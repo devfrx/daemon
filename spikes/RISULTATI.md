@@ -1,6 +1,6 @@
 # Risultati degli spike
 
-Data di esecuzione: _(da compilare)_
+Data di esecuzione: **2026-08-06**
 
 Criteri e soglie: [PROTOCOLLO.md](PROTOCOLLO.md) — congelato al primo commit di
 codice di spike.
@@ -293,8 +293,3 @@ Verdetto **`parziale`**, con le condizioni in cui il controllo si perde:
 3. ADR-0004 richiede un daemon a **concorrenza reale**. La via (a) la ottiene solo
    restando a thread singolo, cioè rinunciando al requisito.
 
-### Altre esecuzioni
-
-| Criterio | Candidato | Comando | Output osservato | Divergenza dall'attesa |
-|---|---|---|---|---|
-| | | | | |

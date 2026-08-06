@@ -20,23 +20,27 @@ codice di spike.
 
 | Criterio | Rust | Go | TypeScript |
 |---|---|---|---|
-| C1 stesso seed → stessa traccia | ✅ `passa` | | |
-| C2 seed diversi → tracce diverse | ✅ `passa` | | |
-| C3 tempo virtuale | ✅ `passa` | | |
-| C4 guasto riproducibile | ✅ `passa` | | |
-| C5 nessun orologio/RNG globale | ✅ `passa` | | |
-| C6 concorrenza nativa ordinabile | ✅ `passa` | | |
-| C7 I/O iniettabile, crash riproducibile | ✅ `passa` | | |
+| C1 stesso seed → stessa traccia | ✅ `passa` | ✅ `passa` | |
+| C2 seed diversi → tracce diverse | ✅ `passa` | ✅ `passa` | |
+| C3 tempo virtuale | ✅ `passa` | ✅ `passa` | |
+| C4 guasto riproducibile | ✅ `passa` | ✅ `passa` | |
+| C5 nessun orologio/RNG globale | ✅ `passa` | ✅ `passa` | |
+| C6 concorrenza nativa ordinabile | ✅ `passa` | ❌ **`non passa`** | |
+| C7 I/O iniettabile, crash riproducibile | ✅ `passa` | ✅ `passa` | |
 
-**Rust passa entrambi gli spike.** Per la regola di applicazione del protocollo, avendo
-C6 = `passa`, lo spareggio #1 dell'ADR **non gli si applica**.
+**Rust passa entrambi gli spike.** Avendo C6 = `passa`, per la regola di applicazione
+del protocollo lo spareggio #1 dell'ADR **non gli si applica**.
+
+**Go non passa SP-5.** Sei criteri su sette, ma il protocollo è esplicito: un candidato
+passa solo se li soddisfa **tutti**. C6 = `non passa` → lo spareggio #1 gli si applica
+in pieno, ora con una misura invece che con un'osservazione generica.
 
 ## Osservazioni registrate — non criteri
 
 | # | Rust | Go | TypeScript |
 |---|---|---|---|
-| O1 motore di persistenza conforme a §10.6 | candidati esistono: `redb` 4.1.0 · `fjall` 3.1.8 (LSM, adatto alla potatura selettiva) · `rusqlite` 0.40.1 · `sled` 1.0.0-alpha.124. **Requisito 4 (I/O iniettabile) da confermare** nell'ADR sulla persistenza: è il discriminante, non la disponibilità | | |
-| O2 daemon a vita lunga, istanza singola | da registrare | | |
+| O1 motore di persistenza conforme a §10.6 | candidati esistono: `redb` 4.1.0 · `fjall` 3.1.8 (LSM, adatto alla potatura selettiva) · `rusqlite` 0.40.1 · `sled` 1.0.0-alpha.124. **Requisito 4 (I/O iniettabile) da confermare** nell'ADR sulla persistenza: è il discriminante, non la disponibilità | candidati esistono: `go.etcd.io/bbolt` v1.5.0 · `github.com/dgraph-io/badger/v4` v4.9.6 · `github.com/cockroachdb/pebble` v1.1.5. Stessa riserva sul requisito 4 | |
+| O2 daemon a vita lunga, istanza singola | via consolidata; nessun runtime esterno da impacchettare, binario singolo | via consolidata; binario singolo. È il caso d'uso per cui il linguaggio è nato | |
 
 ## Versioni degli strumenti
 
@@ -58,6 +62,12 @@ Un risultato senza seed non è valido.
 | C6 | Rust | `20260806` | 100 esecuzioni → **1 sola** traccia distinta; con `20260807` l'interlacciamento cambia |
 | C7 | Rust | `1, 7, 42, 99, 20260806` | tracce identiche a parità di seed, caduta inclusa |
 | C7 dubbio | Rust | **`0`** | primo seed su 200 che cade *fra* intento ed esito: passo 0 resta `InDubbio`, rilevabile |
+| C1, C2 | Go | `42`, `43` | come Rust |
+| C3 | Go | `7` | orologio virtuale a 5000 ms, tempo di parete < 1 s |
+| C4 | Go | `99` | il seed inietta un guasto; `TestC4` non è stato saltato |
+| C6 | Go | — | **il seed non entra**: non c'è alcun punto in cui inserirlo nello scheduler delle goroutine. È il risultato, non un'omissione |
+| C7 | Go | `1, 7, 42, 99, 20260806` | tracce identiche a parità di seed, caduta inclusa |
+| C7 dubbio | Go | **`0`** | stesso esito di Rust |
 
 ## Evidenze
 
@@ -170,6 +180,51 @@ chiavi vanno estratte e ordinate a ogni iterazione, ogni volta, per sempre.
 
 Per V29 è una fonte di non determinismo che non compare in nessun elenco di «chiamate
 OS» e che C1 rivelerebbe solo come traccia divergente e inspiegabile.
+
+### SP-5 · Go — eseguito il 2026-08-06, go1.26.5
+
+| Criterio | Comando | Output osservato | Divergenza dall'attesa |
+|---|---|---|---|
+| **C1–C4** | `go test ./sched/` | 4/4. Il seed 99 inietta un guasto: `TestC4` **non** è stato saltato | il piano prevedeva un possibile skip; non è servito, come in Rust |
+| **C5** | `grep -rnE "time\.Now\|math/rand\|os\.\|net\." sched/ giornale/ kernel/` escludendo i commenti | nessun riscontro | nessuna |
+| tempo virtuale | `go test ./sched/ -run TestGoroutineReali` | PASS in < 1 s di tempo di parete: **`synctest` virtualizza davvero il tempo** anche per goroutine e timer reali. La firma `synctest.Test(t, func(*testing.T))` è quella del piano | nessuna: su questo il piano era corretto |
+| **C6** | `go test ./sched/ -run TestC6 -count=1` | vedi il riquadro sotto | ⚠️ **il criterio non è soddisfatto** |
+| **C7** | `go test ./giornale/` | 6/6, esattamente come Rust. Crash riproducibile su 5 seed, ordine `I,E,I,E,I,E`, passo `InDubbio` rilevabile senza falsi positivi, giornale sostituibile con un secondo doppio | nessuna |
+
+#### C6 · La misura che chiude la domanda aperta
+
+L'ipotesi da falsificare era: *«lo spareggio #1 è troppo severo verso Go, perché se il
+kernel guida le proprie attività con un esecutore proprio, che lo scheduler delle
+goroutine sia del runtime conta poco.»*
+
+**Falsificata.** 100 esecuzioni della stessa scena, 3 goroutine in contesa, 6 passi
+ciascuna:
+
+| Prova | Dentro `synctest` | Fuori dalla bolla |
+|---|---|---|
+| contesa su **canale** della bolla — il caso più favorevole, durably blocking | **9** tracce distinte | 13 |
+| contesa su **`sync.Mutex`** — escluso testualmente dal durably blocking | **4** tracce distinte | 5 |
+
+`synctest` **riduce** il non determinismo, non lo elimina. È coerente con la propria
+documentazione: promette quiescenza — il tempo avanza quando ogni goroutine della bolla
+è durably blocked — e **non promette un ordine totale**. La formulazione diffusa
+«synctest dà scheduling deterministico» è più forte del contratto reale.
+
+**Perché non basta un esecutore proprio.** L'esecutore ordina le attività *che gestisce
+lui*. Ma il kernel di ADR-0004 è un daemon che riceve eventi concorrenti da IPC, da
+worker e dalla rete: quelle goroutine esistono, e il loro interlacciamento resta del
+runtime. La riga della tabella sul `sync.Mutex` è la più pesante: ADR-0004 descrive
+l'arbitro GPU come «un unico processo con **un unico lock**», cioè esattamente la
+primitiva che `synctest` dichiara di non coprire.
+
+**Conseguenza sui requisiti.** Q2 (zero OOM), Q4 (kill di un worker in qualsiasi
+istante) e Q5 (riavvio a metà run) sono verificabili **solo** per simulazione
+deterministica (ADR-0021, design/08). Con l'interlacciamento non riproducibile, un
+difetto trovato in simulazione non conserva il proprio seed — e V31 cade con lui.
+
+**I test restano nel repository come guardie**, non come fallimenti: asseriscono il non
+determinismo misurato. Se una versione futura di Go lo eliminasse, falliscono e C6 va
+rimisurato.
 
 ### Altre esecuzioni
 

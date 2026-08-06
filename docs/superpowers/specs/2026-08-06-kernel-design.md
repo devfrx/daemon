@@ -3,7 +3,7 @@
 - **Data:** 2026-08-06
 - **Sotto-progetto:** kernel. È il primo, perché tutte e sei le capacità di L2
   dipendono da esso.
-- **Stato:** §0–§9 approvate. **Una lacuna aperta:** vedi §10.
+- **Stato:** §0–§9 approvate · §10 in attesa di approvazione.
 
 ## Avanzamento delle sezioni
 
@@ -19,7 +19,7 @@
 | 7 | Errori, degrado e osservabilità | Approvata |
 | 8 | Test e criteri di accettazione | Approvata |
 | 9 | Rischi e spike di validazione | Approvata |
-| **10** | **L0 fisico: persistenza, cifratura, backup, segreti, confinamento** | ⚠️ **lacuna — da presentare** |
+| 10 | L0 fisico: persistenza, cifratura, backup, segreti, confinamento | **Proposta — in attesa di approvazione** |
 
 ---
 
@@ -81,12 +81,17 @@ il cui metodo di determinazione è già deciso.
 | Q18 | Perdita della rete durante l'uso | il sistema **dichiara** cosa resta disponibile; non fallisce azione per azione |
 | Q19 | Capire cosa è andato storto in una run di 4 ore | trace gerarchico navigabile, ricavato dal giornale |
 | Q20 | Dati che lasciano la macchina | nessuno per default: esportazione opt-in, un solo punto di uscita |
+| Q21 | Ripristino da backup su una macchina nuova | torna tutto l'irriproducibile; indici e pesi si ricostruiscono; i segreti si re-inseriscono — **dichiarato al momento del backup**, non del ripristino |
+| Q22 | Un passo modifica file e va annullato | l'ambito torna allo stato precedente al passo, senza dipendere da git |
+| Q23 | Esecuzione di codice generato o di un comando | avviene almeno al **livello 2** di confinamento; se non disponibile, **non parte** |
+| Q24 | Un componente diverso dal gestore dei segreti tenta di leggere una credenziale | non esiste alcun percorso per farlo — verificabile staticamente |
 
 Q5–Q7 sono i requisiti delle **long-horizon tasks** (§4).
 Q10–Q12 sono i requisiti dell'**harness** (§5).
 Q13–Q14 sono i requisiti del **gateway** (§3).
 Q15–Q17 sono i requisiti di **sicurezza** (§6).
 Q18–Q20 sono i requisiti di **osservabilità e degrado** (§7).
+Q21–Q24 sono i requisiti di **L0 fisico** (§10).
 
 ### 0.5 Requisiti strutturali che vincolano la topologia
 
@@ -702,31 +707,90 @@ sono già fissati da questa spec, non da preferenze:
 
 ## 10. L0 fisico: persistenza, cifratura, backup, segreti, confinamento
 
-> **Lacuna aperta, non ancora progettata.** Emersa dall'esercizio di tracciabilità:
-> vedi [tracciabilita.md](../../tracciabilita.md), §Lacune.
+Chiude le cinque lacune emerse dall'esercizio di tracciabilità. Le §0–§9 avevano
+deciso la **semantica** di L0 senza mai toccarne il **supporto fisico**.
 
-Questa spec si intitola «L0 fondamenta + L1 arbitri trasversali». Le §0–§9 coprono
-integralmente L1 e i meccanismi trasversali, ma di L0 hanno deciso la **semantica**
-senza mai toccare il **supporto fisico**.
+**Decisioni:** [ADR-0022](../../adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md) ·
+[ADR-0023](../../adr/0023-cifratura-a-riposo-e-gestore-dei-segreti.md) ·
+[ADR-0024](../../adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md) ·
+[ADR-0025](../../adr/0025-confinamento-a-livelli.md).
 
-| # | Lacuna | Cosa manca | Su cosa poggia già |
-|---|---|---|---|
-| L-1 | Checkpoint del filesystem | §4 giornala le *run*, non lo stato dei file. Serve a Coding, Generazione asset e Conoscenza: per la parità di [ADR-0001](../../adr/0001-architettura-a-kernel-con-capacita-paritarie.md) è **kernel**, non capacità | classi di effetto §4, permessi §6 |
-| L-2 | Storage e cifratura a riposo | §4 decide la semantica della persistenza, mai il motore né la cifratura | giornale §4, ritenzione ADR-0018 |
-| L-3 | Backup ed export dei dati | nessuna sezione lo affronta; include il backup della base di conoscenza indipendente dall'app | ritenzione ADR-0018 |
-| L-4 | Gestore dei segreti | §6 vi si appoggia — escalation automatica, canary, mascheratura V16 — ma non lo progetta | ADR-0016, V16 |
-| L-5 | Confinamento reale dell'esecuzione | §6 decide **cosa** si può toccare (la tripla); **come** si confina un processo è OS-specifico → modulo di piattaforma (I3) | permessi §6, ADR-0002 |
+**Struttura:** [L0 fisico](../../design/09-l0-fisico.md).
 
-**Nessuna invalida le decisioni prese**: stanno tutte *sotto* i meccanismi già decisi,
-non sopra. Ma nessuna delle cinque è opzionale, e L-1 e L-5 bloccano la capacità
-Coding.
+### 10.1 In sintesi
 
-Vincoli già noti che la §10 dovrà rispettare:
-
-| Vincolo | Da |
+| Lacuna | Scelta |
 |---|---|
-| Il confinamento è OS-specifico → vive nel modulo di piattaforma, non nel core | I3 · ADR-0002 |
-| Il checkpoint del filesystem è di kernel, non della capacità Coding | ADR-0001 |
-| La persistenza deve reggere il write-ahead e la potatura a livelli | ADR-0007 · ADR-0018 |
-| Il gestore dei segreti è il punto in cui scatta l'escalation dei vincoli sui dati | ADR-0016 |
-| Tutto ciò che qui esegue I/O resta **iniettabile** | V29 · ADR-0021 |
+| L-2 storage | archivi separati **per natura**, non per componente: ritenzione, cifratura e backup differenziati |
+| L-3 backup | contiene **solo l'irriproducibile**: indici e pesi esclusi perché ricostruibili, segreti esclusi perché vettore di fuga |
+| L-2 cifratura | chiavi affidate alle facility dell'OS → il daemon parte senza interazione |
+| L-4 segreti | **un solo punto di lettura** delle credenziali; da lì discendono mascheratura, escalation e canary |
+| L-1 checkpoint | ad **ambiti dichiarati**, write-ahead sui file, distinto da git e convivente |
+| L-5 confinamento | **quattro livelli**; il kernel richiede, la piattaforma implementa; default livello 2 |
+
+### 10.2 La tensione che questa sezione doveva risolvere
+
+| Requisito | Implica |
+|---|---|
+| daemon con avvio automatico (R2) | il core parte **senza interazione umana** |
+| voce always-on | funziona da subito dopo il boot |
+| cifratura a riposo | qualcuno deve fornire una chiave |
+
+Con una passphrase, i primi due cadono. Con le chiavi dell'OS, restano tutti e tre —
+al prezzo che la protezione **equivale a quella dell'account di sistema**.
+
+Abbiamo scelto le chiavi dell'OS **e** l'obbligo di dirlo in interfaccia. «Cifrato»
+suona più forte di quanto sia: una falsa sicurezza è peggio di nessuna sicurezza.
+
+Chi vuole la protezione più forte ha il profilo **riservato**, che disattiva avvio
+automatico e voce always-on. La composizione è mutuamente esclusiva e dichiarata:
+il sistema **rifiuta** di abilitare l'avvio automatico in quel profilo, non si limita
+a sconsigliarlo.
+
+### 10.3 L'illusione che questa sezione chiude
+
+I permessi applicativi della §6 sono un confine **solo finché tutti gli accessi passano
+dal mediatore**. Un processo figlio che esegue codice non ci passa: può aprire ciò che
+l'utente può aprire.
+
+| Livello | Regge contro codice eseguito? |
+|---|---|
+| 1 — permessi applicativi | **no** |
+| 2 — processo ristretto dell'OS | sì |
+| 3 — macchina virtuale leggera | sì, anche a fuga dal kernel guest |
+
+Era l'illusione più pericolosa dell'intero capitolo sicurezza, e sarebbe rimasta
+implicita senza l'esercizio di tracciabilità.
+
+### 10.4 Vincoli che la §10 impone all'implementazione
+
+| # | Vincolo | Colpisce |
+|---|---|---|
+| V32 | Il backup contiene solo l'irriproducibile: indici, pesi e cache esclusi | L3, GUI |
+| V33 | I segreti non entrano **mai** nel backup automatico | L3, GUI |
+| V34 | Il gestore dei segreti è l'**unico** punto di lettura delle credenziali; verificabile staticamente | tutto il kernel |
+| V35 | Nessuna esecuzione di codice o comando sotto il **livello 2** di confinamento | capacità Coding, L3 |
+| V36 | Gli effetti fuori dagli ambiti dichiarati non sono coperti dal checkpoint e restano soggetti alle classi di effetto §4 | capacità Coding, Asset, Conoscenza |
+| V37 | Il livello di confinamento usato entra nel giornale insieme al passo | §4, §7 |
+
+### 10.5 I costi dichiarati
+
+| Costo | |
+|---|---|
+| **Il ripristino non è istantaneo** | indici da ricostruire, pesi da riscaricare, segreti da re-inserire |
+| **La cifratura vale quanto l'account OS** | non protegge da chi ha già il tuo account |
+| **Il livello 2 costa un'implementazione per OS** | è il pezzo più caro del modulo di piattaforma, ed è esattamente il rischio RK-11 |
+| **Fail-closed sul confinamento** | su una piattaforma non supportata l'app **rifiuta di eseguire**, non funziona a metà |
+| **Un ambito dichiarato male è falsa sicurezza** | l'interfaccia deve mostrare cosa è coperto *prima* che l'agente scriva |
+
+### 10.6 Cosa resta a un ADR successivo
+
+La **scelta del motore di persistenza**: dipende da cosa offre l'ecosistema del
+linguaggio, che non è ancora scelto. La §10 ne fissa i requisiti, non il nome.
+
+| # | Requisito del motore | Da |
+|---|---|---|
+| 1 | scrittura durevole e ordinata, con conferma prima dell'esecuzione | ADR-0007 · V6 |
+| 2 | lettura concorrente mentre si scrive | GUI + core + proiezioni |
+| 3 | potatura selettiva senza riscrivere l'archivio | ADR-0018 |
+| 4 | ogni operazione di I/O **iniettabile** | V29 · ADR-0021 |

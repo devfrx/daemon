@@ -98,7 +98,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | HITL: approvazioni | ✅ | §6 · ADR-0016 |
 | HITL: interruzione e steering | 🔶 | `AttesaUmano` §4 · politica → Agenti |
 | Domande di chiarimento | 📋 | Agenti |
-| Checkpoint e rollback | 🔶 | giornale §4 · **filesystem → ⚠️ vedi Lacune** |
+| Checkpoint e rollback | ✅ | giornale §4 + §10 · ADR-0024 |
 | Run persistenti, ripresa e cancellazione | ✅ | §4 · ADR-0007 |
 | Task in background | ✅ | §4 + ADR-0004 |
 | Scheduling | ✅ | trigger anello 3 §5 |
@@ -113,13 +113,13 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Sandboxing ed esecuzione | 🔶 | permessi §6 · **confinamento reale → ⚠️ vedi Lacune** |
+| Sandboxing ed esecuzione | ✅ | permessi §6 + §10 · ADR-0025 — quattro livelli |
 | Edit dei file e diff review | 📋 | Coding |
 | Terminale integrato | 📋 | Coding |
 | LSP e analisi statica | 🔶 | sensori §5 · implementazione → Coding |
 | Git e gestione branch | 📋 | Coding |
 | Isolamento per branch di lavoro | 📋 | Coding |
-| Undo/checkpoint del filesystem | ⚠️ | **lacuna** |
+| Undo/checkpoint del filesystem | ✅ | §10 · ADR-0024 — ambiti dichiarati |
 | Esecuzione test | 🔶 | sensori §5 · implementazione → Coding |
 | Modalità di edit selezionabili | 📋 | Coding |
 | Anteprima applicazioni | 📋 | Coding + GUI |
@@ -168,12 +168,12 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Permessi e sandbox policy | 🔶 | §6 · confinamento reale → ⚠️ Lacune |
+| Permessi e sandbox policy | ✅ | §6 + §10 · ADR-0025 |
 | Difese da prompt injection | ✅ | §6 · ADR-0014 |
 | Difesa da tool poisoning | ✅ | §6 · ADR-0015 |
-| Gestione segreti e credenziali | ⚠️ | citato in §6, **non progettato** — vedi Lacune |
-| Storage e cifratura a riposo | ⚠️ | **lacuna** |
-| Backup ed export dei dati | ⚠️ | **lacuna** |
+| Gestione segreti e credenziali | ✅ | §10 · ADR-0023 — gestore unico |
+| Storage e cifratura a riposo | ✅ | §10 · ADR-0022 + ADR-0023 |
+| Backup ed export dei dati | ✅ | §10 · ADR-0022 — solo l'irriproducibile |
 | Osservabilità e tracing locale | ✅ | §7 · ADR-0017 |
 | Logging | ✅ | §7 |
 | Hotkey globale, tray e clipboard | 📋 | L3 |
@@ -219,7 +219,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 |---|---|---|
 | RAG «agentico» su filesystem | 📋 | Conoscenza |
 | Sincronizzazione automatica delle cartelle | 🔶 | trigger §5 · politica → Conoscenza |
-| Backup della KB indipendente dall'app | ⚠️ | **lacuna** (backup L0) |
+| Backup della KB indipendente dall'app | ✅ | §10 · ADR-0022 — documenti nel backup, indice ricostruito |
 | Memoria selettiva ed episodica | 📋 | Conoscenza |
 | Gestione delle contraddizioni nella memoria | 📋 | Conoscenza |
 | Full-context mode per singolo allegato | 📋 | Conoscenza |
@@ -269,19 +269,18 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 ---
 
-## Lacune
+## Lacune — chiuse dalla §10
 
-Trovate da questo esercizio di tracciabilità. **Tutte appartengono a L0** — la parte
-di kernel che le §0–§9 hanno toccato solo di rimbalzo.
+Trovate da questo esercizio di tracciabilità il 2026-08-06, tutte in L0, tutte chiuse
+dalla §10 della spec del kernel lo stesso giorno.
 
-| # | Lacuna | Perché è una lacuna | Proposta |
-|---|---|---|---|
-| L-1 | **Undo/checkpoint del filesystem** | §4 giornala le *run*, non lo stato dei file. Serve a Coding, ma anche a Generazione asset e a Conoscenza: per la parità di ADR-0001 è kernel | §10 |
-| L-2 | **Storage e cifratura a riposo** | §4 decide la *semantica* della persistenza, mai il supporto fisico né la cifratura | §10 |
-| L-3 | **Backup ed export dei dati** | nessuna sezione lo affronta; include il backup della KB indipendente dall'app | §10 |
-| L-4 | **Gestore dei segreti** | §6 vi si appoggia (escalation automatica, canary, mascheratura V16) ma non lo progetta | §10 |
-| L-5 | **Confinamento reale dell'esecuzione** | §6 decide *cosa* si può toccare (la tripla); *come* si confina un processo è OS-specifico → modulo di piattaforma | §10 + L3 |
+| # | Lacuna | Chiusa da |
+|---|---|---|
+| L-1 | Undo/checkpoint del filesystem | [ADR-0024](adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md) — ambiti dichiarati, write-ahead sui file |
+| L-2 | Storage e cifratura a riposo | [ADR-0022](adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md) + [ADR-0023](adr/0023-cifratura-a-riposo-e-gestore-dei-segreti.md) |
+| L-3 | Backup ed export dei dati | [ADR-0022](adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md) — solo l'irriproducibile |
+| L-4 | Gestore dei segreti | [ADR-0023](adr/0023-cifratura-a-riposo-e-gestore-dei-segreti.md) — punto unico di lettura |
+| L-5 | Confinamento reale dell'esecuzione | [ADR-0025](adr/0025-confinamento-a-livelli.md) — quattro livelli, default 2 |
 
-**Nessuna invalida le decisioni prese**: sono tutte sotto i meccanismi già decisi, non
-sopra. Ma la spec si intitola «L0 fondamenta + L1 arbitri trasversali» e L0 è, a oggi,
-coperto solo in parte.
+**Nessuna lacuna aperta.** Se un nuovo esercizio di tracciabilità ne trova altre, si
+aggiungono qui con lo stesso formato.

@@ -17,7 +17,7 @@ una sola GPU da 16 GB.
 
 ## Stato: progettazione. Nessun codice scritto.
 
-Non esiste sorgente in questo repository. Esiste una spec del kernel completa e 21
+Non esiste sorgente in questo repository. Esiste una spec del kernel completa e 25
 decisioni architetturali. **Non iniziare a implementare**: il linguaggio del core non
 è ancora scelto, e due spike possono escluderne alcuni.
 
@@ -28,7 +28,7 @@ decisioni architetturali. **Non iniziare a implementare**: il linguaggio del cor
 | 1 | [`docs/roadmap.md`](docs/roadmap.md) | stato, ordine dei sotto-progetti, **prossimo passo** |
 | 2 | [`docs/README.md`](docs/README.md) | indice di ADR, diagrammi e spec |
 | 3 | [`docs/adr/`](docs/adr/) | il **perché** di ogni decisione — leggi ADR-0001 e ADR-0004 per primi |
-| 4 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§9 |
+| 4 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§10 |
 | 5 | [`docs/tracciabilita.md`](docs/tracciabilita.md) | ogni funzionalità della mappa originale → dove vive |
 | 6 | [`docs/riferimenti.md`](docs/riferimenti.md) | provenienza di ciò che non abbiamo dedotto noi |
 
@@ -69,14 +69,18 @@ riscrittura, non una patch.
 | 2 | Nessuna chiamata OS-specifica nel kernel | I3 · ADR-0002 |
 | 3 | **Iniettabilità** di tempo, casualità, I/O e scheduling | V29 · ADR-0021 |
 
+Una quarta, di natura diversa ma altrettanto vincolante: **nessuna esecuzione di codice
+o comando sotto il livello 2 di confinamento** (V35 · ADR-0025). I permessi applicativi
+da soli non sono un confine contro codice eseguito.
+
 ## Prossimo passo
 
 **Spike SP-5 (iniettabilità) e SP-6 (confine dei tipi).** Entrambi possono escludere un
 linguaggio, quindi precedono l'ADR sul linguaggio del core, che precede ogni riga di
 codice. Protocolli e soglie: spec §9.
 
-Resta aperta una lacuna: **§10 — persistenza fisica, cifratura a riposo, backup,
-gestore dei segreti, confinamento dell'esecuzione**. Vedi `docs/tracciabilita.md`, §Lacune.
+La spec del kernel è completa (§0–§10, 25 ADR) e **non ha lacune aperte**: le cinque
+trovate dall'esercizio di tracciabilità sono state chiuse dalla §10.
 
 ## Manutenzione della documentazione
 

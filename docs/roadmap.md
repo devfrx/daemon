@@ -7,8 +7,8 @@ Ultimo aggiornamento: **2026-08-06**.
 
 ## Stato in una riga
 
-> Spec del kernel completa (§0–§9, 21 ADR). **Nessun codice scritto.** Prossimo passo:
-> spike SP-5 e SP-6, che decidono il linguaggio del core.
+> Spec del kernel completa (§0–§10, 25 ADR), nessuna lacuna aperta. **Nessun codice
+> scritto.** Prossimo passo: spike SP-5 e SP-6, che decidono il linguaggio del core.
 
 ## Il ciclo che seguiamo
 
@@ -29,7 +29,7 @@ flowchart LR
 | # | Sotto-progetto | Livello | Stato | Dipende da |
 |---|---|---|---|---|
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
-| **0b** | **Kernel L0 fisico — persistenza, cifratura, backup, segreti, confinamento** (§10) | L0 | ⚠️ **lacuna dichiarata, da progettare** | 0 |
+| **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
 | **0c** | **ADR linguaggio del core** | — | ⏭️ **prossimo** | SP-5, SP-6 |
 | 1 | Implementazione del kernel + simulatore DST | L0 + L1 | ⬜ | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1 |
@@ -82,9 +82,9 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 | Decisione | Quando | Vincolata da |
 |---|---|---|
 | Linguaggio del core | dopo SP-5/SP-6 | V29, V19, I3, V28, ADR-0004 |
-| Motore di persistenza | §10 | semantica §4 |
+| Motore di persistenza | ADR dopo il linguaggio | requisiti fissati in §10.6 |
 | Linguaggio e tecnologia della GUI | sotto-progetto 2 | ADR-0004 (GUI sacrificabile) |
-| Sede di L-1 (checkpoint filesystem) | §10 | parità ADR-0001 |
+| Livello 3 di confinamento (microVM) | quando servirà eseguire codice di provenienza ignota | ADR-0025 |
 
 ## Regola di manutenzione
 

@@ -6,9 +6,14 @@ Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 ## In trenta secondi
 
 Assistente desktop locale, utente singolo, GPU singola RTX 5080 16 GB. **Piattaforma
-a quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 28
-ADR, zero lacune aperte**. Lo **stack è chiuso**: core in Rust, GUI a shell nativa con
-interfaccia web, worker ML in Python.
+a quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 30
+ADR**. Stack deciso **tranne il guscio della GUI**: core in **Rust**, interfaccia web in
+**Vue 3**, worker ML in **Python**; Tauri contro Electron è ancora aperto
+([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
+
+⚠️ **Una lacuna aperta nel kernel**, trovata durante la revisione e non cercata: **la
+GPU usata dalla GUI non è arbitrata da nessuno.** Vedi sotto — va chiusa nel
+sotto-progetto 1.
 
 Il vincolo che governa tutto non è funzionale ma di risorsa: quattro aree che si
 contendono una sola GPU.
@@ -26,8 +31,34 @@ Lo stack non è più una domanda aperta:
 | ADR | Decisione | Misurata da |
 |---|---|---|
 | **0026** | core in **Rust** | SP-5 e SP-6 su tre candidati. Rust è l'unico che passa entrambi |
-| **0027** | GUI a shell nativa + interfaccia web | G7, con P1–P4 misurati su un prototipo IPC |
+| **0027** | GUI a **interfaccia web**, non toolkit nativo | G7, con P1–P4 misurati su un prototipo IPC |
 | **0028** | worker ML in **Python** | non una scelta: i modelli hanno implementazioni Python |
+| **0029** | ⚠️ **guscio: aperto** — Tauri o Electron | **niente**: sono argomenti, non misure. È il motivo per cui è `Proposed` |
+| **0030** | interfaccia in **Vue 3** | merito + competenza del proprietario, criterio legittimo qui e non in ADR-0026 |
+
+### Le due cose aperte, e perché non bloccano
+
+| Aperta | Si chiude con | Blocca il sotto-progetto 1? |
+|---|---|---|
+| **guscio della GUI** (ADR-0029) | quattro misure M1–M4 su un frontend Vue minimo con scena 3D, sui due gusci | **no**: il sotto-progetto 1 è interamente Rust e non tocca la GUI |
+| **GPU della GUI non arbitrata** | un ADR quando si progetta l'arbitro | **no, ma è lì che va chiusa** — è L1, non GUI |
+
+#### La lacuna su I2, per esteso
+
+[ADR-0005](adr/0005-arbitrato-gpu-su-due-dimensioni.md) e
+[design/02](design/02-arbitrato-gpu.md) **non menzionano mai la GUI**. La verifica di I2
+è scritta solo sui worker: «nessun *worker* si avvia senza una concessione valida».
+
+Ma un viewer 3D (G6) usa la GPU, e il compositing della webview la usa anche senza 3D.
+Durante un render TRELLIS2 che vuole 13–14 GB su 16, quella VRAM è contesa. Tre uscite:
+
+| Opzione | Conseguenza |
+|---|---|
+| il viewer chiede una concessione come tutti | I2 resta vero, ma la GUI smette di essere «solo stato di presentazione» (I1) |
+| il viewer è esente | **I2 è falso come scritto** e va riformulato dichiarando il rischio |
+| quota sottratta, come per l'audio | riusa il meccanismo che ADR-0005 ha già inventato per la voce |
+
+Vale identico per Tauri e per Electron: **è una questione di kernel, non di guscio.**
 
 Toolchain verificata il 2026-08-06: `rustc` 1.95.0 · `cargo` 1.95.0 · `clippy` 0.1.95.
 
@@ -130,8 +161,11 @@ per chiudersi.
 | Domanda | Si chiude con | Blocca? |
 |---|---|---|
 | ~~Linguaggio del core~~ | ✅ **ADR-0026: Rust** | — |
-| ~~Stack della GUI~~ | ✅ **ADR-0027** | — |
+| ~~Interfaccia web o toolkit nativo~~ | ✅ **ADR-0027: web** | — |
 | ~~Ecosistema dei worker ML~~ | ✅ **ADR-0028: Python** | — |
+| ~~Framework dell'interfaccia~~ | ✅ **ADR-0030: Vue 3** | — |
+| ⚠️ **Guscio: Tauri o Electron** | ADR-0029 `Proposed`, misure M1–M4 | no |
+| ⚠️ **GPU della GUI non arbitrata** | ADR nel sotto-progetto 1 | no, ma va chiusa lì |
 | Motore di persistenza | ADR successivo; requisiti in §10.6, candidati Rust già verificati | l'implementazione |
 | CPU della GUI con rendering reale (P3) | rimisura nel sotto-progetto 2 | no: il margine misurato è 21,4 % su 25 %, **stretto** |
 | Curva qualità/VRAM di TRELLIS2 | SP-1 | no: tara i profili di risorsa |

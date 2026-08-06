@@ -7,10 +7,14 @@ Ultimo aggiornamento: **2026-08-06**.
 
 ## Stato in una riga
 
-> Spec del kernel **completa e approvata** (§0–§10, 28 ADR), nessuna lacuna aperta.
-> **Stack chiuso**: core in **Rust**, GUI a shell nativa con interfaccia web, worker ML
-> in Python. Prossimo passo: **implementazione del kernel + simulatore DST**
-> (sotto-progetto 1).
+> Spec del kernel **completa e approvata** (§0–§10, 30 ADR). Stack deciso **tranne il
+> guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**, worker ML in
+> **Python**; Tauri contro Electron resta aperto ([ADR-0029](adr/0029-guscio-della-gui.md),
+> `Proposed`) e **non blocca nulla**. Prossimo passo: **implementazione del kernel +
+> simulatore DST** (sotto-progetto 1).
+>
+> ⚠️ **Una lacuna aperta nel kernel**: la GPU usata dalla GUI non è arbitrata da
+> nessuno. Va chiusa nel sotto-progetto 1 — vedi [HANDOFF](HANDOFF.md).
 
 ## Il ciclo che seguiamo
 
@@ -100,10 +104,31 @@ native e il giornale write-ahead iniettabile, tutti con i loro test.
 | Decisione | Quando | Vincolata da |
 |---|---|---|
 | ~~Linguaggio del core~~ | ✅ **ADR-0026: Rust** | — |
-| ~~Stack della GUI~~ | ✅ **ADR-0027: shell nativa + interfaccia web** | — |
+| ~~Interfaccia web o toolkit nativo~~ | ✅ **ADR-0027: interfaccia web** (G7) | — |
 | ~~Ecosistema dei worker ML~~ | ✅ **ADR-0028: Python** | — |
+| ~~Framework dell'interfaccia~~ | ✅ **ADR-0030: Vue 3** | — |
+| ⚠️ **Guscio della GUI: Tauri o Electron** | **ADR-0029, `Proposed`.** Si chiude con quattro misure M1–M4 all'inizio del sotto-progetto 2 | non blocca il sotto-progetto 1 |
+| ⚠️ **La GPU usata dalla GUI non è arbitrata** | ADR nel sotto-progetto 1, quando si progetta l'arbitro | **I2 come scritto è verificato solo sui worker** |
 | **Motore di persistenza** | ADR prossimo; l'ecosistema ora è noto | requisiti in §10.6; candidati Rust verificati in `spikes/RISULTATI.md` |
 | Livello 3 di confinamento (microVM) | quando servirà eseguire codice di provenienza ignota | ADR-0025 |
+
+### La lacuna su I2, per esteso
+
+Trovata durante la revisione di ADR-0027, non cercata.
+[ADR-0005](adr/0005-arbitrato-gpu-su-due-dimensioni.md) e
+[design/02](design/02-arbitrato-gpu.md) **non menzionano mai la GUI**, e la verifica di
+I2 è scritta solo sui worker: «nessun *worker* si avvia senza una concessione valida».
+
+Ma un viewer 3D (G6) usa la GPU, e il compositing della webview la usa anche senza 3D.
+Durante un render TRELLIS2 che vuole 13–14 GB su 16, quella VRAM è contesa.
+
+| Opzione | Conseguenza |
+|---|---|
+| il viewer chiede una concessione come tutti | I2 resta vero, ma la GUI smette di essere «solo stato di presentazione» (I1) |
+| il viewer è esente | **I2 è falso come scritto** e va riformulato, dichiarando il rischio |
+| quota sottratta, come per l'audio | riusa il meccanismo che ADR-0005 ha già inventato per la voce |
+
+Vale identico per Tauri e per Electron: **è una questione di kernel, non di guscio.**
 
 ## Regola di manutenzione
 

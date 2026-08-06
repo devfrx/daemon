@@ -25,11 +25,18 @@ diventeranno il punto di partenza del simulatore.
 | Strato | Scelta | Da |
 |---|---|---|
 | core | **Rust** | ADR-0026, sostenuto da SP-5 e SP-6 misurati |
-| gui | shell nativa Rust + **interfaccia web** (Tauri) | ADR-0027 |
+| gui — forma | **interfaccia web**, non toolkit nativo | ADR-0027, deciso da G7 |
+| gui — framework | **Vue 3** | ADR-0030 |
+| gui — **guscio** | ⚠️ **aperto**: Tauri o Electron | ADR-0029, `Proposed` |
 | worker ML | **Python** | ADR-0028 |
 
 **Ora si può implementare**, ma solo il sotto-progetto 1 (kernel + simulatore DST), e
-solo con la spec §0–§10 alla mano.
+solo con la spec §0–§10 alla mano. Il guscio aperto **non lo blocca**: il sotto-progetto
+1 è interamente Rust e non tocca la GUI.
+
+⚠️ **Una lacuna aperta nel kernel**, trovata durante la revisione di ADR-0027: la GPU
+usata dalla GUI non è arbitrata da nessuno, e I2 è verificato solo sui worker. Va chiusa
+nel sotto-progetto 1, perché tocca l'arbitro. Dettagli in [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Da dove partire, in quest'ordine
 
@@ -96,8 +103,10 @@ Lo stack è chiuso, e con esso tutte le domande che bloccavano l'implementazione
 | ADR | Decisione | Cosa l'ha decisa |
 |---|---|---|
 | **0026** | core in **Rust** | è l'unico dei tre candidati che passa **entrambi** gli spike. Go fallisce C6 con una misura; TypeScript è parziale su T4, T6 e C6 |
-| **0027** | GUI a shell nativa + interfaccia web | **G7**, artifacts con anteprima viva: non ammette alternativa. P1–P4 misurati |
+| **0027** | GUI a **interfaccia web** | **G7**, artifacts con anteprima viva: non ammette alternativa. P1–P4 misurati |
 | **0028** | worker ML in **Python** | non è una scelta: i modelli hanno implementazioni Python. L'ADR ne dichiara i costi |
+| **0029** | ⚠️ guscio: **aperto** | né Tauri né Electron hanno una misura a sostegno. Raccomandazione Electron, ma è un argomento. Si chiude con M1–M4 nel sotto-progetto 2 |
+| **0030** | interfaccia in **Vue 3** | competenza del proprietario — criterio **legittimo qui** perché nessuna invariante vincola la scelta e la GUI è sacrificabile. In ADR-0026 non lo era |
 
 Evidenze, seed e versioni: [`spikes/RISULTATI.md`](spikes/RISULTATI.md) ·
 [`spikes/GUI-REQUISITI.md`](spikes/GUI-REQUISITI.md).

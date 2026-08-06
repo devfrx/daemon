@@ -1,8 +1,18 @@
-# ADR-0027: Stack della GUI
+# ADR-0027: La GUI è un'interfaccia web, non un toolkit nativo
 
 - **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
+
+> **Perimetro di questo ADR.** Decide **una** cosa: interfaccia web contro toolkit
+> nativo. Non decide il **guscio** che ospita la webview — Tauri o Electron — che è
+> [ADR-0029](0029-guscio-della-gui.md), **ancora aperto**; né il **framework**
+> dell'interfaccia, che è [ADR-0030](0030-framework-dell-interfaccia.md).
+>
+> La prima versione di questo ADR nominava Tauri. La revisione del proprietario ha
+> rilevato che **Electron non era stato considerato**, il che rendeva la decisione
+> incompleta secondo il metodo del repository. Il perimetro è stato ristretto a ciò
+> che le misure sostengono davvero.
 
 ## Context
 
@@ -61,7 +71,8 @@ Il margine su P2 assorbe il salto mancante. **Il margine su P3 no.**
 
 ## Decision
 
-La GUI si scrive come **shell nativa Rust con interfaccia web**, su **Tauri 2.11.5**.
+La GUI si scrive come **interfaccia web dentro un guscio nativo**, non come toolkit
+nativo del linguaggio.
 
 Il requisito che ha deciso il confronto è **G7 — artifacts o canvas con anteprima
 viva**. È l'unico che non ammette alternativa: rendere contenuto arbitrario prodotto da
@@ -97,19 +108,17 @@ richiesto uno spike bloccante come il core:
   - **Nessun tipo condiviso col core.** Lo schema dell'IPC esiste in Rust e va
     rispecchiato nell'interfaccia: due definizioni da tenere allineate. Mitigabile con
     generazione automatica, che è però un passo di build in più da mantenere.
-  - **Due motori di rendering diversi**, non uno portabile: su Windows **WebView2**
-    (Chromium), su Linux **WebKitGTK** — verificato sulla documentazione di Tauri, che
-    dichiara essa stessa quanto sia difficile avere informazioni accurate su WebKitGTK
-    nelle varie distribuzioni. G19 è soddisfatto, ma «Linux senza riscrivere» significa
-    *senza riscrivere*, **non** *senza ritestare*.
   - **Un terzo ecosistema entra nel progetto**: dopo Rust (core) e Python
     ([ADR-0028](0028-ecosistema-dei-worker-ml.md), worker ML), arriva la toolchain web.
     Tre gestori di dipendenze, tre superfici di supply chain, tre cicli di aggiornamento.
   - **Il margine su P3 è stretto**: 21,43 % contro una soglia del 25 %, e la misura non
     includeva il rendering reale né il salto verso la webview. È il numero da rimisurare
     per primo.
-  - Il packaging non è un binario singolo, ma questo costo era **già stato pagato** da
-    ADR-0028: non è questa decisione a introdurlo.
+  - **Si rinuncia ai tipi condivisi e al binario singolo** che un toolkit nativo Rust
+    avrebbe dato. È il prezzo di G7, e va pagato consapevolmente.
+  - Le conseguenze che dipendono dal **guscio** — quale motore di rendering, quanti
+    runtime, quanto pesa il pacchetto — non appartengono a questo ADR:
+    [ADR-0029](0029-guscio-della-gui.md) le enumera e le decide.
 
 - **Follow-up richiesti:**
   - **P3 va rimisurato nel sotto-progetto 2** con rendering reale e con il salto

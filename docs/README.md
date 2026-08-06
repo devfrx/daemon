@@ -61,8 +61,10 @@ sotto-progetto**, nello stesso passaggio.
 | [0024](adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md) | Checkpoint del filesystem ad ambiti dichiarati | Accepted |
 | [0025](adr/0025-confinamento-a-livelli.md) | Confinamento a livelli: il kernel richiede, la piattaforma implementa | Accepted |
 | [0026](adr/0026-linguaggio-del-core.md) | Linguaggio del core: Rust | Accepted |
-| [0027](adr/0027-stack-della-gui.md) | Stack della GUI: shell nativa Rust con interfaccia web | Accepted |
+| [0027](adr/0027-stack-della-gui.md) | La GUI è un'interfaccia web, non un toolkit nativo | Accepted |
 | [0028](adr/0028-ecosistema-dei-worker-ml.md) | Ecosistema dei worker ML: Python, ratificato | Accepted |
+| [0029](adr/0029-guscio-della-gui.md) | Guscio della GUI: Tauri o Electron | ⚠️ **Proposed** |
+| [0030](adr/0030-framework-dell-interfaccia.md) | Framework dell'interfaccia: Vue 3 | Accepted |
 
 ## Indice dei diagrammi
 

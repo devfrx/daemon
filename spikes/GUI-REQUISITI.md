@@ -55,10 +55,14 @@ Il core è **Rust** ([ADR-0026](../docs/adr/0026-linguaggio-del-core.md)). Le ri
 relative a Go e TypeScript sono state cancellate: righe non pertinenti lasciate lì
 sono rumore che il prossimo lettore dovrà filtrare a mano.
 
-| Core | Opzione GUI | Packaging | Tipi condivisi | Costo del viewer 3D (G6) |
-|---|---|---|---|---|
-| Rust | shell nativa con interfaccia web | binario singolo + webview di sistema | no, schema duplicato | libreria web matura |
-| Rust | toolkit nativo del linguaggio | binario singolo | sì | da valutare |
+| Core | Opzione GUI | Packaging | Tipi condivisi | Costo del viewer 3D (G6) | Esito |
+|---|---|---|---|---|---|
+| Rust | **interfaccia web** in un guscio nativo | dipende dal guscio | no, schema duplicato | libreria web matura | ✅ **scelta** — ADR-0027, per G7 |
+| Rust | toolkit nativo del linguaggio | binario singolo | sì | da scrivere | ❌ scartata: non regge G7 |
+
+**Il guscio che ospita la webview — Tauri o Electron — è una decisione separata e
+ancora aperta**: [ADR-0029](../docs/adr/0029-guscio-della-gui.md), `Proposed`. Il
+framework è **Vue 3**, [ADR-0030](../docs/adr/0030-framework-dell-interfaccia.md).
 
 ## Criteri di passaggio del prototipo IPC
 

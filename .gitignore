@@ -1,0 +1,21 @@
+# Sistema operativo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Scratch e artefatti locali
+/scratch/
+/tmp/
+*.log
+
+# Segreti — nessuna credenziale entra mai nel repo
+.env
+.env.*
+!.env.example
+*.key
+*.pem

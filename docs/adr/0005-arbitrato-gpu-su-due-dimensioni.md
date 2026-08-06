@@ -1,6 +1,6 @@
 # ADR-0005: Arbitrato GPU su due dimensioni, con quota audio sottratta dal budget
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

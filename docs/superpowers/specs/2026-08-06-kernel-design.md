@@ -11,9 +11,9 @@
 |---|---|---|
 | 0 | Perimetro, vincoli e requisiti di qualità | Approvata |
 | 1 | Architettura di processo | Approvata |
-| 2 | Arbitro risorse GPU e policy VRAM | **Proposta — in attesa di approvazione** |
+| 2 | Arbitro risorse GPU e policy VRAM | Approvata |
 | 3 | Gateway di inferenza | Da presentare |
-| 4 | Persistenza, run durevoli e idempotenza | Da presentare |
+| 4 | Persistenza, run durevoli e idempotenza | **Proposta — in attesa di approvazione** |
 | 5 | Permessi e confine dei dati non fidati | Da presentare |
 | 6 | Errori, degrado e osservabilità | Da presentare |
 | 7 | Test e criteri di accettazione | Da presentare |
@@ -63,14 +63,13 @@ determinazione è già deciso.
 | Q2 | Job GPU concorrenti che causano OOM | zero, per costruzione (I2) |
 | Q3 | Chiusura o crash della GUI durante una run agentica | la run prosegue, nessuna perdita di stato |
 | Q4 | Crash o kill di un worker in qualsiasi istante | nessuna corruzione, nessuna perdita (I1) |
-| Q5 | Riavvio del core con run in corso | run riprese dall'ultimo checkpoint |
-| Q6 | Ricarica di un modello locale dopo scarico (cold start) | segnalata all'utente prima che percepisca un blocco |
-| Q7 | Contenuto non fidato che tenta di iniettare istruzioni | non raggiunge mai il canale delle istruzioni (I6) |
-| Q8 | Riavvio del core a metà di una run di 4 ore | ripresa dall'ultimo passo giornalato, **nessun effetto rieseguito** |
-| Q9 | Contesto esaurito prima che il task sia finito | la run prosegue: il contesto si ricalcola dallo stato durevole, nessuna informazione persa |
-| Q10 | Run che supera il tetto di passi, tempo o costo | si ferma e chiede; non prosegue in silenzio |
+| Q5 | Riavvio del core a metà di una run lunga | ripresa dall'ultimo passo giornalato, **nessun effetto rieseguito** |
+| Q6 | Contesto esaurito prima che il task sia finito | la run prosegue: il contesto si ricalcola dallo stato durevole, nessuna informazione persa |
+| Q7 | Run che supera il tetto di passi, tempo o costo | si ferma e chiede; non prosegue in silenzio |
+| Q8 | Ricarica di un modello locale dopo scarico (avvio a freddo) | segnalata all'utente prima che percepisca un blocco |
+| Q9 | Contenuto non fidato che tenta di iniettare istruzioni | non raggiunge mai il canale delle istruzioni (I6) |
 
-Q8–Q10 sono i requisiti delle **long-horizon tasks** e discendono dalla §4.
+Q5–Q7 sono i requisiti delle **long-horizon tasks** e discendono dalla §4.
 
 ### 0.5 Requisiti strutturali che vincolano la topologia
 
@@ -93,9 +92,6 @@ esse; una violazione richiede un ADR, non una deroga.
 ---
 
 ## 2. Arbitro risorse GPU e policy VRAM
-
-> **Stato: proposta, in attesa di approvazione.** Gli ADR-0005 e 0006 sono in
-> `Proposed` e passano ad `Accepted` con l'approvazione.
 
 **Decisioni:** [ADR-0005](../../adr/0005-arbitrato-gpu-su-due-dimensioni.md) ·
 [ADR-0006](../../adr/0006-due-policy-vram-come-oggetti-distinti.md).
@@ -131,5 +127,63 @@ esse; una violazione richiede un ADR, non una deroga.
 
 ---
 
-*Sezioni 3–8: in lavorazione. Ogni sezione approvata viene aggiunta qui e la tabella
-di avanzamento aggiornata nello stesso passaggio.*
+## 4. Persistenza, run durevoli e idempotenza
+
+> **Stato: proposta, in attesa di approvazione.** ADR-0007 e 0008 sono in `Proposed`.
+>
+> Presentata prima della §3 perché non ha dipendenze da essa, e perché è la sezione
+> che decide se le **long-horizon tasks** arrivano in fondo.
+
+**Decisioni:** [ADR-0007](../../adr/0007-giornale-write-ahead-e-riconciliazione.md) ·
+[ADR-0008](../../adr/0008-contesto-come-proiezione-dello-stato.md).
+
+**Struttura:** [Run durevoli, giornale e proiezione](../../design/03-run-durevoli.md).
+
+### 4.1 In sintesi
+
+| Scelta | Sostanza |
+|---|---|
+| Tre livelli di stato | durevole (verità) · proiezione (contesto) · presentazione (GUI) |
+| Giornale write-ahead | intento prima di eseguire, esito dopo → il **dubbio è rilevabile** |
+| Ripresa = riconciliazione | non replay cieco: per ogni passo in dubbio si stabilisce cosa è accaduto |
+| Tre classi di effetto | `verificabile` · `idempotente` · `irripetibile` |
+| Default sicuro | effetto non classificato = `irripetibile` → sospendi e chiedi |
+| Contesto = proiezione | compattare **ricompone**, non riassume; solo la trascrizione grezza è sacrificabile |
+| Confini di autonomia | passi, tempo, costo: il superamento **sospende**, non termina |
+
+### 4.2 Perché è nel kernel e non nella capacità agenti
+
+Il giornale delle run serve anche alla coda dei render 3D, all'indicizzazione RAG e
+alla deep research: sono tutte attività lunghe con effetti da riconciliare. Metterlo
+nella capacità agenti le darebbe un accesso privilegiato, che
+[ADR-0001](../../adr/0001-architettura-a-kernel-con-capacita-paritarie.md) vieta.
+
+Il kernel fornisce il **meccanismo**; ogni capacità porta la propria **politica**
+(quali passi, quali effetti, cosa entra nella proiezione).
+
+### 4.3 Vincoli che la §4 impone alle sezioni successive
+
+| # | Vincolo | Colpisce |
+|---|---|---|
+| V5 | Nessun effetto senza classe dichiarata; l'assenza vale `irripetibile` | ogni strumento, §5 |
+| V6 | Write-ahead obbligatorio: nulla si esegue prima che l'intento sia durevole | §3, ogni capacità |
+| V7 | Il contesto non è mai sorgente di verità: ciò che deve sopravvivere si scrive | §3, ogni capacità |
+| V8 | Ogni run ha un tetto; in assenza di configurazione vale un default conservativo | §6, GUI |
+| V9 | Ogni ingresso in `AttesaUmano` emette una notifica | §6, L3 |
+
+### 4.4 Il modo di fallire che questa sezione introduce
+
+Onestà sul rovescio della medaglia: il fallimento non scompare, **si sposta**.
+
+| Prima | Dopo |
+|---|---|
+| "il contesto si riempie e l'informazione è persa" | "l'agente non ha registrato una decisione" |
+
+Mitigazione strutturale: **registrare è un passo con un effetto giornalato**, non
+un'aspettativa sul comportamento del modello. Se non è giornalato non è avvenuto — il
+che rende il problema *osservabile* invece che silenzioso.
+
+---
+
+*Sezioni 3 e 5–8: in lavorazione. Ogni sezione approvata viene aggiunta qui e la
+tabella di avanzamento aggiornata nello stesso passaggio.*

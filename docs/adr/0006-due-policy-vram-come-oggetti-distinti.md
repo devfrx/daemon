@@ -1,6 +1,6 @@
 # ADR-0006: Le due policy VRAM sono oggetti distinti, non due rami di un condizionale
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

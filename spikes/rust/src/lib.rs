@@ -7,6 +7,10 @@
 
 #![forbid(unsafe_code)]
 
+pub mod concorrenza;
+pub mod giornale;
+pub mod sched;
+
 /// Contenuto che può occupare il canale delle istruzioni.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Instruction(String);

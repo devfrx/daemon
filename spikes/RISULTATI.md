@@ -20,20 +20,23 @@ codice di spike.
 
 | Criterio | Rust | Go | TypeScript |
 |---|---|---|---|
-| C1 stesso seed → stessa traccia | | | |
-| C2 seed diversi → tracce diverse | | | |
-| C3 tempo virtuale | | | |
-| C4 guasto riproducibile | | | |
-| C5 nessun orologio/RNG globale | | | |
-| C6 concorrenza nativa ordinabile | | | |
-| C7 I/O iniettabile, crash riproducibile | | | |
+| C1 stesso seed → stessa traccia | ✅ `passa` | | |
+| C2 seed diversi → tracce diverse | ✅ `passa` | | |
+| C3 tempo virtuale | ✅ `passa` | | |
+| C4 guasto riproducibile | ✅ `passa` | | |
+| C5 nessun orologio/RNG globale | ✅ `passa` | | |
+| C6 concorrenza nativa ordinabile | ✅ `passa` | | |
+| C7 I/O iniettabile, crash riproducibile | ✅ `passa` | | |
+
+**Rust passa entrambi gli spike.** Per la regola di applicazione del protocollo, avendo
+C6 = `passa`, lo spareggio #1 dell'ADR **non gli si applica**.
 
 ## Osservazioni registrate — non criteri
 
 | # | Rust | Go | TypeScript |
 |---|---|---|---|
-| O1 motore di persistenza conforme a §10.6 | | | |
-| O2 daemon a vita lunga, istanza singola | | | |
+| O1 motore di persistenza conforme a §10.6 | candidati esistono: `redb` 4.1.0 · `fjall` 3.1.8 (LSM, adatto alla potatura selettiva) · `rusqlite` 0.40.1 · `sled` 1.0.0-alpha.124. **Requisito 4 (I/O iniettabile) da confermare** nell'ADR sulla persistenza: è il discriminante, non la disponibilità | | |
+| O2 daemon a vita lunga, istanza singola | da registrare | | |
 
 ## Versioni degli strumenti
 
@@ -49,7 +52,12 @@ Un risultato senza seed non è valido.
 
 | Criterio | Candidato | Seed | Note |
 |---|---|---|---|
-| | | | |
+| C1, C2 | Rust | `42`, `43` | tracce identiche a parità di seed, diverse fra seed |
+| C3 | Rust | `7` | orologio virtuale a 5000 ms, tempo di parete < 1 s |
+| C4 | Rust | `99` | il seed inietta almeno un `GUASTO`; riprodotto identico |
+| C6 | Rust | `20260806` | 100 esecuzioni → **1 sola** traccia distinta; con `20260807` l'interlacciamento cambia |
+| C7 | Rust | `1, 7, 42, 99, 20260806` | tracce identiche a parità di seed, caduta inclusa |
+| C7 dubbio | Rust | **`0`** | primo seed su 200 che cade *fra* intento ed esito: passo 0 resta `InDubbio`, rilevabile |
 
 ## Evidenze
 
@@ -80,6 +88,30 @@ di iterazione non è riproducibile fra esecuzioni. È una violazione di V29 che 
 compare in nessun elenco di «chiamate OS» e che C1 scoprirebbe solo come traccia
 divergente e inspiegabile. Vale per ogni candidato: va verificata anche su Go e
 TypeScript.
+
+### SP-5 · Rust — eseguito il 2026-08-06, rustc 1.95.0
+
+| Criterio | Comando | Output osservato | Divergenza dall'attesa |
+|---|---|---|---|
+| **C1–C4** | `cargo test --test sched` | 4/4. Il seed 99 inietta un guasto **senza doverne cercare un altro**: il piano prevedeva di doverlo sostituire | il piano prevedeva un possibile skip; non è servito |
+| **C5** | `grep -rnE "Instant::now\|SystemTime\|rand::\|thread_rng\|std::fs\|std::net\|std::env\|HashMap" src/ kernel_core/src/` escludendo i commenti | nessun riscontro. **Provato non vacuo**: inserendo `SystemTime::now()` in `sched.rs` il grep lo trova | il grep iniziale, senza escludere i commenti, dava un falso positivo su un `//!` |
+| **C6 (a)** | `cargo test --test c6` | `Future` native guidate da un esecutore proprio: **100 esecuzioni, seed 20260806, 1 sola traccia distinta**. Interlacciamento reale verificato, altrimenti il determinismo sarebbe vacuo | nessuna |
+| **C6 (b)** controprova | idem | `std::thread` dell'OS: **> 1 traccia distinta su 100**. Stabilisce il confine di C6 — non è un criterio che tutti superano per costruzione | nessuna |
+| **C7** | `cargo test --test c7` | 6/6. Crash riproducibile su 5 seed; l'ordine è write-ahead (`I,E,I,E,I,E`); il passo `InDubbio` è rilevabile e **senza falsi positivi** quando non c'è crash; il giornale è sostituibile con un secondo doppio senza toccare il codice sotto test | nessuna |
+| ecosistema | `cargo add --dry-run madsim` | `Adding madsim v0.2.34`. Esiste un runtime deterministico di ecosistema che **sostituisce tokio**; `turmoil` 0.7.2 è l'alternativa | nessuna |
+
+**Il dato che distingue Rust, in una riga.** L'ordine delle unità concorrenti native è
+deciso dal **nostro** esecutore, non dal runtime: `Future` è un oggetto che si sceglie
+quando far avanzare. Non serve uno strumento di test per ottenerlo, e vale anche fuori
+dai test — che è la differenza fra controllo *posseduto* e *fornito*.
+
+**Il costo, misurato e non stimato.** La regola di T6 (a) è a granularità di **crate**
+e ha bloccato un uso **legittimo** di `Instant::now()` dentro il test C3, che deve
+misurare il tempo di parete proprio per provare che il tempo virtuale non ha atteso.
+Si è dovuto scrivere `#[allow(clippy::disallowed_methods)]` su quel test. È la prova,
+su un caso reale e non ipotetico, che il meccanismo (a) è **disattivabile per sito** —
+mentre `forbid` e `no_std` non lo sono. Il confine forte in Rust c'è, ma va scelto:
+non è quello di default.
 
 ### Altre esecuzioni
 

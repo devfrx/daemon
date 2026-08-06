@@ -1,6 +1,6 @@
 # ADR-0025: Confinamento a livelli — il kernel richiede, la piattaforma implementa
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

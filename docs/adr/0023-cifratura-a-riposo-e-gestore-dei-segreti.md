@@ -1,6 +1,6 @@
 # ADR-0023: Cifratura a riposo con chiavi dell'OS, e gestore dei segreti unico
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

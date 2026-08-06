@@ -7,7 +7,7 @@ Ultimo aggiornamento: **2026-08-06**.
 
 ## Stato in una riga
 
-> Spec del kernel completa (§0–§10, 25 ADR), nessuna lacuna aperta. **Nessun codice
+> Spec del kernel **completa e approvata** (§0–§10, 25 ADR), nessuna lacuna aperta. **Nessun codice
 > scritto.** Prossimo passo: spike SP-5 e SP-6, che decidono il linguaggio del core.
 
 ## Il ciclo che seguiamo

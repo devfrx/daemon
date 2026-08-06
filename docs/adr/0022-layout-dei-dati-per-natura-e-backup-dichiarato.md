@@ -1,6 +1,6 @@
 # ADR-0022: Layout dei dati per natura, e backup del solo irriproducibile
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

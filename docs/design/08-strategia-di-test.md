@@ -37,7 +37,7 @@ kernel**. Un fallimento del kernel non è mai variabilità — è un difetto.
 
 | Tecnica | Verifica | Determinismo |
 |---|---|---|
-| **analisi statica** | I3 (nessuna chiamata OS nel kernel), I6/V19 (confine dei tipi), V5 (effetti classificati), V25 (un solo punto di uscita), ADR-0020 | totale, a compilazione |
+| **analisi statica** | I3 (nessuna chiamata OS nel kernel), I6/V19 (confine dei tipi), V5 (effetti classificati), V25 (un solo punto di uscita), V34 (lettura dei segreti), V35 (livello di confinamento), ADR-0020 | totale, a compilazione |
 | **test a esempi** | comportamenti puntuali, macchine a stati, tabelle di decisione | totale |
 | **simulazione deterministica (DST)** | concorrenza, crash, ripristino: I1, I2, I5, Q2, Q4, Q5 | riproducibile **per seed** |
 | **test di contratto** | worker, server MCP, provider: dati stantii, risposte malformate, timeout | totale, con doppi |
@@ -69,6 +69,13 @@ anche *quanto costa* verificarlo, che è ciò che determina se verrà davvero fa
 | Q18 | perdita di rete | iniezione del guasto; proprietà: lo stato di degrado è dichiarato **prima** del primo fallimento | **DST** |
 | Q19 | capire una run di 4 ore | giornale sintetico lungo; la proiezione trace è navigabile e completa | esempi |
 | Q20 | nessun dato lascia la macchina | statica (un solo punto di uscita) + test che verifica assenza di traffico a default | **statica** + esempi |
+| Q21 | ripristino da backup su macchina nuova | backup e ripristino su ambiente pulito; proprietà: nessun dato irriproducibile perso, e il messaggio pre-backup elenca le esclusioni | esempi + **contratto** |
+| Q22 | annullare un passo che ha modificato file | dopo il rollback al passo N l'ambito è **byte-identico** allo stato precedente; crash iniettato durante la conservazione | **DST + crash-injection** |
+| Q23 | esecuzione sotto il livello 2 di confinamento | statica: nessun percorso di esecuzione senza livello richiesto. Più test negativo: con confinamento indisponibile l'azione **non parte** | **statica** + esempi |
+| Q24 | lettura di credenziali fuori dal gestore dei segreti | statica sui grafi di importazione e chiamata: nessun altro componente ha un percorso verso l'archivio dei segreti | **statica** |
+
+**Le quattro nuove sono statiche o di proprietà**, non a esempi: Q23 e Q24 sono
+proprietà strutturali, e verificarle a campione le renderebbe congetture.
 
 ## Cosa il kernel deliberatamente NON testa
 

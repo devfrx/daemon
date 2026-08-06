@@ -3,7 +3,7 @@
 - **Data:** 2026-08-06
 - **Sotto-progetto:** kernel. È il primo, perché tutte e sei le capacità di L2
   dipendono da esso.
-- **Stato:** §0–§9 approvate · §10 in attesa di approvazione.
+- **Stato:** §0–§10 approvate. Nessuna lacuna aperta.
 
 ## Avanzamento delle sezioni
 
@@ -19,7 +19,7 @@
 | 7 | Errori, degrado e osservabilità | Approvata |
 | 8 | Test e criteri di accettazione | Approvata |
 | 9 | Rischi e spike di validazione | Approvata |
-| 10 | L0 fisico: persistenza, cifratura, backup, segreti, confinamento | **Proposta — in attesa di approvazione** |
+| 10 | L0 fisico: persistenza, cifratura, backup, segreti, confinamento | Approvata |
 
 ---
 

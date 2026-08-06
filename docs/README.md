@@ -55,10 +55,10 @@ sotto-progetto**, nello stesso passaggio.
 | [0019](adr/0019-lo-stato-di-degrado-e-un-oggetto-osservabile.md) | Lo stato di degrado è un oggetto osservabile | Accepted |
 | [0020](adr/0020-nessun-modello-nel-percorso-decisionale-del-kernel.md) | Nessun modello nel percorso decisionale del kernel | Accepted |
 | [0021](adr/0021-simulazione-deterministica-e-iniettabilita.md) | Simulazione deterministica, iniettabilità di costruzione | Accepted |
-| [0022](adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md) | Layout dei dati per natura, backup del solo irriproducibile | Proposed |
-| [0023](adr/0023-cifratura-a-riposo-e-gestore-dei-segreti.md) | Cifratura con chiavi dell'OS, gestore dei segreti unico | Proposed |
-| [0024](adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md) | Checkpoint del filesystem ad ambiti dichiarati | Proposed |
-| [0025](adr/0025-confinamento-a-livelli.md) | Confinamento a livelli: il kernel richiede, la piattaforma implementa | Proposed |
+| [0022](adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md) | Layout dei dati per natura, backup del solo irriproducibile | Accepted |
+| [0023](adr/0023-cifratura-a-riposo-e-gestore-dei-segreti.md) | Cifratura con chiavi dell'OS, gestore dei segreti unico | Accepted |
+| [0024](adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md) | Checkpoint del filesystem ad ambiti dichiarati | Accepted |
+| [0025](adr/0025-confinamento-a-livelli.md) | Confinamento a livelli: il kernel richiede, la piattaforma implementa | Accepted |
 
 ## Indice dei diagrammi
 
@@ -71,14 +71,14 @@ sotto-progetto**, nello stesso passaggio.
 | [Gateway di inferenza](design/05-gateway-inferenza.md) | Risoluzione di una richiesta, catena di riserva, contabilità |
 | [Permessi e confine dei dati](design/06-permessi-e-confine-dei-dati.md) | I due canali, ereditarietà dell'etichetta, permessi, canary |
 | [Osservabilità e degrado](design/07-osservabilita-e-degrado.md) | Tassonomia degli errori, stato di degrado, proiezioni del giornale |
-| [Strategia di test](design/08-strategia-di-test.md) | I due strati, le quattro tecniche, mappa Q1–Q20 → metodo |
+| [Strategia di test](design/08-strategia-di-test.md) | I due strati, le quattro tecniche, mappa Q1–Q24 → metodo |
 | [L0 fisico](design/09-l0-fisico.md) | Archivi, chiavi e segreti, checkpoint, livelli di confinamento |
 
 ## Specifiche
 
 | Spec | Sotto-progetto | Stato |
 |---|---|---|
-| [Kernel](superpowers/specs/2026-08-06-kernel-design.md) | L0 fondamenta + L1 arbitri trasversali | §0–§10 · in attesa di approvazione della §10 |
+| [Kernel](superpowers/specs/2026-08-06-kernel-design.md) | L0 fondamenta + L1 arbitri trasversali | ✅ **completa e approvata** |
 
 ## Decomposizione del sistema
 

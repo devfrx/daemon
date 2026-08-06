@@ -5,14 +5,22 @@ agenti/coding, voce, generazione asset) su kernel comune.
 
 **Fase corrente: progettazione del kernel. Nessun codice scritto.**
 
+> Se stai riprendendo il progetto, parti da [`../CLAUDE.md`](../CLAUDE.md) e da
+> [`roadmap.md`](roadmap.md).
+
 ## Dove va cosa
 
 | Percorso | Contiene | Risponde alla domanda |
 |---|---|---|
+| [`roadmap.md`](roadmap.md) | Sotto-progetti, ordine, stato, spike aperti | *a che punto siamo* e *cosa viene dopo* |
+| [`tracciabilita.md`](tracciabilita.md) | Mappa funzionale → sede di ogni funzionalità | *dove vive* ciò che è stato chiesto |
 | `adr/` | Architecture Decision Records | *perché* abbiamo deciso così |
 | `design/` | Diagrammi Mermaid della struttura | *com'è fatto* il sistema |
 | `superpowers/specs/` | Specifiche dei sotto-progetti | *cosa* costruiamo, prima di costruirlo |
 | [`riferimenti.md`](riferimenti.md) | Fonti esterne consultate | *da dove viene* ciò che non abbiamo dedotto noi |
+
+`roadmap.md` e `tracciabilita.md` si aggiornano **alla chiusura di ogni
+sotto-progetto**, nello stesso passaggio.
 
 ## Regole della documentazione
 

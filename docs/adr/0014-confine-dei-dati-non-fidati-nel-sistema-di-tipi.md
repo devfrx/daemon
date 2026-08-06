@@ -1,6 +1,6 @@
 # ADR-0014: Il confine dei dati non fidati vive nel sistema di tipi, e la sanitizzazione non esiste
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

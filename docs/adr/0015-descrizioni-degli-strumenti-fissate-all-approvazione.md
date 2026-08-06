@@ -1,6 +1,6 @@
 # ADR-0015: Le descrizioni degli strumenti sono fissate all'approvazione
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

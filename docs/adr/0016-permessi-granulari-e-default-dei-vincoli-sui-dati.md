@@ -1,6 +1,6 @@
 # ADR-0016: Permessi come tripla, e default dei vincoli sui dati per profilo
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

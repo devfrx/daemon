@@ -15,8 +15,8 @@
 | 3 | Gateway di inferenza | Approvata |
 | 4 | Persistenza, run durevoli e idempotenza | Approvata |
 | 5 | Harness: guide, sensori e anelli di controllo | Approvata |
-| 6 | Permessi e confine dei dati non fidati | **Proposta — in attesa di approvazione** |
-| 7 | Errori, degrado e osservabilità | Da presentare |
+| 6 | Permessi e confine dei dati non fidati | Approvata |
+| 7 | Errori, degrado e osservabilità | **Proposta — in attesa di approvazione** |
 | 8 | Test e criteri di accettazione | Da presentare |
 | 9 | Rischi e spike di validazione | Da presentare |
 
@@ -77,11 +77,20 @@ determinazione è già deciso.
 | Q15 | Contenuto non fidato che contiene un'istruzione | può informare, mai autorizzare: l'azione richiede la stessa approvazione che servirebbe senza quella richiesta |
 | Q16 | Server MCP che cambia la descrizione di uno strumento dopo l'approvazione | strumento **sospeso**, diff mostrato, ri-approvazione obbligatoria |
 | Q17 | Un segreto noto compare in contenuto in uscita | bloccato e segnalato dal canary |
+| Q18 | Perdita della rete durante l'uso | il sistema **dichiara** cosa resta disponibile; non fallisce azione per azione |
+| Q19 | Capire cosa è andato storto in una run di 4 ore | trace gerarchico navigabile, ricavato dal giornale |
+| Q20 | Dati che lasciano la macchina | nessuno per default: esportazione opt-in, un solo punto di uscita |
 
 Q5–Q7 sono i requisiti delle **long-horizon tasks** (§4).
 Q10–Q12 sono i requisiti dell'**harness** (§5).
 Q13–Q14 sono i requisiti del **gateway** (§3).
 Q15–Q17 sono i requisiti di **sicurezza** (§6).
+Q18–Q20 sono i requisiti di **osservabilità e degrado** (§7).
+
+### 0.5 Requisiti strutturali che vincolano la topologia
+
+Vedi la tabella R1–R5 in [ADR-0004](../../adr/0004-topologia-di-processo.md#context).
+Sono proprietà del processo, non funzionalità: non si aggiungono a posteriori.
 
 ### 0.6 Le tre discipline e dove vivono
 
@@ -114,11 +123,6 @@ esplicita.
 | Livelli di permesso e gate umani | harness | §6 |
 | Routing | harness | §3 |
 | Osservabilità | harness | §4 (giornale) · §7 |
-
-### 0.5 Requisiti strutturali che vincolano la topologia
-
-Vedi la tabella R1–R5 in [ADR-0004](../../adr/0004-topologia-di-processo.md#context).
-Sono proprietà del processo, non funzionalità: non si aggiungono a posteriori.
 
 ---
 
@@ -209,7 +213,7 @@ dell'agente**. Senza di essa servirebbe un secondo percorso per la chat: un'altr
 contabilità, un altro annullamento, un altro tracciamento. Il costo è due scritture
 durevoli su una latenza già dominata dalla chiamata al modello.
 
-### 3.3 Vincoli che la §3 impone alle sezioni successive
+### 3.4 Vincoli che la §3 impone alle sezioni successive
 
 | # | Vincolo | Colpisce |
 |---|---|---|
@@ -218,7 +222,7 @@ durevoli su una latenza già dominata dalla chiamata al modello.
 | V17 | Ritentativo e cambio di candidato restano dentro lo stesso passo | §4, capacità Agenti |
 | V18 | Un errore di vincolo non soddisfatto deve nominare **quale** vincolo | §7, GUI |
 
-### 3.4 Il costo che questa sezione introduce
+### 3.5 Il costo che questa sezione introduce
 
 **Più richieste falliranno del tutto**, per scelta. Un vincolo sui dati che non trova
 endpoint conformi produce un errore invece di una risposta.
@@ -228,7 +232,7 @@ per questo la decisione è presa adesso e scritta, non lasciata al momento in cu
 qualcosa non funziona. Il contrappeso è V18 — se il sistema si rifiuta di rispondere,
 deve dire esattamente perché.
 
-### 3.5 Domanda aperta
+### 3.6 Domanda aperta
 
 | ID | Domanda | Si chiude con |
 |---|---|---|
@@ -423,5 +427,79 @@ qualcuno può decidere di chiudere.
 
 ---
 
-*Sezioni 7–9: in lavorazione. Ogni sezione approvata viene aggiunta qui e la tabella
+## 7. Errori, degrado e osservabilità
+
+> **Stato: proposta, in attesa di approvazione.** ADR-0017, 0018 e 0019 sono in
+> `Proposed`.
+
+**Decisioni:** [ADR-0017](../../adr/0017-giornale-sorgente-trace-proiezione.md) ·
+[ADR-0018](../../adr/0018-ritenzione-a-livelli-del-giornale.md) ·
+[ADR-0019](../../adr/0019-lo-stato-di-degrado-e-un-oggetto-osservabile.md).
+
+**Struttura:** [Osservabilità, errori e degrado](../../design/07-osservabilita-e-degrado.md).
+
+### 7.1 In sintesi
+
+| Scelta | Sostanza |
+|---|---|
+| Giornale sorgente, trace proiezione | il vocabolario **OpenTelemetry GenAI** si applica alla proiezione, non all'archiviazione |
+| Nessuna telemetria per default | esportazione opt-in, **un solo punto di uscita** → promessa verificabile |
+| Ritenzione a livelli | struttura lunga · payload potati con impronta · artefatti per riferimento |
+| Stato di degrado osservabile | si dichiara **prima**, non si fallisce dopo |
+| Tassonomia degli errori | otto classi, sette già coperte da meccanismi decisi nelle §2–§6 |
+
+### 7.2 Perché il vocabolario sì, la dipendenza no
+
+Le convenzioni `gen_ai.*` sono lo standard di fatto — gli agenti di riferimento le
+emettono — ma a giugno 2026 sono **ancora pre-stabili**: spostate in un repository
+dedicato, senza rilascio 1.0, con i nomi ancora soggetti a cambiamento.
+
+| Se le usassimo per archiviare | Usandole per proiettare |
+|---|---|
+| un cambio di attributi diventa una **migrazione dei dati di ripristino** | un cambio di attributi cambia solo la trasformazione |
+
+Rischio sproporzionato al beneficio, quindi: vocabolario adottato, dipendenza no.
+Fonti in [riferimenti.md](../../riferimenti.md).
+
+### 7.3 La verifica di coerenza più forte del design
+
+Sette delle otto classi di errore hanno già un meccanismo deciso in una sezione
+precedente. Nessuna richiede un percorso nuovo.
+
+| Classe | Meccanismo | Deciso in |
+|---|---|---|
+| transitorio | ritentativo nello stesso passo | §3 · V17 |
+| di risorsa | coda o fallback | §2 · §3 |
+| di vincolo | fallisce chiuso | §3 · ADR-0012 |
+| di autorizzazione | sospende e chiede | §6 |
+| di verifica | rientra nell'anello, passo nuovo | §5 · V14 |
+| di dubbio | riconciliazione per classe di effetto | §4 · ADR-0007 |
+| di autonomia | `AttesaUmano` + notifica | §4 · V8, V9 |
+| **definitivo** | **nessun recupero**: fallisce e si dichiara | — |
+
+L'ottava è corretta così: un'invariante violata è un difetto del sistema, non una
+condizione da gestire.
+
+### 7.4 Vincoli che la §7 impone alle sezioni successive
+
+| # | Vincolo | Colpisce |
+|---|---|---|
+| V24 | Il giornale è la sorgente; trace, metriche e costi ne sono proiezioni | ogni capacità |
+| V25 | Nessuna telemetria lascia la macchina per default; un solo punto di uscita | L3, GUI |
+| V26 | La ritenzione pota i payload grezzi, mai i record strutturati | §8 |
+| V27 | Nessuna azione fallisce per una condizione già nota e non dichiarata | GUI, ogni capacità |
+
+### 7.5 Il rischio che questa sezione introduce
+
+**Allarmismo.** Uno stato di degrado sempre visibile può rendere l'interfaccia
+ansiogena, e un'interfaccia che segnala tutto è indistinguibile da una che non segnala
+nulla.
+
+Criterio di selezione: si mostra ciò che **cambia cosa l'utente può fare**, non ogni
+variazione interna. È un criterio di prodotto, non tecnico, e va verificato sull'uso
+reale — candidato naturale per una metrica dell'anello 4.
+
+---
+
+*Sezioni 8–9: in lavorazione. Ogni sezione approvata viene aggiunta qui e la tabella
 di avanzamento aggiornata nello stesso passaggio.*

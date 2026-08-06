@@ -1,0 +1,16 @@
+{
+  "name": "kernel-spike",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit false --outDir dist",
+    "test": "npm run build && node --test \"dist/test/*.test.js\"",
+    "t6": "tsc -p tsconfig.kernel.json"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "typescript": "^5.6.0"
+  }
+}

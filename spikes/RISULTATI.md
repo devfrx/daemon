@@ -9,38 +9,51 @@ codice di spike.
 
 | Criterio | Rust | Go | TypeScript |
 |---|---|---|---|
-| T1 non compila | ✅ `passa` | ✅ `passa` | |
-| T2 percorso unico | ✅ `passa` | ✅ `passa` | |
-| T3 ereditarietà | ✅ `passa` | ✅ `passa` | |
-| T4 aggiramento | ✅ `passa` | ✅ `passa` **ma solo dopo una correzione**, vedi sotto | |
-| T5 rilevabile globalmente | ✅ `passa` | ✅ `passa` | |
-| T6 importazione vietata, provata in negativo | ✅ `passa` | ✅ `passa`, con driver scritto a mano | |
+| T1 non compila | ✅ `passa` | ✅ `passa` | ✅ `passa` |
+| T2 percorso unico | ✅ `passa` | ✅ `passa` | ✅ `passa` |
+| T3 ereditarietà | ✅ `passa` | ✅ `passa` | ✅ `passa` |
+| T4 aggiramento | ✅ `passa` | ✅ `passa` **ma solo dopo una correzione**, vedi sotto | ⚠️ **`parziale`** — tre vie, nessuna vietabile dal compilatore |
+| T5 rilevabile globalmente | ✅ `passa` | ✅ `passa` | ✅ `passa` |
+| T6 importazione vietata, provata in negativo | ✅ `passa` | ✅ `passa`, con driver scritto a mano | ⚠️ **`parziale`** — regola del compilatore, ma zittibile per riga |
 
 ## SP-5 — Iniettabilità e riproducibilità
 
 | Criterio | Rust | Go | TypeScript |
 |---|---|---|---|
-| C1 stesso seed → stessa traccia | ✅ `passa` | ✅ `passa` | |
-| C2 seed diversi → tracce diverse | ✅ `passa` | ✅ `passa` | |
-| C3 tempo virtuale | ✅ `passa` | ✅ `passa` | |
-| C4 guasto riproducibile | ✅ `passa` | ✅ `passa` | |
-| C5 nessun orologio/RNG globale | ✅ `passa` | ✅ `passa` | |
-| C6 concorrenza nativa ordinabile | ✅ `passa` | ❌ **`non passa`** | |
-| C7 I/O iniettabile, crash riproducibile | ✅ `passa` | ✅ `passa` | |
+| C1 stesso seed → stessa traccia | ✅ `passa` | ✅ `passa` | ✅ `passa` |
+| C2 seed diversi → tracce diverse | ✅ `passa` | ✅ `passa` | ✅ `passa` |
+| C3 tempo virtuale | ✅ `passa` | ✅ `passa` | ✅ `passa` |
+| C4 guasto riproducibile | ✅ `passa` | ✅ `passa` | ✅ `passa`, con **seed 4** e non 99 |
+| C5 nessun orologio/RNG globale | ✅ `passa` | ✅ `passa` | ✅ `passa` |
+| C6 concorrenza nativa ordinabile | ✅ `passa` | ❌ **`non passa`** | ⚠️ **`parziale`** |
+| C7 I/O iniettabile, crash riproducibile | ✅ `passa` | ✅ `passa` | ✅ `passa` |
 
-**Rust passa entrambi gli spike.** Avendo C6 = `passa`, per la regola di applicazione
-del protocollo lo spareggio #1 dell'ADR **non gli si applica**.
+## Esito
 
-**Go non passa SP-5.** Sei criteri su sette, ma il protocollo è esplicito: un candidato
-passa solo se li soddisfa **tutti**. C6 = `non passa` → lo spareggio #1 gli si applica
-in pieno, ora con una misura invece che con un'osservazione generica.
+| Candidato | SP-6 | SP-5 | Passa? |
+|---|---|---|---|
+| **Rust** | 6/6 `passa` | 7/7 `passa` | ✅ **sì, entrambi** |
+| **Go** | 6/6 `passa` | 6/7 — **C6 `non passa`** | ❌ no |
+| **TypeScript** | 4/6 — T4 e T6 `parziale` | 6/7 — **C6 `parziale`** | ❌ no |
+
+Il protocollo è esplicito: *«un candidato passa solo se soddisfa **tutti** i criteri»*,
+e *«un criterio soddisfatto con un accorgimento va registrato come parziale, non come
+passato»*. **Rust è l'unico candidato che passa entrambi gli spike.**
+
+Per la regola di applicazione di C6:
+
+| Candidato | C6 | Lo spareggio #1 dell'ADR… |
+|---|---|---|
+| Rust | `passa` | **non si applica**: possiede il controllo |
+| Go | `non passa` | si applica in pieno, con una misura |
+| TypeScript | `parziale` | si applica, e l'evidenza dice **in quali condizioni** il controllo si perde |
 
 ## Osservazioni registrate — non criteri
 
 | # | Rust | Go | TypeScript |
 |---|---|---|---|
-| O1 motore di persistenza conforme a §10.6 | candidati esistono: `redb` 4.1.0 · `fjall` 3.1.8 (LSM, adatto alla potatura selettiva) · `rusqlite` 0.40.1 · `sled` 1.0.0-alpha.124. **Requisito 4 (I/O iniettabile) da confermare** nell'ADR sulla persistenza: è il discriminante, non la disponibilità | candidati esistono: `go.etcd.io/bbolt` v1.5.0 · `github.com/dgraph-io/badger/v4` v4.9.6 · `github.com/cockroachdb/pebble` v1.1.5. Stessa riserva sul requisito 4 | |
-| O2 daemon a vita lunga, istanza singola | via consolidata; nessun runtime esterno da impacchettare, binario singolo | via consolidata; binario singolo. È il caso d'uso per cui il linguaggio è nato | |
+| O1 motore di persistenza conforme a §10.6 | candidati esistono: `redb` 4.1.0 · `fjall` 3.1.8 (LSM, adatto alla potatura selettiva) · `rusqlite` 0.40.1 · `sled` 1.0.0-alpha.124. **Requisito 4 (I/O iniettabile) da confermare** nell'ADR sulla persistenza: è il discriminante, non la disponibilità | candidati esistono: `go.etcd.io/bbolt` v1.5.0 · `github.com/dgraph-io/badger/v4` v4.9.6 · `github.com/cockroachdb/pebble` v1.1.5. Stessa riserva sul requisito 4 | non verificato: il candidato non passa nessuno dei due spike |
+| O2 daemon a vita lunga, istanza singola | via consolidata; nessun runtime esterno da impacchettare, binario singolo | via consolidata; binario singolo. È il caso d'uso per cui il linguaggio è nato | richiede il runtime Node accanto all'eseguibile: il packaging non è un binario singolo |
 
 ## Versioni degli strumenti
 
@@ -48,7 +61,7 @@ in pieno, ora con una misura invece che con un'osservazione generica.
 |---|---|---|
 | Rust | `rustc --version` | `rustc 1.95.0 (59807616e 2026-04-14)` · `cargo 1.95.0` · `clippy 0.1.95` · `trybuild 1.0.120` |
 | Go | `go version` | `go version go1.26.5 windows/amd64` |
-| TypeScript | `npx tsc --version` | _(da compilare)_ |
+| TypeScript | `npx tsc --version` | `Version 5.9.3` · node `v24.9.0` · npm `11.6.0` · `@types/node` 26.1.2 |
 
 ## Seed usati
 
@@ -68,6 +81,12 @@ Un risultato senza seed non è valido.
 | C6 | Go | — | **il seed non entra**: non c'è alcun punto in cui inserirlo nello scheduler delle goroutine. È il risultato, non un'omissione |
 | C7 | Go | `1, 7, 42, 99, 20260806` | tracce identiche a parità di seed, caduta inclusa |
 | C7 dubbio | Go | **`0`** | stesso esito di Rust |
+| C1, C2 | TypeScript | `42`, `43` | come gli altri due |
+| C3 | TypeScript | `7` | orologio virtuale a 5000 ms, tempo di parete < 1 s |
+| C4 | TypeScript | **`4`**, non 99 | RNG a 32 bit: sequenza diversa. Primi seed validi: 1, 4, 6, 10, 11, 12 |
+| C6 (a) | TypeScript | `20260806` | 100 esecuzioni con generatori sotto esecutore proprio -> 1 traccia |
+| C7 | TypeScript | `1, 7, 42, 99, 20260806` | tracce identiche a parita di seed, caduta inclusa |
+| C7 dubbio | TypeScript | **`0`** | passo 4 resta `InDubbio` |
 
 ## Evidenze
 
@@ -225,6 +244,54 @@ difetto trovato in simulazione non conserva il proprio seed — e V31 cade con l
 **I test restano nel repository come guardie**, non come fallimenti: asseriscono il non
 determinismo misurato. Se una versione futura di Go lo eliminasse, falliscono e C6 va
 rimisurato.
+
+### SP-6 e SP-5 · TypeScript — eseguito il 2026-08-06, tsc 5.9.3 su node 24.9
+
+| Criterio | Comando | Output osservato | Divergenza dall'attesa |
+|---|---|---|---|
+| **T1–T3** | `npm run typecheck` | i branded types reggono: `@ts-expect-error` è *usato* su entrambe le violazioni | nessuna |
+| **T1 non-vacuità** | rimozione del marchio | ⚠️ **il piano indicava la sonda sbagliata.** Togliendo il marchio da `Untrusted` il typecheck **passa comunque**, perché `Instruction` resta marchiato e una `string` semplice non gli è assegnabile. La sonda corretta è togliere il marchio da **`Instruction`**: allora escono i due `TS2578: Unused '@ts-expect-error' directive` che il piano si aspettava | ⚠️ **divergenza** |
+| **T4** | `tsc` su tre vie di aggiramento | **tutte e tre compilano**: `dalWeb as any` · `dalWeb as unknown as Instruction` · `<Instruction><unknown>dalWeb`. Nessun flag del compilatore le vieta | il piano ne citava **una**; sono tre, e la seconda sopravvive al divieto di `any` |
+| **T5** | `tsc --noEmit` | è il controllo globale del progetto | nessuna |
+| **T6** | `tsc -p tsconfig.kernel.json` con `"types": []` | ✅ meccanismo **del compilatore**, non un lint: `TS2307: Cannot find module 'node:fs'`. Provato in entrambe le direzioni, con controprova su `platform` che *deve* fallire. **Ma**: `// @ts-ignore` sopra l'import lo zittisce, exit 0 | il piano dava per scontato che in TS servisse un lint. È **meglio** di così — ma resta zittibile per riga |
+| **C1–C3, C5, C7** | `npm test` | come Rust e Go. C7 6/6: crash riproducibile, ordine write-ahead, passo `InDubbio` rilevabile | nessuna |
+| **C4** | `npm test` | ⚠️ il **seed 99 non inietta guasti**: l'RNG qui è a 32 bit (`>>> 0` a ogni passo), in Rust e Go a 64. Sequenza diversa a parità di seed. Primi seed validi misurati: **1, 4, 6, 10, 11, 12**. Usato **4**, registrato | il piano lo prevedeva e chiedeva di registrarlo: fatto |
+| **C6** | `npm test` | vedi il riquadro sotto | — |
+
+#### T4 · Tre vie, non una
+
+| Via | Sopravvive al divieto di `any`? | Vietabile dal compilatore? |
+|---|---|---|
+| `dalWeb as any` | no | no — serve un lint |
+| `dalWeb as unknown as Instruction` | **sì** | no |
+| `<Instruction><unknown>dalWeb` | **sì** | no |
+
+Il piano prevedeva `parziale` citando solo `as any`. Il verdetto regge, ma la motivazione
+va corretta: vietare `any` **non basta**, perché la doppia asserzione via `unknown`
+resta. Servono almeno due regole di lint, entrambe esterne e disattivabili per riga.
+
+#### C6 · Il controllo esiste, ma a un prezzo che tocca ADR-0004
+
+| Via | Tracce distinte su 100 | Cosa dimostra |
+|---|---|---|
+| **(a)** generatori guidati da un esecutore proprio, seed 20260806 | **1** | il controllo c'è, ed è ordinabile dal seed |
+| **(b)** funzioni `async` sul ciclo di eventi | **1** | determinismo **per assenza di concorrenza**, non per controllo |
+
+La riga (b) è la più importante e va letta con attenzione: è deterministica, ma il
+**seed non entra da nessuna parte**. Il ciclo di eventi è a thread singolo e le microtask
+si accodano in ordine di creazione: non c'è un ordine *scelto*, c'è l'assenza di scelta.
+
+Verdetto **`parziale`**, con le condizioni in cui il controllo si perde:
+
+1. in JavaScript una `Promise` **non è ispezionabile** — non esiste un `poll` che
+   permetta a un esecutore di decidere quando farla avanzare. Per riprendere il
+   controllo bisogna **rinunciare a `async`/`await`** e scrivere il kernel in
+   generatori, che è l'unica primitiva del linguaggio in cui il punto di sospensione
+   torna al chiamante;
+2. il parallelismo reale richiede `worker_threads`, il cui ordinamento **non è
+   controllabile dall'applicazione**;
+3. ADR-0004 richiede un daemon a **concorrenza reale**. La via (a) la ottiene solo
+   restando a thread singolo, cioè rinunciando al requisito.
 
 ### Altre esecuzioni
 

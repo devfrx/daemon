@@ -98,7 +98,8 @@ da soli non sono un confine contro codice eseguito.
 DST — e poi il piano. Non partire dal codice: vale «spec prima del codice» come per
 tutto il resto.
 
-Lo stack è chiuso, e con esso tutte le domande che bloccavano l'implementazione:
+Lo stack è deciso **tranne il guscio della GUI**, che non blocca nulla. Le domande che
+bloccavano l'implementazione sono chiuse:
 
 | ADR | Decisione | Cosa l'ha decisa |
 |---|---|---|

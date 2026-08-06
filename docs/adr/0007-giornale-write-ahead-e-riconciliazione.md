@@ -1,6 +1,6 @@
 # ADR-0007: Giornale write-ahead delle run, e ripresa come riconciliazione
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

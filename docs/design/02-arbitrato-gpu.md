@@ -107,7 +107,7 @@ istruiti a **ridurre la propria occupazione** (meno stream concorrenti, batch pi
 piccoli), accettando di allungarsi.
 
 Quanto questo basti a tenere Q1 sotto i 600 ms è una domanda aperta, non una
-certezza: è oggetto dello spike SP-2 in §8 della spec.
+certezza: è oggetto dello spike SP-2 in §9 della spec.
 
 ## Le due policy VRAM
 

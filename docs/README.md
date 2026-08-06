@@ -7,11 +7,12 @@ agenti/coding, voce, generazione asset) su kernel comune.
 
 ## Dove va cosa
 
-| Cartella | Contiene | Risponde alla domanda |
+| Percorso | Contiene | Risponde alla domanda |
 |---|---|---|
 | `adr/` | Architecture Decision Records | *perché* abbiamo deciso così |
 | `design/` | Diagrammi Mermaid della struttura | *com'è fatto* il sistema |
 | `superpowers/specs/` | Specifiche dei sotto-progetti | *cosa* costruiamo, prima di costruirlo |
+| [`riferimenti.md`](riferimenti.md) | Fonti esterne consultate | *da dove viene* ciò che non abbiamo dedotto noi |
 
 ## Regole della documentazione
 
@@ -31,8 +32,10 @@ agenti/coding, voce, generazione asset) su kernel comune.
 | [0004](adr/0004-topologia-di-processo.md) | Topologia di processo: core, gui, worker | Accepted |
 | [0005](adr/0005-arbitrato-gpu-su-due-dimensioni.md) | Arbitrato GPU su due dimensioni, quota audio sottratta | Accepted |
 | [0006](adr/0006-due-policy-vram-come-oggetti-distinti.md) | Due policy VRAM come oggetti distinti | Accepted |
-| [0007](adr/0007-giornale-write-ahead-e-riconciliazione.md) | Giornale write-ahead delle run e riconciliazione alla ripresa | Proposed |
-| [0008](adr/0008-contesto-come-proiezione-dello-stato.md) | Il contesto è una proiezione, non lo stato | Proposed |
+| [0007](adr/0007-giornale-write-ahead-e-riconciliazione.md) | Giornale write-ahead delle run e riconciliazione alla ripresa | Accepted |
+| [0008](adr/0008-contesto-come-proiezione-dello-stato.md) | Il contesto è una proiezione, non lo stato | Accepted |
+| [0009](adr/0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md) | Guide, sensori e anelli di controllo sono meccanismi di kernel | Proposed |
+| [0010](adr/0010-budget-della-proiezione-invece-di-soglia-di-riempimento.md) | Budget della proiezione invece di soglia di riempimento | Proposed |
 
 ## Indice dei diagrammi
 
@@ -41,6 +44,7 @@ agenti/coding, voce, generazione asset) su kernel comune.
 | [Topologia dei processi](design/01-topologia-dei-processi.md) | Classi di processo, proprietà dello stato, canali |
 | [Arbitrato delle risorse GPU](design/02-arbitrato-gpu.md) | Dimensioni della risorsa, ciclo di vita della concessione, corsie |
 | [Run durevoli e proiezione](design/03-run-durevoli.md) | Livelli dello stato, ciclo di vita del passo, riconciliazione |
+| [Anelli, guide e sensori](design/04-anelli-e-sensori.md) | I quattro anelli, feedforward vs feedback, budget della proiezione |
 
 ## Specifiche
 

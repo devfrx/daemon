@@ -56,6 +56,6 @@ pagare quando serve; il secondo si scopre solo quando ha già fatto danno.
     coordinato passerebbe da eccezione a caso normale e cambierebbe l'intera UX di
     attesa e notifica. Sarebbe un ADR nuovo, non una riconfigurazione.
   - La fattibilità della policy LOCALE dipende da **SP-1**: quanta VRAM serve
-    realmente a TRELLIS2 su 16 GB (§8 della spec). Se il picco supera ~13–14 GB,
+    realmente a TRELLIS2 su 16 GB (§9 della spec). Se il picco supera ~13–14 GB,
     tenere un LLM caldo durante un render è impossibile e le due cose vanno dichiarate
     mutuamente esclusive.

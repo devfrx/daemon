@@ -1,6 +1,6 @@
 # ADR-0008: Il contesto è una proiezione dello stato durevole, non lo stato
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

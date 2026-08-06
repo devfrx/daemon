@@ -31,6 +31,13 @@ non un numero sparso nel codice.
 | `tempo_di_rilascio` | ms | quanto può metterci a liberarle prima del kill |
 | `avvio_a_freddo` | ms stimati | usato per avvisare l'utente, non per decidere |
 
+**Un tipo di lavoro può avere più profili.** Il fabbisogno di TRELLIS2 dipende dalla
+risoluzione e dai parametri di qualità, quindi non produce un numero ma una **curva**:
+i punti utili di quella curva diventano profili nominati distinti
+(es. `trellis2-512-lean`, `trellis2-512-standard`, `trellis2-1024`), ciascuno con la
+propria `vram_riservata` misurata. La scelta del profilo è la scelta del punto di
+lavoro. Vedi SP-1 in §9 della spec.
+
 **La riserva è dichiarata dal richiedente, verificata dall'arbitro.** Il picco reale
 viene misurato durante l'esecuzione e registrato: se supera la riserva dichiarata, il
 profilo è sbagliato e va corretto. È così che la "stima di fit prima del caricamento"

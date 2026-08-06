@@ -17,8 +17,8 @@
 | 5 | Harness: guide, sensori e anelli di controllo | Approvata |
 | 6 | Permessi e confine dei dati non fidati | Approvata |
 | 7 | Errori, degrado e osservabilità | Approvata |
-| 8 | Test e criteri di accettazione | **Proposta — in attesa di approvazione** |
-| 9 | Rischi e spike di validazione | Da presentare |
+| 8 | Test e criteri di accettazione | Approvata |
+| 9 | Rischi e spike di validazione | **Proposta — in attesa di approvazione** |
 
 ---
 
@@ -569,5 +569,139 @@ l'intera architettura a processi — restano dichiarazioni non verificate.
 
 ---
 
-*Sezione 9: in lavorazione. Ogni sezione approvata viene aggiunta qui e la tabella di
-avanzamento aggiornata nello stesso passaggio.*
+## 9. Rischi e spike di validazione
+
+> **Stato: proposta, in attesa di approvazione.** Nessun ADR nuovo: questa sezione non
+> decide, **misura**. Le decisioni che ne dipendono sono già scritte e indicano la
+> propria soglia.
+
+### 9.1 Registro dei rischi
+
+L'ultima colonna è la più importante: un rischio senza **innesco osservabile** è un
+timore, non un rischio gestito.
+
+| ID | Rischio | Impatto | Innesco osservabile | Risposta |
+|---|---|---|---|---|
+| RK-1 | TRELLIS2 non lascia margine utile su 16 GB | policy LOCALE con LLM caldo impossibile | picco misurato > ~14 GB al profilo minimo accettabile (SP-1) | dichiarare la **mutua esclusività** in interfaccia; il default REMOTA la rende poco impattante |
+| RK-2 | Ridurre l'occupazione dei job `batch` non basta per Q1 | voce degradata durante i render | p95 > 600 ms con `batch` attivo (SP-2) | **sospendere** il `batch` mentre si parla; costo: render più lenti |
+| RK-3 | L'iniettabilità non è praticabile nel linguaggio scelto | DST impossibile → Q2/Q4/Q5 non verificabili | il prototipo SP-5 non riproduce l'esecuzione per seed | **cambiare linguaggio** — per questo lo spike precede l'ADR |
+| RK-4 | Il confine dei tipi non è applicabile staticamente | I6 scende da garanzia a convenzione | il prototipo SP-6 non impedisce l'assegnazione | cambiare linguaggio, oppure accettare verifica per lint dedicato e **dichiararlo** |
+| RK-5 | Astrazione prematura del contratto sensore | diventa vincolo invece che strumento | il **secondo** sensore reale non vi si adatta | spezzare il contratto, non piegarlo (§5.5) |
+| RK-6 | L'utente approva per stanchezza | la sicurezza collassa sull'anello umano | tempo di risposta all'approvazione tendente a zero | preset; è una metrica naturale dell'anello 4 |
+| RK-7 | L'agente non registra le decisioni | la proiezione perde ciò che conta | run che tornano a ragionare su cose già decise | registrare è **un passo con effetto giornalato** (§4.4) |
+| RK-8 | Allarmismo dello stato di degrado | l'utente ignora gli avvisi | frequenza di avvisi ignorati | mostrare solo ciò che **cambia cosa si può fare** (§7.5) |
+| RK-9 | Il simulatore costa prima di produrre valore visibile | tentazione di saltarlo | — | non è un'opzione: senza, Q2/Q4/Q5 restano dichiarazioni (§8.5) |
+| RK-10 | Le convenzioni OTel cambiano | rottura dell'esportazione | rilascio con rinomina di attributi | assorbita dalla proiezione (ADR-0017) |
+| RK-11 | Il confine OS è verificato ma non **validato** | l'astrazione ha la forma sbagliata | la prima implementazione Linux richiede modifiche al kernel | schizzare su carta l'implementazione Linux al primo punto OS non banale (ADR-0002) |
+| RK-12 | Il kernel-first allontana il primo valore utile | abbandono del progetto | — | accettato in ADR-0001; mitigazione: il kernel è **sottile per costruzione** |
+| RK-13 | Il fail-closed fa fallire più richieste | frustrazione | tasso di fallimento per vincolo | V18: nominare **quale** vincolo (§3.5) |
+| RK-14 | Crescita del giornale | disco pieno | dimensione su disco | ritenzione a livelli (ADR-0018) |
+
+### 9.2 Gli spike
+
+Ognuno dichiara la domanda, il metodo e **la soglia che cambia una decisione**. Uno
+spike senza soglia è un esperimento, non una validazione.
+
+#### SP-1 — Curva qualità/VRAM di TRELLIS2 su 16 GB
+
+Il conflitto di fonti del documento originale **si risolve**: le due cifre misuravano
+configurazioni diverse, non erano in contraddizione.
+
+| Configurazione | VRAM dichiarata |
+|---|---|
+| raccomandazione generale | ≥ 24 GB |
+| **512³** | **16 GB minimo** |
+| 1024³ | 40 GB raccomandati |
+| configurazioni low-VRAM documentate | fino a 6–8 GB, con tempi 2–3× |
+
+| | |
+|---|---|
+| **Domanda** | quale punto della curva qualità/VRAM scegliere, e quanto margine resta |
+| **Metodo** | per ogni combinazione di risoluzione, `max_num_tokens` (32768 / 49152 / 65536+), generazione texture on/off e passi di campionamento: misurare **picco** VRAM e tempo, a GPU altrimenti scarica |
+| **Output** | la **tabella dei profili di risorsa** di §2 con `vram_riservata` misurata — non un sì/no |
+| **Soglia** | se al profilo minimo accettabile il picco supera ~14 GB → RK-1: LLM caldo e render 3D sono **mutuamente esclusivi**, e va dichiarato |
+
+#### SP-2 — Q1 sotto carico GPU
+
+| | |
+|---|---|
+| **Domanda** | ridurre l'occupazione dei job `batch` basta a tenere la voce sotto i 600 ms? |
+| **Metodo** | p95 fine-enunciato → primo fonema, a occupazioni `batch` crescenti, con e senza riduzione |
+| **Soglia** | p95 > 600 ms → RK-2: l'unica leva resta **sospendere** il `batch` durante il parlato |
+
+#### SP-3 — Budget della proiezione
+
+| | |
+|---|---|
+| **Domanda** | oltre quale frazione della finestra cala la qualità, per i modelli effettivamente usati? |
+| **Metodo** | compito ripetibile a occupazioni crescenti, misura di accuratezza |
+| **Soglia** | fino alla misura vale un default conservativo, **dichiarato come non misurato** (ADR-0010) |
+
+#### SP-4 — Annullamento senza addebito
+
+| | |
+|---|---|
+| **Domanda** | quali provider supportano l'annullamento dello stream senza generare costo? |
+| **Metodo** | verifica sul campo alla prima integrazione |
+| **Output** | ordine di preferenza per le richieste che si annullano spesso (ADR-0011) |
+
+#### SP-5 — Iniettabilità nel linguaggio candidato ⛔ *blocca l'ADR sul linguaggio*
+
+| | |
+|---|---|
+| **Domanda** | nel linguaggio candidato si possono sostituire tempo, casualità, I/O e **ordinamento delle attività concorrenti**? |
+| **Metodo** | prototipo minimo: due attività concorrenti, un guasto iniettato, riproduzione identica dato il seed |
+| **Soglia** | se l'esecuzione non è riproducibile → il linguaggio è **escluso** (RK-3) |
+
+#### SP-6 — Confine dei tipi nel linguaggio candidato ⛔ *blocca l'ADR sul linguaggio*
+
+| | |
+|---|---|
+| **Domanda** | il sistema di tipi impedisce di assegnare contenuto non fidato a un campo istruzione? |
+| **Metodo** | prototipo con **test negativo di compilazione** |
+| **Soglia** | se non impedibile staticamente → I6 scende da garanzia a convenzione verificata per lint, e va dichiarato (RK-4) |
+
+### 9.3 Ordine e dipendenze
+
+```mermaid
+flowchart TD
+    SP5["SP-5 iniettabilita"] --> LANG["ADR: linguaggio del core"]
+    SP6["SP-6 confine dei tipi"] --> LANG
+    LANG --> IMPL["implementazione del kernel"]
+
+    SP1["SP-1 curva qualita/VRAM"] --> P2["tabella dei profili di risorsa (§2)"]
+    SP2["SP-2 Q1 sotto carico"] --> P2
+    P2 --> IMPL
+
+    SP3["SP-3 budget proiezione"] -.->|"default conservativo<br/>fino alla misura"| IMPL
+    SP4["SP-4 annullamento"] -.->|"alla prima<br/>integrazione"| IMPL
+
+    classDef block fill:#b45309,stroke:#78350f,color:#fff
+    class SP5,SP6 block
+```
+
+| Spike | Quando | Blocca |
+|---|---|---|
+| **SP-5, SP-6** | **prima di scrivere codice** | l'ADR sul linguaggio del core, quindi tutto |
+| SP-1, SP-2 | prima di congelare i profili di risorsa | la taratura di §2, non l'impianto |
+| SP-3 | quando esistono chat e proiezione funzionanti | nulla: default conservativo dichiarato |
+| SP-4 | alla prima integrazione con un provider | nulla: ordine di preferenza |
+
+**Solo due spike bloccano.** Gli altri quattro tarano parametri di decisioni già prese
+— che è il segno che il design non dipende dal loro esito.
+
+### 9.4 La decisione che questa sezione consegna al passo successivo
+
+Il kernel **non si implementa** finché SP-5 e SP-6 non hanno risposto, perché
+entrambi possono escludere un linguaggio, e il linguaggio non è ancora scelto.
+
+Il prossimo artefatto è quindi **l'ADR sul linguaggio del core**, e i suoi criteri
+sono già fissati da questa spec, non da preferenze:
+
+| Criterio | Da |
+|---|---|
+| sostituibilità di tempo, casualità, I/O e scheduling | V29 · ADR-0021 |
+| capacità del sistema di tipi di reggere il confine dei dati non fidati | V19 · ADR-0014 |
+| verificabilità statica dell'assenza di chiamate OS nel kernel | I3 · ADR-0002 |
+| verificabilità statica dell'assenza di modelli nel percorso decisionale | V28 · ADR-0020 |
+| adeguatezza a un daemon a vita lunga con concorrenza reale | ADR-0004 |

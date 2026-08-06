@@ -1,6 +1,6 @@
 # ADR-0021: Simulazione deterministica, e iniettabilità come requisito di costruzione
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

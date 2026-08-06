@@ -1,6 +1,6 @@
 # ADR-0020: Nessun modello nel percorso decisionale del kernel
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

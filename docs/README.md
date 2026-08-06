@@ -45,8 +45,8 @@ agenti/coding, voce, generazione asset) su kernel comune.
 | [0017](adr/0017-giornale-sorgente-trace-proiezione.md) | Il giornale è la sorgente, il trace è una proiezione | Accepted |
 | [0018](adr/0018-ritenzione-a-livelli-del-giornale.md) | Ritenzione a livelli: la struttura sopravvive, i payload si potano | Accepted |
 | [0019](adr/0019-lo-stato-di-degrado-e-un-oggetto-osservabile.md) | Lo stato di degrado è un oggetto osservabile | Accepted |
-| [0020](adr/0020-nessun-modello-nel-percorso-decisionale-del-kernel.md) | Nessun modello nel percorso decisionale del kernel | Proposed |
-| [0021](adr/0021-simulazione-deterministica-e-iniettabilita.md) | Simulazione deterministica, iniettabilità di costruzione | Proposed |
+| [0020](adr/0020-nessun-modello-nel-percorso-decisionale-del-kernel.md) | Nessun modello nel percorso decisionale del kernel | Accepted |
+| [0021](adr/0021-simulazione-deterministica-e-iniettabilita.md) | Simulazione deterministica, iniettabilità di costruzione | Accepted |
 
 ## Indice dei diagrammi
 

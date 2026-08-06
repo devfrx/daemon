@@ -29,7 +29,7 @@ flowchart LR
 | # | Sotto-progetto | Livello | Stato | Dipende da |
 |---|---|---|---|---|
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
-| **0b** | **Kernel L0 — persistenza fisica, segreti, sandbox** (§10, proposta) | L0 | ⚠️ **lacuna aperta** | 0 |
+| **0b** | **Kernel L0 fisico — persistenza, cifratura, backup, segreti, confinamento** (§10) | L0 | ⚠️ **lacuna dichiarata, da progettare** | 0 |
 | **0c** | **ADR linguaggio del core** | — | ⏭️ **prossimo** | SP-5, SP-6 |
 | 1 | Implementazione del kernel + simulatore DST | L0 + L1 | ⬜ | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1 |

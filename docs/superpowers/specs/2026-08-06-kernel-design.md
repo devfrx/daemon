@@ -3,7 +3,7 @@
 - **Data:** 2026-08-06
 - **Sotto-progetto:** kernel. È il primo, perché tutte e sei le capacità di L2
   dipendono da esso.
-- **Stato:** in costruzione — vedi tabella di avanzamento.
+- **Stato:** §0–§9 approvate. **Una lacuna aperta:** vedi §10.
 
 ## Avanzamento delle sezioni
 
@@ -18,7 +18,8 @@
 | 6 | Permessi e confine dei dati non fidati | Approvata |
 | 7 | Errori, degrado e osservabilità | Approvata |
 | 8 | Test e criteri di accettazione | Approvata |
-| 9 | Rischi e spike di validazione | **Proposta — in attesa di approvazione** |
+| 9 | Rischi e spike di validazione | Approvata |
+| **10** | **L0 fisico: persistenza, cifratura, backup, segreti, confinamento** | ⚠️ **lacuna — da presentare** |
 
 ---
 
@@ -54,9 +55,9 @@ Il perimetro negativo è l'artefatto più prezioso di questa sezione.
 ### 0.4 Requisiti di qualità
 
 Espressi come **scenari misurabili**: è qui che vive la difficoltà reale del sistema,
-non nell'elenco delle funzionalità. Le soglie marcate *(da tarare)* saranno fissate
-dagli spike della §9 — non sono segnaposto, sono valori il cui metodo di
-determinazione è già deciso.
+non nell'elenco delle funzionalità. Le soglie numeriche di Q1 e Q11 sono **provvisorie
+e da tarare**: le fissano gli spike SP-2 e SP-3 (§9). Non sono segnaposto — sono valori
+il cui metodo di determinazione è già deciso.
 
 | ID | Scenario | Soglia |
 |---|---|---|
@@ -170,7 +171,7 @@ esse; una violazione richiede un ADR, non una deroga.
 
 | ID | Domanda | Si chiude con |
 |---|---|---|
-| SP-1 | Quanta VRAM serve realmente a TRELLIS2 su 16 GB? | spike §9 — determina se la policy LOCALE può tenere un LLM caldo |
+| SP-1 | Quale punto della **curva qualità/VRAM** di TRELLIS2 scegliere su 16 GB? | spike §9 — produce la tabella dei profili di risorsa; determina se la policy LOCALE può tenere un LLM caldo |
 | SP-2 | Ridurre l'occupazione dei job `batch` basta a tenere Q1 sotto i 600 ms? | spike §9 — se no, l'unica leva è sospendere il `batch` |
 
 ---
@@ -242,8 +243,8 @@ deve dire esattamente perché.
 
 ## 4. Persistenza, run durevoli e idempotenza
 
-Presentata prima della §3 perché non ha dipendenze da essa, e perché è la sezione che
-decide se le **long-horizon tasks** arrivano in fondo.
+È la sezione che decide se le **long-horizon tasks** arrivano in fondo. Non ha
+dipendenze dalla §3: si può leggere prima.
 
 **Decisioni:** [ADR-0007](../../adr/0007-giornale-write-ahead-e-riconciliazione.md) ·
 [ADR-0008](../../adr/0008-contesto-come-proiezione-dello-stato.md).
@@ -356,9 +357,6 @@ sensore reale in aree diverse**. Se non si adatta, si spezza — non si piega.
 
 ## 6. Permessi e confine dei dati non fidati
 
-> **Stato: proposta, in attesa di approvazione.** ADR-0014, 0015 e 0016 sono in
-> `Proposed`.
-
 **Decisioni:** [ADR-0014](../../adr/0014-confine-dei-dati-non-fidati-nel-sistema-di-tipi.md) ·
 [ADR-0015](../../adr/0015-descrizioni-degli-strumenti-fissate-all-approvazione.md) ·
 [ADR-0016](../../adr/0016-permessi-granulari-e-default-dei-vincoli-sui-dati.md).
@@ -428,9 +426,6 @@ qualcuno può decidere di chiudere.
 ---
 
 ## 7. Errori, degrado e osservabilità
-
-> **Stato: proposta, in attesa di approvazione.** ADR-0017, 0018 e 0019 sono in
-> `Proposed`.
 
 **Decisioni:** [ADR-0017](../../adr/0017-giornale-sorgente-trace-proiezione.md) ·
 [ADR-0018](../../adr/0018-ritenzione-a-livelli-del-giornale.md) ·
@@ -503,8 +498,6 @@ reale — candidato naturale per una metrica dell'anello 4.
 
 ## 8. Test e criteri di accettazione
 
-> **Stato: proposta, in attesa di approvazione.** ADR-0020 e 0021 sono in `Proposed`.
-
 **Decisioni:** [ADR-0020](../../adr/0020-nessun-modello-nel-percorso-decisionale-del-kernel.md) ·
 [ADR-0021](../../adr/0021-simulazione-deterministica-e-iniettabilita.md).
 
@@ -571,8 +564,7 @@ l'intera architettura a processi — restano dichiarazioni non verificate.
 
 ## 9. Rischi e spike di validazione
 
-> **Stato: proposta, in attesa di approvazione.** Nessun ADR nuovo: questa sezione non
-> decide, **misura**. Le decisioni che ne dipendono sono già scritte e indicano la
+> **Nessun ADR nuovo:** questa sezione non decide, **misura**. Le decisioni che ne dipendono sono già scritte e indicano la
 > propria soglia.
 
 ### 9.1 Registro dei rischi
@@ -705,3 +697,36 @@ sono già fissati da questa spec, non da preferenze:
 | verificabilità statica dell'assenza di chiamate OS nel kernel | I3 · ADR-0002 |
 | verificabilità statica dell'assenza di modelli nel percorso decisionale | V28 · ADR-0020 |
 | adeguatezza a un daemon a vita lunga con concorrenza reale | ADR-0004 |
+
+---
+
+## 10. L0 fisico: persistenza, cifratura, backup, segreti, confinamento
+
+> **Lacuna aperta, non ancora progettata.** Emersa dall'esercizio di tracciabilità:
+> vedi [tracciabilita.md](../../tracciabilita.md), §Lacune.
+
+Questa spec si intitola «L0 fondamenta + L1 arbitri trasversali». Le §0–§9 coprono
+integralmente L1 e i meccanismi trasversali, ma di L0 hanno deciso la **semantica**
+senza mai toccare il **supporto fisico**.
+
+| # | Lacuna | Cosa manca | Su cosa poggia già |
+|---|---|---|---|
+| L-1 | Checkpoint del filesystem | §4 giornala le *run*, non lo stato dei file. Serve a Coding, Generazione asset e Conoscenza: per la parità di [ADR-0001](../../adr/0001-architettura-a-kernel-con-capacita-paritarie.md) è **kernel**, non capacità | classi di effetto §4, permessi §6 |
+| L-2 | Storage e cifratura a riposo | §4 decide la semantica della persistenza, mai il motore né la cifratura | giornale §4, ritenzione ADR-0018 |
+| L-3 | Backup ed export dei dati | nessuna sezione lo affronta; include il backup della base di conoscenza indipendente dall'app | ritenzione ADR-0018 |
+| L-4 | Gestore dei segreti | §6 vi si appoggia — escalation automatica, canary, mascheratura V16 — ma non lo progetta | ADR-0016, V16 |
+| L-5 | Confinamento reale dell'esecuzione | §6 decide **cosa** si può toccare (la tripla); **come** si confina un processo è OS-specifico → modulo di piattaforma (I3) | permessi §6, ADR-0002 |
+
+**Nessuna invalida le decisioni prese**: stanno tutte *sotto* i meccanismi già decisi,
+non sopra. Ma nessuna delle cinque è opzionale, e L-1 e L-5 bloccano la capacità
+Coding.
+
+Vincoli già noti che la §10 dovrà rispettare:
+
+| Vincolo | Da |
+|---|---|
+| Il confinamento è OS-specifico → vive nel modulo di piattaforma, non nel core | I3 · ADR-0002 |
+| Il checkpoint del filesystem è di kernel, non della capacità Coding | ADR-0001 |
+| La persistenza deve reggere il write-ahead e la potatura a livelli | ADR-0007 · ADR-0018 |
+| Il gestore dei segreti è il punto in cui scatta l'escalation dei vincoli sui dati | ADR-0016 |
+| Tutto ciò che qui esegue I/O resta **iniettabile** | V29 · ADR-0021 |

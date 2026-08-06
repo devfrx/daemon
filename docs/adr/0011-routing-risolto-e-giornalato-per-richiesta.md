@@ -1,6 +1,6 @@
 # ADR-0011: La politica di routing è risolta e giornalata per ogni richiesta
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
@@ -46,13 +46,28 @@ al passo; il passo appartiene a una run; una run può appartenere a una run padr
 Le quattro granularità richieste sono **aggregazioni della stessa gerarchia**, non
 quattro contatori.
 
-**3. Corollario accettato: ogni interazione con un modello è un passo di una run.**
-Anche un singolo messaggio di chat. Una conversazione è una run interattiva di lunga
-durata; una run agentica è la stessa struttura con più passi e meno attese.
+**3. Corollario accettato: ogni richiesta di inferenza _generativa_ è un passo di una
+run.** Anche un singolo messaggio di chat. Una conversazione è una run interattiva di
+lunga durata; una run agentica è la stessa struttura con più passi e meno attese.
 
 È l'unificazione che rende universali i meccanismi della §4 invece che specifici
 dell'agente: annullamento, ripresa, contabilità, tracciamento e tetti di spesa
 funzionano allo stesso modo ovunque, senza un secondo percorso per la chat.
+
+**Confine esplicito — l'inferenza percettiva sempre attiva non è un passo.** Wake
+word, rilevazione della voce e trascrizione continua non passano dal gateway e non si
+giornalano per frammento: sono **sorgenti di eventi** (anello 3, §5). Giornalarle
+violerebbe Q1 e riempirebbe il giornale di rumore.
+
+| | Inferenza **generativa** | Inferenza **percettiva** always-on |
+|---|---|---|
+| Esempi | chat, agente, riformulazioni, sensori inferenziali | wake word, VAD, trascrizione continua |
+| Passa dal gateway | sì | no |
+| Unità | **passo** di una run | **evento**, che può *avviare* una run |
+| Contabilizzata | per token e costo | per risorsa GPU (§2), non per token |
+
+Il confine è netto: la trascrizione che diventa un messaggio dell'utente **apre** un
+passo; i frammenti audio che l'hanno prodotta no.
 
 **4. Il costo si registra anche per gli stream interrotti.** Annullare uno stream
 remoto può comunque generare addebito: se non venisse registrato, la contabilità

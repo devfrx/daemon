@@ -1,6 +1,6 @@
 # ADR-0013: La conformità allo schema è un verdetto di sensore, non un'eccezione
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

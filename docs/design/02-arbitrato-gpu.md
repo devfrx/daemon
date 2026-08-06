@@ -99,6 +99,11 @@ rientra mai. Nessun altro lavoro può richiederla, nemmeno se la GPU è scarica.
 già allocato. Un budget sottratto non può essere allocato per errore. Questa è la
 risposta strutturale a "la voce non deve balbettare durante un render".
 
+**La sottrazione non è un'esenzione.** Il worker audio non è fuori dall'arbitrato:
+detiene una **concessione permanente e non prelazionabile** sulla quota riservata.
+I2 vale anche per lui — nessun processo tocca la GPU senza concessione. Ciò che cambia
+non è l'obbligo, è che la sua concessione non può essere revocata né contesa.
+
 ### Contesa di calcolo
 
 Il calcolo GPU non è prelazionabile a grana fine come la memoria. La leva praticabile

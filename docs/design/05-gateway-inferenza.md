@@ -127,6 +127,36 @@ una run* ([ADR-0011](../adr/0011-routing-risolto-e-giornalato-per-richiesta.md))
 Il record contiene la decisione **risolta**, non un riferimento alla configurazione:
 rileggere la configurazione di oggi non dice cosa accadde ieri.
 
+## Due confini che si prestano a essere confusi
+
+### Ritentativo o passo nuovo? Il discriminante è l'output
+
+V17 dice che un ritentativo resta nello stesso passo. V14 dice che un verdetto
+negativo di sensore produce un passo nuovo. Non è una contraddizione: il
+discriminante è **se il modello ha prodotto un output**.
+
+| Situazione | Il modello ha prodotto output? | Unità |
+|---|---|---|
+| errore di trasporto, 5xx, limite di frequenza, rifiuto dell'arbitro | no | **stesso passo**, nuovo tentativo nel record di routing |
+| output prodotto ma respinto da un sensore (schema, linter, test) | **sì** | **passo nuovo**, con il verdetto come feedback |
+
+La ragione è sostanziale, non formale: un output prodotto **esiste, è stato pagato e
+fa parte della storia**. Nasconderlo dentro un tentativo lo renderebbe invisibile
+all'anello di miglioramento, che è esattamente ciò che deve vederlo.
+
+### Policy VRAM o destinazione della richiesta?
+
+Sono cose diverse e V3 riguarda solo la prima.
+
+| | Cosa determina | Chi la cambia |
+|---|---|---|
+| **Policy VRAM** (§2) | cosa risiede in memoria: solo audio, oppure audio + LLM + embedding | il profilo di configurazione, con transizione esplicita |
+| **Destinazione della richiesta** (§3) | dove viene eseguita *questa* chiamata | il routing, richiesta per richiesta |
+
+In policy LOCALE una singola richiesta può benissimo finire su un provider remoto —
+per rifiuto dell'arbitro o per fallback — **senza che la policy cambi**. Il contrario
+non vale: la policy non si cambia per servire una richiesta.
+
 ## Regole che i diagrammi non esprimono
 
 - Un candidato che viola un vincolo **non viene provato**: è scartato prima.

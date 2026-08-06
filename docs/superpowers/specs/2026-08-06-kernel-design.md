@@ -12,10 +12,10 @@
 | 0 | Perimetro, vincoli e requisiti di qualità | Approvata |
 | 1 | Architettura di processo | Approvata |
 | 2 | Arbitro risorse GPU e policy VRAM | Approvata |
-| 3 | Gateway di inferenza | **Proposta — in attesa di approvazione** |
+| 3 | Gateway di inferenza | Approvata |
 | 4 | Persistenza, run durevoli e idempotenza | Approvata |
 | 5 | Harness: guide, sensori e anelli di controllo | Approvata |
-| 6 | Permessi e confine dei dati non fidati | Da presentare |
+| 6 | Permessi e confine dei dati non fidati | **Proposta — in attesa di approvazione** |
 | 7 | Errori, degrado e osservabilità | Da presentare |
 | 8 | Test e criteri di accettazione | Da presentare |
 | 9 | Rischi e spike di validazione | Da presentare |
@@ -74,10 +74,14 @@ determinazione è già deciso.
 | Q12 | Difetto che si ripresenta per la seconda volta | il sistema propone una guida o un sensore, non una raccomandazione generica |
 | Q13 | Richiesta con vincolo sui dati e nessun endpoint conforme | **fallisce chiuso**: errore che nomina il vincolo, nessun ripiego |
 | Q14 | Ricostruire con cosa è stato eseguito un passo di sei mesi fa | il record di routing lo dice, indipendentemente dalla configurazione attuale |
+| Q15 | Contenuto non fidato che contiene un'istruzione | può informare, mai autorizzare: l'azione richiede la stessa approvazione che servirebbe senza quella richiesta |
+| Q16 | Server MCP che cambia la descrizione di uno strumento dopo l'approvazione | strumento **sospeso**, diff mostrato, ri-approvazione obbligatoria |
+| Q17 | Un segreto noto compare in contenuto in uscita | bloccato e segnalato dal canary |
 
 Q5–Q7 sono i requisiti delle **long-horizon tasks** (§4).
 Q10–Q12 sono i requisiti dell'**harness** (§5).
 Q13–Q14 sono i requisiti del **gateway** (§3).
+Q15–Q17 sono i requisiti di **sicurezza** (§6).
 
 ### 0.6 Le tre discipline e dove vivono
 
@@ -169,9 +173,6 @@ esse; una violazione richiede un ADR, non una deroga.
 
 ## 3. Gateway di inferenza
 
-> **Stato: proposta, in attesa di approvazione.** ADR-0011, 0012 e 0013 sono in
-> `Proposed`.
-
 **Decisioni:** [ADR-0011](../../adr/0011-routing-risolto-e-giornalato-per-richiesta.md) ·
 [ADR-0012](../../adr/0012-equivalenza-del-fallback-e-fallimento-chiuso.md) ·
 [ADR-0013](../../adr/0013-conformita-allo-schema-e-un-verdetto-di-sensore.md).
@@ -192,7 +193,16 @@ esse; una violazione richiede un ADR, non una deroga.
 | Schema non conforme | **verdetto di sensore** (§5), non eccezione del gateway |
 | Stream interrotti | il costo si registra comunque |
 
-### 3.2 Perché "tutto è una run" non è sovra-ingegnerizzazione
+### 3.2 Confini chiariti dall'audit di coerenza
+
+| Confine | Regola |
+|---|---|
+| Inferenza generativa vs percettiva | solo la **generativa** passa dal gateway ed è un passo. Wake word, VAD e trascrizione continua sono **eventi** (anello 3), mai passi: giornalarle violerebbe Q1 |
+| Ritentativo vs passo nuovo | discriminante = **il modello ha prodotto output?** No → stesso passo. Sì, ma respinto da un sensore → passo nuovo, perché quell'output esiste, è stato pagato e deve restare visibile all'anello 4 |
+| Policy VRAM vs destinazione | V3 riguarda **cosa risiede in memoria**, non dove va la singola richiesta. In policy LOCALE una richiesta può finire su un provider remoto senza che la policy cambi |
+| Quota audio sottratta vs I2 | la sottrazione **non è un'esenzione**: il worker audio detiene una concessione *permanente e non prelazionabile*, non l'assenza di concessione |
+
+### 3.3 Perché "tutto è una run" non è sovra-ingegnerizzazione
 
 È la condizione perché i meccanismi della §4 siano **universali invece che specifici
 dell'agente**. Senza di essa servirebbe un secondo percorso per la chat: un'altra
@@ -340,5 +350,78 @@ sensore reale in aree diverse**. Se non si adatta, si spezza — non si piega.
 
 ---
 
-*Sezioni 3 e 6–9: in lavorazione. Ogni sezione approvata viene aggiunta qui e la
-tabella di avanzamento aggiornata nello stesso passaggio.*
+## 6. Permessi e confine dei dati non fidati
+
+> **Stato: proposta, in attesa di approvazione.** ADR-0014, 0015 e 0016 sono in
+> `Proposed`.
+
+**Decisioni:** [ADR-0014](../../adr/0014-confine-dei-dati-non-fidati-nel-sistema-di-tipi.md) ·
+[ADR-0015](../../adr/0015-descrizioni-degli-strumenti-fissate-all-approvazione.md) ·
+[ADR-0016](../../adr/0016-permessi-granulari-e-default-dei-vincoli-sui-dati.md).
+
+**Struttura:** [Permessi e confine dei dati](../../design/06-permessi-e-confine-dei-dati.md).
+
+### 6.1 In sintesi
+
+| Scelta | Sostanza |
+|---|---|
+| Il confine è nel **sistema di tipi** | contenuto esterno e istruzioni hanno tipi distinti; la conversione è esplicita e giornalata |
+| Etichetta **ereditaria** | riassumere, tradurre o concatenare non ripulisce nulla |
+| **Nessuna sanitizzazione** | non si filtra: *un'istruzione trovata nei dati non è mai un'autorizzazione* |
+| Descrizioni degli strumenti **fissate** | cambiano → strumento **sospeso**, diff mostrato, ri-approvazione |
+| Permesso = **tripla** | `(strumento × risorsa × operazione)`, mai «lo strumento» |
+| Approvazione **non estendibile** | vale per la tripla e per la sessione |
+| Vincoli sui dati | default per profilo + **escalation automatica** sui segreti |
+| Canary | verdetto di sensore (§5), non sottosistema nuovo |
+
+### 6.2 Cosa questa sezione difende, e cosa no
+
+Distinzione che regge tutto il capitolo:
+
+| Difende da | Non difende da |
+|---|---|
+| **escalation di privilegio**: un contenuto ostile che diventa azione | **inganno del modello**: il modello può comunque essere convinto di qualcosa di falso |
+
+Il modello vede il contenuto non fidato — deve vederlo, per lavorarci. Ciò che non
+può è convertire quella convinzione in autorizzazione. Riporre nella difesa più
+fiducia di così significa non averla capita.
+
+### 6.3 L'unica eccezione strutturale, e come è contenuta
+
+Le descrizioni degli strumenti MCP sono contenuto di terze parti che **deve** entrare
+nel canale che influenza il comportamento: senza, l'agente non sa cosa fa lo
+strumento. È l'unico varco, e viene chiuso su tre lati:
+
+| Lato | Difesa |
+|---|---|
+| contenuto | mostrato integralmente all'approvazione, non solo il nome |
+| tempo | impronta fissata: cambia → **sospeso** (difesa contro il *rug pull*) |
+| autorità | una descrizione **non concede permessi**: quelli vengono solo dalla tripla |
+
+### 6.4 Vincoli che la §6 impone alle sezioni successive
+
+| # | Vincolo | Colpisce |
+|---|---|---|
+| V19 | Il contenuto esterno è trasportato da un tipo distinto; la conversione è esplicita e giornalata | ogni capacità |
+| V20 | L'etichetta di non-fidatezza è ereditaria attraverso ogni trasformazione | ogni capacità |
+| V21 | Un permesso vale per la tripla concessa e per la sessione corrente | §7, GUI |
+| V22 | Nessuna descrizione di strumento concede permessi | §3, capacità Agenti |
+| V23 | La provenienza del contenuto è visibile in interfaccia | §7, GUI |
+
+### 6.5 I modi di fallire, dichiarati
+
+Nessuno di questi è tecnico. Sono i tre punti in cui il capitolo cede.
+
+| # | Falla | Mitigazione |
+|---|---|---|
+| 1 | **L'utente approva per stanchezza** | preset (`auto-approva sicuri` di default) riducono il volume; non lo azzerano |
+| 2 | Un **segreto incollato a mano** in chat non attraversa il gestore e aggira l'escalation | candidato sensore in §7: rilevare segreti in chiaro nell'input |
+| 3 | Il **canary copre i segreti noti**, non dati sensibili generici | nessuna: è una rete, non un muro, e va presentata come tale |
+
+Scriverli qui è la mitigazione principale: una falla dichiarata è una falla che
+qualcuno può decidere di chiudere.
+
+---
+
+*Sezioni 7–9: in lavorazione. Ogni sezione approvata viene aggiunta qui e la tabella
+di avanzamento aggiornata nello stesso passaggio.*

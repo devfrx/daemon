@@ -36,9 +36,12 @@ agenti/coding, voce, generazione asset) su kernel comune.
 | [0008](adr/0008-contesto-come-proiezione-dello-stato.md) | Il contesto è una proiezione, non lo stato | Accepted |
 | [0009](adr/0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md) | Guide, sensori e anelli di controllo sono meccanismi di kernel | Accepted |
 | [0010](adr/0010-budget-della-proiezione-invece-di-soglia-di-riempimento.md) | Budget della proiezione invece di soglia di riempimento | Accepted |
-| [0011](adr/0011-routing-risolto-e-giornalato-per-richiesta.md) | Routing risolto e giornalato per ogni richiesta | Proposed |
-| [0012](adr/0012-equivalenza-del-fallback-e-fallimento-chiuso.md) | Equivalenza del fallback dai vincoli; sui dati si fallisce chiuso | Proposed |
-| [0013](adr/0013-conformita-allo-schema-e-un-verdetto-di-sensore.md) | La conformità allo schema è un verdetto di sensore | Proposed |
+| [0011](adr/0011-routing-risolto-e-giornalato-per-richiesta.md) | Routing risolto e giornalato per ogni richiesta | Accepted |
+| [0012](adr/0012-equivalenza-del-fallback-e-fallimento-chiuso.md) | Equivalenza del fallback dai vincoli; sui dati si fallisce chiuso | Accepted |
+| [0013](adr/0013-conformita-allo-schema-e-un-verdetto-di-sensore.md) | La conformità allo schema è un verdetto di sensore | Accepted |
+| [0014](adr/0014-confine-dei-dati-non-fidati-nel-sistema-di-tipi.md) | Il confine dei dati non fidati vive nel sistema di tipi | Proposed |
+| [0015](adr/0015-descrizioni-degli-strumenti-fissate-all-approvazione.md) | Descrizioni degli strumenti fissate all'approvazione | Proposed |
+| [0016](adr/0016-permessi-granulari-e-default-dei-vincoli-sui-dati.md) | Permessi come tripla, default dei vincoli sui dati per profilo | Proposed |
 
 ## Indice dei diagrammi
 
@@ -49,6 +52,7 @@ agenti/coding, voce, generazione asset) su kernel comune.
 | [Run durevoli e proiezione](design/03-run-durevoli.md) | Livelli dello stato, ciclo di vita del passo, riconciliazione |
 | [Anelli, guide e sensori](design/04-anelli-e-sensori.md) | I quattro anelli, feedforward vs feedback, budget della proiezione |
 | [Gateway di inferenza](design/05-gateway-inferenza.md) | Risoluzione di una richiesta, catena di riserva, contabilità |
+| [Permessi e confine dei dati](design/06-permessi-e-confine-dei-dati.md) | I due canali, ereditarietà dell'etichetta, permessi, canary |
 
 ## Specifiche
 

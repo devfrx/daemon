@@ -1,6 +1,6 @@
 # ADR-0012: L'equivalenza del fallback è definita dai vincoli, e sui dati si fallisce chiuso
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

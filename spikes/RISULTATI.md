@@ -5,6 +5,12 @@ Data di esecuzione: **2026-08-06**
 Criteri e soglie: [PROTOCOLLO.md](PROTOCOLLO.md) — congelato al primo commit di
 codice di spike.
 
+**Dove sono i prototipi.** Quello del candidato vincente resta in `spikes/rust/` e
+diventa il punto di partenza del simulatore del sotto-progetto 1. Quelli di Go e
+TypeScript sono stati rimossi dopo ADR-0026, ma restano nella storia: l'ultimo commit
+che li contiene è **`da653a1`**. Un ADR che cita misure deve lasciarle rifacibili —
+`git show da653a1:spikes/go/sched/c6_test.go` e simili.
+
 ## SP-6 — Confine dei dati non fidati, e confini statici del kernel
 
 | Criterio | Rust | Go | TypeScript |

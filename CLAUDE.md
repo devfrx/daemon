@@ -16,11 +16,20 @@ tutto il resto ne discende.
 Il vincolo dominante non è funzionale ma di risorsa: quattro aree che si contendono
 una sola GPU da 16 GB.
 
-## Stato: progettazione. Nessun codice scritto.
+## Stato: stack deciso. Kernel non ancora implementato.
 
-Non esiste sorgente in questo repository. Esiste una spec del kernel completa e 25
-decisioni architetturali. **Non iniziare a implementare**: il linguaggio del core non
-è ancora scelto, e due spike possono escluderne alcuni.
+Spec del kernel completa e **28 decisioni architetturali**. L'unico codice nel
+repository è in [`spikes/rust/`](spikes/rust/): sono **prove**, non il kernel, ma
+diventeranno il punto di partenza del simulatore.
+
+| Strato | Scelta | Da |
+|---|---|---|
+| core | **Rust** | ADR-0026, sostenuto da SP-5 e SP-6 misurati |
+| gui | shell nativa Rust + **interfaccia web** (Tauri) | ADR-0027 |
+| worker ML | **Python** | ADR-0028 |
+
+**Ora si può implementare**, ma solo il sotto-progetto 1 (kernel + simulatore DST), e
+solo con la spec §0–§10 alla mano.
 
 ## Da dove partire, in quest'ordine
 
@@ -78,25 +87,35 @@ da soli non sono un confine contro codice eseguito.
 
 ## Prossimo passo
 
-**Eseguire il piano** [`docs/superpowers/plans/2026-08-06-spike-linguaggio-del-core.md`](docs/superpowers/plans/2026-08-06-spike-linguaggio-del-core.md).
+**Scrivere la spec del sotto-progetto 1** — implementazione del kernel + simulatore
+DST — e poi il piano. Non partire dal codice: vale «spec prima del codice» come per
+tutto il resto.
 
-11 task, 75 step. Chiude **l'intero stack** con tre ADR:
+Lo stack è chiuso, e con esso tutte le domande che bloccavano l'implementazione:
 
-| ADR | Decide | Come |
+| ADR | Decisione | Cosa l'ha decisa |
 |---|---|---|
-| **0026** | linguaggio del core | spike SP-5 e SP-6 su Rust, Go, TypeScript |
-| **0027** | stack della GUI | valutato **in coppia** col core, non da solo |
-| **0028** | ecosistema dei worker ML | ratifica una scelta finora implicita |
+| **0026** | core in **Rust** | è l'unico dei tre candidati che passa **entrambi** gli spike. Go fallisce C6 con una misura; TypeScript è parziale su T4, T6 e C6 |
+| **0027** | GUI a shell nativa + interfaccia web | **G7**, artifacts con anteprima viva: non ammette alternativa. P1–P4 misurati |
+| **0028** | worker ML in **Python** | non è una scelta: i modelli hanno implementazioni Python. L'ADR ne dichiara i costi |
 
-Entrambi gli spike possono escludere un candidato, quindi precedono ADR-0026, che
-precede ogni riga di codice del kernel.
+Evidenze, seed e versioni: [`spikes/RISULTATI.md`](spikes/RISULTATI.md) ·
+[`spikes/GUI-REQUISITI.md`](spikes/GUI-REQUISITI.md).
 
-Prerequisiti verificati il 2026-08-06: Rust 1.95 presente, Node 24.9 presente,
-**Go assente** (`winget install --id GoLang.Go -e`) senza il quale i task 5 e 6 non
-partono.
+### Quattro vincoli che ADR-0026 impone alla prima riga di codice
 
-La spec del kernel è completa (§0–§10, 25 ADR) e **non ha lacune aperte**: le cinque
-trovate dall'esercizio di tracciabilità sono state chiuse dalla §10.
+Non sono raccomandazioni: sono conseguenze misurate, e vanno tradotte in controlli
+automatici, non lasciate alla memoria.
+
+| # | Vincolo | Perché |
+|---|---|---|
+| 1 | il **kernel è una crate propria**, la piattaforma un'altra | i confini di T6 sono a granularità di crate, non di modulo |
+| 2 | `#![forbid(unsafe_code)]` sul kernel, non `deny` | `forbid` non è scavalcabile da un `#[allow]` locale (`E0453`) |
+| 3 | la crate del kernel è `#![no_std]` + `alloc` | è ciò che rende `E0433` un errore del **compilatore** e non un lint |
+| 4 | **`std::collections::HashMap` è vietato** | `RandomState` è seminato per processo: l'ordine di iterazione non è riproducibile, e viola V29 senza comparire in nessun elenco di «chiamate OS» |
+
+La spec del kernel è completa (§0–§10) e **non ha lacune aperte**: le cinque trovate
+dall'esercizio di tracciabilità sono state chiuse dalla §10.
 
 ## Manutenzione della documentazione
 

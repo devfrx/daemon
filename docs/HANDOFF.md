@@ -6,29 +6,41 @@ Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 ## In trenta secondi
 
 Assistente desktop locale, utente singolo, GPU singola RTX 5080 16 GB. **Piattaforma
-a quattro pilastri paritari** su kernel comune. Progettazione conclusa per il kernel:
-**spec §0–§10 completa, 25 ADR, zero lacune aperte, zero righe di codice**.
+a quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 28
+ADR, zero lacune aperte**. Lo **stack è chiuso**: core in Rust, GUI a shell nativa con
+interfaccia web, worker ML in Python.
 
 Il vincolo che governa tutto non è funzionale ma di risorsa: quattro aree che si
 contendono una sola GPU.
 
+L'unico codice nel repository è in [`../spikes/rust/`](../spikes/rust/): sono **prove**,
+non il kernel.
+
 ## Prima cosa da fare
 
-Eseguire il piano [`superpowers/plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md)
-— 11 task, 75 step. Produce tre ADR che chiudono **l'intero stack**:
+**Scrivere la spec del sotto-progetto 1** — kernel + simulatore DST — poi il piano, poi
+il codice. Vale «spec prima del codice» come per tutto il resto.
 
-| ADR | Cosa decide | Come |
+Lo stack non è più una domanda aperta:
+
+| ADR | Decisione | Misurata da |
 |---|---|---|
-| **0026** | linguaggio del core | spike SP-5 e SP-6 su Rust, Go, TypeScript |
-| **0027** | stack della GUI | valutato **in coppia** col core, non da solo |
-| **0028** | ecosistema dei worker ML | ratifica una scelta finora implicita |
+| **0026** | core in **Rust** | SP-5 e SP-6 su tre candidati. Rust è l'unico che passa entrambi |
+| **0027** | GUI a shell nativa + interfaccia web | G7, con P1–P4 misurati su un prototipo IPC |
+| **0028** | worker ML in **Python** | non una scelta: i modelli hanno implementazioni Python |
 
-**Non scrivere codice del kernel prima di ADR-0026.** Due spike possono escludere un
-linguaggio, e scoprirlo dopo significa riscrivere.
+Toolchain verificata il 2026-08-06: `rustc` 1.95.0 · `cargo` 1.95.0 · `clippy` 0.1.95.
 
-Prerequisiti sulla macchina, verificati il 2026-08-06: Rust 1.95 ✅ · Node 24.9 ✅ ·
-**Go ❌ da installare** (`winget install --id GoLang.Go -e`), altrimenti i task 5 e 6
-non partono.
+### I quattro vincoli che ADR-0026 impone alla prima riga di codice
+
+Conseguenze **misurate**, non raccomandazioni. Vanno tradotte in controlli automatici.
+
+| # | Vincolo | Perché |
+|---|---|---|
+| 1 | il kernel è una **crate propria**, la piattaforma un'altra | i confini sono a granularità di crate, non di modulo |
+| 2 | `#![forbid(unsafe_code)]`, **non** `deny` | `forbid` non è scavalcabile da un `#[allow]` locale (`E0453`) |
+| 3 | la crate del kernel è `#![no_std]` + `alloc` | è ciò che rende `E0433` un errore del **compilatore** e non un lint |
+| 4 | **`std::collections::HashMap` vietato** | vedi gotcha #12 |
 
 ## Non rilitigabile
 
@@ -46,6 +58,7 @@ nuovo che lo superi** (`Superseded by`), non una conversazione. Le otto decision
 | Il **contesto è una proiezione**, non lo stato (ADR-0008) | le run lunghe tornano a perdere informazione in modo irreversibile |
 | **Nessun modello** nel percorso decisionale del kernel (ADR-0020) | un fallimento del kernel smette di essere sempre un difetto, e la DST diventa impossibile |
 | L'anello 4 **propone**, l'utente approva (ADR-0009) | il harness si auto-modifica in silenzio e diventa indebuggabile |
+| Il core è **Rust** (ADR-0026) | riaprirlo significa rifare SP-5 e SP-6, i cui esiti sono misurati e registrati con seed e versioni. Il criterio che ha deciso è lo **spareggio #1**, e discende da V29 e ADR-0021: **rimettere in discussione il linguaggio significa rimettere in discussione la DST**, non il linguaggio |
 
 ## Le tre proprietà che non si aggiungono dopo
 
@@ -77,6 +90,10 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 9 | **Go non ha test di compilazione fallita di serie** | un driver che compila un file *fuori* dal modulo fallisce per il motivo sbagliato: falso positivo. Va tenuto dentro il modulo, dietro un build tag |
 | 10 | **xorshift resta bloccato su zero** | senza guardia sullo stato iniziale, certi seed producono una traccia vuota e lo spike sembra passare |
 | 11 | **Il contesto degrada _prima_ che la finestra si riempia** (context rot) | compattare all'overflow significa lavorare degradati per gran parte di una run lunga. Si tiene un **budget target**, non una soglia |
+| 12 | **`std::collections::HashMap` viola V29** | `RandomState` è seminato casualmente **per processo**: l'ordine di iterazione non è riproducibile fra esecuzioni. Non compare in nessun elenco di «chiamate OS» e si manifesta come traccia divergente e inspiegabile. Usare `BTreeMap`, o un hasher fissato. *(Vale anche altrove: in Go la randomizzazione delle `map` è deliberata — misurate 8 sequenze distinte su 200 iterazioni della stessa map, e lì non c'è alternativa ordinata nella libreria standard.)* |
+| 13 | **Un lint non è il compilatore** | `clippy` ferma la violazione ma `cargo build` no, e un `#[allow]` per riga la annulla. Solo `forbid` e `no_std` producono un divieto non scavalcabile. **Misurato**: la regola clippy ha bloccato un uso *legittimo* di `Instant::now()` in un test, e ha richiesto un `allow` — cioè ha dimostrato di essere aggirabile mentre faceva il proprio lavoro |
+| 14 | **Un test negativo va provato _in negativo_** | il piano degli spike conteneva **due sonde di non-vacuità sbagliate su tre**: quella di TypeScript modificava il tipo sbagliato e il controllo passava comunque, quindi non provava nulla. Un controllo che non si è visto fallire **non è un controllo**. Vale per ogni test di compilazione fallita, per ogni regola di importazione, per ogni `grep` di conformità |
+| 15 | **Un'evidenza scritta prima della misura è un'ipotesi, non un risultato** | il piano dettava il testo delle evidenze da riportare. Tre di quelle affermazioni sono risultate **false** alla misura — inclusa una che nascondeva un buco reale nel confine dei tipi. Si esegue, si misura, si registra ciò che si è visto; dove diverge, si registra la divergenza |
 
 ## Il metodo di lavoro
 
@@ -101,6 +118,7 @@ diventassero codice.
 | ❌ ri-derivare l'architettura | è in 25 ADR, ciascuno con alternative scartate e motivo |
 | ❌ riscrivere `tracciabilita.md` da zero | 170 funzionalità già mappate: si **aggiorna**, non si rigenera |
 | ❌ ri-cercare lo stato dell'arte già tracciato | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
+| ❌ rifare gli spike SP-5 e SP-6 | esiti, seed, versioni e comandi sono in [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md). I prototipi esclusi sono recuperabili dalla storia git, lo SHA è lì |
 | ❌ progettare una capacità L2 | prima il kernel deve esistere (ADR-0001) |
 | ⚠️ fidarsi delle fonti senza data | l'ecosistema si muove a cadenza mensile; `riferimenti.md` riporta la data di consultazione |
 
@@ -111,10 +129,11 @@ per chiudersi.
 
 | Domanda | Si chiude con | Blocca? |
 |---|---|---|
-| Linguaggio del core | SP-5, SP-6 → ADR-0026 | ⛔ **sì, tutto** |
-| Stack della GUI | ADR-0027, in coppia col core | il sotto-progetto 2 |
-| Ecosistema dei worker ML | ADR-0028 | no, ma è deciso per inerzia finché non si scrive |
-| Motore di persistenza | ADR successivo; requisiti già fissati in §10.6 | l'implementazione |
+| ~~Linguaggio del core~~ | ✅ **ADR-0026: Rust** | — |
+| ~~Stack della GUI~~ | ✅ **ADR-0027** | — |
+| ~~Ecosistema dei worker ML~~ | ✅ **ADR-0028: Python** | — |
+| Motore di persistenza | ADR successivo; requisiti in §10.6, candidati Rust già verificati | l'implementazione |
+| CPU della GUI con rendering reale (P3) | rimisura nel sotto-progetto 2 | no: il margine misurato è 21,4 % su 25 %, **stretto** |
 | Curva qualità/VRAM di TRELLIS2 | SP-1 | no: tara i profili di risorsa |
 | Voce < 600 ms sotto carico | SP-2 | no |
 | Budget della proiezione per modello | SP-3 | no: vale un default conservativo, dichiarato |

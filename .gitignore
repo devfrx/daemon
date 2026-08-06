@@ -16,6 +16,8 @@ Desktop.ini
 # Artefatti di build degli spike — le prove si conservano, i binari no
 /spikes/rust/target/
 /spikes/rust/Cargo.lock
+/spikes/gui-ipc/target/
+/spikes/gui-ipc/Cargo.lock
 /spikes/ts/node_modules/
 /spikes/ts/dist/
 /spikes/**/wip/

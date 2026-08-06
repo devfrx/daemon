@@ -40,6 +40,35 @@ la terza è un criterio mancante, approvato dal proprietario del progetto.
 | E1 | Task 5 · Step 7 | `t.Logf` conteneva un a capo **letterale** dentro una stringa Go. Sostituito con `\n` | Go rifiuta con `string literal not terminated`: il driver che deve provare T1 non compilava lui stesso, producendo un fallimento per il motivo sbagliato — lo stesso falso positivo del gotcha #9 |
 | E2 | Task 3 · Step 3 | L'esito atteso non è `E0432` ma l'assenza di target | senza `src/lib.rs` cargo fallisce prima di risolvere gli import. Rosso comunque, ma va detto il motivo giusto |
 | E3 | Task 1, 4, 6, 8 · nuovo criterio **C6** | SP-5 acquisisce un sesto criterio | vedi sotto |
+| E4 | Task 1, 3–8 · nuovi **C7** e **T6** | il protocollo copriva 2,5 criteri della spec §9.4 su 5 | vedi sotto |
+
+### E4 — I criteri mancanti
+
+Verifica del protocollo **contro la spec**, non a occhio. La [§9.4](../specs/2026-08-06-kernel-design.md)
+fissa cinque criteri per l'ADR sul linguaggio. Il protocollo iniziale ne misurava due
+e mezzo, e relegava gli altri agli spareggi del Task 9 — cioè li affidava
+all'opinione.
+
+| Criterio §9.4 | Prima | Ora |
+|---|---|---|
+| 1 · tempo, casualità, **I/O**, scheduling | C1–C6 coprivano tre elementi su quattro: **l'I/O mancava** | **C7** |
+| 2 · confine dei dati non fidati | T1–T5 ✅ | invariato |
+| 3 · statica: nessuna chiamata OS nel kernel (I3) | ⛔ nessun criterio, solo spareggio #3 | **T6** |
+| 4 · statica: nessun modello nel percorso decisionale (V28) | ⛔ idem | **T6**, stessa forma |
+| 5 · daemon a vita lunga, concorrenza reale | C6 copriva la concorrenza | C6 + osservazione **O2** |
+
+Perché l'I/O non era un dettaglio: la tecnica di verifica di Q5 in ADR-0021 è la
+**crash-injection ai confini di persistenza**, e il giornale write-ahead di ADR-0007 è
+il confine principale. Senza C7 il rischio RK-3 resta non misurato.
+
+Perché T6 è **una** riga e non due: I3 e V28 chiedono la stessa capacità — vietare che
+un modulo ne importi un altro, verificabile su tutto il progetto. Sdoppiarli sarebbe
+burocrazia, non rigore.
+
+Aggiunti anche: la **regola di decisione di T4** (era l'unico criterio senza soglia,
+ed è quello che decide contro i candidati più deboli), le osservazioni **O1** (esiste
+un motore di persistenza conforme a §10.6 nell'ecosistema?) e **O2**, e la clausola di
+**congelamento** del protocollo. Tutto in [`spikes/PROTOCOLLO.md`](../../../spikes/PROTOCOLLO.md).
 
 ### E3 — Perché serve C6
 
@@ -443,7 +472,23 @@ Aggiungi in `spikes/RISULTATI.md`, colonna Rust, riga T4, l'evidenza:
 «aggirabile solo esponendo un costruttore alternativo o con `unsafe` di
 transmutazione; entrambi cercabili con una ricerca testuale e assenti per default».
 
-- [ ] **Step 10: Commit**
+- [ ] **Step 10: T6 — regola di importazione vietata, provata in negativo** *(errata E4)*
+
+I3 (nessuna chiamata OS nel kernel) e V28 (nessun modello nel percorso decisionale)
+chiedono la stessa capacità: **vietare che un modulo ne importi un altro**, e
+verificarlo su tutto il progetto.
+
+1. Separa in `spikes/rust` due moduli: `kernel` — che non deve toccare l'OS — e
+   `platform`, l'unico che può.
+2. Introduci una **violazione deliberata**: `kernel` chiama direttamente l'OS.
+3. Esegui il comando di controllo → **deve fallire**.
+4. Rimuovi la violazione → **deve passare**.
+
+Registra in `RISULTATI.md` riga T6: il comando, gli esiti in **entrambe** le direzioni,
+e se il controllo è nativo della toolchain o richiede uno strumento esterno.
+**Un controllo che passa sempre non prova nulla.**
+
+- [ ] **Step 11: Commit**
 
 ```bash
 git add spikes/rust spikes/RISULTATI.md
@@ -678,7 +723,25 @@ Expected: **100 esecuzioni, stesso seed, 100 tracce byte-identiche.**
 Verifica le API sulla versione installata prima di scrivere. In `RISULTATI.md`, riga
 C6: esito, seed, numero di esecuzioni, e **quale primitiva** ha fornito il controllo.
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 9: C7 — I/O durevole iniettabile, crash riproducibile** *(errata E4)*
+
+V29 elenca **quattro** cose iniettabili; C1–C6 ne coprono tre. Questa è la quarta, ed
+è quella su cui poggia la verifica di Q5.
+
+1. Aggiungi allo spike un «giornale» minimo dietro un'interfaccia: `intento(passo)` e
+   `esito(passo)`, nell'ordine write-ahead di ADR-0007.
+2. Il `World` scrive **attraverso quell'interfaccia**, mai direttamente sul filesystem.
+3. Un doppio la implementa in memoria e **fallisce nel punto scelto dal seed**.
+4. Verifica: stesso seed → stessa traccia, crash incluso; e dopo il crash esiste un
+   passo **con intento e senza esito** — cioè `InDubbio` rilevabile.
+
+Run: `cd spikes/rust && cargo test --test c7 -- --nocapture`
+Expected: due esecuzioni con lo stesso seed danno tracce identiche, crash incluso; il
+passo in dubbio è individuabile senza ambiguità.
+
+Verifica anche l'assenza di I/O diretto nel codice sotto test, come per C5.
+
+- [ ] **Step 10: Commit**
 
 ```bash
 git add spikes/rust spikes/RISULTATI.md
@@ -879,7 +942,19 @@ Annota in `RISULTATI.md`, colonna Go:
   perché Go non offre test di compilazione fallita di serie. È un `parziale` sul
   supporto degli strumenti, non sulla proprietà.
 
-- [ ] **Step 10: Commit**
+- [ ] **Step 10: T6 — regola di importazione vietata, provata in negativo** *(errata E4)*
+
+Stessa procedura del Task 3 · Step 10, sui package Go: `kernel` non deve poter
+importare né l'OS né il gateway; `platform` è l'unico che può.
+
+Introduci la violazione, il comando **deve fallire**; rimuovila, **deve passare**.
+Registra il comando e gli esiti in entrambe le direzioni.
+
+Nota da verificare in esecuzione: Go espone il grafo delle importazioni con `go list`,
+ma la **regola di divieto** è uno strumento a parte. Registra se serve un lint esterno
+o se basta la toolchain — è esattamente la differenza fra `passa` e `parziale`.
+
+- [ ] **Step 11: Commit**
 
 ```bash
 git add spikes/go spikes/RISULTATI.md
@@ -1153,7 +1228,21 @@ canali e non copre i lock. Se divergono entrambe, C6 è `non passa`.
 
 In `RISULTATI.md` registra il **comportamento osservato**, non quello atteso.
 
-- [ ] **Step 10: Commit**
+- [ ] **Step 10: C7 — I/O durevole iniettabile, crash riproducibile** *(errata E4)*
+
+Stessa procedura del Task 4 · Step 9, in Go: giornale minimo dietro un'interfaccia,
+`Intento`/`Esito` nell'ordine write-ahead, doppio in memoria che fallisce nel punto
+scelto dal seed.
+
+Run: `cd spikes/go && go test ./sched/ -run TestC7 -count=1 -v`
+Expected: stesso seed → stessa traccia, crash incluso; il passo `InDubbio` è
+individuabile.
+
+Attenzione specifica a Go: `go doc testing/synctest` dice che **l'I/O non è durably
+blocking**. Registra se il doppio in memoria basta a mantenere il determinismo, o se
+l'I/O vero lo romperebbe — è la stessa domanda di C6, sull'altra dimensione di V29.
+
+- [ ] **Step 11: Commit**
 
 ```bash
 git add spikes/go spikes/RISULTATI.md
@@ -1318,7 +1407,20 @@ In `spikes/RISULTATI.md`, colonna TypeScript:
   provenienza sopravvive alla compilazione. Con V19 questo è accettabile, perché la
   garanzia richiesta è statica; ma non c'è rete di sicurezza a runtime.»
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 7: T6 — regola di importazione vietata, provata in negativo** *(errata E4)*
+
+Stessa procedura del Task 3 · Step 10, su TypeScript: `src/kernel/` non deve poter
+importare né moduli Node che toccano l'OS (`node:fs`, `node:os`, `node:child_process`)
+né il gateway; `src/platform/` è l'unico che può.
+
+Introduci la violazione, il comando **deve fallire**; rimuovila, **deve passare**.
+
+Nota da verificare in esecuzione: in TypeScript il divieto non è del compilatore ma di
+uno strumento configurabile e disattivabile per riga. Se è così, T6 è `parziale`, e va
+registrato **con quale direttiva** lo si disattiva — è la stessa debolezza di T4, sullo
+stesso asse.
+
+- [ ] **Step 8: Commit**
 
 ```bash
 git add spikes/ts spikes/RISULTATI.md
@@ -1517,7 +1619,17 @@ controllo esiste **solo finché il core resta a thread singolo sotto il proprio
 esecutore** — ipotesi da verificare contro ADR-0004, che chiede concorrenza reale.
 `worker_threads` non è ordinabile dall'applicazione.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 8: C7 — I/O durevole iniettabile, crash riproducibile** *(errata E4)*
+
+Stessa procedura del Task 4 · Step 9, in TypeScript: giornale minimo dietro
+un'interfaccia, `intento`/`esito` nell'ordine write-ahead, doppio in memoria che
+fallisce nel punto scelto dal seed.
+
+Run: `cd spikes/ts && npm test`
+Expected: stesso seed → stessa traccia, crash incluso; il passo in dubbio è
+individuabile.
+
+- [ ] **Step 9: Commit**
 
 ```bash
 git add spikes/ts spikes/RISULTATI.md
@@ -1571,7 +1683,7 @@ spareggio è dichiarato in quest'ordine:
 |---|---|---|
 | 1 | il controllo deterministico è **posseduto** (runtime sostituibile) o soltanto **fornito** dai test? — **si applica solo ai candidati che non passano C6**, vedi errata E3 | V29, ADR-0021 |
 | 2 | quanto è **facile aggirare** il confine dei tipi (T4)? | V19, ADR-0014 |
-| 3 | quanto costa la verifica statica di I3 e V28? | ADR-0002, ADR-0020 |
+| 3 | quanto costa la verifica statica di I3 e V28? — **ora misurato da T6**, non più affidato al giudizio (errata E4) | ADR-0002, ADR-0020 |
 | 4 | adeguatezza a un daemon a vita lunga con concorrenza reale | ADR-0004 |
 
 La sezione `Consequences` deve elencare **almeno una conseguenza negativa accettata**:

@@ -61,6 +61,7 @@ sotto-progetto**, nello stesso passaggio.
 | [0024](adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md) | Checkpoint del filesystem ad ambiti dichiarati | Accepted |
 | [0025](adr/0025-confinamento-a-livelli.md) | Confinamento a livelli: il kernel richiede, la piattaforma implementa | Accepted |
 | [0026](adr/0026-linguaggio-del-core.md) | Linguaggio del core: Rust | Accepted |
+| [0028](adr/0028-ecosistema-dei-worker-ml.md) | Ecosistema dei worker ML: Python, ratificato | Accepted |
 
 ## Indice dei diagrammi
 

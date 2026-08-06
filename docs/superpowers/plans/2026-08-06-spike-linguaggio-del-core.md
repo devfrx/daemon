@@ -30,6 +30,55 @@ Copiati verbatim dalla spec. Ogni task li eredita.
   reale.
 - **Nessun risultato di spike è valido senza il seed o la versione registrata.**
 
+## Errata — 2026-08-06, prima dell'esecuzione
+
+Tre correzioni al piano, applicate **prima** di eseguirlo. Le prime due sono difetti;
+la terza è un criterio mancante, approvato dal proprietario del progetto.
+
+| # | Dove | Cosa cambia | Perché |
+|---|---|---|---|
+| E1 | Task 5 · Step 7 | `t.Logf` conteneva un a capo **letterale** dentro una stringa Go. Sostituito con `\n` | Go rifiuta con `string literal not terminated`: il driver che deve provare T1 non compilava lui stesso, producendo un fallimento per il motivo sbagliato — lo stesso falso positivo del gotcha #9 |
+| E2 | Task 3 · Step 3 | L'esito atteso non è `E0432` ma l'assenza di target | senza `src/lib.rs` cargo fallisce prima di risolvere gli import. Rosso comunque, ma va detto il motivo giusto |
+| E3 | Task 1, 4, 6, 8 · nuovo criterio **C6** | SP-5 acquisisce un sesto criterio | vedi sotto |
+
+### E3 — Perché serve C6
+
+Lo spareggio #1 del Task 9 premia il controllo deterministico **posseduto** (runtime
+sostituibile) rispetto a quello **fornito** dai test. Applicato così com'è, penalizza
+Go per una proprietà che potrebbe non contare, e la penalità non sarebbe misurata.
+
+La domanda che il piano non poneva:
+
+> ADR-0021 chiede che siano iniettabili tempo, casualità, I/O e scheduling **del
+> kernel**. Se il kernel guida le proprie attività con un esecutore proprio, quanto
+> conta che lo scheduler nativo del linguaggio sia di proprietà del runtime?
+
+Conta **solo se** il kernel usa concorrenza nativa sotto il proprio esecutore e le
+sue decisioni dipendono dall'interlacciamento. C6 lo misura invece di assumerlo.
+
+| # | Criterio | Come si verifica | Soglia |
+|---|---|---|---|
+| **C6** | Unità concorrenti **native** del linguaggio, in contesa su una risorsa condivisa, producono la stessa traccia a parità di seed | ≥3 unità concorrenti native (task async / goroutine / async), ordine di acquisizione registrato, **100 esecuzioni** con lo stesso seed | **100 tracce byte-identiche**, o è `non passa` |
+
+Regola di applicazione, fissata **prima** di guardare i risultati:
+
+| Esito di C6 | Effetto sullo spareggio #1 |
+|---|---|
+| `passa` | lo spareggio #1 **non si applica** a quel candidato: possiede il controllo, comunque lo ottenga |
+| `parziale` | si applica, e l'evidenza dice **in quali condizioni** il controllo si perde |
+| `non passa` | si applica in pieno, e ora con una misura invece che con un'osservazione generica |
+
+Il codice di C6 **non è pre-scritto qui**: le API di concorrenza vanno verificate
+sulla versione realmente installata al momento del task, non assunte. Qui si fissano
+il criterio e la soglia — che è ciò che il Task 1 esige.
+
+### Nota di metodo sulle evidenze pre-scritte
+
+I Task 4·7, 6·8, 7·6 e 8·6 dettano **il testo** delle evidenze da riportare in
+`RISULTATI.md`. Sono verdetti scritti prima della misura. Si eseguono comunque, ma
+in `RISULTATI.md` va ciò che si misura: dove diverge dal testo pre-scritto, si
+registra la divergenza invece di allinearsi.
+
 ## File Structure
 
 ```
@@ -102,6 +151,11 @@ come passato: la differenza è tutta lì.
 | C3 | Il tempo è **virtuale**: un'attesa di 5 secondi completa in millisecondi | tempo di parete del test < 1 s |
 | C4 | Un guasto iniettato in un punto scelto dal seed è **riproducibile a comando** | rieseguire con quel seed lo riproduce |
 | C5 | Nessuna lettura dell'orologio di sistema o del generatore casuale globale nel codice sotto test | verifica statica sul progetto |
+| C6 | Unità concorrenti **native** del linguaggio, in contesa, producono la stessa traccia a parità di seed | ≥3 unità native, ordine di acquisizione registrato, **100 esecuzioni** con lo stesso seed: tutte byte-identiche |
+
+C6 misura ciò che C1–C4 non toccano. Un esecutore scritto a mano si può scrivere in
+qualunque linguaggio: la domanda vera è se il **parallelismo nativo** resta ordinabile
+dal seed, perché è quello che il kernel userà (ADR-0004, concorrenza reale).
 
 ## SP-6 — Confine dei dati non fidati
 
@@ -149,6 +203,7 @@ Data di esecuzione: _(da compilare)_
 | C3 tempo virtuale | | | |
 | C4 guasto riproducibile | | | |
 | C5 nessun orologio/RNG globale | | | |
+| C6 concorrenza nativa ordinabile | | | |
 
 ## Versioni degli strumenti
 
@@ -282,7 +337,9 @@ fn il_prompt_si_costruisce_solo_da_istruzioni() {
 - [ ] **Step 3: Eseguire per verificare che fallisca**
 
 Run: `cd spikes/rust && cargo test`
-Expected: FAIL — `error[E0432]: unresolved import` / `can't find crate`
+Expected: FAIL. **Il motivo atteso è l'assenza del target** (`src/lib.rs` non esiste
+ancora), non `E0432`: cargo fallisce prima di risolvere gli import. Rosso comunque, ma
+registrare il motivo giusto — vedi errata E2 e gotcha #9.
 
 - [ ] **Step 4: Scrivere l'implementazione minima**
 
@@ -605,7 +662,23 @@ Aggiungi in `spikes/RISULTATI.md`, sotto SP-5 colonna Rust, la riga di evidenza:
 «esecutore deterministico scrivibile a mano in ~90 righe; esiste anche un runtime di
 ecosistema (madsim, versione registrata sopra) che sostituisce tokio».
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 8: C6 — la concorrenza nativa è ordinabile dal seed?** *(errata E3)*
+
+C1–C4 provano che un esecutore scritto a mano è deterministico. Si può scrivere
+ovunque. C6 chiede l'altra cosa: il **parallelismo nativo** del linguaggio resta
+ordinabile dal seed?
+
+Crea `spikes/rust/tests/c6.rs`: **≥3 unità concorrenti native** — `Future` guidati da
+un esecutore proprio che sceglie il prossimo task pronto con l'RNG del seed — in
+contesa su una risorsa condivisa. Registra l'ordine di acquisizione.
+
+Run: `cd spikes/rust && cargo test --test c6 -- --nocapture`
+Expected: **100 esecuzioni, stesso seed, 100 tracce byte-identiche.**
+
+Verifica le API sulla versione installata prima di scrivere. In `RISULTATI.md`, riga
+C6: esito, seed, numero di esecuzioni, e **quale primitiva** ha fornito il controllo.
+
+- [ ] **Step 9: Commit**
 
 ```bash
 git add spikes/rust spikes/RISULTATI.md
@@ -778,8 +851,7 @@ func TestT1IlNonFidatoNonCompila(t *testing.T) {
 	if err == nil {
 		t.Fatalf("T1 VIOLATO: la violazione ha compilato")
 	}
-	t.Logf("errore atteso del compilatore:
-%s", out)
+	t.Logf("errore atteso del compilatore:\n%s", out)
 }
 ```
 
@@ -1051,7 +1123,37 @@ proprietà del runtime e non è sostituibile dall'utente; il controllo determini
 **fornito** da `testing/synctest` (versione registrata sopra) e vale **solo dentro i
 test**. Differenza sostanziale rispetto a un runtime sostituibile.»
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 9: C6 — la concorrenza nativa è ordinabile dal seed?** *(errata E3)*
+
+**È il passo che decide se lo spareggio #1 si applica a Go.** Va eseguito per
+falsificare l'attesa, non per confermarla.
+
+La documentazione di `testing/synctest` è stata verificata su Go 1.26.5 prima di
+scrivere questo passo. Dice due cose che cambiano il test:
+
+| Fatto | Fonte |
+|---|---|
+| **durably blocking**: send/receive su canale *della bolla*, `select` su canali della bolla, `sync.Cond.Wait`, `WaitGroup.Wait`, `time.Sleep` | `go doc testing/synctest`, sezione *Blocking* |
+| **NON durably blocking**, testuale: `sync.Mutex`, `sync.RWMutex`, I/O di rete, chiamate di sistema | idem |
+| nessuna affermazione su un ordine totale deterministico dell'interlacciamento | idem: il contratto è la **quiescenza**, non l'ordine |
+
+Crea `spikes/go/sched/c6_test.go` con **due prove**, perché il contratto le distingue:
+
+| Prova | Contesa su | Perché |
+|---|---|---|
+| **a** | **canale** creato nella bolla | è il caso più favorevole: durably blocking |
+| **b** | **`sync.Mutex`** | esplicitamente fuori dal controllo di synctest — ed è la primitiva dell'arbitro GPU (ADR-0004, «un unico lock») |
+
+≥3 goroutine per prova, dentro `synctest.Test`, ordine di acquisizione registrato.
+
+Run: `cd spikes/go && go test ./sched/ -run TestC6 -count=1 -v`
+Expected: **da misurare, non da assumere.** Se (a) è deterministica e (b) no, C6 è
+`parziale`, con l'evidenza precisa: il determinismo copre la sincronizzazione per
+canali e non copre i lock. Se divergono entrambe, C6 è `non passa`.
+
+In `RISULTATI.md` registra il **comportamento osservato**, non quello atteso.
+
+- [ ] **Step 10: Commit**
 
 ```bash
 git add spikes/go spikes/RISULTATI.md
@@ -1398,7 +1500,24 @@ parallelismo reale. Il vero parallelismo richiede worker separati, il cui ordina
 **non è controllabile** dall'applicazione. La riproducibilità vale finché il core
 resta a thread singolo — ipotesi da verificare contro ADR-0004.»
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 7: C6 — la concorrenza nativa è ordinabile dal seed?** *(errata E3)*
+
+Crea `spikes/ts/test/c6.test.ts` con **due prove distinte**:
+
+| Prova | Cosa usa | Cosa dimostra |
+|---|---|---|
+| **a** | ≥3 funzioni `async` guidate da un esecutore proprio, che sceglie il prossimo task con l'RNG del seed | il controllo che il kernel avrebbe |
+| **b** | ≥3 funzioni `async` lasciate al ciclo di eventi, senza esecutore | cosa resta senza |
+
+Run: `cd spikes/ts && npm test`
+Expected: (a) 100 tracce identiche · (b) **da misurare.**
+
+In `RISULTATI.md`: se (a) passa e (b) no, C6 = `parziale`, con l'evidenza che il
+controllo esiste **solo finché il core resta a thread singolo sotto il proprio
+esecutore** — ipotesi da verificare contro ADR-0004, che chiede concorrenza reale.
+`worker_threads` non è ordinabile dall'applicazione.
+
+- [ ] **Step 8: Commit**
 
 ```bash
 git add spikes/ts spikes/RISULTATI.md
@@ -1450,7 +1569,7 @@ spareggio è dichiarato in quest'ordine:
 
 | # | Spareggio | Da |
 |---|---|---|
-| 1 | il controllo deterministico è **posseduto** (runtime sostituibile) o soltanto **fornito** dai test? | V29, ADR-0021 |
+| 1 | il controllo deterministico è **posseduto** (runtime sostituibile) o soltanto **fornito** dai test? — **si applica solo ai candidati che non passano C6**, vedi errata E3 | V29, ADR-0021 |
 | 2 | quanto è **facile aggirare** il confine dei tipi (T4)? | V19, ADR-0014 |
 | 3 | quanto costa la verifica statica di I3 e V28? | ADR-0002, ADR-0020 |
 | 4 | adeguatezza a un daemon a vita lunga con concorrenza reale | ADR-0004 |

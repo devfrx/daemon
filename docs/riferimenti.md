@@ -74,6 +74,25 @@ misurano configurazioni diverse.**
 | [Microsoft Learn — cifratura delle chiavi a riposo](https://learn.microsoft.com/en-us/aspnet/core/security/data-protection/implementation/key-encryption-at-rest) · [KomuraSoft — segreti in app Windows con DPAPI](https://comcomponent.com/en/blog/2026/03/16/000-windows-app-secret-storage-best-practices-dpapi/) | le facility dell'OS sono il meccanismo appropriato per dati **mai letti fuori dalla macchina**: cifrano con le credenziali di accesso e non espongono mai la chiave all'applicazione. Distinzione fra ciò che va protetto (token, credenziali) e ciò che resta in chiaro (URL, nomi, flag) | [ADR-0023](adr/0023-cifratura-a-riposo-e-gestore-dei-segreti.md) |
 | [HackTricks — estrazione di segreti DPAPI](https://hacktricks.wiki/en/windows-hardening/windows-local-privilege-escalation/dpapi-extracting-passwords.html) | i segreti protetti dalle facility dell'OS sono estraibili da chi controlla l'account dell'utente | fonda l'obbligo di **dichiarare in interfaccia** che la protezione equivale a quella dell'account OS |
 
+## Linguaggio del core — SP-5 e SP-6 (ADR-0026)
+
+Fonti consultate il **2026-08-06**, sugli strumenti realmente installati su questa
+macchina. Sono verifiche dirette, non articoli: il comando e la sua versione sono la
+fonte, e sono riproducibili.
+
+| Verifica | Comando | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| runtime deterministici Rust | `cargo search madsim` · `cargo search turmoil` | `madsim` 0.2.34 · `madsim-tokio` 0.2.30 (sostituto di tokio) · `turmoil` 0.7.2 | [`spikes/CANDIDATI.md`](../spikes/CANDIDATI.md), SP-5 su Rust |
+| semantica di `testing/synctest` | `go doc testing/synctest` su go1.26.5 | orologio finto per bolla; il tempo avanza solo a **quiescenza** (ogni goroutine *durably blocked*); **`sync.Mutex`, `sync.RWMutex`, I/O e chiamate di sistema sono esclusi testualmente**; nessuna promessa di ordine totale deterministico | [`spikes/CANDIDATI.md`](../spikes/CANDIDATI.md) · criterio **C6** del protocollo |
+
+**Correzione tracciata.** La formulazione diffusa «`synctest` dà scheduling
+deterministico» è più forte di quanto la documentazione dichiari: il contratto è la
+quiescenza, non l'ordine. La differenza non è accademica — l'arbitro GPU di
+[ADR-0004](adr/0004-topologia-di-processo.md) è descritto come «un unico lock», cioè
+la primitiva che `synctest` esclude. Il criterio C6 di
+[`spikes/PROTOCOLLO.md`](../spikes/PROTOCOLLO.md) esiste per misurarlo invece di
+assumerlo, in entrambe le direzioni.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

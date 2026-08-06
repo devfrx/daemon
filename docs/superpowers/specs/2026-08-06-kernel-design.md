@@ -16,8 +16,8 @@
 | 4 | Persistenza, run durevoli e idempotenza | Approvata |
 | 5 | Harness: guide, sensori e anelli di controllo | Approvata |
 | 6 | Permessi e confine dei dati non fidati | Approvata |
-| 7 | Errori, degrado e osservabilità | **Proposta — in attesa di approvazione** |
-| 8 | Test e criteri di accettazione | Da presentare |
+| 7 | Errori, degrado e osservabilità | Approvata |
+| 8 | Test e criteri di accettazione | **Proposta — in attesa di approvazione** |
 | 9 | Rischi e spike di validazione | Da presentare |
 
 ---
@@ -501,5 +501,73 @@ reale — candidato naturale per una metrica dell'anello 4.
 
 ---
 
-*Sezioni 8–9: in lavorazione. Ogni sezione approvata viene aggiunta qui e la tabella
-di avanzamento aggiornata nello stesso passaggio.*
+## 8. Test e criteri di accettazione
+
+> **Stato: proposta, in attesa di approvazione.** ADR-0020 e 0021 sono in `Proposed`.
+
+**Decisioni:** [ADR-0020](../../adr/0020-nessun-modello-nel-percorso-decisionale-del-kernel.md) ·
+[ADR-0021](../../adr/0021-simulazione-deterministica-e-iniettabilita.md).
+
+**Struttura:** [Strategia di test](../../design/08-strategia-di-test.md), con la mappa
+completa Q1–Q20 → metodo di verifica.
+
+### 8.1 In sintesi
+
+| Scelta | Sostanza |
+|---|---|
+| Il kernel è **deterministico per costruzione** | nessun modello nel suo percorso decisionale: un fallimento è **sempre** un difetto |
+| Quattro tecniche | analisi statica · test a esempi · **simulazione deterministica** · test di contratto |
+| DST per crash e concorrenza | seed → esecuzione riproducibile; crash iniettati a ogni confine di persistenza |
+| **Iniettabilità di costruzione** | tempo, casualità, I/O e scheduling sostituibili dalla prima riga |
+| Ogni Q ha un metodo dichiarato | un requisito senza verifica è un'intenzione |
+| Valutazione probabilistica **fuori** dal kernel | giudice, dataset curati e trace-based eval appartengono a L2 |
+
+### 8.2 La decisione che vincola l'implementazione
+
+**La simulazione deterministica non è retrofittabile.** Richiede che tempo, casualità,
+I/O e ordinamento delle attività siano sostituibili dall'esterno: se il codice legge
+l'orologio di sistema, un'esecuzione non è riproducibile e la tecnica non si applica.
+
+È il terzo caso in cui una proprietà si ottiene **solo costruendola dall'inizio**,
+dopo I6 (confine dei dati non fidati) e il confine OS di ADR-0002. Il costo oggi è
+un'astrazione; il costo domani è una riscrittura.
+
+Conseguenza diretta sull'ADR successivo: la scelta del linguaggio del core dovrà
+valutare esplicitamente la **sostituibilità dello scheduling**. È il primo punto in
+cui una decisione di test vincola una decisione di architettura, e va detto invece che
+scoperto.
+
+### 8.3 Perché il kernel può permettersi il determinismo
+
+Verifica componente per componente in
+[ADR-0020](../../adr/0020-nessun-modello-nel-percorso-decisionale-del-kernel.md):
+nessuna parte del kernel usa un modello per decidere. Il gateway instrada con regole,
+il registro dei sensori tratta i verdetti come **dati opachi**, l'anello 4 rileva le
+ricorrenze in modo deterministico anche quando la proposta che ne deriva è
+inferenziale.
+
+Non è un caso ma una proprietà emersa dal design, e questa sezione la rende
+vincolante prima che venga erosa per comodità.
+
+### 8.4 Vincoli che la §8 impone all'implementazione
+
+| # | Vincolo | Colpisce |
+|---|---|---|
+| V28 | Nessun modello nel percorso decisionale del kernel; verificabile staticamente | tutto il kernel |
+| V29 | Tempo, casualità, I/O e scheduling sono iniettabili — requisito di costruzione | tutto il kernel, ADR sul linguaggio |
+| V30 | Ogni requisito Q ha un metodo di verifica dichiarato **prima** dell'implementazione | ogni sezione |
+| V31 | Ogni difetto trovato in simulazione conserva il proprio seed come caso di regressione | §5, anello 4 |
+
+### 8.5 Il costo che questa sezione introduce
+
+Costruire il simulatore è **lavoro reale prima che il kernel faccia qualcosa di
+visibile**, e V29 è il vincolo più invasivo dell'intera spec: tocca ogni riga che
+legge l'orologio o esegue I/O.
+
+Il contrappeso: senza, i requisiti Q2, Q4 e Q5 — cioè le tre promesse su cui poggia
+l'intera architettura a processi — restano dichiarazioni non verificate.
+
+---
+
+*Sezione 9: in lavorazione. Ogni sezione approvata viene aggiunta qui e la tabella di
+avanzamento aggiornata nello stesso passaggio.*

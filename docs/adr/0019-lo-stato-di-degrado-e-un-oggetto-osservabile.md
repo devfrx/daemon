@@ -1,6 +1,6 @@
 # ADR-0019: Lo stato di degrado è un oggetto osservabile, non una collezione di errori
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

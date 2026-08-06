@@ -1,6 +1,6 @@
 # ADR-0018: Ritenzione a livelli — la struttura sopravvive, i payload si potano
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

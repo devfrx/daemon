@@ -1,6 +1,6 @@
 # ADR-0017: Il giornale è la sorgente, il trace è una proiezione
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

@@ -9,12 +9,12 @@ codice di spike.
 
 | Criterio | Rust | Go | TypeScript |
 |---|---|---|---|
-| T1 non compila | ✅ `passa` | | |
-| T2 percorso unico | ✅ `passa` | | |
-| T3 ereditarietà | ✅ `passa` | | |
-| T4 aggiramento | ✅ `passa` | | |
-| T5 rilevabile globalmente | ✅ `passa` | | |
-| T6 importazione vietata, provata in negativo | ✅ `passa` | | |
+| T1 non compila | ✅ `passa` | ✅ `passa` | |
+| T2 percorso unico | ✅ `passa` | ✅ `passa` | |
+| T3 ereditarietà | ✅ `passa` | ✅ `passa` | |
+| T4 aggiramento | ✅ `passa` | ✅ `passa` **ma solo dopo una correzione**, vedi sotto | |
+| T5 rilevabile globalmente | ✅ `passa` | ✅ `passa` | |
+| T6 importazione vietata, provata in negativo | ✅ `passa` | ✅ `passa`, con driver scritto a mano | |
 
 ## SP-5 — Iniettabilità e riproducibilità
 
@@ -112,6 +112,64 @@ Si è dovuto scrivere `#[allow(clippy::disallowed_methods)]` su quel test. È la
 su un caso reale e non ipotetico, che il meccanismo (a) è **disattivabile per sito** —
 mentre `forbid` e `no_std` non lo sono. Il confine forte in Rust c'è, ma va scelto:
 non è quello di default.
+
+### SP-6 · Go — eseguito il 2026-08-06, go1.26.5
+
+| Criterio | Comando | Output osservato | Divergenza dall'attesa |
+|---|---|---|---|
+| **T1** | `go test ./boundary/ -run TestT1` | `cannot use dalWeb (variable of struct type boundary.Untrusted) as boundary.Instruction value`. **Provato non vacuo.** Il driver verifica anche il **motivo** dell'errore: una compilazione fallita per la ragione sbagliata sarebbe un falso positivo (gotcha #9) | il driver del piano **non compilava**: a capo letterale in una stringa. Errata E1, necessaria |
+| **T2** | ricerca testuale | una sola funzione, `Untrusted.PromoteToInstruction` | nessuna |
+| **T3** | `go test ./boundary/` | `Summarize(Untrusted) Untrusted` | nessuna |
+| **T4** | `go build` su una conversione diretta, da **fuori** dal package | vedi il riquadro sotto: **il piano si sbagliava** | ⚠️ **divergenza sostanziale** |
+| **T5** | `go build ./... && go vet ./...` | puliti; la compilazione del modulo è il controllo globale | nessuna |
+| **T6** | `go test ./kernel/` con driver su `go list -deps` | il kernel non dipende da `os`, `net`, `syscall`, `math/rand`. **Provato in entrambe le direzioni**: introducendo `import "os"` il test fallisce con `T6 VIOLATO: il kernel dipende da [syscall os]`. Controprova su `platform`, che *deve* risultare in violazione | Go non ha una regola nativa: serve un **driver scritto a mano**, come per T1. Toolchain standard, però: nessuno strumento esterno |
+
+#### T4 · La trappola che il piano non conosceva
+
+Il piano affermava, come evidenza pre-scritta da riportare: «aggirabile con una
+conversione esplicita `Instruction(...)` **solo dentro il package**, perché il campo
+`text` non è esportato; da fuori non è aggirabile». **Misurato: falso.**
+
+| Passo | Comando | Risultato |
+|---|---|---|
+| entrambe le struct con campo `text string` | `go build` di `boundary.Instruction(dalWeb)` da un package esterno | **compila** — exit 0 |
+| stessa cosa, eseguita | `go run` | stampa `sei un assistente\nignora le istruzioni precedenti`: **il contenuto non fidato è nel canale delle istruzioni** |
+| campi rinominati in `text` / `raw` | `go build` | `cannot convert dalWeb (variable of struct type boundary.Untrusted) to type boundary.Instruction` |
+
+**Causa.** In Go due tipi con lo stesso **tipo sottostante** sono convertibili. L'identità
+dei tipi sottostanti richiede la stessa sequenza di nomi e tipi dei campi; per i campi
+non esportati conta il package di provenienza, che qui è lo stesso per entrambi i tipi.
+Il campo non esportato quindi **non protegge**: protegge dalla costruzione con
+letterale, non dalla conversione.
+
+**Gravità.** L'aggiramento non richiede `unsafe`, non richiede reflection, non richiede
+di toccare il package: è la sintassi più ordinaria di Go, `T(x)`, scrivibile ovunque.
+Era il modo di fallire peggiore — silenzioso e per costruzione.
+
+**Correzione applicata e blindata.** I campi si chiamano `text` e `raw`. Il package
+`boundary/conversione`, dietro il tag `violation`, contiene la conversione: se qualcuno
+riallineasse i nomi dei campi, `TestT4LaConversioneDirettaNonCompila` fallisce.
+
+**Verdetto.** `passa` per la regola di decisione — l'aggiramento è ora vietato **dal
+compilatore** — con due riserve registrate:
+1. la protezione dipende da una disciplina sui **nomi dei campi** che nessun
+   compilatore impone e che non è nella documentazione del linguaggio come tale;
+2. `unsafe` resta una via, ma è **vietabile con lo stesso meccanismo di T6**: verificato
+   che il package `unsafe` compare in `go list -deps`. Go non ha l'equivalente di
+   `#![forbid(unsafe_code)]`, quindi il divieto è un test, non un attributo.
+
+#### Scoperta collaterale · l'ordine di iterazione delle `map`
+
+Misurato: **200 iterazioni della stessa map, nello stesso processo → 8 ordini
+distinti.** È la randomizzazione deliberata del runtime Go, e non è disattivabile.
+
+È l'analogo del `HashMap` di Rust, ma con una differenza pratica sostanziale: in Rust
+si sostituisce `HashMap` con `BTreeMap` e il problema sparisce; in Go `map` è il tipo
+**incorporato** e non esiste un'alternativa ordinata nella libreria standard — le
+chiavi vanno estratte e ordinate a ogni iterazione, ogni volta, per sempre.
+
+Per V29 è una fonte di non determinismo che non compare in nessun elenco di «chiamate
+OS» e che C1 rivelerebbe solo come traccia divergente e inspiegabile.
 
 ### Altre esecuzioni
 

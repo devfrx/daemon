@@ -60,6 +60,7 @@ sotto-progetto**, nello stesso passaggio.
 | [0023](adr/0023-cifratura-a-riposo-e-gestore-dei-segreti.md) | Cifratura con chiavi dell'OS, gestore dei segreti unico | Accepted |
 | [0024](adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md) | Checkpoint del filesystem ad ambiti dichiarati | Accepted |
 | [0025](adr/0025-confinamento-a-livelli.md) | Confinamento a livelli: il kernel richiede, la piattaforma implementa | Accepted |
+| [0026](adr/0026-linguaggio-del-core.md) | Linguaggio del core: Rust | Accepted |
 
 ## Indice dei diagrammi
 

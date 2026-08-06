@@ -75,9 +75,12 @@ da soli non sono un confine contro codice eseguito.
 
 ## Prossimo passo
 
-**Spike SP-5 (iniettabilità) e SP-6 (confine dei tipi).** Entrambi possono escludere un
-linguaggio, quindi precedono l'ADR sul linguaggio del core, che precede ogni riga di
-codice. Protocolli e soglie: spec §9.
+**Eseguire il piano** [`docs/superpowers/plans/2026-08-06-spike-linguaggio-del-core.md`](docs/superpowers/plans/2026-08-06-spike-linguaggio-del-core.md).
+
+Copre SP-5 (iniettabilità) e SP-6 (confine dei tipi) su Rust, Go e TypeScript, e
+produce **ADR-0026**, la scelta del linguaggio del core. Entrambi gli spike possono
+escludere un candidato, quindi precedono l'ADR, che precede ogni riga di codice del
+kernel.
 
 La spec del kernel è completa (§0–§10, 25 ADR) e **non ha lacune aperte**: le cinque
 trovate dall'esercizio di tracciabilità sono state chiuse dalla §10.

@@ -77,6 +77,15 @@ Costo accettato in ADR-0001: arriva più tardi che in un'architettura con barice
 
 Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-design.md).
 
+## Piani di implementazione
+
+| Piano | Copre | Stato |
+|---|---|---|
+| [Spike bloccanti e linguaggio del core](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | SP-5, SP-6, ADR-0026 | ⏭️ **pronto, non eseguito** |
+
+Il piano del sotto-progetto 1 (implementazione del kernel) **non è scrivibile** finché
+ADR-0026 non nomina il linguaggio: percorsi di file e codice dipendono da quella scelta.
+
 ## Decisioni ancora da prendere
 
 | Decisione | Quando | Vincolata da |

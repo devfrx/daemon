@@ -12,9 +12,9 @@
 | 0 | Perimetro, vincoli e requisiti di qualità | Approvata |
 | 1 | Architettura di processo | Approvata |
 | 2 | Arbitro risorse GPU e policy VRAM | Approvata |
-| 3 | Gateway di inferenza | Da presentare |
+| 3 | Gateway di inferenza | **Proposta — in attesa di approvazione** |
 | 4 | Persistenza, run durevoli e idempotenza | Approvata |
-| 5 | Harness: guide, sensori e anelli di controllo | **Proposta — in attesa di approvazione** |
+| 5 | Harness: guide, sensori e anelli di controllo | Approvata |
 | 6 | Permessi e confine dei dati non fidati | Da presentare |
 | 7 | Errori, degrado e osservabilità | Da presentare |
 | 8 | Test e criteri di accettazione | Da presentare |
@@ -72,9 +72,12 @@ determinazione è già deciso.
 | Q10 | Esito di un passo che viola un sensore | rientra nell'anello con il feedback del sensore, senza intervento umano |
 | Q11 | Occupazione della proiezione | resta al **budget target**, non al limite della finestra |
 | Q12 | Difetto che si ripresenta per la seconda volta | il sistema propone una guida o un sensore, non una raccomandazione generica |
+| Q13 | Richiesta con vincolo sui dati e nessun endpoint conforme | **fallisce chiuso**: errore che nomina il vincolo, nessun ripiego |
+| Q14 | Ricostruire con cosa è stato eseguito un passo di sei mesi fa | il record di routing lo dice, indipendentemente dalla configurazione attuale |
 
 Q5–Q7 sono i requisiti delle **long-horizon tasks** (§4).
 Q10–Q12 sono i requisiti dell'**harness** (§5).
+Q13–Q14 sono i requisiti del **gateway** (§3).
 
 ### 0.6 Le tre discipline e dove vivono
 
@@ -164,6 +167,65 @@ esse; una violazione richiede un ADR, non una deroga.
 
 ---
 
+## 3. Gateway di inferenza
+
+> **Stato: proposta, in attesa di approvazione.** ADR-0011, 0012 e 0013 sono in
+> `Proposed`.
+
+**Decisioni:** [ADR-0011](../../adr/0011-routing-risolto-e-giornalato-per-richiesta.md) ·
+[ADR-0012](../../adr/0012-equivalenza-del-fallback-e-fallimento-chiuso.md) ·
+[ADR-0013](../../adr/0013-conformita-allo-schema-e-un-verdetto-di-sensore.md).
+
+**Struttura:** [Gateway di inferenza](../../design/05-gateway-inferenza.md).
+
+### 3.1 In sintesi
+
+| Scelta | Sostanza |
+|---|---|
+| Record di routing risolto | ogni richiesta giornala la decisione **risolta**, non un rimando alla configurazione |
+| Tutto è una run | ogni interazione con un modello è un passo; una chat è una run interattiva |
+| Contabilità gerarchica | messaggio/sessione/run/sub-agente sono aggregazioni della stessa gerarchia |
+| Equivalenza del fallback | definita dai **vincoli** della richiesta, non dalla capacità del modello |
+| Due classi di vincolo | dati → **fallisce chiuso** · qualità e costo → degrado dichiarato |
+| Rifiuto dell'arbitro GPU | causa di fallback di prima classe, non errore |
+| Ritentativo ≠ passo | resta dentro lo stesso passo: cambia il record, non la run |
+| Schema non conforme | **verdetto di sensore** (§5), non eccezione del gateway |
+| Stream interrotti | il costo si registra comunque |
+
+### 3.2 Perché "tutto è una run" non è sovra-ingegnerizzazione
+
+È la condizione perché i meccanismi della §4 siano **universali invece che specifici
+dell'agente**. Senza di essa servirebbe un secondo percorso per la chat: un'altra
+contabilità, un altro annullamento, un altro tracciamento. Il costo è due scritture
+durevoli su una latenza già dominata dalla chiamata al modello.
+
+### 3.3 Vincoli che la §3 impone alle sezioni successive
+
+| # | Vincolo | Colpisce |
+|---|---|---|
+| V15 | Ogni richiesta dichiara i propri vincoli, anche quando coincidono con i default | ogni capacità |
+| V16 | Il record di routing non contiene mai credenziali; nomi di provider e parametri sì | §6 |
+| V17 | Ritentativo e cambio di candidato restano dentro lo stesso passo | §4, capacità Agenti |
+| V18 | Un errore di vincolo non soddisfatto deve nominare **quale** vincolo | §7, GUI |
+
+### 3.4 Il costo che questa sezione introduce
+
+**Più richieste falliranno del tutto**, per scelta. Un vincolo sui dati che non trova
+endpoint conformi produce un errore invece di una risposta.
+
+È controintuitivo e sotto pressione la tentazione di "provare comunque" sarà forte:
+per questo la decisione è presa adesso e scritta, non lasciata al momento in cui
+qualcosa non funziona. Il contrappeso è V18 — se il sistema si rifiuta di rispondere,
+deve dire esattamente perché.
+
+### 3.5 Domanda aperta
+
+| ID | Domanda | Si chiude con |
+|---|---|---|
+| SP-4 | Quali provider supportano l'annullamento senza addebito? | verifica sul campo alla prima integrazione: determina l'ordine di preferenza per le richieste che si annullano spesso |
+
+---
+
 ## 4. Persistenza, run durevoli e idempotenza
 
 Presentata prima della §3 perché non ha dipendenze da essa, e perché è la sezione che
@@ -221,8 +283,6 @@ che rende il problema *osservabile* invece che silenzioso.
 ---
 
 ## 5. Harness: guide, sensori e anelli di controllo
-
-> **Stato: proposta, in attesa di approvazione.** ADR-0009 e 0010 sono in `Proposed`.
 
 **Decisioni:** [ADR-0009](../../adr/0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md) ·
 [ADR-0010](../../adr/0010-budget-della-proiezione-invece-di-soglia-di-riempimento.md).

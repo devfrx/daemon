@@ -1,6 +1,6 @@
 # ADR-0009: Guide, sensori e anelli di controllo sono meccanismi di kernel
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

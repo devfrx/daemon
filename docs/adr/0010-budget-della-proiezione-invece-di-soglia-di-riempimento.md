@@ -1,6 +1,6 @@
 # ADR-0010: La proiezione ha un budget di qualità, non una soglia di riempimento
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 

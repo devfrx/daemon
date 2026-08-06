@@ -30,9 +30,9 @@ flowchart LR
 |---|---|---|---|---|
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
-| **0c** | **ADR linguaggio del core** | — | ⏭️ **prossimo** | SP-5, SP-6 |
+| **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ⏭️ **prossimo** | SP-5, SP-6 |
 | 1 | Implementazione del kernel + simulatore DST | L0 + L1 | ⬜ | 0, 0b, 0c |
-| 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1 |
+| 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2 |
 | 4 | Agenti | L2 | ⬜ | 3 |
 | 5 | Coding | L2 | ⬜ | 4, 0b |
@@ -81,10 +81,13 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 
 | Piano | Copre | Stato |
 |---|---|---|
-| [Spike bloccanti e linguaggio del core](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | SP-5, SP-6, ADR-0026 | ⏭️ **pronto, non eseguito** |
+| [Spike bloccanti e stack](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | SP-5, SP-6, ADR-0026, ADR-0027, ADR-0028 | ⏭️ **pronto, non eseguito** |
 
 Il piano del sotto-progetto 1 (implementazione del kernel) **non è scrivibile** finché
 ADR-0026 non nomina il linguaggio: percorsi di file e codice dipendono da quella scelta.
+
+**Prerequisito** verificato il 2026-08-06: Rust 1.95 presente, Node 24.9 presente,
+**Go assente**. Senza Go i task 5 e 6 non partono.
 
 ## Decisioni ancora da prendere
 
@@ -92,7 +95,8 @@ ADR-0026 non nomina il linguaggio: percorsi di file e codice dipendono da quella
 |---|---|---|
 | Linguaggio del core | dopo SP-5/SP-6 | V29, V19, I3, V28, ADR-0004 |
 | Motore di persistenza | ADR dopo il linguaggio | requisiti fissati in §10.6 |
-| Linguaggio e tecnologia della GUI | sotto-progetto 2 | ADR-0004 (GUI sacrificabile) |
+| Stack della GUI | ADR-0027, **in coppia col core** | ADR-0004 (GUI sacrificabile), I4 |
+| Ecosistema dei worker ML | ADR-0028 | deciso per inerzia finché non è scritto |
 | Livello 3 di confinamento (microVM) | quando servirà eseguire codice di provenienza ignota | ADR-0025 |
 
 ## Regola di manutenzione

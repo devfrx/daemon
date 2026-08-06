@@ -1,6 +1,7 @@
 # Istruzioni per l'agente
 
-Leggi questo file per intero prima di toccare qualsiasi cosa.
+Leggi questo file per intero, poi [`docs/HANDOFF.md`](docs/HANDOFF.md), prima di
+toccare qualsiasi cosa.
 
 ## Cos'è questo progetto
 
@@ -25,12 +26,13 @@ decisioni architetturali. **Non iniziare a implementare**: il linguaggio del cor
 
 | # | File | Cosa ti dà |
 |---|---|---|
-| 1 | [`docs/roadmap.md`](docs/roadmap.md) | stato, ordine dei sotto-progetti, **prossimo passo** |
-| 2 | [`docs/README.md`](docs/README.md) | indice di ADR, diagrammi e spec |
-| 3 | [`docs/adr/`](docs/adr/) | il **perché** di ogni decisione — leggi ADR-0001 e ADR-0004 per primi |
-| 4 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§10 |
-| 5 | [`docs/tracciabilita.md`](docs/tracciabilita.md) | ogni funzionalità della mappa originale → dove vive |
-| 6 | [`docs/riferimenti.md`](docs/riferimenti.md) | provenienza di ciò che non abbiamo dedotto noi |
+| 1 | [`docs/HANDOFF.md`](docs/HANDOFF.md) | **parti da qui**: gotcha, non rilitigabile, metodo, cosa non rifare |
+| 2 | [`docs/roadmap.md`](docs/roadmap.md) | stato, ordine dei sotto-progetti, prossimo passo |
+| 3 | [`docs/README.md`](docs/README.md) | indice di ADR, diagrammi e spec |
+| 4 | [`docs/adr/`](docs/adr/) | il **perché** di ogni decisione — leggi ADR-0001 e ADR-0004 per primi |
+| 5 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§10 |
+| 6 | [`docs/tracciabilita.md`](docs/tracciabilita.md) | ogni funzionalità della mappa originale → dove vive |
+| 7 | [`docs/riferimenti.md`](docs/riferimenti.md) | provenienza di ciò che non abbiamo dedotto noi |
 
 ## Come si lavora qui
 
@@ -42,6 +44,7 @@ decisioni architetturali. **Non iniziare a implementare**: il linguaggio del cor
 | **Rendere verificabile** | un principio che non si può controllare è un'intenzione. Gli invarianti diventano test |
 | **Schema-first** | tabelle, diagrammi, elenchi numerati. Niente muri di testo |
 | **Stato dell'arte verificato** | se una nozione non è certa, si cerca **prima** di scrivere e si traccia la fonte in `riferimenti.md`. Mai inventare |
+| **Audit a ogni chiusura** | `bash scripts/check-docs.sh` — link, indici, numerazioni, V30, ADR pendenti |
 | **Dichiarare i costi** | ogni decisione elenca ciò che peggiora, non solo ciò che migliora |
 | **ADR append-only** | una decisione superata si marca `Superseded by`, non si cancella |
 
@@ -77,10 +80,20 @@ da soli non sono un confine contro codice eseguito.
 
 **Eseguire il piano** [`docs/superpowers/plans/2026-08-06-spike-linguaggio-del-core.md`](docs/superpowers/plans/2026-08-06-spike-linguaggio-del-core.md).
 
-Copre SP-5 (iniettabilità) e SP-6 (confine dei tipi) su Rust, Go e TypeScript, e
-produce **ADR-0026**, la scelta del linguaggio del core. Entrambi gli spike possono
-escludere un candidato, quindi precedono l'ADR, che precede ogni riga di codice del
-kernel.
+11 task, 75 step. Chiude **l'intero stack** con tre ADR:
+
+| ADR | Decide | Come |
+|---|---|---|
+| **0026** | linguaggio del core | spike SP-5 e SP-6 su Rust, Go, TypeScript |
+| **0027** | stack della GUI | valutato **in coppia** col core, non da solo |
+| **0028** | ecosistema dei worker ML | ratifica una scelta finora implicita |
+
+Entrambi gli spike possono escludere un candidato, quindi precedono ADR-0026, che
+precede ogni riga di codice del kernel.
+
+Prerequisiti verificati il 2026-08-06: Rust 1.95 presente, Node 24.9 presente,
+**Go assente** (`winget install --id GoLang.Go -e`) senza il quale i task 5 e 6 non
+partono.
 
 La spec del kernel è completa (§0–§10, 25 ADR) e **non ha lacune aperte**: le cinque
 trovate dall'esercizio di tracciabilità sono state chiuse dalla §10.
@@ -88,7 +101,9 @@ trovate dall'esercizio di tracciabilità sono state chiuse dalla §10.
 ## Manutenzione della documentazione
 
 Alla chiusura di ogni sotto-progetto si aggiornano **nello stesso passaggio**:
-`docs/roadmap.md`, `docs/tracciabilita.md`, lo stato degli spike, e questo file se
-cambia il prossimo passo.
+`docs/roadmap.md`, `docs/tracciabilita.md`, lo stato degli spike, `docs/HANDOFF.md` se
+emergono gotcha nuovi, e questo file se cambia il prossimo passo.
+
+Prima di ogni commit di documentazione: `bash scripts/check-docs.sh`.
 
 Un documento di stato disallineato è peggio di nessun documento: mente con autorevolezza.

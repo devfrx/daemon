@@ -6,12 +6,13 @@ agenti/coding, voce, generazione asset) su kernel comune.
 **Fase corrente: progettazione del kernel. Nessun codice scritto.**
 
 > Se stai riprendendo il progetto, parti da [`../CLAUDE.md`](../CLAUDE.md) e da
-> [`roadmap.md`](roadmap.md).
+> [`HANDOFF.md`](HANDOFF.md).
 
 ## Dove va cosa
 
 | Percorso | Contiene | Risponde alla domanda |
 |---|---|---|
+| [`HANDOFF.md`](HANDOFF.md) | Gotcha, non rilitigabile, metodo, cosa non rifare | *come riprendere* senza rifare |
 | [`roadmap.md`](roadmap.md) | Sotto-progetti, ordine, stato, spike aperti | *a che punto siamo* e *cosa viene dopo* |
 | [`tracciabilita.md`](tracciabilita.md) | Mappa funzionale → sede di ogni funzionalità | *dove vive* ciò che è stato chiesto |
 | `adr/` | Architecture Decision Records | *perché* abbiamo deciso così |

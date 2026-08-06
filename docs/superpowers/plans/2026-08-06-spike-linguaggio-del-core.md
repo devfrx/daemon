@@ -2,8 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Eseguire SP-5 e SP-6 su tre linguaggi candidati e produrre ADR-0026, la
-scelta motivata del linguaggio del core, sostenuta da prototipi funzionanti.
+**Goal:** Chiudere **l'intero stack** con tre ADR motivati: ADR-0026 (linguaggio del
+core, sostenuto dagli spike SP-5 e SP-6), ADR-0027 (stack della GUI, valutato **in
+coppia** col core) e ADR-0028 (ecosistema dei worker ML).
 
 **Architecture:** Sei prototipi usa-e-getta in `spikes/`, due per candidato, ciascuno
 con criteri di passaggio identici definiti prima di scrivere codice. Nessuno di questi
@@ -1558,14 +1559,188 @@ simulatore del sotto-progetto 1.
 
 ---
 
+---
+
+### Task 10: Stack della GUI — ADR-0027
+
+La GUI non ha incognite bloccanti: ADR-0004 la rende **sacrificabile**, quindi la
+scelta e' reversibile. Ma **non e' indipendente dal core**: ergonomia dell'IPC, tipi
+condivisi e packaging cambiano a seconda della coppia. Si valuta la **coppia**, non i
+due elementi separati.
+
+**Files:**
+- Create: `spikes/GUI-REQUISITI.md`
+- Create: `spikes/gui-ipc/` (prototipo minimo, nel linguaggio scelto in ADR-0026)
+- Create: `docs/adr/0027-stack-della-gui.md`
+- Modify: `docs/README.md`, `docs/roadmap.md`
+
+**Interfaces:**
+- Consumes: il linguaggio nominato in ADR-0026.
+- Produces: la decisione che sblocca il sotto-progetto 2 (GUI minima).
+
+- [ ] **Step 1: Estrarre dalla spec i requisiti di rendering**
+
+Crea `spikes/GUI-REQUISITI.md`. Ogni riga cita la sua fonte: se un requisito non ha
+fonte nella spec, **non e' un requisito**.
+
+| # | Vincolo strutturale | Fonte |
+|---|---|---|
+| G1 | 0..1 istanze, effimera, **solo stato di presentazione** | ADR-0004, I1 |
+| G2 | Parla **solo** col core, via IPC privato non versionato | ADR-0004, I4 |
+| G3 | Puo' essere uccisa in qualsiasi istante senza perdite | I1, Q3 |
+
+| # | Deve rendere | Fonte |
+|---|---|---|
+| G4 | chat markdown con blocchi di codice, streaming token per token | mappa funzionale, area 2 |
+| G5 | diff dei file, approvabili o rifiutabili | capacita' Coding |
+| G6 | viewer 3D interattivo (rotazione, zoom, materiali) | mappa funzionale, area 7 |
+| G7 | artifacts o canvas con anteprima viva | mappa funzionale, area 2 |
+| G8 | grafici di costo e di occupazione | sezioni 3 e 7 |
+
+| # | Deve mostrare sempre | Fonte |
+|---|---|---|
+| G9 | stato di degrado corrente | V27, ADR-0019 |
+| G10 | permessi attivi nella sessione | V21, sezione 6 |
+| G11 | occupazione del contesto **per categoria** | ADR-0010, sezione 7 |
+| G12 | costo corrente e distanza dal tetto | V8, sezione 3 |
+| G13 | provenienza del contenuto: fidato o non fidato | V23, ADR-0014 |
+| G14 | run in `AttesaUmano`, con notifica | V9 |
+| G15 | `Rifiutata` e `InCoda` come esiti **distinti** | V4, sezione 2 |
+| G16 | che la cifratura vale quanto l'account OS | ADR-0023 |
+| G17 | cosa il backup **non** contiene, al momento del backup | ADR-0022 |
+| G18 | cosa copre l'ambito di checkpoint, **prima** che l'agente scriva | ADR-0024 |
+
+| # | Vincolo di piattaforma | Fonte |
+|---|---|---|
+| G19 | Windows primario, Linux successivo senza riscrivere | ADR-0002 |
+| G20 | navigazione da tastiera, screen reader, contrasto | mappa funzionale, area 8 |
+| G21 | interfaccia multilingua | mappa funzionale, area 8 |
+
+- [ ] **Step 2: Costruire la matrice delle coppie**
+
+Aggiungi a `spikes/GUI-REQUISITI.md` la matrice seguente, e **cancella le righe** che
+non corrispondono al linguaggio scelto in ADR-0026. Righe non pertinenti lasciate li'
+sono rumore che il prossimo lettore dovra' filtrare a mano.
+
+| Core | Opzione GUI | Packaging | Tipi condivisi | Costo del viewer 3D (G6) |
+|---|---|---|---|---|
+| Rust | shell nativa con interfaccia web | binario singolo | no, schema duplicato | libreria web matura |
+| Rust | toolkit nativo del linguaggio | binario singolo | si' | da valutare |
+| Go | shell nativa con interfaccia web | binario singolo | no, schema duplicato | libreria web matura |
+| TypeScript | runtime condiviso, interfaccia web | due runtime oppure bundle | **si', senza duplicazione** | libreria web matura |
+
+- [ ] **Step 3: Prototipo dell'unico rischio reale, lo streaming attraverso l'IPC**
+
+I requisiti da G4 a G18 sono lavoro noto. L'unica incognita e' se l'IPC regga
+**aggiornamenti ad alta frequenza** senza ingolfare l'interfaccia: token in streaming,
+stato di degrado e occupazione del contesto, tutti insieme.
+
+Crea `spikes/gui-ipc/` con un prototipo che, nel linguaggio scelto:
+
+1. avvia un processo "core" che emette **2000 messaggi in 10 secondi** su tre canali
+   logici distinti: token, stato, metriche;
+2. avvia un processo "gui" che li riceve e li rende in una lista;
+3. misura tre numeri: messaggi persi, ritardo massimo fra emissione e rendering, uso
+   di CPU della gui.
+
+- [ ] **Step 4: Fissare il criterio di passaggio prima di guardare i numeri**
+
+Aggiungi in `spikes/GUI-REQUISITI.md`:
+
+| # | Criterio | Soglia |
+|---|---|---|
+| P1 | messaggi persi | **zero** |
+| P2 | ritardo massimo emissione verso rendering | < 100 ms |
+| P3 | CPU della gui durante lo streaming | < 25% di un core |
+| P4 | uccidere la gui a meta' streaming e riaprirla | il core non se ne accorge (G3) |
+
+Se P1 fallisce, l'IPC ha bisogno di contropressione: e' una decisione di design del
+**kernel**, non un dettaglio della GUI, e va scritta come ADR a se'.
+
+- [ ] **Step 5: Eseguire il prototipo e registrare i numeri**
+
+Esegui il prototipo e riporta i quattro valori misurati in `spikes/GUI-REQUISITI.md`.
+**Un risultato senza numeri non e' un risultato.**
+
+- [ ] **Step 6: Scrivere ADR-0027**
+
+Crea `docs/adr/0027-stack-della-gui.md` con il formato standard degli altri ADR.
+`Context` deve contenere la matrice delle coppie e i numeri di P1-P4. `Decision` deve
+nominare la tecnologia **e** dire quale requisito fra G1 e G21 ha deciso il confronto.
+
+`Consequences` deve includere questa conseguenza positiva, che e' il motivo per cui la
+scelta e' a basso rischio:
+
+> Se la scelta si rivelasse sbagliata, la GUI si riscrive **senza toccare il kernel**:
+> ADR-0004 la rende sacrificabile e I4 lascia il protocollo libero di cambiare.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add spikes/GUI-REQUISITI.md spikes/gui-ipc docs/adr/0027-stack-della-gui.md docs/README.md docs/roadmap.md
+git commit -m "adr(0027): stack della GUI, valutato in coppia col core"
+```
+
+---
+
+### Task 11: Ecosistema dei worker ML — ADR-0028
+
+Questa scelta e' **gia' stata fatta per inerzia** e mai ratificata: TRELLIS2,
+embedding, STT e TTS vivono in Python. Ha conseguenze reali su packaging, gestione
+degli ambienti e avvio a freddo (Q8) che nessuno ha ancora valutato.
+
+**Files:**
+- Create: `docs/adr/0028-ecosistema-dei-worker-ml.md`
+- Modify: `docs/README.md`, `docs/roadmap.md`, `docs/tracciabilita.md`
+
+- [ ] **Step 1: Scrivere ADR-0028**
+
+Crea `docs/adr/0028-ecosistema-dei-worker-ml.md`. `Context` deve dire perche'
+l'alternativa non esiste davvero: i modelli richiesti hanno implementazioni Python.
+`Consequences` deve elencare almeno questi costi, che sono reali:
+
+| Costo | Perche' conta |
+|---|---|
+| ambiente Python da installare e versionare accanto al core | il packaging non e' piu' un binario singolo (L3) |
+| avvio a freddo dell'interprete, oltre a quello del modello | pesa su Q8 |
+| il confine di processo diventa **obbligatorio**, non una scelta | conferma ADR-0004 invece di contraddirlo |
+| dipendenze native (CUDA, driver) fuori dal nostro controllo | rischio da registrare nella sezione 9 |
+
+`Decision` deve anche dire cosa **non** vive nei worker: nessuna logica di ritentativo,
+coda o priorita' (I5), e nessuno stato (I1).
+
+- [ ] **Step 2: Aggiornare tracciabilita' e indici**
+
+In `docs/tracciabilita.md`, nella sezione "1. Modelli e risorse", aggiungi la riga:
+
+```
+| Ecosistema dei worker ML | (spunta) | ADR-0028 |
+```
+
+usando lo stesso simbolo di stato delle altre righe gia' decise.
+
+In `docs/README.md`, aggiungi la voce d'indice per ADR-0028.
+
+- [ ] **Step 3: Verificare la coerenza**
+
+Run: `bash scripts/check-docs.sh`
+Expected: `OK — nessuna incoerenza.`
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add docs/adr/0028-ecosistema-dei-worker-ml.md docs/README.md docs/roadmap.md docs/tracciabilita.md
+git commit -m "adr(0028): ecosistema dei worker ML, ratificato invece che implicito"
+```
+
 ## Cosa questo piano NON fa
 
 | Fuori perimetro | Perché |
 |---|---|
 | implementare il kernel | bloccato da SP-5 e SP-6 fino ad ADR-0026 |
+| implementare la GUI | ADR-0027 ne sceglie lo stack; l'implementazione è il sotto-progetto 2 |
 | scegliere il motore di persistenza | ADR successivo: dipende dall'ecosistema del linguaggio (§10.6) |
 | SP-1, SP-2, SP-3, SP-4 | non bloccano: tarano parametri di decisioni già prese (§9.3) |
-| scegliere la tecnologia della GUI | sotto-progetto 2 |
 
 ## Criterio di completamento del piano
 
@@ -1574,6 +1749,8 @@ Il piano è finito quando **tutte** queste sono vere:
 - [ ] `spikes/RISULTATI.md` non ha celle vuote, e riporta versioni e seed;
 - [ ] `docs/adr/0026-linguaggio-del-core.md` esiste, è `Accepted`, e nomina il
       criterio che ha deciso il confronto;
+- [ ] `docs/adr/0027-stack-della-gui.md` esiste, con i numeri misurati di P1–P4;
+- [ ] `docs/adr/0028-ecosistema-dei-worker-ml.md` esiste, con i costi dichiarati;
 - [ ] `docs/roadmap.md` mostra SP-5 e SP-6 chiusi e il sotto-progetto 0c deciso;
-- [ ] il controllo dei link non produce output;
+- [ ] `bash scripts/check-docs.sh` esce con `OK — nessuna incoerenza.`;
 - [ ] i prototipi dei candidati esclusi sono stati rimossi.

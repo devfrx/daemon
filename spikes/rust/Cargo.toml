@@ -1,0 +1,11 @@
+[workspace]
+members = ["kernel_core"]
+
+[package]
+name = "kernel_spike"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dev-dependencies]
+trybuild = "1"

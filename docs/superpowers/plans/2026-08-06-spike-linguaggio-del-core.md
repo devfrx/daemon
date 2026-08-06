@@ -38,7 +38,7 @@ la terza è un criterio mancante, approvato dal proprietario del progetto.
 | # | Dove | Cosa cambia | Perché |
 |---|---|---|---|
 | E1 | Task 5 · Step 7 | `t.Logf` conteneva un a capo **letterale** dentro una stringa Go. Sostituito con `\n` | Go rifiuta con `string literal not terminated`: il driver che deve provare T1 non compilava lui stesso, producendo un fallimento per il motivo sbagliato — lo stesso falso positivo del gotcha #9 |
-| E2 | Task 3 · Step 3 | L'esito atteso non è `E0432` ma l'assenza di target | senza `src/lib.rs` cargo fallisce prima di risolvere gli import. Rosso comunque, ma va detto il motivo giusto |
+| ~~E2~~ | Task 3 · Step 3 | **RITIRATA — la misura ha smentito la previsione** | avevo previsto che cargo fallisse per assenza di target. Misurato: cargo compila comunque il target di test e produce `error[E0432]: unresolved import`. **Il piano originale era corretto.** Registrato qui invece che cancellato, per la stessa ragione per cui gli ADR sono append-only |
 | E3 | Task 1, 4, 6, 8 · nuovo criterio **C6** | SP-5 acquisisce un sesto criterio | vedi sotto |
 | E4 | Task 1, 3–8 · nuovi **C7** e **T6** | il protocollo copriva 2,5 criteri della spec §9.4 su 5 | vedi sotto |
 
@@ -366,9 +366,10 @@ fn il_prompt_si_costruisce_solo_da_istruzioni() {
 - [ ] **Step 3: Eseguire per verificare che fallisca**
 
 Run: `cd spikes/rust && cargo test`
-Expected: FAIL. **Il motivo atteso è l'assenza del target** (`src/lib.rs` non esiste
-ancora), non `E0432`: cargo fallisce prima di risolvere gli import. Rosso comunque, ma
-registrare il motivo giusto — vedi errata E2 e gotcha #9.
+Expected: FAIL — `error[E0432]: unresolved import 'kernel_spike'`.
+
+Verificato il 2026-08-06 su rustc 1.95.0: è esattamente questo. L'errata E2, che
+prevedeva un fallimento per assenza di target, **è stata ritirata dalla misura**.
 
 - [ ] **Step 4: Scrivere l'implementazione minima**
 

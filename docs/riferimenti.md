@@ -74,6 +74,45 @@ misurano configurazioni diverse.**
 | [Microsoft Learn — cifratura delle chiavi a riposo](https://learn.microsoft.com/en-us/aspnet/core/security/data-protection/implementation/key-encryption-at-rest) · [KomuraSoft — segreti in app Windows con DPAPI](https://comcomponent.com/en/blog/2026/03/16/000-windows-app-secret-storage-best-practices-dpapi/) | le facility dell'OS sono il meccanismo appropriato per dati **mai letti fuori dalla macchina**: cifrano con le credenziali di accesso e non espongono mai la chiave all'applicazione. Distinzione fra ciò che va protetto (token, credenziali) e ciò che resta in chiaro (URL, nomi, flag) | [ADR-0023](adr/0023-cifratura-a-riposo-e-gestore-dei-segreti.md) |
 | [HackTricks — estrazione di segreti DPAPI](https://hacktricks.wiki/en/windows-hardening/windows-local-privilege-escalation/dpapi-extracting-passwords.html) | i segreti protetti dalle facility dell'OS sono estraibili da chi controlla l'account dell'utente | fonda l'obbligo di **dichiarare in interfaccia** che la protezione equivale a quella dell'account OS |
 
+## Linguaggio del core — SP-5 e SP-6 (ADR-0026)
+
+Fonti consultate il **2026-08-06**, sugli strumenti realmente installati su questa
+macchina. Sono verifiche dirette, non articoli: il comando e la sua versione sono la
+fonte, e sono riproducibili.
+
+| Verifica | Comando | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| runtime deterministici Rust | `cargo search madsim` · `cargo search turmoil` | `madsim` 0.2.34 · `madsim-tokio` 0.2.30 (sostituto di tokio) · `turmoil` 0.7.2 | [`spikes/CANDIDATI.md`](../spikes/CANDIDATI.md), SP-5 su Rust |
+| semantica di `testing/synctest` | `go doc testing/synctest` su go1.26.5 | orologio finto per bolla; il tempo avanza solo a **quiescenza** (ogni goroutine *durably blocked*); **`sync.Mutex`, `sync.RWMutex`, I/O e chiamate di sistema sono esclusi testualmente**; nessuna promessa di ordine totale deterministico | [`spikes/CANDIDATI.md`](../spikes/CANDIDATI.md) · criterio **C6** del protocollo |
+
+**Correzione tracciata.** La formulazione diffusa «`synctest` dà scheduling
+deterministico» è più forte di quanto la documentazione dichiari: il contratto è la
+quiescenza, non l'ordine. La differenza non è accademica — l'arbitro GPU di
+[ADR-0004](adr/0004-topologia-di-processo.md) è descritto come «un unico lock», cioè
+la primitiva che `synctest` esclude. Il criterio C6 di
+[`spikes/PROTOCOLLO.md`](../spikes/PROTOCOLLO.md) esiste per misurarlo invece di
+assumerlo, in entrambe le direzioni.
+
+## Stack della GUI (ADR-0027)
+
+Consultato il **2026-08-06**.
+
+| Fonte | Contributo usato | Dove entra |
+|---|---|---|
+| [Tauri — Webview Versions](https://v2.tauri.app/reference/webview-versions/) · [Tauri — Architecture](https://v2.tauri.app/concept/architecture/) · [tauri-apps/wry](https://github.com/tauri-apps/wry) | Tauri **non impacchetta** una webview: usa quella di sistema attraverso WRY. Su Windows è **WebView2**, basata su Chromium, preinstallata su Windows 11 e installata dall'installer sulle versioni precedenti. Su Linux è **WebKitGTK**, con `webkit2gtk 4.1` richiesto da Tauri v2 | [ADR-0027](adr/0027-stack-della-gui.md), costo su G19 |
+| idem | La documentazione di Tauri dichiara essa stessa che «la natura diversificata dell'ecosistema Linux» rende difficile raccogliere informazioni accurate su WebKitGTK nelle varie distribuzioni | fonda il costo dichiarato: **due motori di rendering diversi**, non uno portabile |
+
+| [WebGPU — Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation-Status) · [WebGPU nei browser principali](https://web.dev/blog/webgpu-supported-major-browsers) | WebGPU su Chromium/Windows x86-64 è **rilasciato** (Chrome 113+); su Linux è **dietro flag**; per **WebKitGTK non risulta rilasciato**. three.js usa WebGL2 di default, disponibile ovunque | [ADR-0029](adr/0029-guscio-della-gui.md): è il costo principale imputato a Tauri su G6 |
+| [Tauri — Frontend](https://v2.tauri.app/start/frontend/) | Tauri è **agnostico rispetto al framework**; Vue è fra quelli documentati via Vite. Vincolo: **SSG, SPA o MPA — niente SSR** | [ADR-0030](adr/0030-framework-dell-interfaccia.md) |
+
+| Verifica | Comando | Dato ottenuto |
+|---|---|---|
+| versioni degli stack GUI candidati | `cargo search` | `tauri` 2.11.5 · `egui` 0.36.0 · `iced` 0.14.0 · `slint` 1.17.1 · `wry` 0.56.0 · `dioxus` 0.8.0-**alpha**.1 |
+| Electron | `npm view` | `electron` 43.3.0 · `electron-builder` 26.15.3 · `electron-vite` 5.0.0 |
+| ecosistema Vue | `npm view` | `vue` 3.5.41 · `vue-i18n` 11.4.8 · `pinia` 4.0.2 · `@vueuse/core` 14.4.0 · `@tauri-apps/api` 2.11.1 |
+| librerie **agnostiche** per G5 e G6 | `npm view` | `three` 0.185.1 · `codemirror` 6.0.2 — JavaScript puro, sopravvivono a un cambio di framework |
+| trasporto IPC locale | `cargo search` | `interprocess` 2.4.3 — named pipe su Windows, socket unix su Linux, stessa API |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

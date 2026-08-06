@@ -31,6 +31,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Caricamento su richiesta e pre-caricamento | 🔶 | meccanismo §2 · politica → Gestione modelli locali |
 | Tetto ai modelli residenti | ✅ | §2 · ammissione |
 | Stima di fit prima del caricamento | ✅ | §2 · riserva dichiarata, picco misurato |
+| Ecosistema dei worker ML | ✅ | ADR-0028 · Python, con i costi dichiarati |
 | Routing locale/remoto con fallback | ✅ | §3 · ADR-0012 |
 | Fallback a catena tra modelli | ✅ | §3 · ADR-0012 |
 | Preferenze di provider (OpenRouter) | ✅ | §3 · vincoli della richiesta |

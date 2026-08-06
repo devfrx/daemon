@@ -30,6 +30,84 @@ Copiati verbatim dalla spec. Ogni task li eredita.
   reale.
 - **Nessun risultato di spike è valido senza il seed o la versione registrata.**
 
+## Errata — 2026-08-06, prima dell'esecuzione
+
+Tre correzioni al piano, applicate **prima** di eseguirlo. Le prime due sono difetti;
+la terza è un criterio mancante, approvato dal proprietario del progetto.
+
+| # | Dove | Cosa cambia | Perché |
+|---|---|---|---|
+| E1 | Task 5 · Step 7 | `t.Logf` conteneva un a capo **letterale** dentro una stringa Go. Sostituito con `\n` | Go rifiuta con `string literal not terminated`: il driver che deve provare T1 non compilava lui stesso, producendo un fallimento per il motivo sbagliato — lo stesso falso positivo del gotcha #9 |
+| ~~E2~~ | Task 3 · Step 3 | **RITIRATA — la misura ha smentito la previsione** | avevo previsto che cargo fallisse per assenza di target. Misurato: cargo compila comunque il target di test e produce `error[E0432]: unresolved import`. **Il piano originale era corretto.** Registrato qui invece che cancellato, per la stessa ragione per cui gli ADR sono append-only |
+| E3 | Task 1, 4, 6, 8 · nuovo criterio **C6** | SP-5 acquisisce un sesto criterio | vedi sotto |
+| E4 | Task 1, 3–8 · nuovi **C7** e **T6** | il protocollo copriva 2,5 criteri della spec §9.4 su 5 | vedi sotto |
+
+### E4 — I criteri mancanti
+
+Verifica del protocollo **contro la spec**, non a occhio. La [§9.4](../specs/2026-08-06-kernel-design.md)
+fissa cinque criteri per l'ADR sul linguaggio. Il protocollo iniziale ne misurava due
+e mezzo, e relegava gli altri agli spareggi del Task 9 — cioè li affidava
+all'opinione.
+
+| Criterio §9.4 | Prima | Ora |
+|---|---|---|
+| 1 · tempo, casualità, **I/O**, scheduling | C1–C6 coprivano tre elementi su quattro: **l'I/O mancava** | **C7** |
+| 2 · confine dei dati non fidati | T1–T5 ✅ | invariato |
+| 3 · statica: nessuna chiamata OS nel kernel (I3) | ⛔ nessun criterio, solo spareggio #3 | **T6** |
+| 4 · statica: nessun modello nel percorso decisionale (V28) | ⛔ idem | **T6**, stessa forma |
+| 5 · daemon a vita lunga, concorrenza reale | C6 copriva la concorrenza | C6 + osservazione **O2** |
+
+Perché l'I/O non era un dettaglio: la tecnica di verifica di Q5 in ADR-0021 è la
+**crash-injection ai confini di persistenza**, e il giornale write-ahead di ADR-0007 è
+il confine principale. Senza C7 il rischio RK-3 resta non misurato.
+
+Perché T6 è **una** riga e non due: I3 e V28 chiedono la stessa capacità — vietare che
+un modulo ne importi un altro, verificabile su tutto il progetto. Sdoppiarli sarebbe
+burocrazia, non rigore.
+
+Aggiunti anche: la **regola di decisione di T4** (era l'unico criterio senza soglia,
+ed è quello che decide contro i candidati più deboli), le osservazioni **O1** (esiste
+un motore di persistenza conforme a §10.6 nell'ecosistema?) e **O2**, e la clausola di
+**congelamento** del protocollo. Tutto in [`spikes/PROTOCOLLO.md`](../../../spikes/PROTOCOLLO.md).
+
+### E3 — Perché serve C6
+
+Lo spareggio #1 del Task 9 premia il controllo deterministico **posseduto** (runtime
+sostituibile) rispetto a quello **fornito** dai test. Applicato così com'è, penalizza
+Go per una proprietà che potrebbe non contare, e la penalità non sarebbe misurata.
+
+La domanda che il piano non poneva:
+
+> ADR-0021 chiede che siano iniettabili tempo, casualità, I/O e scheduling **del
+> kernel**. Se il kernel guida le proprie attività con un esecutore proprio, quanto
+> conta che lo scheduler nativo del linguaggio sia di proprietà del runtime?
+
+Conta **solo se** il kernel usa concorrenza nativa sotto il proprio esecutore e le
+sue decisioni dipendono dall'interlacciamento. C6 lo misura invece di assumerlo.
+
+| # | Criterio | Come si verifica | Soglia |
+|---|---|---|---|
+| **C6** | Unità concorrenti **native** del linguaggio, in contesa su una risorsa condivisa, producono la stessa traccia a parità di seed | ≥3 unità concorrenti native (task async / goroutine / async), ordine di acquisizione registrato, **100 esecuzioni** con lo stesso seed | **100 tracce byte-identiche**, o è `non passa` |
+
+Regola di applicazione, fissata **prima** di guardare i risultati:
+
+| Esito di C6 | Effetto sullo spareggio #1 |
+|---|---|
+| `passa` | lo spareggio #1 **non si applica** a quel candidato: possiede il controllo, comunque lo ottenga |
+| `parziale` | si applica, e l'evidenza dice **in quali condizioni** il controllo si perde |
+| `non passa` | si applica in pieno, e ora con una misura invece che con un'osservazione generica |
+
+Il codice di C6 **non è pre-scritto qui**: le API di concorrenza vanno verificate
+sulla versione realmente installata al momento del task, non assunte. Qui si fissano
+il criterio e la soglia — che è ciò che il Task 1 esige.
+
+### Nota di metodo sulle evidenze pre-scritte
+
+I Task 4·7, 6·8, 7·6 e 8·6 dettano **il testo** delle evidenze da riportare in
+`RISULTATI.md`. Sono verdetti scritti prima della misura. Si eseguono comunque, ma
+in `RISULTATI.md` va ciò che si misura: dove diverge dal testo pre-scritto, si
+registra la divergenza invece di allinearsi.
+
 ## File Structure
 
 ```
@@ -102,6 +180,11 @@ come passato: la differenza è tutta lì.
 | C3 | Il tempo è **virtuale**: un'attesa di 5 secondi completa in millisecondi | tempo di parete del test < 1 s |
 | C4 | Un guasto iniettato in un punto scelto dal seed è **riproducibile a comando** | rieseguire con quel seed lo riproduce |
 | C5 | Nessuna lettura dell'orologio di sistema o del generatore casuale globale nel codice sotto test | verifica statica sul progetto |
+| C6 | Unità concorrenti **native** del linguaggio, in contesa, producono la stessa traccia a parità di seed | ≥3 unità native, ordine di acquisizione registrato, **100 esecuzioni** con lo stesso seed: tutte byte-identiche |
+
+C6 misura ciò che C1–C4 non toccano. Un esecutore scritto a mano si può scrivere in
+qualunque linguaggio: la domanda vera è se il **parallelismo nativo** resta ordinabile
+dal seed, perché è quello che il kernel userà (ADR-0004, concorrenza reale).
 
 ## SP-6 — Confine dei dati non fidati
 
@@ -149,6 +232,7 @@ Data di esecuzione: _(da compilare)_
 | C3 tempo virtuale | | | |
 | C4 guasto riproducibile | | | |
 | C5 nessun orologio/RNG globale | | | |
+| C6 concorrenza nativa ordinabile | | | |
 
 ## Versioni degli strumenti
 
@@ -282,7 +366,10 @@ fn il_prompt_si_costruisce_solo_da_istruzioni() {
 - [ ] **Step 3: Eseguire per verificare che fallisca**
 
 Run: `cd spikes/rust && cargo test`
-Expected: FAIL — `error[E0432]: unresolved import` / `can't find crate`
+Expected: FAIL — `error[E0432]: unresolved import 'kernel_spike'`.
+
+Verificato il 2026-08-06 su rustc 1.95.0: è esattamente questo. L'errata E2, che
+prevedeva un fallimento per assenza di target, **è stata ritirata dalla misura**.
 
 - [ ] **Step 4: Scrivere l'implementazione minima**
 
@@ -386,7 +473,23 @@ Aggiungi in `spikes/RISULTATI.md`, colonna Rust, riga T4, l'evidenza:
 «aggirabile solo esponendo un costruttore alternativo o con `unsafe` di
 transmutazione; entrambi cercabili con una ricerca testuale e assenti per default».
 
-- [ ] **Step 10: Commit**
+- [ ] **Step 10: T6 — regola di importazione vietata, provata in negativo** *(errata E4)*
+
+I3 (nessuna chiamata OS nel kernel) e V28 (nessun modello nel percorso decisionale)
+chiedono la stessa capacità: **vietare che un modulo ne importi un altro**, e
+verificarlo su tutto il progetto.
+
+1. Separa in `spikes/rust` due moduli: `kernel` — che non deve toccare l'OS — e
+   `platform`, l'unico che può.
+2. Introduci una **violazione deliberata**: `kernel` chiama direttamente l'OS.
+3. Esegui il comando di controllo → **deve fallire**.
+4. Rimuovi la violazione → **deve passare**.
+
+Registra in `RISULTATI.md` riga T6: il comando, gli esiti in **entrambe** le direzioni,
+e se il controllo è nativo della toolchain o richiede uno strumento esterno.
+**Un controllo che passa sempre non prova nulla.**
+
+- [ ] **Step 11: Commit**
 
 ```bash
 git add spikes/rust spikes/RISULTATI.md
@@ -605,7 +708,41 @@ Aggiungi in `spikes/RISULTATI.md`, sotto SP-5 colonna Rust, la riga di evidenza:
 «esecutore deterministico scrivibile a mano in ~90 righe; esiste anche un runtime di
 ecosistema (madsim, versione registrata sopra) che sostituisce tokio».
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 8: C6 — la concorrenza nativa è ordinabile dal seed?** *(errata E3)*
+
+C1–C4 provano che un esecutore scritto a mano è deterministico. Si può scrivere
+ovunque. C6 chiede l'altra cosa: il **parallelismo nativo** del linguaggio resta
+ordinabile dal seed?
+
+Crea `spikes/rust/tests/c6.rs`: **≥3 unità concorrenti native** — `Future` guidati da
+un esecutore proprio che sceglie il prossimo task pronto con l'RNG del seed — in
+contesa su una risorsa condivisa. Registra l'ordine di acquisizione.
+
+Run: `cd spikes/rust && cargo test --test c6 -- --nocapture`
+Expected: **100 esecuzioni, stesso seed, 100 tracce byte-identiche.**
+
+Verifica le API sulla versione installata prima di scrivere. In `RISULTATI.md`, riga
+C6: esito, seed, numero di esecuzioni, e **quale primitiva** ha fornito il controllo.
+
+- [ ] **Step 9: C7 — I/O durevole iniettabile, crash riproducibile** *(errata E4)*
+
+V29 elenca **quattro** cose iniettabili; C1–C6 ne coprono tre. Questa è la quarta, ed
+è quella su cui poggia la verifica di Q5.
+
+1. Aggiungi allo spike un «giornale» minimo dietro un'interfaccia: `intento(passo)` e
+   `esito(passo)`, nell'ordine write-ahead di ADR-0007.
+2. Il `World` scrive **attraverso quell'interfaccia**, mai direttamente sul filesystem.
+3. Un doppio la implementa in memoria e **fallisce nel punto scelto dal seed**.
+4. Verifica: stesso seed → stessa traccia, crash incluso; e dopo il crash esiste un
+   passo **con intento e senza esito** — cioè `InDubbio` rilevabile.
+
+Run: `cd spikes/rust && cargo test --test c7 -- --nocapture`
+Expected: due esecuzioni con lo stesso seed danno tracce identiche, crash incluso; il
+passo in dubbio è individuabile senza ambiguità.
+
+Verifica anche l'assenza di I/O diretto nel codice sotto test, come per C5.
+
+- [ ] **Step 10: Commit**
 
 ```bash
 git add spikes/rust spikes/RISULTATI.md
@@ -778,8 +915,7 @@ func TestT1IlNonFidatoNonCompila(t *testing.T) {
 	if err == nil {
 		t.Fatalf("T1 VIOLATO: la violazione ha compilato")
 	}
-	t.Logf("errore atteso del compilatore:
-%s", out)
+	t.Logf("errore atteso del compilatore:\n%s", out)
 }
 ```
 
@@ -807,7 +943,19 @@ Annota in `RISULTATI.md`, colonna Go:
   perché Go non offre test di compilazione fallita di serie. È un `parziale` sul
   supporto degli strumenti, non sulla proprietà.
 
-- [ ] **Step 10: Commit**
+- [ ] **Step 10: T6 — regola di importazione vietata, provata in negativo** *(errata E4)*
+
+Stessa procedura del Task 3 · Step 10, sui package Go: `kernel` non deve poter
+importare né l'OS né il gateway; `platform` è l'unico che può.
+
+Introduci la violazione, il comando **deve fallire**; rimuovila, **deve passare**.
+Registra il comando e gli esiti in entrambe le direzioni.
+
+Nota da verificare in esecuzione: Go espone il grafo delle importazioni con `go list`,
+ma la **regola di divieto** è uno strumento a parte. Registra se serve un lint esterno
+o se basta la toolchain — è esattamente la differenza fra `passa` e `parziale`.
+
+- [ ] **Step 11: Commit**
 
 ```bash
 git add spikes/go spikes/RISULTATI.md
@@ -1051,7 +1199,51 @@ proprietà del runtime e non è sostituibile dall'utente; il controllo determini
 **fornito** da `testing/synctest` (versione registrata sopra) e vale **solo dentro i
 test**. Differenza sostanziale rispetto a un runtime sostituibile.»
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 9: C6 — la concorrenza nativa è ordinabile dal seed?** *(errata E3)*
+
+**È il passo che decide se lo spareggio #1 si applica a Go.** Va eseguito per
+falsificare l'attesa, non per confermarla.
+
+La documentazione di `testing/synctest` è stata verificata su Go 1.26.5 prima di
+scrivere questo passo. Dice due cose che cambiano il test:
+
+| Fatto | Fonte |
+|---|---|
+| **durably blocking**: send/receive su canale *della bolla*, `select` su canali della bolla, `sync.Cond.Wait`, `WaitGroup.Wait`, `time.Sleep` | `go doc testing/synctest`, sezione *Blocking* |
+| **NON durably blocking**, testuale: `sync.Mutex`, `sync.RWMutex`, I/O di rete, chiamate di sistema | idem |
+| nessuna affermazione su un ordine totale deterministico dell'interlacciamento | idem: il contratto è la **quiescenza**, non l'ordine |
+
+Crea `spikes/go/sched/c6_test.go` con **due prove**, perché il contratto le distingue:
+
+| Prova | Contesa su | Perché |
+|---|---|---|
+| **a** | **canale** creato nella bolla | è il caso più favorevole: durably blocking |
+| **b** | **`sync.Mutex`** | esplicitamente fuori dal controllo di synctest — ed è la primitiva dell'arbitro GPU (ADR-0004, «un unico lock») |
+
+≥3 goroutine per prova, dentro `synctest.Test`, ordine di acquisizione registrato.
+
+Run: `cd spikes/go && go test ./sched/ -run TestC6 -count=1 -v`
+Expected: **da misurare, non da assumere.** Se (a) è deterministica e (b) no, C6 è
+`parziale`, con l'evidenza precisa: il determinismo copre la sincronizzazione per
+canali e non copre i lock. Se divergono entrambe, C6 è `non passa`.
+
+In `RISULTATI.md` registra il **comportamento osservato**, non quello atteso.
+
+- [ ] **Step 10: C7 — I/O durevole iniettabile, crash riproducibile** *(errata E4)*
+
+Stessa procedura del Task 4 · Step 9, in Go: giornale minimo dietro un'interfaccia,
+`Intento`/`Esito` nell'ordine write-ahead, doppio in memoria che fallisce nel punto
+scelto dal seed.
+
+Run: `cd spikes/go && go test ./sched/ -run TestC7 -count=1 -v`
+Expected: stesso seed → stessa traccia, crash incluso; il passo `InDubbio` è
+individuabile.
+
+Attenzione specifica a Go: `go doc testing/synctest` dice che **l'I/O non è durably
+blocking**. Registra se il doppio in memoria basta a mantenere il determinismo, o se
+l'I/O vero lo romperebbe — è la stessa domanda di C6, sull'altra dimensione di V29.
+
+- [ ] **Step 11: Commit**
 
 ```bash
 git add spikes/go spikes/RISULTATI.md
@@ -1216,7 +1408,20 @@ In `spikes/RISULTATI.md`, colonna TypeScript:
   provenienza sopravvive alla compilazione. Con V19 questo è accettabile, perché la
   garanzia richiesta è statica; ma non c'è rete di sicurezza a runtime.»
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 7: T6 — regola di importazione vietata, provata in negativo** *(errata E4)*
+
+Stessa procedura del Task 3 · Step 10, su TypeScript: `src/kernel/` non deve poter
+importare né moduli Node che toccano l'OS (`node:fs`, `node:os`, `node:child_process`)
+né il gateway; `src/platform/` è l'unico che può.
+
+Introduci la violazione, il comando **deve fallire**; rimuovila, **deve passare**.
+
+Nota da verificare in esecuzione: in TypeScript il divieto non è del compilatore ma di
+uno strumento configurabile e disattivabile per riga. Se è così, T6 è `parziale`, e va
+registrato **con quale direttiva** lo si disattiva — è la stessa debolezza di T4, sullo
+stesso asse.
+
+- [ ] **Step 8: Commit**
 
 ```bash
 git add spikes/ts spikes/RISULTATI.md
@@ -1398,7 +1603,34 @@ parallelismo reale. Il vero parallelismo richiede worker separati, il cui ordina
 **non è controllabile** dall'applicazione. La riproducibilità vale finché il core
 resta a thread singolo — ipotesi da verificare contro ADR-0004.»
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 7: C6 — la concorrenza nativa è ordinabile dal seed?** *(errata E3)*
+
+Crea `spikes/ts/test/c6.test.ts` con **due prove distinte**:
+
+| Prova | Cosa usa | Cosa dimostra |
+|---|---|---|
+| **a** | ≥3 funzioni `async` guidate da un esecutore proprio, che sceglie il prossimo task con l'RNG del seed | il controllo che il kernel avrebbe |
+| **b** | ≥3 funzioni `async` lasciate al ciclo di eventi, senza esecutore | cosa resta senza |
+
+Run: `cd spikes/ts && npm test`
+Expected: (a) 100 tracce identiche · (b) **da misurare.**
+
+In `RISULTATI.md`: se (a) passa e (b) no, C6 = `parziale`, con l'evidenza che il
+controllo esiste **solo finché il core resta a thread singolo sotto il proprio
+esecutore** — ipotesi da verificare contro ADR-0004, che chiede concorrenza reale.
+`worker_threads` non è ordinabile dall'applicazione.
+
+- [ ] **Step 8: C7 — I/O durevole iniettabile, crash riproducibile** *(errata E4)*
+
+Stessa procedura del Task 4 · Step 9, in TypeScript: giornale minimo dietro
+un'interfaccia, `intento`/`esito` nell'ordine write-ahead, doppio in memoria che
+fallisce nel punto scelto dal seed.
+
+Run: `cd spikes/ts && npm test`
+Expected: stesso seed → stessa traccia, crash incluso; il passo in dubbio è
+individuabile.
+
+- [ ] **Step 9: Commit**
 
 ```bash
 git add spikes/ts spikes/RISULTATI.md
@@ -1450,9 +1682,9 @@ spareggio è dichiarato in quest'ordine:
 
 | # | Spareggio | Da |
 |---|---|---|
-| 1 | il controllo deterministico è **posseduto** (runtime sostituibile) o soltanto **fornito** dai test? | V29, ADR-0021 |
+| 1 | il controllo deterministico è **posseduto** (runtime sostituibile) o soltanto **fornito** dai test? — **si applica solo ai candidati che non passano C6**, vedi errata E3 | V29, ADR-0021 |
 | 2 | quanto è **facile aggirare** il confine dei tipi (T4)? | V19, ADR-0014 |
-| 3 | quanto costa la verifica statica di I3 e V28? | ADR-0002, ADR-0020 |
+| 3 | quanto costa la verifica statica di I3 e V28? — **ora misurato da T6**, non più affidato al giudizio (errata E4) | ADR-0002, ADR-0020 |
 | 4 | adeguatezza a un daemon a vita lunga con concorrenza reale | ADR-0004 |
 
 La sezione `Consequences` deve elencare **almeno una conseguenza negativa accettata**:

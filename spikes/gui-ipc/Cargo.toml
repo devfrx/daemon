@@ -1,0 +1,25 @@
+[package]
+name = "gui_ipc_spike"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+# Prototipo dell'unica incognita reale della GUI: l'IPC regge aggiornamenti ad alta
+# frequenza senza ingolfare l'interfaccia? Criteri P1-P4 in ../GUI-REQUISITI.md.
+#
+# `interprocess` fornisce lo stesso astratto su named pipe (Windows) e socket unix
+# (Linux): rilevante per G19, che chiede Linux senza riscrivere.
+
+[dependencies]
+interprocess = "2.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sysinfo = "0.39"
+
+[[bin]]
+name = "core"
+path = "src/bin/core.rs"
+
+[[bin]]
+name = "gui"
+path = "src/bin/gui.rs"

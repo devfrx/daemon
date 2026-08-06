@@ -1,0 +1,14 @@
+# T6 — regola di importazione vietata, meccanismo (a): lint configurabile.
+# Copre I3 (nessuna chiamata OS nel kernel) e V29 (tempo, casualità, I/O iniettabili).
+
+disallowed-methods = [
+    { path = "std::time::SystemTime::now", reason = "V29: il tempo è iniettabile e passa dal modulo di piattaforma" },
+    { path = "std::time::Instant::now", reason = "V29: idem" },
+    { path = "std::env::var", reason = "I3: nessuna chiamata OS nel kernel" },
+    { path = "std::fs::read_to_string", reason = "I3 e V29: l'I/O è iniettabile" },
+    { path = "std::fs::write", reason = "I3 e V29: l'I/O è iniettabile" },
+]
+
+disallowed-types = [
+    { path = "std::collections::HashMap", reason = "V29: RandomState è seminato casualmente per processo, quindi l'ordine di iterazione non è riproducibile fra esecuzioni" },
+]

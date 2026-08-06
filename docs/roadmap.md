@@ -7,8 +7,14 @@ Ultimo aggiornamento: **2026-08-06**.
 
 ## Stato in una riga
 
-> Spec del kernel **completa e approvata** (§0–§10, 25 ADR), nessuna lacuna aperta. **Nessun codice
-> scritto.** Prossimo passo: spike SP-5 e SP-6, che decidono il linguaggio del core.
+> Spec del kernel **completa e approvata** (§0–§10, 30 ADR). Stack deciso **tranne il
+> guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**, worker ML in
+> **Python**; Tauri contro Electron resta aperto ([ADR-0029](adr/0029-guscio-della-gui.md),
+> `Proposed`) e **non blocca nulla**. Prossimo passo: **implementazione del kernel +
+> simulatore DST** (sotto-progetto 1).
+>
+> ⚠️ **Una lacuna aperta nel kernel**: la GPU usata dalla GUI non è arbitrata da
+> nessuno. Va chiusa nel sotto-progetto 1 — vedi [HANDOFF](HANDOFF.md).
 
 ## Il ciclo che seguiamo
 
@@ -30,8 +36,8 @@ flowchart LR
 |---|---|---|---|---|
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
-| **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ⏭️ **prossimo** | SP-5, SP-6 |
-| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | ⬜ | 0, 0b, 0c |
+| **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
+| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | ⏭️ **prossimo** | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2 |
 | 4 | Agenti | L2 | ⬜ | 3 |
@@ -68,8 +74,8 @@ Costo accettato in ADR-0001: arriva più tardi che in un'architettura con barice
 
 | ID | Domanda | Blocca | Stato |
 |---|---|---|---|
-| **SP-5** | iniettabilità di tempo, casualità, I/O, scheduling | ⛔ ADR linguaggio | ⬜ da eseguire |
-| **SP-6** | il sistema di tipi regge il confine dei dati non fidati | ⛔ ADR linguaggio | ⬜ da eseguire |
+| **SP-5** | iniettabilità di tempo, casualità, I/O, scheduling | ⛔ ADR linguaggio | ✅ **chiuso**: solo Rust passa. Go fallisce C6 (9 e 4 tracce distinte su 100 dentro `synctest`), TypeScript parziale |
+| **SP-6** | il sistema di tipi regge il confine dei dati non fidati | ⛔ ADR linguaggio | ✅ **chiuso**: Rust e Go passano, TypeScript parziale su T4 e T6 |
 | SP-1 | curva qualità/VRAM di TRELLIS2 su 16 GB | profili di risorsa §2 | ⬜ |
 | SP-2 | Q1 (voce < 600 ms) sotto carico GPU | taratura corsie §2 | ⬜ |
 | SP-3 | budget della proiezione per modello | taratura §5 | ⬜ |
@@ -81,23 +87,48 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 
 | Piano | Copre | Stato |
 |---|---|---|
-| [Spike bloccanti e stack](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | SP-5, SP-6, ADR-0026, ADR-0027, ADR-0028 | ⏭️ **pronto, non eseguito** |
+| [Spike bloccanti e stack](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | SP-5, SP-6, ADR-0026, ADR-0027, ADR-0028 | ✅ **eseguito** il 2026-08-06 |
 
-Il piano del sotto-progetto 1 (implementazione del kernel) **non è scrivibile** finché
-ADR-0026 non nomina il linguaggio: percorsi di file e codice dipendono da quella scelta.
+Il piano del sotto-progetto 1 (implementazione del kernel) **è ora scrivibile**:
+ADR-0026 nomina Rust, quindi percorsi di file e struttura delle crate sono determinati.
 
-**Prerequisito** verificato il 2026-08-06: Rust 1.95 presente, Node 24.9 presente,
-**Go assente**. Senza Go i task 5 e 6 non partono.
+Il prototipo [`spikes/rust/`](../spikes/rust/) è il punto di partenza del simulatore:
+contiene già il confine dei tipi, l'esecutore deterministico, l'esecutore su `Future`
+native e il giornale write-ahead iniettabile, tutti con i loro test.
+
+**Toolchain sulla macchina**, verificata il 2026-08-06: `rustc` 1.95.0 · `cargo` 1.95.0
+· `clippy` 0.1.95. Go 1.26.5 e Node 24.9 restano installati ma non servono più al core.
 
 ## Decisioni ancora da prendere
 
 | Decisione | Quando | Vincolata da |
 |---|---|---|
-| Linguaggio del core | dopo SP-5/SP-6 | V29, V19, I3, V28, ADR-0004 |
-| Motore di persistenza | ADR dopo il linguaggio | requisiti fissati in §10.6 |
-| Stack della GUI | ADR-0027, **in coppia col core** | ADR-0004 (GUI sacrificabile), I4 |
-| Ecosistema dei worker ML | ADR-0028 | deciso per inerzia finché non è scritto |
+| ~~Linguaggio del core~~ | ✅ **ADR-0026: Rust** | — |
+| ~~Interfaccia web o toolkit nativo~~ | ✅ **ADR-0027: interfaccia web** (G7) | — |
+| ~~Ecosistema dei worker ML~~ | ✅ **ADR-0028: Python** | — |
+| ~~Framework dell'interfaccia~~ | ✅ **ADR-0030: Vue 3** | — |
+| ⚠️ **Guscio della GUI: Tauri o Electron** | **ADR-0029, `Proposed`.** Si chiude con quattro misure M1–M4 all'inizio del sotto-progetto 2 | non blocca il sotto-progetto 1 |
+| ⚠️ **La GPU usata dalla GUI non è arbitrata** | ADR nel sotto-progetto 1, quando si progetta l'arbitro | **I2 come scritto è verificato solo sui worker** |
+| **Motore di persistenza** | ADR prossimo; l'ecosistema ora è noto | requisiti in §10.6; candidati Rust verificati in `spikes/RISULTATI.md` |
 | Livello 3 di confinamento (microVM) | quando servirà eseguire codice di provenienza ignota | ADR-0025 |
+
+### La lacuna su I2, per esteso
+
+Trovata durante la revisione di ADR-0027, non cercata.
+[ADR-0005](adr/0005-arbitrato-gpu-su-due-dimensioni.md) e
+[design/02](design/02-arbitrato-gpu.md) **non menzionano mai la GUI**, e la verifica di
+I2 è scritta solo sui worker: «nessun *worker* si avvia senza una concessione valida».
+
+Ma un viewer 3D (G6) usa la GPU, e il compositing della webview la usa anche senza 3D.
+Durante un render TRELLIS2 che vuole 13–14 GB su 16, quella VRAM è contesa.
+
+| Opzione | Conseguenza |
+|---|---|
+| il viewer chiede una concessione come tutti | I2 resta vero, ma la GUI smette di essere «solo stato di presentazione» (I1) |
+| il viewer è esente | **I2 è falso come scritto** e va riformulato, dichiarando il rischio |
+| quota sottratta, come per l'audio | riusa il meccanismo che ADR-0005 ha già inventato per la voce |
+
+Vale identico per Tauri e per Electron: **è una questione di kernel, non di guscio.**
 
 ## Regola di manutenzione
 

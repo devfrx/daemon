@@ -18,11 +18,11 @@ una sola GPU da 16 GB.
 
 ## Stato: §0–§8 approvate, e la spec è riaperta su sette voci. Poi il piano.
 
-Spec del kernel completa e **34 decisioni architetturali**.
+Spec del kernel completa e **35 decisioni architetturali**.
 
 > ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-> scrive **qui**, in questo repository. Fra le due mancano la **chiusura delle cinque voci
-> ancora aperte** e poi il **piano**. La documentazione è la fase corrente, non lo scopo.
+> scrive **qui**, in questo repository. Fra le due mancano la **chiusura delle voci ancora
+> aperte** e poi il **piano**. La documentazione è la fase corrente, non lo scopo.
 > Oggi l'unico codice è in
 > [`spikes/rust/`](spikes/rust/) — sono **prove**, non il kernel, ma
 > [§2.5 della spec](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) dice già
@@ -45,8 +45,8 @@ un **workspace annidato**, e `spikes/gui-ipc/`.
 | schema IPC | **`bincode` 2.0.1** — appuntato a `2`, vedi gotcha #22 | M-1, spec §6.1.1. Prime voci della lista di ADR-0031 |
 | GPU della **GUI** | **quota di presentazione sottratta**, concessione tenuta dal core | ADR-0033, chiude la lacuna su I2 |
 
-**La spec del sotto-progetto 1 ha §0–§8 approvate**, ed è riaperta su sette voci — due
-chiuse. Resta spec, non codice: dopo le cinque aperte viene il **piano**. Il guscio aperto
+**La spec del sotto-progetto 1 ha §0–§8 approvate**, ed è riaperta su sette voci — tre
+chiuse più F1a. Resta spec, non codice: dopo le aperte viene il **piano**. Il guscio aperto
 non blocca nulla: il sotto-progetto 1 è interamente Rust e non tocca la GUI.
 
 ✅ **La lacuna su I2 è chiusa** da ADR-0033: il consumo GPU della GUI si modella come
@@ -91,7 +91,7 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | `anthropic-skills:dev-discipline` | governa il **codice**: esplora prima di scrivere, YAGNI, convenzioni del repo, niente scorciatoie non dichiarate |
 | `anthropic-skills:dev-communication` | governa la **conversazione** intorno al codice: cosa si decide da soli e cosa si porta al proprietario. Una decisione strutturale non si seppellisce in un messaggio di consegna |
 | `superpowers:brainstorming` | prima di qualunque lavoro creativo, e **prima di entrare in plan mode** |
-| `superpowers:writing-plans` | quando si scriverà il piano — **non adesso**: prima le cinque voci aperte |
+| `superpowers:writing-plans` | quando si scriverà il piano — **non adesso**: prima le voci ancora aperte |
 | `superpowers:test-driven-development` | quando comincerà il codice |
 
 ## Le sei invarianti del kernel (ADR-0004)
@@ -103,7 +103,7 @@ Vincolano ogni scelta successiva. Una violazione richiede un ADR, non una deroga
 | I1 | Lo stato autorevole vive **solo nel core**. GUI e worker non hanno persistenza propria |
 | I2 | La GPU ha **un solo proprietario**: nessun processo la tocca senza concessione dell'arbitro |
 | I3 | Il core non contiene **codice OS-specifico**: tutto passa dal modulo di piattaforma |
-| I4 | Il protocollo IPC è **privato, singolo, non versionato** |
+| I4 | Il protocollo IPC è **privato, singolo, non versionato** — «singolo» si legge **per canale privato**: ADR-0035 |
 | I5 | I worker sono **senza stato**: ritentativi, code e priorità stanno nel core |
 | I6 | Il contenuto non fidato **non attraversa mai** il confine delle istruzioni |
 
@@ -124,8 +124,13 @@ da soli non sono un confine contro codice eseguito.
 
 ## Prossimo passo
 
-**Chiudere le cinque voci ancora aperte della riapertura, poi scrivere il piano.** Due sono
-già chiuse. Nessuna misura blocca né le une né l'altro. L'elenco, l'ordine e le propedeuticità sono in
+**Il prossimo passo è F2 (+F7): l'evoluzione del formato durevole del giornale.** Poi F1b
+— il progetto della porta in §5–§6 — poi F4, poi la §8 e infine il piano. Tre voci sono
+già chiuse e F1a anche. Nessuna misura blocca né le une né l'altro.
+
+⚠️ **F2 viene prima di F1b, e non è una preferenza:** F1b progetta messaggi i cui campi
+finiscono in record durevoli (il picco di VRAM di §5.2.2), quindi ha bisogno che la regola
+di evoluzione esista già. L'elenco, l'ordine e le propedeuticità sono in
 [`docs/HANDOFF.md`](docs/HANDOFF.md#prima-cosa-da-fare).
 
 Sono emerse rileggendo [`docs/tracciabilita.md`](docs/tracciabilita.md) con una domanda che
@@ -135,8 +140,9 @@ la spec lo nomina?»**. La legenda è la crepa: `📋` significa *«sotto-proget
 
 | | |
 |---|---|
-| ✅ **chiuse** | **F3** — i parametri di decisione sono **consegnati** al kernel, non letti ([ADR-0034](docs/adr/0034-parametri-di-decisione-consegnati-non-letti.md), §2.8) · **F6** — la provenienza del totale di VRAM (§5.1) |
-| ⬜ **aperte** | **F1** nessuna porta per *parlare* con un worker (B) · **F2** l'evoluzione del formato durevole (B) · **F4** l'anello 3 non collocato in §0.4 · **F5** `network` descritta più stretta di V25 · **F7** fork e branching |
+| ✅ **chiuse** | **F3** — i parametri di decisione sono **consegnati** al kernel, non letti ([ADR-0034](docs/adr/0034-parametri-di-decisione-consegnati-non-letti.md), §2.8) · **F6** — la provenienza del totale di VRAM (§5.1) · **F5** — `network` è l'unico punto di uscita **verso la rete**, non «verso i provider» (§2.3.1) |
+| 🔵 **F1a chiusa** | la porta verso i worker è **dichiarata**: `process` copre avvio, dialogo e uccisione, e «singolo» in I4 si legge **per canale privato** ([ADR-0035](docs/adr/0035-porta-verso-i-worker-e-lettura-di-i4.md), §2.3.1) |
+| ⬜ **aperte**, in ordine | **F2** l'evoluzione del formato durevole (B) · **F7** fork e branching, che converge in F2 · **F1b** il progetto della porta in §5–§6 (B) · **F4** l'anello 3 non collocato in §0.4 |
 
 ⛔ **La §8 si tocca per ultima, e una volta sola**: ognuna delle sette cambia una sua riga.
 E **nessuna rinumerazione** di sezioni — lo script legge §7.4 e §8 per posizione.

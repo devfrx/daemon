@@ -7,7 +7,7 @@ Ultimo aggiornamento: **2026-08-07**.
 
 ## Stato in una riga
 
-> Spec del kernel **completa e approvata** (§0–§10, 34 ADR). Stack deciso **tranne il
+> Spec del kernel **completa e approvata** (§0–§10, 35 ADR). Stack deciso **tranne il
 > guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**, worker ML in
 > **Python**; Tauri contro Electron resta aperto ([ADR-0029](adr/0029-guscio-della-gui.md),
 > `Proposed`) e **non blocca nulla**.
@@ -24,13 +24,17 @@ Ultimo aggiornamento: **2026-08-07**.
 > ⚠️ **La spec è riaperta su sette voci** (2026-08-07), trovate rileggendo
 > [tracciabilita.md](tracciabilita.md) con la domanda *«di quale meccanismo di kernel ha
 > bisogno questa funzionalità, e la spec lo nomina?»*. Tre sono di classe **B**, cioè non
-> retrofittabili. **Due sono chiuse** — i parametri di decisione consegnati al kernel
-> ([ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md), §2.8) e la
-> provenienza del totale di VRAM (§5.1). Le cinque aperte, con l'ordine e le
-> propedeuticità, sono in [HANDOFF](HANDOFF.md#prima-cosa-da-fare).
+> retrofittabili. **Tre sono chiuse** — i parametri di decisione consegnati al kernel
+> ([ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md), §2.8), la
+> provenienza del totale di VRAM (§5.1) e l'unico punto di uscita verso la rete (§2.3.1) —
+> **più F1a**, la dichiarazione della porta verso i worker
+> ([ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md), §2.3.1), che completa la
+> riga di verifica di I4. Le restanti, con l'ordine e le propedeuticità, sono in
+> [HANDOFF](HANDOFF.md#prima-cosa-da-fare).
 >
-> Prossimo passo: **chiudere le cinque voci aperte, poi il piano di implementazione**, che
-> deve decidere anche dove nasce il workspace. Poi il codice.
+> Prossimo passo: **F2 (+F7) — l'evoluzione del formato durevole del giornale**, poi F1b
+> (il progetto della porta in §5–§6), poi F4, poi la §8 e infine il piano di
+> implementazione, che deve decidere anche dove nasce il workspace. Poi il codice.
 >
 > ✅ **La lacuna su I2 è chiusa**: [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
 > — quota di presentazione sottratta, con la concessione tenuta dal core. Il kernel non
@@ -57,7 +61,7 @@ flowchart LR
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
 | **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
-| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — §0–§8 approvate, **riaperta su sette voci** (due chiuse), poi il piano | 0, 0b, 0c |
+| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — §0–§8 approvate, **riaperta su sette voci** (tre chiuse più F1a), poi il piano | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2 |
 | 4 | Agenti | L2 | ⬜ | 3 |
@@ -111,7 +115,7 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 |---|---|---|
 | [Spike bloccanti e stack](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | SP-5, SP-6, ADR-0026, ADR-0027, ADR-0028 | ✅ **eseguito** il 2026-08-06 |
 
-**Il piano è l'artefatto dopo la chiusura delle cinque voci ancora aperte** della
+**Il piano è l'artefatto dopo la chiusura delle voci ancora aperte** della
 riapertura: vale «spec prima del codice», e il piano è il passo fra le due.
 
 **Il codice si scrive in questo repository**, non altrove. Il piano deve quindi decidere

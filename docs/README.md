@@ -71,6 +71,7 @@ sotto-progetto**, nello stesso passaggio.
 | [0032](adr/0032-motore-di-persistenza.md) | Motore di persistenza: `redb`, con backend nostro | Accepted |
 | [0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) | GPU della GUI: quota di presentazione sottratta, concessione tenuta dal core | Accepted |
 | [0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md) | I parametri di decisione sono consegnati al kernel, non letti | Accepted |
+| [0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) | La porta verso i worker, e cosa significa «singolo» in I4 | Accepted |
 
 ## Indice dei diagrammi
 
@@ -91,7 +92,7 @@ sotto-progetto**, nello stesso passaggio.
 | Spec | Sotto-progetto | Stato |
 |---|---|---|
 | [Kernel](superpowers/specs/2026-08-06-kernel-design.md) | L0 fondamenta + L1 arbitri trasversali | ✅ **completa e approvata** |
-| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | ✅ **completa e approvata** (§0–§8) — manca il piano |
+| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, ⚠️ **riaperta su sette voci** — tre chiuse più F1a; restano F1b, F2, F4, F7 |
 
 ## Decomposizione del sistema
 

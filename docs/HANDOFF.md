@@ -2,13 +2,13 @@
 
 Aggiornato il **2026-08-07**, alla chiusura della **§8** — la copertura V1–V37 e Q1–Q24 —
 e poi di nuovo quando rileggere `tracciabilita.md` con un'altra domanda ha **riaperto la
-spec su sette voci**, di cui due chiuse. Serve a riprendere senza rifare, e senza
+spec su sette voci**, di cui tre chiuse più F1a. Serve a riprendere senza rifare, e senza
 rilitigare ciò che è già deciso.
 
 ## In trenta secondi
 
 Assistente desktop locale, utente singolo, GPU singola RTX 5080 16 GB. **Piattaforma a
-quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 34 ADR**.
+quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 35 ADR**.
 Stack deciso **tranne il guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**,
 worker ML in **Python**; Tauri contro Electron è ancora aperto
 ([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
@@ -16,7 +16,7 @@ worker ML in **Python**; Tauri contro Electron è ancora aperto
 **La spec del sotto-progetto 1 ha §0–§8 approvate**, ed è **riaperta su sette voci**
 trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto. Il
 codice non è ancora iniziato, e vale «spec prima del codice». Il piano viene **dopo** la
-chiusura delle **cinque ancora aperte** — vedi sotto.
+chiusura di **quelle ancora aperte** — vedi sotto.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -26,15 +26,26 @@ Il vincolo che governa tutto non è funzionale ma di risorsa: quattro aree che s
 una sola GPU.
 
 ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-scrive **qui**: fra le due mancano le cinque voci aperte e poi il **piano**. Oggi l'unico
+scrive **qui**: fra le due mancano le voci ancora aperte e poi il **piano**. Oggi l'unico
 codice presente è in [`../spikes/rust/`](../spikes/rust/): sono **prove**, non il kernel —
 ma la §2.5 della spec dice già riga per riga quali pezzi salgono a `kernel/` e quali
 restano dove sono.
 
 ## Prima cosa da fare
 
-**Chiudere le cinque voci ancora aperte della riapertura, poi scrivere il piano.** Due
-sono già chiuse. Nessuna misura blocca né le une né l'altro.
+**Chiudere le voci ancora aperte della riapertura, poi scrivere il piano.** Tre sono già
+chiuse, e **F1a** — la dichiarazione della porta verso i worker — anche. Nessuna misura
+blocca né le une né l'altro.
+
+> ⏭️ **Il prossimo passo è F2 (+F7)**: l'evoluzione del formato durevole del giornale.
+> Non è F1b, e la ragione è sotto: F1b progetta messaggi i cui campi finiscono in record
+> durevoli, quindi ha bisogno che la regola esista già.
+>
+> ⏭️ **Poi F1b**: firme e messaggi della porta `process` in §5–§6, l'allargamento delle
+> giustificazioni di §6.1.1 e §7.3.1, e la misura che
+> [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) lascia aperta —
+> *`bincode` è decodificabile dal pari **Python**?* Se no, vale l'**esito B di M-1**, già
+> misurato: tipi in `kernel`, serializzazione in `daemon`.
 
 ### Le sette voci, e come sono state trovate
 
@@ -51,10 +62,10 @@ assegnato»*, e **non** significa «non richiede un meccanismo di kernel». Tutt
 |---|---|---|---|---|
 | **F3** | i **parametri di decisione** non erano consegnati al kernel | esplicita in §8.3 V3, ma con l'innesco della specie sbagliata | **B** | ✅ **chiusa** — [ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md), spec §2.8 |
 | **F6** | la **VRAM totale** non aveva provenienza | implicita | conseguenza di F3 | ✅ **chiusa** con F3, spec §5.1 |
-| **F1** | nessuna porta per **parlare** con un worker: `process` è «avvio e uccisione» | implicita | **B** | ⬜ aperta |
+| **F5** | la porta `network` era descritta «verso i **provider**», V25 promette «un solo punto di uscita **verso la rete**» | implicita | una riga | ✅ **chiusa** — spec §2.3.1 |
+| **F1** | nessuna porta per **parlare** con un worker: `process` era «avvio e uccisione» | implicita | **B** | 🔵 **F1a chiusa** ([ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md), §2.3.1); **F1b aperta** — il progetto in §5–§6 |
 | **F2** | l'**evoluzione del formato durevole** del giornale non è decisa | implicita | **B** | ⬜ aperta |
 | **F4** | l'**anello 3** non è collocato in §0.4, né dentro né fuori | implicita | **C**, ma va *scritta* | ⬜ aperta |
-| **F5** | la porta `network` è descritta «verso i **provider**», V25 promette «un solo punto di uscita **verso la rete**» | implicita | una riga | ⬜ aperta |
 | **F7** | «il giornale lo consente» per **fork e branching** è un'affermazione della sola tracciabilità | implicita | converge in F2 | ⬜ aperta |
 
 ### L'ordine, e perché
@@ -66,12 +77,13 @@ scrittura. È:
 > scritta prima della decisione che descrive va riscritta comunque.
 
 ```
-F3 ─▶ F6            F3 chiusa: F6 è caduta con lei
-F1a (dichiarazione della porta, §2.3) ─▶ F5   stessa tabella
-F2 ─▶ F7            F7 è un campo, se F2 dà la regola per aggiungerne
-F1b (progetto, §5–§6)               bivio su I4: uno schema o due
-F4                                  indipendente, in qualsiasi momento
-§8                                  ⛔ per ultima, e UNA VOLTA SOLA
+✅ F3 ─▶ F6         F3 chiusa: F6 è caduta con lei
+✅ F1a ─▶ F5        stessa tabella, toccata una volta sola. Il bivio su I4
+                    è deciso: ADR-0035, «singolo» = per canale privato
+⬜ F2 ─▶ F7         F7 è un campo, se F2 dà la regola per aggiungerne
+⬜ F1b (§5–§6)      firme, messaggi, formato di filo — DOPO F2
+⬜ F4               indipendente, in qualsiasi momento
+⛔ §8               per ultima, e UNA VOLTA SOLA
 ```
 
 Il test che ha deciso l'ordine: **quale, decisa per ultima, costringerebbe a riaprire le
@@ -79,6 +91,13 @@ altre?** F3 per ultima riapriva F1 e F2; F2 per ultima non riapre niente. Ma F2 
 scadenza **temporale** e non logica: va chiusa **prima della prima riga di codice che
 scrive un record**, perché aggiungere un discriminante a record già su disco è una
 migrazione dell'unico archivio irriproducibile.
+
+⚠️ **F2 precede F1b anche per una ragione logica, scoperta il 2026-08-07 sbagliando
+l'ordine.** Il diagramma era stato letto come una preferenza, e non lo è: **F1b può creare
+campi durevoli**. Il picco di VRAM che §5.2.2 fa entrare nel giornale *«accanto al passo»*
+arriva dal worker, cioè da un messaggio che F1b progetta. Progettare quei messaggi prima
+che F2 abbia dato la regola di evoluzione significa aggiungere campi a record **sotto
+nessuna regola** — che è esattamente il modo di fallire per cui F2 esiste.
 
 ⚠️ **Tre propedeuticità di processo, che non sono fra le sette:** la §8 si tocca per
 ultima e una volta sola, perché ognuna delle sette cambia una sua riga; **nessuna
@@ -97,6 +116,24 @@ e ogni correzione a una sezione approvata porta il proprio **richiamo datato**, 
 dentro il kernel. Prova che una decisione **riceve** i propri parametri, non che non ne
 abbia altri di nascosto — è il limite del gettone (§6.3.2). Lo copre solo la campagna, e
 solo per i parametri che fa davvero variare.
+
+### Cosa hanno chiuso F1a e F5, in quattro righe
+
+| | |
+|---|---|
+| **il divario non era con I4** | era fra la §2.3 e `design/01`, che descriveva già il canale con tre verbi — *«Avvia, **istruisce**, uccide»* — e aggiungeva *«il flusso audio risale al core»*. La §2.3 ne aveva conservati due |
+| **una porta sola, non due** | il dialogo entra in `process` invece di nascere accanto: l'oggetto con cui si parla a un worker è quello che restituisce l'avvio, e l'avvio pretende una concessione (§5.6). Spezzarli riaprirebbe la chiusura che ha portato I2 al **compilatore** |
+| **la lettura di «singolo»** | un trasporto e uno schema **per canale privato**. I4 si **completa**, non si riformula: ADR-0004 riceve un rimando, come per I2 con ADR-0033 |
+| **F5 non era una sfumatura** | `network` «verso i provider» avrebbe lasciato l'**esportazione OTLP** di ADR-0017 *fuori* dall'unico punto di uscita — cioè esattamente ciò che V25 vieta. Un secondo consumatore già deciso, e già escluso da una descrizione |
+
+⛔ **Il limite di F1a, dichiarato:** resta aperta una domanda di stato dell'arte che **non
+è stata misurata** — se `bincode` sia decodificabile dal pari **Python**. Non tocca la
+dichiarazione della porta; tocca il **formato di filo**, che è F1b. Se la risposta è no,
+vale l'esito **B** di M-1, già misurato e già prezzato: il confine di ADR-0031 non cresce.
+
+⚠️ **E un follow-up di ADR-0028 è diventato un presupposto:** *«trattare l'ambiente Python
+come artefatto da versionare»*. Il timbro di build regge sul secondo canale **solo se** il
+worker è artefatto nostro; se non lo è, «non versionato» cade lì.
 
 ⚠️ **Il piano deve decidere anche _dove nasce il workspace_.** Alla radice non c'è nessun
 `Cargo.toml`: il workspace delle cinque crate nasce alla radice escludendo gli spike,
@@ -234,9 +271,9 @@ Le aveva sollevate M-1 (§6.8.2) e M-3 le aveva rese concrete con dei numeri. De
 
 **§0–§8 approvate.** ⚠️ La spec è però **riaperta su sette voci** — vedi «Prima cosa da
 fare». Le sezioni toccate finora portano ciascuna il proprio richiamo datato: §1.2, §2.0,
-§2.8 (nuova), §5.1, §7.4.1 e la riga V3 della §8.3.
+§2.3.1 (nuova), §2.8 (nuova), §3.1, §5.1, §7.4.1 e la riga V3 della §8.3.
 
-### Le decisioni aperte dalla §0.5 — tre previste, due emerse
+### Le decisioni aperte dalla §0.5 — tre previste, tre emerse
 
 | # | Decisione | Esito |
 |---|---|---|
@@ -245,6 +282,7 @@ fare». Le sezioni toccate finora portano ciascuna il proprio richiamo datato: �
 | 3 | Dove vive l'esecutore | ✅ nel `kernel`, con `Reactor` come porta (§2.4) |
 | 4 | Dipendenze del kernel nel confine I3 | ✅ [ADR-0031](adr/0031-dipendenze-del-kernel-parte-del-confine.md) — **non prevista**, emersa da una misura |
 | 5 | I parametri di decisione sono consegnati, non letti | ✅ [ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md) — **non prevista**, emersa dalla riapertura |
+| 6 | La porta verso i worker, e la lettura di «singolo» in I4 | ✅ [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) — **non prevista**, è la voce F1 della stessa riapertura |
 
 ### Misure eseguite, e quelle ancora aperte
 
@@ -343,7 +381,7 @@ Conseguenze **misurate**, non raccomandazioni. Vanno tradotte in controlli autom
 
 ## Non rilitigabile
 
-33 ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
+34 ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
 nuovo che lo superi** (`Superseded by`), non una conversazione. Le decisioni che
 è più probabile qualcuno voglia riaprire per comodità, e la ragione per cui non si fa:
 
@@ -368,6 +406,7 @@ nuovo che lo superi** (`Superseded by`), non una conversazione. Le decisioni che
 | L'**innesco è obbligatorio** per `parziale` e `rimandato` (§8.1) | sembra burocrazia e non lo è: è l'unica cosa che impedisce a `parziale` di diventare la casella comoda in cui parcheggiare tutto. Toglierla riporta alla situazione che la §0.6 chiamava «rimandato tende a diventare dimenticato» — con in più una tabella che sembra dire il contrario |
 | La **guardia di non-vacuità** dei controlli nuovi (§8.6.2) | è il pezzo che sembra più togliibile e il solo che non si può togliere. Senza, basta rinumerare una sotto-sezione perché due controlli smettano di controllare **uscendo verdi**: gotcha #26. E il «miglioramento» sbagliato è metterci un numero atteso di righe, che diventa rosso quando la tabella cresce per un motivo legittimo |
 | I **parametri di decisione sono consegnati**, non letti (ADR-0034) | la scorciatoia tentante è «tanto il budget è 16 GB, scrivilo e basta». Una costante nel kernel **non fa scattare nessun controllo del catalogo §7**: si scopre solo quando qualcuno prova a farla variare in campagna e non può. È il gotcha #12 su un altro asse — e toglie alla DST l'unico modo di esplorare lo scenario di RK-1 |
+| Il **dialogo con un worker vive dentro `process`** (ADR-0035) | la scorciatoia tentante è «è tutto IPC, mettiamolo su `ipc`». Sembra un accorpamento e invece **spezza la vita di un worker fra due porte**: l'avvio pretende una concessione (§5.6), e se il dialogo passa da un'altra porta quella catena non copre più il parlare. Si perde il meccanismo che ha portato I2 dal test al **compilatore**, e lo si perde senza che nulla diventi rosso |
 
 ## Le tre proprietà che non si aggiungono dopo
 
@@ -416,6 +455,7 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 26 | **Un controllo che delimita il proprio bersaglio per intestazione si spegne quando qualcuno rinumera — e si spegne _verde_** | è il gotcha #14 in una forma che #14 non copre: quel controllo **è stato visto fallire**, quindi era un controllo vero. Poi qualcuno rinomina `#### 7.4.1`, l'intervallo non trova più righe, e uno script che non ha niente da controllare **esce con successo**. Il segnale è indistinguibile da «tutto a posto». Rimedio, applicato in §8.6.2: **se un delimitatore non si trova, o l'intervallo è vuoto, è un fallimento**. Sonde S6, S6b e S6c. ⚠️ E il rimedio sbagliato è mettere a guardia un **numero atteso** di righe: diventerebbe rosso il giorno in cui la tabella cresce per un motivo legittimo, cioè il gotcha #9 applicato allo script. Si verifica che i delimitatori esistano, non quante righe ci siano — a meno che l'elenco non sia canonico, come i V1–V37, dove la completezza *è* il controllo |
 | 27 | **La legenda di una tabella risponde a una domanda sola, e chi la legge ne assume un'altra** | `tracciabilita.md` risponde a *«dove vive questa funzionalità»*. Il suo `📋` significa «sotto-progetto assegnato» — **non** «non richiede un meccanismo di kernel». Nessuno l'aveva mai letta con la seconda domanda, e leggerla così ha **riaperto la spec su sette voci**, tre di classe B. È il gotcha #26 spostato dai controlli ai documenti: una tabella che non ha mai rifiutato niente non sta verificando niente. ⚠️ Il rimedio non è riscrivere la legenda: è **rileggere con un'altra domanda**, che è ciò che la §8 ha fatto sessantuno volte e questa volta ha fatto la tracciabilità |
 | 28 | **Un parametro non consegnato è una costante, e una costante è invisibile** | V29 rende sostituibile ciò che il mondo *risponde*. Non dice nulla sui **parametri con cui il kernel è configurato** — budget della GPU, quote sottratte, policy attiva, tetti di autonomia — e ciò che non viene consegnato finisce scritto dentro. Non compare in nessun elenco, non fa scattare nessuna voce del catalogo, e **si manifesta solo come uno scenario che la campagna non può esplorare**: con le quote fisse, RK-1 è irraggiungibile. Chiuso da ADR-0034. ⛔ E il limite resta dichiarato: il compilatore prova che una decisione *riceve* i propri parametri, **non** che non ne abbia altri di nascosto |
+| 29 | **La riga di _verifica_ di un'invariante è il punto in cui l'invariante si restringe in silenzio** | Le sei invarianti di ADR-0004 hanno due colonne: l'**enunciato** e **come si verifica**. La seconda è più corta, più concreta, e viene letta al posto della prima — ma è scritta guardando i casi che esistevano quel giorno. È già successo **due volte**: I2 diceva «nessun **worker** si avvia senza concessione», e copriva una classe di processo su tre (chiuso da ADR-0033); I4 dice «nessun **consumatore esterno**», che parla di esternalità e non di quanti dei nostri processi parlino il protocollo (chiuso da ADR-0035). In entrambi i casi l'enunciato era giusto e nessun controllo poteva accorgersene, perché **la riga di verifica _è_ il controllo**. ⚠️ Il rimedio non è riscrivere le invarianti: è che **completare una riga di verifica non è superarla** — ADR-0004 non è mai stato superato, ha ricevuto due rimandi. Chi trova il terzo caso lo aggiunga qui invece di aprire un dibattito sull'invariante |
 
 ## Il metodo di lavoro
 
@@ -437,7 +477,7 @@ diventassero codice.
 
 | | |
 |---|---|
-| ❌ ri-derivare l'architettura | è in **34 ADR**, ciascuno con alternative scartate e motivo |
+| ❌ ri-derivare l'architettura | è in **35 ADR**, ciascuno con alternative scartate e motivo |
 | ❌ riscrivere `tracciabilita.md` da zero | 170 funzionalità già mappate: si **aggiorna**, non si rigenera |
 | ❌ ri-cercare lo stato dell'arte già tracciato | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ rifare gli spike SP-5 e SP-6 | esiti, seed, versioni e comandi sono in [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md). I prototipi esclusi sono recuperabili dalla storia git, lo SHA è lì |
@@ -476,7 +516,7 @@ per chiudersi.
 | [`roadmap.md`](roadmap.md) | dodici sotto-progetti, ordine, dipendenze, decisioni aperte |
 | [`tracciabilita.md`](tracciabilita.md) | 170 funzionalità → dove vive ciascuna |
 | [`README.md`](README.md) | indice di ADR e diagrammi |
-| [`adr/`](adr/) | **33 decisioni**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
+| [`adr/`](adr/) | **35 decisioni**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
 | [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§8 complete, con tutte le evidenze delle misure |
 | [`superpowers/plans/`](superpowers/plans/) | il piano dello stack — **eseguito**, con l'errata in testa che documenta cosa il piano sbagliava |

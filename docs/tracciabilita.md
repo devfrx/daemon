@@ -22,7 +22,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 > significa «sotto-progetto assegnato», **non** «non richiede un meccanismo di kernel».
 >
 > Rileggerla con la seconda domanda ha **riaperto la spec del sotto-progetto 1 su sette
-> voci**, due chiuse e cinque aperte: elenco, classe e ordine in
+> voci**, tre chiuse più F1a: elenco, classe e ordine in
 > [HANDOFF](HANDOFF.md#prima-cosa-da-fare). Finché **F4** è aperta, la riga *Scheduling* ✅
 > punta a un meccanismo — l'anello 3 — che la §0.4 non colloca né dentro né fuori, e la
 > riga *File watching* 🔶 dichiara deciso un meccanismo che non ha una porta.

@@ -4,8 +4,10 @@
 - **Sotto-progetto:** 1. Dipende da 0, 0b, 0c ([roadmap](../../roadmap.md))
 - **Stato:** §0–§8 approvate. ⚠️ **Riaperta il 2026-08-07 su sette voci** trovate
   rileggendo la tracciabilità — elenco, ordine e propedeuticità in
-  [HANDOFF](../../HANDOFF.md#prima-cosa-da-fare). Due chiuse: **F3** (§2.8, ADR-0034) e
-  **F6** (§5.1). Dopo le cinque aperte, il piano.
+  [HANDOFF](../../HANDOFF.md#prima-cosa-da-fare). Chiuse: **F3** (§2.8, ADR-0034), **F6**
+  (§5.1), **F5** (§2.3.1) e **F1a**, la dichiarazione della porta verso i worker (§2.3.1,
+  [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md)). Restano, in ordine:
+  **F2** (+**F7**), poi **F1b** (progetto della porta, §5–§6), poi **F4**; poi il piano.
 
 Questa spec **non ri-decide l'architettura**: la spec del kernel dice *cosa* il sistema
 fa e *perché*, e gli ADR dicono con quali alternative scartate. Qui si dice *quali crate
@@ -21,8 +23,8 @@ sbagliata — con l'eccezione delle tre decisioni della §0.5, dove qualcosa man
 |---|---|---|
 | 0 | Perimetro e criterio di scaglionamento | **Approvata** |
 | 1 | Struttura delle crate e regole di importazione | **Approvata** |
-| 2 | Il substrato iniettabile | **Approvata** · ⚠️ **§2.8 aggiunta il 2026-08-07** |
-| 3 | Il simulatore DST | **Approvata** |
+| 2 | Il substrato iniettabile | **Approvata** · ⚠️ **§2.8 aggiunta e §2.3 corretta il 2026-08-07** |
+| 3 | Il simulatore DST | **Approvata** · ⚠️ **§3.1 allineata il 2026-08-07** |
 | 4 | Giornale, riconciliazione e motore di persistenza | **Approvata** |
 | 5 | Arbitro GPU, e la lacuna su I2 | **Approvata** |
 | 6 | Gli altri meccanismi: gateway, sensori, permessi, degrado | **Approvata** |
@@ -151,6 +153,7 @@ Non sono ri-derivazioni: sono buchi, ciascuno già documentato come tale.
 | 3 | **Dove vive l'esecutore delle attività concorrenti** | conseguenza del vincolo 3 di ADR-0026: la crate del kernel è `#![no_std]`, e va **misurato** se un runtime deterministico di ecosistema può starci dentro o debba stare accanto | §2 |
 | 4 | ✅ **Le dipendenze del kernel sono parte del confine I3** — [ADR-0031](../../adr/0031-dipendenze-del-kernel-parte-del-confine.md) | non previsto quando la §0 è stata approvata: emerge da una **misura**, registrata in §1.4.1. `no_std` impedisce di *nominare* `std`, non di *raggiungere* l'OS attraverso una dipendenza | §1 |
 | 5 | ✅ **I parametri di decisione sono consegnati, non letti** — [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md) | **non previsto**: emerge dalla riapertura del 2026-08-07, rileggendo `tracciabilita.md` con la domanda del meccanismo. V29 rende sostituibile ciò che il mondo *risponde*, non i **parametri** con cui il kernel è configurato | §2.8 |
+| 6 | ✅ **La porta verso i worker, e la lettura di «singolo» in I4** — [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) | **non previsto**: è la voce **F1** della stessa riapertura. La §2.3 non aveva nessuna porta per *parlare* con un worker, e `design/01` la descriveva già con un verbo in più | §2.3.1 · §5–§6 |
 
 Ciascuna nasce **dentro** la sezione che la richiede, non in coda: una decisione staccata
 dal contesto che la motiva è la stessa cosa che ADR-0028 ha dovuto ratificare a
@@ -199,7 +202,7 @@ Il sotto-progetto 1 è chiuso quando **tutte** queste sono vere, non quando il c
 | 2 | ogni controllo statico **è stato visto fallire** su una violazione deliberata, e poi tornare verde — gotcha #14: un controllo mai visto fallire non è un controllo |
 | 3 | ogni Q in perimetro è verificato col metodo che [design/08](../../design/08-strategia-di-test.md) gli assegna, non con un altro |
 | 4 | ogni difetto trovato in simulazione conserva il proprio **seed** come caso di regressione permanente (V31) |
-| 5 | i **quattro** ADR della §0.5 sono scritti, ciascuno con le proprie `Negative (accettate)`. ⚠️ erano tre fino al 2026-08-07: il quarto è [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md), e la riga 3 resta l'unica decisione della §0.5 senza ADR — vive in §2.4 |
+| 5 | i **cinque** ADR della §0.5 sono scritti, ciascuno con le proprie `Negative (accettate)`. ⚠️ erano tre fino al 2026-08-07, poi quattro con [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md) e cinque con [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md). La riga 3 resta l'unica decisione della §0.5 senza ADR — vive in §2.4 |
 | 6 | `roadmap.md`, `tracciabilita.md`, lo stato degli spike e `HANDOFF.md` sono aggiornati **nello stesso passaggio** |
 | 7 | `bash scripts/check-docs.sh` esce verde |
 
@@ -444,10 +447,39 @@ scegliere l'ordine e iniettare guasti — non alla logica.
 |---|---|
 | `journal` — scrittura durevole ordinata, rilettura | §4 |
 | `filesystem` — ambiti di checkpoint, artefatti | §4 |
-| `process` — avvio e uccisione dei worker | §5 |
+| `process` — **ciclo di vita di un worker: avvio, dialogo, uccisione** | §5 · [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) |
 | `ipc` — server verso la gui | §6 |
-| `network` — uscita verso i provider | dichiarata qui, implementazione scaglionata (§0.4) |
+| `network` — **l'unico punto di uscita verso la rete** (V25) | dichiarata qui, implementazione scaglionata (§0.4) |
 | `reactor` — «cosa è pronto», e l'attesa | §2.4 |
+
+#### 2.3.1 Due celle riscritte — F1a e F5
+
+> ⚠️ **Corretto il 2026-08-07**, dopo l'approvazione della §2. Sono le voci **F1** e **F5**
+> della riapertura, e stanno nella stessa tabella: si toccano una volta sola. La decisione
+> completa, con le quattro alternative e i costi, è
+> [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md).
+
+**`process` — mancava il verbo di mezzo.** La riga diceva «avvio e uccisione»:
+non esisteva nessuna porta per **parlare** con un worker già avviato.
+[design/01](../../design/01-topologia-dei-processi.md) lo descriveva già con tre verbi —
+*«Avvia, **istruisce**, uccide»* — e aggiungeva *«il flusso audio risale al core»*. Il
+divario era fra questa tabella e quel diagramma, non fra il progetto e I4.
+
+| | |
+|---|---|
+| **perché non poteva aspettare la §5** | la §3.1 dichiara questo elenco **esaustivo**, e il simulatore sostituisce *tutte* le porte. Una porta aggiunta dopo significa che **C1 era verificato su un mondo più piccolo del reale**, e nulla sarebbe diventato rosso — gotcha #17 |
+| **perché resta una porta sola** | il dialogo entra in `process` invece di nascere accanto: l'oggetto con cui si parla a un worker è quello che restituisce l'avvio, e l'avvio pretende una concessione (§5.6). Spezzare avvio e dialogo su due porte riaprirebbe la chiusura che ha portato I2 al **compilatore** |
+| **la lettura di I4** | «singolo» significa un trasporto e uno schema **per canale privato**. Nessun broker, nessuna negoziazione, nessun versionamento — e nessuno dei due canali ha consumatori esterni. ADR-0004 non è superato: riceve un **rimando** |
+
+**`network` — la descrizione era più stretta della promessa.** La riga diceva «uscita verso
+i provider»; V25 e Q20 promettono *«un solo punto di uscita **verso la rete**»*. Non è una
+sfumatura: [ADR-0017](../../adr/0017-giornale-sorgente-trace-proiezione.md) ha già deciso
+un **secondo** consumatore — l'esportazione OTLP opt-in — e con la descrizione precedente
+sarebbe nato **fuori** dall'unico punto di uscita, cioè esattamente ciò che V25 vieta.
+
+⛔ Cosa **non** cambia: la porta resta dichiarata e non implementata (§0.4), e la sua
+allow-list resta vuota. Il buco di V25 dichiarato in §7.4.2 — sonda sì, contro-sonda no —
+resta aperto e resta registrato lì.
 
 ### 2.4 Scheduling — dove vive l'esecutore
 
@@ -746,10 +778,21 @@ punti in cui il mondo tocchi il kernel.
 | `reactor` | attende gli eventi dell'OS | fa scorrere l'orologio virtuale e sceglie i pronti col seme |
 | `journal` | scrive sul motore di persistenza | scrive in memoria, e **cade** a una scrittura scelta dal seme |
 | `filesystem` | disco | albero in memoria |
-| `process` | avvia e uccide worker veri | worker finti, uccisi in istanti scelti dal seme |
+| `process` | avvia, **istruisce** e uccide worker veri | worker finti: risposte, ritardi e uccisione scelti dal seme |
 | `network` | HTTPS verso i provider | risposte, ritardi e perdite scelti dal seme |
 | `ipc` | named pipe verso la gui | client finto, che può **morire** quando il seme decide |
 | `rng` | seminato all'avvio | seminato dal seme della campagna |
+
+> ⚠️ **La riga `process` è stata allargata il 2026-08-07**, con la §2.3 e nello stesso
+> passaggio: questa tabella dichiara di essere *«esattamente le porte della §2.3»*, quindi
+> non poteva restare indietro di un verbo. Il dialogo con un worker è ora una sorgente di
+> guasti che il seme governa — risposta sbagliata, tardiva o assente — e non solo
+> l'uccisione. **Quali guasti verifichino quale Q è progetto, non dichiarazione:** la §3.3
+> si tocca in F1b, con la porta. [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md).
+>
+> 📌 Nota di lettura, senza conseguenze: `rng` è dichiarata in **§2.2**, non in §2.3. La
+> frase qui sopra resta vera in ciò che afferma — non esistono altri punti in cui il mondo
+> tocchi il kernel — ma l'elenco è di **sette** porte e la §2.3 ne enumera sei.
 
 ### 3.2 Il tempo virtuale
 

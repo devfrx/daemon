@@ -16,20 +16,22 @@ tutto il resto ne discende.
 Il vincolo dominante non è funzionale ma di risorsa: quattro aree che si contendono
 una sola GPU da 16 GB.
 
-## Stato: spec del sotto-progetto 1 completa (§0–§8). Manca il piano.
+## Stato: §0–§8 approvate, e la spec è riaperta su sette voci. Poi il piano.
 
-Spec del kernel completa e **33 decisioni architetturali**.
+Spec del kernel completa e **34 decisioni architetturali**.
 
 > ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-> scrive **qui**, in questo repository, e ora la spec è completa: fra le due manca solo il
-> **piano**. La documentazione è la fase corrente, non lo scopo. Oggi l'unico codice è in
+> scrive **qui**, in questo repository. Fra le due mancano la **chiusura delle sette voci**
+> della riapertura e poi il **piano**. La documentazione è la fase corrente, non lo scopo.
+> Oggi l'unico codice è in
 > [`spikes/rust/`](spikes/rust/) — sono **prove**, non il kernel, ma
 > [§2.5 della spec](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) dice già
 > riga per riga quali pezzi salgono a `kernel/` e quali restano dove sono.
 
-⚠️ **Una cosa da decidere nel piano, non prima:** `spikes/rust/` ha un **proprio
-`Cargo.toml`** e alla radice non ce n'è nessuno. Va deciso se il workspace delle cinque
-crate nasce alla radice — escludendo gli spike — o accanto ad essi.
+⚠️ **Una cosa da decidere nel piano, non prima:** alla radice non c'è nessun `Cargo.toml`,
+e va deciso se il workspace delle cinque crate nasce lì — escludendo gli spike — o accanto
+ad essi. Sotto `spikes/` i progetti Cargo sono **due**: `spikes/rust/`, che è a sua volta
+un **workspace annidato**, e `spikes/gui-ipc/`.
 
 | Strato | Scelta | Da |
 |---|---|---|
@@ -43,9 +45,9 @@ crate nasce alla radice — escludendo gli spike — o accanto ad essi.
 | schema IPC | **`bincode` 2.0.1** — appuntato a `2`, vedi gotcha #22 | M-1, spec §6.1.1. Prime voci della lista di ADR-0031 |
 | GPU della **GUI** | **quota di presentazione sottratta**, concessione tenuta dal core | ADR-0033, chiude la lacuna su I2 |
 
-**La spec del sotto-progetto 1 è completa** — §0–§8 approvate — ma è spec, non codice: il
-passo successivo è il **piano**. Il guscio aperto non lo blocca: il sotto-progetto 1 è
-interamente Rust e non tocca la GUI.
+**La spec del sotto-progetto 1 ha §0–§8 approvate**, ed è riaperta su sette voci — due
+chiuse. Resta spec, non codice: dopo le cinque aperte viene il **piano**. Il guscio aperto
+non blocca nulla: il sotto-progetto 1 è interamente Rust e non tocca la GUI.
 
 ✅ **La lacuna su I2 è chiusa** da ADR-0033: il consumo GPU della GUI si modella come
 **tre consumatori distinti**, e I2 è ora verificato su tutte e tre le classi di processo.
@@ -60,7 +62,7 @@ concessione come argomento.
 | 2 | [`docs/roadmap.md`](docs/roadmap.md) | stato, ordine dei sotto-progetti, prossimo passo |
 | 3 | [`docs/README.md`](docs/README.md) | indice di ADR, diagrammi e spec |
 | 4 | [`docs/adr/`](docs/adr/) | il **perché** di ogni decisione — leggi ADR-0001 e ADR-0004 per primi |
-| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: §0–§8 complete, con tutte le evidenze delle misure |
+| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: §0–§8 approvate con tutte le evidenze, più §2.8 dalla riapertura |
 | 6 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§10 — il *cosa*, di cui la precedente è il *come* |
 | 7 | [`docs/tracciabilita.md`](docs/tracciabilita.md) | ogni funzionalità della mappa originale → dove vive |
 | 8 | [`docs/riferimenti.md`](docs/riferimenti.md) | provenienza di ciò che non abbiamo dedotto noi |
@@ -89,7 +91,7 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | `anthropic-skills:dev-discipline` | governa il **codice**: esplora prima di scrivere, YAGNI, convenzioni del repo, niente scorciatoie non dichiarate |
 | `anthropic-skills:dev-communication` | governa la **conversazione** intorno al codice: cosa si decide da soli e cosa si porta al proprietario. Una decisione strutturale non si seppellisce in un messaggio di consegna |
 | `superpowers:brainstorming` | prima di qualunque lavoro creativo, e **prima di entrare in plan mode** |
-| `superpowers:writing-plans` | quando si scrive il piano di implementazione — cioè adesso |
+| `superpowers:writing-plans` | quando si scriverà il piano — **non adesso**: prima le cinque voci aperte |
 | `superpowers:test-driven-development` | quando comincerà il codice |
 
 ## Le sei invarianti del kernel (ADR-0004)
@@ -114,7 +116,7 @@ riscrittura, non una patch.
 |---|---|---|
 | 1 | Confine dei dati non fidati nel sistema di tipi | I6 · ADR-0014 |
 | 2 | Nessuna chiamata OS-specifica nel kernel | I3 · ADR-0002 |
-| 3 | **Iniettabilità** di tempo, casualità, I/O e scheduling | V29 · ADR-0021 |
+| 3 | **Iniettabilità** di tempo, casualità, I/O e scheduling — e i **parametri di decisione**, che sono l'altro asse | V29 · ADR-0021 · **ADR-0034** |
 
 Una quarta, di natura diversa ma altrettanto vincolante: **nessuna esecuzione di codice
 o comando sotto il livello 2 di confinamento** (V35 · ADR-0025). I permessi applicativi
@@ -122,8 +124,22 @@ da soli non sono un confine contro codice eseguito.
 
 ## Prossimo passo
 
-**Scrivere il piano di implementazione.** La spec è completa: §0–§8 approvate, nessuna
-sezione aperta, nessuna misura che blocchi. Poi il codice.
+**Chiudere le sette voci della riapertura, poi scrivere il piano.** Nessuna misura blocca
+né l'una né l'altro. L'elenco, l'ordine e le propedeuticità sono in
+[`docs/HANDOFF.md`](docs/HANDOFF.md#prima-cosa-da-fare).
+
+Sono emerse rileggendo [`docs/tracciabilita.md`](docs/tracciabilita.md) con una domanda che
+nessuno le aveva posto: **«di quale meccanismo di kernel ha bisogno questa funzionalità, e
+la spec lo nomina?»**. La legenda è la crepa: `📋` significa *«sotto-progetto assegnato»*,
+**non** «non richiede un meccanismo di kernel».
+
+| | |
+|---|---|
+| ✅ **chiuse** | **F3** — i parametri di decisione sono **consegnati** al kernel, non letti ([ADR-0034](docs/adr/0034-parametri-di-decisione-consegnati-non-letti.md), §2.8) · **F6** — la provenienza del totale di VRAM (§5.1) |
+| ⬜ **aperte** | **F1** nessuna porta per *parlare* con un worker (B) · **F2** l'evoluzione del formato durevole (B) · **F4** l'anello 3 non collocato in §0.4 · **F5** `network` descritta più stretta di V25 · **F7** fork e branching |
+
+⛔ **La §8 si tocca per ultima, e una volta sola**: ognuna delle sette cambia una sua riga.
+E **nessuna rinumerazione** di sezioni — lo script legge §7.4 e §8 per posizione.
 
 ⚠️ **Il piano deve decidere anche _dove nasce il workspace_**: `spikes/rust/` ha un proprio
 `Cargo.toml` e alla radice non ce n'è nessuno. È l'unica domanda strutturale che la spec ha

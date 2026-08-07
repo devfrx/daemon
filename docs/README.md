@@ -70,6 +70,7 @@ sotto-progetto**, nello stesso passaggio.
 | [0031](adr/0031-dipendenze-del-kernel-parte-del-confine.md) | Le dipendenze del kernel sono parte del confine I3 | Accepted |
 | [0032](adr/0032-motore-di-persistenza.md) | Motore di persistenza: `redb`, con backend nostro | Accepted |
 | [0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) | GPU della GUI: quota di presentazione sottratta, concessione tenuta dal core | Accepted |
+| [0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md) | I parametri di decisione sono consegnati al kernel, non letti | Accepted |
 
 ## Indice dei diagrammi
 

@@ -56,6 +56,16 @@ Vale l'argomento già usato per I6 e per il confine OS: **è una proprietà che 
 ottiene solo costruendola dall'inizio.** Il costo di introdurla adesso è un'astrazione;
 il costo di introdurla dopo è una riscrittura.
 
+> ✅ **Rimando — [ADR-0034](0034-parametri-di-decisione-consegnati-non-letti.md) aggiunge
+> un secondo asse** (2026-08-07). I quattro elencati qui sono i punti in cui il **non
+> determinismo** entra in una decisione. Ma una decisione dipende anche dai **parametri
+> con cui il kernel è stato configurato** — budget della GPU, quote sottratte, policy
+> attiva, tetti di autonomia — che sono deterministici e che nessuna sezione consegnava.
+> Questo ADR **non è superato**: la sua enumerazione era corretta per ciò che affermava,
+> e ciò che non affermava è ora coperto. Il modo di fallire chiuso da ADR-0034 è che un
+> parametro non consegnato diventa una **costante**, invisibile a ogni controllo, che
+> impedisce alla campagna di esplorare la propria configurazione.
+
 ## Consequences
 
 - **Positive:**

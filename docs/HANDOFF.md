@@ -1,21 +1,22 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-07**, alla chiusura della sessione che ha scritto la **§8** della
-spec del sotto-progetto 1 — la copertura V1–V37 e Q1–Q24 — ed esteso `check-docs.sh` con le
-due asserzioni che la §7 le aveva lasciato. **La spec del sotto-progetto 1 è completa.**
-Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
+Aggiornato il **2026-08-07**, alla chiusura della **§8** — la copertura V1–V37 e Q1–Q24 —
+e poi di nuovo quando rileggere `tracciabilita.md` con un'altra domanda ha **riaperto la
+spec su sette voci**, di cui due chiuse. Serve a riprendere senza rifare, e senza
+rilitigare ciò che è già deciso.
 
 ## In trenta secondi
 
 Assistente desktop locale, utente singolo, GPU singola RTX 5080 16 GB. **Piattaforma a
-quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 33 ADR**.
+quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 34 ADR**.
 Stack deciso **tranne il guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**,
 worker ML in **Python**; Tauri contro Electron è ancora aperto
 ([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
 
-**La spec del sotto-progetto 1 è completa** — implementazione del kernel + simulatore DST,
-§0–§8 approvate. Il passo successivo è il **piano di implementazione**; il codice non è
-ancora iniziato, e vale «spec prima del codice».
+**La spec del sotto-progetto 1 ha §0–§8 approvate**, ed è **riaperta su sette voci**
+trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto. Il
+codice non è ancora iniziato, e vale «spec prima del codice». Il piano viene **dopo** la
+chiusura delle sette — vedi sotto.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -25,20 +26,84 @@ Il vincolo che governa tutto non è funzionale ma di risorsa: quattro aree che s
 una sola GPU.
 
 ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-scrive **qui**, e ora la spec è completa: fra le due manca solo il **piano**. Oggi l'unico
+scrive **qui**: fra le due mancano le cinque voci aperte e poi il **piano**. Oggi l'unico
 codice presente è in [`../spikes/rust/`](../spikes/rust/): sono **prove**, non il kernel —
 ma la §2.5 della spec dice già riga per riga quali pezzi salgono a `kernel/` e quali
 restano dove sono.
 
 ## Prima cosa da fare
 
-**Scrivere il piano di implementazione del sotto-progetto 1.** La spec è completa: §0–§8
-approvate, nessuna sezione aperta, nessuna misura che blocchi. Poi il codice.
+**Chiudere le sette voci della riapertura, poi scrivere il piano.** Nessuna misura blocca
+né l'una né l'altro.
 
-⚠️ **Il piano deve decidere anche _dove nasce il workspace_.** `spikes/rust/` ha un proprio
-`Cargo.toml` e alla radice non ce n'è nessuno: il workspace delle cinque crate nasce alla
-radice escludendo gli spike, oppure accanto ad essi. È l'unica domanda strutturale che la
-spec ha deliberatamente lasciato al piano.
+### Le sette voci, e come sono state trovate
+
+`tracciabilita.md` risponde a *«dove vive questa funzionalità»*. Rileggendola con un'altra
+domanda — ***«di quale meccanismo di kernel ha bisogno, e la spec lo nomina?»*** — sono
+emerse sette voci che non reggono. È la stessa mossa della §8, applicata alla tracciabilità
+invece che ai V/Q, ed è la terza volta che «rileggere con un'altra domanda» trova qualcosa.
+
+⚠️ **La crepa sta nella legenda.** Un `📋` significa *«pianificata: sotto-progetto
+assegnato»*, e **non** significa «non richiede un meccanismo di kernel». Tutto ciò che è
+`📋` non era verificato su quel fronte.
+
+| # | Voce | Voluta? | Classe §0.3 | Stato |
+|---|---|---|---|---|
+| **F3** | i **parametri di decisione** non erano consegnati al kernel | esplicita in §8.3 V3, ma con l'innesco della specie sbagliata | **B** | ✅ **chiusa** — [ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md), spec §2.8 |
+| **F6** | la **VRAM totale** non aveva provenienza | implicita | conseguenza di F3 | ✅ **chiusa** con F3, spec §5.1 |
+| **F1** | nessuna porta per **parlare** con un worker: `process` è «avvio e uccisione» | implicita | **B** | ⬜ aperta |
+| **F2** | l'**evoluzione del formato durevole** del giornale non è decisa | implicita | **B** | ⬜ aperta |
+| **F4** | l'**anello 3** non è collocato in §0.4, né dentro né fuori | implicita | **C**, ma va *scritta* | ⬜ aperta |
+| **F5** | la porta `network` è descritta «verso i **provider**», V25 promette «un solo punto di uscita **verso la rete**» | implicita | una riga | ⬜ aperta |
+| **F7** | «il giornale lo consente» per **fork e branching** è un'affermazione della sola tracciabilità | implicita | converge in F2 | ⬜ aperta |
+
+### L'ordine, e perché
+
+Il criterio **non** è «prima la scrittura»: non esiste ancora costruzione, sono tutte
+scrittura. È:
+
+> **Si decide prima ciò che vincola una firma, poi ciò che la descrive.** Una descrizione
+> scritta prima della decisione che descrive va riscritta comunque.
+
+```
+F3 ─▶ F6            F3 chiusa: F6 è caduta con lei
+F1a (dichiarazione della porta, §2.3) ─▶ F5   stessa tabella
+F2 ─▶ F7            F7 è un campo, se F2 dà la regola per aggiungerne
+F1b (progetto, §5–§6)               bivio su I4: uno schema o due
+F4                                  indipendente, in qualsiasi momento
+§8                                  ⛔ per ultima, e UNA VOLTA SOLA
+```
+
+Il test che ha deciso l'ordine: **quale, decisa per ultima, costringerebbe a riaprire le
+altre?** F3 per ultima riapriva F1 e F2; F2 per ultima non riapre niente. Ma F2 ha una
+scadenza **temporale** e non logica: va chiusa **prima della prima riga di codice che
+scrive un record**, perché aggiungere un discriminante a record già su disco è una
+migrazione dell'unico archivio irriproducibile.
+
+⚠️ **Tre propedeuticità di processo, che non sono fra le sette:** la §8 si tocca per
+ultima e una volta sola, perché ognuna delle sette cambia una sua riga; **nessuna
+rinumerazione** di sezioni, perché lo script legge §7.4 e §8 per posizione (gotcha #26);
+e ogni correzione a una sezione approvata porta il proprio **richiamo datato**, come §8.5.
+
+### Cosa ha chiuso F3, in tre righe
+
+| | |
+|---|---|
+| **la regola** | nessuna decisione del kernel legge un parametro che non le è stato consegnato |
+| **non è un quinto iniettabile** | i quattro di V29 sono sorgenti di *non determinismo*; un parametro è deterministico. Consegnarlo compra I3 **e** la variabilità sotto il seme, non la riproducibilità |
+| **il guadagno che non c'era** | la DST può ora far variare i parametri col seme, quindi lo scenario di **RK-1** — quota audio + quota presentazione contro TRELLIS2 — diventa esplorabile *prima* che M5 lo misuri |
+
+⛔ **Il limite di F3, dichiarato:** il compilatore **non può** vietare una costante scritta
+dentro il kernel. Prova che una decisione **riceve** i propri parametri, non che non ne
+abbia altri di nascosto — è il limite del gettone (§6.3.2). Lo copre solo la campagna, e
+solo per i parametri che fa davvero variare.
+
+⚠️ **Il piano deve decidere anche _dove nasce il workspace_.** Alla radice non c'è nessun
+`Cargo.toml`: il workspace delle cinque crate nasce alla radice escludendo gli spike,
+oppure accanto ad essi. È l'unica domanda strutturale che la spec ha deliberatamente
+lasciato al piano — con **un fatto in più che nessun documento nominava**: sotto `spikes/`
+i progetti Cargo sono **due**, non uno — `spikes/rust/`, che è anche un **workspace
+annidato**, e `spikes/gui-ipc/`.
 
 ✅ **Nessuna misura blocca il piano.** L'unica ancora aperta — M5 — richiede una GUI, cioè
 il sotto-progetto 2.
@@ -166,7 +231,9 @@ Le aveva sollevate M-1 (§6.8.2) e M-3 le aveva rese concrete con dei numeri. De
 | **7** | **La porta di qualità: i controlli automatici** | ✅ | **scala di forza a tre livelli**, evidenze di M-3, le due decisioni sulle dipendenze, il **catalogo** con sonda e contro-sonda, la cadenza, il perimetro negativo. **Il livello 3 è vuoto** |
 | **8** | **Copertura V1–V37 e Q1–Q24** | ✅ | **quattro stati** con innesco obbligatorio, **due specie di innesco**, la regola che un Q della DST eredita lo stato della propria porta, l'estensione di `check-docs.sh` provata in due direzioni. **Il livello ⛔ è vuoto** |
 
-**La spec è completa: §0–§8, nessuna sezione aperta.** Il passo successivo è il piano.
+**§0–§8 approvate.** ⚠️ La spec è però **riaperta su sette voci** — vedi «Prima cosa da
+fare». Le sezioni toccate finora portano ciascuna il proprio richiamo datato: §1.2, §2.0,
+§2.8 (nuova), §5.1, §7.4.1 e la riga V3 della §8.3.
 
 ### Le decisioni aperte dalla §0.5 — tre previste, una emersa
 
@@ -274,7 +341,7 @@ Conseguenze **misurate**, non raccomandazioni. Vanno tradotte in controlli autom
 
 ## Non rilitigabile
 
-32 ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
+33 ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
 nuovo che lo superi** (`Superseded by`), non una conversazione. Le decisioni che
 è più probabile qualcuno voglia riaprire per comodità, e la ragione per cui non si fa:
 
@@ -365,7 +432,7 @@ diventassero codice.
 
 | | |
 |---|---|
-| ❌ ri-derivare l'architettura | è in **33 ADR**, ciascuno con alternative scartate e motivo |
+| ❌ ri-derivare l'architettura | è in **34 ADR**, ciascuno con alternative scartate e motivo |
 | ❌ riscrivere `tracciabilita.md` da zero | 170 funzionalità già mappate: si **aggiorna**, non si rigenera |
 | ❌ ri-cercare lo stato dell'arte già tracciato | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ rifare gli spike SP-5 e SP-6 | esiti, seed, versioni e comandi sono in [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md). I prototipi esclusi sono recuperabili dalla storia git, lo SHA è lì |

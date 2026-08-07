@@ -2,7 +2,10 @@
 
 - **Data:** 2026-08-06
 - **Sotto-progetto:** 1. Dipende da 0, 0b, 0c ([roadmap](../../roadmap.md))
-- **Stato:** §0–§8 approvate. **La spec è completa.** Il passo successivo è il piano.
+- **Stato:** §0–§8 approvate. ⚠️ **Riaperta il 2026-08-07 su sette voci** trovate
+  rileggendo la tracciabilità — elenco, ordine e propedeuticità in
+  [HANDOFF](../../HANDOFF.md#prima-cosa-da-fare). Due chiuse: **F3** (§2.8, ADR-0034) e
+  **F6** (§5.1). Dopo le cinque aperte, il piano.
 
 Questa spec **non ri-decide l'architettura**: la spec del kernel dice *cosa* il sistema
 fa e *perché*, e gli ADR dicono con quali alternative scartate. Qui si dice *quali crate
@@ -226,7 +229,7 @@ ricorda di rispettarlo.
 | **`platform`** | sì | le implementazioni **reali** dei tratti dichiarati dal kernel: filesystem, orologio, rete, processi, confinamento livello 2 | — |
 | **`secrets`** | sì | l'**unico** punto che tocca il portachiavi dell'OS | — |
 | **`simulator`** | **no** — `no_std` + `alloc` | le implementazioni **finte** degli stessi tratti: orologio virtuale, RNG seminato, I/O in memoria, guasti scelti dal seed | come `kernel` |
-| **`daemon`** (binario) | sì | il cablaggio: sceglie `platform` o `simulator`, avvia l'esecutore, ospita il server IPC | — |
+| **`daemon`** (binario) | sì | il cablaggio: sceglie `platform` o `simulator`, avvia l'esecutore, ospita il server IPC, e **produce i parametri risolti** che consegna al kernel (§2.8) | — |
 
 ```mermaid
 flowchart BT
@@ -381,6 +384,12 @@ seme. Il kernel non sa la differenza, ed è per questo che una simulazione può 
 difetto **a comando**.
 
 V29 elenca quattro cose da consegnare: **tempo, casualità, I/O, scheduling**.
+
+> ⚠️ **Sono quattro, e non bastano — aggiunto il 2026-08-07.** I quattro di V29 sono i
+> punti in cui il **non determinismo** entra in una decisione. Ma una decisione dipende
+> anche dai **parametri con cui il kernel è stato configurato**, che sono deterministici e
+> che nessuna sezione consegnava. Il secondo asse è la **§2.8** e
+> [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md).
 
 ### 2.1 Tempo — due concetti distinti
 
@@ -580,6 +589,110 @@ accodarsi dietro l'anello per mangiarne l'1 % (6 ms):
 | **una decisione per volta** | se una decisione diventasse pesante in CPU terrebbe fermo l'anello. Difesa strutturale: il pesante sta nei worker e dietro le porte. Innesco di riapertura in §2.4.2 |
 | **due concetti di tempo** | più attrito a ogni «che ora è». Mitigato dal fatto che sono due tipi: scambiarli non compila |
 | **la porta di rete esiste vuota** | dichiarata qui, riempita in un sotto-progetto successivo. Il rischio di dimenticarsene sta nella tabella di copertura §8 |
+
+> 📌 **La §2.8 è stata aggiunta dopo, e porta i propri costi in §2.8.5.** Non sono
+> ripetuti qui: questa tabella copre le scelte che la §2 aveva quando è stata approvata.
+
+### 2.8 I parametri di decisione sono consegnati, non letti
+
+> ⚠️ **Sezione aggiunta il 2026-08-07**, dopo l'approvazione della §2. Non corregge una
+> scelta di questa sezione: ne aggiunge un **secondo asse** che nessuna sezione copriva.
+> La decisione completa, con alternative e costi, è
+> [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md).
+
+**A parole.** Il kernel non prende niente dal mondo: gli viene consegnato (§2.0). Ma una
+sua decisione dipende da due cose diverse, e finora ne governavamo una sola: *cosa il
+mondo risponde*, e *con quali parametri il kernel è stato configurato*. Il budget della
+GPU, la quota audio, la quota di presentazione, la policy attiva, i tetti di autonomia:
+nessuno di questi gli veniva consegnato, e ciò che non viene consegnato finisce per essere
+una **costante scritta dentro il kernel**.
+
+Una costante è la peggiore delle violazioni possibili qui, perché è **invisibile**: non
+compare in nessun elenco, non fa scattare nessuna voce del catalogo §7, e si scopre solo
+quando qualcuno prova a farla variare in una campagna e non può. È la forma esatta del
+gotcha #12.
+
+#### 2.8.1 Perché non è «un quinto iniettabile»
+
+La distinzione va fatta, o la sezione si progetta male.
+
+| | I quattro di V29 | I parametri |
+|---|---|---|
+| natura | sorgenti di **non determinismo** | valori **deterministici** |
+| sostituirli compra | la **riproducibilità** | ⛔ non la riproducibilità |
+
+Consegnare un parametro compra due cose diverse, ed entrambe contano:
+
+| # | | Perché |
+|---|---|---|
+| 1 | **I3** | un parametro sta su disco; leggerlo è I/O, e il kernel non fa I/O. In linea di principio lo copriva già la porta `filesystem` — ma nessuna riga lo diceva, e l'esito naturale del silenzio è la costante |
+| 2 | **variabilità sotto il seme** | la DST varia *ciò che il mondo risponde*; non può variare *come il sistema è configurato*. Un'intera classe di scenari è irraggiungibile |
+
+#### 2.8.2 La regola
+
+> **Nessuna decisione del kernel legge un parametro che non le è stato consegnato.**
+
+| # | |
+|---|---|
+| 1 | il kernel riceve **alla costruzione** un valore che porta i parametri **risolti** |
+| 2 | il kernel **non nomina** un file, una chiave o un default: nessuno dei tre è esprimibile al suo interno |
+| 3 | chi produce il valore è **`daemon`**: dall'archivio via `platform` in produzione, dal banco di prova in simulazione |
+| 4 | la **sostituzione** di un parametro è un passo giornalato — ✅ già preteso dalla §5.4 per la transizione di policy |
+
+**Non è un'astrazione nuova.** È la mossa di
+[ADR-0011](../../adr/0011-routing-risolto-e-giornalato-per-richiesta.md) un livello sopra:
+*«il record contiene la decisione risolta, non un riferimento alla configurazione»*. Là il
+giornale non vi rimanda, qui il kernel.
+
+**Una conseguenza gratuita:** se il valore consegnato porta **una** policy, «due policy
+attive» non è rappresentabile. L'unicità che §5.4 verificava con un test a esempi sale al
+compilatore — catalogo §7.4.1, blocco C.
+
+#### 2.8.3 Cosa entra e cosa si scaglia
+
+| | Regola | |
+|---|---|---|
+| il **tipo** dei parametri risolti, e che il kernel li riceve | **B** | consegnarli dopo cambia la firma di ogni decisione che ne legge uno |
+| che il kernel non nomini file, chiave o default | **B** | idem |
+| che la sostituzione sia un passo giornalato | — | ✅ già in perimetro per la policy (§5.4) |
+| l'**archivio** su disco e il suo formato | **C** | esiste un'interfaccia (2) |
+| il **pannello** che li modifica | **C** | idem |
+| i **valori** reali | — | SP-1, SP-2, M5: parametri, non impianto |
+
+**Non è A** — senza, la DST prova ancora Q2, Q4 e Q5 a parametri fissi. **Non è C** —
+l'arbitro ha bisogno di un budget qui, non quando arriverà una capacità L2.
+
+⚠️ **In questo sotto-progetto i valori di default sono letterali dentro `daemon`.** È il
+confine corretto e non una scorciatoia — l'archivio arriva con l'interfaccia — ma va
+scritto invece che nascosto.
+
+⛔ **Perimetro negativo.** Non è un sistema di configurazione, non è un registro a chiavi
+stringa — che rimetterebbe il kernel in condizione di *chiedere* — e non è una
+sostituzione a caldo generalizzata. L'elenco completo è in ADR-0034.
+
+#### 2.8.4 Come si verifica, e il limite dichiarato
+
+| # | Livello | Sonda — *deve scattare* | Contro-sonda — *deve restare verde* |
+|---|---|---|---|
+| 1 | **1 — compilatore** | costruire l'arbitro **senza** consegnargli i parametri → non compila | consegnandoglieli → compila |
+| 2 | **2 — campagna DST** | si fa variare un parametro col seme e le tracce **non cambiano** → c'è una costante nascosta | parametro variato, tracce diverse → verde |
+
+> ⛔ **Il limite, dichiarato prima che qualcuno lo scopra.** Il compilatore **non può**
+> vietare una costante scritta dentro il kernel. Il controllo 1 prova che una decisione
+> **riceve** i propri parametri, non che non ne abbia altri di nascosto: è il limite del
+> gettone (§6.3.2), *prova la provenienza, non l'esclusività*. Il controllo 2 copre quel
+> buco solo per i parametri che la campagna fa **davvero** variare. **Non è una prova di
+> assenza.**
+
+#### 2.8.5 I costi
+
+| Costo | |
+|---|---|
+| **attrito su ogni firma che legge un parametro** | si paga a ogni riga, non una volta. Stesso genere di costo che ADR-0021 dichiara per V29 |
+| **i default vivono in `daemon` come letterali** | finché non esiste l'archivio. Dichiarato, non nascosto |
+| **un tipo in più da tenere allineato** | ogni ADR che introduce un parametro deve comparirvi, o quel parametro rientra come costante da un'altra porta |
+| **il compilatore non può vietare una costante** | §2.8.4. Sposta il confine, non lo elimina |
+| ⚠️ **il rischio è la crescita, non la pigrizia** | il perimetro negativo di §2.8.3 è la parte da non togliere |
 
 ---
 
@@ -925,6 +1038,25 @@ budget allocabile = totale − quota audio − quota presentazione
 ```
 
 La seconda è nuova e viene da ADR-0033. La §5.5 la argomenta.
+
+> ⚠️ **`totale` non aveva provenienza — corretto il 2026-08-07.** Questa formula compare
+> identica in tre documenti — qui, in ADR-0033 e in `design/02` — e **nessuno diceva da
+> dove venga `totale`**. Interrogare la GPU è una chiamata all'OS, che I3 vieta al kernel,
+> e nessuna delle famiglie di porte della §2.3 fornisce la capacità dell'hardware.
+
+**I tre addendi sono parametri consegnati** (§2.8), non numeri che l'arbitro va a
+prendere. Vale per tutti e tre lo stesso trattamento che ADR-0005 dà alla riserva —
+*dichiarata dal richiedente, picco misurato*:
+
+| | |
+|---|---|
+| `totale` è **dichiarato** | nessuna porta nuova, nessuna dipendenza dal driver in `platform` adesso |
+| l'occupazione reale si **misura e si registra** | con il meccanismo di §5.2.2, che esiste già |
+| uno scarto sistematico è **un difetto del parametro** | non un incidente — è la stessa postura di ADR-0005 |
+
+⚠️ **Il costo, dichiarato:** un `totale` sbagliato produce sovra-ammissione, cioè **Q2 che
+cede per un errore di configurazione invece che di codice**. La mitigazione è la misura
+del picco, non una verifica a priori che qui non esiste.
 
 **Le strutture dell'arbitro sono `BTreeMap` e `Vec`.** Non è una preferenza: `HashMap`
 vive in `std`, che la crate `kernel` non nomina — quindi il divieto del gotcha #12 è qui
@@ -1849,6 +1981,15 @@ quella «semplificazione» prima che qualcuno la applichi.
 | **V2** | un'ammissione **senza profilo di risorsa** — §5.2.1 dice *«il profilo che l'arbitro riceve»* | con il profilo dichiarato compila |
 | **V4** | trattare l'esito dell'arbitro come **due vie** invece di tre — §5.3 punto 1 | distinguere `Concessa`, `Rifiutata` e `InCoda` compila |
 | **V10** | un sensore che **modifica** l'artefatto — §6.4.2 lo consegna per riferimento immutabile | osservarlo e restituire un verdetto compila |
+| **§2.8** · ADR-0034 | costruire una decisione **senza i parametri consegnati** — §2.8.2 | riceverli alla costruzione compila |
+| **V3** | una **seconda policy attiva**: il valore consegnato ne porta una sola | con una policy sola compila, e la transizione resta un passo giornalato (§5.4) |
+
+> ⚠️ **Due righe aggiunte il 2026-08-07 con ADR-0034.** La prima è il controllo di livello
+> 1 della §2.8.4; la seconda esisteva già come *comportamento* — la §5.4 verificava
+> l'unicità della policy con un test a esempi — e sale al compilatore perché il valore
+> consegnato ne porta una sola. ⛔ Vale per entrambe il limite dichiarato in §2.8.4: il
+> compilatore prova che una decisione **riceve** i propri parametri, **non** che non ne
+> abbia altri scritti dentro come costanti.
 
 > ⚠️ **Tre righe aggiunte il 2026-08-07, e il titolo del blocco corretto.** Le trovò la
 > copertura della §8: V2, V4 e V10 sono proprietà **di livello 1** decise nelle §5 e §6 —
@@ -2311,7 +2452,7 @@ disallineano (§7.4.4, caso 2).
 |---|---|---|---|---|
 | V1 | nessun lavoro tocca la GPU senza concessione valida | ✅ verificato qui | gettone sulla porta `process`, livello 1 (§7.4.1 B) · campagna DST (§7.4.2) · per la GUI la concessione di presentazione è tenuta dal core (§5.5.1). ⚠️ verso il compositor il rifiuto non è esecutivo: §5.5.2, non mitigabile | — |
 | V2 | ogni lavoro GPU ha un profilo di risorsa dichiarato | ✅ verificato qui | §7.4.1 C, riga V2 — un'ammissione senza profilo non compila. La taratura dei valori è SP-1, che è un parametro | — |
-| V3 | una sola policy attiva, e proviene dal profilo di configurazione | ⚠️ parziale | campagna DST: una transizione di policy interrotta lascia un passo riconciliabile (§5.7) · test a esempi sull'unicità dell'oggetto attivo (§5.4). **La provenienza dal profilo di configurazione non ha consumatore**: nessuna sezione mette la configurazione in perimetro | A — esiste un'interfaccia (2) |
+| V3 | una sola policy attiva, e proviene dal profilo di configurazione | ⚠️ parziale | §7.4.1 C, riga V3 — una **seconda policy attiva** non è esprimibile: il valore consegnato ne porta una sola (§2.8.2, livello 1) · campagna DST: una transizione interrotta lascia un passo riconciliabile (§5.7). ⚠️ **riscritta il 2026-08-07 con ADR-0034**: la cella diceva *«la configurazione non ha consumatore»*, e non è più vero — la §2.8 la mette in perimetro. Manca l'**archivio su disco e il pannello che lo modifica**, scaglionati per regola C | A — esiste un'interfaccia (2) |
 | V4 | `Rifiutata` e `InCoda` sono esiti distinti, anche in interfaccia | ⚠️ parziale | §7.4.1 C, riga V4 — trattare l'esito come due vie non compila; **la distinzione in interfaccia** no | A (2) |
 | V5 | nessun effetto senza classe dichiarata | ✅ verificato qui | la classe è un campo obbligatorio del tipo: livello 1, con test di compilazione fallita (§7.4.1 C, §7.4.4 punto 3) | — |
 | V6 | write-ahead obbligatorio | ✅ verificato qui | campagna DST su `journal`, che ha la suite di conformità (§8.2.2) · due livelli di crash provati, M-2 e M-8 (§4.6) | — |

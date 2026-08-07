@@ -665,7 +665,7 @@ per chiudersi.
 | [`roadmap.md`](roadmap.md) | dodici sotto-progetti, ordine, dipendenze, decisioni aperte |
 | [`tracciabilita.md`](tracciabilita.md) | 170 funzionalità → dove vive ciascuna |
 | [`README.md`](README.md) | indice di ADR e diagrammi |
-| [`adr/`](adr/) | **35 decisioni**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
+| [`adr/`](adr/) | **36 decisioni**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
 | [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§8 complete, con tutte le evidenze delle misure |
 | [`superpowers/plans/`](superpowers/plans/) | il piano dello stack — **eseguito**, con l'errata in testa che documenta cosa il piano sbagliava |

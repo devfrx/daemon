@@ -126,6 +126,43 @@ stati=$(
 )
 [ -z "$stati" ] || while IFS= read -r r; do segnala "§8 — $r"; done <<<"$stati"
 
+echo "== compendio §5: una voce per ogni ADR, e nessuna di troppo =="
+# Il compendio e l'unica lettura obbligatoria a inizio sessione (CLAUDE.md).
+# Conseguenza secca: una decisione che non compare li, per chi legge NON ESISTE.
+# Un compendio stantio e peggio di nessun compendio -- mente con autorevolezza,
+# e chi lo legge non ha modo di accorgersene perche CREDE di sapere tutto.
+# Livello 2 -- controllo esterno: cancellato lo script, la regola sparisce.
+# Il livello 1 non e raggiungibile: nessun compilatore legge un .md.
+# DUE direzioni (gotcha #24): un ADR senza voce, e una voce senza ADR. La
+# seconda coglie il file rinominato o rimosso, che la prima non vede.
+# Guardia di non-vacuita: delimitatore mancante o blocco vuoto sono un
+# FALLIMENTO. Uno script che non trova niente da controllare uscirebbe verde
+# -- gotcha #26.
+compendio=docs/COMPENDIO.md
+if [ ! -f "$compendio" ]; then
+  segnala "manca $compendio, che CLAUDE.md dichiara lettura obbligatoria"
+else
+  grep -qE '^## 5\. ' "$compendio" || segnala "compendio §5 — delimitatore «## 5. » non trovato"
+  grep -qE '^## 6\. ' "$compendio" || segnala "compendio §5 — delimitatore «## 6. » non trovato"
+  voci=$(
+    awk '/^## 5\. / { dentro=1; next } /^## 6\. / { dentro=0 } dentro' "$compendio" |
+      grep -oE '^\*\*[0-9]{4} —' | grep -oE '[0-9]{4}' | sort -u
+  )
+  n_voci=$(printf '%s\n' "$voci" | grep -cE '^[0-9]{4}$' || true)
+  if [ "$n_voci" -eq 0 ]; then
+    segnala "compendio §5 — nessuna voce nell'intervallo: il controllo sarebbe vacuo"
+  else
+    assenti=$(comm -23 \
+      <(ls docs/adr/*.md 2>/dev/null | xargs -n1 basename | cut -c1-4 | sort -u) \
+      <(printf '%s\n' "$voci") | tr '\n' ' ')
+    [ -z "${assenti// /}" ] || segnala "compendio §5 — ADR senza voce: $assenti"
+    intrusi=$(comm -13 \
+      <(ls docs/adr/*.md 2>/dev/null | xargs -n1 basename | cut -c1-4 | sort -u) \
+      <(printf '%s\n' "$voci") | tr '\n' ' ')
+    [ -z "${intrusi// /}" ] || segnala "compendio §5 — voce senza ADR corrispondente: $intrusi"
+  fi
+fi
+
 echo "== conteggi ADR dichiarati nelle prose =="
 # I documenti di stato dichiarano quanti ADR esistono. Il numero invecchia in silenzio:
 # nessun controllo lo intercettava, e due prose erano stantie.
@@ -136,7 +173,7 @@ echo "== conteggi ADR dichiarati nelle prose =="
 # Limite dichiarato: un numero scritto a parole è invisibile a questa guardia.
 adr_tot=$(ls docs/adr/*.md 2>/dev/null | wc -l)
 adr_acc=$(grep -l '^- \*\*Status:\*\* Accepted' docs/adr/*.md 2>/dev/null | wc -l)
-for f in docs/HANDOFF.md docs/roadmap.md docs/README.md CLAUDE.md; do
+for f in docs/HANDOFF.md docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/AVVIO-CHAT.md CLAUDE.md; do
   [ -f "$f" ] || continue
   # Gli esempi stanno nei code span: `2 ADR nuovi` è un esempio, non una
   # dichiarazione. Si spogliano prima di confrontare, o il controllo accusa

@@ -5,10 +5,15 @@ e poi di nuovo quando rileggere `tracciabilita.md` con un'altra domanda ha **ria
 spec su sette voci**, di cui tre chiuse più F1a. Serve a riprendere senza rifare, e senza
 rilitigare ciò che è già deciso.
 
-> 📍 **Punto di ripresa: `ee796c7`** — F1a e F5 chiuse, [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md)
-> scritto, albero pulito, `check-docs.sh` verde. **Il prossimo passo è F2 (+F7)**, che è
-> stata *istruita ma non decisa*: il materiale è in «Prima cosa da fare», e riparte da due
-> domande aperte al proprietario.
+> 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — F1a e F5
+> chiuse, [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) scritto, albero
+> pulito, `check-docs.sh` verde. **Il prossimo passo è F2 (+F7)**, che è stata *istruita ma
+> non decisa*: il materiale è in «Prima cosa da fare», e riparte da due domande aperte al
+> proprietario.
+>
+> ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
+> nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
+> cui si legge.
 
 ## In trenta secondi
 

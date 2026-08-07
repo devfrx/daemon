@@ -73,8 +73,12 @@ _transitivo_.**
 > `kernel`, e la regola 2 è sul grafo **transitivo**. Misurato in M-3. Confondere «zero
 > voci proprie» con «grafo vuoto» rende la regola 2 non applicata proprio dove serve.
 >
-> Le voci con la giustificazione stanno nella spec; il **meccanismo di verifica** è
-> materia della §7, ed è stato misurato da M-3 — evidenze in [HANDOFF](../HANDOFF.md).
+> ✅ **Rimando — la §7.3.1 ha chiuso il meccanismo di verifica** (2026-08-07). La lista
+> completa vive lì, con una colonna **classe** che questo ADR non prevedeva: il controllo
+> verifica **due** grafi — le crate *spedite* e quelle *di build* — con due comandi, due
+> errori e **due rimedi opposti**. Una violazione fra le spedite si ripara **togliendo** la
+> dipendenza, non aggiungendola alla lista. Le dipendenze di **sviluppo** sono escluse, e
+> l'esclusione è provata. Evidenze e sonde in §7.2.
 
 **Perimetro, ed è ciò che rende la regola economica.** `platform`, `secrets` e `daemon`
 **non** sono vincolati: è lì che l'I/O deve vivere, per I3. Il motore di persistenza, il
@@ -111,8 +115,11 @@ che sarebbe caro.
     al posto nostro.
 
 - **Follow-up richiesti:**
-  - Il controllo entra nella **porta di qualità** del sotto-progetto 1, e vale la regola
-    generale: va visto fallire, o non è un controllo (gotcha #14).
+  - ~~Il controllo entra nella **porta di qualità** del sotto-progetto 1~~ ✅ **fatto**:
+    §7.3.1, con le sonde N1–N4 viste fallire e tornare verdi (§7.2.2). ⚠️ La riverifica ha
+    trovato che il comando indicato per separare i due grafi era **sbagliato**: `cargo tree
+    -e no-proc-macro` da solo lascia dentro le dipendenze di *sviluppo*, e con esse
+    `windows-sys`. Il comando corretto è `-e normal,no-proc-macro`.
   - ~~La ricerca di un serializzatore per lo schema IPC (misura M-1)~~ ✅ **chiusa**: la
     domanda riformulata — «esiste un serializzatore il cui grafo transitivo è
     accettabile?» — ha risposta **sì**, per tutti e cinque i candidati provati. Scelto
@@ -121,6 +128,10 @@ che sarebbe caro.
     **non sufficiente** per via dell'unificazione delle feature; (b) «grafo transitivo»
     non distingue **runtime** da **tempo di compilazione**, e lo scarto è grande — la §7
     deve dichiarare quale dei due il controllo misura.
+    ✅ **Entrambe chiuse dalla §7.3** (2026-08-07): (a) il cancello **si aggiunge** alla
+    lista invece di sostituirla, perché i due falliscono in modo complementare — la lista
+    nomina il colpevole, il cancello prova invece di enumerare; (b) il controllo misura
+    **entrambi** i grafi, con rimedi opposti.
   - La scelta del **motore di persistenza** non è vincolata da questo ADR — vive in
     `platform` — ma il criterio va comunque dichiarato quando si scriverà quell'ADR, per
     evitare che qualcuno lo applichi dove non serve.

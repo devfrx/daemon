@@ -13,7 +13,7 @@ worker ML in **Python**; Tauri contro Electron è ancora aperto
 ([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
 
 **È in corso la spec del sotto-progetto 1** — implementazione del kernel + simulatore DST.
-Sezioni **§0–§6 approvate**, §7–§8 da scrivere. Il codice non è ancora iniziato: vale
+Approvata **fino alla §7.3**; restano §7.4–§7.7 e §8. Il codice non è ancora iniziato: vale
 «spec prima del codice».
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
@@ -34,21 +34,34 @@ gli spike, o accanto ad essi?
 
 ## Prima cosa da fare
 
-**Riprendere la spec del sotto-progetto 1 dalla §7** — la porta di qualità, cioè i
-controlli automatici. Si **presenta**, si discute, si approva, si scrive: mai tutto
-insieme. Poi §8. Poi il piano. Poi il codice.
+**Riprendere la §7 dalla §7.4** — il catalogo dei controlli, uno per uno, ciascuno con la
+sonda *e* la contro-sonda. Poi §7.5 la cadenza, §7.6 il perimetro negativo, §7.7 i costi.
+Poi §8. Poi il piano. Poi il codice.
 
-✅ **Nessuna misura la blocca.** M-3 è chiusa (evidenze più sotto, e vanno **trasferite
-nella §7**). Le misure ancora aperte — M5 — richiedono una GUI, cioè il sotto-progetto 2.
+✅ **§7.0–§7.3 sono approvate e scritte**: criterio di ammissione, scala di forza a tre
+livelli, evidenze di M-3 trasferite, e le **due decisioni** che la sezione doveva prendere.
 
-### ⚠️ Le due domande che la §7 deve decidere, e che nessuna misura decide al posto sua
+✅ **Nessuna misura la blocca.** Le misure ancora aperte — M5 — richiedono una GUI, cioè il
+sotto-progetto 2.
 
-Le ha sollevate M-1 (§6.8.2) e M-3 le ha rese concrete con dei numeri.
+⚠️ **Quattro cose emerse scrivendo la §7.1–§7.3, che la §7.4 deve raccogliere:**
 
-| # | Domanda | Cosa si sa già |
+| # | | |
 |---|---|---|
-| **1** | il controllo della allow-list misura il grafo di **runtime** o quello **totale**? | lo scarto è reale e misurato: `kernel` ha **2** crate esterne a runtime e **4** in totale. Un proc-macro gira sull'host durante la build: **non può violare V29 a runtime**, ma **è superficie di supply chain**. `cargo tree -e no-proc-macro` separa i due, quindi entrambe le scelte sono implementabili — è una decisione, non un vincolo |
-| **2** | il **cancello bare-metal** entra fra i controlli automatici? | è provato che funziona (sonde B1/B2) e che è più forte della lista per nome — *prova* le crate invece di enumerarle. ⚠️ Ma l'unificazione delle feature di cargo può accendere, nella build reale per Windows, ciò che sul bare-metal restava spento: **condizione necessaria forte, non sufficiente**. Va deciso se si aggiunge alla lista o la sostituisce — la raccomandazione di chi ha misurato è **aggiungere, non sostituire** |
+| 1 | il **gotcha #25** | la rigenerazione in blocco degli `.stderr` di `trybuild` rende ogni test di compilazione fallita una tautologia |
+| 2 | **`clippy.toml` va delimitato per crate** | quello degli spike è a livello di workspace e scatterebbe addosso a `platform`, che **deve** chiamare l'orologio e il filesystem. Gotcha #24 nella forma peggiore. Raccomandazione: **togliere** le regole sui metodi fuori dal kernel e spostare la garanzia sul **tipo di ritorno delle porte**, che è livello 1 |
+| 3 | **`design/08` dice «DST su cicli più lunghi»** | la §3.5 ha misurato 25,8 µs a corsa: la DST sta a ogni commit. La §7.5 possiede la cadenza e **aggiorna `design/08` nello stesso passaggio** |
+| 4 | **i test di contratto** | §3.7 li dichiara «il vero punto cieco»: che `platform` si comporti come `simulator` non è verificato dalla DST. Entrano nella §7.4, per le sole porte che qui hanno **entrambe** le implementazioni |
+
+### ✅ Le due domande della §7 sono decise
+
+Le aveva sollevate M-1 (§6.8.2) e M-3 le aveva rese concrete con dei numeri. Decise nella
+**§7.3** il 2026-08-07.
+
+| # | Domanda | Decisione |
+|---|---|---|
+| **1** | il controllo della allow-list misura il grafo di **runtime** o quello **totale**? | **entrambi, con due comandi e due rimedi distinti** (§7.3.1). Una violazione fra le crate *spedite* è `I3 violato` e si ripara **togliendo** la dipendenza; un cambiamento fra quelle *di build* è un evento da rivedere e si ripara **aggiungendola alla lista**. Le dipendenze di **sviluppo** sono escluse, e l'esclusione è provata |
+| **2** | il **cancello bare-metal** entra fra i controlli automatici? | **si aggiunge alla lista, non la sostituisce** (§7.3.2), e il bersaglio passa a **`x86_64-unknown-none`**. I due falliscono in modo complementare: la lista **nomina il colpevole**, il cancello **prova** invece di enumerare |
 
 📄 [`superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md)
 
@@ -63,7 +76,7 @@ Le ha sollevate M-1 (§6.8.2) e M-3 le ha rese concrete con dei numeri.
 | 4 | Giornale, riconciliazione, persistenza | ✅ | write-ahead, riconciliazione su un **insieme**, [ADR-0032](adr/0032-motore-di-persistenza.md) `redb` |
 | 5 | Arbitro GPU, e la lacuna su I2 | ✅ | tre consumatori GPU nella GUI, quota di presentazione, I2 sui worker imposto dal **compilatore**. Più [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) |
 | 6 | Gateway, sensori, permessi, degrado | ✅ | schema IPC in `kernel` con **`bincode`**, **timbro di build** contro la GUI stantia, il **gettone non falsificabile** nominato una volta, «costo» del sensore separato in due |
-| **7** | **La porta di qualità: i controlli automatici** | ⏭️ **da presentare** | **non bloccata**: M-3 è chiusa. Deve assorbire le evidenze di M-3 e decidere le **due domande** qui sopra |
+| **7** | **La porta di qualità: i controlli automatici** | 🔵 **§7.0–§7.3 approvate** | criterio di ammissione, **scala di forza a tre livelli**, evidenze di M-3, e le due decisioni: due grafi con due rimedi, cancello **aggiunto** su `x86_64-unknown-none`. Restano §7.4–§7.7 |
 | 8 | Copertura V1–V37 e Q1–Q24 | ⬜ | |
 
 ### Le decisioni aperte dalla §0.5 — tre previste, una emersa
@@ -88,47 +101,31 @@ Tutte con `rustc 1.95.0` · `cargo 1.95.0` · Windows 11. Evidenze complete nell
 | M-8 | i quattro requisiti di §10.6 su `redb` | 1 ✅ · 2 ✅ · 3 ⚠️ si stabilizza in alto · 4 ✅ **12/12 crash recuperati** |
 | M-6 | `BTreeMap`/`Vec` bastano alle strutture del kernel | ✅ **chiusa dall'esistenza di M-7**: il suo prototipo è `no_std`, zero dipendenze, tutto su `BTreeMap`, e l'arbitro è la struttura più complessa del kernel finora. Resta aperta solo per ciò che introdurrà la §6 |
 | M-1 | serializzatore per lo schema IPC con **grafo transitivo** accettabile | ✅ **sì, tutti e cinque i candidati provati.** Scelto `bincode` 2.0.1 (2 crate di runtime). Esito **A**: lo schema sta in `kernel`, il grafo di §1.2 non cambia |
-| M-3 | allow-list di ADR-0031 esprimibile con la toolchain standard, provata in negativo | ✅ **sì, esito A** — con `cargo tree`, **non** con `cargo metadata`. Quattro sonde in negativo, entrambe le direzioni dell'errore. Evidenze qui sotto |
+| M-3 | allow-list di ADR-0031 esprimibile con la toolchain standard, provata in negativo | ✅ **sì, esito A** — con `cargo tree`, **non** con `cargo metadata`. Sonde N1–N4 e B1–B3, entrambe le direzioni dell'errore. **Evidenze nella §7.2 della spec**; qui sotto resta solo la correzione al comando |
 | **M5** | quanta VRAM prende la presentazione della GUI | ⬜ **aperta e dichiarata tale** — richiede una GUI: sotto-progetto 2, accanto a M1–M4 di ADR-0029 |
 
-#### M-3, per esteso — ⚠️ **da trasferire nella §7 quando la si scrive**
+#### M-3 — ✅ evidenze trasferite nella spec
 
-È l'unica misura le cui evidenze **non stanno ancora nella spec**, perché la sezione che
-le ospita non è scritta. Trasferirle è parte del lavoro della §7, non un extra.
+Le evidenze complete — esito A, lo scarto fra `cargo metadata` e `cargo tree`, le sonde
+N1–N4 e B1–B3 — **vivono ora nella §7.2 della spec del sotto-progetto 1**, che è la loro
+sede unica. Qui restano solo le due cose che non stanno lì.
 
-Eseguita il **2026-08-07** · `rustc 1.95.0` · `cargo 1.95.0` · Windows 11. Workspace di
-prova che replica il layout reale: `kernel` (`no_std`+`forbid`, con `bincode`) ·
-`simulator` (`no_std`+`forbid`, dipende da `kernel`) · `platform` (std) · `daemon`.
+**1 · Una riga di questo documento era sbagliata, e va saputo.** HANDOFF affermava che
+`cargo tree -e no-proc-macro` separa il grafo di runtime da quello totale.
 
-**Esito A: esprimibile con la sola toolchain standard.** Nessuno strumento esterno.
+> ⛔ **Non li separa.** Da solo toglie i generatori di codice ma lascia dentro l'intero
+> sottoalbero delle dipendenze **di sviluppo**, e con esso `windows-sys`. Su un workspace
+> con `trybuild` — che il kernel avrà, §2.5 — restituisce **venti** crate invece di due.
+> Il comando corretto è **`-e normal,no-proc-macro`**.
 
-| Scoperta | |
-|---|---|
-| ⛔ **`cargo metadata` non va bene** | le *feature attive* che riporta sono corrette, ma il suo elenco `deps` **ignora le feature**: mostra anche le dipendenze opzionali spente. Sul caso reale segnalava 11 crate esterne invece di 2, fra cui `serde` e `syn` che **non vengono compilate** |
-| ✅ **`cargo tree` sì** | risolve davvero le feature. `--prefix depth --format {p}` dà un output ricostruibile, e `-e no-proc-macro` separa il grafo di runtime da quello totale |
-| costo dichiarato | `cargo tree` è un'interfaccia **pensata per gli umani**: nessuna garanzia di stabilità del formato, a differenza di `cargo metadata`. È il prezzo di avere le feature risolte |
+**Perché M-3 non poteva accorgersene:** il suo workspace di prova non aveva dipendenze di
+sviluppo, e senza quelle i due comandi danno la stessa risposta. La sonda **non poteva
+falsificare l'affermazione** — gotcha #17 applicato a M-3 stessa. Riverificato il
+2026-08-07, con la contro-sonda che lo dimostra.
 
-**Le sonde, tutte viste fallire e poi tornare verdi:**
-
-| # | Sonda | Atteso | Osservato |
-|---|---|---|---|
-| N1 | violazione **transitiva** — tolta `unty` dalla lista | fallisce **nominando il rimbalzo** | ✅ `X unty <- kernel -> bincode -> unty` |
-| N2 | `getrandom` diretto in `kernel` | fallisce | ✅ `X getrandom <- kernel -> getrandom` |
-| N3 | `getrandom` in `simulator` | fallisce | ✅ segnalato solo su `simulator`, non su `kernel` |
-| **N4** | **guardia contro il falso positivo**: `getrandom` in **`platform`** | ⚠️ **non deve scattare** | ✅ `CONFORME`, exit 0 — e verificato che `platform` lo raggiunga davvero |
-| B1 | cancello bare-metal su `kernel` e `simulator` | passano | ✅ entrambi |
-| B2 | idem con `getrandom` in `kernel` | fallisce | ✅ `target is not supported` |
-
-**N4 è la sonda che di solito si dimentica.** Un controllo che scatta dove non deve è
-peggio di uno assente: insegna a ignorare l'audit. `platform` **deve** poter toccare
-l'OS — è il perimetro esplicito di ADR-0031.
-
-**La correzione che M-3 ha imposto a una riga della §6.1.1:** `simulator` non aggiunge
-voci proprie, ma la sua lista **non è vuota** — dipende da `kernel`, e la regola 2 è sul
-grafo *transitivo*. Scritto «resta vuota», misurato `bincode kernel unty`.
-
-**Cosa la §7 deve ancora decidere**, e che M-3 non decide al posto suo: le due domande in
-fondo a questo documento.
+**2 · La correzione che M-3 aveva imposto alla §6.1.1**, già applicata: `simulator` non
+aggiunge voci proprie, ma la sua lista **non è vuota** — dipende da `kernel`, e la regola 2
+è sul grafo *transitivo*. Scritto «resta vuota», misurato `bincode kernel unty`.
 
 Lo stack non è più una domanda aperta:
 
@@ -251,6 +248,7 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 22 | **Che una versione esista non vuol dire che funzioni** | `cargo add bincode` risolve alla **3.0.0**, che è l'ultima pubblicata e il cui **intero sorgente** è `compile_error!("https://xkcd.com/2347/")`: un segnaposto contro l'occupazione del nome. La versione utile è la `2.0.1`, e il manifesto va **appuntato a `2`** con la ragione scritta accanto, o il prossimo aggiornamento «sistema» il vincolo e rompe la build. È la stessa classe della riga su `sled` in ADR-0032, ma peggiore: lì la versione utile era solo più vecchia, qui **la più recente esiste ed è inutilizzabile**. Corollario: in una misura sui candidati, `cargo add --dry-run` dice che il nome si risolve — **non** che il codice compili |
 | 23 | **`cargo metadata` non risolve le feature; `cargo tree` sì** | i due strumenti danno grafi diversi sullo stesso workspace, e la differenza è grande. `cargo metadata` riporta correttamente le *feature attive* di ogni nodo, ma il suo elenco `deps` **le ignora**: elenca anche le dipendenze opzionali **spente**. **Misurato**: sul kernel con `bincode` senza la feature `serde`, `cargo metadata` segnalava **11** crate esterne — fra cui `serde` e `syn`, che non vengono compilate — contro le **2** reali di `cargo tree`. Un controllo di allow-list costruito sull'interfaccia macchina «giusta» sovra-segnala di 5×. Costo dell'alternativa, dichiarato: `cargo tree` è pensato per gli umani e non garantisce la stabilità del formato |
 | 24 | **Un controllo si prova in _due_ direzioni, non una** | il gotcha #14 copre metà del problema: un controllo mai visto fallire non è un controllo. L'altra metà è che **un controllo che scatta dove non deve è peggio di uno assente**, perché insegna a ignorare l'audit. In M-3 la sonda decisiva è stata **N4**: mettere `getrandom` dentro `platform` — dove ADR-0031 lo **ammette** — e verificare che il controllo **resti verde**. Senza quella sonda, una regola troppo larga sarebbe passata per una regola che funziona. È la stessa ragione per cui `check-docs.sh` conta le sezioni duplicate **per file** e non sull'insieme |
+| 25 | **Rigenerare in blocco le evidenze di un test negativo lo trasforma in una tautologia** | un test di compilazione fallita in Rust confronta l'errore prodotto con un file `.stderr` salvato accanto al caso: è **ciò che gli impedisce di fallire per il motivo sbagliato** (gotcha #9 in forma Rust). Ma `trybuild` offre un modo di riscrivere **tutti** gli `.stderr` sull'output corrente. Serve quando i messaggi cambiano legittimamente; usato senza leggerli, ogni caso diventa «l'errore atteso è quello che è uscito» e la suite **passa per sempre**, restando verde. La rigenerazione è un atto deliberato e **si legge nel diff**, come aggiungere una voce alla lista di ADR-0031. Corollario che vale oltre `trybuild`: ogni volta che l'oracolo di un test è un file generato dal test stesso, aggiornarlo automaticamente **cancella l'oracolo** |
 
 ## Il metodo di lavoro
 
@@ -310,7 +308,7 @@ per chiudersi.
 | [`README.md`](README.md) | indice di ADR e diagrammi |
 | [`adr/`](adr/) | **33 decisioni**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
-| [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§6 approvate, con tutte le evidenze delle misure |
+| [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — approvata fino alla §7.3, con tutte le evidenze delle misure |
 | [`superpowers/plans/`](superpowers/plans/) | il piano dello stack — **eseguito**, con l'errata in testa che documenta cosa il piano sbagliava |
 | [`riferimenti.md`](riferimenti.md) | fonti esterne, con data e con **cosa non abbiamo adottato** |
 | [`../spikes/`](../spikes/) | **prove, non kernel.** `PROTOCOLLO.md` criteri e soglie · `CANDIDATI.md` pre-selezione · `RISULTATI.md` esiti, seed, versioni, evidenze · `GUI-REQUISITI.md` G1–G21 e P1–P4 |

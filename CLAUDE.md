@@ -16,7 +16,7 @@ tutto il resto ne discende.
 Il vincolo dominante non è funzionale ma di risorsa: quattro aree che si contendono
 una sola GPU da 16 GB.
 
-## Stato: spec del sotto-progetto 1 in corso, §0–§6 approvate su otto.
+## Stato: spec del sotto-progetto 1 in corso, approvata fino alla §7.3.
 
 Spec del kernel completa e **33 decisioni architetturali**.
 
@@ -43,9 +43,9 @@ crate nasce alla radice — escludendo gli spike — o accanto ad essi.
 | schema IPC | **`bincode` 2.0.1** — appuntato a `2`, vedi gotcha #22 | M-1, spec §6.1.1. Prime voci della lista di ADR-0031 |
 | GPU della **GUI** | **quota di presentazione sottratta**, concessione tenuta dal core | ADR-0033, chiude la lacuna su I2 |
 
-**Il sotto-progetto 1 è iniziato**, ma come spec, non come codice: le §0–§6 sono
-approvate, le §7–§8 no. Il guscio aperto non lo blocca — il sotto-progetto 1 è
-interamente Rust e non tocca la GUI.
+**Il sotto-progetto 1 è iniziato**, ma come spec, non come codice: le §0–§6 e le §7.0–§7.3
+sono approvate; restano §7.4–§7.7 e §8. Il guscio aperto non lo blocca — il sotto-progetto 1
+è interamente Rust e non tocca la GUI.
 
 ✅ **La lacuna su I2 è chiusa** da ADR-0033: il consumo GPU della GUI si modella come
 **tre consumatori distinti**, e I2 è ora verificato su tutte e tre le classi di processo.
@@ -60,7 +60,7 @@ concessione come argomento.
 | 2 | [`docs/roadmap.md`](docs/roadmap.md) | stato, ordine dei sotto-progetti, prossimo passo |
 | 3 | [`docs/README.md`](docs/README.md) | indice di ADR, diagrammi e spec |
 | 4 | [`docs/adr/`](docs/adr/) | il **perché** di ogni decisione — leggi ADR-0001 e ADR-0004 per primi |
-| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: §0–§6 approvate, con tutte le evidenze delle misure |
+| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: approvata fino alla §7.3, con tutte le evidenze delle misure |
 | 6 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§10 — il *cosa*, di cui la precedente è il *come* |
 | 7 | [`docs/tracciabilita.md`](docs/tracciabilita.md) | ogni funzionalità della mappa originale → dove vive |
 | 8 | [`docs/riferimenti.md`](docs/riferimenti.md) | provenienza di ciò che non abbiamo dedotto noi |
@@ -109,16 +109,22 @@ da soli non sono un confine contro codice eseguito.
 
 ## Prossimo passo
 
-**Riprendere la spec del sotto-progetto 1 dalla §7** — la porta di qualità, cioè i
-controlli automatici. Poi §8. Poi il piano. Poi il codice.
+**Riprendere la §7 dalla §7.4** — il catalogo dei controlli, ciascuno con la sonda *e* la
+contro-sonda. Poi §7.5 la cadenza, §7.6 il perimetro negativo, §7.7 i costi. Poi §8. Poi
+il piano. Poi il codice.
 
-✅ **Nessuna misura blocca la §7**: M-3 è chiusa. Le sue evidenze stanno in `HANDOFF.md`
-e **vanno trasferite nella §7** — è l'unica misura non ancora nella spec.
+✅ **§7.0–§7.3 approvate e scritte.** Le evidenze di M-3 sono trasferite nella §7.2, e le
+due domande che nessuna misura decideva sono chiuse:
 
-⚠️ **La §7 deve decidere due cose**, e nessuna misura le decide al posto suo: se il
-controllo della allow-list misura il grafo di **runtime** o quello **totale** (misurato:
-2 contro 4), e se il **cancello bare-metal** si aggiunge alla lista o la sostituisce
-(raccomandazione di chi ha misurato: **aggiungere** — è necessario ma non sufficiente).
+| Domanda | Decisione |
+|---|---|
+| runtime o totale? | **entrambi**, due comandi e **due rimedi opposti** — una violazione fra le crate *spedite* si ripara togliendo la dipendenza, non aggiungendola alla lista. Dipendenze di sviluppo escluse, esclusione **provata** |
+| cancello bare-metal? | **si aggiunge**, non sostituisce. Bersaglio spostato a **`x86_64-unknown-none`**: differisce dal reale in **una** dimensione invece di quattro |
+
+⚠️ **Una riga di `HANDOFF.md` era sbagliata ed è corretta**: `cargo tree -e no-proc-macro`
+**non** separa il grafo di runtime da quello totale — lascia dentro le dipendenze di
+sviluppo, e con esse `windows-sys`. Il comando corretto è `-e normal,no-proc-macro`.
+M-3 non poteva accorgersene: il suo workspace non aveva dipendenze di sviluppo.
 
 Si presenta la sezione, si discute, si approva, si scrive. Mai tutto insieme, e mai
 un'affermazione che si può misurare senza averla misurata prima.

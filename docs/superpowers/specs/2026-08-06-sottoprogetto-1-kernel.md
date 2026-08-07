@@ -2,7 +2,7 @@
 
 - **Data:** 2026-08-06
 - **Sotto-progetto:** 1. Dipende da 0, 0b, 0c ([roadmap](../../roadmap.md))
-- **Stato:** §0–§6 approvate. §7–§8 da presentare.
+- **Stato:** §0–§6 approvate. §7 approvata fino alla §7.3; §7.4–§7.7 e §8 da presentare.
 
 Questa spec **non ri-decide l'architettura**: la spec del kernel dice *cosa* il sistema
 fa e *perché*, e gli ADR dicono con quali alternative scartate. Qui si dice *quali crate
@@ -23,7 +23,7 @@ sbagliata — con l'eccezione delle tre decisioni della §0.5, dove qualcosa man
 | 4 | Giornale, riconciliazione e motore di persistenza | **Approvata** |
 | 5 | Arbitro GPU, e la lacuna su I2 | **Approvata** |
 | 6 | Gli altri meccanismi: gateway, sensori, permessi, degrado | **Approvata** |
-| 7 | La porta di qualità: i controlli automatici | da presentare |
+| 7 | La porta di qualità: i controlli automatici | **§7.0–§7.3 approvate** · §7.4–§7.7 da presentare |
 | 8 | Copertura V1–V37 e Q1–Q24 | da presentare |
 
 ---
@@ -1158,6 +1158,11 @@ di essere vuota.
 | **`kernel`** | `bincode` 2.0.1 · `unty` 0.0.4 | le stesse |
 | **`simulator`** | **nessuna** — non serializza nulla | ⚠️ **quello di `kernel`**, perché vi dipende |
 
+> 📄 **La lista completa vive in §7.3.1**, ed è la sede unica. Quella qui sopra elenca le
+> voci **spedite** — quelle che entrano nel prodotto — con la giustificazione che le lega
+> allo schema IPC. La §7.3.1 vi aggiunge la colonna **classe** e le voci che girano soltanto
+> a tempo di compilazione, che nascono dal meccanismo di verifica e non da questa decisione.
+
 ⚠️ **La riga di `simulator` è stata corretta da M-3.** La prima stesura diceva «la lista
 resta vuota», che confonde due cose: `simulator` **non aggiunge voci proprie**, ma il suo
 **grafo transitivo** non è vuoto — contiene `kernel` e quindi `bincode`. La regola di
@@ -1473,3 +1478,268 @@ Quattro ipotesi su sei sono divergute. Registrate invece che allineate.
 | **il contratto del sensore resta un'ipotesi** | verificato con un doppio, su tre casi reali di cui **nessuno esiste**. RK-5 per intero |
 | **il gettone prova la provenienza, non la correttezza** | §6.3.2. Elimina una classe di errori, non due |
 | **il decisore non parla con nessun provider vero** | la prima integrazione reale può scoprire che una firma è sbagliata. Costo già dichiarato in §0.6 |
+
+---
+
+## 7. La porta di qualità: i controlli automatici
+
+Le §0–§6 hanno deciso **cosa** il sistema garantisce. Questa sezione dice **chi lo verifica
+al posto nostro, e con quale forza**. Non aggiunge regole: ogni voce difende una regola già
+presa.
+
+### 7.0 A parole
+
+Un vincolo scritto in un documento è un'intenzione. Diventa una garanzia quando esiste un
+meccanismo che **fa fallire da solo** chi lo viola, e quando quel meccanismo è stato **visto
+fallire**.
+
+I meccanismi però non hanno tutti la stessa forza, e presentarli come «controlli»
+indistinti è il modo più semplice di mentire con autorevolezza — la stessa classe di errore
+di «cifrato a riposo» dichiarato più forte di quanto sia (gotcha #6). La domanda che li
+separa è una sola:
+
+> **Se qualcuno cancella il controllo, la regola resta?**
+
+### 7.1 Il criterio di ammissione
+
+#### 7.1.1 Le tre regole per entrare
+
+| # | Regola | Se manca |
+|---|---|---|
+| 1 | difende un **V** o un'**I** nominato | è un'abitudine, non un controllo: va tolta |
+| 2 | **si è visto scattare** su una violazione deliberata | gotcha #14 — un controllo mai visto fallire non è un controllo |
+| 3 | **si è visto restare verde** dove la cosa è lecita | gotcha #24 — un controllo che scatta dove non deve insegna a ignorare l'audit |
+
+La terza è quella che si dimentica. È la ragione per cui in M-3 la sonda decisiva è stata
+**N4** e non N1.
+
+#### 7.1.2 La scala di forza, e ogni controllo dichiara la propria
+
+| Livello | Meccanismo | Se cancelli il controllo | Se lo aggiri |
+|---|---|---|---|
+| **1 — compilatore** | `no_std` · `forbid(unsafe_code)` · una firma che pretende un gettone | **la regola resta**: la violazione continua a non compilare | non si può — `E0453` rifiuta anche un `#[allow]` locale |
+| **2 — controllo esterno** | allow-list sul grafo · cancello senza OS · grafo delle crate | **la regola sparisce**: sotto non c'è nient'altro | si cancella il controllo |
+| **3 — lint** | `clippy.toml` | la regola sparisce | **una riga di permesso**, senza cancellare niente |
+
+Il livello non è una qualità del controllo: è una **proprietà dichiarata accanto ad esso**.
+[ADR-0031](../../adr/0031-dipendenze-del-kernel-parte-del-confine.md) lo fa già per la
+propria regola — *«è un controllo, non il compilatore […] va detto invece che sperato»*.
+Questa sezione lo generalizza: **ogni voce del catalogo porta il proprio livello**.
+
+#### 7.1.3 Il test di compilazione fallita è di livello 1, e va detto
+
+Distinzione controintuitiva, e per questo isolata qui.
+
+Quando la regola è del compilatore, il test che l'accompagna **non regge la regola**: la
+*dimostra*. Cancellarlo non riapre la violazione — la rende invisibile.
+
+| Se cancelli… | La violazione torna possibile? | Cosa si perde |
+|---|---|---|
+| un test di compilazione fallita | ❌ **no** | la **visibilità** della regola |
+| il controllo della allow-list | ✅ **sì** | la **regola** |
+
+Conseguenza: i test di compilazione fallita entrano nel catalogo con **forza di livello 1 e
+visibilità di livello 2**. Senza l'etichetta doppia si sopravvaluta ciò che si perde
+cancellandoli, e si sottovaluta ciò che si perde cancellando gli altri.
+
+#### 7.1.4 Come si esclude che un test negativo fallisca per il motivo sbagliato
+
+Il gotcha #9 nasce in Go: un test che verifica «questo non compila» passa **anche quando la
+compilazione fallisce per un'altra ragione**. È un falso positivo travestito da successo.
+
+In Rust il meccanismo lo esclude per costruzione: `trybuild` confronta l'errore prodotto con
+un **file di riferimento salvato accanto al caso**, quindi verifica il *testo* dell'errore e
+non soltanto il suo esito. È già così in
+[`spikes/rust/tests/compile_fail/`](../../../spikes/rust/tests/compile_fail/), dove ogni
+caso ha il proprio `.stderr`.
+
+> ⚠️ **Ma i file di riferimento si possono rigenerare in blocco.** `trybuild` offre un modo
+> di riscrivere tutti gli `.stderr` sull'output corrente. Serve, quando i messaggi cambiano
+> legittimamente; usato senza leggerli, trasforma ogni caso in una tautologia — *«l'errore
+> atteso è quello che è uscito»* — e da quel momento la suite **passa per sempre**.
+>
+> La rigenerazione è un **atto deliberato e si legge nel diff**, esattamente come aggiungere
+> una voce alla lista di ADR-0031. È il **gotcha #25**.
+
+### 7.2 Le evidenze di M-3
+
+#### 7.2.0 Perché questa misura sta all'inizio e non in fondo
+
+Nelle §4, §5 e §6 la misura chiude la sezione: **conferma** una scelta già argomentata. M-3
+ha un ruolo diverso — non conferma la §7, la **abilita**: è la prova che il meccanismo di cui
+la sezione parla esiste con la sola toolchain standard. E le due decisioni della §7.3 sono
+alla lettera *ciò che M-3 lascia aperto*. Leggerle prima delle evidenze sarebbe leggere una
+conclusione senza la premessa.
+
+#### 7.2.1 Esito e strumento
+
+Eseguita il **2026-08-07** · `rustc 1.95.0` · `cargo 1.95.0` · Windows 11. Workspace di
+prova che replica il layout reale: `kernel` (`no_std`+`forbid`, con `bincode`) ·
+`simulator` (`no_std`+`forbid`, dipende da `kernel`) · `platform` (std) · `daemon`.
+
+**Esito A: esprimibile con la sola toolchain standard.** Nessuno strumento esterno.
+
+| Scoperta | |
+|---|---|
+| ⛔ **`cargo metadata` non va bene** | le *feature attive* che riporta sono corrette, ma il suo elenco `deps` **le ignora**: mostra anche le dipendenze opzionali spente. Sul caso reale segnalava undici crate esterne invece di due, fra cui `serde` e `syn`, che non vengono compilate |
+| ✅ **`cargo tree` sì** | risolve davvero le feature, e `--prefix depth --format {p}` dà un output ricostruibile |
+| costo dichiarato | `cargo tree` è un'interfaccia **pensata per gli umani**: nessuna garanzia di stabilità del formato, a differenza di `cargo metadata`. È il prezzo di avere le feature risolte |
+
+#### 7.2.2 Le sonde, tutte viste fallire e poi tornare verdi
+
+| # | Sonda | Atteso | Osservato |
+|---|---|---|---|
+| N1 | violazione **transitiva** — tolta `unty` dalla lista | fallisce **nominando il rimbalzo** | ✅ `X unty <- kernel -> bincode -> unty` |
+| N2 | `getrandom` diretto in `kernel` | fallisce | ✅ `X getrandom <- kernel -> getrandom` |
+| N3 | `getrandom` in `simulator` | fallisce | ✅ segnalato **solo** su `simulator` |
+| **N4** | **contro-sonda**: `getrandom` in **`platform`**, dove ADR-0031 lo ammette | ⚠️ **non deve scattare** | ✅ `CONFORME`, uscita 0 — e verificato che `platform` lo raggiunga davvero |
+
+**N4 è la sonda che di solito si dimentica.** `platform` **deve** poter toccare l'OS: è il
+perimetro esplicito di ADR-0031. Senza quella sonda, una regola troppo larga sarebbe passata
+per una regola che funziona.
+
+#### 7.2.3 La correzione trovata riverificando M-3: il filtro era sbagliato
+
+Riverifica eseguita il **2026-08-07**, stesse versioni, su un workspace che replica il
+layout reale **con la dipendenza di sviluppo che il kernel avrà davvero** — `trybuild`, che
+la §2.5 fa salire insieme a `tests/compile_fail/`.
+
+| Classe | Comando | Crate | Contenuto |
+|---|---|---|---|
+| **spedita** — entra nel prodotto | `-e normal,no-proc-macro` | **2** | `bincode` · `unty` |
+| **di build** — gira sull'host a compilazione | il complemento su `-e no-dev` | **+2** | `bincode_derive` · `virtue` |
+| di sviluppo — non esce di qui | il complemento sul comando senza filtri | +24 | `trybuild` e il suo sottoalbero |
+| ⛔ **`-e no-proc-macro` da solo** | **il comando nominato in HANDOFF** | **20** | fra cui **`windows-sys`** e **`windows-link`** |
+
+> **HANDOFF affermava che `-e no-proc-macro` separa il grafo di runtime da quello totale.
+> Non li separa.** Da solo toglie i generatori di codice ma **lascia dentro l'intero
+> sottoalbero di sviluppo**, e con esso le API di Windows. Un controllo costruito su quel
+> comando segnalerebbe venti crate invece di due, con dentro `windows-sys`: sarebbe una
+> macchina da falsi positivi, cioè il gotcha #24 nella sua forma più pura.
+>
+> Il comando corretto è **`-e normal,no-proc-macro`**.
+
+**Perché M-3 non poteva accorgersene.** Contro-sonda eseguita: **tolta la dipendenza di
+sviluppo, `-e no-proc-macro` da solo restituisce esattamente `bincode unty`** — cioè sembra
+corretto. Il workspace di M-3 non ne aveva, quindi la sonda **non poteva falsificare
+l'affermazione**. È il gotcha #17 applicato a M-3 stessa: un guasto iniettato dove il codice
+non arriva.
+
+I numeri «due contro quattro» restano giusti. Era sbagliato il **comando attribuito a
+produrli** — cioè esattamente ciò che finisce nel controllo automatico.
+
+#### 7.2.4 La correzione che M-3 aveva già imposto alla §6.1.1
+
+Registrata al suo posto: `simulator` non aggiunge voci proprie, ma la sua lista **non è
+vuota**, perché dipende da `kernel` e la regola 2 di ADR-0031 è sul grafo *transitivo*.
+Vedi §6.1.1.
+
+### 7.3 Le due decisioni che questa sezione prende
+
+Nessuna misura le decide al posto suo. M-3 le ha rese concrete con dei numeri; la scelta
+resta una scelta.
+
+#### 7.3.1 Il grafo: due classi cancellate, una esclusa e provata esclusa
+
+> **Decisione.** La lista di ADR-0031 dichiara per ogni voce la propria **classe**. Il
+> controllo verifica **due** grafi con due comandi distinti, e produce **due errori diversi
+> con due rimedi diversi**. Le dipendenze di sviluppo sono **escluse, e l'esclusione è
+> provata**.
+
+| Classe | Comando | Errore | **Rimedio** |
+|---|---|---|---|
+| **spedita** | `cargo tree -p <crate> -e normal,no-proc-macro` | **`I3 violato`** | ⛔ **togliere la dipendenza.** Aggiungerla alla lista *non* è un rimedio |
+| **di build** | il complemento fra `-e no-dev` e la riga sopra | **`grafo di build cambiato`** | ✅ valutare e **aggiungere alla lista**, con giustificazione |
+| di sviluppo | ❌ non cancellata | — | — |
+
+**Perché due e non uno.** Non è completezza: ADR-0031 **ha già deciso questo**, fra le
+proprie `Negative` — *«Il grafo cambia sotto di noi. […] aggiornare una dipendenza del
+kernel diventa un **evento da rivedere**, non un'operazione automatica.»*
+
+Un controllo che guarda solo ciò che spedisce lascia passare in silenzio proprio l'evento
+che l'ADR dice di rivedere. E un controllo che li unifica insegna il rimedio sbagliato —
+«aggiungi alla lista» — **anche per una violazione di I3**, che è il modo in cui
+un'invariante si degrada in scartoffia.
+
+**Perché le dipendenze di sviluppo si escludono.** Non spediscono e non girano alla
+compilazione del prodotto: non possono violare V29 né I3. Ma l'esclusione **va dimostrata**,
+o «la lista è corta» potrebbe voler dire soltanto «l'interrogazione era stretta» — è la
+quinta sonda di M-1 applicata al comando invece che al grep.
+
+> **Guardia di non-vacuità del controllo.** Se il grafo completo e quello spedito
+> **coincidono**, il filtro non sta distinguendo niente — ed è la condizione esatta in cui
+> M-3 è stata ingannata (§7.2.3). Il controllo lo **segnala** invece di passare in silenzio.
+
+**La lista, nella forma che questa decisione le dà.** Vive qui, ed è la sede unica: §6.1.1
+conserva la giustificazione delle voci spedite e rimanda a questa tabella.
+
+| Crate vincolata | Voce | Classe | Perché serve | Cosa raggiunge |
+|---|---|---|---|---|
+| **`kernel`** | `bincode` 2.0.1 | **spedita** | serializza lo schema IPC (I4) | **nulla**: compila per un bersaglio senza OS, e nel grafo non compare nessuna sorgente di casualità |
+| **`kernel`** | `unty` 0.0.4 | **spedita** | controllo di tipo alla decodifica di `bincode` | idem |
+| **`kernel`** | `bincode_derive` 2.0.1 | **di build** | genera il codice di serializzazione; gira sull'host e non entra nel prodotto | **l'host, a tempo di compilazione** |
+| **`kernel`** | `virtue` 0.0.18 | **di build** | dipendenza di `bincode_derive` | idem |
+| **`simulator`** | *nessuna propria* | — | — | ⚠️ eredita per intero il grafo di `kernel` |
+
+⚠️ Le due voci **di build** non comparivano in §6.1.1, che elenca le sole spedite. Non è una
+contraddizione — §6.1.1 rimandava già il meccanismo a questa sezione — ma è la prima volta
+che la lista nomina crate che non entrano nel prodotto, e la colonna «classe» esiste per
+questo.
+
+**I costi:**
+
+| Costo | |
+|---|---|
+| **due invocazioni invece di una** | e due liste da tenere allineate nello stesso file |
+| **il grafo di build fa fallire la build** | un aggiornamento di `bincode` che porti un generatore nuovo ferma il lavoro finché non è valutato. È il costo che ADR-0031 aveva dichiarato, e qui si comincia a pagarlo |
+| `cargo tree` resta un'interfaccia per umani | un cambio di formato rompe entrambi i controlli in una volta sola |
+
+#### 7.3.2 Il cancello senza OS: si aggiunge, e cambia bersaglio
+
+> **Decisione.** Il cancello entra fra i controlli automatici **accanto alla lista, non al
+> suo posto**. Il bersaglio è **`x86_64-unknown-none`**.
+
+**Perché si aggiunge e non sostituisce.** «Necessario ma non sufficiente» spiega solo perché
+non *può* sostituire. La ragione per avere entrambi è che **falliscono in modo
+complementare**:
+
+| | La lista per nome | Il cancello senza OS |
+|---|---|---|
+| Come decide | **enumera** | **prova** |
+| Coglie | una crate **nuova** che entra, anche innocua | una crate **già in lista** che raggiunge l'OS per una via non prevista — l'unificazione delle feature |
+| Messaggio d'errore | ✅ **nomina il rimbalzo**: `X unty <- kernel -> bincode -> unty` | ❌ `target is not supported` — **non dice chi l'ha tirata dentro** |
+
+> **La lista è la diagnosi, il cancello è la prova.** Sostituire la prima con il secondo
+> lascia un controllo che dice «no» senza dire perché.
+
+**Perché il bersaglio cambia.** Il criterio era finora implicito, e va scritto:
+
+> **Il bersaglio del cancello deve differire da quello reale in una sola dimensione:
+> l'assenza del sistema operativo.** Ogni altra differenza è una sorgente di rossi per il
+> motivo sbagliato — il gotcha #9 applicato al bersaglio invece che al test.
+
+| Bersaglio | arch | OS | puntatore | atomici a 64 bit | **scarto dal reale** |
+|---|---|---|---|---|---|
+| reale — `x86_64-pc-windows-msvc` | x86_64 | windows | 64 | sì | — |
+| `thumbv7em-none-eabihf` | **arm** | none | **32** | **no** | **quattro dimensioni** |
+| **`x86_64-unknown-none`** | x86_64 | none | 64 | sì | **una** |
+
+**Le sonde, rieseguite il 2026-08-07 su entrambi i bersagli:**
+
+| # | Sonda | `thumbv7em` | **`x86_64-none`** |
+|---|---|---|---|
+| **B1** | `kernel` e `simulator` compilano | ✅ | ✅ |
+| **B2** | `getrandom` in `kernel` | ✅ `target is not supported` | ✅ **stesso messaggio** |
+| **B3** | **contro-sonda**: il cancello non si applica a `platform` | — | ✅ con `--workspace` fallisce su `platform` con `can't find crate for std` — **motivo giusto, crate sbagliata** |
+
+**B3 è la sonda che non esisteva.** Chi «migliorasse» il comando aggiungendo `--workspace`
+otterrebbe un rosso legittimo sulla crate che **deve** toccare l'OS. Il comando nomina le due
+crate vincolate, e non è un dettaglio di comodità.
+
+**I costi:**
+
+| Costo | |
+|---|---|
+| il bersaglio va **installato** sulla macchina | `rustup target add x86_64-unknown-none` diventa un prerequisito dell'ambiente, o la porta è rossa su una macchina pulita e per il motivo sbagliato |
+| **innesco di smantellamento** | se un giorno il kernel avesse bisogno legittimo di qualcosa che non compila senza OS, il cancello diventa un ostacolo. Va tolto con un **ADR**, non con un commento — stessa postura della lista |
+| il cancello dice «no» senza dire chi | mitigato dalla lista, che resta accanto. Da soli, nessuno dei due basta |

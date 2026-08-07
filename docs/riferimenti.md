@@ -113,6 +113,19 @@ Consultato il **2026-08-06**.
 | librerie **agnostiche** per G5 e G6 | `npm view` | `three` 0.185.1 · `codemirror` 6.0.2 — JavaScript puro, sopravvivono a un cambio di framework |
 | trasporto IPC locale | `cargo search` | `interprocess` 2.4.3 — named pipe su Windows, socket unix su Linux, stessa API |
 
+## Porta di qualità del kernel (§7)
+
+Verifiche dirette sugli strumenti installati su questa macchina, eseguite il **2026-08-07**
+con `rustc 1.95.0` · `cargo 1.95.0`. Il comando e la sua versione **sono** la fonte, e sono
+riproducibili. Nessuna di queste è documentazione consultata: sono misure.
+
+| Verifica | Comando | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| quali classi di dipendenza separa `cargo tree` | `cargo tree --edges` | i valori ammessi sono `all` · `normal` · `build` · `dev` · `features` · `public` · `no-normal` · `no-build` · `no-dev` · `no-proc-macro`. **Non esiste `proc-macro` in positivo** | §7.3.1 |
+| il comando che isola le dipendenze **spedite** | `cargo tree -p kernel -e normal,no-proc-macro` | 2 crate. `-e no-proc-macro` **da solo** ne restituisce 20, fra cui `windows-sys`: lascia dentro il sottoalbero **di sviluppo** | §7.2.3 — corregge una riga di HANDOFF |
+| bersagli senza sistema operativo installabili | `rustup target list` | esiste **`x86_64-unknown-none`**, stessa architettura e stessa larghezza di puntatore del bersaglio reale | §7.3.2 |
+| il cancello respinge una sorgente di casualità | `cargo build --target x86_64-unknown-none -p kernel` con `getrandom` 0.3.4 | `error: target is not supported` — identico su `thumbv7em-none-eabihf` | §7.3.2, sonda B2 |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

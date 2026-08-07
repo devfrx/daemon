@@ -1,7 +1,7 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-07**, alla chiusura della sessione che ha scritto le **§5 e §6**
-della spec del sotto-progetto 1 e chiuso le misure **M-1**, **M-3** e **M-6**. Serve a
+Aggiornato il **2026-08-07**, alla chiusura della sessione che ha scritto la **§7** della
+spec del sotto-progetto 1 — la porta di qualità — e corretto il comando di M-3. Serve a
 riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 
 ## In trenta secondi
@@ -13,7 +13,7 @@ worker ML in **Python**; Tauri contro Electron è ancora aperto
 ([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
 
 **È in corso la spec del sotto-progetto 1** — implementazione del kernel + simulatore DST.
-Approvata **fino alla §7.4**; restano §7.5–§7.7 e §8. Il codice non è ancora iniziato: vale
+Approvata **fino alla §7**; resta la **§8**. Il codice non è ancora iniziato: vale
 «spec prima del codice».
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
@@ -34,27 +34,32 @@ gli spike, o accanto ad essi?
 
 ## Prima cosa da fare
 
-**Riprendere la §7 dalla §7.5** — la cadenza, cioè cosa gira a ogni commit e cosa su ciclo
-lungo. Poi §7.6 il perimetro negativo, §7.7 i costi. Poi §8. Poi il piano. Poi il codice.
+**Scrivere la §8** — copertura V1–V37 e Q1–Q24, con lo stato di ognuno. È l'ultima sezione
+della spec. Poi il piano. Poi il codice.
 
-✅ **§7.0–§7.4 sono approvate e scritte**: criterio di ammissione, scala di forza a tre
-livelli, evidenze di M-3 trasferite, le due decisioni sul confine delle dipendenze, e il
-**catalogo completo** dei controlli con sonda e contro-sonda.
+✅ **La §7 è chiusa.** Criterio di ammissione, scala di forza a tre livelli, evidenze di M-3
+trasferite, le due decisioni sul confine delle dipendenze, il catalogo completo con sonda e
+contro-sonda, la cadenza, il perimetro negativo e i costi.
 
-✅ **Nessuna misura la blocca.** Le misure ancora aperte — M5 — richiedono una GUI, cioè il
-sotto-progetto 2.
+✅ **Nessuna misura blocca la §8.** Le misure ancora aperte — M5 — richiedono una GUI, cioè
+il sotto-progetto 2.
 
-⚠️ **Una cosa che la §7.5 deve chiudere:** [`design/08`](design/08-strategia-di-test.md)
-dice «DST su cicli più lunghi», ma la §3.5 ha misurato **25,8 µs a corsa**: la DST sta a
-ogni commit. La §7.5 possiede la cadenza e **aggiorna `design/08` nello stesso passaggio** —
-è la fonte di verità dichiarata sulla porta di qualità, e due cadenze diverse sono due
-verità.
+📌 **Cosa la §7 ha deciso, e che vale la pena non riscoprire:**
 
-📌 **Cosa la §7.4 ha deciso, e che vale la pena non riscoprire:** il catalogo ha **ridotto**
-tre voci invece di aggiungerne. Il divieto di `HashMap` fuori dal kernel è **tolto** — non
-difende V29, perché in una corsa DST `platform` non gira affatto; V28 è un **corollario**
-dell'allow-list e non ha bisogno di un controllo proprio; V5 **sale al compilatore**. E il
-livello 3 del catalogo è **vuoto**: nessuna invariante del kernel poggia su un lint.
+| | |
+|---|---|
+| **il catalogo ha ridotto tre voci invece di aggiungerne** | `HashMap` fuori dal kernel è **tolto** (non difende V29: in DST `platform` non gira affatto) · V28 è un **corollario** dell'allow-list, niente driver · V5 **sale al compilatore** |
+| **il livello 3 è vuoto** | nessuna invariante del kernel poggia su un lint. `clippy` resta come igiene, senza voce nella porta |
+| **il livello 1 non ha cadenza** | non «gira»: *è* il compilatore. Solo il livello 2 ha una cadenza |
+| **la porta non prova la correttezza** | prova che un insieme **nominato** di invarianti regge. Un difetto che non viola nessun V passa verde — §7.6.3 |
+| **il quarto gettone si scaglia** | V35/Q23: nessuna porta esegue comandi qui, ed è retrofittabile. L'innesco è scritto in §7.4.5 |
+
+⚠️ **Due cose che la §8 deve fare, e che la §7 le ha lasciato:**
+
+| # | | |
+|---|---|---|
+| 1 | **estendere `check-docs.sh`** | deve fallire se una voce del catalogo (§7.4) ha la **contro-sonda vuota**, e se la tabella della §8 ha un V o un Q senza stato. Le due estensioni toccano lo stesso script: si scrivono insieme. Senza la prima, la regola 3 di §7.1.1 resta un'intenzione — ed è l'unico punto della §7 non verificabile |
+| 2 | **registrare i rimandati con l'innesco** | V25 provata in una direzione sola · i test di contratto su `process` e `ipc` · il quarto gettone · Q1, Q6, Q11, Q12, Q16 |
 
 ### ✅ Le due domande della §7 sono decise
 
@@ -79,7 +84,7 @@ Le aveva sollevate M-1 (§6.8.2) e M-3 le aveva rese concrete con dei numeri. De
 | 4 | Giornale, riconciliazione, persistenza | ✅ | write-ahead, riconciliazione su un **insieme**, [ADR-0032](adr/0032-motore-di-persistenza.md) `redb` |
 | 5 | Arbitro GPU, e la lacuna su I2 | ✅ | tre consumatori GPU nella GUI, quota di presentazione, I2 sui worker imposto dal **compilatore**. Più [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) |
 | 6 | Gateway, sensori, permessi, degrado | ✅ | schema IPC in `kernel` con **`bincode`**, **timbro di build** contro la GUI stantia, il **gettone non falsificabile** nominato una volta, «costo» del sensore separato in due |
-| **7** | **La porta di qualità: i controlli automatici** | 🔵 **§7.0–§7.4 approvate** | criterio di ammissione, **scala di forza a tre livelli**, evidenze di M-3, le due decisioni sulle dipendenze, e il **catalogo** con sonda e contro-sonda. Restano §7.5–§7.7 |
+| **7** | **La porta di qualità: i controlli automatici** | ✅ | **scala di forza a tre livelli**, evidenze di M-3, le due decisioni sulle dipendenze, il **catalogo** con sonda e contro-sonda, la cadenza, il perimetro negativo. **Il livello 3 è vuoto** |
 | 8 | Copertura V1–V37 e Q1–Q24 | ⬜ | |
 
 ### Le decisioni aperte dalla §0.5 — tre previste, una emersa
@@ -311,7 +316,7 @@ per chiudersi.
 | [`README.md`](README.md) | indice di ADR e diagrammi |
 | [`adr/`](adr/) | **33 decisioni**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
-| [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — approvata fino alla §7.4, con tutte le evidenze delle misure |
+| [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — approvata fino alla §7, con tutte le evidenze delle misure |
 | [`superpowers/plans/`](superpowers/plans/) | il piano dello stack — **eseguito**, con l'errata in testa che documenta cosa il piano sbagliava |
 | [`riferimenti.md`](riferimenti.md) | fonti esterne, con data e con **cosa non abbiamo adottato** |
 | [`../spikes/`](../spikes/) | **prove, non kernel.** `PROTOCOLLO.md` criteri e soglie · `CANDIDATI.md` pre-selezione · `RISULTATI.md` esiti, seed, versioni, evidenze · `GUI-REQUISITI.md` G1–G21 e P1–P4 |

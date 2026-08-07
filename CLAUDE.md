@@ -16,7 +16,7 @@ tutto il resto ne discende.
 Il vincolo dominante non è funzionale ma di risorsa: quattro aree che si contendono
 una sola GPU da 16 GB.
 
-## Stato: spec del sotto-progetto 1 in corso, approvata fino alla §7.4.
+## Stato: spec del sotto-progetto 1 in corso, approvata fino alla §7.
 
 Spec del kernel completa e **33 decisioni architetturali**.
 
@@ -43,9 +43,9 @@ crate nasce alla radice — escludendo gli spike — o accanto ad essi.
 | schema IPC | **`bincode` 2.0.1** — appuntato a `2`, vedi gotcha #22 | M-1, spec §6.1.1. Prime voci della lista di ADR-0031 |
 | GPU della **GUI** | **quota di presentazione sottratta**, concessione tenuta dal core | ADR-0033, chiude la lacuna su I2 |
 
-**Il sotto-progetto 1 è iniziato**, ma come spec, non come codice: le §0–§6 e le §7.0–§7.4
-sono approvate; restano §7.5–§7.7 e §8. Il guscio aperto non lo blocca — il sotto-progetto 1
-è interamente Rust e non tocca la GUI.
+**Il sotto-progetto 1 è iniziato**, ma come spec, non come codice: le §0–§7 sono approvate,
+resta la **§8**. Il guscio aperto non lo blocca — il sotto-progetto 1 è interamente Rust e
+non tocca la GUI.
 
 ✅ **La lacuna su I2 è chiusa** da ADR-0033: il consumo GPU della GUI si modella come
 **tre consumatori distinti**, e I2 è ora verificato su tutte e tre le classi di processo.
@@ -60,7 +60,7 @@ concessione come argomento.
 | 2 | [`docs/roadmap.md`](docs/roadmap.md) | stato, ordine dei sotto-progetti, prossimo passo |
 | 3 | [`docs/README.md`](docs/README.md) | indice di ADR, diagrammi e spec |
 | 4 | [`docs/adr/`](docs/adr/) | il **perché** di ogni decisione — leggi ADR-0001 e ADR-0004 per primi |
-| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: approvata fino alla §7.4, con tutte le evidenze delle misure |
+| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: approvata fino alla §7, con tutte le evidenze delle misure |
 | 6 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§10 — il *cosa*, di cui la precedente è il *come* |
 | 7 | [`docs/tracciabilita.md`](docs/tracciabilita.md) | ogni funzionalità della mappa originale → dove vive |
 | 8 | [`docs/riferimenti.md`](docs/riferimenti.md) | provenienza di ciò che non abbiamo dedotto noi |
@@ -109,23 +109,33 @@ da soli non sono un confine contro codice eseguito.
 
 ## Prossimo passo
 
-**Riprendere la §7 dalla §7.5** — la cadenza: cosa gira a ogni commit e cosa su ciclo lungo.
-Poi §7.6 il perimetro negativo, §7.7 i costi. Poi §8. Poi il piano. Poi il codice.
+**Scrivere la §8** — copertura V1–V37 e Q1–Q24, con lo stato di ognuno. È l'ultima sezione
+della spec. Poi il piano. Poi il codice.
 
-✅ **§7.0–§7.4 approvate e scritte.** Le evidenze di M-3 sono trasferite nella §7.2, il
-catalogo dei controlli è in §7.4 — dove **tre voci si sono ridotte invece di crescere**, e
-il livello 3 è rimasto vuoto: nessuna invariante del kernel poggia su un lint. Le due
-domande che nessuna misura decideva sono chiuse:
+✅ **La §7 è chiusa.** Ogni controllo dichiara il proprio **livello di forza**, e la
+domanda che li separa è una sola: *se qualcuno lo cancella, la regola resta?*
 
-| Domanda | Decisione |
+| Livello | Se cancelli il controllo |
 |---|---|
-| runtime o totale? | **entrambi**, due comandi e **due rimedi opposti** — una violazione fra le crate *spedite* si ripara togliendo la dipendenza, non aggiungendola alla lista. Dipendenze di sviluppo escluse, esclusione **provata** |
-| cancello bare-metal? | **si aggiunge**, non sostituisce. Bersaglio spostato a **`x86_64-unknown-none`**: differisce dal reale in **una** dimensione invece di quattro |
+| **1 — compilatore** | la regola **resta**. Cancellare il test la nasconde, non la toglie |
+| **2 — controllo esterno** | la regola **sparisce**: sotto non c'è nient'altro |
+| **3 — lint** | si aggira con una riga, senza cancellare niente. **Il catalogo non ne ha nessuno** |
+
+Le due domande che nessuna misura decideva sono chiuse in §7.3: il controllo delle
+dipendenze misura **entrambi** i grafi con **rimedi opposti** — fra le crate *spedite* una
+violazione si ripara togliendo la dipendenza, non aggiungendola alla lista — e il cancello
+senza sistema operativo **si aggiunge** alla lista su `x86_64-unknown-none`, che differisce
+dal reale in una dimensione invece di quattro.
 
 ⚠️ **Una riga di `HANDOFF.md` era sbagliata ed è corretta**: `cargo tree -e no-proc-macro`
 **non** separa il grafo di runtime da quello totale — lascia dentro le dipendenze di
 sviluppo, e con esse `windows-sys`. Il comando corretto è `-e normal,no-proc-macro`.
 M-3 non poteva accorgersene: il suo workspace non aveva dipendenze di sviluppo.
+
+⚠️ **La §8 deve estendere `check-docs.sh`**: la regola «ogni controllo ha una contro-sonda»
+è oggi **un'intenzione**, ed è l'unico punto della §7 non verificabile. Il catalogo è una
+tabella: lo script può fallire se una casella è vuota. Si scrive insieme al controllo sulla
+tabella della §8, che la §0.6 aveva già previsto.
 
 Si presenta la sezione, si discute, si approva, si scrive. Mai tutto insieme, e mai
 un'affermazione che si può misurare senza averla misurata prima.

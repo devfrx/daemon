@@ -40,7 +40,7 @@ kernel**. Un fallimento del kernel non è mai variabilità — è un difetto.
 | **analisi statica** | I3 (nessuna chiamata OS nel kernel), I6/V19 (confine dei tipi), V5 (effetti classificati), V25 (un solo punto di uscita), V34 (lettura dei segreti), V35 (livello di confinamento), ADR-0020 | totale, a compilazione |
 | **test a esempi** | comportamenti puntuali, macchine a stati, tabelle di decisione | totale |
 | **simulazione deterministica (DST)** | concorrenza, crash, ripristino: I1, I2, I5, Q2, Q4, Q5 | riproducibile **per seed** |
-| **test di contratto** | worker, server MCP, provider: dati stantii, risposte malformate, timeout | totale, con doppi |
+| **test di contratto** | worker, server MCP, provider: dati stantii, risposte malformate, timeout. ⭐ E la **conformità fra l'implementazione reale di una porta e la sua finta** — è ciò che impedisce di provare Q4 e Q5 contro una finzione | totale, con doppi |
 
 ## Mappa requisito → metodo di verifica
 
@@ -98,7 +98,19 @@ dove esiste»**.
 | Nessuna sezione della spec è «fatta» senza i test dei suoi requisiti | un requisito senza verifica è un'intenzione |
 | Ogni difetto trovato in simulazione **conserva il proprio seed** | il seed diventa un caso di regressione permanente |
 | I fallimenti promossi dall'anello 4 (§5) entrano nella stessa suite | un artefatto, non due |
-| Analisi statica e test a esempi girano a **ogni commit**; DST su cicli più lunghi | «tieni la qualità a sinistra» (§5) |
+| Analisi statica, test a esempi **e campagna DST breve** girano a **ogni commit**; la campagna DST **profonda** su cicli più lunghi | «tieni la qualità a sinistra» (§5) |
+
+> ⭐ **La riga sulla cadenza è cambiata dopo una misura.** Diceva «DST su cicli più
+> lunghi», perché si dava per scontato che una campagna fosse cara. **M-2 l'ha smentito**:
+> una corsa dello scenario minimo costa **25,8 µs**, quindi migliaia di semi stanno dentro
+> un secondo. I cicli lunghi servono ad andare **più a fondo**, non a rendere possibile la
+> DST. Riserva dichiarata: 25,8 µs è lo scenario *minimo*, e quelli reali saranno più
+> pesanti — la misura dice che il substrato non è il collo di bottiglia, non che le
+> campagne siano gratis.
+>
+> 📄 **Il meccanismo di questa porta** — ogni controllo con il proprio livello di forza, la
+> sonda che deve scattare e la contro-sonda che deve restare verde — è la **§7 della spec
+> del sotto-progetto 1**. Qui vive il *metodo*; là il *catalogo* e la cadenza operativa.
 
 ## Regole che le tabelle non esprimono
 

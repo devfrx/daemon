@@ -2,7 +2,7 @@
 
 - **Data:** 2026-08-06
 - **Sotto-progetto:** 1. Dipende da 0, 0b, 0c ([roadmap](../../roadmap.md))
-- **Stato:** §0–§6 approvate. §7 approvata fino alla §7.4; §7.5–§7.7 e §8 da presentare.
+- **Stato:** §0–§7 approvate. §8 da presentare.
 
 Questa spec **non ri-decide l'architettura**: la spec del kernel dice *cosa* il sistema
 fa e *perché*, e gli ADR dicono con quali alternative scartate. Qui si dice *quali crate
@@ -23,7 +23,7 @@ sbagliata — con l'eccezione delle tre decisioni della §0.5, dove qualcosa man
 | 4 | Giornale, riconciliazione e motore di persistenza | **Approvata** |
 | 5 | Arbitro GPU, e la lacuna su I2 | **Approvata** |
 | 6 | Gli altri meccanismi: gateway, sensori, permessi, degrado | **Approvata** |
-| 7 | La porta di qualità: i controlli automatici | **§7.0–§7.4 approvate** · §7.5–§7.7 da presentare |
+| 7 | La porta di qualità: i controlli automatici | **Approvata** |
 | 8 | Copertura V1–V37 e Q1–Q24 | da presentare |
 
 ---
@@ -1933,3 +1933,118 @@ La §8 registra quali porte hanno la suite e quali no, con il sotto-progetto che
 | **una voce è provata in una direzione sola** | V25, finché la rete non esiste. Dichiarato in §7.4.2 |
 | **V31 resta debole per natura** | l'automatismo protegge la proprietà, non il seme: §3.4 |
 | **i test di contratto sono lavoro reale** | due suite ora, due rimandate. È il prezzo per non provare Q4 e Q5 contro una finzione |
+
+### 7.5 La cadenza: cosa gira quando
+
+#### 7.5.1 Il livello 1 non ha una cadenza
+
+L'osservazione che accorcia la tabella prima di scriverla: **le voci di livello 1 non
+«girano» mai.** Non sono un passo della porta — sono il compilatore. Se il codice compila,
+quelle regole valgono, e non esiste un modo di saltarle o di rimandarle a stasera.
+
+È il motivo per cui il livello di forza conta più della cadenza, e per cui la tabella
+seguente riguarda **solo il livello 2**.
+
+| Quando | Cosa gira |
+|---|---|
+| **a ogni compilazione** | tutto il **livello 1**: `no_std` · `forbid` · i gettoni · i tipi che non si scambiano |
+| **a ogni commit** | allow-list sui due grafi · cancello senza OS · test di compilazione fallita · test a esempi · **campagna DST breve** · test di contratto · `check-docs.sh` |
+| **su ciclo lungo** | **campagna DST profonda**: molti più semi, scenari più grandi |
+
+#### 7.5.2 La DST sta a ogni commit, e `design/08` si aggiorna
+
+[design/08](../../design/08-strategia-di-test.md) dice «DST su cicli più lunghi», ed è la
+**fonte di verità dichiarata** sulla porta di qualità. Ma la §3.5 ha misurato **25,8 µs**
+per una corsa dello scenario minimo: migliaia di semi stanno dentro un secondo.
+
+Non è un capovolgimento ma una precisazione, e la §3.5 ha già la formulazione giusta — *«i
+cicli lunghi servono ad andare più a fondo, non a rendere possibile la DST»*. Due cadenze
+scritte in due documenti sarebbero **due verità**, quindi `design/08` è aggiornato nello
+stesso passaggio di questa sezione.
+
+**Seconda riga aggiornata nello stesso passaggio:** `design/08` assegna i test di contratto
+a Q16 e Q21, entrambi fuori dal perimetro di questo sotto-progetto. La §7.4.6 aggiunge un
+uso che quel documento non prevedeva — la **conformità fra `platform` e `simulator`** — ed
+è quello che chiude il punto cieco dichiarato in §3.7.
+
+#### 7.5.3 Come si dimensiona la campagna breve
+
+Due modi, e la differenza è cosa succede quando gli scenari si appesantiscono.
+
+| | **numero di semi fissato** | budget di tempo |
+|---|---|---|
+| riproducibilità | ✅ stessa copertura su ogni macchina | ❌ dipende dalla velocità della macchina |
+| quando gli scenari si appesantiscono | il commit rallenta, **e si vede** | la copertura **cala in silenzio** |
+| rischio residuo | qualcuno abbassa il numero per far tornare veloce il commit | nessuno se ne accorge mai |
+
+> **Il numero di semi della campagna breve è fissato e versionato.** Abbassarlo è una
+> modifica che **si legge nel diff**, non un flag di comodità — la stessa postura del
+> gotcha #25 sulla rigenerazione degli `.stderr`. Il tempo di parete si stampa a ogni
+> corsa, così l'appesantimento diventa visibile **prima** di diventare una tentazione.
+
+Costo dichiarato: la campagna troverà difetti nuovi nei momenti scomodi, perché esplora
+semi che nessuno aveva ancora percorso. È il punto della DST, ma va detto — la disciplina è
+**registrare il seme e la proprietà** (V31), non abbassare il numero.
+
+### 7.6 Cosa la porta deliberatamente non controlla
+
+Il perimetro negativo, come in §0.2 e nella §0.2 della spec del kernel: è l'artefatto che
+impedisce insieme la falsa sicurezza e l'allargamento silenzioso.
+
+#### 7.6.1 Fuori dal kernel per natura
+
+Già elencato in [design/08](../../design/08-strategia-di-test.md) e non si ripete: qualità
+delle risposte del modello, valutazione con giudice e dataset curati, correttezza semantica
+di un piano agentico, qualità percepita di voce e mesh, ergonomia dell'interfaccia.
+
+#### 7.6.2 Dentro il perimetro, e non controllato per scelta
+
+| Non controllato | Perché | Cosa lo copre invece |
+|---|---|---|
+| `HashMap` fuori da `kernel` e `simulator` | non difende V29: in una corsa DST `platform` **non gira affatto** (§7.4.4) | niente, ed è corretto |
+| il **tempo di parete** dell'arbitro come non-regressione | M-7 dichiara che il massimo per operazione è dominato dal rumore dello scheduler di Windows. Un cancello su un numero rumoroso si impara a ri-lanciare finché non passa | i numeri di M-7 come **limite superiore**; Q1 lo chiude SP-2 |
+| la **percentuale di copertura** del codice | il criterio di questo progetto è «ogni V ha un controllo», non «l'X % delle righe». Una copertura alta con invarianti non verificate è la falsa sicurezza peggiore | la tabella della **§8** |
+| che una crate ammessa non faccia nulla di indesiderato | ADR-0031 lo dichiara: *«limita la superficie, non la certifica»* | la giustificazione scritta, e chi la legge |
+| che `platform` si comporti come `simulator` su **tutte** le porte | solo due ne hanno entrambe le implementazioni qui (§7.4.6) | contratto su `journal` e `reactor`; le altre in §8 come rimandate |
+| lo **stile** del codice | non difende nessun V, quindi la regola 1 di §7.1.1 lo esclude | `clippy` come igiene, **fuori** dalla porta |
+| Q1 · Q6 · Q11 · Q12 · Q16 | non hanno consumatore in questo sotto-progetto | la §8, con il sotto-progetto che li chiude |
+
+#### 7.6.3 La riga che chiude la sezione
+
+> **La porta non prova che il kernel sia corretto.** Prova che un insieme **nominato** di
+> invarianti regge. Un difetto che non viola nessun V passa verde.
+
+È lo stesso limite del gettone (§6.3.2): il dispositivo elimina una classe di errori, non
+due. Dichiararlo è ciò che impedisce alla porta verde di diventare un argomento — *«i
+controlli passano, quindi va bene»* — che è il modo in cui una porta di qualità smette di
+essere utile pur restando in funzione.
+
+### 7.7 I costi di questa sezione
+
+| Costo | |
+|---|---|
+| **la porta è lavoro prima di ogni valore visibile** | come il simulatore: è lo stesso RK-9, già accettato nella spec del kernel |
+| **nove voci sono di livello 2** | cioè cancellabili. ADR-0031 lo dichiara per una sola; qui vale per tutte, e non è mitigabile — è la natura del livello, non un'omissione |
+| **si paga a ogni commit, non una volta** | due grafi, un cancello, una campagna, due suite di contratto |
+| **`cargo tree` è un'interfaccia per umani** | un cambio di formato rompe **due** controlli in una volta sola |
+| **il bersaglio senza OS è un prerequisito dell'ambiente** | su una macchina pulita la porta è rossa finché non lo si installa, e per il motivo sbagliato |
+| **la porta non prova la correttezza** | §7.6.3. Sposta il confine di ciò di cui ci si può fidare, non lo elimina |
+
+#### 7.7.1 Il punto in cui questa sezione viola la propria regola
+
+Va scritto, perché è l'unico posto della §7 che non è a sua volta verificabile.
+
+> La §7.1.1 impone che **ogni** controllo abbia una contro-sonda. Ma niente lo verifica: è
+> una regola sul processo, cioè **un'intenzione** — esattamente ciò che il metodo del
+> progetto chiama «un principio che non si può controllare».
+
+Il catalogo però è una tabella in un file di testo, e `check-docs.sh` può leggerla e
+**fallire se una casella “contro-sonda” è vuota**. Poche righe, e la regola 3 smette di
+essere un'intenzione.
+
+La §0.6 aveva già previsto la stessa estensione per la tabella della §8 — *«`check-docs.sh`
+può essere esteso per controllarla, come già fa per V30»*. Le due estensioni toccano lo
+stesso script e lo stesso genere di tabella.
+
+**Si scrivono insieme, quando si scrive la §8.** Farlo ora significherebbe controllare una
+tabella e non l'altra, con due passaggi sullo stesso file.

@@ -12,13 +12,13 @@ Ultimo aggiornamento: **2026-08-07**.
 > **Python**; Tauri contro Electron resta aperto ([ADR-0029](adr/0029-guscio-della-gui.md),
 > `Proposed`) e **non blocca nulla**.
 >
-> **Sotto-progetto 1 in corso**: spec approvata fino alla **§7.4**. Nessuna riga di codice.
-> Le evidenze di M-3 sono **trasferite nella §7.2**, le due domande che nessuna misura
-> decideva sono **chiuse dalla §7.3**, e la §7.4 porta il **catalogo dei controlli** — ogni
-> voce con il proprio livello di forza, la sonda che deve scattare e la contro-sonda che
-> deve restare verde.
+> **Sotto-progetto 1 in corso**: spec approvata **fino alla §7**, resta la **§8**. Nessuna
+> riga di codice. La §7 porta la **porta di qualità**: ogni controllo dichiara il proprio
+> livello di forza — compilatore, controllo esterno, lint — e porta la sonda che deve
+> scattare *e* la contro-sonda che deve restare verde. **Il livello 3 è vuoto**: nessuna
+> invariante del kernel poggia su un lint.
 >
-> Prossimo passo: **§7.5** — la cadenza. Poi §7.6–§7.7, poi §8, poi il piano.
+> Prossimo passo: **§8** — copertura V1–V37 e Q1–Q24. Poi il piano, poi il codice.
 >
 > ✅ **La lacuna su I2 è chiusa**: [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
 > — quota di presentazione sottratta, con la concessione tenuta dal core. Il kernel non
@@ -45,7 +45,7 @@ flowchart LR
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
 | **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
-| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — spec approvata fino alla §7.4 | 0, 0b, 0c |
+| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — spec approvata fino alla §7 | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2 |
 | 4 | Agenti | L2 | ⬜ | 3 |

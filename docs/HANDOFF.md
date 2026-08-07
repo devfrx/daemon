@@ -5,6 +5,11 @@ e poi di nuovo quando rileggere `tracciabilita.md` con un'altra domanda ha **ria
 spec su sette voci**, di cui tre chiuse più F1a. Serve a riprendere senza rifare, e senza
 rilitigare ciò che è già deciso.
 
+> 📍 **Punto di ripresa: `ee796c7`** — F1a e F5 chiuse, [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md)
+> scritto, albero pulito, `check-docs.sh` verde. **Il prossimo passo è F2 (+F7)**, che è
+> stata *istruita ma non decisa*: il materiale è in «Prima cosa da fare», e riparte da due
+> domande aperte al proprietario.
+
 ## In trenta secondi
 
 Assistente desktop locale, utente singolo, GPU singola RTX 5080 16 GB. **Piattaforma a
@@ -134,6 +139,69 @@ vale l'esito **B** di M-1, già misurato e già prezzato: il confine di ADR-0031
 ⚠️ **E un follow-up di ADR-0028 è diventato un presupposto:** *«trattare l'ambiente Python
 come artefatto da versionare»*. Il timbro di build regge sul secondo canale **solo se** il
 worker è artefatto nostro; se non lo è, «non versionato» cade lì.
+
+### F2 (+F7) — istruita in sessione, **non decisa**. Riprendere da qui
+
+⛔ **Stato: presentata al proprietario il 2026-08-07, nessuna riga di spec scritta e
+nessun ADR.** Quanto segue è materiale istruttorio, non decisione. Serve a non ri-derivarlo.
+
+**Il nodo.** Il giornale è l'unico archivio irriproducibile, e chi lo rilegge non è chi lo
+ha scritto: è lo stesso programma mesi dopo, con campi in più. Nessuna riga dice cosa
+succede in quell'istante.
+
+**Perché la postura di I4 qui non è disponibile** — è F1a con la risposta rovesciata:
+
+| | canale IPC | giornale |
+|---|---|---|
+| i due capi | **spediscono insieme** | lo **stesso programma in due momenti diversi** |
+| se divergono | si rifiuta il pari stantio: **timbro di build** (§6.1.2) | ⛔ non si può rifiutare il passato |
+| evoluzione dello schema | **rinunciata esplicitamente** | **obbligatoria** |
+
+**Quattro cose già decise che la vincolano:**
+
+| # | | Cosa impone |
+|---|---|---|
+| 1 | [ADR-0011](adr/0011-routing-risolto-e-giornalato-per-richiesta.md): il record porta la decisione **risolta**, non un rimando alla configurazione | i record sono già **auto-contenuti**: metà del problema è risolta, e per un altro motivo |
+| 2 | [ADR-0018](adr/0018-ritenzione-a-livelli-del-giornale.md): un record potato **dichiara** di esserlo | esiste già un precedente di auto-descrizione **dentro** il record, e già una mutazione dopo la scrittura — la potatura riscrive |
+| 3 | **§7.4.4 punto 3** | ⚠️ la spec **presuppone già l'evoluzione senza averla decisa**: il default `irripetibile` *«resta dov'è davvero utile — sui record riletti da un giornale scritto **prima che la classe esistesse**»*. È una regola di lettura in avanti per **un campo solo**, arrivata di straforo |
+| 4 | [ADR-0032](adr/0032-motore-di-persistenza.md): `redb` conserva byte | la **codifica del record è nostra**: la decisione è interamente qui |
+
+⚠️ **Il ritrovamento, ed è il pezzo da non perdere.** La §6.8 ha scartato `minicbor` perché
+i suoi indici di campo *«servono all'evoluzione dello schema, cioè a un beneficio che I4
+rinuncia esplicitamente»*. Quel giudizio è **giusto per lo schema IPC e rovesciato per il
+giornale**, dove l'evoluzione non è un beneficio di cui fare a meno ma il requisito.
+
+> ⛔ **La scorciatoia da rifiutare, e ha un nome:** *«usiamo `bincode` anche per il
+> giornale, tanto è già nella lista di ADR-0031»* — cioè importare in un artefatto che
+> **deve** evolvere una decisione presa dove l'evoluzione era stata **rinunciata**.
+
+**Le quattro forme che la regola può prendere:**
+
+| | Regola | Costo | Forza ottenibile |
+|---|---|---|---|
+| **A** | **discriminante di versione nel record**, e il lettore dispaccia | un campo per record; una funzione di lettura per forma passata | **livello 1** se il campo è obbligatorio nel tipo: «un record senza versione» non è esprimibile |
+| **B** | **campi auto-descritti** (tag per campo, stile CBOR) | permanente su ogni campo di ogni record, più un serializzatore in più nella lista | livello 2 |
+| **C** | **disciplina solo-append**: campi nuovi facoltativi, mai rimossi, mai riordinati | nulla in scrittura | ⛔ **è una disciplina** — la §7.0 la chiama intenzione, non garanzia. **È la trappola: sembra gratis, e sotto non c'è niente** |
+| **D** | **migrazione al riavvio**: rileggi vecchio, riscrivi nuovo | ⛔ riscrive l'**unico archivio irriproducibile**, e un crash a metà migrazione è il caso peggiore del progetto | — |
+
+**Inclinazione espressa, non approvata: A**, perché rende il vincolo *non esprimibile*
+invece che controllato — la stessa mossa con cui V5 è salita al compilatore (§7.4.4 punto
+3) e con cui «due policy attive» è diventato irrappresentabile (§2.8.2).
+
+✅ **A differenza di F1a, F2 ha un discriminante misurabile, e non è stato misurato:** si
+scrive un record, si cambia il tipo, si prova a rileggerlo. Piccolo, e senza di esso il
+costo di A e di B è un'opinione.
+
+**Le due domande lasciate aperte al proprietario:**
+
+| # | |
+|---|---|
+| 1 | F2 **non eredita** la scelta di `bincode` — cioè il formato del giornale è una decisione a sé, presa sul requisito dell'evoluzione e non sulla comodità della lista già scritta? |
+| 2 | si misura **prima** e si presentano le quattro forme dopo, oppure il contrario? (proposta: prima la misura) |
+
+**F7 converge qui:** fork e branching sono un campo in più sul record — il passo padre, il
+punto di diramazione. Sotto la regola di F2 aggiungerlo è meccanico; senza, è la migrazione
+che F2 esiste per evitare.
 
 ⚠️ **Il piano deve decidere anche _dove nasce il workspace_.** Alla radice non c'è nessun
 `Cargo.toml`: il workspace delle cinque crate nasce alla radice escludendo gli spike,
@@ -532,11 +600,12 @@ Alla chiusura di ogni sotto-progetto, **nello stesso passaggio**: `roadmap.md`,
 `tracciabilita.md`, lo stato degli spike, `CLAUDE.md` se cambia il prossimo passo, e
 questo file se emergono gotcha nuovi.
 
-`tracciabilita.md` **non** è stato toccato in questa sessione: nessuna funzionalità ha
-cambiato sede, e la regola dice di aggiornarlo alla *chiusura* del sotto-progetto. Resta
-quindi da aggiornare **quando il sotto-progetto 1 chiude**, non alla fine della §8.
+Di [`tracciabilita.md`](tracciabilita.md) è stato toccato **solo il riquadro in testa**,
+che conta le voci della riapertura: nessuna funzionalità ha cambiato sede, e la regola dice
+di aggiornare la tabella alla *chiusura* del sotto-progetto. Resta quindi da aggiornare
+**quando il sotto-progetto 1 chiude**, non alla fine della §8.
 
-### Tre trappole di `check-docs.sh`, da sapere prima di scrivere
+### Quattro trappole di `check-docs.sh`, da sapere prima di scrivere
 
 **1 · I conteggi.** La guardia confronta con la realtà **ogni** occorrenza di
 `<cifra> ADR`, `<cifra> ADR in stato ...` e `<cifra> decisioni architetturali` nei
@@ -565,5 +634,23 @@ non fanno analisi del testo: contano le celle.
 `#### 7.4.3`, la copertura da `## 8.`. Rinumerarle non è un ritocco: senza la guardia di
 non-vacuità spegnerebbe i controlli **in verde** — gotcha #26. Con la guardia diventa un
 rosso che nomina il delimitatore mancante, ed è il comportamento voluto.
+
+**4 · Un falso positivo in attesa, se qualcuno allarga la lista dei file.** La guardia dei
+conteggi gira oggi su quattro documenti di stato. In [`tracciabilita.md`](tracciabilita.md)
+esistono righe come `§4 ADR-0008`, dove il regex leggerebbe `4 ADR` e pretenderebbe il
+totale: rosso per il motivo sbagliato, cioè gotcha #24. **Oggi non scatta**, perché quel
+file non è nella lista. Se un giorno servisse aggiungerlo, il rimedio è il **regex** — che
+non deve accettare una cifra preceduta da `§` — non il documento.
+
+> 📌 **Provata sul campo, per sbaglio, due volte.** Scrivendo questa riga l'esempio è finito
+> prima **fuori da un code span**, e poi dentro un code span **spezzato su due righe**: la
+> guardia è scattata entrambe le volte su `HANDOFF.md` stesso. È la conferma nella direzione
+> che conta — il controllo vede davvero il pattern — e insieme la dimostrazione della
+> trappola 1.
+>
+> ⚠️ **Il sotto-caso che non era scritto:** lo spogliamento dei code span è `sed` **riga per
+> riga**. Un code span che va a capo non protegge la parte sulla prima riga, perché il
+> delimitatore di chiusura sta sulla seconda. Gli esempi con una cifra **stanno su una riga
+> sola**, o si riformulano senza la cifra.
 
 Un documento di stato disallineato è peggio di nessun documento: mente con autorevolezza.

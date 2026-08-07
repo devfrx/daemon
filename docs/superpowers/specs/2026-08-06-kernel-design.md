@@ -788,6 +788,19 @@ implicita senza l'esercizio di tracciabilità.
 La **scelta del motore di persistenza**: dipende da cosa offre l'ecosistema del
 linguaggio, che non è ancora scelto. La §10 ne fissa i requisiti, non il nome.
 
+> ✅ **Rimando — entrambe le premesse sono cadute** (2026-08-07). Il linguaggio è scelto
+> ([ADR-0026](../../adr/0026-linguaggio-del-core.md): Rust) e il motore anche
+> ([ADR-0032](../../adr/0032-motore-di-persistenza.md): `redb` 4.1.0, con `StorageBackend`
+> scritto da noi). **Il testo sopra resta com'era**, per la stessa ragione per cui gli ADR
+> sono append-only: era corretto quando è stato scritto, e i quattro requisiti che fissa
+> sono esattamente quelli su cui ADR-0032 ha misurato e deciso — il **4**, l'I/O
+> iniettabile, è quello che ha deciso.
+>
+> ⚠️ Il disallineamento è stato trovato il 2026-08-07 rileggendo la spec con una domanda
+> diversa. `check-docs.sh` non poteva vederlo: il link non è rotto e i conteggi sono
+> giusti — è un **rimando assente**, e lo script controlla la forma, non la sostanza
+> (§8.6.4 della spec del sotto-progetto 1 lo dichiara come proprio limite).
+
 | # | Requisito del motore | Da |
 |---|---|---|
 | 1 | scrittura durevole e ordinata, con conferma prima dell'esecuzione | ADR-0007 · V6 |

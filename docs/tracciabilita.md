@@ -16,6 +16,20 @@ Ogni funzionalità della mappa funzionale originale, con la sua sede nel progett
 **Il kernel non implementa nessuna funzionalità utente.** Fornisce i meccanismi su cui
 tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
+> ⚠️ **Questa tabella risponde a una domanda sola, e va saputo prima di fidarsene**
+> (2026-08-07). Risponde a *«dove vive questa funzionalità»*. **Non** risponde a *«di quale
+> meccanismo di kernel ha bisogno, e la spec lo nomina?»* — e in particolare un `📋`
+> significa «sotto-progetto assegnato», **non** «non richiede un meccanismo di kernel».
+>
+> Rileggerla con la seconda domanda ha **riaperto la spec del sotto-progetto 1 su sette
+> voci**, due chiuse e cinque aperte: elenco, classe e ordine in
+> [HANDOFF](HANDOFF.md#prima-cosa-da-fare). Finché **F4** è aperta, la riga *Scheduling* ✅
+> punta a un meccanismo — l'anello 3 — che la §0.4 non colloca né dentro né fuori, e la
+> riga *File watching* 🔶 dichiara deciso un meccanismo che non ha una porta.
+>
+> La tabella si aggiorna **alla chiusura del sotto-progetto**, non ora: questo riquadro è
+> il segnaposto che impedisce di leggerla come se fosse già vera.
+
 ---
 
 ## 1. Modelli e risorse

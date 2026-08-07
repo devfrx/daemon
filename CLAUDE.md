@@ -21,8 +21,8 @@ una sola GPU da 16 GB.
 Spec del kernel completa e **34 decisioni architetturali**.
 
 > ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-> scrive **qui**, in questo repository. Fra le due mancano la **chiusura delle sette voci**
-> della riapertura e poi il **piano**. La documentazione è la fase corrente, non lo scopo.
+> scrive **qui**, in questo repository. Fra le due mancano la **chiusura delle cinque voci
+> ancora aperte** e poi il **piano**. La documentazione è la fase corrente, non lo scopo.
 > Oggi l'unico codice è in
 > [`spikes/rust/`](spikes/rust/) — sono **prove**, non il kernel, ma
 > [§2.5 della spec](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) dice già
@@ -124,8 +124,8 @@ da soli non sono un confine contro codice eseguito.
 
 ## Prossimo passo
 
-**Chiudere le sette voci della riapertura, poi scrivere il piano.** Nessuna misura blocca
-né l'una né l'altro. L'elenco, l'ordine e le propedeuticità sono in
+**Chiudere le cinque voci ancora aperte della riapertura, poi scrivere il piano.** Due sono
+già chiuse. Nessuna misura blocca né le une né l'altro. L'elenco, l'ordine e le propedeuticità sono in
 [`docs/HANDOFF.md`](docs/HANDOFF.md#prima-cosa-da-fare).
 
 Sono emerse rileggendo [`docs/tracciabilita.md`](docs/tracciabilita.md) con una domanda che

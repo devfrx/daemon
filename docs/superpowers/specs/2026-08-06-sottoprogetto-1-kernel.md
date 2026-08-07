@@ -21,7 +21,7 @@ sbagliata — con l'eccezione delle tre decisioni della §0.5, dove qualcosa man
 |---|---|---|
 | 0 | Perimetro e criterio di scaglionamento | **Approvata** |
 | 1 | Struttura delle crate e regole di importazione | **Approvata** |
-| 2 | Il substrato iniettabile | **Approvata** |
+| 2 | Il substrato iniettabile | **Approvata** · ⚠️ **§2.8 aggiunta il 2026-08-07** |
 | 3 | Il simulatore DST | **Approvata** |
 | 4 | Giornale, riconciliazione e motore di persistenza | **Approvata** |
 | 5 | Arbitro GPU, e la lacuna su I2 | **Approvata** |
@@ -123,7 +123,24 @@ giorno — quindi V35 non è rimandabile — ma *chi lo implementa* è la piatta
 piattaforma non serve finché nessuno esegue nulla. Se questa distinzione non regge,
 salta lo scaglionamento più costoso di tutti.
 
-### 0.5 Le tre decisioni che questo sotto-progetto deve prendere
+#### 0.4.2 La configurazione mancava da questa tabella, ed è la stessa correzione
+
+> ⚠️ **Aggiunto il 2026-08-07** con [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md).
+> È lo stesso difetto di §0.4.1, trovato subito dopo averlo diagnosticato altrove: la §2.8
+> scaglia l'archivio della configurazione e il pannello che lo modifica, ma li scaglia
+> **dentro la §2**, e la §8.5.1 ha stabilito che *«vince la §0.4: è l'autorità sul
+> perimetro»*. Una riga C dichiarata fuori da qui è una riga C che nessuno trova.
+
+| Entra | Si scaglia | Regola |
+|---|---|---|
+| il **tipo** dei parametri risolti, e il fatto che il kernel li **riceve** invece di leggerli | l'**archivio** su disco con il suo formato, e il **pannello** che lo modifica | **B** per ciò che entra — consegnarli dopo cambia la firma di ogni decisione che ne legge uno, ed è invisibile a ogni controllo finché non si prova a variarli · **C** per ciò che si scaglia: non c'è chi li cambi finché non esiste un'interfaccia |
+
+**Perché non è regola A.** Senza, la DST prova ancora Q2, Q4 e Q5 a parametri fissi: non
+è che «non prova niente». **E perché non è C per intero:** l'arbitro ha bisogno di un
+budget *in questo sotto-progetto*, non quando arriverà una capacità L2 — che è esattamente
+l'errore di innesco che la §8.3 riga V3 aveva commesso.
+
+### 0.5 Le decisioni che questo sotto-progetto deve prendere
 
 Non sono ri-derivazioni: sono buchi, ciascuno già documentato come tale.
 
@@ -133,6 +150,7 @@ Non sono ri-derivazioni: sono buchi, ciascuno già documentato come tale.
 | 2 | ✅ **Motore di persistenza** — [ADR-0032](../../adr/0032-motore-di-persistenza.md): `redb`, con backend nostro | [§10.6](2026-08-06-kernel-design.md#106-cosa-resta-a-un-adr-successivo): la roadmap dice che blocca **l'implementazione**. Il discriminante era il requisito 4, **I/O iniettabile**: misurato, e solo `redb` lo espone | §4 |
 | 3 | **Dove vive l'esecutore delle attività concorrenti** | conseguenza del vincolo 3 di ADR-0026: la crate del kernel è `#![no_std]`, e va **misurato** se un runtime deterministico di ecosistema può starci dentro o debba stare accanto | §2 |
 | 4 | ✅ **Le dipendenze del kernel sono parte del confine I3** — [ADR-0031](../../adr/0031-dipendenze-del-kernel-parte-del-confine.md) | non previsto quando la §0 è stata approvata: emerge da una **misura**, registrata in §1.4.1. `no_std` impedisce di *nominare* `std`, non di *raggiungere* l'OS attraverso una dipendenza | §1 |
+| 5 | ✅ **I parametri di decisione sono consegnati, non letti** — [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md) | **non previsto**: emerge dalla riapertura del 2026-08-07, rileggendo `tracciabilita.md` con la domanda del meccanismo. V29 rende sostituibile ciò che il mondo *risponde*, non i **parametri** con cui il kernel è configurato | §2.8 |
 
 Ciascuna nasce **dentro** la sezione che la richiede, non in coda: una decisione staccata
 dal contesto che la motiva è la stessa cosa che ADR-0028 ha dovuto ratificare a
@@ -181,7 +199,7 @@ Il sotto-progetto 1 è chiuso quando **tutte** queste sono vere, non quando il c
 | 2 | ogni controllo statico **è stato visto fallire** su una violazione deliberata, e poi tornare verde — gotcha #14: un controllo mai visto fallire non è un controllo |
 | 3 | ogni Q in perimetro è verificato col metodo che [design/08](../../design/08-strategia-di-test.md) gli assegna, non con un altro |
 | 4 | ogni difetto trovato in simulazione conserva il proprio **seed** come caso di regressione permanente (V31) |
-| 5 | i tre ADR della §0.5 sono scritti, ciascuno con le proprie `Negative (accettate)` |
+| 5 | i **quattro** ADR della §0.5 sono scritti, ciascuno con le proprie `Negative (accettate)`. ⚠️ erano tre fino al 2026-08-07: il quarto è [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md), e la riga 3 resta l'unica decisione della §0.5 senza ADR — vive in §2.4 |
 | 6 | `roadmap.md`, `tracciabilita.md`, lo stato degli spike e `HANDOFF.md` sono aggiornati **nello stesso passaggio** |
 | 7 | `bash scripts/check-docs.sh` esce verde |
 
@@ -599,6 +617,13 @@ accodarsi dietro l'anello per mangiarne l'1 % (6 ms):
 > scelta di questa sezione: ne aggiunge un **secondo asse** che nessuna sezione copriva.
 > La decisione completa, con alternative e costi, è
 > [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md).
+>
+> ⚠️ **A differenza delle altre scelte della §2, questa non poggia su una misura** — e
+> l'apertura della sezione dice che le tre misure di §2.6 la sostengono. Non ne serve una:
+> non c'è un discriminante fra due opzioni che un numero possa sciogliere. È una
+> **constatazione di coerenza**, verificabile rileggendo i cinque ADR che nominano un
+> parametro. ADR-0034 lo dichiara, e dichiara anche cosa resta un giudizio: la stima che la
+> correzione tardiva sarebbe *«pervasiva ma meccanica»*.
 
 **A parole.** Il kernel non prende niente dal mondo: gli viene consegnato (§2.0). Ma una
 sua decisione dipende da due cose diverse, e finora ne governavamo una sola: *cosa il

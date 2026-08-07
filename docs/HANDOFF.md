@@ -16,7 +16,7 @@ worker ML in **Python**; Tauri contro Electron è ancora aperto
 **La spec del sotto-progetto 1 ha §0–§8 approvate**, ed è **riaperta su sette voci**
 trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto. Il
 codice non è ancora iniziato, e vale «spec prima del codice». Il piano viene **dopo** la
-chiusura delle sette — vedi sotto.
+chiusura delle **cinque ancora aperte** — vedi sotto.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -33,8 +33,8 @@ restano dove sono.
 
 ## Prima cosa da fare
 
-**Chiudere le sette voci della riapertura, poi scrivere il piano.** Nessuna misura blocca
-né l'una né l'altro.
+**Chiudere le cinque voci ancora aperte della riapertura, poi scrivere il piano.** Due
+sono già chiuse. Nessuna misura blocca né le une né l'altro.
 
 ### Le sette voci, e come sono state trovate
 
@@ -112,7 +112,7 @@ il sotto-progetto 2.
 V/Q e l'estensione di `check-docs.sh`. Entrambe sono in esercizio e provate in due
 direzioni.
 
-#### Cosa la spec consegna al piano — già deciso, sparso in sette sezioni
+#### Cosa la spec consegna al piano — già deciso, e sparso
 
 Nessuna di queste righe è una decisione da prendere: sono decisioni **prese**, che il piano
 deve tradurre in passi. Raccolte qui perché cercarle una per una è il modo in cui se ne
@@ -130,6 +130,7 @@ perde qualcuna.
 | 8 | la cadenza: livello 1 a ogni compilazione (non «gira»), livello 2 a ogni commit, DST profonda su ciclo lungo | §7.5.1 |
 | 9 | riga per riga, **cosa sale da `spikes/rust/` e cosa resta** | §2.5 |
 | 10 | ogni regola nuova porta **due** sonde e un caso in `tests/compile_fail/` con il suo `.stderr` — da **leggere**, non da rigenerare in blocco | §7.1.4 · gotcha #25 |
+| 11 | **nessuna decisione legge un parametro che non le è stato consegnato**: budget, quote, policy attiva, tetti. In sotto-progetto 1 i default sono letterali in `daemon` | §2.8 · ADR-0034 |
 
 📌 **Cosa la §8 ha deciso, e che vale la pena non riscoprire:**
 
@@ -235,7 +236,7 @@ Le aveva sollevate M-1 (§6.8.2) e M-3 le aveva rese concrete con dei numeri. De
 fare». Le sezioni toccate finora portano ciascuna il proprio richiamo datato: §1.2, §2.0,
 §2.8 (nuova), §5.1, §7.4.1 e la riga V3 della §8.3.
 
-### Le decisioni aperte dalla §0.5 — tre previste, una emersa
+### Le decisioni aperte dalla §0.5 — tre previste, due emerse
 
 | # | Decisione | Esito |
 |---|---|---|
@@ -243,6 +244,7 @@ fare». Le sezioni toccate finora portano ciascuna il proprio richiamo datato: �
 | 2 | Motore di persistenza | ✅ [ADR-0032](adr/0032-motore-di-persistenza.md): `redb` 4.1.0 con backend nostro |
 | 3 | Dove vive l'esecutore | ✅ nel `kernel`, con `Reactor` come porta (§2.4) |
 | 4 | Dipendenze del kernel nel confine I3 | ✅ [ADR-0031](adr/0031-dipendenze-del-kernel-parte-del-confine.md) — **non prevista**, emersa da una misura |
+| 5 | I parametri di decisione sono consegnati, non letti | ✅ [ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md) — **non prevista**, emersa dalla riapertura |
 
 ### Misure eseguite, e quelle ancora aperte
 
@@ -365,6 +367,7 @@ nuovo che lo superi** (`Superseded by`), non una conversazione. Le decisioni che
 | Il **livello 3 del catalogo è vuoto** (§7.4.3) | la tentazione è aggiungere un lint «tanto non costa niente». Costa: un rosso della porta deve significare sempre «invariante violata», mai «stile discutibile», o si impara a ignorarlo |
 | L'**innesco è obbligatorio** per `parziale` e `rimandato` (§8.1) | sembra burocrazia e non lo è: è l'unica cosa che impedisce a `parziale` di diventare la casella comoda in cui parcheggiare tutto. Toglierla riporta alla situazione che la §0.6 chiamava «rimandato tende a diventare dimenticato» — con in più una tabella che sembra dire il contrario |
 | La **guardia di non-vacuità** dei controlli nuovi (§8.6.2) | è il pezzo che sembra più togliibile e il solo che non si può togliere. Senza, basta rinumerare una sotto-sezione perché due controlli smettano di controllare **uscendo verdi**: gotcha #26. E il «miglioramento» sbagliato è metterci un numero atteso di righe, che diventa rosso quando la tabella cresce per un motivo legittimo |
+| I **parametri di decisione sono consegnati**, non letti (ADR-0034) | la scorciatoia tentante è «tanto il budget è 16 GB, scrivilo e basta». Una costante nel kernel **non fa scattare nessun controllo del catalogo §7**: si scopre solo quando qualcuno prova a farla variare in campagna e non può. È il gotcha #12 su un altro asse — e toglie alla DST l'unico modo di esplorare lo scenario di RK-1 |
 
 ## Le tre proprietà che non si aggiungono dopo
 
@@ -374,7 +377,7 @@ Se le trascuri, la correzione non è una patch: è una riscrittura.
 |---|---|---|
 | 1 | Confine dei dati non fidati **nel sistema di tipi** | I6 · ADR-0014 |
 | 2 | Nessuna chiamata OS-specifica nel kernel | I3 · ADR-0002 |
-| 3 | **Iniettabilità** di tempo, casualità, I/O e scheduling | V29 · ADR-0021 |
+| 3 | **Iniettabilità** di tempo, casualità, I/O e scheduling — e dei **parametri di decisione**, che sono l'altro asse | V29 · ADR-0021 · **ADR-0034** |
 
 Più una quarta, di natura diversa ma altrettanto vincolante: **nessuna esecuzione di
 codice o comando sotto il livello 2 di confinamento** (V35 · ADR-0025).
@@ -411,6 +414,8 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 24 | **Un controllo si prova in _due_ direzioni, non una** | il gotcha #14 copre metà del problema: un controllo mai visto fallire non è un controllo. L'altra metà è che **un controllo che scatta dove non deve è peggio di uno assente**, perché insegna a ignorare l'audit. In M-3 la sonda decisiva è stata **N4**: mettere `getrandom` dentro `platform` — dove ADR-0031 lo **ammette** — e verificare che il controllo **resti verde**. Senza quella sonda, una regola troppo larga sarebbe passata per una regola che funziona. È la stessa ragione per cui `check-docs.sh` conta le sezioni duplicate **per file** e non sull'insieme |
 | 25 | **Rigenerare in blocco le evidenze di un test negativo lo trasforma in una tautologia** | un test di compilazione fallita in Rust confronta l'errore prodotto con un file `.stderr` salvato accanto al caso: è **ciò che gli impedisce di fallire per il motivo sbagliato** (gotcha #9 in forma Rust). Ma `trybuild` offre un modo di riscrivere **tutti** gli `.stderr` sull'output corrente. Serve quando i messaggi cambiano legittimamente; usato senza leggerli, ogni caso diventa «l'errore atteso è quello che è uscito» e la suite **passa per sempre**, restando verde. La rigenerazione è un atto deliberato e **si legge nel diff**, come aggiungere una voce alla lista di ADR-0031. Corollario che vale oltre `trybuild`: ogni volta che l'oracolo di un test è un file generato dal test stesso, aggiornarlo automaticamente **cancella l'oracolo** |
 | 26 | **Un controllo che delimita il proprio bersaglio per intestazione si spegne quando qualcuno rinumera — e si spegne _verde_** | è il gotcha #14 in una forma che #14 non copre: quel controllo **è stato visto fallire**, quindi era un controllo vero. Poi qualcuno rinomina `#### 7.4.1`, l'intervallo non trova più righe, e uno script che non ha niente da controllare **esce con successo**. Il segnale è indistinguibile da «tutto a posto». Rimedio, applicato in §8.6.2: **se un delimitatore non si trova, o l'intervallo è vuoto, è un fallimento**. Sonde S6, S6b e S6c. ⚠️ E il rimedio sbagliato è mettere a guardia un **numero atteso** di righe: diventerebbe rosso il giorno in cui la tabella cresce per un motivo legittimo, cioè il gotcha #9 applicato allo script. Si verifica che i delimitatori esistano, non quante righe ci siano — a meno che l'elenco non sia canonico, come i V1–V37, dove la completezza *è* il controllo |
+| 27 | **La legenda di una tabella risponde a una domanda sola, e chi la legge ne assume un'altra** | `tracciabilita.md` risponde a *«dove vive questa funzionalità»*. Il suo `📋` significa «sotto-progetto assegnato» — **non** «non richiede un meccanismo di kernel». Nessuno l'aveva mai letta con la seconda domanda, e leggerla così ha **riaperto la spec su sette voci**, tre di classe B. È il gotcha #26 spostato dai controlli ai documenti: una tabella che non ha mai rifiutato niente non sta verificando niente. ⚠️ Il rimedio non è riscrivere la legenda: è **rileggere con un'altra domanda**, che è ciò che la §8 ha fatto sessantuno volte e questa volta ha fatto la tracciabilità |
+| 28 | **Un parametro non consegnato è una costante, e una costante è invisibile** | V29 rende sostituibile ciò che il mondo *risponde*. Non dice nulla sui **parametri con cui il kernel è configurato** — budget della GPU, quote sottratte, policy attiva, tetti di autonomia — e ciò che non viene consegnato finisce scritto dentro. Non compare in nessun elenco, non fa scattare nessuna voce del catalogo, e **si manifesta solo come uno scenario che la campagna non può esplorare**: con le quote fisse, RK-1 è irraggiungibile. Chiuso da ADR-0034. ⛔ E il limite resta dichiarato: il compilatore prova che una decisione *riceve* i propri parametri, **non** che non ne abbia altri di nascosto |
 
 ## Il metodo di lavoro
 

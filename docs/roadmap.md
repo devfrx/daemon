@@ -98,6 +98,11 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 Il piano del sotto-progetto 1 si scrive **dopo** che la sua spec è completa (§0–§8):
 vale «spec prima del codice», e il piano è il passo fra le due.
 
+**Il codice si scrive in questo repository**, non altrove. Il piano deve quindi decidere
+anche *dove*: `spikes/rust/` ha un proprio `Cargo.toml` e alla radice non ce n'è nessuno,
+quindi il workspace delle cinque crate nasce alla radice — escludendo gli spike — oppure
+accanto ad essi.
+
 Il prototipo [`spikes/rust/`](../spikes/rust/) è il punto di partenza del simulatore:
 contiene già il confine dei tipi, l'esecutore deterministico, l'esecutore su `Future`
 native e il giornale write-ahead iniettabile, tutti con i loro test.

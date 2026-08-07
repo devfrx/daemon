@@ -23,8 +23,14 @@ sottratta, con la concessione tenuta dal core.** Il kernel non ha più lacune ap
 Il vincolo che governa tutto non è funzionale ma di risorsa: quattro aree che si contendono
 una sola GPU.
 
-L'unico codice nel repository è in [`../spikes/rust/`](../spikes/rust/): sono **prove**,
-non il kernel.
+⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
+scrive **qui**, quando la spec sarà completa. Oggi l'unico codice presente è in
+[`../spikes/rust/`](../spikes/rust/): sono **prove**, non il kernel — ma la §2.5 della
+spec dice già riga per riga quali pezzi salgono a `kernel/` e quali restano dove sono.
+
+Da decidere **nel piano**, non prima: `spikes/rust/` ha un proprio `Cargo.toml` e alla
+radice non ce n'è nessuno. Il workspace delle cinque crate nasce alla radice, escludendo
+gli spike, o accanto ad essi?
 
 ## Prima cosa da fare
 

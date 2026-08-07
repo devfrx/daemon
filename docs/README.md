@@ -3,7 +3,9 @@
 Assistente desktop locale — piattaforma a quattro pilastri (conversazione, conoscenza,
 agenti/coding, voce, generazione asset) su kernel comune.
 
-**Fase corrente: progettazione del kernel. Nessun codice scritto.**
+**Fase corrente: progettazione del kernel.** Nessuna riga di codice del prodotto è
+ancora scritta — ma **il codice si scriverà in questo stesso repository**, non altrove:
+la documentazione è la fase, non lo scopo. Vale «spec prima del codice».
 
 > Se stai riprendendo il progetto, parti da [`../CLAUDE.md`](../CLAUDE.md) e da
 > [`HANDOFF.md`](HANDOFF.md).

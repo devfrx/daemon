@@ -18,9 +18,18 @@ una sola GPU da 16 GB.
 
 ## Stato: spec del sotto-progetto 1 in corso, §0–§6 approvate su otto.
 
-Spec del kernel completa e **33 decisioni architetturali**. L'unico codice nel
-repository è in [`spikes/rust/`](spikes/rust/): sono **prove**, non il kernel, ma
-diventeranno il punto di partenza del simulatore.
+Spec del kernel completa e **33 decisioni architetturali**.
+
+> ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
+> scrive **qui**, in questo repository, quando la spec sarà completa: la
+> documentazione è la fase corrente, non lo scopo. Oggi l'unico codice presente è in
+> [`spikes/rust/`](spikes/rust/) — sono **prove**, non il kernel, ma
+> [§2.5 della spec](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) dice già
+> riga per riga quali pezzi salgono a `kernel/` e quali restano dove sono.
+
+⚠️ **Una cosa da decidere nel piano, non prima:** `spikes/rust/` ha un **proprio
+`Cargo.toml`** e alla radice non ce n'è nessuno. Va deciso se il workspace delle cinque
+crate nasce alla radice — escludendo gli spike — o accanto ad essi.
 
 | Strato | Scelta | Da |
 |---|---|---|

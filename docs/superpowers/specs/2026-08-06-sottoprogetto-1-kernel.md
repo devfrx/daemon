@@ -5,9 +5,12 @@
 - **Stato:** §0–§8 approvate. ⚠️ **Riaperta il 2026-08-07 su sette voci** trovate
   rileggendo la tracciabilità — elenco, ordine e propedeuticità in
   [HANDOFF](../../HANDOFF.md#prima-cosa-da-fare). Chiuse: **F3** (§2.8, ADR-0034), **F6**
-  (§5.1), **F5** (§2.3.1) e **F1a**, la dichiarazione della porta verso i worker (§2.3.1,
-  [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md)). Restano, in ordine:
-  **F2** (+**F7**), poi **F1b** (progetto della porta, §5–§6), poi **F4**; poi il piano.
+  (§5.1), **F5** (§2.3.1), **F1a** — la dichiarazione della porta verso i worker (§2.3.1,
+  [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md)) — e **F2 con F7**,
+  l'evoluzione del formato durevole (§4.9,
+  [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md)). Restano, in
+  ordine: **F1b** (progetto della porta, §5–§6), poi **F4**; poi la §8, una volta sola; poi
+  il piano.
 
 Questa spec **non ri-decide l'architettura**: la spec del kernel dice *cosa* il sistema
 fa e *perché*, e gli ADR dicono con quali alternative scartate. Qui si dice *quali crate
@@ -25,7 +28,7 @@ sbagliata — con l'eccezione delle tre decisioni della §0.5, dove qualcosa man
 | 1 | Struttura delle crate e regole di importazione | **Approvata** |
 | 2 | Il substrato iniettabile | **Approvata** · ⚠️ **§2.8 aggiunta e §2.3 corretta il 2026-08-07** |
 | 3 | Il simulatore DST | **Approvata** · ⚠️ **§3.1 allineata il 2026-08-07** |
-| 4 | Giornale, riconciliazione e motore di persistenza | **Approvata** |
+| 4 | Giornale, riconciliazione e motore di persistenza | **Approvata** · ⚠️ **§4.9 aggiunta e §4.1 corretta il 2026-08-07** |
 | 5 | Arbitro GPU, e la lacuna su I2 | **Approvata** |
 | 6 | Gli altri meccanismi: gateway, sensori, permessi, degrado | **Approvata** |
 | 7 | La porta di qualità: i controlli automatici | **Approvata** |
@@ -154,6 +157,7 @@ Non sono ri-derivazioni: sono buchi, ciascuno già documentato come tale.
 | 4 | ✅ **Le dipendenze del kernel sono parte del confine I3** — [ADR-0031](../../adr/0031-dipendenze-del-kernel-parte-del-confine.md) | non previsto quando la §0 è stata approvata: emerge da una **misura**, registrata in §1.4.1. `no_std` impedisce di *nominare* `std`, non di *raggiungere* l'OS attraverso una dipendenza | §1 |
 | 5 | ✅ **I parametri di decisione sono consegnati, non letti** — [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md) | **non previsto**: emerge dalla riapertura del 2026-08-07, rileggendo `tracciabilita.md` con la domanda del meccanismo. V29 rende sostituibile ciò che il mondo *risponde*, non i **parametri** con cui il kernel è configurato | §2.8 |
 | 6 | ✅ **La porta verso i worker, e la lettura di «singolo» in I4** — [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) | **non previsto**: è la voce **F1** della stessa riapertura. La §2.3 non aveva nessuna porta per *parlare* con un worker, e `design/01` la descriveva già con un verbo in più | §2.3.1 · §5–§6 |
+| 7 | ✅ **L'evoluzione del formato durevole del giornale** — [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) | **non previsto**: è la voce **F2** della stessa riapertura, con **F7** che vi converge. Il giornale è l'unico archivio irriproducibile, e chi lo rilegge è lo stesso programma mesi dopo, con campi in più: nessuna riga diceva cosa succede in quell'istante | §4.9 |
 
 Ciascuna nasce **dentro** la sezione che la richiede, non in coda: una decisione staccata
 dal contesto che la motiva è la stessa cosa che ADR-0028 ha dovuto ratificare a
@@ -202,7 +206,7 @@ Il sotto-progetto 1 è chiuso quando **tutte** queste sono vere, non quando il c
 | 2 | ogni controllo statico **è stato visto fallire** su una violazione deliberata, e poi tornare verde — gotcha #14: un controllo mai visto fallire non è un controllo |
 | 3 | ogni Q in perimetro è verificato col metodo che [design/08](../../design/08-strategia-di-test.md) gli assegna, non con un altro |
 | 4 | ogni difetto trovato in simulazione conserva il proprio **seed** come caso di regressione permanente (V31) |
-| 5 | i **cinque** ADR della §0.5 sono scritti, ciascuno con le proprie `Negative (accettate)`. ⚠️ erano tre fino al 2026-08-07, poi quattro con [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md) e cinque con [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md). La riga 3 resta l'unica decisione della §0.5 senza ADR — vive in §2.4 |
+| 5 | i **sei** ADR della §0.5 sono scritti, ciascuno con le proprie `Negative (accettate)`. ⚠️ erano tre fino al 2026-08-07, poi quattro con [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md), cinque con [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) e sei con [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md). La riga 3 resta l'unica decisione della §0.5 senza ADR — vive in §2.4 |
 | 6 | `roadmap.md`, `tracciabilita.md`, lo stato degli spike e `HANDOFF.md` sono aggiornati **nello stesso passaggio** |
 | 7 | `bash scripts/check-docs.sh` esce verde |
 
@@ -943,6 +947,13 @@ Il kernel dichiara cosa gli serve; chi lo fornisce sta fuori.
 | `read_back` | rilegge alla ripresa, per la riconciliazione |
 | `prune` | sostituisce un payload con impronta e dimensione (ADR-0018) |
 
+> ⚠️ **La porta scambia _byte_, non record tipizzati — aggiunto il 2026-08-07** con
+> [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md). La codifica
+> del record vive in `kernel`, ed è la §4.9 a dirne la regola. Due conseguenze che questa
+> tabella non mostrava: il **simulatore scambia byte**, quindi la campagna DST esercita
+> davvero codifica e decodifica invece di aggirarle; e la **forma durevole** resta di
+> proprietà del kernel, coerente con la §4.4.
+
 Due implementazioni, come per ogni porta:
 
 | Implementazione | Vive in | Sotto c'è |
@@ -1057,6 +1068,146 @@ esaustivamente.
 | **`compact()` è esclusivo** | manutenzione da pianificare, non un'operazione da fare mentre il sistema lavora |
 | **la riconciliazione è lavoro di progettazione per ogni strumento** | ogni effetto va classificato, e il default `irripetibile` produrrà interruzioni evitabili finché le classi non sono dichiarate bene |
 | **il livello 2 è verificato su 12 punti, non esaustivamente** | è molto meglio di zero, e resta un campione |
+
+> 📌 **La §4.9 è stata aggiunta dopo, e porta i propri costi in §4.9.7.** Non sono
+> ripetuti qui: questa tabella copre le scelte che la §4 aveva quando è stata approvata.
+
+### 4.9 L'evoluzione del formato durevole
+
+> ⚠️ **Sezione aggiunta il 2026-08-07**, dopo l'approvazione della §4. È la voce **F2**
+> della riapertura, e **F7** vi converge. Non corregge una scelta di questa sezione:
+> risponde a una domanda che nessuna sezione poneva. La decisione completa, con le quattro
+> forme, la misura e i costi, è
+> [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md).
+
+**A parole.** Il giornale è l'unico archivio che non si può rifare. E chi lo rilegge non è
+chi lo ha scritto: è lo **stesso programma, mesi dopo, con campi in più**. Fino a qui
+nessuna riga diceva cosa succede in quell'istante — e il modo di scoprirlo sarebbe stato
+la prima evoluzione, cioè quando è troppo tardi.
+
+⚠️ **La scadenza era temporale, non logica:** questa sezione andava scritta **prima della
+prima riga di codice che scrive un record**. Alla sua data non ne esiste ancora nessuno, e
+per questo la decisione non costa una migrazione. Sarebbe costata quella.
+
+#### 4.9.1 Perché la postura di I4 non è disponibile qui
+
+È [F1a](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) con la risposta rovesciata,
+e la tabella lo rende immediato:
+
+| | canale IPC (§6.1) | giornale |
+|---|---|---|
+| i due capi | **spediscono insieme** | lo **stesso programma in due momenti diversi** |
+| se divergono | si rifiuta il pari stantio: **timbro di build** (§6.1.2) | ⛔ **non si può rifiutare il passato** |
+| evoluzione dello schema | **rinunciata** esplicitamente | **obbligatoria** |
+
+⛔ **Da cui la scorciatoia che questa sezione rifiuta:** *«usiamo `bincode` anche per il
+giornale, tanto è già nella lista di ADR-0031»*. Sarebbe importare in un artefatto che
+**deve** evolvere una decisione presa dove l'evoluzione era stata **rinunciata**. La §6.8
+aveva scartato `minicbor` per l'IPC proprio perché i suoi indici servono all'evoluzione:
+quel giudizio è giusto là e rovesciato qui.
+
+#### 4.9.2 La regola
+
+> **Ogni record durevole dichiara la propria versione, e i suoi campi si identificano per
+> indice esplicito.**
+
+| # | Regola | Cosa la sostiene |
+|---|---|---|
+| 1 | il tipo del record è un **enum di versione**: «un record senza versione» non è esprimibile | **livello 1**, la stessa mossa con cui V5 è salita al compilatore (§7.4.4 punto 3) |
+| 2 | ogni campo porta un **indice esplicito**, scritto nel tipo | misurato: è l'indice a comprare il risultato, e costa **un byte su ventisei** |
+| 3 | un campo nuovo è **facoltativo** e prende un **indice nuovo** | misurato ✅ in coda, in mezzo e in direzione inversa |
+| 4 | un indice **si ritira e non si riusa mai**: il buco resta | misurato: il buco ✅, il riuso ⛔ **silenzio sbagliato** |
+| 5 | un cambiamento **non additivo** apre una **versione nuova**; il lettore dispaccia e converte | è la sola cosa che l'indice non compra |
+
+**Nessuna delle due metà regge da sola, ed è la misura a dirlo, non un giudizio:** la
+disciplina solo-append su un formato posizionale **non funziona affatto** — anche un campo
+opzionale in coda rende illeggibili i record vecchi — e il discriminante di versione su un
+formato posizionale ha una trappola **non chiudibile**, perché i discriminanti espliciti
+sono ignorati.
+
+#### 4.9.3 Dove vive la codifica
+
+**In `kernel`.** La porta `journal` scambia **byte**, non record tipizzati (§4.1).
+
+| # | Perché |
+|---|---|
+| 1 | **coerenza di proprietà**: la §4.4 mette il modello dei dati in perimetro come cosa del kernel, e [ADR-0032](../../adr/0032-motore-di-persistenza.md) dice che `redb` conserva byte e la codifica è nostra. Con la codifica in `platform` la regola si applicherebbe dove il tipo non vive |
+| 2 | **il controllo non resta appeso a un filo**: con la porta a byte il **simulatore scambia byte**, quindi la campagna DST esercita davvero codifica e decodifica, e i crash cadono *dentro* la scrittura |
+| 3 | **il costo dove conta è misurato**: una crate spedita in più, senza dipendenze proprie, e il cancello senza OS di §7.3.2 **passa** |
+
+⚠️ **Il costo che non è piccolo, e sta altrove:** il grafo **di build** del kernel passa da
+due voci a sette, e per la prima volta porta `syn`. È un «grafo di build cambiato» ai sensi
+di §7.3.1 — ammissibile con giustificazione, mai automatico. Le voci sono in §7.3.1.
+
+#### 4.9.4 Come si verifica, e il limite dichiarato
+
+| # | Livello | Meccanismo | Sonda — *deve scattare* | Contro-sonda — *deve restare verde* |
+|---|---|---|---|---|
+| 1 | **1 — compilatore** | il tipo del record è un enum di versione | costruire un record **senza versione** → non compila | con la versione → compila |
+| 2 | **2 — controllo esterno** | **byte congelati**, con la mappa `indice → nome → valore atteso` | si **riusa** un indice o si rinumera → fallisce e **nomina il campo** | campo facoltativo con indice nuovo → resta verde |
+
+**A parole il secondo.** Si scrive un record vero **oggi**, e i suoi byte entrano nel
+repository come file. Ogni build futura deve rileggerli e ritrovare gli stessi valori.
+
+> ⛔ **I byte congelati non si rigenerano.** Se cambiano non è un aggiornamento: è un
+> cambio di formato, e va aperta una versione nuova. Rigenerarli in blocco cancella
+> l'oracolo — è il **gotcha #25** trasferito dagli `.stderr` di `trybuild` a questo file.
+
+**Un controllo e non due**, nello spirito della §7.4.4: un registro degli indici separato
+sarebbe un secondo posto da tenere allineato per la stessa proprietà, e il primo che smette
+di essere aggiornato mente in silenzio. Il file dei byte porta la mappa dentro di sé.
+
+> ⛔ **Il limite, dichiarato prima che qualcuno lo scopra.** Il livello 1 prova che un
+> record **dichiara** una versione, non che sia quella **giusta** — è il limite del gettone
+> (§6.3.2), *prova la provenienza, non l'esattezza*. E la regola 4 resta una **disciplina**:
+> nessun meccanismo del compilatore impedisce di riusare un numero. La regge un controllo
+> di livello 2, quindi cancellabile.
+
+#### 4.9.5 F7 converge qui, e si vede
+
+Fork e branching sono **un campo in più** sul record: il passo padre, il punto di
+diramazione. Sotto la regola sono un **campo facoltativo con un indice nuovo**, ed è
+esattamente il caso che la misura dichiara ✅. Senza la regola sarebbero stati la
+migrazione che questa sezione esiste per evitare.
+
+⚠️ La tracciabilità afferma che «il giornale lo consente» per fork e branching. Con la §4.9
+quell'affermazione ha finalmente un meccanismo sotto; prima era una promessa della sola
+tabella. Il resto — quali campi, con quale semantica — è politica della capacità
+Conversazione, non di questa sezione.
+
+#### 4.9.6 Le evidenze
+
+Eseguite il **2026-08-07** · `rustc 1.95.0` · `cargo 1.95.0` · Windows 11, `release` ·
+`bincode` 2.0.1 · `minicbor` 2.3.0 · `serde_json` 1.0.151. Prototipi usa-e-getta fuori dal
+repository. La matrice completa, i sei ritrovamenti e le quattro divergenze dalle attese
+scritte prima stanno in
+[ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md); qui restano le
+righe che decidono questa sezione.
+
+| Mutazione | posizionale | per indice | per nome |
+|---|---|---|---|
+| campo **opzionale** in coda | ⚠️ **errore** | ✅ | ✅ |
+| campo **rimosso** | ⛔ **silenzio** | ✅ | ✅ |
+| variante **rinumerata** | ⛔ silenzio | ⛔ silenzio | ✅ |
+| **direzione inversa** — nuovo → vecchio | ⛔ **silenzio** | ✅ | ✅ |
+| indice **riusato** | — | ⛔ silenzio | — |
+| byte per record | 26 | **27** *(+ 3 con la versione)* | 76 |
+
+**Non-vacuità, in due direzioni:** il caso di controllo è ✅ su tutte e tre le classi — il
+banco funziona — **e** il banco ha prodotto davvero ⛔ su cinque celle, quindi sa
+distinguere «errore» da «silenzio sbagliato». Senza la seconda metà la tabella non
+proverebbe nulla: è il gotcha #14 applicato al banco invece che al controllo.
+
+#### 4.9.7 I costi
+
+| Costo | |
+|---|---|
+| **il grafo di build del kernel cresce da due voci a sette** | e porta `syn` per la prima volta. Superficie di supply chain a tempo di compilazione: non può violare V29 a runtime (§7.3.1), ma va rivista invece che subita |
+| **il kernel porta due serializzatori** | uno per artefatto, con requisiti opposti. È coerente, e sono due grafi da guardare invece di uno |
+| **ogni campo di ogni record durevole porta un indice** | si paga a ogni riga, non una volta. Un byte sul filo, un'annotazione in più nella scrittura |
+| **la regola 4 è una disciplina** | «un indice non si riusa mai» non è imponibile dal compilatore. La regge un controllo di livello 2, cancellabile |
+| **i byte congelati sono un oracolo rigenerabile** | la difesa è che la rigenerazione **si legge nel diff**, non che sia impossibile. Stessa forza e stessa debolezza del gotcha #25 |
+| **la misura è su un record singolo** | che il costo in byte regga a regime non è provato: vale la stessa riserva del requisito 3 di ADR-0032, e le due rimisure si fanno insieme |
 
 ---
 
@@ -1417,6 +1568,16 @@ di essere vuota.
 > allo schema IPC. La §7.3.1 vi aggiunge la colonna **classe** e le voci che girano soltanto
 > a tempo di compilazione, che nascono dal meccanismo di verifica e non da questa decisione.
 
+> ⚠️ **La lista non è più solo dello schema IPC — aggiunto il 2026-08-07** con
+> [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md). La §4.9
+> mette la codifica del **giornale** in `kernel`, e vi aggiunge `minicbor` come **seconda**
+> voce spedita, con una giustificazione che non ha nulla a che vedere con I4. Le tabelle di
+> questa sotto-sezione restano quelle dello schema IPC; **la lista completa è §7.3.1**.
+>
+> ⛔ E non è la stessa scelta estesa a un secondo artefatto: è una scelta **diversa**, presa
+> sul requisito opposto. Il kernel porta due serializzatori perché ha due artefatti con
+> requisiti opposti — §4.9.1.
+
 ⚠️ **La riga di `simulator` è stata corretta da M-3.** La prima stesura diceva «la lista
 resta vuota», che confonde due cose: `simulator` **non aggiunge voci proprie**, ma il suo
 **grafo transitivo** non è vuoto — contiene `kernel` e quindi `bincode`. La regola di
@@ -1662,6 +1823,20 @@ perché:
 |---|---|
 | `minicbor` | grafo più piccolo di tutti, ma impone `#[n(0)]`, `#[n(1)]`… **su ogni campo di ogni messaggio** — indici che servono all'evoluzione dello schema, cioè a un beneficio **che I4 rinuncia esplicitamente**. Costo permanente per un vantaggio che non vogliamo |
 | `postcard` | porta `serde`, che è ciò che leggono i generatori di tipi TypeScript — la mitigazione che ADR-0027 nomina per lo schema speculare della GUI. Ma quella generazione **oggi non è decisa**: tre crate in più per un'opzione ipotetica è YAGNI. Se un giorno si decidesse, è il momento di rivalutare |
+
+> ⚠️ **Rimando — una premessa di questa riga è stata misurata, e cade. La conclusione no
+> (2026-08-07).** La misura di [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md)
+> ha prezzato quegli indici: nella codifica predefinita — ad **array**, non a mappa — costano
+> **un byte su ventisei**. «Costo permanente» resta vero della *scrittura* — un'annotazione
+> per campo — ma non dei byte, come questa riga lasciava intendere.
+>
+> ⛔ **La conclusione regge, e sulla gamba più forte delle due:** I4 rinuncia
+> all'evoluzione, e far condividere un formato a due artefatti con requisiti **opposti**
+> significa che un cambiamento fatto per uno si propaga sull'altro. È lo stesso
+> ragionamento che ADR-0036 usa per rifiutare la scorciatoia inversa — `bincode` sul
+> giornale — letto nell'altro verso. **§6.1.1 non si riapre**: il kernel porta due
+> serializzatori perché ha due artefatti con requisiti opposti, ed è la coerenza, non la
+> duplicazione.
 
 #### 6.8.1 Le cinque sonde di non-vacuità
 
@@ -1931,14 +2106,31 @@ conserva la giustificazione delle voci spedite e rimanda a questa tabella.
 |---|---|---|---|---|
 | **`kernel`** | `bincode` 2.0.1 | **spedita** | serializza lo schema IPC (I4) | **nulla**: compila per un bersaglio senza OS, e nel grafo non compare nessuna sorgente di casualità |
 | **`kernel`** | `unty` 0.0.4 | **spedita** | controllo di tipo alla decodifica di `bincode` | idem |
+| **`kernel`** | `minicbor` 2.3.0 | **spedita** | codifica il **record durevole** del giornale, per indice esplicito — §4.9 · [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) | **nulla**: misurato il 2026-08-07 su `x86_64-unknown-none`, e nel grafo spedito non compare nessuna sorgente di casualità |
 | **`kernel`** | `bincode_derive` 2.0.1 | **di build** | genera il codice di serializzazione; gira sull'host e non entra nel prodotto | **l'host, a tempo di compilazione** |
 | **`kernel`** | `virtue` 0.0.18 | **di build** | dipendenza di `bincode_derive` | idem |
+| **`kernel`** | `minicbor-derive` 0.19.5 | **di build** | genera codifica e decodifica del record durevole con gli indici dichiarati | idem |
+| **`kernel`** | `syn` 2.0.119 | **di build** | dipendenza di `minicbor-derive` ⚠️ | idem |
+| **`kernel`** | `quote` 1.0.47 | **di build** | idem | idem |
+| **`kernel`** | `proc-macro2` 1.0.107 | **di build** | idem | idem |
+| **`kernel`** | `unicode-ident` 1.0.24 | **di build** | dipendenza di `proc-macro2` | idem |
 | **`simulator`** | *nessuna propria* | — | — | ⚠️ eredita per intero il grafo di `kernel` |
 
-⚠️ Le due voci **di build** non comparivano in §6.1.1, che elenca le sole spedite. Non è una
+⚠️ Le voci **di build** non comparivano in §6.1.1, che elenca le sole spedite. Non è una
 contraddizione — §6.1.1 rimandava già il meccanismo a questa sezione — ma è la prima volta
 che la lista nomina crate che non entrano nel prodotto, e la colonna «classe» esiste per
 questo.
+
+> ⚠️ **Cinque voci di build aggiunte il 2026-08-07 con ADR-0036, e una va guardata in
+> faccia.** Il grafo di build del kernel passa da **due** voci a **sette**, e per la prima
+> volta porta **`syn`**: `bincode_derive` usa `virtue` apposta per evitarlo. Non può violare
+> V29 a runtime — è la ragione per cui questa classe esiste — ma **è superficie di supply
+> chain**, ed è esattamente l'«evento da rivedere» che ADR-0031 dichiara fra le proprie
+> `Negative`. Registrato invece che assorbito.
+>
+> **L'alternativa che lo evitava è stata valutata e scartata:** scrivere a mano codifica e
+> decodifica per ogni tipo di record toglie le cinque voci e sposta il costo **da una volta
+> a per sempre**. Il costo dichiarato in ADR-0036.
 
 **I costi:**
 
@@ -2051,6 +2243,13 @@ quella «semplificazione» prima che qualcuno la applichi.
 | **V10** | un sensore che **modifica** l'artefatto — §6.4.2 lo consegna per riferimento immutabile | osservarlo e restituire un verdetto compila |
 | **§2.8** · ADR-0034 | costruire una decisione **senza i parametri consegnati** — §2.8.2 | riceverli alla costruzione compila |
 | **V3** | una **seconda policy attiva**: il valore consegnato ne porta una sola | con una policy sola compila, e la transizione resta un passo giornalato (§5.4) |
+| **Q14** · §4.9 | un **record durevole senza versione**: il tipo è un enum di versione — §4.9.2 regola 1 | il record che dichiara la propria versione compila |
+
+> ⚠️ **Una riga aggiunta il 2026-08-07 con [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md).**
+> È il controllo di livello 1 della §4.9.4. ⛔ Vale il limite dichiarato lì: il compilatore
+> prova che un record **dichiara** una versione, non che sia quella **giusta** — limite del
+> gettone, §6.3.2. E la regola «un indice non si riusa mai» **non** è di questo livello:
+> vive in §7.4.2, ed è di livello 2.
 
 > ⚠️ **Due righe aggiunte il 2026-08-07 con ADR-0034.** La prima è il controllo di livello
 > 1 della §2.8.4; la seconda esisteva già come *comportamento* — la §5.4 verificava
@@ -2084,6 +2283,7 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 | Q2 · Q3 · Q4 · Q5 · Q18 · Q22 · I1 · I2 · I5 · V1 · V6 | **la campagna DST** (§3.5) | si rompe l'ammissione: la campagna fallisce e **nomina il seme** (§5.7.1) | senza guasto iniettato, **nessun passo in dubbio** — misurato, C7a di M-2 |
 | §3.7 | **test di contratto** — §7.4.6 | il doppio diverge dall'implementazione reale → scatta | i due concordi → verde |
 | V30 | `check-docs.sh` | un Q senza metodo di verifica → scatta | già in esercizio |
+| **Q14** · §4.9 | **byte congelati** del record durevole, con la mappa `indice → nome del campo → valore atteso` (§4.9.4) | si **riusa** un indice o si rinumera → fallisce e **nomina il campo** | si aggiunge un campo facoltativo con un indice nuovo → resta verde |
 | V31 | il **seme** entra nell'elenco versionato, la **proprietà** entra nella suite | si reintroduce il difetto che quella proprietà proteggeva → la campagna fallisce e **nomina il seme** | il difetto corretto → la campagna resta verde, e l'elenco dei semi non produce falsi rossi |
 
 > ⚠️ **V31 resta debole per natura, e la riga qui sopra non lo nasconde.** Ciò che
@@ -2103,6 +2303,15 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 >
 > È quindi l'unica voce del catalogo **provata in una direzione sola**. Si completa nel
 > sotto-progetto che accende la rete, e fino ad allora la §8 la registra come tale.
+
+> ⚠️ **La riga dei byte congelati è aggiunta il 2026-08-07 con
+> [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md), e porta con sé
+> la regola che le impedisce di diventare una tautologia.** L'oracolo è un file generato dal
+> codice che il controllo verifica: **rigenerarlo in blocco lo cancella**. Quindi i byte
+> congelati **non si rigenerano** — se cambiano non è un aggiornamento, è un cambio di
+> formato, e va aperta una versione nuova. È il **gotcha #25** trasferito dagli `.stderr` di
+> `trybuild` a questo file, e vale identico: la difesa non è che sia impossibile, è che **si
+> legge nel diff**.
 
 #### 7.4.3 Livello 3 — vuoto, e non è una svista
 
@@ -2165,6 +2374,15 @@ senza classe dichiarata vale `irripetibile`. Oggi è una regola di comportamento
 Non contraddice ADR-0007: il default `irripetibile` resta dov'è davvero utile — sui record
 riletti da un giornale scritto prima che la classe esistesse. Sposta la difesa dove il
 rischio è la dimenticanza di chi scrive, e la lascia dov'è il rischio di un dato vecchio.
+
+> ✅ **Rimando — questo punto presupponeva l'evoluzione, e ora la eredita (2026-08-07).**
+> «Un record scritto prima che la classe esistesse» era una regola di **lettura in avanti**
+> per **un campo solo**, arrivata di straforo in una sezione che non aveva deciso nulla del
+> genere. Con la §4.9 e
+> [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) quella riga
+> **discende** dalla regola generale invece di essere un'eccezione non dichiarata: un campo
+> assente in una versione precedente è il caso ordinario, non un caso speciale della classe
+> di effetto. Il testo sopra resta com'era, perché era corretto quando è stato scritto.
 
 #### 7.4.5 Il quarto gettone si scaglia, e l'innesco si scrive
 

@@ -126,6 +126,25 @@ riproducibili. Nessuna di queste è documentazione consultata: sono misure.
 | bersagli senza sistema operativo installabili | `rustup target list` | esiste **`x86_64-unknown-none`**, stessa architettura e stessa larghezza di puntatore del bersaglio reale | §7.3.2 |
 | il cancello respinge una sorgente di casualità | `cargo build --target x86_64-unknown-none -p kernel` con `getrandom` 0.3.4 | `error: target is not supported` — identico su `thumbv7em-none-eabihf` | §7.3.2, sonda B2 |
 
+## Evoluzione del formato durevole del giornale (ADR-0036)
+
+Verifiche dirette sugli strumenti installati su questa macchina, eseguite il **2026-08-07**
+con `rustc 1.95.0` · `cargo 1.95.0` · Windows 11. Nessuna di queste è documentazione
+consultata: **sono misure**, e il comando con la sua versione è la fonte.
+
+| Verifica | Comando | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| cosa succede rileggendo un record dopo un cambio di tipo | banco su tre classi di formato × nove mutazioni, che confronta i **valori** e non l'esito | **cinque celle su trentasei sono «silenzio sbagliato»**: `Ok` con valori errati. Su formato posizionale anche un campo *opzionale* in coda rende illeggibili i record vecchi | ADR-0036, §4.9 |
+| il costo reale degli indici di campo | `minicbor` 2.3.0, codifica predefinita ad **array** | **27 byte contro i 26** di `bincode`, non i 33 della codifica a mappa | ADR-0036, ritrovamento 3 · corregge una premessa di §6.8 |
+| i discriminanti espliciti sono onorati? | `bincode` 2.0.1, variante dichiarata `= 20` | **no**: si codifica come l'ordinale, byte per byte. La trappola del riordino **non è chiudibile** appuntando il numero | ADR-0036, ritrovamento 2 |
+| il formato dipende dalla configurazione? | `config::standard()` contro `config::legacy()` | byte diversi, e non si leggono a vicenda. **Cambiare configurazione è un cambio di formato**, e nessun byte lo dichiara | ADR-0036, ritrovamento 4 |
+| il kernel con **due** serializzatori regge i confini? | `cargo build -p kernel --target x86_64-unknown-none` | ✅ passa. Grafo **spedito** 3 crate; grafo **di build** 7, con `syn` per la prima volta | §7.3.1 · ADR-0031 |
+
+**Correzione tracciata.** La stima corrente prezzava i campi auto-descritti come «costo
+permanente su ogni campo di ogni record»: era la codifica a **mappa**. La predefinita della
+stessa libreria è ad **array**, e lo scarto è di sette volte — su un numero che stava per
+far scartare la forma giusta. Registrato come **gotcha #31**.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

@@ -73,6 +73,14 @@ _transitivo_.**
 > `kernel`, e la regola 2 è sul grafo **transitivo**. Misurato in M-3. Confondere «zero
 > voci proprie» con «grafo vuoto» rende la regola 2 non applicata proprio dove serve.
 >
+> ⚠️ **Rimando — la lista è cresciuta una seconda volta** (2026-08-07).
+> [ADR-0036](0036-evoluzione-del-formato-durevole-del-giornale.md) mette la codifica del
+> **giornale** in `kernel` e vi aggiunge **`minicbor` 2.3.0** come seconda voce *spedita* —
+> misurata: nessuna dipendenza propria, e il cancello senza sistema operativo di §7.3.2
+> passa. Ma il grafo **di build** passa da due voci a **sette**, e per la prima volta il
+> kernel porta **`syn`** a tempo di compilazione. È l'«evento da rivedere» che questo ADR
+> dichiara fra le proprie `Negative`, ed è la prima volta che si paga su quella classe.
+>
 > ✅ **Rimando — la §7.3.1 ha chiuso il meccanismo di verifica** (2026-08-07). La lista
 > completa vive lì, con una colonna **classe** che questo ADR non prevedeva: il controllo
 > verifica **due** grafi — le crate *spedite* e quelle *di build* — con due comandi, due

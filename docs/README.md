@@ -72,6 +72,7 @@ sotto-progetto**, nello stesso passaggio.
 | [0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) | GPU della GUI: quota di presentazione sottratta, concessione tenuta dal core | Accepted |
 | [0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md) | I parametri di decisione sono consegnati al kernel, non letti | Accepted |
 | [0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) | La porta verso i worker, e cosa significa «singolo» in I4 | Accepted |
+| [0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md) | L'evoluzione del formato durevole del giornale | Accepted |
 
 ## Indice dei diagrammi
 
@@ -92,7 +93,7 @@ sotto-progetto**, nello stesso passaggio.
 | Spec | Sotto-progetto | Stato |
 |---|---|---|
 | [Kernel](superpowers/specs/2026-08-06-kernel-design.md) | L0 fondamenta + L1 arbitri trasversali | ✅ **completa e approvata** |
-| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, ⚠️ **riaperta su sette voci** — tre chiuse più F1a; restano F1b, F2, F4, F7 |
+| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, ⚠️ **riaperta su sette voci** — cinque chiuse (F3, F6, F5, F1a, **F2 con F7**); restano **F1b** e **F4** |
 
 ## Decomposizione del sistema
 

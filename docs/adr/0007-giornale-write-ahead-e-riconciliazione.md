@@ -51,6 +51,16 @@ riconciliazione:
 è il caso sicuro: davanti a un dubbio non risolvibile il sistema si ferma e chiede,
 non indovina.
 
+> ✅ **Rimando — il caso «record scritto prima che la classe esistesse» ora ha una regola
+> generale** (2026-08-07). La §7.4.4 della spec del sotto-progetto 1 aveva fatto salire al
+> compilatore l'obbligo della classe, lasciando il default di questo punto *«dov'è davvero
+> utile: sui record riletti da un giornale scritto prima che la classe esistesse»*. Era una
+> regola di **lettura in avanti** per un campo solo, e nessuna sezione aveva deciso che
+> l'evoluzione del formato fosse ammessa. Ora lo dice
+> [ADR-0036](0036-evoluzione-del-formato-durevole-del-giornale.md): un campo assente in una
+> versione precedente è il **caso ordinario**, non un'eccezione della classe di effetto.
+> Questo ADR non è superato: la sua semantica reggeva, le mancava il substrato.
+
 ## Consequences
 
 - **Positive:**

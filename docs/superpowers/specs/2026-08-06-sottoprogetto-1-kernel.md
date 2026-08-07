@@ -2,7 +2,7 @@
 
 - **Data:** 2026-08-06
 - **Sotto-progetto:** 1. Dipende da 0, 0b, 0c ([roadmap](../../roadmap.md))
-- **Stato:** §0–§7 approvate. §8 da presentare.
+- **Stato:** §0–§8 approvate. **La spec è completa.** Il passo successivo è il piano.
 
 Questa spec **non ri-decide l'architettura**: la spec del kernel dice *cosa* il sistema
 fa e *perché*, e gli ADR dicono con quali alternative scartate. Qui si dice *quali crate
@@ -24,7 +24,7 @@ sbagliata — con l'eccezione delle tre decisioni della §0.5, dove qualcosa man
 | 5 | Arbitro GPU, e la lacuna su I2 | **Approvata** |
 | 6 | Gli altri meccanismi: gateway, sensori, permessi, degrado | **Approvata** |
 | 7 | La porta di qualità: i controlli automatici | **Approvata** |
-| 8 | Copertura V1–V37 e Q1–Q24 | da presentare |
+| 8 | Copertura V1–V37 e Q1–Q24 | **Approvata** |
 
 ---
 
@@ -89,7 +89,30 @@ errore di questa sezione, non una semplificazione.
 | **§6** permessi e confine dei dati | il **confine dei tipi**; la forma del permesso e la sua registrazione nel giornale | il mediatore completo, i preset, il ciclo di approvazione MCP, il canary | **B** — il confine dei tipi è la proprietà n. 1 non aggiungibile dopo (I6, V19, V20) · **C** — un mediatore non ha nulla da mediare finché non esistono strumenti |
 | **§7** errori e degrado | tassonomia, stato di degrado osservabile, ritenzione a livelli | la proiezione trace e l'esportazione OTLP | **A** — Q18 è DST: lo stato va dichiarato *prima* del primo fallimento · **C** — l'esportazione ha per consumatore un backend esterno, ed è opt-in |
 | **§8** test | tutta: è metà di questo sotto-progetto | — | **A** — è il simulatore |
-| **§10** L0 fisico | il **motore di persistenza**; il *lato kernel* di segreti, confinamento e checkpoint: **dichiarare, richiedere, giornalare** | le implementazioni di piattaforma: livello 2 su Windows, cifratura reale, checkpoint su filesystem reale | **A** per il motore (senza, il giornale non esiste) · **B** per il lato kernel: V34, V35 e V37 costano poco ora e sono strutturali · **C** per la piattaforma — il livello 2 non ha nulla da confinare finché nessuna capacità esegue codice |
+| **§10** L0 fisico | il **motore di persistenza**; il *lato kernel* di segreti, confinamento e checkpoint: **dichiarare, richiedere, giornalare** | le implementazioni di piattaforma: livello 2 su Windows, cifratura reale, checkpoint su filesystem reale · **backup e ripristino** | **A** per il motore (senza, il giornale non esiste) · **B** per il lato kernel: V34, V35 e V37 costano poco ora e sono strutturali · **C** per la piattaforma — il livello 2 non ha nulla da confinare finché nessuna capacità esegue codice · **C** per il backup — §0.4.1 |
+
+#### 0.4.1 Il backup mancava da questa tabella, ed è una correzione
+
+> ⚠️ **Aggiunto il 2026-08-07**, trovato scrivendo la §8. La riga §10 non nominava il
+> backup **né fra ciò che entra né fra ciò che si scaglia**. Per la §0.3 quello non è
+> un'omissione veniale: *«un pezzo scaglionato senza una riga C esplicita è un errore di
+> questa sezione, non una semplificazione»*.
+
+**Perché è regola C e non B.** La domanda che separa le due è se costruirlo dopo sia una
+riscrittura. Non lo è: un backup **legge** archivi che esistono già e vi aggiunge un
+manifesto. Il suo consumatore — un ripristino su macchina nuova — non esiste finché non
+esiste qualcosa di irriproducibile da ripristinare.
+
+**E c'è una metà di ADR-0022 che invece è già rispettata qui, non scaglionata.** Il *layout
+per natura* — archivi separati con ritenzione, cifratura e backup differenziati — è
+strutturale, e sarebbe stato regola B se questo sotto-progetto costruisse un archivio unico
+indifferenziato. Non lo fa: giornale e segreti nascono **già come due archivi distinti**,
+per V34 e per la struttura delle crate (§1.2). Ciò che si scaglia è il backup, non il
+layout.
+
+⚠️ **Il costo dello scaglionamento, che va detto:** fra qui e il sotto-progetto che lo
+implementa, l'unico irriproducibile che cresce è il giornale, e l'unica protezione è una
+copia manuale del suo file. È un rischio accettato, non un rischio ignorato.
 
 **La riga §10 è quella su cui voglio più attenzione in revisione**, perché è dove il
 criterio è più affilato: il kernel *richiede* un livello di confinamento dal primo
@@ -124,10 +147,26 @@ Un piano che elenca solo ciò che guadagna è incompleto.
 | Costo | |
 |---|---|
 | **Il contratto del sensore resta un'ipotesi** | verificato con un doppio, su tre casi reali di cui **nessuno esiste**. È RK-5 per intero: va rivisto dopo il secondo sensore reale, e se non si adatta si spezza, non si piega |
-| **Q6, Q11, Q12 e Q16 non sono verificati qui** | restano dichiarazioni fino al sotto-progetto che dà loro un consumatore. Vanno nella tabella §8 come *rimandati*, con il sotto-progetto che li chiude |
-| **Q17, Q21, Q22, Q23 sono verificati solo lato kernel** | la parte di piattaforma resta **verificata ma non validata**: è RK-11, applicato alla §10 invece che al confine OS. Mitigazione di ADR-0002: schizzare *su carta* l'implementazione prima di congelare l'interfaccia |
+| **Q6, Q11, Q12, Q16 e Q21 non sono verificati qui** | restano dichiarazioni fino al sotto-progetto che dà loro un consumatore. Vanno nella tabella §8 come *rimandati*, con il sotto-progetto che li chiude. ⚠️ **Q21 è stato spostato qui il 2026-08-07** — vedi sotto |
+| **Q17, Q22, Q23 sono verificati solo lato kernel** | la parte di piattaforma resta **verificata ma non validata**: è RK-11, applicato alla §10 invece che al confine OS. Mitigazione di ADR-0002: schizzare *su carta* l'implementazione prima di congelare l'interfaccia |
+
+> ⚠️ **Correzione, 2026-08-07: Q21 era nella riga sbagliata.** La riga «verificati solo
+> lato kernel» valeva per **tre** voci, non quattro: Q17 poggia su `secrets`, Q22 sul
+> checkpoint, Q23 sul livello di confinamento — e tutte e tre hanno un lato kernel elencato
+> in §0.4. **Q21 non ne ha nessuno**, perché il backup non era in perimetro affatto: c'era
+> entrato per somiglianza con gli altri tre della §10.
+>
+> Trovata dalla copertura della §8, che ha dovuto leggere questa sezione con un criterio
+> diverso da quello con cui era stata scritta. La correzione è **doppia**, perché la causa
+> era a monte: la §0.4 ora colloca il backup esplicitamente (§0.4.1), e Q21 passa alla riga
+> dei rimandati. Registrata in §8.5.1 invece che cancellata.
 | **Il gateway non parla con nessun provider vero** | il decisore è provato, l'integrazione no. La prima integrazione reale può scoprire che una firma è sbagliata |
 | **«Rimandato» tende a diventare «dimenticato»** | mitigazione: la §8 elenca **ogni** V e **ogni** Q con il proprio stato, e `check-docs.sh` può essere esteso per controllarla — come già fa per V30 |
+
+> ✅ **Rimando — la mitigazione è in esercizio (2026-08-07).** La §8 assegna uno stato a
+> tutte e sessantuno le voci, e `check-docs.sh` **rifiuta** una tabella incompleta, uno
+> stato fuori dall'insieme chiuso, o un `rimandato` senza innesco. Provato in due direzioni,
+> §8.6.3. Non era una promessa in senso figurato: era un controllo da scrivere, e c'è.
 
 ### 0.7 Definizione di «fatto»
 
@@ -142,6 +181,13 @@ Il sotto-progetto 1 è chiuso quando **tutte** queste sono vere, non quando il c
 | 5 | i tre ADR della §0.5 sono scritti, ciascuno con le proprie `Negative (accettate)` |
 | 6 | `roadmap.md`, `tracciabilita.md`, lo stato degli spike e `HANDOFF.md` sono aggiornati **nello stesso passaggio** |
 | 7 | `bash scripts/check-docs.sh` esce verde |
+
+> 📌 **Rimando — dove si controllano le condizioni 1 e 3 (2026-08-07).** Sono le due che
+> parlano di copertura, e il posto in cui si verificano è la tabella della **§8**: la
+> colonna del meccanismo nomina il controllo di ogni V (condizione 1) e, per i Q, il metodo
+> che `design/08` assegna loro (condizione 3). ⚠️ **Le due condizioni riguardano ciò che è
+> «in perimetro»**, quindi si leggono sulle sole righe `verificato qui` e sulla metà
+> verificata delle `parziale`: una riga `rimandato` non le viola, la §8 dice perché.
 
 ---
 
@@ -1790,7 +1836,7 @@ quella «semplificazione» prima che qualcuno la applichi.
 | eseguire una richiesta | una **prova di conformità** | **Q13** | candidato non filtrato → non compila | filtrato → compila |
 | promuovere testo a istruzione | la porta **`journal`** | **V19** | conversione libera → non compila | conversione giornalata → compila |
 
-**C · Tipi che non si scambiano.**
+**C · Cosa non è esprimibile.**
 
 | Difende | Cosa **non** deve compilare | Contro-sonda |
 |---|---|---|
@@ -1800,6 +1846,19 @@ quella «semplificazione» prima che qualcuno la applichi.
 | §5.3 | `InRevoca` per un profilo non prelazionabile | costruibile per uno prelazionabile |
 | §5.2.1 | l'ammissione legge `cold_start` | la proiezione di presentazione lo legge |
 | **V5** | un effetto **senza classe dichiarata** — §7.4.4 | un effetto con la classe compila |
+| **V2** | un'ammissione **senza profilo di risorsa** — §5.2.1 dice *«il profilo che l'arbitro riceve»* | con il profilo dichiarato compila |
+| **V4** | trattare l'esito dell'arbitro come **due vie** invece di tre — §5.3 punto 1 | distinguere `Concessa`, `Rifiutata` e `InCoda` compila |
+| **V10** | un sensore che **modifica** l'artefatto — §6.4.2 lo consegna per riferimento immutabile | osservarlo e restituire un verdetto compila |
+
+> ⚠️ **Tre righe aggiunte il 2026-08-07, e il titolo del blocco corretto.** Le trovò la
+> copertura della §8: V2, V4 e V10 sono proprietà **di livello 1** decise nelle §5 e §6 —
+> non nuove — che il catalogo non enumerava, quindi la §8 non poteva nominarle senza
+> violare la propria regola §8.1.2. Registrato in §8.5.3.
+>
+> Il titolo diceva «Tipi che non si scambiano», ma **tre delle sei righe originali non erano
+> scambi di tipo** — `InRevoca`, `cold_start` e la classe dell'effetto. Il titolo era
+> stretto rispetto a ciò che il blocco già conteneva; la colonna, che dice «cosa **non**
+> deve compilare», era invece giusta fin dall'inizio.
 
 Tutte le righe dei blocchi B e C sono **test di compilazione fallita**, quindi valgono per
 loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha #25 (§7.1.4).
@@ -1816,7 +1875,17 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 | Q2 · Q3 · Q4 · Q5 · Q18 · Q22 · I1 · I2 · I5 · V1 · V6 | **la campagna DST** (§3.5) | si rompe l'ammissione: la campagna fallisce e **nomina il seme** (§5.7.1) | senza guasto iniettato, **nessun passo in dubbio** — misurato, C7a di M-2 |
 | §3.7 | **test di contratto** — §7.4.6 | il doppio diverge dall'implementazione reale → scatta | i due concordi → verde |
 | V30 | `check-docs.sh` | un Q senza metodo di verifica → scatta | già in esercizio |
-| V31 | il **seme** entra nell'elenco versionato, la **proprietà** entra nella suite | ⚠️ debole per natura: §3.4 — un seme non riproduce dopo un cambio di codice |
+| V31 | il **seme** entra nell'elenco versionato, la **proprietà** entra nella suite | si reintroduce il difetto che quella proprietà proteggeva → la campagna fallisce e **nomina il seme** | il difetto corretto → la campagna resta verde, e l'elenco dei semi non produce falsi rossi |
+
+> ⚠️ **V31 resta debole per natura, e la riga qui sopra non lo nasconde.** Ciò che
+> l'automatismo protegge è la **proprietà**, non il seme: §3.4 — un seme non riproduce la
+> stessa esecuzione dopo un cambio di codice. Sonda e contro-sonda valgono quindi per la
+> proprietà; il seme resta un punto di ripartenza per indagare, non un oracolo.
+>
+> 📌 La prima stesura di questa riga aveva **tre celle su quattro**: il testo «debole per
+> natura» occupava la colonna *Sonda* e la contro-sonda non esisteva. Era l'unica riga del
+> catalogo a violare la §7.1.1 regola 3, e l'ha trovata il controllo scritto in §8.6 — alla
+> sua prima corsa, prima ancora che la §8 fosse scritta.
 
 > ⚠️ **La riga di V25 ha un buco, e va dichiarato invece che nascosto.** La lista delle
 > crate autorizzate a uscire in rete è **vuota**, e una lista vuota passa sempre. La sonda
@@ -1936,7 +2005,7 @@ La §8 registra quali porte hanno la suite e quali no, con il sotto-progetto che
 | Costo | |
 |---|---|
 | **ogni regola nuova porta due sonde, non una** | e la contro-sonda è la più noiosa da scrivere, perché verifica che *non* succeda niente |
-| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta già una decina, e ciascuno ha un `.stderr` da leggere (gotcha #25) |
+| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta già una dozzina — tre nel blocco B e nove nel C — e ciascuno ha un `.stderr` da leggere (gotcha #25) |
 | **una voce è provata in una direzione sola** | V25, finché la rete non esiste. Dichiarato in §7.4.2 |
 | **V31 resta debole per natura** | l'automatismo protegge la proprietà, non il seme: §3.4 |
 | **i test di contratto sono lavoro reale** | due suite ora, due rimandate. È il prezzo per non provare Q4 e Q5 contro una finzione |
@@ -2014,7 +2083,7 @@ di un piano agentico, qualità percepita di voce e mesh, ergonomia dell'interfac
 | che una crate ammessa non faccia nulla di indesiderato | ADR-0031 lo dichiara: *«limita la superficie, non la certifica»* | la giustificazione scritta, e chi la legge |
 | che `platform` si comporti come `simulator` su **tutte** le porte | solo due ne hanno entrambe le implementazioni qui (§7.4.6) | contratto su `journal` e `reactor`; le altre in §8 come rimandate |
 | lo **stile** del codice | non difende nessun V, quindi la regola 1 di §7.1.1 lo esclude | `clippy` come igiene, **fuori** dalla porta |
-| Q6 · Q11 · Q12 · Q16 | non hanno consumatore in questo sotto-progetto — è l'elenco della §0.6 | la §8, con il sotto-progetto che li chiude |
+| Q6 · Q11 · Q12 · Q16 | non hanno consumatore in questo sotto-progetto. ⚠️ dal 2026-08-07 la riga della §0.6 ne elenca **cinque**: vi si è aggiunto **Q21**, per la correzione di §8.5.1 | la §8, con il sotto-progetto che li chiude |
 
 #### 7.6.3 La riga che chiude la sezione
 
@@ -2055,3 +2124,536 @@ stesso script e lo stesso genere di tabella.
 
 **Si scrivono insieme, quando si scrive la §8.** Farlo ora significherebbe controllare una
 tabella e non l'altra, con due passaggi sullo stesso file.
+
+---
+
+## 8. Copertura V1–V37 e Q1–Q24
+
+### 8.0 A parole
+
+Le §0–§7 hanno deciso *cosa* il sistema garantisce e *chi lo verifica*. Questa sezione fa
+l'unica cosa che nessuna delle precedenti ha fatto: **giudica, una per una, tutte e
+sessantuno le voci nominate**, e dice se questo sotto-progetto ha finito con ciascuna.
+
+Non è un riepilogo. Un riepilogo ripete; questa sezione **decide**, e in due casi ha
+trovato che qualcosa non tornava (§8.5).
+
+Ha una seconda natura, meno ovvia. La §7.6.3 chiude così:
+
+> *«La porta non prova che il kernel sia corretto. Prova che un insieme **nominato** di
+> invarianti regge.»*
+
+**Questa è la sezione in cui quell'insieme viene nominato.** Senza di essa «insieme
+nominato» è una figura retorica: non esiste il posto in cui l'insieme è scritto per intero,
+e nessuno può controllare che non si sia ristretto in silenzio.
+
+Ed è la mitigazione che la §0.6 aveva promesso contro il costo peggiore dello
+scaglionamento — *«rimandato tende a diventare dimenticato»*. La promessa era in due
+pezzi: una tabella che elenca ogni V e ogni Q con il proprio stato, e uno script che la
+controlla. Entrambi vivono qui.
+
+### 8.1 Il vocabolario degli stati
+
+Quattro valori, chiusi. Un quinto non si aggiunge senza modificare anche il controllo di
+§8.6, che è il punto: l'insieme è chiuso *per costruzione*, non per buona volontà.
+
+| Stato | Significato | Cosa la riga deve portare |
+|---|---|---|
+| ✅ **verificato qui** | esiste un controllo **in perimetro**, visto scattare e visto restare verde | il meccanismo, con il suo livello di forza |
+| ⚠️ **parziale** | una parte è verificata qui, una parte no — e si dice **quale** | ⛔ **innesco obbligatorio** |
+| ⏳ **rimandato** | nessun controllo qui | ⛔ **innesco obbligatorio** |
+| ⛔ **non controllato** | in perimetro, e **si sceglie** di non controllarlo | il motivo (è la §7.6.2) |
+
+#### 8.1.1 Perché quattro e non tre
+
+I primi tre bastavano quasi. Due classi di righe non ci stanno dentro senza dire il falso,
+e sono esattamente le due che le sezioni precedenti avevano già isolato:
+
+| Riga | Con «verificato qui» | Con «rimandato» |
+|---|---|---|
+| **V25 · Q20** — un solo punto di uscita (§7.4.2) | ⛔ sopravvaluta: la contro-sonda **non esiste**, e la §7.4.2 lo dichiara | ⛔ sottovaluta: il controllo gira *già* a ogni commit, e la sonda scatta |
+| **Q17 · Q22 · Q23** — «verificati solo lato kernel» (§0.6) | ⛔ cancella RK-11 | ⛔ cancella il lavoro lato kernel, che è fatto |
+
+**Il costo del quarto stato, dichiarato:** `parziale` è la casella comoda in cui si può
+parcheggiare qualunque cosa. La mitigazione è l'**innesco obbligatorio**, ed è il gettone
+della §6.3 applicato a una tabella: una riga `parziale` senza innesco non passa lo script,
+quindi non è esprimibile. Chi vuole parcheggiare deve prima dire chi verrà a riprendere.
+
+#### 8.1.2 Cosa vale come «controllo» in questa tabella
+
+La colonna del meccanismo nomina **una voce della §7**, mai un'intenzione. Sono ammesse
+tre risposte, e non di più:
+
+| Risposta | Da |
+|---|---|
+| una voce del **catalogo** §7.4.1 o §7.4.2, con il suo livello | §7.4 |
+| i **test a esempi**, che la cadenza fa girare a ogni commit | §7.5.1 |
+| la **campagna DST**, con la porta in cui si inietta | §3.3 · §7.4.2 |
+
+Un V che non può nominare nessuna delle tre **non è ✅**. È la regola 1 del criterio di
+ammissione (§7.1.1) letta al contrario, e serve a impedire che questa tabella diventi il
+posto in cui si aggiungono controlli che la §7 non ha esaminato.
+
+#### 8.1.3 I V e i Q si giudicano con criteri diversi, e va detto
+
+Non è un'incoerenza: le due famiglie sono oggetti diversi.
+
+| | Criterio | Autorità |
+|---|---|---|
+| **V** — vincoli | il vincolo è soddisfatto **in tutte le sue parti** dentro il perimetro? | il testo del vincolo |
+| **Q** — requisiti | il **metodo che `design/08` gli assegna** è eseguibile dentro il perimetro? | [`design/08`](../../design/08-strategia-di-test.md) |
+
+Per i Q l'autorità non è discrezionale: è la condizione 3 della §0.7 — *«ogni Q in
+perimetro è verificato col metodo che design/08 gli assegna, non con un altro»* — ed è
+anche il motivo per cui V30 esiste.
+
+**Conseguenza visibile, e va anticipata perché sembra un'incoerenza e non lo è.** Q7 e Q8
+sono ✅ benché la loro metà rivolta all'utente non esista: `design/08` assegna a entrambi
+un test a esempi su un **evento emesso dal kernel**, e quel test è eseguibile qui. V9 —
+*«ogni ingresso in `AttesaUmano` emette una notifica»* — è invece ⚠️, perché il vincolo
+parla della notifica, non dell'evento. Due giudizi diversi sullo stesso confine, ciascuno
+dalla propria autorità.
+
+### 8.2 Le due specie di innesco
+
+Un rimando senza innesco è un rimando dimenticato. Le specie sono **due**, e la differenza
+è cosa deve accadere perché la voce si chiuda.
+
+| Specie | Si chiude quando | Voci |
+|---|---|---|
+| **sotto-progetto** | arriva un **consumatore** | tutto il resto |
+| **spike** | arriva una **misura** | **Q1**, con SP-2 |
+
+**Ho cercato una terza specie e non l'ho trovata.** I candidati esaminati e perché non
+sono inneschi:
+
+| Candidato | Perché no |
+|---|---|
+| una **misura** — M5, quota di presentazione | tara un numero. Nessun V e nessun Q vi pende: V1 chiede che una concessione esista, non quanto valga |
+| un **ADR** — 0029, il guscio | non vincola nessun V né Q di questo sotto-progetto. È il verso opposto: §5.5.4 esporta un discriminante verso di lui |
+| **SP-1, SP-3** | tarano i parametri di V2 e Q11; il meccanismo è verificabile senza |
+
+> **L'innesco è ciò che rende il requisito verificabile, non ciò che ne tara un numero.**
+
+È la stessa distinzione della §9.3 della spec del kernel — *«solo due spike bloccano; gli
+altri quattro tarano parametri di decisioni già prese»*.
+
+#### 8.2.1 Come si scrive un innesco: la condizione, poi il numero
+
+Un innesco scritto come «sotto-progetto 4» invecchia il giorno in cui la roadmap cambia, e
+invecchia **in silenzio**. Quindi:
+
+> L'innesco nomina la **condizione**; il numero del sotto-progetto sta fra parentesi come
+> *chi la soddisfa per primo oggi*. Se la roadmap cambia, la condizione resta vera e il
+> numero si aggiorna.
+
+Le condizioni che ricorrono, raccolte una volta sola perché la tabella non le ripeta per
+esteso:
+
+| Sigla | Condizione | Oggi |
+|---|---|---|
+| **A** | esiste un'interfaccia | **2** — GUI minima |
+| **B** | qualcuno chiama un modello: proiezione, provider reale, rete | **3** — Conversazione |
+| **C** | esistono strumenti e permessi da mediare | **4** — Agenti |
+| **D** | si esegue codice o un comando, e si scrive su file reali | **5** — Coding |
+| **E** | esiste un worker reale da avviare e uccidere | **7** — Generazione asset ⚠️ |
+| **F** | esistono backup e ripristino | **11** — Backup e ripristino |
+| **SP-2** | la misura di Q1 sotto carico GPU | spike, dentro **8** — Voce |
+
+⚠️ **Sulla E.** Il primo worker *certo* è la generazione asset, che dichiara un carico GPU
+proprio. Il sotto-progetto 6 potrebbe anticiparla se l'indicizzazione girasse in locale
+invece che su un provider remoto: la condizione resta quella, il numero è il candidato
+odierno.
+
+📌 **Sulla F, e sul perché questa colonna non è decorativa.** Quel numero **non esisteva**
+quando la tabella è stata compilata: la roadmap non collocava il backup da nessuna parte, e
+il vuoto è emerso dal solo fatto di dover riempire la casella. Il sotto-progetto 11 è nato
+lì (§8.5.2), e il suo posto in coda è **derivato, non comodo**: dipende da 5, 6 e 9 perché
+prima l'elenco delle esclusioni di V32 sarebbe vuoto, e verificarlo su un elenco vuoto è
+una prova che non può fallire.
+
+#### 8.2.2 Un Q della DST eredita lo stato della porta in cui si inietta
+
+Questa non è una scelta: è la conseguenza di incrociare due tabelle che finora non si
+erano mai guardate. La §3.3 dice **in quale porta** si inietta il guasto che verifica ogni
+Q; la §7.4.6 dice **quali porte hanno la suite di conformità** fra la finta e la vera.
+
+| Porta | Suite di conformità (§7.4.6) | Q che ne eredita lo stato | Esito | Innesco |
+|---|---|---|---|---|
+| `journal` | ✅ c'è — e §4.6 ne copre anche il livello 2 | **Q5** | ✅ | — |
+| `reactor` | ✅ c'è — ed è la più importante | **Q2** | ✅ | — |
+| `process` | ⚠️ rimandata: non ci sono worker da avviare | **Q4** | ⚠️ | E — esiste un worker reale (7) |
+| `ipc` | ⚠️ rimandata: non c'è una GUI dall'altro capo | **Q3** | ⚠️ | A — esiste un'interfaccia (2) |
+| `filesystem` | ❌ scaglionata (§0.4) | **Q22** | ⚠️ | D — si scrive su file reali (5) |
+| `network` | ❌ scaglionata | **Q18** | ⚠️ | B — qualcuno chiama un modello (3) |
+
+L'ultima colonna è ciò che la §7.4.6 chiedeva alla lettera: *«la §8 registra quali porte
+hanno la suite e quali no, con il sotto-progetto che le chiude»*.
+
+Senza la suite di conformità, la DST dimostra che il kernel si comporta bene **con il
+simulatore**. È il punto cieco che la §3.7 dichiara con parole sue — *«la finta non è la
+vera»* — e chiamare ✅ un Q provato contro una finzione sarebbe la falsa sicurezza che
+questo progetto combatte ovunque.
+
+⚠️ **Questo aggiunge una condizione che `design/08` non prevedeva**, ed è esattamente ciò
+che la §7.5.2 ha registrato: la conformità fra `platform` e `simulator` è un uso dei test
+di contratto che quel documento non contemplava. Per Q3, Q4, Q18 e Q22 il metodo di
+`design/08` **è** eseguibile qui; ciò che manca è la condizione aggiunta dalla §7.4.6.
+
+Questa tabella è la **derivazione** di sei righe delle due seguenti, non un secondo
+registro. È anche la risposta alla richiesta esplicita della §7.4.6 — *«la §8 registra
+quali porte hanno la suite e quali no»* — tenuta in un posto solo perché due posti si
+disallineano (§7.4.4, caso 2).
+
+### 8.3 I vincoli V1–V37
+
+| ID | Vincolo | Stato | Con quale controllo, e cosa manca | Innesco |
+|---|---|---|---|---|
+| V1 | nessun lavoro tocca la GPU senza concessione valida | ✅ verificato qui | gettone sulla porta `process`, livello 1 (§7.4.1 B) · campagna DST (§7.4.2) · per la GUI la concessione di presentazione è tenuta dal core (§5.5.1). ⚠️ verso il compositor il rifiuto non è esecutivo: §5.5.2, non mitigabile | — |
+| V2 | ogni lavoro GPU ha un profilo di risorsa dichiarato | ✅ verificato qui | §7.4.1 C, riga V2 — un'ammissione senza profilo non compila. La taratura dei valori è SP-1, che è un parametro | — |
+| V3 | una sola policy attiva, e proviene dal profilo di configurazione | ⚠️ parziale | campagna DST: una transizione di policy interrotta lascia un passo riconciliabile (§5.7) · test a esempi sull'unicità dell'oggetto attivo (§5.4). **La provenienza dal profilo di configurazione non ha consumatore**: nessuna sezione mette la configurazione in perimetro | A — esiste un'interfaccia (2) |
+| V4 | `Rifiutata` e `InCoda` sono esiti distinti, anche in interfaccia | ⚠️ parziale | §7.4.1 C, riga V4 — trattare l'esito come due vie non compila; **la distinzione in interfaccia** no | A (2) |
+| V5 | nessun effetto senza classe dichiarata | ✅ verificato qui | la classe è un campo obbligatorio del tipo: livello 1, con test di compilazione fallita (§7.4.1 C, §7.4.4 punto 3) | — |
+| V6 | write-ahead obbligatorio | ✅ verificato qui | campagna DST su `journal`, che ha la suite di conformità (§8.2.2) · due livelli di crash provati, M-2 e M-8 (§4.6) | — |
+| V7 | il contesto non è mai sorgente di verità | ⚠️ parziale | test a esempi sul modello dello stato durevole (§4.4): ciò che è dichiarato non sacrificabile si rilegge dal giornale dopo una ripresa. **La proiezione non esiste**, quindi metà del vincolo non ha soggetto | B — qualcuno chiama un modello (3) |
+| V8 | ogni run ha un tetto, con default conservativo | ✅ verificato qui | i confini di autonomia entrano (§0.4, §4) · test a esempi sulla transizione ad `AttesaUmano`, che è il metodo di Q7 | — |
+| V9 | ogni ingresso in `AttesaUmano` emette una notifica | ⚠️ parziale | test a esempi sull'**evento** emesso e giornalato; **la notifica all'utente** no | A (2) |
+| V10 | un sensore osserva e non modifica nulla | ✅ verificato qui | §7.4.1 C, riga V10 — un sensore che modifica l'artefatto non compila: §6.4.2 lo consegna per riferimento immutabile | — |
+| V11 | ogni sensore dichiara il proprio costo; gli inferenziali fuori dall'anello stretto | ⚠️ parziale | test a esempi: il **costo dichiarato** decide l'ammissione all'anello stretto (§6.4.1). **Nessun sensore inferenziale esiste**, quindi la seconda metà non ha soggetto | C — esistono strumenti e sensori reali (4) |
+| V12 | l'anello 4 propone, non applica | ⏳ rimandato | l'anello 4 è scaglionato per regola C (§0.4, §5): legge ricorrenze che esistono solo quando qualcosa gira | C (4) |
+| V13 | la ricomposizione mantiene il **budget**, non evita l'overflow | ⏳ rimandato | la ricomposizione della proiezione è scaglionata per regola C (§0.4, §4) | B (3) |
+| V14 | un verdetto negativo che rientra nell'anello è un passo nuovo, giornalato | ✅ verificato qui | test a esempi con sensore finto e verdetto scelto dal test: è il metodo che `design/08` assegna a Q10 (§6.4.2) | — |
+| V15 | ogni richiesta dichiara i propri vincoli, anche quando coincidono con i default | ✅ verificato qui | test a esempi sul decisore, che entra per regola A (§0.4, §3) e non richiede nessun provider (ADR-0020) | — |
+| V16 | il record di routing non contiene mai credenziali | ⏳ rimandato | ⚠️ **declassato da `parziale` durante l'audit della §8.5.3.** Nessuna credenziale attraversa il sistema in questo perimetro — `secrets` esiste ma nessun adattatore la usa — quindi **qualunque controllo qui è vacuo**: proverebbe l'assenza di una cosa che non c'è. Gotcha #17. Che il tipo del record non abbia un campo per una credenziale è una scelta di scrittura, non un controllo | B (3) |
+| V17 | ritentativo e cambio di candidato restano dentro lo stesso passo | ✅ verificato qui | test a esempi sul discriminante di §6.2 — *il modello ha prodotto output?* | — |
+| V18 | un errore di vincolo nomina **quale** vincolo | ⚠️ parziale | test a esempi: l'errore prodotto dal filtro porta il nome del vincolo non soddisfatto; **che l'interfaccia lo mostri** no | A (2) |
+| V19 | tipo distinto per il contenuto esterno, conversione esplicita e giornalata | ✅ verificato qui | la conversione riceve la porta `journal` come argomento: gettone di livello 1 (§6.5, §7.4.1 B) | — |
+| V20 | l'etichetta di non-fidatezza è ereditaria attraverso ogni trasformazione | ✅ verificato qui | test di compilazione fallita, livello 1 (§7.4.1 C). ⚠️ le trasformazioni esistenti oggi sono poche: ogni trasformazione nuova porta il proprio caso in `tests/compile_fail/` (§2.5) | — |
+| V21 | un permesso vale per la tripla concessa e per la sessione corrente | ⚠️ parziale | test a esempi sulla **forma** del permesso e sulla sua registrazione nel giornale (§6.6): una tripla concessa non copre una tripla diversa. Il mediatore, i preset e il ciclo di approvazione sono scaglionati per regola C | C (4) |
+| V22 | nessuna descrizione di strumento concede permessi | ⏳ rimandato | non esistono strumenti MCP: regola C (§0.4, §6) | C (4) |
+| V23 | la provenienza del contenuto è visibile in interfaccia | ⏳ rimandato | vincolo interamente d'interfaccia | A (2) |
+| V24 | il giornale è la sorgente; trace, metriche e costi ne sono proiezioni | ⚠️ parziale | test a esempi: il picco di VRAM (§5.2.2) e i permessi attivi (§6.6) si ricavano **rileggendo il giornale**, e non esiste un secondo archivio da cui ricavarli. **La proiezione trace non esiste**, quindi l'altra metà non ha soggetto | A (2) |
+| V25 | nessuna telemetria per default, un solo punto di uscita | ⚠️ parziale | il controllo gira a ogni commit e la **sonda scatta** — una chiamata di rete in `daemon` lo accende; **la contro-sonda non esiste**: la lista è vuota e non c'è niente di legittimo da lasciar passare (§7.4.2). È l'unica voce del catalogo provata in una direzione sola | B (3) |
+| V26 | la ritenzione pota i payload grezzi, mai i record strutturati | ✅ verificato qui | `prune` è un'operazione della porta `journal` (§4.1) · test a esempi sulle due regole non negoziabili di ADR-0018: un record potato **dichiara** di esserlo, e un passo in dubbio non è potabile (§4.5) | — |
+| V27 | nessuna azione fallisce per una condizione già nota e non dichiarata | ⚠️ parziale | lo stato di degrado è un oggetto derivato in perimetro (§6.7) e Q18 lo verifica in DST; **che l'interfaccia lo dichiari prima** no | A (2) |
+| V28 | nessun modello nel percorso decisionale del kernel | ✅ verificato qui | §7.4.2, riga I3 · V28 — corollario dell'allow-list: un percorso verso un adattatore comparirebbe nel grafo transitivo (§7.4.4 punto 2). Livello 2, sonde N1–N3 e contro-sonda N4. ⚠️ ADR-0031 dichiara il proprio limite: *«limita la superficie, non la certifica»* | — |
+| V29 | tempo, casualità, I/O e scheduling iniettabili | ✅ verificato qui | `no_std` e il divieto gratuito di `HashMap`, livello 1 · allow-list e cancello senza OS, livello 2 · la campagna DST stessa, il cui criterio C1 fallisce a ogni sorgente nascosta di non determinismo (§3.7). ⚠️ `HashMap` fuori dal kernel è **deliberatamente non controllato**: §7.4.4 punto 1 | — |
+| V30 | ogni requisito Q ha un metodo di verifica dichiarato | ✅ verificato qui | `check-docs.sh`, livello 2, già in esercizio (§7.4.2) | — |
+| V31 | ogni difetto trovato in simulazione conserva il proprio seme | ✅ verificato qui | il seme entra nell'elenco versionato, la **proprietà** entra nella suite (§7.4.2). ⚠️ debole per natura: l'automatismo protegge la proprietà, non il seme (§3.4). Nessun innesco la rafforza — è un limite, non un pezzo mancante | — |
+| V32 | il backup contiene solo l'irriproducibile | ⏳ rimandato | il backup si scaglia per regola C (§0.4.1). ⚠️ verificarlo prima che esistano indici e pesi sarebbe **vacuo**: l'elenco delle esclusioni sarebbe vuoto | F — esistono backup e ripristino (11) |
+| V33 | i segreti non entrano mai nel backup automatico | ⏳ rimandato | idem (§0.4.1). Il **layout per natura** di ADR-0022 è invece già rispettato: `secrets` è un archivio distinto (§1.2) | F (11) |
+| V34 | un solo punto di lettura delle credenziali, verificabile staticamente | ✅ verificato qui | `secrets` è una crate separata e il grafo lo rende verificabile: livello 2, con sonda e contro-sonda (§7.4.2). È il motivo per cui le crate sono cinque e non quattro (§1.2) | — |
+| V35 | nessuna esecuzione di codice o comando sotto il livello 2 | ⚠️ parziale | il **tipo** del livello, la dichiarazione per azione e la registrazione entrano (§7.4.5); **il quarto gettone si scaglia** perché nessuna porta esegue comandi qui, ed è retrofittabile | D — si esegue un comando (5) |
+| V36 | gli effetti fuori dagli ambiti dichiarati restano soggetti alle classi di effetto | ⚠️ parziale | §7.4.1 C, riga V5 — un effetto senza classe non compila, **dentro o fuori un ambito indifferentemente**, ed è ciò che V36 chiede. **Che il checkpoint copra davvero gli ambiti** richiede il filesystem reale, scaglionato (§0.4, §10) | D (5) |
+| V37 | il livello di confinamento usato entra nel giornale insieme al passo | ✅ verificato qui | test a esempi: è la parte che §7.4.5 fa entrare comunque | — |
+
+### 8.4 I requisiti Q1–Q24
+
+| ID | Requisito | Stato | Con quale controllo, e cosa manca | Innesco |
+|---|---|---|---|---|
+| Q1 | voce sotto i 600 ms con job GPU pesante | ⏳ rimandato | il metodo di `design/08` è una **misura end-to-end**, che richiede voce e carico reali. §7.6.2 lo dichiara già: il tempo di parete dell'arbitro non è un cancello, perché è un numero rumoroso | **SP-2** (spike, dentro 8) |
+| Q2 | zero OOM | ✅ verificato qui | campagna DST su `reactor`, che ha la suite di conformità (§8.2.2) · sonda negativa esplicita: si concede oltre il budget, la campagna fallisce e nomina il seme (§5.7.1) | — |
+| Q3 | crash della GUI durante una run | ⚠️ parziale | il metodo di `design/08` — DST con morte del client — **è eseguibile qui** (§5.7); manca la **suite di conformità su `ipc`**, quindi la prova è contro una finta (§8.2.2) | A (2) |
+| Q4 | kill di un worker in qualsiasi istante | ⚠️ parziale | idem su `process`: la DST inietta il kill (§3.3), ma non esiste un worker reale contro cui provare la conformità della finta | E (7) |
+| Q5 | riavvio del core a metà run, nessun effetto rieseguito | ✅ verificato qui | DST con crash-injection su `journal`, suite di conformità presente, **e** il livello 2 dentro il motore: M-8, 12 punti scattati, 12/12 riaperti coerenti (§4.6) | — |
+| Q6 | contesto esaurito | ⏳ rimandato | il metodo è una proprietà su ricomposizioni ripetute, e la ricomposizione è scaglionata (§0.6) | B (3) |
+| Q7 | tetto di passi, tempo o costo superato | ✅ verificato qui | test a esempi sulla transizione ad `AttesaUmano` — il metodo di `design/08` è interamente lato kernel ed è eseguibile qui (§8.1.3) | — |
+| Q8 | avvio a freddo dichiarato | ✅ verificato qui | test a esempi sull'**evento emesso prima dell'attesa** · e §5.2.1 rende `cold_start` irraggiungibile dal percorso decisionale, con test di compilazione fallita (§7.4.1 C) | — |
+| Q9 | contenuto non fidato nel canale delle istruzioni | ✅ verificato qui | **non compila**: test negativo di compilazione, livello 1 con visibilità di livello 2 (§7.4.1 C, §7.1.3) | — |
+| Q10 | verdetto di sensore che rientra nell'anello | ✅ verificato qui | test a esempi con sensore finto, che è il metodo assegnato da `design/08` (§6.4.2). ⚠️ prova che l'**anello** funziona, non che il **contratto** regga sensori reali: è RK-5, già accettato | — |
+| Q11 | occupazione della proiezione al budget | ⏳ rimandato | nessuna proiezione da misurare (§0.6). SP-3 ne tarerà la soglia, ma non è ciò che lo rende verificabile | B (3) |
+| Q12 | difetto ricorrente che diventa una proposta | ⏳ rimandato | l'anello 4 è scaglionato: legge ricorrenze che esistono solo quando qualcosa gira (§0.6) | C (4) |
+| Q13 | nessun candidato non conforme viene mai eseguito | ✅ verificato qui | **gettone di conformità**: un candidato non filtrato non è esprimibile come argomento di un'esecuzione. Livello 1 (§6.3.1, §7.4.1 B). ⚠️ il gettone prova la provenienza, non la correttezza del filtro: §6.3.2 | — |
+| Q14 | ricostruire con cosa è stato eseguito un passo di sei mesi fa | ✅ verificato qui | il record di routing è **risolto** e giornalato col passo (§6.2): test a esempi su un giornale sintetico. La proprietà è strutturale — il record non rimanda alla configurazione, quindi non dipende da essa | — |
+| Q15 | un'istruzione trovata nei dati non autorizza | ⚠️ parziale | la metà **statica** è qui: §7.4.1 C riga Q9·I6·V20, più il gettone `journal` sulla conversione (§7.4.1 B, V19) · la metà a esempi — *l'obbligo di autorizzazione* — richiede il mediatore e il ciclo di approvazione, scaglionati per regola C | C (4) |
+| Q16 | descrizione MCP cambiata dopo l'approvazione | ⏳ rimandato | il metodo è un test di contratto contro un server MCP finto, e non esistono strumenti (§0.6) | C (4) |
+| Q17 | un segreto compare in contenuto in uscita | ⚠️ parziale | lato kernel: §7.4.2, riga V34 · Q24 — solo `secrets` raggiunge il portachiavi, livello 2 provato in due direzioni · **il canary è scaglionato** (§0.4, §6) e non c'è contenuto in uscita da controllare | B (3) |
+| Q18 | perdita della rete | ⚠️ parziale | il metodo di `design/08` — DST con iniezione del guasto — è eseguibile e verifica che il degrado sia dichiarato **prima** del primo fallimento (§3.3); ma `network` non ha implementazione reale, quindi nessuna conformità (§8.2.2) | B (3) |
+| Q19 | capire cosa è andato storto in una run di 4 ore | ⏳ rimandato | il metodo poggia sulla **proiezione trace**, scaglionata per regola C (§0.4, §7) | A (2) |
+| Q20 | nessun dato lascia la macchina | ⚠️ parziale | la metà statica è §7.4.2, riga V25 · Q20: il controllo gira, la sonda scatta, **la contro-sonda non esiste** · il test «assenza di traffico a default» è eseguibile ma **vacuo** finché nessuno può generarne — gotcha #17 | B (3) |
+| Q21 | ripristino da backup su una macchina nuova | ⏳ rimandato | il metodo di `design/08` è *«backup e ripristino su ambiente pulito»*, e qui non esiste né l'uno né l'altro: il backup si scaglia per regola C (§0.4.1). ⚠️ la §0.6 lo elencava fra i «verificati solo lato kernel»: disallineamento trovato e corretto, §8.5.1 | F (11) |
+| Q22 | annullare un passo che ha modificato file | ⚠️ parziale | la DST inietta la caduta durante la conservazione (§3.3) e il lato kernel — ambiti dichiarati, riferimento sul passo — entra; `filesystem` non ha implementazione reale (§8.2.2), quindi «l'ambito torna byte-identico» è provato su un albero in memoria | D (5) |
+| Q23 | esecuzione sotto il livello 2 di confinamento | ⚠️ parziale | `design/08` chiede una verifica **statica**, ed è esattamente il quarto gettone che la §7.4.5 scaglia: nessuna porta esegue comandi qui. Entrano il tipo, la dichiarazione per azione e la registrazione (V37) | D (5) |
+| Q24 | lettura di credenziali fuori dal gestore dei segreti | ✅ verificato qui | statica sul grafo delle crate: solo `secrets` raggiunge il portachiavi. Livello 2, con sonda e contro-sonda (§7.4.2) | — |
+
+### 8.5 Tre disallineamenti che la copertura ha trovato, e tutti chiusi
+
+Nessuno era cercato. Sono emersi perché **giudicare sessantuno voci obbliga a leggere le
+sezioni con criteri diversi** da quelli con cui sono state scritte, ed è il valore
+principale di questa sezione oltre alla tabella.
+
+| # | Cosa | Dove |
+|---|---|---|
+| 1 | il **backup** non era in perimetro, e la §0.6 diceva il contrario | §8.5.1 |
+| 2 | **nessun sotto-progetto** della roadmap collocava il backup | §8.5.2 |
+| 3 | il **livello 1 del catalogo** non enumerava tre proprietà che le §5 e §6 avevano già deciso | §8.5.3 |
+
+I primi due riguardano lo stesso oggetto — il **backup** — e non è un caso: era l'unica
+cosa del progetto di cui nessuno era il proprietario, quindi l'unica che nessuna sezione
+aveva motivo di nominare. Il terzo è di natura diversa, e lo ha trovato la §8 **contro sé
+stessa**. Tutte le correzioni sono registrate al loro posto, non applicate in silenzio.
+
+#### 8.5.1 Il backup non era in perimetro, e la §0.6 diceva il contrario — ✅ chiuso
+
+| | |
+|---|---|
+| **Cosa diceva §0.4** | la riga §10 metteva in perimetro *«il motore di persistenza; il lato kernel di segreti, confinamento e checkpoint»*. Il **backup non compariva**, né dentro né fuori |
+| **Cosa diceva §0.6** | *«Q17, Q21, Q22, Q23 sono verificati solo lato kernel»* — cioè affermava che Q21 **ha** un lato kernel in perimetro |
+| **Perché è successo** | la generalizzazione a quattro voci regge per Q17 (`secrets`), Q22 (checkpoint) e Q23 (confinamento), che hanno tutti un lato kernel elencato in §0.4. **Q21 vi era entrato per somiglianza**, non per un perimetro |
+
+> **Risoluzione: vince la §0.4.** È l'autorità sul perimetro, ed è l'unica delle due resa
+> falsificabile riga per riga dal criterio A-B-C della §0.3. Q21, V32 e V33 sono quindi
+> **⏳ rimandati per intero**, non parziali.
+
+**Entrambe le sezioni sono state corrette il 2026-08-07**, e la correzione è doppia perché
+la causa era a monte:
+
+| Dove | Correzione |
+|---|---|
+| **§0.4** | il backup entra nella colonna «si scaglia» della riga §10, con **regola C** e la sua giustificazione — §0.4.1. Senza, il perimetro restava incompleto rispetto alla propria regola di §0.3 |
+| **§0.6** | Q21 passa dalla riga «verificati solo lato kernel» a quella dei **non verificati qui**, accanto a Q6, Q11, Q12 e Q16 |
+
+Nessuna delle due riscrive la storia: la riga della §0.6 porta il proprio richiamo, e la
+§0.4.1 dichiara di essere un'aggiunta. È la stessa postura degli ADR — una decisione
+superata si marca, non si cancella.
+
+⚠️ **Cosa questo episodio dice del metodo, e vale più della correzione.** Le §0.4 e §0.6
+sono state scritte **nella stessa sessione** e rilette più volte, e la contraddizione è
+sopravvissuta. È emersa solo quando qualcosa ha costretto a leggerle con un criterio
+diverso — *«dammi lo stato di Q21»* — che è esattamente ciò che questa sezione fa
+sessantuno volte. Una tabella di copertura non serve solo a non dimenticare: serve a
+**rileggere con un'altra domanda**.
+
+#### 8.5.2 Nessun sotto-progetto della roadmap collocava il backup — ✅ chiuso
+
+V32, V33 e Q21 avevano una **condizione** d'innesco chiara — *esistono backup e
+ripristino* — e **nessun numero**: la [roadmap](../../roadmap.md) non nominava il backup in
+nessuno dei propri sotto-progetti. Era il caso esatto che la §0.6 temeva, trovato dal solo
+fatto di dover riempire una colonna.
+
+> ✅ **Chiuso il 2026-08-07: sotto-progetto 11 — Backup e ripristino**, che dipende da 5, 6
+> e 9.
+
+**L'ordine non è comodità, è non-vacuità.** V32 dice che il backup **esclude indici e pesi
+perché ricostruibili**. Prima che il sotto-progetto 6 produca gli indici e il 9 i pesi,
+l'elenco delle esclusioni è **vuoto**, e una verifica di V32 su un elenco vuoto è una prova
+che non può fallire: il gotcha #17 nella forma già vista due volte in questa spec — M-8 sui
+punti di crash (§4.7) e M-3 sul proprio grafo (§7.2.3).
+
+Servono inoltre il filesystem reale, che arriva con il sotto-progetto 5, e l'interfaccia
+che dichiara le esclusioni **al momento del backup** — il follow-up di
+[ADR-0022](../../adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md), che dice di
+farlo lì e non al ripristino.
+
+⚠️ **Il costo dello scaglionamento resta, ed è dichiarato in §0.4.1:** fino ad allora
+l'unico irriproducibile che cresce è il giornale, e l'unica protezione è una copia manuale
+del suo file.
+
+#### 8.5.3 Il catalogo non enumerava tre proprietà di livello 1 — ✅ chiuso
+
+Questo l'ha trovato la §8 **contro sé stessa**, rileggendo la propria tabella con la regola
+che si era appena data — la §8.1.2: *«la colonna del meccanismo nomina una voce della §7,
+mai un'intenzione»*.
+
+**Diciassette celle su sessantuno non la rispettavano.** Tolti i casi in cui il meccanismo
+c'era ma il rimando era indiretto, restavano tre proprietà che il catalogo §7.4.1 **non
+enumerava affatto**:
+
+| Voce | La proprietà | Decisa in |
+|---|---|---|
+| **V2** | l'ammissione dell'arbitro **riceve un profilo**: senza, la chiamata non si scrive | §5.2.1 — *«il profilo che l'arbitro riceve»* |
+| **V4** | l'esito è **a tre vie**, e chi chiama è obbligato a distinguerle | §5.3 punto 1 |
+| **V10** | il sensore riceve l'artefatto **per riferimento immutabile** | §6.4.2 |
+
+Tutte e tre erano già decise, tutte e tre sono di **livello 1**, e nessuna era nel catalogo.
+La §8 poteva quindi solo sopravvalutarle — dichiarando un livello 1 che nessuno aveva
+esaminato — o sottovalutarle chiamandole test a esempi, che è falso.
+
+> **Risoluzione: entrano nel catalogo**, blocco C, ciascuna con la propria sonda e la propria
+> contro-sonda. Non sono controlli *nuovi*: sono controlli che il catalogo aveva saltato.
+
+**Il titolo del blocco C era stretto, e va corretto insieme.** Diceva «Tipi che non si
+scambiano», ma **tre delle sue sei righe originali non erano scambi di tipo** — `InRevoca`
+per un profilo non prelazionabile, l'ammissione che legge `cold_start`, l'effetto senza
+classe. La colonna, che dice «cosa **non** deve compilare», era invece giusta dall'inizio:
+il blocco è diventato **«Cosa non è esprimibile»**.
+
+#### 8.5.3.1 E una voce è stata declassata
+
+**V16** — *«il record di routing non contiene mai credenziali»* — era `parziale`. Rileggendo
+la sua cella con la stessa regola, la metà che dichiaravo verificata non lo era: nessuna
+credenziale attraversa il sistema in questo perimetro, quindi qualunque controllo
+proverebbe **l'assenza di una cosa che non c'è**. È il gotcha #17 nella forma «prova vacua
+che sembra un successo», ed è lo stesso motivo per cui V25 non ha una contro-sonda.
+
+> **V16 passa a ⏳ rimandato**, innesco B. Che il tipo del record non abbia un campo per una
+> credenziale resta una scelta di scrittura giusta — ma una scelta di scrittura non è un
+> controllo, ed è esattamente la distinzione che la §7.0 esiste per fare.
+
+**Cosa questo dice della regola §8.1.2.** Una regola che non rifiuta mai niente è
+decorazione. Questa ha rifiutato tre voci del catalogo e una riga della propria tabella
+**la prima volta che è stata applicata sul serio**, ed è la ragione per cui vale la pena
+scriverla come regola invece che come buona intenzione.
+
+⚠️ **Ciò che resta scoperto, e va detto:** lo script di §8.6 controlla che la casella del
+meccanismo sia **piena**, non che nomini davvero una voce della §7. Questa terza scoperta è
+venuta da una rilettura, non da un controllo automatico — e resta l'unico punto della §8
+che dipende da chi legge.
+
+### 8.6 L'estensione di `check-docs.sh`
+
+#### 8.6.0 A parole
+
+Lo script oggi fa una cosa sola, in cinque modi diversi: **prende un elenco da un posto, un
+elenco da un altro, e segnala la differenza.** Quanti file ADR contro quante voci d'indice.
+Quali link puntano a file che non esistono. Quali Q non hanno un metodo in `design/08` —
+che è V30, ed è la stessa forma di controllo che questa sezione aggiunge.
+
+Le due estensioni non introducono un meccanismo nuovo: applicano quello che c'è a due
+tabelle che finora nessuno leggeva. È il motivo per cui costano poche righe, ed è anche il
+motivo per cui non c'era una ragione per non farle.
+
+#### 8.6.1 Le quattro asserzioni
+
+| # | Asserzione | Chiude |
+|---|---|---|
+| 1 | ogni riga dei controlli §7.4 ha **l'ultima casella piena** — la contro-sonda | §7.7.1 |
+| 2 | **tutti** i V1–V37 e Q1–Q24 compaiono nelle tabelle §8.3 e §8.4, una volta ciascuno | §0.6 |
+| 3 | lo **stato** appartiene all'insieme chiuso dei quattro | §8.1 |
+| 4 | `parziale` e `rimandato` portano un **innesco** non vuoto | §8.1.1 |
+
+La 2 è insieme completezza e non-duplicazione: una voce mancante e una voce scritta due
+volte con stati diversi sono lo stesso difetto — *la tabella non giudica* — e producono lo
+stesso rosso.
+
+#### 8.6.2 Il problema vero, che non è nessuna delle quattro
+
+Come fa lo script a sapere **dove finisce** il catalogo e **dove comincia** la §8? Delimita
+per intestazione di sezione. E se un giorno qualcuno rinumera, l'intervallo non trova più
+niente — e uno script che non trova niente da controllare **esce verde**.
+
+Sarebbe un controllo che smette di controllare senza dirlo: il gotcha #14 applicato allo
+script stesso, e la forma più insidiosa perché il segnale è un successo.
+
+> **Guardia di non-vacuità.** Se un'intestazione delimitatrice non si trova, o l'intervallo
+> restituisce **zero righe**, è un fallimento. Non si passa in silenzio.
+
+È la stessa postura della §7.3.1 — *«se il grafo completo e quello spedito coincidono, il
+filtro non sta distinguendo niente: il controllo lo segnala»* — ed è la decisione più
+importante dell'intera estensione.
+
+**Il numero atteso non si scrive.** Un `19` o un `21` messo a guardia diventerebbe rosso il
+giorno in cui il catalogo cresce **per un motivo legittimo**: è il gotcha #9 applicato allo
+script, cioè un fallimento per la ragione sbagliata. La guardia verifica che i delimitatori
+esistano e che le righe siano più di zero; per la §8 la completezza è già garantita
+dall'asserzione 2, che è un elenco canonico e quindi non ha questo problema.
+
+#### 8.6.3 Le sonde, in due direzioni
+
+Eseguite il **2026-08-07**. Ogni sonda muta la spec **reale** e lancia lo script **reale**:
+provare una copia del codice invece del codice sarebbe il gotcha #14 nella sua forma più
+sottile. Le mutazioni sono transitorie, ripristinate da una copia tenuta nello scratchpad,
+e il ripristino è verificato byte per byte alla fine — **`spec ripristinata byte-identica`**.
+
+Ogni riga verifica **due** cose, non una: che l'uscita sia quella attesa, **e** che il
+messaggio nomini il colpevole. La seconda è ciò che ha smascherato una sonda vacua, sotto.
+
+| # | Sonda — *deve scattare* | Messaggio osservato |
+|---|---|---|
+| **S1** | si svuota la casella contro-sonda di una voce | `riga 1778 (V29 · gotcha #12): contro-sonda vuota` |
+| **S1b** | si toglie del tutto la colonna | `riga 1778 (V29 · gotcha #12): manca la colonna contro-sonda` |
+| **S2** | si toglie lo stato a una riga della §8 | `V13: stato non ammesso — «»` |
+| **S3** | si cancella la riga `V13` | `manca la riga per V13` |
+| **S3b** | si duplica la riga `V13` | `V13 compare più di una volta` |
+| **S4** | si scrive uno stato fuori dall'insieme | `V13: stato non ammesso — «🟡 in corso»` |
+| **S4b** | si scrive uno stato **ambiguo**, con due parole dell'insieme | `V13: stato ambiguo — «⏳ parziale e rimandato»` |
+| **S5** | `rimandato` senza innesco | `V13: «⏳ rimandato» senza innesco` |
+| **S6** | si rinomina `#### 7.4.1`: l'intervallo del catalogo si svuota | `delimitatore «#### 7.4.1» non trovato` |
+| **S6b** | si rinomina `#### 7.4.3` | `delimitatore «#### 7.4.3» non trovato` |
+| **S6c** | si rinomina `## 8.` | `delimitatore «## 8.» non trovato` |
+
+| # | Contro-sonda — *deve restare verde* | Osservato |
+|---|---|---|
+| **C0** | la spec intatta — con la casella di V25 che **dichiara** l'assenza, e con tutte le righe ✅ che non hanno innesco | ✅ verde |
+| **C5** | `verificato qui` **con** un innesco: è lecito, non obbligatorio | ✅ verde |
+
+**S5 e S6 sono le due che di solito non si scrivono, e sono le più importanti.** S5
+impedisce che l'innesco diventi obbligatorio *ovunque*: un ✅ non ne ha bisogno, e un
+controllo troppo largo è il gotcha #24 nella sua forma pura — insegna a ignorare l'audit.
+S6 è la guardia di §8.6.2, e senza di essa l'intera estensione può spegnersi in silenzio.
+
+#### 8.6.3.1 Una sonda era vacua, e va registrato
+
+> **La prima versione di S1b non provava niente.** Applicava la sua mutazione a una stringa
+> che la sonda precedente aveva già consumato, quindi la riga restava com'era: lo script
+> usciva rosso, ma **per il guasto di S1**, non per il suo. Un successo apparente.
+
+È il gotcha #17 nella sua forma esatta — *iniettare un guasto dove il codice non arriva è
+una prova vacua che sembra un successo* — la stessa classe di errore che M-8 aveva commesso
+sui punti di crash di `redb` (§4.7) e M-3 sul proprio grafo di prova (§7.2.3).
+
+**Cosa l'ha intercettata:** non l'uscita, che era giusta, ma l'asserzione **sul messaggio**.
+Una sonda che si accontenta del codice di uscita non distingue «è scattato per il mio
+guasto» da «è scattato per quello di prima». Riscritta ricostruendo la riga con tre celle
+invece di quattro, e verificata mostrando la riga **prima e dopo** la mutazione.
+
+Esito finale: **tredici sonde su tredici**, con il ripristino byte-identico.
+
+#### 8.6.4 Cosa questa estensione non prova
+
+| Non prova | Perché |
+|---|---|
+| che la contro-sonda **esista** davvero | verifica che la casella sia **piena**. Chi scrive `n/a` passa. È la stessa classe della riga di ADR-0031 — *«limita la superficie, non la certifica»* |
+| che lo **stato dichiarato sia vero** | uno stato è un giudizio nostro; lo script controlla che sia *espresso*, non che sia *giusto* |
+| che l'**innesco sia il sotto-progetto giusto** | §8.2.1 mette la condizione prima del numero proprio perché il numero non è verificabile |
+
+⚠️ **La casella di V25 mostra dove passa il confine, ed è il caso da non «correggere».** Il
+suo contenuto è `⚠️ non esiste ancora — vedi sotto`, e **deve passare**: è una
+dichiarazione, che è esattamente ciò che la regola 3 della §7.1.1 chiede. Un controllo che
+pretendesse una contro-sonda *funzionante* trasformerebbe una dichiarazione onesta in un
+rosso, e insegnerebbe a cancellarla.
+
+### 8.7 Cosa questa tabella non prova
+
+Il perimetro negativo, come in §0.2 e §7.6.
+
+| # | |
+|---|---|
+| 1 | **Non prova che il kernel sia corretto.** Prova che ogni V e ogni Q è stato **giudicato**. È la §7.6.3 applicata a sé stessa: un difetto che non viola nessun V passa verde anche qui |
+| 2 | **Un ✅ significa «esiste un controllo che è stato visto fallire e visto restare verde»**, non «questo non può andare storto» |
+| 3 | **Non sostituisce la percentuale di copertura, e non la vuole.** §7.6.2 lo dichiara già: il criterio è «ogni V ha un controllo», non «l'X % delle righe» — e una copertura alta con invarianti non verificate è la falsa sicurezza peggiore |
+| 4 | **Gli stati sono dichiarazioni nostre.** Lo script li controlla come forma; a controllarli come sostanza c'è solo chi rilegge |
+
+#### 8.7.1 Il livello ⛔ è vuoto, e non è una svista
+
+**Nessuna delle sessantuno voci è `non controllato`.** Ogni V e ogni Q in perimetro ha un
+controllo, o un innesco che dice chi glielo darà.
+
+⚠️ **Non contraddice la §7.6.2, e la differenza va detta perché sembra una.** Quella
+sezione elenca Q6, Q11, Q12 e Q16 sotto il titolo *«dentro il perimetro, e non controllato
+per scelta»*. Ma la sua stessa colonna «cosa lo copre invece» dice **«la §8, con il
+sotto-progetto che li chiude»**: sta dichiarando che *la porta* non li controlla, non che
+nessuno lo farà mai. Qui sono **⏳ rimandati**, che è la traduzione esatta di quella frase.
+Il valore ⛔ significa un'altra cosa — *si sceglie di non controllarlo, e nessun innesco lo
+riaprirà* — e per questo pretende un motivo invece di un innesco.
+
+È lo stesso esito della §7.4.3, dove il livello 3 del catalogo è risultato vuoto, e ha la
+stessa lettura: ciò che la §7.6.2 sceglie di **non** controllare non sono V interi, ma
+**pezzi** di V — `HashMap` fuori dal kernel dentro V29, il tempo di parete dell'arbitro
+dentro Q1 — e ciascuno è dichiarato nella colonna del meccanismo, dove chi legge la riga lo
+incontra per forza.
+
+Il valore resta nell'insieme chiuso apposta: il giorno in cui si sceglierà di non
+controllare un V per intero, esiste già la casella in cui dirlo. Toglierlo obbligherebbe a
+scrivere ✅ o a tacere, e sono i due modi in cui una rinuncia diventa invisibile.
+
+### 8.8 I costi di questa sezione
+
+| Costo | |
+|---|---|
+| **sessantuno righe da tenere allineate** | ogni V o Q nuovo, ogni cambio di perimetro, tocca questa tabella. Mitigato dall'asserzione 2: dimenticarla è rosso, non silenzio |
+| **tredici V e otto Q sono `parziale`** | è un terzo del totale, ed è il ritratto onesto di un sotto-progetto che costruisce il kernel senza nessuno dei suoi consumatori. Il rischio è che `parziale` diventi la casella comoda: l'innesco obbligatorio è l'unica difesa, ed è di livello 2 |
+| **gli inneschi invecchiano** | la condizione no, il numero fra parentesi sì. §8.2.1 sceglie quale delle due lo script può controllare — nessuna delle due — e quale un lettore può correggere: il numero |
+| **tre sezioni approvate sono state corrette** | §0.4, §0.6 e il **catalogo §7.4** — la riga V31 in §7.4.2, e le tre nuove in §7.4.1 — per disallineamenti che questa tabella ha trovato. Il costo non è la correzione ma il precedente: una sezione approvata non è congelata, e ogni riapertura va **registrata** invece che applicata, §8.5 |
+| **una regola della §8 dipende da chi legge** | §8.1.2 — «il meccanismo nomina una voce della §7» — ha rifiutato tre voci del catalogo e una riga della tabella, ma **nessuno script la applica**: lo script verifica che la casella sia piena, non che nomini davvero una voce. È l'unico punto della §8 nella condizione in cui era la §7.7.1 prima di questa sezione |
+| **lo script controlla la forma, non la sostanza** | §8.6.4. Sposta il confine di ciò di cui ci si può fidare, non lo elimina — è la stessa riga della §7.7 |

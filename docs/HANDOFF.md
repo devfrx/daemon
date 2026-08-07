@@ -1,8 +1,9 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-07**, alla chiusura della sessione che ha scritto la **§7** della
-spec del sotto-progetto 1 — la porta di qualità — e corretto il comando di M-3. Serve a
-riprendere senza rifare, e senza rilitigare ciò che è già deciso.
+Aggiornato il **2026-08-07**, alla chiusura della sessione che ha scritto la **§8** della
+spec del sotto-progetto 1 — la copertura V1–V37 e Q1–Q24 — ed esteso `check-docs.sh` con le
+due asserzioni che la §7 le aveva lasciato. **La spec del sotto-progetto 1 è completa.**
+Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 
 ## In trenta secondi
 
@@ -12,9 +13,9 @@ Stack deciso **tranne il guscio della GUI**: core in **Rust**, interfaccia web i
 worker ML in **Python**; Tauri contro Electron è ancora aperto
 ([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
 
-**È in corso la spec del sotto-progetto 1** — implementazione del kernel + simulatore DST.
-Approvata **fino alla §7**; resta la **§8**. Il codice non è ancora iniziato: vale
-«spec prima del codice».
+**La spec del sotto-progetto 1 è completa** — implementazione del kernel + simulatore DST,
+§0–§8 approvate. Il passo successivo è il **piano di implementazione**; il codice non è
+ancora iniziato, e vale «spec prima del codice».
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -24,25 +25,81 @@ Il vincolo che governa tutto non è funzionale ma di risorsa: quattro aree che s
 una sola GPU.
 
 ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-scrive **qui**, quando la spec sarà completa. Oggi l'unico codice presente è in
-[`../spikes/rust/`](../spikes/rust/): sono **prove**, non il kernel — ma la §2.5 della
-spec dice già riga per riga quali pezzi salgono a `kernel/` e quali restano dove sono.
-
-Da decidere **nel piano**, non prima: `spikes/rust/` ha un proprio `Cargo.toml` e alla
-radice non ce n'è nessuno. Il workspace delle cinque crate nasce alla radice, escludendo
-gli spike, o accanto ad essi?
+scrive **qui**, e ora la spec è completa: fra le due manca solo il **piano**. Oggi l'unico
+codice presente è in [`../spikes/rust/`](../spikes/rust/): sono **prove**, non il kernel —
+ma la §2.5 della spec dice già riga per riga quali pezzi salgono a `kernel/` e quali
+restano dove sono.
 
 ## Prima cosa da fare
 
-**Scrivere la §8** — copertura V1–V37 e Q1–Q24, con lo stato di ognuno. È l'ultima sezione
-della spec. Poi il piano. Poi il codice.
+**Scrivere il piano di implementazione del sotto-progetto 1.** La spec è completa: §0–§8
+approvate, nessuna sezione aperta, nessuna misura che blocchi. Poi il codice.
 
-✅ **La §7 è chiusa.** Criterio di ammissione, scala di forza a tre livelli, evidenze di M-3
-trasferite, le due decisioni sul confine delle dipendenze, il catalogo completo con sonda e
-contro-sonda, la cadenza, il perimetro negativo e i costi.
+⚠️ **Il piano deve decidere anche _dove nasce il workspace_.** `spikes/rust/` ha un proprio
+`Cargo.toml` e alla radice non ce n'è nessuno: il workspace delle cinque crate nasce alla
+radice escludendo gli spike, oppure accanto ad essi. È l'unica domanda strutturale che la
+spec ha deliberatamente lasciato al piano.
 
-✅ **Nessuna misura blocca la §8.** Le misure ancora aperte — M5 — richiedono una GUI, cioè
+✅ **Nessuna misura blocca il piano.** L'unica ancora aperta — M5 — richiede una GUI, cioè
 il sotto-progetto 2.
+
+⛔ **Due cose che il piano _non_ deve rifare**, perché la §8 le ha già chiuse: la copertura
+V/Q e l'estensione di `check-docs.sh`. Entrambe sono in esercizio e provate in due
+direzioni.
+
+#### Cosa la spec consegna al piano — già deciso, sparso in sette sezioni
+
+Nessuna di queste righe è una decisione da prendere: sono decisioni **prese**, che il piano
+deve tradurre in passi. Raccolte qui perché cercarle una per una è il modo in cui se ne
+perde qualcuna.
+
+| # | Vincolo sul primo commit di codice | Da |
+|---|---|---|
+| 1 | **cinque crate**: `kernel` · `platform` · `secrets` · `simulator` · `daemon`. `kernel` non dipende da nessuna crate del progetto — è una riga del suo manifesto | §1.2 |
+| 2 | `kernel` e `simulator`: `#![no_std]` + `alloc` + `#![forbid(unsafe_code)]`. **`forbid`, non `deny`** | §1.4 · ADR-0026 |
+| 3 | il manifesto **appunta `bincode` a `2`**, con la ragione scritta accanto: la `3.0.0` è un `compile_error!` | §6.1.1 · gotcha #22 |
+| 4 | `rustup target add x86_64-unknown-none` è un **prerequisito dell'ambiente**, o la porta è rossa per il motivo sbagliato | §7.3.2 |
+| 5 | il [`clippy.toml`](../spikes/rust/clippy.toml) di `spikes/rust/` **non sale**: a livello di workspace scatterebbe addosso a `platform` | §7.4.4 |
+| 6 | l'aiutante `passo_in_dubbio` dello spike **non sale così com'è**: restituisce un passo, ne servono un insieme | §4.3 · gotcha #20 |
+| 7 | il numero di semi della campagna breve è **fissato e versionato**, e il tempo di parete si stampa a ogni corsa | §7.5.3 |
+| 8 | la cadenza: livello 1 a ogni compilazione (non «gira»), livello 2 a ogni commit, DST profonda su ciclo lungo | §7.5.1 |
+| 9 | riga per riga, **cosa sale da `spikes/rust/` e cosa resta** | §2.5 |
+| 10 | ogni regola nuova porta **due** sonde e un caso in `tests/compile_fail/` con il suo `.stderr` — da **leggere**, non da rigenerare in blocco | §7.1.4 · gotcha #25 |
+
+📌 **Cosa la §8 ha deciso, e che vale la pena non riscoprire:**
+
+| | |
+|---|---|
+| **quattro stati, non tre** | `verificato qui` · `parziale` · `rimandato` · `non controllato`. Il quarto — `parziale` — esiste perché V25 e i «solo lato kernel» con tre stati si possono solo sopravvalutare o sottovalutare |
+| **`parziale` e `rimandato` pretendono l'innesco** | ed è lo script a pretenderlo, non la buona volontà: è il gettone della §6.3 applicato a una tabella |
+| **l'innesco è la _condizione_, il numero sta fra parentesi** | «esiste un'interfaccia (2)», non «sotto-progetto 2». Se la roadmap cambia, la condizione resta vera |
+| **un Q della DST eredita lo stato della porta in cui si inietta** | incrociando §3.3 e §7.4.6: Q2 e Q5 sono ✅ perché `reactor` e `journal` hanno la suite di conformità; Q3, Q4, Q18, Q22 sono `parziale` perché le loro porte no |
+| **il livello ⛔ è vuoto**, come il livello 3 del catalogo | nessun V e nessun Q è lasciato deliberatamente senza controllo. Ciò che §7.6.2 non controlla sono **pezzi** di V, dichiarati dentro la riga |
+| **la porta non prova la correttezza, e la §8 non prova la verità** | prova che ogni V e ogni Q è stato **giudicato**. Lo script controlla che lo stato sia *espresso*, non che sia *giusto* |
+
+✅ **Tre disallineamenti trovati dalla copertura, tutti chiusi** — §8.5. **Tre sezioni
+approvate sono state corrette**, ciascuna con il proprio richiamo datato: §0.4, §0.6 e il
+**catalogo §7.4** — la riga V31 in §7.4.2, che era l'unica priva di contro-sonda, e le tre
+nuove in §7.4.1.
+
+| # | Trovato | Chiuso come |
+|---|---|---|
+| 1 | la **§0.6 elencava Q21** fra i «verificati solo lato kernel», ma la **§0.4 non metteva il backup in perimetro**, né dentro né fuori | correzione **doppia**, perché la causa era a monte: §0.4 colloca il backup in «si scaglia» con **regola C** (nuova §0.4.1), e Q21 passa alla riga dei rimandati — §8.5.1 |
+| 2 | **nessun sotto-progetto della roadmap collocava il backup** | **sotto-progetto 11 — Backup e ripristino**, dipendente da 5, 6 e 9. L'ordine è derivato: prima che 6 e 9 producano indici e pesi, l'elenco delle esclusioni di V32 è **vuoto**, e verificarlo sarebbe vacuo — gotcha #17. §8.5.2 |
+| 3 | il **livello 1 del catalogo non enumerava** tre proprietà che le §5 e §6 avevano già deciso: **V2** (l'ammissione riceve un profilo), **V4** (esito a tre vie), **V10** (artefatto per riferimento immutabile) | entrano nel blocco C di §7.4.1, con sonda e contro-sonda. Il titolo del blocco è passato da «Tipi che non si scambiano» a **«Cosa non è esprimibile»**, perché **tre delle sue sei righe originali non erano scambi di tipo**. E **V16 è stato declassato** da `parziale` a `rimandato`: la metà che dichiarava verificata era vacua. §8.5.3 |
+
+I primi due riguardano lo stesso oggetto — il **backup**, l'unica cosa del progetto di cui
+nessuno era proprietario, quindi l'unica che nessuna sezione aveva motivo di nominare. Il
+terzo lo ha trovato la §8 **contro sé stessa**, applicando la regola §8.1.2 alla propria
+tabella: diciassette celle su sessantuno non la rispettavano.
+
+📌 **La lezione, che vale più delle tre correzioni.** §0.4 e §0.6 erano state scritte nella
+**stessa sessione** e rilette più volte: la contraddizione è sopravvissuta. È emersa solo
+quando qualcosa ha costretto a rileggerle con una domanda diversa — *«dammi lo stato di
+Q21»* — che è ciò che la §8 fa sessantuno volte. **Una tabella di copertura non serve solo
+a non dimenticare: serve a rileggere con un'altra domanda.** E una regola che non rifiuta
+mai niente è decorazione: la §8.1.2 ha rifiutato tre voci del catalogo e una riga della
+propria tabella la prima volta che è stata applicata sul serio.
 
 📌 **Cosa la §7 ha deciso, e che vale la pena non riscoprire:**
 
@@ -54,29 +111,34 @@ il sotto-progetto 2.
 | **la porta non prova la correttezza** | prova che un insieme **nominato** di invarianti regge. Un difetto che non viola nessun V passa verde — §7.6.3 |
 | **il quarto gettone si scaglia** | V35/Q23: nessuna porta esegue comandi qui, ed è retrofittabile. L'innesco è scritto in §7.4.5 |
 
-⚠️ **Due cose che la §8 deve fare, e che la §7 le ha lasciato:**
+✅ **Le due cose che la §7 aveva lasciato alla §8 sono fatte:**
 
-| # | | |
+| # | | Esito |
 |---|---|---|
-| 1 | **estendere `check-docs.sh`** | deve fallire se una voce del catalogo (§7.4) ha la **contro-sonda vuota**, e se la tabella della §8 ha un V o un Q senza stato. Le due estensioni toccano lo stesso script: si scrivono insieme. Senza la prima, la regola 3 di §7.1.1 resta un'intenzione — ed è l'unico punto della §7 non verificabile |
-| 2 | **registrare i rimandati con l'innesco** | e gli inneschi sono di **due tipi diversi**, che la tabella deve distinguere: *un sotto-progetto* per Q6, Q11, Q12, Q16, per i test di contratto su `process` e `ipc`, per V25 e per il quarto gettone — *uno spike* per Q1, che si chiude con SP-2 e non con un consumatore |
+| 1 | **estendere `check-docs.sh`** | ✅ due blocchi nuovi, **quattro asserzioni**: contro-sonda piena nel catalogo §7.4 · completezza e non-duplicazione delle voci in §8 · stato dentro l'insieme chiuso · innesco obbligatorio per `parziale` e `rimandato`. Con una **guardia di non-vacuità** che è la parte importante — §8.6.2 |
+| 2 | **registrare i rimandati con l'innesco** | ✅ due specie distinte, e ne ho cercata una terza senza trovarla: una **misura** e un **ADR** tarano, non abilitano. §8.2 |
 
-#### Il lavoro della §8, già ridotto: chi non è ancora nominato
+#### Il conteggio delle ventuno voci — ✅ chiuso, e il grep dà zero
 
-Contato il 2026-08-07 sulla spec del sotto-progetto 1. **Ventuno voci su sessantuno non
-compaiono ancora da nessuna parte** e sono quelle che la §8 deve giudicare esplicitamente;
-le altre quaranta sono già nominate da una sezione, e alla §8 resta di dichiararne lo stato.
+Le ventuno voci che nessuna sezione nominava sono ora tutte giudicate. Rieseguito alla
+chiusura della §8, il `grep` su `V<n>` e `Q<n>` restituisce **zero mancanti**.
 
-| | Non ancora nominati |
-|---|---|
-| **V** (17) | V3 · V7 · V8 · V9 · V12 · V13 · V15 · V16 · V17 · V18 · V22 · V23 · V24 · V26 · V32 · V33 · V36 |
-| **Q** (4) | Q7 · Q8 · Q15 · Q19 |
+Il ritratto che ne esce, contato il **2026-08-07** sulla tabella stessa:
 
-⚠️ **Nessuno di questi è dimenticato** — a un controllo a campione il contenuto c'è
-(V24 è il gotcha #7 nella §4, V26 è la §4.5, Q15 è ADR-0014 nella §6.5, Q8 è `cold_start`
-nella §5.2.1). Ciò che manca è che **qualcuno lo dichiari**, ed è esattamente il mestiere
-della §8. Il comando che ha prodotto l'elenco è un `grep` su `V<n>` e `Q<n>`: rifarlo alla
-fine della §8 deve dare **zero**.
+| | ✅ verificato qui | ⚠️ parziale | ⏳ rimandato | ⛔ non controllato |
+|---|---|---|---|---|
+| **V** (37) | 18 | 12 | 7 | **0** |
+| **Q** (24) | 9 | 8 | 7 | **0** |
+
+⚠️ **Un terzo delle voci è `parziale`, ed è il ritratto onesto** di un sotto-progetto che
+costruisce il kernel senza nessuno dei suoi consumatori. Chi legge la tabella cercando
+conforto la leggerà male.
+
+⛔ **Il livello `non controllato` è vuoto**, come il livello 3 del catalogo. Non è una
+svista e non contraddice la §7.6.2: quella sezione dice che *la porta* non controlla Q6,
+Q11, Q12 e Q16 — e la sua stessa colonna li rimanda alla §8. Qui sono `rimandati`, che è la
+traduzione esatta. Il valore ⛔ significa un'altra cosa: *si sceglie di non controllarlo, e
+nessun innesco lo riaprirà*. §8.7.1.
 
 ### ✅ Le due domande della §7 sono decise
 
@@ -102,7 +164,9 @@ Le aveva sollevate M-1 (§6.8.2) e M-3 le aveva rese concrete con dei numeri. De
 | 5 | Arbitro GPU, e la lacuna su I2 | ✅ | tre consumatori GPU nella GUI, quota di presentazione, I2 sui worker imposto dal **compilatore**. Più [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) |
 | 6 | Gateway, sensori, permessi, degrado | ✅ | schema IPC in `kernel` con **`bincode`**, **timbro di build** contro la GUI stantia, il **gettone non falsificabile** nominato una volta, «costo» del sensore separato in due |
 | **7** | **La porta di qualità: i controlli automatici** | ✅ | **scala di forza a tre livelli**, evidenze di M-3, le due decisioni sulle dipendenze, il **catalogo** con sonda e contro-sonda, la cadenza, il perimetro negativo. **Il livello 3 è vuoto** |
-| 8 | Copertura V1–V37 e Q1–Q24 | ⬜ | |
+| **8** | **Copertura V1–V37 e Q1–Q24** | ✅ | **quattro stati** con innesco obbligatorio, **due specie di innesco**, la regola che un Q della DST eredita lo stato della propria porta, l'estensione di `check-docs.sh` provata in due direzioni. **Il livello ⛔ è vuoto** |
+
+**La spec è completa: §0–§8, nessuna sezione aperta.** Il passo successivo è il piano.
 
 ### Le decisioni aperte dalla §0.5 — tre previste, una emersa
 
@@ -232,6 +296,8 @@ nuovo che lo superi** (`Superseded by`), non una conversazione. Le decisioni che
 | Il controllo delle dipendenze misura **due grafi con rimedi opposti** (§7.3.1) | unificarli sembra una semplificazione e non lo è: insegna il riflesso «aggiungi alla lista» **anche per una violazione di I3**, dove aggiungere alla lista non è un rimedio ma la violazione scritta in un modulo. È così che un'invariante si degrada in scartoffia |
 | Il **cancello senza OS si aggiunge**, non sostituisce la lista (§7.3.2) | sembrano ridondanti e non lo sono: la lista coglie una crate **nuova**, il cancello una crate **già ammessa** che raggiunge l'OS per una via non prevista. E quando falliscono, **solo la lista dice il nome del colpevole** |
 | Il **livello 3 del catalogo è vuoto** (§7.4.3) | la tentazione è aggiungere un lint «tanto non costa niente». Costa: un rosso della porta deve significare sempre «invariante violata», mai «stile discutibile», o si impara a ignorarlo |
+| L'**innesco è obbligatorio** per `parziale` e `rimandato` (§8.1) | sembra burocrazia e non lo è: è l'unica cosa che impedisce a `parziale` di diventare la casella comoda in cui parcheggiare tutto. Toglierla riporta alla situazione che la §0.6 chiamava «rimandato tende a diventare dimenticato» — con in più una tabella che sembra dire il contrario |
+| La **guardia di non-vacuità** dei controlli nuovi (§8.6.2) | è il pezzo che sembra più togliibile e il solo che non si può togliere. Senza, basta rinumerare una sotto-sezione perché due controlli smettano di controllare **uscendo verdi**: gotcha #26. E il «miglioramento» sbagliato è metterci un numero atteso di righe, che diventa rosso quando la tabella cresce per un motivo legittimo |
 
 ## Le tre proprietà che non si aggiungono dopo
 
@@ -277,6 +343,7 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 23 | **`cargo metadata` non risolve le feature; `cargo tree` sì** | i due strumenti danno grafi diversi sullo stesso workspace, e la differenza è grande. `cargo metadata` riporta correttamente le *feature attive* di ogni nodo, ma il suo elenco `deps` **le ignora**: elenca anche le dipendenze opzionali **spente**. **Misurato**: sul kernel con `bincode` senza la feature `serde`, `cargo metadata` segnalava **11** crate esterne — fra cui `serde` e `syn`, che non vengono compilate — contro le **2** reali di `cargo tree`. Un controllo di allow-list costruito sull'interfaccia macchina «giusta» sovra-segnala di 5×. Costo dell'alternativa, dichiarato: `cargo tree` è pensato per gli umani e non garantisce la stabilità del formato |
 | 24 | **Un controllo si prova in _due_ direzioni, non una** | il gotcha #14 copre metà del problema: un controllo mai visto fallire non è un controllo. L'altra metà è che **un controllo che scatta dove non deve è peggio di uno assente**, perché insegna a ignorare l'audit. In M-3 la sonda decisiva è stata **N4**: mettere `getrandom` dentro `platform` — dove ADR-0031 lo **ammette** — e verificare che il controllo **resti verde**. Senza quella sonda, una regola troppo larga sarebbe passata per una regola che funziona. È la stessa ragione per cui `check-docs.sh` conta le sezioni duplicate **per file** e non sull'insieme |
 | 25 | **Rigenerare in blocco le evidenze di un test negativo lo trasforma in una tautologia** | un test di compilazione fallita in Rust confronta l'errore prodotto con un file `.stderr` salvato accanto al caso: è **ciò che gli impedisce di fallire per il motivo sbagliato** (gotcha #9 in forma Rust). Ma `trybuild` offre un modo di riscrivere **tutti** gli `.stderr` sull'output corrente. Serve quando i messaggi cambiano legittimamente; usato senza leggerli, ogni caso diventa «l'errore atteso è quello che è uscito» e la suite **passa per sempre**, restando verde. La rigenerazione è un atto deliberato e **si legge nel diff**, come aggiungere una voce alla lista di ADR-0031. Corollario che vale oltre `trybuild`: ogni volta che l'oracolo di un test è un file generato dal test stesso, aggiornarlo automaticamente **cancella l'oracolo** |
+| 26 | **Un controllo che delimita il proprio bersaglio per intestazione si spegne quando qualcuno rinumera — e si spegne _verde_** | è il gotcha #14 in una forma che #14 non copre: quel controllo **è stato visto fallire**, quindi era un controllo vero. Poi qualcuno rinomina `#### 7.4.1`, l'intervallo non trova più righe, e uno script che non ha niente da controllare **esce con successo**. Il segnale è indistinguibile da «tutto a posto». Rimedio, applicato in §8.6.2: **se un delimitatore non si trova, o l'intervallo è vuoto, è un fallimento**. Sonde S6, S6b e S6c. ⚠️ E il rimedio sbagliato è mettere a guardia un **numero atteso** di righe: diventerebbe rosso il giorno in cui la tabella cresce per un motivo legittimo, cioè il gotcha #9 applicato allo script. Si verifica che i delimitatori esistano, non quante righe ci siano — a meno che l'elenco non sia canonico, come i V1–V37, dove la completezza *è* il controllo |
 
 ## Il metodo di lavoro
 
@@ -334,12 +401,12 @@ per chiudersi.
 | File | Cosa contiene |
 |---|---|
 | [`../CLAUDE.md`](../CLAUDE.md) | istruzioni operative per l'agente |
-| [`roadmap.md`](roadmap.md) | 11 sotto-progetti, ordine, dipendenze, decisioni aperte |
+| [`roadmap.md`](roadmap.md) | dodici sotto-progetti, ordine, dipendenze, decisioni aperte |
 | [`tracciabilita.md`](tracciabilita.md) | 170 funzionalità → dove vive ciascuna |
 | [`README.md`](README.md) | indice di ADR e diagrammi |
 | [`adr/`](adr/) | **33 decisioni**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
-| [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — approvata fino alla §7, con tutte le evidenze delle misure |
+| [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§8 complete, con tutte le evidenze delle misure |
 | [`superpowers/plans/`](superpowers/plans/) | il piano dello stack — **eseguito**, con l'errata in testa che documenta cosa il piano sbagliava |
 | [`riferimenti.md`](riferimenti.md) | fonti esterne, con data e con **cosa non abbiamo adottato** |
 | [`../spikes/`](../spikes/) | **prove, non kernel.** `PROTOCOLLO.md` criteri e soglie · `CANDIDATI.md` pre-selezione · `RISULTATI.md` esiti, seed, versioni, evidenze · `GUI-REQUISITI.md` G1–G21 e P1–P4 |
@@ -357,7 +424,7 @@ questo file se emergono gotcha nuovi.
 cambiato sede, e la regola dice di aggiornarlo alla *chiusura* del sotto-progetto. Resta
 quindi da aggiornare **quando il sotto-progetto 1 chiude**, non alla fine della §8.
 
-### Due trappole di `check-docs.sh`, da sapere prima di scrivere
+### Tre trappole di `check-docs.sh`, da sapere prima di scrivere
 
 **1 · I conteggi.** La guardia confronta con la realtà **ogni** occorrenza di
 `<cifra> ADR`, `<cifra> ADR in stato ...` e `<cifra> decisioni architetturali` nei
@@ -372,6 +439,19 @@ prodotto conteggi stantii in questo repository.
 **2 · La numerazione delle sezioni.** Il controllo sui duplicati è **per file**, e il suo
 regex cattura `^#{2,3} <numero>`. Quindi `### 7.4.1` verrebbe letto come un duplicato di
 `### 7.4`. **Le sotto-sotto-sezioni si scrivono con `####`**, che il regex non cattura —
-verificato sulle §5, §6 e §7, che ne hanno una decina ciascuna.
+verificato sulle §5, §6, §7 e §8, che ne hanno una decina ciascuna.
+
+**3 · Due tabelle della spec sono lette _per posizione_.** I controlli aggiunti dalla §8.6
+non fanno analisi del testo: contano le celle.
+
+| Tabella | Cosa lo script pretende |
+|---|---|
+| il **catalogo** §7.4.1 e §7.4.2 | l'**ultima** colonna è la contro-sonda, e la casella non è vuota. Una riga con meno celle dell'intestazione è un errore, non una scorciatoia tipografica — è così che è stata trovata la riga di V31 |
+| le tabelle **§8.3 e §8.4** | **cinque** colonne, con l'ID in prima, lo **stato** in terza e l'**innesco** in quinta. Una colonna aggiunta o spostata rompe entrambe le asserzioni |
+
+⚠️ **E i delimitatori sono intestazioni.** Il catalogo è delimitato da `#### 7.4.1` e
+`#### 7.4.3`, la copertura da `## 8.`. Rinumerarle non è un ritocco: senza la guardia di
+non-vacuità spegnerebbe i controlli **in verde** — gotcha #26. Con la guardia diventa un
+rosso che nomina il delimitatore mancante, ed è il comportamento voluto.
 
 Un documento di stato disallineato è peggio di nessun documento: mente con autorevolezza.

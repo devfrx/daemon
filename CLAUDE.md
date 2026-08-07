@@ -16,13 +16,13 @@ tutto il resto ne discende.
 Il vincolo dominante non è funzionale ma di risorsa: quattro aree che si contendono
 una sola GPU da 16 GB.
 
-## Stato: spec del sotto-progetto 1 in corso, approvata fino alla §7.
+## Stato: spec del sotto-progetto 1 completa (§0–§8). Manca il piano.
 
 Spec del kernel completa e **33 decisioni architetturali**.
 
 > ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-> scrive **qui**, in questo repository, quando la spec sarà completa: la
-> documentazione è la fase corrente, non lo scopo. Oggi l'unico codice presente è in
+> scrive **qui**, in questo repository, e ora la spec è completa: fra le due manca solo il
+> **piano**. La documentazione è la fase corrente, non lo scopo. Oggi l'unico codice è in
 > [`spikes/rust/`](spikes/rust/) — sono **prove**, non il kernel, ma
 > [§2.5 della spec](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) dice già
 > riga per riga quali pezzi salgono a `kernel/` e quali restano dove sono.
@@ -43,9 +43,9 @@ crate nasce alla radice — escludendo gli spike — o accanto ad essi.
 | schema IPC | **`bincode` 2.0.1** — appuntato a `2`, vedi gotcha #22 | M-1, spec §6.1.1. Prime voci della lista di ADR-0031 |
 | GPU della **GUI** | **quota di presentazione sottratta**, concessione tenuta dal core | ADR-0033, chiude la lacuna su I2 |
 
-**Il sotto-progetto 1 è iniziato**, ma come spec, non come codice: le §0–§7 sono approvate,
-resta la **§8**. Il guscio aperto non lo blocca — il sotto-progetto 1 è interamente Rust e
-non tocca la GUI.
+**La spec del sotto-progetto 1 è completa** — §0–§8 approvate — ma è spec, non codice: il
+passo successivo è il **piano**. Il guscio aperto non lo blocca: il sotto-progetto 1 è
+interamente Rust e non tocca la GUI.
 
 ✅ **La lacuna su I2 è chiusa** da ADR-0033: il consumo GPU della GUI si modella come
 **tre consumatori distinti**, e I2 è ora verificato su tutte e tre le classi di processo.
@@ -60,7 +60,7 @@ concessione come argomento.
 | 2 | [`docs/roadmap.md`](docs/roadmap.md) | stato, ordine dei sotto-progetti, prossimo passo |
 | 3 | [`docs/README.md`](docs/README.md) | indice di ADR, diagrammi e spec |
 | 4 | [`docs/adr/`](docs/adr/) | il **perché** di ogni decisione — leggi ADR-0001 e ADR-0004 per primi |
-| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: approvata fino alla §7, con tutte le evidenze delle misure |
+| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: §0–§8 complete, con tutte le evidenze delle misure |
 | 6 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§10 — il *cosa*, di cui la precedente è il *come* |
 | 7 | [`docs/tracciabilita.md`](docs/tracciabilita.md) | ogni funzionalità della mappa originale → dove vive |
 | 8 | [`docs/riferimenti.md`](docs/riferimenti.md) | provenienza di ciò che non abbiamo dedotto noi |
@@ -78,6 +78,19 @@ concessione come argomento.
 | **Audit a ogni chiusura** | `bash scripts/check-docs.sh` — link, indici, numerazioni, V30, ADR pendenti |
 | **Dichiarare i costi** | ogni decisione elenca ciò che peggiora, non solo ciò che migliora |
 | **ADR append-only** | una decisione superata si marca `Superseded by`, non si cancella |
+
+## Skill da invocare, in questo repository
+
+Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
+
+| Skill | Perché qui |
+|---|---|
+| `superpowers:using-superpowers` | è il preambolo: se una skill può applicarsi, si invoca |
+| `anthropic-skills:dev-discipline` | governa il **codice**: esplora prima di scrivere, YAGNI, convenzioni del repo, niente scorciatoie non dichiarate |
+| `anthropic-skills:dev-communication` | governa la **conversazione** intorno al codice: cosa si decide da soli e cosa si porta al proprietario. Una decisione strutturale non si seppellisce in un messaggio di consegna |
+| `superpowers:brainstorming` | prima di qualunque lavoro creativo, e **prima di entrare in plan mode** |
+| `superpowers:writing-plans` | quando si scrive il piano di implementazione — cioè adesso |
+| `superpowers:test-driven-development` | quando comincerà il codice |
 
 ## Le sei invarianti del kernel (ADR-0004)
 
@@ -109,8 +122,39 @@ da soli non sono un confine contro codice eseguito.
 
 ## Prossimo passo
 
-**Scrivere la §8** — copertura V1–V37 e Q1–Q24, con lo stato di ognuno. È l'ultima sezione
-della spec. Poi il piano. Poi il codice.
+**Scrivere il piano di implementazione.** La spec è completa: §0–§8 approvate, nessuna
+sezione aperta, nessuna misura che blocchi. Poi il codice.
+
+⚠️ **Il piano deve decidere anche _dove nasce il workspace_**: `spikes/rust/` ha un proprio
+`Cargo.toml` e alla radice non ce n'è nessuno. È l'unica domanda strutturale che la spec ha
+deliberatamente lasciato al piano.
+
+✅ **La §8 è chiusa.** Ogni V e ogni Q porta uno stato fra quattro, e ogni `parziale` o
+`rimandato` porta un **innesco** — preteso da `check-docs.sh`, non dalla buona volontà.
+
+| | |
+|---|---|
+| **quattro stati** | `verificato qui` · `parziale` · `rimandato` · `non controllato`. Il terzo e il quarto **non passano senza innesco** |
+| **l'innesco è la condizione, il numero sta fra parentesi** | «esiste un'interfaccia (2)». Se la roadmap cambia, la condizione resta vera |
+| **due specie di innesco** | un **sotto-progetto** che porta un consumatore, o uno **spike** che porta una misura (solo Q1, con SP-2). Una terza cercata e non trovata |
+| **il livello ⛔ è vuoto** | come il livello 3 del catalogo: nulla è lasciato deliberatamente senza controllo. Ciò che §7.6.2 non controlla sono *pezzi* di V |
+| **la §8 non prova la verità** | prova che ogni V e ogni Q è stato **giudicato**. Lo script controlla che lo stato sia espresso, non che sia giusto |
+
+✅ **Tre disallineamenti trovati dalla copertura, tutti chiusi** (§8.5), e **tre sezioni
+approvate corrette** con il proprio richiamo datato:
+
+| # | | Chiuso |
+|---|---|---|
+| 1 | il **backup** non era in perimetro, e la §0.6 diceva il contrario | §0.4 lo colloca fra ciò che si scaglia con **regola C** (§0.4.1); Q21 passa alla riga dei rimandati |
+| 2 | nessun sotto-progetto lo collocava | roadmap: **sotto-progetto 11 — Backup e ripristino**, dopo 5, 6 e 9 — prima l'elenco delle esclusioni di V32 sarebbe vuoto e verificarlo sarebbe vacuo |
+| 3 | il **catalogo §7.4.1 non enumerava** V2, V4 e V10, tutte di livello 1 e già decise nelle §5 e §6 | entrano nel blocco C, che si chiama ora **«Cosa non è esprimibile»**. **V16 declassato** a `rimandato`: la metà che dichiarava verificata era vacua |
+
+> 📌 Le §0.4 e §0.6 erano state scritte nella **stessa sessione** e rilette più volte: la
+> contraddizione è sopravvissuta, ed è emersa solo quando la §8 ha imposto di rileggerle con
+> una domanda diversa. **Una tabella di copertura non serve solo a non dimenticare: serve a
+> rileggere con un'altra domanda.** Il terzo disallineamento la §8 lo ha trovato **contro sé
+> stessa**: la sua regola §8.1.2 ha rifiutato diciassette celle su sessantuno alla prima
+> applicazione seria. Una regola che non rifiuta mai niente è decorazione.
 
 ✅ **La §7 è chiusa.** Ogni controllo dichiara il proprio **livello di forza**, e la
 domanda che li separa è una sola: *se qualcuno lo cancella, la regola resta?*
@@ -132,10 +176,15 @@ dal reale in una dimensione invece di quattro.
 sviluppo, e con esse `windows-sys`. Il comando corretto è `-e normal,no-proc-macro`.
 M-3 non poteva accorgersene: il suo workspace non aveva dipendenze di sviluppo.
 
-⚠️ **La §8 deve estendere `check-docs.sh`**: la regola «ogni controllo ha una contro-sonda»
-è oggi **un'intenzione**, ed è l'unico punto della §7 non verificabile. Il catalogo è una
-tabella: lo script può fallire se una casella è vuota. Si scrive insieme al controllo sulla
-tabella della §8, che la §0.6 aveva già previsto.
+✅ **`check-docs.sh` è esteso**, e la regola «ogni controllo ha una contro-sonda» non è più
+un'intenzione: lo script fallisce se una casella del catalogo §7.4 è vuota, e se una voce
+della §8 non ha stato o innesco. Provato in **due direzioni**, con una **guardia di
+non-vacuità** che è il pezzo da non togliere — gotcha #26.
+
+⚠️ **Due tabelle della spec sono ora lette _per posizione_**: nel catalogo §7.4 la
+contro-sonda è l'ultima colonna; in §8.3 e §8.4 le colonne sono cinque, con lo stato in
+terza e l'innesco in quinta. Spostarle rompe i controlli. E i delimitatori sono
+intestazioni: rinumerarle è un rosso, non un ritocco.
 
 Si presenta la sezione, si discute, si approva, si scrive. Mai tutto insieme, e mai
 un'affermazione che si può misurare senza averla misurata prima.

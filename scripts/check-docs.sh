@@ -49,6 +49,83 @@ mancanti=$(comm -23 \
   tr '\n' ' ')
 [ -z "${mancanti// /}" ] || segnala "V30 violato — Q senza metodo di verifica: $mancanti"
 
+spec_sp1=docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+
+echo "== catalogo §7.4: ogni controllo ha la contro-sonda (§7.1.1 regola 3) =="
+# La §7.1.1 impone che ogni voce del catalogo porti DUE sonde: quella che deve
+# scattare e quella che deve restare verde. Era l'unico punto della §7 non
+# verificabile a sua volta (§7.7.1), cioe un'intenzione.
+# Il controllo e sulla FORMA: verifica che la casella sia piena, non che la
+# contro-sonda esista davvero (§8.6.4). Chi scrive «n/a» passa.
+# Guardia di non-vacuita: se un delimitatore non c'e, o l'intervallo e vuoto,
+# e un FALLIMENTO. Uno script che non trova niente da controllare uscirebbe
+# verde -- gotcha #14 applicato allo script stesso.
+vuote=$(
+  awk '
+    /^#### 7\.4\.1/ { apre=1; dentro=1; next }
+    /^#### 7\.4\.3/ { chiude=1; dentro=0; next }
+    dentro && !/^\|/ { attese=0; next }
+    dentro && /^\|/ {
+      riga=$0
+      gsub(/\\\|/, "", riga)                 # le pipe protette non separano celle
+      n=gsub(/\|/, "|", riga) - 1            # celle = separatori - 1
+      if (riga ~ /^\|[-:|[:space:]]+\|$/) { attese=n; next }   # riga separatrice
+      if (attese == 0) next                                    # intestazione
+      righe++
+      prima=riga
+      sub(/^[[:space:]]*\|[[:space:]]*/, "", prima); sub(/[[:space:]]*\|.*$/, "", prima)
+      ultima=riga
+      sub(/\|[[:space:]]*$/, "", ultima); sub(/^.*\|/, "", ultima)
+      sub(/^[[:space:]]+/, "", ultima); sub(/[[:space:]]+$/, "", ultima)
+      if (n < attese)       printf "riga %d (%s): manca la colonna contro-sonda\n", NR, prima
+      else if (ultima == "") printf "riga %d (%s): contro-sonda vuota\n", NR, prima
+    }
+    END {
+      if (!apre)    print "delimitatore «#### 7.4.1» non trovato"
+      if (!chiude)  print "delimitatore «#### 7.4.3» non trovato"
+      if (righe==0) print "nessuna riga di catalogo nell'\''intervallo: il controllo sarebbe vacuo"
+    }
+  ' "$spec_sp1"
+)
+[ -z "$vuote" ] || while IFS= read -r r; do segnala "catalogo §7.4 — $r"; done <<<"$vuote"
+
+echo "== §8: ogni V e ogni Q ha uno stato, e i rimandati hanno l'innesco =="
+# La mitigazione promessa dalla §0.6 contro «rimandato tende a diventare
+# dimenticato». Quattro asserzioni (§8.6.1): completezza e non-duplicazione,
+# stato dentro l'insieme chiuso, innesco obbligatorio per «parziale» e
+# «rimandato». Lo stato si riconosce da una PAROLA, non da un'emoji: il
+# byte-matching su emoji dipende dal locale, e un rosso per il locale e un
+# rosso per il motivo sbagliato.
+stati=$(
+  awk '
+    function pulisci(s) {
+      sub(/^[[:space:]]+/, "", s); sub(/[[:space:]]+$/, "", s); return s
+    }
+    /^## 8\. / { apre=1; dentro=1 }
+    dentro && /^\|[[:space:]]*[VQ][0-9]+[[:space:]]*\|/ {
+      riga=$0; gsub(/\\\|/, "", riga)
+      n=split(riga, c, "|")
+      id=pulisci(c[2])
+      if (visto[id]++) { printf "%s compare piu di una volta\n", id; next }
+      if (n < 7) { printf "%s: la riga non ha le cinque colonne\n", id; next }
+      stato=pulisci(c[4]); innesco=pulisci(c[6])
+      k = (stato ~ /verificato qui/) + (stato ~ /parziale/) \
+        + (stato ~ /rimandato/)     + (stato ~ /non controllato/)
+      if (k == 0) { printf "%s: stato non ammesso — «%s»\n", id, stato; next }
+      if (k > 1)  { printf "%s: stato ambiguo — «%s»\n", id, stato; next }
+      if (stato ~ /parziale/ || stato ~ /rimandato/)
+        if (innesco == "" || innesco == "—" || innesco == "-")
+          printf "%s: «%s» senza innesco\n", id, stato
+    }
+    END {
+      if (!apre) { print "delimitatore «## 8.» non trovato"; exit }
+      for (i=1; i<=37; i++) if (!visto["V" i]) printf "manca la riga per V%d\n", i
+      for (i=1; i<=24; i++) if (!visto["Q" i]) printf "manca la riga per Q%d\n", i
+    }
+  ' "$spec_sp1"
+)
+[ -z "$stati" ] || while IFS= read -r r; do segnala "§8 — $r"; done <<<"$stati"
+
 echo "== conteggi ADR dichiarati nelle prose =="
 # I documenti di stato dichiarano quanti ADR esistono. Il numero invecchia in silenzio:
 # nessun controllo lo intercettava, e due prose erano stantie.

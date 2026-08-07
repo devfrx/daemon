@@ -12,14 +12,13 @@ Ultimo aggiornamento: **2026-08-07**.
 > **Python**; Tauri contro Electron resta aperto ([ADR-0029](adr/0029-guscio-della-gui.md),
 > `Proposed`) e **non blocca nulla**.
 >
-> **Sotto-progetto 1 in corso**: spec approvata fino alla **§7.3**. Nessuna riga di codice.
-> Le evidenze di M-3 sono **trasferite nella §7.2**, e le due domande che nessuna misura
-> decideva sono **chiuse dalla §7.3**: il controllo delle dipendenze misura **entrambi** i
-> grafi con rimedi opposti, e il cancello senza sistema operativo **si aggiunge** alla
-> lista invece di sostituirla, su `x86_64-unknown-none`.
+> **Sotto-progetto 1 in corso**: spec approvata fino alla **§7.4**. Nessuna riga di codice.
+> Le evidenze di M-3 sono **trasferite nella §7.2**, le due domande che nessuna misura
+> decideva sono **chiuse dalla §7.3**, e la §7.4 porta il **catalogo dei controlli** — ogni
+> voce con il proprio livello di forza, la sonda che deve scattare e la contro-sonda che
+> deve restare verde.
 >
-> Prossimo passo: **§7.4** — il catalogo dei controlli, ciascuno con la sonda *e* la
-> contro-sonda. Poi §7.5–§7.7, poi §8, poi il piano.
+> Prossimo passo: **§7.5** — la cadenza. Poi §7.6–§7.7, poi §8, poi il piano.
 >
 > ✅ **La lacuna su I2 è chiusa**: [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
 > — quota di presentazione sottratta, con la concessione tenuta dal core. Il kernel non
@@ -46,7 +45,7 @@ flowchart LR
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
 | **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
-| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — spec approvata fino alla §7.3 | 0, 0b, 0c |
+| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — spec approvata fino alla §7.4 | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2 |
 | 4 | Agenti | L2 | ⬜ | 3 |

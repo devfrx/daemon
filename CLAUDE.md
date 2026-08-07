@@ -16,7 +16,7 @@ tutto il resto ne discende.
 Il vincolo dominante non è funzionale ma di risorsa: quattro aree che si contendono
 una sola GPU da 16 GB.
 
-## Stato: spec del sotto-progetto 1 in corso, approvata fino alla §7.3.
+## Stato: spec del sotto-progetto 1 in corso, approvata fino alla §7.4.
 
 Spec del kernel completa e **33 decisioni architetturali**.
 
@@ -43,8 +43,8 @@ crate nasce alla radice — escludendo gli spike — o accanto ad essi.
 | schema IPC | **`bincode` 2.0.1** — appuntato a `2`, vedi gotcha #22 | M-1, spec §6.1.1. Prime voci della lista di ADR-0031 |
 | GPU della **GUI** | **quota di presentazione sottratta**, concessione tenuta dal core | ADR-0033, chiude la lacuna su I2 |
 
-**Il sotto-progetto 1 è iniziato**, ma come spec, non come codice: le §0–§6 e le §7.0–§7.3
-sono approvate; restano §7.4–§7.7 e §8. Il guscio aperto non lo blocca — il sotto-progetto 1
+**Il sotto-progetto 1 è iniziato**, ma come spec, non come codice: le §0–§6 e le §7.0–§7.4
+sono approvate; restano §7.5–§7.7 e §8. Il guscio aperto non lo blocca — il sotto-progetto 1
 è interamente Rust e non tocca la GUI.
 
 ✅ **La lacuna su I2 è chiusa** da ADR-0033: il consumo GPU della GUI si modella come
@@ -60,7 +60,7 @@ concessione come argomento.
 | 2 | [`docs/roadmap.md`](docs/roadmap.md) | stato, ordine dei sotto-progetti, prossimo passo |
 | 3 | [`docs/README.md`](docs/README.md) | indice di ADR, diagrammi e spec |
 | 4 | [`docs/adr/`](docs/adr/) | il **perché** di ogni decisione — leggi ADR-0001 e ADR-0004 per primi |
-| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: approvata fino alla §7.3, con tutte le evidenze delle misure |
+| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: approvata fino alla §7.4, con tutte le evidenze delle misure |
 | 6 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§10 — il *cosa*, di cui la precedente è il *come* |
 | 7 | [`docs/tracciabilita.md`](docs/tracciabilita.md) | ogni funzionalità della mappa originale → dove vive |
 | 8 | [`docs/riferimenti.md`](docs/riferimenti.md) | provenienza di ciò che non abbiamo dedotto noi |
@@ -109,12 +109,13 @@ da soli non sono un confine contro codice eseguito.
 
 ## Prossimo passo
 
-**Riprendere la §7 dalla §7.4** — il catalogo dei controlli, ciascuno con la sonda *e* la
-contro-sonda. Poi §7.5 la cadenza, §7.6 il perimetro negativo, §7.7 i costi. Poi §8. Poi
-il piano. Poi il codice.
+**Riprendere la §7 dalla §7.5** — la cadenza: cosa gira a ogni commit e cosa su ciclo lungo.
+Poi §7.6 il perimetro negativo, §7.7 i costi. Poi §8. Poi il piano. Poi il codice.
 
-✅ **§7.0–§7.3 approvate e scritte.** Le evidenze di M-3 sono trasferite nella §7.2, e le
-due domande che nessuna misura decideva sono chiuse:
+✅ **§7.0–§7.4 approvate e scritte.** Le evidenze di M-3 sono trasferite nella §7.2, il
+catalogo dei controlli è in §7.4 — dove **tre voci si sono ridotte invece di crescere**, e
+il livello 3 è rimasto vuoto: nessuna invariante del kernel poggia su un lint. Le due
+domande che nessuna misura decideva sono chiuse:
 
 | Domanda | Decisione |
 |---|---|

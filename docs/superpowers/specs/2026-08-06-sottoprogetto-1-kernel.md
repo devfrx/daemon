@@ -2,7 +2,7 @@
 
 - **Data:** 2026-08-06
 - **Sotto-progetto:** 1. Dipende da 0, 0b, 0c ([roadmap](../../roadmap.md))
-- **Stato:** §0–§6 approvate. §7 approvata fino alla §7.3; §7.4–§7.7 e §8 da presentare.
+- **Stato:** §0–§6 approvate. §7 approvata fino alla §7.4; §7.5–§7.7 e §8 da presentare.
 
 Questa spec **non ri-decide l'architettura**: la spec del kernel dice *cosa* il sistema
 fa e *perché*, e gli ADR dicono con quali alternative scartate. Qui si dice *quali crate
@@ -23,7 +23,7 @@ sbagliata — con l'eccezione delle tre decisioni della §0.5, dove qualcosa man
 | 4 | Giornale, riconciliazione e motore di persistenza | **Approvata** |
 | 5 | Arbitro GPU, e la lacuna su I2 | **Approvata** |
 | 6 | Gli altri meccanismi: gateway, sensori, permessi, degrado | **Approvata** |
-| 7 | La porta di qualità: i controlli automatici | **§7.0–§7.3 approvate** · §7.4–§7.7 da presentare |
+| 7 | La porta di qualità: i controlli automatici | **§7.0–§7.4 approvate** · §7.5–§7.7 da presentare |
 | 8 | Copertura V1–V37 e Q1–Q24 | da presentare |
 
 ---
@@ -248,6 +248,14 @@ La colonna che conta è l'ultima. Gotcha #13: **un lint non è il compilatore.**
 | il kernel non ha un percorso verso il gateway per proprio conto | V28 | grafo delle crate + driver | test |
 | solo `secrets` tocca il portachiavi | V34 | grafo delle crate | test |
 | un solo punto di uscita verso la rete | V25 | allow-list delle crate autorizzate, **oggi vuota** | test |
+
+> ✅ **Due rimandi dalla §7.4.4**, dove il catalogo dei controlli ha ridotto questa tabella
+> invece di ampliarla:
+>
+> | Riga | Esito |
+> |---|---|
+> | «niente `HashMap` nelle altre crate», con forza di lint | ⛔ **tolta.** Non difende V29: in una corsa DST `platform` non gira affatto, perché il simulatore sostituisce *tutte* le porte. Un controllo che non protegge niente e scatta su codice legittimo è il gotcha #24 senza contropartita |
+> | «il kernel non ha un percorso verso il gateway per proprio conto», con driver proprio | ✅ **corollario, niente driver.** `kernel` non dipende da nessuna crate del progetto: un percorso verso un adattatore comparirebbe nel grafo transitivo e farebbe già scattare il controllo della §7.3.1 |
 
 #### 1.4.1 `no_std` non è tutto il confine — misurato
 
@@ -1743,3 +1751,185 @@ crate vincolate, e non è un dettaglio di comodità.
 | il bersaglio va **installato** sulla macchina | `rustup target add x86_64-unknown-none` diventa un prerequisito dell'ambiente, o la porta è rossa su una macchina pulita e per il motivo sbagliato |
 | **innesco di smantellamento** | se un giorno il kernel avesse bisogno legittimo di qualcosa che non compila senza OS, il cancello diventa un ostacolo. Va tolto con un **ADR**, non con un commento — stessa postura della lista |
 | il cancello dice «no» senza dire chi | mitigato dalla lista, che resta accanto. Da soli, nessuno dei due basta |
+
+### 7.4 Il catalogo dei controlli
+
+#### 7.4.0 Come si legge
+
+Il catalogo è organizzato per **livello di forza** (§7.1.2), non per argomento: è la
+proprietà che dice quanto vale ogni riga, e raggrupparlo altrimenti la nasconderebbe.
+
+Ogni voce porta **due** sonde, per la regola 3 del criterio di ammissione: quella che
+**deve scattare** e quella che **deve restare verde**. Una voce con una sola sonda è
+dichiarata incompleta, non tenuta per buona.
+
+Costruendo il catalogo **tre voci si sono ridotte invece di crescere**, e una si è
+scaglionata. Sono in §7.4.4 e §7.4.5: sono l'esito più utile di questa sezione, perché una
+porta di qualità che cresce a ogni revisione smette di essere letta.
+
+#### 7.4.1 Livello 1 — il compilatore
+
+**A · Attributi delle crate.**
+
+| Difende | Meccanismo | Sonda — *deve scattare* | Contro-sonda — *deve restare verde* |
+|---|---|---|---|
+| I3 · V28 · V29 | `#![no_std]` su `kernel` e `simulator` | `std::fs` nel kernel → `E0433` | `platform` nomina `std::fs` e **compila** |
+| ADR-0026 v.2 | `#![forbid(unsafe_code)]` sulle stesse | `unsafe {}` → errore · un `#[allow]` locale → `E0453` | ⚠️ `platform` usa `unsafe` per la FFI e **compila** |
+| V29 · gotcha #12 | `HashMap` non nominabile — conseguenza gratuita di `no_std` | `use std::collections::HashMap` → `E0433` | `BTreeMap` compila |
+
+⚠️ **La contro-sonda sul `forbid` non è teorica.** Cargo permette di dichiarare i divieti a
+livello di workspace e farli ereditare da tutte le crate. Fatto così, `platform` smette di
+compilare: non può parlare con l'OS senza `unsafe`. La contro-sonda è ciò che intercetta
+quella «semplificazione» prima che qualcuno la applichi.
+
+**B · I gettoni — il dispositivo di §6.3.**
+
+| Per fare questo… | …va consegnato questo | Difende | Sonda | Contro-sonda |
+|---|---|---|---|---|
+| avviare un worker | una **concessione** | **I2** | senza → non compila | con → compila |
+| eseguire una richiesta | una **prova di conformità** | **Q13** | candidato non filtrato → non compila | filtrato → compila |
+| promuovere testo a istruzione | la porta **`journal`** | **V19** | conversione libera → non compila | conversione giornalata → compila |
+
+**C · Tipi che non si scambiano.**
+
+| Difende | Cosa **non** deve compilare | Contro-sonda |
+|---|---|---|
+| **Q9** · I6 · V20 | `Untrusted` assegnato a `Instruction` | la promozione dichiarata compila |
+| §5.1 | MiB assegnati a millisecondi | ciascuno con sé stesso |
+| §2.1 | tempo monotonic assegnato a wall time | idem |
+| §5.3 | `InRevoca` per un profilo non prelazionabile | costruibile per uno prelazionabile |
+| §5.2.1 | l'ammissione legge `cold_start` | la proiezione di presentazione lo legge |
+| **V5** | un effetto **senza classe dichiarata** — §7.4.4 | un effetto con la classe compila |
+
+Tutte le righe dei blocchi B e C sono **test di compilazione fallita**, quindi valgono per
+loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha #25 (§7.1.4).
+
+#### 7.4.2 Livello 2 — controlli esterni
+
+| Difende | Meccanismo | Sonda | Contro-sonda |
+|---|---|---|---|
+| I3 · **V28** | allow-list, grafo **spedito** (§7.3.1) | N1 · N2 · N3 | **N4** |
+| supply chain | allow-list, grafo **di build** (§7.3.1) | voce nuova non in lista | voce in lista resta verde |
+| I3 | cancello senza OS su `x86_64-unknown-none` (§7.3.2) | **B2** | **B3** |
+| V34 · Q24 | solo `secrets` raggiunge il portachiavi | il portachiavi nel grafo di `platform` → scatta | `secrets` resta verde |
+| V25 · Q20 | un solo punto di uscita verso la rete | chiamata di rete in `daemon` → scatta | ⚠️ **non esiste ancora** — vedi sotto |
+| Q2 · Q3 · Q4 · Q5 · Q18 · Q22 · I1 · I2 · I5 · V1 · V6 | **la campagna DST** (§3.5) | si rompe l'ammissione: la campagna fallisce e **nomina il seme** (§5.7.1) | senza guasto iniettato, **nessun passo in dubbio** — misurato, C7a di M-2 |
+| §3.7 | **test di contratto** — §7.4.6 | il doppio diverge dall'implementazione reale → scatta | i due concordi → verde |
+| V30 | `check-docs.sh` | un Q senza metodo di verifica → scatta | già in esercizio |
+| V31 | il **seme** entra nell'elenco versionato, la **proprietà** entra nella suite | ⚠️ debole per natura: §3.4 — un seme non riproduce dopo un cambio di codice |
+
+> ⚠️ **La riga di V25 ha un buco, e va dichiarato invece che nascosto.** La lista delle
+> crate autorizzate a uscire in rete è **vuota**, e una lista vuota passa sempre. La sonda
+> esiste — una chiamata di rete deliberata in `daemon` la accende, come §1.4.1 prescrive —
+> ma **la contro-sonda no**: non c'è ancora niente di legittimo da lasciar passare.
+>
+> È quindi l'unica voce del catalogo **provata in una direzione sola**. Si completa nel
+> sotto-progetto che accende la rete, e fino ad allora la §8 la registra come tale.
+
+#### 7.4.3 Livello 3 — vuoto, e non è una svista
+
+**Nessuna voce del catalogo è di livello 3.** Ogni invariante del kernel in perimetro è
+difesa dal compilatore o da un controllo esterno; nessuna da un lint.
+
+`clippy` continua a girare come igiene del codice, ma **non ha voce nella porta**: nessun V
+dipende da lui, e la regola 1 del criterio di ammissione (§7.1.1) dice che allora non entra.
+Distinguere l'igiene dalla porta tiene il significato della porta affilato — un rosso della
+porta è sempre un'invariante violata, mai uno stile discutibile.
+
+#### 7.4.4 Le tre voci che il catalogo ha ridotto invece di aggiungere
+
+**1 · Il divieto di `HashMap` fuori dal kernel si toglie, perché non difende nulla.**
+
+La §1.4 lo elencava come regola di V29, con forza di lint dichiarata. Costruendo il catalogo
+è emerso che il vincolo non regge, per due motivi indipendenti:
+
+| | |
+|---|---|
+| **una porta ordinata non basta** | una porta può restituire un `Vec` — ordinato come *tipo* — costruito però scorrendo una `HashMap`. L'ordine del **contenuto** resta irriproducibile: il tipo non porta la garanzia |
+| **e non serve** | in una corsa DST `platform` **non gira affatto**. Il simulatore sostituisce *tutte* le porte (§3.1), quindi ciò che `platform` fa al proprio interno non può rendere irriproducibile una simulazione |
+
+V29 chiede che tempo, casualità, I/O e scheduling siano **sostituibili**, e lo sono. Non
+chiede che `platform` sia deterministico in produzione, e non lo è mai stato.
+
+Tenere la regola significherebbe avere un controllo che non protegge niente e che scatta su
+codice legittimo: gotcha #24 senza contropartita. **Si toglie**, e §1.4 riceve un rimando.
+
+Costo dichiarato: in produzione l'ordine interno di `platform` non è riproducibile. Se un
+giorno servisse — per esempio per un test di contratto instabile — la risposta è rendere
+deterministico **quel** punto, non vietare un tipo ovunque.
+
+**2 · V28 è un corollario dell'allow-list, non un controllo in più.**
+
+La §1.4 prevedeva «grafo delle crate + driver», cioè un controllo da scrivere. Ma `kernel`
+**non dipende da nessuna crate del progetto** (§1.2) e la sua allow-list ha due voci
+spedite: un percorso verso un adattatore di provider comparirebbe nel grafo transitivo e
+**farebbe già scattare il controllo della §7.3.1**.
+
+Il catalogo lo registra come riga che **rimanda allo stesso controllo**, senza driver
+proprio. Un secondo meccanismo per la stessa proprietà è un secondo posto da tenere
+allineato — e il primo che smette di essere aggiornato mente in silenzio.
+
+**3 · V5 sale dal comportamento al compilatore.**
+
+[ADR-0007](../../adr/0007-giornale-write-ahead-e-riconciliazione.md) dice che un effetto
+senza classe dichiarata vale `irripetibile`. Oggi è una regola di comportamento.
+
+> **La classe è un campo obbligatorio del tipo dell'effetto.** «Un effetto senza classe»
+> non è esprimibile, quindi non compila.
+
+Non contraddice ADR-0007: il default `irripetibile` resta dov'è davvero utile — sui record
+riletti da un giornale scritto prima che la classe esistesse. Sposta la difesa dove il
+rischio è la dimenticanza di chi scrive, e la lascia dov'è il rischio di un dato vecchio.
+
+#### 7.4.5 Il quarto gettone si scaglia, e l'innesco si scrive
+
+§6.3 nomina il dispositivo del gettone tre volte. Una quarta ricorrenza è naturale — *per
+eseguire un comando serve la prova del livello di confinamento richiesto* (V35, Q23) — e
+[design/08](../../design/08-strategia-di-test.md) chiede già per Q23 una verifica
+**statica**, che è esattamente ciò che una firma darebbe.
+
+**Non entra ora, e il motivo è il criterio della §0.3:**
+
+| | |
+|---|---|
+| il gettone si attacca a una porta | ma **nessuna porta esegue comandi** in questo sotto-progetto: `process` avvia worker, e gli strumenti sono scaglionati per regola C |
+| crearne una per ospitarlo | sarebbe costruire per un consumatore che non esiste |
+| è retrofittabile? | **sì**: aggiungere un argomento a una firma con zero chiamanti è meccanico. La regola B non si applica, quindi vale la C |
+
+**Cosa entra comunque**, perché §0.4 l'aveva già messo in perimetro: il **tipo** del livello
+di confinamento, la sua dichiarazione per azione, e la sua registrazione nel giornale (V37).
+
+> **L'innesco, scritto perché «rimandato» non diventi «dimenticato»:** alla nascita della
+> prima porta che esegue un comando, quella porta **prende un livello di confinamento come
+> argomento**, e il test di compilazione fallita si scrive lì. La §8 lo registra con il
+> sotto-progetto che lo chiude.
+
+#### 7.4.6 I test di contratto — due porte adesso, due dopo
+
+La §3.7 dichiara il punto cieco con parole proprie: **«la finta non è la vera»**. Senza test
+di contratto, Q4 e Q5 sono provati contro una finzione — la DST dimostra che il kernel si
+riconcilia bene *con il simulatore*.
+
+Entrano per regola A, ma il perimetro si tara da sé: una suite di conformità esiste solo
+dove esistono **entrambe** le implementazioni.
+
+| Porta | Implementazione reale in questo sotto-progetto | Suite di conformità |
+|---|---|---|
+| `journal` | ✅ `redb` in `platform` | ✅ **sì** — e §4.6 ne copre già il livello 2 |
+| `reactor` | ✅ l'attesa vera sull'OS | ✅ **sì**, ed è la più importante: la validità della DST poggia lì |
+| `process` | ✅ avvio e uccisione veri | ⚠️ **rimandata**: non esistono worker da avviare (§0.2) |
+| `ipc` | ✅ named pipe | ⚠️ **rimandata**: non esiste una GUI dall'altro capo |
+| `filesystem` | ❌ scaglionata (§0.4) | ❌ |
+| `network` | ❌ scaglionata | ❌ |
+
+La §8 registra quali porte hanno la suite e quali no, con il sotto-progetto che le chiude.
+
+#### 7.4.7 I costi del catalogo
+
+| Costo | |
+|---|---|
+| **ogni regola nuova porta due sonde, non una** | e la contro-sonda è la più noiosa da scrivere, perché verifica che *non* succeda niente |
+| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta già una decina, e ciascuno ha un `.stderr` da leggere (gotcha #25) |
+| **una voce è provata in una direzione sola** | V25, finché la rete non esiste. Dichiarato in §7.4.2 |
+| **V31 resta debole per natura** | l'automatismo protegge la proprietà, non il seme: §3.4 |
+| **i test di contratto sono lavoro reale** | due suite ora, due rimandate. È il prezzo per non provare Q4 e Q5 contro una finzione |

@@ -1858,6 +1858,13 @@ Costo dichiarato: in produzione l'ordine interno di `platform` non è riproducib
 giorno servisse — per esempio per un test di contratto instabile — la risposta è rendere
 deterministico **quel** punto, non vietare un tipo ovunque.
 
+> ⚠️ **Conseguenza operativa, che la §2.5 non copriva:** il
+> [`clippy.toml`](../../../spikes/rust/clippy.toml) di `spikes/rust/` **non sale**. È
+> l'evidenza del meccanismo (a) di T6 e resta dov'è, ma nel workspace reale è a livello di
+> workspace e scatterebbe addosso a `platform` — che *deve* chiamare l'orologio e il
+> filesystem. È lo stesso costo che `RISULTATI.md` ha misurato su un caso reale, quando la
+> regola ha bloccato un uso **legittimo** di `Instant::now()` in un test.
+
 **2 · V28 è un corollario dell'allow-list, non un controllo in più.**
 
 La §1.4 prevedeva «grafo delle crate + driver», cioè un controllo da scrivere. Ma `kernel`
@@ -2007,7 +2014,7 @@ di un piano agentico, qualità percepita di voce e mesh, ergonomia dell'interfac
 | che una crate ammessa non faccia nulla di indesiderato | ADR-0031 lo dichiara: *«limita la superficie, non la certifica»* | la giustificazione scritta, e chi la legge |
 | che `platform` si comporti come `simulator` su **tutte** le porte | solo due ne hanno entrambe le implementazioni qui (§7.4.6) | contratto su `journal` e `reactor`; le altre in §8 come rimandate |
 | lo **stile** del codice | non difende nessun V, quindi la regola 1 di §7.1.1 lo esclude | `clippy` come igiene, **fuori** dalla porta |
-| Q1 · Q6 · Q11 · Q12 · Q16 | non hanno consumatore in questo sotto-progetto | la §8, con il sotto-progetto che li chiude |
+| Q6 · Q11 · Q12 · Q16 | non hanno consumatore in questo sotto-progetto — è l'elenco della §0.6 | la §8, con il sotto-progetto che li chiude |
 
 #### 7.6.3 La riga che chiude la sezione
 

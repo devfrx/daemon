@@ -59,7 +59,24 @@ il sotto-progetto 2.
 | # | | |
 |---|---|---|
 | 1 | **estendere `check-docs.sh`** | deve fallire se una voce del catalogo (§7.4) ha la **contro-sonda vuota**, e se la tabella della §8 ha un V o un Q senza stato. Le due estensioni toccano lo stesso script: si scrivono insieme. Senza la prima, la regola 3 di §7.1.1 resta un'intenzione — ed è l'unico punto della §7 non verificabile |
-| 2 | **registrare i rimandati con l'innesco** | V25 provata in una direzione sola · i test di contratto su `process` e `ipc` · il quarto gettone · Q1, Q6, Q11, Q12, Q16 |
+| 2 | **registrare i rimandati con l'innesco** | e gli inneschi sono di **due tipi diversi**, che la tabella deve distinguere: *un sotto-progetto* per Q6, Q11, Q12, Q16, per i test di contratto su `process` e `ipc`, per V25 e per il quarto gettone — *uno spike* per Q1, che si chiude con SP-2 e non con un consumatore |
+
+#### Il lavoro della §8, già ridotto: chi non è ancora nominato
+
+Contato il 2026-08-07 sulla spec del sotto-progetto 1. **Ventuno voci su sessantuno non
+compaiono ancora da nessuna parte** e sono quelle che la §8 deve giudicare esplicitamente;
+le altre quaranta sono già nominate da una sezione, e alla §8 resta di dichiararne lo stato.
+
+| | Non ancora nominati |
+|---|---|
+| **V** (17) | V3 · V7 · V8 · V9 · V12 · V13 · V15 · V16 · V17 · V18 · V22 · V23 · V24 · V26 · V32 · V33 · V36 |
+| **Q** (4) | Q7 · Q8 · Q15 · Q19 |
+
+⚠️ **Nessuno di questi è dimenticato** — a un controllo a campione il contenuto c'è
+(V24 è il gotcha #7 nella §4, V26 è la §4.5, Q15 è ADR-0014 nella §6.5, Q8 è `cold_start`
+nella §5.2.1). Ciò che manca è che **qualcuno lo dichiari**, ed è esattamente il mestiere
+della §8. Il comando che ha prodotto l'elenco è un `grep` su `V<n>` e `Q<n>`: rifarlo alla
+fine della §8 deve dare **zero**.
 
 ### ✅ Le due domande della §7 sono decise
 
@@ -212,6 +229,9 @@ nuovo che lo superi** (`Superseded by`), non una conversazione. Le decisioni che
 | Il motore è **`redb` con backend nostro** (ADR-0032) | il backend nostro non è un dettaglio: è il punto in cui il **livello 2** di crash diventa iniettabile. Prenderne uno con l'I/O non sostituibile rinuncia a metà della verifica |
 | L'**esecutore vive nel kernel** (§2.4) | prendere un runtime di ecosistema restituisce a lui l'ordine delle attività — cioè esattamente il controllo che lo spareggio #1 aveva comprato escludendo Go |
 | La **concessione di presentazione la tiene il core** (ADR-0033) | la scorciatoia tentante è «esentiamo la GUI e amen». Esentarla rende **I2 falso** e indebolisce Q2 in silenzio; darla in mano alla GUI crea una concessione che si perde ogni volta che la GUI muore — cioè in qualsiasi istante, per G3. Il titolare deve avere vita lunga, e l'unico che ce l'ha è il core |
+| Il controllo delle dipendenze misura **due grafi con rimedi opposti** (§7.3.1) | unificarli sembra una semplificazione e non lo è: insegna il riflesso «aggiungi alla lista» **anche per una violazione di I3**, dove aggiungere alla lista non è un rimedio ma la violazione scritta in un modulo. È così che un'invariante si degrada in scartoffia |
+| Il **cancello senza OS si aggiunge**, non sostituisce la lista (§7.3.2) | sembrano ridondanti e non lo sono: la lista coglie una crate **nuova**, il cancello una crate **già ammessa** che raggiunge l'OS per una via non prevista. E quando falliscono, **solo la lista dice il nome del colpevole** |
+| Il **livello 3 del catalogo è vuoto** (§7.4.3) | la tentazione è aggiungere un lint «tanto non costa niente». Costa: un rosso della porta deve significare sempre «invariante violata», mai «stile discutibile», o si impara a ignorarlo |
 
 ## Le tre proprietà che non si aggiungono dopo
 
@@ -282,7 +302,10 @@ diventassero codice.
 | ❌ riscrivere `tracciabilita.md` da zero | 170 funzionalità già mappate: si **aggiorna**, non si rigenera |
 | ❌ ri-cercare lo stato dell'arte già tracciato | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ rifare gli spike SP-5 e SP-6 | esiti, seed, versioni e comandi sono in [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md). I prototipi esclusi sono recuperabili dalla storia git, lo SHA è lì |
+| ❌ rifare le misure **M-1 · M-2 · M-3 · M-4 · M-5 · M-6 · M-7 · M-8** | tutte chiuse, con comandi, versioni e sonde nella spec: M-1 §6.8 · M-2 §3.6 · M-3 §7.2 · M-4 e M-5 §2.6 · M-6 §5.8.1 · M-7 §2.6 · M-8 §4.7. L'unica aperta è **M5** (senza trattino), e richiede una GUI |
+| ❌ riaprire le **due decisioni della §7.3** | erano le uniche domande che la §7 doveva prendere, e sono state prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
 | ❌ progettare una capacità L2 | prima il kernel deve esistere (ADR-0001) |
+| ❌ promuovere l'aiutante `passo_in_dubbio` dello spike | assume esecuzione sequenziale: con l'interlacciamento dà un **falso negativo**. Gotcha #20 |
 | ⚠️ fidarsi delle fonti senza data | l'ecosistema si muove a cadenza mensile; `riferimenti.md` riporta la data di consultazione |
 
 ## Domande legittimamente aperte
@@ -331,7 +354,8 @@ Alla chiusura di ogni sotto-progetto, **nello stesso passaggio**: `roadmap.md`,
 questo file se emergono gotcha nuovi.
 
 `tracciabilita.md` **non** è stato toccato in questa sessione: nessuna funzionalità ha
-cambiato sede, e la regola dice di aggiornarlo alla *chiusura* del sotto-progetto.
+cambiato sede, e la regola dice di aggiornarlo alla *chiusura* del sotto-progetto. Resta
+quindi da aggiornare **quando il sotto-progetto 1 chiude**, non alla fine della §8.
 
 ### Due trappole di `check-docs.sh`, da sapere prima di scrivere
 
@@ -348,6 +372,6 @@ prodotto conteggi stantii in questo repository.
 **2 · La numerazione delle sezioni.** Il controllo sui duplicati è **per file**, e il suo
 regex cattura `^#{2,3} <numero>`. Quindi `### 7.4.1` verrebbe letto come un duplicato di
 `### 7.4`. **Le sotto-sotto-sezioni si scrivono con `####`**, che il regex non cattura —
-verificato in questa sessione sulle §5 e §6, che ne hanno una decina ciascuna.
+verificato sulle §5, §6 e §7, che ne hanno una decina ciascuna.
 
 Un documento di stato disallineato è peggio di nessun documento: mente con autorevolezza.

@@ -67,7 +67,7 @@ diventano test:
 | # | Invariante | Come si verifica |
 |---|---|---|
 | **I1** | Lo stato autorevole vive solo nel core. GUI e worker non hanno persistenza propria. | Uccidere gui o worker in qualsiasi istante non perde né corrompe nulla |
-| **I2** | La GPU ha un solo proprietario: nessun processo la tocca senza concessione dell'arbitro. | Nessun worker si avvia senza una concessione valida |
+| **I2** | La GPU ha un solo proprietario: nessun processo la tocca senza concessione dell'arbitro. | Nessun worker si avvia senza una concessione valida — ⚠️ **verifica completata da [ADR-0033](0033-gpu-della-gui-quota-di-presentazione.md)**: questa riga copriva una classe di processo su tre, e anche la `gui` tocca la GPU |
 | **I3** | Il core non contiene codice OS-specifico: ogni chiamata all'OS passa dal modulo di piattaforma. | Analisi statica dei grafi di importazione |
 | **I4** | Il protocollo IPC è privato, singolo e non versionato: un trasporto, uno schema, nessun broker, nessun service discovery. | Nessun consumatore esterno, per [ADR-0003](0003-estensibilita-solo-mcp-e-skill-dichiarative.md) |
 | **I5** | I worker sono senza stato e senza voce in capitolo: ritentativi, code e priorità stanno nel core. | Un worker non contiene logica di retry né di scheduling |

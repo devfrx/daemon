@@ -16,9 +16,9 @@ tutto il resto ne discende.
 Il vincolo dominante non è funzionale ma di risorsa: quattro aree che si contendono
 una sola GPU da 16 GB.
 
-## Stato: stack deciso. Kernel non ancora implementato.
+## Stato: spec del sotto-progetto 1 in corso, §0–§6 approvate su otto.
 
-Spec del kernel completa e **28 decisioni architetturali**. L'unico codice nel
+Spec del kernel completa e **33 decisioni architetturali**. L'unico codice nel
 repository è in [`spikes/rust/`](spikes/rust/): sono **prove**, non il kernel, ma
 diventeranno il punto di partenza del simulatore.
 
@@ -29,14 +29,19 @@ diventeranno il punto di partenza del simulatore.
 | gui — framework | **Vue 3** | ADR-0030 |
 | gui — **guscio** | ⚠️ **aperto**: Tauri o Electron | ADR-0029, `Proposed` |
 | worker ML | **Python** | ADR-0028 |
+| persistenza | **`redb` 4.1.0**, con `StorageBackend` scritto da noi | ADR-0032, requisito 4 misurato |
+| dipendenze del kernel | **allow-list sul grafo transitivo** | ADR-0031, emerso da una misura |
+| schema IPC | **`bincode` 2.0.1** — appuntato a `2`, vedi gotcha #22 | M-1, spec §6.1.1. Prime voci della lista di ADR-0031 |
+| GPU della **GUI** | **quota di presentazione sottratta**, concessione tenuta dal core | ADR-0033, chiude la lacuna su I2 |
 
-**Ora si può implementare**, ma solo il sotto-progetto 1 (kernel + simulatore DST), e
-solo con la spec §0–§10 alla mano. Il guscio aperto **non lo blocca**: il sotto-progetto
-1 è interamente Rust e non tocca la GUI.
+**Il sotto-progetto 1 è iniziato**, ma come spec, non come codice: le §0–§6 sono
+approvate, le §7–§8 no. Il guscio aperto non lo blocca — il sotto-progetto 1 è
+interamente Rust e non tocca la GUI.
 
-⚠️ **Una lacuna aperta nel kernel**, trovata durante la revisione di ADR-0027: la GPU
-usata dalla GUI non è arbitrata da nessuno, e I2 è verificato solo sui worker. Va chiusa
-nel sotto-progetto 1, perché tocca l'arbitro. Dettagli in [`docs/roadmap.md`](docs/roadmap.md).
+✅ **La lacuna su I2 è chiusa** da ADR-0033: il consumo GPU della GUI si modella come
+**tre consumatori distinti**, e I2 è ora verificato su tutte e tre le classi di processo.
+Per i worker è passato da test a **compilatore** — la porta `process` richiede una
+concessione come argomento.
 
 ## Da dove partire, in quest'ordine
 
@@ -46,9 +51,10 @@ nel sotto-progetto 1, perché tocca l'arbitro. Dettagli in [`docs/roadmap.md`](d
 | 2 | [`docs/roadmap.md`](docs/roadmap.md) | stato, ordine dei sotto-progetti, prossimo passo |
 | 3 | [`docs/README.md`](docs/README.md) | indice di ADR, diagrammi e spec |
 | 4 | [`docs/adr/`](docs/adr/) | il **perché** di ogni decisione — leggi ADR-0001 e ADR-0004 per primi |
-| 5 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§10 |
-| 6 | [`docs/tracciabilita.md`](docs/tracciabilita.md) | ogni funzionalità della mappa originale → dove vive |
-| 7 | [`docs/riferimenti.md`](docs/riferimenti.md) | provenienza di ciò che non abbiamo dedotto noi |
+| 5 | [`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | **il lavoro in corso**: §0–§6 approvate, con tutte le evidenze delle misure |
+| 6 | [`docs/superpowers/specs/2026-08-06-kernel-design.md`](docs/superpowers/specs/2026-08-06-kernel-design.md) | la spec del kernel, §0–§10 — il *cosa*, di cui la precedente è il *come* |
+| 7 | [`docs/tracciabilita.md`](docs/tracciabilita.md) | ogni funzionalità della mappa originale → dove vive |
+| 8 | [`docs/riferimenti.md`](docs/riferimenti.md) | provenienza di ciò che non abbiamo dedotto noi |
 
 ## Come si lavora qui
 
@@ -94,9 +100,19 @@ da soli non sono un confine contro codice eseguito.
 
 ## Prossimo passo
 
-**Scrivere la spec del sotto-progetto 1** — implementazione del kernel + simulatore
-DST — e poi il piano. Non partire dal codice: vale «spec prima del codice» come per
-tutto il resto.
+**Riprendere la spec del sotto-progetto 1 dalla §7** — la porta di qualità, cioè i
+controlli automatici. Poi §8. Poi il piano. Poi il codice.
+
+✅ **Nessuna misura blocca la §7**: M-3 è chiusa. Le sue evidenze stanno in `HANDOFF.md`
+e **vanno trasferite nella §7** — è l'unica misura non ancora nella spec.
+
+⚠️ **La §7 deve decidere due cose**, e nessuna misura le decide al posto suo: se il
+controllo della allow-list misura il grafo di **runtime** o quello **totale** (misurato:
+2 contro 4), e se il **cancello bare-metal** si aggiunge alla lista o la sostituisce
+(raccomandazione di chi ha misurato: **aggiungere** — è necessario ma non sufficiente).
+
+Si presenta la sezione, si discute, si approva, si scrive. Mai tutto insieme, e mai
+un'affermazione che si può misurare senza averla misurata prima.
 
 Lo stack è deciso **tranne il guscio della GUI**, che non blocca nulla. Le domande che
 bloccavano l'implementazione sono chiuse:
@@ -106,7 +122,7 @@ bloccavano l'implementazione sono chiuse:
 | **0026** | core in **Rust** | è l'unico dei tre candidati che passa **entrambi** gli spike. Go fallisce C6 con una misura; TypeScript è parziale su T4, T6 e C6 |
 | **0027** | GUI a **interfaccia web** | **G7**, artifacts con anteprima viva: non ammette alternativa. P1–P4 misurati |
 | **0028** | worker ML in **Python** | non è una scelta: i modelli hanno implementazioni Python. L'ADR ne dichiara i costi |
-| **0029** | ⚠️ guscio: **aperto** | né Tauri né Electron hanno una misura a sostegno. Raccomandazione Electron, ma è un argomento. Si chiude con M1–M4 nel sotto-progetto 2 |
+| **0029** | ⚠️ guscio: **aperto** | né Tauri né Electron hanno una misura a sostegno. Raccomandazione Electron, ma è un argomento. Si chiude con **M1–M5** nel sotto-progetto 2 — la quinta è arrivata da ADR-0033 |
 | **0030** | interfaccia in **Vue 3** | competenza del proprietario — criterio **legittimo qui** perché nessuna invariante vincola la scelta e la GUI è sacrificabile. In ADR-0026 non lo era |
 
 Evidenze, seed e versioni: [`spikes/RISULTATI.md`](spikes/RISULTATI.md) ·
@@ -123,6 +139,10 @@ automatici, non lasciate alla memoria.
 | 2 | `#![forbid(unsafe_code)]` sul kernel, non `deny` | `forbid` non è scavalcabile da un `#[allow]` locale (`E0453`) |
 | 3 | la crate del kernel è `#![no_std]` + `alloc` | è ciò che rende `E0433` un errore del **compilatore** e non un lint |
 | 4 | **`std::collections::HashMap` è vietato** | `RandomState` è seminato per processo: l'ordine di iterazione non è riproducibile, e viola V29 senza comparire in nessun elenco di «chiamate OS» |
+
+Un **quinto**, misurato dopo: `no_std` impedisce di *nominare* `std`, **non** di
+raggiungere l'OS attraverso una dipendenza. La lista delle dipendenze del kernel è
+l'altra metà del confine — ADR-0031, gotcha #16.
 
 La spec del kernel è completa (§0–§10) e **non ha lacune aperte**: le cinque trovate
 dall'esercizio di tracciabilità sono state chiuse dalla §10.

@@ -111,6 +111,36 @@ detiene una **concessione permanente e non prelazionabile** sulla quota riservat
 I2 vale anche per lui — nessun processo tocca la GPU senza concessione. Ciò che cambia
 non è l'obbligo, è che la sua concessione non può essere revocata né contesa.
 
+### La quota di presentazione della GUI
+
+Decisione: [ADR-0033](../adr/0033-gpu-della-gui-quota-di-presentazione.md).
+
+Anche il processo `gui` tocca la GPU: il **compositing** della webview sempre, il
+**viewer 3D** (G6) quando serve. Si modella come **tre consumatori distinti**, perché
+hanno percorsi di richiesta diversi.
+
+| # | Consumo | Governo | Corsia | Rifiuto esecutivo? |
+|---|---|---|---|---|
+| 1 | compositing della webview | quota di **presentazione** sottratta | fuori dalle corsie: l'arbitro non lo schedula | ❌ no |
+| 2 | viewer 3D **entro** la quota | stessa quota | idem | ❌ no |
+| 3 | viewer 3D **oltre** la quota | **concessione ordinaria** via IPC | `interattivo` | ✅ sì |
+
+```
+budget allocabile = totale − quota audio − quota presentazione
+```
+
+**La concessione di presentazione la tiene il core**, non la GUI: la richiede all'avvio,
+permanente e non prelazionabile. Così la sottrazione non diventa un'esenzione (I2 resta
+vero) e nulla si perde quando la GUI muore — il titolare è il core, la cui vita è lunga
+e indipendente.
+
+⚠️ **Con una differenza di forza da dichiarare.** Verso un worker il rifiuto
+dell'arbitro è *esecutivo*: il processo non parte. Verso il compositor **non lo è**:
+compone lo stesso. La quota è una **promessa di budget, non un'imposizione**.
+
+Il valore della quota è **non misurato**: lo chiude M5, insieme a M1–M4 di
+[ADR-0029](../adr/0029-guscio-della-gui.md).
+
 ### Contesa di calcolo
 
 Il calcolo GPU non è prelazionabile a grana fine come la memoria. La leva praticabile
@@ -127,13 +157,13 @@ certezza: è oggetto dello spike SP-2 in §9 della spec.
 flowchart LR
     subgraph R["Policy REMOTA — default"]
         direction TB
-        r1["VRAM occupata:<br/>solo audio riservato"]
+        r1["VRAM occupata:<br/>audio riservato<br/>+ presentazione GUI"]
         r2["Job 3D: parte subito<br/>nessuno swap"]
         r3["Chat durante il render:<br/>inalterata, gira su OpenRouter"]
     end
     subgraph L["Policy LOCALE"]
         direction TB
-        l1["VRAM occupata:<br/>audio + LLM + embedding"]
+        l1["VRAM occupata:<br/>audio + presentazione<br/>+ LLM + embedding"]
         l2["Job 3D: richiede eviction<br/>coordinata e ricarica dopo"]
         l3["Chat durante il render:<br/>attende, o si dirotta su remoto"]
     end
@@ -143,7 +173,7 @@ flowchart LR
 
 | | Policy REMOTA *(default)* | Policy LOCALE |
 |---|---|---|
-| Chi occupa VRAM | audio riservato soltanto | audio + LLM + embedding locali |
+| Chi occupa VRAM | audio riservato **+ presentazione** | audio + presentazione + LLM + embedding locali |
 | Prima di un job 3D | nulla da fare | eviction coordinata, obbligatoria |
 | Dopo un job 3D | nulla da fare | ricarica con avvio a freddo visibile |
 | Chat durante un render | inalterata | bloccata, oppure dirottata su remoto |
@@ -168,5 +198,6 @@ qualcosa al posto dell'utente, glielo dice.
 | `Rifiutata` | perché non entra, e l'alternativa concreta (qualità ridotta, backend remoto) |
 | `InCoda` | posizione e stima d'attesa, con opzione di annullare |
 | `InRevoca` | cosa sta per essere fermato e perché |
+| Viewer 3D revocato durante un render | che il 3D è in pausa e perché, con la ripresa attesa ([ADR-0033](../adr/0033-gpu-della-gui-quota-di-presentazione.md)) |
 | Avvio a freddo | che un modello si sta ricaricando, con attesa stimata |
 | Policy in transizione | che il backend è cambiato, e per quali richieste |

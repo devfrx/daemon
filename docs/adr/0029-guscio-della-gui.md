@@ -79,6 +79,7 @@ più una scena three.js — costruito sui due gusci, e quattro numeri:
 | M2 | dimensione del pacchetto installato | idem |
 | M3 | fps del viewer 3D e API grafica realmente ottenuta, **su Windows e su Linux** | è il costo principale imputato a Tauri |
 | M4 | **P3 con rendering vero**, salto webview compreso | chiude anche il margine stretto lasciato da ADR-0027 |
+| **M5** | **VRAM a riposo e sotto carico 3D**, sui due gusci | aggiunta da [ADR-0033](0033-gpu-della-gui-quota-di-presentazione.md): è il valore della **quota di presentazione**, e quanto sia governabile dipende da chi possiede il motore di rendering — impacchettato dal guscio o del sistema |
 
 Se M3 mostra la stessa API grafica su entrambe le piattaforme con Tauri, l'argomento
 principale a favore di Electron cade e la decisione si ribalta.
@@ -101,6 +102,8 @@ definito lato core e ADR-0027 ha già dichiarato che non ci sono tipi condivisi.
     ha chiuso: va vietato esplicitamente.
   - Il vincolo **niente SSR** vale per Tauri ed è naturale per Electron: la GUI è una
     SPA locale che parla col core via IPC. Nessuna delle due opzioni ne soffre.
-  - **La GPU usata dalla GUI non è arbitrata da nessuno.** Vedi la lacuna aperta in
-    [HANDOFF.md](../HANDOFF.md): è un problema del kernel, non del guscio, e va chiuso
-    nel sotto-progetto 1.
+  - ~~**La GPU usata dalla GUI non è arbitrata da nessuno.**~~ ✅ **Chiusa** da
+    [ADR-0033](0033-gpu-della-gui-quota-di-presentazione.md): quota di presentazione
+    sottratta, con la concessione tenuta dal core. Era un problema di kernel e non di
+    guscio, come previsto — il meccanismo è identico sulle due opzioni. Ne **esce** però
+    un discriminante nuovo per questo ADR, la misura **M5** qui sopra.

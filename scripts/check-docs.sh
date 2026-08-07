@@ -34,8 +34,13 @@ d_idx=$(grep -cE '^\| \[.*\]\(design/' docs/README.md)
 [ "$d_file" -eq "$d_idx" ] || segnala "design: $d_file file, $d_idx voci d'indice"
 
 echo "== numerazione delle sezioni: duplicati =="
-dup=$(grep -ohE '^#{2,3} [0-9]+(\.[0-9]+)?' docs/superpowers/specs/*.md | sort | uniq -d | tr '\n' ' ')
-[ -z "${dup// /}" ] || segnala "sezioni duplicate: $dup"
+# Il controllo è PER FILE. Concatenare le spec produrrebbe un falso positivo: ogni
+# spec ha legittimamente la propria §0, e un controllo che fallisce per il motivo
+# sbagliato è peggio di un controllo assente — insegna a ignorare l'audit.
+for f in docs/superpowers/specs/*.md; do
+  dup=$(grep -ohE '^#{2,3} [0-9]+(\.[0-9]+)?' "$f" | sort | uniq -d | tr '\n' ' ')
+  [ -z "${dup// /}" ] || segnala "sezioni duplicate in $f: $dup"
+done
 
 echo "== ogni requisito Q ha un metodo di verifica (V30) =="
 mancanti=$(comm -23 \
@@ -43,6 +48,32 @@ mancanti=$(comm -23 \
   <(grep -ohE '^\| Q[0-9]+ \|' docs/design/08-strategia-di-test.md | grep -oE 'Q[0-9]+' | sort -uV) |
   tr '\n' ' ')
 [ -z "${mancanti// /}" ] || segnala "V30 violato — Q senza metodo di verifica: $mancanti"
+
+echo "== conteggi ADR dichiarati nelle prose =="
+# I documenti di stato dichiarano quanti ADR esistono. Il numero invecchia in silenzio:
+# nessun controllo lo intercettava, e due prose erano stantie.
+# Copre esattamente tre forme, e non di più:
+#   «N ADR in stato ...»        -> deve valere il numero degli Accepted
+#   «N ADR»                     -> deve valere il totale
+#   «N decisioni architetturali» -> deve valere il totale
+# Limite dichiarato: un numero scritto a parole è invisibile a questa guardia.
+adr_tot=$(ls docs/adr/*.md 2>/dev/null | wc -l)
+adr_acc=$(grep -l '^- \*\*Status:\*\* Accepted' docs/adr/*.md 2>/dev/null | wc -l)
+for f in docs/HANDOFF.md docs/roadmap.md docs/README.md CLAUDE.md; do
+  [ -f "$f" ] || continue
+  # Gli esempi stanno nei code span: `2 ADR nuovi` è un esempio, non una
+  # dichiarazione. Si spogliano prima di confrontare, o il controllo accusa
+  # la documentazione di sé stesso — successo davvero.
+  while IFS= read -r m; do
+    [ -n "$m" ] || continue
+    n=${m%% *}
+    case "$m" in
+      *"in stato"*) atteso=$adr_acc; eti="in stato Accepted" ;;
+      *) atteso=$adr_tot; eti="in totale" ;;
+    esac
+    [ "$n" -eq "$atteso" ] || segnala "$f dichiara $n ADR $eti, sono $atteso"
+  done < <(sed 's/`[^`]*`//g' "$f" | grep -oE '[0-9]+ (ADR in stato|ADR|decisioni architetturali)')
+done
 
 echo "== ADR ancora in Proposed =="
 prop=$(grep -l 'Status:\*\* Proposed' docs/adr/*.md 2>/dev/null | tr '\n' ' ')

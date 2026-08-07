@@ -65,6 +65,9 @@ sotto-progetto**, nello stesso passaggio.
 | [0028](adr/0028-ecosistema-dei-worker-ml.md) | Ecosistema dei worker ML: Python, ratificato | Accepted |
 | [0029](adr/0029-guscio-della-gui.md) | Guscio della GUI: Tauri o Electron | ⚠️ **Proposed** |
 | [0030](adr/0030-framework-dell-interfaccia.md) | Framework dell'interfaccia: Vue 3 | Accepted |
+| [0031](adr/0031-dipendenze-del-kernel-parte-del-confine.md) | Le dipendenze del kernel sono parte del confine I3 | Accepted |
+| [0032](adr/0032-motore-di-persistenza.md) | Motore di persistenza: `redb`, con backend nostro | Accepted |
+| [0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) | GPU della GUI: quota di presentazione sottratta, concessione tenuta dal core | Accepted |
 
 ## Indice dei diagrammi
 
@@ -85,6 +88,7 @@ sotto-progetto**, nello stesso passaggio.
 | Spec | Sotto-progetto | Stato |
 |---|---|---|
 | [Kernel](superpowers/specs/2026-08-06-kernel-design.md) | L0 fondamenta + L1 arbitri trasversali | ✅ **completa e approvata** |
+| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | 🔵 **§0–§6 approvate** su otto |
 
 ## Decomposizione del sistema
 

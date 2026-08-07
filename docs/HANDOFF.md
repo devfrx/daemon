@@ -1,30 +1,128 @@
 # Handoff — ripresa del progetto
 
-Scritto il **2026-08-06**, alla chiusura della sessione di progettazione del kernel.
-Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
+Aggiornato il **2026-08-07**, alla chiusura della sessione che ha scritto le **§5 e §6**
+della spec del sotto-progetto 1 e chiuso le misure **M-1**, **M-3** e **M-6**. Serve a
+riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 
 ## In trenta secondi
 
-Assistente desktop locale, utente singolo, GPU singola RTX 5080 16 GB. **Piattaforma
-a quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 30
-ADR**. Stack deciso **tranne il guscio della GUI**: core in **Rust**, interfaccia web in
-**Vue 3**, worker ML in **Python**; Tauri contro Electron è ancora aperto
+Assistente desktop locale, utente singolo, GPU singola RTX 5080 16 GB. **Piattaforma a
+quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 33 ADR**.
+Stack deciso **tranne il guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**,
+worker ML in **Python**; Tauri contro Electron è ancora aperto
 ([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
 
-⚠️ **Una lacuna aperta nel kernel**, trovata durante la revisione e non cercata: **la
-GPU usata dalla GUI non è arbitrata da nessuno.** Vedi sotto — va chiusa nel
-sotto-progetto 1.
+**È in corso la spec del sotto-progetto 1** — implementazione del kernel + simulatore DST.
+Sezioni **§0–§6 approvate**, §7–§8 da scrivere. Il codice non è ancora iniziato: vale
+«spec prima del codice».
 
-Il vincolo che governa tutto non è funzionale ma di risorsa: quattro aree che si
-contendono una sola GPU.
+✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
+[ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
+sottratta, con la concessione tenuta dal core.** Il kernel non ha più lacune aperte.
+
+Il vincolo che governa tutto non è funzionale ma di risorsa: quattro aree che si contendono
+una sola GPU.
 
 L'unico codice nel repository è in [`../spikes/rust/`](../spikes/rust/): sono **prove**,
 non il kernel.
 
 ## Prima cosa da fare
 
-**Scrivere la spec del sotto-progetto 1** — kernel + simulatore DST — poi il piano, poi
-il codice. Vale «spec prima del codice» come per tutto il resto.
+**Riprendere la spec del sotto-progetto 1 dalla §7** — la porta di qualità, cioè i
+controlli automatici. Si **presenta**, si discute, si approva, si scrive: mai tutto
+insieme. Poi §8. Poi il piano. Poi il codice.
+
+✅ **Nessuna misura la blocca.** M-3 è chiusa (evidenze più sotto, e vanno **trasferite
+nella §7**). Le misure ancora aperte — M5 — richiedono una GUI, cioè il sotto-progetto 2.
+
+### ⚠️ Le due domande che la §7 deve decidere, e che nessuna misura decide al posto sua
+
+Le ha sollevate M-1 (§6.8.2) e M-3 le ha rese concrete con dei numeri.
+
+| # | Domanda | Cosa si sa già |
+|---|---|---|
+| **1** | il controllo della allow-list misura il grafo di **runtime** o quello **totale**? | lo scarto è reale e misurato: `kernel` ha **2** crate esterne a runtime e **4** in totale. Un proc-macro gira sull'host durante la build: **non può violare V29 a runtime**, ma **è superficie di supply chain**. `cargo tree -e no-proc-macro` separa i due, quindi entrambe le scelte sono implementabili — è una decisione, non un vincolo |
+| **2** | il **cancello bare-metal** entra fra i controlli automatici? | è provato che funziona (sonde B1/B2) e che è più forte della lista per nome — *prova* le crate invece di enumerarle. ⚠️ Ma l'unificazione delle feature di cargo può accendere, nella build reale per Windows, ciò che sul bare-metal restava spento: **condizione necessaria forte, non sufficiente**. Va deciso se si aggiunge alla lista o la sostituisce — la raccomandazione di chi ha misurato è **aggiungere, non sostituire** |
+
+📄 [`superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md)
+
+## Stato del sotto-progetto 1
+
+| § | Sezione | Stato | Cosa ha deciso |
+|---|---|---|---|
+| 0 | Perimetro e criterio di scaglionamento | ✅ | cosa entra e cosa si scaglia, con un criterio falsificabile a tre regole (A/B/C) |
+| 1 | Struttura delle crate e regole di importazione | ✅ | cinque crate: `kernel` · `platform` · `secrets` · `simulator` · `daemon`. Più [ADR-0031](adr/0031-dipendenze-del-kernel-parte-del-confine.md), nato da una misura |
+| 2 | Il substrato iniettabile | ✅ | esecutore nel `kernel`, `Reactor` come porta, nessun thread nel percorso decisionale |
+| 3 | Il simulatore DST | ✅ | cosa sostituisce, tempo virtuale, iniezione dei guasti, il seme e cosa **non** è |
+| 4 | Giornale, riconciliazione, persistenza | ✅ | write-ahead, riconciliazione su un **insieme**, [ADR-0032](adr/0032-motore-di-persistenza.md) `redb` |
+| 5 | Arbitro GPU, e la lacuna su I2 | ✅ | tre consumatori GPU nella GUI, quota di presentazione, I2 sui worker imposto dal **compilatore**. Più [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) |
+| 6 | Gateway, sensori, permessi, degrado | ✅ | schema IPC in `kernel` con **`bincode`**, **timbro di build** contro la GUI stantia, il **gettone non falsificabile** nominato una volta, «costo» del sensore separato in due |
+| **7** | **La porta di qualità: i controlli automatici** | ⏭️ **da presentare** | **non bloccata**: M-3 è chiusa. Deve assorbire le evidenze di M-3 e decidere le **due domande** qui sopra |
+| 8 | Copertura V1–V37 e Q1–Q24 | ⬜ | |
+
+### Le decisioni aperte dalla §0.5 — tre previste, una emersa
+
+| # | Decisione | Esito |
+|---|---|---|
+| 1 | GPU della GUI non arbitrata | ✅ [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): quota di presentazione sottratta, concessione tenuta dal **core** |
+| 2 | Motore di persistenza | ✅ [ADR-0032](adr/0032-motore-di-persistenza.md): `redb` 4.1.0 con backend nostro |
+| 3 | Dove vive l'esecutore | ✅ nel `kernel`, con `Reactor` come porta (§2.4) |
+| 4 | Dipendenze del kernel nel confine I3 | ✅ [ADR-0031](adr/0031-dipendenze-del-kernel-parte-del-confine.md) — **non prevista**, emersa da una misura |
+
+### Misure eseguite, e quelle ancora aperte
+
+Tutte con `rustc 1.95.0` · `cargo 1.95.0` · Windows 11. Evidenze complete nella spec.
+
+| # | Domanda | Esito |
+|---|---|---|
+| M-4 | un runtime di ecosistema è usabile sotto `no_std`? | ✅ **sì** — l'attesa contraria era falsa. 55 crate nel grafo, fra cui `getrandom` |
+| M-5 | un esecutore `no_std` senza `unsafe` fa avanzare `Future` reali? | ✅ **sì, con zero dipendenze**. Un `Waker` su misura invece **non** è costruibile: `E0133` |
+| M-7 | quanto costa una decisione dell'arbitro? | `request` ≤ 100 ns · `release` p99 **500 ns** a coda realistica, 86,6 µs a coda 2000 |
+| M-2 | `simulator` regge `no_std`? | ✅ **sì**. 100 corse → 1 traccia · 20 000 ms virtuali in **25,8 µs** · crash riproducibile 5/5 |
+| M-8 | i quattro requisiti di §10.6 su `redb` | 1 ✅ · 2 ✅ · 3 ⚠️ si stabilizza in alto · 4 ✅ **12/12 crash recuperati** |
+| M-6 | `BTreeMap`/`Vec` bastano alle strutture del kernel | ✅ **chiusa dall'esistenza di M-7**: il suo prototipo è `no_std`, zero dipendenze, tutto su `BTreeMap`, e l'arbitro è la struttura più complessa del kernel finora. Resta aperta solo per ciò che introdurrà la §6 |
+| M-1 | serializzatore per lo schema IPC con **grafo transitivo** accettabile | ✅ **sì, tutti e cinque i candidati provati.** Scelto `bincode` 2.0.1 (2 crate di runtime). Esito **A**: lo schema sta in `kernel`, il grafo di §1.2 non cambia |
+| M-3 | allow-list di ADR-0031 esprimibile con la toolchain standard, provata in negativo | ✅ **sì, esito A** — con `cargo tree`, **non** con `cargo metadata`. Quattro sonde in negativo, entrambe le direzioni dell'errore. Evidenze qui sotto |
+| **M5** | quanta VRAM prende la presentazione della GUI | ⬜ **aperta e dichiarata tale** — richiede una GUI: sotto-progetto 2, accanto a M1–M4 di ADR-0029 |
+
+#### M-3, per esteso — ⚠️ **da trasferire nella §7 quando la si scrive**
+
+È l'unica misura le cui evidenze **non stanno ancora nella spec**, perché la sezione che
+le ospita non è scritta. Trasferirle è parte del lavoro della §7, non un extra.
+
+Eseguita il **2026-08-07** · `rustc 1.95.0` · `cargo 1.95.0` · Windows 11. Workspace di
+prova che replica il layout reale: `kernel` (`no_std`+`forbid`, con `bincode`) ·
+`simulator` (`no_std`+`forbid`, dipende da `kernel`) · `platform` (std) · `daemon`.
+
+**Esito A: esprimibile con la sola toolchain standard.** Nessuno strumento esterno.
+
+| Scoperta | |
+|---|---|
+| ⛔ **`cargo metadata` non va bene** | le *feature attive* che riporta sono corrette, ma il suo elenco `deps` **ignora le feature**: mostra anche le dipendenze opzionali spente. Sul caso reale segnalava 11 crate esterne invece di 2, fra cui `serde` e `syn` che **non vengono compilate** |
+| ✅ **`cargo tree` sì** | risolve davvero le feature. `--prefix depth --format {p}` dà un output ricostruibile, e `-e no-proc-macro` separa il grafo di runtime da quello totale |
+| costo dichiarato | `cargo tree` è un'interfaccia **pensata per gli umani**: nessuna garanzia di stabilità del formato, a differenza di `cargo metadata`. È il prezzo di avere le feature risolte |
+
+**Le sonde, tutte viste fallire e poi tornare verdi:**
+
+| # | Sonda | Atteso | Osservato |
+|---|---|---|---|
+| N1 | violazione **transitiva** — tolta `unty` dalla lista | fallisce **nominando il rimbalzo** | ✅ `X unty <- kernel -> bincode -> unty` |
+| N2 | `getrandom` diretto in `kernel` | fallisce | ✅ `X getrandom <- kernel -> getrandom` |
+| N3 | `getrandom` in `simulator` | fallisce | ✅ segnalato solo su `simulator`, non su `kernel` |
+| **N4** | **guardia contro il falso positivo**: `getrandom` in **`platform`** | ⚠️ **non deve scattare** | ✅ `CONFORME`, exit 0 — e verificato che `platform` lo raggiunga davvero |
+| B1 | cancello bare-metal su `kernel` e `simulator` | passano | ✅ entrambi |
+| B2 | idem con `getrandom` in `kernel` | fallisce | ✅ `target is not supported` |
+
+**N4 è la sonda che di solito si dimentica.** Un controllo che scatta dove non deve è
+peggio di uno assente: insegna a ignorare l'audit. `platform` **deve** poter toccare
+l'OS — è il perimetro esplicito di ADR-0031.
+
+**La correzione che M-3 ha imposto a una riga della §6.1.1:** `simulator` non aggiunge
+voci proprie, ma la sua lista **non è vuota** — dipende da `kernel`, e la regola 2 è sul
+grafo *transitivo*. Scritto «resta vuota», misurato `bincode kernel unty`.
+
+**Cosa la §7 deve ancora decidere**, e che M-3 non decide al posto suo: le due domande in
+fondo a questo documento.
 
 Lo stack non è più una domanda aperta:
 
@@ -36,29 +134,38 @@ Lo stack non è più una domanda aperta:
 | **0029** | ⚠️ **guscio: aperto** — Tauri o Electron | **niente**: sono argomenti, non misure. È il motivo per cui è `Proposed` |
 | **0030** | interfaccia in **Vue 3** | merito + competenza del proprietario, criterio legittimo qui e non in ADR-0026 |
 
-### Le due cose aperte, e perché non bloccano
+### L'unica cosa aperta, e perché non blocca
 
 | Aperta | Si chiude con | Blocca il sotto-progetto 1? |
 |---|---|---|
-| **guscio della GUI** (ADR-0029) | quattro misure M1–M4 su un frontend Vue minimo con scena 3D, sui due gusci | **no**: il sotto-progetto 1 è interamente Rust e non tocca la GUI |
-| **GPU della GUI non arbitrata** | un ADR quando si progetta l'arbitro | **no, ma è lì che va chiusa** — è L1, non GUI |
+| **guscio della GUI** (ADR-0029) | cinque misure **M1–M5** su un frontend Vue minimo con scena 3D, sui due gusci | **no**: il sotto-progetto 1 è interamente Rust e non tocca la GUI |
 
-#### La lacuna su I2, per esteso
+#### Come la lacuna su I2 è stata chiusa — [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
 
-[ADR-0005](adr/0005-arbitrato-gpu-su-due-dimensioni.md) e
-[design/02](design/02-arbitrato-gpu.md) **non menzionano mai la GUI**. La verifica di I2
-è scritta solo sui worker: «nessun *worker* si avvia senza una concessione valida».
+Il problema: [ADR-0005](adr/0005-arbitrato-gpu-su-due-dimensioni.md) e
+[design/02](design/02-arbitrato-gpu.md) non menzionavano mai la GUI, e la verifica di I2
+era scritta sui soli worker.
 
-Ma un viewer 3D (G6) usa la GPU, e il compositing della webview la usa anche senza 3D.
-Durante un render TRELLIS2 che vuole 13–14 GB su 16, quella VRAM è contesa. Tre uscite:
+**Le tre uscite enumerate non erano tre opzioni per un problema: erano tre risposte
+parziali per tre consumatori diversi**, che erano stati trattati come uno solo.
 
-| Opzione | Conseguenza |
+| # | Consumo GPU della GUI | Governo | Rifiuto esecutivo? |
+|---|---|---|---|
+| 1 | compositing della webview | quota di presentazione sottratta, **concessione tenuta dal core** | ❌ no |
+| 2 | viewer 3D entro la quota | stessa quota | ❌ no |
+| 3 | viewer 3D oltre la quota | concessione ordinaria via IPC, prelazionabile | ✅ sì |
+
+Tre cose da sapere, se qualcuno riapre il tema:
+
+| | |
 |---|---|
-| il viewer chiede una concessione come tutti | I2 resta vero, ma la GUI smette di essere «solo stato di presentazione» (I1) |
-| il viewer è esente | **I2 è falso come scritto** e va riformulato dichiarando il rischio |
-| quota sottratta, come per l'audio | riusa il meccanismo che ADR-0005 ha già inventato per la voce |
+| **il titolare è il core, non la GUI** | la GUI non può *chiedere*: chi alloca è il compositor, che non ha un percorso di richiesta. Una quota sottratta **senza titolare** lascerebbe I2 falso — gotcha #4 |
+| **I2 per la GUI è più debole in natura** | verso un worker il rifiuto è esecutivo, verso il compositor no. La quota è una promessa di budget, non un'imposizione. Dichiarato, non nascosto |
+| **una divergenza registrata** | HANDOFF affermava che l'uscita A «incrina I1». **Non regge**: un worker tiene una concessione ed è dichiarato `possiede: nulla`. A è stata scartata per un motivo diverso e più forte |
 
-Vale identico per Tauri e per Electron: **è una questione di kernel, non di guscio.**
+Vale identico per Tauri e per Electron: **è una questione di kernel, non di guscio** — e
+la §5 lo ha confermato con un motivo, esportando verso ADR-0029 il discriminante **M5**
+invece di importarne uno.
 
 Toolchain verificata il 2026-08-06: `rustc` 1.95.0 · `cargo` 1.95.0 · `clippy` 0.1.95.
 
@@ -75,8 +182,8 @@ Conseguenze **misurate**, non raccomandazioni. Vanno tradotte in controlli autom
 
 ## Non rilitigabile
 
-Venticinque ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
-nuovo che lo superi** (`Superseded by`), non una conversazione. Le otto decisioni che
+32 ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
+nuovo che lo superi** (`Superseded by`), non una conversazione. Le decisioni che
 è più probabile qualcuno voglia riaprire per comodità, e la ragione per cui non si fa:
 
 | Decisione | Se la riapri |
@@ -90,6 +197,10 @@ nuovo che lo superi** (`Superseded by`), non una conversazione. Le otto decision
 | **Nessun modello** nel percorso decisionale del kernel (ADR-0020) | un fallimento del kernel smette di essere sempre un difetto, e la DST diventa impossibile |
 | L'anello 4 **propone**, l'utente approva (ADR-0009) | il harness si auto-modifica in silenzio e diventa indebuggabile |
 | Il core è **Rust** (ADR-0026) | riaprirlo significa rifare SP-5 e SP-6, i cui esiti sono misurati e registrati con seed e versioni. Il criterio che ha deciso è lo **spareggio #1**, e discende da V29 e ADR-0021: **rimettere in discussione il linguaggio significa rimettere in discussione la DST**, non il linguaggio |
+| Le **dipendenze del kernel** sono parte del confine I3 (ADR-0031) | `no_std` blocca solo il *nominare* `std`. Misurato: una crate con `no_std` **e** `forbid(unsafe_code)` legge un file dal disco attraverso una dipendenza. Senza la lista, I3 è controllato su un lato solo |
+| Il motore è **`redb` con backend nostro** (ADR-0032) | il backend nostro non è un dettaglio: è il punto in cui il **livello 2** di crash diventa iniettabile. Prenderne uno con l'I/O non sostituibile rinuncia a metà della verifica |
+| L'**esecutore vive nel kernel** (§2.4) | prendere un runtime di ecosistema restituisce a lui l'ordine delle attività — cioè esattamente il controllo che lo spareggio #1 aveva comprato escludendo Go |
+| La **concessione di presentazione la tiene il core** (ADR-0033) | la scorciatoia tentante è «esentiamo la GUI e amen». Esentarla rende **I2 falso** e indebolisce Q2 in silenzio; darla in mano alla GUI crea una concessione che si perde ogni volta che la GUI muore — cioè in qualsiasi istante, per G3. Il titolare deve avere vita lunga, e l'unico che ce l'ha è il core |
 
 ## Le tre proprietà che non si aggiungono dopo
 
@@ -125,6 +236,15 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 13 | **Un lint non è il compilatore** | `clippy` ferma la violazione ma `cargo build` no, e un `#[allow]` per riga la annulla. Solo `forbid` e `no_std` producono un divieto non scavalcabile. **Misurato**: la regola clippy ha bloccato un uso *legittimo* di `Instant::now()` in un test, e ha richiesto un `allow` — cioè ha dimostrato di essere aggirabile mentre faceva il proprio lavoro |
 | 14 | **Un test negativo va provato _in negativo_** | il piano degli spike conteneva **due sonde di non-vacuità sbagliate su tre**: quella di TypeScript modificava il tipo sbagliato e il controllo passava comunque, quindi non provava nulla. Un controllo che non si è visto fallire **non è un controllo**. Vale per ogni test di compilazione fallita, per ogni regola di importazione, per ogni `grep` di conformità |
 | 15 | **Un'evidenza scritta prima della misura è un'ipotesi, non un risultato** | il piano dettava il testo delle evidenze da riportare. Tre di quelle affermazioni sono risultate **false** alla misura — inclusa una che nascondeva un buco reale nel confine dei tipi. Si esegue, si misura, si registra ciò che si è visto; dove diverge, si registra la divergenza |
+| 16 | **`no_std` impedisce di _nominare_ `std`, non di _raggiungere_ l'OS** | non è transitivo sul grafo delle dipendenze. **Misurato**: una crate con `#![no_std]` **e** `#![forbid(unsafe_code)]` — gli attributi esatti che ADR-0026 impone al kernel — legge un file dal disco e l'orologio di sistema chiamando una dipendenza, e *compila ed esegue*. ADR-0026 resta corretto: dice che `E0433` blocca `std::fs`, e lo blocca. Ciò che non era mai stato misurato è che bastasse a garantire I3. **Non basta**: la lista delle dipendenze del kernel è l'altra metà del confine. Evidenze e comandi in [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) §1.4.1 |
+| 17 | **Iniettare un guasto dove il codice non arriva è una prova _vacua_** | è il gotcha #14 travestito da successo: la prima misura sui crash di `redb` iniettava alle operazioni 12, 20 e 33, che quella transazione non raggiungeva mai. Tre prove su cinque non provavano nulla, e stavano per essere riportate come `5/5`. **Si conta prima quante operazioni compie davvero il codice**, e si inietta dentro quel numero — poi si verifica che il guasto sia *scattato*, non solo che il test sia passato |
+| 18 | **Misurare il transitorio invece del regime** | la prima misura sulla potatura di `redb` guardava **un solo giro** e concludeva «lo spazio non viene riusato». Falso: a regime si stabilizza (32 900 KiB identici a 4, 6 e 8 giri). Per qualunque proprietà di stato stazionario, un solo giro non è una misura |
+| 19 | **Un avanzamento nullo dichiarato riuscito è un ciclo infinito** | nel reattore a orologio virtuale, `advance()` prendeva il minimo di *tutte* le scadenze. Quelle dei task già conclusi sono nel passato: l'orologio non si muoveva e la funzione diceva di aver avanzato. Va filtrato alle scadenze **strettamente future**, e l'esecutore deve avere una **guardia sui giri** — un blocco va visto come errore, non come test che non finisce |
+| 20 | **Un crash lascia _più_ passi in dubbio, non uno** | con esecuzione interlacciata due run possono avere entrambe l'intento scritto quando il processo cade. **Misurato**: seme 99 → passi `[3, 7]`. ADR-0007 diceva già «per *ogni* passo in dubbio», quindi la semantica reggeva — ma **l'aiutante `passo_in_dubbio` dello spike non sale così com'è**: restituiva un solo passo perché assumeva sequenzialità, e con l'interlacciamento dà un **falso negativo** |
+| 21 | **Il rifiuto dell'arbitro è esecutivo solo verso ciò che avviamo noi** | un worker che riceve `Rifiutata` non parte: il rifiuto *è* il meccanismo. Il compositor della webview **compone lo stesso**, perché non lo avviamo noi, non dichiara un profilo e non ha un percorso di richiesta. Verso di lui una quota è una **promessa di budget, non un'imposizione**, e I2 vale in una forma più debole *in natura* — non per implementazione mancante. Il corollario che quasi sfugge: una quota sottratta **senza titolare della concessione** non salva I2 affatto (è il gotcha #4 letto al contrario). Il titolare dev'essere un processo a vita lunga, e l'unico è il core — ADR-0033 |
+| 22 | **Che una versione esista non vuol dire che funzioni** | `cargo add bincode` risolve alla **3.0.0**, che è l'ultima pubblicata e il cui **intero sorgente** è `compile_error!("https://xkcd.com/2347/")`: un segnaposto contro l'occupazione del nome. La versione utile è la `2.0.1`, e il manifesto va **appuntato a `2`** con la ragione scritta accanto, o il prossimo aggiornamento «sistema» il vincolo e rompe la build. È la stessa classe della riga su `sled` in ADR-0032, ma peggiore: lì la versione utile era solo più vecchia, qui **la più recente esiste ed è inutilizzabile**. Corollario: in una misura sui candidati, `cargo add --dry-run` dice che il nome si risolve — **non** che il codice compili |
+| 23 | **`cargo metadata` non risolve le feature; `cargo tree` sì** | i due strumenti danno grafi diversi sullo stesso workspace, e la differenza è grande. `cargo metadata` riporta correttamente le *feature attive* di ogni nodo, ma il suo elenco `deps` **le ignora**: elenca anche le dipendenze opzionali **spente**. **Misurato**: sul kernel con `bincode` senza la feature `serde`, `cargo metadata` segnalava **11** crate esterne — fra cui `serde` e `syn`, che non vengono compilate — contro le **2** reali di `cargo tree`. Un controllo di allow-list costruito sull'interfaccia macchina «giusta» sovra-segnala di 5×. Costo dell'alternativa, dichiarato: `cargo tree` è pensato per gli umani e non garantisce la stabilità del formato |
+| 24 | **Un controllo si prova in _due_ direzioni, non una** | il gotcha #14 copre metà del problema: un controllo mai visto fallire non è un controllo. L'altra metà è che **un controllo che scatta dove non deve è peggio di uno assente**, perché insegna a ignorare l'audit. In M-3 la sonda decisiva è stata **N4**: mettere `getrandom` dentro `platform` — dove ADR-0031 lo **ammette** — e verificare che il controllo **resti verde**. Senza quella sonda, una regola troppo larga sarebbe passata per una regola che funziona. È la stessa ragione per cui `check-docs.sh` conta le sezioni duplicate **per file** e non sull'insieme |
 
 ## Il metodo di lavoro
 
@@ -146,7 +266,7 @@ diventassero codice.
 
 | | |
 |---|---|
-| ❌ ri-derivare l'architettura | è in **30 ADR**, ciascuno con alternative scartate e motivo |
+| ❌ ri-derivare l'architettura | è in **33 ADR**, ciascuno con alternative scartate e motivo |
 | ❌ riscrivere `tracciabilita.md` da zero | 170 funzionalità già mappate: si **aggiorna**, non si rigenera |
 | ❌ ri-cercare lo stato dell'arte già tracciato | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ rifare gli spike SP-5 e SP-6 | esiti, seed, versioni e comandi sono in [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md). I prototipi esclusi sono recuperabili dalla storia git, lo SHA è lì |
@@ -164,9 +284,10 @@ per chiudersi.
 | ~~Interfaccia web o toolkit nativo~~ | ✅ **ADR-0027: web** | — |
 | ~~Ecosistema dei worker ML~~ | ✅ **ADR-0028: Python** | — |
 | ~~Framework dell'interfaccia~~ | ✅ **ADR-0030: Vue 3** | — |
-| ⚠️ **Guscio: Tauri o Electron** | ADR-0029 `Proposed`, misure M1–M4 | no |
-| ⚠️ **GPU della GUI non arbitrata** | ADR nel sotto-progetto 1 | no, ma va chiusa lì |
-| Motore di persistenza | ADR successivo; requisiti in §10.6, candidati Rust già verificati | l'implementazione |
+| ⚠️ **Guscio: Tauri o Electron** | ADR-0029 `Proposed`, misure **M1–M5** | no |
+| ~~GPU della GUI non arbitrata~~ | ✅ **ADR-0033**: quota di presentazione, concessione tenuta dal core | — |
+| **Quanto vale la quota di presentazione** | **M5**, insieme a M1–M4 | no: default conservativo dichiarato non misurato |
+| ~~Motore di persistenza~~ | ✅ **ADR-0032: `redb`** con backend nostro | — |
 | CPU della GUI con rendering reale (P3) | rimisura nel sotto-progetto 2 | no: il margine misurato è 21,4 % su 25 %, **stretto** |
 | Curva qualità/VRAM di TRELLIS2 | SP-1 | no: tara i profili di risorsa |
 | Voce < 600 ms sotto carico | SP-2 | no |
@@ -181,9 +302,9 @@ per chiudersi.
 | [`roadmap.md`](roadmap.md) | 11 sotto-progetti, ordine, dipendenze, decisioni aperte |
 | [`tracciabilita.md`](tracciabilita.md) | 170 funzionalità → dove vive ciascuna |
 | [`README.md`](README.md) | indice di ADR e diagrammi |
-| [`adr/`](adr/) | **30 decisioni**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
+| [`adr/`](adr/) | **33 decisioni**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
-| [`superpowers/specs/`](superpowers/specs/) | la spec del kernel, §0–§10 |
+| [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§6 approvate, con tutte le evidenze delle misure |
 | [`superpowers/plans/`](superpowers/plans/) | il piano dello stack — **eseguito**, con l'errata in testa che documenta cosa il piano sbagliava |
 | [`riferimenti.md`](riferimenti.md) | fonti esterne, con data e con **cosa non abbiamo adottato** |
 | [`../spikes/`](../spikes/) | **prove, non kernel.** `PROTOCOLLO.md` criteri e soglie · `CANDIDATI.md` pre-selezione · `RISULTATI.md` esiti, seed, versioni, evidenze · `GUI-REQUISITI.md` G1–G21 e P1–P4 |
@@ -196,5 +317,25 @@ per chiudersi.
 Alla chiusura di ogni sotto-progetto, **nello stesso passaggio**: `roadmap.md`,
 `tracciabilita.md`, lo stato degli spike, `CLAUDE.md` se cambia il prossimo passo, e
 questo file se emergono gotcha nuovi.
+
+`tracciabilita.md` **non** è stato toccato in questa sessione: nessuna funzionalità ha
+cambiato sede, e la regola dice di aggiornarlo alla *chiusura* del sotto-progetto.
+
+### Due trappole di `check-docs.sh`, da sapere prima di scrivere
+
+**1 · I conteggi.** La guardia confronta con la realtà **ogni** occorrenza di
+`<cifra> ADR`, `<cifra> ADR in stato ...` e `<cifra> decisioni architetturali` nei
+documenti di stato. Scrivere `2 ADR nuovi` la fa scattare, perché legge `2` come il
+totale. **Per i numeri piccoli si usano le parole** — «due ADR nuovi» — e le cifre si
+riservano ai conteggi veri. Gli esempi vanno nei code span, che la guardia ignora.
+
+⚠️ La guardia ha due punti ciechi **dichiarati**: un numero scritto a parole le è
+invisibile, e così pure `<cifra> decisioni` senza «architetturali». Entrambi hanno già
+prodotto conteggi stantii in questo repository.
+
+**2 · La numerazione delle sezioni.** Il controllo sui duplicati è **per file**, e il suo
+regex cattura `^#{2,3} <numero>`. Quindi `### 7.4.1` verrebbe letto come un duplicato di
+`### 7.4`. **Le sotto-sotto-sezioni si scrivono con `####`**, che il regex non cattura —
+verificato in questa sessione sulle §5 e §6, che ne hanno una decina ciascuna.
 
 Un documento di stato disallineato è peggio di nessun documento: mente con autorevolezza.

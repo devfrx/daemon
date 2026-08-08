@@ -25,11 +25,12 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
-  /superpowers:subagent-driven-development   per eseguire un piano, un subagente
-                                             fresco per compito. E' la modalita' scelta
+  /superpowers:subagent-driven-development   per ESEGUIRE un piano: un subagente
+                                             fresco per compito, con revisione fra
+                                             uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
   /superpowers:brainstorming                 prima di qualunque lavoro creativo
-  /superpowers:writing-plans                 quando si scrivera' un piano nuovo
+  /superpowers:writing-plans                 quando si scriverà un piano nuovo
 
 LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI
   1. CLAUDE.md

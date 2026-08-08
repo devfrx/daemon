@@ -50,6 +50,7 @@ compilazione fallita, allow-list sui due grafi delle dipendenze, cancello senza 
 | `PORTA VERDE.` · `PORTA ROSSA` | `GATE GREEN.` · `GATE RED` |
 | `I3 violato` · `grafo di build cambiato` | `I3 violated` · `build graph changed` |
 | `OK — nessuna incoerenza.` | `OK — no inconsistencies.` |
+| `.github/workflows/porta.yml` — `name: porta di qualità`, job `porta` | `.github/workflows/quality-gate.yml` — `name: quality gate`, job `gate`. ⚠️ **Allineato il 2026-08-09, non il giorno dell'esecuzione:** era l'ultimo residuo italiano nel codice, ed è stato lasciato indietro. ⛔ Cambiarlo era **gratis solo finché il workflow non fosse mai stato eseguito** — committato il 2026-08-08, ramo mai pushato, quindi nessuna regola di protezione del ramo poteva ancora riferirsi a quei nomi. Dopo la prima corsa non lo sarebbe più stato |
 
 📌 **La tabella elenca solo ciò che il piano _scrive_.** Il cancello sugli attributi —
 `scripts/gate-attributes.sh` — **non compare nel piano**: è nato dopo, dal difetto di **E4**.

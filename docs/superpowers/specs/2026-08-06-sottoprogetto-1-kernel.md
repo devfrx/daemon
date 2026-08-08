@@ -2691,6 +2691,7 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 | V31 | il **seme** entra nell'elenco versionato, la **proprietà** entra nella suite | si reintroduce il difetto che quella proprietà proteggeva → la campagna fallisce e **nomina il seme** | il difetto corretto → la campagna resta verde, e l'elenco dei semi non produce falsi rossi |
 | **Q4** · I5 · §6.10 | sul canale verso i worker, i **byte consumati** dalla decodifica sono pari alla **lunghezza dichiarata** dal frame (§6.10.4) | frame troncato, o con una coda dopo l'ultimo elemento → fallisce | frame esatto → resta verde |
 | **1b** · validità di §7.4.1 A · B · C | le crate vincolate **dichiarano davvero** i propri attributi — `scripts/gate-attributes.sh` | `#![forbid(unsafe_code)]` tolto, oppure `#![deny(unsafe_code)]` al suo posto → scatta e nomina file e attributo | `platform`, `secrets` e `daemon` non ne dichiarano nessuno e **restano verdi** |
+| I3 · **V29** | le crate vincolate **non hanno un build script** — `scripts/gate-attributes.sh` | `crates/kernel/build.rs` o `crates/simulator/build.rs` → scatta e **nomina il file** · `build = "gen.rs"` nel manifesto → scatta | `crates/platform/build.rs` **resta verde** · `build = false`, che il build script lo **disattiva**, resta verde |
 
 > ⛔ **La riga degli attributi è aggiunta il 2026-08-08, e la lacuna che chiude era stata
 > misurata eseguendo il Traguardo 1.** Senza di lei si poteva togliere
@@ -2715,6 +2716,47 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 > sepolto in un commento di blocco `/* ... */` sfugge ancora; l'ancora a inizio riga chiude il
 > caso `//`, che è quello reale, e chiudere anche l'altro richiederebbe un parser — un rimedio
 > più fragile del buco.
+
+> ⛔ **La riga del build script è aggiunta il 2026-08-09, e la lacuna è stata _misurata_, non
+> temuta.** Un `crates/kernel/build.rs` che chiama `std::time::SystemTime::now()`,
+> `std::fs::metadata()` e `std::env::var()` e inietta il risultato con `cargo:rustc-env` ha
+> lasciato la porta **verde su sei controlli su sei**. Ciascuno manca il bersaglio per una
+> ragione propria:
+>
+> | Controllo | Perché non lo vede |
+> |---|---|
+> | `cargo build` · `cargo test` | un build script è un target **separato**, compilato **per l'host**: usare `std` lì è il suo mestiere |
+> | `gate-no-os.sh` | i build script si compilano per l'host **anche** con `--target`. Non solo non lo coglie: **lo esegue** — verificato leggendo `target/debug/build/kernel-*/output` |
+> | `gate-deps.sh` | legge il **grafo**, e uno script senza dipendenze proprie non aggiunge nodi. ⚠️ Una `[build-dependencies]` **verrebbe** colta: l'invisibile è lo script *senza* dipendenze |
+> | `gate-attributes.sh` | leggeva solo `src/lib.rs`. `build.rs` ha attributi propri, e il `forbid` di `lib.rs` non lo raggiunge — per questo il controllo nuovo vive **lì**: era il suo punto cieco |
+> | `check-docs.sh` | non guarda il codice |
+>
+> ⛔ **Perché la cella «Difende» dice `I3` · `V29` e non `1b`.** Non sostiene la validità di
+> un'altra riga: difende **due invarianti direttamente**. `I3` perché sono chiamate all'OS
+> dentro la crate del kernel; `V29` perché `cargo:rustc-env` più `env!()` **cuoce nel kernel**
+> un valore letto dal mondo al momento della build. È il **gotcha #28** alla lettera — *un
+> parametro non consegnato è una costante, e una costante è invisibile* — nella forma più
+> difficile da vedere, perché il valore non compare in nessuna firma.
+>
+> ⛔ **Il rimedio è TOGLIERE, non elencare.** È il rimedio del grafo **spedito** di §7.3.1, non
+> quello del grafo di build: un build script nel kernel non si giustifica e non si aggiunge a
+> nessuna lista. Il messaggio dello script lo dice, e dice anche **perché** — altrimenti sembra
+> pedanteria e la prima persona che ha fretta lo aggira.
+>
+> ⚠️ **Il perimetro è `kernel` e `simulator` soltanto**, e la directory è **derivata** dalla
+> lista dei file vincolati, così non nasce un secondo posto da tenere allineato. `platform`,
+> `secrets` e `daemon` **possono** avere un build script: è il posto dove l'I/O deve vivere, e
+> un controllo che scattasse anche lì sarebbe rosso per il motivo sbagliato — gotcha #24. È la
+> contro-sonda della riga, ed è la direzione che si dimentica.
+>
+> 📌 **Due vie, non una.** Rinominare `build.rs` in `gen.rs` e dichiarare `build = "gen.rs"` nel
+> manifesto è lo stesso oggetto sotto altro nome, e il solo test di esistenza del file non lo
+> vedrebbe. Le **virgolette** nel motivo distinguono quel caso da `build = false`, che il build
+> script lo **disattiva** e deve restare verde. ⚠️ **Che un manifesto solo basti è misurato, non
+> supposto:** `build` **non** è fra le chiavi che `[workspace.package]` può passare in eredità —
+> provato su `cargo` 1.95.0, `build.workspace = true` è rifiutato in fase di parsing con
+> *«invalid type: map, expected a boolean, string or array»*. Il manifesto della crate è quindi
+> l'unico posto da guardare.
 
 > ⚠️ **La riga dei byte consumati è aggiunta il 2026-08-08, e non è un controllo nuovo.** È
 > il controllo 5 della §6.10.5, deciso con F1b e
@@ -2988,7 +3030,7 @@ essere utile pur restando in funzione.
 | Costo | |
 |---|---|
 | **la porta è lavoro prima di ogni valore visibile** | come il simulatore: è lo stesso RK-9, già accettato nella spec del kernel |
-| **dodici voci sono di livello 2** | cioè cancellabili. ADR-0031 lo dichiara per una sola; qui vale per tutte, e non è mitigabile — è la natura del livello, non un'omissione. ⚠️ **Ricontato sulla tabella §7.4.2 due volte il 2026-08-08**: diceva «nove» prima delle righe di ADR-0036 e ADR-0037, e «undici» prima della riga degli **attributi**, aggiunta eseguendo il Traguardo 1 |
+| **tredici voci sono di livello 2** | cioè cancellabili. ADR-0031 lo dichiara per una sola; qui vale per tutte, e non è mitigabile — è la natura del livello, non un'omissione. ⚠️ **Ricontato sulla tabella §7.4.2 due volte il 2026-08-08**: diceva «nove» prima delle righe di ADR-0036 e ADR-0037, e «undici» prima della riga degli **attributi**, aggiunta eseguendo il Traguardo 1. ⚠️ **Terzo riconteggio il 2026-08-09**: diceva «dodici» prima della riga del **build script**, aggiunta chiudendo la lacuna che una revisione aveva misurato — sei controlli su sei verdi con un `build.rs` nel kernel |
 | **si paga a ogni commit, non una volta** | due grafi, un cancello, una campagna, due suite di contratto |
 | **`cargo tree` è un'interfaccia per umani** | un cambio di formato rompe **due** controlli in una volta sola |
 | **il bersaglio senza OS è un prerequisito dell'ambiente** | su una macchina pulita la porta è rossa finché non lo si installa, e per il motivo sbagliato |

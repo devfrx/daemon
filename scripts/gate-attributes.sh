@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # The attributes of the constrained crates, REALLY declared -- §7.4.1 block A, constraint 2 of §11.
 #
+# TWO THINGS, AND THE SECOND IS NOT A BONUS: the attributes are declared (below), and the
+# constrained crates HAVE NO BUILD SCRIPT (further down, with its own measurement). They live
+# in the same file because they share the same list of crates, and that list has ONE home.
+#
 # THE MEASUREMENT THAT JUSTIFIES IT, and it is not a hypothesis. Without this check one can
 # remove '#![forbid(unsafe_code)]' from crates/kernel/src/lib.rs, write a REAL 'unsafe' in
 # the kernel, and the gate stays GREEN on all five preceding checks. Measured.
@@ -72,6 +76,63 @@ for f in $CONSTRAINED; do
     echo "      ⛔ Without it, an 'unsafe' in the kernel compiles and NO other check sees it:"
     echo "      the compile_fail cases redeclare their own attributes and do not look here."
   fi
+
+  # ⛔ NO BUILD SCRIPT ON THE CONSTRAINED CRATES, AND THE HOLE WAS MEASURED, not feared.
+  # A 'crates/kernel/build.rs' calling std::time::SystemTime::now(), std::fs::metadata() and
+  # std::env::var(), injecting the result with 'cargo:rustc-env', left the gate GREEN ON SIX
+  # CHECKS OUT OF SIX. Each one misses the target for its own reason:
+  #   cargo build / cargo test  a build script is a SEPARATE target, compiled FOR THE HOST:
+  #                             using 'std' there is its job, not a violation.
+  #   gate-no-os.sh             build scripts compile for the host EVEN WITH --target. It does
+  #                             not merely miss it: it RUNS it.
+  #   gate-deps.sh              it reads the GRAPH. A build script with no dependencies of its
+  #                             own adds no node. ⚠️ A '[build-dependencies]' IS caught: the
+  #                             invisible one is the script WITHOUT dependencies.
+  #   gate-attributes.sh        it read only 'src/lib.rs'. 'build.rs' has attributes of its own
+  #                             and the 'forbid' of 'lib.rs' does not reach it. That is why the
+  #                             check lives HERE: this is the script whose blind spot it was.
+  #   check-docs.sh             it does not look at the code at all.
+  #
+  # WHAT IT VIOLATES: I3 -- OS calls inside the kernel crate -- and V29, the third property
+  # that cannot be retrofitted: 'cargo:rustc-env' plus 'env!()' BAKES INTO THE KERNEL a value
+  # read from the world at build time. It is gotcha #28 to the letter -- a parameter that is
+  # not delivered is a constant, and a constant is invisible.
+  #
+  # ⛔ PERIMETER: 'kernel' and 'simulator' ONLY, the same two the list above names, and the
+  # directory is DERIVED from that list so there is no second place to keep aligned.
+  # 'platform', 'secrets' and 'daemon' MAY have a build script: that is exactly where the I/O
+  # has to live, and a check firing there too would be red for the wrong reason -- gotcha #24.
+  crate_dir=$(dirname "$(dirname "$f")")
+  manifest="$crate_dir/Cargo.toml"
+
+  if [ -f "$crate_dir/build.rs" ]; then
+    report "$crate_dir/build.rs exists: a constrained crate must have NO build script."
+    echo "      ⛔ REMEDY: REMOVE IT. It is the remedy of an I3 violation on the shipped graph,"
+    echo "      not the one of the build graph: there is nothing to add to any list."
+    echo "      WHY IT IS NOT PEDANTRY: that file is compiled FOR THE HOST and runs with the"
+    echo "      whole of 'std' at hand -- SystemTime::now(), fs, env -- and with 'cargo:rustc-env'"
+    echo "      plus 'env!()' it BAKES what it read into the kernel as a constant. I3 and V29,"
+    echo "      gotcha #28. AND NO OTHER CHECK SEES IT: build and test compile it because that"
+    echo "      is a build script's job, gate-no-os.sh builds it for the host even with --target"
+    echo "      and RUNS it, gate-deps.sh adds no node for a script with no dependencies of its"
+    echo "      own, and check-docs.sh does not read code. Measured: six out of six GREEN."
+  fi
+
+  # ⚠️ SECOND ROUTE, and it is the one a rename takes: 'build = \"gen.rs\"' in the manifest is
+  # the same object under another name, and the existence test above does not see it. The
+  # QUOTE in the pattern is what tells it apart from 'build = false', which DISABLES the
+  # script and must stay green -- gotcha #24 again.
+  # ⚠️ ONE MANIFEST IS ENOUGH, and that is measured too, not assumed: 'build' is NOT among the
+  # keys '[workspace.package]' can hand down. Tried on cargo 1.95.0 -- 'build.workspace = true'
+  # is rejected at parse time with "invalid type: map, expected a boolean, string or array".
+  # So the crate's own manifest is the only place a build script can be declared from.
+  if [ ! -f "$manifest" ]; then
+    report "$manifest DOES NOT EXIST: the build-script check would read nothing and pass."
+  elif grep -qE '^[[:space:]]*build[[:space:]]*=[[:space:]]*"' "$manifest"; then
+    report "$manifest declares a build script with 'build = \"...\"'."
+    echo "      ⛔ REMEDY: REMOVE IT. Renaming 'build.rs' does not change what it is -- a host"
+    echo "      target with all of 'std', invisible to the other five checks. See above."
+  fi
 done
 
 # Second non-vacuity guard, on the same gotcha #26 but one level up: if the list above were
@@ -82,7 +143,8 @@ fi
 
 echo
 if [ "$failures" -eq 0 ]; then
-  echo "OK -- kernel and simulator declare the three attributes, and neither uses 'deny'."
+  echo "OK -- kernel and simulator declare the three attributes, neither uses 'deny', and"
+  echo "neither has a build script."
 else
   echo "$failures violations. A missing attribute is not style: it is the invariant vanishing without leaving a red anywhere else."
   exit 1

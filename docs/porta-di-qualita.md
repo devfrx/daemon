@@ -23,7 +23,11 @@
 compilazione, senza che nessuno lo lanci; `gate.sh` compila perché una porta che non
 compila non prova niente. La stessa distinzione è scritta in testa a `scripts/gate.sh`.
 
-La CI lancia lo stesso identico comando: `.github/workflows/porta.yml`.
+La CI lancia lo stesso identico comando: `.github/workflows/quality-gate.yml` — `name: quality
+gate`, job `gate`. ⚠️ **Rinominato il 2026-08-09, ed era l'ultimo residuo italiano nel codice:**
+il workflow non era **mai stato eseguito** — committato lo stesso giorno, ramo non ancora
+pushato — quindi nessuna regola di protezione del ramo poteva ancora riferirsi al nome vecchio.
+Dopo la prima corsa non sarebbe più stato gratis.
 
 ## Livello 1 — il compilatore
 
@@ -67,6 +71,7 @@ quella che deve restare verde.
 | allow-list, grafo **di build** | idem, e l'errore è **diverso** | N3 | N1 |
 | cancello senza OS su `x86_64-unknown-none` | `scripts/gate-no-os.sh` | B2 · **B4** | B1 · **B3** |
 | le crate vincolate **dichiarano davvero** i propri attributi | `scripts/gate-attributes.sh` | `forbid` tolto · `deny` al posto di `forbid` · attributi tolti a `simulator` · file atteso assente · lista dei vincolati vuota | stato pulito · `platform`, `secrets` e `daemon` |
+| le crate vincolate **non hanno un build script** | idem, e l'errore è **diverso** | `crates/kernel/build.rs` · `crates/simulator/build.rs` · `build = "gen.rs"` nel manifesto · manifesto assente | `crates/platform/build.rs` · `build = false` |
 | coerenza della documentazione | `scripts/check-docs.sh` | S1…S6c · S7 · S7b · S7c · S7d | C0 · C5 · **C6** |
 
 Le sonde, per nome:
@@ -84,6 +89,19 @@ Le sonde, per nome:
 | **B4** | il bersaglio non installato → uscita 1 e messaggio corretto. ⚠️ Vedi sotto: è la via *offline* |
 | **S1…S7d · C0 · C5 · C6** | **diciotto su diciotto**, con ripristino byte-identico della spec: le tredici del 2026-08-07 (§8.6.3) più le quattro di `S7` e la contro-sonda `C6`, aggiunte chiudendo la §7.1.1 |
 
+⛔ **La riga del build script è la sesta voce di livello 2, ed è entrata il 2026-08-09 su una
+lacuna _misurata_.** Un `crates/kernel/build.rs` che chiama `SystemTime::now()`,
+`fs::metadata()` e `env::var()` e inietta il risultato con `cargo:rustc-env` lasciava la porta
+**verde su sei controlli su sei**: `build` e `test` lo compilano perché è il mestiere di un
+build script, `gate-no-os.sh` lo compila **per l'host anche con `--target`** e **lo esegue**,
+`gate-deps.sh` non vede nodi nuovi se lo script non ha dipendenze proprie, `gate-attributes.sh`
+leggeva solo `src/lib.rs`, e `check-docs.sh` non guarda il codice. Difende **`I3` e `V29`
+direttamente** — non è di ramo 1b: `cargo:rustc-env` più `env!()` cuoce nel kernel un valore
+letto dal mondo alla build, che è il gotcha #28. **Il rimedio è TOGLIERE**, come per il grafo
+spedito, e il messaggio dello script lo dice insieme al perché — un controllo che sembra
+pedanteria viene aggirato. Vive dentro `gate-attributes.sh` perché è **il punto cieco di quello
+script**: `build.rs` ha attributi propri e il `forbid` di `lib.rs` non lo raggiunge.
+
 📌 **`gate-attributes.sh` è un controllo di testo, e non va promosso.** Cerca gli attributi
 con `grep` ancorato a inizio riga: prova che il divieto sia **dichiarato**, non che nel
 kernel non ci sia `unsafe`. Quella la prova il compilatore, ed è proprio ciò che questo
@@ -100,11 +118,13 @@ disponibile la guardia **non può scattare**. Scatta quando la riconciliazione f
 cioè **senza rete** — verificato: uscita 1 e messaggio corretto. È la via che rende
 utilizzabile una macchina isolata, non un controllo che sorveglia la macchina connessa.
 
-**Contro-sonde, per esteso:** N4 · B3 · la contro-sonda di `gate-attributes.sh` —
+**Contro-sonde, per esteso:** N4 · B3 · le due contro-sonde di `gate-attributes.sh` —
 `platform`, `secrets` e `daemon` non dichiarano nessuno dei tre attributi e **restano
-verdi**, perché non sono nella lista dei vincolati e un controllo che scattasse anche lì
-sarebbe rosso per il motivo sbagliato (gotcha #24) — e, al livello sopra,
-`crates/platform/tests/counter_probes.rs`.
+verdi**, e `crates/platform/build.rs` **resta verde** anch'esso, perché non sono nella lista
+dei vincolati e un controllo che scattasse anche lì sarebbe rosso per il motivo sbagliato
+(gotcha #24): `platform` è **il posto dove l'I/O deve vivere**. Più `build = false`, che il
+build script lo **disattiva** e va distinto da `build = "gen.rs"`, che lo dichiara. E, al
+livello sopra, `crates/platform/tests/counter_probes.rs`.
 
 ## Livello 3 — vuoto, e non è una svista
 

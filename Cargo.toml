@@ -1,0 +1,18 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/kernel",
+    "crates/platform",
+    "crates/secrets",
+    "crates/simulator",
+    "crates/daemon",
+]
+# spikes/ NON è un membro: spikes/rust/ è un workspace annidato e porta un clippy.toml
+# che a livello di workspace scatterebbe addosso a platform, che DEVE chiamare l'orologio
+# e il filesystem. Vincolo 5 della §11, deciso in §7.4.4.
+exclude = ["spikes"]
+
+[workspace.package]
+edition = "2024"
+version = "0.0.0"
+publish = false

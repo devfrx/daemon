@@ -1,0 +1,13 @@
+[package]
+name = "daemon"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[dependencies]
+kernel = { path = "../kernel" }
+platform = { path = "../platform" }
+secrets = { path = "../secrets" }
+# ⛔ NON dipende da `simulator`. Il daemon è il cablaggio DI PRODUZIONE: monta `platform`.
+# In simulazione il cablaggio lo fa il banco di prova, che riceve i parametri risolti —
+# ADR-0034, e §1.2 corretta il 2026-08-08 dopo che tabella e grafo si contraddicevano.

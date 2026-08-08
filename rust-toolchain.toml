@@ -1,0 +1,6 @@
+[toolchain]
+channel = "1.95.0"
+components = ["rustfmt", "clippy"]
+# Il bersaglio del cancello senza OS (§7.3.2). Dichiararlo qui lo installa da solo su una
+# macchina pulita: senza, la porta è rossa per il motivo sbagliato — vincolo 4 della §11.
+targets = ["x86_64-unknown-none"]

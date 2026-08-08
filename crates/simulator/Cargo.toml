@@ -1,0 +1,10 @@
+[package]
+name = "simulator"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[dependencies]
+# ⚠️ simulator non aggiunge voci proprie all'allow-list, ma il suo grafo NON è vuoto:
+# eredita per intero quello di kernel. §7.3.1.
+kernel = { path = "../kernel" }

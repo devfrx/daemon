@@ -1,14 +1,14 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-07**, alla chiusura della **§8** — la copertura V1–V37 e Q1–Q24 —
-e poi di nuovo quando rileggere `tracciabilita.md` con un'altra domanda ha **riaperto la
-spec su sette voci**, di cui **cinque chiuse**. Serve a riprendere senza rifare, e senza
-rilitigare ciò che è già deciso.
+Aggiornato il **2026-08-08**, alla **chiusura della §8** — la copertura V1–V37 e Q1–Q24,
+riallineata alle sette voci della riapertura e toccata **una volta sola**, come previsto.
+Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 
-> 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — **le sette
-> voci della riapertura sono tutte chiuse**, l'ultima è F4 con la §0.4.3. Albero pulito,
-> `check-docs.sh` verde. **Il prossimo passo è la §8**: si tocca **una volta sola**, e il
-> ritratto dei conteggi va **ricontato sulla tabella**, non dedotto. Poi il piano.
+> 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — **le sette voci
+> della riapertura sono tutte chiuse**, e la **§8 è chiusa**: le celle riallineate, il
+> ritratto dei conteggi **ricontato sulla tabella**, e un quarto disallineamento trovato e
+> chiuso (§8.5.4). Albero pulito, `check-docs.sh` verde. **Il prossimo passo è il piano di
+> implementazione.** Poi il codice, non prima.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -22,10 +22,10 @@ Stack deciso **tranne il guscio della GUI**: core in **Rust**, interfaccia web i
 worker ML in **Python**; Tauri contro Electron è ancora aperto
 ([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
 
-**La spec del sotto-progetto 1 ha §0–§8 approvate**, ed è **riaperta su sette voci**
-trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto. Sono
-**tutte chiuse**. Il codice non è ancora iniziato, e vale «spec prima
-del codice». Il piano viene **dopo** la chiusura di quelle ancora aperte — vedi sotto.
+**La spec del sotto-progetto 1 ha §0–§8 approvate**, è stata **riaperta su sette voci**
+trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto, e le sette
+sono **tutte chiuse**. La **§8 è stata riallineata e chiusa** il 2026-08-08. Il codice non è
+ancora iniziato, e vale «spec prima del codice». Tocca al **piano**.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -42,14 +42,19 @@ restano dove sono.
 
 ## Prima cosa da fare
 
-**Chiudere l'ultima voce della riapertura, poi scrivere il piano.** **Sei** sono chiuse —
-F3, F6, F5, F1a, **F2 con F7**, e **F1b**. Nessuna misura blocca quella che resta.
+**Scrivere il piano di implementazione.** La riapertura è chiusa — F3, F6, F5, F1a, **F2 con
+F7**, **F1b** e **F4** — e la **§8** è stata riallineata e chiusa il **2026-08-08**. Nessuna
+misura blocca il piano: l'unica aperta è **M5**, e richiede una GUI.
 
-> ⏭️ **Il prossimo passo è F4**, ed è l'ultima delle sette: l'anello 3 non è collocato in
-> §0.4, né dentro né fuori. Costo previsto: una riga in §0.4, e se serve una in §8.
+> ⏭️ **Il prossimo passo è il piano.** Poi il codice, non prima. I quindici vincoli che il
+> piano deve tradurre in passi stanno nella §11 del compendio; la domanda strutturale che la
+> spec gli ha deliberatamente lasciato è **dove nasce il workspace** — alla radice non c'è
+> nessun `Cargo.toml`, e sotto `spikes/` i progetti Cargo sono due.
 >
-> ⛔ **Poi la §8, per ultima e una volta sola**, e il ritratto dei conteggi va **ricontato
-> sulla tabella**, non dedotto. Poi il piano. Poi il codice, non prima.
+> ✅ **La §8 è chiusa il 2026-08-08**, toccata una volta sola come previsto: celle di `Q4`,
+> `Q5`, `Q14` e §8.2.2 riallineate senza che **nessuno stato cambi**, ritratto dei conteggi
+> **ricontato sulla tabella** (diciotto ✅ · dodici ⚠️ · sette ⏳ per i V, nove · otto · sette
+> per i Q), e un **quarto disallineamento** trovato e chiuso — §8.5.4, il gotcha #36.
 >
 > ✅ **F1b è chiusa il 2026-08-08** con
 > [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) e la §6.10. La
@@ -95,7 +100,7 @@ scrittura. È:
 ✅ F1b (§5–§6)      firme, messaggi, formato di filo. La propedeuticità su F2
                     era soddisfatta, e il formato l'ha deciso una misura
 ✅ F4               scritta invece che assunta, si è spaccata: C + B
-⛔ §8               per ultima, e UNA VOLTA SOLA
+✅ §8               per ultima, e UNA VOLTA SOLA — rispettato: chiusa 2026-08-08
 ```
 
 Il test che ha deciso l'ordine: **quale, decisa per ultima, costringerebbe a riaprire le
@@ -191,25 +196,36 @@ non essendo né entrato né scaglionato — dopo il backup (§0.4.1) e la config
 (§0.4.2). Non è distrazione: la tabella chiede «cosa entra» e «cosa si scaglia», e chi la
 compila **non vede il terzo stato**. Chi troverà il quarto caso lo aggiunga qui.
 
-### Cosa la §8 deve incassare — l'elenco, perché si tocca una volta sola
+### ✅ Cosa la §8 ha incassato — chiusa il 2026-08-08, toccata una volta sola
 
-⛔ La §8 si tocca **per ultima e una volta sola**: ognuna delle sette voci le cambia una
-riga, e toccarla sette volte sarebbero sette occasioni di disallinearla. L'elenco si
-accumula qui mano a mano.
+⛔ La §8 si toccava **per ultima e una volta sola**: ognuna delle sette voci le cambia una
+riga, e toccarla sette volte sarebbero state sette occasioni di disallinearla. L'elenco si è
+accumulato qui mano a mano, ed è stato incassato tutto insieme. **Resta come consuntivo**, e
+la colonna «Stato» dice com'è finita — non si cancella, o la prossima riapertura riparte
+senza sapere cosa era già stato deciso.
 
 | Voce | Righe della §8 da rivedere | Stato |
 |---|---|---|
 | **F3** | **V3** — la metà rimandata non è più «la configurazione non ha consumatore» ma «l'archivio e il pannello non esistono»; l'innesco A resta valido per quella metà | ✅ già scritta |
 | **F6** | nessuna: la provenienza del totale è un parametro, e la riga V3 la copre | — |
-| **F5** | **V25** e **Q20** — la descrizione di `network` si è allargata, ma il buco della contro-sonda resta e lo **stato non cambia**. Da **rileggere**, non da riscrivere | ⬜ da verificare |
-| **F1a** | **§8.2.2** — la riga `process` → Q4 resta 1:1, ed è ciò che il discriminante 3 di ADR-0035 verificava. Da **rileggere** | ⬜ da verificare |
-| **F2 + F7** | **Q14** — il meccanismo cresce: livello 1 (§7.4.1 blocco C) e byte congelati (§7.4.2). **Q5** — la porta `journal` scambia byte, quindi la campagna esercita davvero la codifica | ⬜ **da scrivere** |
-| **F1b** | **Q4** — la §3.3 aggiunge **quattro** guasti del dialogo, tutti sulla porta `process`, e §7.4.6 acquista l'affermazione sul **filo** oltre a quella sul ciclo di vita. ⚠️ Lo **stato non cambia**: Q4 resta `parziale` con innesco **E (7)**, perché manca ancora il worker vero. Da **rileggere**, non da riscrivere | ⬜ **da verificare** |
+| **F5** | **V25** e **Q20** — la descrizione di `network` si è allargata, ma il buco della contro-sonda resta e lo **stato non cambia**. Da **rileggere**, non da riscrivere | ✅ **riletta, nessuna scrittura**: le due celle non dicevano «verso i provider», quindi erano già giuste. L'istruzione «rileggere, non riscrivere» ha retto alla lettera |
+| **F1a** | **§8.2.2** — la riga `process` → Q4 resta 1:1, ed è ciò che il discriminante 3 di ADR-0035 verificava. Da **rileggere** | ✅ **1:1 confermato.** La cella `process` guadagna una riga sola: col dialogo, ciò che manca alla suite di conformità è cresciuto — anche il **filo**, non solo il ciclo di vita (§7.4.6) |
+| **F2 + F7** | **Q14** — il meccanismo cresce: livello 1 (§7.4.1 blocco C) e byte congelati (§7.4.2). **Q5** — la porta `journal` scambia byte, quindi la campagna esercita davvero la codifica | ✅ **scritte entrambe.** `Q14` porta ora l'enum di versione e i byte congelati, e dice che un fork è un campo facoltativo con indice nuovo (§4.9.5); `Q5` dice che il crash cade **dentro** la scrittura. Nessuno dei due stato cambia: erano ✅ e restano ✅ |
+| **F1b** | **Q4** — la §3.3 aggiunge **quattro** guasti del dialogo, tutti sulla porta `process`, e §7.4.6 acquista l'affermazione sul **filo** oltre a quella sul ciclo di vita. ⚠️ Lo **stato non cambia**: Q4 resta `parziale` con innesco **E (7)**, perché manca ancora il worker vero. Da **rileggere**, non da riscrivere | ⚠️ **riletta — ed era anche da scrivere.** Lo stato di `Q4` non cambia, come previsto. Ma la rilettura ha trovato che il **catalogo §7.4 non enumerava i cinque controlli della §6.10.5**: la cella non poteva nominarli senza violare §8.1.2. I cinque sono entrati, e il fatto è registrato in **§8.5.4** — gotcha **#36** |
 | **F4** | ✅ **nessuna riga nuova.** **V29** copre già le sorgenti di eventi, e lo dice la sua stessa riga di verifica — *«C1 fallisce a ogni sorgente nascosta»*: una sorgente **dichiarata su una porta** è dentro quella frase, una non dichiarata è ciò che C1 fa fallire. Lo stato di V29 **non cambia** | ✅ **stabilito** |
 
-⚠️ **E il ritratto va ricontato, non dedotto.** I numeri «18 ✅ · 12 ⚠️ · 7 ⏳» per i V e
-«9 · 8 · 7» per i Q sono stati contati sulla tabella il 2026-08-07, **prima** di queste
-modifiche. Si ricontano sulla tabella stessa quando la §8 si tocca.
+✅ **Il ritratto è stato ricontato sulla tabella il 2026-08-08, non dedotto.** Confermati
+«18 ✅ · 12 ⚠️ · 7 ⏳» per i V e «9 · 8 · 7» per i Q — nessuno stato è cambiato in questo
+passaggio. ⚠️ **Ma la §8.8 diceva «tredici V sono `parziale`»**, ed era il numero di prima
+che `V16` fosse declassato in §8.5.3.1: nessuno lo aveva ricontato. Corretto a **dodici**,
+con il ritratto pieno scritto per esteso, così che la prossima volta il confronto sia con
+sei numeri e non con un aggettivo.
+
+⚠️ **E un secondo ritratto era stantio nella stessa famiglia:** la §7.4.7 contava i test di
+compilazione fallita come «una dozzina — tre nel blocco B e nove nel C», il ritratto di prima
+di ADR-0034, ADR-0036 e §6.10.5. Ricontato: **cinque** in B e **quattordici** in C. Due
+conteggi stantii trovati nello stesso passaggio non sono una coincidenza — è la ragione per
+cui la regola dice **ricontare**, non dedurre.
 
 ### Cosa ha chiuso F3, in tre righe
 
@@ -353,21 +369,25 @@ perde qualcuna.
 | **il livello ⛔ è vuoto**, come il livello 3 del catalogo | nessun V e nessun Q è lasciato deliberatamente senza controllo. Ciò che §7.6.2 non controlla sono **pezzi** di V, dichiarati dentro la riga |
 | **la porta non prova la correttezza, e la §8 non prova la verità** | prova che ogni V e ogni Q è stato **giudicato**. Lo script controlla che lo stato sia *espresso*, non che sia *giusto* |
 
-✅ **Tre disallineamenti trovati dalla copertura, tutti chiusi** — §8.5. **Tre sezioni
+✅ **Quattro disallineamenti trovati dalla copertura, tutti chiusi** — §8.5. **Tre sezioni
 approvate sono state corrette**, ciascuna con il proprio richiamo datato: §0.4, §0.6 e il
-**catalogo §7.4** — la riga V31 in §7.4.2, che era l'unica priva di contro-sonda, e le tre
-nuove in §7.4.1.
+**catalogo §7.4** — la riga V31 in §7.4.2, che era l'unica priva di contro-sonda, le tre
+nuove in §7.4.1, e il 2026-08-08 le **cinque** della §6.10.5 più il ritratto ricontato in
+§7.4.7.
 
 | # | Trovato | Chiuso come |
 |---|---|---|
 | 1 | la **§0.6 elencava Q21** fra i «verificati solo lato kernel», ma la **§0.4 non metteva il backup in perimetro**, né dentro né fuori | correzione **doppia**, perché la causa era a monte: §0.4 colloca il backup in «si scaglia» con **regola C** (nuova §0.4.1), e Q21 passa alla riga dei rimandati — §8.5.1 |
 | 2 | **nessun sotto-progetto della roadmap collocava il backup** | **sotto-progetto 11 — Backup e ripristino**, dipendente da 5, 6 e 9. L'ordine è derivato: prima che 6 e 9 producano indici e pesi, l'elenco delle esclusioni di V32 è **vuoto**, e verificarlo sarebbe vacuo — gotcha #17. §8.5.2 |
 | 3 | il **livello 1 del catalogo non enumerava** tre proprietà che le §5 e §6 avevano già deciso: **V2** (l'ammissione riceve un profilo), **V4** (esito a tre vie), **V10** (artefatto per riferimento immutabile) | entrano nel blocco C di §7.4.1, con sonda e contro-sonda. Il titolo del blocco è passato da «Tipi che non si scambiano» a **«Cosa non è esprimibile»**, perché **tre delle sue sei righe originali non erano scambi di tipo**. E **V16 è stato declassato** da `parziale` a `rimandato`: la metà che dichiarava verificata era vacua. §8.5.3 |
+| 4 | il catalogo **non enumerava i cinque controlli della §6.10.5**, decisi con F1b il giorno prima: quattro di livello 1 e uno di livello 2, con le sonde già scritte | entrano dove il blocco li vuole — due gettoni in §7.4.1 B, due voci in §7.4.1 C, uno in §7.4.2 — e **rimandano** a §6.10.5 invece di ridefinirlo, la forma già scelta per V28 in §7.4.4 punto 2. Provato che lo script le **veda**: sonde S7 e S8, ripristino byte-identico. Lo stato di `Q4` **non cambia**. §8.5.4 — è il gotcha **#36** |
 
 I primi due riguardano lo stesso oggetto — il **backup**, l'unica cosa del progetto di cui
 nessuno era proprietario, quindi l'unica che nessuna sezione aveva motivo di nominare. Il
-terzo lo ha trovato la §8 **contro sé stessa**, applicando la regola §8.1.2 alla propria
-tabella: diciassette celle su sessantuno non la rispettavano.
+terzo e il quarto li ha trovati la §8 **contro sé stessa**, applicando la regola §8.1.2 alla
+propria tabella: la prima volta diciassette celle su sessantuno non la rispettavano, e la
+seconda — **il giorno dopo, sulla sezione successiva** — è ciò che ha reso il difetto una
+classe invece che un incidente.
 
 📌 **La lezione, che vale più delle tre correzioni.** §0.4 e §0.6 erano state scritte nella
 **stessa sessione** e rilette più volte: la contraddizione è sopravvissuta. È emersa solo
@@ -440,13 +460,14 @@ Le aveva sollevate M-1 (§6.8.2) e M-3 le aveva rese concrete con dei numeri. De
 | 5 | Arbitro GPU, e la lacuna su I2 | ✅ | tre consumatori GPU nella GUI, quota di presentazione, I2 sui worker imposto dal **compilatore**. Più [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) |
 | 6 | Gateway, sensori, permessi, degrado | ✅ | schema IPC in `kernel` con **`bincode`**, **timbro di build** contro la GUI stantia, il **gettone non falsificabile** nominato una volta, «costo» del sensore separato in due |
 | **7** | **La porta di qualità: i controlli automatici** | ✅ | **scala di forza a tre livelli**, evidenze di M-3, le due decisioni sulle dipendenze, il **catalogo** con sonda e contro-sonda, la cadenza, il perimetro negativo. **Il livello 3 è vuoto** |
-| **8** | **Copertura V1–V37 e Q1–Q24** | ✅ | **quattro stati** con innesco obbligatorio, **due specie di innesco**, la regola che un Q della DST eredita lo stato della propria porta, l'estensione di `check-docs.sh` provata in due direzioni. **Il livello ⛔ è vuoto** |
+| **8** | **Copertura V1–V37 e Q1–Q24** | ✅ | **quattro stati** con innesco obbligatorio, **due specie di innesco**, la regola che un Q della DST eredita lo stato della propria porta, l'estensione di `check-docs.sh` provata in due direzioni. **Il livello ⛔ è vuoto**. ⚠️ **Riallineata e chiusa il 2026-08-08** alle sette voci: quattro disallineamenti trovati in tutto, l'ultimo è §8.5.4 |
 
-**§0–§8 approvate.** ⚠️ La spec è però **riaperta su sette voci**, di cui **cinque chiuse**
-— vedi «Prima cosa da fare». Le sezioni toccate finora portano ciascuna il proprio richiamo
-datato: §0.5, §0.7, §1.2, §2.0, §2.3.1 (nuova), §2.8 (nuova), §3.1, **§4.1**, **§4.9
-(nuova)**, §5.1, **§6.1.1**, **§6.8**, **§7.3.1**, §7.4.1, **§7.4.2**, **§7.4.4** e la riga
-V3 della §8.3.
+**§0–§8 approvate, e la riapertura è chiusa.** Le sezioni toccate portano ciascuna il proprio
+richiamo datato: §0.4.1, §0.4.2, **§0.4.3 (nuova)**, §0.5, §0.7, §1.2, §2.0, §2.3.1 (nuova),
+§2.8 (nuova), §3.1, **§3.3**, **§4.1**, **§4.9 (nuova)**, §5.1, §5.2.2, **§6.1.1**, **§6.8**,
+**§6.10 (nuova)**, **§7.3.1**, **§7.4.1**, **§7.4.2**, §7.4.4, **§7.4.6**, **§7.4.7**, e in
+§8 le celle `Q4`, `Q5`, `Q14`, la riga V3 di §8.3, la riga `process` di §8.2.2, **§8.5.4
+(nuova)** e il ritratto di §8.8.
 
 ### Le decisioni aperte dalla §0.5 — tre previste, quattro emerse
 
@@ -651,6 +672,7 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 33 | **Il nome del formato è occupato da un'altra cosa, e in due ecosistemi** | Su PyPI il pacchetto `bincode` installa un modulo **`b64tools`**: funzioni base64, nessun rapporto col formato. Su npm `bincode` è una **CLI di sviluppo con l'IA**. Cercare per nome trova pacchetti che non c'entrano, e in un elenco di risultati sembrano conferme. È il gotcha #22 nella forma più larga: che una versione esista non dice che funzioni, e che un **nome** esista non dice **cosa contiene**. Il rimedio è aprire il pacchetto: `pip download`/`npm pack` e guardare i file |
 | 34 | ⛔ **Un decodificatore CBOR si ferma al primo elemento completo e ignora la coda** | Misurato: dando a `cbor2` i byte prodotti da `bincode` per `Esito`, restituisce **`1`** — legge il primo byte come intero senza segno e si ferma. **Nessuna eccezione, un valore plausibile.** Vale per la famiglia: il formato è auto-delimitante per *elemento*, non per *buffer*. ⚠️ Conseguenza operativa su un canale a frame: un controllo «ha decodificato senza errori» **non prova nulla**. Il frame deve dichiarare la propria lunghezza, e la decodifica deve verificare che i **byte consumati** siano esattamente quel numero. È il gotcha #30 spostato dall'archivio durevole al filo |
 | 35 | **Un `Vec<u8>` non annotato raddoppia il traffico, in silenzio** | In `minicbor`, scritto nel modo naturale, un `Vec<u8>` si codifica come **array di numeri** e non come stringa di byte: ogni byte ≥ 24 ne occupa due. Serve l'annotazione esplicita (`with = "minicbor::bytes"`). **Misurato** su un frammento audio da 4096 B: **7813** contro **4101**, cioè **1,91×**. ⚠️ La trappola è che non somiglia a un difetto: compila, fa round-trip, e i valori sono **corretti**. Costa soltanto il doppio della banda, su un canale — quello audio — dove la banda è il vincolo |
+| 36 | ⛔ **La tabella «come si verifica» di una sezione non è il catalogo, e il passaggio si salta** | Quando una sezione decide un meccanismo nuovo, scrive una propria tabella *«come si verifica»* con sonda e contro-sonda — ed è giusto che lo faccia, perché il controllo si progetta dove si progetta la cosa. Ma il **catalogo §7.4** è l'unico posto che la §8.1.2 ammette come meccanismo nominabile, ed è la lista che il piano tradurrà in lavoro. Chi scrive la sezione considera il controllo «scritto» e non lo riporta. **Successo due volte**: la prima con V2, V4 e V10 — proprietà di livello 1 decise nelle §5 e §6 e mai enumerate (§8.5.3); la seconda il giorno dopo con i **cinque controlli della §6.10.5** (§8.5.4). ⚠️ **La diagnosi che rende il gotcha utile è l'asimmetria**: nella stessa riapertura, §2.8.4 e §4.9.4 le loro righe le hanno aggiunte, §6.10.5 no, e **nessun documento dice perché** — cioè non era una decisione, era un passaggio saltato. Prima di concludere che sia stato deliberato si cerca dove sarebbe stato deciso: in ADR-0037 la parola «catalogo» non compare, e la §7.4.4 riduce tre voci che sono altre. ⛔ **Il rimedio non è irrigidire `check-docs.sh`**: lo script verifica che la casella del meccanismo sia *piena*, non che nomini davvero una voce della §7 (§8.6.4), e pretendere di più trasformerebbe le dichiarazioni oneste in rossi. Il rimedio è sapere che **questa è la classe di difetto che ricompare**, e cercarla a ogni sezione che decide un controllo. È il gotcha #29 spostato dalle invarianti ai controlli: il posto dove una cosa si **verifica** è il posto dove si restringe in silenzio |
 
 ## Il metodo di lavoro
 

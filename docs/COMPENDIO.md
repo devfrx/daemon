@@ -518,7 +518,8 @@ restituito `251` al posto di `4096` senza sollevare nulla.
 ## 6. Dove siamo, e cosa viene dopo
 
 **Spec del kernel §0–§10 completa.** Spec del **sotto-progetto 1** con §0–§8 approvate,
-**riaperta su sette voci** — **tutte chiuse**. **Zero righe di codice del prodotto.**
+**riaperta su sette voci** — **tutte chiuse** — e **§8 riallineata e chiusa il 2026-08-08**.
+**La spec è completa. Zero righe di codice del prodotto.**
 
 Le sette voci sono emerse rileggendo `tracciabilita.md` con una domanda che nessuno le
 aveva posto: ***«di quale meccanismo di kernel ha bisogno questa funzionalità, e la
@@ -538,12 +539,21 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 
 ### L'ordine, già deciso
 
-1. **§8** — ⛔ **per ultima, e una volta sola**: ognuna delle sette le cambia una riga, e il
-   **ritratto dei conteggi va ricontato sulla tabella**, non dedotto. **È la prossima.**
-2. **Il piano** di implementazione.
+1. ~~**§8**~~ — ✅ **chiusa il 2026-08-08**, toccata una volta sola come previsto.
+2. **Il piano** di implementazione. **È il prossimo passo.**
 3. **Poi** il codice, non prima.
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
+
+### §8 — ✅ chiusa. Cosa ha trovato, in cinque righe
+
+| | |
+|---|---|
+| **nessuno stato è cambiato** | le sette voci hanno cambiato **cosa una cella nomina**, non il voto. Riallineate `Q4`, `Q5`, `Q14` e la riga `process` di §8.2.2; `V25`, `Q20` e `V29` **rilette e lasciate come stavano**, perché erano già giuste |
+| ⛔ **il catalogo aveva saltato cinque controlli** | i cinque della §6.10.5 (F1b) non erano in §7.4, quindi `Q4` non poteva nominarli senza violare §8.1.2. Sono entrati — due gettoni in §7.4.1 B, due voci in §7.4.1 C, uno di livello 2 in §7.4.2. **Non sono controlli nuovi**: §8.5.4 |
+| **e non era gotcha #32** | cercato prima di scrivere: ADR-0037 non nomina mai il catalogo, la chiusura di F1b lo colloca in altre sei sezioni, §7.4.4 riduce tre voci che sono altre. **Mai valutato, mai scartato** |
+| **due ritratti di conteggi erano stantii** | §8.8 diceva «tredici V `parziale`» — sono **dodici** da quando `V16` è stato declassato; §7.4.7 diceva «tre in B e nove in C» — sono **cinque** e **quattordici**. Ricontati sulla tabella |
+| 📌 **il ritratto pieno, per il confronto della prossima volta** | **diciotto ✅ · dodici ⚠️ · sette ⏳** per i V · **nove · otto · sette** per i Q |
 
 ### F1b — ✅ chiusa. Cosa ha deciso, in sei righe
 
@@ -634,7 +644,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I trentacinque gotcha
+## 9. I trentasei gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -676,6 +686,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 33 | **Il nome del formato è occupato da un'altra cosa, e in due ecosistemi.** Su PyPI `bincode` installa un modulo `b64tools`, funzioni base64; su npm `bincode` è una CLI di sviluppo con l'IA. È il gotcha #22 nella forma più larga: **che un nome esista non dice cosa contiene**, e cercare per nome trova pacchetti che non c'entrano |
 | 34 | ⛔ **Un decodificatore CBOR si ferma al primo elemento completo e ignora la coda.** Misurato: dando a `cbor2` i byte di `bincode` restituisce `1` — nessuna eccezione, un valore plausibile. Su un canale a frame «ha decodificato» non prova nulla: serve che i **byte consumati** siano pari alla lunghezza dichiarata |
 | 35 | **Un `Vec<u8>` non annotato raddoppia il traffico, in silenzio.** In `minicbor`, senza l'annotazione di stringa di byte, si codifica come **array di numeri**. Misurato su 4096 B: **7813** contro **4101**, cioè **1,91×**. Compila, fa round-trip, ed è corretto: costa solo il doppio |
+| 36 | ⛔ **La tabella «come si verifica» di una sezione non è il catalogo, e il passaggio si salta.** Una sezione che decide un meccanismo scrive le proprie sonde lì — ed è giusto — ma il **catalogo §7.4** è l'unico posto che §8.1.2 ammette, ed è la lista che il piano tradurrà in lavoro. Successo **due volte**: V2/V4/V10 (§8.5.3) e i cinque controlli della §6.10.5 (§8.5.4). ⚠️ La diagnosi è l'**asimmetria**: nella stessa riapertura §2.8.4 e §4.9.4 le righe le hanno aggiunte, §6.10.5 no, e **nessun documento dice perché** — quindi non era una decisione. ⛔ Il rimedio **non** è irrigidire lo script (§8.6.4): è cercare questa classe di difetto a ogni sezione che decide un controllo. È il #29 spostato dalle invarianti ai controlli |
 
 ---
 

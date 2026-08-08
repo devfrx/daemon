@@ -1788,6 +1788,11 @@ mai eseguito, per qualunque catena»* — una proprietà invece di un controllo:
 non filtrato non ha il gettone, quindi non è **esprimibile** come argomento di
 un'esecuzione.
 
+> ⚠️ **Gli usi sono quattro dal 2026-08-08, e la tabella completa non è questa.** La §6.10.1
+> aggiunge *«leggere da un worker → una **ricevuta**»* con F1b, e la ripresenta per intero
+> lì. Questa resta com'era perché era corretta quando è stata scritta; **la versione
+> aggiornata è quella di §6.10.1**, e nel catalogo i gettoni sono cinque (§7.4.1 B).
+
 #### 6.3.2 Il limite del dispositivo, dichiarato
 
 > **Un gettone prova la provenienza, non la correttezza.**
@@ -2486,6 +2491,8 @@ quella «semplificazione» prima che qualcuno la applichi.
 | avviare un worker | una **concessione** | **I2** | senza → non compila | con → compila |
 | eseguire una richiesta | una **prova di conformità** | **Q13** | candidato non filtrato → non compila | filtrato → compila |
 | promuovere testo a istruzione | la porta **`journal`** | **V19** | conversione libera → non compila | conversione giornalata → compila |
+| **parlare** a un worker | l'oggetto **`Worker`** che l'avvio ha restituito | **I2** | parlargli senza `Worker` → non compila | col `Worker` → compila |
+| **leggere** da un worker | una **ricevuta** | **I5** · **Q4** | leggere senza ricevuta → non compila | con la ricevuta → compila |
 
 **C · Cosa non è esprimibile.**
 
@@ -2503,6 +2510,15 @@ quella «semplificazione» prima che qualcuno la applichi.
 | **§2.8** · ADR-0034 | costruire una decisione **senza i parametri consegnati** — §2.8.2 | riceverli alla costruzione compila |
 | **V3** | una **seconda policy attiva**: il valore consegnato ne porta una sola | con una policy sola compila, e la transizione resta un passo giornalato (§5.4) |
 | **Q14** · §4.9 | un **record durevole senza versione**: il tipo è un enum di versione — §4.9.2 regola 1 | il record che dichiara la propria versione compila |
+| **I2** · §6.10 | **istruire un worker dopo `uccidi`**: l'uccisione **consuma** il `Worker` — §6.10.2 | istruirlo prima dell'uccisione compila |
+| **I5** · §6.10 | **leggere due volte dalla stessa ricevuta singola**: la lettura la consuma — §6.10.2 | leggerne una compila |
+
+> ⚠️ **Due righe aggiunte il 2026-08-08, e non sono controlli nuovi.** Sono i controlli 2 e
+> 4 della §6.10.5, decisi con F1b e
+> [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md), che il catalogo
+> **non enumerava**. Li ha trovati la §8, con la stessa regola §8.1.2 e nella stessa forma di
+> §8.5.3 — registrato in **§8.5.4**. I controlli 1 e 3 della stessa tabella sono **gettoni** e
+> stanno nel blocco B; il controllo 5 è di livello 2 e sta in §7.4.2.
 
 > ⚠️ **Una riga aggiunta il 2026-08-07 con [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md).**
 > È il controllo di livello 1 della §4.9.4. ⛔ Vale il limite dichiarato lì: il compilatore
@@ -2544,6 +2560,15 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 | V30 | `check-docs.sh` | un Q senza metodo di verifica → scatta | già in esercizio |
 | **Q14** · §4.9 | **byte congelati** del record durevole, con la mappa `indice → nome del campo → valore atteso` (§4.9.4) | si **riusa** un indice o si rinumera → fallisce e **nomina il campo** | si aggiunge un campo facoltativo con un indice nuovo → resta verde |
 | V31 | il **seme** entra nell'elenco versionato, la **proprietà** entra nella suite | si reintroduce il difetto che quella proprietà proteggeva → la campagna fallisce e **nomina il seme** | il difetto corretto → la campagna resta verde, e l'elenco dei semi non produce falsi rossi |
+| **Q4** · I5 · §6.10 | sul canale verso i worker, i **byte consumati** dalla decodifica sono pari alla **lunghezza dichiarata** dal frame (§6.10.4) | frame troncato, o con una coda dopo l'ultimo elemento → fallisce | frame esatto → resta verde |
+
+> ⚠️ **La riga dei byte consumati è aggiunta il 2026-08-08, e non è un controllo nuovo.** È
+> il controllo 5 della §6.10.5, deciso con F1b e
+> [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md), che il catalogo
+> non enumerava — §8.5.4. Esiste perché la misura ha mostrato che **«ha decodificato» non
+> prova nulla**: dando a `cbor2` i byte di `bincode` si ottiene `1`, senza nessuna eccezione
+> e con un valore plausibile. È il **gotcha #34**, e su un canale a frame la sola difesa è
+> contare i byte.
 
 > ⚠️ **V31 resta debole per natura, e la riga qui sopra non lo nasconde.** Ciò che
 > l'automatismo protegge è la **proprietà**, non il seme: §3.4 — un seme non riproduce la
@@ -2645,7 +2670,15 @@ rischio è la dimenticanza di chi scrive, e la lascia dov'è il rischio di un da
 
 #### 7.4.5 Il quarto gettone si scaglia, e l'innesco si scrive
 
-§6.3 nomina il dispositivo del gettone tre volte. Una quarta ricorrenza è naturale — *per
+> ⚠️ **«Quarto» qui è un nome, non una posizione — precisato il 2026-08-08.** Quando questa
+> sezione è stata scritta gli usi del dispositivo erano tre, e quello del confinamento
+> sarebbe stato il quarto. Con F1b la §6.10.1 ne ha aggiunto uno — la **ricevuta** — quindi
+> gli usi presenti sono quattro e questo sarebbe il quinto. **Il titolo resta**: «il quarto
+> gettone» è il nome con cui la §8 e [`HANDOFF.md`](../../HANDOFF.md) lo chiamano, e
+> rinominarlo romperebbe i rimandi per guadagnare un ordinale. Ciò che conta non cambia:
+> **è quello del confinamento, ed è l'unico scaglionato.**
+
+§6.3 nominava il dispositivo del gettone tre volte. Una ricorrenza in più è naturale — *per
 eseguire un comando serve la prova del livello di confinamento richiesto* (V35, Q23) — e
 [design/08](../../design/08-strategia-di-test.md) chiede già per Q23 una verifica
 **statica**, che è esattamente ciò che una firma darebbe.
@@ -2698,7 +2731,7 @@ La §8 registra quali porte hanno la suite e quali no, con il sotto-progetto che
 | Costo | |
 |---|---|
 | **ogni regola nuova porta due sonde, non una** | e la contro-sonda è la più noiosa da scrivere, perché verifica che *non* succeda niente |
-| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta già una dozzina — tre nel blocco B e nove nel C — e ciascuno ha un `.stderr` da leggere (gotcha #25) |
+| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta ormai diciannove — **cinque** nel blocco B e **quattordici** nel C — e ciascuno ha un `.stderr` da leggere (gotcha #25). ⚠️ **Ricontato sulla tabella il 2026-08-08**: diceva «una dozzina, tre e nove», ed era il ritratto di **prima** di ADR-0034, ADR-0036 e §6.10.5. Un ritratto di conteggi si riconta, non si deduce |
 | **una voce è provata in una direzione sola** | V25, finché la rete non esiste. Dichiarato in §7.4.2 |
 | **V31 resta debole per natura** | l'automatismo protegge la proprietà, non il seme: §3.4 |
 | **i test di contratto sono lavoro reale** | due suite ora, due rimandate. È il prezzo per non provare Q4 e Q5 contro una finzione |
@@ -2828,7 +2861,7 @@ Le §0–§7 hanno deciso *cosa* il sistema garantisce e *chi lo verifica*. Ques
 l'unica cosa che nessuna delle precedenti ha fatto: **giudica, una per una, tutte e
 sessantuno le voci nominate**, e dice se questo sotto-progetto ha finito con ciascuna.
 
-Non è un riepilogo. Un riepilogo ripete; questa sezione **decide**, e in due casi ha
+Non è un riepilogo. Un riepilogo ripete; questa sezione **decide**, e in **quattro** casi ha
 trovato che qualcosa non tornava (§8.5).
 
 Ha una seconda natura, meno ovvia. La §7.6.3 chiude così:
@@ -2975,7 +3008,7 @@ Q; la §7.4.6 dice **quali porte hanno la suite di conformità** fra la finta e 
 |---|---|---|---|---|
 | `journal` | ✅ c'è — e §4.6 ne copre anche il livello 2 | **Q5** | ✅ | — |
 | `reactor` | ✅ c'è — ed è la più importante | **Q2** | ✅ | — |
-| `process` | ⚠️ rimandata: non ci sono worker da avviare | **Q4** | ⚠️ | E — esiste un worker reale (7) |
+| `process` | ⚠️ rimandata: non ci sono worker da avviare — e col **dialogo** (§6.10) la suite acquista un'affermazione in più, sul **filo** oltre che sul ciclo di vita (§7.4.6) | **Q4** | ⚠️ | E — esiste un worker reale (7) |
 | `ipc` | ⚠️ rimandata: non c'è una GUI dall'altro capo | **Q3** | ⚠️ | A — esiste un'interfaccia (2) |
 | `filesystem` | ❌ scaglionata (§0.4) | **Q22** | ⚠️ | D — si scrive su file reali (5) |
 | `network` | ❌ scaglionata | **Q18** | ⚠️ | B — qualcuno chiama un modello (3) |
@@ -3047,8 +3080,8 @@ disallineano (§7.4.4, caso 2).
 | Q1 | voce sotto i 600 ms con job GPU pesante | ⏳ rimandato | il metodo di `design/08` è una **misura end-to-end**, che richiede voce e carico reali. §7.6.2 lo dichiara già: il tempo di parete dell'arbitro non è un cancello, perché è un numero rumoroso | **SP-2** (spike, dentro 8) |
 | Q2 | zero OOM | ✅ verificato qui | campagna DST su `reactor`, che ha la suite di conformità (§8.2.2) · sonda negativa esplicita: si concede oltre il budget, la campagna fallisce e nomina il seme (§5.7.1) | — |
 | Q3 | crash della GUI durante una run | ⚠️ parziale | il metodo di `design/08` — DST con morte del client — **è eseguibile qui** (§5.7); manca la **suite di conformità su `ipc`**, quindi la prova è contro una finta (§8.2.2) | A (2) |
-| Q4 | kill di un worker in qualsiasi istante | ⚠️ parziale | idem su `process`: la DST inietta il kill (§3.3), ma non esiste un worker reale contro cui provare la conformità della finta | E (7) |
-| Q5 | riavvio del core a metà run, nessun effetto rieseguito | ✅ verificato qui | DST con crash-injection su `journal`, suite di conformità presente, **e** il livello 2 dentro il motore: M-8, 12 punti scattati, 12/12 riaperti coerenti (§4.6) | — |
+| Q4 | kill di un worker in qualsiasi istante | ⚠️ parziale | idem su `process`: la DST inietta il kill **e i quattro guasti del dialogo** (§3.3) · la vita del worker è al compilatore — parlargli pretende il `Worker` che l'avvio ha restituito, leggere pretende una **ricevuta**, `uccidi` consuma il `Worker` (§7.4.1 B e C) · sul filo, i byte consumati devono pareggiare la lunghezza dichiarata (§7.4.2, gotcha #34). ⚠️ **Riletta il 2026-08-08 con F1b:** non esiste un worker reale contro cui provare la conformità della finta, e col dialogo ciò che manca alla suite è cresciuto — anche il **filo**, non solo il ciclo di vita (§7.4.6). **Lo stato non cambia** | E (7) |
+| Q5 | riavvio del core a metà run, nessun effetto rieseguito | ✅ verificato qui | DST con crash-injection su `journal`, suite di conformità presente, **e** il livello 2 dentro il motore: M-8, 12 punti scattati, 12/12 riaperti coerenti (§4.6). ⚠️ **Rafforzato il 2026-08-08 con ADR-0036:** la porta `journal` scambia **byte** e la codifica vive in `kernel` (§4.9.3), quindi il crash cade **dentro** la scrittura e la campagna esercita davvero codifica e decodifica — prima le avrebbe scavalcate | — |
 | Q6 | contesto esaurito | ⏳ rimandato | il metodo è una proprietà su ricomposizioni ripetute, e la ricomposizione è scaglionata (§0.6) | B (3) |
 | Q7 | tetto di passi, tempo o costo superato | ✅ verificato qui | test a esempi sulla transizione ad `AttesaUmano` — il metodo di `design/08` è interamente lato kernel ed è eseguibile qui (§8.1.3) | — |
 | Q8 | avvio a freddo dichiarato | ✅ verificato qui | test a esempi sull'**evento emesso prima dell'attesa** · e §5.2.1 rende `cold_start` irraggiungibile dal percorso decisionale, con test di compilazione fallita (§7.4.1 C) | — |
@@ -3057,7 +3090,7 @@ disallineano (§7.4.4, caso 2).
 | Q11 | occupazione della proiezione al budget | ⏳ rimandato | nessuna proiezione da misurare (§0.6). SP-3 ne tarerà la soglia, ma non è ciò che lo rende verificabile | B (3) |
 | Q12 | difetto ricorrente che diventa una proposta | ⏳ rimandato | l'anello 4 è scaglionato: legge ricorrenze che esistono solo quando qualcosa gira (§0.6) | C (4) |
 | Q13 | nessun candidato non conforme viene mai eseguito | ✅ verificato qui | **gettone di conformità**: un candidato non filtrato non è esprimibile come argomento di un'esecuzione. Livello 1 (§6.3.1, §7.4.1 B). ⚠️ il gettone prova la provenienza, non la correttezza del filtro: §6.3.2 | — |
-| Q14 | ricostruire con cosa è stato eseguito un passo di sei mesi fa | ✅ verificato qui | il record di routing è **risolto** e giornalato col passo (§6.2): test a esempi su un giornale sintetico. La proprietà è strutturale — il record non rimanda alla configurazione, quindi non dipende da essa | — |
+| Q14 | ricostruire con cosa è stato eseguito un passo di sei mesi fa | ✅ verificato qui | il record di routing è **risolto** e giornalato col passo (§6.2): test a esempi su un giornale sintetico. La proprietà è strutturale — il record non rimanda alla configurazione, quindi non dipende da essa. ⚠️ **Il meccanismo è cresciuto il 2026-08-07 con ADR-0036**, e senza di esso «sei mesi fa» era una promessa: il record **dichiara la propria versione** — enum di versione al compilatore (§7.4.1 C) — e i **byte congelati** con la mappa `indice → nome → valore atteso` provano che un giornale scritto oggi si rilegge domani (§7.4.2, §4.9.4). ⛔ Vale il limite di §4.9.4: il compilatore prova che una versione è **dichiarata**, non che sia quella **giusta**. Un campo aggiunto dopo — il passo padre di un fork, §4.9.5 — è **facoltativo con un indice nuovo**, quindi non rompe la rilettura | — |
 | Q15 | un'istruzione trovata nei dati non autorizza | ⚠️ parziale | la metà **statica** è qui: §7.4.1 C riga Q9·I6·V20, più il gettone `journal` sulla conversione (§7.4.1 B, V19) · la metà a esempi — *l'obbligo di autorizzazione* — richiede il mediatore e il ciclo di approvazione, scaglionati per regola C | C (4) |
 | Q16 | descrizione MCP cambiata dopo l'approvazione | ⏳ rimandato | il metodo è un test di contratto contro un server MCP finto, e non esistono strumenti (§0.6) | C (4) |
 | Q17 | un segreto compare in contenuto in uscita | ⚠️ parziale | lato kernel: §7.4.2, riga V34 · Q24 — solo `secrets` raggiunge il portachiavi, livello 2 provato in due direzioni · **il canary è scaglionato** (§0.4, §6) e non c'è contenuto in uscita da controllare | B (3) |
@@ -3069,7 +3102,7 @@ disallineano (§7.4.4, caso 2).
 | Q23 | esecuzione sotto il livello 2 di confinamento | ⚠️ parziale | `design/08` chiede una verifica **statica**, ed è esattamente il quarto gettone che la §7.4.5 scaglia: nessuna porta esegue comandi qui. Entrano il tipo, la dichiarazione per azione e la registrazione (V37) | D (5) |
 | Q24 | lettura di credenziali fuori dal gestore dei segreti | ✅ verificato qui | statica sul grafo delle crate: solo `secrets` raggiunge il portachiavi. Livello 2, con sonda e contro-sonda (§7.4.2) | — |
 
-### 8.5 Tre disallineamenti che la copertura ha trovato, e tutti chiusi
+### 8.5 Quattro disallineamenti che la copertura ha trovato, e tutti chiusi
 
 Nessuno era cercato. Sono emersi perché **giudicare sessantuno voci obbliga a leggere le
 sezioni con criteri diversi** da quelli con cui sono state scritte, ed è il valore
@@ -3080,11 +3113,13 @@ principale di questa sezione oltre alla tabella.
 | 1 | il **backup** non era in perimetro, e la §0.6 diceva il contrario | §8.5.1 |
 | 2 | **nessun sotto-progetto** della roadmap collocava il backup | §8.5.2 |
 | 3 | il **livello 1 del catalogo** non enumerava tre proprietà che le §5 e §6 avevano già deciso | §8.5.3 |
+| 4 | il catalogo non enumerava i **cinque controlli della §6.10.5** — ed è la seconda volta, con la stessa forma | §8.5.4 |
 
 I primi due riguardano lo stesso oggetto — il **backup** — e non è un caso: era l'unica
 cosa del progetto di cui nessuno era il proprietario, quindi l'unica che nessuna sezione
-aveva motivo di nominare. Il terzo è di natura diversa, e lo ha trovato la §8 **contro sé
-stessa**. Tutte le correzioni sono registrate al loro posto, non applicate in silenzio.
+aveva motivo di nominare. Il terzo e il quarto sono di natura diversa, e li ha trovati la
+§8 **contro sé stessa**, con la stessa regola e a distanza di un giorno. Tutte le
+correzioni sono registrate al loro posto, non applicate in silenzio.
 
 #### 8.5.1 Il backup non era in perimetro, e la §0.6 diceva il contrario — ✅ chiuso
 
@@ -3192,6 +3227,84 @@ scriverla come regola invece che come buona intenzione.
 meccanismo sia **piena**, non che nomini davvero una voce della §7. Questa terza scoperta è
 venuta da una rilettura, non da un controllo automatico — e resta l'unico punto della §8
 che dipende da chi legge.
+
+#### 8.5.4 Il catalogo non enumerava i cinque controlli della §6.10.5 — ✅ chiuso
+
+> ⚠️ **Trovato e chiuso il 2026-08-08**, riallineando la §8 alle sette voci. È la stessa
+> forma di §8.5.3, e la §8 lo ha trovato di nuovo **contro sé stessa**, con la stessa regola.
+
+La §6.10.5 — scritta con F1b e
+[ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) — decide **cinque
+controlli**, quattro di livello 1 e uno di livello 2, ciascuno con la propria sonda e la
+propria contro-sonda **già scritte**. Nessuno dei cinque compariva nel catalogo §7.4.
+
+Perché è un problema e non una sfumatura: la §8.1.2 ammette **tre** risposte nella colonna
+del meccanismo, e una voce di sezione non è fra queste. La cella di `Q4` poteva quindi
+nominare solo la campagna DST — che è vera, ed è ciò che la riga diceva — lasciando quattro
+test di compilazione fallita **fuori dall'insieme nominato**. È il difetto che la §7.6.3
+descrive al contrario: l'insieme si era ristretto, e nulla sarebbe diventato rosso.
+
+**Perché è successo, e la causa è visibile in una tabella sola.** Tre sezioni della
+riapertura hanno la stessa forma — una tabella «come si verifica» con sonde e contro-sonde:
+
+| Sezione | Voce | Righe nel catalogo |
+|---|---|---|
+| §2.8.4 | F3 · ADR-0034 | ✅ due, aggiunte il 2026-08-07 |
+| §4.9.4 | F2 · ADR-0036 | ✅ due, aggiunte il 2026-08-07 |
+| §6.10.5 | F1b · ADR-0037 | ⛔ **nessuna** |
+
+Due su tre le hanno aggiunte, una no, e **nessun documento dice perché**. Non è una
+decisione presa: è un passaggio saltato.
+
+> **Cercato prima di scrivere, perché una proposta può essere già caduta — gotcha #32.**
+> [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) non nomina mai
+> il catalogo; la chiusura di F1b in [`HANDOFF.md`](../../HANDOFF.md) elenca sette consegne
+> e le colloca in §6.10.2, §6.10.3, §7.3.1, §7.4.6, §3.3, §6.10.1 e §5.2.2 — **mai in
+> §7.4.1 o §7.4.2**; la §7.4.4 riduce tre voci, e sono `HashMap`, V28 e V5; la §7.4.5
+> scaglia un gettone, ed è quello del **confinamento**. **La questione non era mai stata
+> posta**, quindi non si sta rilitigando niente.
+
+> **Risoluzione: i cinque entrano nel catalogo**, dove il blocco li vuole — due gettoni in
+> §7.4.1 B, due voci non esprimibili in §7.4.1 C, un controllo esterno in §7.4.2. Come in
+> §8.5.3, **non sono controlli nuovi**: sono controlli che il catalogo aveva saltato, e le
+> righe **rimandano** a §6.10.5 invece di ridefinirlo — la forma che la §7.4.4 punto 2 ha
+> già scelto per V28, proprio per non avere due posti da tenere allineati.
+
+⛔ **Lo stato di `Q4` non cambia**, ed è la parte da non fraintendere. I quattro controlli di
+livello 1 provano la forma **dalla nostra parte** del filo; ciò che manca a `Q4` è il worker
+vero contro cui provare la conformità della finta, e nessuno dei cinque lo fornisce
+(§6.10.5, limite dichiarato). La riga guadagna un meccanismo nominato, non un voto migliore.
+
+**E ha ripagato una previsione, il che è il motivo per cui vale registrarlo.** La §8.5.3.1
+chiudeva dicendo che la §8.1.2 *«resta l'unico punto della §8 che dipende da chi legge»*,
+perché lo script controlla che la casella sia **piena**, non che nomini davvero una voce
+della §7. Il buco previsto si è ripresentato **il giorno dopo**, sulla sezione successiva. Il
+rimedio non è irrigidire lo script — §8.6.4 spiega perché non può — ma sapere che questa è
+la classe di difetto che ricompare, e cercarla a ogni sezione nuova.
+
+**Le righe nuove sono state provate dentro l'intervallo, non date per dentro.** Una riga
+aggiunta **fuori** dai delimitatori `#### 7.4.1` e `#### 7.4.3` passerebbe in silenzio: lo
+script non la vedrebbe e uscirebbe verde, che è il gotcha #26 applicato a un'aggiunta invece
+che a una rinumerazione. Sonde eseguite il **2026-08-08** sulla spec **reale**, con lo script
+**reale** e ripristino verificato:
+
+| # | Sonda — *deve scattare* | Messaggio osservato |
+|---|---|---|
+| **S7** | si svuota la contro-sonda del gettone «leggere da un worker» (§7.4.1 B) | `riga 2495 (**leggere** da un worker): contro-sonda vuota` |
+| **S8** | si svuota la contro-sonda della riga «byte consumati» (§7.4.2) | `riga 2563 (**Q4** · I5 · §6.10): contro-sonda vuota` |
+
+La contro-sonda è **C0** della §8.6.3, che qui vale invariata: la spec intatta esce verde.
+Ripristino verificato — **`spec ripristinata byte-identica`**.
+
+⛔ **Il numero di riga nel messaggio è quello del giorno, e invecchia** — basta un richiamo
+inserito sopra per spostarlo, ed è successo mentre queste due sonde si scrivevano. Ciò che
+identifica la riga è la **prima cella**, che il messaggio riporta fra parentesi apposta:
+è quella a non spostarsi. Vale identico per i numeri della §8.6.3, veri il 2026-08-07.
+
+⚠️ **Un secondo ritratto è risultato stantio nello stesso passaggio, ed è dichiarato dove
+sta:** la §7.4.7 contava i test di compilazione fallita come *«una dozzina — tre nel blocco B
+e nove nel C»*, cioè il ritratto di **prima** di ADR-0034, ADR-0036 e §6.10.5. Ricontato sulla
+tabella: **cinque** in B e **quattordici** in C.
 
 ### 8.6 L'estensione di `check-docs.sh`
 
@@ -3345,8 +3458,8 @@ scrivere ✅ o a tacere, e sono i due modi in cui una rinuncia diventa invisibil
 | Costo | |
 |---|---|
 | **sessantuno righe da tenere allineate** | ogni V o Q nuovo, ogni cambio di perimetro, tocca questa tabella. Mitigato dall'asserzione 2: dimenticarla è rosso, non silenzio |
-| **tredici V e otto Q sono `parziale`** | è un terzo del totale, ed è il ritratto onesto di un sotto-progetto che costruisce il kernel senza nessuno dei suoi consumatori. Il rischio è che `parziale` diventi la casella comoda: l'innesco obbligatorio è l'unica difesa, ed è di livello 2 |
+| **dodici V e otto Q sono `parziale`** | è circa un terzo del totale, ed è il ritratto onesto di un sotto-progetto che costruisce il kernel senza nessuno dei suoi consumatori. Il rischio è che `parziale` diventi la casella comoda: l'innesco obbligatorio è l'unica difesa, ed è di livello 2. ⚠️ **Ricontato sulla tabella il 2026-08-08**, non dedotto: il ritratto pieno è **diciotto ✅ · dodici ⚠️ · sette ⏳** per i V e **nove · otto · sette** per i Q. Diceva «tredici V», ed era il numero di prima che `V16` fosse declassato in §8.5.3.1 — nessuno lo aveva ricontato, e un conteggio stantio invecchia **in silenzio** |
 | **gli inneschi invecchiano** | la condizione no, il numero fra parentesi sì. §8.2.1 sceglie quale delle due lo script può controllare — nessuna delle due — e quale un lettore può correggere: il numero |
-| **tre sezioni approvate sono state corrette** | §0.4, §0.6 e il **catalogo §7.4** — la riga V31 in §7.4.2, e le tre nuove in §7.4.1 — per disallineamenti che questa tabella ha trovato. Il costo non è la correzione ma il precedente: una sezione approvata non è congelata, e ogni riapertura va **registrata** invece che applicata, §8.5 |
-| **una regola della §8 dipende da chi legge** | §8.1.2 — «il meccanismo nomina una voce della §7» — ha rifiutato tre voci del catalogo e una riga della tabella, ma **nessuno script la applica**: lo script verifica che la casella sia piena, non che nomini davvero una voce. È l'unico punto della §8 nella condizione in cui era la §7.7.1 prima di questa sezione |
+| **tre sezioni approvate sono state corrette** | §0.4, §0.6 e il **catalogo §7.4** — la riga V31 in §7.4.2, le tre nuove in §7.4.1, e il 2026-08-08 le **cinque** della §6.10.5 più il ritratto ricontato in §7.4.7 (§8.5.4) — per disallineamenti che questa tabella ha trovato. Il costo non è la correzione ma il precedente: una sezione approvata non è congelata, e ogni riapertura va **registrata** invece che applicata, §8.5 |
+| **una regola della §8 dipende da chi legge** | §8.1.2 — «il meccanismo nomina una voce della §7» — ha rifiutato tre voci del catalogo e una riga della tabella, e il giorno dopo altre **cinque** voci (§8.5.4), ma **nessuno script la applica**: lo script verifica che la casella sia piena, non che nomini davvero una voce. È l'unico punto della §8 nella condizione in cui era la §7.7.1 prima di questa sezione — ed è **la classe di difetto che ricompare**, non un incidente |
 | **lo script controlla la forma, non la sostanza** | §8.6.4. Sposta il confine di ciò di cui ci si può fidare, non lo elimina — è la stessa riga della §7.7 |

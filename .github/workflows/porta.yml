@@ -1,0 +1,16 @@
+name: porta di qualità
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  porta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # rust-toolchain.toml dichiara versione e bersaglio: rustup li installa da solo,
+      # ed è il motivo per cui il vincolo 4 della §11 non richiede un passo qui.
+      - run: rustup show
+      - run: bash scripts/gate.sh

@@ -24,6 +24,7 @@ esegui "compilazione del workspace"        cargo build --workspace
 esegui "test a esempi e compile-fail"      cargo test --workspace
 esegui "cancello senza OS"                 bash scripts/gate-no-os.sh
 esegui "allow-list sui due grafi"          bash scripts/gate-deps.sh
+esegui "attributi delle crate vincolate"   bash scripts/gate-attributi.sh
 esegui "coerenza della documentazione"     bash scripts/check-docs.sh
 
 echo

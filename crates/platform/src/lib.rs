@@ -1,24 +1,24 @@
-//! Le implementazioni reali dei tratti dichiarati dal kernel: filesystem, orologio, rete,
-//! processi, confinamento.
+//! The real implementations of the traits the kernel declares: filesystem, clock,
+//! network, processes, confinement.
 //!
-//! ⛔ Questa crate USA `std` e USERÀ `unsafe` per la FFI, ed è deliberato: è il posto dove
-//! l'I/O deve vivere (ADR-0031, perimetro). Le funzioni qui sotto esistono come
-//! CONTRO-SONDE — provano che i divieti del kernel non scattano dove non devono, che è la
-//! direzione che si dimentica (§7.1.1 regola 3, gotcha #24). Non cancellarle finché non
-//! esiste codice reale che dimostri le stesse due cose.
+//! ⛔ This crate USES `std` and WILL USE `unsafe` for FFI, and that is deliberate: it is
+//! the place where I/O has to live (ADR-0031, perimeter). The functions below exist as
+//! COUNTER-PROBES — they prove that the kernel's prohibitions do not fire where they
+//! must not, which is the direction one forgets (§7.1.1 rule 3, gotcha #24). Do not
+//! delete them until real code exists that demonstrates the same two things.
 
-/// Contro-sonda di `no_std`: `platform` nomina `std::fs` e **compila**.
-pub fn contro_sonda_std_compila() -> bool {
+/// Counter-probe of `no_std`: `platform` names `std::fs` and **compiles**.
+pub fn counter_probe_std_compiles() -> bool {
     core::mem::size_of::<std::fs::File>() > 0
 }
 
-/// Contro-sonda di `forbid(unsafe_code)`: `platform` usa `unsafe` e **compila**.
+/// Counter-probe of `forbid(unsafe_code)`: `platform` uses `unsafe` and **compiles**.
 ///
-/// Se qualcuno dichiarasse i divieti a livello di workspace, questa funzione smetterebbe
-/// di compilare — ed è esattamente ciò che la contro-sonda deve intercettare.
-pub fn contro_sonda_unsafe_compila() -> usize {
+/// If someone declared the prohibitions at workspace level, this function would stop
+/// compiling — and that is exactly what the counter-probe has to intercept.
+pub fn counter_probe_unsafe_compiles() -> usize {
     let x: u8 = 42;
     let p = &raw const x;
-    // SAFETY: `p` deriva da un riferimento a `x`, vivo per tutta la funzione.
+    // SAFETY: `p` derives from a reference to `x`, alive for the whole function.
     unsafe { *p as usize }
 }

@@ -1,9 +1,9 @@
-//! Il kernel: logica, decisioni, tratti dichiarati. Nessuna chiamata all'OS.
+//! The kernel: logic, decisions, declared traits. No call to the OS.
 //!
-//! Questa crate non contiene ancora nulla: il Traguardo 1 costruisce lo scheletro e la
-//! porta di qualità, e la logica arriva dai traguardi successivi. Gli attributi qui
-//! sotto NON sono decorazione — sono tre delle regole di livello 1 della §7.4.1, e i
-//! loro test negativi vivono in `tests/compile_fail/`.
+//! This crate contains nothing yet: Milestone 1 builds the skeleton and the quality
+//! gate, and the logic arrives with the later milestones. The attributes below are NOT
+//! decoration — they are three of the level 1 rules of §7.4.1, and their negative
+//! tests live in `tests/compile_fail/`.
 
 #![no_std]
 #![forbid(unsafe_code)]

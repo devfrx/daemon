@@ -1,5 +1,5 @@
 error[E0433]: cannot find module or crate `std` in this scope
- --> tests/compile_fail/std_nel_kernel.rs:6:13
+ --> tests/compile_fail/std_in_kernel.rs:6:13
   |
 6 |     let _ = std::fs::read_to_string("/etc/passwd");
   |             ^^^ use of unresolved module or unlinked crate `std`

@@ -1,5 +1,5 @@
 error[E0433]: cannot find module or crate `std` in this scope
-  --> tests/compile_fail/hashmap_nel_kernel.rs:10:13
+  --> tests/compile_fail/hashmap_in_kernel.rs:10:13
    |
 10 |     let _m: std::collections::HashMap<u8, u8> = std::collections::HashMap::new();
    |             ^^^ use of unresolved module or unlinked crate `std`
@@ -7,7 +7,7 @@ error[E0433]: cannot find module or crate `std` in this scope
    = help: if you wanted to use a crate named `std`, use `cargo add std` to add it to your `Cargo.toml`
 
 error[E0433]: cannot find module or crate `std` in this scope
-  --> tests/compile_fail/hashmap_nel_kernel.rs:10:49
+  --> tests/compile_fail/hashmap_in_kernel.rs:10:49
    |
 10 |     let _m: std::collections::HashMap<u8, u8> = std::collections::HashMap::new();
    |                                                 ^^^ use of unresolved module or unlinked crate `std`

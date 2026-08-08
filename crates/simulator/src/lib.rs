@@ -1,8 +1,8 @@
-//! Il simulatore DST: implementazioni finte dei tratti che il kernel dichiara.
+//! The DST simulator: fake implementations of the traits the kernel declares.
 //!
-//! Vincolata come `kernel`, e per la stessa ragione: una corsa deterministica non può
-//! contenere una sorgente di non determinismo, e `HashMap` è la più insidiosa perché non
-//! compare in nessun elenco di «chiamate OS» — gotcha #12.
+//! Constrained like `kernel`, and for the same reason: a deterministic run cannot
+//! contain a source of non-determinism, and `HashMap` is the most insidious one because
+//! it appears in no list of "OS calls" — gotcha #12.
 
 #![no_std]
 #![forbid(unsafe_code)]

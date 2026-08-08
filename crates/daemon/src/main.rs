@@ -1,9 +1,9 @@
-//! Il cablaggio di produzione: monta `platform`, avvia l'esecutore, ospita il server IPC,
-//! e **produce i parametri risolti** che consegna al kernel (§2.8, ADR-0034).
+//! The production wiring: mounts `platform`, starts the executor, hosts the IPC server,
+//! and **produces the resolved parameters** it hands to the kernel (§2.8, ADR-0034).
 //!
-//! In questo sotto-progetto i default sono **letterali qui dentro**, non letti da un
-//! archivio: vincolo 11 della §11.
+//! In this sub-project the defaults are **literals right here**, not read from a store:
+//! constraint 11 of §11.
 
 fn main() {
-    println!("daemon: scheletro. Nessuna logica in questo traguardo.");
+    println!("daemon: skeleton. No logic in this milestone.");
 }

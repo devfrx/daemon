@@ -13,6 +13,14 @@ Desktop.ini
 /tmp/
 *.log
 
+# Artefatti di build del prodotto
+/target/
+# ⛔ /Cargo.lock NON si ignora, ed è deliberato: gate-deps.sh verifica il grafo
+# TRANSITIVO delle dipendenze contro l'allow-list di ADR-0031. Senza lockfile versionato
+# il grafo si risolve diverso su un'altra macchina o un altro giorno, e il controllo
+# misurerebbe un grafo che nessuno ha approvato. Gli spike qui sotto ignorano il proprio
+# perché sono prove usa-e-getta; questo è il prodotto.
+
 # Artefatti di build degli spike — le prove si conservano, i binari no
 /spikes/rust/target/
 /spikes/rust/Cargo.lock

@@ -1,6 +1,6 @@
-// ⛔ È IL CASO CHE GIUSTIFICA `forbid` INVECE DI `deny`, e senza di lui il vincolo 2 della
-// §11 è una preferenza stilistica. Con `deny`, questo file COMPILA. Con `forbid`, il
-// compilatore rifiuta l'`#[allow]` stesso: E0453.
+// ⛔ È IL CASO CHE GIUSTIFICA `forbid` INVECE DI `deny`: senza, il vincolo 2 della §11
+// resta una preferenza. Con `deny` l'`#[allow]` vince e l'`unsafe` non è più segnalato
+// (non compila lo stesso, ma per il rumore di codegen); `forbid` lo rifiuta: E0453.
 #![no_std]
 #![forbid(unsafe_code)]
 

@@ -837,10 +837,24 @@ requisito preciso:
 |---|---|---|
 | caduta fra intento ed esito | `journal` | **Q5** — ripresa senza effetti rieseguiti |
 | uccisione di un worker in un istante qualsiasi | `process` | **Q4** · I1 · I5 |
+| **risposta assente o tardiva** | `process` | **Q4** — il core non si blocca: l'attesa passa dal `reactor`, e la guardia sui giri dell'esecutore (§3.2.1) trasforma un blocco in errore invece che in attesa infinita |
+| **frame malformato** — byte consumati diversi dalla lunghezza dichiarata | `process` | **Q4** — il frame è **rifiutato**, non diventa un valore. Senza questa riga varrebbe il gotcha #34: decodifica riuscita e valore sbagliato |
+| **frame non sollecitato** — il worker parla senza ricevuta aperta | `process` | **Q4** · **I5** — è un guasto, non un dato: §6.10.1 |
+| **morte del worker a metà flusso** | `process` | **Q4** · I1 — la ricevuta si chiude e la concessione torna alla linea di base |
 | morte della gui a metà run | `ipc` | **Q3** |
 | perdita della rete | `network` | **Q18** — il degrado si dichiara *prima* del primo fallimento |
 | interlacciamento delle richieste concorrenti | `reactor` | **Q2** — la somma delle concessioni non supera mai il budget · I2 |
 | caduta durante la conservazione di un file | `filesystem` | **Q22** — l'ambito torna byte-identico |
+
+> ⚠️ **Quattro righe del dialogo aggiunte il 2026-08-08**, con F1b e la §6.10. La §3.1
+> aveva già allargato la riga `process` — «risposta sbagliata, tardiva o assente» — ma la
+> mappa **guasto → requisito** non era scritta, e senza di essa il seme governa guasti che
+> nessuno ha collegato a un requisito.
+>
+> 📌 **Tutte e quattro ricadono su Q4**, e non è una scorciatoia: è la regola di §8.2.2 —
+> *«un Q della DST eredita lo stato della porta in cui si inietta»* — applicata alla porta
+> `process`. **Lo stato di Q4 non cambia** per questo: resta `parziale` finché non esiste
+> un worker vero contro cui provare la conformità della finta (§7.4.6).
 
 ### 3.4 Il seme come caso di regressione — e cosa **non** è
 
@@ -1320,6 +1334,16 @@ reale viene misurato e registrato»*. In pratica:
 Il giornale è già il substrato (§4): non serve un secondo posto dove mettere le misure.
 È il gotcha #7 applicato qui.
 
+> ⚠️ **Da dove arriva il picco, e sotto quale regola nasce — aggiunto il 2026-08-08.** Il
+> numero lo misura il **worker**: risale dalla porta `process`, in un messaggio progettato
+> in **§6.10**. Nel record durevole nasce sotto la regola di **§4.9** — campo
+> **facoltativo**, **indice nuovo**, e l'indice non si riusa mai.
+>
+> 📌 È la ragione per cui **F2 doveva precedere F1b**: progettare questo messaggio prima
+> che la regola di evoluzione esistesse avrebbe significato aggiungere un campo a un record
+> durevole **sotto nessuna regola**, che è esattamente il modo di fallire per cui §4.9
+> esiste.
+
 ### 5.3 Il ciclo della concessione
 
 La macchina a stati è quella di [design/02](../../design/02-arbitrato-gpu.md) e non si
@@ -1577,6 +1601,18 @@ di essere vuota.
 > ⛔ E non è la stessa scelta estesa a un secondo artefatto: è una scelta **diversa**, presa
 > sul requisito opposto. Il kernel porta due serializzatori perché ha due artefatti con
 > requisiti opposti — §4.9.1.
+
+> ⚠️ **La scelta è stata verificata sul _secondo_ capo del filo — aggiunto il 2026-08-08**
+> con [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md). M-1 aveva
+> chiesto se il **grafo transitivo** fosse accettabile: domanda giusta per I3, ma
+> interamente sul **nostro** lato. Il pari di `ipc` è TypeScript
+> ([ADR-0030](../../adr/0030-framework-dell-interfaccia.md)), e che sapesse rileggere
+> questi byte **non era mai stato misurato** — P1 aveva due binari **Rust** ai due capi.
+>
+> ✅ **M-11 lo misura, e la risposta è sì**: `bincode-ts` 1.0.0 decodifica i byte veri con i
+> valori giusti. **Questa sotto-sezione non cambia**: acquista l'evidenza che le mancava.
+> ⚠️ E acquista una **fragilità dichiarata** — quel pacchetto è a una sola versione, con
+> entrambi i punti d'ingresso rotti su Node 24. §6.10.6.
 
 ⚠️ **La riga di `simulator` è stata corretta da M-3.** La prima stesura diceva «la lista
 resta vuota», che confonde due cose: `simulator` **non aggiunge voci proprie**, ma il suo
@@ -1838,6 +1874,17 @@ perché:
 > serializzatori perché ha due artefatti con requisiti opposti, ed è la coerenza, non la
 > duplicazione.
 
+> ⚠️ **La _domanda_ di questa misura era incompleta, e se ne è accorta solo il 2026-08-08**
+> — [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md). «Esiste un
+> serializzatore il cui grafo transitivo sia accettabile?» riguarda il **nostro** capo del
+> filo. Un canale privato ne ha due, e il secondo non è Rust. La seconda metà —
+> ***«l'ecosistema del pari ha un lettore conforme e mantenuto?»*** — è stata misurata
+> dopo, con **M-10** e **M-11**: no per Python, sì per TypeScript.
+>
+> ⛔ **La scelta di questa sezione non cambia**, e la tabella dei cinque candidati resta
+> valida per ciò che confronta. Cambia il fatto che ora è verificata su entrambi i capi
+> invece che su uno.
+
 #### 6.8.1 Le cinque sonde di non-vacuità
 
 Gotcha #14: un controllo mai visto fallire non è un controllo. Ogni affermazione della
@@ -1907,6 +1954,144 @@ Quattro ipotesi su sei sono divergute. Registrate invece che allineate.
 | **il contratto del sensore resta un'ipotesi** | verificato con un doppio, su tre casi reali di cui **nessuno esiste**. RK-5 per intero |
 | **il gettone prova la provenienza, non la correttezza** | §6.3.2. Elimina una classe di errori, non due |
 | **il decisore non parla con nessun provider vero** | la prima integrazione reale può scoprire che una firma è sbagliata. Costo già dichiarato in §0.6 |
+
+### 6.10 Il canale verso i worker
+
+> ⚠️ **Aggiunta il 2026-08-08**, dopo l'approvazione della §6. È la voce **F1b** della
+> riapertura: [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) ha
+> dichiarato la porta in §2.3.1, e qui la si **progetta**. Il formato di filo lo sceglie
+> [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md), con le misure
+> **M-10** e **M-11**. Sta in fondo alla sezione, come §2.8 e §4.9: **nessuna
+> rinumerazione**.
+
+**A parole.** Il core deve poter dire a un worker *«fai questo»*, e il worker deve poter
+rispondere — anche molte volte, come per l'audio. Ma `design/01` dice che *«il worker non
+risponde di iniziativa propria»*. Le due frasi sembrano litigare, e non litigano: **lo
+streaming è istruito**. Il worker non parla mai da solo, riempie una casella che il core
+ha aperto. Il problema è che oggi questo è un commento, e un commento non regge nulla.
+
+#### 6.10.1 La tensione di `design/01`, e come si scioglie
+
+| Riga della tabella dei canali | Cosa dice |
+|---|---|
+| `core → worker ML` | *«Avvia, istruisce, uccide. **Il worker non risponde di iniziativa propria**»* |
+| `core → worker audio` | *«Idem; **il flusso audio risale al core**»* |
+
+La forma della porta la scioglie così:
+
+> **Ogni byte che risale è coperto da una _ricevuta_, e le ricevute le emette solo
+> un'istruzione.** Un frame che nessuna ricevuta copre non ha modo di essere nominato:
+> non è un dato, è un **guasto**.
+
+È il **quarto uso** del dispositivo di §6.3.1, e conviene vederlo nella stessa tabella:
+
+| Per fare questo… | …va consegnato questo | emesso solo da |
+|---|---|---|
+| avviare un worker | una **concessione** | l'arbitro (§5.6) |
+| mettere testo nel canale delle istruzioni | un `Instruction` | la conversione dichiarata (§6.5) |
+| eseguire una richiesta | una **prova di conformità** | il filtro dei vincoli |
+| **leggere da un worker** | una **ricevuta** | l'istruzione stessa |
+
+La prima frase di `design/01` resta vera **alla lettera**, e la seconda diventa un caso
+della prima: il worker audio tiene aperta una ricevuta di flusso per tutta la propria
+vita, aperta da un'istruzione sola all'avvio.
+
+⚠️ **La ricevuta di flusso non è un passo del giornale.** I frammenti che risalgono da una
+trascrizione continua sono una **sorgente di eventi**, non passi
+([ADR-0011](../../adr/0011-routing-risolto-e-giornalato-per-richiesta.md), gotcha #1):
+giornalarli violerebbe Q1. Ciò che si giornala resta la concessione e l'esito. Va scritto,
+o qualcuno li giornala per diligenza.
+
+#### 6.10.2 Le firme
+
+| Operazione | Cosa fa | Cosa impone |
+|---|---|---|
+| `avvia(concessione, descrittore) → Worker` | avvia il processo | senza concessione **non compila** — §5.6, invariata |
+| `Worker::istruisci(frame) → Ricevuta` | manda un'istruzione | l'unico modo di parlare è **l'oggetto che l'avvio ha restituito** |
+| `Worker::leggi_uno(RicevutaSingola) → Frammento` | una risposta sola | **consuma** la ricevuta: leggere due volte non compila |
+| `Worker::leggi_prossimo(&mut RicevutaFlusso)` | il frame successivo | resta aperta finché il worker dichiara la fine, o il core chiude |
+| `Worker::chiudi(RicevutaFlusso)` | chiude il flusso | |
+| `Worker::uccidi(self)` | uccide, ed è **sempre lecito** (§5.3, punto 4) | **consuma il `Worker`**: istruire dopo l'uccisione non compila |
+
+**Due tipi di ricevuta e non un enum a due rami.** Costa una funzione di lettura in più, e
+compra che *«una risposta singola diventi un flusso»* non sia **esprimibile** — cioè
+esattamente la frase di `design/01`. È la stessa mossa del punto 3 di §5.3: reso non
+rappresentabile invece che controllato a runtime.
+
+**Chi risveglia chi.** Nessuno attende dentro `process`. La prontezza arriva dal
+`reactor`, come per ogni altra porta: l'esecutore chiede «cosa è pronto» e un frame
+disponibile è una delle risposte. §2.4 resta intatta — **nessun thread nel percorso
+decisionale**, e in simulazione è il seme a decidere quando un frame è pronto.
+
+#### 6.10.3 Il formato di filo, e il criterio che lo sceglie
+
+[ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md): il formato di
+un canale privato si sceglie **anche** sull'ecosistema del pari, e la risposta si
+**misura**. Misurata (§6.10.6): il pari **Python non ha** un lettore per `bincode`, il
+pari TypeScript ce l'ha. Quindi i due canali privati ricevono formati diversi, e la
+differenza è misurata invece che accidentale.
+
+| | |
+|---|---|
+| **codificatore** | **`minicbor` 2.3.0** — voce **già spedita** (§7.3.1): zero aggiunte alla lista di ADR-0031 |
+| **dove vive** | in **`kernel`**. La porta scambia **byte**, non messaggi tipizzati, come `journal` dopo [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) |
+| **perché lì** | è l'argomento 2 di §4.9.3 applicato qui: con la porta a byte **il simulatore scambia byte**, quindi la campagna DST esercita davvero codifica e decodifica invece di aggirarle |
+| **gli schemi restano due** | condividere la crate **non è** condividere lo schema: ADR-0035, regola 2 |
+| ⛔ **cosa il canale NON adotta** | la regola di **§4.9**. Usa la crate, **non la disciplina**: nessun enum di versione, nessun registro di indici ritirati, nessun byte congelato. I4 rinuncia al versionamento, e il meccanismo resta il **timbro di build** di §6.1.2, identico sui due canali |
+
+#### 6.10.4 Due regole che escono dalla misura, non da un'opinione
+
+| Regola | L'evidenza |
+|---|---|
+| **il frame dichiara la propria lunghezza**, e la decodifica verifica che i byte consumati siano **esattamente** quel numero | un decodificatore CBOR si ferma al **primo elemento completo** e ignora la coda. Misurato: dando a `cbor2` i byte di `bincode` di `Esito` restituisce **`1`**, senza sollevare nulla. Senza il controllo, un frame malformato è un **valore sbagliato**, non un errore |
+| ogni `Vec<u8>` porta l'**annotazione di stringa di byte** | senza, `minicbor` lo codifica come **array di numeri**. Misurato su un frammento audio da 4096 B: **7813** contro **4101**, cioè **1,91×**. Compila, fa round-trip, ed è corretto: costa solo il doppio del traffico, in silenzio |
+
+**Il campo che questo canale fa entrare nel giornale** è il **picco di VRAM** di §5.2.2:
+arriva dal worker, in un messaggio progettato qui. Nasce sotto la regola di §4.9 — campo
+**facoltativo**, **indice nuovo** — ed è la ragione per cui F2 doveva precedere F1b.
+
+#### 6.10.5 Come si verifica, e il limite dichiarato
+
+| # | Livello | Meccanismo | Sonda — *deve scattare* | Contro-sonda — *deve restare verde* |
+|---|---|---|---|---|
+| 1 | **1 — compilatore** | si parla a un worker solo con l'oggetto che l'avvio restituisce | parlargli senza `Worker` → non compila | col `Worker` → compila |
+| 2 | **1 — compilatore** | `uccidi` consuma il `Worker` | istruire dopo `uccidi` → non compila | istruire prima → compila |
+| 3 | **1 — compilatore** | leggere pretende una ricevuta | leggere senza ricevuta → non compila | con la ricevuta → compila |
+| 4 | **1 — compilatore** | una ricevuta singola si consuma | leggere due volte dalla stessa → non compila | leggerne una → compila |
+| 5 | **2 — controllo esterno** | i byte consumati sono pari alla lunghezza dichiarata | frame troncato, o con coda dopo l'ultimo elemento → fallisce | frame esatto → verde |
+
+> ⛔ **Il limite, dichiarato prima che qualcuno lo scopra.** Il compilatore prova la forma
+> **dalla nostra parte**, non che il pari la rispetti. Un frame non sollecitato viene
+> **rifiutato**, non impedito: è un guasto che il simulatore inietta (§3.3), e contro un
+> worker vero resta scoperto finché la suite di conformità non esiste — §7.4.6, rimandata
+> perché worker non ce ne sono (§0.2).
+
+#### 6.10.6 Le evidenze — M-10 e M-11
+
+Eseguite il **2026-08-08**. `rustc 1.95.0` · Python **3.13.7** · Node **v24.9.0** ·
+npm **11.6.0**. Prototipi usa-e-getta, fuori dal repository. Le tabelle complete, con i
+candidati respinti e il motivo, stanno in ADR-0037.
+
+| Misura | Domanda | Esito |
+|---|---|---|
+| **M-10** | il pari **Python** decodifica `bincode` 2.0.1? | ⛔ **no** — nessuna libreria; l'unica che si dichiara compatibile è ferma alla configurazione 1.x e non ha tipi somma. ✅ `minicbor` letto da `cbor2` 6.1.4: valori giusti |
+| **M-11** | il pari **TypeScript** ci riesce? | ✅ **sì** — `bincode-ts` 1.0.0, valori giusti e byte tutti consumati. ✅ anche `cbor-x` 1.6.5 su CBOR |
+
+⚠️ **Una fragilità dichiarata sul canale gui, che non cambia la sua decisione.**
+`bincode-ts` è a **una sola versione** e ha **entrambi** i punti d'ingresso pubblicati
+rotti su Node 24: ha funzionato dietro un bundler. Il sotto-progetto 2 può ancora
+specchiare i tipi a mano; si scrive qui perché non venga scoperto allora.
+
+#### 6.10.7 I costi
+
+| Costo | |
+|---|---|
+| **due funzioni di lettura invece di una** | il prezzo di rendere non rappresentabile ciò che `design/01` vieta a parole |
+| **un `#[n(i)]` per campo** su ogni messaggio del canale | per un beneficio a cui I4 rinuncia. È il costo che M-1 aveva respinto per il canale gui, pagato qui per un'altra ragione — ADR-0037 |
+| **un byte in più** sul messaggio piccolo misurato | otto contro sette. Trascurabile, e misurato invece che stimato |
+| ⚠️ **`minicbor` serve due artefatti con requisiti opposti** | giornale e canale worker. Un cambiamento fatto per l'uno tocca l'altro: lo contengono il pin nel manifesto e il fatto che gli schemi restano distinti |
+| **la lunghezza del frame è un secondo posto da tenere allineato** | col codificatore. È il prezzo per non confondere un frame malformato con un valore |
+| **`process` diventa la porta più grande del kernel** | e §7.4.6 acquisisce un'affermazione in più sulla conformità fra la finta e la vera |
 
 ---
 
@@ -2106,10 +2291,10 @@ conserva la giustificazione delle voci spedite e rimanda a questa tabella.
 |---|---|---|---|---|
 | **`kernel`** | `bincode` 2.0.1 | **spedita** | serializza lo schema IPC (I4) | **nulla**: compila per un bersaglio senza OS, e nel grafo non compare nessuna sorgente di casualità |
 | **`kernel`** | `unty` 0.0.4 | **spedita** | controllo di tipo alla decodifica di `bincode` | idem |
-| **`kernel`** | `minicbor` 2.3.0 | **spedita** | codifica il **record durevole** del giornale, per indice esplicito — §4.9 · [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) | **nulla**: misurato il 2026-08-07 su `x86_64-unknown-none`, e nel grafo spedito non compare nessuna sorgente di casualità |
+| **`kernel`** | `minicbor` 2.3.0 | **spedita** | codifica il **record durevole** del giornale, per indice esplicito — §4.9 · [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) — **e lo schema del canale verso i worker**, §6.10 · [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) | **nulla**: misurato il 2026-08-07 su `x86_64-unknown-none`, e nel grafo spedito non compare nessuna sorgente di casualità |
 | **`kernel`** | `bincode_derive` 2.0.1 | **di build** | genera il codice di serializzazione; gira sull'host e non entra nel prodotto | **l'host, a tempo di compilazione** |
 | **`kernel`** | `virtue` 0.0.18 | **di build** | dipendenza di `bincode_derive` | idem |
-| **`kernel`** | `minicbor-derive` 0.19.5 | **di build** | genera codifica e decodifica del record durevole con gli indici dichiarati | idem |
+| **`kernel`** | `minicbor-derive` 0.19.5 | **di build** | genera codifica e decodifica del record durevole **e dei messaggi del canale worker**, con gli indici dichiarati | idem |
 | **`kernel`** | `syn` 2.0.119 | **di build** | dipendenza di `minicbor-derive` ⚠️ | idem |
 | **`kernel`** | `quote` 1.0.47 | **di build** | idem | idem |
 | **`kernel`** | `proc-macro2` 1.0.107 | **di build** | idem | idem |
@@ -2131,6 +2316,17 @@ questo.
 > **L'alternativa che lo evitava è stata valutata e scartata:** scrivere a mano codifica e
 > decodifica per ogni tipo di record toglie le cinque voci e sposta il costo **da una volta
 > a per sempre**. Il costo dichiarato in ADR-0036.
+
+> ⚠️ **Due giustificazioni allargate il 2026-08-08, e nessuna voce aggiunta** —
+> [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md). `minicbor` e
+> `minicbor-derive` servono ora **anche** lo schema del canale verso i worker (§6.10). La
+> lista **non cresce**: il canale riusa una voce già spedita.
+>
+> ⛔ **Ed è l'allargamento opposto a quello che F1b si aspettava.** L'istruzione diceva di
+> allargare le giustificazioni di `bincode` — «serializza lo schema IPC» — dando per
+> scontato che il canale worker ne ereditasse il formato. La misura ha detto altro, e
+> quelle righe **restano esatte come sono**: `bincode` continua a servire il solo canale
+> gui. Si registra la divergenza invece di allinearsi all'attesa — gotcha #15.
 
 **I costi:**
 
@@ -2420,10 +2616,17 @@ dove esistono **entrambe** le implementazioni.
 |---|---|---|
 | `journal` | ✅ `redb` in `platform` | ✅ **sì** — e §4.6 ne copre già il livello 2 |
 | `reactor` | ✅ l'attesa vera sull'OS | ✅ **sì**, ed è la più importante: la validità della DST poggia lì |
-| `process` | ✅ avvio e uccisione veri | ⚠️ **rimandata**: non esistono worker da avviare (§0.2) |
+| `process` | ✅ avvio, **dialogo** e uccisione veri | ⚠️ **rimandata**: non esistono worker da avviare (§0.2) — e con il dialogo la suite acquista **un'affermazione in più**, sotto |
 | `ipc` | ✅ named pipe | ⚠️ **rimandata**: non esiste una GUI dall'altro capo |
 | `filesystem` | ❌ scaglionata (§0.4) | ❌ |
 | `network` | ❌ scaglionata | ❌ |
+
+> ⚠️ **L'affermazione in più su `process` — aggiunta il 2026-08-08** con la §6.10. Con il
+> solo avvio e la sola uccisione, la conformità riguardava il **ciclo di vita**: il
+> processo parte, muore, e la finta si comporta come la vera. Col dialogo riguarda anche il
+> **filo** — che i byte prodotti dalla finta siano quelli che un worker vero produrrebbe, e
+> che un frame malformato sia **rifiutato allo stesso modo** dalle due. È la parte che
+> resta scoperta più a lungo, perché pretende un worker Python vero.
 
 La §8 registra quali porte hanno la suite e quali no, con il sotto-progetto che le chiude.
 

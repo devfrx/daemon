@@ -73,6 +73,7 @@ sotto-progetto**, nello stesso passaggio.
 | [0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md) | I parametri di decisione sono consegnati al kernel, non letti | Accepted |
 | [0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) | La porta verso i worker, e cosa significa «singolo» in I4 | Accepted |
 | [0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md) | L'evoluzione del formato durevole del giornale | Accepted |
+| [0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) | Il criterio del pari: il formato di un canale privato si sceglie anche sull'ecosistema di chi lo legge | Accepted |
 
 ## Indice dei diagrammi
 

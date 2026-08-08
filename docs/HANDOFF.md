@@ -5,10 +5,10 @@ e poi di nuovo quando rileggere `tracciabilita.md` con un'altra domanda ha **ria
 spec su sette voci**, di cui **cinque chiuse**. Serve a riprendere senza rifare, e senza
 rilitigare ciò che è già deciso.
 
-> 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — **F2 e F7
-> chiuse** con [ADR-0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md) e la
-> §4.9, albero pulito, `check-docs.sh` verde. **Il prossimo passo è F1b**: il progetto della
-> porta `process` in §5–§6. Poi F4, poi la §8 una volta sola, poi il piano.
+> 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — **F1b chiusa**
+> con [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) e la §6.10,
+> albero pulito, `check-docs.sh` verde. **Il prossimo passo è F4**: collocare l'anello 3 in
+> §0.4 — l'ultima delle sette. Poi la §8 una volta sola, poi il piano.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -17,14 +17,14 @@ rilitigare ciò che è già deciso.
 ## In trenta secondi
 
 Assistente desktop locale, utente singolo, GPU singola RTX 5080 16 GB. **Piattaforma a
-quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 36 ADR**.
+quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 37 ADR**.
 Stack deciso **tranne il guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**,
 worker ML in **Python**; Tauri contro Electron è ancora aperto
 ([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
 
 **La spec del sotto-progetto 1 ha §0–§8 approvate**, ed è **riaperta su sette voci**
-trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto. Cinque
-sono chiuse; restano **F1b** e **F4**. Il codice non è ancora iniziato, e vale «spec prima
+trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto. Sei
+sono chiuse; resta **F4**. Il codice non è ancora iniziato, e vale «spec prima
 del codice». Il piano viene **dopo** la chiusura di quelle ancora aperte — vedi sotto.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
@@ -42,20 +42,20 @@ restano dove sono.
 
 ## Prima cosa da fare
 
-**Chiudere le voci ancora aperte della riapertura, poi scrivere il piano.** **Cinque** sono
-chiuse — F3, F6, F5, F1a e **F2 con F7**. Nessuna misura blocca le due che restano.
+**Chiudere l'ultima voce della riapertura, poi scrivere il piano.** **Sei** sono chiuse —
+F3, F6, F5, F1a, **F2 con F7**, e **F1b**. Nessuna misura blocca quella che resta.
 
-> ⏭️ **Il prossimo passo è F1b**: firme e messaggi della porta `process` in §5–§6,
-> l'allargamento delle giustificazioni di §6.1.1 e §7.3.1, e la misura che
-> [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) lascia aperta —
-> *`bincode` è decodificabile dal pari **Python**?* Se no, vale l'**esito B di M-1**, già
-> misurato: tipi in `kernel`, serializzazione in `daemon`.
+> ⏭️ **Il prossimo passo è F4**, ed è l'ultima delle sette: l'anello 3 non è collocato in
+> §0.4, né dentro né fuori. Costo previsto: una riga in §0.4, e se serve una in §8.
 >
-> ✅ **La propedeuticità che bloccava F1b è caduta:** F1b progetta messaggi i cui campi
-> finiscono in record durevoli — il picco di VRAM di §5.2.2 — e ora la regola di evoluzione
-> **esiste** (§4.9). Quei campi si aggiungono sotto una regola invece che sotto nessuna.
+> ⛔ **Poi la §8, per ultima e una volta sola**, e il ritratto dei conteggi va **ricontato
+> sulla tabella**, non dedotto. Poi il piano. Poi il codice, non prima.
 >
-> ⏭️ **Poi F4**, indipendente: l'anello 3 non è collocato in §0.4, né dentro né fuori.
+> ✅ **F1b è chiusa il 2026-08-08** con
+> [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) e la §6.10. La
+> domanda che ADR-0035 lasciava aperta — *`bincode` è decodificabile dal pari **Python**?*
+> — è stata **misurata**: no. Ma non è scattato l'esito B di M-1: la stessa misura, ripetuta
+> sul **secondo** pari, ha trovato una via che nel 2026-08-07 non esisteva ancora.
 
 ### Le sette voci, e come sono state trovate
 
@@ -73,7 +73,7 @@ assegnato»*, e **non** significa «non richiede un meccanismo di kernel». Tutt
 | **F3** | i **parametri di decisione** non erano consegnati al kernel | esplicita in §8.3 V3, ma con l'innesco della specie sbagliata | **B** | ✅ **chiusa** — [ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md), spec §2.8 |
 | **F6** | la **VRAM totale** non aveva provenienza | implicita | conseguenza di F3 | ✅ **chiusa** con F3, spec §5.1 |
 | **F5** | la porta `network` era descritta «verso i **provider**», V25 promette «un solo punto di uscita **verso la rete**» | implicita | una riga | ✅ **chiusa** — spec §2.3.1 |
-| **F1** | nessuna porta per **parlare** con un worker: `process` era «avvio e uccisione» | implicita | **B** | 🔵 **F1a chiusa** ([ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md), §2.3.1); **F1b aperta** — il progetto in §5–§6 |
+| **F1** | nessuna porta per **parlare** con un worker: `process` era «avvio e uccisione» | implicita | **B** | ✅ **chiusa** — F1a con [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) e §2.3.1; **F1b** con [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) e §6.10 |
 | **F2** | l'**evoluzione del formato durevole** del giornale non è decisa | implicita | **B** | ✅ **chiusa** — [ADR-0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md), spec §4.9 |
 | **F4** | l'**anello 3** non è collocato in §0.4, né dentro né fuori | implicita | **C**, ma va *scritta* | ⬜ aperta |
 | **F7** | «il giornale lo consente» per **fork e branching** è un'affermazione della sola tracciabilità | implicita | converge in F2 | ✅ **chiusa con F2** — §4.9.5 |
@@ -92,9 +92,9 @@ scrittura. È:
                     è deciso: ADR-0035, «singolo» = per canale privato
 ✅ F2 ─▶ F7         chiuse insieme: F7 è un campo facoltativo con un
                     indice nuovo, e la regola di F2 lo rende meccanico
-⬜ F1b (§5–§6)      firme, messaggi, formato di filo — la propedeuticità
-                    su F2 è soddisfatta
-⬜ F4               indipendente, in qualsiasi momento
+✅ F1b (§5–§6)      firme, messaggi, formato di filo. La propedeuticità su F2
+                    era soddisfatta, e il formato l'ha deciso una misura
+⬜ F4               indipendente, in qualsiasi momento — l'ultima
 ⛔ §8               per ultima, e UNA VOLTA SOLA
 ```
 
@@ -120,21 +120,35 @@ ultima e una volta sola, perché ognuna delle sette cambia una sua riga; **nessu
 rinumerazione** di sezioni, perché lo script legge §7.4 e §8 per posizione (gotcha #26);
 e ogni correzione a una sezione approvata porta il proprio **richiamo datato**, come §8.5.
 
-### F1b — istruita, e cosa la aspetta esattamente
+### F1b — ✅ chiusa. Cosa ha deciso, e cosa non rifare
 
-Non va ri-derivata: [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) la
-consegna già per intero fra le proprie conseguenze e i propri follow-up. Raccolto qui
-perché cercarlo là dentro è il modo in cui se ne perde un pezzo.
+✅ **Chiusa il 2026-08-08** con
+[ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) e la **§6.10**. Le
+sette cose che le erano state consegnate sono tutte scritte; qui resta ciò che serve a
+**non ri-derivarle**.
 
-| # | Cosa | Dove |
+| # | Cosa era | Dove è finita |
 |---|---|---|
-| 1 | **firme e messaggi** della porta `process`: avvio, dialogo, uccisione. ⚠️ L'oggetto con cui si parla a un worker **è quello che restituisce l'avvio** — è ciò che conserva la catena del gettone e tiene I2 al compilatore | §5.6 · §6 |
-| 2 | il **formato di filo** del canale verso i worker, e la misura che lo decide: *`bincode` è decodificabile dal pari **Python**?* Se no vale l'**esito B di M-1**, già misurato e già prezzato — tipi in `kernel`, serializzazione in `daemon` — e il confine di ADR-0031 **non cresce** | §6 |
-| 3 | l'**allargamento di tre giustificazioni**: §6.1.1 e §7.3.1 dicono «serializza lo schema IPC (I4)», e gli schemi diventano due. Si fa **qui e non prima**, o si scrive un'affermazione non ancora vera | §6.1.1 · §7.3.1 |
-| 4 | la **suite di conformità** per `process` entra in §7.4.6 | §7.4.6 |
-| 5 | la §3.3 dice **quali guasti del dialogo verificano quale Q**. Oggi la §3.1 dichiara il dialogo una sorgente di guasti, ma la mappa guasto → requisito non è scritta | §3.3 |
-| 6 | ⚠️ una **tensione di `design/01` da conciliare**: *«il worker non risponde di iniziativa propria»* contro *«il flusso audio risale al core»*. Non è una contraddizione — lo streaming è **istruito** — ma la forma della porta deve renderlo esplicito, o la prima frase diventa falsa in silenzio | [`design/01`](design/01-topologia-dei-processi.md) |
-| 7 | i campi che F1b fa entrare nel giornale — il **picco di VRAM** di §5.2.2 — nascono sotto la regola §4.9: **campo facoltativo, indice nuovo** | §4.9 |
+| 1 | firme e messaggi di `process` | **§6.10.2** — l'avvio restituisce il `Worker`, ed è l'unico modo di parlargli; `uccidi` lo **consuma**. Due tipi di ricevuta, non un enum |
+| 2 | il formato di filo, e la misura che lo decide | **§6.10.3** — `minicbor`, codifica in `kernel`, porta a **byte**. ⛔ **L'esito B di M-1 non è scattato**: vedi sotto |
+| 3 | l'allargamento delle giustificazioni | **§7.3.1** — ma **al contrario di come era istruito**: vedi sotto |
+| 4 | la suite di conformità | **§7.4.6** — resta rimandata, e acquista l'affermazione sul **filo** oltre a quella sul ciclo di vita |
+| 5 | quali guasti del dialogo verificano quale Q | **§3.3** — quattro righe, tutte su **Q4** per la regola di §8.2.2. Lo stato di Q4 **non cambia** |
+| 6 | la tensione di `design/01` | **§6.10.1** — la scioglie il gettone della **ricevuta**: un frame non coperto è un guasto, non un dato |
+| 7 | il picco di VRAM nel giornale | **§5.2.2** — campo facoltativo, indice nuovo, sotto la regola di §4.9 |
+
+⛔ **Due cose sono andate diversamente da come erano istruite, e vanno lette.**
+
+| | |
+|---|---|
+| **l'esito B di M-1 non è scattato, pur essendo «no» la risposta** | ADR-0035 prevedeva: se il pari Python non legge `bincode`, tipi in `kernel` e serializzazione in `daemon`. Il ripiego era stato prezzato **prima** che `minicbor` entrasse in `kernel` con ADR-0036, cioè il giorno prima. Con quella voce già spedita esiste una terza via che non c'era: il canale usa `minicbor`, la codifica **resta in `kernel`**, e la lista di ADR-0031 non cresce |
+| **le giustificazioni allargate sono le altre** | l'istruzione diceva di allargare quelle di `bincode` — «serializza lo schema IPC» — dando per scontato che il canale worker ne ereditasse il formato. **Non si allargano**: `bincode` serve il solo canale gui, ed è la riga di `minicbor` a crescere. Divergenza registrata invece che allineata — gotcha #15 |
+
+⚠️ **E una domanda che nessuno aveva posto è stata posta, con esito opposto all'atteso.**
+Lo stesso criterio applicato all'**altro** canale privato — *il pari TypeScript sa leggere
+`bincode`?* — ha risposto **sì** (M-11). Quindi §6.1.1 **non si tocca**, e i due canali
+privati hanno formati diversi per una ragione **misurata**. Il tentativo di uniformarli è
+il **gotcha #32**.
 
 ⚠️ **Un presupposto ereditato, che non era tale:** il follow-up di
 [ADR-0028](adr/0028-ecosistema-dei-worker-ml.md) — *«trattare l'ambiente Python come
@@ -166,7 +180,7 @@ accumula qui mano a mano.
 | **F5** | **V25** e **Q20** — la descrizione di `network` si è allargata, ma il buco della contro-sonda resta e lo **stato non cambia**. Da **rileggere**, non da riscrivere | ⬜ da verificare |
 | **F1a** | **§8.2.2** — la riga `process` → Q4 resta 1:1, ed è ciò che il discriminante 3 di ADR-0035 verificava. Da **rileggere** | ⬜ da verificare |
 | **F2 + F7** | **Q14** — il meccanismo cresce: livello 1 (§7.4.1 blocco C) e byte congelati (§7.4.2). **Q5** — la porta `journal` scambia byte, quindi la campagna esercita davvero la codifica | ⬜ **da scrivere** |
-| **F1b** | ciò che produce: verosimilmente **Q4**, con la suite di conformità su `process`, più le righe che il formato di filo tocca | ⬜ dopo F1b |
+| **F1b** | **Q4** — la §3.3 aggiunge **quattro** guasti del dialogo, tutti sulla porta `process`, e §7.4.6 acquista l'affermazione sul **filo** oltre a quella sul ciclo di vita. ⚠️ Lo **stato non cambia**: Q4 resta `parziale` con innesco **E (7)**, perché manca ancora il worker vero. Da **rileggere**, non da riscrivere | ⬜ **da verificare** |
 | **F4** | possibile una riga, se l'anello 3 porta con sé un V o un Q. Da stabilire quando F4 si chiude | ⬜ dopo F4 |
 
 ⚠️ **E il ritratto va ricontato, non dedotto.** I numeri «18 ✅ · 12 ⚠️ · 7 ⏳» per i V e
@@ -421,10 +435,12 @@ V3 della §8.3.
 | 5 | I parametri di decisione sono consegnati, non letti | ✅ [ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md) — **non prevista**, emersa dalla riapertura |
 | 6 | La porta verso i worker, e la lettura di «singolo» in I4 | ✅ [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) — **non prevista**, è la voce F1 della stessa riapertura |
 | 7 | L'evoluzione del formato durevole del giornale | ✅ [ADR-0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md) — **non prevista**, è la voce F2, con F7 che vi converge |
+| 8 | Il criterio del pari per il formato dei canali privati | ✅ [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) — **non prevista**, emersa misurando ciò che F1b chiedeva |
 
 ### Misure eseguite, e quelle ancora aperte
 
 Tutte con `rustc 1.95.0` · `cargo 1.95.0` · Windows 11. Evidenze complete nella spec.
+M-10 e M-11 hanno un secondo capo: Python **3.13.7** e Node **v24.9.0** con npm **11.6.0**.
 
 | # | Domanda | Esito |
 |---|---|---|
@@ -437,6 +453,8 @@ Tutte con `rustc 1.95.0` · `cargo 1.95.0` · Windows 11. Evidenze complete nell
 | M-1 | serializzatore per lo schema IPC con **grafo transitivo** accettabile | ✅ **sì, tutti e cinque i candidati provati.** Scelto `bincode` 2.0.1 (2 crate di runtime). Esito **A**: lo schema sta in `kernel`, il grafo di §1.2 non cambia |
 | M-3 | allow-list di ADR-0031 esprimibile con la toolchain standard, provata in negativo | ✅ **sì, esito A** — con `cargo tree`, **non** con `cargo metadata`. Sonde N1–N4 e B1–B3, entrambe le direzioni dell'errore. **Evidenze nella §7.2 della spec**; qui sotto resta solo la correzione al comando |
 | **M-9** | cosa succede rileggendo un record durevole dopo che il tipo è cambiato | ✅ **tre classi di formato × nove mutazioni.** Cinque celle sono **silenzio sbagliato**, non errore. Elimina la forma **C** e prezza l'indice a **un byte su ventisei**. Evidenze in [ADR-0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md) |
+| **M-10** | il pari **Python** decodifica `bincode` 2.0.1? | ⛔ **no.** L'unica libreria che si dichiara compatibile è ferma alla configurazione **1.x** (33 B contro 12) e **non ha tipi somma**; il pacchetto PyPI omonimo è un helper base64. ✅ `minicbor` letto da `cbor2` 6.1.4: valori giusti. Evidenze in [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) |
+| **M-11** | e il pari **TypeScript**? | ✅ **sì** — `bincode-ts` 1.0.0 decodifica con i valori giusti e i byte tutti consumati. ⚠️ pacchetto a **una sola versione**, con entrambi i punti d'ingresso rotti su Node 24. Anche `cbor-x` 1.6.5 ✅ |
 | **M5** | quanta VRAM prende la presentazione della GUI | ⬜ **aperta e dichiarata tale** — richiede una GUI: sotto-progetto 2, accanto a M1–M4 di ADR-0029 |
 
 #### M-3 — ✅ evidenze trasferite nella spec
@@ -520,7 +538,7 @@ Conseguenze **misurate**, non raccomandazioni. Vanno tradotte in controlli autom
 
 ## Non rilitigabile
 
-35 ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
+36 ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
 nuovo che lo superi** (`Superseded by`), non una conversazione. Le decisioni che
 è più probabile qualcuno voglia riaprire per comodità, e la ragione per cui non si fa:
 
@@ -605,6 +623,10 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 
 | 30 | **Un banco che guarda solo l'esito non vede la risposta sbagliata** | È il gotcha #17 spostato dall'**iniezione** all'**oracolo**: non «il guasto non è scattato», ma «il guasto *è* scattato e il banco non sa distinguerlo da un successo». **Misurato in M-9**: rileggendo un record durevole dopo un cambio di tipo, cinque celle su trentasei restituiscono `Ok` **con valori sbagliati**. Un banco che confronta solo `Ok`/`Err` le legge tutte come successi — e la forma che *sembrava* più economica avrebbe superato il vaglio. Il rimedio è confrontare i **valori**, non l'esito, e vale ovunque l'oracolo sia un codice di ritorno: decodifica, parsing, riconciliazione, conversione di tipi. ⚠️ **Corollario che vale oltre F2:** in un archivio durevole il modo di fallire peggiore **non è l'errore** — un errore lo vedi — ma il record che si rilegge e ti restituisce il numero sbagliato |
 | 31 | **Una stima di costo prezzata sulla variante sbagliata sopravvive, perché viene citata invece che rifatta** | Questo documento prezzava la forma B dell'evoluzione come *«permanente su ogni campo di ogni record»*. **Misurato: un byte su ventisei.** La stima guardava la codifica a **mappa**; la predefinita della stessa libreria è ad **array**, e lo scarto è di sette volte — su un numero che stava per far scartare la forma giusta. Non è un errore di calcolo: è che una stima scritta una volta **suona più certa più invecchia**, e nessuno la rimisura perché «c'è già scritto». È il gotcha #15 — un'evidenza scritta prima della misura è un'ipotesi — applicato ai **costi** invece che agli esiti. ⚠️ Il rimedio non è diffidare delle stime: è che una stima che sta per **decidere** va rimisurata, e quella che decide soltanto di rimandare no |
+| 32 | ⛔ **Un'idea che sembra nuova può essere già stata scartata, e il compendio non lo dice** | Il compendio comprime le **decisioni**, non le alternative respinte: il *perché* lungo — misure comprese — vive nell'ADR o nella sezione. Conseguenza: una proposta perfettamente ragionevole può essere già caduta, **con la misura fatta**, e chi la ripropone non incontra nessun ostacolo. **Successo il 2026-08-08**: si è proposto di sostituire `bincode` con `minicbor` sul canale `ipc` per uniformare i codificatori. Era già stato valutato e respinto in §6.8 e riaffermato il giorno prima, e il compendio lo vietava per nome. ⚠️ Il rimedio **non** è leggere tutto prima di parlare — sarebbero settecento kilobyte. È: **prima di proporre qualcosa che sostituisce una decisione presa, cercare dove era già stata valutata e perché era caduta**, e riaprire **solo con una prova nuova**. ⛔ E se la prova nuova gioca **contro** la propria idea, si registra e si chiude: qui a smontare la proposta è stata **la stessa misura che l'aveva motivata** (M-11). La regola sta in `CLAUDE.md` |
+| 33 | **Il nome del formato è occupato da un'altra cosa, e in due ecosistemi** | Su PyPI il pacchetto `bincode` installa un modulo **`b64tools`**: funzioni base64, nessun rapporto col formato. Su npm `bincode` è una **CLI di sviluppo con l'IA**. Cercare per nome trova pacchetti che non c'entrano, e in un elenco di risultati sembrano conferme. È il gotcha #22 nella forma più larga: che una versione esista non dice che funzioni, e che un **nome** esista non dice **cosa contiene**. Il rimedio è aprire il pacchetto: `pip download`/`npm pack` e guardare i file |
+| 34 | ⛔ **Un decodificatore CBOR si ferma al primo elemento completo e ignora la coda** | Misurato: dando a `cbor2` i byte prodotti da `bincode` per `Esito`, restituisce **`1`** — legge il primo byte come intero senza segno e si ferma. **Nessuna eccezione, un valore plausibile.** Vale per la famiglia: il formato è auto-delimitante per *elemento*, non per *buffer*. ⚠️ Conseguenza operativa su un canale a frame: un controllo «ha decodificato senza errori» **non prova nulla**. Il frame deve dichiarare la propria lunghezza, e la decodifica deve verificare che i **byte consumati** siano esattamente quel numero. È il gotcha #30 spostato dall'archivio durevole al filo |
+| 35 | **Un `Vec<u8>` non annotato raddoppia il traffico, in silenzio** | In `minicbor`, scritto nel modo naturale, un `Vec<u8>` si codifica come **array di numeri** e non come stringa di byte: ogni byte ≥ 24 ne occupa due. Serve l'annotazione esplicita (`with = "minicbor::bytes"`). **Misurato** su un frammento audio da 4096 B: **7813** contro **4101**, cioè **1,91×**. ⚠️ La trappola è che non somiglia a un difetto: compila, fa round-trip, e i valori sono **corretti**. Costa soltanto il doppio della banda, su un canale — quello audio — dove la banda è il vincolo |
 
 ## Il metodo di lavoro
 
@@ -626,7 +648,7 @@ diventassero codice.
 
 | | |
 |---|---|
-| ❌ ri-derivare l'architettura | è in **36 ADR**, ciascuno con alternative scartate e motivo |
+| ❌ ri-derivare l'architettura | è in **37 ADR**, ciascuno con alternative scartate e motivo |
 | ❌ riscrivere `tracciabilita.md` da zero | 170 funzionalità già mappate: si **aggiorna**, non si rigenera |
 | ❌ ri-cercare lo stato dell'arte già tracciato | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ rifare gli spike SP-5 e SP-6 | esiti, seed, versioni e comandi sono in [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md). I prototipi esclusi sono recuperabili dalla storia git, lo SHA è lì |

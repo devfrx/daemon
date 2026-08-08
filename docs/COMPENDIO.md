@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano oltre settecento kilobyte, e
 > l'idea è già qui.
 
-**Aggiornato il 2026-08-07.** Manutenzione: §13.
+**Aggiornato il 2026-08-08.** Manutenzione: §13.
 
 ---
 
@@ -94,10 +94,20 @@ dell'unico archivio irriproducibile**.
 | dipendenze del kernel | **allow-list sul grafo transitivo**, due grafi con rimedi opposti | ADR-0031 · §7.3.1 |
 | schema IPC | **`bincode` 2.0.1** — appuntato a `2` | M-1 · §6.1.1 · gotcha #22 |
 | formato del **giornale** | **versione + indici espliciti** — `minicbor` 2.3.0, codifica in `kernel` | ADR-0036 · §4.9 |
+| formato del **canale worker** | **`minicbor` 2.3.0**, codifica in `kernel`, porta a **byte** | ADR-0037 · §6.10 |
 
-⛔ **Il kernel porta due serializzatori, e non è duplicazione.** Ha due artefatti con
-requisiti **opposti**: l'IPC rinuncia al versionamento (I4), il giornale **deve**
-evolvere. Non riaprire §6.1.1 «tanto ora c'è `minicbor` nel kernel».
+⛔ **Il kernel porta due serializzatori, e non è duplicazione.** Gli artefatti però sono
+**tre**, e a deciderli non è il solo requisito di evoluzione:
+
+| Artefatto | Rinuncia a evolvere? | Il pari sa leggere `bincode`? | Formato |
+|---|---|---|---|
+| canale `ipc` | sì (I4) | **sì** — M-11 | `bincode` |
+| canale `process` | sì (I4) | **no** — M-10 | `minicbor` |
+| giornale | **no, deve evolvere** | — (il pari siamo noi) | `minicbor` |
+
+⛔ **Non riaprire §6.1.1** «tanto ora c'è `minicbor` nel kernel». È già stato tentato il
+**2026-08-08**, e la misura ha dato torto a chi lo tentava: i due canali privati non sono
+lo stesso problema, perché i loro **pari** sono diversi (ADR-0037).
 
 Le cinque crate: `kernel` · `platform` · `secrets` · `simulator` · `daemon`.
 Solo le prime due della lista — `kernel` e `simulator` — sono vincolate da ADR-0031:
@@ -105,9 +115,9 @@ Solo le prime due della lista — `kernel` e `simulator` — sono vincolate da A
 
 ---
 
-## 5. Le trentasei decisioni
+## 5. Le trentasette decisioni
 
-Sono **36 ADR**, di cui **35 ADR in stato Accepted** e uno `Proposed` (0029).
+Sono **37 ADR**, di cui **36 ADR in stato Accepted** e uno `Proposed` (0029).
 Ordine numerico. Il *perché*, le alternative scartate e i costi accettati stanno nel
 file di ciascuno: `docs/adr/`.
 
@@ -485,12 +495,30 @@ non due, perché un registro separato sarebbe un secondo posto da tenere allinea
 primo che smette mente in silenzio. ⛔ **I byte congelati non si rigenerano:** se
 cambiano non è un aggiornamento, è un **cambio di formato**.
 
+**0037 — Il criterio del pari.** **Il formato di un canale privato si sceglie _anche_
+sull'ecosistema di chi lo legge, e la risposta si _misura per pari_.** M-1 chiedeva se il
+**grafo transitivo** fosse accettabile: domanda giusta per I3, ma interamente sul
+**nostro** capo del filo. Un canale privato ne ha due, e il secondo non è Rust. La seconda
+metà — ***«il pari ha un lettore conforme e mantenuto?»*** — non era scritta da nessuna
+parte, e P1 sembrava rispondervi pur avendo **due binari Rust** ai due capi.
+
+| Canale | Il pari | Misura | Formato |
+|---|---|---|---|
+| `ipc` | TypeScript | **M-11**: `bincode-ts` decodifica, valori giusti | **`bincode`** — §6.1.1 **confermata**, non riaperta |
+| `process` | Python | **M-10**: nessuna libreria per `bincode` | **`minicbor`** — voce già spedita, lista invariata |
+
+⚠️ **Due canali privati con formati diversi non sono un'incoerenza:** la differenza è
+**misurata**, non accidentale, e non va «sanata». ⛔ E un decodificatore scritto e
+mantenuto **da noi** nel linguaggio del pari **non è una via**: è una seconda definizione
+dello schema, e misurato sbaglia **in silenzio** — un lettore ingenuo del varint ha
+restituito `251` al posto di `4096` senza sollevare nulla.
+
 ---
 
 ## 6. Dove siamo, e cosa viene dopo
 
 **Spec del kernel §0–§10 completa.** Spec del **sotto-progetto 1** con §0–§8 approvate,
-**riaperta su sette voci** — **cinque chiuse**. **Zero righe di codice del prodotto.**
+**riaperta su sette voci** — **sei chiuse**. **Zero righe di codice del prodotto.**
 
 Le sette voci sono emerse rileggendo `tracciabilita.md` con una domanda che nessuno le
 aveva posto: ***«di quale meccanismo di kernel ha bisogno questa funzionalità, e la
@@ -505,32 +533,28 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 | **F1a** | nessuna porta per **parlare** con un worker | ✅ chiusa — ADR-0035, §2.3.1 |
 | **F2** | l'evoluzione del formato durevole del giornale | ✅ chiusa — ADR-0036, §4.9 |
 | **F7** | fork e branching | ✅ chiusa con F2 — §4.9.5 |
-| **F1b** | il **progetto** della porta `process` in §5–§6 | ⬜ **APERTA — è la prossima** |
-| **F4** | l'anello 3 non è collocato in §0.4 | ⬜ **APERTA**, indipendente |
+| **F1b** | il **progetto** della porta `process` in §5–§6 | ✅ chiusa — ADR-0037, §6.10 |
+| **F4** | l'anello 3 non è collocato in §0.4 | ⬜ **APERTA — è la prossima**, e indipendente |
 
 ### L'ordine, già deciso
 
-1. **F1b** — il progetto della porta `process` in §5–§6.
-2. **F4** — la collocazione dell'anello 3 in §0.4. La più piccola.
-3. **§8** — ⛔ **per ultima, e una volta sola**: ognuna delle sette le cambia una riga.
-4. **Il piano** di implementazione.
-5. **Poi** il codice, non prima.
+1. **F4** — la collocazione dell'anello 3 in §0.4. La più piccola, e l'ultima delle sette.
+2. **§8** — ⛔ **per ultima, e una volta sola**: ognuna delle sette le cambia una riga.
+3. **Il piano** di implementazione.
+4. **Poi** il codice, non prima.
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
-### F1b — già istruita, non va ri-derivata
+### F1b — ✅ chiusa. Cosa ha deciso, in sei righe
 
-Sette cose da produrre. Sono in `HANDOFF.md`, nel blocco «F1b — istruita»:
-
-| # | Cosa |
+| | |
 |---|---|
-| 1 | **firme e messaggi** di `process`: avvio, dialogo, uccisione. ⚠️ L'oggetto con cui si parla a un worker **è quello che restituisce l'avvio** — è ciò che conserva la catena del gettone e tiene I2 al **compilatore** |
-| 2 | il **formato di filo** verso i worker, e la misura che lo decide: ⚠️ **`bincode` è decodificabile dal pari Python?** Se no vale l'**esito B di M-1**, già misurato e già prezzato — tipi in `kernel`, serializzazione in `daemon` — e il confine di ADR-0031 **non cresce** |
-| 3 | l'**allargamento di tre giustificazioni**: §6.1.1 e §7.3.1 dicono «serializza lo schema IPC», e gli schemi diventano due. Qui e non prima |
-| 4 | la **suite di conformità** per `process`, in §7.4.6 |
-| 5 | in §3.3, **quali guasti del dialogo verificano quale Q** |
-| 6 | ⚠️ una **tensione di `design/01` da conciliare**: «il worker non risponde di iniziativa propria» contro «il flusso audio risale al core». Non è contraddizione — lo streaming è **istruito** — ma la forma della porta deve renderlo esplicito |
-| 7 | i campi che F1b fa entrare nel giornale (il **picco di VRAM** di §5.2.2) nascono sotto §4.9: campo **facoltativo**, **indice nuovo** |
+| **la tensione di `design/01` si scioglie con un gettone** | *«il worker non risponde di iniziativa propria»* contro *«il flusso audio risale al core»*: ogni byte che risale è coperto da una **ricevuta**, e le ricevute le emette solo un'istruzione. Un frame che nessuna ricevuta copre è un **guasto**, non un dato. Quarto uso del dispositivo di §6.3.1 |
+| **la vita del worker sta in un oggetto solo** | l'avvio restituisce il `Worker`, ed è l'unico modo di parlargli; `uccidi` lo **consuma**. Istruire dopo l'uccisione non compila. I2 resta al compilatore |
+| **due tipi di ricevuta, non un enum** | singola e di flusso: «una risposta singola diventa un flusso» non è **esprimibile**. Costa una funzione di lettura in più |
+| **il formato è `minicbor`, e la porta scambia byte** | perché il pari **Python non sa leggere `bincode`** — ADR-0037, M-10. Voce già spedita: la lista di ADR-0031 **non cresce**. Col byte sulla porta il simulatore esercita davvero la codifica |
+| **due regole uscite dalla misura** | il frame **dichiara la propria lunghezza** e la decodifica verifica i byte consumati (gotcha #34) · ogni `Vec<u8>` porta l'**annotazione di stringa di byte**, o il flusso audio raddoppia (gotcha #35) |
+| ⛔ **e una divergenza registrata** | l'istruzione diceva di allargare le giustificazioni di `bincode`. Con la misura **non si allargano**: `bincode` serve il solo canale gui, e ad allargarsi sono le righe di `minicbor`. Gotcha #15 |
 
 ### F4 — già istruita, più piccola di quanto sembri
 
@@ -574,6 +598,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 | I **parametri sono consegnati**, non letti (0034) | una costante nel kernel non fa scattare nessun controllo, e toglie alla DST l'unico modo di esplorare RK-1 |
 | Il **dialogo con un worker vive in `process`** (0035) | metterlo su `ipc` spezza la vita del worker fra due porte e perde il meccanismo che ha portato I2 dal test al **compilatore** — senza che nulla diventi rosso |
 | Il **formato del giornale è deciso a sé** (0036) | usare `bincode` anche lì importa in un artefatto che **deve** evolvere una decisione presa dove l'evoluzione era stata **rinunciata** |
+| Il formato di un canale privato si sceglie **anche sul pari** (0037) | si torna a scegliere guardando **un capo solo** del filo, e che il pari sappia leggere si scopre quando il codice esiste già. E l'asimmetria fra i due canali torna a sembrare una svista da «sanare» |
 
 ---
 
@@ -581,15 +606,15 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 | | |
 |---|---|
-| ❌ **ri-derivare l'architettura** | è nei 36 ADR, ciascuno con alternative scartate e motivo |
+| ❌ **ri-derivare l'architettura** | è nei 37 ADR, ciascuno con alternative scartate e motivo |
 | ❌ **riscrivere `tracciabilita.md` da zero** | centosettanta funzionalità già mappate: si **aggiorna**, e **solo alla chiusura del sotto-progetto 1** — quindi non ora |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ **rifare gli spike SP-5 e SP-6** | esiti, seed, versioni e comandi in `spikes/RISULTATI.md` |
-| ❌ **rifare le misure da M-1 a M-9** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036. L'unica aperta è **M5** (senza trattino), e richiede una GUI |
+| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta è **M5** (senza trattino), e richiede una GUI |
 | ❌ **riaprire le due decisioni della §7.3** | prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
 | ❌ **riaprire la copertura della §8** | |
 | ❌ **riaprire F3, F6, F5, F1a, F2, F7** | chiuse, con i limiti dichiarati |
-| ⛔ **riaprire §6.1.1** «tanto ora c'è `minicbor` nel kernel» | due artefatti con requisiti **opposti**: è coerenza, non duplicazione |
+| ⛔ **riaprire §6.1.1** «tanto ora c'è `minicbor` nel kernel» | **tentato il 2026-08-08, e la misura ha dato torto**: i due canali privati non sono lo stesso problema, perché i loro **pari** sono diversi (ADR-0037, M-11). Riaprirla richiede una misura nuova sul pari, non un argomento di simmetria |
 | ⛔ **rigenerare i byte congelati del giornale** | se cambiano non è un aggiornamento, è un cambio di formato: si apre una versione nuova |
 | ❌ **progettare una capacità L2** | prima il kernel deve esistere |
 | ❌ **promuovere l'aiutante `passo_in_dubbio` dello spike** | assume esecuzione sequenziale: con l'interlacciamento dà un **falso negativo** (gotcha #20) |
@@ -598,7 +623,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I trentuno gotcha
+## 9. I trentacinque gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -636,6 +661,10 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 29 | **La riga di _verifica_ di un'invariante è il punto in cui l'invariante si restringe in silenzio.** Già successo con I2 e con I4. Completare una riga di verifica **non è superare l'ADR** |
 | 30 | ⛔ **Un banco che guarda solo `Ok`/`Err` non vede la _risposta sbagliata_.** Misurato in M-9: cinque celle su trentasei restituiscono `Ok` con **valori sbagliati**. Confrontare i **valori**, non l'esito. In un archivio durevole il modo di fallire peggiore non è l'errore — è il record che ti restituisce il numero sbagliato |
 | 31 | **Una stima di costo prezzata sulla variante sbagliata sopravvive, perché viene citata invece che rifatta.** Misurato: un byte su ventisei, contro il «permanente su ogni campo» che stava per far scartare la forma giusta. Una stima che sta per **decidere** va rimisurata |
+| 32 | ⛔ **Un'idea che sembra nuova può essere già stata scartata, e il compendio non lo dice.** Comprime le **decisioni**, non le alternative respinte: una proposta ragionevole può essere già caduta — con la misura — dentro un ADR o una sezione. Prima di proporre una **sostituzione** si cerca dove era già stata valutata e perché. Successo il 2026-08-08 con `minicbor` su `ipc`: a smontare la proposta è stata **la stessa misura che l'aveva motivata** |
+| 33 | **Il nome del formato è occupato da un'altra cosa, e in due ecosistemi.** Su PyPI `bincode` installa un modulo `b64tools`, funzioni base64; su npm `bincode` è una CLI di sviluppo con l'IA. È il gotcha #22 nella forma più larga: **che un nome esista non dice cosa contiene**, e cercare per nome trova pacchetti che non c'entrano |
+| 34 | ⛔ **Un decodificatore CBOR si ferma al primo elemento completo e ignora la coda.** Misurato: dando a `cbor2` i byte di `bincode` restituisce `1` — nessuna eccezione, un valore plausibile. Su un canale a frame «ha decodificato» non prova nulla: serve che i **byte consumati** siano pari alla lunghezza dichiarata |
+| 35 | **Un `Vec<u8>` non annotato raddoppia il traffico, in silenzio.** In `minicbor`, senza l'annotazione di stringa di byte, si codifica come **array di numeri**. Misurato su 4096 B: **7813** contro **4101**, cioè **1,91×**. Compila, fa round-trip, ed è corretto: costa solo il doppio |
 
 ---
 
@@ -652,7 +681,7 @@ Da sapere **prima** di scrivere, non dopo il rosso.
 
 ---
 
-## 11. I quattordici vincoli sul primo commit di codice
+## 11. I quindici vincoli sul primo commit di codice
 
 Non sono decisioni da prendere: sono decisioni **prese**, che il piano deve tradurre in
 passi.
@@ -673,6 +702,7 @@ passi.
 | 12 | il record durevole è un **enum di versione**, ogni campo ha un **indice esplicito**, un campo nuovo è facoltativo con indice nuovo, un indice **si ritira e non si riusa mai** | §4.9 · ADR-0036 |
 | 13 | la porta `journal` scambia **byte**, non record tipizzati: la codifica vive in `kernel` | §4.1 · §4.9.3 · §7.3.1 |
 | 14 | ⛔ al **primo record scritto**, i suoi byte entrano nel repository come **oracolo**, con la mappa `indice → nome → valore atteso`. **Non si rigenerano** | §4.9.4 · gotcha #25 |
+| 15 | il **canale worker** usa `minicbor`, la porta `process` scambia **byte**, ogni frame **dichiara la propria lunghezza** e la decodifica verifica i byte consumati, e ogni `Vec<u8>` porta l'**annotazione di stringa di byte** | §6.10 · ADR-0037 · gotcha #34, #35 |
 
 ---
 

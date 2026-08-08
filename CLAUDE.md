@@ -5,7 +5,7 @@
 Leggi **questo file** e poi **[`docs/COMPENDIO.md`](docs/COMPENDIO.md)**, per intero.
 Poi **fermati**.
 
-Il compendio contiene **tutte** le decisioni del progetto — le 36 ADR, le sei
+Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe. Insieme, questi due file costano circa seimila token.
 
@@ -61,6 +61,7 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | **Ma prima a parole** | quando l'argomento esce dal dominio del proprietario (non è operativo in Rust), si spiega **prima** a parole semplici e **poi** si schematizza |
 | **Stato dell'arte verificato** | se una nozione non è certa si cerca **prima** di scrivere, e la fonte si traccia in [`docs/riferimenti.md`](docs/riferimenti.md). **Mai inventare** |
 | **Dichiarare i costi** | ogni decisione elenca ciò che peggiora. Un ADR senza `Negative (accettate)` è incompleto |
+| **Un'idea nuova può essere già stata scartata** | prima di proporre qualcosa che **sostituisce** una decisione presa, si cerca **dove era già stata valutata e perché era caduta**. Si riapre **solo con una prova nuova**; e se la prova nuova gioca contro, si **registra e si chiude**. Vale anche — soprattutto — per le proprie idee |
 | **ADR append-only** | superato → `Superseded by`; completato → un **rimando**. Completare una riga di verifica **non** è superare l'ADR |
 | **Richiamo datato** | ogni correzione a una sezione approvata porta il proprio richiamo con la data |
 | **Le misure nello scratchpad** | non nel repository, e si ripulisce dopo |

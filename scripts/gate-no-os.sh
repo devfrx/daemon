@@ -1,40 +1,40 @@
 #!/usr/bin/env bash
-# Il cancello senza OS -- §7.3.2 della spec del sotto-progetto 1.
+# The no-OS gate -- §7.3.2 of the sub-project 1 spec.
 #
-# SI AGGIUNGE alla allow-list, non la sostituisce. I due falliscono in modo
-# complementare: la lista ENUMERA e nomina il colpevole ("X unty <- kernel -> bincode
-# -> unty"); il cancello PROVA e coglie una crate GIA' IN LISTA che raggiunge l'OS per
-# una via non prevista -- l'unificazione delle feature -- ma dice solo "no" senza dire
-# chi. La lista e' la diagnosi, il cancello e' la prova.
+# IT ADDS TO the allow-list, it does not replace it. The two fail in complementary ways:
+# the list ENUMERATES and names the culprit ("X unty <- kernel -> bincode -> unty"); the
+# gate PROVES and catches a crate ALREADY ON THE LIST that reaches the OS by an unforeseen
+# route -- feature unification -- but only says "no" without saying who. The list is the
+# diagnosis, the gate is the proof.
 #
-# BERSAGLIO: x86_64-unknown-none, e non e' un dettaglio. Deve differire dal bersaglio
-# reale in UNA SOLA dimensione, l'assenza dell'OS. thumbv7em-none-eabihf ne differisce
-# per quattro (arch, puntatore, atomici a 64 bit) ed e' una sorgente di rossi per il
-# motivo sbagliato -- gotcha #9 applicato al bersaglio.
+# TARGET: x86_64-unknown-none, and it is not a detail. It has to differ from the real
+# target along ONE SINGLE dimension, the absence of the OS. thumbv7em-none-eabihf differs
+# along four (arch, pointer, 64-bit atomics) and is a source of reds for the wrong reason
+# -- gotcha #9 applied to the target.
 #
-# ⛔ NON aggiungere --workspace. Il comando nomina le DUE crate vincolate, e non e' una
-# comodita': con --workspace il cancello fallisce su `platform` con "can't find crate
-# for std", cioe' motivo giusto e crate sbagliata. E' la sonda B3, che non esisteva.
+# ⛔ DO NOT add --workspace. The command names the TWO constrained crates, and that is not
+# a convenience: with --workspace the gate fails on `platform` with "can't find crate for
+# std", that is, right reason and wrong crate. It is probe B3, which did not exist.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
-BERSAGLIO=x86_64-unknown-none
+TARGET=x86_64-unknown-none
 
-echo "== cancello senza OS -- $BERSAGLIO =="
+echo "== no-OS gate -- $TARGET =="
 
-if ! rustup target list --installed | grep -qx "$BERSAGLIO"; then
-  echo "  ✗ bersaglio $BERSAGLIO non installato."
-  echo "    rustup target add $BERSAGLIO   (o affidati a rust-toolchain.toml)"
-  echo "    Senza, la porta sarebbe rossa per il motivo sbagliato -- vincolo 4 della §11."
+if ! rustup target list --installed | grep -qx "$TARGET"; then
+  echo "  ✗ target $TARGET not installed."
+  echo "    rustup target add $TARGET   (or rely on rust-toolchain.toml)"
+  echo "    Without it the gate would be red for the wrong reason -- constraint 4 of §11."
   exit 1
 fi
 
-if cargo build -p kernel -p simulator --target "$BERSAGLIO" 2>&1; then
-  echo "  ✓ kernel e simulator compilano senza sistema operativo"
+if cargo build -p kernel -p simulator --target "$TARGET" 2>&1; then
+  echo "  ✓ kernel and simulator build without an operating system"
   exit 0
 else
-  echo "  ✗ kernel o simulator NON compilano per $BERSAGLIO."
-  echo "    Il cancello non dice chi l'ha tirata dentro: guarda l'uscita di"
-  echo "    scripts/gate-deps.sh, che nomina il rimbalzo."
+  echo "  ✗ kernel or simulator do NOT build for $TARGET."
+  echo "    The gate does not say who dragged it in: look at the output of"
+  echo "    scripts/gate-deps.sh, which names the bounce."
   exit 1
 fi

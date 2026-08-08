@@ -8,6 +8,7 @@ publish.workspace = true
 kernel = { path = "../kernel" }
 platform = { path = "../platform" }
 secrets = { path = "../secrets" }
-# ⛔ NON dipende da `simulator`. Il daemon è il cablaggio DI PRODUZIONE: monta `platform`.
-# In simulazione il cablaggio lo fa il banco di prova, che riceve i parametri risolti —
-# ADR-0034, e §1.2 corretta il 2026-08-08 dopo che tabella e grafo si contraddicevano.
+# ⛔ Does NOT depend on `simulator`. The daemon is the PRODUCTION wiring: it mounts
+# `platform`. In simulation the wiring is done by the bench, which receives the resolved
+# parameters — ADR-0034, and §1.2 corrected on 2026-08-08 after table and graph
+# contradicted each other.

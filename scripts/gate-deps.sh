@@ -1,33 +1,33 @@
 #!/usr/bin/env bash
-# L'allow-list sul grafo transitivo di kernel e simulator -- ADR-0031, §7.3.1.
+# The allow-list on the transitive graph of kernel and simulator -- ADR-0031, §7.3.1.
 #
-# DUE GRAFI, DUE ERRORI, DUE RIMEDI OPPOSTI. Non e' completezza: unificarli insegna il
-# riflesso "aggiungi alla lista" ANCHE per una violazione di I3, dove aggiungere E' la
-# violazione. E un controllo che guarda solo cio' che spedisce lascia passare in silenzio
-# proprio l'evento che ADR-0031 dice di rivedere.
+# TWO GRAPHS, TWO ERRORS, TWO OPPOSITE REMEDIES. It is not completeness: merging them
+# teaches the "add it to the list" reflex ALSO for an I3 violation, where adding IS the
+# violation. And a check that looks only at what ships lets through in silence exactly the
+# event that ADR-0031 says to review.
 #
-#   spedita   -> `cargo tree -e normal,no-proc-macro` -> errore "I3 violato"
-#                RIMEDIO: togliere la dipendenza. Aggiungerla alla lista NON e' un rimedio.
-#   di build  -> il complemento fra `-e no-dev` e la riga sopra
-#                RIMEDIO: valutare e aggiungere alla lista, con giustificazione.
-#   di sviluppo -> esclusa, e l'esclusione e' PROVATA (vedi la guardia sotto).
+#   shipped     -> `cargo tree -e normal,no-proc-macro` -> error "I3 violated"
+#                  REMEDY: remove the dependency. Adding it to the list is NOT a remedy.
+#   build-only  -> the complement between `-e no-dev` and the line above
+#                  REMEDY: assess it and add it to the list, with a justification.
+#   dev-only    -> excluded, and the exclusion is PROVEN (see the guard below).
 #
-# ⚠️ `cargo tree` e non `cargo metadata`: il secondo non risolve le feature. Misurato,
-# gotcha #23: undici crate segnalate contro le due reali, cioe' 5x di sovra-segnalazione.
+# ⚠️ `cargo tree` and not `cargo metadata`: the latter does not resolve features. Measured,
+# gotcha #23: eleven crates reported against the two real ones, that is 5x over-reporting.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
-fallimenti=0
-segnala() { echo "  ✗ $*"; fallimenti=$((fallimenti + 1)); }
+failures=0
+report() { echo "  ✗ $*"; failures=$((failures + 1)); }
 
-# --- Le due liste. Sede unica: la §7.3.1 della spec; questo file la rispecchia. ---
-SPEDITE="bincode
+# --- The two lists. Single home: §7.3.1 of the spec; this file mirrors it. ---
+SHIPPED="bincode
 kernel
 minicbor
 simulator
 unty"
 
-DI_BUILD="bincode_derive
+BUILD_ONLY="bincode_derive
 minicbor-derive
 proc-macro2
 quote
@@ -35,52 +35,52 @@ syn
 unicode-ident
 virtue"
 
-# ⛔ LA CLASSE DI CARATTERI DEL grep E' UN VINCOLO MISURATO, NON UNA FORMATTAZIONE.
-# Con `[a-z0-9_-]` -- come era scritta -- una crate col nome MAIUSCOLO veniva scartata dal
-# filtro, quindi non compariva fra gli intrusi e il cancello usciva VERDE. Misurato con
-# `Inflector`, che e' una crate reale: nel grafo spedito del kernel, uscita 0. E' un falso
-# negativo su I3, cioe' il modo di fallire peggiore per questo controllo. Sonda N5.
-# Chi la "semplifica" riapre il punto cieco, e il cancello torna verde senza dirlo.
-nomi() { sed 's/^[^a-zA-Z0-9_-]*//' | awk '{print $1}' | grep -E '^[A-Za-z0-9_-]+$' | sort -u; }
+# ⛔ THE CHARACTER CLASS OF THE grep IS A MEASURED CONSTRAINT, NOT FORMATTING.
+# With `[a-z0-9_-]` -- as it was written -- a crate with an UPPERCASE name was dropped by
+# the filter, so it did not show up among the intruders and the gate came out GREEN.
+# Measured with `Inflector`, which is a real crate: in the kernel's shipped graph, exit 0.
+# It is a false negative on I3, that is, the worst way to fail for this check. Probe N5.
+# Whoever "simplifies" it reopens the blind spot, and the gate goes green without saying so.
+names() { sed 's/^[^a-zA-Z0-9_-]*//' | awk '{print $1}' | grep -E '^[A-Za-z0-9_-]+$' | sort -u; }
 
 for crate in kernel simulator; do
-  echo "== $crate: grafo SPEDITO =="
-  spedito=$(cargo tree -p "$crate" -e normal,no-proc-macro --prefix none 2>/dev/null | nomi)
-  intrusi=$(comm -23 <(printf '%s\n' "$spedito") <(printf '%s\n' "$SPEDITE" | sort -u))
-  if [ -n "$intrusi" ]; then
-    for i in $intrusi; do
-      segnala "I3 violato -- $crate spedisce '$i', che non e' in lista."
-      echo "      ⛔ RIMEDIO: TOGLIERE la dipendenza. Aggiungerla alla lista non e' un rimedio."
-      echo "      Da dove arriva:"
+  echo "== $crate: SHIPPED graph =="
+  shipped_graph=$(cargo tree -p "$crate" -e normal,no-proc-macro --prefix none 2>/dev/null | names)
+  intruders=$(comm -23 <(printf '%s\n' "$shipped_graph") <(printf '%s\n' "$SHIPPED" | sort -u))
+  if [ -n "$intruders" ]; then
+    for i in $intruders; do
+      report "I3 violated -- $crate ships '$i', which is not on the list."
+      echo "      ⛔ REMEDY: REMOVE the dependency. Adding it to the list is not a remedy."
+      echo "      Where it comes from:"
       cargo tree -p "$crate" -e normal,no-proc-macro -i "$i" 2>/dev/null | sed 's/^/        /'
     done
   fi
 
-  echo "== $crate: grafo DI BUILD =="
-  completo=$(cargo tree -p "$crate" -e no-dev --prefix none 2>/dev/null | nomi)
-  build=$(comm -13 <(printf '%s\n' "$spedito") <(printf '%s\n' "$completo"))
-  nuove=$(comm -23 <(printf '%s\n' "$build") <(printf '%s\n' "$DI_BUILD" | sort -u))
-  if [ -n "$nuove" ]; then
-    for n in $nuove; do
-      segnala "grafo di build cambiato -- '$n' non e' in lista."
-      echo "      ✅ RIMEDIO: valutarla e AGGIUNGERLA alla lista, con la giustificazione."
-      echo "      E' l'evento da rivedere che ADR-0031 dichiara fra le proprie Negative."
+  echo "== $crate: BUILD graph =="
+  full_graph=$(cargo tree -p "$crate" -e no-dev --prefix none 2>/dev/null | names)
+  build_graph=$(comm -13 <(printf '%s\n' "$shipped_graph") <(printf '%s\n' "$full_graph"))
+  unlisted=$(comm -23 <(printf '%s\n' "$build_graph") <(printf '%s\n' "$BUILD_ONLY" | sort -u))
+  if [ -n "$unlisted" ]; then
+    for n in $unlisted; do
+      report "build graph changed -- '$n' is not on the list."
+      echo "      ✅ REMEDY: assess it and ADD IT to the list, with the justification."
+      echo "      It is the event to review that ADR-0031 declares among its own Negative."
     done
   fi
 
-  # Guardia di non-vacuita': se i due grafi COINCIDONO il filtro non distingue niente,
-  # ed e' la condizione esatta in cui M-3 e' stata ingannata (§7.2.3). Non passa in
-  # silenzio: il controllo lo SEGNALA.
-  if [ "$spedito" = "$completo" ]; then
-    segnala "$crate: grafo spedito e grafo completo COINCIDONO -- il filtro non sta distinguendo niente."
-    echo "      Non e' 'la lista e' corta': e' 'l'interrogazione era stretta'."
+  # Non-vacuity guard: if the two graphs COINCIDE the filter is not distinguishing
+  # anything, and that is the exact condition in which M-3 was fooled (§7.2.3). It does not
+  # pass in silence: the check REPORTS it.
+  if [ "$shipped_graph" = "$full_graph" ]; then
+    report "$crate: shipped graph and full graph COINCIDE -- the filter is not distinguishing anything."
+    echo "      It is not 'the list is short': it is 'the query was narrow'."
   fi
 done
 
 echo
-if [ "$fallimenti" -eq 0 ]; then
-  echo "OK -- i due grafi corrispondono alle due liste."
+if [ "$failures" -eq 0 ]; then
+  echo "OK -- the two graphs match the two lists."
 else
-  echo "$fallimenti violazioni. Leggi il RIMEDIO: NON e' lo stesso per i due grafi."
+  echo "$failures violations. Read the REMEDY: it is NOT the same for the two graphs."
   exit 1
 fi

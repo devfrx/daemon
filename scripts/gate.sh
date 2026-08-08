@@ -1,36 +1,36 @@
 #!/usr/bin/env bash
-# La porta di qualita', livello 2 -- §7.5.1 della spec del sotto-progetto 1.
+# The quality gate, level 2 -- §7.5.1 of the sub-project 1 spec.
 #
-# CADENZA: a ogni commit. Il livello 1 NON e' qui, e non e' una dimenticanza: le voci di
-# livello 1 non "girano" mai -- SONO il compilatore. Se il codice compila, quelle regole
-# valgono, e non esiste un modo di saltarle o di rimandarle a stasera.
+# CADENCE: on every commit. Level 1 is NOT here, and that is not an oversight: the level 1
+# entries never "run" -- they ARE the compiler. If the code compiles, those rules hold, and
+# there is no way to skip them or to put them off until tonight.
 #
-# ⛔ Un rosso di questa porta significa sempre "invariante violata", mai "stile
-# discutibile". `clippy` gira come igiene del codice ma NON ha voce qui: nessun V dipende
-# da lui, e la regola 1 del criterio di ammissione (§7.1.1) dice che allora non entra.
-# Il livello 3 del catalogo e' VUOTO, ed e' una decisione (§7.4.3).
+# ⛔ A red from this gate always means "invariant violated", never "questionable style".
+# `clippy` runs as code hygiene but has NO voice here: no V depends on it, and rule 1 of the
+# admission criterion (§7.1.1) says that in that case it does not get in.
+# Level 3 of the catalogue is EMPTY, and that is a decision (§7.4.3).
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
-fallimenti=0
-esegui() {
+failures=0
+run() {
   echo
   echo "######## $1"
   shift
-  if "$@"; then :; else fallimenti=$((fallimenti + 1)); fi
+  if "$@"; then :; else failures=$((failures + 1)); fi
 }
 
-esegui "compilazione del workspace"        cargo build --workspace
-esegui "test a esempi e compile-fail"      cargo test --workspace
-esegui "cancello senza OS"                 bash scripts/gate-no-os.sh
-esegui "allow-list sui due grafi"          bash scripts/gate-deps.sh
-esegui "attributi delle crate vincolate"   bash scripts/gate-attributi.sh
-esegui "coerenza della documentazione"     bash scripts/check-docs.sh
+run "workspace build"                     cargo build --workspace
+run "example and compile-fail tests"      cargo test --workspace
+run "no-OS gate"                          bash scripts/gate-no-os.sh
+run "allow-list on the two graphs"        bash scripts/gate-deps.sh
+run "attributes of the constrained crates" bash scripts/gate-attributes.sh
+run "documentation consistency"           bash scripts/check-docs.sh
 
 echo
-if [ "$fallimenti" -eq 0 ]; then
-  echo "PORTA VERDE."
+if [ "$failures" -eq 0 ]; then
+  echo "GATE GREEN."
 else
-  echo "PORTA ROSSA -- $fallimenti controlli falliti."
+  echo "GATE RED -- $failures checks failed."
   exit 1
 fi

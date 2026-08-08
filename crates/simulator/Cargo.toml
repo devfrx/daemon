@@ -5,6 +5,6 @@ version.workspace = true
 publish.workspace = true
 
 [dependencies]
-# ⚠️ simulator non aggiunge voci proprie all'allow-list, ma il suo grafo NON è vuoto:
-# eredita per intero quello di kernel. §7.3.1.
+# ⚠️ simulator adds no entries of its own to the allow-list, but its graph is NOT empty:
+# it inherits the kernel's in full. §7.3.1.
 kernel = { path = "../kernel" }

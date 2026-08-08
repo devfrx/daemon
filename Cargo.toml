@@ -7,9 +7,9 @@ members = [
     "crates/simulator",
     "crates/daemon",
 ]
-# spikes/ NON è un membro: spikes/rust/ è un workspace annidato e porta un clippy.toml
-# che a livello di workspace scatterebbe addosso a platform, che DEVE chiamare l'orologio
-# e il filesystem. Vincolo 5 della §11, deciso in §7.4.4.
+# spikes/ is NOT a member: spikes/rust/ is a nested workspace and carries a clippy.toml
+# that, at workspace level, would fire at platform, which MUST call the clock and the
+# filesystem. Constraint 5 of §11, decided in §7.4.4.
 exclude = ["spikes"]
 
 [workspace.package]

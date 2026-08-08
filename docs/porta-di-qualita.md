@@ -16,7 +16,7 @@
 | 2 | `cargo test --workspace` | banco `compile_fail`, contro-sonde, round-trip delle voci spedite |
 | 3 | `bash scripts/gate-no-os.sh` | livello 2 |
 | 4 | `bash scripts/gate-deps.sh` | livello 2 |
-| 5 | `bash scripts/gate-attributi.sh` | livello 2 |
+| 5 | `bash scripts/gate-attributes.sh` | livello 2 |
 | 6 | `bash scripts/check-docs.sh` | livello 2 |
 
 ⚠️ **I primi due non «sono» il livello 1.** Il livello 1 *è* il compilatore e vale a ogni
@@ -32,9 +32,9 @@ esprimibile) non sono ancora implementati: richiedono tipi che il Traguardo 1 no
 
 | Regola del catalogo | Dove è dichiarata | Caso negativo |
 |---|---|---|
-| `#![no_std]` su `kernel` e `simulator` | `crates/kernel/src/lib.rs` · `crates/simulator/src/lib.rs` | `crates/kernel/tests/compile_fail/std_nel_kernel.rs` |
-| `#![forbid(unsafe_code)]` sulle stesse | idem | `crates/kernel/tests/compile_fail/unsafe_nel_kernel.rs` · `allow_unsafe_scavalca.rs` |
-| `HashMap` non nominabile | conseguenza gratuita di `no_std` | `crates/kernel/tests/compile_fail/hashmap_nel_kernel.rs` |
+| `#![no_std]` su `kernel` e `simulator` | `crates/kernel/src/lib.rs` · `crates/simulator/src/lib.rs` | `crates/kernel/tests/compile_fail/std_in_kernel.rs` |
+| `#![forbid(unsafe_code)]` sulle stesse | idem | `crates/kernel/tests/compile_fail/unsafe_in_kernel.rs` · `allow_overrides_forbid.rs` |
+| `HashMap` non nominabile | conseguenza gratuita di `no_std` | `crates/kernel/tests/compile_fail/hashmap_in_kernel.rs` |
 
 ⛔ **La colonna «Caso negativo» prova il meccanismo, non la dichiarazione — e il registro
 non deve lasciar credere altro.** I quattro casi di `crates/kernel/tests/compile_fail/`
@@ -43,12 +43,12 @@ non deve lasciar credere altro.** I quattro casi di `crates/kernel/tests/compile
 siano dichiarati nel kernel. Tolto `#![forbid(unsafe_code)]` da `crates/kernel/src/lib.rs`
 e scritto un `unsafe` vero, quei casi restano **verdi**.
 
-A sorvegliare la **presenza** degli attributi è `scripts/gate-attributi.sh`, che è di
+A sorvegliare la **presenza** degli attributi è `scripts/gate-attributes.sh`, che è di
 **livello 2**: un controllo esterno, quindi cancellabile. La riga di `forbid` è di ramo
 **1b** — sostiene la validità dei blocchi A, B e C — e poggia quindi su un controllo più
 debole di quello che difende. È dichiarato, non nascosto.
 
-**Contro-sonde:** `crates/platform/tests/contro_sonde.rs` — `platform` nomina `std` e usa
+**Contro-sonde:** `crates/platform/tests/counter_probes.rs` — `platform` nomina `std` e usa
 `unsafe`, e **compila**. Sono la direzione che si dimentica (§7.1.1 regola 3).
 
 **Guardia di non-vacuità del banco:** `crates/kernel/tests/compile_fail.rs` conta i `.rs`
@@ -66,7 +66,7 @@ quella che deve restare verde.
 | allow-list, grafo **spedito** | `scripts/gate-deps.sh` | N2 · **N5** | N1 · **N4** |
 | allow-list, grafo **di build** | idem, e l'errore è **diverso** | N3 | N1 |
 | cancello senza OS su `x86_64-unknown-none` | `scripts/gate-no-os.sh` | B2 · **B4** | B1 · **B3** |
-| le crate vincolate **dichiarano davvero** i propri attributi | `scripts/gate-attributi.sh` | `forbid` tolto · `deny` al posto di `forbid` · attributi tolti a `simulator` · file atteso assente · lista dei vincolati vuota | stato pulito · `platform`, `secrets` e `daemon` |
+| le crate vincolate **dichiarano davvero** i propri attributi | `scripts/gate-attributes.sh` | `forbid` tolto · `deny` al posto di `forbid` · attributi tolti a `simulator` · file atteso assente · lista dei vincolati vuota | stato pulito · `platform`, `secrets` e `daemon` |
 | coerenza della documentazione | `scripts/check-docs.sh` | S1…S6c · S7 · S7b · S7c · S7d | C0 · C5 · **C6** |
 
 Le sonde, per nome:
@@ -84,7 +84,7 @@ Le sonde, per nome:
 | **B4** | il bersaglio non installato → uscita 1 e messaggio corretto. ⚠️ Vedi sotto: è la via *offline* |
 | **S1…S7d · C0 · C5 · C6** | **diciotto su diciotto**, con ripristino byte-identico della spec: le tredici del 2026-08-07 (§8.6.3) più le quattro di `S7` e la contro-sonda `C6`, aggiunte chiudendo la §7.1.1 |
 
-📌 **`gate-attributi.sh` è un controllo di testo, e non va promosso.** Cerca gli attributi
+📌 **`gate-attributes.sh` è un controllo di testo, e non va promosso.** Cerca gli attributi
 con `grep` ancorato a inizio riga: prova che il divieto sia **dichiarato**, non che nel
 kernel non ci sia `unsafe`. Quella la prova il compilatore, ed è proprio ciò che questo
 controllo tiene in piedi. Costo dichiarato nello script stesso: l'ancora chiude il caso
@@ -100,11 +100,11 @@ disponibile la guardia **non può scattare**. Scatta quando la riconciliazione f
 cioè **senza rete** — verificato: uscita 1 e messaggio corretto. È la via che rende
 utilizzabile una macchina isolata, non un controllo che sorveglia la macchina connessa.
 
-**Contro-sonde, per esteso:** N4 · B3 · la contro-sonda di `gate-attributi.sh` —
+**Contro-sonde, per esteso:** N4 · B3 · la contro-sonda di `gate-attributes.sh` —
 `platform`, `secrets` e `daemon` non dichiarano nessuno dei tre attributi e **restano
 verdi**, perché non sono nella lista dei vincolati e un controllo che scattasse anche lì
 sarebbe rosso per il motivo sbagliato (gotcha #24) — e, al livello sopra,
-`crates/platform/tests/contro_sonde.rs`.
+`crates/platform/tests/counter_probes.rs`.
 
 ## Livello 3 — vuoto, e non è una svista
 

@@ -4,11 +4,30 @@ edition.workspace = true
 version.workspace = true
 publish.workspace = true
 
-# ⛔ kernel non dipende da NESSUNA crate del progetto: §1.2, ed è la riga che rende I3
-# verificabile guardando il manifesto invece di ispezionare il codice.
-# Le dipendenze esterne arrivano nel Task 5, e ciascuna è una voce dell'allow-list di
-# ADR-0031 con la propria giustificazione scritta.
+# ⛔ OGNI VOCE QUI È UNA RIGA DELLA LISTA DI ADR-0031, e aggiungerne una è un atto
+# deliberato e rivedibile. La giustificazione si scrive accanto, non altrove: la sede
+# unica della lista è la §7.3.1 della spec, e questo manifesto la rispecchia.
+# Il controllo che le verifica è scripts/gate-deps.sh, sui DUE grafi.
 [dependencies]
+
+# Serializza lo schema del canale privato `ipc` (I4). Raggiunge: NULLA — compila per un
+# bersaglio senza OS, e nel grafo non compare nessuna sorgente di casualità.
+# ⛔ APPUNTATO A "2" E NON A "3": la 3.0.0 è l'ultima pubblicata e il suo intero sorgente
+# è `compile_error!("https://xkcd.com/2347/")`, un segnaposto contro l'occupazione del
+# nome. Senza questo pin, il prossimo aggiornamento «sistema» il vincolo e rompe la build.
+# Gotcha #22, vincolo 3 della §11.
+bincode = { version = "2", default-features = false, features = ["alloc", "derive"] }
+
+# ⚠️ `unty` 0.0.4 NON si dichiara qui, ed è deliberato: arriva come dipendenza di
+# `bincode`, e dichiararla direttamente creerebbe una voce inutilizzata. È comunque IN
+# LISTA in scripts/gate-deps.sh, perché il controllo misura il grafo TRANSITIVO — il
+# pericolo arriva di rimbalzo, ed è la ragione per cui ADR-0031 non guarda le sole
+# dipendenze dirette.
+
+# Codifica il record durevole del giornale, per indice esplicito (§4.9, ADR-0036), E lo
+# schema del canale verso i worker (§6.10, ADR-0037). Una voce sola per due artefatti: il
+# canale riusa una voce già spedita, e la lista NON cresce.
+minicbor = { version = "2.3.0", default-features = false, features = ["alloc", "derive"] }
 
 [dev-dependencies]
 trybuild = "1"

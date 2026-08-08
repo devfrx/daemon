@@ -7,11 +7,17 @@ Poi **fermati**.
 
 Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
-compressa a poche righe. Insieme, questi due file costano circa seimila token.
+compressa a poche righe.
+
+⚠️ **Insieme questi due file pesano 85 KB** (`wc -c`, il 2026-08-08), cioè poco più di
+**ventimila token** con lo stesso rapporto che fu usato per prezzarli la prima volta.
+**Non sono più «circa seimila token»**: quella cifra era vera quando pesavano 24 KB, e
+nessuno l'ha più rifatta — gotcha **#31**, terza occorrenza. Restano comunque la lettura
+più economica che esista qui: l'alternativa è mezzo megabyte.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — 559 KB con `wc -c`
-il 2026-08-08, e possono solo crescere; la spec da sola ne fa 253 — e l'idea è
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — 577 KB con `wc -c`
+il 2026-08-08, e possono solo crescere; la spec da sola ne fa 259 — e l'idea è
 già nel compendio. Quando ti servirà il **perché** di una decisione — le alternative
 scartate, le misure, i costi accettati — apri **quel** file, uno solo. La §12 del
 compendio dice quale.
@@ -31,7 +37,10 @@ Il vincolo dominante non è funzionale ma **di risorsa**. Il kernel **non implem
 nessuna funzionalità utente**: fornisce i meccanismi.
 
 ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-scrive **qui**. Oggi l'unico codice è in [`spikes/`](spikes/), e sono **prove**.
+scrive **qui**, e vive in [`crates/`](crates/): cinque crate, con `kernel` e `simulator`
+in `no_std`. Gli spike in [`spikes/`](spikes/) restano **prove**, fuori dal workspace.
+La porta di qualità si lancia con un comando solo — `bash scripts/gate.sh` — e la mappa
+dei controlli è in [`docs/porta-di-qualita.md`](docs/porta-di-qualita.md).
 Lo stato corrente e il prossimo passo stanno nella **§6 del compendio** — non qui, o si
 disallineano.
 
@@ -54,6 +63,7 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | Regola | |
 |---|---|
 | **Spec prima del codice** | nessun sotto-progetto si implementa senza spec approvata |
+| ⛔ **Codice in inglese, documentazione in italiano** | **§1.0 della spec.** Crate, moduli, tipi, funzioni, messaggi d'uscita e commenti nel sorgente sono **in inglese**; i documenti restano **in italiano**; un riferimento al codice dentro un documento si scrive **in inglese, col nome esatto del sorgente**. ⚠️ Non è tipografia: la regola non stava né qui né nel compendio, e un traguardo intero è stato scritto con gli identificatori italiani e poi rifatto — gotcha **#40** |
 | **Sezione per sezione** | si presenta, si discute, **si approva**, si scrive. Mai tutto insieme |
 | **Decidere sul merito** | né scorciatoie né sovra-ingegnerizzazione. «Non pigro» **non** significa «più costoso» |
 | **Rendere verificabile** | un principio che non si può controllare è un'intenzione. Gli invarianti diventano test |

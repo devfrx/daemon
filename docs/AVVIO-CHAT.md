@@ -35,9 +35,11 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
 LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
-     compresse, le sei invarianti, le proprietà non retrofittabili, lo stack,
-     il non rilitigabile, i trentasette gotcha, le trappole di check-docs.sh,
-     i vincoli sul primo commit di codice, lo stato di oggi e il prossimo passo.
+     compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
+     (⛔ compresa la convenzione di nomenclatura: CODICE IN INGLESE,
+     documentazione in italiano), il non rilitigabile, i quarantuno gotcha,
+     le trappole di check-docs.sh, i vincoli sul primo commit di codice,
+     lo stato di oggi e il prossimo passo.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
    docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte, e
@@ -74,8 +76,14 @@ proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ~2 KB |
-| lettura che ordinava | oltre 700 KB, e in pratica ~400k token | 24 KB, ~6k token |
-| decisioni note all'agente | tutte, **dopo** ~400k token | **tutte**, dopo ~6k token |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **85 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 85 KB |
+
+⚠️ **I due numeri di destra sono stati rimisurati il 2026-08-08, e il primo era diventato
+falso.** Diceva *«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di
+oggi, e nessuno l'aveva più rifatto. È il gotcha **#31** — una cifra messa a sostegno di
+una regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il
+rapporto resta quello che conta: **85 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e una spec da 201 KB. Non è che chiedesse troppo: chiedeva la cosa giusta nel

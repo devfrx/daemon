@@ -1,21 +1,39 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-08**, alla **chiusura della §8** — la copertura V1–V37 e Q1–Q24,
-riallineata alle sette voci della riapertura e toccata **una volta sola**, come previsto.
-Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
+Aggiornato il **2026-08-08**, alla **chiusura del Traguardo 1** del sotto-progetto 1 — lo
+scheletro delle cinque crate e la porta di qualità, eseguibile in un comando solo e provata
+in due direzioni. Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 
-> 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — **le sette voci
-> della riapertura sono tutte chiuse**, e la **§8 è chiusa**: le celle riallineate, il
-> ritratto dei conteggi **ricontato sulla tabella**, e un quarto disallineamento trovato e
-> chiuso (§8.5.4). Poi la spec è passata per un **audit sezione-contro-ADR**: quaranta
-> rilievi, di cui **trentanove chiusi subito** e uno lasciato aperto di proposito perché era
-> una decisione — la **regola 1 del catalogo, §7.1.1**, ✅ **chiusa anch'essa il 2026-08-08**.
-> È stato scritto il **piano del Traguardo 1**. Albero pulito, `check-docs.sh` verde.
+> 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — la spec del
+> sotto-progetto 1 è **completa e senza voci aperte**, e il **Traguardo 1 è eseguito**.
+> Il piano è stato percorso compito per compito, **subagent-driven**, con revisione fra uno
+> e l'altro; poi quattro compiti di riallineamento hanno riportato in **inglese** tutto il
+> codice, che il piano dettava in italiano contro la §1.0 della spec.
+>
+> ✅ **Il codice del prodotto non è più zero righe.** Esiste il workspace alla radice con le
+> cinque crate — `kernel` · `platform` · `secrets` · `simulator` · `daemon` — edition
+> **2024**, `rust-toolchain.toml` che appunta **rustc 1.95.0** e il bersaglio
+> **`x86_64-unknown-none`**. `kernel` e `simulator` sono `#![no_std]` + `alloc` +
+> `#![forbid(unsafe_code)]` e **non contengono nessuna logica di prodotto**: è deliberato,
+> non un lavoro lasciato a metà.
+>
+> ✅ **La porta di qualità gira in un comando solo** — `bash scripts/gate.sh` — con **sei**
+> controlli: build del workspace · test · cancello senza OS · allow-list sui due grafi ·
+> attributi delle crate vincolate · coerenza della documentazione. **`GATE GREEN`.** La CI
+> lancia lo stesso identico comando. La mappa riga-per-riga sul catalogo §7.4 è in
+> [`porta-di-qualita.md`](porta-di-qualita.md), e dice anche ciò che **non** è coperto.
+>
+> ⚠️ **Quattro gotcha nuovi, tutti misurati eseguendo** — **#38**, **#39**, **#40**, **#41** —
+> più una **seconda occorrenza** di #26 e una di #25. Il #39 e il #41 hanno prodotto codice:
+> `scripts/gate-attributes.sh` e la classe di caratteri di `gate-deps.sh`. Il testo integrale
+> è nella tabella dei gotcha.
 >
 > ✅ **Nessuna voce aperta resta nella spec.** L'unica decisione ancora `Proposed` del
 > progetto è **ADR-0029**, il guscio della GUI, che non tocca il sotto-progetto 1.
 >
-> ⏭️ **Il prossimo passo è il codice**: eseguire quel piano, **subagent-driven**.
+> ⏭️ **Il prossimo passo è il Traguardo 2 — il substrato iniettabile**, e il suo piano **non
+> esiste ancora**: si scrive quando si arriva, per la stessa ragione per cui non se ne è
+> scritto uno solo per tutti e sei.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -31,8 +49,9 @@ worker ML in **Python**; Tauri contro Electron è ancora aperto
 
 **La spec del sotto-progetto 1 ha §0–§8 approvate**, è stata **riaperta su sette voci**
 trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto, e le sette
-sono **tutte chiuse**. La **§8 è stata riallineata e chiusa** il 2026-08-08. Il codice non è
-ancora iniziato, e vale «spec prima del codice». Tocca al **piano**.
+sono **tutte chiuse**. La **§8 è stata riallineata e chiusa** il 2026-08-08. Il **Traguardo 1
+è eseguito** lo stesso giorno: workspace, cinque crate, porta di qualità verde, **zero logica
+di prodotto**. Tocca al **Traguardo 2**, e prima al suo piano.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -42,39 +61,38 @@ Il vincolo che governa tutto non è funzionale ma di risorsa: quattro aree che s
 una sola GPU.
 
 ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-scrive **qui**: fra le due mancano le voci ancora aperte e poi il **piano**. Oggi l'unico
-codice presente è in [`../spikes/rust/`](../spikes/rust/): sono **prove**, non il kernel —
-ma la §2.5 della spec dice già riga per riga quali pezzi salgono a `kernel/` e quali
-restano dove sono.
+scrive **qui**, e vive in [`../crates/`](../crates/): cinque crate, con `kernel` e
+`simulator` in `no_std`. Gli spike in [`../spikes/rust/`](../spikes/rust/) restano
+**prove**, **fuori dal workspace** — e la §2.5 della spec dice riga per riga quali pezzi
+saliranno a `crates/kernel/` e quali restano dove sono. Nel Traguardo 1 **non è ancora
+salito niente**: sale col substrato.
 
 ## Prima cosa da fare
 
-⏭️ **Eseguire il piano del Traguardo 1, subagent-driven.** La spec è **completa** — la
-riapertura è chiusa, la §8 è chiusa, l'audit è passato — e il piano è scritto:
-[`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
+⏭️ **Scrivere il piano del Traguardo 2 — il substrato iniettabile.** Il piano **non
+esiste**: tempo, casualità, I/O, scheduling, l'esecutore nel `kernel`, e le sei porte come
+tratti. Vale «spec prima del codice», e la spec c'è già: **§2** e **§3** del sotto-progetto 1.
 
-> **Come**: skill `superpowers:subagent-driven-development`, **un subagente fresco per
+> ⛔ **Non si riusa il piano del Traguardo 1**, e non si scrive un piano unico per i
+> traguardi rimasti: scriverne uno per codice che non esiste ancora significa inventare.
+> È la regola della §6 del compendio, e ha appena retto alla prova.
+>
+> **Come**: `superpowers:writing-plans` per scriverlo, poi
+> `superpowers:subagent-driven-development` per eseguirlo — **un subagente fresco per
 > compito**, con revisione fra uno e l'altro. La scelta è del proprietario ed è già presa.
-> Otto compiti; ciascuno finisce con un commit, e il piano dice quale.
 >
-> **Cosa costruisce**: il workspace alla radice con le cinque crate, e la **porta di
-> qualità** eseguibile in un comando solo — `bash scripts/gate.sh`. ⛔ **Zero logica di
-> prodotto**, ed è deliberato: un cancello costruito dopo la logica è un cancello che
-> nessuno ha mai visto fallire (§7.1.1).
+> ⛔ **Leggere prima l'errata del piano del Traguardo 1**, che sta in testa al piano
+> stesso. Quattro voci, e due valgono anche per i piani futuri: **E1** — il piano dettava
+> identificatori **italiani**, e la §1.0 della spec vince; **E4** — la Definizione di
+> «fatto» dava per verificata una condizione che i test non verificavano (gotcha #39).
 >
-> ⛔ **Cosa NON si fa nel Traguardo 1, e non è una dimenticanza:** non si scrive **nessun
-> record del giornale**. Il vincolo 14 della §11 fa entrare i **byte congelati** nel
-> repository *al primo record scritto*, e quel record appartiene al **Traguardo 3**.
-> Scriverne uno ora congelerebbe un formato che la §4.9 non ha ancora messo alla prova, e
-> ⛔ **i byte congelati non si rigenerano**.
+> ⛔ **Cosa NON si fa ancora, e non è una dimenticanza:** non si scrive **nessun record del
+> giornale**. Il vincolo 14 della §11 fa entrare i **byte congelati** nel repository *al
+> primo record scritto*, e quel record appartiene al **Traguardo 3**. Scriverne uno ora
+> congelerebbe un formato che la §4.9 non ha ancora messo alla prova, e ⛔ **i byte
+> congelati non si rigenerano**.
 >
 > **Nessuna misura blocca**: l'unica aperta è **M5**, e richiede una GUI.
->
-> ✅ **F1b è chiusa il 2026-08-08** con
-> [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) e la §6.10. La
-> domanda che ADR-0035 lasciava aperta — *`bincode` è decodificabile dal pari **Python**?*
-> — è stata **misurata**: no. Ma non è scattato l'esito B di M-1: la stessa misura, ripetuta
-> sul **secondo** pari, ha trovato una via che nel 2026-08-07 non esisteva ancora.
 
 ### Le sette voci, e come sono state trovate
 
@@ -518,6 +536,29 @@ richiamo datato: §0.4.1, §0.4.2, **§0.4.3 (nuova)**, §0.5, §0.7, §1.2, §2
 §8 le celle `Q4`, `Q5`, `Q14`, la riga V3 di §8.3, la riga `process` di §8.2.2, **§8.5.4
 (nuova)** e il ritratto di §8.8.
 
+### I sei traguardi, e dove siamo
+
+Il sotto-progetto 1 si esegue a traguardi, e **ciascuno ha il proprio piano** — scritto
+quando si arriva, perché scriverne uno per codice che non esiste significa inventare.
+
+| # | Traguardo | Stato |
+|---|---|---|
+| **1** | scheletro e porta di qualità — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
+| **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ⏭️ **prossimo**, e il piano **non esiste ancora** |
+| 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
+| 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
+| 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
+| 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
+
+**Cosa il Traguardo 1 ha lasciato dietro di sé**, oltre al codice:
+
+| | |
+|---|---|
+| **quattro gotcha nuovi** | **#38** la guardia che installa ciò che verifica · **#39** i test negativi che ridichiarano le proprie precondizioni · **#40** una decisione fuori da un ADR non arriva al compendio · **#41** il filtro che decide cosa il controllo può vedere |
+| **due seconde occorrenze** | **#26** — il glob vuoto di `trybuild` esce verde, il percorso letterale no · **#25** — gli oracoli sono accoppiati al **grafo linkato**, e due diventano rossi insieme per un motivo estraneo alla regola |
+| **due controlli nati dopo il piano** | `scripts/gate-attributes.sh` (da #39) e la classe di caratteri allargata di `gate-deps.sh` (da #41). Nessuno dei due era previsto |
+| ⛔ **un'errata in testa al piano** | quattro voci, e la prima è la §1.0: il piano dettava identificatori **italiani**, e il codice è in **inglese** perché lo impone la spec |
+
 ### Le decisioni aperte dalla §0.5 — tre previste, quattro emerse
 
 | # | Decisione | Esito |
@@ -709,12 +750,11 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 22 | **Che una versione esista non vuol dire che funzioni** | `cargo add bincode` risolve alla **3.0.0**, che è l'ultima pubblicata e il cui **intero sorgente** è `compile_error!("https://xkcd.com/2347/")`: un segnaposto contro l'occupazione del nome. La versione utile è la `2.0.1`, e il manifesto va **appuntato a `2`** con la ragione scritta accanto, o il prossimo aggiornamento «sistema» il vincolo e rompe la build. È la stessa classe della riga su `sled` in ADR-0032, ma peggiore: lì la versione utile era solo più vecchia, qui **la più recente esiste ed è inutilizzabile**. Corollario: in una misura sui candidati, `cargo add --dry-run` dice che il nome si risolve — **non** che il codice compili |
 | 23 | **`cargo metadata` non risolve le feature; `cargo tree` sì** | i due strumenti danno grafi diversi sullo stesso workspace, e la differenza è grande. `cargo metadata` riporta correttamente le *feature attive* di ogni nodo, ma il suo elenco `deps` **le ignora**: elenca anche le dipendenze opzionali **spente**. **Misurato**: sul kernel con `bincode` senza la feature `serde`, `cargo metadata` segnalava **11** crate esterne — fra cui `serde` e `syn`, che non vengono compilate — contro le **2** reali di `cargo tree`. Un controllo di allow-list costruito sull'interfaccia macchina «giusta» sovra-segnala di 5×. Costo dell'alternativa, dichiarato: `cargo tree` è pensato per gli umani e non garantisce la stabilità del formato |
 | 24 | **Un controllo si prova in _due_ direzioni, non una** | il gotcha #14 copre metà del problema: un controllo mai visto fallire non è un controllo. L'altra metà è che **un controllo che scatta dove non deve è peggio di uno assente**, perché insegna a ignorare l'audit. In M-3 la sonda decisiva è stata **N4**: mettere `getrandom` dentro `platform` — dove ADR-0031 lo **ammette** — e verificare che il controllo **resti verde**. Senza quella sonda, una regola troppo larga sarebbe passata per una regola che funziona. È la stessa ragione per cui `check-docs.sh` conta le sezioni duplicate **per file** e non sull'insieme |
-| 25 | **Rigenerare in blocco le evidenze di un test negativo lo trasforma in una tautologia** | un test di compilazione fallita in Rust confronta l'errore prodotto con un file `.stderr` salvato accanto al caso: è **ciò che gli impedisce di fallire per il motivo sbagliato** (gotcha #9 in forma Rust). Ma `trybuild` offre un modo di riscrivere **tutti** gli `.stderr` sull'output corrente. Serve quando i messaggi cambiano legittimamente; usato senza leggerli, ogni caso diventa «l'errore atteso è quello che è uscito» e la suite **passa per sempre**, restando verde. La rigenerazione è un atto deliberato e **si legge nel diff**, come aggiungere una voce alla lista di ADR-0031. Corollario che vale oltre `trybuild`: ogni volta che l'oracolo di un test è un file generato dal test stesso, aggiornarlo automaticamente **cancella l'oracolo** |
-| 26 | **Un controllo che delimita il proprio bersaglio per intestazione si spegne quando qualcuno rinumera — e si spegne _verde_** | è il gotcha #14 in una forma che #14 non copre: quel controllo **è stato visto fallire**, quindi era un controllo vero. Poi qualcuno rinomina `#### 7.4.1`, l'intervallo non trova più righe, e uno script che non ha niente da controllare **esce con successo**. Il segnale è indistinguibile da «tutto a posto». Rimedio, applicato in §8.6.2: **se un delimitatore non si trova, o l'intervallo è vuoto, è un fallimento**. Sonde S6, S6b e S6c. ⚠️ E il rimedio sbagliato è mettere a guardia un **numero atteso** di righe: diventerebbe rosso il giorno in cui la tabella cresce per un motivo legittimo, cioè il gotcha #9 applicato allo script. Si verifica che i delimitatori esistano, non quante righe ci siano — a meno che l'elenco non sia canonico, come i V1–V37, dove la completezza *è* il controllo |
+| 25 | **Rigenerare in blocco le evidenze di un test negativo lo trasforma in una tautologia** | un test di compilazione fallita in Rust confronta l'errore prodotto con un file `.stderr` salvato accanto al caso: è **ciò che gli impedisce di fallire per il motivo sbagliato** (gotcha #9 in forma Rust). Ma `trybuild` offre un modo di riscrivere **tutti** gli `.stderr` sull'output corrente. Serve quando i messaggi cambiano legittimamente; usato senza leggerli, ogni caso diventa «l'errore atteso è quello che è uscito» e la suite **passa per sempre**, restando verde. La rigenerazione è un atto deliberato e **si legge nel diff**, come aggiungere una voce alla lista di ADR-0031. Corollario che vale oltre `trybuild`: ogni volta che l'oracolo di un test è un file generato dal test stesso, aggiornarlo automaticamente **cancella l'oracolo**. 📌 **Seconda occorrenza, 2026-08-08, e aggiunge la ragione per cui la tentazione arriva proprio nel momento peggiore.** Gli `.stderr` non sono accoppiati al **sorgente del caso**: sono accoppiati al **grafo linkato**. Misurato togliendo `#![no_std]` da `crates/kernel/src/lib.rs`: il caso continua a non compilare — ridichiara il proprio `#![no_std]` — ma dall'output reale **sparisce la riga dell'allocatore**, *«no global memory allocator found»*, e **due oracoli diventano rossi insieme**: `std_in_kernel.rs` e `hashmap_in_kernel.rs`, cioè i due che quella riga la portavano. ⛔ Il punto che fa male: quei due rossi non dicono nulla sulla regola che i due casi mettono alla prova — parlano della **forma del kernel**. Chi li vede rossi «per un motivo che non c'entra» è esattamente chi rigenererebbe in blocco, e in quel momento la rigenerazione cancella l'oracolo di **entrambi** |
+| 26 | **Un controllo che delimita il proprio bersaglio per intestazione si spegne quando qualcuno rinumera — e si spegne _verde_** | è il gotcha #14 in una forma che #14 non copre: quel controllo **è stato visto fallire**, quindi era un controllo vero. Poi qualcuno rinomina `#### 7.4.1`, l'intervallo non trova più righe, e uno script che non ha niente da controllare **esce con successo**. Il segnale è indistinguibile da «tutto a posto». Rimedio, applicato in §8.6.2: **se un delimitatore non si trova, o l'intervallo è vuoto, è un fallimento**. Sonde S6, S6b e S6c. ⚠️ E il rimedio sbagliato è mettere a guardia un **numero atteso** di righe: diventerebbe rosso il giorno in cui la tabella cresce per un motivo legittimo, cioè il gotcha #9 applicato allo script. Si verifica che i delimitatori esistano, non quante righe ci siano — a meno che l'elenco non sia canonico, come i V1–V37, dove la completezza *è* il controllo. 📌 **Seconda occorrenza, 2026-08-08, fuori dagli script e dentro un banco di test.** Il piano prevedeva che, senza la cartella `tests/compile_fail/`, il banco fosse **rosso**. Misurato su `trybuild` 1.0.120: **un glob che non pesca niente non è un errore** — stampa un avviso giallo, lascia i fallimenti a zero ed **esce 0**. Un percorso **letterale** inesistente invece diventa rosso. ⚠️ **L'asimmetria è la parte da ricordare**, perché non si ricostruisce leggendo `t.compile_fail(...)`: la stessa chiamata è severa o indulgente a seconda che l'argomento contenga un `*`. Rimedio in esercizio: `crates/kernel/tests/compile_fail.rs` conta i `.rs` **prima** di chiamare `trybuild` e fallisce se sono zero — **senza numero atteso**, che è il rimedio sbagliato di questa stessa riga |
 | 27 | **La legenda di una tabella risponde a una domanda sola, e chi la legge ne assume un'altra** | `tracciabilita.md` risponde a *«dove vive questa funzionalità»*. Il suo `📋` significa «sotto-progetto assegnato» — **non** «non richiede un meccanismo di kernel». Nessuno l'aveva mai letta con la seconda domanda, e leggerla così ha **riaperto la spec su sette voci**, tre di classe B. È il gotcha #26 spostato dai controlli ai documenti: una tabella che non ha mai rifiutato niente non sta verificando niente. ⚠️ Il rimedio non è riscrivere la legenda: è **rileggere con un'altra domanda**, che è ciò che la §8 ha fatto sessantuno volte e questa volta ha fatto la tracciabilità |
 | 28 | **Un parametro non consegnato è una costante, e una costante è invisibile** | V29 rende sostituibile ciò che il mondo *risponde*. Non dice nulla sui **parametri con cui il kernel è configurato** — budget della GPU, quote sottratte, policy attiva, tetti di autonomia — e ciò che non viene consegnato finisce scritto dentro. Non compare in nessun elenco, non fa scattare nessuna voce del catalogo, e **si manifesta solo come uno scenario che la campagna non può esplorare**: con le quote fisse, RK-1 è irraggiungibile. Chiuso da ADR-0034. ⛔ E il limite resta dichiarato: il compilatore prova che una decisione *riceve* i propri parametri, **non** che non ne abbia altri di nascosto |
 | 29 | **La riga di _verifica_ di un'invariante è il punto in cui l'invariante si restringe in silenzio** | Le sei invarianti di ADR-0004 hanno due colonne: l'**enunciato** e **come si verifica**. La seconda è più corta, più concreta, e viene letta al posto della prima — ma è scritta guardando i casi che esistevano quel giorno. È già successo **due volte**: I2 diceva «nessun **worker** si avvia senza concessione», e copriva una classe di processo su tre (chiuso da ADR-0033); I4 dice «nessun **consumatore esterno**», che parla di esternalità e non di quanti dei nostri processi parlino il protocollo (chiuso da ADR-0035). In entrambi i casi l'enunciato era giusto e nessun controllo poteva accorgersene, perché **la riga di verifica _è_ il controllo**. ⚠️ Il rimedio non è riscrivere le invarianti: è che **completare una riga di verifica non è superarla** — ADR-0004 non è mai stato superato, ha ricevuto due rimandi. Chi trova il terzo caso lo aggiunga qui invece di aprire un dibattito sull'invariante. 📌 **Terza occorrenza, 2026-08-08, e in una forma peggiore delle prime due.** Non una riga di verifica ma una **riformulazione**: la colonna «Vincolo» di §8.3 riassume in poche parole un vincolo che vive nella spec del kernel, e **otto** delle trentasette avevano perso un pezzo. Sette erano innocue; su `V16` la metà caduta era quella **positiva** — *«nomi di provider e parametri sì»* — e il giudizio era stato dato sulla metà rimasta, declassando a `rimandato` un vincolo che è `parziale`. ⛔ La differenza che rende questa forma peggiore: una riga di verifica troppo stretta **lascia scoperto un caso**, una riformulazione troppo stretta **cambia l'oggetto del giudizio**, e nessuno script può accorgersene perché la casella è piena e lo stato è ammesso. Rimedio in §8.5.5: quando si tocca la §8, la colonna «Vincolo» **si confronta con la fonte**, non si rilegge da sola |
-
 | 30 | **Un banco che guarda solo l'esito non vede la risposta sbagliata** | È il gotcha #17 spostato dall'**iniezione** all'**oracolo**: non «il guasto non è scattato», ma «il guasto *è* scattato e il banco non sa distinguerlo da un successo». **Misurato in M-9**: rileggendo un record durevole dopo un cambio di tipo, cinque celle su trentasei restituiscono `Ok` **con valori sbagliati**. Un banco che confronta solo `Ok`/`Err` le legge tutte come successi — e la forma che *sembrava* più economica avrebbe superato il vaglio. Il rimedio è confrontare i **valori**, non l'esito, e vale ovunque l'oracolo sia un codice di ritorno: decodifica, parsing, riconciliazione, conversione di tipi. ⚠️ **Corollario che vale oltre F2:** in un archivio durevole il modo di fallire peggiore **non è l'errore** — un errore lo vedi — ma il record che si rilegge e ti restituisce il numero sbagliato |
 | 31 | **Una stima di costo prezzata sulla variante sbagliata sopravvive, perché viene citata invece che rifatta** | Questo documento prezzava la forma B dell'evoluzione come *«permanente su ogni campo di ogni record»*. **Misurato: un byte su ventisei.** La stima guardava la codifica a **mappa**; la predefinita della stessa libreria è ad **array**, e lo scarto è di sette volte — su un numero che stava per far scartare la forma giusta. Non è un errore di calcolo: è che una stima scritta una volta **suona più certa più invecchia**, e nessuno la rimisura perché «c'è già scritto». È il gotcha #15 — un'evidenza scritta prima della misura è un'ipotesi — applicato ai **costi** invece che agli esiti. ⚠️ Il rimedio non è diffidare delle stime: è che una stima che sta per **decidere** va rimisurata, e quella che decide soltanto di rimandare no. 📌 **Seconda occorrenza, 2026-08-08**, e in una forma peggiore perché il numero **sostiene una regola giusta**: `CLAUDE.md`, il compendio e `AVVIO-CHAT.md` dicevano che HANDOFF + spec del sotto-progetto 1 + `adr/` pesano *«oltre settecento kilobyte»*. Misurati: **cinquecentosedici**, cioè un terzo in meno, e i documenti da allora sono solo **cresciuti** — quindi il numero non era invecchiato, **non era mai stato vero**. Nessuno l'aveva verificato perché la regola che giustifica — «non aprirli per farsi un'idea» — è corretta, e un numero che argomenta bene non sembra un'affermazione. ⛔ Un numero gonfiato a sostegno di una regola giusta resta un numero falso, e il giorno in cui qualcuno lo verifica **è la regola a perdere credito** |
 | 32 | ⛔ **Un'idea che sembra nuova può essere già stata scartata, e il compendio non lo dice** | Il compendio comprime le **decisioni**, non le alternative respinte: il *perché* lungo — misure comprese — vive nell'ADR o nella sezione. Conseguenza: una proposta perfettamente ragionevole può essere già caduta, **con la misura fatta**, e chi la ripropone non incontra nessun ostacolo. **Successo il 2026-08-08**: si è proposto di sostituire `bincode` con `minicbor` sul canale `ipc` per uniformare i codificatori. Era già stato valutato e respinto in §6.8 e riaffermato il giorno prima, e il compendio lo vietava per nome. ⚠️ Il rimedio **non** è leggere tutto prima di parlare — sarebbero cinquecento kilobyte. È: **prima di proporre qualcosa che sostituisce una decisione presa, cercare dove era già stata valutata e perché era caduta**, e riaprire **solo con una prova nuova**. ⛔ E se la prova nuova gioca **contro** la propria idea, si registra e si chiude: qui a smontare la proposta è stata **la stessa misura che l'aveva motivata** (M-11). La regola sta in `CLAUDE.md` |
@@ -723,6 +763,10 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 35 | **Un `Vec<u8>` non annotato raddoppia il traffico, in silenzio** | In `minicbor`, scritto nel modo naturale, un `Vec<u8>` si codifica come **array di numeri** e non come stringa di byte: ogni byte ≥ 24 ne occupa due. Serve l'annotazione esplicita (`with = "minicbor::bytes"`). **Misurato** su un frammento audio da 4096 B: **7813** contro **4101**, cioè **1,91×**. ⚠️ La trappola è che non somiglia a un difetto: compila, fa round-trip, e i valori sono **corretti**. Costa soltanto il doppio della banda, su un canale — quello audio — dove la banda è il vincolo |
 | 36 | ⛔ **La tabella «come si verifica» di una sezione non è il catalogo, e il passaggio si salta** | Quando una sezione decide un meccanismo nuovo, scrive una propria tabella *«come si verifica»* con sonda e contro-sonda — ed è giusto che lo faccia, perché il controllo si progetta dove si progetta la cosa. Ma il **catalogo §7.4** è l'unico posto che la §8.1.2 ammette come meccanismo nominabile, ed è la lista che il piano tradurrà in lavoro. Chi scrive la sezione considera il controllo «scritto» e non lo riporta. **Successo due volte**: la prima con V2, V4 e V10 — proprietà di livello 1 decise nelle §5 e §6 e mai enumerate (§8.5.3); la seconda il giorno dopo con i **cinque controlli della §6.10.5** (§8.5.4). ⚠️ **La diagnosi che rende il gotcha utile è l'asimmetria**: nella stessa riapertura, §2.8.4 e §4.9.4 le loro righe le hanno aggiunte, §6.10.5 no, e **nessun documento dice perché** — cioè non era una decisione, era un passaggio saltato. Prima di concludere che sia stato deliberato si cerca dove sarebbe stato deciso: in ADR-0037 la parola «catalogo» non compare, e la §7.4.4 riduce tre voci che sono altre. ⛔ **Il rimedio non è irrigidire `check-docs.sh`**: lo script verifica che la casella del meccanismo sia *piena*, non che nomini davvero una voce della §7 (§8.6.4), e pretendere di più trasformerebbe le dichiarazioni oneste in rossi. Il rimedio è sapere che **questa è la classe di difetto che ricompare**, e cercarla a ogni sezione che decide un controllo. È il gotcha #29 spostato dalle invarianti ai controlli: il posto dove una cosa si **verifica** è il posto dove si restringe in silenzio |
 | 37 | ⛔ **Un controllo può difendere _un altro controllo_ invece di una proprietà, e la regola d'ammissione lo scambia per un'abitudine** | La §7.1.1 ammette una voce nel catalogo solo se difende un `V`, un'`I` o un `Q` nominato; se non ne difende nessuno *«è un'abitudine, non un controllo: va tolta»*. È la regola con cui la §7.4.3 caccia `clippy`, ed è giusta. **Misurato il 2026-08-08: otto righe su trentatré non la rispettavano**, e sotto la sua lettera andavano tolte tutte e otto. Cinque erano contabilità — `Q8` era perfino **già scritta** in §8.4 e mai riportata nel catalogo, gotcha #36 nella forma pura. ⛔ Le altre tre no, e sono la trappola: `forbid(unsafe_code)`, l'allow-list sul grafo **di build** e i **test di contratto** non difendono una proprietà del sistema — difendono il **verdetto** di altri controlli. Cancella `forbid` e **nessuna** riga del catalogo diventa rossa: diventano tutte **meno vere**, perché un `unsafe` falsifica un gettone, transmuta un newtype o raggiunge l'OS con un `extern` scritto a mano. Un catalogo senza una casella per dirlo costringe a scrivere il numero di una sezione nella colonna del vincolo, e lì resta finché qualcuno applica la regola alla lettera. ⚠️ **Il rimedio sbagliato è allargare la regola** a «una proprietà decisa in una sezione nominata»: così non rifiuta più niente, e una regola che non rifiuta mai è decorazione — la §8.5.3.1 esiste perché quella famiglia di regole ha **rifiutato** alla prima applicazione seria. Il rimedio è un **secondo ramo** con criterio proprio: *nomina le voci del catalogo di cui sostieni la validità*. Rifiuta ancora `clippy`, perché cancellare `clippy` non rende falsa nessuna riga. 📌 **E la prova nelle due direzioni è arrivata gratis**: la sesta asserzione di `check-docs.sh`, scritta **prima** della correzione, alla prima corsa ha nominato **le otto e solo le otto** — 8 rosse, 25 verdi — con un caso storico invece che con una mutazione costruita |
+| 38 | **Un controllo che interroga uno stato può _modificarlo_ mentre lo interroga, e allora la sua condizione non può essere vera** | `scripts/gate-no-os.sh` ha una guardia in testa: chiede a `rustup` l'elenco dei bersagli installati e, se `x86_64-unknown-none` non c'è, esce 1 con il comando da lanciare — perché senza il bersaglio il cancello sarebbe rosso **per il motivo sbagliato**, che è il vincolo 4 della §11. **Misurato**: `rustup target list --installed` **riconcilia `rust-toolchain.toml` prima di rispondere**, e il manifesto dichiara `targets = ["x86_64-unknown-none"]`. Quindi se il bersaglio manca, **l'atto stesso di chiederlo lo installa**, e la risposta è «c'è». Isolato eseguendo la sola riga della guardia, senza `cargo`, con una directory **fuori dal repository** come controllo: lì il manifesto non esiste, non c'è niente da riconciliare, e il bersaglio resta assente **tre volte su tre**. ⚠️ La guardia **può** scattare, ma solo dove la riconciliazione fallisce, cioè **senza rete**: verificato, uscita 1 e messaggio corretto. È dunque **la via offline, non una rete di sicurezza** — rende usabile una macchina isolata, non sorveglia una macchina connessa, e la differenza sta scritta accanto alla guardia perché chi la legge non le attribuisca un potere che non ha. Sonda **B4** in [`porta-di-qualita.md`](porta-di-qualita.md) |
+| 39 | ⛔ **Un test negativo che _ridichiara le proprie precondizioni_ prova il meccanismo, non che il sistema sia configurato così** | I quattro casi di `crates/kernel/tests/compile_fail/` **ridichiarano ciascuno** `#![no_std]` e `#![forbid(unsafe_code)]`, e **non nominano mai `kernel::`**. Provano che il divieto **morde dove è dichiarato** — cosa vera e utile — non che il kernel lo dichiari. **Misurato**: tolto `#![forbid(unsafe_code)]` da `crates/kernel/src/lib.rs` **e scritto un `unsafe` vero** dentro la crate, la porta restava **verde su cinque controlli su cinque**. La Definizione di «fatto» del piano dava quella condizione — *«i quattro casi passano»* — per una verifica del divieto sul kernel, e non lo era: è la voce **E4** dell'errata. Rimedio: `scripts/gate-attributes.sh`, che cerca i tre attributi ancorati a inizio riga nei due file vincolati e rifiuta anche `deny` al posto di `forbid`. È **livello 2**, quindi cancellabile, e questo è dichiarato. ⚠️ **Peggiore di come sembra**, e la ragione sta nel catalogo: la riga di `forbid(unsafe_code)` è di **ramo 1b** — sostiene la validità dei blocchi A, B e C, gotcha #37 — quindi toglierla non spegneva **una** regola, invalidava **il fondamento del livello 1** senza che niente diventasse rosso |
+| 40 | ⛔ **Il compendio dichiara di contenere tutte le decisioni, ma il controllo ne pretende una voce solo per gli _ADR_: una decisione che vive in una _sezione di spec_ può mancare, e allora per chi legge non esiste** | `CLAUDE.md` ordina di leggere due file e **fermarsi**, e il compendio si presenta come *«una compressione, non una selezione — ci sono dentro tutte le decisioni»*. La promessa è mantenuta **dove è controllata**: `check-docs.sh` pretende una voce di §5 per ogni file in `docs/adr/`, in due direzioni. Ma la **§1.0** della spec del sotto-progetto 1 — *codice interamente in inglese, documentazione in italiano, riferimenti al codice in inglese col nome esatto del sorgente* — **non è un ADR**: è una sezione, quindi **nessun controllo ne pretendeva la presenza**, e infatti non c'era né nel compendio né in `CLAUDE.md`. **Misurato il 2026-08-08**: un agente ha letto per intero **entrambi** i file obbligatori, ha fatto esattamente ciò che gli era stato detto, e ha scritto **un traguardo intero** con gli identificatori in italiano — perché la regola non era in nessuno dei due e il piano dettava nomi italiani. La correzione è costata **sei rinomini di file, undici di funzione**, la traduzione di quattro script e la **rigenerazione dei quattro oracoli** `.stderr`, che è l'atto più delicato del repository (gotcha #25). ⚠️ Il controllo di §13 accoppia le voci ai **file** in `docs/adr/`: è **esatto per ciò che misura**, e cieco a tutto il resto — non è un difetto dello script, è il suo perimetro. ⛔ **Il rimedio non è irrigidirlo**: nessun elenco di «sezioni che contano» resterebbe vero più di una sessione, e uno script che pretende voci per sezioni inventate produce rossi per il motivo sbagliato. Il rimedio è che **una decisione scritta fuori da un ADR va portata a mano nel compendio**, e chi la scrive è **l'unico** che può saperlo. Registrato in §4 del compendio e nella tabella «Come si lavora qui» di `CLAUDE.md`, cioè nei due posti dove chi legge inciampa |
+| 41 | **Un filtro che _normalizza l'ingresso_ di un controllo decide anche che cosa il controllo può vedere** | `scripts/gate-deps.sh` legge l'uscita di `cargo tree` e ne estrae i nomi di crate; per scartare le righe che nomi non sono, filtrava con `grep -E '^[a-z0-9_-]+$'`. **Misurato**: una crate col nome che contiene una **maiuscola** non passa il filtro, quindi non entra nell'insieme confrontato con la allow-list, quindi **non compare fra gli intrusi** — e il cancello esce **verde**. È un **falso negativo su I3**, cioè il modo di fallire peggiore per quel controllo: un rosso mancato su un'invariante non si nota mai, mentre un rosso di troppo lo segnala qualcuno. Provato con `Inflector`, crate reale e non un nome costruito, aggiunta al grafo **spedito** del kernel: **uscita 0 prima** della correzione, **uscita 1 e il nome del colpevole dopo**. Rimedio: allargare la classe di caratteri, con la ragione scritta accanto alla classe. Sonda **N5**. ⚠️ **E c'era un secondo strato, che la sola uscita 0 nascondeva**: `Inflector` porta con sé un corteo di dipendenze dal nome tutto minuscolo, che il filtro **lasciava passare**. Il controllo quindi non taceva del tutto — segnalava **il corteo e non il capofila**, pur stampando il capofila dentro ogni catena. Un elenco di colpevoli in cui manca l'unico nome che spiega gli altri è peggio di un elenco vuoto: sembra un rapporto completo |
 
 ## Il metodo di lavoro
 
@@ -751,6 +795,9 @@ diventassero codice.
 | ❌ rifare le misure **M-1 · M-2 · M-3 · M-4 · M-5 · M-6 · M-7 · M-8 · M-9** | tutte chiuse, con comandi, versioni e sonde: M-1 §6.8 · M-2 §3.6 · M-3 §7.2 · M-4 e M-5 §2.6 · M-6 §5.8.1 · M-7 §2.6 · M-8 §4.7 · **M-9 in [ADR-0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md)**, con la matrice, i sei ritrovamenti e le quattro divergenze. L'unica aperta è **M5** (senza trattino), e richiede una GUI |
 | ❌ riaprire le **due decisioni della §7.3** | erano le uniche domande che la §7 doveva prendere, e sono state prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
 | ❌ progettare una capacità L2 | prima il kernel deve esistere (ADR-0001) |
+| ⛔ **riscrivere il piano del Traguardo 1** | è il registro di ciò che fu osservato eseguendolo, e riscriverlo falsificherebbe la storia. Dove detta una cosa e il repository ne contiene un'altra, parla l'**errata in testa** — quattro voci, e la prima sono gli identificatori italiani |
+| ⛔ **«tradurre in italiano» qualcosa in `crates/` o in `scripts/`** | la §1.0 lo vieta, ed è già costato un traguardo intero da rifare — gotcha #40. Restano italiane **solo** le parole che `check-docs.sh` cerca dentro i documenti: `verificato qui`, `parziale`, `rimandato`, `non controllato`, e l'intestazione «Difende» del catalogo. Sono dati confrontati, non identificatori |
+| ⛔ **rigenerare in blocco gli `.stderr` di `compile_fail/`** | sono accoppiati al **grafo linkato**, non al solo sorgente del caso: due possono diventare rossi insieme per un motivo estraneo alla regola sotto test, ed è proprio il momento in cui rigenerare è più tentante. Gotcha #25, seconda occorrenza |
 | ❌ promuovere l'aiutante `passo_in_dubbio` dello spike | assume esecuzione sequenziale: con l'interlacciamento dà un **falso negativo**. Gotcha #20 |
 | ⚠️ fidarsi delle fonti senza data | l'ecosistema si muove a cadenza mensile; `riferimenti.md` riporta la data di consultazione |
 
@@ -783,15 +830,18 @@ per chiudersi.
 | [`roadmap.md`](roadmap.md) | dodici sotto-progetti, ordine, dipendenze, decisioni aperte |
 | [`tracciabilita.md`](tracciabilita.md) | 170 funzionalità → dove vive ciascuna |
 | [`README.md`](README.md) | indice di ADR e diagrammi |
-| [`adr/`](adr/) | **36 decisioni**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
+| [`porta-di-qualita.md`](porta-di-qualita.md) | **dove vive ogni controllo**: ogni riga del catalogo §7.4 → il file che la implementa, le sonde per nome, e ciò che la porta **non** controlla ancora |
+| [`adr/`](adr/) | **37 decisioni architetturali**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
 | [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§8 complete, con tutte le evidenze delle misure |
-| [`superpowers/plans/`](superpowers/plans/) | il piano dello stack — **eseguito**, con l'errata in testa che documenta cosa il piano sbagliava |
+| [`superpowers/plans/`](superpowers/plans/) | i due piani scritti finora — lo **stack** e il **Traguardo 1** — entrambi **eseguiti**, ed entrambi con un'**errata in testa** che documenta dove il piano sbagliava. ⛔ Un piano non si riscrive: è il registro di ciò che fu osservato eseguendolo |
+| [`../crates/`](../crates/) | **il codice del prodotto.** Cinque crate: `kernel` e `simulator` in `no_std` + `alloc` + `forbid(unsafe_code)`; `platform`, `secrets` e `daemon` sono il posto dove l'I/O deve vivere |
 | [`riferimenti.md`](riferimenti.md) | fonti esterne, con data e con **cosa non abbiamo adottato** |
 | [`../spikes/`](../spikes/) | **prove, non kernel.** `PROTOCOLLO.md` criteri e soglie · `CANDIDATI.md` pre-selezione · `RISULTATI.md` esiti, seed, versioni, evidenze · `GUI-REQUISITI.md` G1–G21 e P1–P4 |
 | [`../spikes/rust/`](../spikes/rust/) | il prototipo vincente: confine dei tipi, esecutore deterministico, `Future` native, giornale write-ahead. **Punto di partenza del simulatore** |
 | [`../spikes/gui-ipc/`](../spikes/gui-ipc/) | prototipo IPC con P1–P4 misurati |
-| `../scripts/check-docs.sh` | controllo di coerenza, verificato anche in negativo. **Da eseguire prima di ogni commit di documentazione** |
+| `../scripts/gate.sh` | **la porta di qualità, in un comando solo.** Sei controlli, e gli altri quattro script sono i suoi pezzi: `gate-no-os.sh` · `gate-deps.sh` · `gate-attributes.sh` · `check-docs.sh` |
+| `../scripts/check-docs.sh` | controllo di coerenza, verificato anche in negativo. **Da eseguire prima di ogni commit di documentazione** — o `gate.sh`, che lo comprende |
 
 ## Come si aggiorna questo handoff
 

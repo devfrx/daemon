@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-08-07**.
+Ultimo aggiornamento: **2026-08-08**.
 
 ## Stato in una riga
 
@@ -13,7 +13,12 @@ Ultimo aggiornamento: **2026-08-07**.
 > `Proposed`) e **non blocca nulla**.
 >
 > **Sotto-progetto 1: §0–§8 approvate**, e la riapertura su sette voci è **tutta chiusa**.
-> Nessuna riga di codice. La §7 porta la **porta di qualità**: ogni controllo dichiara il proprio
+> ✅ **Il Traguardo 1 è eseguito il 2026-08-08**: il workspace alla radice con le cinque
+> crate, edition **2024**, `rust-toolchain.toml` che appunta **rustc 1.95.0** e il bersaglio
+> **`x86_64-unknown-none`**, e la **porta di qualità in un comando solo** —
+> `bash scripts/gate.sh`, sei controlli, **`GATE GREEN`**. ⛔ **Zero logica di prodotto**, ed
+> è deliberato. La mappa dei controlli è in [porta-di-qualita.md](porta-di-qualita.md).
+> La §7 porta la **porta di qualità**: ogni controllo dichiara il proprio
 > livello di forza — compilatore, controllo esterno, lint — e porta la sonda che deve
 > scattare *e* la contro-sonda che deve restare verde. **Il livello 3 è vuoto**: nessuna
 > invariante del kernel poggia su un lint. La §8 porta la **copertura**: ogni V e ogni Q
@@ -39,10 +44,11 @@ Ultimo aggiornamento: **2026-08-07**.
 > ✅ **La §8 è chiusa** (2026-08-08), toccata una volta sola come previsto, e la spec è
 > passata per un **audit sezione-contro-ADR** — quaranta rilievi, **tutti chiusi**: l'ultimo
 > era la regola 1 del catalogo (§7.1.1), lasciata aperta perché era una decisione e chiusa
-> lo stesso giorno. ✅ **Il piano del Traguardo 1 è scritto**, e la spec non ha voci aperte.
+> lo stesso giorno. ✅ **Il piano del Traguardo 1 è scritto ed eseguito**, e la spec non ha
+> voci aperte.
 >
-> ⏭️ **Prossimo passo: eseguire il piano, subagent-driven.** Otto compiti, e il primo
-> traguardo è lo **scheletro con la porta di qualità**, zero logica di prodotto.
+> ⏭️ **Prossimo passo: il Traguardo 2 — il substrato iniettabile**, e prima il suo piano,
+> che **non esiste ancora**: si scrive quando si arriva.
 >
 > ✅ **La lacuna su I2 è chiusa**: [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
 > — quota di presentazione sottratta, con la concessione tenuta dal core. Il kernel non
@@ -69,7 +75,7 @@ flowchart LR
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
 | **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
-| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — **spec completa** (§0–§8, riapertura chiusa, §8 chiusa, audit passato) e **piano del Traguardo 1 scritto**. Tocca al **codice** | 0, 0b, 0c |
+| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — spec completa (§0–§8, riapertura chiusa, §8 chiusa, audit passato). **Traguardo 1 ✅ eseguito**: scheletro e porta di qualità, `GATE GREEN`. Tocca al **Traguardo 2** | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2 |
 | 4 | Agenti | L2 | ⬜ | 3 |
@@ -122,35 +128,45 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 | Piano | Copre | Stato |
 |---|---|---|
 | [Spike bloccanti e stack](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | SP-5, SP-6, ADR-0026, ADR-0027, ADR-0028 | ✅ **eseguito** il 2026-08-06 |
-| [Sotto-progetto 1 · Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) | il workspace con le cinque crate e la **porta di qualità**, eseguibile e provata in due direzioni. **Zero logica di prodotto** | ⏭️ **da eseguire** — è il prossimo passo |
+| [Sotto-progetto 1 · Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) | il workspace con le cinque crate e la **porta di qualità**, eseguibile e provata in due direzioni. **Zero logica di prodotto** | ✅ **eseguito** il 2026-08-08, con un'**errata in testa**: il piano dettava identificatori italiani, la §1.0 della spec vince |
 
 ⛔ **Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano.** Scriverne
 uno per codice che non esiste ancora significa inventare. I sei traguardi sono elencati nel
-piano del primo; i successivi si scrivono quando si arriva.
+piano del primo; i successivi si scrivono quando si arriva — **quello del Traguardo 2
+compreso, e non esiste ancora**.
 
 | # | Traguardo | Deliverable |
 |---|---|---|
-| **1** | scheletro e porta di qualità | ⏭️ il piano c'è |
-| 2 | il substrato iniettabile | tempo, casualità, I/O, scheduling; l'esecutore in `kernel`; le sei porte come tratti |
+| **1** | scheletro e porta di qualità | ✅ **eseguito**: cinque crate, sei controlli in un comando, `GATE GREEN` |
+| **2** | il substrato iniettabile | ⏭️ **prossimo**: tempo, casualità, I/O, scheduling; l'esecutore in `kernel`; le sei porte come tratti |
 | 3 | giornale e formato durevole | la porta `journal` a byte, il record come enum di versione, **i byte congelati** |
 | 4 | il simulatore DST | tempo virtuale, iniezione dei guasti, la campagna, i semi |
 | 5 | arbitro GPU | ammissione, corsie, ciclo della concessione, le due policy |
 | 6 | gli altri meccanismi | gateway, sensori, permessi, degrado, il canale worker |
 
-**Il piano è l'artefatto dopo la chiusura delle voci ancora aperte** della
-riapertura: vale «spec prima del codice», e il piano è il passo fra le due.
+**Il codice si scrive in questo repository**, non altrove, e la domanda su *dove* è
+**chiusa dall'esecuzione**: il workspace delle cinque crate nasce **alla radice**, con
+`spikes/` fra gli `exclude` — `spikes/rust/` è un workspace annidato e porta un
+`clippy.toml` che a livello di workspace scatterebbe addosso a `platform`, che *deve*
+chiamare l'orologio.
 
-**Il codice si scrive in questo repository**, non altrove. Il piano deve quindi decidere
-anche *dove*: `spikes/rust/` ha un proprio `Cargo.toml` e alla radice non ce n'è nessuno,
-quindi il workspace delle cinque crate nasce alla radice — escludendo gli spike — oppure
-accanto ad essi.
-
-Il prototipo [`spikes/rust/`](../spikes/rust/) è il punto di partenza del simulatore:
+Il prototipo [`spikes/rust/`](../spikes/rust/) resta il punto di partenza del simulatore:
 contiene già il confine dei tipi, l'esecutore deterministico, l'esecutore su `Future`
-native e il giornale write-ahead iniettabile, tutti con i loro test.
+native e il giornale write-ahead iniettabile, tutti con i loro test. ⚠️ **Nel Traguardo 1
+non è ancora salito niente**: sale col substrato, e la §2.5 della spec dice riga per riga
+cosa entra in `crates/kernel/` e cosa resta dov'è.
+
+⛔ **Tutto il codice è in inglese** — §1.0 della spec: crate, moduli, tipi, funzioni,
+messaggi d'uscita, commenti nel sorgente. La documentazione resta in italiano. La regola
+non stava nei due file di lettura obbligatoria, e questo è costato un traguardo intero da
+rifare: gotcha **#40**.
 
 **Toolchain sulla macchina**, verificata il 2026-08-06: `rustc` 1.95.0 · `cargo` 1.95.0
 · `clippy` 0.1.95. Go 1.26.5 e Node 24.9 restano installati ma non servono più al core.
+✅ **Ora è anche appuntata nel repository**: `rust-toolchain.toml` dichiara il canale
+`1.95.0`, i componenti `rustfmt` e `clippy`, e il bersaglio `x86_64-unknown-none` del
+cancello senza OS. ⚠️ Che il bersaglio sia dichiarato lì ha una conseguenza misurata sulla
+guardia che lo verifica — gotcha **#38**.
 
 ## Decisioni ancora da prendere
 

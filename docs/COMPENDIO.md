@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (559 KB con `wc -c` il 2026-08-08, e possono solo crescere — la spec da sola ne fa 253), e
+> (577 KB con `wc -c` il 2026-08-08, e possono solo crescere — la spec da sola ne fa 259), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-08.** Manutenzione: §13.
@@ -37,7 +37,8 @@ una sola GPU da 16 GB.
 **Il kernel non implementa nessuna funzionalità utente: fornisce i meccanismi.**
 
 ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-scrive qui. Oggi l'unico codice è in `spikes/`, e sono **prove**, non il kernel.
+scrive qui, e vive in [`../crates/`](../crates/): cinque crate, con `kernel` e `simulator`
+in `no_std`. Gli spike in `spikes/` restano **prove**, fuori dal workspace.
 
 ---
 
@@ -96,6 +97,33 @@ dell'unico archivio irriproducibile**.
 | schema IPC | **`bincode` 2.0.1** — appuntato a `2` | M-1 · §6.1.1 · gotcha #22 |
 | formato del **giornale** | **versione + indici espliciti** — `minicbor` 2.3.0, codifica in `kernel` | ADR-0036 · §4.9 |
 | formato del **canale worker** | **`minicbor` 2.3.0**, codifica in `kernel`, porta a **byte** | ADR-0037 · §6.10 |
+| **edition** | **2024**, su tutte e cinque le crate | scelta dal piano del Traguardo 1 |
+| **toolchain appuntata** | `rust-toolchain.toml`: canale **`1.95.0`**, componenti `rustfmt` e `clippy`, bersaglio **`x86_64-unknown-none`** | vincolo 4 di §11 — il bersaglio dichiarato lì si installa da solo su una macchina pulita |
+| **nomenclatura** | **codice in inglese, documentazione in italiano** | §1.0 della spec — vedi il riquadro qui sotto |
+
+⛔ **La convenzione di nomenclatura — §1.0, e non è un ADR.**
+
+| | |
+|---|---|
+| **Codice** | interamente in **inglese**: nomi di crate, moduli, tipi, funzioni, messaggi d'uscita, commenti nel sorgente |
+| **Documentazione** | in **italiano** |
+| **Riferimenti al codice dentro la documentazione** | in **inglese**, col **nome esatto del sorgente** |
+
+Il costo accettato: fra la parola di un ADR («l'arbitro») e il nome nel codice (`arbiter`)
+c'è una traduzione da tenere a mente leggendo. Il beneficio: il codice non stona con un
+ecosistema interamente inglese, e non nasce un **dialetto misto**, che è la condizione
+peggiore delle due.
+
+⚠️ **Perché sta qui, e perché prima non c'era.** La §1.0 è una **sezione di spec**, non un
+ADR: `check-docs.sh` pretende una voce di §5 per ogni file in `docs/adr/`, quindi nessun
+controllo ne pretendeva la presenza. Un agente ha letto per intero **entrambi** i file
+obbligatori e ha scritto un traguardo intero con gli identificatori in italiano. Gotcha
+**#40**.
+
+⛔ **Eccezione, e non è un'incoerenza:** le parole che `check-docs.sh` **cerca dentro i
+documenti** restano italiane — `verificato qui`, `parziale`, `rimandato`,
+`non controllato`, e l'intestazione «Difende» del catalogo. Sono dati che lo script
+confronta, non identificatori.
 
 ⛔ **Il kernel porta due serializzatori, e non è duplicazione.** Gli artefatti però sono
 **tre**, e a deciderli non è il solo requisito di evoluzione:
@@ -520,8 +548,24 @@ restituito `251` al posto di `4096` senza sollevare nulla.
 
 **Spec del kernel §0–§10 completa.** Spec del **sotto-progetto 1** con §0–§8 approvate,
 **riaperta su sette voci** — **tutte chiuse** — **§8 riallineata e chiusa il 2026-08-08**, e
-**audit sezione-contro-ADR passato**. ✅ **La spec è completa e il piano del Traguardo 1 è
-scritto. Zero righe di codice del prodotto: il prossimo passo è scriverle.**
+**audit sezione-contro-ADR passato**.
+
+✅ **Il Traguardo 1 è eseguito, il 2026-08-08.** Il codice del prodotto non è più zero righe:
+esiste il workspace, esiste la porta di qualità, e la porta è **verde**.
+
+| | |
+|---|---|
+| **il workspace** | alla radice, `resolver = "3"`, edition **2024**, `spikes/` fra gli `exclude`. Le cinque crate di §1.2 esistono tutte |
+| **`kernel` e `simulator`** | `#![no_std]` + `alloc` + `#![forbid(unsafe_code)]`, e **nessuna logica di prodotto**: è deliberato, non un lavoro lasciato a metà |
+| **la porta** | un comando solo — `bash scripts/gate.sh` — con **sei** controlli: build del workspace · test · cancello senza OS · allow-list sui due grafi · **attributi delle crate vincolate** · coerenza della documentazione. La CI lancia lo stesso comando |
+| **la mappa dei controlli** | [`porta-di-qualita.md`](porta-di-qualita.md): ogni riga del catalogo §7.4 → il file che la implementa, con le sonde per nome e ciò che **non** è ancora coperto |
+| ⛔ **quattro trappole nuove** | gotcha **#38**, **#39**, **#40**, **#41**, più una **seconda occorrenza** di #26 e una di #25. Non erano deducibili: sono uscite eseguendo |
+
+⛔ **Il piano ha ricevuto un'errata in testa, e non si riscrive.** La prima voce sono gli
+identificatori: il piano li detta **italiani**, il codice eseguito è in **inglese** perché
+lo impone la §1.0 della spec — «spec prima del codice», e il piano non aveva l'autorità per
+derogarvi. Le altre tre sono, in ordine, la seconda occorrenza di **#26**, quella di
+**#25**, e il gotcha **#39**.
 
 Le sette voci sono emerse rileggendo `tracciabilita.md` con una domanda che nessuno le
 aveva posto: ***«di quale meccanismo di kernel ha bisogno questa funzionalità, e la
@@ -543,19 +587,20 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 
 1. ~~**§8**~~ — ✅ **chiusa il 2026-08-08**, toccata una volta sola come previsto.
 2. ~~**Il piano**~~ — ✅ **scritto**: [Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
-3. ⏭️ **Il codice. È il prossimo passo**, ed è l'esecuzione di quel piano — **subagent-driven**.
+3. ~~**Il codice del Traguardo 1**~~ — ✅ **eseguito** subagent-driven, otto compiti più quattro di riallineamento alla §1.0. `GATE GREEN`.
+4. ⏭️ **Il Traguardo 2 — il substrato iniettabile. È il prossimo passo**, e il suo piano **non esiste ancora**: si scrive quando si arriva, come dice questa stessa sezione.
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
 ### Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano
 
-Scrivere ora un piano per codice che non esiste significa inventare. **Il piano del
-Traguardo 1 c'è; gli altri si scrivono quando si arriva.**
+Scrivere ora un piano per codice che non esiste significa inventare. **Il Traguardo 1 è
+eseguito; i piani degli altri si scrivono quando si arriva — quello del 2 compreso.**
 
 | # | Traguardo | Stato |
 |---|---|---|
-| **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ⏭️ piano scritto, da eseguire |
-| 2 | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ⬜ |
+| **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
+| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ⏭️ **prossimo**. Il piano **non esiste**: si scrive ora |
 | 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
@@ -566,10 +611,10 @@ costruito **dopo** è un cancello che nessuno ha mai visto fallire, e la §7.1.1
 allora non è un cancello. Su uno scheletro vuoto ogni controllo si prova in **due**
 direzioni al costo di poche righe; dopo, la seconda direzione diventa cara e si smette.
 
-📌 **Due scelte prese dal piano**, perché la spec non le fissa e ora costano zero: **edition
-`2024`** su tutte e cinque le crate, e un **`rust-toolchain.toml`** che dichiara versione e
-**bersaglio del cancello**, così che il vincolo 4 della §11 si soddisfi da solo su una
-macchina pulita.
+📌 **Due scelte prese dal piano**, perché la spec non le fissa e allora costavano zero:
+**edition `2024`** su tutte e cinque le crate, e un **`rust-toolchain.toml`** che dichiara
+versione e **bersaglio del cancello**, così che il vincolo 4 della §11 si soddisfi da solo
+su una macchina pulita. ✅ **Entrambe sono nel repository**, e stanno in §4.
 
 ✅ **L'ultima decisione aperta è chiusa — §7.1.1, il 2026-08-08.** Le otto righe del catalogo
 §7.4 la cui colonna «Difende» non nominava un `V`, un'`I` o un `Q` non erano un problema solo:
@@ -639,7 +684,7 @@ sotto-sezione invece di una riscrittura. 📌 **Per la §8 non produce nessuna r
 **V29** copre già le sorgenti di eventi, e lo dice la sua stessa riga di verifica — *«C1
 fallisce a ogni sorgente nascosta»*. Lo stato non cambia.
 
-### ✅ Dove nasce il workspace — deciso dal piano
+### ✅ Dove nasce il workspace — deciso dal piano, ed **eseguito**
 
 Era l'unica domanda strutturale che la spec aveva deliberatamente lasciato al piano.
 
@@ -647,7 +692,7 @@ Era l'unica domanda strutturale che la spec aveva deliberatamente lasciato al pi
 |---|---|
 | **il workspace nasce alla radice**, da zero | `Cargo.toml` con `crates/{kernel,platform,secrets,simulator,daemon}`. Niente si eredita |
 | ⛔ **`spikes/` è fra gli `exclude`** | `spikes/rust/` è a sua volta un **workspace annidato** e porta un `clippy.toml` che a livello di workspace scatterebbe addosso a `platform`, che *deve* chiamare l'orologio — vincolo 5 |
-| **«punto di partenza» significa che si copia** | la §2.5 dice riga per riga cosa entra in `crates/kernel/` e cosa **resta** negli spike |
+| **«punto di partenza» significa che si copia** | la §2.5 dice riga per riga cosa entra in `crates/kernel/` e cosa **resta** negli spike. Nel Traguardo 1 **non è ancora salito niente**: sale col substrato, Traguardo 2 |
 
 ---
 
@@ -702,7 +747,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I trentasette gotcha
+## 9. I quarantuno gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -733,8 +778,8 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 22 | **Che una versione esista non vuol dire che funzioni.** `cargo add bincode` risolve alla `3.0.0`, il cui intero sorgente è un `compile_error!`. La versione utile è la `2.0.1`, **appuntata a `2`** con la ragione scritta accanto |
 | 23 | **`cargo metadata` non risolve le feature; `cargo tree` sì.** Misurato: undici crate segnalate contro le due reali. Un allow-list costruito sull'interfaccia macchina «giusta» sovra-segnala di cinque volte |
 | 24 | ⛔ **Un controllo si prova in _due_ direzioni.** #14 copre metà: mai visto fallire = non è un controllo. L'altra metà è che **uno che scatta dove non deve è peggio di uno assente**, perché insegna a ignorare l'audit |
-| 25 | ⛔ **Rigenerare in blocco l'oracolo di un test negativo lo rende una tautologia.** Vale per gli `.stderr` di `trybuild` **e per i byte congelati del giornale**. Ogni volta che l'oracolo è un file generato dal test stesso, aggiornarlo automaticamente **cancella l'oracolo** |
-| 26 | ⛔ **Un controllo delimitato per intestazione si spegne quando qualcuno rinumera — e si spegne _verde_.** Rimedio: se un delimitatore non si trova, o l'intervallo è vuoto, **è un fallimento**. ⚠️ Il rimedio **sbagliato** è mettere a guardia un numero atteso di righe |
+| 25 | ⛔ **Rigenerare in blocco l'oracolo di un test negativo lo rende una tautologia.** Vale per gli `.stderr` di `trybuild` **e per i byte congelati del giornale**. Ogni volta che l'oracolo è un file generato dal test stesso, aggiornarlo automaticamente **cancella l'oracolo**. 📌 **Seconda occorrenza:** l'oracolo di `trybuild` è accoppiato al **grafo linkato**, non al solo sorgente del caso — se `kernel` linkasse `std` sparirebbe una riga dall'output e **due oracoli diventerebbero rossi insieme**, per un motivo estraneo alla regola sotto test |
+| 26 | ⛔ **Un controllo delimitato per intestazione si spegne quando qualcuno rinumera — e si spegne _verde_.** Rimedio: se un delimitatore non si trova, o l'intervallo è vuoto, **è un fallimento**. ⚠️ Il rimedio **sbagliato** è mettere a guardia un numero atteso di righe. 📌 **Seconda occorrenza:** in `trybuild` un **glob** che non pesca nulla **non è un errore** e il banco usciva verde, mentre un percorso **letterale** inesistente diventa rosso. L'asimmetria è la parte da ricordare |
 | 27 | **La legenda di una tabella risponde a una domanda sola, e chi legge ne assume un'altra.** È così che la spec è stata riaperta su sette voci. Il rimedio non è riscrivere la legenda: è **rileggere con un'altra domanda** |
 | 28 | **Un parametro non consegnato è una costante, e una costante è invisibile.** Non compare in nessun elenco, non fa scattare nessun controllo, e si manifesta solo come uno scenario che la campagna **non può esplorare** |
 | 29 | **La riga di _verifica_ di un'invariante è il punto in cui l'invariante si restringe in silenzio.** Già successo con I2 e con I4. Completare una riga di verifica **non è superare l'ADR** |
@@ -744,8 +789,12 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 33 | **Il nome del formato è occupato da un'altra cosa, e in due ecosistemi.** Su PyPI `bincode` installa un modulo `b64tools`, funzioni base64; su npm `bincode` è una CLI di sviluppo con l'IA. È il gotcha #22 nella forma più larga: **che un nome esista non dice cosa contiene**, e cercare per nome trova pacchetti che non c'entrano |
 | 34 | ⛔ **Un decodificatore CBOR si ferma al primo elemento completo e ignora la coda.** Misurato: dando a `cbor2` i byte di `bincode` restituisce `1` — nessuna eccezione, un valore plausibile. Su un canale a frame «ha decodificato» non prova nulla: serve che i **byte consumati** siano pari alla lunghezza dichiarata |
 | 35 | **Un `Vec<u8>` non annotato raddoppia il traffico, in silenzio.** In `minicbor`, senza l'annotazione di stringa di byte, si codifica come **array di numeri**. Misurato su 4096 B: **7813** contro **4101**, cioè **1,91×**. Compila, fa round-trip, ed è corretto: costa solo il doppio |
-| 37 | ⛔ **Un controllo può difendere _un altro controllo_ invece di una proprietà, e la regola d'ammissione lo scambia per un'abitudine — cioè lo fa togliere.** Misurato: **otto righe su trentatré** del catalogo, fra cui `forbid(unsafe_code)`. Cancellalo e **nessuna** riga diventa rossa: diventano tutte **meno vere**, perché un `unsafe` falsifica un gettone o transmuta un newtype. ⛔ Il rimedio **non** è allargare la regola a «una proprietà decisa in una sezione nominata» — così non rifiuterebbe più niente, e una regola che non rifiuta mai è decorazione. È darle un **secondo ramo** con un criterio proprio: *nomina le voci del catalogo di cui sostieni la validità*. Quello rifiuta ancora `clippy` |
 | 36 | ⛔ **La tabella «come si verifica» di una sezione non è il catalogo, e il passaggio si salta.** Una sezione che decide un meccanismo scrive le proprie sonde lì — ed è giusto — ma il **catalogo §7.4** è l'unico posto che §8.1.2 ammette, ed è la lista che il piano tradurrà in lavoro. Successo **due volte**: V2/V4/V10 (§8.5.3) e i cinque controlli della §6.10.5 (§8.5.4). ⚠️ La diagnosi è l'**asimmetria**: nella stessa riapertura §2.8.4 e §4.9.4 le righe le hanno aggiunte, §6.10.5 no, e **nessun documento dice perché** — quindi non era una decisione. ⛔ Il rimedio **non** è irrigidire lo script (§8.6.4): è cercare questa classe di difetto a ogni sezione che decide un controllo. È il #29 spostato dalle invarianti ai controlli |
+| 37 | ⛔ **Un controllo può difendere _un altro controllo_ invece di una proprietà, e la regola d'ammissione lo scambia per un'abitudine — cioè lo fa togliere.** Misurato: **otto righe su trentatré** del catalogo, fra cui `forbid(unsafe_code)`. Cancellalo e **nessuna** riga diventa rossa: diventano tutte **meno vere**, perché un `unsafe` falsifica un gettone o transmuta un newtype. ⛔ Il rimedio **non** è allargare la regola a «una proprietà decisa in una sezione nominata» — così non rifiuterebbe più niente, e una regola che non rifiuta mai è decorazione. È darle un **secondo ramo** con un criterio proprio: *nomina le voci del catalogo di cui sostieni la validità*. Quello rifiuta ancora `clippy` |
+| 38 | **Un controllo che interroga uno stato può _modificarlo_ mentre lo interroga, e allora la sua condizione non può essere vera.** `gate-no-os.sh` chiede a `rustup` quali bersagli siano installati. Misurato: quel comando **riconcilia `rust-toolchain.toml` prima di rispondere**, quindi se il bersaglio manca **l'atto di chiederlo lo installa**. Con la rete la guardia **non può scattare**; scatta **senza rete**, verificato con uscita 1 e messaggio corretto. È **la via offline, non una rete di sicurezza**, e la differenza va scritta accanto alla guardia |
+| 39 | ⛔ **Un test negativo che _ridichiara le proprie precondizioni_ prova il meccanismo, non che il sistema sia configurato così.** I quattro casi di `compile_fail/` ridichiarano ciascuno `#![no_std]` e `#![forbid(unsafe_code)]` e non nominano mai `kernel::`: provano che il divieto **morde dove è dichiarato**, non che il kernel lo dichiari. Misurato: tolto `#![forbid(unsafe_code)]` da `crates/kernel/src/lib.rs` **e scritto un `unsafe` vero**, la porta restava **verde su cinque controlli su cinque**. Rimedio: `scripts/gate-attributes.sh`, livello 2. ⚠️ Peggiore di come sembra: quella riga è di **ramo 1b** e sostiene i blocchi A, B e C — toglierla non spegneva una regola, invalidava **il fondamento del livello 1** |
+| 40 | ⛔ **Questo file dichiara di contenere tutte le decisioni, ma il controllo ne pretende una voce solo per gli _ADR_: una decisione che vive in una _sezione di spec_ può mancare, e allora per chi legge non esiste.** Misurato il 2026-08-08: la **§1.0** — codice in inglese, documentazione in italiano — non era né qui né in `CLAUDE.md`. Un agente ha letto per intero **entrambi** i file obbligatori e ha scritto un traguardo intero con gli identificatori in italiano, poi corretto con sei rinomini di file, undici di funzione e la rigenerazione dei quattro oracoli. ⚠️ Il controllo di §13 accoppia le voci ai **file** in `docs/adr/`: esatto per ciò che misura, cieco a tutto il resto. ⛔ Il rimedio non è irrigidire lo script — nessun elenco di «sezioni che contano» resterebbe vero — è che **una decisione scritta fuori da un ADR va portata a mano nel compendio**, e chi la scrive è l'unico che può saperlo |
+| 41 | **Un filtro che _normalizza l'ingresso_ di un controllo decide anche che cosa il controllo può vedere.** `gate-deps.sh` estraeva i nomi di crate con una classe di caratteri **minuscola**. Misurato: una crate col nome maiuscolo veniva scartata dal filtro, quindi non compariva fra gli intrusi e il cancello usciva **verde** — un falso negativo su I3, il modo di fallire peggiore per quel controllo. Provato con `Inflector`, crate reale: uscita 0 prima, uscita 1 e nome del colpevole dopo. ⚠️ Col corteo di dipendenze minuscole che si porta dietro, il controllo segnalava **il corteo e non il capofila**, pur stampandolo dentro ogni catena |
 
 ---
 
@@ -764,8 +813,14 @@ Da sapere **prima** di scrivere, non dopo il rosso.
 
 ## 11. I quindici vincoli sul primo commit di codice
 
-Non sono decisioni da prendere: sono decisioni **prese**, che il piano deve tradurre in
+Non sono decisioni da prendere: sono decisioni **prese**, che ogni piano deve tradurre in
 passi.
+
+✅ **I primi cinque sono onorati dal Traguardo 1** — cinque crate · `no_std` + `alloc` +
+`forbid` su `kernel` e `simulator` · `bincode` appuntato a `2` con la ragione accanto ·
+il bersaglio del cancello dichiarato in `rust-toolchain.toml` · `spikes/` fra gli
+`exclude`. ⚠️ Il quarto ha una sottigliezza misurata: gotcha **#38**. Gli altri dieci
+restano davanti, e chi li copre è scritto in [`porta-di-qualita.md`](porta-di-qualita.md).
 
 | # | Vincolo | Da |
 |---|---|---|
@@ -794,12 +849,13 @@ Apri **un** file, quello che serve. Non la cartella.
 | Se ti serve… | Apri | Peso |
 |---|---|---|
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
-| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 253 KB |
+| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 259 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 92 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 104 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
-| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 13 KB |
+| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 14 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 9 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
@@ -807,7 +863,8 @@ Apri **un** file, quello che serve. Non la cartella.
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | |
 | la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 25 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
-| l'indice di ADR e diagrammi | [`README.md`](README.md) | 9 KB |
+| ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
+| l'indice di ADR e diagrammi | [`README.md`](README.md) | 10 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -826,8 +883,20 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > 📌 **Il rimedio, e stavolta è il metodo invece del numero:** i pesi si misurano con
 > **`wc -c`, arrotondati a KiB**. Scritto qui, il prossimo che riconta ottiene la stessa
-> cifra o scopre una crescita vera — e non un artefatto dello strumento. Il totale
-> dell'insieme *«HANDOFF + spec del sotto-progetto 1 + `adr/`»* è **559 KB**.
+> cifra o scopre una crescita vera — e non un artefatto dello strumento.
+
+> 🔁 **Terza misura, alla chiusura del Traguardo 1 — e il metodo ha retto.** Tutti gli
+> scarti sono **crescite vere**, nessuno è un artefatto dello strumento: è la differenza
+> fra le prime due misure e questa.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | HANDOFF `92 → 104`, per i quattro gotcha nuovi · spec del sotto-progetto 1 `253 → 259` · roadmap `13 → 14` · README `9 → 10` |
+> | **voci nuove in tabella** | [`porta-di-qualita.md`](porta-di-qualita.md) **9 KB** e il piano del Traguardo 1 **50 KB**: esistono da oggi |
+> | **invariati** | kernel-design 44 · tracciabilità 15 · riferimenti 25 · `design/08` 8 · il piano degli spike 68 · gli ADR 2–19 |
+>
+> Il totale dell'insieme *«HANDOFF + spec del sotto-progetto 1 + `adr/`»* è **577 KB**.
+> ⚠️ Cresce a ogni chiusura: la frase in testa dice «oltre mezzo megabyte» apposta.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**
@@ -849,6 +918,7 @@ Per questo la sua completezza **non è lasciata alla buona volontà**:
 | **il controllo** | `scripts/check-docs.sh` pretende **una voce in §5 per ogni file in `docs/adr/`**, accoppiata per numero. Un ADR nuovo senza voce → **rosso** |
 | **il livello di forza** | **2 — controllo esterno.** Se cancelli lo script, la regola sparisce: sotto non c'è nient'altro. Il livello 1 non è raggiungibile — nessun compilatore legge un `.md` |
 | **la guardia di non-vacuità** | se il blocco §5 non si trova, o è vuoto, **è un fallimento** — gotcha #26 |
+| ⛔ **ciò che il controllo NON copre** | il controllo accoppia le voci ai **file in `docs/adr/`**: una decisione che vive in una **sezione di spec** non è pretesa da nessuno, e se manca qui **per chi legge non esiste**. Successo con la §1.0, ed è costato un traguardo intero da rifare — gotcha **#40**. ⛔ Il rimedio non è irrigidire lo script: è che **chi scrive una decisione fuori da un ADR la porta a mano nel compendio**, perché è l'unico che può saperlo |
 
 📋 **Il messaggio da incollare all'inizio di una chat** vive in
 [`AVVIO-CHAT.md`](AVVIO-CHAT.md). Non nomina il prossimo passo, deliberatamente: lo

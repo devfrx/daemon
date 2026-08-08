@@ -1,11 +1,13 @@
 # Messaggio di avvio di una chat
 
-Da copiare all'inizio di ogni nuova sessione. Sostituisci `<SHA>` con l'ultimo commit —
-lo SHA sta **qui e non nei file**, perché un hash scritto dentro il file che quel commit
-contiene nasce già vecchio di uno.
+Da copiare all'inizio di ogni nuova sessione.
 
-⚠️ **Questo messaggio non nomina il prossimo passo, ed è deliberato.** Lo stato vive
-nella §6 del compendio, in un posto solo. Duplicarlo qui lo farebbe divergere.
+⚠️ **Lo SHA qui sotto è l'ultimo commit noto quando questo file è stato aggiornato.** Se ne
+hai fatti altri, sostituiscilo prima di incollare: un hash scritto dentro il file che quel
+commit contiene nasce già vecchio di uno.
+
+⚠️ **Questo messaggio non nomina il prossimo passo, ed è deliberato.** Lo stato vive nella
+§6 del compendio, in un posto solo. Duplicarlo qui lo farebbe divergere.
 
 ---
 
@@ -14,7 +16,7 @@ Riprendo un progetto già progettato, in corso.
 
 Repo:   C:\Users\zagor\Desktop\harness
 Remote: https://github.com/devfrx/daemon.git · branch spec/sottoprogetto-1-kernel
-Albero pulito, ramo pushato. Ultimo commit: <SHA>
+Albero pulito, ramo pushato. Ultimo commit: 73c9771
 
 ⛔ PRIMA DI PROPORRE QUALSIASI COSA: leggi, poi ASCOLTA. Non entrare in plan
    mode, non proporre passi, non scrivere file finché non te lo dico.
@@ -25,21 +27,35 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
+  /superpowers:brainstorming                 prima di qualunque lavoro creativo
+  /superpowers:writing-plans                 quando si scriverà un piano nuovo
   /superpowers:subagent-driven-development   per ESEGUIRE un piano: un subagente
                                              fresco per compito, con revisione fra
                                              uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
-  /superpowers:brainstorming                 prima di qualunque lavoro creativo
-  /superpowers:writing-plans                 quando si scriverà un piano nuovo
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 87 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
-     (⛔ compresa la convenzione di nomenclatura: CODICE IN INGLESE,
-     documentazione in italiano), il non rilitigabile, i quarantuno gotcha,
-     le trappole di check-docs.sh, i vincoli sul primo commit di codice,
-     lo stato di oggi e il prossimo passo.
+     (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
+     cosa NON rifare (§8), i quarantuno gotcha (§9), le trappole di
+     check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
+
+⛔ CODICE IN INGLESE, DOCUMENTAZIONE IN ITALIANO — §1.0 della spec.
+   Crate, moduli, tipi, funzioni, messaggi d'uscita e commenti nel sorgente
+   sono in inglese; i documenti restano in italiano; un riferimento al codice
+   dentro un documento si scrive in inglese, col nome esatto del sorgente.
+   Non è tipografia: la regola non stava scritta, e un traguardo intero è stato
+   scritto con gli identificatori italiani e poi rifatto.
+
+⚠️ IL REPOSITORY CONTIENE CODICE RUST, e fino a poco fa non era così.
+   Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
+   x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
+   in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
+   Il primo comando utile è
+       bash scripts/gate.sh
+   e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
    docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte, e
@@ -55,9 +71,10 @@ QUATTRO COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
   · Non sono operativo in Rust. Quando l'argomento esce dal mio dominio,
     spiegamelo PRIMA a parole semplici e POI schematizza.
   · Alla chiusura di ogni voce COMMITTA E PUSHA senza chiedere, e SENZA
-    co-autore. Prima però: bash scripts/check-docs.sh
+    co-autore. Prima però: bash scripts/gate.sh — comprende check-docs.sh.
   · Se ti viene un'idea che SOSTITUISCE una decisione presa, cerca PRIMA dove
-    era già stata valutata e perché era caduta. Riaprila solo con una prova
+    era già stata valutata e perché era caduta: la §7 del compendio elenca le
+    riaperture più tentate e il costo di ciascuna. Riaprila solo con una prova
     nuova — e se la prova nuova gioca contro, registrala e chiudila. È il
     gotcha #32, e c'è perché è già successo.
   · Un controllo si prova in DUE direzioni: che scatti dove deve, e che NON
@@ -75,16 +92,22 @@ proporre qualunque cosa.
 
 | | Prima | Adesso |
 |---|---|---|
-| il messaggio | ~9 KB | ~2 KB |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **85 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 85 KB |
+| il messaggio | ~9 KB | ~4 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **87 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 87 KB |
 
-⚠️ **I due numeri di destra sono stati rimisurati il 2026-08-08, e il primo era diventato
-falso.** Diceva *«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di
-oggi, e nessuno l'aveva più rifatto. È il gotcha **#31** — una cifra messa a sostegno di
-una regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il
-rapporto resta quello che conta: **85 KB contro mezzo megabyte**.
+⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi una volta.** Dicevano
+*«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di oggi, e nessuno
+l'aveva più rifatto. È il gotcha **#31** — una cifra messa a sostegno di una regola giusta
+non viene mai riverificata, perché nessuno dubita della regola. Il rapporto resta quello
+che conta: **87 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
-diagrammi e una spec da 201 KB. Non è che chiedesse troppo: chiedeva la cosa giusta nel
-posto sbagliato. Le decisioni servono **tutte** — ma compresse, non integrali.
+diagrammi e la spec del sotto-progetto 1, che oggi pesa **263 KB**. Non è che chiedesse
+troppo: chiedeva la cosa giusta nel posto sbagliato. Le decisioni servono **tutte** — ma
+compresse, non integrali.
+
+⚠️ **Cosa aggiornare qui, e quando.** Il ramo e lo SHA a ogni push; il peso dei due file
+obbligatori quando uno dei due cresce; il numero dei gotcha quando §9 ne guadagna uno; i
+prerequisiti d'ambiente quando il repository comincia a richiedere uno strumento nuovo —
+è successo con `rustup`, e prima di allora non serviva niente.

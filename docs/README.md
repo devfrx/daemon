@@ -11,14 +11,17 @@ cancello costruito dopo la logica è un cancello che nessuno ha mai visto fallir
 Vale «spec prima del codice», e ⛔ **il codice è in inglese, la documentazione in
 italiano** (§1.0 della spec del sotto-progetto 1).
 
-> Se stai riprendendo il progetto, parti da [`../CLAUDE.md`](../CLAUDE.md) e da
-> [`HANDOFF.md`](HANDOFF.md).
+> Se stai riprendendo il progetto, le letture obbligatorie sono **due**, e sono
+> [`../CLAUDE.md`](../CLAUDE.md) e [`COMPENDIO.md`](COMPENDIO.md). ⛔ **Non** `HANDOFF.md`,
+> che si apre a sezioni e quando serve il testo integrale di un gotcha o di una misura.
 
 ## Dove va cosa
 
 | Percorso | Contiene | Risponde alla domanda |
 |---|---|---|
-| [`HANDOFF.md`](HANDOFF.md) | Gotcha, non rilitigabile, metodo, cosa non rifare | *come riprendere* senza rifare |
+| [`COMPENDIO.md`](COMPENDIO.md) | ⛔ **l'unica lettura obbligatoria oltre a `CLAUDE.md`**: tutte le decisioni compresse, le invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo | *cosa è già deciso*, tutto, in un colpo solo |
+| [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | il messaggio da incollare all'inizio di una nuova sessione | *come si apre* una chat su questo repository |
+| [`HANDOFF.md`](HANDOFF.md) | Gotcha, non rilitigabile, metodo, cosa non rifare — ⚠️ **a sezioni**, non per farsi un'idea | *come riprendere* senza rifare |
 | [`roadmap.md`](roadmap.md) | Sotto-progetti, ordine, stato, spike aperti | *a che punto siamo* e *cosa viene dopo* |
 | [`tracciabilita.md`](tracciabilita.md) | Mappa funzionale → sede di ogni funzionalità | *dove vive* ciò che è stato chiesto |
 | [`porta-di-qualita.md`](porta-di-qualita.md) | Dove vive ogni controllo della porta, mappato riga per riga sul catalogo §7.4. Un comando solo: `bash scripts/gate.sh` | *cosa è sorvegliato*, da quale file, e con quali sonde |

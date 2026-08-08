@@ -15,10 +15,10 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (577 KB con `wc -c` il 2026-08-08, e possono solo crescere — la spec da sola ne fa 259), e
+> (581 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 263), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-08-08.** Manutenzione: §13.
+**Aggiornato il 2026-08-09.** Manutenzione: §13.
 
 ---
 
@@ -139,7 +139,7 @@ confronta, non identificatori.
 lo stesso problema, perché i loro **pari** sono diversi (ADR-0037).
 
 Le cinque crate: `kernel` · `platform` · `secrets` · `simulator` · `daemon`.
-Solo le prime due della lista — `kernel` e `simulator` — sono vincolate da ADR-0031:
+Solo **due delle cinque** — `kernel` e `simulator` — sono vincolate da ADR-0031:
 `platform`, `secrets` e `daemon` sono **il posto dove l'I/O deve vivere**.
 
 ---
@@ -557,9 +557,22 @@ esiste il workspace, esiste la porta di qualità, e la porta è **verde**.
 |---|---|
 | **il workspace** | alla radice, `resolver = "3"`, edition **2024**, `spikes/` fra gli `exclude`. Le cinque crate di §1.2 esistono tutte |
 | **`kernel` e `simulator`** | `#![no_std]` + `alloc` + `#![forbid(unsafe_code)]`, e **nessuna logica di prodotto**: è deliberato, non un lavoro lasciato a metà |
-| **la porta** | un comando solo — `bash scripts/gate.sh` — con **sei** controlli: build del workspace · test · cancello senza OS · allow-list sui due grafi · **attributi delle crate vincolate** · coerenza della documentazione. La CI lancia lo stesso comando |
+| **la porta** | un comando solo — `bash scripts/gate.sh` — con **sei** controlli: build del workspace · test · cancello senza OS · allow-list sui due grafi · **attributi delle crate vincolate** · coerenza della documentazione. La CI lancia lo stesso comando, `.github/workflows/quality-gate.yml` |
 | **la mappa dei controlli** | [`porta-di-qualita.md`](porta-di-qualita.md): ogni riga del catalogo §7.4 → il file che la implementa, con le sonde per nome e ciò che **non** è ancora coperto |
 | ⛔ **quattro trappole nuove** | gotcha **#38**, **#39**, **#40**, **#41**, più una **seconda occorrenza** di #26 e una di #25. Non erano deducibili: sono uscite eseguendo |
+
+⛔ **Una revisione ha aggiunto una riga al catalogo il 2026-08-09, ed è stata misurata.** Il
+quinto controllo della porta — `gate-attributes.sh` — ne copre ora **due**: che le crate
+vincolate **dichiarino** i propri attributi, e che **non abbiano un build script**. Un
+`crates/kernel/build.rs` che chiama l'orologio, il filesystem e l'ambiente e inietta il
+risultato con `cargo:rustc-env` lasciava la porta **verde su sei controlli su sei** —
+`build` e `test` lo compilano perché è il mestiere di un build script, il cancello senza OS
+lo compila **per l'host** e lo **esegue**, l'allow-list non vede nodi nuovi, gli attributi
+leggevano il solo `src/lib.rs`. Difende **I3 e V29 direttamente**, non è di ramo 1b: è il
+gotcha **#28**, un valore del mondo cotto dentro il kernel. Il catalogo **§7.4.2 passa da
+dodici a tredici** voci di livello 2; il registro è [`porta-di-qualita.md`](porta-di-qualita.md).
+📌 Lo stesso commit ha rinominato il workflow in `quality-gate.yml`: era l'**ultimo residuo
+italiano nel codice**, e costava zero solo finché non fosse mai stato eseguito.
 
 ⛔ **Il piano ha ricevuto un'errata in testa, e non si riscrive.** La prima voce sono gli
 identificatori: il piano li detta **italiani**, il codice eseguito è in **inglese** perché
@@ -849,19 +862,19 @@ Apri **un** file, quello che serve. Non la cartella.
 | Se ti serve… | Apri | Peso |
 |---|---|---|
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
-| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 259 KB |
+| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 263 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 104 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 105 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 14 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 9 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 11 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 25 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 30 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 10 KB |
@@ -895,8 +908,18 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > | **voci nuove in tabella** | [`porta-di-qualita.md`](porta-di-qualita.md) **9 KB** e il piano del Traguardo 1 **50 KB**: esistono da oggi |
 > | **invariati** | kernel-design 44 · tracciabilità 15 · riferimenti 25 · `design/08` 8 · il piano degli spike 68 · gli ADR 2–19 |
 >
-> Il totale dell'insieme *«HANDOFF + spec del sotto-progetto 1 + `adr/`»* è **577 KB**.
+> Il totale dell'insieme *«HANDOFF + spec del sotto-progetto 1 + `adr/`»* era **577 KB**.
 > ⚠️ Cresce a ogni chiusura: la frase in testa dice «oltre mezzo megabyte» apposta.
+
+> 🔁 **Quarta misura, il 2026-08-09, chiudendo la passata di coerenza.** Quattro scarti,
+> tutti **crescite vere**: spec del sotto-progetto 1 `259 → 263` e
+> [`porta-di-qualita.md`](porta-di-qualita.md) `9 → 11` per la riga del build script ·
+> HANDOFF `104 → 105` e [`riferimenti.md`](riferimenti.md) `25 → 30` per le misure del
+> Traguardo 1, che il §13 pretendeva lì e non c'erano. L'insieme passa da **577** a
+> **581 KB**, ed è la cifra in testa a questo file e in `CLAUDE.md`. ⚠️ **E i due file
+> obbligatori sono passati da 85 a 87 KB**: la cifra vive in `CLAUDE.md` e in
+> [`AVVIO-CHAT.md`](AVVIO-CHAT.md), e va rifatta ogni volta che uno dei due cresce.
+> 📌 Due misure di seguito senza artefatti dello strumento: il metodo `wc -c` regge.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

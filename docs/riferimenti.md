@@ -126,6 +126,39 @@ riproducibili. Nessuna di queste è documentazione consultata: sono misure.
 | bersagli senza sistema operativo installabili | `rustup target list` | esiste **`x86_64-unknown-none`**, stessa architettura e stessa larghezza di puntatore del bersaglio reale | §7.3.2 |
 | il cancello respinge una sorgente di casualità | `cargo build --target x86_64-unknown-none -p kernel` con `getrandom` 0.3.4 | `error: target is not supported` — identico su `thumbv7em-none-eabihf` | §7.3.2, sonda B2 |
 
+## Esecuzione del Traguardo 1 — toolchain, versioni risolte, sonde della porta
+
+Misure eseguite il **2026-08-08** e il **2026-08-09** costruendo il workspace e la porta di
+qualità. Non sono documentazione consultata: **sono misure**, e il comando con la sua
+versione è la fonte. Ambiente: Windows 11 · `rustup` **1.29.0** (28d1352db, 2026-03-05) ·
+`rustc` e `cargo` **1.95.0**, appuntati da `rust-toolchain.toml`.
+
+**La toolchain, e cosa serve su una macchina pulita.**
+
+| Verifica | Comando | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| gira la versione appuntata o quella predefinita? | `rustc --version` contro `rustup run stable rustc --version` | **1.95.0** contro **1.97.1**: `rust-toolchain.toml` vince sul canale `stable`, e la porta gira sulla versione dichiarata anche su una macchina più aggiornata | §4 del compendio |
+| il bersaglio senza OS si installa da sé | `targets = ["x86_64-unknown-none"]` nel manifesto della toolchain | su una macchina pulita **non** serve `rustup target add`: il manifesto lo tira giù. È ciò che soddisfa il vincolo 4 della §11 senza chiederlo a nessuno | §7.3.2 · gotcha #38 |
+| cosa resta comunque a carico dell'ambiente | build con la toolchain `-msvc` senza **Visual Studio Build Tools** | su Windows il **linker MSVC** è un prerequisito: `rustup` risolve la toolchain, non il linker. Va scritto accanto a `rustup`, o la porta è rossa per il motivo sbagliato | prerequisito d'ambiente in [`AVVIO-CHAT.md`](AVVIO-CHAT.md) |
+
+**Le versioni risolte, e i due grafi del kernel.**
+
+| Verifica | Comando | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| cosa risolve davvero il manifesto | `Cargo.lock` dopo `cargo build --workspace` | `bincode` **2.0.1** — appuntato a `2`, perché la 3.0.0 è un `compile_error!` · `unty` **0.0.4**, transitiva e deliberatamente **non dichiarata** · `minicbor` **2.3.0** · `trybuild` **1.0.120** fra le dipendenze di sviluppo | §6.1.1 · gotcha #22 · ADR-0031 |
+| il grafo **spedito** | `cargo tree -p kernel -e normal,no-proc-macro` | **quattro nodi**: `kernel` → `bincode` → `unty`, più `minicbor` | prima lista di `scripts/gate-deps.sh`, §7.3.1 |
+| il grafo **di build** | `cargo tree -p kernel -e no-dev`, per complemento col precedente | **sette voci in più**: `bincode_derive` · `virtue` · `minicbor-derive` · `syn` · `quote` · `proc-macro2` · `unicode-ident` | seconda lista di `gate-deps.sh` — rimedio opposto: si valuta e si **aggiunge** |
+
+**Le sonde, e le tre asimmetrie che nessuno ricostruisce leggendo il codice.**
+
+| Verifica | Comando o banco | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| un banco `trybuild` **vuoto** è rosso? | `trybuild` **1.0.120**, cartella `compile_fail/` svuotata | ⛔ **no.** Un **glob** che non corrisponde a nulla **non è un errore**: `expand.rs:20` restituisce `Err` solo se è il pattern a essere malformato, e `run.rs:74` stampa un avviso, lascia i fallimenti a zero ed esce 0. Un percorso **letterale** inesistente invece fallisce, perché passa da `check_exists` | guardia di non-vacuità in `crates/kernel/tests/compile_fail.rs` · gotcha #26, seconda occorrenza |
+| la guardia sul bersaglio può scattare? | la sola riga `rustup target list --installed`, senza `cargo` | ⛔ `rustup` **1.29.0 riconcilia `rust-toolchain.toml` prima di rispondere**: se il bersaglio manca, **l'atto di chiederlo lo installa**. Isolato con una directory **fuori dal repository** come controllo — lì non c'è manifesto da riconciliare e il bersaglio resta assente 3/3. La guardia scatta solo dove la riconciliazione fallisce, cioè **senza rete** | gotcha #38 · sonda **B4** |
+| il cancello senza OS respinge la casualità | `getrandom` **0.2.17** aggiunto a `kernel`, poi `cargo build --target x86_64-unknown-none` | `target is not supported`. ⚠️ La §7 qui sopra registra la stessa sonda con `getrandom` 0.3.4 il 2026-08-07: **versione diversa, esito identico**, e la riga resta valida | sonda **B2** di `scripts/gate-no-os.sh` |
+| l'allow-list vede un nome con la **maiuscola**? | `Inflector` **0.11.4** — crate reale, non un nome costruito — aggiunta al grafo **spedito** del kernel | ⛔ **prima no: uscita 0**, cioè un falso negativo su I3. Dopo l'allargamento della classe di caratteri del filtro: **uscita 1 e il nome del colpevole**. ⚠️ Il corteo di dipendenze minuscole veniva segnalato lo stesso: mancava **il capofila**, non l'elenco | gotcha #41 · sonda **N5** |
+| basta un manifesto solo per vietare i build script? | `build.workspace = true` in `[workspace.package]` | ⛔ **no**: `cargo` **1.95.0** lo rifiuta in fase di parsing — *«invalid type: map, expected a boolean, string or array»*. La via si chiude **crate per crate**, ed è la ragione per cui il controllo deriva la directory dalla lista dei file vincolati | §7.4.2, riga del build script |
+
 ## Evoluzione del formato durevole del giornale (ADR-0036)
 
 Verifiche dirette sugli strumenti installati su questa macchina, eseguite il **2026-08-07**

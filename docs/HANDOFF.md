@@ -1,6 +1,6 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-08**, alla **chiusura del Traguardo 1** del sotto-progetto 1 — lo
+Aggiornato il **2026-08-09**, alla **chiusura del Traguardo 1** del sotto-progetto 1 — lo
 scheletro delle cinque crate e la porta di qualità, eseguibile in un comando solo e provata
 in due direzioni. Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 
@@ -20,8 +20,15 @@ in due direzioni. Serve a riprendere senza rifare, e senza rilitigare ciò che �
 > ✅ **La porta di qualità gira in un comando solo** — `bash scripts/gate.sh` — con **sei**
 > controlli: build del workspace · test · cancello senza OS · allow-list sui due grafi ·
 > attributi delle crate vincolate · coerenza della documentazione. **`GATE GREEN`.** La CI
-> lancia lo stesso identico comando. La mappa riga-per-riga sul catalogo §7.4 è in
-> [`porta-di-qualita.md`](porta-di-qualita.md), e dice anche ciò che **non** è coperto.
+> lancia lo stesso identico comando, `.github/workflows/quality-gate.yml`. La mappa
+> riga-per-riga sul catalogo §7.4 è in [`porta-di-qualita.md`](porta-di-qualita.md), e dice
+> anche ciò che **non** è coperto.
+>
+> ⛔ **Il quinto controllo copre due righe del catalogo, non una — dal 2026-08-09.** Oltre
+> agli attributi, `gate-attributes.sh` verifica che le crate vincolate **non abbiano un
+> build script**: una lacuna che una revisione ha **misurato**, non temuto — un
+> `crates/kernel/build.rs` lasciava la porta verde su **sei su sei**. Il catalogo §7.4.2
+> passa da **dodici a tredici** voci di livello 2. Dettagli in `porta-di-qualita.md`.
 >
 > ⚠️ **Quattro gotcha nuovi, tutti misurati eseguendo** — **#38**, **#39**, **#40**, **#41** —
 > più una **seconda occorrenza** di #26 e una di #25. Il #39 e il #41 hanno prodotto codice:
@@ -556,7 +563,7 @@ quando si arriva, perché scriverne uno per codice che non esiste significa inve
 |---|---|
 | **quattro gotcha nuovi** | **#38** la guardia che installa ciò che verifica · **#39** i test negativi che ridichiarano le proprie precondizioni · **#40** una decisione fuori da un ADR non arriva al compendio · **#41** il filtro che decide cosa il controllo può vedere |
 | **due seconde occorrenze** | **#26** — il glob vuoto di `trybuild` esce verde, il percorso letterale no · **#25** — gli oracoli sono accoppiati al **grafo linkato**, e due diventano rossi insieme per un motivo estraneo alla regola |
-| **due controlli nati dopo il piano** | `scripts/gate-attributes.sh` (da #39) e la classe di caratteri allargata di `gate-deps.sh` (da #41). Nessuno dei due era previsto |
+| **tre controlli nati dopo il piano** | `scripts/gate-attributes.sh` (da #39) · la classe di caratteri allargata di `gate-deps.sh` (da #41) · e, il **2026-08-09**, la riga sul **build script** dentro `gate-attributes.sh`, trovata da una revisione **misurando**, non leggendo. Nessuno dei tre era previsto |
 | ⛔ **un'errata in testa al piano** | quattro voci, e la prima è la §1.0: il piano dettava identificatori **italiani**, e il codice è in **inglese** perché lo impone la spec |
 
 ### Le decisioni aperte dalla §0.5 — tre previste, quattro emerse
@@ -885,7 +892,8 @@ non-vacuità spegnerebbe i controlli **in verde** — gotcha #26. Con la guardia
 rosso che nomina il delimitatore mancante, ed è il comportamento voluto.
 
 **4 · Un falso positivo in attesa, se qualcuno allarga la lista dei file.** La guardia dei
-conteggi gira oggi su quattro documenti di stato. In [`tracciabilita.md`](tracciabilita.md)
+conteggi gira oggi su sei documenti di stato — `HANDOFF.md`, `roadmap.md`, `README.md`,
+`COMPENDIO.md`, `AVVIO-CHAT.md` e `CLAUDE.md`. In [`tracciabilita.md`](tracciabilita.md)
 esistono righe come `§4 ADR-0008`, dove il regex leggerebbe `4 ADR` e pretenderebbe il
 totale: rosso per il motivo sbagliato, cioè gotcha #24. **Oggi non scatta**, perché quel
 file non è nella lista. Se un giorno servisse aggiungerlo, il rimedio è il **regex** — che

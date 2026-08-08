@@ -35,7 +35,7 @@ syn
 unicode-ident
 virtue"
 
-nomi() { sed 's/^[^a-zA-Z0-9_-]*//' | awk '{print $1}' | grep -E '^[a-z0-9_-]+$' | sort -u; }
+nomi() { sed 's/^[^a-zA-Z0-9_-]*//' | awk '{print $1}' | grep -E '^[A-Za-z0-9_-]+$' | sort -u; }
 
 for crate in kernel simulator; do
   echo "== $crate: grafo SPEDITO =="

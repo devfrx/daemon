@@ -2690,6 +2690,31 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 | **Q14** · §4.9 | **byte congelati** del record durevole, con la mappa `indice → nome del campo → valore atteso` (§4.9.4) | si **riusa** un indice o si rinumera → fallisce e **nomina il campo** | si aggiunge un campo facoltativo con un indice nuovo → resta verde |
 | V31 | il **seme** entra nell'elenco versionato, la **proprietà** entra nella suite | si reintroduce il difetto che quella proprietà proteggeva → la campagna fallisce e **nomina il seme** | il difetto corretto → la campagna resta verde, e l'elenco dei semi non produce falsi rossi |
 | **Q4** · I5 · §6.10 | sul canale verso i worker, i **byte consumati** dalla decodifica sono pari alla **lunghezza dichiarata** dal frame (§6.10.4) | frame troncato, o con una coda dopo l'ultimo elemento → fallisce | frame esatto → resta verde |
+| **1b** · validità di §7.4.1 A · B · C | le crate vincolate **dichiarano davvero** i propri attributi — `scripts/gate-attributi.sh` | `#![forbid(unsafe_code)]` tolto, oppure `#![deny(unsafe_code)]` al suo posto → scatta e nomina file e attributo | `platform`, `secrets` e `daemon` non ne dichiarano nessuno e **restano verdi** |
+
+> ⛔ **La riga degli attributi è aggiunta il 2026-08-08, e la lacuna che chiude era stata
+> misurata eseguendo il Traguardo 1.** Senza di lei si poteva togliere
+> `#![forbid(unsafe_code)]` da `crates/kernel/src/lib.rs`, **scrivere `unsafe` vero nel
+> kernel**, e la porta restava **verde su cinque controlli su cinque**.
+>
+> ⚠️ **Perché era più grave di quanto sembri, e lo dice la sua stessa colonna «Difende».** I
+> quattro casi di `tests/compile_fail/` **ridichiarano ciascuno i propri attributi** e non
+> nominano mai `kernel::`: provano che il meccanismo **morde dove è dichiarato**, non che sia
+> dichiarato nel kernel. E la riga di `forbid` in §7.4.1 A è di **ramo 1b** — sostiene la
+> validità dei blocchi A, B e C — quindi toglierla in silenzio non spegneva *una* regola:
+> invalidava il **fondamento del livello 1**, e nessun rosso lo diceva.
+>
+> 📌 **È un controllo di testo, non del compilatore, e il registro non deve promuoverlo:**
+> prova che il divieto sia **dichiarato**, non che nel kernel non ci sia `unsafe`. Quella la
+> prova il compilatore, ed è proprio ciò che questa riga tiene in piedi.
+>
+> ⛔ **La sonda che la distingue da un controllo ingenuo è la terza:** `#![deny(unsafe_code)]`
+> al posto di `forbid` deve **scattare**. Un `grep -q 'unsafe_code'` resterebbe **verde** —
+> misurato — e il vincolo 2 della §11 tornerebbe una preferenza stilistica, perché `deny` è
+> scavalcabile da un `#[allow]` locale mentre `forbid` no. **Costo dichiarato:** un attributo
+> sepolto in un commento di blocco `/* ... */` sfugge ancora; l'ancora a inizio riga chiude il
+> caso `//`, che è quello reale, e chiudere anche l'altro richiederebbe un parser — un rimedio
+> più fragile del buco.
 
 > ⚠️ **La riga dei byte consumati è aggiunta il 2026-08-08, e non è un controllo nuovo.** È
 > il controllo 5 della §6.10.5, deciso con F1b e
@@ -2963,7 +2988,7 @@ essere utile pur restando in funzione.
 | Costo | |
 |---|---|
 | **la porta è lavoro prima di ogni valore visibile** | come il simulatore: è lo stesso RK-9, già accettato nella spec del kernel |
-| **undici voci sono di livello 2** | cioè cancellabili. ADR-0031 lo dichiara per una sola; qui vale per tutte, e non è mitigabile — è la natura del livello, non un'omissione. ⚠️ **Ricontato sulla tabella §7.4.2 il 2026-08-08**: diceva «nove», ed era il ritratto di prima delle due righe aggiunte con ADR-0036 (byte congelati) e ADR-0037 (byte consumati) |
+| **dodici voci sono di livello 2** | cioè cancellabili. ADR-0031 lo dichiara per una sola; qui vale per tutte, e non è mitigabile — è la natura del livello, non un'omissione. ⚠️ **Ricontato sulla tabella §7.4.2 due volte il 2026-08-08**: diceva «nove» prima delle righe di ADR-0036 e ADR-0037, e «undici» prima della riga degli **attributi**, aggiunta eseguendo il Traguardo 1 |
 | **si paga a ogni commit, non una volta** | due grafi, un cancello, una campagna, due suite di contratto |
 | **`cargo tree` è un'interfaccia per umani** | un cambio di formato rompe **due** controlli in una volta sola |
 | **il bersaglio senza OS è un prerequisito dell'ambiente** | su una macchina pulita la porta è rossa finché non lo si installa, e per il motivo sbagliato |

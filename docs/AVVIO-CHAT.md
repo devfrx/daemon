@@ -32,7 +32,7 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI
      i vincoli sul primo commit di codice, lo stato di oggi e il prossimo passo.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre settecento kilobyte, e
+   docs/adr/ «per farsi un'idea»: insieme pesano cinquecentosedici kilobyte, e
    l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà il
    perché di una decisione: le alternative scartate, le misure, i costi
    accettati. La §12 del compendio dice quale.

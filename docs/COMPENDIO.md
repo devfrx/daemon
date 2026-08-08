@@ -14,7 +14,8 @@
 > accettati — apri **quel** file. Uno, non trentasei. La §12 dice quale.
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
-> cartella `adr/` «per farsi un'idea». Insieme pesano oltre settecento kilobyte, e
+> cartella `adr/` «per farsi un'idea». Insieme pesano **cinquecentosedici kilobyte**
+> (misurati il 2026-08-08 — la spec da sola ne fa duecentoventisei), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-08.** Manutenzione: §13.
@@ -735,9 +736,10 @@ Apri **un** file, quello che serve. Non la cartella.
 | Se ti serve… | Apri | Peso |
 |---|---|---|
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 4–19 KB l'uno |
-| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 201 KB |
+| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 226 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei gotcha, delle misure e delle istruzioni per F1b e F4 | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 74 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 83 KB |
+| ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 11 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 9 KB |
@@ -745,9 +747,15 @@ Apri **un** file, quello che serve. Non la cartella.
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 3–10 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 22 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 25 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 72 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 9 KB |
+
+📏 **I pesi sono misurati il 2026-08-08**, e servono a decidere se aprire. ⚠️ Tre erano
+stantii, e il quarto — *«insieme pesano oltre settecento kilobyte»*, in testa a questo file,
+in `CLAUDE.md` e in `AVVIO-CHAT.md` — era **falso di un terzo**: sono cinquecentosedici. È il
+gotcha **#31**: un numero messo a sostegno di una regola giusta non viene mai rimisurato,
+perché nessuno dubita della regola. **Si rimisurano quando si toccano i file che contano.**
 
 ⚠️ **Prima di ogni commit di documentazione:** `bash scripts/check-docs.sh`
 

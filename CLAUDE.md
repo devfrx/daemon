@@ -10,7 +10,8 @@ invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascun
 compressa a poche righe. Insieme, questi due file costano circa seimila token.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano oltre settecento kilobyte, e l'idea è
+`docs/adr/` «per farsi un'idea». Insieme pesano **cinquecentosedici kilobyte** — misurati il
+2026-08-08; la spec da sola ne fa duecentoventisei — e l'idea è
 già nel compendio. Quando ti servirà il **perché** di una decisione — le alternative
 scartate, le misure, i costi accettati — apri **quel** file, uno solo. La §12 del
 compendio dice quale.

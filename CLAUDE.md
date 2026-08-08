@@ -46,6 +46,7 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | `anthropic-skills:dev-communication` | governa la **conversazione** intorno al codice: cosa si decide da soli e cosa si porta al proprietario |
 | `superpowers:brainstorming` | prima di qualunque lavoro creativo, e **prima di entrare in plan mode** |
 | `superpowers:writing-plans` | quando si scriverà il piano — **non prima** che le voci aperte siano chiuse |
+| `superpowers:subagent-driven-development` | per **eseguire** un piano: un subagente fresco per compito, con revisione fra uno e l'altro. È la modalità scelta dal proprietario |
 | `superpowers:test-driven-development` | quando comincerà il codice |
 
 ## Come si lavora qui

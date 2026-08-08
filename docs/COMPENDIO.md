@@ -519,8 +519,9 @@ restituito `251` al posto di `4096` senza sollevare nulla.
 ## 6. Dove siamo, e cosa viene dopo
 
 **Spec del kernel §0–§10 completa.** Spec del **sotto-progetto 1** con §0–§8 approvate,
-**riaperta su sette voci** — **tutte chiuse** — e **§8 riallineata e chiusa il 2026-08-08**.
-**La spec è completa. Zero righe di codice del prodotto.**
+**riaperta su sette voci** — **tutte chiuse** — **§8 riallineata e chiusa il 2026-08-08**, e
+**audit sezione-contro-ADR passato**. ✅ **La spec è completa e il piano del Traguardo 1 è
+scritto. Zero righe di codice del prodotto: il prossimo passo è scriverle.**
 
 Le sette voci sono emerse rileggendo `tracciabilita.md` con una domanda che nessuno le
 aveva posto: ***«di quale meccanismo di kernel ha bisogno questa funzionalità, e la
@@ -541,10 +542,39 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 ### L'ordine, già deciso
 
 1. ~~**§8**~~ — ✅ **chiusa il 2026-08-08**, toccata una volta sola come previsto.
-2. **Il piano** di implementazione. **È il prossimo passo.**
-3. **Poi** il codice, non prima.
+2. ~~**Il piano**~~ — ✅ **scritto**: [Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
+3. ⏭️ **Il codice. È il prossimo passo**, ed è l'esecuzione di quel piano — **subagent-driven**.
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
+
+### Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano
+
+Scrivere ora un piano per codice che non esiste significa inventare. **Il piano del
+Traguardo 1 c'è; gli altri si scrivono quando si arriva.**
+
+| # | Traguardo | Stato |
+|---|---|---|
+| **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ⏭️ piano scritto, da eseguire |
+| 2 | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ⬜ |
+| 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
+| 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
+| 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
+| 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
+
+⛔ **Perché la porta di qualità viene prima della logica, e non è pedanteria:** un cancello
+costruito **dopo** è un cancello che nessuno ha mai visto fallire, e la §7.1.1 dice che
+allora non è un cancello. Su uno scheletro vuoto ogni controllo si prova in **due**
+direzioni al costo di poche righe; dopo, la seconda direzione diventa cara e si smette.
+
+📌 **Due scelte prese dal piano**, perché la spec non le fissa e ora costano zero: **edition
+`2024`** su tutte e cinque le crate, e un **`rust-toolchain.toml`** che dichiara versione e
+**bersaglio del cancello**, così che il vincolo 4 della §11 si soddisfi da solo su una
+macchina pulita.
+
+⚠️ **Una decisione resta aperta, e non blocca il codice:** otto righe del catalogo §7.4
+hanno una colonna «Difende» che non nomina un `V`, un'`I` o un `Q` — la stessa regola con
+cui la §7 caccia `clippy`. Ri-attribuirle, allargare la regola, o dichiarare un'eccezione:
+**§7.1.1**.
 
 ### §8 — ✅ chiusa. Cosa ha trovato, in quattro righe
 
@@ -607,11 +637,15 @@ sotto-sezione invece di una riscrittura. 📌 **Per la §8 non produce nessuna r
 **V29** copre già le sorgenti di eventi, e lo dice la sua stessa riga di verifica — *«C1
 fallisce a ogni sorgente nascosta»*. Lo stato non cambia.
 
-### Il piano dovrà decidere anche dove nasce il workspace
+### ✅ Dove nasce il workspace — deciso dal piano
 
-Alla radice **non c'è nessun `Cargo.toml`**. Sotto `spikes/` i progetti Cargo sono
-**due**: `spikes/rust/` (a sua volta un **workspace annidato**) e `spikes/gui-ipc/`.
-È l'unica domanda strutturale che la spec ha deliberatamente lasciato al piano.
+Era l'unica domanda strutturale che la spec aveva deliberatamente lasciato al piano.
+
+| | |
+|---|---|
+| **il workspace nasce alla radice**, da zero | `Cargo.toml` con `crates/{kernel,platform,secrets,simulator,daemon}`. Niente si eredita |
+| ⛔ **`spikes/` è fra gli `exclude`** | `spikes/rust/` è a sua volta un **workspace annidato** e porta un `clippy.toml` che a livello di workspace scatterebbe addosso a `platform`, che *deve* chiamare l'orologio — vincolo 5 |
+| **«punto di partenza» significa che si copia** | la §2.5 dice riga per riga cosa entra in `crates/kernel/` e cosa **resta** negli spike |
 
 ---
 

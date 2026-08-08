@@ -24,6 +24,13 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
 
+E QUESTE QUANDO SERVIRANNO, NON PRIMA
+  /superpowers:subagent-driven-development   per eseguire un piano, un subagente
+                                             fresco per compito. E' la modalita' scelta
+  /superpowers:test-driven-development       quando si scrive codice
+  /superpowers:brainstorming                 prima di qualunque lavoro creativo
+  /superpowers:writing-plans                 quando si scrivera' un piano nuovo
+
 LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
@@ -41,7 +48,7 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
    lungo, non la decisione. Nessuna può sfuggirti perché «non sembrava attinente».
 
-TRE COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
+QUATTRO COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
   · Non sono operativo in Rust. Quando l'argomento esce dal mio dominio,
     spiegamelo PRIMA a parole semplici e POI schematizza.
   · Alla chiusura di ogni voce COMMITTA E PUSHA senza chiedere, e SENZA
@@ -50,9 +57,13 @@ TRE COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     era già stata valutata e perché era caduta. Riaprila solo con una prova
     nuova — e se la prova nuova gioca contro, registrala e chiudila. È il
     gotcha #32, e c'è perché è già successo.
+  · Un controllo si prova in DUE direzioni: che scatti dove deve, e che NON
+    scatti dove non deve. La seconda si dimentica, ed è quella che conta —
+    gotcha #24. Vale anche per i tuoi test, non solo per i miei.
 
-Parti confermandomi cosa hai letto e qual è la tua lettura dello stato — POI
-ASPETTA le mie richieste prima di proporre qualunque cosa.
+Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, e qual è
+il prossimo passo secondo la §6 — POI ASPETTA le mie richieste prima di
+proporre qualunque cosa.
 ```
 
 ---

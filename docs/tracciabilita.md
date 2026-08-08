@@ -16,6 +16,19 @@ Ogni funzionalità della mappa funzionale originale, con la sua sede nel progett
 **Il kernel non implementa nessuna funzionalità utente.** Fornisce i meccanismi su cui
 tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
+> ⛔ **QUESTA TABELLA RISPONDE A UNA DOMANDA SOLA, ed è «dove vive».**
+> **Non** risponde a *«di quale meccanismo di kernel ha bisogno questa funzionalità, e la
+> spec lo nomina?»*. In particolare `📋` significa **«sotto-progetto assegnato»**, non «non
+> richiede un meccanismo di kernel»: sono due cose diverse, e chi legge assume la seconda.
+>
+> **È la crepa da cui sono uscite le sette voci della riapertura del 2026-08-07**, tre delle
+> quali di classe **B**, cioè non retrofittabili. Il rimedio non è riscrivere la legenda —
+> gotcha **#27** — è **rileggere con un'altra domanda**, e questo riquadro esiste per
+> ricordare che la domanda che manca è quella.
+>
+> ⚠️ *Aggiunto il 2026-08-08: la §12 del compendio rimandava già «al riquadro in testa» per
+> questo avvertimento, e il riquadro non lo conteneva.*
+
 > ⚠️ **Questa tabella risponde a una domanda sola, e va saputo prima di fidarsene**
 > (2026-08-07). Risponde a *«dove vive questa funzionalità»*. **Non** risponde a *«di quale
 > meccanismo di kernel ha bisogno, e la spec lo nomina?»* — e in particolare un `📋`

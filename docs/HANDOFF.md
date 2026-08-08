@@ -9,8 +9,10 @@ Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 > ritratto dei conteggi **ricontato sulla tabella**, e un quarto disallineamento trovato e
 > chiuso (§8.5.4). Poi la spec è passata per un **audit sezione-contro-ADR**: quaranta
 > rilievi, tutti chiusi tranne **uno lasciato aperto di proposito** (§7.1.1, la regola 1 del
-> catalogo). Albero pulito, `check-docs.sh` verde. **Il prossimo passo è il piano di
-> implementazione.** Poi il codice, non prima.
+> catalogo). Infine è stato scritto il **piano del Traguardo 1**. Albero pulito,
+> `check-docs.sh` verde.
+>
+> ⏭️ **Il prossimo passo è il codice**: eseguire quel piano, **subagent-driven**.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -44,19 +46,26 @@ restano dove sono.
 
 ## Prima cosa da fare
 
-**Scrivere il piano di implementazione.** La riapertura è chiusa — F3, F6, F5, F1a, **F2 con
-F7**, **F1b** e **F4** — e la **§8** è stata riallineata e chiusa il **2026-08-08**. Nessuna
-misura blocca il piano: l'unica aperta è **M5**, e richiede una GUI.
+⏭️ **Eseguire il piano del Traguardo 1, subagent-driven.** La spec è **completa** — la
+riapertura è chiusa, la §8 è chiusa, l'audit è passato — e il piano è scritto:
+[`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
 
-> ⏭️ **Il prossimo passo è il piano.** Poi il codice, non prima. I quindici vincoli che il
-> piano deve tradurre in passi stanno nella §11 del compendio; la domanda strutturale che la
-> spec gli ha deliberatamente lasciato è **dove nasce il workspace** — alla radice non c'è
-> nessun `Cargo.toml`, e sotto `spikes/` i progetti Cargo sono due.
+> **Come**: skill `superpowers:subagent-driven-development`, **un subagente fresco per
+> compito**, con revisione fra uno e l'altro. La scelta è del proprietario ed è già presa.
+> Otto compiti; ciascuno finisce con un commit, e il piano dice quale.
 >
-> ✅ **La §8 è chiusa il 2026-08-08**, toccata una volta sola come previsto: celle di `Q4`,
-> `Q5`, `Q14` e §8.2.2 riallineate senza che **nessuno stato cambi**, ritratto dei conteggi
-> **ricontato sulla tabella** (**diciotto ✅ · tredici ⚠️ · sei ⏳** per i V, nove · otto · sette
-> per i Q), e un **quarto disallineamento** trovato e chiuso — §8.5.4, il gotcha #36.
+> **Cosa costruisce**: il workspace alla radice con le cinque crate, e la **porta di
+> qualità** eseguibile in un comando solo — `bash scripts/gate.sh`. ⛔ **Zero logica di
+> prodotto**, ed è deliberato: un cancello costruito dopo la logica è un cancello che
+> nessuno ha mai visto fallire (§7.1.1).
+>
+> ⛔ **Cosa NON si fa nel Traguardo 1, e non è una dimenticanza:** non si scrive **nessun
+> record del giornale**. Il vincolo 14 della §11 fa entrare i **byte congelati** nel
+> repository *al primo record scritto*, e quel record appartiene al **Traguardo 3**.
+> Scriverne uno ora congelerebbe un formato che la §4.9 non ha ancora messo alla prova, e
+> ⛔ **i byte congelati non si rigenerano**.
+>
+> **Nessuna misura blocca**: l'unica aperta è **M5**, e richiede una GUI.
 >
 > ✅ **F1b è chiusa il 2026-08-08** con
 > [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) e la §6.10. La

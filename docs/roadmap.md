@@ -36,9 +36,12 @@ Ultimo aggiornamento: **2026-08-07**.
 > | **F1b** — il progetto della porta `process`, e il formato di filo verso i worker | [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) · §6.10 |
 > | **F4** — la collocazione dell'anello 3, che scritta si è spaccata in **C + B** | §0.4.3 |
 >
-> Prossimo passo: la **§8**, che si tocca **una volta sola** — e il ritratto dei conteggi va
-> **ricontato sulla tabella**, non dedotto. Poi il piano di implementazione, che deve
-> decidere anche dove nasce il workspace. Poi il codice.
+> ✅ **La §8 è chiusa** (2026-08-08), toccata una volta sola come previsto, e la spec è
+> passata per un **audit sezione-contro-ADR** — quaranta rilievi, tutti chiusi tranne uno
+> lasciato aperto di proposito (§7.1.1). ✅ **Il piano del Traguardo 1 è scritto.**
+>
+> ⏭️ **Prossimo passo: eseguire il piano, subagent-driven.** Otto compiti, e il primo
+> traguardo è lo **scheletro con la porta di qualità**, zero logica di prodotto.
 >
 > ✅ **La lacuna su I2 è chiusa**: [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
 > — quota di presentazione sottratta, con la concessione tenuta dal core. Il kernel non
@@ -65,7 +68,7 @@ flowchart LR
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
 | **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
-| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — §0–§8 approvate, riapertura su sette voci **tutta chiusa**; resta la **§8** da incassare, poi il piano | 0, 0b, 0c |
+| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — **spec completa** (§0–§8, riapertura chiusa, §8 chiusa, audit passato) e **piano del Traguardo 1 scritto**. Tocca al **codice** | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2 |
 | 4 | Agenti | L2 | ⬜ | 3 |
@@ -118,6 +121,20 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 | Piano | Copre | Stato |
 |---|---|---|
 | [Spike bloccanti e stack](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | SP-5, SP-6, ADR-0026, ADR-0027, ADR-0028 | ✅ **eseguito** il 2026-08-06 |
+| [Sotto-progetto 1 · Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) | il workspace con le cinque crate e la **porta di qualità**, eseguibile e provata in due direzioni. **Zero logica di prodotto** | ⏭️ **da eseguire** — è il prossimo passo |
+
+⛔ **Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano.** Scriverne
+uno per codice che non esiste ancora significa inventare. I sei traguardi sono elencati nel
+piano del primo; i successivi si scrivono quando si arriva.
+
+| # | Traguardo | Deliverable |
+|---|---|---|
+| **1** | scheletro e porta di qualità | ⏭️ il piano c'è |
+| 2 | il substrato iniettabile | tempo, casualità, I/O, scheduling; l'esecutore in `kernel`; le sei porte come tratti |
+| 3 | giornale e formato durevole | la porta `journal` a byte, il record come enum di versione, **i byte congelati** |
+| 4 | il simulatore DST | tempo virtuale, iniezione dei guasti, la campagna, i semi |
+| 5 | arbitro GPU | ammissione, corsie, ciclo della concessione, le due policy |
+| 6 | gli altri meccanismi | gateway, sensori, permessi, degrado, il canale worker |
 
 **Il piano è l'artefatto dopo la chiusura delle voci ancora aperte** della
 riapertura: vale «spec prima del codice», e il piano è il passo fra le due.

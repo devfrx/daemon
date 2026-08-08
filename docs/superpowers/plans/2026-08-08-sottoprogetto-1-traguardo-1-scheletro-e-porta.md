@@ -23,6 +23,57 @@ compilazione fallita, allow-list sui due grafi delle dipendenze, cancello senza 
 
 ---
 
+## Errata — 2026-08-08, dopo l'esecuzione
+
+> ⛔ **Da leggere prima dei compiti.** Il piano **non si riscrive**: è il registro di ciò che
+> fu osservato mentre lo si eseguiva, e riscriverlo falsificherebbe la storia. Ma è anche il
+> documento che si riapre per i traguardi successivi, quindi non può restare muto su quattro
+> punti in cui **detta una cosa e il repository ne contiene un'altra**.
+
+| # | Dove | Cosa non torna | Perché |
+|---|---|---|---|
+| **E1** | **ovunque** — nomi di file, di funzioni e messaggi d'uscita | ⛔ **il piano detta identificatori italiani; il codice eseguito è in inglese** | contraddice la **§1.0** della spec — *«Codice: interamente in inglese: nomi di crate, moduli, tipi, funzioni, commenti nel sorgente»* — e **vince la spec**, per «spec prima del codice». Il piano non aveva l'autorità per derogarvi, e la deroga non era nemmeno dichiarata: era implicita nei nomi. I nomi veri sono nella tabella sotto |
+| **E2** | **Task 2 · Step 2** | ⛔ **il banco vuoto NON fallisce: esce _verde_** | il passo prevede un rosso «perché la cartella `tests/compile_fail/` non esiste ancora». Misurato su `trybuild` 1.0.120: un **glob** che non pesca niente **non è un errore** — stampa un avviso giallo, lascia i fallimenti a zero e **esce 0**. Un percorso *letterale* inesistente invece diventa rosso, e l'asimmetria non si ricostruisce leggendo `t.compile_fail(...)`. ⚠️ Il piano il gotcha #26 lo aveva perfino **nominato**, nella riga sotto — *«se passasse trovando zero casi…»* — ma lo dava per non accaduto. È il caso che si è verificato. Rimedio in esercizio: `compile_fail.rs` conta i `.rs` **prima** di chiamare `trybuild`, e senza numero atteso (§8.6.2) |
+| **E3** | **Task 6 · Step 3** | ⛔ **la porta diventa rossa, ma non per la ragione scritta** | il passo dice che togliendo `#![no_std]` da `crates/kernel/src/lib.rs` il caso «ora **compila**», e che `trybuild` lo segnala. Misurato: il caso **non compila lo stesso**. Ogni caso **ridichiara** il proprio `#![no_std]`, quindi `E0433` scatta comunque; `trybuild` cade per **mismatch dello `.stderr`**, perché il kernel che linka `std` fa **sparire la riga dell'allocatore** — *«no global memory allocator found»* — dall'output reale. E i casi rossi sono **due**, non uno: `std_in_kernel.rs` **e** `hashmap_in_kernel.rs`, cioè i due il cui oracolo portava quella riga. Il rosso c'è; l'affermazione sul **meccanismo** è falsa |
+| **E4** | **Definizione di «fatto» · condizione 2** | ⛔ **non era sufficiente, e lo si è scoperto misurando** | «i quattro casi di `tests/compile_fail/` passano» non prova ciò che la condizione promette. I quattro **ridichiarano ciascuno i propri attributi** e non nominano mai `kernel::`: provano che il meccanismo **morde dove è dichiarato**, non che sia dichiarato **nel kernel**. Tolto `#![forbid(unsafe_code)]` da `crates/kernel/src/lib.rs` e scritto un `unsafe` **vero**, la porta restava **verde su cinque controlli su cinque**. Da qui `scripts/gate-attributes.sh` e la riga di catalogo che lo enumera (§7.4.2) |
+
+### E1 — i nomi veri
+
+| Il piano scrive | Nel repository è |
+|---|---|
+| `crates/kernel/tests/compile_fail/std_nel_kernel.rs` | `std_in_kernel.rs` |
+| `crates/kernel/tests/compile_fail/unsafe_nel_kernel.rs` | `unsafe_in_kernel.rs` |
+| `crates/kernel/tests/compile_fail/allow_unsafe_scavalca.rs` | `allow_overrides_forbid.rs` |
+| `crates/kernel/tests/compile_fail/hashmap_nel_kernel.rs` | `hashmap_in_kernel.rs` |
+| `crates/kernel/tests/dipendenze_utilizzabili.rs` | `dependencies_usable.rs` |
+| `crates/platform/tests/contro_sonde.rs` | `counter_probes.rs` |
+| `PORTA VERDE.` · `PORTA ROSSA` | `GATE GREEN.` · `GATE RED` |
+| `I3 violato` · `grafo di build cambiato` | `I3 violated` · `build graph changed` |
+| `OK — nessuna incoerenza.` | `OK — no inconsistencies.` |
+
+📌 **La tabella elenca solo ciò che il piano _scrive_.** Il cancello sugli attributi —
+`scripts/gate-attributes.sh` — **non compare nel piano**: è nato dopo, dal difetto di **E4**.
+E i messaggi di `check-docs.sh` che il piano non cita restano fuori di qui: dove sono citati,
+cioè nella spec §8.5.4 e §8.6, sono stati **rimisurati**, non tradotti a tavolino.
+
+⛔ **Le parole che `check-docs.sh` _cerca_ dentro i documenti restano italiane**, e non è
+un'incoerenza: `verificato qui`, `parziale`, `rimandato`, `non controllato` e l'intestazione
+`Difende` sono **contenuto della documentazione**, non messaggi dello script. Tradurle
+renderebbe rosse o, peggio, **vacue** le asserzioni 2, 3, 4 e 6 di §8.6.1.
+
+📌 **E2 ed E3 sono la stessa lezione, ed è quella del gotcha #17:** una sonda che guarda solo
+il **codice d'uscita** non distingue «è scattato per il mio guasto» da «è scattato per un
+altro». Entrambe le previsioni sbagliate del piano danno l'uscita **attesa** — verde in E2,
+rosso in E3 — e solo il **messaggio** dice che il meccanismo non è quello descritto.
+
+⛔ **E3 ha una trappola operativa, e sta proprio dove il passo la incontra.** Il rosso di
+`trybuild` invita a *«bless it by rerunning with `TRYBUILD=overwrite`»*. Farlo qui
+**cancellerebbe l'oracolo**: riscriverebbe i due `.stderr` sull'output di un kernel che linka
+`std`, e la suite passerebbe per sempre — è il **gotcha #25**, e il vincolo globale 6 lo
+vieta. Il rimedio è **rimettere `#![no_std]`**, non benedire l'output.
+
+---
+
 ## Perché questo traguardo non produce niente di visibile, ed è deliberato
 
 Un cancello costruito **dopo** la logica è un cancello che nessuno ha mai visto fallire, e

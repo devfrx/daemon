@@ -1246,7 +1246,7 @@ sono ignorati.
 | 3 | **il costo dove conta è misurato**: una crate spedita in più, senza dipendenze proprie, e il cancello senza OS di §7.3.2 **passa** |
 
 ⚠️ **Il costo che non è piccolo, e sta altrove:** il grafo **di build** del kernel passa da
-due voci a sette, e per la prima volta porta `syn`. È un «grafo di build cambiato» ai sensi
+due voci a sette, e per la prima volta porta `syn`. È un «`build graph changed`» ai sensi
 di §7.3.1 — ammissibile con giustificazione, mai automatico. Le voci sono in §7.3.1.
 
 #### 4.9.4 Come si verifica, e il limite dichiarato
@@ -2450,8 +2450,8 @@ resta una scelta.
 
 | Classe | Comando | Errore | **Rimedio** |
 |---|---|---|---|
-| **spedita** | `cargo tree -p <crate> -e normal,no-proc-macro` | **`I3 violato`** | ⛔ **togliere la dipendenza.** Aggiungerla alla lista *non* è un rimedio |
-| **di build** | il complemento fra `-e no-dev` e la riga sopra | **`grafo di build cambiato`** | ✅ valutare e **aggiungere alla lista**, con giustificazione |
+| **spedita** | `cargo tree -p <crate> -e normal,no-proc-macro` | **`I3 violated`** | ⛔ **togliere la dipendenza.** Aggiungerla alla lista *non* è un rimedio |
+| **di build** | il complemento fra `-e no-dev` e la riga sopra | **`build graph changed`** | ✅ valutare e **aggiungere alla lista**, con giustificazione |
 | di sviluppo | ❌ non cancellata | — | — |
 
 **Perché due e non uno.** Non è completezza: ADR-0031 **ha già deciso questo**, fra le
@@ -2690,7 +2690,7 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 | **Q14** · §4.9 | **byte congelati** del record durevole, con la mappa `indice → nome del campo → valore atteso` (§4.9.4) | si **riusa** un indice o si rinumera → fallisce e **nomina il campo** | si aggiunge un campo facoltativo con un indice nuovo → resta verde |
 | V31 | il **seme** entra nell'elenco versionato, la **proprietà** entra nella suite | si reintroduce il difetto che quella proprietà proteggeva → la campagna fallisce e **nomina il seme** | il difetto corretto → la campagna resta verde, e l'elenco dei semi non produce falsi rossi |
 | **Q4** · I5 · §6.10 | sul canale verso i worker, i **byte consumati** dalla decodifica sono pari alla **lunghezza dichiarata** dal frame (§6.10.4) | frame troncato, o con una coda dopo l'ultimo elemento → fallisce | frame esatto → resta verde |
-| **1b** · validità di §7.4.1 A · B · C | le crate vincolate **dichiarano davvero** i propri attributi — `scripts/gate-attributi.sh` | `#![forbid(unsafe_code)]` tolto, oppure `#![deny(unsafe_code)]` al suo posto → scatta e nomina file e attributo | `platform`, `secrets` e `daemon` non ne dichiarano nessuno e **restano verdi** |
+| **1b** · validità di §7.4.1 A · B · C | le crate vincolate **dichiarano davvero** i propri attributi — `scripts/gate-attributes.sh` | `#![forbid(unsafe_code)]` tolto, oppure `#![deny(unsafe_code)]` al suo posto → scatta e nomina file e attributo | `platform`, `secrets` e `daemon` non ne dichiarano nessuno e **restano verdi** |
 
 > ⛔ **La riga degli attributi è aggiunta il 2026-08-08, e la lacuna che chiude era stata
 > misurata eseguendo il Traguardo 1.** Senza di lei si poteva togliere
@@ -3466,16 +3466,29 @@ che a una rinumerazione. Sonde eseguite il **2026-08-08** sulla spec **reale**, 
 
 | # | Sonda — *deve scattare* | Messaggio osservato |
 |---|---|---|
-| **S7** | si svuota la contro-sonda del gettone «leggere da un worker» (§7.4.1 B) | `riga 2566 (**leggere** da un worker): contro-sonda vuota` |
-| **S8** | si svuota la contro-sonda della riga «byte consumati» (§7.4.2) | `riga 2634 (**Q4** · I5 · §6.10): contro-sonda vuota` |
+| **S7** | si svuota la contro-sonda del gettone «leggere da un worker» (§7.4.1 B) | `row 2624 (**leggere** da un worker): empty counter-probe` |
+| **S8** | si svuota la contro-sonda della riga «byte consumati» (§7.4.2) | `row 2692 (**Q4** · I5 · §6.10): empty counter-probe` |
+
+> ✅ **Rimisurate il 2026-08-08, dopo il passaggio di `check-docs.sh` all'inglese** — stesso
+> metodo delle diciotto di §8.6.3 e stessa ragione: riscrivere il messaggio a tavolino sarebbe
+> stata *un'evidenza scritta prima della misura*, cioè il **gotcha #15**. Entrambe sono passate
+> per la guardia di §8.6.3.1 — bersaglio unico e mutazione non vacua — e **C0** è stata
+> rieseguita **prima** di esse: spec intatta, `OK — no inconsistencies.`, uscita 0.
+>
+> ⚠️ **Il primo tentativo era vacuo, e va registrato perché sembrava un successo.** Lanciava
+> `bash` senza percorso e prendeva quello di **WSL**, assente su questa macchina: le sonde
+> uscivano **1** — cioè «scattato» — per un `execvpe(/bin/bash) failed`. È §8.6.3.1 alla
+> seconda occorrenza, ed è l'asserzione **sul messaggio** ad averlo colto, non quella
+> sull'uscita: di messaggi non ne arrivava nessuno.
 
 La contro-sonda è **C0** della §8.6.3, che qui vale invariata: la spec intatta esce verde.
 Ripristino verificato — **`spec ripristinata byte-identica`**.
 
 ⛔ **Il numero di riga nel messaggio è quello del giorno, e invecchia** — basta un richiamo
-inserito sopra per spostarlo, ed è successo mentre queste due sonde si scrivevano. Ciò che
-identifica la riga è la **prima cella**, che il messaggio riporta fra parentesi apposta:
-è quella a non spostarsi. Vale identico per i numeri della §8.6.3, veri il 2026-08-07.
+inserito sopra per spostarlo, ed è successo mentre queste due sonde si scrivevano, e di nuovo
+alla rimisurazione: `2566` e `2634` sono diventati `2624` e `2692`. Ciò che identifica la riga
+è la **prima cella**, che il messaggio riporta fra parentesi apposta: è quella a non
+spostarsi. Vale identico per i numeri della §8.6.3, anch'essi riportati a **oggi**.
 
 ⚠️ **Un secondo ritratto è risultato stantio nello stesso passaggio, ed è dichiarato dove
 sta:** la §7.4.7 contava i test di compilazione fallita come *«una dozzina — tre nel blocco B
@@ -3572,7 +3585,7 @@ motivo per cui non c'era una ragione per non farle.
 > scrive `§7.4.1` accanto a un lint passa.
 
 > ⚠️ **La quinta è stata aggiunta all'elenco il 2026-08-08, non allo script.** Lo script la
-> esegue da sempre — `if (n < 7) { printf "%s: la riga non ha le cinque colonne" }` — ma
+> esegue da sempre — `if (n < 7) { printf "%s: the row does not have the five columns" }` — ma
 > questa tabella si presentava come inventario chiuso e ne elencava quattro. Va detto anche
 > il suo effetto collaterale, perché non è ovvio: su una riga malformata il controllo **si
 > ferma lì**, quindi le asserzioni 3 e 4 su quella riga non girano. Il rosso resta rumoroso,
@@ -3609,7 +3622,7 @@ dall'asserzione 2, che è un elenco canonico e quindi non ha questo problema.
 > file», non «§8.3 e §8.4». Oggi non produce falsi rossi solo per un dettaglio tipografico
 > — le altre tabelle della §8 scrivono gli identificativi in **grassetto** (`| **V2** |`) e
 > la regex, che pretende `| V2 |`, non li vede. Chi togliesse il grassetto a una di quelle
-> celle otterrebbe `V2 compare piu di una volta`, cioè un rosso **per la ragione sbagliata**:
+> celle otterrebbe `V2 appears more than once`, cioè un rosso **per la ragione sbagliata**:
 > il gotcha #9 applicato allo script, la stessa cosa che questa sottosezione rifiuta di fare
 > col numero atteso. ⛔ **Non si irrigidisce la regex**, che diventerebbe fragile in un altro
 > modo: si sa che le tabelle diverse da §8.3 e §8.4 scrivono gli ID in grassetto, ed è una

@@ -492,7 +492,7 @@ Le aveva sollevate M-1 (§6.8.2) e M-3 le aveva rese concrete con dei numeri. De
 
 | # | Domanda | Decisione |
 |---|---|---|
-| **1** | il controllo della allow-list misura il grafo di **runtime** o quello **totale**? | **entrambi, con due comandi e due rimedi distinti** (§7.3.1). Una violazione fra le crate *spedite* è `I3 violato` e si ripara **togliendo** la dipendenza; un cambiamento fra quelle *di build* è un evento da rivedere e si ripara **aggiungendola alla lista**. Le dipendenze di **sviluppo** sono escluse, e l'esclusione è provata |
+| **1** | il controllo della allow-list misura il grafo di **runtime** o quello **totale**? | **entrambi, con due comandi e due rimedi distinti** (§7.3.1). Una violazione fra le crate *spedite* è `I3 violated` e si ripara **togliendo** la dipendenza; un cambiamento fra quelle *di build* è un evento da rivedere e si ripara **aggiungendola alla lista**. Le dipendenze di **sviluppo** sono escluse, e l'esclusione è provata |
 | **2** | il **cancello bare-metal** entra fra i controlli automatici? | **si aggiunge alla lista, non la sostituisce** (§7.3.2), e il bersaglio passa a **`x86_64-unknown-none`**. I due falliscono in modo complementare: la lista **nomina il colpevole**, il cancello **prova** invece di enumerare |
 
 📄 [`superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md)

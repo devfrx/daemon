@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # rust-toolchain.toml dichiara versione e bersaglio: rustup li installa da solo,
-      # ed è il motivo per cui il vincolo 4 della §11 non richiede un passo qui.
+      # rust-toolchain.toml declares version and target: rustup installs them by itself,
+      # and that is why constraint 4 of §11 does not require a step here.
       - run: rustup show
       - run: bash scripts/gate.sh

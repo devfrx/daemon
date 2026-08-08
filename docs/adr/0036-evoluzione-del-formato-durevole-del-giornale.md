@@ -141,7 +141,7 @@ con **entrambi** i serializzatori:
 | sorgenti di casualità nel grafo spedito | ispezione del grafo | **0** |
 
 ⚠️ Per la prima volta `kernel` porta **`syn`** a tempo di compilazione: `bincode_derive`
-usa `virtue` apposta per evitarlo. È un «grafo di build cambiato» ai sensi di §7.3.1 —
+usa `virtue` apposta per evitarlo. È un «`build graph changed`» ai sensi di §7.3.1 —
 ammissibile, ma **evento da rivedere**, non operazione automatica.
 
 ## Alternative considerate

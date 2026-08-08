@@ -74,7 +74,7 @@ Le sonde, per nome:
 | | |
 |---|---|
 | **N1** | lo stato pulito passa — è il verde di partenza, non una violazione colta |
-| **N2** | una crate **spedita** fuori lista → `I3 violato`, e il rimedio è **TOGLIERE** |
+| **N2** | una crate **spedita** fuori lista → `I3 violated`, e il rimedio è **TOGLIERE** |
 | **N3** | una crate **di build** fuori lista → l'altro messaggio, e il rimedio è **AGGIUNGERLA**. Sono due grafi proprio perché i rimedi sono opposti |
 | **N4** | `getrandom` in `platform`, dove ADR-0031 lo ammette: **resta verde**. È la sonda che di solito si dimentica |
 | **N5** | un nome di crate con la **maiuscola**: prima usciva **verde**, ed era un falso negativo su I3. Corretto allargando la classe di caratteri del filtro, con la ragione scritta accanto alla classe |

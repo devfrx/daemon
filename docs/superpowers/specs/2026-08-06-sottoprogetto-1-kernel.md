@@ -93,7 +93,7 @@ errore di questa sezione, non una semplificazione.
 | **§2** arbitro GPU | tutta: ammissione, corsie, ciclo della concessione, revoca, due policy | la taratura dei profili reali (SP-1, SP-2) | **A** — Q2 e I2 sono il cuore della DST. I valori dei profili sono parametri, non impianto |
 | **§3** gateway | il **decisore**: risoluzione del routing, filtro dei vincoli, catena, contabilità, record risolto | gli adattatori dei provider reali | **A** per il decisore (Q13 è una proprietà su *qualunque* catena) · **C** per gli adattatori |
 | **§4** persistenza e run durevoli | giornale write-ahead, riconciliazione, classi di effetto, confini di autonomia, modello dello stato durevole | la **ricomposizione della proiezione** | **A** — Q5 è crash-injection ai confini di persistenza, ed è ciò che giustifica il simulatore · **C** per la ricomposizione: non ha consumatore finché nessuno chiama un modello |
-| **§5** harness | il **contratto** del sensore e l'anello di verifica, con sensore finto | i sensori reali, il registro delle guide, l'**anello 4** | **A** — Q10 si verifica con un doppio · **C** — RK-5 dice di rivedere il contratto **dopo** il secondo sensore reale, e l'anello 4 legge ricorrenze che esistono solo quando qualcosa gira |
+| **§5** harness | il **contratto** del sensore e l'anello di verifica, con sensore finto; e la **dichiarazione delle sorgenti dell'anello 3**, con la porta da cui entrano | i sensori reali, il registro delle guide, l'**anello 4**, e il **registro dei trigger** dell'anello 3 | **A** — Q10 si verifica con un doppio · **B** — le sorgenti dell'anello 3 vanno dichiarate ora, §0.4.3 · **C** — RK-5 dice di rivedere il contratto **dopo** il secondo sensore reale; l'anello 4 legge ricorrenze che esistono solo quando qualcosa gira, e il registro dei trigger non ha consumatore finché nessuna capacità parte da un evento |
 | **§6** permessi e confine dei dati | il **confine dei tipi**; la forma del permesso e la sua registrazione nel giornale | il mediatore completo, i preset, il ciclo di approvazione MCP, il canary | **B** — il confine dei tipi è la proprietà n. 1 non aggiungibile dopo (I6, V19, V20) · **C** — un mediatore non ha nulla da mediare finché non esistono strumenti |
 | **§7** errori e degrado | tassonomia, stato di degrado osservabile, ritenzione a livelli | la proiezione trace e l'esportazione OTLP | **A** — Q18 è DST: lo stato va dichiarato *prima* del primo fallimento · **C** — l'esportazione ha per consumatore un backend esterno, ed è opt-in |
 | **§8** test | tutta: è metà di questo sotto-progetto | — | **A** — è il simulatore |
@@ -144,6 +144,69 @@ salta lo scaglionamento più costoso di tutti.
 è che «non prova niente». **E perché non è C per intero:** l'arbitro ha bisogno di un
 budget *in questo sotto-progetto*, non quando arriverà una capacità L2 — che è esattamente
 l'errore di innesco che la §8.3 riga V3 aveva commesso.
+
+#### 0.4.3 L'anello 3 mancava da questa tabella, ed è la terza volta
+
+> ⚠️ **Aggiunto il 2026-08-08.** È la voce **F4** della riapertura, e l'ultima delle sette.
+> La riga §5 faceva entrare «il contratto del sensore e l'anello di verifica» e scaglionava
+> «i sensori reali, il registro delle guide, l'anello 4». **L'anello 3 — i trigger — non
+> compariva né dentro né fuori.** Per la §0.3 quello non è un'omissione veniale: *«un pezzo
+> scaglionato senza una riga C esplicita è un errore di questa sezione»*. È lo stesso
+> difetto di §0.4.1 e §0.4.2, e **le tre volte hanno la stessa forma**: un pezzo che non è
+> né entrato né scaglionato non è invisibile per caso — è invisibile perché la tabella
+> chiede «cosa entra» e «cosa si scaglia», e chi la compila non si accorge del terzo stato.
+
+**Cos'è l'anello 3.** [design/04](../../design/04-anelli-e-sensori.md): non è una fase, è
+**l'insieme dei modi in cui l'anello 1 può partire** — utente, pianificazione, cambiamento
+di file, fine di un'altra run. *«Senza di esso il sistema funziona solo quando qualcuno lo
+guarda.»*
+
+**Non è una riga sola: si spacca in due, e le due hanno regole diverse.** È la stessa
+forma di §0.4.2.
+
+| Pezzo | Regola | Perché |
+|---|---|---|
+| il **registro dei trigger**, e l'apertura di una run da un evento | **C** | non ha consumatore finché non esiste una capacità L2 che parta da un evento. E la DST prova Q2, Q4 e Q5 aprendo le run direttamente: senza il registro **non è che non prova niente** |
+| che ogni **sorgente di eventi** entri da una porta **dichiarata**, e che si dica **quale** | **B** | costruirlo dopo non è una patch: è una porta aggiunta dopo la campagna |
+
+**Perché la seconda riga è B, e non è pedanteria.** La §3.1 dichiara che le porte del
+simulatore *«sono **esattamente** le porte della §2.3, e non esistono altri punti in cui il
+mondo tocchi il kernel»*, e il simulatore le sostituisce **tutte**. Una sorgente di eventi
+scoperta dopo significherebbe che **C1 era verificato su un mondo più piccolo del reale**,
+e **nulla sarebbe diventato rosso**. È il ragionamento di F1a per intero, e il gotcha #17.
+
+**Le due sorgenti che la tracciabilità aveva già promesso**, e da dove entrano:
+
+| Sorgente | Porta | Stato |
+|---|---|---|
+| **pianificazione** — riga *Scheduling* | `reactor` | ✅ **già coperta**: una scadenza è ciò che la §3.2 modella già, e in simulazione è il seme a decidere quando scatta |
+| **cambiamento di file** — riga *File watching* | `reactor` | ⬜ **dichiarata qui, implementazione scaglionata** — la stessa postura di `network` in §2.3 |
+| **fine di un'altra run** | nessuna: è **interna** | non tocca il mondo. Lo sa il giornale, che è già in perimetro |
+| **utente** | `ipc` | già lì |
+
+**Perché il cambiamento di file sta su `reactor` e non su `filesystem`.** Ciò che deve
+essere deterministico non è *quale* percorso, ma **quando arriva la notifica** — ed è
+esattamente il contratto del reattore: «cosa è pronto», reale che *«attende gli eventi
+dell'OS»*, finto in cui *«cosa è pronto lo decide il seme»* (§3.1). Il percorso è un
+argomento della registrazione, come lo è una scadenza; non è una famiglia nuova. Su
+`filesystem` sarebbe invece una **direzione nuova** — quella porta modella l'albero, non la
+spinta — e la sua finta dovrebbe generare eventi, cioè più macchina per meno determinismo.
+
+> ✅ **Le famiglie di porte restano sei.** L'anello 3 **non** ne aggiunge una, ed è la
+> ragione per cui questa voce costa una sezione invece di una riscrittura. Se fosse servita
+> una settima famiglia, sarebbe stata regola B per intero e avrebbe dovuto entrare adesso,
+> come `process` in §2.3.1.
+
+⛔ **Il limite dichiarato.** Qui si dichiara **da dove** una sorgente entra, non **come**
+funziona: il reattore reale non osserva percorsi finché l'anello 3 non si costruisce, e la
+sua suite di conformità (§7.4.6) non copre un'operazione che nessuno chiama. Ciò che questa
+sezione compra è che il giorno in cui si costruisce **non nasca una porta nuova**.
+
+**Cosa produce per la §8: nessuna riga nuova.** **V29** — *«tempo, casualità, I/O e
+scheduling iniettabili»* — copre già le sorgenti di eventi, e lo dice la sua stessa riga di
+verifica: *«la campagna DST stessa, il cui criterio C1 fallisce a ogni sorgente nascosta»*.
+Una sorgente dichiarata su una porta è dentro quella frase; una non dichiarata è ciò che
+C1 fa fallire. **Lo stato di V29 non cambia.**
 
 ### 0.5 Le decisioni che questo sotto-progetto deve prendere
 

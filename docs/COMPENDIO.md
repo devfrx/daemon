@@ -518,7 +518,7 @@ restituito `251` al posto di `4096` senza sollevare nulla.
 ## 6. Dove siamo, e cosa viene dopo
 
 **Spec del kernel §0–§10 completa.** Spec del **sotto-progetto 1** con §0–§8 approvate,
-**riaperta su sette voci** — **sei chiuse**. **Zero righe di codice del prodotto.**
+**riaperta su sette voci** — **tutte chiuse**. **Zero righe di codice del prodotto.**
 
 Le sette voci sono emerse rileggendo `tracciabilita.md` con una domanda che nessuno le
 aveva posto: ***«di quale meccanismo di kernel ha bisogno questa funzionalità, e la
@@ -534,14 +534,14 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 | **F2** | l'evoluzione del formato durevole del giornale | ✅ chiusa — ADR-0036, §4.9 |
 | **F7** | fork e branching | ✅ chiusa con F2 — §4.9.5 |
 | **F1b** | il **progetto** della porta `process` in §5–§6 | ✅ chiusa — ADR-0037, §6.10 |
-| **F4** | l'anello 3 non è collocato in §0.4 | ⬜ **APERTA — è la prossima**, e indipendente |
+| **F4** | l'anello 3 non è collocato in §0.4 | ✅ chiusa — §0.4.3 |
 
 ### L'ordine, già deciso
 
-1. **F4** — la collocazione dell'anello 3 in §0.4. La più piccola, e l'ultima delle sette.
-2. **§8** — ⛔ **per ultima, e una volta sola**: ognuna delle sette le cambia una riga.
-3. **Il piano** di implementazione.
-4. **Poi** il codice, non prima.
+1. **§8** — ⛔ **per ultima, e una volta sola**: ognuna delle sette le cambia una riga, e il
+   **ritratto dei conteggi va ricontato sulla tabella**, non dedotto. **È la prossima.**
+2. **Il piano** di implementazione.
+3. **Poi** il codice, non prima.
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
@@ -556,14 +556,25 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 | **due regole uscite dalla misura** | il frame **dichiara la propria lunghezza** e la decodifica verifica i byte consumati (gotcha #34) · ogni `Vec<u8>` porta l'**annotazione di stringa di byte**, o il flusso audio raddoppia (gotcha #35) |
 | ⛔ **e una divergenza registrata** | l'istruzione diceva di allargare le giustificazioni di `bincode`. Con la misura **non si allargano**: `bincode` serve il solo canale gui, e ad allargarsi sono le righe di `minicbor`. Gotcha #15 |
 
-### F4 — già istruita, più piccola di quanto sembri
+### F4 — ✅ chiusa. E la classe attesa era sbagliata a metà
 
-La §0.4 ripartisce sezione per sezione. La riga §5 fa entrare il contratto del sensore
-e l'anello di verifica, e scaglia i sensori reali, il registro delle guide e l'anello 4.
-**L'anello 3 — i trigger — non compare né dentro né fuori.** Per la §0.3 un pezzo
-scaglionato **senza una riga C esplicita è un errore di quella sezione**. Due righe
-della tracciabilità vi pendono (*Scheduling* e *File watching*). Classe attesa **C**,
-ma **va scritta, non assunta**. Costo: una riga in §0.4, e se serve una in §8.
+La classe attesa era **C**. Scritta invece che assunta, si è spaccata in **due**:
+
+| Pezzo | Regola |
+|---|---|
+| il **registro dei trigger**, e l'apertura di una run da un evento | **C** — nessun consumatore finché non esiste una capacità che parta da un evento, e la DST prova Q2, Q4 e Q5 aprendo le run direttamente |
+| che ogni **sorgente di eventi** entri da una **porta dichiarata**, e che si dica quale | **B** — §3.1 dichiara le porte esaustive e il simulatore le sostituisce tutte: una sorgente scoperta dopo è **una porta aggiunta dopo la campagna**, e nulla diventerebbe rosso |
+
+**Le due righe della tracciabilità che vi pendevano hanno una porta:** *Scheduling* e
+*File watching* entrano entrambe da **`reactor`** — la prima è già coperta dal tempo
+virtuale (§3.2), la seconda è **dichiarata** con implementazione scaglionata, la stessa
+postura di `network`. Sta su `reactor` e non su `filesystem` perché ciò che deve essere
+deterministico è **quando arriva la notifica**, non quale percorso.
+
+✅ **Le famiglie di porte restano sei**, ed è la ragione per cui F4 è costata una
+sotto-sezione invece di una riscrittura. 📌 **Per la §8 non produce nessuna riga nuova:**
+**V29** copre già le sorgenti di eventi, e lo dice la sua stessa riga di verifica — *«C1
+fallisce a ogni sorgente nascosta»*. Lo stato non cambia.
 
 ### Il piano dovrà decidere anche dove nasce il workspace
 

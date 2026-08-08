@@ -5,10 +5,10 @@ e poi di nuovo quando rileggere `tracciabilita.md` con un'altra domanda ha **ria
 spec su sette voci**, di cui **cinque chiuse**. Serve a riprendere senza rifare, e senza
 rilitigare ciò che è già deciso.
 
-> 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — **F1b chiusa**
-> con [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) e la §6.10,
-> albero pulito, `check-docs.sh` verde. **Il prossimo passo è F4**: collocare l'anello 3 in
-> §0.4 — l'ultima delle sette. Poi la §8 una volta sola, poi il piano.
+> 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — **le sette
+> voci della riapertura sono tutte chiuse**, l'ultima è F4 con la §0.4.3. Albero pulito,
+> `check-docs.sh` verde. **Il prossimo passo è la §8**: si tocca **una volta sola**, e il
+> ritratto dei conteggi va **ricontato sulla tabella**, non dedotto. Poi il piano.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -23,8 +23,8 @@ worker ML in **Python**; Tauri contro Electron è ancora aperto
 ([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
 
 **La spec del sotto-progetto 1 ha §0–§8 approvate**, ed è **riaperta su sette voci**
-trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto. Sei
-sono chiuse; resta **F4**. Il codice non è ancora iniziato, e vale «spec prima
+trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto. Sono
+**tutte chiuse**. Il codice non è ancora iniziato, e vale «spec prima
 del codice». Il piano viene **dopo** la chiusura di quelle ancora aperte — vedi sotto.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
@@ -75,7 +75,7 @@ assegnato»*, e **non** significa «non richiede un meccanismo di kernel». Tutt
 | **F5** | la porta `network` era descritta «verso i **provider**», V25 promette «un solo punto di uscita **verso la rete**» | implicita | una riga | ✅ **chiusa** — spec §2.3.1 |
 | **F1** | nessuna porta per **parlare** con un worker: `process` era «avvio e uccisione» | implicita | **B** | ✅ **chiusa** — F1a con [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) e §2.3.1; **F1b** con [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) e §6.10 |
 | **F2** | l'**evoluzione del formato durevole** del giornale non è decisa | implicita | **B** | ✅ **chiusa** — [ADR-0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md), spec §4.9 |
-| **F4** | l'**anello 3** non è collocato in §0.4, né dentro né fuori | implicita | **C**, ma va *scritta* | ⬜ aperta |
+| **F4** | l'**anello 3** non è collocato in §0.4, né dentro né fuori | implicita | **C** *e* **B** — scritta invece che assunta, si è **spaccata** | ✅ **chiusa** — §0.4.3 |
 | **F7** | «il giornale lo consente» per **fork e branching** è un'affermazione della sola tracciabilità | implicita | converge in F2 | ✅ **chiusa con F2** — §4.9.5 |
 
 ### L'ordine, e perché
@@ -94,7 +94,7 @@ scrittura. È:
                     indice nuovo, e la regola di F2 lo rende meccanico
 ✅ F1b (§5–§6)      firme, messaggi, formato di filo. La propedeuticità su F2
                     era soddisfatta, e il formato l'ha deciso una misura
-⬜ F4               indipendente, in qualsiasi momento — l'ultima
+✅ F4               scritta invece che assunta, si è spaccata: C + B
 ⛔ §8               per ultima, e UNA VOLTA SOLA
 ```
 
@@ -157,15 +157,39 @@ i sotto-progetti 9 e 10. Ora la regola 4 di ADR-0035 vi poggia: se l'ambiente de
 non è artefatto nostro, il **timbro di build** non ha un'identità da confrontare e «non
 versionato» **cade su quel canale**.
 
-### F4 — istruita, e più piccola di quanto sembri
+### F4 — ✅ chiusa. E «va scritta, non assunta» ha ripagato
 
-| | |
-|---|---|
-| **cosa manca** | la §0.4 ripartisce sezione per sezione della spec del kernel. La riga §5 fa entrare «il contratto del sensore e l'anello di verifica, con sensore finto» e scaglia «i sensori reali, il registro delle guide, l'**anello 4**». L'**anello 3** — i trigger, cioè i modi in cui l'anello 1 può partire — **non compare né dentro né fuori** |
-| **perché conta** | per la §0.3 un pezzo scaglionato **senza una riga C esplicita è un errore di quella sezione**, non una semplificazione. È lo stesso difetto di forma già corretto due volte: §0.4.1 per il backup, §0.4.2 per la configurazione |
-| **due righe della tracciabilità vi pendono** | *Scheduling* ✅ e *File watching* 🔶 puntano entrambe a «trigger anello 3 §5» — cioè a un meccanismo che la spec non colloca |
-| **la classe attesa** | **C** con ogni probabilità: un trigger ha un consumatore solo quando esiste una capacità che parte da un evento. ⚠️ Ma va **scritta**, non assunta — è esattamente la lezione di §0.4.1 |
-| **il costo** | una riga in §0.4 e, se serve, una in §8. È la più piccola delle sette |
+✅ **Chiusa il 2026-08-08** con la **§0.4.3**, ed era l'ultima delle sette.
+
+La classe attesa era **C**, e l'istruzione avvertiva di **scriverla invece di assumerla**.
+Scrivendola si è spaccata in due, e **una metà è B**:
+
+| Pezzo | Regola | Perché |
+|---|---|---|
+| il **registro dei trigger**, e l'apertura di una run da un evento | **C** | nessun consumatore finché non esiste una capacità L2 che parta da un evento. E la DST prova Q2, Q4 e Q5 aprendo le run direttamente: **non è che senza non prova niente** |
+| che ogni **sorgente di eventi** entri da una porta **dichiarata**, e che si dica **quale** | **B** | §3.1 dichiara le porte *«esattamente quelle della §2.3»* e il simulatore le sostituisce **tutte**. Una sorgente scoperta dopo la campagna è una **porta aggiunta dopo la campagna**: C1 sarebbe stato verificato su un mondo più piccolo del reale, e **nulla sarebbe diventato rosso**. È F1a per intero, e il gotcha #17 |
+
+**Le due righe della tracciabilità hanno ora una porta:**
+
+| Sorgente | Porta | |
+|---|---|---|
+| *Scheduling* | `reactor` | ✅ già coperta: una scadenza è ciò che §3.2 modella, e in simulazione la decide il seme |
+| *File watching* | `reactor` | ⬜ **dichiarata**, implementazione scaglionata — la postura di `network` |
+| fine di un'altra run | nessuna | è **interna**: lo sa il giornale |
+| utente | `ipc` | già lì |
+
+**Perché su `reactor` e non su `filesystem`:** ciò che deve essere deterministico non è
+*quale percorso*, ma **quando arriva la notifica** — ed è il contratto del reattore. Su
+`filesystem` sarebbe una **direzione nuova**, e la sua finta dovrebbe generare eventi: più
+macchina per meno determinismo.
+
+✅ **Le famiglie restano sei.** Se ne fosse servita una settima, sarebbe stata regola B per
+intero e sarebbe dovuta entrare adesso, come `process` in §2.3.1.
+
+⚠️ **La lezione, che vale oltre F4.** È la **terza volta** che un pezzo sfugge alla §0.4
+non essendo né entrato né scaglionato — dopo il backup (§0.4.1) e la configurazione
+(§0.4.2). Non è distrazione: la tabella chiede «cosa entra» e «cosa si scaglia», e chi la
+compila **non vede il terzo stato**. Chi troverà il quarto caso lo aggiunga qui.
 
 ### Cosa la §8 deve incassare — l'elenco, perché si tocca una volta sola
 
@@ -181,7 +205,7 @@ accumula qui mano a mano.
 | **F1a** | **§8.2.2** — la riga `process` → Q4 resta 1:1, ed è ciò che il discriminante 3 di ADR-0035 verificava. Da **rileggere** | ⬜ da verificare |
 | **F2 + F7** | **Q14** — il meccanismo cresce: livello 1 (§7.4.1 blocco C) e byte congelati (§7.4.2). **Q5** — la porta `journal` scambia byte, quindi la campagna esercita davvero la codifica | ⬜ **da scrivere** |
 | **F1b** | **Q4** — la §3.3 aggiunge **quattro** guasti del dialogo, tutti sulla porta `process`, e §7.4.6 acquista l'affermazione sul **filo** oltre a quella sul ciclo di vita. ⚠️ Lo **stato non cambia**: Q4 resta `parziale` con innesco **E (7)**, perché manca ancora il worker vero. Da **rileggere**, non da riscrivere | ⬜ **da verificare** |
-| **F4** | possibile una riga, se l'anello 3 porta con sé un V o un Q. Da stabilire quando F4 si chiude | ⬜ dopo F4 |
+| **F4** | ✅ **nessuna riga nuova.** **V29** copre già le sorgenti di eventi, e lo dice la sua stessa riga di verifica — *«C1 fallisce a ogni sorgente nascosta»*: una sorgente **dichiarata su una porta** è dentro quella frase, una non dichiarata è ciò che C1 fa fallire. Lo stato di V29 **non cambia** | ✅ **stabilito** |
 
 ⚠️ **E il ritratto va ricontato, non dedotto.** I numeri «18 ✅ · 12 ⚠️ · 7 ⏳» per i V e
 «9 · 8 · 7» per i Q sono stati contati sulla tabella il 2026-08-07, **prima** di queste

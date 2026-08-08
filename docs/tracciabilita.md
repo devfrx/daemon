@@ -22,10 +22,13 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 > significa «sotto-progetto assegnato», **non** «non richiede un meccanismo di kernel».
 >
 > Rileggerla con la seconda domanda ha **riaperto la spec del sotto-progetto 1 su sette
-> voci**, tre chiuse più F1a: elenco, classe e ordine in
-> [HANDOFF](HANDOFF.md#prima-cosa-da-fare). Finché **F4** è aperta, la riga *Scheduling* ✅
-> punta a un meccanismo — l'anello 3 — che la §0.4 non colloca né dentro né fuori, e la
-> riga *File watching* 🔶 dichiara deciso un meccanismo che non ha una porta.
+> voci**, ora **tutte chiuse**: elenco, classe e ordine in
+> [HANDOFF](HANDOFF.md#prima-cosa-da-fare).
+>
+> ✅ **F4 chiusa il 2026-08-08**, ed era l'ultima. Le due righe che vi pendevano hanno ora
+> un meccanismo collocato **e** una porta: *Scheduling* e *File watching* entrano entrambe
+> da `reactor` — la prima è già coperta, la seconda è **dichiarata** con implementazione
+> scaglionata (§0.4.3).
 >
 > La tabella si aggiorna **alla chiusura del sotto-progetto**, non ora: questo riquadro è
 > il segnaposto che impedisce di leggerla come se fosse già vera.

@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
-# Controllo di coerenza della documentazione.
-# Da eseguire PRIMA DI OGNI COMMIT di documentazione -- e quindi a ogni chiusura di
-# sezione, ADR o sotto-progetto, che è quando si committa. La cadenza è quella di
-# CLAUDE.md e della §7.5.1 della spec del sotto-progetto 1: una sola, scritta in tre
-# posti che devono dire la stessa cosa. Allineata il 2026-08-08: questa riga diceva
-# «alla chiusura di ogni sezione, ADR o sotto-progetto», cioè una cadenza più
-# grossolana di quella che la porta di qualità le assegna.
-# Uscita 0 = tutto coerente. Uscita 1 = c'è qualcosa da sistemare.
+# Consistency check of the documentation.
+# To be run BEFORE EVERY DOCUMENTATION COMMIT -- and therefore at every closure of a
+# section, ADR or sub-project, which is when one commits. The cadence is the one in
+# CLAUDE.md and in §7.5.1 of the sub-project 1 spec: a single one, written in three
+# places that must say the same thing. Aligned on 2026-08-08: this line used to say
+# "at the closure of every section, ADR or sub-project", that is a cadence coarser
+# than the one the quality gate assigns to it.
+# Exit 0 = everything consistent. Exit 1 = there is something to fix.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
-fallimenti=0
-segnala() { echo "  ✗ $*"; fallimenti=$((fallimenti + 1)); }
+failures=0
+report() { echo "  ✗ $*"; failures=$((failures + 1)); }
 
-echo "== link interni =="
-# I piani sono esclusi di proposito: contengono riferimenti in avanti ad
-# artefatti che il piano stesso deve ancora creare.
-rotti=$(
+echo "== internal links =="
+# The plans are excluded on purpose: they contain forward references to
+# artefacts that the plan itself has yet to create.
+broken=$(
   while IFS= read -r f; do
     d=$(dirname "$f")
     grep -o '](\([^)#]*\.md\)[^)]*)' "$f" 2>/dev/null |
@@ -26,220 +26,214 @@ rotti=$(
       done
   done < <(find . -name '*.md' -not -path './.git/*' -not -path './docs/superpowers/plans/*')
 )
-[ -z "$rotti" ] || while IFS= read -r r; do segnala "link rotto: $r"; done <<<"$rotti"
+[ -z "$broken" ] || while IFS= read -r r; do report "broken link: $r"; done <<<"$broken"
 
-echo "== ADR: file vs indice =="
+echo "== ADR: files vs index =="
 n_file=$(ls docs/adr/*.md 2>/dev/null | wc -l)
 n_idx=$(grep -cE '^\| \[00' docs/README.md)
-[ "$n_file" -eq "$n_idx" ] || segnala "ADR: $n_file file, $n_idx voci d'indice"
+[ "$n_file" -eq "$n_idx" ] || report "ADR: $n_file files, $n_idx index entries"
 
-echo "== diagrammi: file vs indice =="
+echo "== diagrams: files vs index =="
 d_file=$(ls docs/design/*.md 2>/dev/null | wc -l)
 d_idx=$(grep -cE '^\| \[.*\]\(design/' docs/README.md)
-[ "$d_file" -eq "$d_idx" ] || segnala "design: $d_file file, $d_idx voci d'indice"
+[ "$d_file" -eq "$d_idx" ] || report "design: $d_file files, $d_idx index entries"
 
-echo "== numerazione delle sezioni: duplicati =="
-# Il controllo è PER FILE. Concatenare le spec produrrebbe un falso positivo: ogni
-# spec ha legittimamente la propria §0, e un controllo che fallisce per il motivo
-# sbagliato è peggio di un controllo assente — insegna a ignorare l'audit.
+echo "== section numbering: duplicates =="
+# The check is PER FILE. Concatenating the specs would produce a false positive: every
+# spec legitimately has its own §0, and a check that fails for the wrong reason is worse
+# than no check at all -- it teaches people to ignore the audit.
 for f in docs/superpowers/specs/*.md; do
   dup=$(grep -ohE '^#{2,3} [0-9]+(\.[0-9]+)?' "$f" | sort | uniq -d | tr '\n' ' ')
-  [ -z "${dup// /}" ] || segnala "sezioni duplicate in $f: $dup"
+  [ -z "${dup// /}" ] || report "duplicate sections in $f: $dup"
 done
 
-echo "== ogni requisito Q ha un metodo di verifica (V30) =="
-mancanti=$(comm -23 \
+echo "== every Q requirement has a verification method (V30) =="
+missing=$(comm -23 \
   <(grep -ohE '^\| Q[0-9]+ \|' docs/superpowers/specs/*.md | grep -oE 'Q[0-9]+' | sort -uV) \
   <(grep -ohE '^\| Q[0-9]+ \|' docs/design/08-strategia-di-test.md | grep -oE 'Q[0-9]+' | sort -uV) |
   tr '\n' ' ')
-[ -z "${mancanti// /}" ] || segnala "V30 violato — Q senza metodo di verifica: $mancanti"
+[ -z "${missing// /}" ] || report "V30 violated — Q with no verification method: $missing"
 
 spec_sp1=docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
 
-echo "== catalogo §7.4: ogni controllo difende qualcosa (regola 1) e ha la contro-sonda (regola 3) =="
-# DUE asserzioni sulla stessa tabella, in una passata sola: i delimitatori si
-# scrivono UNA volta, o diventano due posti da tenere allineati e il primo che
-# smette mente in silenzio.
+echo "== catalogue §7.4: every check defends something (rule 1) and has its counter-probe (rule 3) =="
+# TWO assertions on the same table, in a single pass: the delimiters are written ONCE, or
+# they become two places to keep aligned and the first one that stops lies in silence.
 #
-# REGOLA 3 -- ogni voce porta DUE sonde: quella che deve scattare e quella che
-# deve restare verde. Era l'unico punto della §7 non verificabile a sua volta
-# (§7.7.1), cioe un'intenzione.
-# REGOLA 1 -- la casella «Difende» nomina un V, una I o un Q (ramo 1a), oppure
-# una voce del catalogo di cui la riga sostiene la validita (ramo 1b, deciso il
-# 2026-08-08 chiudendo la §7.1.1). Senza, e un'abitudine e non un controllo: e
-# la stessa regola con cui la §7.4.3 caccia clippy fuori dalla porta.
+# RULE 3 -- every entry carries TWO probes: the one that must fire and the one that must
+# stay green. It was the only point of §7 not verifiable in its turn (§7.7.1), that is,
+# an intention.
+# RULE 1 -- the «Difende» cell names a V, an I or a Q (branch 1a), or else a catalogue
+# entry whose validity the row upholds (branch 1b, decided on 2026-08-08 closing §7.1.1).
+# Without it, it is a habit and not a check: it is the same rule with which §7.4.3 throws
+# clippy out of the gate.
 #
-# La colonna «Difende» NON e sempre la prima: nel blocco B dei gettoni e la
-# terza. Si legge dall'INTESTAZIONE invece che per posizione -- la lettura
-# posizionale e la trappola 3 di questo script, e qui non c'era motivo di
-# ereditarla.
-# Nel confronto non entra il carattere «§»: e multibyte, e il byte-matching
-# dipende dal locale. Stessa ragione per cui gli stati della §8 si riconoscono
-# da una parola invece che da un'emoji.
-# Entrambe sono controlli sulla FORMA: provano che la casella sia piena e che
-# NOMINI qualcosa della forma giusta, non che la contro-sonda esista davvero ne
-# che l'attribuzione sia vera (§8.6.4). Chi scrive «§7.4.1» accanto a un lint
-# passa.
-# Guardia di non-vacuita: delimitatore mancante, intervallo vuoto o nessuna
-# casella «Difende» letta sono un FALLIMENTO. Uno script che non trova niente
-# da controllare uscirebbe verde -- gotcha #26.
-vuote=$(
+# The «Difende» column is NOT always the first one: in block B of the tokens it is the
+# third. It is read from the HEADER instead of by position -- positional reading is trap
+# 3 of this script, and here there was no reason to inherit it.
+# The «§» character does not enter the comparison: it is multibyte, and byte-matching
+# depends on the locale. Same reason why the §8 states are recognised by a word instead
+# of by an emoji.
+# Both are checks on the FORM: they prove that the cell is filled and that it NAMES
+# something of the right shape, not that the counter-probe really exists nor that the
+# attribution is true (§8.6.4). Whoever writes «§7.4.1» next to a lint passes.
+# Non-vacuity guard: a missing delimiter, an empty range or no «Difende» cell read are a
+# FAILURE. A script that finds nothing to check would exit green -- gotcha #26.
+catalogue=$(
   awk '
-    function pulisci(s) {
+    function trim(s) {
       sub(/^[[:space:]]+/, "", s); sub(/[[:space:]]+$/, "", s); return s
     }
-    /^#### 7\.4\.1/ { apre=1; dentro=1; next }
-    /^#### 7\.4\.3/ { chiude=1; dentro=0; next }
-    dentro && !/^\|/ { attese=0; idx=0; next }
-    dentro && /^\|/ {
-      riga=$0
-      gsub(/\\\|/, "", riga)                 # le pipe protette non separano celle
-      n=gsub(/\|/, "|", riga) - 1            # celle = separatori - 1
-      if (riga ~ /^\|[-:|[:space:]]+\|$/) {                    # riga separatrice
-        attese=n
-        if (idx == 0) printf "riga %d: tabella del catalogo senza colonna Difende\n", NR
+    /^#### 7\.4\.1/ { opens=1; inside=1; next }
+    /^#### 7\.4\.3/ { closes=1; inside=0; next }
+    inside && !/^\|/ { expected=0; idx=0; next }
+    inside && /^\|/ {
+      row=$0
+      gsub(/\\\|/, "", row)                  # protected pipes do not separate cells
+      n=gsub(/\|/, "|", row) - 1             # cells = separators - 1
+      if (row ~ /^\|[-:|[:space:]]+\|$/) {                     # separator row
+        expected=n
+        if (idx == 0) printf "row %d: catalogue table with no Difende column\n", NR
         next
       }
-      if (attese == 0) {                                       # intestazione
+      if (expected == 0) {                                     # header row
         idx=0
-        m=split(riga, h, "|")
+        m=split(row, h, "|")
         for (i=2; i<m; i++) if (h[i] ~ /Difende/) idx=i-1
         next
       }
-      righe++
-      prima=riga
-      sub(/^[[:space:]]*\|[[:space:]]*/, "", prima); sub(/[[:space:]]*\|.*$/, "", prima)
-      ultima=riga
-      sub(/\|[[:space:]]*$/, "", ultima); sub(/^.*\|/, "", ultima)
-      ultima=pulisci(ultima)
-      if (n < attese)       printf "riga %d (%s): manca la colonna contro-sonda\n", NR, prima
-      else if (ultima == "") printf "riga %d (%s): contro-sonda vuota\n", NR, prima
+      rows++
+      first=row
+      sub(/^[[:space:]]*\|[[:space:]]*/, "", first); sub(/[[:space:]]*\|.*$/, "", first)
+      last=row
+      sub(/\|[[:space:]]*$/, "", last); sub(/^.*\|/, "", last)
+      last=trim(last)
+      if (n < expected)   printf "row %d (%s): counter-probe column missing\n", NR, first
+      else if (last == "") printf "row %d (%s): empty counter-probe\n", NR, first
       if (idx > 0) {
-        split(riga, c, "|")
-        dif=pulisci(c[idx+1])
-        difese++
-        if (dif !~ /(^|[^A-Za-z])[IVQ][0-9]/ && dif !~ /7\.4\./)
-          printf "riga %d: «Difende» = «%s» non nomina un V, una I o un Q, ne una voce del catalogo (regola 1)\n", NR, dif
+        split(row, c, "|")
+        def=trim(c[idx+1])
+        defends++
+        if (def !~ /(^|[^A-Za-z])[IVQ][0-9]/ && def !~ /7\.4\./)
+          printf "row %d: «Difende» = «%s» names neither a V, an I or a Q, nor a catalogue entry (rule 1)\n", NR, def
       }
     }
     END {
-      if (!apre)     print "delimitatore «#### 7.4.1» non trovato"
-      if (!chiude)   print "delimitatore «#### 7.4.3» non trovato"
-      if (righe==0)  print "nessuna riga di catalogo nell'\''intervallo: il controllo sarebbe vacuo"
-      if (difese==0) print "nessuna casella Difende letta: la regola 1 non controllerebbe niente"
+      if (!opens)     print "delimiter «#### 7.4.1» not found"
+      if (!closes)    print "delimiter «#### 7.4.3» not found"
+      if (rows==0)    print "no catalogue row in the range: the check would be vacuous"
+      if (defends==0) print "no Difende cell read: rule 1 would check nothing"
     }
   ' "$spec_sp1"
 )
-[ -z "$vuote" ] || while IFS= read -r r; do segnala "catalogo §7.4 — $r"; done <<<"$vuote"
+[ -z "$catalogue" ] || while IFS= read -r r; do report "catalogue §7.4 — $r"; done <<<"$catalogue"
 
-echo "== §8: ogni V e ogni Q ha uno stato, e i rimandati hanno l'innesco =="
-# La mitigazione promessa dalla §0.6 contro «rimandato tende a diventare
-# dimenticato». Quattro asserzioni (§8.6.1): completezza e non-duplicazione,
-# stato dentro l'insieme chiuso, innesco obbligatorio per «parziale» e
-# «rimandato». Lo stato si riconosce da una PAROLA, non da un'emoji: il
-# byte-matching su emoji dipende dal locale, e un rosso per il locale e un
-# rosso per il motivo sbagliato.
-stati=$(
+echo "== §8: every V and every Q has a state, and the deferred ones have their trigger =="
+# The mitigation promised by §0.6 against "deferred tends to become forgotten". Four
+# assertions (§8.6.1): completeness and non-duplication, state within the closed set,
+# mandatory trigger for «parziale» and «rimandato». The state is recognised by a WORD,
+# not by an emoji: byte-matching on emoji depends on the locale, and a red caused by the
+# locale is a red for the wrong reason.
+states=$(
   awk '
-    function pulisci(s) {
+    function trim(s) {
       sub(/^[[:space:]]+/, "", s); sub(/[[:space:]]+$/, "", s); return s
     }
-    /^## 8\. / { apre=1; dentro=1 }
-    dentro && /^\|[[:space:]]*[VQ][0-9]+[[:space:]]*\|/ {
-      riga=$0; gsub(/\\\|/, "", riga)
-      n=split(riga, c, "|")
-      id=pulisci(c[2])
-      if (visto[id]++) { printf "%s compare piu di una volta\n", id; next }
-      if (n < 7) { printf "%s: la riga non ha le cinque colonne\n", id; next }
-      stato=pulisci(c[4]); innesco=pulisci(c[6])
-      k = (stato ~ /verificato qui/) + (stato ~ /parziale/) \
-        + (stato ~ /rimandato/)     + (stato ~ /non controllato/)
-      if (k == 0) { printf "%s: stato non ammesso — «%s»\n", id, stato; next }
-      if (k > 1)  { printf "%s: stato ambiguo — «%s»\n", id, stato; next }
-      if (stato ~ /parziale/ || stato ~ /rimandato/)
-        if (innesco == "" || innesco == "—" || innesco == "-")
-          printf "%s: «%s» senza innesco\n", id, stato
+    /^## 8\. / { opens=1; inside=1 }
+    inside && /^\|[[:space:]]*[VQ][0-9]+[[:space:]]*\|/ {
+      row=$0; gsub(/\\\|/, "", row)
+      n=split(row, c, "|")
+      id=trim(c[2])
+      if (seen[id]++) { printf "%s appears more than once\n", id; next }
+      if (n < 7) { printf "%s: the row does not have the five columns\n", id; next }
+      state=trim(c[4]); trigger=trim(c[6])
+      k = (state ~ /verificato qui/) + (state ~ /parziale/) \
+        + (state ~ /rimandato/)     + (state ~ /non controllato/)
+      if (k == 0) { printf "%s: state not allowed — «%s»\n", id, state; next }
+      if (k > 1)  { printf "%s: ambiguous state — «%s»\n", id, state; next }
+      if (state ~ /parziale/ || state ~ /rimandato/)
+        if (trigger == "" || trigger == "—" || trigger == "-")
+          printf "%s: «%s» with no trigger\n", id, state
     }
     END {
-      if (!apre) { print "delimitatore «## 8.» non trovato"; exit }
-      for (i=1; i<=37; i++) if (!visto["V" i]) printf "manca la riga per V%d\n", i
-      for (i=1; i<=24; i++) if (!visto["Q" i]) printf "manca la riga per Q%d\n", i
+      if (!opens) { print "delimiter «## 8.» not found"; exit }
+      for (i=1; i<=37; i++) if (!seen["V" i]) printf "missing row for V%d\n", i
+      for (i=1; i<=24; i++) if (!seen["Q" i]) printf "missing row for Q%d\n", i
     }
   ' "$spec_sp1"
 )
-[ -z "$stati" ] || while IFS= read -r r; do segnala "§8 — $r"; done <<<"$stati"
+[ -z "$states" ] || while IFS= read -r r; do report "§8 — $r"; done <<<"$states"
 
-echo "== compendio §5: una voce per ogni ADR, e nessuna di troppo =="
-# Il compendio e l'unica lettura obbligatoria a inizio sessione (CLAUDE.md).
-# Conseguenza secca: una decisione che non compare li, per chi legge NON ESISTE.
-# Un compendio stantio e peggio di nessun compendio -- mente con autorevolezza,
-# e chi lo legge non ha modo di accorgersene perche CREDE di sapere tutto.
-# Livello 2 -- controllo esterno: cancellato lo script, la regola sparisce.
-# Il livello 1 non e raggiungibile: nessun compilatore legge un .md.
-# DUE direzioni (gotcha #24): un ADR senza voce, e una voce senza ADR. La
-# seconda coglie il file rinominato o rimosso, che la prima non vede.
-# Guardia di non-vacuita: delimitatore mancante o blocco vuoto sono un
-# FALLIMENTO. Uno script che non trova niente da controllare uscirebbe verde
-# -- gotcha #26.
-compendio=docs/COMPENDIO.md
-if [ ! -f "$compendio" ]; then
-  segnala "manca $compendio, che CLAUDE.md dichiara lettura obbligatoria"
+echo "== compendium §5: one entry per ADR, and none too many =="
+# The compendium is the only mandatory reading at the start of a session (CLAUDE.md).
+# Blunt consequence: a decision that does not appear there DOES NOT EXIST for the reader.
+# A stale compendium is worse than no compendium -- it lies with authority, and whoever
+# reads it has no way of noticing because they BELIEVE they know everything.
+# Level 2 -- external check: delete the script and the rule disappears.
+# Level 1 is not reachable: no compiler reads a .md.
+# TWO directions (gotcha #24): an ADR with no entry, and an entry with no ADR. The second
+# catches the renamed or removed file, which the first does not see.
+# Non-vacuity guard: a missing delimiter or an empty block are a FAILURE. A script that
+# finds nothing to check would exit green -- gotcha #26.
+compendium=docs/COMPENDIO.md
+if [ ! -f "$compendium" ]; then
+  report "$compendium is missing, and CLAUDE.md declares it mandatory reading"
 else
-  grep -qE '^## 5\. ' "$compendio" || segnala "compendio §5 — delimitatore «## 5. » non trovato"
-  grep -qE '^## 6\. ' "$compendio" || segnala "compendio §5 — delimitatore «## 6. » non trovato"
-  voci=$(
-    awk '/^## 5\. / { dentro=1; next } /^## 6\. / { dentro=0 } dentro' "$compendio" |
+  grep -qE '^## 5\. ' "$compendium" || report "compendium §5 — delimiter «## 5. » not found"
+  grep -qE '^## 6\. ' "$compendium" || report "compendium §5 — delimiter «## 6. » not found"
+  entries=$(
+    awk '/^## 5\. / { inside=1; next } /^## 6\. / { inside=0 } inside' "$compendium" |
       grep -oE '^\*\*[0-9]{4} —' | grep -oE '[0-9]{4}' | sort -u
   )
-  n_voci=$(printf '%s\n' "$voci" | grep -cE '^[0-9]{4}$' || true)
-  if [ "$n_voci" -eq 0 ]; then
-    segnala "compendio §5 — nessuna voce nell'intervallo: il controllo sarebbe vacuo"
+  n_entries=$(printf '%s\n' "$entries" | grep -cE '^[0-9]{4}$' || true)
+  if [ "$n_entries" -eq 0 ]; then
+    report "compendium §5 — no entry in the range: the check would be vacuous"
   else
-    assenti=$(comm -23 \
+    absent=$(comm -23 \
       <(ls docs/adr/*.md 2>/dev/null | xargs -n1 basename | cut -c1-4 | sort -u) \
-      <(printf '%s\n' "$voci") | tr '\n' ' ')
-    [ -z "${assenti// /}" ] || segnala "compendio §5 — ADR senza voce: $assenti"
-    intrusi=$(comm -13 \
+      <(printf '%s\n' "$entries") | tr '\n' ' ')
+    [ -z "${absent// /}" ] || report "compendium §5 — ADR with no entry: $absent"
+    strays=$(comm -13 \
       <(ls docs/adr/*.md 2>/dev/null | xargs -n1 basename | cut -c1-4 | sort -u) \
-      <(printf '%s\n' "$voci") | tr '\n' ' ')
-    [ -z "${intrusi// /}" ] || segnala "compendio §5 — voce senza ADR corrispondente: $intrusi"
+      <(printf '%s\n' "$entries") | tr '\n' ' ')
+    [ -z "${strays// /}" ] || report "compendium §5 — entry with no matching ADR: $strays"
   fi
 fi
 
-echo "== conteggi ADR dichiarati nelle prose =="
-# I documenti di stato dichiarano quanti ADR esistono. Il numero invecchia in silenzio:
-# nessun controllo lo intercettava, e due prose erano stantie.
-# Copre esattamente tre forme, e non di più:
-#   «N ADR in stato ...»        -> deve valere il numero degli Accepted
-#   «N ADR»                     -> deve valere il totale
-#   «N decisioni architetturali» -> deve valere il totale
-# Limite dichiarato: un numero scritto a parole è invisibile a questa guardia.
+echo "== ADR counts declared in the prose =="
+# The status documents declare how many ADR exist. The number ages in silence: no check
+# intercepted it, and two pieces of prose were stale.
+# It covers exactly three forms, and no more:
+#   «N ADR in stato ...»         -> must equal the number of Accepted ones
+#   «N ADR»                      -> must equal the total
+#   «N decisioni architetturali» -> must equal the total
+# Declared limit: a number spelled out in words is invisible to this guard.
 adr_tot=$(ls docs/adr/*.md 2>/dev/null | wc -l)
 adr_acc=$(grep -l '^- \*\*Status:\*\* Accepted' docs/adr/*.md 2>/dev/null | wc -l)
 for f in docs/HANDOFF.md docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/AVVIO-CHAT.md CLAUDE.md; do
   [ -f "$f" ] || continue
-  # Gli esempi stanno nei code span: `2 ADR nuovi` è un esempio, non una
-  # dichiarazione. Si spogliano prima di confrontare, o il controllo accusa
-  # la documentazione di sé stesso — successo davvero.
+  # The examples live inside code spans: `2 ADR nuovi` is an example, not a
+  # declaration. They are stripped before comparing, or the check accuses the
+  # documentation of itself -- a success indeed.
   while IFS= read -r m; do
     [ -n "$m" ] || continue
     n=${m%% *}
     case "$m" in
-      *"in stato"*) atteso=$adr_acc; eti="in stato Accepted" ;;
-      *) atteso=$adr_tot; eti="in totale" ;;
+      *"in stato"*) expected=$adr_acc; label="in Accepted status" ;;
+      *) expected=$adr_tot; label="in total" ;;
     esac
-    [ "$n" -eq "$atteso" ] || segnala "$f dichiara $n ADR $eti, sono $atteso"
+    [ "$n" -eq "$expected" ] || report "$f declares $n ADR $label, they are $expected"
   done < <(sed 's/`[^`]*`//g' "$f" | grep -oE '[0-9]+ (ADR in stato|ADR|decisioni architetturali)')
 done
 
-echo "== ADR ancora in Proposed =="
+echo "== ADR still in Proposed =="
 prop=$(grep -l 'Status:\*\* Proposed' docs/adr/*.md 2>/dev/null | tr '\n' ' ')
-[ -z "${prop// /}" ] && echo "  (nessuno)" || echo "  in attesa di approvazione: $prop"
+[ -z "${prop// /}" ] && echo "  (none)" || echo "  awaiting approval: $prop"
 
 echo
-if [ "$fallimenti" -eq 0 ]; then
-  echo "OK — nessuna incoerenza."
+if [ "$failures" -eq 0 ]; then
+  echo "OK — no inconsistencies."
 else
-  echo "$fallimenti incoerenze da sistemare."
+  echo "$failures inconsistencies to fix."
   exit 1
 fi

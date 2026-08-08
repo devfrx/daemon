@@ -3625,19 +3625,33 @@ e il ripristino è verificato byte per byte alla fine — **`spec ripristinata b
 Ogni riga verifica **due** cose, non una: che l'uscita sia quella attesa, **e** che il
 messaggio nomini il colpevole. La seconda è ciò che ha smascherato una sonda vacua, sotto.
 
+> ✅ **Rimisurate tutte il 2026-08-08, dopo il passaggio di `check-docs.sh` all'inglese** —
+> la §1.0 impone l'inglese al codice, e il proprietario ha esteso la regola agli script di
+> servizio. Ogni messaggio citato qui sarebbe diventato **falso**, e riscriverlo a tavolino
+> sarebbe stato *un'evidenza scritta prima della misura*, cioè il **gotcha #15**. Le
+> diciotto sonde sono state **rieseguite** con lo stesso metodo e la stessa guardia; le
+> colonne sotto riportano ciò che si è visto, non ciò che ci si aspettava.
+>
+> | | |
+> |---|---|
+> | **il comportamento non è cambiato, e non è un'affermazione sulla parola** | ogni mutazione è passata per **entrambi** gli script — quello di prima e quello tradotto — confrontati su uscita, numero di fallimenti e payload: numeri di riga, identificativi e valori fra guillemet. **Diciotto su diciotto identici**, il rosso di trentasei righe di S6b compreso |
+> | **i numeri di riga sono quelli di oggi** | S1 e S1b dicevano `riga 1778`, che era la posizione della voce il 2026-08-07. La voce è la stessa — `V29 · gotcha #12` — e oggi sta alla **2609**: è l'invecchiamento che §8.5.4 aveva già dichiarato. Le quattro della sesta asserzione ricadono invece sulle **stesse righe** di allora |
+> | ⛔ **le parole che lo script _cerca_ restano italiane** | `verificato qui`, `parziale`, `rimandato`, `non controllato` e l'intestazione `Difende` sono **contenuto della documentazione**, non messaggi: tradurle avrebbe reso rosse o, peggio, **vacue** le asserzioni 2, 3, 4 e 6. L'uscita di S5 è mista per costruzione, ed è giusto così |
+> | **la guardia di non-vacuità ha fermato una sonda** | il bersaglio di S7c, indicato per prefisso, nella spec compare **tre volte** — anche in §6.3.1 e §6.10.1, che ripetono la stessa riga del dispositivo. La sonda si è **fermata** invece di mutare la tabella sbagliata, e il bersaglio è stato ristretto alla riga intera: è §8.6.3.1 che funziona alla seconda occasione |
+
 | # | Sonda — *deve scattare* | Messaggio osservato |
 |---|---|---|
-| **S1** | si svuota la casella contro-sonda di una voce | `riga 1778 (V29 · gotcha #12): contro-sonda vuota` |
-| **S1b** | si toglie del tutto la colonna | `riga 1778 (V29 · gotcha #12): manca la colonna contro-sonda` |
-| **S2** | si toglie lo stato a una riga della §8 | `V13: stato non ammesso — «»` |
-| **S3** | si cancella la riga `V13` | `manca la riga per V13` |
-| **S3b** | si duplica la riga `V13` | `V13 compare piu di una volta` — ⚠️ **senza accento, corretto il 2026-08-08**: lo script scrive `piu`, e la trascrizione accentata rendeva l'unico messaggio dei tredici non riproducibile carattere per carattere |
-| **S4** | si scrive uno stato fuori dall'insieme | `V13: stato non ammesso — «🟡 in corso»` |
-| **S4b** | si scrive uno stato **ambiguo**, con due parole dell'insieme | `V13: stato ambiguo — «⏳ parziale e rimandato»` |
-| **S5** | `rimandato` senza innesco | `V13: «⏳ rimandato» senza innesco` |
-| **S6** | si rinomina `#### 7.4.1`: l'intervallo del catalogo si svuota | `delimitatore «#### 7.4.1» non trovato` |
-| **S6b** | si rinomina `#### 7.4.3` | `delimitatore «#### 7.4.3» non trovato` |
-| **S6c** | si rinomina `## 8.` | `delimitatore «## 8.» non trovato` |
+| **S1** | si svuota la casella contro-sonda di una voce | `row 2609 (V29 · gotcha #12): empty counter-probe` |
+| **S1b** | si toglie del tutto la colonna | `row 2609 (V29 · gotcha #12): counter-probe column missing` |
+| **S2** | si toglie lo stato a una riga della §8 | `V13: state not allowed — «»` |
+| **S3** | si cancella la riga `V13` | `missing row for V13` |
+| **S3b** | si duplica la riga `V13` | `V13 appears more than once` — ⚠️ **e il richiamo sull'accento decade**: il messaggio italiano scriveva `piu`, e la trascrizione accentata lo rendeva l'unico dei tredici non riproducibile carattere per carattere. In inglese il problema non è stato risolto, è **sparito con la lingua** |
+| **S4** | si scrive uno stato fuori dall'insieme | `V13: state not allowed — «🟡 in corso»` |
+| **S4b** | si scrive uno stato **ambiguo**, con due parole dell'insieme | `V13: ambiguous state — «⏳ parziale e rimandato»` |
+| **S5** | `rimandato` senza innesco | `V13: «⏳ rimandato» with no trigger` |
+| **S6** | si rinomina `#### 7.4.1`: l'intervallo del catalogo si svuota | `delimiter «#### 7.4.1» not found`, **e con lui le due guardie**: `no catalogue row in the range: the check would be vacuous` · `no Difende cell read: rule 1 would check nothing`. Tre rossi, non uno |
+| **S6b** | si rinomina `#### 7.4.3` | `delimiter «#### 7.4.3» not found` — ⚠️ **ultimo di trentasei**: senza chiusura l'intervallo arriva a fine file, e ogni tabella a valle produce un `catalogue table with no Difende column`. Il rosso è **rumoroso, non silenzioso**, ed è esattamente ciò che la §8.6.2 chiede |
+| **S6c** | si rinomina `## 8.` | `delimiter «## 8.» not found` |
 
 **Le quattro della sesta asserzione, eseguite il 2026-08-08** con lo stesso metodo, e con una
 guardia in più presa da §8.6.3.1: la mutazione deve applicarsi **esattamente una volta**, o la
@@ -3645,16 +3659,22 @@ sonda si ferma invece di produrre il rosso di un'altra.
 
 | # | Sonda — *deve scattare* | Messaggio osservato |
 |---|---|---|
-| **S7** | una casella «Difende» che non nomina niente di ammesso | `riga 2631: «Difende» = «§5.1» non nomina un V, una I o un Q, ne una voce del catalogo (regola 1)` |
-| **S7b** | la colonna «Difende» sparisce dall'intestazione | `riga 2629: tabella del catalogo senza colonna Difende` |
-| **S7c** | ⛔ casella invalida nel **blocco B**, dove «Difende» è la **terza** colonna | `riga 2620: «Difende» = «§6.3» non nomina un V, una I o un Q, ne una voce del catalogo (regola 1)` |
-| **S7d** | una riga **1b** perde il riferimento al catalogo | `riga 2683: «Difende» = «supply chain» non nomina un V, una I o un Q, ne una voce del catalogo (regola 1)` |
+| **S7** | una casella «Difende» che non nomina niente di ammesso | `row 2631: «Difende» = «§5.1» names neither a V, an I or a Q, nor a catalogue entry (rule 1)` |
+| **S7b** | la colonna «Difende» sparisce dall'intestazione | `row 2629: catalogue table with no Difende column` |
+| **S7c** | ⛔ casella invalida nel **blocco B**, dove «Difende» è la **terza** colonna | `row 2620: «Difende» = «§6.3» names neither a V, an I or a Q, nor a catalogue entry (rule 1)` |
+| **S7d** | una riga **1b** perde il riferimento al catalogo | `row 2683: «Difende» = «supply chain» names neither a V, an I or a Q, nor a catalogue entry (rule 1)` |
 
 | # | Contro-sonda — *deve restare verde* | Osservato |
 |---|---|---|
-| **C0** | la spec intatta — con la casella di V25 che **dichiara** l'assenza, e con tutte le righe ✅ che non hanno innesco | ✅ verde |
-| **C5** | `verificato qui` **con** un innesco: è lecito, non obbligatorio | ✅ verde |
-| **C6** | la spec intatta dopo la chiusura di §7.1.1: **trentatré** righe di catalogo, comprese le **tre 1b** e le **cinque del blocco B** | ✅ verde |
+| **C0** | la spec intatta — con la casella di V25 che **dichiara** l'assenza, e con tutte le righe ✅ che non hanno innesco | ✅ verde — `OK — no inconsistencies.`, uscita 0 |
+| **C5** | `verificato qui` **con** un innesco: è lecito, non obbligatorio | ✅ verde — idem, con l'innesco di V1 portato da `—` ad `A (2)` |
+| **C6** | la spec intatta dopo la chiusura di §7.1.1: **trentaquattro** righe di catalogo, comprese le **quattro 1b** e le **cinque del blocco B** | ✅ verde — idem |
+
+> ⚠️ **C6 diceva «trentatré righe e tre 1b», ed è stato ricontato invece che ricopiato.** Oggi
+> sono **trentaquattro**, con **quattro** righe di ramo 1b: la §7.4.2 ha guadagnato la riga
+> degli attributi — gotcha #36 — dopo la campagna della sesta asserzione. I blocchi sono
+> `A 3 · B 5 · C 14 · §7.4.2 12`. ⛔ Il conteggio **non è a guardia dello script**, e non deve
+> diventarlo: §8.6.2 dice perché. È il ritratto di cosa C6 stava attraversando.
 
 ⛔ **S7c è la sonda decisiva, ed è l'unica che non si sarebbe scritta da sé.** Prova che la
 lettura **per intestazione** legge davvero la terza colonna e non la prima. Senza di lei

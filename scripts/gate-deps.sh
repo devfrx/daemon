@@ -35,6 +35,12 @@ syn
 unicode-ident
 virtue"
 
+# ⛔ LA CLASSE DI CARATTERI DEL grep E' UN VINCOLO MISURATO, NON UNA FORMATTAZIONE.
+# Con `[a-z0-9_-]` -- come era scritta -- una crate col nome MAIUSCOLO veniva scartata dal
+# filtro, quindi non compariva fra gli intrusi e il cancello usciva VERDE. Misurato con
+# `Inflector`, che e' una crate reale: nel grafo spedito del kernel, uscita 0. E' un falso
+# negativo su I3, cioe' il modo di fallire peggiore per questo controllo. Sonda N5.
+# Chi la "semplifica" riapre il punto cieco, e il cancello torna verde senza dirlo.
 nomi() { sed 's/^[^a-zA-Z0-9_-]*//' | awk '{print $1}' | grep -E '^[A-Za-z0-9_-]+$' | sort -u; }
 
 for crate in kernel simulator; do

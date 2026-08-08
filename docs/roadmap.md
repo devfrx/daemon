@@ -37,8 +37,9 @@ Ultimo aggiornamento: **2026-08-07**.
 > | **F4** — la collocazione dell'anello 3, che scritta si è spaccata in **C + B** | §0.4.3 |
 >
 > ✅ **La §8 è chiusa** (2026-08-08), toccata una volta sola come previsto, e la spec è
-> passata per un **audit sezione-contro-ADR** — quaranta rilievi, tutti chiusi tranne uno
-> lasciato aperto di proposito (§7.1.1). ✅ **Il piano del Traguardo 1 è scritto.**
+> passata per un **audit sezione-contro-ADR** — quaranta rilievi, **tutti chiusi**: l'ultimo
+> era la regola 1 del catalogo (§7.1.1), lasciata aperta perché era una decisione e chiusa
+> lo stesso giorno. ✅ **Il piano del Traguardo 1 è scritto**, e la spec non ha voci aperte.
 >
 > ⏭️ **Prossimo passo: eseguire il piano, subagent-driven.** Otto compiti, e il primo
 > traguardo è lo **scheletro con la porta di qualità**, zero logica di prodotto.

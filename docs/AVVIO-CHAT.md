@@ -36,7 +36,7 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack,
-     il non rilitigabile, i trentasei gotcha, le trappole di check-docs.sh,
+     il non rilitigabile, i trentasette gotcha, le trappole di check-docs.sh,
      i vincoli sul primo commit di codice, lo stato di oggi e il prossimo passo.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella

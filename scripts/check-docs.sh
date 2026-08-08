@@ -56,39 +56,77 @@ mancanti=$(comm -23 \
 
 spec_sp1=docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
 
-echo "== catalogo §7.4: ogni controllo ha la contro-sonda (§7.1.1 regola 3) =="
-# La §7.1.1 impone che ogni voce del catalogo porti DUE sonde: quella che deve
-# scattare e quella che deve restare verde. Era l'unico punto della §7 non
-# verificabile a sua volta (§7.7.1), cioe un'intenzione.
-# Il controllo e sulla FORMA: verifica che la casella sia piena, non che la
-# contro-sonda esista davvero (§8.6.4). Chi scrive «n/a» passa.
-# Guardia di non-vacuita: se un delimitatore non c'e, o l'intervallo e vuoto,
-# e un FALLIMENTO. Uno script che non trova niente da controllare uscirebbe
-# verde -- gotcha #14 applicato allo script stesso.
+echo "== catalogo §7.4: ogni controllo difende qualcosa (regola 1) e ha la contro-sonda (regola 3) =="
+# DUE asserzioni sulla stessa tabella, in una passata sola: i delimitatori si
+# scrivono UNA volta, o diventano due posti da tenere allineati e il primo che
+# smette mente in silenzio.
+#
+# REGOLA 3 -- ogni voce porta DUE sonde: quella che deve scattare e quella che
+# deve restare verde. Era l'unico punto della §7 non verificabile a sua volta
+# (§7.7.1), cioe un'intenzione.
+# REGOLA 1 -- la casella «Difende» nomina un V, una I o un Q (ramo 1a), oppure
+# una voce del catalogo di cui la riga sostiene la validita (ramo 1b, deciso il
+# 2026-08-08 chiudendo la §7.1.1). Senza, e un'abitudine e non un controllo: e
+# la stessa regola con cui la §7.4.3 caccia clippy fuori dalla porta.
+#
+# La colonna «Difende» NON e sempre la prima: nel blocco B dei gettoni e la
+# terza. Si legge dall'INTESTAZIONE invece che per posizione -- la lettura
+# posizionale e la trappola 3 di questo script, e qui non c'era motivo di
+# ereditarla.
+# Nel confronto non entra il carattere «§»: e multibyte, e il byte-matching
+# dipende dal locale. Stessa ragione per cui gli stati della §8 si riconoscono
+# da una parola invece che da un'emoji.
+# Entrambe sono controlli sulla FORMA: provano che la casella sia piena e che
+# NOMINI qualcosa della forma giusta, non che la contro-sonda esista davvero ne
+# che l'attribuzione sia vera (§8.6.4). Chi scrive «§7.4.1» accanto a un lint
+# passa.
+# Guardia di non-vacuita: delimitatore mancante, intervallo vuoto o nessuna
+# casella «Difende» letta sono un FALLIMENTO. Uno script che non trova niente
+# da controllare uscirebbe verde -- gotcha #26.
 vuote=$(
   awk '
+    function pulisci(s) {
+      sub(/^[[:space:]]+/, "", s); sub(/[[:space:]]+$/, "", s); return s
+    }
     /^#### 7\.4\.1/ { apre=1; dentro=1; next }
     /^#### 7\.4\.3/ { chiude=1; dentro=0; next }
-    dentro && !/^\|/ { attese=0; next }
+    dentro && !/^\|/ { attese=0; idx=0; next }
     dentro && /^\|/ {
       riga=$0
       gsub(/\\\|/, "", riga)                 # le pipe protette non separano celle
       n=gsub(/\|/, "|", riga) - 1            # celle = separatori - 1
-      if (riga ~ /^\|[-:|[:space:]]+\|$/) { attese=n; next }   # riga separatrice
-      if (attese == 0) next                                    # intestazione
+      if (riga ~ /^\|[-:|[:space:]]+\|$/) {                    # riga separatrice
+        attese=n
+        if (idx == 0) printf "riga %d: tabella del catalogo senza colonna Difende\n", NR
+        next
+      }
+      if (attese == 0) {                                       # intestazione
+        idx=0
+        m=split(riga, h, "|")
+        for (i=2; i<m; i++) if (h[i] ~ /Difende/) idx=i-1
+        next
+      }
       righe++
       prima=riga
       sub(/^[[:space:]]*\|[[:space:]]*/, "", prima); sub(/[[:space:]]*\|.*$/, "", prima)
       ultima=riga
       sub(/\|[[:space:]]*$/, "", ultima); sub(/^.*\|/, "", ultima)
-      sub(/^[[:space:]]+/, "", ultima); sub(/[[:space:]]+$/, "", ultima)
+      ultima=pulisci(ultima)
       if (n < attese)       printf "riga %d (%s): manca la colonna contro-sonda\n", NR, prima
       else if (ultima == "") printf "riga %d (%s): contro-sonda vuota\n", NR, prima
+      if (idx > 0) {
+        split(riga, c, "|")
+        dif=pulisci(c[idx+1])
+        difese++
+        if (dif !~ /(^|[^A-Za-z])[IVQ][0-9]/ && dif !~ /7\.4\./)
+          printf "riga %d: «Difende» = «%s» non nomina un V, una I o un Q, ne una voce del catalogo (regola 1)\n", NR, dif
+      }
     }
     END {
-      if (!apre)    print "delimitatore «#### 7.4.1» non trovato"
-      if (!chiude)  print "delimitatore «#### 7.4.3» non trovato"
-      if (righe==0) print "nessuna riga di catalogo nell'\''intervallo: il controllo sarebbe vacuo"
+      if (!apre)     print "delimitatore «#### 7.4.1» non trovato"
+      if (!chiude)   print "delimitatore «#### 7.4.3» non trovato"
+      if (righe==0)  print "nessuna riga di catalogo nell'\''intervallo: il controllo sarebbe vacuo"
+      if (difese==0) print "nessuna casella Difende letta: la regola 1 non controllerebbe niente"
     }
   ' "$spec_sp1"
 )

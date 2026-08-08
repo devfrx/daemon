@@ -65,6 +65,12 @@ il costo di introdurla dopo è una riscrittura.
 > e ciò che non affermava è ora coperto. Il modo di fallire chiuso da ADR-0034 è che un
 > parametro non consegnato diventa una **costante**, invisibile a ogni controllo, che
 > impedisce alla campagna di esplorare la propria configurazione.
+>
+> ✅ **E il secondo asse è entrato nel testo di `V29` il 2026-08-08**, chiudendo la §7.1.1
+> della spec del sotto-progetto 1. Fino a quel giorno il vincolo ne nominava quattro, quindi
+> il controllo di livello 1 che impedisce di costruire una decisione senza i propri parametri
+> **non aveva un vincolo da nominare** — ed era una delle otto righe del catalogo che la
+> regola d'ammissione avrebbe fatto togliere.
 
 ## Consequences
 

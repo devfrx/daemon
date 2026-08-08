@@ -552,9 +552,27 @@ vincolante prima che venga erosa per comodità.
 | # | Vincolo | Colpisce |
 |---|---|---|
 | V28 | Nessun modello nel percorso decisionale del kernel; verificabile staticamente | tutto il kernel |
-| V29 | Tempo, casualità, I/O e scheduling sono iniettabili — requisito di costruzione | tutto il kernel, ADR sul linguaggio |
+| V29 | Tempo, casualità, I/O, scheduling **e i parametri di decisione** sono iniettabili — requisito di costruzione | tutto il kernel, ADR sul linguaggio |
 | V30 | Ogni requisito Q ha un metodo di verifica dichiarato **prima** dell'implementazione | ogni sezione |
 | V31 | Ogni difetto trovato in simulazione conserva il proprio seed come caso di regressione | §5, anello 4 |
+
+> ✅ **`V29` si allarga ai parametri di decisione — richiamo del 2026-08-08.** Non è una
+> decisione nuova: [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md) ha deciso
+> il **2026-08-07** che nessuna decisione del kernel legge un parametro che non le è stato
+> consegnato, ed è il **secondo asse della stessa proprietà** — la terza delle non
+> retrofittabili. Era il testo di `V29` a essere rimasto indietro, esattamente come la regola 1
+> della §7.1.1 del sotto-progetto 1 nominava «V o I» quando il catalogo difendeva anche dei Q.
+>
+> ⚠️ **Perché conta, e non è pedanteria:** un parametro non consegnato è una **costante**, e
+> una costante è deterministica — quindi non fa fallire il criterio `C1` della campagna. Non
+> rompe la riproducibilità: toglie alla campagna la possibilità di **variarlo**, ed è il
+> gotcha #28. Senza questa mezza riga, il controllo di livello 1 che lo impedisce non aveva un
+> vincolo da nominare.
+>
+> 🔍 **Cercato prima di scrivere, gotcha #32.** L'audit del 2026-08-08 (§8.5.5 del
+> sotto-progetto 1) ha riletto `V29` e l'ha lasciato com'era — ma la domanda era *«la colonna
+> di §8.3 è una copia fedele di questa riga?»*, e la risposta era sì. **Nessuno aveva mai
+> chiesto se questa riga fosse abbastanza larga.** Mai valutato, mai scartato.
 
 ### 8.5 Il costo che questa sezione introduce
 

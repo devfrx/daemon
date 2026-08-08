@@ -183,3 +183,27 @@ una riprogettazione, e dirlo evita di gonfiarla per giustificare il lavoro.
     l'innesco A resta valido **per quella metà**.
   - Se un giorno un parametro dovesse essere modificabile a caldo, il meccanismo è già
     scelto — un passo giornalato — e non va inventato allora.
+
+## ✅ Rimando — il secondo asse è entrato nel testo di `V29` (2026-08-08)
+
+Questa decisione era **presa** ma non **nominata dal vincolo che la porta di qualità legge**.
+`V29` elencava quattro assi — tempo, casualità, I/O, scheduling — e i parametri di decisione
+non erano fra questi, benché il compendio dichiarasse già i due assi come **una sola**
+proprietà non retrofittabile.
+
+La conseguenza si è vista chiudendo la **§7.1.1** del sotto-progetto 1: il controllo di
+livello 1 che rende non compilabile *«costruire una decisione senza i parametri consegnati»*
+era una delle **otto** righe del catalogo la cui colonna «Difende» non nominava un `V`,
+un'`I` o un `Q` — e sotto la lettera della regola d'ammissione andava **tolto**. Un controllo
+giusto stava per cadere perché il vincolo che difendeva era rimasto indietro rispetto a
+questo ADR.
+
+| | |
+|---|---|
+| **cosa è cambiato** | il testo di `V29` nella spec del kernel §8.4 nomina ora anche **i parametri di decisione**; la copia in §8.3 del sotto-progetto 1 è stata riallineata alla fonte |
+| **cosa NON è cambiato** | lo **stato** di `V29` resta ✅: il quinto asse è difeso da un controllo di livello 1 già in perimetro. Nessun conteggio della §8 si muove |
+| **questo ADR non è superato** | è **completato**: la decisione era corretta e resta quella. A cambiare è il vincolo che la rende verificabile |
+
+⚠️ Vale ancora, e senza sconti, il limite già dichiarato qui sopra: il compilatore prova che
+una decisione **riceva** i propri parametri, non che non ne abbia altri scritti dentro come
+costanti.

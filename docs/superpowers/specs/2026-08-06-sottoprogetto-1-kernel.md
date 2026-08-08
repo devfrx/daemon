@@ -2244,12 +2244,27 @@ separa è una sola:
 
 | # | Regola | Se manca |
 |---|---|---|
-| 1 | difende un **V**, un'**I** o un **Q** nominato | è un'abitudine, non un controllo: va tolta |
+| 1 | difende **qualcosa di nominato** — due rami, qui sotto | è un'abitudine, non un controllo: va tolta |
 | 2 | **si è visto scattare** su una violazione deliberata | gotcha #14 — un controllo mai visto fallire non è un controllo |
 | 3 | **si è visto restare verde** dove la cosa è lecita | gotcha #24 — un controllo che scatta dove non deve insegna a ignorare l'audit |
 
 La terza è quella che si dimentica. È la ragione per cui in M-3 la sonda decisiva è stata
 **N4** e non N1.
+
+**I due rami della regola 1.** A separarli non è *cosa* proteggono, ma **di chi è il
+verdetto che sostengono**.
+
+| Ramo | Una voce entra se… | Se la cancelli |
+|---|---|---|
+| **1a** | difende un **`V`**, un'**`I`** o un **`Q`** nominato | quella proprietà smette di essere protetta |
+| **1b** | sostiene la **validità del verdetto** di voci nominate del catalogo | quelle voci **restano scritte, e smettono di essere vere** |
+
+⛔ **Il ramo 1b non è «allargare la regola», ed è la distinzione su cui la chiusura poggia.**
+Allargarla a *«una proprietà decisa in una sezione nominata»* l'avrebbe resa incapace di
+rifiutare, e una regola che non rifiuta mai è decorazione (§8.5.3.1). Il ramo 1b pretende
+invece che la casella **nomini le voci del catalogo** di cui sostiene la validità, e questo
+rifiuta: cancella `clippy` e non c'è **una sola** riga del catalogo che diventi falsa. La
+§7.4.3 regge parola per parola.
 
 > ⚠️ **La regola 1 nominava «V o I», e il catalogo difende anche dei Q — allineata il
 > 2026-08-08.** Non è un allargamento: le righe `Q9`, `Q13` e `Q14` erano già lì, e la §8.1.2
@@ -2265,6 +2280,40 @@ La terza è quella che si dimentica. È la ragione per cui in M-3 la sonda decis
 > sezione nominata» — che però la renderebbe incapace di rifiutare, e una regola che non
 > rifiuta mai è decorazione (§8.5.3.1) — o **dichiarare** una classe di eccezione con il suo
 > motivo. Trovato il **2026-08-08**; aperto.
+
+> ✅ **Chiusa il 2026-08-08. Il testo sopra resta perché era vero quando è stato scritto**,
+> e perché è il verbale di ciò che è stato trovato. Va letto con questo richiamo.
+>
+> **Le otto righe non erano un problema solo: erano tre.** Guardandole con la domanda del
+> ramo 1b — *«se cancello questo controllo, quale altra riga smette di essere vera?»* — si
+> separano da sole:
+>
+> | Righe | Esito | |
+> |---|---|---|
+> | `§5.2.1` `§2.1` `§5.1` `§5.3` | **1a**, ri-attribuite | `Q8` · `V29` · `Q2` · `I2` |
+> | `§2.8 · ADR-0034` | **1a**, ri-attribuita | `V29`, il cui testo si allarga — vedi sotto |
+> | `ADR-0026 v.2` `supply chain` `§3.7` | **1b** | non difendono una proprietà del sistema: difendono **il verdetto di altri controlli** |
+>
+> ⚠️ **Perché `Q8` è la prova che il difetto era di contabilità e non di merito:** la §8.4
+> scriveva già *«§5.2.1 rende `cold_start` irraggiungibile dal percorso decisionale, con
+> test di compilazione fallita (§7.4.1 C)»*. L'attribuzione **esisteva**, scritta da un lato
+> solo. È il gotcha #36 nella sua forma pura — l'**asimmetria** — e per questo la §8 non
+> cambia stato: nessuna cella di §8.3 o §8.4 aveva sbagliato giudizio.
+>
+> ⛔ **La riga `ADR-0026 v.2` è quella che ha imposto il ramo 1b.** `forbid(unsafe_code)`
+> non impedisce niente di suo: impedisce che un `unsafe` falsifichi un gettone, transmuti un
+> newtype o raggiunga l'OS con un `extern` dichiarato a mano. Toglilo e **nessuna** riga del
+> catalogo diventa rossa — diventano tutte **meno vere**. Costringerlo a nominare un `V`
+> sarebbe stato più semplice e falso. Stessa natura per il grafo **di build** — se una
+> dipendenza di compilazione è compromessa, «non compila» non significa niente, e il kernel
+> ora porta `syn` a tempo di compilazione — e per i **test di contratto**, senza i quali ogni
+> `Q` della campagna è provata contro una finta.
+>
+> ✅ **E la regola 1 non è più un'intenzione**, che era il difetto dichiarato in §7.7.1 per
+> la regola 3: `check-docs.sh` ha una **sesta asserzione** che la verifica (§8.6.1).
+> **Provata in due direzioni sullo stesso giro, con un caso storico invece che costruito:**
+> alla prima corsa, sulle trentatré righe del catalogo, ha nominato **le otto e solo le
+> otto** — 8 rosse, 25 verdi — e dopo la correzione è verde su tutte e trentatré.
 
 #### 7.1.2 La scala di forza, e ogni controllo dichiara la propria
 
@@ -2536,6 +2585,15 @@ Ogni voce porta **due** sonde, per la regola 3 del criterio di ammissione: quell
 **deve scattare** e quella che **deve restare verde**. Una voce con una sola sonda è
 dichiarata incompleta, non tenuta per buona.
 
+⚠️ **La colonna «Difende» ha due specie, e vanno distinte a occhio.** La maggior parte delle
+righe nomina un `V`, un'`I` o un `Q`: sono il **ramo 1a** della §7.1.1. Tre righe portano
+invece il prefisso **`1b`** e nominano un pezzo del catalogo: sostengono la **validità del
+verdetto** di altre righe, non una proprietà del sistema. Cancellarne una non rende rossa
+nessuna riga — le rende **meno vere**, ed è per questo che il ramo esiste. ⛔ La colonna
+**non è sempre la prima**: nel blocco B dei gettoni è la terza, e chi scrive un controllo su
+questa tabella la cerca per **intestazione**, mai per posizione (trappola 3 di
+`check-docs.sh`).
+
 Costruendo il catalogo **tre voci si sono ridotte invece di crescere**, e una si è
 scaglionata. Sono in §7.4.4 e §7.4.5: sono l'esito più utile di questa sezione, perché una
 porta di qualità che cresce a ogni revisione smette di essere letta.
@@ -2547,7 +2605,7 @@ porta di qualità che cresce a ogni revisione smette di essere letta.
 | Difende | Meccanismo | Sonda — *deve scattare* | Contro-sonda — *deve restare verde* |
 |---|---|---|---|
 | I3 · V28 · V29 | `#![no_std]` su `kernel` e `simulator` | `std::fs` nel kernel → `E0433` | `platform` nomina `std::fs` e **compila** |
-| ADR-0026 v.2 | `#![forbid(unsafe_code)]` sulle stesse | `unsafe {}` → errore · un `#[allow]` locale → `E0453` | ⚠️ `platform` usa `unsafe` per la FFI e **compila** |
+| **1b** · validità di §7.4.1 A · B · C | `#![forbid(unsafe_code)]` sulle stesse | `unsafe {}` → errore · un `#[allow]` locale → `E0453` | ⚠️ `platform` usa `unsafe` per la FFI e **compila** |
 | V29 · gotcha #12 | `HashMap` non nominabile — conseguenza gratuita di `no_std` | `use std::collections::HashMap` → `E0433` | `BTreeMap` compila |
 
 ⚠️ **La contro-sonda sul `forbid` non è teorica.** Cargo permette di dichiarare i divieti a
@@ -2570,15 +2628,15 @@ quella «semplificazione» prima che qualcuno la applichi.
 | Difende | Cosa **non** deve compilare | Contro-sonda |
 |---|---|---|
 | **Q9** · I6 · V20 | `Untrusted` assegnato a `Instruction` | la promozione dichiarata compila |
-| §5.1 | MiB assegnati a millisecondi | ciascuno con sé stesso |
-| §2.1 | tempo monotonic assegnato a wall time | idem |
-| §5.3 | `InRevoca` per un profilo non prelazionabile | costruibile per uno prelazionabile |
-| §5.2.1 | l'ammissione legge `cold_start` | la proiezione di presentazione lo legge |
+| **Q2** · §5.1 | MiB assegnati a millisecondi | ciascuno con sé stesso |
+| **V29** · §2.1 | tempo monotonic assegnato a wall time | idem |
+| **I2** · §5.3 | `InRevoca` per un profilo non prelazionabile | costruibile per uno prelazionabile |
+| **Q8** · §5.2.1 | l'ammissione legge `cold_start` | la proiezione di presentazione lo legge |
 | **V5** | un effetto **senza classe dichiarata** — §7.4.4 | un effetto con la classe compila |
 | **V2** | un'ammissione **senza profilo di risorsa** — §5.2.1 dice *«il profilo che l'arbitro riceve»* | con il profilo dichiarato compila |
 | **V4** | trattare l'esito dell'arbitro come **due vie** invece di tre — §5.3 punto 1 | distinguere `Concessa`, `Rifiutata` e `InCoda` compila |
 | **V10** | un sensore che **modifica** l'artefatto — §6.4.2 lo consegna per riferimento immutabile | osservarlo e restituire un verdetto compila |
-| **§2.8** · ADR-0034 | costruire una decisione **senza i parametri consegnati** — §2.8.2 | riceverli alla costruzione compila |
+| **V29** · §2.8 · ADR-0034 | costruire una decisione **senza i parametri consegnati** — §2.8.2 | riceverli alla costruzione compila |
 | **V3** | una **seconda policy attiva**: il valore consegnato ne porta una sola | con una policy sola compila, e la transizione resta un passo giornalato (§5.4) |
 | **Q14** · §4.9 | un **record durevole senza versione**: il tipo è un enum di versione — §4.9.2 regola 1 | il record che dichiara la propria versione compila |
 | **I2** · §6.10 | **istruire un worker dopo `uccidi`**: l'uccisione **consuma** il `Worker` — §6.10.2 | istruirlo prima dell'uccisione compila |
@@ -2622,12 +2680,12 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 | Difende | Meccanismo | Sonda | Contro-sonda |
 |---|---|---|---|
 | I3 · **V28** | allow-list, grafo **spedito** (§7.3.1) | N1 · N2 · N3 | **N4** |
-| supply chain | allow-list, grafo **di build** (§7.3.1) | voce nuova non in lista | voce in lista resta verde |
+| **1b** · validità di §7.4.1 | allow-list, grafo **di build** (§7.3.1) | voce nuova non in lista | voce in lista resta verde |
 | I3 | cancello senza OS su `x86_64-unknown-none` (§7.3.2) | **B2** | **B3** |
 | V34 · Q24 | solo `secrets` raggiunge il portachiavi | il portachiavi nel grafo di `platform` → scatta | `secrets` resta verde |
 | V25 · Q20 | un solo punto di uscita verso la rete | chiamata di rete in `daemon` → scatta | ⚠️ **non esiste ancora** — vedi sotto |
 | Q2 · Q3 · Q4 · Q5 · Q18 · Q22 · I1 · I2 · I5 · V1 · V6 | **la campagna DST** (§3.5) | si rompe l'ammissione: la campagna fallisce e **nomina il seme** (§5.7.1) | senza guasto iniettato, **nessun passo in dubbio** — misurato, C7a di M-2 |
-| §3.7 | **test di contratto** — §7.4.6 | il doppio diverge dall'implementazione reale → scatta | i due concordi → verde |
+| **1b** · validità di §7.4.2, riga della campagna DST | **test di contratto** — §7.4.6 | il doppio diverge dall'implementazione reale → scatta | i due concordi → verde |
 | V30 | `check-docs.sh` | un Q senza metodo di verifica → scatta | già in esercizio |
 | **Q14** · §4.9 | **byte congelati** del record durevole, con la mappa `indice → nome del campo → valore atteso` (§4.9.4) | si **riusa** un indice o si rinumera → fallisce e **nomina il campo** | si aggiunge un campo facoltativo con un indice nuovo → resta verde |
 | V31 | il **seme** entra nell'elenco versionato, la **proprietà** entra nella suite | si reintroduce il difetto che quella proprietà proteggeva → la campagna fallisce e **nomina il seme** | il difetto corretto → la campagna resta verde, e l'elenco dei semi non produce falsi rossi |
@@ -3153,7 +3211,7 @@ disallineano (§7.4.4, caso 2).
 | V26 | la ritenzione pota i payload grezzi, mai i record strutturati | ✅ verificato qui | `prune` è un'operazione della porta `journal` (§4.1) · test a esempi sulle due regole non negoziabili di ADR-0018: un record potato **dichiara** di esserlo, e un passo in dubbio non è potabile (§4.5) | — |
 | V27 | nessuna azione fallisce per una condizione già nota e non dichiarata | ⚠️ parziale | lo stato di degrado è un oggetto derivato in perimetro (§6.7) e Q18 lo verifica in DST; **che l'interfaccia lo dichiari prima** no | A (2) |
 | V28 | nessun modello nel percorso decisionale del kernel; **verificabile staticamente** | ✅ verificato qui | §7.4.2, riga I3 · V28 — corollario dell'allow-list: un percorso verso un adattatore comparirebbe nel grafo transitivo (§7.4.4 punto 2). Livello 2, sonde N1–N3 e contro-sonda N4. ⚠️ ADR-0031 dichiara il proprio limite: *«limita la superficie, non la certifica»* | — |
-| V29 | tempo, casualità, I/O e scheduling iniettabili | ✅ verificato qui | `no_std` e il divieto gratuito di `HashMap`, livello 1 · allow-list e cancello senza OS, livello 2 · la campagna DST stessa, il cui criterio C1 fallisce a ogni sorgente nascosta di non determinismo (§3.7). ⚠️ `HashMap` fuori dal kernel è **deliberatamente non controllato**: §7.4.4 punto 1 | — |
+| V29 | tempo, casualità, I/O, scheduling **e i parametri di decisione** iniettabili | ✅ verificato qui | `no_std` e il divieto gratuito di `HashMap`, livello 1 · allow-list e cancello senza OS, livello 2 · §7.4.1 C, righe `V29 · §2.1` e `V29 · §2.8` — scambiare monotonic e wall time non compila, e nemmeno costruire una decisione senza i parametri consegnati · la campagna DST stessa, il cui criterio C1 fallisce a ogni sorgente nascosta di non determinismo (§3.7). ⚠️ `HashMap` fuori dal kernel è **deliberatamente non controllato**: §7.4.4 punto 1. ⚠️ **Formulazione allargata il 2026-08-08 chiudendo la §7.1.1**, e confrontata con la fonte come impone §8.5.5: il testo nominava quattro assi, ADR-0034 ne aveva aggiunto un quinto il 2026-08-07. **Lo stato non cambia** — il quinto asse è difeso da un controllo di livello 1 già in perimetro | — |
 | V30 | ogni requisito Q ha un metodo di verifica dichiarato **prima** dell'implementazione | ✅ verificato qui | `check-docs.sh`, livello 2, già in esercizio (§7.4.2) | — |
 | V31 | ogni difetto trovato in simulazione conserva il proprio seme **come caso di regressione** | ✅ verificato qui | il seme entra nell'elenco versionato, la **proprietà** entra nella suite (§7.4.2). ⚠️ debole per natura: l'automatismo protegge la proprietà, non il seme (§3.4). Nessun innesco la rafforza — è un limite, non un pezzo mancante | — |
 | V32 | il backup contiene solo l'irriproducibile | ⏳ rimandato | il backup si scaglia per regola C (§0.4.1). ⚠️ verificarlo prima che esistano indici e pesi sarebbe **vacuo**: l'elenco delle esclusioni sarebbe vuoto | F — esistono backup e ripristino (11) |
@@ -3463,7 +3521,7 @@ Le due estensioni non introducono un meccanismo nuovo: applicano quello che c'è
 tabelle che finora nessuno leggeva. È il motivo per cui costano poche righe, ed è anche il
 motivo per cui non c'era una ragione per non farle.
 
-#### 8.6.1 Le cinque asserzioni
+#### 8.6.1 Le sei asserzioni
 
 | # | Asserzione | Chiude |
 |---|---|---|
@@ -3472,6 +3530,21 @@ motivo per cui non c'era una ragione per non farle.
 | 3 | lo **stato** appartiene all'insieme chiuso dei quattro | §8.1 |
 | 4 | `parziale` e `rimandato` portano un **innesco** non vuoto | §8.1.1 |
 | 5 | la riga ha **cinque colonne** — meno di cinque e le asserzioni 3 e 4 non hanno dove leggere | §8.3 · §8.4 |
+| 6 | ogni riga dei controlli §7.4 ha la casella **«Difende»** che nomina un `V`, un'`I`, un `Q` **o** una voce del catalogo | §7.1.1 regola 1 |
+
+> ✅ **La sesta è aggiunta il 2026-08-08, allo script e a questo elenco**, chiudendo la §7.1.1.
+> Fa per la **regola 1** ciò che la prima fa per la regola 3: la toglie dalle intenzioni. Tre
+> cose vanno dette, perché nessuna è ovvia.
+>
+> | | |
+> |---|---|
+> | **gira nella stessa passata della prima** | i delimitatori del catalogo si scrivono **una volta**. Due copie sarebbero due posti da tenere allineati, e il primo che smette mente in silenzio — è l'argomento di §7.4.4 punto 2 applicato allo script |
+> | ⛔ **legge la colonna per intestazione, non per posizione** | «Difende» è la **prima** colonna nei blocchi A e C e in §7.4.2, ma la **terza** nel blocco B dei gettoni. Un controllo posizionale avrebbe giudicato la colonna sbagliata su cinque righe. È la trappola 3 di questo script, e qui non c'era ragione di ereditarla |
+> | **nel confronto non entra il carattere `§`** | è multibyte, e il byte-matching dipende dal locale: stessa ragione per cui l'asserzione 3 riconosce gli stati da una **parola** e non da un'emoji. Il ramo 1b si riconosce da `7.4.` |
+>
+> ⚠️ **Vale anche per lei il limite dell'asserzione 1, ed è lo stesso di §8.6.4:** prova che
+> la casella **nomini** qualcosa della forma giusta, non che l'attribuzione sia **vera**. Chi
+> scrive `§7.4.1` accanto a un lint passa.
 
 > ⚠️ **La quinta è stata aggiunta all'elenco il 2026-08-08, non allo script.** Lo script la
 > esegue da sempre — `if (n < 7) { printf "%s: la riga non ha le cinque colonne" }` — ma
@@ -3484,7 +3557,7 @@ La 2 è insieme completezza e non-duplicazione: una voce mancante e una voce scr
 volte con stati diversi sono lo stesso difetto — *la tabella non giudica* — e producono lo
 stesso rosso.
 
-#### 8.6.2 Il problema vero, che non è nessuna delle quattro
+#### 8.6.2 Il problema vero, che non è nessuna di quelle
 
 Come fa lo script a sapere **dove finisce** il catalogo e **dove comincia** la §8? Delimita
 per intestazione di sezione. E se un giorno qualcuno rinumera, l'intervallo non trova più
@@ -3541,10 +3614,33 @@ messaggio nomini il colpevole. La seconda è ciò che ha smascherato una sonda v
 | **S6b** | si rinomina `#### 7.4.3` | `delimitatore «#### 7.4.3» non trovato` |
 | **S6c** | si rinomina `## 8.` | `delimitatore «## 8.» non trovato` |
 
+**Le quattro della sesta asserzione, eseguite il 2026-08-08** con lo stesso metodo, e con una
+guardia in più presa da §8.6.3.1: la mutazione deve applicarsi **esattamente una volta**, o la
+sonda si ferma invece di produrre il rosso di un'altra.
+
+| # | Sonda — *deve scattare* | Messaggio osservato |
+|---|---|---|
+| **S7** | una casella «Difende» che non nomina niente di ammesso | `riga 2631: «Difende» = «§5.1» non nomina un V, una I o un Q, ne una voce del catalogo (regola 1)` |
+| **S7b** | la colonna «Difende» sparisce dall'intestazione | `riga 2629: tabella del catalogo senza colonna Difende` |
+| **S7c** | ⛔ casella invalida nel **blocco B**, dove «Difende» è la **terza** colonna | `riga 2620: «Difende» = «§6.3» non nomina un V, una I o un Q, ne una voce del catalogo (regola 1)` |
+| **S7d** | una riga **1b** perde il riferimento al catalogo | `riga 2683: «Difende» = «supply chain» non nomina un V, una I o un Q, ne una voce del catalogo (regola 1)` |
+
 | # | Contro-sonda — *deve restare verde* | Osservato |
 |---|---|---|
 | **C0** | la spec intatta — con la casella di V25 che **dichiara** l'assenza, e con tutte le righe ✅ che non hanno innesco | ✅ verde |
 | **C5** | `verificato qui` **con** un innesco: è lecito, non obbligatorio | ✅ verde |
+| **C6** | la spec intatta dopo la chiusura di §7.1.1: **trentatré** righe di catalogo, comprese le **tre 1b** e le **cinque del blocco B** | ✅ verde |
+
+⛔ **S7c è la sonda decisiva, ed è l'unica che non si sarebbe scritta da sé.** Prova che la
+lettura **per intestazione** legge davvero la terza colonna e non la prima. Senza di lei
+resterebbe il dubbio che il verde del blocco B venga dal caso: la contro-sonda C6 esclude che
+lo script legga la colonna 1, 4 o 5 — su ciascuna di quelle il blocco B sarebbe **tutto
+rosso** — ma solo S7c mostra che la colonna letta reagisce.
+
+📌 **E la sonda «deve scattare» della sesta asserzione ha un caso storico, non costruito:**
+alla sua **prima** corsa, prima di qualunque correzione, ha nominato **le otto righe e solo
+le otto** — 8 rosse su 33, 25 verdi. È la prova nelle due direzioni del gotcha #24 ottenuta
+da un giro solo, e sul difetto vero invece che su una mutazione.
 
 **S5 e S6 sono le due che di solito non si scrivono, e sono le più importanti.** S5
 impedisce che l'innesco diventi obbligatorio *ovunque*: un ✅ non ne ha bisogno, e un
@@ -3567,6 +3663,11 @@ guasto» da «è scattato per quello di prima». Riscritta ricostruendo la riga 
 invece di quattro, e verificata mostrando la riga **prima e dopo** la mutazione.
 
 Esito finale: **tredici sonde su tredici**, con il ripristino byte-identico.
+
+> ✅ **Ricontato il 2026-08-08, chiudendo la §7.1.1.** Con le quattro sonde e la contro-sonda
+> della sesta asserzione il totale è **diciotto su diciotto**, sempre con ripristino
+> byte-identico. «Tredici» resta scritto sopra perché è l'esito della campagna del
+> **2026-08-07**, che è ciò che quella riga racconta.
 
 #### 8.6.4 Cosa questa estensione non prova
 

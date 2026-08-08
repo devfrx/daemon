@@ -7,7 +7,9 @@ Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 > 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — **le sette voci
 > della riapertura sono tutte chiuse**, e la **§8 è chiusa**: le celle riallineate, il
 > ritratto dei conteggi **ricontato sulla tabella**, e un quarto disallineamento trovato e
-> chiuso (§8.5.4). Albero pulito, `check-docs.sh` verde. **Il prossimo passo è il piano di
+> chiuso (§8.5.4). Poi la spec è passata per un **audit sezione-contro-ADR**: quaranta
+> rilievi, tutti chiusi tranne **uno lasciato aperto di proposito** (§7.1.1, la regola 1 del
+> catalogo). Albero pulito, `check-docs.sh` verde. **Il prossimo passo è il piano di
 > implementazione.** Poi il codice, non prima.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
@@ -53,7 +55,7 @@ misura blocca il piano: l'unica aperta è **M5**, e richiede una GUI.
 >
 > ✅ **La §8 è chiusa il 2026-08-08**, toccata una volta sola come previsto: celle di `Q4`,
 > `Q5`, `Q14` e §8.2.2 riallineate senza che **nessuno stato cambi**, ritratto dei conteggi
-> **ricontato sulla tabella** (diciotto ✅ · dodici ⚠️ · sette ⏳ per i V, nove · otto · sette
+> **ricontato sulla tabella** (**diciotto ✅ · tredici ⚠️ · sei ⏳** per i V, nove · otto · sette
 > per i Q), e un **quarto disallineamento** trovato e chiuso — §8.5.4, il gotcha #36.
 >
 > ✅ **F1b è chiusa il 2026-08-08** con
@@ -214,18 +216,53 @@ senza sapere cosa era già stato deciso.
 | **F1b** | **Q4** — la §3.3 aggiunge **quattro** guasti del dialogo, tutti sulla porta `process`, e §7.4.6 acquista l'affermazione sul **filo** oltre a quella sul ciclo di vita. ⚠️ Lo **stato non cambia**: Q4 resta `parziale` con innesco **E (7)**, perché manca ancora il worker vero. Da **rileggere**, non da riscrivere | ⚠️ **riletta — ed era anche da scrivere.** Lo stato di `Q4` non cambia, come previsto. Ma la rilettura ha trovato che il **catalogo §7.4 non enumerava i cinque controlli della §6.10.5**: la cella non poteva nominarli senza violare §8.1.2. I cinque sono entrati, e il fatto è registrato in **§8.5.4** — gotcha **#36** |
 | **F4** | ✅ **nessuna riga nuova.** **V29** copre già le sorgenti di eventi, e lo dice la sua stessa riga di verifica — *«C1 fallisce a ogni sorgente nascosta»*: una sorgente **dichiarata su una porta** è dentro quella frase, una non dichiarata è ciò che C1 fa fallire. Lo stato di V29 **non cambia** | ✅ **stabilito** |
 
-✅ **Il ritratto è stato ricontato sulla tabella il 2026-08-08, non dedotto.** Confermati
-«18 ✅ · 12 ⚠️ · 7 ⏳» per i V e «9 · 8 · 7» per i Q — nessuno stato è cambiato in questo
-passaggio. ⚠️ **Ma la §8.8 diceva «tredici V sono `parziale`»**, ed era il numero di prima
-che `V16` fosse declassato in §8.5.3.1: nessuno lo aveva ricontato. Corretto a **dodici**,
-con il ritratto pieno scritto per esteso, così che la prossima volta il confronto sia con
-sei numeri e non con un aggettivo.
+✅ **Il ritratto è stato ricontato sulla tabella il 2026-08-08, non dedotto** — e **due
+volte**, perché fra il primo e il secondo riconteggio l'audit ha cambiato uno stato.
+
+| Momento | V | Q | Perché |
+|---|---|---|---|
+| prima | 13 ⚠️ dichiarati | 8 ⚠️ | numero scritto quando `V16` era ancora `parziale` |
+| **1° riconteggio** | 18 ✅ · **12** ⚠️ · 7 ⏳ | 9 · 8 · 7 | nessuno aveva ricontato dopo il declassamento di `V16` in §8.5.3.1 |
+| **2° riconteggio — vale questo** | 18 ✅ · **13** ⚠️ · 6 ⏳ | 9 · 8 · 7 | `V16` torna `parziale`: era stato giudicato su una **formulazione troncata**, §8.5.5 |
+
+⛔ **Stesso numero di partenza, tre tabelle diverse.** Non è un ripensamento: è la
+dimostrazione del perché la regola dice **ricontare sulla tabella** invece di fidarsi di ciò
+che c'è scritto — se al primo riconteggio ci si fosse fermati al «tredici» già presente,
+sarebbe stato giusto per il motivo sbagliato, e il secondo non sarebbe mai avvenuto.
 
 ⚠️ **E un secondo ritratto era stantio nella stessa famiglia:** la §7.4.7 contava i test di
 compilazione fallita come «una dozzina — tre nel blocco B e nove nel C», il ritratto di prima
 di ADR-0034, ADR-0036 e §6.10.5. Ricontato: **cinque** in B e **quattordici** in C. Due
 conteggi stantii trovati nello stesso passaggio non sono una coincidenza — è la ragione per
 cui la regola dice **ricontare**, non dedurre.
+
+### ✅ L'audit sezione-contro-ADR — 2026-08-08. Quaranta rilievi
+
+Dopo la chiusura della §8, la spec è stata passata al setaccio da **undici revisori in sola
+lettura**: uno per sezione §0–§8, più due sulle **formulazioni** di V1–V37 e Q1–Q24 contro le
+loro fonti. Ciascuno con l'obbligo di **citare entrambe le parti**, e con l'elenco dei falsi
+positivi noti — un revisore che scatta dove non deve è il gotcha #24.
+
+⛔ **Nessuna decisione è stata riaperta e nessun ADR superato.** Tre hanno ricevuto un
+**rimando** (0021, 0032, 0035); tutte le correzioni portano il proprio richiamo datato.
+
+| Cosa | Dove |
+|---|---|
+| ⛔ **`V16` ri-giudicato: torna a ⚠️ `parziale`** | la formulazione era troncata, e il declassamento aveva giudicato la metà rimasta — **§8.5.5**, gotcha #29 terza occorrenza |
+| **otto formulazioni di vincolo troncate** | `V5` `V16` `V25` `V28` `V30` `V31` `V34` `V36` — §8.3, tutte ripristinate dalla fonte |
+| ⛔ **due firme impossibili in §6.10.2** | `istruisci → Ricevuta` restituiva un tipo inesistente altrove: o l'enum vietato, o **nessun modo di ottenere un flusso**. Ora le istruzioni sono due |
+| **`daemon` non monta il simulatore** | tabella §1.2 contro il grafo accanto; ADR-0034 dà ragione al grafo. **È la riga che il piano traduce in `Cargo.toml`** |
+| **`network` stretto in §3.1** | F5 aveva allargato la gemella in §2.3 e non questa, nella tabella che si dichiara *«esattamente le porte della §2.3»* |
+| **§9 mancava dalla tabella §0.4** | **quarto** caso del terzo stato, dopo backup, configurazione e anello 3. Risposta diversa: la §9 non è impianto, è il piano degli spike — si **dichiara**, non si colloca |
+| **sei conteggi stantii** | §0.1 «tre ADR» → sette · §1.6 «due regole test» → tre · §2.8 «cinque ADR» → otto · §4.9.2 «cinque regole» → sei · §7.4.4 «due voci spedite» → tre · §7.7 «nove voci liv. 2» → undici |
+| **§7.7.1 descriveva un'intenzione già realizzata** | la contro-sonda **è** verificata dallo script da due corse; la sottosezione lo diceva al futuro |
+| **cadenza di `check-docs.sh` scritta in due modi** | la porta diceva «a ogni commit», lo script «a ogni chiusura». Allineata allo script, che è l'unico dei due eseguibile |
+| ⚠️ **una voce lasciata aperta, ed è una decisione** | **otto righe del catalogo** hanno «Difende» che non nomina un V, un'I o un Q — la stessa regola con cui la §7 caccia `clippy`. Tre uscite possibili, nessuna ovvia: **§7.1.1** |
+
+📌 **Un falso positivo respinto, e vale registrarlo:** un revisore segnalava che «grafo delle
+crate» in §7.1.2 fosse un meccanismo cancellato da §7.4.4 punto 2. **No**: quel punto toglie
+il *driver di V28*, mentre il grafo delle crate resta il meccanismo reale di V34 · Q24. La
+regola dei due lati citati ha retto — chi legge il rilievo può verificarlo in trenta secondi.
 
 ### Cosa ha chiuso F3, in tre righe
 
@@ -369,7 +406,7 @@ perde qualcuna.
 | **il livello ⛔ è vuoto**, come il livello 3 del catalogo | nessun V e nessun Q è lasciato deliberatamente senza controllo. Ciò che §7.6.2 non controlla sono **pezzi** di V, dichiarati dentro la riga |
 | **la porta non prova la correttezza, e la §8 non prova la verità** | prova che ogni V e ogni Q è stato **giudicato**. Lo script controlla che lo stato sia *espresso*, non che sia *giusto* |
 
-✅ **Quattro disallineamenti trovati dalla copertura, tutti chiusi** — §8.5. **Tre sezioni
+✅ **Cinque disallineamenti trovati dalla copertura, tutti chiusi** — §8.5. **Tre sezioni
 approvate sono state corrette**, ciascuna con il proprio richiamo datato: §0.4, §0.6 e il
 **catalogo §7.4** — la riga V31 in §7.4.2, che era l'unica priva di contro-sonda, le tre
 nuove in §7.4.1, e il 2026-08-08 le **cinque** della §6.10.5 più il ritratto ricontato in
@@ -411,7 +448,7 @@ propria tabella la prima volta che è stata applicata sul serio.
 
 | # | | Esito |
 |---|---|---|
-| 1 | **estendere `check-docs.sh`** | ✅ due blocchi nuovi, **quattro asserzioni**: contro-sonda piena nel catalogo §7.4 · completezza e non-duplicazione delle voci in §8 · stato dentro l'insieme chiuso · innesco obbligatorio per `parziale` e `rimandato`. Con una **guardia di non-vacuità** che è la parte importante — §8.6.2 |
+| 1 | **estendere `check-docs.sh`** | ✅ due blocchi nuovi, **cinque asserzioni**: contro-sonda piena nel catalogo §7.4 · completezza e non-duplicazione delle voci in §8 · stato dentro l'insieme chiuso · innesco obbligatorio per `parziale` e `rimandato` · la riga ha cinque colonne. Con una **guardia di non-vacuità** che è la parte importante — §8.6.2. ⚠️ La quinta è stata **aggiunta all'elenco** il 2026-08-08, non allo script: la eseguiva già, e §8.6.1 si presentava come inventario chiuso di quattro |
 | 2 | **registrare i rimandati con l'innesco** | ✅ due specie distinte, e ne ho cercata una terza senza trovarla: una **misura** e un **ADR** tarano, non abilitano. §8.2 |
 
 #### Il conteggio delle ventuno voci — ✅ chiuso, e il grep dà zero
@@ -460,7 +497,7 @@ Le aveva sollevate M-1 (§6.8.2) e M-3 le aveva rese concrete con dei numeri. De
 | 5 | Arbitro GPU, e la lacuna su I2 | ✅ | tre consumatori GPU nella GUI, quota di presentazione, I2 sui worker imposto dal **compilatore**. Più [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) |
 | 6 | Gateway, sensori, permessi, degrado | ✅ | schema IPC in `kernel` con **`bincode`**, **timbro di build** contro la GUI stantia, il **gettone non falsificabile** nominato una volta, «costo» del sensore separato in due |
 | **7** | **La porta di qualità: i controlli automatici** | ✅ | **scala di forza a tre livelli**, evidenze di M-3, le due decisioni sulle dipendenze, il **catalogo** con sonda e contro-sonda, la cadenza, il perimetro negativo. **Il livello 3 è vuoto** |
-| **8** | **Copertura V1–V37 e Q1–Q24** | ✅ | **quattro stati** con innesco obbligatorio, **due specie di innesco**, la regola che un Q della DST eredita lo stato della propria porta, l'estensione di `check-docs.sh` provata in due direzioni. **Il livello ⛔ è vuoto**. ⚠️ **Riallineata e chiusa il 2026-08-08** alle sette voci: quattro disallineamenti trovati in tutto, l'ultimo è §8.5.4 |
+| **8** | **Copertura V1–V37 e Q1–Q24** | ✅ | **quattro stati** con innesco obbligatorio, **due specie di innesco**, la regola che un Q della DST eredita lo stato della propria porta, l'estensione di `check-docs.sh` provata in due direzioni. **Il livello ⛔ è vuoto**. ⚠️ **Riallineata e chiusa il 2026-08-08** alle sette voci, poi passata per l'**audit sezione-contro-ADR**: **cinque** disallineamenti in tutto, l'ultimo è §8.5.5 — otto formulazioni di vincolo troncate, e su una (`V16`) era stato dato un giudizio |
 
 **§0–§8 approvate, e la riapertura è chiusa.** Le sezioni toccate portano ciascuna il proprio
 richiamo datato: §0.4.1, §0.4.2, **§0.4.3 (nuova)**, §0.5, §0.7, §1.2, §2.0, §2.3.1 (nuova),
@@ -664,7 +701,7 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 26 | **Un controllo che delimita il proprio bersaglio per intestazione si spegne quando qualcuno rinumera — e si spegne _verde_** | è il gotcha #14 in una forma che #14 non copre: quel controllo **è stato visto fallire**, quindi era un controllo vero. Poi qualcuno rinomina `#### 7.4.1`, l'intervallo non trova più righe, e uno script che non ha niente da controllare **esce con successo**. Il segnale è indistinguibile da «tutto a posto». Rimedio, applicato in §8.6.2: **se un delimitatore non si trova, o l'intervallo è vuoto, è un fallimento**. Sonde S6, S6b e S6c. ⚠️ E il rimedio sbagliato è mettere a guardia un **numero atteso** di righe: diventerebbe rosso il giorno in cui la tabella cresce per un motivo legittimo, cioè il gotcha #9 applicato allo script. Si verifica che i delimitatori esistano, non quante righe ci siano — a meno che l'elenco non sia canonico, come i V1–V37, dove la completezza *è* il controllo |
 | 27 | **La legenda di una tabella risponde a una domanda sola, e chi la legge ne assume un'altra** | `tracciabilita.md` risponde a *«dove vive questa funzionalità»*. Il suo `📋` significa «sotto-progetto assegnato» — **non** «non richiede un meccanismo di kernel». Nessuno l'aveva mai letta con la seconda domanda, e leggerla così ha **riaperto la spec su sette voci**, tre di classe B. È il gotcha #26 spostato dai controlli ai documenti: una tabella che non ha mai rifiutato niente non sta verificando niente. ⚠️ Il rimedio non è riscrivere la legenda: è **rileggere con un'altra domanda**, che è ciò che la §8 ha fatto sessantuno volte e questa volta ha fatto la tracciabilità |
 | 28 | **Un parametro non consegnato è una costante, e una costante è invisibile** | V29 rende sostituibile ciò che il mondo *risponde*. Non dice nulla sui **parametri con cui il kernel è configurato** — budget della GPU, quote sottratte, policy attiva, tetti di autonomia — e ciò che non viene consegnato finisce scritto dentro. Non compare in nessun elenco, non fa scattare nessuna voce del catalogo, e **si manifesta solo come uno scenario che la campagna non può esplorare**: con le quote fisse, RK-1 è irraggiungibile. Chiuso da ADR-0034. ⛔ E il limite resta dichiarato: il compilatore prova che una decisione *riceve* i propri parametri, **non** che non ne abbia altri di nascosto |
-| 29 | **La riga di _verifica_ di un'invariante è il punto in cui l'invariante si restringe in silenzio** | Le sei invarianti di ADR-0004 hanno due colonne: l'**enunciato** e **come si verifica**. La seconda è più corta, più concreta, e viene letta al posto della prima — ma è scritta guardando i casi che esistevano quel giorno. È già successo **due volte**: I2 diceva «nessun **worker** si avvia senza concessione», e copriva una classe di processo su tre (chiuso da ADR-0033); I4 dice «nessun **consumatore esterno**», che parla di esternalità e non di quanti dei nostri processi parlino il protocollo (chiuso da ADR-0035). In entrambi i casi l'enunciato era giusto e nessun controllo poteva accorgersene, perché **la riga di verifica _è_ il controllo**. ⚠️ Il rimedio non è riscrivere le invarianti: è che **completare una riga di verifica non è superarla** — ADR-0004 non è mai stato superato, ha ricevuto due rimandi. Chi trova il terzo caso lo aggiunga qui invece di aprire un dibattito sull'invariante |
+| 29 | **La riga di _verifica_ di un'invariante è il punto in cui l'invariante si restringe in silenzio** | Le sei invarianti di ADR-0004 hanno due colonne: l'**enunciato** e **come si verifica**. La seconda è più corta, più concreta, e viene letta al posto della prima — ma è scritta guardando i casi che esistevano quel giorno. È già successo **due volte**: I2 diceva «nessun **worker** si avvia senza concessione», e copriva una classe di processo su tre (chiuso da ADR-0033); I4 dice «nessun **consumatore esterno**», che parla di esternalità e non di quanti dei nostri processi parlino il protocollo (chiuso da ADR-0035). In entrambi i casi l'enunciato era giusto e nessun controllo poteva accorgersene, perché **la riga di verifica _è_ il controllo**. ⚠️ Il rimedio non è riscrivere le invarianti: è che **completare una riga di verifica non è superarla** — ADR-0004 non è mai stato superato, ha ricevuto due rimandi. Chi trova il terzo caso lo aggiunga qui invece di aprire un dibattito sull'invariante. 📌 **Terza occorrenza, 2026-08-08, e in una forma peggiore delle prime due.** Non una riga di verifica ma una **riformulazione**: la colonna «Vincolo» di §8.3 riassume in poche parole un vincolo che vive nella spec del kernel, e **otto** delle trentasette avevano perso un pezzo. Sette erano innocue; su `V16` la metà caduta era quella **positiva** — *«nomi di provider e parametri sì»* — e il giudizio era stato dato sulla metà rimasta, declassando a `rimandato` un vincolo che è `parziale`. ⛔ La differenza che rende questa forma peggiore: una riga di verifica troppo stretta **lascia scoperto un caso**, una riformulazione troppo stretta **cambia l'oggetto del giudizio**, e nessuno script può accorgersene perché la casella è piena e lo stato è ammesso. Rimedio in §8.5.5: quando si tocca la §8, la colonna «Vincolo» **si confronta con la fonte**, non si rilegge da sola |
 
 | 30 | **Un banco che guarda solo l'esito non vede la risposta sbagliata** | È il gotcha #17 spostato dall'**iniezione** all'**oracolo**: non «il guasto non è scattato», ma «il guasto *è* scattato e il banco non sa distinguerlo da un successo». **Misurato in M-9**: rileggendo un record durevole dopo un cambio di tipo, cinque celle su trentasei restituiscono `Ok` **con valori sbagliati**. Un banco che confronta solo `Ok`/`Err` le legge tutte come successi — e la forma che *sembrava* più economica avrebbe superato il vaglio. Il rimedio è confrontare i **valori**, non l'esito, e vale ovunque l'oracolo sia un codice di ritorno: decodifica, parsing, riconciliazione, conversione di tipi. ⚠️ **Corollario che vale oltre F2:** in un archivio durevole il modo di fallire peggiore **non è l'errore** — un errore lo vedi — ma il record che si rilegge e ti restituisce il numero sbagliato |
 | 31 | **Una stima di costo prezzata sulla variante sbagliata sopravvive, perché viene citata invece che rifatta** | Questo documento prezzava la forma B dell'evoluzione come *«permanente su ogni campo di ogni record»*. **Misurato: un byte su ventisei.** La stima guardava la codifica a **mappa**; la predefinita della stessa libreria è ad **array**, e lo scarto è di sette volte — su un numero che stava per far scartare la forma giusta. Non è un errore di calcolo: è che una stima scritta una volta **suona più certa più invecchia**, e nessuno la rimisura perché «c'è già scritto». È il gotcha #15 — un'evidenza scritta prima della misura è un'ipotesi — applicato ai **costi** invece che agli esiti. ⚠️ Il rimedio non è diffidare delle stime: è che una stima che sta per **decidere** va rimisurata, e quella che decide soltanto di rimandare no. 📌 **Seconda occorrenza, 2026-08-08**, e in una forma peggiore perché il numero **sostiene una regola giusta**: `CLAUDE.md`, il compendio e `AVVIO-CHAT.md` dicevano che HANDOFF + spec del sotto-progetto 1 + `adr/` pesano *«oltre settecento kilobyte»*. Misurati: **cinquecentosedici**, cioè un terzo in meno, e i documenti da allora sono solo **cresciuti** — quindi il numero non era invecchiato, **non era mai stato vero**. Nessuno l'aveva verificato perché la regola che giustifica — «non aprirli per farsi un'idea» — è corretta, e un numero che argomenta bene non sembra un'affermazione. ⛔ Un numero gonfiato a sostegno di una regola giusta resta un numero falso, e il giorno in cui qualcuno lo verifica **è la regola a perdere credito** |

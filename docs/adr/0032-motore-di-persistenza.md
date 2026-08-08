@@ -149,3 +149,28 @@ la porta `journal`.
     ripresa, prima che il sistema accetti lavoro.
   - Il backend cadente entra nell'armamentario della DST come **punto di iniezione di
     livello 2**, accanto a quello di livello 1 alla porta.
+
+---
+
+## ✅ Rimando — «la lista delle dipendenze del kernel resta vuota» non è più vero (2026-08-08)
+
+La riga che spiega perché `redb` non è vincolato da ADR-0031 dice: *«`redb` vive in
+`platform`, quindi ADR-0031 non lo vincola: la lista delle dipendenze del kernel resta vuota.
+Il kernel conosce solo la porta `journal`.»*
+
+**La prima metà regge, la seconda no**, e va marcata invece che lasciata mentire:
+
+| Affermazione | Oggi |
+|---|---|
+| `redb` vive in `platform` e ADR-0031 non lo vincola | ✅ **invariata**, ed è la sostanza di questo ADR |
+| la lista delle dipendenze del kernel **resta vuota** | ⛔ **falsa**. Le voci spedite sono **tre**: `bincode` 2.0.1, `unty` 0.0.4 e `minicbor` 2.3.0 — vedi i due rimandi di [ADR-0031](0031-dipendenze-del-kernel-parte-del-confine.md) |
+| il kernel conosce **solo la porta `journal`** | ⚠️ **precisata**: il kernel conosce la porta `journal`, che scambia **byte**, e possiede la **codifica** del record durevole — [ADR-0036](0036-evoluzione-del-formato-durevole-del-giornale.md), §4.9.3 |
+
+⛔ **Nessuna delle tre correzioni tocca la decisione**: il motore resta `redb` 4.1.0 con lo
+`StorageBackend` scritto da noi, e il requisito 4 — I/O iniettabile — resta il motivo per cui.
+Ciò che è cambiato è il **contorno**, e un contorno stantio dentro un ADR `Accepted` è
+esattamente la cosa che si cita invece di riverificare.
+
+📌 Trovato in un audit sezione-contro-ADR il 2026-08-08. La lista era già cresciuta a due
+voci **il giorno stesso** in cui questa riga fu scritta (M-1, `bincode` + `unty`): non è
+invecchiata, non era mai stata vera. È il gotcha **#31**.

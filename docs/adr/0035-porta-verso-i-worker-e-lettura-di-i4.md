@@ -181,3 +181,29 @@ canale privato_.**
     l'allargamento di §6.1.1 e §7.3.1.
   - §7.4.6 acquisisce la riga della suite di conformità per `process`.
   - La **§8** registra lo stato delle righe toccate — per ultima, e una volta sola.
+
+---
+
+## ✅ Rimando — «nessun gettone nuovo da inventare» è stato smentito da F1b (2026-08-08)
+
+Fra le conseguenze positive, questo ADR scrive: *«La catena del gettone si conserva […]
+«parlare con un worker senza concessione» non diventa esprimibile. **Nessun gettone nuovo da
+inventare.**»*
+
+La prima metà regge: la catena si conserva davvero, e l'avvio continua a pretendere una
+concessione. **La seconda è stata smentita** quando la §6.10 ha progettato il canale:
+
+| Gettone | Da dove | Perché non era prevedibile qui |
+|---|---|---|
+| l'oggetto **`Worker`** che l'avvio restituisce | §6.10.2 | serve a rendere il dialogo inseparabile dall'avvio — ma il dialogo non era ancora progettato |
+| la **ricevuta** | §6.10.1 | scioglie la tensione di `design/01` fra *«il worker non risponde di iniziativa propria»* e *«il flusso audio risale al core»*: un frame che nessuna ricevuta copre è un **guasto**, non un dato |
+
+⛔ **Non cambia la decisione né il suo costo complessivo**: entrambi i gettoni usano il
+dispositivo che §6.3.1 aveva già nominato, nessuno dei due richiede un meccanismo nuovo, e
+sono registrati nel catalogo in §7.4.1 B — dove i gettoni sono passati da tre a **cinque**.
+Ciò che cade è la stima *«costa poco perché non aggiunge niente»*: aggiunge due righe di
+catalogo e quattro test di compilazione fallita.
+
+📌 Trovato in un audit sezione-contro-ADR il 2026-08-08. È il gotcha **#31** nella forma
+consueta: una stima scritta prima che la cosa fosse progettata sopravvive perché viene
+citata invece che rifatta.

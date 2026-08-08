@@ -14,8 +14,8 @@
 > accettati — apri **quel** file. Uno, non trentasei. La §12 dice quale.
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
-> cartella `adr/` «per farsi un'idea». Insieme pesano **cinquecentosedici kilobyte**
-> (misurati il 2026-08-08 — la spec da sola ne fa duecentoventisei), e
+> cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
+> (541 KB misurati il 2026-08-08, e possono solo crescere — la spec da sola ne fa 245), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-08.** Manutenzione: §13.
@@ -546,15 +546,35 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
-### §8 — ✅ chiusa. Cosa ha trovato, in cinque righe
+### §8 — ✅ chiusa. Cosa ha trovato, in quattro righe
 
 | | |
 |---|---|
-| **nessuno stato è cambiato** | le sette voci hanno cambiato **cosa una cella nomina**, non il voto. Riallineate `Q4`, `Q5`, `Q14` e la riga `process` di §8.2.2; `V25`, `Q20` e `V29` **rilette e lasciate come stavano**, perché erano già giuste |
-| ⛔ **il catalogo aveva saltato cinque controlli** | i cinque della §6.10.5 (F1b) non erano in §7.4, quindi `Q4` non poteva nominarli senza violare §8.1.2. Sono entrati — due gettoni in §7.4.1 B, due voci in §7.4.1 C, uno di livello 2 in §7.4.2. **Non sono controlli nuovi**: §8.5.4 |
+| **le sette voci non hanno cambiato nessun voto** | hanno cambiato **cosa una cella nomina**. Riallineate `Q4`, `Q5`, `Q14` e la riga `process` di §8.2.2; `V25`, `Q20` e `V29` **rilette e lasciate come stavano** |
+| ⛔ **il catalogo aveva saltato cinque controlli** | i cinque della §6.10.5 (F1b) non erano in §7.4, quindi `Q4` non poteva nominarli senza violare §8.1.2. Sono entrati — due gettoni in §7.4.1 B, due voci in C, uno di livello 2 in §7.4.2. **Non sono controlli nuovi**: §8.5.4, gotcha **#36** |
 | **e non era gotcha #32** | cercato prima di scrivere: ADR-0037 non nomina mai il catalogo, la chiusura di F1b lo colloca in altre sei sezioni, §7.4.4 riduce tre voci che sono altre. **Mai valutato, mai scartato** |
-| **due ritratti di conteggi erano stantii** | §8.8 diceva «tredici V `parziale`» — sono **dodici** da quando `V16` è stato declassato; §7.4.7 diceva «tre in B e nove in C» — sono **cinque** e **quattordici**. Ricontati sulla tabella |
-| 📌 **il ritratto pieno, per il confronto della prossima volta** | **diciotto ✅ · dodici ⚠️ · sette ⏳** per i V · **nove · otto · sette** per i Q |
+| **due ritratti di conteggi erano stantii** | §8.8 e §7.4.7. Ricontati sulla tabella, non dedotti |
+
+### L'audit sezione-contro-ADR — ✅ 2026-08-08. Quaranta rilievi, e uno ha ribaltato un voto
+
+Undici revisori in sola lettura, uno per sezione più due sulle formulazioni di V e Q,
+ciascuno contro gli ADR e le fonti. **Nessuno stato ⛔ e nessuna decisione riaperta**; tutte
+le correzioni portano il proprio richiamo datato.
+
+| | |
+|---|---|
+| ⛔ **`V16` torna a ⚠️ `parziale`** | la colonna «Vincolo» di §8.3 lo riportava **troncato** — mancava *«nomi di provider e parametri **sì**»*, la metà **positiva**, che è verificata qui dallo stesso test a esempi di `V15` e `Q14`. Il declassamento di §8.5.3.1 era corretto sulla metà che aveva davanti. **§8.5.5** |
+| **otto formulazioni di vincolo erano troncate** | `V5` `V16` `V25` `V28` `V30` `V31` `V34` `V36`. Sette innocue, una no. È il gotcha **#29** spostato dalle invarianti alla tabella che le giudica: una riga di verifica stretta lascia scoperto un caso, una **riformulazione** stretta cambia l'oggetto del giudizio |
+| ⛔ **due firme erano impossibili** | `Worker::istruisci → Ricevuta` restituiva un tipo che non esiste altrove, mentre le letture prendono `RicevutaSingola` e `RicevutaFlusso`: o era l'enum che la decisione vieta, o **non c'era modo di ottenere un flusso** — cioè l'audio. Ora le istruzioni sono **due** (§6.10.2) |
+| **`daemon` non monta il simulatore** | la tabella §1.2 diceva *«sceglie `platform` o `simulator`»*, il grafo accanto non aveva quell'arco, e ADR-0034 dà ragione al grafo: in simulazione il cablaggio lo fa **il banco**. Era l'unica ambiguità strutturale sul verso delle dipendenze, ed è quella che il piano deve tradurre in `Cargo.toml` |
+| **`network` era rimasto stretto in §3.1** | F5 aveva allargato la cella in §2.3 e non la gemella nella tabella che si dichiara *«esattamente le porte della §2.3»*: l'esportazione OTLP sarebbe nata fuori dall'unico punto di uscita |
+| **sei conteggi stantii** | «tre ADR» in §0.1 (sono sette) · «due regole restano test» in §1.6 (tre) · «cinque ADR che nominano un parametro» in §2.8 (otto) · «cinque regole» in §4.9.2 (sei) · «due voci spedite» in §7.4.4 (tre) · «nove voci di livello 2» in §7.7 (undici) |
+| **tre ADR hanno ricevuto un rimando** | **0021** — «il seed è un caso di regressione *permanente*» non regge, protegge la **proprietà** · **0032** — «la lista del kernel resta vuota» è falsa, e lo era già alla sua data · **0035** — «nessun gettone nuovo da inventare», F1b ne ha portati due |
+| ⚠️ **una voce resta aperta, ed è una decisione** | **otto righe del catalogo** hanno una colonna «Difende» che non nomina un V, un'I o un Q — la stessa regola con cui la §7 caccia `clippy`. Ri-attribuirle, allargare la regola, o dichiarare un'eccezione: §7.1.1 |
+
+📌 **Il ritratto pieno, per il confronto della prossima volta:** **diciotto ✅ · tredici ⚠️ ·
+sei ⏳** per i V · **nove · otto · sette** per i Q. ⚠️ «Tredici» era anche il numero di
+partenza, ma per una tabella diversa: la storia sta in §8.8, e si riconta **ogni volta**.
 
 ### F1b — ✅ chiusa. Cosa ha deciso, in sei righe
 
@@ -736,9 +756,9 @@ Apri **un** file, quello che serve. Non la cartella.
 | Se ti serve… | Apri | Peso |
 |---|---|---|
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 4–19 KB l'uno |
-| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 226 KB |
+| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 245 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 83 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 84 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 11 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
@@ -753,9 +773,11 @@ Apri **un** file, quello che serve. Non la cartella.
 
 📏 **I pesi sono misurati il 2026-08-08**, e servono a decidere se aprire. ⚠️ Tre erano
 stantii, e il quarto — *«insieme pesano oltre settecento kilobyte»*, in testa a questo file,
-in `CLAUDE.md` e in `AVVIO-CHAT.md` — era **falso di un terzo**: sono cinquecentosedici. È il
+in `CLAUDE.md` e in `AVVIO-CHAT.md` — era **falso di un quarto**: misurati, **541 KB**. È il
 gotcha **#31**: un numero messo a sostegno di una regola giusta non viene mai rimisurato,
-perché nessuno dubita della regola. **Si rimisurano quando si toccano i file che contano.**
+perché nessuno dubita della regola. **Si rimisurano quando si toccano i file che contano** —
+ed è per questo che la frase in testa dice ora «oltre mezzo megabyte»: un limite inferiore
+misurato resta vero mentre i documenti crescono, una cifra esatta no.
 
 ⚠️ **Prima di ogni commit di documentazione:** `bash scripts/check-docs.sh`
 

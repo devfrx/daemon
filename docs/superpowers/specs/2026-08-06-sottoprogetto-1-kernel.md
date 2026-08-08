@@ -44,7 +44,7 @@ sbagliata — con l'eccezione delle tre decisioni della §0.5, dove qualcosa man
 |---|---|
 | **il kernel** | crate proprie, secondo i quattro vincoli di [ADR-0026](../../adr/0026-linguaggio-del-core.md) |
 | **il simulatore DST** | l'infrastruttura che rende Q2, Q4 e Q5 verificabili invece che dichiarate |
-| **tre ADR** | vedi §0.5 |
+| **sette ADR** | vedi §0.5 — erano tre quando questa riga fu scritta; **ricontato sulla tabella il 2026-08-08** |
 | **la porta di qualità** | controlli automatici, ciascuno **provato in negativo** |
 
 Il punto di partenza è [`spikes/rust/`](../../../spikes/rust/): confine dei tipi,
@@ -97,7 +97,21 @@ errore di questa sezione, non una semplificazione.
 | **§6** permessi e confine dei dati | il **confine dei tipi**; la forma del permesso e la sua registrazione nel giornale | il mediatore completo, i preset, il ciclo di approvazione MCP, il canary | **B** — il confine dei tipi è la proprietà n. 1 non aggiungibile dopo (I6, V19, V20) · **C** — un mediatore non ha nulla da mediare finché non esistono strumenti |
 | **§7** errori e degrado | tassonomia, stato di degrado osservabile, ritenzione a livelli | la proiezione trace e l'esportazione OTLP | **A** — Q18 è DST: lo stato va dichiarato *prima* del primo fallimento · **C** — l'esportazione ha per consumatore un backend esterno, ed è opt-in |
 | **§8** test | tutta: è metà di questo sotto-progetto | — | **A** — è il simulatore |
+| **§9** rischi e spike | ⬜ **nessun meccanismo**: non è una sezione di impianto, è il **piano degli spike**. SP-1…SP-4 sono collocati in §0.2, e SP-2 è l'innesco di Q1 in §8.2.1 | — | ⛔ **fuori scala A/B/C, e dichiarato invece che omesso** — vedi sotto |
 | **§10** L0 fisico | il **motore di persistenza**; il *lato kernel* di segreti, confinamento e checkpoint: **dichiarare, richiedere, giornalare** | le implementazioni di piattaforma: livello 2 su Windows, cifratura reale, checkpoint su filesystem reale · **backup e ripristino** | **A** per il motore (senza, il giornale non esiste) · **B** per il lato kernel: V34, V35 e V37 costano poco ora e sono strutturali · **C** per la piattaforma — il livello 2 non ha nulla da confinare finché nessuna capacità esegue codice · **C** per il backup — §0.4.1 |
+
+> ⚠️ **La riga §9 è stata aggiunta il 2026-08-08, ed è il quarto caso.** La tabella dichiara
+> di coprire *«tutte le §0–§10 della spec del kernel»* e ne saltava una: la §9 non compariva
+> **né dentro né fuori**, che è precisamente il terzo stato che §0.4.1, §0.4.2 e §0.4.3 hanno
+> già corretto — il backup, la configurazione, l'anello 3. §0.4.3 chiedeva che *«chi troverà
+> il quarto caso lo aggiunga»*: eccolo.
+>
+> ⛔ **Ma la risposta è diversa dalle altre tre, e va detto perché.** Quelle erano pezzi di
+> impianto sfuggiti alla classificazione, e sono finiti in «si scaglia» con una regola C. La
+> §9 **non è impianto**: è il piano degli spike, cioè un documento su come si decide, non una
+> cosa da costruire. Non ha una regola A/B/C perché la scala classifica **meccanismi**, e qui
+> non ce n'è uno. La correzione è **dichiararlo**, non collocarlo: un'assenza motivata è
+> verificabile, un'assenza muta no.
 
 #### 0.4.1 Il backup mancava da questa tabella, ed è una correzione
 
@@ -222,6 +236,14 @@ Non sono ri-derivazioni: sono buchi, ciascuno già documentato come tale.
 | 6 | ✅ **La porta verso i worker, e la lettura di «singolo» in I4** — [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) | **non previsto**: è la voce **F1** della stessa riapertura. La §2.3 non aveva nessuna porta per *parlare* con un worker, e `design/01` la descriveva già con un verbo in più | §2.3.1 · §5–§6 |
 | 7 | ✅ **L'evoluzione del formato durevole del giornale** — [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) | **non previsto**: è la voce **F2** della stessa riapertura, con **F7** che vi converge. Il giornale è l'unico archivio irriproducibile, e chi lo rilegge è lo stesso programma mesi dopo, con campi in più: nessuna riga diceva cosa succede in quell'istante | §4.9 |
 
+| 8 | ✅ **Il criterio del pari per il formato dei canali privati** — [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) | **non previsto**: emerge misurando ciò che la voce **F1b** chiedeva. M-1 aveva domandato se il grafo transitivo fosse accettabile — domanda giusta per I3, ma tutta sul **nostro** capo del filo. Un canale privato ne ha due, e il secondo non è Rust | §6.10 · §6.1.1 |
+
+> ⚠️ **La riga 8 è stata aggiunta il 2026-08-08.** Mancava: ADR-0037 è una decisione presa
+> **dentro** questo sotto-progetto, con lo stesso criterio di ammissione delle righe 4, 5, 6
+> e 7 — non prevista quando la §0 fu approvata, ed emersa da una misura. La catena datata di
+> §0.7 si ferma a sei perché è stata scritta prima; ora sono **sette** le decisioni ✅ e
+> **otto** le righe, con la n. 3 ancora aperta.
+
 Ciascuna nasce **dentro** la sezione che la richiede, non in coda: una decisione staccata
 dal contesto che la motiva è la stessa cosa che ADR-0028 ha dovuto ratificare a
 posteriori.
@@ -317,7 +339,7 @@ ricorda di rispettarlo.
 | **`platform`** | sì | le implementazioni **reali** dei tratti dichiarati dal kernel: filesystem, orologio, rete, processi, confinamento livello 2 | — |
 | **`secrets`** | sì | l'**unico** punto che tocca il portachiavi dell'OS | — |
 | **`simulator`** | **no** — `no_std` + `alloc` | le implementazioni **finte** degli stessi tratti: orologio virtuale, RNG seminato, I/O in memoria, guasti scelti dal seed | come `kernel` |
-| **`daemon`** (binario) | sì | il cablaggio: sceglie `platform` o `simulator`, avvia l'esecutore, ospita il server IPC, e **produce i parametri risolti** che consegna al kernel (§2.8) | — |
+| **`daemon`** (binario) | sì | il cablaggio **di produzione**: monta `platform`, avvia l'esecutore, ospita il server IPC, e **produce i parametri risolti** che consegna al kernel (§2.8) | — |
 
 ```mermaid
 flowchart BT
@@ -445,8 +467,8 @@ Non si assumono. Se una va diversamente, il grafo cambia **prima** che vi si scr
 | # | Da misurare | Cosa cambia se va male |
 |---|---|---|
 | **M-1** ✅ | esiste un serializzatore usabile in `no_std` + `alloc`? | se no, lo schema IPC (I4) non può stare in `kernel` e serve una crate accanto: il grafo di §1.2 cambia. **Misurata in §6.8: esito A, il grafo non cambia** |
-| **M-2** | `simulator` regge `no_std` mentre inietta guasti e registra tracce? | se no, perde il divieto gratuito su `HashMap` e resta appeso a un lint |
-| **M-3** | le regole di allow-list si esprimono con la toolchain standard, e si provano in negativo? | se no, servono driver scritti a mano — è successo in Go per T6, e va messo in conto |
+| **M-2** | ✅ `simulator` regge `no_std` mentre inietta guasti e registra tracce? | **sì** (§3.6). ⚠️ **Ripiego corretto il 2026-08-08:** diceva *«se no, resta appeso a un lint»*, ma il lint su `HashMap` fuori dal kernel è stato **tolto** (§7.4.4 punto 1, «non difende nulla»). Se M-2 fosse fallita, `simulator` sarebbe rimasto **senza nulla**, non degradato — e la misura è passata, quindi il punto è storico |
+| **M-3** | ✅ le regole di allow-list si esprimono con la toolchain standard, e si provano in negativo? | **sì**, e con le sonde N1–N4 viste fallire e tornare verdi: §7.2.2 e §7.3.1, `-e normal,no-proc-macro`. ⚠️ **Stato allineato il 2026-08-08:** la riga era ancora scritta al futuro (*«se no, servono driver scritti a mano»*) mentre ADR-0031 la dichiara eseguita e chiusa, e la §1.4 già scrive sopra i suoi risultati |
 
 ### 1.6 I costi di questa struttura
 
@@ -455,7 +477,7 @@ Non si assumono. Se una va diversamente, il grafo cambia **prima** che vi si scr
 | **cinque crate invece di una** | più manifesti, compilazione più lenta, e spostare codice fra crate costa più che spostarlo fra moduli |
 | **`no_std` è scomodo** | niente `HashMap`, niente `std::thread`, nessuna comodità della libreria standard: ogni cosa va sostituita o fatta passare da un tratto. Si paga a ogni riga di `kernel` e di `simulator`, non una volta sola |
 | **`kernel` resta una crate grande** | non si spezza: i divieti forti sono per crate, e spezzare moltiplica i posti in cui dimenticare gli attributi. Il costo è che i confini interni sono tenuti dai moduli, cioè più deboli |
-| **due regole restano test, non compilatore** | V25 e V34. Un test si cancella, `no_std` no. Detto invece che sperato |
+| **tre regole restano controllo esterno, non compilatore** | l'**allow-list** di ADR-0031, V25 e V34. Un controllo si cancella, `no_std` no. Detto invece che sperato. ⚠️ **Ricontato sulla colonna «Forza» il 2026-08-08:** diceva «due» e ometteva proprio l'allow-list, cioè quella che §1.4.1 chiama *«l'altra metà del confine»* I3 e che ADR-0031 dichiara **la più debole delle quattro** |
 
 ---
 
@@ -720,7 +742,11 @@ accodarsi dietro l'anello per mangiarne l'1 % (6 ms):
 > ⚠️ **A differenza delle altre scelte della §2, questa non poggia su una misura** — e
 > l'apertura della sezione dice che le tre misure di §2.6 la sostengono. Non ne serve una:
 > non c'è un discriminante fra due opzioni che un numero possa sciogliere. È una
-> **constatazione di coerenza**, verificabile rileggendo i cinque ADR che nominano un
+> **constatazione di coerenza**, verificabile rileggendo gli **otto** — 0005, 0006, 0010,
+> 0016, 0018, 0023, 0025, 0033; ⚠️ **ricontato su ADR-0034 il 2026-08-08**, diceva «cinque»,
+> che è il numero delle decisioni *che ne leggono uno senza passare da un'interfaccia* e non
+> degli ADR che ne nominano uno — seguire la frase alla lettera avrebbe saltato 0010, 0018 e
+> 0025, cioè il modo di fallire che il costo di §2.8.5 dichiara — ADR che nominano un
 > parametro. ADR-0034 lo dichiara, e dichiara anche cosa resta un giudizio: la stima che la
 > correzione tardiva sarebbe *«pervasiva ma meccanica»*.
 
@@ -846,7 +872,7 @@ punti in cui il mondo tocchi il kernel.
 | `journal` | scrive sul motore di persistenza | scrive in memoria, e **cade** a una scrittura scelta dal seme |
 | `filesystem` | disco | albero in memoria |
 | `process` | avvia, **istruisce** e uccide worker veri | worker finti: risposte, ritardi e uccisione scelti dal seme |
-| `network` | HTTPS verso i provider | risposte, ritardi e perdite scelti dal seme |
+| `network` | HTTPS **verso la rete** — i provider **e** l'esportazione OTLP opt-in | risposte, ritardi e perdite scelti dal seme |
 | `ipc` | named pipe verso la gui | client finto, che può **morire** quando il seme decide |
 | `rng` | seminato all'avvio | seminato dal seme della campagna |
 
@@ -904,7 +930,7 @@ requisito preciso:
 | **frame malformato** — byte consumati diversi dalla lunghezza dichiarata | `process` | **Q4** — il frame è **rifiutato**, non diventa un valore. Senza questa riga varrebbe il gotcha #34: decodifica riuscita e valore sbagliato |
 | **frame non sollecitato** — il worker parla senza ricevuta aperta | `process` | **Q4** · **I5** — è un guasto, non un dato: §6.10.1 |
 | **morte del worker a metà flusso** | `process` | **Q4** · I1 — la ricevuta si chiude e la concessione torna alla linea di base |
-| morte della gui a metà run | `ipc` | **Q3** |
+| morte della gui a metà run | `ipc` | **Q3** · **I1** — la GUI non possiede stato autorevole, quindi ucciderla non perde nulla: è metà esatta della riga di verifica di I1, e l'altra metà è la riga del kill del worker |
 | perdita della rete | `network` | **Q18** — il degrado si dichiara *prima* del primo fallimento |
 | interlacciamento delle richieste concorrenti | `reactor` | **Q2** — la somma delle concessioni non supera mai il budget · I2 |
 | caduta durante la conservazione di un file | `filesystem` | **Q22** — l'ambito torna byte-identico |
@@ -1081,7 +1107,13 @@ governa è una sola: **ciò che deve sopravvivere si scrive**.
 | decisioni prese, con il motivo | mai |
 | fatti acquisiti, con la provenienza | mai |
 | artefatti — **riferimenti**, non contenuti | mai |
-| trascrizione grezza | **sì**: unica perdita ammessa |
+| trascrizione grezza | **sì**: unica perdita ammessa **nella proiezione** (ADR-0008) |
+
+⚠️ **Due tabelle, due domande diverse — precisato il 2026-08-08.** Questa dice cosa la
+**proiezione** può lasciar cadere (ADR-0008); la §4.5 dice cosa la **ritenzione** pota dal
+giornale (ADR-0018), e sono prompt, risposte e output degli strumenti oltre alle
+trascrizioni. «Unica perdita ammessa» vale qui, non lì: un payload potato **dichiara** di
+esserlo, e quella non è una perdita silenziosa.
 
 La **ricomposizione della proiezione** non è in questo sotto-progetto (§0.4, regola C): non
 ha consumatore finché nessuno chiama un modello. Il *modello dei dati* però sì, perché è la
@@ -1118,7 +1150,7 @@ Eseguita il **2026-08-07** · `rustc 1.95.0` · `cargo 1.95.0` · Windows 11, pr
 `release` · `redb` 4.1.0. `StorageBackend` scritto da noi, in memoria, che fallisce a
 un'operazione scelta.
 
-| # | Requisito §10.6 | Esito |
+| # | Requisito §10.6 **della spec del kernel** | Esito |
 |---|---|---|
 | 1 | scrittura durevole e ordinata, confermata | ✅ dopo riapertura i record **confermati** ci sono; quello di una transazione mai confermata **no** |
 | 2 | lettura concorrente mentre si scrive | ✅ un lettore aperto **prima** continua a vedere la propria istantanea (5) mentre si scrive; uno nuovo vede lo stato nuovo (10). Nessun blocco |
@@ -1195,6 +1227,7 @@ quel giudizio è giusto là e rovesciato qui.
 | 3 | un campo nuovo è **facoltativo** e prende un **indice nuovo** | misurato ✅ in coda, in mezzo e in direzione inversa |
 | 4 | un indice **si ritira e non si riusa mai**: il buco resta | misurato: il buco ✅, il riuso ⛔ **silenzio sbagliato** |
 | 5 | un cambiamento **non additivo** apre una **versione nuova**; il lettore dispaccia e converte | è la sola cosa che l'indice non compra |
+| 6 | la **codifica vive in `kernel`**, e la porta `journal` scambia **byte** | §4.9.3 — ⚠️ **aggiunta all'elenco il 2026-08-08**: la regola c'era, ma solo come prosa nella sottosezione seguente, mentre ADR-0036 la numera. Due documenti che condividono l'indice devono condividerlo per intero, o «regola 6» risolve in uno solo |
 
 **Nessuna delle due metà regge da sola, ed è la misura a dirlo, non un giudizio:** la
 disciplina solo-append su un formato posizionale **non funziona affatto** — anche un campo
@@ -1456,19 +1489,29 @@ percorsi di richiesta diversi:
 
 | # | Consumo | Governo | Corsia | Rifiuto esecutivo? |
 |---|---|---|---|---|
-| 1 | compositing della webview | **quota di presentazione** sottratta | fuori dalle corsie | ❌ no |
-| 2 | viewer 3D **entro** la quota | stessa quota | fuori dalle corsie | ❌ no |
+| 1 | compositing della webview | **quota di presentazione** sottratta | `realtime`, **mai in coda** | ❌ no |
+| 2 | viewer 3D **entro** la quota | stessa quota | `realtime`, **mai in coda** | ❌ no |
 | 3 | viewer 3D **oltre** la quota | concessione **ordinaria**, richiesta via IPC | `interactive` | ✅ sì |
 
-I consumatori 1 e 2 stanno fuori dalle corsie perché una corsia è un **ordinamento che
+I consumatori 1 e 2 non entrano mai **in coda** perché una corsia è un **ordinamento che
 l'arbitro applica a ciò che schedula**, e il compositor non lo schedula lui.
+
+> ⚠️ **Corretto il 2026-08-08: la colonna diceva «fuori dalle corsie», e non era
+> esprimibile.** La corsia è il campo `compute_class` del profilo (§5.2), che ha **tre**
+> valori e che V2 rende **obbligatorio per ogni lavoro GPU**; la concessione di presentazione
+> è una concessione con un titolare (ADR-0033), non un'esenzione, quindi un profilo ce l'ha
+> per forza. «Fuori dalle corsie» sarebbe stato un **quarto valore** che il tipo non ha —
+> e aggiungerlo per un consumatore che non viene mai ordinato sarebbe costruire per un caso
+> che non esiste. Il profilo dichiara `realtime`; ciò che è vero è che **non entra mai in
+> coda**, perché una concessione permanente non torna in ammissione. È un fatto sul ciclo di
+> vita, non un valore di tipo.
 
 #### 5.5.1 Perché non basta copiare la quota audio
 
 La quota audio è sottratta **e** ha un titolare: il worker audio detiene una concessione
 permanente e non prelazionabile. È il gotcha #4 — *la sottrazione non è un'esenzione*.
 
-Ma la GUI **non può chiedere**: chi alloca è il compositor, che non ha un percorso di
+Ma per questo consumo **non c'è nessuno che possa chiedere**: chi alloca è il compositor, che non ha un percorso di
 richiesta. Una quota sottratta senza titolare lascerebbe I2 falso.
 
 **Il titolare è il core.** Richiede la concessione di presentazione all'avvio, permanente
@@ -1530,7 +1573,7 @@ dall'arbitro. Chi scrive «avvia il worker» senza averne una **non compila**.
 | | Prima | Dopo |
 |---|---|---|
 | forza di I2 sui worker | test | **compilatore** |
-| vie di aggiramento | disciplina | nessuna: `process` è l'unica porta verso i processi (§2.3), e il kernel non raggiunge l'OS per altra via — `no_std` più [ADR-0031](../../adr/0031-dipendenze-del-kernel-parte-del-confine.md) |
+| vie di aggiramento | disciplina | `process` è l'**unica porta** verso i processi (§2.3): questa metà è del compilatore. ⚠️ **Corretto il 2026-08-08:** diceva «nessuna», appoggiandosi a *«`no_std` più ADR-0031»* — ma ADR-0031 esiste **proprio perché** `no_std` non copre il raggiungimento dell'OS attraverso una dipendenza (misura A3), e il suo controllo è dichiarato **il più debole delle quattro regole**. La seconda metà è retta da un controllo di livello 2, cancellabile: §1.4, riga con forza `controllo esterno` |
 
 Il ragionamento sulla chiusura è lo stesso di §2.4.1: **non è la disciplina a reggere il
 vincolo, è l'assenza di alternative.** Il kernel non ha un secondo modo di avviare un
@@ -1657,7 +1700,7 @@ di essere vuota.
 
 > ⚠️ **La lista non è più solo dello schema IPC — aggiunto il 2026-08-07** con
 > [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md). La §4.9
-> mette la codifica del **giornale** in `kernel`, e vi aggiunge `minicbor` come **seconda**
+> mette la codifica del **giornale** in `kernel`, e vi aggiunge `minicbor` come **terza**
 > voce spedita, con una giustificazione che non ha nulla a che vedere con I4. Le tabelle di
 > questa sotto-sezione restano quelle dello schema IPC; **la lista completa è §7.3.1**.
 >
@@ -1887,7 +1930,7 @@ ricalcolabile, mai autorevole di per sé**.
 | salute dei provider | §6.2 |
 | permessi, strumenti sospesi | §6.6 |
 
-La riga dell'arbitro è nuova rispetto ad ADR-0019: la §5 ha aggiunto un consumatore
+L'arbitro è già un ingresso nominato da ADR-0019; ciò che è **nuovo** è la §5, che ha aggiunto un consumatore
 revocabile, e «il viewer 3D è in pausa durante un render» è **esattamente** una
 condizione che cambia cosa l'utente può fare — quindi si dichiara (V27).
 
@@ -2075,7 +2118,8 @@ o qualcuno li giornala per diligenza.
 | Operazione | Cosa fa | Cosa impone |
 |---|---|---|
 | `avvia(concessione, descrittore) → Worker` | avvia il processo | senza concessione **non compila** — §5.6, invariata |
-| `Worker::istruisci(frame) → Ricevuta` | manda un'istruzione | l'unico modo di parlare è **l'oggetto che l'avvio ha restituito** |
+| `Worker::istruisci_uno(frame) → RicevutaSingola` | un'istruzione con **una** risposta | l'unico modo di parlare è **l'oggetto che l'avvio ha restituito** |
+| `Worker::istruisci_flusso(frame) → RicevutaFlusso` | un'istruzione con un **flusso** di risposte | idem — ed è **l'istruzione** a dichiarare quale delle due |
 | `Worker::leggi_uno(RicevutaSingola) → Frammento` | una risposta sola | **consuma** la ricevuta: leggere due volte non compila |
 | `Worker::leggi_prossimo(&mut RicevutaFlusso)` | il frame successivo | resta aperta finché il worker dichiara la fine, o il core chiude |
 | `Worker::chiudi(RicevutaFlusso)` | chiude il flusso | |
@@ -2085,6 +2129,17 @@ o qualcuno li giornala per diligenza.
 compra che *«una risposta singola diventi un flusso»* non sia **esprimibile** — cioè
 esattamente la frase di `design/01`. È la stessa mossa del punto 3 di §5.3: reso non
 rappresentabile invece che controllato a runtime.
+
+> ⛔ **Corretto il 2026-08-08: le istruzioni sono due, non una.** La tabella aveva una sola
+> riga — `istruisci(frame) → Ricevuta` — con un tipo `Ricevuta` che non compare in nessun'altra
+> firma, mentre le tre letture prendono `RicevutaSingola` e `RicevutaFlusso`. Le uscite erano
+> due, ed erano **entrambe** contro la decisione: o `Ricevuta` è l'enum a due rami che il
+> paragrafo qui sopra dichiara di aver comprato con una funzione in più, oppure non esisteva
+> **nessun modo di ottenere una `RicevutaFlusso`** — cioè il flusso audio, che è la ragione
+> per cui la §6.10 esiste. Con due punti d'ingresso è **l'istruzione** a dichiarare la forma
+> della risposta, che è dove la decisione va presa: chi manda un'istruzione sa se si aspetta
+> una risposta o un flusso. Costa **due** funzioni in più invece di una — il costo dichiarato
+> in §6.10.7 cresce di conseguenza.
 
 **Chi risveglia chi.** Nessuno attende dentro `process`. La prontezza arriva dal
 `reactor`, come per ogni altra porta: l'esecutore chiede «cosa è pronto» e un frame
@@ -2154,7 +2209,8 @@ specchiare i tipi a mano; si scrive qui perché non venga scoperto allora.
 
 | Costo | |
 |---|---|
-| **due funzioni di lettura invece di una** | il prezzo di rendere non rappresentabile ciò che `design/01` vieta a parole |
+| **due istruzioni e due funzioni di lettura invece di una e una** | il prezzo di rendere non rappresentabile ciò che `design/01` vieta a parole. ⚠️ **Ricontato il 2026-08-08:** diceva «due funzioni di lettura invece di una», e dimenticava che se i tipi di ricevuta sono due anche i **punti d'ingresso** devono essere due — altrimenti la firma che li emette è l'enum che la decisione vieta (§6.10.2) |
+| ⚠️ **la regola 4 di ADR-0035 poggia su un presupposto ereditato** | *«non versionato»* regge sul **timbro di build**, che pretende un'identità da confrontare. Se l'ambiente Python del worker non è un artefatto **nostro versionato** — follow-up di ADR-0028, oggi solo una raccomandazione per i sotto-progetti 9 e 10 — il timbro non ha nulla da confrontare e la rinuncia al versionamento **cade su questo canale**. Dichiarato qui il 2026-08-08, perché l'ADR lo segnala e la sezione che progetta il canale lo taceva |
 | **un `#[n(i)]` per campo** su ogni messaggio del canale | per un beneficio a cui I4 rinuncia. È il costo che M-1 aveva respinto per il canale gui, pagato qui per un'altra ragione — ADR-0037 |
 | **un byte in più** sul messaggio piccolo misurato | otto contro sette. Trascurabile, e misurato invece che stimato |
 | ⚠️ **`minicbor` serve due artefatti con requisiti opposti** | giornale e canale worker. Un cambiamento fatto per l'uno tocca l'altro: lo contengono il pin nel manifesto e il fatto che gli schemi restano distinti |
@@ -2188,12 +2244,27 @@ separa è una sola:
 
 | # | Regola | Se manca |
 |---|---|---|
-| 1 | difende un **V** o un'**I** nominato | è un'abitudine, non un controllo: va tolta |
+| 1 | difende un **V**, un'**I** o un **Q** nominato | è un'abitudine, non un controllo: va tolta |
 | 2 | **si è visto scattare** su una violazione deliberata | gotcha #14 — un controllo mai visto fallire non è un controllo |
 | 3 | **si è visto restare verde** dove la cosa è lecita | gotcha #24 — un controllo che scatta dove non deve insegna a ignorare l'audit |
 
 La terza è quella che si dimentica. È la ragione per cui in M-3 la sonda decisiva è stata
 **N4** e non N1.
+
+> ⚠️ **La regola 1 nominava «V o I», e il catalogo difende anche dei Q — allineata il
+> 2026-08-08.** Non è un allargamento: le righe `Q9`, `Q13` e `Q14` erano già lì, e la §8.1.2
+> tratta i Q come cittadini di pari grado. Era la regola a essere rimasta indietro.
+>
+> ⛔ **Resta però un disallineamento vero, e non lo chiudo di mia iniziativa perché è una
+> decisione.** Otto righe del catalogo hanno una colonna «Difende» che **non nomina** un V,
+> un'I o un Q: `ADR-0026 v.2` · `§5.1` · `§2.1` · `§5.3` · `§5.2.1` · `§2.8 · ADR-0034` ·
+> `supply chain` · `§3.7`. Sotto la lettera della regola 1 andrebbero **tolte** — ed è la
+> stessa regola con cui questa sezione caccia `clippy` (§7.4.3) e lo stile del codice
+> (§7.6.2), quindi non è una lettura severa. Le tre uscite possibili sono: **ri-attribuire**
+> ciascuna al V che serve davvero, **allargare** la regola a «una proprietà decisa in una
+> sezione nominata» — che però la renderebbe incapace di rifiutare, e una regola che non
+> rifiuta mai è decorazione (§8.5.3.1) — o **dichiarare** una classe di eccezione con il suo
+> motivo. Trovato il **2026-08-08**; aperto.
 
 #### 7.1.2 La scala di forza, e ogni controllo dichiara la propria
 
@@ -2639,8 +2710,9 @@ deterministico **quel** punto, non vietare un tipo ovunque.
 **2 · V28 è un corollario dell'allow-list, non un controllo in più.**
 
 La §1.4 prevedeva «grafo delle crate + driver», cioè un controllo da scrivere. Ma `kernel`
-**non dipende da nessuna crate del progetto** (§1.2) e la sua allow-list ha due voci
-spedite: un percorso verso un adattatore di provider comparirebbe nel grafo transitivo e
+**non dipende da nessuna crate del progetto** (§1.2) e la sua allow-list ha **tre** voci
+spedite — `bincode`, `unty`, `minicbor`, contate sulla tabella §7.3.1 il 2026-08-08; diceva
+«due», ed era il ritratto di prima di ADR-0036: un percorso verso un adattatore di provider comparirebbe nel grafo transitivo e
 **farebbe già scattare il controllo della §7.3.1**.
 
 Il catalogo lo registra come riga che **rimanda allo stesso controllo**, senza driver
@@ -2672,8 +2744,11 @@ rischio è la dimenticanza di chi scrive, e la lascia dov'è il rischio di un da
 
 > ⚠️ **«Quarto» qui è un nome, non una posizione — precisato il 2026-08-08.** Quando questa
 > sezione è stata scritta gli usi del dispositivo erano tre, e quello del confinamento
-> sarebbe stato il quarto. Con F1b la §6.10.1 ne ha aggiunto uno — la **ricevuta** — quindi
-> gli usi presenti sono quattro e questo sarebbe il quinto. **Il titolo resta**: «il quarto
+> sarebbe stato il quarto. Con F1b il catalogo ne ha registrati **due** — l'oggetto `Worker`
+> che l'avvio restituisce, e la **ricevuta** — quindi il blocco B ne conta **cinque** e
+> questo sarebbe il **sesto**. ⚠️ Il conteggio che vale è quello del **catalogo**, non quello
+> di §6.10.1: lì «quarto uso» è vero rispetto alla tabella di §6.3.1, che ha tre righe e non
+> registra l'oggetto `Worker`. Un solo registro, ed è §7.4.1 B. **Il titolo resta**: «il quarto
 > gettone» è il nome con cui la §8 e [`HANDOFF.md`](../../HANDOFF.md) lo chiamano, e
 > rinominarlo romperebbe i rimandi per guadagnare un ordinale. Ciò che conta non cambia:
 > **è quello del confinamento, ed è l'unico scaglionato.**
@@ -2744,12 +2819,16 @@ L'osservazione che accorcia la tabella prima di scriverla: **le voci di livello 
 «girano» mai.** Non sono un passo della porta — sono il compilatore. Se il codice compila,
 quelle regole valgono, e non esiste un modo di saltarle o di rimandarle a stasera.
 
-È il motivo per cui il livello di forza conta più della cadenza, e per cui la tabella
-seguente riguarda **solo il livello 2**.
+È il motivo per cui il livello di forza conta più della cadenza. ⚠️ **Formulazione corretta
+il 2026-08-08:** diceva che *«la tabella seguente riguarda solo il livello 2»*, e la sua
+prima riga è invece tutta di livello 1. La tabella le porta **entrambi**, ed è giusto così —
+ma la prima riga non dice una cadenza: dice che quelle voci **non ne hanno una**, perché
+sono il compilatore. Tenerla è ciò che rende visibile la differenza; chiamarla «cadenza» era
+l'errore.
 
 | Quando | Cosa gira |
 |---|---|
-| **a ogni compilazione** | tutto il **livello 1**: `no_std` · `forbid` · i gettoni · i tipi che non si scambiano |
+| **a ogni compilazione — cioè: sempre, senza essere un passo** | tutto il **livello 1**: `no_std` · `forbid` · i gettoni · i tipi che non si scambiano |
 | **a ogni commit** | allow-list sui due grafi · cancello senza OS · test di compilazione fallita · test a esempi · **campagna DST breve** · test di contratto · `check-docs.sh` |
 | **su ciclo lungo** | **campagna DST profonda**: molti più semi, scenari più grandi |
 
@@ -2826,7 +2905,7 @@ essere utile pur restando in funzione.
 | Costo | |
 |---|---|
 | **la porta è lavoro prima di ogni valore visibile** | come il simulatore: è lo stesso RK-9, già accettato nella spec del kernel |
-| **nove voci sono di livello 2** | cioè cancellabili. ADR-0031 lo dichiara per una sola; qui vale per tutte, e non è mitigabile — è la natura del livello, non un'omissione |
+| **undici voci sono di livello 2** | cioè cancellabili. ADR-0031 lo dichiara per una sola; qui vale per tutte, e non è mitigabile — è la natura del livello, non un'omissione. ⚠️ **Ricontato sulla tabella §7.4.2 il 2026-08-08**: diceva «nove», ed era il ritratto di prima delle due righe aggiunte con ADR-0036 (byte congelati) e ADR-0037 (byte consumati) |
 | **si paga a ogni commit, non una volta** | due grafi, un cancello, una campagna, due suite di contratto |
 | **`cargo tree` è un'interfaccia per umani** | un cambio di formato rompe **due** controlli in una volta sola |
 | **il bersaglio senza OS è un prerequisito dell'ambiente** | su una macchina pulita la porta è rossa finché non lo si installa, e per il motivo sbagliato |
@@ -2851,6 +2930,17 @@ stesso script e lo stesso genere di tabella.
 **Si scrivono insieme, quando si scrive la §8.** Farlo ora significherebbe controllare una
 tabella e non l'altra, con due passaggi sullo stesso file.
 
+> ✅ **Fatto, e questa sottosezione ora descrive un passato — richiamo del 2026-08-08.** Le
+> due estensioni sono state scritte insieme con la §8: `check-docs.sh` legge il catalogo
+> fra `#### 7.4.1` e `#### 7.4.3` e **fallisce se l'ultima casella è vuota** (§8.6.1,
+> asserzione 1), con guardia di non-vacuità sui delimitatori (§8.6.2) e sonde in due
+> direzioni (§8.6.3). ⛔ **Il testo sopra resta al presente perché era vero quando è stato
+> scritto**, ma va letto con questo richiamo: la regola 3 **non è più** un'intenzione, e la
+> prova materiale è che alla sua prima corsa il controllo ha trovato la riga di V31 con tre
+> celle su quattro — §7.4.2. ⚠️ Ciò che **resta** non verificabile è un'altra cosa, ed è
+> dichiarata altrove: che la casella *nomini davvero* una voce del catalogo (§8.6.4), che è
+> il buco da cui sono usciti §8.5.3, §8.5.4 e §8.5.5.
+
 ---
 
 ## 8. Copertura V1–V37 e Q1–Q24
@@ -2861,7 +2951,7 @@ Le §0–§7 hanno deciso *cosa* il sistema garantisce e *chi lo verifica*. Ques
 l'unica cosa che nessuna delle precedenti ha fatto: **giudica, una per una, tutte e
 sessantuno le voci nominate**, e dice se questo sotto-progetto ha finito con ciascuna.
 
-Non è un riepilogo. Un riepilogo ripete; questa sezione **decide**, e in **quattro** casi ha
+Non è un riepilogo. Un riepilogo ripete; questa sezione **decide**, e in **cinque** casi ha
 trovato che qualcosa non tornava (§8.5).
 
 Ha una seconda natura, meno ovvia. La §7.6.3 chiude così:
@@ -2980,7 +3070,7 @@ esteso:
 |---|---|---|
 | **A** | esiste un'interfaccia | **2** — GUI minima |
 | **B** | qualcuno chiama un modello: proiezione, provider reale, rete | **3** — Conversazione |
-| **C** | esistono strumenti e permessi da mediare | **4** — Agenti |
+| **C** | esistono strumenti e permessi da mediare, **e sensori reali da eseguire** | **4** — Agenti |
 | **D** | si esegue codice o un comando, e si scrive su file reali | **5** — Coding |
 | **E** | esiste un worker reale da avviare e uccidere | **7** — Generazione asset ⚠️ |
 | **F** | esistono backup e ripristino | **11** — Backup e ripristino |
@@ -3039,18 +3129,18 @@ disallineano (§7.4.4, caso 2).
 | V2 | ogni lavoro GPU ha un profilo di risorsa dichiarato | ✅ verificato qui | §7.4.1 C, riga V2 — un'ammissione senza profilo non compila. La taratura dei valori è SP-1, che è un parametro | — |
 | V3 | una sola policy attiva, e proviene dal profilo di configurazione | ⚠️ parziale | §7.4.1 C, riga V3 — una **seconda policy attiva** non è esprimibile: il valore consegnato ne porta una sola (§2.8.2, livello 1) · campagna DST: una transizione interrotta lascia un passo riconciliabile (§5.7). ⚠️ **riscritta il 2026-08-07 con ADR-0034**: la cella diceva *«la configurazione non ha consumatore»*, e non è più vero — la §2.8 la mette in perimetro. Manca l'**archivio su disco e il pannello che lo modifica**, scaglionati per regola C | A — esiste un'interfaccia (2) |
 | V4 | `Rifiutata` e `InCoda` sono esiti distinti, anche in interfaccia | ⚠️ parziale | §7.4.1 C, riga V4 — trattare l'esito come due vie non compila; **la distinzione in interfaccia** no | A (2) |
-| V5 | nessun effetto senza classe dichiarata | ✅ verificato qui | la classe è un campo obbligatorio del tipo: livello 1, con test di compilazione fallita (§7.4.1 C, §7.4.4 punto 3) | — |
+| V5 | nessun effetto senza classe dichiarata; **l'assenza vale `irripetibile`** | ✅ verificato qui | la classe è un campo obbligatorio del tipo: livello 1, con test di compilazione fallita (§7.4.1 C, §7.4.4 punto 3) | — |
 | V6 | write-ahead obbligatorio | ✅ verificato qui | campagna DST su `journal`, che ha la suite di conformità (§8.2.2) · due livelli di crash provati, M-2 e M-8 (§4.6) | — |
 | V7 | il contesto non è mai sorgente di verità | ⚠️ parziale | test a esempi sul modello dello stato durevole (§4.4): ciò che è dichiarato non sacrificabile si rilegge dal giornale dopo una ripresa. **La proiezione non esiste**, quindi metà del vincolo non ha soggetto | B — qualcuno chiama un modello (3) |
 | V8 | ogni run ha un tetto, con default conservativo | ✅ verificato qui | i confini di autonomia entrano (§0.4, §4) · test a esempi sulla transizione ad `AttesaUmano`, che è il metodo di Q7 | — |
 | V9 | ogni ingresso in `AttesaUmano` emette una notifica | ⚠️ parziale | test a esempi sull'**evento** emesso e giornalato; **la notifica all'utente** no | A (2) |
 | V10 | un sensore osserva e non modifica nulla | ✅ verificato qui | §7.4.1 C, riga V10 — un sensore che modifica l'artefatto non compila: §6.4.2 lo consegna per riferimento immutabile | — |
-| V11 | ogni sensore dichiara il proprio costo; gli inferenziali fuori dall'anello stretto | ⚠️ parziale | test a esempi: il **costo dichiarato** decide l'ammissione all'anello stretto (§6.4.1). **Nessun sensore inferenziale esiste**, quindi la seconda metà non ha soggetto | C — esistono strumenti e sensori reali (4) |
+| V11 | ogni sensore dichiara il proprio costo; gli inferenziali fuori dall'anello stretto | ⚠️ parziale | test a esempi: il **costo dichiarato** decide l'ammissione all'anello stretto (§6.4.1). **Nessun sensore inferenziale esiste**, quindi la seconda metà non ha soggetto. ⚠️ **Innesco allineato il 2026-08-08:** la cella riscriveva la condizione C con parole proprie — «strumenti e sensori reali» — creando una seconda definizione di una sigla che §8.2.1 raccoglie *«una volta sola»*. La condizione C è stata **allargata alla fonte** per comprendere i sensori, invece di essere riscritta qui | C (4) |
 | V12 | l'anello 4 propone, non applica | ⏳ rimandato | l'anello 4 è scaglionato per regola C (§0.4, §5): legge ricorrenze che esistono solo quando qualcosa gira | C (4) |
 | V13 | la ricomposizione mantiene il **budget**, non evita l'overflow | ⏳ rimandato | la ricomposizione della proiezione è scaglionata per regola C (§0.4, §4) | B (3) |
 | V14 | un verdetto negativo che rientra nell'anello è un passo nuovo, giornalato | ✅ verificato qui | test a esempi con sensore finto e verdetto scelto dal test: è il metodo che `design/08` assegna a Q10 (§6.4.2) | — |
 | V15 | ogni richiesta dichiara i propri vincoli, anche quando coincidono con i default | ✅ verificato qui | test a esempi sul decisore, che entra per regola A (§0.4, §3) e non richiede nessun provider (ADR-0020) | — |
-| V16 | il record di routing non contiene mai credenziali | ⏳ rimandato | ⚠️ **declassato da `parziale` durante l'audit della §8.5.3.** Nessuna credenziale attraversa il sistema in questo perimetro — `secrets` esiste ma nessun adattatore la usa — quindi **qualunque controllo qui è vacuo**: proverebbe l'assenza di una cosa che non c'è. Gotcha #17. Che il tipo del record non abbia un campo per una credenziale è una scelta di scrittura, non un controllo | B (3) |
+| V16 | il record di routing non contiene mai credenziali; **nomi di provider e parametri sì** | ⚠️ parziale | ⛔ **Ri-giudicato il 2026-08-08, e lo stato torna a `parziale`.** La metà **positiva** — il record *deve* portare nomi di provider e parametri — è verificata qui: è il record **risolto** di §6.2, con lo stesso test a esempi su giornale sintetico che rende ✅ V15 e Q14. La metà **negativa** resta vacua: nessuna credenziale attraversa il sistema in questo perimetro (`secrets` esiste, nessun adattatore la usa), quindi un controllo proverebbe l'assenza di una cosa che non c'è — gotcha #17, e resta vero. ⚠️ **Il declassamento di §8.5.3.1 era corretto sulla metà che aveva davanti, e la metà positiva non ce l'aveva**: la formulazione in questa colonna era troncata. Vedi §8.5.5 | B (3) |
 | V17 | ritentativo e cambio di candidato restano dentro lo stesso passo | ✅ verificato qui | test a esempi sul discriminante di §6.2 — *il modello ha prodotto output?* | — |
 | V18 | un errore di vincolo nomina **quale** vincolo | ⚠️ parziale | test a esempi: l'errore prodotto dal filtro porta il nome del vincolo non soddisfatto; **che l'interfaccia lo mostri** no | A (2) |
 | V19 | tipo distinto per il contenuto esterno, conversione esplicita e giornalata | ✅ verificato qui | la conversione riceve la porta `journal` come argomento: gettone di livello 1 (§6.5, §7.4.1 B) | — |
@@ -3059,18 +3149,18 @@ disallineano (§7.4.4, caso 2).
 | V22 | nessuna descrizione di strumento concede permessi | ⏳ rimandato | non esistono strumenti MCP: regola C (§0.4, §6) | C (4) |
 | V23 | la provenienza del contenuto è visibile in interfaccia | ⏳ rimandato | vincolo interamente d'interfaccia | A (2) |
 | V24 | il giornale è la sorgente; trace, metriche e costi ne sono proiezioni | ⚠️ parziale | test a esempi: il picco di VRAM (§5.2.2) e i permessi attivi (§6.6) si ricavano **rileggendo il giornale**, e non esiste un secondo archivio da cui ricavarli. **La proiezione trace non esiste**, quindi l'altra metà non ha soggetto | A (2) |
-| V25 | nessuna telemetria per default, un solo punto di uscita | ⚠️ parziale | il controllo gira a ogni commit e la **sonda scatta** — una chiamata di rete in `daemon` lo accende; **la contro-sonda non esiste**: la lista è vuota e non c'è niente di legittimo da lasciar passare (§7.4.2). È l'unica voce del catalogo provata in una direzione sola | B (3) |
+| V25 | nessuna telemetria **lascia la macchina** per default; un solo punto di uscita | ⚠️ parziale | il controllo gira a ogni commit e la **sonda scatta** — una chiamata di rete in `daemon` lo accende; **la contro-sonda non esiste**: la lista è vuota e non c'è niente di legittimo da lasciar passare (§7.4.2). È l'unica voce del catalogo provata in una direzione sola | B (3) |
 | V26 | la ritenzione pota i payload grezzi, mai i record strutturati | ✅ verificato qui | `prune` è un'operazione della porta `journal` (§4.1) · test a esempi sulle due regole non negoziabili di ADR-0018: un record potato **dichiara** di esserlo, e un passo in dubbio non è potabile (§4.5) | — |
 | V27 | nessuna azione fallisce per una condizione già nota e non dichiarata | ⚠️ parziale | lo stato di degrado è un oggetto derivato in perimetro (§6.7) e Q18 lo verifica in DST; **che l'interfaccia lo dichiari prima** no | A (2) |
-| V28 | nessun modello nel percorso decisionale del kernel | ✅ verificato qui | §7.4.2, riga I3 · V28 — corollario dell'allow-list: un percorso verso un adattatore comparirebbe nel grafo transitivo (§7.4.4 punto 2). Livello 2, sonde N1–N3 e contro-sonda N4. ⚠️ ADR-0031 dichiara il proprio limite: *«limita la superficie, non la certifica»* | — |
+| V28 | nessun modello nel percorso decisionale del kernel; **verificabile staticamente** | ✅ verificato qui | §7.4.2, riga I3 · V28 — corollario dell'allow-list: un percorso verso un adattatore comparirebbe nel grafo transitivo (§7.4.4 punto 2). Livello 2, sonde N1–N3 e contro-sonda N4. ⚠️ ADR-0031 dichiara il proprio limite: *«limita la superficie, non la certifica»* | — |
 | V29 | tempo, casualità, I/O e scheduling iniettabili | ✅ verificato qui | `no_std` e il divieto gratuito di `HashMap`, livello 1 · allow-list e cancello senza OS, livello 2 · la campagna DST stessa, il cui criterio C1 fallisce a ogni sorgente nascosta di non determinismo (§3.7). ⚠️ `HashMap` fuori dal kernel è **deliberatamente non controllato**: §7.4.4 punto 1 | — |
-| V30 | ogni requisito Q ha un metodo di verifica dichiarato | ✅ verificato qui | `check-docs.sh`, livello 2, già in esercizio (§7.4.2) | — |
-| V31 | ogni difetto trovato in simulazione conserva il proprio seme | ✅ verificato qui | il seme entra nell'elenco versionato, la **proprietà** entra nella suite (§7.4.2). ⚠️ debole per natura: l'automatismo protegge la proprietà, non il seme (§3.4). Nessun innesco la rafforza — è un limite, non un pezzo mancante | — |
+| V30 | ogni requisito Q ha un metodo di verifica dichiarato **prima** dell'implementazione | ✅ verificato qui | `check-docs.sh`, livello 2, già in esercizio (§7.4.2) | — |
+| V31 | ogni difetto trovato in simulazione conserva il proprio seme **come caso di regressione** | ✅ verificato qui | il seme entra nell'elenco versionato, la **proprietà** entra nella suite (§7.4.2). ⚠️ debole per natura: l'automatismo protegge la proprietà, non il seme (§3.4). Nessun innesco la rafforza — è un limite, non un pezzo mancante | — |
 | V32 | il backup contiene solo l'irriproducibile | ⏳ rimandato | il backup si scaglia per regola C (§0.4.1). ⚠️ verificarlo prima che esistano indici e pesi sarebbe **vacuo**: l'elenco delle esclusioni sarebbe vuoto | F — esistono backup e ripristino (11) |
 | V33 | i segreti non entrano mai nel backup automatico | ⏳ rimandato | idem (§0.4.1). Il **layout per natura** di ADR-0022 è invece già rispettato: `secrets` è un archivio distinto (§1.2) | F (11) |
-| V34 | un solo punto di lettura delle credenziali, verificabile staticamente | ✅ verificato qui | `secrets` è una crate separata e il grafo lo rende verificabile: livello 2, con sonda e contro-sonda (§7.4.2). È il motivo per cui le crate sono cinque e non quattro (§1.2) | — |
-| V35 | nessuna esecuzione di codice o comando sotto il livello 2 | ⚠️ parziale | il **tipo** del livello, la dichiarazione per azione e la registrazione entrano (§7.4.5); **il quarto gettone si scaglia** perché nessuna porta esegue comandi qui, ed è retrofittabile | D — si esegue un comando (5) |
-| V36 | gli effetti fuori dagli ambiti dichiarati restano soggetti alle classi di effetto | ⚠️ parziale | §7.4.1 C, riga V5 — un effetto senza classe non compila, **dentro o fuori un ambito indifferentemente**, ed è ciò che V36 chiede. **Che il checkpoint copra davvero gli ambiti** richiede il filesystem reale, scaglionato (§0.4, §10) | D (5) |
+| V34 | il **gestore dei segreti** è l'**unico** punto di lettura delle credenziali; verificabile staticamente | ✅ verificato qui | `secrets` è una crate separata e il grafo lo rende verificabile: livello 2, con sonda e contro-sonda (§7.4.2). È il motivo per cui le crate sono cinque e non quattro (§1.2) | — |
+| V35 | nessuna esecuzione di codice o comando sotto il livello 2 | ⚠️ parziale | **test a esempi**, gli stessi che rendono ✅ V37: il livello di confinamento è un campo obbligatorio dell'azione e finisce nel giornale. ⚠️ **Meccanismo rinominato il 2026-08-08:** la cella diceva «entrano (§7.4.5)», che è una voce di sezione e non una delle tre risposte ammesse da §8.1.2 — la stessa forma dei difetti §8.5.3 e §8.5.4. **Il quarto gettone si scaglia** perché nessuna porta esegue comandi qui, ed è retrofittabile: §7.4.5 | D — si esegue un comando (5) |
+| V36 | gli effetti fuori dagli ambiti dichiarati **non sono coperti dal checkpoint** e restano soggetti alle classi di effetto | ⚠️ parziale | §7.4.1 C, riga V5 — un effetto senza classe non compila, **dentro o fuori un ambito indifferentemente**, ed è ciò che V36 chiede. **Che il checkpoint copra davvero gli ambiti** richiede il filesystem reale, scaglionato (§0.4, §10) | D (5) |
 | V37 | il livello di confinamento usato entra nel giornale insieme al passo | ✅ verificato qui | test a esempi: è la parte che §7.4.5 fa entrare comunque | — |
 
 ### 8.4 I requisiti Q1–Q24
@@ -3088,21 +3178,21 @@ disallineano (§7.4.4, caso 2).
 | Q9 | contenuto non fidato nel canale delle istruzioni | ✅ verificato qui | **non compila**: test negativo di compilazione, livello 1 con visibilità di livello 2 (§7.4.1 C, §7.1.3) | — |
 | Q10 | verdetto di sensore che rientra nell'anello | ✅ verificato qui | test a esempi con sensore finto, che è il metodo assegnato da `design/08` (§6.4.2). ⚠️ prova che l'**anello** funziona, non che il **contratto** regga sensori reali: è RK-5, già accettato | — |
 | Q11 | occupazione della proiezione al budget | ⏳ rimandato | nessuna proiezione da misurare (§0.6). SP-3 ne tarerà la soglia, ma non è ciò che lo rende verificabile | B (3) |
-| Q12 | difetto ricorrente che diventa una proposta | ⏳ rimandato | l'anello 4 è scaglionato: legge ricorrenze che esistono solo quando qualcosa gira (§0.6) | C (4) |
-| Q13 | nessun candidato non conforme viene mai eseguito | ✅ verificato qui | **gettone di conformità**: un candidato non filtrato non è esprimibile come argomento di un'esecuzione. Livello 1 (§6.3.1, §7.4.1 B). ⚠️ il gettone prova la provenienza, non la correttezza del filtro: §6.3.2 | — |
+| Q12 | difetto ricorrente che diventa una proposta | ⏳ rimandato | l'**anello 4 non esiste**: è scaglionato per regola C (§0.4, §5), e senza di lui non c'è niente che emetta la proposta che il metodo verifica. ⚠️ **Motivazione corretta il 2026-08-08:** diceva *«legge ricorrenze che esistono solo quando qualcosa gira»*, ma il metodo di `design/08` è un **giornale sintetico con ricorrenza** — la ricorrenza si costruisce senza far girare niente, come per Q14. A mancare è l'anello, non il dato | C (4) |
+| Q13 | nessun candidato non conforme viene mai eseguito, **per qualunque catena** | ✅ verificato qui | **gettone di conformità**: un candidato non filtrato non è esprimibile come argomento di un'esecuzione. Livello 1 (§6.3.1, §7.4.1 B). ⚠️ il gettone prova la provenienza, non la correttezza del filtro: §6.3.2. ⛔ **Divergenza da `design/08`, registrata il 2026-08-08 invece che nascosta:** il metodo assegnato è una **verifica di proprietà** su catene generate; qui la proprietà è resa **non esprimibile**, che è più forte — una proprietà provata su N catene lascia scoperta la N+1, un tipo no. È la stessa mossa di §5.3 punto 3. Sostituire un metodo con uno più forte resta una sostituzione, e §8.1.3 pretende che si dica | — |
 | Q14 | ricostruire con cosa è stato eseguito un passo di sei mesi fa | ✅ verificato qui | il record di routing è **risolto** e giornalato col passo (§6.2): test a esempi su un giornale sintetico. La proprietà è strutturale — il record non rimanda alla configurazione, quindi non dipende da essa. ⚠️ **Il meccanismo è cresciuto il 2026-08-07 con ADR-0036**, e senza di esso «sei mesi fa» era una promessa: il record **dichiara la propria versione** — enum di versione al compilatore (§7.4.1 C) — e i **byte congelati** con la mappa `indice → nome → valore atteso` provano che un giornale scritto oggi si rilegge domani (§7.4.2, §4.9.4). ⛔ Vale il limite di §4.9.4: il compilatore prova che una versione è **dichiarata**, non che sia quella **giusta**. Un campo aggiunto dopo — il passo padre di un fork, §4.9.5 — è **facoltativo con un indice nuovo**, quindi non rompe la rilettura | — |
 | Q15 | un'istruzione trovata nei dati non autorizza | ⚠️ parziale | la metà **statica** è qui: §7.4.1 C riga Q9·I6·V20, più il gettone `journal` sulla conversione (§7.4.1 B, V19) · la metà a esempi — *l'obbligo di autorizzazione* — richiede il mediatore e il ciclo di approvazione, scaglionati per regola C | C (4) |
 | Q16 | descrizione MCP cambiata dopo l'approvazione | ⏳ rimandato | il metodo è un test di contratto contro un server MCP finto, e non esistono strumenti (§0.6) | C (4) |
-| Q17 | un segreto compare in contenuto in uscita | ⚠️ parziale | lato kernel: §7.4.2, riga V34 · Q24 — solo `secrets` raggiunge il portachiavi, livello 2 provato in due direzioni · **il canary è scaglionato** (§0.4, §6) e non c'è contenuto in uscita da controllare | B (3) |
+| Q17 | un segreto compare in contenuto in uscita | ⚠️ parziale | lato kernel: §7.4.2, riga V34 · Q24 — solo `secrets` raggiunge il portachiavi, livello 2 provato in due direzioni · **il canary è scaglionato** (§0.4, §6) e non c'è contenuto in uscita da controllare. ⛔ **Precisato il 2026-08-08, perché la cella si attribuiva un merito altrui:** il metodo che `design/08` assegna a Q17 è il **canary a esempi**, e **non ne gira niente**; il controllo di livello 2 qui accreditato è quello che `design/08` assegna a **Q24**. Resta ⚠️ e non ⏳ perché è esattamente la classe di §0.6 — *«verificato solo lato kernel»* — che §8.1.1 dichiara essere una delle due ragioni per cui il quarto stato esiste | B (3) |
 | Q18 | perdita della rete | ⚠️ parziale | il metodo di `design/08` — DST con iniezione del guasto — è eseguibile e verifica che il degrado sia dichiarato **prima** del primo fallimento (§3.3); ma `network` non ha implementazione reale, quindi nessuna conformità (§8.2.2) | B (3) |
 | Q19 | capire cosa è andato storto in una run di 4 ore | ⏳ rimandato | il metodo poggia sulla **proiezione trace**, scaglionata per regola C (§0.4, §7) | A (2) |
 | Q20 | nessun dato lascia la macchina | ⚠️ parziale | la metà statica è §7.4.2, riga V25 · Q20: il controllo gira, la sonda scatta, **la contro-sonda non esiste** · il test «assenza di traffico a default» è eseguibile ma **vacuo** finché nessuno può generarne — gotcha #17 | B (3) |
 | Q21 | ripristino da backup su una macchina nuova | ⏳ rimandato | il metodo di `design/08` è *«backup e ripristino su ambiente pulito»*, e qui non esiste né l'uno né l'altro: il backup si scaglia per regola C (§0.4.1). ⚠️ la §0.6 lo elencava fra i «verificati solo lato kernel»: disallineamento trovato e corretto, §8.5.1 | F (11) |
 | Q22 | annullare un passo che ha modificato file | ⚠️ parziale | la DST inietta la caduta durante la conservazione (§3.3) e il lato kernel — ambiti dichiarati, riferimento sul passo — entra; `filesystem` non ha implementazione reale (§8.2.2), quindi «l'ambito torna byte-identico» è provato su un albero in memoria | D (5) |
-| Q23 | esecuzione sotto il livello 2 di confinamento | ⚠️ parziale | `design/08` chiede una verifica **statica**, ed è esattamente il quarto gettone che la §7.4.5 scaglia: nessuna porta esegue comandi qui. Entrano il tipo, la dichiarazione per azione e la registrazione (V37) | D (5) |
+| Q23 | esecuzione sotto il livello 2 di confinamento | ⚠️ parziale | ⚠️ **Riletto il 2026-08-08: `design/08` chiede _due_ cose, non una** — *«statica: nessun percorso di esecuzione senza livello richiesto»* **più** un *«test negativo: con confinamento indisponibile l'azione non parte»*. **Nessuna delle due gira qui**, e per lo stesso motivo: nessuna porta esegue comandi (§7.4.5). Ciò che entra sono i **test a esempi** su tipo, dichiarazione per azione e registrazione nel giornale — che è V37, ed è meno di quanto `design/08` chiede | D (5) |
 | Q24 | lettura di credenziali fuori dal gestore dei segreti | ✅ verificato qui | statica sul grafo delle crate: solo `secrets` raggiunge il portachiavi. Livello 2, con sonda e contro-sonda (§7.4.2) | — |
 
-### 8.5 Quattro disallineamenti che la copertura ha trovato, e tutti chiusi
+### 8.5 Cinque disallineamenti che la copertura ha trovato, e tutti chiusi
 
 Nessuno era cercato. Sono emersi perché **giudicare sessantuno voci obbliga a leggere le
 sezioni con criteri diversi** da quelli con cui sono state scritte, ed è il valore
@@ -3114,12 +3204,15 @@ principale di questa sezione oltre alla tabella.
 | 2 | **nessun sotto-progetto** della roadmap collocava il backup | §8.5.2 |
 | 3 | il **livello 1 del catalogo** non enumerava tre proprietà che le §5 e §6 avevano già deciso | §8.5.3 |
 | 4 | il catalogo non enumerava i **cinque controlli della §6.10.5** — ed è la seconda volta, con la stessa forma | §8.5.4 |
+| 5 | **otto formulazioni di vincolo erano troncate** rispetto alla fonte, e su una di esse era stato dato un giudizio | §8.5.5 |
 
 I primi due riguardano lo stesso oggetto — il **backup** — e non è un caso: era l'unica
 cosa del progetto di cui nessuno era il proprietario, quindi l'unica che nessuna sezione
 aveva motivo di nominare. Il terzo e il quarto sono di natura diversa, e li ha trovati la
-§8 **contro sé stessa**, con la stessa regola e a distanza di un giorno. Tutte le
-correzioni sono registrate al loro posto, non applicate in silenzio.
+§8 **contro sé stessa**, con la stessa regola e a distanza di un giorno. Il quinto è l'unico
+che la §8 **non** poteva trovare da sola: sta fra questa tabella e la sua fonte, e per
+vederlo bisogna aprire l'altro documento. Tutte le correzioni sono registrate al loro posto,
+non applicate in silenzio.
 
 #### 8.5.1 Il backup non era in perimetro, e la §0.6 diceva il contrario — ✅ chiuso
 
@@ -3290,8 +3383,8 @@ che a una rinumerazione. Sonde eseguite il **2026-08-08** sulla spec **reale**, 
 
 | # | Sonda — *deve scattare* | Messaggio osservato |
 |---|---|---|
-| **S7** | si svuota la contro-sonda del gettone «leggere da un worker» (§7.4.1 B) | `riga 2495 (**leggere** da un worker): contro-sonda vuota` |
-| **S8** | si svuota la contro-sonda della riga «byte consumati» (§7.4.2) | `riga 2563 (**Q4** · I5 · §6.10): contro-sonda vuota` |
+| **S7** | si svuota la contro-sonda del gettone «leggere da un worker» (§7.4.1 B) | `riga 2566 (**leggere** da un worker): contro-sonda vuota` |
+| **S8** | si svuota la contro-sonda della riga «byte consumati» (§7.4.2) | `riga 2634 (**Q4** · I5 · §6.10): contro-sonda vuota` |
 
 La contro-sonda è **C0** della §8.6.3, che qui vale invariata: la spec intatta esce verde.
 Ripristino verificato — **`spec ripristinata byte-identica`**.
@@ -3306,6 +3399,57 @@ sta:** la §7.4.7 contava i test di compilazione fallita come *«una dozzina —
 e nove nel C»*, cioè il ritratto di **prima** di ADR-0034, ADR-0036 e §6.10.5. Ricontato sulla
 tabella: **cinque** in B e **quattordici** in C.
 
+#### 8.5.5 Otto formulazioni erano troncate, e su una era stato dato un giudizio — ✅ chiuso
+
+> ⚠️ **Trovato e chiuso il 2026-08-08**, in un audit sezione per sezione contro gli ADR e le
+> fonti. È l'unico dei cinque che la §8 non poteva trovare da sola: sta **fra** questa
+> tabella e il documento da cui copia.
+
+La §8.1.3 nomina l'autorità sui vincoli con una parola sola: **il testo del vincolo**, che
+vive nella [spec del kernel](2026-08-06-kernel-design.md). La colonna «Vincolo» di §8.3 è una
+**riformulazione abbreviata**, ed è corta per costruzione. Confrontandola con la fonte riga
+per riga, **otto** delle trentasette avevano perso un pezzo:
+
+| V | Cosa era caduto | Perché conta |
+|---|---|---|
+| **V16** | *«nomi di provider e parametri **sì**»* | è la metà **positiva** del vincolo, ed è **verificabile qui** |
+| **V5** | *«l'assenza vale `irripetibile`»* | senza, il caso «classe assente a runtime» — un record riletto da una versione precedente — resta senza regola |
+| **V36** | *«**non sono coperti dal checkpoint** e…»* | senza, un rollback che lascia intatto un file fuori ambito soddisfa la formulazione |
+| **V30** | *«**prima** dell'implementazione»* | è l'unica cosa che impedisce al metodo di essere ritagliato sul risultato |
+| **V25** | *«nessuna telemetria **lascia la macchina**»* | senza, vieta anche la **raccolta**, che V24 invece pretende: era un **allargamento**, non un taglio |
+| **V34** | *«il **gestore dei segreti** è…»* | perdeva il soggetto proprio nella riga che deve difenderlo |
+| **V31** | *«**come caso di regressione**»* | «conservato in un elenco» e «rigira a ogni commit» diventano indistinguibili |
+| **V28** | *«verificabile staticamente»* | e la riga V34 accanto lo aveva **tenuto**, quindi non cadeva per brevità |
+
+⛔ **Sette erano innocue. Una no, e aveva già prodotto un giudizio sbagliato.**
+
+> **`V16` torna a ⚠️ `parziale`.** Il declassamento di §8.5.3.1 era **corretto sulla metà che
+> aveva davanti** — provare che nessuna credenziale compare, dove nessuna credenziale passa,
+> è vacuo (gotcha #17), e resta vero. Ma la metà **positiva** — che il record *porti* nomi di
+> provider e parametri — non era nella colonna, quindi non è entrata nel giudizio. Quella
+> metà è verificata qui, dallo **stesso test a esempi su giornale sintetico** che rende ✅ V15
+> e Q14. Un vincolo con una metà verificata e una vacua è `parziale`: è la definizione di
+> §8.1.
+
+⚠️ **Il conteggio torna a «tredici», e non è un ripensamento.** Il 2026-08-08 §8.8 era stata
+corretta da «tredici» a «dodici» perché nessuno aveva ricontato dopo il declassamento di
+`V16`. Il numero era giusto per la tabella di allora; ora la tabella è cambiata di nuovo, per
+una ragione diversa e registrata. **Il ritratto va riletto sulla tabella ogni volta**, che è
+esattamente ciò che la regola dice — e questo è il caso in cui obbedirle produce lo stesso
+numero di partenza per un motivo nuovo.
+
+**È il gotcha #29, spostato dalle invarianti alla tabella che le giudica.** Quella regola dice
+che *«la riga di verifica di un'invariante è il punto in cui l'invariante si restringe in
+silenzio»*. Qui non è la riga di verifica ma la **riformulazione**, e l'esito è peggiore: una
+riga di verifica troppo stretta lascia scoperto un caso, una riformulazione troppo stretta
+**cambia l'oggetto del giudizio**. ⛔ Nessuno script può accorgersene — la colonna è piena e
+lo stato è nell'insieme chiuso — ed è la stessa condizione dichiarata in §8.5.3.1 e §8.8: la
+§8 ha un punto che dipende da chi rilegge, e ora si sa che sono **due**, non uno.
+
+📌 **Il rimedio, che è il pezzo utile:** quando si tocca la §8, la colonna «Vincolo» si
+**confronta con la fonte**, non si rilegge da sola. Costa il tempo di aprire un file di
+quarantatré kilobyte, e questa volta ha ribaltato un verdetto.
+
 ### 8.6 L'estensione di `check-docs.sh`
 
 #### 8.6.0 A parole
@@ -3319,7 +3463,7 @@ Le due estensioni non introducono un meccanismo nuovo: applicano quello che c'è
 tabelle che finora nessuno leggeva. È il motivo per cui costano poche righe, ed è anche il
 motivo per cui non c'era una ragione per non farle.
 
-#### 8.6.1 Le quattro asserzioni
+#### 8.6.1 Le cinque asserzioni
 
 | # | Asserzione | Chiude |
 |---|---|---|
@@ -3327,6 +3471,14 @@ motivo per cui non c'era una ragione per non farle.
 | 2 | **tutti** i V1–V37 e Q1–Q24 compaiono nelle tabelle §8.3 e §8.4, una volta ciascuno | §0.6 |
 | 3 | lo **stato** appartiene all'insieme chiuso dei quattro | §8.1 |
 | 4 | `parziale` e `rimandato` portano un **innesco** non vuoto | §8.1.1 |
+| 5 | la riga ha **cinque colonne** — meno di cinque e le asserzioni 3 e 4 non hanno dove leggere | §8.3 · §8.4 |
+
+> ⚠️ **La quinta è stata aggiunta all'elenco il 2026-08-08, non allo script.** Lo script la
+> esegue da sempre — `if (n < 7) { printf "%s: la riga non ha le cinque colonne" }` — ma
+> questa tabella si presentava come inventario chiuso e ne elencava quattro. Va detto anche
+> il suo effetto collaterale, perché non è ovvio: su una riga malformata il controllo **si
+> ferma lì**, quindi le asserzioni 3 e 4 su quella riga non girano. Il rosso resta rumoroso,
+> non silenzioso, e per questo non è una guardia di non-vacuità mancante.
 
 La 2 è insieme completezza e non-duplicazione: una voce mancante e una voce scritta due
 volte con stati diversi sono lo stesso difetto — *la tabella non giudica* — e producono lo
@@ -3354,6 +3506,17 @@ script, cioè un fallimento per la ragione sbagliata. La guardia verifica che i 
 esistano e che le righe siano più di zero; per la §8 la completezza è già garantita
 dall'asserzione 2, che è un elenco canonico e quindi non ha questo problema.
 
+> ⚠️ **Un limite dell'intervallo, dichiarato il 2026-08-08 invece di lasciarlo scoprire.**
+> Per la §8 l'awk apre su `## 8. ` e **non chiude mai**: l'intervallo reale è «da lì a fine
+> file», non «§8.3 e §8.4». Oggi non produce falsi rossi solo per un dettaglio tipografico
+> — le altre tabelle della §8 scrivono gli identificativi in **grassetto** (`| **V2** |`) e
+> la regex, che pretende `| V2 |`, non li vede. Chi togliesse il grassetto a una di quelle
+> celle otterrebbe `V2 compare piu di una volta`, cioè un rosso **per la ragione sbagliata**:
+> il gotcha #9 applicato allo script, la stessa cosa che questa sottosezione rifiuta di fare
+> col numero atteso. ⛔ **Non si irrigidisce la regex**, che diventerebbe fragile in un altro
+> modo: si sa che le tabelle diverse da §8.3 e §8.4 scrivono gli ID in grassetto, ed è una
+> convenzione da rispettare, non un caso.
+
 #### 8.6.3 Le sonde, in due direzioni
 
 Eseguite il **2026-08-07**. Ogni sonda muta la spec **reale** e lancia lo script **reale**:
@@ -3370,7 +3533,7 @@ messaggio nomini il colpevole. La seconda è ciò che ha smascherato una sonda v
 | **S1b** | si toglie del tutto la colonna | `riga 1778 (V29 · gotcha #12): manca la colonna contro-sonda` |
 | **S2** | si toglie lo stato a una riga della §8 | `V13: stato non ammesso — «»` |
 | **S3** | si cancella la riga `V13` | `manca la riga per V13` |
-| **S3b** | si duplica la riga `V13` | `V13 compare più di una volta` |
+| **S3b** | si duplica la riga `V13` | `V13 compare piu di una volta` — ⚠️ **senza accento, corretto il 2026-08-08**: lo script scrive `piu`, e la trascrizione accentata rendeva l'unico messaggio dei tredici non riproducibile carattere per carattere |
 | **S4** | si scrive uno stato fuori dall'insieme | `V13: stato non ammesso — «🟡 in corso»` |
 | **S4b** | si scrive uno stato **ambiguo**, con due parole dell'insieme | `V13: stato ambiguo — «⏳ parziale e rimandato»` |
 | **S5** | `rimandato` senza innesco | `V13: «⏳ rimandato» senza innesco` |
@@ -3458,7 +3621,7 @@ scrivere ✅ o a tacere, e sono i due modi in cui una rinuncia diventa invisibil
 | Costo | |
 |---|---|
 | **sessantuno righe da tenere allineate** | ogni V o Q nuovo, ogni cambio di perimetro, tocca questa tabella. Mitigato dall'asserzione 2: dimenticarla è rosso, non silenzio |
-| **dodici V e otto Q sono `parziale`** | è circa un terzo del totale, ed è il ritratto onesto di un sotto-progetto che costruisce il kernel senza nessuno dei suoi consumatori. Il rischio è che `parziale` diventi la casella comoda: l'innesco obbligatorio è l'unica difesa, ed è di livello 2. ⚠️ **Ricontato sulla tabella il 2026-08-08**, non dedotto: il ritratto pieno è **diciotto ✅ · dodici ⚠️ · sette ⏳** per i V e **nove · otto · sette** per i Q. Diceva «tredici V», ed era il numero di prima che `V16` fosse declassato in §8.5.3.1 — nessuno lo aveva ricontato, e un conteggio stantio invecchia **in silenzio** |
+| **tredici V e otto Q sono `parziale`** | è circa un terzo del totale, ed è il ritratto onesto di un sotto-progetto che costruisce il kernel senza nessuno dei suoi consumatori. Il rischio è che `parziale` diventi la casella comoda: l'innesco obbligatorio è l'unica difesa, ed è di livello 2. ⚠️ **Ricontato sulla tabella due volte il 2026-08-08**, non dedotto. Il ritratto pieno è **diciotto ✅ · tredici ⚠️ · sei ⏳** per i V e **nove · otto · sette** per i Q. ⛔ **La storia del numero, perché altrimenti sembra un ripensamento:** diceva «tredici» dal giorno in cui fu scritto; il primo riconteggio lo portò a «dodici», perché nessuno aveva ricontato dopo il declassamento di `V16` in §8.5.3.1; il secondo lo riporta a «tredici», perché `V16` è tornato `parziale` quando si è visto che il declassamento aveva giudicato una **formulazione troncata** (§8.5.5). Stesso numero, tre tabelle diverse: è il motivo per cui **si riconta**, invece di fidarsi di ciò che c'è scritto |
 | **gli inneschi invecchiano** | la condizione no, il numero fra parentesi sì. §8.2.1 sceglie quale delle due lo script può controllare — nessuna delle due — e quale un lettore può correggere: il numero |
 | **tre sezioni approvate sono state corrette** | §0.4, §0.6 e il **catalogo §7.4** — la riga V31 in §7.4.2, le tre nuove in §7.4.1, e il 2026-08-08 le **cinque** della §6.10.5 più il ritratto ricontato in §7.4.7 (§8.5.4) — per disallineamenti che questa tabella ha trovato. Il costo non è la correzione ma il precedente: una sezione approvata non è congelata, e ogni riapertura va **registrata** invece che applicata, §8.5 |
 | **una regola della §8 dipende da chi legge** | §8.1.2 — «il meccanismo nomina una voce della §7» — ha rifiutato tre voci del catalogo e una riga della tabella, e il giorno dopo altre **cinque** voci (§8.5.4), ma **nessuno script la applica**: lo script verifica che la casella sia piena, non che nomini davvero una voce. È l'unico punto della §8 nella condizione in cui era la §7.7.1 prima di questa sezione — ed è **la classe di difetto che ricompare**, non un incidente |

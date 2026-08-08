@@ -88,3 +88,27 @@ il costo di introdurla dopo è una riscrittura.
   - L'ADR sul linguaggio del core deve valutare esplicitamente la **sostituibilità
     dello scheduling**. È il primo caso in cui una decisione di test vincola una
     decisione di architettura, e va detto invece che scoperto.
+
+---
+
+## ✅ Rimando — «permanente» e «suite di regressione» sono stati precisati (2026-08-08)
+
+Il punto 3 della Decision dice che il seed diventa *«un caso di regressione permanente»*, e
+le Consequences che *«i seed accumulati formano una suite di regressione che cresce da
+sola»*. La **§3.4** della spec del sotto-progetto 1 restringe entrambe le formulazioni, e la
+restrizione va registrata qui invece di vivere solo là:
+
+| Cosa diceva | Cosa vale |
+|---|---|
+| il seed è un caso di regressione **permanente** | ⚠️ **no**: un seed non riproduce la stessa esecuzione dopo un cambio di codice. È un **punto di ripartenza per indagare**, non un oracolo |
+| i seed formano una **suite di regressione** | ⚠️ **no**: a entrare nella suite è la **proprietà** che quel difetto violava. Un elenco di semi presentato come suite sarebbe una falsa sicurezza |
+
+⛔ **L'ADR non è superato, e la sostanza del punto 3 regge**: ogni difetto trovato in
+simulazione **conserva** il proprio seed, e il seed **si versiona**. Ciò che cade è
+l'aspettativa che quel seed lo **riprodurrà** per sempre. La conseguenza pratica è scritta
+in §3.4 e nella riga V31 di §8.3: *«l'automatismo protegge la proprietà, non il seme»*, e la
+debolezza è dichiarata invece che nascosta.
+
+📌 Trovato in un audit sezione-contro-ADR il 2026-08-08. Vale il gotcha **#29**: la
+formulazione più corta — qui «permanente» — è quella che viene citata, e nessuno la
+confronta con ciò che il meccanismo fa davvero.

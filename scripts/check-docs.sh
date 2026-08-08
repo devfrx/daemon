@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Controllo di coerenza della documentazione.
-# Da eseguire alla chiusura di ogni sezione, ADR o sotto-progetto.
+# Da eseguire PRIMA DI OGNI COMMIT di documentazione -- e quindi a ogni chiusura di
+# sezione, ADR o sotto-progetto, che è quando si committa. La cadenza è quella di
+# CLAUDE.md e della §7.5.1 della spec del sotto-progetto 1: una sola, scritta in tre
+# posti che devono dire la stessa cosa. Allineata il 2026-08-08: questa riga diceva
+# «alla chiusura di ogni sezione, ADR o sotto-progetto», cioè una cadenza più
+# grossolana di quella che la porta di qualità le assegna.
 # Uscita 0 = tutto coerente. Uscita 1 = c'è qualcosa da sistemare.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1

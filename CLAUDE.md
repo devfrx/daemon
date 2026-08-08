@@ -66,15 +66,20 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | **Richiamo datato** | ogni correzione a una sezione approvata porta il proprio richiamo con la data |
 | **Le misure nello scratchpad** | non nel repository, e si ripulisce dopo |
 | **Audit a ogni chiusura** | `bash scripts/check-docs.sh` prima di ogni commit di documentazione |
-| **Commit e push** | **senza co-autore** |
+| **Commit e push** | alla chiusura di ogni voce si **committa e si pusha**, senza chiedere, e **senza co-autore** |
 
 ## Manutenzione della documentazione
 
 Alla chiusura di ogni sotto-progetto si aggiornano **nello stesso passaggio**:
 [`docs/COMPENDIO.md`](docs/COMPENDIO.md), [`docs/roadmap.md`](docs/roadmap.md),
-[`docs/tracciabilita.md`](docs/tracciabilita.md), lo stato degli spike,
-[`docs/HANDOFF.md`](docs/HANDOFF.md) se emergono gotcha nuovi, e questo file se cambia
-il modo di lavorare.
+[`docs/README.md`](docs/README.md), [`docs/tracciabilita.md`](docs/tracciabilita.md),
+lo stato degli spike, [`docs/HANDOFF.md`](docs/HANDOFF.md) se emergono gotcha nuovi, e
+questo file se cambia il modo di lavorare.
+
+Alla chiusura di ogni **voce** — non solo di un sotto-progetto — si aggiornano
+[`docs/COMPENDIO.md`](docs/COMPENDIO.md) e [`docs/HANDOFF.md`](docs/HANDOFF.md), e
+[`docs/riferimenti.md`](docs/riferimenti.md) **se la voce ha portato una misura o una
+fonte**. Poi si committa e si pusha.
 
 ⛔ **Il compendio non può restare indietro**, e non è lasciato alla buona volontà:
 `check-docs.sh` pretende una voce in §5 per **ogni** file in `docs/adr/`. Un ADR nuovo

@@ -28,7 +28,7 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack,
-     il non rilitigabile, i trentuno gotcha, le trappole di check-docs.sh,
+     il non rilitigabile, i trentacinque gotcha, le trappole di check-docs.sh,
      i vincoli sul primo commit di codice, lo stato di oggi e il prossimo passo.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
@@ -41,10 +41,15 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
    lungo, non la decisione. Nessuna può sfuggirti perché «non sembrava attinente».
 
-DUE COSE CHE I FILE NON DICONO
+TRE COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
   · Non sono operativo in Rust. Quando l'argomento esce dal mio dominio,
     spiegamelo PRIMA a parole semplici e POI schematizza.
-  · Commit e push SENZA co-autore.
+  · Alla chiusura di ogni voce COMMITTA E PUSHA senza chiedere, e SENZA
+    co-autore. Prima però: bash scripts/check-docs.sh
+  · Se ti viene un'idea che SOSTITUISCE una decisione presa, cerca PRIMA dove
+    era già stata valutata e perché era caduta. Riaprila solo con una prova
+    nuova — e se la prova nuova gioca contro, registrala e chiudila. È il
+    gotcha #32, e c'è perché è già successo.
 
 Parti confermandomi cosa hai letto e qual è la tua lettura dello stato — POI
 ASPETTA le mie richieste prima di proporre qualunque cosa.
@@ -60,6 +65,6 @@ ASPETTA le mie richieste prima di proporre qualunque cosa.
 | lettura che ordinava | oltre 700 KB, e in pratica ~400k token | 24 KB, ~6k token |
 | decisioni note all'agente | tutte, **dopo** ~400k token | **tutte**, dopo ~6k token |
 
-Il messaggio lungo elencava undici letture «PER INTERO», fra cui trentasei ADR, nove
+Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e una spec da 201 KB. Non è che chiedesse troppo: chiedeva la cosa giusta nel
 posto sbagliato. Le decisioni servono **tutte** — ma compresse, non integrali.

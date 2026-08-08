@@ -12,8 +12,8 @@ Ultimo aggiornamento: **2026-08-07**.
 > **Python**; Tauri contro Electron resta aperto ([ADR-0029](adr/0029-guscio-della-gui.md),
 > `Proposed`) e **non blocca nulla**.
 >
-> **Sotto-progetto 1: §0–§8 approvate**, e la spec è **riaperta su sette voci**. Nessuna
-> riga di codice. La §7 porta la **porta di qualità**: ogni controllo dichiara il proprio
+> **Sotto-progetto 1: §0–§8 approvate**, e la riapertura su sette voci è **tutta chiusa**.
+> Nessuna riga di codice. La §7 porta la **porta di qualità**: ogni controllo dichiara il proprio
 > livello di forza — compilatore, controllo esterno, lint — e porta la sonda che deve
 > scattare *e* la contro-sonda che deve restare verde. **Il livello 3 è vuoto**: nessuna
 > invariante del kernel poggia su un lint. La §8 porta la **copertura**: ogni V e ogni Q
@@ -21,22 +21,24 @@ Ultimo aggiornamento: **2026-08-07**.
 > e non dalla buona volontà. **Il livello ⛔ è vuoto**: nulla è lasciato deliberatamente
 > senza controllo.
 >
-> ⚠️ **La spec è riaperta su sette voci** (2026-08-07), trovate rileggendo
-> [tracciabilita.md](tracciabilita.md) con la domanda *«di quale meccanismo di kernel ha
-> bisogno questa funzionalità, e la spec lo nomina?»*. Tre sono di classe **B**, cioè non
-> retrofittabili. **Cinque sono chiuse**: i parametri di decisione consegnati al kernel
-> ([ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md), §2.8), la
-> provenienza del totale di VRAM (§5.1), l'unico punto di uscita verso la rete (§2.3.1),
-> **F1a** — la dichiarazione della porta verso i worker
-> ([ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md), §2.3.1), che completa la
-> riga di verifica di I4 — e **F2 con F7**, l'evoluzione del formato durevole del giornale
-> ([ADR-0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md), §4.9). Le
-> restanti, con l'ordine e le propedeuticità, sono in
-> [HANDOFF](HANDOFF.md#prima-cosa-da-fare).
+> ✅ **Le sette voci della riapertura sono tutte chiuse** (2026-08-08). Erano emerse
+> rileggendo [tracciabilita.md](tracciabilita.md) con la domanda *«di quale meccanismo di
+> kernel ha bisogno questa funzionalità, e la spec lo nomina?»*, e tre erano di classe
+> **B**, cioè non retrofittabili.
 >
-> Prossimo passo: **F1b — il progetto della porta `process` in §5–§6**, poi F4, poi la §8
-> una volta sola, e infine il piano di implementazione, che deve decidere anche dove nasce
-> il workspace. Poi il codice.
+> | Voce | Chiusa con |
+> |---|---|
+> | i parametri di decisione consegnati al kernel | [ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md) · §2.8 |
+> | la provenienza del totale di VRAM | §5.1 |
+> | l'unico punto di uscita verso la rete | §2.3.1 |
+> | **F1a** — la porta verso i worker, che completa la riga di verifica di I4 | [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) · §2.3.1 |
+> | **F2 con F7** — l'evoluzione del formato durevole del giornale | [ADR-0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md) · §4.9 |
+> | **F1b** — il progetto della porta `process`, e il formato di filo verso i worker | [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) · §6.10 |
+> | **F4** — la collocazione dell'anello 3, che scritta si è spaccata in **C + B** | §0.4.3 |
+>
+> Prossimo passo: la **§8**, che si tocca **una volta sola** — e il ritratto dei conteggi va
+> **ricontato sulla tabella**, non dedotto. Poi il piano di implementazione, che deve
+> decidere anche dove nasce il workspace. Poi il codice.
 >
 > ✅ **La lacuna su I2 è chiusa**: [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
 > — quota di presentazione sottratta, con la concessione tenuta dal core. Il kernel non
@@ -63,7 +65,7 @@ flowchart LR
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
 | **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
-| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — §0–§8 approvate, **riaperta su sette voci**: cinque chiuse, restano **F1b** e **F4**, poi il piano | 0, 0b, 0c |
+| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — §0–§8 approvate, riapertura su sette voci **tutta chiusa**; resta la **§8** da incassare, poi il piano | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2 |
 | 4 | Agenti | L2 | ⬜ | 3 |

@@ -768,6 +768,7 @@ stato sta nella §6, in un posto solo.
 | ADR superato | la voce resta e si marca; gli ADR sono **append-only** |
 | voce della riapertura chiusa | la tabella e l'ordine in **§6** |
 | gotcha nuovo | una riga in **§9**, e il testo integrale in `HANDOFF.md` |
+| **misura nuova** | le **fonti** e i **comandi** in `riferimenti.md`, la riga d'esito in `HANDOFF.md`, e le evidenze nell'ADR o nella sezione che la misura decide. ⛔ I prototipi restano nello scratchpad e si ripuliscono |
 | decisione dello stack | **§4** |
 | cambio del prossimo passo | **§6** |
 

@@ -145,6 +145,40 @@ permanente su ogni campo di ogni record»: era la codifica a **mappa**. La prede
 stessa libreria è ad **array**, e lo scarto è di sette volte — su un numero che stava per
 far scartare la forma giusta. Registrato come **gotcha #31**.
 
+## Il formato dei canali privati e i pari non-Rust (ADR-0037)
+
+Consultato e misurato il **2026-08-08**. `rustc 1.95.0` · Python **3.13.7** ·
+Node **v24.9.0** con npm **11.6.0**. La domanda che ha aperto la ricerca: *un canale
+privato ha due capi, e il secondo non è Rust — il suo ecosistema ha un lettore?*
+
+**Le fonti consultate**, con ciò che affermano:
+
+| Fonte | Cosa dice | Esito |
+|---|---|---|
+| [`attrs2bin`](https://github.com/fvicent/attrs2bin) — PyPI **0.0.1**, unica release del **2020-03-22** | «compatible with Rust's bincode», e rimanda a `github.com/servo/bincode`, l'URL **pre-1.0** | ⛔ è la configurazione **1.x**, e i serializzatori dichiarati sono `int, float, bytes, str, bool`: **nessun tipo somma** |
+| [`serde-generate`](https://docs.rs/serde-generate) | genera Python con «Bincode (**default configuration only**)»; `bincode ^1.3.3` fra le dipendenze | ⛔ **1.x**, e richiederebbe `serde` nel grafo spedito del kernel |
+| [`bincode-ts`](https://www.npmjs.com/package/bincode-ts) — **1.0.0**, unica release del **2025-07-17** | espone `BincodeConfig.STANDARD` = `{endian: little, intEncoding: variant}` | ✅ corrisponde a `config::standard()` di bincode 2. ⚠️ README **autodichiarato generato da un LLM** |
+| `cbor2` **6.1.4** (Python) · [`cbor-x`](https://www.npmjs.com/package/cbor-x) **1.6.5** (npm, aggiornata il **2026-07-29**) | CBOR conforme a **RFC 8949** | ✅ entrambe leggono i byte di `minicbor` |
+| `https://pypi.org/pypi/<nome>/json` · `https://registry.npmjs.org/<nome>` | interrogati per **aprire** i pacchetti invece di fidarsi del nome | ⛔ su PyPI `bincode` installa un modulo **`b64tools`**; su npm `bincode` è una **CLI di sviluppo con l'IA**. Gotcha #33 |
+
+**Le misure**, che non sono documentazione consultata: il comando con la sua versione è
+la fonte.
+
+| Verifica | Comando o banco | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| il pari **Python** decodifica `bincode` 2.0.1? | sonda `no_std` + driver `std`, come in M-1; confronto sui **valori** | ⛔ **no.** `attrs2bin` produce **33 B** dove bincode 2 ne produce **12** — è fixint a otto byte — e sui byte veri solleva `IncompleteOrCorruptedStreamError` | **M-10** · ADR-0037 · §6.10.6 |
+| il pari **TypeScript** ci riesce? | `esbuild --bundle` + Node 24, come farebbe Vite | ✅ **sì**, valori giusti e byte tutti consumati. ⚠️ **entrambi** i punti d'ingresso pubblicati sono rotti su Node 24: CJS `exports is not defined`, ESM import senza estensione | **M-11** · ADR-0037 |
+| CBOR è leggibile dai due pari? | `minicbor` 2.3.0 → `cbor2` 6.1.4 e `cbor-x` 1.6.5 | ✅ valori giusti su entrambi | ADR-0037, regola 3 |
+| un decodificatore CBOR rifiuta byte di un altro formato? | byte di `bincode` dati a `cbor2` | ⛔ **no**: restituisce **`1`** e ignora la coda. Nessuna eccezione | **gotcha #34** · §6.10.4 |
+| quanto costa un `Vec<u8>` non annotato? | `minicbor` con e senza `with = "minicbor::bytes"`, frammento audio da 4096 B | **7813 B** contro **4101 B** — **1,91×**, in silenzio | **gotcha #35** · §6.10.4 |
+
+⚠️ **Una nota sulla stabilità di queste fonti in particolare.** Il lettore `bincode` del
+pari TypeScript è **un pacchetto a versione unica** con il packaging rotto; i lettori CBOR
+sono implementazioni di uno **standard IETF** con più realizzazioni indipendenti. La
+decisione non è stata presa su questo scarto — il criterio è *il pari ha un lettore?* — ma
+lo scarto è dichiarato in ADR-0037 fra le `Negative`, perché il sotto-progetto 2 lo
+incontrerà.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

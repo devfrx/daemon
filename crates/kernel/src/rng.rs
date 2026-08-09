@@ -77,7 +77,9 @@ pub trait RngExt: Rng {
 
 /// ⛔ THE BLANKET IMPL IS THE GUARD, not a convenience: it is what makes `below` final.
 ///
-/// `?Sized` so that an erased `&mut dyn Rng` receives it as well — the executor may well
-/// hold its source that way, and dropping the bound would still compile everything else in
-/// this crate. Checked by `below_is_reachable_through_a_trait_object`.
-impl<R: Rng + ?Sized> RngExt for R {}
+/// ⚠️ No `?Sized`, and that is deliberate. Widening the impl to unsized types would put
+/// `below` on a `&mut dyn Rng` too, and nothing here receives its source erased: the
+/// executor takes it as a generic `R: Rng`. A bound with no consumer is an API item with no
+/// caller, and it goes. Re-add it — together with a test that pins it — on the day some
+/// consumer really does hold an `Rng` behind a trait object.
+impl<R: Rng> RngExt for R {}

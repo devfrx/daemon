@@ -117,16 +117,6 @@ fn below_is_the_shared_modulo_reduction_bias_included() {
     assert_eq!(rng.below(1_000), 7);
 }
 
-#[test]
-fn below_is_reachable_through_a_trait_object() {
-    // The executor receives an `Rng`; if it receives it erased, the `?Sized` on the blanket
-    // impl is the only thing keeping `below` reachable — and dropping it would still
-    // compile everything else here. Checked, therefore, instead of asserted in a comment.
-    let mut seeded = SeededRng::new(3);
-    let erased: &mut dyn Rng = &mut seeded;
-    assert!(erased.below(4) < 4);
-}
-
 /// An `Rng` whose raw values are chosen by hand, so that the reduction can be observed on
 /// values `SeededRng` cannot be asked to produce. It implements `Rng` and NOTHING else:
 /// `below` reaches it through the blanket impl.

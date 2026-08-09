@@ -6,4 +6,4 @@ error[E0119]: conflicting implementations of trait `RngExt` for type `Loaded`
    |
    = note: conflicting implementation in crate `kernel`:
            - impl<R> RngExt for R
-             where R: Rng, R: ?Sized;
+             where R: Rng;

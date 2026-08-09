@@ -9,7 +9,7 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 117 KB** (`wc -c`, il 2026-08-09), cioè **circa
+⚠️ **Insieme questi due file pesano 123 KB** (`wc -c`, il 2026-08-10), cioè **circa
 venticinquemila token** con lo stesso rapporto che fu usato per prezzarli la prima volta —
 ⚠️ e **quel rapporto non è mai stato rimisurato**, il che lo rende il prossimo #31 in arrivo.
 **Non sono più «circa seimila token»**: quella cifra era vera quando pesavano 24 KB, e
@@ -18,8 +18,8 @@ proprio su questa riga**: diceva 88 KB, ed erano già 91 prima che qualcuno la t
 Restano comunque la lettura più economica che esista qui: l'alternativa è mezzo megabyte.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — 605 KB con `wc -c`
-il 2026-08-09, e possono solo crescere; la spec da sola ne fa 271 — e l'idea è
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — 614 KB con `wc -c`
+il 2026-08-10, e possono solo crescere; la spec da sola ne fa 271 — e l'idea è
 già nel compendio. Quando ti servirà il **perché** di una decisione — le alternative
 scartate, le misure, i costi accettati — apri **quel** file, uno solo. La §12 del
 compendio dice quale.
@@ -79,6 +79,7 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | **ADR append-only** | superato → `Superseded by`; completato → un **rimando**. Completare una riga di verifica **non** è superare l'ADR |
 | **Richiamo datato** | ogni correzione a una sezione approvata porta il proprio richiamo con la data |
 | **Le misure nello scratchpad** | non nel repository, e si ripulisce dopo |
+| ⛔ **I fine-riga sono misti _per file_** | non c'è una convenzione da seguire: c'è **un file da non cambiare**. Uno script che riscrive un sorgente ne normalizza i fine-riga senza dirlo, e `git diff` dichiara **seicento righe cambiate** che nessuno ha toccato — successo due volte in una sessione. Chi scrive uno strumento che tocca file **conserva i fine-riga di quel file** |
 | **Audit a ogni chiusura** | `bash scripts/check-docs.sh` prima di ogni commit di documentazione |
 | **Commit e push** | alla chiusura di ogni voce si **committa e si pusha**, senza chiedere, e **senza co-autore** |
 

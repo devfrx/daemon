@@ -1,12 +1,12 @@
 //! One fake per port declared WITHOUT an implementation, and calls that exercise them
 //! (§2.3, gotcha #17).
 //!
-//! ⛔ WHAT THIS BUYS: that the signatures of `Filesystem`, `Network`, `Worker` and `Process`
-//! are IMPLEMENTABLE and CALLABLE. A trait nobody implements has not been proved implementable
-//! — a signature can be unusable for borrows, for ownership or for object safety, and one
-//! finds that out when the code that has to use it already exists. It has already happened in
-//! this milestone: a `Wakeup` enum declared in advance turned out to be unusable and was
-//! removed.
+//! ⛔ WHAT THIS BUYS: that the signatures of `Filesystem`, `Network`, `Worker`, `Process` and
+//! `Ipc` are IMPLEMENTABLE and CALLABLE. A trait nobody implements has not been proved
+//! implementable — a signature can be unusable for borrows, for ownership or for object
+//! safety, and one finds that out when the code that has to use it already exists. It has
+//! already happened in this milestone: a `Wakeup` enum declared in advance turned out to be
+//! unusable and was removed.
 //!
 //! ⛔ AND ON `process` IT CAUGHT ONE, which is worth recording because it is the first time
 //! this file found a defect instead of confirming a design. The port as the plan dictated it
@@ -22,6 +22,18 @@
 //! already failed. Errors from different passes MASK each other, so "I fixed the error and it
 //! built" can hide a second one that was never reached.
 //!
+//! ⛔ AND ON `ipc` IT DID THE OPPOSITE SERVICE, which is worth writing beside the paragraph
+//! above so that neither outcome looks like the only one this file can have. There the fake
+//! compiled at the first attempt — nothing was unbuildable from outside — and what it settled
+//! instead was SUBTRACTION: the plan gave `ClientId` a `get()` and the derives `PartialOrd`,
+//! `Ord` and `Hash`, and writing the fake first showed that an implementation which RETAINS a
+//! `Copy` identifier and compares it with `==` never needs the number, exactly as
+//! `InMemoryFilesystem` never needs a `CheckpointId`'s. All four came off, each measured on
+//! its own by removal. ⚠️ A fake is therefore not only a test that a port CAN be implemented;
+//! it is the only instrument here that can say which of a port's items an implementation
+//! actually reaches for — which on a trait with no callers is the question YAGNI cannot answer
+//! (gotcha #46).
+//!
 //! ⛔ WHAT IT DOES NOT BUY: that these are the RIGHT signatures. That is the spec's decision,
 //! not this file's. And it is NOT a conformance suite — the one `tests/reactor_contract.rs` is
 //! for `reactor` — which needs TWO implementations to compare and is born the day these ports
@@ -33,11 +45,16 @@
 //! does not interpret paths, so it cannot say whether two `Path` name one file.
 
 use kernel::ports::filesystem::{CheckpointId, Filesystem, FilesystemError, Path};
+use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 use kernel::ports::journal::StepId;
 use kernel::ports::network::{Endpoint, Network, NetworkError};
 use kernel::ports::process::{
     Frame, Grant, Process, ProcessError, SingleReceipt, StreamReceipt, Worker, WorkerDescriptor,
 };
+
+// ============================================================================================
+// THE `filesystem` FAKE
+// ============================================================================================
 
 #[derive(Default)]
 struct InMemoryFilesystem {
@@ -119,6 +136,10 @@ impl Filesystem for InMemoryFilesystem {
     }
 }
 
+// ============================================================================================
+// THE `network` FAKE
+// ============================================================================================
+
 /// A recorder, modelled on `RecordingJournal` in `boundary_promotion.rs`. What this port is
 /// FOR is that everything leaving the machine goes through one place, so the fake worth having
 /// is the one that writes down what left.
@@ -138,6 +159,10 @@ impl Network for RecordingNetwork {
         Ok(answer)
     }
 }
+
+// ============================================================================================
+// THE `process` FAKES -- `Worker` and `Process`
+// ============================================================================================
 
 /// A scripted worker, and it CORRELATES on purpose. §6.10.1 gives the port its shape --
 /// every byte that flows back is covered by a receipt -- so a fake that ignored which
@@ -276,6 +301,147 @@ impl Process for SpawningProcess {
         Ok(ScriptedWorker::new())
     }
 }
+
+// ============================================================================================
+// THE `ipc` FAKE
+// ============================================================================================
+
+/// A fake gui, and §3.1 asks it for one property no other fake in this file has: it CAN DIE,
+/// when the seed decides. The others refuse when they are asked something wrong; this one has
+/// to stop existing WHILE THE CORE IS HOLDING ITS IDENTIFIER, because that disappearance is
+/// the only event ADR-0033 gives the core to reconcile on.
+struct FakeGui {
+    /// Clients that have connected and are not accepted yet. `accept` NEVER BLOCKS, so
+    /// "nobody is waiting" has to be an ordinary answer rather than a wait.
+    knocking: usize,
+    next_id: u64,
+    clients: Vec<FakeClient>,
+}
+
+struct FakeClient {
+    id: ClientId,
+    /// What the core sent to this client.
+    delivered: Vec<Vec<u8>>,
+    /// What this client has put on the wire for the core.
+    queued: Vec<Vec<u8>>,
+    /// ⛔ A DEAD CLIENT IS KEPT IN THE TABLE, not removed, and that is a choice with a
+    /// reason. If dying deleted the row, "this client died" and "this identifier was never
+    /// issued" would collapse into ONE code path -- and the fake could then answer
+    /// `Disconnected` to a forged identifier without ever comparing identities at all. That
+    /// is the trap the forged receipt fell into on `process` (gotcha #24), avoided here by
+    /// construction instead of caught later.
+    alive: bool,
+}
+
+impl FakeGui {
+    fn new() -> Self {
+        FakeGui {
+            knocking: 0,
+            next_id: 1,
+            clients: Vec::new(),
+        }
+    }
+
+    /// A gui process connects. It is NOT accepted yet: `accept` is what the core calls when
+    /// the `reactor` says the listener is ready, and until then the client just waits.
+    fn knock(&mut self) {
+        self.knocking += 1;
+    }
+
+    /// The client puts a message on the wire for the core.
+    fn speaks(&mut self, client: ClientId, message: &[u8]) {
+        let position = self.row_of(client);
+        self.clients[position].queued.push(message.to_vec());
+    }
+
+    /// ⛔ THE SEED DECIDES (§3.1), and nothing warns the core. There is no call the port
+    /// makes to ask a client to die and no notification when one does: the gui is
+    /// SACRIFICIAL, so the core finds out by being REFUSED the next time it speaks.
+    fn dies(&mut self, client: ClientId) {
+        let position = self.row_of(client);
+        self.clients[position].alive = false;
+    }
+
+    /// What the core has sent to a client, for the assertions.
+    fn delivered_to(&self, client: ClientId) -> &[Vec<u8>] {
+        &self.clients[self.row_of(client)].delivered
+    }
+
+    fn row_of(&self, client: ClientId) -> usize {
+        self.clients
+            .iter()
+            .position(|known| known.id == client)
+            .expect("the test named a client this fake issued")
+    }
+
+    /// The lookup both dialogue methods open with, in `ScriptedWorker::alive`'s shape and for
+    /// its reason: written once, so that the places which do NOT call it are visible.
+    ///
+    /// ⚠️ IT ANSWERS TWO QUESTIONS WITH ONE ERROR, and WHY one word covers both is the port's
+    /// decision, written once on `IpcError::Disconnected`. What belongs to this fake is the
+    /// consequence: keeping the dead row IN the table is what lets the two facts reach that
+    /// word by two DIFFERENT routes -- a missing row, and a row marked dead. A fake that
+    /// stopped comparing identities would still have to fail one of them, which is what M3 and
+    /// M12 of the mutation pass exercise.
+    fn live(&self, client: ClientId) -> Result<usize, IpcError> {
+        let position = self
+            .clients
+            .iter()
+            .position(|known| known.id == client)
+            .ok_or(IpcError::Disconnected)?;
+        if !self.clients[position].alive {
+            return Err(IpcError::Disconnected);
+        }
+        Ok(position)
+    }
+}
+
+impl Ipc for FakeGui {
+    fn accept(&mut self) -> Option<ClientId> {
+        if self.knocking == 0 {
+            return None;
+        }
+        self.knocking -= 1;
+        let id = ClientId::new(self.next_id);
+        self.next_id += 1;
+        self.clients.push(FakeClient {
+            id,
+            delivered: Vec::new(),
+            queued: Vec::new(),
+            alive: true,
+        });
+        Some(id)
+    }
+
+    fn send(&mut self, client: ClientId, message: &[u8]) -> Result<(), IpcError> {
+        let position = self.live(client)?;
+        self.clients[position].delivered.push(message.to_vec());
+        Ok(())
+    }
+
+    fn receive(&mut self, client: ClientId) -> Result<Option<Vec<u8>>, IpcError> {
+        let position = self.live(client)?;
+        if self.clients[position].queued.is_empty() {
+            return Ok(None);
+        }
+        let message = self.clients[position].queued.remove(0);
+        // ⚠️ THE FAKE DECIDES THIS, not the port: an empty message is this implementation's
+        // notion of "did not decode", exactly as an empty frame is `ScriptedWorker`'s. The
+        // kernel exchanges bytes and does not read them, so it could not judge one if it
+        // wanted to -- what the port fixes is that the VOCABULARY exists.
+        //
+        // ⛔ AND IT SITS ON `receive` AND NOT ON `send`: same reason as `IpcError`, written
+        // once there.
+        if message.is_empty() {
+            return Err(IpcError::MalformedMessage);
+        }
+        Ok(Some(message))
+    }
+}
+
+// ============================================================================================
+// THE TESTS, in the order the fakes appear above
+// ============================================================================================
 
 #[test]
 fn the_filesystem_port_can_be_implemented_and_called() {
@@ -609,4 +775,137 @@ fn the_process_port_is_implementable_but_start_is_not_callable() {
         WorkerDescriptor::new(b"asr.exe".to_vec()),
         WorkerDescriptor::new(b"ASR.EXE".to_vec())
     );
+}
+
+#[test]
+fn the_ipc_port_can_be_implemented_and_called() {
+    let mut gui = FakeGui::new();
+
+    // ⛔ NOBODY IS WAITING IS NOT AN ERROR, and it is the first line of this test because it
+    // is the state the core spends most of its life in: the gui is 0..1 and sacrificial
+    // (ADR-0004), the core owns all the authoritative state (I1), so "there is no gui" is the
+    // ordinary case. `accept` never blocks -- readiness comes from the `reactor`.
+    assert_eq!(gui.accept(), None);
+
+    gui.knock();
+    let client = gui.accept().expect("the waiting client was accepted");
+    // ...and once taken, it is not waiting any more.
+    assert_eq!(gui.accept(), None);
+
+    // ⛔ THE CORE DECIDES WHEN TO EMIT (§6.1.4). This byte went out because the core called
+    // `send`, and there is no call in this trait with which the gui could have asked for it.
+    assert_eq!(gui.send(client, b"state"), Ok(()));
+    assert_eq!(gui.delivered_to(client), vec![b"state".to_vec()]);
+
+    // Nothing ready is `Ok(None)` and NOT an error: the core polls this port, and a poll that
+    // came back `Err` would make an idle gui indistinguishable from a broken one.
+    assert_eq!(gui.receive(client), Ok(None));
+
+    gui.speaks(client, b"a request");
+    assert_eq!(gui.receive(client), Ok(Some(b"a request".to_vec())));
+    // ...and it is consumed. A message that could be read twice is a message the core could
+    // act on twice, and nothing in the port would say which reading was the real one.
+    assert_eq!(gui.receive(client), Ok(None));
+}
+
+#[test]
+fn the_ipc_fake_refuses_where_it_must() {
+    // The direction that gets forgotten (§7.1.1 rule 3, gotcha #24). ⚠️ WHAT REFUSES IS THE
+    // FAKE, not the port -- same caveat as the filesystem and the worker above.
+    let mut gui = FakeGui::new();
+
+    // ⛔ A GENUINE CLIENT IS CONNECTED FIRST, and that line is what makes the rest
+    // discriminate. Measured on `process`: against an EMPTY table "this identifier is
+    // unknown" and "there are no clients at all" are indistinguishable, so a fake that had
+    // stopped comparing identities altogether still refused the forged one -- for the wrong
+    // reason.
+    gui.knock();
+    let genuine = gui.accept().expect("a genuine client is connected");
+
+    let forged = ClientId::new(4242);
+    assert_eq!(gui.send(forged, b"state"), Err(IpcError::Disconnected));
+    assert_eq!(gui.receive(forged), Err(IpcError::Disconnected));
+    // ...and the genuine one is untouched by the two refusals above.
+    assert_eq!(gui.send(genuine, b"state"), Ok(()));
+
+    // A message that did not decode. ⚠️ `MalformedMessage` and NOT `Disconnected`: a peer
+    // that talks nonsense is still there, and treating the two as one would make the core
+    // tear down a live gui over a single bad frame.
+    gui.speaks(genuine, b"");
+    assert_eq!(gui.receive(genuine), Err(IpcError::MalformedMessage));
+    // ...and the connection survived it: the next read is an ordinary empty one.
+    assert_eq!(gui.receive(genuine), Ok(None));
+
+    // And then the client dies, WITHOUT WARNING and without the core asking (§3.1). Both
+    // directions of the dialogue refuse from here on, including with an identifier that was
+    // perfectly good a moment ago.
+    gui.dies(genuine);
+    assert_eq!(gui.send(genuine, b"state"), Err(IpcError::Disconnected));
+    assert_eq!(gui.receive(genuine), Err(IpcError::Disconnected));
+}
+
+#[test]
+fn messages_are_delivered_to_the_client_they_name() {
+    // ⛔ THE LESSON OF `answers_are_correlated_to_the_receipt_that_asked`, applied here BEFORE
+    // it had to be learned a second time. With one client connected, "deliver to the right
+    // one" and "deliver to the only one" are the same sentence, and a fake that ignored the
+    // identifier entirely would satisfy every other test in this file.
+    let mut gui = FakeGui::new();
+    gui.knock();
+    gui.knock();
+    let first = gui.accept().expect("the first client was accepted");
+    let second = gui.accept().expect("the second client was accepted");
+
+    // Progressive and DISTINCT (§6.1.3, §2.2): never random, and never the same twice.
+    assert_ne!(first, second);
+
+    gui.send(first, b"for the first")
+        .expect("the first was sent to");
+    gui.send(second, b"for the second")
+        .expect("the second was sent to");
+    assert_eq!(gui.delivered_to(first), vec![b"for the first".to_vec()]);
+    assert_eq!(gui.delivered_to(second), vec![b"for the second".to_vec()]);
+
+    // Read in the REVERSE order of speaking. Reading them in order would pass against a fake
+    // that simply drains one shared queue.
+    gui.speaks(first, b"from the first");
+    gui.speaks(second, b"from the second");
+    assert_eq!(gui.receive(second), Ok(Some(b"from the second".to_vec())));
+    assert_eq!(gui.receive(first), Ok(Some(b"from the first".to_vec())));
+}
+
+#[test]
+fn a_dead_client_does_not_take_the_port_with_it() {
+    // ⛔ THE PROPERTY THE WHOLE PORT IS BUILT FOR. The gui is SACRIFICIAL: a client dying is
+    // an ordinary event, not an outage, and there is no liveness protocol against a process
+    // designed to die. So the refusal has to land on THAT client and on nobody else -- a
+    // check that fires where it must not is worse than one that is missing (gotcha #24).
+    //
+    // ⛔ AND WHICH CLIENT DIES IS CHOSEN, NOT INCIDENTAL. The one that dies sits at POSITION 0
+    // of the fake's table and the one that must survive at position 1. Measured on `process`:
+    // with that order reversed, an implementation keyed on POSITION instead of identity
+    // survives the test. This ordering is what makes it die.
+    let mut gui = FakeGui::new();
+    gui.knock();
+    gui.knock();
+    let doomed = gui.accept().expect("the first client was accepted");
+    let survivor = gui.accept().expect("the second client was accepted");
+
+    gui.dies(doomed);
+
+    assert_eq!(gui.send(doomed, b"state"), Err(IpcError::Disconnected));
+    assert_eq!(gui.send(survivor, b"state"), Ok(()));
+    assert_eq!(gui.receive(survivor), Ok(None));
+
+    // ⛔ AND A GUI THAT COMES BACK IS A NEW CLIENT. It does not inherit the dead one's
+    // identifier, and that is not tidiness: a message the core had queued for the corpse
+    // would otherwise be delivered to the newcomer, which by I1 starts with NO state of its
+    // own and could not tell that it was not meant for it. §6.1.3 says progressive; this says
+    // never reused.
+    gui.knock();
+    let reborn = gui.accept().expect("a new gui connected");
+    assert_ne!(reborn, doomed);
+    assert_ne!(reborn, survivor);
+    // ...and the corpse stays a corpse: reconnecting did not resurrect the identifier.
+    assert_eq!(gui.send(doomed, b"state"), Err(IpcError::Disconnected));
 }

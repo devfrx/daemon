@@ -169,6 +169,36 @@ quello di chi la dichiara.
 
 ---
 
+## Errata — 2026-08-10, dopo l'esecuzione del Task 12
+
+> ⛔ **Cinque voci, e per la prima volta la porta era corretta: il piano sbagliava intorno a
+> lei.** `ipc` è l'unica delle quattro porte dichiarate in anticipo che la finta ha
+> **confermato** invece di smentire — compila al primo colpo, implementabile da fuori dalla
+> crate, nessun `E0599`. A cadere sono stati **quattro item su cinque** che il piano le
+> attaccava, un'istruzione di manutenzione sbagliata, e una proprietà che la spec ordina di
+> scrivere e il piano ometteva.
+
+| # | Dove | Cosa non torna |
+|---|---|---|
+| **E42** | **Task 12 · Step 1**, `ClientId` con `get()` e i derive `PartialOrd, Ord, Hash` | ⛔ **Quattro item su cinque cadono, misurati uno per uno** (togliere → `cargo build --workspace` e `cargo test --workspace` in **passi separati**). `get()` via: `ClientId` è `Copy`, quindi un'implementazione **conserva** e confronta con `==` — è il caso di `CheckpointId::get()`, cancellato al Task 10, **non** quello di `SingleReceipt::id`, dove una ricevuta non può essere `Copy` e il getter era l'unica correlazione rimasta. `Hash` via, e ⚠️ **è il peggiore dei tre**: abilita `HashMap`, che nel kernel è **vietato** dal gotcha #12. `Ord`/`PartialOrd` via: l'argomento `BTreeMap` è reale ma **non blocca** chi implementa, e l'eccezione del #46 copre «non implementabile oggi», non «comodo domani». ⛔ **E le tre contro-sonde sono ciò che rende la potatura difendibile**, non cerimonia: `PartialEq` via → `E0369`, `Copy` via → `E0382` ×23 su **otto** legami, `Debug` via → `E0277`, `Clone` via con `Copy` in piedi → **la crate non compila**. Senza la contro-sonda su `PartialEq`, l'argomento *«si conserva e si confronta»* poggerebbe sul nulla — ed è la forma esatta con cui `SingleReceipt::id` era sopravvissuto **senza** copertura |
+| **E43** | **Task 12**, nessuna sonda per la porta nuova | quinta volta su cinque. `crates/kernel/tests/ports_are_implementable.rs` è il rimedio stabilito al gotcha **#46** e il piano non lo estende mai. ⚠️ **Qui però ha comprato una cosa diversa dalle altre volte:** non ha colto un difetto della porta — la porta era corretta — ha detto **quali item un'implementazione non tocca**, ed è su quell'evidenza che cadono le quattro voci di E42. È lo strumento usato per **sottrarre**, non per verificare |
+| **E44** | **Task 12 · Step 2**, *«tenendo intatto il commento in testa scritto al Task 4»* | ⛔ **Istruzione sbagliata**: quel commento era stato riscritto al **Task 11**, dichiarava *«FIVE submodules»*, spiegava che `ipc` era nominato **solo nella tabella** perché un `pub mod` che nomina un file inesistente non compila, e diceva che sarebbe arrivato al Task 12. Tenerlo «intatto» lasciava **quattro affermazioni false**, e nessuno script legge la prosa di un doc di modulo. ⚠️ **E c'è un secondo strato che l'istruzione non vede:** ora che ogni riga della tabella ha un file, la tabella *sembra* un duplicato dell'elenco `pub mod` e diventa candidata alla cancellazione — ma l'elenco dice cosa **esiste** e la tabella quante **dovrebbero essere**, e toglierla farebbe rientrare il gotcha #17 dalla porta di servizio. La ragione è ora scritta |
+| **E45** | **Task 12 · Step 1**, il doc di modulo senza la §6.1.4 | la spec dice testualmente che *«il core decide **quando** emettere, la GUI non tira»* è già vero per costruzione **e va scritto perché non venga eroso**. Il piano lo ometteva. Scritto, e legato alla forma: il tratto ha **tre operazioni e nessuna quarta**, nessuna prende il nome di un pezzo di stato per restituirne il valore corrente, quindi *«la gui si aggiorna da sé»* **non è esprimibile** |
+| **E46** | **Task 12 · Step 1**, il residuo di `accept` — assente nel piano, e sbagliato alla prima stesura | `accept` non ha canale d'errore: un **ascoltatore** rotto arriverebbe come `None`, un valore sbagliato invece di un errore (gotcha #30). ⛔ **La prima stesura del limite ne sbagliava la causa**, scrivendo che era *«la domanda se due varianti bastino»*: è **anche** un'asimmetria fra le firme, perché `receive` restituisce già `Result<Option<Vec<u8>>, IpcError>` e lì «niente di pronto» e «rotto» convivono senza travestire il caso normale da errore. Conseguenza: **una terza variante non chiuderebbe niente**, chiudere costa la **firma**. La firma resta com'è — un `Result` inabitabile è superficie morta — ma il prezzo è ora scritto giusto, o al Traguardo 6 qualcuno lo riaprirà convinto che basti muovere l'enum |
+
+📌 **E il difetto più costoso di questo compito non stava né nel piano né nel codice: stava nel
+_registro_.** [`porta-di-qualita.md`](../../porta-di-qualita.md) era arrivato a **531 righe**, di
+cui **228 — il 43%** — di prosa su **una riga di tabella su tre**; le due righe vicine, nella
+stessa tabella, ne hanno **zero** ciascuna. Il meccanismo ha un nome: il registro era diventato
+la **prima stesura** del materiale da gotcha, e la promozione a
+[`HANDOFF.md`](../../HANDOFF.md) **non porta via la copia** — tre paragrafi erano in entrambi i
+posti alla lettera. Rimediato a **449 righe**, con quindici intestazioni invece di cinque e il
+buco più lungo senza titolo sceso da **322 a 91**. ⛔ **La regola che ne esce:** un registro di
+controlli risponde a *«dove vive il controllo X»*, e ogni riga che non serve a quella domanda ha
+una casa migliore altrove.
+
+---
+
 ## Il perimetro, e la voce che è stata cercata prima di fissarlo
 
 ⛔ **Da leggere prima dei compiti.** Il perimetro di questo traguardo è stato messo in

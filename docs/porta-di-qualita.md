@@ -32,12 +32,8 @@ Dopo la prima corsa non sarebbe più stato gratis.
 ## Livello 1 — il compilatore
 
 Le tre righe del **blocco A** di §7.4.1, **sette righe del blocco C** e **una del blocco B** —
-queste ultime otto dal Traguardo 2. ⚠️ **Ricontate sulle tabelle il 2026-08-09:** questa riga
-diceva *«tre righe del blocco C»* mentre la tabella qui sotto ne elencava quattro, ed erano già
-sei — gotcha **#31**, un ritratto di conteggi si riconta invece di dedurlo. ⚠️ **Ricontate di
-nuovo lo stesso giorno**, chiudendo la voce della **regola B**: erano sei e sono **sette**, e la
-riga nuova era già implementata da un compito — è la voce che questo registro portava dichiarata
-qui sotto. Del blocco **B**
+queste ultime otto dal Traguardo 2. ⚠️ **I conteggi si ricontano sulla tabella qui sotto, mai
+si deducono** — gotcha **#31**: questa riga ne ha già portati due sbagliati. Del blocco **B**
 (i gettoni) è coperta **una riga su cinque**, `promuovere testo a istruzione ← la porta
 journal` (V19); gli altri quattro gettoni li emettono l'arbitro e il filtro dei vincoli, che
 nascono coi Traguardi 5 e 6.
@@ -56,17 +52,13 @@ nascono coi Traguardi 5 e 6.
 | **blocco C** · `Q9 · I6 · V20` — **nessuna via `From`/`Into`** da `Untrusted` a `Instruction`, **regola B** | idem: nessuna conversione è dichiarata, e l'unica strada ammessa è `promote`, che pretende il giornale | `no_conversion_from_untrusted_to_instruction.rs` |
 | **blocco B** · `V19` — **promuovere testo a istruzione ← la porta `journal`** | `crates/kernel/src/boundary.rs` — `Untrusted::promote` pretende il giornale come **argomento**, e la registrazione fallita fa fallire la promozione | `promote_without_journal.rs` |
 
-✅ **La voce che questo registro portava aperta è chiusa il 2026-08-09, e il modo in cui è
-stata colta è la parte da tenere.** `no_conversion_from_untrusted_to_instruction.rs` esisteva
-dal Task 9 e il blocco C portava la sola riga della **regola A**: il caso era *implementato e
-non coperto dal catalogo*, che è il gotcha **#36** — alla terza occorrenza, ma la **prima colta
-prima che si sedimentasse**, perché lo scarto è stato scritto **qui** invece che nel silenzio.
-La riga della regola B è ora in §7.4.1 C con il proprio richiamo datato, e questo registro
-torna a dire *coperto*. ⛔ **La regola che ne esce, e vale oltre il caso:** quando un compito
-implementa un controllo che il catalogo non ha, il posto dove dichiararlo è **il registro**, e
-la dichiarazione va scritta come **voce aperta** — non come nota. Una nota si legge e si
-dimentica; una voce aperta la §6 del [compendio](COMPENDIO.md) la porta fino a che qualcuno la
-chiude.
+⛔ **La regola uscita dalla riga della regola B, e vale oltre il caso** (gotcha **#36**, terza
+occorrenza): quando un compito implementa un controllo che il catalogo non ha, il posto dove
+dichiararlo è **il registro**, e la dichiarazione va scritta come **voce aperta**, non come
+nota. Una nota si legge e si dimentica; una voce aperta la §6 del
+[compendio](COMPENDIO.md) la porta finché qualcuno la chiude.
+
+#### Come scattano le due direzioni, e perché la differenza conta
 
 ⛔ **Le due direzioni non sono simmetriche nel modo di scattare, e la differenza conta —
 gotcha #42.** `trybuild` stampa **`error`** quando un caso ha compilato e **`mismatch`**
@@ -97,7 +89,9 @@ Monotonic` lasciava la porta **verde su sei controlli su sei**. La riga `From`/`
 perché quella era la direzione **pericolosa** — una decisione che dipende dal wall time — e
 perché una regola guardata solo da casi `mismatch` non è guardata abbastanza.
 
-**Contro-sonde delle righe nuove**, per file — la direzione che si dimentica (§7.1.1 regola 3):
+#### Le contro-sonde delle righe nuove
+
+Per file — la direzione che si dimentica (§7.1.1 regola 3):
 
 | File | Righe che difende | |
 |---|---|---|
@@ -126,6 +120,8 @@ sostituzione mai avvenuta (gotcha #24), e che **nessun ripiego viva dentro il co
 la via d'ingresso più economica per un default, che il compilatore **non** può vietare e che
 §2.8.4 dichiara come limite.
 
+#### I casi di `compile_fail`, e cosa provano davvero
+
 ⛔ **I dieci casi nuovi nominano `kernel::` e non ridichiarano attributi propri**, a differenza
 dei quattro del Traguardo 1: è il rimedio al gotcha **#39**, e significa che i loro oracoli
 sono accoppiati alla **superficie pubblica del kernel**. Un cambio di firma li rende rossi, ed
@@ -139,14 +135,9 @@ non deve lasciar credere altro.** I **quattro casi del Traguardo 1** — `std_in
 **ridichiarano ciascuno i propri attributi** e non nominano mai `kernel::`. Provano che
 `#![no_std]` e `#![forbid(unsafe_code)]` **mordono dove sono dichiarati**; non provano che
 siano dichiarati nel kernel. Tolto `#![forbid(unsafe_code)]` da `crates/kernel/src/lib.rs`
-e scritto un `unsafe` vero, quei casi restano **verdi**.
-
-⚠️ **La frase nominava _la cartella_, ed era vera dei soli quattro — corretta il 2026-08-09.**
-`crates/kernel/tests/compile_fail/` ne contiene oggi **quattordici**, e i dieci del Traguardo 2
-fanno l'**opposto**: nominano `kernel::` e non dichiarano attributi propri, quindi il limite
-qui sopra **non li riguarda**. Restringere la frase costa una riga; lasciarla larga avrebbe
-attribuito a dieci casi una debolezza che non hanno — e a chi legge la sensazione che il
-gotcha #39 fosse ancora aperto.
+e scritto un `unsafe` vero, quei casi restano **verdi**. ⚠️ **Il limite riguarda quei quattro e
+non la cartella:** i dieci del Traguardo 2 fanno l'opposto, e attribuire anche a loro questa
+debolezza direbbe che il gotcha #39 è ancora aperto.
 
 A sorvegliare la **presenza** degli attributi è `scripts/gate-attributes.sh`, che è di
 **livello 2**: un controllo esterno, quindi cancellabile. La riga di `forbid` è di ramo
@@ -176,7 +167,7 @@ quella che deve restare verde.
 | coerenza della documentazione | `scripts/check-docs.sh` | S1…S6c · S7 · S7b · S7c · S7d | C0 · C5 · **C6** |
 | i **test di contratto** fra porta finta e porta vera — porta `reactor` | `crates/kernel/tests/reactor_contract.rs`, incluso da `crates/platform/tests/reactor_contract_real.rs` | **R3** · **R4** · R5 | R1 · R2 · **R6** |
 
-Le sonde, per nome:
+#### Le sonde, per nome
 
 | | |
 |---|---|
@@ -197,6 +188,8 @@ Le sonde, per nome:
 | **R5** | la plausibilità di `wall_time()` sulla **vera** — `crates/platform/tests/wall_clock_plausibility.rs`: un istante posteriore a una data fissa del passato. Coglie l'orologio fermo a **zero o all'epoca**, che era la mutazione sopravvissuta alla prima stesura |
 | **R6** | ⛔ **la contro-sonda che conta, e la si sarebbe dimenticata:** rompendo l'avanzamento dell'orologio di parete del `VirtualReactor`, la conformità **resta verde** e scatta **solo** `crates/simulator/tests/virtual_clock.rs`. È la prova che la suite condivisa non impone alla vera un comportamento della finta — se lo facesse, renderebbe rossa un'implementazione **corretta**. Gotcha **#44** |
 
+#### Il build script — la sesta voce, entrata su una lacuna misurata
+
 ⛔ **La riga del build script è la sesta voce di livello 2, ed è entrata il 2026-08-09 su una
 lacuna _misurata_.** Un `crates/kernel/build.rs` che chiama `SystemTime::now()`,
 `fs::metadata()` e `env::var()` e inietta il risultato con `cargo:rustc-env` lasciava la porta
@@ -209,6 +202,8 @@ letto dal mondo alla build, che è il gotcha #28. **Il rimedio è TOGLIERE**, co
 spedito, e il messaggio dello script lo dice insieme al perché — un controllo che sembra
 pedanteria viene aggirato. Vive dentro `gate-attributes.sh` perché è **il punto cieco di quello
 script**: `build.rs` ha attributi propri e il `forbid` di `lib.rs` non lo raggiunge.
+
+#### Tre note sui limiti dichiarati di questi controlli
 
 📌 **`gate-attributes.sh` è un controllo di testo, e non va promosso.** Cerca gli attributi
 con `grep` ancorato a inizio riga: prova che il divieto sia **dichiarato**, non che nel
@@ -226,15 +221,15 @@ disponibile la guardia **non può scattare**. Scatta quando la riconciliazione f
 cioè **senza rete** — verificato: uscita 1 e messaggio corretto. È la via che rende
 utilizzabile una macchina isolata, non un controllo che sorveglia la macchina connessa.
 
-**Contro-sonde, per esteso:** N4 · B3 · le due contro-sonde di `gate-attributes.sh` —
-`platform`, `secrets` e `daemon` non dichiarano nessuno dei tre attributi e **restano
-verdi**, e `crates/platform/build.rs` **resta verde** anch'esso, perché non sono nella lista
-dei vincolati e un controllo che scattasse anche lì sarebbe rosso per il motivo sbagliato
-(gotcha #24): `platform` è **il posto dove l'I/O deve vivere**. Più `build = false`, che il
-build script lo **disattiva** e va distinto da `build = "gen.rs"`, che lo dichiara. E, al
-livello sopra, `crates/platform/tests/counter_probes.rs`.
+**Contro-sonde:** la colonna «deve restare verde» qui sopra, più
+`crates/platform/tests/counter_probes.rs` al livello 1. ⚠️ Il punto che si dimentica è **perché**
+`platform`, `secrets` e `daemon` restano verdi: non sono fra le crate vincolate, e un controllo
+che scattasse anche lì sarebbe rosso per il motivo sbagliato (gotcha #24) — `platform` è **il
+posto dove l'I/O deve vivere**.
 
-**Gli altri test che `cargo test --workspace` porta, e cosa difende ciascuno.** ⛔ Stanno qui
+#### Gli altri test che «cargo test --workspace» porta
+
+**Cosa difende ciascuno.** ⛔ Stanno qui
 perché il gotcha **#36** ha una forma pura e silenziosa: chi scrive un controllo lo considera
 «scritto» e non lo riporta nel registro, e da fuori resta **indistinguibile da uno che non
 esiste**. Nessuno di questi è una riga del catalogo — sono controlli di livello 2 che
@@ -243,73 +238,70 @@ sostengono righe del catalogo, o che tengono in piedi ciò che le righe presuppo
 | File | Che cosa difende |
 |---|---|
 | `crates/kernel/tests/executor_determinism.rs` (dieci test) | **C1, C2 e C3 sull'esecutore _spedito_**, non su quello dello spike: **cento** corse allo stesso seme danno una traccia sola, **duecento** semi distinti non ne danno una sola, e il tempo virtuale **non attende** — l'orologio si ferma a 20 000 ms dove il sequenziale arriverebbe a 60 000. Più le sonde di **non-vacuità**: che l'interfoliazione sia reale, che un blocco diventi **errore e non attesa infinita**, che un reattore che non avanza sia **errore e non giro a vuoto**, che un'attesa già scaduta svegli subito senza muovere l'orologio, che una richiesta di sospensione **non si erediti** fra attività, e che un rideposito perpetuo di una scadenza passata **termini comunque** |
-| `crates/kernel/tests/ports_are_implementable.rs` (**nove** test) | il rimedio al gotcha **#46**: una **finta** per `Filesystem`, una per `Network` e due per `process` — `Worker` e `Process` — con chiamate che le esercitano in entrambe le direzioni. È ciò che tiene in vita `Path::as_bytes()`, `Endpoint::as_bytes()` e il `Clone` su `Path` contro una passata YAGNI — su un tratto dichiarato **in anticipo** i chiamanti sono vuoti per costruzione, e il criterio non distingue il morto dalla sola porta d'ingresso di chi verrà — e prova che quelle firme siano **implementabili fuori dalla crate**, dove la privacy di modulo di una tuple-struct le renderebbe inutilizzabili. ⚠️ **Non** è una suite di conformità: quella pretende due implementazioni da confrontare |
+| `crates/kernel/tests/ports_are_implementable.rs` (**tredici** test) | il rimedio al gotcha **#46**: una **finta** per `Filesystem`, una per `Network`, due per `process` — `Worker` e `Process` — e una per `Ipc`, con chiamate che le esercitano in entrambe le direzioni. **Cinque finte per quattro famiglie**, ed è la copertura di **tutte** le porte dichiarate senza implementazione. È ciò che tiene in vita `Path::as_bytes()`, `Endpoint::as_bytes()` e il `Clone` su `Path` contro una passata YAGNI — su un tratto dichiarato **in anticipo** i chiamanti sono vuoti per costruzione, e il criterio non distingue il morto dalla sola porta d'ingresso di chi verrà — e prova che quelle firme siano **implementabili fuori dalla crate**, dove la privacy di modulo di una tuple-struct le renderebbe inutilizzabili. ⚠️ **Non** è una suite di conformità: quella pretende due implementazioni da confrontare |
 | `crates/kernel/tests/dependencies_usable.rs` (due test) | che le voci **spedite** dell'allow-list **compilino e facciano round-trip** — gotcha #22, `cargo add bincode` risolve a una versione il cui intero sorgente è un `compile_error!`. E per `bincode` i **byte consumati** sono pari alla lunghezza dichiarata, che è la regola imposta dal gotcha **#34**: un decodificatore che si ferma al primo elemento completo e ignora la coda «ha decodificato» senza provare niente |
 
-⛔ **`ports_are_implementable.rs` ha smesso di confermare e ha colto un difetto — il 2026-08-09,
-sulla porta `process`, ed è la ragione per cui questo file esiste.** La porta **come il piano la
-dettava non era implementabile**: `instruct_one` deve **restituire** un `SingleReceipt` il cui
-unico campo è `pub(crate)`, e la privacy di un campo di struct è **di modulo** — da fuori dalla
-crate quel valore non si poteva costruire. È il gotcha **#46** nella forma peggiore di quella
-registrata: non «non riesco a **leggere** un campo» ma «non riesco a **produrre** il valore di
-ritorno». Il rimedio — `new` e `id` su entrambe le ricevute — porta la ragione accanto a sé in
+#### Le finte delle porte — cosa hanno colto, e cosa hanno potato
+
+⛔ **`ports_are_implementable.rs` ha smesso di confermare e ha colto un difetto — il
+2026-08-09, sulla porta `process`.** La porta **come il piano la dettava non era
+implementabile**: `instruct_one` deve **restituire** un `SingleReceipt` il cui unico campo è
+`pub(crate)`, e la privacy di un campo di struct è **di modulo** — da fuori dalla crate quel
+valore non si poteva costruire. È il gotcha **#46** nella forma peggiore: non «non riesco a
+**leggere** un campo» ma «non riesco a **produrre** il valore di ritorno». Il rimedio — `new` e
+`id` su entrambe le ricevute — porta la ragione accanto a sé in
 `crates/kernel/src/ports/process.rs`. ⚠️ `Grant` resta **senza costruttore**, ed è l'opposto
-deliberato: una concessione si **riceve** dall'arbitro, e §5.6 la vuole inedificabile.
+deliberato: §5.6 la vuole inedificabile.
 
-⚠️ **E `Grant` diverge dal piano, che dettava un campo con nome — misurato.** Il piano voleva
-`reserved_mib: u64`, che rende il tipo inedificabile da fuori **e costa un
-`#[allow(dead_code)]`**, perché nessuno legge quel numero; qui un `allow` è un divieto spento
-(gotcha **#13**). Il campo **unitario privato** — `pub struct Grant(());` — dà la garanzia
-**identica** a costo zero: da un test d'integrazione `Grant(())` è
-`error[E0423]: cannot initialize a tuple struct which contains private fields`, **senza nessun
-warning e senza `allow`**. Il campo con nome, per giunta, anticipava un pezzo del modello
-dell'arbitro (una riserva in MiB) che è del **Traguardo 5**. ⛔ Via anche `#[derive(Debug)]`:
-**nessuno formatta una concessione**, ed è la stessa potatura di `CheckpointId::get()` e dei
-derive inutilizzati su `Path` e `StepId`. ⚠️ Sulle **ricevute** `Debug` **si tiene**: lo pretende
-`unwrap_err`, ed è portante.
+⚠️ **E `Grant` diverge dal piano, misurato.** Il campo con nome `reserved_mib: u64` costava un
+`#[allow(dead_code)]` — qui un `allow` è un divieto spento (gotcha **#13**) — e anticipava un
+pezzo del modello dell'arbitro, che è del Traguardo 5. Il campo **unitario privato** dà la
+garanzia **identica** a costo zero: da fuori `Grant(())` è `E0423`, senza warning e senza
+`allow`. Via anche `Debug`: nessuno formatta una concessione. ⚠️ Sulle **ricevute** `Debug` si
+tiene, lo pretende `unwrap_err`. ⛔ E la misura ha una trappola che vale oltre il caso: **gli
+errori di rustc si mascherano fra passate** — col costruttore assente usciva `E0599`, e sul
+letterale **nessun errore**, perché l'`E0451` lo emette la passata di **privacy**, che non gira
+se il type-check si è già fermato. Gotcha **#47**.
 
-⛔ **E la misura ha una trappola che vale oltre il caso: gli errori di rustc si mascherano fra
-passate.** Misurato, non dedotto. Col costruttore assente rustc dava **`E0599`** («no function or
-associated item named `new`») e, su un letterale `SingleReceipt { id }`, **nessun errore**. Il
-letterale è un **`E0451`**, che lo emette la passata di **privacy** — la quale **non gira mai**,
-perché la compilazione si ferma agli errori di *type-check*. Sanati quelli, `E0451` **compare**.
-Chi legge un elenco di errori sta guardando quelli della **prima passata che ha fallito**, non
-tutti: «ho corretto e adesso compila» può nascondere un secondo errore mai raggiunto.
+⛔ **`Clone` potato da `WorkerDescriptor` e da `Frame`, e la contro-sonda è ciò che rende la
+potatura difendibile.** Tolti da questi due: **verde, zero warning**. Tolto da `Path` come
+contro-sonda: **rosso**, `E0277` · `E0308` · `E0599`. Su `Path` e su `Endpoint` `Clone` è
+**portante** — `declare_scope` consegna un **prestito** che l'implementazione deve trattenere —
+mentre `WorkerDescriptor` e `Frame` attraversano la porta **per valore**. ⚠️ «Non implementabile
+oggi» e «un chiamante lo vorrà domani» sono due forme diverse, e a distinguerle è **la finta**.
 
-⛔ **E questo registro ha dichiarato una copertura che la misura non sosteneva. La riga è
-riscritta con ciò che è stato misurato, non riformulata perché tornasse.** Diceva che sei
-mutazioni «ognuna uccide almeno un test», fra cui *«`read_one` che risponde una costante
-perdendo la correlazione»*. **Era falso, e lo si vede solo provando due valori:**
+⛔ **La porta `ipc` ha usato la stessa finta per il servizio opposto — il 2026-08-10 — e la
+differenza fra i due esiti è la parte da tenere.** Su `process` la finta ha **colto un
+difetto**; su `ipc` ha compilato al primo colpo, e ciò che ha comprato è stata una
+**sottrazione**. Scritta **prima** del sorgente, non ha usato nessuna delle quattro voci che il
+piano dettava per `ClientId` — misurate **una per una**, togliendo e ricompilando:
 
-| Mutazione su `read_one` | Esito | |
+| Voce del piano | Misura | Esito |
 |---|---|---|
-| risponde la costante **7** | **rosso** | uccide, ma **perché il valore è sbagliato** |
-| risponde la costante **1** | ⛔ **verde su 8 test su 8** | la correlazione era persa e **nessuno se ne accorgeva** |
+| `ClientId::get()` | tolto → `build` e `test --workspace` **verdi, zero warning** | ⛔ **cancellato** |
+| `Hash` | idem | ⛔ **cancellato** |
+| `PartialOrd`/`Ord` | idem | ⛔ **cancellato** |
+| `PartialEq`/`Eq` | **contro-sonda** — tolto → **rosso**, `E0369` («`==` cannot be applied») | ✅ **tenuto** |
+| `Copy` | **contro-sonda** — tolto → **rosso**, `E0382`: **ventitré**, su **otto** siti di dichiarazione | ✅ **tenuto** |
+| `Debug` | **contro-sonda** — tolto → **rosso**, `E0277`, lo pretende ogni `assert_eq!` | ✅ **tenuto** |
+| `Clone` | **non è una scelta**: lo pretende `Copy` — tolto da solo, `kernel` **non compila** (`E0277`) | ✅ **tenuto dal compilatore** |
 
-La mutazione uccideva **per il motivo giusto solo per caso** — l'id atteso in quel punto era
-`1`, e la costante `7` non coincideva. Gotcha **#15**: un'evidenza scritta prima della misura è
-un'ipotesi. ⛔ **E il fondo era più basso:** con tre mutazioni combinate — ricerca per id
-sostituita da «prendi il flusso 0» in `read_next` e in `close`, i due lettori su costante — la
-finta conteneva **zero** occorrenze di `receipt.id()` e la suite restava **verde su 8 su 8**.
-Una finta che **non correla affatto** soddisfaceva l'intero file, quindi l'argomento con cui
-`SingleReceipt::id` era stato tenuto in vita **non poggiava su niente**.
+⛔ **Le contro-sonde non sono cerimonia: sono ciò che regge l'argomento della prima riga.**
+`get()` è cancellato *perché* un'implementazione **conserva** un identificativo `Copy` e lo
+confronta con `==`, come `InMemoryFilesystem` fa con `CheckpointId` — ma se `PartialEq` non
+fosse davvero esercitato quel «perché» poggerebbe sul nulla, che è esattamente il modo in cui
+`SingleReceipt::id` era rimasto in vita senza copertura. ⚠️ L'argomento **a favore** di `Ord` era
+reale — il **#12** vieta `HashMap` e spinge su `BTreeMap` — e cade su un criterio preciso:
+`Ord` **non blocca** chi implementa da fuori (una tabella più `==` basta) e si aggiunge dopo in
+una riga. L'eccezione del **#46** copre *«non implementabile oggi»*, non *«comodo domani»*.
+`Hash` è il peggiore dei tre: **abilita la cosa vietata**.
 
-**La causa non era la scelta della costante ma la forma della suite: non teneva mai due ricevute
-aperte insieme.** Con una sola ricevuta aperta, «rispondi a quella giusta» e «rispondi all'unica»
-sono la stessa frase; e la prova sulla ricevuta ignota girava contro una **tabella dei flussi
-vuota**, dove «id sconosciuto» e «nessun flusso» sono indistinguibili.
+#### Le passate di mutazione, e le righe che contano
 
-**Il rimedio è `answers_are_correlated_to_the_receipt_that_asked`**: due `SingleReceipt` aperte
-insieme e lette **al contrario**, e due `StreamReceipt` di **lunghezza diversa** lette a
-interfoliazione. Più, in `the_process_fake_refuses_where_it_must`, **un flusso vero aperto
-accanto** alla ricevuta falsa. ⚠️ Due dettagli sono **scelti e non casuali**, ed erano entrambi
-buchi veri alla prima stesura: le lunghezze **diverse** (a budget uguale i due flussi si
-esaurirebbero insieme e servire quello sbagliato non si vedrebbe) e **quale** flusso si chiude
-(chiudendo quello in posizione 0 la mutazione «rimuovi la posizione 0» **sopravviveva**; si
-chiude quello in posizione 1).
+⛔ **Ogni finta porta la propria passata. La prosa sotto le tabelle è solo per le mutazioni
+uccise da _un test solo_:** sono le uniche che dicono qualcosa che la tabella non dice già.
 
-📌 **Passata di non-vacuità rifatta sul codice finale — dodici mutazioni, dodici uccise.** Per
-ciascuna, i test che muoiono:
+**`process` — dodici mutazioni, dodici uccise.**
 
 | | Mutazione | Chi la uccide |
 |---|---|---|
@@ -326,46 +318,80 @@ ciascuna, i test che muoiono:
 | M10 | `WorkerDescriptor::new` perde un byte | `..._start_is_not_callable` |
 | M11 | `kill()` **acquista** una guardia di liveness | `killing_a_worker_consumes_it` |
 
-⛔ **M6b è la riga che conta**, ed è l'unica uccisa da un test solo: è la mutazione che prima
-sopravviveva, ed è ciò che oggi tiene in piedi `SingleReceipt::id`.
+⛔ **M6b è la riga che conta, e si vede solo provando _due_ valori.** Il registro aveva
+dichiarato che «`read_one` su costante» uccideva: vero per la costante **7**, **falso** per la
+costante **1**, che coincideva con l'id atteso — **verde su 8 test su 8**, correlazione persa e
+nessuno se ne accorgeva. ⛔ E il fondo era più basso: con tre mutazioni combinate la finta
+conteneva **zero** occorrenze di `receipt.id()` e la suite restava verde. La causa non era la
+costante ma **la forma della suite**, che non teneva mai due ricevute aperte insieme. Rimedio:
+`answers_are_correlated_to_the_receipt_that_asked`, con lunghezze **diverse** e chiudendo il
+flusso in posizione **1** — a budget uguale, o chiudendo la posizione 0, la mutazione
+sopravviveva. Gotcha **#15**.
 
-⛔ **M11 è nata sopravvivendo, e la sua storia è la stessa di M6b.** Il file spendeva quattro
-righe a dichiarare che `kill` la guardia di liveness **non ce l'ha, di proposito** — uccidere è
-**sempre lecito** (§5.3 punto 4) — e **niente lo teneva**: aggiungendo `self.alive()?` a `kill`,
-cioè trasformando l'unica operazione sempre lecita in una che rifiuta, i **9 test restavano
-verdi**. Una riga — uccidere un worker **già morto** — la rende rossa. ⚠️ La mutazione è nata da
-una **rifinitura di stile**: estraendo l'aiutante `alive()` per togliere cinque copie della
-guardia, l'unico punto che non la chiama è diventato visibile — e visibile ha fatto chiedere se
-fosse **provato**. Non lo era. Un principio che non si può controllare è un'intenzione.
+⛔ **M11 è nata sopravvivendo.** Il file spendeva quattro righe a dichiarare che `kill` la
+guardia di liveness **non ce l'ha, di proposito** (§5.3 punto 4) — e **niente lo teneva**:
+aggiungendola, i nove test restavano verdi. Una riga — uccidere un worker **già morto** — la
+rende rossa. ⚠️ La mutazione è nata da una **rifinitura di stile**: estratto l'aiutante
+`alive()`, l'unico punto che non lo chiama è diventato **visibile**, e visibile ha fatto
+chiedere se fosse provato. Un principio che non si può controllare è un'intenzione.
 
-⚠️ **E l'estrazione di `alive()` ha avuto un incidente che vale la pena scrivere:** la
-sostituzione automatica ha colpito **sei** siti invece di cinque, riscrivendo anche il corpo
-dell'aiutante **dentro sé stesso** — `fn alive() { self.alive()?; }`, una ricorsione infinita.
-Colta al conteggio (`6 -> 6` invece di `5 -> 5`), non dai test. Una sostituzione su tutto il
-file include **la definizione**, non solo le chiamate.
+**`ipc` — quattordici mutazioni, quattordici uccise.**
 
-⛔ **`Clone` potato da `WorkerDescriptor` e da `Frame`, e la contro-sonda è ciò che rende la
-potatura difendibile.** Misurato in due direzioni: tolti da questi due, `cargo test --workspace`
-è **verde con zero warning**; tolto da `Path` come contro-sonda di non-vacuità, è **rosso** con
-`E0277`, `E0308` ed `E0599`. La differenza non è di gusto: su `Path` — e su `Endpoint` —
-`Clone` è **portante**, perché `declare_scope` consegna un **prestito** che l'implementazione
-deve trattenere, quindi **senza, la porta non è implementabile oggi**. `WorkerDescriptor` e
-`Frame` attraversano la porta **per valore**: chi implementa li possiede già, li **muove**, e
-per darli al sistema operativo ha `as_bytes()`. ⚠️ L'obiezione I5 — i ritentativi vivono nel
-core e rimanderebbero un frame — **non regge**: è un chiamante del **Traguardo 6**, cioè
-esattamente la forma coperta dalla formula già scritta due volte qui, *«tornano il giorno in cui
-qualcosa li richiede, col chiamante che li richiede»*. «Non implementabile oggi» e «un chiamante
-lo vorrà domani» sono due forme diverse, e lo strumento che questo repository si è dato per
-distinguerle — **la finta** — non clonava né l'uno né l'altro una sola volta.
+| | Mutazione | Chi la uccide |
+|---|---|---|
+| M1 | `accept` riusa l'identificativo | `..._delivered_to_the_client_they_name` · `a_dead_client_...` |
+| M2 | `live()` ignora la morte del client | `..._refuses_where_it_must` · `a_dead_client_...` |
+| M3 | `live()` smette di guardare le identità (prende il client 0) | i tre sopra |
+| M4 | `receive` risponde `Ok(None)` a un client ignoto | `..._refuses_where_it_must` |
+| M5 | `receive` risponde `Err` invece di `Ok(None)` a vuoto | tre test |
+| M6 | `send` consegna sempre al client 0 | `..._delivered_to_the_client_they_name` |
+| M7 | `accept` consegna un client che nessuno ha chiesto | `..._can_be_implemented_and_called` |
+| M8a | `accept` conia la costante **7** | `..._delivered_...` · `a_dead_client_...` |
+| M8b | `accept` conia la costante **1** (la scelta **avversaria**: è l'id reale del primo) | idem |
+| M9 | `receive` non consuma il messaggio | `..._can_be_implemented_...` · `..._refuses_...` |
+| M10 | il controllo sul messaggio malformato sparisce | `..._refuses_where_it_must` |
+| M11 | morire non uccide | `..._refuses_...` · `a_dead_client_...` |
+| M12 | ⛔ la morte è **contagiosa**: ne muore uno, muoiono tutti | ⛔ **solo** `a_dead_client_...` |
+| M13 | ⛔ `accept` **ricicla** l'identificativo di un client morto | ⛔ **solo** `a_dead_client_...` |
 
-⚠️ **Tre inciampi del banco di misura, e stanno qui perché ognuno produceva un risultato
-credibile e falso.** (1) Due `sed` non agganciavano la riga giusta e le mutazioni **non si
-applicavano**: il verde che ne usciva sembrava «test vacuo» e non lo era. (2) Il rilevatore di
-errori di compilazione cercava `^error` e pescava l'`error: test failed` che `cargo` stampa
-quando un test **fallisce** — dieci mutazioni su dieci dichiarate «non compila» mentre
-compilavano e uccidevano. (3) La costante di M6a, scelta a caso, coincideva col caso fortunato.
-**Si verifica che il file sia davvero cambiato, e che il rosso arrivi dal punto che si crede**,
-prima di leggere un esito come un risultato.
+⛔ **M12 e M13 esistono perché la prima passata ha colto il gotcha #45 dentro il lavoro di
+oggi.** Con le prime dodici, `a_dead_client_does_not_take_the_port_with_it` non era **l'unico
+uccisore di nessuna**: cancellandolo, tutte e dodici morivano lo stesso — cioè il test che porta
+la proprietà per cui la porta esiste, **la gui è sacrificabile**, era cancellabile lasciando la
+porta **verde**. Le due mutazioni che lo isolano sono quelle che nessun altro test poteva
+vedere: che la morte di un client **non contagi** gli altri, e che una gui che si riconnette sia
+un **client nuovo** e non erediti l'identificativo del cadavere — altrimenti un messaggio
+accodato per il morto verrebbe consegnato al nuovo arrivato, che per I1 nasce **senza stato
+proprio** e non potrebbe accorgersene.
+
+⛔ **E una questione resta dichiarata e aperta nel sorgente di `ipc`, sul modello di
+`network`.** `accept` non può fallire, e per i due modi di fallire che il vocabolario conosce è
+**coerente**: `Disconnected` è un'affermazione **su un `ClientId`**, e `accept` è l'unico metodo
+che un `ClientId` **non lo prende**; e non decodifica niente, quindi nemmeno `MalformedMessage`
+lo raggiunge. ⚠️ Ma un **ascoltatore** rotto — non un client — oggi **non ha parola** in questo
+vocabolario, e arriverebbe come `None`, cioè un **valore sbagliato** invece di un errore
+(gotcha #30). ⛔ **Ed è _anche_ un'asimmetria fra le firme:** `receive` restituisce
+`Result<Option<Vec<u8>>, IpcError>`, dove «niente di pronto» e «rotto» sono già distinti;
+l'argomento contro il `Result` confuta solo `Result<ClientId, IpcError>`, non la forma con
+l'`Option` dentro, che il metodo lì sotto **già usa**.
+
+| | |
+|---|---|
+| **il prezzo vero** | ⛔ aggiungere una terza variante domani **non chiuderebbe niente**: non c'è dove restituirla. Chiudere il residuo costa **la firma**, non l'enum |
+| **perché la firma resta** | oggi `IpcError` non ha **nessuna** variante che `accept` possa restituire: un `Result` che non può mai essere `Err` è **superficie morta**, esattamente ciò che questa porta ha appena potato in tre derive e un accessore |
+
+⚠️ **Il banco di misura ha prodotto _nove_ esiti credibili e falsi in due sessioni** — gotcha
+**#48**, col testo integrale in [`HANDOFF.md`](HANDOFF.md). ⛔ Gli ultimi due sono della revisione
+di oggi e portano una forma nuova: **si erano corretti due strumenti gemelli, ma uno solo** — il
+gemello non corretto ha riscritto di nuovo i fine-riga alla corsa successiva — e una
+**rinomina** ha reso stantie due ancore di mutazione, che sono tornate «zero siti» invece che un
+esito. 📌 Una cosa sola resta qui, perché
+non è un inganno del banco ma un **fatto del repository**: i fine-riga sono **misti per file**
+(`process.rs` e `ports_are_implementable.rs` in CRLF, `mod.rs` e `network.rs` in LF). Non c'è
+una convenzione da seguire, c'è **un file da non cambiare** — uno strumento che ne riscrive uno
+intero in LF produce un `git diff` di seicento righe che nessuno ha toccato.
+
+#### Due moduli di test vivono in `src/`
 
 📌 **Due moduli di test vivono in `src/` invece che in `tests/`, e la deviazione è dichiarata
 in entrambi i file.** Non è una scorciatoia: in un caso non è nemmeno una scelta.

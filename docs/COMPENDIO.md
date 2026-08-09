@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (605 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 271), e
+> (614 KB con `wc -c` il 2026-08-10, e possono solo crescere — la spec da sola ne fa 271), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-09.** Manutenzione: §13.
@@ -602,10 +602,10 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 2. ~~**Il piano**~~ — ✅ **scritto**: [Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
 3. ~~**Il codice del Traguardo 1**~~ — ✅ **eseguito** subagent-driven, otto compiti più quattro di riallineamento alla §1.0. `GATE GREEN`.
 4. ~~**Il piano del Traguardo 2**~~ — ✅ **scritto il 2026-08-09**: [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md), quattordici compiti in due parti.
-5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–11 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ **Il prossimo passo è il Task 12** — la porta `ipc`, e la tabella completa delle sei famiglie. ✅ **E la voce che restava aperta è chiusa il 2026-08-09:** il caso `no_conversion_from_untrusted_to_instruction` del Task 9 — misurato **portante** — ha ora la propria riga nel **catalogo §7.4.1 blocco C**, la **regola B** della coppia `Untrusted`/`Instruction` accanto alla regola A (`Q9 · I6 · V20`), con richiamo datato. ⛔ **Non era una rifinitura, ed è il punto da ricordare:** la regola A è **cieca** proprio a quella via — con `impl From<Untrusted> for Instruction` presente il caso resta `ok` invece di dare il `mismatch` che il gotcha #42 prevede, perché lì lo scarto è fra **riferimenti** — quindi senza la riga B la porta resta verde **col confine già caduto**. Il blocco C passa da diciassette a **diciotto** righe, e §7.4.7, §8.3 (`Q9` e `Q15`) e [`porta-di-qualita.md`](porta-di-qualita.md) sono riallineate nello stesso passaggio.
+5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–12 eseguiti** subagent-driven, il 2026-08-09 e il 2026-08-10, `GATE GREEN` a ogni compito. ✅ **Col Task 12 le sei famiglie di porte sono complete**: `reactor` · `journal` · `filesystem` · `network` · `process` · `ipc`, e §3.1 le dichiara esaustive. ⏭️ **Il prossimo passo sono i Task 13–14** — il registro dei controlli e la chiusura del traguardo. ✅ **E la voce che restava aperta è chiusa il 2026-08-09:** il caso `no_conversion_from_untrusted_to_instruction` del Task 9 — misurato **portante** — ha ora la propria riga nel **catalogo §7.4.1 blocco C**, la **regola B** della coppia `Untrusted`/`Instruction` accanto alla regola A (`Q9 · I6 · V20`), con richiamo datato. ⛔ **Non era una rifinitura, ed è il punto da ricordare:** la regola A è **cieca** proprio a quella via — con `impl From<Untrusted> for Instruction` presente il caso resta `ok` invece di dare il `mismatch` che il gotcha #42 prevede, perché lì lo scarto è fra **riferimenti** — quindi senza la riga B la porta resta verde **col confine già caduto**. Il blocco C passa da diciassette a **diciotto** righe, e §7.4.7, §8.3 (`Q9` e `Q15`) e [`porta-di-qualita.md`](porta-di-qualita.md) sono riallineate nello stesso passaggio.
 
-⛔ **E tre questioni restano aperte nel sorgente, dichiarate e non risolte.** Nessuna delle
-tre è un difetto oggi, ed è scritto **perché**; tutte si pagano più avanti, e chi riprende
+⛔ **E quattro questioni restano aperte nel sorgente, dichiarate e non risolte.** Nessuna delle
+quattro è un difetto oggi, ed è scritto **perché**; tutte si pagano più avanti, e chi riprende
 deve saperle **prima** di scrivere:
 
 | | |
@@ -613,6 +613,7 @@ deve saperle **prima** di scrivere:
 | **la porta `network` ha una tensione non conciliata** | la firma di `request` è **sincrona e bloccante** — restituisce la risposta intera, quindi qualcuno ha atteso — mentre la regola scritta sotto dice che la prontezza viene dal `reactor` e che **nulla attende dentro `network`**; e l'esecutore di questo kernel è **cooperativo**. Le due si conciliano **il giorno in cui la porta riceve un'implementazione**: finché non ha chiamanti nulla blocca, quindi non è ancora un difetto. La domanda è scritta **aperta** in `crates/kernel/src/ports/network.rs` |
 | **il residuo dichiarato su `Untrusted::promote`** | il meccanismo compra **una cosa sola**: che la conversione non si scriva senza **nominare** la porta `journal`. **Non** compra che qualcosa sia stato registrato — `promote` è generico su qualunque `Journal`, e un giornale che risponde `Ok(())` senza scrivere un byte soddisfa il vincolo. Sono **sette** le vie che aggirano il confine e **compilano**, tutte elencate in `crates/kernel/src/boundary.rs`, e **una sola è chiusa** — il `Debug` di `Untrusted`, che non stampa più il contenuto. Ciò che terrebbe l'onestà della porta è una **suite di conformità del `journal`**, sul modello di `crates/kernel/tests/reactor_contract.rs` e dei suoi due bugiardi: appartiene al **Traguardo 3**, cioè al prossimo |
 | **la tesi della porta `process` la tiene l'implementazione, non il compilatore** | *«ogni byte che risale è coperto da una ricevuta»* è la frase su cui la porta è costruita — ma `SingleReceipt::new` e `StreamReceipt::new` sono **`pub`, e devono esserlo**: chi implementa `Worker` è `platform`, cioè un'altra crate, e Rust non ha una visibilità che arrivi fin lì e non oltre. Quindi **una ricevuta si può forgiare**, ed è la ragione per cui `close` deve poter rispondere `UnsolicitedFrame` pur andando core→worker. Il limite è scritto accanto ai due costruttori in `crates/kernel/src/ports/process.rs`. ⛔ **Il contrasto è con `Grant`**, che il costruttore non ce l'ha e la cui garanzia è davvero del compilatore. A chiudere la differenza sarà la **suite di conformità** della porta, che pretende due implementazioni: **Traguardo 6** |
+| **`Ipc::accept` non ha un canale d'errore, e il prezzo di dargliene uno è la firma** | `accept` restituisce `Option<ClientId>` e **non può fallire**: nessuna delle due varianti di `IpcError` lo raggiunge — `Disconnected` è un'affermazione **su un `ClientId`**, e `accept` è l'unico metodo che un `ClientId` non lo prende. Corretto oggi, e «nessuno in attesa» è lo stato **ordinario**: la gui è 0..1 e sacrificabile. ⛔ **Ma un _ascoltatore_ rotto — che non è un client — arriverebbe come `None`, cioè un valore sbagliato invece di un errore** (gotcha #30). ⛔ **E il prezzo di chiuderlo va detto giusto, perché la prima stesura lo sbagliava:** aggiungere una terza variante **non basterebbe**, non c'è dove restituirla — costa la **firma**, `Result<Option<ClientId>, IpcError>`, che è la forma che `receive` già usa. Oggi la firma resta perché un `Result` che non può mai essere `Err` è superficie morta. Dichiarato in `crates/kernel/src/ports/ipc.rs`, in testa al file come in `network.rs` |
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
@@ -631,8 +632,8 @@ deve saperle **prima** di scrivere:
 | 9 | il confine dei tipi, e la promozione che pretende il giornale | ✅ |
 | 10 | le porte `filesystem` e `network` | ✅ |
 | 11 | `process` coi gettoni e le due ricevute | ✅ |
-| **12** | **`ipc`, e la tabella completa delle sei famiglie** | ⏭️ **riprende qui** |
-| 13–14 | il registro dei controlli · la chiusura del traguardo | ⬜ |
+| 12 | `ipc`, e la tabella completa delle sei famiglie | ✅ |
+| **13–14** | **il registro dei controlli · la chiusura del traguardo** | ⏭️ **riprende qui** |
 
 ✅ **I due buchi che il Task 6 aveva lasciato in eredità sono chiusi — ma uno dei due NON era
 chiudibile dove era stato assegnato.** Il ramo `deadline <= now → None` di
@@ -670,7 +671,7 @@ eseguito e il piano del 2 è scritto; quelli dal terzo in poi si scrivono quando
 | # | Traguardo | Stato |
 |---|---|---|
 | **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
-| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | 🔵 **in corso**. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito fino al **Task 11 su 14**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale · **il reattore reale e la prima suite di conformità** · il **cablaggio di produzione** in `daemon`, coi default letterali · il **confine dei tipi** `Untrusted`/`Instruction`, con la promozione che pretende la porta `journal` · le porte **`filesystem` e `network`** · la porta **`process`**, coi gettoni e le **due ricevute distinte**. ⏭️ **Riprende dal Task 12** |
+| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | 🔵 **in corso**. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito fino al **Task 12 su 14**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale · **il reattore reale e la prima suite di conformità** · il **cablaggio di produzione** in `daemon`, coi default letterali · il **confine dei tipi** `Untrusted`/`Instruction`, con la promozione che pretende la porta `journal` · le porte **`filesystem` e `network`** · la porta **`process`**, coi gettoni e le **due ricevute distinte** · la porta **`ipc`**, che chiude le **sei famiglie**. ⏭️ **Riprende dai Task 13–14** |
 | 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
@@ -871,7 +872,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 45 | ⛔ **Il rimedio a una copertura mancante è esso stesso un controllo, e nasce non provato — perché lo si scrive credendo di stare già rimediando.** Il caso `deadline < now`, aggiunto al Task 7 per coprire la metà di ramo che il piano lasciava fuori, era **cancellabile lasciando la porta verde**: il bugiardo del file moriva sul primo caso senza mai raggiungerlo, e i due condividevano **lo stesso messaggio**. ⚠️ Il difetto stava **dentro il file che spende un intero test negativo proprio per impedirlo**. Rimedio in due pezzi: due messaggi **distinti**, così che il payload dica quale metà ha sparato, e un **secondo bugiardo** rotto in modo diverso. Valgono il **#14** e il **#24** anche per il tappo. Sonda **R4**. 📌 **Seconda occorrenza al Task 11, e stavolta il non-provato era un'_eccezione dichiarata_.** La finta di `Worker` spendeva quattro righe a dire che `kill` la guardia di liveness **non ce l'ha, di proposito** — uccidere è sempre lecito — e **niente lo teneva**: dandogliela, i nove test restavano **verdi**. ⚠️ È saltata fuori da una **rifinitura di stile**: estraendo l'aiutante `alive()`, l'unico punto che non lo chiama è diventato **visibile**, e visibile ha fatto chiedere se fosse provato. ⛔ Un'eccezione scritta in un commento è indistinguibile da una dimenticanza finché una mutazione non prova che il sistema la difende: il #14 vale anche per ciò che il codice sceglie di **non** fare |
 | 46 | ⛔ **Su una porta mai implementata, YAGNI cancella ciò che serve a implementarla.** Al Task 10 la regola avrebbe tolto `Path::as_bytes()` ed `Endpoint::as_bytes()`, senza chiamanti. **Misurato: le due porte sarebbero rimaste non implementabili fuori da `kernel`** — la privacy del campo di una tuple-struct è **di modulo**, quindi `platform` non può leggere `Path.0`, e nulla diventa rosso perché lì l'implementazione non esiste. ⚠️ Il difetto non è YAGNI: è che su un tratto **dichiarato in anticipo** i chiamanti sono vuoti **per costruzione**, quindi il criterio non distingue il morto dalla **sola porta d'ingresso di chi verrà**. Rimedio: un'**implementazione finta** in un test (`ports_are_implementable.rs`), che dà un chiamante a ciò che serve e lascia scoperto solo il morto vero. 📌 E prova per giunta che le firme siano **implementabili** — ha colto che `Clone` su `Path` è portante per `declare_scope`. 📌 **Seconda occorrenza al Task 11, in forma peggiore:** non «non riesco a **leggere** un campo» ma «non riesco a **produrre** il valore di ritorno» — le due ricevute di `process` non erano costruibili da fuori, e `instruct_one` deve restituirne una. Un accessore mancante si intuisce leggendo il tipo; un **costruttore** mancante no, perché da dentro la crate il tipo si costruisce benissimo: il difetto **esiste solo dal lato di fuori**, e l'unico strumento che sta di fuori è la finta |
 | 47 | ⛔ **Gli errori di rustc si mascherano fra passate: l'elenco che leggi è quello della _prima passata che ha fallito_, non tutti.** Misurato: il letterale `SingleReceipt { id: 7 }` scritto da fuori dalla crate **non dava nessun errore** — e la lettura ovvia era che un campo `pub(crate)` fosse scrivibile da fuori. È un **`E0451`**, che lo emette la passata di **privacy**, la quale **non gira** se la compilazione si ferma prima al type-check. Sanati quelli, compare. ⚠️ *«Ho corretto e adesso compila»* e *«ho corretto e adesso emerge il secondo errore»* sono indistinguibili **prima** di correggere. 📌 Quando si prova che qualcosa **non** è possibile, si sanano prima tutti gli errori diversi da quello cercato |
-| 48 | ⛔ **Un banco di misura sbaglia _verso l'attesa_, ed è peggio di uno che si pianta: si smette di guardarlo quando conferma.** Quattro inciampi reali in una sessione, tutti nel banco e nessuno nel codice: due `sed` che non agganciavano la riga — la mutazione non si applicava e il verde somigliava alla **vacuità che si cacciava** · un rilevatore su `^error` che pescava l'`error: test failed` di `cargo`, dichiarando «non compila» dieci mutazioni che compilavano **e uccidevano** · una costante scelta a caso che coincideva col valore atteso, così che con `7` il test moriva e con `1` **passava** · una sostituzione globale che ha riscritto il corpo dell'aiutante **dentro sé stesso**, colta dal conteggio dei siti e non dai test. È il **#15 applicato allo strumento** e il #17 spostato dall'iniezione al misuratore. 📌 **Contro-verso:** provare che la mutazione **si sia applicata**, compilare in un passo **separato** dall'eseguire, e per ogni mutazione su un valore **provarne due** |
+| 48 | ⛔ **Un banco di misura sbaglia _verso l'attesa_, ed è peggio di uno che si pianta: si smette di guardarlo quando conferma.** Quattro inciampi reali in una sessione, tutti nel banco e nessuno nel codice: due `sed` che non agganciavano la riga — la mutazione non si applicava e il verde somigliava alla **vacuità che si cacciava** · un rilevatore su `^error` che pescava l'`error: test failed` di `cargo`, dichiarando «non compila» dieci mutazioni che compilavano **e uccidevano** · una costante scelta a caso che coincideva col valore atteso, così che con `7` il test moriva e con `1` **passava** · una sostituzione globale che ha riscritto il corpo dell'aiutante **dentro sé stesso**, colta dal conteggio dei siti e non dai test. È il **#15 applicato allo strumento** e il #17 spostato dall'iniezione al misuratore. 📌 **Contro-verso:** provare che la mutazione **si sia applicata**, compilare in un passo **separato** dall'eseguire, e per ogni mutazione su un valore **provarne due**. 📌 **Salite a nove col Task 12, e tre forme sono nuove.** ⛔ Un numero solo **misurato quattro volte e sbagliato tre**, ogni volta per un difetto diverso — e la terza misura, un parser che guardava il ramo sbagliato dell'albero delle diagnostiche, ha risposto **«zero» con uscita pulita**: la bugia più credibile, perché è **un numero preciso da uno strumento che sembra funzionare**. ⛔ **Due strumenti gemelli, corretto uno solo**: il bug riparato in uno è rimasto nell'altro, e nulla lo segnalava perché quello riparato funzionava. ⛔ **E la più insidiosa: una rifinitura di _leggibilità_ disarma la campagna di mutazione senza che nulla diventi rosso** — una rinomina richiesta da una revisione ha reso stantie due ancore, e una mutazione è tornata «zero siti» invece di un esito. 📌 Le ancore sono **accoppiate ai nomi del codice**: la campagna si rilancia dopo ogni **rifinitura**, non solo dopo ogni cambiamento di comportamento |
 
 ---
 
@@ -928,11 +929,11 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 271 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 127 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 129 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 15 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 38 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 40 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
@@ -941,7 +942,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 47 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
-| ⛔ **il compito da cui si riprende** — è il piano **in corso**, e il Task 11 sta lì | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 153 KB |
+| ⛔ **il compito da cui si riprende** — è il piano **in corso**, e il Task 11 sta lì | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 158 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 10 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
@@ -1165,6 +1166,37 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > registro che cresce di dieci kilobyte in un compito solo è il **prossimo** candidato al #31 di
 > un genere nuovo — non un numero stantio, un **documento che smette di essere letto perché è
 > diventato troppo lungo**. Scritto qui perché chi lo noterà per primo abbia da dove partire.
+
+> 🔁 **Dodicesima misura, il 2026-08-10, chiudendo il Task 12 — e per la prima volta un file è
+> _sceso_.** Scritta a passata chiusa, righe contate prima dei numeri: nessuna voce da aggiungere.
+>
+> | | |
+> |---|---|
+> | ⛔ **sceso** | [`porta-di-qualita.md`](porta-di-qualita.md) **47 → 40**, e la storia è tutta lì: era arrivato a 47 KB e **531 righe**, di cui **228 — il 43%** — di prosa su **una riga di tabella su tre**, mentre le due righe vicine nella stessa tabella ne hanno **zero**. Riportato a **449 righe** con quindici intestazioni invece di cinque. In tabella la cella passa da 38 a **40**, perché 38 era il valore dell'undicesima misura: il picco a 47 non è mai stato scritto qui |
+> | **cresciuti** | [`HANDOFF.md`](HANDOFF.md) `127 → 129` per le tre forme nuove del **#48** · il **piano del Traguardo 2** `153 → 158` per l'errata E42–E46 |
+> | **invariati, ricontati** | spec del sotto-progetto 1 271 · kernel-design 44 · roadmap 15 · tracciabilità 15 · [`riferimenti.md`](riferimenti.md) 47 · `design/08` 8 · `design/01` 4 · il piano degli spike 68 · il piano del Traguardo 1 50 · README 10 · ADR `2–19` |
+>
+> ⛔ **E questa misura ha trovato un residuo dell'undicesima, che è il #31 nella forma che la
+> SESTA misura aveva scritto per impedirlo.** L'undicesima aveva portato l'aggregato da 605 a
+> **611** e lo aveva scritto **solo nel proprio riquadro**: in testa a questo file e in
+> `CLAUDE.md` — cioè **dove qualcuno legge per decidere se aprire** — era rimasto **605**. La
+> cifra dei due file obbligatori, invece, era stata propagata in tutti e tre i posti. 📌 Quindi
+> non è che la lezione non ci fosse: **c'era, scritta da me, e ho applicato metà del rimedio**.
+> Un aggregato ha **due** case e un numero solo ne ha una, e la seconda si dimentica proprio
+> perché la prima è stata fatta.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **611** a **614 KB** (628305 B), ed è corretto
+> **in tutti e tre i posti** questa volta. I **due file obbligatori** passano da 117 a **123 KB**.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla quinta
+> applicazione.
+>
+> 📌 **E il registro che scende è la notizia della misura.** Undici misure di seguito hanno
+> registrato solo crescite, e questa è la prima volta che un documento è stato **ridotto perché
+> aveva smesso di rispondere alla propria domanda**. ⚠️ La regola che ne esce vale oltre il caso:
+> un file che cresce non è un problema, un file che cresce **in una sezione sola** lo è — e il
+> segnale non è il peso, è **la sproporzione fra righe vicine della stessa tabella**.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

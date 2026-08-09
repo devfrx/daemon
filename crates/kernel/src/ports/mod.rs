@@ -18,19 +18,27 @@
 //! | `ipc`        | §6.1        | milestone 6                              |
 //! | `network`    | §2.3.1      | staged — the single exit point           |
 //!
-//! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES. Today this module declares FIVE
-//! submodules — `reactor`, which the executor needs; `journal`, which the promotion of
-//! `crate::boundary` demands as an argument; and `filesystem`, `network` and `process`, which
-//! have NO CALLER AT ALL and are here for the reason above. `ipc` arrives by Task 12 of the
-//! milestone 2 plan, and this table is completed there. A `pub mod` naming a file that does
-//! not exist does not compile, so for that last one the table is still the only place it can
-//! be named at all — and naming it is exactly what gotcha #17 above is asking for.
+//! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES — and with task 12 the two finally
+//! COINCIDE: this module declares SIX submodules, one per row. Two of them have a caller —
+//! `reactor`, which the executor needs, and `journal`, which the promotion of
+//! `crate::boundary` demands as an argument. The other FOUR — `filesystem`, `network`,
+//! `process` and `ipc` — have NO CALLER AT ALL and are here for the reason above.
 //!
-//! ⚠️ A TRAIT NOBODY IMPLEMENTS IS NOT A TRAIT PROVED IMPLEMENTABLE. The three declared
-//! without a caller are held by `tests/ports_are_implementable.rs` — a fake per trait, and
-//! calls that exercise it. It buys that the signatures compile FROM OUTSIDE THE CRATE and can
-//! be called; it does not buy that they are the right signatures, and it is not the
-//! conformance suite, which needs two implementations to compare.
+//! ⚠️ AND THAT COINCIDENCE IS PRECISELY WHEN THE TABLE LOOKS DELETABLE, so the reason it stays
+//! is written here rather than left to be re-derived. Until `ipc` landed, the table was the
+//! only place the sixth family could be named at all — a `pub mod` naming a file that does not
+//! exist does not compile — so it was visibly doing work. Now every row has a file and the
+//! table reads like a duplicate of the `pub mod` list below. It is not: the list says what
+//! EXISTS, the table says how many there are SUPPOSED to be. Remove it and a seventh family
+//! added later stops being a discrepancy anyone can see, which is gotcha #17 arriving by the
+//! back door.
+//!
+//! ⚠️ A TRAIT NOBODY IMPLEMENTS IS NOT A TRAIT PROVED IMPLEMENTABLE. The four declared
+//! without a caller are held by `tests/ports_are_implementable.rs` — FIVE fakes, because
+//! `process` needs two of them (`Worker` and `Process`), and calls that exercise each in both
+//! directions. It buys that the signatures compile FROM OUTSIDE THE CRATE and can be called;
+//! it does not buy that they are the right signatures, and it is not the conformance suite,
+//! which needs two implementations to compare.
 //!
 //! ⛔ AND ON `process` THAT TEST EARNED ITS KEEP RATHER THAN CONFIRMING ANYTHING. The port as
 //! designed was NOT IMPLEMENTABLE: `instruct_one` has to HAND BACK a `SingleReceipt` whose
@@ -39,6 +47,13 @@
 //! (`E0599`, then `E0451` once the first errors stopped masking the privacy pass), and the
 //! remedy is written beside the constructors in `process.rs`. ⚠️ `Grant` is the deliberate
 //! opposite and keeps no constructor: §5.6 wants that one unbuildable.
+//!
+//! ⚠️ ON `ipc` THE SAME TEST CONFIRMED INSTEAD, AND THAT IS WORTH RECORDING TOO. Written before
+//! the port existed, the fake compiled at the first attempt: no missing constructor, no masked
+//! privacy error. What it earned there was the opposite service — it is what proved that
+//! `ClientId` needs NO getter, because a fake that retains a `Copy` identifier and compares it
+//! never asks for the number. Three derives and an accessor the plan dictated came off on that
+//! evidence; the reasoning is beside the type in `ipc.rs`.
 //!
 //! ⚠️ `journal` is declared here in milestone 2 and IMPLEMENTED in milestone 3: the trait
 //! exists because a caller already demands it, not because the durable format is settled. The
@@ -52,6 +67,8 @@
 //! moving `rng` under this module, or by writing "seven families" in the line above.
 
 pub mod filesystem;
+
+pub mod ipc;
 
 pub mod journal;
 

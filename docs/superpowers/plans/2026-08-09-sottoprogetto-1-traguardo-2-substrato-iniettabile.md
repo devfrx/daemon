@@ -275,9 +275,18 @@ fn instants_of_the_same_kind_compare() {
 cargo test -p kernel --test time_types
 ```
 
-Atteso: **FAIL** con `error[E0433]: failed to resolve: could not find 'time' in 'kernel'`.
+Atteso: **FAIL** con `could not find 'time' in 'kernel'`.
 
-⚠️ Se fallisce con un errore diverso, fermarsi: il test sta misurando qualcos'altro.
+> ⚠️ **Richiamo 2026-08-09, misurato eseguendo.** Questo passo diceva `error[E0433]`, ed
+> è **`error[E0432]: unresolved import`**. Il testo leggibile è identico alla previsione —
+> *«could not find `time` in `kernel`»* — e cambia solo il codice: **E0432 è il codice di
+> un `use` irrisolto, E0433 quello di un percorso in posizione di espressione o di tipo**.
+> Il test usa una riga `use`, quindi E0432 è il codice giusto e l'attesa scritta era
+> un'ipotesi. La sostanza combacia, quindi **non** è il caso di «fermarsi». Gotcha #15: si
+> registra la divergenza invece di allinearsi all'attesa.
+
+⚠️ Se fallisce per un motivo **diverso da quello** — il modulo c'è ma qualcosa non
+risolve — fermarsi: il test sta misurando qualcos'altro.
 
 - [ ] **Step 3: Scrivere l'implementazione minima**
 

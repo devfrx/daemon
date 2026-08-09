@@ -38,9 +38,11 @@ in due direzioni. Serve a riprendere senza rifare, e senza rilitigare ciò che �
 > ✅ **Nessuna voce aperta resta nella spec.** L'unica decisione ancora `Proposed` del
 > progetto è **ADR-0029**, il guscio della GUI, che non tocca il sotto-progetto 1.
 >
-> ⏭️ **Il prossimo passo è il Traguardo 2 — il substrato iniettabile**, e il suo piano **non
-> esiste ancora**: si scrive quando si arriva, per la stessa ragione per cui non se ne è
-> scritto uno solo per tutti e sei.
+> ⏭️ **Il prossimo passo è il Traguardo 2 — il substrato iniettabile**, e il suo piano
+> ✅ **è scritto** (2026-08-09):
+> [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md).
+> Quattordici compiti, in due parti: il substrato che la §2 progetta per intero, poi le
+> altre cinque famiglie di porte come tratti. **Resta da eseguirlo.**
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -58,7 +60,7 @@ worker ML in **Python**; Tauri contro Electron è ancora aperto
 trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto, e le sette
 sono **tutte chiuse**. La **§8 è stata riallineata e chiusa** il 2026-08-08. Il **Traguardo 1
 è eseguito** lo stesso giorno: workspace, cinque crate, porta di qualità verde, **zero logica
-di prodotto**. Tocca al **Traguardo 2**, e prima al suo piano.
+di prodotto**. Il **piano del Traguardo 2 è scritto** il 2026-08-09: tocca a eseguirlo.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -76,17 +78,25 @@ salito niente**: sale col substrato.
 
 ## Prima cosa da fare
 
-⏭️ **Scrivere il piano del Traguardo 2 — il substrato iniettabile.** Il piano **non
-esiste**: tempo, casualità, I/O, scheduling, l'esecutore nel `kernel`, e le sei porte come
-tratti. Vale «spec prima del codice», e la spec c'è già: **§2** e **§3** del sotto-progetto 1.
+⏭️ **Eseguire il piano del Traguardo 2 — il substrato iniettabile**, che ✅ **è scritto**:
+[`2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md).
+Tempo, casualità, I/O, scheduling, l'esecutore nel `kernel`, e le sei porte come tratti.
+Vale «spec prima del codice», e la spec c'era già: **§2** e **§3** del sotto-progetto 1.
 
 > ⛔ **Non si riusa il piano del Traguardo 1**, e non si scrive un piano unico per i
 > traguardi rimasti: scriverne uno per codice che non esiste ancora significa inventare.
-> È la regola della §6 del compendio, e ha appena retto alla prova.
+> È la regola della §6 del compendio, e ha già retto alla prova due volte.
 >
-> **Come**: `superpowers:writing-plans` per scriverlo, poi
-> `superpowers:subagent-driven-development` per eseguirlo — **un subagente fresco per
+> **Come**: `superpowers:subagent-driven-development` — **un subagente fresco per
 > compito**, con revisione fra uno e l'altro. La scelta è del proprietario ed è già presa.
+
+> ⛔ **Il piano porta in testa il perimetro, e la voce che è stata cercata prima di
+> fissarlo.** L'idea di far dichiarare al Traguardo 2 le sole porte con un consumatore
+> immediato è stata cercata dove era già stata decisa — quattro documenti concordi — e la
+> prova nuova ha giocato **contro**: la §3.3 inietta guasti su tutte e sei le porte, e la
+> campagna è il Traguardo 4. Un tratto inesistente a quel punto significa che **C1 sarebbe
+> verificato su un mondo più piccolo del reale**, gotcha #17. È registrato nel piano invece
+> che dimenticato — gotcha #32.
 >
 > ⛔ **Leggere prima l'errata del piano del Traguardo 1**, che sta in testa al piano
 > stesso. Quattro voci, e due valgono anche per i piani futuri: **E1** — il piano dettava
@@ -551,7 +561,7 @@ quando si arriva, perché scriverne uno per codice che non esiste significa inve
 | # | Traguardo | Stato |
 |---|---|---|
 | **1** | scheletro e porta di qualità — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
-| **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ⏭️ **prossimo**, e il piano **non esiste ancora** |
+| **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ⏭️ **prossimo**. ✅ Il [piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **scritto** il 2026-08-09, quattordici compiti in due parti. **Da eseguire** |
 | 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |

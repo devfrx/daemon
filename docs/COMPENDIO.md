@@ -601,19 +601,20 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 1. ~~**§8**~~ — ✅ **chiusa il 2026-08-08**, toccata una volta sola come previsto.
 2. ~~**Il piano**~~ — ✅ **scritto**: [Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
 3. ~~**Il codice del Traguardo 1**~~ — ✅ **eseguito** subagent-driven, otto compiti più quattro di riallineamento alla §1.0. `GATE GREEN`.
-4. ⏭️ **Il Traguardo 2 — il substrato iniettabile. È il prossimo passo**, e il suo piano **non esiste ancora**: si scrive quando si arriva, come dice questa stessa sezione.
+4. ~~**Il piano del Traguardo 2**~~ — ✅ **scritto il 2026-08-09**: [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md), quattordici compiti in due parti.
+5. ⏭️ **Il codice del Traguardo 2 — il substrato iniettabile. È il prossimo passo.**
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
 ### Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano
 
 Scrivere ora un piano per codice che non esiste significa inventare. **Il Traguardo 1 è
-eseguito; i piani degli altri si scrivono quando si arriva — quello del 2 compreso.**
+eseguito e il piano del 2 è scritto; quelli dal terzo in poi si scrivono quando si arriva.**
 
 | # | Traguardo | Stato |
 |---|---|---|
 | **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
-| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ⏭️ **prossimo**. Il piano **non esiste**: si scrive ora |
+| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ⏭️ **prossimo**. ✅ [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) **scritto il 2026-08-09**, quattordici compiti. **Da eseguire** |
 | 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |

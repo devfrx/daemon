@@ -34,7 +34,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 88 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 94 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -100,17 +100,18 @@ proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ~4 KB |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **88 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 88 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **94 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 94 KB |
 
-⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi una volta.** Dicevano
+⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi due volte.** Dicevano
 *«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di oggi, e nessuno
-l'aveva più rifatto. È il gotcha **#31** — una cifra messa a sostegno di una regola giusta
-non viene mai riverificata, perché nessuno dubita della regola. Il rapporto resta quello
-che conta: **88 KB contro mezzo megabyte**.
+l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
+questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
+regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
+resta quello che conta: **94 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
-diagrammi e la spec del sotto-progetto 1, che oggi pesa **263 KB**. Non è che chiedesse
+diagrammi e la spec del sotto-progetto 1, che oggi pesa **267 KB**. Non è che chiedesse
 troppo: chiedeva la cosa giusta nel posto sbagliato. Le decisioni servono **tutte** — ma
 compresse, non integrali.
 

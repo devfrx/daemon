@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (597 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 267), e
+> (599 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 267), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-09.** Manutenzione: §13.
@@ -602,7 +602,7 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 2. ~~**Il piano**~~ — ✅ **scritto**: [Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
 3. ~~**Il codice del Traguardo 1**~~ — ✅ **eseguito** subagent-driven, otto compiti più quattro di riallineamento alla §1.0. `GATE GREEN`.
 4. ~~**Il piano del Traguardo 2**~~ — ✅ **scritto il 2026-08-09**: [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md), quattordici compiti in due parti.
-5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–9 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ **Il prossimo passo è il Task 10** — le porte `filesystem` e `network`. ⛔ **E una voce resta aperta, da approvare prima di scriverla:** il Task 9 ha prodotto **un controllo nuovo** — il caso `no_conversion_from_untrusted_to_instruction`, misurato **portante** — e il **catalogo §7.4.1 blocco C** non ha la riga della **regola B** per la coppia `Untrusted`/`Instruction`, ma solo quella della regola A (`Q9 · I6 · V20`). È il gotcha **#36**, e la forma del rimedio è nota: allargare il blocco con **richiamo datato**, come già fatto per i due tempi.
+5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–10 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ **Il prossimo passo è il Task 11** — la porta `process`, i gettoni e le due ricevute. ⛔ **E una voce resta aperta, da approvare prima di scriverla:** il Task 9 ha prodotto **un controllo nuovo** — il caso `no_conversion_from_untrusted_to_instruction`, misurato **portante** — e il **catalogo §7.4.1 blocco C** non ha la riga della **regola B** per la coppia `Untrusted`/`Instruction`, ma solo quella della regola A (`Q9 · I6 · V20`). È il gotcha **#36**, e la forma del rimedio è nota: allargare il blocco con **richiamo datato**, come già fatto per i due tempi.
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
@@ -619,8 +619,9 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 | 7 | il reattore reale in `platform`, e la prima suite di conformità | ✅ |
 | 8 | il cablaggio di produzione in `daemon`, coi default letterali | ✅ |
 | 9 | il confine dei tipi, e la promozione che pretende il giornale | ✅ |
-| **10** | **le porte `filesystem` e `network`** | ⏭️ **riprende qui** |
-| 11–12 | `process` coi gettoni e le due ricevute · `ipc` | ⬜ |
+| 10 | le porte `filesystem` e `network` | ✅ |
+| **11** | **`process` coi gettoni e le due ricevute** | ⏭️ **riprende qui** |
+| 12 | `ipc`, e la tabella completa delle sei famiglie | ⬜ |
 | 13–14 | il registro dei controlli · la chiusura del traguardo | ⬜ |
 
 ✅ **I due buchi che il Task 6 aveva lasciato in eredità sono chiusi — ma uno dei due NON era
@@ -806,7 +807,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I quarantacinque gotcha
+## 9. I quarantasei gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -858,6 +859,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 43 | ⛔ **In un modello, un valore d'esempio _valido_ viene incollato così com'è: non si distingue da un dato. E un avviso accanto non è un rimedio.** Il campo «Ultimo commit» di [`AVVIO-CHAT.md`](AVVIO-CHAT.md) portava un hash vero, con accanto una riga che **dichiarava il difetto** e ne scaricava il rimedio su chi incolla. Misurato: il file era vecchio di **due** commit, il messaggio incollato di **quattro**, e due commit erano serviti solo a rincorrerlo — non possono raggiungerlo, perché lo contengono. ⚠️ **Togliere il campo era la proposta sbagliata:** `HANDOFF.md` non porta lo SHA **perché delega a lì**, e la prova ha giocato contro — il **#32 applicato a sé**, con un rimedio migliore in uscita. Il difetto è più stretto: lo SHA appartiene all'**istanza**, il **modello** ci metteva un valore concreto. Rimedio: un **segnaposto** che nomina il comando che lo riempie — si fallisce **rosso** invece che verde, come nel **#26** |
 | 44 | ⛔ **Una suite di conformità prova solo ciò che TUTTE le implementazioni promettono: il buco che le viene assegnato può non essere chiudibile lì, e forzarcelo rende rossa un'implementazione _corretta_.** §6 e [`porta-di-qualita.md`](porta-di-qualita.md) assegnavano alla conformità di `reactor` di coprire `VirtualReactor::wall_time()`. Ma la finta muove i due orologi **insieme** (deliberato: un timbro fermo contraddirebbe il proprio ordinamento) e la **vera non deve**, perché serve `wall_time` dall'orologio di sistema, che NTP fa arretrare. Il buco si è chiuso in `crates/simulator/tests/virtual_clock.rs`, e in conformità resta una riga che prova **la sola chiamabilità**, dichiarata come tale invece del `let _ = …` che sembra copertura. ⛔ La forma generale: assegnare un buco a un controllo condiviso **presume che il buco sia una proprietà condivisa** — quando non lo è, non si indebolisce il controllo, gli si trova **l'altra sede**. Contro-sonda **R6** |
 | 45 | ⛔ **Il rimedio a una copertura mancante è esso stesso un controllo, e nasce non provato — perché lo si scrive credendo di stare già rimediando.** Il caso `deadline < now`, aggiunto al Task 7 per coprire la metà di ramo che il piano lasciava fuori, era **cancellabile lasciando la porta verde**: il bugiardo del file moriva sul primo caso senza mai raggiungerlo, e i due condividevano **lo stesso messaggio**. ⚠️ Il difetto stava **dentro il file che spende un intero test negativo proprio per impedirlo**. Rimedio in due pezzi: due messaggi **distinti**, così che il payload dica quale metà ha sparato, e un **secondo bugiardo** rotto in modo diverso. Valgono il **#14** e il **#24** anche per il tappo. Sonda **R4** |
+| 46 | ⛔ **Su una porta mai implementata, YAGNI cancella ciò che serve a implementarla.** Al Task 10 la regola avrebbe tolto `Path::as_bytes()` ed `Endpoint::as_bytes()`, senza chiamanti. **Misurato: le due porte sarebbero rimaste non implementabili fuori da `kernel`** — la privacy del campo di una tuple-struct è **di modulo**, quindi `platform` non può leggere `Path.0`, e nulla diventa rosso perché lì l'implementazione non esiste. ⚠️ Il difetto non è YAGNI: è che su un tratto **dichiarato in anticipo** i chiamanti sono vuoti **per costruzione**, quindi il criterio non distingue il morto dalla **sola porta d'ingresso di chi verrà**. Rimedio: un'**implementazione finta** in un test (`ports_are_implementable.rs`), che dà un chiamante a ciò che serve e lascia scoperto solo il morto vero. 📌 E prova per giunta che le firme siano **implementabili** — ha colto che `Clone` su `Path` è portante per `declare_scope` |
 
 ---
 
@@ -914,7 +916,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 267 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 117 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 119 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 15 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |

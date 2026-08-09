@@ -240,6 +240,153 @@ misurata contro `SeededRng` e `VirtualReactor` reali. Il meccanismo è stato poi
 — `below(2) == 1` serve alla fuga, e la parità di `xorshift64(seme·M + 1)` per i semi 1–6 è
 `0, 1, 1, 0, 1, 1` — e il calcolo combacia col runtime.
 
+## Esecuzione del Traguardo 2 — i Task 7–10: il limite dei giri, e il confine dei tipi
+
+Eseguite il **2026-08-09** · `rustc 1.95.0` · `cargo 1.95.0` · Windows 11 · profilo `dev`.
+Non sono documentazione consultata: **sono misure**, e il comando col proprio banco è la fonte.
+⚠️ **Tutte rifatte** su una copia del repository prima di finire qui, e dove il numero rifatto
+si scosta da quello atteso lo scarto è scritto nella riga invece di essere lisciato.
+
+**Il dimensionamento del limite di giri, e lo strumento che lo ottiene senza strumentare nulla.**
+
+⛔ **Il metodo vale più del numero, perché è riusabile e non è ovvio.** L'esecutore **non** è
+stato strumentato: si è usato **il limite stesso come strumento**. `Executor::run` fallisce
+appena i giri superano il limite consegnato, quindi *il più piccolo limite che restituisce
+ancora `Ok(())` **è** il numero di giri*. Il banco è quello di `trace_of` in
+`crates/kernel/tests/executor_determinism.rs` — tre attività per quattro passi — con il solo
+limite reso variabile.
+
+| Verifica | Banco | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| quanti giri usa lo scenario di riferimento | il più piccolo limite che passa, cercato per ciascuno dei **duecento** semi | **nove**, e lo **stesso** nove su tutti: minimo uguale al massimo, istogramma `{9: 200}` | `EXECUTOR_TURN_LIMIT` in `crates/daemon/src/main.rs` |
+| è un confine o una stima? | limite **otto** e limite **nove**, ciascuno su tutti i semi | con otto la corsa fallisce su **tutti e duecento**, con nove passa su **tutti e duecento**: **confine misurato** | idem · errata **E20** del piano |
+
+⛔ **Smentisce il piano**, che diceva *«meno di quaranta»* senza averlo mai verificato — gotcha
+**#15**. Sono nove, e il limite spedito, `100_000`, li supera di **quattro** ordini di
+grandezza. Senza questa riga la costante si ri-deriva ogni volta che qualcuno la mette in
+dubbio.
+
+⚠️ **Il seme cambia l'ordine _dentro_ un giro, non il _numero_ dei giri**, e non era ovvio a
+priori: è ciò che rende la cifra una proprietà **dello scenario** e non di un seme, ed è il
+motivo per cui su duecento semi minimo e massimo coincidono invece di formare una banda.
+
+**Il limite è un conteggio di giri, non un tetto sull'orologio.**
+
+Misurato sul **grafo vero** — `SystemReactor` più `SequentialRng`, cioè quello che
+`crates/daemon/src/main.rs` cabla davvero, non la coppia finta del simulatore.
+
+| Caso | Banco | Dato ottenuto |
+|---|---|---|
+| tutto il soffitto speso a interrogare, **nessun giro attende** | un'attività che cede per sempre, limite `100_000`, cinque corse | **≈ 15 ms** — 14,5 · 14,8 · 14,9 · 14,9 · 14,9 — poi `Err(TurnLimitReached)` |
+| **una** corsa i cui giri contengono un'attesa da **2000 ms** | un'attività sospesa fino a `Monotonic::from_millis(2_000)`, tre corse | **2,0001 · 2,0001 · 2,0005 s**, poi `Ok(())` |
+
+⚠️ **La seconda riga non ha decimi stabili, e il commento del sorgente ne cita uno.**
+`EXECUTOR_TURN_LIMIT` registra **2,0004 s**; la rimisura dà **2,0001–2,0005 s** su tre corse.
+Non è una divergenza ma la **granularità dell'overshoot** di `std::thread::sleep`, che nessuna
+piattaforma garantisce — la stessa ragione per cui `wait_until` di `platform` dichiara un
+residuo invece di scriverci sopra un controllo. La cifra che si cita è **la parte intera**.
+
+📌 **Cosa stabiliscono le due righe insieme.** `EXECUTOR_TURN_LIMIT` copre **in millisecondi** i
+blocchi che **non attendono** — un'attività che cede per sempre, una che ri-registra una
+scadenza già passata: girano entrambe a vuoto, e finiscono entrambe lì in un quindicesimo di
+secondo. E **non limita l'orologio** per un'attività che si riaddormenta su scadenze
+**future**: quella non gira a vuoto, aspetta; termina lo stesso — i giri finiscono comunque —
+ma al tempo che le sue attese sommano. La garanzia è **terminazione, non prontezza**. ⛔ Una
+versione precedente di quel commento affermava il contrario, sostenendo che un giro «non fa
+I/O».
+
+**La divergenza dal gotcha #42, sul confine `Untrusted`/`Instruction`.**
+
+Banco: `impl From<Untrusted> for Instruction` scritta in `crates/kernel/src/boundary.rs` — cioè
+esattamente il ponte che le due regole di I6 vietano — e poi la porta, nelle due direzioni.
+
+| Verifica | Comando | Dato ottenuto |
+|---|---|---|
+| il caso della **regola A**, `untrusted_as_instruction.rs`, se ne accorge? | `cargo test -p kernel --test compile_fail` | ⛔ **resta `ok`** — **non** `mismatch`, che era l'attesa. L'uscita `E0308` combacia ancora **esattamente** con l'oracolo, e nulla da nessuna parte diventa rosso |
+| il caso della **regola B**, `no_conversion_from_untrusted_to_instruction.rs`, sì? | idem | **`error`**: *«Expected test case to fail to compile, but it succeeded»*, che non passa da nessun oracolo |
+| quanto vale quel caso, misurato **dall'altro capo** | con l'`impl` presente **e** quel caso rimosso: `bash scripts/gate.sh` | ⛔ **`GATE GREEN`**: `cargo build`, `cargo test` e i quattro script della porta, **sei controlli su sei verdi mentre I6 è già caduta** |
+
+⛔ **La ragione, ed è il punto.** Lo scarto che il caso della regola A guarda è fra
+**riferimenti** — `&Untrusted` contro `&Instruction` — e `impl From<Untrusted> for Instruction`
+**non** produce `&Untrusted: Into<&Instruction>`: rustc non ha nessun `help: call Into::into` da
+appendere, l'uscita non cambia di una riga, l'oracolo combacia. Sui **due tempi** della §2.1 lo
+scarto era invece fra valori **posseduti**, e lì il suggerimento compare — ed è il caso su cui
+il #42 fu scritto. ⚠️ La conclusione punta nella stessa direzione, più forte: quella guardia
+**non è «disarmabile da una rigenerazione dell'oracolo», è cieca dalla nascita**. E la
+differenza cambia il rimedio: non irrigidire l'oracolo, ma tenere il caso **diretto**.
+
+**Le vie che aggirano il confine, contate compilando — e quelle che non compilano.**
+
+⚠️ Ogni riga è stata **compilata**, e quelle che compilano sono anche state **eseguite**:
+«compila» e «porta il contenuto oltre il confine» non sono la stessa cosa, e una riga sola
+distingue le due.
+
+| Via | Esito |
+|---|---|
+| **A1** `Instruction::new(u.as_str().into())` · **A2** con `to_owned()` | ✅ compilano · ✅ **portano il testo intatto** |
+| **A3** `Instruction::new(format!("{u:?}"))` | ✅ compila · ⛔ **non porta più il contenuto**: esce `Untrusted(<24 bytes>)`. È la via chiusa dal `Debug` scritto a mano |
+| **A4** giro attraverso il giornale: `outcome` → `read_back` → `String::from_utf8` | ✅ compila · ✅ testo intatto |
+| **A5** `transmute` da una crate che ammette `unsafe` | ✅ compila · ✅ testo intatto |
+| **A6** un `Journal` che risponde `Ok(())` senza scrivere un byte | ✅ compila · ✅ `promote` riesce, testo intatto |
+| **A7** un modulo **figlio** di `boundary`: `Instruction(u.0)` | ✅ compila · ✅ testo intatto |
+
+📌 **Sette vie compilano, sei portano il contenuto**, che è la forma esatta di ciò che
+`Untrusted::promote` e l'errata **E29** scrivono come *«sette compilano, una sola è chiusa»*.
+
+E il contro-insieme, dodici tentativi che **non** compilano:
+
+| Tentativo | Codice |
+|---|---|
+| `let _i: Instruction = u.into();` | `E0277` |
+| `Instruction::from(u)` | ⚠️ **`E0308`, non `E0277`** — vedi sotto |
+| `build_prompt(&system, &u)` · `Instruction::new(u)` · `let _r: &Instruction = &u;` · `let _v: Vec<Instruction> = vec![u];` | `E0308` |
+| `u.promote()` senza il giornale | `E0061` |
+| `u as Instruction` | `E0605` |
+| `Instruction("…".into())` da fuori dal modulo, e da un modulo **fratello** dentro `kernel` | `E0423` |
+| `u.0` da fuori dal modulo, e da un modulo **fratello** dentro `kernel` | `E0616` |
+| `transmute` **senza** blocco `unsafe` | `E0133` |
+| `unsafe { transmute }` **dentro `kernel`** | nessun codice: la lint `unsafe_code` di `#![forbid(unsafe_code)]`, *«usage of an `unsafe` block»* |
+
+⛔ **Il risultato che vale più degli altri: la privacy del campo di una tuple-struct è di
+modulo, non `pub(crate)`.** Un modulo **fratello** dentro `kernel` **non** può costruire
+`Instruction(…)` né leggere `Untrusted.0` — `E0423` e `E0616`, misurati aggiungendo il modulo e
+compilando. Un modulo **figlio** di `boundary` invece **sì**, ed è A7. Quindi le sette vie sono
+**le** vie: non ce n'è un'ottava nascosta altrove nella crate, ed è un residuo **misurato**
+invece che ragionato.
+
+⚠️ **`Instruction::from(u)` e `u.into()` falliscono con codici diversi**, e non era prevedibile
+leggendo: `Instruction::from` risolve sull'impl **riflessiva** `From<T> for T` di `core`, quindi
+l'errore cade sull'**argomento** (`E0308`) e non sul vincolo di tratto (`E0277`). Le due
+sintassi della **stessa** conversione producono uscite diverse: un oracolo scritto per l'una non
+copre l'altra.
+
+⚠️ **Un'attesa smentita, registrata invece che allineata.** Ci si aspettava **dieci** vie non
+compilanti *«ciascuna col proprio codice d'errore»*. Nessuna delle due metà regge: il **numero**
+di vie che non compilano è una proprietà dell'**elenco** che si sceglie di provare, non del
+confine — i dodici qui sopra sono i tentativi naturali, e se ne scrivono altrettanti — e i
+**codici distinti sono sette**, con `E0308` che da solo ne copre **cinque**. Ciò che non dipende
+dall'elenco, e che è dunque la sola parte da citare, sono i codici e il risultato sulla privacy
+di modulo.
+
+**Marginale, e però è la ragione per cui una premessa fu smentita.**
+
+| Verifica | Comando | Dato ottenuto |
+|---|---|---|
+| quante volte `clippy` chiede il `Default` che non c'è | `cargo clippy --workspace --all-targets`, **due volte a distanza** con `cargo clean` in mezzo | **quattro** emissioni su quattro bersagli — `simulator` **lib** e **lib test**, `platform` **lib** e **lib test** — per **due** tipi: `VirtualReactor` in `crates/simulator/src/reactor.rs` e `SystemReactor` in `crates/platform/src/reactor.rs`. Identico alle due misure |
+
+⚠️ **A video se ne leggono due, non quattro**, e chi ricontasse si troverebbe in disaccordo con
+questa riga: `cargo` stampa il corpo dell'avviso **una volta per tipo** e riporta gli altri due
+come *«1 duplicate»* nelle righe di riepilogo per bersaglio. Le occorrenze sono quattro, i corpi
+stampati due. ⛔ Ed è tutto ciò che `clippy` ha da dire sul workspace.
+
+📌 **Perché sta qui.** La premessa con cui era stato chiesto un `impl Default for SystemReactor`
+diceva che toglierlo non avrebbe fatto rumore: `clippy` **quel `Default` lo chiede eccome**, e
+la decisione di non metterlo regge per **altre** ragioni — nessun chiamante, e `VirtualReactor`
+che riceve la stessa identica warning senza aver mai avuto un `Default`, quindi toglierlo rende
+i due reattori coerenti invece di isolarne uno. La §7.4.3 scioglie il pareggio: *«clippy non ha
+voce nella porta»*. Nessun `#[allow]`, perché sopprimere nasconderebbe anche l'occorrenza
+successiva. Errata **E18** del piano.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

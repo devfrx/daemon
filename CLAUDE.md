@@ -9,7 +9,7 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 103 KB** (`wc -c`, il 2026-08-09), cioè **circa
+⚠️ **Insieme questi due file pesano 108 KB** (`wc -c`, il 2026-08-09), cioè **circa
 venticinquemila token** con lo stesso rapporto che fu usato per prezzarli la prima volta —
 ⚠️ e **quel rapporto non è mai stato rimisurato**, il che lo rende il prossimo #31 in arrivo.
 **Non sono più «circa seimila token»**: quella cifra era vera quando pesavano 24 KB, e

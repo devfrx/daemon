@@ -604,6 +604,15 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 4. ~~**Il piano del Traguardo 2**~~ — ✅ **scritto il 2026-08-09**: [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md), quattordici compiti in due parti.
 5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–10 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ **Il prossimo passo è il Task 11** — la porta `process`, i gettoni e le due ricevute. ⛔ **E una voce resta aperta, da approvare prima di scriverla:** il Task 9 ha prodotto **un controllo nuovo** — il caso `no_conversion_from_untrusted_to_instruction`, misurato **portante** — e il **catalogo §7.4.1 blocco C** non ha la riga della **regola B** per la coppia `Untrusted`/`Instruction`, ma solo quella della regola A (`Q9 · I6 · V20`). È il gotcha **#36**, e la forma del rimedio è nota: allargare il blocco con **richiamo datato**, come già fatto per i due tempi.
 
+⛔ **E due questioni restano aperte nel sorgente, dichiarate e non risolte.** Nessuna delle
+due è un difetto oggi, ed è scritto **perché**; entrambe si pagano più avanti, e chi riprende
+deve saperle **prima** di scrivere:
+
+| | |
+|---|---|
+| **la porta `network` ha una tensione non conciliata** | la firma di `request` è **sincrona e bloccante** — restituisce la risposta intera, quindi qualcuno ha atteso — mentre la regola scritta sotto dice che la prontezza viene dal `reactor` e che **nulla attende dentro `network`**; e l'esecutore di questo kernel è **cooperativo**. Le due si conciliano **il giorno in cui la porta riceve un'implementazione**: finché non ha chiamanti nulla blocca, quindi non è ancora un difetto. La domanda è scritta **aperta** in `crates/kernel/src/ports/network.rs` |
+| **il residuo dichiarato su `Untrusted::promote`** | il meccanismo compra **una cosa sola**: che la conversione non si scriva senza **nominare** la porta `journal`. **Non** compra che qualcosa sia stato registrato — `promote` è generico su qualunque `Journal`, e un giornale che risponde `Ok(())` senza scrivere un byte soddisfa il vincolo. Sono **sette** le vie che aggirano il confine e **compilano**, tutte elencate in `crates/kernel/src/boundary.rs`, e **una sola è chiusa** — il `Debug` di `Untrusted`, che non stampa più il contenuto. Ciò che terrebbe l'onestà della porta è una **suite di conformità del `journal`**, sul modello di `crates/kernel/tests/reactor_contract.rs` e dei suoi due bugiardi: appartiene al **Traguardo 3**, cioè al prossimo |
+
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
 ### Il Traguardo 2, compito per compito — dove riprendere
@@ -660,7 +669,7 @@ eseguito e il piano del 2 è scritto; quelli dal terzo in poi si scrivono quando
 | # | Traguardo | Stato |
 |---|---|---|
 | **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
-| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | 🔵 **in corso**. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito fino al **Task 7 su 14**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale · **il reattore reale e la prima suite di conformità**. ⏭️ **Riprende dal Task 8** |
+| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | 🔵 **in corso**. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito fino al **Task 10 su 14**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale · **il reattore reale e la prima suite di conformità** · il **cablaggio di produzione** in `daemon`, coi default letterali · il **confine dei tipi** `Untrusted`/`Instruction`, con la promozione che pretende la porta `journal` · le porte **`filesystem` e `network`**. ⏭️ **Riprende dal Task 11** |
 | 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
@@ -920,16 +929,16 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 15 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 17 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 27 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 32 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 43 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
-| ⛔ **il compito da cui si riprende** — è il piano **in corso**, e il Task 7 sta lì | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 135 KB |
+| ⛔ **il compito da cui si riprende** — è il piano **in corso**, e il Task 11 sta lì | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 147 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 10 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
@@ -1069,6 +1078,41 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > da quando fu fissato**, e nessuno lo dubita perché la regola che sostiene è giusta — che è la
 > definizione esatta del **#31**. ⚠️ Resta comunque il confronto che conta, ed è **101 KB contro
 > 597**.
+
+> 🔁 **Nona misura, il 2026-08-09, chiudendo la sessione dei Task 8–10 del Traguardo 2 — e la
+> riga mancante della settima non si è ripetuta.** Contate le **righe** prima dei numeri dentro
+> di esse, come pretende la lezione della settima: ogni file citato in questa sezione ha la sua
+> voce in tabella, verificato uno per uno. Nessuna riga da aggiungere.
+>
+> | | |
+> |---|---|
+> | **cresciuto** | [`HANDOFF.md`](HANDOFF.md) `117 → 119`, per il gotcha **#46** — YAGNI che, su una porta mai implementata, cancella ciò che serve a implementarla |
+> | ⛔ **e tre righe che questo riquadro dichiarava invariate lo erano solo a metà passata** | [`porta-di-qualita.md`](porta-di-qualita.md) `17 → 27` per gli undici artefatti registrati · [`riferimenti.md`](riferimenti.md) `32 → 43` per le misure dei Task 7–10 · il **piano del Traguardo 2** `135 → 147` per l'errata E19–E35 |
+> | **invariati, ricontati a passata chiusa** | spec del sotto-progetto 1 267 · kernel-design 44 · roadmap 15 · tracciabilità 15 · `design/08` 8 · `design/01` 4 · il piano degli spike 68 · il piano del Traguardo 1 50 · README 10 · ADR `2–19` |
+>
+> ⛔ **E la riga qui sopra è essa stessa il #31, colto mentre accadeva.** Questo riquadro fu
+> scritto **a metà passata**, quando quei tre file erano ancora a HEAD, e dichiarava
+> «invariati, ricontati» tre file che di lì a poco sarebbero cresciuti — per un lavoro **già
+> in corso in parallelo**, e quindi prevedibile. 📌 **La regola che ne esce, e costa zero:** un
+> verbale di misura si scrive **quando la passata è chiusa**, mai mentre altri stanno ancora
+> scrivendo; e se lo si scrive prima, si rimisura prima di committare. Una misura vera **di un
+> momento sbagliato** è indistinguibile da una misura falsa per chi la legge dopo.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **597** a **599 KB** (613166 B). I **due file
+> obbligatori** passano da 101 a **108 KB**: **103 erano già a HEAD**, ed è la cifra che
+> `CLAUDE.md` e [`AVVIO-CHAT.md`](AVVIO-CHAT.md) portano **oggi**; il resto lo aggiungono questo
+> riquadro e le due questioni aperte della §6. ⚠️ **In quei due file la cifra dice ancora 103**,
+> e va rifatta lì: vive in **tre** posti, e questa passata ne ha aggiornato **uno**.
+>
+> ⛔ **E il verbale è arrivato dopo i numeri, che è la variante successiva del #31.** Le cifre
+> erano **giuste e già in tabella**; a mancare era il riquadro, perché la misura era stata
+> scritta **solo nel messaggio del commit** — un posto che nessuno rilegge per decidere se
+> aprire un file. Un numero corretto senza il proprio verbale non si può né rifare né dubitare:
+> chi rimisura non sa da cosa parte. 📌 Il verbale è parte della misura, non il suo racconto.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi si rimisura **dopo**
+> aver chiuso questo riquadro e si corregge **di sole cifre** — il metodo della sesta misura,
+> alla seconda applicazione.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

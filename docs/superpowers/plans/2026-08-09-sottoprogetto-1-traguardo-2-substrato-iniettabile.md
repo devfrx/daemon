@@ -26,6 +26,29 @@ quelle sezioni fissano. Il *perché* di ogni vincolo sta lì; qui c'è solo il *
 
 ---
 
+## Richiamo — 2026-08-09, prima di eseguire il primo compito
+
+> ⛔ **Una correzione, trovata leggendo il file invece di dedurlo.** La prima stesura di
+> questo piano diceva, in quattro punti, di **alzare «il conteggio atteso»** dei casi in
+> `crates/kernel/tests/compile_fail.rs`. **Quel conteggio non esiste, ed è deliberato che
+> non esista.**
+>
+> La guardia di non-vacuità di quel file porta scritto il perché:
+> *«No expected number, for the reason of §8.6.2: a fixed count would turn red the day the
+> bench grows for a legitimate reason»*. Mettere a guardia un numero atteso è il **rimedio
+> sbagliato** che il gotcha **#26** nomina per nome. Ciò che la guardia controlla è che i
+> casi siano **più di zero**, e il banco usa un **glob**: un caso nuovo entra da solo.
+>
+> **`compile_fail.rs` non si modifica in nessuno dei quattordici compiti.** I passi
+> interessati — Task 1 Step 6, Task 5 Step 3, Task 9 Step 7, Task 14 Step 1 — sono
+> corretti, e la struttura dei file pure.
+>
+> 📌 **Perché è registrato invece che corretto in silenzio:** il piano era già committato,
+> ed è la stessa classe di errore che la §2.5 chiama *«un'evidenza scritta prima della
+> misura è un'ipotesi»* — avevo scritto «il conteggio cresce» senza aprire il file.
+
+---
+
 ## Il perimetro, e la voce che è stata cercata prima di fissarlo
 
 ⛔ **Da leggere prima dei compiti.** Il perimetro di questo traguardo è stato messo in
@@ -158,7 +181,7 @@ crates/kernel/tests/
   executor_determinism.rs      ← C1, C2, C3 e la NON-VACUITÀ, rimisurata
   boundary_promotion.rs        ← contro-sonda: la promozione giornalata compila e registra
   reactor_contract.rs          ← la suite di conformità, condivisa fra finta e vera
-  compile_fail.rs              ← MODIFICATO: il conteggio atteso cresce
+  compile_fail.rs              ← ⛔ NON si tocca: il glob raccoglie i casi nuovi da se'
   compile_fail/                ← quattro casi nuovi + i loro .stderr
 crates/simulator/src/
   lib.rs                       ← MODIFICATO
@@ -190,6 +213,7 @@ gli attributi restano dove sono. `gate-attributes.sh` legge quel file.
 - Modify: `crates/kernel/src/lib.rs`
 - Test: `crates/kernel/tests/time_types.rs`
 - Test: `crates/kernel/tests/compile_fail/monotonic_as_wall.rs` (+ `.stderr`)
+- ⛔ **Non modificare:** `crates/kernel/tests/compile_fail.rs` — vedi Step 6
 
 **Interfaces:**
 - Consuma: nulla.
@@ -382,14 +406,17 @@ fn main() {
 }
 ```
 
-- [ ] **Step 6: Registrare il caso nel banco, e alzare il conteggio**
+- [ ] **Step 6: Verificare che il banco raccolga il caso nuovo — senza toccare nulla**
 
-In `crates/kernel/tests/compile_fail.rs`, il conteggio dei `.rs` attesi passa da **4** a
-**5**.
+⛔ **`crates/kernel/tests/compile_fail.rs` NON si modifica**, e il motivo va letto invece
+che dedotto. Il banco usa un **glob** — `t.compile_fail("tests/compile_fail/*.rs")` —
+quindi un caso nuovo entra da solo. E la guardia di non-vacuità **non ha un numero
+atteso**, deliberatamente: la sua stessa documentazione dice *«a fixed count would turn
+red the day the bench grows for a legitimate reason»*. Metterle a guardia un numero è il
+**rimedio sbagliato** che il gotcha **#26** nomina per nome (§8.6.2). Ciò che la guardia
+controlla è che i casi siano **più di zero**, e resta vero.
 
-⛔ **Non toccare la guardia di non-vacuità**: conta i `.rs` *prima* di chiamare
-`trybuild`, perché un glob che non pesca nulla **non è un errore** e il banco uscirebbe
-verde (gotcha #26, seconda occorrenza).
+Verificare soltanto che il caso nuovo sia stato raccolto: lo dirà l'uscita dello Step 7.
 
 - [ ] **Step 7: Generare l'oracolo LEGGENDOLO, non benedicendolo**
 
@@ -424,7 +451,7 @@ bash scripts/gate.sh
 Atteso: `GATE GREEN.`
 
 ```bash
-git add crates/kernel/src/time.rs crates/kernel/src/lib.rs crates/kernel/tests/time_types.rs crates/kernel/tests/compile_fail.rs crates/kernel/tests/compile_fail/monotonic_as_wall.rs crates/kernel/tests/compile_fail/monotonic_as_wall.stderr
+git add crates/kernel/src/time.rs crates/kernel/src/lib.rs crates/kernel/tests/time_types.rs crates/kernel/tests/compile_fail/monotonic_as_wall.rs crates/kernel/tests/compile_fail/monotonic_as_wall.stderr
 git commit -m "feat(kernel): i due tempi sono due tipi, e scambiarli non compila"
 ```
 
@@ -1219,9 +1246,10 @@ In `crates/kernel/src/lib.rs`:
 pub mod executor;
 ```
 
-- [ ] **Step 3: Alzare il conteggio del banco e generare l'oracolo**
+- [ ] **Step 3: Generare l'oracolo**
 
-In `crates/kernel/tests/compile_fail.rs`, il conteggio passa da **5** a **6**.
+⛔ **`compile_fail.rs` non si tocca**: il glob raccoglie il caso nuovo da sé, e la guardia
+di non-vacuità non ha un numero atteso — vedi Task 1, Step 6.
 
 ```bash
 cargo test -p kernel --test compile_fail
@@ -2323,9 +2351,9 @@ fn main() {
 }
 ```
 
-- [ ] **Step 7: Alzare il conteggio e leggere gli oracoli**
+- [ ] **Step 7: Leggere i due oracoli**
 
-In `crates/kernel/tests/compile_fail.rs`, il conteggio passa da **6** a **8**.
+⛔ **`compile_fail.rs` non si tocca** — vedi Task 1, Step 6.
 
 ```bash
 cargo test -p kernel --test compile_fail
@@ -2929,7 +2957,9 @@ dichiara.
 cargo test --workspace
 ```
 
-Atteso: nessun fallimento, e il conteggio dei casi `compile_fail` è **otto**.
+Atteso: nessun fallimento, e il banco `compile_fail` elenca **otto** casi — i quattro del
+Traguardo 1 più i quattro di questo. ⛔ Il numero si **legge nell'uscita**, non si mette a
+guardia in `compile_fail.rs`: §8.6.2, gotcha #26.
 
 - [ ] **Step 2: Aggiornare `docs/riferimenti.md`**
 

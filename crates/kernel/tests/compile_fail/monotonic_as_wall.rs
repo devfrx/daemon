@@ -2,8 +2,8 @@
 // NOT compile.
 //
 // ⛔ This case NAMES `kernel::` and declares NO attributes of its own: gotcha #39. A case
-// that redeclared `#![no_std]` would prove that the ban bites where it is declared, not
-// that the kernel declares it.
+// that defined its own local `struct Monotonic` and `struct WallTime` would prove only
+// that Rust has nominal typing, not that the KERNEL keeps the two times apart.
 
 use kernel::time::{Monotonic, WallTime};
 

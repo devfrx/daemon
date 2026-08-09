@@ -11,7 +11,8 @@
 //!
 //! They are two types and not two functions over one type: swapping them does not
 //! compile, by the same mechanism that separates `Instruction` from `Untrusted`. The
-//! negative test is `tests/compile_fail/monotonic_as_wall.rs`.
+//! ban is proved in BOTH directions — `tests/compile_fail/monotonic_as_wall.rs` and
+//! `tests/compile_fail/wall_as_monotonic.rs` — because one direction alone is half a ban.
 //!
 //! Unit: the millisecond, everywhere (decision D1 of the milestone 2 plan).
 
@@ -43,24 +44,26 @@ impl Monotonic {
         Monotonic(value)
     }
 
-    pub const fn as_millis(self) -> u64 {
-        self.0
-    }
-
-    /// Saturating and NOT wrapping: a deadline that wraps becomes a deadline in the
-    /// past and fires immediately — a defect that hides itself.
+    /// Saturating and NOT wrapping: a deadline that wrapped would land in the PAST and
+    /// fire immediately — a defect that hides itself.
     pub const fn saturating_add(self, delta: Millis) -> Self {
         Monotonic(self.0.saturating_add(delta.0))
     }
 
-    /// The distance from an earlier instant. Saturates to zero when `earlier` is in
-    /// fact later, for the same reason.
+    /// The distance from an earlier instant, saturating to zero when `earlier` is in
+    /// fact later. Also never wrapping, but the failure is the OPPOSITE one: a wrapped
+    /// subtraction yields some 584 million years — a timeout that never fires.
     pub const fn saturating_since(self, earlier: Monotonic) -> Millis {
         Millis(self.0.saturating_sub(earlier.0))
     }
 }
 
 /// Wall time: what time it is in the world. ONLY the record reads it.
+///
+/// ⚠️ `Ord` orders the VALUES, not the events. Two stamps can compare in the opposite
+/// order to the one in which they happened, because the clock between them may have
+/// stepped. Sorting journal entries by `WallTime` gives a chronology, never a CAUSAL
+/// order — for that, `Monotonic`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct WallTime(u64);
 

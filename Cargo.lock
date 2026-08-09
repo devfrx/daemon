@@ -106,6 +106,7 @@ name = "platform"
 version = "0.0.0"
 dependencies = [
  "kernel",
+ "simulator",
 ]
 
 [[package]]

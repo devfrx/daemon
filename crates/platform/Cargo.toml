@@ -6,3 +6,11 @@ publish.workspace = true
 
 [dependencies]
 kernel = { path = "../kernel" }
+
+[dev-dependencies]
+# ⚠️ Needed by the CONFORMANCE SUITE, not by this crate: tests/reactor_contract_real.rs
+# `include!`s crates/kernel/tests/reactor_contract.rs, and that file builds a `VirtualReactor`
+# for the two tests it carries with it. A dev-dependency, so it does not enter the shipped
+# graph — and `platform` is outside the ADR-0031 allow-list anyway, which measures `kernel`
+# and `simulator`.
+simulator = { path = "../simulator" }

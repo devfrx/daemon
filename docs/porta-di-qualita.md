@@ -158,6 +158,27 @@ livello sopra, `crates/platform/tests/counter_probes.rs`.
 lui. Un rosso della porta deve significare sempre «invariante violata», mai «stile
 discutibile», o si impara a ignorarlo.
 
+⛔ **`cargo fmt --all --check` è stato valutato il 2026-08-09, e resta fuori per lo stesso
+argomento.** La deriva era reale — **una sola** in tutto il workspace, il letterale di struct
+di `Parameters::new`, ereditata dal Task 3 — ed è stata corretta **nel file** (commit
+`c1aebcc`) invece che sorvegliata dalla porta. La regola 1 di §7.1.1 la rifiuta su
+**entrambi** i rami, ed è la stessa coppia di domande con cui quella sezione caccia `clippy`:
+
+| Ramo | La domanda | Su `rustfmt` |
+|---|---|---|
+| **1a** | difende un `V`, un'`I` o un `Q` nominato? | **no** — nessuna proprietà del sistema dipende da dove va a capo un letterale di struct |
+| **1b** | quale riga del catalogo smette di essere **vera**, se lo cancelli? | **nessuna** — stesso esito che su `clippy`, e la §7.4.3 regge parola per parola |
+
+⚠️ **E non sarebbe comunque una decisione da prendere qui.** *«Il livello 3 del catalogo è
+vuoto»* sta fra le voci **non rilitigabili** della §7 del [compendio](COMPENDIO.md):
+aggiungere un passo di stile alla porta richiederebbe un **ADR che superi la §7.4.3**, non un
+commit. ⚠️ `rustfmt` non è nemmeno un lint, ma sulla scala di §7.1.2 si comporta da livello
+**3**: si cancella, e si aggira per singolo elemento con una riga — `#[rustfmt::skip]`.
+
+📌 **Il costo accettato, ed è reale:** `cargo fmt --all --check` resta un segnale che
+**nessuno fa rispettare**. Oggi è verde su tutto il workspace, e a tenerlo tale è l'igiene di
+chi scrive — non un controllo. Chi lo trova rosso lo corregge nel file, come qui.
+
 ## Cosa la porta NON controlla, in questo traguardo
 
 Righe del catalogo §7.4 che oggi **nessun file implementa**. Stanno qui perché un registro

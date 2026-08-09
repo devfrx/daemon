@@ -53,7 +53,9 @@ impl Parameters {
     /// would, and it is cheaper to write. Validation is outside the perimeter above for
     /// this reason, not for laziness.
     pub const fn new(executor_turn_limit: u64) -> Self {
-        Parameters { executor_turn_limit }
+        Parameters {
+            executor_turn_limit,
+        }
     }
 
     /// How many turns the executor may take before declaring a block.

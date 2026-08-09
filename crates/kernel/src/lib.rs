@@ -1,9 +1,11 @@
 //! The kernel: logic, decisions, declared traits. No call to the OS.
 //!
-//! This crate contains nothing yet: Milestone 1 builds the skeleton and the quality
-//! gate, and the logic arrives with the later milestones. The attributes below are NOT
-//! decoration — they are three of the level 1 rules of §7.4.1, and their negative
-//! tests live in `tests/compile_fail/`.
+//! Milestone 2 is filling this crate with the INJECTABLE SUBSTRATE: the two concepts of
+//! time, the randomness port, the delivered decision parameters, the executor, and the
+//! six families of ports as traits. The kernel never takes anything from the world — it
+//! is handed a provider, and in simulation that provider is a fake governed by a seed.
+//! The attributes below are NOT decoration — they are three of the level 1 rules of
+//! §7.4.1, and their negative tests live in `tests/compile_fail/`.
 
 #![no_std]
 #![forbid(unsafe_code)]

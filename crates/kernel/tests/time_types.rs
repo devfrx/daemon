@@ -1,7 +1,7 @@
 //! Counter-probes for the three time types (§2.1).
 //!
 //! The probe that must FIRE lives in `tests/compile_fail/monotonic_as_wall.rs`: these
-//! are the other direction -- the one that is forgotten (§7.1.1, rule 3).
+//! are the other direction — the one that is forgotten (§7.1.1, rule 3).
 
 use kernel::time::{Millis, Monotonic, WallTime};
 
@@ -15,7 +15,7 @@ fn a_deadline_is_an_instant_plus_a_duration() {
 #[test]
 fn monotonic_never_goes_backwards_even_on_overflow() {
     // Saturating and not wrapping: a deadline that wraps is a defect that hides
-    // itself -- it becomes a deadline in the past and fires immediately.
+    // itself — it becomes a deadline in the past and fires immediately.
     let late = Monotonic::from_millis(u64::MAX);
     assert_eq!(late.saturating_add(Millis::new(1)), late);
 }

@@ -39,7 +39,7 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 87 KB in tutto
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i quarantuno gotcha (§9), le trappole di
+     cosa NON rifare (§8), i quarantadue gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
 
 ⛔ CODICE IN INGLESE, DOCUMENTAZIONE IN ITALIANO — §1.0 della spec.

@@ -18,13 +18,19 @@
 //! | `ipc`        | §6.1        | milestone 6                              |
 //! | `network`    | §2.3.1      | staged — the single exit point           |
 //!
-//! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES. Today this module declares TWO
-//! submodules — `reactor`, which the executor needs, and `journal`, which the promotion of
-//! `crate::boundary` demands as an argument — because they are the ones whose trait has been
-//! written; the other four arrive by Task 12 of the milestone 2 plan, and this table is
-//! completed there. A `pub mod` naming a file that does not exist does not compile, so until
-//! then the table is the only place the six can be named at all — and naming them is exactly
-//! what gotcha #17 above is asking for.
+//! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES. Today this module declares FOUR
+//! submodules — `reactor`, which the executor needs; `journal`, which the promotion of
+//! `crate::boundary` demands as an argument; and `filesystem` and `network`, which have NO
+//! CALLER AT ALL and are here for the reason above. `process` and `ipc` arrive by Task 12 of
+//! the milestone 2 plan, and this table is completed there. A `pub mod` naming a file that
+//! does not exist does not compile, so for those two the table is still the only place they
+//! can be named at all — and naming them is exactly what gotcha #17 above is asking for.
+//!
+//! ⚠️ A TRAIT NOBODY IMPLEMENTS IS NOT A TRAIT PROVED IMPLEMENTABLE. The two declared without
+//! a caller are held by `tests/ports_are_implementable.rs` — a fake for each, and calls that
+//! exercise it. It buys that the signatures compile FROM OUTSIDE THE CRATE and can be called;
+//! it does not buy that they are the right signatures, and it is not the conformance suite,
+//! which needs two implementations to compare.
 //!
 //! ⚠️ `journal` is declared here in milestone 2 and IMPLEMENTED in milestone 3: the trait
 //! exists because a caller already demands it, not because the durable format is settled. The
@@ -37,6 +43,10 @@
 //! §3.1 says so in those words. Repeated here so that nobody "fixes" the discrepancy by
 //! moving `rng` under this module, or by writing "seven families" in the line above.
 
+pub mod filesystem;
+
 pub mod journal;
+
+pub mod network;
 
 pub mod reactor;

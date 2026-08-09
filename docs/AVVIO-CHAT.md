@@ -16,7 +16,7 @@ Riprendo un progetto già progettato, in corso.
 
 Repo:   C:\Users\zagor\Desktop\harness
 Remote: https://github.com/devfrx/daemon.git · branch spec/sottoprogetto-1-kernel
-Albero pulito, ramo pushato. Ultimo commit: 0da4ab6
+Albero pulito, ramo pushato. Ultimo commit: 3d8ef7c
 
 ⛔ PRIMA DI PROPORRE QUALSIASI COSA: leggi, poi ASCOLTA. Non entrare in plan
    mode, non proporre passi, non scrivere file finché non te lo dico.
@@ -34,7 +34,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 87 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 88 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -67,9 +67,16 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 87 KB in tutto
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
    lungo, non la decisione. Nessuna può sfuggirti perché «non sembrava attinente».
 
-QUATTRO COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
+CINQUE COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
   · Non sono operativo in Rust. Quando l'argomento esce dal mio dominio,
     spiegamelo PRIMA a parole semplici e POI schematizza.
+  · Un piano scritto qui è un'IPOTESI, non un'istruzione — e le sue sonde
+    sono la parte che sbaglia. Nel Traguardo 2 sei difetti su sei stavano
+    nel piano e non nel codice: un test vacuo, una sonda che attaccava il
+    caso invece del meccanismo, una regola guardata in una direzione sola,
+    un conteggio inesistente, una variante inusabile, una misura vera ma
+    di un'altra cosa. Prova in negativo PRIMA di crederci, e dove diverge
+    registra la divergenza invece di allinearti all'attesa.
   · Alla chiusura di ogni voce COMMITTA E PUSHA senza chiedere, e SENZA
     co-autore. Prima però: bash scripts/gate.sh — comprende check-docs.sh.
   · Se ti viene un'idea che SOSTITUISCE una decisione presa, cerca PRIMA dove
@@ -93,19 +100,23 @@ proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ~4 KB |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **87 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 87 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **88 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 88 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi una volta.** Dicevano
 *«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di oggi, e nessuno
 l'aveva più rifatto. È il gotcha **#31** — una cifra messa a sostegno di una regola giusta
 non viene mai riverificata, perché nessuno dubita della regola. Il rapporto resta quello
-che conta: **87 KB contro mezzo megabyte**.
+che conta: **88 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **263 KB**. Non è che chiedesse
 troppo: chiedeva la cosa giusta nel posto sbagliato. Le decisioni servono **tutte** — ma
 compresse, non integrali.
+
+⚠️ **La quinta voce è nata il 2026-08-09**, eseguendo i Task 1–6 del Traguardo 2. Non è una
+massima: è il ritratto di sei difetti su sei, e vive qui perché il prossimo agente riprende
+**dentro** quel piano, dove la lezione serve al primo compito e non al decimo.
 
 ⚠️ **Cosa aggiornare qui, e quando.** Il ramo e lo SHA a ogni push; il peso dei due file
 obbligatori quando uno dei due cresce; il numero dei gotcha quando §9 ne guadagna uno; i

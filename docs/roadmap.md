@@ -47,8 +47,9 @@ Ultimo aggiornamento: **2026-08-08**.
 > lo stesso giorno. ✅ **Il piano del Traguardo 1 è scritto ed eseguito**, e la spec non ha
 > voci aperte.
 >
-> ⏭️ **Prossimo passo: il Traguardo 2 — il substrato iniettabile.** ✅ Il suo piano è
-> **scritto** il 2026-08-09; resta da **eseguirlo**.
+> 🔵 **Il Traguardo 2 — il substrato iniettabile — è in corso**: piano scritto ed eseguito
+> **fino al Task 6 su quattordici** il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ Si
+> riprende dal **Task 7**.
 >
 > ✅ **La lacuna su I2 è chiusa**: [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
 > — quota di presentazione sottratta, con la concessione tenuta dal core. Il kernel non
@@ -129,7 +130,7 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 |---|---|---|
 | [Spike bloccanti e stack](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | SP-5, SP-6, ADR-0026, ADR-0027, ADR-0028 | ✅ **eseguito** il 2026-08-06 |
 | [Sotto-progetto 1 · Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) | il workspace con le cinque crate e la **porta di qualità**, eseguibile e provata in due direzioni. **Zero logica di prodotto** | ✅ **eseguito** il 2026-08-08, con un'**errata in testa**: il piano dettava identificatori italiani, la §1.0 della spec vince |
-| [Sotto-progetto 1 · Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) | tempo, casualità, I/O, scheduling; l'**esecutore** in `kernel`; le **sei famiglie di porte** come tratti; i **parametri consegnati** | 📝 **scritto** il 2026-08-09 — quattordici compiti in due parti. **Da eseguire** |
+| [Sotto-progetto 1 · Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) | tempo, casualità, I/O, scheduling; l'**esecutore** in `kernel`; le **sei famiglie di porte** come tratti; i **parametri consegnati** | 🔵 **in corso** — eseguito fino al **Task 6 su 14** il 2026-08-09, con un'**errata di tredici righe**: sei difetti del piano trovati **eseguendo**, il più grave una fuga della cella `Sleep` dipendente dal seme che nessun test del piano avrebbe colto |
 
 ⛔ **Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano.** Scriverne
 uno per codice che non esiste ancora significa inventare. I sei traguardi sono elencati nel
@@ -139,7 +140,7 @@ scritto il 2026-08-09, quelli dal terzo in poi ancora no**.
 | # | Traguardo | Deliverable |
 |---|---|---|
 | **1** | scheletro e porta di qualità | ✅ **eseguito**: cinque crate, sei controlli in un comando, `GATE GREEN` |
-| **2** | il substrato iniettabile | ⏭️ **prossimo**, col **piano scritto**: tempo, casualità, I/O, scheduling; l'esecutore in `kernel`; le sei porte come tratti |
+| **2** | il substrato iniettabile | 🔵 **in corso**: ✅ i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · l'**esecutore** · l'orologio virtuale. ⏭️ Riprende dal **Task 7**, il reattore reale e la suite di conformità |
 | 3 | giornale e formato durevole | la porta `journal` a byte, il record come enum di versione, **i byte congelati** |
 | 4 | il simulatore DST | tempo virtuale, iniezione dei guasti, la campagna, i semi |
 | 5 | arbitro GPU | ammissione, corsie, ciclo della concessione, le due policy |

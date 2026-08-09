@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (581 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 263), e
+> (589 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 266), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-09.** Manutenzione: §13.
@@ -602,9 +602,36 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 2. ~~**Il piano**~~ — ✅ **scritto**: [Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
 3. ~~**Il codice del Traguardo 1**~~ — ✅ **eseguito** subagent-driven, otto compiti più quattro di riallineamento alla §1.0. `GATE GREEN`.
 4. ~~**Il piano del Traguardo 2**~~ — ✅ **scritto il 2026-08-09**: [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md), quattordici compiti in due parti.
-5. ⏭️ **Il codice del Traguardo 2 — il substrato iniettabile. È il prossimo passo.**
+5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–6 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ **Il prossimo passo è il Task 7** — il reattore reale in `platform`, e la prima suite di conformità fra porta finta e porta vera.
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
+
+### Il Traguardo 2, compito per compito — dove riprendere
+
+| # | Compito | Stato |
+|---|---|---|
+| 1 | i due tempi, `Monotonic` e `WallTime`, e il terzo che li lega | ✅ |
+| 2 | la porta `Rng`, e l'implementazione seminata in `simulator` | ✅ |
+| 3 | i parametri di decisione, consegnati e non letti | ✅ |
+| 4 | la porta `Reactor` | ✅ |
+| 5 | **l'esecutore** | ✅ |
+| 6 | il reattore finto, e la misura dell'interlacciamento | ✅ |
+| **7** | **il reattore reale in `platform`, e la prima suite di conformità** | ⏭️ **riprende qui** |
+| 8 | il cablaggio di produzione in `daemon`, coi default letterali | ⬜ |
+| 9–12 | il confine dei tipi · `journal` e `filesystem` · `process` coi gettoni · `ipc` | ⬜ |
+| 13–14 | il registro dei controlli · la chiusura del traguardo | ⬜ |
+
+⛔ **Cosa il Task 7 deve coprire, e lo dice chi ha scritto il Task 6:** il ramo
+`deadline <= now → None` di `VirtualReactor::wait_until` **non è esercitato da nessun test**
+— l'esecutore non lo raggiunge più da quando promuove i dormienti scaduti — e
+`VirtualReactor::wall_time()` **non è letto da nessuno**. Sono contratto della porta: o li
+copre la suite di conformità, o partono non provati.
+
+📌 **Sei difetti del piano trovati eseguendo, non leggendo**, e il più grave è invisibile
+per costruzione: la cella `Sleep` veniva svuotata **solo sul ramo `Pending`**, quindi
+un'attività che chiedeva di dormire e poi finiva lasciava la richiesta alla successiva.
+**C1 resta verde** — la fuga è deterministica, quindi riproducibile e perciò invisibile a un
+controllo di riproducibilità. Regressione permanente su un intervallo di semi, non su uno.
 
 ### Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano
 
@@ -614,7 +641,7 @@ eseguito e il piano del 2 è scritto; quelli dal terzo in poi si scrivono quando
 | # | Traguardo | Stato |
 |---|---|---|
 | **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
-| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ⏭️ **prossimo**. ✅ [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) **scritto il 2026-08-09**, quattordici compiti. **Da eseguire** |
+| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | 🔵 **in corso**. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito fino al **Task 6 su 14**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale. ⏭️ **Riprende dal Task 7** |
 | 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
@@ -922,6 +949,19 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > obbligatori sono passati da 85 a 87 KB**: la cifra vive in `CLAUDE.md` e in
 > [`AVVIO-CHAT.md`](AVVIO-CHAT.md), e va rifatta ogni volta che uno dei due cresce.
 > 📌 Due misure di seguito senza artefatti dello strumento: il metodo `wc -c` regge.
+
+> 🔁 **Quinta misura, il 2026-08-09, chiudendo la sessione dei Task 1–6 del Traguardo 2.**
+> Tutti scarti sono **crescite vere**; il metodo `wc -c` regge da tre misure di seguito.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | HANDOFF `105 → 109` · spec del sotto-progetto 1 `263 → 266` (le tre righe nuove del catalogo) · [`porta-di-qualita.md`](porta-di-qualita.md) `11 → 13` · roadmap `14 → 15` |
+> | **voce nuova** | il **piano del Traguardo 2**, che è il più grande scritto finora |
+> | **invariati** | kernel-design 44 · tracciabilità 15 · riferimenti 30 · `design/08` 8 · README 10 · il piano degli spike 68 |
+>
+> L'insieme *«HANDOFF + spec del sotto-progetto 1 + `adr/`»* passa da **581** a **589 KB**.
+> ⚠️ **E i due file obbligatori sono passati da 87 a 88 KB**: la cifra vive in `CLAUDE.md` e
+> in [`AVVIO-CHAT.md`](AVVIO-CHAT.md), e va rifatta ogni volta che uno dei due cresce.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

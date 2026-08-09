@@ -212,6 +212,34 @@ decisione non è stata presa su questo scarto — il criterio è *il pari ha un 
 lo scarto è dichiarato in ADR-0037 fra le `Negative`, perché il sotto-progetto 2 lo
 incontrerà.
 
+## Esecuzione del Traguardo 2 — le misure del substrato iniettabile
+
+Eseguite il **2026-08-09** · `rustc 1.95.0` · `cargo 1.95.0` · Windows 11 · profilo `dev`.
+Tutte riproducibili dal repository: non sono prototipi usa-e-getta.
+
+| Misura | Comando | Esito |
+|---|---|---|
+| **interlacciamento dell'esecutore**, seme `20260806` | `cargo test -p kernel --test executor_determinism -- --nocapture` | **10 cambi di task su 11 transizioni** |
+| C1 — stesso seme, stessa traccia | idem, `c1_the_same_seed_gives_one_single_trace` | **una sola traccia** su 100 corse |
+| C2 — semi diversi, tracce diverse | idem, `c2_a_different_seed_gives_a_different_trace` | più di una traccia distinta su 200 semi |
+| C3 — tempo virtuale | idem, `c3_virtual_time_does_not_wait` | l'orologio arriva **esattamente a 20 000 ms** virtuali |
+| la guardia sullo zero di `SeededRng` | calcolo, poi `cargo test -p simulator --test seeded_rng` | il moltiplicatore è **dispari**, quindi la mappa è una **biiezione** modulo 2⁶⁴: **esattamente un seme** finisce a zero, `4_568_919_932_995_229_531` |
+| la fuga della cella `Sleep` (difetto E10) | reintroducendo il difetto, sei semi | **quattro semi su sei** perdono — `{2, 3, 5, 6}` |
+
+⛔ **Il 10 su 11 non si legge come «più concorrenza dello spike».** SP-5 misurò **13 su 17**
+con un esecutore che sceglieva **una sola** attività a caso per giro; questo ne interroga
+**tutte** le pronte in un ordine scelto dal seme (decisione D4 del piano). Con tre attività
+che condividono le scadenze, ogni giro è una permutazione completa: **otto cambi sono
+forzati** dalla struttura e solo i **tre confini di giro** possono non cambiare. La cifra
+è vicina al proprio **massimo strutturale**, e i due numeri **non sono confrontabili**.
+
+⚠️ **La fuga della cella `Sleep` era stata prima misurata a «tre semi su sei — {1,3,5}»**, su
+un banco usa-e-getta con un reattore finto **diverso** da quello spedito. Vera, ma di
+un'altra cosa: è il gotcha **#15** nella forma più insidiosa, e la cifra che vale è quella
+misurata contro `SeededRng` e `VirtualReactor` reali. Il meccanismo è stato poi **calcolato**
+— `below(2) == 1` serve alla fuga, e la parità di `xorshift64(seme·M + 1)` per i semi 1–6 è
+`0, 1, 1, 0, 1, 1` — e il calcolo combacia col runtime.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

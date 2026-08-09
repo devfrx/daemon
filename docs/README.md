@@ -102,7 +102,7 @@ sotto-progetto**, nello stesso passaggio.
 | Spec | Sotto-progetto | Stato |
 |---|---|---|
 | [Kernel](superpowers/specs/2026-08-06-kernel-design.md) | L0 fondamenta + L1 arbitri trasversali | ✅ **completa e approvata** |
-| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, riapertura su sette voci ✅ **tutta chiusa** (F3, F6, F5, F1a, **F2 con F7**, **F1b**, **F4**), e **§8 riallineata e chiusa** il 2026-08-08, poi **audit sezione-contro-ADR** passato. ✅ **Spec completa**, e il [piano del Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) è **eseguito**. Il [piano del Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **scritto** il 2026-08-09 e **resta da eseguire** |
+| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, riapertura su sette voci ✅ **tutta chiusa** (F3, F6, F5, F1a, **F2 con F7**, **F1b**, **F4**), e **§8 riallineata e chiusa** il 2026-08-08, poi **audit sezione-contro-ADR** passato. ✅ **Spec completa**, e il [piano del Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) è **eseguito**. Il [piano del Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **in corso**: eseguito fino al **Task 6 su quattordici** il 2026-08-09, si riprende dal **Task 7** |
 
 ## Decomposizione del sistema
 

@@ -167,7 +167,7 @@ che le omettesse lascerebbe credere che siano coperte.
 |---|---|
 | il blocco **B** di §7.4.1 — i **gettoni** | i gettoni li emettono l'arbitro (§5.6) e il filtro dei vincoli (§6.3): **Traguardi 5 e 6**. ⛔ Un costruttore di `Grant` dietro una feature di test **è stato valutato e scartato**: creerebbe il secondo modo di ottenere una concessione che §5.6 esiste per togliere dal compilatore |
 | il resto del blocco **C** di §7.4.1 | tre righe su sedici sono implementate (sopra). Le altre nominano tipi dell'arbitro, del giornale e del canale worker, che nascono coi Traguardi 3, 5 e 6 |
-| i **test di contratto** fra porta finta e porta vera | non esistono ancora le porte. Traguardo 2 |
+| i **test di contratto** fra porta finta e porta vera | ⏭️ **Traguardo 2, Task 7.** La porta `reactor` esiste, la finta pure (`VirtualReactor`), la vera no. ⛔ **Due cose che quella suite deve coprire, o partono non provate:** il ramo `deadline <= now → None` di `VirtualReactor::wait_until` — che **nessun test esercita**, perché l'esecutore non lo raggiunge più da quando promuove i dormienti scaduti — e `VirtualReactor::wall_time()`, che **nessuno legge**. Sono contratto della porta, e §7.4.6 chiama questa suite *«la più importante: la validità della DST poggia lì»* |
 | i **byte congelati** del record durevole | non esiste ancora nessun record. Entrano al **primo** record scritto — vincolo 14 della §11 del [compendio](COMPENDIO.md), Traguardo 3 |
 | la **campagna DST**, e l'elenco versionato dei **semi** di V31 | non esiste ancora il simulatore. Traguardo 4 |
 | i **byte consumati** pari alla lunghezza dichiarata dal frame | non esiste ancora il canale verso i worker. Traguardo 6 |

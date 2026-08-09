@@ -38,11 +38,16 @@ in due direzioni. Serve a riprendere senza rifare, e senza rilitigare ciò che �
 > ✅ **Nessuna voce aperta resta nella spec.** L'unica decisione ancora `Proposed` del
 > progetto è **ADR-0029**, il guscio della GUI, che non tocca il sotto-progetto 1.
 >
-> ⏭️ **Il prossimo passo è il Traguardo 2 — il substrato iniettabile**, e il suo piano
-> ✅ **è scritto** (2026-08-09):
-> [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md).
-> Quattordici compiti, in due parti: il substrato che la §2 progetta per intero, poi le
-> altre cinque famiglie di porte come tratti. **Resta da eseguirlo.**
+> 🔵 **Il Traguardo 2 è in corso.** Il suo
+> [piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md)
+> è scritto (quattordici compiti in due parti) ed **eseguito fino al Task 6**,
+> subagent-driven, con `GATE GREEN` a ogni compito. Il kernel ha ora i **due tempi**, la
+> porta **`Rng`**, i **parametri consegnati**, la porta **`Reactor`**, **l'esecutore**, e
+> `simulator` ha l'**orologio virtuale**.
+>
+> ⏭️ **Si riprende dal Task 7** — il reattore reale in `platform`, e la prima suite di
+> conformità fra porta finta e porta vera. La §6 del compendio ha la tabella compito per
+> compito.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -60,7 +65,8 @@ worker ML in **Python**; Tauri contro Electron è ancora aperto
 trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto, e le sette
 sono **tutte chiuse**. La **§8 è stata riallineata e chiusa** il 2026-08-08. Il **Traguardo 1
 è eseguito** lo stesso giorno: workspace, cinque crate, porta di qualità verde, **zero logica
-di prodotto**. Il **piano del Traguardo 2 è scritto** il 2026-08-09: tocca a eseguirlo.
+di prodotto**. Il **Traguardo 2 è in corso**: piano scritto ed eseguito **fino al Task 6 su
+quattordici** il 2026-08-09. Si riprende dal **Task 7**.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -78,10 +84,29 @@ salito niente**: sale col substrato.
 
 ## Prima cosa da fare
 
-⏭️ **Eseguire il piano del Traguardo 2 — il substrato iniettabile**, che ✅ **è scritto**:
-[`2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md).
-Tempo, casualità, I/O, scheduling, l'esecutore nel `kernel`, e le sei porte come tratti.
-Vale «spec prima del codice», e la spec c'era già: **§2** e **§3** del sotto-progetto 1.
+⏭️ **Riprendere il piano del Traguardo 2 dal Task 7**:
+[`2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md),
+sezione `## Task 7: Il reattore reale, e la prima suite di conformità`. I Task 1–6 sono
+eseguiti; la §6 del compendio ha la tabella compito per compito.
+
+> ⛔ **Prima di aprire il piano, leggerne l'errata in testa.** Sono **tredici righe**, e
+> non sono rifiniture: sei difetti del piano stesso, trovati **eseguendo** e non leggendo.
+> Il piano **non si riscrive** — è il registro di ciò che fu deciso — ma dove detta una
+> cosa e il repository ne contiene un'altra, vince il repository e l'errata lo dice.
+>
+> ⛔ **E la lezione che le attraversa, per chi esegue i compiti rimasti:** sei volte su sei
+> il difetto **non era nel codice, era nella sonda scritta nel piano** — un test vacuo, una
+> sonda che attaccava il caso invece del meccanismo, una regola guardata in una direzione
+> sola, un conteggio inesistente, una variante che non si poteva usare, una misura vera ma
+> **di un'altra cosa**. Le sonde di quel piano si trattano come **ipotesi**, non come
+> istruzioni, e si provano in negativo prima di crederci.
+
+> ⛔ **Due cose che il Task 7 deve coprire, e le ha nominate chi ha scritto il Task 6:** il
+> ramo `deadline <= now → None` di `VirtualReactor::wait_until` **non è esercitato da
+> nessun test** — l'esecutore non lo raggiunge più da quando promuove i dormienti scaduti —
+> e `VirtualReactor::wall_time()` **non è letto da nessuno**. Sono contratto della porta:
+> o li copre la suite di conformità, o partono non provati. §7.4.6 chiama quella suite *«la
+> più importante: la validità della DST poggia lì»*.
 
 > ⛔ **Non si riusa il piano del Traguardo 1**, e non si scrive un piano unico per i
 > traguardi rimasti: scriverne uno per codice che non esiste ancora significa inventare.
@@ -561,7 +586,7 @@ quando si arriva, perché scriverne uno per codice che non esiste significa inve
 | # | Traguardo | Stato |
 |---|---|---|
 | **1** | scheletro e porta di qualità — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
-| **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ⏭️ **prossimo**. ✅ Il [piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **scritto** il 2026-08-09, quattordici compiti in due parti. **Da eseguire** |
+| **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | 🔵 **in corso**. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) eseguito fino al **Task 6 su 14**, `GATE GREEN` a ogni compito. ⏭️ **Riprende dal Task 7** |
 | 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |

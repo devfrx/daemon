@@ -13,3 +13,5 @@
 extern crate alloc;
 
 pub mod time;
+
+pub mod rng;

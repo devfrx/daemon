@@ -1,0 +1,9 @@
+error[E0119]: conflicting implementations of trait `RngExt` for type `Loaded`
+  --> tests/compile_fail/override_below.rs:28:1
+   |
+28 | impl RngExt for Loaded {
+   | ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: conflicting implementation in crate `kernel`:
+           - impl<R> RngExt for R
+             where R: Rng, R: ?Sized;

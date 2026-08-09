@@ -52,7 +52,10 @@ impl Rng for SequentialRng {
 }
 
 // ⚠️ A UNIT TEST MODULE IN `src/`, WHERE THIS REPOSITORY OTHERWISE PUTS TESTS IN `tests/`, and
-// the deviation is declared because it is the only one of its kind here. The reason is
+// the deviation is declared rather than left to be noticed. It is ONE OF TWO in the
+// workspace: the other is in `crates/daemon/src/main.rs`, where a unit test is not a choice
+// at all — the function under test is private in a `bin` target, and no integration test can
+// link a binary. Here it IS a choice, and the reason is
 // `the_counter_wraps_instead_of_overflowing`: it builds `SequentialRng(u64::MAX)` directly, and
 // the field is private, so from an integration test — a crate of its own — that value is
 // unreachable without either 2^64 draws or a constructor existing solely to be tested. The

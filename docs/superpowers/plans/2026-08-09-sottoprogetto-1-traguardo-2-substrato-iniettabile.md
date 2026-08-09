@@ -63,6 +63,10 @@ quelle sezioni fissano. Il *perché* di ogni vincolo sta lì; qui c'è solo il *
 | **E4** | **Task 2 · Step 3**, la porta `Rng` con `below` come metodo di default | il piano scriveva la regola *«tutte le implementazioni riducono allo stesso modo»* **in un commento**, e un metodo di default **si sovrascrive**: era un'intenzione. Nel repository `below` vive su **`RngExt`**, tratto d'estensione con `impl<R: Rng> RngExt for R {}`, e un impl scritto a mano collide con `E0119`. Costo dichiarato: i chiamanti importano due tratti |
 | **E5** | **Task 2**, il comportamento di `below(0)` | il piano non lo fissava. Deciso eseguendo: **`below(0)` consuma comunque un'estrazione**. Cortocircuitare farebbe dipendere il **numero di estrazioni** dalla dimensione della collezione, e due corse dello stesso seme che differiscono per un solo passo vuoto divergerebbero — **invisibilmente**. Fissato da un test, non da un commento |
 | **E6** | **Task 1**, l'API di `time.rs` | tolti `Millis::ZERO` e `Monotonic::as_millis`: **nessuno dei quattordici compiti li consuma**. Da qui il vincolo globale **14** |
+| **E10** | **Task 5**, la cella `Sleep` svuotata **solo sul ramo `Pending`** | ⛔ **Difetto grave, e misurato.** Un'attività che chiede di dormire e poi restituisce `Ready` **lascia la richiesta nella cella**, e la successiva attività interrogata **la eredita** — addormentata su una scadenza che non è mai stata sua. Misurato su due attività e sei semi: con la forma del piano i semi 1/3/5 finiscono a `clock=9999`, i semi 2/4/6 a `0`. Rimedio: **svuotare dopo ogni poll**, non solo su `Pending`. ⚠️ **Nessun test del piano lo avrebbe trovato:** la fuga è *deterministica*, quindi C1 resta verde — riproducibile e perciò invisibile a un controllo di riproducibilità. È entrata come **regressione permanente** su un intervallo di semi (V31), perché su un seme solo si perde una volta su due |
+| **E11** | **Task 5**, l'abortire su una scadenza non strettamente futura | ⛔ **era sbagliato**, e la causa è una lettura mia della §3.2.1: quella sezione regola l'**`advance()` del reattore** — *«un avanzamento nullo non deve mai essere dichiarato riuscito»* — e **non dice nulla** su cosa l'esecutore debba a un'attività la cui attesa è già finita. Ho letto una regola sulla porta come una regola sull'esecutore. ⛔ Il costo era strutturale: **un `Future` non può leggere l'orologio** — non ha il reattore — quindi un'attività che calcola una scadenza assoluta non ha modo di verificare che l'istante sia ancora avanti, e **qualunque scadenza scaduta mentre altre attività giravano uccideva l'intera corsa**. Ora una scadenza scaduta viene **promossa**, l'orologio non si muove, e il caso patologico resta terminante per la guardia sui giri |
+| **E12** | **Task 5**, il nome `RunError::Stalled` e la guardia morta | `Stalled` **mentiva**: col rimedio di E11 l'unico modo di raggiungere quel ramo è che il reattore rifiuti di avanzare a un istante **strettamente futuro**, cioè una porta che non onora il proprio contratto — non un blocco. Rinominato **`ReactorWillNotAdvance`**, e la sua documentazione dice quale delle due cose è: ⚠️ **non è raggiungibile con un reattore conforme**, ed è una guardia fail-closed contro un'implementazione che non lo è. ⛔ E il piano portava una guardia **morta** con un commento falso — *«may have been woken or finished earlier in this same turn»* — impossibile, perché nulla dentro un poll raggiunge l'esecutore (§2.4.1). Tolta. 📌 Il filtro `d > now` **resta** pur non potendo più escludere nulla, e il commento lo dice: enuncia la precondizione di `wait_until` nel punto in cui la §3.2.1 vincola davvero |
+| **E13** | **Task 5**, l'importazione di `Rng` | il codice del piano importa `use crate::rng::Rng;`, ma dopo E4 `below` vive su **`RngExt`**: `error[E0599]`. Servono entrambi |
 | **E8** | **Task 4 · Step 2**, la variante `Wakeup::EventReady` | ⛔ **tolta prima di essere scritta.** Nessuno dei quattordici compiti la costruisce, e le due difese scritte nel piano non reggono alla lettura. La prima — *«§0.4.3 la vuole per regola B»* — è smentita dalla §0.4.3 stessa, che dice con parole proprie di comprare **da dove** una sorgente entra, *«non come funziona»*, e che la suite di conformità *«non copre un'operazione che nessuno chiama»*: la **porta** doveva esistere adesso, e esiste; la **forma del ritorno** è il «come». La seconda — *«aggiungere una variante dopo rompe ogni `match`»* — inverte il proprio segno: in Rust quella rottura **è** il meccanismo che trova ogni sito che deve decidere, e la regola che vale davvero (ADR-0036 regola 3) governa i record **durevoli**, dove i byte scritti non si ricompilano. ⛔ **E la ragione decisiva:** una variante che porta **solo un istante** non identifica nulla, quindi non può risvegliare l'attività per cui l'evento è arrivato — l'esecutore ha `Runnable` e `Sleeping(deadline)` e promuove per scadenza. Congelarla significava congelare una forma **già nota come sbagliata** |
 | **E9** | **Task 4 · Step 2**, il tipo `Wakeup` | tolto anche l'involucro, e con la stessa regola un livello sopra: rimasto a una variante sola **non distingue nulla** che la firma non dica già. La firma vera è `wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic>`. ⚠️ **`Millis`/`Monotonic`/`WallTime` non sono un controesempio**, e la differenza è scritta nel sorgente: quelli distinguono **cose diverse che condividono una rappresentazione**, ed è per questo che scambiarli **doveva** essere un errore di compilazione — quattro casi in `tests/compile_fail/` lo provano. Un enum a una variante su un `Monotonic` non compra nessun errore da nessuna parte, solo cerimonia. Retrofittabile per il criterio della §7.4.5, quindi **regola C**: tre siti di chiamata nel repository, nessun artefatto durevole. 📌 Misurato dopo il cambio: con l'istante esposto direttamente ai siti di chiamata, `let _x: Option<WallTime> = r.wait_until(…)` resta **`E0308`** — togliere l'involucro non apre un buco nel confine dei tipi |
 | **E7** | **Task 1 · Step 5**, «il caso negativo» al singolare | i casi sono **quattro**, perché le regole erano **due**: *«non si passa l'uno per l'altro»* e *«non esiste una via di conversione»*, ciascuna in **entrambe** le direzioni. Il piano ne dettava uno solo, e con quello solo la porta restava **verde su sei su sei** aggiungendo `impl From<WallTime> for Monotonic` — cioè la direzione **pericolosa** |
@@ -1511,10 +1515,45 @@ fn a_block_becomes_an_error_and_not_an_infinite_wait() {
 }
 
 #[test]
-fn a_deadlock_is_stalled_and_not_a_null_advance() {
-    // An activity suspended on a deadline ALREADY IN THE PAST. `wait_until` must refuse
-    // to advance, and the executor must report it rather than spinning -- the trap of
-    // §3.2.1 found by walking into it.
+fn a_reactor_that_will_not_advance_is_an_error_and_not_a_spin() {
+    // ⚠️ The activity must register a STRICTLY FUTURE deadline. With a past one the
+    // promotion path fires, `wait_until` is never called, and the test would pass for
+    // the wrong reason — gotcha #17.
+    struct RefusingReactor;
+    impl kernel::ports::reactor::Reactor for RefusingReactor {
+        fn now(&self) -> Monotonic {
+            Monotonic::ORIGIN
+        }
+        fn wall_time(&self) -> kernel::time::WallTime {
+            kernel::time::WallTime::from_millis_since_epoch(0)
+        }
+        fn wait_until(&mut self, _deadline: Monotonic) -> Option<Monotonic> {
+            None
+        }
+    }
+
+    let sleep = Sleep::new();
+    let mut executor = Executor::new(
+        SeededRng::new(1),
+        RefusingReactor,
+        Parameters::new(TURN_LIMIT),
+        &sleep,
+    );
+    executor.spawn(async {
+        Yield::once().await;
+    });
+    sleep.until(Monotonic::from_millis(5_000));
+    assert_eq!(executor.run(), Err(RunError::ReactorWillNotAdvance));
+}
+
+#[test]
+fn a_wait_already_over_wakes_immediately_and_the_clock_does_not_move() {
+    // ⛔ The boundary is the point: `deadline == now`, not a strictly past instant. It is
+    // what discriminates `until <= instant` from `until < instant`.
+    //
+    // ⛔ And the second assertion is the direction that gets forgotten: `Ok(())` alone
+    // does NOT prove the executor declined to advance — an implementation that satisfied
+    // the sleeper BY MOVING THE CLOCK would pass the first assertion.
     let sleep = Sleep::new();
     let mut executor = Executor::new(
         SeededRng::new(1),
@@ -1523,15 +1562,66 @@ fn a_deadlock_is_stalled_and_not_a_null_advance() {
         &sleep,
     );
     executor.spawn(async {
-        sleep_in_the_past().await;
+        Yield::once().await;
     });
-    // `Sleep` is shared, so declare the past deadline from here.
     sleep.until(Monotonic::ORIGIN);
-    assert_eq!(executor.run(), Err(RunError::Stalled));
+    assert_eq!(executor.run(), Ok(()));
+    assert_eq!(executor.now(), Monotonic::ORIGIN, "the clock moved to satisfy a wait that was already over");
 }
 
-async fn sleep_in_the_past() {
-    Yield::once().await;
+#[test]
+fn a_suspension_request_is_not_inherited_by_the_next_activity() {
+    // ⛔ PERMANENT REGRESSION (V31, ADR-0021). The first draft drained the `Sleep` cell
+    // only on the `Pending` arm: an activity that requested a suspension and then
+    // returned `Ready` left the request behind, and the NEXT activity polled inherited
+    // it — asleep on a deadline that was never its own.
+    //
+    // ⚠️ Across a RANGE of seeds, not one: the defect appeared on three seeds out of six,
+    // so a single seed has an even chance of missing it entirely.
+    for seed in 1..=6u64 {
+        let sleep = Sleep::new();
+        let mut executor = Executor::new(
+            SeededRng::new(seed),
+            VirtualReactor::new(),
+            Parameters::new(TURN_LIMIT),
+            &sleep,
+        );
+        // Declares a suspension, then finishes WITHOUT yielding.
+        executor.spawn(async {
+            sleep.until(Monotonic::from_millis(9_999));
+        });
+        // Merely yields, and must not inherit the deadline above.
+        executor.spawn(async {
+            Yield::once().await;
+        });
+        assert_eq!(executor.run(), Ok(()), "seed {seed}");
+        assert_eq!(
+            executor.now(),
+            Monotonic::ORIGIN,
+            "seed {seed}: a suspension request leaked to another activity"
+        );
+    }
+}
+
+#[test]
+fn re_registering_a_past_deadline_for_ever_still_terminates() {
+    // ⛔ The assertion that makes promoting expired sleepers SAFE rather than merely
+    // nicer. Without it, "we removed the abort" has no proof that the pathological case
+    // still ends.
+    let sleep = Sleep::new();
+    let mut executor = Executor::new(
+        SeededRng::new(1),
+        VirtualReactor::new(),
+        Parameters::new(50),
+        &sleep,
+    );
+    executor.spawn(async {
+        loop {
+            sleep.until(Monotonic::ORIGIN);
+            Yield::once().await;
+        }
+    });
+    assert_eq!(executor.run(), Err(RunError::TurnLimitReached));
 }
 
 #[test]
@@ -1648,7 +1738,8 @@ pub mod reactor;
 cargo test -p kernel --test executor_determinism -- --nocapture
 ```
 
-Atteso: `test result: ok. 7 passed; 0 failed`, e fra l'output la riga
+Atteso: **dieci** test verdi — i cinque originali più i quattro riscritti dopo il Task 5 e
+la misura dell'interlacciamento — e fra l'output la riga
 `INTERLEAVING seed=20260806: N switches over M transitions`.
 
 ⛔ **Trascrivere N e M**: entrano nel Task 14 in `docs/riferimenti.md` e nella §6 del

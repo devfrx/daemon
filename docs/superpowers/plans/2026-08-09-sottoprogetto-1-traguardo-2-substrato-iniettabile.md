@@ -142,6 +142,33 @@ rilettura del piano l'avrebbe posta al posto nostro.
 
 ---
 
+## Errata — 2026-08-09, dopo l'esecuzione del Task 11
+
+> ⛔ **Sei voci, e la prima è che la porta come il piano la detta NON È IMPLEMENTABILE.** Non un
+> commento troppo generoso né una sonda mal collocata: il codice dettato compila, passa la porta
+> di qualità, e il Traguardo 6 ci sbatterebbe contro. Le altre cinque sono, in ordine, una sonda
+> assente, un commento che sarebbe diventato falso, due potature misurate, e un'affermazione che
+> promette il compilatore dove decide l'implementazione.
+
+| # | Dove | Cosa non torna |
+|---|---|---|
+| **E36** | **Task 11 · Step 1**, `SingleReceipt` e `StreamReceipt` col solo campo `pub(crate) id: u64` e **nessun costruttore** | ⛔ **Così la porta non è implementabile fuori da `kernel`, ed è il gotcha #46 in una forma peggiore di quella registrata.** Chi implementa `Worker` è `platform` (Traguardo 6), e `instruct_one` deve **restituire** un `SingleReceipt`: la privacy di un campo di struct è **di modulo**, quindi da fuori dalla crate quel valore **non si può costruire**. Non «non riesco a leggere un campo» — **non riesco a produrre il valore di ritorno**. Misurato scrivendo la finta prima del rimedio: `error[E0599]: no function or associated item named 'new' found for struct 'SingleReceipt'`, più quattro errori sulla lettura dell'id. Rimedio: `new` e `id` pubblici su entrambe, con la ragione accanto. ⚠️ `Grant` è il caso **opposto e resta com'è**: una concessione si **riceve**, e §5.6 la vuole inedificabile |
+| **E37** | **Task 11**, nessuna sonda per la porta nuova | il piano dichiara nel proprio doc di modulo che i quattro casi negativi di §6.10.5 sono scaglionati — ed è giusto — ma **non mette niente al loro posto**, mentre il rimedio al #46 esiste già in questo repository e si chiama `crates/kernel/tests/ports_are_implementable.rs`. È la **quarta volta su quattro** che il difetto è una sonda **assente** invece che sbagliata, e la domanda che la coglie è sempre la stessa: *per ogni artefatto che il compito produce, quale controllo lo esercita?* |
+| **E38** | **Task 11 · Step 1**, *«in `ports/mod.rs` aggiungere `pub mod process;`»* | il doc di quel modulo **conta i sottomoduli** — *«today this module declares FOUR submodules»* — e dichiara che `process` e `ipc` arrivano *«by Task 12»*. Aggiungendo la sola riga il commento diventa **falso in tre punti**, e resterebbe falso senza che nulla diventi rosso: nessuno script legge la prosa di un doc di modulo |
+| **E39** | **Task 11 · Step 1**, `Grant` con il campo nominato `pub(crate) reserved_mib: u64` | ⚠️ **Sovra-costruzione, e si paga in un `#[allow]`.** Il campo serve solo a rendere il tipo inedificabile da fuori, nessuno lo legge, quindi costa un `#[allow(dead_code)]` — e qui un `allow` è un divieto spento (gotcha **#13**). Misurato: `pub struct Grant(());` dà la garanzia **identica** — `error[E0423]: cannot initialize a tuple struct which contains private fields` — con **zero warning e zero `allow`**. Il campo con nome anticipava per giunta un pezzo del modello dell'arbitro (una riserva in MiB) che è del Traguardo 5. Via anche `#[derive(Debug)]`: nessuno formatta una concessione |
+| **E40** | **Task 11 · Step 1**, `Clone` su `WorkerDescriptor` e su `Frame` | potati, e la potatura è **misurata in due direzioni**: tolti da questi due il workspace è **verde con zero warning**; tolto da `Path` come contro-sonda di non-vacuità è **rosso** con `E0277`, `E0308` ed `E0599`. La differenza è strutturale: su `Path` e `Endpoint` `Clone` è portante perché la firma consegna un **prestito** che l'implementazione deve trattenere, quindi **senza, la porta non è implementabile oggi**; `WorkerDescriptor` e `Frame` attraversano **per valore** e chi implementa li **muove**. ⛔ «Non implementabile oggi» e «un chiamante lo vorrà domani» non sono la stessa forma, e solo la prima è l'eccezione del #46 |
+| **E41** | **Task 11 · Step 1**, il doc di modulo — *«a frame no receipt covers HAS NO WAY OF BEING NAMED»* | ⛔ **Falso, e falso proprio nel punto che il file presenta come la tesi della porta.** I due `new` delle ricevute sono `pub`, **e devono esserlo** (E36): chiunque scrive `StreamReceipt::new(7)` ha nominato un frame che nessuna istruzione copre. La garanzia esiste, ma la tiene **l'implementazione a runtime** rispondendo `UnsolicitedFrame`, **non il compilatore** — a differenza di `Grant`, dove il costruttore assente la mette davvero sul compilatore. In un file che dichiara ogni altro limite, questo era l'unico da scoprire. 📌 E spiega un'asimmetria altrimenti strana: `UnsolicitedFrame` torna anche da `close`, che è core→worker, **perché una ricevuta si può forgiare** |
+
+📌 **Cosa distingue questo giro, e vale la pena scriverlo.** Nei tre precedenti il difetto stava
+nella **sonda** — sbagliata, mal collocata, o assente. Qui il più grave sta nell'**artefatto**:
+il piano dettava un tipo che compila, supera la porta di qualità, e **non si può implementare**.
+⛔ Non era deducibile leggendo il codice dettato, perché da dentro `kernel` è corretto: si vede
+**solo** scrivendo un'implementazione **da fuori dalla crate**, che è esattamente ciò che la
+finta è. Una porta dichiarata in anticipo va **provata dal lato di chi la implementerà**, non da
+quello di chi la dichiara.
+
+---
+
 ## Il perimetro, e la voce che è stata cercata prima di fissarlo
 
 ⛔ **Da leggere prima dei compiti.** Il perimetro di questo traguardo è stato messo in

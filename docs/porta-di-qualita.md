@@ -243,8 +243,129 @@ sostengono righe del catalogo, o che tengono in piedi ciò che le righe presuppo
 | File | Che cosa difende |
 |---|---|
 | `crates/kernel/tests/executor_determinism.rs` (dieci test) | **C1, C2 e C3 sull'esecutore _spedito_**, non su quello dello spike: **cento** corse allo stesso seme danno una traccia sola, **duecento** semi distinti non ne danno una sola, e il tempo virtuale **non attende** — l'orologio si ferma a 20 000 ms dove il sequenziale arriverebbe a 60 000. Più le sonde di **non-vacuità**: che l'interfoliazione sia reale, che un blocco diventi **errore e non attesa infinita**, che un reattore che non avanza sia **errore e non giro a vuoto**, che un'attesa già scaduta svegli subito senza muovere l'orologio, che una richiesta di sospensione **non si erediti** fra attività, e che un rideposito perpetuo di una scadenza passata **termini comunque** |
-| `crates/kernel/tests/ports_are_implementable.rs` (quattro test) | il rimedio al gotcha **#46**: una **finta** per `Filesystem` e una per `Network`, con chiamate che le esercitano in entrambe le direzioni. È ciò che tiene in vita `Path::as_bytes()`, `Endpoint::as_bytes()` e il `Clone` su `Path` contro una passata YAGNI — su un tratto dichiarato **in anticipo** i chiamanti sono vuoti per costruzione, e il criterio non distingue il morto dalla sola porta d'ingresso di chi verrà — e prova che quelle firme siano **implementabili fuori dalla crate**, dove la privacy di modulo di una tuple-struct le renderebbe inutilizzabili. ⚠️ **Non** è una suite di conformità: quella pretende due implementazioni da confrontare |
+| `crates/kernel/tests/ports_are_implementable.rs` (**nove** test) | il rimedio al gotcha **#46**: una **finta** per `Filesystem`, una per `Network` e due per `process` — `Worker` e `Process` — con chiamate che le esercitano in entrambe le direzioni. È ciò che tiene in vita `Path::as_bytes()`, `Endpoint::as_bytes()` e il `Clone` su `Path` contro una passata YAGNI — su un tratto dichiarato **in anticipo** i chiamanti sono vuoti per costruzione, e il criterio non distingue il morto dalla sola porta d'ingresso di chi verrà — e prova che quelle firme siano **implementabili fuori dalla crate**, dove la privacy di modulo di una tuple-struct le renderebbe inutilizzabili. ⚠️ **Non** è una suite di conformità: quella pretende due implementazioni da confrontare |
 | `crates/kernel/tests/dependencies_usable.rs` (due test) | che le voci **spedite** dell'allow-list **compilino e facciano round-trip** — gotcha #22, `cargo add bincode` risolve a una versione il cui intero sorgente è un `compile_error!`. E per `bincode` i **byte consumati** sono pari alla lunghezza dichiarata, che è la regola imposta dal gotcha **#34**: un decodificatore che si ferma al primo elemento completo e ignora la coda «ha decodificato» senza provare niente |
+
+⛔ **`ports_are_implementable.rs` ha smesso di confermare e ha colto un difetto — il 2026-08-09,
+sulla porta `process`, ed è la ragione per cui questo file esiste.** La porta **come il piano la
+dettava non era implementabile**: `instruct_one` deve **restituire** un `SingleReceipt` il cui
+unico campo è `pub(crate)`, e la privacy di un campo di struct è **di modulo** — da fuori dalla
+crate quel valore non si poteva costruire. È il gotcha **#46** nella forma peggiore di quella
+registrata: non «non riesco a **leggere** un campo» ma «non riesco a **produrre** il valore di
+ritorno». Il rimedio — `new` e `id` su entrambe le ricevute — porta la ragione accanto a sé in
+`crates/kernel/src/ports/process.rs`. ⚠️ `Grant` resta **senza costruttore**, ed è l'opposto
+deliberato: una concessione si **riceve** dall'arbitro, e §5.6 la vuole inedificabile.
+
+⚠️ **E `Grant` diverge dal piano, che dettava un campo con nome — misurato.** Il piano voleva
+`reserved_mib: u64`, che rende il tipo inedificabile da fuori **e costa un
+`#[allow(dead_code)]`**, perché nessuno legge quel numero; qui un `allow` è un divieto spento
+(gotcha **#13**). Il campo **unitario privato** — `pub struct Grant(());` — dà la garanzia
+**identica** a costo zero: da un test d'integrazione `Grant(())` è
+`error[E0423]: cannot initialize a tuple struct which contains private fields`, **senza nessun
+warning e senza `allow`**. Il campo con nome, per giunta, anticipava un pezzo del modello
+dell'arbitro (una riserva in MiB) che è del **Traguardo 5**. ⛔ Via anche `#[derive(Debug)]`:
+**nessuno formatta una concessione**, ed è la stessa potatura di `CheckpointId::get()` e dei
+derive inutilizzati su `Path` e `StepId`. ⚠️ Sulle **ricevute** `Debug` **si tiene**: lo pretende
+`unwrap_err`, ed è portante.
+
+⛔ **E la misura ha una trappola che vale oltre il caso: gli errori di rustc si mascherano fra
+passate.** Misurato, non dedotto. Col costruttore assente rustc dava **`E0599`** («no function or
+associated item named `new`») e, su un letterale `SingleReceipt { id }`, **nessun errore**. Il
+letterale è un **`E0451`**, che lo emette la passata di **privacy** — la quale **non gira mai**,
+perché la compilazione si ferma agli errori di *type-check*. Sanati quelli, `E0451` **compare**.
+Chi legge un elenco di errori sta guardando quelli della **prima passata che ha fallito**, non
+tutti: «ho corretto e adesso compila» può nascondere un secondo errore mai raggiunto.
+
+⛔ **E questo registro ha dichiarato una copertura che la misura non sosteneva. La riga è
+riscritta con ciò che è stato misurato, non riformulata perché tornasse.** Diceva che sei
+mutazioni «ognuna uccide almeno un test», fra cui *«`read_one` che risponde una costante
+perdendo la correlazione»*. **Era falso, e lo si vede solo provando due valori:**
+
+| Mutazione su `read_one` | Esito | |
+|---|---|---|
+| risponde la costante **7** | **rosso** | uccide, ma **perché il valore è sbagliato** |
+| risponde la costante **1** | ⛔ **verde su 8 test su 8** | la correlazione era persa e **nessuno se ne accorgeva** |
+
+La mutazione uccideva **per il motivo giusto solo per caso** — l'id atteso in quel punto era
+`1`, e la costante `7` non coincideva. Gotcha **#15**: un'evidenza scritta prima della misura è
+un'ipotesi. ⛔ **E il fondo era più basso:** con tre mutazioni combinate — ricerca per id
+sostituita da «prendi il flusso 0» in `read_next` e in `close`, i due lettori su costante — la
+finta conteneva **zero** occorrenze di `receipt.id()` e la suite restava **verde su 8 su 8**.
+Una finta che **non correla affatto** soddisfaceva l'intero file, quindi l'argomento con cui
+`SingleReceipt::id` era stato tenuto in vita **non poggiava su niente**.
+
+**La causa non era la scelta della costante ma la forma della suite: non teneva mai due ricevute
+aperte insieme.** Con una sola ricevuta aperta, «rispondi a quella giusta» e «rispondi all'unica»
+sono la stessa frase; e la prova sulla ricevuta ignota girava contro una **tabella dei flussi
+vuota**, dove «id sconosciuto» e «nessun flusso» sono indistinguibili.
+
+**Il rimedio è `answers_are_correlated_to_the_receipt_that_asked`**: due `SingleReceipt` aperte
+insieme e lette **al contrario**, e due `StreamReceipt` di **lunghezza diversa** lette a
+interfoliazione. Più, in `the_process_fake_refuses_where_it_must`, **un flusso vero aperto
+accanto** alla ricevuta falsa. ⚠️ Due dettagli sono **scelti e non casuali**, ed erano entrambi
+buchi veri alla prima stesura: le lunghezze **diverse** (a budget uguale i due flussi si
+esaurirebbero insieme e servire quello sbagliato non si vedrebbe) e **quale** flusso si chiude
+(chiudendo quello in posizione 0 la mutazione «rimuovi la posizione 0» **sopravviveva**; si
+chiude quello in posizione 1).
+
+📌 **Passata di non-vacuità rifatta sul codice finale — dodici mutazioni, dodici uccise.** Per
+ciascuna, i test che muoiono:
+
+| | Mutazione | Chi la uccide |
+|---|---|---|
+| M1 | ricevuta ignota → `Ok(None)` invece di `UnsolicitedFrame` | `..._refuses_where_it_must` |
+| M2 | `read_one` ignora la morte del worker | `..._refuses_where_it_must` |
+| M3 | il flusso non si esaurisce mai | `..._can_be_implemented_and_called` · `..._correlated_...` |
+| M4 | `instruct_one` accetta un frame vuoto | `..._refuses_where_it_must` |
+| M5 | `close` ammette una ricevuta mai aperta | `..._refuses_where_it_must` |
+| M6a | `read_one` → costante **7** | `..._can_be_implemented_and_called` · `..._correlated_...` |
+| M6b | `read_one` → costante **1** (la scelta **avversaria**) | ⛔ **solo** `..._correlated_...` |
+| M7 | `read_next` prende il flusso 0 invece di cercarlo | `..._correlated_...` · `..._refuses_where_it_must` |
+| M8 | `close` rimuove il flusso 0 invece di cercarlo | `..._correlated_...` · `..._refuses_where_it_must` |
+| M9 | **de-correlazione totale**, zero `receipt.id()` nella finta | `..._correlated_...` · `..._refuses_where_it_must` |
+| M10 | `WorkerDescriptor::new` perde un byte | `..._start_is_not_callable` |
+| M11 | `kill()` **acquista** una guardia di liveness | `killing_a_worker_consumes_it` |
+
+⛔ **M6b è la riga che conta**, ed è l'unica uccisa da un test solo: è la mutazione che prima
+sopravviveva, ed è ciò che oggi tiene in piedi `SingleReceipt::id`.
+
+⛔ **M11 è nata sopravvivendo, e la sua storia è la stessa di M6b.** Il file spendeva quattro
+righe a dichiarare che `kill` la guardia di liveness **non ce l'ha, di proposito** — uccidere è
+**sempre lecito** (§5.3 punto 4) — e **niente lo teneva**: aggiungendo `self.alive()?` a `kill`,
+cioè trasformando l'unica operazione sempre lecita in una che rifiuta, i **9 test restavano
+verdi**. Una riga — uccidere un worker **già morto** — la rende rossa. ⚠️ La mutazione è nata da
+una **rifinitura di stile**: estraendo l'aiutante `alive()` per togliere cinque copie della
+guardia, l'unico punto che non la chiama è diventato visibile — e visibile ha fatto chiedere se
+fosse **provato**. Non lo era. Un principio che non si può controllare è un'intenzione.
+
+⚠️ **E l'estrazione di `alive()` ha avuto un incidente che vale la pena scrivere:** la
+sostituzione automatica ha colpito **sei** siti invece di cinque, riscrivendo anche il corpo
+dell'aiutante **dentro sé stesso** — `fn alive() { self.alive()?; }`, una ricorsione infinita.
+Colta al conteggio (`6 -> 6` invece di `5 -> 5`), non dai test. Una sostituzione su tutto il
+file include **la definizione**, non solo le chiamate.
+
+⛔ **`Clone` potato da `WorkerDescriptor` e da `Frame`, e la contro-sonda è ciò che rende la
+potatura difendibile.** Misurato in due direzioni: tolti da questi due, `cargo test --workspace`
+è **verde con zero warning**; tolto da `Path` come contro-sonda di non-vacuità, è **rosso** con
+`E0277`, `E0308` ed `E0599`. La differenza non è di gusto: su `Path` — e su `Endpoint` —
+`Clone` è **portante**, perché `declare_scope` consegna un **prestito** che l'implementazione
+deve trattenere, quindi **senza, la porta non è implementabile oggi**. `WorkerDescriptor` e
+`Frame` attraversano la porta **per valore**: chi implementa li possiede già, li **muove**, e
+per darli al sistema operativo ha `as_bytes()`. ⚠️ L'obiezione I5 — i ritentativi vivono nel
+core e rimanderebbero un frame — **non regge**: è un chiamante del **Traguardo 6**, cioè
+esattamente la forma coperta dalla formula già scritta due volte qui, *«tornano il giorno in cui
+qualcosa li richiede, col chiamante che li richiede»*. «Non implementabile oggi» e «un chiamante
+lo vorrà domani» sono due forme diverse, e lo strumento che questo repository si è dato per
+distinguerle — **la finta** — non clonava né l'uno né l'altro una sola volta.
+
+⚠️ **Tre inciampi del banco di misura, e stanno qui perché ognuno produceva un risultato
+credibile e falso.** (1) Due `sed` non agganciavano la riga giusta e le mutazioni **non si
+applicavano**: il verde che ne usciva sembrava «test vacuo» e non lo era. (2) Il rilevatore di
+errori di compilazione cercava `^error` e pescava l'`error: test failed` che `cargo` stampa
+quando un test **fallisce** — dieci mutazioni su dieci dichiarate «non compila» mentre
+compilavano e uccidevano. (3) La costante di M6a, scelta a caso, coincideva col caso fortunato.
+**Si verifica che il file sia davvero cambiato, e che il rosso arrivi dal punto che si crede**,
+prima di leggere un esito come un risultato.
 
 📌 **Due moduli di test vivono in `src/` invece che in `tests/`, e la deviazione è dichiarata
 in entrambi i file.** Non è una scorciatoia: in un caso non è nemmeno una scelta.
@@ -297,5 +418,6 @@ nell'altro verso.
 | i **byte congelati** del record durevole | non esiste ancora nessun record. Entrano al **primo** record scritto — vincolo 14 della §11 del [compendio](COMPENDIO.md), Traguardo 3 |
 | la **campagna DST**, e l'elenco versionato dei **semi** di V31 | ⚠️ **Il soggetto era sbagliato, corretto il 2026-08-09:** diceva *«non esiste ancora il simulatore»*, e la crate `simulator` **esiste** e spedisce `SeededRng` e `VirtualReactor` — `crates/kernel/tests/executor_determinism.rs` gira già **C1 e C2** su di essi. A non esistere è la **campagna**: molti semi, guasti iniettati, e l'elenco versionato dei semi. Traguardo 4 |
 | i **byte consumati** pari alla lunghezza dichiarata dal frame | non esiste ancora il canale verso i worker. Traguardo 6 |
+| le **righe 1–4 di §6.10.5** — i casi negativi della porta `process` | ⛔ **Scaglionate, e la ragione è strutturale e non di fretta.** Tutte e quattro pretendono di **ottenere** un `Worker`; un `Worker` lo restituisce solo `start(grant, ..)`; e nessuno emette concessioni prima del **Traguardo 5**. Scriverle oggi darebbe quattro casi che falliscono perché manca la `Grant`, cioè **verdi per il motivo sbagliato** (gotcha #24) — una regola provata in una direzione sola non è ammissibile (§7.1.1 regola 3). ⚠️ Un costruttore di `Grant` dietro una feature di test resta **scartato** per la ragione già scritta nella riga del blocco **B** qui sopra. Quel che le sostituisce intanto è `ports_are_implementable.rs`, che le firme le esercita **in entrambe le direzioni** con una finta costruita direttamente dal test |
 | solo `secrets` raggiunge il **portachiavi** | nessuno script lo verifica oggi: `gate-deps.sh` guarda i grafi di `kernel` e `simulator`, non quelli di `platform` e `secrets` |
 | un solo **punto di uscita verso la rete** | la lista delle crate autorizzate è **vuota**, e una lista vuota passa sempre. Il catalogo lo dichiara già: è l'unica voce provata in una direzione sola, e si completa nel sotto-progetto che accende la rete |

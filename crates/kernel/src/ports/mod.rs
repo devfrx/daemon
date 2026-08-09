@@ -18,19 +18,27 @@
 //! | `ipc`        | §6.1        | milestone 6                              |
 //! | `network`    | §2.3.1      | staged — the single exit point           |
 //!
-//! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES. Today this module declares FOUR
+//! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES. Today this module declares FIVE
 //! submodules — `reactor`, which the executor needs; `journal`, which the promotion of
-//! `crate::boundary` demands as an argument; and `filesystem` and `network`, which have NO
-//! CALLER AT ALL and are here for the reason above. `process` and `ipc` arrive by Task 12 of
-//! the milestone 2 plan, and this table is completed there. A `pub mod` naming a file that
-//! does not exist does not compile, so for those two the table is still the only place they
-//! can be named at all — and naming them is exactly what gotcha #17 above is asking for.
+//! `crate::boundary` demands as an argument; and `filesystem`, `network` and `process`, which
+//! have NO CALLER AT ALL and are here for the reason above. `ipc` arrives by Task 12 of the
+//! milestone 2 plan, and this table is completed there. A `pub mod` naming a file that does
+//! not exist does not compile, so for that last one the table is still the only place it can
+//! be named at all — and naming it is exactly what gotcha #17 above is asking for.
 //!
-//! ⚠️ A TRAIT NOBODY IMPLEMENTS IS NOT A TRAIT PROVED IMPLEMENTABLE. The two declared without
-//! a caller are held by `tests/ports_are_implementable.rs` — a fake for each, and calls that
-//! exercise it. It buys that the signatures compile FROM OUTSIDE THE CRATE and can be called;
-//! it does not buy that they are the right signatures, and it is not the conformance suite,
-//! which needs two implementations to compare.
+//! ⚠️ A TRAIT NOBODY IMPLEMENTS IS NOT A TRAIT PROVED IMPLEMENTABLE. The three declared
+//! without a caller are held by `tests/ports_are_implementable.rs` — a fake per trait, and
+//! calls that exercise it. It buys that the signatures compile FROM OUTSIDE THE CRATE and can
+//! be called; it does not buy that they are the right signatures, and it is not the
+//! conformance suite, which needs two implementations to compare.
+//!
+//! ⛔ AND ON `process` THAT TEST EARNED ITS KEEP RATHER THAN CONFIRMING ANYTHING. The port as
+//! designed was NOT IMPLEMENTABLE: `instruct_one` has to HAND BACK a `SingleReceipt` whose
+//! only field is `pub(crate)`, so from outside the crate the return value could not be built
+//! — gotcha #46, in the worse form where what is missing is not a read but a value. Measured
+//! (`E0599`, then `E0451` once the first errors stopped masking the privacy pass), and the
+//! remedy is written beside the constructors in `process.rs`. ⚠️ `Grant` is the deliberate
+//! opposite and keeps no constructor: §5.6 wants that one unbuildable.
 //!
 //! ⚠️ `journal` is declared here in milestone 2 and IMPLEMENTED in milestone 3: the trait
 //! exists because a caller already demands it, not because the durable format is settled. The
@@ -48,5 +56,7 @@ pub mod filesystem;
 pub mod journal;
 
 pub mod network;
+
+pub mod process;
 
 pub mod reactor;

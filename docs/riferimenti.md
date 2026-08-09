@@ -387,6 +387,72 @@ i due reattori coerenti invece di isolarne uno. La §7.4.3 scioglie il pareggio:
 voce nella porta»*. Nessun `#[allow]`, perché sopprimere nasconderebbe anche l'occorrenza
 successiva. Errata **E18** del piano.
 
+## Esecuzione del Traguardo 2 — il Task 11: la porta che non era implementabile
+
+Eseguite il **2026-08-09** · `rustc 1.95.0` · `cargo 1.95.0` · Windows 11 · profilo `dev`.
+Non sono documentazione consultata: **sono misure**, e il comando col proprio banco è la fonte.
+
+**1 — La porta come il piano la dettava non è implementabile fuori da `kernel`.**
+Banco: una finta di `Worker` e `Process` in `crates/kernel/tests/ports_are_implementable.rs`,
+che è un **test d'integrazione**, quindi una crate a sé — l'unico punto di osservazione da cui
+il difetto è visibile.
+
+| Comando | Esito |
+|---|---|
+| `cargo test -p kernel --test ports_are_implementable`, con `SingleReceipt { pub(crate) id }` e nessun costruttore | `error[E0599]: no function or associated item named 'new' found for struct 'SingleReceipt'`, più quattro errori sulla lettura dell'id — `private field, not a method` |
+| lo stesso, dopo aver aggiunto `new` e `id` pubblici | compila |
+
+⛔ **E la stessa misura ha prodotto il gotcha #47.** Provata anche la forma pura — il letterale
+`SingleReceipt { id: 7 }` da fuori dalla crate — rustc **non dava nessun errore**, e la lettura
+ovvia era che un campo `pub(crate)` fosse scrivibile da fuori. È un **`E0451`**, emesso dalla
+passata di **privacy**, che **non gira** perché la compilazione si ferma prima al type-check;
+sanati quelli, `E0451` **compare**. L'elenco di errori che si legge è quello della **prima
+passata che ha fallito**, non tutti.
+
+**2 — `Grant`: il campo unitario dà la garanzia identica del campo nominato, a costo zero.**
+
+| Forma | Inedificabile da fuori? | Warning | `#[allow]` |
+|---|---|---|---|
+| `pub(crate) reserved_mib: u64` — dettata dal piano | sì | `field 'reserved_mib' is never read` | **necessario** |
+| `pub struct Grant(());` — spedita | sì, `error[E0423]: cannot initialize a tuple struct which contains private fields` | **nessuno** | **nessuno** |
+
+Provate da un test d'integrazione anche `Grant::new()` → `error[E0599]` e `Default::default()`
+→ `error[E0277]`. Errata **E39** del piano.
+
+**3 — `Clone`: la contro-sonda è ciò che rende la potatura difendibile.**
+
+| Sonda | Esito |
+|---|---|
+| `Clone` tolto da `WorkerDescriptor` **e** `Frame` | `cargo test --workspace` **verde**, zero warning |
+| `Clone` tolto da `Path` — contro-sonda di non-vacuità | **rosso**: `E0277` · `E0308` · `E0599` |
+
+La differenza non è di gusto: `declare_scope` consegna un **prestito** che l'implementazione
+deve trattenere, i due tipi di `process` attraversano **per valore**. Errata **E40**.
+
+**4 — La campagna di mutazione della finta: dodici mutazioni, dodici uccise.**
+Comando per ciascuna: applicare la mutazione, **verificare che il file sia cambiato**, poi
+`cargo test -p kernel --test ports_are_implementable`. La tabella completa dei carnefici è in
+[`porta-di-qualita.md`](porta-di-qualita.md); qui le due righe che decidono qualcosa:
+
+| Mutazione | Esito | |
+|---|---|---|
+| `read_one` → costante **7** | 1 rosso su 9 | uccide **perché il valore è sbagliato** |
+| `read_one` → costante **1** | ⛔ **9 verdi su 9**, prima del rimedio | la correlazione era persa e nessuno se ne accorgeva |
+| de-correlazione totale, **zero** `receipt.id()` nella finta | ⛔ **9 verdi su 9**, prima del rimedio | una finta che non correla affatto soddisfaceva il file |
+| `kill()` **acquista** una guardia di liveness | ⛔ **9 verdi su 9**, prima del rimedio | l'eccezione «uccidere è sempre lecito» era dichiarata in un commento e **non difesa** |
+
+Dopo `answers_are_correlated_to_the_receipt_that_asked` e il caso del worker già morto, tutte e
+quattro sono **rosse**, e la costante `1` è uccisa da **un test solo**.
+
+⛔ **Il gotcha #48 esce da qui, e non dal codice misurato.** Quattro esiti **credibili e falsi**
+prodotti dal banco: due `sed` che non agganciavano la riga (mutazione non applicata → verde che
+somigliava alla vacuità cercata) · un rilevatore su `^error` che pescava l'`error: test failed`
+di `cargo`, dichiarando «non compila» dieci mutazioni che compilavano **e uccidevano** · la
+costante di M6a scelta a caso che coincideva col caso fortunato · una sostituzione globale che ha
+riscritto il corpo dell'aiutante **dentro sé stesso** (`fn alive() { self.alive()?; }`), colta dal
+conteggio dei siti e non dai test. ⚠️ **La prima è ricapitata a chi verificava**, sullo stesso
+file, un'ora dopo aver letto la riga che la descrive.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

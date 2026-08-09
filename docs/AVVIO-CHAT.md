@@ -42,12 +42,12 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 111 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 117 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i quarantasei gotcha (§9), le trappole di
+     cosa NON rifare (§8), i quarantotto gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
 
 ⛔ CODICE IN INGLESE, DOCUMENTAZIONE IN ITALIANO — §1.0 della spec.
@@ -75,16 +75,28 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 111 KB in tutto
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
    lungo, non la decisione. Nessuna può sfuggirti perché «non sembrava attinente».
 
-CINQUE COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
+SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
   · Non sono operativo in Rust. Quando l'argomento esce dal mio dominio,
     spiegamelo PRIMA a parole semplici e POI schematizza.
-  · Un piano scritto qui è un'IPOTESI, non un'istruzione — e le sue sonde
-    sono la parte che sbaglia. Nel Traguardo 2 sei difetti su sei stavano
-    nel piano e non nel codice: un test vacuo, una sonda che attaccava il
-    caso invece del meccanismo, una regola guardata in una direzione sola,
-    un conteggio inesistente, una variante inusabile, una misura vera ma
-    di un'altra cosa. Prova in negativo PRIMA di crederci, e dove diverge
-    registra la divergenza invece di allinearti all'attesa.
+  · Un piano scritto qui è un'IPOTESI, non un'istruzione, e nel Traguardo 2
+    il difetto sta nel piano molto più spesso che nel codice. Tre forme, in
+    ordine di quanto sono difficili da vedere:
+      1. la SONDA È SBAGLIATA — vacua, o attacca il caso invece del
+         meccanismo, o guarda una direzione sola. Si coglie rileggendo.
+      2. la SONDA MANCA, e non si vede leggendo perché non c'è niente da
+         leggere. L'unica domanda che la trova: per ogni artefatto che il
+         compito produce, quale controllo lo esercita?
+      3. l'ARTEFATTO è sbagliato, e compila. Al Task 11 il piano dettava
+         una porta CHE NON SI PUÒ IMPLEMENTARE: passava la porta di
+         qualità, e si vede solo scrivendone un'implementazione DA FUORI
+         DALLA CRATE. Una porta dichiarata in anticipo va provata dal lato
+         di chi la implementerà, non da quello di chi la dichiara.
+    Prova in negativo PRIMA di crederci, e dove diverge registra la
+    divergenza invece di allinearti all'attesa.
+  · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48. Prova
+    che la mutazione si sia applicata, compila in un passo separato
+    dall'eseguire, e per ogni mutazione su un valore provane due. È già
+    costato quattro falsi risultati credibili in una sessione sola.
   · Alla chiusura di ogni voce COMMITTA E PUSHA senza chiedere, e SENZA
     co-autore. Prima però: bash scripts/gate.sh — comprende check-docs.sh.
   · Se ti viene un'idea che SOSTITUISCE una decisione presa, cerca PRIMA dove
@@ -108,24 +120,35 @@ proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ~4 KB |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **111 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 111 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **117 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 117 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi due volte.** Dicevano
 *«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di oggi, e nessuno
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **111 KB contro mezzo megabyte**.
+resta quello che conta: **117 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **271 KB**. Non è che chiedesse
 troppo: chiedeva la cosa giusta nel posto sbagliato. Le decisioni servono **tutte** — ma
 compresse, non integrali.
 
-⚠️ **La quinta voce è nata il 2026-08-09**, eseguendo i Task 1–6 del Traguardo 2. Non è una
-massima: è il ritratto di sei difetti su sei, e vive qui perché il prossimo agente riprende
+⚠️ **La voce sul piano è nata il 2026-08-09**, eseguendo i Task 1–6 del Traguardo 2. Non è una
+massima: era il ritratto di sei difetti su sei, e vive qui perché il prossimo agente riprende
 **dentro** quel piano, dove la lezione serve al primo compito e non al decimo.
+
+> 🔁 **Riscritta lo stesso giorno, chiudendo il Task 11 — e il ritratto era diventato stretto.**
+> Diceva *«le sue sonde sono la parte che sbaglia»*, ed elencava sei difetti che erano **tutti**
+> di quella specie. Poi i Task 8–10 hanno prodotto il difetto **«la sonda manca»** — che non si
+> coglie rileggendo, perché non c'è niente da leggere — e il Task 11 il difetto **«l'artefatto è
+> sbagliato, e compila»**. Tre specie, non una, e la seconda e la terza si trovano con domande
+> diverse dalla prima. ⛔ Restringere il ritratto alla specie già vista è il gotcha **#29**
+> spostato dalle invarianti a questo file: la formulazione più corta viene letta al posto di
+> quella giusta. 📌 **E una sesta voce è nata dallo stesso compito**, sul banco di misura: il
+> gotcha **#48** è costato quattro falsi risultati **credibili** in una sessione sola, e uno è
+> ricapitato a chi stava verificando la riga che lo descrive.
 
 ⚠️ **Cosa aggiornare qui, e quando.** Il ramo se cambia; il peso dei due file
 obbligatori quando uno dei due cresce; il numero dei gotcha quando §9 ne guadagna uno; i

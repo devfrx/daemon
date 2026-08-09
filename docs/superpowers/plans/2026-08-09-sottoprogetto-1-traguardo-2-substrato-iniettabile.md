@@ -136,6 +136,8 @@ spec, non ricavati.
 | 10 | ⛔ **Un'evidenza scritta prima della misura è un'ipotesi.** Dove questo piano scrive un numero atteso, si misura e **si registra la divergenza** invece di allinearsi all'attesa | gotcha #15 |
 | 11 | A ogni compito, prima del commit: `bash scripts/gate.sh` deve stampare `GATE GREEN` | §7.5.1 |
 | 12 | ⛔ **Un'attività del kernel si sospende solo su una primitiva dell'esecutore o su una porta.** Chi ne inventa una terza ottiene un'attività che non si risveglia più | §2.4.1 |
+| 13 | ⚠️ **Nei commenti del sorgente il trattino lungo è `—`, non `--`.** I blocchi di codice di questo piano usano `--`; è una svista tipografica del piano, e **vince il repository**: tutto il codice del Traguardo 1 usa `—`. Vale solo dove il trattino è **prosa**, mai dove è un operatore o un'opzione da riga di comando | convenzione del Traguardo 1 · trovata eseguendo il Task 1 |
+| 14 | ⛔ **Non si aggiunge un solo elemento di API che nessun compito del piano consuma.** `Millis::ZERO` era nel piano, nessuno dei quattordici compiti lo usava, ed è stato **tolto**. Se una costante o un metodo sembra utile ma non ha un chiamante qui, **non entra** | YAGNI · trovata dalla revisione del Task 1 |
 
 ---
 
@@ -315,8 +317,9 @@ risolve — fermarsi: il test sta misurando qualcos'altro.
 pub struct Millis(u64);
 
 impl Millis {
-    pub const ZERO: Millis = Millis(0);
-
+    // ⚠️ Nessuna costante `ZERO`: la prima stesura ne aveva una, e nessuno dei
+    // quattordici compiti la consumava. `Millis::new(0)` dice la stessa cosa.
+    // Vincolo globale 14, trovato dalla revisione del Task 1.
     pub const fn new(value: u64) -> Self {
         Millis(value)
     }

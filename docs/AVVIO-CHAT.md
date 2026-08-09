@@ -14,7 +14,8 @@ commit contiene nasce già vecchio di uno.
 ```
 Riprendo un progetto già progettato, in corso.
 
-Repo:   C:\Users\zagor\Desktop\harness
+Repo:   due macchine — C:\Users\zagor\Desktop\harness
+                       E:\ALL\DEV\MY_REPOS\daemon
 Remote: https://github.com/devfrx/daemon.git · branch spec/sottoprogetto-1-kernel
 Albero pulito, ramo pushato. Ultimo commit: abe6ff3
 
@@ -123,3 +124,8 @@ massima: è il ritratto di sei difetti su sei, e vive qui perché il prossimo ag
 obbligatori quando uno dei due cresce; il numero dei gotcha quando §9 ne guadagna uno; i
 prerequisiti d'ambiente quando il repository comincia a richiedere uno strumento nuovo —
 è successo con `rustup`, e prima di allora non serviva niente.
+
+📌 **Il percorso del repository ha due valori, e non è una svista da «sanare».** Si lavora
+su **due macchine**, e il campo le nomina entrambe: un percorso solo sembrava aggiornato e
+su una delle due era falso. Chi incolla il messaggio lascia pure tutti e due — l'agente
+parte dentro il repository e la propria posizione la conosce già.

@@ -2,9 +2,16 @@
 
 Da copiare all'inizio di ogni nuova sessione.
 
-⚠️ **Lo SHA qui sotto è l'ultimo commit noto quando questo file è stato aggiornato.** Se ne
-hai fatti altri, sostituiscilo prima di incollare: un hash scritto dentro il file che quel
-commit contiene nasce già vecchio di uno.
+⚠️ **Il campo dello SHA è un segnaposto, e si compila incollando.** Lo SHA appartiene al
+**messaggio**, dove è vero nel momento in cui si legge — non a questo file, che del
+messaggio è il **modello**: un hash scritto qui nasce già vecchio di uno, perché il commit
+che lo aggiorna lo contiene. È la stessa ragione per cui [`HANDOFF.md`](HANDOFF.md) non ne
+porta, e quella riga delega esplicitamente a qui.
+
+⛔ **Prima questo campo portava un valore vero, e non ha funzionato.** È stato incollato
+tale e quale **due volte** — l'ultima vecchio di **quattro** commit — e due commit
+(`a2ac9f9`, `c7f3203`) sono serviti solo a rincorrerlo. Un valore d'esempio valido non si
+distingue da un dato; un segnaposto sì. Gotcha **#43**.
 
 ⚠️ **Questo messaggio non nomina il prossimo passo, ed è deliberato.** Lo stato vive nella
 §6 del compendio, in un posto solo. Duplicarlo qui lo farebbe divergere.
@@ -17,7 +24,7 @@ Riprendo un progetto già progettato, in corso.
 Repo:   due macchine — C:\Users\zagor\Desktop\harness
                        E:\ALL\DEV\MY_REPOS\daemon
 Remote: https://github.com/devfrx/daemon.git · branch spec/sottoprogetto-1-kernel
-Albero pulito, ramo pushato. Ultimo commit: abe6ff3
+Albero pulito, ramo pushato. Ultimo commit: <<< INCOLLA QUI: git log --oneline -1 >>>
 
 ⛔ PRIMA DI PROPORRE QUALSIASI COSA: leggi, poi ASCOLTA. Non entrare in plan
    mode, non proporre passi, non scrivere file finché non te lo dico.
@@ -35,12 +42,12 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 94 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 97 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i quarantadue gotcha (§9), le trappole di
+     cosa NON rifare (§8), i quarantatré gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
 
 ⛔ CODICE IN INGLESE, DOCUMENTAZIONE IN ITALIANO — §1.0 della spec.
@@ -101,15 +108,15 @@ proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ~4 KB |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **94 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 94 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **97 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 97 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi due volte.** Dicevano
 *«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di oggi, e nessuno
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **94 KB contro mezzo megabyte**.
+resta quello che conta: **97 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **267 KB**. Non è che chiedesse
@@ -120,10 +127,11 @@ compresse, non integrali.
 massima: è il ritratto di sei difetti su sei, e vive qui perché il prossimo agente riprende
 **dentro** quel piano, dove la lezione serve al primo compito e non al decimo.
 
-⚠️ **Cosa aggiornare qui, e quando.** Il ramo e lo SHA a ogni push; il peso dei due file
+⚠️ **Cosa aggiornare qui, e quando.** Il ramo se cambia; il peso dei due file
 obbligatori quando uno dei due cresce; il numero dei gotcha quando §9 ne guadagna uno; i
 prerequisiti d'ambiente quando il repository comincia a richiedere uno strumento nuovo —
-è successo con `rustup`, e prima di allora non serviva niente.
+è successo con `rustup`, e prima di allora non serviva niente. ⛔ **Lo SHA non è in questo
+elenco**, ed è la voce che è stata tolta: si compila incollando, non si mantiene.
 
 📌 **Il percorso del repository ha due valori, e non è una svista da «sanare».** Si lavora
 su **due macchine**, e il campo le nomina entrambe: un percorso solo sembrava aggiornato e

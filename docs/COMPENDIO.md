@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (591 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 267), e
+> (593 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 267), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-09.** Manutenzione: §13.
@@ -788,7 +788,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I quarantadue gotcha
+## 9. I quarantatré gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -837,6 +837,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 40 | ⛔ **Questo file dichiara di contenere tutte le decisioni, ma il controllo ne pretende una voce solo per gli _ADR_: una decisione che vive in una _sezione di spec_ può mancare, e allora per chi legge non esiste.** Misurato il 2026-08-08: la **§1.0** — codice in inglese, documentazione in italiano — non era né qui né in `CLAUDE.md`. Un agente ha letto per intero **entrambi** i file obbligatori e ha scritto un traguardo intero con gli identificatori in italiano, poi corretto con sei rinomini di file, undici di funzione e la rigenerazione dei quattro oracoli. ⚠️ Il controllo di §13 accoppia le voci ai **file** in `docs/adr/`: esatto per ciò che misura, cieco a tutto il resto. ⛔ Il rimedio non è irrigidire lo script — nessun elenco di «sezioni che contano» resterebbe vero — è che **una decisione scritta fuori da un ADR va portata a mano nel compendio**, e chi la scrive è l'unico che può saperlo |
 | 41 | **Un filtro che _normalizza l'ingresso_ di un controllo decide anche che cosa il controllo può vedere.** `gate-deps.sh` estraeva i nomi di crate con una classe di caratteri **minuscola**. Misurato: una crate col nome maiuscolo veniva scartata dal filtro, quindi non compariva fra gli intrusi e il cancello usciva **verde** — un falso negativo su I3, il modo di fallire peggiore per quel controllo. Provato con `Inflector`, crate reale: uscita 0 prima, uscita 1 e nome del colpevole dopo. ⚠️ Col corteo di dipendenze minuscole che si porta dietro, il controllo segnalava **il corteo e non il capofila**, pur stampandolo dentro ogni catena |
 | 42 | ⛔ **Un test di compilazione fallita che scatta come `mismatch` è disarmato da una rigenerazione in blocco; uno che scatta come `error` no — e `trybuild` stampa la parola.** Misurato: col confine fra `Monotonic` e `WallTime` guardato dal solo caso «passa l'uno dove va l'altro», aggiungere `impl From<WallTime> for Monotonic` **non** lo fa smettere di fallire — resta `E0308`, perché Rust non applica `From` al sito di chiamata. Lo rende rosso il fatto che rustc **aggiunga quattro righe di `help: call Into::into`** che l'oracolo non porta: un **`mismatch`**. Quindi quel guardiano **poggia interamente sul fatto che l'oracolo non venga rigenerato** — è il #25 con la conseguenza che nessuno aveva scritto: **l'oracolo registra anche l'assenza di una via di conversione**. Rimedio: un **secondo caso di forma diversa** — `let _x: Monotonic = wall.into();` — che con l'`impl From` presente **compila**, e scatta come `error`. ⚠️ **Il test generale, che costa zero:** una regola guardata solo da casi `mismatch` è una regola che una rigenerazione spegne in silenzio. 📌 E le regole erano **due** — «non si passa l'uno per l'altro» e «non esiste una via di conversione» — con la seconda scritta **in un commento**, cioè un'intenzione |
+| 43 | ⛔ **In un modello, un valore d'esempio _valido_ viene incollato così com'è: non si distingue da un dato. E un avviso accanto non è un rimedio.** Il campo «Ultimo commit» di [`AVVIO-CHAT.md`](AVVIO-CHAT.md) portava un hash vero, con accanto una riga che **dichiarava il difetto** e ne scaricava il rimedio su chi incolla. Misurato: il file era vecchio di **due** commit, il messaggio incollato di **quattro**, e due commit erano serviti solo a rincorrerlo — non possono raggiungerlo, perché lo contengono. ⚠️ **Togliere il campo era la proposta sbagliata:** `HANDOFF.md` non porta lo SHA **perché delega a lì**, e la prova ha giocato contro — il **#32 applicato a sé**, con un rimedio migliore in uscita. Il difetto è più stretto: lo SHA appartiene all'**istanza**, il **modello** ci metteva un valore concreto. Rimedio: un **segnaposto** che nomina il comando che lo riempie — si fallisce **rosso** invece che verde, come nel **#26** |
 
 ---
 
@@ -893,7 +894,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 267 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 111 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 113 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 15 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
@@ -906,6 +907,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 32 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
+| ⛔ **il compito da cui si riprende** — è il piano **in corso**, e il Task 7 sta lì | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 131 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 10 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
@@ -1002,6 +1004,28 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > rimisurato — lo era stato, e scritto **in uno solo dei due posti in cui vive**. Rimisurare
 > non basta: si scrive **dove qualcuno legge per decidere**, che è la tabella, non il verbale
 > della misura.
+
+> 🔁 **Settima misura, il 2026-08-09, chiudendo la voce dello SHA — e la sesta aveva corretto
+> i numeri lasciando fuori una riga intera.** Il rimedio scritto nella sesta — *«si scrive dove
+> qualcuno legge per decidere, che è la tabella»* — è stato applicato ai **pesi esistenti** e
+> non alla **voce mancante**: la quinta misura dichiarava *«voce nuova: il piano del Traguardo
+> 2»*, e in tabella quella riga **non è mai entrata**.
+>
+> | | |
+> |---|---|
+> | ⛔ **riga aggiunta** | il **piano del Traguardo 2**, **131 KB** — il secondo file più grande del repository, e proprio quello da cui si riprende. Chi doveva decidere se aprirlo non aveva né la voce né il peso |
+> | **cresciuto** | [`HANDOFF.md`](HANDOFF.md) `111 → 113`, per il gotcha #43 di questa voce |
+> | **invariati, ricontati** | spec del sotto-progetto 1 267 · kernel-design 44 · roadmap 15 · tracciabilità 15 · [`porta-di-qualita.md`](porta-di-qualita.md) 15 · riferimenti 32 · `design/08` 8 · `design/01` 4 · il piano degli spike 68 · il piano del Traguardo 1 50 · README 10 · ADR `2–19` |
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **591** a **593 KB** (607118 B). I **due file
+> obbligatori** passano da 94 a **97 KB**: la cifra vive in `CLAUDE.md` e in
+> [`AVVIO-CHAT.md`](AVVIO-CHAT.md), ed è aggiornata in entrambi.
+>
+> 📌 **La forma successiva del #31, e completa quella della sesta misura:** una tabella si
+> aggiorna in **due modi** — correggendo una cella, e **aggiungendo una riga**. Il secondo si
+> dimentica, e per una ragione che vale la pena scrivere: rileggendo, **una riga assente non si
+> vede**, mentre una cella sbagliata sì. Chi rimisura conta anche le **righe**, non solo i
+> numeri dentro di esse.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

@@ -9,15 +9,15 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 94 KB** (`wc -c`, il 2026-08-09), cioè **circa
-ventitremila token** con lo stesso rapporto che fu usato per prezzarli la prima volta.
+⚠️ **Insieme questi due file pesano 97 KB** (`wc -c`, il 2026-08-09), cioè **circa
+ventiquattromila token** con lo stesso rapporto che fu usato per prezzarli la prima volta.
 **Non sono più «circa seimila token»**: quella cifra era vera quando pesavano 24 KB, e
 nessuno l'ha più rifatta — gotcha **#31**, ormai alla **quarta occorrenza, e stavolta
 proprio su questa riga**: diceva 88 KB, ed erano già 91 prima che qualcuno la toccasse.
 Restano comunque la lettura più economica che esista qui: l'alternativa è mezzo megabyte.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — 591 KB con `wc -c`
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — 593 KB con `wc -c`
 il 2026-08-09, e possono solo crescere; la spec da sola ne fa 267 — e l'idea è
 già nel compendio. Quando ti servirà il **perché** di una decisione — le alternative
 scartate, le misure, i costi accettati — apri **quel** file, uno solo. La §12 del

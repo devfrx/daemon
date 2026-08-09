@@ -1,0 +1,15 @@
+error[E0308]: mismatched types
+  --> tests/compile_fail/untrusted_as_instruction.rs:29:53
+   |
+29 |     let _ = kernel::boundary::build_prompt(&system, &from_a_web_page);
+   |             ------------------------------          ^^^^^^^^^^^^^^^^ expected `&Instruction`, found `&Untrusted`
+   |             |
+   |             arguments to this function are incorrect
+   |
+   = note: expected reference `&Instruction`
+              found reference `&Untrusted`
+note: function defined here
+  --> src/boundary.rs
+   |
+   | pub fn build_prompt(system: &Instruction, user: &Instruction) -> String {
+   |        ^^^^^^^^^^^^

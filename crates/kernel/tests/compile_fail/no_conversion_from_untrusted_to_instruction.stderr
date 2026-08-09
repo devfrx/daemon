@@ -1,0 +1,7 @@
+error[E0277]: the trait bound `Instruction: From<Untrusted>` is not satisfied
+  --> tests/compile_fail/no_conversion_from_untrusted_to_instruction.rs:37:48
+   |
+37 |     let _system: Instruction = from_a_web_page.into();
+   |                                                ^^^^ the trait `From<Untrusted>` is not implemented for `Instruction`
+   |
+   = note: required for `Untrusted` to implement `Into<Instruction>`

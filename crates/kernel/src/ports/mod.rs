@@ -18,17 +18,25 @@
 //! | `ipc`        | §6.1        | milestone 6                              |
 //! | `network`    | §2.3.1      | staged — the single exit point           |
 //!
-//! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES. Today this module declares ONE
-//! submodule, `reactor`, because it is the only one whose trait has been written; the other
-//! five arrive together in Task 12 of the milestone 2 plan, and this table is completed
-//! there. A `pub mod` naming a file that does not exist does not compile, so until then the
-//! table is the only place the six can be named at all — and naming them is exactly what
-//! gotcha #17 above is asking for.
+//! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES. Today this module declares TWO
+//! submodules — `reactor`, which the executor needs, and `journal`, which the promotion of
+//! `crate::boundary` demands as an argument — because they are the ones whose trait has been
+//! written; the other four arrive by Task 12 of the milestone 2 plan, and this table is
+//! completed there. A `pub mod` naming a file that does not exist does not compile, so until
+//! then the table is the only place the six can be named at all — and naming them is exactly
+//! what gotcha #17 above is asking for.
+//!
+//! ⚠️ `journal` is declared here in milestone 2 and IMPLEMENTED in milestone 3: the trait
+//! exists because a caller already demands it, not because the durable format is settled. The
+//! record, the version enum and the frozen bytes are §4.9, and constraint 14 of §11 freezes
+//! them at the first record written — so nothing writes one yet.
 //!
 //! ⚠️ `rng` IS DECLARED IN §2.2 AND LIVES IN `crate::rng`, NOT HERE. It is a source of
 //! non-determinism, not a family of I/O, and the asymmetry is deliberate rather than a
 //! filing mistake: the simulator substitutes SEVEN things while §2.3 enumerates SIX, and
 //! §3.1 says so in those words. Repeated here so that nobody "fixes" the discrepancy by
 //! moving `rng` under this module, or by writing "seven families" in the line above.
+
+pub mod journal;
 
 pub mod reactor;

@@ -16,7 +16,7 @@ Riprendo un progetto già progettato, in corso.
 
 Repo:   C:\Users\zagor\Desktop\harness
 Remote: https://github.com/devfrx/daemon.git · branch spec/sottoprogetto-1-kernel
-Albero pulito, ramo pushato. Ultimo commit: 3d8ef7c
+Albero pulito, ramo pushato. Ultimo commit: abe6ff3
 
 ⛔ PRIMA DI PROPORRE QUALSIASI COSA: leggi, poi ASCOLTA. Non entrare in plan
    mode, non proporre passi, non scrivere file finché non te lo dico.

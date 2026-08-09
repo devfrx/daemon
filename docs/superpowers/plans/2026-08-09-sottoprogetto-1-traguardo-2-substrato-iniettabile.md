@@ -63,6 +63,8 @@ quelle sezioni fissano. Il *perché* di ogni vincolo sta lì; qui c'è solo il *
 | **E4** | **Task 2 · Step 3**, la porta `Rng` con `below` come metodo di default | il piano scriveva la regola *«tutte le implementazioni riducono allo stesso modo»* **in un commento**, e un metodo di default **si sovrascrive**: era un'intenzione. Nel repository `below` vive su **`RngExt`**, tratto d'estensione con `impl<R: Rng> RngExt for R {}`, e un impl scritto a mano collide con `E0119`. Costo dichiarato: i chiamanti importano due tratti |
 | **E5** | **Task 2**, il comportamento di `below(0)` | il piano non lo fissava. Deciso eseguendo: **`below(0)` consuma comunque un'estrazione**. Cortocircuitare farebbe dipendere il **numero di estrazioni** dalla dimensione della collezione, e due corse dello stesso seme che differiscono per un solo passo vuoto divergerebbero — **invisibilmente**. Fissato da un test, non da un commento |
 | **E6** | **Task 1**, l'API di `time.rs` | tolti `Millis::ZERO` e `Monotonic::as_millis`: **nessuno dei quattordici compiti li consuma**. Da qui il vincolo globale **14** |
+| **E8** | **Task 4 · Step 2**, la variante `Wakeup::EventReady` | ⛔ **tolta prima di essere scritta.** Nessuno dei quattordici compiti la costruisce, e le due difese scritte nel piano non reggono alla lettura. La prima — *«§0.4.3 la vuole per regola B»* — è smentita dalla §0.4.3 stessa, che dice con parole proprie di comprare **da dove** una sorgente entra, *«non come funziona»*, e che la suite di conformità *«non copre un'operazione che nessuno chiama»*: la **porta** doveva esistere adesso, e esiste; la **forma del ritorno** è il «come». La seconda — *«aggiungere una variante dopo rompe ogni `match`»* — inverte il proprio segno: in Rust quella rottura **è** il meccanismo che trova ogni sito che deve decidere, e la regola che vale davvero (ADR-0036 regola 3) governa i record **durevoli**, dove i byte scritti non si ricompilano. ⛔ **E la ragione decisiva:** una variante che porta **solo un istante** non identifica nulla, quindi non può risvegliare l'attività per cui l'evento è arrivato — l'esecutore ha `Runnable` e `Sleeping(deadline)` e promuove per scadenza. Congelarla significava congelare una forma **già nota come sbagliata** |
+| **E9** | **Task 4 · Step 2**, il tipo `Wakeup` | tolto anche l'involucro, e con la stessa regola un livello sopra: rimasto a una variante sola **non distingue nulla** che la firma non dica già. La firma vera è `wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic>`. ⚠️ **`Millis`/`Monotonic`/`WallTime` non sono un controesempio**, e la differenza è scritta nel sorgente: quelli distinguono **cose diverse che condividono una rappresentazione**, ed è per questo che scambiarli **doveva** essere un errore di compilazione — quattro casi in `tests/compile_fail/` lo provano. Un enum a una variante su un `Monotonic` non compra nessun errore da nessuna parte, solo cerimonia. Retrofittabile per il criterio della §7.4.5, quindi **regola C**: tre siti di chiamata nel repository, nessun artefatto durevole. 📌 Misurato dopo il cambio: con l'istante esposto direttamente ai siti di chiamata, `let _x: Option<WallTime> = r.wait_until(…)` resta **`E0308`** — togliere l'involucro non apre un buco nel confine dei tipi |
 | **E7** | **Task 1 · Step 5**, «il caso negativo» al singolare | i casi sono **quattro**, perché le regole erano **due**: *«non si passa l'uno per l'altro»* e *«non esiste una via di conversione»*, ciascuna in **entrambe** le direzioni. Il piano ne dettava uno solo, e con quello solo la porta restava **verde su sei su sei** aggiungendo `impl From<WallTime> for Monotonic` — cioè la direzione **pericolosa** |
 
 📌 **La lezione che attraversa E1, E2 e E7, e che vale per i dodici compiti rimasti:** tre
@@ -982,7 +984,7 @@ bisogno.
 // absence.
 
 use kernel::executor::Executor;
-use kernel::ports::reactor::{Reactor, Wakeup};
+use kernel::ports::reactor::Reactor;
 use kernel::rng::Rng;
 use kernel::time::{Monotonic, WallTime};
 
@@ -1001,7 +1003,7 @@ impl Reactor for StubReactor {
     fn wall_time(&self) -> WallTime {
         WallTime::from_millis_since_epoch(0)
     }
-    fn wait_until(&mut self, _deadline: Monotonic) -> Option<Wakeup> {
+    fn wait_until(&mut self, _deadline: Monotonic) -> Option<Monotonic> {
         None
     }
 }
@@ -1191,11 +1193,10 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
             let Some(deadline) = earliest else {
                 return Err(RunError::Stalled);
             };
-            let Some(wakeup) = self.reactor.wait_until(deadline) else {
+            let Some(reached) = self.reactor.wait_until(deadline) else {
                 return Err(RunError::Stalled);
             };
 
-            let reached = wakeup.at();
             for task in &mut self.tasks {
                 if let TaskState::Sleeping(until) = task.state {
                     if until <= reached {
@@ -1323,7 +1324,7 @@ git commit -m "feat(kernel): l'esecutore, e l'orologio che avanza solo a quiesce
 - Test: `crates/kernel/tests/executor_determinism.rs`
 
 **Interfaces:**
-- Consuma: `kernel::ports::reactor::{Reactor, Wakeup}`, `kernel::time::*`.
+- Consuma: `kernel::ports::reactor::Reactor`, `kernel::time::*`.
 - Produce: `simulator::reactor::VirtualReactor`. Il Task 7 gli affianca l'implementazione
   vera; il Traguardo 4 vi aggiunge l'iniezione dei guasti.
 
@@ -1583,7 +1584,7 @@ Atteso: **FAIL**, `could not find 'reactor' in 'simulator'`.
 //! ⚠️ Milestone 2 builds the clock and nothing else. Fault injection, the campaign and
 //! the seed list are §3.3-§3.5, milestone 4.
 
-use kernel::ports::reactor::{Reactor, Wakeup};
+use kernel::ports::reactor::Reactor;
 use kernel::time::{Monotonic, WallTime};
 
 pub struct VirtualReactor {
@@ -1617,7 +1618,7 @@ impl Reactor for VirtualReactor {
         self.wall
     }
 
-    fn wait_until(&mut self, deadline: Monotonic) -> Option<Wakeup> {
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
         // ⛔ STRICTLY IN THE FUTURE, and `None` otherwise. A null advance declared
         // successful is an infinite loop: the first draft took the minimum of ALL
         // registered deadlines, the minimum fell on an already-finished task, the clock
@@ -1630,7 +1631,7 @@ impl Reactor for VirtualReactor {
         self.wall = WallTime::from_millis_since_epoch(
             self.wall.as_millis_since_epoch().saturating_add(elapsed.get()),
         );
-        Some(Wakeup::DeadlineReached(self.now))
+        Some(self.now)
     }
 }
 ```
@@ -1681,7 +1682,7 @@ git commit -m "feat(simulator): l'orologio virtuale, e l'interlacciamento rimisu
 - Modify: `crates/platform/src/lib.rs`
 
 **Interfaces:**
-- Consuma: `kernel::ports::reactor::{Reactor, Wakeup}`, `kernel::rng::Rng`.
+- Consuma: `kernel::ports::reactor::Reactor`, `kernel::rng::Rng`.
 - Produce: `platform::reactor::SystemReactor`, `platform::rng::SequentialRng`, e la
   funzione di conformità `kernel::…` riusabile — vedi Step 1.
 
@@ -1703,7 +1704,7 @@ La §3.7 dichiara il punto cieco con parole proprie — **«la finta non è la v
 //! §3.7: "the fake is not the real one". Without this suite, Q4 and Q5 are proved
 //! against a fiction.
 
-use kernel::ports::reactor::{Reactor, Wakeup};
+use kernel::ports::reactor::Reactor;
 use kernel::time::{Millis, Monotonic};
 
 /// Every assertion the port promises, applied to whatever implementation is handed in.
@@ -1732,8 +1733,8 @@ pub fn assert_reactor_contract<R: Reactor, F: Fn() -> R>(build: F) {
     // to swallow a Windows scheduling hiccup costs a tenth of a second per run.
     let mut reactor = build();
     let deadline = reactor.now().saturating_add(Millis::new(50));
-    let wakeup = reactor.wait_until(deadline).expect("a future deadline is reachable");
-    assert!(wakeup.at() >= deadline, "the wait resumed before the deadline");
+    let resumed = reactor.wait_until(deadline).expect("a future deadline is reachable");
+    assert!(resumed >= deadline, "the wait resumed before the deadline");
     assert!(reactor.now() >= deadline, "now() did not follow the wait");
 
     // 4. Two consecutive waits compose: the clock does not reset.
@@ -1771,9 +1772,9 @@ fn a_reactor_that_lies_about_a_null_advance_is_caught() {
         fn wall_time(&self) -> kernel::time::WallTime {
             kernel::time::WallTime::from_millis_since_epoch(0)
         }
-        fn wait_until(&mut self, deadline: Monotonic) -> Option<Wakeup> {
+        fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
             self.0 = deadline;
-            Some(Wakeup::DeadlineReached(deadline))
+            Some(deadline)
         }
     }
 
@@ -1808,7 +1809,7 @@ scatti**, la suite è vacua: si corregge la suite, non il test.
 
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
-use kernel::ports::reactor::{Reactor, Wakeup};
+use kernel::ports::reactor::Reactor;
 use kernel::time::{Monotonic, WallTime};
 
 pub struct SystemReactor {
@@ -1849,14 +1850,14 @@ impl Reactor for SystemReactor {
         WallTime::from_millis_since_epoch(since_epoch)
     }
 
-    fn wait_until(&mut self, deadline: Monotonic) -> Option<Wakeup> {
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
         let now = self.now();
         if deadline <= now {
             return None;
         }
         let remaining = deadline.saturating_since(now);
         std::thread::sleep(std::time::Duration::from_millis(remaining.get()));
-        Some(Wakeup::DeadlineReached(self.now()))
+        Some(self.now())
     }
 }
 ```
@@ -3069,6 +3070,6 @@ Il Traguardo 2 è chiuso quando **tutte** queste sono vere, non quando il codice
 |---|---|
 | `journal`, `filesystem`, `process`, `ipc`, `network` sono **tratti senza implementazione** | Traguardi 3 e 6; `filesystem` e `network` restano scaglionate per §0.4 |
 | le righe 1–4 di **§6.10.5** e i gettoni del blocco B non hanno contro-sonda | Traguardo 5, quando l'arbitro emette concessioni |
-| `Wakeup::EventReady` non è mai restituito da nessuna implementazione | il primo consumatore di un evento esterno — anello 3, o la porta `process` |
+| ⛔ **la porta `reactor` non sa dire _quale_ evento esterno è pronto** — restituisce l'istante e basta | il primo consumatore di un evento esterno: anello 3, o la porta `process`. Allora la firma cresce, e crescerà sapendo **quale registrazione** è diventata pronta — l'informazione che una variante col solo istante non poteva portare. Errata **E8** ed **E9** |
 | **D4** — un giro interroga tutte le attività `Runnable`, contro lo spike che ne sceglieva una — non è stata confrontata con la politica dello spike a parità di scenario | se il Traguardo 4 trovasse la campagna povera di interlacciamenti, è la prima cosa da rimisurare |
 | **D5** — in produzione l'ordine è fisso | resta così finché qualcuno non dimostri che serve esplorare ordini **fuori** dalla campagna |

@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (599 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 267), e
+> (605 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 271), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-09.** Manutenzione: §13.
@@ -602,7 +602,7 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 2. ~~**Il piano**~~ — ✅ **scritto**: [Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
 3. ~~**Il codice del Traguardo 1**~~ — ✅ **eseguito** subagent-driven, otto compiti più quattro di riallineamento alla §1.0. `GATE GREEN`.
 4. ~~**Il piano del Traguardo 2**~~ — ✅ **scritto il 2026-08-09**: [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md), quattordici compiti in due parti.
-5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–10 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ **Il prossimo passo è il Task 11** — la porta `process`, i gettoni e le due ricevute. ⛔ **E una voce resta aperta, da approvare prima di scriverla:** il Task 9 ha prodotto **un controllo nuovo** — il caso `no_conversion_from_untrusted_to_instruction`, misurato **portante** — e il **catalogo §7.4.1 blocco C** non ha la riga della **regola B** per la coppia `Untrusted`/`Instruction`, ma solo quella della regola A (`Q9 · I6 · V20`). È il gotcha **#36**, e la forma del rimedio è nota: allargare il blocco con **richiamo datato**, come già fatto per i due tempi.
+5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–10 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ✅ **E la voce che restava aperta è chiusa il 2026-08-09:** il caso `no_conversion_from_untrusted_to_instruction` del Task 9 — misurato **portante** — ha ora la propria riga nel **catalogo §7.4.1 blocco C**, la **regola B** della coppia `Untrusted`/`Instruction` accanto alla regola A (`Q9 · I6 · V20`), con richiamo datato. ⛔ **Non era una rifinitura, ed è il punto da ricordare:** la regola A è **cieca** proprio a quella via — con `impl From<Untrusted> for Instruction` presente il caso resta `ok` invece di dare il `mismatch` che il gotcha #42 prevede, perché lì lo scarto è fra **riferimenti** — quindi senza la riga B la porta resta verde **col confine già caduto**. Il blocco C passa da diciassette a **diciotto** righe, e §7.4.7, §8.3 (`Q9` e `Q15`) e [`porta-di-qualita.md`](porta-di-qualita.md) sono riallineate nello stesso passaggio. ⏭️ **Il prossimo passo è il Task 11** — la porta `process`, i gettoni e le due ricevute.
 
 ⛔ **E due questioni restano aperte nel sorgente, dichiarate e non risolte.** Nessuna delle
 due è un difetto oggi, ed è scritto **perché**; entrambe si pagano più avanti, e chi riprende
@@ -858,7 +858,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 33 | **Il nome del formato è occupato da un'altra cosa, e in due ecosistemi.** Su PyPI `bincode` installa un modulo `b64tools`, funzioni base64; su npm `bincode` è una CLI di sviluppo con l'IA. È il gotcha #22 nella forma più larga: **che un nome esista non dice cosa contiene**, e cercare per nome trova pacchetti che non c'entrano |
 | 34 | ⛔ **Un decodificatore CBOR si ferma al primo elemento completo e ignora la coda.** Misurato: dando a `cbor2` i byte di `bincode` restituisce `1` — nessuna eccezione, un valore plausibile. Su un canale a frame «ha decodificato» non prova nulla: serve che i **byte consumati** siano pari alla lunghezza dichiarata |
 | 35 | **Un `Vec<u8>` non annotato raddoppia il traffico, in silenzio.** In `minicbor`, senza l'annotazione di stringa di byte, si codifica come **array di numeri**. Misurato su 4096 B: **7813** contro **4101**, cioè **1,91×**. Compila, fa round-trip, ed è corretto: costa solo il doppio |
-| 36 | ⛔ **La tabella «come si verifica» di una sezione non è il catalogo, e il passaggio si salta.** Una sezione che decide un meccanismo scrive le proprie sonde lì — ed è giusto — ma il **catalogo §7.4** è l'unico posto che §8.1.2 ammette, ed è la lista che il piano tradurrà in lavoro. Successo **due volte**: V2/V4/V10 (§8.5.3) e i cinque controlli della §6.10.5 (§8.5.4). ⚠️ La diagnosi è l'**asimmetria**: nella stessa riapertura §2.8.4 e §4.9.4 le righe le hanno aggiunte, §6.10.5 no, e **nessun documento dice perché** — quindi non era una decisione. ⛔ Il rimedio **non** è irrigidire lo script (§8.6.4): è cercare questa classe di difetto a ogni sezione che decide un controllo. È il #29 spostato dalle invarianti ai controlli |
+| 36 | ⛔ **La tabella «come si verifica» di una sezione non è il catalogo, e il passaggio si salta.** Una sezione che decide un meccanismo scrive le proprie sonde lì — ed è giusto — ma il **catalogo §7.4** è l'unico posto che §8.1.2 ammette, ed è la lista che il piano tradurrà in lavoro. Successo **tre volte**: V2/V4/V10 (§8.5.3) · i cinque controlli della §6.10.5 (§8.5.4) · e la **regola B** della coppia `Untrusted`/`Instruction`, implementata al Task 9 e catalogata solo il 2026-08-09. ✅ **La terza è la prima colta _prima_ che si sedimentasse**, e a coglierla non è stato un controllo: il registro [`porta-di-qualita.md`](porta-di-qualita.md) ha dichiarato il caso come *implementato e non coperto dal catalogo*, e la §6 l'ha portato come **voce aperta** finché qualcuno l'ha chiusa. 📌 Da lì la regola operativa: uno scarto fra codice e catalogo si scrive nel registro **come voce aperta**, mai come nota — una nota si legge e si dimentica. ⚠️ La diagnosi è l'**asimmetria**: nella stessa riapertura §2.8.4 e §4.9.4 le righe le hanno aggiunte, §6.10.5 no, e **nessun documento dice perché** — quindi non era una decisione. ⛔ Il rimedio **non** è irrigidire lo script (§8.6.4): è cercare questa classe di difetto a ogni sezione che decide un controllo. È il #29 spostato dalle invarianti ai controlli |
 | 37 | ⛔ **Un controllo può difendere _un altro controllo_ invece di una proprietà, e la regola d'ammissione lo scambia per un'abitudine — cioè lo fa togliere.** Misurato: **otto righe su trentatré** del catalogo, fra cui `forbid(unsafe_code)`. Cancellalo e **nessuna** riga diventa rossa: diventano tutte **meno vere**, perché un `unsafe` falsifica un gettone o transmuta un newtype. ⛔ Il rimedio **non** è allargare la regola a «una proprietà decisa in una sezione nominata» — così non rifiuterebbe più niente, e una regola che non rifiuta mai è decorazione. È darle un **secondo ramo** con un criterio proprio: *nomina le voci del catalogo di cui sostieni la validità*. Quello rifiuta ancora `clippy` |
 | 38 | **Un controllo che interroga uno stato può _modificarlo_ mentre lo interroga, e allora la sua condizione non può essere vera.** `gate-no-os.sh` chiede a `rustup` quali bersagli siano installati. Misurato: quel comando **riconcilia `rust-toolchain.toml` prima di rispondere**, quindi se il bersaglio manca **l'atto di chiederlo lo installa**. Con la rete la guardia **non può scattare**; scatta **senza rete**, verificato con uscita 1 e messaggio corretto. È **la via offline, non una rete di sicurezza**, e la differenza va scritta accanto alla guardia |
 | 39 | ⛔ **Un test negativo che _ridichiara le proprie precondizioni_ prova il meccanismo, non che il sistema sia configurato così.** I quattro casi di `compile_fail/` ridichiarano ciascuno `#![no_std]` e `#![forbid(unsafe_code)]` e non nominano mai `kernel::`: provano che il divieto **morde dove è dichiarato**, non che il kernel lo dichiari. Misurato: tolto `#![forbid(unsafe_code)]` da `crates/kernel/src/lib.rs` **e scritto un `unsafe` vero**, la porta restava **verde su cinque controlli su cinque**. Rimedio: `scripts/gate-attributes.sh`, livello 2. ⚠️ Peggiore di come sembra: quella riga è di **ramo 1b** e sostiene i blocchi A, B e C — toglierla non spegneva una regola, invalidava **il fondamento del livello 1** |
@@ -923,13 +923,13 @@ Apri **un** file, quello che serve. Non la cartella.
 | Se ti serve… | Apri | Peso |
 |---|---|---|
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
-| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 267 KB |
+| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 271 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 119 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 120 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 15 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 27 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 28 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
@@ -1113,6 +1113,32 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi si rimisura **dopo**
 > aver chiuso questo riquadro e si corregge **di sole cifre** — il metodo della sesta misura,
 > alla seconda applicazione.
+
+> 🔁 **Decima misura, il 2026-08-09, chiudendo la voce della regola B — e per la prima volta
+> nessuna riga era stantia se non quelle che questa passata ha fatto crescere.** È anche la prima
+> scritta **a passata chiusa**, che è la regola uscita dalla nona: le tre righe qui sotto sono
+> state misurate quando non restava niente da scrivere, non mentre qualcuno scriveva ancora.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | spec del sotto-progetto 1 `267 → 271` per la riga della **regola B**, il suo richiamo e i riallineamenti di §7.4.7 e §8.3 · [`HANDOFF.md`](HANDOFF.md) `119 → 120` per la terza occorrenza del **#36** · [`porta-di-qualita.md`](porta-di-qualita.md) `27 → 28` per la riga nuova e la nota di chiusura |
+> | **invariati, ricontati** | kernel-design 44 · roadmap 15 · tracciabilità 15 · [`riferimenti.md`](riferimenti.md) 43 · `design/08` 8 · `design/01` 4 · il piano degli spike 68 · il piano del Traguardo 1 50 · il **piano del Traguardo 2** 147 · README 10 · ADR `2–19` (2441 B e 19291 B) |
+> | ✅ **righe contate prima dei numeri** | ogni file citato in §12 ha la propria voce in tabella, verificato uno per uno. **Nessuna riga da aggiungere** — la lezione della settima, alla seconda applicazione riuscita |
+> | ✅ **e il residuo dichiarato dalla nona è chiuso** | la nona misura lasciava scritto *«in quei due file la cifra dice ancora 103»*: `CLAUDE.md` e [`AVVIO-CHAT.md`](AVVIO-CHAT.md) sono stati allineati, e la cifra oggi è la stessa in **tutti e tre** i posti |
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **599** a **605 KB** (619105 B). I **due file
+> obbligatori** passano da 108 a **111 KB**. Le due cifre vivono in `CLAUDE.md`, in
+> [`AVVIO-CHAT.md`](AVVIO-CHAT.md) e qui, e sono aggiornate in tutti e tre — insieme alla spec,
+> che in testa a questo file e in `CLAUDE.md` è nominata per nome (`270`).
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla terza
+> applicazione. Regge perché ogni correzione qui è fra numeri della **stessa lunghezza**.
+>
+> 📌 **Cosa dice il #31 questa volta, ed è una notizia buona:** non si è ripetuto. Quattro misure
+> di seguito senza artefatti dello strumento, due di seguito senza righe mancanti, e la prima
+> senza celle stantie estranee alla passata. ⚠️ Il che è esattamente il momento in cui si smette
+> di rimisurare — quindi resta scritto che la **prossima** si fa lo stesso.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

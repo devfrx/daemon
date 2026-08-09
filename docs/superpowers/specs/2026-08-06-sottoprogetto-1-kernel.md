@@ -2627,7 +2627,8 @@ quella «semplificazione» prima che qualcuno la applichi.
 
 | Difende | Cosa **non** deve compilare | Contro-sonda |
 |---|---|---|
-| **Q9** · I6 · V20 | `Untrusted` assegnato a `Instruction` | la promozione dichiarata compila |
+| **Q9** · I6 · V20 | `Untrusted` assegnato a `Instruction` — **regola A** | la promozione dichiarata compila |
+| **Q9** · I6 · V20 | una **via di conversione `From`/`Into`** da `Untrusted` a `Instruction` — **regola B**. La direzione è **una sola**, e il richiamo qui sotto dice perché | la promozione dichiarata, che pretende la porta `journal`, compila |
 | **Q2** · §5.1 | MiB assegnati a millisecondi | ciascuno con sé stesso |
 | **V29** · §2.1 | tempo monotonic assegnato a wall time, **e wall time assegnato a un istante di decisione** — la §2.1 dice *«scambiarli non compila»*, che è simmetrico | ciascuno accettato dal proprio |
 | **V29** · §2.1 | una **via di conversione `From`/`Into`** fra i due tempi | i due accessori, nominati entrambi esplicitamente, compilano |
@@ -2664,6 +2665,44 @@ quella «semplificazione» prima che qualcuno la applichi.
 > ⚠️ **Perché entrano qui e non solo nel registro:** §8.1.2 ammette come «controllo» solo ciò
 > che il catalogo elenca, e il gotcha **#36** è successo due volte proprio così — una sezione
 > decide un meccanismo, lo scrive nella propria tabella, e il catalogo resta indietro.
+
+> ⛔ **Una riga aggiunta il 2026-08-09, chiudendo la voce che il Traguardo 2 aveva lasciato
+> aperta: è la _regola B_ della coppia `Untrusted`/`Instruction`.** Il caso esiste dal Task 9 —
+> `no_conversion_from_untrusted_to_instruction.rs` — e la riga no. È il gotcha **#36** alla
+> **terza** occorrenza, e la prima colta **prima** che il catalogo si sedimentasse: il registro
+> [`porta-di-qualita.md`](../../porta-di-qualita.md) ha portato il caso come *implementato e non
+> coperto dal catalogo* invece che nel silenzio, ed è quello che ha reso la voce visibile.
+>
+> ⛔ **E non è una rifinitura della regola A: quella guardia è cieca proprio a questa via, ed è
+> misurato.** Il gotcha #42 prevede un `mismatch` — rustc che appende righe di `help: call
+> Into::into` che l'oracolo non porta. **Su questa coppia non succede.** Con
+> `impl From<Untrusted> for Instruction` presente, `untrusted_as_instruction.rs` resta **`ok`**:
+> lì lo scarto è fra **riferimenti** (`&Untrusted` contro `&Instruction`), e quell'impl non
+> produce nessun `&Untrusted: Into<&Instruction>`, quindi rustc non ha suggerimenti da
+> appendere. Sui due tempi lo scarto è fra **valori posseduti**, e il suggerimento compare.
+> Quella guardia non è «disarmabile da una rigenerazione»: è **cieca dall'inizio**, e senza la
+> riga B l'`impl From` lascia la porta **verde col confine già caduto**. Il caso B scatta come
+> **`error`**, che nessuna rigenerazione di oracoli disarma.
+>
+> 📌 **Rimisurato il 2026-08-09, _prima_ di scrivere questa riga e non dopo.** Aggiunto
+> `impl From<Untrusted> for Instruction` in `crates/kernel/src/boundary.rs` e lanciato
+> `cargo test -p kernel --test compile_fail`: `untrusted_as_instruction.rs` → **`ok`**,
+> `no_conversion_from_untrusted_to_instruction.rs` → **`error`**. L'esito era già registrato dal
+> Task 9; è stato rifatto perché un'evidenza **ereditata** che sta per entrare nel catalogo resta
+> un'ipotesi finché qualcuno non la rilancia — gotcha #15.
+>
+> ⚠️ **Una direzione sola qui, due per i due tempi — scritto perché non venga «sanato».**
+> `Untrusted → Instruction` è la direzione **pericolosa**: promuove contenuto esterno nel canale
+> delle istruzioni, che è esattamente ciò che I6 vieta, e l'unica strada ammessa pretende la
+> porta `journal` (blocco B, `V19`). `Instruction → Untrusted` è un **declassamento**: può solo
+> aggiungere sospetto, mai toglierlo, quindi non può violare I6 e non ha bisogno di guardia. Fra
+> `Monotonic` e `WallTime` **nessuno dei due è più stretto dell'altro** — un termine di parete e
+> un timbro monotono sbagliano ciascuno a modo proprio — ed è per questo che lì le direzioni
+> sono due e qui una. L'asimmetria è **misurata, non accidentale**.
+>
+> 📌 **Conteggi ricontati sulla tabella, non dedotti** — gotcha #31: il blocco C passa da
+> diciassette a **diciotto** righe, e i test di compilazione fallita del catalogo da ventidue a
+> **ventitré**. La §7.4.7 è aggiornata nello stesso passaggio.
 
 > ⚠️ **Due righe aggiunte il 2026-08-08, e non sono controlli nuovi.** Sono i controlli 2 e
 > 4 della §6.10.5, decisi con F1b e
@@ -2954,7 +2993,7 @@ La §8 registra quali porte hanno la suite e quali no, con il sotto-progetto che
 | Costo | |
 |---|---|
 | **ogni regola nuova porta due sonde, non una** | e la contro-sonda è la più noiosa da scrivere, perché verifica che *non* succeda niente |
-| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta ormai **ventidue** — **cinque** nel blocco B e **diciassette** nel C — e ciascuno ha un `.stderr` da leggere (gotcha #25). ⚠️ **Ricontato sulla tabella il 2026-08-08**: diceva «una dozzina, tre e nove», ed era il ritratto di **prima** di ADR-0034, ADR-0036 e §6.10.5. ⚠️ **Ricontato di nuovo il 2026-08-09**, eseguendo il Traguardo 2: diceva «diciannove, cinque e quattordici», ed era il ritratto di prima delle **tre righe nuove** del blocco C — arrivate una per compito, ai Task 1, 2 e 3. Un ritratto di conteggi si riconta, non si deduce — gotcha #31 |
+| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta ormai **ventitré** — **cinque** nel blocco B e **diciotto** nel C — e ciascuno ha un `.stderr` da leggere (gotcha #25). ⚠️ **Ricontato sulla tabella il 2026-08-08**: diceva «una dozzina, tre e nove», ed era il ritratto di **prima** di ADR-0034, ADR-0036 e §6.10.5. ⚠️ **Ricontato di nuovo il 2026-08-09**, eseguendo il Traguardo 2: diceva «diciannove, cinque e quattordici», ed era il ritratto di prima delle **tre righe nuove** del blocco C — arrivate una per compito, ai Task 1, 2 e 3. ⚠️ **Ricontato una terza volta il 2026-08-09**, chiudendo la voce della **regola B**: diceva «ventidue, cinque e diciassette», ed era il ritratto di prima che il caso del Task 9 avesse la propria riga. Un ritratto di conteggi si riconta, non si deduce — gotcha #31 |
 | **una voce è provata in una direzione sola** | V25, finché la rete non esiste. Dichiarato in §7.4.2 |
 | **V31 resta debole per natura** | l'automatismo protegge la proprietà, non il seme: §3.4 |
 | **i test di contratto sono lavoro reale** | due suite ora, due rimandate. È il prezzo per non provare Q4 e Q5 contro una finzione |
@@ -3323,13 +3362,13 @@ disallineano (§7.4.4, caso 2).
 | Q6 | contesto esaurito | ⏳ rimandato | il metodo è una proprietà su ricomposizioni ripetute, e la ricomposizione è scaglionata (§0.6) | B (3) |
 | Q7 | tetto di passi, tempo o costo superato | ✅ verificato qui | test a esempi sulla transizione ad `AttesaUmano` — il metodo di `design/08` è interamente lato kernel ed è eseguibile qui (§8.1.3) | — |
 | Q8 | avvio a freddo dichiarato | ✅ verificato qui | test a esempi sull'**evento emesso prima dell'attesa** · e §5.2.1 rende `cold_start` irraggiungibile dal percorso decisionale, con test di compilazione fallita (§7.4.1 C) | — |
-| Q9 | contenuto non fidato nel canale delle istruzioni | ✅ verificato qui | **non compila**: test negativo di compilazione, livello 1 con visibilità di livello 2 (§7.4.1 C, §7.1.3) | — |
+| Q9 | contenuto non fidato nel canale delle istruzioni | ✅ verificato qui | **non compila**: test negativo di compilazione, livello 1 con visibilità di livello 2 (§7.4.1 C, §7.1.3). ⚠️ **Precisato il 2026-08-09, e la precisazione conta:** le righe di catalogo sono **due** — regola A e regola B — e a reggere questa cella è soprattutto la **seconda**. Misurato: la regola A è **cieca** a `impl From<Untrusted> for Instruction`, perché il suo scarto è fra **riferimenti** e rustc non ha niente da suggerire, quindi il caso resta `ok`. Con la sola regola A catalogata il ✅ poggiava su una guardia che quella via non la vede. **Lo stato non cambia** — il caso esiste dal Task 9 — ma la ragione ora è nominata giusta | — |
 | Q10 | verdetto di sensore che rientra nell'anello | ✅ verificato qui | test a esempi con sensore finto, che è il metodo assegnato da `design/08` (§6.4.2). ⚠️ prova che l'**anello** funziona, non che il **contratto** regga sensori reali: è RK-5, già accettato | — |
 | Q11 | occupazione della proiezione al budget | ⏳ rimandato | nessuna proiezione da misurare (§0.6). SP-3 ne tarerà la soglia, ma non è ciò che lo rende verificabile | B (3) |
 | Q12 | difetto ricorrente che diventa una proposta | ⏳ rimandato | l'**anello 4 non esiste**: è scaglionato per regola C (§0.4, §5), e senza di lui non c'è niente che emetta la proposta che il metodo verifica. ⚠️ **Motivazione corretta il 2026-08-08:** diceva *«legge ricorrenze che esistono solo quando qualcosa gira»*, ma il metodo di `design/08` è un **giornale sintetico con ricorrenza** — la ricorrenza si costruisce senza far girare niente, come per Q14. A mancare è l'anello, non il dato | C (4) |
 | Q13 | nessun candidato non conforme viene mai eseguito, **per qualunque catena** | ✅ verificato qui | **gettone di conformità**: un candidato non filtrato non è esprimibile come argomento di un'esecuzione. Livello 1 (§6.3.1, §7.4.1 B). ⚠️ il gettone prova la provenienza, non la correttezza del filtro: §6.3.2. ⛔ **Divergenza da `design/08`, registrata il 2026-08-08 invece che nascosta:** il metodo assegnato è una **verifica di proprietà** su catene generate; qui la proprietà è resa **non esprimibile**, che è più forte — una proprietà provata su N catene lascia scoperta la N+1, un tipo no. È la stessa mossa di §5.3 punto 3. Sostituire un metodo con uno più forte resta una sostituzione, e §8.1.3 pretende che si dica | — |
 | Q14 | ricostruire con cosa è stato eseguito un passo di sei mesi fa | ✅ verificato qui | il record di routing è **risolto** e giornalato col passo (§6.2): test a esempi su un giornale sintetico. La proprietà è strutturale — il record non rimanda alla configurazione, quindi non dipende da essa. ⚠️ **Il meccanismo è cresciuto il 2026-08-07 con ADR-0036**, e senza di esso «sei mesi fa» era una promessa: il record **dichiara la propria versione** — enum di versione al compilatore (§7.4.1 C) — e i **byte congelati** con la mappa `indice → nome → valore atteso` provano che un giornale scritto oggi si rilegge domani (§7.4.2, §4.9.4). ⛔ Vale il limite di §4.9.4: il compilatore prova che una versione è **dichiarata**, non che sia quella **giusta**. Un campo aggiunto dopo — il passo padre di un fork, §4.9.5 — è **facoltativo con un indice nuovo**, quindi non rompe la rilettura | — |
-| Q15 | un'istruzione trovata nei dati non autorizza | ⚠️ parziale | la metà **statica** è qui: §7.4.1 C riga Q9·I6·V20, più il gettone `journal` sulla conversione (§7.4.1 B, V19) · la metà a esempi — *l'obbligo di autorizzazione* — richiede il mediatore e il ciclo di approvazione, scaglionati per regola C | C (4) |
+| Q15 | un'istruzione trovata nei dati non autorizza | ⚠️ parziale | la metà **statica** è qui: §7.4.1 C, **le due** righe Q9·I6·V20 — la regola A (`Untrusted` dove è attesa un'`Instruction`) e la regola B (nessuna via `From`/`Into`) — più il gettone `journal` sulla conversione (§7.4.1 B, V19). ⚠️ **Riletta il 2026-08-09:** la cella diceva «riga» al singolare, ed era vera finché la riga era una; dal richiamo di §7.4.1 sono due, e la seconda è quella che vede il ponte di conversione. **Lo stato non cambia** · la metà a esempi — *l'obbligo di autorizzazione* — richiede il mediatore e il ciclo di approvazione, scaglionati per regola C | C (4) |
 | Q16 | descrizione MCP cambiata dopo l'approvazione | ⏳ rimandato | il metodo è un test di contratto contro un server MCP finto, e non esistono strumenti (§0.6) | C (4) |
 | Q17 | un segreto compare in contenuto in uscita | ⚠️ parziale | lato kernel: §7.4.2, riga V34 · Q24 — solo `secrets` raggiunge il portachiavi, livello 2 provato in due direzioni · **il canary è scaglionato** (§0.4, §6) e non c'è contenuto in uscita da controllare. ⛔ **Precisato il 2026-08-08, perché la cella si attribuiva un merito altrui:** il metodo che `design/08` assegna a Q17 è il **canary a esempi**, e **non ne gira niente**; il controllo di livello 2 qui accreditato è quello che `design/08` assegna a **Q24**. Resta ⚠️ e non ⏳ perché è esattamente la classe di §0.6 — *«verificato solo lato kernel»* — che §8.1.1 dichiara essere una delle due ragioni per cui il quarto stato esiste | B (3) |
 | Q18 | perdita della rete | ⚠️ parziale | il metodo di `design/08` — DST con iniezione del guasto — è eseguibile e verifica che il degrado sia dichiarato **prima** del primo fallimento (§3.3); ma `network` non ha implementazione reale, quindi nessuna conformità (§8.2.2) | B (3) |

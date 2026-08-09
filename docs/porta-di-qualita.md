@@ -31,10 +31,13 @@ Dopo la prima corsa non sarebbe più stato gratis.
 
 ## Livello 1 — il compilatore
 
-Le tre righe del **blocco A** di §7.4.1, **sei righe del blocco C** e **una del blocco B** —
-queste ultime sette dal Traguardo 2. ⚠️ **Ricontate sulle tabelle il 2026-08-09:** questa riga
+Le tre righe del **blocco A** di §7.4.1, **sette righe del blocco C** e **una del blocco B** —
+queste ultime otto dal Traguardo 2. ⚠️ **Ricontate sulle tabelle il 2026-08-09:** questa riga
 diceva *«tre righe del blocco C»* mentre la tabella qui sotto ne elencava quattro, ed erano già
-sei — gotcha **#31**, un ritratto di conteggi si riconta invece di dedurlo. Del blocco **B**
+sei — gotcha **#31**, un ritratto di conteggi si riconta invece di dedurlo. ⚠️ **Ricontate di
+nuovo lo stesso giorno**, chiudendo la voce della **regola B**: erano sei e sono **sette**, e la
+riga nuova era già implementata da un compito — è la voce che questo registro portava dichiarata
+qui sotto. Del blocco **B**
 (i gettoni) è coperta **una riga su cinque**, `promuovere testo a istruzione ← la porta
 journal` (V19); gli altri quattro gettoni li emettono l'arbitro e il filtro dei vincoli, che
 nascono coi Traguardi 5 e 6.
@@ -50,16 +53,20 @@ nascono coi Traguardi 5 e 6.
 | **blocco C** · `V29 · §2.8` — il kernel **non nomina un default** | `crates/kernel/src/parameters.rs` — nessun `impl Default`, e `new` pretende ogni campo | `parameters_have_no_default.rs` |
 | **blocco C** · `V29 · §2.8 · ADR-0034` — una decisione **senza i parametri consegnati** | `crates/kernel/src/executor.rs` — `Executor::new` prende `Parameters` **per posizione**, quindi ometterli è un errore di arità e non un valore messo di default in silenzio | `executor_without_parameters.rs` |
 | **blocco C** · `Q9 · I6 · V20` — `Untrusted` **dove è attesa** un'`Instruction`, **regola A** | `crates/kernel/src/boundary.rs` — `Instruction` e `Untrusted` sono due tipi distinti | `untrusted_as_instruction.rs` |
+| **blocco C** · `Q9 · I6 · V20` — **nessuna via `From`/`Into`** da `Untrusted` a `Instruction`, **regola B** | idem: nessuna conversione è dichiarata, e l'unica strada ammessa è `promote`, che pretende il giornale | `no_conversion_from_untrusted_to_instruction.rs` |
 | **blocco B** · `V19` — **promuovere testo a istruzione ← la porta `journal`** | `crates/kernel/src/boundary.rs` — `Untrusted::promote` pretende il giornale come **argomento**, e la registrazione fallita fa fallire la promozione | `promote_without_journal.rs` |
 
-⛔ **Un caso è implementato e il catalogo non ha ancora la sua riga, e sta qui invece che nel
-silenzio.** `no_conversion_from_untrusted_to_instruction.rs` guarda la **regola B** della
-coppia `Untrusted`/`Instruction` — che **non esista** una via `From`/`Into` — esattamente come
-`no_conversion_from_monotonic_to_wall.rs` fa per i due tempi. Ma il blocco C porta la sola riga
-della regola A (`Q9 · I6 · V20`): la riga della regola B **va aggiunta alla spec**, con
-richiamo datato, ed è la **voce aperta dichiarata nella §6 del [compendio](COMPENDIO.md)**.
-È il gotcha **#36** colto prima che si sedimenti — e finché la riga non c'è, questo registro
-dice *implementato*, non *coperto dal catalogo*.
+✅ **La voce che questo registro portava aperta è chiusa il 2026-08-09, e il modo in cui è
+stata colta è la parte da tenere.** `no_conversion_from_untrusted_to_instruction.rs` esisteva
+dal Task 9 e il blocco C portava la sola riga della **regola A**: il caso era *implementato e
+non coperto dal catalogo*, che è il gotcha **#36** — alla terza occorrenza, ma la **prima colta
+prima che si sedimentasse**, perché lo scarto è stato scritto **qui** invece che nel silenzio.
+La riga della regola B è ora in §7.4.1 C con il proprio richiamo datato, e questo registro
+torna a dire *coperto*. ⛔ **La regola che ne esce, e vale oltre il caso:** quando un compito
+implementa un controllo che il catalogo non ha, il posto dove dichiararlo è **il registro**, e
+la dichiarazione va scritta come **voce aperta** — non come nota. Una nota si legge e si
+dimentica; una voce aperta la §6 del [compendio](COMPENDIO.md) la porta fino a che qualcuno la
+chiude.
 
 ⛔ **Le due direzioni non sono simmetriche nel modo di scattare, e la differenza conta —
 gotcha #42.** `trybuild` stampa **`error`** quando un caso ha compilato e **`mismatch`**
@@ -96,7 +103,7 @@ perché una regola guardata solo da casi `mismatch` non è guardata abbastanza.
 |---|---|---|
 | `crates/kernel/tests/time_types.rs` | **blocco C** · `V29 · §2.1`, entrambe | sette test |
 | `crates/simulator/tests/seeded_rng.rs` | **blocco C** · `V29 · §2.2` | otto test |
-| `crates/kernel/tests/boundary_promotion.rs` | **blocco C** · `Q9 · I6 · V20` **e blocco B** · `V19` | otto test |
+| `crates/kernel/tests/boundary_promotion.rs` | **blocco C** · `Q9 · I6 · V20`, **entrambe** — la promozione dichiarata è la contro-sonda della regola A e della regola B — **e blocco B** · `V19` | otto test |
 | `crates/kernel/tests/parameters_delivered.rs` | le **due** righe **blocco C** · `V29 · §2.8 · ADR-0034` | quattro test |
 
 ⛔ **`boundary_promotion.rs` è la contro-sonda di due blocchi insieme**, e ciascuno dei suoi

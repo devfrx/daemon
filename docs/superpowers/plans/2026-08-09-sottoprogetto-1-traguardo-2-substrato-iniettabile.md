@@ -49,6 +49,29 @@ quelle sezioni fissano. Il *perché* di ogni vincolo sta lì; qui c'è solo il *
 
 ---
 
+## Errata — 2026-08-09, dopo l'esecuzione dei Task 1 e 2
+
+> ⛔ **Da leggere prima dei compiti che restano.** Il piano **non si riscrive**: è il
+> registro di ciò che fu deciso, e riscriverlo falsificherebbe la storia. Ma non può
+> restare muto dove **detta una cosa e il repository ne contiene un'altra**.
+
+| # | Dove | Cosa non torna |
+|---|---|---|
+| **E1** | **Task 2 · Step 1**, il test `seed_zero_does_not_produce_a_dead_generator` | ⛔ **era vacuo**: resta **verde anche cancellando la guardia sullo zero**. `SeededRng::new(0)` mescola comunque a un valore non nullo, quindi per il seme 0 la guardia non scatta mai. La portata vera, **calcolata invece che assunta**: il moltiplicatore è **dispari**, quindi `seed → seed·M + 1` è una **biiezione modulo 2⁶⁴**, quindi **esattamente un seme** finisce a zero — `4_568_919_932_995_229_531`. La guardia è raggiungibile, portata uno, e il commento nel sorgente dice **quello e non di più**. ⚠️ Conseguenza dichiarata: quel seme e il seme 0 producono la **stessa sequenza**, perché la guardia porta a 1 ed è dove il seme 0 atterra da sé. È il gotcha **#14** applicato al piano stesso |
+| **E2** | **Task 2 · Step 5**, la sonda di non-vacuità che il piano suggeriva | ⛔ **era la sonda sbagliata**, e per la ragione che conta: togliere `fn below` dall'impl offensivo attacca **il caso**, non **il meccanismo**. Il meccanismo vieta *ogni* `impl RngExt` scritto a mano, quindi il caso resta rosso comunque e la sonda non distingue armato da disarmato. L'unica cosa che può disarmare la regola è **l'impl a tappeto**, ed è quella che va cancellata — verificato: `1 of 9`, isolamento pulito |
+| **E3** | **Task 13**, la frase *«in questo traguardo non nasce nessun controllo nuovo»* | ⛔ **è falsa.** Ne sono nati **due**, entrambi di livello 1: *«non esiste una via `From`/`Into` fra i due tempi»* e *«la riduzione di `below` non è sovrascrivibile»*. Il **catalogo §7.4.1 blocco C** è stato corretto con richiamo datato — una riga allargata e due nuove, da quattordici a **sedici** — e §7.4.7 ricontata. È il gotcha **#36**, colto **prima** che il catalogo restasse indietro invece che dopo |
+| **E4** | **Task 2 · Step 3**, la porta `Rng` con `below` come metodo di default | il piano scriveva la regola *«tutte le implementazioni riducono allo stesso modo»* **in un commento**, e un metodo di default **si sovrascrive**: era un'intenzione. Nel repository `below` vive su **`RngExt`**, tratto d'estensione con `impl<R: Rng> RngExt for R {}`, e un impl scritto a mano collide con `E0119`. Costo dichiarato: i chiamanti importano due tratti |
+| **E5** | **Task 2**, il comportamento di `below(0)` | il piano non lo fissava. Deciso eseguendo: **`below(0)` consuma comunque un'estrazione**. Cortocircuitare farebbe dipendere il **numero di estrazioni** dalla dimensione della collezione, e due corse dello stesso seme che differiscono per un solo passo vuoto divergerebbero — **invisibilmente**. Fissato da un test, non da un commento |
+| **E6** | **Task 1**, l'API di `time.rs` | tolti `Millis::ZERO` e `Monotonic::as_millis`: **nessuno dei quattordici compiti li consuma**. Da qui il vincolo globale **14** |
+| **E7** | **Task 1 · Step 5**, «il caso negativo» al singolare | i casi sono **quattro**, perché le regole erano **due**: *«non si passa l'uno per l'altro»* e *«non esiste una via di conversione»*, ciascuna in **entrambe** le direzioni. Il piano ne dettava uno solo, e con quello solo la porta restava **verde su sei su sei** aggiungendo `impl From<WallTime> for Monotonic` — cioè la direzione **pericolosa** |
+
+📌 **La lezione che attraversa E1, E2 e E7, e che vale per i dodici compiti rimasti:** tre
+volte su tre il difetto non era nel codice ma **nella sonda scritta nel piano**, e tre volte
+su tre è emerso solo **provando il controllo in negativo**. Le sonde di questo piano vanno
+trattate come ipotesi, non come istruzioni.
+
+---
+
 ## Il perimetro, e la voce che è stata cercata prima di fissarlo
 
 ⛔ **Da leggere prima dei compiti.** Il perimetro di questo traguardo è stato messo in

@@ -2629,7 +2629,9 @@ quella «semplificazione» prima che qualcuno la applichi.
 |---|---|---|
 | **Q9** · I6 · V20 | `Untrusted` assegnato a `Instruction` | la promozione dichiarata compila |
 | **Q2** · §5.1 | MiB assegnati a millisecondi | ciascuno con sé stesso |
-| **V29** · §2.1 | tempo monotonic assegnato a wall time | idem |
+| **V29** · §2.1 | tempo monotonic assegnato a wall time, **e wall time assegnato a un istante di decisione** — la §2.1 dice *«scambiarli non compila»*, che è simmetrico | ciascuno accettato dal proprio |
+| **V29** · §2.1 | una **via di conversione `From`/`Into`** fra i due tempi | i due accessori, nominati entrambi esplicitamente, compilano |
+| **V29** · §2.2 | una **riduzione propria** di `below`: vive su un tratto d'estensione con impl a tappeto, e un impl scritto a mano collide | usare la riduzione del kernel compila |
 | **I2** · §5.3 | `InRevoca` per un profilo non prelazionabile | costruibile per uno prelazionabile |
 | **Q8** · §5.2.1 | l'ammissione legge `cold_start` | la proiezione di presentazione lo legge |
 | **V5** | un effetto **senza classe dichiarata** — §7.4.4 | un effetto con la classe compila |
@@ -2641,6 +2643,25 @@ quella «semplificazione» prima che qualcuno la applichi.
 | **Q14** · §4.9 | un **record durevole senza versione**: il tipo è un enum di versione — §4.9.2 regola 1 | il record che dichiara la propria versione compila |
 | **I2** · §6.10 | **istruire un worker dopo `uccidi`**: l'uccisione **consuma** il `Worker` — §6.10.2 | istruirlo prima dell'uccisione compila |
 | **I5** · §6.10 | **leggere due volte dalla stessa ricevuta singola**: la lettura la consuma — §6.10.2 | leggerne una compila |
+
+> ⛔ **Tre righe toccate il 2026-08-09, eseguendo il Traguardo 2 — e due sono controlli
+> _nuovi_.** È la differenza dalle note qui sotto, e va detta invece che confusa.
+>
+> | | |
+> |---|---|
+> | la riga `V29 · §2.1` è **allargata** | diceva una direzione sola. Misurato: con quel solo caso, aggiungere `impl From<WallTime> for Monotonic` lasciava la porta **verde su sei controlli su sei** — e quella è la direzione **pericolosa**, la decisione che dipende dal wall time. La §2.1 diceva già *«scambiarli non compila»*, simmetrico: il catalogo era più stretto della sezione |
+> | **la seconda riga `V29 · §2.1` è nuova** | le regole erano **due** e il catalogo ne registrava una: *«non si passa l'uno per l'altro»* e *«non esiste una via `From`/`Into`»*. La seconda era scritta **in un commento del sorgente**, cioè era un'intenzione |
+> | **la riga `V29 · §2.2` è nuova** | `below` viveva come metodo di default, e un metodo di default **si sovrascrive**. Due implementazioni che riducono in modo diverso producono tracce diverse dallo stesso seme, **invisibilmente**. Ora vive su un tratto d'estensione con impl a tappeto, e la collisione è `E0119` |
+>
+> 📌 **E ne esce un test generale, che è il gotcha #42:** `trybuild` distingue nel proprio
+> output **`error`** (il caso ha compilato) da **`mismatch`** (l'uscita non combacia con
+> l'oracolo). Le due righe nuove scattano come **`error`**, quindi non poggiano sul proprio
+> oracolo; la riga allargata scatta come `mismatch` e vi poggia. Una regola guardata **solo**
+> da casi `mismatch` è una regola che una rigenerazione in blocco spegne in silenzio.
+>
+> ⚠️ **Perché entrano qui e non solo nel registro:** §8.1.2 ammette come «controllo» solo ciò
+> che il catalogo elenca, e il gotcha **#36** è successo due volte proprio così — una sezione
+> decide un meccanismo, lo scrive nella propria tabella, e il catalogo resta indietro.
 
 > ⚠️ **Due righe aggiunte il 2026-08-08, e non sono controlli nuovi.** Sono i controlli 2 e
 > 4 della §6.10.5, decisi con F1b e
@@ -2931,7 +2952,7 @@ La §8 registra quali porte hanno la suite e quali no, con il sotto-progetto che
 | Costo | |
 |---|---|
 | **ogni regola nuova porta due sonde, non una** | e la contro-sonda è la più noiosa da scrivere, perché verifica che *non* succeda niente |
-| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta ormai diciannove — **cinque** nel blocco B e **quattordici** nel C — e ciascuno ha un `.stderr` da leggere (gotcha #25). ⚠️ **Ricontato sulla tabella il 2026-08-08**: diceva «una dozzina, tre e nove», ed era il ritratto di **prima** di ADR-0034, ADR-0036 e §6.10.5. Un ritratto di conteggi si riconta, non si deduce |
+| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta ormai **ventuno** — **cinque** nel blocco B e **sedici** nel C — e ciascuno ha un `.stderr` da leggere (gotcha #25). ⚠️ **Ricontato sulla tabella il 2026-08-08**: diceva «una dozzina, tre e nove», ed era il ritratto di **prima** di ADR-0034, ADR-0036 e §6.10.5. ⚠️ **Ricontato di nuovo il 2026-08-09**, eseguendo il Traguardo 2: diceva «diciannove, cinque e quattordici», ed era il ritratto di prima delle **due righe nuove** del blocco C. Un ritratto di conteggi si riconta, non si deduce — gotcha #31 |
 | **una voce è provata in una direzione sola** | V25, finché la rete non esiste. Dichiarato in §7.4.2 |
 | **V31 resta debole per natura** | l'automatismo protegge la proprietà, non il seme: §3.4 |
 | **i test di contratto sono lavoro reale** | due suite ora, due rimandate. È il prezzo per non provare Q4 e Q5 contro una finzione |

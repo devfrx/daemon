@@ -31,14 +31,39 @@ Dopo la prima corsa non sarebbe più stato gratis.
 
 ## Livello 1 — il compilatore
 
-Le tre righe del **blocco A** di §7.4.1. I blocchi **B** (gettoni) e **C** (cosa non è
-esprimibile) non sono ancora implementati: richiedono tipi che il Traguardo 1 non scrive.
+Le tre righe del **blocco A** di §7.4.1, e **tre righe del blocco C** dal Traguardo 2. Il
+blocco **B** (i gettoni) non è ancora implementato: i suoi gettoni li emettono l'arbitro e
+il filtro dei vincoli, che nascono coi Traguardi 5 e 6.
 
 | Regola del catalogo | Dove è dichiarata | Caso negativo |
 |---|---|---|
 | `#![no_std]` su `kernel` e `simulator` | `crates/kernel/src/lib.rs` · `crates/simulator/src/lib.rs` | `crates/kernel/tests/compile_fail/std_in_kernel.rs` |
 | `#![forbid(unsafe_code)]` sulle stesse | idem | `crates/kernel/tests/compile_fail/unsafe_in_kernel.rs` · `allow_overrides_forbid.rs` |
 | `HashMap` non nominabile | conseguenza gratuita di `no_std` | `crates/kernel/tests/compile_fail/hashmap_in_kernel.rs` |
+| **blocco C** · `V29 · §2.1` — i due tempi non si scambiano, **in nessuna delle due direzioni** | `crates/kernel/src/time.rs` — `Monotonic` e `WallTime` sono due tipi distinti | `monotonic_as_wall.rs` · `wall_as_monotonic.rs` |
+| **blocco C** · `V29 · §2.1` — **nessuna via `From`/`Into`** fra i due tempi | idem: nessuna conversione è dichiarata, e il divieto non è più un commento | `no_conversion_from_monotonic_to_wall.rs` · `no_conversion_from_wall_to_monotonic.rs` |
+| **blocco C** · `V29 · §2.2` — la **riduzione** di `below` non è sovrascrivibile | `crates/kernel/src/rng.rs` — `below` vive su `RngExt`, con `impl<R: Rng> RngExt for R {}` | `override_below.rs` |
+
+⛔ **Le due direzioni non sono simmetriche nel modo di scattare, e la differenza conta —
+gotcha #42.** `trybuild` stampa **`error`** quando un caso ha compilato e **`mismatch`**
+quando l'uscita non combacia con l'oracolo:
+
+| Regola | Scatta come | Dipende dall'oracolo? |
+|---|---|---|
+| i due tempi non si scambiano | `mismatch` | **sì** — una rigenerazione in blocco la spegnerebbe in silenzio |
+| nessuna via `From`/`Into` | **`error`** | no |
+| `below` non sovrascrivibile | **`error`** | no |
+
+Misurato: col solo caso «passa l'uno per l'altro», aggiungere `impl From<WallTime> for
+Monotonic` lasciava la porta **verde su sei controlli su sei**. La riga `From`/`Into` esiste
+perché quella era la direzione **pericolosa** — una decisione che dipende dal wall time — e
+perché una regola guardata solo da casi `mismatch` non è guardata abbastanza.
+
+**Contro-sonde delle righe nuove:** `crates/kernel/tests/time_types.rs` (sette) ·
+`crates/simulator/tests/seeded_rng.rs` (otto). ⛔ **I cinque casi nuovi nominano `kernel::`
+e non ridichiarano attributi propri**, a differenza dei quattro del Traguardo 1: è il rimedio
+al gotcha **#39**, e significa che i loro oracoli sono accoppiati alla **superficie pubblica
+del kernel**. Un cambio di firma li rende rossi, ed è corretto che lo faccia.
 
 ⛔ **La colonna «Caso negativo» prova il meccanismo, non la dichiarazione — e il registro
 non deve lasciar credere altro.** I quattro casi di `crates/kernel/tests/compile_fail/`
@@ -139,7 +164,8 @@ che le omettesse lascerebbe credere che siano coperte.
 
 | Riga del catalogo | Perché non c'è ancora |
 |---|---|
-| i **blocchi B e C** di §7.4.1 — gettoni e tipi non esprimibili | non esistono ancora i tipi. Nascono col substrato iniettabile, Traguardo 2, e coi meccanismi successivi |
+| il blocco **B** di §7.4.1 — i **gettoni** | i gettoni li emettono l'arbitro (§5.6) e il filtro dei vincoli (§6.3): **Traguardi 5 e 6**. ⛔ Un costruttore di `Grant` dietro una feature di test **è stato valutato e scartato**: creerebbe il secondo modo di ottenere una concessione che §5.6 esiste per togliere dal compilatore |
+| il resto del blocco **C** di §7.4.1 | tre righe su sedici sono implementate (sopra). Le altre nominano tipi dell'arbitro, del giornale e del canale worker, che nascono coi Traguardi 3, 5 e 6 |
 | i **test di contratto** fra porta finta e porta vera | non esistono ancora le porte. Traguardo 2 |
 | i **byte congelati** del record durevole | non esiste ancora nessun record. Entrano al **primo** record scritto — vincolo 14 della §11 del [compendio](COMPENDIO.md), Traguardo 3 |
 | la **campagna DST**, e l'elenco versionato dei **semi** di V31 | non esiste ancora il simulatore. Traguardo 4 |

@@ -31,3 +31,13 @@ minicbor = { version = "2.3.0", default-features = false, features = ["alloc", "
 
 [dev-dependencies]
 trybuild = "1"
+
+# ⚠️ DEV-dependency, not a shipped one: `gate-deps.sh` measures the shipped graph with
+# `-e normal,no-proc-macro`, so this does not enter the ADR-0031 list. Verified by
+# running the gate, not deduced — gotcha #41.
+#
+# ⚠️ AND IT CLOSES A CYCLE, `kernel -> (dev) -> simulator -> kernel`. Cargo accepts it
+# because a dev-dependency does not take part in building the library; it was still run
+# once rather than assumed. The test lives here and not in `simulator/tests/` because what
+# it proves is THE KERNEL'S EXECUTOR under a fake reactor.
+simulator = { path = "../simulator" }

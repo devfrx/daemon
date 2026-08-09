@@ -3,10 +3,10 @@
 //! | Concept     | What it is for                                    | Who uses it   |
 //! |-------------|---------------------------------------------------|---------------|
 //! | `Monotonic` | deadlines, grant validity windows, grace, timeouts | THE DECISIONS |
-//! | `WallTime`  | what time it is in the world -- Q14, journal stamps| THE RECORD    |
+//! | `WallTime`  | what time it is in the world — Q14, journal stamps | THE RECORD    |
 //!
-//! ⛔ No kernel decision depends on wall time. The system clock goes backwards -- NTP,
-//! daylight saving, the user changing it -- and a run that died for that reason would be
+//! ⛔ No kernel decision depends on wall time. The system clock goes backwards — NTP,
+//! daylight saving, the user changing it — and a run that died for that reason would be
 //! an irreproducible defect, which is the class this sub-project exists to remove.
 //!
 //! They are two types and not two functions over one type: swapping them does not
@@ -20,8 +20,6 @@
 pub struct Millis(u64);
 
 impl Millis {
-    pub const ZERO: Millis = Millis(0);
-
     pub const fn new(value: u64) -> Self {
         Millis(value)
     }
@@ -32,7 +30,7 @@ impl Millis {
 }
 
 /// Monotonic time: never goes backwards. The origin is arbitrary and carries no
-/// meaning -- only differences do.
+/// meaning — only differences do.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Monotonic(u64);
 
@@ -50,7 +48,7 @@ impl Monotonic {
     }
 
     /// Saturating and NOT wrapping: a deadline that wraps becomes a deadline in the
-    /// past and fires immediately -- a defect that hides itself.
+    /// past and fires immediately — a defect that hides itself.
     pub const fn saturating_add(self, delta: Millis) -> Self {
         Monotonic(self.0.saturating_add(delta.0))
     }

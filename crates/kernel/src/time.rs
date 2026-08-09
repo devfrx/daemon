@@ -9,10 +9,16 @@
 //! daylight saving, the user changing it — and a run that died for that reason would be
 //! an irreproducible defect, which is the class this sub-project exists to remove.
 //!
-//! They are two types and not two functions over one type: swapping them does not
-//! compile, by the same mechanism that separates `Instruction` from `Untrusted`. The
-//! ban is proved in BOTH directions — `tests/compile_fail/monotonic_as_wall.rs` and
-//! `tests/compile_fail/wall_as_monotonic.rs` — because one direction alone is half a ban.
+//! They are two types and not two functions over one type, by the same mechanism that
+//! separates `Instruction` from `Untrusted`. The ban has TWO rules, each proved in BOTH
+//! directions in `tests/compile_fail/`: rule A — neither can be passed where the other
+//! is expected — by `monotonic_as_wall.rs` and `wall_as_monotonic.rs`; rule B — no
+//! `From`/`Into` path exists between them — by `no_conversion_from_monotonic_to_wall.rs`
+//! and `no_conversion_from_wall_to_monotonic.rs`.
+//!
+//! ⛔ So do NOT add `impl From<Monotonic> for WallTime`, nor the reverse. Rule B's two
+//! cases catch it by COMPILING, which trybuild reports as a failure outright — they do
+//! not depend on their oracle to notice.
 //!
 //! Unit: the millisecond, everywhere (decision D1 of the milestone 2 plan).
 

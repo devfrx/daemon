@@ -1,8 +1,9 @@
 //! Counter-probes for the three time types (§2.1).
 //!
-//! The probes that must FIRE live in `tests/compile_fail/monotonic_as_wall.rs` and
-//! `tests/compile_fail/wall_as_monotonic.rs`: these are the other direction — the one
-//! that is forgotten (§7.1.1, rule 3).
+//! The probes that must FIRE live in `tests/compile_fail/`, and there are four: two for
+//! rule A — neither time can be passed where the other is expected — and two for rule B
+//! — no `From`/`Into` path exists between them. These here are the other direction, the
+//! one that is forgotten (§7.1.1, rule 3).
 
 use kernel::time::{Millis, Monotonic, WallTime};
 

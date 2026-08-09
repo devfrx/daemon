@@ -1,4 +1,4 @@
-// Catalogue §7.4.1 block C, row `V29 · §2.1`, rule B: there is NO conversion path
+// Catalogue §7.4.1 block C, row `V29 · §2.1`, rule B: there is no `From`/`Into` path
 // between the two times.
 //
 // ⛔ Rule A — that one type cannot be passed where the other is expected — is guarded by

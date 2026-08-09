@@ -47,16 +47,27 @@ use crate::time::Monotonic;
 pub enum RunError {
     /// The turn limit was reached. A BLOCK MUST SHOW UP AS AN ERROR, never as an infinite
     /// wait: a test that never ends says nothing (§3.2.1).
-    TurnLimitReached,
-    /// No activity can advance and the reactor has nothing to advance to. Distinct from
-    /// `TurnLimitReached`: this one is a deadlock, that one is a slow loop.
     ///
-    /// ⚠️ IT ALSO COVERS A CASE THAT IS NOT A DEADLOCK, and saying so here is cheaper than
-    /// letting somebody find it: an activity suspended on a deadline that is NOT STRICTLY IN
-    /// THE FUTURE — the current instant included, so a zero-length sleep — stops the whole
-    /// run with this error instead of being polled again. See `Sleep::until`, which carries
-    /// the caller's half of the contract.
-    Stalled,
+    /// It is the backstop for every way an activity can fail to progress under its own
+    /// power — a loop that yields for ever, or one that keeps re-registering a deadline the
+    /// clock has already passed. Both are slow loops, and both end here.
+    TurnLimitReached,
+    /// The reactor was asked to advance to an instant STRICTLY IN THE FUTURE and refused.
+    /// The `reactor` contract forbids that: `wait_until` returns `None` only when there is
+    /// nothing to wait for, and a deadline strictly ahead of `now` is something to wait for.
+    /// The executor fails closed rather than spinning on a port that will not move.
+    ///
+    /// ⚠️ UNREACHABLE WITH A CONFORMING REACTOR, and writing which of the two it is beats
+    /// leaving it to be guessed: this is a FAIL-CLOSED GUARD against an implementation that
+    /// breaks its own contract, not a state a correct run can enter. It is a variant rather
+    /// than a comment because it is TESTABLE — the conformance suite of §7.4.6 builds a
+    /// deliberately broken reactor, and that is the only thing that can produce it.
+    ///
+    /// ⛔ IT IS NOT A DEADLOCK, and an earlier draft called it `Stalled` and meant exactly
+    /// that. The rename came with the fix: an activity whose deadline has already passed is
+    /// READY, not blocked, so it is promoted and polled. What is left here is only the port
+    /// misbehaving.
+    ReactorWillNotAdvance,
 }
 
 /// What an activity is doing, from the executor's point of view.
@@ -105,21 +116,28 @@ impl Sleep {
 
     /// Declare that the calling activity is suspended until `deadline`.
     ///
-    /// ⛔ THE CALLER'S HALF OF THE CONTRACT: `deadline` must be STRICTLY LATER than the
-    /// instant the run is at. A deadline already reached cannot move the clock, so the
-    /// executor refuses to treat it as a wait and stops with `RunError::Stalled` — it does
-    /// not promote the activity, and it does not spin. That is §3.2.1's rule taken at its
-    /// word: a null advance is never reported as a successful one.
+    /// ⛔ A DEADLINE ALREADY REACHED IS NOT AN ERROR — the wait is simply over. The executor
+    /// promotes the activity and polls it again WITHOUT touching the clock, so a zero-length
+    /// sleep behaves as a yield rather than stopping the run.
     ///
-    /// ⚠️ THE COST IS REAL AND IT IS PAID BY THE CALLER: a future cannot read the clock — it
-    /// holds no reactor — so an activity computing an absolute deadline has to obtain it
-    /// from `Executor::now` at a point where it can still be sure the instant lies ahead. A
-    /// zero-length sleep is NOT a no-op here: it stops the run.
+    /// ⚠️ WHY IT HAS TO WORK THIS WAY, and the reason is structural rather than a kindness:
+    /// A FUTURE CANNOT READ THE CLOCK — it holds no reactor — so an activity computing an
+    /// absolute deadline has no way of checking that the instant still lies ahead by the
+    /// time it is polled. Under the opposite rule any deadline that elapsed while the other
+    /// activities ran would kill the whole run. That is a trap, not a property.
     ///
-    /// ⚠️ This is a runtime rule and this comment does not pretend otherwise. No compiler
-    /// stops a caller from passing a past instant; what holds it is the level 2 case
-    /// `a_deadlock_is_stalled_and_not_a_null_advance`, which proves the executor REPORTS the
-    /// situation rather than spinning on it.
+    /// 📌 §3.2.1 GOVERNS THE REACTOR, NOT THIS, and conflating the two is how the opposite
+    /// rule got written in the first place. What that section rules is that `advance()`
+    /// filters strictly future deadlines and returns false when there are none, because A
+    /// NULL ADVANCE MUST NEVER BE DECLARED SUCCESSFUL — a rule about the PORT refusing to
+    /// lie about the clock. It is honoured at the call site of `wait_until`, which is never
+    /// handed an instant that is not strictly ahead. It says nothing about what the executor
+    /// owes an activity whose wait is already over.
+    ///
+    /// ⚠️ THE COST, declared: an activity that re-registers a past deadline on every poll
+    /// never blocks the clock, but never progresses either. It ends as
+    /// `RunError::TurnLimitReached` — "a slow loop", which is the accurate diagnosis and the
+    /// reason the turn limit exists.
     pub fn until(&self, deadline: Monotonic) {
         self.until.set(Some(deadline));
     }
@@ -189,14 +207,30 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
                 continue;
             }
 
-            // Nobody can work. Find the earliest deadline STRICTLY IN THE FUTURE and let the
-            // reactor take us there.
+            // Nobody can work — every remaining activity is `Sleeping`.
             //
-            // ⛔ "Strictly": the first draft of the spike took the minimum of ALL registered
-            // deadlines, including those of finished tasks, so the minimum fell in the past,
-            // the clock did not move, and the function declared success anyway. The executor
-            // spun forever. §3.2.1.
+            // ⛔ FIRST, A WAIT THAT IS ALREADY OVER IS NOT A WAIT. An activity whose deadline
+            // the clock has already reached is READY, so it is promoted and polled, and the
+            // clock is not touched. Doing otherwise looks defensible and is a trap: a future
+            // cannot read the clock, so it cannot avoid registering a deadline that elapses
+            // while the others run, and the whole run would die of it. See `Sleep::until`.
             let now = self.reactor.now();
+            if self.wake_those_due_at(now) {
+                continue;
+            }
+
+            // Only now, with every sleeper strictly ahead of `now`, is there something to
+            // wait FOR. Take the earliest and let the reactor move the clock to it.
+            //
+            // ⛔ "Strictly" is the precondition of `wait_until`, and it is §3.2.1's rule at
+            // the one boundary where it binds: the port must never report a null advance as
+            // a successful one — the trap the spike's first draft walked into by taking the
+            // minimum of ALL registered deadlines, finished activities included, so that the
+            // minimum fell in the past and the executor spun for ever.
+            //
+            // ⚠️ The filter cannot exclude anything today — the promotion above has already
+            // removed every candidate it would reject — and it stays because it states that
+            // precondition where the call is made rather than three lines away.
             let earliest = self
                 .tasks
                 .iter()
@@ -206,28 +240,44 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
                 })
                 .min();
 
-            let Some(deadline) = earliest else {
-                return Err(RunError::Stalled);
-            };
-            let Some(reached) = self.reactor.wait_until(deadline) else {
-                return Err(RunError::Stalled);
-            };
+            // ⚠️ `earliest` is always `Some` here: the loop guard says the vector is not
+            // empty, `poll_one_turn` returned false so nothing is `Runnable`, and the
+            // promotion above returned false so every sleeper is strictly ahead. Were that
+            // ever to stop holding, the turn limit ends the run with an error instead of
+            // hanging it — which is why this is an `if let` and not a second error variant
+            // that no reachable state produces.
+            if let Some(deadline) = earliest {
+                let Some(reached) = self.reactor.wait_until(deadline) else {
+                    return Err(RunError::ReactorWillNotAdvance);
+                };
 
-            // ⚠️ `reached` and not `deadline`: the port may come back EARLY, because an
-            // external event beat the deadline. Promoting by the instant actually reached is
-            // what keeps that honest — an early return wakes nobody, and the next turn asks
-            // again. Nothing produces external events in this milestone, so today every wait
-            // that returns `Some` ran to its deadline.
-            for task in &mut self.tasks {
-                if let TaskState::Sleeping(until) = task.state
-                    && until <= reached
-                {
-                    task.state = TaskState::Runnable;
-                }
+                // ⚠️ `reached` and not `deadline`: the port may come back EARLY, because an
+                // external event beat the deadline. Promoting by the instant actually
+                // reached is what keeps that honest — an early return wakes nobody, and the
+                // next turn asks again. Nothing produces external events in this milestone,
+                // so today every wait that returns `Some` ran to its deadline.
+                self.wake_those_due_at(reached);
             }
         }
 
         Ok(())
+    }
+
+    /// Promotes every activity whose deadline `instant` has reached, and says whether any
+    /// was. THE ONLY PLACE a sleeper becomes runnable, called from the two points that mean
+    /// different things: `now`, where the wait turns out to be already over, and the instant
+    /// the reactor came back at, where the clock has just moved.
+    fn wake_those_due_at(&mut self, instant: Monotonic) -> bool {
+        let mut woken = false;
+        for task in &mut self.tasks {
+            if let TaskState::Sleeping(until) = task.state
+                && until <= instant
+            {
+                task.state = TaskState::Runnable;
+                woken = true;
+            }
+        }
+        woken
     }
 
     /// Polls every `Runnable` activity once, in an order chosen by the seed. Returns whether

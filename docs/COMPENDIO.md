@@ -602,7 +602,7 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 2. ~~**Il piano**~~ — ✅ **scritto**: [Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
 3. ~~**Il codice del Traguardo 1**~~ — ✅ **eseguito** subagent-driven, otto compiti più quattro di riallineamento alla §1.0. `GATE GREEN`.
 4. ~~**Il piano del Traguardo 2**~~ — ✅ **scritto il 2026-08-09**: [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md), quattordici compiti in due parti.
-5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–7 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ **Il prossimo passo è il Task 8** — il cablaggio di produzione in `daemon`, coi **default letterali** (vincolo 11 della §11).
+5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–9 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ **Il prossimo passo è il Task 10** — le porte `filesystem` e `network`. ⛔ **E una voce resta aperta, da approvare prima di scriverla:** il Task 9 ha prodotto **un controllo nuovo** — il caso `no_conversion_from_untrusted_to_instruction`, misurato **portante** — e il **catalogo §7.4.1 blocco C** non ha la riga della **regola B** per la coppia `Untrusted`/`Instruction`, ma solo quella della regola A (`Q9 · I6 · V20`). È il gotcha **#36**, e la forma del rimedio è nota: allargare il blocco con **richiamo datato**, come già fatto per i due tempi.
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
@@ -617,8 +617,10 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 | 5 | **l'esecutore** | ✅ |
 | 6 | il reattore finto, e la misura dell'interlacciamento | ✅ |
 | 7 | il reattore reale in `platform`, e la prima suite di conformità | ✅ |
-| **8** | **il cablaggio di produzione in `daemon`, coi default letterali** | ⏭️ **riprende qui** |
-| 9–12 | il confine dei tipi · `journal` e `filesystem` · `process` coi gettoni · `ipc` | ⬜ |
+| 8 | il cablaggio di produzione in `daemon`, coi default letterali | ✅ |
+| 9 | il confine dei tipi, e la promozione che pretende il giornale | ✅ |
+| **10** | **le porte `filesystem` e `network`** | ⏭️ **riprende qui** |
+| 11–12 | `process` coi gettoni e le due ricevute · `ipc` | ⬜ |
 | 13–14 | il registro dei controlli · la chiusura del traguardo | ⬜ |
 
 ✅ **I due buchi che il Task 6 aveva lasciato in eredità sono chiusi — ma uno dei due NON era

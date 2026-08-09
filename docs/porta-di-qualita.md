@@ -99,6 +99,7 @@ quella che deve restare verde.
 | le crate vincolate **dichiarano davvero** i propri attributi | `scripts/gate-attributes.sh` | `forbid` tolto · `deny` al posto di `forbid` · attributi tolti a `simulator` · file atteso assente · lista dei vincolati vuota | stato pulito · `platform`, `secrets` e `daemon` |
 | le crate vincolate **non hanno un build script** | idem, e l'errore è **diverso** | `crates/kernel/build.rs` · `crates/simulator/build.rs` · `build = "gen.rs"` nel manifesto · manifesto assente | `crates/platform/build.rs` · `build = false` |
 | coerenza della documentazione | `scripts/check-docs.sh` | S1…S6c · S7 · S7b · S7c · S7d | C0 · C5 · **C6** |
+| i **test di contratto** fra porta finta e porta vera — porta `reactor` | `crates/kernel/tests/reactor_contract.rs`, incluso da `crates/platform/tests/reactor_contract_real.rs` | **R3** · **R4** · R5 | R1 · R2 · **R6** |
 
 Le sonde, per nome:
 
@@ -114,6 +115,12 @@ Le sonde, per nome:
 | **B3** | contro-sonda: con `--workspace` il cancello fallirebbe su `platform` con `can't find crate for std` — **motivo giusto, crate sbagliata**. Per questo il comando nomina `-p kernel -p simulator` |
 | **B4** | il bersaglio non installato → uscita 1 e messaggio corretto. ⚠️ Vedi sotto: è la via *offline* |
 | **S1…S7d · C0 · C5 · C6** | **diciotto su diciotto**, con ripristino byte-identico della spec: le tredici del 2026-08-07 (§8.6.3) più le quattro di `S7` e la contro-sonda `C6`, aggiunte chiudendo la §7.1.1 |
+| **R1** | la **finta** onora il contratto — il verde di partenza dal lato `simulator` |
+| **R2** | la **vera** onora il contratto: la stessa funzione, gli stessi assert, l'altra implementazione. È ciò che la suite esiste per comprare |
+| **R3** | `NullAdvanceLiar`, che risponde `Some` a una scadenza **pari** all'istante corrente → la suite scatta. ⛔ E il test **legge il payload del panic**: verifica *quale* asserzione ha sparato, perché un `is_err()` nudo direbbe «ho colto il null advance» anche se a scattare fosse stata un'altra — una misura vera di un'altra cosa, gotcha #15 |
+| **R4** | `PastDeadlineLiar`, che onora `deadline == now` e mente su `deadline < now` → scatta sul **solo** caso 2b. ⛔ È la sonda che prova che il caso 2b **non è vacuo**: prima che esistesse, cancellare l'intero blocco 2b lasciava la porta **verde**, e con essa la metà `<` del ramo priva di guardia. Gotcha **#45** |
+| **R5** | la plausibilità di `wall_time()` sulla **vera** — `crates/platform/tests/wall_clock_plausibility.rs`: un istante posteriore a una data fissa del passato. Coglie l'orologio fermo a **zero o all'epoca**, che era la mutazione sopravvissuta alla prima stesura |
+| **R6** | ⛔ **la contro-sonda che conta, e la si sarebbe dimenticata:** rompendo l'avanzamento dell'orologio di parete del `VirtualReactor`, la conformità **resta verde** e scatta **solo** `crates/simulator/tests/virtual_clock.rs`. È la prova che la suite condivisa non impone alla vera un comportamento della finta — se lo facesse, renderebbe rossa un'implementazione **corretta**. Gotcha **#44** |
 
 ⛔ **La riga del build script è la sesta voce di livello 2, ed è entrata il 2026-08-09 su una
 lacuna _misurata_.** Un `crates/kernel/build.rs` che chiama `SystemTime::now()`,
@@ -188,7 +195,8 @@ che le omettesse lascerebbe credere che siano coperte.
 |---|---|
 | il blocco **B** di §7.4.1 — i **gettoni** | i gettoni li emettono l'arbitro (§5.6) e il filtro dei vincoli (§6.3): **Traguardi 5 e 6**. ⛔ Un costruttore di `Grant` dietro una feature di test **è stato valutato e scartato**: creerebbe il secondo modo di ottenere una concessione che §5.6 esiste per togliere dal compilatore |
 | il resto del blocco **C** di §7.4.1 | tre righe su sedici sono implementate (sopra). Le altre nominano tipi dell'arbitro, del giornale e del canale worker, che nascono coi Traguardi 3, 5 e 6 |
-| i **test di contratto** fra porta finta e porta vera | ⏭️ **Traguardo 2, Task 7.** La porta `reactor` esiste, la finta pure (`VirtualReactor`), la vera no. ⛔ **Due cose che quella suite deve coprire, o partono non provate:** il ramo `deadline <= now → None` di `VirtualReactor::wait_until` — che **nessun test esercita**, perché l'esecutore non lo raggiunge più da quando promuove i dormienti scaduti — e `VirtualReactor::wall_time()`, che **nessuno legge**. Sono contratto della porta, e §7.4.6 chiama questa suite *«la più importante: la validità della DST poggia lì»* |
+| i test di contratto per le **altre cinque** famiglie di porte | ✅ **`reactor` è coperta** dal Task 7 — sonde R1…R6 di livello 2. Restano `journal`, `filesystem`, `network`, `process` e `ipc`: le loro implementazioni nascono coi **Traguardi 3, 5 e 6**, e la suite di ciascuna nasce con esse |
+| **due residui dichiarati dentro `SystemReactor`**, e stanno qui perché un registro che li tacesse mentirebbe | ⛔ sostituire `Some(self.now())` con `Some(deadline)` in `wait_until` **non fa scattare nulla**: la conformità non può coglierlo perché **sulla finta le due espressioni coincidono**, e distinguerle sulla vera richiederebbe l'overshoot dello sleep del sistema operativo, che nessuna piattaforma garantisce — un controllo verde per fortuna e rosso per sfortuna, cioè peggio di uno assente (gotcha #24). ⚠️ E `R5` prova che `wall_time()` non è **ferma**, non che sia **esatta**: l'esattezza vorrebbe una seconda sorgente di tempo |
 | i **byte congelati** del record durevole | non esiste ancora nessun record. Entrano al **primo** record scritto — vincolo 14 della §11 del [compendio](COMPENDIO.md), Traguardo 3 |
 | la **campagna DST**, e l'elenco versionato dei **semi** di V31 | non esiste ancora il simulatore. Traguardo 4 |
 | i **byte consumati** pari alla lunghezza dichiarata dal frame | non esiste ancora il canale verso i worker. Traguardo 6 |

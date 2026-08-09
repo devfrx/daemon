@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (593 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 267), e
+> (597 KB con `wc -c` il 2026-08-09, e possono solo crescere — la spec da sola ne fa 267), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-09.** Manutenzione: §13.
@@ -602,7 +602,7 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 2. ~~**Il piano**~~ — ✅ **scritto**: [Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
 3. ~~**Il codice del Traguardo 1**~~ — ✅ **eseguito** subagent-driven, otto compiti più quattro di riallineamento alla §1.0. `GATE GREEN`.
 4. ~~**Il piano del Traguardo 2**~~ — ✅ **scritto il 2026-08-09**: [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md), quattordici compiti in due parti.
-5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–6 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ **Il prossimo passo è il Task 7** — il reattore reale in `platform`, e la prima suite di conformità fra porta finta e porta vera.
+5. 🔵 **Il codice del Traguardo 2 — in corso.** ✅ **Task 1–7 eseguiti** subagent-driven il 2026-08-09, `GATE GREEN` a ogni compito. ⏭️ **Il prossimo passo è il Task 8** — il cablaggio di produzione in `daemon`, coi **default letterali** (vincolo 11 della §11).
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
@@ -616,22 +616,38 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 | 4 | la porta `Reactor` | ✅ |
 | 5 | **l'esecutore** | ✅ |
 | 6 | il reattore finto, e la misura dell'interlacciamento | ✅ |
-| **7** | **il reattore reale in `platform`, e la prima suite di conformità** | ⏭️ **riprende qui** |
-| 8 | il cablaggio di produzione in `daemon`, coi default letterali | ⬜ |
+| 7 | il reattore reale in `platform`, e la prima suite di conformità | ✅ |
+| **8** | **il cablaggio di produzione in `daemon`, coi default letterali** | ⏭️ **riprende qui** |
 | 9–12 | il confine dei tipi · `journal` e `filesystem` · `process` coi gettoni · `ipc` | ⬜ |
 | 13–14 | il registro dei controlli · la chiusura del traguardo | ⬜ |
 
-⛔ **Cosa il Task 7 deve coprire, e lo dice chi ha scritto il Task 6:** il ramo
-`deadline <= now → None` di `VirtualReactor::wait_until` **non è esercitato da nessun test**
-— l'esecutore non lo raggiunge più da quando promuove i dormienti scaduti — e
-`VirtualReactor::wall_time()` **non è letto da nessuno**. Sono contratto della porta: o li
-copre la suite di conformità, o partono non provati.
+✅ **I due buchi che il Task 6 aveva lasciato in eredità sono chiusi — ma uno dei due NON era
+chiudibile dove era stato assegnato.** Il ramo `deadline <= now → None` di
+`VirtualReactor::wait_until` è ora esercitato dalla conformità in **entrambe** le metà, `==` e
+`<` (sonde R3 e R4). ⛔ `VirtualReactor::wall_time()` no: la conformità gira contro **tutte e
+due** le implementazioni, quindi può asserire solo ciò che **entrambe** promettono, e i due
+orologi che si muovono insieme sono una proprietà **della finta** — la vera serve `wall_time`
+dall'orologio di sistema, che NTP fa arretrare. Metterla in conformità avrebbe reso **rossa
+un'implementazione corretta**. È il gotcha **#44**: il buco si è chiuso in
+`crates/simulator/tests/virtual_clock.rs`, e in conformità è rimasta una riga che prova **la
+sola chiamabilità**, dichiarata come tale.
 
 📌 **Sei difetti del piano trovati eseguendo, non leggendo**, e il più grave è invisibile
 per costruzione: la cella `Sleep` veniva svuotata **solo sul ramo `Pending`**, quindi
 un'attività che chiedeva di dormire e poi finiva lasciava la richiesta alla successiva.
 **C1 resta verde** — la fuga è deterministica, quindi riproducibile e perciò invisibile a un
 controllo di riproducibilità. Regressione permanente su un intervallo di semi, non su uno.
+
+📌 **Il Task 7 ne ha aggiunti cinque, e quattro sono stati colti _leggendo_ il piano prima di
+eseguirlo:** l'asserzione su `wall_time()` che sembrava copertura ed era `let _ = …` · la metà
+`<` del ramo `deadline <= now` mai esercitata · il `catch_unwind` che accettava **qualunque**
+panic invece del proprio · `SequentialRng` che nasceva **senza un test**. ⛔ **Il quinto è
+uscito solo dalla revisione, ed è il più istruttivo:** il caso aggiunto per chiudere il
+secondo era a sua volta **cancellabile lasciando la porta verde** — gotcha **#45**. ⚠️ E due
+mutazioni sono sopravvissute a tutto: una è stata chiusa (`wall_time()` della vera, sonda
+**R5**), l'altra è un **residuo dichiarato** invece che un test, perché distinguerla
+richiederebbe un controllo non deterministico — e un controllo che scatta a caso è peggio di
+uno assente.
 
 ### Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano
 
@@ -641,7 +657,7 @@ eseguito e il piano del 2 è scritto; quelli dal terzo in poi si scrivono quando
 | # | Traguardo | Stato |
 |---|---|---|
 | **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
-| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | 🔵 **in corso**. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito fino al **Task 6 su 14**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale. ⏭️ **Riprende dal Task 7** |
+| **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | 🔵 **in corso**. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito fino al **Task 7 su 14**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale · **il reattore reale e la prima suite di conformità**. ⏭️ **Riprende dal Task 8** |
 | 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
@@ -788,7 +804,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I quarantatré gotcha
+## 9. I quarantacinque gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -838,6 +854,8 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 41 | **Un filtro che _normalizza l'ingresso_ di un controllo decide anche che cosa il controllo può vedere.** `gate-deps.sh` estraeva i nomi di crate con una classe di caratteri **minuscola**. Misurato: una crate col nome maiuscolo veniva scartata dal filtro, quindi non compariva fra gli intrusi e il cancello usciva **verde** — un falso negativo su I3, il modo di fallire peggiore per quel controllo. Provato con `Inflector`, crate reale: uscita 0 prima, uscita 1 e nome del colpevole dopo. ⚠️ Col corteo di dipendenze minuscole che si porta dietro, il controllo segnalava **il corteo e non il capofila**, pur stampandolo dentro ogni catena |
 | 42 | ⛔ **Un test di compilazione fallita che scatta come `mismatch` è disarmato da una rigenerazione in blocco; uno che scatta come `error` no — e `trybuild` stampa la parola.** Misurato: col confine fra `Monotonic` e `WallTime` guardato dal solo caso «passa l'uno dove va l'altro», aggiungere `impl From<WallTime> for Monotonic` **non** lo fa smettere di fallire — resta `E0308`, perché Rust non applica `From` al sito di chiamata. Lo rende rosso il fatto che rustc **aggiunga quattro righe di `help: call Into::into`** che l'oracolo non porta: un **`mismatch`**. Quindi quel guardiano **poggia interamente sul fatto che l'oracolo non venga rigenerato** — è il #25 con la conseguenza che nessuno aveva scritto: **l'oracolo registra anche l'assenza di una via di conversione**. Rimedio: un **secondo caso di forma diversa** — `let _x: Monotonic = wall.into();` — che con l'`impl From` presente **compila**, e scatta come `error`. ⚠️ **Il test generale, che costa zero:** una regola guardata solo da casi `mismatch` è una regola che una rigenerazione spegne in silenzio. 📌 E le regole erano **due** — «non si passa l'uno per l'altro» e «non esiste una via di conversione» — con la seconda scritta **in un commento**, cioè un'intenzione |
 | 43 | ⛔ **In un modello, un valore d'esempio _valido_ viene incollato così com'è: non si distingue da un dato. E un avviso accanto non è un rimedio.** Il campo «Ultimo commit» di [`AVVIO-CHAT.md`](AVVIO-CHAT.md) portava un hash vero, con accanto una riga che **dichiarava il difetto** e ne scaricava il rimedio su chi incolla. Misurato: il file era vecchio di **due** commit, il messaggio incollato di **quattro**, e due commit erano serviti solo a rincorrerlo — non possono raggiungerlo, perché lo contengono. ⚠️ **Togliere il campo era la proposta sbagliata:** `HANDOFF.md` non porta lo SHA **perché delega a lì**, e la prova ha giocato contro — il **#32 applicato a sé**, con un rimedio migliore in uscita. Il difetto è più stretto: lo SHA appartiene all'**istanza**, il **modello** ci metteva un valore concreto. Rimedio: un **segnaposto** che nomina il comando che lo riempie — si fallisce **rosso** invece che verde, come nel **#26** |
+| 44 | ⛔ **Una suite di conformità prova solo ciò che TUTTE le implementazioni promettono: il buco che le viene assegnato può non essere chiudibile lì, e forzarcelo rende rossa un'implementazione _corretta_.** §6 e [`porta-di-qualita.md`](porta-di-qualita.md) assegnavano alla conformità di `reactor` di coprire `VirtualReactor::wall_time()`. Ma la finta muove i due orologi **insieme** (deliberato: un timbro fermo contraddirebbe il proprio ordinamento) e la **vera non deve**, perché serve `wall_time` dall'orologio di sistema, che NTP fa arretrare. Il buco si è chiuso in `crates/simulator/tests/virtual_clock.rs`, e in conformità resta una riga che prova **la sola chiamabilità**, dichiarata come tale invece del `let _ = …` che sembra copertura. ⛔ La forma generale: assegnare un buco a un controllo condiviso **presume che il buco sia una proprietà condivisa** — quando non lo è, non si indebolisce il controllo, gli si trova **l'altra sede**. Contro-sonda **R6** |
+| 45 | ⛔ **Il rimedio a una copertura mancante è esso stesso un controllo, e nasce non provato — perché lo si scrive credendo di stare già rimediando.** Il caso `deadline < now`, aggiunto al Task 7 per coprire la metà di ramo che il piano lasciava fuori, era **cancellabile lasciando la porta verde**: il bugiardo del file moriva sul primo caso senza mai raggiungerlo, e i due condividevano **lo stesso messaggio**. ⚠️ Il difetto stava **dentro il file che spende un intero test negativo proprio per impedirlo**. Rimedio in due pezzi: due messaggi **distinti**, così che il payload dica quale metà ha sparato, e un **secondo bugiardo** rotto in modo diverso. Valgono il **#14** e il **#24** anche per il tappo. Sonda **R4** |
 
 ---
 
@@ -894,11 +912,11 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 267 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 113 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 117 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 15 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 15 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 17 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
@@ -907,7 +925,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 32 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
-| ⛔ **il compito da cui si riprende** — è il piano **in corso**, e il Task 7 sta lì | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 131 KB |
+| ⛔ **il compito da cui si riprende** — è il piano **in corso**, e il Task 7 sta lì | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 135 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 10 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
@@ -1026,6 +1044,27 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > dimentica, e per una ragione che vale la pena scrivere: rileggendo, **una riga assente non si
 > vede**, mentre una cella sbagliata sì. Chi rimisura conta anche le **righe**, non solo i
 > numeri dentro di esse.
+
+> 🔁 **Ottava misura, il 2026-08-09, chiudendo il Task 7 — e stavolta il #31 non si è ripetuto.**
+> È la prima rimisura fatta **applicando la lezione della settima**: si aggiornano le celle **e**
+> si contano le **righe**, e si scrive nella tabella prima che nel verbale. Nessuna riga mancava:
+> quella del piano del Traguardo 2, aggiunta due misure fa, ha retto al primo controllo.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`HANDOFF.md`](HANDOFF.md) `113 → 117` per i gotcha **#44** e **#45** · [`porta-di-qualita.md`](porta-di-qualita.md) `15 → 17` per le sei sonde `R` · il **piano del Traguardo 2** `131 → 135` per l'errata del Task 7 |
+> | **invariati, ricontati** | spec del sotto-progetto 1 267 · kernel-design 44 · roadmap 15 · tracciabilità 15 · riferimenti 32 · `design/08` 8 · `design/01` 4 · il piano degli spike 68 · il piano del Traguardo 1 50 · README 10 · ADR `2–19` |
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **593** a **597 KB** (611081 B). I **due file
+> obbligatori** passano da 97 a **101 KB**: la cifra vive in `CLAUDE.md` e in
+> [`AVVIO-CHAT.md`](AVVIO-CHAT.md), ed è aggiornata in entrambi.
+>
+> 📌 **E una cifra tonda è una trappola in arrivo**, quindi si dice adesso: i due file
+> obbligatori hanno passato i **101 KB**, e la frase che li accompagna li prezza *«circa
+> venticinquemila token»* col rapporto della prima volta. Il rapporto **non è stato rimisurato
+> da quando fu fissato**, e nessuno lo dubita perché la regola che sostiene è giusta — che è la
+> definizione esatta del **#31**. ⚠️ Resta comunque il confronto che conta, ed è **101 KB contro
+> 597**.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

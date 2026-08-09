@@ -78,6 +78,29 @@ trattate come ipotesi, non come istruzioni.
 
 ---
 
+## Errata — 2026-08-09, dopo l'esecuzione del Task 7
+
+> ⛔ **Cinque voci, e quattro sono state colte _leggendo_ il compito prima di dispatcharlo.**
+> È la prima volta che accade in questo piano, ed è la conseguenza diretta del paragrafo qui
+> sopra: le sonde sono state trattate come ipotesi. La quinta è uscita solo dalla revisione,
+> e non era deducibile.
+
+| # | Dove | Cosa non torna |
+|---|---|---|
+| **E14** | **Task 7 · Step 1**, l'asserzione 5 — `let _ = reactor.wall_time();` | ⛔ **Sembra copertura e non lo è**: prova soltanto che la chiamata non va in panico. ⛔ **E il buco che doveva chiudere non era chiudibile lì.** La §6 del compendio assegnava alla conformità di coprire `VirtualReactor::wall_time()`, che nessuno leggeva; ma quella suite gira contro **entrambe** le implementazioni e può asserire solo ciò che **entrambe** promettono. I due orologi che avanzano insieme sono una proprietà **della finta**, e la vera non deve averla: serve `wall_time` dall'orologio di sistema, che NTP fa arretrare. Asserirlo in conformità avrebbe reso **rossa un'implementazione corretta**. Chiuso in un file che il piano **non prevedeva**, `crates/simulator/tests/virtual_clock.rs`; in conformità resta la chiamabilità, **dichiarata come tale**. Gotcha **#44** |
+| **E15** | **Task 7 · Step 1**, l'asserzione 2 dettata in **una forma sola** | Il piano scriveva il solo caso `deadline == now`, lasciando non esercitata la metà `<` del ramo `deadline <= now`. Aggiunto il caso `2b`. ⛔ **E poi il rimedio si è rivelato a sua volta non provato:** cancellando l'intero blocco `2b` la porta restava **verde**, perché il bugiardo del file moriva sul primo caso senza mai raggiungerlo e i due condividevano **lo stesso messaggio**. Chiuso con due costanti di messaggio distinte e un **secondo bugiardo** (`PastDeadlineLiar`). Misurato in entrambe le direzioni. Gotcha **#45** |
+| **E16** | **Task 7 · Step 1**, il test negativo col `catch_unwind` | Il piano guardava il solo `caught.is_err()`: avrebbe dichiarato «ho colto il null advance» **anche se a scattare fosse stata un'altra asserzione**, e avrebbe continuato a dire `ok` il giorno in cui l'asserzione 2 smettesse di sparare. È il gotcha **#15** — una misura vera, ma di un'altra cosa. Ora il payload del panic si legge e si confronta con la costante attesa |
+| **E17** | **Task 7 · Step 3**, `SequentialRng` | Nasceva **senza un solo test**, in un repository che ha una cultura di test. ⚠️ E il commento dettato dal piano — *«so that `below(n)` cycles through the indices: round robin»* — è vero **solo a `n` costante**: con `below(n) = raw % n` e la sequenza 0,1,2,… il giro è pulito finché il numero di attività pronte non cambia. Cinque test aggiunti, commento ristretto a ciò che vale |
+| **E18** | **Task 7 · Step 3**, `impl Default for SystemReactor` | Il piano lo dettava; **non ha chiamanti**, e questo repository ha già cancellato `Millis::ZERO`, `Monotonic::as_millis` e un bound `?Sized` per la stessa ragione (E6, E9). Tolto. ⚠️ **E la premessa con cui era stato chiesto era sbagliata, misurata invece che assunta:** `clippy` **chiede eccome** un `Default` qui — `new_without_default`, quattro occorrenze nel workspace. La conclusione regge per altre due ragioni: l'assenza di chiamanti, e il fatto che `VirtualReactor` di `simulator` riceva **la stessa identica warning** senza aver mai avuto un `Default`. Toglierlo rende i due reattori coerenti invece di isolarne uno; §7.4.3 scioglie il pareggio — *«clippy non ha voce nella porta»*. Nessun `#[allow]`: sopprimere nasconderebbe anche l'occorrenza successiva |
+
+📌 **E la lezione di questo giro è diversa da quella di sopra, non una sua ripetizione.** Lì
+il difetto era **nella sonda**; qui, in **E14**, era nella *sede* che la sonda aveva ricevuto —
+un buco assegnato a un controllo condiviso presumendo che fosse una proprietà condivisa. E in
+**E15** era **nel rimedio a un difetto già trovato**, che nasce non provato proprio perché lo
+si scrive credendo di star già rimediando.
+
+---
+
 ## Il perimetro, e la voce che è stata cercata prima di fissarlo
 
 ⛔ **Da leggere prima dei compiti.** Il perimetro di questo traguardo è stato messo in

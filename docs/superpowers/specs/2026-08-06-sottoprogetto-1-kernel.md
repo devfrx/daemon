@@ -2639,12 +2639,13 @@ quella «semplificazione» prima che qualcuno la applichi.
 | **V4** | trattare l'esito dell'arbitro come **due vie** invece di tre — §5.3 punto 1 | distinguere `Concessa`, `Rifiutata` e `InCoda` compila |
 | **V10** | un sensore che **modifica** l'artefatto — §6.4.2 lo consegna per riferimento immutabile | osservarlo e restituire un verdetto compila |
 | **V29** · §2.8 · ADR-0034 | costruire una decisione **senza i parametri consegnati** — §2.8.2 | riceverli alla costruzione compila |
+| **V29** · §2.8 · ADR-0034 | il kernel che **nomina un default**: `Parameters::default()` non esiste — §2.8.2 regola 2 | costruirli con `new`, consegnando ogni campo, compila |
 | **V3** | una **seconda policy attiva**: il valore consegnato ne porta una sola | con una policy sola compila, e la transizione resta un passo giornalato (§5.4) |
 | **Q14** · §4.9 | un **record durevole senza versione**: il tipo è un enum di versione — §4.9.2 regola 1 | il record che dichiara la propria versione compila |
 | **I2** · §6.10 | **istruire un worker dopo `uccidi`**: l'uccisione **consuma** il `Worker` — §6.10.2 | istruirlo prima dell'uccisione compila |
 | **I5** · §6.10 | **leggere due volte dalla stessa ricevuta singola**: la lettura la consuma — §6.10.2 | leggerne una compila |
 
-> ⛔ **Tre righe toccate il 2026-08-09, eseguendo il Traguardo 2 — e due sono controlli
+> ⛔ **Quattro righe toccate il 2026-08-09, eseguendo il Traguardo 2 — e tre sono controlli
 > _nuovi_.** È la differenza dalle note qui sotto, e va detta invece che confusa.
 >
 > | | |
@@ -2652,6 +2653,7 @@ quella «semplificazione» prima che qualcuno la applichi.
 > | la riga `V29 · §2.1` è **allargata** | diceva una direzione sola. Misurato: con quel solo caso, aggiungere `impl From<WallTime> for Monotonic` lasciava la porta **verde su sei controlli su sei** — e quella è la direzione **pericolosa**, la decisione che dipende dal wall time. La §2.1 diceva già *«scambiarli non compila»*, simmetrico: il catalogo era più stretto della sezione |
 > | **la seconda riga `V29 · §2.1` è nuova** | le regole erano **due** e il catalogo ne registrava una: *«non si passa l'uno per l'altro»* e *«non esiste una via `From`/`Into`»*. La seconda era scritta **in un commento del sorgente**, cioè era un'intenzione |
 > | **la riga `V29 · §2.2` è nuova** | `below` viveva come metodo di default, e un metodo di default **si sovrascrive**. Due implementazioni che riducono in modo diverso producono tracce diverse dallo stesso seme, **invisibilmente**. Ora vive su un tratto d'estensione con impl a tappeto, e la collisione è `E0119` |
+> | **la seconda riga `V29 · §2.8` è nuova** | la §2.8.2 regola 2 dice che il kernel **non può nominare un default**, e finora lo diceva **soltanto**: nulla impediva a un commit successivo di scrivere `impl Default for Parameters`, e nel momento in cui esiste la regola muore **senza che nulla diventi rosso**. Misurato: con quell'impl la porta resta **verde su sei su sei** — `gate-attributes` legge attributi, `gate-deps` legge il grafo, il cancello senza OS compila per un bersaglio nudo, `check-docs` non legge il codice, e `build`/`test` lo compilano perché è Rust valido. ⚠️ La guardia è **larga esattamente quanto la regola**: ogni `impl Default` incorpora per forza un valore scelto dentro il kernel |
 >
 > 📌 **E ne esce un test generale, che è il gotcha #42:** `trybuild` distingue nel proprio
 > output **`error`** (il caso ha compilato) da **`mismatch`** (l'uscita non combacia con
@@ -2952,7 +2954,7 @@ La §8 registra quali porte hanno la suite e quali no, con il sotto-progetto che
 | Costo | |
 |---|---|
 | **ogni regola nuova porta due sonde, non una** | e la contro-sonda è la più noiosa da scrivere, perché verifica che *non* succeda niente |
-| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta ormai **ventuno** — **cinque** nel blocco B e **sedici** nel C — e ciascuno ha un `.stderr` da leggere (gotcha #25). ⚠️ **Ricontato sulla tabella il 2026-08-08**: diceva «una dozzina, tre e nove», ed era il ritratto di **prima** di ADR-0034, ADR-0036 e §6.10.5. ⚠️ **Ricontato di nuovo il 2026-08-09**, eseguendo il Traguardo 2: diceva «diciannove, cinque e quattordici», ed era il ritratto di prima delle **due righe nuove** del blocco C. Un ritratto di conteggi si riconta, non si deduce — gotcha #31 |
+| **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta ormai **ventidue** — **cinque** nel blocco B e **diciassette** nel C — e ciascuno ha un `.stderr` da leggere (gotcha #25). ⚠️ **Ricontato sulla tabella il 2026-08-08**: diceva «una dozzina, tre e nove», ed era il ritratto di **prima** di ADR-0034, ADR-0036 e §6.10.5. ⚠️ **Ricontato di nuovo il 2026-08-09**, eseguendo il Traguardo 2: diceva «diciannove, cinque e quattordici», ed era il ritratto di prima delle **tre righe nuove** del blocco C — arrivate una per compito, ai Task 1, 2 e 3. Un ritratto di conteggi si riconta, non si deduce — gotcha #31 |
 | **una voce è provata in una direzione sola** | V25, finché la rete non esiste. Dichiarato in §7.4.2 |
 | **V31 resta debole per natura** | l'automatismo protegge la proprietà, non il seme: §3.4 |
 | **i test di contratto sono lavoro reale** | due suite ora, due rimandate. È il prezzo per non provare Q4 e Q5 contro una finzione |

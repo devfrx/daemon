@@ -6,7 +6,9 @@
 //! journal that works; there one that breaks.
 
 use alloc::vec::Vec;
+use crate::rng::SeededRng;
 use kernel::ports::journal::{Journal, JournalError, StepId};
+use kernel::rng::RngExt;
 
 /// A journal that keeps everything in memory, in write order.
 ///
@@ -207,5 +209,143 @@ impl Journal for MemoryJournal {
         // and forgotten (gotcha #36).
         self.entries.retain(|e| e.step != step);
         Ok(())
+    }
+}
+
+/// A journal that STOPS EXISTING at a write chosen by the seed — §3.3, and level 1 of the two
+/// crash levels of ADR-0032.
+///
+/// ⛔ IT IS NOT AN ERROR CHANNEL, AND THAT DIFFERENCE IS THE WHOLE POINT. A journal that
+/// answered `NotDurable` once and worked again afterwards would model A BAD DISK, not a crash:
+/// a dead process does not come back. So the first refusal is PERMANENT, and every later write
+/// is refused too — which is what makes all the interleaved activities of the campaign stop,
+/// and not only the one that happened to touch the boundary.
+///
+/// ⚠️ DECLARED LIMIT, so this doc promises no more than it delivers: the READS delegate to the
+/// surviving archive rather than refusing. The campaign never uses them — it calls
+/// `into_survivor`, which models reopening the archive after the restart — and they are here
+/// because `Journal` requires them.
+///
+/// ⚠️ IT IS NOT HELD TO THE CONFORMANCE SUITE, and that is deliberate rather than an omission:
+/// this type is a LIAR by construction, and gotcha #50 says a fake may break a contract when
+/// the test around it speaks about the breaking. Its own promises live in
+/// `crates/simulator/tests/crashing_journal.rs`.
+pub struct CrashingJournal {
+    inner: MemoryJournal,
+    falls_at: u64,
+    writes: u64,
+    fallen: bool,
+}
+
+impl CrashingJournal {
+    /// Falls at the write with this index, counting from zero.
+    pub const fn falling_at(write: u64) -> Self {
+        CrashingJournal {
+            inner: MemoryJournal::new(),
+            falls_at: write,
+            writes: 0,
+            fallen: false,
+        }
+    }
+
+    /// Falls at a write DRAWN from the seed, inside `0..expected_writes`.
+    ///
+    /// ⛔ `expected_writes` IS HOW MANY WRITES THE SCENARIO REALLY PERFORMS, counted rather
+    /// than guessed. Gotcha #17: a point drawn past the last write never fires, and a campaign
+    /// whose fault never arrives reports green for having done nothing.
+    pub fn from_seed(seed: u64, expected_writes: u64) -> Self {
+        let mut rng = SeededRng::new(seed);
+        Self::falling_at(rng.below(expected_writes))
+    }
+
+    /// Never falls. It is what `C7a` — no crash, no false doubt — is measured against.
+    pub const fn without_crash() -> Self {
+        Self::falling_at(u64::MAX)
+    }
+
+    /// The write it will fall at.
+    pub const fn falls_at(&self) -> u64 {
+        self.falls_at
+    }
+
+    /// Whether it HAS fallen. ⛔ The campaign's non-vacuity oracle: without it, "this run left
+    /// no doubt" and "the crash never fired" are the same green.
+    pub const fn has_fallen(&self) -> bool {
+        self.fallen
+    }
+
+    /// How many writes reached the archive.
+    pub const fn writes_done(&self) -> u64 {
+        self.writes
+    }
+
+    /// The archive that survived, as a journal that works. It models REOPENING after the
+    /// restart, which is the only way the reconciliation ever meets a crashed archive.
+    pub fn into_survivor(self) -> MemoryJournal {
+        self.inner
+    }
+
+    /// Whether this write may proceed, MARKING the fall when it may not.
+    ///
+    /// ⚠️ It is asked BEFORE delegating, and the counter moves only on an `Ok` from the inner
+    /// journal: a write the write-ahead protocol refuses (`OutOfOrder`) never reached storage,
+    /// so it must not consume a position in the count the crash point is drawn against. Held
+    /// by `a_write_the_protocol_refuses_does_not_consume_a_crash_position`.
+    fn may_write(&mut self) -> bool {
+        if self.fallen {
+            return false;
+        }
+        if self.writes == self.falls_at {
+            self.fallen = true;
+            return false;
+        }
+        true
+    }
+}
+
+impl Journal for CrashingJournal {
+    fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        if !self.may_write() {
+            return Err(JournalError::NotDurable);
+        }
+        let outcome = self.inner.intent(step, record);
+        if outcome.is_ok() {
+            self.writes += 1;
+        }
+        outcome
+    }
+
+    fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        if !self.may_write() {
+            return Err(JournalError::NotDurable);
+        }
+        let outcome = self.inner.outcome(step, record);
+        if outcome.is_ok() {
+            self.writes += 1;
+        }
+        outcome
+    }
+
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        if !self.may_write() {
+            return Err(JournalError::NotDurable);
+        }
+        let outcome = self.inner.note(step, record);
+        if outcome.is_ok() {
+            self.writes += 1;
+        }
+        outcome
+    }
+
+    fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
+        self.inner.read_back(step)
+    }
+
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        self.inner.replay()
+    }
+
+    fn prune(&mut self, step: StepId) -> Result<(), JournalError> {
+        self.inner.prune(step)
     }
 }

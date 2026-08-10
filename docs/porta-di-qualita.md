@@ -35,8 +35,8 @@ Le tre righe del **blocco A** di §7.4.1, **sette righe del blocco C** e **una d
 queste ultime otto dal Traguardo 2. ⚠️ **I conteggi si ricontano sulla tabella qui sotto, mai
 si deducono** — gotcha **#31**: questa riga ne ha già portati due sbagliati. Del blocco **B**
 (i gettoni) è coperta **una riga su cinque**, `promuovere testo a istruzione ← la porta
-journal` (V19); gli altri quattro gettoni li emettono l'arbitro e il filtro dei vincoli, che
-nascono coi Traguardi 5 e 6.
+journal` (V19); perché gli altri quattro non lo siano lo dice la riga del blocco **B** in
+«Cosa la porta NON controlla», e da oggi **lo dice in un posto solo**.
 
 | Regola del catalogo | Dove è dichiarata | Caso negativo |
 |---|---|---|
@@ -188,10 +188,14 @@ quella che deve restare verde.
 | **R5** | la plausibilità di `wall_time()` sulla **vera** — `crates/platform/tests/wall_clock_plausibility.rs`: un istante posteriore a una data fissa del passato. Coglie l'orologio fermo a **zero o all'epoca**, che era la mutazione sopravvissuta alla prima stesura |
 | **R6** | ⛔ **la contro-sonda che conta, e la si sarebbe dimenticata:** rompendo l'avanzamento dell'orologio di parete del `VirtualReactor`, la conformità **resta verde** e scatta **solo** `crates/simulator/tests/virtual_clock.rs`. È la prova che la suite condivisa non impone alla vera un comportamento della finta — se lo facesse, renderebbe rossa un'implementazione **corretta**. Gotcha **#44** |
 
-#### Il build script — la sesta voce, entrata su una lacuna misurata
+#### Il build script — entrato su una lacuna misurata
 
-⛔ **La riga del build script è la sesta voce di livello 2, ed è entrata il 2026-08-09 su una
-lacuna _misurata_.** Un `crates/kernel/build.rs` che chiama `SystemTime::now()`,
+⛔ **La riga del build script è entrata il 2026-08-09 su una lacuna _misurata_, e allora le
+voci di livello 2 erano sei.** ⚠️ **Legata alla data e non alla posizione, il 2026-08-10:**
+diceva *«è la sesta voce di livello 2»*, vero quando fu scritto e falso da quando la riga dei
+test di contratto è entrata poche ore dopo — nella tabella di oggi, che ne ha **sette**, il
+build script sta **quinto**. È la terza forma del gotcha **#31**: un'affermazione vera legata
+al **contenitore** invece che a ciò che fu misurato, e il contenitore cresce senza avvisare. Un `crates/kernel/build.rs` che chiama `SystemTime::now()`,
 `fs::metadata()` e `env::var()` e inietta il risultato con `cargo:rustc-env` lasciava la porta
 **verde su sei controlli su sei**: `build` e `test` lo compilano perché è il mestiere di un
 build script, `gate-no-os.sh` lo compila **per l'host anche con `--target`** e **lo esegue**,
@@ -437,8 +441,8 @@ nell'altro verso.
 
 | Riga del catalogo | Perché non c'è ancora |
 |---|---|
-| il **resto** del blocco **B** di §7.4.1 — i **gettoni** | ⚠️ **Non più interamente scoperto, dal 2026-08-09:** **una riga su cinque** è implementata — `promuovere testo a istruzione ← la porta journal` (V19), da `crates/kernel/tests/compile_fail/promote_without_journal.rs`, che nomina quella riga di catalogo nella propria intestazione. Gli **altri quattro** gettoni li emettono l'arbitro (§5.6) e il filtro dei vincoli (§6.3): **Traguardi 5 e 6**. ⛔ Un costruttore di `Grant` dietro una feature di test **è stato valutato e scartato**: creerebbe il secondo modo di ottenere una concessione che §5.6 esiste per togliere dal compilatore |
-| il resto del blocco **C** di §7.4.1 | **sei righe su diciassette** sono implementate (sopra) — ricontate sulla tabella del catalogo il 2026-08-09, questa riga diceva *«tre su sedici»*. Le **altre undici** nominano tipi dell'arbitro, del giornale e del canale worker, che nascono coi Traguardi 3, 5 e 6 |
+| il **resto** del blocco **B** di §7.4.1 — i **gettoni** | ⚠️ **Non più interamente scoperto, dal 2026-08-09:** **una riga su cinque** è implementata — `promuovere testo a istruzione ← la porta journal` (V19), da `crates/kernel/tests/compile_fail/promote_without_journal.rs`, che nomina quella riga di catalogo nella propria intestazione. Degli **altri quattro**, **due** li emettono l'arbitro (§5.6) e il filtro dei vincoli (§6.3) — **Traguardi 5 e 6**; gli altri **due**, il `Worker` e la **ricevuta**, li emette già `crates/kernel/src/ports/process.rs`, e restano scoperti per la ragione della riga di §6.10.5 più sotto: senza `Grant` non si ottiene un `Worker`. ⚠️ **Corretto il 2026-08-10:** diceva che li emettevano **tutti e quattro** l'arbitro e il filtro dei vincoli, e per due era falso — `Process::start` restituisce il `Worker` e `instruct_one`/`instruct_stream` le ricevute, tutti e tre spediti da questo traguardo. ⛔ Un costruttore di `Grant` dietro una feature di test **è stato valutato e scartato**: creerebbe il secondo modo di ottenere una concessione che §5.6 esiste per togliere dal compilatore |
+| il resto del blocco **C** di §7.4.1 | **sette righe su diciotto** sono implementate (sopra). ⚠️ **Ricontate il 2026-08-10:** diceva *«sei su diciassette»*, sbagliato in **entrambi** i termini — e prima ancora *«tre su sedici»*. Il numero giusto **esisteva già** in testa alla sezione «Livello 1»: era stato rimisurato e scritto in **uno solo dei due posti dello stesso file**, e il denominatore era rimasto indietro perché la riga della **regola B** entrò nel catalogo lo stesso giorno. Le **altre undici** non cambiano — i due termini erano bassi di uno insieme — e nominano tipi che nascono coi **Traguardi 3, 5 e 6**. ⚠️ **E la loro descrizione era stretta, corretta lo stesso giorno:** diceva *«nominano tipi dell'arbitro, del giornale e del canale worker»*, e **due delle undici non vi rientrano** — `V5`, un effetto senza classe dichiarata, e `V10`, un sensore che modifica l'artefatto. Chi le ricontasse **dalla descrizione** ne troverebbe nove: è lo stesso difetto della riga qui accanto un livello più sotto, e si ricontano **sul catalogo**, che è l'unico posto che le enumera |
 | i test di contratto per le **altre cinque** famiglie di porte | ✅ **`reactor` è coperta** dal Task 7 — sonde R1…R6 di livello 2. Restano `journal`, `filesystem`, `network`, `process` e `ipc`: le loro implementazioni nascono coi **Traguardi 3, 5 e 6**, e la suite di ciascuna nasce con esse |
 | **due residui dichiarati dentro `SystemReactor`**, e stanno qui perché un registro che li tacesse mentirebbe | ⛔ sostituire `Some(self.now())` con `Some(deadline)` in `wait_until` **non fa scattare nulla**: la conformità non può coglierlo perché **sulla finta le due espressioni coincidono**, e distinguerle sulla vera richiederebbe l'overshoot dello sleep del sistema operativo, che nessuna piattaforma garantisce — un controllo verde per fortuna e rosso per sfortuna, cioè peggio di uno assente (gotcha #24). ⚠️ E `R5` prova che `wall_time()` non è **ferma**, non che sia **esatta**: l'esattezza vorrebbe una seconda sorgente di tempo |
 | i **byte congelati** del record durevole | non esiste ancora nessun record. Entrano al **primo** record scritto — vincolo 14 della §11 del [compendio](COMPENDIO.md), Traguardo 3 |

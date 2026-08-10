@@ -654,6 +654,28 @@ cargo test -p simulator --test memory_journal -- --exact <nome>   # una per proc
 | una mutazione **viva e dichiarata** | `has_intent` che ignora il **tipo** della voce | **nessun test rosso, e non è una lacuna**: distingue uno stato **irraggiungibile**, perché il primo record di un passo può essere solo un intento. ⚠️ **L'equivalenza cade** quando `prune` rimuoverà voci selettivamente — compito **11** | registro |
 | ⛔ l'ordine di scrittura **è** osservabile, contro l'attesa scritta | intenti scritti **in testa** invece che in coda | ⛔ **Divergenza registrata.** La prima stesura concludeva «invisibile dall'esterno» da una premessa vera — *ogni passo incontra il proprio intento prima del proprio esito* — che regge **solo con al più un intento per passo**. Il testimone è di **tre chiamate senza nessun esito**: `intent(1,"p0"); intent(1,"p1"); read_back(1)` dà `"p0"`, e rovesciato `"p1"`. Ne è uscita una **voce aperta**: se un secondo intento sullo stesso passo debba essere accettato | [registro](porta-di-qualita.md) · conformità |
 
+## Esecuzione del Traguardo 3 — i Task 4 e 5: la conformità, e due promesse vacue contro il proprio bugiardo
+
+Misurate il **2026-08-10**, stessa toolchain. La suite di conformità di `journal` sta in una
+copia sola in `crates/kernel/tests/journal_contract.rs`; la tabella per nome è nel
+[registro](porta-di-qualita.md).
+
+```bash
+cargo test -p kernel --test journal_contract                  # 7 passed
+cp crates/platform/tests/journal_contract_real.rs …           # sonda usa-e-getta:
+#   include!("../../kernel/tests/journal_contract.rs")         # → 7 passed dentro platform
+```
+
+| Misura | Come | Esito il 2026-08-10 | Dove entra |
+|---|---|---|---|
+| ⛔ una promessa **vacua contro il proprio bugiardo** | neutralizzata una promessa alla volta, commentandone il blocco | ⛔ la promessa sull'ordine di `replay` confrontava le **sole identità** dei passi, e la sequenza dettata `1, 2, 1` **è un palindromo**: `ShuffledJournal`, che rovescia il giornale, la superava e **passava la suite intera**. Chiusa confrontando i **record**, byte compresi | `journal_contract.rs` · specie 1 |
+| ⛔ la via **A6** scattava senza saper dire di essere A6 | `SilentJournal` contro la promessa 1 | la rilettura usava `.expect("read_back must find it")`, e un giornale che non scrive risponde `Missing` **prima** dell'asserzione: il payload non nominava nessuna promessa e il test riportava *«ha sparato, ma NON sulla promessa 1»*. Il messaggio della promessa è ora **anche** sull'`expect` | `journal_contract.rs` · specie 1 |
+| la corrispondenza **promessa ↔ bugiardo**, misurata e non argomentata | sei neutralizzazioni, una per promessa | **sei su sei**: cade **esattamente** il test del bugiardo di quella promessa, gli altri **sei restano verdi**. Nessuna promessa è decorativa, nessun bugiardo muore sulla promessa di un altro | [registro](porta-di-qualita.md) |
+| la **mutazione di controllo** | cambiato **solo un commento** | **nessun test rosso** — `7 passed`. Senza, la tabella qui sopra non prova niente (gotcha **#48**) | metodo |
+| ⛔ `assert_eq!` con messaggio **non** produce il messaggio | letto il payload di tutti e sei i panici | il payload è `` assertion `left == right` failed: <messaggio> `` più i due valori, quindi **non è mai uguale** alla costante: i test negativi dettati dal piano (`assert_eq!(caught.as_deref(), Some(MSG))`) sarebbero falliti in **cinque casi su sei**. Si confronta con `contains`, col vincolo che **nessun messaggio sia sottostringa di un altro** | `journal_contract.rs` |
+| il file è **`include!`-abile** da `platform` | sonda usa-e-getta in `crates/platform/tests/`, poi rimossa | **7 passed** dentro il binario di `platform`, senza avvisi: `kernel` è dipendenza e `simulator` è già fra le `dev-dependencies` con la ragione scritta. Il Task 9 non incontra ostacoli | Task 9 |
+| ⚠️ il **limite dichiarato** dell'hook di panic si è materializzato | esecuzione in parallelo dei sette test | un test è uscito `FAILED` **senza la propria sezione stdout**: il suo panico è caduto nella finestra in cui un altro test aveva silenziato l'hook, che è **globale al processo**. Il fallimento non si perde mai, solo il suo messaggio. Si rilegge con `-- --test-threads=1` | metodo · limite già dichiarato in `reactor_contract.rs` |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

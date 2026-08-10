@@ -5,7 +5,8 @@
 //! |-------------|------------------------------------------------------------------|
 //! | `intent`    | makes the INTENTION of a step durable, before the effect happens |
 //! | `outcome`   | makes the OUTCOME durable, after                                 |
-//! | `read_back` | re-reads on resume, for reconciliation                           |
+//! | `read_back` | re-reads ONE step BY NAME, for reconciliation                     |
+//! | `replay`    | re-reads EVERYTHING, in write order, to discover the names       |
 //! | `prune`     | replaces a payload with a fingerprint and a size (ADR-0018)      |
 //!
 //! ⛔ THE PORT EXCHANGES BYTES, not typed records (ADR-0036). The encoding of the record
@@ -20,9 +21,17 @@
 //! repository at the first record written, and they are deliberately the LAST thing of the
 //! milestone, so that a real consumer has exercised the format before it is frozen.
 //!
-//! ⚠️ AND THE PORT IS NOT FINISHED: `replay` is not here. It arrives with its first consumer,
-//! the reconciliation, because in this project a port grows when something needs it — a
-//! signature decided before its caller is a signature decided by nobody.
+//! ⚠️ `replay` ARRIVED ON 2026-08-10, and the sentence this paragraph used to carry — "the
+//! port is not finished, `replay` is not here" — is why it is dated instead of deleted. A port
+//! grows when something needs it, and what needed this one is the RECONCILIATION: §4.3 collects
+//! ALL the steps with an intent and no outcome, and `read_back` asks for a step BY NAME. After a
+//! crash the kernel does not know the names — its memory is exactly what it lost — so with
+//! `read_back` alone the set is not discoverable.
+//!
+//! ⚠️ AND THE SIGNATURE IS STILL A HYPOTHESIS while this line is being read: the reconciliation
+//! is written NEXT, and it is the first caller that will put it under strain. If it turns out
+//! cramped or insufficient there, it changes HERE — bending the caller to a signature decided
+//! too early is the mistake this rule exists to prevent.
 
 use alloc::vec::Vec;
 
@@ -78,6 +87,30 @@ pub trait Journal {
     /// Re-reads on resume. Returns the bytes as they were written: decoding is the
     /// kernel's job, which is what keeps the durable form its property.
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError>;
+
+    /// Re-reads EVERYTHING, in write order, for reconciliation.
+    ///
+    /// ⛔ THE PORT DOES NOT KNOW WHAT "IN DOUBT" MEANS, and that is deliberate. It hands back
+    /// what it has; the kernel decodes and computes the set (§4.3). An operation like
+    /// `steps_in_doubt()` would move a decision of the kernel inside whoever implements the
+    /// port, which is the opposite of how every other port here is built.
+    ///
+    /// ⚠️ WHY THIS EXISTS AT ALL, since `read_back` already reads: `read_back` asks for a step
+    /// BY NAME, and after a crash the kernel does not know the names — its memory is exactly
+    /// what it lost. With `read_back` alone the set of steps in doubt is not discoverable.
+    ///
+    /// ⛔ WRITE ORDER IS PART OF THE PROMISE, not a property of whichever container the
+    /// implementation happens to use. Reconciliation computes the doubt by walking this
+    /// sequence, and an arbitrary order gives it an arbitrary answer — SILENTLY, which is
+    /// worse. It is held by `crates/kernel/tests/journal_contract.rs`, which is also what
+    /// stops a key-value implementation from answering in key order.
+    ///
+    /// ⛔ DECLARED COST, and it is real: this loads the whole journal into memory. On a
+    /// production archive it does not hold. The known remedy is a CHECKPOINT — a point past
+    /// which everything is reconciled — and designing one now would freeze a mechanism no
+    /// measurement has touched. It is closed by the first consumer that measures a large
+    /// journal, not by this milestone.
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError>;
 
     /// Replaces a payload with its fingerprint and size (ADR-0018).
     ///

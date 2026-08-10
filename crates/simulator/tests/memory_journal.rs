@@ -123,12 +123,14 @@ fn each_step_reads_back_its_own_first_record() {
     // `a_second_intent_on_the_same_step_reads_back_the_first` holds.
     //
     // ⚠️ AND IT DOES NOT PROVE THE WHOLE OF THE WRITE ORDER `journal.rs` claims. The global
-    // order ACROSS steps is what `replay` will owe, and `replay` does not exist yet: the port
-    // gains it with its first consumer, and until then nothing outside this crate can observe
-    // it. What is held here is the order WITHIN a step under interleaving — which is what THIS
-    // test asks, and NOT "as much as the surface can be asked". An earlier version of this line
-    // said the second, and it was false: that is the sentence that stops the next reader from
-    // looking, so it does not get written again.
+    // order ACROSS steps is what `replay` owes — SINCE 2026-08-10, when the port gained it, and
+    // this line used to say "`replay` does not exist yet" — and it is held from outside, by
+    // `crates/kernel/tests/journal_contract.rs`, against BOTH implementations. What is held
+    // here is the order WITHIN a step under interleaving, which conformance does not reach:
+    // `replay` hands back identities and bytes, and telling an intent from an outcome is the
+    // kernel's job. That is what THIS test asks, and NOT "as much as the surface can be asked".
+    // An earlier version of this line said the second, and it was false: that is the sentence
+    // that stops the next reader from looking, so it does not get written again.
     let mut journal = MemoryJournal::new();
     let first = StepId::new(1);
     let second = StepId::new(2);

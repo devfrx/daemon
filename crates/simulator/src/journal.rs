@@ -14,11 +14,13 @@ use kernel::ports::journal::{Journal, JournalError, StepId};
 /// forbidden in a deterministic world because `RandomState` is seeded per process and the
 /// iteration order is not reproducible (gotcha #12). A `Vec` also gives WRITE ORDER for free.
 ///
-/// ⚠️ THE FUTURE TENSE IS EXACT, AND NOTHING ASKS FOR THAT ORDER TODAY. `replay` — the
-/// operation that will owe it — IS NOT ON THE PORT YET: it arrives with its first consumer,
-/// the reconciliation. Until then the order ACROSS steps is a property nothing outside this
-/// crate can read, and only the order WITHIN a step is observable; `memory_journal.rs` holds
-/// exactly that much and says so.
+/// ⚠️ AND SINCE 2026-08-10 SOMETHING DOES ASK FOR THAT ORDER: `replay` is on the port, and
+/// what it owes is the order ACROSS steps. This sentence used to say the opposite — "nothing
+/// asks for that order today" — and it is dated rather than deleted, because the reason the
+/// `Vec` was chosen has not changed and the reader deserves to see when it stopped being free.
+/// The order is now held from outside by `crates/kernel/tests/journal_contract.rs`;
+/// `memory_journal.rs` continues to hold the order WITHIN a step, which conformance does not
+/// reach.
 pub struct MemoryJournal {
     entries: Vec<Entry>,
 }
@@ -99,6 +101,19 @@ impl Journal for MemoryJournal {
             .find(|e| e.step == step)
             .map(|e| e.bytes.clone())
             .ok_or(JournalError::Missing)
+    }
+
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        // ⛔ WRITE ORDER COMES FROM THE `Vec` AND NOWHERE ELSE, which is the reason the store
+        // is a `Vec` of pairs rather than a map — see the type's own doc. Nothing here sorts,
+        // groups or deduplicates: an intent and its outcome come back as two entries under the
+        // same identity, in the order they were written, and telling them apart is the
+        // kernel's job because the port exchanges BYTES (ADR-0036).
+        Ok(self
+            .entries
+            .iter()
+            .map(|e| (e.step, e.bytes.clone()))
+            .collect())
     }
 
     fn prune(&mut self, _step: StepId) -> Result<(), JournalError> {

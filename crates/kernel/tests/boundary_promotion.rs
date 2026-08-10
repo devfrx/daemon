@@ -25,6 +25,13 @@ impl Journal for RecordingJournal {
     fn read_back(&self, _step: StepId) -> Result<Vec<u8>, JournalError> {
         Err(JournalError::Missing)
     }
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        // ⚠️ Arrived on 2026-08-10 with the operation itself: a port that grows costs a line
+        // in EVERY fake, and this file has two. Answering with what was actually recorded
+        // rather than with an empty vector keeps the fake honest — a fake that lied here
+        // would be a fake nobody could later reuse for a promotion that IS replayed.
+        Ok(self.intents.clone())
+    }
     fn prune(&mut self, _step: StepId) -> Result<(), JournalError> {
         Ok(())
     }
@@ -72,6 +79,11 @@ fn a_journal_that_refuses_refuses_the_promotion_too() {
         }
         fn read_back(&self, _s: StepId) -> Result<Vec<u8>, JournalError> {
             Err(JournalError::Missing)
+        }
+        fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+            // Nothing is ever recorded here — `intent` refuses — so an empty journal is not a
+            // shortcut, it is the truth about this fake.
+            Ok(Vec::new())
         }
         fn prune(&mut self, _s: StepId) -> Result<(), JournalError> {
             Ok(())

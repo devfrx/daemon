@@ -1047,8 +1047,27 @@ Il kernel dichiara cosa gli serve; chi lo fornisce sta fuori.
 |---|---|
 | `intent` | rende durevole **l'intenzione** di un passo, prima che l'effetto avvenga |
 | `outcome` | rende durevole **l'esito**, dopo |
-| `read_back` | rilegge alla ripresa, per la riconciliazione |
+| `read_back` | rilegge **un** passo **per nome**, alla ripresa, per la riconciliazione |
+| `replay` | rilegge **tutto**, in ordine di scrittura, per scoprire l'insieme dei passi in dubbio |
 | `prune` | sostituisce un payload con impronta e dimensione (ADR-0018) |
+
+> ⛔ **Un'operazione aggiunta il 2026-08-10, eseguendo il Traguardo 3 — e non è un ripensamento.**
+> La §4.3 dice che la ripresa *«raccoglie **tutti** i passi con intento e senza esito»*, ma
+> l'unica lettura che questa tabella offriva era `read_back`, che chiede un passo **per nome**.
+> ⛔ **Dopo un crash il kernel non sa i nomi: la sua memoria è esattamente ciò che ha perso.**
+> Con `read_back` da solo l'insieme non è scopribile, e non era una decisione presa — ADR-0007
+> dice *«per ogni passo in dubbio»* senza dire **come si scoprono**. Era una lacuna. ⚠️ La
+> descrizione di `read_back` è stata corretta nello stesso passaggio: diceva *«rilegge alla
+> ripresa»* senza dire **per nome**, ed è proprio quel dettaglio a rendere visibile la lacuna.
+>
+> ⚠️ **Perché non è stata trovata prima:** `read_back` non ha **mai avuto un consumatore**. Le
+> uniche implementazioni erano finte che ignorano l'argomento, e una firma senza chiamanti non
+> si prova. È il gotcha **#46**, e la riconciliazione è il primo consumatore che la mette alla
+> prova. ⚠️ **E la firma resta un'ipotesi finché quel consumatore non è scritto:** se scrivendo
+> la riconciliazione risultasse scomoda o insufficiente, si cambia **qui**.
+>
+> ⛔ **Costo dichiarato:** `replay` carica l'intero giornale in memoria. Il rimedio noto è un
+> **checkpoint**, e fissarlo ora congelerebbe un meccanismo che nessuna misura ha toccato.
 
 > ⚠️ **La porta scambia _byte_, non record tipizzati — aggiunto il 2026-08-07** con
 > [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md). La codifica

@@ -9,5 +9,6 @@
 
 extern crate alloc;
 
+pub mod journal;
 pub mod reactor;
 pub mod rng;

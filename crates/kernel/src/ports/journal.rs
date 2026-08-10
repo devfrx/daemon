@@ -53,6 +53,13 @@ pub enum JournalError {
     NotDurable,
     /// The read found nothing under that identity.
     Missing,
+    /// ⛔ An `outcome` arrived for a step that has no `intent`. This is V6 held by the port
+    /// rather than by the caller: "nothing executes before the intent is durable" is the
+    /// NATURE of a write-ahead journal, not a policy the kernel layers on top. A port that
+    /// accepts it leaves the protocol resting on the diligence of whoever calls — the same
+    /// reason `boundary_promotion.rs` requires that a refusing journal refuses the
+    /// promotion too.
+    OutOfOrder,
 }
 
 pub trait Journal {

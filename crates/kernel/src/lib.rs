@@ -23,3 +23,5 @@ pub mod ports;
 pub mod executor;
 
 pub mod boundary;
+
+pub mod record;

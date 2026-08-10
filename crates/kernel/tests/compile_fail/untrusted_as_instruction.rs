@@ -28,3 +28,13 @@ fn main() {
     // A web page does not get to speak in the instruction channel.
     let _ = kernel::boundary::build_prompt(&system, &from_a_web_page);
 }
+
+// ⚠️ WHY THE ORACLE SPELLS THE TYPES OUT IN FULL, and it is NOT noise to be tidied away by a
+// regeneration. `kernel::record::Trust` arrived at milestone 3 with variants named
+// `Instruction` and `Untrusted`, so those two names are no longer unique inside the crate, and
+// rustc STOPS ABBREVIATING a name it cannot trim unambiguously: every diagnostic that mentions
+// either type now prints `kernel::boundary::..`. Measured, not deduced — commenting out
+// `pub mod record;` puts the short form back and this case green again.
+//
+// ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle above quotes LINE 29 of this file, so a
+// paragraph added at the top would move the code and break it. Whoever writes here appends.

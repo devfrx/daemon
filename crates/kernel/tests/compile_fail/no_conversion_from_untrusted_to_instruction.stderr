@@ -1,7 +1,7 @@
-error[E0277]: the trait bound `Instruction: From<Untrusted>` is not satisfied
+error[E0277]: the trait bound `kernel::boundary::Instruction: From<kernel::boundary::Untrusted>` is not satisfied
   --> tests/compile_fail/no_conversion_from_untrusted_to_instruction.rs:37:48
    |
 37 |     let _system: Instruction = from_a_web_page.into();
-   |                                                ^^^^ the trait `From<Untrusted>` is not implemented for `Instruction`
+   |                                                ^^^^ the trait `From<kernel::boundary::Untrusted>` is not implemented for `kernel::boundary::Instruction`
    |
-   = note: required for `Untrusted` to implement `Into<Instruction>`
+   = note: required for `kernel::boundary::Untrusted` to implement `Into<kernel::boundary::Instruction>`

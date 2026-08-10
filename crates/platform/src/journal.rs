@@ -50,7 +50,33 @@ use redb::{Database, ReadableDatabase, ReadableTable, StorageBackend, TableDefin
 ///
 /// The value carries the step's identity beside the bytes, because `replay` owes both and the
 /// key no longer says which step a record belongs to.
-const RECORDS: TableDefinition<u64, (u64, &[u8])> = TableDefinition::new("journal-records");
+///
+/// ⛔ AND SINCE 2026-08-10 IT CARRIES THE OPERATION TOO, WHICH TASK 11 FORCED AND THE PLAN DID
+/// NOT FORESEE. `prune` must refuse a step IN DOUBT — an intent with no outcome — and no
+/// question this file could ask answered that: `has_intent` only ever asked "has this step ANY
+/// record", and counting records is wrong because a NOTE is not an outcome, so an intent plus a
+/// note would have looked closed. Decoding the bytes to find out is forbidden (ADR-0036: the
+/// port exchanges BYTES, and `boundary.rs` writes some that are not a `Record` at all), so the
+/// operation is written down beside them, exactly as `simulator::journal::EntryKind` does.
+///
+/// ⚠️ DECLARED COST: one byte per record on the disk, and the shape of this table changed —
+/// a file written by an older build does not decode under it. That is free ONLY because no
+/// archive exists yet, which is the same exemption `record.rs` spent at task 10 and the reason
+/// it is spelt out here rather than assumed.
+const RECORDS: TableDefinition<u64, (u64, u8, &[u8])> = TableDefinition::new("journal-records");
+
+/// The journal's own bookkeeping of WHICH OPERATION wrote a record — and NOT the record's
+/// `RecordKind`, which lives in the kernel and is read by the kernel. The two are kept in step
+/// by the caller and not by a type, exactly as they are in `simulator::journal`.
+///
+/// ⚠️ THREE CONSTANTS AND NOT AN ENUM, because nothing here ever converts a byte BACK into one:
+/// the only question asked of the stored byte is "is it the outcome", and an enum would buy a
+/// `from_byte` whose failing branch no caller has. ⛔ AND AN UNRECOGNISED BYTE — which only a
+/// corrupted archive can produce — IS NOT AN OUTCOME, so the step stays in doubt and `prune`
+/// refuses it. The safe direction is the refusing one: this operation is irreversible.
+const KIND_INTENT: u8 = 0;
+const KIND_OUTCOME: u8 = 1;
+const KIND_NOTE: u8 = 2;
 
 /// What can go wrong OPENING the journal.
 ///
@@ -261,7 +287,7 @@ impl FileJournal {
             .database
             .begin_write()
             .map_err(|_| JournalError::NotDurable)?;
-        Self::stage(&transaction, self.next_key, step, record)?;
+        Self::stage(&transaction, self.next_key, step, KIND_INTENT, record)?;
 
         // ⛔ READ IT BACK INSIDE THE TRANSACTION THAT IS ABOUT TO DIE. This is the only vantage
         // point from which "staged, then abandoned" and "never staged" look different: from
@@ -292,13 +318,14 @@ impl FileJournal {
         transaction: &redb::WriteTransaction,
         key: u64,
         step: StepId,
+        kind: u8,
         record: &[u8],
     ) -> Result<(), JournalError> {
         let mut table = transaction
             .open_table(RECORDS)
             .map_err(|_| JournalError::NotDurable)?;
         table
-            .insert(key, (step.get(), record))
+            .insert(key, (step.get(), kind, record))
             .map_err(|_| JournalError::NotDurable)?;
         Ok(())
     }
@@ -317,12 +344,12 @@ impl FileJournal {
     /// that DIES tells the two apart, and killing itself is the one thing a test cannot do.
     /// That is level-2 fault injection, milestone 4, through the very backend below. Declared
     /// here rather than discovered there.
-    fn append(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+    fn append(&mut self, step: StepId, kind: u8, record: &[u8]) -> Result<(), JournalError> {
         let transaction = self
             .database
             .begin_write()
             .map_err(|_| JournalError::NotDurable)?;
-        Self::stage(&transaction, self.next_key, step, record)?;
+        Self::stage(&transaction, self.next_key, step, kind, record)?;
         transaction.commit().map_err(|_| JournalError::NotDurable)?;
         // ⛔ AFTER the commit and not before: a write that failed must not burn a key, or the
         // archive would grow holes that `replay` cannot tell from records it never saw.
@@ -343,7 +370,7 @@ impl FileJournal {
     /// `docs/riferimenti.md`, section "Esecuzione del Traguardo 3 — il Task 8".
     fn find_first<T>(
         &self,
-        mut visit: impl FnMut(u64, &[u8]) -> Option<T>,
+        mut visit: impl FnMut(u64, u8, &[u8]) -> Option<T>,
     ) -> Result<Option<T>, JournalError> {
         // ⛔ `NotDurable` AND NOT `Missing` ON AN ENGINE FAILURE, and the choice is between two
         // wrong-looking answers. `Missing` asserts that the step IS NOT THERE, which a failed
@@ -360,8 +387,8 @@ impl FileJournal {
 
         for entry in table.iter().map_err(|_| JournalError::NotDurable)? {
             let (_, value) = entry.map_err(|_| JournalError::NotDurable)?;
-            let (stored_step, record) = value.value();
-            if let Some(found) = visit(stored_step, record) {
+            let (stored_step, kind, record) = value.value();
+            if let Some(found) = visit(stored_step, kind, record) {
                 return Ok(Some(found));
             }
         }
@@ -374,9 +401,17 @@ impl FileJournal {
     /// HERE — which is an invariant of this file and not a coincidence, so it is written down.
     /// `intent` refuses a step that already has one, `outcome` and `note` refuse a step that
     /// has none: therefore the FIRST record of any step is always its intent, and no step can
-    /// hold records without holding an intent. `MemoryJournal` keeps an explicit kind for the
-    /// same question; storing one here would mean reading it back and branching on a byte that
-    /// is neither of the three, a case nothing in this file can produce.
+    /// hold records without holding an intent.
+    ///
+    /// ⚠️ THIS DOC WENT ON — "`MemoryJournal` keeps an explicit kind for the same question;
+    /// storing one here would mean reading it back and branching on a byte that is neither of
+    /// the three, a case nothing in this file can produce" — AND TASK 11 SPENT IT ON
+    /// 2026-08-10. The clause was right about THIS question and wrong about the next one:
+    /// `prune` asks whether the step has an OUTCOME, which the record count cannot answer
+    /// because a note is not an outcome. The kind is now stored (see `RECORDS`), and the branch
+    /// the clause feared is written and declared there. This question does not use it, and that
+    /// is deliberate rather than an oversight: "has any record" is the cheaper truth and it is
+    /// the true one here.
     ///
     /// ⚠️ IT READS THE ARCHIVE AND NOT A FIELD, which is what makes the guard survive a
     /// restart. A guard cached in the struct would satisfy promise 6 of the conformance suite —
@@ -384,7 +419,7 @@ impl FileJournal {
     /// this whole port exists for. Held by `a_second_intent_is_refused_across_a_reopening`.
     fn has_intent(&self, step: StepId) -> Result<bool, JournalError> {
         Ok(self
-            .find_first(|stored, _| (stored == step.get()).then_some(()))?
+            .find_first(|stored, _, _| (stored == step.get()).then_some(()))?
             .is_some())
     }
 }
@@ -394,14 +429,14 @@ impl Journal for FileJournal {
         if self.has_intent(step)? {
             return Err(JournalError::OutOfOrder);
         }
-        self.append(step, record)
+        self.append(step, KIND_INTENT, record)
     }
 
     fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
         if !self.has_intent(step)? {
             return Err(JournalError::OutOfOrder);
         }
-        self.append(step, record)
+        self.append(step, KIND_OUTCOME, record)
     }
 
     fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
@@ -411,7 +446,7 @@ impl Journal for FileJournal {
         if !self.has_intent(step)? {
             return Err(JournalError::OutOfOrder);
         }
-        self.append(step, record)
+        self.append(step, KIND_NOTE, record)
     }
 
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
@@ -421,7 +456,7 @@ impl Journal for FileJournal {
         // the progressive of the write, so the intent both SURVIVES its outcome and comes
         // first. A table keyed on the step would have answered with the outcome, or kept only
         // it.
-        self.find_first(|stored, record| (stored == step.get()).then(|| record.to_vec()))?
+        self.find_first(|stored, _, record| (stored == step.get()).then(|| record.to_vec()))?
             .ok_or(JournalError::Missing)
     }
 
@@ -441,24 +476,87 @@ impl Journal for FileJournal {
         let mut all = Vec::new();
         for entry in table.iter().map_err(|_| JournalError::NotDurable)? {
             let (_, value) = entry.map_err(|_| JournalError::NotDurable)?;
-            let (stored_step, record) = value.value();
+            let (stored_step, _, record) = value.value();
             all.push((StepId::new(stored_step), record.to_vec()));
         }
         Ok(all)
     }
 
-    fn prune(&mut self, _step: StepId) -> Result<(), JournalError> {
-        // ⛔ NOT IMPLEMENTED, AND IT ANSWERS THE SAME WAY THE IN-MEMORY DOUBLE DOES, which is
-        // the point: retention is out of this milestone (decision D7 — the fingerprint of a
-        // pruned payload needs a hash function, and in the kernel that is a NEW ENTRY in the
-        // list of ADR-0031), and two implementations that refused DIFFERENTLY would make the
-        // conformance suite pass while the two behaved apart. `Missing` for a step that is
-        // demonstrably there says something false read on its own; the reason stands here
-        // instead of only in the test bench, exactly as it does in `simulator`.
-        //
-        // ⚠️ It satisfies promise 7 WITHOUT consulting whether the step is in doubt — the same
-        // half-blind pass the suite declares on its own assertion. Task 11 is where both sides
-        // learn to refuse a step in doubt instead of refusing everything.
-        Err(JournalError::Missing)
+    /// ⚠️ THIS METHOD REFUSED EVERYTHING UNTIL 2026-08-10, and what stood here said so: it
+    /// answered `Missing` for a step that was demonstrably there, and satisfied promise 7 of the
+    /// conformance suite WITHOUT consulting whether the step was in doubt. Promise 7b is what
+    /// took that away, and it took it away from both implementations at once.
+    ///
+    /// ⛔ IT IS A FULL SCAN AND THEN A REMOVE PER KEY, and the cost is declared rather than
+    /// optimised — the rule this file already follows on `find_first`. A step's records are
+    /// spread through a table keyed on the PROGRESSIVE of the write, so both questions this
+    /// method asks — "is the step there" and "does it carry an outcome" — cost a walk from the
+    /// beginning, and the keys to remove are only known once the walk is done. MEASURED on
+    /// 2026-08-10 rather than feared, and the figures are in `docs/riferimenti.md`. It is NOT
+    /// optimised because no measurement asks for it, and the remedy the day one does is the same
+    /// CHECKPOINT that `Journal::replay` already declares it needs.
+    ///
+    /// ⛔ ONE TRANSACTION, AND THE DECISION IS TAKEN INSIDE IT. Reading in one transaction and
+    /// removing in another would leave a window in which the step could gain its outcome between
+    /// the two — and this operation is IRREVERSIBLE, so the window is not a race to shrug at.
+    fn prune(&mut self, step: StepId) -> Result<(), JournalError> {
+        let transaction = self
+            .database
+            .begin_write()
+            .map_err(|_| JournalError::NotDurable)?;
+
+        let (keys, closed) = {
+            let table = transaction
+                .open_table(RECORDS)
+                .map_err(|_| JournalError::NotDurable)?;
+
+            let mut keys = Vec::new();
+            let mut closed = false;
+            for entry in table.iter().map_err(|_| JournalError::NotDurable)? {
+                let (key, value) = entry.map_err(|_| JournalError::NotDurable)?;
+                let (stored_step, kind, _) = value.value();
+                if stored_step == step.get() {
+                    keys.push(key.value());
+                    // ⛔ `KIND_OUTCOME` BY NAME AND NOT "MORE THAN ONE RECORD": a NOTE is not an
+                    // outcome, so a step carrying an intent and a note is STILL IN DOUBT. That
+                    // is why the operation had to be stored at all — see `RECORDS`.
+                    closed |= kind == KIND_OUTCOME;
+                }
+            }
+            (keys, closed)
+        };
+
+        if keys.is_empty() {
+            return Err(JournalError::Missing);
+        }
+        // ⛔ ADR-0018, NOT NEGOTIABLE: a step with an intent and no outcome is IN DOUBT, and
+        // pruning it destroys the only trace of something that MAY have happened. The refusal
+        // returns BEFORE any removal and before the commit, so a refused prune leaves the
+        // archive byte-identical.
+        if !closed {
+            return Err(JournalError::StepInDoubt);
+        }
+
+        // ⛔ DECLARED LIMIT, THE SAME ONE `simulator` DECLARES AND FOR THE SAME REASON — and the
+        // two must fail the same way or the conformance suite would pass while they behaved
+        // apart. ADR-0018 asks that "a payload that is absent and one that was never recorded
+        // not be indistinguishable"; removing the rows makes them exactly that, MEASURED on
+        // 2026-08-10: a pruned step and one nobody ever wrote both answer `Err(Missing)` to
+        // `read_back` and are both absent from `replay`. The distinction needs the FINGERPRINT
+        // and SIZE of ADR-0018, a fingerprint needs a hash function, and in the kernel that is a
+        // NEW ENTRY in the list of ADR-0031. It belongs to the milestone that brings retention
+        // (decision D7), and it is carried as an OPEN ENTRY in `docs/porta-di-qualita.md`.
+        {
+            let mut table = transaction
+                .open_table(RECORDS)
+                .map_err(|_| JournalError::NotDurable)?;
+            for key in keys {
+                table.remove(key).map_err(|_| JournalError::NotDurable)?;
+            }
+        }
+        transaction.commit().map_err(|_| JournalError::NotDurable)?;
+        // ⚠️ `next_key` IS NOT REWOUND, and it must not be: the keys a prune frees are HOLES, and
+        // reusing one would put a new record BEFORE older ones in the write order promise 4 owes.
+        Ok(())
     }
 }

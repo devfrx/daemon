@@ -165,17 +165,47 @@ impl Journal for MemoryJournal {
             .collect())
     }
 
-    fn prune(&mut self, _step: StepId) -> Result<(), JournalError> {
-        // ⛔ NOT IMPLEMENTED, AND IT ANSWERS `Missing` FOR A STEP THAT IS DEMONSTRABLY THERE.
-        // Read on its own against the port's own words — "the read found nothing under that
-        // identity" — this line says something FALSE, so the reason stands next to it instead
-        // of only in the test bench. Retention is out of this milestone: the fingerprint a
-        // pruned record carries demands a hash function, and in the kernel that is a NEW ENTRY
-        // IN THE LIST OF ADR-0031 — a deliberate act wanting a measurement nobody has made.
+    fn prune(&mut self, step: StepId) -> Result<(), JournalError> {
+        // ⚠️ THIS METHOD REFUSED EVERYTHING UNTIL 2026-08-10, and the paragraph that stood here
+        // is replaced rather than deleted because it explained a state that was real: it
+        // answered `Missing` for a step that was demonstrably there, which is FALSE read against
+        // the port's own words, and it satisfied the conformance suite's promise 7 WITHOUT ever
+        // consulting whether the step was in doubt. Promise 7b is what took that away.
+        if !self.entries.iter().any(|e| e.step == step) {
+            return Err(JournalError::Missing);
+        }
+
+        // ⛔ ADR-0018, NOT NEGOTIABLE: a step with an intent and no outcome is IN DOUBT, and
+        // pruning it destroys the only trace of something that MAY have happened.
         //
-        // ⚠️ Refusing is only half of it: it must also NOT PRUNE. An irreversible operation
-        // that half happened and then reported failure is worse than one nobody wrote. Both
-        // halves are held by `prune_refuses_and_leaves_the_record_where_it_was`.
-        Err(JournalError::Missing)
+        // ⚠️ "IN DOUBT" HERE IS THE PORT'S NOTION AND NOT §4.3's, and the two must not be
+        // confused: this asks which OPERATIONS were called — an `intent` with no `outcome` —
+        // while the kernel's asks what the RECORDS say, by decoding them. The port cannot
+        // decode anything (ADR-0036), which is exactly why `EntryKind` above exists and why
+        // `Journal::replay` can say "the port does not know what in doubt means" without
+        // contradicting this line. ⚠️ AND THE NOTE IS NOT AN OUTCOME: a step whose only company
+        // for its intent is a note is still in doubt, which is the whole reason this asks for
+        // `EntryKind::Outcome` by name instead of counting records.
+        let closed = self
+            .entries
+            .iter()
+            .any(|e| e.step == step && e.kind == EntryKind::Outcome);
+        if !closed {
+            return Err(JournalError::StepInDoubt);
+        }
+
+        // ⛔ DECLARED LIMIT, AND IT IS A RULE OF ADR-0018 THAT THIS LINE DOES NOT KEEP: "a
+        // payload that is absent and one that was never recorded must not be indistinguishable".
+        // Removing the entries makes them exactly that — MEASURED on 2026-08-10, not argued: a
+        // pruned step and a step nobody ever wrote both answer `Err(Missing)` to `read_back`,
+        // and both are absent from `replay`. The full distinction needs the FINGERPRINT and the
+        // SIZE that ADR-0018 asks a pruned record to carry, and a fingerprint needs a hash
+        // function, which in the kernel is a NEW ENTRY IN THE LIST OF ADR-0031 — a deliberate
+        // act no measurement has prepared. It belongs to the milestone that brings retention
+        // (decision D7 of the milestone-3 plan), and it is carried as an OPEN ENTRY in
+        // `docs/porta-di-qualita.md` rather than as this comment alone, because a note is read
+        // and forgotten (gotcha #36).
+        self.entries.retain(|e| e.step != step);
+        Ok(())
     }
 }

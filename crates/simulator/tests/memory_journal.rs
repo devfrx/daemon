@@ -321,26 +321,42 @@ fn a_note_does_not_take_the_intents_place_in_read_back() {
 
 #[test]
 fn prune_refuses_and_leaves_the_record_where_it_was() {
-    // ⛔ THE DECLARED NON-IMPLEMENTATION, held by a test so that it stays declared. Retention
-    // is out of this milestone (decision D7) because the fingerprint a pruned record carries
-    // demands a hash function, and in the kernel that is a NEW ENTRY IN THE LIST OF ADR-0031 —
-    // a deliberate act that wants a measurement nobody has made. So `prune` refuses.
+    // ⚠️ THIS TEST HELD "THE DECLARED NON-IMPLEMENTATION" UNTIL 2026-08-10 and expected
+    // `Err(Missing)` — `prune` refused EVERYTHING then, and the comment here explained why. Task
+    // 11 gave it the one rule of ADR-0018 that needs no fingerprint, so the refusal is now a
+    // REASONED one and carries its own word. The paragraph is replaced rather than deleted: it
+    // was true, and a reader meeting `StepInDoubt` deserves to see when `Missing` stopped being
+    // the answer.
     //
-    // The second assertion is the half that matters: refusing is not enough if the payload
-    // went anyway. An irreversible operation that half-happened and then reported failure is
-    // worse than one that is not implemented at all.
+    // ⛔ WHAT IS HELD HERE AND NOT IN THE CONFORMANCE SUITE, which is the whole reason this test
+    // survives promise 7: that the refusal DID NOT PRUNE ANYWAY. The suite reads the error and
+    // stops there; an irreversible operation that half-happened and then reported failure is
+    // worse than one nobody wrote, and no promise looks.
     let mut journal = MemoryJournal::new();
     let step = StepId::new(5);
     journal
         .intent(step, b"a payload worth keeping")
         .expect("intent");
 
-    assert_eq!(journal.prune(step), Err(JournalError::Missing));
+    assert_eq!(journal.prune(step), Err(JournalError::StepInDoubt));
 
     assert_eq!(
         journal.read_back(step).expect("read back"),
         b"a payload worth keeping".to_vec(),
         "prune refused and pruned anyway"
+    );
+
+    // ⛔ AND THE THIRD ANSWER, WHICH THE CONFORMANCE SUITE DOES NOT PIN — declared here rather
+    // than left to be discovered. `prune` has three answers: `Missing` for a step nobody wrote,
+    // `StepInDoubt` for an open one, `Ok` for a reconciled one. Promises 7 and 7b hold the last
+    // two ACROSS BOTH implementations; this one is held for the in-memory double alone, so the
+    // two could in principle diverge on it with nothing going red. It is not a hole this task
+    // opened — both refused every prune with `Missing` before it — and closing it costs a ninth
+    // promise with a liar of its own, which no measurement asks for yet.
+    assert_eq!(
+        journal.prune(StepId::new(404)),
+        Err(JournalError::Missing),
+        "a step nobody ever wrote is Missing, not in doubt"
     );
 }
 

@@ -27,11 +27,14 @@
 //
 // ⚠️ DECLARED COST, AND IT HAS BEEN PAID SINCE 2026-08-10 — this sentence read "AND IT IS NOT
 // YET BEING PAID" until task 9. `include!` carries the `#[test]` functions of this file along
-// with it, so the TEN tests below RUN A SECOND TIME inside `platform`'s binary: that binary
-// reports ELEVEN tests, these ten plus the one that builds the real journal. It buys the single
-// copy of the assertions and costs a few milliseconds — nothing here touches the disk or sleeps.
-// ⚠️ The figure said "eight" until 2026-08-10, when promise 8 brought a liar and the substring
-// constraint became a test of its own; counted rather than remembered.
+// with it, so the ELEVEN tests below RUN A SECOND TIME inside `platform`'s binary: that binary
+// reports TWELVE tests, these eleven plus the one that builds the real journal. It buys the
+// single copy of the assertions and costs a few milliseconds — nothing here touches the disk or
+// sleeps, and that stayed true when the real journal started pruning: `prune` runs against the
+// in-memory double here and against the file only in `platform`'s own copy.
+// ⚠️ The figure said "eight" and then "ten" during 2026-08-10, as promise 8 brought a liar, the
+// substring constraint became a test of its own, and promise 7b brought the ninth liar; counted
+// rather than remembered.
 
 use kernel::ports::journal::{Journal, JournalError, StepId};
 
@@ -68,6 +71,12 @@ pub const SECOND_INTENT_MESSAGE: &str =
 
 pub const PRUNE_IN_DOUBT_MESSAGE: &str =
     "journal contract violated: a step IN DOUBT must never be prunable (ADR-0018)";
+
+/// The OTHER DIRECTION of promise 7, and it carries a message of its own for the same reason
+/// every other promise does: a journal caught REFUSING a reconciled step and one caught PRUNING
+/// a step in doubt are opposite defects, and a shared message would name neither.
+pub const PRUNE_RECONCILED_MESSAGE: &str =
+    "journal contract violated: a step that HAS an outcome must be prunable";
 
 /// The operation that arrived on 2026-08-10 with `Untrusted::promote`. See promise 8.
 pub const NOTE_MESSAGE: &str = "journal contract violated: a `note` upon an open step must be \
@@ -260,16 +269,27 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
     // of a pruned payload needs a hash function and that would be a NEW ENTRY in the ADR-0031
     // list, which is a deliberate act nobody has measured.
     //
-    // ⛔ AND THE HALF THIS BLOCK CANNOT TELL APART, SAID HERE INSTEAD OF DISCOVERED LATER. The
-    // assertion asks that `prune` REFUSE, and `MemoryJournal` refuses EVERYTHING — decision D7
-    // again — so it satisfies this line WITHOUT ever consulting whether the step is in doubt.
-    // A journal that refused every prune for the wrong reason, or for no reason at all, is
-    // indistinguishable here from one that refuses this one BECAUSE it is in doubt. That is the
-    // family of gotcha #30, and closing it needs the OTHER half of the pair — a step NOT in
-    // doubt, whose prune must be ACCEPTED — which cannot be written while `prune` is
-    // unimplemented on both sides. It arrives with task 11, where `prune` learns to refuse a
-    // step in doubt instead of refusing everything. Written down as an OPEN ENTRY in
-    // `docs/porta-di-qualita.md`, because a note is read and forgotten (gotcha #36).
+    // ✅ AND THE HALF THIS BLOCK COULD NOT TELL APART IS CLOSED, ON 2026-08-10, BY BLOCK 7b
+    // BELOW. The paragraph that stood here is replaced rather than deleted because it was true
+    // and it named its own remedy: the assertion asks that `prune` REFUSE, both implementations
+    // refused EVERYTHING (decision D7), and so both satisfied this line WITHOUT ever consulting
+    // whether the step was in doubt — the family of gotcha #30. Closing it needed the OTHER half
+    // of the pair, a step NOT in doubt whose prune must be ACCEPTED, and that could not be
+    // written while `prune` was unimplemented on both sides. Task 11 implemented it and 7b is the
+    // half. `AlwaysInDoubtJournal` is the liar that proves 7b bites.
+    //
+    // ⚠️ AND THE ASSERTION IS AN EXACT ANSWER AND NOT `is_err()` ANY MORE, which is a second
+    // thing this block did not hold: with `is_err()` one implementation could answer `Missing`
+    // and the other `StepInDoubt` and NOTHING would go red — a divergence in silence, which is
+    // the family of defect this whole suite exists for.
+    //
+    // ⛔ TWO ASSERTIONS AND ONE MESSAGE, because both ARE this promise, and the second was
+    // MEASURED to be missing rather than added for symmetry: with the bare intent alone, an
+    // implementation that read "closed" as "carries a second record of any sort" passed — and
+    // both of them can be written that way, because neither `replay` nor `read_back` says which
+    // operation wrote a record. Mutation `M12` filed a NOTE as an outcome inside `FileJournal`
+    // and the ENTIRE workspace stayed green: a step in doubt became prunable, which is the one
+    // thing this promise exists to forbid.
     {
         let mut journal = build();
         let step = StepId::new(4);
@@ -277,7 +297,98 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
             .intent(step, b"in doubt from birth")
             .expect("intent");
 
-        assert!(journal.prune(step).is_err(), "{}", PRUNE_IN_DOUBT_MESSAGE);
+        assert_eq!(
+            journal.prune(step),
+            Err(JournalError::StepInDoubt),
+            "{}",
+            PRUNE_IN_DOUBT_MESSAGE
+        );
+
+        // ⛔ AND A NOTE IS NOT AN OUTCOME. A note says what the step READ on the way; only an
+        // outcome says what came of it, so a step whose intent has only a note for company has
+        // still not been reconciled and is still not prunable.
+        journal
+            .note(step, b"and what it read on the way")
+            .expect("a note upon an open step must succeed");
+
+        assert_eq!(
+            journal.prune(step),
+            Err(JournalError::StepInDoubt),
+            "{}",
+            PRUNE_IN_DOUBT_MESSAGE
+        );
+    }
+
+    // ── 7b. A step that is NOT in doubt CAN be pruned ─────────────────────────────────────
+    // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3), and here it is LOAD-BEARING and not tidy.
+    // Promise 7 asks `prune` to REFUSE, and a `prune` that refuses EVERYTHING satisfies it
+    // without ever consulting whether the step is in doubt — which is what BOTH implementations
+    // did until this block existed. Gotcha #30.
+    //
+    // ⚠️ NUMBERED 7b AND NOT 9 ON PURPOSE: it is the second direction of ONE rule, not a rule of
+    // its own. The suite therefore holds NINE promises across TEN blocks. ⚠️ The plan called it
+    // "5b" and the number was stale — `prune` has been the SEVENTH promise since the guard on
+    // `intent` took the sixth. Recounted on the source, gotcha #31.
+    //
+    // ⛔ AND WHAT THIS BLOCK DELIBERATELY DOES NOT ASSERT: what the archive looks like AFTER a
+    // prune succeeds. ADR-0018 requires that "a payload that is absent and one that was never
+    // recorded not be indistinguishable", and BOTH implementations fail that — MEASURED on
+    // 2026-08-10 and not argued: a pruned step and one nobody ever wrote both answer
+    // `Err(Missing)` to `read_back`, are both absent from `replay`, and answer `Err(Missing)`
+    // alike to a second `prune`. Pinning any post-state here would freeze the wrong one. The
+    // limit is declared where the defect is — beside `prune` in both implementations — and
+    // carried as an OPEN ENTRY in `docs/porta-di-qualita.md`, because a note is read and
+    // forgotten (gotcha #36). It belongs to the milestone that brings retention.
+    //
+    // ⚠️ AND A SECOND THING THIS SUITE DOES NOT PIN, declared rather than left to be found:
+    // `prune`'s THIRD answer, `Missing` for a step nobody ever wrote. Promises 7 and 7b hold the
+    // other two across both implementations; this one is held for the in-memory double alone, in
+    // `crates/simulator/tests/memory_journal.rs`, so the two could diverge on it with nothing
+    // going red — MEASURED, mutation `M10`, which survived the whole workspace. It is not a hole
+    // this task opened, since both refused every prune with `Missing` before it, and closing it
+    // costs a promise with a liar of its own that no measurement asks for yet.
+    // ⛔ THREE ASSERTIONS AND ONE MESSAGE, because all three ARE this promise, and the second and
+    // third were MEASURED to be missing rather than reasoned into place. With `is_ok()` alone,
+    // TWO mutations of `prune` left the whole workspace green: one that answered `Ok(())` and
+    // pruned NOTHING (`M5`, `M9` — both implementations), and one that answered `Ok(())` and
+    // pruned THE WHOLE JOURNAL (`M6`). The first is the shape of gotcha #30 — an operation judged
+    // by its return value; the second is the more expensive by far, because "prune step 5" was
+    // free to destroy every other step in the archive. ⚠️ Neither is about WHAT a pruned step
+    // leaves behind, which is why both can be held here without deciding it.
+    {
+        let mut journal = build();
+        let step = StepId::new(5);
+        let bystander = StepId::new(50);
+        let kept: &[u8] = b"the record of another step entirely";
+
+        journal.intent(bystander, kept).expect("intent");
+        journal.intent(step, b"opened").expect("intent");
+        journal.outcome(step, b"closed").expect("outcome");
+
+        // (a) THE LIAR DIES HERE, and it is first because nothing else can be asked of a prune
+        // that never happened.
+        assert!(journal.prune(step).is_ok(), "{}", PRUNE_RECONCILED_MESSAGE);
+
+        // (b) SOMETHING HAPPENED. ⛔ `assert_ne!` AGAINST THE ORIGINAL BYTES AND NOT `Missing`,
+        // ON PURPOSE: what a pruned step reads back is exactly the question this milestone does
+        // not answer, and pinning `Missing` here would freeze one answer to it. Every retention
+        // form that ADR-0018 could choose — absent, empty, a fingerprint and a size — differs
+        // from the payload, so this assertion survives the decision instead of pre-empting it.
+        assert_ne!(
+            journal.read_back(step).ok().as_deref(),
+            Some(b"opened".as_slice()),
+            "{}",
+            PRUNE_RECONCILED_MESSAGE
+        );
+
+        // (c) AND ONLY THAT STEP. An irreversible operation with an unbounded blast radius is
+        // worse than one nobody wrote.
+        assert_eq!(
+            journal.read_back(bystander).ok().as_deref(),
+            Some(kept),
+            "{}",
+            PRUNE_RECONCILED_MESSAGE
+        );
     }
 
     // ── 8. A note upon an open step is kept, and never displaces its intent ───────────────
@@ -352,10 +463,12 @@ fn no_promise_message_is_a_substring_of_another() {
     // place. The rule was written in the doc of `READ_BACK_MESSAGE` and held by nothing; a
     // declared reason that no test holds is a comment.
     //
-    // ⚠️ IT WAS RE-RUN RATHER THAN TRUSTED when `NOTE_MESSAGE` arrived, which is the whole
-    // reason it is a test now: the constraint is over the SET, so every message added has to be
-    // checked against all the others, and re-reading eight strings by eye is exactly the check
-    // nobody repeats.
+    // ⚠️ IT WAS RE-RUN RATHER THAN TRUSTED when `NOTE_MESSAGE` arrived, and again when
+    // `PRUNE_RECONCILED_MESSAGE` did, which is the whole reason it is a test now: the constraint
+    // is over the SET, so every message added has to be checked against ALL the others — NINE
+    // messages are 72 ordered pairs, and re-reading nine strings by eye is exactly the check
+    // nobody repeats. ⚠️ The two prune messages are the closest pair the set has ever held, both
+    // opening "a step ", which is why the count is written down instead of the reassurance.
     let messages = [
         ("READ_BACK", READ_BACK_MESSAGE),
         ("READ_BACK_IS_THE_INTENT", READ_BACK_IS_THE_INTENT_MESSAGE),
@@ -364,6 +477,7 @@ fn no_promise_message_is_a_substring_of_another() {
         ("OUT_OF_ORDER", OUT_OF_ORDER_MESSAGE),
         ("SECOND_INTENT", SECOND_INTENT_MESSAGE),
         ("PRUNE_IN_DOUBT", PRUNE_IN_DOUBT_MESSAGE),
+        ("PRUNE_RECONCILED", PRUNE_RECONCILED_MESSAGE),
         ("NOTE", NOTE_MESSAGE),
     ];
 
@@ -388,25 +502,26 @@ fn no_promise_message_is_a_substring_of_another() {
 }
 
 // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3): a suite never seen to fail is not a suite. The
-// eight tests below break the port's promises ONE EACH, and demand that the suite notices each —
+// nine tests below break the port's promises ONE EACH, and demand that the suite notices each —
 // and notices it ON THE RIGHT PROMISE, which is what reading the payload buys over `is_err()`.
 //
-// ⛔ EIGHT AND NOT THREE, and the five that were added are the lesson of gotcha #14. The suite
+// ⛔ NINE AND NOT THREE, and the six that were added are the lesson of gotcha #14. The suite
 // dies at the FIRST promise a journal breaks, so a liar that violates promise 1 never reaches
 // promise 5: with the three liars this task was dictated with, promises 2, 3 and 5 WERE NEVER
 // SEEN TO FIRE. `SilentJournal` violates promise 5 as well — its `outcome` answers `Ok(())` —
 // and dies on promise 1 long before getting there, which is exactly the shape of a control that
 // looks covered and is not.
 //
-// ⚠️ THE COUNT WAS "SIX" UNTIL 2026-08-10 and is dated rather than quietly bumped: promise 6
-// and its liar arrived with the guard on `intent`, promise 8 and its liar with `note`. A number
-// inside a sentence that stays true is the exact shape of gotcha #31.
+// ⚠️ THE COUNT WAS "SIX" AND THEN "EIGHT" DURING 2026-08-10, and is dated rather than quietly
+// bumped: promise 6 and its liar arrived with the guard on `intent`, promise 8 and its liar with
+// `note`, promise 7b and its liar with `prune`. A number inside a sentence that stays true is the
+// exact shape of gotcha #31.
 //
 // ⚠️ AND EACH IS BROKEN IN A DIFFERENT WAY (gotcha #45): writes dropped, the wrong record
 // returned, absence reported as emptiness, order reversed, the write-ahead guard removed on
-// `outcome`, the guard removed on `intent`, retention granted, and — the eighth — a write
-// VALIDATED AND THEN DISCARDED. Two liars broken the same way prove one thing twice and leave
-// the other promise unguarded.
+// `outcome`, the guard removed on `intent`, retention granted, a write VALIDATED AND THEN
+// DISCARDED, and — the ninth — retention REFUSED to everything, in the right words. Two liars
+// broken the same way prove one thing twice and leave the other promise unguarded.
 
 #[test]
 fn a_journal_that_writes_nothing_is_caught() {
@@ -454,6 +569,15 @@ fn a_journal_that_accepts_a_second_intent_is_caught() {
 #[test]
 fn a_journal_that_prunes_a_step_in_doubt_is_caught() {
     assert_caught_on(EagerPruner::new, PRUNE_IN_DOUBT_MESSAGE, "promise 7");
+}
+
+#[test]
+fn a_journal_that_calls_every_step_in_doubt_is_caught() {
+    assert_caught_on(
+        AlwaysInDoubtJournal::new,
+        PRUNE_RECONCILED_MESSAGE,
+        "promise 7b",
+    );
 }
 
 #[test]
@@ -867,6 +991,60 @@ impl Journal for EagerPruner {
     }
     fn prune(&mut self, _step: StepId) -> Result<(), JournalError> {
         Ok(())
+    }
+}
+
+/// Refuses EVERY prune, and refuses it with the RIGHT WORD: `StepInDoubt` for a step that has
+/// been reconciled exactly as for one that has not.
+///
+/// ⛔ BROKEN IN A NINTH WAY, and gotcha #45 is why the shape was chosen rather than reached for.
+/// The eight above drop every write, hand back the wrong record, report absence as emptiness,
+/// reverse the order, remove the guard on `outcome`, remove the guard on `intent`, grant
+/// retention, and validate a write then discard it. This one REFUSES SOMETHING LEGITIMATE — the
+/// only liar here whose defect is saying NO — and it says it with an answer that is CORRECT on
+/// the case promise 7 tests. `EagerPruner` is its opposite and not its twin: that one destroys
+/// evidence, this one never destroys anything and never asks the question.
+///
+/// ⛔ IT ANSWERS `StepInDoubt` AND NOT `Missing`, WHICH IS THE WHOLE POINT AND NOT A DETAIL. With
+/// `Missing` it would die on promise 7, six lines earlier, and promise 7b would go on being
+/// unproven while a test claimed otherwise — the shape of gotcha #14 rebuilt inside its own
+/// remedy. To die on 7b it has to pass 7 ON ITS MERITS, and passing 7 on its merits means
+/// giving the right refusal for the right case by accident.
+///
+/// ⚠️ AND IT IS NOT HYPOTHETICAL: it is what BOTH implementations were until 2026-08-10, save for
+/// the word — they answered `Missing`. Promise 7 was satisfied by both without either consulting
+/// anything, which is the open entry in `docs/porta-di-qualita.md` that promise 7b closes.
+struct AlwaysInDoubtJournal {
+    inner: simulator::journal::MemoryJournal,
+}
+
+impl AlwaysInDoubtJournal {
+    fn new() -> Self {
+        AlwaysInDoubtJournal {
+            inner: simulator::journal::MemoryJournal::new(),
+        }
+    }
+}
+
+impl Journal for AlwaysInDoubtJournal {
+    fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.intent(step, record)
+    }
+    fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.outcome(step, record)
+    }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.note(step, record)
+    }
+    fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
+        self.inner.read_back(step)
+    }
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        self.inner.replay()
+    }
+    fn prune(&mut self, _step: StepId) -> Result<(), JournalError> {
+        // ⛔ THE DEFECT, and it is a question never asked: the step is not consulted at all.
+        Err(JournalError::StepInDoubt)
     }
 }
 

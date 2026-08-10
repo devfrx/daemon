@@ -137,6 +137,29 @@ pub enum JournalError {
     /// implementation keyed on the identity of the step would otherwise diverge from the
     /// in-memory one with nothing going red.
     OutOfOrder,
+    /// ⛔ A PRUNE WAS ASKED FOR A STEP THAT HAS AN INTENT AND NO OUTCOME. ADR-0018, not
+    /// negotiable: a step in doubt is never prunable until it has been reconciled, because
+    /// pruning it destroys the only trace of something that MAY have happened.
+    ///
+    /// ⛔ WHY A FOURTH VARIANT AND NOT A FOURTH WAY OF BEING `OutOfOrder`, since this type is
+    /// deliberately poor and the second and third ways WIDENED that variant instead of joining
+    /// it. Because `OutOfOrder` is defined by its INVARIANT and not by its words: all three of
+    /// its ways are V6 — "nothing executes before the intent is durable" — and its own doc says
+    /// exactly that. Pruning too early breaks no V6; it breaks ADR-0018's retention rule, which
+    /// is a different invariant in a different ADR. Folding it in would make that doc's own
+    /// sentence false, and a variant whose meaning is "one of two unrelated rules" is the rich
+    /// error type this enum refuses by another route.
+    ///
+    /// ⛔ AND THE CALLER REALLY HAS TO TELL THEM APART, which is the test this enum sets before
+    /// it grows. `OutOfOrder` says the caller BROKE the write-ahead protocol: nothing should ever
+    /// do it, and a caller that meets it has a defect to surface. This one is ORDINARY — a
+    /// retention sweep walking the archive meets steps still in doubt as a matter of course,
+    /// skips them, and comes back after the next reconciliation. One is a bug, the other is
+    /// control flow, and a single variant would force a normal sweep to look like a bug.
+    ///
+    /// ⚠️ NO VARIANT FOR "PRUNED ALREADY", and it is an absence with a reason: what a pruned
+    /// step looks like afterwards is not settled — see `Journal::prune`.
+    StepInDoubt,
 }
 
 pub trait Journal {

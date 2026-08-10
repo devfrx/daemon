@@ -904,6 +904,32 @@ byte cambiano non è un aggiornamento, è un cambio di formato. Misure prima, sc
 **Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi;
 `cargo test --workspace --no-fail-fast` → **29 target, 150 test**, zero rossi.
 
+## Esecuzione del Traguardo 3 — il Task 11: `prune`, e una promessa che era verde prima di essere scritta
+
+**Misurato il 2026-08-10.** Sonde usa-e-getta, poi cancellate.
+
+| Misura | Come | Esito |
+|---|---|---|
+| ⛔ **lo stato di partenza**, che il piano dà per rosso | `cargo test -p kernel --test journal_contract` · `-p platform --test journal_contract_real` | ⛔ **VERDE, 10 e 11 su 11.** `prune` rispondeva `Missing` a tutto, quindi `is_err()` passava. La promessa 7 era soddisfatta **per caso** da entrambe |
+| ⛔ **ADR-0018: «un payload assente e uno mai registrato non devono essere indistinguibili»** | sonda su **entrambe** le implementazioni, dopo la potatura | ⛔ **VIOLATA da entrambe:** passo potato e passo mai scritto rispondono **`Err(Missing)`** a `read_back`, sono **entrambi assenti** da `replay`, e una **seconda** potatura risponde `Err(Missing)` a tutti e due. Indistinguibili in tre modi |
+| ⚠️ **la via che non costa un'impronta** — lasciare la voce e svuotare il payload | mutazione di `MemoryJournal::prune`, tre righe | ✅ **Funziona e non costa nessuna promessa:** `read_back(potato)` = `Ok([])` contro `Err(Missing)` — **distinguibili** — e la conformità resta **10 su 10 verde** |
+| ⛔ **ma la misura successiva la uccide** | `steps_in_doubt` sullo stesso giornale | ⛔ **`[InDoubt { step: 1, resolution: SuspendAndAsk }]`** — prima della potatura era `[]`. I byte vuoti sono **indecifrabili**, e un record indecifrabile **rimette il passo in dubbio** (E24). Un passo riconciliato e potato tornerebbe **in dubbio a ogni ripresa, per sempre**. La traccia deve essere **leggibile dalla riconciliazione**, cioè una decisione di **formato** — che i byte congelati del Task 10 rendono un atto deliberato |
+| il costo della potatura in `redb` | `--release`, archivi da 200, 2000 e 8000 record | **1,5 · 1,7 · 1,9 ms**, contro un `append` di **1,6 · 1,8 · 2,2 ms** sugli stessi archivi. ⛔ **La scansione non è il costo: l'`fsync` lo è.** Il delta 200→8000 è **~0,4 ms** su 7800 record, cioè **~51 ns/record** — conferma indipendente dei **56 ns** misurati al Task 8 per `has_intent`. Non ottimizzata |
+| la campagna: **15 mutazioni più una di controllo** | applicazione verificata (rifiuto se il modello non è unico), **compilazione in un passo separato**, poi `--no-fail-fast` | **11 uccise, 4 sopravvissute al primo giro**, e le sopravvissute sono la voce |
+| ⛔ `prune` risponde `Ok` e **non pota niente** (`M5` simulatore, `M9` `redb`) | mutazione | ⛔ **VERDE, tutto il workspace.** La 7b dettata guarda solo il valore di ritorno — famiglia del gotcha #30, e la stessa specie di **E42** |
+| ⛔ `prune` risponde `Ok` e **pota l'intero giornale** (`M6`) | mutazione | ⛔ **VERDE.** *«Pota il passo 5»* era libero di distruggere ogni altro passo dell'archivio |
+| ⛔ una **nota** archiviata come **esito** (`M12`, `redb`) | mutazione | ⛔ **VERDE.** Un passo con intento **e una nota** diventava potabile **mentre è in dubbio** — l'unica cosa che ADR-0018 vieta. È il difetto che il byte del `kind` esiste per impedire, e nulla lo teneva |
+| ✅ **tutte e tre chiuse**, e le stesse mutazioni rilanciate | 7b guadagna *«qualcosa è successo»* e *«solo quel passo»*; la 7 guadagna il caso **intento + nota** | ✅ **`M5`, `M6`, `M9`, `M12` uccise**, ciascuna col **proprio** messaggio: `M5`/`M6`/`M9` con `PRUNE_RECONCILED_MESSAGE`, `M12` con `PRUNE_IN_DOUBT_MESSAGE` |
+| ⚠️ `prune` di un passo **mai scritto** → `Missing` (`M10`) | mutazione | ⚠️ **SOPRAVVISSUTA, e resta dichiarata:** la terza risposta non è tenuta da nessuna promessa, solo dal doppio in memoria. Non è un buco aperto qui — prima entrambe rifiutavano tutto con `Missing` |
+| ✅ **la contro-sonda della contro-sonda** | `prune` rifiuta **tutto** con la parola giusta (`M13`) | ✅ **rossa**, `the_in_memory_journal_honours_the_contract` con `PRUNE_RECONCILED_MESSAGE` |
+| ✅ **e la 7b tolta del tutto** (`M14b`) | il blocco intero sostituito da un commento | ✅ `a_journal_that_calls_every_step_in_doubt_is_caught` → **«THE SUITE IS VACUOUS ON promise 7b»**, in **entrambi** i binari |
+| la **mutazione di controllo** | un commento in `MemoryJournal::prune` | ✅ **verde**, zero rossi |
+| le sottostringhe, **ricontate** | contatore strumentato nella sonda, poi tolto | **9 messaggi, 72 coppie ordinate** (erano 8 e 56). Le due di `prune` sono la coppia più vicina che l'insieme abbia mai avuto |
+| fine-riga e `rustfmt` | misurati prima e dopo su tutti e cinque i file | **zero CRLF** ovunque; ⚠️ **tutti `rustfmt`-clean al primo controllo** — nessuna settima occorrenza di **E6** |
+
+**Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi;
+`cargo test --workspace --no-fail-fast` → **29 target, 152 test**, zero rossi.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

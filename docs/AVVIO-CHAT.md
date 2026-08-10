@@ -95,8 +95,11 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     divergenza invece di allinearti all'attesa.
   · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48. Prova
     che la mutazione si sia applicata, compila in un passo separato
-    dall'eseguire, e per ogni mutazione su un valore provane due. È già
-    costato quattro falsi risultati credibili in una sessione sola.
+    dall'eseguire, e per ogni mutazione su un valore provane due. Sono già
+    NOVE i risultati credibili e falsi in due sessioni, e la peggiore è
+    la più innocua a vedersi: una rifinitura di LEGGIBILITÀ disarma la
+    campagna di mutazione senza che nulla diventi rosso, perché le ancore
+    sono accoppiate ai nomi del codice.
   · Alla chiusura di ogni voce COMMITTA E PUSHA senza chiedere, e SENZA
     co-autore. Prima però: bash scripts/gate.sh — comprende check-docs.sh.
   · Se ti viene un'idea che SOSTITUISCE una decisione presa, cerca PRIMA dove

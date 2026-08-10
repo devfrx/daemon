@@ -52,7 +52,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 210 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 216 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -82,7 +82,7 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 210 KB in tutto
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 675 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 676 KB
    il 2026-08-11, la spec da sola 277, i piani 168 e 162 — e l'idea è già nel
    compendio. Aprirai UN file — uno — quando ti servirà il perché di una
    decisione: le alternative scartate, le misure, i costi accettati. La §12
@@ -160,8 +160,8 @@ proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | **7,7 KB** |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **210 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 210 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **216 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 216 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -175,7 +175,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **210 KB contro mezzo megabyte**.
+resta quello che conta: **216 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **277 KB**. Non è che chiedesse
@@ -246,7 +246,7 @@ elenco**, ed è la voce che è stata tolta: si compila incollando, non si mantie
 > ignorato: le quattro specie di difetto di piano passano da ventidue righe a quindici, perché
 > il testo lungo vive ora in `CLAUDE.md` e nel gotcha **#49** e qui bastava l'elenco — la regola
 > è *rimandare invece di riscrivere*. 📌 **Il rapporto che questo file esiste per difendere non
-> si è mosso: 7,7 KB di messaggio che ordinano 210 KB di lettura, contro 675 di corpus.**
+> si è mosso: 7,7 KB di messaggio che ordinano 216 KB di lettura, contro 676 di corpus.**
 
 📌 **Il percorso del repository ha due valori, e non è una svista da «sanare».** Si lavora
 su **due macchine**, e il campo le nomina entrambe: un percorso solo sembrava aggiornato e

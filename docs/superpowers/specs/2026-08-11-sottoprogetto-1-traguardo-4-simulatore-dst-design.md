@@ -51,7 +51,7 @@ difetto che non si vede rileggendo: non c'è niente da leggere.
 | # | Artefatto | Vive in | Chi lo esercita |
 |---|---|---|---|
 | **1** | `CrashingJournal` — il giornale che cade alla scrittura scelta dal seme | `crates/simulator/src/journal.rs` | la campagna di livello 1, più una sonda che prova che **cade davvero** al punto dichiarato |
-| **2** | `CrashingBackend` — il `redb::StorageBackend` che cade all'operazione scelta dal seme | `crates/platform/src/journal.rs` | la campagna di livello 2, più il **conteggio dei punti scattati** (§4.2) |
+| **2** | `CrashingBackend` — il `redb::StorageBackend` che cade all'operazione scelta dal seme | ⛔ `crates/platform/tests/` — **un banco di prova, non `src/`**: vedi il richiamo del 2026-08-11 in §11 | la campagna di livello 2, più il **conteggio dei punti scattati** (§4.2) |
 | **3** | la campagna di **livello 1** — riproducibilità e riconciliazione su N semi | `crates/simulator/tests/` | è essa stessa un controllo; la sua non-vacuità la tiene un **giornale che non cade mai** e uno che **cade sempre** |
 | **4** | la campagna di **livello 2** — riapertura dell'archivio dopo la caduta | `crates/platform/tests/` | idem, più l'asserzione che `sync_data` sia **scattato** |
 | **5** | `C7a` — senza crash, **nessun** passo in dubbio | con la campagna di livello 1 | il bugiardo è un giornale che dichiara dubbi che non ci sono |
@@ -172,11 +172,14 @@ append-only, e completare o correggere un contorno **non è superare la decision
 | una **sesta crate** | il vincolo 1 della §11 dice **cinque**, e `platform` è **già fuori** dal perimetro di [ADR-0031](../../adr/0031-dipendenze-del-kernel-parte-del-confine.md): una crate nuova non compra nessun confine che non ci sia già |
 | `redb` fra le **dev-dependencies** di `simulator` | passerebbe `gate-deps.sh`, che le esclude — ma **il codice di test di una crate non è raggiungibile da un'altra**, e chi deve usare il backend cadente è `platform`. Sarebbe un vicolo cieco scelto per salvare la lettera di una tabella |
 | dietro una **feature** (`#[cfg(feature = "dst")]`) | creerebbe **due configurazioni di compilazione**, e il cancello ne proverebbe una sola. Una superficie che non gira mai è peggio di una dichiarata |
+| ⛔ **`pub` in `crates/platform/src/journal.rs`** | è la via che questa sezione **proponeva** fino al richiamo del 2026-08-11 in §11, appoggiandosi al precedente di `abandon_without_commit`. **Il precedente non trasferisce**, ed è la ragione per cui cade: quel metodo è `pub` perché **non è scrivibile da fuori** — gli serve la transazione ancora aperta. Un backend **lo è**, e scriverlo dentro `platform` toglierebbe proprio la proprietà che il Task 8 ha comprato: che il confine sia raggiungibile **da fuori la crate** (gotcha #46) |
 
-✅ **Il precedente c'è, e si segue invece di inventare.** `FileJournal::abandon_without_commit`
-è già `pub` in codice di produzione, con la ragione scritta accanto — *«IT IS PUBLIC SURFACE IN
-PRODUCTION CODE — said here rather than found out»* — e per lo stesso motivo: un test non può
-uccidere sé stesso. `CrashingBackend` segue quella regola: **pubblico e dichiarato**.
+✅ **La via giusta ha già il proprio precedente, e stava scritta nel codice.**
+`crates/platform/tests/file_journal.rs` porta `CountingBackend` — un `redb::StorageBackend`
+scritto **da fuori** `platform`, in un banco di prova — e il suo commento dice testualmente che
+*«Milestone 4 will put a FAILING one in the same place»*. `CrashingBackend` va lì: **zero
+superficie di produzione**, e la prova che il confine è reale resta quella che vale, cioè
+un'implementazione scritta da fuori.
 
 ---
 
@@ -225,7 +228,7 @@ Quindi:
 
 | | |
 |---|---|
-| `CrashingBackend` | **avvolge `InMemoryBackend`**: non si riscrive l'archiviazione, si aggiunge il punto di caduta e il **contatore** |
+| `CrashingBackend` | ⛔ **tiene il PROPRIO buffer dietro un `Arc`**, e **non** avvolge `redb::InMemoryBackend` — vedi il richiamo del 2026-08-11 in §11: quel tipo tiene i byte in un campo privato, quindi l'archivio **non si può riaprire** dopo la caduta, che è l'intera domanda del livello 2 |
 | `CrashingJournal` | **avvolge `MemoryJournal`**: la sola differenza è il punto di caduta, e duplicare il doppio in memoria creerebbe due verità da tenere allineate |
 
 ---
@@ -332,7 +335,7 @@ e resterà tale finché non esiste un worker vero contro cui provare la conformi
 | Costo | |
 |---|---|
 | la §3 resta **coperta in parte** a fine traguardo | mitigato dalla §7: ogni riga ha un indirizzo |
-| **superficie pubblica di prova** in `platform` | segue il precedente di `abandon_without_commit` — dichiarata accanto al tipo, non scoperta da chi legge |
+| ⚠️ **il banco di livello 2 non è riusabile da un'altra crate** | il codice di test **non attraversa i confini di crate**: `CrashingBackend` serve solo a `platform`, e nessuno lo chiede altrove. ⛔ **Questa riga dichiarava un costo diverso** — *«superficie pubblica di prova in `platform`»* — e quel costo **non si paga più**: vedi il richiamo del 2026-08-11 in §11 |
 | la campagna di livello 2 fa **I/O vero** | pochi semi, e il numero è **fissato e versionato** — vincolo 7 |
 | [ADR-0032](../../adr/0032-motore-di-persistenza.md) prende un **rimando** | è la seconda volta per quell'ADR, ed è il meccanismo previsto, non una deroga |
 | ⛔ **«la finta non è la vera» resta il punto cieco** | la §3.7 lo dichiara già. Il Traguardo 4 ne chiude **una parte** per il giornale — non tutto |
@@ -350,7 +353,9 @@ Le fonti e i comandi stanno in [`riferimenti.md`](../../riferimenti.md).
 | **D4-1** | `bash scripts/gate.sh` sul ramo, prima di toccare qualsiasi cosa | `GATE GREEN`, sei controlli su sei |
 | **D4-2** | `redb` 4.1.0 supporta `no_std`? | ❌ **no** — nessun `#![no_std]`, e le sole feature sono `cache_metrics` e `logging` |
 | **D4-3** | la superficie di `redb::StorageBackend` | **sei** metodi: `len`, `read`, `set_len`, `sync_data`, `write` obbligatori, **`close`** con implementazione predefinita |
-| **D4-4** | esiste un backend in memoria già pronto? | ✅ **sì** — `InMemoryBackend`, quindi il cadente **avvolge** invece di riscrivere |
+| **D4-4** | esiste un backend in memoria già pronto? | ✅ **sì** — `InMemoryBackend`. ⛔ **Ma non serve**, e la ragione è D4-10 |
+| **D4-9** | dove il repository dice già che vada il backend cadente | ⛔ `crates/platform/tests/file_journal.rs`, accanto a `CountingBackend`: *«Milestone 4 will put a FAILING one in the same place»*. Era **scritto nel codice** e questo documento non l'aveva letto |
+| **D4-10** | `redb::InMemoryBackend` espone il proprio buffer? | ❌ **no** — è `InMemoryBackend(RwLock<Vec<u8>>)` con i guardiani `fn read`/`fn write` **privati**. I byte muoiono con l'oggetto, quindi l'archivio **non si può riaprire**: il cadente tiene il proprio buffer dietro un `Arc`, che è ciò con cui ADR-0032 misurò |
 | **D4-5** | quali criteri di M-2 sono già permanenti nel repository | **C1, C2, C3, NV** in `crates/kernel/tests/executor_determinism.rs`. **C7a e C7b no** |
 | **D4-6** | quali finte della §3.1 esistono in `crates/simulator/src/` | **tre su sette**: `VirtualReactor`, `SeededRng`, `MemoryJournal` |
 | **D4-7** | quante righe di guasto della §3.3 hanno oggi il proprio soggetto | **una su dieci** |
@@ -373,3 +378,28 @@ senza che nulla lo dicesse.
 | **una guardia in `check-docs.sh`** che pretenda che ogni voce dell'elenco dei semi nomini un test esistente | è una **riga di catalogo nuova**, e quella è una decisione del proprietario. Un elenco di semi senza proprietà è l'artefatto che marcisce meglio di tutti — la proposta è scritta perché chi la riprende non debba riscoprirla |
 | **il checkpoint** | `replay()` carica tutto in memoria e le guardie di `FileJournal` sono scansioni: il rimedio noto è lo stesso per entrambi. ⛔ Resta chiuso dal **primo consumatore che misuri un giornale grande**, non da qui |
 | **le quattro finte mancanti** | nascono col meccanismo che le usa — §7. Il piano del Traguardo 4 **non le nomina** |
+
+---
+
+## 11. ⛔ Richiamo — 2026-08-11: due cose sbagliate, e le ha trovate il codice
+
+Trovate **prima di scrivere il piano**, leggendo `crates/platform/tests/file_journal.rs` e il
+sorgente di `redb` invece di fidarsi di questo documento. Corrette qui e **non riscritte in
+silenzio**, perché il modo in cui sono state trovate vale più delle correzioni.
+
+| | Diceva | È |
+|---|---|---|
+| **dove vive `CrashingBackend`** | `crates/platform/src/journal.rs`, `pub`, appoggiandosi al precedente di `abandon_without_commit` | ⛔ `crates/platform/tests/`, **un banco di prova**, come `CountingBackend`. Il precedente **non trasferisce**: `abandon_without_commit` è `pub` perché **non è scrivibile da fuori** — gli serve la transazione ancora aperta — mentre un backend lo è, ed è **da fuori** che deve essere scritto o non prova niente (gotcha **#46**). ⚠️ E la risposta era **già scritta nel codice**: il commento di `CountingBackend` dice *«Milestone 4 will put a FAILING one in the same place»* |
+| **su cosa poggia `CrashingBackend`** | avvolge `redb::InMemoryBackend` | ⛔ tiene il **proprio buffer** dietro un `Arc`. `InMemoryBackend(RwLock<Vec<u8>>)` ha i guardiani **privati**: i byte muoiono con l'oggetto, quindi **l'archivio non si può riaprire dopo la caduta** — e riaprirlo è l'intera domanda del livello 2. ✅ È anche ciò con cui ADR-0032 misurò: *«un backend scritto da noi, in memoria»* |
+
+📌 **La lezione, ed è la stessa che questo documento predica nella §1.** La §0.1 dice di leggere
+la §3.3 *«contro il codice di oggi»*, e chi ha scritto le due righe qui sopra lo ha fatto per la
+**spec** e non per il **codice**: le guardie erano state misurate, i banchi di prova no. ⛔ **Un
+disegno si legge contro il codice esattamente come un compito**, e i due errori si sono
+manifestati in modi diversi — il primo era **scritto** in un commento e bastava aprirlo, il
+secondo si vedeva solo **leggendo la libreria**. 📌 Nessuno dei due si vedeva rileggendo questo
+documento, che era coerente con sé stesso.
+
+✅ **E il richiamo va a favore del disegno, non contro:** entrambe le correzioni **rafforzano** la
+§2.2 — nessuna superficie di produzione, e la prova del confine resta quella scritta **da fuori
+la crate**. Il costo dichiarato in §8 è cambiato di conseguenza.

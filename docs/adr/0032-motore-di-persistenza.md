@@ -207,7 +207,7 @@ Trovato aprendo il brainstorming del Traguardo 4, il 2026-08-11.
 | il motore è **`redb` 4.1.0** con uno `StorageBackend` **scritto da noi** | ✅ **invariata**, ed è la sostanza di questo ADR |
 | il **requisito 4** — I/O iniettabile — è la ragione della scelta | ✅ **invariata** |
 | esistono **due** implementazioni del backend | ✅ **invariata** |
-| il backend cadente vive in **`simulator`** | ⛔ **falsa**. Vive in **`platform`**, accanto a `FileBackend` |
+| il backend cadente vive in **`simulator`** | ⛔ **falsa**. Vive in **`platform`**, e precisamente in un suo **banco di prova** — `crates/platform/tests/` — accanto a `CountingBackend`, non in `src/`. ⚠️ **Questa cella diceva *«accanto a `FileBackend`»*** poche ore dopo essere stata scritta, ed è imprecisa nello stesso senso della riga che corregge: un backend scritto **dentro** `platform` non proverebbe ciò che il Task 8 ha comprato, cioè che il confine sia raggiungibile **da fuori la crate** (gotcha #46) |
 
 ⛔ **È un rimando e non un `Superseded by`**: la decisione non è toccata, è sbagliata **una
 cella di una tabella**. È la seconda volta per questo ADR — la prima è il rimando del
@@ -235,7 +235,7 @@ abiti**. Questo ADR era l'unico posto che lo diceva, ed è il posto che lo corre
 | | |
 |---|---|
 | ✅ **i sei metodi erano giusti** | questo ADR dichiara *«`read` · `write` · `set_len` · **`sync_data`** · `len` · `close`»*, e sono sei davvero: `close` ha un'implementazione predefinita. Una prima lettura affrettata ne aveva contati cinque, e **l'ADR aveva ragione** |
-| ✅ **`InMemoryBackend` esiste ancora** | quindi il backend cadente lo **avvolge** invece di riscrivere l'archiviazione |
+| ⛔ **`InMemoryBackend` esiste ancora, e NON serve** | questa cella diceva che il cadente lo **avvolge**. Non può: `InMemoryBackend(RwLock<Vec<u8>>)` tiene i guardiani **privati**, quindi i byte muoiono con l'oggetto e **l'archivio non si riapre** — che è l'intera domanda del livello 2. Il cadente tiene il **proprio** buffer dietro un `Arc`, che è del resto ciò con cui questo ADR misurò: *«un backend scritto da noi, in memoria»* |
 
 Il disegno completo del Traguardo 4 sta in
 [`specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md`](../superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).

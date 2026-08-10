@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (675 KB con `wc -c` il 2026-08-11, e possono solo crescere — la spec da sola ne fa 277), e
+> (676 KB con `wc -c` il 2026-08-11, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-11.** Manutenzione: §13.
@@ -613,8 +613,19 @@ dell'errata.
 
 ✅ **Il brainstorming del Traguardo 4 è chiuso il 2026-08-11, e il disegno è scritto:**
 [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
-⏭️ **Il prossimo passo è il PIANO del Traguardo 4** — `superpowers:writing-plans`, che ora ha
-le voci chiuse davanti.
+✅ **E il piano è scritto lo stesso giorno:**
+[Traguardo 4](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci
+compiti in tre parti**. ⏭️ **Il prossimo passo è ESEGUIRLO**, subagent-driven, un compito per volta
+con revisione fra uno e l'altro.
+⛔ **E il disegno ha ricevuto un richiamo PRIMA che il piano fosse scritto, perché il codice lo ha
+smentito su due punti** — §11 del disegno: `CrashingBackend` vive in un **banco di prova** di
+`platform` e non in `src/`, perché ciò che il Task 8 comprò è che il confine sia raggiungibile **da
+fuori la crate**, e il precedente di `abandon_without_commit` **non trasferisce** (quel metodo è
+`pub` perché *non* è scrivibile da fuori); e non può avvolgere `redb::InMemoryBackend`, che tiene i
+guardiani **privati**, quindi l'archivio **non si riaprirebbe** — e riaprirlo è l'intera domanda del
+livello 2. ⚠️ **La prima risposta era già scritta in un commento** di
+`crates/platform/tests/file_journal.rs`; la seconda si vedeva solo leggendo la libreria. Nessuna
+delle due si vedeva rileggendo il disegno, che era coerente con sé stesso.
 
 ⛔ **Cosa ha deciso il disegno, e la prima decisione governa le altre: il Traguardo 4 costruisce
 il MOTORE della DST, non tutte le finte della §3.1.** Il fatto che decide è un conteggio, ed è
@@ -752,9 +763,10 @@ assegnato», **non** «non richiede un meccanismo di kernel».
    target verdi»* attribuite alla chiusura del Traguardo 2 — scritte identiche qui e in `HANDOFF.md`
    — non riconciliano con nessun'altra misura del progetto (**25 target** a quella data, **29**
    oggi), e non sono state riscritte perché rifarle richiederebbe uno stato che non esiste più.
-   ⏭️ **Il prossimo è il _piano_ del Traguardo 4**, il simulatore DST: ✅ il **brainstorming è
-   chiuso il 2026-08-11** e il disegno è scritto — questa riga diceva *«il brainstorming»* fino a
-   quel giorno, ed è una delle **tre** in cui il prossimo passo vive dentro questa sola sezione.
+   ⏭️ **Il prossimo è l'_esecuzione_ del piano del Traguardo 4**, il simulatore DST: ✅ il
+   **brainstorming è chiuso, il disegno è scritto e il piano pure**, tutti il 2026-08-11 — questa
+   riga ha detto *«il brainstorming»* e poi *«il piano»* nello stesso giorno, ed è una delle **tre**
+   in cui il prossimo passo vive dentro questa sola sezione.
 8. ~~**Il brainstorming del Traguardo 4**~~ — ✅ **chiuso il 2026-08-11**, e il disegno è scritto:
    [Traguardo 4 — il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
    ⛔ **Ha trovato una collocazione non eseguibile in un ADR `Accepted`**, e non riaprendo una
@@ -770,7 +782,17 @@ assegnato», **non** «non richiede un meccanismo di kernel».
    giusti. L'errore andava **a sfavore** dell'oracolo, non a favore: il conteggio dei punti scattati
    è la non-vacuità della campagna, quindi un metodo in meno sarebbe stato un oracolo più debole
    senza che nulla lo dicesse.
-9. **Il piano del Traguardo 4** — ⏭️ **è il prossimo**, e si scrive con `superpowers:writing-plans`.
+9. ~~**Il piano del Traguardo 4**~~ — ✅ **scritto il 2026-08-11**:
+   [Traguardo 4](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci
+   compiti in tre parti**. ⛔ **Sette decisioni prese dal piano**, e la seconda è quella che governa
+   il resto: la caduta **non si riprende** — un giornale che rifiuta una volta e poi riparte modella
+   un disco cattivo, non un crash, e la permanenza è ciò che fa fermare **tutte** le attività
+   interlacciate e non solo quella che ha toccato il confine. ⚠️ **E il punto di caduta si estrae da
+   un generatore diverso da quello dell'interlacciamento**, con seme derivato: due `SeededRng`
+   costruiti dallo stesso numero danno la **stessa** sequenza, quindi la campagna esplorerebbe una
+   **diagonale** dello spazio invece dello spazio.
+10. **L'esecuzione del Traguardo 4** — ⏭️ **è il prossimo**, subagent-driven, un compito per volta
+    con revisione fra uno e l'altro.
 
 ⛔ **E quattro questioni restano aperte nel sorgente, dichiarate e non risolte.** Nessuna delle
 quattro è un difetto oggi, ed è scritto **perché**; tutte si pagano più avanti, e chi riprende
@@ -916,7 +938,7 @@ in tre posti, aggiornata in due.
 | **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
 | **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito **per intero, quattordici compiti su quattordici**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale · **il reattore reale e la prima suite di conformità** · il **cablaggio di produzione** in `daemon`, coi default letterali · il **confine dei tipi** `Untrusted`/`Instruction`, con la promozione che pretende la porta `journal` · le porte **`filesystem` e `network`** · la porta **`process`**, coi gettoni e le **due ricevute distinte** · la porta **`ipc`**, che chiude le **sei famiglie** · il **registro dei controlli** e questa chiusura. ⛔ **Zero record del giornale scritti**, ed è deliberato: i byte congelati appartengono al Traguardo 3 |
 | **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ✅ **eseguito il 2026-08-10, dodici compiti su dodici**, `GATE GREEN` a tutti. ⚠️ **Ricontati il 2026-08-10 chiudendo il traguardo:** diceva *«otto compiti»*, ed era la terza delle tre cifre discordi dello stesso file. ⚠️ **Ricontati il 2026-08-10:** diceva *«due compiti»* ed era già indietro di uno al commit precedente, di **tre** a questo — e chiamava il compito *«la conformità coi **tre** bugiardi»* quando i bugiardi consegnati sono **sette**. Il numeratore lo muove chi esegue, e chi esegue guarda la §6. [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**, dodici compiti in due parti: ✅ il record versionato · ✅ la riga di catalogo dell'etichetta · ✅ il **doppio in memoria** · ✅ la **conformità coi sette bugiardi** e ✅ `replay()`, eseguiti come un compito solo · ✅ la **riconciliazione su un insieme**, che ha riportato indietro la firma di `replay()` invece di deciderla · ✅ **`promote` che diventa una nota**, con l'operazione `note()` e la variante `RecordKind::Note` che il compito ha dovuto inventare · ✅ **`redb` in `platform`** col **backend nostro**, la chiave progressiva e la prova che il confine è **sostituibile da fuori** · ✅ la conformità contro **entrambe** a ogni commit · ✅ **i byte congelati**, tre record e una mappa riletta dal banco · ✅ `prune` che rifiuta un passo in dubbio · ✅ la **chiusura**, che è stata un **audit** e non una scrittura. ⛔ **Congelamento per ultimo**, che è la decisione D1 del piano |
-| 4 | il simulatore DST — **il guasto**, non il tempo virtuale: quello è del Traguardo 2 | ⬜ ⏭️ **è il prossimo.** ✅ **Brainstorming chiuso e disegno scritto il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md), che fissa il perimetro (il **motore**, non tutte le finte), i **due livelli come due campagne**, l'oracolo di non-vacuità e i **sette** artefatti col controllo che esercita ciascuno. Manca **il piano**. ⚠️ Il titolo diceva *«tempo virtuale, guasti, campagna, semi»* e il tempo virtuale era eseguito da due traguardi |
+| 4 | il simulatore DST — **il guasto**, non il tempo virtuale: quello è del Traguardo 2 | ⬜ ⏭️ **è il prossimo, e resta da ESEGUIRE.** ✅ **Brainstorming, disegno e piano tutti il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md), che fissa il perimetro (il **motore**, non tutte le finte), i **due livelli come due campagne**, l'oracolo di non-vacuità e i **sette** artefatti col controllo che esercita ciascuno; e il [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci compiti in tre parti** — il giornale cadente · lo scenario giornalato e `C7a` · `C7b` con l'oracolo preso dalla **traccia** e non dall'archivio · la campagna breve col numero di semi **misurato** · il backend cadente scritto **da fuori la crate** · la coerenza dopo la riapertura e il **#51 chiuso dal conteggio dei `sync_data`** · la campagna di livello 2 · l'elenco dei semi · il tempo di parete nel cancello · la chiusura. ⚠️ Il titolo diceva *«tempo virtuale, guasti, campagna, semi»* e il tempo virtuale era eseguito da due traguardi |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
 | 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
 
@@ -1180,7 +1202,7 @@ Apri **un** file, quello che serve. Non la cartella.
 |---|---|---|
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
-| ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 23 KB |
+| ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 27 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
 | il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 181 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
@@ -1197,6 +1219,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
+| ⛔ **il compito da cui si riprende** — è il piano del Traguardo 4, **da eseguire**: dieci compiti in tre parti, e il pre-controllo con le quattro domande in testa | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 71 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 14 KB |
 | ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è 7,7, il resto è il perché di ogni riga | 17 KB |
 
@@ -1717,6 +1740,45 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > passata non ha eseguito nessun compito e ha comunque mosso **sei** righe su ventuno, più i due
 > aggregati e i loro conteggi di case. Resta **registrata e non presa**: è una riga di catalogo
 > nuova, e quella è una decisione del proprietario.
+
+> 🔁 **Ventunesima misura, il 2026-08-11, chiudendo il piano del Traguardo 4 — ed è la SECONDA
+> passata dello stesso giorno**, perché la voce si è chiusa due volte: il disegno e poi il piano.
+> Scritta a passata chiusa; righe contate **partendo dall'elenco dei file citati** — **ventuno**
+> bersagli, **ventidue** righe, perché `HANDOFF.md` ne ha due.
+>
+> | | |
+> |---|---|
+> | ⛔ **riga aggiunta** | il **piano del Traguardo 4**, **71 KB** — il compito da cui si riprende |
+> | **cresciuti** | il **disegno del Traguardo 4** `23 → 27`, per il richiamo della §11 in cui il codice lo ha smentito · questo file `200 → 206` |
+> | **invariati, ricontati** | [`HANDOFF.md`](HANDOFF.md) 181 · [`riferimenti.md`](riferimenti.md) 110 · [`roadmap.md`](roadmap.md) 23 · [`README.md`](README.md) 14 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 17 · [`porta-di-qualita.md`](porta-di-qualita.md) 96 · spec del sotto-progetto 1 **277** · kernel-design 44 · tracciabilità 15 · `design/08` 8 · `design/01` 4 · `design/` nove file `4–9` · il piano degli spike 68 · il piano del Traguardo 1 50 · il piano del Traguardo 2 162 · il piano del Traguardo 3 168 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
+>
+> ⛔ **E la notizia è che il difetto della ventesima si è ripetuto identico, alla PRIMA occasione
+> utile — che è la TERZA volta di seguito.** La riga del piano è stata scritta **`47 KB`** mentre
+> si aggiungeva, e il `wc -c` dice **71**. La diciottesima misura lo registrò per il piano del
+> Traguardo 3 (`162` scritto, **168** misurato, *«somigliare a un file vicino non è misurarlo»*), la
+> ventesima per il disegno (`15` scritto, **23** misurato), e questa per il piano. **Tre passate
+> consecutive, lo stesso gesto**: si aggiunge una riga, la cella del peso vuole un numero, e la mano
+> ne scrive uno **plausibile** invece di lasciarla vuota fino alla misura.
+>
+> 📌 **Il rimedio, e stavolta non è un'esortazione: una riga nuova nasce SENZA peso.** Si scrive la
+> cella `—`, si chiude la passata, si misura, e si riempie insieme a tutte le altre. Una cella
+> vuota è visibilmente incompleta; una cella con dentro un numero verosimile **non lo è**, ed è
+> precisamente per questo che sopravvive al commit. È il gotcha **#43** — *«un valore d'esempio
+> valido viene incollato così com'è: non si distingue da un dato»* — applicato al peso invece che
+> allo SHA.
+>
+> ⚠️ **E l'errore cresce:** `15 → 23` era il 53 % in più, `47 → 71` è il 51 %. Non è una stima che
+> migliora avvicinandosi al vero: è **sempre la stessa stima sbagliata**, fatta guardando un file
+> vicino che non c'entra.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **675** a **676 KB** (692398 B) — l'unico
+> movimento è la precisazione in [ADR-0032](adr/0032-motore-di-persistenza.md) — corretto in **tutte
+> e quattro** le case. I **due file obbligatori** passano da 210 a **216 KB**, corretti in tutte e
+> sei.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla tredicesima
+> applicazione.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

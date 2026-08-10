@@ -57,7 +57,9 @@ Ultimo aggiornamento: **2026-08-10**.
 > lezione della tredicesima misura: la §6 giusta **nasconde** gli altri documenti di stato.
 > ✅ **Il brainstorming del Traguardo 4 è chiuso il 2026-08-11** e il disegno è scritto:
 > [Traguardo 4 — il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
-> ⏭️ **Il prossimo passo è il _piano_**, con `superpowers:writing-plans`. ⛔ **Il disegno ha
+> ✅ **E il piano è scritto lo stesso giorno**, dieci compiti in tre parti:
+> [Traguardo 4](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md).
+> ⏭️ **Il prossimo passo è ESEGUIRLO**, subagent-driven. ⛔ **Il disegno ha
 > ristretto il traguardo su una misura**: delle dieci righe di guasto della §3.3 **una sola** ha
 > oggi il proprio soggetto, quindi il Traguardo 4 costruisce **il motore** della DST e non tutte
 > le finte — le altre nove hanno ciascuna il proprio indirizzo fra i Traguardi 5 e 6. ⚠️ **Questa
@@ -165,7 +167,7 @@ scritti, il 2026-08-09 e il 2026-08-10; quelli dal quarto in poi ancora no**.
 | **1** | scheletro e porta di qualità | ✅ **eseguito**: cinque crate, sei controlli in un comando, `GATE GREEN` |
 | **2** | il substrato iniettabile | ✅ **eseguito** il 2026-08-10, `GATE GREEN`: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · l'**esecutore** · l'orologio virtuale · il reattore reale e la prima **suite di conformità** · il cablaggio di produzione in `daemon` · il **confine dei tipi** `Untrusted`/`Instruction` · le **sei famiglie di porte al completo** · il registro dei controlli e la chiusura |
 | **3** | giornale e formato durevole | ✅ **eseguito** il 2026-08-10, **dodici compiti su dodici**, `GATE GREEN` a tutti. [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**: la porta `journal` a byte con **due** implementazioni giudicate dalla stessa suite, il record come enum di versione, la **riconciliazione**, ✅ **i byte congelati** — nel repository dal Task 10, e non si rigenerano mai. ⚠️ **Questa cella ha detto *«il prossimo … da eseguire»* a nove compiti fatti e *«dieci su dodici»* a dodici**, ed è la lezione della tredicesima misura ripetuta due volte: la §6 del compendio giusta **nasconde** gli altri documenti di stato |
-| **4** | il simulatore DST — **il guasto** | ⏭️ **il prossimo.** ✅ **Brainstorming chiuso e disegno scritto il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md); manca **il piano**. ⛔ Costruisce **il motore** della DST — giornale cadente, backend cadente, campagna, semi — e **non** le quattro finte mancanti, che nascono col meccanismo che le usa. ⚠️ Questa cella diceva *«tempo virtuale, iniezione dei guasti, la campagna, i semi»*: il **tempo virtuale è del Traguardo 2**, e con esso `C1`, `C2`, `C3` e la non-vacuità. Il `StorageBackend` su cui iniettare **esiste già**, ed è provato sostituibile da fuori la crate |
+| **4** | il simulatore DST — **il guasto** | ⏭️ **il prossimo, e resta da ESEGUIRE.** ✅ **Brainstorming, disegno e piano tutti il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) e il [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci compiti in tre parti**. ⛔ Costruisce **il motore** della DST — giornale cadente, backend cadente, campagna, semi — e **non** le quattro finte mancanti, che nascono col meccanismo che le usa. ⚠️ Questa cella diceva *«tempo virtuale, iniezione dei guasti, la campagna, i semi»*: il **tempo virtuale è del Traguardo 2**, e con esso `C1`, `C2`, `C3` e la non-vacuità. Il `StorageBackend` su cui iniettare **esiste già**, ed è provato sostituibile da fuori la crate |
 | 5 | arbitro GPU | ammissione, corsie, ciclo della concessione, le due policy |
 | 6 | gli altri meccanismi | gateway, sensori, permessi, degrado, il canale worker |
 

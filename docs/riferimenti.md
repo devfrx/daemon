@@ -844,10 +844,19 @@ su otto**. Mutazioni su `crates/platform/src/journal.rs`, ripristino **byte-iden
 
 | Mutazione | Muore su | Col messaggio |
 |---|---|---|
-| `read_back` risponde sempre `Ok(Vec::new())` | promessa **1**, riga 103 | ``journal contract violated: what `intent` wrote must come back from `read_back` unchanged`` |
-| la guardia del **secondo intento** tolta | promessa **6**, riga 244 | ``journal contract violated: a step already carrying an `intent` must refuse a second one`` |
-| `replay` rovesciato | promessa **4**, riga 193 | ``journal contract violated: `replay` must return records in WRITE ORDER`` |
+| `read_back` risponde sempre `Ok(Vec::new())` | promessa **1** | ``journal contract violated: what `intent` wrote must come back from `read_back` unchanged`` |
+| la guardia del **secondo intento** tolta | promessa **6** | ``journal contract violated: a step already carrying an `intent` must refuse a second one`` |
+| `replay` rovesciato | promessa **4** | ``journal contract violated: `replay` must return records in WRITE ORDER`` |
 | **controllo**: un commento dentro `FileJournal` | ✅ nulla | 28 target, 144 test verdi |
+
+⛔ **La colonna del mezzo portava anche il NUMERO DI RIGA del panico, ed è stato tolto dopo
+averlo visto invecchiare in un'ora.** Le tre misure erano state prese prima di correggere
+l'intestazione di `journal_contract.rs` (**E48**); l'intestazione è cresciuta di quattro righe e
+`103 · 244 · 193` sono diventati `107 · 248 · 197` **senza che nessuna asserzione si muovesse**.
+Rimisurate sull'albero finale invece di aggiornarle a mente. 📌 **Il numero di riga di un file
+vivo non è una misura da scrivere in un documento**: invecchia a ogni commento aggiunto, e il
+numero della **promessa** dice la stessa cosa e non invecchia. Gotcha **#31** nella sua forma più
+piccola e più rapida.
 
 ⚠️ **La seconda è la più informativa**: per morire sulla **6** deve superare le cinque precedenti
 **sui propri meriti**, cioè prova cinque promesse in più della prima.

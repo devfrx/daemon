@@ -930,6 +930,27 @@ byte cambiano non è un aggiornamento, è un cambio di formato. Misure prima, sc
 **Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi;
 `cargo test --workspace --no-fail-fast` → **29 target, 152 test**, zero rossi.
 
+## Esecuzione del Traguardo 3 — il Task 12: il costo della busta di versione, e i conteggi ricontati col comando
+
+**Misurato il 2026-08-10, chiudendo il traguardo.** ⛔ **Il compito era un AUDIT e non una
+scrittura**, quindi ogni cifra qui è un **riconteggio**, non una produzione: la domanda del gotcha
+**#49** — *ciò che questo compito detta di produrre esiste già?* — davanti a ogni passo.
+
+| Misura | Come | Esito |
+|---|---|---|
+| ⛔ **il confronto con ADR-0036 sulla dimensione del record** | sonda usa-e-getta in `crates/kernel/tests/`, poi **cancellata**: `minicbor::encode` del solo `RecordV1` contro `Record::V1(..).encode()` | ⛔ **Il confronto fra i TOTALI non è possibile, e la ragione è tracciabile:** il record che l'ADR prezzava a 27/30 byte non è descritto né nell'ADR né qui, e i prototipi erano *«usa-e-getta fuori dal repository»*. ✅ **Ciò che è confrontabile è la BUSTA DI VERSIONE**, che è la sola cosa che quella riga decideva: `82 00 81`, **`+3` byte esatti** — record pieno **18 → 21**, record vuoto **6 → 9** — dove l'ADR misurò `27 → 30`. **Stesso numero assoluto** |
+| ⚠️ **la divergenza, registrata invece che arrotondata** | la stessa misura, letta in percentuale | ⚠️ `+11 %` nell'ADR, **`+17 %`** qui: la base è più corta (18 byte contro 27), quindi la stessa busta pesa di più in proporzione. ⛔ **Non è un peggioramento del formato**, ed è scritto perché chi rileggesse la sola percentuale concluderebbe il contrario |
+| il numero dei test, **letto nell'uscita** e non messo a guardia | `cargo test --workspace --no-fail-fast` | **29 target, 152 test**, zero rossi — invariati dal Task 11 |
+| i casi di `compile_fail`, **contati** e non citati dal piano | `ls crates/kernel/tests/compile_fail/*.rs \| wc -l` | **17** — quattro dal Traguardo 1, dieci dal Traguardo 2, **tre** dal Traguardo 3. Il registro ne dichiarava **quattordici** |
+| ⛔ **i file di test orfani nel registro**, cercati **dall'altro capo** | per ogni file in `crates/*/tests/` e ogni caso in `compile_fail/`, `grep -F` del nome in `docs/porta-di-qualita.md` | ✅ **zero orfani** su **venti** file di test e **diciassette** casi. ⚠️ Al Task 2 uno era orfano: il rimedio ha retto |
+| ⛔ **la riga ASSENTE, che non si vede leggendo** | dall'elenco dei bugiardi verso la colonna, invece che dalla colonna verso i bugiardi | ⛔ **`J13` non era mai entrato** nella colonna «deve scattare» della riga di catalogo dei test di contratto: esisteva nella tabella delle sonde dal Task 11, e da quella riga il bugiardo della **7b** risultava inesistente |
+| i conteggi di test del registro, **ricontati sui binari** | l'uscita di `cargo test`, più `git diff` fra i commit per attribuire gli scarti | **cinque stantii**: `boundary_promotion.rs` 8 → **15**, `record_shape.rs` 10 → **12**, `reconciliation.rs` 9 → **11**, `journal_contract_real.rs` 11 → **12**, `compile_fail/` 14 → **17**. ✅ **Gli scarti attribuiti col `diff` e non dedotti:** i due di `record_shape.rs` e i due di `reconciliation.rs` vengono tutti dal **Task 7** |
+| le promesse e i bugiardi della conformità, **ricontati sul sorgente** | i `const … MESSAGE` e gli `struct …Journal` di `journal_contract.rs` | **nove** messaggi e **nove** bugiardi, in **dieci** blocchi. Il registro si intestava *«otto e otto»*. ⛔ **La cifra della passata di neutralizzazione NON è stata alzata per simmetria**, perché sarebbe stata un'ipotesi: resta quella misurata dopo la promessa 8, e la **7b** è dichiarata provata da `M14b` |
+| il grafo **spedito** e la lista di ADR-0031 | `cargo tree -p kernel/-p simulator --edges normal`, e `git log` sull'ADR | ✅ **invariati**: `bincode` · `minicbor` · `unty` più le proc-macro di build. `redb` vive in `platform`, che ADR-0031 **non** vincola, e l'ADR non è stato toccato dal traguardo |
+| la Definizione di «fatto», **condizione per condizione** | dodici condizioni contro il repository | **dodici soddisfatte**, e ⛔ **tre stantie nella lettera** — la 4 (*«tre bugiardi»*, sono nove), la 6 (*«A4 chiusa al formato»*, che **E31** aveva già respinto), la 9 (le due direzioni **incompilabili**, **E51**/**E52**). Corrette nell'**errata** e non nel testo |
+
+**Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

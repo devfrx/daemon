@@ -42,12 +42,12 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 165 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 192 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i cinquantaquattro gotcha (§9), le trappole di
+     cosa NON rifare (§8), i cinquantasei gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
 
 ⛔ CODICE IN INGLESE, DOCUMENTAZIONE IN ITALIANO — §1.0 della spec.
@@ -57,8 +57,8 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 165 KB in tutto
    Non è tipografia: la regola non stava scritta, e un traguardo intero è stato
    scritto con gli identificatori italiani e poi rifatto.
 
-⚠️ IL REPOSITORY CONTIENE CODICE RUST — due traguardi eseguiti, e il terzo
-   è il piano che stiamo per eseguire.
+⚠️ IL REPOSITORY CONTIENE CODICE RUST — tre traguardi eseguiti, e il quarto
+   è il piano che c'è da scrivere.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
    x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
    in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
@@ -131,18 +131,21 @@ proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ~4 KB |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **165 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 165 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **192 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 192 KB |
 
-⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi due volte.** Dicevano
+⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
+del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
+file mentre erano **192**, e il file che quella cifra descrive era cresciuto di ventitré
+kilobyte sotto di essa. Prima ancora dicevano
 *«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di oggi, e nessuno
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **165 KB contro mezzo megabyte**.
+resta quello che conta: **192 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
-diagrammi e la spec del sotto-progetto 1, che oggi pesa **274 KB**. Non è che chiedesse
+diagrammi e la spec del sotto-progetto 1, che oggi pesa **277 KB**. Non è che chiedesse
 troppo: chiedeva la cosa giusta nel posto sbagliato. Le decisioni servono **tutte** — ma
 compresse, non integrali.
 
@@ -181,6 +184,15 @@ massima: era il ritratto di sei difetti su sei.
 > ritratto si sia ristretto **due volte di seguito** è esso stesso il dato: ogni volta elencava
 > esattamente le specie viste fino a quel giorno, il che è il gotcha **#29** — la formulazione
 > più corta viene letta al posto di quella giusta, e qui la più corta era anche l'ultima vera.
+
+> 🔁 **Riletto il 2026-08-10, chiudendo il Traguardo 3 — e la cifra dei gotcha era stantia.**
+> Diceva *«cinquantaquattro»* mentre la §9 ne conta **cinquantasei**: il **#55** e il **#56** sono
+> nati col Task 11 e nessuno ha toccato questa riga. ⛔ **Ed è la voce che l'elenco qui sotto
+> nomina per prima fra quelle da aggiornare** — *«il numero dei gotcha quando §9 ne guadagna
+> uno»* — cioè la regola c'era, scritta in questo file, dodici righe più in basso. Un promemoria
+> non è un controllo, e la guardia dei conteggi di `check-docs.sh` sa contare gli **ADR** e non i
+> gotcha. ⚠️ Stessa passata: *«due traguardi eseguiti, e il terzo è il piano che stiamo per
+> eseguire»* diceva il falso a **tre** eseguiti.
 
 ⚠️ **Cosa aggiornare qui, e quando.** Il ramo se cambia; il peso dei due file
 obbligatori quando uno dei due cresce; il numero dei gotcha quando §9 ne guadagna uno; i

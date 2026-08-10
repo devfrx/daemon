@@ -9,7 +9,7 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 165 KB** (`wc -c`, il 2026-08-10). ⛔ **E il prezzo in
+⚠️ **Insieme questi due file pesano 192 KB** (`wc -c`, il 2026-08-10). ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
@@ -20,18 +20,18 @@ frase sul mezzo megabyte:** il file cresce, e un limite inferiore misurato **res
 mentre cresce** — una cifra esatta no. ⚠️ **La cifra dei token non è scritta apposta:**
 servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un'ipotesi
 travestita da misura. Il metodo e il limite stanno nella §12 del compendio, quattordicesima
-misura. 📌 È la **quinta** occorrenza del gotcha **#31** su questa riga, che prima diceva
-«circa seimila token» quando i due file pesavano 24 KB, e prima ancora «88 KB» quando erano
-già 91. Restano comunque la lettura più economica che esista qui: l'alternativa è **649 KB**.
+misura. 📌 È la **sesta** occorrenza del gotcha **#31** su questa riga, che prima diceva
+«circa seimila token» quando i due file pesavano 24 KB, poi «88 KB» quando erano
+già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano **192**. Restano comunque la lettura più economica che esista qui: l'alternativa è **665 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **649 KB** con
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **665 KB** con
 `wc -c` il 2026-08-10, e possono solo crescere; la spec da sola ne fa **277** — e l'idea è
 già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
 aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione
 per cui la riga qui sopra prezza i token come **limite inferiore** e non come totale — un
 compito che scrive nella spec invalida una cifra esatta **nel commit stesso in cui la
-legge**. Il verbale è la **sedicesima misura** della §12. Quando ti servirà il **perché** di
+legge**. Il verbale è la **sedicesima misura** della §12; l'ultima rimisura è la **diciottesima**, alla chiusura del Traguardo 3, e le due cifre di questo capoverso vengono da lì. Quando ti servirà il **perché** di
 una decisione — le alternative scartate, le misure, i costi accettati — apri **quel** file,
 uno solo. La §12 del compendio dice quale.
 

@@ -1,8 +1,12 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-10**, alla **chiusura del Traguardo 2** del sotto-progetto 1 — il
-substrato iniettabile: tempo, casualità, I/O, scheduling, l'esecutore e le **sei famiglie di
-porte**. Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
+Aggiornato il **2026-08-10**, alla **chiusura del Traguardo 3** del sotto-progetto 1 — il
+giornale e il formato durevole: il record come enum di versione, **due** implementazioni della
+porta `journal` giudicate dalla stessa suite, la riconciliazione, e i **byte congelati**.
+Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
+⚠️ **Questa riga diceva «alla chiusura del Traguardo 2» mentre undici compiti del terzo erano
+chiusi e pushati** — gotcha **#31** sull'intestazione, che nessuno rilegge perché è la cornice e
+non il contenuto.
 
 > 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — la spec del
 > sotto-progetto 1 è **completa e senza voci aperte**, e il **Traguardo 1 è eseguito**.
@@ -49,9 +53,18 @@ porte**. Serve a riprendere senza rifare, e senza rilitigare ciò che è già de
 > Alla chiusura `cargo test --workspace` dà **72 target verdi e zero fallimenti**, e dentro
 > il banco `compile_fail` esegue **quattordici** casi via `trybuild`.
 >
-> ⏭️ **Il prossimo passo è eseguire il piano del Traguardo 3**, scritto il 2026-08-10:
-> giornale e formato durevole — la porta a byte, il record come enum di versione, **i byte
-> congelati**. Dodici compiti in due parti; la §6 del compendio ha la tabella.
+> ✅ **Il Traguardo 3 è eseguito, il 2026-08-10.** Il suo
+> [piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md)
+> è percorso **per intero, dodici compiti su dodici**, subagent-driven, con `GATE GREEN` a ogni
+> compito. Il kernel ha ora il **record durevole** versionato, la **riconciliazione**, e la porta
+> `journal` ha **due** implementazioni — il doppio in memoria e `redb` col backend nostro — tenute
+> alle stesse **nove** promesse a ogni commit. I **byte congelati** sono nel repository e **non si
+> rigenerano**. `cargo test --workspace --no-fail-fast` → **29 target, 152 test**.
+>
+> ⏭️ **Il prossimo passo è SCRIVERE il piano del Traguardo 4** — il simulatore DST: tempo
+> virtuale, iniezione dei guasti, la campagna e i semi. Non si scrive prima di arrivarci, ed è la
+> regola che ha retto tre volte; la §6 del compendio ha la tabella e le **questioni che il
+> Traguardo 3 lascia aperte**, raccolte in un posto solo.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -72,8 +85,11 @@ sono **tutte chiuse**. La **§8 è stata riallineata e chiusa** il 2026-08-08. I
 di prodotto**. ✅ **Il Traguardo 2 è eseguito il 2026-08-10**: piano percorso **per intero,
 quattordici compiti su quattordici**, fra il 2026-08-09 e il 2026-08-10, `GATE GREEN` a ogni
 compito. ✅ **Le sei famiglie di porte sono complete** — `reactor` · `journal` · `filesystem`
-· `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive. ⏭️ Il prossimo passo è
-**eseguire il piano del Traguardo 3**, scritto il 2026-08-10: giornale e formato durevole.
+· `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive. ✅ **Il Traguardo 3 è eseguito
+il 2026-08-10**: **dodici compiti su dodici**, `GATE GREEN` a tutti — il record durevole
+versionato, due implementazioni della porta `journal` giudicate dalla stessa suite, la
+riconciliazione, e i **byte congelati**, che **non si rigenerano**. ⏭️ Il prossimo passo è
+**scrivere il piano del Traguardo 4**: il simulatore DST.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -97,11 +113,20 @@ iniezione di guasti. Il **giornale write-ahead** sale col Traguardo 3.
 
 ## Prima cosa da fare
 
-⏭️ **Eseguire il piano del Traguardo 3**, scritto il 2026-08-10 — giornale e formato durevole:
-la porta `journal` a byte, il record come **enum di versione**, e **i byte congelati**. Dodici
-compiti in due parti, subagent-driven con revisione fra uno e l'altro.
+⏭️ **Scrivere il piano del Traguardo 4** — il simulatore DST: tempo virtuale, **iniezione dei
+guasti**, la campagna e l'elenco versionato dei semi. ⛔ **Prima di scriverlo, leggere le
+questioni che il Traguardo 3 lascia aperte**, raccolte in un posto solo nella §6 del
+[compendio](COMPENDIO.md): due di esse hanno il Traguardo 4 come chiudente dichiarato — il
+**backend cadente** con l'iniezione di livello 2 (gotcha **#51**: una garanzia sulla morte del
+processo non è osservabile da dentro il processo) e la **campagna** che oggi il catalogo dichiara
+scoperta. Il `StorageBackend` su cui iniettare **esiste già** ed è provato sostituibile da fuori.
 
-⛔ **Prima di aprirlo, la decisione che ne governa l'ordine, perché è controintuitiva.** I
+> ⚠️ **Questa sezione diceva «eseguire il piano del Traguardo 3» a undici compiti su dodici
+> eseguiti**, e il capoverso qui sotto è ciò che resta di quel testo: si tiene perché la decisione
+> che descrive è **stata presa e ha retto**, non perché ci sia ancora da eseguire.
+
+⛔ **La decisione che governava l'ordine del Traguardo 3, perché era controintuitiva e ha
+retto.** I
 **byte congelati sono l'ultimo compito, non il primo**: non si rigenerano mai, e congelarli
 prima che un consumatore reale e **due** implementazioni abbiano esercitato il formato
 significherebbe congelare la forma sbagliata. È il difetto del Task 11 del Traguardo 2 — un
@@ -144,13 +169,23 @@ dire **quando** si scrivono e **cosa** l'oracolo contiene, non arrivarci per cas
 > ⚠️ **I due buchi che il Task 6 aveva lasciato sono chiusi**, e uno dei due **non** era
 > chiudibile dove era stato assegnato — gotcha **#44**. Non c'è più niente in sospeso lì.
 
-> ⛔ **Quattro questioni restano aperte nel sorgente, dichiarate e non risolte**, e chi
-> riprende deve conoscerle **prima** di scrivere: la tensione di `network` fra firma sincrona
-> e prontezza dal `reactor` · il residuo su `Untrusted::promote`, dove **sette** vie aggirano
-> il confine e **una sola** è chiusa · la tesi di `process` tenuta dall'implementazione e non
-> dal compilatore, perché i `new` delle ricevute **devono** essere pubblici · e `Ipc::accept`
-> senza canale d'errore, il cui prezzo di chiusura è **la firma**, non una variante. La §6
-> del compendio le elenca tutte e quattro, con la sede nel sorgente.
+> ⛔ **Quattro questioni restano aperte nel sorgente dal Traguardo 2, dichiarate e non risolte**,
+> e chi riprende deve conoscerle **prima** di scrivere: la tensione di `network` fra firma
+> sincrona e prontezza dal `reactor` · il residuo su `Untrusted::promote`, dove **sette** vie
+> aggirano il confine e ora **tre** sono chiuse · la tesi di `process` tenuta dall'implementazione
+> e non dal compilatore, perché i `new` delle ricevute **devono** essere pubblici · e
+> `Ipc::accept` senza canale d'errore, il cui prezzo di chiusura è **la firma**, non una
+> variante. ⚠️ **Questa riga diceva «una sola è chiusa»**, ed era ferma a prima del Task 7: le
+> chiuse sono **A3**, **A4** e **A6**, e le **quattro** che restano si dichiarano ciascuna **non
+> chiudibile** — non è un arretrato, è il **pavimento**.
+>
+> ⛔ **E il Traguardo 3 ha raccolto in un posto solo tutto ciò che resta aperto — DIECI voci**,
+> nella §6 del compendio, *«Cosa il Traguardo 3 lascia aperto»*: **otto** nate da questo
+> traguardo, più le vie del confine e la questione delle due verità, che vi stanno perché chi
+> riprende non debba cercarle in tre file. ⛔ **Due hanno il Traguardo 4 come chiudente
+> dichiarato**, e si leggono **prima** di scriverne il piano. ⚠️ **Erano sparse fra sorgente,
+> registro ed errata**, che è il modo in cui una voce aperta smette di esserlo senza che nessuno
+> l'abbia chiusa.
 
 > ⛔ **Non si riusa il piano del Traguardo 1**, e non si scrive un piano unico per i
 > traguardi rimasti: scriverne uno per codice che non esiste ancora significa inventare.
@@ -640,7 +675,7 @@ quando si arriva, perché scriverne uno per codice che non esiste significa inve
 |---|---|---|
 | **1** | scheletro e porta di qualità — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
 | **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) percorso **per intero, quattordici compiti su quattordici**, con `GATE GREEN` a ogni compito |
-| **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | 🔄 **in esecuzione dal 2026-08-10.** [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) di dodici compiti in due parti: **undici eseguiti**, `GATE GREEN` a tutti. ⚠️ **Ricontati una TERZA volta il 2026-08-10, chiudendo il Task 11:** questa cella diceva *«sei eseguiti»* e i Task 7, 8, 9, 10 e 11 erano chiusi e pushati — **Task 7** la promozione che scrive un record vero, **Task 8** `redb` e il backend nostro, **Task 9** la conformità contro l'implementazione vera, **Task 10** i **byte congelati**, **Task 11** `prune` che rifiuta un passo in dubbio (`cargo test --workspace --no-fail-fast` → **29 target, 152 test**). Resta il **Task 12**, il registro e la chiusura. ⛔ **E il conteggio dell'errata più sotto era fermo a ventisei: sono SETTANTA**, in otto passate. Terza occorrenza del gotcha **#31** dentro questa cella. ⚠️ **Ricontati il 2026-08-10:** questa cella diceva *«due eseguiti»* ed era ferma al Task 2 mentre il Task 3 era chiuso e pushato — è il gotcha **#31** sul contatore di un contenitore che cresce, e chi lo muove è chi esegue il compito, non chi legge. Task 1 → `crates/kernel/src/record.rs`; Task 2 → la riga di catalogo dell'**etichetta di fiducia** col proprio caso negativo; Task 3 → il **doppio in memoria** (`crates/simulator/src/journal.rs`); **Task 4 e 5, eseguiti come uno solo** → la **suite di conformità** in una copia sola (`crates/kernel/tests/journal_contract.rs`, `cargo test -p kernel --test journal_contract` → **7 passed**) e `replay()` sulla porta; **Task 6** → la **riconciliazione** (`crates/kernel/src/reconcile.rs`, `cargo test -p kernel --test reconciliation` → **9 passed**), preceduta da un passo proprio che toglie a `Record::encode` un `Result` che non poteva essere `Err`. ⛔ **Un'errata in testa al piano, ventisei voci in tre passate** — sette dal Task 1, **quattordici** dai Task 4/5, **cinque** dal Task 6 e dal suo passo preliminare. ⛔ **Tre non sono divergenze:** **E19** e **E22** sono **decisioni** del coordinatore — il secondo `intent` rifiutato, e la firma di `encode` che diventa `-> Vec<u8>` — ed **E25** è una domanda **riportata e non decisa**, la firma di `replay`. ⚠️ **Ricontate il 2026-08-10:** questa cella diceva *«diciassette voci — sette e **dieci**»*, sbagliato in **entrambi** i termini quando le voci erano E1…E18. ⛔ **Ed è la seconda volta nella stessa riga**, a una cella di distanza dal richiamo che riconta i compiti eseguiti: un conteggio si riconta **sulla tabella**, e chi lo scrive lo deduce dal proprio ricordo di averne aggiunte «una decina». Gotcha **#31** |
+| **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) di dodici compiti in due parti: **dodici eseguiti**, `GATE GREEN` a tutti. ⚠️ **Ricontati una QUARTA volta il 2026-08-10, chiudendo il traguardo:** questa cella diceva *«undici eseguiti»*, e il **Task 12** è stato un **audit** — le righe che dettava di spostare erano già spostate, e ciò che mancava erano cinque conteggi di test nel registro, una riga di sonda (**J13**) mai entrata nella propria colonna, e tre condizioni stantie nella **Definizione di «fatto»**. Gotcha **#49** per la seconda volta, previsto dal compito stesso. ⚠️ **Ricontati una TERZA volta il 2026-08-10, chiudendo il Task 11:** questa cella diceva *«sei eseguiti»* e i Task 7, 8, 9, 10 e 11 erano chiusi e pushati — **Task 7** la promozione che scrive un record vero, **Task 8** `redb` e il backend nostro, **Task 9** la conformità contro l'implementazione vera, **Task 10** i **byte congelati**, **Task 11** `prune` che rifiuta un passo in dubbio (`cargo test --workspace --no-fail-fast` → **29 target, 152 test**). Resta il **Task 12**, il registro e la chiusura. ⛔ **E il conteggio dell'errata più sotto era fermo a ventisei: sono SETTANTA**, in otto passate. Terza occorrenza del gotcha **#31** dentro questa cella. ⚠️ **Ricontati il 2026-08-10:** questa cella diceva *«due eseguiti»* ed era ferma al Task 2 mentre il Task 3 era chiuso e pushato — è il gotcha **#31** sul contatore di un contenitore che cresce, e chi lo muove è chi esegue il compito, non chi legge. Task 1 → `crates/kernel/src/record.rs`; Task 2 → la riga di catalogo dell'**etichetta di fiducia** col proprio caso negativo; Task 3 → il **doppio in memoria** (`crates/simulator/src/journal.rs`); **Task 4 e 5, eseguiti come uno solo** → la **suite di conformità** in una copia sola (`crates/kernel/tests/journal_contract.rs`, `cargo test -p kernel --test journal_contract` → **7 passed**) e `replay()` sulla porta; **Task 6** → la **riconciliazione** (`crates/kernel/src/reconcile.rs`, `cargo test -p kernel --test reconciliation` → **9 passed**), preceduta da un passo proprio che toglie a `Record::encode` un `Result` che non poteva essere `Err`. ⛔ **Un'errata in testa al piano, ventisei voci in tre passate** — sette dal Task 1, **quattordici** dai Task 4/5, **cinque** dal Task 6 e dal suo passo preliminare. ⛔ **Tre non sono divergenze:** **E19** e **E22** sono **decisioni** del coordinatore — il secondo `intent` rifiutato, e la firma di `encode` che diventa `-> Vec<u8>` — ed **E25** è una domanda **riportata e non decisa**, la firma di `replay`. ⚠️ **Ricontate il 2026-08-10:** questa cella diceva *«diciassette voci — sette e **dieci**»*, sbagliato in **entrambi** i termini quando le voci erano E1…E18. ⛔ **Ed è la seconda volta nella stessa riga**, a una cella di distanza dal richiamo che riconta i compiti eseguiti: un conteggio si riconta **sulla tabella**, e chi lo scrive lo deduce dal proprio ricordo di averne aggiunte «una decina». Gotcha **#31** |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
 | 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
@@ -664,12 +699,24 @@ dicono quanto il secondo traguardo sia costato più del primo:
 | **cinque controlli nati dopo il piano** | `crates/kernel/tests/ports_are_implementable.rs`, il rimedio a #46 (E31) · `run_the_production_graph()` estratta in `daemon`, perché la porta non lancia **mai** `cargo run` (E19) · `crates/simulator/tests/virtual_clock.rs`, un file che il piano non prevedeva (E14) · il secondo bugiardo `PastDeadlineLiar` (E15) · i cinque test di `SequentialRng`, che nasceva senza nessuno (E17). **Nessuno dei cinque era previsto** |
 | ⛔ **un'errata in testa al piano** | **quarantanove voci in sei passate**, contro le quattro del Traguardo 1. ⚠️ **E la proporzione è il dato:** nei Task 1–2 e 7 il difetto stava nella **sonda**, negli 8–11 nella **sonda assente**, nell'11 nell'**artefatto** che compilava e non era implementabile, nei 13–14 nel **compito già eseguito**. Quattro specie, e ciascuna si coglie in un modo che non coglie le altre |
 
-**Cosa il Traguardo 3 sta lasciando dietro di sé**, dopo i primi **undici** compiti — comandi e
-numeri completi in [`riferimenti.md`](riferimenti.md), sezione «Esecuzione del Traguardo 3».
+**Cosa il Traguardo 3 ha lasciato dietro di sé**, oltre al codice — **stessa forma dei due
+precedenti**, e questa tabella è la sintesi che mancava: fino alla chiusura c'era il dettaglio e
+non il ritratto, e un lettore non poteva confrontare i tre traguardi senza rileggerli.
+
+| | |
+|---|---|
+| **sette gotcha nuovi** | **#50** una finta che rompe un contratto è legittima quando il test parla della **rottura** · **#51** una garanzia sulla **morte del processo** non è osservabile da dentro il processo · **#52** un difetto di parallelismo **mascherato dal sistema operativo** — verde su Windows, rosso su Linux · **#53** una misura presa **in anticipo** dice che il risultato sarà verde, non che il banco sia giusto · **#54** una mutazione che deve restare **verde** può esserlo perché **non ha fatto niente** · **#55** più asserzioni con **un messaggio solo**: la non-vacuità si prova togliendo **il blocco**, non un'asserzione · **#56** due implementazioni della stessa porta **non conoscono le stesse cose**, e *«e l'equivalente nell'altra»* può costare un **cambio di archivio** |
+| **occorrenze successive** — ⚠️ **contate nell'errata col `grep`, non ricordate** | **#31** sei volte, fra cui **quattro su quattro** sul contatore dei compiti eseguiti · **#45** quattro, ogni volta su un rimedio nato **non provato** · **#14**, **#15**, **#32** e **#48** tre ciascuna — la sonda che sembra coperta, l'affermazione scritta **prima** della misura, l'idea cercata **dove era già stata valutata**, il banco che sbaglia verso l'attesa · **#30**, **#36**, **#46**, **#49** e **#52** due ciascuna: la **#49** è la sola **prevista dal compito che la incontrava** · **#40**, **#42**, **#43** una — e la #40 si dichiara *«la terza occorrenza di E1»* dentro lo stesso piano |
+| **i controlli nati dopo il piano** | la **promessa 2** e la **promessa 6** della conformità, coi propri bugiardi · i bugiardi portati da tre a **nove**, uno per promessa · `no_promise_message_is_a_substring_of_another`, il vincolo che rende sicuro `contains` · le tre sonde dell'**insieme** in `reconciliation.rs` · `CountingBackend`, una **seconda implementazione di `redb::StorageBackend` scritta da fuori la crate**, e con essa `FileJournal::with_backend` · `OperationSpy`, la spia conforme che annota **quale metodo** è stato chiamato · le **due** sonde che rileggono la mappa dei byte congelati · la promessa **7b** col nono bugiardo. **Nessuno di questi era previsto** |
+| ⛔ **un'errata in testa al piano** | **settanta voci in otto passate**, contro le quarantanove del Traguardo 2 e le quattro del primo. ⛔ **E NOVE non sono divergenze ma DECISIONI** — E19, E22, E27, E28, E34, E35, E53, E61, E63 — perché cambiano una **firma pubblica**, il contratto di una **porta condivisa** o il **formato durevole**: stanno nell'errata perché il proprietario possa **ribaltarle vedendole** invece di scoprirle. ⚠️ **E una era una domanda RIPORTATA e non decisa** — E25, la firma di `replay` — chiusa dal proprietario lo stesso giorno |
+
+⚠️ **E il dettaglio, misura per misura** — comandi e numeri completi in
+[`riferimenti.md`](riferimenti.md), sezione «Esecuzione del Traguardo 3».
 ⚠️ **Questa riga diceva «tre» a sei compiti eseguiti**, che è il gotcha **#31** sul contatore di
 un contenitore che cresce, per la seconda volta in questa tabella — portata a **sette** il
-2026-08-10 chiudendo il Task 7, a **otto** lo stesso giorno chiudendo il Task 8, e a **undici**
-chiudendo il Task 11, dopo che i Task 9 e 10 l'avevano lasciata ferma:
+2026-08-10 chiudendo il Task 7, a **otto** lo stesso giorno chiudendo il Task 8, a **undici**
+chiudendo il Task 11 dopo che i Task 9 e 10 l'avevano lasciata ferma, e a **dodici** alla
+chiusura:
 
 | | |
 |---|---|

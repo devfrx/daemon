@@ -16,6 +16,12 @@ distingue da un dato; un segnaposto sì. Gotcha **#43**.
 ⚠️ **Questo messaggio non nomina il prossimo passo, ed è deliberato.** Lo stato vive nella
 §6 del compendio, in un posto solo. Duplicarlo qui lo farebbe divergere.
 
+⛔ **Dice però di che _specie_ è il lavoro che viene dopo, e non è una deroga alla riga qui
+sopra.** La skill da invocare dipende dalla **specie** del lavoro — creativo, oppure
+esecuzione di un piano — non dal deliverable; e senza quella riga l'agente entra in plan
+mode **saltando il brainstorming**, che è precisamente ciò che `CLAUDE.md` vieta. Il
+*quale* deliverable resta scritto solo nella §6.
+
 ---
 
 ```
@@ -33,22 +39,29 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
+  /superpowers:brainstorming            <-- SERVE SUBITO: quello che viene dopo è
+                                        lavoro CREATIVO, e il brainstorming va
+                                        fatto PRIMA di entrare in plan mode
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
-  /superpowers:brainstorming                 prima di qualunque lavoro creativo
-  /superpowers:writing-plans                 quando si scriverà un piano nuovo
+  /superpowers:writing-plans                 quando si scriverà il piano — NON
+                                             prima che il brainstorming abbia
+                                             chiuso le voci aperte
   /superpowers:subagent-driven-development   per ESEGUIRE un piano: un subagente
                                              fresco per compito, con revisione fra
                                              uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 192 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 200 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
      cosa NON rifare (§8), i cinquantasei gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
+  ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
+     quattrocento righe del solo compendio pesano 25148 token, e il compendio
+     ne ha oltre milleseicento. È un LIMITE INFERIORE, non un totale — §12.
 
 ⛔ CODICE IN INGLESE, DOCUMENTAZIONE IN ITALIANO — §1.0 della spec.
    Crate, moduli, tipi, funzioni, messaggi d'uscita e commenti nel sorgente
@@ -57,8 +70,10 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 192 KB in tutto
    Non è tipografia: la regola non stava scritta, e un traguardo intero è stato
    scritto con gli identificatori italiani e poi rifatto.
 
-⚠️ IL REPOSITORY CONTIENE CODICE RUST — tre traguardi eseguiti, e il quarto
-   è il piano che c'è da scrivere.
+⚠️ IL REPOSITORY CONTIENE CODICE RUST — TRE traguardi su sei eseguiti, l'ultimo
+   il Traguardo 3 (il giornale e il formato durevole), dodici compiti su dodici,
+   GATE GREEN a tutti. Quello che viene dopo NON è codice ma lavoro CREATIVO,
+   e il deliverable esatto sta scritto solo nella §6 del compendio.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
    x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
    in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
@@ -67,10 +82,31 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 192 KB in tutto
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte, e
-   l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà il
-   perché di una decisione: le alternative scartate, le misure, i costi
-   accettati. La §12 del compendio dice quale.
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 667 KB
+   il 2026-08-10, la spec da sola 277, i piani 168 e 162 — e l'idea è già nel
+   compendio. Aprirai UN file — uno — quando ti servirà il perché di una
+   decisione: le alternative scartate, le misure, i costi accettati. La §12
+   del compendio dice quale.
+
+⛔ IL FORMATO DUREVOLE È CONGELATO. I byte in crates/kernel/tests/frozen/ —
+   tre record e una mappa che il banco rilegge — NON si rigenerano mai: se
+   cambiano non è un aggiornamento, è un CAMBIO DI FORMATO. Un campo nuovo
+   dev'essere Option con #[cbor(default)] e prendere un INDICE NUOVO, e il
+   significato di un indice non cambia mai.
+
+⛔ CINQUE COSE DECISE ESEGUENDO e non dal piano — PUOI RIBALTARLE, e stanno
+   nell'errata in testa al piano del Traguardo 3:
+     E22 Record::encode NON restituisce Result · E19 un SECONDO intento sullo
+     stesso passo è RIFIUTATO · E27 la porta guadagna note() e il record la
+     variante RecordKind::Note · E28 il record porta DUE campi, il contenuto
+     non fidato all'indice 3 e la ragione del chiamante al 4 · E31 la via A4
+     del confine dei dati è chiusa a LIVELLO 2, non «al formato».
+   L'errata ne marca NOVE come DECISIONE; E31 non è fra quelle, perché
+   corregge cosa significhi «chiusa».
+
+⚠️ DIECI QUESTIONI RESTANO APERTE, in un posto solo: §6 del compendio, «Cosa il
+   Traguardo 3 lascia aperto». Nessuna è un difetto oggi e per ciascuna è
+   scritto perché: sono la materia del brainstorming del Traguardo 4.
 
 ⚠️ Il compendio è una COMPRESSIONE, non una selezione: ci sono dentro tutte le
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
@@ -79,28 +115,21 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 192 KB in tutto
 SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
   · Non sono operativo in Rust. Quando l'argomento esce dal mio dominio,
     spiegamelo PRIMA a parole semplici e POI schematizza.
-  · Un piano scritto qui è un'IPOTESI, non un'istruzione, e nel Traguardo 2
-    il difetto è stato nel piano molto più spesso che nel codice. Quattro
-    forme, in ordine di quanto sono difficili da vedere:
-      1. la SONDA È SBAGLIATA — vacua, o attacca il caso invece del
-         meccanismo, o guarda una direzione sola. Si coglie rileggendo.
-      2. la SONDA MANCA, e non si vede leggendo perché non c'è niente da
-         leggere. L'unica domanda che la trova: per ogni artefatto che il
-         compito produce, quale controllo lo esercita?
-      3. l'ARTEFATTO è sbagliato, e compila. Al Task 11 il piano dettava
-         una porta CHE NON SI PUÒ IMPLEMENTARE: passava la porta di
-         qualità, e si vede solo scrivendone un'implementazione DA FUORI
-         DALLA CRATE. Una porta dichiarata in anticipo va provata dal lato
-         di chi la implementerà, non da quello di chi la dichiara.
-      4. il COMPITO È GIÀ ESEGUITO, e il piano non lo sa — gotcha #49. Ai
-         Task 13-14 il piano dettava di AGGIUNGERE a un registro righe che
-         c'erano già, perché la disciplina impone di aggiornarlo a ogni
-         passo: un compito di consolidamento in coda nasce vuoto. Non si
-         vede né rileggendo il piano né leggendo il codice, perché tutti e
-         due sono corretti. Si vede SOLO chiedendosi, prima di eseguire:
-         ciò che questo compito detta di produrre esiste già?
-    Prova in negativo PRIMA di crederci, e dove diverge registra la
-    divergenza invece di allinearti all'attesa.
+  · Un piano scritto qui è un'IPOTESI, non un'istruzione: il difetto è stato
+    nel piano più spesso che nel codice, e nel Traguardo 3 il pre-controllo
+    ne ha trovato almeno uno in DODICI compiti su dodici. Prima di eseguire
+    un compito si fanno le QUATTRO DOMANDE — l'elenco è in CLAUDE.md, «Prima
+    di eseguire un compito di un piano», col testo lungo nel gotcha #49:
+      1. la SONDA È SBAGLIATA — si coglie rileggendo
+      2. la SONDA MANCA — per ogni artefatto che il compito produce, quale
+         controllo lo esercita? Non c'è niente da leggere
+      3. l'ARTEFATTO è sbagliato e compila — si vede SOLO scrivendone
+         un'implementazione DA FUORI DALLA CRATE
+      4. il COMPITO È GIÀ ESEGUITO — ciò che detta di produrre esiste già?
+    E una quinta che non è nell'elenco: IL CONTRATTO CRESCE SOTTO IL PIANO —
+    un compito scritto prima si legge contro il codice di ADESSO, non contro
+    il piano. Prova in negativo PRIMA di crederci, e dove diverge registra
+    la divergenza invece di allinearti all'attesa.
   · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48. Prova
     che la mutazione si sia applicata, compila in un passo separato
     dall'eseguire, e per ogni mutazione su un valore provane due. Sono già
@@ -130,9 +159,9 @@ proporre qualunque cosa.
 
 | | Prima | Adesso |
 |---|---|---|
-| il messaggio | ~9 KB | ~4 KB |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **192 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 192 KB |
+| il messaggio | ~9 KB | **7,7 KB** |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **200 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 200 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -142,7 +171,7 @@ kilobyte sotto di essa. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **192 KB contro mezzo megabyte**.
+resta quello che conta: **200 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **277 KB**. Non è che chiedesse
@@ -195,10 +224,25 @@ massima: era il ritratto di sei difetti su sei.
 > eseguire»* diceva il falso a **tre** eseguiti.
 
 ⚠️ **Cosa aggiornare qui, e quando.** Il ramo se cambia; il peso dei due file
-obbligatori quando uno dei due cresce; il numero dei gotcha quando §9 ne guadagna uno; i
+obbligatori quando uno dei due cresce; il numero dei gotcha quando §9 ne guadagna uno; il
+**numero dei traguardi eseguiti** quando uno si chiude; il **peso del messaggio** quando il
+blocco fra le due recinzioni cresce — è la cella che nessuno rifaceva, ed era falsa di metà; i
 prerequisiti d'ambiente quando il repository comincia a richiedere uno strumento nuovo —
 è successo con `rustup`, e prima di allora non serviva niente. ⛔ **Lo SHA non è in questo
 elenco**, ed è la voce che è stata tolta: si compila incollando, non si mantiene.
+
+> 🔁 **Rimisurato il 2026-08-10, chiudendo il Traguardo 3 — e la cella del messaggio era la
+> quarta cifra falsa di questo file.** Diceva **«~4 KB»**; misurato sul blocco fra le due
+> recinzioni, a HEAD era **6,2 KB in 104 righe**, cresciuto sotto la propria descrizione senza
+> che nessuno la rifacesse. ⚠️ **E questa passata l'ha fatto crescere ancora, a 7,7 KB in 127
+> righe**, per le sei cose che la chiusura del traguardo pretendeva: il costo in token come
+> limite inferiore, i pesi di ciò che non si apre, il **formato congelato**, le **cinque
+> decisioni** ribaltabili, le **dieci** questioni aperte, e `superpowers:brainstorming` spostata
+> fra quelle che servono **subito**. ⛔ **Il conto è stato pagato dove costava meno**, non
+> ignorato: le quattro specie di difetto di piano passano da ventidue righe a quindici, perché
+> il testo lungo vive ora in `CLAUDE.md` e nel gotcha **#49** e qui bastava l'elenco — la regola
+> è *rimandare invece di riscrivere*. 📌 **Il rapporto che questo file esiste per difendere non
+> si è mosso: 7,7 KB di messaggio che ordinano 200 KB di lettura, contro 667 di corpus.**
 
 📌 **Il percorso del repository ha due valori, e non è una svista da «sanare».** Si lavora
 su **due macchine**, e il campo le nomina entrambe: un percorso solo sembrava aggiornato e

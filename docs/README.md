@@ -1,7 +1,8 @@
 # Documentazione di progetto
 
-Assistente desktop locale — piattaforma a quattro pilastri (conversazione, conoscenza,
-agenti/coding, voce, generazione asset) su kernel comune.
+Assistente desktop locale — piattaforma a **quattro pilastri paritari** (conversazione e
+conoscenza, agenti e coding, voce, generazione asset) su kernel comune. ⚠️ **Questa riga ne
+elencava cinque dicendo «quattro»**: il raggruppamento è quello della §1 del compendio.
 
 **Fase corrente: implementazione del kernel — Traguardi 1, 2 e 3 ✅ eseguiti, il 2026-08-08 e il
 2026-08-10.** Il codice del prodotto vive in [`../crates/`](../crates/) — cinque crate,
@@ -10,7 +11,10 @@ agenti/coding, voce, generazione asset) su kernel comune.
 **dodici compiti su dodici**: il record come enum di versione, **due** implementazioni della
 porta `journal` tenute alle stesse nove promesse a ogni commit, la riconciliazione. ⛔ **Col
 Task 10 il formato durevole è CONGELATO:** i byte del record sono nel repository e non si
-rigenerano mai. ⏭️ **Il prossimo passo è scrivere il piano del Traguardo 4**, il simulatore DST.
+rigenerano mai. ⏭️ **Il prossimo passo è il _brainstorming_ del piano del Traguardo 4**, il
+simulatore DST — **non** la sua scrittura: `CLAUDE.md` impone `superpowers:brainstorming` prima
+di qualunque lavoro creativo e prima di entrare in plan mode. ⚠️ **Questa riga diceva *«scrivere
+il piano»***.
 ⚠️ **Questa riga diceva «dieci compiti su dodici, si riprende dal Task 11»** a traguardo chiuso:
 è la lezione della tredicesima misura — la §6 del compendio giusta **nasconde** gli altri
 documenti di stato.
@@ -115,7 +119,7 @@ sotto-progetto**, nello stesso passaggio.
 | Spec | Sotto-progetto | Stato |
 |---|---|---|
 | [Kernel](superpowers/specs/2026-08-06-kernel-design.md) | L0 fondamenta + L1 arbitri trasversali | ✅ **completa e approvata** |
-| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, riapertura su sette voci ✅ **tutta chiusa** (F3, F6, F5, F1a, **F2 con F7**, **F1b**, **F4**), e **§8 riallineata e chiusa** il 2026-08-08, poi **audit sezione-contro-ADR** passato. ✅ **Spec completa**, e il [piano del Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) è **eseguito**. Anche il [piano del Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **eseguito** il 2026-08-10, **per intero**: quattordici compiti su quattordici, fra il 2026-08-09 e il 2026-08-10, con le **sei famiglie di porte complete**. ✅ Il [piano del **Traguardo 3**](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) è **scritto** il 2026-08-10 ed **eseguito** lo stesso giorno: **dodici compiti su dodici**, `GATE GREEN` a tutti. ⚠️ **Questa cella diceva «otto compiti su dodici, si riprende dal Task 9»** a traguardo chiuso. ✅ Col **Task 7** il kernel scrive il **primo record vero**: la porta guadagna `note()`, il record `RecordKind::Note` e il campo `reason`, e la via **A4** del confine dei dati non fidati si chiude a **livello 2**. ✅ Col **Task 8** nasce la **seconda implementazione** della porta `journal` — `redb` col **backend scritto da noi** in `platform` — con la chiave **progressiva della scrittura** e la prova, scritta da fuori la crate, che il confine dello `StorageBackend` è **davvero sostituibile**. ✅ Col **Task 10** i **byte congelati** — tre record e una mappa che il banco rilegge — e col **Task 11** `prune`, che rifiuta un passo **in dubbio** e accetta uno riconciliato. ⏭️ Il piano del **Traguardo 4** — il simulatore DST — è **da scrivere** |
+| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, riapertura su sette voci ✅ **tutta chiusa** (F3, F6, F5, F1a, **F2 con F7**, **F1b**, **F4**), e **§8 riallineata e chiusa** il 2026-08-08, poi **audit sezione-contro-ADR** passato. ✅ **Spec completa**, e il [piano del Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) è **eseguito**. Anche il [piano del Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **eseguito** il 2026-08-10, **per intero**: quattordici compiti su quattordici, fra il 2026-08-09 e il 2026-08-10, con le **sei famiglie di porte complete**. ✅ Il [piano del **Traguardo 3**](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) è **scritto** il 2026-08-10 ed **eseguito** lo stesso giorno: **dodici compiti su dodici**, `GATE GREEN` a tutti. ⚠️ **Questa cella diceva «otto compiti su dodici, si riprende dal Task 9»** a traguardo chiuso. ✅ Col **Task 7** il kernel scrive il **primo record vero**: la porta guadagna `note()`, il record `RecordKind::Note` e il campo `reason`, e la via **A4** del confine dei dati non fidati si chiude a **livello 2**. ✅ Col **Task 8** nasce la **seconda implementazione** della porta `journal` — `redb` col **backend scritto da noi** in `platform` — con la chiave **progressiva della scrittura** e la prova, scritta da fuori la crate, che il confine dello `StorageBackend` è **davvero sostituibile**. ✅ Col **Task 10** i **byte congelati** — tre record e una mappa che il banco rilegge — e col **Task 11** `prune`, che rifiuta un passo **in dubbio** e accetta uno riconciliato. ⏭️ Del **Traguardo 4** — il simulatore DST — si deve ancora fare il **brainstorming** del piano |
 
 ## Decomposizione del sistema
 

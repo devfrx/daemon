@@ -264,6 +264,7 @@ sostengono righe del catalogo, o che tengono in piedi ciò che le righe presuppo
 | `crates/kernel/tests/executor_determinism.rs` (dieci test) | **C1, C2 e C3 sull'esecutore _spedito_**, non su quello dello spike: **cento** corse allo stesso seme danno una traccia sola, **duecento** semi distinti non ne danno una sola, e il tempo virtuale **non attende** — l'orologio si ferma a 20 000 ms dove il sequenziale arriverebbe a 60 000. Più le sonde di **non-vacuità**: che l'interfoliazione sia reale, che un blocco diventi **errore e non attesa infinita**, che un reattore che non avanza sia **errore e non giro a vuoto**, che un'attesa già scaduta svegli subito senza muovere l'orologio, che una richiesta di sospensione **non si erediti** fra attività, e che un rideposito perpetuo di una scadenza passata **termini comunque** |
 | `crates/kernel/tests/ports_are_implementable.rs` (**tredici** test) | il rimedio al gotcha **#46**: una **finta** per `Filesystem`, una per `Network`, due per `process` — `Worker` e `Process` — e una per `Ipc`, con chiamate che le esercitano in entrambe le direzioni. **Cinque finte per quattro famiglie**, ed è la copertura di **tutte** le porte dichiarate senza implementazione. È ciò che tiene in vita `Path::as_bytes()`, `Endpoint::as_bytes()` e il `Clone` su `Path` contro una passata YAGNI — su un tratto dichiarato **in anticipo** i chiamanti sono vuoti per costruzione, e il criterio non distingue il morto dalla sola porta d'ingresso di chi verrà — e prova che quelle firme siano **implementabili fuori dalla crate**, dove la privacy di modulo di una tuple-struct le renderebbe inutilizzabili. ⚠️ **Non** è una suite di conformità: quella pretende due implementazioni da confrontare |
 | `crates/simulator/tests/memory_journal.rs` (**undici** test — ⚠️ ricontati il 2026-08-10, erano dieci prima della guardia sul secondo intento e della sua contro-sonda) | il **doppio in memoria** del giornale (§4.1): che l'intento riletto torni intatto, che un passo mai scritto sia **`Missing` e non vuoto**, che un esito **senza** intento sia rifiutato **e** uno **dopo** il proprio intento accettato — le due direzioni, e la seconda mancava — che il rifiuto guardi **quale** passo, che `read_back` risponda con l'**intento** e non con l'esito, che ogni passo rilegga **il proprio** primo record, che un **secondo intento** sullo stesso passo sia **rifiutato senza scrivere** e che uno su un passo **diverso** resti **accettato** — le due direzioni della guardia decisa il 2026-08-10 — e che `prune` **rifiuti senza potare** (decisione D7 del piano). ⚠️ **Non** è la suite di conformità, e dal 2026-08-10 la distinzione non è più «quella non esiste» ma **quella sta altrove**: `journal_contract.rs` porta ciò che **entrambe** le implementazioni promettono, questo file ciò che è vero **di questa sola** — l'ordine *dentro* un passo, il secondo intento, e che il giornale non sopravviva alla propria caduta |
+| `crates/kernel/tests/reconciliation.rs` (**nove** test) | la **riconciliazione** (§4.3, ADR-0007) — il primo consumatore di `replay()`: che un crash lasci **più** passi in dubbio e non uno (gotcha **#20**, `[3, 7]` col seme 99), che un passo con intento **ed** esito **non** sia in dubbio (la direzione che si dimentica), che la **classe decida** la risoluzione sui tre valori, e che un record indecifrabile valga `SuspendAndAsk`. ⚠️ **Quattro sonde che il compito non chiedeva:** il giornale **vuoto** — il primo avvio, che nessuna sonda dettata incontrava — l'**ordine di scrittura** scritto `7, 3, 1` perché quella dettata attendeva `[3, 7]`, che è ordine di scrittura **e** ordine numerico insieme, e le **due dell'insieme**: al più una voce per passo, e un passo che rientra **conserva il posto**. ⛔ **Ciò che questo file NON tiene, ed è dichiarato in `reconcile.rs`:** che il `kind` del record concordi con l'operazione che l'ha scritto — vedi la voce aperta in fondo |
 | `crates/kernel/tests/dependencies_usable.rs` (due test) | che le voci **spedite** dell'allow-list **compilino e facciano round-trip** — gotcha #22, `cargo add bincode` risolve a una versione il cui intero sorgente è un `compile_error!`. E per `bincode` i **byte consumati** sono pari alla lunghezza dichiarata, che è la regola imposta dal gotcha **#34**: un decodificatore che si ferma al primo elemento completo e ignora la coda «ha decodificato» senza provare niente |
 
 #### Le finte delle porte — cosa hanno colto, e cosa hanno potato
@@ -513,6 +514,51 @@ consultare se il passo sia in dubbio. Un giornale che rifiutasse ogni potatura a
 non è implementata da nessuna delle due parti. Arriva col **Task 11** di questo traguardo, dove
 `prune` impara a rifiutare *un passo in dubbio* invece di rifiutare tutto. Fino ad allora **J7**
 prova che la promessa sa scattare, e nient'altro prova che sappia distinguere.
+
+**`reconciliation` — sedici mutazioni più una di controllo, e tre sonde isolate da una propria.**
+⚠️ Applicazione verificata **per siti**, compilazione in un passo **separato** dall'esecuzione,
+conteggio con `--no-fail-fast` (gotcha **#48**). **Sedici su sedici applicate**, nessuna
+incompilabile; **nove sonde su nove** muoiono sotto almeno una mutazione, quindi nessuna è vacua.
+
+| Mutazione | Chi cade |
+|---|---|
+| il ramo `Intent` tronca l'insieme a **1**, e a **0** | il crash a più passi, la classe, l'ordine — e con `0` anche il posto |
+| il ramo `Outcome` non toglie nulla, e mette in dubbio invece di togliere | il passo con intento **ed** esito, il crash a più passi, l'ordine |
+| `resolution_of` mappa tutto a `RunAgain`, a `SuspendAndAsk`, ad `AskTheWorld` | ⛔ **la prima ne uccide UNA, le altre due ne uccidono DUE**: gli altri test scrivono `Idempotent`, quindi la costante che coincide col valore atteso **nasconde metà del difetto**. È il contro-verso del #48 guadagnato di nuovo |
+| il ramo `Err(_)` ignora, e risolve a `RunAgain` | il record indecifrabile, l'insieme, il posto, la gemella dopo l'esito |
+| l'insieme **rovesciato** | l'ordine **e** il crash a più passi |
+| ✅ l'insieme **ordinato per passo** | ⛔ **solo l'ordine**, e nient'altro: è la prova che la sonda dettata teneva l'ordine **per accidente**. ⚠️ Costa **due file**, perché `StepId` non deriva `Ord` di proposito |
+| `enter` spinge sempre, e `enter` toglie-e-rispinge in coda | la prima uccide insieme e posto; ✅ **la seconda solo il posto**, ed è l'alternativa che un lettore sceglierebbe |
+| `enter` tiene la **prima** risoluzione invece dell'ultima | insieme e posto |
+| ✅ `MemoryJournal::replay` rifiuta un giornale **vuoto**, e ne perde la **prima** voce | ⛔ la prima uccide **solo** il giornale vuoto — ogni altra sonda scrive qualcosa prima, quindi nessuna incontra il primo avvio; la seconda ne uccide quattro |
+| **controllo**: cambiata **una parola di un commento** | ✅ **nulla**, `9 passed` |
+
+⚠️ **E una sonda non muore MAI da sola, dichiarato invece che taciuto:**
+`a_step_is_in_doubt_at_most_once_however_many_records_it_carries` cade solo insieme a
+`a_step_that_re_enters_doubt_keeps_the_place_it_first_took`, la cui asserzione confronta il
+**vettore intero** e vede quindi anche un doppione. Resta perché porta lo **scenario** — un passo,
+due record, il secondo illeggibile — non perché veda un difetto che nessun'altra vede.
+
+⛔ **E una questione nuova resta aperta, scritta qui come voce e non come nota** (gotcha **#36**):
+**il `kind` del record e l'operazione della porta sono due verità indipendenti, e `replay()` ne
+restituisce una sola.** La riconciliazione si fida del **campo**; il giornale conosce
+l'**operazione** — `MemoryJournal` tiene un `EntryKind` interno e `JournalError::OutOfOrder` è
+definito sulle due operazioni. Misurate le due direzioni: `intent()` con un record che dice
+`Outcome` fa **sparire in silenzio un dubbio vero**; `outcome()` con un record che dice `Intent`
+rimette in dubbio un passo concluso. **Nessuna sonda lo tiene**, e non può tenerlo nessuna da
+questo lato della porta. ⚠️ **Non è un difetto oggi** — nessun codice del kernel scrive ancora un
+record — e diventa concreto al **Task 7**, dove `promote` ne scrive uno. ⛔ **Riportata al
+proprietario e non decisa**, perché chiuderla cambia la firma di `replay()`, cioè porta,
+conformità e due implementazioni.
+
+⚠️ **E una riga di questo registro va riletta quando quella questione si chiude, non prima:**
+la voce di `V5` fra le scoperte dice *«il tipo `EffectClass` esiste ma nessun caso lo esercita»*.
+Dal Task 6 la **riconciliazione** lo esercita su tutti e tre i valori, e tratta un record senza
+classe leggibile come `Unrepeatable`, che è la frase di ADR-0007. ⛔ **Ma la riga di catalogo di
+`V5` è di livello 1** — *«un effetto senza classe dichiarata non è esprimibile»* — e un test di
+comportamento **non la copre**: sono due proprietà diverse con lo stesso nome. Scritto qui perché
+chi riconta non muova il numeratore per la ragione sbagliata, e perché spostarlo richiederebbe il
+**catalogo §7.4**, che è una modifica alla spec che nessuno ha deciso (vincolo globale 7).
 
 ⚠️ **Il banco di misura ha prodotto _nove_ esiti credibili e falsi in due sessioni** — gotcha
 **#48**, col testo integrale in [`HANDOFF.md`](HANDOFF.md). ⛔ Gli ultimi due sono della revisione

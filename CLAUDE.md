@@ -9,7 +9,7 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 216 KB** (`wc -c`, il 2026-08-11). ⛔ **E il prezzo in
+⚠️ **Insieme questi due file pesano 222 KB** (`wc -c`, il 2026-08-11). ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
@@ -22,16 +22,16 @@ servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un
 travestita da misura. Il metodo e il limite stanno nella §12 del compendio, quattordicesima
 misura. 📌 È la **sesta** occorrenza del gotcha **#31** su questa riga, che prima diceva
 «circa seimila token» quando i due file pesavano 24 KB, poi «88 KB» quando erano
-già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **676 KB**.
+già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **679 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **676 KB** con
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **679 KB** con
 `wc -c` il 2026-08-11, e possono solo crescere; la spec da sola ne fa **277** — e l'idea è
 già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
 aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione
 per cui la riga qui sopra prezza i token come **limite inferiore** e non come totale — un
 compito che scrive nella spec invalida una cifra esatta **nel commit stesso in cui la
-legge**. Il verbale è la **sedicesima misura** della §12; l'ultima rimisura è la **ventunesima**, alla chiusura del piano del Traguardo 4, e le due cifre di questo capoverso vengono da lì. Quando ti servirà il **perché** di
+legge**. Il verbale è la **sedicesima misura** della §12; l'ultima rimisura è la **ventiduesima**, alla chiusura della sessione, e le due cifre di questo capoverso vengono da lì. Quando ti servirà il **perché** di
 una decisione — le alternative scartate, le misure, i costi accettati — apri **quel** file,
 uno solo. La §12 del compendio dice quale.
 
@@ -113,6 +113,13 @@ il solo elenco, perché è quello che si rilegge prima di dispacciare.
 contratto cresce sotto il piano.** Il Task 8 dettava «le cinque operazioni» quando erano sei;
 il Task 10 congelava quattro campi quando erano cinque; il Task 11 attendeva un rosso che era
 verde. **Un compito scritto prima si legge contro il codice di adesso, non contro il piano.**
+
+⛔ **E vale anche per un DISEGNO — misurato il 2026-08-11, gotcha #58.** Il disegno del
+Traguardo 4 fu scritto leggendo la spec, gli ADR e le **guardie**, e sbagliava due cose che
+stavano nei **banchi di prova** — di cui una scritta in un **commento**. ⚠️ **Le guardie non sono
+tutto il codice:** un documento che ha letto gli script del cancello, i manifesti e i sorgenti
+delle dipendenze **si sente verificato**, ed è lì che smette di guardare i test. E un precedente
+si cita per la **ragione** che lo ha prodotto, non per la forma.
 
 ## Manutenzione della documentazione
 

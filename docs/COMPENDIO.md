@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (676 KB con `wc -c` il 2026-08-11, e possono solo crescere — la spec da sola ne fa 277), e
+> (679 KB con `wc -c` il 2026-08-11, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-11.** Manutenzione: §13.
@@ -858,6 +858,7 @@ nessuno l'abbia chiusa.
 | ⚠️ **l'amplificazione dello spazio di `redb`**, misurata in M-8 su carico **sintetico** | §4.8 della spec | *«da rimisurare sul carico reale prima di congelare i parametri di ADR-0018»* |
 | ⚠️ **il `kind` del record e l'operazione della porta restano due verità indipendenti**, e nulla di livello 1 impedisce a uno scrittore futuro di farle divergere | `crates/kernel/src/reconcile.rs` | ✅ **chiusa come DECISIONE dal proprietario**, non come garanzia: la sonda copre **l'unico scrittore che esiste**, e l'aiutante nasce col **secondo** |
 | ⚠️ **il registro non è sorvegliato** dalla guardia dei conteggi | il capoverso qui sopra | il **proprietario**: allargare la lista non basta, servirebbe un controllo diverso — **registrata, non presa** |
+| ⚠️ **l'elenco dei semi non avrà un chiudente**, e sarà l'unico artefatto del Traguardo 4 senza: nessun controllo pretende che una sua voce **nomini un test esistente**, e un elenco di semi senza proprietà è l'artefatto che marcisce meglio di tutti | §10 del [disegno del Traguardo 4](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) | il **proprietario**: sarebbe una riga di catalogo nuova in `check-docs.sh` — **registrata, non presa**, come la guardia sui pesi della §12 |
 | ⚠️ **il portachiavi non ha un chiudente scritto**: nessuno script verifica che solo `secrets` lo raggiunga, e nessuna riga dice chi lo farà | riga di *«Cosa la porta NON controlla»* in [`porta-di-qualita.md`](porta-di-qualita.md) | ⛔ **da assegnare** — trovato chiudendo il Traguardo 3, rileggendo il registro contro la condizione 11 |
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
@@ -1083,7 +1084,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I cinquantasette gotcha
+## 9. I cinquantotto gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -1147,6 +1148,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 55 | ⛔ **Quando più asserzioni condividono UN messaggio, una mutazione mirata a una di esse è colta da un'altra: il rosso c'è e non prova ciò che si voleva provare.** Al Task 11 del Traguardo 3, per mostrare che la promessa **7b** non è vacua, si neutralizza l'asserzione che il bugiardo uccide e si pretende un *«THE SUITE IS VACUOUS»*. **La sonda è rimasta VERDE**: le tre asserzioni del blocco portano lo stesso messaggio — è la regola *un messaggio per promessa* — il bugiardo è caduto sulla **seconda**, e il confronto è per `contains`, che non distingue quale abbia sparato. ⚠️ E il verde si leggeva come una prova quando diceva solo che il blocco ha ancora denti **da qualche parte**. 📌 **La non-vacuità di un blocco a più asserzioni si prova togliendo IL BLOCCO, non un'asserzione.** È il rovescio del **#54** e la specie del **#15** |
 | 56 | ⛔ **Due implementazioni della stessa porta non conoscono le stesse cose: una guardia nuova può costare a una tre righe e all'altra un CAMBIO DI ARCHIVIO — e il piano lo scrive «e l'equivalente nell'altra».** Al Task 11 `MemoryJournal` sa quale operazione ha scritto ogni voce, quindi *«questo passo ha un esito?»* è una riga; `FileJournal` tiene `(passo, byte)` e **non poteva rispondere**: `has_intent` chiede solo *«c'è QUALCHE record»*, contare i record è sbagliato perché una **nota** non è un esito, e decodificare i byte è vietato da **ADR-0036**. L'unica via era scrivere l'operazione nell'archivio, cioè cambiarne il formato. ⚠️ E il difetto era già dichiarato impossibile in un commento — vero della domanda di allora, falso della successiva. 📌 **Prima di scrivere «e l'equivalente nell'altra», chiedersi se l'altra abbia l'INFORMAZIONE per rispondere** |
 | 57 | ⛔ **Una decisione presa PRIMA che esistesse ciò di cui parla è una PREVISIONE, e si cita come se fosse una misura.** [ADR-0032](adr/0032-motore-di-persistenza.md) colloca il backend cadente *«in `simulator`»*, ed è **non eseguibile**: `redb` non ha `no_std`, i sei metodi di `StorageBackend` restituiscono `std::io::Error`, `simulator` si costruisce per `x86_64-unknown-none`, e il suo grafo spedito ha una lista chiusa la cui **unica cura scritta** per un intruso è *«REMOVE the dependency. Adding it to the list is not a remedy»*. ⚠️ **La misura che chiuse quell'ADR era vera** — dodici crash iniettati, dodici riaperture coerenti — ma fu presa in uno **spike**, quando `crates/simulator/` non esisteva e non aveva i propri vincoli: la riga sulla collocazione non era il risultato, era **dove chi misurava immaginava che sarebbe finito**. ⛔ **Il difetto non si vede rileggendo l'ADR**, che è coerente con sé stesso, né eseguendo, perché nessuno ci aveva ancora provato: si vede solo **leggendo la decisione contro le guardie di oggi**. 📌 **La diagnosi vale più dell'errore: i due livelli di crash erano trattati come una cosa sola** mentre hanno **soggetti** diversi — il livello 1 esamina la riconciliazione del kernel, il livello 2 la coerenza di `redb` — quindi collocazioni, costi e cadenze diversi. 📌 **La domanda che lo coglie, e costa una riga:** *quando questa riga fu scritta, esisteva la cosa di cui parla?* È il **#15** spostato dallo strumento alla **collocazione**, e il **#53** — *«una misura anticipata vale come previsione dell'esito, mai come collaudo del codice che verrà scritto»* — applicato al **dove** invece che al **cosa**. ⚠️ E la stessa cella viveva **anche nella §5** di questo file: un ADR compresso eredita l'errore dell'ADR |
+| 58 | ⛔ **Un documento di DISEGNO si legge contro il codice esattamente come un compito — e i BANCHI DI PROVA sono codice.** Il disegno del Traguardo 4 fu scritto leggendo la spec, gli ADR e le **guardie** — `gate-*.sh`, i manifesti, il sorgente di `redb` — e sbagliava **due** cose, entrambe visibili solo aprendo i banchi, che nessuna di quelle letture tocca. ⛔ **Prima:** collocava `CrashingBackend` in `platform/src/` appoggiandosi al precedente di `abandon_without_commit`, e **la risposta giusta era scritta in un commento** di `crates/platform/tests/file_journal.rs` — *«Milestone 4 will put a FAILING one in the same place»*. Il precedente per giunta **non trasferiva**: quel metodo è `pub` perché **non è scrivibile da fuori**, mentre un backend lo è, ed è da fuori che deve essere scritto o non prova nulla (**#46**). ⛔ **Seconda:** lo faceva avvolgere `redb::InMemoryBackend`, che tiene i guardiani **privati** — i byte muoiono con l'oggetto e l'archivio **non si riapre**, che è l'intera domanda a cui il livello 2 risponde. ⚠️ **Nessuna delle due si vede rileggendo il disegno**, coerente con sé stesso, e nessuna è il **#57**: quella è una decisione **anteriore** a ciò che nomina, questa è un documento **posteriore** che non ha guardato. 📌 **La domanda che le coglie, ed è la quinta del pre-controllo spostata dal compito al disegno:** *questo documento è stato letto contro il codice di oggi, **banchi di prova compresi**?* 📌 **E la generalizzazione utile: le guardie non sono tutto il codice.** Un documento che le ha lette **si sente verificato**, ed è precisamente lì che smette di guardare |
 
 ---
 
@@ -1204,9 +1206,9 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 27 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 181 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 184 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
-| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 23 KB |
+| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 24 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
 | **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 96 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
@@ -1214,14 +1216,14 @@ Apri **un** file, quello che serve. Non la cartella.
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 110 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 112 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
 | ⛔ **il compito da cui si riprende** — è il piano del Traguardo 4, **da eseguire**: dieci compiti in tre parti, e il pre-controllo con le quattro domande in testa | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 71 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 14 KB |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è 7,7, il resto è il perché di ogni riga | 17 KB |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è 9,8, il resto è il perché di ogni riga | 19 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -1779,6 +1781,36 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla tredicesima
 > applicazione.
+
+> 🔁 **Ventiduesima misura, il 2026-08-11, chiudendo la sessione — ed è la TERZA dello stesso
+> giorno**, perché la voce si è chiusa tre volte: il disegno, il piano, e la consegna al prossimo
+> agente. Scritta a passata chiusa; righe contate partendo dall'elenco dei file citati —
+> **ventuno** bersagli, **ventidue** righe, nessuna assente.
+>
+> | | |
+> |---|---|
+> | ✅ **nessuna riga aggiunta**, e il rimedio della ventunesima **non ha avuto occasione di fallire** | va detto invece che spacciato per successo: la ventunesima prescrive che *«una riga nuova nasce senza peso»*, e questa passata **non ne ha aggiunte**. La regola resta **non provata** |
+> | **cresciuti** | [`HANDOFF.md`](HANDOFF.md) `181 → 184` per il gotcha **#58** e lo stato · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) `17 → 19`, rifatto per la consegna · [`riferimenti.md`](riferimenti.md) `110 → 112` per **D4-9** e **D4-10** · [`roadmap.md`](roadmap.md) `23 → 24` per la riga del piano nella tabella dei piani · `CLAUDE.md` `10 → 11` · questo file `206 → 211` |
+> | **invariati, ricontati** | [`README.md`](README.md) 14 · [`porta-di-qualita.md`](porta-di-qualita.md) 96 · [`tracciabilita.md`](tracciabilita.md) 15 · il **disegno del Traguardo 4** 27 · il **piano del Traguardo 4** 71 · spec del sotto-progetto 1 **277** · kernel-design 44 · `design/08` 8 · `design/01` 4 · `design/` nove file `4–9` · il piano degli spike 68 · il piano del Traguardo 1 50 · il piano del Traguardo 2 162 · il piano del Traguardo 3 168 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
+> | ⛔ **e una riga di [`riferimenti.md`](riferimenti.md) mancava, non un numero** | le misure **D4-9** e **D4-10** — quelle che hanno corretto il disegno — erano state scritte **nel disegno e nell'ADR** ma non nel file che raccoglie le misure, perché arrivarono **dopo** che quella sezione era già chiusa. È il difetto della **nona** misura — *«un verbale si scrive quando la passata è chiusa»* — nella forma in cui la passata si **riapre** |
+>
+> ⛔ **E la notizia di questa misura è il MESSAGGIO, che è la cifra per cui `AVVIO-CHAT.md`
+> esiste.** Diceva **7,7 KB** in due posti; misurato ora è **9,8** — cresciuto del **27 %** in una
+> sessione sola, perché la consegna al prossimo agente ha aggiunto il blocco dei due file da
+> aprire, le sette decisioni del piano e il gotcha **#58**. ⚠️ **Il rapporto che quel file difende
+> regge comunque — 9,8 KB di messaggio che ordinano 222 KB di lettura, contro 679 di corpus** —
+> ma la crescita è il **prossimo candidato** al difetto che la dodicesima misura registrò per
+> [`porta-di-qualita.md`](porta-di-qualita.md): non un numero stantio, **un documento che smette di
+> essere letto perché è diventato troppo lungo**. Un messaggio da incollare ha un limite naturale
+> che una tabella non ha, ed è la pazienza di chi lo rilegge.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **676** a **679 KB** (695206 B), corretto in tutte
+> e quattro le case. I **due file obbligatori** passano da 216 a **222 KB**, corretti in tutte e
+> sei.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
+> quattordicesima applicazione.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

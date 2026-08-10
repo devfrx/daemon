@@ -39,25 +39,27 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
-  /superpowers:brainstorming            <-- SERVE SUBITO: quello che viene dopo è
-                                        lavoro CREATIVO, e il brainstorming va
-                                        fatto PRIMA di entrare in plan mode
+  /superpowers:subagent-driven-development  <-- SERVE SUBITO: quello che viene
+                                        dopo NON è lavoro creativo ma l'ESECUZIONE
+                                        di un piano già scritto. Un subagente
+                                        fresco per compito, con revisione fra uno
+                                        e l'altro. È la modalità scelta
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
-  /superpowers:writing-plans                 quando si scriverà il piano — NON
-                                             prima che il brainstorming abbia
-                                             chiuso le voci aperte
-  /superpowers:subagent-driven-development   per ESEGUIRE un piano: un subagente
-                                             fresco per compito, con revisione fra
-                                             uno e l'altro. È la modalità scelta
-  /superpowers:test-driven-development       quando si scrive codice
+  /superpowers:test-driven-development       quando si scrive codice — cioè al
+                                             primo compito
+  /superpowers:brainstorming                 NON serve adesso: il brainstorming
+                                             del traguardo in corso è chiuso e il
+                                             piano è scritto. Serve al prossimo
+                                             traguardo, PRIMA del suo piano
+  /superpowers:writing-plans                 idem — il piano di oggi c'è già
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 216 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 222 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i cinquantasei gotcha (§9), le trappole di
+     cosa NON rifare (§8), i cinquantotto gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token, e il compendio
@@ -72,8 +74,8 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 216 KB in tutto
 
 ⚠️ IL REPOSITORY CONTIENE CODICE RUST — TRE traguardi su sei eseguiti, l'ultimo
    il Traguardo 3 (il giornale e il formato durevole), dodici compiti su dodici,
-   GATE GREEN a tutti. Quello che viene dopo NON è codice ma lavoro CREATIVO,
-   e il deliverable esatto sta scritto solo nella §6 del compendio.
+   GATE GREEN a tutti. Quello che viene dopo È CODICE: si ESEGUE un piano già
+   scritto, un compito per volta. Quale, sta scritto solo nella §6 del compendio.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
    x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
    in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
@@ -81,8 +83,18 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 216 KB in tutto
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
+✅ DUE FILE VANNO APERTI, ed è l'eccezione al divieto qui sotto — la §6 del
+   compendio li nomina entrambi:
+     · il DISEGNO del traguardo in corso, per INTERO (27 KB). Ha già preso le
+       decisioni che il piano traduce e non ridiscute: il perimetro, dove vive
+       ciascun pezzo, e per ogni artefatto QUALE CONTROLLO LO ESERCITA.
+     · il PIANO, A COMPITI E MAI INTERO (71 KB). Un compito per volta.
+   ⛔ Il disegno PRIMA del piano. E il disegno porta in coda un RICHIAMO datato
+      in cui il codice lo ha smentito su due punti: si legge, perché il piano
+      è stato scritto DOPO quella correzione e la dà per acquisita.
+
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 676 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 679 KB
    il 2026-08-11, la spec da sola 277, i piani 168 e 162 — e l'idea è già nel
    compendio. Aprirai UN file — uno — quando ti servirà il perché di una
    decisione: le alternative scartate, le misure, i costi accettati. La §12
@@ -94,8 +106,8 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 216 KB in tutto
    dev'essere Option con #[cbor(default)] e prendere un INDICE NUOVO, e il
    significato di un indice non cambia mai.
 
-⛔ CINQUE COSE DECISE ESEGUENDO e non dal piano — PUOI RIBALTARLE, e stanno
-   nell'errata in testa al piano del Traguardo 3:
+⛔ CINQUE COSE DECISE ESEGUENDO il Traguardo 3, e non dal suo piano — PUOI
+   RIBALTARLE, e stanno nell'errata in testa a quel piano:
      E22 Record::encode NON restituisce Result · E19 un SECONDO intento sullo
      stesso passo è RIFIUTATO · E27 la porta guadagna note() e il record la
      variante RecordKind::Note · E28 il record porta DUE campi, il contenuto
@@ -104,9 +116,21 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 216 KB in tutto
    L'errata ne marca NOVE come DECISIONE; E31 non è fra quelle, perché
    corregge cosa significhi «chiusa».
 
+⛔ E SETTE DECISIONI LE HA PRESE IL PIANO IN CORSO — anche queste ribaltabili,
+   e stanno in testa a quel piano. Le due che governano il resto:
+     · la caduta NON SI RIPRENDE. Un giornale che rifiuta una volta e poi
+       riparte modella un disco cattivo, non un crash — ed è la permanenza
+       che fa fermare TUTTE le attività interlacciate, non solo quella che ha
+       toccato il confine.
+     · il punto di caduta si estrae da un generatore DIVERSO da quello
+       dell'interlacciamento, con seme derivato: due generatori seminati con
+       lo stesso numero danno la STESSA sequenza, e la campagna esplorerebbe
+       una diagonale dello spazio invece dello spazio.
+
 ⚠️ DIECI QUESTIONI RESTANO APERTE, in un posto solo: §6 del compendio, «Cosa il
    Traguardo 3 lascia aperto». Nessuna è un difetto oggi e per ciascuna è
-   scritto perché: sono la materia del brainstorming del Traguardo 4.
+   scritto perché. Il brainstorming che le aveva come materia è CHIUSO: ora
+   sono il contesto dell'esecuzione, e UNA di esse il piano in corso la chiude.
 
 ⚠️ Il compendio è una COMPRESSIONE, non una selezione: ci sono dentro tutte le
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
@@ -130,6 +154,13 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     un compito scritto prima si legge contro il codice di ADESSO, non contro
     il piano. Prova in negativo PRIMA di crederci, e dove diverge registra
     la divergenza invece di allinearti all'attesa.
+    ⛔ E vale anche per il DISEGNO che il piano traduce — gotcha #58, misurato
+    scrivendo quel piano: il disegno era stato letto contro la spec, gli ADR e
+    le GUARDIE, e sbagliava due cose che stavano nei BANCHI DI PROVA, di cui
+    una scritta in un COMMENTO. Le guardie non sono tutto il codice: un
+    documento che le ha lette si sente verificato, ed è lì che smette di
+    guardare i test. E un precedente si cita per la RAGIONE che lo ha
+    prodotto, non per la forma.
   · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48. Prova
     che la mutazione si sia applicata, compila in un passo separato
     dall'eseguire, e per ogni mutazione su un valore provane due. Sono già
@@ -148,9 +179,9 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     scatti dove non deve. La seconda si dimentica, ed è quella che conta —
     gotcha #24. Vale anche per i tuoi test, non solo per i miei.
 
-Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, e qual è
-il prossimo passo secondo la §6 — POI ASPETTA le mie richieste prima di
-proporre qualunque cosa.
+Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, qual è
+il prossimo passo secondo la §6 e da quale compito del piano si riprende —
+POI ASPETTA le mie richieste prima di proporre qualunque cosa.
 ```
 
 ---
@@ -159,9 +190,9 @@ proporre qualunque cosa.
 
 | | Prima | Adesso |
 |---|---|---|
-| il messaggio | ~9 KB | **7,7 KB** |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **216 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 216 KB |
+| il messaggio | ~9 KB | **9,8 KB** ⚠️ era 7,7 fino al 2026-08-11 |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **222 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 222 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -175,7 +206,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **216 KB contro mezzo megabyte**.
+resta quello che conta: **222 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **277 KB**. Non è che chiedesse
@@ -246,7 +277,7 @@ elenco**, ed è la voce che è stata tolta: si compila incollando, non si mantie
 > ignorato: le quattro specie di difetto di piano passano da ventidue righe a quindici, perché
 > il testo lungo vive ora in `CLAUDE.md` e nel gotcha **#49** e qui bastava l'elenco — la regola
 > è *rimandare invece di riscrivere*. 📌 **Il rapporto che questo file esiste per difendere non
-> si è mosso: 7,7 KB di messaggio che ordinano 216 KB di lettura, contro 676 di corpus.**
+> si è mosso: 9,8 KB di messaggio che ordinano 222 KB di lettura, contro 679 di corpus.**
 
 📌 **Il percorso del repository ha due valori, e non è una svista da «sanare».** Si lavora
 su **due macchine**, e il campo le nomina entrambe: un percorso solo sembrava aggiornato e

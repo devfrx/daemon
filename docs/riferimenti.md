@@ -977,6 +977,25 @@ non-vacuità** della campagna di livello 2: un metodo in meno sarebbe stato un o
 **senza che nulla lo dicesse**, ed è precisamente il gotcha **#48** — un banco che sbaglia
 mentre conferma.
 
+### Le due misure che hanno corretto il disegno, prese **dopo** averlo scritto
+
+⛔ **Sono arrivate scrivendo il piano, non il disegno**, ed è la ragione per cui hanno una
+sotto-sezione propria invece di stare in tabella con le altre: le prime otto furono prese
+leggendo la spec, gli ADR e le **guardie**; queste due sono venute dai **banchi di prova**, che
+nessuna di quelle letture tocca. Gotcha **#58**.
+
+| # | Misura | Comando | Esito |
+|---|---|---|---|
+| **D4-9** | dove il repository dice **già** che vada il backend cadente | lettura di `crates/platform/tests/file_journal.rs` | ⛔ *«Milestone 4 will put a FAILING one in the same place»*, scritto accanto a `CountingBackend`. Il disegno lo collocava in `platform/src/`: **la risposta era in un commento** |
+| **D4-10** | `redb::InMemoryBackend` espone il proprio buffer? | `sed -n '40,90p' $REDB/src/tree_store/page_store/backends.rs` | ❌ **no.** È `InMemoryBackend(RwLock<Vec<u8>>)` coi guardiani `fn read`/`fn write` **privati**: i byte muoiono con l'oggetto, quindi l'archivio **non si riapre** — e riaprirlo è l'intera domanda del livello 2 |
+
+✅ **Entrambe hanno prodotto una correzione, non una nota:** il **richiamo §11** del disegno e una
+**precisazione** dentro il rimando di [ADR-0032](adr/0032-motore-di-persistenza.md), scritte prima
+che il piano ereditasse l'errore. ⚠️ **E il precedente citato dal disegno non trasferiva:**
+`abandon_without_commit` è `pub` perché **non è scrivibile da fuori** — gli serve la transazione
+ancora aperta — mentre un backend lo è, ed è **da fuori** che deve essere scritto o non prova nulla
+(gotcha #46).
+
 📌 **E una misura non presa, dichiarata:** il **numero di semi** delle due campagne. Va scelto
 contro lo scenario **vero**, che il piano deve ancora scrivere; il pavimento noto è M-2 —
 **25,8 µs** per una corsa dello scenario **minimo**. Fissarlo adesso sarebbe un'ipotesi

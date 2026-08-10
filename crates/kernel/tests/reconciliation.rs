@@ -11,8 +11,97 @@ fn record(kind: RecordKind, effect: EffectClass) -> Vec<u8> {
         effect,
         trust: Trust::Instruction,
         payload: Vec::new(),
+        reason: String::from("why this step exists"),
     })
     .encode()
+}
+
+/// A note, written the way `Untrusted::promote` writes one.
+///
+/// ⚠️ THE CLASS IS `Unrepeatable` ON PURPOSE and it is the whole of what makes the two probes
+/// below non-vacuous: it DIFFERS from the `Idempotent` every step here declares, so a
+/// reconciliation that let a note's class through would show as `RunAgain` turning into
+/// `SuspendAndAsk`. A note carrying the same class as its step could not tell the two apart —
+/// the palindrome of errata E12 in a third dress.
+fn a_note() -> Vec<u8> {
+    Record::V1(RecordV1 {
+        kind: RecordKind::Note,
+        effect: EffectClass::Unrepeatable,
+        trust: Trust::Untrusted,
+        payload: b"what the web page said".to_vec(),
+        reason: String::from("the user asked for this page"),
+    })
+    .encode()
+}
+
+#[test]
+fn a_note_does_not_put_a_step_in_doubt() {
+    // ⛔ ONE HALF OF THE EMPTY ARM (§7.1.1 rule 3), and it is the half a mutation reaches first:
+    // a `Note` arm written as `enter(..)` would put a step in doubt that has already finished.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    journal
+        .intent(step, &record(RecordKind::Intent, EffectClass::Idempotent))
+        .expect("intent");
+    journal.note(step, &a_note()).expect("note");
+    journal
+        .outcome(step, &record(RecordKind::Outcome, EffectClass::Idempotent))
+        .expect("outcome");
+    // And a note AFTER the outcome, which is the case that separates "does not open" from
+    // "does not reopen".
+    journal.note(step, &a_note()).expect("note after outcome");
+
+    assert!(
+        steps_in_doubt(&journal).expect("reconcile").is_empty(),
+        "a note put a finished step back in doubt"
+    );
+}
+
+#[test]
+fn a_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
+    // ⛔ THE OTHER HALF, AND IT IS THE ONE THAT WAS MEASURED AS A REAL DEFECT rather than
+    // imagined. Written as a second `Intent` record on the step — which is what the plan for
+    // task 7 dictated — the note's own class REPLACES the step's: measured, a step the caller
+    // declared `Idempotent` came back `SuspendAndAsk`. Written as an `Outcome`, the step LEAVES
+    // the doubt without having executed: measured, `steps_in_doubt` answered `[]`.
+    //
+    // ⚠️ THE COMPARISON IS THE WHOLE VECTOR, deliberately. The dictated probe compared
+    // `.map(|d| d.step)` — the identities alone — and both defects above keep the identities
+    // exactly right. That is the third time in this milestone a dictated probe fitted the case
+    // instead of the mechanism.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    let other = StepId::new(2);
+    journal
+        .intent(step, &record(RecordKind::Intent, EffectClass::Idempotent))
+        .expect("intent");
+    journal
+        .intent(other, &record(RecordKind::Intent, EffectClass::Verifiable))
+        .expect("intent");
+
+    let before = steps_in_doubt(&journal).expect("reconcile");
+    journal.note(step, &a_note()).expect("note");
+    let after = steps_in_doubt(&journal).expect("reconcile");
+
+    assert_eq!(
+        after, before,
+        "the note changed the doubt: it was read as an intent or as an outcome"
+    );
+    // ⚠️ And `before` is pinned to its literal value, because two equal vectors prove nothing if
+    // both are empty — a reconciliation that reported nothing at all would pass the line above.
+    assert_eq!(
+        before,
+        vec![
+            InDoubt {
+                step,
+                resolution: Resolution::RunAgain
+            },
+            InDoubt {
+                step: other,
+                resolution: Resolution::AskTheWorld
+            }
+        ]
+    );
 }
 
 #[test]

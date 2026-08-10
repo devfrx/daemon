@@ -47,18 +47,20 @@
 //! any `Journal`, and one that answers `Ok(())` without writing a byte satisfies the bound.
 //! The honesty of an implementation is not a level 1 property and never becomes one; it is
 //! what a CONFORMANCE SUITE holds, the way `tests/reactor_contract.rs` holds the `Reactor`
-//! with two deliberate liars. That suite for `journal` belongs to milestone 3, with the
-//! durable record it would have to check against. Until it exists, this boundary rests on
-//! the type system for the naming and on review for the rest — said here rather than implied,
-//! because "the conversion is journalled" read as a guarantee is precisely the sentence this
-//! paragraph replaced.
+//! with two deliberate liars. ⚠️ THAT SUITE EXISTS SINCE 2026-08-10 —
+//! `tests/journal_contract.rs`, eight promises and eight liars — and this paragraph is dated
+//! rather than rewritten, because the sentence it replaced ("the conversion is journalled",
+//! read as a guarantee) is the mistake it exists to prevent and the correction has its own
+//! date. ⛔ WHAT THE SUITE BUYS IS STILL NOT WHAT THE TYPE SYSTEM BUYS: it is level 2, so
+//! nothing stops somebody writing a `Journal` that never meets it. Road A6 below says exactly
+//! how far it reaches.
 
 use core::fmt;
 
 use alloc::string::String;
-use alloc::vec::Vec;
 
 use crate::ports::journal::{Journal, JournalError, StepId};
+use crate::record::{EffectClass, Record, RecordKind, RecordV1, Trust};
 
 /// Content allowed to occupy the instruction channel.
 ///
@@ -124,25 +126,47 @@ impl Untrusted {
 
     /// The ONE conversion path, and it takes the journal port.
     ///
-    /// `reason` is meant to be recorded with the promotion: a promotion whose reason nobody
-    /// wrote down is indistinguishable from one nobody thought about. ⚠️ MEANT TO BE — nothing
-    /// here checks that `reason` is non-empty, and nothing checks that the implementation
-    /// wrote it. Both belong to the conformance suite of milestone 3.
+    /// `reason` is recorded with the promotion, at index 4 of the record: a promotion whose
+    /// reason nobody wrote down is indistinguishable from one nobody thought about. ⚠️ NOTHING
+    /// HERE CHECKS THAT `reason` IS NON-EMPTY, and that is still true; what has changed since
+    /// milestone 2 is that the conformance suite now checks the implementation really keeps it.
     ///
-    /// ⚠️ Milestone 2 records the reason as raw bytes. The versioned record with
-    /// explicit indices is §4.9, milestone 3, and this call site is one of the first it
-    /// will change. Two things §4.9 inherits, declared here so they are not discovered there:
+    /// ⛔ THE OPEN QUESTION OF MILESTONE 2 IS ANSWERED, AND IT NEEDED A THIRD ANSWER. It read:
+    /// is a promotion a STEP OF ITS OWN, which then owes its own outcome, or a note ON THE
+    /// CALLER'S step, which already has one? It is a NOTE — ADR-0007 fixes the granularity, "a
+    /// step is AN INTERACTION WITH THE OUTSIDE WORLD", and a promotion touches nothing outside.
+    /// A step of its own would double the durable writes for something that reaches nothing and
+    /// would sit in doubt for ever, because nobody owes it an outcome.
     ///
-    /// - ⛔ THE RECORD DOES NOT CONTAIN THE PROMOTED TEXT, only the reason. So `read_back` of
-    ///   this step cannot answer "what crossed the boundary at step 7?" — it answers "why did
-    ///   somebody say it should". The provisional thing is the FORMAT; the missing thing is
-    ///   the CONTENT, and those are two different gaps.
-    /// - ⛔ THIS WRITES `intent` AND NEVER `outcome`, so by ADR-0007 the step it names is IN
-    ///   DOUBT the moment it is written — and a step in doubt is never prunable. OPEN
-    ///   QUESTION, left open rather than settled by whoever wrote the call: is a promotion a
-    ///   STEP OF ITS OWN, which then owes its own outcome, or a note ON THE CALLER'S step,
-    ///   which already has one? §4.9 decides it at milestone 3, and the answer changes this
-    ///   signature either way.
+    /// ⛔ AND ANSWERING "A NOTE" DID NOT SAY HOW TO WRITE ONE, which is where the plan for this
+    /// task was wrong and the error was found by MEASURING both roads rather than by reading:
+    ///
+    /// - as a second `intent` on the caller's step, the port REFUSES it — one intent per step,
+    ///   `OutOfOrder`. And with that guard removed it is worse than a refusal: reconciliation
+    ///   reads a second `Intent` record for the step and REPLACES the caller's resolution with
+    ///   this one's. Measured — a step the caller declared `Idempotent` came back
+    ///   `SuspendAndAsk`. A promotion would silently downgrade a step it does not own.
+    /// - as an `outcome`, the step LEAVES THE DOUBT although the caller has not executed.
+    ///   Measured — `steps_in_doubt` answered `[]`. A true doubt vanishing in silence is the one
+    ///   failure ADR-0007 exists to prevent.
+    ///
+    /// So the port gained `note` and the record gained `RecordKind::Note`, together, because
+    /// neither half works without the other: a note has to carry SOME `kind`, and both existing
+    /// ones are the defects above. Decided by the coordinator on 2026-08-10 and recorded in the
+    /// plan's errata so the owner can overturn it by seeing it.
+    ///
+    /// ⚠️ THE CLASS IS `Unrepeatable` AND IT IS AN INERT FIELD, which is the opposite of what
+    /// this paragraph first said. `crate::reconcile` never reads the `effect` of a `Note` — the
+    /// arm is empty — so nothing branches on it and no argument about repeatability is doing any
+    /// work here. `Unrepeatable` is what an inert field is filled with in this record: it is
+    /// ADR-0007's own answer for a class nobody can act on, so if some later reader ever treats
+    /// an unknown kind as an intent, the value it finds stops the system instead of re-running
+    /// something. Saying "it is not a placeholder" would be a claim the measurement contradicts.
+    ///
+    /// ⛔ AND THE STEP IS THE CALLER'S. `step` is the step the caller already opened and already
+    /// owes an outcome for, so `note` refuses if that intent is not there. Before this, every
+    /// promotion left behind a step with an intent and no outcome: IN DOUBT FROM BIRTH and never
+    /// prunable.
     ///
     /// ⛔ DECLARED RESIDUAL, and it is long because it was MEASURED instead of reasoned: a
     /// review went looking for ways around this call and SEVEN OF THEM COMPILE TODAY. Neither
@@ -160,9 +184,15 @@ impl Untrusted {
     ///
     /// ⛔ The roads that COMPILE, with the price of closing each, which is the part worth
     /// knowing. ⚠️ The heading used to read "what is NOT covered", and it stopped being the
-    /// truth as soon as entries started closing: **two of the seven are closed** — A3 at level
-    /// 1 and A6 at level 2 — and a heading that called them uncovered would mislead in the one
-    /// direction nobody checks. Each entry says its own state.
+    /// truth as soon as entries started closing: **three of the seven are closed** — A3 at level
+    /// 1, A4 and A6 at level 2 — and a heading that called them uncovered would mislead in the
+    /// one direction nobody checks. Each entry says its own state.
+    ///
+    /// ⚠️ COUNTED ON THE ENTRIES BELOW AND NOT DEDUCED, because this line has already been wrong
+    /// once: there are SIX entries and SEVEN roads, since A1/A2 is two. Closed: A3, A4, A6.
+    /// Open: A1, A2, A5, A7 — FOUR, and every one of them is an entry that declares itself NOT
+    /// CLOSABLE. That last sentence is new on 2026-08-10 and is the real change: what remains is
+    /// no longer a backlog, it is the declared floor.
     ///
     /// - **A1/A2 — `Instruction::new(untrusted.as_str().into())`.** Reaches the instruction
     ///   channel with the journal never hearing of it. NOT closable here: making
@@ -172,12 +202,30 @@ impl Untrusted {
     ///   hand-written `Debug` above. It cost a derive and bought back the diagnostics with a
     ///   byte count.
     /// - **A4 — a round trip through the journal**: `outcome(id, untrusted.as_str().as_bytes())`,
-    ///   then `read_back`, then `String::from_utf8`, then `Instruction::new`. NOT closable at
-    ///   level 1, and the reason is a decision rather than an oversight: ADR-0036 has the port
-    ///   exchange BYTES, and bytes carry no labels. ⚠️ This is the right place to notice it —
-    ///   §4.9 designs the versioned record at milestone 3, and the label could become A FIELD
-    ///   WITH AN EXPLICIT INDEX there. Cheap then, retrofitted later only by migrating the one
-    ///   irreproducible archive.
+    ///   then `read_back`, then `String::from_utf8`, then `Instruction::new`. ✅ CLOSED on
+    ///   2026-08-10, **at level 2**, by the record carrying the label: `promote` now writes the
+    ///   untrusted content into `payload` — index 3 — with `trust: Trust::Untrusted` beside it,
+    ///   so what comes back out of a decoding SAYS what it was. It is NOT closable at level 1,
+    ///   and the reason is a decision rather than an oversight: ADR-0036 has the port exchange
+    ///   BYTES, and bytes carry no labels.
+    ///
+    ///   ⛔ AND THE LIMIT IS PART OF THE CLOSURE, in the shape A6's is. The label closes this
+    ///   road FOR WHATEVER PASSES THROUGH THE FORMAT, and nothing today requires that every
+    ///   write to the journal be a `Record`: the road as written above hands the port RAW BYTES,
+    ///   `Record::decode` answers `Malformed` on them, and the round trip still works. So what
+    ///   is closed is the road THROUGH THE RECORD — the one a promotion actually takes — and
+    ///   what holds the rest is the same thing that holds A5 and A7: review. ⚠️ Saying "A4 is
+    ///   closed" without this paragraph would be the sentence that stops the next reader looking.
+    ///
+    ///   ⚠️ AND THE LABEL PROVES PROVENANCE, NOT CORRECTNESS (§6.3.2): whoever writes a record
+    ///   may still label it wrongly. What it buys is that a reader can no longer LOSE the
+    ///   distinction, which is a different thing from making it impossible to lie about.
+    ///
+    ///   ⚠️ IT WAS ALMOST CLOSED ON PAPER AND NOT IN FACT, and that is worth the line. The plan
+    ///   for this task put THE REASON in `payload` and labelled it `Trust::Untrusted` — the
+    ///   caller's own justification, which never crossed any boundary — so no untrusted byte
+    ///   would have entered the record at all and the label would have been FALSE rather than
+    ///   merely decorative. The content and the reason now travel at two indices, 3 and 4.
     /// - **A5 — `transmute`, from a crate that allows `unsafe`.** `platform`, `secrets` and
     ///   `daemon` allow it ON PURPOSE. Closing it would mean giving the two types different
     ///   layouts — some 8 bytes per value — to stop somebody who writes `unsafe` WHILE NAMING
@@ -199,19 +247,37 @@ impl Untrusted {
     ///
     /// Why none of the ones still open becomes a level 1 rule: each would have to quantify over
     /// code THAT DOES NOT EXIST YET, and Rust states no rule about a call site not yet written.
-    /// ⚠️ A6 is the counter-example that proves the shape of the answer rather than breaking it:
-    /// it was closed at **level 2**, by a test that runs, not by the compiler — and the price
-    /// was a whole conformance suite. The remaining five are declared, not fixed, and what
-    /// holds them meanwhile is review. The guard covers the roads that exist; it is not total.
+    /// ⚠️ A4 and A6 are the counter-examples that prove the shape of the answer rather than
+    /// breaking it: both were closed at **level 2**, by things that run rather than by the
+    /// compiler — a whole conformance suite for one, a field in the durable format for the
+    /// other. ⛔ THE REMAINING FOUR — A1, A2, A5, A7 — ARE NOT A BACKLOG: each of their entries
+    /// declares itself not closable, so what is left is the floor and not the unfinished part.
+    /// What holds them is review. The guard covers the roads that exist; it is not total.
     pub fn promote<J: Journal>(
         self,
         journal: &mut J,
         step: StepId,
         reason: &str,
     ) -> Result<Instruction, JournalError> {
-        let mut record: Vec<u8> = Vec::new();
-        record.extend_from_slice(reason.as_bytes());
-        journal.intent(step, &record)?;
+        // ⛔ THE PAYLOAD IS THE UNTRUSTED CONTENT AND THE REASON IS A FIELD OF ITS OWN. Index 3
+        // is the one the record's hand-written `Debug` hides, and index 4 the one it prints:
+        // somebody else's bytes in the first, our words in the second. Swapping them would put
+        // external text into the first `{:?}` that reaches a log — road A3, reopened one type
+        // over.
+        //
+        // ⚠️ THE COPY IS ONE ALLOCATION AND IT IS DELIBERATE: the bytes are taken before
+        // `Instruction(self.0)` MOVES the string, so the content is copied once into the record
+        // and the string itself is not copied at all.
+        let record = Record::V1(RecordV1 {
+            kind: RecordKind::Note,
+            effect: EffectClass::Unrepeatable,
+            trust: Trust::Untrusted,
+            payload: self.0.as_bytes().to_vec(),
+            reason: String::from(reason),
+        })
+        .encode();
+
+        journal.note(step, &record)?;
         Ok(Instruction(self.0))
     }
 

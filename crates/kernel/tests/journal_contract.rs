@@ -23,9 +23,11 @@
 // in `crates/platform/tests/`, where today there is no journal test at all.
 //
 // ⚠️ DECLARED COST, AND IT IS NOT YET BEING PAID: once task 9 lands, `include!` will carry the
-// `#[test]` functions of this file along with it, so the eight tests below WILL RUN A SECOND
+// `#[test]` functions of this file along with it, so the TEN tests below WILL RUN A SECOND
 // TIME inside `platform`'s binary. It buys the single copy of the assertions and will cost a
-// few milliseconds — nothing here touches the disk or sleeps.
+// few milliseconds — nothing here touches the disk or sleeps. ⚠️ The figure said "eight" until
+// 2026-08-10, when promise 8 brought a liar and the substring constraint became a test of its
+// own; counted rather than remembered.
 
 use kernel::ports::journal::{Journal, JournalError, StepId};
 
@@ -62,6 +64,10 @@ pub const SECOND_INTENT_MESSAGE: &str =
 
 pub const PRUNE_IN_DOUBT_MESSAGE: &str =
     "journal contract violated: a step IN DOUBT must never be prunable (ADR-0018)";
+
+/// The operation that arrived on 2026-08-10 with `Untrusted::promote`. See promise 8.
+pub const NOTE_MESSAGE: &str = "journal contract violated: a `note` upon an open step must be \
+     kept, and must never displace that step's intent";
 
 /// Every promise the `journal` port makes, checked against ONE implementation.
 ///
@@ -269,6 +275,63 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
 
         assert!(journal.prune(step).is_err(), "{}", PRUNE_IN_DOUBT_MESSAGE);
     }
+
+    // ── 8. A note upon an open step is kept, and never displaces its intent ───────────────
+    // ⛔ THE OPERATION ARRIVED ON 2026-08-10 BECAUSE A CALLER NEEDED IT — `Untrusted::promote`,
+    // the first kernel code that writes a record at all — and the two operations already here
+    // were both MEASURED to be wrong for it: as a second `intent` the port refuses, and with the
+    // guard removed reconciliation replaces the caller's resolution with the note's; as an
+    // `outcome` the caller's step leaves the doubt without having executed. The argument is
+    // written out on `Journal::note`.
+    //
+    // ⛔ THIS IS ROAD A4's HALF OF ROAD A6. A journal that accepts a note and keeps nothing
+    // makes the promotion succeed having recorded NOTHING — and what goes missing is precisely
+    // the untrusted content and the label that says it was untrusted, which is the whole of what
+    // task 7 added to the record. Promise 1 does not see it: it never writes a note.
+    //
+    // ⚠️ THREE ASSERTIONS AND ONE MESSAGE, because all three ARE this promise: the note attaches
+    // only to something, it survives, and it does not take the intent's place. The ORDER is
+    // chosen so the liar dies on the LAST of them — a suite that stopped at the first would
+    // never exercise the other two against anything.
+    {
+        let mut journal = build();
+        // (a) A note upon a step nobody opened has nothing to attach to.
+        assert_eq!(
+            journal.note(StepId::new(8), b"a note about nothing"),
+            Err(JournalError::OutOfOrder),
+            "{}",
+            NOTE_MESSAGE
+        );
+    }
+    {
+        let mut journal = build();
+        let step = StepId::new(6);
+        let intent: &[u8] = b"what it set out to do";
+        let note: &[u8] = b"and what it read on the way";
+
+        journal.intent(step, intent).expect("intent must succeed");
+        journal.note(step, note).expect(NOTE_MESSAGE);
+
+        // (b) The intent still answers `read_back`. A store keyed on the step alone answers with
+        // the note instead — the shape promise 2 catches for outcomes, one operation over.
+        let read = journal.read_back(step).expect(NOTE_MESSAGE);
+        assert_eq!(read.as_slice(), intent, "{}", NOTE_MESSAGE);
+
+        // (c) And the note reached the archive. ⛔ THIS IS THE ASSERTION THE LIAR DIES ON, and it
+        // is last on purpose: a journal that validated the note and then dropped it passes (a)
+        // and (b) without a mark on it.
+        let replayed = journal.replay().expect("replay must succeed");
+        let records: Vec<(StepId, &[u8])> = replayed
+            .iter()
+            .map(|(step, bytes)| (*step, bytes.as_slice()))
+            .collect();
+        assert_eq!(
+            records,
+            vec![(step, intent), (step, note)],
+            "{}",
+            NOTE_MESSAGE
+        );
+    }
 }
 
 #[test]
@@ -276,21 +339,70 @@ fn the_in_memory_journal_honours_the_contract() {
     assert_journal_contract(simulator::journal::MemoryJournal::new);
 }
 
+#[test]
+fn no_promise_message_is_a_substring_of_another() {
+    // ⛔ THE CONSTRAINT THAT MAKES `contains` SAFE, AND UNTIL 2026-08-10 IT WAS ONLY DECLARED.
+    // `assert_caught_on` matches the panic payload with `contains`, so if one message were a
+    // substring of another, a liar caught on the WRONG promise would still satisfy the test that
+    // names the right one — the suite would keep printing `ok` while pointing at the wrong
+    // place. The rule was written in the doc of `READ_BACK_MESSAGE` and held by nothing; a
+    // declared reason that no test holds is a comment.
+    //
+    // ⚠️ IT WAS RE-RUN RATHER THAN TRUSTED when `NOTE_MESSAGE` arrived, which is the whole
+    // reason it is a test now: the constraint is over the SET, so every message added has to be
+    // checked against all the others, and re-reading eight strings by eye is exactly the check
+    // nobody repeats.
+    let messages = [
+        ("READ_BACK", READ_BACK_MESSAGE),
+        ("READ_BACK_IS_THE_INTENT", READ_BACK_IS_THE_INTENT_MESSAGE),
+        ("MISSING", MISSING_MESSAGE),
+        ("REPLAY_ORDER", REPLAY_ORDER_MESSAGE),
+        ("OUT_OF_ORDER", OUT_OF_ORDER_MESSAGE),
+        ("SECOND_INTENT", SECOND_INTENT_MESSAGE),
+        ("PRUNE_IN_DOUBT", PRUNE_IN_DOUBT_MESSAGE),
+        ("NOTE", NOTE_MESSAGE),
+    ];
+
+    for (name, message) in messages {
+        for (other_name, other) in messages {
+            if name == other_name {
+                continue;
+            }
+            assert!(
+                !other.contains(message),
+                "{name} is a substring of {other_name}: a liar caught on {other_name} would \
+                 satisfy the test that names {name}"
+            );
+        }
+    }
+
+    // The other direction, the one that gets forgotten (§7.1.1 rule 3): a bench where every
+    // message were distinct BY BEING EMPTY would pass the loop above without saying anything.
+    for (name, message) in messages {
+        assert!(!message.is_empty(), "{name} is empty");
+    }
+}
+
 // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3): a suite never seen to fail is not a suite. The
-// six tests below break the port's promises ONE EACH, and demand that the suite notices each —
+// eight tests below break the port's promises ONE EACH, and demand that the suite notices each —
 // and notices it ON THE RIGHT PROMISE, which is what reading the payload buys over `is_err()`.
 //
-// ⛔ SIX AND NOT THREE, and the three that were added are the lesson of gotcha #14. The suite
+// ⛔ EIGHT AND NOT THREE, and the five that were added are the lesson of gotcha #14. The suite
 // dies at the FIRST promise a journal breaks, so a liar that violates promise 1 never reaches
 // promise 5: with the three liars this task was dictated with, promises 2, 3 and 5 WERE NEVER
 // SEEN TO FIRE. `SilentJournal` violates promise 5 as well — its `outcome` answers `Ok(())` —
 // and dies on promise 1 long before getting there, which is exactly the shape of a control that
 // looks covered and is not.
 //
+// ⚠️ THE COUNT WAS "SIX" UNTIL 2026-08-10 and is dated rather than quietly bumped: promise 6
+// and its liar arrived with the guard on `intent`, promise 8 and its liar with `note`. A number
+// inside a sentence that stays true is the exact shape of gotcha #31.
+//
 // ⚠️ AND EACH IS BROKEN IN A DIFFERENT WAY (gotcha #45): writes dropped, the wrong record
-// returned, absence reported as emptiness, order reversed, the write-ahead guard removed,
-// retention granted. Two liars broken the same way prove one thing twice and leave the other
-// promise unguarded.
+// returned, absence reported as emptiness, order reversed, the write-ahead guard removed on
+// `outcome`, the guard removed on `intent`, retention granted, and — the eighth — a write
+// VALIDATED AND THEN DISCARDED. Two liars broken the same way prove one thing twice and leave
+// the other promise unguarded.
 
 #[test]
 fn a_journal_that_writes_nothing_is_caught() {
@@ -338,6 +450,11 @@ fn a_journal_that_accepts_a_second_intent_is_caught() {
 #[test]
 fn a_journal_that_prunes_a_step_in_doubt_is_caught() {
     assert_caught_on(EagerPruner::new, PRUNE_IN_DOUBT_MESSAGE, "promise 7");
+}
+
+#[test]
+fn a_journal_that_validates_a_note_and_keeps_it_nowhere_is_caught() {
+    assert_caught_on(DiscardedNoteJournal::new, NOTE_MESSAGE, "promise 8");
 }
 
 /// Runs the suite against a deliberately broken journal and demands that it be caught, and
@@ -428,6 +545,9 @@ impl Journal for SilentJournal {
     fn outcome(&mut self, _step: StepId, _record: &[u8]) -> Result<(), JournalError> {
         Ok(())
     }
+    fn note(&mut self, _step: StepId, _record: &[u8]) -> Result<(), JournalError> {
+        Ok(())
+    }
     fn read_back(&self, _step: StepId) -> Result<Vec<u8>, JournalError> {
         Err(JournalError::Missing)
     }
@@ -475,6 +595,11 @@ impl Journal for LastWriteWinsJournal {
         self.written.push((step, record.to_vec()));
         Ok(())
     }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.note(step, record)?;
+        self.written.push((step, record.to_vec()));
+        Ok(())
+    }
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
         // ⛔ THE DEFECT, and it is one `.rev()` wide: the LAST record of the step rather than
         // the first. A step that never got its outcome still reads back correctly.
@@ -517,6 +642,9 @@ impl Journal for EmptyInsteadOfMissingJournal {
     fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
         self.inner.outcome(step, record)
     }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.note(step, record)
+    }
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
         // ⛔ THE DEFECT: `Missing` laundered into a successful read of nothing.
         match self.inner.read_back(step) {
@@ -553,6 +681,9 @@ impl Journal for ShuffledJournal {
     }
     fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
         self.inner.outcome(step, record)
+    }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.note(step, record)
     }
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
         self.inner.read_back(step)
@@ -597,6 +728,9 @@ impl Journal for PermissiveJournal {
             Err(JournalError::OutOfOrder) => Ok(()),
             other => other,
         }
+    }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.note(step, record)
     }
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
         self.inner.read_back(step)
@@ -665,6 +799,20 @@ impl Journal for UnguardedIntentJournal {
         });
         Ok(())
     }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        // ⚠️ Correct, and it never runs: this journal dies on promise 6, which is ahead of the
+        // one that writes a note. It is written properly all the same — a liar broken in two
+        // places proves nothing about either.
+        if !self.has_intent(step) {
+            return Err(JournalError::OutOfOrder);
+        }
+        self.entries.push(UnguardedEntry {
+            step,
+            is_intent: false,
+            bytes: record.to_vec(),
+        });
+        Ok(())
+    }
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
         self.entries
             .iter()
@@ -704,6 +852,9 @@ impl Journal for EagerPruner {
     fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
         self.inner.outcome(step, record)
     }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.note(step, record)
+    }
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
         self.inner.read_back(step)
     }
@@ -712,5 +863,61 @@ impl Journal for EagerPruner {
     }
     fn prune(&mut self, _step: StepId) -> Result<(), JournalError> {
         Ok(())
+    }
+}
+
+/// Checks that a note has a step to attach to, answers `Ok(())`, and KEEPS NOTHING.
+///
+/// ⛔ BROKEN IN AN EIGHTH WAY, and gotcha #45 is why the shape was chosen rather than reached
+/// for. The seven above drop every write, return the wrong record, report absence as emptiness,
+/// reverse the order, remove the guard on `outcome`, remove the guard on `intent`, and grant
+/// retention. This one VALIDATES AND THEN DISCARDS — it does the check, says yes, and stores
+/// nothing. `SilentJournal` is the nearest neighbour and is not the same: it never checks
+/// anything and dies on promise 1, six promises earlier.
+///
+/// ⚠️ AND IT IS THE SHAPE A REAL IMPLEMENTATION REALLY TAKES: `note` is the newest operation on
+/// the port, so it is the one most likely to be stubbed `Ok(())` while the rest is written
+/// properly. The consequence is exactly road A6 aimed at road A4 — the promotion succeeds, and
+/// what silently fails to reach the archive is the untrusted content together with the label
+/// that says it was untrusted.
+struct DiscardedNoteJournal {
+    inner: simulator::journal::MemoryJournal,
+}
+
+impl DiscardedNoteJournal {
+    fn new() -> Self {
+        DiscardedNoteJournal {
+            inner: simulator::journal::MemoryJournal::new(),
+        }
+    }
+}
+
+impl Journal for DiscardedNoteJournal {
+    fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.intent(step, record)
+    }
+    fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.outcome(step, record)
+    }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        // The guard is real — which is what lets this journal walk past assertion (a) of
+        // promise 8 and die on (c). `read_back` answers `Missing` for a step with no records at
+        // all, and the first record of a step is always its intent, so this asks the right
+        // question through the surface the port offers.
+        if self.inner.read_back(step).is_err() {
+            return Err(JournalError::OutOfOrder);
+        }
+        // ⛔ THE DEFECT, and it is one line long: `record` goes nowhere.
+        let _ = record;
+        Ok(())
+    }
+    fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
+        self.inner.read_back(step)
+    }
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        self.inner.replay()
+    }
+    fn prune(&mut self, step: StepId) -> Result<(), JournalError> {
+        self.inner.prune(step)
     }
 }

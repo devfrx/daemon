@@ -8,6 +8,7 @@ fn main() {
         effect: kernel::record::EffectClass::Idempotent,
         trust: kernel::record::Trust::Instruction,
         payload: Vec::new(),
+        reason: String::new(),
     };
 
     // The bare V1 body is NOT a record: only `Record::V1(..)` is.
@@ -39,3 +40,10 @@ fn main() {
 //
 // ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle quotes LINE 14 of this file, so a paragraph
 // added at the top would move the code and break it. Whoever writes here appends.
+//
+// ⛔ AND THE LINE NUMBER MOVED ON 2026-08-10, WHICH IS THE HAZARD THIS FILE ALREADY WARNS
+// ABOUT FROM THE OTHER END. The note above says a paragraph added at the TOP would break the
+// oracle; index 4 of the record added a line INSIDE the literal, which does the same thing —
+// `inner.encode()` went from line 14 to line 15 and the `.stderr` was corrected BY HAND to
+// match. Not regenerated: `TRYBUILD=overwrite` would have rewritten the oracle wholesale and a
+// real change hiding in it would have gone in unread.

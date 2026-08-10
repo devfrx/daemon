@@ -5,6 +5,7 @@
 //! |-------------|------------------------------------------------------------------|
 //! | `intent`    | makes the INTENTION of a step durable, before the effect happens |
 //! | `outcome`   | makes the OUTCOME durable, after                                 |
+//! | `note`      | appends a NOTE upon a step already open — neither of the two     |
 //! | `read_back` | re-reads ONE step BY NAME, for reconciliation                     |
 //! | `replay`    | re-reads EVERYTHING, in write order, to discover the names       |
 //! | `prune`     | replaces a payload with a fingerprint and a size (ADR-0018)      |
@@ -32,6 +33,21 @@
 //! is written NEXT, and it is the first caller that will put it under strain. If it turns out
 //! cramped or insufficient there, it changes HERE — bending the caller to a signature decided
 //! too early is the mistake this rule exists to prevent.
+//!
+//! ⚠️ `note` ARRIVED ON 2026-08-10 TOO, AND IT IS THE SAME RULE PAYING OUT A SECOND TIME. The
+//! port did not grow because somebody foresaw a use: it grew because `Untrusted::promote` — the
+//! first kernel code that writes a record at all — could not be written with the two operations
+//! that were here. Both were tried and both were MEASURED to be wrong; the measurements are on
+//! the operation itself. ⛔ AND THE PORT GROWING COST TEN IMPLEMENTATIONS A LINE EACH, counted
+//! from the compiler and not estimated: `cargo build --workspace --all-targets` answered with
+//! exactly ten `E0046` — one real, seven liars in `crates/kernel/tests/journal_contract.rs`, two
+//! fakes in `crates/kernel/tests/boundary_promotion.rs`. That is the recurring price of decision
+//! D6, and it is paid knowingly.
+//!
+//! ⚠️ THE TENSE IS PAST AND THE NUMBER IS A MEASUREMENT OF THAT MOMENT, not a description of
+//! today: the operation brought a liar of its own and this file now has ELEVEN implementations,
+//! twelve once `redb` lands at task 8. A cost figure written in the present tense is a figure
+//! that goes quietly wrong the first time the set grows — gotcha #31.
 
 use alloc::vec::Vec;
 
@@ -67,22 +83,27 @@ pub enum JournalError {
     NotDurable,
     /// The read found nothing under that identity.
     Missing,
-    /// ⛔ An operation arrived OUT OF ORDER for this step, and there are TWO ways to do that.
+    /// ⛔ An operation arrived OUT OF ORDER for this step, and there are THREE ways to do that.
     ///
     /// - an `outcome` for a step that has no `intent`;
-    /// - a SECOND `intent` for a step that already carries one.
+    /// - a SECOND `intent` for a step that already carries one;
+    /// - a `note` upon a step that has no `intent`.
     ///
-    /// Both are V6 held by the port rather than by the caller: "nothing executes before the
+    /// All three are V6 held by the port rather than by the caller: "nothing executes before the
     /// intent is durable" is the NATURE of a write-ahead journal, not a policy the kernel
-    /// layers on top. A port that accepts either leaves the protocol resting on the diligence
-    /// of whoever calls — the same reason `boundary_promotion.rs` requires that a refusing
-    /// journal refuses the promotion too.
+    /// layers on top. A port that accepts any of them leaves the protocol resting on the
+    /// diligence of whoever calls — the same reason `boundary_promotion.rs` requires that a
+    /// refusing journal refuses the promotion too.
     ///
-    /// ⚠️ THE SECOND HALF ARRIVED ON 2026-08-10, and it WIDENED this variant instead of adding
-    /// a third one. That is deliberate and it is this enum's own rule, three lines above: a
-    /// rich error type invites the kernel to branch on the reason, and the reason belongs to
-    /// whoever implements the port. "Out of order for this step" is one sentence that covers
-    /// both halves, and the kernel has nothing to decide differently between them.
+    /// ⚠️ THE SECOND AND THIRD HALVES BOTH ARRIVED ON 2026-08-10, and each WIDENED this variant
+    /// instead of adding a neighbour. That is deliberate and it is this enum's own rule, three
+    /// lines above: a rich error type invites the kernel to branch on the reason, and the reason
+    /// belongs to whoever implements the port. "Out of order for this step" is one sentence that
+    /// covers all three, and the kernel has nothing to decide differently between them.
+    ///
+    /// ⚠️ THIS DOC SAID "TWO WAYS" FOR ONE COMMIT, and is dated rather than silently renumbered:
+    /// gotcha #31 is a count that ages inside a sentence nobody rereads because the sentence
+    /// around it stayed true.
     ///
     /// ⛔ ONE INTENT PER STEP IS ADR-0007's OWN WORDING — "the intent of every step" — so a
     /// second one is outside the model rather than a case to discipline. It is held for BOTH
@@ -102,6 +123,42 @@ pub trait Journal {
 
     /// Makes the outcome durable, after the effect happened.
     fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError>;
+
+    /// Appends a NOTE upon a step that is already open. ⛔ IT IS NEITHER OF THE OTHER TWO, and
+    /// that is the whole reason it exists rather than being folded into one of them.
+    ///
+    /// ⛔ WHY IT ARRIVED ON 2026-08-10, and it is a MEASUREMENT and not a preference. A note has
+    /// one caller — `Untrusted::promote`, which records a crossing of the untrusted boundary
+    /// onto THE CALLER'S STEP, because a promotion touches nothing outside and by ADR-0007 is
+    /// therefore not a step of its own. Both existing operations were tried and both fail:
+    ///
+    /// - `intent` is REFUSED, because the caller's step already carries one — and even with
+    ///   that guard removed, reconciliation reads a second `Intent` record for the step and
+    ///   REPLACES the caller's resolution with the note's. Measured: a step the caller declared
+    ///   `Idempotent` came back `SuspendAndAsk`.
+    /// - `outcome` is accepted and takes the step OUT OF THE DOUBT although nothing has
+    ///   executed. Measured: `steps_in_doubt` answered `[]` — a true doubt vanishing in
+    ///   silence, the one failure ADR-0007 exists to prevent.
+    ///
+    /// ⛔ THE WRITE-AHEAD DISCIPLINE APPLIES: a note for a step with NO INTENT is `OutOfOrder`.
+    /// A note is an annotation UPON something, and a step nobody opened is not something.
+    ///
+    /// ⛔ AND THERE IS DELIBERATELY NO LIMIT ON HOW MANY, which is the opposite answer from
+    /// `intent`'s and has its own reason rather than being an omission. One intent per step is
+    /// ADR-0007's own wording, so a second is outside the model; nothing says how many times one
+    /// interaction with the world may consult external content, and a caller that promotes twice
+    /// within one step is ordinary rather than suspect. ⚠️ Gotcha #46 does not apply here as it
+    /// applied to `intent`: this operation is NOT declared in advance of its callers — it is
+    /// declared BY one, and the one says many.
+    ///
+    /// ⚠️ AND WHAT THIS OPERATION DOES NOT BUY, declared rather than assumed from its existence:
+    /// nothing here observable through the port distinguishes an implementation that stores a
+    /// note in its own right from one that files it wherever it files outcomes. The port cannot
+    /// see an implementation's bookkeeping. What the separate operation buys is that a CALLER
+    /// cannot write a note through `intent` and trip its guard, and that the port's vocabulary
+    /// matches the record's `RecordKind`. The semantics live in the record — see
+    /// `crate::reconcile`, which neither opens nor closes a doubt on a `Note`.
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError>;
 
     /// Re-reads on resume. Returns the bytes as they were written: decoding is the
     /// kernel's job, which is what keeps the durable form its property.

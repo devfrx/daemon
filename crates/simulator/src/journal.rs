@@ -31,10 +31,29 @@ struct Entry {
     bytes: Vec<u8>,
 }
 
+/// ⚠️ THE JOURNAL'S OWN BOOKKEEPING, and NOT the record's `RecordKind` — the two are separate
+/// on purpose and the separation is the answer to the question `crate`'s reconciliation had
+/// open until 2026-08-10. This one exists so `has_intent` can be asked; the record's `kind` is
+/// what the KERNEL reads, and the kernel is the authority. They are kept in step by the caller,
+/// not by a type.
+///
+/// ⚠️ `Note` IS HERE RATHER THAN FILED UNDER ONE OF THE OTHER TWO, AND NOTHING HOLDS IT — which
+/// was MEASURED and not supposed. Filing a note under `EntryKind::Intent` leaves the ENTIRE
+/// workspace green, and the reason is sound rather than a hole in the bench: `note` refuses a
+/// step with no intent, so a note-only step cannot be built through the port at all, and
+/// `has_intent` can only be made true by a note on a step that already had one. The distinction
+/// is real inside this file and invisible outside it.
+///
+/// ⚠️ SO WHY IT IS HERE, since no test would notice its going: `has_intent` asks a question
+/// about `Intent`, and a third state that answers "neither" is the shape that stays right when
+/// somebody writes `has_outcome` — which nobody has yet. It is an argument, not a red, and it is
+/// labelled as one. A test was written to hold it and REMOVED when the mutation survived; the
+/// note on that removal is in `crates/simulator/tests/memory_journal.rs`.
 #[derive(PartialEq, Eq)]
 enum EntryKind {
     Intent,
     Outcome,
+    Note,
 }
 
 impl MemoryJournal {
@@ -82,6 +101,23 @@ impl Journal for MemoryJournal {
         self.entries.push(Entry {
             step,
             kind: EntryKind::Outcome,
+            bytes: record.to_vec(),
+        });
+        Ok(())
+    }
+
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        // ⛔ THE SAME GUARD AS `outcome` AND FOR THE SAME REASON: a note is an annotation UPON
+        // something, and a step nobody opened is not something. What it does NOT share is
+        // `intent`'s guard — there is no limit on how many notes a step carries, because
+        // nothing says how many times one interaction with the world may consult external
+        // content. The argument is written out on `Journal::note`.
+        if !self.has_intent(step) {
+            return Err(JournalError::OutOfOrder);
+        }
+        self.entries.push(Entry {
+            step,
+            kind: EntryKind::Note,
             bytes: record.to_vec(),
         });
         Ok(())

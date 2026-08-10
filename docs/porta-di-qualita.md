@@ -176,7 +176,7 @@ quella che deve restare verde.
 | le crate vincolate **non hanno un build script** | idem, e l'errore è **diverso** | `crates/kernel/build.rs` · `crates/simulator/build.rs` · `build = "gen.rs"` nel manifesto · manifesto assente | `crates/platform/build.rs` · `build = false` |
 | coerenza della documentazione | `scripts/check-docs.sh` | S1…S6c · S7 · S7b · S7c · S7d | C0 · C5 · **C6** |
 | i **test di contratto** fra porta finta e porta vera — porta `reactor` | `crates/kernel/tests/reactor_contract.rs`, incluso da `crates/platform/tests/reactor_contract_real.rs` | **R3** · **R4** · R5 | R1 · R2 · **R6** |
-| i **test di contratto** — porta `journal`, **una implementazione su due** | `crates/kernel/tests/journal_contract.rs`. ⚠️ **La seconda implementazione arriva col Task 8**: oggi la suite gira contro la sola finta, e ciò che compra intanto è la via **A6** di `boundary.rs` | **J2** · **J3** · **J4** · **J5** · **J6** · **J7** · **J8** | J1 · **J9** |
+| i **test di contratto** — porta `journal`, **una implementazione su due** | `crates/kernel/tests/journal_contract.rs`. ⚠️ **La seconda implementazione arriva col Task 8**: oggi la suite gira contro la sola finta, e ciò che compra intanto è la via **A6** di `boundary.rs` | **J2** · **J3** · **J4** · **J5** · **J6** · **J7** · **J8** · **J10** | J1 · **J9** · **J11** |
 
 #### Le sonde, per nome
 
@@ -197,7 +197,7 @@ quella che deve restare verde.
 | **R3** | `NullAdvanceLiar`, che risponde `Some` a una scadenza **pari** all'istante corrente → la suite scatta. ⛔ E il test **legge il payload del panic**: verifica *quale* asserzione ha sparato, perché un `is_err()` nudo direbbe «ho colto il null advance» anche se a scattare fosse stata un'altra — una misura vera di un'altra cosa, gotcha #15 |
 | **R4** | `PastDeadlineLiar`, che onora `deadline == now` e mente su `deadline < now` → scatta sul **solo** caso 2b. ⛔ È la sonda che prova che il caso 2b **non è vacuo**: prima che esistesse, cancellare l'intero blocco 2b lasciava la porta **verde**, e con essa la metà `<` del ramo priva di guardia. Gotcha **#45** |
 | **R5** | la plausibilità di `wall_time()` sulla **vera** — `crates/platform/tests/wall_clock_plausibility.rs`: un istante posteriore a una data fissa del passato. Coglie l'orologio fermo a **zero o all'epoca**, che era la mutazione sopravvissuta alla prima stesura |
-| **J1** | il **doppio in memoria** onora tutte e sei le promesse — il verde di partenza. ⚠️ La promessa **6** la soddisfa **per la ragione sbagliata**: vedi la voce aperta più sotto |
+| **J1** | il **doppio in memoria** onora tutte e **otto** le promesse — il verde di partenza. ⚠️ La promessa **7** la soddisfa **per la ragione sbagliata**: vedi la voce aperta più sotto. ⚠️ **Questa riga diceva «tutte e sei» e «la promessa 6»**, ed erano **due** cifre stantie in una riga sola: le promesse erano già sette dal 2026-08-10 e la voce aperta parla di `prune`, che è la **settima** da quando il secondo intento si è preso la sesta. Ricontate il 2026-08-10 — gotcha **#31** |
 | **J2** | `SilentJournal`, che risponde `Ok(())` e non scrive → scatta la **promessa 1**. ⛔ È la via **A6** di `boundary.rs` resa eseguibile, ed è la ragione per cui questa suite esiste in questo traguardo |
 | **J3** | `LastWriteWinsJournal`, che rilegge l'**ultimo** record del passo invece del primo → scatta la **promessa 2**. ⛔ È la forma che una tabella chiavata sul passo ha **per natura**, cioè quella che avrà `redb`: è la promessa che la seconda implementazione **non incontra da sola** |
 | **J4** | `EmptyInsteadOfMissingJournal`, che riporta l'**assenza** come lettura riuscita di **niente** → scatta la **promessa 3** |
@@ -205,7 +205,9 @@ quella che deve restare verde.
 | **J6** | `PermissiveJournal`, che accetta un esito **senza intento** → scatta la **promessa 5** |
 | **J7** | `UnguardedIntentJournal`, che accetta un **secondo intento** sullo stesso passo → scatta la **promessa 6**. ⛔ **Rotto per assenza e non per menzogna:** ha il proprio archivio e la guardia su `outcome`, e gli manca solo quella su `intent` — è ciò che era `MemoryJournal` fino al 2026-08-10. Non lava un rifiuto altrui come fa `PermissiveJournal`, o sarebbe lo stesso difetto scritto due volte (gotcha #45) |
 | **J8** | `EagerPruner`, che pota un passo **in dubbio** → scatta la **promessa 7** |
-| **J9** | ⛔ **la contro-sonda, ed è di due pezzi.** (a) La **durabilità attraverso la caduta del processo** sta **fuori** dalla suite — `the_memory_journal_does_not_survive_being_dropped` vive in `memory_journal.rs` — perché pretenderla in conformità renderebbe rossa la finta, che è **corretta** (gotcha **#44**). (b) La **mutazione di controllo**: cambiato un **solo commento**, tutti e otto i test restano verdi e `cargo test --workspace --no-fail-fast` dà **zero** rossi. Senza (b) la tabella qui sopra non prova niente — gotcha **#48** |
+| **J10** | `DiscardedNoteJournal`, che **controlla la nota e non ne conserva nulla** → scatta la **promessa 8**. ⛔ **Rotto in un ottavo modo** (gotcha #45): fa la verifica, risponde `Ok(())` e non scrive — *valida e poi butta*. `SilentJournal` è il vicino più prossimo e **non è lo stesso**: quello non verifica niente e muore sulla promessa 1, sei promesse prima. ⛔ **Ed è la forma che una implementazione vera prende davvero:** `note` è l'operazione più nuova della porta, quindi la più probabile da lasciare `Ok(())` mentre il resto è scritto bene — e ciò che smette di arrivare all'archivio è **il contenuto non fidato con l'etichetta che dice che lo era**, cioè la via **A6** puntata sulla via **A4**. ⚠️ **Sta qui e non fra J8 e J9** perché gli identificatori di questo registro **non si spostano**: J9 era già la contro-sonda quando questo bugiardo è nato |
+| **J9** | ⛔ **la contro-sonda, ed è di due pezzi.** (a) La **durabilità attraverso la caduta del processo** sta **fuori** dalla suite — `the_memory_journal_does_not_survive_being_dropped` vive in `memory_journal.rs` — perché pretenderla in conformità renderebbe rossa la finta, che è **corretta** (gotcha **#44**). (b) La **mutazione di controllo**: cambiato un **solo commento**, tutti e **dieci** i test restano verdi e `cargo test --workspace --no-fail-fast` dà **zero** rossi. Senza (b) la tabella qui sopra non prova niente — gotcha **#48**. ⚠️ **La cifra diceva «otto»**: rimisurata il 2026-08-10 con la promessa 8 e la sonda delle sottostringhe |
+| **J11** | ⛔ **il vincolo che rende sicuro `contains`, e fino al 2026-08-10 era solo dichiarato.** `no_promise_message_is_a_substring_of_another` — nessuno degli **otto** messaggi è sottostringa di un altro, e nessuno è vuoto. Senza, un bugiardo colto sulla promessa **sbagliata** soddisferebbe comunque il test che nomina quella giusta, e la suite direbbe `ok` indicando il posto sbagliato. ⚠️ **Misurato in due direzioni**, e la prima è quella che insegna: rendere un messaggio un semplice **prefisso** di un altro **non** lo fa scattare — giustamente, perché `contains` non è ingannato da un prefisso condiviso — mentre una **vera** inclusione (`MISSING_MESSAGE` = `"a `note` upon an open step must be"`) lo fa scattare **da solo**, e un messaggio **vuoto** anche |
 | **R6** | ⛔ **la contro-sonda che conta, e la si sarebbe dimenticata:** rompendo l'avanzamento dell'orologio di parete del `VirtualReactor`, la conformità **resta verde** e scatta **solo** `crates/simulator/tests/virtual_clock.rs`. È la prova che la suite condivisa non impone alla vera un comportamento della finta — se lo facesse, renderebbe rossa un'implementazione **corretta**. Gotcha **#44** |
 
 #### Il build script — entrato su una lacuna misurata
@@ -479,12 +481,15 @@ uccisore che sparisce in silenzio è il pericolo vero:
 | **M13** — `intent` sovrascrive l'intento già presente | ⛔ solo `a_second_intent...` | **irraggiungibile**: la guardia risponde `OutOfOrder` prima. La forma viva è **M14**, la guardia **tolta**, uccisa dalla conformità (promessa 6) e da `a_second_intent_on_the_same_step_is_refused` |
 | **M15** — la guardia scritta `!entries.is_empty()` invece di `has_intent(step)` | *nuova* | **sei test**: `each_step_reads_back_its_own_first_record` e `an_intent_for_another_step_is_still_accepted` qui, più **cinque** in conformità, che muoiono sul **setup** della promessa 4. ⚠️ **La prima stesura di questa riga diceva «solo la contro-sonda nuova», ed era falsa**: scritta prima della misura, corretta dopo |
 
-**`journal_contract` — sette promesse, sette bugiardi, e la corrispondenza è stata _misurata_.**
-⛔ Neutralizzando **una** promessa alla volta — commentandone il blocco — cade **esattamente** il
-test del suo bugiardo e nessun altro, **sette volte su sette**. È la prova che nessuna promessa è
-decorativa e che nessun bugiardo muore sulla promessa di un altro. ⚠️ **Rimisurata per intero il
-2026-08-10** dopo l'arrivo della promessa 6: un banco che non si rifà quando l'insieme cambia è
-un banco che riporta l'esito di ieri.
+**`journal_contract` — otto promesse, otto bugiardi, e la corrispondenza è stata _misurata_.**
+⛔ Neutralizzando **una** promessa alla volta — avvolgendone i blocchi in `if false` — cade
+**esattamente** il test del suo bugiardo e nessun altro, **otto volte su otto**. È la prova che
+nessuna promessa è decorativa e che nessun bugiardo muore sulla promessa di un altro.
+⚠️ **Rimisurata per intero il 2026-08-10 due volte:** la prima dopo l'arrivo della promessa 6, la
+seconda dopo la promessa 8. Un banco che non si rifà quando l'insieme cambia è un banco che
+riporta l'esito di ieri. ⚠️ **E la promessa 8 ha DUE blocchi**, non uno — il passo mai aperto sta
+in un giornale suo — quindi neutralizzarla ne spegne due; scritto qui perché chi rifà la misura
+con uno strumento che cerca un blocco solo otterrebbe un falso «sopravvissuta».
 
 | Promessa neutralizzata | Chi cade | E nessun altro |
 |---|---|---|
@@ -495,6 +500,7 @@ un banco che riporta l'esito di ieri.
 | 5 · un esito **senza** intento è rifiutato | `PermissiveJournal` (**J6**) | 7 verdi |
 | 6 · un **secondo intento** sullo stesso passo è rifiutato | `UnguardedIntentJournal` (**J7**) | 7 verdi |
 | 7 · un passo **in dubbio** non è potabile | `EagerPruner` (**J8**) | 7 verdi |
+| 8 · una **nota** su un passo aperto è conservata e non spodesta l'intento | `DiscardedNoteJournal` (**J10**) | 7 verdi |
 
 ⛔ **E due difetti reali sono stati colti dalla misura, non dalla rilettura** — entrambi nella
 suite come il piano la dettava:
@@ -505,15 +511,19 @@ suite come il piano la dettava:
 | **b** | la promessa **1** rileggeva con un `.expect("read_back must find it")`, e la via **A6** è proprio il caso in cui `read_back` **non trova**: la suite scattava con un messaggio che **non nomina nessuna promessa** | `a_journal_that_writes_nothing_is_caught` riportava «ha sparato, ma NON sulla promessa 1» — la suite coglieva A6 e non sapeva dirlo. Chiuso mettendo il messaggio della promessa anche sull'`expect` |
 
 ⛔ **E una questione nuova resta aperta, scritta qui e non come nota** (gotcha **#36**): **la
-promessa 6 è soddisfatta dalla finta per la ragione sbagliata.** L'asserzione chiede che `prune`
+promessa 7 è soddisfatta dalla finta per la ragione sbagliata.** ⚠️ **Questo capoverso diceva «la
+promessa 6» e il numero era stantio** — `prune` è la **settima** da quando il secondo intento si è
+preso la sesta; corretto il 2026-08-10 ricontando sul sorgente, gotcha **#31**. L'asserzione chiede che `prune`
 **rifiuti**, e `MemoryJournal` rifiuta **tutto** (decisione D7) — quindi la supera senza mai
 consultare se il passo sia in dubbio. Un giornale che rifiutasse ogni potatura a caso è qui
 **indistinguibile** da uno che rifiuta *questa* perché è in dubbio: è la famiglia del gotcha
 **#30**. ⛔ **Non è stata forzata**, e la ragione è precisa: la metà che discrimina è un passo
 **non** in dubbio la cui potatura dev'essere **accettata**, e non si può scrivere finché `prune`
 non è implementata da nessuna delle due parti. Arriva col **Task 11** di questo traguardo, dove
-`prune` impara a rifiutare *un passo in dubbio* invece di rifiutare tutto. Fino ad allora **J7**
-prova che la promessa sa scattare, e nient'altro prova che sappia distinguere.
+`prune` impara a rifiutare *un passo in dubbio* invece di rifiutare tutto. Fino ad allora **J8**
+prova che la promessa sa scattare, e nient'altro prova che sappia distinguere. ⚠️ **Anche questo
+identificatore era sbagliato e diceva J7**, che è il bugiardo del secondo intento: il potatore
+avido è **J8**.
 
 **`reconciliation` — sedici mutazioni più una di controllo, e tre sonde isolate da una propria.**
 ⚠️ Applicazione verificata **per siti**, compilazione in un passo **separato** dall'esecuzione,
@@ -533,23 +543,77 @@ incompilabile; **nove sonde su nove** muoiono sotto almeno una mutazione, quindi
 | ✅ `MemoryJournal::replay` rifiuta un giornale **vuoto**, e ne perde la **prima** voce | ⛔ la prima uccide **solo** il giornale vuoto — ogni altra sonda scrive qualcosa prima, quindi nessuna incontra il primo avvio; la seconda ne uccide quattro |
 | **controllo**: cambiata **una parola di un commento** | ✅ **nulla**, `9 passed` |
 
+**`boundary` e l'arm `Note` — nove mutazioni più due di controllo, misurate il 2026-08-10.**
+⚠️ Compilazione in un passo **separato** dall'esecuzione e conteggio con `--no-fail-fast` (gotcha
+**#48**); ripristino **byte-identico** dei file, fine-riga compresi (vincolo globale 5).
+
+| Mutazione | Chi cade |
+|---|---|
+| l'arm `Note` letto come un **intento** | **5**: le due sonde della nota, e tre della promozione |
+| l'arm `Note` letto come un **esito** | **4** — ⚠️ `a_note_does_not_put_a_step_in_doubt` **non** cade qui, e la ragione è nel suo scenario: finisce con un esito, quindi un `leave` in più non cambia nulla. Delle due sonde della nota **una sola** vede entrambe le direzioni, ed è scritto invece che taciuto |
+| `payload` e `reason` **scambiati** — il difetto che il piano dettava | **4**, fra cui quella dell'etichetta e quella del `Debug` |
+| `trust: Instruction` invece di `Untrusted` | ⛔ **una sola**, ed è la prova che l'etichetta non poggia su nessun'altra asserzione |
+| il record dice `Intent`, scritto comunque con `note()` | **4**, fra cui la sonda dell'accordo |
+| il record dice `Outcome`, scritto comunque con `note()` | **4**, le stesse |
+| ✅ `promote` scrive con **`outcome()`** invece di `note()` | ⛔ **prima: NESSUNA.** È l'opzione **F** scartata dal proprietario, e nulla la teneva. Dopo `OperationSpy`: **una sola**, la sua |
+| `promote` scrive con **`intent()`** | **9** — il rifiuto della porta cade su tutto |
+| ✅ `RecordKind::Note` spostata su un indice **libero** (2 → 7) | ⛔ **nulla**, ed è **atteso e dichiarato**: il derive rinumera codifica e decodifica insieme, quindi nessun andata-e-ritorno lo vede. È la stessa misura che il doc di `record_shape.rs` porta per gli altri campi, e a tenerla saranno i **byte congelati del Task 10** |
+| **controllo**: una parola di un commento in `reconcile.rs` | ✅ **nulla** |
+| **controllo**: una parola di un commento in `boundary_promotion.rs` | ✅ **nulla** |
+
+**`MemoryJournal::note` — quattro mutazioni.**
+
+| Mutazione | Chi cade |
+|---|---|
+| la guardia `has_intent` **tolta** | **4**, fra cui la conformità |
+| la guardia dimentica **quale** passo (`!entries.is_empty()`) | ⛔ **una sola**, `a_note_is_refused_when_the_intent_belongs_to_another_step` — è il gemello del buco misurato su `outcome`, e senza quella sonda la mutazione sopravvive |
+| la nota **scartata** (il bugiardo, messo nel giornale vero) | **8** |
+| ⛔ la nota archiviata come `EntryKind::Intent` | ⛔ **NULLA, e la sonda scritta per tenerla è stata TOLTA.** La variante interna è **inosservabile** da fuori: `note` rifiuta un passo senza intento, quindi un passo di sole note non è costruibile attraverso la porta e `has_intent` non può diventare vero per una nota sola. La sonda che lo affermava è stata cancellata e la misura registrata al suo posto — una sonda il cui commento rivendica un difetto che non vede insegna che il difetto è coperto, ed è peggio di un difetto scoperto che qualcuno conosce. Gotcha **#15** |
+
 ⚠️ **E una sonda non muore MAI da sola, dichiarato invece che taciuto:**
 `a_step_is_in_doubt_at_most_once_however_many_records_it_carries` cade solo insieme a
 `a_step_that_re_enters_doubt_keeps_the_place_it_first_took`, la cui asserzione confronta il
 **vettore intero** e vede quindi anche un doppione. Resta perché porta lo **scenario** — un passo,
 due record, il secondo illeggibile — non perché veda un difetto che nessun'altra vede.
 
-⛔ **E una questione nuova resta aperta, scritta qui come voce e non come nota** (gotcha **#36**):
-**il `kind` del record e l'operazione della porta sono due verità indipendenti, e `replay()` ne
-restituisce una sola.** La riconciliazione si fida del **campo**; il giornale conosce
+✅ **E LA QUESTIONE DELLE DUE VERITÀ È CHIUSA IL 2026-08-10 — DAL PROPRIETARIO — e la voce resta
+qui invece di essere cancellata:** una voce aperta che sparisce non si distingue da una
+dimenticata.
+
+**Com'era.** *Il `kind` del record e l'operazione della porta sono due verità indipendenti, e
+`replay()` ne restituisce una sola.* La riconciliazione si fida del **campo**; il giornale conosce
 l'**operazione** — `MemoryJournal` tiene un `EntryKind` interno e `JournalError::OutOfOrder` è
 definito sulle due operazioni. Misurate le due direzioni: `intent()` con un record che dice
 `Outcome` fa **sparire in silenzio un dubbio vero**; `outcome()` con un record che dice `Intent`
-rimette in dubbio un passo concluso. **Nessuna sonda lo tiene**, e non può tenerlo nessuna da
-questo lato della porta. ⚠️ **Non è un difetto oggi** — nessun codice del kernel scrive ancora un
-record — e diventa concreto al **Task 7**, dove `promote` ne scrive uno. ⛔ **Riportata al
-proprietario e non decisa**, perché chiuderla cambia la firma di `replay()`, cioè porta,
-conformità e due implementazioni.
+rimette in dubbio un passo concluso.
+
+⛔ **La decisione: `replay()` NON cambia e il `kind` RESTA nel record.** Presa dal **proprietario**,
+non dal piano. Le ragioni, in ordine:
+
+| | |
+|---|---|
+| **è semantica del kernel** | distinguere intento da esito è una decisione del kernel, e spostarla nella porta contraddice il doc di `replay` stesso — *«un'operazione come `steps_in_doubt()` sposterebbe una decisione del kernel dentro chi implementa la porta»* |
+| **la forma durevole è del kernel** | ADR-0036, ed è la stessa regola per cui la porta scambia **byte** |
+| **il costo evitato** | l'alternativa tocca **porta, conformità e due implementazioni**, e renderebbe **ridondante** il campo che `record.rs` chiama *«quello su cui poggia l'intero protocollo write-ahead»* |
+
+⛔ **E il disaccordo si chiude da CHI SCRIVE, che oggi è una funzione sola.** `Untrusted::promote`
+è l'unico codice del kernel che scrive un record, quindi non si costruisce un aiutante per un
+chiamante solo: si mette una **sonda** che fissi l'accordo —
+`the_promotion_writes_through_note_and_the_record_says_note` — e l'aiutante nasce col **secondo**
+scrittore, quando avrà due siti per cui essere giusto.
+
+⚠️ **E la sonda è nata sbagliata, corretta dalla misura e non dalla rilettura.** La prima stesura
+asseriva **solo** il `kind` e dichiarava la metà della porta *«tenuta per costruzione, perché
+`note` è l'unica operazione che ammette un passo già aperto senza chiuderlo»*. **Falso, e
+misurato:** `outcome` lo ammette anch'esso, quindi un `promote` riscritto per chiamare `outcome()`
+— cioè l'**opzione F**, quella che il proprietario ha esaminato e **scartato** — lasciava
+**l'intero workspace verde**. Chiusa con una spia conforme, `OperationSpy`, che delega tutto a
+`MemoryJournal` e in più annota **quale metodo** è stato chiamato: ora quella mutazione uccide
+**una sola** sonda, la sua.
+
+⛔ **Ciò che NON è comprato, detto per intero:** nessuna regola di livello 1 impedisce a uno
+scrittore futuro di chiamare `outcome()` con un record che dice `Intent`. La sonda copre
+**l'unico scrittore che esiste**. È una voce **chiusa come decisione**, non come garanzia.
 
 ⚠️ **E una riga di questo registro va riletta quando quella questione si chiude, non prima:**
 la voce di `V5` fra le scoperte dice *«il tipo `EffectClass` esiste ma nessun caso lo esercita»*.

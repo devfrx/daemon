@@ -12,7 +12,11 @@
 //! decided this is the array one. A default nobody wrote down is a default somebody changes.
 //! ⚠️ AND THAT IT COSTS NOTHING TO WRITE IT WAS MEASURED, not assumed: with and without
 //! `#[cbor(array)]` on the two types below, a record encodes to the same bytes down to the
-//! length — `82 00 81 84 00 01 00 40` empty, 28 bytes with a 20-byte payload.
+//! length. ⚠️ THE BYTES OF THAT MEASUREMENT WERE `82 00 81 84 00 01 00 40` UNTIL 2026-08-10,
+//! when index 4 arrived and the inner array went from four elements to five: an empty record is
+//! now `82 00 81 85 00 01 00 40 60`, nine bytes. Re-measured rather than left standing —
+//! gotcha #31 is a number nobody rechecks because the rule it supports is right, and the rule
+//! here is still right.
 //!
 //! ⚠️ AND THE ARRAY HAS A PRICE THE MAP DOES NOT, which belongs beside those numbers: a
 //! RETIRED INDEX COSTS A NULL BYTE FOR EVER. The array is positional, so a gap has to be
@@ -28,13 +32,43 @@
 //! is a new version of the record, not an edit to this line. The byte-string annotation below
 //! declares its own stake; this one is the stake of the three above it.
 
+use alloc::string::String;
 use alloc::vec::Vec;
 use core::fmt;
 use minicbor::{Decode, Encode};
 
-/// Is this the INTENTION of a step or its OUTCOME? The whole write-ahead protocol rests on
-/// telling them apart: a step with an intent and no outcome is IN DOUBT (§4.2), and the
-/// doubt is what makes recovery possible.
+/// Is this the INTENTION of a step, its OUTCOME, or a NOTE upon it? The whole write-ahead
+/// protocol rests on telling the first two apart: a step with an intent and no outcome is IN
+/// DOUBT (§4.2), and the doubt is what makes recovery possible.
+///
+/// ⛔ `Note` ARRIVED ON 2026-08-10 AND IS A THIRD THING, not a variety of either. It was
+/// decided by the coordinator while executing task 7 and is recorded in the plan's errata so
+/// the owner can overturn it by SEEING it. What forced it, measured rather than argued:
+/// `Untrusted::promote` writes a record onto THE CALLER'S STEP, which already carries an
+/// intent, and the two roads the plan left open both fail —
+///
+/// - written as a second `intent`, the port REFUSES it (`OutOfOrder`, one intent per step);
+///   and even with the guard relaxed, reconciliation reads a second `Intent` record for the
+///   same step and REPLACES the caller's resolution with the note's. Measured: a caller that
+///   declared `Idempotent` came back `SuspendAndAsk` — the promotion silently downgraded a
+///   step it does not own.
+/// - written as an `outcome`, reconciliation takes the step OUT OF THE DOUBT although it has
+///   not executed. Measured: `steps_in_doubt` answered `[]`. That is a true doubt vanishing in
+///   silence, which is the one failure ADR-0007 exists to prevent.
+///
+/// So a note is neither, and the record says so. `crate::reconcile` neither opens nor closes a
+/// doubt on it.
+///
+/// ⚠️ THE COST IS DECLARED AND IT IS A FORMAT COST: a build that does not know this variant
+/// decodes such a record to `RecordError::Malformed`. ⛔ THE DIRECTION IS SAFE, and that is
+/// what makes the cost acceptable — reconciliation reads a record it cannot decode as
+/// `SuspendAndAsk`, so an older build STOPS rather than guesses. It is free today because no
+/// archive exists; after the frozen bytes of task 10 the same change would cost a migration of
+/// the one irreproducible archive.
+///
+/// ⚠️ AND THE TWO EXISTING VARIANTS DID NOT MOVE, which was measured and not assumed:
+/// `#[cbor(index_only)]` encodes a variant as its bare index, so `Intent` stays `00` and
+/// `Outcome` stays `01`, and all of `tests/record_shape.rs` stayed green with the variant added.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
 #[cbor(index_only)]
 pub enum RecordKind {
@@ -42,6 +76,12 @@ pub enum RecordKind {
     Intent,
     #[n(1)]
     Outcome,
+    /// ⛔ A NOTE UPON A STEP, which neither opens a doubt nor closes one. It is what
+    /// `Untrusted::promote` writes: a promotion touches nothing outside, so by ADR-0007 —
+    /// "a step is AN INTERACTION WITH THE OUTSIDE WORLD" — it is not a step of its own, and
+    /// the step it names is the caller's, which already owes an outcome.
+    #[n(2)]
+    Note,
 }
 
 /// How an effect may be reconciled after a crash (ADR-0007).
@@ -138,9 +178,42 @@ pub struct RecordV1 {
     /// ⛔ THE BYTE-STRING ANNOTATION IS LOAD-BEARING, not decoration. Without it `minicbor`
     /// encodes a `Vec<u8>` as an ARRAY OF NUMBERS: it compiles, it round-trips, and it costs
     /// 1.91x — measured on 4096 B, 7813 against 4101. Gotcha #35.
+    ///
+    /// ⛔ THIS INDEX HOLDS THE CONTENT THE `trust` FIELD SPEAKS ABOUT, and after 2026-08-10 that
+    /// is a rule and not a description. It is index 3 that the hand-written `Debug` below hides,
+    /// so anything that may have come from outside belongs HERE and nowhere else in this struct.
+    /// Putting untrusted content at any other index would print it in the first `{:?}` that
+    /// reaches a log.
     #[n(3)]
     #[cbor(with = "minicbor::bytes")]
     pub payload: Vec<u8>,
+    /// Why the record was written, in OUR words. ⛔ IT IS TEXT AND THE PAYLOAD IS BYTES, and the
+    /// asymmetry is the point rather than an accident of typing: the payload is somebody else's
+    /// and may be anything, this is ours and is always UTF-8. The two travel as different CBOR
+    /// major types, so the distinction is in the archive and not only in the source.
+    ///
+    /// ⛔ IT ARRIVED WITH INDEX 4 ON 2026-08-10, AND IT IS WHY THE `trust` LABEL IS TRUE. Until
+    /// then `Untrusted::promote` was to put THE REASON in `payload` and label it
+    /// `Trust::Untrusted` — a label on the caller's own justification, which never crossed any
+    /// boundary. `Trust`'s own doc says the label is about THE PAYLOAD, so that record would have
+    /// carried a false statement in the one field whose whole job is to be true, in the one call
+    /// site the boundary exists for. Splitting them lets the payload hold the external content
+    /// and the label describe it.
+    ///
+    /// ⚠️ MANDATORY AND NOT `Option`, AND THAT IS A DECISION WITH A DEADLINE ON IT. Rule 3 of
+    /// §4.9.2 — "a new field is OPTIONAL and takes a new index" — governs a field added to a
+    /// version SOMEBODY HAS ALREADY WRITTEN. V1 has never been written to an archive: the frozen
+    /// bytes are task 10 and do not exist yet, so there is no short array anywhere to decode and
+    /// an `Option` no reader would ever find `None` in would be dead surface — the same argument
+    /// that took the `Result` off `encode`. ⛔ FROM TASK 10 ONWARDS THE EXEMPTION IS GONE: once
+    /// the bytes are frozen, a field added to V1 MUST be `Option` with `#[cbor(default)]`, and
+    /// the meaning of an index that already exists must never change (rule 4 — the reuse was
+    /// measured, and it decodes to the WRONG SILENCE rather than to an error).
+    ///
+    /// ⚠️ AND IT STAYS PRINTABLE, deliberately: the hand-written `Debug` hides index 3 and shows
+    /// this one, because a failed assertion on a record has to say what the record was FOR.
+    #[n(4)]
+    pub reason: String,
 }
 
 /// ⛔ THE PAYLOAD IS NOT PRINTED, and it is the same defence `Untrusted` carries, applied to
@@ -151,10 +224,16 @@ pub struct RecordV1 {
 /// `trust` field exists to say the bytes came from outside. A `{:?}` in a log line, a panic
 /// message, a failed `assert_eq!`, and the payload is out.
 ///
-/// ⚠️ THE OTHER THREE FIELDS STAY READABLE, deliberately and for the reason the length stays on
-/// `Untrusted`: a failed `assert_eq!` has to remain diagnostic. `kind`, `effect` and `trust`
-/// are the kernel's own vocabulary — nobody outside chose them — and they are exactly what one
-/// wants to read when a record comes back wrong. Only the payload is somebody else's.
+/// ⚠️ THE OTHER FOUR FIELDS STAY READABLE, deliberately and for the reason the length stays on
+/// `Untrusted`: a failed `assert_eq!` has to remain diagnostic. `kind`, `effect`, `trust` and
+/// `reason` are the kernel's own vocabulary — nobody outside chose them — and they are exactly
+/// what one wants to read when a record comes back wrong. Only the payload is somebody else's.
+///
+/// ⚠️ THAT SENTENCE SAID "THE OTHER THREE" UNTIL 2026-08-10 and is dated rather than quietly
+/// renumbered: `reason` arrived at index 4 that day, and it is on THIS side of the line on
+/// purpose. It is the text the caller wrote to justify the record; printing it discloses
+/// nothing nobody chose, and hiding it would leave a failed assertion unable to say what the
+/// record was for.
 ///
 /// ⚠️ Pinned by `the_debug_of_a_record_does_not_print_the_payload`, because a closed road that
 /// no test holds is a road that reopens the day somebody puts `Debug` back in the derive list
@@ -163,11 +242,12 @@ impl fmt::Debug for RecordV1 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "RecordV1 {{ kind: {:?}, effect: {:?}, trust: {:?}, payload: <{} bytes> }}",
+            "RecordV1 {{ kind: {:?}, effect: {:?}, trust: {:?}, payload: <{} bytes>, reason: {:?} }}",
             self.kind,
             self.effect,
             self.trust,
-            self.payload.len()
+            self.payload.len(),
+            self.reason
         )
     }
 }

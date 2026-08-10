@@ -724,6 +724,63 @@ bash scripts/gate.sh                                  # GATE GREEN
 | `Record::encode` non può fallire, e la firma smette di dirlo | cambio di firma a `-> Vec<u8>` | `record_shape.rs` perde **nove** `.expect("encode")`, e `compile_fail/record_without_version.rs` **non è toccato** — il suo oracolo parla di `RecordV1` che non ha un `encode` **inerente**, non del tipo di ritorno di `Record::encode`. `10 passed` invariati | errata **E22** |
 | ⚠️ **«i chiamanti sono due», e contandoli erano UNO** | `grep -rc "\.encode()"` sui sorgenti | **un file chiamante**, `crates/kernel/tests/record_shape.rs`, con **nove** siti. Il secondo che era stato contato — `compile_fail/record_without_version.rs` — **non è un chiamante**: nomina `RecordV1::encode`, e quel caso esiste **proprio perché** il metodo inerente non c'è. ✅ **L'errore va a favore dell'argomento** — meno siti, edit ancora più economico — ed è corretto lo stesso, perché un numero sbagliato appeso a una regola giusta è la definizione del gotcha **#31**. Col Task 6 i file chiamanti sono **due** e i siti **dieci** | errata **E22** |
 
+## Esecuzione del Traguardo 3 — il Task 7: la promozione, e le due stringhe che l'etichetta poteva descrivere
+
+**Misurato il 2026-08-10.** Il compito dettato aveva **due conflitti di formato**, e le opzioni
+sono state misurate prima di decidere: i byte congelati del Task 10 non si rigenerano.
+
+| Misura | Comando | Esito |
+|---|---|---|
+| il `promote` dettato contro l'implementazione **vera** | `cargo test -p kernel` con `MemoryJournal` e il passo del chiamante già aperto | **`Err(OutOfOrder)`** — la guardia di **E19** lo rifiuta |
+| lo stesso contro la finta **dettata** | `RecordingJournal` di `boundary_promotion.rs` | ⛔ **`Ok`** — la finta **non ha la guardia**: è riga per riga `UnguardedIntentJournal`, il bugiardo **J7** |
+| la promozione scritta come **secondo intento**, a guardia rilassata | `steps_in_doubt` prima e dopo | ⛔ `[{1, RunAgain}]` → **`[{1, SuspendAndAsk}]`** — la risoluzione del chiamante **sostituita** |
+| la promozione scritta come **esito** | idem | ⛔ **`[]`** — il passo esce dal dubbio **senza aver eseguito** |
+| un **secondo `outcome()`** sullo stesso passo | `MemoryJournal` | **`Ok`** — `outcome` non ha guardia di ripetizione (rilevante al Task 8) |
+| l'arrivo di `note()` sulla porta | `cargo build --workspace --all-targets` | **dieci `E0046`**: 1 implementazione vera + 7 bugiardi + 2 finte; **undici** dopo il Task 8 |
+| la variante `Note` su un enum `#[cbor(index_only)]` | `cargo test -p kernel --test record_shape` col solo campo aggiunto | i byte di `Intent` e `Outcome` **non cambiano**; dieci sonde su dieci verdi |
+| un `RecordKind` **sconosciuto** | `Record::decode` su `82 00 81 84 02 …` | **`Malformed`** → la riconciliazione risponde `SuspendAndAsk`: direzione **sicura** |
+| l'additività **in coda** (regola 3 di §4.9.2) | `Record::decode` di un array a **cinque** elementi con un lettore a **quattro** | **`Ok`** — l'elemento in più è ignorato |
+| il record vuoto, prima e dopo l'indice 4 | `Record::encode` | `82 00 81 84 00 01 00 40` (**8 B**) → `82 00 81 85 00 01 00 40 60` (**9 B**), ora tenuto da una sonda |
+| il costo sul filo delle tre opzioni del conflitto 2 | payload 24 B / ragione 20 B | contenuto **33 B** · ragione **28 B** · entrambi **≈53 B** |
+| `Debug` di un record col contenuto esterno nel payload | `format!("{body:?}")` | `payload: <24 bytes>` — il `Debug` scritto a mano copre già il caso nuovo |
+
+**La correspondenza bugiardo→promessa, rimisurata per intero.** Neutralizzando una promessa alla
+volta — avvolgendone i blocchi in `if false` — cade **esattamente** il test del suo bugiardo e
+nessun altro, **otto volte su otto**. ⚠️ La promessa 8 ha **due** blocchi, non uno.
+
+**Le mutazioni del compito.** Compilazione in un passo separato dall'esecuzione, conteggio con
+`--no-fail-fast`, ripristino **byte-identico** dei file (gotcha #48, vincolo globale 5).
+
+| Mutazione | Chi cade |
+|---|---|
+| l'arm `Note` letto come **intento** · come **esito** | 5 · 4 |
+| `payload` e `reason` **scambiati** | 4 |
+| `trust: Instruction` invece di `Untrusted` | ⛔ **1** — l'etichetta non poggia su nessun'altra asserzione |
+| il record dice `Intent` · `Outcome`, scritto con `note()` | 4 · 4 |
+| ✅ `promote` scrive con **`outcome()`** | ⛔ **prima: nessuna.** È l'opzione scartata dal proprietario e **nulla la teneva**. Dopo `OperationSpy`: **1** |
+| `promote` scrive con `intent()` | 9 |
+| la guardia di `note` **tolta** · che dimentica **quale** passo | 4 · **1** |
+| la nota **scartata** | 8 |
+| ⛔ la nota archiviata come `EntryKind::Intent` | ⛔ **nulla** — la variante interna è **inosservabile** da fuori, e la sonda scritta per tenerla è stata **tolta** |
+| ✅ `RecordKind::Note` su un indice **libero** (2 → 7) | ⛔ **nulla**, **atteso**: a tenerlo saranno i byte congelati del Task 10 |
+| il messaggio nuovo reso **prefisso** di un altro · **vera sottostringa** · **vuoto** | nulla (giusto: `contains` non è ingannato da un prefisso) · **1** · **1** |
+| **controllo**: una parola di commento in `reconcile.rs` · in `boundary_promotion.rs` · in `journal_contract.rs` | ✅ nulla, tre volte |
+
+**L'audit delle finte, che il conflitto ha reso obbligatorio.** `grep` su tutte le
+implementazioni di porta fuori da `src/`: **ventuno** al commit precedente, **ventidue** oggi.
+⚠️ **Il primo conteggio diceva venti ed era sbagliato**, misurato **dopo** che `RecordingJournal`
+era già stato tolto — cioè contava il mondo meno la cosa che l'audit doveva trovare (gotcha #48). Una sola era il difetto —
+`RecordingJournal`, **tolta**. Una seconda rompe un contratto e **resta**: `RefusingReactor` in
+`executor_determinism.rs` viola la promessa 3 di `reactor_contract.rs`, ma il suo test si chiama
+`a_reactor_that_will_not_advance_is_an_error_and_not_a_spin` — **la rottura è il soggetto**. Le
+altre **diciannove** non rompono nulla: nove sono i bugiardi delle due suite, quattro sono stub di
+`compile_fail` che non girano mai, quattro implementano `Filesystem`, `Network`, `Worker` o `Ipc`
+— porte **senza** suite —, una è un `Rng` scriptato e una è `RefusingJournal`, che esiste per
+rifiutare.
+
+**Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi;
+`cargo test --workspace --no-fail-fast` → **26 target, 127 test**, zero rossi.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

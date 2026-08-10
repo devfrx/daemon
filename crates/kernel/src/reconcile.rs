@@ -34,15 +34,32 @@ pub struct InDoubt {
 /// 99 left `[3, 7]`. The spike helper returned one, assuming sequential execution, and gave a
 /// FALSE NEGATIVE. Gotcha #20, and constraint 6 of §11 says it does not come up as it was.
 ///
-/// ⛔ DECLARED OPEN QUESTION, RAISED HERE AND NOT DECIDED HERE: WHICH IS THE AUTHORITY ON
-/// "INTENT OR OUTCOME" — THE `kind` FIELD OF THE RECORD, OR THE PORT OPERATION THAT WROTE THE
-/// ENTRY? This walk trusts the FIELD, and only the field. `Journal::replay` hands back
-/// `(StepId, bytes)` and does not say which of its two write methods produced each entry — yet
-/// the journal knows: `MemoryJournal` keeps an internal kind per entry, and
-/// `JournalError::OutOfOrder` is DEFINED in terms of the two operations. So there are two
-/// independent truths about the same thing, and only one of them reaches this function.
+/// ✅ THE QUESTION OF THE TWO TRUTHS IS DECIDED — 2026-08-10, BY THE OWNER — AND THE ANSWER IS
+/// THE FIELD. It stood here open: which is the authority on "intent or outcome", the `kind`
+/// field of the record or the PORT OPERATION that wrote the entry? `Journal::replay` hands back
+/// `(StepId, bytes)` and does not say which of its write methods produced each entry — yet the
+/// journal knows: `MemoryJournal` keeps an internal kind per entry, and
+/// `JournalError::OutOfOrder` is DEFINED in terms of the operations. Two independent truths
+/// about the same thing, and only one of them reaches this function.
 ///
-/// ⚠️ MEASURED AT THIS COMMIT, BOTH DIRECTIONS, and the two do not fail alike:
+/// ⛔ THE DECISION: `replay` DOES NOT CHANGE AND `kind` STAYS IN THE RECORD. Telling an intent
+/// from an outcome is SEMANTICS OF THE KERNEL, and moving it into the port would contradict
+/// `replay`'s own doc — "an operation like `steps_in_doubt()` would move a decision of the
+/// kernel inside whoever implements the port" — and the rule that the durable form is the
+/// kernel's property (ADR-0036). The record keeps the authority; this walk keeps trusting the
+/// field, and now does so BY DECISION rather than by default.
+///
+/// ⚠️ THE DISAGREEMENT IS CLOSED BY WHOEVER WRITES, and today that is ONE FUNCTION —
+/// `Untrusted::promote`, which since 2026-08-10 writes through `Journal::note` a record whose
+/// `kind` is `RecordKind::Note`. So there is nothing to build an abstraction around: a helper
+/// that kept the two in step would have a single caller, and this repository does not build one
+/// for a single caller. What holds it instead is a PROBE that pins the agreement —
+/// `the_promotion_writes_through_note_and_the_record_says_note` in
+/// `crates/kernel/tests/boundary_promotion.rs`. The helper is born with the SECOND writer, and
+/// then it has two call sites to be right for.
+///
+/// ⚠️ MEASURED, BOTH DIRECTIONS, and the two do not fail alike — kept because it is the evidence
+/// that the probe above is worth its line:
 ///
 /// - a record written with `intent()` whose `kind` says `Outcome` → THE STEP IS NOT REPORTED.
 ///   A true doubt is dropped in silence, which is the one failure ADR-0007 exists to prevent:
@@ -50,20 +67,11 @@ pub struct InDoubt {
 /// - a record written with `outcome()` whose `kind` says `Intent` → the step IS reported though
 ///   it finished; before `enter` below made this a set, it was reported TWICE.
 ///
-/// ⚠️ IT IS NOT A DEFECT TODAY, and the reason is what makes it safe to leave open: nothing in
-/// the kernel writes a record yet — `Untrusted::promote` gains that at task 7 — so the two
-/// truths cannot disagree unless the kernel writes a record that contradicts the call it is
-/// making. What is written here is that NOTHING PREVENTS IT and nothing would notice.
-///
-/// ⛔ AND THE REMEDY IS NOT ON THIS SIDE OF THE PORT. Closing it means `replay` handing back the
-/// operation it performed, which touches the port, the conformance suite and both
-/// implementations — a shared contract, so it is reported rather than taken while writing a
-/// consumer. ⚠️ AND THE CONSEQUENCE THAT COMES WITH IT, written down so it is not discovered
-/// afterwards: if the port becomes the authority, the record's `kind` field turns redundant —
-/// and `crate::record` calls it the field "the whole write-ahead protocol rests on". Then it
-/// either goes, which is a FORMAT change and the frozen bytes of task 10 are the deadline for
-/// one, or it stays as a cross-check that something actually CHECKS. Redundancy nobody checks is
-/// exactly what ADR-0036 refused when it kept one oracle instead of two.
+/// ⚠️ AND WHAT IS *NOT* BOUGHT IS SAID PLAINLY, because "decided" reads like "held": nothing at
+/// level 1 stops a future writer from calling `outcome()` with a record whose `kind` says
+/// `Intent`. The probe covers the one writer that exists. This sentence used to read "it is not
+/// a defect today, because nothing in the kernel writes a record yet"; that reason expired on
+/// 2026-08-10, and it is replaced rather than left standing.
 pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalError> {
     let entries = journal.replay()?;
 
@@ -73,6 +81,28 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
             Ok(Record::V1(body)) => match body.kind {
                 RecordKind::Intent => enter(&mut open, step, resolution_of(body.effect)),
                 RecordKind::Outcome => leave(&mut open, step),
+                // ⛔ A NOTE NEITHER OPENS A DOUBT NOR CLOSES ONE, AND THE EMPTY ARM IS THE
+                // WHOLE OF IT. A note says something happened WITHIN a step — today, that
+                // untrusted content crossed the boundary — and says nothing about whether the
+                // step's effect reached the world. Both other answers were MEASURED before this
+                // one was written, and both are defects:
+                //
+                // - treated as an intent, `enter` REPLACES the caller's resolution with the
+                //   note's: a step the caller declared `Idempotent` came back `SuspendAndAsk`.
+                //   The note would silently downgrade a step it does not own.
+                // - treated as an outcome, `leave` takes the step out of the doubt although
+                //   nothing executed: `steps_in_doubt` answered `[]`. A true doubt vanishing in
+                //   silence is the one failure ADR-0007 exists to prevent.
+                //
+                // ⚠️ SO THE `effect` FIELD OF A NOTE IS NEVER READ, and that is said here rather
+                // than left for a reader to deduce from an empty arm. `Untrusted::promote`
+                // writes `Unrepeatable` into it, and the reason is on that call — it is what an
+                // inert field is filled with here, not a class this function consults.
+                //
+                // Held in BOTH directions (§7.1.1 rule 3) by
+                // `a_note_does_not_put_a_step_in_doubt` and
+                // `a_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them`.
+                RecordKind::Note => {}
             },
             // ⛔ A record this build cannot read closes nothing and resolves nothing: it is the
             // strongest form of "no declared class", and ADR-0007 says that means stop. Note it

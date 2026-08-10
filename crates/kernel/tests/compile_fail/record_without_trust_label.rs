@@ -3,11 +3,12 @@
 //! `#[cbor(default)]`, and `Trust` implements no `Default`.
 
 fn main() {
-    // Three fields out of four. `trust` is the one left out, and leaving it out is the point.
+    // Four fields out of five. `trust` is the one left out, and leaving it out is the point.
     let _record = kernel::record::Record::V1(kernel::record::RecordV1 {
         kind: kernel::record::RecordKind::Intent,
         effect: kernel::record::EffectClass::Idempotent,
         payload: Vec::new(),
+        reason: String::new(),
     });
 }
 
@@ -38,3 +39,9 @@ fn main() {
 //
 // ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle quotes LINE 7 of this file, so a paragraph
 // added at the top would move the code and break it. Whoever writes here appends.
+//
+// ⚠️ `reason` WAS ADDED TO THE LITERAL ON 2026-08-10 AND THE CASE DID NOT MOVE, which is the
+// point of touching it. Index 4 is mandatory, so without that line this case would fail with
+// `missing fields `reason` and `trust`` — still an error, still `ok`, and no longer a case
+// about the trust label at all. A negative case that fires for a second reason is a case that
+// stops proving the first.

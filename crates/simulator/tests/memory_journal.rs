@@ -220,6 +220,106 @@ fn an_intent_for_another_step_is_still_accepted() {
 }
 
 #[test]
+fn a_note_upon_a_step_nobody_opened_is_refused() {
+    // ⛔ THE GUARD `note` SHARES WITH `outcome`, and it is the same sentence one operation over:
+    // a note is an annotation UPON something, and a step nobody opened is not something. What it
+    // does NOT share is `intent`'s guard — see the test below.
+    let mut journal = MemoryJournal::new();
+
+    assert_eq!(
+        journal.note(StepId::new(3), b"a note about nothing"),
+        Err(JournalError::OutOfOrder)
+    );
+}
+
+#[test]
+fn a_note_is_refused_when_the_intent_belongs_to_another_step() {
+    // ⛔ THE HOLE THAT WAS MEASURED ON `outcome` AND WOULD HAVE BEEN REBUILT HERE. The refusal
+    // above is checked on an EMPTY journal, where "no intent for this step" and "no intent at
+    // all" are the same sentence — so a `note` whose guard forgot `e.step == step` would pass
+    // it. This is the twin of `an_outcome_is_refused_when_the_intent_belongs_to_another_step`,
+    // written because the defect it catches is not hypothetical: it was found on `outcome`.
+    let mut journal = MemoryJournal::new();
+    journal
+        .intent(StepId::new(1), b"the step that did happen")
+        .expect("intent");
+
+    assert_eq!(
+        journal.note(StepId::new(2), b"a note upon a step that did not"),
+        Err(JournalError::OutOfOrder)
+    );
+}
+
+#[test]
+fn a_step_may_carry_many_notes_and_they_keep_their_order() {
+    // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3), and here it is a DECISION rather than a
+    // permission left lying about. One intent per step is ADR-0007's own wording, so a second is
+    // outside the model; nothing says how many times one interaction with the world may consult
+    // external content, and a caller that promotes twice within a step is ordinary. A `note`
+    // that inherited `intent`'s guard would refuse the second, and this is where that goes red.
+    //
+    // ⚠️ AND THE ORDER WITHIN THE STEP IS THE HALF CONFORMANCE DOES NOT REACH, for the reason
+    // `each_step_reads_back_its_own_first_record` gives: `replay` owes the order ACROSS steps,
+    // and what is asked here is the order WITHIN one.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    journal
+        .intent(step, b"what it set out to do")
+        .expect("intent");
+
+    assert_eq!(journal.note(step, b"the first note"), Ok(()));
+    assert_eq!(journal.note(step, b"the second note"), Ok(()));
+
+    let replayed = journal.replay().expect("replay");
+    let bytes: Vec<&[u8]> = replayed.iter().map(|(_, b)| b.as_slice()).collect();
+    assert_eq!(
+        bytes,
+        vec![
+            b"what it set out to do".as_slice(),
+            b"the first note".as_slice(),
+            b"the second note".as_slice(),
+        ]
+    );
+}
+
+#[test]
+fn a_note_does_not_take_the_intents_place_in_read_back() {
+    // ⛔ `read_back` ANSWERS WITH THE FIRST RECORD OF THE STEP, and a note must not become that
+    // record. The decision is the one `read_back_returns_the_intent_and_not_the_outcome` names —
+    // the intent is what says WHAT THE STEP WAS — and a note is by construction never the first
+    // thing a step carries, because `note` refuses a step with no intent. This pins that the
+    // two mechanisms agree instead of leaving it to follow from them.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(9);
+    journal
+        .intent(step, b"what it set out to do")
+        .expect("intent");
+    journal
+        .note(step, b"and what it read on the way")
+        .expect("note");
+
+    assert_eq!(
+        journal.read_back(step).expect("read back"),
+        b"what it set out to do".to_vec()
+    );
+}
+
+// ⛔ AND ONE TEST WAS WRITTEN HERE AND THEN REMOVED, WHICH IS RECORDED INSTEAD OF THE TEST.
+// `a_note_does_not_admit_an_outcome_for_a_step_that_never_had_an_intent` claimed to be the
+// counter-probe of the internal `EntryKind::Note` variant — that filing a note under
+// `EntryKind::Intent` would make `has_intent` answer `true` for a step whose only record is a
+// note, and V6 would fall. THE MUTATION WAS RUN AND NOTHING WENT RED, that test included, and
+// the reason is sound rather than a gap: `note` itself REFUSES a step with no intent, so a
+// note-only step cannot be built through the port, so `has_intent` can only be made true by a
+// note on a step that already had an intent. The variant is genuinely unobservable from out
+// here, exactly as `crates/simulator/src/journal.rs` declares beside it.
+//
+// ⚠️ THE TEST WENT AND THE MEASUREMENT STAYED, because the two failures are not the same size: a
+// probe whose comment claims a defect it cannot see teaches the next reader that the defect is
+// covered, which is worse than an uncovered defect somebody knows about. Gotcha #15 — a true
+// measurement, of another thing.
+
+#[test]
 fn prune_refuses_and_leaves_the_record_where_it_was() {
     // ⛔ THE DECLARED NON-IMPLEMENTATION, held by a test so that it stays declared. Retention
     // is out of this milestone (decision D7) because the fingerprint a pruned record carries

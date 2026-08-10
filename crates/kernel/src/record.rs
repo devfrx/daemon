@@ -193,11 +193,16 @@ pub enum Record {
     V1(#[n(0)] RecordV1),
 }
 
-/// What can go wrong encoding or decoding a record.
+/// What can go wrong DECODING a record.
 ///
 /// ⚠️ Deliberately poor, and for the reason `JournalError` is: a rich error invites the
 /// kernel to branch on the reason, and there is exactly one thing to do with a record that
 /// will not decode.
+///
+/// ⚠️ THIS SENTENCE SAID "encoding or decoding" UNTIL 2026-08-10, and it is dated rather than
+/// silently rewritten: `encode` returned a `Result` that could never be `Err`, and when that
+/// signature went so did half of this type's job. Nothing is lost by the narrowing — decoding
+/// is where the failure really lives, because the bytes come from an archive.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RecordError {
     /// The bytes are not a record of any version this build knows.
@@ -205,30 +210,46 @@ pub enum RecordError {
 }
 
 impl Record {
-    /// Encodes to the bytes the `journal` port exchanges.
+    /// Encodes to the bytes the `journal` port exchanges. ⛔ IT CANNOT FAIL, AND THE SIGNATURE
+    /// SAYS SO — this returned `Result<Vec<u8>, RecordError>` until 2026-08-10, with the open
+    /// question below beside it, and the question is now CLOSED.
     ///
-    /// ⛔ DECLARED OPEN QUESTION, AND IT IS NOT RESOLVED HERE: THIS `Result` CANNOT BE `Err`
-    /// TODAY. The repository already has the sentence for that shape, on `Ipc::accept` — a
-    /// `Result` that can never be `Err` is DEAD SURFACE, of the kind that port pruned three
-    /// derives and a getter for. Measured on the types rather than deduced: `minicbor::encode`
-    /// returns `Result<(), minicbor::encode::Error<W::Error>>`, and `Vec<u8>` implements
-    /// `minicbor::encode::Write` with `type Error = core::convert::Infallible`, so the WRITE
-    /// road of that error is uninhabited here. Its other two roads — a message and a custom
-    /// error — have exactly two producers in `minicbor` 2.3.0, `SystemTime` and a non-UTF-8
-    /// `Path`, and NEITHER IS IN THIS TYPE'S GRAPH: three `index_only` enums and a byte
-    /// string. So the compiler cannot see it, but nothing can produce it.
+    /// ⛔ WHY THE `Err` WAS UNREACHABLE, kept because it is the EVIDENCE that removing it is
+    /// safe and not an opinion about it. Measured on the types rather than deduced:
+    /// `minicbor::encode` returns `Result<(), minicbor::encode::Error<W::Error>>`, and `Vec<u8>`
+    /// implements `minicbor::encode::Write` with `type Error = core::convert::Infallible`, so
+    /// the WRITE road of that error is uninhabited here. Its other two roads — a message and a
+    /// custom error — have exactly two producers in `minicbor` 2.3.0, `SystemTime` and a
+    /// non-UTF-8 `Path`, and NEITHER IS IN THIS TYPE'S GRAPH: three `index_only` enums and a
+    /// byte string. So the compiler could not see it, but nothing could produce it.
     ///
-    /// ⚠️ AND THE PRICE OF CLOSING IT IS THE SIGNATURE, not a variant of `RecordError` — the
-    /// same shape as `Ipc::accept`'s residue, and the same trap: widening the enum would not
-    /// touch this. Closing it means returning `Vec<u8>` bare, which costs an edit at every
-    /// call site the day a later version encodes something that CAN fail, and hides the
-    /// asymmetry with `decode`, which really can. Left as it is deliberately: milestone 3 has
-    /// further tasks that consume this signature, and changing it on incomplete information
-    /// is churn.
-    pub fn encode(&self) -> Result<Vec<u8>, RecordError> {
+    /// ⛔ AND THE THREE REASONS FOR CLOSING IT NOW rather than at the version that first needs
+    /// an error. The repository already holds this position and wrote it down for `Ipc::accept`:
+    /// A `Result` THAT CAN NEVER BE `Err` IS DEAD SURFACE, of the kind that port pruned three
+    /// derives and a getter for. `Untrusted::promote` will call this at task 7, and an `.expect`
+    /// that cannot fire, sitting INSIDE THE CODE OF THE UNTRUSTED-DATA BOUNDARY, is debt and not
+    /// prudence — a reader of that file has to establish that it cannot fire before trusting the
+    /// line it is on. And the call sites are TWO today and will be many afterwards: the edit
+    /// costs least now and most later.
+    ///
+    /// ⚠️ THE PRICE IS DECLARED, and it is the one the open question named: the day a later
+    /// version encodes something that CAN fail, this signature changes and every call site with
+    /// it. That is a compiler error at each of them, which is the direction this repository
+    /// accepts everywhere else — see `a_record_is_matched_exhaustively_and_that_is_the_point`.
+    /// ⚠️ AND IT HIDES THE ASYMMETRY WITH `decode`, which really can fail: `RecordError` STAYS
+    /// for that reason and only that one, so the type is now `decode`'s alone.
+    pub fn encode(&self) -> Vec<u8> {
         let mut bytes = Vec::new();
-        minicbor::encode(self, &mut bytes).map_err(|_| RecordError::Malformed)?;
-        Ok(bytes)
+        // ⚠️ THE RESULT IS DROPPED AND NOT `expect`ed, AND THAT IS THE POINT OF THE CHANGE: an
+        // `.expect` here would only move the dead branch one level down, from many call sites to
+        // one. ⛔ AND THE IMPOSSIBLE CASE IS CONTAINED RATHER THAN IGNORED — measured on the
+        // shape of the failure, not hoped: an encoder that stopped early would leave `bytes`
+        // TRUNCATED OR EMPTY, and `Record::decode` answers `Malformed` to both
+        // (`bytes_that_are_not_a_record_decode_to_malformed` holds exactly those two inputs).
+        // Reconciliation reads a record it cannot decode as `SuspendAndAsk`, so the archive
+        // would stop the system rather than hand it a wrong answer — ADR-0007's own rule.
+        let _ = minicbor::encode(self, &mut bytes);
+        bytes
     }
 
     /// Decodes from the bytes the `journal` port hands back.

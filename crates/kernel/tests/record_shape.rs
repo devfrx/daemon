@@ -44,7 +44,7 @@ fn a_record_round_trips_through_its_own_encoding() {
         payload: b"why this step exists".to_vec(),
     });
 
-    let bytes = original.encode().expect("encode");
+    let bytes = original.encode();
     let read = Record::decode(&bytes).expect("decode");
 
     assert_eq!(read, original);
@@ -62,8 +62,7 @@ fn the_version_is_in_the_bytes_and_not_only_in_the_type() {
         trust: Trust::Instruction,
         payload: Vec::new(),
     })
-    .encode()
-    .expect("encode");
+    .encode();
 
     // The length first, or the two indexings below panic on a bounds check and say nothing
     // about the format — a failure mode that reads like a bug in the bench.
@@ -90,8 +89,7 @@ fn a_payload_is_a_byte_string_and_not_an_array_of_numbers() {
         trust: Trust::Instruction,
         payload: vec![0xAA; 64],
     })
-    .encode()
-    .expect("encode");
+    .encode();
 
     // 64 bytes as a byte string cost 64 + 2 of header. As an array of numbers each value
     // above 0x17 costs TWO bytes, so the array form could not fit under 100.
@@ -110,8 +108,7 @@ fn the_two_record_kinds_are_distinguishable_in_the_bytes() {
         trust: Trust::Instruction,
         payload: Vec::new(),
     })
-    .encode()
-    .expect("encode");
+    .encode();
 
     let outcome = Record::V1(RecordV1 {
         kind: RecordKind::Outcome,
@@ -119,8 +116,7 @@ fn the_two_record_kinds_are_distinguishable_in_the_bytes() {
         trust: Trust::Instruction,
         payload: Vec::new(),
     })
-    .encode()
-    .expect("encode");
+    .encode();
 
     assert_ne!(intent, outcome);
 }
@@ -145,7 +141,6 @@ fn every_record_kind_survives_the_round_trip_and_the_two_differ_in_the_bytes() {
             payload: Vec::new(),
         })
         .encode()
-        .expect("encode")
     };
 
     // The VALUE READ BACK, not the outcome of reading.
@@ -180,7 +175,6 @@ fn every_trust_label_survives_the_round_trip_and_the_two_differ_in_the_bytes() {
             payload: Vec::new(),
         })
         .encode()
-        .expect("encode")
     };
 
     // The VALUE READ BACK, not the outcome of reading: `is_ok()` here would prove nothing.
@@ -217,7 +211,6 @@ fn every_effect_class_survives_the_round_trip_and_the_three_differ_in_the_bytes(
             payload: Vec::new(),
         })
         .encode()
-        .expect("encode")
     };
 
     for class in [
@@ -279,8 +272,7 @@ fn bytes_that_are_not_a_record_decode_to_malformed() {
         trust: Trust::Instruction,
         payload: b"why this step exists".to_vec(),
     })
-    .encode()
-    .expect("encode");
+    .encode();
 
     // A record cut in half is the failure a real archive actually suffers, and it is neither
     // of the two above: the prefix is well formed as far as it goes.

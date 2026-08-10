@@ -632,6 +632,22 @@ deve saperle **prima** di scrivere:
 | **la tesi della porta `process` la tiene l'implementazione, non il compilatore** | *«ogni byte che risale è coperto da una ricevuta»* è la frase su cui la porta è costruita — ma `SingleReceipt::new` e `StreamReceipt::new` sono **`pub`, e devono esserlo**: chi implementa `Worker` è `platform`, cioè un'altra crate, e Rust non ha una visibilità che arrivi fin lì e non oltre. Quindi **una ricevuta si può forgiare**, ed è la ragione per cui `close` deve poter rispondere `UnsolicitedFrame` pur andando core→worker. Il limite è scritto accanto ai due costruttori in `crates/kernel/src/ports/process.rs`. ⛔ **Il contrasto è con `Grant`**, che il costruttore non ce l'ha e la cui garanzia è davvero del compilatore. A chiudere la differenza sarà la **suite di conformità** della porta, che pretende due implementazioni: **Traguardo 6** |
 | **`Ipc::accept` non ha un canale d'errore, e il prezzo di dargliene uno è la firma** | `accept` restituisce `Option<ClientId>` e **non può fallire**: nessuna delle due varianti di `IpcError` lo raggiunge — `Disconnected` è un'affermazione **su un `ClientId`**, e `accept` è l'unico metodo che un `ClientId` non lo prende. Corretto oggi, e «nessuno in attesa» è lo stato **ordinario**: la gui è 0..1 e sacrificabile. ⛔ **Ma un _ascoltatore_ rotto — che non è un client — arriverebbe come `None`, cioè un valore sbagliato invece di un errore** (gotcha #30). ⛔ **E il prezzo di chiuderlo va detto giusto, perché la prima stesura lo sbagliava:** aggiungere una terza variante **non basterebbe**, non c'è dove restituirla — costa la **firma**, `Result<Option<ClientId>, IpcError>`, che è la forma che `receive` già usa. Oggi la firma resta perché un `Result` che non può mai essere `Err` è superficie morta. Dichiarato in `crates/kernel/src/ports/ipc.rs`, in testa al file come in `network.rs` |
 
+⛔ **E ce n'era una sesta, che questa tabella non ha mai elencato — chiusa il 2026-08-10, ed è
+il gotcha #40 su una questione invece che su una decisione.** `Record::encode` restituiva
+`Result<Vec<u8>, RecordError>` con la questione dichiarata **solo accanto alla funzione**, in
+`crates/kernel/src/record.rs`: quell'`Err` era **irraggiungibile**, misurato al Task 1 sui tipi —
+`Vec<u8>` come `Write` di `minicbor` ha `Error = Infallible`, e le altre due strade (`Message`,
+`Custom`) hanno due soli produttori nella 2.3.0, `SystemTime` e un `Path` non-UTF-8, nessuno dei
+due nel grafo di questo tipo. ⛔ **Decisione del coordinatore, non del piano: la firma è
+`pub fn encode(&self) -> Vec<u8>`**, ed è la stessa posizione già presa per `Ipc::accept` —
+*«un `Result` che non può mai essere `Err` è superficie morta»*. Pesano due cose che
+`Ipc::accept` non ha: al **Task 7** `promote` lo chiama, e un `.expect` che non può sparare
+**dentro il confine dei dati non fidati** è debito; e i chiamanti sono due oggi e molti dopo.
+`RecordError` **resta**, ristretto a `decode`. ⚠️ Registrata come **E22** nell'errata del piano,
+perché il proprietario possa ribaltarla vedendola. ⚠️ **E il difetto vero non è la firma: è che
+una questione aperta nel sorgente non compariva qui**, quindi per chi legge non esisteva — la
+tabella qui sopra si popola a mano, come le decisioni.
+
 ⛔ **E una quinta questione è aperta fuori dal sorgente, trovata il 2026-08-10 e non decisa.**
 [`porta-di-qualita.md`](porta-di-qualita.md) **non è sorvegliato** dalla guardia dei conteggi di
 `check-docs.sh`: la lista dei documenti che quella guardia legge è fissa — `HANDOFF.md`,

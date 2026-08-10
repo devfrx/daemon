@@ -14,10 +14,15 @@
 //! and decoding instead of going around them; and the durable form stays the kernel's
 //! property.
 //!
-//! ⚠️ Milestone 2 declares the port. The record, the version enum, the explicit indices
-//! and THE FROZEN BYTES are milestone 3 — constraint 14 of §11 makes the frozen bytes
-//! enter the repository AT THE FIRST RECORD WRITTEN, and writing one here would freeze a
-//! format §4.9 has not yet put to the test.
+//! ⚠️ Milestone 2 declared the port, and milestone 3 has since built half of what this note
+//! announced. The record, the version enum and the explicit indices EXIST — `crate::record`.
+//! What is still ahead is THE FROZEN BYTES: constraint 14 of §11 makes them enter the
+//! repository at the first record written, and they are deliberately the LAST thing of the
+//! milestone, so that a real consumer has exercised the format before it is frozen.
+//!
+//! ⚠️ AND THE PORT IS NOT FINISHED: `replay` is not here. It arrives with its first consumer,
+//! the reconciliation, because in this project a port grows when something needs it — a
+//! signature decided before its caller is a signature decided by nobody.
 
 use alloc::vec::Vec;
 

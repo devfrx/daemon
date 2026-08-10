@@ -47,9 +47,14 @@ fn an_outcome_without_an_intent_is_refused() {
 #[test]
 fn an_outcome_after_its_intent_is_accepted() {
     // ⛔ THE HAPPY PATH OF THE WRITE-AHEAD PROTOCOL, and the refusal above is vacuous without
-    // it: an `outcome` answering `Err(OutOfOrder)` ALWAYS would leave every other test in this
-    // file green. It is the direction of a control that gets forgotten (§7.1.1, rule 3), on
-    // the only sequence the protocol actually walks — intent, then effect, then outcome.
+    // it. MEASURED, AND THE CLAIM IS BOUND TO WHAT WAS MEASURED AND TO WHEN (gotcha #31, which
+    // is what happens to a claim tied to a container that grows): an `outcome` answering
+    // `Err(OutOfOrder)` ALWAYS leaves green ALL FOUR TESTS THE PLAN DICTATED — which is the
+    // whole of the plan's closing criterion for this task, satisfied by a journal that records
+    // no outcome at all. Against the file as it ships it takes three down: this one and the
+    // two that write an outcome before reading back. It is the direction of a control that
+    // gets forgotten (§7.1.1, rule 3), on the only sequence the protocol actually walks —
+    // intent, then effect, then outcome.
     let mut journal = MemoryJournal::new();
     let step = StepId::new(4);
 
@@ -110,15 +115,20 @@ fn each_step_reads_back_its_own_first_record() {
     // (a) a `read_back` that ignored its `step` argument and returned the first entry it owns
     // would pass every single-step test above; (b) a store that put new entries at the FRONT
     // instead of the back would answer each step with its OUTCOME, because `read_back` takes
-    // the first match. ⚠️ Measured, and one half of (b) is invisible: reversing the INTENTS
-    // among themselves changes no answer, because each step still meets its own intent before
-    // its own outcome. It is the outcome jumping the queue that shows.
+    // the first match. ⚠️ Measured, and half of (b) escapes THIS test — but only under an
+    // hypothesis this test happens to satisfy: WITH AT MOST ONE INTENT PER STEP, reversing the
+    // intents among themselves changes no answer, because each step still meets its own intent
+    // before its own outcome. Drop that hypothesis and the reversal becomes visible in three
+    // calls with no outcome anywhere, which is what
+    // `a_second_intent_on_the_same_step_reads_back_the_first` holds.
     //
     // ⚠️ AND IT DOES NOT PROVE THE WHOLE OF THE WRITE ORDER `journal.rs` claims. The global
     // order ACROSS steps is what `replay` will owe, and `replay` does not exist yet: the port
-    // gains it in milestone 3 with its first consumer, and until then nothing outside this
-    // crate can observe it. What is held here is the order WITHIN a step, under interleaving —
-    // as much of that claim as the current surface can be asked about.
+    // gains it with its first consumer, and until then nothing outside this crate can observe
+    // it. What is held here is the order WITHIN a step under interleaving — which is what THIS
+    // test asks, and NOT "as much as the surface can be asked". An earlier version of this line
+    // said the second, and it was false: that is the sentence that stops the next reader from
+    // looking, so it does not get written again.
     let mut journal = MemoryJournal::new();
     let first = StepId::new(1);
     let second = StepId::new(2);
@@ -143,6 +153,34 @@ fn each_step_reads_back_its_own_first_record() {
     assert_eq!(
         journal.read_back(second).expect("read back"),
         b"intent of the second".to_vec()
+    );
+}
+
+#[test]
+fn a_second_intent_on_the_same_step_reads_back_the_first() {
+    // ⛔ THIS PINS WHAT HAPPENS TODAY, AND WHAT HAPPENS TODAY IS UNDECIDED. `intent` has NO
+    // GUARD: a second intent for a step that already carries one is accepted in silence, and
+    // `read_back` answers with the first. Whether it OUGHT to be accepted binds both
+    // implementations and is therefore the conformance suite's to settle — it is written down
+    // as an open entry in `docs/porta-di-qualita.md` rather than as a note, because a note is
+    // read and forgotten (gotcha #36). Until it is settled the behaviour is nailed down, so
+    // that changing it is a red and not a surprise.
+    //
+    // ⚠️ AND IT IS THE WITNESS that reversing the INTENTS among themselves is observable from
+    // outside after all: three calls, no outcome anywhere. Measured — without this test that
+    // mutation leaves the whole file green, which is why the sentence in
+    // `each_step_reads_back_its_own_first_record` now carries the hypothesis that made it true.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+
+    journal.intent(step, b"the first intent").expect("intent");
+    journal
+        .intent(step, b"the second intent")
+        .expect("a second intent is accepted today: there is no guard to refuse it");
+
+    assert_eq!(
+        journal.read_back(step).expect("read back"),
+        b"the first intent".to_vec()
     );
 }
 
@@ -184,9 +222,19 @@ fn the_memory_journal_does_not_survive_being_dropped() {
     // the measurement contradicts it. Give this crate PROCESS-GLOBAL state, a
     // `static AtomicBool` set by `intent` and consulted by `read_back`, which `no_std` and
     // `#![forbid(unsafe_code)]` BOTH permit, and this test goes red while the other stays
-    // green when each is run on its own. What is held here is that a journal keeps nothing
+    // green when each is run ON ITS OWN. What is held here is that a journal keeps nothing
     // outside itself — the same family as gotcha #12, where the state seeded per PROCESS
     // rather than per instance is the one a deterministic run cannot contain.
+    //
+    // ⚠️ AND "ON ITS OWN" CARRIES THE WHOLE PROOF, so it says why instead of sitting there.
+    // The mutant's flag is per PROCESS, so in a shared run whichever test writes an intent
+    // first poisons the twin too, and WHICH ONE THAT IS DEPENDS ON THE POPULATION OF THE FILE.
+    // Measured, and the two figures are the argument: with nine tests the twin survived 5 runs
+    // out of 5; with the tenth added — it writes intents and its name sorts ahead of the
+    // twin's — the twin went down 20 out of 20. Nothing about the journal changed between the
+    // two. Run one test per process and the mutant is unambiguous every time: twin green, this
+    // one red. ⛔ The instability belongs to THE MUTANT, not to what ships: the journal here
+    // holds no global state and comes out green in every arrangement.
     let mut journal = MemoryJournal::new();
     journal.intent(StepId::new(1), b"gone").expect("intent");
     drop(journal);

@@ -633,6 +633,27 @@ ha consegnato `record_without_version.rs` senza scriverne la riga nel registro, 
 controllo lo ha rilevato: la terza voce qui sopra esiste per questo, ed è l'unica delle tre che
 scopre una **mancanza** invece di contare ciò che c'è.
 
+## Esecuzione del Traguardo 3 — il Task 3: il criterio di chiusura che un giornale rotto soddisfa
+
+Misurate il **2026-08-10**, stessa toolchain. Diciotto passate di mutazione su
+`crates/simulator/src/journal.rs`, ciascuna **compilata in un passo separato** dall'eseguirla e
+provata applicata — lo strumento rifiutava di scrivere se il modello non combaciava **esattamente
+una volta**. Tabella completa nel [registro](porta-di-qualita.md).
+
+```bash
+cargo build -p simulator                       # la mutazione compila?
+cargo test -p simulator --test memory_journal   # e adesso muore?
+cargo test -p simulator --test memory_journal -- --exact <nome>   # una per processo
+```
+
+| Misura | Come | Esito il 2026-08-10 | Dove entra |
+|---|---|---|---|
+| ⛔ il **criterio di chiusura** del piano è soddisfatto da un giornale rotto | `outcome` che risponde **sempre** `Err(OutOfOrder)` | ⛔ **tutti e quattro** i test dettati dal piano restano **verdi** — cioè il suo `test result: ok. 4 passed` si ottiene con un giornale che **non registra nessun esito**. È la lacuna di **specie 2** più netta finora: il cammino felice del protocollo write-ahead non era provato. Le tre sonde che la uccidono sono aggiunte eseguendo | `crates/simulator/tests/memory_journal.rs` · specie 2 |
+| la **mutazione di controllo**, senza cui la tabella non vale niente | cambiato **solo un commento**, poi l'intera passata | **nessun test rosso**. ⚠️ È la contro-prova del gotcha **#48** applicata al banco stesso: un banco che risponde rosso a tutto conferma qualunque tesi | metodo, ogni passata futura |
+| ⛔ **stato globale di processo** dentro un `no_std` | `static AtomicBool` posato da `intent` e letto da `read_back` | **compila** sotto `#![no_std]` **e** `#![forbid(unsafe_code)]`, e rende rosso il solo test sul `drop`. Quindi quel test **non è vacuo**: tiene che il giornale non conservi niente fuori di sé — famiglia del gotcha **#12**, stato seminato **per processo** invece che per istanza. ⚠️ **In esecuzione condivisa l'esito dipende dalla popolazione del file**: il test gemello è sopravvissuto **5 volte su 5** con nove test e caduto **20 su 20** con il decimo, che scrive intenti e ordina prima. Una prova del genere si legge **un test per processo** | `..._does_not_survive_being_dropped` |
+| una mutazione **viva e dichiarata** | `has_intent` che ignora il **tipo** della voce | **nessun test rosso, e non è una lacuna**: distingue uno stato **irraggiungibile**, perché il primo record di un passo può essere solo un intento. ⚠️ **L'equivalenza cade** quando `prune` rimuoverà voci selettivamente — compito **11** | registro |
+| ⛔ l'ordine di scrittura **è** osservabile, contro l'attesa scritta | intenti scritti **in testa** invece che in coda | ⛔ **Divergenza registrata.** La prima stesura concludeva «invisibile dall'esterno» da una premessa vera — *ogni passo incontra il proprio intento prima del proprio esito* — che regge **solo con al più un intento per passo**. Il testimone è di **tre chiamate senza nessun esito**: `intent(1,"p0"); intent(1,"p1"); read_back(1)` dà `"p0"`, e rovesciato `"p1"`. Ne è uscita una **voce aperta**: se un secondo intento sullo stesso passo debba essere accettato | [registro](porta-di-qualita.md) · conformità |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

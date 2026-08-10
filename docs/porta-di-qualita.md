@@ -253,6 +253,7 @@ sostengono righe del catalogo, o che tengono in piedi ciò che le righe presuppo
 |---|---|
 | `crates/kernel/tests/executor_determinism.rs` (dieci test) | **C1, C2 e C3 sull'esecutore _spedito_**, non su quello dello spike: **cento** corse allo stesso seme danno una traccia sola, **duecento** semi distinti non ne danno una sola, e il tempo virtuale **non attende** — l'orologio si ferma a 20 000 ms dove il sequenziale arriverebbe a 60 000. Più le sonde di **non-vacuità**: che l'interfoliazione sia reale, che un blocco diventi **errore e non attesa infinita**, che un reattore che non avanza sia **errore e non giro a vuoto**, che un'attesa già scaduta svegli subito senza muovere l'orologio, che una richiesta di sospensione **non si erediti** fra attività, e che un rideposito perpetuo di una scadenza passata **termini comunque** |
 | `crates/kernel/tests/ports_are_implementable.rs` (**tredici** test) | il rimedio al gotcha **#46**: una **finta** per `Filesystem`, una per `Network`, due per `process` — `Worker` e `Process` — e una per `Ipc`, con chiamate che le esercitano in entrambe le direzioni. **Cinque finte per quattro famiglie**, ed è la copertura di **tutte** le porte dichiarate senza implementazione. È ciò che tiene in vita `Path::as_bytes()`, `Endpoint::as_bytes()` e il `Clone` su `Path` contro una passata YAGNI — su un tratto dichiarato **in anticipo** i chiamanti sono vuoti per costruzione, e il criterio non distingue il morto dalla sola porta d'ingresso di chi verrà — e prova che quelle firme siano **implementabili fuori dalla crate**, dove la privacy di modulo di una tuple-struct le renderebbe inutilizzabili. ⚠️ **Non** è una suite di conformità: quella pretende due implementazioni da confrontare |
+| `crates/simulator/tests/memory_journal.rs` (dieci test) | il **doppio in memoria** del giornale (§4.1): che l'intento riletto torni intatto, che un passo mai scritto sia **`Missing` e non vuoto**, che un esito **senza** intento sia rifiutato **e** uno **dopo** il proprio intento accettato — le due direzioni, e la seconda mancava — che il rifiuto guardi **quale** passo, che `read_back` risponda con l'**intento** e non con l'esito, che ogni passo rilegga **il proprio** primo record, e che `prune` **rifiuti senza potare** (decisione D7 del piano). ⚠️ **Non** è una suite di conformità: quella pretende due implementazioni, e arriva col `redb` di `platform` |
 | `crates/kernel/tests/dependencies_usable.rs` (due test) | che le voci **spedite** dell'allow-list **compilino e facciano round-trip** — gotcha #22, `cargo add bincode` risolve a una versione il cui intero sorgente è un `compile_error!`. E per `bincode` i **byte consumati** sono pari alla lunghezza dichiarata, che è la regola imposta dal gotcha **#34**: un decodificatore che si ferma al primo elemento completo e ignora la coda «ha decodificato» senza provare niente |
 
 #### Le finte delle porte — cosa hanno colto, e cosa hanno potato
@@ -393,6 +394,45 @@ l'`Option` dentro, che il metodo lì sotto **già usa**.
 |---|---|
 | **il prezzo vero** | ⛔ aggiungere una terza variante domani **non chiuderebbe niente**: non c'è dove restituirla. Chiudere il residuo costa **la firma**, non l'enum |
 | **perché la firma resta** | oggi `IpcError` non ha **nessuna** variante che `accept` possa restituire: un `Result` che non può mai essere `Err` è **superficie morta**, esattamente ciò che questa porta ha appena potato in tre derive e un accessore |
+
+**`memory_journal` — diciotto passate: una di controllo, sedici uccise, una viva e dichiarata.**
+⛔ **M0 va letta per prima:** cambia **solo un commento**, e nessun test diventa rosso. Senza di
+lei la tabella non prova niente (gotcha #48).
+
+| | Mutazione | Chi la uccide |
+|---|---|---|
+| M0 | *controllo* — cambia solo un commento | ⛔ **nessuno, ed è il punto** |
+| M1 | `intent` risponde `Ok(())` senza scrivere | sei test |
+| M2a · M2b | lettura mancante → `Ok(vuoto)` · → `NotDurable` | `a_step_never_written...` · `..._does_not_survive_being_dropped` |
+| M3 | `outcome` salta la guardia | `..._without_an_intent_is_refused` · `..._belongs_to_another_step` |
+| M4 | `has_intent` ignora **quale** passo | ⛔ **solo** `..._belongs_to_another_step` |
+| M5 | `has_intent` ignora il **tipo** di voce | ⛔ **nessuno, e non è una lacuna** — sotto |
+| M6a · M6b | `read_back` dà l'**ultimo** (`.rev()` · `.last()`) | `..._the_intent_and_not_the_outcome` · `each_step...` · `a_second_intent...` |
+| M7a | gli **intenti** scritti in testa | ⛔ **solo** `a_second_intent...` |
+| M7b | gli **esiti** scritti in testa | `..._the_intent_and_not_the_outcome` · `each_step...` |
+| M8 | `read_back` ignora l'argomento `step` | ⛔ **solo** `each_step...` |
+| M9a · M9b · M10 | `prune` risponde `Ok` · risponde `NotDurable` · **pota lo stesso** | `prune_refuses_and_leaves_the_record_where_it_was` |
+| M11 | stato **globale di processo** (`static AtomicBool`) | `..._does_not_survive_being_dropped` |
+| M12 | `outcome` rifiuta **sempre** | `..._after_its_intent_is_accepted` · `..._the_intent_and_not_the_outcome` · `each_step...` |
+| M13 | `intent` **sovrascrive** l'intento già presente | ⛔ **solo** `a_second_intent...` |
+
+⛔ **M5 non è uccisa da nessuno, e non va chiusa: distingue uno stato irraggiungibile.** Il
+primo record di un passo può essere **solo** un intento, perché `outcome` esige `has_intent`;
+quindi «esiste una voce per questo passo» ed «esiste un **intento** per questo passo» sono la
+stessa affermazione. ⚠️ **L'equivalenza cade** il giorno in cui `prune` rimuoverà voci in modo
+selettivo — il compito **11** di questo traguardo.
+
+⛔ **E una questione resta aperta, scritta qui e non come nota nel sorgente** (gotcha **#36**):
+**se un secondo intento sullo stesso passo debba essere accettato.** Oggi `intent` **non ha
+guardia** — lo accetta in silenzio, e `read_back` risponde col **primo** dei due. Non è una
+decisione presa: è un comportamento mai interrogato, e vincola **entrambe** le implementazioni,
+quindi la sede è la **conformità**. ⚠️ La misura che l'ha scoperta: con gli intenti scritti in
+testa (**M7a**) tutti e nove i test di allora restavano **verdi**, e il testimone è di **tre
+chiamate senza nessun esito** — `intent(1,"p0"); intent(1,"p1"); read_back(1)`, che risponde
+`"p0"` e col rovesciamento `"p1"`. ⛔ **Nessuna guardia è stata aggiunta**: sarebbe una
+decisione di progetto che nessun compito ha preso. Il comportamento di oggi è pinzato da
+`a_second_intent_on_the_same_step_reads_back_the_first`, così che cambiarlo sia un **rosso** e
+non una sorpresa.
 
 ⚠️ **Il banco di misura ha prodotto _nove_ esiti credibili e falsi in due sessioni** — gotcha
 **#48**, col testo integrale in [`HANDOFF.md`](HANDOFF.md). ⛔ Gli ultimi due sono della revisione

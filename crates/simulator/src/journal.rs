@@ -12,8 +12,13 @@ use kernel::ports::journal::{Journal, JournalError, StepId};
 ///
 /// ⚠️ A `Vec` of pairs and not a map, and the reason is a rule of this crate: `HashMap` is
 /// forbidden in a deterministic world because `RandomState` is seeded per process and the
-/// iteration order is not reproducible (gotcha #12). A `Vec` also gives WRITE ORDER for
-/// free, which `replay` owes.
+/// iteration order is not reproducible (gotcha #12). A `Vec` also gives WRITE ORDER for free.
+///
+/// ⚠️ THE FUTURE TENSE IS EXACT, AND NOTHING ASKS FOR THAT ORDER TODAY. `replay` — the
+/// operation that will owe it — IS NOT ON THE PORT YET: it arrives with its first consumer,
+/// the reconciliation. Until then the order ACROSS steps is a property nothing outside this
+/// crate can read, and only the order WITHIN a step is observable; `memory_journal.rs` holds
+/// exactly that much and says so.
 pub struct MemoryJournal {
     entries: Vec<Entry>,
 }
@@ -31,7 +36,7 @@ enum EntryKind {
 }
 
 impl MemoryJournal {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         MemoryJournal {
             entries: Vec::new(),
         }
@@ -46,6 +51,15 @@ impl MemoryJournal {
 
 impl Journal for MemoryJournal {
     fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        // ⚠️ NO GUARD HERE, AND THAT IS AN OPEN QUESTION RATHER THAN A DECISION. A second
+        // intent for a step that already carries one is accepted IN SILENCE, and `read_back`
+        // then answers with the first of the two. Whether it ought to be accepted at all binds
+        // BOTH implementations, so it belongs to the conformance suite and not to this file:
+        // it is written down as an OPEN ENTRY in `docs/porta-di-qualita.md`, because a note is
+        // read and forgotten while an open entry is carried until somebody closes it (gotcha
+        // #36). Today's answer is nailed down by
+        // `a_second_intent_on_the_same_step_reads_back_the_first`, so that whoever decides
+        // changes a red and not a surprise.
         self.entries.push(Entry {
             step,
             kind: EntryKind::Intent,
@@ -77,8 +91,9 @@ impl Journal for MemoryJournal {
         //
         // ⚠️ AND THE SECOND IMPLEMENTATION WILL NOT MEET THIS BY ITSELF: a `redb` table keyed
         // by step identity returns — or worse, keeps — the LAST write. The conformance suite
-        // is what holds both to the same answer; this comment is what tells whoever writes the
-        // second one that the answer was chosen.
+        // WILL BE what holds both to the same answer, and it does not exist yet: until it
+        // does, this comment is the only thing telling whoever writes the second one that the
+        // answer was CHOSEN and not stumbled into.
         self.entries
             .iter()
             .find(|e| e.step == step)
@@ -87,6 +102,16 @@ impl Journal for MemoryJournal {
     }
 
     fn prune(&mut self, _step: StepId) -> Result<(), JournalError> {
+        // ⛔ NOT IMPLEMENTED, AND IT ANSWERS `Missing` FOR A STEP THAT IS DEMONSTRABLY THERE.
+        // Read on its own against the port's own words — "the read found nothing under that
+        // identity" — this line says something FALSE, so the reason stands next to it instead
+        // of only in the test bench. Retention is out of this milestone: the fingerprint a
+        // pruned record carries demands a hash function, and in the kernel that is a NEW ENTRY
+        // IN THE LIST OF ADR-0031 — a deliberate act wanting a measurement nobody has made.
+        //
+        // ⚠️ Refusing is only half of it: it must also NOT PRUNE. An irreversible operation
+        // that half happened and then reported failure is worse than one nobody wrote. Both
+        // halves are held by `prune_refuses_and_leaves_the_record_where_it_was`.
         Err(JournalError::Missing)
     }
 }

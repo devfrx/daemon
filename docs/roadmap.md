@@ -139,14 +139,14 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 
 ⛔ **Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano.** Scriverne
 uno per codice che non esiste ancora significa inventare. I sei traguardi sono elencati nel
-piano del primo; i successivi si scrivono quando si arriva — **quello del Traguardo 2 è
-scritto il 2026-08-09, quelli dal terzo in poi ancora no**.
+piano del primo; i successivi si scrivono quando si arriva — **quelli dei Traguardi 2 e 3 sono
+scritti, il 2026-08-09 e il 2026-08-10; quelli dal quarto in poi ancora no**.
 
 | # | Traguardo | Deliverable |
 |---|---|---|
 | **1** | scheletro e porta di qualità | ✅ **eseguito**: cinque crate, sei controlli in un comando, `GATE GREEN` |
 | **2** | il substrato iniettabile | ✅ **eseguito** il 2026-08-10, `GATE GREEN`: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · l'**esecutore** · l'orologio virtuale · il reattore reale e la prima **suite di conformità** · il cablaggio di produzione in `daemon` · il **confine dei tipi** `Untrusted`/`Instruction` · le **sei famiglie di porte al completo** · il registro dei controlli e la chiusura |
-| **3** | giornale e formato durevole | ⏭️ **il prossimo**, e il piano è **da scrivere**: la porta `journal` a byte, il record come enum di versione, **i byte congelati** |
+| **3** | giornale e formato durevole | ⏭️ **il prossimo.** [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**, dodici compiti, **da eseguire**: la porta `journal` a byte, il record come enum di versione, **i byte congelati** |
 | 4 | il simulatore DST | tempo virtuale, iniezione dei guasti, la campagna, i semi |
 | 5 | arbitro GPU | ammissione, corsie, ciclo della concessione, le due policy |
 | 6 | gli altri meccanismi | gateway, sensori, permessi, degrado, il canale worker |

@@ -34,6 +34,7 @@ inglese, la documentazione in italiano** (§1.0 della spec del sotto-progetto 1)
 | `adr/` | Architecture Decision Records | *perché* abbiamo deciso così |
 | `design/` | Diagrammi Mermaid della struttura | *com'è fatto* il sistema |
 | `superpowers/specs/` | Specifiche dei sotto-progetti | *cosa* costruiamo, prima di costruirlo |
+| ⛔ [`superpowers/plans/`](superpowers/plans/) | i piani, uno per traguardo, ciascuno con l'**errata in testa** che dice dove il piano sbagliava. ⚠️ **Mancava da questa tabella**, aggiunto il 2026-08-10: è la cartella **da cui si riprende il lavoro** | *da dove si riparte*, e cosa il piano ha già sbagliato |
 | [`riferimenti.md`](riferimenti.md) | Fonti esterne consultate | *da dove viene* ciò che non abbiamo dedotto noi |
 
 `roadmap.md` e `tracciabilita.md` si aggiornano **alla chiusura di ogni
@@ -108,7 +109,7 @@ sotto-progetto**, nello stesso passaggio.
 | Spec | Sotto-progetto | Stato |
 |---|---|---|
 | [Kernel](superpowers/specs/2026-08-06-kernel-design.md) | L0 fondamenta + L1 arbitri trasversali | ✅ **completa e approvata** |
-| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, riapertura su sette voci ✅ **tutta chiusa** (F3, F6, F5, F1a, **F2 con F7**, **F1b**, **F4**), e **§8 riallineata e chiusa** il 2026-08-08, poi **audit sezione-contro-ADR** passato. ✅ **Spec completa**, e il [piano del Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) è **eseguito**. Anche il [piano del Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **eseguito** il 2026-08-10, **per intero**: quattordici compiti su quattordici, fra il 2026-08-09 e il 2026-08-10, con le **sei famiglie di porte complete**. ⏭️ Il piano del **Traguardo 3** è da scrivere |
+| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, riapertura su sette voci ✅ **tutta chiusa** (F3, F6, F5, F1a, **F2 con F7**, **F1b**, **F4**), e **§8 riallineata e chiusa** il 2026-08-08, poi **audit sezione-contro-ADR** passato. ✅ **Spec completa**, e il [piano del Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) è **eseguito**. Anche il [piano del Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **eseguito** il 2026-08-10, **per intero**: quattordici compiti su quattordici, fra il 2026-08-09 e il 2026-08-10, con le **sei famiglie di porte complete**. ⏭️ Il [piano del **Traguardo 3**](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) è **scritto** il 2026-08-10 — dodici compiti — e **da eseguire** |
 
 ## Decomposizione del sistema
 

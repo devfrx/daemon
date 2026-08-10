@@ -42,7 +42,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 136 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 139 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -57,7 +57,8 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 136 KB in tutto
    Non è tipografia: la regola non stava scritta, e un traguardo intero è stato
    scritto con gli identificatori italiani e poi rifatto.
 
-⚠️ IL REPOSITORY CONTIENE CODICE RUST, e fino a poco fa non era così.
+⚠️ IL REPOSITORY CONTIENE CODICE RUST — due traguardi eseguiti, e il terzo
+   è il piano che stiamo per eseguire.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
    x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
    in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
@@ -130,15 +131,15 @@ proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ~4 KB |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **136 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 136 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **139 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 139 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi due volte.** Dicevano
 *«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di oggi, e nessuno
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **136 KB contro mezzo megabyte**.
+resta quello che conta: **139 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **271 KB**. Non è che chiedesse
@@ -146,11 +147,17 @@ troppo: chiedeva la cosa giusta nel posto sbagliato. Le decisioni servono **tutt
 compresse, non integrali.
 
 ⚠️ **La voce sul piano è nata il 2026-08-09**, eseguendo i Task 1–6 del Traguardo 2. Non è una
-massima: era il ritratto di sei difetti su sei. ⚠️ **E dal 2026-08-10 il suo destinatario è
-cambiato**, il che vale la pena dirlo invece di lasciarlo dedurre: quel piano è **eseguito per
-intero**, quindi la lezione non serve più a chi riprende **dentro** un piano, ma a chi ne
-**scrive** uno nuovo — quello del Traguardo 3. Le quattro specie sono, in quest'ordine, ciò che
-un piano nuovo deve evitare di far ripetere.
+massima: era il ritratto di sei difetti su sei.
+
+> 🔁 **E il suo destinatario è cambiato due volte in un giorno solo, il 2026-08-10 — vale la
+> pena scriverlo perché è la parte che invecchia più in fretta di tutto questo file.** La
+> mattina il piano del Traguardo 2 è stato **eseguito per intero**, e la lezione ha smesso di
+> servire a chi riprende **dentro** un piano per servire a chi ne **scrive** uno; la sera il
+> piano del Traguardo 3 era **scritto**, e il destinatario è tornato a essere **chi esegue**.
+> 📌 **Quindi vale per entrambi, ed è la formulazione che regge:** le quattro specie sono ciò
+> che chi **scrive** un piano deve evitare di far ripetere, **e** ciò che chi lo **esegue**
+> deve cercare prima di credere a un compito. La quarta — *il compito è già eseguito* —
+> appartiene interamente al secondo: non c'è modo di scriverla via.
 
 > 🔁 **Riscritta lo stesso giorno, chiudendo il Task 11 — e il ritratto era diventato stretto.**
 > Diceva *«le sue sonde sono la parte che sbaglia»*, ed elencava sei difetti che erano **tutti**

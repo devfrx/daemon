@@ -630,7 +630,7 @@ quando si arriva, perché scriverne uno per codice che non esiste significa inve
 |---|---|---|
 | **1** | scheletro e porta di qualità — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
 | **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) percorso **per intero, quattordici compiti su quattordici**, con `GATE GREEN` a ogni compito |
-| **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⏭️ **il prossimo**, e il piano è **da scrivere** |
+| **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⏭️ **il prossimo.** [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**, dodici compiti in due parti, **da eseguire** |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
 | 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
@@ -930,6 +930,8 @@ per chiudersi.
 | File | Cosa contiene |
 |---|---|
 | [`../CLAUDE.md`](../CLAUDE.md) | istruzioni operative per l'agente |
+| ⛔ [`COMPENDIO.md`](COMPENDIO.md) | **l'unica lettura obbligatoria** insieme a `CLAUDE.md`: tutte le decisioni compresse, le invarianti, lo stack, i gotcha, **lo stato di oggi e il prossimo passo (§6)**. ⚠️ **Mancava da questa tabella**, ed è stato aggiunto il 2026-08-10: il file più importante del repository non compariva nella mappa che dice dove va cosa, pur essendo nominato dieci volte nella prosa qui intorno |
+| [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | il messaggio da incollare all'inizio di una sessione, e il perché di ogni sua riga. ⚠️ Mancava anche questo |
 | [`roadmap.md`](roadmap.md) | dodici sotto-progetti, ordine, dipendenze, decisioni aperte |
 | [`tracciabilita.md`](tracciabilita.md) | 170 funzionalità → dove vive ciascuna |
 | [`README.md`](README.md) | indice di ADR e diagrammi |
@@ -937,7 +939,7 @@ per chiudersi.
 | [`adr/`](adr/) | **37 decisioni architetturali**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
 | [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§8 complete, con tutte le evidenze delle misure |
-| [`superpowers/plans/`](superpowers/plans/) | i **tre** piani scritti finora — lo **stack**, il **Traguardo 1** e il **Traguardo 2**, tutti e tre **eseguiti**. Ciascuno porta un'**errata in testa** che documenta dove il piano sbagliava: quella del Traguardo 2 conta **quattro passate e quarantasei voci**. ⛔ Un piano non si riscrive: è il registro di ciò che fu osservato eseguendolo. ⏭️ Il quarto, quello del **Traguardo 3**, è da scrivere |
+| [`superpowers/plans/`](superpowers/plans/) | i **quattro** piani scritti finora — lo **stack**, il **Traguardo 1**, il **Traguardo 2** (tutti e tre **eseguiti**) e il **Traguardo 3**, scritto il 2026-08-10 e **da eseguire**. Ciascuno degli eseguiti porta un'**errata in testa** che documenta dove il piano sbagliava: quella del Traguardo 2 conta **sei passate e quarantanove voci**. ⛔ Un piano non si riscrive: è il registro di ciò che fu osservato eseguendolo |
 | [`../crates/`](../crates/) | **il codice del prodotto.** Cinque crate: `kernel` e `simulator` in `no_std` + `alloc` + `forbid(unsafe_code)`; `platform`, `secrets` e `daemon` sono il posto dove l'I/O deve vivere |
 | [`riferimenti.md`](riferimenti.md) | fonti esterne, con data e con **cosa non abbiamo adottato** |
 | [`../spikes/`](../spikes/) | **prove, non kernel.** `PROTOCOLLO.md` criteri e soglie · `CANDIDATI.md` pre-selezione · `RISULTATI.md` esiti, seed, versioni, evidenze · `GUI-REQUISITI.md` G1–G21 e P1–P4 |

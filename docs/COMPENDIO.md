@@ -11,14 +11,14 @@
 >
 > 📖 **Come si usa.** Leggi questo file per intero. Poi, se e solo se ti serve il
 > ragionamento dietro una decisione — le alternative scartate, le misure, i costi
-> accettati — apri **quel** file. Uno, non trentasei. La §12 dice quale.
+> accettati — apri **quel** file. Uno, non trentasette. La §12 dice quale.
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (621 KB con `wc -c` il 2026-08-10, e possono solo crescere — la spec da sola ne fa 271), e
+> (622 KB con `wc -c` il 2026-08-10, e possono solo crescere — la spec da sola ne fa 271), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-08-09.** Manutenzione: §13.
+**Aggiornato il 2026-08-10.** Manutenzione: §13.
 
 ---
 
@@ -552,8 +552,8 @@ restituito `251` al posto di `4096` senza sollevare nulla.
 
 ✅ **I Traguardi 1 e 2 sono eseguiti — il 2026-08-08 e il 2026-08-10.** Il codice del prodotto
 non è più zero righe: esiste il workspace, esiste la porta di qualità, la porta è **verde**, e
-sopra di essa sta il **substrato iniettabile** al completo. ⏭️ **Il prossimo passo è il piano
-del Traguardo 3.** Il Traguardo 1 ha lasciato questo:
+sopra di essa sta il **substrato iniettabile** al completo. ⏭️ **Il prossimo passo è eseguire
+il piano del Traguardo 3**, scritto il 2026-08-10. Il Traguardo 1 ha lasciato questo:
 
 | | |
 |---|---|
@@ -618,6 +618,18 @@ deve saperle **prima** di scrivere:
 | **il residuo dichiarato su `Untrusted::promote`** | il meccanismo compra **una cosa sola**: che la conversione non si scriva senza **nominare** la porta `journal`. **Non** compra che qualcosa sia stato registrato — `promote` è generico su qualunque `Journal`, e un giornale che risponde `Ok(())` senza scrivere un byte soddisfa il vincolo. Sono **sette** le vie che aggirano il confine e **compilano**, tutte elencate in `crates/kernel/src/boundary.rs`, e **una sola è chiusa** — il `Debug` di `Untrusted`, che non stampa più il contenuto. Ciò che terrebbe l'onestà della porta è una **suite di conformità del `journal`**, sul modello di `crates/kernel/tests/reactor_contract.rs` e dei suoi due bugiardi: appartiene al **Traguardo 3**, cioè al prossimo |
 | **la tesi della porta `process` la tiene l'implementazione, non il compilatore** | *«ogni byte che risale è coperto da una ricevuta»* è la frase su cui la porta è costruita — ma `SingleReceipt::new` e `StreamReceipt::new` sono **`pub`, e devono esserlo**: chi implementa `Worker` è `platform`, cioè un'altra crate, e Rust non ha una visibilità che arrivi fin lì e non oltre. Quindi **una ricevuta si può forgiare**, ed è la ragione per cui `close` deve poter rispondere `UnsolicitedFrame` pur andando core→worker. Il limite è scritto accanto ai due costruttori in `crates/kernel/src/ports/process.rs`. ⛔ **Il contrasto è con `Grant`**, che il costruttore non ce l'ha e la cui garanzia è davvero del compilatore. A chiudere la differenza sarà la **suite di conformità** della porta, che pretende due implementazioni: **Traguardo 6** |
 | **`Ipc::accept` non ha un canale d'errore, e il prezzo di dargliene uno è la firma** | `accept` restituisce `Option<ClientId>` e **non può fallire**: nessuna delle due varianti di `IpcError` lo raggiunge — `Disconnected` è un'affermazione **su un `ClientId`**, e `accept` è l'unico metodo che un `ClientId` non lo prende. Corretto oggi, e «nessuno in attesa» è lo stato **ordinario**: la gui è 0..1 e sacrificabile. ⛔ **Ma un _ascoltatore_ rotto — che non è un client — arriverebbe come `None`, cioè un valore sbagliato invece di un errore** (gotcha #30). ⛔ **E il prezzo di chiuderlo va detto giusto, perché la prima stesura lo sbagliava:** aggiungere una terza variante **non basterebbe**, non c'è dove restituirla — costa la **firma**, `Result<Option<ClientId>, IpcError>`, che è la forma che `receive` già usa. Oggi la firma resta perché un `Result` che non può mai essere `Err` è superficie morta. Dichiarato in `crates/kernel/src/ports/ipc.rs`, in testa al file come in `network.rs` |
+
+⛔ **E una quinta questione è aperta fuori dal sorgente, trovata il 2026-08-10 e non decisa.**
+[`porta-di-qualita.md`](porta-di-qualita.md) **non è sorvegliato** dalla guardia dei conteggi di
+`check-docs.sh`: la lista dei documenti che quella guardia legge è fissa — `HANDOFF.md`,
+`roadmap.md`, `README.md`, questo file, [`AVVIO-CHAT.md`](AVVIO-CHAT.md) e `CLAUDE.md` — e il
+registro non c'è. ⚠️ **È la ragione strutturale per cui uno scarto vi è vissuto**: la riga *«sei
+righe su diciassette»* dove sono sette su diciotto, col numero giusto scritto quattrocento righe
+più su **nello stesso file**. Le cifre del registro sono difese **solo da chi riconta**.
+⛔ **Allargare la lista è una decisione, e non è stata presa**: il registro nomina conteggi che
+la guardia non sa verificare — non «`<cifra>` ADR», ma quante righe di catalogo siano coperte —
+quindi non basta aggiungerlo all'elenco, servirebbe un controllo diverso. Scritto qui perché chi
+lo riprende non debba riscoprirlo.
 
 ⛔ **Nessuna rinumerazione di sezioni**: lo script legge §7.4 e §8 **per posizione**.
 
@@ -937,22 +949,23 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 271 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 137 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 138 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
-| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 17 KB |
+| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 18 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
 | **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 41 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
-| gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | |
-| i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | |
+| gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
+| i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
 | la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 54 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
 | ⛔ **il compito da cui si riprende** — è il piano **in corso**, dodici compiti, e il primo è il record durevole | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 92 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 11 KB |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | 12 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -1273,12 +1286,29 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > | | |
 > |---|---|
-> | ⛔ **riga aggiunta** | il **piano del Traguardo 3**, **92 KB** — è il file da cui si riprende, e la settima misura ha stabilito che una riga assente **non si vede** rileggendo, mentre una cella sbagliata sì |
-> | **invariati, ricontati** | [`HANDOFF.md`](HANDOFF.md) 137 · [`roadmap.md`](roadmap.md) 17 · README 11 · [`riferimenti.md`](riferimenti.md) 54 · [`porta-di-qualita.md`](porta-di-qualita.md) 41 · spec 271 · kernel-design 44 · tracciabilità 15 · `design/08` 8 · `design/01` 4 · il piano degli spike 68 · il piano del Traguardo 1 50 · il piano del Traguardo 2 162 · ADR `2–19` |
+> | ⛔ **tre righe aggiunte** | il **piano del Traguardo 3**, **92 KB** — il file da cui si riprende · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) **12 KB** · e i **pesi degli spike**, `RISULTATI.md` **23** e `GUI-REQUISITI.md` **6**, che avevano la voce e la **cella vuota** da sempre |
+> | **cresciuti** | [`HANDOFF.md`](HANDOFF.md) `137 → 138` · [`roadmap.md`](roadmap.md) `17 → 18` |
+> | **invariati, ricontati** | README 11 · [`riferimenti.md`](riferimenti.md) 54 · [`porta-di-qualita.md`](porta-di-qualita.md) 41 · spec 271 · kernel-design 44 · tracciabilità 15 · `design/08` 8 · `design/01` 4 · il piano degli spike 68 · il piano del Traguardo 1 50 · il piano del Traguardo 2 162 · ADR `2–19` |
 > | **e un conteggio stantio trovato di rimbalzo** | la tabella dei piani di [`roadmap.md`](roadmap.md) diceva *«errata di quarantasei voci in quattro passate»*: con E47–E49 sono **quarantanove in sei**. Non l'ha trovato un controllo — l'ha trovato il fatto che quella riga andava toccata comunque per aggiungerne una accanto |
 >
-> L'insieme *«HANDOFF + spec + `adr/`»* resta **621 KB**: il piano non ne fa parte. I **due file
-> obbligatori** passano da 133 a **136 KB**.
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **621** a **622 KB** (637165 B). I **due file
+> obbligatori** passano da 133 a **139 KB**.
+>
+> ⛔ **E la riga di `AVVIO-CHAT.md` mancava da sempre, mancata da SEI misure di seguito che
+> dichiaravano di averla cercata.** Dalla nona in poi ogni riquadro porta la frase *«ogni file
+> citato in questa sezione ha la sua voce in tabella, verificato uno per uno»* — e
+> [`AVVIO-CHAT.md`](AVVIO-CHAT.md) è citato **dieci volte dentro la §12 stessa**, oltre che in
+> §6, §9 e §13. ⚠️ **Non l'ha trovata chi rimisurava: l'ha trovata una revisione esterna**, e la
+> differenza è il punto. 📌 **La forma del #31 che ne esce, ed è nuova:** una verifica ripetuta
+> uguale sei volte **non è sei verifiche** — è una sola, ripetuta. Chi controlla la propria
+> tabella parte dalle righe che ci sono e ne verifica i numeri; per accorgersi di una riga
+> **assente** bisogna partire dall'**altro capo** — dall'elenco dei file citati — ed è un
+> movimento che nessuna delle sei ha fatto. Chi rimisura la prossima volta parta di lì.
+>
+> 📌 **Altre due righe assenti, fuori dalla §12 e pre-esistenti, chiuse nella stessa passata:**
+> la mappa dei documenti di [`HANDOFF.md`](HANDOFF.md) non elencava **questo file** né
+> `AVVIO-CHAT.md`, e la tabella «Dove va cosa» di [`README.md`](README.md) non elencava
+> `superpowers/plans/`, cioè **la cartella da cui si riprende il lavoro**.
 >
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla settima

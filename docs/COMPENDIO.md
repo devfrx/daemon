@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (614 KB con `wc -c` il 2026-08-10, e possono solo crescere — la spec da sola ne fa 271), e
+> (615 KB con `wc -c` il 2026-08-10, e possono solo crescere — la spec da sola ne fa 271), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-09.** Manutenzione: §13.
@@ -929,9 +929,9 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 271 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 129 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 131 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
-| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 15 KB |
+| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 16 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
 | **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 40 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
@@ -939,11 +939,11 @@ Apri **un** file, quello che serve. Non la cartella.
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 47 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 52 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **il compito da cui si riprende** — è il piano **in corso**, e il Task 11 sta lì | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 158 KB |
-| l'indice di ADR e diagrammi | [`README.md`](README.md) | 10 KB |
+| l'indice di ADR e diagrammi | [`README.md`](README.md) | 11 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -1197,6 +1197,28 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > aveva smesso di rispondere alla propria domanda**. ⚠️ La regola che ne esce vale oltre il caso:
 > un file che cresce non è un problema, un file che cresce **in una sezione sola** lo è — e il
 > segnale non è il peso, è **la sproporzione fra righe vicine della stessa tabella**.
+
+> 🔁 **Tredicesima misura, il 2026-08-10, chiudendo la sessione — ed è la passata di
+> _manutenzione_, quella che di solito non si misura.** Nessun compito eseguito: solo il
+> riallineamento dei documenti di stato che erano rimasti al **Task 6**.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`riferimenti.md`](riferimenti.md) `47 → 52` per le misure del Task 12 · [`HANDOFF.md`](HANDOFF.md) `129 → 131` per lo stato e i richiami · [`roadmap.md`](roadmap.md) `15 → 16` e [`README.md`](README.md) `10 → 11`, che erano **fermi sei compiti indietro** |
+> | **invariati, ricontati** | spec 271 · kernel-design 44 · tracciabilità 15 · [`porta-di-qualita.md`](porta-di-qualita.md) 40 · `design/08` 8 · `design/01` 4 · il piano degli spike 68 · il piano del Traguardo 1 50 · il piano del Traguardo 2 158 · ADR `2–19` |
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **614** a **615 KB** (630190 B). I **due file
+> obbligatori** passano da 123 a **124 KB**, mossi da questo riquadro stesso; rimisurati
+> **dopo** averlo chiuso e corretti **di sole cifre**, come sempre.
+>
+> ⛔ **E la notizia di questa misura è quali file erano stantii.** `roadmap.md` e `README.md`
+> dicevano *«eseguito fino al Task 6, si riprende dal Task 7»* mentre il repository era al
+> **12**: sei compiti di scarto, per **due sessioni**. Nessuno se n'era accorto perché la §6
+> del compendio era **giusta**, e chi lavora legge quella. ⚠️ **Ma non è chi lavora il loro
+> lettore**: `README.md` è la porta d'ingresso di chi arriva, e `roadmap.md` è dove si guarda
+> per decidere **cosa viene dopo**. 📌 La regola che ne esce, ed è la ragione per cui questa
+> passata esiste: **la §6 giusta non protegge gli altri documenti di stato — li nasconde**,
+> perché toglie a chi lavora ogni occasione di incontrarli stantii.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

@@ -3,13 +3,18 @@
 Assistente desktop locale — piattaforma a quattro pilastri (conversazione, conoscenza,
 agenti/coding, voce, generazione asset) su kernel comune.
 
-**Fase corrente: implementazione del kernel, Traguardo 1 ✅ eseguito.** Il codice del
-prodotto vive in [`../crates/`](../crates/) — cinque crate, `kernel` e `simulator` in
-`no_std` — e la porta di qualità gira con un comando solo, `bash scripts/gate.sh`.
-⛔ Nel Traguardo 1 non c'è ancora **nessuna logica di prodotto**, ed è deliberato: un
-cancello costruito dopo la logica è un cancello che nessuno ha mai visto fallire.
-Vale «spec prima del codice», e ⛔ **il codice è in inglese, la documentazione in
-italiano** (§1.0 della spec del sotto-progetto 1).
+**Fase corrente: implementazione del kernel — Traguardo 1 ✅ eseguito, Traguardo 2 🔵 in
+corso fino al Task 12 su 14.** Il codice del prodotto vive in [`../crates/`](../crates/) —
+cinque crate, `kernel` e `simulator` in `no_std` — e la porta di qualità gira con un comando
+solo, `bash scripts/gate.sh`.
+
+⛔ **Non c'è ancora nessuna funzionalità utente, ed è deliberato.** Il Traguardo 1 non
+portava nemmeno logica: solo lo scheletro e i controlli, perché un cancello costruito **dopo**
+la logica è un cancello che nessuno ha mai visto fallire. Il Traguardo 2 porta il
+**substrato** — tempo, casualità, scheduling, l'esecutore, le **sei famiglie di porte** — che
+sono **meccanismi**, non funzionalità: il kernel non implementa niente per l'utente, fornisce
+ciò su cui le capacità poggeranno. Vale «spec prima del codice», e ⛔ **il codice è in
+inglese, la documentazione in italiano** (§1.0 della spec del sotto-progetto 1).
 
 > Se stai riprendendo il progetto, le letture obbligatorie sono **due**, e sono
 > [`../CLAUDE.md`](../CLAUDE.md) e [`COMPENDIO.md`](COMPENDIO.md). ⛔ **Non** `HANDOFF.md`,
@@ -102,7 +107,7 @@ sotto-progetto**, nello stesso passaggio.
 | Spec | Sotto-progetto | Stato |
 |---|---|---|
 | [Kernel](superpowers/specs/2026-08-06-kernel-design.md) | L0 fondamenta + L1 arbitri trasversali | ✅ **completa e approvata** |
-| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, riapertura su sette voci ✅ **tutta chiusa** (F3, F6, F5, F1a, **F2 con F7**, **F1b**, **F4**), e **§8 riallineata e chiusa** il 2026-08-08, poi **audit sezione-contro-ADR** passato. ✅ **Spec completa**, e il [piano del Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) è **eseguito**. Il [piano del Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **in corso**: eseguito fino al **Task 6 su quattordici** il 2026-08-09, si riprende dal **Task 7** |
+| [Sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) | Implementazione del kernel + simulatore DST | §0–§8 approvate, riapertura su sette voci ✅ **tutta chiusa** (F3, F6, F5, F1a, **F2 con F7**, **F1b**, **F4**), e **§8 riallineata e chiusa** il 2026-08-08, poi **audit sezione-contro-ADR** passato. ✅ **Spec completa**, e il [piano del Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) è **eseguito**. Il [piano del Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **in corso**: eseguito fino al **Task 12 su quattordici**, fra il 2026-08-09 e il 2026-08-10, con le **sei famiglie di porte complete**. Si riprende dai **Task 13–14** |
 
 ## Decomposizione del sistema
 

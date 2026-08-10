@@ -65,8 +65,11 @@ worker ML in **Python**; Tauri contro Electron è ancora aperto
 trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto, e le sette
 sono **tutte chiuse**. La **§8 è stata riallineata e chiusa** il 2026-08-08. Il **Traguardo 1
 è eseguito** lo stesso giorno: workspace, cinque crate, porta di qualità verde, **zero logica
-di prodotto**. Il **Traguardo 2 è in corso**: piano scritto ed eseguito **fino al Task 6 su
-quattordici** il 2026-08-09. Si riprende dal **Task 7**.
+di prodotto**. Il **Traguardo 2 è in corso**: piano scritto ed eseguito **fino al Task 12 su
+quattordici**, fra il 2026-08-09 e il 2026-08-10, `GATE GREEN` a ogni compito. ✅ **Le sei
+famiglie di porte sono complete** — `reactor` · `journal` · `filesystem` · `network` ·
+`process` · `ipc` — e la §3.1 le dichiara esaustive. Si riprende dai **Task 13–14**: il
+registro dei controlli e la chiusura del traguardo.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -84,29 +87,41 @@ salito niente**: sale col substrato.
 
 ## Prima cosa da fare
 
-⏭️ **Riprendere il piano del Traguardo 2 dal Task 7**:
+⏭️ **Riprendere il piano del Traguardo 2 dai Task 13–14**:
 [`2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md),
-sezione `## Task 7: Il reattore reale, e la prima suite di conformità`. I Task 1–6 sono
-eseguiti; la §6 del compendio ha la tabella compito per compito.
+sezione `## Task 13: Il registro dei controlli — cosa è coperto ora, e cosa no`. I Task 1–12
+sono eseguiti; la §6 del compendio ha la tabella compito per compito.
 
-> ⛔ **Prima di aprire il piano, leggerne l'errata in testa.** Sono **tredici righe**, e
-> non sono rifiniture: sei difetti del piano stesso, trovati **eseguendo** e non leggendo.
-> Il piano **non si riscrive** — è il registro di ciò che fu deciso — ma dove detta una
-> cosa e il repository ne contiene un'altra, vince il repository e l'errata lo dice.
+⚠️ **Sono i due compiti di consuntivo: niente codice nuovo, ma è dove il traguardo dichiara
+cosa ha davvero comprato.** Il Task 13 aggiorna il registro dei controlli, il 14 chiude.
+
+> ⛔ **Prima di aprire il piano, leggerne le errata in testa.** Sono **quattro passate,
+> quarantasei voci**, e non sono rifiniture. Il piano **non si riscrive** — è il registro di
+> ciò che fu deciso — ma dove detta una cosa e il repository ne contiene un'altra, **vince il
+> repository**, e l'errata lo dice.
 >
-> ⛔ **E la lezione che le attraversa, per chi esegue i compiti rimasti:** sei volte su sei
-> il difetto **non era nel codice, era nella sonda scritta nel piano** — un test vacuo, una
-> sonda che attaccava il caso invece del meccanismo, una regola guardata in una direzione
-> sola, un conteggio inesistente, una variante che non si poteva usare, una misura vera ma
-> **di un'altra cosa**. Le sonde di quel piano si trattano come **ipotesi**, non come
-> istruzioni, e si provano in negativo prima di crederci.
+> ⛔ **E la lezione che le attraversa cambia forma passata dopo passata, il che è la cosa
+> utile.** Tre specie di difetto, in ordine di quanto sono difficili da vedere:
+>
+> | | Specie | Come si trova |
+> |---|---|---|
+> | 1 | la **sonda è sbagliata** — vacua, attacca il caso invece del meccanismo, guarda una direzione sola | **rileggendo** il piano |
+> | 2 | la **sonda manca**, e non si vede leggendo perché non c'è niente da leggere | l'unica domanda che la trova: *per ogni artefatto che il compito produce, quale controllo lo esercita?* |
+> | 3 | ⛔ l'**artefatto è sbagliato, e compila** | al Task 11 il piano dettava una porta che passava la porta di qualità e **non si poteva implementare**: si vede **solo** scrivendone un'implementazione **da fuori dalla crate** |
+>
+> Le sonde di quel piano si trattano come **ipotesi**, non come istruzioni, e si provano in
+> negativo prima di crederci.
 
-> ⛔ **Due cose che il Task 7 deve coprire, e le ha nominate chi ha scritto il Task 6:** il
-> ramo `deadline <= now → None` di `VirtualReactor::wait_until` **non è esercitato da
-> nessun test** — l'esecutore non lo raggiunge più da quando promuove i dormienti scaduti —
-> e `VirtualReactor::wall_time()` **non è letto da nessuno**. Sono contratto della porta:
-> o li copre la suite di conformità, o partono non provati. §7.4.6 chiama quella suite *«la
-> più importante: la validità della DST poggia lì»*.
+> ⚠️ **I due buchi che il Task 6 aveva lasciato sono chiusi**, e uno dei due **non** era
+> chiudibile dove era stato assegnato — gotcha **#44**. Non c'è più niente in sospeso lì.
+
+> ⛔ **Quattro questioni restano aperte nel sorgente, dichiarate e non risolte**, e chi
+> riprende deve conoscerle **prima** di scrivere: la tensione di `network` fra firma sincrona
+> e prontezza dal `reactor` · il residuo su `Untrusted::promote`, dove **sette** vie aggirano
+> il confine e **una sola** è chiusa · la tesi di `process` tenuta dall'implementazione e non
+> dal compilatore, perché i `new` delle ricevute **devono** essere pubblici · e `Ipc::accept`
+> senza canale d'errore, il cui prezzo di chiusura è **la firma**, non una variante. La §6
+> del compendio le elenca tutte e quattro, con la sede nel sorgente.
 
 > ⛔ **Non si riusa il piano del Traguardo 1**, e non si scrive un piano unico per i
 > traguardi rimasti: scriverne uno per codice che non esiste ancora significa inventare.
@@ -578,6 +593,14 @@ richiamo datato: §0.4.1, §0.4.2, **§0.4.3 (nuova)**, §0.5, §0.7, §1.2, §2
 §8 le celle `Q4`, `Q5`, `Q14`, la riga V3 di §8.3, la riga `process` di §8.2.2, **§8.5.4
 (nuova)** e il ritratto di §8.8.
 
+> ⚠️ **Tre richiami aggiunti il 2026-08-09, chiudendo la voce che il Traguardo 2 aveva
+> lasciato aperta**: **§7.4.1** guadagna la riga della **regola B** per la coppia
+> `Untrusted`/`Instruction` — il blocco C passa da diciassette a **diciotto** righe — e con lei
+> **§7.4.7** (i conteggi) e le celle **`Q9`** e **`Q15`** di §8.3, che nominavano *«la riga»* al
+> singolare quando le righe sono diventate due. **Nessuno stato di §8 cambia**: cambia la
+> ragione per cui `Q9` è ✅, ed è la sola cosa che valeva scrivere — la riga che il catalogo
+> **aveva** è **cieca** proprio alla via che la nuova sorveglia.
+
 ### I sei traguardi, e dove siamo
 
 Il sotto-progetto 1 si esegue a traguardi, e **ciascuno ha il proprio piano** — scritto
@@ -883,7 +906,7 @@ per chiudersi.
 | [`adr/`](adr/) | **37 decisioni architetturali**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
 | [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§8 complete, con tutte le evidenze delle misure |
-| [`superpowers/plans/`](superpowers/plans/) | i due piani scritti finora — lo **stack** e il **Traguardo 1** — entrambi **eseguiti**, ed entrambi con un'**errata in testa** che documenta dove il piano sbagliava. ⛔ Un piano non si riscrive: è il registro di ciò che fu osservato eseguendolo |
+| [`superpowers/plans/`](superpowers/plans/) | i **tre** piani scritti finora — lo **stack**, il **Traguardo 1** (entrambi eseguiti) e il **Traguardo 2**, eseguito fino al Task 12 su 14. Ciascuno porta un'**errata in testa** che documenta dove il piano sbagliava: quella del Traguardo 2 conta **quattro passate e quarantasei voci**. ⛔ Un piano non si riscrive: è il registro di ciò che fu osservato eseguendolo |
 | [`../crates/`](../crates/) | **il codice del prodotto.** Cinque crate: `kernel` e `simulator` in `no_std` + `alloc` + `forbid(unsafe_code)`; `platform`, `secrets` e `daemon` sono il posto dove l'I/O deve vivere |
 | [`riferimenti.md`](riferimenti.md) | fonti esterne, con data e con **cosa non abbiamo adottato** |
 | [`../spikes/`](../spikes/) | **prove, non kernel.** `PROTOCOLLO.md` criteri e soglie · `CANDIDATI.md` pre-selezione · `RISULTATI.md` esiti, seed, versioni, evidenze · `GUI-REQUISITI.md` G1–G21 e P1–P4 |

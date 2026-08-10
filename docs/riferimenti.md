@@ -453,6 +453,78 @@ riscritto il corpo dell'aiutante **dentro sé stesso** (`fn alive() { self.alive
 conteggio dei siti e non dai test. ⚠️ **La prima è ricapitata a chi verificava**, sullo stesso
 file, un'ora dopo aver letto la riga che la descrive.
 
+## Esecuzione del Traguardo 2 — il Task 12: la porta che si è progettata sottraendo
+
+Eseguite il **2026-08-10** · `rustc 1.95.0` · `cargo 1.95.0` · Windows 11 · profilo `dev`.
+Non sono documentazione consultata: **sono misure**, e il comando col proprio banco è la fonte.
+
+**1 — La porta era corretta, e la finta è servita a sottrarre.**
+`ipc` è l'unica delle quattro porte dichiarate in anticipo che la finta ha **confermato**
+invece di smentire: test scritto **prima** del sorgente → `E0432: could not find ipc in ports`
+(rosso per il motivo giusto), poi `ipc.rs` compila **al primo colpo**, nessun `E0599`.
+
+**2 — Quattro item su cinque cadono, misurati uno per uno.**
+Metodo: togliere l'item → `cargo build --workspace` **e** `cargo test --workspace`, in **passi
+separati**, perché «serve alla crate» e «serve al test» sono esiti diversi.
+
+| Item | Esito togliendolo | Decisione |
+|---|---|---|
+| `ClientId::get()` | verde, zero warning | **cancellato** |
+| `Hash` | verde | **cancellato** — ⛔ abilita `HashMap`, che nel kernel è vietato (gotcha #12) |
+| `PartialOrd` / `Ord` | verde | **cancellato** |
+| `PartialEq`/`Eq` — **contro-sonda** | **`E0369` × 7** | tenuto |
+| `Copy` — **contro-sonda** | **`E0382` × 23** su **otto** legami | tenuto |
+| `Debug` — **contro-sonda** | **`E0277` × 5** | tenuto |
+| `Clone` con `Copy` in piedi — **contro-sonda** | ⛔ **`kernel` non compila** | tenuto: non è una scelta, lo pretende `Copy` |
+
+⛔ **Le contro-sonde non sono cerimonia.** L'argomento con cui `get()` cade — *«un'implementazione
+conserva un `ClientId` `Copy` e lo confronta con `==`»* — poggia interamente su `PartialEq`:
+senza la sonda che lo prova rosso, sarebbe la forma esatta in cui `SingleReceipt::id` era
+sopravvissuto **senza copertura** al Task 11. Errata **E42** del piano.
+
+**3 — Il numero misurato quattro volte e sbagliato tre, ed è il gotcha #48 in forma pura.**
+Il conteggio dei legami mossi togliendo `Copy`:
+
+| # | Strumento | Uscita | |
+|---|---|---|---|
+| 1 | `head -6` | «sei» | il **tetto del comando** letto come conteggio |
+| 2 | `uniq` sulle stringhe di messaggio | 23 errori, «**dieci** legami» | 23 giusto; `doomed` e `survivor` compaiono in **due** forme ciascuno (`borrow of` e `use of moved value`) |
+| 3 | parser JSON, ramo *children* | ⛔ **«zero siti», uscita pulita** | cercava `move occurs because` fra i children, ma rustc la porta come **etichetta di span** |
+| 4 | parser JSON, etichette di span | **otto** siti, `1+5+6+1+3+3+2+2 = 23` | riconciliati col totale — la misura buona |
+
+⛔ La terza è la più pericolosa: **un numero preciso da uno strumento che sembrava funzionare**.
+Il numero non ha mai cambiato l'esito — la contro-sonda era rossa in tutte e quattro — e questo
+è il punto: **si conta che il misuratore stia guardando la cosa giusta prima di leggerne
+l'uscita**, qui contando le ventitré etichette trovate contro i ventitré errori.
+
+**4 — Campagna di mutazione della finta: quattordici mutazioni, quattordici uccise.**
+Comando per ciascuna: applicare, **verificare che il file sia cambiato e che i siti siano
+quelli attesi**, poi `cargo test -p kernel --test ports_are_implementable`. La tabella completa
+è in [`porta-di-qualita.md`](porta-di-qualita.md); qui le tre che un test solo uccide, che sono
+le uniche che dicono qualcosa che la tabella non dice:
+
+| Mutazione | Unico carnefice | Perché conta |
+|---|---|---|
+| `read_one` → costante `1` (`process`) | `answers_are_correlated_...` | prima del rimedio lasciava **9 verdi su 9** |
+| la morte del client è **contagiosa** | `a_dead_client_does_not_take_the_port_with_it` | prima erano **zero** i suoi carnefici esclusivi |
+| `accept` **ricicla** l'id di un morto | idem | idem |
+
+⛔ **Il test che porta la proprietà per cui la porta esiste era cancellabile lasciando la porta
+verde** — gotcha **#45**, terza occorrenza in due giorni. Le due mutazioni che lo isolano sono
+state cercate apposta.
+
+**5 — E il banco ha ingannato altre due volte, con forme nuove.**
+⛔ **Due strumenti gemelli, corretto uno solo:** il bug dei fine-riga riparato in `mutate.py` e
+non in `mutants.py`, e alla prima corsa successiva il gemello ha **riappiattito il file in LF**
+— `git diff` ha dichiarato **seicento righe** cambiate che nessuno aveva toccato. ⚠️ Il
+repository ha i fine-riga **misti per file**: non c'è una convenzione da seguire, c'è un file da
+non cambiare. ⛔ **E la più insidiosa delle nove: una rifinitura di _leggibilità_ disarma la
+campagna senza che nulla diventi rosso.** La rinomina `position` → `row_of`, chiesta da una
+revisione di qualità, ha reso **stantie due ancore** e una mutazione è tornata «zero siti»
+invece di un esito. L'ha colta **solo** la guardia sul conteggio: le ancore sono **accoppiate ai
+nomi del codice**, quindi la campagna si rilancia dopo ogni **rifinitura**, non solo dopo ogni
+cambiamento di comportamento.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

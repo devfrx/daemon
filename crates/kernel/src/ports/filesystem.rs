@@ -73,6 +73,13 @@ impl Path {
 /// included. The getter comes back the day the durable record of §4.9 has to write it down,
 /// with that caller.
 ///
+/// ⚠️ AND THAT DAY CAME FOR `StepId`, NOT FOR THIS ONE -- said here because the sentence above
+/// names them together and would otherwise read as though both were still out. On 2026-08-10,
+/// task 8 of milestone 3, `platform::journal::FileJournal` became the first implementation that
+/// has to WRITE a step's identity into a file, and `StepId::get` came back with it. Nothing
+/// preserves a file yet, so this one is still waiting for its caller -- which is the rule
+/// working, not an inconsistency.
+///
 /// ⚠️ Same short derive list as `Path`, for the same two reasons: nothing sorts these, and
 /// `Hash` has no possible consumer where `HashMap` is not nameable (gotcha #12).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

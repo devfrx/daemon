@@ -45,9 +45,15 @@
 //! D6, and it is paid knowingly.
 //!
 //! ⚠️ THE TENSE IS PAST AND THE NUMBER IS A MEASUREMENT OF THAT MOMENT, not a description of
-//! today: the operation brought a liar of its own and this file now has ELEVEN implementations,
-//! twelve once `redb` lands at task 8. A cost figure written in the present tense is a figure
+//! today: the operation brought a liar of its own and this file had ELEVEN implementations,
+//! twelve once `redb` landed at task 8. A cost figure written in the present tense is a figure
 //! that goes quietly wrong the first time the set grows — gotcha #31.
+//!
+//! ✅ TASK 8 LANDED ON 2026-08-10 AND THE TWELFTH IS `platform::journal::FileJournal`, counted
+//! with `grep -rn "impl Journal for"` rather than by adding one to the sentence above. It is the
+//! FIRST implementation outside a test that is not the in-memory double, and what it cost the
+//! port is one item: `StepId::get`, without which no implementation outside `kernel` can write a
+//! step's identity down.
 
 use alloc::vec::Vec;
 
@@ -71,6 +77,23 @@ pub struct StepId(u64);
 impl StepId {
     pub const fn new(value: u64) -> Self {
         StepId(value)
+    }
+
+    /// The number back out.
+    ///
+    /// ⚠️ IT CAME BACK ON 2026-08-10, WITH THE CALLER THAT NEEDED IT, and the day was named in
+    /// advance: `CheckpointId`'s doc in `ports/filesystem.rs` says of its own getter that it
+    /// "comes back the day the durable record of §4.9 has to write it down, with that caller".
+    /// That day is task 8 of milestone 3 and that caller is `platform::journal::FileJournal`.
+    ///
+    /// ⛔ WITHOUT IT THE PORT IS UNIMPLEMENTABLE OUTSIDE `kernel`, which is what makes this an
+    /// obligation rather than a convenience: the privacy of a tuple-struct field is
+    /// MODULE-scoped, so a durable implementation could compare two `StepId` and never write
+    /// one down. `Path::as_bytes` exists two files over for exactly this reason, and says so.
+    /// ⚠️ `replay` needs no counterpart because `new` is already public — the way back in was
+    /// always open, and only the way out was missing.
+    pub const fn get(self) -> u64 {
+        self.0
     }
 }
 

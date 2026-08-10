@@ -140,6 +140,11 @@ impl Journal for MemoryJournal {
         // only thing telling whoever writes the second one", which was true when it was
         // written and false from the commit that wrote the suite. Whoever writes the `redb`
         // one does not need this comment to be told: they get a red.
+        //
+        // ✅ WRITTEN ON 2026-08-10, AND THE PREDICTION HELD WITHOUT COSTING A RED. The `redb`
+        // one keys on a PROGRESSIVE OF THE WRITE and not on the step — which the paragraph
+        // above is why — so the intent survives its outcome and comes back first, exactly as
+        // here. `crates/platform/src/journal.rs` carries the argument on its table definition.
         self.entries
             .iter()
             .find(|e| e.step == step)

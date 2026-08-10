@@ -781,6 +781,52 @@ rifiutare.
 **Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi;
 `cargo test --workspace --no-fail-fast` → **26 target, 127 test**, zero rossi.
 
+## Esecuzione del Traguardo 3 — il Task 8: `redb`, il backend nostro, e due affermazioni smentite dalla misura
+
+**Misurato il 2026-08-10.** Il piano **non detta** il codice di `redb`, di proposito: l'API 4.1.0
+non era verificabile quando fu scritto. Letta nella cache del registro prima di scrivere.
+
+| Misura | Comando | Esito |
+|---|---|---|
+| cosa risolve davvero `redb = "4.1.0"` | `cargo info redb`, `cargo tree -p redb` | **4.1.0**, l'ultima pubblicata · `rust-version` **1.89** contro la nostra 1.95 · default features **vuote** · sull'host non tira **nulla** |
+| ⚠️ e cosa entra comunque nel `Cargo.lock` | `cargo tree -p redb --target all` | **`libc` 0.2.189**, che `redb` nomina per il solo **`wasi`**: non si compila qui, ma il lock risolve **l'unione** dei target |
+| l'allow-list dopo la dipendenza nuova | `bash scripts/gate-deps.sh` | ✅ **`OK -- the two graphs match the two lists.`** — `platform` è fuori dai due grafi misurati. **Lanciato, non dedotto** (gotcha #41) |
+| l'ordine delle chiavi `u64` in `redb` | sorgente, `impl Key for u64` | `from_bytes(a).cmp(&from_bytes(b))`: confronto **numerico**, non sui byte. Un confronto sui byte little-endian scombinerebbe `replay` **dopo la 256ª scrittura** |
+| la durabilità di default | sorgente, `WriteTransaction::new` | `InternalDurability::Immediate`: `commit()` che ritorna **è** la durabilità che V6 chiede |
+| ⛔ **un'affermazione scritta prima della misura, smentita** | sonda: 16 byte scritti, riaperto con e senza `.truncate(false)` | ⛔ **16 byte in entrambi i casi.** Avevo scritto che la riga fosse *«load-bearing»*; `truncate` vale **`false` di default**. Resta scritta per la decisione **D3**, con la misura al posto della frase falsa. Errata **E41** |
+| ⛔ **il rimedio dettato al parallelismo, e la sua metà vera** | l'aiutante dettato con **nomi di file distinti**, strumentando `remove_dir_all` | ⛔ **Tre chiamate su sei cancellano davvero la cartella condivisa** sotto altri test in corso — la corsa **c'è**. ⚠️ **Ma il rosso non si riproduce in dodici esecuzioni**: le altre tre rispondono `PermissionDenied`, perché **Windows rifiuta di cancellare una cartella con dentro un file aperto**. Su Linux `unlink` riesce e il banco cadrebbe. Gotcha **#52**. Rimedio: **una cartella per call site**, dal `line!()` — otto esecuzioni su otto verdi |
+| il costo delle **scansioni**, che la chiave progressiva impone | sonda usa-e-getta, archivio da 201 a 4001 record | **release:** scansione piena `225 µs` a 4001 record ≈ **56 ns/record**, lineare · `read_back` del **primo** record `4 µs`, costante · scrittura `1,45 → 1,72 ms` (il pavimento è l'`fsync`). **debug:** ≈ **1,5 µs/record**. ⛔ **La scansione supera l'`fsync` solo oltre ~26 000 record**: nessuna misura chiede di ottimizzarla, e il rimedio del giorno in cui morderà è lo stesso **checkpoint** che `replay` dichiara già |
+| ✅ **la conformità del Task 9, misurata in anticipo** | file usa-e-getta con `include!` della suite, poi cancellato | ✅ **otto promesse su otto verdi** contro `FileJournal` |
+| ⛔ due vincoli meccanici che il Task 9 incontrerà | lo stesso file | **`E0252`** se l'includente ha `use` propri sugli stessi nomi (la suite porta i suoi) · `assert_journal_contract` prende **`Fn`**, non `FnMut`: una fabbrica che cambia percorso a ogni chiamata ha bisogno di mutabilità **interna** |
+
+**Le mutazioni del compito.** Compilazione in un passo separato dall'esecuzione, unicità
+dell'ancora verificata prima di compilare, conteggio con `--no-fail-fast`, ripristino
+**byte-identico** (gotcha #48, vincolo globale 5). Sei sonde nuove in
+`crates/platform/tests/file_journal.rs`; **due mutazioni per ogni valore tenuto**, più il
+controllo.
+
+| Mutazione | Chi cade |
+|---|---|
+| il contatore riparte da **zero** alla riapertura · non avanza mai | 1 · 1 |
+| `append` **non conferma** la transazione · `open` **tronca** il file | 5 · 4 |
+| `abandon_without_commit` **conferma** · **non mette in scena nulla** | 1 · 1 |
+| `read_back` risponde con l'**ultima** scrittura | 1 |
+| la guardia risponde sempre «no» · `intent` **perde** la guardia | 2 · 1 |
+| ⛔ il backend estraneo **ignorato** (in memoria al suo posto) | ⛔ **6** — è la prova che il confine è reale |
+| il lucchetto **tolto** · **condiviso** invece che esclusivo | 1 · 6 |
+| ⛔ `set_durability(Durability::None)` | ⛔ **nessuna, e dichiarato:** i test riaprono dentro un processo **vivo**, quindi le scritture sono comunque nelle mani del sistema operativo. Solo un processo che **muore** distingue i due — Traguardo 4, gotcha **#51** |
+| **controllo**: una parola in un commento | ✅ nulla |
+
+⛔ **Una mutazione ha trovato un difetto vero, e non un buco del banco:**
+`abandon_without_commit` **non metteva in scena nulla** e i sei test restavano verdi, mentre il
+commento affermava che l'`Ok` lo provasse. Da fuori un record abbandonato e uno mai esistito
+sono indistinguibili — che è ciò che il metodo promette di lui — quindi il controllo è stato
+spostato **dentro** il metodo, dove la transazione è ancora aperta. Terza occorrenza del
+gotcha **#45**. Errata **E42**.
+
+**Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi;
+`cargo test --workspace --no-fail-fast` → **27 target, 133 test**, zero rossi.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

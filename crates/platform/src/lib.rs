@@ -9,6 +9,8 @@
 //! must not, which is the direction one forgets (§7.1.1 rule 3, gotcha #24). Do not
 //! delete them until real code exists that demonstrates the same two things.
 
+pub mod journal;
+
 pub mod reactor;
 
 pub mod rng;

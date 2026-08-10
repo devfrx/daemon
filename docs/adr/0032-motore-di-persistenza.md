@@ -174,3 +174,68 @@ esattamente la cosa che si cita invece di riverificare.
 📌 Trovato in un audit sezione-contro-ADR il 2026-08-08. La lista era già cresciuta a due
 voci **il giorno stesso** in cui questa riga fu scritta (M-1, `bincode` + `unty`): non è
 invecchiata, non era mai stata vera. È il gotcha **#31**.
+
+---
+
+## ⛔ Rimando — il backend cadente **non può** vivere in `simulator` (2026-08-11)
+
+La tabella della sezione *Decision* assegna le due implementazioni del backend:
+
+| Implementazione | Vive in |
+|---|---|
+| backend su file | `platform` |
+| backend **cadente in memoria** | ⛔ `simulator` |
+
+**La seconda riga non è eseguibile**, e la correzione va marcata invece che lasciata mentire.
+Trovato aprendo il brainstorming del Traguardo 4, il 2026-08-11.
+
+### La misura
+
+`redb` 4.1.0, letto nella cache del registro — non ricordato:
+
+| Guardia | Cosa succede se `redb` entra in `crates/simulator/` |
+|---|---|
+| `#![no_std]` di `crates/simulator/src/lib.rs` | **`redb` non ha `no_std`**: nessun `#![no_std]` nel suo `lib.rs`, e le sue sole feature sono `cache_metrics` e `logging`. Tutti e sei i metodi di `StorageBackend` restituiscono `std::result::Result<_, std::io::Error>` |
+| `scripts/gate-no-os.sh` | costruisce `simulator` per **`x86_64-unknown-none`** |
+| `scripts/gate-deps.sh`, grafo **spedito** | la lista è `bincode · kernel · minicbor · simulator · unty`. `redb` uscirebbe come **«I3 violated»**, e il rimedio scritto dentro lo script è ⛔ *«REMOVE the dependency. Adding it to the list is not a remedy»* |
+| `scripts/gate-attributes.sh` | pretende i tre attributi su `crates/simulator/src/lib.rs` |
+
+### Cosa cambia, e cosa **non** cambia
+
+| Affermazione | Oggi |
+|---|---|
+| il motore è **`redb` 4.1.0** con uno `StorageBackend` **scritto da noi** | ✅ **invariata**, ed è la sostanza di questo ADR |
+| il **requisito 4** — I/O iniettabile — è la ragione della scelta | ✅ **invariata** |
+| esistono **due** implementazioni del backend | ✅ **invariata** |
+| il backend cadente vive in **`simulator`** | ⛔ **falsa**. Vive in **`platform`**, accanto a `FileBackend` |
+
+⛔ **È un rimando e non un `Superseded by`**: la decisione non è toccata, è sbagliata **una
+cella di una tabella**. È la seconda volta per questo ADR — la prima è il rimando del
+2026-08-08 qui sopra — e completare o correggere un contorno **non è superare la decisione**.
+
+### La diagnosi, che vale più dell'errore
+
+Questa riga **non è una decisione misurata**: è una **previsione**. La misura che chiuse il
+requisito 4 fu presa con *«un backend scritto da noi, in memoria, che fallisce a
+un'operazione scelta»* dentro uno **spike**, quando `crates/simulator/` non esisteva ancora e
+non aveva i propri vincoli. La collocazione fu scritta immaginando dove sarebbe finito.
+
+📌 **E la causa è che i due livelli furono trattati come una cosa sola.** Non lo sono: hanno
+**soggetti** diversi — il livello 1 esamina la riconciliazione del kernel, il livello 2 la
+coerenza dopo crash di `redb` — quindi costi e cadenze diversi. Il livello 1 resta in
+`simulator`, dove la spec l'ha sempre messo: la §3.1 gli assegna il giornale che cade **alla
+porta**. Il livello 2 va dove vive il motore.
+
+⚠️ **La spec non ha mai ripetuto l'errore:** la §4.6 dice del livello 2 solo *«il
+`StorageBackend` di `redb` cade a una scrittura o a un `sync_data`»*, **senza dire dove
+abiti**. Questo ADR era l'unico posto che lo diceva, ed è il posto che lo corregge.
+
+### Due cose che la stessa misura ha trovato, e vanno a favore
+
+| | |
+|---|---|
+| ✅ **i sei metodi erano giusti** | questo ADR dichiara *«`read` · `write` · `set_len` · **`sync_data`** · `len` · `close`»*, e sono sei davvero: `close` ha un'implementazione predefinita. Una prima lettura affrettata ne aveva contati cinque, e **l'ADR aveva ragione** |
+| ✅ **`InMemoryBackend` esiste ancora** | quindi il backend cadente lo **avvolge** invece di riscrivere l'archiviazione |
+
+Il disegno completo del Traguardo 4 sta in
+[`specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md`](../superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).

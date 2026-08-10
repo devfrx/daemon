@@ -951,6 +951,39 @@ scrittura**, quindi ogni cifra qui è un **riconteggio**, non una produzione: la
 
 **Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi.
 
+## Brainstorming del Traguardo 4 — le misure che hanno deciso il perimetro, e una lettura sbagliata registrata
+
+**Misurato il 2026-08-11**, aprendo il brainstorming del simulatore DST. Windows 11 ·
+toolchain `1.95.0` appuntata da `rust-toolchain.toml`. ⛔ **Nessuna di queste misure ha
+prodotto codice:** hanno deciso **il perimetro** e corretto **una collocazione** dentro un ADR
+`Accepted` — il che è la ragione per cui stanno qui e non in un verbale di esecuzione.
+
+| # | Misura | Comando | Esito |
+|---|---|---|---|
+| **D4-1** | l'ambiente regge, **prima** di toccare qualsiasi cosa | `bash scripts/gate.sh` | `GATE GREEN`, sei controlli su sei. L'unico avviso è `awaiting approval: docs/adr/0029-guscio-della-gui.md`, che è lo stato atteso |
+| **D4-2** | ⛔ **`redb` 4.1.0 supporta `no_std`?** | `grep -n '^#!\[no_std\]' $REDB/src/lib.rs` e `grep '^\[features\]' -A4 $REDB/Cargo.toml` nella cache del registro | ❌ **no.** Nessun `#![no_std]`; le sole feature sono `cache_metrics` e `logging`. **È la misura che ha corretto ADR-0032** |
+| **D4-3** | la superficie di `redb::StorageBackend` | `awk '/pub trait StorageBackend/,/^}/' $REDB/src/db.rs` | **sei** metodi: `len`, `read`, `set_len`, `sync_data`, `write` obbligatori — tutti `-> std::result::Result<_, std::io::Error>` — e **`close`** con implementazione predefinita |
+| **D4-4** | esiste un backend in memoria già pronto? | `grep -rn 'InMemoryBackend' $REDB/src/` | ✅ **sì**, `pub struct InMemoryBackend(RwLock<Vec<u8>>)`. Il backend cadente lo **avvolge** invece di riscrivere l'archiviazione |
+| **D4-5** | la lista chiusa del grafo **spedito** di `simulator`, letta nello script e non ricordata | `scripts/gate-deps.sh` | `bincode · kernel · minicbor · simulator · unty`, e la cura scritta per un intruso è ⛔ *«REMOVE the dependency. Adding it to the list is not a remedy»* |
+| **D4-6** | quali criteri di M-2 sono **già permanenti** nel repository | `grep -n 'fn ' crates/kernel/tests/executor_determinism.rs` | **C1, C2, C3** e la **non-vacuità** ci sono dal Traguardo 2. **C7a e C7b no** |
+| **D4-7** | quali finte della §3.1 esistono in `crates/simulator/src/` | lettura di `crates/simulator/src/lib.rs` | **tre su sette**: `VirtualReactor`, `SeededRng`, `MemoryJournal` — e quest'ultimo dichiara nel proprio doc *«THIS IS NOT THE FALLING DOUBLE»* |
+| **D4-8** | ⛔ **quante righe di guasto della §3.3 hanno oggi il proprio soggetto** | la tabella della §3.3 contro `crates/`, riga per riga | **una su dieci.** È il fatto che ha deciso il perimetro del Traguardo 4 |
+
+⚠️ **Una lettura sbagliata, registrata invece che taciuta — e l'errore andava a SFAVORE
+dell'argomento.** La prima estrazione di D4-3 usava `grep -A18` e si fermava prima di `close`:
+ne contava **cinque**. ADR-0032 ne dichiarava **sei**, ed **aveva ragione**. Rifatta con `awk`
+sull'intero corpo del tratto. 📌 Conta perché il **conteggio dei punti scattati è l'oracolo di
+non-vacuità** della campagna di livello 2: un metodo in meno sarebbe stato un oracolo più debole
+**senza che nulla lo dicesse**, ed è precisamente il gotcha **#48** — un banco che sbaglia
+mentre conferma.
+
+📌 **E una misura non presa, dichiarata:** il **numero di semi** delle due campagne. Va scelto
+contro lo scenario **vero**, che il piano deve ancora scrivere; il pavimento noto è M-2 —
+**25,8 µs** per una corsa dello scenario **minimo**. Fissarlo adesso sarebbe un'ipotesi
+travestita da vincolo, cioè il gotcha **#15**.
+
+**Chiusura:** `bash scripts/gate.sh` verde.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

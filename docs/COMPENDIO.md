@@ -15,10 +15,10 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (667 KB con `wc -c` il 2026-08-10, e possono solo crescere — la spec da sola ne fa 277), e
+> (675 KB con `wc -c` il 2026-08-11, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-08-10.** Manutenzione: §13.
+**Aggiornato il 2026-08-11.** Manutenzione: §13.
 
 ---
 
@@ -459,9 +459,16 @@ prima volta il kernel porta `syn` a tempo di compilazione.
 controllo.** Usato con uno `StorageBackend` **scritto da noi** invece di quello su file
 predefinito. Il backend nostro **non è un dettaglio**: è il punto in cui il requisito 4
 (I/O iniettabile) diventa reale. Due implementazioni: backend su file in `platform`
-(l'I/O vero) e backend **cadente in memoria** in `simulator` (cade a un'operazione
-scelta dal seme — è **l'iniezione di livello 2**). `redb` vive in `platform`, quindi
-ADR-0031 non lo vincola: il kernel conosce solo la porta `journal`.
+(l'I/O vero) e backend **cadente in memoria** — cade a un'operazione scelta dal seme, ed è
+**l'iniezione di livello 2**. ⛔ **Il cadente vive in `platform` e NON in `simulator`, e questa
+riga diceva `simulator` fino al 2026-08-11**, come la tabella dell'ADR da cui è compressa:
+`redb` non ha `no_std`, i sei metodi di `StorageBackend` restituiscono `std::io::Error`, e il
+grafo spedito di `simulator` lo rifiuterebbe come **«I3 violated»** — la cui unica cura scritta
+è *togliere la dipendenza*. Non è una decisione riaperta: era una **previsione** scritta quando
+`crates/simulator/` non esisteva. Rimando datato in ADR-0032, e la diagnosi è che i **due
+livelli di crash erano trattati come una cosa sola** mentre hanno soggetti diversi.
+`redb` vive in `platform`, quindi ADR-0031 non lo vincola: il kernel conosce solo la porta
+`journal`.
 
 **0033 — La GPU della GUI: quota di presentazione sottratta, concessione tenuta dal
 core.** Il consumo GPU della GUI si modella come **tre consumatori distinti**:
@@ -604,15 +611,31 @@ riscontro incrociato che **qualcuno controlla davvero**. ⛔ **La scadenza è SC
 l'apertura di una `Record::V2`. Dichiarata in `crates/kernel/src/reconcile.rs` ed **E25**
 dell'errata.
 
-⏭️ **Il prossimo passo è il BRAINSTORMING del piano del Traguardo 4** — il simulatore DST:
-tempo virtuale, iniezione dei guasti, la campagna e i semi. ⛔ **Brainstorming e non scrittura, e
-la distinzione questa riga non la faceva:** un piano è **lavoro creativo**, e `CLAUDE.md` impone
-`superpowers:brainstorming` **prima** di qualunque lavoro creativo e **prima** di entrare in plan
-mode; `superpowers:writing-plans` viene dopo, quando le voci aperte sono chiuse. Chi legge *«il
-piano si scrive adesso»* salta il primo passo senza accorgersene — e le **dieci** questioni aperte
-qui sotto sono precisamente la materia di quel brainstorming.
-⚠️ **Questa riga diceva «il prossimo passo è il Task 12»**, ed è la sua ultima forma da
-contatore interno di un piano.
+✅ **Il brainstorming del Traguardo 4 è chiuso il 2026-08-11, e il disegno è scritto:**
+[`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
+⏭️ **Il prossimo passo è il PIANO del Traguardo 4** — `superpowers:writing-plans`, che ora ha
+le voci chiuse davanti.
+
+⛔ **Cosa ha deciso il disegno, e la prima decisione governa le altre: il Traguardo 4 costruisce
+il MOTORE della DST, non tutte le finte della §3.1.** Il fatto che decide è un conteggio, ed è
+stato ottenuto leggendo la §3.3 contro il codice di **oggi**: delle **dieci** righe di guasto,
+**una sola** ha il proprio soggetto — la caduta fra intento ed esito sulla porta `journal`,
+la cui riconciliazione esiste dal Traguardo 3. Le altre nove iniettano un guasto dentro un
+meccanismo che **non esiste**: l'arbitro è il Traguardo 5, il canale worker e lo stato di
+degrado il Traguardo 6. Costruirle ora è la decisione **D1 del piano del Traguardo 3 al
+rovescio**, più il gotcha **#46**.
+⚠️ **E il Traguardo 4 non porta il determinismo — quello c'è dal Traguardo 2: porta il guasto.**
+**C1, C2, C3** e la **non-vacuità** sono già test permanenti in
+`crates/kernel/tests/executor_determinism.rs`; mancano **C7a** e **C7b**, il giornale cadente,
+il backend cadente, la campagna e l'elenco dei semi. ⚠️ Un caso è a metà e la distinzione conta:
+`a_crash_leaves_more_than_one_step_in_doubt` tiene la **proprietà** su uno stato costruito **a
+mano**, non su uno spazio di semi.
+⛔ **E i due livelli di crash sono DUE CAMPAGNE con soggetti diversi** — livello 1 esamina la
+riconciliazione del kernel, livello 2 la coerenza dopo crash di `redb` — che è la ragione per cui
+ADR-0032 collocava male il backend cadente. Le nove righe scoperte hanno **ciascuna il proprio
+indirizzo** nella §7 del disegno: un arretrato con un indirizzo è uno scaglionamento.
+⚠️ **Questa riga diceva «il prossimo passo è il brainstorming»**, e prima ancora «il Task 12»:
+è la riga che invecchia per costruzione, e si riscrive **quando il passo si chiude**, non dopo.
 ⛔ **E il Task 11 ha lasciato due voci aperte MISURATE, non supposte, in
 [`porta-di-qualita.md`](porta-di-qualita.md).** (1) **ADR-0018 pretende che un payload potato e
 uno mai registrato non siano indistinguibili, ed entrambe le implementazioni lo violano**: dopo
@@ -729,8 +752,25 @@ assegnato», **non** «non richiede un meccanismo di kernel».
    target verdi»* attribuite alla chiusura del Traguardo 2 — scritte identiche qui e in `HANDOFF.md`
    — non riconciliano con nessun'altra misura del progetto (**25 target** a quella data, **29**
    oggi), e non sono state riscritte perché rifarle richiederebbe uno stato che non esiste più.
-   ⏭️ **Il prossimo è il _brainstorming_ del piano del Traguardo 4**, il simulatore DST — non la
-   sua scrittura.
+   ⏭️ **Il prossimo è il _piano_ del Traguardo 4**, il simulatore DST: ✅ il **brainstorming è
+   chiuso il 2026-08-11** e il disegno è scritto — questa riga diceva *«il brainstorming»* fino a
+   quel giorno, ed è una delle **tre** in cui il prossimo passo vive dentro questa sola sezione.
+8. ~~**Il brainstorming del Traguardo 4**~~ — ✅ **chiuso il 2026-08-11**, e il disegno è scritto:
+   [Traguardo 4 — il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
+   ⛔ **Ha trovato una collocazione non eseguibile in un ADR `Accepted`**, e non riaprendo una
+   decisione ma misurandola: il backend cadente di [ADR-0032](adr/0032-motore-di-persistenza.md)
+   *«vive in `simulator`»*, e `simulator` è `no_std`, si costruisce per `x86_64-unknown-none` e ha
+   un grafo spedito a lista chiusa la cui unica cura per un intruso è **togliere la dipendenza**.
+   `redb` non ha `no_std`. **Rimando datato**, non `Superseded by`: è sbagliata una **cella**, non
+   la decisione — ed è la **seconda** volta per quell'ADR. ⚠️ **La stessa cella viveva anche nella
+   §5 di questo file**, ed è stata corretta nello stesso passaggio: la classe di difetto della
+   sessione precedente, colta stavolta **prima** di committare.
+   ⚠️ **E una lettura affrettata è stata registrata invece che taciuta:** `StorageBackend` ha
+   **sei** metodi, non cinque — `close` ha un'implementazione predefinita — e l'ADR li dichiarava
+   giusti. L'errore andava **a sfavore** dell'oracolo, non a favore: il conteggio dei punti scattati
+   è la non-vacuità della campagna, quindi un metodo in meno sarebbe stato un oracolo più debole
+   senza che nulla lo dicesse.
+9. **Il piano del Traguardo 4** — ⏭️ **è il prossimo**, e si scrive con `superpowers:writing-plans`.
 
 ⛔ **E quattro questioni restano aperte nel sorgente, dichiarate e non risolte.** Nessuna delle
 quattro è un difetto oggi, ed è scritto **perché**; tutte si pagano più avanti, e chi riprende
@@ -790,7 +830,7 @@ nessuno l'abbia chiusa.
 | ⛔ **ADR-0018 è violata da entrambe le implementazioni:** un payload potato e uno mai registrato sono **indistinguibili in tre modi**. La via che non costa un'impronta è stata cercata e la misura la **uccide** — svuotare il payload fa rispondere `SuspendAndAsk` su **ogni** passo potato, a ogni ripresa | voce aperta 1 di [`porta-di-qualita.md`](porta-di-qualita.md), accanto a `prune` in tutte e due, e nel blocco **7b** della conformità | il traguardo della **ritenzione**, **insieme** alla decisione sulla funzione d'impronta — che è una voce nuova nella lista di ADR-0031 |
 | ⚠️ **la terza risposta di `prune` non è tenuta da nessuna promessa:** `Missing` per un passo mai scritto lo tiene **solo** il doppio in memoria, e la mutazione `M10` su `redb` **sopravvive all'intero workspace** | voce aperta 2 dello stesso file | il **primo consumatore** di `prune`, cioè la spazzata di ritenzione |
 | ⛔ **`replay()` carica TUTTO in memoria**, e la copia dei byte è stata misurata a **tre** allocazioni per record, non una | doc di `replay` in `crates/kernel/src/ports/journal.rs`, ed **E25** dell'errata | il primo consumatore che misuri un giornale grande. Il rimedio noto è un **checkpoint**, lo stesso che pagherebbe anche le scansioni di `FileJournal` |
-| ⛔ **la durabilità attraverso la MORTE del processo non è osservabile da dentro il processo:** `Durability::None` lascia **sei test su sei verdi** | accanto al codice in `crates/platform/src/journal.rs`, gotcha **#51** | l'**iniezione di livello 2** del **Traguardo 4**, attraverso il `StorageBackend` che il Task 8 ha reso sostituibile |
+| ⛔ **la durabilità attraverso la MORTE del processo non è osservabile da dentro il processo:** `Durability::None` lascia **sei test su sei verdi** | accanto al codice in `crates/platform/src/journal.rs`, gotcha **#51** | l'**iniezione di livello 2** del **Traguardo 4**, attraverso il `StorageBackend` che il Task 8 ha reso sostituibile. ✅ **E dal 2026-08-11 è scritto COME**, che è la parte che mancava: con `Durability::None` `redb` **non chiama `sync_data`**, quindi un backend che **conta** le chiamate lo dice — una campagna che pretende *«`sync_data` è scattato almeno una volta»* diventa rossa appena la garanzia sparisce. ⛔ Il conteggio dei punti scattati **non è un dato accessorio: è l'oracolo di non-vacuità** della campagna, e va asserito, non stampato — gotcha #54 e #17 |
 | ⚠️ **le guardie di `FileJournal` sono SCANSIONI**, ~56 ns per record, e `has_intent` si paga a ogni scrittura: supera il pavimento dell'`fsync` solo oltre ~26 000 record | doc di `FileJournal`, e le misure in [`riferimenti.md`](riferimenti.md) | nessuno **finché nessuna misura lo chiede**: il rimedio è lo stesso checkpoint, e due meccanismi per una misura sola si comprano quando la misura c'è |
 | ⛔ **le vie A1, A2, A5, A7 del confine dei dati non fidati** restano aperte | `crates/kernel/src/boundary.rs`, voce per voce | ⛔ **nessuno**, e ciascuna lo **dichiara**: non è un arretrato, è il **pavimento** |
 | ⚠️ **l'amplificazione dello spazio di `redb`**, misurata in M-8 su carico **sintetico** | §4.8 della spec | *«da rimisurare sul carico reale prima di congelare i parametri di ADR-0018»* |
@@ -876,7 +916,7 @@ in tre posti, aggiornata in due.
 | **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
 | **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito **per intero, quattordici compiti su quattordici**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale · **il reattore reale e la prima suite di conformità** · il **cablaggio di produzione** in `daemon`, coi default letterali · il **confine dei tipi** `Untrusted`/`Instruction`, con la promozione che pretende la porta `journal` · le porte **`filesystem` e `network`** · la porta **`process`**, coi gettoni e le **due ricevute distinte** · la porta **`ipc`**, che chiude le **sei famiglie** · il **registro dei controlli** e questa chiusura. ⛔ **Zero record del giornale scritti**, ed è deliberato: i byte congelati appartengono al Traguardo 3 |
 | **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ✅ **eseguito il 2026-08-10, dodici compiti su dodici**, `GATE GREEN` a tutti. ⚠️ **Ricontati il 2026-08-10 chiudendo il traguardo:** diceva *«otto compiti»*, ed era la terza delle tre cifre discordi dello stesso file. ⚠️ **Ricontati il 2026-08-10:** diceva *«due compiti»* ed era già indietro di uno al commit precedente, di **tre** a questo — e chiamava il compito *«la conformità coi **tre** bugiardi»* quando i bugiardi consegnati sono **sette**. Il numeratore lo muove chi esegue, e chi esegue guarda la §6. [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**, dodici compiti in due parti: ✅ il record versionato · ✅ la riga di catalogo dell'etichetta · ✅ il **doppio in memoria** · ✅ la **conformità coi sette bugiardi** e ✅ `replay()`, eseguiti come un compito solo · ✅ la **riconciliazione su un insieme**, che ha riportato indietro la firma di `replay()` invece di deciderla · ✅ **`promote` che diventa una nota**, con l'operazione `note()` e la variante `RecordKind::Note` che il compito ha dovuto inventare · ✅ **`redb` in `platform`** col **backend nostro**, la chiave progressiva e la prova che il confine è **sostituibile da fuori** · ✅ la conformità contro **entrambe** a ogni commit · ✅ **i byte congelati**, tre record e una mappa riletta dal banco · ✅ `prune` che rifiuta un passo in dubbio · ✅ la **chiusura**, che è stata un **audit** e non una scrittura. ⛔ **Congelamento per ultimo**, che è la decisione D1 del piano |
-| 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ ⏭️ **è il prossimo**, e si comincia dal **brainstorming** del suo piano — non dalla scrittura |
+| 4 | il simulatore DST — **il guasto**, non il tempo virtuale: quello è del Traguardo 2 | ⬜ ⏭️ **è il prossimo.** ✅ **Brainstorming chiuso e disegno scritto il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md), che fissa il perimetro (il **motore**, non tutte le finte), i **due livelli come due campagne**, l'oracolo di non-vacuità e i **sette** artefatti col controllo che esercita ciascuno. Manca **il piano**. ⚠️ Il titolo diceva *«tempo virtuale, guasti, campagna, semi»* e il tempo virtuale era eseguito da due traguardi |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
 | 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
 
@@ -1021,7 +1061,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I cinquantasei gotcha
+## 9. I cinquantasette gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -1084,6 +1124,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 54 | ⛔ **Una mutazione che deve restare VERDE può esserlo perché non ha fatto niente — e allora il verde non prova la tolleranza, prova che la mutazione non è arrivata da nessuna parte.** Il **#48** pretende che la mutazione **si applichi e compili**; non basta quando il verdetto atteso è il verde. Al Task 10 la regola 3 di §4.9.2 — *un campo nuovo è facoltativo e prende un indice nuovo* — si prova aggiungendo un `Option` su un indice libero e verificando che i byte congelati **non si muovano**: e non si muovono. ⛔ **Ma un campo che non arrivasse mai sul filo darebbe lo stesso identico esito**, e la conclusione *«il formato tollera l'aggiunta additiva, ADR-0036 confermato»* sarebbe **falsa avendo l'aria di essere misurata**. Misurato: con `None` sono **21 byte identici** — `minicbor` **tronca** un `None` in coda invece di scrivere `null`, e l'intestazione dell'array resta `85` — e con `Some(9)` sono **22**, con `86` e il valore in fondo. 📌 **Contro-verso:** prima di concludere che una mutazione è invisibile **dove la si vuole invisibile**, provare che è **osservabile da qualche parte**. È il #24 applicato non al controllo ma **alla mutazione**: anche una mutazione si prova in due direzioni |
 | 55 | ⛔ **Quando più asserzioni condividono UN messaggio, una mutazione mirata a una di esse è colta da un'altra: il rosso c'è e non prova ciò che si voleva provare.** Al Task 11 del Traguardo 3, per mostrare che la promessa **7b** non è vacua, si neutralizza l'asserzione che il bugiardo uccide e si pretende un *«THE SUITE IS VACUOUS»*. **La sonda è rimasta VERDE**: le tre asserzioni del blocco portano lo stesso messaggio — è la regola *un messaggio per promessa* — il bugiardo è caduto sulla **seconda**, e il confronto è per `contains`, che non distingue quale abbia sparato. ⚠️ E il verde si leggeva come una prova quando diceva solo che il blocco ha ancora denti **da qualche parte**. 📌 **La non-vacuità di un blocco a più asserzioni si prova togliendo IL BLOCCO, non un'asserzione.** È il rovescio del **#54** e la specie del **#15** |
 | 56 | ⛔ **Due implementazioni della stessa porta non conoscono le stesse cose: una guardia nuova può costare a una tre righe e all'altra un CAMBIO DI ARCHIVIO — e il piano lo scrive «e l'equivalente nell'altra».** Al Task 11 `MemoryJournal` sa quale operazione ha scritto ogni voce, quindi *«questo passo ha un esito?»* è una riga; `FileJournal` tiene `(passo, byte)` e **non poteva rispondere**: `has_intent` chiede solo *«c'è QUALCHE record»*, contare i record è sbagliato perché una **nota** non è un esito, e decodificare i byte è vietato da **ADR-0036**. L'unica via era scrivere l'operazione nell'archivio, cioè cambiarne il formato. ⚠️ E il difetto era già dichiarato impossibile in un commento — vero della domanda di allora, falso della successiva. 📌 **Prima di scrivere «e l'equivalente nell'altra», chiedersi se l'altra abbia l'INFORMAZIONE per rispondere** |
+| 57 | ⛔ **Una decisione presa PRIMA che esistesse ciò di cui parla è una PREVISIONE, e si cita come se fosse una misura.** [ADR-0032](adr/0032-motore-di-persistenza.md) colloca il backend cadente *«in `simulator`»*, ed è **non eseguibile**: `redb` non ha `no_std`, i sei metodi di `StorageBackend` restituiscono `std::io::Error`, `simulator` si costruisce per `x86_64-unknown-none`, e il suo grafo spedito ha una lista chiusa la cui **unica cura scritta** per un intruso è *«REMOVE the dependency. Adding it to the list is not a remedy»*. ⚠️ **La misura che chiuse quell'ADR era vera** — dodici crash iniettati, dodici riaperture coerenti — ma fu presa in uno **spike**, quando `crates/simulator/` non esisteva e non aveva i propri vincoli: la riga sulla collocazione non era il risultato, era **dove chi misurava immaginava che sarebbe finito**. ⛔ **Il difetto non si vede rileggendo l'ADR**, che è coerente con sé stesso, né eseguendo, perché nessuno ci aveva ancora provato: si vede solo **leggendo la decisione contro le guardie di oggi**. 📌 **La diagnosi vale più dell'errore: i due livelli di crash erano trattati come una cosa sola** mentre hanno **soggetti** diversi — il livello 1 esamina la riconciliazione del kernel, il livello 2 la coerenza di `redb` — quindi collocazioni, costi e cadenze diversi. 📌 **La domanda che lo coglie, e costa una riga:** *quando questa riga fu scritta, esisteva la cosa di cui parla?* È il **#15** spostato dallo strumento alla **collocazione**, e il **#53** — *«una misura anticipata vale come previsione dell'esito, mai come collaudo del codice che verrà scritto»* — applicato al **dove** invece che al **cosa**. ⚠️ E la stessa cella viveva **anche nella §5** di questo file: un ADR compresso eredita l'errore dell'ADR |
 
 ---
 
@@ -1139,10 +1180,11 @@ Apri **un** file, quello che serve. Non la cartella.
 |---|---|---|
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
+| ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 23 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 176 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 181 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
-| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 22 KB |
+| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 23 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
 | **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 96 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
@@ -1150,13 +1192,13 @@ Apri **un** file, quello che serve. Non la cartella.
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 106 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 110 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
-| l'indice di ADR e diagrammi | [`README.md`](README.md) | 13 KB |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è 7,7, il resto è il perché di ogni riga | 16 KB |
+| l'indice di ADR e diagrammi | [`README.md`](README.md) | 14 KB |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è 7,7, il resto è il perché di ogni riga | 17 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -1637,6 +1679,44 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, all'undicesima
 > applicazione.
+
+> 🔁 **Ventesima misura, il 2026-08-11, chiudendo il brainstorming del Traguardo 4 — ed è la
+> prima aperta da un BRAINSTORMING e non da un compito o da un audit.** Nessuna riga di codice
+> scritta, nessun compito eseguito: solo un disegno e i documenti di stato che lo incassano. Ha
+> mosso **sei** righe. Scritta a **passata chiusa**; righe contate **partendo dall'elenco dei file
+> citati** — **venti** bersagli, **ventuno** righe, perché `HANDOFF.md` ne ha due; **nessuna
+> assente**.
+>
+> | | |
+> |---|---|
+> | ⛔ **riga aggiunta** | il **disegno del Traguardo 4**, **23 KB** — il file da cui si riprende, e che si legge **prima** di scriverne il piano |
+> | **cresciuti** | [`HANDOFF.md`](HANDOFF.md) `176 → 181` per il gotcha **#57**, il blocco del prossimo passo e due celle stantie · [`riferimenti.md`](riferimenti.md) `106 → 110` per le **otto** misure del brainstorming · [`roadmap.md`](roadmap.md) `22 → 23` · [`README.md`](README.md) `13 → 14` · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) `16 → 17`, che non si muoveva **da diciassette misure** e cresce oggi per il riconteggio delle proprie case · questo file `190 → 200` |
+> | **invariati, ricontati** | spec del sotto-progetto 1 **277** · kernel-design 44 · tracciabilità 15 · [`porta-di-qualita.md`](porta-di-qualita.md) 96 · `design/08` 8 · `design/01` 4 · `design/` nove file `4–9` · il piano degli spike 68 · il piano del Traguardo 1 50 · il piano del Traguardo 2 162 · il piano del Traguardo 3 168 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` (2441 B e 19291 B) |
+> | ⛔ **una cella corretta DALLA MISURA, e per la seconda volta di seguito** | la riga del disegno del Traguardo 4 era stata scritta **`15 KB`** — un numero plausibile, buttato lì mentre si aggiungeva la riga. Il `wc -c` dice **23**. È esattamente il rilievo della **diciottesima** misura, ripetuto quattro riquadri dopo e da chi l'aveva letto: una cifra scritta prima della misura è un'ipotesi, e **una riga nuova nasce senza peso** finché qualcuno non lo misura |
+>
+> ⛔ **E la notizia di questa passata è di specie nuova: era stantio il conteggio di IN QUANTI
+> POSTI VIVE UNA CIFRA.** La diciassettesima dichiara che l'aggregato *«vive in tre posti»* e la
+> cifra dei due file obbligatori *«in cinque, uno in `CLAUDE.md` e quattro in `AVVIO-CHAT.md`»*.
+> Cercate col `grep` **su tutto il repository** — che è il metodo che la sedicesima prescrive — le
+> case sono **quattro** e **sei**: `AVVIO-CHAT.md` ne ha guadagnata una per ciascuna, e nessuno
+> l'ha registrato perché **si contano le case una volta sola, quando si scrive il rimedio**.
+> 📌 **La forma del #31 che ne esce:** il rimedio della sesta misura — *«si scrive dove qualcuno
+> legge per decidere»* — porta con sé un **elenco delle case**, e quell'elenco è **esso stesso una
+> cifra dentro una frase**. Chi rimisura non si fidi del numero di case scritto nel verbale
+> precedente: lo **rifaccia col `grep`**, che costa un comando.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **667** a **675 KB** (691423 B), corretto in
+> **tutte e quattro** le case. I **due file obbligatori** passano da 200 a **210 KB**, corretti in
+> **tutte e sei**.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla dodicesima
+> applicazione.
+>
+> 📌 **E il rimedio proposto dalla diciassettesima è ora chiesto per la QUARTA volta.** Questa
+> passata non ha eseguito nessun compito e ha comunque mosso **sei** righe su ventuno, più i due
+> aggregati e i loro conteggi di case. Resta **registrata e non presa**: è una riga di catalogo
+> nuova, e quella è una decisione del proprietario.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

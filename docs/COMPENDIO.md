@@ -605,7 +605,8 @@ assegnato», **non** «non richiede un meccanismo di kernel».
 3. ~~**Il codice del Traguardo 1**~~ — ✅ **eseguito** subagent-driven, otto compiti più quattro di riallineamento alla §1.0. `GATE GREEN`.
 4. ~~**Il piano del Traguardo 2**~~ — ✅ **scritto il 2026-08-09**: [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md), quattordici compiti in due parti.
 5. ~~**Il codice del Traguardo 2**~~ — ✅ **eseguito il 2026-08-10**, `GATE GREEN`. **Tutti e quattordici i compiti** subagent-driven, fra il 2026-08-09 e il 2026-08-10, con `GATE GREEN` a ogni compito; alla chiusura `cargo test --workspace` dà **72 target verdi e zero fallimenti**, e dentro il banco `compile_fail` esegue **quattordici** casi via `trybuild`. ✅ **Col Task 12 le sei famiglie di porte sono complete**: `reactor` · `journal` · `filesystem` · `network` · `process` · `ipc`, e §3.1 le dichiara esaustive. ⛔ **E il Task 13 ha scoperto di essere già eseguito**: dettava di *aggiungere* al registro [`porta-di-qualita.md`](porta-di-qualita.md) righe che i Task 1–12 vi avevano già scritto a ogni passo, e a mancare non era l'aggiunta ma il **riconteggio** — gotcha **#49**. ✅ **E la voce che restava aperta è chiusa il 2026-08-09:** il caso `no_conversion_from_untrusted_to_instruction` del Task 9 — misurato **portante** — ha ora la propria riga nel **catalogo §7.4.1 blocco C**, la **regola B** della coppia `Untrusted`/`Instruction` accanto alla regola A (`Q9 · I6 · V20`), con richiamo datato. ⛔ **Non era una rifinitura, ed è il punto da ricordare:** la regola A è **cieca** proprio a quella via — con `impl From<Untrusted> for Instruction` presente il caso resta `ok` invece di dare il `mismatch` che il gotcha #42 prevede, perché lì lo scarto è fra **riferimenti** — quindi senza la riga B la porta resta verde **col confine già caduto**. Il blocco C passa da diciassette a **diciotto** righe, e §7.4.7, §8.3 (`Q9` e `Q15`) e [`porta-di-qualita.md`](porta-di-qualita.md) sono riallineate nello stesso passaggio.
-6. ⏭️ **Il piano del Traguardo 3 — è il prossimo passo, e non è ancora scritto.** Giornale e formato durevole: la **porta a byte**, il record come **enum di versione**, e i **byte congelati**. ⛔ È la voce che fa entrare nel repository il primo oracolo durevole — vincolo 14 della §11 — e **i byte congelati non si rigenerano**: nessun record del giornale è stato scritto finora, ed è deliberato.
+6. ~~**Il piano del Traguardo 3**~~ — ✅ **scritto il 2026-08-10**: [Traguardo 3](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md), **dodici compiti in due parti**. ⛔ **Sette decisioni prese dal piano, e la prima governa tutte le altre:** i **byte congelati sono l'ultimo compito**, non il primo. Il nome del traguardo li mette in vetrina e la tentazione è produrli subito, ma non si rigenerano mai — congelarli prima che un consumatore vero e **due** implementazioni abbiano esercitato il formato significherebbe congelare la forma sbagliata, che è il difetto del Task 11 del Traguardo 2 nella sua forma più cara. ⚠️ **Due voci aperte del codice trovano risposta**: una promozione **non è un passo proprio** (ADR-0007 fissa la granularità), e l'**etichetta di fiducia entra nel record** perché è l'unico campo che, se manca, porta informazione che **si perde per sempre**. ⛔ **E la porta guadagna `replay()`**, perché `read_back` chiede un passo **per nome** e dopo un crash il kernel non sa i nomi: non era una decisione presa, era una **lacuna** — ADR-0007 dice *«per ogni passo in dubbio»* senza dire come si scoprono.
+7. ⏭️ **Il codice del Traguardo 3 — è il prossimo passo.** Si esegue subagent-driven, un compito per volta con revisione fra uno e l'altro.
 
 ⛔ **E quattro questioni restano aperte nel sorgente, dichiarate e non risolte.** Nessuna delle
 quattro è un difetto oggi, ed è scritto **perché**; tutte si pagano più avanti, e chi riprende
@@ -670,15 +671,15 @@ uno assente.
 ### Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano
 
 Scrivere ora un piano per codice che non esiste significa inventare. **I Traguardi 1 e 2 sono
-eseguiti; quelli dal terzo in poi si scrivono quando si arriva — ed è ora.** ⏭️ **Il prossimo
-passo è il piano del Traguardo 3**: giornale e formato durevole — la **porta a byte**, il
-record come **enum di versione**, i **byte congelati**.
+eseguiti; quelli dal terzo in poi si scrivono quando si arriva.** ✅ **Il piano del Traguardo 3
+è scritto il 2026-08-10**, e ⏭️ **il prossimo passo è eseguirlo** — subagent-driven, un compito
+per volta con revisione fra uno e l'altro.
 
 | # | Traguardo | Stato |
 |---|---|---|
 | **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
 | **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito **per intero, quattordici compiti su quattordici**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale · **il reattore reale e la prima suite di conformità** · il **cablaggio di produzione** in `daemon`, coi default letterali · il **confine dei tipi** `Untrusted`/`Instruction`, con la promozione che pretende la porta `journal` · le porte **`filesystem` e `network`** · la porta **`process`**, coi gettoni e le **due ricevute distinte** · la porta **`ipc`**, che chiude le **sei famiglie** · il **registro dei controlli** e questa chiusura. ⛔ **Zero record del giornale scritti**, ed è deliberato: i byte congelati appartengono al Traguardo 3 |
-| **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⏭️ **il prossimo**, e il piano è **da scrivere** |
+| **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⏭️ **il prossimo.** [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**, dodici compiti in due parti: il record versionato · la riga di catalogo dell'etichetta · il **doppio in memoria** · la **conformità coi tre bugiardi** · `replay()` · la **riconciliazione su un insieme** · `promote` che diventa una nota · **`redb` in `platform`** · la conformità contro **entrambe** · **i byte congelati** · `prune` che rifiuta un passo in dubbio · la chiusura. ⛔ **Congelamento per ultimo**, che è la decisione D1 del piano |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
 | 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
@@ -950,6 +951,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
+| ⛔ **il compito da cui si riprende** — è il piano **in corso**, dodici compiti, e il primo è il record durevole | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 92 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 11 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
@@ -1264,6 +1266,23 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo**
 > aver chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > sesta applicazione.
+
+> 🔁 **Quindicesima misura, il 2026-08-10, scrivendo il piano del Traguardo 3 — ed è una passata
+> con una riga nuova, che è il modo di aggiornare una tabella che si dimentica.** Scritta a
+> passata chiusa; righe contate prima dei numeri dentro di esse.
+>
+> | | |
+> |---|---|
+> | ⛔ **riga aggiunta** | il **piano del Traguardo 3**, **92 KB** — è il file da cui si riprende, e la settima misura ha stabilito che una riga assente **non si vede** rileggendo, mentre una cella sbagliata sì |
+> | **invariati, ricontati** | [`HANDOFF.md`](HANDOFF.md) 137 · [`roadmap.md`](roadmap.md) 17 · README 11 · [`riferimenti.md`](riferimenti.md) 54 · [`porta-di-qualita.md`](porta-di-qualita.md) 41 · spec 271 · kernel-design 44 · tracciabilità 15 · `design/08` 8 · `design/01` 4 · il piano degli spike 68 · il piano del Traguardo 1 50 · il piano del Traguardo 2 162 · ADR `2–19` |
+> | **e un conteggio stantio trovato di rimbalzo** | la tabella dei piani di [`roadmap.md`](roadmap.md) diceva *«errata di quarantasei voci in quattro passate»*: con E47–E49 sono **quarantanove in sei**. Non l'ha trovato un controllo — l'ha trovato il fatto che quella riga andava toccata comunque per aggiungerne una accanto |
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* resta **621 KB**: il piano non ne fa parte. I **due file
+> obbligatori** passano da 133 a **136 KB**.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla settima
+> applicazione.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

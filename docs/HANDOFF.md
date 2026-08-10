@@ -49,9 +49,9 @@ porte**. Serve a riprendere senza rifare, e senza rilitigare ciò che è già de
 > Alla chiusura `cargo test --workspace` dà **72 target verdi e zero fallimenti**, e dentro
 > il banco `compile_fail` esegue **quattordici** casi via `trybuild`.
 >
-> ⏭️ **Il prossimo passo è il piano del Traguardo 3** — giornale e formato durevole: la
-> porta a byte, il record come enum di versione, **i byte congelati**. La §6 del compendio
-> ha la tabella compito per compito.
+> ⏭️ **Il prossimo passo è eseguire il piano del Traguardo 3**, scritto il 2026-08-10:
+> giornale e formato durevole — la porta a byte, il record come enum di versione, **i byte
+> congelati**. Dodici compiti in due parti; la §6 del compendio ha la tabella.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -72,8 +72,8 @@ sono **tutte chiuse**. La **§8 è stata riallineata e chiusa** il 2026-08-08. I
 di prodotto**. ✅ **Il Traguardo 2 è eseguito il 2026-08-10**: piano percorso **per intero,
 quattordici compiti su quattordici**, fra il 2026-08-09 e il 2026-08-10, `GATE GREEN` a ogni
 compito. ✅ **Le sei famiglie di porte sono complete** — `reactor` · `journal` · `filesystem`
-· `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive. ⏭️ Il prossimo passo è il
-**piano del Traguardo 3**: giornale e formato durevole.
+· `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive. ⏭️ Il prossimo passo è
+**eseguire il piano del Traguardo 3**, scritto il 2026-08-10: giornale e formato durevole.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -97,10 +97,16 @@ iniezione di guasti. Il **giornale write-ahead** sale col Traguardo 3.
 
 ## Prima cosa da fare
 
-⏭️ **Scrivere il piano del Traguardo 3** — giornale e formato durevole: la porta `journal` a
-byte, il record come **enum di versione**, e **i byte congelati**. Il Traguardo 2 è chiuso, e
-i piani si scrivono **quando si arriva**: quello del 3 non esiste ancora, ed è ora che si
-scrive. La §6 del compendio ha lo stato compito per compito.
+⏭️ **Eseguire il piano del Traguardo 3**, scritto il 2026-08-10 — giornale e formato durevole:
+la porta `journal` a byte, il record come **enum di versione**, e **i byte congelati**. Dodici
+compiti in due parti, subagent-driven con revisione fra uno e l'altro.
+
+⛔ **Prima di aprirlo, la decisione che ne governa l'ordine, perché è controintuitiva.** I
+**byte congelati sono l'ultimo compito, non il primo**: non si rigenerano mai, e congelarli
+prima che un consumatore reale e **due** implementazioni abbiano esercitato il formato
+significherebbe congelare la forma sbagliata. È il difetto del Task 11 del Traguardo 2 — un
+artefatto che compila e non si può implementare — nella sua forma più cara, perché lì bastava
+cambiare una firma e qui costerebbe la migrazione dell'unico archivio irriproducibile.
 
 ⛔ **È la voce che fa entrare nel repository il primo oracolo durevole.** Il vincolo 14 della
 §11 dice che al **primo record scritto** i suoi byte entrano come oracolo, con la mappa

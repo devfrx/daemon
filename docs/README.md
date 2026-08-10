@@ -6,8 +6,8 @@ agenti/coding, voce, generazione asset) su kernel comune.
 **Fase corrente: implementazione del kernel — Traguardi 1 e 2 ✅ eseguiti, il 2026-08-08 e il
 2026-08-10.** Il codice del prodotto vive in [`../crates/`](../crates/) — cinque crate,
 `kernel` e `simulator` in `no_std` — e la porta di qualità gira con un comando solo,
-`bash scripts/gate.sh`. ⏭️ **Il prossimo passo è il piano del Traguardo 3**: giornale e
-formato durevole.
+`bash scripts/gate.sh`. ⏭️ **Il prossimo passo è eseguire il piano del Traguardo 3**, scritto
+il 2026-08-10: giornale e formato durevole.
 
 ⛔ **Non c'è ancora nessuna funzionalità utente, ed è deliberato.** Il Traguardo 1 non
 portava nemmeno logica: solo lo scheletro e i controlli, perché un cancello costruito **dopo**

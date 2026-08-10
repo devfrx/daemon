@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-08-08**.
+Ultimo aggiornamento: **2026-08-10**.
 
 ## Stato in una riga
 
@@ -47,11 +47,12 @@ Ultimo aggiornamento: **2026-08-08**.
 > lo stesso giorno. ✅ **Il piano del Traguardo 1 è scritto ed eseguito**, e la spec non ha
 > voci aperte.
 >
-> 🔵 **Il Traguardo 2 — il substrato iniettabile — è in corso**: piano scritto ed eseguito
-> **fino al Task 12 su quattordici**, fra il 2026-08-09 e il 2026-08-10, `GATE GREEN` a ogni
-> compito. ✅ **Le sei famiglie di porte sono complete** — `reactor` · `journal` ·
-> `filesystem` · `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive. ⏭️ Si
-> riprende dai **Task 13–14**: il registro dei controlli e la chiusura del traguardo.
+> ✅ **Il Traguardo 2 — il substrato iniettabile — è eseguito il 2026-08-10**: piano percorso
+> **per intero, quattordici compiti su quattordici**, fra il 2026-08-09 e il 2026-08-10,
+> `GATE GREEN` a ogni compito. ✅ **Le sei famiglie di porte sono complete** — `reactor` ·
+> `journal` · `filesystem` · `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive.
+> ⏭️ **Il prossimo passo è il piano del Traguardo 3**: giornale e formato durevole — la porta
+> a byte, il record come enum di versione, **i byte congelati**.
 >
 > ✅ **La lacuna su I2 è chiusa**: [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
 > — quota di presentazione sottratta, con la concessione tenuta dal core. Il kernel non
@@ -78,7 +79,7 @@ flowchart LR
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
 | **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
-| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — spec completa (§0–§8, riapertura chiusa, §8 chiusa, audit passato). **Traguardo 1 ✅ eseguito**: scheletro e porta di qualità, `GATE GREEN`. Tocca al **Traguardo 2** | 0, 0b, 0c |
+| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — spec completa (§0–§8, riapertura chiusa, §8 chiusa, audit passato). **Traguardi 1 e 2 ✅ eseguiti**: scheletro e porta di qualità, poi il substrato iniettabile e le sei famiglie di porte, `GATE GREEN`. Tocca al **Traguardo 3** | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2 |
 | 4 | Agenti | L2 | ⬜ | 3 |
@@ -132,7 +133,7 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 |---|---|---|
 | [Spike bloccanti e stack](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | SP-5, SP-6, ADR-0026, ADR-0027, ADR-0028 | ✅ **eseguito** il 2026-08-06 |
 | [Sotto-progetto 1 · Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) | il workspace con le cinque crate e la **porta di qualità**, eseguibile e provata in due direzioni. **Zero logica di prodotto** | ✅ **eseguito** il 2026-08-08, con un'**errata in testa**: il piano dettava identificatori italiani, la §1.0 della spec vince |
-| [Sotto-progetto 1 · Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) | tempo, casualità, I/O, scheduling; l'**esecutore** in `kernel`; le **sei famiglie di porte** come tratti; i **parametri consegnati** | 🔵 **in corso** — eseguito fino al **Task 12 su 14**, fra il 2026-08-09 e il 2026-08-10, con un'**errata di quarantasei voci** in quattro passate. ⛔ Il difetto del piano è quasi sempre più grave di quello del codice, e cambia forma: prima la **sonda sbagliata** (una fuga della cella `Sleep` dipendente dal seme), poi la **sonda assente** (nessun controllo sul cablaggio di produzione né sulle porte), infine l'**artefatto sbagliato** — al Task 11 il piano dettava una porta che compilava, passava la porta di qualità e **non si poteva implementare** |
+| [Sotto-progetto 1 · Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) | tempo, casualità, I/O, scheduling; l'**esecutore** in `kernel`; le **sei famiglie di porte** come tratti; i **parametri consegnati** | ✅ **eseguito** il 2026-08-10, `GATE GREEN` — **quattordici compiti su quattordici**, fra il 2026-08-09 e il 2026-08-10, con un'**errata di quarantasei voci** in quattro passate. ⛔ Il difetto del piano è quasi sempre più grave di quello del codice, e cambia forma: prima la **sonda sbagliata** (una fuga della cella `Sleep` dipendente dal seme), poi la **sonda assente** (nessun controllo sul cablaggio di produzione né sulle porte), poi l'**artefatto sbagliato** — al Task 11 il piano dettava una porta che compilava, passava la porta di qualità e **non si poteva implementare** — e infine il **compito stantio**: il Task 13 dettava di aggiungere al registro dei controlli righe che i dodici compiti prima avevano già scritto, gotcha **#49** |
 
 ⛔ **Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano.** Scriverne
 uno per codice che non esiste ancora significa inventare. I sei traguardi sono elencati nel
@@ -142,8 +143,8 @@ scritto il 2026-08-09, quelli dal terzo in poi ancora no**.
 | # | Traguardo | Deliverable |
 |---|---|---|
 | **1** | scheletro e porta di qualità | ✅ **eseguito**: cinque crate, sei controlli in un comando, `GATE GREEN` |
-| **2** | il substrato iniettabile | 🔵 **in corso**: ✅ i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · l'**esecutore** · l'orologio virtuale · il reattore reale e la prima **suite di conformità** · il cablaggio di produzione in `daemon` · il **confine dei tipi** `Untrusted`/`Instruction` · e le **sei famiglie di porte al completo**. ⏭️ Riprende dai **Task 13–14**: il registro dei controlli e la chiusura |
-| 3 | giornale e formato durevole | la porta `journal` a byte, il record come enum di versione, **i byte congelati** |
+| **2** | il substrato iniettabile | ✅ **eseguito** il 2026-08-10, `GATE GREEN`: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · l'**esecutore** · l'orologio virtuale · il reattore reale e la prima **suite di conformità** · il cablaggio di produzione in `daemon` · il **confine dei tipi** `Untrusted`/`Instruction` · le **sei famiglie di porte al completo** · il registro dei controlli e la chiusura |
+| **3** | giornale e formato durevole | ⏭️ **il prossimo**, e il piano è **da scrivere**: la porta `journal` a byte, il record come enum di versione, **i byte congelati** |
 | 4 | il simulatore DST | tempo virtuale, iniezione dei guasti, la campagna, i semi |
 | 5 | arbitro GPU | ammissione, corsie, ciclo della concessione, le due policy |
 | 6 | gli altri meccanismi | gateway, sensori, permessi, degrado, il canale worker |
@@ -156,9 +157,15 @@ chiamare l'orologio.
 
 Il prototipo [`spikes/rust/`](../spikes/rust/) resta il punto di partenza del simulatore:
 contiene già il confine dei tipi, l'esecutore deterministico, l'esecutore su `Future`
-native e il giornale write-ahead iniettabile, tutti con i loro test. ⚠️ **Nel Traguardo 1
-non è ancora salito niente**: sale col substrato, e la §2.5 della spec dice riga per riga
-cosa entra in `crates/kernel/` e cosa resta dov'è.
+native e il giornale write-ahead iniettabile, tutti con i loro test. ⚠️ **Nel Traguardo 1 non
+era salito niente; col Traguardo 2 è salito tutto ciò che la §2.5 assegnava a questo
+traguardo** — il confine dei tipi a `crates/kernel/src/boundary.rs`, la porta `Rng` con la
+sua implementazione seminata in `simulator`, l'esecutore a `crates/kernel/src/executor.rs`,
+la porta `journal`, e i casi di `compile_fail`. Restano negli spike le due righe che la §2.5
+dichiara **non** debbano salire, `esegui_thread` e il `World` giocattolo; e il **doppio
+cadente** del giornale non è un'omissione, perché la §2.5 lo assegna al **Traguardo 4**:
+cadere a una scrittura scelta dal seme **è** iniezione di guasti. Il **giornale
+write-ahead** sale col Traguardo 3.
 
 ⛔ **Tutto il codice è in inglese** — §1.0 della spec: crate, moduli, tipi, funzioni,
 messaggi d'uscita, commenti nel sorgente. La documentazione resta in italiano. La regola

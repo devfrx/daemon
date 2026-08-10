@@ -9,16 +9,21 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 124 KB** (`wc -c`, il 2026-08-10), cioè **circa
-venticinquemila token** con lo stesso rapporto che fu usato per prezzarli la prima volta —
-⚠️ e **quel rapporto non è mai stato rimisurato**, il che lo rende il prossimo #31 in arrivo.
-**Non sono più «circa seimila token»**: quella cifra era vera quando pesavano 24 KB, e
-nessuno l'ha più rifatta — gotcha **#31**, ormai alla **quarta occorrenza, e stavolta
-proprio su questa riga**: diceva 88 KB, ed erano già 91 prima che qualcuno la toccasse.
-Restano comunque la lettura più economica che esista qui: l'alternativa è mezzo megabyte.
+⚠️ **Insieme questi due file pesano 133 KB** (`wc -c`, il 2026-08-10). ⛔ **E il prezzo in
+token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
+usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
+del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
+**per difetto**. Il dato certo: leggendo il compendio, **quattrocento righe sole hanno pesato
+`25148` token** — da sole quanto questa riga attribuiva ai due file **interi** — e il
+compendio ne ha milleduecentosessantaquattro. ⚠️ **La cifra esatta non è scritta apposta:**
+servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un'ipotesi
+travestita da misura. Il metodo e il limite stanno nella §12 del compendio, quattordicesima
+misura. 📌 È la **quinta** occorrenza del gotcha **#31** su questa riga, che prima diceva
+«circa seimila token» quando i due file pesavano 24 KB, e prima ancora «88 KB» quando erano
+già 91. Restano comunque la lettura più economica che esista qui: l'alternativa è **621 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — 615 KB con `wc -c`
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — 621 KB con `wc -c`
 il 2026-08-10, e possono solo crescere; la spec da sola ne fa 271 — e l'idea è
 già nel compendio. Quando ti servirà il **perché** di una decisione — le alternative
 scartate, le misure, i costi accettati — apri **quel** file, uno solo. La §12 del

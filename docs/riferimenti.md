@@ -525,6 +525,31 @@ invece di un esito. L'ha colta **solo** la guardia sul conteggio: le ancore sono
 nomi del codice**, quindi la campagna si rilancia dopo ogni **rifinitura**, non solo dopo ogni
 cambiamento di comportamento.
 
+## Esecuzione del Traguardo 2 — i Task 13–14: i comandi con cui si riconta il catalogo
+
+Eseguiti il **2026-08-10**, chiudendo il traguardo. ⛔ **Non sono misure di codice: sono i
+comandi che rispondono a «questo conteggio è ancora vero?»**, e stanno qui perché il gotcha
+**#31** dice che un numero a sostegno di una regola giusta non viene mai rimisurato — e chi
+volesse rimisurarlo, finora, doveva prima reinventare come.
+
+| Domanda | Comando | Esito il 2026-08-10 |
+|---|---|---|
+| quante righe ha il **blocco C** del catalogo §7.4.1 | `awk 'NR>=2628 && NR<=2648 && /^\|/ && !/^\|-/ && !/^\| Difende/' <spec> \| wc -l` | **diciotto** |
+| quante ne dichiara implementate il registro | `awk 'NR>=41 && NR<=54 && /^\|/ && /blocco C/' docs/porta-di-qualita.md \| wc -l` | **sette** |
+| quanti casi di compilazione fallita esistono | `ls crates/kernel/tests/compile_fail/*.rs \| wc -l` | **quattordici** — quattro dal Traguardo 1, dieci dal 2 |
+| quante famiglie di porte | `grep -c '^pub mod' crates/kernel/src/ports/mod.rs` | **sei** |
+
+⚠️ **I due `awk` dipendono da numeri di riga, quindi invecchiano**: sono un punto di partenza,
+non un controllo. Chi li rilancia verifica prima che l'intervallo peschi ancora la tabella
+giusta — un intervallo che non pesca nulla darebbe **zero** senza sollevare niente, che è il
+gotcha **#26** applicato a uno strumento usa-e-getta.
+
+📌 **Il conteggio che conta davvero non è nessuno di questi quattro, ed è il quinto:**
+**trentanove** righe di catalogo — tre del blocco A, cinque del B, diciotto del C, tredici di
+§7.4.2 — verificate **una per una** contro il registro, e **nessuna assente**. È l'unico che
+non ha un comando: una riga che manca in un registro non la trova un `grep`, perché non si sa
+cosa cercare. La si trova solo enumerando la fonte e cercando ciascuna voce nella destinazione.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

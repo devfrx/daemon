@@ -42,12 +42,12 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              uno e l'altro. È la modalità scelta
   /superpowers:test-driven-development       quando si scrive codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 124 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 133 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i quarantotto gotcha (§9), le trappole di
+     cosa NON rifare (§8), i quarantanove gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
 
 ⛔ CODICE IN INGLESE, DOCUMENTAZIONE IN ITALIANO — §1.0 della spec.
@@ -79,8 +79,8 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
   · Non sono operativo in Rust. Quando l'argomento esce dal mio dominio,
     spiegamelo PRIMA a parole semplici e POI schematizza.
   · Un piano scritto qui è un'IPOTESI, non un'istruzione, e nel Traguardo 2
-    il difetto sta nel piano molto più spesso che nel codice. Tre forme, in
-    ordine di quanto sono difficili da vedere:
+    il difetto è stato nel piano molto più spesso che nel codice. Quattro
+    forme, in ordine di quanto sono difficili da vedere:
       1. la SONDA È SBAGLIATA — vacua, o attacca il caso invece del
          meccanismo, o guarda una direzione sola. Si coglie rileggendo.
       2. la SONDA MANCA, e non si vede leggendo perché non c'è niente da
@@ -91,6 +91,13 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
          qualità, e si vede solo scrivendone un'implementazione DA FUORI
          DALLA CRATE. Una porta dichiarata in anticipo va provata dal lato
          di chi la implementerà, non da quello di chi la dichiara.
+      4. il COMPITO È GIÀ ESEGUITO, e il piano non lo sa — gotcha #49. Ai
+         Task 13-14 il piano dettava di AGGIUNGERE a un registro righe che
+         c'erano già, perché la disciplina impone di aggiornarlo a ogni
+         passo: un compito di consolidamento in coda nasce vuoto. Non si
+         vede né rileggendo il piano né leggendo il codice, perché tutti e
+         due sono corretti. Si vede SOLO chiedendosi, prima di eseguire:
+         ciò che questo compito detta di produrre esiste già?
     Prova in negativo PRIMA di crederci, e dove diverge registra la
     divergenza invece di allinearti all'attesa.
   · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48. Prova
@@ -123,15 +130,15 @@ proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ~4 KB |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **124 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 124 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **133 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 133 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi due volte.** Dicevano
 *«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di oggi, e nessuno
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **124 KB contro mezzo megabyte**.
+resta quello che conta: **133 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **271 KB**. Non è che chiedesse
@@ -139,8 +146,11 @@ troppo: chiedeva la cosa giusta nel posto sbagliato. Le decisioni servono **tutt
 compresse, non integrali.
 
 ⚠️ **La voce sul piano è nata il 2026-08-09**, eseguendo i Task 1–6 del Traguardo 2. Non è una
-massima: era il ritratto di sei difetti su sei, e vive qui perché il prossimo agente riprende
-**dentro** quel piano, dove la lezione serve al primo compito e non al decimo.
+massima: era il ritratto di sei difetti su sei. ⚠️ **E dal 2026-08-10 il suo destinatario è
+cambiato**, il che vale la pena dirlo invece di lasciarlo dedurre: quel piano è **eseguito per
+intero**, quindi la lezione non serve più a chi riprende **dentro** un piano, ma a chi ne
+**scrive** uno nuovo — quello del Traguardo 3. Le quattro specie sono, in quest'ordine, ciò che
+un piano nuovo deve evitare di far ripetere.
 
 > 🔁 **Riscritta lo stesso giorno, chiudendo il Task 11 — e il ritratto era diventato stretto.**
 > Diceva *«le sue sonde sono la parte che sbaglia»*, ed elencava sei difetti che erano **tutti**
@@ -152,6 +162,18 @@ massima: era il ritratto di sei difetti su sei, e vive qui perché il prossimo a
 > quella giusta. 📌 **E una sesta voce è nata dallo stesso compito**, sul banco di misura: il
 > gotcha **#48** è costato quattro falsi risultati **credibili** in una sessione sola, e uno è
 > ricapitato a chi stava verificando la riga che lo descrive.
+
+> 🔁 **Riscritta il 2026-08-10, chiudendo il traguardo — e il ritratto era stretto una seconda
+> volta, nello stesso modo.** Diceva *«tre specie»*, e i Task 13–14 ne hanno prodotta una
+> **quarta**: il **compito già eseguito**. ⛔ È la più difficile delle quattro, e per una ragione
+> che le altre tre non hanno: quelle si trovano guardando **il piano** o **il codice**, e questa
+> non sta in nessuno dei due — il piano è coerente con sé stesso, il codice è corretto, e a
+> essere sbagliato è il **rapporto fra il piano e il repository**. 📌 La domanda che la coglie
+> non assomiglia alle altre tre: non *«questa sonda scatta?»* né *«quale controllo esercita
+> questo artefatto?»*, ma **«ciò che questo compito detta di produrre esiste già?»**. ⚠️ E che il
+> ritratto si sia ristretto **due volte di seguito** è esso stesso il dato: ogni volta elencava
+> esattamente le specie viste fino a quel giorno, il che è il gotcha **#29** — la formulazione
+> più corta viene letta al posto di quella giusta, e qui la più corta era anche l'ultima vera.
 
 ⚠️ **Cosa aggiornare qui, e quando.** Il ramo se cambia; il peso dei due file
 obbligatori quando uno dei due cresce; il numero dei gotcha quando §9 ne guadagna uno; i

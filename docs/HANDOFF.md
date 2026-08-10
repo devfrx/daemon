@@ -1,8 +1,8 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-09**, alla **chiusura del Traguardo 1** del sotto-progetto 1 — lo
-scheletro delle cinque crate e la porta di qualità, eseguibile in un comando solo e provata
-in due direzioni. Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
+Aggiornato il **2026-08-10**, alla **chiusura del Traguardo 2** del sotto-progetto 1 — il
+substrato iniettabile: tempo, casualità, I/O, scheduling, l'esecutore e le **sei famiglie di
+porte**. Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 
 > 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — la spec del
 > sotto-progetto 1 è **completa e senza voci aperte**, e il **Traguardo 1 è eseguito**.
@@ -38,16 +38,20 @@ in due direzioni. Serve a riprendere senza rifare, e senza rilitigare ciò che �
 > ✅ **Nessuna voce aperta resta nella spec.** L'unica decisione ancora `Proposed` del
 > progetto è **ADR-0029**, il guscio della GUI, che non tocca il sotto-progetto 1.
 >
-> 🔵 **Il Traguardo 2 è in corso.** Il suo
+> ✅ **Il Traguardo 2 è eseguito, il 2026-08-10.** Il suo
 > [piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md)
-> è scritto (quattordici compiti in due parti) ed **eseguito fino al Task 6**,
-> subagent-driven, con `GATE GREEN` a ogni compito. Il kernel ha ora i **due tempi**, la
-> porta **`Rng`**, i **parametri consegnati**, la porta **`Reactor`**, **l'esecutore**, e
-> `simulator` ha l'**orologio virtuale**.
+> è scritto (quattordici compiti in due parti) ed **eseguito per intero**, subagent-driven,
+> con `GATE GREEN` a ogni compito. Il kernel ha ora i **due tempi**, la porta **`Rng`**, i
+> **parametri consegnati**, la porta **`Reactor`**, **l'esecutore**, il **confine dei tipi**
+> `Untrusted`/`Instruction` e le **sei famiglie di porte** — `reactor` · `journal` ·
+> `filesystem` · `network` · `process` · `ipc`; `simulator` ha l'**orologio virtuale**,
+> `platform` il **reattore reale**, e una **suite di conformità** li giudica insieme.
+> Alla chiusura `cargo test --workspace` dà **72 target verdi e zero fallimenti**, e dentro
+> il banco `compile_fail` esegue **quattordici** casi via `trybuild`.
 >
-> ⏭️ **Si riprende dal Task 7** — il reattore reale in `platform`, e la prima suite di
-> conformità fra porta finta e porta vera. La §6 del compendio ha la tabella compito per
-> compito.
+> ⏭️ **Il prossimo passo è il piano del Traguardo 3** — giornale e formato durevole: la
+> porta a byte, il record come enum di versione, **i byte congelati**. La §6 del compendio
+> ha la tabella compito per compito.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -65,11 +69,11 @@ worker ML in **Python**; Tauri contro Electron è ancora aperto
 trovate rileggendo `tracciabilita.md` con una domanda che nessuno le aveva posto, e le sette
 sono **tutte chiuse**. La **§8 è stata riallineata e chiusa** il 2026-08-08. Il **Traguardo 1
 è eseguito** lo stesso giorno: workspace, cinque crate, porta di qualità verde, **zero logica
-di prodotto**. Il **Traguardo 2 è in corso**: piano scritto ed eseguito **fino al Task 12 su
-quattordici**, fra il 2026-08-09 e il 2026-08-10, `GATE GREEN` a ogni compito. ✅ **Le sei
-famiglie di porte sono complete** — `reactor` · `journal` · `filesystem` · `network` ·
-`process` · `ipc` — e la §3.1 le dichiara esaustive. Si riprende dai **Task 13–14**: il
-registro dei controlli e la chiusura del traguardo.
+di prodotto**. ✅ **Il Traguardo 2 è eseguito il 2026-08-10**: piano percorso **per intero,
+quattordici compiti su quattordici**, fra il 2026-08-09 e il 2026-08-10, `GATE GREEN` a ogni
+compito. ✅ **Le sei famiglie di porte sono complete** — `reactor` · `journal` · `filesystem`
+· `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive. ⏭️ Il prossimo passo è il
+**piano del Traguardo 3**: giornale e formato durevole.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -82,34 +86,43 @@ una sola GPU.
 scrive **qui**, e vive in [`../crates/`](../crates/): cinque crate, con `kernel` e
 `simulator` in `no_std`. Gli spike in [`../spikes/rust/`](../spikes/rust/) restano
 **prove**, **fuori dal workspace** — e la §2.5 della spec dice riga per riga quali pezzi
-saliranno a `crates/kernel/` e quali restano dove sono. Nel Traguardo 1 **non è ancora
-salito niente**: sale col substrato.
+saliranno a `crates/kernel/` e quali restano dove sono. Nel Traguardo 1 **non era salito
+niente**; col Traguardo 2 è salito **tutto ciò che la §2.5 assegnava a questo traguardo** — il
+confine dei tipi a `crates/kernel/src/boundary.rs`, la porta `Rng` con la sua implementazione
+seminata in `simulator`, l'esecutore a `crates/kernel/src/executor.rs`, la porta `journal`, e i
+casi di `compile_fail`. ⚠️ **Ciò che resta negli spike non è un residuo:** `esegui_thread` e il
+`World` giocattolo la §2.5 dichiara che **non** debbano salire, e il **doppio cadente** del
+giornale è assegnato al **Traguardo 4** perché cadere a una scrittura scelta dal seme **è**
+iniezione di guasti. Il **giornale write-ahead** sale col Traguardo 3.
 
 ## Prima cosa da fare
 
-⏭️ **Riprendere il piano del Traguardo 2 dai Task 13–14**:
-[`2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md),
-sezione `## Task 13: Il registro dei controlli — cosa è coperto ora, e cosa no`. I Task 1–12
-sono eseguiti; la §6 del compendio ha la tabella compito per compito.
+⏭️ **Scrivere il piano del Traguardo 3** — giornale e formato durevole: la porta `journal` a
+byte, il record come **enum di versione**, e **i byte congelati**. Il Traguardo 2 è chiuso, e
+i piani si scrivono **quando si arriva**: quello del 3 non esiste ancora, ed è ora che si
+scrive. La §6 del compendio ha lo stato compito per compito.
 
-⚠️ **Sono i due compiti di consuntivo: niente codice nuovo, ma è dove il traguardo dichiara
-cosa ha davvero comprato.** Il Task 13 aggiorna il registro dei controlli, il 14 chiude.
+⛔ **È la voce che fa entrare nel repository il primo oracolo durevole.** Il vincolo 14 della
+§11 dice che al **primo record scritto** i suoi byte entrano come oracolo, con la mappa
+`indice → nome → valore atteso` — e ⛔ **i byte congelati non si rigenerano**. Il piano deve
+dire **quando** si scrivono e **cosa** l'oracolo contiene, non arrivarci per caso.
 
-> ⛔ **Prima di aprire il piano, leggerne le errata in testa.** Sono **quattro passate,
-> quarantasei voci**, e non sono rifiniture. Il piano **non si riscrive** — è il registro di
-> ciò che fu deciso — ma dove detta una cosa e il repository ne contiene un'altra, **vince il
-> repository**, e l'errata lo dice.
+> ⛔ **Prima di scrivere il piano nuovo, leggere le errata del piano del Traguardo 2.** Sono
+> **quattro passate, quarantasei voci**, e non sono rifiniture. Un piano **non si riscrive**
+> — è il registro di ciò che fu deciso — ma dove detta una cosa e il repository ne contiene
+> un'altra, **vince il repository**, e l'errata lo dice.
 >
 > ⛔ **E la lezione che le attraversa cambia forma passata dopo passata, il che è la cosa
-> utile.** Tre specie di difetto, in ordine di quanto sono difficili da vedere:
+> utile.** Quattro specie di difetto, in ordine di quanto sono difficili da vedere:
 >
 > | | Specie | Come si trova |
 > |---|---|---|
 > | 1 | la **sonda è sbagliata** — vacua, attacca il caso invece del meccanismo, guarda una direzione sola | **rileggendo** il piano |
 > | 2 | la **sonda manca**, e non si vede leggendo perché non c'è niente da leggere | l'unica domanda che la trova: *per ogni artefatto che il compito produce, quale controllo lo esercita?* |
 > | 3 | ⛔ l'**artefatto è sbagliato, e compila** | al Task 11 il piano dettava una porta che passava la porta di qualità e **non si poteva implementare**: si vede **solo** scrivendone un'implementazione **da fuori dalla crate** |
+> | 4 | ⛔ il **compito è stantio** — ciò che detta di produrre **esiste già** | non si vede in nessuno dei tre modi sopra: il piano è coerente con sé stesso e il codice è corretto. Si vede **solo** confrontando il compito col repository, **prima** di eseguirlo — gotcha **#49** |
 >
-> Le sonde di quel piano si trattano come **ipotesi**, non come istruzioni, e si provano in
+> Le sonde di un piano si trattano come **ipotesi**, non come istruzioni, e si provano in
 > negativo prima di crederci.
 
 > ⚠️ **I due buchi che il Task 6 aveva lasciato sono chiusi**, e uno dei due **non** era
@@ -143,11 +156,12 @@ cosa ha davvero comprato.** Il Task 13 aggiorna il registro dei controlli, il 14
 > identificatori **italiani**, e la §1.0 della spec vince; **E4** — la Definizione di
 > «fatto» dava per verificata una condizione che i test non verificavano (gotcha #39).
 >
-> ⛔ **Cosa NON si fa ancora, e non è una dimenticanza:** non si scrive **nessun record del
-> giornale**. Il vincolo 14 della §11 fa entrare i **byte congelati** nel repository *al
-> primo record scritto*, e quel record appartiene al **Traguardo 3**. Scriverne uno ora
-> congelerebbe un formato che la §4.9 non ha ancora messo alla prova, e ⛔ **i byte
-> congelati non si rigenerano**.
+> ⛔ **Cosa il Traguardo 2 NON ha fatto, e non è una dimenticanza:** non ha scritto **nessun
+> record del giornale**. Il vincolo 14 della §11 fa entrare i **byte congelati** nel
+> repository *al primo record scritto*, e quel record appartiene al **Traguardo 3** — cioè
+> proprio al piano che si sta per scrivere. Fino a qui scriverne uno avrebbe congelato un
+> formato che la §4.9 non aveva ancora messo alla prova, e ⛔ **i byte congelati non si
+> rigenerano**.
 >
 > **Nessuna misura blocca**: l'unica aperta è **M5**, e richiede una GUI.
 
@@ -609,8 +623,8 @@ quando si arriva, perché scriverne uno per codice che non esiste significa inve
 | # | Traguardo | Stato |
 |---|---|---|
 | **1** | scheletro e porta di qualità — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
-| **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | 🔵 **in corso**. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) eseguito fino al **Task 6 su 14**, `GATE GREEN` a ogni compito. ⏭️ **Riprende dal Task 7** |
-| 3 | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⬜ |
+| **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) percorso **per intero, quattordici compiti su quattordici**, con `GATE GREEN` a ogni compito |
+| **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⏭️ **il prossimo**, e il piano è **da scrivere** |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
 | 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
@@ -623,6 +637,16 @@ quando si arriva, perché scriverne uno per codice che non esiste significa inve
 | **due seconde occorrenze** | **#26** — il glob vuoto di `trybuild` esce verde, il percorso letterale no · **#25** — gli oracoli sono accoppiati al **grafo linkato**, e due diventano rossi insieme per un motivo estraneo alla regola |
 | **tre controlli nati dopo il piano** | `scripts/gate-attributes.sh` (da #39) · la classe di caratteri allargata di `gate-deps.sh` (da #41) · e, il **2026-08-09**, la riga sul **build script** dentro `gate-attributes.sh`, trovata da una revisione **misurando**, non leggendo. Nessuno dei tre era previsto |
 | ⛔ **un'errata in testa al piano** | quattro voci, e la prima è la §1.0: il piano dettava identificatori **italiani**, e il codice è in **inglese** perché lo impone la spec |
+
+**Cosa il Traguardo 2 ha lasciato dietro di sé**, oltre al codice — stessa forma, e i numeri
+dicono quanto il secondo traguardo sia costato più del primo:
+
+| | |
+|---|---|
+| **sei gotcha nuovi** | **#44** una suite di conformità prova solo ciò che **tutte** le implementazioni promettono · **#45** il rimedio a una copertura mancante nasce **non provato** · **#46** su una porta mai implementata YAGNI cancella ciò che serve a implementarla · **#47** gli errori di `rustc` si mascherano fra passate · **#48** un banco di misura sbaglia **verso l'attesa** · **#49** un compito di consolidamento in coda è già eseguito |
+| **quattro occorrenze successive** | **#45** e **#46** una seconda ciascuna, entrambe al Task 11 · **#36** una terza, ed è la prima colta **prima** che il catalogo si sedimentasse · **#48** salito a **nove** esiti credibili e falsi col Task 12, con tre forme nuove |
+| **cinque controlli nati dopo il piano** | `crates/kernel/tests/ports_are_implementable.rs`, il rimedio a #46 (E31) · `run_the_production_graph()` estratta in `daemon`, perché la porta non lancia **mai** `cargo run` (E19) · `crates/simulator/tests/virtual_clock.rs`, un file che il piano non prevedeva (E14) · il secondo bugiardo `PastDeadlineLiar` (E15) · i cinque test di `SequentialRng`, che nasceva senza nessuno (E17). **Nessuno dei cinque era previsto** |
+| ⛔ **un'errata in testa al piano** | **quarantanove voci in sei passate**, contro le quattro del Traguardo 1. ⚠️ **E la proporzione è il dato:** nei Task 1–2 e 7 il difetto stava nella **sonda**, negli 8–11 nella **sonda assente**, nell'11 nell'**artefatto** che compilava e non era implementabile, nei 13–14 nel **compito già eseguito**. Quattro specie, e ciascuna si coglie in un modo che non coglie le altre |
 
 ### Le decisioni aperte dalla §0.5 — tre previste, quattro emerse
 
@@ -839,6 +863,7 @@ Trappole reali, alcune trovate correggendo errori già commessi in questo proget
 | 46 | ⛔ **Su una porta mai implementata, YAGNI cancella ciò che serve a implementarla — e l'unico modo di accorgersene è un'implementazione finta** | Questo repository cancella gli elementi di API senza chiamanti, e la regola ha già tolto `Millis::ZERO`, `Monotonic::as_millis`, un bound `?Sized`, l'enum `Wakeup` intero e — un'ora prima di questo caso — `StepId::get()`. ⛔ **Applicata al Task 10 avrebbe cancellato `Path::as_bytes()` ed `Endpoint::as_bytes()`**, che al momento della potatura non avevano **nessun** chiamante. **Misurato: le due porte sarebbero rimaste non implementabili fuori da `kernel`.** La privacy del campo di una tuple-struct è **di modulo**, quindi `platform` non può leggere `Path.0`: senza l'accessore un'implementazione della porta **non può passare il percorso al sistema operativo**, e nulla nel kernel diventa rosso, perché nel kernel quell'implementazione non esiste. ⚠️ **Il difetto non è YAGNI**, che è la regola giusta e ha pagato cinque volte: è che su un tratto **dichiarato in anticipo** l'insieme dei chiamanti è vuoto **per costruzione**, quindi il criterio non distingue ciò che è morto da ciò che è **la sola porta d'ingresso di chi verrà**. ⛔ **Il rimedio è un'implementazione finta minima in un test** — `crates/kernel/tests/ports_are_implementable.rs` — che dà un chiamante a ciò che serve davvero e lascia scoperto **solo ciò che è davvero morto**: nella stessa passata ha confermato la cancellazione di `CheckpointId::get()`, di `Hash` e di `PartialOrd`/`Ord`, misurate una per una togliendole e ricompilando. 📌 **E compra un secondo risultato che non era lo scopo:** prova che le firme sono **implementabili**, cosa che un tratto senza implementazioni non dimostra — ha colto che `Clone` su `Path` è portante per `declare_scope`, che consegna `&[Path]` in prestito mentre l'implementazione deve **trattenere** gli ambiti. È lo stesso rischio che in questo traguardo aveva già prodotto una variante inusabile (`Wakeup::EventReady`), scoperta solo perché qualcuno provò a costruirla. 📌 **Seconda occorrenza, 2026-08-09, sulla porta `process`, e in una forma peggiore di questa.** Non «non riesco a **leggere** un campo» ma **«non riesco a produrre il valore di ritorno»**: `SingleReceipt` e `StreamReceipt`, come il piano li dettava, avevano il solo campo `pub(crate)` e **nessun costruttore**, mentre `instruct_one` deve **restituire** un `SingleReceipt` e chi implementa `Worker` è `platform`. Misurato scrivendo la finta prima del rimedio: `error[E0599]`, più quattro errori sulla lettura dell'id. ⛔ **E la forma peggiore ha una diagnosi propria:** un accessore mancante lo si può ancora scoprire leggendo il tipo e chiedendosi chi lo userà; un **costruttore** mancante no, perché da dentro la crate il tipo si costruisce benissimo — il campo `pub(crate)` è visibile lì. Il difetto **esiste solo dal lato di fuori**, e l'unico strumento che sta di fuori è la finta. Una porta dichiarata in anticipo va provata **dal lato di chi la implementerà**, non da quello di chi la dichiara |
 | 47 | ⛔ **Gli errori di rustc si mascherano fra passate: l'elenco che leggi è quello della PRIMA passata che ha fallito, non tutti** | Misurato il 2026-08-09 chiudendo il Task 11. Col costruttore delle ricevute assente, rustc dava `error[E0599]: no function or associated item named 'new'`. Provata anche la forma pura — il letterale `SingleReceipt { id: 7 }` scritto **da fuori dalla crate** — rustc **non dava nessun errore**, e la lettura ovvia era che un campo `pub(crate)` fosse scrivibile da fuori, cioè che la difesa di `Grant` **non tenesse**. ⛔ **Non è così, ed è peggio.** Quel letterale è un **`E0451`**, che lo emette la passata di **privacy**; la privacy **non gira mai** se la compilazione si ferma prima, agli errori di *type-check*. Sanati quelli, `E0451` **compare**. ⚠️ La trappola non è che rustc nasconda qualcosa: è che *«ho corretto e adesso compila»* e *«ho corretto e adesso emerge il secondo errore»* sono **indistinguibili prima di correggere**, e chi conclude dal primo elenco conclude su un campione. 📌 Il rimedio costa una riga di metodo: quando si prova che qualcosa **non** è possibile, si sana ogni errore diverso da quello che si sta cercando **prima** di dichiarare l'assenza. Vale per ogni test negativo scritto a mano, e per ogni «ho verificato che non compila» |
 | 48 | ⛔ **Un banco di misura sbaglia VERSO L'ATTESA, ed è peggio di uno che si pianta: si smette di guardarlo quando conferma** | Tre inciampi reali nella stessa sessione, il 2026-08-09, tutti nel **banco** e nessuno nel codice misurato. **(1)** Due `sed` non agganciavano la riga: la mutazione **non si applicava**, i test restavano verdi, e quel verde somigliava esattamente alla **vacuità che si stava cacciando**. **(2)** Il rilevatore di errori cercava `^error` e pescava l'`error: test failed, to rerun pass...` che `cargo` stampa **quando un test fallisce**: dieci mutazioni su dieci sono state dichiarate «non compilano» mentre compilavano **e uccidevano**. **(3)** La costante di una mutazione, scelta a caso, coincideva col valore atteso in quel punto — con `7` il test moriva, con `1` **passava**: era la **scelta della costante** a decidere il verdetto, non la mutazione. ⚠️ E una quarta, di forma diversa: una sostituzione su tutto il file ha riscritto il corpo dell'aiutante **dentro sé stesso** (`fn alive() { self.alive()?; }`, ricorsione infinita), colta dal **conteggio dei siti** e non dai test, che sarebbero andati in stack overflow — una sostituzione globale include la **definizione**, non solo le chiamate. ⛔ **Ciò che le lega, e che è il gotcha:** tutte producevano un risultato **credibile e nella direzione della risposta cercata** — due un verde che somigliava alla vacuità, una un rosso che somigliava alla copertura. È il gotcha **#15** applicato allo **strumento** invece che al codice, e il #17 spostato dall'iniezione al **misuratore**. 📌 **Il contro-verso, ed è concreto:** provare che la mutazione **si sia applicata** (il file è cambiato, il conteggio dei siti è quello atteso); **compilare in un passo separato dall'eseguire**, o i due esiti restano indistinguibili; e per ogni mutazione **su un valore, provarne due**. ⚠️ Vale anche per chi controlla il controllore: la stessa trappola (1) è ricapitata a chi verificava questa riga, sullo stesso file, un'ora dopo averla letta. 📌 **Salite a nove il 2026-08-10, col Task 12, e le cinque nuove aggiungono tre forme che le prime quattro non avevano.** ⛔ **La prima è un numero solo, misurato quattro volte e sbagliato tre, ogni volta per un difetto _diverso_ del banco** — il conteggio degli `E0382` della contro-sonda su `Copy`: **(1)** «sei», che era il `head -6` del comando e non un conteggio; **(2)** «ventitré su **dieci** legami» — ventitré giusto, ma «dieci» erano le **stringhe di messaggio distinte**, e `doomed` e `survivor` compaiono ciascuno in due forme (`borrow of` e `use of moved value`), quindi `uniq` ne contava due a testa; **(3)** un parser sulle diagnostiche **JSON** che cercava `move occurs because` fra i *children* mentre rustc la porta come **etichetta di span**, e ha risposto **«zero siti» con uscita pulita** — la bugia più credibile delle quattro, perché è **un numero preciso da uno strumento che sembrava funzionare**; **(4)** lo stesso parser sulle etichette: **otto** siti, `1+5+6+1+3+3+2+2 = 23`, cioè **riconciliati col totale**. Il numero non ha mai cambiato l'esito — la contro-sonda era rossa in tutte e quattro — **e questo è il punto**: si conta che il misuratore stia guardando la cosa giusta **prima** di leggerne l'uscita, qui contando le ventitré etichette trovate contro i ventitré errori. ⛔ **La seconda forma nuova: due strumenti gemelli, corretto uno solo.** Il bug dei fine-riga era stato riparato in `mutate.py` e non in `mutants.py`, e alla prima corsa successiva il gemello ha **riappiattito il file in LF**. Stessa classe di difetto, stesso file colpito, correzione a metà — e nulla lo segnalava, perché lo strumento riparato funzionava. ⛔ **La terza è la più insidiosa di tutte e nove: una rifinitura di LEGGIBILITÀ può disarmare la campagna di mutazione senza che nulla diventi rosso.** Rinominare un metodo della finta — `position` → `row_of`, una correzione di qualità richiesta da una revisione — ha reso **stantie due ancore di mutazione**, e M12 è tornata «zero siti» invece di un esito. L'ha colta **solo** la guardia sul conteggio dei siti: senza, si sarebbe letto un falso «uccisa» su una mutazione che non era mai stata applicata. 📌 **Da qui la regola che costa una riga:** le ancore di una campagna di mutazione sono **accoppiate ai nomi del codice**, quindi ogni rinomina le invalida in silenzio — e la campagna va **rilanciata dopo ogni rifinitura**, non solo dopo ogni cambiamento di comportamento |
+| 49 | ⛔ **Un compito di consolidamento in coda a un piano è già eseguito, se il piano impone di consolidare a ogni passo — e chi lo esegue alla lettera duplica invece di verificare** | Misurato il 2026-08-10, chiudendo il Traguardo 2. Il **Task 13** dettava di aggiungere al registro [`porta-di-qualita.md`](porta-di-qualita.md) **quattro** righe di regole coperte, **tre** contro-sonde e **quattro** righe di «cosa resta scoperto». Il registro ne aveva già **dieci**, **quattro** e **nove**: i Task 1–12 lo avevano aggiornato a ogni passo, che è la disciplina che questo repository impone. Eseguirlo alla lettera avrebbe **duplicato** informazione già presente — che è il difetto per cui due giorni prima quel file era sceso da 531 a 449 righe — e avrebbe lasciato in piedi i **conteggi stantii**: il compito chiedeva di **aggiungere**, non di **ricontare**. E i conteggi stantii c'erano — *«sei righe su diciassette»* dove sono **sette su diciotto**, col numero giusto scritto quattrocento righe più su **nello stesso file**. ⛔ **La forma generale, ed è la quarta.** Le tre note sono la **sonda sbagliata** (si coglie rileggendo), la **sonda assente** (si coglie solo chiedendosi, per ogni artefatto che il compito produce, quale controllo lo eserciti) e l'**artefatto sbagliato** (si coglie solo scrivendone un'implementazione da fuori dalla crate). Questa è il **compito stantio**, e non si vede in nessuno dei tre modi: il piano è coerente con sé stesso, il codice è corretto, e nessuna rilettura del piano la rivela. Si vede **solo** confrontando ciò che il compito dà per da fare con ciò che il repository **ha già**. ⚠️ **E lo stesso meccanismo aveva colpito la _Definizione di «fatto»_ dello stesso piano**, che pretende *«otto casi `compile_fail` — i quattro del Traguardo 1 più i quattro di questo»* dove sono **quattordici**, quattro più dieci. Un criterio di chiusura invecchia come tutto il resto, e nessuno lo rilegge perché è il **metro**, non l'oggetto misurato. 📌 **La domanda che lo coglie, e costa una riga:** *prima di eseguire un compito, ciò che detta di produrre esiste già?* |
 
 ## Il metodo di lavoro
 
@@ -906,7 +931,7 @@ per chiudersi.
 | [`adr/`](adr/) | **37 decisioni architetturali**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
 | [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§8 complete, con tutte le evidenze delle misure |
-| [`superpowers/plans/`](superpowers/plans/) | i **tre** piani scritti finora — lo **stack**, il **Traguardo 1** (entrambi eseguiti) e il **Traguardo 2**, eseguito fino al Task 12 su 14. Ciascuno porta un'**errata in testa** che documenta dove il piano sbagliava: quella del Traguardo 2 conta **quattro passate e quarantasei voci**. ⛔ Un piano non si riscrive: è il registro di ciò che fu osservato eseguendolo |
+| [`superpowers/plans/`](superpowers/plans/) | i **tre** piani scritti finora — lo **stack**, il **Traguardo 1** e il **Traguardo 2**, tutti e tre **eseguiti**. Ciascuno porta un'**errata in testa** che documenta dove il piano sbagliava: quella del Traguardo 2 conta **quattro passate e quarantasei voci**. ⛔ Un piano non si riscrive: è il registro di ciò che fu osservato eseguendolo. ⏭️ Il quarto, quello del **Traguardo 3**, è da scrivere |
 | [`../crates/`](../crates/) | **il codice del prodotto.** Cinque crate: `kernel` e `simulator` in `no_std` + `alloc` + `forbid(unsafe_code)`; `platform`, `secrets` e `daemon` sono il posto dove l'I/O deve vivere |
 | [`riferimenti.md`](riferimenti.md) | fonti esterne, con data e con **cosa non abbiamo adottato** |
 | [`../spikes/`](../spikes/) | **prove, non kernel.** `PROTOCOLLO.md` criteri e soglie · `CANDIDATI.md` pre-selezione · `RISULTATI.md` esiti, seed, versioni, evidenze · `GUI-REQUISITI.md` G1–G21 e P1–P4 |

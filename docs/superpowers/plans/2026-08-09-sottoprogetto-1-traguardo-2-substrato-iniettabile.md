@@ -199,6 +199,31 @@ una casa migliore altrove.
 
 ---
 
+## Errata — 2026-08-10, dopo l'esecuzione dei Task 13 e 14
+
+> ⛔ **Tre voci, e nessuna delle tre è una sonda: sono i due compiti stessi, che erano già
+> eseguiti.** Non un difetto del codice né una sonda mal scritta — il piano prescriveva di
+> **produrre** artefatti che il repository conteneva già, e in forma più ricca. Eseguirlo alla
+> lettera avrebbe duplicato invece di verificare. È una **quarta specie** di difetto di piano,
+> accanto alla sonda sbagliata, alla sonda assente e all'artefatto sbagliato: il gotcha **#49**.
+
+| # | Dove | Cosa non torna |
+|---|---|---|
+| **E47** | **Task 13**, i tre Step che dettano cosa aggiungere a [`porta-di-qualita.md`](../../porta-di-qualita.md) | ⛔ **Il compito era già eseguito, e il piano non poteva saperlo.** Step 1 detta **quattro** righe di regole coperte e **tre** contro-sonde: il registro ne aveva **dieci** e **quattro**. Step 2 detta la riga dei test di contratto: c'era, in forma più ricca. Step 3 detta **quattro** righe di «cosa resta scoperto»: ce n'erano **nove**. La ragione è la disciplina stessa di questo repository — i Task 1–12 aggiornano il registro **a ogni passo**, quindi un compito di consolidamento messo **in coda** nasce vuoto. ⛔ **E il danno di eseguirlo alla lettera non era la ridondanza:** era che il compito chiedeva di **aggiungere**, non di **ricontare**, e i conteggi stantii c'erano — *«sei righe su diciassette»* dove sono **sette su diciotto**, col numero giusto scritto quattrocento righe più su **nello stesso file**. Il Task 13 è stato perciò eseguito come **audit di allineamento**: per ogni riga del catalogo §7.4, il registro la dichiara, e la dichiarazione è vera? Trentanove righe verificate una per una, **nessuna assente**, quattro celle stantie corrette |
+| **E48** | **Definizione di «fatto» · condizione 6**, e **Task 14 · Step 1** | ⛔ **Il metro era invecchiato come l'oggetto misurato.** La condizione 6 dice *«i **quattro** casi `compile_fail` nuovi»* e lo Step 1 attende *«**otto** casi — i quattro del Traguardo 1 più i quattro di questo»*. Sono **quattordici**: quattro dal Traguardo 1 e **dieci** da questo. ⚠️ La sostanza della condizione **regge in pieno** — tutti e dieci i nuovi nominano `kernel::` e nessuno ridichiara attributi propri, che è l'opposto dei quattro vecchi e il rimedio al gotcha #39 — a essere stantio è solo il numero. 📌 E il registro aveva **già** la cifra giusta dal 2026-08-09: a restare indietro è stato il **criterio di chiusura**, che nessuno rilegge perché è il metro e non l'oggetto |
+| **E49** | **Task 14 · Step 2**, *«aggiungere una voce con la misura dell'interlacciamento»* | ⛔ **Già trascritta**, in [`riferimenti.md`](../../riferimenti.md): *«**10 cambi di task su 11 transizioni**»*, seme `20260806`, col comando. ⚠️ **E l'avvertenza dello Step era stata onorata prima ancora di essere letta:** il piano dice *«se il numero diverge dall'attesa dello spike (13 su 17), la divergenza si registra con la sua causa invece di allinearsi all'attesa»* — diverge, ed è registrata, con la causa **strutturale** scritta accanto: la politica D4 interroga **tutte** le attività pronte, quindi otto cambi sono forzati e solo i tre confini di giro possono non cambiare, e i due numeri **non sono confrontabili**. 📌 La misura è stata comunque **rilanciata** prima di chiudere, non ereditata: stesso numero |
+
+📌 **Cosa distingue questo giro dai cinque precedenti, ed è la ragione per cui vale la pena
+scriverlo.** Nei Task 1–2 e nel 7 il difetto stava **nella sonda**; negli 8–10 e nell'11 nella
+**sonda assente**; nell'11 anche nell'**artefatto**, che compilava e non era implementabile. Qui
+il difetto non sta in nessuno dei tre posti: **il piano è coerente con sé stesso e il codice è
+corretto.** ⛔ Non si vede né rileggendo il piano né leggendo il codice — si vede **solo**
+confrontando ciò che il compito dà per da fare con ciò che il repository **ha già**. E la
+domanda che lo coglie costa una riga: *prima di eseguire un compito, ciò che detta di produrre
+esiste già?*
+
+---
+
 ## Il perimetro, e la voce che è stata cercata prima di fissarlo
 
 ⛔ **Da leggere prima dei compiti.** Il perimetro di questo traguardo è stato messo in

@@ -7,15 +7,11 @@ fn main() {
         kind: kernel::record::RecordKind::Intent,
         effect: kernel::record::EffectClass::Idempotent,
         trust: kernel::record::Trust::Instruction,
-        payload: alloc_free_payload(),
+        payload: Vec::new(),
     };
 
     // The bare V1 body is NOT a record: only `Record::V1(..)` is.
     let _bytes = inner.encode();
-}
-
-fn alloc_free_payload() -> Vec<u8> {
-    Vec::new()
 }
 
 // ⚠️ THE ORACLE OF THIS CASE IS COUPLED TO `minicbor`, declared rather than left to be found

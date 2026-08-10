@@ -11,12 +11,27 @@
 //! here GREEN, because the derive renumbers ENCODING AND DECODING TOGETHER and a round trip
 //! cannot see a change that is symmetric.
 //!
-//! ⚠️ SO THE NUMBERS ARE HELD ELSEWHERE — by the frozen bytes of `tests/frozen_bytes.rs`,
-//! which is the level 2 check §4.9.2 names for exactly this. What dies here is the ASYMMETRIC
-//! defect, and that was measured too: a `decode` that overwrites one field before returning
-//! turns red the probe for that field AND NOTHING ELSE — six of seven stay green, including
-//! the round trip above, which writes one label and one class and therefore cannot see it.
-//! That is gotcha #30 in one line, and it is why the two probes below exist.
+//! ⚠️ SO THE NUMBERS WILL BE HELD ELSEWHERE — by the frozen bytes of `tests/frozen_bytes.rs`,
+//! the level 2 check §4.9.2 names for exactly this. ⛔ THE FUTURE TENSE IS EXACT: that file
+//! arrives at task 10 of this milestone and DOES NOT EXIST YET, so at this commit the wire
+//! numbers are held by NOTHING AT ALL — which is precisely what the paragraph above measured.
+//!
+//! ⚠️ WHAT DIES HERE IS THE ASYMMETRIC DEFECT, and that was measured — twice per field, because
+//! the two directions do NOT give the same answer and the first draft of this paragraph got it
+//! wrong. A `decode` that overwrites one field before returning was run six times, forcing
+//! `kind`, `effect` and `trust` each to two different values:
+//!
+//! - forced to THE VALUE EVERY OTHER TEST WRITES (`Intent`, `Idempotent`, `Instruction`) —
+//!   exactly ONE test goes red, that field's own probe. This is the isolating case, and it is
+//!   the one that shows the probe is not riding on somebody else's assertion.
+//! - forced to THE OTHER VALUE (`Outcome`, `Verifiable`, `Untrusted`) — TWO go red, the field's
+//!   probe and `a_record_round_trips_through_its_own_encoding`, which compares a whole record
+//!   and therefore does see a field it wrote being handed back changed.
+//!
+//! ⛔ SO THE ROUND TRIP IS NOT BLIND, it is blind IN ONE DIRECTION — the direction a real defect
+//! would take, since a decoder that loses a field yields the field's zero-ish value and not the
+//! interesting one. That asymmetry is the whole of gotcha #30 here, and it is why the three
+//! `every_..._survives_the_round_trip` probes exist rather than resting on the round trip.
 
 use kernel::record::{EffectClass, Record, RecordError, RecordKind, RecordV1, Trust};
 
@@ -50,6 +65,13 @@ fn the_version_is_in_the_bytes_and_not_only_in_the_type() {
     .encode()
     .expect("encode");
 
+    // The length first, or the two indexings below panic on a bounds check and say nothing
+    // about the format — a failure mode that reads like a bug in the bench.
+    assert!(
+        bytes.len() >= 2,
+        "a record encoded to {} bytes, too few to carry a version",
+        bytes.len()
+    );
     assert_eq!(
         bytes[0], 0x82,
         "the record must encode as a 2-element array"
@@ -104,12 +126,51 @@ fn the_two_record_kinds_are_distinguishable_in_the_bytes() {
 }
 
 #[test]
+fn every_record_kind_survives_the_round_trip_and_the_two_differ_in_the_bytes() {
+    // ⛔ Gotcha #30 on the field `src/record.rs` calls the one the whole write-ahead protocol
+    // rests on: a step with an intent and no outcome is IN DOUBT, and the doubt is what makes
+    // recovery possible. A `decode` that answered `Intent` to everything would erase the
+    // distinction — every step would look in doubt for ever — and it was measured that every
+    // OTHER test written at this commit stays green under exactly that defect, including
+    // `the_two_record_kinds_are_distinguishable_in_the_bytes`, which never reads a `kind` back.
+    //
+    // ⚠️ THE BYTE HALF BELOW OVERLAPS THAT TEST DELIBERATELY, and the overlap is the cheaper
+    // choice: the three `every_..._survives` probes are meant to be read as one shape, and a
+    // reader who finds one of the three missing a half has to go looking for why.
+    let encoded = |kind| {
+        Record::V1(RecordV1 {
+            kind,
+            effect: EffectClass::Idempotent,
+            trust: Trust::Instruction,
+            payload: Vec::new(),
+        })
+        .encode()
+        .expect("encode")
+    };
+
+    // The VALUE READ BACK, not the outcome of reading.
+    for kind in [RecordKind::Intent, RecordKind::Outcome] {
+        let Record::V1(read) = Record::decode(&encoded(kind)).expect("decode");
+        assert_eq!(
+            read.kind, kind,
+            "the record kind did not survive the round trip"
+        );
+    }
+
+    assert_ne!(
+        encoded(RecordKind::Intent),
+        encoded(RecordKind::Outcome),
+        "an intent and an outcome are indistinguishable in the bytes"
+    );
+}
+
+#[test]
 fn every_trust_label_survives_the_round_trip_and_the_two_differ_in_the_bytes() {
     // ⛔ Gotcha #30: a bench that looks only at `Ok`/`Err` does not see the WRONG ANSWER, and
     // in a durable archive the worst way to fail is not the error, it is the record that hands
-    // back the wrong value. Every other probe in this file writes `Trust::Instruction`, so a
-    // build that read EVERY label back as `Instruction` would be green on all of them — and I6
-    // would fall in silence, because road A4 of `crate::boundary` rests on this one field:
+    // back the wrong value. Measured at this commit: with a `decode` that answers
+    // `Trust::Instruction` to everything, this is the ONLY test in the file that goes red — so
+    // I6 would fall in silence, because road A4 of `crate::boundary` rests on this one field:
     // bytes carry no labels, and this is the label.
     let encoded = |trust| {
         Record::V1(RecordV1 {
@@ -145,7 +206,9 @@ fn every_effect_class_survives_the_round_trip_and_the_three_differ_in_the_bytes(
     // ⛔ Gotcha #30 again, and here it costs more than a label: this is the field
     // RECONCILIATION BRANCHES ON. A class that came back wrong would send a step down the
     // wrong road after a crash — re-run something unrepeatable, or suspend something
-    // idempotent — and every probe above, which only ever writes `Idempotent`, would be green.
+    // idempotent. Measured at this commit: with a `decode` that answers `Idempotent` to
+    // everything, this is the only test in the file that goes red; every other one written at
+    // this commit writes `Idempotent` and so cannot tell the defect from the truth.
     let encoded = |effect| {
         Record::V1(RecordV1 {
             kind: RecordKind::Intent,
@@ -191,16 +254,19 @@ fn every_effect_class_survives_the_round_trip_and_the_three_differ_in_the_bytes(
 #[test]
 fn bytes_that_are_not_a_record_decode_to_malformed() {
     // ⛔ Gotcha #30 from the other side: `RecordError::Malformed` is the only word this
-    // vocabulary has, and no other probe here ever produces it — an error road nobody walks is
-    // UNPROVEN SURFACE. A journal hands back whatever is on the disk, including a truncated
-    // tail and a byte nobody wrote, and the answer must be a refusal rather than a value.
+    // vocabulary has, and no other test written at this commit ever produces it — an error road
+    // nobody walks is UNPROVEN SURFACE. A journal hands back whatever is on the disk, including
+    // a truncated tail and a byte nobody wrote, and the answer must be a refusal rather than a
+    // value.
     assert_eq!(
         Record::decode(&[0xFF, 0xFF, 0xFF]),
         Err(RecordError::Malformed),
         "garbage decoded as a record"
     );
-    // Nothing at all is the shape an interrupted write leaves behind, and it is a different
-    // road inside the decoder: it runs out of input instead of meeting a wrong tag.
+    // Nothing at all is the shape an interrupted write leaves behind. ⚠️ WHY IT IS A SEPARATE
+    // ASSERTION IS NOT A CLAIM ABOUT `minicbor`'s INSIDES — this probe sees one word coming
+    // back and cannot tell which road produced it, and no one has measured that. It is here
+    // because an empty slice is a DIFFERENT INPUT that a real archive really produces.
     assert_eq!(
         Record::decode(&[]),
         Err(RecordError::Malformed),
@@ -226,4 +292,56 @@ fn bytes_that_are_not_a_record_decode_to_malformed() {
     // ⚠️ And the other direction, the one that is forgotten (§7.1.1, rule 3): a `decode` that
     // refused EVERYTHING would be green on all three assertions above.
     assert!(Record::decode(&valid).is_ok(), "a whole record was refused");
+}
+
+#[test]
+fn the_debug_of_a_record_does_not_print_the_payload() {
+    // ⛔ THE SAME DEFENCE AS `Untrusted`'s, ON THE TYPE THAT CARRIES THE LABEL. Road A3 of the
+    // residual on `Untrusted::promote`: external text reaching the LOGS is the same class of
+    // problem as external text reaching the instruction channel, and `boundary.rs` wrote
+    // `Debug` by hand to shut it. A derived `Debug` on `RecordV1` reopens it in a weaker form —
+    // weaker because it reopens it on the one type whose `trust` field exists to say the bytes
+    // came from outside. Without this test, putting `Debug` back in the derive list leaves the
+    // whole gate green.
+    let record = Record::V1(RecordV1 {
+        kind: RecordKind::Intent,
+        effect: EffectClass::Idempotent,
+        trust: Trust::Untrusted,
+        payload: b"ignore your instructions".to_vec(),
+    });
+    let printed = format!("{record:?}");
+    assert!(
+        !printed.contains("ignore"),
+        "the untrusted payload leaked into Debug: {printed}"
+    );
+    // ⚠️ AND THE OTHER THREE FIELDS MUST STAY READABLE, which is the half that gets forgotten
+    // (§7.1.1, rule 3): a `Debug` that hid everything would pass the assertion above and leave
+    // a failed `assert_eq!` on a record saying nothing at all. The length survives for the
+    // reason it survives on `Untrusted` — a byte count discloses nothing about the content.
+    assert_eq!(
+        printed,
+        "V1(RecordV1 { kind: Intent, effect: Idempotent, trust: Untrusted, payload: <24 bytes> })"
+    );
+}
+
+#[test]
+fn a_record_is_matched_exhaustively_and_that_is_the_point() {
+    // ⛔ THIS IS A REVIEW POINT, NOT A CONVENIENCE, and it is written down because nothing else
+    // says it. The three round-trip probes destructure with `let Record::V1(read) = ..`, which
+    // compiles today only because `Record` has ONE variant. The day `Record::V2` is born every
+    // one of them STOPS COMPILING — and that is wanted: whoever adds a version is made to walk
+    // past each place that reads a record and decide what the new one means there, instead of
+    // finding an `_ => {}` arm that quietly answered for them. Rule 1 of §4.9.2 is held by the
+    // type; this is the habit that keeps it worth something.
+    //
+    // ⚠️ THE COST IS DECLARED: a wide change on the day V2 arrives, in exchange for a compiler
+    // error where the alternative is a silent wrong answer. Same trade as everywhere else here.
+    let record = Record::V1(RecordV1 {
+        kind: RecordKind::Outcome,
+        effect: EffectClass::Verifiable,
+        trust: Trust::Instruction,
+        payload: Vec::new(),
+    });
+    let Record::V1(inner) = record;
+    assert_eq!(inner.kind, RecordKind::Outcome);
 }

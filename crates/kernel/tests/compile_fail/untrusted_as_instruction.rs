@@ -30,11 +30,17 @@ fn main() {
 }
 
 // ⚠️ WHY THE ORACLE SPELLS THE TYPES OUT IN FULL, and it is NOT noise to be tidied away by a
-// regeneration. `kernel::record::Trust` arrived at milestone 3 with variants named
-// `Instruction` and `Untrusted`, so those two names are no longer unique inside the crate, and
-// rustc STOPS ABBREVIATING a name it cannot trim unambiguously: every diagnostic that mentions
-// either type now prints `kernel::boundary::..`. Measured, not deduced — commenting out
-// `pub mod record;` puts the short form back and this case green again.
+// regeneration. THE ARGUMENT LIVES HERE FOR THE WHOLE PAIR, and
+// `no_conversion_from_untrusted_to_instruction.rs` points at it. `kernel::record::Trust`
+// arrived at milestone 3 with variants named `Instruction` and `Untrusted`, so those two names
+// are no longer unique inside the crate, and rustc STOPS ABBREVIATING a name it cannot trim
+// unambiguously: every diagnostic that mentions either type now prints `kernel::boundary::..`.
+// Measured, not deduced — commenting out `pub mod record;` in `src/lib.rs` puts the short form
+// back and turns both cases green again.
+//
+// ⚠️ AND IT IS A STANDING COST, not a one-off repair: any future oracle in this crate that
+// names either type carries the long form, and a reader who "tidies" one back to `Instruction`
+// gets a `mismatch` with no explanation in front of them.
 //
 // ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle above quotes LINE 29 of this file, so a
 // paragraph added at the top would move the code and break it. Whoever writes here appends.

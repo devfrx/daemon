@@ -37,12 +37,9 @@ fn main() {
     let _system: Instruction = from_a_web_page.into();
 }
 
-// ⚠️ WHY THE ORACLE SPELLS THE TYPES OUT IN FULL, and it is NOT noise to be tidied away by a
-// regeneration. `kernel::record::Trust` arrived at milestone 3 with variants named
-// `Instruction` and `Untrusted`, so those two names are no longer unique inside the crate, and
-// rustc STOPS ABBREVIATING a name it cannot trim unambiguously: every diagnostic that mentions
-// either type now prints `kernel::boundary::..`. Measured, not deduced — commenting out
-// `pub mod record;` puts the short form back and this case green again.
+// ⚠️ WHY THE ORACLE SPELLS THE TYPES OUT IN FULL is argued once, in the rule A case of this
+// pair — `untrusted_as_instruction.rs`, at the foot of the file. Both oracles moved for the one
+// reason, and a residual kept in two places is a residual that goes stale in one.
 //
 // ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle above quotes LINE 37 of this file, so a
 // paragraph added at the top would move the code and break it. Whoever writes here appends.

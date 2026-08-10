@@ -10,8 +10,26 @@
 //! Measured in ADR-0036: array 27 bytes (+4 %), map 33 (+27 %), positional 26. The ADR notes
 //! that the earlier estimate "priced the map instead of the array" — so the number that
 //! decided this is the array one. A default nobody wrote down is a default somebody changes.
+//! ⚠️ AND THAT IT COSTS NOTHING TO WRITE IT WAS MEASURED, not assumed: with and without
+//! `#[cbor(array)]` on the two types below, a record encodes to the same bytes down to the
+//! length — `82 00 81 84 00 01 00 40` empty, 28 bytes with a 20-byte payload.
+//!
+//! ⚠️ AND THE ARRAY HAS A PRICE THE MAP DOES NOT, which belongs beside those numbers: a
+//! RETIRED INDEX COSTS A NULL BYTE FOR EVER. The array is positional, so a gap has to be
+//! written to keep the ones after it in place, whereas a map simply omits the key. The
+//! comparison above is between the shapes as they are TODAY; every index the format retires
+//! moves it by one byte per record, in the archive's favourite direction, which is bigger.
+//!
+//! ⛔ AND `#[cbor(index_only)]` ON THE THREE ENUMS CARRIES ITS OWN CONSTRAINT, declared here
+//! because it binds a FUTURE change and nothing in the file would otherwise say so: it encodes
+//! a variant as its bare index, with no room for a body, so a variant under it can NEVER GAIN A
+//! FIELD. The day one of them needs to carry a value — a `Verifiable` that names what to ask
+//! the world, say — the annotation comes off and EVERY RECORD EVER WRITTEN changes shape. That
+//! is a new version of the record, not an edit to this line. The byte-string annotation below
+//! declares its own stake; this one is the stake of the three above it.
 
 use alloc::vec::Vec;
+use core::fmt;
 use minicbor::{Decode, Encode};
 
 /// Is this the INTENTION of a step or its OUTCOME? The whole write-ahead protocol rests on
@@ -33,10 +51,21 @@ pub enum RecordKind {
 /// EXPRESSIBLE. A defaulted class would put the decision back where the risk is — the
 /// forgetfulness of whoever writes.
 ///
-/// ⚠️ The `irripetibile` default of ADR-0007 is NOT gone: it lives where it is actually
-/// useful, on records READ BACK from a journal written before the class existed. Under
-/// ADR-0036 that is not a special case — it is the ordinary case of a field absent in an
-/// earlier version.
+/// ⚠️ THE `Unrepeatable` DEFAULT OF ADR-0007 IS NOT GONE, BUT IT IS NOT REACHABLE HERE EITHER,
+/// and the difference was measured on the types rather than assumed. `RecordV1::effect` is not
+/// an `Option`, carries no `#[cbor(default)]`, and `EffectClass` implements no `Default`: a
+/// record whose array is short does NOT decode to `Unrepeatable`, it decodes to
+/// `RecordError::Malformed`. So there is no defaulting in this file, and reading one into it
+/// would be reading a guarantee that is not here.
+///
+/// ⚠️ AND THE CASE THE DEFAULT IS FOR RUNS THE OTHER WAY ROUND. "Records written before the
+/// class existed" is EMPTY BY CONSTRUCTION — V1 is the first version and the field has been
+/// mandatory in it from the first byte ever written. The real case is a LATER version that
+/// drops the field, and under ADR-0036 that is the ordinary shape of a field absent in another
+/// version. ⚠️ THE FUTURE TENSE IS EXACT, AND TODAY NOTHING DEFAULTS ANYTHING: the version
+/// that removes it will declare `Option<EffectClass>` with `#[cbor(default)]` and resolve
+/// `None` to `Unrepeatable` — the safe reading, which suspends and asks — and until such a
+/// version exists that mechanism is named here and implemented nowhere.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
 #[cbor(index_only)]
 pub enum EffectClass {
@@ -77,11 +106,28 @@ pub enum Trust {
 
 /// Version 1 of the durable record.
 ///
-/// ⛔ EVERY FIELD CARRIES AN EXPLICIT INDEX, and the indices follow four rules that no
+/// ⛔ EVERY FIELD CARRIES AN EXPLICIT INDEX, and the indices follow three rules that no
 /// compiler enforces (§4.9.2): a new field is OPTIONAL and takes a NEW index; an index is
 /// RETIRED AND NEVER REUSED — the gap stays; a non-additive change opens a NEW VERSION.
-/// What holds them is the frozen bytes of `tests/frozen_bytes.rs`, a level 2 check.
-#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+///
+/// ⚠️ THE FUTURE TENSE IS EXACT, AND TODAY NOTHING HOLDS THEM. What WILL hold them is the
+/// frozen bytes of `tests/frozen_bytes.rs`, a level 2 check that arrives at task 10 of this
+/// milestone; that file does not exist yet. It is not a quibble about tense: measured at this
+/// commit, moving a variant onto a FREE index leaves the whole bench green — the derive
+/// renumbers encoding and decoding together, so no round trip can see it. Until the frozen
+/// bytes land, the three rules above are a convention that a reader must keep, not a check.
+///
+/// ⚠️ `Clone` HAS NO CALLER IN THE CRATE AT THIS COMMIT, and is kept deliberately rather than
+/// by inattention — the derive lists of `StepId` and `ClientId` are justified line by line and
+/// this one owes the same. It is NOT removable by the #46 test, which asks what an outside
+/// implementer is BLOCKED from doing: a record is the unit `journal` hands out and callers of
+/// `read_back` will hold one while writing the next, and unlike `Ord` a missing `Clone` on a
+/// struct with private-by-default construction elsewhere is not a one-line fix for them. It
+/// costs nothing on the wire and nothing at run time unless called. ⚠️ NOT MEASURED BY
+/// REMOVAL, and that is the honest state of it: `kernel` compiles without it today, so what is
+/// written here is an argument and not a red.
+#[derive(Clone, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
 pub struct RecordV1 {
     #[n(0)]
     pub kind: RecordKind,
@@ -97,6 +143,35 @@ pub struct RecordV1 {
     pub payload: Vec<u8>,
 }
 
+/// ⛔ THE PAYLOAD IS NOT PRINTED, and it is the same defence `Untrusted` carries, applied to
+/// the type that holds the LABEL. Road A3 of the residual on `Untrusted::promote` says external
+/// text reaching the logs is the same class of problem as external text reaching the
+/// instruction channel; `boundary.rs` wrote `Debug` by hand to close it, and a DERIVED `Debug`
+/// here reopens it in a weaker form — weaker because it reopens it on the one type whose
+/// `trust` field exists to say the bytes came from outside. A `{:?}` in a log line, a panic
+/// message, a failed `assert_eq!`, and the payload is out.
+///
+/// ⚠️ THE OTHER THREE FIELDS STAY READABLE, deliberately and for the reason the length stays on
+/// `Untrusted`: a failed `assert_eq!` has to remain diagnostic. `kind`, `effect` and `trust`
+/// are the kernel's own vocabulary — nobody outside chose them — and they are exactly what one
+/// wants to read when a record comes back wrong. Only the payload is somebody else's.
+///
+/// ⚠️ Pinned by `the_debug_of_a_record_does_not_print_the_payload`, because a closed road that
+/// no test holds is a road that reopens the day somebody puts `Debug` back in the derive list
+/// above, with the gate staying green.
+impl fmt::Debug for RecordV1 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "RecordV1 {{ kind: {:?}, effect: {:?}, trust: {:?}, payload: <{} bytes> }}",
+            self.kind,
+            self.effect,
+            self.trust,
+            self.payload.len()
+        )
+    }
+}
+
 /// The durable record. ⛔ A RECORD WITHOUT A VERSION IS NOT EXPRESSIBLE — rule 1 of §4.9.2,
 /// held at level 1 by the type itself.
 ///
@@ -106,7 +181,13 @@ pub struct RecordV1 {
 /// remove a level of indirection, it would remove a byte from the format — and that byte is
 /// the whole of rule 1. Contrast with `Wakeup`, deleted at milestone 2 (errata E9): that one
 /// wrapped a value and bought no error anywhere; this one is written to the archive.
+///
+/// ⚠️ `Debug` IS DERIVED HERE AND HAND-WRITTEN ON `RecordV1`, which is not an inconsistency:
+/// the derive delegates to the inner impl, so `{:?}` on a whole record prints
+/// `V1(RecordV1 { .. payload: <N bytes> })` and the payload stays shut. Nothing outside chose
+/// the word `V1`. ⚠️ `Clone` carries the same note as `RecordV1`'s, and for the same reason.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
 pub enum Record {
     #[n(0)]
     V1(#[n(0)] RecordV1),

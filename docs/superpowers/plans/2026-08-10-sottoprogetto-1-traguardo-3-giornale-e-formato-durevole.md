@@ -1,5 +1,24 @@
 # Sotto-progetto 1 · Traguardo 3 — il giornale e il formato durevole
 
+## ⛔ Errata — 2026-08-10, dall'esecuzione del Task 1
+
+> Il piano è un'**ipotesi**, e l'esecuzione la misura. Queste sette voci sono le divergenze
+> trovate eseguendo il **Task 1**: il testo dei compiti **non è stato toccato**, perché un
+> piano riscritto a posteriori cancella la prova che l'attesa era sbagliata. Chi esegue un
+> compito legge **prima** questa sezione, poi il compito.
+
+| # | Dove | Il piano dice | Misurato |
+|---|---|---|---|
+| **E1** | Task 1, Step 3 — doc di `EffectClass` | il sorgente dettato porta la parola italiana `` `irripetibile` `` in un commento | ⛔ la **§1.0** vieta l'italiano nel sorgente, e il piano **non ha l'autorità di derogarvi**: è la stessa specie della prima voce dell'errata del Traguardo 1. L'identificatore inglese esiste già ed è `Unrepeatable`. Corretto nel sorgente |
+| **E2** | Task 1, Step 7 | *«`record_without_version.rs` passa da `error` a `ok`»* | **direzione invertita**. La base è `ok` — il caso fallisce a compilare come deve — e con l'`impl` temporaneo diventa **`error`**, con `Expected test case to fail to compile, but it succeeded.` ⚠️ La conclusione che il piano cerca **regge lo stesso, e in meglio**: la parola è `error` e non `mismatch`, quindi `TRYBUILD=overwrite` non può spegnere il caso e **non serve un secondo caso** (gotcha #42) |
+| **E3** | Task 1, Step 3 — decisione **D3** | D3 impone *«scriverlo esplicito anche se è il default»* per la codifica ad array | il `record.rs` **dettato non porta `#[cbor(array)]`** su nessuno dei due tipi: la decisione non è onorata dal sorgente che la cita. Aggiunto su `RecordV1` e `Record`, e **misurato** che i byte non cambiano — `82 00 81 84 00 01 00 40` prima e dopo |
+| **E4** | Task 1, Step 4 | attende `test result: ok. 4 passed` | **criterio di chiusura stantio**: il banco dettato lascia campi non riletti (vedi E7), e con le sonde che mancavano i test sono **10**. Un conteggio atteso invecchia come ogni altra cifra — gotcha #31 applicato a un criterio di uscita |
+| **E5** | Task 1, Step 3 — doc di `RecordV1` | *«the indices follow **four** rules»* | ne **elenca tre**. Corretto a tre; le **sei** regole di §4.9.2 citate nel doc di modulo restano giuste — sono un altro insieme |
+| **E6** | Task 1, Step 1 | la riga `assert_eq!(bytes[0], 0x82, "…");` dettata | **non è `rustfmt`-clean** (gli argomenti superano `fn_call_width` 60) mentre il repository lo è: `cargo fmt --all -- --check` esce 0 su tutto il resto. Riformattata |
+| **E7** | Task 1, Step 1 e Step 3 | il banco dettato e il `RecordV1` dettato | **due lacune di specie 2** — il controllo manca del tutto. (a) nessuno dei quattro test dettati **rilegge un `kind`**: un `decode` che rispondesse sempre `Intent` li lascia tutti verdi, sul campo che il sorgente stesso chiama *«the whole write-ahead protocol rests on telling them apart»*. (b) `RecordV1` **deriva `Debug`** mentre porta un `payload` che il campo `trust` dichiara possibilmente non fidato: `boundary.rs` scrive `Debug` a mano per `Untrusted` esattamente per non farlo. Chiuse entrambe con sonda |
+
+---
+
 > **Per chi esegue:** SKILL RICHIESTA — usa `superpowers:subagent-driven-development`
 > (consigliata) o `superpowers:executing-plans` per eseguire questo piano compito per
 > compito. I passi usano le caselle (`- [ ]`) per il tracciamento.

@@ -762,7 +762,7 @@ nessun altro, **otto volte su otto**. ⚠️ La promessa 8 ha **due** blocchi, n
 | la guardia di `note` **tolta** · che dimentica **quale** passo | 4 · **1** |
 | la nota **scartata** | 8 |
 | ⛔ la nota archiviata come `EntryKind::Intent` | ⛔ **nulla** — la variante interna è **inosservabile** da fuori, e la sonda scritta per tenerla è stata **tolta** |
-| ✅ `RecordKind::Note` su un indice **libero** (2 → 7) | ⛔ **nulla**, **atteso**: a tenerlo saranno i byte congelati del Task 10 |
+| ✅ `RecordKind::Note` su un indice **libero** (2 → 7) | ⛔ **nulla**, **atteso**. ✅ **Aggiornato il 2026-08-10:** a tenerlo **sono** i byte congelati, e la stessa rinumerazione è ora **rossa** — vedi la sezione del Task 10 |
 | il messaggio nuovo reso **prefisso** di un altro · **vera sottostringa** · **vuoto** | nulla (giusto: `contains` non è ingannato da un prefisso) · **1** · **1** |
 | **controllo**: una parola di commento in `reconcile.rs` · in `boundary_promotion.rs` · in `journal_contract.rs` | ✅ nulla, tre volte |
 
@@ -879,6 +879,30 @@ binari girano insieme.
 
 **Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi;
 `cargo test --workspace --no-fail-fast` → **28 target, 144 test**, zero rossi.
+
+## Esecuzione del Traguardo 3 — il Task 10: i byte congelati, e la mappa dettata sbagliava l'offset
+
+**Misurato il 2026-08-10.** ⛔ **È l'unico artefatto del progetto che non si corregge:** se i
+byte cambiano non è un aggiornamento, è un cambio di formato. Misure prima, scrittura dopo.
+
+| Misura | Come | Esito |
+|---|---|---|
+| ⛔ **l'inquadratura è di QUATTRO byte, non tre** | l'uscita vera di una sonda usa-e-getta, poi cancellata | ⛔ **La mappa dettata sbagliava l'offset, non solo l'arità.** Il byte 2 è `81` — l'array a **un elemento** del corpo della variante — e l'array dei campi è al byte **3**, `85`. Quindi `82 00 81 85`, e un record congelato misura **21** byte. Il piano diceva *«byte 2 · `0x84` · array(4)»* |
+| le varianti da fissare, **ricontate sul sorgente** | lettura di `record.rs` | `RecordKind` **3** · `EffectClass` **3** · `Trust` **2** = ⛔ **otto indici di variante**. Il record dettato ne fissava **tre** |
+| i tre record congelati | `Record::encode` | `intent` `82 00 81 85 00 01 01 46 66 72 6f 7a 65 6e 66 66 72 6f 7a 65 6e` · `outcome` idem con `01 02 00` · `note` idem con `02 00 01`. Differiscono **solo** ai byte 4, 5, 6 |
+| ⛔ **le otto varianti rinumerate una per una** su un indice libero | mutazione, compilazione in un passo separato, `--no-fail-fast` | ⛔ **otto rossi su otto**, ciascuno col messaggio che nomina il formato. Due sonde per volta: encode e decode |
+| la mutazione *«deve scattare»* **dettata** — payload `#[n(3)]` → `#[n(2)]` | `cargo build -p kernel` | ⛔ **non compila**: `error: duplicate index numbers`, più tre `E0277`. Il controllo non si sarebbe mai visto scattare |
+| ✅ sostituite da **due** che compilano | `kind` 0 ↔ `effect` 1 · `payload` 3 → 7 | **rosse entrambe**, 3 sonde su 6 ciascuna, col messaggio del formato |
+| la mutazione *«deve restare verde»* **dettata** — `#[n(4)]` | `cargo build -p kernel` | ⛔ **non compila**: l'indice 4 è di `reason`. ⚠️ E il piano avrebbe letto quel rosso come *«ADR-0036 smentito»* |
+| ✅ rifatta sull'indice **libero 5**, con `#[cbor(default)]` | `cargo test -p kernel --test frozen_bytes` | ✅ **VERDE**: i byte congelati **non si muovono** |
+| ⛔ **e la stessa mutazione nell'altra direzione**, perché il verde poteva essere vacuo | `parent: None` contro `parent: Some(9)` | `None` → **21 byte identici**: `minicbor` **tronca** un `None` in coda invece di scrivere `null`, l'array resta `85`. `Some(9)` → **22 byte**, `86` e `09` in fondo. Il campo **arriva davvero sul filo**, quindi il verde significa qualcosa. Gotcha **#54** |
+| una variante **nuova** di `RecordKind` | `#[n(3)] Amend` | ⛔ **la LIBRERIA non compila** — `E0004` in `crate::reconcile` — quindi il livello 1 arriva prima dell'oracolo, e le sonde non lo vedono mai |
+| la **mutazione di controllo** | un commento di `record.rs` | ✅ **6 passed, zero rossi** |
+| i `.cbor` e i fine-riga | `git check-attr`, `git ls-files --eol`, blob dell'indice contro il file | `text: unset` · `i/-text w/-text` · **blob identico** per tutti e tre. `.gitattributes` con **una riga sola**, mai un `* text=auto` |
+| ripristino dopo la campagna | tredici mutazioni, lettura/scrittura **binaria** | `record.rs` e `boundary.rs` **byte-identici** all'originale, **zero CRLF** ovunque |
+
+**Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi;
+`cargo test --workspace --no-fail-fast` → **29 target, 150 test**, zero rossi.
 
 ## Cosa NON abbiamo adottato, e perché
 

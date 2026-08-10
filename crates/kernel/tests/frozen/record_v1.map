@@ -1,0 +1,74 @@
+# The map of the frozen records — §4.9.4. ⛔ One check and not two: a separate index registry
+# would be a second place to keep aligned for the same property, and the first one to stop
+# being updated lies in silence (§7.4.4). This map lives INSIDE the artefact it describes.
+#
+# Produced 2026-08-10 from `the_frozen_records()` in ../frozen_bytes.rs, by hand, from the
+# hexadecimal output of a throwaway probe that was deleted in the same commit.
+# ⛔ NOT REGENERATED. If the bytes change, a new VERSION of the record is opened.
+#
+# ⛔ ONE MAP FOR THREE FILES, AND THE ASYMMETRY IS DELIBERATE. The `.cbor` files are separate
+# because each one is an irreproducible artefact and a single blob would make a one-record
+# change look like a whole-archive change; the map is one because it describes ONE format, and
+# three maps would be three places to keep aligned for one property — the very thing the
+# paragraph above refuses.
+#
+# ⛔ WHAT IS CHECKED HERE AND WHAT IS NOT — read this before believing a cell.
+#   Rows are `offset | hex bytes | prose`, and a line that is only a file name opens a section.
+#   ✅ The OFFSET and the HEX columns are CHECKED, by `the_map_lists_the_bytes_that_are_really_
+#      frozen` in ../frozen_bytes.rs: every row is read back, the offsets must be contiguous,
+#      and the bytes must rebuild the `.cbor` file exactly. A placeholder left in the hex column
+#      does not parse, and a byte typed wrong does not match.
+#   ✅ The claim that byte 4 is `kind`, byte 5 `effect`, byte 6 `trust`, 7..14 the payload and
+#      14..21 the reason is CHECKED too, by `every_field_sits_at_the_offset_the_map_gives_it`,
+#      which changes one field at a time and demands that the encoding move there and nowhere
+#      else.
+#   ⚠️ The rest of the PROSE column is PROSE — unverified. Nothing reads the words `array(2)`
+#      or `EffectClass::Idempotent`. It is said out loud because a document half checked and
+#      not saying which half is worse than one nobody checks at all.
+#
+# ⚠️ THE FRAMING IS FOUR BYTES, NOT THREE, and it is the thing the obvious reading gets wrong:
+# `82 00` is the version enum and its variant index, then `81` — the ONE-ELEMENT ARRAY of the
+# variant's body — and only then `85`, the five fields. So the fields begin at byte 4.
+#
+# ⛔ THE THREE RECORDS DIFFER ONLY AT BYTES 4, 5 AND 6, on purpose: between them the three
+# `index_only` enums have EIGHT variants — RecordKind 3, EffectClass 3, Trust 2 — and a single
+# record would pin three of them and leave five held by nothing. Three is the fewest that cover
+# all eight. Everything else is identical, so the difference between any two files is exactly
+# the three enum bytes.
+#
+# ⚠️ `payload` AND `reason` CARRY THE SAME SIX CHARACTERS, so the two major types sit side by
+# side in the bytes: `46` is a byte string of 6, `66` is text of 6. One nibble apart, and the
+# asymmetry is in the archive instead of only in the source.
+
+record_v1_intent.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 85                   | array(5) — the five fields of RecordV1
+  4 | 00                   | index 0 · kind    · RecordKind::Intent
+  5 | 01                   | index 1 · effect  · EffectClass::Idempotent
+  6 | 01                   | index 2 · trust   · Trust::Untrusted
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+
+record_v1_outcome.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 85                   | array(5) — the five fields of RecordV1
+  4 | 01                   | index 0 · kind    · RecordKind::Outcome
+  5 | 02                   | index 1 · effect  · EffectClass::Unrepeatable
+  6 | 00                   | index 2 · trust   · Trust::Instruction
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+
+record_v1_note.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 85                   | array(5) — the five fields of RecordV1
+  4 | 02                   | index 0 · kind    · RecordKind::Note
+  5 | 00                   | index 1 · effect  · EffectClass::Verifiable
+  6 | 01                   | index 2 · trust   · Trust::Untrusted
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"

@@ -1,0 +1,19 @@
+# ⛔ UNA REGOLA SOLA, E LA RISTRETTEZZA È IL PUNTO.
+#
+# I byte congelati del record durevole (`crates/kernel/tests/frozen/*.cbor`) sono l'unico
+# artefatto del progetto che non si rigenera mai: se cambiano non è un aggiornamento, è un
+# cambio di formato. Un `text=auto` che li trattasse come testo potrebbe riscrivere un `0d 0a`
+# in `0a` fra l'albero di lavoro e l'indice, e il file tornerebbe DIVERSO da quello che è stato
+# misurato — con l'oracolo rosso e nessun colpevole.
+#
+# ⚠️ OGGI NESSUNO DEI TRE FILE CONTIENE UN `0a` O UN `0d`, e per giunta contengono `00`, che
+# basta a git per riconoscerli binari da sé. ⛔ MA È UN ACCIDENTE DEL CONTENUTO E NON UNA
+# GARANZIA: un record congelato di domani può portare quei byte, e allora la protezione
+# servirebbe e non ci sarebbe. Dichiarata adesso, mentre costa una riga.
+#
+# ⛔ E NIENTE `* text=auto`, MAI, in questo file. I fine-riga di questo repository sono MISTI
+# PER FILE — non c'è una convenzione da seguire, c'è un file da non cambiare — e una regola
+# globale normalizzerebbe sorgenti che nessuno ha toccato, dichiarando centinaia di righe
+# cambiate in `git diff`. È già successo due volte, con uno script; da un `.gitattributes`
+# sarebbe peggio, perché nessuno lo rilegge.
+crates/kernel/tests/frozen/*.cbor binary

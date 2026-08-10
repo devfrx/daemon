@@ -56,9 +56,12 @@
 //! evidence; the reasoning is beside the type in `ipc.rs`.
 //!
 //! ⚠️ `journal` is declared here in milestone 2 and IMPLEMENTED in milestone 3: the trait
-//! exists because a caller already demands it, not because the durable format is settled. The
-//! record, the version enum and the frozen bytes are §4.9, and constraint 14 of §11 freezes
-//! them at the first record written — so nothing writes one yet.
+//! exists because a caller already demanded it, not because the durable format was settled. The
+//! record, the version enum and the frozen bytes are §4.9, and constraint 14 of §11 freezes them
+//! at the first record written. ⚠️ THE LINE ENDED WITH "so nothing writes one yet" UNTIL
+//! 2026-08-10 and is dated rather than rewritten: `Untrusted::promote` writes one, and the frozen
+//! bytes are in the repository. The format IS settled now, and `crate::record` states on what
+//! terms it may still grow — optional fields at new indices, and nothing else.
 //!
 //! ⚠️ `rng` IS DECLARED IN §2.2 AND LIVES IN `crate::rng`, NOT HERE. It is a source of
 //! non-determinism, not a family of I/O, and the asymmetry is deliberate rather than a

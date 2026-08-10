@@ -62,9 +62,16 @@ use minicbor::{Decode, Encode};
 /// ⚠️ THE COST IS DECLARED AND IT IS A FORMAT COST: a build that does not know this variant
 /// decodes such a record to `RecordError::Malformed`. ⛔ THE DIRECTION IS SAFE, and that is
 /// what makes the cost acceptable — reconciliation reads a record it cannot decode as
-/// `SuspendAndAsk`, so an older build STOPS rather than guesses. It is free today because no
-/// archive exists; after the frozen bytes of task 10 the same change would cost a migration of
-/// the one irreproducible archive.
+/// `SuspendAndAsk`, so an older build STOPS rather than guesses.
+///
+/// ⚠️ "IT IS FREE TODAY BECAUSE NO ARCHIVE EXISTS" WAS TRUE UNTIL 2026-08-10, and it is dated
+/// rather than quietly rewritten: `tests/frozen_bytes.rs` landed that day and THE FORMAT IS
+/// FROZEN. A fourth variant would not move the frozen bytes — the three that exist keep their
+/// indices and the files carry only those — but it makes every record carrying it undecodable
+/// to a build that predates it, and that is a cost somebody pays instead of a hypothesis.
+/// ⚠️ MEASURED, AND THE COMPILER GETS THERE FIRST: adding `#[n(3)] Amend` never reaches any
+/// bench, because `crate::reconcile` matches this enum exhaustively and the LIBRARY stops with
+/// `E0004`. So the level 1 guard is the reconciliation's match; the frozen bytes speak after it.
 ///
 /// ⚠️ AND THE TWO EXISTING VARIANTS DID NOT MOVE, which was measured and not assumed:
 /// `#[cbor(index_only)]` encodes a variant as its bare index, so `Intent` stays `00` and
@@ -150,12 +157,14 @@ pub enum Trust {
 /// compiler enforces (§4.9.2): a new field is OPTIONAL and takes a NEW index; an index is
 /// RETIRED AND NEVER REUSED — the gap stays; a non-additive change opens a NEW VERSION.
 ///
-/// ⚠️ THE FUTURE TENSE IS EXACT, AND TODAY NOTHING HOLDS THEM. What WILL hold them is the
-/// frozen bytes of `tests/frozen_bytes.rs`, a level 2 check that arrives at task 10 of this
-/// milestone; that file does not exist yet. It is not a quibble about tense: measured at this
-/// commit, moving a variant onto a FREE index leaves the whole bench green — the derive
-/// renumbers encoding and decoding together, so no round trip can see it. Until the frozen
-/// bytes land, the three rules above are a convention that a reader must keep, not a check.
+/// ⚠️ THE FUTURE TENSE WAS EXACT UNTIL 2026-08-10, AND IT IS DATED RATHER THAN REWRITTEN. This
+/// paragraph said "TODAY NOTHING HOLDS THEM", and it was true: measured at that commit, moving a
+/// variant onto a FREE index left the whole bench green — the derive renumbers encoding and
+/// decoding together, so no round trip can see it. ⛔ `tests/frozen_bytes.rs` NOW EXISTS AND THE
+/// THREE RULES ARE A CHECK. It freezes THREE records, which between them pin all EIGHT variant
+/// indices of the three enums above, and each of the eight was renumbered ONE AT A TIME and
+/// turned it red — eight out of eight. ⛔ AND THE THREE `.cbor` FILES ARE NEVER REGENERATED: if
+/// they move it is a NEW VERSION of the record, not an updated test.
 ///
 /// ⚠️ `Clone` HAS NO CALLER IN THE CRATE AT THIS COMMIT, and is kept deliberately rather than
 /// by inattention — the derive lists of `StepId` and `ClientId` are justified line by line and
@@ -200,15 +209,24 @@ pub struct RecordV1 {
     /// site the boundary exists for. Splitting them lets the payload hold the external content
     /// and the label describe it.
     ///
-    /// ⚠️ MANDATORY AND NOT `Option`, AND THAT IS A DECISION WITH A DEADLINE ON IT. Rule 3 of
-    /// §4.9.2 — "a new field is OPTIONAL and takes a new index" — governs a field added to a
-    /// version SOMEBODY HAS ALREADY WRITTEN. V1 has never been written to an archive: the frozen
-    /// bytes are task 10 and do not exist yet, so there is no short array anywhere to decode and
-    /// an `Option` no reader would ever find `None` in would be dead surface — the same argument
-    /// that took the `Result` off `encode`. ⛔ FROM TASK 10 ONWARDS THE EXEMPTION IS GONE: once
-    /// the bytes are frozen, a field added to V1 MUST be `Option` with `#[cbor(default)]`, and
-    /// the meaning of an index that already exists must never change (rule 4 — the reuse was
-    /// measured, and it decodes to the WRONG SILENCE rather than to an error).
+    /// ⚠️ MANDATORY AND NOT `Option`, AND THAT WAS A DECISION WITH A DEADLINE ON IT — THE
+    /// DEADLINE FELL ON 2026-08-10. Rule 3 of §4.9.2 — "a new field is OPTIONAL and takes a new
+    /// index" — governs a field added to a version SOMEBODY HAS ALREADY WRITTEN, and when this
+    /// one arrived V1 had never been written: there was no short array anywhere to decode, and an
+    /// `Option` no reader would ever find `None` in would have been dead surface, the same
+    /// argument that took the `Result` off `encode`. ⛔ THE EXEMPTION IS SPENT, AND THIS IS THE
+    /// LAST MANDATORY FIELD V1 WILL EVER HAVE: `tests/frozen_bytes.rs` exists, so a field added
+    /// to V1 MUST be `Option` with `#[cbor(default)]` and a NEW index, and the meaning of an
+    /// index that already exists must never change (rule 4 — the reuse was measured, and it
+    /// decodes to the WRONG SILENCE rather than to an error).
+    ///
+    /// ✅ AND THE ADDITIVE HALF WAS MEASURED THE SAME DAY, IN BOTH DIRECTIONS, because a rule
+    /// nobody has run is a hope. An `Option<u64>` at the free index 5 leaves the frozen bytes
+    /// BYTE-IDENTICAL while it is `None` — `minicbor` TRUNCATES a trailing `None` instead of
+    /// writing a `null`, so 21 bytes and the inner array header still `85` — and it carries the
+    /// value when it is `Some`, 22 bytes with `86` and the number at the end. Both halves matter:
+    /// without the second, "the bytes did not move" would only have proved the field never
+    /// reached the wire. The old 21-byte records still decode under the six-field type.
     ///
     /// ⚠️ AND IT STAYS PRINTABLE, deliberately: the hand-written `Debug` hides index 3 and shows
     /// this one, because a failed assertion on a record has to say what the record was FOR.

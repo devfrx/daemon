@@ -16,11 +16,14 @@
 //! and decoding instead of going around them; and the durable form stays the kernel's
 //! property.
 //!
-//! ⚠️ Milestone 2 declared the port, and milestone 3 has since built half of what this note
-//! announced. The record, the version enum and the explicit indices EXIST — `crate::record`.
-//! What is still ahead is THE FROZEN BYTES: constraint 14 of §11 makes them enter the
-//! repository at the first record written, and they are deliberately the LAST thing of the
-//! milestone, so that a real consumer has exercised the format before it is frozen.
+//! ⚠️ Milestone 2 declared the port, and milestone 3 has since built ALL of what this note
+//! announced. The record, the version enum and the explicit indices EXIST — `crate::record` —
+//! and so do THE FROZEN BYTES, in `crates/kernel/tests/frozen_bytes.rs`, since 2026-08-10.
+//! ⚠️ THE PARAGRAPH SAID "what is still ahead is THE FROZEN BYTES" UNTIL THEN, and it is dated
+//! rather than deleted: constraint 14 of §11 made them enter the repository at the first record
+//! written, and they were deliberately the LAST thing of the milestone, so that a real consumer
+//! had exercised the format before it was frozen. It has, and it is — and from here a new field
+//! of `RecordV1` must be OPTIONAL with a NEW index, or it is a new version of the record.
 //!
 //! ⚠️ `replay` ARRIVED ON 2026-08-10, and the sentence this paragraph used to carry — "the
 //! port is not finished, `replay` is not here" — is why it is dated instead of deleted. A port

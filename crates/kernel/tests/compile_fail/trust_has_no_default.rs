@@ -43,7 +43,7 @@ fn main() {
 // ⚠️ WHAT NEITHER CASE COVERS, declared here rather than discovered later: a default written BY
 // HAND inside a bespoke `Decode` impl needs no `Default` at all, and no compile-fail case can
 // see it. It is the same declared limit §2.8.4 carries for `Parameters::new`, and it is held at
-// level 2 — for the record, by the frozen bytes of task 10.
+// level 2 — for the record, by the frozen bytes, in the repository since 2026-08-10.
 //
 // ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.
 //

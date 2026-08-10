@@ -11,10 +11,12 @@
 //! here GREEN, because the derive renumbers ENCODING AND DECODING TOGETHER and a round trip
 //! cannot see a change that is symmetric.
 //!
-//! ⚠️ SO THE NUMBERS WILL BE HELD ELSEWHERE — by the frozen bytes of `tests/frozen_bytes.rs`,
-//! the level 2 check §4.9.2 names for exactly this. ⛔ THE FUTURE TENSE IS EXACT: that file
-//! arrives at task 10 of this milestone and DOES NOT EXIST YET, so at this commit the wire
-//! numbers are held by NOTHING AT ALL — which is precisely what the paragraph above measured.
+//! ⚠️ SO THE NUMBERS ARE HELD ELSEWHERE — by the frozen bytes of `tests/frozen_bytes.rs`, the
+//! level 2 check §4.9.2 names for exactly this. ⛔ THE TENSE WAS FUTURE UNTIL 2026-08-10 and it
+//! is dated rather than quietly rewritten: this paragraph said that file "DOES NOT EXIST YET, so
+//! at this commit the wire numbers are held by NOTHING AT ALL", and that was true. It exists
+//! now. It freezes THREE records, because the three enums have EIGHT variants between them and
+//! one record would pin three; each of the eight was renumbered one at a time and turned it red.
 //!
 //! ⚠️ WHAT DIES HERE IS THE ASYMMETRIC DEFECT, and that was measured — twice per field, because
 //! the two directions do NOT give the same answer and the first draft of this paragraph got it
@@ -240,9 +242,11 @@ fn an_empty_record_is_nine_bytes_and_the_inner_array_holds_five() {
     // 4 arrived on 2026-08-10.
     //
     // ⚠️ WHAT THIS DOES AND DOES NOT HOLD: it holds the ARITY of the two arrays and the total
-    // length, not the index of any field. The indices are held by nothing until the frozen bytes
-    // of task 10, exactly as the head of this file says — a variant moved onto a free index
-    // leaves this test green, because the derive renumbers encoding and decoding together.
+    // length, not the index of any field. ⚠️ THIS COMMENT SAID "the indices are held by nothing
+    // until the frozen bytes of task 10" UNTIL 2026-08-10, and they landed that day: the indices
+    // are held by `tests/frozen_bytes.rs`. THIS test still does not hold them — a variant moved
+    // onto a free index leaves it green, because the derive renumbers encoding and decoding
+    // together — and that division of labour is the design, not a gap left in it.
     // ⚠️ THE FIELD VALUES ARE THE DOC'S OWN — `Intent`, `Idempotent`, `Instruction` — so this
     // assertion and the sentence in `src/record.rs` are the SAME measurement written twice.
     // Picking different values here would leave the doc's bytes held by nothing again.

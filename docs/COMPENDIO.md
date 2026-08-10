@@ -664,7 +664,12 @@ due nel grafo di questo tipo. ⛔ **Decisione del coordinatore, non del piano: l
 `pub fn encode(&self) -> Vec<u8>`**, ed è la stessa posizione già presa per `Ipc::accept` —
 *«un `Result` che non può mai essere `Err` è superficie morta»*. Pesano due cose che
 `Ipc::accept` non ha: al **Task 7** `promote` lo chiama, e un `.expect` che non può sparare
-**dentro il confine dei dati non fidati** è debito; e i chiamanti sono due oggi e molti dopo.
+**dentro il confine dei dati non fidati** è debito; e i chiamanti sono **pochi** oggi e molti
+dopo. ⚠️ **Questa riga diceva «due», e il numero era sbagliato:** contati invece che ricordati,
+i file chiamanti erano **uno** — `crates/kernel/tests/record_shape.rs`, con **nove** siti — e il
+secondo che era stato contato, `compile_fail/record_without_version.rs`, **non è un chiamante**:
+nomina `RecordV1::encode`, e la ragione per cui quel caso esiste è che quel metodo inerente
+**non c'è**. ✅ L'errore va **a favore** dell'argomento, non contro.
 `RecordError` **resta**, ristretto a `decode`. ⚠️ Registrata come **E22** nell'errata del piano,
 perché il proprietario possa ribaltarla vedendola. ⚠️ **E il difetto vero non è la firma: è che
 una questione aperta nel sorgente non compariva qui**, quindi per chi legge non esisteva — la

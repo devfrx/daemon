@@ -229,8 +229,17 @@ impl Record {
     /// derives and a getter for. `Untrusted::promote` will call this at task 7, and an `.expect`
     /// that cannot fire, sitting INSIDE THE CODE OF THE UNTRUSTED-DATA BOUNDARY, is debt and not
     /// prudence — a reader of that file has to establish that it cannot fire before trusting the
-    /// line it is on. And the call sites are TWO today and will be many afterwards: the edit
+    /// line it is on. And the call sites are FEW today and will be many afterwards: the edit
     /// costs least now and most later.
+    ///
+    /// ⚠️ "FEW" WAS "TWO" FOR ONE COMMIT, AND THE COUNT WAS WRONG — dated rather than
+    /// quietly fixed, because a wrong number attached to a right rule is exactly how gotcha #31
+    /// works. Counted instead of remembered: at the commit that changed this signature there was
+    /// ONE calling file, `tests/record_shape.rs`, with NINE call sites.
+    /// `tests/compile_fail/record_without_version.rs` was counted as the second and is not a
+    /// caller at all — it names `RecordV1::encode`, and its entire purpose is that no such
+    /// inherent method exists. ✅ The error runs in the argument's FAVOUR: fewer call sites means
+    /// the edit was cheaper than claimed, not dearer.
     ///
     /// ⚠️ THE PRICE IS DECLARED, and it is the one the open question named: the day a later
     /// version encodes something that CAN fail, this signature changes and every call site with

@@ -22,22 +22,12 @@ fn main() {
 // record_without_trust_label.rs ... error` and `Expected test case to fail to compile, but it
 // succeeded.` That is the good answer to gotcha #42 — `TRYBUILD=overwrite` rewrites `.stderr`
 // files and nothing else, so a bulk regeneration CANNOT silence a case that fires by compiling.
-// No second case of a different shape is owed here.
 //
-// ⛔ AND WHAT DOES *NOT* DISARM IT WAS MEASURED TOO, because the obvious guess is wrong and a
-// later reader would waste the same afternoon. `impl Default for Trust` leaves this case GREEN,
-// and so does adding `#[cbor(default)]` to the field on top of it. A `Default` on a FIELD'S TYPE
-// does not make that field omissible in a STRUCT LITERAL — only `..Default::default()` does, and
-// that lives in the caller, not in `src/record.rs`. The only mutation that disarms this guard is
-// REMOVING THE FIELD, which is exactly the defect the rule is about.
-//
-// ⚠️ SO THIS CASE HOLDS THE HALF "THE FIELD EXISTS", NOT THE HALF "IT HAS NO DEFAULT", and the
-// difference is written here rather than left to be assumed from the catalogue row. With
-// `#[cbor(default)]` present the WHOLE `kernel` suite stays green — ten benches, no red. What it
-// does to the bytes was measured too, and the answer is nothing: the array is POSITIONAL and
-// `trust` sits at index 2, so a short array slides the payload into the label's slot and
-// decoding still comes out `Err(Malformed)`. The decode half arrives with the frozen bytes of
-// task 10, which is a level 2 check.
+// ⚠️ REMOVING THE FIELD IS THE ONLY MUTATION THAT DISARMS THIS ONE. A `Default` on a field's
+// TYPE does not make that field omissible in a struct literal, so `impl Default for Trust`
+// leaves this case green — which is why the row's other half needs its own case.
+// `trust_has_no_default.rs` is that case, and it carries the whole argument, the two-line
+// recipe and what neither case covers. Read it there rather than twice.
 //
 // ⚠️ THE COUNTER-PROBE IS NOT HERE, AND IT ALREADY EXISTED: the catalogue row's "a record that
 // declares its own label compiles, in both values" is

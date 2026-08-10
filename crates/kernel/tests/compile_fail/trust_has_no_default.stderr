@@ -1,0 +1,5 @@
+error[E0277]: the trait bound `Trust: Default` is not satisfied
+ --> tests/compile_fail/trust_has_no_default.rs:6:19
+  |
+6 |     let _label = <kernel::record::Trust as Default>::default();
+  |                   ^^^^^^^^^^^^^^^^^^^^^ the trait `Default` is not implemented for `Trust`

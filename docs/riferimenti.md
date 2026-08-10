@@ -555,8 +555,11 @@ cosa cercare. La si trova solo enumerando la fonte e cercando ciascuna voce nell
 Misurate il **2026-08-10** con `rustc 1.95.0` · `cargo 1.95.0` · `minicbor` 2.3.0 ·
 `trybuild` 1.0.120 · Windows 11. ⛔ **Sono misure, non documentazione consultata**: il comando
 con la sua versione è la fonte. Dove l'attesa scritta prima divergeva dall'esito, la divergenza
-è **registrata e non appianata** — sono quattro, e due riguardano ciò che il piano del traguardo
-dava per scontato.
+è **registrata e non appianata** — sono **cinque**: tre su ciò che il piano del traguardo dava
+per scontato, una sul registro, e ⛔ **una su una misura scritta qui in una forma che non si
+poteva rifare**, corretta da una revisione che ha provato a rifarla. È il gotcha **#15** rivolto
+a chi lo cita, ed è la ragione per cui la colonna **Come** porta ora le precondizioni e non solo
+la mutazione.
 
 | Misura | Come | Esito il 2026-08-10 | Dove entra |
 |---|---|---|---|
@@ -566,8 +569,33 @@ dava per scontato.
 | la **parola** con cui scatta `record_without_version.rs` | aggiunto un `encode` inerente a `RecordV1`, poi rimosso | **`error`**, con `Expected test case to fail to compile, but it succeeded.` — **non** `mismatch`. ⚠️ **Il piano attendeva la direzione opposta** (errata **E2**), e la conclusione che cercava regge lo stesso e in meglio: `TRYBUILD=overwrite` riscrive solo i `.stderr`, quindi non può spegnere un caso che scatta **compilando**, e non serve un secondo caso di forma diversa — gotcha **#42** | §7.4.1 blocco C · registro |
 | ⛔ il **giro di andata e ritorno** è cieco, ma in **una direzione sola** | su ciascuno dei tre campi (`kind`, `effect`, `trust`), due mutazioni: `decode` forzato al valore **che il test scrive**, e forzato **all'altro** | forzandolo al valore scritto diventa rossa **una sola** sonda, quella del campo; forzandolo all'altro ne diventano **due**, perché anche il round trip se ne accorge. ⚠️ **La prima stesura del commento del banco affermava «una sola, sempre» ed era falsa**: registrata come divergenza invece che allineata all'attesa | `crates/kernel/tests/record_shape.rs` |
 | la **parola** con cui scatta `record_without_trust_label.rs` | rimosso il campo `trust` da `RecordV1`, poi ripristinato | **`error`**, stessa frase. Neanche questa riga poggia sul proprio oracolo, e nessuna rigenerazione in blocco la spegne | §7.4.1 blocco C · registro |
-| ⛔ cosa **non** disarma il caso dell'etichetta | `impl Default for Trust`, poi `#[cbor(default)]` sul campo in aggiunta | **nessuno dei due**: il caso resta verde, cioè la regola continua a scattare. In Rust un `Default` sul **tipo di un campo** non rende quel campo omissibile in un **letterale di struct** — solo `..Default::default()`, che sta nel chiamante. ⚠️ **Il piano prescriveva proprio quella mutazione** come contro-direzione, e l'unica che disarma la guardia è **togliere il campo** | §7.4.1 blocco C |
-| e cosa fa `#[cbor(default)]` **ai byte** | decodifica di `82 00 81 83 00 01 40` con l'attributo presente | **niente**: `Err(Malformed)`. L'array è **posizionale** e `trust` sta all'indice **2**, quindi un array corto sposta il payload sul posto dell'etichetta. ⚠️ E con l'attributo presente **l'intera suite di `kernel` resta verde** — dieci banchi, nessun rosso: la metà «non ha default» della riga di catalogo **non è tenuta da nulla** finché non arrivano i byte congelati del Task 10 | limite dichiarato della riga di catalogo |
+| ⛔ `#[cbor(default)]` **da solo** sul campo | **solo** l'attributo, senza nessun `impl Default for Trust`, poi `cargo build -p kernel` | ⛔ **non compila**: `error[E0277]: the trait bound `Trust: Default` is not satisfied`. Il derive di `minicbor` **pretende** `Default`, quindi la ricetta è di **due righe** e mai di una | §7.4.1 blocco C |
+| ⛔ cosa **non** disarma `record_without_trust_label.rs` | la ricetta completa a **due righe** — `impl Default for Trust` **più** `#[cbor(default)]` sul campo — e poi il solo `impl` | **nessuna delle due**: quel caso resta verde. In Rust un `Default` sul **tipo di un campo** non rende quel campo omissibile in un **letterale di struct**. ⚠️ **Il piano prescriveva proprio quella mutazione** come contro-direzione: l'unica che disarma **quel** caso è togliere il campo — ed è la ragione per cui la riga ha un **secondo** caso | §7.4.1 blocco C |
+| e cosa disarma `trust_has_no_default.rs` | base **`ok`**; poi `impl Default for Trust` da solo, e poi con l'attributo in aggiunta | **entrambe** lo disarmano: passa a **`error`** con `Expected test case to fail to compile, but it succeeded.`, e tolto l'impl torna verde. ⛔ **Quindi la metà «non ha default» NON è scoperta**: `Trust: Default` è la porta obbligata di ogni via che defaultizzi, e questo caso ci sta dentro. ⚠️ Resta fuori solo un default scritto **a mano** dentro un `Decode` su misura, che non passa da `Default` — stesso limite dichiarato che §2.8.4 porta per `Parameters::new` | §7.4.1 blocco C |
+
+### I fine-riga, misurati per la prima volta invece che assunti
+
+⛔ **La regola dice *«i fine-riga sono misti per file: c'è un file da non cambiare»*, e nessuno
+aveva mai misurato quali.** Contati il 2026-08-10 su tutti i file tracciati, leggendo i byte:
+
+| | |
+|---|---|
+| **solo LF** | **centosessantatré** file |
+| **solo CRLF** | **quattro**, e sono questi: `crates/kernel/src/ports/process.rs` · `crates/kernel/tests/ports_are_implementable.rs` · `crates/kernel/tests/reactor_contract.rs` · `crates/platform/src/reactor.rs` |
+| ⛔ **misti dentro un file** | **zero**. La regola è vera *fra* i file, non *dentro* uno |
+
+```python
+# git ls-files, poi per ciascuno: crlf = d.count(b'\r\n'); lf = d.count(b'\n') - crlf
+```
+
+⚠️ **E il modo in cui è saltata fuori vale quanto il numero, perché è il gotcha #48.** Il
+controllo usato per tutta la sessione era `grep -cU $'\r' <file>` dentro una sostituzione di
+comando, e lì `$'\r'` **collassa a un modello vuoto**, che combacia con **ogni riga**: il
+conteggio tornava sempre *«righe con CR = righe totali»*, cioè **CRLF per qualunque file**,
+compresi quelli appena creati in LF. ⛔ **Un banco che sbaglia verso l'attesa**: la regola fa
+attendere CRLF, e il banco lo confermava. Si è rotto solo quando ha dato **due risposte diverse
+sullo stesso file** nella stessa sessione. Il metodo affidabile è leggere i **byte**, mai un
+`grep` su un carattere di controllo passato per il quoting della shell.
 
 ### I comandi con cui si riconta il catalogo, riscritti perché delimitino per intestazione
 

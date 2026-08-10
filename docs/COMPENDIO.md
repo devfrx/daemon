@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (622 KB con `wc -c` il 2026-08-10, e possono solo crescere — la spec da sola ne fa 271), e
+> (629 KB con `wc -c` il 2026-08-10, e possono solo crescere — la spec da sola ne fa 274), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-10.** Manutenzione: §13.
@@ -950,23 +950,23 @@ Apri **un** file, quello che serve. Non la cartella.
 | Se ti serve… | Apri | Peso |
 |---|---|---|
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
-| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 271 KB |
+| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 274 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 138 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 142 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 18 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 41 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 44 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 54 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 62 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
-| ⛔ **il compito da cui si riprende** — è il piano **in corso**, dodici compiti, e il primo è il record durevole | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 92 KB |
+| ⛔ **il compito da cui si riprende** — è il piano **in corso**, dodici compiti: i primi **due sono eseguiti**, si riprende dal **Task 3**. ⚠️ **L'errata in testa si legge prima del compito** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 95 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 11 KB |
 | ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | 12 KB |
 
@@ -1315,6 +1315,43 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla settima
+> applicazione.
+
+> 🔁 **Sedicesima misura, il 2026-08-10, chiudendo il Task 2 del Traguardo 3 — ed è la prima
+> aperta perché una revisione ha chiesto il verbale, non perché chi scriveva se ne fosse
+> accorto.** Scritta a passata chiusa; righe contate prima dei numeri dentro di esse, e
+> **partendo dall'elenco dei file citati** — il movimento che la quindicesima ha prescritto:
+> diciotto citazioni nella §12, diciotto righe, **nessuna assente**.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | spec del sotto-progetto 1 `271 → 274` · [`HANDOFF.md`](HANDOFF.md) `138 → 142` · [`riferimenti.md`](riferimenti.md) `54 → 62` · [`porta-di-qualita.md`](porta-di-qualita.md) `41 → 44` · il piano del Traguardo 3 `92 → 95`, per l'errata che il Task 1 gli ha messo in testa |
+> | **invariati, ricontati** | kernel-design 44 · roadmap 18 · tracciabilità 15 · `design/08` 8 · `design/01` 4 · il piano degli spike 68 · il piano del Traguardo 1 50 · il piano del Traguardo 2 162 · README 11 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 12 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` (2441 B e 19291 B) · `design/` nove file `4–9` |
+> | **una cella di testo, non di cifre** | la riga del piano del Traguardo 3 diceva *«dodici compiti, e il primo è il record durevole»*. Il primo **è eseguito**: ora dice da dove si riprende, che è la sola cosa che quella riga serve a dire |
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **622** a **629 KB** (643910 B). I **due file
+> obbligatori** passano da 139 a **143 KB**, e quella cifra vive in **cinque** posti — uno in
+> `CLAUDE.md` e **quattro** in [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — più il riquadro della
+> quindicesima misura, che è **verbale** e non si tocca.
+>
+> ⛔ **E cinque cifre vivevano in cinque posti con tre valori diversi, che è la forma peggiore
+> del #31.** Il Task 2 aveva rimisurato *«622 → 630»* e l'aveva scritto in **un posto solo**,
+> lasciando `CLAUDE.md` a contraddirsi **a tre righe di distanza** — 622 alla riga 25, 630 alla
+> 28 — più il riquadro in testa a questo file e la riga della spec in
+> [`AVVIO-CHAT.md`](AVVIO-CHAT.md). ⚠️ **È letteralmente ciò che la sesta misura aveva scritto
+> per impedirlo** — *«rimisurare non basta: si scrive dove qualcuno legge per decidere»* —
+> ripetuto **dentro `CLAUDE.md`**, il file che quella regola contiene. Chi rimisura cerca la
+> cifra vecchia con un `grep` **su tutto il repository**, non nel file che ha in mano.
+>
+> ⚠️ **E due delle cifre di quella rimisura erano sbagliate, ciascuna a modo suo.** La spec era
+> **troncata** invece che arrotondata — il metodo della §12 è *«`wc -c`, arrotondati a KiB»* — e
+> poi il numero è **sceso ancora**, perché la stessa revisione ha fatto accorciare un richiamo
+> datato di venti righe: `276` alla revisione, **274** a passata chiusa. 📌 **La lezione è
+> sull'ordine, non sull'aritmetica:** una rimisura fatta **prima** dell'ultima correzione è
+> un'ipotesi, e vale anche quando le correzioni **riducono** invece di far crescere.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, all'ottava
 > applicazione.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:

@@ -55,7 +55,7 @@ journal` (V19); perché gli altri quattro non lo siano lo dice la riga del blocc
 | **blocco C** · `Q9 · I6 · V20` — `Untrusted` **dove è attesa** un'`Instruction`, **regola A** | `crates/kernel/src/boundary.rs` — `Instruction` e `Untrusted` sono due tipi distinti | `untrusted_as_instruction.rs` |
 | **blocco C** · `Q9 · I6 · V20` — **nessuna via `From`/`Into`** da `Untrusted` a `Instruction`, **regola B** | idem: nessuna conversione è dichiarata, e l'unica strada ammessa è `promote`, che pretende il giornale | `no_conversion_from_untrusted_to_instruction.rs` |
 | **blocco C** · `Q14 · §4.9` — un record durevole **senza versione** | `crates/kernel/src/record.rs` — `Record` è un enum di versione, e l'`encode` inerente vive su di esso, non sul corpo `RecordV1` | `record_without_version.rs` |
-| **blocco C** · `Q9 · I6 · V20 · §4.9` — un payload non fidato **senza la propria etichetta** | `crates/kernel/src/record.rs` — `RecordV1::trust` non è un `Option`, non porta `#[cbor(default)]`, e `Trust` non implementa `Default` | `record_without_trust_label.rs` |
+| **blocco C** · `Q9 · I6 · V20 · §4.9` — un payload non fidato **senza la propria etichetta** | `crates/kernel/src/record.rs` — `RecordV1::trust` non è un `Option` e `Trust` non implementa `Default`. ⛔ **Le metà sono due e i casi sono due**, come per i due tempi: il primo tiene *«il campo esiste»* (`E0063`), il secondo *«e non ha default»* (`E0277`) | `record_without_trust_label.rs` · `trust_has_no_default.rs` |
 | **blocco B** · `V19` — **promuovere testo a istruzione ← la porta `journal`** | `crates/kernel/src/boundary.rs` — `Untrusted::promote` pretende il giornale come **argomento**, e la registrazione fallita fa fallire la promozione | `promote_without_journal.rs` |
 
 ⛔ **La regola uscita dalla riga della regola B, e vale oltre il caso** (gotcha **#36**, terza
@@ -79,7 +79,8 @@ quando l'uscita non combacia con l'oracolo:
 | `Untrusted` dove è attesa un'`Instruction` — **regola A** | ⛔ **niente: resta `ok`** | no, ed è **peggio** — vedi sotto |
 | nessuna via `From`/`Into` da `Untrusted` a `Instruction` — **regola B** | **`error`** | no |
 | un record durevole senza versione | **`error`** | no |
-| un payload non fidato senza la propria etichetta | **`error`** | no |
+| un payload non fidato senza la propria etichetta — **il campo esiste** | **`error`** | no |
+| la stessa riga, **e non ha default** — `trust_has_no_default.rs` | **`error`** | no |
 
 ⛔ **La riga della regola A è la divergenza, e si registra invece di allinearla all'attesa.**
 Il gotcha #42 prevedeva un `mismatch` — rustc che aggiunge righe di `help: call Into::into`

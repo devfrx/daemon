@@ -2662,46 +2662,23 @@ quella «semplificazione» prima che qualcuno la applichi.
 > ⚠️ **Perché entra qui e non solo nel registro:** §8.1.2 ammette come «controllo» solo ciò che
 > il catalogo elenca, ed è il gotcha **#36**, che è già successo **tre volte** nello stesso modo.
 >
-> ⛔ **E la riga porta il proprio caso, che il piano non prevedeva.** Il vincolo globale 6
-> pretende due sonde **e** un caso in `tests/compile_fail/`; senza, questa sarebbe stata la
-> **prima** riga del blocco C sprovvista — le due righe `Q9` qui sopra ce l'hanno entrambe. Il
-> caso è `record_without_trust_label.rs`, costruito sulla forma di
-> `parameters_have_no_default.rs`, e la contro-sonda **esisteva già**: è
-> `every_trust_label_survives_the_round_trip_and_the_two_differ_in_the_bytes` di
-> `crates/kernel/tests/record_shape.rs`, che scrive entrambi i valori e ne confronta i byte.
->
-> 📌 **Provata in due direzioni, e la parola è `error`** — gotcha #24 e #42. Che scatti: il caso
-> è rosso con `E0063`, e l'oracolo **nomina il campo mancante due volte**, come `missing field
-> `trust`` e come `missing `trust``. Che non scatti dove non deve: **rimosso il campo** da
-> `RecordV1` il caso passa a **`error`**, con `Expected test case to fail to compile, but it
-> succeeded.`; ripristinato, torna verde. Scattando come `error` e non come `mismatch`, la
-> regola **non poggia sul proprio oracolo**: nessuna rigenerazione in blocco la spegne, e **non
-> serve un secondo caso** di forma diversa.
->
-> ⛔ **E la mutazione che il piano prevedeva NON disarma il caso — misurato, e registrato invece
-> che appianato.** Il piano del Traguardo 3 chiedeva di provare la seconda direzione con un
-> `impl Default for Trust` o un `#[cbor(default)]` sul campo. Provate entrambe, e **una dopo
-> l'altra sullo stesso sorgente**: il caso resta **verde**, cioè la regola continua a scattare.
-> La ragione è di linguaggio e vale per ogni riga di questa forma: in Rust un `Default` sul
-> **tipo di un campo** non rende quel campo omissibile in un **letterale di struct** — solo
-> `..Default::default()`, che sta nel chiamante e non nel sorgente. L'unica mutazione che
-> disarma la guardia è **togliere il campo**, ed è esattamente il difetto che la riga descrive.
->
-> ⚠️ **Da cui il limite di questa riga, scritto prima che qualcuno lo scopra: il caso tiene la
-> metà «il campo esiste», non la metà «non ha default».** `#[cbor(default)]` tocca la
-> **decodifica**, non la costruzione, e con esso presente **l'intera suite di `kernel` resta
-> verde** — dieci banchi, nessun rosso. ⚠️ Misurato anche cosa faccia davvero su questa forma, e
-> **non fa nulla**: l'array è **posizionale** e `trust` sta all'indice 2, quindi un array corto
-> sposta il payload sul posto dell'etichetta e la decodifica esce comunque `Err(Malformed)`.
-> Chi vorrà la seconda metà la troverà nei **byte congelati** del Task 10, che è di livello 2.
+> ⛔ **Due casi per una riga sola, perché le metà sono due** — il piano ne prevedeva zero, e il
+> vincolo globale 6 ne pretende. `record_without_trust_label.rs` tiene *«il campo esiste»*
+> (`E0063`); `trust_has_no_default.rs` tiene *«e non ha default»* (`E0277`). Entrambi scattano
+> come **`error`** e non come `mismatch`, quindi **nessuna rigenerazione in blocco li spegne**.
+> Sono complementari e nessuno è di troppo: misurato che un `impl Default for Trust` fa rosso
+> **solo** il secondo, e togliere il campo **solo** il primo. La coppia ha il precedente locale
+> in `monotonic_as_wall`/`wall_as_monotonic`, quindi **non è una riga in più**. La contro-sonda
+> esisteva già: `every_trust_label_survives_the_round_trip_and_the_two_differ_in_the_bytes` di
+> `crates/kernel/tests/record_shape.rs`. ⚠️ **L'argomento per intero — la ricetta a due righe,
+> e ciò che nessuno dei due casi copre — sta in `trust_has_no_default.rs`**, dove serve a chi ci
+> sbatte contro, e non è ripetuto qui.
 >
 > 📌 **Conteggi ricontati sulla tabella, non dedotti** — gotcha #31: il blocco C passa da
-> diciotto a **diciannove** righe, e i test di compilazione fallita del catalogo da ventitré a
-> **ventiquattro**. La §7.4.7 è aggiornata nello stesso passaggio. ⚠️ **E il numeratore del
-> registro era già stantio prima di questa riga**, il che vale più del denominatore: il Task 1
-> aveva lasciato `record_without_version.rs` senza la propria riga nel registro, quindi le
-> implementate erano **otto su diciotto** dove il registro diceva sette. Diventano **nove su
-> diciannove**, e il salto di due nel numeratore è la divergenza, non un errore di somma.
+> diciotto a **diciannove** righe, e i test del catalogo da ventitré a **ventiquattro**. La
+> §7.4.7 è aggiornata nello stesso passaggio. ⚠️ **E il numeratore del registro era già stantio
+> prima di questa riga** — otto, non sette — perché il Task 1 aveva consegnato un caso senza
+> scriverne la riga: la divergenza, coi comandi, sta in [`porta-di-qualita.md`](../../porta-di-qualita.md).
 
 > ⛔ **Quattro righe toccate il 2026-08-09, eseguendo il Traguardo 2 — e tre sono controlli
 > _nuovi_.** È la differenza dalle note qui sotto, e va detta invece che confusa.

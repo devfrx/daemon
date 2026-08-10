@@ -53,15 +53,20 @@ impl MemoryJournal {
 
 impl Journal for MemoryJournal {
     fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
-        // ⚠️ NO GUARD HERE, AND THAT IS AN OPEN QUESTION RATHER THAN A DECISION. A second
-        // intent for a step that already carries one is accepted IN SILENCE, and `read_back`
-        // then answers with the first of the two. Whether it ought to be accepted at all binds
-        // BOTH implementations, so it belongs to the conformance suite and not to this file:
-        // it is written down as an OPEN ENTRY in `docs/porta-di-qualita.md`, because a note is
-        // read and forgotten while an open entry is carried until somebody closes it (gotcha
-        // #36). Today's answer is nailed down by
-        // `a_second_intent_on_the_same_step_reads_back_the_first`, so that whoever decides
-        // changes a red and not a surprise.
+        // ⛔ THE GUARD ARRIVED ON 2026-08-10, AND THIS COMMENT USED TO SAY THERE WAS NONE. It
+        // was an OPEN QUESTION and not a decision: a second intent was accepted in silence and
+        // `read_back` answered with the first of the two. The question bound BOTH
+        // implementations, so it was settled where it binds both — the conformance suite,
+        // promise 6 — and this line only obeys.
+        //
+        // ⚠️ WHY IT IS NOT MERELY THIS FILE'S BUSINESS: promise 2 already forces an
+        // implementation to keep more than one record per step, hence a key finer than the
+        // step's identity, and with such a key "the first intent wins" falls out for free. But
+        // that is an accord by ACCIDENT OF THE KEY DESIGN. Keyed on the step — the natural
+        // choice — the two implementations would diverge with nothing going red.
+        if self.has_intent(step) {
+            return Err(JournalError::OutOfOrder);
+        }
         self.entries.push(Entry {
             step,
             kind: EntryKind::Intent,
@@ -92,10 +97,13 @@ impl Journal for MemoryJournal {
         // run able to read what happened and no longer able to read what it had set out to do.
         //
         // ⚠️ AND THE SECOND IMPLEMENTATION WILL NOT MEET THIS BY ITSELF: a `redb` table keyed
-        // by step identity returns — or worse, keeps — the LAST write. The conformance suite
-        // WILL BE what holds both to the same answer, and it does not exist yet: until it
-        // does, this comment is the only thing telling whoever writes the second one that the
-        // answer was CHOSEN and not stumbled into.
+        // by step identity returns — or worse, keeps — the LAST write. ✅ THE CONFORMANCE
+        // SUITE NOW HOLDS BOTH TO THE SAME ANSWER — `crates/kernel/tests/journal_contract.rs`,
+        // promise 2, with `LastWriteWinsJournal` as the liar that proves it bites. This
+        // paragraph used to end "and it does not exist yet: until it does, this comment is the
+        // only thing telling whoever writes the second one", which was true when it was
+        // written and false from the commit that wrote the suite. Whoever writes the `redb`
+        // one does not need this comment to be told: they get a red.
         self.entries
             .iter()
             .find(|e| e.step == step)

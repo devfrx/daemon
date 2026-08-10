@@ -674,7 +674,26 @@ cp crates/platform/tests/journal_contract_real.rs …           # sonda usa-e-ge
 | la **mutazione di controllo** | cambiato **solo un commento** | **nessun test rosso** — `7 passed`. Senza, la tabella qui sopra non prova niente (gotcha **#48**) | metodo |
 | ⛔ `assert_eq!` con messaggio **non** produce il messaggio | letto il payload di tutti e sei i panici | il payload è `` assertion `left == right` failed: <messaggio> `` più i due valori, quindi **non è mai uguale** alla costante: i test negativi dettati dal piano (`assert_eq!(caught.as_deref(), Some(MSG))`) sarebbero falliti in **cinque casi su sei**. Si confronta con `contains`, col vincolo che **nessun messaggio sia sottostringa di un altro** | `journal_contract.rs` |
 | il file è **`include!`-abile** da `platform` | sonda usa-e-getta in `crates/platform/tests/`, poi rimossa | **7 passed** dentro il binario di `platform`, senza avvisi: `kernel` è dipendenza e `simulator` è già fra le `dev-dependencies` con la ragione scritta. Il Task 9 non incontra ostacoli | Task 9 |
-| ⚠️ il **limite dichiarato** dell'hook di panic si è materializzato | esecuzione in parallelo dei sette test | un test è uscito `FAILED` **senza la propria sezione stdout**: il suo panico è caduto nella finestra in cui un altro test aveva silenziato l'hook, che è **globale al processo**. Il fallimento non si perde mai, solo il suo messaggio. Si rilegge con `-- --test-threads=1` | metodo · limite già dichiarato in `reactor_contract.rs` |
+| ⚠️ il **limite dichiarato** dell'hook di panic si è materializzato | esecuzione in parallelo dei sette test **di allora** | un test è uscito `FAILED` **senza la propria sezione stdout**: il suo panico è caduto nella finestra in cui un altro test aveva silenziato l'hook, che è **globale al processo**. Il fallimento non si perde mai, solo il suo messaggio. Si rilegge con `-- --test-threads=1` | metodo · limite già dichiarato in `reactor_contract.rs` |
+
+## Esecuzione del Traguardo 3 — la revisione dei Task 4/5: la decisione sul secondo intento, e un banco che tronca
+
+Misurate il **2026-08-10**, stessa toolchain, chiudendo la voce aperta sul secondo intento.
+
+```bash
+cargo test --workspace --no-fail-fast    # ⛔ senza il flag il conteggio è TRONCATO, sotto
+cargo test -p kernel --test journal_contract          # 8 passed
+cargo test -p simulator --test memory_journal         # 11 passed
+```
+
+| Misura | Come | Esito il 2026-08-10 | Dove entra |
+|---|---|---|---|
+| ⛔ **`cargo test --workspace` si ferma al primo target rosso** | una mutazione uccisa da due target diversi | ⛔ **un esito credibile e falso**: la prima passata riportava **quattro** morti, tutti in `journal_contract`, e concludeva che la contro-sonda nuova in `memory_journal` **non serviva**. Con `--no-fail-fast` i morti sono **sei**, e due sono proprio in `memory_journal`. ⚠️ **Non è un inganno del banco ma una sua opzione predefinita**, ed è la decima forma del gotcha **#48**: un conteggio di mutazioni si fa **sempre** con `--no-fail-fast`, o si legge il ritratto del primo target che cade | metodo, ogni passata futura |
+| ⛔ un'affermazione **scritta prima della misura**, e la misura l'ha smentita | contro-sonda della guardia nuova | ⛔ **Divergenza registrata.** Il commento diceva *«con questo test assente la mutazione lascia tutto verde»*, cioè che fosse una **lacuna misurata**. Falso: la guardia scritta `!entries.is_empty()` è colta da **sei** test — `each_step_reads_back_its_own_first_record` e la contro-sonda qui, più **cinque** in conformità, che muoiono sul **setup** della promessa 4. La contro-sonda resta perché **nomina** la proprietà, non perché sia l'unica a tenerla, ed è scritto così | `memory_journal.rs` |
+| la mutazione che **cambia padrone** invece di sopravvivere | intenti scritti in testa (**M7a**), rimisurata dopo la guardia | ✅ **uccisa dalla conformità**, promessa 4 — l'ordine di scrittura di `replay` **fra** i passi, che non esisteva quando M7a fu misurata la prima volta. Il suo unico uccisore di allora, `a_second_intent...`, **non può più esistere in quella forma**. ⚠️ Va misurato ogni volta che una decisione toglie un test: un uccisore che sparisce in silenzio è il pericolo vero | [registro](porta-di-qualita.md) |
+| la corrispondenza **promessa ↔ bugiardo**, rifatta per intero | sette neutralizzazioni | **sette su sette**, uno a uno: cade il test del bugiardo di quella promessa e **nessun altro**. Rifatta e non estesa — un banco che non si rifà quando l'insieme cambia riporta l'esito di ieri | [registro](porta-di-qualita.md) |
+| le **sottostringhe** fra messaggi, rifatte col messaggio nuovo | tutte le coppie **ordinate** | **quarantadue** coppie (sette messaggi), **zero** violazioni. Erano trenta con sei messaggi. Il confronto è per `contains`, quindi la proprietà va rifatta **ogni volta che se ne aggiunge uno** | `journal_contract.rs` |
+| la **mutazione di controllo**, rifatta | cambiato **solo un commento** | `8 passed`, e `--workspace --no-fail-fast` dà **zero** rossi | metodo |
 
 ## Cosa NON abbiamo adottato, e perché
 

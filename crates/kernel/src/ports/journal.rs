@@ -67,18 +67,37 @@ pub enum JournalError {
     NotDurable,
     /// The read found nothing under that identity.
     Missing,
-    /// ⛔ An `outcome` arrived for a step that has no `intent`. This is V6 held by the port
-    /// rather than by the caller: "nothing executes before the intent is durable" is the
-    /// NATURE of a write-ahead journal, not a policy the kernel layers on top. A port that
-    /// accepts it leaves the protocol resting on the diligence of whoever calls — the same
-    /// reason `boundary_promotion.rs` requires that a refusing journal refuses the
-    /// promotion too.
+    /// ⛔ An operation arrived OUT OF ORDER for this step, and there are TWO ways to do that.
+    ///
+    /// - an `outcome` for a step that has no `intent`;
+    /// - a SECOND `intent` for a step that already carries one.
+    ///
+    /// Both are V6 held by the port rather than by the caller: "nothing executes before the
+    /// intent is durable" is the NATURE of a write-ahead journal, not a policy the kernel
+    /// layers on top. A port that accepts either leaves the protocol resting on the diligence
+    /// of whoever calls — the same reason `boundary_promotion.rs` requires that a refusing
+    /// journal refuses the promotion too.
+    ///
+    /// ⚠️ THE SECOND HALF ARRIVED ON 2026-08-10, and it WIDENED this variant instead of adding
+    /// a third one. That is deliberate and it is this enum's own rule, three lines above: a
+    /// rich error type invites the kernel to branch on the reason, and the reason belongs to
+    /// whoever implements the port. "Out of order for this step" is one sentence that covers
+    /// both halves, and the kernel has nothing to decide differently between them.
+    ///
+    /// ⛔ ONE INTENT PER STEP IS ADR-0007's OWN WORDING — "the intent of every step" — so a
+    /// second one is outside the model rather than a case to discipline. It is held for BOTH
+    /// implementations by `crates/kernel/tests/journal_contract.rs`, promise 6, because an
+    /// implementation keyed on the identity of the step would otherwise diverge from the
+    /// in-memory one with nothing going red.
     OutOfOrder,
 }
 
 pub trait Journal {
     /// Makes the intention of a step durable. NOTHING EXECUTES BEFORE THE INTENT IS
     /// DURABLE (V6): the cost is two writes per step, accepted in ADR-0007.
+    ///
+    /// ⛔ ONE INTENT PER STEP. A second one for a step that already carries an intent is
+    /// `OutOfOrder` — see that variant for why it widened rather than gained a neighbour.
     fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError>;
 
     /// Makes the outcome durable, after the effect happened.

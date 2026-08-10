@@ -158,8 +158,11 @@ impl Untrusted {
     /// `promote_without_journal.rs` — and no `From`/`Into` road goes around it —
     /// `no_conversion_from_untrusted_to_instruction.rs`.
     ///
-    /// ⛔ What is NOT covered — the roads that compile, with the price of closing each, which
-    /// is the part worth knowing:
+    /// ⛔ The roads that COMPILE, with the price of closing each, which is the part worth
+    /// knowing. ⚠️ The heading used to read "what is NOT covered", and it stopped being the
+    /// truth as soon as entries started closing: **two of the seven are closed** — A3 at level
+    /// 1 and A6 at level 2 — and a heading that called them uncovered would mislead in the one
+    /// direction nobody checks. Each entry says its own state.
     ///
     /// - **A1/A2 — `Instruction::new(untrusted.as_str().into())`.** Reaches the instruction
     ///   channel with the journal never hearing of it. NOT closable here: making
@@ -180,17 +183,26 @@ impl Untrusted {
     ///   layouts — some 8 bytes per value — to stop somebody who writes `unsafe` WHILE NAMING
     ///   the kernel's two types. That is not an accident anybody has by mistake; it is
     ///   sabotage, and armouring against it is the wrong trade. Declared, not closed.
-    /// - **A6 — a `Journal` that answers `Ok(())` and writes nothing.** The generic bound is
-    ///   satisfied and the promotion succeeds. Belongs to the conformance suite of milestone 3,
-    ///   with `tests/reactor_contract.rs` and its two liars as the model.
+    /// - **A6 — a `Journal` that answers `Ok(())` and writes nothing.** ✅ CLOSED on 2026-08-10
+    ///   by the conformance suite, `tests/journal_contract.rs`, where this exact journal is
+    ///   `SilentJournal` and promise 1 catches it on the first assertion. ⚠️ AND THE LIMIT IS
+    ///   PART OF THE CLOSURE: a conformance suite is worth the evidence that TWO
+    ///   implementations answer alike, and the second one — `redb` in `platform` — arrives at
+    ///   task 8. Until then what is closed is the road, not the agreement: no journal that
+    ///   silently discards a write can pass the suite, and every journal this kernel is given
+    ///   is meant to pass it. It is a level 2 rule and not level 1 — nothing stops somebody
+    ///   from writing a `Journal` that never meets the suite — which is exactly why it is
+    ///   written here rather than counted as a compiler guarantee.
     /// - **A7 — a CHILD module of `boundary`.** Field privacy reaches descendants, so a
     ///   submodule added tomorrow can build `Instruction(…)` directly. Not closable: it is the
     ///   same mechanism that lets this module build them at all.
     ///
-    /// Why none of the open ones becomes a level 1 rule: each would have to quantify over code
-    /// THAT DOES NOT EXIST YET, and Rust states no rule about a call site not yet written.
-    /// Closing them is NOT attempted here: the residual is declared, not fixed, and what holds
-    /// it meanwhile is review. The guard covers the roads that exist; it is not total.
+    /// Why none of the ones still open becomes a level 1 rule: each would have to quantify over
+    /// code THAT DOES NOT EXIST YET, and Rust states no rule about a call site not yet written.
+    /// ⚠️ A6 is the counter-example that proves the shape of the answer rather than breaking it:
+    /// it was closed at **level 2**, by a test that runs, not by the compiler — and the price
+    /// was a whole conformance suite. The remaining five are declared, not fixed, and what
+    /// holds them meanwhile is review. The guard covers the roads that exist; it is not total.
     pub fn promote<J: Journal>(
         self,
         journal: &mut J,

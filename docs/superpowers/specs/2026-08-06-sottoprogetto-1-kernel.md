@@ -1045,7 +1045,7 @@ Il kernel dichiara cosa gli serve; chi lo fornisce sta fuori.
 
 | Operazione | Cosa fa |
 |---|---|
-| `intent` | rende durevole **l'intenzione** di un passo, prima che l'effetto avvenga |
+| `intent` | rende durevole **l'intenzione** di un passo, prima che l'effetto avvenga. **Uno per passo**: un secondo è rifiutato |
 | `outcome` | rende durevole **l'esito**, dopo |
 | `read_back` | rilegge **un** passo **per nome**, alla ripresa, per la riconciliazione |
 | `replay` | rilegge **tutto**, in ordine di scrittura, per scoprire l'insieme dei passi in dubbio |
@@ -1068,6 +1068,23 @@ Il kernel dichiara cosa gli serve; chi lo fornisce sta fuori.
 >
 > ⛔ **Costo dichiarato:** `replay` carica l'intero giornale in memoria. Il rimedio noto è un
 > **checkpoint**, e fissarlo ora congelerebbe un meccanismo che nessuna misura ha toccato.
+
+> ⛔ **`intent` è uno per passo — deciso il 2026-08-10, eseguendo il Traguardo 3.** Un secondo
+> intento su un passo che ne porta già uno è **rifiutato** con `JournalError::OutOfOrder`.
+> Prima non era una decisione: era un comportamento **mai interrogato** — la finta lo accettava
+> in silenzio e `read_back` rispondeva col primo. ⛔ **La ragione è la §4.2 stessa:**
+> [ADR-0007](../../adr/0007-giornale-write-ahead-e-riconciliazione.md) dice *«l'intento di
+> **ogni** passo»*, uno per passo, quindi un secondo è **fuori dal modello** e non un caso da
+> disciplinare. Ed è la metà **simmetrica** del rifiuto di un esito senza intento: V6 tenuta
+> dalla **porta**, non dalla diligenza del chiamante.
+>
+> ⚠️ **`OutOfOrder` si è allargata invece di guadagnare una variante vicina**, perché la §4.1
+> vuole il tipo d'errore povero: *«un'operazione è arrivata fuori ordine per questo passo»*
+> copre entrambe le direzioni, e il kernel non ha nulla da decidere diversamente fra le due.
+>
+> ⛔ **Vincola entrambe le implementazioni, ed è per questo che vive nella suite di conformità**
+> (§7.4.6) e non dentro una delle due. Una tabella chiavata sull'identità del passo — la scelta
+> naturale per `redb` — divergerebbe altrimenti dalla finta **senza che nulla diventi rosso**.
 
 > ⚠️ **La porta scambia _byte_, non record tipizzati — aggiunto il 2026-08-07** con
 > [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md). La codifica

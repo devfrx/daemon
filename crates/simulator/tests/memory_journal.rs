@@ -115,12 +115,17 @@ fn each_step_reads_back_its_own_first_record() {
     // (a) a `read_back` that ignored its `step` argument and returned the first entry it owns
     // would pass every single-step test above; (b) a store that put new entries at the FRONT
     // instead of the back would answer each step with its OUTCOME, because `read_back` takes
-    // the first match. ⚠️ Measured, and half of (b) escapes THIS test — but only under an
-    // hypothesis this test happens to satisfy: WITH AT MOST ONE INTENT PER STEP, reversing the
-    // intents among themselves changes no answer, because each step still meets its own intent
-    // before its own outcome. Drop that hypothesis and the reversal becomes visible in three
-    // calls with no outcome anywhere, which is what
-    // `a_second_intent_on_the_same_step_reads_back_the_first` holds.
+    // the first match. ⚠️ Measured, and half of (b) escapes THIS test — under a hypothesis
+    // that used to be an accident of the test and IS NOW THE CONTRACT: with AT MOST ONE INTENT
+    // PER STEP, reversing the intents among themselves changes no answer here, because each
+    // step still meets its own intent before its own outcome. ⛔ SINCE 2026-08-10 THE
+    // HYPOTHESIS CANNOT BE DROPPED — `intent` refuses a second one for the same step — so the
+    // three-call witness this line used to name is no longer constructible, and the sentence
+    // that named it has been rewritten rather than left pointing at a deleted test. ✅ Measured
+    // again after the guard, because a killer that goes away in silence is the whole danger:
+    // writing the intents at the HEAD is still caught, by the CONFORMANCE suite this time —
+    // promise 4, the write order of `replay` across steps, which did not exist when the old
+    // sentence was written. The mutation changed owner; it did not survive.
     //
     // ⚠️ AND IT DOES NOT PROVE THE WHOLE OF THE WRITE ORDER `journal.rs` claims. The global
     // order ACROSS steps is what `replay` owes — SINCE 2026-08-10, when the port gained it, and
@@ -159,31 +164,59 @@ fn each_step_reads_back_its_own_first_record() {
 }
 
 #[test]
-fn a_second_intent_on_the_same_step_reads_back_the_first() {
-    // ⛔ THIS PINS WHAT HAPPENS TODAY, AND WHAT HAPPENS TODAY IS UNDECIDED. `intent` has NO
-    // GUARD: a second intent for a step that already carries one is accepted in silence, and
-    // `read_back` answers with the first. Whether it OUGHT to be accepted binds both
-    // implementations and is therefore the conformance suite's to settle — it is written down
-    // as an open entry in `docs/porta-di-qualita.md` rather than as a note, because a note is
-    // read and forgotten (gotcha #36). Until it is settled the behaviour is nailed down, so
-    // that changing it is a red and not a surprise.
+fn a_second_intent_on_the_same_step_is_refused() {
+    // ⛔ THIS TEST CHANGED OBJECT ON 2026-08-10, AND THE OLD OBJECT IS WORTH KNOWING. It was
+    // `a_second_intent_on_the_same_step_reads_back_the_first`, and it pinned a behaviour that
+    // was UNDECIDED — `intent` had no guard, a second one was accepted in silence — so that
+    // whoever decided would change a red instead of getting a surprise. The decision was taken
+    // where it binds BOTH implementations, the conformance suite (promise 6): one intent per
+    // step, ADR-0007's own wording. The pin has done its job and now holds the answer.
     //
-    // ⚠️ AND IT IS THE WITNESS that reversing the INTENTS among themselves is observable from
-    // outside after all: three calls, no outcome anywhere. Measured — without this test that
-    // mutation leaves the whole file green, which is why the sentence in
-    // `each_step_reads_back_its_own_first_record` now carries the hypothesis that made it true.
+    // The second assertion is the half that gets forgotten: refusing is not enough if the
+    // second intent went in anyway. `read_back` still answering with the first proves the
+    // refusal did not half-happen.
     let mut journal = MemoryJournal::new();
     let step = StepId::new(1);
 
     journal.intent(step, b"the first intent").expect("intent");
-    journal
-        .intent(step, b"the second intent")
-        .expect("a second intent is accepted today: there is no guard to refuse it");
+
+    assert_eq!(
+        journal.intent(step, b"the second intent"),
+        Err(JournalError::OutOfOrder)
+    );
 
     assert_eq!(
         journal.read_back(step).expect("read back"),
-        b"the first intent".to_vec()
+        b"the first intent".to_vec(),
+        "the second intent was refused and written anyway"
     );
+}
+
+#[test]
+fn an_intent_for_another_step_is_still_accepted() {
+    // ⛔ THE COUNTER-PROBE OF THE GUARD ABOVE, and it is the direction one forgets (§7.1.1,
+    // rule 3): that the guard looks at WHICH step, not merely at whether anything is there.
+    // It is the same question `an_outcome_is_refused_when_the_intent_belongs_to_another_step`
+    // asks of `outcome`, one operation over.
+    //
+    // ⚠️ AND IT IS NOT A MEASURED HOLE — THE FIRST DRAFT OF THIS COMMENT CLAIMED IT WAS, AND
+    // THE MEASUREMENT SAID OTHERWISE. Writing the guard as `if !self.entries.is_empty()` — one
+    // that refuses every intent after the first, anywhere — is caught by SIX tests, not by
+    // this one alone: `each_step_reads_back_its_own_first_record` here, and five in the
+    // conformance suite, which die on the SETUP of promise 4 because it writes two intents for
+    // two different steps. So this test is not what stands between that mutation and a green
+    // bench. What it buys is that the property is NAMED: a rule held only as a side effect of
+    // a test about something else is a rule the next reader re-decides, which is the same
+    // argument that keeps `read_back_returns_the_intent_and_not_the_outcome` next to its
+    // neighbour. ⛔ The claim was written before the measure and the measure contradicted it;
+    // it is corrected here rather than quietly dropped.
+    let mut journal = MemoryJournal::new();
+
+    journal
+        .intent(StepId::new(1), b"the first step")
+        .expect("intent");
+
+    assert_eq!(journal.intent(StepId::new(2), b"the second step"), Ok(()));
 }
 
 #[test]

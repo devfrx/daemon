@@ -2,9 +2,14 @@
 // DST campaign is worth: the campaign runs against the in-memory double, and every run is
 // worth the evidence that the double and `redb` answer the same contract.
 //
-// ⛔ REGULAR COMMENTS AND NOT `//!`. This file is `include!`d by
-// `crates/platform/tests/journal_contract_real.rs`, where it is expanded in item position,
-// and an inner attribute — which is what `//!` desugars to — is not permitted there.
+// ⛔ REGULAR COMMENTS AND NOT `//!`, AND THE TENSE BELOW IS FUTURE ON PURPOSE. This file WILL
+// BE `include!`d by `crates/platform/tests/journal_contract_real.rs` — task 9 of this
+// milestone, and the real implementation it needs arrives at task 8 — where it is expanded in
+// item position, and an inner attribute, which is what `//!` desugars to, is not permitted
+// there. ✅ The mechanism was MEASURED before being relied on, with a throwaway probe: the
+// whole file compiles and passes inside `platform`'s test binary today. Writing this in the
+// present tense would describe a file that does not exist, which is the habit `StepId` and
+// `record.rs` already refuse.
 //
 // ⛔ THE ASSERTIONS LIVE HERE AND NOWHERE ELSE. Two copies would diverge, and the first one
 // that diverged would lie in silence — a conformance suite that no longer compares anything
@@ -13,13 +18,14 @@
 //
 // ⛔ WHAT IS DELIBERATELY ABSENT: durability across a process restart. It is a promise of the
 // REAL implementation only — the in-memory double cannot make it and is CORRECT not to.
-// Asserting it here would turn a correct implementation red, which is gotcha #44. It lives in
-// `crates/simulator/tests/memory_journal.rs` for the double, and in `crates/platform/tests/`
-// for the real one.
+// Asserting it here would turn a correct implementation red, which is gotcha #44. For the
+// double it lives in `crates/simulator/tests/memory_journal.rs`; for the real one it WILL live
+// in `crates/platform/tests/`, where today there is no journal test at all.
 //
-// ⚠️ DECLARED COST: `include!` carries the `#[test]` functions of this file along with it, so
-// the seven tests below RUN A SECOND TIME inside `platform`'s binary. It buys the single copy
-// of the assertions and costs a few milliseconds — nothing here touches the disk or sleeps.
+// ⚠️ DECLARED COST, AND IT IS NOT YET BEING PAID: once task 9 lands, `include!` will carry the
+// `#[test]` functions of this file along with it, so the eight tests below WILL RUN A SECOND
+// TIME inside `platform`'s binary. It buys the single copy of the assertions and will cost a
+// few milliseconds — nothing here touches the disk or sleeps.
 
 use kernel::ports::journal::{Journal, JournalError, StepId};
 
@@ -49,6 +55,10 @@ pub const REPLAY_ORDER_MESSAGE: &str =
 
 pub const OUT_OF_ORDER_MESSAGE: &str =
     "journal contract violated: an `outcome` with no `intent` must be refused (V6)";
+
+/// The other half of the ordering discipline, decided on 2026-08-10. See promise 6.
+pub const SECOND_INTENT_MESSAGE: &str =
+    "journal contract violated: a step already carrying an `intent` must refuse a second one";
 
 pub const PRUNE_IN_DOUBT_MESSAGE: &str =
     "journal contract violated: a step IN DOUBT must never be prunable (ADR-0018)";
@@ -153,13 +163,19 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
     // back REVERSED produces the same three identities in the same three places, and
     // `ShuffledJournal` passed the whole suite. Measured, not argued — the test reported «the
     // suite is vacuous on promise 4». The records tell the two apart because the bytes do:
-    // `first, second, third` reversed is `third, second, first`.
+    // `first, second, third and last` reversed is `third and last, second, first`.
+    //
+    // ⛔ AND THE PAYLOAD LENGTHS ARE ASYMMETRIC ON PURPOSE — 5, 6, 14. With `first, second,
+    // third` they were `5, 6, 5`, PALINDROMIC TOO, and this block was safe only because the
+    // comparison happens to look at the bytes rather than at sizes. A rewrite that compared
+    // lengths would rebuild the vacuity that has already been built here once, by exactly the
+    // mechanism that built it. No symmetry is left for it to lean on.
     {
         let mut journal = build();
         journal.intent(StepId::new(1), b"first").expect("intent 1");
         journal.intent(StepId::new(2), b"second").expect("intent 2");
         journal
-            .outcome(StepId::new(1), b"third")
+            .outcome(StepId::new(1), b"third and last")
             .expect("outcome 1");
 
         let replayed = journal.replay().expect("replay must succeed");
@@ -173,7 +189,7 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
             vec![
                 (StepId::new(1), b"first".as_slice()),
                 (StepId::new(2), b"second".as_slice()),
-                (StepId::new(1), b"third".as_slice()),
+                (StepId::new(1), b"third and last".as_slice()),
             ],
             "{}",
             REPLAY_ORDER_MESSAGE
@@ -193,7 +209,41 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
         );
     }
 
-    // ── 6. A step IN DOUBT is never prunable ──────────────────────────────────────────────
+    // ── 6. A SECOND `intent` on the same step is refused ─────────────────────────────────
+    // ⛔ DECIDED ON 2026-08-10, EXECUTING, AND IT IS AN ADDITION TO THE CONTRACT OF A SHARED
+    // PORT. Until this line the behaviour was UNDECIDED: `intent` had no guard, a second one
+    // was accepted in silence, and `read_back` answered with the first. The three reasons,
+    // shortest first: ADR-0007 says "the intent of EVERY step", one per step, so a second one
+    // is outside the model rather than a case to discipline; it is the SYMMETRIC HALF of
+    // promise 5 — V6 held by the PORT instead of by the caller's diligence, and the port
+    // already held the other direction; and it costs one line now against two implementations
+    // and an archive later.
+    //
+    // ⛔ AND IT BELONGS HERE RATHER THAN IN EITHER IMPLEMENTATION, which is the whole point.
+    // Promise 2 already forces a key finer than the identity of the step, and with such a key
+    // "the first intent wins" falls out for free — but that is an ACCORD BY ACCIDENT OF THE
+    // KEY DESIGN, not by contract. Key on the step, which is the natural choice, and the two
+    // implementations diverge WITH NOTHING GOING RED. That is the case this suite exists for.
+    //
+    // ⚠️ NO NEW ERROR VARIANT: `OutOfOrder` is widened rather than joined. The port declares
+    // its error type "deliberately poor — a rich error type invites the kernel to branch on
+    // the reason", and "an operation arrived out of order for this step" covers both halves.
+    {
+        let mut journal = build();
+        let step = StepId::new(5);
+        journal
+            .intent(step, b"the first intent")
+            .expect("the first intent must succeed");
+
+        assert_eq!(
+            journal.intent(step, b"the second intent"),
+            Err(JournalError::OutOfOrder),
+            "{}",
+            SECOND_INTENT_MESSAGE
+        );
+    }
+
+    // ── 7. A step IN DOUBT is never prunable ──────────────────────────────────────────────
     // ⛔ NOT NEGOTIABLE (ADR-0018): pruning a step that has an intent and no outcome destroys
     // the only trace of something that MAY have happened. ⚠️ This is the ONLY promise about
     // `prune` in this milestone — decision D7 leaves retention out, because the fingerprint
@@ -277,8 +327,17 @@ fn a_journal_that_accepts_an_outcome_with_no_intent_is_caught() {
 }
 
 #[test]
+fn a_journal_that_accepts_a_second_intent_is_caught() {
+    assert_caught_on(
+        UnguardedIntentJournal::new,
+        SECOND_INTENT_MESSAGE,
+        "promise 6",
+    );
+}
+
+#[test]
 fn a_journal_that_prunes_a_step_in_doubt_is_caught() {
-    assert_caught_on(EagerPruner::new, PRUNE_IN_DOUBT_MESSAGE, "promise 6");
+    assert_caught_on(EagerPruner::new, PRUNE_IN_DOUBT_MESSAGE, "promise 7");
 }
 
 /// Runs the suite against a deliberately broken journal and demands that it be caught, and
@@ -550,7 +609,82 @@ impl Journal for PermissiveJournal {
     }
 }
 
-/// Prunes anything it is asked to prune, including a step in doubt. Caught by promise 6.
+/// Keeps every record faithfully, in order, with the write-ahead guard on `outcome` — and NO
+/// GUARD ON `intent`: a second intent for a step that already carries one is appended in
+/// silence. ⛔ THIS IS NOT A LIE, WHICH IS WHY IT IS THE SHAPE THAT MATTERS. It is what a
+/// journal looks like before somebody decides that one intent per step is the port's to hold,
+/// and it is what `MemoryJournal` itself was until 2026-08-10.
+///
+/// ⚠️ AND IT DOES NOT LAUNDER A REFUSAL, unlike `PermissiveJournal`, which turns its inner
+/// `Err(OutOfOrder)` into `Ok(())`. Two liars that both swallow a refusal would be one defect
+/// written twice (gotcha #45); this one has its own store precisely so that the missing guard
+/// is a MISSING GUARD and not a suppressed one. It is the only journal here that reaches
+/// promise 6, and it passes all five before it on its own merits.
+struct UnguardedIntentJournal {
+    entries: Vec<UnguardedEntry>,
+}
+
+struct UnguardedEntry {
+    step: StepId,
+    is_intent: bool,
+    bytes: Vec<u8>,
+}
+
+impl UnguardedIntentJournal {
+    fn new() -> Self {
+        UnguardedIntentJournal {
+            entries: Vec::new(),
+        }
+    }
+
+    fn has_intent(&self, step: StepId) -> bool {
+        self.entries
+            .iter()
+            .any(|entry| entry.step == step && entry.is_intent)
+    }
+}
+
+impl Journal for UnguardedIntentJournal {
+    fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        // ⛔ THE DEFECT, and it is an absence: no `if self.has_intent(step)` above this line.
+        self.entries.push(UnguardedEntry {
+            step,
+            is_intent: true,
+            bytes: record.to_vec(),
+        });
+        Ok(())
+    }
+    fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        if !self.has_intent(step) {
+            return Err(JournalError::OutOfOrder);
+        }
+        self.entries.push(UnguardedEntry {
+            step,
+            is_intent: false,
+            bytes: record.to_vec(),
+        });
+        Ok(())
+    }
+    fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
+        self.entries
+            .iter()
+            .find(|entry| entry.step == step)
+            .map(|entry| entry.bytes.clone())
+            .ok_or(JournalError::Missing)
+    }
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        Ok(self
+            .entries
+            .iter()
+            .map(|entry| (entry.step, entry.bytes.clone()))
+            .collect())
+    }
+    fn prune(&mut self, _step: StepId) -> Result<(), JournalError> {
+        Err(JournalError::Missing)
+    }
+}
+
+/// Prunes anything it is asked to prune, including a step in doubt. Caught by promise 7.
 struct EagerPruner {
     inner: simulator::journal::MemoryJournal,
 }

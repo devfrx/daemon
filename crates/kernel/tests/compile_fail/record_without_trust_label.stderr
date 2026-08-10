@@ -1,0 +1,5 @@
+error[E0063]: missing field `trust` in initializer of `RecordV1`
+ --> tests/compile_fail/record_without_trust_label.rs:7:46
+  |
+7 |     let _record = kernel::record::Record::V1(kernel::record::RecordV1 {
+  |                                              ^^^^^^^^^^^^^^^^^^^^^^^^ missing `trust`

@@ -25,9 +25,12 @@ misura. 📌 È la **quinta** occorrenza del gotcha **#31** su questa riga, che 
 già 91. Restano comunque la lettura più economica che esista qui: l'alternativa è **622 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — 622 KB con `wc -c`
-il 2026-08-10, e possono solo crescere; la spec da sola ne fa 271 — e l'idea è
-già nel compendio. Quando ti servirà il **perché** di una decisione — le alternative
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **630 KB** con
+`wc -c` il 2026-08-10, e possono solo crescere; la spec da sola ne fa **275** — e l'idea è
+già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
+aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione per
+cui la riga qui sopra prezza i token come **limite inferiore** e non come totale — un compito
+che scrive nella spec invalida una cifra esatta **nel commit stesso in cui la legge**. Quando ti servirà il **perché** di una decisione — le alternative
 scartate, le misure, i costi accettati — apri **quel** file, uno solo. La §12 del
 compendio dice quale.
 

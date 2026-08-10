@@ -630,7 +630,7 @@ quando si arriva, perché scriverne uno per codice che non esiste significa inve
 |---|---|---|
 | **1** | scheletro e porta di qualità — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
 | **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) percorso **per intero, quattordici compiti su quattordici**, con `GATE GREEN` a ogni compito |
-| **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ⏭️ **il prossimo.** [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**, dodici compiti in due parti, **da eseguire** |
+| **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | 🔄 **in esecuzione dal 2026-08-10.** [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) di dodici compiti in due parti: **due eseguiti**, `GATE GREEN` a entrambi. Il Task 1 ha consegnato `crates/kernel/src/record.rs`; il Task 2 la riga di catalogo dell'**etichetta di fiducia** col proprio caso negativo. ⛔ **Un'errata in testa al piano, sette voci dal solo Task 1** |
 | 4 | il simulatore DST — tempo virtuale, guasti, campagna, semi | ⬜ |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
 | 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
@@ -653,6 +653,18 @@ dicono quanto il secondo traguardo sia costato più del primo:
 | **quattro occorrenze successive** | **#45** e **#46** una seconda ciascuna, entrambe al Task 11 · **#36** una terza, ed è la prima colta **prima** che il catalogo si sedimentasse · **#48** salito a **nove** esiti credibili e falsi col Task 12, con tre forme nuove |
 | **cinque controlli nati dopo il piano** | `crates/kernel/tests/ports_are_implementable.rs`, il rimedio a #46 (E31) · `run_the_production_graph()` estratta in `daemon`, perché la porta non lancia **mai** `cargo run` (E19) · `crates/simulator/tests/virtual_clock.rs`, un file che il piano non prevedeva (E14) · il secondo bugiardo `PastDeadlineLiar` (E15) · i cinque test di `SequentialRng`, che nasceva senza nessuno (E17). **Nessuno dei cinque era previsto** |
 | ⛔ **un'errata in testa al piano** | **quarantanove voci in sei passate**, contro le quattro del Traguardo 1. ⚠️ **E la proporzione è il dato:** nei Task 1–2 e 7 il difetto stava nella **sonda**, negli 8–11 nella **sonda assente**, nell'11 nell'**artefatto** che compilava e non era implementabile, nei 13–14 nel **compito già eseguito**. Quattro specie, e ciascuna si coglie in un modo che non coglie le altre |
+
+**Cosa il Traguardo 3 sta lasciando dietro di sé**, dopo i primi due compiti — comandi e
+numeri completi in [`riferimenti.md`](riferimenti.md), sezione «Esecuzione del Traguardo 3»:
+
+| | |
+|---|---|
+| **i byte del record sono misurati** | `82 00 81 84 00 01 00 40` a payload vuoto, **ventotto** byte con un payload da venti. E `#[cbor(array)]` esplicito li lascia **byte-identici**: la decisione **D3** del piano si onora **a costo zero**, il che ha trasformato una discussione in una correzione (errata **E3**) |
+| ⛔ **un costo permanente, e nessuno lo aveva previsto** | `record::Trust::{Instruction, Untrusted}` **collide** con `boundary::{Instruction, Untrusted}`: rustc smette di abbreviare i percorsi, e **due oracoli pre-esistenti** sono passati a `mismatch` senza che nessuna regola fosse toccata. Isolata commentando `pub mod record;`, che li riporta `ok`. Da oggi **ogni oracolo futuro del kernel** che nomini quei due tipi porterà i percorsi qualificati per intero |
+| **due casi negativi che scattano come `error`** | `record_without_version.rs` e `record_without_trust_label.rs`. È la risposta buona al gotcha **#42**: `TRYBUILD=overwrite` riscrive solo i `.stderr` e **non può spegnere** un caso che scatta compilando, quindi non serve un secondo caso di forma diversa per nessuna delle due righe |
+| ⛔ **due attese del piano misurate false** | la direzione del Task 1, Step 7, **invertita** (errata **E2**) · e la contro-direzione dettata al Task 2 — `impl Default for Trust` o `#[cbor(default)]` — che **non disarma nulla**: in Rust un `Default` sul *tipo di un campo* non rende quel campo omissibile in un *letterale di struct*. L'unica mutazione che disarma la guardia è **togliere il campo** |
+| ⚠️ **una lacuna dichiarata invece che scoperta dopo** | la riga di catalogo dice *«il campo esiste e non ha default»*, e il caso negativo tiene **la prima metà**. Con `#[cbor(default)]` presente **l'intera suite di `kernel` resta verde** — dieci banchi, nessun rosso. La seconda metà arriva coi **byte congelati** del Task 10, che è di livello 2 |
+| ⛔ **il numeratore di un registro invecchia da solo** | il Task 1 ha consegnato un caso senza scriverne la riga in [`porta-di-qualita.md`](porta-di-qualita.md), e **nessun controllo se n'è accorto**: il registro dichiarava *sette su diciotto* dove erano **otto**. Il denominatore lo muove chi tocca il catalogo e se ne accorge; il numeratore lo muove chi scrive un **caso di prova**, che il catalogo non lo apre nemmeno. Il rimedio è la terza voce dei comandi di riconteggio — quella che cerca i casi **orfani** |
 
 ### Le decisioni aperte dalla §0.5 — tre previste, quattro emerse
 

@@ -550,6 +550,61 @@ gotcha **#26** applicato a uno strumento usa-e-getta.
 non ha un comando: una riga che manca in un registro non la trova un `grep`, perché non si sa
 cosa cercare. La si trova solo enumerando la fonte e cercando ciascuna voce nella destinazione.
 
+## Esecuzione del Traguardo 3 — i Task 1 e 2: i byte del record, e la collisione che ha riscritto due oracoli
+
+Misurate il **2026-08-10** con `rustc 1.95.0` · `cargo 1.95.0` · `minicbor` 2.3.0 ·
+`trybuild` 1.0.120 · Windows 11. ⛔ **Sono misure, non documentazione consultata**: il comando
+con la sua versione è la fonte. Dove l'attesa scritta prima divergeva dall'esito, la divergenza
+è **registrata e non appianata** — sono quattro, e due riguardano ciò che il piano del traguardo
+dava per scontato.
+
+| Misura | Come | Esito il 2026-08-10 | Dove entra |
+|---|---|---|---|
+| i **byte** del record durevole | `Record::V1(..).encode()` a payload vuoto | `82 00 81 84 00 01 00 40` — otto byte: array(2), variante `0`, array(1), array(4), `kind`, `effect`, `trust`, stringa di byte vuota. Con un payload da venti byte il record ne fa **ventotto** | doc di modulo di `crates/kernel/src/record.rs` · §4.9.3 |
+| `#[cbor(array)]` esplicito **quanto costa** | gli stessi byte, con e senza l'attributo sui due tipi | ⛔ **byte-identici, lunghezza compresa**. La decisione **D3** del piano — *«scriverlo esplicito anche se è il default»* — si onora quindi **a costo zero**, ed è perché il sorgente dettato che non lo portava è stato corretto invece che discusso (errata **E3**) | ADR-0036 · errata E3 del piano |
+| ⛔ la **collisione di nomi** fra `record` e `boundary` | aggiunto `pub mod record;` a `crates/kernel/src/lib.rs`, poi isolata commentando la stessa riga | `record::Trust::{Instruction, Untrusted}` collide con `boundary::{Instruction, Untrusted}`: rustc **smette di abbreviare i percorsi**, e due oracoli **pre-esistenti** — `untrusted_as_instruction.stderr` e `no_conversion_from_untrusted_to_instruction.stderr` — passano a **`mismatch`**. Commentato il modulo tornano **`ok`**, che è la prova che la causa è la collisione e non il contenuto dei casi. ⚠️ **È un costo permanente**: ogni oracolo futuro del kernel che nomini quei due tipi porterà i percorsi qualificati per intero | §7.4.1 blocco C · gotcha #25 |
+| la **parola** con cui scatta `record_without_version.rs` | aggiunto un `encode` inerente a `RecordV1`, poi rimosso | **`error`**, con `Expected test case to fail to compile, but it succeeded.` — **non** `mismatch`. ⚠️ **Il piano attendeva la direzione opposta** (errata **E2**), e la conclusione che cercava regge lo stesso e in meglio: `TRYBUILD=overwrite` riscrive solo i `.stderr`, quindi non può spegnere un caso che scatta **compilando**, e non serve un secondo caso di forma diversa — gotcha **#42** | §7.4.1 blocco C · registro |
+| ⛔ il **giro di andata e ritorno** è cieco, ma in **una direzione sola** | su ciascuno dei tre campi (`kind`, `effect`, `trust`), due mutazioni: `decode` forzato al valore **che il test scrive**, e forzato **all'altro** | forzandolo al valore scritto diventa rossa **una sola** sonda, quella del campo; forzandolo all'altro ne diventano **due**, perché anche il round trip se ne accorge. ⚠️ **La prima stesura del commento del banco affermava «una sola, sempre» ed era falsa**: registrata come divergenza invece che allineata all'attesa | `crates/kernel/tests/record_shape.rs` |
+| la **parola** con cui scatta `record_without_trust_label.rs` | rimosso il campo `trust` da `RecordV1`, poi ripristinato | **`error`**, stessa frase. Neanche questa riga poggia sul proprio oracolo, e nessuna rigenerazione in blocco la spegne | §7.4.1 blocco C · registro |
+| ⛔ cosa **non** disarma il caso dell'etichetta | `impl Default for Trust`, poi `#[cbor(default)]` sul campo in aggiunta | **nessuno dei due**: il caso resta verde, cioè la regola continua a scattare. In Rust un `Default` sul **tipo di un campo** non rende quel campo omissibile in un **letterale di struct** — solo `..Default::default()`, che sta nel chiamante. ⚠️ **Il piano prescriveva proprio quella mutazione** come contro-direzione, e l'unica che disarma la guardia è **togliere il campo** | §7.4.1 blocco C |
+| e cosa fa `#[cbor(default)]` **ai byte** | decodifica di `82 00 81 83 00 01 40` con l'attributo presente | **niente**: `Err(Malformed)`. L'array è **posizionale** e `trust` sta all'indice **2**, quindi un array corto sposta il payload sul posto dell'etichetta. ⚠️ E con l'attributo presente **l'intera suite di `kernel` resta verde** — dieci banchi, nessun rosso: la metà «non ha default» della riga di catalogo **non è tenuta da nulla** finché non arrivano i byte congelati del Task 10 | limite dichiarato della riga di catalogo |
+
+### I comandi con cui si riconta il catalogo, riscritti perché delimitino per intestazione
+
+⛔ **I due `awk` del 2026-08-10 dipendevano da numeri di riga, e una riga aggiunta li ha
+invecchiati lo stesso giorno** — esattamente come la nota che li accompagnava prevedeva. Questi
+non dipendono da numeri di riga: delimitano per **intestazione**, così che un delimitatore
+rinumerato dia un errore invece di **zero in silenzio** (gotcha **#26**).
+
+```bash
+# quante righe ha il blocco C del catalogo §7.4.1
+awk '/^#### 7\.4\.1 /{ins=1} /^#### 7\.4\.2 /{ins=0}
+     ins&&/^\*\*C · /{c=1}
+     ins&&c&&/^\|/&&!/^\|-/&&!/^\| Difende/' \
+  docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md | wc -l
+
+# quante ne dichiara implementate il registro
+grep -cE '^\| \*\*blocco C\*\*' docs/porta-di-qualita.md
+
+# e la controprova che nessun caso resti fuori dal registro
+for f in crates/kernel/tests/compile_fail/*.rs; do
+  b=$(basename "$f"); grep -qF "$b" docs/porta-di-qualita.md || echo "ORFANO: $b"
+done
+```
+
+| Domanda | Esito il 2026-08-10 |
+|---|---|
+| righe del **blocco C** | **diciannove** — erano diciotto, e il piano lo attendeva |
+| righe **dichiarate implementate** dal registro | **nove** — il registro ne dichiarava **sette**, ed erano già **otto** prima di questo commit |
+| casi **orfani**, cioè non nominati dal registro | **nessuno** — prima di questo commit era uno, `record_without_version.rs` |
+
+⛔ **La seconda riga è la divergenza che vale più delle altre, e il piano non la prevedeva.** Il
+denominatore lo muove chi tocca il catalogo, e se ne accorge perché sta scrivendo lì; **il
+numeratore lo muove chi scrive un caso di prova**, che il catalogo non lo apre nemmeno. Il Task 1
+ha consegnato `record_without_version.rs` senza scriverne la riga nel registro, e nessun
+controllo lo ha rilevato: la terza voce qui sopra esiste per questo, ed è l'unica delle tre che
+scopre una **mancanza** invece di contare ciò che c'è.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

@@ -233,14 +233,16 @@ impl Untrusted {
     ///   sabotage, and armouring against it is the wrong trade. Declared, not closed.
     /// - **A6 — a `Journal` that answers `Ok(())` and writes nothing.** ✅ CLOSED on 2026-08-10
     ///   by the conformance suite, `tests/journal_contract.rs`, where this exact journal is
-    ///   `SilentJournal` and promise 1 catches it on the first assertion. ⚠️ AND THE LIMIT IS
-    ///   PART OF THE CLOSURE: a conformance suite is worth the evidence that TWO
-    ///   implementations answer alike, and the second one — `redb` in `platform` — arrives at
-    ///   task 8. Until then what is closed is the road, not the agreement: no journal that
-    ///   silently discards a write can pass the suite, and every journal this kernel is given
-    ///   is meant to pass it. It is a level 2 rule and not level 1 — nothing stops somebody
-    ///   from writing a `Journal` that never meets the suite — which is exactly why it is
-    ///   written here rather than counted as a compiler guarantee.
+    ///   `SilentJournal` and promise 1 catches it on the first assertion. ✅ AND THE LIMIT THAT
+    ///   WAS PART OF THE CLOSURE IS SPENT, later the same day at task 9. This entry read: "a
+    ///   conformance suite is worth the evidence that TWO implementations answer alike, and the
+    ///   second one — `redb` in `platform` — arrives at task 8. Until then what is closed is the
+    ///   road, not the agreement." The second one arrived, and
+    ///   `crates/platform/tests/journal_contract_real.rs` holds it to the same eight promises ON
+    ///   EVERY COMMIT — which is the whole difference between "measured once" and "held". ⛔ IT
+    ///   IS STILL A LEVEL 2 RULE AND NOT LEVEL 1: nothing stops somebody from writing a
+    ///   `Journal` that never meets the suite, which is exactly why it is written here rather
+    ///   than counted as a compiler guarantee.
     /// - **A7 — a CHILD module of `boundary`.** Field privacy reaches descendants, so a
     ///   submodule added tomorrow can build `Instruction(…)` directly. Not closable: it is the
     ///   same mechanism that lets this module build them at all.

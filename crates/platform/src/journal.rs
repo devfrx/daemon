@@ -19,9 +19,10 @@
 //! every read. If a second engine ever arrives, the trait arrives with it.
 //!
 //! ⛔ WHAT BOTH IMPLEMENTATIONS PROMISE IS NOT WRITTEN HERE: it is in
-//! `crates/kernel/tests/journal_contract.rs`, eight promises run against this type at task 9.
-//! What only THIS one promises — that a write survives the process — is in
-//! `crates/platform/tests/file_journal.rs`.
+//! `crates/kernel/tests/journal_contract.rs`, eight promises RUN AGAINST THIS TYPE ON EVERY
+//! COMMIT since 2026-08-10 by `crates/platform/tests/journal_contract_real.rs`, which reaches
+//! them by `include!`. This line said "at task 9" until that file existed. What only THIS one
+//! promises — that a write survives the process — is in `crates/platform/tests/file_journal.rs`.
 
 use std::fs::{File, TryLockError};
 use std::io;

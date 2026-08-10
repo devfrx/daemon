@@ -2,14 +2,15 @@
 // DST campaign is worth: the campaign runs against the in-memory double, and every run is
 // worth the evidence that the double and `redb` answer the same contract.
 //
-// ⛔ REGULAR COMMENTS AND NOT `//!`, AND THE TENSE BELOW IS FUTURE ON PURPOSE. This file WILL
-// BE `include!`d by `crates/platform/tests/journal_contract_real.rs` — task 9 of this
-// milestone, and the real implementation it needs arrives at task 8 — where it is expanded in
-// item position, and an inner attribute, which is what `//!` desugars to, is not permitted
-// there. ✅ The mechanism was MEASURED before being relied on, with a throwaway probe: the
-// whole file compiles and passes inside `platform`'s test binary today. Writing this in the
-// present tense would describe a file that does not exist, which is the habit `StepId` and
-// `record.rs` already refuse.
+// ⛔ REGULAR COMMENTS AND NOT `//!`, BECAUSE THIS FILE IS `include!`d.
+// `crates/platform/tests/journal_contract_real.rs` expands it IN ITEM POSITION, and an inner
+// attribute — which is what `//!` desugars to — is not permitted there.
+//
+// ⚠️ THIS PARAGRAPH STOOD IN THE FUTURE TENSE UNTIL 2026-08-10, and it is dated rather than
+// quietly reworded. It said "this file WILL BE `include!`d ... task 9 of this milestone", and
+// the tense was right then: writing in the present would have described a file that did not
+// exist. Task 9 landed and the file does exist, so the same sentence is now wrong in the other
+// direction. A tense is a status claim like any other (gotcha #31).
 //
 // ⛔ THE ASSERTIONS LIVE HERE AND NOWHERE ELSE. Two copies would diverge, and the first one
 // that diverged would lie in silence — a conformance suite that no longer compares anything
@@ -19,15 +20,18 @@
 // ⛔ WHAT IS DELIBERATELY ABSENT: durability across a process restart. It is a promise of the
 // REAL implementation only — the in-memory double cannot make it and is CORRECT not to.
 // Asserting it here would turn a correct implementation red, which is gotcha #44. For the
-// double it lives in `crates/simulator/tests/memory_journal.rs`; for the real one it WILL live
-// in `crates/platform/tests/`, where today there is no journal test at all.
+// double it lives in `crates/simulator/tests/memory_journal.rs`; for the real one it lives in
+// `crates/platform/tests/file_journal.rs` — this clause read "it WILL live in
+// `crates/platform/tests/`, where today there is no journal test at all" until task 8 wrote
+// that file.
 //
-// ⚠️ DECLARED COST, AND IT IS NOT YET BEING PAID: once task 9 lands, `include!` will carry the
-// `#[test]` functions of this file along with it, so the TEN tests below WILL RUN A SECOND
-// TIME inside `platform`'s binary. It buys the single copy of the assertions and will cost a
-// few milliseconds — nothing here touches the disk or sleeps. ⚠️ The figure said "eight" until
-// 2026-08-10, when promise 8 brought a liar and the substring constraint became a test of its
-// own; counted rather than remembered.
+// ⚠️ DECLARED COST, AND IT HAS BEEN PAID SINCE 2026-08-10 — this sentence read "AND IT IS NOT
+// YET BEING PAID" until task 9. `include!` carries the `#[test]` functions of this file along
+// with it, so the TEN tests below RUN A SECOND TIME inside `platform`'s binary: that binary
+// reports ELEVEN tests, these ten plus the one that builds the real journal. It buys the single
+// copy of the assertions and costs a few milliseconds — nothing here touches the disk or sleeps.
+// ⚠️ The figure said "eight" until 2026-08-10, when promise 8 brought a liar and the substring
+// constraint became a test of its own; counted rather than remembered.
 
 use kernel::ports::journal::{Journal, JournalError, StepId};
 

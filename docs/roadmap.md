@@ -52,7 +52,10 @@ Ultimo aggiornamento: **2026-08-10**.
 > `GATE GREEN` a ogni compito. ✅ **Le sei famiglie di porte sono complete** — `reactor` ·
 > `journal` · `filesystem` · `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive.
 > 🔄 **Il Traguardo 3 è in esecuzione dal 2026-08-10** — giornale e formato durevole, dodici
-> compiti in due parti: **otto eseguiti**, `GATE GREEN` a tutti, e si riprende dal **Task 9**.
+> compiti in due parti: **nove eseguiti**, `GATE GREEN` a tutti, e si riprende dal **Task 10** —
+> i **byte congelati**, che non si rigenerano mai. ✅ **Col Task 9 la porta `journal` ha la
+> conformità contro _entrambe_ le implementazioni**, tenuta a ogni commit e non misurata una
+> volta sola.
 > ⛔ **Il Task 6 ha riportato indietro una domanda invece di deciderla**, ed è la più importante
 > del traguardo: `replay()` non dice quale delle due operazioni abbia scritto una voce, mentre il
 > giornale lo sa — decisione **D6**, e chiuderla cambia una porta condivisa.

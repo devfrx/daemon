@@ -7,7 +7,7 @@ agenti/coding, voce, generazione asset) su kernel comune.
 2026-08-10.** Il codice del prodotto vive in [`../crates/`](../crates/) — cinque crate,
 `kernel` e `simulator` in `no_std` — e la porta di qualità gira con un comando solo,
 `bash scripts/gate.sh`. 🔄 **Il Traguardo 3 è in esecuzione** dal 2026-08-10 —
-giornale e formato durevole: **otto compiti su dodici**, si riprende dal **Task 9**.
+giornale e formato durevole: **nove compiti su dodici**, si riprende dal **Task 10**.
 
 ⛔ **Non c'è ancora nessuna funzionalità utente, ed è deliberato.** Il Traguardo 1 non
 portava nemmeno logica: solo lo scheletro e i controlli, perché un cancello costruito **dopo**

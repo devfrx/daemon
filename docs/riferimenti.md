@@ -827,6 +827,50 @@ gotcha **#45**. Errata **E42**.
 **Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi;
 `cargo test --workspace --no-fail-fast` → **27 target, 133 test**, zero rossi.
 
+## Esecuzione del Traguardo 3 — il Task 9: la conformità contro l'implementazione vera
+
+**Misurato il 2026-08-10.** Il file è corto; il valore sta nelle contro-sonde.
+
+| Misura | Come | Esito |
+|---|---|---|
+| **quante promesse sono, ricontate sul sorgente** | blocchi numerati in `assert_journal_contract` | **otto**, in **nove** blocchi — la promessa 8 ne ha due — quindi la fabbrica è chiamata **nove** volte per corsa |
+| **quante ne passa la vera** | `cargo test -p platform --test journal_contract_real` | ✅ **otto su otto**, e **undici** test nel binario: i dieci inclusi più quello vero. Compilato e verde **al primo colpo** |
+| che ogni chiamata abbia avuto il **proprio** file | i file lasciati nella cartella del test | **nove**, `journal-0.redb` … `journal-8.redb` — la prova che l'`AtomicU64` numera davvero e che nessuna chiamata riapre l'archivio di un'altra |
+| tenuta **in parallelo** | `cargo test --workspace --no-fail-fast` **otto volte di seguito** | ✅ **28 target, 144 test**, otto su otto verdi, zero rossi intermittenti |
+| i due vincoli che il Task 8 aveva previsto | compilando | ✅ **confermati entrambi**: nessun `use` proprio nell'includente, e `Fn` invece di `FnMut` |
+
+**Le tre contro-sonde dello Step 3, e il piano ne chiedeva una.** Una sola prova **una promessa
+su otto**. Mutazioni su `crates/platform/src/journal.rs`, ripristino **byte-identico**.
+
+| Mutazione | Muore su | Col messaggio |
+|---|---|---|
+| `read_back` risponde sempre `Ok(Vec::new())` | promessa **1**, riga 103 | ``journal contract violated: what `intent` wrote must come back from `read_back` unchanged`` |
+| la guardia del **secondo intento** tolta | promessa **6**, riga 244 | ``journal contract violated: a step already carrying an `intent` must refuse a second one`` |
+| `replay` rovesciato | promessa **4**, riga 193 | ``journal contract violated: `replay` must return records in WRITE ORDER`` |
+| **controllo**: un commento dentro `FileJournal` | ✅ nulla | 28 target, 144 test verdi |
+
+⚠️ **La seconda è la più informativa**: per morire sulla **6** deve superare le cinque precedenti
+**sui propri meriti**, cioè prova cinque promesse in più della prima.
+
+✅ **E i due lati sono separati, misurato invece che assunto.** Con `FileJournal` rotta:
+`kernel --test journal_contract` resta **10 su 10 verde**, e dentro il binario di `platform`
+restano verdi i **dieci** test inclusi — rosso il solo `the_real_journal_honours_the_contract`.
+⚠️ `platform --test file_journal` diventa rosso (3 su 6) ed **è giusto**: sono i test
+dell'implementazione vera, non della finta.
+
+⛔ **Il difetto della fabbrica dettata, e perché non bastava rinominare.** Il piano dettava
+`temp_dir().join("daemon-journal-contract.redb")` con `let _ = remove_file(&path)`: percorso
+**fisso**, cartella **condivisa**, errore **ignorato**. Tre guasti indipendenti — su Windows la
+rimozione **fallisce in silenzio** a file aperto e si riaprirebbero **i dati vecchi** (gotcha
+**#52**); `FileJournal` tiene un **lucchetto esclusivo**; e la promessa 4 conta l'**intero**
+archivio, quindi i record delle promesse 1 e 2 la farebbero cadere. **Rimedio: un nome mai
+esistito a ogni chiamata**, in una cartella per call site dal `line!()` e con **prefisso
+diverso** da quello di `file_journal.rs` — un numero di riga è unico dentro **un** file, e i due
+binari girano insieme.
+
+**Chiusura:** `bash scripts/check-docs.sh` e `bash scripts/gate.sh` verdi;
+`cargo test --workspace --no-fail-fast` → **28 target, 144 test**, zero rossi.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

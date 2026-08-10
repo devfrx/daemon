@@ -1,7 +1,13 @@
 //! The real journal, checked on WHAT ONLY IT PROMISES. What both implementations promise is
 //! the conformance suite's business — `crates/kernel/tests/journal_contract.rs` — which is run
-//! against this type at task 9. Asserting the promises below inside that suite would turn the
-//! in-memory double red, and the double is CORRECT not to make them: gotcha #44.
+//! against this type by `crates/platform/tests/journal_contract_real.rs` since 2026-08-10; this
+//! line said "at task 9" until that file existed. Asserting the promises below inside that suite
+//! would turn the in-memory double red, and the double is CORRECT not to make them: gotcha #44.
+//!
+//! ⚠️ AND THE TWO FILES DO NOT SHARE A TEMPORARY DIRECTORY, which the `line!()` scheme below
+//! does not cover on its own: a line number is unique within ONE file, and these two binaries
+//! run at the same time. The prefixes differ — `daemon-file-journal-` here,
+//! `daemon-journal-contract-` there.
 
 use std::io;
 use std::sync::Arc;

@@ -1301,9 +1301,9 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 27 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 194 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 195 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
-| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 24 KB |
+| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 26 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
 | **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 117 KB |
 | ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata | 6 KB |
@@ -1312,14 +1312,14 @@ Apri **un** file, quello che serve. Non la cartella.
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 143 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 145 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 114 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 14 KB |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è 9,8, il resto è il perché di ogni riga | 19 KB |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **12,2**, il resto è il perché di ogni riga | 21 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -1894,14 +1894,14 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > esiste.** Diceva **7,7 KB** in due posti; misurato ora è **9,8** — cresciuto del **27 %** in una
 > sessione sola, perché la consegna al prossimo agente ha aggiunto il blocco dei due file da
 > aprire, le sette decisioni del piano e il gotcha **#58**. ⚠️ **Il rapporto che quel file difende
-> regge comunque — 9,8 KB di messaggio che ordinano 240 KB di lettura, contro 689 di corpus** —
+> regge comunque — 9,8 KB di messaggio che ordinano 242 KB di lettura, contro 689 di corpus** —
 > ma la crescita è il **prossimo candidato** al difetto che la dodicesima misura registrò per
 > [`porta-di-qualita.md`](porta-di-qualita.md): non un numero stantio, **un documento che smette di
 > essere letto perché è diventato troppo lungo**. Un messaggio da incollare ha un limite naturale
 > che una tabella non ha, ed è la pazienza di chi lo rilegge.
 >
 > L'insieme *«HANDOFF + spec + `adr/`»* passa da **676** a **689 KB** (695206 B), corretto in tutte
-> e quattro le case. I **due file obbligatori** passano da 216 a **240 KB**, corretti in tutte e
+> e quattro le case. I **due file obbligatori** passano da 216 a **242 KB**, corretti in tutte e
 > sei.
 >
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
@@ -1920,16 +1920,38 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > ⛔ **E la notizia è che il rapporto per cui la §12 esiste si è MOSSO, per la prima volta nella
 > direzione sbagliata.** L'insieme *«HANDOFF + spec + `adr/`»* passa da **679** a **689 KB**, ma i
-> **due file obbligatori** passano da **222** a **240** — cioè il denominatore è cresciuto
+> **due file obbligatori** passano da **222** a **242** — cioè il denominatore è cresciuto
 > dell'1,5 % e il numeratore del **8,1 %**. ⚠️ La ragione è che il Traguardo 4 ha prodotto
 > soprattutto **decisioni e misure**, che vivono nel compendio, e poco perimetro nuovo, che vivrebbe
-> nella spec. 📌 Non è un difetto oggi — 240 contro 689 regge — ma è la **prima misura in cui la
+> nella spec. 📌 Non è un difetto oggi — 242 contro 689 regge — ma è la **prima misura in cui la
 > lettura obbligatoria cresce più in fretta del corpus che risparmia**, e chi rimisura la prossima
 > volta guardi quel rapporto e non solo le celle.
 >
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > quindicesima applicazione.
+
+> 🔁 **Ventiquattresima misura, il 2026-08-11, chiudendo la sessione con la consegna al prossimo
+> agente — ed è una passata di sola documentazione, come la tredicesima.** Scritta a passata
+> chiusa; righe contate partendo dall'elenco dei file citati.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) `19 → 21`, rifatto per la consegna · [`roadmap.md`](roadmap.md) `24 → 26` · [`riferimenti.md`](riferimenti.md) `143 → 145` · [`HANDOFF.md`](HANDOFF.md) `194 → 195` |
+> | **invariati, ricontati** | questo file **231** · [`porta-di-qualita.md`](porta-di-qualita.md) 117 · [`README.md`](README.md) 14 · [`semi-dst.md`](semi-dst.md) 6 · `CLAUDE.md` 11 · spec 277 · il disegno del Traguardo 4 27 · i piani 168, 162, 114, 50, 68 · tracciabilità 15 · `design/08` 8 · `design/01` 4 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
+>
+> ⛔ **E la notizia è il MESSAGGIO, che è la cifra per cui quel file esiste: è passato da 9,8 a
+> 12,2 KB, +24 % in una sessione — la SECONDA crescita a due cifre di seguito.** La ventiduesima
+> misura lo aveva registrato come *«il prossimo candidato»* al difetto che la dodicesima trovò per
+> il registro: non un numero stantio, **un documento che smette di essere letto perché è diventato
+> troppo lungo**. 📌 **La consegna successiva COMPRIMA invece di appendere:** le lezioni di un
+> traguardo chiuso da due traguardi si spostano nel compendio, dove chi legge le trova comunque, e
+> il messaggio tiene solo ciò che serve a **non sbagliare il primo passo**. ⚠️ Un messaggio da
+> incollare ha un limite che nessuna tabella ha, ed è la pazienza di chi lo rilegge.
+>
+> ✅ **L'aggregato è fermo — 689 → 690 KB — e i due file obbligatori pure, a 240.** Il rapporto che
+> la §12 esiste per difendere non si è mosso in questa passata: a muoverlo era stato il traguardo,
+> non la consegna.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

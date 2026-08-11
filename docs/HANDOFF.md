@@ -131,21 +131,21 @@ saturazione dà corse indistinguibili da corse senza iniezione. ⚠️ *«Chiuso
 **che la durabilità sia chiesta**, non la morte del processo: il perimetro di ciò che **non**
 compra è più lungo di quello che compra, e sta in [`riferimenti.md`](riferimenti.md).
 
-⛔ **Le quarantacinque voci d'errata si leggono prima, in testa al piano: otto sono decisioni, e
-QUATTRO sono difetti del Task 6 e del Task 7 già misurati.** Chi riprende deve saperle prima di
-scrivere una riga:
+### ⛔ Cosa il Traguardo 4 consegna a chi riprende, e va saputo PRIMA di scrivere
+
+⛔ **Non c'è un piano da riprendere.** Il piano del Traguardo 4 è **eseguito per intero**, e
+aprirlo per «continuarlo» significherebbe trovare tutto fatto — il gotcha **#49** istituzionalizzato
+nella consegna. Ciò che resta di quel file è la sua **errata**, che è un documento di lettura e
+non di lavoro.
 
 | | |
 |---|---|
-| **E39** | ⛔ **l'oracolo che doveva chiudere il gotcha #51 non funziona.** Contare le chiamate a `sync_data` è cieco: **sei su sette nascono prima che esista un record**, e con la durabilità tolta la sonda dettata resta **verde**. Serve un **delta attraverso la scrittura** |
-| **E40** | ⛔ **lo scenario di livello 2 satura a 58 operazioni.** Il ciclo dettato ne fa scattare **35 su 40** e passa lo stesso; la campagna profonda a 800 punti ne farebbe scattare **sempre 35** — venti volte il costo, zero stati in più |
-| **E43** | ⚠️ la riga di mutazione dettata **non compila**: `set_durability` vuole `&mut self` e restituisce un `Result` |
-| **E44** | ⚠️ il `catch_unwind` dettato attende **un panico che non arriva**: il `Drop` su backend caduto **ingoia**, misurato su sessanta punti |
-
-⚠️ E resta **E36**, che è la stessa lezione di **E17** applicata al livello 2: il punto si estrae
-fra **tutte e sei** le operazioni, `read` e `len` comprese, quindi un secondo oracolo di
-non-vacuità serve anche lì — *«almeno un'iniezione ha lasciato un archivio più corto di quanto
-scritto»*. ✅ **Brainstorming, disegno e piano sono tutti chiusi il 2026-08-11:** il
+| **l'errata** | **settanta voci in nove passate**, di cui **dodici DECISIONI** ribaltabili dal proprietario. Si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato |
+| ⛔ **la lezione, imparata TRE volte** | *«l'iniezione è avvenuta»* e *«c'era qualcosa da verificare»* sono **due** affermazioni, e una campagna che tiene solo la prima è **verde avendo confrontato insiemi vuoti**. Successo a `C7a`, poi a `C7b`, poi al ciclo di livello 2 — **ogni volta dopo aver chiuso la precedente**, perché le tre sonde le ha scritte lo stesso metodo una dopo l'altra |
+| ⛔ **la forma generale** | un oracolo che verifica che il **guasto sia scattato** non verifica che il guasto **abbia lasciato qualcosa da controllare**. Serve un controllo che guardi **la forma di ciò che sopravvive** — e chiuderlo in un posto **non lo chiude altrove** |
+| ⛔ **due righe di questi documenti erano FALSE** | dicevano come chiudere il gotcha **#51**, e lo dicevano **dal brainstorming**: contare le chiamate a `sync_data` è cieco, perché **sei su sette nascono prima che esista un record**. Corrette con richiami datati. 📌 Il difetto non era il numero ma la **previsione** — gotcha **#57** |
+| ⚠️ **quattro previsioni del coordinatore** smentite da chi eseguiva | fra cui un modello di costo sbagliato del **37 %**. Su un file, **nessuna previsione ha retto**: quattro su quattro |
+| ⚠️ **il gotcha #48 è a TREDICI occorrenze** | quattro dalla sessione scorsa, e **due le ha commesse il coordinatore** — una nell'ora in cui ne scriveva il rimedio | ✅ **Brainstorming, disegno e piano sono tutti chiusi il 2026-08-11:** il
 [disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) e il
 [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci
 compiti in tre parti**. ⛔ **Si legge il disegno prima del piano**, perché ha già preso le

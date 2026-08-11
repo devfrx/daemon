@@ -39,22 +39,24 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
-  /superpowers:subagent-driven-development  <-- SERVE SUBITO: quello che viene
-                                        dopo NON è lavoro creativo ma l'ESECUZIONE
-                                        di un piano già scritto. Un subagente
-                                        fresco per compito, con revisione fra uno
-                                        e l'altro. È la modalità scelta
+  /superpowers:brainstorming            <-- SERVE SUBITO, ed è cambiato rispetto
+                                        alla sessione scorsa: quello che viene
+                                        dopo NON è codice ma LAVORO CREATIVO —
+                                        il brainstorming del Traguardo 5. Si
+                                        invoca PRIMA di entrare in plan mode
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
-  /superpowers:test-driven-development       quando si scrive codice — cioè al
-                                             primo compito
-  /superpowers:brainstorming                 NON serve adesso: il brainstorming
-                                             del traguardo in corso è chiuso e il
-                                             piano è scritto. Serve al prossimo
-                                             traguardo, PRIMA del suo piano
-  /superpowers:writing-plans                 idem — il piano di oggi c'è già
+  /superpowers:writing-plans                 quando le voci aperte del
+                                             brainstorming saranno chiuse — NON
+                                             prima
+  /superpowers:subagent-driven-development   quando ci sarà un piano da
+                                             ESEGUIRE: un subagente fresco per
+                                             compito, con revisione fra uno e
+                                             l'altro. È la modalità scelta, e ha
+                                             appena portato dieci compiti su dieci
+  /superpowers:test-driven-development       quando ricomincerà il codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 240 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 242 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -97,9 +99,9 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 240 KB in tutto
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
    docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 689 KB
-   il 2026-08-11, la spec da sola 277, i piani 168 e 162 — e l'idea è già nel
-   compendio. Aprirai UN file — uno — quando ti servirà il perché di una
-   decisione: le alternative scartate, le misure, i costi accettati. La §12
+   il 2026-08-11, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
+   e l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà
+   il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
    del compendio dice quale.
 
 ⛔ IL FORMATO DUREVOLE È CONGELATO. I byte in crates/kernel/tests/frozen/ —
@@ -108,31 +110,41 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 240 KB in tutto
    dev'essere Option con #[cbor(default)] e prendere un INDICE NUOVO, e il
    significato di un indice non cambia mai.
 
-⛔ CINQUE COSE DECISE ESEGUENDO il Traguardo 3, e non dal suo piano — PUOI
-   RIBALTARLE, e stanno nell'errata in testa a quel piano:
-     E22 Record::encode NON restituisce Result · E19 un SECONDO intento sullo
-     stesso passo è RIFIUTATO · E27 la porta guadagna note() e il record la
-     variante RecordKind::Note · E28 il record porta DUE campi, il contenuto
-     non fidato all'indice 3 e la ragione del chiamante al 4 · E31 la via A4
-     del confine dei dati è chiusa a LIVELLO 2, non «al formato».
-   L'errata ne marca NOVE come DECISIONE; E31 non è fra quelle, perché
-   corregge cosa significhi «chiusa».
+⛔ VENTIDUE DECISIONI SONO STATE PRESE ESEGUENDO, non dai piani — PUOI
+   RIBALTARLE TUTTE, e stanno nelle errata in testa ai due piani:
+     · Traguardo 3: NOVE, fra cui Record::encode che NON restituisce Result,
+       un SECONDO intento sullo stesso passo RIFIUTATO, la porta che guadagna
+       note(), e il record con DUE campi — contenuto non fidato all'indice 3,
+       ragione del chiamante al 4.
+     · Traguardo 4: DODICI. Le tre che governano il resto:
+         - la caduta NON SI RIPRENDE, ai due livelli. Un giornale che rifiuta
+           una volta e poi riparte modella un disco cattivo, non un crash.
+         - il punto di caduta viene da un generatore DIVERSO da quello
+           dell'interlacciamento, con seme derivato: due generatori seminati
+           con lo stesso numero danno la STESSA sequenza.
+         - il numero di semi NON si massimizza: si sceglie sulla CHIUSURA
+           DELLO SPAZIO DEGLI ESITI. Un tetto è un vincolo, non un bersaglio.
 
-⛔ E SETTE DECISIONI LE HA PRESE IL PIANO IN CORSO — anche queste ribaltabili,
-   e stanno in testa a quel piano. Le due che governano il resto:
-     · la caduta NON SI RIPRENDE. Un giornale che rifiuta una volta e poi
-       riparte modella un disco cattivo, non un crash — ed è la permanenza
-       che fa fermare TUTTE le attività interlacciate, non solo quella che ha
-       toccato il confine.
-     · il punto di caduta si estrae da un generatore DIVERSO da quello
-       dell'interlacciamento, con seme derivato: due generatori seminati con
-       lo stesso numero danno la STESSA sequenza, e la campagna esplorerebbe
-       una diagonale dello spazio invece dello spazio.
+⛔ LA COSA PIÙ IMPORTANTE CHE IL TRAGUARDO 4 HA IMPARATO, e l'ha imparata TRE
+   VOLTE, ogni volta DOPO aver chiuso la precedente:
+     «L'INIEZIONE È AVVENUTA» e «C'ERA QUALCOSA DA VERIFICARE» SONO DUE
+     AFFERMAZIONI, e una campagna che tiene solo la prima è VERDE avendo
+     confrontato insiemi vuoti.
+   Successo a C7a («nessun passo è in dubbio» era vero anche di uno scenario
+   che non aveva scritto niente), poi a C7b («ogni seme ha raggiunto il proprio
+   punto» era vero anche di duecento confronti fra insiemi vuoti), poi al ciclo
+   di livello 2 («il prefisso torna» è banalmente vero se non si è perso nulla).
+   Chiuderlo in un posto NON lo chiude altrove: le tre sonde le ha scritte lo
+   stesso metodo, una dopo l'altra, e hanno ripetuto lo stesso buco.
 
-⚠️ DIECI QUESTIONI RESTANO APERTE, in un posto solo: §6 del compendio, «Cosa il
-   Traguardo 3 lascia aperto». Nessuna è un difetto oggi e per ciascuna è
-   scritto perché. Il brainstorming che le aveva come materia è CHIUSO: ora
-   sono il contesto dell'esecuzione, e UNA di esse il piano in corso la chiude.
+⚠️ LE QUESTIONI APERTE STANNO IN UN POSTO SOLO: §6 del compendio. Nessuna è un
+   difetto oggi e per ciascuna è scritto perché. Il Traguardo 4 ne ha chiusa
+   una (il gotcha #51, ma SOLO NELLA METÀ CHIUDIBILE) e ne ha lasciate tre:
+   le nove righe di guasto scoperte — che hanno un indirizzo, quindi sono uno
+   scaglionamento e non un arretrato — la metà del #51 che resta fuori, e
+   docs/semi-dst.md che NON HA UN CHIUDENTE: una guardia in check-docs.sh
+   sarebbe una riga di catalogo nuova, cioè UNA TUA DECISIONE, registrata e
+   non presa.
 
 ⚠️ Il compendio è una COMPRESSIONE, non una selezione: ci sono dentro tutte le
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
@@ -142,8 +154,11 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
   · Non sono operativo in Rust. Quando l'argomento esce dal mio dominio,
     spiegamelo PRIMA a parole semplici e POI schematizza.
   · Un piano scritto qui è un'IPOTESI, non un'istruzione: il difetto è stato
-    nel piano più spesso che nel codice, e nel Traguardo 3 il pre-controllo
-    ne ha trovato almeno uno in DODICI compiti su dodici. Prima di eseguire
+    nel piano più spesso che nel codice — DODICI compiti su dodici al
+    Traguardo 3, DIECI su dieci al Traguardo 4, su un piano scritto il giorno
+    prima. E SEI voci d'errata erano difetti di un compito SUCCESSIVO, trovati
+    misurando in anticipo: una di esse avrebbe fatto dichiarare chiuso un
+    gotcha lasciandolo aperto. Prima di eseguire
     un compito si fanno le QUATTRO DOMANDE — l'elenco è in CLAUDE.md, «Prima
     di eseguire un compito di un piano», col testo lungo nel gotcha #49:
       1. la SONDA È SBAGLIATA — si coglie rileggendo
@@ -163,13 +178,23 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     documento che le ha lette si sente verificato, ed è lì che smette di
     guardare i test. E un precedente si cita per la RAGIONE che lo ha
     prodotto, non per la forma.
-  · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48. Prova
-    che la mutazione si sia applicata, compila in un passo separato
-    dall'eseguire, e per ogni mutazione su un valore provane due. Sono già
-    NOVE i risultati credibili e falsi in due sessioni, e la peggiore è
-    la più innocua a vedersi: una rifinitura di LEGGIBILITÀ disarma la
-    campagna di mutazione senza che nulla diventi rosso, perché le ancore
-    sono accoppiate ai nomi del codice.
+  · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48, ora a
+    TREDICI occorrenze in tre sessioni, e QUATTRO sono della sessione scorsa.
+    Prova che la mutazione si sia applicata, compila in un passo separato
+    dall'eseguire, e per ogni mutazione su un valore provane due. ⛔ Le tre
+    forme nuove, tutte misurate, e nessuna fallisce rumorosamente:
+      - `grep -c $'\r$'` NON FALLISCE: l'escape non sopravvive al trasporto e
+        il pattern DEGRADA in un altro pattern valido. La stessa tecnica ha
+        dato due risposte OPPOSTE, entrambe sbagliate. Conta byte con
+        `tr -cd '\r' | wc -c`.
+      - `python - <<'PY'` decodifica lo stdin nel CODEPAGE DI SISTEMA: uno
+        script che contiene ⛔ o ⚠️ applica le sostituzioni ASCII, muore sulle
+        altre, e lascia il file scritto A METÀ. Usa gli strumenti di edit.
+      - `git checkout --` come ripristino di una mutazione CANCELLA IL LAVORO
+        se il file mutato è anche quello che stai scrivendo. Sfiorato.
+    ⚠️ E la forma peggiore resta quella psicologica: chi aveva colto un errore
+    di misura ha creduto al RIMPIAZZO senza dubitarne. Una misura corretta una
+    volta si guarda come una misura qualsiasi.
   · Alla chiusura di ogni voce COMMITTA E PUSHA senza chiedere, e SENZA
     co-autore. Prima però: bash scripts/gate.sh — comprende check-docs.sh.
   · Se ti viene un'idea che SOSTITUISCE una decisione presa, cerca PRIMA dove
@@ -181,9 +206,16 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     scatti dove non deve. La seconda si dimentica, ed è quella che conta —
     gotcha #24. Vale anche per i tuoi test, non solo per i miei.
 
-Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, qual è
-il prossimo passo secondo la §6 e da quale compito del piano si riprende —
-POI ASPETTA le mie richieste prima di proporre qualunque cosa.
+⚠️ DUE MESSAGGI DI COMMIT SONO MALFORMATI, e la decisione è mia non tua:
+   8d875f4 porta un «@» in testa e in coda, 0fd3ec8 ha perso gli accenti.
+   Ripulirli richiede un rebase e --force-with-lease su un ramo già pushato,
+   e con due macchine sullo stesso repository quella è una scelta che faccio
+   io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
+
+Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, e qual è
+il prossimo passo secondo la §6 — POI ASPETTA le mie richieste prima di
+proporre qualunque cosa. ⛔ Non c'è un piano da riprendere: il Traguardo 4 è
+CHIUSO, e il passo che viene è un brainstorming.
 ```
 
 ---
@@ -193,8 +225,8 @@ POI ASPETTA le mie richieste prima di proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | **9,8 KB** ⚠️ era 7,7 fino al 2026-08-11 |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **240 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 240 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **242 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 242 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -208,7 +240,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **240 KB contro mezzo megabyte**.
+resta quello che conta: **242 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **277 KB**. Non è che chiedesse
@@ -279,7 +311,7 @@ elenco**, ed è la voce che è stata tolta: si compila incollando, non si mantie
 > ignorato: le quattro specie di difetto di piano passano da ventidue righe a quindici, perché
 > il testo lungo vive ora in `CLAUDE.md` e nel gotcha **#49** e qui bastava l'elenco — la regola
 > è *rimandare invece di riscrivere*. 📌 **Il rapporto che questo file esiste per difendere non
-> si è mosso: 9,8 KB di messaggio che ordinano 240 KB di lettura, contro 689 di corpus.**
+> si è mosso: 9,8 KB di messaggio che ordinano 242 KB di lettura, contro 689 di corpus.**
 
 📌 **Il percorso del repository ha due valori, e non è una svista da «sanare».** Si lavora
 su **due macchine**, e il campo le nomina entrambe: un percorso solo sembrava aggiornato e

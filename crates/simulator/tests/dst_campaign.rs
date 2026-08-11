@@ -5,6 +5,7 @@
 //! `crates/kernel/tests/executor_determinism.rs`. This milestone brings the FAULT.
 
 use core::cell::RefCell;
+use std::collections::BTreeSet;
 
 use kernel::executor::{Executor, Sleep};
 use kernel::parameters::Parameters;
@@ -68,16 +69,61 @@ const WRITES_PER_RUN: u64 = (ACTIVITIES * STEPS * 2) as u64;
 /// ceiling is STRUCTURAL and equals `ACTIVITIES` — an activity is a sequential loop and holds at
 /// most one step open. And the doubt vectors this campaign can ever compare are a FINITE set of
 /// 109: the last one first appeared at seed 1038, and 19 000 further seeds produced not one more.
-/// So this number closes that space with 1.9x margin over where it was measured to close, raises
-/// the thinnest crash point from 4 samples to 64, and costs about 103 ms — a tenth of the
-/// ceiling, which is the margin for a machine slower than the one that measured it.
+/// So this number closes that space, raises the thinnest crash point from 4 samples to 64, and
+/// costs about 103 ms — a tenth of the ceiling, which is the margin for a machine slower than
+/// the one that measured it.
+///
+/// ⚠️ AND THE MARGIN IS THINNER THAN "1.9x" MADE IT SOUND, which is why that phrasing is gone:
+/// seed 1038 is the 52nd percentile of the sweep, not a comfortable early finish. Measured over
+/// six mixing constants (see `EXPECTED_DOUBT_SETS`) the space closes at seeds 539, 610, 697, 802,
+/// 1038 and 1166 — so the WORST observed close is at 58% of the sweep and the real margin is
+/// 1.7x, not 1.9x.
 ///
 /// ⚠️ WHAT MORE SEEDS DO STILL BUY, said so the paragraph above is not read as "the space is
-/// exhausted": the distinct ARCHIVES handed to `steps_in_doubt` never saturate in that range —
-/// 1 206 at 2 000 seeds, 6 168 at 20 000, with a new one still arriving at seed 19 995.
-/// Interleaving diversity keeps growing; only the OUTCOMES it produces stop. That growth is the
-/// whole reason `the_deep_campaign` exists.
+/// exhausted": the distinct ARCHIVES handed to `steps_in_doubt` never saturate — 1 206 here,
+/// 16 360 at a hundred times this. Interleaving diversity keeps growing; only the OUTCOMES it
+/// produces stop. That growth is the whole reason `the_deep_campaign` exists, and its table is
+/// on `DEEP_CAMPAIGN_SEEDS`.
 const SHORT_CAMPAIGN_SEEDS: u64 = 2_000;
+
+/// How many DISTINCT doubt vectors this scenario can produce at all. ⛔ IT IS THE ONE NUMBER THAT
+/// TURNS THE CHOICE OF `SHORT_CAMPAIGN_SEEDS` INTO SOMETHING HELD, and before 2026-08-11 nothing
+/// held it. The seed count was chosen because 109 distinct vectors appear and the last arrives at
+/// seed 1038 — but that justification lived only in a doc comment. Raise `ACTIVITIES` to four and
+/// the space grows, 2 000 seeds may no longer close it, and EVERY TEST IN THIS FILE STAYS GREEN
+/// while the reason for the number quietly dies. `WRITES_PER_RUN` is pinned by a test for exactly
+/// this reason; this was not.
+///
+/// ⛔ SO IT IS A CHANGE DETECTOR ON THE SHAPE OF THE SCENARIO, in the same posture as the frozen
+/// bytes of `crates/kernel/tests/frozen_bytes.rs`: it fires precisely when the coverage claim
+/// stops being true, and it fires in BOTH directions — a scenario that grew, and a seed count
+/// that no longer reaches the end of the space.
+///
+/// ⛔ AND IT WAS NOT ADOPTED UNTIL IT WAS MEASURED NOT TO FIRE WHERE IT SHOULD NOT, which is
+/// gotcha #24 and the reason a wrong version of this constant would be worse than no constant:
+/// a check that cries on an innocent change teaches everyone to ignore the audit. The question
+/// was whether 109 is a property of the SCENARIO or of the seeds that sample it. Measured on
+/// 2026-08-11 by replacing the mixing constant of `crash_seed` with six different values, each
+/// over `SHORT_CAMPAIGN_SEEDS` seeds:
+///
+/// | mixing constant      | distinct doubt sets | last new at seed |
+/// |----------------------|---------------------|------------------|
+/// | `0x9E3779B97F4A7C15` | 109                 | 1038             |
+/// | `0xBF58476D1CE4E5B9` | 109                 | 610              |
+/// | `0x94D049BB133111EB` | 109                 | 539              |
+/// | `0xD6E8FEB86659FD93` | 109                 | 802              |
+/// | `0xA0761D6478BD642F` | 109                 | 697              |
+/// | `0x8EBC6AF09C88C6E3` | 109                 | 1166             |
+///
+/// The COUNT is invariant across all six; only WHEN the space closes moves. So 109 belongs to
+/// `ACTIVITIES`, `STEPS` and the write-ahead shape, and a reshuffle does not disturb it — which
+/// is what makes the assertion below a check rather than a bet.
+///
+/// ⚠️ WHAT INVALIDATES IT, named so a red is read as a decision and not as a defect: a change to
+/// `ACTIVITIES`, to `STEPS`, or to the scenario's write pattern. When that red arrives the right
+/// move is to re-measure the space and re-choose `SHORT_CAMPAIGN_SEEDS` against it, not to edit
+/// this number until the bar turns green.
+const EXPECTED_DOUBT_SETS: usize = 109;
 
 /// ⛔ THE CRASH POINT IS DRAWN FROM A DIFFERENT GENERATOR THAN THE INTERLEAVING, and from a
 /// seed DERIVED from this one rather than from the same number. Two `SeededRng` built from the
@@ -271,12 +317,19 @@ fn c7a_without_a_crash_no_step_is_in_doubt() {
     // until the review of 2026-08-11. See `SHORT_CAMPAIGN_SEEDS`.
     //
     // ⚠️ THE SUPPORT IS FOR THE SHORT CAMPAIGN ONLY, AND THE GAP IS DECLARED RATHER THAN LEFT TO
-    // BE FOUND: `the_deep_campaign` sweeps a hundred times these seeds, and this loop does not
-    // follow it there — the premise is checked for the first `SHORT_CAMPAIGN_SEEDS` and INFERRED
-    // for the rest. The inference is not free-hand: the write count depends on `ACTIVITIES` and
-    // `STEPS` and not on the seed, which is the same claim measured over fifty thousand seeds on
-    // 2026-08-11. The price of closing the gap would be to put a `C7a`-shaped loop inside the
-    // deep campaign, which doubles its cost to support an assertion nothing has ever contradicted.
+    // BE FOUND: `the_deep_campaign` sweeps a hundred times these seeds and this loop does not
+    // follow it there. ⚠️ BUT THE GAP IS NOT AN INFERENCE, and calling it one over-declared it —
+    // the range was MEASURED on 2026-08-11 over the exact interval `the_deep_campaign` uses:
+    // `writes_done() == WRITES_PER_RUN` for two hundred thousand seeds out of two hundred
+    // thousand, zero deviations. What is missing is the guard on every future run, not the
+    // evidence. The price of closing it would be a `C7a`-shaped loop inside the deep campaign,
+    // which doubles the cost of the long cycle to re-check a claim measured twice.
+    //
+    // ⚠️ AND NO FALSE GREEN CAN HIDE IN THE GAP, which is what makes that trade acceptable rather
+    // than merely cheap. If some seed did write fewer than `WRITES_PER_RUN` times, `expected_doubt`
+    // would still be computed from the REAL trace of that run, so `found == expected` would go on
+    // holding. What the deep campaign would lose is COVERAGE — a crash point drawn beyond the last
+    // write never fires, gotcha #17 — and not CORRECTNESS.
     for seed in 0..SHORT_CAMPAIGN_SEEDS {
         let (journal, _) = run(seed, CrashingJournal::without_crash());
 
@@ -377,6 +430,7 @@ fn campaign(seeds: u64) -> (u64, usize) {
     let started = std::time::Instant::now();
     let mut crashes = 0u64;
     let mut largest = 0usize;
+    let mut seen: BTreeSet<Vec<u64>> = BTreeSet::new();
 
     for seed in 0..seeds {
         let (journal, trace) = run(
@@ -392,6 +446,7 @@ fn campaign(seeds: u64) -> (u64, usize) {
         let found: Vec<u64> = doubts.iter().map(|d| d.step.get()).collect();
 
         assert_eq!(found, expected, "seed {seed}, crash at write {point}");
+        seen.insert(found);
 
         // ⛔ EVERY STEP OF THIS SCENARIO DECLARES `Idempotent`, so the resolution is decided and
         // not incidental. Without this the campaign would hold WHICH steps are in doubt and say
@@ -434,9 +489,32 @@ fn campaign(seeds: u64) -> (u64, usize) {
     // DERIVE. The budget on `SHORT_CAMPAIGN_SEEDS` is a measurement taken once, on one machine,
     // and a measurement taken once decays; printing it every run is what turns it into something
     // a reader can contradict.
+    // ⛔ THE COVERAGE CLAIM, ASSERTED WHERE THE SWEEP HAPPENS. It is what keeps the choice of
+    // `SHORT_CAMPAIGN_SEEDS` honest: the reason for that number is "this many seeds see the whole
+    // space of doubt vectors", and without this line that reason is a sentence in a comment that
+    // no run can contradict. Reasoning, the six-mixer stability measurement, and what a red here
+    // means are all on `EXPECTED_DOUBT_SETS`.
+    //
+    // ⛔ IT LIVES IN `campaign` AND NOT IN A CALLER, WHICH IS A PRECONDITION ON THE ARGUMENT and
+    // is stated rather than left to be tripped over: `seeds` must be large enough to saturate the
+    // space, and both callers are. Calling `campaign` with a short list would fire HERE — which
+    // is the intent and not a trap, since a sweep too short to close the space is exactly the
+    // thing this constant exists to report. Measured in both directions on 2026-08-11: at 500
+    // seeds it fires with `left: 105, right: 109`, at 2 000 it is silent.
+    assert_eq!(
+        seen.len(),
+        EXPECTED_DOUBT_SETS,
+        "the campaign saw {} of the {EXPECTED_DOUBT_SETS} doubt vectors this scenario can produce \
+         — either the scenario changed shape, or a sweep of {seeds} seeds no longer reaches the \
+         end of the space and the count must be re-measured",
+        seen.len()
+    );
+
     let elapsed = started.elapsed();
     println!(
-        "DST L1 campaign: {crashes}/{seeds} seeds crashed, largest doubt set {largest}, {elapsed:?}"
+        "DST L1 campaign: {crashes}/{seeds} seeds crashed, largest doubt set {largest}, \
+         {} distinct doubt sets, {elapsed:?}",
+        seen.len()
     );
 
     (crashes, largest)
@@ -444,8 +522,20 @@ fn campaign(seeds: u64) -> (u64, usize) {
 
 /// C7b, and it IS the short campaign — one sweep per commit, not a second one beside it.
 ///
-/// ⛔ CONSTRAINT 7 OF §11 IS DISCHARGED HERE: the seed count is fixed in `SHORT_CAMPAIGN_SEEDS`
-/// and versioned with this file, and `campaign` prints its wall time on every run.
+/// ⛔ CONSTRAINT 7 OF §11 IS DISCHARGED IN PART HERE, AND THE PART MATTERS. The constraint has
+/// two halves. The first — the seed count is FIXED AND VERSIONED, not drawn from the clock or the
+/// environment — is discharged: it is `SHORT_CAMPAIGN_SEEDS`, in this file, under review. The
+/// second — the wall time is printed EVERY RUN, *so that the slowdown becomes visible* — is only
+/// half done: `campaign` prints it, but `gate.sh` runs `cargo test --workspace` with no
+/// `--nocapture`, so on every commit that line goes into a buffer nobody reads. **TASK 9 adds the
+/// gate step that shows it.**
+///
+/// ⚠️ WHY THE DISTINCTION IS WORTH SEVEN LINES rather than a tidier "discharged": the closing
+/// audit of this milestone reads these claims. A file saying "discharged" here would mark the
+/// constraint closed and Task 9 redundant, and what would be left uncovered is the constraint's
+/// entire PURPOSE — not that a number exists, but that somebody SEES the campaign getting slower.
+/// The file also said "the gate does not yet collect it" eighty-five lines up, so before this
+/// correction it asserted both things at once.
 ///
 /// ⛔ AND DECISION D6: the campaign is a TEST and the gate does not grow a seventh check for it.
 /// `gate.sh` already runs `cargo test --workspace`, so this sweep is on every commit by being an
@@ -472,11 +562,9 @@ fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
     // and with a single activity every crash leaves one step at most — in both cases the
     // assertion above is satisfied and this campaign has verified nothing. ⚠️ NINETY of these
     // seeds already compare two empty sets on their own merits — the line read "six of these two
-    // hundred" until 2026-08-11, and it was the campaign size that moved and not the fact. ⚠️ The
-    // rate is NOT the same at the two counts and the difference is left standing rather than
-    // rounded away: 90 of 2 000 is 4.5% and 865 of 20 000 is 4.3%, both measured, while six of
-    // two hundred is 3.0% — that older figure was never re-measured here, and at n=200 the gap
-    // is inside the noise, so it is reported as unreconciled rather than declared to agree.
+    // hundred" until 2026-08-11, and it was the campaign size that moved, not the fact: six of
+    // the first two hundred seeds re-measures exactly, and the rate walks 3.00%, 5.00%, 5.00%,
+    // 4.50%, 4.33% at 200, 500, 1 000, 2 000 and 20 000 seeds — sampling noise around ~4.3%.
     //
     // ⚠️ IT IS THE SAME DEFECT `C7a` CARRIED UNTIL TWO TASKS AGO, re-imported: there it was
     // "nothing was written to be in doubt about", here it is "nothing was left in doubt to
@@ -492,16 +580,27 @@ fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
 /// deep DST on a LONG CYCLE, and a campaign that made every commit slower would be turned off
 /// by whoever waits for it.
 ///
-/// ⚠️ WHAT IT BUYS OVER THE SHORT ONE IS MEASURED AND IT IS ONE THING: not crash-point coverage,
-/// which is complete at 200 seeds, and not a bigger doubt set, whose ceiling is `ACTIVITIES`.
-/// It is the count of DISTINCT ARCHIVES presented to `steps_in_doubt` — 1 206 at the short
-/// count, 6 168 at ten times it, with a new one still arriving at seed 19 995. See
-/// `SHORT_CAMPAIGN_SEEDS`.
+/// ⚠️ WHAT IT BUYS OVER THE SHORT ONE IS ONE THING, AND IT IS NOT THE OBVIOUS ONES: not
+/// crash-point coverage, complete at 200 seeds; not a bigger doubt set, whose ceiling is
+/// `ACTIVITIES`; and not more distinct doubt vectors, since `EXPECTED_DOUBT_SETS` is closed by
+/// the short campaign already. It is the count of DISTINCT ARCHIVES handed to `steps_in_doubt`.
 ///
-/// ⚠️ AND THE MULTIPLIER IS NOT MEASURED, WHICH IS SAID RATHER THAN IMPLIED. The archive count
-/// was swept to 20 000 seeds; this constant goes ten times FURTHER, and that the curve keeps
-/// rising there is an extrapolation. What IS measured is the price — 3.9 s in debug on
-/// 2026-08-11 — and that is what makes the extrapolation cheap enough to leave standing.
+/// ⛔ AND THE MULTIPLIER IS MEASURED, NOT EXTRAPOLATED. This doc declared an extrapolation until
+/// 2026-08-11 — honest, but this repository measures, and the measurement cost two seconds:
+///
+/// | seeds   | distinct archives |
+/// |---------|-------------------|
+/// | 2 000   | 1 206             |
+/// | 20 000  | 6 168             |
+/// | 50 000  | 10 082            |
+/// | 100 000 | 13 348            |
+/// | 200 000 | 16 360            |
+///
+/// The curve is still rising at the far end — the last new archive arrived at seed 199 898, of
+/// 200 000 — and it rises SUBLINEARLY, about `n^0.42`. That is the number this constant is
+/// chosen against: `x100` buys **2.65 times** the archives of `x10`, not ten times, and 13.6
+/// times the archives of the short campaign. The price is 3.9 s in debug, which is what makes
+/// 2.65x worth having on a long cycle and not on a commit.
 const DEEP_CAMPAIGN_SEEDS: u64 = SHORT_CAMPAIGN_SEEDS * 100;
 
 #[test]

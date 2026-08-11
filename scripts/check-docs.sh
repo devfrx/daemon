@@ -42,19 +42,51 @@ echo "== section numbering: duplicates =="
 # The check is PER FILE. Concatenating the specs would produce a false positive: every
 # spec legitimately has its own §0, and a check that fails for the wrong reason is worse
 # than no check at all -- it teaches people to ignore the audit.
+#
+# ⛔ NON-VACUITY GUARD, added 2026-08-11 -- gotcha #26 at the level ABOVE the delimiter.
+# 'nullglob' is OFF here (measured), so a renamed or moved directory leaves the pattern
+# UNEXPANDED: the loop below runs once on a path that does not exist, grep fails to stderr,
+# 'dup' stays empty and NOTHING is reported. The same hole covered the V30 check right
+# after. Measured by renaming the directory: both checks produced zero '✗' while all 24 Q
+# lost their verification method. A guard on the delimiter does not help when the FILE SET
+# is what went missing.
+spec_count=$(ls docs/superpowers/specs/*.md 2>/dev/null | wc -l)
+[ "$spec_count" -gt 0 ] ||
+  report "no spec found under docs/superpowers/specs/: the duplicate-section and V30 checks would both pass on nothing."
+
 for f in docs/superpowers/specs/*.md; do
   dup=$(grep -ohE '^#{2,3} [0-9]+(\.[0-9]+)?' "$f" | sort | uniq -d | tr '\n' ' ')
   [ -z "${dup// /}" ] || report "duplicate sections in $f: $dup"
 done
 
 echo "== every Q requirement has a verification method (V30) =="
+# ⛔ 'sort -u' AND NOT 'sort -uV', corrected 2026-08-11. 'comm' compares by COLLATION and
+# says so: version sort puts Q9 before Q10, collation puts Q10 before Q9, and 'comm' walks
+# two lists it believes sorted. The defect is invisible while the two sides agree -- today
+# they do, so 'comm' never meets an unpairable line and does not even print its warning --
+# and it lies EXACTLY when the check has something true to say. Measured on Q1..Q24: with
+# Q9 alone missing a method, '-uV' reported fifteen names (Q9 through Q24) instead of one.
+# A red nobody can read teaches people to ignore the audit, which is the thing the comment
+# above declares to be worse than no check at all.
 missing=$(comm -23 \
-  <(grep -ohE '^\| Q[0-9]+ \|' docs/superpowers/specs/*.md | grep -oE 'Q[0-9]+' | sort -uV) \
-  <(grep -ohE '^\| Q[0-9]+ \|' docs/design/08-strategia-di-test.md | grep -oE 'Q[0-9]+' | sort -uV) |
+  <(grep -ohE '^\| Q[0-9]+ \|' docs/superpowers/specs/*.md | grep -oE 'Q[0-9]+' | sort -u) \
+  <(grep -ohE '^\| Q[0-9]+ \|' docs/design/08-strategia-di-test.md | grep -oE 'Q[0-9]+' | sort -u) |
   tr '\n' ' ')
 [ -z "${missing// /}" ] || report "V30 violated — Q with no verification method: $missing"
 
 spec_sp1=docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+
+# ⛔ EXISTENCE GUARD, added 2026-08-11, AND IT IS THE ONE THE OTHER GUARDS CANNOT BE.
+# The six assertions of §8.6.1 live in the two awk passes below, and every one of their
+# non-vacuity guards -- «delimiter not found», «rows==0», «defends==0» -- sits in an END
+# block. Measured: when the input file cannot be opened, awk emits a FATAL and END NEVER
+# RUNS. So '$catalogue' and '$states' stay empty, '[ -z ... ]' is true, nothing is
+# reported, and check-docs.sh exits 0 -- GATE GREEN with all six assertions dead in
+# silence. That is §8.6.2's own enemy one level up: the guards protect against a RENUMBERED
+# heading, not against a RENAMED file. A guard inside END cannot, by construction, defend
+# against the input that is missing.
+[ -f "$spec_sp1" ] ||
+  report "$spec_sp1 does not exist: the six assertions of §8.6.1 would not run at all."
 
 echo "== catalogue §7.4: every check defends something (rule 1) and has its counter-probe (rule 3) =="
 # TWO assertions on the same table, in a single pass: the delimiters are written ONCE, or

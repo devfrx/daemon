@@ -69,7 +69,10 @@ dà valore.
 2. ⚠️ **Non esiste un modo di rigiocare un caso solo, ed è dichiarato invece di essere scoperto:**
    le campagne percorrono l'intero intervallo e non prendono filtri. Per indagare si scrive una
    **sonda usa-e-getta** che chiami direttamente `run(seed, …)` al livello 1 o
-   `crash_then_reopen(falls_at, records)` al livello 2, e la si cancella dopo. Costa tre righe, e
+   `crash_then_reopen(records, falls_at)` al livello 2, e la si cancella dopo. ⚠️ **L'ordine dei
+   due argomenti è quello, e non l'inverso**: sono entrambi `u64`, quindi scriverli scambiati
+   **compila** e indaga uno scenario diverso da quello che ha prodotto il rosso, restando verde.
+   Questa riga li dava invertiti — audit del 2026-08-11. Costa tre righe, e
    comprarne di meglio significherebbe aggiungere un meccanismo che nessuno ha chiesto.
 3. Si trova la **proprietà** violata — non il cammino.
 4. ⛔ **Si scrive un test che tenga quella proprietà**, e che fallisca prima della correzione.

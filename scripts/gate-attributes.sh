@@ -119,17 +119,31 @@ for f in $CONSTRAINED; do
   fi
 
   # ⚠️ SECOND ROUTE, and it is the one a rename takes: 'build = \"gen.rs\"' in the manifest is
-  # the same object under another name, and the existence test above does not see it. The
-  # QUOTE in the pattern is what tells it apart from 'build = false', which DISABLES the
-  # script and must stay green -- gotcha #24 again.
+  # the same object under another name, and the existence test above does not see it. What
+  # tells a declaration apart from 'build = false' -- which DISABLES the script and must stay
+  # green, gotcha #24 again -- is that a PATH is a string or an array while the disabling form
+  # is a bare boolean.
+  #
+  # ⛔ THIS PATTERN ANCHORED ON THE DOUBLE QUOTE UNTIL 2026-08-11, AND IT WAS A FALSE NEGATIVE
+  # ON I3 -- the one way this check must not fail. TOML has two string forms, and the literal
+  # one is single-quoted: 'build = '"'"'gen.rs'"'"'' is the SAME VALUE and slipped through.
+  # Measured rather than reasoned: a crate declaring it that way builds on cargo 1.95.0 (exit
+  # 0) and its script RUNS -- the build directory's 'output' file carried the injected
+  # 'cargo:rustc-env'. With the other five checks blind by construction (see above), the gate
+  # came out GREEN on six of six with a build script reading the clock, the filesystem and the
+  # environment inside the kernel. Gotcha #28, reopened by a quoting character.
+  #
+  # 📌 The lesson is the shape, not the character: ANCHOR ON THE KEY, NEVER ON THE DELIMITER.
+  # The array form 'build = [...]' is rejected by stable cargo today and is accepted here
+  # anyway, so the day it stabilises this check does not have to be remembered.
   # ⚠️ ONE MANIFEST IS ENOUGH, and that is measured too, not assumed: 'build' is NOT among the
   # keys '[workspace.package]' can hand down. Tried on cargo 1.95.0 -- 'build.workspace = true'
   # is rejected at parse time with "invalid type: map, expected a boolean, string or array".
   # So the crate's own manifest is the only place a build script can be declared from.
   if [ ! -f "$manifest" ]; then
     report "$manifest DOES NOT EXIST: the build-script check would read nothing and pass."
-  elif grep -qE '^[[:space:]]*build[[:space:]]*=[[:space:]]*"' "$manifest"; then
-    report "$manifest declares a build script with 'build = \"...\"'."
+  elif grep -qE "^[[:space:]]*build[[:space:]]*=[[:space:]]*[\"'[]" "$manifest"; then
+    report "$manifest declares a build script."
     echo "      ⛔ REMEDY: REMOVE IT. Renaming 'build.rs' does not change what it is -- a host"
     echo "      target with all of 'std', invisible to the other five checks. See above."
   fi

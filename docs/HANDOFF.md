@@ -1,20 +1,24 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-10**, alla **chiusura del Traguardo 3** del sotto-progetto 1 — il
-giornale e il formato durevole: il record come enum di versione, **due** implementazioni della
-porta `journal` giudicate dalla stessa suite, la riconciliazione, e i **byte congelati**.
+Aggiornato il **2026-08-11**, alla **chiusura del Traguardo 4** del sotto-progetto 1 — il
+simulatore DST: il giornale che cade e non si riprende, il backend cadente di `redb` scritto da
+**fuori la crate**, e due campagne con **soggetti diversi**.
 Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
-⚠️ **Questa riga diceva «alla chiusura del Traguardo 2» mentre undici compiti del terzo erano
-chiusi e pushati** — gotcha **#31** sull'intestazione, che nessuno rilegge perché è la cornice e
-non il contenuto.
+⚠️ **Questa riga diceva «il 2026-08-10, alla chiusura del Traguardo 3» mentre il quarto era
+eseguito** — e prima ancora «alla chiusura del Traguardo 2» con undici compiti del terzo chiusi
+e pushati. È il gotcha **#31** sull'intestazione, che nessuno rilegge perché è la cornice e non
+il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit del 2026-08-11.
 
 > 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — la spec del
-> sotto-progetto 1 è **completa e senza voci aperte**, e i **Traguardi 1, 2 e 3 sono
-> eseguiti** — l'ultimo il 2026-08-10, dodici compiti su dodici. ⏭️ **Quello che viene dopo è
-> il _brainstorming_ del piano del Traguardo 4**, il simulatore DST: è lavoro creativo, e
-> `CLAUDE.md` lo impone **prima** di entrare in plan mode.
-> ⚠️ **Questa riga nominava il solo Traguardo 1**, e i due seguiti stanno trenta righe più giù:
-> è la stessa specie di stantio che la tredicesima misura registrò per `roadmap.md`.
+> sotto-progetto 1 è **completa e senza voci aperte**, e i **Traguardi 1, 2, 3 e 4 sono
+> eseguiti** — l'ultimo il 2026-08-11, dieci compiti su dieci. ⏭️ **Quello che viene dopo è
+> il _brainstorming_ del Traguardo 5**, l'arbitro GPU: è lavoro creativo, e `CLAUDE.md` lo
+> impone **prima** di entrare in plan mode — non si comincia dal piano.
+> ⚠️ **Questa riga diceva «quello che viene dopo è il brainstorming del piano del Traguardo 4»
+> a Traguardo 4 ESEGUITO**, e la riga della tabella dei traguardi seicento righe più sotto lo
+> dava già per chiuso: due affermazioni di stato **nello stesso file** che si contraddicevano.
+> Trovata dall'audit del 2026-08-11. ⚠️ E prima ancora nominava il solo Traguardo 1: è la
+> stessa specie di stantio che la tredicesima misura registrò per `roadmap.md`.
 > Il piano del **primo** traguardo è stato percorso compito per compito, **subagent-driven**,
 > con revisione fra uno e l'altro; poi quattro compiti di riallineamento hanno riportato in
 > **inglese** tutto il codice, che il piano dettava in italiano contro la §1.0 della spec.
@@ -64,12 +68,15 @@ non il contenuto.
 > compito. Il kernel ha ora il **record durevole** versionato, la **riconciliazione**, e la porta
 > `journal` ha **due** implementazioni — il doppio in memoria e `redb` col backend nostro — tenute
 > alle stesse **nove** promesse a ogni commit. I **byte congelati** sono nel repository e **non si
-> rigenerano**. `cargo test --workspace --no-fail-fast` → **29 target, 152 test**.
+> rigenerano**. ⚠️ **La cifra qui diceva «29 target, 152 test» ed era quella del Traguardo 3**:
+> col quarto sono **32 target e 171 test**, di cui **due ignorati** — le due campagne profonde,
+> che appartengono al ciclo lungo (vincolo 8 di §11).
 >
-> ⏭️ **Il prossimo passo è SCRIVERE il piano del Traguardo 4** — il simulatore DST: tempo
-> virtuale, iniezione dei guasti, la campagna e i semi. Non si scrive prima di arrivarci, ed è la
-> regola che ha retto tre volte; la §6 del compendio ha la tabella e le **questioni che il
-> Traguardo 3 lascia aperte**, raccolte in un posto solo.
+> ⏭️ **Il prossimo passo è il BRAINSTORMING del Traguardo 5** — l'arbitro GPU: ammissione,
+> corsie, concessione, le due policy VRAM. Non si comincia dal piano, ed è la regola che ha retto
+> quattro volte; la §6 del compendio ha la tabella e le **questioni lasciate aperte**, raccolte in
+> un posto solo. ⚠️ **Questa riga diceva «scrivere il piano del Traguardo 4»** a quel traguardo
+> eseguito — audit del 2026-08-11.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -93,8 +100,12 @@ compito. ✅ **Le sei famiglie di porte sono complete** — `reactor` · `journa
 · `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive. ✅ **Il Traguardo 3 è eseguito
 il 2026-08-10**: **dodici compiti su dodici**, `GATE GREEN` a tutti — il record durevole
 versionato, due implementazioni della porta `journal` giudicate dalla stessa suite, la
-riconciliazione, e i **byte congelati**, che **non si rigenerano**. ⏭️ Il prossimo passo è
-**scrivere il piano del Traguardo 4**: il simulatore DST.
+riconciliazione, e i **byte congelati**, che **non si rigenerano**. ✅ **E il Traguardo 4 è
+eseguito il 2026-08-11**: **dieci compiti su dieci**, `GATE GREEN` a ciascuno — il giornale che
+cade e non si riprende, il backend cadente di `redb` scritto da **fuori la crate**, e due
+campagne con **soggetti diversi**. ⏭️ Il prossimo passo è il **brainstorming del Traguardo 5**:
+l'arbitro GPU. ⚠️ Questa riga diceva *«scrivere il piano del Traguardo 4»* — audit del
+2026-08-11.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione

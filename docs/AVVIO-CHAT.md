@@ -98,7 +98,7 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 242 KB in tutto
       del traguardo in corso». Vale di nuovo il giorno in cui un piano c'è.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 689 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 691 KB
    il 2026-08-11, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
    e l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
@@ -110,7 +110,7 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 242 KB in tutto
    dev'essere Option con #[cbor(default)] e prendere un INDICE NUOVO, e il
    significato di un indice non cambia mai.
 
-⛔ VENTIDUE DECISIONI SONO STATE PRESE ESEGUENDO, non dai piani — PUOI
+⛔ VENTUNO DECISIONI SONO STATE PRESE ESEGUENDO, non dai piani — PUOI
    RIBALTARLE TUTTE, e stanno nelle errata in testa ai due piani:
      · Traguardo 3: NOVE, fra cui Record::encode che NON restituisce Result,
        un SECONDO intento sullo stesso passo RIFIUTATO, la porta che guadagna
@@ -224,7 +224,7 @@ CHIUSO, e il passo che viene è un brainstorming.
 
 | | Prima | Adesso |
 |---|---|---|
-| il messaggio | ~9 KB | **9,8 KB** ⚠️ era 7,7 fino al 2026-08-11 |
+| il messaggio | ~9 KB | **12,2 KB** ⚠️ era 9,8, e 7,7 prima ancora, entrambe il 2026-08-11. ⛔ **Ha superato il proprio riferimento**: la 24ª misura lo aveva registrato e questa cella non lo aveva incassato — audit del 2026-08-11 |
 | lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **242 KB** — `CLAUDE.md` più il compendio |
 | decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 242 KB |
 

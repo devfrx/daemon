@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (689 KB con `wc -c` il 2026-08-11, e possono solo crescere — la spec da sola ne fa 277), e
+> (691 KB con `wc -c` il 2026-08-11, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-11.** Manutenzione: §13.
@@ -1299,17 +1299,17 @@ Apri **un** file, quello che serve. Non la cartella.
 |---|---|---|
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
-| ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 27 KB |
+| ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 30 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 195 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 196 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 26 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
 | **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 117 KB |
 | ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata | 6 KB |
-| la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
+| la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 10 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
-| gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |
+| gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–10 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
 | la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 145 KB |
@@ -1318,7 +1318,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 114 KB |
-| l'indice di ADR e diagrammi | [`README.md`](README.md) | 14 KB |
+| l'indice di ADR e diagrammi | [`README.md`](README.md) | 15 KB |
 | ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **12,2**, il resto è il perché di ogni riga | 21 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
@@ -1949,7 +1949,7 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > il messaggio tiene solo ciò che serve a **non sbagliare il primo passo**. ⚠️ Un messaggio da
 > incollare ha un limite che nessuna tabella ha, ed è la pazienza di chi lo rilegge.
 >
-> ✅ **L'aggregato è fermo — 689 → 690 KB — e i due file obbligatori pure, a 240.** Il rapporto che
+> ✅ **L'aggregato è fermo — 689 → 690 KB — e i due file obbligatori pure, a 242.** Il rapporto che
 > la §12 esiste per difendere non si è mosso in questa passata: a muoverlo era stato il traguardo,
 > non la consegna.
 

@@ -300,8 +300,8 @@ fn after_the_fall_the_backend_never_serves_again() {
 const OPERATIONS_TO_SATURATION: u64 = 58;
 
 /// Writes three records through a backend that falls at `falls_at`, then reopens the archive and
-/// returns what came back — or `None` if the archive is unreadable, which is itself an answer.
-fn crash_then_reopen(falls_at: u64) -> (Handles, Option<Vec<(StepId, Vec<u8>)>>) {
+/// returns what came back — or WHY IT COULD NOT BE READ, which is itself an answer.
+fn crash_then_reopen(falls_at: u64) -> (Handles, Result<Vec<(StepId, Vec<u8>)>, String>) {
     let archive = empty_archive();
     let (crashing, handles) = backend(&archive, falls_at);
 
@@ -312,20 +312,56 @@ fn crash_then_reopen(falls_at: u64) -> (Handles, Option<Vec<(StepId, Vec<u8>)>>)
     // discarding would make the day that changes look like an archive that simply came back
     // empty; catching and asserting makes it say so.
     let ran = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        let mut journal = FileJournal::with_backend(crashing).expect("open");
+        // ⚠️ THE `expect` NAMES THE CONSTANT — gotcha #9, which the sister probe has already paid
+        // for once. A range starting BELOW `OPERATIONS_TO_OPEN` puts the fall inside the opening,
+        // and this is the line that panics when it does.
+        let mut journal = FileJournal::with_backend(crashing)
+            .expect("the opening must survive: is OPERATIONS_TO_OPEN stale?");
         let _ = journal.intent(StepId::new(1), b"one");
         let _ = journal.outcome(StepId::new(1), b"one done");
         let _ = journal.intent(StepId::new(2), b"two");
     }));
+    // ⛔ AND THE MESSAGE NAMES BOTH CANDIDATES RATHER THAN BLAMING THE ENGINE, which is what it
+    // did until mutation B exhibited the false diagnosis on 2026-08-11: by far the likelier panic
+    // is the `expect` just above — OURS — and reporting it as «the engine panicked» sends the
+    // reader into `redb` to look for a stale constant of ours.
     assert!(
         ran.is_ok(),
-        "injection at {falls_at}: the engine panicked on the way down, which it was measured never to do"
+        "injection at {falls_at}: something panicked on the way down — EITHER the opening did not \
+         survive, and then the range starts below OPERATIONS_TO_OPEN, OR the engine panicked, \
+         which it was measured never to do"
     );
 
+    // The reopening goes through a backend that NEVER falls: what is under test is the state the
+    // first fall left behind, not a second injection.
     let (fresh, _) = backend(&handles.archive, u64::MAX);
-    let reopened = FileJournal::with_backend(fresh)
-        .ok()
-        .and_then(|journal| journal.replay().ok());
+
+    // ⚠️ THE SAME POSTURE ON THIS SIDE — caught, and then declared not to have happened — and here
+    // the reason is stronger than on the way down: this reads an archive left TORN by the fall,
+    // which is exactly where a decoder is likeliest to trip. Measured over every point of the
+    // sweep on 2026-08-11, neither the opening nor the replay ever panics.
+    let reopened = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        // ⛔ THE TWO FAILURES ARE TOLD APART, AND THE ENGINE'S OWN WORD IS CARRIED OUT WITH THEM —
+        // the convention `crates/platform/tests/file_journal.rs` already writes down. An `.ok()`
+        // on both calls folds «it would not open» and «it opened and would not replay» into one
+        // sentence and throws the reason away; across thirty-five points that is a red with no
+        // cause in it.
+        match FileJournal::with_backend(fresh) {
+            Err(error) => Err(format!("the archive did not reopen: {error:?}")),
+            Ok(journal) => match journal.replay() {
+                Err(error) => Err(format!(
+                    "the archive reopened but would not replay: {error:?}"
+                )),
+                Ok(records) => Ok(records),
+            },
+        }
+    }));
+    let reopened = match reopened {
+        Ok(answer) => answer,
+        Err(_) => {
+            panic!("injection at {falls_at}: reopening panicked, which it was measured never to do")
+        }
+    };
 
     (handles, reopened)
 }
@@ -345,6 +381,7 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     let mut points = 0u64;
     let mut fired = 0u64;
     let mut truncated = 0u64;
+    let mut partial = 0u64;
 
     for falls_at in OPERATIONS_TO_OPEN..OPERATIONS_TO_SATURATION {
         points += 1;
@@ -352,10 +389,11 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
         if handles.fallen.load(Ordering::Relaxed) {
             fired += 1;
         }
-        let Some(records) = reopened else {
-            // An archive that will not reopen at all is a FAILURE of this promise, and it is
-            // named rather than skipped.
-            panic!("injection at {falls_at}: the archive did not reopen");
+        let records = match reopened {
+            Ok(records) => records,
+            // An archive that cannot be read back at all is a FAILURE of this promise, and it is
+            // named — with the engine's own reason inside it — rather than skipped.
+            Err(why) => panic!("injection at {falls_at}: {why}"),
         };
         assert!(
             written.starts_with(&records),
@@ -363,6 +401,10 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
         );
         if records.len() < written.len() {
             truncated += 1;
+        }
+        // A STEP OF THE STAIRCASE: something came back, and not everything. See `partial > 0`.
+        if !records.is_empty() && records.len() < written.len() {
+            partial += 1;
         }
     }
 
@@ -373,28 +415,63 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     //
     // ⛔ AND WHAT IT COUNTED ON 2026-08-11 IS A MONOTONE STAIRCASE, which says more than the
     // prefix check can state on its own: injecting at 23..=27 gives back NO record, 28..=33 gives
-    // back one, 34..=44 two, and 45 upwards all three — **35 points, 35 fires, 22 of them
-    // strictly shorter**. Records reappear ONE WHOLE RECORD AT A TIME, in write order, each at a
-    // well-defined operation. Not one point in the sweep came back with a partial record, with a
-    // scrambled one, or with a record out of order.
-    println!("points={points} fired={fired} truncated={truncated}");
+    // back one, 34..=44 two, and 45 upwards all three. Records reappear ONE WHOLE RECORD AT A
+    // TIME, in write order, each at a well-defined operation. ⚠️ THE BOUNDS ARE PROSE AND PROSE
+    // AGES (gotcha #31): what HOLDS the shape is the four assertions below, and these numbers are
+    // here to be read, not to be trusted.
+    println!("points={points} fired={fired} truncated={truncated} partial={partial}");
 
     // ⛔ THE FIRST NON-VACUITY, AND IT IS AN EQUALITY. The range stops at saturation precisely so
     // that every point reaches its operation: one that did not would be a run indistinguishable
     // from a run with no injection, and `> 0` would let all but one of them go quiet.
+    //
+    // ⚠️ AND THE MESSAGE NAMES BOTH CAUSES IN THE ORDER WORTH CHECKING — measured on 2026-08-11,
+    // when `Durability::None` turned this red and the message blamed a drift while NOTHING had
+    // drifted: fewer syncs make the whole scenario cheaper, so saturation falls from 58 to about
+    // 51 and the tail of the range stops firing. The engine's I/O pattern is the cause this file
+    // exists for; a stale constant is the boring one.
     assert_eq!(
         fired, points,
-        "an injection point never fired: the range has drifted past saturation"
+        "an injection point never fired: EITHER the engine now does LESS I/O than was measured — \
+         check durability FIRST — OR OPERATIONS_TO_SATURATION is stale"
     );
 
     // ⛔ THE SECOND, AND WITHOUT IT THE FIRST IS NOT ENOUGH — the same lesson level 1 paid for.
     // "The injection went off" and "the injection cost the archive something" are two claims: if
     // every point left the archive whole, `records == written`, the prefix check above is
     // TRIVIALLY TRUE and this campaign is green having never lost a byte. The injection point is
-    // drawn across all six operations of the backend, and `read` and `len` take nothing away.
+    // drawn across all FIVE guarded operations of the backend — `close` does not pass through
+    // `may_serve` — and of those, `read` and `len` take nothing away.
     assert!(
         truncated > 0,
         "no injection left the archive shorter than what was written: the prefix check proved nothing"
+    );
+
+    // ⛔ THE THIRD IS THE OPPOSITE DIRECTION OF THE SECOND, AND IT WAS MISSING — gotcha #24.
+    // `fired == points` catches the scenario getting CHEAPER; nothing caught it getting DEARER.
+    // If the cost grows, the top of the staircase slides out of the range, every point comes back
+    // short, and the sweep goes on being green having quietly stopped exercising the case where
+    // everything survives — which is the case a journal is FOR.
+    assert!(
+        truncated < points,
+        "every injection came back short: the top of the staircase has slid out of the range, so \
+         the scenario now costs MORE than OPERATIONS_TO_SATURATION says"
+    );
+
+    // ⛔ THE FOURTH IS WHAT MAKES THIS SWEEP A SECOND WITNESS TO GOTCHA #51, and without it the
+    // whole promise rests on ONE probe. MEASURED on 2026-08-11 and not supposed: under
+    // `set_durability(Durability::None)` — WITH the saturation corrected to 51, so that the three
+    // assertions above are all green — the staircase COLLAPSES TO ALL-OR-NOTHING. Nothing is
+    // durable until the `Drop` of `Database` commits, so a point either falls before that and
+    // gives back zero records, or after it and gives back three; the steps in between disappear.
+    // ⚠️ AND THAT IS WHY THIS ONE IS WORTH MORE THAN THE OTHER THREE: it detects a lost durability
+    // guarantee WITHOUT depending on `OPERATIONS_TO_SATURATION`, the fragile constant — and it is
+    // what turns the staircase from a sentence in a comment into a check.
+    assert!(
+        partial > 0,
+        "the archive came back all-or-nothing, with no step in between: records have stopped \
+         becoming durable ONE AT A TIME, which is what a lost durability guarantee looks like \
+         from here"
     );
 }
 

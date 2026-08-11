@@ -9,7 +9,7 @@ use core::cell::RefCell;
 use kernel::executor::{Executor, Sleep};
 use kernel::parameters::Parameters;
 use kernel::ports::journal::{Journal, StepId};
-use kernel::reconcile::steps_in_doubt;
+use kernel::reconcile::{Resolution, steps_in_doubt};
 use kernel::record::{EffectClass, Record, RecordKind, RecordV1, Trust};
 use kernel::time::Monotonic;
 use simulator::journal::CrashingJournal;
@@ -27,6 +27,17 @@ const STEPS: usize = 4;
 /// number: were the scenario to perform fewer writes, the tail of the range would never fire
 /// and those seeds would be silent no-ops. Gotcha #17.
 const WRITES_PER_RUN: u64 = (ACTIVITIES * STEPS * 2) as u64;
+
+/// How many seeds the crash campaign sweeps.
+const CAMPAIGN_SEEDS: u64 = 200;
+
+/// ⛔ THE CRASH POINT IS DRAWN FROM A DIFFERENT GENERATOR THAN THE INTERLEAVING, and from a
+/// seed DERIVED from this one rather than from the same number. Two `SeededRng` built from the
+/// same seed produce the SAME sequence, so the crash point would be a function of the first
+/// shuffle and the campaign would explore a DIAGONAL of the space instead of the space.
+fn crash_seed(seed: u64) -> u64 {
+    seed ^ 0x9E37_79B9_7F4A_7C15
+}
 
 /// A record of the shape every step of this scenario writes.
 ///
@@ -208,4 +219,124 @@ fn c7a_without_a_crash_no_step_is_in_doubt() {
             "seed {seed} left a doubt with no crash"
         );
     }
+}
+
+/// The steps left with an intent and no outcome, computed FROM THE SCENARIO'S TRACE.
+///
+/// ⛔ WHY THIS IS NOT A TAUTOLOGY, said here because it looks like one: the algorithm is the
+/// same shape as `steps_in_doubt`, but the INPUT is not. This walks what the activities were
+/// told went through; `steps_in_doubt` walks the bytes that came back out of the archive, after
+/// decoding. A journal that lost a record, an encode that dropped a field, a decode that
+/// misread `kind` — each makes the two disagree, and none of them would show if the expectation
+/// were computed from the archive.
+///
+/// ⚠️ THE `contains` GUARD IS UNREACHABLE IN THIS SCENARIO, and it stays — declared rather than
+/// removed. No step here is ever given two intents: the ids are distinct per activity, and a
+/// second intent would be refused by the port, so it would never reach the trace at all. It
+/// mirrors what `enter` really does on the other side — a step enters the doubt AT MOST ONCE
+/// and keeps the place it first took — and dropping it would make the two algorithms diverge
+/// for a case the scenario could grow into. It is insurance with its reach written down, not
+/// coverage.
+fn expected_doubt(trace: &Trace) -> Vec<u64> {
+    let mut open: Vec<u64> = Vec::new();
+    for (step, kind) in trace {
+        match kind {
+            RecordKind::Intent => {
+                if !open.contains(step) {
+                    open.push(*step);
+                }
+            }
+            RecordKind::Outcome => open.retain(|s| s != step),
+            RecordKind::Note => {}
+        }
+    }
+    open
+}
+
+#[test]
+fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
+    // ⛔ THE SET AND NOT ITS SIZE. Measured on the spike, seed 99 left `[3, 7]`: with
+    // interleaved execution one crash leaves SEVERAL steps in doubt together, and a bench that
+    // compared only how many would pass on the wrong ones. Gotcha #30, and #20.
+    //
+    // ⛔ AND THE COMPARISON IS ORDERED, NOT SET-WISE, WHICH IS FREE HERE AND MUST STAY. Between
+    // the write to the journal and the push onto the trace there is no `await`, so archive and
+    // trace are in lockstep and the two orders agree — measured over these seeds. Weakening it
+    // to a set "for prudence" would give away the defence against the class of defect that has
+    // already cost this repository three vacuous probes: a comparison of bare identities passes
+    // against a liar that reverses the order, because `1, 2, 1` is a palindrome.
+    let mut crashes = 0u64;
+    let mut largest = 0usize;
+
+    for seed in 0..CAMPAIGN_SEEDS {
+        let (journal, trace) = run(
+            seed,
+            CrashingJournal::from_seed(crash_seed(seed), WRITES_PER_RUN),
+        );
+        let fell = journal.has_fallen();
+        let point = journal.falls_at();
+        let survivor = journal.into_survivor();
+
+        let expected = expected_doubt(&trace);
+        let doubts = steps_in_doubt(&survivor).expect("replay");
+        let found: Vec<u64> = doubts.iter().map(|d| d.step.get()).collect();
+
+        assert_eq!(found, expected, "seed {seed}, crash at write {point}");
+
+        // ⛔ EVERY STEP OF THIS SCENARIO DECLARES `Idempotent`, so the resolution is decided and
+        // not incidental. Without this the campaign would hold WHICH steps are in doubt and say
+        // nothing about WHAT TO DO with them, which is the half ADR-0007 exists for.
+        for doubt in &doubts {
+            assert_eq!(
+                doubt.resolution,
+                Resolution::RunAgain,
+                "seed {seed}, step {}",
+                doubt.step.get()
+            );
+        }
+
+        if fell {
+            crashes += 1;
+        }
+        largest = largest.max(doubts.len());
+    }
+
+    // ⛔ THE NON-VACUITY, AND IT IS THE POINT OF THE WHOLE TEST — but it is asserted as an
+    // EQUALITY and not as `> 0`, and the difference is not pedantry. The point is drawn inside
+    // `0..WRITES_PER_RUN` and the scenario performs exactly `WRITES_PER_RUN` writes when nothing
+    // falls, so EVERY seed must reach its point: a single seed that did not crash would mean the
+    // scenario performed fewer writes than the number the point was drawn against, which is
+    // precisely the silent no-op of gotcha #17. `> 0` would let 199 out of 200 go quiet.
+    assert_eq!(
+        crashes, CAMPAIGN_SEEDS,
+        "a seed did not reach its crash point: the scenario wrote fewer times than {WRITES_PER_RUN}"
+    );
+
+    // A MEASUREMENT, printed rather than guessed — run with `-- --nocapture`. It is what the
+    // seed list of task 8 and the campaign size of task 4 are chosen against.
+    println!("DST L1 c7b: {crashes}/{CAMPAIGN_SEEDS} seeds crashed, largest doubt set {largest}");
+}
+
+#[test]
+fn a_crash_leaves_more_than_one_step_in_doubt_on_at_least_one_seed() {
+    // ⛔ FINDING 2 OF §3.6.1, held on the campaign rather than on a hand-built archive. The
+    // in-tree probe `a_crash_leaves_more_than_one_step_in_doubt` in
+    // `crates/kernel/tests/reconciliation.rs` builds the state BY HAND; this one gets there
+    // through the executor, which is the only way to know the interleaving really produces it.
+    //
+    // ⛔ AND IT IS THE ONLY THING HOLDING THAT THIS SCENARIO INTERLEAVES AT ALL — the doc of
+    // `run` says so and names this test, so the name is a commitment. Measured on 2026-08-11
+    // against a sequential counterfactual: the largest doubt set drops from THREE to ONE, so
+    // this probe really does go red if the activities stop overlapping.
+    let mut best = 0usize;
+    for seed in 0..CAMPAIGN_SEEDS {
+        let (journal, _) = run(
+            seed,
+            CrashingJournal::from_seed(crash_seed(seed), WRITES_PER_RUN),
+        );
+        let survivor = journal.into_survivor();
+        best = best.max(steps_in_doubt(&survivor).expect("replay").len());
+    }
+    assert!(best > 1, "no seed left more than one step in doubt: {best}");
+    println!("DST L1 interleaving: largest doubt set over {CAMPAIGN_SEEDS} seeds is {best}");
 }

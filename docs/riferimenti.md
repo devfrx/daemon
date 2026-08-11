@@ -1278,6 +1278,51 @@ quelle celle furono scritte quando il backend cadente **non esisteva** — gotch
 `cargo test --workspace` → **32 target, 171 test**; `cargo fmt --all -- --check` → 0;
 `bash scripts/gate.sh` → `GATE GREEN`.
 
+## Esecuzione del Traguardo 4 — il Task 7: la profondità compra stati, lo spazzamento no
+
+Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0` · `redb` 4.1.0. Commit `f81b9f9`.
+
+| # | Misura | Esito |
+|---|---|---|
+| **T4-7-a** | ⛔ **la saturazione per profondità dello scenario** | **1** record → **41** operazioni · 3 → **58** · 10 → **100** · 20 → **160** · 30 → **220** · 40 → **280** · 50 → **340** |
+| **T4-7-b** | ⛔ **è lineare?** | ❌ **no.** Il **primo** record costa sei operazioni, il **secondo** sette, il **terzo dieci**, il quarto e il quinto sei, poi sei fisse; e il `Drop` ne costa **dodici tranne a due record, dove ne costa quattordici**. Estrapolare 220 da 58 avrebbe sbagliato |
+| **T4-7-c** | ⛔ **allargare lo SPAZZAMENTO compra stati?** | ❌ **no.** `23..100` → 77 punti, **35** scattano · `23..300` → 277 punti, **35** · `23..823` → **800** punti, **35** |
+| **T4-7-d** | ✅ **approfondire lo SCENARIO compra stati?** | **sì, uno per record.** I **pioli** — quante lunghezze di prefisso distinte tornano — sono `record + 1` su `record + 1` a ogni profondità: **4/4 · 11/11 · 21/21 · 31/31 · 41/41** |
+| **T4-7-e** | costo di un punto d'iniezione | **3,5 ms** in `debug` (6,8 sulla profonda) · **0,29 ms** in `--release` (0,40). ⛔ **Fattore dodici fra i profili**, e il cancello paga il `debug` |
+| **T4-7-f** | il binario intero | **0,145 s** in `debug`, sette volte dentro il tetto dichiarato di un secondo |
+| **T4-7-g** | le due campagne | breve: `records=3 points=35 fired=35 truncated=22 partial=17` in 126 ms · profonda: `records=30 points=197 fired=197 truncated=184 partial=179` in 1,35 s |
+| **T4-7-h** | ⛔ `partial > 0` regge a due profondità? | ✅ **sì:** con `Durability::None` la scala collassa a zero-o-tutto **anche a trenta record**, su **centosessantatré** punti. Non è un accidente dello scenario piccolo |
+| **T4-7-i** | la profonda con la saturazione **della breve** | ⛔ spara **`truncated < points`**, non `fired == points` |
+
+⛔ **T4-7-c e T4-7-d insieme sono la ragione per cui la campagna profonda di livello 2 approfondisce
+lo SCENARIO e non lo spazzamento**, e la metrica che lo dimostra — i **pioli** — non era chiesta da
+nessuno: senza di essa la scelta sarebbe stata un argomento, e con essa è una misura.
+
+⛔ **T4-7-i ha smentito un commento scritto prima di misurarlo, ed è il risultato più utile del
+compito.** Era dichiarato che accoppiare una saturazione con la profondità sbagliata fosse *«un
+no-op silenzioso, ogni asserzione resta verde»*. È falso: l'oracolo `truncated < points`, entrato
+al Task 6 per la direzione **opposta** — uno scenario più **caro** — coglie anche una saturazione
+troppo **bassa**. 📌 **Le due direzioni dello stesso errore sono colte da due oracoli diversi**, e
+nessuno dei due lo sapeva quando è stato scritto.
+
+⚠️ **Quattro attese scritte prima della misura, e QUATTRO sbagliate:** il costo per iniezione
+(previsto ~1,7 ms, misurato 3,5), la profondità del collasso (previsti 313 punti, misurati 163),
+la linearità della saturazione, e il no-op di T4-7-i. 📌 Su questo file **nessuna previsione ha
+retto**, ed è il dato che vale più delle singole correzioni.
+
+⛔ **E una tredicesima misura, che è un incidente dello STRUMENTO e va scritta perché è successa
+due volte in un'ora, la seconda a chi aveva appena documentato la prima.** Un aggiornamento in
+blocco di otto righe di documentazione, scritto come `python - <<'PY'`, ha applicato **una**
+sostituzione su otto e si è fermato — l'interprete decodifica lo stdin nel **codepage di sistema**,
+quindi lo script che contiene `✅` e `⛔` arriva corrotto e muore sul primo carattere che non sa
+scrivere. 📌 **Il modo di fallire è quello che conta:** il file era stato **già scritto** quando
+l'errore è comparso, quindi l'uscita diceva «errore» e il repository era **modificato a metà**.
+A dirlo è stato un `git diff`, non lo strumento.
+
+**Chiusura:** `cargo test -p platform --test engine_crash_consistency` → **cinque passati, uno
+ignorato**; `cargo test --workspace` → **171 test, due ignorati**; `cargo fmt --all -- --check` → 0;
+`bash scripts/gate.sh` → `GATE GREEN`.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

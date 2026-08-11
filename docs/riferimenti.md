@@ -1224,6 +1224,60 @@ senza sospetto **perché chi la faceva aveva appena corretto la prima**. Il cont
 `cargo test --workspace` → **32 target, 169 test**; `cargo fmt --all -- --check` → 0;
 `bash scripts/gate.sh` → `GATE GREEN`.
 
+## Esecuzione del Traguardo 4 — il Task 6: il gotcha #51, e il perimetro esatto di ciò che la sua chiusura compra
+
+Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0` · `redb` 4.1.0. Commit `3509302` e
+`76e777e`. ⚠️ Ogni cifra è stata presa due volte, da agenti diversi, e concorda.
+
+| # | Misura | Esito |
+|---|---|---|
+| **T4-6-a** | il ciclo di coerenza sull'intervallo `23..58` | `points=35` · `fired=35` · `truncated=22` · `partial=17` |
+| **T4-6-b** | la **scala di sopravvivenza**, punto per punto | **monotona**: 23–27 → **zero** record · 28–33 → **uno** · 34–44 → **due** · 45–57 → **tutti e tre**. ⛔ **Nessun** record parziale, mescolato o fuori ordine, in nessun punto |
+| **T4-6-c** | ⛔ togliendo la durabilità a `FileJournal::append`, i sei test di `file_journal.rs` | **verdi, sei su sei** — è il gotcha **#51** confermato **direttamente**, e ciò che dimostra che il controllo nuovo non era ridondante |
+| **T4-6-d** | la stessa mutazione, sulla sonda a **delta** | **rossa**: la durabilità smette di essere chiesta e il banco lo dice |
+| **T4-6-e** | ⛔ la stessa mutazione, sul **ciclo di coerenza**, con la saturazione **ricalcolata** a 51 | **interamente VERDE** con la sola coppia di oracoli dettata dal piano: il ciclo **non contribuiva nulla** alla chiusura del #51 |
+| **T4-6-f** | ⛔ la stessa, con `partial > 0` | **ROSSA**, e le altre tre asserzioni restano verdi: senza durabilità la scala **collassa a zero-o-tutto** — ventidue punti con zero record, sei con tre, **nessuno** con uno o due |
+| **T4-6-g** | la saturazione **dipende dalla durabilità** | senza, `redb` fa **meno I/O** e la saturazione scende da **58** a **~51**: `fired` passa da 35 a **28**. ⚠️ Con `fired > 0` la sonda sarebbe rimasta **verde** |
+| **T4-6-h** | l'intervallo `45..58` isolato | `truncated=0`, quindi `truncated > 0` **spara da sola** mentre `fired == points` resta verde: il secondo oracolo **non è ridondante**, provato in isolamento |
+
+⛔ **Il perimetro del gotcha #51 — che cosa la sua chiusura compra, e che cosa NON compra.**
+Scritto per esteso perché la dichiarazione *«il #51 è chiuso»* finisce nei documenti di stato, e
+nella forma nuda **mentirebbe con autorevolezza**.
+
+✅ **Chiuso ciò che era chiudibile: che la durabilità sia CHIESTA.** Dal 2026-08-11
+`the_engine_really_syncs_and_that_is_what_closes_gotcha_51` va **rossa** se `FileJournal::append`
+smette di chiederla, e il ciclo di coerenza la seconda con `partial > 0`; nel frattempo i sei test
+di `file_journal.rs` restano **verdi**. La conseguenza operativa del #51 — *«nessun banco vede la
+differenza»* — **non vale più**.
+
+⛔ **Resta fuori ciò che l'enunciato dice alla lettera: la MORTE del processo.** Ciò che si
+osserva è **una chiamata a `sync_data` su un backend nostro, dentro un processo vivo**. Non sono
+osservati, e la chiusura **non li compra**:
+
+| | |
+|---|---|
+| **a** | che la chiamata **raggiunga il supporto**: `CrashingBackend` non tocca un disco, e che `FileBackend::sync_data` chiami `File::sync_data` è verificato **leggendo**, non misurando |
+| **b** | l'**ordine**: il delta dice che un sync è avvenuto **durante** la scrittura, non **dopo** che i byte del record erano passati da `write` |
+| **c** | la **copertura**: solo `append`, attraverso `intent`. Il commit di `prune` è un **secondo** punto di durabilità che nessuno osserva |
+| **d** | il **modello di guasto**: l'archivio è un `Vec` che non perde **mai** una scrittura non sincronizzata. ⛔ **Misurato:** a `falls_at = 45` il terzo record si rilegge **benché la caduta abbia rifiutato proprio il `sync_data` del suo commit** — su un supporto vero quel record è esattamente quello che può sparire |
+
+⛔ **T4-6-e e T4-6-f sono la coppia che vale il compito, ed è la stessa lezione del livello 1 per
+la terza volta.** Un ciclo che verifica **la coerenza** e un oracolo che verifica **che il guasto
+sia scattato** possono essere entrambi verdi mentre la proprietà per cui esistono è sparita: serve
+un controllo che guardi **la forma di ciò che sopravvive**, non solo che qualcosa sia sopravvissuto.
+📌 E `partial > 0` ha una virtù che le altre tre non hanno: **è indipendente dalla costante
+fragile**, perché non conta operazioni ma **gradini**.
+
+⚠️ **Due righe dei documenti di stato dicevano il falso su come chiudere il #51, e lo dicevano dal
+brainstorming:** *«con `Durability::None` `redb` non chiama `sync_data`»* — lo chiama **sette volte
+all'apertura** — e quindi *«una campagna che pretende «è scattato almeno una volta» diventa rossa»*,
+che è **l'oracolo cieco per eccellenza**. 📌 Il difetto non era il numero ma la **previsione**:
+quelle celle furono scritte quando il backend cadente **non esisteva** — gotcha **#57**.
+
+**Chiusura:** `cargo test -p platform --test engine_crash_consistency` → **cinque passati**;
+`cargo test --workspace` → **32 target, 171 test**; `cargo fmt --all -- --check` → 0;
+`bash scripts/gate.sh` → `GATE GREEN`.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

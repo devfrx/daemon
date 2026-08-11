@@ -164,8 +164,16 @@ fn the_storage_backend_is_substitutable_from_outside() {
     // ⛔ THE ONLY REASON `FileBackend` IS A TYPE OF ITS OWN, and a boundary declared in advance
     // HAS NO CALLERS BY CONSTRUCTION — gotcha #46. What proves it real is an implementation
     // written from OUTSIDE the crate, which is what this test is: `CountingBackend` lives here,
-    // in a test binary, and `FileJournal` runs on it unchanged. Milestone 4 will put a FAILING
-    // one in the same place (§4.6, ADR-0032 requirement 4); this one only counts.
+    // in a test binary, and `FileJournal` runs on it unchanged. This one only counts.
+    //
+    // ⚠️ AND THE FAILING ONE ARRIVED ON 2026-08-11 (§4.6, ADR-0032 requirement 4): it is
+    // `CrashingBackend`, in `crates/platform/tests/engine_crash_consistency.rs`, a test binary of
+    // its own — the same place, for the same reason. This line said "milestone 4 WILL put a
+    // failing one in the same place" until it did. ⛔ IT IS DATED RATHER THAN DELETED because the
+    // sentence it replaces is the whole reason that file sits in `tests/` and not in `src/`: a
+    // backend written inside `platform` would prove nothing about a boundary being reachable from
+    // outside it, and a reader who found the crashing backend over there without this line would
+    // be entitled to think the placement was tidiness.
     let dir = private_dir!();
     let path = dir.join("journal.redb");
 

@@ -201,29 +201,17 @@ fn without_a_crash_the_archive_reopens_with_everything_in_it() {
     {
         let mut journal = FileJournal::with_backend(first_backend).expect("open");
 
-        // ⛔ THE ORACLE FOR GOTCHA #51 IS THIS DELTA, AND A COUNT WILL NOT DO. A count was here
-        // first, and it was measured wrong: on a fresh archive the syncs come almost entirely
-        // from the OPENING — six from `create_with_backend` before any journal exists, a seventh
-        // from the commit the opening makes — and all of them happen before a single record
-        // does. So `syncs > 0` cannot be false here, and an engine that made NO WRITE durable
-        // would satisfy it. Only the growth ACROSS a write says anything, and a write is worth
-        // exactly one sync: 6 bare, 7 open, 8 after the intent, 9 after the outcome.
-        let syncs_after_open = handles.syncs.load(Ordering::Relaxed);
-
+        // ⚠️ THE SYNC DELTA THAT STOOD HERE MOVED OUT ON 2026-08-11, into
+        // `the_engine_really_syncs_and_that_is_what_closes_gotcha_51`, and the line is dated
+        // rather than deleted because the oracle did not change — only its address. It was right
+        // here for a real reason, which went with it: the delta needs a test where the writes
+        // SUCCEED. What it was NOT is this test's business — a probe named after reopening should
+        // fail for reasons about reopening, and one claim asserted in two places is the
+        // duplication this milestone has already taken out once.
         journal.intent(StepId::new(1), b"one").expect("intent");
         journal
             .outcome(StepId::new(1), b"one done")
             .expect("outcome");
-
-        // ⚠️ AND IT IS PROVED IN THE OTHER DIRECTION, which is the only reason to trust it:
-        // `set_durability(Durability::None)` in `FileJournal::append` leaves the count form GREEN
-        // and turns this one RED. It lives here, in the test where the writes SUCCEED, and not
-        // beside the fall — there `operations == OPERATIONS_TO_OPEN` moves too and fires first,
-        // masking it. Task 6 closes #51 with this shape.
-        assert!(
-            handles.syncs.load(Ordering::Relaxed) > syncs_after_open,
-            "the write did not ask the engine to make anything durable"
-        );
     }
 
     let (reopened_backend, _) = backend(&handles.archive, u64::MAX);
@@ -302,4 +290,141 @@ fn after_the_fall_the_backend_never_serves_again() {
     // A backend still counting would be a backend still weighing each operation — the same
     // defect seen from the other side.
     assert_eq!(handles.operations.load(Ordering::Relaxed), 1);
+}
+
+/// The highest injection point the scenario can still reach. ⛔ MEASURED and not derived:
+/// opening costs `OPERATIONS_TO_OPEN`, the three writes cost as much again, and the `Drop` of
+/// `Database` costs twelve more — see the doc of `CrashingBackend`. Past this the fall NEVER
+/// FIRES and the run is indistinguishable from one with no injection at all, so sweeping past it
+/// buys runs that explore no state (gotcha #17).
+const OPERATIONS_TO_SATURATION: u64 = 58;
+
+/// Writes three records through a backend that falls at `falls_at`, then reopens the archive and
+/// returns what came back — or `None` if the archive is unreadable, which is itself an answer.
+fn crash_then_reopen(falls_at: u64) -> (Handles, Option<Vec<(StepId, Vec<u8>)>>) {
+    let archive = empty_archive();
+    let (crashing, handles) = backend(&archive, falls_at);
+
+    // ⚠️ THE UNWIND IS CAUGHT AND THEN ASSERTED NOT TO HAVE HAPPENED, which is not the same as
+    // swallowing it. A crashed engine would be entitled to panic on the way down; MEASURED over
+    // every point from 0 to 59 on 2026-08-11, `redb` never does — its `Drop` runs a whole write
+    // transaction under `if !thread::panicking()` and takes the error in silence. Catching and
+    // discarding would make the day that changes look like an archive that simply came back
+    // empty; catching and asserting makes it say so.
+    let ran = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let mut journal = FileJournal::with_backend(crashing).expect("open");
+        let _ = journal.intent(StepId::new(1), b"one");
+        let _ = journal.outcome(StepId::new(1), b"one done");
+        let _ = journal.intent(StepId::new(2), b"two");
+    }));
+    assert!(
+        ran.is_ok(),
+        "injection at {falls_at}: the engine panicked on the way down, which it was measured never to do"
+    );
+
+    let (fresh, _) = backend(&handles.archive, u64::MAX);
+    let reopened = FileJournal::with_backend(fresh)
+        .ok()
+        .and_then(|journal| journal.replay().ok());
+
+    (handles, reopened)
+}
+
+#[test]
+fn a_crashed_archive_reopens_in_a_coherent_state() {
+    // ⛔ THE QUESTION LEVEL 2 ASKS, and the answer is not "everything survived": it is that what
+    // comes back is a PREFIX of what was written — either the records confirmed before the fall,
+    // or all of them, NEVER a partial record and never a scrambled one. ADR-0032 measured twelve
+    // injection points and twelve coherent reopenings; this holds it at every commit.
+    let written: Vec<(StepId, Vec<u8>)> = vec![
+        (StepId::new(1), b"one".to_vec()),
+        (StepId::new(1), b"one done".to_vec()),
+        (StepId::new(2), b"two".to_vec()),
+    ];
+
+    let mut points = 0u64;
+    let mut fired = 0u64;
+    let mut truncated = 0u64;
+
+    for falls_at in OPERATIONS_TO_OPEN..OPERATIONS_TO_SATURATION {
+        points += 1;
+        let (handles, reopened) = crash_then_reopen(falls_at);
+        if handles.fallen.load(Ordering::Relaxed) {
+            fired += 1;
+        }
+        let Some(records) = reopened else {
+            // An archive that will not reopen at all is a FAILURE of this promise, and it is
+            // named rather than skipped.
+            panic!("injection at {falls_at}: the archive did not reopen");
+        };
+        assert!(
+            written.starts_with(&records),
+            "injection at {falls_at}: what came back is not a prefix of what was written: {records:?}"
+        );
+        if records.len() < written.len() {
+            truncated += 1;
+        }
+    }
+
+    // ⚠️ LEFT IN ON PURPOSE AND NOT DEBUGGING LEFTOVER: how many points a sweep of this shape
+    // reaches, how many fire and how many actually cost the archive something is the measurement
+    // task 7 picks ITS range from, and a number reported once in a commit message is a number
+    // nobody can re-read. `cargo test … -- --nocapture` shows it.
+    //
+    // ⛔ AND WHAT IT COUNTED ON 2026-08-11 IS A MONOTONE STAIRCASE, which says more than the
+    // prefix check can state on its own: injecting at 23..=27 gives back NO record, 28..=33 gives
+    // back one, 34..=44 two, and 45 upwards all three — **35 points, 35 fires, 22 of them
+    // strictly shorter**. Records reappear ONE WHOLE RECORD AT A TIME, in write order, each at a
+    // well-defined operation. Not one point in the sweep came back with a partial record, with a
+    // scrambled one, or with a record out of order.
+    println!("points={points} fired={fired} truncated={truncated}");
+
+    // ⛔ THE FIRST NON-VACUITY, AND IT IS AN EQUALITY. The range stops at saturation precisely so
+    // that every point reaches its operation: one that did not would be a run indistinguishable
+    // from a run with no injection, and `> 0` would let all but one of them go quiet.
+    assert_eq!(
+        fired, points,
+        "an injection point never fired: the range has drifted past saturation"
+    );
+
+    // ⛔ THE SECOND, AND WITHOUT IT THE FIRST IS NOT ENOUGH — the same lesson level 1 paid for.
+    // "The injection went off" and "the injection cost the archive something" are two claims: if
+    // every point left the archive whole, `records == written`, the prefix check above is
+    // TRIVIALLY TRUE and this campaign is green having never lost a byte. The injection point is
+    // drawn across all six operations of the backend, and `read` and `len` take nothing away.
+    assert!(
+        truncated > 0,
+        "no injection left the archive shorter than what was written: the prefix check proved nothing"
+    );
+}
+
+#[test]
+fn the_engine_really_syncs_and_that_is_what_closes_gotcha_51() {
+    // ⛔ THE PROMISE NOBODY HELD UNTIL NOW. `FileJournal` promises a write survives the death of
+    // the process, and putting `set_durability(Durability::None)` into it leaves ALL SIX tests of
+    // `file_journal.rs` GREEN — they reopen the file inside a LIVING process, so the writes are
+    // in the operating system's hands either way. Gotcha #51.
+    //
+    // ⛔ AND WHAT MAKES IT OBSERVABLE IS A DELTA, NOT A COUNT — measured, because the obvious form
+    // is blind. Opening alone produces seven `sync_data` calls, six of them from
+    // `create_with_backend` before any journal exists and the seventh from the commit the opening
+    // itself makes: `syncs > 0` is satisfied by an engine that syncs NO WRITE AT ALL, and stays
+    // green under the very mutation this test exists to catch. What the write must move is the
+    // count ACROSS itself, and a write is worth exactly one sync — MEASURED as the ladder 6 bare,
+    // 7 open, 8 after the intent, 9 after the outcome.
+    //
+    // ⚠️ AND IT INJECTS NOTHING — `u64::MAX` — because the oracle needs a write that SUCCEEDS.
+    // Beside a fall it would be worthless: there the write fails for the fall's own reason, and
+    // the count stops moving whether the engine wanted durability or not.
+    let archive = empty_archive();
+    let (crashing, handles) = backend(&archive, u64::MAX);
+
+    let mut journal = FileJournal::with_backend(crashing).expect("open");
+    let after_open = handles.syncs.load(Ordering::Relaxed);
+    journal.intent(StepId::new(1), b"one").expect("intent");
+
+    assert!(
+        handles.syncs.load(Ordering::Relaxed) > after_open,
+        "the write did not ask the engine to make anything durable: the durability guarantee is not being asked for"
+    );
 }

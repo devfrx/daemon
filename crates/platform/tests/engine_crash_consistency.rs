@@ -33,6 +33,14 @@ fn empty_archive() -> Archive {
 /// ⚠️ `close` NEVER FAILS, and it is an exception with a reason: `redb` calls it exactly once
 /// when the `Database` is dropped, and a failure there would fire during unwinding rather than
 /// at the injection point the test is about.
+///
+/// ⛔ AND A SCENARIO SATURATES, WHICH IS WHAT A CAMPAIGN HAS TO KNOW BEFORE IT PICKS ITS RANGE.
+/// Measured on the shape task 7 will run — open, three writes, drop: the whole thing spends
+/// **58** operations (23 to open, 23 for the three writes, 12 for the `Drop`), so a `falls_at`
+/// of 58 or more NEVER FIRES and the run is indistinguishable from a run with no injection at
+/// all. Of the forty points in `23..63`, **35 fire and 5 do not**; the highest that fires is 57.
+/// Sweeping past saturation buys runs that explore no state and costs the same as the ones that
+/// do.
 #[derive(Debug)]
 struct CrashingBackend {
     archive: Archive,
@@ -43,7 +51,6 @@ struct CrashingBackend {
 }
 
 /// What the test keeps after handing the backend over BY VALUE to `FileJournal::with_backend`.
-#[derive(Clone)]
 struct Handles {
     archive: Archive,
     operations: Arc<AtomicU64>,
@@ -84,7 +91,7 @@ impl CrashingBackend {
     }
 
     fn gone() -> io::Error {
-        io::Error::new(io::ErrorKind::Other, "the process is gone")
+        io::Error::other("the process is gone")
     }
 }
 
@@ -153,23 +160,32 @@ impl StorageBackend for CrashingBackend {
     }
 }
 
-/// How many backend operations ONE CLEAN OPENING costs, from the first to the last.
+/// How many backend operations ONE CLEAN OPENING OF AN EMPTY ARCHIVE costs.
+///
+/// ⛔ OF AN EMPTY ONE, AND THE WORD IS LOAD-BEARING: reopening a POPULATED archive is a different
+/// number, and not even a stable one. Measured over eight successive sessions on the same
+/// archive: **18, 19, 19, 27, 18, 18, 18, 18**. Anything that wants to inject past a REOPENING
+/// has to measure its own scenario — this constant does not cover it.
 ///
 /// ⛔ MEASURED, NOT CALCULATED, and it could not have been calculated: `with_backend` COMMITS on
 /// every open — it creates the table there so that every later read finds it — so an opening is
 /// a whole write transaction, and how many operations that costs is `redb`'s business and not
 /// ours. The figure comes from running this file's backend with `falls_at` at `u64::MAX`,
-/// opening, and reading the counter before writing anything: **23**, against redb 4.1.0.
+/// opening, and reading the counter before writing anything: **23**, against redb 4.1.0. Of
+/// those, **19** are `create_with_backend` alone; the opening's own commit adds the other four.
 ///
 /// ⚠️ AND THE POINT OF HAVING IT IS TO INJECT PAST IT — gotcha #17. Measured on the way here: at
 /// `falls_at` 3 the fall fires INSIDE `with_backend`, which then answers `Err` and leaves behind
 /// an archive that cannot even be reopened (`Engine(Io(Kind(InvalidData)))`). That is a test
 /// about opening, not about writing.
 ///
-/// ⚠️ PINNED RATHER THAN LOOSENED TO A `>=`. If this number moves, the engine's I/O pattern moved
-/// underneath a crash campaign whose injection points are counted in exactly these units, and
-/// the campaign of task 7 would go on injecting somewhere else without saying so. It is the same
-/// reason `redb` names its minor in `Cargo.toml`.
+/// ⚠️ PINNED RATHER THAN LOOSENED TO A `>=`, and it earns more than it looks. If the number moves,
+/// the engine's I/O pattern moved underneath a crash campaign whose injection points are counted
+/// in exactly these units, and the campaign of task 7 would go on injecting somewhere else
+/// without saying so — the same reason `redb` names its minor in `Cargo.toml`. ⛔ AND IT IS ALSO
+/// WHAT CATCHES A BACKEND THAT STOPPED GUARDING: dropping the `may_serve` call from any ONE of
+/// the five operations is caught, and FOUR OF THE FIVE only through this counter. It does the
+/// work of four guards.
 const OPERATIONS_TO_OPEN: u64 = 23;
 
 #[test]
@@ -184,10 +200,30 @@ fn without_a_crash_the_archive_reopens_with_everything_in_it() {
 
     {
         let mut journal = FileJournal::with_backend(first_backend).expect("open");
+
+        // ⛔ THE ORACLE FOR GOTCHA #51 IS THIS DELTA, AND A COUNT WILL NOT DO. A count was here
+        // first, and it was measured wrong: on a fresh archive the syncs come almost entirely
+        // from the OPENING — six from `create_with_backend` before any journal exists, a seventh
+        // from the commit the opening makes — and all of them happen before a single record
+        // does. So `syncs > 0` cannot be false here, and an engine that made NO WRITE durable
+        // would satisfy it. Only the growth ACROSS a write says anything, and a write is worth
+        // exactly one sync: 6 bare, 7 open, 8 after the intent, 9 after the outcome.
+        let syncs_after_open = handles.syncs.load(Ordering::Relaxed);
+
         journal.intent(StepId::new(1), b"one").expect("intent");
         journal
             .outcome(StepId::new(1), b"one done")
             .expect("outcome");
+
+        // ⚠️ AND IT IS PROVED IN THE OTHER DIRECTION, which is the only reason to trust it:
+        // `set_durability(Durability::None)` in `FileJournal::append` leaves the count form GREEN
+        // and turns this one RED. It lives here, in the test where the writes SUCCEED, and not
+        // beside the fall — there `operations == OPERATIONS_TO_OPEN` moves too and fires first,
+        // masking it. Task 6 closes #51 with this shape.
+        assert!(
+            handles.syncs.load(Ordering::Relaxed) > syncs_after_open,
+            "the write did not ask the engine to make anything durable"
+        );
     }
 
     let (reopened_backend, _) = backend(&handles.archive, u64::MAX);
@@ -211,24 +247,25 @@ fn the_backend_falls_at_the_operation_it_was_told_to() {
     let (falling, handles) = backend(&archive, OPERATIONS_TO_OPEN);
 
     // The opening happens BEFORE the injection point and must therefore survive it whole.
-    let mut journal = FileJournal::with_backend(falling).expect("the opening must survive");
+    //
+    // ⚠️ THE CONSTANT IS NAMED IN THE MESSAGE ON PURPOSE — gotcha #9, a red for the wrong reason.
+    // A stale constant fails ASYMMETRICALLY: too high and the counter assertion below says so
+    // plainly, too low and the fall lands inside the opening and this `expect` reports «the
+    // process is gone», which reads as «the archive will not open» rather than «the number
+    // pinned here is out of date». Naming it is what tells the two apart.
+    let mut journal = FileJournal::with_backend(falling)
+        .expect("the opening must survive: is OPERATIONS_TO_OPEN stale?");
+
+    // ⛔ AND THIS ONE ASSERTION OWNS BOTH TRUTHS: that the opening cost what it was measured to
+    // cost, AND that the fall did not fire inside it. A separate `!fallen` check stood here and
+    // was DEAD — a fall implies `operations >= falls_at + 1`, so this line fires first in every
+    // case that could reach it. Measured: sweeping `falls_at` across 0..80, the set of runs where
+    // the opening survives AND the fall has fired is empty.
     assert_eq!(
         handles.operations.load(Ordering::Relaxed),
         OPERATIONS_TO_OPEN,
-        "the opening did not cost what it was measured to cost"
-    );
-    assert!(
-        !handles.fallen.load(Ordering::Relaxed),
-        "the fall fired inside the opening, so this test is about opening"
-    );
-
-    // ⚠️ AND THE ENGINE ASKED FOR DURABILITY WHILE DOING IT — the oracle task 6 needs to close
-    // gotcha #51, proved alive here for the price of one line. With `Durability::None` `redb`
-    // never calls `sync_data` AT ALL, so a zero here would mean the level-2 campaign is watching
-    // a journal that never syncs and cannot tell. Measured: **7** syncs in one clean opening.
-    assert!(
-        handles.syncs.load(Ordering::Relaxed) > 0,
-        "a clean opening never asked the backend to make anything durable"
+        "the opening did not cost what it was measured to cost; if it cost more, the fall fired \
+         INSIDE it and this became a test about opening"
     );
 
     // And the very next operation is the one refused.

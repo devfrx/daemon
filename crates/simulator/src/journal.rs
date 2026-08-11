@@ -4,8 +4,20 @@
 //! ⛔ THIS IS NOT THE FALLING DOUBLE. Failing at a write chosen by the seed is FAULT
 //! INJECTION — §3.3, milestone 4 — and it needs the campaign to be worth anything. Here a
 //! journal that works; there one that breaks.
+//!
+//! ⚠️ UNTIL 2026-08-11 THE PARAGRAPH ABOVE WAS THE WHOLE TRUTH, and it is dated rather than
+//! deleted because it held for as long as the falling double did not exist: "there" was a
+//! milestone away, and two documents — the milestone-4 design and `docs/riferimenti.md` —
+//! quote that sentence as evidence that it did not. It does now, and "there" is HERE, further
+//! down this file: `CrashingJournal`.
+//!
+//! ⚠️ WHY IN THIS FILE AND NOT IN ONE OF ITS OWN — decision D1. The falling double WRAPS
+//! `MemoryJournal` instead of reimplementing it, so what survives a crash is the very archive
+//! the working journal keeps. Two in-memory stores would be two truths to hold in step, and
+//! nothing would go red on the day they drifted apart.
 
 use alloc::vec::Vec;
+
 use crate::rng::SeededRng;
 use kernel::ports::journal::{Journal, JournalError, StepId};
 use kernel::rng::RngExt;
@@ -221,10 +233,13 @@ impl Journal for MemoryJournal {
 /// is refused too — which is what makes all the interleaved activities of the campaign stop,
 /// and not only the one that happened to touch the boundary.
 ///
-/// ⚠️ DECLARED LIMIT, so this doc promises no more than it delivers: the READS delegate to the
-/// surviving archive rather than refusing. The campaign never uses them — it calls
+/// ⚠️ DECLARED LIMIT, so this doc promises no more than it delivers, and it is about the three
+/// operations the sentence above does NOT cover. `read_back` and `replay` DELEGATE to the
+/// surviving archive rather than refusing: the campaign never calls them — it calls
 /// `into_survivor`, which models reopening the archive after the restart — and they are here
-/// because `Journal` requires them.
+/// because `Journal` requires them. `prune` is different from both, because it MUTATES: it is
+/// refused after the fall, like every write, but it takes no part in the count the crash point
+/// is drawn against. Its own reasoning is on the method.
 ///
 /// ⚠️ IT IS NOT HELD TO THE CONFORMANCE SUITE, and that is deliberate rather than an omission:
 /// this type is a LIAR by construction, and gotcha #50 says a fake may break a contract when
@@ -253,7 +268,30 @@ impl CrashingJournal {
     /// ⛔ `expected_writes` IS HOW MANY WRITES THE SCENARIO REALLY PERFORMS, counted rather
     /// than guessed. Gotcha #17: a point drawn past the last write never fires, and a campaign
     /// whose fault never arrives reports green for having done nothing.
+    ///
+    /// ⛔ COUNTED IN WHICH RUN, because the number is not the same in all of them: in a run
+    /// WITHOUT A CRASH, which is what `without_crash` is for. A count taken from a run that
+    /// already crashed stops at the crash and would draw every later point out of reach.
+    ///
+    /// ⛔ THE SEED MUST BE DERIVED, AND DIFFERENT FROM THE ONE DRIVING THE INTERLEAVING —
+    /// decision D4, and the obvious wiring is the wrong one. Two `SeededRng` built from the
+    /// same number give the SAME sequence, so passing the campaign's seed straight through
+    /// ties the crash point to the interleaving: the campaign would then explore a DIAGONAL of
+    /// the space instead of the space. Nothing on this type can enforce it — the caller holds
+    /// the seed — so it is written here, where the caller is looking, rather than left in a
+    /// plan nobody rereads (gotcha #36).
+    ///
+    /// ⛔ AND `expected_writes` MUST NOT BE ZERO. `RngExt::below` answers 0 for a bound of 0,
+    /// and 0 is not inside `0..0` — the range is empty — so the point would be one that can
+    /// never arrive: exactly the vacuity the paragraph above exists to prevent. A scenario
+    /// that performs no writes has no write to fall at, and asking for one is a defect in the
+    /// caller rather than a case to serve.
     pub fn from_seed(seed: u64, expected_writes: u64) -> Self {
+        debug_assert!(
+            expected_writes > 0,
+            "a scenario that performs no writes has no write to fall at: `below` would answer \
+             0, which is outside the empty range 0..0, and the crash would never fire"
+        );
         let mut rng = SeededRng::new(seed);
         Self::falling_at(rng.below(expected_writes))
     }
@@ -308,33 +346,33 @@ impl Journal for CrashingJournal {
         if !self.may_write() {
             return Err(JournalError::NotDurable);
         }
-        let outcome = self.inner.intent(step, record);
-        if outcome.is_ok() {
+        let written = self.inner.intent(step, record);
+        if written.is_ok() {
             self.writes += 1;
         }
-        outcome
+        written
     }
 
     fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
         if !self.may_write() {
             return Err(JournalError::NotDurable);
         }
-        let outcome = self.inner.outcome(step, record);
-        if outcome.is_ok() {
+        let written = self.inner.outcome(step, record);
+        if written.is_ok() {
             self.writes += 1;
         }
-        outcome
+        written
     }
 
     fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
         if !self.may_write() {
             return Err(JournalError::NotDurable);
         }
-        let outcome = self.inner.note(step, record);
-        if outcome.is_ok() {
+        let written = self.inner.note(step, record);
+        if written.is_ok() {
             self.writes += 1;
         }
-        outcome
+        written
     }
 
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
@@ -346,6 +384,16 @@ impl Journal for CrashingJournal {
     }
 
     fn prune(&mut self, step: StepId) -> Result<(), JournalError> {
+        // ⛔ IT IS THE ONLY MUTATING OPERATION THAT DOES NOT GO THROUGH `may_write`, AND THAT
+        // IS DELIBERATE RATHER THAN AN OVERSIGHT. Refused after the fall, yes — a dead process
+        // prunes nothing, and an archive pruned after the crash is one no real crash can
+        // produce. But it must not ARM or CONSUME the fall: the crash point is drawn against
+        // the writes of the scenario, which are `intent`, `outcome` and `note` — see
+        // `from_seed`. A prune that moved the counter would shift the fall away from the drawn
+        // point, which is gotcha #17 by another route.
+        if self.fallen {
+            return Err(JournalError::NotDurable);
+        }
         self.inner.prune(step)
     }
 }

@@ -28,16 +28,56 @@ const STEPS: usize = 4;
 /// and those seeds would be silent no-ops. Gotcha #17.
 const WRITES_PER_RUN: u64 = (ACTIVITIES * STEPS * 2) as u64;
 
-/// How many seeds BOTH level-1 campaigns sweep — `C7a` without a crash and `C7b` with one.
+/// How many seeds the SHORT level-1 campaign sweeps — `C7a` without a crash, `campaign` with one.
+/// Constraint 7 of §11: the number is fixed here and versioned with the file, not drawn from the
+/// clock or from an environment variable, so two runs of the gate sweep the same seeds.
 ///
-/// ⛔ ONE NUMBER FOR THE TWO, AND IT IS A PREMISE AND NOT TIDINESS. `C7b` asserts that EVERY
+/// ⛔ ONE NUMBER FOR THE TWO, AND IT IS A PREMISE AND NOT TIDINESS. `campaign` asserts that EVERY
 /// seed reaches its crash point, which is sound only because the write count does not depend on
 /// the seed — and the only thing holding that is `C7a`'s `writes_done() == WRITES_PER_RUN`. When
 /// `C7a` swept a bare `0..50` and this one was 200, three quarters of the crash campaign rested
 /// on a premise nobody checked for them. Measured on 2026-08-11: it held, zero deviations over
 /// fifty thousand seeds — so this is a premise brought back under guard, not a defect repaired.
 /// ⚠️ The day this number is raised, the support rises with it instead of falling silently.
-const CAMPAIGN_SEEDS: u64 = 200;
+///
+/// ⛔ THE BUDGET IS MEASURED IN `debug` AND NOT IN `--release`, and the difference is not a
+/// rounding. `gate.sh` runs `cargo test --workspace` with no `--release`, so debug is the profile
+/// that pays. Measured on 2026-08-11, one crashing run: 4.4 µs optimised against 18.9 µs
+/// unoptimised — a factor of 4.3. A budget set on the release figure overruns by that factor
+/// exactly where the gate collects it.
+///
+/// ⛔ AND THE BUDGET IS ON THE WHOLE BINARY, NOT ON A LOOP, because more than one loop scales
+/// with this number. ⚠️ The obvious `2 x seeds x cost` model is wrong by better than a third: a
+/// crashing run STOPS at its point, so it does about half the writes and costs 18.9 µs, while
+/// `C7a` runs the scenario to the end and costs 32.7 µs. The binary costs about `seeds x 51.6 µs`
+/// — the interleaving probe breaks early and the pin uses one seed — which puts the one-second
+/// ceiling near 19 000 seeds, not near 26 000.
+///
+/// ⛔ AND IT IS NOT SET TO THAT CEILING. A ceiling is a constraint and not a target, and past a
+/// point more seeds buy nothing this campaign ASSERTS. Measured on 2026-08-11 over 20 000 seeds:
+///
+/// | seeds  | crash points hit | least hit | largest doubt set | distinct doubt sets |
+/// |--------|------------------|-----------|-------------------|---------------------|
+/// | 200    | 24/24            | 4         | 3                 | 92                  |
+/// | 500    | 24/24            | 14        | 3                 | 105                 |
+/// | 1 000  | 24/24            | 31        | 3                 | 108                 |
+/// | 2 000  | 24/24            | 64        | 3                 | 109                 |
+/// | 20 000 | 24/24            | 807       | 3                 | 109                 |
+///
+/// Every crash point was already covered at 200 seeds. `largest` saturates at 3 because its
+/// ceiling is STRUCTURAL and equals `ACTIVITIES` — an activity is a sequential loop and holds at
+/// most one step open. And the doubt vectors this campaign can ever compare are a FINITE set of
+/// 109: the last one first appeared at seed 1038, and 19 000 further seeds produced not one more.
+/// So this number closes that space with 1.9x margin over where it was measured to close, raises
+/// the thinnest crash point from 4 samples to 64, and costs about 103 ms — a tenth of the
+/// ceiling, which is the margin for a machine slower than the one that measured it.
+///
+/// ⚠️ WHAT MORE SEEDS DO STILL BUY, said so the paragraph above is not read as "the space is
+/// exhausted": the distinct ARCHIVES handed to `steps_in_doubt` never saturate in that range —
+/// 1 206 at 2 000 seeds, 6 168 at 20 000, with a new one still arriving at seed 19 995.
+/// Interleaving diversity keeps growing; only the OUTCOMES it produces stop. That growth is the
+/// whole reason `the_deep_campaign` exists.
+const SHORT_CAMPAIGN_SEEDS: u64 = 2_000;
 
 /// ⛔ THE CRASH POINT IS DRAWN FROM A DIFFERENT GENERATOR THAN THE INTERLEAVING, and from a
 /// seed DERIVED from this one rather than from the same number. Two `SeededRng` built from the
@@ -226,10 +266,18 @@ fn c7a_without_a_crash_no_step_is_in_doubt() {
     // doubt reported by C7b means something.
     //
     // ⛔ THE SAME SEEDS AS `C7b`, AND THE SHARED CONSTANT IS LOAD-BEARING: the write count pinned
-    // below is the premise `C7b`'s `crashes == CAMPAIGN_SEEDS` rests on, so a range narrower than
-    // the crash campaign's would leave most of that campaign's seeds unsupported. It read
-    // `0..50u64` until the review of 2026-08-11. See `CAMPAIGN_SEEDS`.
-    for seed in 0..CAMPAIGN_SEEDS {
+    // below is the premise `campaign`'s `crashes == seeds` rests on, so a range narrower than the
+    // crash campaign's would leave most of that campaign's seeds unsupported. It read `0..50u64`
+    // until the review of 2026-08-11. See `SHORT_CAMPAIGN_SEEDS`.
+    //
+    // ⚠️ THE SUPPORT IS FOR THE SHORT CAMPAIGN ONLY, AND THE GAP IS DECLARED RATHER THAN LEFT TO
+    // BE FOUND: `the_deep_campaign` sweeps a hundred times these seeds, and this loop does not
+    // follow it there — the premise is checked for the first `SHORT_CAMPAIGN_SEEDS` and INFERRED
+    // for the rest. The inference is not free-hand: the write count depends on `ACTIVITIES` and
+    // `STEPS` and not on the seed, which is the same claim measured over fifty thousand seeds on
+    // 2026-08-11. The price of closing the gap would be to put a `C7a`-shaped loop inside the
+    // deep campaign, which doubles its cost to support an assertion nothing has ever contradicted.
+    for seed in 0..SHORT_CAMPAIGN_SEEDS {
         let (journal, _) = run(seed, CrashingJournal::without_crash());
 
         // ⛔ C7a's NON-VACUITY ORACLE, and it is the mirror of `has_fallen()` on the other half
@@ -299,8 +347,23 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
     open
 }
 
-#[test]
-fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
+/// The campaign itself, over `seeds` seeds, answering `(how many crashed, the largest doubt set)`.
+///
+/// ⛔ THE PER-SEED ASSERTIONS LIVE IN HERE AND NOT IN THE CALLER, because they are WHAT THE
+/// CAMPAIGN VERIFIES and not a garnish on it. What comes back out are the two NON-VACUITY
+/// oracles — the numbers that say the sweep did work — and a caller that got only those and
+/// asserted the rest itself would leave the deep campaign checking nothing per seed.
+///
+/// ⛔ AND IT IS A FUNCTION AND NOT A SECOND `#[test]`. The draft of this task added a `campaign`
+/// ALONGSIDE `c7b_…`, which would have duplicated its body minus the resolution loop and minus
+/// both non-vacuity oracles — and the weaker of the two copies is the one that would have been
+/// called "the campaign that really runs". There is one body, and both entry points use it.
+///
+/// ⚠️ IT PRINTS ITS WALL TIME, AND THE GATE DOES NOT YET COLLECT IT. `gate.sh` runs
+/// `cargo test --workspace` with no `--nocapture`, so today this line is visible only to whoever
+/// runs the binary by hand. It is written for the step the gate does not have yet, not to
+/// describe one it has.
+fn campaign(seeds: u64) -> (u64, usize) {
     // ⛔ THE SET AND NOT ITS SIZE. Measured on the spike, seed 99 left `[3, 7]`: with
     // interleaved execution one crash leaves SEVERAL steps in doubt together, and a bench that
     // compared only how many would pass on the wrong ones. Gotcha #30, and #20.
@@ -311,10 +374,11 @@ fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
     // to a set "for prudence" would give away the defence against the class of defect that has
     // already cost this repository three vacuous probes: a comparison of bare identities passes
     // against a liar that reverses the order, because `1, 2, 1` is a palindrome.
+    let started = std::time::Instant::now();
     let mut crashes = 0u64;
     let mut largest = 0usize;
 
-    for seed in 0..CAMPAIGN_SEEDS {
+    for seed in 0..seeds {
         let (journal, trace) = run(
             seed,
             CrashingJournal::from_seed(crash_seed(seed), WRITES_PER_RUN),
@@ -355,14 +419,50 @@ fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
         largest = largest.max(doubts.len());
     }
 
+    // A MEASUREMENT, printed rather than guessed — run with `-- --nocapture`, and NOT visible
+    // under `gate.sh`, which captures it.
+    //
+    // ⚠️ WHAT `largest` IS AND WHAT IT IS NOT, because this line claimed to be what the seed list
+    // of task 8 and the campaign size of task 4 are chosen against, and it cannot be either.
+    // `largest` is bounded STRUCTURALLY by `ACTIVITIES` — an activity is a sequential loop and
+    // holds at most one step open — so it saturates within the first handful of seeds and says
+    // nothing about how many more would be worth sweeping. What it is: evidence that the
+    // scenario interleaves, and the CEILING that evidence reaches. What task 4 was chosen
+    // against instead is on `SHORT_CAMPAIGN_SEEDS`.
+    //
+    // ⛔ AND THE WALL TIME IS ON THIS LINE BECAUSE IT IS THE ONLY NUMBER HERE THAT NOBODY CAN
+    // DERIVE. The budget on `SHORT_CAMPAIGN_SEEDS` is a measurement taken once, on one machine,
+    // and a measurement taken once decays; printing it every run is what turns it into something
+    // a reader can contradict.
+    let elapsed = started.elapsed();
+    println!(
+        "DST L1 campaign: {crashes}/{seeds} seeds crashed, largest doubt set {largest}, {elapsed:?}"
+    );
+
+    (crashes, largest)
+}
+
+/// C7b, and it IS the short campaign — one sweep per commit, not a second one beside it.
+///
+/// ⛔ CONSTRAINT 7 OF §11 IS DISCHARGED HERE: the seed count is fixed in `SHORT_CAMPAIGN_SEEDS`
+/// and versioned with this file, and `campaign` prints its wall time on every run.
+///
+/// ⛔ AND DECISION D6: the campaign is a TEST and the gate does not grow a seventh check for it.
+/// `gate.sh` already runs `cargo test --workspace`, so this sweep is on every commit by being an
+/// ordinary `#[test]` — which is also why the count above is chosen against a wall-clock budget
+/// instead of against how much sweeping would be nice.
+#[test]
+fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
+    let (crashes, largest) = campaign(SHORT_CAMPAIGN_SEEDS);
+
     // ⛔ THE NON-VACUITY, AND IT IS THE POINT OF THE WHOLE TEST — but it is asserted as an
     // EQUALITY and not as `> 0`, and the difference is not pedantry. The point is drawn inside
     // `0..WRITES_PER_RUN` and the scenario performs exactly `WRITES_PER_RUN` writes when nothing
     // falls, so EVERY seed must reach its point: a single seed that did not crash would mean the
     // scenario performed fewer writes than the number the point was drawn against, which is
-    // precisely the silent no-op of gotcha #17. `> 0` would let 199 out of 200 go quiet.
+    // precisely the silent no-op of gotcha #17. `> 0` would let all but one seed go quiet.
     assert_eq!(
-        crashes, CAMPAIGN_SEEDS,
+        crashes, SHORT_CAMPAIGN_SEEDS,
         "a seed did not reach its crash point: the scenario wrote fewer times than {WRITES_PER_RUN}"
     );
 
@@ -370,28 +470,56 @@ fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
     // FIRED; this one says the fault left something to reconcile. They come apart, measured:
     // with a journal that falls at write 0 every seed crashes and every comparison is `[] == []`,
     // and with a single activity every crash leaves one step at most — in both cases the
-    // assertion above is satisfied and this campaign has verified nothing. Six of these two
-    // hundred seeds already compare two empty sets on their own merits.
+    // assertion above is satisfied and this campaign has verified nothing. ⚠️ NINETY of these
+    // seeds already compare two empty sets on their own merits — the line read "six of these two
+    // hundred" until 2026-08-11, and it was the campaign size that moved and not the fact. ⚠️ The
+    // rate is NOT the same at the two counts and the difference is left standing rather than
+    // rounded away: 90 of 2 000 is 4.5% and 865 of 20 000 is 4.3%, both measured, while six of
+    // two hundred is 3.0% — that older figure was never re-measured here, and at n=200 the gap
+    // is inside the noise, so it is reported as unreconciled rather than declared to agree.
     //
-    // ⚠️ IT IS THE SAME DEFECT `C7a` CARRIED UNTIL THE TASK BEFORE THIS ONE, re-imported: there
-    // it was "nothing was written to be in doubt about", here it is "nothing was left in doubt
-    // to disagree about". A campaign needs an oracle saying it did work, not only one saying the
+    // ⚠️ IT IS THE SAME DEFECT `C7a` CARRIED UNTIL TWO TASKS AGO, re-imported: there it was
+    // "nothing was written to be in doubt about", here it is "nothing was left in doubt to
+    // disagree about". A campaign needs an oracle saying it did work, not only one saying the
     // injection went off.
     assert!(
         largest > 1,
         "no seed left more than one step in doubt: the campaign compared empty sets"
     );
+}
 
-    // A MEASUREMENT, printed rather than guessed — run with `-- --nocapture`, and NOT visible
-    // under `gate.sh`, which captures it.
-    //
-    // ⚠️ WHAT IT IS AND WHAT IT IS NOT, because this line claimed to be what the seed list of
-    // task 8 and the campaign size of task 4 are chosen against, and it cannot be either.
-    // `largest` is bounded STRUCTURALLY by `ACTIVITIES` — an activity is a sequential loop and
-    // holds at most one step open — so it saturates within the first handful of seeds and says
-    // nothing about how many more would be worth sweeping. What it is: evidence that the
-    // scenario interleaves, and the CEILING that evidence reaches.
-    println!("DST L1 c7b: {crashes}/{CAMPAIGN_SEEDS} seeds crashed, largest doubt set {largest}");
+/// The deep campaign. ⛔ `#[ignore]` rather than a shorter list: constraint 8 of §11 puts the
+/// deep DST on a LONG CYCLE, and a campaign that made every commit slower would be turned off
+/// by whoever waits for it.
+///
+/// ⚠️ WHAT IT BUYS OVER THE SHORT ONE IS MEASURED AND IT IS ONE THING: not crash-point coverage,
+/// which is complete at 200 seeds, and not a bigger doubt set, whose ceiling is `ACTIVITIES`.
+/// It is the count of DISTINCT ARCHIVES presented to `steps_in_doubt` — 1 206 at the short
+/// count, 6 168 at ten times it, with a new one still arriving at seed 19 995. See
+/// `SHORT_CAMPAIGN_SEEDS`.
+///
+/// ⚠️ AND THE MULTIPLIER IS NOT MEASURED, WHICH IS SAID RATHER THAN IMPLIED. The archive count
+/// was swept to 20 000 seeds; this constant goes ten times FURTHER, and that the curve keeps
+/// rising there is an extrapolation. What IS measured is the price — 3.9 s in debug on
+/// 2026-08-11 — and that is what makes the extrapolation cheap enough to leave standing.
+const DEEP_CAMPAIGN_SEEDS: u64 = SHORT_CAMPAIGN_SEEDS * 100;
+
+#[test]
+#[ignore = "the deep campaign belongs to the long cycle — constraint 8 of §11"]
+fn the_deep_campaign() {
+    let (crashes, largest) = campaign(DEEP_CAMPAIGN_SEEDS);
+
+    // ⛔ THE SAME TWO ORACLES AS `c7b_…` AND NOT WEAKER ONES, because a campaign a hundred times
+    // longer is a hundred times more expensive to run vacuously. Gotcha #17 does not become
+    // less likely with more seeds — it becomes more silent.
+    assert_eq!(
+        crashes, DEEP_CAMPAIGN_SEEDS,
+        "a seed did not reach its crash point: the scenario wrote fewer times than {WRITES_PER_RUN}"
+    );
+    assert!(
+        largest > 1,
+        "no seed left more than one step in doubt: the campaign compared empty sets"
+    );
 }
 
 #[test]
@@ -416,7 +544,7 @@ fn a_crash_leaves_more_than_one_step_in_doubt_on_at_least_one_seed() {
     // stops early — the maximum over the whole campaign is `c7b`'s business now.
     let mut best = 0usize;
     let mut swept = 0u64;
-    for seed in 0..CAMPAIGN_SEEDS {
+    for seed in 0..SHORT_CAMPAIGN_SEEDS {
         swept += 1;
         let (journal, _) = run(
             seed,
@@ -435,11 +563,14 @@ fn a_crash_leaves_more_than_one_step_in_doubt_on_at_least_one_seed() {
     }
     assert!(best > 1, "no seed left more than one step in doubt: {best}");
 
-    // ⚠️ IT REPORTS `swept` AND NOT `CAMPAIGN_SEEDS`, and the distinction was a real lie for the
+    // ⚠️ IT REPORTS `swept` AND NOT THE CONSTANT, and the distinction was a real lie for the
     // length of one review: this line read "over {CAMPAIGN_SEEDS} seeds" and the `break` above
     // made it false the moment it was added — the probe stops at the FIRST seed that satisfies
     // it. How soon it stops is the interesting half anyway: it is how rare the interleaving is.
+    //
+    // ⚠️ AND THIS IS WHY RAISING THE SEED COUNT DID NOT MAKE THIS PROBE COST MORE: `swept` is
+    // what it pays, and `swept` is decided by the scenario and not by the bound.
     println!(
-        "DST L1 interleaving: doubt set {best} reached after {swept} of {CAMPAIGN_SEEDS} seeds"
+        "DST L1 interleaving: doubt set {best} reached after {swept} of {SHORT_CAMPAIGN_SEEDS} seeds"
     );
 }

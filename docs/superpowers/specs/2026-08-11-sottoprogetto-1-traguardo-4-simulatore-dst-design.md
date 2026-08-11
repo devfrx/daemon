@@ -403,3 +403,39 @@ documento, che era coerente con sé stesso.
 ✅ **E il richiamo va a favore del disegno, non contro:** entrambe le correzioni **rafforzano** la
 §2.2 — nessuna superficie di produzione, e la prova del confine resta quella scritta **da fuori
 la crate**. Il costo dichiarato in §8 è cambiato di conseguenza.
+
+---
+
+## 12. ✅ Chiusura — 2026-08-11: la Definizione di «fatto», riletta contro il codice
+
+⛔ **La §0.3 prescrive di rileggersi CONTRO IL CODICE e non contro sé stessa**, ed è quello che
+questa sezione fa. Le otto condizioni, una per una, con ciò che le verifica:
+
+| # | Condizione | Esito |
+|---|---|---|
+| 1 | `bash scripts/gate.sh` → `GATE GREEN` | ✅ verde, e il cancello ha ora **sette passi** di cui **sei controlli**: il settimo stampa il tempo di parete e non può fallire per una ragione che il secondo non abbia già colto |
+| 2 | i **sette** artefatti della §0.2 esistono, ciascuno col controllo dichiarato | ✅ tutti e sette. ⚠️ Il settimo — l'elenco dei semi — è **l'unico senza controllo**, e la §6 lo dichiarava in anticipo |
+| 3 | `C7a` e `C7b` girano a ogni commit, e il tempo di parete si stampa | ✅ entrambe dentro `cargo test --workspace`, e le due righe di tempo compaiono nell'uscita del cancello |
+| 4 | il gotcha **#51** è chiuso, provato togliendo la durabilità davvero | ⚠️ **CHIUSO NELLA METÀ CHIUDIBILE, e questa condizione era scritta troppo larga.** Provato: togliendo la durabilità la sonda del #51 va rossa **e** i sei test di `file_journal.rs` restano verdi. ⛔ Ma *«il #51 è chiuso»* nella forma nuda **mentirebbe**: ciò che si osserva è una chiamata su un backend **nostro** dentro un processo **vivo**, e il perimetro di ciò che non compra sta in [`riferimenti.md`](../../riferimenti.md) |
+| 5 | ogni campagna provata **in due direzioni** | ✅ e oltre: la campagna di livello 1 ha **due** oracoli di non-vacuità e quella di livello 2 ne ha **tre**, ciascuno provato in isolamento |
+| 6 | [ADR-0032](../../adr/0032-motore-di-persistenza.md) porta il proprio rimando datato | ✅ dal 2026-08-11, e ne ha **due**: quello sulla collocazione e uno precedente |
+| 7 | l'elenco dei semi esiste e ogni voce nomina il test permanente | ✅ [`semi-dst.md`](../../semi-dst.md) esiste e **nasce vuoto**: la condizione è vera **a vuoto**, e va detto invece che spuntato. ⛔ Il file aggiunge ciò che il disegno non prevedeva: al **livello 2 «un seme» non esiste**, perché il ciclo è esaustivo e deterministico |
+| 8 | il registro ha una riga per ogni controllo nuovo, e i conteggi sono **ricontati** | ✅ ricontati sul binario al Task 9, e **uno era stantio**: `dst_campaign.rs` diceva quattro test dove sono cinque |
+
+⛔ **E la §0.1 aveva ragione sul perimetro, misurato a posteriori: il Traguardo 4 ha costruito il
+MOTORE e non le finte.** Delle dieci righe di guasto della §3.3 resta coperta **quella sola** che
+aveva il proprio soggetto, e le altre nove hanno l'indirizzo che la §7 gli ha dato.
+
+⚠️ **Dove il disegno è stato smentito dall'esecuzione, oltre al richiamo della §11.** Tre punti,
+tutti dalla misura:
+
+| Il disegno diceva | L'esecuzione ha misurato |
+|---|---|
+| §4.2 — *«con `Durability::None` `redb` non chiama `sync_data`, quindi un backend che conta le chiamate lo dice»* | ⛔ **falso in entrambe le metà**: lo chiama **sette volte all'apertura**, e la forma *«è scattato almeno una volta»* resta **verde** proprio sotto quella mutazione. L'oracolo è un **delta attraverso la scrittura** |
+| §5.2 — la campagna breve *«resta sotto un secondo in `release`»* | ⚠️ il cancello gira in **`debug`**, dove il fattore è **quattro** al livello 1 e **dodici** al livello 2 |
+| §6 — l'elenco dei semi come artefatto unico | ⚠️ ne servivano **due specie**: al livello 1 un seme, al livello 2 un **punto d'iniezione** — e le costanti che lo rendono interpretabile dipendono da `redb 4.1.0` |
+
+📌 **La lezione che questo traguardo ha imparato tre volte, e che il disegno non poteva prevedere:**
+*«l'iniezione è avvenuta»* e *«c'era qualcosa da verificare»* sono **due** affermazioni, e una
+campagna che tiene solo la prima è verde avendo confrontato insiemi vuoti. È successo a `C7a`, poi
+a `C7b`, poi al ciclo di livello 2 — ogni volta **dopo** che la precedente era stata chiusa.

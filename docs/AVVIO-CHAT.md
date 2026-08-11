@@ -54,7 +54,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              traguardo, PRIMA del suo piano
   /superpowers:writing-plans                 idem — il piano di oggi c'è già
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 222 KB in tutto
+LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 240 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -72,10 +72,14 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 222 KB in tutto
    Non è tipografia: la regola non stava scritta, e un traguardo intero è stato
    scritto con gli identificatori italiani e poi rifatto.
 
-⚠️ IL REPOSITORY CONTIENE CODICE RUST — TRE traguardi su sei eseguiti, l'ultimo
-   il Traguardo 3 (il giornale e il formato durevole), dodici compiti su dodici,
-   GATE GREEN a tutti. Quello che viene dopo È CODICE: si ESEGUE un piano già
-   scritto, un compito per volta. Quale, sta scritto solo nella §6 del compendio.
+⚠️ IL REPOSITORY CONTIENE CODICE RUST — QUATTRO traguardi su sei eseguiti,
+   l'ultimo il Traguardo 4 (il simulatore DST: il guasto), dieci compiti su
+   dieci, GATE GREEN a tutti. ⛔ Quello che viene dopo NON è codice ma un
+   BRAINSTORMING — il Traguardo 5, l'arbitro GPU — e la specie del lavoro è
+   cambiata: prima si esplora, poi si disegna, poi si scrive il piano, poi si
+   esegue. Sta scritto solo nella §6 del compendio.
+   ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, e ha detto «quello che
+      viene dopo È CODICE» quando lo era: si riscrive quando il passo si chiude.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
    x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
    in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
@@ -83,18 +87,16 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 222 KB in tutto
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
-✅ DUE FILE VANNO APERTI, ed è l'eccezione al divieto qui sotto — la §6 del
-   compendio li nomina entrambi:
-     · il DISEGNO del traguardo in corso, per INTERO (27 KB). Ha già preso le
-       decisioni che il piano traduce e non ridiscute: il perimetro, dove vive
-       ciascun pezzo, e per ogni artefatto QUALE CONTROLLO LO ESERCITA.
-     · il PIANO, A COMPITI E MAI INTERO (71 KB). Un compito per volta.
-   ⛔ Il disegno PRIMA del piano. E il disegno porta in coda un RICHIAMO datato
-      in cui il codice lo ha smentito su due punti: si legge, perché il piano
-      è stato scritto DOPO quella correzione e la dà per acquisita.
+⛔ NESSUN FILE VA APERTO OLTRE AI DUE, e questa riga è cambiata di specie il
+   2026-08-11: il Traguardo 4 è ESEGUITO, quindi non c'è un piano in corso da
+   leggere a compiti. Quello che viene dopo è il BRAINSTORMING del Traguardo 5
+   — l'arbitro GPU — e un brainstorming si apre con la §6 del compendio, non
+   con un piano: scriverne uno per codice che non esiste significa inventare.
+   ⚠️ La riga qui sopra diceva «DUE FILE VANNO APERTI: il disegno e il piano
+      del traguardo in corso». Vale di nuovo il giorno in cui un piano c'è.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 679 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 689 KB
    il 2026-08-11, la spec da sola 277, i piani 168 e 162 — e l'idea è già nel
    compendio. Aprirai UN file — uno — quando ti servirà il perché di una
    decisione: le alternative scartate, le misure, i costi accettati. La §12
@@ -191,8 +193,8 @@ POI ASPETTA le mie richieste prima di proporre qualunque cosa.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | **9,8 KB** ⚠️ era 7,7 fino al 2026-08-11 |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **222 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 222 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **240 KB** — `CLAUDE.md` più il compendio |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 240 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -206,7 +208,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **222 KB contro mezzo megabyte**.
+resta quello che conta: **240 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **277 KB**. Non è che chiedesse
@@ -277,7 +279,7 @@ elenco**, ed è la voce che è stata tolta: si compila incollando, non si mantie
 > ignorato: le quattro specie di difetto di piano passano da ventidue righe a quindici, perché
 > il testo lungo vive ora in `CLAUDE.md` e nel gotcha **#49** e qui bastava l'elenco — la regola
 > è *rimandare invece di riscrivere*. 📌 **Il rapporto che questo file esiste per difendere non
-> si è mosso: 9,8 KB di messaggio che ordinano 222 KB di lettura, contro 679 di corpus.**
+> si è mosso: 9,8 KB di messaggio che ordinano 240 KB di lettura, contro 689 di corpus.**
 
 📌 **Il percorso del repository ha due valori, e non è una svista da «sanare».** Si lavora
 su **due macchine**, e il campo le nomina entrambe: un percorso solo sembrava aggiornato e

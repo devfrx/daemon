@@ -1323,6 +1323,37 @@ A dirlo è stato un `git diff`, non lo strumento.
 ignorato**; `cargo test --workspace` → **171 test, due ignorati**; `cargo fmt --all -- --check` → 0;
 `bash scripts/gate.sh` → `GATE GREEN`.
 
+## Chiusura del Traguardo 4 — 2026-08-11: che cosa ha imparato, contato
+
+Il traguardo si è chiuso con **dieci compiti su dieci**, `GATE GREEN` a ciascuno, e
+`cargo test --workspace` a **32 target e 171 test**, due dei quali `#[ignore]` — le due campagne
+profonde, che appartengono al ciclo lungo.
+
+| | Contato |
+|---|---|
+| difetti del piano trovati dal **pre-controllo**, prima di dispacciare | **dieci compiti su dieci** — la stessa percentuale del Traguardo 3, e su un piano scritto **il giorno prima** |
+| voci d'errata | **settanta in nove passate**, di cui **dodici DECISIONI** |
+| ⛔ voci d'errata che erano difetti di un compito **successivo**, trovati misurando in anticipo | **sei** — e una di esse, **E39**, avrebbe fatto dichiarare chiuso un gotcha lasciandolo aperto |
+| ⛔ affermazioni dei **documenti di stato** risultate false alla misura | **due**, entrambe su come chiudere il gotcha **#51**, ed erano lì **dal brainstorming** |
+| previsioni del coordinatore smentite da chi eseguiva | **quattro**, fra cui un modello di costo sbagliato del **37 %** |
+| occorrenze nuove del gotcha **#48** | **quattro** — e **due le ho commesse io**, una nella stessa ora in cui ne scrivevo il rimedio |
+
+⛔ **La lezione che il traguardo ha imparato TRE volte, e ogni volta dopo aver chiuso la
+precedente.** *«L'iniezione è avvenuta»* e *«c'era qualcosa da verificare»* sono **due**
+affermazioni, e una campagna che tiene solo la prima è **verde avendo confrontato insiemi vuoti**:
+
+| Dove | La prima volta | Che cosa serviva |
+|---|---|---|
+| `C7a` | *«nessun passo è in dubbio»* era vero anche di uno scenario che **non aveva scritto niente** | un oracolo sul **conteggio delle scritture** |
+| `C7b` | *«ogni seme ha raggiunto il proprio punto»* era vero anche di una campagna che confrontava **insiemi vuoti** | un oracolo su *«almeno un seme ha lasciato più di un passo in dubbio»* |
+| il ciclo di **livello 2** | *«il prefisso torna»* è **banalmente vero** se non si è mai perso un byte | tre oracoli, e il decisivo guarda **i gradini**: che esistano punti in cui torna *qualcosa ma non tutto* |
+
+📌 **La forma generale, e vale oltre la DST:** un oracolo che verifica che il **guasto sia
+scattato** non verifica che il guasto **abbia lasciato qualcosa da controllare**, e serve un
+controllo che guardi **la forma di ciò che sopravvive**. Chiuderlo in un posto **non lo chiude
+altrove**: le tre sonde sono state scritte dallo stesso metodo, l'una dopo l'altra, e hanno
+ripetuto lo stesso buco.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

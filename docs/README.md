@@ -13,11 +13,14 @@ porta `journal` tenute alle stesse nove promesse a ogni commit, la riconciliazio
 Task 10 il formato durevole è CONGELATO:** i byte del record sono nel repository e non si
 rigenerano mai. ✅ **Il brainstorming del Traguardo 4 è chiuso il 2026-08-11** e il disegno è
 scritto: [Traguardo 4 — il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
-✅ **E il piano è scritto lo stesso giorno**, dieci compiti in tre parti.
-⏭️ **Il prossimo passo è ESEGUIRLO.** ⛔ Il disegno ha ristretto il traguardo su una misura —
-delle dieci righe di guasto della §3.3 **una sola** ha oggi il proprio soggetto — quindi il
-Traguardo 4 costruisce **il motore** della DST e non tutte le finte. ⚠️ **Questa riga diceva *«il
-brainstorming»***, e prima ancora *«scrivere il piano»*.
+✅ **E il Traguardo 4 è ESEGUITO lo stesso giorno**, dieci compiti su dieci, `GATE GREEN` a
+ciascuno: il simulatore porta ora **il guasto** — il giornale che cade, il backend cadente di
+`redb` scritto **da fuori la crate**, e due campagne con **soggetti diversi**, la riconciliazione
+del kernel e la coerenza del motore. ⛔ Il disegno aveva ristretto il traguardo su una misura —
+delle dieci righe di guasto della §3.3 **una sola** ha oggi il proprio soggetto — quindi si è
+costruito **il motore** della DST e non tutte le finte. ⏭️ **Il prossimo è il Traguardo 5**,
+l'arbitro GPU, e si comincia dal **brainstorming**. ⚠️ **Questa riga diceva *«il prossimo passo è
+eseguirlo»***, prima *«il brainstorming»*, prima ancora *«scrivere il piano»*.
 ⚠️ **Questa riga diceva «dieci compiti su dodici, si riprende dal Task 11»** a traguardo chiuso:
 è la lezione della tredicesima misura — la §6 del compendio giusta **nasconde** gli altri
 documenti di stato.

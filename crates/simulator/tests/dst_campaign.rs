@@ -28,7 +28,15 @@ const STEPS: usize = 4;
 /// and those seeds would be silent no-ops. Gotcha #17.
 const WRITES_PER_RUN: u64 = (ACTIVITIES * STEPS * 2) as u64;
 
-/// How many seeds the crash campaign sweeps.
+/// How many seeds BOTH level-1 campaigns sweep — `C7a` without a crash and `C7b` with one.
+///
+/// ⛔ ONE NUMBER FOR THE TWO, AND IT IS A PREMISE AND NOT TIDINESS. `C7b` asserts that EVERY
+/// seed reaches its crash point, which is sound only because the write count does not depend on
+/// the seed — and the only thing holding that is `C7a`'s `writes_done() == WRITES_PER_RUN`. When
+/// `C7a` swept a bare `0..50` and this one was 200, three quarters of the crash campaign rested
+/// on a premise nobody checked for them. Measured on 2026-08-11: it held, zero deviations over
+/// fifty thousand seeds — so this is a premise brought back under guard, not a defect repaired.
+/// ⚠️ The day this number is raised, the support rises with it instead of falling silently.
 const CAMPAIGN_SEEDS: u64 = 200;
 
 /// ⛔ THE CRASH POINT IS DRAWN FROM A DIFFERENT GENERATOR THAN THE INTERLEAVING, and from a
@@ -42,8 +50,11 @@ fn crash_seed(seed: u64) -> u64 {
 /// A record of the shape every step of this scenario writes.
 ///
 /// ⚠️ The class is `Idempotent` for every step, so the resolution the reconciliation must
-/// answer is a single expected value — which is what will let task 3 assert the RESOLUTION and
-/// not only the set.
+/// answer is a single expected value — which is what lets the campaign assert the RESOLUTION and
+/// not only the set. ⚠️ This sentence said "what WILL LET task 3" until 2026-08-11, and it is
+/// dated rather than rewritten away: the assertion exists now, inside
+/// `c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open`, and it is what makes this
+/// single class load-bearing instead of merely convenient.
 fn record(kind: RecordKind) -> Vec<u8> {
     Record::V1(RecordV1 {
         kind,
@@ -57,10 +68,16 @@ fn record(kind: RecordKind) -> Vec<u8> {
 
 /// What the scenario SUCCEEDED in writing, in order. It is the independent oracle of `C7b`.
 ///
-/// ⛔ IT COMES FROM THE SCENARIO AND NOT FROM THE ARCHIVE, and that is what will keep `C7b`
-/// from being a tautology: `steps_in_doubt` walks the DECODED archive, this walks what the
-/// activities were told went through. A journal that dropped a record, or a decode that misread
-/// `kind`, makes the two disagree.
+/// ⛔ IT COMES FROM THE SCENARIO AND NOT FROM THE ARCHIVE, and that is what keeps `C7b` from
+/// being a tautology: `steps_in_doubt` walks the DECODED archive, this walks what the activities
+/// were told went through. A journal that dropped a record, or a decode that misread `kind`,
+/// makes the two disagree.
+///
+/// ✅ AND SINCE 2026-08-11 IT IS A MEASURE AND NO LONGER A PROMISE — this paragraph read "what
+/// WILL keep", which was an argument. Measured: `expected_doubt`'s outcome arm was made blind, so
+/// that the trace declared open every step it had ever opened, and the comparison went RED —
+/// `left: [3]` from the archive against a right-hand side carrying all twelve steps. The two
+/// sides really do come from different places.
 type Trace = Vec<(u64, RecordKind)>;
 
 /// The M-2 scenario, now journalled: `ACTIVITIES` activities x `STEPS` steps, each step writing
@@ -75,12 +92,18 @@ type Trace = Vec<(u64, RecordKind)>;
 /// drift away from.
 ///
 /// ⛔ THAT THIS SCENARIO REALLY INTERLEAVES IS NOT HELD HERE, and saying so is cheaper than a
-/// reader deducing it. Nothing in this file goes red if the activities run one after the other:
-/// the write count is the same, and with no crash there is no doubt either way. It is held one
-/// task away, by `c7b`'s `a_crash_leaves_more_than_one_step_in_doubt_on_at_least_one_seed` —
-/// measured against a sequential counterfactual on 2026-08-11, where the largest doubt set drops
-/// from THREE to ONE and that probe goes red. ⚠️ The declared price: if that probe ever fails,
-/// the diagnosis has two candidates — no interleaving, or a wrong reconciliation.
+/// reader deducing it. Nothing in THIS function goes red if the activities run one after the
+/// other: the write count is the same, and with no crash there is no doubt either way. It is
+/// held further down this same file, by `a_crash_leaves_more_than_one_step_in_doubt_on_at_least_one_seed`
+/// — measured against a sequential counterfactual on 2026-08-11, where the largest doubt set
+/// drops from THREE to ONE and that probe goes red. ⚠️ The declared price: if that probe ever
+/// fails, the diagnosis has two candidates — no interleaving, or a wrong reconciliation.
+///
+/// ⚠️ TWO THINGS THIS PARAGRAPH GOT WRONG UNTIL 2026-08-11, dated rather than quietly fixed. It
+/// said "one task away", and that task is this commit. And it called that probe "`c7b`'s", which
+/// it never was: it is a SIBLING `#[test]`, not a helper of `c7b`, and the difference matters
+/// because `c7b` now asserts the same predicate for its own reasons — a reader sent looking for
+/// a part of `c7b` would find the wrong assertion and draw the wrong conclusion from its red.
 fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Trace) {
     let journal = RefCell::new(journal);
     let trace: RefCell<Trace> = RefCell::new(Vec::new());
@@ -185,10 +208,15 @@ fn the_scenario_really_writes_what_the_campaign_assumes() {
     let (journal, trace) = run(20_260_806, CrashingJournal::without_crash());
     assert_eq!(journal.writes_done(), WRITES_PER_RUN);
 
-    // ⚠️ AND THIS ONE IS NOT A SECOND OPINION ON THE LINE ABOVE: it is the ONLY thing anchoring
-    // the trace in this commit. `Trace` exists for `C7b`'s independent oracle, which arrives at
-    // task 3, so until then nothing else would notice a scenario that journalled correctly and
-    // recorded nothing — or the reverse.
+    // ⚠️ AND THIS ONE IS NOT A SECOND OPINION ON THE LINE ABOVE: it holds the trace against the
+    // archive at the COUNT, where `expected_doubt` holds it at the CONTENT.
+    //
+    // ⚠️ ITS DECLARED REASON EXPIRED ON 2026-08-11, and the line is re-argued rather than left
+    // standing on a dead one. It read "it is the ONLY thing anchoring the trace in this commit
+    // … `C7b`'s independent oracle arrives at task 3, so until then nothing else would notice";
+    // that oracle has arrived, and it notices far more than a count. What keeps this assertion
+    // is a different argument: `C7b` only ever sees traces from runs that CRASHED, so a scenario
+    // that recorded nothing in the tail of a complete run would still be invisible there.
     assert_eq!(trace.len() as u64, WRITES_PER_RUN);
 }
 
@@ -196,7 +224,12 @@ fn the_scenario_really_writes_what_the_campaign_assumes() {
 fn c7a_without_a_crash_no_step_is_in_doubt() {
     // ⛔ NO FALSE POSITIVES. It is the half that is easy to skip, and the one that says the
     // doubt reported by C7b means something.
-    for seed in 0..50u64 {
+    //
+    // ⛔ THE SAME SEEDS AS `C7b`, AND THE SHARED CONSTANT IS LOAD-BEARING: the write count pinned
+    // below is the premise `C7b`'s `crashes == CAMPAIGN_SEEDS` rests on, so a range narrower than
+    // the crash campaign's would leave most of that campaign's seeds unsupported. It read
+    // `0..50u64` until the review of 2026-08-11. See `CAMPAIGN_SEEDS`.
+    for seed in 0..CAMPAIGN_SEEDS {
         let (journal, _) = run(seed, CrashingJournal::without_crash());
 
         // ⛔ C7a's NON-VACUITY ORACLE, and it is the mirror of `has_fallen()` on the other half
@@ -230,21 +263,34 @@ fn c7a_without_a_crash_no_step_is_in_doubt() {
 /// misread `kind` — each makes the two disagree, and none of them would show if the expectation
 /// were computed from the archive.
 ///
-/// ⚠️ THE `contains` GUARD IS UNREACHABLE IN THIS SCENARIO, and it stays — declared rather than
-/// removed. No step here is ever given two intents: the ids are distinct per activity, and a
-/// second intent would be refused by the port, so it would never reach the trace at all. It
-/// mirrors what `enter` really does on the other side — a step enters the doubt AT MOST ONCE
-/// and keeps the place it first took — and dropping it would make the two algorithms diverge
-/// for a case the scenario could grow into. It is insurance with its reach written down, not
-/// coverage.
+/// ⚠️ THE SECOND-INTENT CASE IS UNREACHABLE IN THIS SCENARIO, and it is ASSERTED rather than
+/// absorbed. It was a `contains` guard until the review of 2026-08-11, justified as mirroring
+/// what `enter` does on the other side — and that justification was the one place this oracle
+/// was openly derived from READING THE IMPLEMENTATION, four paragraphs under a claim of
+/// independence. The reasoning is on the arm below.
 fn expected_doubt(trace: &Trace) -> Vec<u64> {
     let mut open: Vec<u64> = Vec::new();
     for (step, kind) in trace {
         match kind {
             RecordKind::Intent => {
-                if !open.contains(step) {
-                    open.push(*step);
-                }
+                // ⛔ NOT A DEDUPLICATION BUT AN ASSERTED INVARIANT, and the difference is the
+                // independence this oracle claims four paragraphs up. No step in this scenario
+                // is ever given two intents — the ids are distinct per activity, and a second
+                // one would be refused by the port before it could reach the trace. Were the
+                // scenario to grow into that case, the obvious fix would be to mirror what
+                // `enter` does, and from that moment the oracle would agree with the
+                // implementation BY CONSTRUCTION — including when the implementation is wrong.
+                // So the case fails loudly instead of being absorbed quietly.
+                //
+                // ⚠️ THE PRICE, DECLARED: the scenario can no longer grow into that case without
+                // a red. That is the point and not a side effect — the red is a decision being
+                // asked for, not a defect being reported.
+                assert!(
+                    !open.contains(step),
+                    "step {step} was given two intents: this oracle is no longer independent \
+                     of `enter` for that case, and the campaign must decide before it grows"
+                );
+                open.push(*step);
             }
             RecordKind::Outcome => open.retain(|s| s != step),
             RecordKind::Note => {}
@@ -286,6 +332,14 @@ fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
         // ⛔ EVERY STEP OF THIS SCENARIO DECLARES `Idempotent`, so the resolution is decided and
         // not incidental. Without this the campaign would hold WHICH steps are in doubt and say
         // nothing about WHAT TO DO with them, which is the half ADR-0007 exists for.
+        //
+        // ⛔ AND IT LOOKS REDUNDANT AFTER THE SET, WHICH IS WHY THE PROOF IS WRITTEN HERE rather
+        // than left to be re-derived (gotcha #45). No defect that breaks the SET can demonstrate
+        // this block's worth: it would panic on the line above and this loop would never run.
+        // Its independent value was established by one measurement and only one — MUTATION B of
+        // 2026-08-11, `resolution_of` collapsed to a constant `SuspendAndAsk`, which leaves the
+        // set exactly right and fires HERE: `left: SuspendAndAsk, right: RunAgain`, seed 0, step
+        // 3. Delete this block and that mutation survives in silence.
         for doubt in &doubts {
             assert_eq!(
                 doubt.resolution,
@@ -312,8 +366,31 @@ fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
         "a seed did not reach its crash point: the scenario wrote fewer times than {WRITES_PER_RUN}"
     );
 
-    // A MEASUREMENT, printed rather than guessed — run with `-- --nocapture`. It is what the
-    // seed list of task 8 and the campaign size of task 4 are chosen against.
+    // ⛔ AND THIS IS C7b's OWN NON-VACUITY, WHICH THE LINE ABOVE IS NOT. That one says the fault
+    // FIRED; this one says the fault left something to reconcile. They come apart, measured:
+    // with a journal that falls at write 0 every seed crashes and every comparison is `[] == []`,
+    // and with a single activity every crash leaves one step at most — in both cases the
+    // assertion above is satisfied and this campaign has verified nothing. Six of these two
+    // hundred seeds already compare two empty sets on their own merits.
+    //
+    // ⚠️ IT IS THE SAME DEFECT `C7a` CARRIED UNTIL THE TASK BEFORE THIS ONE, re-imported: there
+    // it was "nothing was written to be in doubt about", here it is "nothing was left in doubt
+    // to disagree about". A campaign needs an oracle saying it did work, not only one saying the
+    // injection went off.
+    assert!(
+        largest > 1,
+        "no seed left more than one step in doubt: the campaign compared empty sets"
+    );
+
+    // A MEASUREMENT, printed rather than guessed — run with `-- --nocapture`, and NOT visible
+    // under `gate.sh`, which captures it.
+    //
+    // ⚠️ WHAT IT IS AND WHAT IT IS NOT, because this line claimed to be what the seed list of
+    // task 8 and the campaign size of task 4 are chosen against, and it cannot be either.
+    // `largest` is bounded STRUCTURALLY by `ACTIVITIES` — an activity is a sequential loop and
+    // holds at most one step open — so it saturates within the first handful of seeds and says
+    // nothing about how many more would be worth sweeping. What it is: evidence that the
+    // scenario interleaves, and the CEILING that evidence reaches.
     println!("DST L1 c7b: {crashes}/{CAMPAIGN_SEEDS} seeds crashed, largest doubt set {largest}");
 }
 
@@ -328,15 +405,41 @@ fn a_crash_leaves_more_than_one_step_in_doubt_on_at_least_one_seed() {
     // `run` says so and names this test, so the name is a commitment. Measured on 2026-08-11
     // against a sequential counterfactual: the largest doubt set drops from THREE to ONE, so
     // this probe really does go red if the activities stop overlapping.
+    //
+    // ⚠️ THE OVERLAP IS DECLARED RATHER THAN LEFT TO BE DISCOVERED: since the review of
+    // 2026-08-11 `c7b` asserts THE SAME PREDICATE at the end of its own sweep, as its
+    // non-vacuity. So this probe buys no coverage `c7b` has not already bought, and it stays for
+    // two things a merged assertion would lose — its NAME, which the doc of `fn run`,
+    // `docs/HANDOFF.md` and `docs/porta-di-qualita.md` cite as the holder of the interleaving,
+    // and its DIAGNOSIS: a red here reads "the scenario stopped interleaving", a red there reads
+    // "the campaign got weaker", and the two want different repairs. ⚠️ It is also why this one
+    // stops early — the maximum over the whole campaign is `c7b`'s business now.
     let mut best = 0usize;
+    let mut swept = 0u64;
     for seed in 0..CAMPAIGN_SEEDS {
+        swept += 1;
         let (journal, _) = run(
             seed,
             CrashingJournal::from_seed(crash_seed(seed), WRITES_PER_RUN),
         );
         let survivor = journal.into_survivor();
         best = best.max(steps_in_doubt(&survivor).expect("replay").len());
+        // ⛔ "ON AT LEAST ONE SEED" IS THE WHOLE CLAIM, and stopping here is what makes the name
+        // true instead of merely satisfied. The maximum over the WHOLE campaign is `c7b`'s
+        // business now that it asserts it; this probe exists for its name and for the diagnosis
+        // it gives — a red here says THE SCENARIO STOPPED INTERLEAVING, which is what the doc of
+        // `run` promises somebody holds, while a red there says the campaign got weaker.
+        if best > 1 {
+            break;
+        }
     }
     assert!(best > 1, "no seed left more than one step in doubt: {best}");
-    println!("DST L1 interleaving: largest doubt set over {CAMPAIGN_SEEDS} seeds is {best}");
+
+    // ⚠️ IT REPORTS `swept` AND NOT `CAMPAIGN_SEEDS`, and the distinction was a real lie for the
+    // length of one review: this line read "over {CAMPAIGN_SEEDS} seeds" and the `break` above
+    // made it false the moment it was added — the probe stops at the FIRST seed that satisfies
+    // it. How soon it stops is the interesting half anyway: it is how rare the interleaving is.
+    println!(
+        "DST L1 interleaving: doubt set {best} reached after {swept} of {CAMPAIGN_SEEDS} seeds"
+    );
 }

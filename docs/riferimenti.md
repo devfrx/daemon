@@ -1003,6 +1003,39 @@ travestita da vincolo, cioè il gotcha **#15**.
 
 **Chiusura:** `bash scripts/gate.sh` verde.
 
+## Esecuzione del Traguardo 4 — il Task 1: il giornale che cade, e una campagna rifatta perché il verbale era andato perso
+
+Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0` appuntata da `rust-toolchain.toml`.
+Commit `9597d22` (il tipo e le sue sonde) e `acda193` (il giro di correzione).
+
+| # | Misura | Comando | Esito |
+|---|---|---|---|
+| **T4-1-a** | il contratto che il compito presuppone esiste già? | lettura di `crates/kernel/src/ports/journal.rs` | ✅ `JournalError::NotDurable` **esisteva già** ed è la prima variante — la caduta **non aggiunge** nulla al contratto di una porta condivisa. Il tratto `Journal` ha **sei** operazioni, tutte implementate |
+| **T4-1-b** | le sonde dettate hanno denti su ogni frase che il tipo dichiara? | ragionamento sui cammini, poi mutazione | ❌ **no**: la mutazione «il contatore avanza anche su una scrittura rifiutata» **sopravvive a tutte e otto** le sonde dettate, perché **nessuna** fa mai fallire una scrittura interna. Gotcha **#45** |
+| **T4-1-c** | mutazione A — `may_write` sempre `true` | `cargo build -p simulator --tests` poi `cargo test -p simulator --test crashing_journal` | **sei** sonde rosse. ⚠️ Il piano ne elencava **quattro**: il criterio enumerava nomi e l'insieme è cresciuto sotto di lui |
+| **T4-1-d** | mutazione B — `may_write` sempre `false` | idem | sei rosse, e `a_journal_told_not_to_crash_never_falls` è **verde sotto A e rossa sotto B**: l'unica in quella direzione, quella su cui poggia `C7a` |
+| **T4-1-e** | mutazione C — il contatore avanza su una scrittura rifiutata | idem, con `grep -c 'is_ok()'` = **0** e `grep -c 'self.writes += 1;'` = **3** a prova che si sia applicata in tutti e tre i metodi | ⛔ **una sola** rossa, `a_write_the_protocol_refuses_does_not_consume_a_crash_position`, riga 127, `left: 2 / right: 1` |
+| **T4-1-f** | mutazioni D e D′ — la guardia di `prune`, tolta e sbagliata | idem | ⛔ **asserzioni diverse**: riga **82** (`Err(Missing)` contro `Err(NotDurable)`) e riga **68** (`Err(NotDurable)` contro `Ok(())`). La sonda **distingue** i due difetti |
+| **T4-1-g** | la sonda nuova è non vacua? — provata **togliendo il blocco**, non un'asserzione | mutazione C attiva + corpo racchiuso in `/* … */` | ✅ **verde, dieci su dieci**: le altre nove sono **cieche** a C |
+| **T4-1-h** | il punto di caduta copre davvero tutte le scritture? | ricalcolo di xorshift64 **fuori dal repository**, cinquecento semi, otto scritture | ✅ **otto posizioni su otto**, `{61, 69, 66, 62, 63, 57, 58, 64}` — minimo **57**, massimo **69** |
+| **T4-1-i** | `cargo fmt` tocca file che nessuno stava modificando? | `cargo fmt --all -- --check` | ❌ **no**: **due** file, esattamente i due del compito. I quattro sorgenti CRLF del repository sono già puliti e rustfmt conserva i fine-riga del file — **G8** non è in gioco |
+
+⛔ **La misura T4-1-h esiste per una ragione che vale oltre il caso.** La cifra *«da 57 a 69»*
+era stata prodotta da una revisione e **citata** nel commento della sonda prima che chiunque la
+rimisurasse: è il gotcha **#53** — *una misura anticipata vale come previsione dell'esito, mai
+come collaudo* — nella forma più economica da lasciar passare, perché il numero **è** giusto.
+📌 Rifarla per una via che **non passa da Rust** è ciò che la rende una misura invece di una
+citazione: due cammini indipendenti che concordano.
+
+⛔ **E la campagna di mutazione è stata rifatta DA ZERO.** La prima passata era stata eseguita
+e interrotta prima di riferire; il codice era committato, il verbale no. 📌 **Un commit senza il
+proprio verbale non si può né rifare né dubitare** — chi rimisura non sa da cosa parte — ed è la
+regola che la **nona misura** della §12 del compendio aveva già scritto per i pesi:
+*il verbale è parte della misura, non il suo racconto.*
+
+**Chiusura:** `cargo test -p simulator --test crashing_journal` → **dieci passati**;
+`bash scripts/gate.sh` → `GATE GREEN`; albero pulito.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

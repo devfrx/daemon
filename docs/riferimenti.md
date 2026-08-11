@@ -1076,6 +1076,49 @@ un tetto scritto `N × costo` sbaglia **per il numero di cicli**. La formula è
 **Chiusura:** `cargo test -p simulator --test dst_campaign` → **due passati**;
 `cargo fmt --all -- --check` → uscita 0; `bash scripts/gate.sh` → `GATE GREEN`.
 
+## Esecuzione del Traguardo 4 — il Task 3: `C7b`, e la non-vacuità che una campagna dichiara non è quella che le serve
+
+Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0`. Commit `049c214` (`C7b` e la sonda
+dell'interlacciamento) e `0fd3ec8` (il giro di correzione).
+
+| # | Misura | Esito |
+|---|---|---|
+| **T4-3-a** | quanti semi raggiungono il proprio punto di caduta | **duecento su duecento**, e **cinquantamila su cinquantamila** a scala. È il motivo per cui l'oracolo è un'**uguaglianza** e non un `> 0` |
+| **T4-3-b** | il conteggio delle scritture dipende dal seme? | ❌ **no** — zero deviazioni su **cinquantamila** semi. È la premessa che rende sana l'uguaglianza, e non era sorvegliata |
+| **T4-3-c** | l'insieme in dubbio più grande | **tre**, a duecento **e** a cinquantamila semi. ⛔ Il tetto è **strutturale** e vale `ACTIVITIES`: un'attività è un ciclo sequenziale e ha al più un passo aperto |
+| **T4-3-d** | quanto presto l'interlacciamento si manifesta | ⛔ **il secondo seme già basta** — `doubt set 2 reached after 2 of 200 seeds` |
+| **T4-3-e** | la distribuzione dei punti di caduta su duecento semi | tutti e **ventiquattro** i punti coperti, da **quattro** a **tredici** volte ciascuno |
+| **T4-3-f** | ⛔ **semi il cui confronto è `[] == []`, senza mutazioni** | **sei su duecento** (3 %), **2091 su cinquantamila** (4,2 %) a scala |
+| **T4-3-g** | ⛔ `C7b` con un giornale che cade alla scrittura **zero** su ogni seme | **VERDE** — duecento crash su duecento, e duecento confronti su duecento sono `[] == []` |
+| **T4-3-h** | ⛔ `C7b` con `ACTIVITIES = 1` | **VERDE**, insieme massimo **uno** |
+| **T4-3-i** | il confronto **ordinato** morde? | ✅ **sì** — con un `replay` ordinato per passo va rosso, `left: [0, 4]` contro `right: [4, 0]`. È il difetto che una tabella `redb` chiavata sul passo produrrebbe da sola |
+| **T4-3-j** | la guardia `contains` di `expected_doubt` scatta mai? | ❌ **mai** — strumentata con un `assert!`, verde su duecento semi |
+| **T4-3-k** | costo per corsa | **4,37 µs** in `--release`, **18,8 µs** in `debug`. ⛔ **Il cancello gira in `debug`**, quindi è la seconda che decide |
+| **T4-3-l** | peso del binario | **916 480 B**, contro 898 048 prima del commit — **+18 432 B, +2,05 %**. Le quattro sonde fanno **~13 ms** di lavoro vero, mentre l'avvio del processo su Windows ne costa **18**: la campagna costa **meno del `CreateProcess` che la lancia** |
+
+⛔ **La misura che vale più di tutte è la coppia T4-3-g / T4-3-h, e la lezione è generale.**
+Una campagna ha bisogno di **due** oracoli di non-vacuità, non di uno: *«l'iniezione è avvenuta»*
+e *«c'era qualcosa da verificare»* sono affermazioni diverse, e la prima è soddisfatta da uno
+stato in cui non c'è nulla da verificare. ⚠️ **Ed era il difetto che il Task 2 aveva chiuso per
+`C7a` un compito prima** — lì *«nessun passo è in dubbio»* contro *«lo scenario non ha scritto
+niente»*, qui *«nessun disaccordo»* contro *«niente su cui disaccordare»*. 📌 **Chiuderlo in un
+posto non lo chiude nell'altro**, e nulla lo segnalava: la seconda sonda è stata scritta dopo la
+prima, dallo stesso metodo, e ha ripetuto lo stesso buco.
+
+⚠️ **Una previsione del coordinatore smentita, registrata:** la mutazione `ACTIVITIES = 1` era
+attesa produrre collaterali sul pin e su `C7a`, perché `WRITES_PER_RUN` scende da ventiquattro a
+otto. Non ne ha prodotti — la costante è **derivata**, quindi si ricalcola e le asserzioni
+confrontano otto con otto. È il caso che il commento del pin dichiara.
+
+⚠️ **E tre rilievi di una revisione sono risultati falsi, verificati contro il piano invece che
+creduti:** lo Step 3 del Task 4 **non** cancella `c7b_…`, quindi l'import di `Resolution` non
+resta inutilizzato e nessun nome viene rimosso. 📌 Un rilievo di un revisore si legge contro la
+fonte, esattamente come un compito si legge contro il codice.
+
+**Chiusura:** `cargo test -p simulator --test dst_campaign` → **quattro passati**;
+`cargo test --workspace` → **31 target, 166 test**; `cargo fmt --all -- --check` → 0;
+`bash scripts/gate.sh` → `GATE GREEN`.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

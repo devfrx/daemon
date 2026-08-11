@@ -615,9 +615,10 @@ dell'errata.
 [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
 ✅ **E il piano è scritto lo stesso giorno:**
 [Traguardo 4](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci
-compiti in tre parti**. ✅ **E l'esecuzione è cominciata il 2026-08-11: i Task 1 e 2 sono
-eseguiti**, subagent-driven, con le due revisioni e `GATE GREEN` a ciascuno. ⏭️ **Il prossimo è
-il Task 3**, `C7b` — il crash lascia **quell'insieme e non un altro**.
+compiti in tre parti**. ✅ **E l'esecuzione è cominciata il 2026-08-11: i Task 1, 2 e 3 sono
+eseguiti**, subagent-driven, con le due revisioni e `GATE GREEN` a ciascuno — la **Parte 1 è
+completa a tre quarti**. ⏭️ **Il prossimo è il Task 4**, la campagna breve col numero di semi
+**misurato**.
 ⛔ **E il disegno ha ricevuto un richiamo PRIMA che il piano fosse scritto, perché il codice lo ha
 smentito su due punti** — §11 del disegno: `CrashingBackend` vive in un **banco di prova** di
 `platform` e non in `src/`, perché ciò che il Task 8 comprò è che il confine sia raggiungibile **da
@@ -764,10 +765,10 @@ assegnato», **non** «non richiede un meccanismo di kernel».
    target verdi»* attribuite alla chiusura del Traguardo 2 — scritte identiche qui e in `HANDOFF.md`
    — non riconciliano con nessun'altra misura del progetto (**25 target** a quella data, **29**
    oggi), e non sono state riscritte perché rifarle richiederebbe uno stato che non esiste più.
-   ⏭️ **Il prossimo è il Task 3 del Traguardo 4**, `C7b`: ✅ il **brainstorming è chiuso, il
-   disegno e il piano sono scritti** — tutti il 2026-08-11 — e i **Task 1 e 2 sono eseguiti** lo
-   stesso giorno. Questa riga ha detto *«il brainstorming»*, poi *«il piano»*, poi
-   *«l'esecuzione»*, poi *«il Task 2»* nello stesso giorno. ⚠️ **E diceva «una delle TRE in cui il
+   ⏭️ **Il prossimo è il Task 4 del Traguardo 4**, la campagna breve: ✅ il **brainstorming è
+   chiuso, il disegno e il piano sono scritti** — tutti il 2026-08-11 — e i **Task 1, 2 e 3 sono
+   eseguiti** lo stesso giorno. Questa riga ha detto *«il brainstorming»*, poi *«il piano»*, poi
+   *«l'esecuzione»*, poi *«il Task 2»*, poi *«il Task 3»* nello stesso giorno. ⚠️ **E diceva «una delle TRE in cui il
    prossimo passo vive dentro questa sola sezione»: sono QUATTRO**, ricontate col `grep` invece
    che citate — righe 618, qui, 794 e la riga del Traguardo 4 nella tabella dei sei. È il gotcha
    **#31** nella forma che la **ventesima misura** aveva descritto per i pesi: *le case si contano
@@ -798,8 +799,16 @@ assegnato», **non** «non richiede un meccanismo di kernel».
    costruiti dallo stesso numero danno la **stessa** sequenza, quindi la campagna esplorerebbe una
    **diagonale** dello spazio invece dello spazio.
 10. **L'esecuzione del Traguardo 4** — ⏳ **in corso dal 2026-08-11**, subagent-driven, un compito
-    per volta con revisione fra uno e l'altro. ✅ **Task 1 e 2 su dieci eseguiti**, `GATE GREEN`
-    a ciascuno. ⛔ **Il Task 2 — lo scenario giornalato e `C7a` — ha trovato che `C7a` era verde
+    per volta con revisione fra uno e l'altro. ✅ **Task 1, 2 e 3 su dieci eseguiti**, `GATE GREEN`
+    a ciascuno; `cargo test --workspace` → **31 target, 166 test**. ⛔ **E il Task 3 — `C7b` — ha
+    trovato il difetto più istruttivo del traguardo: la non-vacuità che una campagna dichiara non
+    è quella che le serve.** *«L'iniezione è avvenuta»* e *«c'era qualcosa da verificare»* sono
+    **due** affermazioni, e il piano ne teneva una sola: con un giornale che cade al primo byte,
+    duecento semi su duecento cadono davvero **e duecento confronti su duecento sono
+    `[] == []`** — verde, e nulla verificato. ⚠️ **Ed era il difetto che il Task 2 aveva chiuso per `C7a` un
+    compito prima, reimportato**: chiuderlo in un posto non lo chiude nell'altro. Ora `C7b` ha
+    **due** oracoli, e il discrimine fra loro è **provato** — le mutazioni che svuotano la
+    campagna sparano sul secondo, quelle che spengono il guasto sul primo. ⛔ **Il Task 2 — lo scenario giornalato e `C7a` — ha trovato che `C7a` era verde
     su un archivio VUOTO:** *«nessun passo è in dubbio»* e *«lo scenario non ha scritto niente»*
     erano lo stesso verde, misurato con un giornale che cade alla scrittura zero, e il piano vi
     rispondeva con una mutazione **una tantum** mentre allo stesso buco su `C7b` dà un oracolo
@@ -971,7 +980,7 @@ in tre posti, aggiornata in due.
 | **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
 | **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito **per intero, quattordici compiti su quattordici**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale · **il reattore reale e la prima suite di conformità** · il **cablaggio di produzione** in `daemon`, coi default letterali · il **confine dei tipi** `Untrusted`/`Instruction`, con la promozione che pretende la porta `journal` · le porte **`filesystem` e `network`** · la porta **`process`**, coi gettoni e le **due ricevute distinte** · la porta **`ipc`**, che chiude le **sei famiglie** · il **registro dei controlli** e questa chiusura. ⛔ **Zero record del giornale scritti**, ed è deliberato: i byte congelati appartengono al Traguardo 3 |
 | **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ✅ **eseguito il 2026-08-10, dodici compiti su dodici**, `GATE GREEN` a tutti. ⚠️ **Ricontati il 2026-08-10 chiudendo il traguardo:** diceva *«otto compiti»*, ed era la terza delle tre cifre discordi dello stesso file. ⚠️ **Ricontati il 2026-08-10:** diceva *«due compiti»* ed era già indietro di uno al commit precedente, di **tre** a questo — e chiamava il compito *«la conformità coi **tre** bugiardi»* quando i bugiardi consegnati sono **sette**. Il numeratore lo muove chi esegue, e chi esegue guarda la §6. [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**, dodici compiti in due parti: ✅ il record versionato · ✅ la riga di catalogo dell'etichetta · ✅ il **doppio in memoria** · ✅ la **conformità coi sette bugiardi** e ✅ `replay()`, eseguiti come un compito solo · ✅ la **riconciliazione su un insieme**, che ha riportato indietro la firma di `replay()` invece di deciderla · ✅ **`promote` che diventa una nota**, con l'operazione `note()` e la variante `RecordKind::Note` che il compito ha dovuto inventare · ✅ **`redb` in `platform`** col **backend nostro**, la chiave progressiva e la prova che il confine è **sostituibile da fuori** · ✅ la conformità contro **entrambe** a ogni commit · ✅ **i byte congelati**, tre record e una mappa riletta dal banco · ✅ `prune` che rifiuta un passo in dubbio · ✅ la **chiusura**, che è stata un **audit** e non una scrittura. ⛔ **Congelamento per ultimo**, che è la decisione D1 del piano |
-| 4 | il simulatore DST — **il guasto**, non il tempo virtuale: quello è del Traguardo 2 | ⏳ **in corso — Task 1 e 2 su dieci eseguiti il 2026-08-11**, `GATE GREEN` a ciascuno; ⏭️ il prossimo è il **Task 3**, `C7b`. ✅ **Brainstorming, disegno e piano tutti il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md), che fissa il perimetro (il **motore**, non tutte le finte), i **due livelli come due campagne**, l'oracolo di non-vacuità e i **sette** artefatti col controllo che esercita ciascuno; e il [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci compiti in tre parti** — il giornale cadente · lo scenario giornalato e `C7a` · `C7b` con l'oracolo preso dalla **traccia** e non dall'archivio · la campagna breve col numero di semi **misurato** · il backend cadente scritto **da fuori la crate** · la coerenza dopo la riapertura e il **#51 chiuso dal conteggio dei `sync_data`** · la campagna di livello 2 · l'elenco dei semi · il tempo di parete nel cancello · la chiusura. ⚠️ Il titolo diceva *«tempo virtuale, guasti, campagna, semi»* e il tempo virtuale era eseguito da due traguardi |
+| 4 | il simulatore DST — **il guasto**, non il tempo virtuale: quello è del Traguardo 2 | ⏳ **in corso — Task 1, 2 e 3 su dieci eseguiti il 2026-08-11**, `GATE GREEN` a ciascuno; ⏭️ il prossimo è il **Task 4**, la campagna breve. ✅ **Brainstorming, disegno e piano tutti il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md), che fissa il perimetro (il **motore**, non tutte le finte), i **due livelli come due campagne**, l'oracolo di non-vacuità e i **sette** artefatti col controllo che esercita ciascuno; e il [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci compiti in tre parti** — il giornale cadente · lo scenario giornalato e `C7a` · `C7b` con l'oracolo preso dalla **traccia** e non dall'archivio · la campagna breve col numero di semi **misurato** · il backend cadente scritto **da fuori la crate** · la coerenza dopo la riapertura e il **#51 chiuso dal conteggio dei `sync_data`** · la campagna di livello 2 · l'elenco dei semi · il tempo di parete nel cancello · la chiusura. ⚠️ Il titolo diceva *«tempo virtuale, guasti, campagna, semi»* e il tempo virtuale era eseguito da due traguardi |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
 | 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
 

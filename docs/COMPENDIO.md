@@ -618,11 +618,11 @@ dell'errata.
 compiti in tre parti**. ✅ **E l'esecuzione è cominciata il 2026-08-11: sette compiti su dieci**,
 subagent-driven, con le due revisioni e `GATE GREEN` a ciascuno — **la Parte 1 è completa** e la
 **Parte 2 ha consegnato il backend cadente e la coerenza dopo la caduta**, col gotcha **#51 chiuso
-nella metà chiudibile**. ✅ **E col Task 7 la Parte 2 è
-COMPLETA.** ⏭️ **Il prossimo è il Task 8**, l'elenco versionato dei semi, che apre la **Parte 3** —
-e arriva con un difetto misurato addosso: al **livello 2 il punto d'iniezione non deriva da un
-seme**, il ciclo è esaustivo e deterministico, quindi un elenco di semi versionerebbe la cosa
-sbagliata.
+nella metà chiudibile**. ✅ **E col Task 8 le Parti 1 e 2 sono complete e la Parte 3 è
+aperta:** [`semi-dst.md`](semi-dst.md) nasce **vuoto e non dimenticato**, e dice che al **livello 2
+«un seme» non esiste** — il ciclo è esaustivo e deterministico, e a identificare un caso sono il
+punto d'iniezione e il numero di record. ⏭️ **Il prossimo è il Task 9**, il passo del cancello che
+**raccoglie** il tempo di parete già stampato.
 ⛔ **E il disegno ha ricevuto un richiamo PRIMA che il piano fosse scritto, perché il codice lo ha
 smentito su due punti** — §11 del disegno: `CrashingBackend` vive in un **banco di prova** di
 `platform` e non in `src/`, perché ciò che il Task 8 comprò è che il confine sia raggiungibile **da
@@ -769,9 +769,9 @@ assegnato», **non** «non richiede un meccanismo di kernel».
    target verdi»* attribuite alla chiusura del Traguardo 2 — scritte identiche qui e in `HANDOFF.md`
    — non riconciliano con nessun'altra misura del progetto (**25 target** a quella data, **29**
    oggi), e non sono state riscritte perché rifarle richiederebbe uno stato che non esiste più.
-   ⏭️ **Il prossimo è il Task 8 del Traguardo 4**, l'elenco dei semi: ✅ il **brainstorming è
-   chiuso, il disegno e il piano sono scritti** — tutti il 2026-08-11 — e le **Parti 1 e 2 sono
-   eseguite per intero**, lo stesso giorno.
+   ⏭️ **Il prossimo è il Task 9 del Traguardo 4**, il tempo di parete nel cancello: ✅ il
+   **brainstorming è chiuso, il disegno e il piano sono scritti** — tutti il 2026-08-11 — le
+   **Parti 1 e 2 sono eseguite per intero** e la **Parte 3 è aperta**, lo stesso giorno.
    ⚠️ Questa riga ha detto *«il brainstorming»*, poi *«il piano»*, poi *«l'esecuzione»*, poi il
    Task 2, il 3, il 4 e il 5 **nello stesso giorno**: è la riga che invecchia più in fretta del
    file, e si riscrive **quando il passo si chiude**. ⚠️ **E diceva «una delle TRE in cui il
@@ -805,8 +805,8 @@ assegnato», **non** «non richiede un meccanismo di kernel».
    costruiti dallo stesso numero danno la **stessa** sequenza, quindi la campagna esplorerebbe una
    **diagonale** dello spazio invece dello spazio.
 10. **L'esecuzione del Traguardo 4** — ⏳ **in corso dal 2026-08-11**, subagent-driven, un compito
-    per volta con revisione fra uno e l'altro. ✅ **Le PARTI 1 e 2 sono complete — sette compiti su
-    dieci**, `GATE GREEN` a ciascuno; `cargo test --workspace` → **32 target, 171 test** di cui
+    per volta con revisione fra uno e l'altro. ✅ **Le PARTI 1 e 2 sono complete e la Parte 3 è
+    aperta — otto compiti su dieci**, `GATE GREEN` a ciascuno; `cargo test --workspace` → **32 target, 171 test** di cui
     **due** ignorati, le due campagne profonde. ⛔ **E il Task 7 ha stabilito cosa compra una
     campagna PROFONDA, misurandolo: non lo spazzamento.** Allargare l'intervallo oltre la
     saturazione dà corse **indistinguibili da corse senza iniezione** — a ottocento punti ne
@@ -1025,7 +1025,7 @@ in tre posti, aggiornata in due.
 | **1** | **scheletro e porta di qualità** — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
 | **2** | **il substrato iniettabile** — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) scritto ed eseguito **per intero, quattordici compiti su quattordici**: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · **l'esecutore** · l'orologio virtuale · **il reattore reale e la prima suite di conformità** · il **cablaggio di produzione** in `daemon`, coi default letterali · il **confine dei tipi** `Untrusted`/`Instruction`, con la promozione che pretende la porta `journal` · le porte **`filesystem` e `network`** · la porta **`process`**, coi gettoni e le **due ricevute distinte** · la porta **`ipc`**, che chiude le **sei famiglie** · il **registro dei controlli** e questa chiusura. ⛔ **Zero record del giornale scritti**, ed è deliberato: i byte congelati appartengono al Traguardo 3 |
 | **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ✅ **eseguito il 2026-08-10, dodici compiti su dodici**, `GATE GREEN` a tutti. ⚠️ **Ricontati il 2026-08-10 chiudendo il traguardo:** diceva *«otto compiti»*, ed era la terza delle tre cifre discordi dello stesso file. ⚠️ **Ricontati il 2026-08-10:** diceva *«due compiti»* ed era già indietro di uno al commit precedente, di **tre** a questo — e chiamava il compito *«la conformità coi **tre** bugiardi»* quando i bugiardi consegnati sono **sette**. Il numeratore lo muove chi esegue, e chi esegue guarda la §6. [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**, dodici compiti in due parti: ✅ il record versionato · ✅ la riga di catalogo dell'etichetta · ✅ il **doppio in memoria** · ✅ la **conformità coi sette bugiardi** e ✅ `replay()`, eseguiti come un compito solo · ✅ la **riconciliazione su un insieme**, che ha riportato indietro la firma di `replay()` invece di deciderla · ✅ **`promote` che diventa una nota**, con l'operazione `note()` e la variante `RecordKind::Note` che il compito ha dovuto inventare · ✅ **`redb` in `platform`** col **backend nostro**, la chiave progressiva e la prova che il confine è **sostituibile da fuori** · ✅ la conformità contro **entrambe** a ogni commit · ✅ **i byte congelati**, tre record e una mappa riletta dal banco · ✅ `prune` che rifiuta un passo in dubbio · ✅ la **chiusura**, che è stata un **audit** e non una scrittura. ⛔ **Congelamento per ultimo**, che è la decisione D1 del piano |
-| 4 | il simulatore DST — **il guasto**, non il tempo virtuale: quello è del Traguardo 2 | ⏳ **in corso — sei compiti su dieci eseguiti il 2026-08-11**, `GATE GREEN` a ciascuno: la **Parte 1 è completa** e la Parte 2 ha consegnato il backend cadente e la coerenza dopo la caduta, col **gotcha #51 chiuso nella metà chiudibile** e la campagna profonda che approfondisce lo **scenario** invece dello spazzamento; ⏭️ il prossimo è il **Task 8**, che apre la Parte 3. ✅ **Brainstorming, disegno e piano tutti il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md), che fissa il perimetro (il **motore**, non tutte le finte), i **due livelli come due campagne**, l'oracolo di non-vacuità e i **sette** artefatti col controllo che esercita ciascuno; e il [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci compiti in tre parti** — il giornale cadente · lo scenario giornalato e `C7a` · `C7b` con l'oracolo preso dalla **traccia** e non dall'archivio · la campagna breve col numero di semi **misurato** · il backend cadente scritto **da fuori la crate** · la coerenza dopo la riapertura e il **#51 chiuso dal conteggio dei `sync_data`** · la campagna di livello 2 · l'elenco dei semi · il tempo di parete nel cancello · la chiusura. ⚠️ Il titolo diceva *«tempo virtuale, guasti, campagna, semi»* e il tempo virtuale era eseguito da due traguardi |
+| 4 | il simulatore DST — **il guasto**, non il tempo virtuale: quello è del Traguardo 2 | ⏳ **in corso — sei compiti su dieci eseguiti il 2026-08-11**, `GATE GREEN` a ciascuno: la **Parte 1 è completa** e la Parte 2 ha consegnato il backend cadente e la coerenza dopo la caduta, col **gotcha #51 chiuso nella metà chiudibile** e la campagna profonda che approfondisce lo **scenario** invece dello spazzamento; **otto compiti su dieci**, e la Parte 3 è aperta con [`semi-dst.md`](semi-dst.md); ⏭️ il prossimo è il **Task 9**. ✅ **Brainstorming, disegno e piano tutti il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md), che fissa il perimetro (il **motore**, non tutte le finte), i **due livelli come due campagne**, l'oracolo di non-vacuità e i **sette** artefatti col controllo che esercita ciascuno; e il [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci compiti in tre parti** — il giornale cadente · lo scenario giornalato e `C7a` · `C7b` con l'oracolo preso dalla **traccia** e non dall'archivio · la campagna breve col numero di semi **misurato** · il backend cadente scritto **da fuori la crate** · la coerenza dopo la riapertura e il **#51 chiuso dal conteggio dei `sync_data`** · la campagna di livello 2 · l'elenco dei semi · il tempo di parete nel cancello · la chiusura. ⚠️ Il titolo diceva *«tempo virtuale, guasti, campagna, semi»* e il tempo virtuale era eseguito da due traguardi |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ⬜ |
 | 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ |
 
@@ -1297,6 +1297,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 24 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
 | **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 96 KB |
+| ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata | 6 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 8 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–9 KB l'uno |

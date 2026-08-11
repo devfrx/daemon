@@ -1036,6 +1036,46 @@ regola che la **nona misura** della §12 del compendio aveva già scritto per i 
 **Chiusura:** `cargo test -p simulator --test crashing_journal` → **dieci passati**;
 `bash scripts/gate.sh` → `GATE GREEN`; albero pulito.
 
+## Esecuzione del Traguardo 4 — il Task 2: lo scenario giornalato, e un verde che significava due cose
+
+Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0`. Commit `388ee53` (lo scenario e
+`C7a`) e `a58cd36` (il giro di correzione).
+
+| # | Misura | Esito |
+|---|---|---|
+| **T4-2-a** | quante scritture compie lo scenario in una corsa **senza crash** | **ventiquattro** — tre attività per quattro passi per due scritture. **Asserito**, non dedotto: il punto di caduta si estrae contro questo numero |
+| **T4-2-b** | `C7a` è verde per la ragione giusta? | ❌ **no** — con un giornale che cade alla scrittura **zero** l'archivio è vuoto, la traccia è vuota e `steps_in_doubt()` risponde `[]`: l'asserzione era soddisfatta da una corsa che **non aveva scritto niente** |
+| **T4-2-c** | mutazione A — lo scenario smette di scrivere l'esito | **rossa su entrambe** le sonde, `left: 12, right: 24`, e **dodici** passi in dubbio |
+| **T4-2-d** | mutazione C — caduta alla scrittura zero, **dopo** l'oracolo nuovo | **rossa** sull'oracolo nuovo, `left: 0, right: 24`. Prima della correzione la stessa mutazione lasciava `C7a` **verde** |
+| **T4-2-e** | mutazione E — l'esito **si scrive** ma il record dice `Intent` | ⛔ **rossa sull'asserzione dell'INSIEME**, dodici passi in dubbio, tutti `RunAgain`. È la misura che impedisce la conclusione sbagliata su C e D |
+| **T4-2-f** | il controfattuale **sequenziale** — le attività finiscono al primo poll | massimo insieme in dubbio **uno**, contro **tre** dello scenario vero, su tutti e cinquanta i semi |
+| **T4-2-g** | costo per seme, nella forma di `C7a` | **0,0324 ms** in debug — stabile su 50, 500 e 5000 semi |
+| **T4-2-h** | costo per seme, nella forma di `C7b` | **0,0246 ms** — **meno**, perché col crash lo scenario si ferma prima |
+| **T4-2-i** | il pavimento | binario nudo **~8 ms**; `cargo test -p simulator --test dst_campaign` **~80 ms**. ⚠️ Una prima misura diceva **~50 ms** ed era un **artefatto dello strumento**: cronometrava attraverso Git Bash, quindi contava il `fork` della shell insieme al binario |
+| **T4-2-j** | il confronto di `C7b` può restare **ordinato** invece che insiemistico? | ✅ **sì, verde su duecento semi.** La ragione è strutturale: fra la scrittura sul giornale e il `push` sulla traccia **non c'è alcun `await`**, quindi archivio e traccia sono in lockstep |
+
+⛔ **La misura T4-2-e esiste perché la lettura ovvia di C e D era sbagliata, ed è la lezione da
+portare via.** Le due mutazioni uccidono **la stessa** asserzione, il che somiglia al gotcha
+**#55** — una sonda che non distingue due difetti. Ma le due asserzioni non sono in competizione:
+stanno su **assi diversi**, la prima giudica **lo scenario** e la seconda la **riconciliazione**,
+e la seconda è raggiungibile esattamente quando la prima passa. 📌 **La regola:** quando due
+mutazioni uccidono la stessa asserzione, si cerca **una terza che lasci passare la prima**. Se
+esiste, la prima **domina** invece di oscurare.
+
+⚠️ **E una regressione di copertura registrata invece che taciuta:** prima dell'oracolo nuovo la
+mutazione A uccideva `C7a` **sull'insieme**; ora la uccide sulla riga nuova. Nessun rosso perso,
+ma il punto d'impatto **si è spostato** — gotcha **#48** nella forma in cui una riga aggiunta si
+mette davanti, e si è visto solo perché la campagna è stata rilanciata dopo una **rifinitura** e
+non solo dopo un cambiamento di comportamento.
+
+⛔ **Per il Task 4, il difetto d'uso della cifra:** il costo per seme è **per ciclo**, non per
+campagna. Il Task 3 aggiunge **due** cicli da duecento semi e `C7a` è un terzo da cinquanta, quindi
+un tetto scritto `N × costo` sbaglia **per il numero di cicli**. La formula è
+`pavimento + Σ_cicli (N × costo_del_ciclo)`.
+
+**Chiusura:** `cargo test -p simulator --test dst_campaign` → **due passati**;
+`cargo fmt --all -- --check` → uscita 0; `bash scripts/gate.sh` → `GATE GREEN`.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

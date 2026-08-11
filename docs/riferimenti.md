@@ -1178,6 +1178,52 @@ sostituisce l'esecuzione.
 `cargo test --workspace` → **31 target, 167 test**; `cargo fmt --all -- --check` → 0;
 `bash scripts/gate.sh` → `GATE GREEN`.
 
+## Esecuzione del Traguardo 4 — il Task 5: il backend cadente, e l'oracolo del #51 che non funzionava
+
+Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0` · `redb` 4.1.0. Commit `d8b4a1e` e
+`85ea1cd`. ⚠️ Le cifre sono state prese due volte, da agenti diversi, e concordano.
+
+| # | Misura | Esito |
+|---|---|---|
+| **T4-5-a** | quanto costa **un'apertura pulita di un archivio vuoto** | **23** operazioni del backend, **7** sync, archivio **1 056 768** byte. ⛔ Non è calcolabile: l'apertura **committa** |
+| **T4-5-b** | quanto costa riaprire un archivio **popolato** | **18**, e su otto sessioni successive 18/19/19/27/18/18/18/18 — ⚠️ **diverso** da un'apertura vuota, e il doc della costante lo taceva |
+| **T4-5-c** | quanto costa il `Drop` di `Database` | **12** operazioni in più, ed esegue una **transazione di scrittura intera** sotto `if !thread::panicking()` |
+| **T4-5-d** | il `Drop` su un backend **caduto** va in panico? | ❌ **no, mai**, su `falls_at` da 0 a 59: **ingoia** l'errore in silenzio. Era l'incognita dichiarata, ed è la ragione per cui il `catch_unwind` che il Task 6 detta attende un panico che non arriva |
+| **T4-5-e** | caduta **dentro** l'apertura (`falls_at = 3`) | archivio **irrecuperabile**: `Engine(Io(Kind(InvalidData)))`. Un punto scelto male non misura una scrittura, misura un file mai nato |
+| **T4-5-f** | caduta a 23 / 24 / 26 | apertura riuscita, **entrambe** le scritture fallite, riapertura **`Ok([])`**: una scrittura non confermata non lascia niente |
+| **T4-5-g** | caduta a **28** | ⛔ `intent` risponde `Err(NotDurable)` **mentre il record è durevole** — la riapertura lo trova. È il caso più affilato per l'asserzione sul prefisso, perché separa *«la porta ha detto no»* da *«l'archivio non ha il record»* |
+| **T4-5-h** | ⛔ **la decomposizione dei sette sync** | `create_with_backend` **nudo**: 19 operazioni, **6 sync** · dopo `with_backend`: 23 / **7** · dopo l'intento: 29 / **8** · dopo l'esito: 36 / **9**. **Un sync per scrittura**, e **sei su sette nascono prima che esista un record** |
+| **T4-5-i** | ⛔ `syncs > 0` chiude il gotcha **#51**? | ❌ **no.** Con `set_durability(Durability::None)` la sonda in quella forma resta **VERDE**; nella forma a **delta attraverso la scrittura** va **rossa**. Su un archivio fresco il conteggio assoluto **non può mai essere zero** |
+| **T4-5-j** | ⛔ **la saturazione dello scenario** | **58** operazioni esatte — 23 per aprire, 23 per tre scritture, 12 per il `Drop`. Da `falls_at = 58` la caduta **non scatta più**: in `23..63` scattano **35 punti su 40**, il più alto è **57** |
+| **T4-5-k** | quanto costa un'iniezione | **281 µs** in release, **3,63 ms** in debug. Il picco di memoria è **1,01 MiB** per punto, in RAM e non su disco |
+| **T4-5-l** | il rifiuto di allentare `OPERATIONS_TO_OPEN` a `>=` | ✅ **giustificato, e più di quanto il doc dicesse:** togliendo la guardia da ciascuna delle **cinque** operazioni, cinque su cinque vengono colte e **quattro su cinque solo da quel contatore** |
+
+⛔ **T4-5-i è la misura che vale il compito, ed è stata presa scrivendo in anticipo la sonda del
+compito SUCCESSIVO.** Il piano voleva chiudere il #51 contando le chiamate a `sync_data`; il
+conteggio è dominato dall'apertura, quindi l'oracolo era **cieco** proprio alla perdita per cui
+sarebbe esistito. 📌 La forma generale: **un contatore che parte da un valore che il soggetto
+sotto esame non ha prodotto non è un oracolo su quel soggetto**, e la cura è il **delta** invece
+del totale.
+
+⛔ **T4-5-j governa la Parte 2 e non solo il Task 5.** Il ciclo che il Task 6 detta esplora
+`23..63` e ne fa scattare trentacinque su quaranta **passando lo stesso**, perché il suo oracolo è
+*«almeno uno è scattato»*; e la campagna profonda del Task 7, a ottocento punti, farebbe scattare
+**sempre gli stessi trentacinque**. Venti volte il costo, **zero** stati in più. La misura è scritta
+nel doc di `CrashingBackend` — dove chi sceglierà l'intervallo la legge — e non in una sonda che
+si cancella.
+
+⚠️ **E due misure sbagliate sono state trovate e diagnosticate, entrambe sui fine-riga.**
+`grep -c $'\r$'` ha risposto **`0`** su un file con **291** byte `CR`: l'escape non sopravvive al
+trasporto del comando e il pattern degrada in `r$`, cioè *«riga che finisce per la lettera r»* —
+e la **stessa** tecnica, invocata prima, era degradata diversamente rispondendo *«tutte le
+righe»*. 📌 Due risposte opposte, entrambe sbagliate, **nessuna rumorosa**; e la seconda è passata
+senza sospetto **perché chi la faceva aveva appena corretto la prima**. Il conteggio vero:
+**quattro** file `.rs` portano byte `CR`, nell'albero e nell'indice, con `core.autocrlf = false`.
+
+**Chiusura:** `cargo test -p platform --test engine_crash_consistency` → **tre passati**;
+`cargo test --workspace` → **32 target, 169 test**; `cargo fmt --all -- --check` → 0;
+`bash scripts/gate.sh` → `GATE GREEN`.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

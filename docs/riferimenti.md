@@ -1354,6 +1354,42 @@ controllo che guardi **la forma di ciò che sopravvive**. Chiuderlo in un posto 
 altrove**: le tre sonde sono state scritte dallo stesso metodo, l'una dopo l'altra, e hanno
 ripetuto lo stesso buco.
 
+## Audit completo del repository — 2026-08-11: le misure, coi comandi
+
+Primo audit completo — codice, script del cancello, documenti di stato, ADR, diagrammi — con
+**nove revisori paralleli in sola lettura** e ogni finding grave **riverificato dal coordinatore
+sul sorgente**. Il rapporto è [`audit-2026-08-11.md`](audit-2026-08-11.md); qui ci sono solo le
+misure, con i comandi che le producono.
+
+**Baseline, presa prima di qualsiasi lettura di merito** — `bash scripts/gate.sh` → `GATE GREEN`,
+exit 0; `cargo test --workspace --no-fail-fast` → **32 target, 171 passati, 0 falliti, 2 ignorati,
+0 warning**. ⚠️ La prima misura fu **troncata da un `| tail -80`** e diede *«8 target, 30 test»*:
+rifatta su uscita intera prima di usarla. Una cifra parziale letta come totale è il difetto che
+questo audit cercava — colto sul proprio banco.
+
+| Misura | Comando | Esito |
+|---|---|---|
+| **vulnerabilità note**, otto dipendenze | `curl -s -X POST https://api.osv.dev/v1/query -d '{"package":{"name":"<crate>","ecosystem":"crates.io"},"version":"<ver>"}'` | **una sola voce**: `bincode` 2.0.1 → **RUSTSEC-2025-0141**, *«Bincode is unmaintained»*, categoria `INFO`, segnalata 2025-12-16, emessa **2026-01-07**, riguarda **tutte** le versioni; alternative citate dall'avviso: `wincode`, `postcard`, `bitcode`, `rkyv`. ✅ Pulite: `minicbor` 2.3.0 · `redb` 4.1.0 · `unty` 0.0.4 · `trybuild` 1.0.120 · `minicbor-derive` 0.19.5 · `bincode_derive` 2.0.1 · `virtue` 0.0.18 |
+| **usi reali di `bincode`** | `grep -rn "bincode" crates/ --include="*.rs"` | **due file, zero usi di produzione**: un commento in `ports/ipc.rs:24` (*«Milestone 6 brings the SCHEMA»*) e la sonda `dependencies_usable.rs`. Lo schema del canale `ipc` **non esiste ancora** |
+| **segreti nel codice tracciato** | `git grep -nIE '(api[_-]?key\|secret[_-]?key\|password\|BEGIN [A-Z ]*PRIVATE KEY\|xox[baprs]-\|ghp_\|sk-[A-Za-z0-9]{20,}\|AKIA[0-9A-Z]{16})'` | ✅ **nessuno**. Due sole corrispondenze, entrambe innocue: il nome della crate `secrets`, e un `/etc/passwd` **deliberato** in `compile_fail/std_in_kernel.rs` |
+| **segreti nella storia** | `git log --all --diff-filter=A --name-only --pretty=format:` filtrato su `*.env`, `*.key`, `*.pem`, `*.p12`, `*.pfx`, `*.jks`, `*.keystore` e sui nomi con `secret`/`credential`/`token`/`password` | ✅ **nessun file sospetto mai aggiunto** in **171** commit |
+| **fine-riga, per file** | `tr -cd '\r' < "$f" \| wc -c` contro `tr -cd '\n' < "$f" \| wc -c` | **160 LF, 4 CRLF, zero file internamente incoerenti**. ⛔ Contati con `tr` e **non** con `grep $'\r$'`, che è il gotcha **#48**, undicesima forma |
+| **isolamento degli spike** | `cargo metadata --no-deps` · `find . -name clippy.toml` | ✅ nessuna crate degli spike nel workspace; `clippy.toml` **solo** in `spikes/rust/` — vincolo 5 di §11 onorato |
+| ⛔ **il build script fra apici singoli** — gotcha **#61** | crate di prova con `build = 'gen.rs'`, script che fa `println!("cargo:rustc-env=LEAKED=yes")`; `cargo build`; poi `find target -name output -path "*build*" -exec grep -l LEAKED {} \;` | **cargo esce 0** e il file `output` **contiene** la variabile: lo script **è stato eseguito**. Il pattern vecchio (`…=[[:space:]]*"`) non lo vedeva |
+| ⛔ **il pattern corretto, cinque forme** | `bash scripts/gate-attributes.sh` su una copia con una riga `build` diversa per volta | `'gen.rs'` **exit 1** · `"gen.rs"` **exit 1** · `["gen.rs"]` **exit 1** · `false` **exit 0** · nessuna riga **exit 0**. ⚠️ Misurati i codici d'uscita **dello script**, non del `grep` che ne filtrava l'uscita: la prima lettura confondeva i due |
+| ⛔ **le guardie di `check-docs.sh`** — gotcha **#60** | copia completa di `docs/`, `scripts/`, `CLAUDE.md` **e `spikes/*.md`**, poi rinomina della spec e della cartella | spec rinominata → **exit 1** col messaggio nuovo; cartella rinominata → **exit 1**, due messaggi; ripristinata → **exit 0**. ⚠️ La prima copia **ometteva `spikes/`** e produsse **dodici link rotti**: un rosso del banco, non del codice, e la misura è stata rifatta invece che riportata |
+| ⛔ **il falso positivo di `sort -uV`** — gotcha **#62** | tolta a `Q9` la propria riga in `design/08`, poi `check-docs.sh` col fix e con il pattern vecchio | col fix (`sort -u`): **`Q9`**. Col vecchio (`sort -uV`): **`Q9 Q10 … Q24`**, sedici nomi, **quindici falsi** |
+| ⛔ **V6 provata solo su archivio vuoto** — gotcha **#63** | copia integrale del workspace; guardie di `FileJournal::outcome` e `::note` sostituite con `if self.find_first(\|_, _, _\| Some(()))?.is_none()`, guardia di `intent` **intatta**; `cargo test --workspace --no-fail-fast` con `CARGO_TARGET_DIR` separato | **32 target, 171 passati, 0 FALLITI, exit 0.** ✅ E la mutazione **è osservabile** (#54 in due direzioni), sonda dedicata: `orphan outcome on EMPTY archive -> Err(OutOfOrder)` · `on NON-EMPTY -> Ok(())` · `orphan note on NON-EMPTY -> Ok(())` |
+| ⛔ **ADR-0026 contro ADR-0031** — gotcha **#59** | `head -8` sui due ADR · `grep -rn "madsim" Cargo.lock crates/` · `awk '/^name = "simulator"/,/^$/' Cargo.lock` · `wc -l crates/simulator/src/*.rs` | **`Date: 2026-08-06` su entrambi**. `madsim` **non compare** né nel lockfile né in `crates/`; `simulator` ha **una** dipendenza (`kernel`) e **512** righe scritte a mano |
+| **pesi della §12, rimisurati a passata chiusa** | `wc -c`, arrotondato a KiB | tre celle erano fuori — disegno T4 `27 → 30`, `design/08` `8 → 10`, `design/` `4–9 → 4–10`. ⛔ **Due erano elencate come «invariati, RICONTATI» in DUE verbali consecutivi**: una rimisura dichiarata e non avvenuta |
+| **il messaggio di `AVVIO-CHAT.md`** | `awk '/^```/{n++; next} n==1' docs/AVVIO-CHAT.md \| wc -c` | **12465 B = 12,2 KB**, contro i `9,8` che la cella viva dichiarava |
+
+⚠️ **Non misurato, e dichiarato invece che taciuto: i permessi del file del giornale su Linux.**
+L'host dell'audit è Windows, dove la divergenza **per costruzione non si manifesta**. È verificata
+l'**assenza** di qualunque `.mode()`, `OpenOptionsExt`, `PermissionsExt` o `cfg` di piattaforma in
+tutto `crates/` (grep esaustivo), e il default documentato di `std::fs::OpenOptions` su Unix
+(`0o666` meno umask). La misura vera è `stat -c %a` sul file del giornale, e **va fatta lì**.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

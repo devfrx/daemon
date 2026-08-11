@@ -18,8 +18,11 @@ ciascuno: il simulatore porta ora **il guasto** — il giornale che cade, il bac
 `redb` scritto **da fuori la crate**, e due campagne con **soggetti diversi**, la riconciliazione
 del kernel e la coerenza del motore. ⛔ Il disegno aveva ristretto il traguardo su una misura —
 delle dieci righe di guasto della §3.3 **una sola** ha oggi il proprio soggetto — quindi si è
-costruito **il motore** della DST e non tutte le finte. ⏭️ **Il prossimo è il Traguardo 5**,
-l'arbitro GPU, e si comincia dal **brainstorming**. ⚠️ **Questa riga diceva *«il prossimo passo è
+costruito **il motore** della DST e non tutte le finte. ⛔ **E lo stesso giorno il repository ha
+ricevuto il suo primo AUDIT COMPLETO** — [`audit-2026-08-11.md`](audit-2026-08-11.md): sedici
+finding corretti e provati, il resto aperto. ⏭️ **Il prossimo è l'ESECUZIONE DELL'AUDIT**, non il
+Traguardo 5: l'arbitro GPU riparte quando le voci aperte sono chiuse, e allora si comincia dal
+**brainstorming**. ⚠️ **Questa riga diceva *«il prossimo passo è
 eseguirlo»***, prima *«il brainstorming»*, prima ancora *«scrivere il piano»*.
 ⚠️ **Questa riga diceva «dieci compiti su dodici, si riprende dal Task 11»** a traguardo chiuso:
 è la lezione della tredicesima misura — la §6 del compendio giusta **nasconde** gli altri
@@ -42,6 +45,7 @@ inglese, la documentazione in italiano** (§1.0 della spec del sotto-progetto 1)
 | Percorso | Contiene | Risponde alla domanda |
 |---|---|---|
 | [`COMPENDIO.md`](COMPENDIO.md) | ⛔ **l'unica lettura obbligatoria oltre a `CLAUDE.md`**: tutte le decisioni compresse, le invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo | *cosa è già deciso*, tutto, in un colpo solo |
+| [`audit-2026-08-11.md`](audit-2026-08-11.md) | ⛔ **il primo audit completo del repository** — codice, script, documenti, ADR, diagrammi. Copertura dichiarata, le quattro radici, i finding con causa radice e dimostrazione, cosa è **pulito**, e le **otto decisioni** che aspettano il proprietario | *cosa c'è da fare adesso* — è il **prossimo passo**, non un documento di consultazione |
 | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | il messaggio da incollare all'inizio di una nuova sessione | *come si apre* una chat su questo repository |
 | [`HANDOFF.md`](HANDOFF.md) | Gotcha, non rilitigabile, metodo, cosa non rifare — ⚠️ **a sezioni**, non per farsi un'idea | *come riprendere* senza rifare |
 | [`roadmap.md`](roadmap.md) | Sotto-progetti, ordine, stato, spike aperti | *a che punto siamo* e *cosa viene dopo* |

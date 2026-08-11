@@ -8,6 +8,26 @@
 > gotcha #36: una sezione decide un meccanismo, lo scrive nella propria tabella, e il
 > catalogo resta indietro — è già successo due volte.
 
+⛔ **RICHIAMO DEL 2026-08-11 — l'audit ha trovato TRE controlli che non controllavano ciò che
+dichiaravano, e nessuno di essi è una riga di catalogo nuova: sono riparazioni di righe
+esistenti.** Il catalogo resta a **sei controlli** e le sue righe non cambiano; cambia il fatto
+che ora fanno ciò che dicevano già di fare. Tutti e tre provati **in due direzioni**, coi codici
+d'uscita veri, e il cancello è rimasto `GATE GREEN` con **171 test, 0 falliti** — identico alla
+baseline presa prima di toccare qualsiasi cosa.
+
+| Controllo | Che cosa lasciava passare | Rimedio | Gotcha |
+|---|---|---|---|
+| **quinto — `gate-attributes.sh`** | ⛔ **un build script dichiarato fra APICI SINGOLI**: il pattern ancorava sulla virgoletta doppia, e `build = 'gen.rs'` è lo stesso valore in TOML. Provato: cargo 1.95.0 lo **costruisce con exit 0** e lo **esegue** — il file `output` porta il `cargo:rustc-env` iniettato. Con gli altri cinque ciechi per costruzione, la porta usciva **verde su sei su sei** col kernel che legge orologio, filesystem e ambiente | àncora sulla **chiave** e non sul delimitatore: accetta `"`, `'` e `[`. Provato su cinque forme — `'…'`, `"…"` e `[…]` rossi; `build = false`, che **disattiva** e deve passare, e l'assenza della riga verdi | **#61**, e il **#28** riaperto |
+| **sesto — `check-docs.sh`, esistenza della spec** | ⛔ **la spec rinominata uccideva le SEI asserzioni di §8.6.1 in silenzio**: vivono in blocchi `END` di `awk`, ed `END` **non gira** su un fatal. Variabili vuote, nessun `report`, **exit 0** | guardia d'esistenza **fuori** da `awk`, prima delle due passate. 📌 La lezione riusabile: *una guardia di non-vacuità dentro `END` non può, per costruzione, difendere dall'input che manca* | **#60** |
+| **sesto — `check-docs.sh`, i due controlli su glob** | ⛔ `nullglob` è **off**: rinominando `docs/superpowers/specs/`, duplicati di sezione e **V30** davano **zero rossi** mentre tutte e ventiquattro le Q perdevano il metodo | conteggio dei file prima del ciclo, con messaggio proprio | **#60** |
+| **sesto — `check-docs.sh`, V30** | ⚠️ **falso positivo**, non falso negativo: `sort -uV` in pasto a `comm`, che confronta per **collazione**. Latente finché i due insiemi coincidono; con `Q9` privo di metodo riportava **sedici** nomi invece di uno | `sort -u` su entrambi i lati | **#62** |
+
+⛔ **E una voce aperta che l'audit ha lasciato, ed è la più grave del rapporto:** la suite di
+conformità prova **V6 solo su un archivio vuoto** — gotcha **#63**. Non è riparabile qui: è
+un'**aggiunta al contratto di una porta condivisa**, cioè una decisione del proprietario. Il
+dettaglio, con la mutazione e la prova che è osservabile, sta in
+[`audit-2026-08-11.md`](audit-2026-08-11.md) §5.1.
+
 **Un comando solo:** `bash scripts/gate.sh`
 
 | # | Cosa lancia | |

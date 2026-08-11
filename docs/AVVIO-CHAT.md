@@ -39,30 +39,43 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
-  /superpowers:brainstorming            <-- SERVE SUBITO, ed è cambiato rispetto
+  /anthropic-skills:repo-audit          <-- SERVE SUBITO, ed è cambiato rispetto
                                         alla sessione scorsa: quello che viene
-                                        dopo NON è codice ma LAVORO CREATIVO —
-                                        il brainstorming del Traguardo 5. Si
-                                        invoca PRIMA di entrare in plan mode
+                                        dopo NON è un brainstorming ma
+                                        l'ESECUZIONE DELL'AUDIT già fatto. La
+                                        skill governa la remediation: radice e
+                                        mai sintomo, niente campionamento
+                                        silenzioso, e i fix in sequenza — il
+                                        parallelismo è per LEGGERE, mai per
+                                        scrivere
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
-  /superpowers:writing-plans                 quando le voci aperte del
-                                             brainstorming saranno chiuse — NON
-                                             prima
+  /superpowers:test-driven-development       quando ricomincerà il codice: buona
+                                             parte delle voci aperte è una SONDA
+                                             che manca, non una funzione
+  /superpowers:brainstorming                 quando l'audit sarà chiuso e
+                                             comincerà il Traguardo 5 — è lavoro
+                                             creativo, e si invoca PRIMA di
+                                             entrare in plan mode
+  /superpowers:writing-plans                 quando le voci aperte di QUEL
+                                             brainstorming saranno chiuse
   /superpowers:subagent-driven-development   quando ci sarà un piano da
                                              ESEGUIRE: un subagente fresco per
                                              compito, con revisione fra uno e
                                              l'altro. È la modalità scelta, e ha
                                              appena portato dieci compiti su dieci
-  /superpowers:test-driven-development       quando ricomincerà il codice
 
-LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 242 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 278 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i cinquantotto gotcha (§9), le trappole di
+     cosa NON rifare (§8), i sessantaquattro gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
+  3. docs/audit-2026-08-11.md — 22 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
+     ALLA REGOLA DEI DUE: è IL COMPITO. Contiene la copertura dichiarata, le
+     quattro radici, i finding con causa radice e dimostrazione, ciò che è
+     stato verificato PULITO, e la §8 con le OTTO DECISIONI che aspettano me.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token, e il compendio
      ne ha oltre milleseicento. È un LIMITE INFERIORE, non un totale — §12.
@@ -76,12 +89,7 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 242 KB in tutto
 
 ⚠️ IL REPOSITORY CONTIENE CODICE RUST — QUATTRO traguardi su sei eseguiti,
    l'ultimo il Traguardo 4 (il simulatore DST: il guasto), dieci compiti su
-   dieci, GATE GREEN a tutti. ⛔ Quello che viene dopo NON è codice ma un
-   BRAINSTORMING — il Traguardo 5, l'arbitro GPU — e la specie del lavoro è
-   cambiata: prima si esplora, poi si disegna, poi si scrive il piano, poi si
-   esegue. Sta scritto solo nella §6 del compendio.
-   ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, e ha detto «quello che
-      viene dopo È CODICE» quando lo era: si riscrive quando il passo si chiude.
+   dieci, GATE GREEN a tutti.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
    x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
    in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
@@ -89,16 +97,49 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 242 KB in tutto
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
-⛔ NESSUN FILE VA APERTO OLTRE AI DUE, e questa riga è cambiata di specie il
-   2026-08-11: il Traguardo 4 è ESEGUITO, quindi non c'è un piano in corso da
-   leggere a compiti. Quello che viene dopo è il BRAINSTORMING del Traguardo 5
-   — l'arbitro GPU — e un brainstorming si apre con la §6 del compendio, non
-   con un piano: scriverne uno per codice che non esiste significa inventare.
-   ⚠️ La riga qui sopra diceva «DUE FILE VANNO APERTI: il disegno e il piano
-      del traguardo in corso». Vale di nuovo il giorno in cui un piano c'è.
+⛔ IL PROSSIMO PASSO È L'ESECUZIONE DELL'AUDIT — NON IL TRAGUARDO 5.
+   Il 2026-08-11 il repository ha ricevuto il suo primo audit completo: nove
+   revisori paralleli in sola lettura, ogni finding grave riverificato sul
+   sorgente, SEDICI corretti e provati nella stessa sessione. Il resto è
+   aperto, ed è quello che devi portarmi.
+   ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, poi «quello che viene
+      dopo è un BRAINSTORMING»: si riscrive quando il passo si chiude.
+
+   LE TRE COSE CHE L'AUDIT HA TROVATO, e la prima è la più grave:
+     · LA SUITE DI CONFORMITÀ PROVA V6 SOLO SU UN ARCHIVIO VUOTO. Le promesse
+       5 e 8a costruiscono un giornale vuoto e chiedono subito il rifiuto:
+       una guardia che chieda «l'archivio è vuoto?» invece di «questo passo ha
+       un intento?» le soddisfa entrambe. Misurato: sostituite così le guardie
+       di FileJournal::outcome e ::note, cargo test --workspace dà 32 target,
+       171 passati, ZERO falliti — e la mutazione È OSSERVABILE, perché su un
+       archivio non vuoto accetta esiti e note per passi MAI APERTI. Gotcha
+       #63. ⛔ Chiuderlo è un'AGGIUNTA AL CONTRATTO DI UNA PORTA CONDIVISA,
+       cioè una decisione mia: non farlo di iniziativa.
+     · DUE BUCHI DEL CANCELLO lo lasciavano verde col confine caduto — già
+       corretti e provati coi codici d'uscita veri. build = 'gen.rs' fra apici
+       singoli sfuggiva al controllo dei build script (#61, il #28 riaperto da
+       un carattere di quoting), e check-docs.sh non verificava che la spec
+       ESISTESSE: le sei asserzioni di §8.6.1 vivono in blocchi END di awk, ed
+       END non gira su un fatal (#60).
+     · TRE DOCUMENTI DI STATO dicevano che il Traguardo 4 era da fare, mentre
+       era eseguito da un commit — già corretti.
+
+   ⛔ E IL GOTCHA PIÙ UTILE CHE NE È USCITO È IL #59: un ADR può essere
+   falsificato da un ADR FRATELLO SCRITTO LO STESSO GIORNO, e nessuno dei due
+   se ne accorge perché entrambi sono coerenti con sé stessi. ADR-0026 dice
+   che il simulatore non va scritto perché c'è madsim; ADR-0031, stessa data,
+   misura 55 crate e lo scarta — e il codice gli dà ragione. Nessuna delle
+   quattro domande del pre-controllo lo coglie: guardano tutte il compito
+   contro il CODICE, mai una decisione contro le decisioni vicine.
+
+   ✅ E CIÒ CHE L'AUDIT HA TROVATO SANO CONTA QUANTO IL RESTO: le due campagne
+   DST sono solide — la quarta occorrenza del difetto di vacuità NON c'è —
+   nessun segreto in centosettantuno commit, il grafo spedito è esattamente
+   quello dichiarato, e i quattordici conteggi di test di porta-di-qualita.md
+   sono giusti tutti e quattordici.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 691 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 698 KB
    il 2026-08-11, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
    e l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
@@ -125,26 +166,27 @@ LEGGI SOLO QUESTI DUE FILE, PER INTERO, POI FERMATI     — 242 KB in tutto
          - il numero di semi NON si massimizza: si sceglie sulla CHIUSURA
            DELLO SPAZIO DEGLI ESITI. Un tetto è un vincolo, non un bersaglio.
 
-⛔ LA COSA PIÙ IMPORTANTE CHE IL TRAGUARDO 4 HA IMPARATO, e l'ha imparata TRE
-   VOLTE, ogni volta DOPO aver chiuso la precedente:
+⛔ LA LEZIONE DEL TRAGUARDO 4, imparata TRE VOLTE ogni volta DOPO aver chiuso
+   la precedente, e la stessa che l'audit ha ritrovato sulla conformità:
      «L'INIEZIONE È AVVENUTA» e «C'ERA QUALCOSA DA VERIFICARE» SONO DUE
-     AFFERMAZIONI, e una campagna che tiene solo la prima è VERDE avendo
+     AFFERMAZIONI, e una prova che tiene solo la prima è VERDE avendo
      confrontato insiemi vuoti.
-   Successo a C7a («nessun passo è in dubbio» era vero anche di uno scenario
-   che non aveva scritto niente), poi a C7b («ogni seme ha raggiunto il proprio
-   punto» era vero anche di duecento confronti fra insiemi vuoti), poi al ciclo
-   di livello 2 («il prefisso torna» è banalmente vero se non si è perso nulla).
-   Chiuderlo in un posto NON lo chiude altrove: le tre sonde le ha scritte lo
-   stesso metodo, una dopo l'altra, e hanno ripetuto lo stesso buco.
+   Il racconto per esteso — C7a, C7b, il ciclo di livello 2 — sta nella §6 del
+   compendio. Quel che serve qui è la domanda: IN QUALE ALTRO STATO DEL MONDO
+   QUESTA ASSERZIONE RESTEREBBE VERDE?
 
-⚠️ LE QUESTIONI APERTE STANNO IN UN POSTO SOLO: §6 del compendio. Nessuna è un
-   difetto oggi e per ciascuna è scritto perché. Il Traguardo 4 ne ha chiusa
-   una (il gotcha #51, ma SOLO NELLA METÀ CHIUDIBILE) e ne ha lasciate tre:
-   le nove righe di guasto scoperte — che hanno un indirizzo, quindi sono uno
-   scaglionamento e non un arretrato — la metà del #51 che resta fuori, e
-   docs/semi-dst.md che NON HA UN CHIUDENTE: una guardia in check-docs.sh
-   sarebbe una riga di catalogo nuova, cioè UNA TUA DECISIONE, registrata e
-   non presa.
+⚠️ LE QUESTIONI APERTE STANNO IN DUE POSTI, e non è un'incoerenza: la §6 del
+   compendio tiene quelle del PRODOTTO — nessuna è un difetto oggi, e per
+   ciascuna è scritto perché — mentre la §5 dell'audit tiene quelle della
+   QUALITÀ, che sono difetti veri e vanno chiuse. Fra le prime: le nove righe
+   di guasto scoperte (hanno un indirizzo, quindi sono uno scaglionamento e
+   non un arretrato), la metà del gotcha #51 che resta fuori, e semi-dst.md
+   che NON HA UN CHIUDENTE. Fra le seconde, oltre a V6: read_back mai
+   obbligato a scegliere per passo, il turn limit consegnato che può essere
+   ignorato senza che nulla diventi rosso, quattro gruppi su cinque della
+   conformità reactor mai visti scattare, e bincode dichiarato NON MANTENUTO
+   (RUSTSEC-2025-0141) — che però ha ZERO usi di produzione, quindi la
+   finestra per decidere si chiude da sola al Traguardo 6.
 
 ⚠️ Il compendio è una COMPRESSIONE, non una selezione: ci sono dentro tutte le
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
@@ -178,23 +220,18 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     documento che le ha lette si sente verificato, ed è lì che smette di
     guardare i test. E un precedente si cita per la RAGIONE che lo ha
     prodotto, non per la forma.
-  · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48, ora a
-    TREDICI occorrenze in tre sessioni, e QUATTRO sono della sessione scorsa.
-    Prova che la mutazione si sia applicata, compila in un passo separato
-    dall'eseguire, e per ogni mutazione su un valore provane due. ⛔ Le tre
-    forme nuove, tutte misurate, e nessuna fallisce rumorosamente:
-      - `grep -c $'\r$'` NON FALLISCE: l'escape non sopravvive al trasporto e
-        il pattern DEGRADA in un altro pattern valido. La stessa tecnica ha
-        dato due risposte OPPOSTE, entrambe sbagliate. Conta byte con
-        `tr -cd '\r' | wc -c`.
-      - `python - <<'PY'` decodifica lo stdin nel CODEPAGE DI SISTEMA: uno
-        script che contiene ⛔ o ⚠️ applica le sostituzioni ASCII, muore sulle
-        altre, e lascia il file scritto A METÀ. Usa gli strumenti di edit.
-      - `git checkout --` come ripristino di una mutazione CANCELLA IL LAVORO
-        se il file mutato è anche quello che stai scrivendo. Sfiorato.
-    ⚠️ E la forma peggiore resta quella psicologica: chi aveva colto un errore
-    di misura ha creduto al RIMPIAZZO senza dubitarne. Una misura corretta una
-    volta si guarda come una misura qualsiasi.
+  · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48, a TREDICI
+    occorrenze. Le forme misurate stanno nella §9 del compendio; qui basta il
+    contro-verso: prova che la mutazione si sia APPLICATA, compila in un passo
+    separato dall'eseguire, per ogni mutazione su un valore provane DUE, e non
+    ripristinare con `git checkout --` un file che stai anche scrivendo.
+    ⛔ L'audit l'ha ripetuto su sé stesso e va detto: la prima misura della
+    baseline fu TRONCATA da un `| tail -80` e diede «8 target, 30 test» invece
+    di 32 e 171; e la prima copia per provare check-docs.sh OMETTEVA spikes/,
+    producendo dodici link rotti che erano del banco e non del codice.
+    Entrambe rifatte invece che riportate.
+    ⚠️ La forma peggiore resta quella psicologica: chi aveva colto un errore di
+    misura ha creduto al RIMPIAZZO senza dubitarne.
   · Alla chiusura di ogni voce COMMITTA E PUSHA senza chiedere, e SENZA
     co-autore. Prima però: bash scripts/gate.sh — comprende check-docs.sh.
   · Se ti viene un'idea che SOSTITUISCE una decisione presa, cerca PRIMA dove
@@ -212,10 +249,11 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
    e con due macchine sullo stesso repository quella è una scelta che faccio
    io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
 
-Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, e qual è
-il prossimo passo secondo la §6 — POI ASPETTA le mie richieste prima di
-proporre qualunque cosa. ⛔ Non c'è un piano da riprendere: il Traguardo 4 è
-CHIUSO, e il passo che viene è un brainstorming.
+Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, e come
+proponi di affrontare le OTTO DECISIONI della §8 dell'audit — quali portarmi
+per prime e perché — POI ASPETTA le mie richieste prima di scrivere qualunque
+cosa. ⛔ Non c'è un piano da riprendere né un brainstorming da aprire: il
+Traguardo 4 è CHIUSO e l'audit è FATTO; quello che manca è eseguirlo.
 ```
 
 ---
@@ -224,9 +262,9 @@ CHIUSO, e il passo che viene è un brainstorming.
 
 | | Prima | Adesso |
 |---|---|---|
-| il messaggio | ~9 KB | **12,2 KB** ⚠️ era 9,8, e 7,7 prima ancora, entrambe il 2026-08-11. ⛔ **Ha superato il proprio riferimento**: la 24ª misura lo aveva registrato e questa cella non lo aveva incassato — audit del 2026-08-11 |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **242 KB** — `CLAUDE.md` più il compendio |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 242 KB |
+| il messaggio | ~9 KB | ⛔ **14,7 KB**, e il riferimento è superato di parecchio: 7,7 → 9,8 → 12,2 → **14,7**, cioè la **quarta crescita di seguito** e la terza a due cifre percentuali. ⚠️ **La consegna del 2026-08-11 aveva PROVATO a comprimere e non è bastato**: le lezioni del Traguardo 4 e il gotcha #48 sono stati portati nel compendio — 344 byte recuperati — e il blocco dell'audit li ha più che compensati. 📌 Va detto invece che nascosto: **comprimere ciò che è vecchio non basta quando ciò che è nuovo pesa di più.** La prossima consegna deve decidere **cosa TOGLIERE**, non cosa accorciare |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **256 KB** — `CLAUDE.md` più il compendio, e **278** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 256 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -240,7 +278,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **242 KB contro mezzo megabyte**.
+resta quello che conta: **278 KB contro mezzo megabyte**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **277 KB**. Non è che chiedesse

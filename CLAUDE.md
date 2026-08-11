@@ -9,7 +9,9 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 242 KB** (`wc -c`, il 2026-08-11). ⛔ **E il prezzo in
+⚠️ **Insieme questi due file pesano 256 KB** (`wc -c`, il 2026-08-11), e con
+[`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — che è il **prossimo passo** e non una
+consultazione — **278**. ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
@@ -22,10 +24,10 @@ servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un
 travestita da misura. Il metodo e il limite stanno nella §12 del compendio, quattordicesima
 misura. 📌 È la **sesta** occorrenza del gotcha **#31** su questa riga, che prima diceva
 «circa seimila token» quando i due file pesavano 24 KB, poi «88 KB» quando erano
-già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **691 KB**.
+già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **698 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **691 KB** con
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **698 KB** con
 `wc -c` il 2026-08-11, e possono solo crescere; la spec da sola ne fa **277** — e l'idea è
 già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
 aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione
@@ -121,6 +123,16 @@ stavano nei **banchi di prova** — di cui una scritta in un **commento**. ⚠�
 tutto il codice:** un documento che ha letto gli script del cancello, i manifesti e i sorgenti
 delle dipendenze **si sente verificato**, ed è lì che smette di guardare i test. E un precedente
 si cita per la **ragione** che lo ha prodotto, non per la forma.
+
+⛔ **E una SESTA, che l'audit del 2026-08-11 ha prodotto e che nessuna delle cinque coglie: un ADR
+si legge anche contro i propri FRATELLI.** [ADR-0026](docs/adr/0026-linguaggio-del-core.md)
+dichiara fra le proprie conseguenze positive che *«il simulatore non va scritto da zero»* perché
+esiste `madsim`; [ADR-0031](docs/adr/0031-dipendenze-del-kernel-parte-del-confine.md) — **con la stessa data** —
+misura che `madsim` porta **55 crate** e lo scarta, e il codice gli dà ragione: `simulator` ha
+**una** dipendenza e **512 righe** scritte a mano. ⚠️ **Nessuno dei due nomina l'altro**, quindi
+la contraddizione non si vede da nessuno dei due lati, e le cinque domande qui sopra guardano
+tutte il compito contro il **codice** — mai una decisione contro le decisioni vicine. Gotcha
+**#59**.
 
 ## Manutenzione della documentazione
 

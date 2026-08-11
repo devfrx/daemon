@@ -525,10 +525,16 @@ fn campaign(seeds: u64) -> (u64, usize) {
 /// ⛔ CONSTRAINT 7 OF §11 IS DISCHARGED IN PART HERE, AND THE PART MATTERS. The constraint has
 /// two halves. The first — the seed count is FIXED AND VERSIONED, not drawn from the clock or the
 /// environment — is discharged: it is `SHORT_CAMPAIGN_SEEDS`, in this file, under review. The
-/// second — the wall time is printed EVERY RUN, *so that the slowdown becomes visible* — is only
-/// half done: `campaign` prints it, but `gate.sh` runs `cargo test --workspace` with no
-/// `--nocapture`, so on every commit that line goes into a buffer nobody reads. **TASK 9 adds the
-/// gate step that shows it.**
+/// second — the wall time is printed EVERY RUN, *so that the slowdown becomes visible* — splits
+/// once more, into PRODUCING the number and SHOWING it.
+///
+/// ⚠️ PRODUCING IT IS DONE SINCE 2026-08-11, AND AT BOTH LEVELS: `campaign` prints it here, and
+/// task 7 put the same line on the level-2 sweep in
+/// `crates/platform/tests/engine_crash_consistency.rs`, which until that day printed its counts and
+/// not its time — so the constraint was produced at one level of two and this paragraph did not
+/// know it. SHOWING it is what is still missing: `gate.sh` runs `cargo test --workspace` with no
+/// `--nocapture`, so on every commit BOTH lines go into a buffer nobody reads. **TASK 9 adds the
+/// gate step that shows them.**
 ///
 /// ⚠️ WHY THE DISTINCTION IS WORTH SEVEN LINES rather than a tidier "discharged": the closing
 /// audit of this milestone reads these claims. A file saying "discharged" here would mark the

@@ -35,12 +35,17 @@ fn empty_archive() -> Archive {
 /// at the injection point the test is about.
 ///
 /// ⛔ AND A SCENARIO SATURATES, WHICH IS WHAT A CAMPAIGN HAS TO KNOW BEFORE IT PICKS ITS RANGE.
-/// Measured on the shape task 7 will run — open, three writes, drop: the whole thing spends
+/// Measured on the shape the short campaign runs — open, three writes, drop: the whole thing spends
 /// **58** operations (23 to open, 23 for the three writes, 12 for the `Drop`), so a `falls_at`
 /// of 58 or more NEVER FIRES and the run is indistinguishable from a run with no injection at
 /// all. Of the forty points in `23..63`, **35 fire and 5 do not**; the highest that fires is 57.
 /// Sweeping past saturation buys runs that explore no state and costs the same as the ones that
 /// do.
+///
+/// ⚠️ AND IT SATURATES *PER DEPTH*, WHICH THIS DOC DID NOT SAY WHILE THERE WAS ONLY ONE DEPTH: a
+/// scenario that writes more records spends more operations and so saturates FURTHER OUT, which is
+/// the whole mechanism the deep campaign of 2026-08-11 is built on. The measured curve, and why
+/// widening the range instead buys nothing, are on `DEEP_RECORDS`.
 #[derive(Debug)]
 struct CrashingBackend {
     archive: Archive,
@@ -292,18 +297,81 @@ fn after_the_fall_the_backend_never_serves_again() {
     assert_eq!(handles.operations.load(Ordering::Relaxed), 1);
 }
 
-/// The highest injection point the scenario can still reach. ⛔ MEASURED and not derived:
+/// How many records the SHORT campaign writes. ⛔ THREE, AND THE ODD ONE IS THE POINT: two
+/// records close a step and the third opens one, so the scenario ends with a step IN DOUBT —
+/// which is the state a crash is interesting for at all.
+const SHORT_RECORDS: u64 = 3;
+
+/// The highest injection point the SHORT scenario can still reach. ⛔ MEASURED and not derived:
 /// opening costs `OPERATIONS_TO_OPEN`, the three writes cost as much again, and the `Drop` of
 /// `Database` costs twelve more — see the doc of `CrashingBackend`. Past this the fall NEVER
 /// FIRES and the run is indistinguishable from one with no injection at all, so sweeping past it
 /// buys runs that explore no state (gotcha #17).
-const OPERATIONS_TO_SATURATION: u64 = 58;
+///
+/// ⛔ A SATURATION BELONGS TO ONE DEPTH, WHICH IS WHY THE CONSTANT NAMES ITS OWN — and the two
+/// ways of getting the pairing wrong are caught by TWO DIFFERENT ORACLES. Measured on 2026-08-11,
+/// not argued:
+///
+/// | the saturation is… | what goes wrong                              | which check fires    |
+/// |--------------------|----------------------------------------------|----------------------|
+/// | TOO HIGH for the depth | the tail of the range has no operation to land on | `fired == points`    |
+/// | TOO LOW for the depth  | every point falls before the scenario ends        | `truncated < points` |
+///
+/// ⚠️ AND THIS PARAGRAPH CLAIMED THE SECOND ROW WAS SILENT — *"it simply stops the sweep early
+/// while every assertion stays green"* — WHICH THE MUTATION DENIED: handing this constant to the
+/// 30-record scenario gives `points=35 fired=35 truncated=35 partial=30`, and `truncated < points`
+/// fires. That check went in at task 6 for gotcha #24, against a scenario growing DEARER; this is
+/// a second defect it turns out to catch, and it is written down because the sentence it replaces
+/// was plausible enough to have been written once already.
+const SHORT_OPERATIONS_TO_SATURATION: u64 = 58;
 
-/// Writes three records through a backend that falls at `falls_at`, then reopens the archive and
-/// returns what came back — or WHY IT COULD NOT BE READ, which is itself an answer.
-fn crash_then_reopen(falls_at: u64) -> (Handles, Result<Vec<(StepId, Vec<u8>)>, String>) {
+/// The records a scenario of `records` records ATTEMPTS TO WRITE — GENERATED, not listed.
+///
+/// ⛔ GENERATING THEM IS WHAT MAKES A DEEPER SCENARIO POSSIBLE AT ALL, and it is also what keeps
+/// the oracles honest. Every check a campaign makes speaks about *what was written*; a literal
+/// list beside the writing loop is a second place saying the same thing, and the day the two
+/// disagree the campaign asserts a prefix of the WRONG list and says nothing about it.
+///
+/// ⛔ THE PAIRING IS THE PORT'S AND NOT A CHOICE OF STYLE. `intent` refuses a step that already
+/// carries one and `outcome` refuses a step that carries none — see `crates/platform/src/journal.rs`
+/// — so a generator that put N records on ONE step would have every write after the first refused
+/// BY THE JOURNAL, and the deep campaign would explore nothing while looking busy. Records go two
+/// to a step, intent then outcome; an ODD count ends on a lone intent, which is exactly the shape
+/// the three records of the short campaign have always had.
+///
+/// ⚠️ THE PAYLOADS ARE UNIFORM AND SHORT, and the substitution was MEASURED rather than waved
+/// through: `b"one"`, `b"one done"`, `b"two"` became `record 0`, `record 1`, `record 2` and the
+/// short campaign's five numbers did not move — 23 to open, saturation 58, `points=35 fired=35
+/// truncated=22 partial=17`. Records this small live inside one page either way, so what a record
+/// COSTS the backend is not its length.
+fn scenario(records: u64) -> Vec<(StepId, Vec<u8>)> {
+    (0..records)
+        .map(|index| {
+            (
+                StepId::new(index / 2 + 1),
+                format!("record {index}").into_bytes(),
+            )
+        })
+        .collect()
+}
+
+/// Writes `records` records through a backend that falls at `falls_at`, then reopens the archive
+/// and returns what came back — or WHY IT COULD NOT BE READ, which is itself an answer.
+///
+/// ⛔ IT HANDS BACK WHAT IT TRIED TO WRITE, and that is not a convenience: the prefix check needs
+/// both sides, and the caller inventing the "written" side is exactly the drift `scenario` exists
+/// to prevent. One call, one scenario, both halves of the comparison from the same place.
+fn crash_then_reopen(
+    records: u64,
+    falls_at: u64,
+) -> (
+    Handles,
+    Vec<(StepId, Vec<u8>)>,
+    Result<Vec<(StepId, Vec<u8>)>, String>,
+) {
     let archive = empty_archive();
     let (crashing, handles) = backend(&archive, falls_at);
+    let written = scenario(records);
 
     // ⚠️ THE UNWIND IS CAUGHT AND THEN ASSERTED NOT TO HAVE HAPPENED, which is not the same as
     // swallowing it. A crashed engine would be entitled to panic on the way down; MEASURED over
@@ -317,9 +385,17 @@ fn crash_then_reopen(falls_at: u64) -> (Handles, Result<Vec<(StepId, Vec<u8>)>, 
         // and this is the line that panics when it does.
         let mut journal = FileJournal::with_backend(crashing)
             .expect("the opening must survive: is OPERATIONS_TO_OPEN stale?");
-        let _ = journal.intent(StepId::new(1), b"one");
-        let _ = journal.outcome(StepId::new(1), b"one done");
-        let _ = journal.intent(StepId::new(2), b"two");
+        for (index, (step, record)) in written.iter().enumerate() {
+            // ⚠️ THE OPERATION FOLLOWS THE INDEX AND IS NOT CARRIED IN THE RECORD, for the reason
+            // written on `scenario`: even records open a step, odd ones close it. `let _` because
+            // after the fall every call answers `Err` — which is the case under test and not a
+            // failure of it.
+            let _ = if index % 2 == 0 {
+                journal.intent(*step, record)
+            } else {
+                journal.outcome(*step, record)
+            };
+        }
     }));
     // ⛔ AND THE MESSAGE NAMES BOTH CANDIDATES RATHER THAN BLAMING THE ENGINE, which is what it
     // did until mutation B exhibited the false diagnosis on 2026-08-11: by far the likelier panic
@@ -363,63 +439,81 @@ fn crash_then_reopen(falls_at: u64) -> (Handles, Result<Vec<(StepId, Vec<u8>)>, 
         }
     };
 
-    (handles, reopened)
+    (handles, written, reopened)
 }
 
-#[test]
-fn a_crashed_archive_reopens_in_a_coherent_state() {
+/// ONE injection campaign: every point from the end of the opening to `saturation`, against a
+/// scenario of `records` records, with the five checks that make a sweep of this shape mean
+/// something.
+///
+/// ⛔ IT IS A FUNCTION AND NOT A SECOND `#[test]` BESIDE THE FIRST, which is the decision
+/// `crates/simulator/tests/dst_campaign.rs` took at level 1 and the one the plan for this task got
+/// wrong. A second test would have carried its own copy of the sweep with ONE oracle instead of
+/// five — and the WEAKER of the two copies is the one that would have run on every commit under
+/// the name "the campaign". There is one body, and both entry points use it.
+///
+/// ⚠️ THE SATURATION IS A PARAMETER AND NOT A CONSTANT READ IN HERE, because it belongs to the
+/// DEPTH and not to the sweep: a deeper scenario costs more operations, so its last reachable point
+/// is further out. Pairing the two wrong is caught in BOTH directions, and by two different checks
+/// — the table is on `SHORT_OPERATIONS_TO_SATURATION`.
+fn campaign(name: &str, records: u64, saturation: u64) {
     // ⛔ THE QUESTION LEVEL 2 ASKS, and the answer is not "everything survived": it is that what
     // comes back is a PREFIX of what was written — either the records confirmed before the fall,
     // or all of them, NEVER a partial record and never a scrambled one. ADR-0032 measured twelve
     // injection points and twelve coherent reopenings; this holds it at every commit.
-    let written: Vec<(StepId, Vec<u8>)> = vec![
-        (StepId::new(1), b"one".to_vec()),
-        (StepId::new(1), b"one done".to_vec()),
-        (StepId::new(2), b"two".to_vec()),
-    ];
-
+    let started = std::time::Instant::now();
     let mut points = 0u64;
     let mut fired = 0u64;
     let mut truncated = 0u64;
     let mut partial = 0u64;
 
-    for falls_at in OPERATIONS_TO_OPEN..OPERATIONS_TO_SATURATION {
+    for falls_at in OPERATIONS_TO_OPEN..saturation {
         points += 1;
-        let (handles, reopened) = crash_then_reopen(falls_at);
+        let (handles, written, reopened) = crash_then_reopen(records, falls_at);
         if handles.fallen.load(Ordering::Relaxed) {
             fired += 1;
         }
-        let records = match reopened {
-            Ok(records) => records,
+        let back = match reopened {
+            Ok(back) => back,
             // An archive that cannot be read back at all is a FAILURE of this promise, and it is
             // named — with the engine's own reason inside it — rather than skipped.
-            Err(why) => panic!("injection at {falls_at}: {why}"),
+            Err(why) => panic!("{name}: injection at {falls_at}: {why}"),
         };
         assert!(
-            written.starts_with(&records),
-            "injection at {falls_at}: what came back is not a prefix of what was written: {records:?}"
+            written.starts_with(&back),
+            "{name}: injection at {falls_at}: what came back is not a prefix of what was written: {back:?}"
         );
-        if records.len() < written.len() {
+        if back.len() < written.len() {
             truncated += 1;
         }
         // A STEP OF THE STAIRCASE: something came back, and not everything. See `partial > 0`.
-        if !records.is_empty() && records.len() < written.len() {
+        if !back.is_empty() && back.len() < written.len() {
             partial += 1;
         }
     }
 
     // ⚠️ LEFT IN ON PURPOSE AND NOT DEBUGGING LEFTOVER: how many points a sweep of this shape
     // reaches, how many fire and how many actually cost the archive something is the measurement
-    // task 7 picks ITS range from, and a number reported once in a commit message is a number
-    // nobody can re-read. `cargo test … -- --nocapture` shows it.
+    // a deeper campaign picks ITS range from, and a number reported once in a commit message is a
+    // number nobody can re-read. `cargo test … -- --nocapture` shows it.
     //
-    // ⛔ AND WHAT IT COUNTED ON 2026-08-11 IS A MONOTONE STAIRCASE, which says more than the
-    // prefix check can state on its own: injecting at 23..=27 gives back NO record, 28..=33 gives
-    // back one, 34..=44 two, and 45 upwards all three. Records reappear ONE WHOLE RECORD AT A
-    // TIME, in write order, each at a well-defined operation. ⚠️ THE BOUNDS ARE PROSE AND PROSE
-    // AGES (gotcha #31): what HOLDS the shape is the four assertions below, and these numbers are
-    // here to be read, not to be trusted.
-    println!("points={points} fired={fired} truncated={truncated} partial={partial}");
+    // ⛔ AND WHAT THE SHORT SWEEP COUNTED ON 2026-08-11 IS A MONOTONE STAIRCASE, which says more
+    // than the prefix check can state on its own: injecting at 23..=27 gives back NO record,
+    // 28..=33 gives back one, 34..=44 two, and 45 upwards all three. Records reappear ONE WHOLE
+    // RECORD AT A TIME, in write order, each at a well-defined operation. ⚠️ THE BOUNDS ARE PROSE
+    // AND PROSE AGES (gotcha #31): what HOLDS the shape is the assertions below, and these numbers
+    // are here to be read, not to be trusted.
+    //
+    // ⛔ AND THE WALL TIME IS ON THIS LINE BECAUSE CONSTRAINT 7 OF §11 ASKS FOR IT — *printed on
+    // every run, so that the slowdown becomes visible before it becomes a temptation*. It is the
+    // only number here nobody can derive: the budget this campaign is sized against is one
+    // measurement on one machine, and a measurement taken once decays. `gate.sh` does not yet
+    // SHOW it — see `a_crashed_archive_reopens_in_a_coherent_state`.
+    let elapsed = started.elapsed();
+    println!(
+        "{name}: records={records} points={points} fired={fired} truncated={truncated} \
+         partial={partial} {elapsed:?}"
+    );
 
     // ⛔ THE FIRST NON-VACUITY, AND IT IS AN EQUALITY. The range stops at saturation precisely so
     // that every point reaches its operation: one that did not would be a run indistinguishable
@@ -432,8 +526,9 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     // exists for; a stale constant is the boring one.
     assert_eq!(
         fired, points,
-        "an injection point never fired: EITHER the engine now does LESS I/O than was measured — \
-         check durability FIRST — OR OPERATIONS_TO_SATURATION is stale"
+        "{name}: an injection point never fired: EITHER the engine now does LESS I/O than was \
+         measured — check durability FIRST — OR the saturation this campaign was given \
+         ({saturation}) is stale"
     );
 
     // ⛔ THE SECOND, AND WITHOUT IT THE FIRST IS NOT ENOUGH — the same lesson level 1 paid for.
@@ -444,7 +539,8 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     // `may_serve` — and of those, `read` and `len` take nothing away.
     assert!(
         truncated > 0,
-        "no injection left the archive shorter than what was written: the prefix check proved nothing"
+        "{name}: no injection left the archive shorter than what was written: the prefix check \
+         proved nothing"
     );
 
     // ⛔ THE THIRD IS THE OPPOSITE DIRECTION OF THE SECOND, AND IT WAS MISSING — gotcha #24.
@@ -454,8 +550,9 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     // everything survives — which is the case a journal is FOR.
     assert!(
         truncated < points,
-        "every injection came back short: the top of the staircase has slid out of the range, so \
-         the scenario now costs MORE than OPERATIONS_TO_SATURATION says"
+        "{name}: every injection came back short: the top of the staircase has slid out of the \
+         range, so the scenario now costs MORE than the saturation this campaign was given \
+         ({saturation}) says"
     );
 
     // ⛔ THE FOURTH IS WHAT MAKES THIS SWEEP A SECOND WITNESS TO GOTCHA #51, and without it the
@@ -465,14 +562,114 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     // durable until the `Drop` of `Database` commits, so a point either falls before that and
     // gives back zero records, or after it and gives back three; the steps in between disappear.
     // ⚠️ AND THAT IS WHY THIS ONE IS WORTH MORE THAN THE OTHER THREE: it detects a lost durability
-    // guarantee WITHOUT depending on `OPERATIONS_TO_SATURATION`, the fragile constant — and it is
-    // what turns the staircase from a sentence in a comment into a check.
+    // guarantee WITHOUT depending on the saturation, the fragile constant — and it is what turns
+    // the staircase from a sentence in a comment into a check.
+    //
+    // ⛔ AND SINCE 2026-08-11 IT IS A WITNESS AT TWO DEPTHS, which is more than the same claim
+    // twice. Re-measured under `Durability::None` on the 30-record scenario — with ITS saturation
+    // corrected to 186, the same courtesy the short one got — the collapse has exactly the shape it
+    // has at three records, 163 points deep: `partial=0`, nothing back or all thirty, never a step
+    // between, and THIS is the assertion that fires. A lost durability guarantee is not an artefact
+    // of a scenario too shallow to have steps in the first place.
     assert!(
         partial > 0,
-        "the archive came back all-or-nothing, with no step in between: records have stopped \
-         becoming durable ONE AT A TIME, which is what a lost durability guarantee looks like \
-         from here"
+        "{name}: the archive came back all-or-nothing, with no step in between: records have \
+         stopped becoming durable ONE AT A TIME, which is what a lost durability guarantee looks \
+         like from here"
     );
+}
+
+#[test]
+fn a_crashed_archive_reopens_in_a_coherent_state() {
+    // ⛔ AND THIS IS THE SHORT CAMPAIGN — the one sweep of level 2 that runs on every commit, not
+    // a cheap rehearsal beside a real one. There is no weaker copy: `campaign` holds all five
+    // checks and both entry points call it.
+    //
+    // ⚠️ CONSTRAINT 7 OF §11, THE HALF THIS FILE OWNS: the wall time is PRINTED on every run — see
+    // the `println!` in `campaign`. The other half, a gate step that SHOWS it, is task 9's:
+    // `gate.sh` runs `cargo test --workspace` with no `--nocapture`, so today the line goes into a
+    // buffer nobody reads. The same sentence, for the same reason, is on
+    // `crates/simulator/tests/dst_campaign.rs`.
+    //
+    // ⛔ AND THE BUDGET IS IN `debug` AND NOT IN `--release`, which is where the plan for this task
+    // had it. `gate.sh` is what pays for this file, and `gate.sh` runs `cargo build --workspace`
+    // and `cargo test --workspace` — BOTH UNOPTIMISED. The two profiles are not close enough for
+    // the distinction to be pedantry, measured on 2026-08-11: one injection point of this scenario
+    // costs **3.5 ms in debug** against **0.29 ms in `--release`**, a factor of TWELVE. A ceiling
+    // set on the fast profile is a ceiling nobody pays and nobody checks.
+    //
+    // ⛔ THE RULE, THEREFORE: the whole `engine_crash_consistency` binary stays under ONE SECOND of
+    // wall time in `debug` — all five ordinary tests together, of which this sweep is by far the
+    // dearest. Measured the same day, running the binary itself rather than `cargo`: **0.14 s**,
+    // seven times inside the ceiling. ⚠️ THE CEILING IS ON THE BINARY AND NOT ON THIS SWEEP, which is what
+    // stops the budget being spent twice — a sixth probe costs against the same second.
+    campaign("L2 short", SHORT_RECORDS, SHORT_OPERATIONS_TO_SATURATION);
+}
+
+/// How many records the DEEP campaign writes.
+///
+/// ⛔ IT IS THE **SCENARIO** THAT IS DEEPER AND NOT THE SWEEP, AND THAT IS THE WHOLE DESIGN OF
+/// THIS CAMPAIGN. The obvious deep campaign — the same three records over an injection range
+/// twenty times wider — explores EXACTLY ZERO extra states, and this was measured rather than
+/// argued on 2026-08-11: past saturation the fall has no operation left to land on, so the run is
+/// indistinguishable from one with no injection at all.
+///
+/// | sweep of the 3-record scenario | points | fired |
+/// |--------------------------------|--------|-------|
+/// | `23..58`, to saturation        | 35     | 35    |
+/// | `23..100`                      | 77     | 35    |
+/// | `23..300`                      | 277    | 35    |
+/// | `23..823`                      | 800    | 35    |
+///
+/// Eight hundred points, still thirty-five falls: twenty-three times the cost for nothing at all.
+/// Gotcha #17, and the reason a "deep" campaign of that shape would be a lie.
+///
+/// ⛔ WHAT DOES BUY STATES IS WRITING MORE, because every record costs the backend operations and
+/// so pushes saturation OUT — a wider range that still fires. Measured the same day, counting the
+/// RUNGS OF THE STAIRCASE, which is how many distinct prefix lengths came back over the sweep:
+///
+/// | records | saturation | points | rungs | debug  |
+/// |---------|------------|--------|-------|--------|
+/// | 3       | 58         | 35     | 4/4   | 0.13 s |
+/// | 10      | 100        | 77     | 11/11 | 0.34 s |
+/// | 20      | 160        | 137    | 21/21 | 0.78 s |
+/// | 30      | 220        | 197    | 31/31 | 1.41 s |
+/// | 40      | 280        | 257    | 41/41 | 2.23 s |
+///
+/// EVERY rung appears at every depth — `records` records give `records + 1` distinct recoverable
+/// archives, all of them reached — so the deep sweep really does hand `crash_then_reopen` states
+/// the short one never sees, which is the thing a wider range does not do.
+///
+/// ⚠️ AND THE NUMBER IS A DECLARED COST AND NOT A KNEE IN A CURVE, said plainly because the
+/// level-1 deep campaign chose ITS constant against a SUBLINEAR curve and a reader will look for
+/// the same reasoning here. There is none to find: rungs grow one per record, exactly, so no depth
+/// is a natural stopping point and what decides is wall time. Thirty costs 1.4 s in debug,
+/// comfortably under the 3.9 s the level-1 deep campaign already spends on the same long cycle.
+const DEEP_RECORDS: u64 = 30;
+
+/// The highest injection point the DEEP scenario can still reach.
+///
+/// ⛔ MEASURED, AND IT COULD NOT HAVE BEEN DERIVED — which the measurement itself showed, because
+/// the writes do NOT cost a flat amount each. Counted on 2026-08-11 with `falls_at` at `u64::MAX`:
+/// the first record costs 6 operations, the second 7, the THIRD TEN, the fourth and fifth 6 again,
+/// and from there every record costs exactly 6. The `Drop` of `Database` costs 12 — except at two
+/// records, where it costs 14. Extrapolating 220 from the short scenario's 58 would have landed
+/// somewhere else, and the sweep would have stopped early or fired short without saying so.
+///
+/// ⛔ AND NEITHER DIRECTION OF A WRONG PAIRING TURNS OUT TO BE SILENT — measured, and the table is
+/// on `SHORT_OPERATIONS_TO_SATURATION`. So what these names buy is not the red itself but a red a
+/// reader can ACT on: both messages carry the saturation they were handed, which is the number to
+/// go and look at.
+const DEEP_OPERATIONS_TO_SATURATION: u64 = 220;
+
+#[test]
+#[ignore = "the deep campaign belongs to the long cycle — constraint 8 of §11"]
+fn the_deep_injection_campaign() {
+    // ⛔ THE SAME FIVE CHECKS AS THE SHORT ONE AND NOT WEAKER ONES, and it costs nothing to say so
+    // because `campaign` holds them and there is no second copy to weaken. A sweep five times
+    // longer is five times more expensive to run vacuously: gotcha #17 does not become less likely
+    // with a longer range, it becomes more silent.
+    campaign("L2 deep", DEEP_RECORDS, DEEP_OPERATIONS_TO_SATURATION);
 }
 
 #[test]

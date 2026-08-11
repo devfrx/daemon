@@ -603,7 +603,11 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     // dearest. Measured the same day, running the binary itself rather than `cargo`: **0.14 s**,
     // seven times inside the ceiling. ⚠️ THE CEILING IS ON THE BINARY AND NOT ON THIS SWEEP, which is what
     // stops the budget being spent twice — a sixth probe costs against the same second.
-    campaign("L2 short", SHORT_RECORDS, SHORT_OPERATIONS_TO_SATURATION);
+    // ⚠️ THE `DST` PREFIX MATCHES LEVEL 1's, and it is not decoration: `scripts/gate.sh` runs
+    // both binaries with `--nocapture` so that constraint 7 of §11 has its wall time, and the two
+    // lines exist to be READ AS A PAIR. Two prefixes would make whoever scans that output know
+    // two spellings to find one thing.
+    campaign("DST L2 short", SHORT_RECORDS, SHORT_OPERATIONS_TO_SATURATION);
 }
 
 /// How many records the DEEP campaign writes.
@@ -669,7 +673,7 @@ fn the_deep_injection_campaign() {
     // because `campaign` holds them and there is no second copy to weaken. A sweep five times
     // longer is five times more expensive to run vacuously: gotcha #17 does not become less likely
     // with a longer range, it becomes more silent.
-    campaign("L2 deep", DEEP_RECORDS, DEEP_OPERATIONS_TO_SATURATION);
+    campaign("DST L2 deep", DEEP_RECORDS, DEEP_OPERATIONS_TO_SATURATION);
 }
 
 #[test]

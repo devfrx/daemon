@@ -1001,6 +1001,13 @@ contro lo scenario **vero**, che il piano deve ancora scrivere; il pavimento not
 **25,8 µs** per una corsa dello scenario **minimo**. Fissarlo adesso sarebbe un'ipotesi
 travestita da vincolo, cioè il gotcha **#15**.
 
+> 🔁 **Richiamo del 2026-08-11, chiudendo il Task 4: la misura è stata presa, e il «pavimento
+> noto» di questo capoverso NON ERA UN PAVIMENTO.** I 25,8 µs di M-2 **non sono confrontabili con
+> niente che esista oggi** — il prototipo che li produsse non è nel repository, l'esecutore era un
+> altro, e il protocollo era un colpo singolo invece di una media. Il numero scelto e le ragioni
+> stanno nella sezione del Task 4, in fondo a questo file. ⚠️ Ciò che quel capoverso sosteneva —
+> *«migliaia di semi stanno dentro un secondo»* — **regge, ed era sottostimato**.
+
 **Chiusura:** `bash scripts/gate.sh` verde.
 
 ## Esecuzione del Traguardo 4 — il Task 1: il giornale che cade, e una campagna rifatta perché il verbale era andato perso
@@ -1117,6 +1124,58 @@ fonte, esattamente come un compito si legge contro il codice.
 
 **Chiusura:** `cargo test -p simulator --test dst_campaign` → **quattro passati**;
 `cargo test --workspace` → **31 target, 166 test**; `cargo fmt --all -- --check` → 0;
+`bash scripts/gate.sh` → `GATE GREEN`.
+
+## Esecuzione del Traguardo 4 — il Task 4: come si sceglie il numero di semi, e i 25,8 µs che non erano un pavimento
+
+Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0`. Commit `3fb7a13` (la campagna
+breve) e `16c2f1a` (il giro di correzione). ⚠️ Ogni cifra qui sotto è stata **riprodotta da un
+secondo agente** prima di essere scritta.
+
+| # | Misura | Esito |
+|---|---|---|
+| **T4-4-a** | costo di una corsa che cade, coi due profili | **18,0 µs** in `debug` · **4,2 µs** in `--release`, rapporto **4,25×**. ⛔ **Decide la `debug`**, perché `gate.sh` esegue `cargo test` senza `--release` |
+| **T4-4-b** | costo di una corsa **completa**, quella di `C7a` | **31,6 µs** in `debug` — ⛔ **quasi il doppio**, perché una corsa che cade si ferma al proprio punto |
+| **T4-4-c** | il modello di costo `2 × semi × costo_per_corsa` | ❌ **sbagliato del 37 %.** Il vero è `semi × 49,6 µs`, e il tetto di un secondo cade a **~19 000** semi, non a ~26 000 |
+| **T4-4-d** | i punti di caduta a duecento semi | **ventiquattro su ventiquattro** già coperti, da quattro a tredici volte ciascuno — **saturi** |
+| **T4-4-e** | l'insieme in dubbio più grande | **tre**, a duecento e a duecentomila semi. Il tetto è **strutturale** e vale `ACTIVITIES` |
+| **T4-4-f** | ⛔ **gli insiemi in dubbio DISTINTI che questa campagna può mai confrontare** | **centonove**, e l'ultimo nuovo compare al seme **1038**. Ventimila semi in più non ne producono nemmeno uno. **È il criterio che ha scelto il numero** |
+| **T4-4-g** | ⛔ centonove è proprietà dello **scenario** o dei **semi**? | dello **scenario**: sei costanti di mescolamento diverse danno **centonove tutte e sei**. A muoversi è solo *quando* lo spazio si chiude — semi **539, 610, 697, 802, 1038, 1166** |
+| **T4-4-h** | il margine reale del numero scelto | **1,7×** e non 1,9: il peggiore dei sei chiude al **58 %** dello spazzamento |
+| **T4-4-i** | archivi distinti presentati alla riconciliazione | **6 168** @20k · **10 082** @50k · **13 348** @100k · **16 360** @200 000, con uno nuovo ancora al seme **199 898**. Crescita **sublineare**, ~`n^0,42`: il `× 100` compra **2,65×** gli archivi del `× 10` |
+| **T4-4-j** | la premessa che il conteggio delle scritture non dipenda dal seme | **zero deviazioni su duecentomila semi** |
+| **T4-4-k** | costo del binario col numero scelto | **~110 ms**, l'**11 %** del tetto dichiarato. Campagna profonda: **~4 s** |
+| **T4-4-l** | ⛔ i **25,8 µs** di M-2 sono confrontabili con qualcosa che esiste? | ❌ **no.** Lo scenario di oggi **senza** giornale costa **0,98 µs** in release, **26×** meno del pavimento dichiarato |
+
+⛔ **La lezione di T4-4-f e T4-4-g, ed è quella che vale oltre il caso: un tetto è un vincolo,
+non un bersaglio.** La regola del piano — *«il più grande multiplo di cento sotto il tetto»* —
+insegue un numero che **satura**, e i semi in più oltre la chiusura dello spazio comprano solo
+diversità di **archivi**, che è il mestiere del ciclo lungo. ⛔ **E la guardia su quel criterio è
+stata adottata solo dopo aver misurato che non scattasse dove non deve** (gotcha **#24**): se
+centonove fosse dipeso da *quali* semi campionano, un rimescolamento l'avrebbe fatta scattare a
+sproposito, e un controllo che scatta dove non deve insegna a ignorare l'audit.
+
+⛔ **T4-4-l chiude una divergenza vecchia, e la notizia è che non era una divergenza.** I 25,8 µs
+non sono confrontabili con nulla che esista oggi, per **tre** ragioni indipendenti — il prototipo
+**non è nel repository** (M-2 è del 2026-08-07, il workspace nasce l'08 e l'esecutore il 09, e le
+misure vivono nello scratchpad per regola) · l'esecutore era **un altro**, e l'argomento con cui
+`crates/kernel/tests/executor_determinism.rs` squalifica la cifra dell'**interlacciamento** dello
+spike squalifica anche quella del **costo**, dove nessuno l'aveva applicato · il protocollo era
+**un colpo solo** e non una media a caldo, e il rapporto fra le due forme è ~4×. ⚠️ **E la
+premessa con cui il rilievo era stato aperto era sbagliata:** lo scenario di M-2 **il giornale ce
+l'aveva** — la §3.6 lo definisce con intento ed esito per passo, e la sua non-vacuità implica
+**ventiquattro** voci di traccia contro le dodici di `trace_of`. A farla leggere altrimenti è la
+formula *«una corsa dello scenario minimo»* di [`design/08`](design/08-strategia-di-test.md).
+✅ **La conclusione che quella cifra sosteneva regge ed era per difetto:** un secondo di `release`
+compra ~240 000 semi, e il `debug` che governa il cancello ne compra **~19 000**.
+
+⚠️ **Due misure del coordinatore smentite da chi eseguiva, registrate:** il modello di costo
+(T4-4-c) e il margine dichiarato (T4-4-h). 📌 In entrambi i casi la correzione è arrivata da una
+misura e non da un argomento, ed è la ragione per cui il pre-controllo di un compito non
+sostituisce l'esecuzione.
+
+**Chiusura:** `cargo test -p simulator --test dst_campaign` → **quattro passati, uno ignorato**;
+`cargo test --workspace` → **31 target, 167 test**; `cargo fmt --all -- --check` → 0;
 `bash scripts/gate.sh` → `GATE GREEN`.
 
 ## Cosa NON abbiamo adottato, e perché

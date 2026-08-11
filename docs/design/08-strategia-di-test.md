@@ -108,6 +108,19 @@ dove esiste»**.
 > pesanti — la misura dice che il substrato non è il collo di bottiglia, non che le
 > campagne siano gratis.
 >
+> ⛔ **Richiamo del 2026-08-11 — la conclusione regge, il numero che la sostiene è morto, ed è
+> questa formulazione a produrre il malinteso.** Chiudendo il Task 4 del Traguardo 4 la campagna
+> è stata misurata sul codice che **spedisce**, e i 25,8 µs **non sono confrontabili con niente
+> che esista oggi**: il prototipo che li produsse non è nel repository, l'esecutore era un altro
+> — lo spike sceglieva un'attività **a caso** — e la cifra era un colpo singolo invece di una
+> media. ⚠️ **E le parole *«scenario minimo»* di questo riquadro sono la causa prossima
+> dell'errore**: lo scenario di M-2 il giornale **ce l'aveva**, quindi *«minimo»* qui non
+> significa *«senza il giornale»*, e chi lo ha letto così ha visto un paradosso — una corsa che
+> fa **di più** costando **di meno**. ✅ Ciò che il riquadro conclude è vero e per difetto: in
+> `release` un secondo compra **centinaia di migliaia** di semi, e in `debug` — che è il profilo
+> con cui gira il cancello, e la distinzione mancava qui — **circa diciannovemila**. 📌 Il numero
+> vivo e il metodo con cui è stato scelto stanno in [`riferimenti.md`](../riferimenti.md).
+>
 > 📄 **Il meccanismo di questa porta** — ogni controllo con il proprio livello di forza, la
 > sonda che deve scattare e la contro-sonda che deve restare verde — è la **§7 della spec
 > del sotto-progetto 1**. Qui vive il *metodo*; là il *catalogo* e la cadenza operativa.

@@ -18,28 +18,38 @@
 // one.
 //
 // ⚠️ DECLARED COST, accepted rather than unnoticed: `include!` brings the included file's
-// `#[test]` functions with it, so THE TEN TESTS OF THE SUITE — the double, the substring
-// constraint and the eight liars — RUN A SECOND TIME inside this binary. None of them touches
+// `#[test]` functions with it, so THE FOURTEEN TESTS OF THE SUITE — the double, the substring
+// constraint and the twelve liars — RUN A SECOND TIME inside this binary. None of them touches
 // the disk or sleeps, so it costs a few milliseconds, and it buys the single copy of the
 // assertions. ⚠️ Only `the_real_journal_honours_the_contract` below reaches a file at all, which
 // is what makes a red in this binary readable: a broken `FileJournal` turns THAT test red and
-// leaves the other ten green, because they never meet it.
+// leaves the other fourteen green, because they never meet it.
+// ⚠️ THE TWO FIGURES SAID "TEN" AND "EIGHT" UNTIL 2026-08-17, and were already stale before the
+// three blind journals of that day arrived: promise 7b's liar had made them eleven and nine.
+// Recounted from the source rather than bumped — gotcha #31.
 
 include!("../../kernel/tests/journal_contract.rs");
 
 #[test]
 fn the_real_journal_honours_the_contract() {
-    // ⛔ A FILE OF ITS OWN FOR EVERY CALL OF THE FACTORY, AND THE SUITE CALLS IT NINE TIMES. The
+    // ⛔ A FILE OF ITS OWN FOR EVERY CALL OF THE FACTORY, AND THE SUITE CALLS IT TEN TIMES. The
     // suite takes a factory precisely because several promises need a journal that has never been
     // written to — promise 3 asks a step to be `Missing`, promise 4 compares the WHOLE archive
     // against three records — so a factory handing back the same archive twice would let promise
     // 1's records be counted by promise 4, and the suite would go red on the bench instead of on
     // the implementation.
     //
-    // ⛔ AND `FileJournal` TAKES AN EXCLUSIVE LOCK ON ITS FILE. The nine journals are dropped one
+    // ⛔ AND `FileJournal` TAKES AN EXCLUSIVE LOCK ON ITS FILE. The ten journals are dropped one
     // at a time — each promise builds inside its own block — but a factory that reused one path
     // would be one refactor away from `OpenError::AlreadyOpen`, which is a failure of the bench
     // wearing the mask of a failure of the port.
+    //
+    // ⚠️ BOTH FIGURES SAID "NINE" AND WERE STALE BEFORE 2026-08-17 TOUCHED THIS FILE, which is why
+    // they are dated here rather than quietly corrected: promise 8 has TWO blocks — a note upon a
+    // step nobody opened, and a note upon an open one — so the count went to ten the day `note`
+    // arrived, and nothing recounted it. `grep -c '= build();'` answers ten. The three journals of
+    // 2026-08-17 added assertions INSIDE existing blocks and no block of their own, so they did
+    // not move this number at all.
     //
     // ⛔ A NAME THAT HAS NEVER EXISTED RATHER THAN A DELETION, which is gotcha #52 avoided
     // instead of met a second time. The obvious `remove_file` before each open FAILS SILENTLY on

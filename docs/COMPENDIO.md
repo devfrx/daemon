@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (698 KB con `wc -c` il 2026-08-11, e possono solo crescere — la spec da sola ne fa 277), e
+> (701 KB con `wc -c` il 2026-08-17, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-11.** Manutenzione: §13.
@@ -629,7 +629,50 @@ grave riverificato sul sorgente. Il rapporto è
 proprietario**. ⏭️ **Il prossimo passo è l'ESECUZIONE DELL'AUDIT — non il Traguardo 5**, che
 riparte quando le voci aperte sono chiuse.
 
-⛔ **Cosa l'audit ha trovato, e la prima voce è la più grave.** La suite di conformità prova
+✅ **E LA PRIMA DELLE OTTO DECISIONI È ESEGUITA IL 2026-08-17 — T-2 e T-1, il finding più grave.**
+La suite di conformità del giornale provava **tre** promesse su nove — la **1**, la **5** e la
+**8** — soltanto nello stato in cui **ogni guardia plausibile passa**: archivio **vuoto**, o con
+**un passo solo**. Chiuse con un **passante** in archivio: un passo **diverso** da quello sotto
+esame è l'unico stato in cui *«l'archivio è vuoto»* smette di coincidere con *«questo passo non ha
+un intento»*, e *«il record di questo passo»* con *«il primo record che c'è»*.
+⛔ **E la notizia è quanto è costato, perché l'audit lo prezzava come un'altra cosa.** La §8 dava
+la decisione 1 per *«un'aggiunta al contratto di una porta condivisa»*; letta contro il codice di
+oggi non è servita **nessuna promessa nuova** e **nessuna riga di prodotto** è stata toccata — le
+due implementazioni filtrano già per passo (`has_intent(step)`, `stored == step.get()`) e la porta
+lo dichiara già (*«re-reads ONE step BY NAME»*, e le tre vie di `OutOfOrder`). A mancare non era il
+contratto: era lo **stato che distingue una guardia sbagliata**. 📌 È la quinta domanda del
+pre-controllo che ha pagato — *un compito scritto prima si legge contro il codice di adesso* —
+applicata a un **rapporto d'audit** invece che a un piano.
+⛔ **E i finding erano TRE e non due, che è il gotcha nuovo #65:** l'audit raggruppa le promesse 5
+e 8a in un finding solo, e ha ragione sulla **causa** — `note` e `outcome` condividono `has_intent`
+— ma la suite **muore alla prima promessa rotta**, quindi un bugiardo cieco su entrambe muore sulla
+5 e il blocco della 8a resta **non provato mentre un test afferma il contrario**. Ne servono
+**due**, e sono un tipo solo con **due istanze**, o sarebbero lo stesso difetto scritto due volte.
+✅ **Il rosso è stato riprodotto PRIMA di correggere**, che è la disciplina di questo repository: i
+tre bugiardi — **J14** `StepBlindJournal`, **J15** e **J16** `BlindGuardJournal` — contro la suite
+com'era hanno risposto tutti e tre `THE SUITE IS VACUOUS ON promise 1 / 5 / 8`.
+✅ **E la seconda direzione è misurata sulle IMPLEMENTAZIONI VERE e non sui soli bugiardi**, perché
+un bugiardo prova che il blocco morde, non che il blocco raggiunga `redb`: **sei** mutazioni — le
+due guardie e il predicato di `read_back`, su ciascuna delle due implementazioni — applicate **una
+alla volta**, ciascuna compilata ed eseguita a sé e poi revocata. **Sei rosse su sei, ciascuna col
+messaggio della propria promessa**; prima del rimedio tutte e sei lasciavano il workspace verde. A
+campagna chiusa `git diff --stat` nomina **il solo file della suite**. La tabella sta in
+[`porta-di-qualita.md`](porta-di-qualita.md).
+⚠️ **E due conteggi erano stantii PRIMA di questa passata**, trovati contandoli invece che
+leggendoli: `journal_contract_real.rs` dichiarava che la suite chiama la fabbrica **nove** volte —
+sono **dieci** dal giorno in cui `note` divise la promessa 8 in due blocchi — e **otto** bugiardi,
+che erano nove dal Task 11. Gotcha **#31**.
+📌 **Baseline dopo il rimedio:** `GATE GREEN`, `cargo test --workspace --no-fail-fast` →
+**32 target, 177 passati, 0 falliti, 2 ignorati** (erano 171: tre test nuovi qui e tre nella copia
+che `platform` include).
+⏭️ **Restano SETTE decisioni della §8**, e l'ordine proposto è: **G-5** (`--locked`, una riga, e
+protegge lo strumento di misura) · i **rimandi datati** A-1/A-2/A-4/A-7 · **C-1** (registrare) ·
+**PL-1** (⚠️ e la §7 dell'audit lo dà fuori copertura *«l'host è Windows»*, ma la CI gira su
+`ubuntu-latest`: la misura `stat -c %a` è raggiungibile) · **K-1** · **P-1** · le sonde
+**B-1/B-2/B-3/S-1/S-2/S-5**.
+
+⛔ **Cosa l'audit ha trovato, e la prima voce è la più grave** — ✅ **chiusa il 2026-08-17, vedi il
+riquadro qui sopra.** La suite di conformità provava
 **V6 solo su un archivio VUOTO**: sostituendo le guardie di `FileJournal::outcome` e `::note`
 con *«l'archivio è vuoto?»* invece di *«questo passo ha un intento?»*, `cargo test --workspace`
 dà **32 target, 171 passati, ZERO falliti** — e la mutazione **è osservabile**, perché su un
@@ -1205,7 +1248,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I sessantaquattro gotcha
+## 9. I sessantacinque gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -1276,6 +1319,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 62 | ⛔ **`comm` confronta per COLLAZIONE, e `sort -V` non produce quell'ordine: il falso positivo che ne esce è invisibile finché il controllo non ha qualcosa di vero da dire.** Misurato il 2026-08-11 su `check-docs.sh`: i due lati del controllo V30 erano ordinati con `sort -uV`, che mette `Q9` prima di `Q10` mentre la collazione fa l'inverso. Finché i due insiemi **coincidono**, `comm` non incontra mai una riga spaiata e **non emette nemmeno il proprio avviso di disordine** — il difetto è latente al 100 %. Togliendo a **`Q9`** il suo metodo di verifica, il controllo riportava **sedici** nomi (`Q9` … `Q24`), **quindici dei quali ce l'hanno**. 📌 È l'altra metà del **#24**: *un controllo che scatta dove non deve è peggio di uno assente, perché insegna a ignorare l'audit* — e qui lo fa **esattamente nel momento in cui serve**. ⚠️ Lo stato d'uscita di `comm` (**1**, *«input is not in sorted order»*) veniva scartato: un verdetto perso in una pipe |
 | 63 | ⛔ **Una promessa di conformità provata SOLO nello stato in cui ogni guardia plausibile passa non è una promessa: è una coincidenza.** Misurato il 2026-08-11: le promesse **5** (*«un `outcome` senza `intent` è rifiutato»*, V6) e **8a** (*«una nota su un passo mai aperto è rifiutata»*) di `journal_contract.rs` costruiscono entrambe un giornale **vuoto** e chiedono subito il rifiuto. Una guardia che chieda *«l'archivio è vuoto?»* invece di *«questo passo ha un intento?»* le soddisfa **entrambe**. ⛔ **Sostituite così le guardie di `FileJournal::outcome` e `::note`, `cargo test --workspace --no-fail-fast` dà 32 target, 171 passati, ZERO falliti** — e la mutazione **è osservabile** (#54 provato in due direzioni): su archivio non vuoto accetta un esito e una nota per passi **mai aperti**, cioè fa sparire il dubbio che ADR-0007 esiste per rendere rilevabile. 📌 Stessa forma su `read_back`, che **otto blocchi su dieci** esercitano su un giornale a **un passo solo**, dove *«cerca questo passo»* e *«restituisci il primo record»* sono la stessa frase. 📌 **La domanda che le coglie:** *in quale altro stato del mondo questa asserzione resterebbe verde?* |
 | 64 | ⛔ **Due criteri possono coprire ciascuno la propria metà e lasciare scoperto il BUCO FRA loro, e nessuna rilettura dell'uno o dell'altro lo mostra.** Misurato il 2026-08-11: `bincode` 2.0.1 è coperto da **RUSTSEC-2025-0141 — «Bincode is unmaintained»**, categoria `INFO` e non una vulnerabilità, emessa il **2026-01-07**. L'avviso era pubblico **sette mesi prima** che §6.1.1 fosse riconfermata il 2026-08-08, e nessuno l'ha visto benché il criterio esistesse: **ADR-0037** chiede *«il pari ha un lettore conforme e **mantenuto**?»* — ma lo punta **verso il pari** (TypeScript, M-11); **M-1** puntava verso di noi e chiedeva un'altra cosa, *«il grafo transitivo è accettabile per I3?»*. ⛔ **Nessuno dei due chiede se sia mantenuta la libreria del NOSTRO capo del filo**, e `gate-deps.sh` verifica **quali** crate ci sono, non **come stanno**. ✅ **Il costo di agire è quasi zero oggi e cresce da solo:** `bincode` ha **zero usi di produzione** — un commento in `ports/ipc.rs` e la sonda `dependencies_usable.rs` — perché lo schema del canale `ipc` è il **Traguardo 6**. È una finestra che si chiude da sola, come la quarta proprietà di §3. 📌 **La domanda:** *questo criterio è puntato verso entrambi i capi del filo?* |
+| 65 | ⛔ **Due difetti con la stessa CAUSA non hanno la stessa COPERTURA, e un rapporto che li raggruppa per causa fa scrivere un rimedio che ne prova uno solo.** Misurato il 2026-08-17 chiudendo T-2: l'audit elenca le promesse **5** e **8a** come un finding, e ha ragione sulla **causa** — `outcome` e `note` condividono `has_intent` in entrambe le implementazioni, quindi una guardia cieca le acceca insieme. ⛔ **Ma la suite muore alla PRIMA promessa rotta**, quindi un bugiardo cieco su tutt'e due muore sulla 5 e il blocco della 8a resta **non provato mentre un test afferma il contrario**: servono **due** bugiardi, ciascuno che superi l'altro blocco **sui propri meriti**. ⚠️ Il rimedio dettato dal rapporto è **giusto**; a essere dimezzata è la sua **prova**, e si vede solo scrivendola. 📌 Un tipo solo con **due istanze**, o sarebbe lo stesso difetto scritto due volte (#45 dall'altro lato). 📌 **La domanda:** *quanti di questi blocchi un solo bugiardo riesce a raggiungere?* |
 
 ---
 
@@ -1329,30 +1373,30 @@ Apri **un** file, quello che serve. Non la cartella.
 
 | Se ti serve… | Apri | Peso |
 |---|---|---|
-| ⛔ **COSA DEVI FARE ADESSO** — le voci aperte dell'audit, con severità, causa radice e dimostrazione. La §5 elenca i finding, la §8 le **otto decisioni** che aspettano il proprietario. Si legge **prima** di qualunque altra cosa | [`audit-2026-08-11.md`](audit-2026-08-11.md) — ⚠️ **è il prossimo passo**, non un documento di consultazione | 22 KB |
+| ⛔ **COSA DEVI FARE ADESSO** — le voci aperte dell'audit, con severità, causa radice e dimostrazione. La §5 elenca i finding e porta in testa il **richiamo del 2026-08-17**, la §8 le otto decisioni: la **prima è eseguita**, ne restano **sette**. Si legge **prima** di qualunque altra cosa | [`audit-2026-08-11.md`](audit-2026-08-11.md) — ⚠️ **è il prossimo passo**, non un documento di consultazione | 25 KB |
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 30 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 203 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 206 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 27 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 120 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 127 KB |
 | ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata | 6 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 10 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–10 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 152 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 156 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 114 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 15 KB |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **14,7**, il resto è il perché di ogni riga | 24 KB |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **14,7**, e il 2026-08-17 **non è cresciuto** per la prima volta | 25 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -2018,6 +2062,48 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > sedicesima applicazione.
+
+> 🔁 **Ventiseiesima misura, il 2026-08-17, chiudendo la prima delle otto decisioni dell'audit —
+> ed è la prima passata in cui il MESSAGGIO non è cresciuto.** Scritta a passata chiusa; righe
+> contate **partendo dall'elenco dei file citati**, che è il movimento della quindicesima —
+> ventidue bersagli, ventitré righe, perché `HANDOFF.md` ne ha due; nessuna assente.
+>
+> | | |
+> |---|---|
+> | ✅ **nessuna riga aggiunta** | nessun documento nuovo: la decisione 1 ha prodotto **codice di banco** e voci dentro documenti che esistevano. Il rimedio della ventunesima — *«una riga nuova nasce senza peso»* — **non ha avuto occasione di fallire**, e va detto invece che spacciato per successo |
+> | **cresciuti** | [`porta-di-qualita.md`](porta-di-qualita.md) `120 → 127` — il salto più grande, ed è il registro che assorbe tre bugiardi e la campagna delle sei mutazioni · [`riferimenti.md`](riferimenti.md) `152 → 156` · [`HANDOFF.md`](HANDOFF.md) `203 → 206` per il gotcha **#65** e il punto di ripresa · [`audit-2026-08-11.md`](audit-2026-08-11.md) `22 → 25` per il richiamo in testa alla §5 · questo file `244 → 253` · [`README.md`](README.md) `15 → 16` · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) `24 → 25`, benché il **messaggio** dentro di esso sia fermo · `CLAUDE.md` `12 → 12` e [`roadmap.md`](roadmap.md) `27 → 27`, mossi di poche righe |
+> | **invariati, ricontati** | spec del sotto-progetto 1 **277** · il disegno del Traguardo 4 30 · kernel-design 44 · [`tracciabilita.md`](tracciabilita.md) 15 · [`semi-dst.md`](semi-dst.md) 6 · `design/08` 10 · `design/01` 4 · i piani 168, 162, 114, 68, 50 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
+>
+> ✅ **E LA NOTIZIA È IL MESSAGGIO, che per quattro misure di seguito era la cattiva.** La serie
+> era 7,7 → 9,8 → 12,2 → 14,7 KB; oggi il blocco fra le due recinzioni passa da **15036 a 15040
+> byte** — **`+4 B` e una riga** — pur avendo incassato una decisione intera dell'audit.
+> ⛔ **Ha funzionato la prescrizione della venticinquesima, alla lettera:** *«la prossima consegna
+> deve decidere cosa TOGLIERE, non cosa accorciare — e il candidato naturale è il blocco delle
+> decisioni ribaltabili, che è un rimando a due errata già scritte»*. Quel blocco è stato **tolto**
+> e ridotto a un rimando di sei righe, e il finding V6 — nel frattempo **chiuso** — è passato da
+> diciotto righe a due. 📌 **La regola che ne esce, ed è la prima volta che questa serie ne produce
+> una che funziona:** si toglie un **rimando duplicato** o una voce **chiusa**; una **lezione** non
+> si toglie, si sposta nel compendio, dove chi legge la trova comunque.
+>
+> ⛔ **E le case sono state ricontate col `grep`, non riprese dal verbale precedente** — che è il
+> rimedio della ventesima, e per la seconda volta il conteggio era stantio. La venticinquesima
+> dichiarava **sei** case per la cifra dei due file obbligatori: sono **tre** (una in `CLAUDE.md`,
+> due in [`AVVIO-CHAT.md`](AVVIO-CHAT.md)). L'aggregato ne ha **quattro**, e la cifra **coi tre
+> file da leggere** altre **quattro**. 📌 L'elenco delle case è esso stesso una cifra dentro una
+> frase, e invecchia come tutte.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **698** a **701 KB** (718041 B), corretto in tutte
+> e quattro le case. I **due file obbligatori** passano da 256 a **265 KB**, e coi tre da 278 a
+> **290**, corretti in tutte le loro.
+>
+> ⚠️ **Il rapporto che la §12 difende si è mosso ancora nella direzione sbagliata, per la terza
+> misura di seguito:** il denominatore è cresciuto dello **0,4 %**, il numeratore del **2,9 %**.
+> Molto meno delle due volte precedenti — la decisione 1 ha prodotto soprattutto **codice** — ma la
+> direzione è la stessa, e chi rimisura guardi quel rapporto e non solo le celle.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
+> diciassettesima applicazione.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

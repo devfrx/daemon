@@ -1390,6 +1390,77 @@ l'**assenza** di qualunque `.mode()`, `OpenOptionsExt`, `PermissionsExt` o `cfg`
 tutto `crates/` (grep esaustivo), e il default documentato di `std::fs::OpenOptions` su Unix
 (`0o666` meno umask). La misura vera è `stat -c %a` sul file del giornale, e **va fatta lì**.
 
+## Esecuzione dell'audit — la decisione 1 (T-2 e T-1), 2026-08-17: le misure, coi comandi
+
+Prima delle otto decisioni della §8 dell'audit. Il rapporto è
+[`audit-2026-08-11.md`](audit-2026-08-11.md), il registro dei controlli
+[`porta-di-qualita.md`](porta-di-qualita.md); qui ci sono solo le misure.
+
+**Baseline di partenza, rimisurata invece che ripresa dal rapporto** — `bash scripts/gate.sh` →
+`GATE GREEN`; `cargo test --workspace --no-fail-fast` → **32 target, 171 passati, 0 falliti, 2
+ignorati**. Identica a quella dell'audit, sei giorni dopo.
+
+⛔ **La misura che ha ristretto il perimetro, e va prima delle altre.** Il rapporto prezza la
+decisione 1 come *«aggiungere promesse alla suite di conformità … un'aggiunta al contratto di una
+porta condivisa»*. Letto il codice di **oggi** invece del rapporto:
+
+| Domanda | Comando | Esito |
+|---|---|---|
+| le guardie filtrano per passo? | lettura di `MemoryJournal::{outcome,note}` e `FileJournal::{outcome,note}` | ✅ **sì, tutte e quattro** — `has_intent(step)` nella finta, `find_first(\|stored, _, _\| (stored == step.get())…)` nella vera |
+| `read_back` filtra per passo? | lettura delle due implementazioni | ✅ **sì** — `find(\|e\| e.step == step)` · `(stored == step.get()).then(…)` |
+| il contratto lo dice già? | doc di `Journal::read_back` e di `JournalError::OutOfOrder` | ✅ **sì** — *«re-reads ONE step BY NAME»*, e le **tre** vie di `OutOfOrder` |
+
+📌 **Quindi non serve nessuna promessa nuova, e nessuna riga di prodotto è stata toccata.** Il
+difetto non era il contratto né il comportamento: era che **nessun blocco della suite costruiva lo
+stato in cui una guardia sbagliata diverge**. `grep -c '= build();'` → **10** blocchi, di cui
+**otto** con un archivio a **un passo solo** e due (5 e 8a) **vuoto**.
+
+**Il rosso, riprodotto prima di correggere** — tre bugiardi scritti contro la suite com'era,
+`cargo test -p kernel --test journal_contract`:
+
+| Bugiardo | Difetto | Risposta |
+|---|---|---|
+| **J14** `StepBlindJournal` | predicato del passo tolto da `read_back` | `THE SUITE IS VACUOUS ON promise 1` |
+| **J15** `BlindGuardJournal::on_outcome` | guardia di `outcome` → *«l'archivio è vuoto?»* | `THE SUITE IS VACUOUS ON promise 5` |
+| **J16** `BlindGuardJournal::on_note` | guardia di `note` → idem | `THE SUITE IS VACUOUS ON promise 8` |
+
+⛔ **La terza non era nel rapporto**, che raggruppa 5 e 8a in un finding solo: giusto sulla
+**causa**, dimezzato sulla **copertura** — gotcha **#65**.
+
+**La seconda direzione, sulle implementazioni VERE.** Sei mutazioni **una alla volta** — due
+insieme e il rosso non si attribuisce — ciascuna applicata con lo strumento di edit e **non** con
+`sed` o un interprete via stdin (gotcha **#48**, decima forma), compilata ed eseguita a sé, poi
+**revocata**:
+
+| # | Mutazione | Crate | Prima | Dopo |
+|---|---|---|---|---|
+| **B-1** | guardia di `outcome` → `find_first(\|_, _, _\| Some(()))?.is_none()` | `platform` | verde | 🔴 promessa **5** |
+| **B-2** | guardia di `note` → idem | `platform` | verde | 🔴 promessa **8** |
+| **B-3** | `stored == step.get()` tolto da `read_back` | `platform` | verde | 🔴 promessa **1** |
+| **B-4** | `e.step == step` tolto da `read_back` | `simulator` | verde | 🔴 promessa **1** |
+| **B-5** | guardia di `outcome` → `self.entries.is_empty()` | `simulator` | verde | 🔴 promessa **5** |
+| **B-6** | guardia di `note` → idem | `simulator` | verde | 🔴 promessa **8** |
+
+⚠️ **Ciascuna col messaggio della PROPRIA promessa**, letto nel payload e non dedotto da un
+`FAILED` — è ciò che `assert_caught_on` compra su `is_err()`. E a campagna chiusa
+`git diff --stat` nomina **il solo file della suite**: le due implementazioni sono tornate
+identiche a `HEAD`.
+
+**Baseline dopo il rimedio** — `GATE GREEN`; `cargo test --workspace --no-fail-fast` → **32
+target, 177 passati, 0 falliti, 2 ignorati**. I sei test in più sono i tre bugiardi qui e i tre
+nella copia che `platform` include con `include!`.
+
+⚠️ **E due conteggi erano stantii prima di questa passata**, in `journal_contract_real.rs`:
+*«la suite chiama la fabbrica NOVE volte»* (`grep -c '= build();'` → **dieci**, dal giorno in cui
+`note` divise la promessa 8 in due blocchi) e *«otto bugiardi»* (erano **nove** dal Task 11).
+Gotcha **#31**, trovati contando e non leggendo.
+
+⚠️ **Non misurato e dichiarato:** che i tre bugiardi nuovi muoiano **ciascuno sul proprio blocco**
+è tenuto da `assert_caught_on`, che confronta il payload; **non** è stata rifatta la passata
+«neutralizza una promessa alla volta» a **dodici** bugiardi. La tabella di
+[`porta-di-qualita.md`](porta-di-qualita.md) resta quella presa a otto, con la propria data — una
+cifra alzata per simmetria sarebbe un'ipotesi.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

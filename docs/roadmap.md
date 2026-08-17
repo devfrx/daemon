@@ -67,7 +67,10 @@ Ultimo aggiornamento: **2026-08-11**.
 > ricevuto il suo primo AUDIT COMPLETO** — [`audit-2026-08-11.md`](audit-2026-08-11.md): sedici
 > finding corretti e provati, il resto **aperto e assegnato al proprietario**, fra cui la suite di
 > conformità che prova **V6 solo su archivio vuoto** e due buchi che lasciavano il cancello verde
-> col confine caduto. ⏭️ **Il prossimo è l'ESECUZIONE DELL'AUDIT**, non il Traguardo 5:
+> col confine caduto. ✅ **La prima delle otto decisioni è eseguita il 2026-08-17** — T-2 e T-1 —
+> **senza aggiungere nessuna promessa e senza toccare una riga di prodotto**: mancava lo *stato*
+> che distingue una guardia sbagliata, non il contratto. **Ne restano sette.**
+> ⏭️ **Il prossimo è l'ESECUZIONE DELL'AUDIT**, non il Traguardo 5:
 > l'arbitro GPU riparte quando le voci aperte sono chiuse, e allora si comincia dal
 > **brainstorming**. ⚠️ **Questa riga diceva *«il prossimo passo
 > è eseguirlo»***, prima *«il brainstorming»*, prima ancora *«scrivere il piano»*.
@@ -106,7 +109,7 @@ flowchart LR
 | **0** | **Kernel — arbitri e meccanismi** (§0–§9) | L0 + L1 | ✅ **spec completa** | — |
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
 | **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
-| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — spec completa (§0–§8, riapertura chiusa, §8 chiusa, audit passato). **Traguardi 1 e 2 ✅ eseguiti**: scheletro e porta di qualità, poi il substrato iniettabile e le sei famiglie di porte, `GATE GREEN`. ✅ **Traguardo 3 eseguito il 2026-08-10**, **dodici** compiti su dodici: il giornale e il formato durevole, coi **byte congelati**. ✅ **Traguardo 4 eseguito il 2026-08-11**, **dieci** compiti su dieci, `GATE GREEN` a ciascuno: il simulatore DST porta ora **il guasto** — il giornale cadente, il backend cadente di `redb` scritto **da fuori la crate**, le due campagne con soggetti diversi, e il gotcha **#51 chiuso nella metà chiudibile**. ⏭️ **Il prossimo è il Traguardo 5** — l'arbitro GPU — e si comincia dal **brainstorming**, non dalla scrittura. ⚠️ **Questa cella diceva «Traguardo 4 è il prossimo»** a traguardo eseguito, e prima ancora «sette compiti su dodici» a dodici eseguiti: è la cella che invecchia per costruzione | 0, 0b, 0c |
+| 1 | Implementazione del kernel + simulatore DST | L0 + L1 | 🔵 **in corso** — spec completa (§0–§8, riapertura chiusa, §8 chiusa, audit passato). **Traguardi 1 e 2 ✅ eseguiti**: scheletro e porta di qualità, poi il substrato iniettabile e le sei famiglie di porte, `GATE GREEN`. ✅ **Traguardo 3 eseguito il 2026-08-10**, **dodici** compiti su dodici: il giornale e il formato durevole, coi **byte congelati**. ✅ **Traguardo 4 eseguito il 2026-08-11**, **dieci** compiti su dieci, `GATE GREEN` a ciascuno: il simulatore DST porta ora **il guasto** — il giornale cadente, il backend cadente di `redb` scritto **da fuori la crate**, le due campagne con soggetti diversi, e il gotcha **#51 chiuso nella metà chiudibile**. ⏭️ **Il prossimo è l'ESECUZIONE DELL'AUDIT**, non il Traguardo 5: la **prima** delle otto decisioni della §8 è eseguita il 2026-08-17 — T-2 e T-1, la conformità del giornale che provava tre promesse solo su un archivio vuoto o a un passo solo — e ne restano **sette**. L'arbitro GPU riparte dopo, e si comincia dal **brainstorming**. ⛔ **Questa cella diceva «il prossimo è il Traguardo 5» mentre due altre righe DELLO STESSO FILE — la 70 e quella del Traguardo 5 nella tabella dei sei — dicevano il contrario**: una contraddizione interna sopravvissuta alla correzione D-2 dell'audit, che aveva sistemato le altre due e non questa. ⚠️ E prima ancora diceva «Traguardo 4 è il prossimo» a traguardo eseguito, e «sette compiti su dodici» a dodici eseguiti: è la cella che invecchia per costruzione | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2 |
 | 4 | Agenti | L2 | ⬜ | 3 |

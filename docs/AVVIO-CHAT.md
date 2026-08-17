@@ -65,17 +65,18 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              l'altro. È la modalità scelta, e ha
                                              appena portato dieci compiti su dieci
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 278 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 290 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i sessantaquattro gotcha (§9), le trappole di
+     cosa NON rifare (§8), i sessantacinque gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
-  3. docs/audit-2026-08-11.md — 22 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
+  3. docs/audit-2026-08-11.md — 25 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE: è IL COMPITO. Contiene la copertura dichiarata, le
      quattro radici, i finding con causa radice e dimostrazione, ciò che è
-     stato verificato PULITO, e la §8 con le OTTO DECISIONI che aspettano me.
+     stato verificato PULITO, e la §8 con le otto decisioni — la prima è
+     ESEGUITA, e porta in testa alla §5 il richiamo datato di com'è andata.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token, e il compendio
      ne ha oltre milleseicento. È un LIMITE INFERIORE, non un totale — §12.
@@ -100,29 +101,29 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 278 KB in tutto
 ⛔ IL PROSSIMO PASSO È L'ESECUZIONE DELL'AUDIT — NON IL TRAGUARDO 5.
    Il 2026-08-11 il repository ha ricevuto il suo primo audit completo: nove
    revisori paralleli in sola lettura, ogni finding grave riverificato sul
-   sorgente, SEDICI corretti e provati nella stessa sessione. Il resto è
-   aperto, ed è quello che devi portarmi.
+   sorgente, SEDICI corretti e provati nella stessa sessione. Delle OTTO
+   decisioni della §8, la PRIMA è eseguita il 2026-08-17. NE RESTANO SETTE,
+   ed è quello che devi portarmi.
    ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, poi «quello che viene
-      dopo è un BRAINSTORMING»: si riscrive quando il passo si chiude.
+      dopo è un BRAINSTORMING», poi «otto decisioni»: si riscrive quando il
+      passo si chiude.
 
-   LE TRE COSE CHE L'AUDIT HA TROVATO, e la prima è la più grave:
-     · LA SUITE DI CONFORMITÀ PROVA V6 SOLO SU UN ARCHIVIO VUOTO. Le promesse
-       5 e 8a costruiscono un giornale vuoto e chiedono subito il rifiuto:
-       una guardia che chieda «l'archivio è vuoto?» invece di «questo passo ha
-       un intento?» le soddisfa entrambe. Misurato: sostituite così le guardie
-       di FileJournal::outcome e ::note, cargo test --workspace dà 32 target,
-       171 passati, ZERO falliti — e la mutazione È OSSERVABILE, perché su un
-       archivio non vuoto accetta esiti e note per passi MAI APERTI. Gotcha
-       #63. ⛔ Chiuderlo è un'AGGIUNTA AL CONTRATTO DI UNA PORTA CONDIVISA,
-       cioè una decisione mia: non farlo di iniziativa.
-     · DUE BUCHI DEL CANCELLO lo lasciavano verde col confine caduto — già
-       corretti e provati coi codici d'uscita veri. build = 'gen.rs' fra apici
-       singoli sfuggiva al controllo dei build script (#61, il #28 riaperto da
-       un carattere di quoting), e check-docs.sh non verificava che la spec
-       ESISTESSE: le sei asserzioni di §8.6.1 vivono in blocchi END di awk, ed
-       END non gira su un fatal (#60).
-     · TRE DOCUMENTI DI STATO dicevano che il Traguardo 4 era da fare, mentre
-       era eseguito da un commit — già corretti.
+   ✅ COS'È STATO CHIUSO — T-2 e T-1, il finding più grave: la suite di
+   conformità del giornale provava TRE promesse su nove solo nello stato in
+   cui ogni guardia plausibile passa (archivio vuoto, o con UN PASSO SOLO).
+   Chiuse con un PASSANTE in archivio. ⛔ E la notizia è il prezzo: NESSUNA
+   promessa nuova, NESSUNA riga di prodotto toccata — l'audit lo dava per
+   «un'aggiunta al contratto di una porta condivisa» e non lo era. Tre
+   bugiardi nuovi, sei mutazioni sulle implementazioni vere, sei rosse su sei.
+   Gotcha #63 chiuso, #65 nato. Il racconto sta nella §6 del compendio.
+
+   ⛔ E DUE COSE DELL'AUDIT VANNO SAPUTE COMUNQUE, perché sono già CORRETTE e
+   spiegano come questo cancello può mentire: due suoi buchi lo lasciavano
+   verde col confine caduto — build = 'gen.rs' fra apici singoli sfuggiva al
+   controllo dei build script (#61, il #28 riaperto da un carattere di
+   quoting), e check-docs.sh non verificava che la spec ESISTESSE, con le sei
+   asserzioni di §8.6.1 in blocchi END di awk, che su un fatal non girano
+   (#60).
 
    ⛔ E IL GOTCHA PIÙ UTILE CHE NE È USCITO È IL #59: un ADR può essere
    falsificato da un ADR FRATELLO SCRITTO LO STESSO GIORNO, e nessuno dei due
@@ -139,8 +140,8 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 278 KB in tutto
    sono giusti tutti e quattordici.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 698 KB
-   il 2026-08-11, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 701 KB
+   il 2026-08-17, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
    e l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
    del compendio dice quale.
@@ -151,20 +152,12 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 278 KB in tutto
    dev'essere Option con #[cbor(default)] e prendere un INDICE NUOVO, e il
    significato di un indice non cambia mai.
 
-⛔ VENTUNO DECISIONI SONO STATE PRESE ESEGUENDO, non dai piani — PUOI
-   RIBALTARLE TUTTE, e stanno nelle errata in testa ai due piani:
-     · Traguardo 3: NOVE, fra cui Record::encode che NON restituisce Result,
-       un SECONDO intento sullo stesso passo RIFIUTATO, la porta che guadagna
-       note(), e il record con DUE campi — contenuto non fidato all'indice 3,
-       ragione del chiamante al 4.
-     · Traguardo 4: DODICI. Le tre che governano il resto:
-         - la caduta NON SI RIPRENDE, ai due livelli. Un giornale che rifiuta
-           una volta e poi riparte modella un disco cattivo, non un crash.
-         - il punto di caduta viene da un generatore DIVERSO da quello
-           dell'interlacciamento, con seme derivato: due generatori seminati
-           con lo stesso numero danno la STESSA sequenza.
-         - il numero di semi NON si massimizza: si sceglie sulla CHIUSURA
-           DELLO SPAZIO DEGLI ESITI. Un tetto è un vincolo, non un bersaglio.
+⛔ VENTUNO DECISIONI SONO STATE PRESE ESEGUENDO, non dai piani, e PUOI
+   RIBALTARLE TUTTE: NOVE al Traguardo 3, DODICI al Traguardo 4. Stanno nelle
+   errata in testa ai due piani, e la §6 del compendio — che leggi comunque —
+   porta quelle che governano le altre. ⚠️ Non sono ricopiate qui: un rimando
+   a documenti già scritti è ciò che questo messaggio deve TOGLIERE invece di
+   accorciare, ed è la prescrizione della 25ª misura della §12.
 
 ⛔ LA LEZIONE DEL TRAGUARDO 4, imparata TRE VOLTE ogni volta DOPO aver chiuso
    la precedente, e la stessa che l'audit ha ritrovato sulla conformità:
@@ -181,12 +174,14 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 278 KB in tutto
    QUALITÀ, che sono difetti veri e vanno chiuse. Fra le prime: le nove righe
    di guasto scoperte (hanno un indirizzo, quindi sono uno scaglionamento e
    non un arretrato), la metà del gotcha #51 che resta fuori, e semi-dst.md
-   che NON HA UN CHIUDENTE. Fra le seconde, oltre a V6: read_back mai
-   obbligato a scegliere per passo, il turn limit consegnato che può essere
-   ignorato senza che nulla diventi rosso, quattro gruppi su cinque della
-   conformità reactor mai visti scattare, e bincode dichiarato NON MANTENUTO
-   (RUSTSEC-2025-0141) — che però ha ZERO usi di produzione, quindi la
-   finestra per decidere si chiude da sola al Traguardo 6.
+   che NON HA UN CHIUDENTE. Fra le seconde — V6 e read_back sono CHIUSE dal
+   2026-08-17 — restano: il turn limit consegnato che può essere ignorato
+   senza che nulla diventi rosso, quattro gruppi su cinque della conformità
+   reactor mai visti scattare, il finto filesystem che può smettere di
+   confrontare i CheckpointId, la via A3 del confine dei dati non fidati
+   dichiarata chiusa ED APERTA, il file del giornale che nasce 0644 su Linux,
+   e bincode dichiarato NON MANTENUTO (RUSTSEC-2025-0141) — che però ha ZERO
+   usi di produzione, quindi la finestra si chiude da sola al Traguardo 6.
 
 ⚠️ Il compendio è una COMPRESSIONE, non una selezione: ci sono dentro tutte le
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
@@ -250,10 +245,16 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
    io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
 
 Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, e come
-proponi di affrontare le OTTO DECISIONI della §8 dell'audit — quali portarmi
-per prime e perché — POI ASPETTA le mie richieste prima di scrivere qualunque
-cosa. ⛔ Non c'è un piano da riprendere né un brainstorming da aprire: il
-Traguardo 4 è CHIUSO e l'audit è FATTO; quello che manca è eseguirlo.
+proponi di affrontare le SETTE DECISIONI che restano nella §8 dell'audit —
+quali portarmi per prime e perché — POI ASPETTA le mie richieste prima di
+scrivere qualunque cosa. ⛔ Non c'è un piano da riprendere né un brainstorming
+da aprire: il Traguardo 4 è CHIUSO e l'audit è FATTO; quello che manca è
+eseguirlo. ⛔ E la prima decisione ha insegnato una cosa che vale per le altre
+sette: IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO. Quella era
+data per «un'aggiunta al contratto di una porta condivisa» e si è rivelata
+zero righe di prodotto — mentre i finding erano TRE e non due, perché una
+suite che si ferma al primo rosso ha bisogno di un bugiardo per BLOCCO, non
+per causa (gotcha #65).
 ```
 
 ---
@@ -262,9 +263,9 @@ Traguardo 4 è CHIUSO e l'audit è FATTO; quello che manca è eseguirlo.
 
 | | Prima | Adesso |
 |---|---|---|
-| il messaggio | ~9 KB | ⛔ **14,7 KB**, e il riferimento è superato di parecchio: 7,7 → 9,8 → 12,2 → **14,7**, cioè la **quarta crescita di seguito** e la terza a due cifre percentuali. ⚠️ **La consegna del 2026-08-11 aveva PROVATO a comprimere e non è bastato**: le lezioni del Traguardo 4 e il gotcha #48 sono stati portati nel compendio — 344 byte recuperati — e il blocco dell'audit li ha più che compensati. 📌 Va detto invece che nascosto: **comprimere ciò che è vecchio non basta quando ciò che è nuovo pesa di più.** La prossima consegna deve decidere **cosa TOGLIERE**, non cosa accorciare |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **256 KB** — `CLAUDE.md` più il compendio, e **278** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 256 KB |
+| il messaggio | ~9 KB | ✅ **14,7 KB, E PER LA PRIMA VOLTA NON È CRESCIUTO.** La serie era 7,7 → 9,8 → 12,2 → 14,7, quattro crescite di seguito e tre a due cifre percentuali; il 2026-08-17 la consegna ha incassato una decisione intera dell'audit e il blocco è passato da **15036 a 15040 byte**, `+4 B` e una riga. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **265 KB** — `CLAUDE.md` più il compendio, e **290** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 265 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -278,7 +279,10 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **278 KB contro mezzo megabyte**.
+resta quello che conta: **290 KB contro 701**. ⚠️ **E le case sono state ricontate col
+`grep` il 2026-08-17, non riprese dal verbale precedente:** l'aggregato ne ha **quattro**,
+la cifra dei due file obbligatori **tre**, quella coi tre file **quattro** — la 25ª ne
+dichiarava sei per la seconda, ed è il gotcha **#31** applicato all'**elenco delle case**.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **277 KB**. Non è che chiedesse

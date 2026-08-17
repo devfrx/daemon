@@ -27,14 +27,16 @@
 //
 // ⚠️ DECLARED COST, AND IT HAS BEEN PAID SINCE 2026-08-10 — this sentence read "AND IT IS NOT
 // YET BEING PAID" until task 9. `include!` carries the `#[test]` functions of this file along
-// with it, so the ELEVEN tests below RUN A SECOND TIME inside `platform`'s binary: that binary
-// reports TWELVE tests, these eleven plus the one that builds the real journal. It buys the
+// with it, so the FOURTEEN tests below RUN A SECOND TIME inside `platform`'s binary: that binary
+// reports FIFTEEN tests, these fourteen plus the one that builds the real journal. It buys the
 // single copy of the assertions and costs a few milliseconds — nothing here touches the disk or
 // sleeps, and that stayed true when the real journal started pruning: `prune` runs against the
 // in-memory double here and against the file only in `platform`'s own copy.
-// ⚠️ The figure said "eight" and then "ten" during 2026-08-10, as promise 8 brought a liar, the
-// substring constraint became a test of its own, and promise 7b brought the ninth liar; counted
-// rather than remembered.
+// ⚠️ The figure said "eight", then "ten", then "eleven" during 2026-08-10, as promise 8 brought a
+// liar, the substring constraint became a test of its own, and promise 7b brought the ninth liar;
+// and "fourteen" on 2026-08-17, when the audit's three blind journals arrived. COUNTED WITH
+// `grep -c '^#\[test\]'` RATHER THAN BUMPED BY THREE — gotcha #31 is a number inside a sentence
+// that stays true, and the sentence around this one has stayed true four times running.
 
 use kernel::ports::journal::{Journal, JournalError, StepId};
 
@@ -97,10 +99,30 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
     // in this milestone at all. Without it a journal that answers `Ok(())` and writes nothing
     // satisfies the type boundary, and the promotion of untrusted text succeeds having
     // recorded NOTHING.
+    //
+    // ⛔ AND A BYSTANDER GOES IN FIRST, WHICH IS LOAD-BEARING AND NOT SCENERY — added 2026-08-17,
+    // and MEASURED before it was written. `read_back` promises "ONE step BY NAME", and until this
+    // line every block of this suite but two held an archive containing A SINGLE STEP: on such an
+    // archive "the record of this step" and "the first record there is" ARE THE SAME RECORD, so
+    // the lookup was never once asked to CHOOSE. `StepBlindJournal` — the predicate `e.step ==
+    // step` deleted, which is the whole mutation — PASSED THIS SUITE ENTIRE, and reported «THE
+    // SUITE IS VACUOUS ON promise 1». With the bystander it dies here.
+    //
+    // ⚠️ NEITHER IMPLEMENTATION CHANGED FOR THIS, and that is the point rather than a let-off:
+    // both already filter by step. What was missing was not the behaviour but the STATE THAT TELLS
+    // A WRONG ONE APART — so this is the same promise, proved, and not a promise added.
     {
         let mut journal = build();
+        let bystander = StepId::new(70);
         let step = StepId::new(7);
         let written: &[u8] = b"the bytes of a record";
+
+        // ⛔ FIRST, so that a `read_back` which hands back the head of the archive hands back THIS
+        // and not `written`. The two payloads differ in content AND in length: a comparison that
+        // degenerated to sizes would rebuild the vacuity of promise 4 by the same mechanism.
+        journal
+            .intent(bystander, b"the intent of a step nobody asked about")
+            .expect("the bystander's intent must succeed");
 
         // ⛔ THE PROMISE'S OWN MESSAGE ON THE `expect`, AND IT WAS MEASURED RATHER THAN
         // FORESEEN. Promise 1 is broken in TWO ways — the wrong bytes come back, or NOTHING
@@ -218,10 +240,45 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
     // ── 5. An `outcome` with no `intent` is refused ───────────────────────────────────────
     // V6, held by the port. See the doc of `JournalError::OutOfOrder` for why this is the
     // nature of a write-ahead journal and not a policy of the kernel.
+    //
+    // ⛔ TWO DIRECTIONS AND ONE MESSAGE, AND THE SECOND ARRIVED ON 2026-08-17 — the most serious
+    // finding of the 2026-08-11 audit, reproduced here before it was closed. Until then this block
+    // asked for the refusal on an EMPTY ARCHIVE and nowhere else, so a guard that asked «is the
+    // archive empty?» instead of «does THIS STEP carry an intent?» satisfied it. That is not a
+    // hypothetical: with `FileJournal`'s guards replaced by `find_first(|_, _, _| Some(()))
+    // .is_none()`, `cargo test --workspace --no-fail-fast` answered 32 targets, 171 passed, ZERO
+    // failed — and the mutation IS observable (gotcha #54, proved in two directions): on a
+    // non-empty archive it accepts an outcome for a step NOBODY EVER OPENED.
+    //
+    // ⛔ WHAT THAT COSTS DOWNSTREAM, which is why this is V6 and not tidiness: reconciliation
+    // reads an `Outcome` for a step that never ran and lifts it OUT OF A DOUBT THAT NEVER EXISTED.
+    // A true doubt vanishing in silence is the one class of failure ADR-0007 exists to prevent.
+    //
+    // ⚠️ THE EMPTY CASE IS KEPT AND NOT REPLACED. It is the state the port meets on a fresh
+    // archive — the commonest one there is — and dropping it to «improve» the block would trade
+    // one blind spot for another.
     {
         let mut journal = build();
+
+        // (a) ON AN EMPTY ARCHIVE.
         assert_eq!(
             journal.outcome(StepId::new(3), b"too early"),
+            Err(JournalError::OutOfOrder),
+            "{}",
+            OUT_OF_ORDER_MESSAGE
+        );
+
+        // (b) AND ON A NON-EMPTY ONE, WHICH IS THE DIRECTION THAT WAS MISSING. ⛔ THE BYSTANDER'S
+        // INTENT IS WHAT MAKES THE TWO QUESTIONS DIFFERENT: after it, «the archive is empty» is
+        // false and «step 3 carries an intent» is still false, so the two guards disagree — and a
+        // block where they cannot disagree cannot tell them apart. `BlindGuardJournal::on_outcome`
+        // is the liar that proves this bites; it survives (a) ON ITS MERITS and dies here.
+        journal
+            .intent(StepId::new(30), b"the intent of a step nobody asked about")
+            .expect("the bystander's intent must succeed");
+
+        assert_eq!(
+            journal.outcome(StepId::new(3), b"still too early"),
             Err(JournalError::OutOfOrder),
             "{}",
             OUT_OF_ORDER_MESSAGE
@@ -408,11 +465,38 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
     // only to something, it survives, and it does not take the intent's place. The ORDER is
     // chosen so the liar dies on the LAST of them — a suite that stopped at the first would
     // never exercise the other two against anything.
+    //
+    // ⛔ AND (a) GOT ITS SECOND DIRECTION ON 2026-08-17, FOR THE REASON PROMISE 5 DID — the same
+    // blind guard, one operation over. `note` and `outcome` share `has_intent` in BOTH
+    // implementations, so a guard that asks «is the archive empty?» blinds them together; but the
+    // suite stops at the FIRST promise a journal breaks, so a liar blind on both dies on promise 5
+    // and this block would go on being unproven while a test claimed otherwise. That is why
+    // `BlindGuardJournal` blinds ONE guard per instance: `on_note` walks past promise 5 on its
+    // merits and dies here.
+    //
+    // ⚠️ AND THIS IS NOT SYMMETRY-FILLING, WHICH IS A REASON THIS REPOSITORY REJECTS: it was
+    // MEASURED. `on_note` against the suite as it stood reported «THE SUITE IS VACUOUS ON promise
+    // 8» — a journal that keeps notes on steps nobody opened passed every promise here.
     {
         let mut journal = build();
-        // (a) A note upon a step nobody opened has nothing to attach to.
+
+        // (a) A note upon a step nobody opened has nothing to attach to — on an EMPTY archive.
         assert_eq!(
             journal.note(StepId::new(8), b"a note about nothing"),
+            Err(JournalError::OutOfOrder),
+            "{}",
+            NOTE_MESSAGE
+        );
+
+        // (a-bis) AND ON A NON-EMPTY ONE. The bystander makes «the archive is empty» false while
+        // «step 8 carries an intent» stays false, which is the only state in which the right guard
+        // and the blind one give different answers.
+        journal
+            .intent(StepId::new(80), b"the intent of a step nobody asked about")
+            .expect("the bystander's intent must succeed");
+
+        assert_eq!(
+            journal.note(StepId::new(8), b"still a note about nothing"),
             Err(JournalError::OutOfOrder),
             "{}",
             NOTE_MESSAGE
@@ -502,26 +586,33 @@ fn no_promise_message_is_a_substring_of_another() {
 }
 
 // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3): a suite never seen to fail is not a suite. The
-// nine tests below break the port's promises ONE EACH, and demand that the suite notices each —
+// twelve tests below break the port's promises ONE EACH, and demand that the suite notices each —
 // and notices it ON THE RIGHT PROMISE, which is what reading the payload buys over `is_err()`.
 //
-// ⛔ NINE AND NOT THREE, and the six that were added are the lesson of gotcha #14. The suite
+// ⛔ TWELVE AND NOT THREE, and the nine that were added are the lesson of gotcha #14. The suite
 // dies at the FIRST promise a journal breaks, so a liar that violates promise 1 never reaches
 // promise 5: with the three liars this task was dictated with, promises 2, 3 and 5 WERE NEVER
 // SEEN TO FIRE. `SilentJournal` violates promise 5 as well — its `outcome` answers `Ok(())` —
 // and dies on promise 1 long before getting there, which is exactly the shape of a control that
 // looks covered and is not.
 //
-// ⚠️ THE COUNT WAS "SIX" AND THEN "EIGHT" DURING 2026-08-10, and is dated rather than quietly
-// bumped: promise 6 and its liar arrived with the guard on `intent`, promise 8 and its liar with
-// `note`, promise 7b and its liar with `prune`. A number inside a sentence that stays true is the
-// exact shape of gotcha #31.
+// ⚠️ THE COUNT WAS "SIX", THEN "EIGHT", THEN "NINE" DURING 2026-08-10, and is dated rather than
+// quietly bumped: promise 6 and its liar arrived with the guard on `intent`, promise 8 and its
+// liar with `note`, promise 7b and its liar with `prune`. It is TWELVE since 2026-08-17. A number
+// inside a sentence that stays true is the exact shape of gotcha #31.
 //
 // ⚠️ AND EACH IS BROKEN IN A DIFFERENT WAY (gotcha #45): writes dropped, the wrong record
 // returned, absence reported as emptiness, order reversed, the write-ahead guard removed on
 // `outcome`, the guard removed on `intent`, retention granted, a write VALIDATED AND THEN
-// DISCARDED, and — the ninth — retention REFUSED to everything, in the right words. Two liars
-// broken the same way prove one thing twice and leave the other promise unguarded.
+// DISCARDED, retention REFUSED to everything in the right words, the STEP NOT CONSULTED on the
+// way back out, and — the eleventh way, worn by two instances — the write-ahead guard asking
+// ABOUT THE ARCHIVE instead of about the step. Two liars broken the same way prove one thing
+// twice and leave the other promise unguarded.
+//
+// ⛔ THE ELEVENTH WAY WEARS TWO INSTANCES AND NOT TWO TYPES, and the difference is worth the
+// line: it is ONE defect on TWO operations, so two types would be one defect written twice. Two
+// INSTANCES are needed because the suite stops at the first promise broken — see
+// `BlindGuardJournal`.
 
 #[test]
 fn a_journal_that_writes_nothing_is_caught() {
@@ -583,6 +674,25 @@ fn a_journal_that_calls_every_step_in_doubt_is_caught() {
 #[test]
 fn a_journal_that_validates_a_note_and_keeps_it_nowhere_is_caught() {
     assert_caught_on(DiscardedNoteJournal::new, NOTE_MESSAGE, "promise 8");
+}
+
+#[test]
+fn a_journal_that_reads_back_the_wrong_step_is_caught() {
+    assert_caught_on(StepBlindJournal::new, READ_BACK_MESSAGE, "promise 1");
+}
+
+#[test]
+fn a_journal_whose_outcome_guard_asks_whether_the_archive_is_empty_is_caught() {
+    assert_caught_on(
+        BlindGuardJournal::on_outcome,
+        OUT_OF_ORDER_MESSAGE,
+        "promise 5",
+    );
+}
+
+#[test]
+fn a_journal_whose_note_guard_asks_whether_the_archive_is_empty_is_caught() {
+    assert_caught_on(BlindGuardJournal::on_note, NOTE_MESSAGE, "promise 8");
 }
 
 /// Runs the suite against a deliberately broken journal and demands that it be caught, and
@@ -1092,6 +1202,171 @@ impl Journal for DiscardedNoteJournal {
         // ⛔ THE DEFECT, and it is one line long: `record` goes nowhere.
         let _ = record;
         Ok(())
+    }
+    fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
+        self.inner.read_back(step)
+    }
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        self.inner.replay()
+    }
+    fn prune(&mut self, step: StepId) -> Result<(), JournalError> {
+        self.inner.prune(step)
+    }
+}
+
+/// Stores everything faithfully and hands `read_back` THE FIRST RECORD OF THE ARCHIVE, whichever
+/// step asked for it.
+///
+/// ⛔ BROKEN IN A TENTH WAY, and it is ONE PREDICATE WIDE: `e.step == step` deleted from
+/// `MemoryJournal::read_back`, `stored == step.get()` deleted from `FileJournal`'s. That is the
+/// whole mutation, and until 2026-08-17 IT PASSED THIS SUITE ENTIRE — measured, not argued.
+///
+/// ⛔ WHY THE SUITE COULD NOT SEE IT, and the reason is the same one that hid the blind guard
+/// below: EIGHT OF ITS TEN BLOCKS BUILD AN ARCHIVE HOLDING ONE STEP. On such an archive "the
+/// record of this step" and "the first record there is" ARE THE SAME RECORD, so `read_back` was
+/// never once asked to CHOOSE. The port's own doc says "re-reads ONE step BY NAME" — the contract
+/// was there, the state that tells the two apart was not.
+///
+/// ⚠️ AND IT IS NOT HYPOTHETICAL IN THE OTHER DIRECTION EITHER: `FileJournal` keys on the
+/// PROGRESSIVE OF THE WRITE and scans, so the predicate is the only thing standing between a
+/// `read_back` and the oldest record in the file. Drop it and every step in the archive answers
+/// with step one's intent.
+struct StepBlindJournal {
+    inner: simulator::journal::MemoryJournal,
+}
+
+impl StepBlindJournal {
+    fn new() -> Self {
+        StepBlindJournal {
+            inner: simulator::journal::MemoryJournal::new(),
+        }
+    }
+}
+
+impl Journal for StepBlindJournal {
+    fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.intent(step, record)
+    }
+    fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.outcome(step, record)
+    }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.note(step, record)
+    }
+    fn read_back(&self, _step: StepId) -> Result<Vec<u8>, JournalError> {
+        // ⛔ THE DEFECT: the step is not consulted. ⚠️ `Missing` on an EMPTY archive is kept, and
+        // that is deliberate rather than incidental — promise 3 asks exactly that, and a liar
+        // broken in two places proves nothing about either (gotcha #45).
+        self.inner
+            .replay()?
+            .into_iter()
+            .next()
+            .map(|(_, bytes)| bytes)
+            .ok_or(JournalError::Missing)
+    }
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        self.inner.replay()
+    }
+    fn prune(&mut self, step: StepId) -> Result<(), JournalError> {
+        self.inner.prune(step)
+    }
+}
+
+/// A journal whose write-ahead guard asks **"IS THE ARCHIVE EMPTY?"** instead of **"does THIS STEP
+/// carry an intent?"**. On an empty archive it refuses, correctly and for the wrong reason; on a
+/// non-empty one it says yes to everything.
+///
+/// ⛔ BROKEN IN AN ELEVENTH WAY, and it is the shape the 2026-08-11 audit REPRODUCED on the real
+/// implementation: `FileJournal`'s guards replaced with `find_first(|_, _, _| Some(())).is_none()`
+/// left `cargo test --workspace` at 32 targets, 171 passed, ZERO failed. `PermissiveJournal` is
+/// the nearest neighbour and is NOT the same defect: that one has NO guard and launders every
+/// refusal, this one has the WRONG guard and launders only where the two disagree. The difference
+/// is exactly what the two directions of promise 5 measure.
+///
+/// ⛔ WHAT IT COSTS IF IT SHIPS: an `outcome` accepted for a step nobody ever opened, so
+/// reconciliation reads an `Outcome` for a step that never ran and takes it OUT OF A DOUBT THAT
+/// WAS NEVER THERE — the one class of failure ADR-0007 exists to prevent.
+///
+/// ⛔ ONE TYPE AND TWO INSTANCES, WHICH IS DELIBERATE AND NOT A SHORTCUT. It is the SAME defect on
+/// two operations, so two types would be one defect written twice — the thing gotcha #45 forbids.
+/// Two INSTANCES are needed for a different reason entirely: the suite stops at the FIRST promise
+/// a journal breaks, so a journal blind on both guards dies on promise 5 and promise 8's new
+/// direction would go on being unproven while a test claimed otherwise. Each instance blinds ONE
+/// guard and therefore reaches ONE of the two blocks.
+struct BlindGuardJournal {
+    inner: simulator::journal::MemoryJournal,
+    blind: BlindOn,
+    /// ⚠️ A COUNT AND NOT A `replay()` CALL, because the mutation it models is a READ OF THE
+    /// ARCHIVE — `find_first(|_, _, _| Some(()))` — and the cheapest faithful stand-in for "is
+    /// there anything in there" is how much has gone in.
+    written: usize,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum BlindOn {
+    Outcome,
+    Note,
+}
+
+impl BlindGuardJournal {
+    fn on_outcome() -> Self {
+        BlindGuardJournal {
+            inner: simulator::journal::MemoryJournal::new(),
+            blind: BlindOn::Outcome,
+            written: 0,
+        }
+    }
+
+    fn on_note() -> Self {
+        BlindGuardJournal {
+            inner: simulator::journal::MemoryJournal::new(),
+            blind: BlindOn::Note,
+            written: 0,
+        }
+    }
+
+    /// The blind guard itself: the question the real one asks about a STEP, asked about the
+    /// ARCHIVE.
+    fn archive_is_empty(&self) -> bool {
+        self.written == 0
+    }
+
+    /// Delegates, and where the RIGHT guard refuses and the blind one would not, answers `Ok(())`.
+    ///
+    /// ⚠️ THE RECORD IS DROPPED ON THAT PATH, and it is not what this liar is measured on: the
+    /// inner journal holds the right guard and has nowhere to put a record it refuses. What the
+    /// blocks read is the ANSWER — `Ok(())` where the port says `OutOfOrder` — and on every path
+    /// where the two guards agree the record is stored exactly as `MemoryJournal` stores it.
+    fn write_through(
+        &mut self,
+        blind_here: bool,
+        result: Result<(), JournalError>,
+    ) -> Result<(), JournalError> {
+        match result {
+            Ok(()) => {
+                self.written += 1;
+                Ok(())
+            }
+            Err(JournalError::OutOfOrder) if blind_here && !self.archive_is_empty() => Ok(()),
+            other => other,
+        }
+    }
+}
+
+impl Journal for BlindGuardJournal {
+    fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        // ⚠️ CORRECT, AND ON PURPOSE: this journal has to walk past promises 1 to 4 on its own
+        // merits to reach the one it breaks.
+        let written = self.inner.intent(step, record);
+        self.write_through(false, written)
+    }
+    fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        let written = self.inner.outcome(step, record);
+        self.write_through(self.blind == BlindOn::Outcome, written)
+    }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        let written = self.inner.note(step, record);
+        self.write_through(self.blind == BlindOn::Note, written)
     }
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
         self.inner.read_back(step)

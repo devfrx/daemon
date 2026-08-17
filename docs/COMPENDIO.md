@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (701 KB con `wc -c` il 2026-08-17, e possono solo crescere — la spec da sola ne fa 277), e
+> (703 KB con `wc -c` il 2026-08-17, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-11.** Manutenzione: §13.
@@ -573,7 +573,8 @@ sopra di essa sta il **substrato iniettabile** al completo. ✅ **Il Traguardo 3
 (`crates/kernel/src/record.rs`), la **riga di catalogo dell'etichetta di fiducia** col proprio
 caso negativo, il **doppio in memoria del giornale** (`crates/simulator/src/journal.rs`), la
 **suite di conformità** con **nove promesse in dieci blocchi e nove bugiardi**
-(`crates/kernel/tests/journal_contract.rs`), l'operazione **`replay()`** sulla porta, la
+(`crates/kernel/tests/journal_contract.rs` — ⚠️ **i bugiardi sono DODICI dal 2026-08-17**, e le
+promesse restano nove: la cifra qui è quella che il Traguardo 3 consegnò), l'operazione **`replay()`** sulla porta, la
 **riconciliazione** (`crates/kernel/src/reconcile.rs`), col Task 7 il **primo record che il
 kernel scrive davvero** — la nota di `Untrusted::promote` — col **Task 8** la **seconda
 implementazione della porta `journal`**: `redb` col **backend scritto da noi**
@@ -945,7 +946,11 @@ assegnato», **non** «non richiede un meccanismo di kernel».
     appartiene a nessuna delle due categorie**, e nulla lo segnala perché il doc *sembra*
     esaustivo. Le otto voci d'errata stanno in testa al piano; le misure in
     [`riferimenti.md`](riferimenti.md), la campagna in [`porta-di-qualita.md`](porta-di-qualita.md).
-    ⏭️ **Il prossimo è il Task 2**, lo scenario giornalato e `C7a`.
+    ⚠️ **Questa riga diceva *«il prossimo è il Task 2»* a traguardo CHIUSO da dieci compiti**, ed è
+    corretta il 2026-08-17 invece che cancellata: era il puntatore di avanzamento **dentro** il
+    racconto del Traguardo 4, e nessuno l'ha spento quando il racconto ha smesso di essere in
+    corso. Il puntatore vivo sta **in cima alla §6**, in un posto solo — gotcha **#31** nella forma
+    che la §6 stessa dichiara di temere: *la riga che invecchia per costruzione*.
 
 ⛔ **E quattro questioni restano aperte nel sorgente, dichiarate e non risolte.** Nessuna delle
 quattro è un difetto oggi, ed è scritto **perché**; tutte si pagano più avanti, e chi riprende
@@ -954,7 +959,7 @@ deve saperle **prima** di scrivere:
 | | |
 |---|---|
 | **la porta `network` ha una tensione non conciliata** | la firma di `request` è **sincrona e bloccante** — restituisce la risposta intera, quindi qualcuno ha atteso — mentre la regola scritta sotto dice che la prontezza viene dal `reactor` e che **nulla attende dentro `network`**; e l'esecutore di questo kernel è **cooperativo**. Le due si conciliano **il giorno in cui la porta riceve un'implementazione**: finché non ha chiamanti nulla blocca, quindi non è ancora un difetto. La domanda è scritta **aperta** in `crates/kernel/src/ports/network.rs` |
-| **il residuo dichiarato su `Untrusted::promote`** | il meccanismo compra **una cosa sola**: che la conversione non si scriva senza **nominare** la porta `journal`. **Non** compra che qualcosa sia stato registrato — `promote` è generico su qualunque `Journal`. Sono **sette** le vie che aggirano il confine e **compilano**, tutte elencate in `crates/kernel/src/boundary.rs`. ✅ **Ricontate il 2026-08-10 col Task 7, e sulle voci invece che dedotte:** ne sono chiuse **tre** — il `Debug` di `Untrusted` (**A3**, livello 1), la conformità `journal_contract.rs` (**A6**, livello 2) e ora l'**etichetta di fiducia nel record** (**A4**, livello 2). ⛔ **A4 è chiusa a livello 2 e non «al formato», ed è la differenza che conta:** la via come `boundary.rs` la scrive passa da **byte grezzi**, non da un `Record` — `Record::decode` risponde `Malformed` e l'andata-e-ritorno funziona lo stesso, perché la porta scambia byte. L'etichetta chiude la via **per chi passa dal formato**, e nulla oggi impone che ogni scrittura sul giornale sia un record. ⛔ **A6 restava chiusa a metà finché la suite non girava contro DUE implementazioni.** ⚠️ **Ricontata il 2026-08-10 col Task 8:** la seconda **esiste** — `platform::journal::FileJournal` — e la suite le gira contro **verde, otto promesse su otto**, misurato; ma il file che la esegue **dentro** il repository era il **Task 9**, e *«misurato una volta»* non è *«tenuto a ogni commit»*. ✅ **Ricontata una terza volta il 2026-08-10, col Task 9: quella metà è CHIUSA.** `crates/platform/tests/journal_contract_real.rs` tiene le due implementazioni alle stesse promesse **a ogni commit**, con tre contro-sonde su tre promesse diverse e una mutazione di controllo. ⚠️ **Questa riga diceva «otto promesse», ed erano otto al Task 9:** il Task 11 ha portato la **7b**, quindi sono **nove promesse in dieci blocchi e nove bugiardi**, ricontati eseguendo il 2026-08-10 — gotcha **#31** su un numero che è cresciuto sotto la frase che lo conteneva. A6 resta comunque una regola di **livello 2** — nulla impedisce di scrivere un `Journal` che la suite non incontri mai. ✅ **E le quattro vie che restano — A1, A2, A5, A7 — sono TUTTE dichiarate non chiudibili**, quindi ciò che resta non è un arretrato ma il **pavimento**: è la notizia vera di questo riconteggio |
+| **il residuo dichiarato su `Untrusted::promote`** | il meccanismo compra **una cosa sola**: che la conversione non si scriva senza **nominare** la porta `journal`. **Non** compra che qualcosa sia stato registrato — `promote` è generico su qualunque `Journal`. Sono **sette** le vie che aggirano il confine e **compilano**, tutte elencate in `crates/kernel/src/boundary.rs`. ✅ **Ricontate il 2026-08-10 col Task 7, e sulle voci invece che dedotte:** ne sono chiuse **tre** — il `Debug` di `Untrusted` (**A3**, livello 1), la conformità `journal_contract.rs` (**A6**, livello 2) e ora l'**etichetta di fiducia nel record** (**A4**, livello 2). ⛔ **A4 è chiusa a livello 2 e non «al formato», ed è la differenza che conta:** la via come `boundary.rs` la scrive passa da **byte grezzi**, non da un `Record` — `Record::decode` risponde `Malformed` e l'andata-e-ritorno funziona lo stesso, perché la porta scambia byte. L'etichetta chiude la via **per chi passa dal formato**, e nulla oggi impone che ogni scrittura sul giornale sia un record. ⛔ **A6 restava chiusa a metà finché la suite non girava contro DUE implementazioni.** ⚠️ **Ricontata il 2026-08-10 col Task 8:** la seconda **esiste** — `platform::journal::FileJournal` — e la suite le gira contro **verde, otto promesse su otto**, misurato; ma il file che la esegue **dentro** il repository era il **Task 9**, e *«misurato una volta»* non è *«tenuto a ogni commit»*. ✅ **Ricontata una terza volta il 2026-08-10, col Task 9: quella metà è CHIUSA.** `crates/platform/tests/journal_contract_real.rs` tiene le due implementazioni alle stesse promesse **a ogni commit**, con tre contro-sonde su tre promesse diverse e una mutazione di controllo. ⚠️ **Questa riga diceva «otto promesse», ed erano otto al Task 9:** il Task 11 ha portato la **7b**, quindi sono **nove promesse in dieci blocchi e nove bugiardi**, ricontati eseguendo il 2026-08-10 — gotcha **#31** su un numero che è cresciuto sotto la frase che lo conteneva. ✅ **Ricontati una QUARTA volta il 2026-08-17, chiudendo T-1 e T-2: i bugiardi sono DODICI, le promesse restano nove.** Ed è la notizia per A6: la suite non è cresciuta di promesse, è cresciuta di **stati** — su tre di quelle nove girava solo dove ogni guardia plausibile passa. A6 resta comunque una regola di **livello 2** — nulla impedisce di scrivere un `Journal` che la suite non incontri mai. ✅ **E le quattro vie che restano — A1, A2, A5, A7 — sono TUTTE dichiarate non chiudibili**, quindi ciò che resta non è un arretrato ma il **pavimento**: è la notizia vera di questo riconteggio |
 | **la tesi della porta `process` la tiene l'implementazione, non il compilatore** | *«ogni byte che risale è coperto da una ricevuta»* è la frase su cui la porta è costruita — ma `SingleReceipt::new` e `StreamReceipt::new` sono **`pub`, e devono esserlo**: chi implementa `Worker` è `platform`, cioè un'altra crate, e Rust non ha una visibilità che arrivi fin lì e non oltre. Quindi **una ricevuta si può forgiare**, ed è la ragione per cui `close` deve poter rispondere `UnsolicitedFrame` pur andando core→worker. Il limite è scritto accanto ai due costruttori in `crates/kernel/src/ports/process.rs`. ⛔ **Il contrasto è con `Grant`**, che il costruttore non ce l'ha e la cui garanzia è davvero del compilatore. A chiudere la differenza sarà la **suite di conformità** della porta, che pretende due implementazioni: **Traguardo 6** |
 | **`Ipc::accept` non ha un canale d'errore, e il prezzo di dargliene uno è la firma** | `accept` restituisce `Option<ClientId>` e **non può fallire**: nessuna delle due varianti di `IpcError` lo raggiunge — `Disconnected` è un'affermazione **su un `ClientId`**, e `accept` è l'unico metodo che un `ClientId` non lo prende. Corretto oggi, e «nessuno in attesa» è lo stato **ordinario**: la gui è 0..1 e sacrificabile. ⛔ **Ma un _ascoltatore_ rotto — che non è un client — arriverebbe come `None`, cioè un valore sbagliato invece di un errore** (gotcha #30). ⛔ **E il prezzo di chiuderlo va detto giusto, perché la prima stesura lo sbagliava:** aggiungere una terza variante **non basterebbe**, non c'è dove restituirla — costa la **firma**, `Result<Option<ClientId>, IpcError>`, che è la forma che `receive` già usa. Oggi la firma resta perché un `Result` che non può mai essere `Err` è superficie morta. Dichiarato in `crates/kernel/src/ports/ipc.rs`, in testa al file come in `network.rs` |
 
@@ -1378,11 +1383,11 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 30 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 206 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 208 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 27 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 127 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 128 KB |
 | ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata | 6 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 10 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
@@ -2104,6 +2109,35 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > diciassettesima applicazione.
+
+> 🔁 **Ventisettesima misura, il 2026-08-17, subito dopo la ventiseiesima — ed è una passata di
+> sola documentazione, aperta per verificare che la precedente avesse finito. NON AVEVA FINITO.**
+> Scritta a passata chiusa; cercata col `grep` invece che a memoria, che è l'unica ragione per cui
+> ha trovato qualcosa.
+>
+> | | |
+> |---|---|
+> | ⛔ **quattro affermazioni di stato FALSE, tutte in [`HANDOFF.md`](HANDOFF.md)** | tre righe dicevano *«il prossimo passo è il brainstorming del Traguardo 5»* — nella «In trenta secondi», nel blocco del lascito e sotto il titolo **«Prima cosa da fare»** — mentre il **Punto di ripresa**, settanta righe più su **nello stesso file**, diceva *«non il Traguardo 5»*. ⛔ **È il finding D-1 dell'audit, che le aveva lasciate:** quella passata corresse il Punto di ripresa e non le tre gemelle. Radice **R1** — *una correzione attraversa il documento in cui nasce, non gli altri* — e qui nemmeno tutto il documento |
+> | ⛔ **e la ventiseiesima ha commesso R1 dentro la passata che chiudeva R1** | la cella di `journal_contract_real.rs` in [`porta-di-qualita.md`](porta-di-qualita.md) ha avuto corretta l'**intestazione** (`dodici → quindici` test) e **non il corpo**, che ha continuato a dire *«nove bugiardi»*, *«dodici test»* e *«nove per corsa»* per un commit intero. Una cella lunga ha **due** posti in cui vive lo stesso numero, e chi corregge quello in cima non vede l'altro |
+> | **altre tre voci stantie** | *«le sonde sono J1…J13»* nella riga di copertura del registro (sono **J1…J16**) · il peso dell'audit `22 → 25 KB` in `HANDOFF.md` · e in **questo file** un *«⏭️ il prossimo è il Task 2»* fermo da **dieci** compiti, dentro il racconto del Traguardo 4 |
+> | **cresciuti** | [`HANDOFF.md`](HANDOFF.md) `206 → 208` · [`porta-di-qualita.md`](porta-di-qualita.md) `127 → 128` · `CLAUDE.md` `12 → 13` per la **settima** domanda del pre-controllo · questo file `253 → 257` |
+> | **invariati, ricontati** | [`riferimenti.md`](riferimenti.md) 156 · [`audit-2026-08-11.md`](audit-2026-08-11.md) 25 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 25 · [`roadmap.md`](roadmap.md) 27 · [`README.md`](README.md) 16 · spec **277** · disegno T4 30 · kernel-design 44 · tracciabilità 15 · `semi-dst.md` 6 · `design/08` 10 · `design/01` 4 · i piani 168, 162, 114, 68, 50 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
+>
+> ⛔ **E la notizia è che una passata di verifica APERTA SUBITO DOPO ne ha trovate sei.** La
+> ventiseiesima aveva fatto tutto ciò che la §13 pretende — compendio, handoff, riferimenti,
+> registro, e i pesi rimisurati — e restava **falsa in quattro punti**, uno dei quali sotto il
+> titolo *«Prima cosa da fare»*, che è la frase più autorevole del file più autorevole.
+> 📌 **La regola che ne esce, e costa un comando:** quando si sposta il **prossimo passo**, non si
+> corregge la riga che si ha davanti — si cerca **`grep '⏭️'` su tutti i documenti di stato** e si
+> guardano **tutte** le case. Vale per il prossimo passo come la sesta misura lo scrisse per i
+> pesi, e le case sono di più di quante ne ricordi chi ha appena scritto una di esse.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **701** a **703 KB**. I **due file obbligatori**
+> passano da 265 a **270 KB**, e coi tre da 290 a **295**.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
+> diciottesima applicazione.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

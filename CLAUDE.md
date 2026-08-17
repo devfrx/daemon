@@ -9,9 +9,9 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 265 KB** (`wc -c`, il 2026-08-17), e con
+⚠️ **Insieme questi due file pesano 270 KB** (`wc -c`, il 2026-08-17), e con
 [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — che è il **prossimo passo** e non una
-consultazione — **290**. ⛔ **E il prezzo in
+consultazione — **295**. ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
@@ -24,10 +24,10 @@ servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un
 travestita da misura. Il metodo e il limite stanno nella §12 del compendio, quattordicesima
 misura. 📌 È la **sesta** occorrenza del gotcha **#31** su questa riga, che prima diceva
 «circa seimila token» quando i due file pesavano 24 KB, poi «88 KB» quando erano
-già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **701 KB**.
+già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **703 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **701 KB** con
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **703 KB** con
 `wc -c` il 2026-08-17, e possono solo crescere; la spec da sola ne fa **277** — e l'idea è
 già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
 aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione
@@ -133,6 +133,15 @@ misura che `madsim` porta **55 crate** e lo scarta, e il codice gli dà ragione:
 la contraddizione non si vede da nessuno dei due lati, e le cinque domande qui sopra guardano
 tutte il compito contro il **codice** — mai una decisione contro le decisioni vicine. Gotcha
 **#59**.
+
+⛔ **E una SETTIMA, misurata il 2026-08-17 eseguendo la prima decisione dell'audit: un RAPPORTO
+è un piano, e si legge contro il codice come tutti gli altri.** L'audit prezzava quel rimedio
+come *«un'aggiunta al contratto di una porta condivisa»*, cioè caro e strutturale; letto contro
+il codice di oggi non serviva **nessuna** promessa nuova e **nessuna riga di prodotto** — mancava
+uno **stato di prova**, non un contratto. ⚠️ E nella direzione opposta il rapporto era **corto**:
+raggruppava due finding per **causa**, ma una suite che si ferma al primo rosso ha bisogno di un
+bugiardo per **blocco**, non per causa — quindi erano tre. 📌 **Il rimedio si prezza leggendo il
+codice, non il rapporto**, in entrambe le direzioni. Gotcha **#65**.
 
 ## Manutenzione della documentazione
 

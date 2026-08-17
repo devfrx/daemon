@@ -33,7 +33,7 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 > ⏭️ **Restano SETTE decisioni**, e l'ordine proposto sta nella §6 del compendio.
 >
 > ⏭️ **QUELLO CHE VIENE DOPO È L'ESECUZIONE DELL'AUDIT — non il Traguardo 5.** Si legge
-> [`audit-2026-08-11.md`](audit-2026-08-11.md) per intero (22 KB), si portano al proprietario le
+> [`audit-2026-08-11.md`](audit-2026-08-11.md) per intero (25 KB), si portano al proprietario le
 > otto decisioni della §8, e si esegue ciò che approva. L'arbitro GPU riparte quando le voci
 > aperte sono chiuse, e allora si comincia dal **brainstorming** — è lavoro creativo, e
 > `CLAUDE.md` lo impone **prima** di entrare in plan mode, non dal piano.
@@ -91,15 +91,24 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 > compito. Il kernel ha ora il **record durevole** versionato, la **riconciliazione**, e la porta
 > `journal` ha **due** implementazioni — il doppio in memoria e `redb` col backend nostro — tenute
 > alle stesse **nove** promesse a ogni commit. I **byte congelati** sono nel repository e **non si
-> rigenerano**. ⚠️ **La cifra qui diceva «29 target, 152 test» ed era quella del Traguardo 3**:
-> col quarto sono **32 target e 171 test**, di cui **due ignorati** — le due campagne profonde,
-> che appartengono al ciclo lungo (vincolo 8 di §11).
+> rigenerano**. ⚠️ **La cifra qui diceva «29 target, 152 test» ed era quella del Traguardo 3, poi
+> «32 e 171» ed era quella del Traguardo 4**: dal 2026-08-17 sono **32 target e 177 test**, di cui
+> **due ignorati** — le due campagne profonde, che appartengono al ciclo lungo (vincolo 8 di §11).
+> I sei in più sono i tre bugiardi che chiudono T-2 e T-1, contati due volte perché `platform`
+> include la suite.
 >
-> ⏭️ **Il prossimo passo è il BRAINSTORMING del Traguardo 5** — l'arbitro GPU: ammissione,
-> corsie, concessione, le due policy VRAM. Non si comincia dal piano, ed è la regola che ha retto
-> quattro volte; la §6 del compendio ha la tabella e le **questioni lasciate aperte**, raccolte in
-> un posto solo. ⚠️ **Questa riga diceva «scrivere il piano del Traguardo 4»** a quel traguardo
-> eseguito — audit del 2026-08-11.
+> ⏭️ **Il prossimo passo è l'ESECUZIONE DELL'AUDIT — non il brainstorming del Traguardo 5.**
+> Delle otto decisioni della §8 la prima è eseguita il 2026-08-17; ne restano **sette**. L'arbitro
+> GPU — ammissione, corsie, concessione, le due policy VRAM — riparte quando sono chiuse, e allora
+> **dal brainstorming**, non dal piano: è la regola che ha retto quattro volte. La §6 del compendio
+> ha la tabella e le **questioni lasciate aperte**, raccolte in un posto solo.
+> ⛔ **Questa riga diceva «il prossimo passo è il BRAINSTORMING del Traguardo 5» mentre due righe
+> settanta più su, dentro QUESTO STESSO FILE, dicevano «non il Traguardo 5»** — e non era sola:
+> altre due (nella «In trenta secondi» e in «Prima cosa da fare») dicevano lo stesso falso. È la
+> forma esatta del finding **D-1** dell'audit, che aveva corretto il **Punto di ripresa** e non le
+> tre gemelle: una correzione attraversa il punto in cui nasce, non gli altri — radice **R1**.
+> Trovate col `grep '⏭️'` invece che a memoria, il 2026-08-17.
+> ⚠️ E prima ancora diceva «scrivere il piano del Traguardo 4» a quel traguardo eseguito.
 >
 > ⚠️ Deliberatamente **senza SHA**: un hash scritto dentro il file che quel commit contiene
 > nasce già vecchio di uno. Lo SHA sta nel messaggio di delega, dove è vero nel momento in
@@ -126,9 +135,11 @@ versionato, due implementazioni della porta `journal` giudicate dalla stessa sui
 riconciliazione, e i **byte congelati**, che **non si rigenerano**. ✅ **E il Traguardo 4 è
 eseguito il 2026-08-11**: **dieci compiti su dieci**, `GATE GREEN` a ciascuno — il giornale che
 cade e non si riprende, il backend cadente di `redb` scritto da **fuori la crate**, e due
-campagne con **soggetti diversi**. ⏭️ Il prossimo passo è il **brainstorming del Traguardo 5**:
-l'arbitro GPU. ⚠️ Questa riga diceva *«scrivere il piano del Traguardo 4»* — audit del
-2026-08-11.
+campagne con **soggetti diversi**. ⏭️ Il prossimo passo è l'**esecuzione dell'audit**: la prima
+delle otto decisioni è chiusa il 2026-08-17, ne restano **sette**, e l'arbitro GPU viene dopo.
+⛔ Questa riga diceva *«il brainstorming del Traguardo 5»*, una delle **tre** che lo dicevano in
+questo file mentre il Punto di ripresa diceva il contrario — finding **D-1**, radice **R1**.
+⚠️ E prima ancora *«scrivere il piano del Traguardo 4»* — audit del 2026-08-11.
 
 ✅ **La lacuna su I2 è chiusa.** La GPU usata dalla GUI è governata da
 [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md): **quota di presentazione
@@ -154,8 +165,12 @@ backend nostro in `platform`. ⚠️ **Questa riga diceva *«sale col Traguardo 
 
 ## Prima cosa da fare
 
-⏭️ **Il BRAINSTORMING del Traguardo 5, l'arbitro GPU** — non la scrittura del suo piano: un piano
-scritto per codice che non esiste significa inventare. ✅ **Il Traguardo 4 è ESEGUITO il
+⏭️ **L'ESECUZIONE DELL'AUDIT — [`audit-2026-08-11.md`](audit-2026-08-11.md), §5 e §8.** La prima
+delle otto decisioni è eseguita il 2026-08-17 (T-2 e T-1: la conformità del giornale provava tre
+promesse solo dove ogni guardia plausibile passa); **ne restano sette**. ⛔ **Non** il brainstorming
+del Traguardo 5, che questa riga dichiarava: quando l'arbitro GPU riparte si comincia **da lì** e
+non dal piano — un piano scritto per codice che non esiste significa inventare — ma non riparte
+finché le voci aperte non sono chiuse. ✅ **Il Traguardo 4 è ESEGUITO il
 2026-08-11, dieci compiti su dieci**, `GATE GREEN` a ciascuno: la **Parte 1 è completa** — il giornale che cade, lo
 scenario giornalato con `C7a`, **`C7b`**, la campagna breve col numero di semi **misurato** — e la
 **Parte 2 pure**: il backend cadente scritto **da fuori la crate**, la coerenza dopo la caduta con

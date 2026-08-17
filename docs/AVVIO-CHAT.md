@@ -65,7 +65,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              l'altro. È la modalità scelta, e ha
                                              appena portato dieci compiti su dieci
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 290 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 295 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -140,7 +140,7 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 290 KB in tutto
    sono giusti tutti e quattordici.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 701 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 703 KB
    il 2026-08-17, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
    e l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
@@ -264,8 +264,8 @@ per causa (gotcha #65).
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **14,7 KB, E PER LA PRIMA VOLTA NON È CRESCIUTO.** La serie era 7,7 → 9,8 → 12,2 → 14,7, quattro crescite di seguito e tre a due cifre percentuali; il 2026-08-17 la consegna ha incassato una decisione intera dell'audit e il blocco è passato da **15036 a 15040 byte**, `+4 B` e una riga. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **265 KB** — `CLAUDE.md` più il compendio, e **290** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 265 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **270 KB** — `CLAUDE.md` più il compendio, e **295** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 270 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -279,7 +279,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **290 KB contro 701**. ⚠️ **E le case sono state ricontate col
+resta quello che conta: **295 KB contro 703**. ⚠️ **E le case sono state ricontate col
 `grep` il 2026-08-17, non riprese dal verbale precedente:** l'aggregato ne ha **quattro**,
 la cifra dei due file obbligatori **tre**, quella coi tre file **quattro** — la 25ª ne
 dichiarava sei per la seconda, ed è il gotcha **#31** applicato all'**elenco delle case**.

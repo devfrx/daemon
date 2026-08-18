@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (715 KB in byte LF il 2026-08-18, e possono solo crescere — la spec da sola ne fa 277), e
+> (719 KB in byte LF il 2026-08-18, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-11.** Manutenzione: §13.
@@ -926,7 +926,8 @@ corrente e il prossimo passo stanno nella §6 — non qui, o si disallineano»* 
 misura della §12 prescrive per intero *«si cerca `grep '⏭️'` su tutti i documenti di stato e
 si guardano tutte le case»*. 📌 **Un promemoria non è un controllo**, ed è la **terza**
 occorrenza della radice **R1** su questa identica riga: finding **D-1**, poi il 2026-08-17,
-poi oggi.
+poi oggi. 📌 **E la regola violata viveva DENTRO il documento che la violava** — gotcha
+**#68** — mentre lo strumento che ha applicato il rimedio ha dato il **#69**.
 ✅ **Quindi il rimedio non è ricorreggere le case: è TOGLIERLE.** I documenti secondari ora
 **rimandano** alla §6 invece di riscriverla — e un rimando non può marcire. ⛔ **E la prova di
 quale forma regga era già nel repository, non è un'opinione:**
@@ -1521,7 +1522,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I sessantasette gotcha
+## 9. I sessantanove gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -1595,6 +1596,8 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 65 | ⛔ **Due difetti con la stessa CAUSA non hanno la stessa COPERTURA, e un rapporto che li raggruppa per causa fa scrivere un rimedio che ne prova uno solo.** Misurato il 2026-08-17 chiudendo T-2: l'audit elenca le promesse **5** e **8a** come un finding, e ha ragione sulla **causa** — `outcome` e `note` condividono `has_intent` in entrambe le implementazioni, quindi una guardia cieca le acceca insieme. ⛔ **Ma la suite muore alla PRIMA promessa rotta**, quindi un bugiardo cieco su tutt'e due muore sulla 5 e il blocco della 8a resta **non provato mentre un test afferma il contrario**: servono **due** bugiardi, ciascuno che superi l'altro blocco **sui propri meriti**. ⚠️ Il rimedio dettato dal rapporto è **giusto**; a essere dimezzata è la sua **prova**, e si vede solo scrivendola. 📌 Un tipo solo con **due istanze**, o sarebbe lo stesso difetto scritto due volte (#45 dall'altro lato). 📌 **La domanda:** *quanti di questi blocchi un solo bugiardo riesce a raggiungere?* |
 | 66 | ⛔ **Chiudere un difetto non rende rosse le sonde che vi poggiavano: alcune diventano VACUE, e quella direzione non si vede.** Misurato il 2026-08-18 chiudendo K-1. Il rapporto prevedeva **due** sonde permanenti rosse; ne è diventata rossa **una**. L'altra — che scriveva la scadenza **dal banco** invece di lasciarla dichiarare all'attività — non aveva più nulla da esercitare, e **restava verde**: provato mutando `until <= instant` in `until < instant`, cioè **la discriminazione che il suo commento dichiara di difendere**, con la vecchia forma **verde** mentre la stessa mutazione faceva rossi **cinque** altri test. ⚠️ **Non è il #63:** lì la sonda nasceva vacua, qui **lo diventa**, e a renderla tale è il rimedio stesso — una sonda che ieri mordeva oggi non morde più, e nessun rosso lo annuncia. ⛔ **Nessuna delle sette domande del pre-controllo lo coglie**, perché guardano il compito contro il codice, mai **le sonde che poggiavano sul difetto che stai chiudendo**. 📌 **La domanda, e va fatta prima di correggere:** *quali sonde passano ATTRAVERSO questo difetto, e quali di esse resteranno verdi senza più provare nulla?* Poi si mutano, una per una. |
 | 67 | ⛔ **Una giustificazione scritta su un ELENCO di nomi si legge come verificata su tutti, e basta che regga sul primo.** Misurato il 2026-08-18 chiudendo P-1: il `Debug` di `RecordV1` giustifica quattro campi con una ragione sola — *«`kind`, `effect`, `trust` e `reason` sono il vocabolario del kernel, **nobody outside chose them**»* — vera per **tre**, falsa per `reason`, che lo sceglie il **chiamante**. Il risultato è che A3 era dichiarata CHIUSA mentre il testo esterno usciva dalla **giustificazione** invece che dal payload. ⚠️ **Non è il #29:** lì una partizione lascia scoperto un membro che non appartiene a nessuna categoria; qui **una sola affermazione è quantificata su un elenco**, e la frase non dice **per quale nome** è stata controllata. 📌 **E ha un secondo tempo, sul RIMEDIO:** il rapporto proponeva `reason: &Instruction`, che **non chiude nulla** — `Instruction::new` è `pub`, quindi la guardia è soddisfatta dalla via **A1/A2**, dichiarata non chiudibile **dieci righe sopra**. **Una guardia a newtype vale esattamente quanto il suo COSTRUTTORE**, e una che non lo dice compra l'apparenza di una chiusura sopra una strada già dichiarata aperta. 📌 **Le due domande:** *questa ragione l'ho verificata su OGNI nome dell'elenco, o sul primo?* e *questo tipo, chi può costruirlo?* |
+| 68 | ⛔ **Una regola scritta in un documento non vincola quel documento, e la sua violazione più vecchia è quasi sempre lì dentro.** Misurato il 2026-08-18: `CLAUDE.md` alla riga **59** scrive *«lo stato corrente e il prossimo passo stanno nella §6 del compendio — **non qui, o si disallineano**»*, e alla riga **13** — quarantasei righe **sopra**, nello stesso file — dava l'audit per **prossimo passo**. Stessa forma nella §12 di questo file, che prescrive *«quando si sposta il prossimo passo si cerca `grep '⏭️'` su tutti i documenti di stato e si guardano TUTTE le case»* mentre ne teneva **quattro** ferme. ⛔ **Non è distrazione, è strutturale:** una regola si scrive **guardando gli altri** — nasce per correggere qualcun altro — quindi il documento che la ospita non viene mai riletto **contro di essa**. ⚠️ **Non è la radice R1:** lì una **correzione** non attraversa gli **altri** documenti; qui una **regola** non attraversa il **proprio**. 📌 **La domanda, e costa una rilettura:** *questo documento rispetta la regola che contiene?* 📌 **E il corollario sul rimedio:** se la regola dice *«vive in un posto solo»*, riallineare le copie **ricrea lo stato in cui la regola è di nuovo l'unica difesa** — il rimedio è toglierle |
+| 69 | ⛔ **Uno strumento che muta più file e RIFERISCE mentre scrive può fallire rumorosamente e lasciare comunque l'insieme applicato a metà: l'errore non è nell'ingresso, è nell'USCITA.** Misurato il 2026-08-18: uno script che applicava ventiquattro sostituzioni su sette file stampava una riga di verbale **dopo ogni scrittura**, e la riga conteneva una freccia. Su una console `cp1252` `print` solleva `UnicodeEncodeError`, e ha sollevato **dopo il primo file**: `CLAUDE.md` scritto, gli altri sei no, **exit 1**. ⚠️ **Non è il #48**, che descrive un banco che sbaglia **verso l'attesa, in silenzio**, e di cui ci si fida perché conferma: qui il guasto è **rumoroso** — traceback pieno, uscita diversa da zero — e proprio per questo si legge come *«non ha fatto niente»* mentre l'insieme è **parzialmente applicato**. ⛔ **Nessun contatore di sostituzioni lo coglie**, perché le sostituzioni erano tutte giuste. 📌 **Il contro-verso è di ORDINAMENTO, non di codifica:** uno strumento che muta file **non stampa nulla finché non ha finito di scrivere** — si accumula il verbale e lo si emette alla fine. Riparare la sola codifica chiude **quella** freccia e lascia aperta la classe. ✅ Ripristinato con `git checkout --`, lecito **solo** perché quei file non portavano lavoro non committato: è la dodicesima forma del **#48** al rovescio, e la condizione va detta perché non è la regola |
 
 ---
 
@@ -1653,7 +1656,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 30 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 215 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 219 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 29 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
@@ -1671,7 +1674,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 114 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 17 KB |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **14,7** (15014 byte LF), `+67 B` il 2026-08-18 dopo il calo di 1712 della 34ª: la crescita più piccola mai registrata | 25 KB |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **14,7** (15013 byte LF): `+67 B` e poi `−1 B` il 2026-08-18, dopo il calo di 1712 della 34ª | 25 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -2645,6 +2648,30 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > L'insieme *«HANDOFF + spec + `adr/`»* resta **715 KB**. I **due file obbligatori** passano
 > da 308 a **317 KB**, e coi tre da 337 a **348**.
+
+> 🔁 **Trentaseiesima misura, il 2026-08-18, chiudendo la manutenzione che il §13 pretende e
+> che la passata precedente aveva saltato.** In byte LF, `int(n/1024 + 0.5)`.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`HANDOFF.md`](HANDOFF.md) `215 → 219` — il testo integrale dei due gotcha nuovi, che è la voce più cara di questa passata · questo file `304 → 308` · `CLAUDE.md` `13 → 14`, la riga di metodo |
+> | ⚡ **calato di un byte** | [`AVVIO-CHAT.md`](AVVIO-CHAT.md), che resta **25 KB**: il **messaggio** passa da 15014 a **15013**, perché *«sessantasette»* è una lettera più lungo di *«sessantanove»* |
+> | **invariati, ricontati** | [`riferimenti.md`](riferimenti.md) 188 · [`audit-2026-08-11.md`](audit-2026-08-11.md) 31 · [`roadmap.md`](roadmap.md) 29 · [`README.md`](README.md) 17 · [`porta-di-qualita.md`](porta-di-qualita.md) 156 · [`tracciabilita.md`](tracciabilita.md) 15 · [`semi-dst.md`](semi-dst.md) 6 · spec **277** |
+>
+> ⛔ **E l'aggregato si muove per la prima volta da tre passate: 715 → 719 KB**, tutto da
+> [`HANDOFF.md`](HANDOFF.md). ⚠️ **La cifra vive in QUATTRO case** — la testa di questo file,
+> `CLAUDE.md`, e **due** punti di [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ricontate col `grep` e
+> aggiornate tutte e quattro nella stessa passata. 📌 È la 20ª misura applicata a sé stessa:
+> *le case si contano una volta sola, quando si scrive il rimedio*, e chi riconta non si fida
+> del numero scritto nel verbale precedente.
+>
+> ⚠️ **I due file obbligatori passano da 317 a 322 KB, e coi tre da 348 a 353** — cioè la
+> lettura d'avvio è cresciuta di **tre** kilobyte per incassare due gotcha e una riga di
+> metodo. ⛔ **Va detto come sta, perché è un costo e non un guadagno:** la 25ª misura
+> prescrive di **togliere**, e questa passata ha **aggiunto**. La differenza è che ciò che
+> entra è una **lezione** — e la stessa 25ª dice che una lezione non si toglie mai: si toglie
+> un rimando duplicato o una voce chiusa. Il rapporto che questo file difende resta
+> **353 KB contro 719**.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

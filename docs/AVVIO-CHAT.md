@@ -61,12 +61,12 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 348 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 353 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i sessantasette gotcha (§9), le trappole di
+     cosa NON rifare (§8), i sessantanove gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
   3. docs/audit-2026-08-11.md — 29 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE, ed è CHIUSO: non è più IL COMPITO, è il VERBALE
@@ -147,7 +147,7 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 348 KB in tutto
    porta-di-qualita.md, in un posto solo.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 715 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 719 KB
    il 2026-08-18, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
    e l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
@@ -266,8 +266,8 @@ plan mode. ⚠️ Il deliverable esatto sta nella §6 del compendio, non qui.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **14,7 KB, E LA SERIE HA GIRATO.** Era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **317 KB** — `CLAUDE.md` più il compendio, e **348** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 317 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **322 KB** — `CLAUDE.md` più il compendio, e **353** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 322 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -281,7 +281,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **348 KB contro 715**. ⛔ **E il 2026-08-18 il METODO ha rivelato un
+resta quello che conta: **353 KB contro 719**. ⛔ **E il 2026-08-18 il METODO ha rivelato un
 difetto che i numeri non mostravano: «`wc -c`» non dice QUALI byte, e questo repository si lavora
 da DUE macchine.** Su un albero CRLF `wc -c` conta un byte in più per riga, quindi nove celle
 della §12 sembravano stantie di 1–4 KB **su file non toccati da giorni**; tolti i CR, tutte e

@@ -9,9 +9,9 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 308 KB** (byte LF, il 2026-08-18), e con
-[`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — che è il **prossimo passo** e non una
-consultazione — **337**. ⛔ **E il prezzo in
+⚠️ **Insieme questi due file pesano 317 KB** (byte LF, il 2026-08-18), e con
+[`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — **chiuso il 2026-08-18, otto decisioni
+su otto**, quindi oggi una **consultazione** — **348**. ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato

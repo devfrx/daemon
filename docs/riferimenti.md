@@ -1912,6 +1912,66 @@ cargo test --workspace --no-fail-fast --locked    ->  32 target · 194 passati �
 
 ---
 
+## Passata di coerenza del 2026-08-18 — il puntatore al prossimo passo: il censimento, coi comandi
+
+Non è una misura di prodotto: è il **censimento delle case** di due affermazioni che erano
+divergute. Sta qui perché la **25ª misura** della §12 del compendio prescriveva il comando e
+nessuno l'aveva eseguito, e perché è il **conteggio delle case** ad aver deciso la forma del
+rimedio.
+
+I due comandi, dalla radice del repository. `docs/superpowers/` è escluso: sono verbali
+storici con errata in testa, e per regola del progetto non si riscrivono.
+
+```
+grep -rn "prossimo passo\|prossimo è\|⏭️\|Prima cosa da fare\|Punto di ripresa" --include=*.md .
+grep -rniE "restano (tre|due|una|quattro|cinque)|audit (è )?(chiuso|aperto)" --include=*.md .
+```
+
+**L'esito, misurato a `bb0985a`:**
+
+| | |
+|---|---|
+| documenti di stato che tenevano una **copia** del puntatore | **cinque** — `CLAUDE.md`, `COMPENDIO.md`, `HANDOFF.md`, `README.md`, `roadmap.md` |
+| case del puntatore che davano l'audit per prossimo passo | **nove**, di cui **quattro nel solo `COMPENDIO.md`** |
+| case del conteggio delle decisioni residue, e valori distinti | **sette** case, **tre** valori — *«tre»*, *«quattro»*, *«cinque»* — contro il vero, **zero**. ⚠️ Una di esse portava anche un conteggio di **eseguite**, *«due»*, falso allo stesso modo |
+| case del conteggio nel solo [`HANDOFF.md`](HANDOFF.md) | **quattro**, con **tre** valori diversi |
+| documenti che portavano il valore **giusto** | **due** — [`AVVIO-CHAT.md`](AVVIO-CHAT.md) e la §6 del compendio |
+| righe della §8 dell'audit lasciate **senza timbro** | **tre** — la 2, la 3 e la 7 — mentre il commit che le chiudeva si intitola *«otto decisioni su otto»* |
+
+⛔ **Il dato che ha deciso il rimedio è la penultima riga**, e non il totale delle case:
+[`AVVIO-CHAT.md`](AVVIO-CHAT.md) è l'unico documento che su questa riga non è **mai** marcito
+in nove passate, ed è l'unico che **si rifiuta di nominare il prossimo passo**, dichiarandone la
+ragione. Non è una preferenza di stile: è la **sola forma osservata che regge**. Da lì il
+rimedio — i secondari **rimandano** alla §6 invece di riscriverla.
+
+✅ **Verifica nella seconda direzione**, dopo la passata: gli stessi due comandi non trovano più
+nessuna affermazione **viva** falsa. Le occorrenze rimaste sono tutte **citazioni del testo
+vecchio dentro i richiami datati**, che è la convenzione del repository — cioè il controllo
+**non scatta dove non deve**, gotcha #24.
+
+⛔ **E una trappola nuova, misurata chiudendo la passata: il LOG DEL CANCELLO non è la fonte
+del conteggio dei test, e chi lo aggrega ottiene un numero più alto senza accorgersene.**
+Sommando le righe `test result:` di `bash scripts/gate.sh` si ottiene **34 target, 203
+passati, 4 ignorati**; il comando che il compendio cita —
+`cargo test --workspace --no-fail-fast --locked` — ne dà **32, 194 e 2**.
+✅ **La causa è verificata, non dedotta:** nel log del cancello
+`engine_crash_consistency.rs` e `dst_campaign.rs` compaiono **due volte** — il cancello le
+rilancia per stampare il **tempo di parete** a ogni corsa (vincolo 7 della §11) — e i due
+binari portano `5+4` test passati e `1+1` ignorati: `32+2`, `194+9`, `2+2`, che torna esatto.
+📌 **La riga di metodo:** una baseline si riprende dal comando che la **definisce**, mai da un
+log che quel comando lo contiene insieme ad altro. È il gotcha **#48** nella forma in cui il
+banco non mente — mente il **perimetro** di ciò che si somma.
+
+⚠️ **E lo strumento ha dato la decima forma del gotcha #48 alla prima corsa, con una causa
+nuova: non l'ingresso, l'USCITA.** Un `print` con una freccia su una console `cp1252` solleva
+`UnicodeEncodeError` **a metà del ciclo di scrittura**, lasciando `CLAUDE.md` applicato e gli
+altri sei no — cioè l'insieme applicato **a metà, con exit diverso da zero**, che è la forma di
+guasto peggiore per uno strumento che muta file. ✅ Ripristinato con `git checkout --`, lecito
+**solo** perché quei file non portavano lavoro non committato (dodicesima forma del #48), e lo
+script riparato in **due** punti, non uno: `sys.stdout.reconfigure(encoding="utf-8")`, **e**
+tutte le scritture spostate **prima** di qualunque `print`. 📌 La riga di metodo: *uno strumento
+che muta file non stampa nulla finché non ha finito di scrivere*.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

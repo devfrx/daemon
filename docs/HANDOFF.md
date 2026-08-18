@@ -65,14 +65,15 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 > il difetto di A-7. ⛔ **E il difetto era invisibile sull'host**: Windows non ha il modo Unix,
 > quindi il rosso poteva uscire **solo sul secondo sistema** (gotcha #52). Il percorso `cfg(unix)`
 > è stato **type-checkato per Linux** prima del push; il valore lo misura la **CI**.
-> ⏭️ **Restano TRE decisioni**, e l'ordine proposto sta nella §6 del compendio. ⛔ **Sono le tre
-> che devi davvero decidere tu**: le altre cinque si eseguivano leggendo il codice.
+> ✅ **E LE OTTO SONO CHIUSE IL 2026-08-18.** Il conteggio vive nella **§6 del compendio**, in un
+> posto solo: qui non si ripete, o diverge — ed è già divergito **quattro volte in questo file**.
 >
-> ⏭️ **QUELLO CHE VIENE DOPO È L'ESECUZIONE DELL'AUDIT — non il Traguardo 5.** Si legge
-> [`audit-2026-08-11.md`](audit-2026-08-11.md) per intero (25 KB), si portano al proprietario le
-> cinque decisioni che restano nella §8, e si esegue ciò che approva. L'arbitro GPU riparte quando le voci
-> aperte sono chiuse, e allora si comincia dal **brainstorming** — è lavoro creativo, e
-> `CLAUDE.md` lo impone **prima** di entrare in plan mode, non dal piano.
+> ⏭️ **QUELLO CHE VIENE DOPO NON È SCRITTO QUI, ED È DELIBERATO:** sta nella **§6 del
+> compendio**, in un posto solo. ⛔ **Questo blocco lo riscriveva, ed è andato stantio tre
+> volte** — radice **R1**. Il rimedio non è ricorreggerlo: è **toglierlo**, che è la
+> prescrizione della 25ª misura — *decidere cosa TOGLIERE, non cosa accorciare* — e la ragione
+> per cui [`AVVIO-CHAT.md`](AVVIO-CHAT.md) è l'unico documento che su questa riga non è **mai**
+> marcito: si rifiuta di nominare il prossimo passo, e lo dichiara.
 > ⚠️ **Questa riga diceva «quello che viene dopo è il brainstorming del piano del Traguardo 4»
 > a Traguardo 4 ESEGUITO**, e la riga della tabella dei traguardi seicento righe più sotto lo
 > dava già per chiuso: due affermazioni di stato **nello stesso file** che si contraddicevano.
@@ -133,12 +134,11 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 > I sei in più sono i tre bugiardi che chiudono T-2 e T-1, contati due volte perché `platform`
 > include la suite.
 >
-> ⏭️ **Il prossimo passo è l'ESECUZIONE DELL'AUDIT — non il brainstorming del Traguardo 5.**
-> Delle otto decisioni della §8 ne sono eseguite **due** — la 1 il 2026-08-17 e la 8 il
-> 2026-08-18, e la 6, la 5 e la 4 lo stesso giorno; ne restano **tre**. L'arbitro
-> GPU — ammissione, corsie, concessione, le due policy VRAM — riparte quando sono chiuse, e allora
-> **dal brainstorming**, non dal piano: è la regola che ha retto quattro volte. La §6 del compendio
-> ha la tabella e le **questioni lasciate aperte**, raccolte in un posto solo.
+> ⏭️ **Il prossimo passo sta nella §6 del compendio, in un posto solo** — insieme alla tabella
+> dei traguardi e alle **questioni lasciate aperte**. ⛔ **Questa riga lo riscriveva e portava
+> un conteggio proprio** — *«ne sono eseguite due … ne restano tre»* — falso dal 2026-08-18,
+> mentre altre tre righe di **questo stesso file** dicevano **tre**, **quattro** e **cinque**:
+> quattro case e **tre** valori distinti, nessuno vero. Tolto invece che corretto.
 > ⛔ **Questa riga diceva «il prossimo passo è il BRAINSTORMING del Traguardo 5» mentre due righe
 > settanta più su, dentro QUESTO STESSO FILE, dicevano «non il Traguardo 5»** — e non era sola:
 > altre due (nella «In trenta secondi» e in «Prima cosa da fare») dicevano lo stesso falso. È la
@@ -172,9 +172,8 @@ versionato, due implementazioni della porta `journal` giudicate dalla stessa sui
 riconciliazione, e i **byte congelati**, che **non si rigenerano**. ✅ **E il Traguardo 4 è
 eseguito il 2026-08-11**: **dieci compiti su dieci**, `GATE GREEN` a ciascuno — il giornale che
 cade e non si riprende, il backend cadente di `redb` scritto da **fuori la crate**, e due
-campagne con **soggetti diversi**. ⏭️ Il prossimo passo è l'**esecuzione dell'audit**: la prima
-l'ottava e la sesta delle otto decisioni sono chiuse — il 2026-08-17 e il 2026-08-18 — ne restano
-**cinque**, e l'arbitro GPU viene dopo.
+campagne con **soggetti diversi**. ⏭️ **Il prossimo passo sta nella §6 del compendio**, in un
+posto solo: questa riga ne teneva una copia — *«ne restano cinque»* — falsa dal 2026-08-18.
 ⛔ Questa riga diceva *«il brainstorming del Traguardo 5»*, una delle **tre** che lo dicevano in
 questo file mentre il Punto di ripresa diceva il contrario — finding **D-1**, radice **R1**.
 ⚠️ E prima ancora *«scrivere il piano del Traguardo 4»* — audit del 2026-08-11.
@@ -203,17 +202,14 @@ backend nostro in `platform`. ⚠️ **Questa riga diceva *«sale col Traguardo 
 
 ## Prima cosa da fare
 
-⏭️ **L'ESECUZIONE DELL'AUDIT — [`audit-2026-08-11.md`](audit-2026-08-11.md), §5 e §8.** La prima
-delle otto decisioni è eseguita il 2026-08-17 (T-2 e T-1: la conformità del giornale provava tre
-promesse solo dove ogni guardia plausibile passa) e l'**ottava** il 2026-08-18 (G-5: `--locked`, e
-il `Cargo.lock` smette di essere un effetto del cancello) e la **sesta** lo stesso giorno (A-1,
-A-2, A-4, A-7: quattro richiami datati, nessuna decisione riaperta) e la **quinta** (C-1:
-`bincode` non mantenuto, registrato accanto alla voce, deciso al Traguardo 6); **ne restano
-quattro**.
-⛔ **Non** il brainstorming
-del Traguardo 5, che questa riga dichiarava: quando l'arbitro GPU riparte si comincia **da lì** e
-non dal piano — un piano scritto per codice che non esiste significa inventare — ma non riparte
-finché le voci aperte non sono chiuse. ✅ **Il Traguardo 4 è ESEGUITO il
+⏭️ **LEGGI LA §6 DEL [`COMPENDIO.md`](COMPENDIO.md).** Il prossimo passo vive **lì e solo lì**,
+ed è deliberato: questa sezione ne teneva una **copia**, e la copia è andata stantia **tre
+volte** — finding **D-1** dell'audit, poi ancora il 2026-08-17 e il 2026-08-18.
+⛔ **L'ultima volta portava anche un conteggio proprio** — *«ne restano quattro»* — mentre altre
+tre righe di questo file dicevano **tre**, **tre** e **cinque**: quattro case e **tre** valori
+distinti, in un documento solo, ciascuno fermo alla decisione che l'aveva scritto.
+✅ **Tolta invece che corretta il 2026-08-18**, che è la 25ª misura — *decidere cosa TOGLIERE,
+non cosa accorciare* — e il rimedio che il finding D-1 non aveva preso. ✅ **Il Traguardo 4 è ESEGUITO il
 2026-08-11, dieci compiti su dieci**, `GATE GREEN` a ciascuno: la **Parte 1 è completa** — il giornale che cade, lo
 scenario giornalato con `C7a`, **`C7b`**, la campagna breve col numero di semi **misurato** — e la
 **Parte 2 pure**: il backend cadente scritto **da fuori la crate**, la coerenza dopo la caduta con

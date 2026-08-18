@@ -31,11 +31,11 @@ C-1: `bincode` è dichiarato **non mantenuto** (RUSTSEC-2025-0141, `INFO`), ha *
 produzione, e la registrazione vive accanto alla voce nel manifesto; si decide al Traguardo 6.
 ✅ **E la quarta** — PL-1: il file del giornale nasceva **0644** su Linux, cioè **meno**
 dell'account che ADR-0023 promette; ora è **0600**, misurato su Linux vero.
-**Ne restano tre**, e sono le tre che richiedono davvero una decisione del proprietario.
-⏭️ **Il prossimo è l'ESECUZIONE DELL'AUDIT**, non il
-Traguardo 5: l'arbitro GPU riparte quando le voci aperte sono chiuse, e allora si comincia dal
-**brainstorming**. ⚠️ **Questa riga diceva *«il prossimo passo è
-eseguirlo»***, prima *«il brainstorming»*, prima ancora *«scrivere il piano»*.
+✅ **E LE OTTO SONO CHIUSE il 2026-08-18, otto su otto.**
+⏭️ **Il prossimo passo sta nella §6 del [`COMPENDIO.md`](COMPENDIO.md), in un posto solo** — qui
+non si ripete. ⚠️ **Questa riga lo riscriveva**, e ha detto *«scrivere il piano»*, poi *«il
+brainstorming»*, poi *«eseguirlo»*, poi *«l'esecuzione dell'audit … ne restano tre»*: quattro
+formulazioni, l'ultima falsa dal 2026-08-18. **Tolta invece che corretta** — 25ª misura.
 ⚠️ **Questa riga diceva «dieci compiti su dodici, si riprende dal Task 11»** a traguardo chiuso:
 è la lezione della tredicesima misura — la §6 del compendio giusta **nasconde** gli altri
 documenti di stato.

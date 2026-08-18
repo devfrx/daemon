@@ -78,11 +78,11 @@ Ultimo aggiornamento: **2026-08-11**.
 > mantenuto: **registrato**, non deciso, perché ha zero usi di produzione e la finestra si chiude
 > da sola al Traguardo 6. ✅ **E la quarta** — PL-1: il file del giornale nasceva **0644** su
 > Linux, meno dell'account che ADR-0023 promette; ora **0600**, con la sonda che gira sulla CI.
-> **Ne restano tre.**
-> ⏭️ **Il prossimo è l'ESECUZIONE DELL'AUDIT**, non il Traguardo 5:
-> l'arbitro GPU riparte quando le voci aperte sono chiuse, e allora si comincia dal
-> **brainstorming**. ⚠️ **Questa riga diceva *«il prossimo passo
-> è eseguirlo»***, prima *«il brainstorming»*, prima ancora *«scrivere il piano»*.
+> ✅ **E LE OTTO SONO CHIUSE il 2026-08-18, otto su otto.**
+> ⏭️ **Il prossimo passo sta nella §6 del [`COMPENDIO.md`](COMPENDIO.md), in un posto solo** —
+> qui non si ripete. ⚠️ **Questa riga lo riscriveva**, e ha detto *«scrivere il piano»*, poi
+> *«il brainstorming»*, poi *«eseguirlo»*, poi *«l'esecuzione dell'audit … ne restano tre»*.
+> **Tolta invece che corretta il 2026-08-18** — 25ª misura.
 > ✅ **Col Task 9 la porta `journal` ha la conformità contro _entrambe_ le implementazioni**,
 > tenuta a ogni commit e non misurata una volta sola.
 > ⛔ **E col Task 10 il formato durevole è CONGELATO:** i byte di **tre** record sono nel
@@ -189,7 +189,7 @@ eseguito** — audit del 2026-08-11.
 | **2** | il substrato iniettabile | ✅ **eseguito** il 2026-08-10, `GATE GREEN`: i due tempi · la porta `Rng` · i parametri consegnati · la porta `Reactor` · l'**esecutore** · l'orologio virtuale · il reattore reale e la prima **suite di conformità** · il cablaggio di produzione in `daemon` · il **confine dei tipi** `Untrusted`/`Instruction` · le **sei famiglie di porte al completo** · il registro dei controlli e la chiusura |
 | **3** | giornale e formato durevole | ✅ **eseguito** il 2026-08-10, **dodici compiti su dodici**, `GATE GREEN` a tutti. [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**: la porta `journal` a byte con **due** implementazioni giudicate dalla stessa suite, il record come enum di versione, la **riconciliazione**, ✅ **i byte congelati** — nel repository dal Task 10, e non si rigenerano mai. ⚠️ **Questa cella ha detto *«il prossimo … da eseguire»* a nove compiti fatti e *«dieci su dodici»* a dodici**, ed è la lezione della tredicesima misura ripetuta due volte: la §6 del compendio giusta **nasconde** gli altri documenti di stato |
 | **4** | il simulatore DST — **il guasto** | ✅ **ESEGUITO il 2026-08-11, dieci compiti su dieci**, `GATE GREEN` a ciascuno. ⚠️ Questa cella diceva *«il prossimo, e resta da ESEGUIRE»* a traguardo chiuso, mentre le altre due tabelle dello stesso file lo davano per eseguito — la stessa cifra in tre tabelle, aggiornata in due. Audit del 2026-08-11. ✅ **Brainstorming, disegno e piano tutti il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) e il [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci compiti in tre parti**. ⛔ Costruisce **il motore** della DST — giornale cadente, backend cadente, campagna, semi — e **non** le quattro finte mancanti, che nascono col meccanismo che le usa. ⚠️ Questa cella diceva *«tempo virtuale, iniezione dei guasti, la campagna, i semi»*: il **tempo virtuale è del Traguardo 2**, e con esso `C1`, `C2`, `C3` e la non-vacuità. Il `StorageBackend` su cui iniettare **esiste già**, ed è provato sostituibile da fuori la crate |
-| 5 | arbitro GPU | ⛔ **NON è più il prossimo**: davanti gli sta l'**esecuzione dell'audit** del 2026-08-11. Quando riparte si comincia dal **BRAINSTORMING**, non dal piano: ammissione, corsie, ciclo della concessione, le due policy. Eredita **cinque** delle nove righe di guasto che il Traguardo 4 ha lasciato scoperte con un indirizzo |
+| 5 | arbitro GPU | ⬜ **non ancora aperto.** Quando si apre si comincia dal **BRAINSTORMING**, non dal piano: ammissione, corsie, ciclo della concessione, le due policy. Eredita **cinque** delle nove righe di guasto che il Traguardo 4 ha lasciato scoperte con un indirizzo. ⚠️ **Questa cella diceva *«NON è più il prossimo: davanti gli sta l'esecuzione dell'audit»***, vero fino al 2026-08-18 e falso dopo — corretta lo stesso giorno. ⛔ **E non porta il puntatore:** quello vive nella §6 del compendio, in un posto solo |
 | 6 | gli altri meccanismi | gateway, sensori, permessi, degrado, il canale worker |
 
 **Il codice si scrive in questo repository**, non altrove, e la domanda su *dove* è

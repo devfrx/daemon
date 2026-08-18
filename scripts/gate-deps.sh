@@ -43,21 +43,55 @@ virtue"
 # Whoever "simplifies" it reopens the blind spot, and the gate goes green without saying so.
 names() { sed 's/^[^a-zA-Z0-9_-]*//' | awk '{print $1}' | grep -E '^[A-Za-z0-9_-]+$' | sort -u; }
 
+# ⛔ `--locked` ON EVERY `cargo tree` BELOW, and it is what makes this check trustworthy at all:
+# without it cargo RE-RESOLVES, rewrites the tracked Cargo.lock, and this script then measures
+# the graph cargo has just invented instead of the one ADR-0031 approved. Measured rather than
+# reasoned (finding G-5 of the 2026-08-11 audit): with `minicbor` removed from
+# crates/kernel/Cargo.toml, this script came out `OK -- the two graphs match the two lists`,
+# exit 0, and Cargo.lock had lost 33 lines. The remedy for a stale lockfile is to refresh it
+# OUTSIDE the gate and COMMIT it with the manifest -- see the block in gate.sh.
+#
+# ⚠️ WHAT THE EXPLICIT FAILURE BRANCH BUYS IS THE DIAGNOSIS, NOT THE RED. Without it a failing
+# `cargo tree` leaves BOTH graphs empty, they compare equal, and the non-vacuity guard at the
+# bottom of this file already turns the gate red -- but saying "the query was narrow" when the
+# truth is "the lockfile is stale". A red whose reason is wrong is what §7.1.1 calls worse than
+# no check at all, because it teaches people to stop reading the output.
+#
+# ⚠️ AND THE ERROR IS SHOWN BY RE-RUNNING, never by folding stderr into the capture: a `cargo
+# tree` that prints "Blocking waiting for file lock on package cache" would hand `names` the
+# word "Blocking", which passes its character class and would be reported as an INTRUDER on I3
+# -- a red for the wrong reason. The second run costs nothing: it happens only on the way out.
 for crate in kernel simulator; do
   echo "== $crate: SHIPPED graph =="
-  shipped_graph=$(cargo tree -p "$crate" -e normal,no-proc-macro --prefix none 2>/dev/null | names)
+  if ! shipped_raw=$(cargo tree --locked -p "$crate" -e normal,no-proc-macro --prefix none 2>/dev/null); then
+    report "$crate: the SHIPPED graph could NOT be measured -- 'cargo tree --locked' failed."
+    echo "      ⛔ Most often a STALE Cargo.lock: a manifest changed and the lockfile did not."
+    echo "      Refresh it OUTSIDE the gate (a plain 'cargo build') and COMMIT it with the"
+    echo "      manifest. The lockfile is an INPUT of this check, not an effect of it."
+    echo "      The error, verbatim:"
+    cargo tree --locked -p "$crate" -e normal,no-proc-macro --prefix none 2>&1 >/dev/null | sed 's/^/        /'
+    continue
+  fi
+  shipped_graph=$(printf '%s\n' "$shipped_raw" | names)
   intruders=$(comm -23 <(printf '%s\n' "$shipped_graph") <(printf '%s\n' "$SHIPPED" | sort -u))
   if [ -n "$intruders" ]; then
     for i in $intruders; do
       report "I3 violated -- $crate ships '$i', which is not on the list."
       echo "      ⛔ REMEDY: REMOVE the dependency. Adding it to the list is not a remedy."
       echo "      Where it comes from:"
-      cargo tree -p "$crate" -e normal,no-proc-macro -i "$i" 2>/dev/null | sed 's/^/        /'
+      cargo tree --locked -p "$crate" -e normal,no-proc-macro -i "$i" 2>/dev/null | sed 's/^/        /'
     done
   fi
 
   echo "== $crate: BUILD graph =="
-  full_graph=$(cargo tree -p "$crate" -e no-dev --prefix none 2>/dev/null | names)
+  if ! full_raw=$(cargo tree --locked -p "$crate" -e no-dev --prefix none 2>/dev/null); then
+    report "$crate: the BUILD graph could NOT be measured -- 'cargo tree --locked' failed."
+    echo "      Same cause and same remedy as above: the lockfile is an INPUT of this check."
+    echo "      The error, verbatim:"
+    cargo tree --locked -p "$crate" -e no-dev --prefix none 2>&1 >/dev/null | sed 's/^/        /'
+    continue
+  fi
+  full_graph=$(printf '%s\n' "$full_raw" | names)
   build_graph=$(comm -13 <(printf '%s\n' "$shipped_graph") <(printf '%s\n' "$full_graph"))
   unlisted=$(comm -23 <(printf '%s\n' "$build_graph") <(printf '%s\n' "$BUILD_ONLY" | sort -u))
   if [ -n "$unlisted" ]; then

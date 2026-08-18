@@ -1461,6 +1461,80 @@ Gotcha **#31**, trovati contando e non leggendo.
 [`porta-di-qualita.md`](porta-di-qualita.md) resta quella presa a otto, con la propria data — una
 cifra alzata per simmetria sarebbe un'ipotesi.
 
+## Esecuzione dell'audit — la decisione 8 (G-5), 2026-08-18: le misure, coi comandi
+
+Ottava delle otto decisioni della §8 dell'audit, presa per **seconda** perché protegge lo
+strumento con cui si misurano le altre. Il registro dei controlli è
+[`porta-di-qualita.md`](porta-di-qualita.md), sonde **N6** e **N7**; qui ci sono solo le misure.
+
+**Baseline di partenza, rimisurata invece che ripresa** — `bash scripts/gate.sh` → `GATE GREEN`;
+`cargo test --workspace --no-fail-fast` → **32 target, 177 passati, 0 falliti, 2 ignorati**.
+Identica a quella lasciata dalla decisione 1.
+
+⛔ **La misura che ha allargato il perimetro, e va prima delle altre.** Il rapporto prezza G-5
+come *«**Fix**: `--locked`»*, cioè una riga. Contati sul codice invece che sul rapporto:
+
+| Domanda | Comando | Esito |
+|---|---|---|
+| `--locked` esiste già da qualche parte? | `grep -rn -- "--locked\|--offline\|--frozen" scripts/ .github/` | ❌ **zero occorrenze** |
+| quanti siti `cargo` stanno nel percorso del cancello? | `grep -n "cargo" scripts/*.sh` | **sei** — `gate.sh` ×4, `gate-no-os.sh` ×1, `gate-deps.sh` ×3 |
+| `cargo tree` accetta `--locked`? | `cargo tree --locked -p kernel -e normal,no-proc-macro --prefix none` | ✅ exit 0 |
+| ADR-0031 dice qualcosa sul lockfile? | `grep -i "lock\|riproducib" docs/adr/0031-*.md` | ❌ **niente**: la ragione del lockfile versionato vive **solo** in `.gitignore` |
+| `cargo tree` scrive su `stderr` nello stato verde? | `err=$(cargo tree … 2>&1 1>/dev/null); echo ${#err}` | **0 byte** — ed è la misura che rende sicuro leggere lo stdout da solo |
+
+📌 **Quindi il rimedio è più grande del rapporto, non più piccolo.** È il gotcha **#65** —
+*un rimedio si prezza leggendo il codice* — nella direzione opposta alla decisione 1, che si era
+ristretta a zero righe di prodotto. Le due insieme dicono che il rapporto non è una stima: è un
+punto di partenza da rimisurare in **entrambi** i versi.
+
+⛔ **La riproduzione, prima di correggere** — guasto: la riga `minicbor = { … }` tolta da
+`crates/kernel/Cargo.toml`, che rende il `Cargo.lock` stantio senza toccare la rete.
+
+| | `gate-deps.sh` | `Cargo.lock` tracciato |
+|---|---|---|
+| **prima del rimedio** | `OK -- the two graphs match the two lists`, **exit 0** | ⛔ **riscritto**: `1 insertion(+), 33 deletions(-)` |
+| **dopo il rimedio** (**N6**) | **exit 1**, `✗ … 'cargo tree --locked' failed` + `error: cannot update the lock file … because --locked was passed` | ✅ **intatto** |
+| **cancello intero, dopo** | `GATE RED -- 5 checks failed` | ✅ **intatto per tutta la corsa** |
+| **stato pulito, dopo** (**N7**) | `GATE GREEN` · **32 target, 177 passati** | ✅ intatto, `git status` vuoto |
+
+⚠️ **La guardia di non-vacuità non coglieva il guasto**, e va detto perché sembra che dovrebbe:
+confronta i due grafi e scatta se **coincidono**, ma sotto quel guasto erano non vuoti e
+**diversi** — cargo aveva risolto un grafo perfettamente valido, solo non quello approvato.
+
+⛔ **E il ramo d'errore esplicito compra la DIAGNOSI, non il rosso.** Senza di esso un
+`cargo tree --locked` che fallisce lascia entrambi i grafi **vuoti**, quindi coincidenti, quindi
+la guardia di non-vacuità diventa rossa da sola — dicendo *«shipped graph and full graph COINCIDE
+-- the filter is not distinguishing anything»*, cioè *«la query era stretta»* dove la verità è
+*«il lockfile è stantio»*. È il gotcha **#24** nella metà che si dimentica: un rosso illeggibile
+insegna a ignorare l'audit.
+
+⚠️ **E l'errore si mostra RI-ESEGUENDO, non unendo `stderr` alla cattura.** Con `2>&1` una riga
+come *«Blocking waiting for file lock on package cache»* darebbe a `names()` il primo campo
+`Blocking`, che **passa** la sua classe di caratteri `^[A-Za-z0-9_-]+$` e verrebbe riportato come
+**intruso su I3** — un rosso per la ragione sbagliata. La seconda corsa costa zero perché avviene
+solo sulla via d'uscita.
+
+⛔ **Il banco ha dato la trappola dei fine-riga mentre la si applicava, ed è la terza occorrenza
+nel repository.** `sed -i '/^minicbor = {/d' crates/kernel/Cargo.toml` ha **normalizzato CRLF →
+LF**: `tr -cd '\r' | wc -c` dava **43** prima e **0** dopo, senza nessun avviso. Ripristino da una
+copia byte-esatta presa **prima** della mutazione — mai da `git checkout --`, gotcha **#48**
+dodicesima forma — e i tre script sono stati modificati con uno strumento di edit, coi CR
+**rimisurati dopo** ogni modifica: `gate.sh` 51 → 67, `gate-no-os.sh` 40 → 44, `gate-deps.sh`
+86 → 120, con CR e LF pari in tutti e tre.
+
+⚠️ **Due limiti dichiarati invece che taciuti.** (1) Il messaggio di coda di `gate-deps.sh` —
+*«Read the REMEDY: it is NOT the same for the two graphs»* — resta **generico**: per questa classe
+di guasto il rimedio è lo stesso per i due grafi. (2) `gate-no-os.sh` sotto lo stesso guasto dice
+*«kernel or simulator do NOT build»* e rimanda a `gate-deps.sh`, che nella stessa corsa dice la
+verità: il puntatore atterra nel posto giusto, ma la sua riga non è la diagnosi.
+
+⚠️ **Il costo, dichiarato accanto al codice:** aggiungere o alzare una dipendenza è ora un atto in
+**due passi** — manifesto e lockfile, insieme, nello stesso commit — perché il cancello non
+rinfresca più il lockfile da sé. ADR-0031 chiama l'aggiunta di una voce *«un atto deliberato e
+rivedibile»*, e un lockfile aggiornato di nascosto non è né l'uno né l'altro.
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

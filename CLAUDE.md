@@ -9,9 +9,9 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 270 KB** (`wc -c`, il 2026-08-17), e con
+⚠️ **Insieme questi due file pesano 279 KB** (byte LF, il 2026-08-18), e con
 [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — che è il **prossimo passo** e non una
-consultazione — **295**. ⛔ **E il prezzo in
+consultazione — **305**. ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
@@ -24,11 +24,11 @@ servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un
 travestita da misura. Il metodo e il limite stanno nella §12 del compendio, quattordicesima
 misura. 📌 È la **sesta** occorrenza del gotcha **#31** su questa riga, che prima diceva
 «circa seimila token» quando i due file pesavano 24 KB, poi «88 KB» quando erano
-già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **703 KB**.
+già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **704 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **703 KB** con
-`wc -c` il 2026-08-17, e possono solo crescere; la spec da sola ne fa **277** — e l'idea è
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **704 KB** in
+byte LF il 2026-08-18, e possono solo crescere; la spec da sola ne fa **277** — e l'idea è
 già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
 aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione
 per cui la riga qui sopra prezza i token come **limite inferiore** e non come totale — un
@@ -92,7 +92,8 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | **ADR append-only** | superato → `Superseded by`; completato → un **rimando**. Completare una riga di verifica **non** è superare l'ADR |
 | **Richiamo datato** | ogni correzione a una sezione approvata porta il proprio richiamo con la data |
 | **Le misure nello scratchpad** | non nel repository, e si ripulisce dopo |
-| ⛔ **I fine-riga sono misti _per file_** | non c'è una convenzione da seguire: c'è **un file da non cambiare**. Uno script che riscrive un sorgente ne normalizza i fine-riga senza dirlo, e `git diff` dichiara **seicento righe cambiate** che nessuno ha toccato — successo due volte in una sessione. Chi scrive uno strumento che tocca file **conserva i fine-riga di quel file** |
+| ⛔ **I fine-riga sono misti _per file_** | non c'è una convenzione da seguire: c'è **un file da non cambiare**. Uno script che riscrive un sorgente ne normalizza i fine-riga senza dirlo, e `git diff` dichiara **seicento righe cambiate** che nessuno ha toccato — successo **tre volte**, l'ultima il 2026-08-18 con un `sed -i` su `crates/kernel/Cargo.toml`, **43 CR → 0**. Chi scrive uno strumento che tocca file **conserva i fine-riga di quel file**, e li **rimisura dopo** con `tr -cd '\r' \| wc -c` invece di fidarsi |
+| ⛔ **Una dipendenza si aggiunge in _due_ passi** | dal 2026-08-18 il cancello passa `--locked` a tutti e **sei** i suoi siti `cargo`, quindi il `Cargo.lock` è un **ingresso** e non più un effetto. Toccare un manifesto da solo lascia il cancello **rosso**: il lockfile si rinfresca **fuori** dal cancello — un `cargo build` senza il flag — e si committa **insieme** al manifesto. È il punto e non il prezzo: ADR-0031 chiama l'aggiunta di una voce *«un atto deliberato e rivedibile»*, e un lockfile che il cancello aggiornava da sé non era né l'uno né l'altro. Finding **G-5** |
 | **Audit a ogni chiusura** | `bash scripts/check-docs.sh` prima di ogni commit di documentazione |
 | **Commit e push** | alla chiusura di ogni voce si **committa e si pusha**, senza chiedere, e **senza co-autore** |
 

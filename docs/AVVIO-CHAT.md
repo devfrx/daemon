@@ -65,7 +65,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              l'altro. È la modalità scelta, e ha
                                              appena portato dieci compiti su dieci
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 295 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 305 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -75,8 +75,8 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 295 KB in tutto
   3. docs/audit-2026-08-11.md — 25 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE: è IL COMPITO. Contiene la copertura dichiarata, le
      quattro radici, i finding con causa radice e dimostrazione, ciò che è
-     stato verificato PULITO, e la §8 con le otto decisioni — la prima è
-     ESEGUITA, e porta in testa alla §5 il richiamo datato di com'è andata.
+     stato verificato PULITO, e la §8 con le otto decisioni — la prima e
+     l'ottava sono ESEGUITE, e la §5 porta in testa il richiamo datato.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token, e il compendio
      ne ha oltre milleseicento. È un LIMITE INFERIORE, non un totale — §12.
@@ -102,20 +102,25 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 295 KB in tutto
    Il 2026-08-11 il repository ha ricevuto il suo primo audit completo: nove
    revisori paralleli in sola lettura, ogni finding grave riverificato sul
    sorgente, SEDICI corretti e provati nella stessa sessione. Delle OTTO
-   decisioni della §8, la PRIMA è eseguita il 2026-08-17. NE RESTANO SETTE,
+   decisioni della §8, la PRIMA e l'OTTAVA sono eseguite. NE RESTANO SEI,
    ed è quello che devi portarmi.
    ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, poi «quello che viene
       dopo è un BRAINSTORMING», poi «otto decisioni»: si riscrive quando il
       passo si chiude.
 
-   ✅ COS'È STATO CHIUSO — T-2 e T-1, il finding più grave: la suite di
-   conformità del giornale provava TRE promesse su nove solo nello stato in
-   cui ogni guardia plausibile passa (archivio vuoto, o con UN PASSO SOLO).
-   Chiuse con un PASSANTE in archivio. ⛔ E la notizia è il prezzo: NESSUNA
-   promessa nuova, NESSUNA riga di prodotto toccata — l'audit lo dava per
-   «un'aggiunta al contratto di una porta condivisa» e non lo era. Tre
-   bugiardi nuovi, sei mutazioni sulle implementazioni vere, sei rosse su sei.
-   Gotcha #63 chiuso, #65 nato. Il racconto sta nella §6 del compendio.
+   ✅ COS'È STATO CHIUSO, e le due volte insegnano la STESSA cosa in
+   direzioni OPPOSTE — il racconto per esteso sta nella §6 del compendio.
+   · 2026-08-17, T-2 e T-1: la conformità del giornale provava tre promesse
+     su nove solo dove ogni guardia plausibile passa. L'audit lo prezzava
+     «un'aggiunta al contratto di una porta condivisa»: è costato ZERO righe
+     di prodotto. Gotcha #63 chiuso, #65 nato.
+   · 2026-08-18, G-5: il Cargo.lock TRACCIATO era un EFFETTO del cancello
+     invece che un suo INGRESSO, quindi gate-deps.sh misurava il grafo che
+     cargo aveva appena inventato. L'audit lo prezzava «una riga»: i siti
+     cargo sono SEI su TRE script, più un ramo d'errore senza il quale il
+     rosso usciva con la diagnosi sbagliata. Sonde N6 e N7.
+   ⛔ QUINDI: IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — e
+   può risultare più piccolo O più grande. Vale per le sei che restano.
 
    ⛔ E DUE COSE DELL'AUDIT VANNO SAPUTE COMUNQUE, perché sono già CORRETTE e
    spiegano come questo cancello può mentire: due suoi buchi lo lasciavano
@@ -140,8 +145,8 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 295 KB in tutto
    sono giusti tutti e quattordici.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 703 KB
-   il 2026-08-17, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 704 KB
+   il 2026-08-18, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
    e l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
    del compendio dice quale.
@@ -245,7 +250,7 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
    io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
 
 Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, e come
-proponi di affrontare le SETTE DECISIONI che restano nella §8 dell'audit —
+proponi di affrontare le SEI DECISIONI che restano nella §8 dell'audit —
 quali portarmi per prime e perché — POI ASPETTA le mie richieste prima di
 scrivere qualunque cosa. ⛔ Non c'è un piano da riprendere né un brainstorming
 da aprire: il Traguardo 4 è CHIUSO e l'audit è FATTO; quello che manca è
@@ -264,8 +269,8 @@ per causa (gotcha #65).
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **14,7 KB, E PER LA PRIMA VOLTA NON È CRESCIUTO.** La serie era 7,7 → 9,8 → 12,2 → 14,7, quattro crescite di seguito e tre a due cifre percentuali; il 2026-08-17 la consegna ha incassato una decisione intera dell'audit e il blocco è passato da **15036 a 15040 byte**, `+4 B` e una riga. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **270 KB** — `CLAUDE.md` più il compendio, e **295** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 270 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **279 KB** — `CLAUDE.md` più il compendio, e **305** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 279 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -279,7 +284,12 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **295 KB contro 703**. ⚠️ **E le case sono state ricontate col
+resta quello che conta: **305 KB contro 704**. ⛔ **E il 2026-08-18 il METODO ha rivelato un
+difetto che i numeri non mostravano: «`wc -c`» non dice QUALI byte, e questo repository si lavora
+da DUE macchine.** Su un albero CRLF `wc -c` conta un byte in più per riga, quindi nove celle
+della §12 sembravano stantie di 1–4 KB **su file non toccati da giorni**; tolti i CR, tutte e
+nove coincidevano. I pesi si misurano in **byte LF**, ed è una riga di metodo **registrata e non
+presa** — la ventottesima misura. ⚠️ **E le case sono state ricontate col
 `grep` il 2026-08-17, non riprese dal verbale precedente:** l'aggregato ne ha **quattro**,
 la cifra dei due file obbligatori **tre**, quella coi tre file **quattro** — la 25ª ne
 dichiarava sei per la seconda, ed è il gotcha **#31** applicato all'**elenco delle case**.

@@ -20,8 +20,24 @@ run() {
   if "$@"; then :; else failures=$((failures + 1)); fi
 }
 
-run "workspace build"                     cargo build --workspace
-run "example and compile-fail tests"      cargo test --workspace
+# ⛔ `--locked` ON EVERY CARGO CALL OF THE GATE, and it is not tidiness: it makes Cargo.lock an
+# INPUT of the gate instead of a SIDE EFFECT of it. Without it the first cargo step re-resolves
+# and REWRITES the tracked lockfile, and `gate-deps.sh` -- which measures the transitive graph
+# against the ADR-0031 list -- then measures the graph cargo has just invented instead of the one
+# that was approved. .gitignore says the lockfile is versioned for exactly the opposite reason.
+#
+# MEASURED, not reasoned (finding G-5 of the 2026-08-11 audit): with `minicbor` removed from
+# crates/kernel/Cargo.toml, `gate-deps.sh` as it was came out `OK -- the two graphs match the two
+# lists`, exit 0, having silently rewritten Cargo.lock by 1 insertion and 33 deletions. The
+# non-vacuity guard did NOT catch it: the two graphs were non-empty and still different.
+#
+# ⚠️ THE COST, DECLARED: adding or bumping a dependency is now a TWO-STEP act. Touching a
+# manifest alone leaves the gate RED; the lockfile has to be refreshed OUTSIDE the gate -- a
+# plain `cargo build` without the flag -- and COMMITTED together with the manifest. That is the
+# point rather than the price: ADR-0031 calls adding an entry "a deliberate and reviewable act",
+# and a lockfile that the gate updates by itself is neither deliberate nor reviewable.
+run "workspace build"                     cargo build --locked --workspace
+run "example and compile-fail tests"      cargo test --locked --workspace
 run "no-OS gate"                          bash scripts/gate-no-os.sh
 run "allow-list on the two graphs"        bash scripts/gate-deps.sh
 run "attributes of the constrained crates" bash scripts/gate-attributes.sh
@@ -39,8 +55,8 @@ run "documentation consistency"           bash scripts/check-docs.sh
 # is not a defect but the only proof the step really executes what it claims -- a printing step
 # that could not go red would be indistinguishable from one that prints nothing.
 run "DST campaigns -- wall time" bash -c '
-  cargo test -p simulator --test dst_campaign -- --nocapture &&
-  cargo test -p platform --test engine_crash_consistency -- --nocapture'
+  cargo test --locked -p simulator --test dst_campaign -- --nocapture &&
+  cargo test --locked -p platform --test engine_crash_consistency -- --nocapture'
 
 echo
 if [ "$failures" -eq 0 ]; then

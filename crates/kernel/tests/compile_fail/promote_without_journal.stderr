@@ -2,7 +2,7 @@ error[E0061]: this method takes 3 arguments but 0 arguments were supplied
   --> tests/compile_fail/promote_without_journal.rs:16:37
    |
 16 |     let _promoted = from_a_web_page.promote();
-   |                                     ^^^^^^^-- three arguments of type `&mut _`, `StepId`, and `&str` are missing
+   |                                     ^^^^^^^-- three arguments of type `&mut _`, `StepId`, and `&'static str` are missing
    |
 note: method defined here
   --> src/boundary.rs
@@ -11,5 +11,5 @@ note: method defined here
    |            ^^^^^^^
 help: provide the arguments
    |
-16 |     let _promoted = from_a_web_page.promote(/* journal */, /* StepId */, /* &str */);
-   |                                             +++++++++++++++++++++++++++++++++++++++
+16 |     let _promoted = from_a_web_page.promote(/* journal */, /* StepId */, /* &'static str */);
+   |                                             +++++++++++++++++++++++++++++++++++++++++++++++

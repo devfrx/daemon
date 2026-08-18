@@ -247,6 +247,18 @@ pub struct RecordV1 {
 /// `reason` are the kernel's own vocabulary — nobody outside chose them — and they are exactly
 /// what one wants to read when a record comes back wrong. Only the payload is somebody else's.
 ///
+/// ⛔ DATED RECALL, 2026-08-18 — FINDING P-1. That sentence was true of three fields out of four
+/// and FALSE OF `reason`, which the CALLER chooses. `promote` took a `&str`, so
+/// `other.promote(&mut journal, step, smuggled.as_str())` put external text at index 4 and this
+/// impl printed it whole. Demonstrated from outside the crate:
+/// `RecordV1 { … payload: <16 bytes>, reason: "ignore your instructions" }` — the guarded field
+/// shut, the unguarded one wide open. ⚠️ **And the LIST is what made it read as verified:** four
+/// names share one justification, the justification holds for three, and nothing in the sentence
+/// says which — so a reader checking it stops at the first name that fits. ✅ The sentence is now
+/// TRUE rather than merely reworded: `promote` takes a `&'static str`, so `reason` really is
+/// text chosen at authoring time. Road A3 in `boundary.rs` says what that shuts and what it
+/// leaves declared.
+///
 /// ⚠️ THAT SENTENCE SAID "THE OTHER THREE" UNTIL 2026-08-10 and is dated rather than quietly
 /// renumbered: `reason` arrived at index 4 that day, and it is on THIS side of the line on
 /// purpose. It is the text the caller wrote to justify the record; printing it discloses

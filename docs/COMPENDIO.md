@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (713 KB in byte LF il 2026-08-18, e possono solo crescere — la spec da sola ne fa 277), e
+> (715 KB in byte LF il 2026-08-18, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-11.** Manutenzione: §13.
@@ -821,11 +821,44 @@ Riscritto col proprio richiamo datato, non appeso: lasciarlo era **A-2** rifatto
 è spec, e il vincolo globale 7 la mette fuori da questa passata — stesso trattamento di **PL-1**,
 stessa ragione (gotcha #36). Il verbale in [`porta-di-qualita.md`](porta-di-qualita.md).
 
-⏭️ **Restano DUE decisioni della §8**, e l'ordine proposto è: **P-1** · le sonde
-**B-2/B-3/S-1/S-2/S-5**. ⛔ **Sono decisioni del proprietario, e la differenza con le sei chiuse va
-detta:** quelle si potevano eseguire leggendo il codice — un flag, quattro richiami, una
-registrazione, un permesso di file già scelto, e ora una riga d'esecutore con le sue sonde. Queste
-cambiano una **firma pubblica** e il **catalogo**.
+✅ **E LA SETTIMA È ESEGUITA LO STESSO GIORNO — P-1, e il rapporto ha ragione sul difetto e torto
+sul rimedio.** La via **A3** era dichiarata **chiusa** e aveva una **seconda bocca**: `Untrusted`
+aveva smesso di stampare il proprio contenuto, ma `promote` prendeva `reason: &str` e il `Debug`
+scritto a mano di `RecordV1` **stampa l'indice 4 per intero**. Riprodotto da fuori la crate —
+`RecordV1 { … payload: <16 bytes>, reason: "ignore your instructions" }`, il campo protetto
+nascosto e quello non protetto spalancato.
+⛔ **La frase che lo autorizzava è la classe del difetto, ed è il gotcha nuovo #67.** Il commento
+giustifica **quattro** campi con una ragione sola — *«sono il vocabolario del kernel, nobody
+outside chose them»* — vera per **tre**. `reason` lo sceglie il chiamante. **È l'ELENCO a farla
+leggere come verificata:** chi la controlla si ferma al primo nome che torna.
+⛔ **E IL RIMEDIO DELLA §8 NON AVREBBE CHIUSO LA STRADA.** Propone `reason: &Instruction`;
+`Instruction::new` è **`pub`** e prende qualunque `String`, quindi
+`Instruction::new(untrusted.as_str().into())` lo soddisfa — ed è la **via A1/A2**, dichiarata
+**non chiudibile** nella stessa lista. 📌 **Una guardia a newtype vale quanto il suo COSTRUTTORE**,
+e quella avrebbe comprato l'**apparenza** di una chiusura sopra una strada già dichiarata aperta.
+⚠️ Sarebbe stata anche un gioco di parole sui tipi: `Instruction` significa *contenuto ammesso nel
+canale delle istruzioni*, e una giustificazione non è quello.
+⛔ **La terza opzione cade su un FATTO:** `reason` come enum sarebbe la lettura più onesta di
+«vocabolario», ma è l'**indice 4 del record durevole** — cambiarne il tipo muove i **byte
+congelati**, cioè apre una `Record::V2` (ADR-0036). Sproporzionato, e speculativo con **un solo**
+chiamante di produzione.
+✅ **Il rimedio è `reason: &'static str`**, ed è **una parola**: il contenuto esterno è dato di
+**runtime**, un `&'static str` è un letterale nel binario. **Zero** siti di chiamata riscritti —
+erano tutti già letterali, misurato — **un** oracolo `.stderr` aggiornato a mano, e il **formato
+non si muove** (`frozen_bytes.rs` sei su sei). ✅ **La sonda è un caso `compile_fail` nella forma
+forte del #42:** rimessa la firma a `&str` il caso **compila**, e `trybuild` risponde `error`
+invece di `mismatch` — non lo disarma un `TRYBUILD=overwrite` in blocco.
+⚠️ **Resta aperto e dichiarato:** `String::leak` dà ancora un `&'static str` — stesso scambio con
+cui **A5** liquida il `transmute` — e un letterale può **mentire**, che è provenienza e non
+correttezza, il limite che **A4** già dichiara. Ciò che ha chiuso è la strada che si prende **senza
+accorgersene**. ⚠️ **Voce aperta registrata, non presa:** la riga di catalogo, come per K-1/B-1.
+📌 **Baseline invariata:** `GATE GREEN`, **32 target, 180 passati, 0 falliti, 2 ignorati**; i casi
+di `compile_fail` passano da diciassette a **diciotto**.
+
+⏭️ **Resta UNA decisione della §8**: le sonde **B-2/B-3/S-1/S-2/S-5**. ⛔ **È del proprietario per
+una ragione sola, e diversa dalle altre sei:** ciascuna è una **riga di catalogo**, cioè **spec** —
+vincolo globale 7. Non è il rimedio a essere incerto, è che scriverlo tocca un documento che si
+approva sezione per sezione.
 
 ⛔ **Cosa l'audit ha trovato, e la prima voce è la più grave** — ✅ **chiusa il 2026-08-17, vedi il
 riquadro qui sopra.** La suite di conformità provava
@@ -1408,7 +1441,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I sessantasei gotcha
+## 9. I sessantasette gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -1481,6 +1514,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 64 | ⛔ **Due criteri possono coprire ciascuno la propria metà e lasciare scoperto il BUCO FRA loro, e nessuna rilettura dell'uno o dell'altro lo mostra.** Misurato il 2026-08-11: `bincode` 2.0.1 è coperto da **RUSTSEC-2025-0141 — «Bincode is unmaintained»**, categoria `INFO` e non una vulnerabilità, emessa il **2026-01-07**. L'avviso era pubblico **sette mesi prima** che §6.1.1 fosse riconfermata il 2026-08-08, e nessuno l'ha visto benché il criterio esistesse: **ADR-0037** chiede *«il pari ha un lettore conforme e **mantenuto**?»* — ma lo punta **verso il pari** (TypeScript, M-11); **M-1** puntava verso di noi e chiedeva un'altra cosa, *«il grafo transitivo è accettabile per I3?»*. ⛔ **Nessuno dei due chiede se sia mantenuta la libreria del NOSTRO capo del filo**, e `gate-deps.sh` verifica **quali** crate ci sono, non **come stanno**. ✅ **Il costo di agire è quasi zero oggi e cresce da solo:** `bincode` ha **zero usi di produzione** — un commento in `ports/ipc.rs` e la sonda `dependencies_usable.rs` — perché lo schema del canale `ipc` è il **Traguardo 6**. È una finestra che si chiude da sola, come la quarta proprietà di §3. 📌 **La domanda:** *questo criterio è puntato verso entrambi i capi del filo?* |
 | 65 | ⛔ **Due difetti con la stessa CAUSA non hanno la stessa COPERTURA, e un rapporto che li raggruppa per causa fa scrivere un rimedio che ne prova uno solo.** Misurato il 2026-08-17 chiudendo T-2: l'audit elenca le promesse **5** e **8a** come un finding, e ha ragione sulla **causa** — `outcome` e `note` condividono `has_intent` in entrambe le implementazioni, quindi una guardia cieca le acceca insieme. ⛔ **Ma la suite muore alla PRIMA promessa rotta**, quindi un bugiardo cieco su tutt'e due muore sulla 5 e il blocco della 8a resta **non provato mentre un test afferma il contrario**: servono **due** bugiardi, ciascuno che superi l'altro blocco **sui propri meriti**. ⚠️ Il rimedio dettato dal rapporto è **giusto**; a essere dimezzata è la sua **prova**, e si vede solo scrivendola. 📌 Un tipo solo con **due istanze**, o sarebbe lo stesso difetto scritto due volte (#45 dall'altro lato). 📌 **La domanda:** *quanti di questi blocchi un solo bugiardo riesce a raggiungere?* |
 | 66 | ⛔ **Chiudere un difetto non rende rosse le sonde che vi poggiavano: alcune diventano VACUE, e quella direzione non si vede.** Misurato il 2026-08-18 chiudendo K-1. Il rapporto prevedeva **due** sonde permanenti rosse; ne è diventata rossa **una**. L'altra — che scriveva la scadenza **dal banco** invece di lasciarla dichiarare all'attività — non aveva più nulla da esercitare, e **restava verde**: provato mutando `until <= instant` in `until < instant`, cioè **la discriminazione che il suo commento dichiara di difendere**, con la vecchia forma **verde** mentre la stessa mutazione faceva rossi **cinque** altri test. ⚠️ **Non è il #63:** lì la sonda nasceva vacua, qui **lo diventa**, e a renderla tale è il rimedio stesso — una sonda che ieri mordeva oggi non morde più, e nessun rosso lo annuncia. ⛔ **Nessuna delle sette domande del pre-controllo lo coglie**, perché guardano il compito contro il codice, mai **le sonde che poggiavano sul difetto che stai chiudendo**. 📌 **La domanda, e va fatta prima di correggere:** *quali sonde passano ATTRAVERSO questo difetto, e quali di esse resteranno verdi senza più provare nulla?* Poi si mutano, una per una. |
+| 67 | ⛔ **Una giustificazione scritta su un ELENCO di nomi si legge come verificata su tutti, e basta che regga sul primo.** Misurato il 2026-08-18 chiudendo P-1: il `Debug` di `RecordV1` giustifica quattro campi con una ragione sola — *«`kind`, `effect`, `trust` e `reason` sono il vocabolario del kernel, **nobody outside chose them**»* — vera per **tre**, falsa per `reason`, che lo sceglie il **chiamante**. Il risultato è che A3 era dichiarata CHIUSA mentre il testo esterno usciva dalla **giustificazione** invece che dal payload. ⚠️ **Non è il #29:** lì una partizione lascia scoperto un membro che non appartiene a nessuna categoria; qui **una sola affermazione è quantificata su un elenco**, e la frase non dice **per quale nome** è stata controllata. 📌 **E ha un secondo tempo, sul RIMEDIO:** il rapporto proponeva `reason: &Instruction`, che **non chiude nulla** — `Instruction::new` è `pub`, quindi la guardia è soddisfatta dalla via **A1/A2**, dichiarata non chiudibile **dieci righe sopra**. **Una guardia a newtype vale esattamente quanto il suo COSTRUTTORE**, e una che non lo dice compra l'apparenza di una chiusura sopra una strada già dichiarata aperta. 📌 **Le due domande:** *questa ragione l'ho verificata su OGNI nome dell'elenco, o sul primo?* e *questo tipo, chi può costruirlo?* |
 
 ---
 
@@ -2447,6 +2481,28 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > L'insieme *«HANDOFF + spec + `adr/`»* passa da **711** a **713 KB**. I **due file obbligatori**
 > passano da 292 a **296 KB**, e coi tre da 321 a **325**.
+
+> 🔁 **Trentatreesima misura, il 2026-08-18, chiudendo la decisione 2 (P-1) — SESTA passata dello
+> stesso giorno.** In byte LF, arrotondati — `int(n/1024 + 0.5)`, il metodo fissato dalla 32ª.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`COMPENDIO.md`](COMPENDIO.md) `283 → 289` · [`HANDOFF.md`](HANDOFF.md) `213 → 215` per il gotcha **#67** · [`porta-di-qualita.md`](porta-di-qualita.md) `140 → 145` · [`riferimenti.md`](riferimenti.md) `174 → 178` · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) `26 → 27` |
+> | **invariati, ricontati** | [`audit-2026-08-11.md`](audit-2026-08-11.md) 29 · [`README.md`](README.md) 17 · [`roadmap.md`](roadmap.md) 28 · `CLAUDE.md` 13 · spec **277** |
+>
+> ⛔ **IL MESSAGGIO: 15940 → 16659 byte, `+719 B`, la crescita più grande mai registrata — e la
+> prescrizione della 29ª è ora SCADUTA, non più dovuta.** Il blocco delle decisioni chiuse ha la
+> sua **quarta** voce, e cresce di una a ogni chiusura come la 29ª aveva previsto **cinque passate
+> fa**. ⚠️ **Va detto come sta:** non è stata applicata perché ogni singola passata la trovava più
+> economica da rimandare che da eseguire, ed è precisamente il modo in cui un debito dichiarato
+> resta dichiarato per sempre. 📌 **Con l'ultima decisione della §8 il blocco arriva a cinque, e a
+> quel punto TOGLIERLO è il lavoro di chiusura dell'audit, non una rifinitura.**
+>
+> ⚠️ **E una cifra di questa passata NON è in KB e vale rileggerla:** i casi di `compile_fail`
+> passano da **diciassette a diciotto**, ed è il primo caso nuovo dal Traguardo 2.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **713** a **715 KB**. I **due file obbligatori**
+> passano da 296 a **303 KB**, e coi tre da 325 a **332**.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

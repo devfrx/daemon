@@ -65,18 +65,18 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              l'altro. È la modalità scelta, e ha
                                              appena portato dieci compiti su dieci
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 325 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 332 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i sessantasei gotcha (§9), le trappole di
+     cosa NON rifare (§8), i sessantasette gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
-  3. docs/audit-2026-08-11.md — 25 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
+  3. docs/audit-2026-08-11.md — 29 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE: è IL COMPITO. Contiene la copertura dichiarata, le
      quattro radici, i finding con causa radice e dimostrazione, ciò che è
-     stato verificato PULITO, e la §8 con le otto decisioni — la 1, la 6 e
-     l'8 sono ESEGUITE, e la §5 porta in testa il richiamo datato.
+     stato verificato PULITO, e la §8 con le otto decisioni — SETTE sono
+     ESEGUITE, e la §5 porta in testa il richiamo datato.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token, e il compendio
      ne ha oltre milleseicento. È un LIMITE INFERIORE, non un totale — §12.
@@ -102,14 +102,14 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 325 KB in tutto
    Il 2026-08-11 il repository ha ricevuto il suo primo audit completo: nove
    revisori paralleli in sola lettura, ogni finding grave riverificato sul
    sorgente, SEDICI corretti e provati nella stessa sessione. Delle OTTO
-   decisioni della §8, la 1, la 3, la 4, la 5, la 6 e l'8 sono eseguite. NE
-   RESTANO DUE — P-1, e le sonde B-2/B-3/S-1/S-2/S-5 — ed è quello che devi
+   decisioni della §8, SETTE sono eseguite — la 1, la 2, la 3, la 4, la 5, la 6
+   e l'8. NE RESTA UNA: le sonde B-2/B-3/S-1/S-2/S-5, ed è quello che devi
    portarmi.
    ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, poi «quello che viene
-      dopo è un BRAINSTORMING», poi «otto decisioni», poi «ne restano TRE»:
-      si riscrive quando il passo si chiude.
+      dopo è un BRAINSTORMING», poi «otto decisioni», poi «ne restano TRE»,
+      poi DUE: si riscrive quando il passo si chiude.
 
-   ✅ COS'È STATO CHIUSO, e le tre volte insegnano la STESSA cosa in
+   ✅ COS'È STATO CHIUSO, e le quattro volte insegnano la STESSA cosa in
    direzioni DIVERSE — il racconto per esteso sta nella §6 del compendio.
    · 2026-08-17, T-2 e T-1: la conformità del giornale provava tre promesse
      su nove solo dove ogni guardia plausibile passa. L'audit lo prezzava
@@ -125,8 +125,17 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 325 KB in tutto
      vie sono due, e la seconda è un Drop che gira DENTRO la run. La forma
      giusta è svuotare la cella SUBITO PRIMA di ogni poll, ed è UNA RIGA che
      cambia l'invariante invece di tappare due buchi. Gotcha #66 nato.
+   · 2026-08-18, P-1: la via A3 era dichiarata CHIUSA e aveva una seconda
+     bocca — promote prendeva reason: &str e il Debug del record stampa
+     l'indice 4 per intero. Il rimedio del rapporto (reason: &Instruction)
+     NON avrebbe chiuso nulla: Instruction::new è pub, quindi la guardia è
+     soddisfatta dalla via A1/A2, dichiarata non chiudibile dieci righe
+     sopra. Una guardia a newtype vale quanto il suo COSTRUTTORE. Chiuso con
+     reason: &'static str — una parola, zero chiamanti riscritti, formato
+     invariato. Gotcha #67 nato.
    ⛔ QUINDI: IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — e
-   può risultare più piccolo O più grande. Vale per le due che restano.
+   può risultare più piccolo, più grande, O DI SPECIE DIVERSA. Vale per
+   quella che resta.
 
    ⛔ E DUE COSE DELL'AUDIT VANNO SAPUTE COMUNQUE, perché sono già CORRETTE e
    spiegano come questo cancello può mentire: due suoi buchi lo lasciavano
@@ -151,7 +160,7 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 325 KB in tutto
    sono giusti tutti e quattordici.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 713 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 715 KB
    il 2026-08-18, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
    e l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
@@ -256,17 +265,19 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
    io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
 
 Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, e come
-proponi di affrontare le DUE DECISIONI che restano nella §8 dell'audit —
-quale portarmi per prima e perché — POI ASPETTA le mie richieste prima di
-scrivere qualunque cosa. ⛔ Non c'è un piano da riprendere né un brainstorming
-da aprire: il Traguardo 4 è CHIUSO e l'audit è FATTO; quello che manca è
-eseguirlo. ⛔ E le sei chiuse hanno insegnato una cosa che vale per le altre
-due: IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — in ENTRAMBE
-le direzioni. La decisione 1 era data per «un'aggiunta al contratto di una
-porta condivisa» e si è rivelata zero righe di prodotto, mentre i finding
-erano TRE e non due (gotcha #65). La 3 era data per «drenare all'ingresso di
-run, e due sonde diventano rosse»: il drenaggio all'ingresso NON BASTA, e
-delle due sonde una diventa rossa e l'altra VACUA (gotcha #66).
+proponi di affrontare l'ULTIMA DECISIONE che resta nella §8 dell'audit — le
+sonde B-2/B-3/S-1/S-2/S-5 — POI ASPETTA le mie richieste prima di scrivere
+qualunque cosa. ⛔ Non c'è un piano da riprendere né un brainstorming da
+aprire: il Traguardo 4 è CHIUSO e l'audit è FATTO; quello che manca è
+eseguirlo. ⛔ E le sette chiuse hanno insegnato una cosa sola, in TRE
+direzioni: IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO. La
+decisione 1 era data per «un'aggiunta al contratto di una porta condivisa» e
+si è rivelata zero righe di prodotto, mentre i finding erano TRE e non due
+(#65) — più PICCOLO. La 8 era data per «una riga» ed erano sei siti su tre
+script più un ramo d'errore — più GRANDE. La 2 e la 3 erano date per un
+rimedio che NON CHIUDE: drenare all'ingresso di run lascia aperta la via dei
+Drop (#66), e reason: &Instruction lascia aperta la via A1/A2 perché
+Instruction::new è pub (#67) — di SPECIE DIVERSA.
 ```
 
 ---
@@ -276,8 +287,8 @@ delle due sonde una diventa rossa e l'altra VACUA (gotcha #66).
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **14,7 KB, E PER LA PRIMA VOLTA NON È CRESCIUTO.** La serie era 7,7 → 9,8 → 12,2 → 14,7, quattro crescite di seguito e tre a due cifre percentuali; il 2026-08-17 la consegna ha incassato una decisione intera dell'audit e il blocco è passato da **15036 a 15040 byte**, `+4 B` e una riga. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **296 KB** — `CLAUDE.md` più il compendio, e **325** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 296 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **303 KB** — `CLAUDE.md` più il compendio, e **332** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 303 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -291,7 +302,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **325 KB contro 713**. ⛔ **E il 2026-08-18 il METODO ha rivelato un
+resta quello che conta: **332 KB contro 715**. ⛔ **E il 2026-08-18 il METODO ha rivelato un
 difetto che i numeri non mostravano: «`wc -c`» non dice QUALI byte, e questo repository si lavora
 da DUE macchine.** Su un albero CRLF `wc -c` conta un byte in più per riga, quindi nove celle
 della §12 sembravano stantie di 1–4 KB **su file non toccati da giorni**; tolti i CR, tutte e

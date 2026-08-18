@@ -201,6 +201,35 @@ impl Untrusted {
     /// - **A3 — `Instruction::new(format!("{:?}", untrusted))`.** ✅ CLOSED, by the
     ///   hand-written `Debug` above. It cost a derive and bought back the diagnostics with a
     ///   byte count.
+    ///
+    ///   ⛔ AND IT WAS DECLARED CLOSED WHILE A SECOND MOUTH WAS OPEN — finding P-1 of the
+    ///   2026-08-11 audit, shut on 2026-08-18. `Untrusted` stopped printing its content, but
+    ///   `promote` took `reason: &str` and `RecordV1`'s hand-written `Debug` PRINTS index 4 in
+    ///   full. So external text walked out through the justification instead of through the
+    ///   payload, and demonstrated from outside the crate it read:
+    ///   `RecordV1 { … payload: <16 bytes>, reason: "ignore your instructions" }` — the guarded
+    ///   field hidden, the unguarded one wide open.
+    ///
+    ///   ✅ **Shut at level 1 by the type of the argument: `reason: &'static str`.** External
+    ///   content is RUNTIME data; a `&'static str` is a literal in the binary. The accidental
+    ///   road stops compiling, and the case that holds it is
+    ///   `tests/compile_fail/promote_reason_is_not_runtime_text.rs`.
+    ///
+    ///   ⛔ **AND THE FIX THE REPORT NAMED WOULD NOT HAVE SHUT IT.** §8 proposed
+    ///   `reason: &Instruction`; `Instruction::new` is `pub` and takes any `String`, so
+    ///   `Instruction::new(untrusted.as_str().into())` satisfies it — which is road **A1/A2**,
+    ///   declared right above as NOT CLOSABLE. A newtype guard is worth exactly what its
+    ///   CONSTRUCTOR is worth, and this one would have bought the look of a closure over a road
+    ///   this very list already declares open. ⚠️ It would also have been a type pun:
+    ///   `Instruction` means *content allowed in the instruction channel*, and a justification
+    ///   is not that — using it here blurs the one distinction the type exists to draw.
+    ///
+    ///   ⚠️ **WHAT IS STILL OPEN, and it is declared rather than papered over.** `String::leak`
+    ///   yields a `&'static str`, so a caller determined to smuggle can still do it — the same
+    ///   trade A5 states below: deliberate, visible, and not an accident anybody has by
+    ///   mistake. And a literal can still LIE — `"quoted by the user"` on a promotion the user
+    ///   never asked for — which is provenance and not correctness, exactly the limit A4
+    ///   declares. What shut is the road somebody takes without noticing.
     /// - **A4 — a round trip through the journal**: `outcome(id, untrusted.as_str().as_bytes())`,
     ///   then `read_back`, then `String::from_utf8`, then `Instruction::new`. ✅ CLOSED on
     ///   2026-08-10, **at level 2**, by the record carrying the label: `promote` now writes the
@@ -259,7 +288,7 @@ impl Untrusted {
         self,
         journal: &mut J,
         step: StepId,
-        reason: &str,
+        reason: &'static str,
     ) -> Result<Instruction, JournalError> {
         // ⛔ THE PAYLOAD IS THE UNTRUSTED CONTENT AND THE REASON IS A FIELD OF ITS OWN. Index 3
         // is the one the record's hand-written `Debug` hides, and index 4 the one it prints:

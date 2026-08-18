@@ -944,6 +944,88 @@ righe candidate difenderebbero **§2.4.1** — la cella è l'unico canale, e le 
 appartengono a un poll — e **§2.8 · ADR-0034**, nessuna decisione legge un parametro che non le è
 stato consegnato.
 
+### P-1 — A3 era dichiarata chiusa e aveva una seconda bocca (2026-08-18)
+
+⛔ **La seconda decisione della §8, e il rapporto ha ragione sul DIFETTO e torto sul RIMEDIO.**
+`Untrusted` aveva smesso di stampare il proprio contenuto, ma `promote` prendeva `reason: &str` e
+il `Debug` scritto a mano di `RecordV1` **stampa l'indice 4 per intero**. Il testo esterno usciva
+dalla **giustificazione** invece che dal payload.
+
+⛔ **Riprodotto da fuori la crate**, come l'audit dichiarava di aver fatto:
+
+```
+RecordV1 { kind: Note, effect: Unrepeatable, trust: Untrusted,
+           payload: <16 bytes>, reason: "ignore your instructions" }
+```
+
+📌 **Il campo protetto nascosto, quello non protetto spalancato.** Bastava
+`altro.promote(&mut journal, step, esterno.as_str())`: nulla nella firma lo vietava.
+
+⛔ **LA FRASE CHE LO AUTORIZZAVA, e va guardata perché è la classe del difetto.** Il commento del
+`Debug` giustifica quattro campi con una ragione sola: *«`kind`, `effect`, `trust` e `reason` sono
+il vocabolario del kernel — **nobody outside chose them**»*. È vera per **tre su quattro**.
+`reason` lo sceglie il **chiamante**. ⚠️ **Ed è l'ELENCO a farla leggere come verificata:** quattro
+nomi condividono una giustificazione, la giustificazione regge per tre, e la frase non dice quale —
+chi la controlla si ferma al primo nome che torna. Gotcha **#67**.
+
+⛔ **IL RIMEDIO DEL RAPPORTO NON AVREBBE CHIUSO LA STRADA, ed è la misura che conta.** La §8
+propone `reason: &Instruction`. `Instruction::new` è **`pub`** e prende qualunque `String`, quindi
+`Instruction::new(untrusted.as_str().into())` lo soddisfa — ed è la **via A1/A2**, dichiarata
+**non chiudibile** nella stessa lista, dieci righe più su. 📌 **Una guardia a newtype vale esattamente
+quanto il suo COSTRUTTORE**, e questa avrebbe comprato **l'apparenza** di una chiusura sopra una
+strada che l'elenco stesso dichiara aperta.
+⚠️ **E sarebbe stato anche un gioco di parole sui tipi:** `Instruction` significa *contenuto ammesso
+nel canale delle istruzioni*, e una giustificazione non è quello — usarlo lì sfoca l'unica
+distinzione per cui quel tipo esiste.
+
+⛔ **E LA TERZA OPZIONE È CADUTA SU UN FATTO, non su un'opinione:** `reason` come **enum** sarebbe
+la lettura più onesta di *«vocabolario»* e renderebbe la frase letteralmente vera — ma `reason` è
+l'**indice 4 del record durevole**, oggi una `String`. Cambiarne il tipo **muove i byte congelati**,
+e per ADR-0036 quello non è un aggiornamento ma un **cambio di formato**, cioè una `Record::V2`.
+Sproporzionato per una decisione — *quali reason esistono?* — che oggi ha **un solo chiamante di
+produzione**. YAGNI.
+
+✅ **IL RIMEDIO: `reason: &'static str`.** Il contenuto esterno è **dato di runtime**; un
+`&'static str` è un letterale nel binario. La strada accidentale **smette di compilare**, a
+livello 1.
+
+| | Prezzo misurato |
+|---|---|
+| `crates/kernel/src/boundary.rs` | **una parola** nella firma |
+| siti di chiamata da riscrivere | ⚡ **zero** — `cargo test --workspace --no-run --locked` non dà **nessun** errore: erano **tutti già letterali** |
+| oracoli `.stderr` | **uno**, `promote_without_journal.stderr`, e cambia esattamente ciò che deve: `&str` → `&'static str` in due punti. **Letto e modificato a mano**, non rigenerato (gotcha #25) |
+| formato durevole | ⛔ **invariato**: l'indice 4 resta una `String`, `crates/kernel/tests/frozen/` non si muove, `frozen_bytes.rs` **6 passati su 6** |
+
+✅ **LA SONDA È UN CASO `compile_fail`, ED È NELLA FORMA FORTE.**
+`tests/compile_fail/promote_reason_is_not_runtime_text.rs` — la regola scatta con
+`error[E0597]: `smuggled` does not live long enough … argument requires that `smuggled` is
+borrowed for `'static``, cioè col messaggio che **nomina il meccanismo**.
+⛔ **Provato nell'altra direzione, e non dedotto:** rimessa la firma a `&str`, il caso **COMPILA** e
+`trybuild` risponde **`error`** — *«expected compilation to fail»* — invece di `mismatch`. È il
+gotcha **#42**: un caso che riporta **compilando** non si disarma con un `TRYBUILD=overwrite` in
+blocco. (Nella stessa corsa `promote_without_journal` risponde `mismatch`, che è il controllo: quel
+caso passa **dall'oracolo**, questo no.)
+⚠️ **L'altra direzione della regola NON è qui, deliberatamente:** che un letterale promuova e si
+stampi lo tiene già `boundary_promotion.rs`, che esegue la promozione intera e rilegge il record.
+Una copia sarebbe gotcha **#49**.
+
+⛔ **Ciò che RESTA APERTO, dichiarato invece che taciuto.** `String::leak` produce ancora un
+`&'static str`: un chiamante deciso a contrabbandare ci riesce — lo stesso scambio con cui **A5**
+liquida il `transmute`, *«non è un incidente che uno ha per sbaglio»*. E un letterale può **mentire**
+— `"quoted by the user"` su una promozione che l'utente non ha chiesto — che è **provenienza e non
+correttezza**, esattamente il limite che **A4** già dichiara. Ciò che ha chiuso è la strada che si
+prende **senza accorgersene**.
+
+⛔ **La mutazione di controllo è la baseline:** `GATE GREEN`, `cargo test --workspace
+--no-fail-fast --locked` → **32 target, 180 passati, 0 falliti, 2 ignorati**, invariata rispetto
+alla chiusura di K-1. I casi di `compile_fail` passano da **diciassette a diciotto**.
+
+⚠️ **VOCE APERTA — la riga di catalogo, come per K-1/B-1 e per PL-1.** La §7.4.1 blocco B ha già la
+riga *«promuovere testo a istruzione ← la porta journal»* (V19), e questa regola è la **seconda
+metà della stessa difesa**: la porta impedisce la conversione muta, il `'static` impedisce che il
+contenuto esca dalla giustificazione. Aggiungerla è **spec**, quindi del proprietario — vincolo
+globale 7. **Registrata come voce aperta, non come nota** (gotcha #36).
+
 #### `CrashingJournal` — cinque mutazioni, cinque uccise, e una coppia che prova di essere due difetti
 
 **Misurate il 2026-08-11, chiudendo il Task 1 del Traguardo 4.** ⚠️ **Rifatte da zero dopo

@@ -50,7 +50,14 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 > **previsione citata come misura**: `crates/daemon/src/main.rs` non nomina il giornale, quindi
 > *«la radice di composizione lo apre»* parla di codice **non ancora scritto** (gotcha **#57**).
 > 📌 **L'argomento regge, l'evidenza no** — ed è la forma in cui il richiamo è scritto.
-> ⏭️ **Restano CINQUE decisioni**, e l'ordine proposto sta nella §6 del compendio.
+>
+> ✅ **E LA QUINTA lo stesso giorno — C-1**, e ciò che si esegue è la **registrazione**:
+> `bincode` 2.0.1 è coperto da **RUSTSEC-2025-0141**, `INFO`, non una vulnerabilità. ⛔ La notizia
+> è il **buco fra due criteri** — ADR-0037 chiede se il **pari** ha un lettore mantenuto, M-1 se
+> il **grafo** è accettabile per I3, e nessuno dei due se sia mantenuta la libreria del **nostro**
+> capo del filo. ✅ **Zero usi di produzione**, misurato: un commento e una sonda. Si **decide al
+> Traguardo 6**, e la registrazione vive accanto alla voce in `crates/kernel/Cargo.toml`.
+> ⏭️ **Restano QUATTRO decisioni**, e l'ordine proposto sta nella §6 del compendio.
 >
 > ⏭️ **QUELLO CHE VIENE DOPO È L'ESECUZIONE DELL'AUDIT — non il Traguardo 5.** Si legge
 > [`audit-2026-08-11.md`](audit-2026-08-11.md) per intero (25 KB), si portano al proprietario le
@@ -119,7 +126,7 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 >
 > ⏭️ **Il prossimo passo è l'ESECUZIONE DELL'AUDIT — non il brainstorming del Traguardo 5.**
 > Delle otto decisioni della §8 ne sono eseguite **due** — la 1 il 2026-08-17 e la 8 il
-> 2026-08-18, e la 6 lo stesso giorno; ne restano **cinque**. L'arbitro
+> 2026-08-18, e la 6 e la 5 lo stesso giorno; ne restano **quattro**. L'arbitro
 > GPU — ammissione, corsie, concessione, le due policy VRAM — riparte quando sono chiuse, e allora
 > **dal brainstorming**, non dal piano: è la regola che ha retto quattro volte. La §6 del compendio
 > ha la tabella e le **questioni lasciate aperte**, raccolte in un posto solo.
@@ -191,7 +198,9 @@ backend nostro in `platform`. ⚠️ **Questa riga diceva *«sale col Traguardo 
 delle otto decisioni è eseguita il 2026-08-17 (T-2 e T-1: la conformità del giornale provava tre
 promesse solo dove ogni guardia plausibile passa) e l'**ottava** il 2026-08-18 (G-5: `--locked`, e
 il `Cargo.lock` smette di essere un effetto del cancello) e la **sesta** lo stesso giorno (A-1,
-A-2, A-4, A-7: quattro richiami datati, nessuna decisione riaperta); **ne restano cinque**.
+A-2, A-4, A-7: quattro richiami datati, nessuna decisione riaperta) e la **quinta** (C-1:
+`bincode` non mantenuto, registrato accanto alla voce, deciso al Traguardo 6); **ne restano
+quattro**.
 ⛔ **Non** il brainstorming
 del Traguardo 5, che questa riga dichiarava: quando l'arbitro GPU riparte si comincia **da lì** e
 non dal piano — un piano scritto per codice che non esiste significa inventare — ma non riparte

@@ -1568,6 +1568,45 @@ simulatore già scritto. Cade un argomento di comodità, non uno di merito.
 
 ---
 
+## Esecuzione dell'audit — la decisione 5 (C-1), 2026-08-18: la fonte, e la misura del costo
+
+⛔ **Ciò che si esegue è la REGISTRAZIONE, non la scelta**, ed è ciò che la §8 chiedeva.
+
+| | |
+|---|---|
+| **la fonte** | **RUSTSEC-2025-0141 — «Bincode is unmaintained»**, emesso il **2026-01-07**, categoria **`INFO`**. ⚠️ **Non è una vulnerabilità**: è una dichiarazione di manutenzione cessata, e va detto così o la severità si gonfia |
+| **verificata su** | OSV.dev, consultato dall'audit del 2026-08-11. Le altre **sette** dipendenze del grafo sono pulite |
+| **la finestra** | l'avviso era pubblico **sette mesi prima** che §6.1.1 fosse riconfermata il 2026-08-08 |
+
+⛔ **Il costo di agire, RIMISURATO il 2026-08-18 invece di ripreso dal rapporto** —
+`grep -rn "bincode" crates/ --include=*.rs`:
+
+| Sito | Che cos'è |
+|---|---|
+| `crates/kernel/src/ports/ipc.rs:24` | un **commento** di documentazione: *«Milestone 6 brings the SCHEMA»* |
+| `crates/kernel/tests/dependencies_usable.rs` | una **sonda**: l'andata-e-ritorno in `no_std`, che esiste per il gotcha **#22** (la `3.0.0` è un `compile_error!`) |
+
+✅ **Zero usi di produzione**, quindi il rapporto aveva ragione e la cifra ora è misurata invece
+che citata. Lo schema del canale `ipc` nasce al **Traguardo 6**: è una finestra che **si chiude
+da sola**, come la quarta proprietà della §3 del compendio, e si decide **allora**, mentre la
+scelta è ancora libera.
+
+📌 **La lezione non è l'avviso: è il BUCO FRA DUE CRITERI**, ed è il gotcha **#64**.
+[ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) chiede *«il pari ha un lettore
+conforme e **mantenuto**?»* — puntato verso il **capo lontano**, TypeScript, misura M-11. **M-1**
+puntava verso di noi e chiedeva *«il grafo transitivo è accettabile per I3?»*. **Nessuno dei due
+chiede se sia mantenuta la libreria del nostro capo del filo**, e `gate-deps.sh` verifica **quali**
+crate ci sono, non **come stanno**. Nessuna rilettura dell'uno o dell'altro criterio lo mostra:
+ciascuno copre la propria metà, e scoperto resta **lo spazio fra le due**. 📌 La domanda che lo
+coglie: *questo criterio è puntato verso **entrambi** i capi del filo?*
+
+⚠️ **Dove vive la registrazione, e perché non solo qui:** accanto alla **voce** in
+`crates/kernel/Cargo.toml`, che è il posto in cui guarda chi la tocca — più la riga dello stack in
+§4 del compendio e il racconto in §6. Un avviso scritto solo nel registro delle fonti è un avviso
+che chi cambia la dipendenza non incontra mai.
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

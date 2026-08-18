@@ -94,7 +94,7 @@ dell'unico archivio irriproducibile**.
 | worker ML | **Python** | ADR-0028 |
 | persistenza | **`redb` 4.1.0**, con `StorageBackend` scritto da noi | ADR-0032 |
 | dipendenze del kernel | **allow-list sul grafo transitivo**, due grafi con rimedi opposti | ADR-0031 · §7.3.1 |
-| schema IPC | **`bincode` 2.0.1** — appuntato a `2` | M-1 · §6.1.1 · gotcha #22 |
+| schema IPC | **`bincode` 2.0.1** — appuntato a `2`. ⚠️ **Dichiarato NON MANTENUTO** — RUSTSEC-2025-0141, `INFO`, non una vulnerabilità: **registrato il 2026-08-18, si decide al Traguardo 6** | M-1 · §6.1.1 · gotcha #22 · C-1 |
 | formato del **giornale** | **versione + indici espliciti** — `minicbor` 2.3.0, codifica in `kernel` | ADR-0036 · §4.9 |
 | formato del **canale worker** | **`minicbor` 2.3.0**, codifica in `kernel`, porta a **byte** | ADR-0037 · §6.10 |
 | **edition** | **2024**, su tutte e cinque le crate | scelta dal piano del Traguardo 1 |
@@ -735,7 +735,25 @@ codice **non ancora scritto** — gotcha **#57** applicato a una **giustificazio
 una collocazione. 📌 E il richiamo dice la cosa esatta: **l'argomento regge, l'evidenza no.**
 `open` davvero non è un'operazione della porta, e quella è una proprietà leggibile **oggi**.
 
-⏭️ **Restano CINQUE decisioni della §8**, e l'ordine proposto è: **C-1** (registrare) · **PL-1**
+✅ **E LA QUINTA È ESEGUITA LO STESSO GIORNO — C-1, e ciò che si esegue è la REGISTRAZIONE.**
+`bincode` 2.0.1 è coperto da **RUSTSEC-2025-0141 — «Bincode is unmaintained»**, emesso il
+**2026-01-07**, categoria **`INFO`**: non è una vulnerabilità, e le altre sette dipendenze sono
+pulite. ⛔ **La notizia non è l'avviso: è il BUCO FRA DUE CRITERI.** [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md)
+chiede *«il pari ha un lettore conforme e **mantenuto**?»* — puntato verso il **capo lontano** del
+filo, TypeScript, misura M-11; **M-1** puntava verso di noi e chiedeva un'altra cosa, *«il grafo
+transitivo è accettabile per I3?»*. **Nessuno dei due chiede se sia mantenuta la libreria del
+NOSTRO capo**, e `gate-deps.sh` verifica **quali** crate ci sono, non **come stanno**. L'avviso
+era pubblico **sette mesi prima** che §6.1.1 fosse riconfermata il 2026-08-08.
+✅ **E il costo di agire è quasi zero oggi, misurato invece che citato:** `grep -rn bincode crates/
+--include=*.rs` dà **zero usi di produzione** — un commento di documentazione in
+`crates/kernel/src/ports/ipc.rs` e una sonda in `crates/kernel/tests/dependencies_usable.rs`. Lo
+schema del canale `ipc` è il **Traguardo 6**. ⛔ **È una finestra che si chiude da sola**, come la
+quarta proprietà della §3: si **decide allora**, mentre la scelta è ancora libera, e la
+registrazione vive **accanto alla voce** in `crates/kernel/Cargo.toml` — dove guarda chi la tocca
+— invece che solo qui. 📌 **La domanda che ne esce, e vale oltre il caso:** *questo criterio è
+puntato verso **entrambi** i capi del filo?* Gotcha **#64**.
+
+⏭️ **Restano QUATTRO decisioni della §8**, e l'ordine proposto è: **PL-1**
 (⚠️ e la §7 dell'audit lo dà fuori copertura *«l'host è Windows»*, ma la CI gira su
 `ubuntu-latest`: la misura `stat -c %a` è raggiungibile) · **K-1 insieme a B-1**, che si fanno in
 un colpo solo perché chiudere K-1 rende rosse **due sonde permanenti**
@@ -1448,7 +1466,7 @@ Apri **un** file, quello che serve. Non la cartella.
 
 | Se ti serve… | Apri | Peso |
 |---|---|---|
-| ⛔ **COSA DEVI FARE ADESSO** — le voci aperte dell'audit, con severità, causa radice e dimostrazione. La §5 elenca i finding e porta in testa il **richiamo del 2026-08-17**, la §8 le otto decisioni: la **1**, la **6** e l'**8** sono eseguite, ne restano **cinque**. Si legge **prima** di qualunque altra cosa | [`audit-2026-08-11.md`](audit-2026-08-11.md) — ⚠️ **è il prossimo passo**, non un documento di consultazione | 27 KB |
+| ⛔ **COSA DEVI FARE ADESSO** — le voci aperte dell'audit, con severità, causa radice e dimostrazione. La §5 elenca i finding e porta in testa il **richiamo del 2026-08-17**, la §8 le otto decisioni: la **1**, la **5**, la **6** e l'**8** sono eseguite, ne restano **quattro**. Si legge **prima** di qualunque altra cosa | [`audit-2026-08-11.md`](audit-2026-08-11.md) — ⚠️ **è il prossimo passo**, non un documento di consultazione | 28 KB |
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 30 KB |
@@ -1464,7 +1482,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–11 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 165 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 167 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
@@ -2292,6 +2310,22 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > ventesima applicazione.
+
+> 🔁 **Trentesima misura, il 2026-08-18, chiudendo la decisione 5 (C-1) — TERZA passata dello
+> stesso giorno, e volutamente CORTA.** In byte LF, a passata chiusa.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`riferimenti.md`](riferimenti.md) `165 → 167` · [`audit-2026-08-11.md`](audit-2026-08-11.md) `27 → 28` · questo file `268 → 272` |
+> | **invariati** | [`HANDOFF.md`](HANDOFF.md) 210 · [`roadmap.md`](roadmap.md) 28 — ⚠️ **e l'invarianza è il dato**: la cella del sotto-progetto 1 è stata **accorciata** mentre la si aggiornava, sostituendo l'elenco delle decisioni chiuse con un **rimando alla §6**. Ricopiarlo lì è ciò che ha fatto invecchiare quella riga **tre volte** · [`README.md`](README.md) 16 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 25 · `CLAUDE.md` 13 · [`porta-di-qualita.md`](porta-di-qualita.md) 130 · spec **277** · tutto il resto come alla ventinovesima |
+>
+> ⚠️ **Il messaggio: 15361 → 15369 byte, `+8 B`.** Il conteggio è passato a QUATTRO decisioni e il
+> blocco delle chiuse ha guadagnato una voce: è il segnale che la 29ª aveva previsto — **il
+> blocco delle decisioni chiuse va tolto e sostituito da un rimando alla §6** appena la quinta
+> si chiude, o cresce di una voce per decisione fino alla fine.
+>
+> L'insieme resta **707 KB**. I **due file obbligatori** passano da 284 a **287 KB**, e coi tre da
+> 311 a **315**.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

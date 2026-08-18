@@ -26,7 +26,10 @@ finding corretti e provati, il resto aperto. ✅ **La prima delle otto decisioni
 G-5: `--locked` su tutti i siti `cargo` del cancello, così il `Cargo.lock` **tracciato** smette di
 essere un **effetto** del cancello e ne diventa un **ingresso**. ✅ **E la sesta lo stesso
 giorno** — A-1, A-2, A-4, A-7: quattro richiami datati su ADR e diagrammi, **nessuna decisione
-riaperta**, perché a cadere sono quattro **evidenze** e non quattro scelte. **Ne restano cinque.**
+riaperta**, perché a cadere sono quattro **evidenze** e non quattro scelte. ✅ **E la quinta** —
+C-1: `bincode` è dichiarato **non mantenuto** (RUSTSEC-2025-0141, `INFO`), ha **zero** usi di
+produzione, e la registrazione vive accanto alla voce nel manifesto; si decide al Traguardo 6.
+**Ne restano quattro.**
 ⏭️ **Il prossimo è l'ESECUZIONE DELL'AUDIT**, non il
 Traguardo 5: l'arbitro GPU riparte quando le voci aperte sono chiuse, e allora si comincia dal
 **brainstorming**. ⚠️ **Questa riga diceva *«il prossimo passo è

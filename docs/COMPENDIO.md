@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (707 KB in byte LF il 2026-08-18, e possono solo crescere — la spec da sola ne fa 277), e
+> (711 KB in byte LF il 2026-08-18, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-11.** Manutenzione: §13.
@@ -753,12 +753,44 @@ registrazione vive **accanto alla voce** in `crates/kernel/Cargo.toml` — dove 
 — invece che solo qui. 📌 **La domanda che ne esce, e vale oltre il caso:** *questo criterio è
 puntato verso **entrambi** i capi del filo?* Gotcha **#64**.
 
-⏭️ **Restano QUATTRO decisioni della §8**, e l'ordine proposto è: **PL-1**
-(⚠️ e la §7 dell'audit lo dà fuori copertura *«l'host è Windows»*, ma la CI gira su
-`ubuntu-latest`: la misura `stat -c %a` è raggiungibile) · **K-1 insieme a B-1**, che si fanno in
-un colpo solo perché chiudere K-1 rende rosse **due sonde permanenti**
+✅ **E LA QUARTA È ESEGUITA LO STESSO GIORNO — PL-1, e la scelta del proprietario è `0600` SUL
+FILE.** ADR-0023 promette che il giornale a riposo sia *«protetto quanto il tuo account di
+sistema»* e pretende che la frase si mostri **in interfaccia**; il file nasceva **0644** su Linux,
+cioè **leggibile da chiunque**, cioè **meno** dell'account. ✅ **Misurato su un Linux vero — WSL,
+`umask` 0022 — invece che dedotto dai doc di `std`:** `open` a `0o666` dà **644**, a `0o600` dà
+**600**. Non c'era **nessun** `.mode()` in tutto `crates/`.
+⛔ **Perché il file e non la cartella, che era l'altra opzione:** `0700` sulla cartella coprirebbe
+anche gli archivi futuri in un colpo solo, ma **la cartella non ha un proprietario nel codice** —
+nessuno la crea — quindi la regola nominerebbe un **chiamante che non esiste**, che è esattamente
+il difetto del finding **A-7** chiuso poche ore prima. Prenderselo per risparmiare una riga era lo
+scambio peggiore.
+⛔ **E la cosa da ricordare non è il permesso: è che il difetto era INVISIBILE DOVE SI LAVORA.**
+Windows non ha il modo Unix, quindi né il codice né una sonda potevano dirne nulla sull'host di
+sviluppo, e il rosso era **programmato per uscire il giorno del secondo sistema** — la stessa
+forma del gotcha **#52**. È la ragione per cui l'audit dichiarava PL-1 *fuori copertura*; a
+renderlo misurabile è stato notare che la **CI gira su `ubuntu-latest`**.
+✅ **Provato per quanto si può da qui, e il resto è dichiarato:** il percorso `cfg(unix)` è stato
+**type-checkato per Linux** prima del push — `cargo check --locked -p platform --target
+x86_64-unknown-linux-gnu --tests` — perché su Windows quel blocco **non viene nemmeno compilato**;
+la direzione *«deve scattare»* è provata dalla **misura del sistema** (senza la riga il file nasce
+644, e `644 & 0o077 ≠ 0`) e non da una corsa del banco mutato; il **valore vero** lo misura la CI.
+⚠️ **L'asserzione è «nessuno tranne il proprietario» e non «esattamente 0600»**, perché `mode()`
+resta mascherato dall'umask e un'uguaglianza esatta andrebbe **rossa su un sistema più chiuso del
+richiesto**, cioè dove la promessa è **mantenuta** — gotcha **#24**.
+⚠️ **Due limiti dichiarati:** `mode()` vale solo alla **creazione**, quindi un giornale nato prima
+resta 0644 e portarlo giù è una **migrazione** che non esiste ancora; e la sonda **non è una riga
+di catalogo** — aggiungerla alla §7.4 è una decisione del proprietario, e fino ad allora sta
+**registrata come voce aperta** nel registro invece che come nota (gotcha **#36**).
+📌 **E il conteggio dei test di quel file è il primo del registro che DIPENDE DAL SISTEMA**: sei
+su Windows, sette su Linux. Dichiarato invece di sceglierne uno.
+
+⏭️ **Restano TRE decisioni della §8**, e l'ordine proposto è: **K-1 insieme a B-1**, che si fanno
+in un colpo solo perché chiudere K-1 rende rosse **due sonde permanenti**
 (`executor_determinism.rs:213` e `:235`) nello stesso banco in cui B-1 va scritta · **P-1** · le
-sonde **B-2/B-3/S-1/S-2/S-5**.
+sonde **B-2/B-3/S-1/S-2/S-5**. ⛔ **Sono tutte e tre decisioni del proprietario, e la differenza
+con le cinque chiuse va detta:** quelle si potevano eseguire leggendo il codice — un flag, quattro
+richiami, una registrazione, un permesso di file già scelto. Queste cambiano la **semantica
+dell'esecutore**, una **firma pubblica**, e il **catalogo**.
 
 ⛔ **Cosa l'audit ha trovato, e la prima voce è la più grave** — ✅ **chiusa il 2026-08-17, vedi il
 riquadro qui sopra.** La suite di conformità provava
@@ -1466,29 +1498,29 @@ Apri **un** file, quello che serve. Non la cartella.
 
 | Se ti serve… | Apri | Peso |
 |---|---|---|
-| ⛔ **COSA DEVI FARE ADESSO** — le voci aperte dell'audit, con severità, causa radice e dimostrazione. La §5 elenca i finding e porta in testa il **richiamo del 2026-08-17**, la §8 le otto decisioni: la **1**, la **5**, la **6** e l'**8** sono eseguite, ne restano **quattro**. Si legge **prima** di qualunque altra cosa | [`audit-2026-08-11.md`](audit-2026-08-11.md) — ⚠️ **è il prossimo passo**, non un documento di consultazione | 28 KB |
+| ⛔ **COSA DEVI FARE ADESSO** — le voci aperte dell'audit, con severità, causa radice e dimostrazione. La §5 elenca i finding e porta in testa il **richiamo del 2026-08-17**, la §8 le otto decisioni: la **1**, la **4**, la **5**, la **6** e l'**8** sono eseguite, ne restano **tre** — ⚠️ **e sono le tre che il proprietario deve davvero decidere**: le altre cinque si eseguivano leggendo il codice. Si legge **prima** di qualunque altra cosa | [`audit-2026-08-11.md`](audit-2026-08-11.md) — ⚠️ **è il prossimo passo**, non un documento di consultazione | 29 KB |
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 30 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 210 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 211 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 28 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 130 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 133 KB |
 | ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata | 6 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 11 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 5 KB |
 | gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–11 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 167 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 170 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 114 KB |
-| l'indice di ADR e diagrammi | [`README.md`](README.md) | 16 KB |
+| l'indice di ADR e diagrammi | [`README.md`](README.md) | 17 KB |
 | ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **15,0**, ed è tornato a crescere — `+321 B` il 2026-08-18, dopo una passata sola di fermo | 25 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
@@ -2326,6 +2358,28 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > L'insieme resta **707 KB**. I **due file obbligatori** passano da 284 a **287 KB**, e coi tre da
 > 311 a **315**.
+
+> 🔁 **Trentunesima misura, il 2026-08-18, chiudendo la decisione 4 (PL-1) — QUARTA passata dello
+> stesso giorno.** In byte LF, a passata chiusa.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`riferimenti.md`](riferimenti.md) `167 → 170` · [`porta-di-qualita.md`](porta-di-qualita.md) `130 → 133` per la settima sonda di `file_journal.rs` · [`HANDOFF.md`](HANDOFF.md) `210 → 211` · [`audit-2026-08-11.md`](audit-2026-08-11.md) `28 → 29` · [`README.md`](README.md) `16 → 17` · questo file `272 → 277` |
+> | **invariati, ricontati** | [`roadmap.md`](roadmap.md) 28 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 25 · `CLAUDE.md` 13 · spec **277** · kernel-design 44 · disegno T4 30 · tracciabilità 15 · [`semi-dst.md`](semi-dst.md) 6 · i piani 68, 50, 162, 168, 114 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
+>
+> ⚠️ **Il messaggio: 15369 → 15367 byte, `−2 B`.** Il conteggio delle decisioni si è accorciato
+> (`QUATTRO → TRE`) più di quanto il blocco delle chiuse sia cresciuto. ⛔ **Non è la compressione
+> che la 29ª prescriveva**, è aritmetica: il blocco ha guadagnato **un'altra voce**, che è il quinto
+> giro dello stesso meccanismo. La prescrizione resta **non applicata** e va detto così.
+>
+> 📌 **E questa passata ha prodotto una cifra di specie nuova per il registro: un conteggio che
+> DIPENDE DAL SISTEMA.** `file_journal.rs` porta **sei** test su Windows e **sette** su Linux,
+> perché il settimo è `cfg(unix)`. Dichiarato invece di sceglierne uno — ed è la stessa lezione
+> della ventottesima, un piano sotto: **una misura ha bisogno di dire su quale macchina è stata
+> presa**, o due lettori onesti ottengono due numeri e si correggono a vicenda per sempre.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **707** a **711 KB**. I **due file obbligatori**
+> passano da 287 a **292 KB**, e coi tre da 315 a **321**.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

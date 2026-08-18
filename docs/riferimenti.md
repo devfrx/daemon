@@ -1607,6 +1607,48 @@ che chi cambia la dipendenza non incontra mai.
 
 ---
 
+## Esecuzione dell'audit — la decisione 4 (PL-1), 2026-08-18: le misure, coi comandi
+
+⛔ **La §7 dell'audit dichiarava PL-1 fuori copertura — *«l'host è Windows, dove la divergenza per
+costruzione non si manifesta»* — e la conclusione era sbagliata**, non prudente: è una conclusione
+sull'**host**, non sui **sistemi raggiungibili dall'host**. La CI gira su `ubuntu-latest`, e sulla
+macchina c'è **WSL**.
+
+**Il presupposto, misurato su Linux vero** — `wsl -e bash -lc '… python3 os.open …; stat -c "%n %a"'`,
+`umask` **0022**:
+
+| Come si apre | Modo risultante |
+|---|---|
+| `0o666` — ciò che `OpenOptions::create(true)` chiede | **644** → `g+r`, `o+r`: **leggibile da chiunque** |
+| `0o600` | **600** |
+
+| Domanda | Comando | Esito |
+|---|---|---|
+| esisteva un `.mode()` da qualche parte? | `grep -rn "\.mode(\|OpenOptionsExt\|PermissionsExt" crates/ --include=*.rs` | ❌ **nessuna occorrenza** |
+| il percorso `cfg(unix)` compila per Linux? | `cargo check --locked -p platform --target x86_64-unknown-linux-gnu --tests` | ✅ `Finished dev profile`, `src` **e** banchi |
+| il cancello resta verde su Windows? | `bash scripts/gate.sh` | ✅ `GATE GREEN` — e lì il blocco è **compilato via** |
+
+⛔ **Perché il type-check per Linux non è pedanteria:** su Windows quel blocco **non viene
+nemmeno type-checkato**, quindi un errore di sintassi o un `use` sbagliato sarebbe uscito **dalla
+CI** e non da qui. È la forma del gotcha **#52** applicata al *compilatore* invece che al banco.
+
+⚠️ **La direzione «deve scattare» è provata dalla MISURA DEL SISTEMA e non da una corsa del banco
+mutato**, e la distinzione va scritta o la prova sembra più forte di com'è: senza `.mode()` il file
+nasce **644**, e l'asserzione è `mode & 0o077 == 0`, cioè `0o044 ≠ 0` → **rossa**. La corsa vera del
+banco mutato la potrebbe fare solo un secondo giro di CI, e non è stata fatta.
+
+⚠️ **E l'asserzione è «nessuno tranne il proprietario», non «esattamente 0600»:** `mode()` è ciò che
+si **consegna** a `open(2)`, e il kernel lo maschera comunque con l'umask. Un'uguaglianza esatta
+andrebbe **rossa su un sistema più chiuso del richiesto**, cioè dove la promessa è **mantenuta** —
+gotcha **#24**, la metà che si dimentica.
+
+⚠️ **Due limiti dichiarati:** `mode()` è ignorato se il file **esiste già**, quindi un giornale nato
+prima resta 0644 — è una **migrazione**, e la fixture cancella la cartella all'ingresso, quindi la
+sonda **non può vederla**; e il conteggio dei test di `file_journal.rs` diventa il **primo del
+registro che dipende dal sistema**: **sei** su Windows, **sette** su Linux.
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

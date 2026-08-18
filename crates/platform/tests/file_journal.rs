@@ -48,6 +48,57 @@ fn private_dir_for_line(line: u32) -> std::path::PathBuf {
     dir
 }
 
+/// ⛔ ADR-0023 PROMISES "PROTECTED AS MUCH AS YOUR SYSTEM ACCOUNT IS", AND 0644 IS LESS.
+///
+/// Finding PL-1 of the 2026-08-11 audit. `OpenOptions::create(true)` asks the OS for
+/// `0o666 & !umask`; on a stock Linux that is **0644**, world-readable. The journal is the one
+/// archive ADR-0022 marks as encrypted-and-backed-up, so a world-readable one contradicts the
+/// sentence the ADR requires to be shown IN THE INTERFACE.
+///
+/// ⚠️ THE ASSERTION IS "NOBODY BUT THE OWNER", NOT "EXACTLY 0600", and the difference is
+/// umask. `mode()` sets what is HANDED to `open(2)`, and the kernel still masks it: with a
+/// hostile umask an exact-equality assertion would go red on a system that is MORE closed than
+/// asked, that is, a red where the promise is kept. `mode & 0o077 == 0` is the promise itself.
+///
+/// ⚠️ AND IT ONLY BITES ON CREATION. `mode()` is ignored when the file already exists, so a
+/// journal created before this line keeps 0644 for ever. That is a MIGRATION, not a bug in this
+/// probe, and it is declared here because nobody would find it later: the fixture below deletes
+/// the directory on entry, so the probe always sees a fresh file and CANNOT see the old case.
+///
+/// ⚠️ `cfg(unix)`: on Windows there is no Unix mode, which is exactly why the defect could not
+/// appear on the development host. This runs on the Linux CI — gotcha #52, same shape.
+#[cfg(unix)]
+#[test]
+fn the_journal_file_is_not_world_readable() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let dir = private_dir!();
+    let path = dir.join("journal.redb");
+
+    let mut journal = FileJournal::open(&path).expect("open");
+    journal.intent(StepId::new(1), b"private").expect("intent");
+    drop(journal);
+
+    let mode = std::fs::metadata(&path)
+        .expect("stat the journal file")
+        .permissions()
+        .mode();
+
+    assert_eq!(
+        mode & 0o077,
+        0,
+        "ADR-0023 promises the journal is protected as much as the account: mode is {:o}, \
+         which grants group or other. Finding PL-1.",
+        mode & 0o777
+    );
+    assert_eq!(
+        mode & 0o600,
+        0o600,
+        "the owner must still be able to read and write it: mode is {:o}",
+        mode & 0o777
+    );
+}
+
 #[test]
 fn what_was_written_survives_reopening_the_file() {
     // ⛔ THE PROMISE THE IN-MEMORY DOUBLE CANNOT MAKE, and the reason this test is here and not

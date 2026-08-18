@@ -172,13 +172,36 @@ impl FileBackend {
     /// that matters is written down — and the false sentence is replaced rather than deleted,
     /// because the claim was plausible and the next reader will think it too. `redb`'s own
     /// `Builder::create` spells it out the same way.
+    ///
+    /// ⛔ MODE `0600` ON UNIX, AND IT IS A PROMISE OF ADR-0023 RATHER THAN HARDENING BY HABIT.
+    /// That ADR says the journal at rest is "protected as much as your system account is", and
+    /// says it must be told to the user IN THE INTERFACE because a false sense of security is
+    /// worse than none. `create(true)` alone asks the OS for `0o666 & !umask`, which on a stock
+    /// Linux is **0644** — WORLD-READABLE, that is, LESS than the account. Measured on the code
+    /// rather than assumed: before this line there was no `.mode()` anywhere in `crates/`.
+    ///
+    /// ⚠️ IT IS INVISIBLE ON THE DEVELOPMENT HOST. Windows has no Unix mode, so `cfg(unix)`
+    /// compiles this away and the defect could not show up where the work happens — it was
+    /// programmed to appear on the SECOND supported system, exactly like gotcha #52. The probe
+    /// that holds it (`the_journal_file_is_not_world_readable`) is `cfg(unix)` too and runs on
+    /// the Linux CI, which is the only place the question exists. Finding PL-1.
+    ///
+    /// ⛔ ONLY THE FILE, NOT THE DIRECTORY, and that was the owner's choice between the two:
+    /// `0700` on the data directory would cover future archives in one go, but the directory has
+    /// NO OWNER IN THE CODE TODAY — nobody creates it — so the rule would have to name a caller
+    /// that does not exist. That is finding A-7's defect, and taking it on to avoid one line was
+    /// the worse trade.
     pub fn open(path: &Path) -> Result<Self, OpenError> {
-        let file = File::options()
-            .read(true)
-            .write(true)
-            .create(true)
-            .truncate(false)
-            .open(path)?;
+        let mut options = File::options();
+        options.read(true).write(true).create(true).truncate(false);
+
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::OpenOptionsExt;
+            options.mode(0o600);
+        }
+
+        let file = options.open(path)?;
 
         match file.try_lock() {
             Ok(()) => Ok(FileBackend {

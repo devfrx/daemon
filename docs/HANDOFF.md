@@ -57,7 +57,16 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 > il **grafo** è accettabile per I3, e nessuno dei due se sia mantenuta la libreria del **nostro**
 > capo del filo. ✅ **Zero usi di produzione**, misurato: un commento e una sonda. Si **decide al
 > Traguardo 6**, e la registrazione vive accanto alla voce in `crates/kernel/Cargo.toml`.
-> ⏭️ **Restano QUATTRO decisioni**, e l'ordine proposto sta nella §6 del compendio.
+>
+> ✅ **E LA QUARTA lo stesso giorno — PL-1, e la scelta è `0600` SUL FILE.** Il giornale nasceva
+> **0644** su Linux, cioè **meno** dell'account che ADR-0023 promette. ✅ **Misurato su Linux
+> vero** (WSL, umask 0022): `0o666` → **644**, `0o600` → **600**. ⛔ **Non la cartella**, che era
+> l'altra opzione: nessuno la crea, quindi la regola nominerebbe un chiamante che **non esiste** —
+> il difetto di A-7. ⛔ **E il difetto era invisibile sull'host**: Windows non ha il modo Unix,
+> quindi il rosso poteva uscire **solo sul secondo sistema** (gotcha #52). Il percorso `cfg(unix)`
+> è stato **type-checkato per Linux** prima del push; il valore lo misura la **CI**.
+> ⏭️ **Restano TRE decisioni**, e l'ordine proposto sta nella §6 del compendio. ⛔ **Sono le tre
+> che devi davvero decidere tu**: le altre cinque si eseguivano leggendo il codice.
 >
 > ⏭️ **QUELLO CHE VIENE DOPO È L'ESECUZIONE DELL'AUDIT — non il Traguardo 5.** Si legge
 > [`audit-2026-08-11.md`](audit-2026-08-11.md) per intero (25 KB), si portano al proprietario le
@@ -126,7 +135,7 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 >
 > ⏭️ **Il prossimo passo è l'ESECUZIONE DELL'AUDIT — non il brainstorming del Traguardo 5.**
 > Delle otto decisioni della §8 ne sono eseguite **due** — la 1 il 2026-08-17 e la 8 il
-> 2026-08-18, e la 6 e la 5 lo stesso giorno; ne restano **quattro**. L'arbitro
+> 2026-08-18, e la 6, la 5 e la 4 lo stesso giorno; ne restano **tre**. L'arbitro
 > GPU — ammissione, corsie, concessione, le due policy VRAM — riparte quando sono chiuse, e allora
 > **dal brainstorming**, non dal piano: è la regola che ha retto quattro volte. La §6 del compendio
 > ha la tabella e le **questioni lasciate aperte**, raccolte in un posto solo.

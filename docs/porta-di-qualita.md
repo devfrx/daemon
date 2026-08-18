@@ -851,6 +851,99 @@ non è un inganno del banco ma un **fatto del repository**: i fine-riga sono **m
 una convenzione da seguire, c'è **un file da non cambiare** — uno strumento che ne riscrive uno
 intero in LF produce un `git diff` di seicento righe che nessuno ha toccato.
 
+### K-1 e B-1 — la cella che accettava scritture da fuori un poll, e il limite mai letto (2026-08-18)
+
+⛔ **La terza decisione della §8 dell'audit, e il rapporto la prezza sbagliata in TRE modi** — due
+per difetto e uno per eccesso. È il gotcha **#65** a un'altra occorrenza, e stavolta ne insegna una
+forma che il #65 non copre: il **#66**.
+
+**Cosa dice il rapporto.** *«K-1 — drenare la cella all'ingresso di `run`, e riscrivere le due
+sonde»*, con la nota che chiudendo K-1 *«due sonde permanenti diventano rosse»*.
+
+| | Il rapporto | La misura del 2026-08-18 |
+|---|---|---|
+| **1** | drenare **all'ingresso di `run`** | ⛔ **non basta.** La via dei `Drop` è **dentro** la run: un distruttore gira dopo l'ultima lettura del ciclo, e col drenaggio all'ingresso il clock arrivava ancora a **9999** |
+| **2** | *«due sonde diventano rosse»* | ⛔ **una** diventa rossa. L'altra resta **VERDE E DIVENTA VACUA**, che è il caso che non si vede |
+| **3** | (implicito) il rimedio è un drenaggio in più | 📌 è un **cambio di invariante**, e costa **una riga** invece di due |
+
+⛔ **IL RIMEDIO, e perché questa forma e non quella proposta.** L'invariante che serve
+all'esecutore è *«ciò che leggo dopo aver girato X è stato scritto da X in quel poll»*. Drenare
+**dopo** ogni poll difende dall'attività **precedente** — è V31, chiusa dal Traguardo 2 — e da
+nient'altro: non dice nulla su una scrittura fatta **mentre nessun poll è in corso**, e i momenti
+sono due, prima di `run` e fra un poll e il successivo. Svuotare la cella **subito prima** di ogni
+poll sposta l'invariante da *«nessuno scriva mai fuori da un poll»*, che nulla può imporre, a
+*«conta solo ciò che è scritto durante questo poll»*, che è imposto lì. **Tutte le vie chiudono in
+un punto solo**, comprese quelle non ancora immaginate.
+
+⛔ **E la via idiomatica è già stata scartata con una misura, quindi non si riapre:** un waker su
+misura renderebbe la scrittura non falsificabile, e **non è costruibile qui** — `Waker::from_raw` è
+`unsafe`, `forbid(unsafe_code)` lo rifiuta, misurato in **M-5**. Scritto perché chi legge non
+riproponga il meccanismo credendo che nessuno ci abbia pensato — gotcha **#32**.
+⛔ **L'altra opzione, caduta sul MERITO e non sul costo:** far possedere la cella all'`Executor`.
+È più invasiva — firma pubblica e tutti i chiamanti — **e non chiude il `Drop`**, perché un
+distruttore che tiene `&Sleep` scrive lo stesso. Peggiore su entrambi gli assi.
+
+⛔ **Prima il rosso, e le sonde sono DUE perché le VIE sono due — non le cause.** La suite si ferma
+al primo rosso, quindi una sonda per via è ciò che impedisce alla seconda di restare non provata
+mentre un test afferma il contrario: gotcha **#65**, nella forma che la prima decisione dell'audit
+aveva insegnato il 2026-08-17.
+
+| Sonda | Via | Contro il codice non corretto |
+|---|---|---|
+| `a_request_written_before_the_run_belongs_to_nobody` | il banco scrive prima di `run` | 🔴 il clock arriva a **9999** su un'attività **scelta dal seme** |
+| `a_request_written_by_a_destructor_belongs_to_nobody` | un `Drop` scrive dopo il ciclo | 🔴 **9999**, e **anche col drenaggio all'ingresso di `run`** |
+
+⚠️ **La prima stesura della seconda sonda era VACUA, ed è registrata invece di essere rifatta in
+silenzio.** Scritta con un blocco `async` che teneva un guardiano, passava contro l'esecutore **non
+corretto**: i locali di un blocco `async` muoiono **dentro** il poll che lo completa, prima che
+l'esecutore legga la cella. Serve un `Future` **scritto a mano**, il cui distruttore appartiene al
+future stesso e gira quando il task finito è tolto dal vettore. È il gotcha **#17**, e per questo
+la sonda definitiva **asserisce che il distruttore sia girato** prima di guardare l'oracolo.
+
+⛔ **CIÒ CHE HA INSEGNATO L'ALTRA SONDA DEL RAPPORTO, ed è la notizia di questa passata.**
+`a_wait_already_over_wakes_immediately_and_the_clock_does_not_move` scriveva la scadenza **dal
+banco**, prima di `run`. Chiudendo K-1 non diventa rossa: **resta verde e smette di provare
+qualcosa**. Misurato invece che dedotto — col rimedio applicato e `until <= instant` mutato in
+`until < instant`, cioè **la discriminazione che il suo stesso commento dichiara di difendere**:
+
+| Forma della sonda | Sotto la mutazione `<=` → `<` |
+|---|---|
+| come era, con la scrittura dal banco | 🟢 **verde** — e la mutazione è viva: **cinque** altri test vanno rossi |
+| riscritta, con l'attività che dichiara la propria scadenza | 🔴 `Err(TurnLimitReached)` invece di `Ok(())` |
+
+📌 **Un rosso lo vedi. Una vacuità no.** L'audit prevedeva il primo e ha consegnato la seconda: è
+il gotcha **#66**.
+
+⛔ **B-1 — il limite di turni consegnato e mai letto.** `parameters_delivered.rs` prova che
+`Parameters` **trasporta** il numero; nulla provava che l'esecutore lo **usi**.
+
+| | |
+|---|---|
+| **Riprodotto** | `turn_limit: { let _ = parameters; 10_000 }` → **32 target, 177 passati, 0 falliti**, identico alla baseline. ⚠️ **Rimisurato sui 177 di oggi** invece di riprendere i **171** del rapporto, che sono di prima di T-1/T-2 |
+| **La sonda** | `the_delivered_turn_limit_is_honoured_by_its_value` |
+| **L'oracolo** | il **conteggio dei poll**, non l'errore: `run` prende un turno per poll su un'attività che si limita a cedere e si ferma a `turns > limit`, quindi i poll sono **esattamente** il limite. È l'unico osservabile che porta il **valore** |
+| **Due valori e non uno** | `7` e `13`, entrambi lontani da ogni default plausibile — gotcha **#48**, *«per ogni mutazione su un valore provane DUE»*. Con uno solo, un'implementazione la cui costante coincide passerebbe |
+| **Morde** | 🔴 sotto la mutazione: `left: 10000, right: 7`, col messaggio che nomina il difetto |
+
+⛔ **La mutazione di controllo è la baseline:** col codice vero `bash scripts/gate.sh` dà
+`GATE GREEN`, e `cargo test --workspace --no-fail-fast --locked` dà **32 target, 180 passati, 0
+falliti, 2 ignorati** — erano **177**, e le tre in più sono le tre sonde di questa passata. Le
+asserzioni nuove **non scattano dove non devono**, che è la metà che si dimentica — gotcha **#24**.
+
+⚠️ **E il commento di `Sleep` dichiarava il falso, quindi è stato RISCRITTO e non appeso.** Diceva
+*«la richiesta è letta e DRENATA dopo ogni poll, quindi appartiene sempre all'attività che ha
+appena girato»*: la subordinata era **falsa**, perché «dopo» esclude la precedente e nient'altro.
+Lasciarla sarebbe stato il finding **A-2** rifatto — una formulazione falsificata che sopravvive
+nel documento che si dichiara autorevole. Porta il proprio **richiamo datato**.
+
+⚠️ **VOCE APERTA — le tre sonde non hanno una riga di catalogo, e aggiungerla è del proprietario.**
+La §7.4 è la spec, e il vincolo globale 7 la mette fuori dalla portata di questa passata. È lo
+stesso trattamento scelto per **PL-1** il 2026-08-18, e per la stessa ragione: **registrata come
+voce aperta e non come nota**, perché una nota si legge e si dimentica — gotcha **#36**. Le tre
+righe candidate difenderebbero **§2.4.1** — la cella è l'unico canale, e le sue scritture
+appartengono a un poll — e **§2.8 · ADR-0034**, nessuna decisione legge un parametro che non le è
+stato consegnato.
+
 #### `CrashingJournal` — cinque mutazioni, cinque uccise, e una coppia che prova di essere due difetti
 
 **Misurate il 2026-08-11, chiudendo il Task 1 del Traguardo 4.** ⚠️ **Rifatte da zero dopo

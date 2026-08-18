@@ -1649,6 +1649,96 @@ registro che dipende dal sistema**: **sei** su Windows, **sette** su Linux.
 
 ---
 
+## Esecuzione dell'audit — la decisione 3 (K-1, con B-1), 2026-08-18: le misure, coi comandi
+
+⚠️ **Nessuna fonte esterna.** Tutto ciò che segue è misurato su questo repository, col comando
+accanto. Ogni mutazione è stata applicata **una alla volta**, compilata ed eseguita a sé, e poi
+**revocata da una copia byte-esatta** presa prima — mai con `git checkout --`, perché i file
+toccati erano anche quelli in scrittura (gotcha **#48**). I fine-riga sono stati misurati prima e
+dopo: `crates/kernel/src/executor.rs` e `crates/kernel/tests/executor_determinism.rs` sono **CRLF**,
+e lo sono rimasti.
+
+**B-1 — il limite consegnato può essere ignorato.** Riproduzione:
+
+```
+# in crates/kernel/src/executor.rs, Executor::new
+-   turn_limit: parameters.executor_turn_limit(),
++   turn_limit: { let _ = parameters; 10_000 },
+
+cargo test --workspace --no-fail-fast --locked
+  ->  32 target · 180 passati · 0 falliti · 2 ignorati      (con la sonda nuova: ROSSA)
+  ->  32 target · 177 passati · 0 falliti · 2 ignorati      (senza: identico alla baseline)
+```
+
+⚠️ **La cifra del rapporto era 171 e non è stata ripresa**: sono i test di **prima** di T-1/T-2.
+Rimisurata sui **177** di oggi, la conclusione regge — la mutazione è invisibile all'intero
+workspace.
+📌 **L'oracolo della sonda è il conteggio dei poll, non l'errore.** `run` prende un turno per poll
+su un'attività che si limita a cedere, e si ferma a `turns > limit`: i poll sono **esattamente** il
+limite, ed è l'unico osservabile che porta il **valore**. Due valori, `7` e `13` (gotcha **#48**).
+Sotto la mutazione: `left: 10000, right: 7`.
+
+**K-1 — le due vie d'ingresso.** La prima riproduzione ha usato le sonde che già esistevano:
+
+```
+# rimedio proposto dalla §8: self.sleep.take() all'ingresso di run()
+cargo test --workspace --no-fail-fast --locked
+  ->  32 target · 176 passati · 1 FALLITO
+  ->  l'unico rosso: a_reactor_that_will_not_advance_is_an_error_and_not_a_spin
+```
+
+⛔ **Una sola su due, e la seconda non è rossa: è VACUA.** Provato aggiungendo alla stessa copia la
+mutazione `until <= instant` → `until < instant` in `wake_those_due_at`, cioè la discriminazione
+che `a_wait_already_over_wakes_immediately_and_the_clock_does_not_move` dichiara di difendere:
+
+```
+cargo test --locked -p kernel --test executor_determinism
+  ->  4 passati · 6 FALLITI
+  ->  a_wait_already_over_wakes_immediately_and_the_clock_does_not_move ... ok   <-- VERDE
+  ->  c1, c2, c3, non_vacuity, measure_and_print, a_reactor_that_will_not_advance ... FAILED
+```
+
+📌 **Cinque altri test vanno rossi, quindi la mutazione è VIVA**: il verde appartiene alla sonda,
+non alla mutazione morta. È il gotcha **#66**.
+✅ **Riscritta con l'attività che dichiara la propria scadenza, la stessa mutazione la uccide:**
+`left: Err(TurnLimitReached), right: Ok(())`.
+
+**La seconda via — un `Drop` che scrive dopo l'ultima lettura del ciclo.** Serve un `Future`
+**scritto a mano**: un blocco `async` distrugge i propri locali **dentro** il poll che lo completa,
+prima che l'esecutore legga la cella.
+
+```
+# sonda con un blocco async che tiene un guardiano  ->  VERDE contro il codice NON corretto
+#   = prova vacua (gotcha #17), registrata invece che rifatta in silenzio
+# sonda con `WritesFromItsDestructor`, poll -> Ready, Drop -> sleep.until(9_999)
+cargo test --locked -p kernel --test zz_k1_measurement
+  ->  FAILED: left: Monotonic(9999), right: Monotonic(0)      (codice pristino)
+  ->  FAILED: left: Monotonic(9999), right: Monotonic(0)      (col drenaggio all'ingresso di run)
+```
+
+⛔ **Identico nelle due corse: il rimedio della §8 non tocca questa via.** È la ragione per cui il
+rimedio adottato è un altro — svuotare la cella **subito prima** di ogni poll, che chiude entrambe
+le vie in **un punto solo** e costa **una riga**.
+
+**Baseline dopo il rimedio**, e la mutazione di controllo è la baseline stessa:
+
+```
+bash scripts/gate.sh                                  ->  GATE GREEN
+cargo test --workspace --no-fail-fast --locked        ->  32 target · 180 passati · 0 falliti · 2 ignorati
+                                                          (erano 177: le tre sonde nuove)
+```
+
+⚠️ **Le tre sonde nuove non scattano dove non devono** (gotcha **#24**): gli altri undici test di
+`executor_determinism.rs` restano verdi, e nessun altro target si muove.
+⛔ **Due opzioni sono cadute, e vanno registrate perché non si ripropongano.** Un **waker su
+misura** renderebbe la scrittura non falsificabile ed è la via idiomatica — **non è costruibile
+qui**: `Waker::from_raw` è `unsafe` e `forbid(unsafe_code)` lo rifiuta, misurato in **M-5**. Far
+**possedere la cella all'`Executor`** è più invasivo — firma pubblica e tutti i chiamanti — **e non
+chiude il `Drop`**, perché un distruttore che tiene `&Sleep` scrive lo stesso: caduta sul **merito**,
+non sul costo.
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

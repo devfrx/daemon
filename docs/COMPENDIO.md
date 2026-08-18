@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (711 KB in byte LF il 2026-08-18, e possono solo crescere — la spec da sola ne fa 277), e
+> (713 KB in byte LF il 2026-08-18, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-11.** Manutenzione: §13.
@@ -784,13 +784,48 @@ di catalogo** — aggiungerla alla §7.4 è una decisione del proprietario, e fi
 📌 **E il conteggio dei test di quel file è il primo del registro che DIPENDE DAL SISTEMA**: sei
 su Windows, sette su Linux. Dichiarato invece di sceglierne uno.
 
-⏭️ **Restano TRE decisioni della §8**, e l'ordine proposto è: **K-1 insieme a B-1**, che si fanno
-in un colpo solo perché chiudere K-1 rende rosse **due sonde permanenti**
-(`executor_determinism.rs:213` e `:235`) nello stesso banco in cui B-1 va scritta · **P-1** · le
-sonde **B-2/B-3/S-1/S-2/S-5**. ⛔ **Sono tutte e tre decisioni del proprietario, e la differenza
-con le cinque chiuse va detta:** quelle si potevano eseguire leggendo il codice — un flag, quattro
-richiami, una registrazione, un permesso di file già scelto. Queste cambiano la **semantica
-dell'esecutore**, una **firma pubblica**, e il **catalogo**.
+✅ **E LA TERZA È ESEGUITA IL 2026-08-18 — K-1 insieme a B-1, e il rapporto le prezzava sbagliate
+in TRE modi.** La cella `Sleep` accettava scritture da **fuori un poll**, e una sospensione che
+nessuna attività aveva chiesto veniva onorata su un'attività **scelta dal seme**.
+⛔ **Il rimedio della §8 — drenare all'ingresso di `run` — non basta e non è ben puntato.** Le vie
+sono **due**, e la seconda è **dentro** la run: un distruttore gira dopo l'ultima lettura del
+ciclo, e col drenaggio all'ingresso il clock arrivava ancora a **9999**, misurato.
+📌 **La forma giusta è svuotare la cella SUBITO PRIMA di ogni poll**, ed è **una riga**: sposta
+l'invariante da *«nessuno scriva mai fuori da un poll»*, che nulla può imporre, a *«conta solo ciò
+che è scritto durante questo poll»*, che è imposto lì. Tutte le vie chiudono in un punto solo,
+comprese quelle non ancora immaginate. ⛔ **La via idiomatica non si riapre:** un waker su misura
+non è costruibile qui — `Waker::from_raw` è `unsafe` — **misurato in M-5**. E far possedere la
+cella all'`Executor` è più invasivo **e non chiude il `Drop`**: caduta sul merito, non sul costo.
+⛔ **E LA NOTIZIA È COSA SUCCEDE ALL'ALTRA SONDA, che è il gotcha nuovo #66.** Il rapporto dice
+che chiuderlo rende rosse **due** sonde permanenti. Ne diventa rossa **una**: l'altra —
+`a_wait_already_over_wakes_immediately_and_the_clock_does_not_move` — **resta verde e diventa
+vacua**. Misurato invece che dedotto: col rimedio applicato e `until <= instant` mutato in
+`until < instant`, cioè **la discriminazione che il suo stesso commento dichiara di difendere**,
+la forma vecchia resta **verde** mentre la stessa mutazione fa rossi **cinque** altri test.
+Riscritta con l'attività che dichiara la propria scadenza, va rossa. 📌 **Un rosso lo vedi, una
+vacuità no** — e nessuna delle sette domande del pre-controllo la coglie, perché guardano il
+compito, mai le sonde che poggiavano sul difetto che stai chiudendo.
+✅ **Tre sonde nuove, e sono TRE perché le vie sono tre — non le cause** (gotcha #65):
+`a_request_written_before_the_run_belongs_to_nobody`,
+`a_request_written_by_a_destructor_belongs_to_nobody`, e per B-1
+`the_delivered_turn_limit_is_honoured_by_its_value`, il cui oracolo è il **conteggio dei poll** e
+non l'errore, su **due** valori (gotcha #48). ⚠️ **La prima stesura della sonda dei `Drop` era
+VACUA e sta scritta**: un blocco `async` distrugge i suoi locali **dentro** il poll, quindi serviva
+un `Future` a mano — gotcha **#17**.
+📌 **Baseline dopo il rimedio:** `GATE GREEN`, `cargo test --workspace --no-fail-fast --locked` →
+**32 target, 180 passati, 0 falliti, 2 ignorati** (erano 177: le tre sonde nuove).
+⚠️ **E il commento di `Sleep` dichiarava il falso** — *«la richiesta … appartiene sempre
+all'attività che ha appena girato»*, dove «dopo ogni poll» esclude la **precedente** e nient'altro.
+Riscritto col proprio richiamo datato, non appeso: lasciarlo era **A-2** rifatto.
+⚠️ **Voce aperta registrata, non presa:** le tre sonde **non hanno una riga di catalogo**. La §7.4
+è spec, e il vincolo globale 7 la mette fuori da questa passata — stesso trattamento di **PL-1**,
+stessa ragione (gotcha #36). Il verbale in [`porta-di-qualita.md`](porta-di-qualita.md).
+
+⏭️ **Restano DUE decisioni della §8**, e l'ordine proposto è: **P-1** · le sonde
+**B-2/B-3/S-1/S-2/S-5**. ⛔ **Sono decisioni del proprietario, e la differenza con le sei chiuse va
+detta:** quelle si potevano eseguire leggendo il codice — un flag, quattro richiami, una
+registrazione, un permesso di file già scelto, e ora una riga d'esecutore con le sue sonde. Queste
+cambiano una **firma pubblica** e il **catalogo**.
 
 ⛔ **Cosa l'audit ha trovato, e la prima voce è la più grave** — ✅ **chiusa il 2026-08-17, vedi il
 riquadro qui sopra.** La suite di conformità provava
@@ -1373,7 +1408,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I sessantacinque gotcha
+## 9. I sessantasei gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -1445,6 +1480,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 63 | ⛔ **Una promessa di conformità provata SOLO nello stato in cui ogni guardia plausibile passa non è una promessa: è una coincidenza.** Misurato il 2026-08-11: le promesse **5** (*«un `outcome` senza `intent` è rifiutato»*, V6) e **8a** (*«una nota su un passo mai aperto è rifiutata»*) di `journal_contract.rs` costruiscono entrambe un giornale **vuoto** e chiedono subito il rifiuto. Una guardia che chieda *«l'archivio è vuoto?»* invece di *«questo passo ha un intento?»* le soddisfa **entrambe**. ⛔ **Sostituite così le guardie di `FileJournal::outcome` e `::note`, `cargo test --workspace --no-fail-fast` dà 32 target, 171 passati, ZERO falliti** — e la mutazione **è osservabile** (#54 provato in due direzioni): su archivio non vuoto accetta un esito e una nota per passi **mai aperti**, cioè fa sparire il dubbio che ADR-0007 esiste per rendere rilevabile. 📌 Stessa forma su `read_back`, che **otto blocchi su dieci** esercitano su un giornale a **un passo solo**, dove *«cerca questo passo»* e *«restituisci il primo record»* sono la stessa frase. 📌 **La domanda che le coglie:** *in quale altro stato del mondo questa asserzione resterebbe verde?* |
 | 64 | ⛔ **Due criteri possono coprire ciascuno la propria metà e lasciare scoperto il BUCO FRA loro, e nessuna rilettura dell'uno o dell'altro lo mostra.** Misurato il 2026-08-11: `bincode` 2.0.1 è coperto da **RUSTSEC-2025-0141 — «Bincode is unmaintained»**, categoria `INFO` e non una vulnerabilità, emessa il **2026-01-07**. L'avviso era pubblico **sette mesi prima** che §6.1.1 fosse riconfermata il 2026-08-08, e nessuno l'ha visto benché il criterio esistesse: **ADR-0037** chiede *«il pari ha un lettore conforme e **mantenuto**?»* — ma lo punta **verso il pari** (TypeScript, M-11); **M-1** puntava verso di noi e chiedeva un'altra cosa, *«il grafo transitivo è accettabile per I3?»*. ⛔ **Nessuno dei due chiede se sia mantenuta la libreria del NOSTRO capo del filo**, e `gate-deps.sh` verifica **quali** crate ci sono, non **come stanno**. ✅ **Il costo di agire è quasi zero oggi e cresce da solo:** `bincode` ha **zero usi di produzione** — un commento in `ports/ipc.rs` e la sonda `dependencies_usable.rs` — perché lo schema del canale `ipc` è il **Traguardo 6**. È una finestra che si chiude da sola, come la quarta proprietà di §3. 📌 **La domanda:** *questo criterio è puntato verso entrambi i capi del filo?* |
 | 65 | ⛔ **Due difetti con la stessa CAUSA non hanno la stessa COPERTURA, e un rapporto che li raggruppa per causa fa scrivere un rimedio che ne prova uno solo.** Misurato il 2026-08-17 chiudendo T-2: l'audit elenca le promesse **5** e **8a** come un finding, e ha ragione sulla **causa** — `outcome` e `note` condividono `has_intent` in entrambe le implementazioni, quindi una guardia cieca le acceca insieme. ⛔ **Ma la suite muore alla PRIMA promessa rotta**, quindi un bugiardo cieco su tutt'e due muore sulla 5 e il blocco della 8a resta **non provato mentre un test afferma il contrario**: servono **due** bugiardi, ciascuno che superi l'altro blocco **sui propri meriti**. ⚠️ Il rimedio dettato dal rapporto è **giusto**; a essere dimezzata è la sua **prova**, e si vede solo scrivendola. 📌 Un tipo solo con **due istanze**, o sarebbe lo stesso difetto scritto due volte (#45 dall'altro lato). 📌 **La domanda:** *quanti di questi blocchi un solo bugiardo riesce a raggiungere?* |
+| 66 | ⛔ **Chiudere un difetto non rende rosse le sonde che vi poggiavano: alcune diventano VACUE, e quella direzione non si vede.** Misurato il 2026-08-18 chiudendo K-1. Il rapporto prevedeva **due** sonde permanenti rosse; ne è diventata rossa **una**. L'altra — che scriveva la scadenza **dal banco** invece di lasciarla dichiarare all'attività — non aveva più nulla da esercitare, e **restava verde**: provato mutando `until <= instant` in `until < instant`, cioè **la discriminazione che il suo commento dichiara di difendere**, con la vecchia forma **verde** mentre la stessa mutazione faceva rossi **cinque** altri test. ⚠️ **Non è il #63:** lì la sonda nasceva vacua, qui **lo diventa**, e a renderla tale è il rimedio stesso — una sonda che ieri mordeva oggi non morde più, e nessun rosso lo annuncia. ⛔ **Nessuna delle sette domande del pre-controllo lo coglie**, perché guardano il compito contro il codice, mai **le sonde che poggiavano sul difetto che stai chiudendo**. 📌 **La domanda, e va fatta prima di correggere:** *quali sonde passano ATTRAVERSO questo difetto, e quali di esse resteranno verdi senza più provare nulla?* Poi si mutano, una per una. |
 
 ---
 
@@ -2380,6 +2416,37 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > L'insieme *«HANDOFF + spec + `adr/`»* passa da **707** a **711 KB**. I **due file obbligatori**
 > passano da 287 a **292 KB**, e coi tre da 315 a **321**.
+
+> 🔁 **Trentaduesima misura, il 2026-08-18, chiudendo la decisione 3 (K-1 con B-1) — QUINTA
+> passata dello stesso giorno.** In byte LF, a passata chiusa.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`porta-di-qualita.md`](porta-di-qualita.md) `133 → 140` per il verbale di K-1/B-1 · [`riferimenti.md`](riferimenti.md) `170 → 174` · [`HANDOFF.md`](HANDOFF.md) `211 → 213` per il gotcha **#66** · questo file `277 → 283` · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) `25 → 26` |
+> | **invariati, ricontati** | [`audit-2026-08-11.md`](audit-2026-08-11.md) 29 · [`README.md`](README.md) 17 · [`roadmap.md`](roadmap.md) 28 · `CLAUDE.md` 13 · spec **277** |
+>
+> ⛔ **E questa passata ha trovato un difetto di METODO che i numeri nascondevano, sul banco di
+> misura e non sui documenti.** La prima corsa dava l'audit a **28 KB** contro i **29** della 31ª,
+> su un file che `git diff` dichiara **non toccato**. Non era il file: era **l'arrotondamento**.
+> `29469` byte fanno `28,78` KB, che **tronca a 28** e **arrotonda a 29** — e la serie di queste
+> trentadue misure arrotonda. ⚠️ **Il metodo non era scritto da nessuna parte**, quindi due lettori
+> onesti ottengono due numeri e si correggono a vicenda per sempre: è la lezione della 31ª — *«una
+> misura ha bisogno di dire su quale macchina è stata presa»* — sull'asse dell'**operazione**
+> invece che della macchina. 📌 **Da qui in poi: byte LF, `int(n/1024 + 0.5)`.**
+> ⛔ **E una seconda cifra falsa è stata colta prima di entrare nel documento**, che è il punto:
+> la prima misura dell'insieme dava **743 KB** perché il glob `*sottoprogetto-1*` rastrellava
+> **anche** il disegno del Traguardo 4. L'insieme è *«HANDOFF + LA spec + `adr/`»*, e la
+> contro-prova che il glob fosse sbagliato era già lì: la spec da sola deve fare **277**, e faceva
+> 308. Gotcha **#48**, quattordicesima occorrenza.
+>
+> ⚠️ **Il messaggio: 15367 → 15940 byte, `+573 B`** — la crescita più grande da quando si conta,
+> ed è **tutta** nel blocco delle decisioni chiuse, che ha guadagnato la sua **terza** voce.
+> ⛔ **La prescrizione della 29ª è ora dovuta e non più solo prevista:** quel blocco va **tolto e
+> sostituito da un rimando alla §6**. Resta **non applicata**, e va detto così invece di rimandarla
+> in silenzio una quinta volta.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **711** a **713 KB**. I **due file obbligatori**
+> passano da 292 a **296 KB**, e coi tre da 321 a **325**.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

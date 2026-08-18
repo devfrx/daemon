@@ -5,7 +5,7 @@
 //! while the spike picked one at random. Citing the spike's 13-out-of-17 would be an
 //! expectation written before the measurement, which is gotcha #15.
 
-use core::cell::RefCell;
+use core::cell::{Cell, RefCell};
 
 use kernel::executor::{Executor, RunError, Sleep};
 use kernel::parameters::Parameters;
@@ -183,6 +183,52 @@ fn a_block_becomes_an_error_and_not_an_infinite_wait() {
 }
 
 #[test]
+fn the_delivered_turn_limit_is_honoured_by_its_value() {
+    // ⛔ FINDING B-1 OF THE 2026-08-11 AUDIT. The test above proves the guard FIRES; it does
+    // not prove the executor used the number it was HANDED. Measured on 2026-08-18:
+    // replacing the field with `turn_limit: { let _ = parameters; 10_000 }` left the whole
+    // workspace at 32 targets and 177 passing — a parameter that is delivered and not read
+    // is a constant just the same, which is gotcha #28 from the other side.
+    //
+    // ⚠️ TWO VALUES AND NOT ONE, because a single one is satisfied by any implementation
+    // whose constant happens to equal it — gotcha #48, "for every mutation on a value prove
+    // TWO". Both are far from any plausible hard-coded default.
+    //
+    // 📌 The oracle is the POLL COUNT and not the error: `run` takes exactly one turn per
+    // poll for an activity that only yields, and stops when `turns > limit`. So the
+    // activity is polled `limit` times, which is the only observable that carries the value.
+    for limit in [7u64, 13] {
+        let polls = Cell::new(0u64);
+        let sleep = Sleep::new();
+        let mut executor = Executor::new(
+            SeededRng::new(1),
+            VirtualReactor::new(),
+            Parameters::new(limit),
+            &sleep,
+        );
+        executor.spawn(async {
+            loop {
+                polls.set(polls.get() + 1);
+                Yield::once().await;
+            }
+        });
+        assert_eq!(
+            executor.run(),
+            Err(RunError::TurnLimitReached),
+            "limit {limit}"
+        );
+        // The activity borrows `polls`, and a boxed future carries drop glue: the executor
+        // goes first, exactly as in `trace_of`.
+        drop(executor);
+        assert_eq!(
+            polls.get(),
+            limit,
+            "limit {limit}: the executor did not run on the value it was delivered"
+        );
+    }
+}
+
+#[test]
 fn a_reactor_that_will_not_advance_is_an_error_and_not_a_spin() {
     // ⚠️ The activity must register a STRICTLY FUTURE deadline. With a past one the
     // promotion path fires, `wait_until` is never called, and the test would pass for
@@ -207,10 +253,13 @@ fn a_reactor_that_will_not_advance_is_an_error_and_not_a_spin() {
         Parameters::new(TURN_LIMIT),
         &sleep,
     );
+    // ⚠️ THE ACTIVITY DECLARES ITS OWN DEADLINE, and until 2026-08-18 the bench wrote it
+    // into the cell before `run` instead. That preload went through the hole finding K-1
+    // names, so this probe was resting on the very defect the fix removes.
     executor.spawn(async {
+        sleep.until(Monotonic::from_millis(5_000));
         Yield::once().await;
     });
-    sleep.until(Monotonic::from_millis(5_000));
     assert_eq!(executor.run(), Err(RunError::ReactorWillNotAdvance));
 }
 
@@ -229,10 +278,16 @@ fn a_wait_already_over_wakes_immediately_and_the_clock_does_not_move() {
         Parameters::new(TURN_LIMIT),
         &sleep,
     );
+    // ⛔ AND THE THIRD THING, learnt on 2026-08-18: written with the bench preloading the
+    // cell, THIS PROBE WAS VACUOUS THE MOMENT K-1 WAS FIXED — not red, GREEN FOR NOTHING.
+    // Measured: with the entry drained and `until <= instant` mutated to `until < instant`
+    // — the very discrimination the paragraph above claims — the old form stayed green
+    // while the same mutation turned five other tests red. With the activity declaring its
+    // own deadline it goes red, which is the whole reason the two lines swapped places.
     executor.spawn(async {
+        sleep.until(Monotonic::ORIGIN);
         Yield::once().await;
     });
-    sleep.until(Monotonic::ORIGIN);
     assert_eq!(executor.run(), Ok(()));
     assert_eq!(
         executor.now(),
@@ -278,6 +333,116 @@ fn a_suspension_request_is_not_inherited_by_the_next_activity() {
             executor.now(),
             Monotonic::ORIGIN,
             "seed {seed}: a suspension request leaked to another activity"
+        );
+    }
+}
+
+/// A future written BY HAND, because an async block cannot express what this needs: its
+/// locals are dropped INSIDE the poll that completes it, before the executor reads the
+/// cell. Here the destructor belongs to the boxed future itself, so it runs when the
+/// finished task is removed from the vector — after the loop, hence after the last read.
+struct WritesFromItsDestructor<'a> {
+    sleep: &'a Sleep,
+    ran: &'a Cell<bool>,
+}
+
+impl core::future::Future for WritesFromItsDestructor<'_> {
+    type Output = ();
+    fn poll(
+        self: core::pin::Pin<&mut Self>,
+        _context: &mut core::task::Context<'_>,
+    ) -> core::task::Poll<()> {
+        core::task::Poll::Ready(())
+    }
+}
+
+impl Drop for WritesFromItsDestructor<'_> {
+    fn drop(&mut self) {
+        self.ran.set(true);
+        self.sleep.until(Monotonic::from_millis(9_999));
+    }
+}
+
+// ⛔ FINDING K-1 OF THE 2026-08-11 AUDIT, and the two probes below are TWO because the
+// entry paths are two — not because the cause is two. The suite stops at the first red, so
+// one probe per path is what keeps the second from going unproven while a test claims
+// otherwise: gotcha #65, the shape the first audit decision taught on 2026-08-17.
+//
+// ⚠️ WHAT MAKES THEM NON-VACUOUS IS NOT HERE, and it is worth saying rather than
+// duplicating: an executor that ignored `Sleep` altogether would satisfy both. That
+// direction is already held by `c3_virtual_time_does_not_wait`, which needs the clock to
+// REACH 20 000, and by the probe above. A third copy would be gotcha #49.
+
+#[test]
+fn a_request_written_before_the_run_belongs_to_nobody() {
+    // The bench holds `&Sleep` and can write to it at any time. Before the fix the first
+    // activity the SEED happened to poll inherited that deadline — a suspension nobody
+    // asked for, honoured on an arbitrary victim.
+    for seed in 1..=6u64 {
+        let sleep = Sleep::new();
+        let mut executor = Executor::new(
+            SeededRng::new(seed),
+            VirtualReactor::new(),
+            Parameters::new(TURN_LIMIT),
+            &sleep,
+        );
+        executor.spawn(async {
+            Yield::once().await;
+        });
+        executor.spawn(async {
+            Yield::once().await;
+        });
+
+        sleep.until(Monotonic::from_millis(9_999));
+
+        assert_eq!(executor.run(), Ok(()), "seed {seed}");
+        assert_eq!(
+            executor.now(),
+            Monotonic::ORIGIN,
+            "seed {seed}: a request written before the run was honoured on an activity \
+             that never asked for it"
+        );
+    }
+}
+
+#[test]
+fn a_request_written_by_a_destructor_belongs_to_nobody() {
+    // The second path, and the one draining at the entry of `run` does NOT close: the
+    // write happens mid-run, between the last read of one turn and the first poll of the
+    // next. Measured on 2026-08-18 — with the entry drained, this still reached 9999.
+    for seed in 1..=6u64 {
+        let sleep = Sleep::new();
+        let ran = Cell::new(false);
+        let mut executor = Executor::new(
+            SeededRng::new(seed),
+            VirtualReactor::new(),
+            Parameters::new(TURN_LIMIT),
+            &sleep,
+        );
+
+        executor.spawn(WritesFromItsDestructor {
+            sleep: &sleep,
+            ran: &ran,
+        });
+        // Still `Pending` on the turn after, so it is the one that would inherit.
+        executor.spawn(async {
+            Yield::once().await;
+            Yield::once().await;
+        });
+
+        let outcome = executor.run();
+        let clock = executor.now();
+        drop(executor);
+
+        // ⛔ Gotcha #17: prove the injection HAPPENED before believing the oracle. A first
+        // draft of this probe used an async block and was VACUOUS — the guard died inside
+        // the poll, and the test passed against the unfixed executor.
+        assert!(ran.get(), "seed {seed}: the destructor never ran");
+        assert_eq!(outcome, Ok(()), "seed {seed}");
+        assert_eq!(
+            clock,
+            Monotonic::ORIGIN,
+            "seed {seed}: a destructor's write was honoured as the next activity's request"
         );
     }
 }

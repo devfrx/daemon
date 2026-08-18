@@ -97,8 +97,14 @@ struct Task<'a> {
 /// ⛔ ONE CELL FOR THE WHOLE EXECUTOR, and the two limits that follow are declared rather
 /// than discovered:
 ///
-/// - the request is read and DRAINED after every poll, so it always belongs to the activity
-///   that has just run — never to the previous one;
+/// - the cell is CLEARED BEFORE and READ AFTER every poll, so what the executor reads was
+///   written during that poll — by the activity that has just run, and by nobody else.
+///   ⚠️ DATED RECALL, 2026-08-18: this line used to say "read and DRAINED after every poll,
+///   so it always belongs to the activity that has just run". The clause was FALSE — after
+///   is enough to exclude the PREVIOUS activity (V31) and nothing else, so a write made
+///   while no poll was running was honoured on whichever activity the seed polled next.
+///   Finding K-1 of the 2026-08-11 audit; the clearing before the poll is what makes the
+///   sentence true rather than aspirational;
 /// - within a single poll the LAST write wins. An activity that suspended on two deadlines
 ///   at once would keep only the second, and it would be the wrong one whenever the first is
 ///   earlier. Nothing in this milestone can do that — there is no combinator that polls two
@@ -298,6 +304,21 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
         // only after the loop. So no activity is polled twice in a turn, and none is polled
         // after finishing.
         for index in order {
+            // ⛔ CLEARED BEFORE THE POLL TOO, and this is finding K-1 of the 2026-08-11
+            // audit. Draining AFTER a poll only defends against the PREVIOUS ACTIVITY; it
+            // says nothing about a write made while no poll was running, and there are two
+            // such moments — before `run` (anything holding `&Sleep` may write) and after
+            // this loop, where a finished task's DESTRUCTOR runs.
+            //
+            // 📌 What the line buys is not a third patch but a CHANGE OF INVARIANT: from
+            // "nobody may ever write outside a poll", which nothing can enforce, to "only
+            // what is written DURING this poll counts", which is enforced right here. Every
+            // entry path closes at one point, including any not yet imagined.
+            //
+            // ⚠️ Draining at the entry of `run` was the remedy §8 of the audit proposed. It
+            // was measured on 2026-08-18 and is NEITHER SUFFICIENT — the destructor path
+            // still reached the clock — NOR well aimed.
+            self.sleep.take();
             let outcome = self.tasks[index].future.as_mut().poll(&mut context);
             // ⛔ Drained after EVERY poll, the completed ones included. A request left behind
             // by an activity that then returned `Ready` would otherwise still be in the cell

@@ -39,17 +39,22 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
-  /superpowers:brainstorming            <-- SERVE SUBITO, ed è CAMBIATO rispetto
-                                        alla sessione scorsa: l'audit è CHIUSO,
-                                        otto decisioni su otto, e quello che
-                                        viene dopo è il TRAGUARDO 5, cioè lavoro
-                                        CREATIVO. Si invoca PRIMA di entrare in
-                                        plan mode — saltarlo è precisamente ciò
-                                        che CLAUDE.md vieta
+  /superpowers:writing-plans            <-- SERVE SUBITO, ed è CAMBIATO rispetto
+                                        alla sessione scorsa: il brainstorming
+                                        è CHIUSO e il disegno è scritto, quindi
+                                        non si ri-brainstorma — si TRADUCE un
+                                        disegno in compiti. ⛔ E il disegno si
+                                        legge PRIMA di scrivere il piano: qual è
+                                        lo dice la §6 del compendio, che leggi
+                                        comunque. Non è nominato qui apposta —
+                                        un rimando non può marcire
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
-  /superpowers:writing-plans                 quando le voci aperte del
-                                             brainstorming saranno chiuse
+  /superpowers:brainstorming                 quando ricomincerà un lavoro
+                                             creativo. NON serve ora: quello del
+                                             Traguardo 5 è chiuso. Si invoca
+                                             comunque PRIMA di entrare in plan
+                                             mode il giorno che riapre
   /superpowers:test-driven-development       quando ricomincerà il codice
   /superpowers:subagent-driven-development   quando ci sarà un piano da
                                              ESEGUIRE: un subagente fresco per
@@ -61,12 +66,12 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 353 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 365 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i sessantanove gotcha (§9), le trappole di
+     cosa NON rifare (§8), i settanta gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
   3. docs/audit-2026-08-11.md — 29 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE, ed è CHIUSO: non è più IL COMPITO, è il VERBALE
@@ -95,16 +100,18 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 353 KB in tutto
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
-⛔ L'AUDIT È CHIUSO — OTTO DECISIONI SU OTTO. IL PROSSIMO PASSO È IL
-   TRAGUARDO 5, E CAMBIA SPECIE: non più esecuzione, ma lavoro CREATIVO.
+⛔ L'AUDIT È CHIUSO E IL BRAINSTORMING PURE. LA SPECIE DEL LAVORO CHE VIENE
+   È: TRADURRE UN DISEGNO IN UN PIANO. Non più esecuzione, non più lavoro
+   creativo. ⛔ Il disegno si legge PRIMA di scriverne il piano — quale, e
+   di che traguardo, lo dice la §6 del compendio, in un posto solo.
    Il 2026-08-11 il repository ha ricevuto il suo primo audit completo: nove
    revisori paralleli in sola lettura, ogni finding grave riverificato sul
    sorgente, SEDICI corretti nella stessa sessione e le OTTO decisioni della
    §8 eseguite fra il 17 e il 18 agosto.
    ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, poi «un BRAINSTORMING»,
-      poi «otto decisioni», poi «ne restano TRE», poi DUE, poi UNA: si
-      riscrive quando il passo si chiude, ed è la riga che invecchia per
-      costruzione.
+      poi «otto decisioni», poi «ne restano TRE», poi DUE, poi UNA, poi
+      «lavoro CREATIVO»: si riscrive quando il passo si chiude, ed è la riga
+      che invecchia per costruzione.
 
    ✅ COSA HANNO INSEGNATO LE OTTO, IN UNA RIGA — il racconto per esteso sta
    nella §6 del compendio, che leggi comunque, e ricopiarlo qui è ciò che
@@ -147,7 +154,7 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 353 KB in tutto
    porta-di-qualita.md, in un posto solo.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 719 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 721 KB
    il 2026-08-18, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
    e l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
@@ -253,10 +260,10 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
 
 Parti confermandomi cosa hai letto e qual è la tua lettura dello stato, POI
 ASPETTA le mie richieste prima di scrivere qualunque cosa. ⛔ Non c'è un
-piano da riprendere né un audit da eseguire: il Traguardo 4 è CHIUSO e
-l'audit è CHIUSO, otto decisioni su otto. Quello che viene è il TRAGUARDO 5,
-cioè lavoro CREATIVO — quindi si apre col BRAINSTORMING, prima di entrare in
-plan mode. ⚠️ Il deliverable esatto sta nella §6 del compendio, non qui.
+piano da riprendere, né un audit da eseguire, né un brainstorming da aprire:
+sono chiusi tutti e tre. Quello che viene è la SCRITTURA DI UN PIANO a
+partire da un disegno già approvato — e il disegno si legge PRIMA.
+⚠️ Quale disegno, e di che traguardo, sta nella §6 del compendio, non qui.
 ```
 
 ---
@@ -266,8 +273,8 @@ plan mode. ⚠️ Il deliverable esatto sta nella §6 del compendio, non qui.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **14,7 KB, E LA SERIE HA GIRATO.** Era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **322 KB** — `CLAUDE.md` più il compendio, e **353** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 322 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **334 KB** — `CLAUDE.md` più il compendio, e **365** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 334 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -281,7 +288,11 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **353 KB contro 719**. ⛔ **E il 2026-08-18 il METODO ha rivelato un
+resta quello che conta: **365 KB contro 721**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+`grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
+`353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
+e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del
+rimedio che la ventesima misura prescrive contro il #31. ⛔ **E il 2026-08-18 il METODO ha rivelato un
 difetto che i numeri non mostravano: «`wc -c`» non dice QUALI byte, e questo repository si lavora
 da DUE macchine.** Su un albero CRLF `wc -c` conta un byte in più per riga, quindi nove celle
 della §12 sembravano stantie di 1–4 KB **su file non toccati da giorni**; tolti i CR, tutte e

@@ -1972,6 +1972,94 @@ script riparato in **due** punti, non uno: `sys.stdout.reconfigure(encoding="utf
 tutte le scritture spostate **prima** di qualunque `print`. 📌 La riga di metodo: *uno strumento
 che muta file non stampa nulla finché non ha finito di scrivere*.
 
+## Brainstorming del Traguardo 5 — 2026-08-18: le quattro misure che hanno deciso il disegno
+
+Eseguite il **2026-08-18** · Windows 11 · toolchain `1.95.0` appuntata da `rust-toolchain.toml`
+· repository a `3338808`, albero pulito. Il disegno è
+[`specs/2026-08-18-…-traguardo-5-arbitro-gpu-design.md`](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md).
+
+### D5-1 — un modulo **fratello** può costruire `Grant`?
+
+⛔ **No, e questo fatto sposta il tipo di modulo.** `Grant` vive oggi in
+`crates/kernel/src/ports/process.rs` come `pub struct Grant(());`, senza costruttore pubblico.
+Il Traguardo 5 gli deve dare un emittente — l'arbitro — e l'arbitro sarebbe un modulo
+**fratello**, non figlio: in Rust un campo privato è visibile dal modulo che lo dichiara **e dai
+suoi discendenti**.
+
+Riprodotto su una crate usa-e-getta nello scratchpad, poi cancellata:
+
+```rust
+pub mod ports { pub mod process { pub struct Grant(()); } }
+pub mod arbiter {
+    use crate::ports::process::Grant;
+    pub fn issue() -> Grant { Grant(()) }
+}
+```
+
+```
+error[E0423]: cannot initialize a tuple struct which contains private fields
+note: constructor is not visible here due to private fields
+```
+
+📌 È lo **stesso errore** che il commento di `Grant` cita per chi sta fuori dalla crate. La
+conseguenza è nel disegno §3: il tipo **si sposta nel modulo dell'arbitro**, invece di guadagnare
+un costruttore `pub(crate)` dove sta — quello aprirebbe una seconda via *dentro* `kernel`, e *una
+guardia vale esattamente quanto il suo costruttore* (gotcha **#67**).
+
+### D5-2 — quante righe di guasto della §3.3 eredita davvero il Traguardo 5?
+
+⛔ **Una, più una condivisa — non cinque.** Contate sulla **§7 del
+[disegno del Traguardo 4](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md)**,
+che è la tabella che gli indirizzi li **assegna**:
+
+```
+sed -n '316,327p' docs/superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md \
+  | grep -o 'Traguardo 5/6\|Traguardo 5\|Traguardo 6' | sort | uniq -c
+```
+
+| Destinazione | Righe |
+|---|---|
+| **Traguardo 5** | **1** — interlacciamento delle richieste concorrenti → `Q2` |
+| Traguardo 5/6 | 1 — caduta durante la conservazione di un file → `Q22` |
+| **Traguardo 6** | **7** |
+
+⚠️ **[`COMPENDIO.md`](COMPENDIO.md) e [`roadmap.md`](roadmap.md) dicevano «cinque», e il Traguardo
+6 «le altre quattro».** 📌 **Da dove viene il cinque, che è la parte utile:** la **§5.7 della
+spec** ha una tabella con esattamente **cinque** righe, ma sono le **proprietà che la DST verifica
+sull'arbitro**, non le righe di guasto. Due tabelle diverse, e la cifra dell'una letta contro
+l'altra — il gotcha **#29** nella forma in cui una cifra migra fra tabelle vicine.
+
+### D5-3 — quante righe di catalogo il Traguardo 5 **crea**?
+
+✅ **Zero. Ne chiude dodici già scritte.** Contate sul catalogo §7.4 della spec, non dedotte.
+
+| Blocco | Righe |
+|---|---|
+| §7.4.1 **B**, i gettoni | **3** — *avviare un worker ← una concessione* (chiusa) · *parlare ← il `Worker`* e *leggere ← una ricevuta* (**sbloccate** dal `Grant`) |
+| §7.4.1 **C**, cosa non è esprimibile | **8** — `Q2 · §5.1` · `V2` · `V4` · `I2 · §5.3` · `Q8 · §5.2.1` · `V3` · `I2 · §6.10` · `I5 · §6.10` |
+| §7.4.2, livello 2 | **1** — la campagna DST, che nomina già `Q2 · I2 · V1` fra i propri difesi |
+
+⛔ **E la riga `Q8 · §5.2.1` ha ribaltato una decisione del disegno mentre lo si scriveva.** La
+prima lettura diceva *«`cold_start` non si costruisce, non ha consumatore»*; ma la contro-sonda di
+quella riga è *«la proiezione di presentazione lo legge»*, e senza il campo **non è scrivibile** —
+una riga provata in una direzione sola non è ammissibile (§7.1.1 regola 3). La §5.2.1 il costo lo
+aveva già messo in conto: *«due strutture invece di una»*.
+
+### D5-4 — la baseline prima di cominciare
+
+```
+bash scripts/gate.sh
+cargo test --workspace --no-fail-fast --locked
+```
+
+| | |
+|---|---|
+| cancello | `GATE GREEN` |
+| test | **32 target · 194 passati · 0 falliti · 2 ignorati** |
+| albero | pulito, `git status --porcelain` vuoto — il `--locked` non ha mosso il lockfile |
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

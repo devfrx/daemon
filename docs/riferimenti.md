@@ -2060,6 +2060,113 @@ cargo test --workspace --no-fail-fast --locked
 
 ---
 
+## Piano del Traguardo 5 — 2026-08-18: le sette misure del pre-controllo
+
+⛔ **Il disegno è un'ipotesi come un compito, e si legge contro il codice di oggi — banchi di
+prova compresi (gotcha #58).** Sette voci, tutte misurate sul sorgente a `b041620`, albero
+pulito, `GATE GREEN` verificato prima di cominciare.
+
+### P5-1 — `WorkDescriptor` collide con un tipo che esiste già?
+
+```
+grep -rn "WorkerDescriptor" crates/ --include=*.rs
+```
+
+| | |
+|---|---|
+| esito | **sì, a una lettera.** `crates/kernel/src/ports/process.rs:95` dichiara `pub struct WorkerDescriptor(Vec<u8>)` — *che cosa avviare*, byte opachi per l'OS — e il disegno chiama `WorkDescriptor` una cosa diversa, *dove vive `cold_start`* |
+| siti | **dodici**, in due file: `ports/process.rs` e `tests/ports_are_implementable.rs` |
+| rischio | **meccanico basso** (moduli diversi), **umano alto**: la collisione `record`/`boundary` del Traguardo 3 riscrisse **due oracoli pre-esistenti**, ed è registrata più su come permanente |
+| decisione | si tiene il nome del disegno; nessun file importa i due **non qualificati** insieme. **Registrata** per il proprietario |
+
+### P5-2 — `Admission` può derivare `Debug` e `PartialEq`?
+
+Letto in `crates/kernel/src/ports/process.rs`, sul commento di `Grant`:
+
+> *«NO `Debug` EITHER … nothing formats a grant»*
+
+| | |
+|---|---|
+| esito | ⛔ **no.** `Admission::Granted(Grant)` non può derivare né `Debug` né `PartialEq` senza darli a `Grant`, cioè senza aggiungere un derive **per comodità di banco** — lo scambio che quel commento ha rifiutato |
+| conseguenza | ogni sonda dell'arbitro confronta con `matches!` e `let … else`, mai con `assert_eq!` su un `Admission`. **Non si vede rileggendo il disegno**, e cambia come si scrive ogni banco del traguardo |
+
+### P5-3 — la riga di catalogo `Q2 · §5.1` regge due regole?
+
+Letta la §7.4.1 blocco C della spec: **una** riga, *«MiB assegnati a millisecondi»*,
+contro-sonda *«ciascuno con sé stesso»*. Il disegno la vuole tenuta *«in due regole»*.
+
+| Precedente | Cosa fece |
+|---|---|
+| `Q9 · I6 · V20 · §4.9` — l'etichetta di fiducia | **due casi, una riga**: la spec scrive *«due casi per una riga sola, perché le metà sono due»* |
+| `V29 · §2.1` — i due tempi | ⛔ **la regola `From` prese una riga PROPRIA**, perché prima *«era scritta in un commento del sorgente, cioè era un'intenzione»* |
+
+**Decisione:** il piano scrive **quattro** casi — due direzioni più due vie `From`, che è la
+simmetria del precedente `Monotonic`/`WallTime` — e **registra** che la riga di catalogo è una
+e formulata in una direzione. §7.4 è spec, vincolo globale 7.
+
+### P5-4 — il disegno diverge dalla §5.2, e lo dichiara?
+
+| | |
+|---|---|
+| la §5.2 elenca | `preemptible: booleano` **e** `release_grace: durata` — **due** campi |
+| il disegno scrive | `Preemption::Never \| After(Millis)` — **uno** |
+| lo dichiara? | ⛔ **no**, mentre dichiara per esteso la divergenza gemella dalla §5.1 |
+| è giusta nel merito? | ✅ **sì**: la §5.3 punto 3 pretende che `InRevoca` sia *«non rappresentabile»*, e un booleano lo lascia costruibile |
+
+📌 **È il gotcha nuovo #71**, e il difetto non è la scelta: è che il proprietario non l'ha
+vista. Una divergenza dichiarata è ribaltabile, una taciuta diventa un fatto del codice al
+primo compito che la implementa.
+
+### P5-5 — due celle del catalogo nominano identificatori italiani?
+
+| Cella | Dice | Diventerà |
+|---|---|---|
+| `V4` | *«distinguere `Concessa`, `Rifiutata` e `InCoda` compila»* | `Admission::Granted` · `Refused` · `Queued` |
+| `I2 · §5.3` | *«`InRevoca` per un profilo non prelazionabile»* | `Activity::Preemptible(PreemptibleState::Revoking { .. })` |
+
+Oggi sono **prosa** — nominano concetti che non esistono nel sorgente. Dal Task 4 diventano
+**riferimenti al codice scritti in italiano**, che la §1.0 vieta. **Registrata**, non presa.
+
+### P5-6 — chi rilascia una concessione data a `Process::start`?
+
+Letto `crates/kernel/src/ports/process.rs:286`:
+
+```rust
+fn start(&mut self, grant: Grant, descriptor: WorkerDescriptor) -> Result<Self::Handle, ProcessError>;
+```
+
+| | |
+|---|---|
+| esito | ⛔ **`start` CONSUMA il grant.** Se anche `Arbiter::release` lo consuma, al Traguardo 6 chi avvia un worker **non ha più nulla da rilasciare**, e la metà di cablaggio delle proprietà 2 e 3 della §5.7 non ha una strada |
+| non è un difetto oggi | nessuno chiama `start`: `process` non ha implementazione |
+| la via naturale, dichiarata | `Worker::kill(self) -> Result<Grant, ProcessError>` — l'uccisione **è** il rilascio. ⛔ **Non si costruisce ora**: sarebbe un'astrazione per un consumatore che non esiste, gotcha **#46** dal verso sbagliato |
+
+### P5-7 — cablare un giornale in `daemon` fa scrivere un file al test che già esiste?
+
+```
+grep -n "private_dir_for_line" crates/platform/tests/*.rs
+```
+
+| | |
+|---|---|
+| esito | **sì.** `crates/daemon/src/main.rs` ha già un test che chiama `run_the_production_graph()`; con un `FileJournal` quel test comincia a creare un archivio su disco |
+| il rischio | gotcha **#52**, misurato al Traguardo 3: un percorso fisso in una cartella condivisa fallisce **in silenzio su Windows** e rosso **su Linux** |
+| il rimedio, già in uso | la cartella **per call site** dal `line!()`, con prefisso distinto — `crates/platform/tests/journal_contract_real.rs:90` e `file_journal.rs:44`. Il percorso diventa un **argomento**, e `main` passa il letterale di default |
+
+### Il conteggio dei chiamanti che il Task 5 romperà
+
+```
+grep -rn "Parameters::new" crates/ --include=*.rs | wc -l
+```
+
+**Venti** siti in **sei** file — `crates/daemon/src/main.rs`,
+`crates/kernel/tests/executor_determinism.rs`, `crates/kernel/tests/parameters_delivered.rs`,
+`crates/simulator/tests/dst_campaign.rs`, e i due casi `compile_fail`
+`parameters_have_no_default.rs` e `trust_has_no_default.rs`. ⚠️ **Si riconta prima di
+eseguire il Task 5**, non si prende da qui: il contratto cresce sotto il piano.
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

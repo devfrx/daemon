@@ -66,14 +66,14 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 380 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 384 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
      cosa NON rifare (§8), i settantuno gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
-  3. docs/audit-2026-08-11.md — 29 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
+  3. docs/audit-2026-08-11.md — 31 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE, ed è CHIUSO: non è più IL COMPITO, è il VERBALE
      di COME si lavora qui. Contiene la copertura dichiarata, le
      quattro radici, i finding con causa radice e dimostrazione, ciò che è
@@ -115,50 +115,17 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 380 KB in tutto
       «lavoro CREATIVO»: si riscrive quando il passo si chiude, ed è la riga
       che invecchia per costruzione.
 
-   ✅ COSA HANNO INSEGNATO LE OTTO, IN UNA RIGA — il racconto per esteso sta
-   nella §6 del compendio, che leggi comunque, e ricopiarlo qui è ciò che
-   questo messaggio deve TOGLIERE invece di accorciare (25ª misura):
+   ✅ COSA HANNO INSEGNATO LE OTTO, IN UNA RIGA — il resto lo leggi nel
+   verbale e nella §6, che apri comunque, e ricopiarlo qui è ciò che questo
+   messaggio deve TOGLIERE invece di accorciare (25ª e 26ª misura):
    ⛔ IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — e può
-   risultare più PICCOLO (decisione 1: zero righe di prodotto), più GRANDE
-   (la 8: sei siti su tre script), o DI SPECIE DIVERSA (la 2 e la 3: il
-   rimedio proposto non chiudeva la strada). Gotcha #65, #66 e #67 sono i tre
-   che ne sono nati.
-
-   ⛔ E DUE COSE DELL'AUDIT VANNO SAPUTE COMUNQUE, perché sono già CORRETTE e
-   spiegano come questo cancello può mentire: due suoi buchi lo lasciavano
-   verde col confine caduto — build = 'gen.rs' fra apici singoli sfuggiva al
-   controllo dei build script (#61, il #28 riaperto da un carattere di
-   quoting), e check-docs.sh non verificava che la spec ESISTESSE, con le sei
-   asserzioni di §8.6.1 in blocchi END di awk, che su un fatal non girano
-   (#60).
-
-   ⛔ E IL GOTCHA PIÙ UTILE CHE NE È USCITO È IL #59: un ADR può essere
-   falsificato da un ADR FRATELLO SCRITTO LO STESSO GIORNO, e nessuno dei due
-   se ne accorge perché entrambi sono coerenti con sé stessi. ADR-0026 dice
-   che il simulatore non va scritto perché c'è madsim; ADR-0031, stessa data,
-   misura 55 crate e lo scarta — e il codice gli dà ragione. Nessuna delle
-   quattro domande del pre-controllo lo coglie: guardano tutte il compito
-   contro il CODICE, mai una decisione contro le decisioni vicine.
-
-   ✅ E CIÒ CHE L'AUDIT HA TROVATO SANO CONTA QUANTO IL RESTO: le due campagne
-   DST sono solide — la quarta occorrenza del difetto di vacuità NON c'è —
-   nessun segreto in centosettantuno commit, il grafo spedito è esattamente
-   quello dichiarato, e i quattordici conteggi di test di porta-di-qualita.md
-   sono giusti tutti e quattordici.
-
-   ⚠️ E CIÒ CHE L'AUDIT LASCIA AL TRAGUARDO 5 VA SAPUTO PRIMA DI APRIRLO: le
-   nove righe di guasto scoperte della §3.3 hanno ciascuna il proprio
-   indirizzo — e l'ARBITRO È QUESTO TRAGUARDO — la metà non chiudibile del
-   gotcha #51, semi-dst.md che NON HA UN CHIUDENTE, e una voce aperta
-   CONSOLIDATA: le dieci sonde permanenti che l'esecuzione dell'audit ha
-   prodotto non hanno riga di catalogo, perché la §7.4 è SPEC e si approva
-   sezione per sezione (vincolo globale 7). La tabella sta in
-   porta-di-qualita.md, in un posto solo.
+   risultare più PICCOLO, più GRANDE, o DI SPECIE DIVERSA.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
    docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 726 KB
-   il 2026-08-18, la spec da sola 277, i tre piani più grandi 168, 162 e 114 —
-   e l'idea è già nel compendio. Aprirai UN file — uno — quando ti servirà
+   il 2026-08-18, la spec da sola 277, i quattro piani più grandi 174, 168,
+   162 e 114 — e l'idea è già nel compendio. ⛔ IL PIANO DA ESEGUIRE È IL 174,
+   e si apre A COMPITI. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
    del compendio dice quale.
 
@@ -184,20 +151,25 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 380 KB in tutto
    compendio. Quel che serve qui è la domanda: IN QUALE ALTRO STATO DEL MONDO
    QUESTA ASSERZIONE RESTEREBBE VERDE?
 
-⚠️ LE QUESTIONI APERTE STANNO IN DUE POSTI, e non è un'incoerenza: la §6 del
+⚠️ LE QUESTIONI APERTE STANNO IN TRE POSTI, e non è un'incoerenza. La §6 del
    compendio tiene quelle del PRODOTTO — nessuna è un difetto oggi, e per
-   ciascuna è scritto perché — mentre la §5 dell'audit tiene quelle della
-   QUALITÀ, che sono difetti veri e vanno chiuse. Fra le prime: le nove righe
-   di guasto scoperte (hanno un indirizzo, quindi sono uno scaglionamento e
-   non un arretrato), la metà del gotcha #51 che resta fuori, e semi-dst.md
-   che NON HA UN CHIUDENTE. Fra le seconde — V6 e read_back sono CHIUSE dal
-   2026-08-17 — restano: il turn limit consegnato che può essere ignorato
-   senza che nulla diventi rosso, quattro gruppi su cinque della conformità
-   reactor mai visti scattare, il finto filesystem che può smettere di
-   confrontare i CheckpointId, la via A3 del confine dei dati non fidati
-   dichiarata chiusa ED APERTA, il file del giornale che nasce 0644 su Linux,
-   e bincode dichiarato NON MANTENUTO (RUSTSEC-2025-0141) — che però ha ZERO
-   usi di produzione, quindi la finestra si chiude da sola al Traguardo 6.
+   ciascuna è scritto perché: le nove righe di guasto scoperte (hanno un
+   indirizzo, quindi sono uno scaglionamento e non un arretrato), la metà del
+   gotcha #51 che resta fuori, e semi-dst.md che NON HA UN CHIUDENTE.
+   ⛔ La §5 dell'AUDIT teneva quelle della QUALITÀ, e le OTTO decisioni della
+   §8 sono ESEGUITE: quel che vi resta sono i ~20 rilievi minori dichiarati
+   non corretti, più DUE residui registrati — l'asserzione 4b della conformità
+   reactor è IMPLICATA dalla 4a, quindi MUTA e non vacua, e le DIECI sonde
+   permanenti dell'esecuzione non hanno riga di catalogo, perché la §7.4 è
+   SPEC (vincolo globale 7). La tabella sta in porta-di-qualita.md.
+   ⚠️ Questo blocco elencava SEI difetti aperti che erano CHIUSI dal
+   2026-08-18: si riscrive quando un passo si chiude, ed è la specie di riga
+   che marcisce per costruzione.
+   ⛔ E il terzo posto è IL PIANO DEL TRAGUARDO 5: porta SETTE voci registrate
+   dal proprio pre-controllo, di cui TRE sono decisioni tue — un nome di tipo
+   a una lettera da uno che esiste già, una riga di catalogo che vale per due
+   regole, e due celle del catalogo che nominano identificatori ITALIANI che
+   il traguardo fa esistere in inglese. Toccano la SPEC: registrate, non prese.
 
 ⚠️ Il compendio è una COMPRESSIONE, non una selezione: ci sono dentro tutte le
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
@@ -211,26 +183,31 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     Traguardo 3, DIECI su dieci al Traguardo 4, su un piano scritto il giorno
     prima. E SEI voci d'errata erano difetti di un compito SUCCESSIVO, trovati
     misurando in anticipo: una di esse avrebbe fatto dichiarare chiuso un
-    gotcha lasciandolo aperto. Prima di eseguire
-    un compito si fanno le QUATTRO DOMANDE — l'elenco è in CLAUDE.md, «Prima
-    di eseguire un compito di un piano», col testo lungo nel gotcha #49:
+    gotcha lasciandolo aperto. Prima di eseguire un compito si fanno le SETTE
+    domande — le QUATTRO qui sotto più le tre che l'elenco non contiene, e
+    l'elenco intero è in CLAUDE.md, «Prima di eseguire un compito di un
+    piano», col testo lungo nel gotcha #49:
       1. la SONDA È SBAGLIATA — si coglie rileggendo
       2. la SONDA MANCA — per ogni artefatto che il compito produce, quale
          controllo lo esercita? Non c'è niente da leggere
       3. l'ARTEFATTO è sbagliato e compila — si vede SOLO scrivendone
          un'implementazione DA FUORI DALLA CRATE
       4. il COMPITO È GIÀ ESEGUITO — ciò che detta di produrre esiste già?
-    E una quinta che non è nell'elenco: IL CONTRATTO CRESCE SOTTO IL PIANO —
+    E la QUINTA, che non è nell'elenco: IL CONTRATTO CRESCE SOTTO IL PIANO —
     un compito scritto prima si legge contro il codice di ADESSO, non contro
     il piano. Prova in negativo PRIMA di crederci, e dove diverge registra
     la divergenza invece di allinearti all'attesa.
-    ⛔ E vale anche per il DISEGNO che il piano traduce — gotcha #58, misurato
-    scrivendo quel piano: il disegno era stato letto contro la spec, gli ADR e
-    le GUARDIE, e sbagliava due cose che stavano nei BANCHI DI PROVA, di cui
-    una scritta in un COMMENTO. Le guardie non sono tutto il codice: un
-    documento che le ha lette si sente verificato, ed è lì che smette di
-    guardare i test. E un precedente si cita per la RAGIONE che lo ha
-    prodotto, non per la forma.
+    La SESTA: un ADR si legge anche contro i propri FRATELLI (#59). La
+    SETTIMA: un RAPPORTO è un piano, e si prezza leggendo il codice (#65).
+    ⛔ E tutte valgono anche per il DISEGNO che il piano traduce — gotcha #58 —
+    e per il PIANO STESSO. Misurato due volte: scrivendo il piano del
+    Traguardo 4 il disegno sbagliava due cose che stavano nei BANCHI DI PROVA,
+    una in un COMMENTO; scrivendo quello del Traguardo 5 il disegno DICHIARAVA
+    una divergenza dalla spec e ne TACEVA una gemella — gotcha #71, e la
+    taciuta era giusta nel merito, quindi il difetto non è la scelta ma che il
+    proprietario non l'ha vista. Un documento che ha letto le guardie si sente
+    verificato, ed è lì che smette di guardare; e uno che dichiara UNA
+    divergenza si legge come se le avesse dichiarate tutte.
   · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48, a TREDICI
     occorrenze. Le forme misurate stanno nella §9 del compendio; qui basta il
     contro-verso: prova che la mutazione si sia APPLICATA, compila in un passo
@@ -276,8 +253,8 @@ piano si legge a COMPITI, mai intero.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **14,7 KB, E LA SERIE HA GIRATO.** Era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **349 KB** — `CLAUDE.md` più il compendio, e **380** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 349 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **353 KB** — `CLAUDE.md` più il compendio, e **384** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 353 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -291,7 +268,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **380 KB contro 726**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+resta quello che conta: **384 KB contro 726**. ⛔ **E il 2026-08-18 una passata ha trovato che il
 `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
 `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
 e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del

@@ -1767,7 +1767,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 114 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 18 KB |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **15,2** (15586 byte LF): `+573 B` il 2026-08-18, per la specie del lavoro che è cambiata e per il gotcha **#70** | 26 KB |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **14,1** (14460 byte LF): `−1281 B` il 2026-08-18, la consegna all'esecuzione | 25 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -2923,6 +2923,44 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > ventitreesima applicazione.
+
+> 🔁 **Quarantesima misura, il 2026-08-18, chiudendo la CONSEGNA alla sessione che eseguirà —
+> ed è una passata di sola coerenza, come la ventisettesima e la trentottesima, aperta per
+> verificare che il messaggio d'avvio reggesse per una specie di lavoro diversa. NON REGGEVA,
+> in cinque punti.** In byte LF, `int(n/1024 + 0.5)`, a passata chiusa.
+>
+> | | |
+> |---|---|
+> | ⛔ **la falsità più cara** | il blocco delle **questioni aperte di QUALITÀ** elencava **sei** difetti — il turn limit ignorabile, quattro gruppi su cinque della conformità `reactor`, il finto filesystem sui `CheckpointId`, la via **A3**, il giornale a `0644`, `bincode` non mantenuto — e **tutti e sei sono chiusi dal 2026-08-18**, dalle otto decisioni dell'audit. Il messaggio ordinava al prossimo agente di credere aperti sei difetti che non lo sono |
+> | **altre quattro stantie** | il peso dell'audit `29 → 31 KB` · *«i TRE piani più grandi 168, 162 e 114»*, dove il più grande è ora **174** · *«le QUATTRO domande»* del pre-controllo, mentre trenta righe più su lo stesso messaggio ne diceva **SETTE** — due cifre della stessa cosa **dentro lo stesso file** · e il blocco sul gotcha **#58** citava solo il caso del Traguardo 4 |
+> | ⚡ **calato** | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) `26 → 25` |
+> | **cresciuto** | questo file `335 → 339` |
+> | **invariati, ricontati** | `CLAUDE.md` 14 · [`HANDOFF.md`](HANDOFF.md) 226 · [`riferimenti.md`](riferimenti.md) 198 · [`roadmap.md`](roadmap.md) 30 · [`README.md`](README.md) 18 · il **piano del Traguardo 5** 174 · [`porta-di-qualita.md`](porta-di-qualita.md) 156 · [`audit-2026-08-11.md`](audit-2026-08-11.md) 31 · spec **277** · il disegno del Traguardo 5 31 |
+>
+> ✅ **IL MESSAGGIO: 15741 → 14460 byte, `−1281 B`, cioè `−8,1 %`** — ed è il **secondo** calo da
+> quando si conta, dopo quello della 34ª. ⛔ **Ha pagato la regola della 26ª applicata alla
+> lettera:** ciò che è stato tolto è il **riassunto dell'audit** — le due falle del cancello, il
+> #59, ciò che l'audit ha trovato sano, ciò che lascia al Traguardo 5 — cioè un **rimando
+> duplicato**, perché quel file è uno dei **tre che il messaggio ordina di leggere per intero**.
+> ✅ **Le lezioni non sono state tolte ma spostate**, che è la distinzione della 26ª: il
+> **#71** entra accanto al #58, e le **sette** domande del pre-controllo sostituiscono le quattro.
+>
+> ⛔ **E LA NOTIZIA DI QUESTA MISURA È CHE IL DIFETTO ERA GIÀ STATO SEGNALATO E NON CHIUSO.** Le
+> sei questioni chiuse furono riportate al proprietario **all'apertura della sessione
+> precedente**, confrontando il messaggio incollato con la §5 dell'audit — *«sei su sei»* — e la
+> sessione ha poi scritto un piano, aggiornato nove documenti e committato **senza toccarle**.
+> 📌 **La classe è nuova e vale oltre il caso: una divergenza SEGNALATA A VOCE non è una
+> divergenza REGISTRATA.** Il verbale la conserva, la conversazione no — e chi l'ha detta è
+> esattamente chi smette di cercarla, perché ricorda di averne parlato. ⚠️ **Non è la radice R1**,
+> dove una correzione non attraversa gli altri documenti: qui la correzione **non è mai
+> esistita**, è esistito solo il suo annuncio.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* resta **726 KB**. I **due file obbligatori** passano da
+> 349 a **353 KB**, e coi tre da 380 a **384**.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
+> ventiquattresima applicazione.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

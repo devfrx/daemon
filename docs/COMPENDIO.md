@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (704 KB in byte LF il 2026-08-18, e possono solo crescere — la spec da sola ne fa 277), e
+> (707 KB in byte LF il 2026-08-18, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-11.** Manutenzione: §13.
@@ -350,8 +350,15 @@ ripristino, e con **crash-injection** ai confini di persistenza. **Tempo, casual
 I/O e scheduling sono iniettabili** — requisito di **costruzione**, non infrastruttura
 di test: nessun componente legge l'orologio, genera casualità o esegue I/O se non
 attraverso un confine sostituibile. **Ogni difetto trovato conserva il proprio seme**,
-e il seme diventa una regressione permanente. Rimando: ADR-0034 aggiunge il **secondo
-asse**, i parametri di configurazione.
+e ⛔ **a diventare regressione permanente è la PROPRIETÀ che quel difetto violava, non il
+seme** — un seme non riproduce la stessa esecuzione dopo un cambio di codice, quindi è un
+**punto di ripartenza per indagare** e non un oracolo, e un elenco di semi presentato come
+suite sarebbe una falsa sicurezza. ⚠️ **Richiamo del 2026-08-18, finding A-2:** questa riga
+diceva *«e il seme diventa una regressione permanente»*, formulazione **già falsificata in
+ADR-0021 il 2026-08-08** e sopravvissuta intatta qui e in
+[`design/08`](design/08-strategia-di-test.md) — che si dichiara *fonte di verità sulla porta
+di qualità*. È la radice **R1**: una correzione attraversa il documento in cui nasce, non gli
+altri. Rimando: ADR-0034 aggiunge il **secondo asse**, i parametri di configurazione.
 
 **0022 — Layout dei dati per natura, e backup del solo irriproducibile.** Separazione
 **per natura, non per componente**; ogni archivio ha la propria politica.
@@ -708,12 +715,32 @@ la riga di `CLAUDE.md` incontrata eseguendola invece che leggendola. Ripristino 
 byte-esatta** presa prima, mai da `git checkout --` (gotcha **#48**, dodicesima forma), e i tre
 script sono stati modificati con uno strumento di edit dopo aver **misurato** che i CR reggessero.
 
-⏭️ **Restano SEI decisioni della §8**, e l'ordine proposto è: i **rimandi datati**
-A-1/A-2/A-4/A-7 · **C-1** (registrare) · **PL-1** (⚠️ e la §7 dell'audit lo dà fuori copertura
-*«l'host è Windows»*, ma la CI gira su `ubuntu-latest`: la misura `stat -c %a` è raggiungibile) ·
-**K-1 insieme a B-1**, che si fanno in un colpo solo perché chiudere K-1 rende rosse **due sonde
-permanenti** (`executor_determinism.rs:213` e `:235`) nello stesso banco in cui B-1 va scritta ·
-**P-1** · le sonde **B-2/B-3/S-1/S-2/S-5**.
+✅ **E LA SESTA DECISIONE È ESEGUITA IL 2026-08-18 — i quattro rimandi datati A-1, A-2, A-4,
+A-7.** Nessuna decisione riaperta: cadono quattro **evidenze**, non quattro scelte.
+
+| | Cosa diceva il documento | Cosa dice il codice |
+|---|---|---|
+| **A-1** | [ADR-0026](adr/0026-linguaggio-del-core.md): *«esiste `madsim` … quindi il simulatore non va scritto da zero»* | `simulator` ha **una** dipendenza e **512** righe a mano; `madsim` non è né in `Cargo.lock` né in `crates/`. E a scartarlo fu [ADR-0031](adr/0031-dipendenze-del-kernel-parte-del-confine.md) — **stessa data** — a 55 crate |
+| **A-2** | *«il seme diventa una regressione permanente»* | falsificata in ADR-0021 il **2026-08-08**: a entrare nella suite è la **proprietà**, non il seme |
+| **A-4** | [`design/01`](design/01-topologia-dei-processi.md): canale worker **a senso unico** | il tratto `Worker` ha **sei** verbi contati sul sorgente, e i frame **risalgono** — dentro una **ricevuta** |
+| **A-7** | `OpenError`: *«la radice di composizione lo apre, una volta»* | `crates/daemon/src/main.rs` cabla `SequentialRng`, `SystemReactor`, `Parameters`, `Sleep` e l'esecutore — e **nessun giornale** |
+
+⛔ **Due erano più larghi di come il rapporto li scrive, e in due modi diversi.** **A-2** viveva
+in **due** case oltre ad ADR-0021 — questa §5 e [`design/08`](design/08-strategia-di-test.md),
+che *si dichiara fonte di verità sulla porta di qualità* ed è quindi l'ultimo posto in cui una
+formulazione falsificata dovrebbe sopravvivere: ci è sopravvissuta **dieci giorni**, ed è la
+radice **R1**. **A-7** non è una frase imprecisa ma una **previsione citata come misura**: *«la
+radice di composizione lo apre»* è scritta al presente e si legge come un fatto, mentre parla di
+codice **non ancora scritto** — gotcha **#57** applicato a una **giustificazione** invece che a
+una collocazione. 📌 E il richiamo dice la cosa esatta: **l'argomento regge, l'evidenza no.**
+`open` davvero non è un'operazione della porta, e quella è una proprietà leggibile **oggi**.
+
+⏭️ **Restano CINQUE decisioni della §8**, e l'ordine proposto è: **C-1** (registrare) · **PL-1**
+(⚠️ e la §7 dell'audit lo dà fuori copertura *«l'host è Windows»*, ma la CI gira su
+`ubuntu-latest`: la misura `stat -c %a` è raggiungibile) · **K-1 insieme a B-1**, che si fanno in
+un colpo solo perché chiudere K-1 rende rosse **due sonde permanenti**
+(`executor_determinism.rs:213` e `:235`) nello stesso banco in cui B-1 va scritta · **P-1** · le
+sonde **B-2/B-3/S-1/S-2/S-5**.
 
 ⛔ **Cosa l'audit ha trovato, e la prima voce è la più grave** — ✅ **chiusa il 2026-08-17, vedi il
 riquadro qui sopra.** La suite di conformità provava
@@ -1421,23 +1448,23 @@ Apri **un** file, quello che serve. Non la cartella.
 
 | Se ti serve… | Apri | Peso |
 |---|---|---|
-| ⛔ **COSA DEVI FARE ADESSO** — le voci aperte dell'audit, con severità, causa radice e dimostrazione. La §5 elenca i finding e porta in testa il **richiamo del 2026-08-17**, la §8 le otto decisioni: la **prima** e l'**ottava** sono eseguite, ne restano **sei**. Si legge **prima** di qualunque altra cosa | [`audit-2026-08-11.md`](audit-2026-08-11.md) — ⚠️ **è il prossimo passo**, non un documento di consultazione | 26 KB |
+| ⛔ **COSA DEVI FARE ADESSO** — le voci aperte dell'audit, con severità, causa radice e dimostrazione. La §5 elenca i finding e porta in testa il **richiamo del 2026-08-17**, la §8 le otto decisioni: la **1**, la **6** e l'**8** sono eseguite, ne restano **cinque**. Si legge **prima** di qualunque altra cosa | [`audit-2026-08-11.md`](audit-2026-08-11.md) — ⚠️ **è il prossimo passo**, non un documento di consultazione | 27 KB |
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 30 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 209 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 210 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 28 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
 | **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 130 KB |
 | ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata | 6 KB |
-| la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 10 KB |
-| la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 4 KB |
-| gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–10 KB l'uno |
+| la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 11 KB |
+| la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 5 KB |
+| gli altri diagrammi della struttura | [`design/`](design/) — nove file | 4–11 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
-| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 162 KB |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 165 KB |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) | 68 KB |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito | 50 KB |
 | ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**: è il **secondo file più grande** del repository, dopo la spec | 162 KB |
@@ -2242,6 +2269,29 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > diciannovesima applicazione.
+
+> 🔁 **Ventinovesima misura, il 2026-08-18, chiudendo la decisione 6 dell'audit (A-1, A-2, A-4,
+> A-7) — ed è la SECONDA passata dello stesso giorno**, come la ventunesima: la voce si è chiusa
+> due volte. Scritta a passata chiusa, in **byte LF** — che è il metodo che la ventottesima ha
+> dovuto scoprire per non correggere nove celle giuste.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`riferimenti.md`](riferimenti.md) `162 → 165` per le misure dei quattro richiami · [`HANDOFF.md`](HANDOFF.md) `209 → 210` · [`audit-2026-08-11.md`](audit-2026-08-11.md) `26 → 27` per le tre righe barrate della §8 · `design/08` `10 → 11` e `design/01` `4 → 5`, che portano ora il proprio richiamo · questo file `261 → 268` |
+> | ⛔ **e una riga di INTERVALLO che nessuno aggiorna mai** | `design/` nove file `4–10 → 4–11`: è la cella che invecchia in silenzio, perché un intervallo *sembra* sempre giusto. Ricontata su tutti e nove i file, non dedotta dai due che ho toccato |
+> | **invariati, ricontati** | spec **277** · kernel-design 44 · disegno T4 30 · [`porta-di-qualita.md`](porta-di-qualita.md) 130 · [`roadmap.md`](roadmap.md) 28 · [`README.md`](README.md) 16 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 25 · tracciabilità 15 · [`semi-dst.md`](semi-dst.md) 6 · i piani 68, 50, 162, 168, 114 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` (2441 B e 19291 B in byte LF — ⚠️ con `wc -c` su questo albero il massimo dice **19584**, che sono i **293 CR** di quel file: la ventottesima, applicata) |
+>
+> ✅ **E il MESSAGGIO non si è mosso: 15361 byte, invariato.** Non per virtù ma per compenso — le
+> tre correzioni di conteggio si annullano fra loro (`SEI → CINQUE` due volte, `la prima e
+> l'ottava → la 1, la 6 e l'8` una). Va detto così invece di attribuirselo: la 26ª chiuse a
+> `+4 B` **per una compressione decisa**, questa a `0` **per caso**.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **704** a **707 KB**. I **due file obbligatori**
+> passano da 279 a **284 KB**, e coi tre da 305 a **311**.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
+> ventesima applicazione.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

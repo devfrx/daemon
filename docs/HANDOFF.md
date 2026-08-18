@@ -41,11 +41,20 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 > esplicito — senza, il rosso c'era comunque (i due grafi vuoti coincidono) ma diceva *«la query
 > era stretta»* invece di *«il lockfile è stantio»*. Sonde **N6** e **N7**; `GATE GREEN`,
 > **32 target, 177 passati**.
-> ⏭️ **Restano SEI decisioni**, e l'ordine proposto sta nella §6 del compendio.
+>
+> ✅ **E LA SESTA IL 2026-08-18 — i quattro rimandi datati A-1, A-2, A-4, A-7**, con nessuna
+> decisione riaperta: cadono quattro **evidenze**, non quattro scelte. ⛔ **Due erano più larghi
+> del rapporto:** A-2 viveva in **due** case oltre ad ADR-0021 — il compendio e `design/08`, che
+> *si dichiara fonte di verità sulla porta di qualità* e ci ha tenuto una formulazione
+> falsificata per **dieci giorni** (radice **R1**) — e A-7 non era una frase imprecisa ma una
+> **previsione citata come misura**: `crates/daemon/src/main.rs` non nomina il giornale, quindi
+> *«la radice di composizione lo apre»* parla di codice **non ancora scritto** (gotcha **#57**).
+> 📌 **L'argomento regge, l'evidenza no** — ed è la forma in cui il richiamo è scritto.
+> ⏭️ **Restano CINQUE decisioni**, e l'ordine proposto sta nella §6 del compendio.
 >
 > ⏭️ **QUELLO CHE VIENE DOPO È L'ESECUZIONE DELL'AUDIT — non il Traguardo 5.** Si legge
 > [`audit-2026-08-11.md`](audit-2026-08-11.md) per intero (25 KB), si portano al proprietario le
-> sei decisioni che restano nella §8, e si esegue ciò che approva. L'arbitro GPU riparte quando le voci
+> cinque decisioni che restano nella §8, e si esegue ciò che approva. L'arbitro GPU riparte quando le voci
 > aperte sono chiuse, e allora si comincia dal **brainstorming** — è lavoro creativo, e
 > `CLAUDE.md` lo impone **prima** di entrare in plan mode, non dal piano.
 > ⚠️ **Questa riga diceva «quello che viene dopo è il brainstorming del piano del Traguardo 4»
@@ -110,7 +119,7 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 >
 > ⏭️ **Il prossimo passo è l'ESECUZIONE DELL'AUDIT — non il brainstorming del Traguardo 5.**
 > Delle otto decisioni della §8 ne sono eseguite **due** — la 1 il 2026-08-17 e la 8 il
-> 2026-08-18; ne restano **sei**. L'arbitro
+> 2026-08-18, e la 6 lo stesso giorno; ne restano **cinque**. L'arbitro
 > GPU — ammissione, corsie, concessione, le due policy VRAM — riparte quando sono chiuse, e allora
 > **dal brainstorming**, non dal piano: è la regola che ha retto quattro volte. La §6 del compendio
 > ha la tabella e le **questioni lasciate aperte**, raccolte in un posto solo.
@@ -148,8 +157,8 @@ riconciliazione, e i **byte congelati**, che **non si rigenerano**. ✅ **E il T
 eseguito il 2026-08-11**: **dieci compiti su dieci**, `GATE GREEN` a ciascuno — il giornale che
 cade e non si riprende, il backend cadente di `redb` scritto da **fuori la crate**, e due
 campagne con **soggetti diversi**. ⏭️ Il prossimo passo è l'**esecuzione dell'audit**: la prima
-e l'ottava delle otto decisioni sono chiuse — il 2026-08-17 e il 2026-08-18 — ne restano **sei**,
-e l'arbitro GPU viene dopo.
+l'ottava e la sesta delle otto decisioni sono chiuse — il 2026-08-17 e il 2026-08-18 — ne restano
+**cinque**, e l'arbitro GPU viene dopo.
 ⛔ Questa riga diceva *«il brainstorming del Traguardo 5»*, una delle **tre** che lo dicevano in
 questo file mentre il Punto di ripresa diceva il contrario — finding **D-1**, radice **R1**.
 ⚠️ E prima ancora *«scrivere il piano del Traguardo 4»* — audit del 2026-08-11.
@@ -181,7 +190,9 @@ backend nostro in `platform`. ⚠️ **Questa riga diceva *«sale col Traguardo 
 ⏭️ **L'ESECUZIONE DELL'AUDIT — [`audit-2026-08-11.md`](audit-2026-08-11.md), §5 e §8.** La prima
 delle otto decisioni è eseguita il 2026-08-17 (T-2 e T-1: la conformità del giornale provava tre
 promesse solo dove ogni guardia plausibile passa) e l'**ottava** il 2026-08-18 (G-5: `--locked`, e
-il `Cargo.lock` smette di essere un effetto del cancello); **ne restano sei**. ⛔ **Non** il brainstorming
+il `Cargo.lock` smette di essere un effetto del cancello) e la **sesta** lo stesso giorno (A-1,
+A-2, A-4, A-7: quattro richiami datati, nessuna decisione riaperta); **ne restano cinque**.
+⛔ **Non** il brainstorming
 del Traguardo 5, che questa riga dichiarava: quando l'arbitro GPU riparte si comincia **da lì** e
 non dal piano — un piano scritto per codice che non esiste significa inventare — ma non riparte
 finché le voci aperte non sono chiuse. ✅ **Il Traguardo 4 è ESEGUITO il

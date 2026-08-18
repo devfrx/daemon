@@ -24,7 +24,9 @@ finding corretti e provati, il resto aperto. ✅ **La prima delle otto decisioni
 2026-08-17** — la conformità del giornale provava **tre** promesse solo su un archivio vuoto o a
 **un passo solo**; chiuse con un passante, senza promesse nuove. ✅ **E l'ottava il 2026-08-18** —
 G-5: `--locked` su tutti i siti `cargo` del cancello, così il `Cargo.lock` **tracciato** smette di
-essere un **effetto** del cancello e ne diventa un **ingresso**. **Ne restano sei.**
+essere un **effetto** del cancello e ne diventa un **ingresso**. ✅ **E la sesta lo stesso
+giorno** — A-1, A-2, A-4, A-7: quattro richiami datati su ADR e diagrammi, **nessuna decisione
+riaperta**, perché a cadere sono quattro **evidenze** e non quattro scelte. **Ne restano cinque.**
 ⏭️ **Il prossimo è l'ESECUZIONE DELL'AUDIT**, non il
 Traguardo 5: l'arbitro GPU riparte quando le voci aperte sono chiuse, e allora si comincia dal
 **brainstorming**. ⚠️ **Questa riga diceva *«il prossimo passo è
@@ -50,7 +52,7 @@ inglese, la documentazione in italiano** (§1.0 della spec del sotto-progetto 1)
 | Percorso | Contiene | Risponde alla domanda |
 |---|---|---|
 | [`COMPENDIO.md`](COMPENDIO.md) | ⛔ **l'unica lettura obbligatoria oltre a `CLAUDE.md`**: tutte le decisioni compresse, le invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo | *cosa è già deciso*, tutto, in un colpo solo |
-| [`audit-2026-08-11.md`](audit-2026-08-11.md) | ⛔ **il primo audit completo del repository** — codice, script, documenti, ADR, diagrammi. Copertura dichiarata, le quattro radici, i finding con causa radice e dimostrazione, cosa è **pulito**, e le otto decisioni che aspettano il proprietario — la **prima è eseguita** il 2026-08-17 e l'**ottava** il 2026-08-18, col richiamo datato in testa alla §5 e le due righe barrate nella §8 | *cosa c'è da fare adesso* — è il **prossimo passo**, non un documento di consultazione |
+| [`audit-2026-08-11.md`](audit-2026-08-11.md) | ⛔ **il primo audit completo del repository** — codice, script, documenti, ADR, diagrammi. Copertura dichiarata, le quattro radici, i finding con causa radice e dimostrazione, cosa è **pulito**, e le otto decisioni che aspettano il proprietario — la **1** è eseguita il 2026-08-17, la **8** e la **6** il 2026-08-18, col richiamo datato in testa alla §5 e le tre righe barrate nella §8 | *cosa c'è da fare adesso* — è il **prossimo passo**, non un documento di consultazione |
 | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | il messaggio da incollare all'inizio di una nuova sessione | *come si apre* una chat su questo repository |
 | [`HANDOFF.md`](HANDOFF.md) | Gotcha, non rilitigabile, metodo, cosa non rifare — ⚠️ **a sezioni**, non per farsi un'idea | *come riprendere* senza rifare |
 | [`roadmap.md`](roadmap.md) | Sotto-progetti, ordine, stato, spike aperti | *a che punto siamo* e *cosa viene dopo* |

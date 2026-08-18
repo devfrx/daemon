@@ -1535,6 +1535,39 @@ rivedibile»*, e un lockfile aggiornato di nascosto non è né l'uno né l'altro
 
 ---
 
+## Esecuzione dell'audit — la decisione 6 (A-1, A-2, A-4, A-7), 2026-08-18: le misure, coi comandi
+
+Quattro **richiami datati**, e **nessuna decisione riaperta**: a cadere sono quattro *evidenze*,
+non quattro scelte. Ciascuno è stato verificato sul codice o sulle date, non sul rapporto.
+
+| # | L'affermazione | Come è stata verificata | Esito |
+|---|---|---|---|
+| **A-1** | ADR-0026: *«esiste `madsim` … quindi il simulatore non va scritto da zero»* | `grep -rn madsim Cargo.lock crates/` · `git log -1 --format=%ad` sui due ADR · conteggio righe di `crates/simulator/src/` | ⛔ **falsa**: zero occorrenze di `madsim`; `simulator` ha **una** dipendenza e **512** righe. ADR-0031 ha la **stessa data** (`2026-08-06`) e lo scartò a **55 crate** |
+| **A-2** | *«il seme diventa una regressione permanente»* | `grep -rn "regressione permanente"` su tutti i documenti | ⛔ **tre** case: ADR-0021 (**già corretta il 2026-08-08**), `COMPENDIO.md:353` e `design/08:99` — le ultime due **intatte per dieci giorni**. Radice **R1** |
+| **A-4** | `design/01`: canale worker **a senso unico** | `grep -n "    fn " crates/kernel/src/ports/process.rs` | ⛔ **sei** verbi — `instruct_one`, `instruct_stream`, `read_one`, `read_next`, `close`, `kill` — più `Process::start`. `read_one` e `read_next` **restituiscono un `Frame`**: i frame risalgono |
+| **A-7** | `OpenError`: *«la radice di composizione lo apre, una volta»* | lettura di `crates/daemon/src/main.rs` | ⛔ **cabla `SequentialRng`, `SystemReactor`, `Parameters`, `Sleep` e l'esecutore — e NESSUN giornale.** Nessun chiamante di `FileJournal::open` fuori dai banchi |
+
+⛔ **Due erano più larghi del rapporto, in due modi diversi — ed è la ragione per cui una voce
+d'audit si legge contro il codice come un compito.**
+
+- **A-2** è un difetto di **propagazione**, non di contenuto: la correzione giusta esisteva
+  dal 2026-08-08 e non aveva attraversato i due file vicini. È la radice **R1** dell'audit, e la
+  casa peggiore è `design/08`, che **si dichiara fonte di verità sulla porta di qualità**.
+- **A-7** non è una frase imprecisa: è una **previsione citata come misura**. *«La radice di
+  composizione lo apre»* è scritta al presente e si legge come un fatto, mentre parla di codice
+  che **non esiste ancora**. È il gotcha **#57** applicato a una **giustificazione** invece che
+  a una collocazione. 📌 E il richiamo lo dice nella forma esatta: **l'argomento regge, l'evidenza
+  no** — che `open` non sia un'operazione della porta è una proprietà leggibile **oggi**, che il
+  distinguo avvenga nella radice di composizione è una scommessa sul domani.
+
+📌 **A-1 è il gotcha #59 visto dalla sua sorgente:** *un ADR si legge anche contro i propri
+fratelli.* La contraddizione non è visibile da nessuno dei due lati perché **nessuno dei due
+nomina l'altro**, ed entrambi sono coerenti con sé stessi. ✅ **E la decisione di ADR-0026 —
+il core in Rust — è INVARIATA:** a deciderla fu lo **spareggio #1**, non la comodità di un
+simulatore già scritto. Cade un argomento di comodità, non uno di merito.
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

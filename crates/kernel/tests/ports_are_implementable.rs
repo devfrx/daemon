@@ -465,6 +465,66 @@ fn the_filesystem_port_can_be_implemented_and_called() {
 }
 
 #[test]
+fn a_restore_serves_the_checkpoint_it_was_asked_for_and_not_the_first_one() {
+    // ⛔ FINDING B-3 OF THE 2026-08-11 AUDIT, closed on 2026-08-18. The test above keeps exactly
+    // ONE checkpoint in the store, and in that state "find the one whose id matches" and "take
+    // the first one there is" are THE SAME SENTENCE. Measured by the audit: `restore` rewritten
+    // to take the first left all thirteen tests of this file green.
+    //
+    // ⛔ WHAT MAKES IT NON-VACUOUS IS A BYSTANDER — a second checkpoint that is not the one under
+    // test — and it is the identical remedy the FIRST decision of this audit needed on the
+    // journal's conformance suite (T-1/T-2, 2026-08-17). Same defect, different port: an
+    // assertion is worth only the state it is made in.
+    //
+    // ⛔ AND TWO ARGUMENTS IN THE SOURCE RESTED ON THIS. `CheckpointId` and `ClientId` carry no
+    // getter, and the reason written beside them is that "an implementation retains it and
+    // COMPARES it, exactly as `InMemoryFilesystem` does" — an argument about a comparison that
+    // nothing observed.
+    let mut filesystem = InMemoryFilesystem::default();
+    let path = Path::new(b"scope/a.txt".to_vec());
+    filesystem
+        .declare_scope(&[Path::new(b"scope/".to_vec())])
+        .expect("the scope was accepted");
+
+    filesystem.write(&path, b"first").expect("write");
+    let older = filesystem
+        .preserve(StepId::new(1), &path)
+        .expect("the first version was preserved");
+
+    filesystem.write(&path, b"second").expect("write");
+    let newer = filesystem
+        .preserve(StepId::new(2), &path)
+        .expect("the second version was preserved");
+
+    // ⚠️ The two handles must differ, or this case would be vacuous for a reason of its own —
+    // gotcha #17: prove the setup before believing the oracle.
+    assert_ne!(
+        older, newer,
+        "the fake handed out the same CheckpointId twice, so this case proves nothing"
+    );
+
+    filesystem.write(&path, b"third").expect("write");
+
+    // ⛔ THE NEWER ONE FIRST, because it is the one "take the first" gets wrong.
+    assert_eq!(filesystem.restore(newer), Ok(()));
+    assert_eq!(
+        filesystem.read(&path),
+        Ok(b"second".to_vec()),
+        "restore served a checkpoint other than the one it was asked for"
+    );
+
+    // ⛔ AND THE OLDER ONE, which is the direction that gets forgotten: a `restore` that always
+    // served the LAST one would satisfy the assertion above and fail here. Either alone leaves
+    // half the mapping unobserved — gotcha #24.
+    assert_eq!(filesystem.restore(older), Ok(()));
+    assert_eq!(
+        filesystem.read(&path),
+        Ok(b"first".to_vec()),
+        "restore served a checkpoint other than the one it was asked for"
+    );
+}
+
+#[test]
 fn the_filesystem_fake_refuses_outside_its_own_notion_of_scope() {
     // The other direction of the same exercise, the one that gets forgotten (§7.1.1, rule 3):
     // the calls have to be callable AND refusable. ⚠️ WHAT REFUSES IS THE FAKE, not the port:

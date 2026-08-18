@@ -39,33 +39,29 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
-  /anthropic-skills:repo-audit          <-- SERVE SUBITO, ed è cambiato rispetto
-                                        alla sessione scorsa: quello che viene
-                                        dopo NON è un brainstorming ma
-                                        l'ESECUZIONE DELL'AUDIT già fatto. La
-                                        skill governa la remediation: radice e
-                                        mai sintomo, niente campionamento
-                                        silenzioso, e i fix in sequenza — il
-                                        parallelismo è per LEGGERE, mai per
-                                        scrivere
+  /superpowers:brainstorming            <-- SERVE SUBITO, ed è CAMBIATO rispetto
+                                        alla sessione scorsa: l'audit è CHIUSO,
+                                        otto decisioni su otto, e quello che
+                                        viene dopo è il TRAGUARDO 5, cioè lavoro
+                                        CREATIVO. Si invoca PRIMA di entrare in
+                                        plan mode — saltarlo è precisamente ciò
+                                        che CLAUDE.md vieta
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
-  /superpowers:test-driven-development       quando ricomincerà il codice: buona
-                                             parte delle voci aperte è una SONDA
-                                             che manca, non una funzione
-  /superpowers:brainstorming                 quando l'audit sarà chiuso e
-                                             comincerà il Traguardo 5 — è lavoro
-                                             creativo, e si invoca PRIMA di
-                                             entrare in plan mode
-  /superpowers:writing-plans                 quando le voci aperte di QUEL
+  /superpowers:writing-plans                 quando le voci aperte del
                                              brainstorming saranno chiuse
+  /superpowers:test-driven-development       quando ricomincerà il codice
   /superpowers:subagent-driven-development   quando ci sarà un piano da
                                              ESEGUIRE: un subagente fresco per
                                              compito, con revisione fra uno e
                                              l'altro. È la modalità scelta, e ha
-                                             appena portato dieci compiti su dieci
+                                             portato dieci compiti su dieci al
+                                             Traguardo 4
+  /anthropic-skills:repo-audit               se e quando si riaprirà un audit.
+                                             NON serve ora: quello dell'11
+                                             agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 332 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 337 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -75,7 +71,7 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 332 KB in tutto
   3. docs/audit-2026-08-11.md — 29 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE: è IL COMPITO. Contiene la copertura dichiarata, le
      quattro radici, i finding con causa radice e dimostrazione, ciò che è
-     stato verificato PULITO, e la §8 con le otto decisioni — SETTE sono
+     stato verificato PULITO, e la §8 con le otto decisioni — TUTTE E OTTO
      ESEGUITE, e la §5 porta in testa il richiamo datato.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token, e il compendio
@@ -98,44 +94,25 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 332 KB in tutto
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
-⛔ IL PROSSIMO PASSO È L'ESECUZIONE DELL'AUDIT — NON IL TRAGUARDO 5.
+⛔ L'AUDIT È CHIUSO — OTTO DECISIONI SU OTTO. IL PROSSIMO PASSO È IL
+   TRAGUARDO 5, E CAMBIA SPECIE: non più esecuzione, ma lavoro CREATIVO.
    Il 2026-08-11 il repository ha ricevuto il suo primo audit completo: nove
    revisori paralleli in sola lettura, ogni finding grave riverificato sul
-   sorgente, SEDICI corretti e provati nella stessa sessione. Delle OTTO
-   decisioni della §8, SETTE sono eseguite — la 1, la 2, la 3, la 4, la 5, la 6
-   e l'8. NE RESTA UNA: le sonde B-2/B-3/S-1/S-2/S-5, ed è quello che devi
-   portarmi.
-   ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, poi «quello che viene
-      dopo è un BRAINSTORMING», poi «otto decisioni», poi «ne restano TRE»,
-      poi DUE: si riscrive quando il passo si chiude.
+   sorgente, SEDICI corretti nella stessa sessione e le OTTO decisioni della
+   §8 eseguite fra il 17 e il 18 agosto.
+   ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, poi «un BRAINSTORMING»,
+      poi «otto decisioni», poi «ne restano TRE», poi DUE, poi UNA: si
+      riscrive quando il passo si chiude, ed è la riga che invecchia per
+      costruzione.
 
-   ✅ COS'È STATO CHIUSO, e le quattro volte insegnano la STESSA cosa in
-   direzioni DIVERSE — il racconto per esteso sta nella §6 del compendio.
-   · 2026-08-17, T-2 e T-1: la conformità del giornale provava tre promesse
-     su nove solo dove ogni guardia plausibile passa. L'audit lo prezzava
-     «un'aggiunta al contratto di una porta condivisa»: è costato ZERO righe
-     di prodotto. Gotcha #63 chiuso, #65 nato.
-   · 2026-08-18, G-5: il Cargo.lock TRACCIATO era un EFFETTO del cancello
-     invece che un suo INGRESSO, quindi gate-deps.sh misurava il grafo che
-     cargo aveva appena inventato. L'audit lo prezzava «una riga»: i siti
-     cargo sono SEI su TRE script, più un ramo d'errore senza il quale il
-     rosso usciva con la diagnosi sbagliata. Sonde N6 e N7.
-   · 2026-08-18, K-1 con B-1: la cella Sleep accettava scritture da FUORI un
-     poll. Il rimedio della §8 — drenare all'ingresso di run — NON BASTA: le
-     vie sono due, e la seconda è un Drop che gira DENTRO la run. La forma
-     giusta è svuotare la cella SUBITO PRIMA di ogni poll, ed è UNA RIGA che
-     cambia l'invariante invece di tappare due buchi. Gotcha #66 nato.
-   · 2026-08-18, P-1: la via A3 era dichiarata CHIUSA e aveva una seconda
-     bocca — promote prendeva reason: &str e il Debug del record stampa
-     l'indice 4 per intero. Il rimedio del rapporto (reason: &Instruction)
-     NON avrebbe chiuso nulla: Instruction::new è pub, quindi la guardia è
-     soddisfatta dalla via A1/A2, dichiarata non chiudibile dieci righe
-     sopra. Una guardia a newtype vale quanto il suo COSTRUTTORE. Chiuso con
-     reason: &'static str — una parola, zero chiamanti riscritti, formato
-     invariato. Gotcha #67 nato.
-   ⛔ QUINDI: IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — e
-   può risultare più piccolo, più grande, O DI SPECIE DIVERSA. Vale per
-   quella che resta.
+   ✅ COSA HANNO INSEGNATO LE OTTO, IN UNA RIGA — il racconto per esteso sta
+   nella §6 del compendio, che leggi comunque, e ricopiarlo qui è ciò che
+   questo messaggio deve TOGLIERE invece di accorciare (25ª misura):
+   ⛔ IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — e può
+   risultare più PICCOLO (decisione 1: zero righe di prodotto), più GRANDE
+   (la 8: sei siti su tre script), o DI SPECIE DIVERSA (la 2 e la 3: il
+   rimedio proposto non chiudeva la strada). Gotcha #65, #66 e #67 sono i tre
+   che ne sono nati.
 
    ⛔ E DUE COSE DELL'AUDIT VANNO SAPUTE COMUNQUE, perché sono già CORRETTE e
    spiegano come questo cancello può mentire: due suoi buchi lo lasciavano
@@ -158,6 +135,15 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 332 KB in tutto
    nessun segreto in centosettantuno commit, il grafo spedito è esattamente
    quello dichiarato, e i quattordici conteggi di test di porta-di-qualita.md
    sono giusti tutti e quattordici.
+
+   ⚠️ E CIÒ CHE L'AUDIT LASCIA AL TRAGUARDO 5 VA SAPUTO PRIMA DI APRIRLO: le
+   nove righe di guasto scoperte della §3.3 hanno ciascuna il proprio
+   indirizzo — e l'ARBITRO È QUESTO TRAGUARDO — la metà non chiudibile del
+   gotcha #51, semi-dst.md che NON HA UN CHIUDENTE, e una voce aperta
+   CONSOLIDATA: le dieci sonde permanenti che l'esecuzione dell'audit ha
+   prodotto non hanno riga di catalogo, perché la §7.4 è SPEC e si approva
+   sezione per sezione (vincolo globale 7). La tabella sta in
+   porta-di-qualita.md, in un posto solo.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
    docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 715 KB
@@ -264,20 +250,12 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
    e con due macchine sullo stesso repository quella è una scelta che faccio
    io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
 
-Parti confermandomi cosa hai letto, qual è la tua lettura dello stato, e come
-proponi di affrontare l'ULTIMA DECISIONE che resta nella §8 dell'audit — le
-sonde B-2/B-3/S-1/S-2/S-5 — POI ASPETTA le mie richieste prima di scrivere
-qualunque cosa. ⛔ Non c'è un piano da riprendere né un brainstorming da
-aprire: il Traguardo 4 è CHIUSO e l'audit è FATTO; quello che manca è
-eseguirlo. ⛔ E le sette chiuse hanno insegnato una cosa sola, in TRE
-direzioni: IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO. La
-decisione 1 era data per «un'aggiunta al contratto di una porta condivisa» e
-si è rivelata zero righe di prodotto, mentre i finding erano TRE e non due
-(#65) — più PICCOLO. La 8 era data per «una riga» ed erano sei siti su tre
-script più un ramo d'errore — più GRANDE. La 2 e la 3 erano date per un
-rimedio che NON CHIUDE: drenare all'ingresso di run lascia aperta la via dei
-Drop (#66), e reason: &Instruction lascia aperta la via A1/A2 perché
-Instruction::new è pub (#67) — di SPECIE DIVERSA.
+Parti confermandomi cosa hai letto e qual è la tua lettura dello stato, POI
+ASPETTA le mie richieste prima di scrivere qualunque cosa. ⛔ Non c'è un
+piano da riprendere né un audit da eseguire: il Traguardo 4 è CHIUSO e
+l'audit è CHIUSO, otto decisioni su otto. Quello che viene è il TRAGUARDO 5,
+cioè lavoro CREATIVO — quindi si apre col BRAINSTORMING, prima di entrare in
+plan mode. ⚠️ Il deliverable esatto sta nella §6 del compendio, non qui.
 ```
 
 ---
@@ -287,8 +265,8 @@ Instruction::new è pub (#67) — di SPECIE DIVERSA.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **14,7 KB, E PER LA PRIMA VOLTA NON È CRESCIUTO.** La serie era 7,7 → 9,8 → 12,2 → 14,7, quattro crescite di seguito e tre a due cifre percentuali; il 2026-08-17 la consegna ha incassato una decisione intera dell'audit e il blocco è passato da **15036 a 15040 byte**, `+4 B` e una riga. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **303 KB** — `CLAUDE.md` più il compendio, e **332** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 303 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **308 KB** — `CLAUDE.md` più il compendio, e **337** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 308 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -302,7 +280,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **332 KB contro 715**. ⛔ **E il 2026-08-18 il METODO ha rivelato un
+resta quello che conta: **337 KB contro 715**. ⛔ **E il 2026-08-18 il METODO ha rivelato un
 difetto che i numeri non mostravano: «`wc -c`» non dice QUALI byte, e questo repository si lavora
 da DUE macchine.** Su un albero CRLF `wc -c` conta un byte in più per riga, quindi nove celle
 della §12 sembravano stantie di 1–4 KB **su file non toccati da giorni**; tolti i CR, tutte e

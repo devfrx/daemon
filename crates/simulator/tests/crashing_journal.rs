@@ -139,6 +139,120 @@ fn a_write_the_protocol_refuses_does_not_consume_a_crash_position() {
     );
 }
 
+// ⛔ THE THREE PROBES BELOW ARE FINDINGS S-1 AND S-2 of the 2026-08-11 audit, closed on
+// 2026-08-18, and they exist because the probe above is EXCLUSIVE in a way it did not know.
+// It made an inner write fail exactly once, through `outcome`, so what it held was
+// `outcome`'s half of "the counter moves only on an `Ok`". `intent`'s and `note`'s halves were
+// held by nothing, and `note`'s SUCCESS PATH — delegate, return `Ok`, move the counter — was
+// never taken at all: every `note` in this file before today answered `NotDurable`.
+//
+// ⛔ THREE PROBES AND NOT ONE, which is gotcha #65: the three failures are three, the file
+// stops at the first, and a single probe touching all of them would prove only its first
+// assertion. Measured — with the three mutations applied one at a time, each kills exactly one
+// of these and nothing else.
+//
+// 📌 AND THE SHAPE IS THE ONE THE PROBE ABOVE WARNED ABOUT IN ITS OWN COMMENT: "exclusivity
+// over a set that grows is the claim that ages silently". It aged in seven days.
+
+#[test]
+fn the_success_path_of_note_is_exercised_and_counted() {
+    // ⛔ S-1. `note` is the one write of the three whose successful path nothing took: the
+    // delegation to the inner journal and the `self.writes += 1` after it were dead code, so a
+    // `note` that silently wrote nothing would have left this file green.
+    let mut journal = CrashingJournal::falling_at(3);
+
+    assert_eq!(journal.intent(StepId::new(1), b"one"), Ok(()));
+    assert_eq!(journal.outcome(StepId::new(1), b"one done"), Ok(()));
+
+    // The write under test: it must SUCCEED, it must REACH THE ARCHIVE, and it must count.
+    assert_eq!(journal.note(StepId::new(1), b"a note"), Ok(()));
+
+    // ⛔ THE ARCHIVE AND NOT ONLY THE COUNTER, and the first draft of this probe had only the
+    // counter — measured on 2026-08-18 and corrected rather than shipped. A `note` that
+    // answered `Ok(())` WITHOUT DELEGATING moves the counter just the same, so the counter
+    // alone cannot tell "it wrote" from "it pretended". `replay` is what distinguishes them.
+    let replayed = journal.replay().expect("replay");
+    assert_eq!(
+        replayed.len(),
+        3,
+        "the note answered Ok without reaching the archive: {replayed:?}"
+    );
+    assert_eq!(
+        replayed.last().map(|(_, record)| record.as_slice()),
+        Some(b"a note".as_slice()),
+        "the archive's last record is not the note that was just written"
+    );
+
+    assert_eq!(
+        journal.writes_done(),
+        3,
+        "a successful note reached storage but did not move the counter"
+    );
+    assert!(!journal.has_fallen(), "the third write is not the fall");
+
+    // And the fall is still exactly where it was drawn — the fourth write, not the third.
+    assert_eq!(
+        journal.intent(StepId::new(2), b"two"),
+        Err(JournalError::NotDurable)
+    );
+}
+
+#[test]
+fn a_refused_note_does_not_consume_a_crash_position() {
+    // ⛔ S-2, `note`'s half. A note on a step that was never opened is refused by the port
+    // (promise 8a), reaches no storage, and must therefore not move the counter the crash
+    // point is drawn against.
+    let mut journal = CrashingJournal::falling_at(2);
+
+    assert_eq!(journal.intent(StepId::new(1), b"one"), Ok(()));
+
+    assert_eq!(
+        journal.note(StepId::new(9), b"a note on a step nobody opened"),
+        Err(JournalError::OutOfOrder)
+    );
+    assert!(!journal.has_fallen(), "a refused note is not the fall");
+    assert_eq!(
+        journal.writes_done(),
+        1,
+        "a refused note reached no storage and must not consume a crash position"
+    );
+
+    // So the fall is still the write that really reaches the archive third.
+    assert_eq!(journal.outcome(StepId::new(1), b"one done"), Ok(()));
+    assert_eq!(journal.writes_done(), 2);
+    assert_eq!(
+        journal.note(StepId::new(1), b"a note"),
+        Err(JournalError::NotDurable)
+    );
+}
+
+#[test]
+fn a_refused_intent_does_not_consume_a_crash_position() {
+    // ⛔ S-2, `intent`'s half. A SECOND intent on the same step is refused — the guard decided
+    // on 2026-08-10 — so it is the one way to make `intent` fail without touching storage.
+    let mut journal = CrashingJournal::falling_at(2);
+
+    assert_eq!(journal.intent(StepId::new(1), b"one"), Ok(()));
+
+    assert_eq!(
+        journal.intent(StepId::new(1), b"one again"),
+        Err(JournalError::OutOfOrder)
+    );
+    assert!(!journal.has_fallen(), "a refused intent is not the fall");
+    assert_eq!(
+        journal.writes_done(),
+        1,
+        "a refused intent reached no storage and must not consume a crash position"
+    );
+
+    assert_eq!(journal.outcome(StepId::new(1), b"one done"), Ok(()));
+    assert_eq!(journal.writes_done(), 2);
+    assert_eq!(
+        journal.note(StepId::new(1), b"a note"),
+        Err(JournalError::NotDurable)
+    );
+}
+
 #[test]
 fn a_journal_told_not_to_crash_never_falls() {
     // ⛔ THE OTHER DIRECTION (rule 3 of §7.1.1): a control that fires where it must not is

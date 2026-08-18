@@ -466,6 +466,9 @@ fn campaign(name: &str, records: u64, saturation: u64) {
     let mut fired = 0u64;
     let mut truncated = 0u64;
     let mut partial = 0u64;
+    // Every DISTINCT prefix length the sweep recovered — the rungs of the staircase. See S-5,
+    // at the point where it is filled.
+    let mut rungs: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
 
     for falls_at in OPERATIONS_TO_OPEN..saturation {
         points += 1;
@@ -490,6 +493,18 @@ fn campaign(name: &str, records: u64, saturation: u64) {
         if !back.is_empty() && back.len() < written.len() {
             partial += 1;
         }
+        // ⛔ THE RUNGS THEMSELVES — finding S-5 of the 2026-08-11 audit, closed on 2026-08-18.
+        // `partial > 0` is satisfied by ONE step, while the entire argument for a DEEPER
+        // scenario rather than a WIDER sweep is that `records` records give `records + 1`
+        // DISTINCT recoverable archives AND that the sweep reaches all of them. That claim
+        // lived in the doc comment on `DEEP_RECORDS`, with its table of 4/4, 11/11, 21/21,
+        // 31/31, 41/41 — and nothing counted it. The audit measured the price: a world reaching
+        // THREE rungs out of thirty-one passes all five assertions below.
+        //
+        // ⚠️ A `BTreeSet` and not a hash set: the kernel's rule about `RandomState` (gotcha #12)
+        // does not bind a test in `platform`, but a set whose iteration order depends on a
+        // per-process seed has no place in a campaign whose whole purpose is reproducibility.
+        rungs.insert(back.len());
     }
 
     // ⚠️ LEFT IN ON PURPOSE AND NOT DEBUGGING LEFTOVER: how many points a sweep of this shape
@@ -512,7 +527,9 @@ fn campaign(name: &str, records: u64, saturation: u64) {
     let elapsed = started.elapsed();
     println!(
         "{name}: records={records} points={points} fired={fired} truncated={truncated} \
-         partial={partial} {elapsed:?}"
+         partial={partial} rungs={}/{} {elapsed:?}",
+        rungs.len(),
+        records + 1
     );
 
     // ⛔ THE FIRST NON-VACUITY, AND IT IS AN EQUALITY. The range stops at saturation precisely so
@@ -576,6 +593,32 @@ fn campaign(name: &str, records: u64, saturation: u64) {
         "{name}: the archive came back all-or-nothing, with no step in between: records have \
          stopped becoming durable ONE AT A TIME, which is what a lost durability guarantee looks \
          like from here"
+    );
+
+    // ⛔ THE FIFTH ASSERTION, AND IT IS FINDING S-5 — closed on 2026-08-18. The four above are
+    // satisfied by a staircase with ONE step: `partial > 0` counts POINTS that landed mid-way,
+    // not the DISTINCT archives they landed on, so a sweep in which every partial recovery
+    // returned the same two records would pass all of them. The audit measured the price of
+    // that gap: a world reaching THREE rungs out of thirty-one passes the whole campaign.
+    //
+    // ⛔ AND WHAT IT DEFENDS IS THE REASON THIS CAMPAIGN IS DEEP INSTEAD OF WIDE. The doc on
+    // `DEEP_RECORDS` argues that a wider sweep buys nothing — 800 points, still 35 falls — while
+    // more RECORDS buy states, and its evidence is a table of rungs: 4/4, 11/11, 21/21, 31/31,
+    // 41/41, "every rung appears at every depth". That was the load-bearing claim of the whole
+    // design AND IT WAS PROSE. This is the line that makes it a check.
+    //
+    // ⚠️ AN EQUALITY AND NOT `> 1`, deliberately: `records + 1` is exactly what the argument
+    // claims — the empty archive plus one rung per record — so anything less means the sweep no
+    // longer reaches every recoverable state and the depth is being paid for without being used.
+    assert_eq!(
+        rungs.len() as u64,
+        records + 1,
+        "{name}: the sweep reached {} distinct recoverable archives out of the {} this depth \
+         is supposed to have. The rungs are the ENTIRE argument for a deeper scenario over a \
+         wider sweep — if they no longer all appear, the depth is being paid for and not used. \
+         Rungs seen: {rungs:?}",
+        rungs.len(),
+        records + 1
     );
 }
 

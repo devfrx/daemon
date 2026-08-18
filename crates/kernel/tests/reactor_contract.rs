@@ -14,9 +14,12 @@
 // items, so textual inclusion is the mechanism, not a shortcut.
 //
 // ⚠️ DECLARED COST: `include!` carries the `#[test]` functions of this file along with it, so
-// the three tests below RUN A SECOND TIME inside `platform`'s binary. It buys the single copy
-// of the assertions and costs a few milliseconds — the fake and the two liars sleep for
-// nothing.
+// the EIGHT tests below RUN A SECOND TIME inside `platform`'s binary. It buys the single copy of
+// the assertions and costs a few milliseconds. ⚠️ THIS LINE SAID "THREE" UNTIL 2026-08-18, when
+// finding B-2 brought five liars more — and the clause that followed it, "the fake and the two
+// liars sleep for nothing", was wrong in BOTH halves even then: the SEVEN liars never sleep at
+// all, because a liar is a fake clock and only the real implementation waits. Recounted on the
+// source rather than remembered — gotcha #31.
 
 use kernel::ports::reactor::Reactor;
 use kernel::time::{Millis, Monotonic, WallTime};
@@ -44,6 +47,37 @@ pub const DEADLINE_EQUAL_TO_NOW_MESSAGE: &str =
 /// constant above for why the two are not one.
 pub const DEADLINE_BEFORE_NOW_MESSAGE: &str =
     "reactor contract violated: a deadline STRICTLY BEFORE the current instant must give None";
+
+// ⛔ THE FOUR CONSTANTS BELOW ARRIVED ON 2026-08-18 WITH FINDING B-2 of the 2026-08-11 audit,
+// and they are constants for the reason 2a and 2b are: A NEGATIVE TEST HAS TO SAY WHICH
+// ASSERTION FIRED. Until that day FOUR GROUPS OUT OF FIVE had no liar at all — deleting blocks
+// 1, 3, 4 and 5 outright left the whole workspace green — so the suite asserted its own
+// coverage instead of measuring it, which is gotcha #14 at the scale of a file.
+//
+// ⚠️ They carry only the STATIC HEAD of each message: the values are formatted in at the
+// assertion and the tests match with `contains`, exactly as 2a and 2b already do.
+
+/// Assertion 1 — the clock went backwards on its own.
+pub const CLOCK_WENT_BACKWARDS_MESSAGE: &str = "reactor contract violated: now() went backwards";
+
+/// Assertion 3a — the first wait came back short of the deadline it was given.
+pub const FIRST_WAIT_SHORT_MESSAGE: &str =
+    "reactor contract violated: the first wait came back short of its deadline";
+
+/// Assertion 3b — the wait returned the right instant while the port's own clock stayed behind.
+pub const CLOCK_LAGGED_BEHIND_MESSAGE: &str =
+    "reactor contract violated: the wait returned its deadline but now() stayed behind";
+
+/// Assertion 4a — the SECOND wait came back short. Distinct from 3a's, and it has to be: a test
+/// pinning the second would otherwise be satisfied by the first one firing.
+pub const SECOND_WAIT_SHORT_MESSAGE: &str =
+    "reactor contract violated: the second wait came back short of its deadline";
+
+/// Group 5 carries NO assertion — it proves `wall_time()` is callable and stops there. What
+/// proves the block is REACHED is a port whose `wall_time` panics, and this is the text it
+/// panics with.
+pub const WALL_TIME_UNREACHED_MESSAGE: &str =
+    "reactor contract violated: wall_time() was never called, so group 5 is dead code";
 
 /// What every wait on a future deadline fails with, AND IT NAMES THE SECOND CAUSE ON PURPOSE.
 ///
@@ -74,7 +108,7 @@ pub fn assert_reactor_contract<R: Reactor, F: Fn() -> R>(build: F) {
         let second = reactor.now();
         assert!(
             second >= first,
-            "reactor contract violated: now() went backwards, {first:?} then {second:?}"
+            "{CLOCK_WENT_BACKWARDS_MESSAGE}, {first:?} then {second:?}"
         );
     }
 
@@ -139,13 +173,13 @@ pub fn assert_reactor_contract<R: Reactor, F: Fn() -> R>(build: F) {
             .expect(FUTURE_DEADLINE_MESSAGE);
         assert!(
             first_reached >= first_deadline,
-            "reactor contract violated: the wait came back at {first_reached:?}, \
-             short of the deadline {first_deadline:?}"
+            "{FIRST_WAIT_SHORT_MESSAGE}: came back at {first_reached:?}, \
+             deadline was {first_deadline:?}"
         );
         assert!(
             reactor.now() >= first_deadline,
-            "reactor contract violated: the wait returned {first_reached:?} but now() is \
-             {:?}, behind the deadline {first_deadline:?}",
+            "{CLOCK_LAGGED_BEHIND_MESSAGE}: returned {first_reached:?} but now() is \
+             {:?}, deadline was {first_deadline:?}",
             reactor.now()
         );
 
@@ -157,9 +191,20 @@ pub fn assert_reactor_contract<R: Reactor, F: Fn() -> R>(build: F) {
             .expect(FUTURE_DEADLINE_MESSAGE);
         assert!(
             second_reached >= second_deadline,
-            "reactor contract violated: the second wait came back at {second_reached:?}, \
-             short of the deadline {second_deadline:?}"
+            "{SECOND_WAIT_SHORT_MESSAGE}: came back at {second_reached:?}, \
+             deadline was {second_deadline:?}"
         );
+
+        // ⛔ THIS ASSERTION IS IMPLIED BY THE ONE ABOVE, and it is kept with the proof rather
+        // than deleted or given a liar that cannot exist. Found on 2026-08-18 while writing
+        // B-2's liars: `second_deadline` is computed from `first_reached`, so
+        // `second_reached >= second_deadline = first_reached + MARGIN > first_reached` — the
+        // assertion above ENTAILS this one, and no conforming-then-lying reactor can fire this
+        // and not that. ⚠️ It is dead weight, NOT a vacuous check: it cannot be false where the
+        // other is true, so it never lies; it just never speaks. Removing it, or rebasing
+        // `second_deadline` on `start` so that the two become independent, is a change to a
+        // SHARED PORT'S CONFORMANCE SUITE — registered as an open item in
+        // `docs/porta-di-qualita.md` rather than taken here.
         assert!(
             second_reached > first_reached,
             "reactor contract violated: the clock restarted between two waits, \
@@ -237,6 +282,85 @@ fn a_reactor_that_lies_only_about_a_past_deadline_is_caught() {
         message.contains(DEADLINE_BEFORE_NOW_MESSAGE),
         "the suite did fire, but NOT on case 2b — so 2b is still unproven.\n\
          expected to contain: {DEADLINE_BEFORE_NOW_MESSAGE}\n\
+         actual payload: {message}"
+    );
+}
+
+// ⛔ THE FIVE TESTS BELOW ARE FINDING B-2, closed on 2026-08-18. Before them the suite had TWO
+// liars for ONE group, and the other four groups were held by nothing: the audit measured that
+// deleting blocks 1, 3, 4 and 5 left `cargo test --workspace` entirely green.
+//
+// ⛔ ONE LIAR PER ASSERTION AND NOT PER GROUP, which is gotcha #65 applied here: the suite dies
+// at the FIRST assertion that fires, so a liar broken in two places proves only the first. Group
+// 3 has two assertions — the returned instant and the port's own clock — and they need a liar
+// each; group 4's second assertion needs none, because it is ENTAILED by its first (see the
+// comment on it).
+
+#[test]
+fn a_reactor_whose_clock_runs_backwards_is_caught() {
+    let message = message_the_suite_fails_with(BackwardsClockLiar::new)
+        .expect("THE SUITE IS VACUOUS ON GROUP 1: a clock that runs backwards passed it");
+    assert!(
+        message.contains(CLOCK_WENT_BACKWARDS_MESSAGE),
+        "the suite did fire, but NOT on group 1.\n\
+         expected to contain: {CLOCK_WENT_BACKWARDS_MESSAGE}\n\
+         actual payload: {message}"
+    );
+}
+
+#[test]
+fn a_reactor_that_comes_back_short_of_its_deadline_is_caught() {
+    let message = message_the_suite_fails_with(ShortWaitLiar::new)
+        .expect("THE SUITE IS VACUOUS ON ASSERTION 3a: a wait that stops short passed it");
+    assert!(
+        message.contains(FIRST_WAIT_SHORT_MESSAGE),
+        "the suite did fire, but NOT on assertion 3a.\n\
+         expected to contain: {FIRST_WAIT_SHORT_MESSAGE}\n\
+         actual payload: {message}"
+    );
+}
+
+#[test]
+fn a_reactor_that_leaves_its_own_clock_behind_is_caught() {
+    // ⛔ THE ASSERTION THIS PINS IS THE ONE THE BLOCK'S COMMENT CALLS OUT: "a port that
+    // returned the right instant while leaving its own clock behind would pass on the return
+    // value alone, and the executor reads `now()`". That argument was TRUE and UNPROVEN.
+    let message = message_the_suite_fails_with(LaggingClockLiar::new)
+        .expect("THE SUITE IS VACUOUS ON ASSERTION 3b: a port whose clock lags passed it");
+    assert!(
+        message.contains(CLOCK_LAGGED_BEHIND_MESSAGE),
+        "the suite did fire, but NOT on assertion 3b.\n\
+         expected to contain: {CLOCK_LAGGED_BEHIND_MESSAGE}\n\
+         actual payload: {message}"
+    );
+}
+
+#[test]
+fn a_reactor_correct_on_the_first_wait_and_short_on_the_second_is_caught() {
+    // ⛔ IT HAS TO BE CORRECT ON THE FIRST ONE, or it never reaches group 4 — and that is the
+    // whole reason this liar counts its calls instead of being broken outright.
+    let message = message_the_suite_fails_with(SecondWaitShortLiar::new)
+        .expect("THE SUITE IS VACUOUS ON ASSERTION 4a: a second wait that stops short passed it");
+    assert!(
+        message.contains(SECOND_WAIT_SHORT_MESSAGE),
+        "the suite did fire, but NOT on assertion 4a.\n\
+         expected to contain: {SECOND_WAIT_SHORT_MESSAGE}\n\
+         actual payload: {message}"
+    );
+}
+
+#[test]
+fn the_suite_really_reaches_the_wall_time_block() {
+    // ⛔ GROUP 5 HAS NO ASSERTION — it proves `wall_time()` is callable and says so. That makes
+    // it the one block whose DELETION nothing could notice: there is no oracle to go red. A
+    // port whose `wall_time` panics turns "the block exists" into "the block runs", which is
+    // the only property that block can have.
+    let message = message_the_suite_fails_with(PanickingWallClockLiar::new)
+        .expect("GROUP 5 IS DEAD CODE: the suite never called wall_time()");
+    assert!(
+        message.contains(WALL_TIME_UNREACHED_MESSAGE),
+        "the suite did fire, but NOT inside group 5.\n\
+         expected to contain: {WALL_TIME_UNREACHED_MESSAGE}\n\
          actual payload: {message}"
     );
 }
@@ -333,6 +457,196 @@ impl Reactor for PastDeadlineLiar {
         // says `<=`. A deadline in the past slips past this guard and is reported as a
         // successful advance — backwards.
         if deadline == self.now {
+            return None;
+        }
+        self.now = deadline;
+        Some(deadline)
+    }
+}
+
+/// One millisecond before an instant. ⚠️ `Monotonic` has no subtraction and deliberately so —
+/// the only distance it exposes is `saturating_since`, which answers a `Millis` — so the trip
+/// through the origin is how a liar names an instant just short of its deadline. Written once
+/// and used by two of them, so that "short" cannot come to mean two different amounts.
+fn one_millisecond_before(instant: Monotonic) -> Monotonic {
+    let from_origin = instant.saturating_since(Monotonic::ORIGIN).get();
+    Monotonic::from_millis(from_origin.saturating_sub(1))
+}
+
+/// A `Reactor` broken ON PURPOSE IN GROUP 1: `now()` walks BACKWARDS on its own, with no wait
+/// in between. It starts above the origin because `Monotonic::ORIGIN` is the bottom of the
+/// scale and there is nothing below it to walk down to.
+struct BackwardsClockLiar {
+    reads: core::cell::Cell<u64>,
+}
+
+impl BackwardsClockLiar {
+    fn new() -> Self {
+        BackwardsClockLiar {
+            reads: core::cell::Cell::new(0),
+        }
+    }
+}
+
+impl Reactor for BackwardsClockLiar {
+    fn now(&self) -> Monotonic {
+        // ⛔ THE DEFECT: every read is earlier than the one before it.
+        let read = self.reads.get();
+        self.reads.set(read + 1);
+        Monotonic::from_millis(1_000 - read.min(1_000))
+    }
+
+    fn wall_time(&self) -> WallTime {
+        WallTime::from_millis_since_epoch(0)
+    }
+
+    fn wait_until(&mut self, _deadline: Monotonic) -> Option<Monotonic> {
+        None
+    }
+}
+
+/// A `Reactor` broken ON PURPOSE IN ASSERTION 3a: it moves its clock all the way to the
+/// deadline — so it walks through groups 1 and 2 honestly, including 2b's setup wait — and then
+/// REPORTS one millisecond less than it actually reached.
+struct ShortWaitLiar {
+    now: Monotonic,
+}
+
+impl ShortWaitLiar {
+    fn new() -> Self {
+        ShortWaitLiar {
+            now: Monotonic::ORIGIN,
+        }
+    }
+}
+
+impl Reactor for ShortWaitLiar {
+    fn now(&self) -> Monotonic {
+        self.now
+    }
+
+    fn wall_time(&self) -> WallTime {
+        WallTime::from_millis_since_epoch(0)
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        if deadline <= self.now {
+            return None;
+        }
+        self.now = deadline;
+        // ⛔ THE DEFECT: the clock is right, the ANSWER is short. A caller that trusts the
+        // return value schedules the next deadline from an instant that never happened.
+        Some(one_millisecond_before(deadline))
+    }
+}
+
+/// A `Reactor` broken ON PURPOSE IN ASSERTION 3b: it answers with exactly the deadline it was
+/// given — so the return value is impeccable — while its OWN clock stops halfway. It is the
+/// port the block's comment describes and that nothing used to catch.
+struct LaggingClockLiar {
+    now: Monotonic,
+}
+
+impl LaggingClockLiar {
+    fn new() -> Self {
+        LaggingClockLiar {
+            now: Monotonic::ORIGIN,
+        }
+    }
+}
+
+impl Reactor for LaggingClockLiar {
+    fn now(&self) -> Monotonic {
+        self.now
+    }
+
+    fn wall_time(&self) -> WallTime {
+        WallTime::from_millis_since_epoch(0)
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        if deadline <= self.now {
+            return None;
+        }
+        // ⛔ THE DEFECT: the clock moves, but only halfway. It has to MOVE, or 2b's setup
+        // assertion fires first and this liar would be proving that one instead.
+        let half = deadline.saturating_since(self.now).get() / 2;
+        self.now = self.now.saturating_add(Millis::new(half.max(1)));
+        Some(deadline)
+    }
+}
+
+/// A `Reactor` broken ON PURPOSE IN ASSERTION 4a: correct on the FIRST successful wait of its
+/// life and short on the SECOND. It has to be correct first, or it never reaches group 4 —
+/// which is why it counts instead of being broken outright.
+///
+/// ⚠️ The count is per INSTANCE, and the suite builds a fresh reactor for each block, so the
+/// two waits it sees are groups 3 and 4 — not 2b's setup, which happens on another instance.
+struct SecondWaitShortLiar {
+    now: Monotonic,
+    successful_waits: u32,
+}
+
+impl SecondWaitShortLiar {
+    fn new() -> Self {
+        SecondWaitShortLiar {
+            now: Monotonic::ORIGIN,
+            successful_waits: 0,
+        }
+    }
+}
+
+impl Reactor for SecondWaitShortLiar {
+    fn now(&self) -> Monotonic {
+        self.now
+    }
+
+    fn wall_time(&self) -> WallTime {
+        WallTime::from_millis_since_epoch(0)
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        if deadline <= self.now {
+            return None;
+        }
+        self.successful_waits += 1;
+        self.now = deadline;
+        if self.successful_waits >= 2 {
+            // ⛔ THE DEFECT, and only from the second wait on.
+            return Some(one_millisecond_before(deadline));
+        }
+        Some(deadline)
+    }
+}
+
+/// A `Reactor` that conforms in every group EXCEPT that `wall_time()` refuses to answer.
+///
+/// ⛔ IT IS NOT A LIAR ABOUT A BEHAVIOUR, because group 5 asserts none: it is the instrument
+/// that turns "the block exists" into "the block RUNS". Group 5 is the one block whose deletion
+/// no oracle could notice, and this is what notices.
+struct PanickingWallClockLiar {
+    now: Monotonic,
+}
+
+impl PanickingWallClockLiar {
+    fn new() -> Self {
+        PanickingWallClockLiar {
+            now: Monotonic::ORIGIN,
+        }
+    }
+}
+
+impl Reactor for PanickingWallClockLiar {
+    fn now(&self) -> Monotonic {
+        self.now
+    }
+
+    fn wall_time(&self) -> WallTime {
+        panic!("{}", WALL_TIME_UNREACHED_MESSAGE)
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        if deadline <= self.now {
             return None;
         }
         self.now = deadline;

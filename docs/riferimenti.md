@@ -1813,6 +1813,105 @@ fatta a mano invece di ereditarla dallo strumento.
 
 ---
 
+## Esecuzione dell'audit — la decisione 7 (B-2, B-3, S-1, S-2, S-5), 2026-08-18: le misure, coi comandi
+
+⚠️ **Nessuna fonte esterna.** Ogni mutazione applicata a sé, compilata ed eseguita a sé, e revocata
+da una **copia byte-esatta** — mai con `git checkout --` (gotcha **#48**). I fine-riga misurati
+prima e dopo su ogni file toccato.
+
+**B-2 — la conformità del `reactor`.** Neutralizzate **tutte e cinque** le asserzioni scoperte in
+un colpo — `second >= first`, `first_reached >= first_deadline`, `reactor.now() >= first_deadline`,
+`second_reached >= second_deadline`, e la lettura di `wall_time()`:
+
+```
+cargo test --locked -p kernel --test reactor_contract --no-fail-fast
+  ->  3 passati · 5 FALLITI
+  ->  a_reactor_whose_clock_runs_backwards_is_caught .................. FAILED
+      a_reactor_that_comes_back_short_of_its_deadline_is_caught ....... FAILED
+      a_reactor_that_leaves_its_own_clock_behind_is_caught ............ FAILED
+      a_reactor_correct_on_the_first_wait_and_short_on_the_second ..... FAILED
+      the_suite_really_reaches_the_wall_time_block .................... FAILED
+  ->  i tre PREESISTENTI restano verdi: the_fake_reactor_honours_the_contract,
+      NullAdvanceLiar, PastDeadlineLiar
+```
+
+📌 **Cinque rosse su cinque, ciascuna col MESSAGGIO DELLA PROPRIA asserzione** —
+`THE SUITE IS VACUOUS ON GROUP 1 / ASSERTION 3a / 3b / 4a`, `GROUP 5 IS DEAD CODE` — e i tre verdi
+sono il controllo: le asserzioni nuove non scattano dove non devono (gotcha **#24**).
+
+⛔ **E scrivendo i bugiardi è uscito un difetto che l'audit non aveva visto.** L'asserzione **4b**
+(*«il clock non è ripartito fra due attese»*) è **implicata** dalla 4a: `second_deadline` è
+calcolata da `first_reached`, quindi `second_reached >= first_reached + MARGIN > first_reached`.
+**Un bugiardo per la 4b non è scrivibile.** Non è vacua — non può essere falsa dove l'altra è vera,
+quindi non mente; **non parla**. Registrata come voce aperta.
+
+**B-3 — il finto filesystem.**
+
+```
+# restore: .find(|(known, _, _)| *known == checkpoint)  ->  .find(|_| true)
+cargo test --locked -p kernel --test ports_are_implementable --no-fail-fast
+  ->  13 passati · 1 FALLITO
+  ->  l'unico rosso: a_restore_serves_the_checkpoint_it_was_asked_for_and_not_the_first_one
+```
+
+📌 **Tredici verdi sotto la mutazione è esattamente la cifra dell'audit**, e la sonda nuova è la
+sola che la coglie. Ciò che la rende non vacua è il **passante** — un secondo checkpoint — cioè il
+rimedio identico alla **prima** decisione di questo audit sulla conformità del giornale.
+
+**S-1 e S-2 — `CrashingJournal`.** Tre mutazioni, una alla volta:
+
+| Mutazione | Rosso |
+|---|---|
+| `note` incrementa sempre, non solo su `Ok` | `a_refused_note_does_not_consume_a_crash_position` |
+| `intent` incrementa sempre | `a_refused_intent_does_not_consume_a_crash_position` |
+| `note` risponde `Ok` **senza delegare** | `a_refused_note_…` **e** `the_success_path_of_note_…` |
+
+⛔ **E la terza ha trovato un buco nella sonda appena scritta, corretto invece che spedito.** La
+prima stesura di `the_success_path_…` controllava il **contatore** e non che la nota **raggiungesse
+l'archivio**: sotto quella mutazione restava **verde**, perché una `note` che risponde `Ok` senza
+delegare muove il contatore ugualmente. Chiusa leggendo `replay()` — tre record, e l'ultimo è la
+nota. 📌 È il **#66** applicato a sé stessi: *in quale altro stato del mondo questa asserzione
+resterebbe verde?*
+
+**S-5 — i pioli della scala di livello 2.** L'insieme delle **lunghezze di prefisso distinte**
+recuperate nella spazzata, contro le `records + 1` che l'argomento del disegno afferma:
+
+```
+cargo test --locked -p platform --test engine_crash_consistency -- --nocapture
+  DST L2 short: records=3  points=35  fired=35  truncated=22  partial=17  rungs=4/4   0.49 s
+cargo test … the_deep_injection_campaign -- --ignored --nocapture
+  DST L2 deep:  records=30 points=197 fired=197 truncated=184 partial=179 rungs=31/31 5.21 s
+```
+
+✅ **La tabella del doc di `DEEP_RECORDS` — 4/4 e 31/31 — regge a entrambe le profondità,
+rimisurata invece che citata.**
+✅ **Seconda direzione**, modellando il mondo a pochi pioli che l'audit descrive:
+
+```
+# al punto di osservazione: rungs.insert(back.len().min(2))
+  DST L2 short: … rungs=3/4
+  -> FAILED: "the sweep reached 3 distinct recoverable archives out of the 4 this depth
+              is supposed to have … Rungs seen: {0, 1, 2}"
+  -> le QUATTRO asserzioni precedenti restano verdi
+```
+
+📌 **Che le quattro precedenti restino verdi è il punto**: è esattamente ciò che l'audit aveva
+misurato — *«un mondo con 3 pioli su 31 supera tutte e cinque le asserzioni»* — e la quinta è la
+riga che lo coglie.
+
+**Baseline a decisione chiusa:**
+
+```
+bash scripts/gate.sh                              ->  GATE GREEN
+cargo test --workspace --no-fail-fast --locked    ->  32 target · 194 passati · 0 falliti · 2 ignorati
+```
+
+⚠️ **Erano 180, e i quattordici in più non sono nove:** le **cinque** sonde del `reactor` contano
+**doppio**, perché `reactor_contract.rs` è `include!`d anche da `crates/platform/tests/`. 5×2 + 1 +
+3 = 14. Contato invece che dedotto.
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

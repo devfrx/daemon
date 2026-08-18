@@ -855,10 +855,55 @@ accorgersene**. ⚠️ **Voce aperta registrata, non presa:** la riga di catalog
 📌 **Baseline invariata:** `GATE GREEN`, **32 target, 180 passati, 0 falliti, 2 ignorati**; i casi
 di `compile_fail` passano da diciassette a **diciotto**.
 
-⏭️ **Resta UNA decisione della §8**: le sonde **B-2/B-3/S-1/S-2/S-5**. ⛔ **È del proprietario per
-una ragione sola, e diversa dalle altre sei:** ciascuna è una **riga di catalogo**, cioè **spec** —
-vincolo globale 7. Non è il rimedio a essere incerto, è che scriverlo tocca un documento che si
-approva sezione per sezione.
+✅ **E L'OTTAVA È ESEGUITA LO STESSO GIORNO — la decisione 7, le cinque sonde mancanti. L'AUDIT È
+CHIUSO: otto decisioni su otto.** Le cinque voci sono **quattro soggetti diversi**, e ciascuna è la
+stessa forma di difetto — *un'asserzione vale solo lo stato in cui è fatta* — su una porta diversa.
+⛔ **B-2, e la suite colpita è la più importante del progetto:** la conformità del `reactor`, su cui
+poggia la validità dell'intera simulazione deterministica, aveva **due bugiardi per UN gruppo** —
+cancellare i blocchi 1, 3, 4 e 5 lasciava il workspace verde. ✅ **Cinque bugiardi nuovi, uno per
+ASSERZIONE e non per gruppo** (#65). ⛔ **Il gruppo 5 non ha asserzioni**, quindi era l'unico blocco
+la cui cancellazione nessun oracolo poteva notare: un `wall_time` che esplode trasforma *«il blocco
+esiste»* in *«il blocco gira»*. ⛔ **E scrivendo i bugiardi è uscito un difetto che l'audit non
+aveva visto: l'asserzione 4b è IMPLICATA dalla 4a** — `second_deadline` è calcolata da
+`first_reached`, quindi un bugiardo per la 4b **non è scrivibile**. Non è vacua, è **muta**.
+Registrata e non presa: toglierla tocca la conformità di una porta condivisa.
+⛔ **B-3:** i test tenevano **un solo** checkpoint, e lì *«trova per id»* e *«prendi il primo»* sono
+la stessa frase — 13 su 13 verdi sotto la mutazione. 📌 **Il rimedio è il PASSANTE, identico a
+quello della prima decisione di questo audit** sulla conformità del giornale: stesso difetto, porta
+diversa. E due argomenti nel sorgente vi poggiavano — `CheckpointId` e `ClientId` non hanno getter
+*«perché un'implementazione lo ritiene e lo CONFRONTA»*, un argomento su un confronto che nulla
+osservava.
+⛔ **S-1/S-2:** il percorso di **successo** di `CrashingJournal::note` non era **mai** preso — ogni
+`note` del file rispondeva `NotDurable` — e *«il contatore si muove solo su un `Ok`»* era tenuto per
+il solo `outcome`. 📌 **La sonda lo aveva scritto di sé stessa** — *«esclusività su un insieme che
+cresce è l'affermazione che invecchia in silenzio»* — e ha invecchiato in **sette giorni**.
+⛔ **E la terza mutazione ha trovato un buco nella sonda che avevo appena scritto:** controllava il
+**contatore** e non che la nota **raggiungesse l'archivio**, e una `note` che risponde `Ok` senza
+delegare muove il contatore ugualmente. Chiusa leggendo `replay()`. È il **#66** applicato a sé
+stessi.
+⛔ **S-5:** `partial > 0` è soddisfatta da **UN** gradino, mentre l'intera ragione per cui la
+campagna di livello 2 è **profonda** invece che **larga** è la tabella dei pioli del disegno —
+4/4, 11/11, 21/21, 31/31, 41/41 — che era **prosa**. ✅ **Ora è un'uguaglianza**, e la tabella regge
+a entrambe le profondità: **`rungs=4/4`** sulla corta, **`rungs=31/31`** sulla profonda, rimisurate
+invece che citate.
+📌 **Baseline:** `GATE GREEN`, **32 target, 194 passati, 0 falliti, 2 ignorati** — erano 180. I
+quattordici in più sono le nove sonde nuove, di cui le cinque del `reactor` contano **doppio**
+perché quel file è `include!`d anche da `platform`.
+⚠️ **Voce aperta CONSOLIDATA:** le **dieci** sonde permanenti che l'esecuzione dell'audit ha
+prodotto **non hanno riga di catalogo**, e la §7.4 è spec (vincolo globale 7). Raccolte in una
+tabella sola in [`porta-di-qualita.md`](porta-di-qualita.md) invece che in quattro riquadri, perché
+quattro voci aperte sullo stesso oggetto sono il modo in cui una smette di esserlo senza che
+nessuno l'abbia chiusa.
+
+⏭️ **IL PROSSIMO PASSO È IL TRAGUARDO 5, E CAMBIA SPECIE: non più esecuzione ma lavoro creativo.**
+L'audit dell'11 agosto è **chiuso**, otto decisioni su otto, eseguite fra il 2026-08-17 e il
+2026-08-18. ⛔ **Quindi si riparte dal BRAINSTORMING**, prima di entrare in plan mode — è la regola
+di `CLAUDE.md`, ed è la ragione per cui [`AVVIO-CHAT.md`](AVVIO-CHAT.md) nomina la **specie** del
+lavoro pur non nominando il deliverable.
+⛔ **E ciò che l'audit lascia al Traguardo 5 va saputo PRIMA di aprirlo:** le **nove righe di
+guasto scoperte** della §3.3 hanno ciascuna il proprio indirizzo — e l'**arbitro è questo
+traguardo** — la metà non chiudibile del gotcha **#51**, `semi-dst.md` che **non ha un chiudente**,
+e la voce aperta consolidata qui sopra.
 
 ⛔ **Cosa l'audit ha trovato, e la prima voce è la più grave** — ✅ **chiusa il 2026-08-17, vedi il
 riquadro qui sopra.** La suite di conformità provava
@@ -2503,6 +2548,32 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > L'insieme *«HANDOFF + spec + `adr/`»* passa da **713** a **715 KB**. I **due file obbligatori**
 > passano da 296 a **303 KB**, e coi tre da 325 a **332**.
+
+> 🔁 **Trentaquattresima misura, il 2026-08-18, chiudendo la decisione 7 — e con essa l'AUDIT
+> INTERO. Settima passata dello stesso giorno.** In byte LF, `int(n/1024 + 0.5)`.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`porta-di-qualita.md`](porta-di-qualita.md) `145 → 156` — la passata che l'ha fatto crescere di più, e sono due sezioni: la decisione 7 e la **voce aperta consolidata** · [`riferimenti.md`](riferimenti.md) `178 → 183` · questo file `289 → 295` |
+> | **calato** | ⚡ [`AVVIO-CHAT.md`](AVVIO-CHAT.md) `27 → 25` |
+> | **invariati, ricontati** | [`HANDOFF.md`](HANDOFF.md) 215 · [`audit-2026-08-11.md`](audit-2026-08-11.md) 29 · [`README.md`](README.md) 17 · [`roadmap.md`](roadmap.md) 28 · `CLAUDE.md` 13 · spec **277** |
+>
+> ✅ **IL MESSAGGIO È CALATO PER LA PRIMA VOLTA DA QUANDO SI CONTA: 16659 → 14947 byte, `−1712 B`,
+> cioè −10,3 %.** La serie era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette
+> crescite e un solo fermo. ⛔ **Ha funzionato la prescrizione della 29ª — applicata alla settima
+> occasione, che è la prima in cui era DOVUTA e non solo prevista:** il blocco delle decisioni
+> chiuse, arrivato a **quattro** voci e destinato alla quinta, è stato **tolto** e sostituito da
+> una riga sola — *«il rimedio si prezza leggendo il codice, non il rapporto, e può risultare più
+> piccolo, più grande o di specie diversa»* — più il rimando alla §6.
+> 📌 **La lezione è sopravvissuta, il verbale no**, ed è la regola della 25ª: *si toglie un
+> rimando duplicato o una voce chiusa, mai una lezione*. Le quattro chiusure per esteso stanno
+> nella §6, che chi legge apre comunque.
+> ⚠️ **E il messaggio ha cambiato SPECIE oltre che dimensione:** la skill che serve subito non è
+> più `repo-audit` ma `brainstorming`, perché il prossimo passo non è più esecuzione ma lavoro
+> creativo. Era la ragione per cui quel blocco esisteva; chiuso l'audit, la ragione è finita.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* resta **715 KB**. I **due file obbligatori** passano da
+> 303 a **308 KB**, e coi tre da 332 a **337**.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

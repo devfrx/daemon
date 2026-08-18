@@ -851,6 +851,35 @@ non è un inganno del banco ma un **fatto del repository**: i fine-riga sono **m
 una convenzione da seguire, c'è **un file da non cambiare** — uno strumento che ne riscrive uno
 intero in LF produce un `git diff` di seicento righe che nessuno ha toccato.
 
+### ⛔ VOCE APERTA CONSOLIDATA — le righe di catalogo delle sonde dell'audit (2026-08-18)
+
+⛔ **L'esecuzione dell'audit ha prodotto DIECI sonde permanenti nuove, e NESSUNA ha una riga nel
+catalogo §7.4.** La §7.4 è **spec**, e il **vincolo globale 7** la mette fuori dalla portata di
+una passata di rimedio: si approva sezione per sezione. È lo stesso trattamento scelto per
+**PL-1** il 2026-08-18 — *registrata come voce aperta e non come nota*, perché una nota si legge e
+si dimentica (gotcha **#36**).
+
+⚠️ **Raccolte qui in un posto solo invece che in quattro riquadri**, perché quattro voci aperte
+sullo stesso oggetto sono il modo in cui una di esse smette di esserlo senza che nessuno l'abbia
+chiusa — la ragione per cui la §6 del compendio ha una tabella e non quattro paragrafi.
+
+| Finding | Sonde | Cosa difenderebbe la riga |
+|---|---|---|
+| **PL-1** | `the_journal_file_is_not_world_readable` | **ADR-0023** — «protetto quanto il tuo account di sistema», su Unix |
+| **K-1** | `a_request_written_before_the_run_belongs_to_nobody` · `a_request_written_by_a_destructor_belongs_to_nobody` | **§2.4.1** — la cella è l'unico canale, e le sue scritture appartengono a un poll |
+| **B-1** | `the_delivered_turn_limit_is_honoured_by_its_value` | **§2.8 · ADR-0034** — nessuna decisione legge un parametro che non le è stato consegnato |
+| **P-1** | `promote_reason_is_not_runtime_text` (`compile_fail`) | **§6.5 · ADR-0014 · I6** — è la seconda metà della riga di §7.4.1 blocco B che già esiste |
+| **B-2** | i cinque bugiardi del `reactor` | **§7.4.6** — la conformità della porta più importante del progetto |
+| **B-3** | `a_restore_serves_the_checkpoint_it_was_asked_for_and_not_the_first_one` | **§2.3** — un'implementazione ritiene e **confronta** l'identificatore |
+| **S-1/S-2** | le tre di `CrashingJournal` | **§7.5** — il conteggio contro cui è estratto il punto di caduta |
+| **S-5** | l'uguaglianza sui pioli | **§7.5.3** — la profondità della campagna di livello 2 |
+
+⛔ **E una NONA voce che non è una riga di catalogo ma una modifica alla conformità:**
+l'asserzione **4b** del `reactor` è **implicata** dalla 4a e non può scattare da sola. Toglierla o
+ribasarla è una decisione sulla porta condivisa. Il verbale sta nella sezione B-2 qui sotto.
+
+---
+
 ### K-1 e B-1 — la cella che accettava scritture da fuori un poll, e il limite mai letto (2026-08-18)
 
 ⛔ **La terza decisione della §8 dell'audit, e il rapporto la prezza sbagliata in TRE modi** — due
@@ -1025,6 +1054,125 @@ riga *«promuovere testo a istruzione ← la porta journal»* (V19), e questa re
 metà della stessa difesa**: la porta impedisce la conversione muta, il `'static` impedisce che il
 contenuto esca dalla giustificazione. Aggiungerla è **spec**, quindi del proprietario — vincolo
 globale 7. **Registrata come voce aperta, non come nota** (gotcha #36).
+
+### Decisione 7 — le cinque sonde mancanti, e l'audit si chiude (2026-08-18)
+
+⛔ **L'ultima decisione della §8, e le cinque voci sono QUATTRO soggetti diversi.** Ciascuna è la
+stessa forma di difetto — *un'asserzione vale solo lo stato in cui è fatta* — su una porta diversa.
+
+#### B-2 — quattro gruppi su cinque della conformità `reactor` non erano mai visti scattare
+
+⛔ **La suite più importante del progetto**, quella su cui poggia la validità dell'intera
+simulazione deterministica, aveva **due bugiardi per UN gruppo**. Gli altri quattro erano tenuti da
+nulla: l'audit misurò che cancellare i blocchi **1, 3, 4 e 5** lasciava l'intero workspace verde.
+
+✅ **Cinque bugiardi nuovi, e sono cinque perché le ASSERZIONI sono cinque — non i gruppi.** La
+suite muore alla prima che scatta, quindi un bugiardo rotto in due punti prova solo la prima:
+gotcha **#65**.
+
+| Bugiardo | Asserzione | Il difetto |
+|---|---|---|
+| `BackwardsClockLiar` | **1** | `now()` cammina all'indietro da solo |
+| `ShortWaitLiar` | **3a** | il clock arriva alla scadenza, la **risposta** è corta di un ms |
+| `LaggingClockLiar` | **3b** | risponde la scadenza esatta e il **proprio clock** si ferma a metà |
+| `SecondWaitShortLiar` | **4a** | corretto sulla **prima** attesa, corto sulla **seconda** — conta le chiamate, o non arriverebbe al gruppo 4 |
+| `PanickingWallClockLiar` | **5** | `wall_time()` non risponde |
+
+⛔ **Il gruppo 5 non ha asserzioni**, e per questo era l'unico blocco la cui **cancellazione**
+nessun oracolo poteva notare: non c'è niente che possa andare rosso. Un reactor il cui `wall_time`
+esplode trasforma *«il blocco esiste»* in *«il blocco GIRA»*, che è l'unica proprietà che quel
+blocco può avere.
+
+✅ **Seconda direzione, misurata in un colpo solo.** Neutralizzate **tutte e cinque** le asserzioni
+insieme, vanno rosse **esattamente le cinque sonde nuove**, ciascuna col proprio messaggio —
+`THE SUITE IS VACUOUS ON GROUP 1 / ASSERTION 3a / 3b / 4a`, `GROUP 5 IS DEAD CODE` — mentre le
+**tre preesistenti restano verdi**. Il controllo è quelle tre: le asserzioni nuove non scattano
+dove non devono (gotcha #24).
+
+⛔ **E SCRIVENDO I BUGIARDI È USCITO UN DIFETTO CHE L'AUDIT NON AVEVA VISTO: l'asserzione 4b è
+IMPLICATA dalla 4a.** `second_deadline` è calcolata da `first_reached`, quindi
+`second_reached >= second_deadline = first_reached + MARGIN > first_reached`: nessun reactor può
+far scattare la 4b senza far scattare prima la 4a, e **un bugiardo per la 4b non è scrivibile**.
+⚠️ **Non è vacua, è muta:** non può essere falsa dove l'altra è vera, quindi non mente mai — non
+parla mai. **Voce aperta:** toglierla, o ribasare `second_deadline` su `start` così che le due
+diventino indipendenti, è una modifica alla **conformità di una porta condivisa**. Registrata,
+non presa.
+
+#### B-3 — il finto filesystem poteva smettere di confrontare i `CheckpointId`
+
+⛔ I test tenevano **un solo** checkpoint in archivio, e in quello stato *«trova quello il cui id
+corrisponde»* e *«prendi il primo che c'è»* sono **la stessa frase**. Misurato dall'audit:
+`restore` riscritta a «prendi il primo» lasciava **13 test su 13** verdi.
+
+📌 **Ciò che la rende non vacua è un PASSANTE** — un secondo checkpoint che non è quello sotto
+esame — ed è **il rimedio identico** che la **prima** decisione di questo audit richiese sulla
+conformità del giornale (T-1/T-2, 2026-08-17). Stesso difetto, porta diversa.
+⛔ **E due argomenti nel sorgente vi poggiavano:** `CheckpointId` e `ClientId` non hanno getter, e
+la ragione scritta accanto è che *«un'implementazione lo ritiene e lo CONFRONTA, esattamente come
+fa `InMemoryFilesystem`»* — un argomento su un confronto che nulla osservava.
+
+✅ `a_restore_serves_the_checkpoint_it_was_asked_for_and_not_the_first_one`, con **due
+direzioni**: il checkpoint **più recente** (che «prendi il primo» sbaglia) e il **più vecchio**
+(che «prendi l'ultimo» sbaglierebbe). Una sola lascia metà della mappa non osservata.
+✅ **Sotto la mutazione «prendi il primo» è l'UNICA rossa**, e le altre tredici restano verdi.
+
+#### S-1 e S-2 — `note` non era mai esercitata con successo
+
+⛔ La sonda che teneva *«il contatore si muove solo su un `Ok`»* faceva fallire una scrittura
+interna **una volta sola, attraverso `outcome`**. Le metà di `intent` e `note` erano tenute da
+nulla, e il **percorso di successo di `note`** — delegare, rispondere `Ok`, muovere il contatore —
+non era mai stato preso: **ogni** `note` del file rispondeva `NotDurable`.
+📌 **E la sonda lo aveva scritto di sé stessa:** *«esclusività su un insieme che cresce è
+l'affermazione che invecchia in silenzio»*. Ha invecchiato in **sette giorni**.
+
+✅ Tre sonde, una per via (gotcha #65): `the_success_path_of_note_is_exercised_and_counted`,
+`a_refused_note_does_not_consume_a_crash_position`,
+`a_refused_intent_does_not_consume_a_crash_position`.
+
+| Mutazione | Chi la uccide |
+|---|---|
+| `note` incrementa **sempre**, non solo su `Ok` | 🔴 `a_refused_note_…` |
+| `intent` incrementa **sempre** | 🔴 `a_refused_intent_…` |
+| `note` risponde `Ok` **senza delegare** | 🔴 `a_refused_note_…` **e** `the_success_path_…` |
+
+⛔ **E LA TERZA MUTAZIONE HA TROVATO UN BUCO NELLA MIA STESSA SONDA, corretto invece che
+spedito.** La prima stesura di `the_success_path_…` controllava **il contatore** e non che la nota
+**raggiungesse l'archivio**: una `note` che risponde `Ok` senza delegare muove il contatore
+ugualmente, quindi la mutazione le passava davanti. Chiusa leggendo `replay()` — tre record, e
+l'ultimo è la nota. 📌 È la domanda del **#66** applicata a sé stessi: *in quale altro stato del
+mondo questa asserzione resterebbe verde?*
+
+#### S-5 — i gradini della scala erano giustificati in un commento e contati da nessuno
+
+⛔ `partial > 0` è soddisfatta da **UN** gradino: conta i **punti** che atterrano a metà, non gli
+**archivi distinti** su cui atterrano. Misurato dall'audit: **un mondo a tre pioli su trentuno
+supera tutte e cinque le asserzioni**.
+⛔ **E ciò che difende è l'intera ragione per cui questa campagna è PROFONDA invece che LARGA.**
+Il doc di `DEEP_RECORDS` argomenta che allargare non compra nulla — *800 punti, sempre 35 cadute* —
+mentre più **record** comprano stati, e la sua evidenza è una tabella di pioli: **4/4, 11/11,
+21/21, 31/31, 41/41**. Era la tesi portante del disegno, **ed era prosa**.
+
+✅ **Ora è un controllo:** i pioli sono l'insieme delle **lunghezze di prefisso distinte**
+recuperate nella spazzata, e l'asserzione è un'**uguaglianza** — `records + 1`, cioè l'archivio
+vuoto più un piolo per record — perché è esattamente ciò che l'argomento afferma.
+
+| Campagna | Misurato il 2026-08-18 |
+|---|---|
+| corta, 3 record | `points=35 fired=35 truncated=22 partial=17` **`rungs=4/4`** |
+| profonda, 30 record | `points=197 fired=197 truncated=184 partial=179` **`rungs=31/31`**, 5,2 s |
+
+✅ **La tabella del disegno regge a entrambe le profondità**, rimisurata invece che citata.
+✅ **Seconda direzione:** modellato il mondo a pochi pioli dell'audit, l'asserzione scatta —
+*«the sweep reached 3 distinct recoverable archives out of the 4 … Rungs seen: {0, 1, 2}»* —
+mentre le **quattro precedenti restano verdi**, che è esattamente ciò che l'audit aveva misurato.
+
+📌 **Baseline dopo la decisione 7:** `GATE GREEN`, **32 target, 194 passati, 0 falliti, 2
+ignorati** — erano **180**. I quattordici in più sono le nove sonde nuove, di cui le **cinque del
+`reactor` contano DOPPIO** perché `reactor_contract.rs` è `include!`d anche da `platform`.
+⚠️ **E l'intestazione di quel file dichiarava «i tre test qui sotto girano una seconda volta»**:
+sono **otto** dal 2026-08-18, e la frase che seguiva — *«la finta e i due bugiardi dormono per
+niente»* — era sbagliata in **entrambe** le metà già prima, perché un bugiardo è un clock finto e
+non dorme mai. Ricontata sul sorgente, gotcha **#31**.
 
 #### `CrashingJournal` — cinque mutazioni, cinque uccise, e una coppia che prova di essere due difetti
 

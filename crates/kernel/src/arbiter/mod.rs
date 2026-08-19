@@ -17,6 +17,7 @@
 //! would give it two owners, itself and the executor, and the borrow would not pass.
 
 use alloc::collections::BTreeMap;
+use alloc::vec::Vec;
 
 use crate::parameters::Parameters;
 use crate::time::{Millis, Monotonic};
@@ -39,9 +40,19 @@ pub use resource::{ComputeClass, Mib, Preemption, ResourceProfile, WorkDescripto
 /// and nothing would go red. A guard is worth exactly what its CONSTRUCTOR is worth
 /// (gotcha #67).
 ///
-/// ⛔ There is deliberately NO public constructor, and since Task 5 there IS an issuer:
-/// `Arbiter::admit`, the only function in this crate that builds one. That is the whole of
-/// §5.6 -- whoever writes "start the worker" without going through it does not compile.
+/// ⛔ There is deliberately NO public constructor, and since Task 5 there IS an issuer.
+///
+/// ⚠️ RECALL OF 2026-08-19, MILESTONE 5 TASK 6 -- "THE ONLY FUNCTION IN THIS CRATE THAT
+/// BUILDS ONE" WAS TRUE FOR ONE TASK, and it is REWRITTEN rather than qualified: an
+/// exclusivity is read as a GUARANTEE, and a stale guarantee is worse than a stale count
+/// (gotcha #31 on an adjective, the species of `E38`). It said `Arbiter::admit` was that
+/// function; task 6 gave the queue its own door and `Arbiter::promote` hands out grants too.
+///
+/// ⛔ WHAT IS STILL TRUE, AND IT IS THE POINT OF §5.6: a grant is CONSTRUCTED in exactly ONE
+/// place, the private `Arbiter::issue`, and both public doors go through it. A second
+/// construction site would be a second way to obtain a grant, which is the thing §5.6 exists
+/// to remove. From outside the crate the two ways to come by one are `admit` and `promote`,
+/// and whoever writes "start the worker" without passing an admission does not compile.
 ///
 /// ⚠️ NO `Debug`, NO `Clone`, NO `Copy`, and each absence is load-bearing rather than
 /// minimal. `Clone` would let one grant start two workers. `Debug` -- nothing formats a
@@ -126,6 +137,19 @@ pub enum Admission {
     Queued(TicketId),
     /// It does not fit and it never will under this budget.
     Refused { asked: Mib, ceiling: Mib },
+}
+
+/// A ticket that came out of the queue, with the grant it waited for.
+///
+/// ⚠️ IT IS A STRUCT AND NOT A TUPLE, and the reason is the same one design/02 gives for
+/// `Refused`: whoever reads `promotion.ticket` should not have to remember which of two
+/// unnamed slots held it. A tuple of two things one of which has no `Debug` is worse still.
+///
+/// ⚠️ NO `Debug` AND NO `PartialEq`, for the same reason `Admission` has neither: it carries
+/// a `Grant`. The bench compares `promotion.ticket`, which is a `TicketId` and derives both.
+pub struct Promotion {
+    pub ticket: TicketId,
+    pub grant: Grant,
 }
 
 /// What a held grant is doing. ⛔ IT NESTS RATHER THAN FLATTENS, and the nesting IS the
@@ -214,33 +238,73 @@ pub enum ReleaseError {
 ///
 /// ⛔ TWO FIELDS, AND THE OTHER TWO ARRIVE WITH THEIR OWN READERS. The milestone 5 design
 /// gives `Held` a `lane: ComputeClass` and an `activity: Activity` as well; neither has a
-/// reader in this task, so both would compile as `dead_code` warnings, and this repository
-/// does not switch a warning off with `#[allow]` (gotcha #13). `lane` comes with the queues
-/// at task 6 -- a ticket has to know which lane it is waiting in -- and `activity` with the
-/// revocation at task 7, which is the first thing that reads what a grant is DOING. A field
-/// born with its consumer is a field somebody uses.
+/// reader yet, so both would compile as `dead_code` warnings, and this repository does not
+/// switch a warning off with `#[allow]` (gotcha #13). A field born with its consumer is a
+/// field somebody uses.
+///
+/// ⚠️ RECALL OF 2026-08-19, MILESTONE 5 TASK 6 -- THE DATE THIS COMMENT GAVE FOR `lane` WAS
+/// WRONG, and the sentence is REPLACED rather than corrected underneath, because a false
+/// line left standing below a true one is the finding A-2 of this project's own audit done
+/// again. It said `lane` "comes with the queues at task 6 -- a ticket has to know which lane
+/// it is waiting in". ⛔ TASK 6 BUILT THE QUEUES AND `Held` STILL HAS TWO FIELDS, because
+/// the premise was wrong and not the date: a WAITING request is a `Waiting`, which carries
+/// the whole `ResourceProfile` and therefore its lane, and `promote` walks `queues` without
+/// ever looking at `held`. `Held` is what a GRANT is, not what a TICKET is.
+///
+/// ⛔ THE FIRST READER OF `lane` IS `ask_back`, AT TASK 7, which is the same task `activity`
+/// waits for: a revocation has to choose a victim, and it chooses by lane. Adding the field
+/// here would light exactly the `dead_code` warning the paragraph above refuses.
 struct Held {
     reserved: Mib,
     /// The validity window, on the MONOTONIC axis (§5.3 point 2).
     expires_at: Monotonic,
 }
 
+/// A request waiting in its lane.
+///
+/// ⚠️ IT KEEPS THE WHOLE `ResourceProfile` AND NOT JUST THE RESERVATION, and that is what
+/// makes a promotion INDISTINGUISHABLE from an admission: `issue` receives the same profile
+/// the requester handed to `admit`, so a grant that came out of the queue is built from the
+/// same material as one that never waited. Keeping only `reserved_vram` would make `promote`
+/// a second, poorer way of describing a request.
+///
+/// ⚠️ AND IT KEEPS `valid_for` AND NOT AN `expires_at`. A window that started counting when
+/// the request was QUEUED would charge the waiting to the work: the ticket would be handed a
+/// grant already part-spent, and one that waited longer than its own window would expire
+/// before it ever ran. The window opens when the grant is ISSUED.
+struct Waiting {
+    ticket: TicketId,
+    profile: ResourceProfile,
+    valid_for: Millis,
+}
+
 /// The GPU arbiter: admission on VRAM, lanes on compute (ADR-0005).
 ///
-/// ⛔ `BTreeMap` AND NOT `HashMap`, AND IT IS NOT A PREFERENCE: `HashMap` lives in `std`,
-/// which this crate does not name, so gotcha #12 -- iteration order seeded PER PROCESS,
-/// which V29 forbids -- is closed here by the compiler and for free (§5.1). It also closes
-/// M-6.
+/// ⛔ `BTreeMap` AND `Vec`, BOTH FROM `alloc`, AND `BTreeMap` IS NOT A PREFERENCE:
+/// `HashMap` lives in `std`, which this crate does not name, so gotcha #12 -- iteration
+/// order seeded PER PROCESS, which V29 forbids -- is closed here by the compiler and for
+/// free (§5.1). It also closes M-6.
 ///
-/// ⚠️ RECALL OF 2026-08-19: this line said "`BTreeMap` AND `Vec`" and THERE IS NO `Vec` in
-/// the struct below -- the sentence was copied from the milestone 5 design, which was
-/// thinking of the lane queues. Those arrive at task 6; the word arrives with them. A
-/// comment that names a field the type does not have is the species of `E20`, from the
-/// other side.
+/// ⛔ AND FOR `queues` THE ORDER IS NOT MERELY DETERMINISTIC, IT IS THE POLICY. `promote`
+/// walks the map with the map's OWN iteration, which is `ComputeClass`'s hand-written
+/// priority order, so "best lane first" costs nothing and the order stays stated in ONE
+/// place -- the `priority()` key. A list of the three lanes written out inside `promote`
+/// would be that order stated a SECOND time, which is the trap `resource.rs` refused a
+/// derived `Ord` in order to remove.
+///
+/// ⚠️ RECALL OF 2026-08-19, OPENED AND CLOSED THE SAME DAY. At task 5 this line said
+/// "`BTreeMap` AND `Vec`" while the struct had no `Vec` -- the sentence had been copied from
+/// the milestone 5 design, which was thinking of the lane queues -- so it was cut, with a
+/// note saying the word would come back with the queues. It has: `queues` holds a
+/// `Vec<Waiting>` per lane. The note is rewritten instead of left standing as a promise
+/// already kept.
 pub struct Arbiter {
     parameters: Parameters,
     next_grant: u64,
+    next_ticket: u64,
     held: BTreeMap<GrantId, Held>,
+    /// One queue per lane, in arrival order within the lane (§5.3.1).
+    queues: BTreeMap<ComputeClass, Vec<Waiting>>,
 }
 
 impl Arbiter {
@@ -253,7 +317,9 @@ impl Arbiter {
         Arbiter {
             parameters,
             next_grant: 0,
+            next_ticket: 0,
             held: BTreeMap::new(),
+            queues: BTreeMap::new(),
         }
     }
 
@@ -277,6 +343,13 @@ impl Arbiter {
     /// ⛔ AND IT DOES NOT RECEIVE A `WorkDescriptor`. `cold_start` is not reachable from
     /// here, and that is `Q8 · §5.2.1` held by the shape of this signature rather than by a
     /// rule in a document.
+    ///
+    /// ⛔ THE TWO GUARDS BELOW ANSWER DIFFERENTLY SINCE TASK 6, and until task 6 they did
+    /// not. "Bigger than the whole machine" is `Refused` -- no release will ever make room,
+    /// so a ticket there would be a leak that looks like patience -- while "bigger than what
+    /// is free right now" is `Queued`. Before the queues both returned the same `Refused`
+    /// with the same two numbers, which is why deleting the first one killed nothing
+    /// (measured at task 5, errata `E28`).
     pub fn admit(
         &mut self,
         profile: &ResourceProfile,
@@ -295,19 +368,80 @@ impl Arbiter {
         }
 
         if self.allocated().saturating_add(asked) > ceiling {
-            return Admission::Refused { asked, ceiling };
+            // ⛔ IT FITS THE MACHINE AND NOT THE MOMENT, so it WAITS. Refusing here would
+            // make the answer depend on the instant the request happened to arrive, and
+            // §5.3.1 wants the request kept IN ITS OWN LANE instead. The guard above is what
+            // keeps "for ever" out of this branch: a request bigger than the whole machine
+            // never reaches it.
+            let ticket = TicketId(self.next_ticket);
+            self.next_ticket += 1;
+            self.queues
+                .entry(profile.compute_class)
+                .or_default()
+                .push(Waiting {
+                    ticket,
+                    profile: *profile,
+                    valid_for,
+                });
+            return Admission::Queued(ticket);
         }
 
-        let id = GrantId(self.next_grant);
-        self.next_grant += 1;
-        self.held.insert(
-            id,
-            Held {
-                reserved: asked,
-                expires_at: now.saturating_add(valid_for),
-            },
-        );
-        Admission::Granted(Grant { id })
+        Admission::Granted(self.issue(profile, valid_for, now))
+    }
+
+    /// How many requests are waiting, across all lanes.
+    pub fn queued(&self) -> usize {
+        self.queues.values().map(Vec::len).sum()
+    }
+
+    /// Serves the queue with whatever room there is now, BEST LANE FIRST.
+    ///
+    /// ⛔ THE ORDER IS BY LANE AND NOT BY ARRIVAL, and it is a measurement rather than a
+    /// taste: §5.3.1 says M-7's numbers stay valid AS AN UPPER BOUND precisely because the
+    /// specified version keeps the order PER LANE. A single queue re-sorted on every
+    /// release would invalidate that measurement, and it would have to be redone.
+    ///
+    /// ⛔ IT STOPS AT THE FIRST REQUEST THAT DOES NOT FIT, WITHIN A LANE, and does not skip
+    /// ahead to a smaller one. Skipping is a scheduling policy nobody decided, and it would
+    /// let a large request in a busy lane wait for ever behind small ones.
+    ///
+    /// ⚠️ `BTreeMap` ITERATES IN KEY ORDER, and `ComputeClass` orders by its explicit
+    /// priority key -- so "best lane first" costs nothing here. That is the coupling the
+    /// probe `the_lane_order_is_pinned_by_name_and_realtime_comes_first` protects.
+    pub fn promote(&mut self, now: Monotonic) -> Vec<Promotion> {
+        self.collect_expired(now);
+
+        let mut promoted = Vec::new();
+        let ceiling = self.parameters.total_vram();
+
+        // ⚠️ THE QUEUES ARE MOVED OUT FOR THE PASS AND PUT BACK, and the reason is the
+        // borrow checker rather than cleverness: `issue` takes `&mut self`, so a borrow
+        // reaching into `self.queues` cannot be alive across it. The swap costs one pointer
+        // and keeps the map's OWN iteration -- the priority order of `ComputeClass` -- which
+        // writing the three lanes out here would have restated a second time.
+        //
+        // ⛔ THE HAZARD, WRITTEN DOWN INSTEAD OF LEFT TO BE DISCOVERED: while this loop runs,
+        // `self.queues` is EMPTY. It is sound only because the two things called inside --
+        // `allocated` and `issue` -- read and write `held` and `next_grant` and nothing else.
+        // Anything added to either that touches `queues` would see an empty map.
+        let mut queues = core::mem::take(&mut self.queues);
+        for queue in queues.values_mut() {
+            while let Some(waiting) = queue.first() {
+                let asked = waiting.profile.reserved_vram;
+                if self.allocated().saturating_add(asked) > ceiling {
+                    break;
+                }
+                let waiting = queue.remove(0);
+                let grant = self.issue(&waiting.profile, waiting.valid_for, now);
+                promoted.push(Promotion {
+                    ticket: waiting.ticket,
+                    grant,
+                });
+            }
+        }
+        self.queues = queues;
+
+        promoted
     }
 
     /// Hands a grant back, and answers with the reservation that returned to the budget.
@@ -321,6 +455,32 @@ impl Arbiter {
             Some(held) => Ok(held.reserved),
             None => Err(ReleaseError::UnknownGrant),
         }
+    }
+
+    /// The ONE place a grant is built, shared by `admit` and `promote`.
+    ///
+    /// ⛔ PRIVATE, AND THERE IS EXACTLY ONE OF IT. A second place that constructed a `Grant`
+    /// would be a second way to obtain one, which is the thing §5.6 exists to remove -- and
+    /// it would be a second place where the books are written, so the two could drift and
+    /// nothing would say so. `admit` and `promote` differ in WHO they say yes to; what
+    /// saying yes MEANS is here.
+    ///
+    /// ⛔ IT DOES NOT CHECK THE CEILING, and that is deliberate rather than forgotten: both
+    /// callers have already decided that this request fits, and a guard repeated here would
+    /// be a second statement of the admission rule. The reservation it books is the
+    /// profile's own, so the number in the books and the number the requester declared
+    /// cannot disagree.
+    fn issue(&mut self, profile: &ResourceProfile, valid_for: Millis, now: Monotonic) -> Grant {
+        let id = GrantId(self.next_grant);
+        self.next_grant += 1;
+        self.held.insert(
+            id,
+            Held {
+                reserved: profile.reserved_vram,
+                expires_at: now.saturating_add(valid_for),
+            },
+        );
+        Grant { id }
     }
 
     /// ⛔ PRIVATE, AND DELIBERATELY. A public `collect` would be a SECOND way of advancing

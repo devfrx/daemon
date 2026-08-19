@@ -431,8 +431,29 @@ fn a_request_that_fits_the_machine_but_not_the_moment_is_queued() {
 }
 
 /// ⛔ THE ASSERTION THAT KEEPS M-7's NUMBERS VALID, and it is the whole reason the queue is
-/// per lane. `Batch` arrived FIRST and `Interactive` is served first anyway; a global FIFO
-/// would promote them in arrival order and this probe would go red.
+/// per lane. The three waiters arrive in the WORST order there is -- `Batch` first,
+/// `Interactive` second, `Realtime` last -- and they come out exactly REVERSED. A global FIFO
+/// would serve them as they arrived and this probe would go red.
+///
+/// ⚠️ RECALL OF 2026-08-19, MILESTONE 5 TASK 6, IN REVIEW -- THIS PROBE PITTED TWO LANES AND
+/// NOT THREE, and it is REWRITTEN rather than joined by a second one because what it says is
+/// the same thing, said completely. The rewrite is a MEASUREMENT and not a tidy-up: with
+/// `Interactive` against `Batch` only, NOTHING IN THE WORKSPACE EVER PROMOTED A WAITER IN THE
+/// `Realtime` LANE -- ✅ measured, `if *lane_key == ComputeClass::Realtime { continue; }`
+/// inside the lane loop of `promote` left ALL 34 TARGETS GREEN. "Best lane first" was
+/// therefore proved on the SECOND-best lane, and `Realtime` is the very lane §5.3.1, M-7 and
+/// ADR-0033's permanent quotas are about.
+///
+/// ⚠️ THE SIZES ARE WHAT MAKE THIS A THREE-WAY ORDER INSTEAD OF A ONE-WAY ONE. Exactly TWO of
+/// the three fit the room that comes back, so one probe states three things: `Realtime`
+/// before `Interactive`, `Interactive` before `Batch`, and `Batch` LEFT WAITING while the
+/// room it arrived first for goes to the two lanes above it. Three waiters of `4_096` would
+/// have served one and said nothing about the other two.
+///
+/// ⚠️ AND THE `assert_ne!` IS NOT FREE, which is worth saying because the shape looks it (the
+/// species this milestone paid for as `E17`). It is what catches a `next_ticket` that never
+/// advances: with the increment deleted every ticket is `TicketId(0)`, the two `assert_eq!`
+/// above still pass, and that line does not.
 #[test]
 fn the_queue_promotes_by_lane_and_not_in_arrival_order() {
     let mut arbiter = arbiter(Mib::new(4_096));
@@ -445,32 +466,48 @@ fn the_queue_promotes_by_lane_and_not_in_arrival_order() {
     };
 
     let Admission::Queued(batch) = arbiter.admit(
-        &profile("batch-first", 4_096, ComputeClass::Batch),
+        &profile("batch-first", 2_048, ComputeClass::Batch),
         LONG,
         Monotonic::ORIGIN,
     ) else {
         panic!("queued");
     };
     let Admission::Queued(interactive) = arbiter.admit(
-        &profile("interactive-second", 4_096, ComputeClass::Interactive),
+        &profile("interactive-second", 2_048, ComputeClass::Interactive),
         LONG,
         Monotonic::ORIGIN,
     ) else {
         panic!("queued");
     };
-    assert_eq!(arbiter.queued(), 2);
+    let Admission::Queued(realtime) = arbiter.admit(
+        &profile("realtime-last", 2_048, ComputeClass::Realtime),
+        LONG,
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("queued");
+    };
+    assert_eq!(arbiter.queued(), 3);
 
     let _ = arbiter
         .release(resident, Monotonic::ORIGIN)
         .expect("this arbiter issued it");
     let promoted = arbiter.promote(Monotonic::ORIGIN);
 
-    assert_eq!(promoted.len(), 1, "only one of the two fits");
+    assert_eq!(promoted.len(), 2, "2048 + 2048 is exactly the room freed");
     assert_eq!(
-        promoted[0].ticket, interactive,
-        "the lane decides, not the arrival order"
+        promoted[0].ticket, realtime,
+        "the best lane first, and it arrived LAST"
+    );
+    assert_eq!(
+        promoted[1].ticket, interactive,
+        "then the next lane down, and it arrived second"
     );
     assert_ne!(promoted[0].ticket, batch);
+    assert_eq!(
+        arbiter.queued(),
+        1,
+        "the worst lane arrived FIRST and is the one left waiting"
+    );
 }
 
 /// Within ONE lane the order is arrival order, and this is what says the lane rule above is
@@ -574,10 +611,19 @@ fn a_promoted_grant_is_a_grant_like_any_other() {
 
 /// ⛔ THE RULE THE `promote` DOC STATES AND THAT NOTHING ELSE HOLDS: it STOPS at the first
 /// request that does not fit WITHIN A LANE, and does not skip ahead to a smaller one that
-/// would. A `promote` that skipped ahead passes every other probe in this file -- a rule
-/// written in a comment and held by nothing is an intention (gotcha #42), and §7.1.4 wants
-/// two directions per rule. This is the direction that gets skipped: the small request IS
-/// servable and is NOT served, because a bigger one is in front of it in its own lane.
+/// would. A rule written in a comment and held by nothing is an intention (gotcha #42), and
+/// §7.1.4 wants two directions per rule. This is the direction that gets skipped: the small
+/// request IS servable and is NOT served, because a bigger one is in front of it in its own
+/// lane.
+///
+/// ⚠️ RECALL OF 2026-08-19, MILESTONE 5 TASK 6, IN REVIEW -- "A `promote` THAT SKIPPED AHEAD
+/// PASSES EVERY OTHER PROBE IN THIS FILE" WAS WRITTEN AS A FACT AND HAD NEVER BEEN MEASURED,
+/// which is exactly the shape this repository calls an intention when it finds it in
+/// production code. The campaign substituted the mutation that DELETES the fit check, which
+/// kills four probes and therefore isolates nothing. ✅ NOW MEASURED, with the skip-ahead
+/// mutation itself -- the `break` on the first non-fitting waiter replaced by a scan for the
+/// first entry that fits: this probe goes red and it is SOLE, 18 passed 1 failed. The
+/// sentence is kept because it turned out to be true, not because it was written down.
 ///
 /// ⚠️ THE ROOM FREED IS EXACTLY THE SMALL ONE'S, and that is the whole construction: `1_024`
 /// comes back, the head of the lane asks `4_096` and does not fit, the tail asks `1_024` and

@@ -344,6 +344,20 @@ impl Arbiter {
     /// here, and that is `Q8 · §5.2.1` held by the shape of this signature rather than by a
     /// rule in a document.
     ///
+    /// ⛔ IT NEVER CONSULTS THE QUEUE, AND A LATECOMER THEREFORE JUMPS IT. This function reads
+    /// `held` and `parameters` and nothing else: if the room is there when it is called, it
+    /// says yes, whatever is already waiting. ✅ MEASURED on a throwaway crate outside the
+    /// repository, not deduced: on a full 4_096 machine with a `Realtime` ticket queued,
+    /// releasing the resident and then admitting a NEW `Batch` request of 4_096 answers
+    /// `Granted` at once, and the `promote` that follows comes back EMPTY with the `Realtime`
+    /// ticket still waiting. ⚠️ SO THE PER-LANE ORDER IS A PROPERTY OF `promote` AND NOT OF
+    /// THE ARBITER: it decides who gets served out of the queue, not who gets in front of it.
+    /// ⚖️ WHOSE PROBLEM IT IS, and it is not this function's: whether an admission has to yield
+    /// to a waiting ticket is an ORCHESTRATION decision -- who calls `promote`, and when --
+    /// which is task 10's, and closing it here would mean an `admit` that can refuse room that
+    /// exists. REGISTERED FOR THE OWNER in the plan's errata, where it sits beside the
+    /// permanent-quota voice it interacts with.
+    ///
     /// ⛔ THE TWO GUARDS BELOW ANSWER DIFFERENTLY SINCE TASK 6, and until task 6 they did
     /// not. "Bigger than the whole machine" is `Refused` -- no release will ever make room,
     /// so a ticket there would be a leak that looks like patience -- while "bigger than what
@@ -402,12 +416,29 @@ impl Arbiter {
     /// release would invalidate that measurement, and it would have to be redone.
     ///
     /// ⛔ IT STOPS AT THE FIRST REQUEST THAT DOES NOT FIT, WITHIN A LANE, and does not skip
-    /// ahead to a smaller one. Skipping is a scheduling policy nobody decided, and it would
-    /// let a large request in a busy lane wait for ever behind small ones.
+    /// ahead to a smaller one BEHIND IT IN ITS OWN LANE. Skipping there is a scheduling policy
+    /// nobody decided, and it would let a large request wait for ever behind the small ones OF
+    /// ITS OWN LANE.
+    ///
+    /// ⛔ ACROSS LANES THAT IS EXACTLY WHAT HAPPENS, and the sentence above is scoped rather
+    /// than left to be read as a guarantee it does not give. A lane that stops FALLS THROUGH
+    /// to the next one, so a small request in a WORSE lane is served while a big one in a
+    /// BETTER lane waits -- a priority inversion, and starvation for as long as the small ones
+    /// keep arriving. ✅ MEASURED on a throwaway crate outside the repository, not deduced: on
+    /// a 4_096 machine holding `bulk` 3_072 and `small` 1_024, with a `Realtime` waiter of
+    /// 4_096 queued BEFORE a `Batch` waiter of 1_024, releasing `small` promotes the `Batch`
+    /// one and leaves the `Realtime` one waiting. ⚖️ IT IS WORK-CONSERVING AND DEFENSIBLE --
+    /// the alternative holds the machine idle for a waiter that may never fit -- AND NOTHING
+    /// DECIDES IT: §5.3, §5.3.1 and design/02 say nothing about the order across lanes. So it
+    /// is REGISTERED FOR THE OWNER in the plan's errata instead of being chosen here.
     ///
     /// ⚠️ `BTreeMap` ITERATES IN KEY ORDER, and `ComputeClass` orders by its explicit
-    /// priority key -- so "best lane first" costs nothing here. That is the coupling the
-    /// probe `the_lane_order_is_pinned_by_name_and_realtime_comes_first` protects.
+    /// priority key -- so "best lane first" costs nothing here. TWO probes hold that coupling
+    /// and they hold DIFFERENT halves of it, which is why both are named instead of one:
+    /// `the_lane_order_is_pinned_by_name_and_realtime_comes_first` pins THE KEY -- its three
+    /// values and the three `<` relations -- and stays GREEN if this function stops using the
+    /// map's order altogether, while `the_queue_promotes_by_lane_and_not_in_arrival_order`
+    /// pins THIS FUNCTION'S DEPENDENCE on that key, which is what mutation 1b turns red.
     pub fn promote(&mut self, now: Monotonic) -> Vec<Promotion> {
         self.collect_expired(now);
 

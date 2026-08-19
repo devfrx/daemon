@@ -626,6 +626,12 @@ di **M-7** restano validi **come limite superiore** proprio perché la versione 
 tiene l'ordine **per corsia**. Una coda unica riordinata a ogni rilascio invaliderebbe quella
 misura, e allora andrebbe rifatta.
 
+⚠️ **E L'ORDINE PER CORSIA È UNA PROPRIETÀ DI `promote`, NON DELL'ARBITRO — circoscritto in
+revisione il 2026-08-19.** `Arbiter::admit` non guarda mai `queues`, quindi una richiesta che
+arriva **dopo** scavalca chi è in coda; e `promote` cade sulla corsia successiva quando la sua
+si ferma, quindi fra corsie serve la piccola peggiore prima della grande migliore. Entrambe
+**misurate**, entrambe **registrate e non prese**: le due voci aperte in fondo a questa sezione.
+
 ⛔ **`Queued` esisteva dal Task 4 e non lo emetteva nessuno.** Il Task 6 gli dà il produttore:
 in `admit` il ramo *«entra nella macchina ma non in questo momento»* **accoda** invece di
 rifiutare, e `promote` serve la coda con la stanza che c'è. La costruzione della concessione è
@@ -653,15 +659,15 @@ perché una regola scritta in un commento e tenuta da niente è un'intenzione (g
 | Sonda nuova | Cosa tiene |
 |---|---|
 | `a_request_that_fits_the_machine_but_not_the_moment_is_queued` | il produttore di `Queued`: una richiesta che **non entra adesso ma potrebbe entrare dopo** è accodata e non rifiutata, e dopo il rilascio `promote` la serve col **suo** biglietto |
-| `the_queue_promotes_by_lane_and_not_in_arrival_order` | ⛔ **l'asserzione che tiene validi i numeri di M-7**, ed è tutta la ragione per cui la coda è per corsia: `Batch` è arrivata **prima** e `Interactive` è servita comunque per prima. Una FIFO globale la manderebbe rossa |
+| `the_queue_promotes_by_lane_and_not_in_arrival_order` | ⛔ **l'asserzione che tiene validi i numeri di M-7 PER `promote`** — e non per l'arbitro intero: vedi la voce aperta sull'ammissione più sotto. È tutta la ragione per cui la coda è per corsia. ⚠️ **RISCRITTA IN REVISIONE IL 2026-08-19: erano DUE corsie, adesso sono TRE.** Le tre attese arrivano nell'ordine peggiore che ci sia — `Batch`, poi `Interactive`, poi `Realtime` — ed escono **rovesciate**: due entrano nella stanza liberata, `Batch` resta ad aspettare. Una FIFO globale la manderebbe rossa. ⛔ **Perché è stata riscritta, ed è una misura:** con due corsie sole **nessuna sonda dell'intero workspace promuoveva mai un'attesa in corsia `Realtime`** — mutazione **1c** qui sotto — cioè *«prima la corsia migliore»* era provato sulla **seconda** migliore, che è proprio la corsia di cui parlano §5.3.1, M-7 e le quote permanenti di ADR-0033 |
 | `inside_one_lane_the_order_is_the_order_of_arrival` | che la regola qui sopra **non** sia *«un ordine qualsiasi»*: dentro **una** corsia l'ordine è quello d'arrivo |
 | `promote_with_no_room_freed_promotes_nothing` | la contro-sonda: `promote` **non** è *«concedi tutto quello che c'è in coda»*. Senza stanza liberata non promuove niente e i libri non si muovono |
 | `a_promoted_grant_is_a_grant_like_any_other` | che ciò che esce dalla coda si **rilasci** e renda esattamente la prenotazione — senza, la coda potrebbe emettere concessioni che i libri non hanno mai imparato |
-| `promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one` | ⚠️ **NON dettata dal piano.** È la regola che il doc di `promote` **dichiara** — *«si ferma alla prima richiesta che non entra, dentro una corsia»* — e che nessuna delle cinque dettate esercitava: un `promote` che scavalcasse passava tutte e cinque. La stanza liberata è **esattamente** quella della piccola, che è **servibile** e **non viene servita** perché la grande le sta davanti |
+| `promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one` | ⚠️ **NON dettata dal piano.** È la regola che il doc di `promote` **dichiara** — *«si ferma alla prima richiesta che non entra, dentro una corsia»* — e che nessuna delle cinque dettate esercitava. La stanza liberata è **esattamente** quella della piccola, che è **servibile** e **non viene servita** perché la grande le sta davanti. ⚠️ **RICHIAMO DEL 2026-08-19, IN REVISIONE:** *«un `promote` che scavalcasse passava tutte e cinque»* era scritto come un **fatto** e non era mai stato misurato — al suo posto la campagna metteva la mutazione **3**, che ne uccide quattro e quindi non isola niente. ✅ **Adesso è misurato, con la mutazione dello scavalcamento vero (riga 3d): rossa, e SOLA — 18 passate, 1 fallita.** La frase resta perché è risultata **vera**, non perché era scritta |
 | `promote_collects_the_expired_before_it_serves_the_queue` | ⚠️ **NON dettata dal piano.** *«L'arbitro riscuote prima di decidere»* è una proprietà di **ogni** operazione — è il motivo per cui `collect_expired` è privata — e con `promote` le operazioni sono **tre**, di cui solo due coperte. ⛔ **Nessuna chiamata a `release` qui dentro:** l'unica cosa che libera la stanza è la riscossione **dentro `promote`** |
 | `promote_serves_every_request_that_fits_and_not_just_the_first` | ⚠️ **NON dettata dal piano, e nata da un MUTANTE VIVO** — vedi la riga **3c** della tabella sotto. Il doc di `promote` dice *«serve la coda con la stanza che c'è»*, al **plurale**, e un `promote` che si fermasse dopo **una** promozione per corsia sopravviveva a tutte e diciotto le altre sonde. Due attese da `2_048` nella **stessa** corsia, e l'ordine è asserito su **entrambe** le posizioni: contare non basta (gotcha **#30**) |
 
-⛔ **Dieci mutazioni, una alla volta, ciascuna compilata ed eseguita a sé, provata entrata con
+⛔ **TREDICI mutazioni, una alla volta, ciascuna compilata ed eseguita a sé, provata entrata con
 il conteggio delle occorrenze e revocata con una copia byte-esatta presa prima** (mai
 `git checkout --`, gotcha #48; nessun `sed -i`, i fine-riga di entrambi i sorgenti sono
 rimasti a **zero CR**). ✅ **Tutti i conteggi sono della suite di DICIANNOVE sonde**, cioè di
@@ -669,24 +675,67 @@ rimasti a **zero CR**). ✅ **Tutti i conteggi sono della suite di DICIANNOVE so
 sono state **rimisurate tutte da capo** invece di essere datate, così nessuna cella qui porta
 un numero di una suite diversa (gotcha **#31**).
 
+⛔ **ERANO DIECI, E LA REVISIONE DEL 2026-08-19 NE HA AGGIUNTE TRE — la `1c`, la `3d` e la `3e` —
+POI HA RIMISURATO TUTTE E DIECI LE ALTRE DA CAPO.** La ragione della rimisura non è lo scrupolo: la
+sonda `the_queue_promotes_by_lane_and_not_in_arrival_order` è stata **riscritta** in quella
+stessa passata da due corsie a tre, e ogni cella qui sotto è un conteggio **di quella suite**.
+✅ **Rimisurate tutte e dieci: nessuna cifra si è mossa**, né i totali né quali sonde muoiono —
+e il fatto si scrive perché è una **misura** e non un'aspettativa: la riscrittura è costruita
+apposta perché **esattamente due** delle tre attese entrino nella stanza liberata, così la
+sonda continua a morire dove moriva (la **3** e la **3b** la uccidono anche adesso) invece di
+scivolare fuori dalla loro portata. La suite resta di **diciannove** sonde: la sonda delle
+corsie è stata riscritta, non affiancata.
+
 | # | Mutazione, sul codice di produzione | Sonda attesa morta | Misurato |
 |---|---|---|---|
 | **1** | in `promote`, le corsie percorse **al contrario** (`values_mut()` → `values_mut().rev()`) | `the_queue_promotes_by_lane_and_not_in_arrival_order` | ✅ **rossa, e sola** — **18 passate, 1 fallita** |
-| **1b** | ⚠️ **aggiunta**, non dettata: la **chiave** `ComputeClass::priority` (`Realtime => 2`, `Batch => 0`) | — | ✅ **rossa la stessa**, e con lei le due di `arbiter_resource.rs` (`the_lane_order_is_pinned_by_name_and_realtime_comes_first`, `the_three_lanes_are_distinct_and_the_ordering_is_total`). **18/1** e **6/2**. ⛔ È la prova che l'ordine di `promote` viene **davvero** dalla chiave e non da un elenco scritto due volte |
+| **1b** | ⚠️ **aggiunta**, non dettata: la **chiave** `ComputeClass::priority` (`Realtime => 2`, `Batch => 0`) | — | ✅ **rossa la stessa**, e con lei le due di `arbiter_resource.rs` (`the_lane_order_is_pinned_by_name_and_realtime_comes_first`, `the_three_lanes_are_distinct_and_the_ordering_is_total`). **18/1** e **6/2**. ⛔ È la prova che l'ordine di `promote` viene **davvero** dalla chiave e non da un elenco scritto due volte. ✅ **Rimisurata in revisione il 2026-08-19 sulla sonda a tre corsie: invariata** |
+| **1c** | ⛔ **AGGIUNTA IN REVISIONE IL 2026-08-19, ed è quella che ha trovato il buco più grande del compito:** dentro il ciclo delle corsie di `promote`, `if *lane_key == ComputeClass::Realtime { continue; }` — la corsia **migliore** saltata per intero | `the_queue_promotes_by_lane_and_not_in_arrival_order` | ⛔ **PRIMA della riscrittura a tre corsie: NESSUNA moriva.** ✅ Misurato sul codice di `47941dd`: **34 target, 222 passate, 0 fallite, 2 ignorate** — il mutante era **vivo nell'intero workspace**, e *«prima la corsia migliore»* era provato sulla sola `Interactive`. ✅ **Dopo la riscrittura: rossa, e SOLA — 18 passate, 1 fallita** |
 | **2** | in `promote`, `remove(0)` → prendere la **coda** della corsia (`remove(len() - 1)`, cioè `pop`) | `inside_one_lane_the_order_is_the_order_of_arrival` | ✅ **rossa**, e cade con lei `promote_serves_every_request_that_fits_and_not_just_the_first`, che asserisce l'ordine su entrambe le posizioni. **17 passate, 2 fallite** |
 | **3** | in `promote`, il controllo `saturating_add(asked) > ceiling` **cancellato** | `promote_with_no_room_freed_promotes_nothing` **e** `the_sum_of_the_grants_never_exceeds_the_total` | ⚠️ **la prima muore, la seconda NO** — vedi la divergenza sotto. Muoiono **quattro**: `promote_with_no_room_freed_promotes_nothing`, `promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one`, `the_queue_promotes_by_lane_and_not_in_arrival_order`, `inside_one_lane_the_order_is_the_order_of_arrival`. **15 passate, 4 fallite** |
 | **3b** | ⚠️ **aggiunta** — la seconda direzione sul **valore**: lo stesso controllo `>` → `>=` | — | ✅ **quattro rosse**: `promote_collects_the_expired_before_it_serves_the_queue`, `promote_serves_every_request_that_fits_and_not_just_the_first`, `inside_one_lane_the_order_is_the_order_of_arrival`, `the_queue_promotes_by_lane_and_not_in_arrival_order`. **15/4**. Una promozione che riempie il tetto **esatto** verrebbe rifiutata |
 | **3c** | ⚠️ **aggiunta**, ed è quella che ha trovato il buco: `promote` promuove **una sola** voce per corsia (`break` dopo la prima) | — | ⛔ **NESSUNA moriva — 19 passate, 0 fallite**: mutante **vivo**. Sonda nuova scritta per lui, `promote_serves_every_request_that_fits_and_not_just_the_first`, e **rimisurato**: ✅ **rossa, e sola — 18 passate, 1 fallita** |
+| **3d** | ⛔ **AGGIUNTA IN REVISIONE IL 2026-08-19, ed è la direzione negativa che PC-2 pretendeva e che la campagna non aveva:** in `promote`, il `break` sulla prima attesa che non entra sostituito da una **scansione** della prima che entra (`queue.iter().position(…)` più `remove(index)`) — cioè lo scavalcamento vero e proprio | `promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one` | ✅ **rossa, e SOLA — 18 passate, 1 fallita**, misurata sul codice **dopo** la riscrittura a tre corsie. ⛔ **Prima di questa riga quella sonda non era isolata da niente:** la registrazione le attribuiva la mutazione **3**, che ne uccide **quattro** e quindi non isola nessuna delle quattro |
+| **3e** | ⚠️ **AGGIUNTA IN REVISIONE IL 2026-08-19**, cercando una mutazione che isolasse `promote_with_no_room_freed_promotes_nothing`: in `promote`, `queue.remove(0)` spostato **prima** del controllo — la richiesta che non entra viene **scartata in silenzio** invece di restare in coda | `promote_with_no_room_freed_promotes_nothing`, **prevista sola** | ⚠️ **NON isola: 16 passate, 3 fallite.** Muoiono `promote_with_no_room_freed_promotes_nothing`, `promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one` e `the_queue_promotes_by_lane_and_not_in_arrival_order` — tutte e tre asseriscono `queued()` alla fine. ⛔ **La previsione era di DUE e la misura dice TRE:** registrata, non appianata |
 | **4** | in `admit`, restituire `Refused` invece di accodare | `a_request_that_fits_the_machine_but_not_the_moment_is_queued` | ✅ **rossa**, e cadono con lei **dieci** altre — tutte quelle che accodano, comprese le tre riscritte. **8 passate, 11 fallite** |
 | **5** | ⚠️ **aggiunta, e la deve `E28`**: la guardia *«più grande dell'intera macchina»* (`asked > ceiling`) **cancellata per intero**, `return` compreso | `a_request_larger_than_the_total_is_refused_and_not_queued` | ✅ **rossa, e SOLA — 18 passate, 1 fallita.** ⛔ **L'attesa di `E28` si avvera:** al Task 5 la stessa identica mutazione lasciava **11 passate, 0 fallite**. La guardia non è più sussunta |
 | **5b** | ⚠️ **aggiunta** — la seconda direzione sul **valore**: `asked > ceiling` → `asked >= ceiling` | — | ✅ **undici rosse — 8 passate, 11 fallite**, e **non sono le stesse undici della 4**: qui cadono le sonde che chiedono il tetto **esatto** (comprese `an_expired_grant_does_not_stay_allocated` e `a_grant_is_collected_at_the_instant_its_window_closes`), là quelle che accodano |
 | **6** | ⚠️ **aggiunta**: `self.collect_expired(now)` tolta da `promote` | `promote_collects_the_expired_before_it_serves_the_queue` | ✅ **rossa, e sola — 18 passate, 1 fallita**. ⛔ Prima che quella sonda esistesse questa mutazione sopravviveva alla suite **intera** |
 
-⛔ **La 3 uccide quattro sonde, e non sono in concorrenza: stanno su assi diversi**, che è la
-regola nata dal Task 3 del Traguardo 4 — quando una mutazione ne uccide due si cerca **una
-terza che lasci passare la prima**. Qui ce ne sono tre: la **1** uccide la sola sonda delle
-corsie, la **2** la sola dell'ordine d'arrivo, la **3c** la sola del *«quante ne serve»*. Nessuna
-delle quattro è ridondante rispetto alle altre.
+⛔ **La 3 uccide quattro sonde, e la domanda che ne segue è se siano in concorrenza fra loro** —
+la regola nata dal Task 3 del Traguardo 4: quando una mutazione ne uccide due si cerca **una
+terza che lasci passare la prima**.
+
+⚠️ **RICONTATO IN REVISIONE IL 2026-08-19, E LA RISPOSTA DI PRIMA ERA SBAGLIATA IN DUE MODI.**
+Diceva: *«Qui ce ne sono tre: la 1 uccide la sola sonda delle corsie, la 2 la sola dell'ordine
+d'arrivo, la 3c la sola del «quante ne serve». Nessuna delle quattro è ridondante rispetto alle
+altre»*. ① **Tre mutazioni isolanti nominate per QUATTRO sonde**, e il conto non torna.
+② **Una delle tre — la 3c — isola una sonda che NON è fra le quattro:**
+`promote_serves_every_request_that_fits_and_not_just_the_first` non muore sotto la 3. Il conto
+vero, sonda per sonda, misurato e non dedotto:
+
+| Sonda uccisa dalla **3** | Che cosa la **isola** |
+|---|---|
+| `the_queue_promotes_by_lane_and_not_in_arrival_order` | la **1**, e dal 2026-08-19 anche la **1c**: entrambe **rosse e sole**, 18/1 |
+| `inside_one_lane_the_order_is_the_order_of_arrival` | la **2**: è la **sola delle quattro** a morire lì (cade con lei `promote_serves_every_request_that_fits_and_not_just_the_first`, che fra le quattro non c'è) |
+| `promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one` | la **3d**, **rossa e sola**, 18/1 — ⛔ **ed è ciò che la revisione ha trovato mancante:** fino al 2026-08-19 questa sonda non aveva **nessuna** mutazione che la isolasse |
+| `promote_with_no_room_freed_promotes_nothing` | ⛔ **NIENTE, e si scrive invece di lasciarlo intendere.** Nessuna delle **tredici** la uccide da sola, e c'è di più: **muore solo dove muore anche la sonda dello scavalcamento** — la **3**, la **3e**, la **4** e la **5b**, quattro volte su quattro. Il suo insieme di morti è **contenuto** in quello dell'altra, cioè sotto questa campagna è **dominata** |
+
+⛔ **Che cosa se ne fa, e che cosa NON se ne fa.** La sonda dominata **resta**, e non perché
+togliere una sonda costi: perché quel che dice è un'altra cosa — è la contro-sonda di *«promote
+non è concedi-tutto»*, ed è l'unica che chiami `promote` su una macchina **esattamente piena**
+senza che sia stato rilasciato niente. ⚠️ **Ma la sua non-ridondanza NON è misurata**, e la
+riga di prima lo affermava; quella qui la registra come quello che è — un'intenzione finché una
+mutazione non la isola.
+
+⚠️ **UNA CANDIDATA È STATA CERCATA E MISURATA, ED È LA MUTAZIONE `3e`** — togliere l'attesa dalla
+coda **prima** del controllo, cioè lo **scarto silenzioso** della richiesta che non entra. ⛔ **E
+la misura ha smentito la previsione, che si registra invece di appianarla:** era stata ragionata
+a **due** morti — la sonda cercata più quella delle corsie, che asserisce `queued()` alla fine —
+e ne uccide **TRE**, perché muore anche quella dello scavalcamento, che asserisce `queued()` a
+sua volta. ✅ **16 passate, 3 fallite.** Quindi la `3e` non isola niente, e **non rompe nemmeno
+la dominanza**: uccide le due insieme, esattamente come le altre tre. Un'evidenza scritta prima
+della misura è un'ipotesi, anche quando è la propria.
 
 ⚠️ **DIVERGENZA, misurata e non dedotta: la mutazione 3 NON uccide
 `the_sum_of_the_grants_never_exceeds_the_total`.** Il piano se l'aspettava, ed era scritto
@@ -726,15 +775,70 @@ le due concessioni permanenti le chiede **lei** e può trattare un `Queued` come
 d'avvio. Registrato nell'errata del piano col Task 10 nominato come chiusore; scritto anche
 **accanto alla sonda**, dove lo legge chi la tocca.
 
+⚠️ **VOCE APERTA — LO SCAVALCAMENTO CHE `promote` RIFIUTA DENTRO UNA CORSIA, FRA CORSIE LO FA —
+con un'inversione di priorità sopra.** Il doc di `promote` giustificava la propria regola d'arresto
+dicendo che scavalcare *«lascerebbe una richiesta grande in una corsia affollata aspettare per
+sempre dietro le piccole»*: ⛔ **fra corsie il codice produce esattamente quello.** Una corsia che
+si ferma **cade sulla successiva**, quindi una richiesta piccola in una corsia **peggiore** viene
+servita mentre una grande in una corsia **migliore** aspetta. ✅ **Misurato il 2026-08-19 su una
+sonda usa-e-getta fuori dal repository, non dedotto:** macchina da `4_096` con `bulk` `3_072` e
+`small` `1_024` residenti, un'attesa **`Realtime`** da `4_096` accodata **prima** di un'attesa
+**`Batch`** da `1_024` (biglietti `0` e `1`); rilasciata `small`, `promote` restituisce **una**
+promozione ed è il **biglietto 1**, quello `Batch`, e il `Realtime` resta in coda.
+
+⚖️ **REGISTRATA, NON PRESA, e il comportamento NON è stato cambiato.** È dettato dal Passo 3 del
+piano — il corpo detta il `break` interno e la caduta sulla corsia successiva — ed è una scelta
+**work-conserving** difendibile: l'alternativa tiene la macchina ferma per un'attesa che potrebbe
+non entrare mai. ⛔ **Il difetto non è il comportamento, è che la conseguenza non stava scritta da
+nessuna parte:** §5.3, §5.3.1 e `design/02-arbitrato-gpu.md` non dicono niente sull'ordine **fra**
+corsie, e la frase del doc lasciava credere il contrario. Adesso la frase è **circoscritta a
+dentro una corsia** e dice per esteso che cosa succede fra corsie. Che l'ordine debba essere
+work-conserving o rispettare la priorità è una decisione del **proprietario**; registrata anche
+nell'errata del piano.
+
+⚠️ **VOCE APERTA — `admit` NON CONSULTA MAI LA CODA, quindi un ritardatario la scavalca, e questo
+è ciò che circoscrive la promessa su M-7.** `admit` legge `held` e `parameters` e basta: se la
+stanza c'è nel momento in cui viene chiamata, dice sì, qualunque cosa stia già aspettando.
+✅ **Misurato il 2026-08-19 su una sonda usa-e-getta fuori dal repository:** macchina da `4_096`
+piena, un biglietto **`Realtime`** da `4_096` in coda, rilasciato il residente; una **nuova**
+richiesta `Batch` da `4_096` che arriva da `admit` è **`Granted` all'istante**, `allocated()`
+torna a `Mib(4096)`, e il `promote` che segue restituisce **zero** promozioni col `Realtime`
+ancora in attesa. ⛔ **Conseguenza sulla riga che apre questa sezione:** *«l'ordine per corsia è
+ciò che tiene validi i numeri di M-7»* è vero **di `promote`**, non dell'arbitro — l'ordine
+d'**ammissione** lo sconfessa, e la riga della sonda qui sopra è stata circoscritta di
+conseguenza.
+
+⚖️ **REGISTRATA, NON PRESA, e il comportamento NON è stato cambiato.** ⛔ **Chiuderlo dentro
+`admit` significherebbe un'ammissione che RIFIUTA stanza che esiste**, cioè una politica di
+scheduling che nessun ADR ha deciso; e *quando* si chiama `promote` rispetto ad `admit` è una
+questione di **orchestrazione**, che è del **Task 10** — la radice di composizione. ⚠️ **E
+interagisce direttamente con la voce delle due quote permanenti qui sopra**, che al Task 10
+manda lo stesso chiusore: una quota permanente accodata non solo non sarà mai servita, ma può
+vedersi passare davanti qualunque richiesta che arrivi dopo. Registrata anche nell'errata del
+piano.
+
 ⚠️ **VOCE APERTA — `promote` restituisce un `Vec<Promotion>` senza `#[must_use]`, e ignorarlo
-perde le concessioni.** `arbiter.promote(now);` da solo compila, e le concessioni promosse
-finiscono **nei libri** senza che nessuno le tenga: la VRAM resta prenotata fino alla scadenza
-della finestra e il chiamante non ha nulla da rilasciare. ⚖️ **REGISTRATA, NON PRESA:**
-`#[must_use]` costa una riga ed è la forma che `Admission` ha già, ma è un **lint** e non una
-regola che una sonda possa tenere — nessun caso `compile_fail` può pinzarlo, perché produce un
-avviso e non un errore. Metterlo significherebbe aggiungere superficie che nessuna delle due
-direzioni di §7.1.4 può provare; lasciarlo fuori significa che la trappola resta. La scelta è
-del proprietario.
+perde le concessioni.** ✅ **MISURATO IL 2026-08-19 SU UNA SONDA USA-E-GETTA FUORI DAL
+REPOSITORY, e non più affermato** — la riga di prima diceva *«`arbiter.promote(now);` da solo
+compila»* senza citare nessuna misura, dove `E30` ed `E31` la citano entrambe. Le due direzioni,
+misurate una per una: ① **così com'è**, `arbiter.promote(now);` da solo compila e la crate
+chiamante resta verde **anche con `-D warnings`** — nessun lint scatta affatto; ② con
+`#[must_use]` messo su `promote`, la stessa riga produce
+`warning: unused return value of Arbiter::promote that must be used`, `#[warn(unused_must_use)]`,
+e la compilazione **riesce lo stesso, exit 0**. Nella sonda ① la promozione avviene davvero:
+dopo quella riga `allocated()` legge `Mib(4096)` e `queued()` legge `0` — le concessioni sono
+**nei libri** senza che nessuno le tenga, la VRAM resta prenotata fino alla scadenza della
+finestra e il chiamante non ha nulla da rilasciare.
+
+⚖️ **REGISTRATA, NON PRESA:** `#[must_use]` costa una riga ed è la forma che `Admission` ha già,
+ma la misura ② dice che è un **lint** e non una regola che una sonda possa tenere — produce un
+**avviso** e non un errore, quindi nessun caso `compile_fail` può pinzarlo. ⛔ **E la via
+d'uscita apparente è proprio il gotcha #39:** un caso che dichiarasse `#![deny(unused_must_use)]`
+per farlo diventare errore proverebbe che **il lint morde dove è dichiarato**, non che il kernel
+dichiari l'attributo — che è la forma esatta dei quattro casi che ridichiarano `#![no_std]`, e
+per cui è dovuto nascere `gate-attributes.sh`. Metterlo significherebbe aggiungere superficie che
+nessuna delle due direzioni di §7.1.4 può provare; lasciarlo fuori significa che la trappola
+resta. La scelta è del proprietario.
 
 ⚠️ **`Queued` è RAGGIUNGIBILE A RUNTIME da oggi, e nessuna riga di catalogo lo chiedeva.** `V4`
 resta coperta come al Task 5 — *«non compila»* con i due casi negativi, *«compila»* con
@@ -751,6 +855,14 @@ in più sono le otto sonde nuove di questo file. Nessun target nuovo. Per file:
 (invariato), e i casi `compile_fail` **ventotto** — ✅ ricontati col comando,
 `ls crates/kernel/tests/compile_fail/*.rs | wc -l` → **28**, invariati: il Task 6 non ne ha
 aggiunto nessuno e non ha rigenerato nessun oracolo.
+
+✅ **RICONTATI DOPO LA REVISIONE DEL 2026-08-19, e ricontati invece che dedotti anche quando la
+deduzione era facile** (gotcha #31): workspace **34 target, 222 passate, 0 fallite, 2 ignorate**,
+`arbiter_admission.rs` **diciannove**, `compile_fail` **ventotto** — ⛔ **tutte e tre invariate, ed
+è il punto della passata**: la revisione ha **riscritto** la sonda delle corsie e ha aggiunto tre
+mutazioni, che non lasciano traccia nei conteggi perché una mutazione si revoca. Nessuna sonda
+nuova, nessun caso nuovo, nessun oracolo rigenerato. `cargo build --locked --workspace` stampa
+**zero warning**.
 
 #### Le contro-sonde delle righe nuove
 

@@ -36,9 +36,10 @@ pub use resource::{ComputeClass, Mib, Preemption, ResourceProfile, WorkDescripto
 /// and nothing would go red. A guard is worth exactly what its CONSTRUCTOR is worth
 /// (gotcha #67).
 ///
-/// ⛔ There is deliberately NO public constructor, and now there is also an ISSUER: the
-/// admission. That is the whole of §5.6 -- whoever writes "start the worker" without one
-/// DOES NOT COMPILE.
+/// ⛔ There is deliberately NO public constructor. ⚠️ NOT YET AN ISSUER: `Admission` is the
+/// SHAPE an issuer's answer will have, not an issuer itself -- nothing constructs one today,
+/// and the function that will, `admit`, arrives at Task 5. Once it does, that is the whole
+/// of §5.6: whoever writes "start the worker" without going through it will not compile.
 ///
 /// ⚠️ NO `Debug`, NO `Clone`, NO `Copy`, and each absence is load-bearing rather than
 /// minimal. `Clone` would let one grant start two workers. `Debug` -- nothing formats a
@@ -56,12 +57,14 @@ pub use resource::{ComputeClass, Mib, Preemption, ResourceProfile, WorkDescripto
 /// ⚠️ RECALL OF 2026-08-19, MILESTONE 5 TASK 4 -- WHAT THIS COMMENT SAID BEFORE THE MOVE,
 /// written out because a moved comment that keeps its old tense is the finding A-2 of this
 /// project's audit done again. It lived in `ports::process` and said "the arbiter, which
-/// arrives in milestone 5" in the FUTURE, and "today the type has no issuer": both are
-/// spent, the arbiter module is this one and the issuer is `Admission::Granted` below. It
-/// also recorded a DIVERGENCE -- the field was a private UNIT, `Grant(())`, because the
-/// named field the plan dictated then bought nothing that the unit field did not buy for
-/// free and cost an `#[allow(dead_code)]`, which this repository treats as a prohibition
-/// switched off (gotcha #13). ⛔ THAT PARAGRAPH IS NOT COPIED, because the shape it
+/// arrives in milestone 5" in the FUTURE, and "today the type has no issuer": the FIRST is
+/// spent -- the arbiter module is this one. ⚠️ THE SECOND IS NOT, quite:
+/// `Admission::Granted` is now the SHAPE an issuer's answer will have, but nothing
+/// constructs one yet -- `admit` is the actual issuer, and it arrives at Task 5. It also
+/// recorded a DIVERGENCE -- the field was a private UNIT, `Grant(())`, because the named
+/// field the plan dictated then bought nothing that the unit field did not buy for free and
+/// cost an `#[allow(dead_code)]`, which this repository treats as a prohibition switched off
+/// (gotcha #13). ⛔ THAT PARAGRAPH IS NOT COPIED, because the shape it
 /// described no longer exists: the named field is back, dictated again by the milestone 5
 /// design, and it is `id` that lets `Arbiter::release` tell a grant of THIS arbiter from a
 /// grant of another one.

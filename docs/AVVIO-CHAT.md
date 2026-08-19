@@ -71,7 +71,7 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 384 KB in tutto
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i settantuno gotcha (§9), le trappole di
+     cosa NON rifare (§8), i settantadue gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
   3. docs/audit-2026-08-11.md — 31 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE, ed è CHIUSO: non è più IL COMPITO, è il VERBALE
@@ -135,10 +135,14 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 384 KB in tutto
    dev'essere Option con #[cbor(default)] e prendere un INDICE NUOVO, e il
    significato di un indice non cambia mai.
 
-⛔ VENTUNO DECISIONI SONO STATE PRESE ESEGUENDO, non dai piani, e PUOI
-   RIBALTARLE TUTTE: NOVE al Traguardo 3, DODICI al Traguardo 4. Stanno nelle
-   errata in testa ai due piani, e la §6 del compendio — che leggi comunque —
-   porta quelle che governano le altre. ⚠️ Non sono ricopiate qui: un rimando
+⛔ LE DECISIONI PRESE ESEGUENDO, non dai piani, PUOI RIBALTARLE TUTTE:
+   NOVE al Traguardo 3, DODICI al Traguardo 4, e il piano in corso ha la
+   propria errata che NON È PIÙ VUOTA. Stanno nelle errata in testa ai piani,
+   e la §6 del compendio — che leggi comunque — porta quelle che governano
+   le altre. ⛔ L'ERRATA IN TESTA AL PIANO SI LEGGE PRIMA DI OGNI COMPITO,
+   non una volta sola: ci sono dentro i comandi dettati che non potevano
+   fallire, le mutazioni dettate che non rovesciavano il proprio caso, e
+   almeno un warning che viaggia DI PROPOSITO con una scadenza scritta. ⚠️ Non sono ricopiate qui: un rimando
    a documenti già scritti è ciò che questo messaggio deve TOGLIERE invece di
    accorciare, ed è la prescrizione della 25ª misura della §12.
 

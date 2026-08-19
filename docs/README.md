@@ -44,6 +44,12 @@ cose leggendo il disegno contro il codice — gotcha **#58** — e tre sono per 
 `WorkDescriptor` dista **una lettera** da `WorkerDescriptor`, che esiste già ed è un'altra cosa;
 la riga di catalogo `Q2 · §5.1` è **una** dove le regole sono **due**; e due celle del catalogo
 nominano **identificatori italiani** che il traguardo fa esistere in inglese.
+✅ **E IL 2026-08-19 L'ESECUZIONE È COMINCIATA: quattro compiti su tredici**, subagent-driven,
+`GATE GREEN` a ciascuno — il modulo `arbiter` con `Mib`, le tre corsie con l'ordine scritto in una
+chiave esplicita, il profilo che l'arbitro riceve con `cold_start` **fuori** dall'ammissione, e
+`Grant` spostato da chi lo consuma a chi lo **emette**. ⚠️ **Quante e quali**, e le tre cose da
+sapere prima di riprendere, stanno nella **§6 del [`COMPENDIO.md`](COMPENDIO.md)** — qui non si
+ripetono, che è la ragione per cui questa riga non è mai marcita.
 ⏭️ **Il prossimo passo sta nella §6 del [`COMPENDIO.md`](COMPENDIO.md), in un posto solo** — qui
 non si ripete. ⚠️ **Questa riga lo riscriveva**, e ha detto *«scrivere il piano»*, poi *«il
 brainstorming»*, poi *«eseguirlo»*, poi *«l'esecuzione dell'audit … ne restano tre»*: quattro

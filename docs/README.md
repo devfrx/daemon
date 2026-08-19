@@ -44,13 +44,16 @@ cose leggendo il disegno contro il codice — gotcha **#58** — e tre sono per 
 `WorkDescriptor` dista **una lettera** da `WorkerDescriptor`, che esiste già ed è un'altra cosa;
 la riga di catalogo `Q2 · §5.1` è **una** dove le regole sono **due**; e due celle del catalogo
 nominano **identificatori italiani** che il traguardo fa esistere in inglese.
-✅ **E DAL 2026-08-19 L'ESECUZIONE È IN CORSO: cinque compiti su tredici**, subagent-driven,
-`GATE GREEN` a ciascuno — il modulo `arbiter` con `Mib`, le tre corsie con l'ordine scritto in una
-chiave esplicita, il profilo che l'arbitro riceve con `cold_start` **fuori** dall'ammissione,
-`Grant` spostato da chi lo consuma a chi lo **emette**, e **l'arbitro che ammette e rilascia**.
+✅ **E DAL 2026-08-19 L'ESECUZIONE È IN CORSO**, subagent-driven, `GATE GREEN` a ogni compito — il
+modulo `arbiter` con `Mib`, le tre corsie con l'ordine scritto in una chiave esplicita, il profilo
+che l'arbitro riceve con `cold_start` **fuori** dall'ammissione, `Grant` spostato da chi lo
+consuma a chi lo **emette**, l'arbitro che **ammette e rilascia**, e le **code per corsia**.
+⛔ **A CHE PUNTO SIA NON È SCRITTO QUI, ed è il rimedio e non una svista:** questa riga portava il
+numeratore — *«cinque compiti su tredici»* — **due righe sopra** la frase che dice *«qui non si
+ripetono, ed è la ragione per cui questa riga non è mai marcita»*. Era il gotcha **#68**, una
+regola che non vincola il documento che la ospita, e la cifra è **tolta invece che ricorretta**.
 ⚠️ **Quante e quali**, le cose da sapere prima di riprendere e le decisioni di disegno che
-aspettano il proprietario stanno nella **§6 del [`COMPENDIO.md`](COMPENDIO.md)** — qui non si
-ripetono, che è la ragione per cui questa riga non è mai marcita.
+aspettano il proprietario stanno nella **§6 del [`COMPENDIO.md`](COMPENDIO.md)**.
 ⏭️ **Il prossimo passo sta nella §6 del [`COMPENDIO.md`](COMPENDIO.md), in un posto solo** — qui
 non si ripete. ⚠️ **Questa riga lo riscriveva**, e ha detto *«scrivere il piano»*, poi *«il
 brainstorming»*, poi *«eseguirlo»*, poi *«l'esecuzione dell'audit … ne restano tre»*: quattro

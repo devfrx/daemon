@@ -66,12 +66,12 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 404 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 415 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i settantatré gotcha (§9), le trappole di
+     cosa NON rifare (§8), i settantaquattro gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
   3. docs/audit-2026-08-11.md — 31 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE, ed è CHIUSO: non è più IL COMPITO, è il VERBALE
@@ -105,7 +105,7 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 404 KB in tutto
 ⛔ L'AUDIT È CHIUSO, IL BRAINSTORMING PURE, E IL PIANO È SCRITTO. LA SPECIE
    DEL LAVORO CHE VIENE È: ESEGUIRE UN PIANO, UN COMPITO PER VOLTA. Non più
    lavoro creativo, non più pianificazione — CODICE. ⛔ Il piano si legge a
-   COMPITI e mai intero (174 KB), e prima di ogni compito si fanno le SETTE
+   COMPITI e mai intero (241 KB), e prima di ogni compito si fanno le SETTE
    domande del pre-controllo. Quale piano lo dice la §6 del compendio, in un
    posto solo.
    Il 2026-08-11 il repository ha ricevuto il suo primo audit completo: nove
@@ -124,10 +124,11 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 404 KB in tutto
    risultare più PICCOLO, più GRANDE, o DI SPECIE DIVERSA.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 732 KB
-   il 2026-08-19, la spec da sola 277, i quattro piani più grandi 174, 168,
-   162 e 114 — e l'idea è già nel compendio. ⛔ IL PIANO DA ESEGUIRE È IL 174,
-   e si apre A COMPITI. Aprirai UN file — uno — quando ti servirà
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 735 KB
+   il 2026-08-19, la spec da sola 277, i quattro piani più grandi 241, 168,
+   162 e 114 — e l'idea è già nel compendio. ⛔ IL PIANO DA ESEGUIRE È IL 241,
+   e si apre A COMPITI: è il file più grande del repository dopo la spec, e
+   cresce a ogni compito perché l'errata cresce. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
    del compendio dice quale.
 
@@ -179,8 +180,10 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 404 KB in tutto
    nome di tipo a una lettera da uno che esiste già, una riga di catalogo che
    vale per due regole, e due celle che nominano identificatori ITALIANI che
    il traguardo fa esistere in inglese: toccano la SPEC, registrate non prese.
-   Dall'ESECUZIONE, altre TRE decisioni di disegno nell'errata — una di esse
-   VA DECISA PRIMA DEL TRAGUARDO 6, e la §6 del compendio dice quale e perché.
+   Dall'ESECUZIONE, altre CINQUE decisioni di disegno nell'errata — una di esse
+   VA DECISA PRIMA DEL TRAGUARDO 6, e DUE sono dichiarate NON TENUTE DA NESSUNA
+   SONDA nel sorgente stesso, di proposito: pinzarle congelerebbe la scelta che
+   mettono davanti a te. La §6 del compendio dice quali e perché.
 
 ⚠️ Il compendio è una COMPRESSIONE, non una selezione: ci sono dentro tutte le
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
@@ -264,8 +267,8 @@ piano si legge a COMPITI, mai intero.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **14,7 KB, E LA SERIE HA GIRATO.** Era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **373 KB** — `CLAUDE.md` più il compendio, e **404** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 373 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **384 KB** — `CLAUDE.md` più il compendio, e **415** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 384 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -279,7 +282,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **404 KB contro 732**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+resta quello che conta: **415 KB contro 735**. ⛔ **E il 2026-08-18 una passata ha trovato che il
 `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
 `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
 e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del

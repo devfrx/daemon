@@ -39,14 +39,21 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
-  /superpowers:subagent-driven-development  <-- SERVE SUBITO, ed è CAMBIATO
-                                        rispetto alla sessione scorsa: il piano
-                                        è SCRITTO, quindi non si ri-pianifica —
+  /superpowers:subagent-driven-development  <-- SERVE SUBITO: il piano è
+                                        SCRITTO, quindi non si ri-pianifica —
                                         si ESEGUE, un subagente fresco per
                                         compito con revisione fra uno e l'altro.
                                         È la modalità scelta, e ha portato dieci
                                         compiti su dieci al Traguardo 4 e dodici
-                                        su dodici al 3. ⛔ Quale piano lo dice la
+                                        su dodici al 3. ⛔ E LA REVISIONE NON È
+                                        UNA FORMALITÀ: al Task 6 ha trovato un
+                                        mutante vivo nell'INTERO workspace che
+                                        l'esecuzione non aveva visto. Anche
+                                        un'ONDATA DI CORREZIONI si rivede come
+                                        il compito: i suoi difetti stanno nella
+                                        PROSA, e «non tocca righe eseguibili»
+                                        è un argomento PER rivederla, non
+                                        contro. ⛔ Quale piano lo dice la
                                         §6 del compendio, che leggi comunque —
                                         non è nominato qui apposta, un rimando
                                         non può marcire
@@ -66,7 +73,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 415 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 421 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -108,23 +115,20 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 415 KB in tutto
    COMPITI e mai intero (241 KB), e prima di ogni compito si fanno le SETTE
    domande del pre-controllo. Quale piano lo dice la §6 del compendio, in un
    posto solo.
-   Il 2026-08-11 il repository ha ricevuto il suo primo audit completo: nove
-   revisori paralleli in sola lettura, ogni finding grave riverificato sul
-   sorgente, SEDICI corretti nella stessa sessione e le OTTO decisioni della
-   §8 eseguite fra il 17 e il 18 agosto.
    ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, poi «un BRAINSTORMING»,
       poi «otto decisioni», poi «ne restano TRE», poi DUE, poi UNA, poi
       «lavoro CREATIVO»: si riscrive quando il passo si chiude, ed è la riga
       che invecchia per costruzione.
 
-   ✅ COSA HANNO INSEGNATO LE OTTO, IN UNA RIGA — il resto lo leggi nel
+   ✅ COSA HANNO INSEGNATO LE OTTO DECISIONI DELL'AUDIT, IN UNA RIGA — il
+   resto lo leggi nel
    verbale e nella §6, che apri comunque, e ricopiarlo qui è ciò che questo
    messaggio deve TOGLIERE invece di accorciare (25ª e 26ª misura):
    ⛔ IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — e può
    risultare più PICCOLO, più GRANDE, o DI SPECIE DIVERSA.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 735 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 737 KB
    il 2026-08-19, la spec da sola 277, i quattro piani più grandi 241, 168,
    162 e 114 — e l'idea è già nel compendio. ⛔ IL PIANO DA ESEGUIRE È IL 241,
    e si apre A COMPITI: è il file più grande del repository dopo la spec, e
@@ -145,10 +149,8 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 415 KB in tutto
    le altre. ⛔ L'ERRATA IN TESTA AL PIANO SI LEGGE PRIMA DI OGNI COMPITO,
    non una volta sola: ci sono dentro i comandi dettati che non potevano
    fallire, le mutazioni dettate che non rovesciavano il proprio caso, e
-   conteggi di chiamanti sbagliati in ENTRAMBI i termini. ⚠️ E una scadenza
-   falsificabile è già SCATTATA E RISPETTATA — il warning che il Task 4
-   faceva viaggiare di proposito è sparito al Task 5, perché il campo
-   serviva davvero: non cercarlo più. ⚠️ Non sono ricopiate qui: un rimando
+   conteggi di chiamanti sbagliati in ENTRAMBI i termini, e un CORPO DETTATO
+   disatteso sul merito. ⚠️ Non sono ricopiate qui: un rimando
    a documenti già scritti è ciò che questo messaggio deve TOGLIERE invece di
    accorciare, ed è la prescrizione della 25ª misura della §12.
 
@@ -222,8 +224,11 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     proprietario non l'ha vista. Un documento che ha letto le guardie si sente
     verificato, ed è lì che smette di guardare; e uno che dichiara UNA
     divergenza si legge come se le avesse dichiarate tutte.
-  · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48, a TREDICI
-    occorrenze. Le forme misurate stanno nella §9 del compendio; qui basta il
+  · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48, il più
+    frequente del progetto. ⛔ Quante volte NON è scritto qui, ed è tolto e non
+    ricorretto: diceva TREDICI mentre la §12 ne registrava già QUATTORDICI, e un
+    conteggio che vive in due posti marcisce sempre in quello che non lo muove.
+    Le forme misurate stanno nella §9 del compendio; qui basta il
     contro-verso: prova che la mutazione si sia APPLICATA, compila in un passo
     separato dall'eseguire, per ogni mutazione su un valore provane DUE, e non
     ripristinare con `git checkout --` un file che stai anche scrivendo.
@@ -267,8 +272,8 @@ piano si legge a COMPITI, mai intero.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **14,7 KB, E LA SERIE HA GIRATO.** Era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **384 KB** — `CLAUDE.md` più il compendio, e **415** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 384 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **390 KB** — `CLAUDE.md` più il compendio, e **421** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 390 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -282,7 +287,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **415 KB contro 735**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+resta quello che conta: **421 KB contro 737**. ⛔ **E il 2026-08-18 una passata ha trovato che il
 `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
 `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
 e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del

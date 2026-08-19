@@ -159,6 +159,31 @@ non il controllo. Aggiornare §7.4 è **spec**, quindi del proprietario — vinc
 **Registrata come voce aperta e non come nota** (gotcha #36), stesso trattamento di PL-1 e
 K-1/B-1.
 
+#### `ComputeClass` e `Preemption` — Traguardo 5, Task 2, e nessuna riga di catalogo qui
+
+⛔ **`ComputeClass` NON ha una riga di catalogo, ed è dichiarato invece di lasciarlo
+dedurre.** L'ordine delle tre corsie di calcolo è un **valore**, non una forma: il
+compilatore non ha niente da rifiutare se qualcuno riordina le varianti dell'enum, quindi
+non è materia di `compile_fail`. A tenerlo è una **sonda a esempi**, nel file esistente
+`crates/kernel/tests/arbiter_resource.rs` (ora **sei** test, tre del Task 1 e tre nuovi):
+
+| Sonda nuova | Cosa tiene |
+|---|---|
+| `the_lane_order_is_pinned_by_name_and_realtime_comes_first` | l'ordine **per nome** — `Realtime < Interactive < Batch` — e la chiave `priority()` stessa, così un lettore non deve inferirla dalle disuguaglianze |
+| `the_three_lanes_are_distinct_and_the_ordering_is_total` | la contro-sonda: l'ordinamento è **totale**, non solo le tre disuguaglianze dichiarate — nessuna coppia di corsie confronta uguale a un'altra |
+| `a_grace_time_exists_exactly_when_the_profile_is_preemptible` | ciò che `Preemption` rende **non dicibile**: un profilo non preemptibile non può portare un tempo di grazia, e uno preemptibile non può esserne privo — due stati illegali insieme, non uno |
+
+⛔ **Le DUE mutazioni del Passo 4, ed entrambe provate.** La prima deve uccidere; la seconda
+— la direzione che si dimentica — deve restare verde:
+
+| Mutazione | Applicata su | Atteso | Misurato |
+|---|---|---|---|
+| la **chiave**: `Realtime => 2`, `Batch => 0` (`Interactive` invariato) | `ComputeClass::priority` | rosso su `the_lane_order_is_pinned_by_name_and_realtime_comes_first` | ✅ rosso, e anche `the_three_lanes_are_distinct_and_the_ordering_is_total` cade con lei — **4 passati, 2 falliti** |
+| **contro-mutazione**: le varianti riordinate `Batch`, `Interactive`, `Realtime` nella dichiarazione dell'enum, la chiave **intatta** | `enum ComputeClass` | verde, sei su sei | ✅ verde — **6 passati, 0 falliti** — è la prova che la trappola di un `Ord` derivato è stata **tolta** e non sorvegliata: con un `Ord` derivato quella stessa mutazione avrebbe rovesciato le priorità dell'arbitro senza un rosso |
+
+Entrambe le mutazioni provate con `grep -c`/`grep -n` sulla riga mutata prima di ogni corsa e
+revocate con lo strumento di edit, mai `git checkout --` (gotcha #48).
+
 #### Le contro-sonde delle righe nuove
 
 Per file — la direzione che si dimentica (§7.1.1 regola 3):

@@ -194,6 +194,14 @@ pub enum PreemptibleState {
 /// "your release failed" and "it was already done for you" are different news. A second
 /// variant `Expired` is the known remedy and it is a DESIGN decision, so it is RECORDED FOR
 /// THE OWNER in the plan's errata (`E30`) instead of being taken by the task that noticed it.
+///
+/// ⚠️ AND NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT. A test
+/// asserting `Err` at 5_001 would freeze the very behaviour `E30` puts in front of the owner:
+/// the day the second variant arrives, that probe goes red FOR HAVING BEEN RIGHT, and a probe
+/// that must be deleted to take a decision is a vote against taking it. So the measurement
+/// lives here, beside the type, and moves when the decision does. ⛔ THE COST IS STATED
+/// INSTEAD OF HIDDEN: moving `collect_expired` after the lookup -- one of the two roads `E30`
+/// names -- turns nothing red, and this paragraph would become false in silence.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReleaseError {
     /// Not in this arbiter's books. ⚠️ TWO CAUSES, ONE ANSWER -- see the second declared

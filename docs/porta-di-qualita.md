@@ -455,11 +455,11 @@ di `V4` e di `I2 · §5.3`. Le due `use` sono state unite, non sostituite.
 
 | # | Mutazione, sul codice di produzione | Sonda attesa morta | Misurato |
 |---|---|---|---|
-| **1a** | `>` → `>=` nel confronto **somma contro tetto** (`self.allocated().saturating_add(asked) > ceiling`) | `the_sum_of_the_grants_never_exceeds_the_total` | ✅ **rossa** — `assertion failed: matches!(outcome, Admission::Granted(_))`. Cadono con lei anche `an_expired_grant_does_not_stay_allocated` e `a_grant_still_inside_its_window_is_not_collected`, che riempiono il totale **esatto**. **7 passati, 3 falliti** |
+| **1a** | `>` → `>=` nel confronto **somma contro tetto** (`self.allocated().saturating_add(asked) > ceiling`) | `the_sum_of_the_grants_never_exceeds_the_total` | ✅ **rossa** — `assertion failed: matches!(outcome, Admission::Granted(_))`. Cadono con lei anche le sonde che riempiono il totale **esatto**. **7 passati, 3 falliti** — ⚠️ **l'elenco che questa cella nominava non è più esaustivo**: vedi la nota sotto la tabella |
 | **1b** | ⚠️ **aggiunta**, non dettata: `>` → `>=` nell'**altro** confronto col tetto (`asked > ceiling`) | — | ✅ **`the_sum_of_the_grants_never_exceeds_the_total` SOPRAVVIVE**, e muoiono le altre due. **8 passati, 2 falliti** — vedi la divergenza sotto la tabella |
 | **1c** | ⚠️ **aggiunta in revisione il 2026-08-19**, e non è una variante della 1b: la guardia `asked > ceiling` **cancellata per intero**, `return` compreso | — | ⛔ **NESSUNA muore — 11 passati, 0 falliti**, inclusa `a_request_larger_than_the_total_is_refused_and_not_queued`, la sola che la nomini. La guardia è **interamente sussunta** dalla seconda, e oggi **nessuna sonda la tiene**. Vedi la divergenza sotto la tabella |
 | **2** | `release` restituisce `Mib::ZERO` invece di `held.reserved` | `releasing_gives_back_exactly_the_reservation` | ✅ **rossa, e sola** — `` assertion `left == right` failed / left: Mib(0) / right: Mib(6144) ``. **9 passati, 1 fallito** |
-| **3** | `collect_expired` con **corpo vuoto** | `an_expired_grant_does_not_stay_allocated` | ✅ **rossa, e sola**, col proprio messaggio: *«without the collection this is Refused»*. **9 passati, 1 fallito** |
+| **3** | `collect_expired` con **corpo vuoto** | `an_expired_grant_does_not_stay_allocated` | ✅ **rossa**, col proprio messaggio: *«without the collection this is Refused»*. **9 passati, 1 fallito** — ⚠️ **e l'esclusività che questa cella dichiarava è caduta**: vedi la nota sotto la tabella |
 | **4** | `collect_expired` con `retain(\|_, _\| false)` | `a_grant_still_inside_its_window_is_not_collected` | ✅ **rossa**, col proprio messaggio: *«the window has not closed yet»*. Cadono con lei altre tre. **6 passati, 4 falliti** |
 | **5** | `cold_start: Millis` rimesso su `ResourceProfile` | `admission_reads_cold_start.rs` | ⛔ **`mismatch`, non `error`** — `E0063` al posto di `E0609`. Vedi sotto |
 | **6** | `impl Admission { pub const fn is_granted(&self) -> bool { … } }` | `admission_has_no_is_granted.rs` | ✅ **`error`** — *«Expected test case to fail to compile, but it succeeded»*, e gli altri **ventisei** restano `ok` — ⚠️ **cifra del momento della misura**, quando i casi in cartella erano **ventisette**; vedi la nota sui conteggi |
@@ -472,6 +472,17 @@ sono misure fatte in un momento, e l'undicesima sonda è arrivata dopo, il 2026-
 **1a**, **3** e **4** toccano un tetto riempito **esatto** o la riscossione, quindi la sonda nuova
 sposterebbe i loro numeri: **non sono state rimisurate, e il numero nuovo non è dedotto** (gotcha
 **#31**).
+
+⛔ **E a invecchiare non è solo il numero: è il QUALIFICATORE, che datare non salva** — trovato
+in revisione il 2026-08-19, ed è la ragione per cui due celle qui sopra sono state **accorciate**
+invece di essere riallineate. La riga **3** diceva *«rossa, e **sola**»* e la **1a** **nominava**
+le due sonde che cadevano con lei: l'esclusività e l'elenco erano veri della suite di **dieci**,
+e la sonda undicesima riempie anch'essa il tetto **esatto**. ⚠️ **Quante ne cadano oggi non è
+scritto da nessuna parte, ed è deliberato:** rimisurare costa due mutazioni e non è stato fatto,
+quindi un numero qui sarebbe **dedotto**. Ciò che resta è ciò che regge — *«la sonda attesa
+muore»* — e l'esclusività della riga **3** va **riconquistata rimisurando**, non riscrivendo.
+📌 Un conteggio stantio si vede; un *«e sola»* stantio si legge come una garanzia. È il gotcha
+**#31** su un aggettivo invece che su una cifra.
 
 ⛔ **Le mutazioni 3 e 4 sono ENTRAMBE necessarie, ed è la ragione per cui esistono due sonde:**
 la 3 da sola sarebbe soddisfatta da *«riscuoti sempre tutto»*, che è il difetto opposto e non

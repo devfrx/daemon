@@ -63,7 +63,8 @@ difetto reale in **ventidue compiti su ventidue**.
 
 | # | Compito | Voce |
 |---|---|---|
-| — | — | *(vuota: nessun compito è stato eseguito)* |
+| **E1** | Task 1 | ⚠️ **`resource.rs` apriva con `use crate::time::Millis;`, e nel Task 1 nessun codice lo nomina.** `Millis` compare per la prima volta come argomento in `Preemption::After(Millis)`, che è del Task 2 — quindi quella riga, scritta com'era, sarebbe stata un **unused import warning** a ogni build del Task 1. Risolto **omettendo** la riga: il tipo pieno `crate::time::Millis` compare solo nel Passo 6, in una mutazione **temporanea** (`impl From<Mib> for crate::time::Millis` e viceversa), che quindi non ha bisogno di un `use` nemmeno lei. Misurato: `cargo build --locked --workspace` **zero warning** con la riga omessa |
+| **E2** | Task 1 | ⚠️ **Il Passo 6 prevedeva «gli altri restano `ok`», e non regge per la regola A.** Misurato con `impl From<Mib> for crate::time::Millis` (e, nell'altra direzione, `impl From<crate::time::Millis> for Mib`): il caso `no_conversion_from_*` della stessa direzione scatta `error` come atteso, ma il caso «passa l'uno per l'altro» della **stessa** direzione (`mib_as_millis.rs` o `millis_as_mib.rs`) passa da `ok` a **`mismatch`**, non resta `ok`. È la stessa specie già scritta in `docs/porta-di-qualita.md` per `Monotonic`/`WallTime` (gotcha #42, forma indiretta): `Mib` e `Millis` sono **valori posseduti**, quindi con l'`impl From` presente rustc appende un `help: call `.into()`` che l'oracolo non porta, e il confronto letterale fallisce. La regola B (`no_conversion_from_*`) resta comunque isolata da questo effetto — scatta `error` in entrambe le direzioni, indipendente dall'oracolo. Registrato in `docs/porta-di-qualita.md`, sezione «Come scattano le due direzioni», con la tabella della misura e i comandi |
 
 ---
 

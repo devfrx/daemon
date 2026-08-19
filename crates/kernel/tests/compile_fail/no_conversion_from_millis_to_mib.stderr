@@ -1,0 +1,7 @@
+error[E0277]: the trait bound `Mib: From<Millis>` is not satisfied
+ --> tests/compile_fail/no_conversion_from_millis_to_mib.rs:4:48
+  |
+4 |     let _size: kernel::arbiter::Mib = duration.into();
+  |                                                ^^^^ the trait `From<Millis>` is not implemented for `Mib`
+  |
+  = note: required for `Millis` to implement `Into<Mib>`

@@ -1,0 +1,13 @@
+error[E0308]: mismatched types
+ --> tests/compile_fail/mib_as_millis.rs:6:22
+  |
+6 |     takes_a_duration(kernel::arbiter::Mib::new(4096));
+  |     ---------------- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Millis`, found `Mib`
+  |     |
+  |     arguments to this function are incorrect
+  |
+note: function defined here
+ --> tests/compile_fail/mib_as_millis.rs:3:4
+  |
+3 | fn takes_a_duration(_value: kernel::time::Millis) {}
+  |    ^^^^^^^^^^^^^^^^ ----------------------------

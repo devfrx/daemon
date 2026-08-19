@@ -7,10 +7,10 @@
 // DECISION PATH reading one -- and no decision path existed. It does now, it is the call
 // below, and the row closes here.
 //
-// ⛔ THE PROFILE IS BUILT AND THEN HANDED TO `admit` IN THE SAME `main`, and that is the
-// point rather than ceremony: it is the exact material a real admission runs on, so "the
-// decision cannot see `cold_start`" is proved on the argument the decision actually takes,
-// not on a type quoted out of context.
+// ⛔ THE CALL BELOW DOES NOT PARTICIPATE IN THE ERROR, and this paragraph used to claim it
+// did. `E0609` comes from the LITERAL plus the field access, and is raised with the call
+// DELETED -- ✅ measured 2026-08-19. What handing the profile to `admit` buys is a coupling to
+// the SIGNATURE, and it is of grade `mismatch`, not of grade `error`: see the register.
 //
 // ⛔ Names `kernel::` and declares no attributes of its own -- gotcha #39.
 fn main() {

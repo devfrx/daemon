@@ -431,7 +431,8 @@ posto — un default in `Parameters` è precisamente ciò che §2.8.2 regola 2 v
 ⛔ **`Arbiter` è logica pura dei propri ingressi**, con `BTreeMap` da `alloc` (`HashMap` non è
 nominabile: `no_std`, gotcha #12 chiuso gratis), e `admit` **riscuote gli scaduti prima di
 decidere**. Le sonde nuove stanno in `crates/kernel/tests/arbiter_admission.rs`, che passa da
-**due** a **DIECI** test — ricontati eseguendo il binario, mai dedotti (gotcha #31):
+**due** a **UNDICI** test — ⚠️ **l'undicesima è arrivata in revisione il 2026-08-19**,
+non dal piano — ricontati eseguendo il binario, mai dedotti (gotcha #31):
 
 | Sonda nuova | Cosa tiene |
 |---|---|
@@ -442,7 +443,8 @@ decidere**. Le sonde nuove stanno in `crates/kernel/tests/arbiter_admission.rs`,
 | `a_total_smaller_than_the_two_permanent_quotas_refuses_the_second_one` | che una configurazione impossibile sia **visibile invece che silenziosa** — è la sonda che paga la divergenza del disegno dalla §5.1: con le due quote **sottratte** dal totale, un totale più piccolo della loro somma darebbe budget zero **senza una parola** |
 | `an_expired_grant_does_not_stay_allocated` | la riscossione pigra, scritta perché sia **osservabile**: fra due operazioni una concessione scaduta resta nei libri — non nega niente a nessuno, **non c'è** nessuno — e al primo che guarda è già liberata (§5.7 proprietà 5) |
 | `a_grant_still_inside_its_window_is_not_collected` | la contro-sonda, ed è la direzione che si salta: senza, *«riscuoti sempre tutto»* passa |
-| `a_request_larger_than_the_total_is_refused_and_not_queued` | che una richiesta più grande dell'intera macchina sia `Refused` e **mai** `Queued`: nessun rilascio le farà mai posto, e un gettone che non può essere servito è una perdita che sembra pazienza |
+| `a_grant_is_collected_at_the_instant_its_window_closes` | ⚠️ **UNDICESIMA, e non dettata dal piano: aggiunta in revisione il 2026-08-19.** È il **confine** che le due righe qui sopra scavalcano — una guarda a `5_001`, l'altra a `4_999`, e a **`5_000` esatti** non chiedeva nessuno — quindi `>` mutato in `>=` dentro `collect_expired` sopravviveva all'intera suite, **sulla funzione che quelle due esistono per tenere**. ⛔ Tiene anche **quale** delle due semantiche sia quella scelta: con `expires_at > now` la finestra è **semiaperta**, `[inizio, scadenza)`, e a `now == expires_at` la concessione è **già riscossa** |
+| `a_request_larger_than_the_total_is_refused_and_not_queued` | ⚠️ **MENO di ciò che il nome promette, e la cella riscritta il 2026-08-19 diceva le due metà che non sono sue.** ⛔ Ciò che tiene è che `32_768` contro un tetto di `8_192` torni `Refused` **coi due numeri giusti**, e a consegnarlo è la **seconda** guardia — `allocated + asked > ceiling` — non quella che il nome nomina: ✅ **misurato cancellando `asked > ceiling` per intero, `return` compreso — `cargo test --locked -p kernel --test arbiter_admission` → 11 passati, 0 falliti.** La metà **mai `Queued`** è vera **per assenza di produttori**: fino al Task 6 nessuno emette `Queued`, quindi nessun codice esistente può falsificarla. ⏳ **L'innesco è il Task 6**, dove il ramo alternativo diventa `Queued` e le due guardie cominciano a rispondere **diverso** |
 
 ⚠️ **Il file era del Task 4 e il suo *«Create»* era un `Modify`:** il commento di modulo è
 stato **fuso** e le due sonde del Task 4 restano — altrimenti sparivano le seconde direzioni
@@ -455,12 +457,21 @@ di `V4` e di `I2 · §5.3`. Le due `use` sono state unite, non sostituite.
 |---|---|---|---|
 | **1a** | `>` → `>=` nel confronto **somma contro tetto** (`self.allocated().saturating_add(asked) > ceiling`) | `the_sum_of_the_grants_never_exceeds_the_total` | ✅ **rossa** — `assertion failed: matches!(outcome, Admission::Granted(_))`. Cadono con lei anche `an_expired_grant_does_not_stay_allocated` e `a_grant_still_inside_its_window_is_not_collected`, che riempiono il totale **esatto**. **7 passati, 3 falliti** |
 | **1b** | ⚠️ **aggiunta**, non dettata: `>` → `>=` nell'**altro** confronto col tetto (`asked > ceiling`) | — | ✅ **`the_sum_of_the_grants_never_exceeds_the_total` SOPRAVVIVE**, e muoiono le altre due. **8 passati, 2 falliti** — vedi la divergenza sotto la tabella |
+| **1c** | ⚠️ **aggiunta in revisione il 2026-08-19**, e non è una variante della 1b: la guardia `asked > ceiling` **cancellata per intero**, `return` compreso | — | ⛔ **NESSUNA muore — 11 passati, 0 falliti**, inclusa `a_request_larger_than_the_total_is_refused_and_not_queued`, la sola che la nomini. La guardia è **interamente sussunta** dalla seconda, e oggi **nessuna sonda la tiene**. Vedi la divergenza sotto la tabella |
 | **2** | `release` restituisce `Mib::ZERO` invece di `held.reserved` | `releasing_gives_back_exactly_the_reservation` | ✅ **rossa, e sola** — `` assertion `left == right` failed / left: Mib(0) / right: Mib(6144) ``. **9 passati, 1 fallito** |
 | **3** | `collect_expired` con **corpo vuoto** | `an_expired_grant_does_not_stay_allocated` | ✅ **rossa, e sola**, col proprio messaggio: *«without the collection this is Refused»*. **9 passati, 1 fallito** |
 | **4** | `collect_expired` con `retain(\|_, _\| false)` | `a_grant_still_inside_its_window_is_not_collected` | ✅ **rossa**, col proprio messaggio: *«the window has not closed yet»*. Cadono con lei altre tre. **6 passati, 4 falliti** |
 | **5** | `cold_start: Millis` rimesso su `ResourceProfile` | `admission_reads_cold_start.rs` | ⛔ **`mismatch`, non `error`** — `E0063` al posto di `E0609`. Vedi sotto |
-| **6** | `impl Admission { pub const fn is_granted(&self) -> bool { … } }` | `admission_has_no_is_granted.rs` | ✅ **`error`** — *«Expected test case to fail to compile, but it succeeded»*, e gli altri ventisei restano `ok` |
+| **6** | `impl Admission { pub const fn is_granted(&self) -> bool { … } }` | `admission_has_no_is_granted.rs` | ✅ **`error`** — *«Expected test case to fail to compile, but it succeeded»*, e gli altri **ventisei** restano `ok` — ⚠️ **cifra del momento della misura**, quando i casi in cartella erano **ventisette**; vedi la nota sui conteggi |
 | **7** | il `profile` **tolto dalla firma** di `admit` | `admission_without_profile.rs` | ✅ **`error`** — e come effetto collaterale gli altri due casi dell'ammissione vanno `mismatch`, perché passano un profilo a una firma che non lo prende più |
+| **8** | ⚠️ **aggiunta in revisione il 2026-08-19**: `>` → `>=` in `collect_expired` (`held.expires_at > now`) | `a_grant_is_collected_at_the_instant_its_window_closes` | ✅ **rossa, e SOLA su tutto il workspace** — col proprio messaggio: *«at now == expires_at the window is already shut: [start, expiry)»*. **10 passati, 1 fallito** nel file, e `cargo test --workspace --no-fail-fast --locked` non porta **nessun** altro rosso. ⛔ Prima che quella sonda esistesse questa mutazione sopravviveva alla suite **intera** |
+
+⚠️ **I conteggi delle righe 1a–7 sono della suite di DIECI sonde**, misurati chiudendo il
+Task 5; quelli di **1c** e **8** sono della suite di **undici**. Dichiarato invece che riallineato:
+sono misure fatte in un momento, e l'undicesima sonda è arrivata dopo, il 2026-08-19. Le righe
+**1a**, **3** e **4** toccano un tetto riempito **esatto** o la riscossione, quindi la sonda nuova
+sposterebbe i loro numeri: **non sono state rimisurate, e il numero nuovo non è dedotto** (gotcha
+**#31**).
 
 ⛔ **Le mutazioni 3 e 4 sono ENTRAMBE necessarie, ed è la ragione per cui esistono due sonde:**
 la 3 da sola sarebbe soddisfatta da *«riscuoti sempre tutto»*, che è il difetto opposto e non
@@ -472,7 +483,18 @@ DUE.** Il piano detta *«`>` diventa `>=` nel confronto col tetto»* attendendo 
 uccide; l'altro — `asked > ceiling`, la guardia *«più grande dell'intera macchina»* — la lascia
 **verde** e ne uccide altre due. Misurate entrambe perché una campagna che si ferma alla prima
 avrebbe concluso *«mutazione applicata, sonda morta, fatto»* senza sapere quale delle due
-guardie aveva toccato. Nessuna delle due è vacua, ed è quello il risultato.
+guardie aveva toccato.
+
+⛔ **E LA CONCLUSIONE ERA PIÙ FORTE DELLA MISURA, corretta il 2026-08-19.** Questa riga
+chiudeva con *«Nessuna delle due è vacua, ed è quello il risultato»*, e la mutazione `>` → `>=`
+non lo prova: dice che **il confronto** morde, non che **la guardia** sia portante. ✅ **Misurato
+dopo, cancellando `asked > ceiling` per intero** — riga **1c** della tabella: **11 passati, 0
+falliti**, inclusa `a_request_larger_than_the_total_is_refused_and_not_queued`, la sola che la
+nomini. La guardia è **interamente sussunta** dalla seconda: se `asked > ceiling`, allora
+`allocated + asked > ceiling` è vero **a maggior ragione**, e il valore restituito è **identico**.
+⛔ **E resta lo stesso**, perché è dettata dal piano ed è **anticipatoria**: al **Task 6** il ramo
+alternativo diventa `Queued`, e da lì in poi le due guardie rispondono **diverso**. Scritto
+invece di lasciarla contare fra le portanti — è la specie di `E17`.
 
 ⛔ **La mutazione 5 misura la SPECIE della guardia di `Q8 · §5.2.1`, e la specie va scritta
 perché nessuno la conti fra le forti.** Rimettere `cold_start` su `ResourceProfile` **non** fa
@@ -483,13 +505,26 @@ trybuild dice **`mismatch`**. ⚠️ Cioè questa guardia **dipende dall'oracolo
 È il prezzo della forma di questo caso, non un difetto scoperto dopo: registrato qui e nella
 tabella delle due direzioni.
 
+⚠️ **E IL COMMENTO DEL CASO ACCREDITAVA LA CHIAMATA DELL'ERRORE, corretto il 2026-08-19.**
+`crates/kernel/tests/compile_fail/admission_reads_cold_start.rs` diceva che il profilo è
+costruito *«e poi passato ad `admit` nello stesso `main`, e QUELLO è il punto»*. L'`E0609` nasce
+invece dal **letterale** e dall'**accesso al campo**, e la chiamata **non partecipa**:
+✅ **misurato cancellandola** su una crate usa-e-getta fuori dal repository — stesso
+`error[E0609]`, stessa nota coi quattro campi disponibili — e l'oracolo accanto al caso nomina
+**un** errore e **una** riga, che è quella dell'accesso al campo. Ciò che la chiamata compra è
+un **accoppiamento alla firma** di grado `mismatch` e non di grado `error`, che è quanto la
+tabella delle due direzioni diceva già giusto. ⛔ **Il commento è stato riscritto a parità di
+righe**, e non è pignoleria: l'oracolo pinza il **numero di riga** dell'accesso al campo, quindi
+allungare il commento avrebbe reso il caso `mismatch` e costretto a rigenerare uno `.stderr` che
+non aveva nessuna ragione di cambiare.
+
 ⛔ **Le due righe di catalogo che il Task 5 chiude, più quella che gli inneschi gli hanno
 consegnato.**
 
 | Riga | Stato | Le due direzioni |
 |---|---|---|
 | `Q8 · §5.2.1` | ✅ **coperta** (era parziale) | *non compila*: `admission_reads_cold_start.rs`, che ora costruisce il profilo **e lo passa ad `admit`**. *Compila*: `cold_start_is_readable_outside_the_decision_path` in `crates/kernel/tests/arbiter_resource.rs`, dal Task 3 |
-| `V2` | ✅ **coperta** (era scoperta) | *non compila*: `admission_without_profile.rs` (`E0061`, *«argument #1 of type `&ResourceProfile` is missing»*). *Compila*: **tutte e otto** le sonde nuove di `arbiter_admission.rs`, che `admit` lo chiamano **col** profilo, da fuori la crate |
+| `V2` | ✅ **coperta** (era scoperta) | *non compila*: `admission_without_profile.rs` (`E0061`, *«argument #1 of type `&ResourceProfile` is missing»*). *Compila*: **tutte e nove** le sonde nuove di `arbiter_admission.rs`, che `admit` lo chiamano **col** profilo, da fuori la crate — ⚠️ **erano otto** fino alla revisione del 2026-08-19, che ha portato la nona |
 | blocco **B**, *«avviare un worker ← una concessione»* | ✅ **coperta** (era parziale) | *non compila*: `grant_has_no_constructor.rs`, con la mutazione **2b** del Task 4 a provarlo non vacuo. *Compila* — cioè *«con la concessione → compila»* — **ora è scrivibile**, ed è scritta: `releasing_gives_back_exactly_the_reservation` ottiene un `Grant` da `admit` e lo consuma. ⚠️ **Il consumatore vero è `Process::start`, che resta del Traguardo 6**: ciò che questa direzione compra oggi è che una concessione **si ottiene solo da `admit`** ed è spendibile una volta sola |
 | `V4` | ✅ **coperta**, e ora con **due** casi | *non compila*: `admission_is_not_two_ways.rs` (`E0004`) **e** `admission_has_no_is_granted.rs` (`E0599`) — la seconda metà, che aspettava un'ammissione vera da cui ottenere un `Admission`. *Compila*: `an_admission_is_distinguishable_three_ways`, dal Task 4 |
 
@@ -502,6 +537,25 @@ id, e il secondo accrediterebbe la concessione del primo. ⛔ **Il disegno non �
 per chiudere il buco:** dare un'**identità** all'arbitro è una decisione del proprietario. Ciò
 che protegge oggi è che un processo ha **un** arbitro — i diversi che esistono insieme esistono
 nei **banchi**. Il limite è scritto **accanto a `ReleaseError` nel sorgente**, oltre che qui.
+
+⚠️ **VOCE APERTA — `release` risponde `UnknownGrant` anche a una concessione PROPRIA ma
+SCADUTA, e il nome della variante afferma il falso.** `release` chiama `collect_expired`
+**prima** di cercare, quindi una concessione con `expires_at <= now` è già stata tolta dai libri:
+`held.remove` dà `None` e si esce con `Err(ReleaseError::UnknownGrant)`, il cui doc diceva *«This
+arbiter never issued that grant»* — che del caso scaduto è **falso**. Il chiamante non può
+distinguere *«non è mia»* da *«era mia ed è scaduta»*. ✅ **Misurato il 2026-08-19 su una sonda
+usa-e-getta fuori dal repository**, non dedotto: ammessa per `5_000` ms e rilasciata a `5_001` →
+`Err(UnknownGrant)`; a `4_999` → `Ok(Mib(4096))`; a `5_000` **esatti** → `Err(UnknownGrant)`
+anche lì, perché la finestra è **semiaperta**. ⛔ **Le due scelte che lo producono sono dettate
+dal Passo 4 del piano** — la riscossione prima della ricerca, e una variante sola — quindi il
+disegno **non è stato cambiato**: la conflazione è **dichiarata** accanto a `ReleaseError` nel
+sorgente, e la scelta fra tenerla e aggiungere `ReleaseError::Expired` è **registrata per il
+proprietario** in `E30` dell'errata del piano, **non presa**. ⏳ **Oggi non costa nulla, e la
+ragione è una misura e non una speranza:** `release` ha **due** chiamanti in tutto il
+repository, entrambi in `crates/kernel/tests/arbiter_admission.rs` — nessun consumatore di
+produzione esiste. Comincia a costare al **Traguardo 6**, dove `Worker::kill` restituisce la
+concessione a lavoro **finito**, che può benissimo cadere dopo la finestra, e lì *«il rilascio è
+fallito»* e *«era già stato fatto per te»* sono notizie diverse.
 
 ⏳ **LA SCADENZA DEL TASK 4 È RISPETTATA, e questa riga esiste per renderlo verificabile.** La
 sezione del Task 4 dichiarava: *«al Task 5 quell'avviso DEVE sparire, perché `release` legge il
@@ -527,8 +581,9 @@ con una nota che cita la firma di `Parameters::new` **verbatim**. La rigenerazio
 **legittima e prevista** — il commento dentro il caso la descriveva già — ed è stata fatta per
 la via documentata: cancellato l'oracolo stantio, ri-eseguito, `diff -u` del vecchio contro
 quello in `wip/`, spostato **a mano**. ⛔ **Mai `TRYBUILD=overwrite`**, che avrebbe portato via
-gli altri ventisette (gotcha #25). Il diff letto è di **due righe**: la firma e la sua
-sottolineatura. La regola che quel caso difende scatta comunque come `error` e **non**
+gli altri **ventisette** — ⚠️ **cifra del momento della misura**, col caso nuovo già in
+cartella, cioè **ventotto** in tutto (gotcha #25). Il diff letto è di **due righe**: la firma e
+la sua sottolineatura. La regola che quel caso difende scatta comunque come `error` e **non**
 attraverso l'oracolo, quindi la rigenerazione non disarma niente.
 
 ⚠️ **`parameters_delivered.rs` passa da quattro a CINQUE test**, e il quinto è la metà che
@@ -541,12 +596,17 @@ quale una comparazione che guardasse il solo `executor_turn_limit` avrebbe passa
 del file, e sostituire un totale sarebbe stato inosservabile.
 
 📌 **Conteggi, ricontati eseguendo il binario e mai dedotti** (gotcha #31): workspace **34
-target, 213 passati, 0 falliti, 2 ignorati** — erano **204** prima del compito, e i nove in più
-sono le otto sonde dell'ammissione più quella del totale. Nessun target nuovo: il file
-dell'ammissione esisteva già. Per file: `arbiter_admission.rs` **dieci**,
-`parameters_delivered.rs` **cinque**, `executor_determinism.rs` **tredici** (invariato),
-`arbiter_resource.rs` **otto** (invariato), `dst_campaign.rs` **cinque** di cui uno `#[ignore]`
-(invariato), e i casi `compile_fail` da **ventisei** a **VENTOTTO**.
+target, 214 passati, 0 falliti, 2 ignorati** — erano **204** prima del compito e **213** alla sua
+chiusura; il duecentoquattordicesimo è la sonda del **confine della scadenza**, aggiunta in
+revisione il 2026-08-19. Gli altri nove sono le otto sonde dell'ammissione più quella del totale.
+Nessun target nuovo: il file dell'ammissione esisteva già. Per file: `arbiter_admission.rs`
+**undici**, `parameters_delivered.rs` **cinque**, `executor_determinism.rs` **tredici**
+(invariato), `arbiter_resource.rs` **otto** (invariato), `dst_campaign.rs` **cinque** di cui uno
+`#[ignore]` (invariato), e i casi `compile_fail` da **ventisei** a **VENTOTTO** — ✅ **ricontati
+il 2026-08-19 col comando e non a memoria**, `ls crates/kernel/tests/compile_fail/*.rs | wc -l`
+→ **28**. ⚠️ **È la cifra che le due righe qui sopra datano invece di riscrivere:** *«gli altri
+ventisei»* e *«gli altri ventisette»* sono due istantanee di un contenitore che cresceva dentro
+lo stesso compito, non due affermazioni in contraddizione.
 
 #### Le contro-sonde delle righe nuove
 
@@ -558,7 +618,7 @@ Per file — la direzione che si dimentica (§7.1.1 regola 3):
 | `crates/simulator/tests/seeded_rng.rs` | **blocco C** · `V29 · §2.2` | otto test |
 | `crates/kernel/tests/boundary_promotion.rs` | **blocco C** · `Q9 · I6 · V20`, **entrambe** — la promozione dichiarata è la contro-sonda della regola A e della regola B — **e blocco B** · `V19` | ⚠️ **quindici** test — ricontati **sul binario** il 2026-08-10 chiudendo il traguardo: la cella diceva **otto**, ed era ferma a prima che il Task 7 vi portasse le sonde della nota, dell'accordo fra `kind` e operazione, e le due in cui la sonda dettata è stata **divisa**. Gotcha **#31** |
 | `crates/kernel/tests/parameters_delivered.rs` | le **due** righe **blocco C** · `V29 · §2.8 · ADR-0034` | ⚠️ **cinque** test — erano quattro fino al Traguardo 5 Task 5, che ha aggiunto la metà di §2.8.4 per `total_vram`. Ricontati **sul binario** |
-| `crates/kernel/tests/arbiter_admission.rs` | **blocco C** · `V4` — la direzione *«distinguere le tre compila»* — `I2 · §5.3` — la direzione *«quello legale SI COSTRUISCE»* — **e dal Task 5** `V2` (*«con il profilo compila»*) e la riga del **blocco B** *«avviare un worker ← una concessione»* (*«con la concessione compila»*). Nessuna tenibile dal rispettivo caso negativo. ⚠️ **File nuovo del Traguardo 5 Task 4**, e cresce coi Task 6–7 | ⚠️ **dieci** test — erano **due** alla nascita; le otto dell'ammissione sono del Task 5. Ricontati **sul binario** |
+| `crates/kernel/tests/arbiter_admission.rs` | **blocco C** · `V4` — la direzione *«distinguere le tre compila»* — `I2 · §5.3` — la direzione *«quello legale SI COSTRUISCE»* — **e dal Task 5** `V2` (*«con il profilo compila»*) e la riga del **blocco B** *«avviare un worker ← una concessione»* (*«con la concessione compila»*). Nessuna tenibile dal rispettivo caso negativo. ⚠️ **File nuovo del Traguardo 5 Task 4**, e cresce coi Task 6–7 | ⚠️ **undici** test — erano **due** alla nascita; le otto dell'ammissione sono del Task 5, e l'undicesima — il **confine della scadenza** — è della revisione del 2026-08-19. Ricontati **sul binario** |
 | `crates/kernel/tests/record_shape.rs` | **blocco C** · `Q14 · §4.9` **e** `Q9 · I6 · V20 · §4.9` — la contro-sonda dell'etichetta è `every_trust_label_survives_the_round_trip_and_the_two_differ_in_the_bytes`, che scrive **entrambi** i valori e ne confronta i byte | ⚠️ **dodici** test — ricontati **sul binario** il 2026-08-10 chiudendo il traguardo: la cella diceva **dieci**, e i due mancanti sono `the_reason_survives_the_round_trip_and_travels_beside_the_payload` e `an_empty_record_is_nine_bytes_and_the_inner_array_holds_five`, arrivati col **Task 7** — verificati col `diff` fra i due commit invece che dedotti. Gotcha **#31** |
 
 ⛔ **`boundary_promotion.rs` è la contro-sonda di due blocchi insieme**, e ciascuno dei suoi

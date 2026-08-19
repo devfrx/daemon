@@ -165,6 +165,15 @@ fn releasing_gives_back_exactly_the_reservation() {
 ///
 /// ⚠️ WHAT IT PROVES IS "IT IS NOT IN MY BOOKS", NOT "I TELL MINE FROM SOMEBODY ELSE'S", and
 /// the declared limit beside `ReleaseError` says why: the second arbiter here is EMPTY.
+///
+/// ⛔ AND THE SECOND ASSERTION CANNOT FAIL, WRITTEN DOWN INSTEAD OF QUIETLY KEPT -- the
+/// species this milestone has already paid for as `E17`. `release` can only REMOVE from the
+/// map, never insert, so `allocated()` on an arbiter that was born empty is `Mib::ZERO`
+/// whatever the production code does: no mutation of `release` turns that line red. IT IS
+/// THE LINE ABOVE, `is_err()`, THAT HOLDS THE PROBE. The assertion stays because it states
+/// the intent the name carries -- "and not a silent credit" -- and because the day `release`
+/// grows a path that can INSERT, it stops being free and starts being the guard it reads
+/// like.
 #[test]
 fn a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit() {
     let mut first = arbiter(TOTAL);
@@ -287,6 +296,43 @@ fn a_grant_still_inside_its_window_is_not_collected() {
         matches!(after, Admission::Refused { .. }),
         "the window has not closed yet"
     );
+}
+
+/// THE BOUNDARY THE TWO PROBES ABOVE STEP OVER. One asks at `5_001` and the other at
+/// `4_999`; `5_000` itself -- the instant the window closes -- was asked by nobody, so `>`
+/// mutated to `>=` inside `collect_expired` survived the whole suite, on the very function
+/// those two exist to hold.
+///
+/// ⛔ AND IT WRITES DOWN WHICH SEMANTICS IS THE CHOSEN ONE, because a boundary nobody names
+/// is a boundary somebody later "fixes". `retain(|_, held| held.expires_at > now)` means
+/// that at `now == expires_at` the grant IS ALREADY COLLECTED: the window is HALF-OPEN,
+/// `[start, expiry)`, and a grant is valid up to -- and not including -- the instant it
+/// expires. A choice, not an accident.
+///
+/// ⚠️ THE CONSEQUENCE THAT IS NOT OBVIOUS, and it is why the choice is worth naming:
+/// `release` collects before it looks, so at `now == expires_at` handing the grant back
+/// answers `Err(ReleaseError::UnknownGrant)` -- measured. The limit written beside
+/// `ReleaseError` is where that lives.
+#[test]
+fn a_grant_is_collected_at_the_instant_its_window_closes() {
+    let mut arbiter = arbiter(Mib::new(4_096));
+    let outcome = arbiter.admit(
+        &profile("short-lived", 4_096, ComputeClass::Batch),
+        Millis::new(5_000),
+        Monotonic::ORIGIN,
+    );
+    assert!(matches!(outcome, Admission::Granted(_)));
+
+    let after = arbiter.admit(
+        &profile("the-next-one", 4_096, ComputeClass::Batch),
+        Millis::new(5_000),
+        Monotonic::from_millis(5_000),
+    );
+    assert!(
+        matches!(after, Admission::Granted(_)),
+        "at now == expires_at the window is already shut: [start, expiry)"
+    );
+    assert_eq!(arbiter.allocated(), Mib::new(4_096), "one grant, not two");
 }
 
 /// ⛔ A REQUEST BIGGER THAN THE WHOLE MACHINE IS `Refused` AND NEVER `Queued`: no release

@@ -173,9 +173,32 @@ pub enum PreemptibleState {
 /// several that exist at once exist in BENCHES. The day a second real arbiter is wired, this
 /// paragraph is the debt to settle, and it is written where the type is instead of in a
 /// document nobody opens beside the code.
+///
+/// ⚠️ A SECOND DECLARED LIMIT, AND IT IS THE ONE THAT BITES FIRST. `release` calls
+/// `collect_expired` BEFORE it looks, so a grant THIS ARBITER ISSUED whose window has closed
+/// is no longer in the books: `remove` answers `None` and the caller gets `UnknownGrant`.
+/// ✅ MEASURED on a throwaway probe, not deduced: admitted for 5_000 ms, released at 5_001 ->
+/// `Err(UnknownGrant)`; released at 4_999 -> `Ok(Mib(4096))`; released at 5_000 EXACTLY ->
+/// `Err(UnknownGrant)` too, because the window is half-open, `[start, expiry)`.
+///
+/// ⛔ SO TWO CASES ARE CONFLATED IN ONE VARIANT, and THE NAME STILL STATES THE STRONGER OF
+/// THE TWO -- which of an expired grant is simply FALSE. That is why the doc line below no
+/// longer repeats it. What the guard buys is "that is not in my books, so I will not credit
+/// it", and THAT holds in both cases: it is the whole of the over-admission protection. What
+/// it does not buy is telling the caller WHICH of the two happened.
+///
+/// ⚠️ TODAY IT COSTS NOTHING, and the reason is a measurement rather than a hope: `release`
+/// has TWO callers in this repository and both are in `tests/arbiter_admission.rs` -- no
+/// production consumer exists. It starts costing at milestone 6, where `Worker::kill` hands
+/// the grant back when the work FINISHES, which can perfectly well be after the window; there
+/// "your release failed" and "it was already done for you" are different news. A second
+/// variant `Expired` is the known remedy and it is a DESIGN decision, so it is RECORDED FOR
+/// THE OWNER in the plan's errata (`E30`) instead of being taken by the task that noticed it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReleaseError {
-    /// This arbiter never issued that grant.
+    /// Not in this arbiter's books. ⚠️ TWO CAUSES, ONE ANSWER -- see the second declared
+    /// limit above: the grant came from ANOTHER arbiter, or it was this arbiter's and its
+    /// window had already closed.
     UnknownGrant,
 }
 
@@ -196,9 +219,16 @@ struct Held {
 
 /// The GPU arbiter: admission on VRAM, lanes on compute (ADR-0005).
 ///
-/// ⛔ `BTreeMap` AND `Vec`, AND IT IS NOT A PREFERENCE: `HashMap` lives in `std`, which this
-/// crate does not name, so gotcha #12 -- iteration order seeded PER PROCESS, which V29
-/// forbids -- is closed here by the compiler and for free (§5.1). It also closes M-6.
+/// ⛔ `BTreeMap` AND NOT `HashMap`, AND IT IS NOT A PREFERENCE: `HashMap` lives in `std`,
+/// which this crate does not name, so gotcha #12 -- iteration order seeded PER PROCESS,
+/// which V29 forbids -- is closed here by the compiler and for free (§5.1). It also closes
+/// M-6.
+///
+/// ⚠️ RECALL OF 2026-08-19: this line said "`BTreeMap` AND `Vec`" and THERE IS NO `Vec` in
+/// the struct below -- the sentence was copied from the milestone 5 design, which was
+/// thinking of the lane queues. Those arrive at task 6; the word arrives with them. A
+/// comment that names a field the type does not have is the species of `E20`, from the
+/// other side.
 pub struct Arbiter {
     parameters: Parameters,
     next_grant: u64,

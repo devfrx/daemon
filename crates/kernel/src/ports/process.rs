@@ -45,38 +45,7 @@
 
 use alloc::vec::Vec;
 
-/// A grant from the arbiter. THE ONLY WAY TO START A WORKER.
-///
-/// ⛔ There is deliberately NO public constructor. A grant can be issued only by the
-/// arbiter (§5.6), which arrives in milestone 5; whoever writes "start the worker"
-/// without one DOES NOT COMPILE. Today the type has no issuer, and that is why the
-/// negative tests of §6.10.5 are staged rather than written vacuously.
-///
-/// ⛔ AND THIS IS THE ONE PLACE WHERE THE ABSENCE OF A CONSTRUCTOR IS THE POINT, which is
-/// why the remedy applied to the two receipts below STOPS HERE. `platform` RECEIVES a
-/// grant, it does not create one: naming `Grant` in a signature is all an implementation
-/// outside the crate needs, and it is what `tests/ports_are_implementable.rs` exercises.
-/// The declared limit that follows is real and is written rather than left to be
-/// discovered: `Process::start` is IMPLEMENTABLE today and NOT CALLABLE, by anyone, until
-/// milestone 5 gives the arbiter a way to issue one. A test-only constructor was weighed
-/// and refused in `docs/porta-di-qualita.md` -- it would create the second way of
-/// obtaining a grant that §5.6 exists to take away from the compiler.
-///
-/// ⚠️ DIVERGENCE FROM THE PLAN, AND IT WAS MEASURED. The plan dictated a named field
-/// `reserved_mib: u64`. It buys the unconstructibility above, and it costs a
-/// `#[allow(dead_code)]` -- nothing reads the number, and this repository treats an
-/// `allow` as a prohibition switched off (gotcha #13). The private UNIT field gives the
-/// identical guarantee for free: from an integration test `Grant(())` is
-/// `error[E0423]: cannot initialize a tuple struct which contains private fields`, with
-/// zero warnings and no `allow`. The named field also spelled out a piece of the arbiter's
-/// model -- a reservation in MiB -- that belongs to milestone 5 and would have been
-/// invented here.
-///
-/// ⚠️ NO `Debug` EITHER, for the reason that removed `CheckpointId::get()` and the unused
-/// derives on `Path` and `StepId`: nothing formats a grant. It comes back with the caller
-/// that needs it. The receipts below KEEP `Debug` -- there it is load-bearing, `unwrap_err`
-/// requires it.
-pub struct Grant(());
+use crate::arbiter::Grant;
 
 /// What to start. Opaque to the kernel: an executable path and its arguments are
 /// OS-specific, and I3 keeps them behind the platform module.

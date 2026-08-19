@@ -1,0 +1,7 @@
+error: cannot construct `Grant` with struct literal syntax due to private fields
+  --> tests/compile_fail/grant_has_no_constructor.rs:10:19
+   |
+10 |     let _forged = kernel::arbiter::Grant {};
+   |                   ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: private field `id` that was not provided

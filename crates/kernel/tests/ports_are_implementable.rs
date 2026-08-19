@@ -48,8 +48,9 @@ use kernel::ports::filesystem::{CheckpointId, Filesystem, FilesystemError, Path}
 use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 use kernel::ports::journal::StepId;
 use kernel::ports::network::{Endpoint, Network, NetworkError};
+use kernel::arbiter::Grant;
 use kernel::ports::process::{
-    Frame, Grant, Process, ProcessError, SingleReceipt, StreamReceipt, Worker, WorkerDescriptor,
+    Frame, Process, ProcessError, SingleReceipt, StreamReceipt, Worker, WorkerDescriptor,
 };
 
 // ============================================================================================

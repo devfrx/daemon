@@ -18,4 +18,4 @@
 
 pub mod resource;
 
-pub use resource::{ComputeClass, Mib, Preemption};
+pub use resource::{ComputeClass, Mib, Preemption, ResourceProfile, WorkDescriptor};

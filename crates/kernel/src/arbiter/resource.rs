@@ -124,3 +124,46 @@ impl Preemption {
         }
     }
 }
+
+/// What the arbiter RECEIVES in order to decide (§5.2). Named and versioned: design/02
+/// makes the version part of the NAME -- `trellis2-512-lean`, `trellis2-1024` -- because a
+/// kind of work does not produce a number but a CURVE, and the useful points of that curve
+/// become distinct named profiles.
+///
+/// ⛔ `name` IS `&'static str` AND NOT `String`, and the reason is finding P-1, closed on
+/// 2026-08-18: a profile name is chosen when the code is written, so it is a literal in the
+/// binary, and runtime text -- which is where untrusted content lives -- cannot get here at
+/// all. A `String` would buy nothing and reopen a road that was measured shut.
+///
+/// ⛔ AND `cold_start` IS NOT HERE. §5.2.1: design/02 says it is "used to warn the user, not
+/// to decide", which was a written rule and therefore a recommendation. It lives in
+/// `WorkDescriptor`, which the admission does not receive, so a decision that wanted to read
+/// it HAS NO WAY.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ResourceProfile {
+    pub name: &'static str,
+    /// The reservation DECLARED by the requester, not measured after the fact. A
+    /// systematically wrong reservation is a defect of the PROFILE and not an incident
+    /// (ADR-0005).
+    pub reserved_vram: Mib,
+    pub compute_class: ComputeClass,
+    pub preemption: Preemption,
+}
+
+/// What goes to the PRESENTATION side, and never to the admission (§5.2.1).
+///
+/// ⚠️ IT IS TIED TO ITS PROFILE BY A NAME AND BY NOTHING ELSE. §5.2.1 accepted the cost in
+/// those words -- "two structures instead of one, and one more place to keep them aligned"
+/// -- and a shared type would put `cold_start` back within reach of the decision, which is
+/// the whole thing this split exists to prevent.
+///
+/// ⚠️ NOT TO BE CONFUSED WITH `crate::ports::process::WorkerDescriptor`, which is one letter
+/// away and is a different thing: that one is WHAT TO START, opaque bytes for the OS. No
+/// file imports both unqualified.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct WorkDescriptor {
+    pub profile_name: &'static str,
+    /// How long the work takes to become useful when it starts cold. ⛔ FOR WARNING THE
+    /// USER, NEVER FOR DECIDING.
+    pub cold_start: Millis,
+}

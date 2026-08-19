@@ -1,7 +1,7 @@
 //! What the compiler cannot hold about the resource model: the DIRECTION in which the
 //! arithmetic saturates, and the explicit lane order.
 
-use kernel::arbiter::{ComputeClass, Mib, Preemption};
+use kernel::arbiter::{ComputeClass, Mib, Preemption, ResourceProfile, WorkDescriptor};
 use kernel::time::Millis;
 
 /// ⛔ THE DIRECTION IS THE ASSERTION, not the fact that it does not panic. A wrapping add
@@ -89,4 +89,44 @@ fn a_grace_time_exists_exactly_when_the_profile_is_preemptible() {
         Preemption::After(Millis::new(250)).grace(),
         Some(Millis::new(250))
     );
+}
+
+/// ⛔ THE OTHER HALF OF `Q8 · §5.2.1`, and without it the row is proved in one direction
+/// only, which §7.1.1 rule 3 does not admit. The rule is "the admission cannot reach
+/// `cold_start`"; the counter-probe is "somebody OUTSIDE the admission can".
+///
+/// ⚠️ THE CATALOGUE NAMES THAT SOMEBODY "the presentation projection", AND IT DOES NOT
+/// EXIST. So the reader here is a FAKE, and it proves the right property -- the field is
+/// reachable outside the decision path -- with words different from the row's. Registered
+/// in §12 of the milestone 5 design as the owner's to reword.
+fn a_presentation_projection(descriptor: &WorkDescriptor) -> Millis {
+    descriptor.cold_start
+}
+
+#[test]
+fn cold_start_is_readable_outside_the_decision_path() {
+    let descriptor = WorkDescriptor {
+        profile_name: "trellis2-512-lean",
+        cold_start: Millis::new(9_000),
+    };
+    assert_eq!(a_presentation_projection(&descriptor), Millis::new(9_000));
+}
+
+/// ⛔ THE TWO STRUCTURES ARE TIED BY A NAME AND BY NOTHING ELSE, and §5.2.1 priced that
+/// exactly: "two structures instead of one, and one more place to keep them aligned". This
+/// probe is that place, and it is a probe rather than a type because a shared type would
+/// put `cold_start` back within reach of the admission.
+#[test]
+fn a_descriptor_names_the_profile_it_describes() {
+    let profile = ResourceProfile {
+        name: "trellis2-512-lean",
+        reserved_vram: Mib::new(6_144),
+        compute_class: ComputeClass::Batch,
+        preemption: Preemption::After(Millis::new(500)),
+    };
+    let descriptor = WorkDescriptor {
+        profile_name: "trellis2-512-lean",
+        cold_start: Millis::new(9_000),
+    };
+    assert_eq!(profile.name, descriptor.profile_name);
 }

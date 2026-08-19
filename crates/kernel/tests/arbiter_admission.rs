@@ -10,6 +10,23 @@
 //! that it serves EVERY request that fits and skips ahead to none, that it collects the expired
 //! before it serves, and that what comes out of the queue is a grant like any other.
 //!
+//! ⛔ AND THE REVOCATION FROM TASK 7, WHICH IS A THIRD SUBJECT AND WHOSE PROBES ARE ALMOST ALL
+//! SOMEWHERE ELSE -- said here because a reader who counted the revocation probes in this file
+//! would find ONE and conclude the subject is barely held. `Arbiter::ask_back` is `pub(crate)`,
+//! and a `pub(crate)` is unreachable from an integration test, which is a crate of its own
+//! (`error[E0624]`, measured). So the ten probes that CALL it live in the `#[cfg(test)] mod
+//! tests` of `crates/kernel/src/arbiter/mod.rs`, with the deviation declared beside them: that
+//! asking back MARKS and does not free, that the grace is collected when it runs out and not
+//! before, the instant it runs out, that a non-preemptible grant and a lane that is not below
+//! the asking one are never touched, that it stops as soon as the need is covered and takes the
+//! WORST lane first, that asking twice does not buy the room twice, and that it collects the
+//! expired before it marks.
+//!
+//! ⛔ WHAT STAYS HERE IS THE ONE PROBE THAT NEEDS NOTHING PRIVATE, and only privacy moved the
+//! others: `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` is about the
+//! SWEEP, which is where the two deadlines of task 7 meet the validity window of task 5, and it
+//! belongs beside the other probes of that window.
+//!
 //! ⚠️ THE PROBES LIVE HERE AND NOT IN `arbiter_resource.rs`, and the split is by subject
 //! rather than by convenience: that file holds the vocabulary of the RESOURCE -- `Mib`, the
 //! three lanes, the grace time -- and neither `Activity` nor `Admission` is a resource.
@@ -54,6 +71,22 @@ fn profile(name: &'static str, vram: u64, lane: ComputeClass) -> ResourceProfile
         reserved_vram: Mib::new(vram),
         compute_class: lane,
         preemption: Preemption::Never,
+    }
+}
+
+/// A profile the arbiter MAY ask back, with the grace its holder then gets.
+///
+/// ⚠️ NO `use` CAME WITH IT. The plan's step opened with `use kernel::arbiter::{Activity,
+/// PreemptibleState};` and `use kernel::time::Millis as Grace;`, and all three names are
+/// ALREADY imported at the top of this file -- `error[E0252]: the name ... is defined multiple
+/// times`, measured. Merged instead of added, which is what the module comment above has been
+/// telling every task since task 5.
+fn preemptible(name: &'static str, vram: u64, lane: ComputeClass, grace: u64) -> ResourceProfile {
+    ResourceProfile {
+        name,
+        reserved_vram: Mib::new(vram),
+        compute_class: lane,
+        preemption: Preemption::After(Millis::new(grace)),
     }
 }
 
@@ -792,4 +825,39 @@ fn promote_serves_every_request_that_fits_and_not_just_the_first() {
     assert_eq!(promoted[1].ticket, second);
     assert_eq!(arbiter.allocated(), Mib::new(4_096));
     assert_eq!(arbiter.queued(), 0, "the lane emptied");
+}
+
+/// ⛔ THE PROBE THAT PROTECTS THE ONES FROM TASK 5 FROM BECOMING VACUOUS (gotcha #66): with
+/// forced reclamation now living inside the same sweep, a grant that is neither expired nor
+/// revoking must still survive it. Without it, a `collect_expired` whose SECOND arm answered
+/// "collect" would empty the books of everything that was never asked back, and the whole of
+/// the validity window above would still be green.
+///
+/// ⚠️ THE ANSWER IS `Queued` AND NOT `Refused`, AND THE PLAN'S STEP SAID `Refused`. That was
+/// written before task 6 gave `admit` its queueing branch: `4_096` is not bigger than the whole
+/// machine, so "it fits the machine but not the moment" is a ticket. Corrected against the code
+/// of today rather than against the plan, exactly as the three probes task 6 rewrote.
+///
+/// ⚠️ IT STAYS IN THIS FILE while the other ten probes of task 7 are in
+/// `crates/kernel/src/arbiter/mod.rs`, and the reason is the one the module comment gives: this
+/// one never calls `ask_back`, so nothing private is out of its reach.
+#[test]
+fn a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep() {
+    let mut arbiter = arbiter(Mib::new(4_096));
+    let Admission::Granted(_resident) = arbiter.admit(
+        &preemptible("resident", 4_096, ComputeClass::Batch, 500),
+        Millis::new(5_000),
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("it fills the machine");
+    };
+
+    let Admission::Queued(_) = arbiter.admit(
+        &profile("late-comer", 4_096, ComputeClass::Batch),
+        LONG,
+        Monotonic::from_millis(4_999),
+    ) else {
+        panic!("nothing has expired and nothing was asked back, so the late-comer waits");
+    };
+    assert_eq!(arbiter.allocated(), Mib::new(4_096));
 }

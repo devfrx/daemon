@@ -909,6 +909,141 @@ mutazioni, che non lasciano traccia nei conteggi perché una mutazione si revoca
 nuova, nessun caso nuovo, nessun oracolo rigenerato. `cargo build --locked --workspace` stampa
 **zero warning**.
 
+#### La revoca e la grazia che scade — Traguardo 5, Task 7, e le sonde che vivono in `src/`
+
+⛔ **`ask_back` MARCA, non prende, e la spazzata copre DUE scadenze.** Chiedere indietro mette la
+concessione in `Revoking { deadline }` e **lascia la prenotazione nei libri** per tutta la grazia:
+la §5.3 punto 4 dà al titolare quel tempo per consegnare, e un arbitro che liberasse subito
+ammetterebbe un secondo consumatore sulla VRAM che il primo sta ancora usando. A riscuotere è
+`collect_expired`, che da oggi guarda `expires_at` **e** `deadline` — la finestra di validità che
+il richiedente ha dichiarato e la grazia che una revoca ha concesso.
+
+⛔ **DIECI SONDE SU UNDICI VIVONO IN `crates/kernel/src/arbiter/mod.rs`, in un `#[cfg(test)] mod
+tests`, ed è il TERZO modulo di test in `src/` del workspace.** `ask_back` è `pub(crate)` — la
+decisione del proprietario, perché il suo unico chiamante è l'ammissione sotto policy LOCALE — e
+un `pub(crate)` **non si vede da un test d'integrazione**, che è una crate a sé. ✅ **Misurato e
+non assunto:** chiamandolo da `crates/kernel/tests/arbiter_admission.rs` esce
+`` error[E0624]: method `ask_back` is private ``. Il precedente e la forma della giustificazione
+sono `crates/platform/src/rng.rs`. ⛔ **Solo la privatezza sposta una sonda lì dentro:**
+`a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` non chiama `ask_back` e **resta**
+in `tests/arbiter_admission.rs`, accanto alle altre sonde della finestra di validità.
+
+⚠️ **E il commento di modulo di `arbiter_admission.rs` è stato ESTESO e non sovrascritto**, che è
+l'istruzione che quel file porta dal Task 5 e che il Task 6 aveva saltato (`E56`): l'enumerazione
+dei soggetti ora nomina anche la revoca, e dice **dove** stanno le dieci sonde e perché.
+
+⛔ **UNDICI SONDE, di cui SEI dettate dal piano e CINQUE no.** Le cinque in più esistono perché
+una regola scritta in un commento e tenuta da niente è un'intenzione (gotcha **#42**), e perché
+**due** delle mutazioni dettate non uccidevano niente senza di esse.
+
+| Sonda | Dove | Cosa tiene |
+|---|---|---|
+| `asking_a_grant_back_marks_it_and_does_not_free_it_yet` | `src` | che chiedere indietro **marchi** e non prenda: `revoking()` sale a uno e `allocated()` non si muove |
+| `a_grace_that_ran_out_returns_the_reservation_to_the_budget` | `src` | che oltre la scadenza della grazia la prenotazione **torni** nel budget — la metà arbitro di `Forzata` (§6.5 del disegno) |
+| `a_non_preemptible_grant_is_never_asked_back` | `src` | ⛔ **DETTATA, E CORRETTA: il residente è in corsia `Batch` e non in `Realtime`.** Come dettata passava **per la ragione sbagliata** — la guardia sulla **corsia** lo scartava prima che la sua prelazionabilità fosse guardata, quindi il meccanismo che il nome promette non girava mai (gotcha **#74**). In `Batch`, strettamente sotto la corsia che chiede, a salvarlo può essere **solo** la guardia sulla grazia |
+| `only_lanes_below_the_asking_one_are_asked_back` | `src` | la contro-sonda per l'altra strada: un lavoro `Realtime` **prelazionabile** non viene sfrattato per uno `Interactive` |
+| `asking_back_stops_as_soon_as_the_need_is_covered` | `src` | che si fermi appena la stanza basta: *«ha fatto spazio»* è soddisfatto anche da chi revoca tutto e sfratta due lavori per sederne uno |
+| `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` | `tests/` | ⛔ **DETTATA, E CORRETTA nella variante attesa:** il piano asseriva `Refused`, e dal Task 6 *«entra nella macchina ma non in questo momento»* è `Queued`. È la contro-sonda del ramo `_` della spazzata |
+| `a_grant_inside_its_grace_keeps_its_reservation` | `src` | ⚠️ **NON dettata, e senza di lei la mutazione 5 del piano non uccide NIENTE.** `allocated()` non riscuote e `ask_back` nemmeno, quindi un'asserzione scritta subito dopo un `ask_back` **non passa da nessuna spazzata**. Questa fa spazzare qualcun altro — un `admit` a `499` su una grazia che scade a `500` — mentre la grazia corre ancora |
+| `the_grace_runs_out_at_the_instant_of_its_deadline` | `src` | ⚠️ **NON dettata, ed è la specie di `E29` sulla SECONDA scadenza.** Le due sonde qui sopra chiedono a `501` e a `499`: su `500` esatti non chiedeva nessuno, e `deadline > now` mutato in `>=` sarebbe sopravvissuto all'intera suite. Dichiara anche **quale** semantica è quella scelta: grazia **semiaperta**, `[chiesta, scadenza)`, la stessa regola della finestra di validità |
+| `asking_back_twice_does_not_buy_the_room_twice` | `src` | ⚠️ **NON dettata.** È ciò che la guardia su `activity` compra **da sola**: una seconda passata che rimarcasse una concessione già in uscita conterebbe la sua prenotazione **due volte** in `covered` — stanza che l'arbitro non ha — e le sposterebbe la scadenza più in là, regalando al titolare **più** tempo per essere stato chiamato prima |
+| `ask_back_collects_the_expired_before_it_marks` | `src` | ⚠️ **NON dettata.** *«L'arbitro riscuote prima di decidere»* è una proprietà di **ogni** operazione, e con `ask_back` sono **quattro**. Il corpo dettato **non riscuoteva**: la riscossione è stata aggiunta per analogia con `promote`, e questa è l'unica sonda che ne esercita la riga. Nessun `release` qui dentro, come in `promote_collects_the_expired_before_it_serves_the_queue` |
+| `asking_back_takes_the_worst_lane_first` | `src` | ⚠️ **NON dettata.** *«Prima la corsia peggiore, la cosa più economica da interrompere»* è una frase che il doc di `ask_back` **afferma**, e che la tabella delle corsie di [design/02](design/02-arbitrato-gpu.md) fonda — `interattivo` è *«servita prima di `batch`»*, `batch` *«può attendere indefinitamente»*. ⚠️ **Le due prenotazioni sono DIVERSE apposta:** `revoking()` conta e non nomina, quindi due vittime della stessa taglia sarebbero indistinguibili — `2_048` in `Batch` contro `4_096` in `Interactive`, ed è la **risposta** a dire quale è stata presa |
+
+⛔ **DICIOTTO mutazioni, una alla volta, ciascuna provata entrata col conteggio delle
+occorrenze, COMPILATA in un passo separato da quello che la esegue, e revocata da una copia
+byte-esatta presa prima** (mai `git checkout --`, gotcha #48; nessun `sed -i` — il rimpiazzo è
+byte-a-byte in Python, e i **CR sono zero prima e dopo** su entrambi i sorgenti, verificati a ogni
+passo). ✅ **Tutti i conteggi sono della suite di adesso** — dieci sonde nel bersaglio `lib` di
+`kernel` e venti in `arbiter_admission.rs` — e dove ne compaiono due sono nell'ordine `lib` poi
+`arbiter_admission`.
+
+| # | Mutazione, sul codice di produzione | Sonda attesa morta | Misurato |
+|---|---|---|---|
+| **1** | `ask_back` **libera subito** invece di marcare: un `retain` in coda che toglie ogni `Revoking` | `asking_a_grant_back_marks_it_and_does_not_free_it_yet` | ✅ **rossa**, e cadono con lei **tre**: `a_grace_that_ran_out_returns_the_reservation_to_the_budget`, `a_grant_inside_its_grace_keeps_its_reservation`, `asking_back_twice_does_not_buy_the_room_twice`. **6 passate, 4 fallite** |
+| **2** | il `continue` su `lane <= below` tolto | `only_lanes_below_the_asking_one_are_asked_back` | ✅ **rossa, e SOLA — 9 passate, 1 fallita** |
+| **3** | il `return covered` anticipato tolto | `asking_back_stops_as_soon_as_the_need_is_covered` | ✅ **rossa**, e con lei `asking_back_takes_the_worst_lane_first` — senza la fermata marca **anche** la corsia migliore e la risposta diventa `6_144`. **8 passate, 2 fallite** |
+| **3b** | ⚠️ **aggiunta**, la seconda direzione sul **valore** della stessa guardia: `covered >= needed` diventa `covered > needed` | `asking_back_stops_as_soon_as_the_need_is_covered` | ✅ **rossa, e SOLA — 9 passate, 1 fallita.** ⛔ **Cercata apposta**, e la ragione è l'analisi di dominanza qui sotto: prima di questa riga quella sonda non aveva **nessuna** mutazione che la isolasse |
+| **4** | nella spazzata, il ramo `Revoking` diventa `true` (non riscuote mai) | `a_grace_that_ran_out_returns_the_reservation_to_the_budget` | ✅ **rossa**, e con lei `asking_back_twice_does_not_buy_the_room_twice` e `the_grace_runs_out_at_the_instant_of_its_deadline`. **7 passate, 3 fallite** |
+| **5** | nella spazzata, il ramo `Revoking` diventa `false` (riscuote subito) | il piano dice `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` | ⛔ **QUELLA SONDA NON MUORE, e non può: non c'è nessuna revoca nel suo scenario.** ✅ Muoiono **due**, ed **entrambe sono fra le NON dettate** — `a_grant_inside_its_grace_keeps_its_reservation` e `asking_back_twice_does_not_buy_the_room_twice`: **8 passate, 2 fallite**, e `arbiter_admission.rs` **20 passate, 0 fallite**. ⛔ **Quindi con le sole sei sonde dettate questo mutante era VIVO** — la riga della tabella del piano nomina una sonda che il difetto non attraversa. Registrato come `E64` |
+| **5b** | nella spazzata, il **secondo** ramo: `_ => true` diventa `_ => false` | `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` | ✅ **rossa**, ma **non isola**: cadono **venti** sonde in tutto — `lib` **3 passate, 7 fallite** e `arbiter_admission.rs` **7 passate, 13 fallite**. Riscuotere tutto ciò che non è in revoca rompe metà del traguardo, il che è la prova che il ramo è **portante** e non che quella sonda sia sola a tenerlo |
+| **5c** | il confine della grazia: `deadline > now` diventa `>=` | `the_grace_runs_out_at_the_instant_of_its_deadline` | ✅ **rossa, e SOLA — 9 passate, 1 fallita.** ⛔ È la ragione per cui quella sonda esiste: senza, la mutazione sopravviveva a tutte le altre |
+| **5d** | ⚠️ **aggiunta**, la forma **stretta** della 5b: un ramo `Preemptible(Running) => false` davanti a `_ => true` | `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` | ✅ **rossa**, e nel proprio file è la **SOLA** — `arbiter_admission.rs` **19 passate, 1 fallita** — mentre nel `lib` ne cadono sei che tengono la revoca dall'altro capo. **4 passate, 6 fallite** |
+| **6** | ⛔ **la domanda del gotcha #66**: `expires_at <= now` diventa `expires_at < now` | il piano dice `a_grant_still_inside_its_window_is_not_collected` | ⛔ **QUELLA SONDA RESTA VERDE, E NON PERCHÉ SIA DIVENTATA VACUA:** chiede a `4_999` su una finestra di `5_000` e sotto la mutazione fa la **stessa identica cosa** — quel confine non l'ha **mai** tenuto. ✅ **La sola morta è `a_grant_is_collected_at_the_instant_its_window_closes`**, la sonda che il Task 5 aggiunse con `E29` proprio per quel confine: `arbiter_admission.rs` **19 passate, 1 fallita**, `lib` **10 passate, 0 fallite**. Registrato come `E65` |
+| **7** | la guardia *«è già in uscita»* (`Revoking → continue`) tolta | `asking_back_twice_does_not_buy_the_room_twice` | ✅ **rossa, e SOLA — 9 passate, 1 fallita** |
+| **8** | la guardia sulla grazia tolta: `let Some(grace) = held.grace else { continue }` diventa `unwrap_or(Millis::new(0))` | `a_non_preemptible_grant_is_never_asked_back` | ✅ **rossa, e SOLA — 9 passate, 1 fallita.** ⛔ È ciò che rende la sonda della corsia `Batch` non vacua: sulla forma dettata **nessuna** mutazione la uccide, vedi le tre righe `D` |
+| **9** | `self.collect_expired(now)` tolta da `ask_back` | `ask_back_collects_the_expired_before_it_marks` | ✅ **rossa, e SOLA — 9 passate, 1 fallita** |
+| **10** | prima la corsia **migliore** invece della peggiore (`.rev()` tolto) | `asking_back_takes_the_worst_lane_first` | ✅ **rossa, e SOLA — 9 passate, 1 fallita** |
+| **11** | ⚠️ **aggiunta**, la seconda direzione su `revoking()`: conta **ogni** concessione prelazionabile invece delle sole revocate | — | ✅ **tre rosse** — `only_lanes_below_the_asking_one_are_asked_back`, `asking_back_stops_as_soon_as_the_need_is_covered`, `asking_back_takes_the_worst_lane_first`. **7 passate, 3 fallite**: il contatore nuovo è tenuto nelle due direzioni, «zero» e «uno» |
+| **D0** | ⚠️ **non una mutazione ma la forma che il piano DETTA**, installata per misurarla: `if let …Running` più `match held.grace { Some => …, None => continue }` | — | ✅ **VERDE — 10 passate e 20 passate.** Le due forme sono equivalenti su tutte e trenta le sonde, quindi ciò che le distingue non è il comportamento ma **cosa si riesce a provare** |
+| **D1** | sulla forma **dettata**: la guardia `if let …Running` cancellata | — | ✅ **rossa `asking_back_twice_does_not_buy_the_room_twice`, e SOLA — 9 passate, 1 fallita.** ⛔ **`a_non_preemptible_grant_is_never_asked_back` resta VERDE:** a salvarla è il ramo `None`, non la guardia cancellata |
+| **D2** | sulla forma **dettata**: `None => continue` diventa `None => now` | — | ⛔ **NESSUNA muore — 10 passate e 20 passate. Mutante VIVO**, e il ramo è **irraggiungibile**: con la guardia `Running` davanti, una concessione non prelazionabile non ci arriva mai |
+
+⛔ **QUALI SONDE UCCIDE OGNI MUTAZIONE, E QUALI RESTANO DOMINATE — misurato, e scritto anche
+dove la risposta è scomoda.** La regola nata dal Task 3 del Traguardo 4: quando una mutazione ne
+uccide due si cerca **una terza che lasci passare la prima**. Sette sonde su undici hanno un
+uccisore **solo** — le mutazioni **2**, **3b**, **5c**, **7**, **8**, **9**, **10** — e
+`a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` è **sola nel proprio file**
+sotto la **5d**. ⚠️ **Le altre tre sono DOMINATE sotto questa campagna, e si scrive invece di
+lasciarlo intendere:**
+
+| Sonda dominata | Da chi, e perché |
+|---|---|
+| `asking_a_grant_back_marks_it_and_does_not_free_it_yet` | muore sotto **1**, **5b**, **5d** — un sottoinsieme di dove muore `a_grace_that_ran_out_returns_the_reservation_to_the_budget`. Le due condividono lo scenario e differiscono in ciò che asseriscono **alla fine**: *«non ha liberato»* contro *«poi libera»* |
+| `a_grace_that_ran_out_returns_the_reservation_to_the_budget` | muore sotto **1**, **4**, **5b**, **5d** — un sottoinsieme di `asking_back_twice_does_not_buy_the_room_twice`, che per provare che la scadenza **non si è spostata** riammette a `501` e quindi contiene la stessa domanda come sotto-fatto |
+| `a_grant_inside_its_grace_keeps_its_reservation` | muore sotto **1**, **5**, **5b**, **5d** — anch'essa un sottoinsieme di `asking_back_twice`, per la stessa ragione |
+
+⛔ **Che cosa se ne fa, e che cosa NON se ne fa: restano tutte e tre.** ① La **5** le deve la
+propria unica morte utile — senza `a_grant_inside_its_grace_keeps_its_reservation` la mutazione
+del piano è un **mutante vivo** (`E64`), e «dominata» non vuol dire «superflua». ② Ciascuna dice
+una cosa che nessun'altra dice a voce alta, ed è ciò che si legge quando una va rossa: *«marca e
+non prende»*, *«poi riscuote»*, *«dentro la grazia non riscuote»*. ③ ⚠️ **Ma la loro
+non-ridondanza NON è misurata**, ed è registrata per quello che è — un'intenzione finché una
+mutazione non le isola. ✅ **Una candidata è stata cercata e misurata**, ed è la **3b**: ha
+rotto la dominanza di `asking_back_stops_as_soon_as_the_need_is_covered`, che prima era
+contenuta in `asking_back_takes_the_worst_lane_first`. Per le altre tre non se n'è trovata
+nessuna, e la ricerca si registra invece dell'esito che si sarebbe voluto.
+
+⛔ **Le tre righe `D` sono la ragione per cui il corpo di `ask_back` DIVERGE dal piano, e la
+divergenza è una misura e non un gusto.** Sulla forma dettata la direzione *«una concessione non
+prelazionabile non si chiede indietro»* è tenuta da **due guardie che si mascherano a vicenda**:
+cancellare l'una la lascia coperta dall'altra (`D1`), e rompere l'altra non è nemmeno
+raggiungibile (`D2`). Una direzione che nessuna mutazione riesce a mostrare non è provata, è
+**assunta**. Nella forma scritta le due guardie rispondono a **due domande diverse** — *«è già in
+uscita»* e *«si può chiedere indietro»* — e ciascuna ha la propria sonda e il proprio uccisore
+**solo**, le righe **7** e **8**. Voce `E62`.
+
+⛔ **DUE AVVISI `dead_code` RESTANO, E SONO REGISTRATI PER IL PROPRIETARIO invece che spenti.**
+`cargo build --locked --workspace` stampa `` warning: fields `lane` and `grace` are never read ``
+e `` warning: method `ask_back` is never used ``: `ask_back` è `pub(crate)`, il suo unico
+chiamante di produzione nasce al **Task 8**, e un modulo `#[cfg(test)]` non conta per `dead_code`
+in una build non di test. ⛔ **Nessun `#[allow]`** (gotcha #13), **nessun lettore inventato**,
+nessun `pub` di comodo: pubblicare `ask_back` per far tacere l'avviso pubblicherebbe
+un'operazione che non lo è. Il cancello resta **verde** — non passa `-D warnings`. ⏳ **SCADENZA,
+ed è la parte falsificabile: al Task 8 quei due avvisi DEVONO sparire**, perché la policy LOCALE
+chiama `ask_back`, che legge `lane` e `grace`. Chi esegue il Task 8 lo verifica con
+`cargo build --locked --workspace` e si aspetta **zero warning**; se sono ancora lì, il metodo non
+serviva. È la forma esatta di `E10` al Task 4, e la voce è `E67`.
+
+⚠️ **NESSUNA RIGA NUOVA È STATA AGGIUNTA AL CATALOGO.** §7.4 è **spec**, e aggiungere una riga è
+una decisione del **proprietario** (vincolo globale 7). `I2 · §5.3` resta coperta come al Task 4 —
+*«non rappresentabile»* dal caso negativo, *«costruibile dove è lecito»* da
+`a_revocation_is_constructible_on_the_preemptible_side` — e ciò che il Task 7 aggiunge è che
+l'arbitro **non ci prova nemmeno** a runtime, che è più di quanto la riga pretenda. Registrato
+nell'errata.
+
+📌 **Conteggi, ricontati eseguendo il binario e mai dedotti** (gotcha #31): workspace **34 target,
+233 passate, 0 fallite, 2 ignorate** — erano **222** all'inizio del compito, e le **undici** in
+più sono le dieci sonde del `mod tests` e la sola aggiunta a `arbiter_admission.rs`. ⛔ **I TARGET
+NON SI SONO MOSSI, contro l'attesa:** il pre-controllo avvertiva che un `mod tests` dentro `src`
+fa nascere un bersaglio di prova nuovo, e **il bersaglio c'era già** — `cargo test --workspace`
+eseguiva `unittests src\lib.rs` per `kernel` con **zero** test, e oggi ne esegue dieci. La
+divergenza si registra invece di appianarla. Per file: `arbiter_admission.rs` **venti** (erano
+diciannove), il bersaglio `lib` di `kernel` **dieci** (erano zero), `arbiter_resource.rs` **otto**
+(invariato), e i casi `compile_fail` **ventotto** — ✅ ricontati col comando,
+`ls crates/kernel/tests/compile_fail/*.rs | wc -l` → **28**, invariati: il Task 7 non ne ha
+aggiunto nessuno e non ha rigenerato nessun oracolo.
+
 #### Le contro-sonde delle righe nuove
 
 Per file — la direzione che si dimentica (§7.1.1 regola 3):
@@ -919,7 +1054,7 @@ Per file — la direzione che si dimentica (§7.1.1 regola 3):
 | `crates/simulator/tests/seeded_rng.rs` | **blocco C** · `V29 · §2.2` | otto test |
 | `crates/kernel/tests/boundary_promotion.rs` | **blocco C** · `Q9 · I6 · V20`, **entrambe** — la promozione dichiarata è la contro-sonda della regola A e della regola B — **e blocco B** · `V19` | ⚠️ **quindici** test — ricontati **sul binario** il 2026-08-10 chiudendo il traguardo: la cella diceva **otto**, ed era ferma a prima che il Task 7 vi portasse le sonde della nota, dell'accordo fra `kind` e operazione, e le due in cui la sonda dettata è stata **divisa**. Gotcha **#31** |
 | `crates/kernel/tests/parameters_delivered.rs` | le **due** righe **blocco C** · `V29 · §2.8 · ADR-0034` | ⚠️ **cinque** test — erano quattro fino al Traguardo 5 Task 5, che ha aggiunto la metà di §2.8.4 per `total_vram`. Ricontati **sul binario** |
-| `crates/kernel/tests/arbiter_admission.rs` | **blocco C** · `V4` — la direzione *«distinguere le tre compila»* — `I2 · §5.3` — la direzione *«quello legale SI COSTRUISCE»* — **e dal Task 5** `V2` (*«con il profilo compila»*) e la riga del **blocco B** *«avviare un worker ← una concessione»* (*«con la concessione compila»*). Nessuna tenibile dal rispettivo caso negativo. ⚠️ **File nuovo del Traguardo 5 Task 4**, e cresce coi Task 6–7 | ⚠️ **diciannove** test — erano **due** alla nascita; le otto dell'ammissione sono del Task 5, l'undicesima — il **confine della scadenza** — è della revisione del 2026-08-19, e le **otto** delle code sono del Task 6. Ricontati **sul binario** |
+| `crates/kernel/tests/arbiter_admission.rs` | **blocco C** · `V4` — la direzione *«distinguere le tre compila»* — `I2 · §5.3` — la direzione *«quello legale SI COSTRUISCE»* — **e dal Task 5** `V2` (*«con il profilo compila»*) e la riga del **blocco B** *«avviare un worker ← una concessione»* (*«con la concessione compila»*). Nessuna tenibile dal rispettivo caso negativo. ⚠️ **File nuovo del Traguardo 5 Task 4**, e cresce coi Task 6–7 | ⚠️ **venti** test — erano **due** alla nascita; le otto dell'ammissione sono del Task 5, l'undicesima — il **confine della scadenza** — è della revisione del 2026-08-19, le **otto** delle code sono del Task 6, e la ventesima è del Task 7. ⛔ **UNA SOLA dal Task 7, e le altre DIECI vivono in `crates/kernel/src/arbiter/mod.rs`:** `ask_back` è `pub(crate)` e da qui non si vede — `` error[E0624] ``, misurato. Ricontati **sul binario** |
 | `crates/kernel/tests/record_shape.rs` | **blocco C** · `Q14 · §4.9` **e** `Q9 · I6 · V20 · §4.9` — la contro-sonda dell'etichetta è `every_trust_label_survives_the_round_trip_and_the_two_differ_in_the_bytes`, che scrive **entrambi** i valori e ne confronta i byte | ⚠️ **dodici** test — ricontati **sul binario** il 2026-08-10 chiudendo il traguardo: la cella diceva **dieci**, e i due mancanti sono `the_reason_survives_the_round_trip_and_travels_beside_the_payload` e `an_empty_record_is_nine_bytes_and_the_inner_array_holds_five`, arrivati col **Task 7** — verificati col `diff` fra i due commit invece che dedotti. Gotcha **#31** |
 
 ⛔ **`boundary_promotion.rs` è la contro-sonda di due blocchi insieme**, e ciascuno dei suoi
@@ -2122,15 +2257,18 @@ invece che da un avviso. ⚠️ **La colonna di prosa è dichiarata NON verifica
 stessa:** un documento controllato a metà che non dice quale metà è peggio di uno che nessuno
 controlla.
 
-#### Due moduli di test vivono in `src/`
+#### Tre moduli di test vivono in `src/`
 
-📌 **Due moduli di test vivono in `src/` invece che in `tests/`, e la deviazione è dichiarata
-in entrambi i file.** Non è una scorciatoia: in un caso non è nemmeno una scelta.
+📌 **Tre moduli di test vivono in `src/` invece che in `tests/`, e la deviazione è dichiarata
+in tutti e tre i file.** Non è una scorciatoia: in due casi su tre non è nemmeno una scelta.
+⚠️ **Erano DUE fino al Traguardo 5 Task 7**, che ha portato il terzo — ed è anche il primo
+`#[cfg(test)]` di `kernel`.
 
 | Dove | Che cosa difende, e perché sta in `src/` |
 |---|---|
 | `crates/daemon/src/main.rs` (un test) | che il **grafo di produzione si monti e giri**: il cablaggio, non il dimensionamento del limite di turni — misurato in due direzioni, con il limite a `0` il test resta **verde** perché senza attività il corpo non gira mai. Sta in `src/` perché la funzione sotto test è **privata in un target `bin`**, e nessun test d'integrazione può linkare un binario |
 | `crates/platform/src/rng.rs` (cinque test) | `SequentialRng`: che le estrazioni siano 0, 1, 2 e così via, che `new` e `default` siano **lo stesso** generatore, che `below` percorra gli indici a turno **a limite costante**, il limite dichiarato quando il limite **cambia**, e che il contatore **avvolga invece di traboccare**. Sta in `src/` perché l'ultimo costruisce `SequentialRng(u64::MAX)` **col campo privato**, irraggiungibile da una crate a parte senza 2^64 estrazioni o un costruttore che esisterebbe solo per il test |
+| `crates/kernel/src/arbiter/mod.rs` (dieci test) | la **revoca** del Traguardo 5 Task 7: che chiedere indietro **marchi e non prenda**, che la grazia si riscuota quando scade e **non prima**, l'**istante** in cui scade, che una concessione non prelazionabile e una corsia non inferiore non si tocchino, che si fermi appena la stanza basta e prenda la corsia **peggiore** per prima, che chiedere **due volte** non compri la stanza due volte, e che riscuota lo scaduto **prima** di marcare. Sta in `src/` perché `ask_back` è `pub(crate)` — il suo unico chiamante di produzione è l'ammissione sotto policy LOCALE, Task 8 — e un `pub(crate)` da una crate a parte è `` error[E0624]: method `ask_back` is private ``, misurato. ⛔ **Solo la privatezza sposta una sonda lì:** l'undicesima del compito non chiama `ask_back` e **resta** in `crates/kernel/tests/arbiter_admission.rs` |
 
 ## Livello 3 — vuoto, e non è una svista
 

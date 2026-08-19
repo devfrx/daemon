@@ -16,7 +16,7 @@
 //! of it -- `Reactor::wait_until` takes `&mut self`, so an arbiter that owned a reactor
 //! would give it two owners, itself and the executor, and the borrow would not pass.
 
-use alloc::collections::BTreeMap;
+use alloc::collections::{BTreeMap, BTreeSet};
 use alloc::vec::Vec;
 
 use crate::parameters::Parameters;
@@ -236,28 +236,39 @@ pub enum ReleaseError {
 
 /// What the arbiter remembers about a grant it has issued.
 ///
-/// ⛔ TWO FIELDS, AND THE OTHER TWO ARRIVE WITH THEIR OWN READERS. The milestone 5 design
-/// gives `Held` a `lane: ComputeClass` and an `activity: Activity` as well; neither has a
-/// reader yet, so both would compile as `dead_code` warnings, and this repository does not
-/// switch a warning off with `#[allow]` (gotcha #13). A field born with its consumer is a
-/// field somebody uses.
+/// ⚠️ RECALL OF 2026-08-20, MILESTONE 5 TASK 7 -- THIS COMMENT SAID "TWO FIELDS, AND THE OTHER
+/// TWO ARRIVE WITH THEIR OWN READERS", AND IT IS REWRITTEN AND NOT ANNOTATED, because a true
+/// sentence appended under a false one leaves the false one standing, which is finding A-2 of
+/// this project's own audit done again. It carried two dated recalls of its own and both are
+/// spent: task 5 held `lane` and `activity` back because neither had a reader, so both would
+/// have compiled as `dead_code` warnings and this repository does not switch a warning off with
+/// `#[allow]` (gotcha #13); task 6 corrected the PREMISE of the `lane` one -- a WAITING request
+/// is a `Waiting`, which carries the whole `ResourceProfile` and therefore its lane, so
+/// `promote` never looks at `held` -- and named `ask_back` at task 7 as the first reader of
+/// BOTH. ⛔ TASK 7 IS THIS ONE, `ask_back` EXISTS BELOW, AND IT READS BOTH: it chooses its
+/// victim by `lane`, and by `activity` it refuses to ask back what is already on its way out.
 ///
-/// ⚠️ RECALL OF 2026-08-19, MILESTONE 5 TASK 6 -- THE DATE THIS COMMENT GAVE FOR `lane` WAS
-/// WRONG, and the sentence is REPLACED rather than corrected underneath, because a false
-/// line left standing below a true one is the finding A-2 of this project's own audit done
-/// again. It said `lane` "comes with the queues at task 6 -- a ticket has to know which lane
-/// it is waiting in". ⛔ TASK 6 BUILT THE QUEUES AND `Held` STILL HAS TWO FIELDS, because
-/// the premise was wrong and not the date: a WAITING request is a `Waiting`, which carries
-/// the whole `ResourceProfile` and therefore its lane, and `promote` walks `queues` without
-/// ever looking at `held`. `Held` is what a GRANT is, not what a TICKET is.
+/// ⛔ FIVE FIELDS AND NOT FOUR, AND THE FIFTH IS THE ONE THE MILESTONE 5 DESIGN DOES NOT LIST.
+/// `grace` is here because `Preemption` lives in the PROFILE and the profile is not kept: the
+/// deadline of a revocation is `now + grace`, and without the field there is nothing to add.
+/// ⛔ KEEPING THE WHOLE PROFILE WOULD HAVE BEEN EASIER AND DEARER: it would put `name` and
+/// `compute_class` in two places at once, and a `&'static str` retained inside the arbiter is
+/// state no decision reads.
 ///
-/// ⛔ THE FIRST READER OF `lane` IS `ask_back`, AT TASK 7, which is the same task `activity`
-/// waits for: a revocation has to choose a victim, and it chooses by lane. Adding the field
-/// here would light exactly the `dead_code` warning the paragraph above refuses.
+/// ⚠️ `grace` IS AN `Option` AND THE `None` IS NOT A MISSING VALUE: it is `Preemption::grace`'s
+/// own word for "this profile is never revoked". That is what makes it a GUARD `ask_back` reads
+/// and not merely a number it needs -- see the two guards there, which are deliberately about
+/// two different questions.
 struct Held {
     reserved: Mib,
     /// The validity window, on the MONOTONIC axis (§5.3 point 2).
     expires_at: Monotonic,
+    /// The lane the grant was issued in. `ask_back` picks its victims by it, worst lane first.
+    lane: ComputeClass,
+    /// What the grant is doing -- and, since task 7, whether it has been asked back.
+    activity: Activity,
+    /// How long its holder gets to hand the resource over, when it can be asked for at all.
+    grace: Option<Millis>,
 }
 
 /// A request waiting in its lane.
@@ -499,6 +510,119 @@ impl Arbiter {
         promoted
     }
 
+    /// How many grants have been asked back and have not handed over yet.
+    ///
+    /// ⛔ IT COLLECTS NOTHING, for the same reason `allocated` collects nothing: it reports the
+    /// books as they are, so a probe can tell "the sweep happened" from "the number looks right
+    /// anyway".
+    pub fn revoking(&self) -> usize {
+        self.held
+            .values()
+            .filter(|held| {
+                matches!(
+                    held.activity,
+                    Activity::Preemptible(PreemptibleState::Revoking { .. })
+                )
+            })
+            .count()
+    }
+
+    /// Asks back enough preemptible grants FROM LANES BELOW `below` to cover `needed`, and
+    /// answers with how much was actually asked back.
+    ///
+    /// ⛔ IT MARKS, IT DOES NOT TAKE. The reservation stays in the books for the whole grace
+    /// period: §5.3 point 4 gives the holder that long, and freeing the memory at once would
+    /// seat a second consumer on VRAM the first is still using. The forced reclamation happens
+    /// in the sweep, when the grace has run out.
+    ///
+    /// ⛔ IT STOPS AS SOON AS THE NEED IS COVERED. "It made room" is satisfied by revoking
+    /// everything, which evicts two jobs to seat one.
+    ///
+    /// ⛔ WORST LANE FIRST: the cheapest thing to interrupt goes first. What grounds it is the
+    /// lane table of design/02, which says of `ComputeClass::Interactive` that it is served
+    /// before `ComputeClass::Batch`, and of `Batch` that it may wait indefinitely. What HOLDS it
+    /// is `asking_back_takes_the_worst_lane_first`: before that probe the sentence was in a
+    /// comment and in nothing else.
+    ///
+    /// ⛔ IT COLLECTS THE EXPIRED FIRST, like every other operation. With this one there are
+    /// FOUR, and the property "the arbiter collects before it decides" is why `collect_expired`
+    /// is private rather than a step somebody remembers to take.
+    ///
+    /// ⚠️ `pub(crate)` BECAUSE ITS ONLY CALLER IS THE ADMISSION UNDER THE LOCAL POLICY. It is
+    /// not a public operation: making room is a consequence of a request, never a thing
+    /// somebody asks for. ⛔ THAT CALLER IS TASK 8 AND DOES NOT EXIST YET, which would make this
+    /// a method with no consumer -- gotcha #46 from the wrong side. What answers it here is the
+    /// answer this repository already uses: the consumer is a BENCH, and the ten probes of the
+    /// `#[cfg(test)] mod tests` at the foot of this file are it. The `pub(crate)` is what puts
+    /// them there instead of in `tests/`.
+    pub(crate) fn ask_back(&mut self, needed: Mib, below: ComputeClass, now: Monotonic) -> Mib {
+        self.collect_expired(now);
+
+        // ⛔ THE LANES COME FROM THE BOOKS AND THE ORDER FROM `ComputeClass` ITSELF, and neither
+        // is a list of the three lanes written out here. `BTreeSet` iterates in key order --
+        // which for `ComputeClass` is the hand-written `priority()` of §5.1 -- so `.rev()` IS
+        // "worst lane first", and the order stays stated in ONE place. `promote` refuses a
+        // hand-written list for exactly this reason and gets its order from its own map for
+        // free; `held` is keyed by `GrantId` and not by lane, so this is what buys the same
+        // thing here.
+        let lanes: BTreeSet<ComputeClass> = self.held.values().map(|held| held.lane).collect();
+
+        let mut covered = Mib::ZERO;
+        for lane in lanes.iter().rev() {
+            if *lane <= below {
+                // Not BELOW the asking lane: a Realtime job is not evicted for an Interactive
+                // one, however preemptible its profile says it is.
+                continue;
+            }
+            for held in self.held.values_mut() {
+                if covered >= needed {
+                    return covered;
+                }
+                if held.lane != *lane {
+                    continue;
+                }
+                // ⛔ ALREADY ON ITS WAY OUT: leave it alone. Marking it again would hand its
+                // holder a FRESH grace for having been asked earlier, and would count its
+                // reservation into `covered` a second time -- room the arbiter does not have,
+                // which is over-admission by the back door.
+                if matches!(
+                    held.activity,
+                    Activity::Preemptible(PreemptibleState::Revoking { .. })
+                ) {
+                    continue;
+                }
+                // ⛔ NO GRACE MEANS NEVER REVOKED, and that is `Preemption::grace`'s own word
+                // for it -- `None` "is the statement that this profile is never revoked". So
+                // this is the guard that keeps `I2 · §5.3` at runtime, and it is the ONLY one
+                // that reads it: the guard above asks a DIFFERENT question, "is it already on
+                // its way out".
+                //
+                // ⚠️ WRITTEN THIS WAY INSTEAD OF THE WAY THE PLAN DICTATES, and the reason is a
+                // MEASUREMENT rather than a taste. The dictated body wraps all of this in
+                // `if let Activity::Preemptible(PreemptibleState::Running)` and reads the grace
+                // with `match held.grace { Some(g) => .., None => continue }`, so BOTH guards
+                // answer for the non-preemptible case and each masks the other's mutation. ✅
+                // Measured on that very shape, which is green on all thirty probes: deleting
+                // the `Running` guard kills `asking_back_twice_does_not_buy_the_room_twice` and
+                // ONLY it -- `a_non_preemptible_grant_is_never_asked_back` stays green, saved by
+                // the `None` arm -- and turning `None => continue` into `None => now` kills
+                // NOTHING AT ALL, 10 passed and 20 passed, because the `Running` guard means
+                // that arm is never reached. The non-preemptible direction was therefore held by
+                // two guards and provable through neither. In this shape each guard has its own
+                // probe and its own SOLE killer. Registered as `E62`.
+                let Some(grace) = held.grace else {
+                    continue;
+                };
+                held.activity = Activity::Preemptible(PreemptibleState::Revoking {
+                    deadline: now.saturating_add(grace),
+                });
+                covered = covered.saturating_add(held.reserved);
+            }
+        }
+
+        covered
+    }
+
     /// Hands a grant back, and answers with the reservation that returned to the budget.
     ///
     /// ⛔ IT CONSUMES THE GRANT: releasing twice DOES NOT COMPILE, which is level 1 and
@@ -533,6 +657,17 @@ impl Arbiter {
             Held {
                 reserved: profile.reserved_vram,
                 expires_at: now.saturating_add(valid_for),
+                lane: profile.compute_class,
+                // ⛔ `activity` AND `grace` COME FROM THE SAME FIELD, AND THAT IS WHAT MAKES
+                // THEM AGREE. `Preemption` says BOTH whether the grant may be asked back and
+                // how long its holder then gets, so a `Held` that was `Preemptible` with no
+                // grace -- or `NonPreemptible` with one -- cannot be built from here. It is
+                // §5.3 point 3 surviving the trip from the profile into the books.
+                activity: match profile.preemption {
+                    Preemption::Never => Activity::NonPreemptible,
+                    Preemption::After(_) => Activity::Preemptible(PreemptibleState::Running),
+                },
+                grace: profile.preemption.grace(),
             },
         );
         Grant { id }
@@ -542,7 +677,388 @@ impl Arbiter {
     /// this state -- one no probe covers and no caller has to reach -- while "the arbiter
     /// collects before it decides" is a property of every operation rather than a step
     /// somebody remembers to take.
+    ///
+    /// ⛔ TWO DEADLINES, ONE SWEEP, and they are genuinely different things: `expires_at` is the
+    /// validity window the requester declared, `deadline` is the grace a revocation gave. Both
+    /// are on the MONOTONIC axis, never wall time (§5.3 point 2).
+    ///
+    /// ⛔ AND BOTH WINDOWS ARE HALF-OPEN, WHICH IS ONE RULE AND NOT TWO. At `now == expires_at`
+    /// the grant is already collected, and at `now == deadline` the grace is already over: both
+    /// comparisons are `>`, and both boundaries have a probe standing exactly on them --
+    /// `a_grant_is_collected_at_the_instant_its_window_closes` for the first,
+    /// `the_grace_runs_out_at_the_instant_of_its_deadline` for the second. The second exists
+    /// because the first had to be added at task 5 for the same reason: the two probes either
+    /// side of a boundary step OVER it, and `>` mutated to `>=` then survives the whole suite
+    /// (`E29`).
     fn collect_expired(&mut self, now: Monotonic) {
-        self.held.retain(|_, held| held.expires_at > now);
+        self.held.retain(|_, held| {
+            if held.expires_at <= now {
+                return false;
+            }
+            match held.activity {
+                Activity::Preemptible(PreemptibleState::Revoking { deadline }) => deadline > now,
+                _ => true,
+            }
+        });
+    }
+}
+
+// ⚠️ A UNIT TEST MODULE IN `src/`, WHERE THIS CRATE OTHERWISE PUTS EVERY TEST IN `tests/`, and
+// the deviation is declared rather than left to be noticed. It is the FIRST `#[cfg(test)]` of
+// `kernel`, and it exists for ONE reason: `Arbiter::ask_back` is this crate's first
+// `pub(crate) fn`, and a `pub(crate)` is NOT visible from an integration test -- which is a
+// crate of its own. ✅ MEASURED and not assumed: calling it from `tests/arbiter_admission.rs`
+// is `error[E0624]: method `ask_back` is private`. The precedent, and the wording, is
+// `crates/platform/src/rng.rs`, which lives in `src/` for the same species of reason -- there
+// it is a private FIELD that "from an integration test -- a crate of its own -- is
+// unreachable".
+//
+// ⛔ ONLY PRIVACY MOVES A PROBE IN HERE, and the counter-example is named so the rule stays
+// readable: `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` belongs to this
+// same task, needs nothing private, and therefore STAYS in `tests/arbiter_admission.rs` beside
+// the other probes of the validity window. Moving it for company would split one subject
+// across two files and buy nothing.
+//
+// ⛔ AND THE CHEAP WAY OUT WAS REFUSED ON THE MERITS: making `ask_back` `pub` so that every
+// probe could live in `tests/` would publish an operation that is not one -- making room is a
+// CONSEQUENCE of a request, never a thing somebody asks for. It is the same argument that
+// keeps `collect_expired` private and that refused a `pub(crate)` constructor for `Grant`
+// (gotcha #67).
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const TURN_LIMIT: u64 = 10_000;
+
+    /// The window every probe here uses when the value does not matter.
+    const LONG: Millis = Millis::new(1_000_000);
+
+    fn arbiter(total: Mib) -> Arbiter {
+        Arbiter::new(Parameters::new(TURN_LIMIT, total))
+    }
+
+    /// A profile the arbiter may NEVER ask back.
+    fn profile(name: &'static str, vram: u64, lane: ComputeClass) -> ResourceProfile {
+        ResourceProfile {
+            name,
+            reserved_vram: Mib::new(vram),
+            compute_class: lane,
+            preemption: Preemption::Never,
+        }
+    }
+
+    /// A profile the arbiter may ask back, with the grace its holder then gets.
+    fn preemptible(
+        name: &'static str,
+        vram: u64,
+        lane: ComputeClass,
+        grace: u64,
+    ) -> ResourceProfile {
+        ResourceProfile {
+            name,
+            reserved_vram: Mib::new(vram),
+            compute_class: lane,
+            preemption: Preemption::After(Millis::new(grace)),
+        }
+    }
+
+    /// ⛔ ASKING BACK MARKS, IT DOES NOT TAKE. The reservation stays in the books for the whole
+    /// grace period: §5.3 point 4 gives the holder that long to hand it over, and an arbiter
+    /// that freed the memory at once would be admitting a second consumer onto VRAM the first
+    /// one is still using.
+    #[test]
+    fn asking_a_grant_back_marks_it_and_does_not_free_it_yet() {
+        let mut arbiter = arbiter(Mib::new(4_096));
+        let Admission::Granted(_batch) = arbiter.admit(
+            &preemptible("batch-resident", 4_096, ComputeClass::Batch, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("it fills the machine");
+        };
+
+        let asked_back =
+            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+
+        assert_eq!(asked_back, Mib::new(4_096), "one grant covers the need");
+        assert_eq!(arbiter.revoking(), 1);
+        assert_eq!(
+            arbiter.allocated(),
+            Mib::new(4_096),
+            "the memory is still the holder's until the grace runs out"
+        );
+    }
+
+    /// ⛔ THE GRACE IS COLLECTED, AND IT IS THE ARBITER HALF OF `Forzata` (§6.5 of the design).
+    /// The other half -- actually killing the process -- needs `process` and is milestone 6.
+    #[test]
+    fn a_grace_that_ran_out_returns_the_reservation_to_the_budget() {
+        let mut arbiter = arbiter(Mib::new(4_096));
+        let Admission::Granted(_batch) = arbiter.admit(
+            &preemptible("batch-resident", 4_096, ComputeClass::Batch, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("it fills the machine");
+        };
+        let _ = arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+
+        // Still inside the grace: nothing is free yet.
+        assert_eq!(arbiter.allocated(), Mib::new(4_096));
+        // Past it: the first one who looks finds the budget back.
+        let after = arbiter.admit(
+            &profile("the-interactive-one", 4_096, ComputeClass::Interactive),
+            LONG,
+            Monotonic::from_millis(501),
+        );
+        assert!(matches!(after, Admission::Granted(_)));
+        assert_eq!(arbiter.allocated(), Mib::new(4_096), "one grant, not two");
+        assert_eq!(arbiter.revoking(), 0);
+    }
+
+    /// ⛔ A GRANT INSIDE ITS GRACE IS NOT COLLECTED, and this is the direction the probe above
+    /// steps over. Without it a sweep that freed a revoked reservation AT ONCE would satisfy
+    /// every other probe here: `allocated()` collects nothing by design, and neither `ask_back`
+    /// nor `revoking()` runs a sweep -- so an assertion written straight after an `ask_back`
+    /// passes through no sweep at all and cannot fail. The only way to catch it is to make
+    /// somebody SWEEP while the grace is still running, and `admit` is that somebody.
+    #[test]
+    fn a_grant_inside_its_grace_keeps_its_reservation() {
+        let mut arbiter = arbiter(Mib::new(4_096));
+        let Admission::Granted(_batch) = arbiter.admit(
+            &preemptible("batch-resident", 4_096, ComputeClass::Batch, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("it fills the machine");
+        };
+        let _ = arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+
+        let Admission::Queued(_) = arbiter.admit(
+            &profile("the-interactive-one", 4_096, ComputeClass::Interactive),
+            LONG,
+            Monotonic::from_millis(499),
+        ) else {
+            panic!("the grace has not run out, so the memory is still the holder's");
+        };
+        assert_eq!(arbiter.allocated(), Mib::new(4_096));
+        assert_eq!(arbiter.revoking(), 1, "still on its way out, not gone");
+    }
+
+    /// THE BOUNDARY THE TWO PROBES ABOVE STEP OVER, and it is the species `E29` found on the
+    /// OTHER deadline: one asks at `501` and the other at `499`, so `500` itself -- the instant
+    /// the grace runs out -- would be asked by nobody, and `deadline > now` mutated to `>=`
+    /// would survive the whole suite on the very line those two exist to hold.
+    ///
+    /// ⛔ AND IT WRITES DOWN WHICH SEMANTICS IS THE CHOSEN ONE, because a boundary nobody names
+    /// is a boundary somebody later "fixes". At `now == deadline` the grace IS ALREADY OVER and
+    /// the reservation is back in the budget: the grace window is HALF-OPEN, `[asked, deadline)`,
+    /// exactly like the validity window of `expires_at`. ONE rule for both deadlines, not two.
+    #[test]
+    fn the_grace_runs_out_at_the_instant_of_its_deadline() {
+        let mut arbiter = arbiter(Mib::new(4_096));
+        let Admission::Granted(_batch) = arbiter.admit(
+            &preemptible("batch-resident", 4_096, ComputeClass::Batch, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("it fills the machine");
+        };
+        let _ = arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+
+        let after = arbiter.admit(
+            &profile("the-interactive-one", 4_096, ComputeClass::Interactive),
+            LONG,
+            Monotonic::from_millis(500),
+        );
+        assert!(
+            matches!(after, Admission::Granted(_)),
+            "at now == deadline the grace is already over: [asked, deadline)"
+        );
+        assert_eq!(arbiter.allocated(), Mib::new(4_096), "one grant, not two");
+        assert_eq!(arbiter.revoking(), 0);
+    }
+
+    /// ⛔ A NON-PREEMPTIBLE GRANT IS NEVER ASKED BACK, and this is `I2 · §5.3` seen from the
+    /// runtime side -- the type already makes `Revoking` unspellable for it, this says the
+    /// arbiter does not even try.
+    ///
+    /// ⛔ THE RESIDENT IS IN `Batch` AND NOT IN `Realtime`, AND THE LANE IS THE WHOLE PROBE.
+    /// Under `Realtime` the guard on the LANE turns it away before its preemption is ever
+    /// looked at, so the mechanism this name promises would never run and the probe would pass
+    /// for the wrong reason (gotcha #74). `Batch` is strictly below the asking lane, so the
+    /// only thing that can save it is the one thing this probe is about.
+    #[test]
+    fn a_non_preemptible_grant_is_never_asked_back() {
+        let mut arbiter = arbiter(Mib::new(4_096));
+        let Admission::Granted(_reserved) = arbiter.admit(
+            &profile("batch-that-is-never-preempted", 4_096, ComputeClass::Batch),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("it fills the machine");
+        };
+
+        let asked_back =
+            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+
+        assert_eq!(asked_back, Mib::ZERO, "nothing here can be taken back");
+        assert_eq!(arbiter.revoking(), 0);
+        assert_eq!(arbiter.allocated(), Mib::new(4_096));
+    }
+
+    /// ⛔ ONLY LOWER LANES, and it is the counter-probe of the one above by the other road: a
+    /// `Realtime` job is not evicted to make room for an `Interactive` one, no matter how
+    /// preemptible its profile says it is.
+    #[test]
+    fn only_lanes_below_the_asking_one_are_asked_back() {
+        let mut arbiter = arbiter(Mib::new(4_096));
+        let Admission::Granted(_realtime) = arbiter.admit(
+            &preemptible("realtime-resident", 4_096, ComputeClass::Realtime, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("it fills the machine");
+        };
+
+        let asked_back =
+            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+
+        assert_eq!(asked_back, Mib::ZERO, "Realtime is not below Interactive");
+        assert_eq!(arbiter.revoking(), 0);
+    }
+
+    /// ⛔ IT STOPS WHEN IT HAS ENOUGH, and the assertion is on the NUMBER: an arbiter that
+    /// revoked everything preemptible would satisfy "it made room" and evict two jobs to seat
+    /// one.
+    #[test]
+    fn asking_back_stops_as_soon_as_the_need_is_covered() {
+        let mut arbiter = arbiter(Mib::new(8_192));
+        for name in ["batch-a", "batch-b"] {
+            let outcome = arbiter.admit(
+                &preemptible(name, 4_096, ComputeClass::Batch, 500),
+                LONG,
+                Monotonic::ORIGIN,
+            );
+            assert!(matches!(outcome, Admission::Granted(_)));
+        }
+
+        let asked_back =
+            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+
+        assert_eq!(asked_back, Mib::new(4_096));
+        assert_eq!(arbiter.revoking(), 1, "one was enough");
+    }
+
+    /// ⛔ THE WORST LANE FIRST, and it is the rule the doc of `ask_back` STATES -- "the cheapest
+    /// thing to interrupt goes first". What grounds it is design/02's lane table: `interattivo`
+    /// is "served before `batch`", and `batch` "may wait indefinitely". A rule written in a
+    /// comment and held by nothing is an intention (gotcha #42).
+    ///
+    /// ⚠️ THE TWO RESERVATIONS DIFFER, AND THAT IS THE WHOLE CONSTRUCTION. `revoking()` counts,
+    /// it does not name, so two victims of the same size would be indistinguishable: with
+    /// `2_048` in `Batch` and `4_096` in `Interactive` the ANSWER says which one was taken.
+    #[test]
+    fn asking_back_takes_the_worst_lane_first() {
+        let mut arbiter = arbiter(Mib::new(8_192));
+        let Admission::Granted(_interactive) = arbiter.admit(
+            &preemptible("interactive-resident", 4_096, ComputeClass::Interactive, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("4096 of 8192 fits");
+        };
+        let Admission::Granted(_batch) = arbiter.admit(
+            &preemptible("batch-resident", 2_048, ComputeClass::Batch, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("4096 + 2048 fits 8192");
+        };
+
+        let asked_back =
+            arbiter.ask_back(Mib::new(1_024), ComputeClass::Realtime, Monotonic::ORIGIN);
+
+        assert_eq!(
+            asked_back,
+            Mib::new(2_048),
+            "the Batch one, which is the cheapest to interrupt -- not the Interactive one"
+        );
+        assert_eq!(arbiter.revoking(), 1, "one was enough");
+    }
+
+    /// ⛔ ASKING BACK TWICE DOES NOT BUY THE ROOM TWICE, AND DOES NOT EXTEND THE GRACE. This is
+    /// what the guard on `activity` buys ON ITS OWN, and nothing else here holds it: a second
+    /// pass that re-marked a grant already on its way out would count its reservation into
+    /// `covered` a SECOND time -- room the arbiter does not have, which is over-admission by the
+    /// back door -- and would push its deadline further out, so the holder would get MORE time
+    /// for having been asked earlier.
+    #[test]
+    fn asking_back_twice_does_not_buy_the_room_twice() {
+        let mut arbiter = arbiter(Mib::new(4_096));
+        let Admission::Granted(_batch) = arbiter.admit(
+            &preemptible("batch-resident", 4_096, ComputeClass::Batch, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("it fills the machine");
+        };
+        let first = arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        assert_eq!(first, Mib::new(4_096));
+
+        let second = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::from_millis(200),
+        );
+
+        assert_eq!(second, Mib::ZERO, "it is already on its way out");
+        assert_eq!(arbiter.revoking(), 1, "still one, and not one more");
+        // The deadline did not move: it is still `0 + 500`, not `200 + 500`.
+        let after = arbiter.admit(
+            &profile("the-interactive-one", 4_096, ComputeClass::Interactive),
+            LONG,
+            Monotonic::from_millis(501),
+        );
+        assert!(
+            matches!(after, Admission::Granted(_)),
+            "the second ask must not have handed the holder a fresh grace"
+        );
+    }
+
+    /// ⛔ `ask_back` COLLECTS THE EXPIRED BEFORE IT MARKS, and "the arbiter collects before it
+    /// decides" is a property of EVERY operation -- it is why `collect_expired` is private.
+    /// With `ask_back` there are now FOUR of them, and this is the only probe that exercises
+    /// this one's line.
+    ///
+    /// ⚠️ NOTHING IS RELEASED HERE, DELIBERATELY, exactly as in
+    /// `promote_collects_the_expired_before_it_serves_the_queue`: the only thing that can empty
+    /// the books is the collection INSIDE `ask_back`. Without it the resident is still there,
+    /// in a lane below the asking one and perfectly preemptible, and the answer would be
+    /// `4_096` instead of nothing.
+    #[test]
+    fn ask_back_collects_the_expired_before_it_marks() {
+        let mut arbiter = arbiter(Mib::new(4_096));
+        let Admission::Granted(_short_lived) = arbiter.admit(
+            &preemptible("short-lived", 4_096, ComputeClass::Batch, 500),
+            Millis::new(5_000),
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("it fills the machine");
+        };
+
+        let asked_back = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::from_millis(5_001),
+        );
+
+        assert_eq!(
+            asked_back,
+            Mib::ZERO,
+            "there was nothing left to ask back: the window had closed"
+        );
+        assert_eq!(arbiter.revoking(), 0);
+        assert_eq!(arbiter.allocated(), Mib::ZERO);
     }
 }

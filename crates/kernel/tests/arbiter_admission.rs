@@ -4,6 +4,12 @@
 //! never exceeds the total, that releasing gives back EXACTLY the reservation, and that an
 //! expired grant does not stay allocated.
 //!
+//! ⛔ AND THE QUEUES FROM TASK 6, which is a SUBJECT and not one more assertion about the
+//! previous one: that a request which fits the machine but not the moment is QUEUED instead of
+//! refused, that `promote` serves the queue BY LANE and, inside one lane, in arrival order,
+//! that it serves EVERY request that fits and skips ahead to none, that it collects the expired
+//! before it serves, and that what comes out of the queue is a grant like any other.
+//!
 //! ⚠️ THE PROBES LIVE HERE AND NOT IN `arbiter_resource.rs`, and the split is by subject
 //! rather than by convenience: that file holds the vocabulary of the RESOURCE -- `Mib`, the
 //! three lanes, the grace time -- and neither `Activity` nor `Admission` is a resource.
@@ -18,6 +24,12 @@
 //! it: its step said "create", the file was already here, and this module comment was MERGED
 //! instead of overwritten -- otherwise the only thing holding the second direction of
 //! `I2 · §5.3` would have disappeared. The same still goes for tasks 6 and 7.
+//!
+//! ⚠️ DATED RECALL, 2026-08-19: TASK 6 SKIPPED THE INSTRUCTION THE LINE ABOVE NAMES IT IN.
+//! It added eight probes on a NEW subject -- the queues, `promote`, `queued` -- and left this
+//! comment enumerating tasks 4 and 5 only, which is a rule that does not bind the document
+//! hosting it (gotcha #68). Repaired in review by EXTENDING the enumeration above, not by
+//! overwriting it. TASK 7 IS STILL BOUND BY IT.
 //!
 //! ⚠️ TWO DIFFERENT RULES ABOUT COMPARISON LIVE HERE, DELIBERATELY. R2 -- probes MATCH and
 //! never compare -- is about `Admission`, which carries a `Grant` and therefore has neither

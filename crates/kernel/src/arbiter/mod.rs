@@ -358,6 +358,20 @@ impl Arbiter {
     /// exists. REGISTERED FOR THE OWNER in the plan's errata, where it sits beside the
     /// permanent-quota voice it interacts with.
     ///
+    /// ⛔ AND NOTHING IN THIS REPOSITORY HOLDS THE PARAGRAPH ABOVE -- said here rather than
+    /// left to be discovered, because a claim about behaviour that no probe exercises is the
+    /// species this task has already paid for once. ✅ MEASURED on 2026-08-19, not deduced:
+    /// with `!self.queues.is_empty() ||` added to the second guard below -- so a latecomer
+    /// QUEUES BEHIND the waiters instead of jumping them -- NOTHING goes red: 19 passed, 0
+    /// failed in `tests/arbiter_admission.rs`, and 34 targets, 222 passed, 0 failed, 2 ignored
+    /// across the workspace. THE MUTANT IS ALIVE, so the day task 10 decides the other way this
+    /// paragraph becomes FALSE IN SILENCE with nothing going red to say so. ⚖️ AND IT IS NOT
+    /// PINNED, ON PURPOSE AND ON THE MERITS: a probe asserting `Granted` for the latecomer would
+    /// freeze exactly the choice the errata voice `E51` puts in front of the owner, and a probe
+    /// that has to be deleted to take a decision is a vote against taking it -- the precedent is
+    /// `E39`, which refused for the same reason to pin the three measured `release` values.
+    /// Registered as `E53`.
+    ///
     /// ⛔ THE TWO GUARDS BELOW ANSWER DIFFERENTLY SINCE TASK 6, and until task 6 they did
     /// not. "Bigger than the whole machine" is `Refused` -- no release will ever make room,
     /// so a ticket there would be a leak that looks like patience -- while "bigger than what
@@ -431,6 +445,16 @@ impl Arbiter {
     /// the alternative holds the machine idle for a waiter that may never fit -- AND NOTHING
     /// DECIDES IT: §5.3, §5.3.1 and design/02 say nothing about the order across lanes. So it
     /// is REGISTERED FOR THE OWNER in the plan's errata instead of being chosen here.
+    ///
+    /// ⛔ AND NOTHING HOLDS THE PARAGRAPH ABOVE EITHER, which is declared here for the same
+    /// reason as beside `admit`. ✅ MEASURED on 2026-08-19, not deduced: with the WHOLE PASS
+    /// made to stop at the first lane whose head does not fit -- a flag on the inner `break`,
+    /// then `break` on the outer loop, so no lane ever falls through -- NOTHING goes red: 19
+    /// passed, 0 failed in `tests/arbiter_admission.rs`, and 34 targets, 222 passed, 0 failed,
+    /// 2 ignored across the workspace. THE MUTANT IS ALIVE, so the day task 7 or task 10 changes
+    /// the order across lanes this paragraph becomes FALSE IN SILENCE. ⚖️ AND A PROBE IS NOT
+    /// THE REMEDY: pinning the fall-through would freeze the very policy the errata voice `E50`
+    /// asks the owner to choose. Same reasoning as `E39`; registered as `E53`.
     ///
     /// ⚠️ `BTreeMap` ITERATES IN KEY ORDER, and `ComputeClass` orders by its explicit
     /// priority key -- so "best lane first" costs nothing here. TWO probes hold that coupling

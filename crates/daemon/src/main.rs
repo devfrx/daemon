@@ -27,6 +27,7 @@
 //! `Parameters` and the executor's `Sleep` cell fit together, and the executor runs to
 //! completion. There is no work to do yet, so there is nothing else to claim.
 
+use kernel::arbiter::Mib;
 use kernel::executor::{Executor, RunError, Sleep};
 use kernel::parameters::Parameters;
 use platform::reactor::SystemReactor;
@@ -73,6 +74,30 @@ use platform::rng::SequentialRng;
 /// NUMBER of turns. Eight fails, which is what makes nine a boundary rather than a guess.
 const EXECUTOR_TURN_LIMIT: u64 = 100_000;
 
+/// How much VRAM the machine has, in whole MiB (§5.1).
+///
+/// # ⛔ It is DECLARED here, because the kernel has no way to ask
+///
+/// Querying the GPU is an OS call, which I3 forbids the kernel, and none of the six port
+/// families supplies hardware capacity. So the total is a DELIVERED parameter like every
+/// other, and this binary is the somebody who resolves it — constraint 11 of §11, the same
+/// boundary `EXECUTOR_TURN_LIMIT` sits on.
+///
+/// # Where the number comes from
+///
+/// 16384 MiB is the single RTX 5080 this project is built around — the resource constraint
+/// that ADR-0005 calls dominant. ⚠️ IT IS NOT MEASURED FROM THE DEVICE and cannot be from
+/// here: a wrong total produces OVER-ADMISSION, which §5.1 declares as the cost of
+/// delivering it rather than asking for it. That makes a systematic discrepancy a defect of
+/// this line, visible and variable, instead of an incident nobody can locate.
+///
+/// ⚠️ NOTHING IN THIS BINARY READS IT YET beyond handing it over. No arbiter is wired here:
+/// the production wiring of the arbiter, with the two permanent grants of §4.3, is a later
+/// task of milestone 5. What this line buys today is that the value is CHOSEN IN `daemon`
+/// and travels through `Parameters`, so the day the arbiter is mounted there is no second
+/// road for it to arrive by.
+const TOTAL_VRAM: Mib = Mib::new(16_384);
+
 /// Builds the production graph and runs the executor, handing back what the run said.
 ///
 /// ⚠️ IT IS A FUNCTION RATHER THAN THE BODY OF `main` SO THAT A TEST CAN CALL IT. The
@@ -89,7 +114,7 @@ fn run_the_production_graph() -> Result<(), RunError> {
     let mut executor = Executor::new(
         SequentialRng::new(),
         SystemReactor::new(),
-        Parameters::new(EXECUTOR_TURN_LIMIT),
+        Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM),
         &sleep,
     );
 

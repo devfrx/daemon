@@ -7,5 +7,5 @@ error[E0599]: no function or associated item named `default` found for struct `P
 note: if you're trying to build a new `Parameters`, consider using `Parameters::new` which returns `Parameters`
   --> src/parameters.rs
    |
-   |     pub const fn new(executor_turn_limit: u64) -> Self {
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |     pub const fn new(executor_turn_limit: u64, total_vram: Mib) -> Self {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,0 +1,5 @@
+error[E0599]: no method named `is_granted` found for enum `Admission` in the current scope
+  --> tests/compile_fail/admission_has_no_is_granted.rs:26:16
+   |
+26 |     if outcome.is_granted() {
+   |                ^^^^^^^^^^ method not found in `Admission`

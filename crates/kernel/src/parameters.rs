@@ -21,6 +21,8 @@
 //! friction is the point: §2.8.5 declares it, and it is what stops a parameter from
 //! quietly re-entering as a constant.
 
+use crate::arbiter::Mib;
+
 /// The parameters the kernel has been configured with.
 ///
 /// ⛔ THERE IS NO `Default` IMPL, and that is the decision rather than an omission. A
@@ -42,6 +44,7 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Parameters {
     executor_turn_limit: u64,
+    total_vram: Mib,
 }
 
 impl Parameters {
@@ -52,9 +55,10 @@ impl Parameters {
     /// would put a number chosen inside the kernel just as surely as an `impl Default`
     /// would, and it is cheaper to write. Validation is outside the perimeter above for
     /// this reason, not for laziness.
-    pub const fn new(executor_turn_limit: u64) -> Self {
+    pub const fn new(executor_turn_limit: u64, total_vram: Mib) -> Self {
         Parameters {
             executor_turn_limit,
+            total_vram,
         }
     }
 
@@ -64,5 +68,29 @@ impl Parameters {
     /// says nothing (§3.2.1).
     pub const fn executor_turn_limit(self) -> u64 {
         self.executor_turn_limit
+    }
+
+    /// How much VRAM the machine has, in whole MiB.
+    ///
+    /// ⛔ IT IS DELIVERED AND NOT ASKED FOR, and §5.1 spent a dated recall on exactly this:
+    /// the formula for the allocatable budget appears identically in three documents and
+    /// NONE of them said where `total` comes from. Querying the GPU is an OS call, which I3
+    /// forbids the kernel, and none of the six port families supplies hardware capacity. So
+    /// it is DECLARED, like the reservation of ADR-0005, and a systematic discrepancy is a
+    /// defect of the PARAMETER rather than an accident.
+    ///
+    /// ⚠️ THE COST, DECLARED BY §5.1 ITSELF: a wrong total produces over-admission -- Q2
+    /// giving way through a configuration error rather than a code one. The mitigation is
+    /// the measured peak of §5.2.2, not an a-priori check that does not exist here.
+    ///
+    /// ⛔ IT IS THE ONLY ONE OF THE THREE ADDENDS THAT IS DELIVERED, and that is a declared
+    /// divergence from the letter of §5.1 rather than an omission. The audio quota and the
+    /// presentation quota are NOT subtracted here: they are the reservations of two
+    /// PERMANENT GRANTS asked for by the composition root. A subtraction without a holder
+    /// leaves I2 false for those two consumers -- "the subtraction is not an exemption",
+    /// ADR-0005 and gotcha #4 -- and two fields no kernel decision reads would be dead
+    /// surface inside the kernel.
+    pub const fn total_vram(self) -> Mib {
+        self.total_vram
     }
 }

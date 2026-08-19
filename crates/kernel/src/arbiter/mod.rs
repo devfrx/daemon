@@ -16,7 +16,10 @@
 //! of it -- `Reactor::wait_until` takes `&mut self`, so an arbiter that owned a reactor
 //! would give it two owners, itself and the executor, and the borrow would not pass.
 
-use crate::time::Monotonic;
+use alloc::collections::BTreeMap;
+
+use crate::parameters::Parameters;
+use crate::time::{Millis, Monotonic};
 
 pub mod resource;
 
@@ -36,10 +39,9 @@ pub use resource::{ComputeClass, Mib, Preemption, ResourceProfile, WorkDescripto
 /// and nothing would go red. A guard is worth exactly what its CONSTRUCTOR is worth
 /// (gotcha #67).
 ///
-/// ⛔ There is deliberately NO public constructor. ⚠️ NOT YET AN ISSUER: `Admission` is the
-/// SHAPE an issuer's answer will have, not an issuer itself -- nothing constructs one today,
-/// and the function that will, `admit`, arrives at Task 5. Once it does, that is the whole
-/// of §5.6: whoever writes "start the worker" without going through it will not compile.
+/// ⛔ There is deliberately NO public constructor, and since Task 5 there IS an issuer:
+/// `Arbiter::admit`, the only function in this crate that builds one. That is the whole of
+/// §5.6 -- whoever writes "start the worker" without going through it does not compile.
 ///
 /// ⚠️ NO `Debug`, NO `Clone`, NO `Copy`, and each absence is load-bearing rather than
 /// minimal. `Clone` would let one grant start two workers. `Debug` -- nothing formats a
@@ -58,16 +60,16 @@ pub use resource::{ComputeClass, Mib, Preemption, ResourceProfile, WorkDescripto
 /// written out because a moved comment that keeps its old tense is the finding A-2 of this
 /// project's audit done again. It lived in `ports::process` and said "the arbiter, which
 /// arrives in milestone 5" in the FUTURE, and "today the type has no issuer": the FIRST is
-/// spent -- the arbiter module is this one. ⚠️ THE SECOND IS NOT, quite:
-/// `Admission::Granted` is now the SHAPE an issuer's answer will have, but nothing
-/// constructs one yet -- `admit` is the actual issuer, and it arrives at Task 5. It also
-/// recorded a DIVERGENCE -- the field was a private UNIT, `Grant(())`, because the named
-/// field the plan dictated then bought nothing that the unit field did not buy for free and
-/// cost an `#[allow(dead_code)]`, which this repository treats as a prohibition switched off
-/// (gotcha #13). ⛔ THAT PARAGRAPH IS NOT COPIED, because the shape it
-/// described no longer exists: the named field is back, dictated again by the milestone 5
+/// spent -- the arbiter module is this one. ⚠️ AND THE SECOND IS SPENT TOO SINCE TASK 5,
+/// which is why this sentence is rewritten instead of left standing: at task 4 it read
+/// "nothing constructs one yet, `admit` arrives at Task 5", and `admit` is now below it in
+/// this file. It also recorded a DIVERGENCE -- the field was a private UNIT, `Grant(())`,
+/// because the named field the plan dictated then bought nothing that the unit field did not
+/// buy for free and cost an `#[allow(dead_code)]`, which this repository treats as a
+/// prohibition switched off (gotcha #13). ⛔ THAT PARAGRAPH IS NOT COPIED, because the shape
+/// it described no longer exists: the named field is back, dictated again by the milestone 5
 /// design, and it is `id` that lets `Arbiter::release` tell a grant of THIS arbiter from a
-/// grant of another one.
+/// grant of another one -- with the limit of that written beside `ReleaseError`.
 pub struct Grant {
     id: GrantId,
 }
@@ -101,9 +103,12 @@ impl TicketId {
 /// ⛔ THERE IS NO `is_ok()`, NO `is_granted()`, AND NO CONVERSION TO A BOOLEAN. That is how
 /// `V4` becomes a SIGNATURE instead of a recommendation: "refused" and "queued" are
 /// different answers that call for different behaviour, and a boolean would collapse them.
-/// The negative case names a method that does not exist -- so the day somebody adds it the
-/// case starts COMPILING and trybuild reports `error`, which no bulk regeneration disarms
-/// (gotcha #42, strong form).
+/// The negative case -- `tests/compile_fail/admission_has_no_is_granted.rs`, written at
+/// Task 5 once there was an `admit` to obtain a real `Admission` from -- names a method that
+/// does not exist, so the day somebody adds it the case starts COMPILING and trybuild reports
+/// `error`, which no bulk regeneration disarms (gotcha #42, strong form). ✅ MEASURED, not
+/// asserted: with `is_granted` added, that case comes back `error` and the other twenty-six
+/// stay `ok`.
 ///
 /// ⛔ `Refused` CARRIES TWO NUMBERS AND NOT A SENTENCE. design/02 wants "why it does not fit,
 /// and the workable alternative": the alternative is built by the interface, the kernel
@@ -145,4 +150,146 @@ pub enum PreemptibleState {
     /// The arbiter has asked for the resource back. `deadline` is on the MONOTONIC axis --
     /// never wall time: a clock that steps backwards cannot expire a grant (§5.3 point 2).
     Revoking { deadline: Monotonic },
+}
+
+/// What can go wrong when handing a grant back.
+///
+/// ⛔ ONE VARIANT, AND IT IS REACHABLE -- which is what keeps this `Result` from being the
+/// dead surface this repository removed from `Record::encode`. Two arbiters can exist in
+/// one process (a bench builds several), and a grant issued by one is meaningless to the
+/// other. Crediting it silently would corrupt the budget of an arbiter that never issued
+/// it, which is over-admission arriving by the back door.
+///
+/// ⚠️ DECLARED LIMIT, AND IT IS WRITTEN HERE BECAUSE THE PROBE CANNOT SAY IT. What
+/// `release` actually answers is "THAT IS NOT IN MY BOOKS", not "I can tell my grants from
+/// somebody else's". `GrantId` is a counter that restarts at zero for every `Arbiter`, so
+/// two arbiters that have BOTH issued grants share the same id space, and the second one
+/// would credit the first one's grant as if it were its own. The bench catches the case it
+/// can -- an empty second arbiter -- and no more.
+///
+/// ⛔ AND THE DESIGN IS NOT CHANGED TO CLOSE IT, because closing it means giving an
+/// `Arbiter` an IDENTITY, and that is a decision for the owner rather than for the task
+/// that noticed. What buys the protection today is that one process has one arbiter: the
+/// several that exist at once exist in BENCHES. The day a second real arbiter is wired, this
+/// paragraph is the debt to settle, and it is written where the type is instead of in a
+/// document nobody opens beside the code.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ReleaseError {
+    /// This arbiter never issued that grant.
+    UnknownGrant,
+}
+
+/// What the arbiter remembers about a grant it has issued.
+///
+/// ⛔ TWO FIELDS, AND THE OTHER TWO ARRIVE WITH THEIR OWN READERS. The milestone 5 design
+/// gives `Held` a `lane: ComputeClass` and an `activity: Activity` as well; neither has a
+/// reader in this task, so both would compile as `dead_code` warnings, and this repository
+/// does not switch a warning off with `#[allow]` (gotcha #13). `lane` comes with the queues
+/// at task 6 -- a ticket has to know which lane it is waiting in -- and `activity` with the
+/// revocation at task 7, which is the first thing that reads what a grant is DOING. A field
+/// born with its consumer is a field somebody uses.
+struct Held {
+    reserved: Mib,
+    /// The validity window, on the MONOTONIC axis (§5.3 point 2).
+    expires_at: Monotonic,
+}
+
+/// The GPU arbiter: admission on VRAM, lanes on compute (ADR-0005).
+///
+/// ⛔ `BTreeMap` AND `Vec`, AND IT IS NOT A PREFERENCE: `HashMap` lives in `std`, which this
+/// crate does not name, so gotcha #12 -- iteration order seeded PER PROCESS, which V29
+/// forbids -- is closed here by the compiler and for free (§5.1). It also closes M-6.
+pub struct Arbiter {
+    parameters: Parameters,
+    next_grant: u64,
+    held: BTreeMap<GrantId, Held>,
+}
+
+impl Arbiter {
+    /// ⛔ IT TAKES `Parameters` AND NOT A BARE `Mib`. That is the shape `Executor::new`
+    /// already has and the one the catalogue row `V29 · §2.8 · ADR-0034` names -- "building
+    /// a decision without the delivered parameters". A bare number would have the
+    /// composition root read the total and hand it over OUTSIDE the mechanism ADR-0034
+    /// exists to impose.
+    pub const fn new(parameters: Parameters) -> Self {
+        Arbiter {
+            parameters,
+            next_grant: 0,
+            held: BTreeMap::new(),
+        }
+    }
+
+    /// How much VRAM is spoken for right now. ⛔ IT COLLECTS NOTHING: it reports the books
+    /// as they are, so a probe can tell "the collection happened" from "the number looks
+    /// right anyway".
+    pub fn allocated(&self) -> Mib {
+        self.held
+            .values()
+            .fold(Mib::ZERO, |sum, held| sum.saturating_add(held.reserved))
+    }
+
+    /// Admission (§5.3). THREE ways out, and the caller must face all three.
+    ///
+    /// ⛔ IT COLLECTS THE EXPIRED FIRST, and the declared limit of that is written where the
+    /// property is: between two operations an expired grant stays in the books. It denies
+    /// nothing to nobody -- there is nobody -- and at the first one who looks it is already
+    /// freed. The property holds AT EVERY POINT WHERE IT IS OBSERVABLE, which is why the
+    /// probe advances the clock and then ASKS.
+    ///
+    /// ⛔ AND IT DOES NOT RECEIVE A `WorkDescriptor`. `cold_start` is not reachable from
+    /// here, and that is `Q8 · §5.2.1` held by the shape of this signature rather than by a
+    /// rule in a document.
+    pub fn admit(
+        &mut self,
+        profile: &ResourceProfile,
+        valid_for: Millis,
+        now: Monotonic,
+    ) -> Admission {
+        self.collect_expired(now);
+
+        let ceiling = self.parameters.total_vram();
+        let asked = profile.reserved_vram;
+
+        if asked > ceiling {
+            // ⛔ Bigger than the whole machine: no release will ever make room, so a ticket
+            // here would be a leak that looks like patience.
+            return Admission::Refused { asked, ceiling };
+        }
+
+        if self.allocated().saturating_add(asked) > ceiling {
+            return Admission::Refused { asked, ceiling };
+        }
+
+        let id = GrantId(self.next_grant);
+        self.next_grant += 1;
+        self.held.insert(
+            id,
+            Held {
+                reserved: asked,
+                expires_at: now.saturating_add(valid_for),
+            },
+        );
+        Admission::Granted(Grant { id })
+    }
+
+    /// Hands a grant back, and answers with the reservation that returned to the budget.
+    ///
+    /// ⛔ IT CONSUMES THE GRANT: releasing twice DOES NOT COMPILE, which is level 1 and
+    /// cheaper than any runtime guard. The consequence for milestone 6 is written beside
+    /// `Grant`.
+    pub fn release(&mut self, grant: Grant, now: Monotonic) -> Result<Mib, ReleaseError> {
+        self.collect_expired(now);
+        match self.held.remove(&grant.id) {
+            Some(held) => Ok(held.reserved),
+            None => Err(ReleaseError::UnknownGrant),
+        }
+    }
+
+    /// ⛔ PRIVATE, AND DELIBERATELY. A public `collect` would be a SECOND way of advancing
+    /// this state -- one no probe covers and no caller has to reach -- while "the arbiter
+    /// collects before it decides" is a property of every operation rather than a step
+    /// somebody remembers to take.
+    fn collect_expired(&mut self, now: Monotonic) {
+        self.held.retain(|_, held| held.expires_at > now);
+    }
 }

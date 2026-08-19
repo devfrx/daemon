@@ -7,6 +7,7 @@
 use core::cell::RefCell;
 use std::collections::BTreeSet;
 
+use kernel::arbiter::Mib;
 use kernel::executor::{Executor, Sleep};
 use kernel::parameters::Parameters;
 use kernel::ports::journal::{Journal, StepId};
@@ -18,6 +19,13 @@ use simulator::reactor::VirtualReactor;
 use simulator::rng::SeededRng;
 
 const TURN_LIMIT: u64 = 10_000;
+
+/// ⚠️ A LITERAL OF THIS BENCH, and inert to this campaign: nothing here admits anything, and
+/// the seed does not touch it. It is written because `Parameters` carries every delivered
+/// value positionally — §2.8.5's friction — and because §2.8.2 rule 2 forbids the kernel to
+/// name a default in its place.
+const TOTAL_VRAM: Mib = Mib::new(16_384);
+
 const ACTIVITIES: usize = 3;
 const STEPS: usize = 4;
 
@@ -197,7 +205,7 @@ fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Trace) {
     let mut executor = Executor::new(
         SeededRng::new(seed),
         VirtualReactor::new(),
-        Parameters::new(TURN_LIMIT),
+        Parameters::new(TURN_LIMIT, TOTAL_VRAM),
         &sleep,
     );
 

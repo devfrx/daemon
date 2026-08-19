@@ -83,6 +83,24 @@ convenzione usata per contare stanno nella riga del blocco C in «Cosa la porta 
 La tabella «Livello 1» qui sotto **non cambia**: per R3 continua a mostrare `Q2 · §5.1` come
 due righe di mappatura regola-a-file, una scelta dichiarata e non una svista.
 
+⚠️ **Richiamo del 2026-08-19 — Traguardo 5, Task 5: le DUE righe che avevano un innesco
+scritto si chiudono, ed è l'innesco che ha fatto il lavoro.** `admit` esiste, quindi
+`Q8 · §5.2.1` passa da **parziale** a **coperta** — il caso negativo ora nomina il percorso
+decisionale invece di un tipo fuori contesto — e `V2` da **scoperta** a **coperta**, con un
+caso nuovo. Blocco C: **da dodici a QUATTORDICI righe su diciannove**, ricontate direttamente
+su §7.4.1 blocco C e non da questa frase. Non restano righe `parziali` nel blocco C. ⛔ **E la
+riga del blocco B *«avviare un worker ← una concessione»* passa da PARZIALE a COPERTA**, con
+la contro-sonda che il Task 4 dichiarava non scrivibile: `crates/kernel/tests/arbiter_admission.rs`
+ottiene concessioni vere da `admit`. Il blocco **B** passa quindi da **una riga su cinque** a
+**DUE su cinque** coperte.
+
+⛔ **`V2` non era nel brief del Task 5, ed è stato scritto lo stesso: l'innesco lo aveva
+scritto il Task 3, in questo stesso file, alla riga «si chiude insieme a `Q8` allo stesso Task
+5».** Un innesco che scatta e che nessuno raccoglie lascia il registro a mentire con
+autorevolezza. Non è una riga di catalogo **nuova** — `V2` sta in §7.4.1 blocco C da sempre,
+fra le scoperte — quindi il vincolo globale 7 non è toccato: qui si **copre** una riga, non se
+ne aggiunge una. Divergenza registrata come **E23** nell'errata del piano.
+
 | Regola del catalogo | Dove è dichiarata | Caso negativo |
 |---|---|---|
 | `#![no_std]` su `kernel` e `simulator` | `crates/kernel/src/lib.rs` · `crates/simulator/src/lib.rs` | `crates/kernel/tests/compile_fail/std_in_kernel.rs` |
@@ -99,10 +117,12 @@ due righe di mappatura regola-a-file, una scelta dichiarata e non una svista.
 | **blocco C** · `Q2 · §5.1` — **nessuna via `From`/`Into`** fra `Mib` e `Millis` — **regola B** | idem: nessuna conversione è dichiarata | `no_conversion_from_mib_to_millis.rs` · `no_conversion_from_millis_to_mib.rs` |
 | **blocco C** · `Q14 · §4.9` — un record durevole **senza versione** | `crates/kernel/src/record.rs` — `Record` è un enum di versione, e l'`encode` inerente vive su di esso, non sul corpo `RecordV1` | `record_without_version.rs` |
 | **blocco C** · `Q9 · I6 · V20 · §4.9` — un payload non fidato **senza la propria etichetta** | `crates/kernel/src/record.rs` — `RecordV1::trust` non è un `Option` e `Trust` non implementa `Default`. ⛔ **Le metà sono due e i casi sono due**, come per i due tempi: il primo tiene *«il campo esiste»* (`E0063`), il secondo *«e non ha default»* (`E0277`) | `record_without_trust_label.rs` · `trust_has_no_default.rs` |
-| **blocco C** · `V4` — l'esito dell'arbitro trattato come **due vie** invece di tre | `crates/kernel/src/arbiter/mod.rs` — `Admission` ha **tre** varianti e nessun `is_granted()`, nessuna conversione a booleano: distinguerle non è una raccomandazione, è la firma | `admission_is_not_two_ways.rs` |
+| **blocco C** · `V4` — l'esito dell'arbitro trattato come **due vie** invece di tre | `crates/kernel/src/arbiter/mod.rs` — `Admission` ha **tre** varianti e nessun `is_granted()`, nessuna conversione a booleano: distinguerle non è una raccomandazione, è la firma. ⛔ **Le metà sono due e i casi sono due**, come per i due tempi: il primo tiene *«un `match` a due bracci non compila»* (`E0004`), il secondo *«e non c'è nemmeno la scorciatoia booleana»* (`E0599`) | `admission_is_not_two_ways.rs` · `admission_has_no_is_granted.rs` |
+| **blocco C** · `V2` — un'**ammissione senza profilo** di risorsa | `crates/kernel/src/arbiter/mod.rs` — `Arbiter::admit` prende il `&ResourceProfile` **per posizione**, quindi ometterlo è un errore di arità e non un'ammissione che decide sul nulla | `admission_without_profile.rs` |
+| **blocco C** · `Q8 · §5.2.1` — l'**ammissione legge `cold_start`** | `crates/kernel/src/arbiter/` — `admit` riceve un `ResourceProfile`, che quel campo non ce l'ha; `cold_start` vive su `WorkDescriptor`, che l'ammissione non riceve. ⚠️ Dal Task 5 il caso costruisce il profilo **e lo passa ad `admit` nello stesso `main`**: la regola è provata sull'argomento che la decisione prende davvero | `admission_reads_cold_start.rs` |
 | **blocco C** · `I2 · §5.3` — la **revoca** per un profilo **non prelazionabile** | `crates/kernel/src/arbiter/mod.rs` — `Activity::NonPreemptible` è una variante **unitaria**: non ha dove metterla, quindi lo stato illegale non è vietato, è **indicibile**. ⚠️ La cella di catalogo scrive `InRevoca`; il codice si chiama `Revoking` per la §1.0 della spec — divergenza già registrata come `R5` del piano del Traguardo 5 | `revoking_a_non_preemptible_grant.rs` |
 | **blocco B** · `V19` — **promuovere testo a istruzione ← la porta `journal`** | `crates/kernel/src/boundary.rs` — `Untrusted::promote` pretende il giornale come **argomento**, e la registrazione fallita fa fallire la promozione | `promote_without_journal.rs` |
-| **blocco B** · `I2` — **avviare un worker ← una concessione**. ⚠️ **PARZIALE**, e la metà che manca è dichiarata nella sezione del Task 4 qui sotto | `crates/kernel/src/arbiter/mod.rs` — `Grant` vive dove lo si **emette**, con un campo privato e nessun costruttore pubblico; `Process::start` lo pretende per valore | `grant_has_no_constructor.rs` |
+| **blocco B** · `I2` — **avviare un worker ← una concessione**. ✅ **COPERTA dal Task 5**, quando la metà che mancava è diventata scrivibile — vedi la sezione del Task 5 qui sotto | `crates/kernel/src/arbiter/mod.rs` — `Grant` vive dove lo si **emette**, con un campo privato e nessun costruttore pubblico; `Process::start` lo pretende per valore, e `Arbiter::admit` è l'**unico** che ne conia uno | `grant_has_no_constructor.rs` |
 
 ⛔ **La regola uscita dalla riga della regola B, e vale oltre il caso** (gotcha **#36**, terza
 occorrenza): quando un compito implementa un controllo che il catalogo non ha, il posto dove
@@ -132,6 +152,9 @@ quando l'uscita non combacia con l'oracolo:
 | l'esito dell'arbitro a **due vie** (`admission_is_not_two_ways.rs`) | **`error`** | no |
 | la **revoca** su un profilo non prelazionabile (`revoking_a_non_preemptible_grant.rs`) | **`error`** | no |
 | la concessione **forgiata da fuori** (`grant_has_no_constructor.rs`) | ⛔ **dipende da COME si rompe la regola** — `error` se il tipo perde i campi, `mismatch` se il campo diventa `pub` | **in parte sì** — vedi la sezione del Task 4 |
+| la **scorciatoia booleana** sull'esito (`admission_has_no_is_granted.rs`) | **`error`** | no — misurato al Task 5, con `is_granted` aggiunto |
+| l'**ammissione senza profilo** (`admission_without_profile.rs`) | **`error`** | no — misurato al Task 5, togliendo il profilo dalla firma di `admit` |
+| l'**ammissione che legge `cold_start`** (`admission_reads_cold_start.rs`) | `mismatch` | ⛔ **sì**, e va detto invece di lasciarlo dedurre — vedi la sezione del Task 5 |
 
 ⛔ **La riga della regola A è la divergenza, e si registra invece di allinearla all'attesa.**
 Il gotcha #42 prevedeva un `mismatch` — rustc che aggiunge righe di `help: call Into::into`
@@ -248,6 +271,15 @@ struttura, non che il percorso decisionale non vi arrivi — quel percorso non e
 «un'ammissione senza profilo») resta invece scoperta**, senza innesco da scrivere qui:
 nessun argomento di ammissione esiste ancora da rendere obbligatorio, e si chiude insieme a
 `Q8` allo stesso Task 5.
+
+✅ **RICHIAMO DEL 2026-08-19, TRAGUARDO 5 TASK 5 — i due inneschi qui sopra sono SCATTATI, ed
+entrambe le righe sono chiuse.** `admit` esiste: `admission_reads_cold_start.rs` è stato
+riscritto per costruire il profilo **e passarlo ad `admit` nello stesso `main`**, quindi la
+regola è provata sull'argomento che la decisione prende davvero e non su un tipo citato fuori
+contesto; `V2` ha ora un caso proprio, `admission_without_profile.rs`, che omette il profilo e
+ottiene `E0061`. ⚠️ **La seconda riga non era nel brief del Task 5:** l'unica cosa che la
+chiedeva era la frase qui sopra, e un innesco che scatta senza che nessuno lo raccolga lascia
+questo file a mentire. Dettaglio nella sezione «Livello 1 · l'arbitro che ammette e rilascia».
 
 #### `Grant`, `Admission` e `Activity` — Traguardo 5, Task 4, e `V4` e `I2 · §5.3` si chiudono
 
@@ -387,6 +419,135 @@ nessun accessore — e l'avviso **si vede**. Il cancello resta **verde**: non pa
 `-D warnings`. ⏳ **E la riga porta la propria scadenza: al Task 5 quell'avviso DEVE sparire**,
 perché `release` legge il campo. Se è ancora lì, il campo non serviva.
 
+#### `Parameters::total_vram` e l'arbitro che ammette e rilascia — Traguardo 5, Task 5
+
+⛔ **Il totale è CONSEGNATO, non chiesto**, e la §5.1 ci aveva speso un richiamo datato: la
+formula del budget allocabile compare identica in tre documenti e **nessuno** diceva da dove
+venga `total`. Interrogare la GPU è una chiamata al sistema operativo, che I3 vieta al kernel,
+e nessuna delle sei famiglie di porte consegna la capacità dell'hardware. Quindi `Parameters`
+guadagna un secondo campo, e **diciannove siti chiamanti** in quattro file lo scrivono sul
+posto — un default in `Parameters` è precisamente ciò che §2.8.2 regola 2 vieta.
+
+⛔ **`Arbiter` è logica pura dei propri ingressi**, con `BTreeMap` da `alloc` (`HashMap` non è
+nominabile: `no_std`, gotcha #12 chiuso gratis), e `admit` **riscuote gli scaduti prima di
+decidere**. Le sonde nuove stanno in `crates/kernel/tests/arbiter_admission.rs`, che passa da
+**due** a **DIECI** test — ricontati eseguendo il binario, mai dedotti (gotcha #31):
+
+| Sonda nuova | Cosa tiene |
+|---|---|
+| `a_grant_takes_exactly_its_reservation_out_of_the_budget` | ⛔ **l'asserzione è il NUMERO, non la variante:** *«ha concesso»* lo soddisfa un arbitro che concede tutto; ciò che dice che il budget è reale è che `allocated` si sia mosso **della prenotazione** |
+| `releasing_gives_back_exactly_the_reservation` | la metà arbitro delle proprietà 2 e 3 di §5.7 — e sono **una** e non due: l'arbitro non deve sapere **chi** teneva una concessione, solo che rilasciarla rimetta la prenotazione |
+| `a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit` | che l'`Err` di `release` sia **raggiungibile** — la superficie morta che questo repository ha tolto da `Record::encode`. ⚠️ **Con un limite dichiarato, vedi sotto** |
+| `the_sum_of_the_grants_never_exceeds_the_total` | l'invariante, asserito **sul numero**: la somma di **tutte** le concessioni non supera il totale, e la terza richiesta torna `Refused` coi due numeri che design/02 chiede |
+| `a_total_smaller_than_the_two_permanent_quotas_refuses_the_second_one` | che una configurazione impossibile sia **visibile invece che silenziosa** — è la sonda che paga la divergenza del disegno dalla §5.1: con le due quote **sottratte** dal totale, un totale più piccolo della loro somma darebbe budget zero **senza una parola** |
+| `an_expired_grant_does_not_stay_allocated` | la riscossione pigra, scritta perché sia **osservabile**: fra due operazioni una concessione scaduta resta nei libri — non nega niente a nessuno, **non c'è** nessuno — e al primo che guarda è già liberata (§5.7 proprietà 5) |
+| `a_grant_still_inside_its_window_is_not_collected` | la contro-sonda, ed è la direzione che si salta: senza, *«riscuoti sempre tutto»* passa |
+| `a_request_larger_than_the_total_is_refused_and_not_queued` | che una richiesta più grande dell'intera macchina sia `Refused` e **mai** `Queued`: nessun rilascio le farà mai posto, e un gettone che non può essere servito è una perdita che sembra pazienza |
+
+⚠️ **Il file era del Task 4 e il suo *«Create»* era un `Modify`:** il commento di modulo è
+stato **fuso** e le due sonde del Task 4 restano — altrimenti sparivano le seconde direzioni
+di `V4` e di `I2 · §5.3`. Le due `use` sono state unite, non sostituite.
+
+⛔ **Sette mutazioni, una alla volta, ciascuna compilata ed eseguita a sé, provata entrata con
+`grep -c` e revocata con lo strumento di edit** (mai `git checkout --`, gotcha #48):
+
+| # | Mutazione, sul codice di produzione | Sonda attesa morta | Misurato |
+|---|---|---|---|
+| **1a** | `>` → `>=` nel confronto **somma contro tetto** (`self.allocated().saturating_add(asked) > ceiling`) | `the_sum_of_the_grants_never_exceeds_the_total` | ✅ **rossa** — `assertion failed: matches!(outcome, Admission::Granted(_))`. Cadono con lei anche `an_expired_grant_does_not_stay_allocated` e `a_grant_still_inside_its_window_is_not_collected`, che riempiono il totale **esatto**. **7 passati, 3 falliti** |
+| **1b** | ⚠️ **aggiunta**, non dettata: `>` → `>=` nell'**altro** confronto col tetto (`asked > ceiling`) | — | ✅ **`the_sum_of_the_grants_never_exceeds_the_total` SOPRAVVIVE**, e muoiono le altre due. **8 passati, 2 falliti** — vedi la divergenza sotto la tabella |
+| **2** | `release` restituisce `Mib::ZERO` invece di `held.reserved` | `releasing_gives_back_exactly_the_reservation` | ✅ **rossa, e sola** — `` assertion `left == right` failed / left: Mib(0) / right: Mib(6144) ``. **9 passati, 1 fallito** |
+| **3** | `collect_expired` con **corpo vuoto** | `an_expired_grant_does_not_stay_allocated` | ✅ **rossa, e sola**, col proprio messaggio: *«without the collection this is Refused»*. **9 passati, 1 fallito** |
+| **4** | `collect_expired` con `retain(\|_, _\| false)` | `a_grant_still_inside_its_window_is_not_collected` | ✅ **rossa**, col proprio messaggio: *«the window has not closed yet»*. Cadono con lei altre tre. **6 passati, 4 falliti** |
+| **5** | `cold_start: Millis` rimesso su `ResourceProfile` | `admission_reads_cold_start.rs` | ⛔ **`mismatch`, non `error`** — `E0063` al posto di `E0609`. Vedi sotto |
+| **6** | `impl Admission { pub const fn is_granted(&self) -> bool { … } }` | `admission_has_no_is_granted.rs` | ✅ **`error`** — *«Expected test case to fail to compile, but it succeeded»*, e gli altri ventisei restano `ok` |
+| **7** | il `profile` **tolto dalla firma** di `admit` | `admission_without_profile.rs` | ✅ **`error`** — e come effetto collaterale gli altri due casi dell'ammissione vanno `mismatch`, perché passano un profilo a una firma che non lo prende più |
+
+⛔ **Le mutazioni 3 e 4 sono ENTRAMBE necessarie, ed è la ragione per cui esistono due sonde:**
+la 3 da sola sarebbe soddisfatta da *«riscuoti sempre tutto»*, che è il difetto opposto e non
+meno grave — la 4 lo dimostra uccidendo la contro-sonda.
+
+⚠️ **DIVERGENZA, misurata e non dedotta: «il confronto col tetto» ne nomina UNO e ce ne sono
+DUE.** Il piano detta *«`>` diventa `>=` nel confronto col tetto»* attendendo la morte di
+`the_sum_of_the_grants_never_exceeds_the_total`, e solo il confronto **somma contro tetto** la
+uccide; l'altro — `asked > ceiling`, la guardia *«più grande dell'intera macchina»* — la lascia
+**verde** e ne uccide altre due. Misurate entrambe perché una campagna che si ferma alla prima
+avrebbe concluso *«mutazione applicata, sonda morta, fatto»* senza sapere quale delle due
+guardie aveva toccato. Nessuna delle due è vacua, ed è quello il risultato.
+
+⛔ **La mutazione 5 misura la SPECIE della guardia di `Q8 · §5.2.1`, e la specie va scritta
+perché nessuno la conti fra le forti.** Rimettere `cold_start` su `ResourceProfile` **non** fa
+compilare il caso: il letterale del caso resta senza quel campo, quindi rustc passa da `E0609`
+(*«no field `cold_start`»*) a `E0063` (*«missing field `cold_start` in initializer»*) e
+trybuild dice **`mismatch`**. ⚠️ Cioè questa guardia **dipende dall'oracolo** — stessa specie di
+`mib_as_millis.rs`, gotcha **#42** — e una rigenerazione in blocco la spegnerebbe in silenzio.
+È il prezzo della forma di questo caso, non un difetto scoperto dopo: registrato qui e nella
+tabella delle due direzioni.
+
+⛔ **Le due righe di catalogo che il Task 5 chiude, più quella che gli inneschi gli hanno
+consegnato.**
+
+| Riga | Stato | Le due direzioni |
+|---|---|---|
+| `Q8 · §5.2.1` | ✅ **coperta** (era parziale) | *non compila*: `admission_reads_cold_start.rs`, che ora costruisce il profilo **e lo passa ad `admit`**. *Compila*: `cold_start_is_readable_outside_the_decision_path` in `crates/kernel/tests/arbiter_resource.rs`, dal Task 3 |
+| `V2` | ✅ **coperta** (era scoperta) | *non compila*: `admission_without_profile.rs` (`E0061`, *«argument #1 of type `&ResourceProfile` is missing»*). *Compila*: **tutte e otto** le sonde nuove di `arbiter_admission.rs`, che `admit` lo chiamano **col** profilo, da fuori la crate |
+| blocco **B**, *«avviare un worker ← una concessione»* | ✅ **coperta** (era parziale) | *non compila*: `grant_has_no_constructor.rs`, con la mutazione **2b** del Task 4 a provarlo non vacuo. *Compila* — cioè *«con la concessione → compila»* — **ora è scrivibile**, ed è scritta: `releasing_gives_back_exactly_the_reservation` ottiene un `Grant` da `admit` e lo consuma. ⚠️ **Il consumatore vero è `Process::start`, che resta del Traguardo 6**: ciò che questa direzione compra oggi è che una concessione **si ottiene solo da `admit`** ed è spendibile una volta sola |
+| `V4` | ✅ **coperta**, e ora con **due** casi | *non compila*: `admission_is_not_two_ways.rs` (`E0004`) **e** `admission_has_no_is_granted.rs` (`E0599`) — la seconda metà, che aspettava un'ammissione vera da cui ottenere un `Admission`. *Compila*: `an_admission_is_distinguishable_three_ways`, dal Task 4 |
+
+⚠️ **VOCE APERTA — ciò che `release` compra davvero, e ciò che non compra.** La sonda
+`a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit` costruisce un
+secondo arbitro **vuoto**, quindi prova *«non è nei miei libri»*, **non** *«distinguo le mie
+concessioni da quelle altrui»*. `GrantId` è un progressivo che riparte da zero per ogni
+`Arbiter`: due arbitri che abbiano **entrambi** emesso concessioni condividono lo spazio degli
+id, e il secondo accrediterebbe la concessione del primo. ⛔ **Il disegno non è stato cambiato
+per chiudere il buco:** dare un'**identità** all'arbitro è una decisione del proprietario. Ciò
+che protegge oggi è che un processo ha **un** arbitro — i diversi che esistono insieme esistono
+nei **banchi**. Il limite è scritto **accanto a `ReleaseError` nel sorgente**, oltre che qui.
+
+⏳ **LA SCADENZA DEL TASK 4 È RISPETTATA, e questa riga esiste per renderlo verificabile.** La
+sezione del Task 4 dichiarava: *«al Task 5 quell'avviso DEVE sparire, perché `release` legge il
+campo; se è ancora lì, il campo non serviva»*. ✅ Misurato dopo il Task 5:
+`cargo build --locked --workspace` stampa **ZERO warning**. `Grant::id` ha il suo lettore, ed è
+`Arbiter::release`.
+
+⛔ **`Held` nasce con DUE campi e non con quattro, e non è una semplificazione: è la stessa
+regola applicata due volte.** Il piano gli dà anche `lane: ComputeClass` e `activity: Activity`;
+nessuno dei due ha un lettore in questo compito, quindi sarebbero stati **due** warning
+`dead_code` — e la scadenza qui sopra sarebbe stata falsificata dal compito stesso. Il piano
+prescriveva l'uscita per `lane` (*«si sposta il campo al compito dove nasce col proprio
+consumatore»*) e la stessa uscita vale per `activity` sugli stessi fatti: `lane` arriva col
+**Task 6**, quando una coda deve sapere in che corsia aspetta; `activity` col **Task 7**, che è
+il primo a leggere che cosa una concessione stia **facendo**. ⛔ **Nessun `#[allow]`**, che è un
+divieto spento (gotcha #13). Conseguenza sul corpo di `admit`: sparisce anche il blocco
+`activity: match profile.preemption { … }`, che esisteva solo per riempire quel campo.
+
+⚠️ **Il costo di un secondo parametro consegnato, misurato invece che temuto.** §2.8.5 promette
+che aggiungere un parametro **rompe ogni chiamante**, e la promessa arriva fino all'oracolo:
+`parameters_have_no_default.stderr` è andato **`mismatch`**, perché rustc chiude quell'errore
+con una nota che cita la firma di `Parameters::new` **verbatim**. La rigenerazione è
+**legittima e prevista** — il commento dentro il caso la descriveva già — ed è stata fatta per
+la via documentata: cancellato l'oracolo stantio, ri-eseguito, `diff -u` del vecchio contro
+quello in `wip/`, spostato **a mano**. ⛔ **Mai `TRYBUILD=overwrite`**, che avrebbe portato via
+gli altri ventisette (gotcha #25). Il diff letto è di **due righe**: la firma e la sua
+sottolineatura. La regola che quel caso difende scatta comunque come `error` e **non**
+attraverso l'oracolo, quindi la rigenerazione non disarma niente.
+
+⚠️ **`parameters_delivered.rs` passa da quattro a CINQUE test**, e il quinto è la metà che
+mancava: `the_constructor_substitutes_nothing_for_the_total_it_is_handed`. La regola di §2.8.4
+è sul **costruttore**, e un costruttore che lascia stare un campo e mette un pavimento
+sull'altro soddisfa la sonda vecchia e viola la regola. `Mib::ZERO` e `Mib::new(u64::MAX)`
+tornano indietro **identici**. ⚠️ **E `parameters_are_comparable_so_a_substitution_is_observable`
+ha guadagnato una riga** — due `Parameters` che differiscono **nel solo totale** — senza la
+quale una comparazione che guardasse il solo `executor_turn_limit` avrebbe passato ogni sonda
+del file, e sostituire un totale sarebbe stato inosservabile.
+
+📌 **Conteggi, ricontati eseguendo il binario e mai dedotti** (gotcha #31): workspace **34
+target, 213 passati, 0 falliti, 2 ignorati** — erano **204** prima del compito, e i nove in più
+sono le otto sonde dell'ammissione più quella del totale. Nessun target nuovo: il file
+dell'ammissione esisteva già. Per file: `arbiter_admission.rs` **dieci**,
+`parameters_delivered.rs` **cinque**, `executor_determinism.rs` **tredici** (invariato),
+`arbiter_resource.rs` **otto** (invariato), `dst_campaign.rs` **cinque** di cui uno `#[ignore]`
+(invariato), e i casi `compile_fail` da **ventisei** a **VENTOTTO**.
+
 #### Le contro-sonde delle righe nuove
 
 Per file — la direzione che si dimentica (§7.1.1 regola 3):
@@ -396,8 +557,8 @@ Per file — la direzione che si dimentica (§7.1.1 regola 3):
 | `crates/kernel/tests/time_types.rs` | **blocco C** · `V29 · §2.1`, entrambe | sette test |
 | `crates/simulator/tests/seeded_rng.rs` | **blocco C** · `V29 · §2.2` | otto test |
 | `crates/kernel/tests/boundary_promotion.rs` | **blocco C** · `Q9 · I6 · V20`, **entrambe** — la promozione dichiarata è la contro-sonda della regola A e della regola B — **e blocco B** · `V19` | ⚠️ **quindici** test — ricontati **sul binario** il 2026-08-10 chiudendo il traguardo: la cella diceva **otto**, ed era ferma a prima che il Task 7 vi portasse le sonde della nota, dell'accordo fra `kind` e operazione, e le due in cui la sonda dettata è stata **divisa**. Gotcha **#31** |
-| `crates/kernel/tests/parameters_delivered.rs` | le **due** righe **blocco C** · `V29 · §2.8 · ADR-0034` | quattro test |
-| `crates/kernel/tests/arbiter_admission.rs` | **blocco C** · `V4` — la direzione *«distinguere le tre compila»* — **e** `I2 · §5.3` — la direzione *«quello legale SI COSTRUISCE»* — nessuna delle due tenibile dal rispettivo caso negativo. ⚠️ **File nuovo del Traguardo 5 Task 4**, e cresce coi Task 5–7 | **due** test — `an_admission_is_distinguishable_three_ways` (morso solo a compilazione) e `a_revocation_is_constructible_on_the_preemptible_side` |
+| `crates/kernel/tests/parameters_delivered.rs` | le **due** righe **blocco C** · `V29 · §2.8 · ADR-0034` | ⚠️ **cinque** test — erano quattro fino al Traguardo 5 Task 5, che ha aggiunto la metà di §2.8.4 per `total_vram`. Ricontati **sul binario** |
+| `crates/kernel/tests/arbiter_admission.rs` | **blocco C** · `V4` — la direzione *«distinguere le tre compila»* — `I2 · §5.3` — la direzione *«quello legale SI COSTRUISCE»* — **e dal Task 5** `V2` (*«con il profilo compila»*) e la riga del **blocco B** *«avviare un worker ← una concessione»* (*«con la concessione compila»*). Nessuna tenibile dal rispettivo caso negativo. ⚠️ **File nuovo del Traguardo 5 Task 4**, e cresce coi Task 6–7 | ⚠️ **dieci** test — erano **due** alla nascita; le otto dell'ammissione sono del Task 5. Ricontati **sul binario** |
 | `crates/kernel/tests/record_shape.rs` | **blocco C** · `Q14 · §4.9` **e** `Q9 · I6 · V20 · §4.9` — la contro-sonda dell'etichetta è `every_trust_label_survives_the_round_trip_and_the_two_differ_in_the_bytes`, che scrive **entrambi** i valori e ne confronta i byte | ⚠️ **dodici** test — ricontati **sul binario** il 2026-08-10 chiudendo il traguardo: la cella diceva **dieci**, e i due mancanti sono `the_reason_survives_the_round_trip_and_travels_beside_the_payload` e `an_empty_record_is_nine_bytes_and_the_inner_array_holds_five`, arrivati col **Task 7** — verificati col `diff` fra i due commit invece che dedotti. Gotcha **#31** |
 
 ⛔ **`boundary_promotion.rs` è la contro-sonda di due blocchi insieme**, e ciascuno dei suoi
@@ -1657,8 +1818,8 @@ che manca.
 
 | Riga del catalogo | Perché non c'è ancora |
 |---|---|
-| il **resto** del blocco **B** di §7.4.1 — i **gettoni** | ⚠️ **Non più interamente scoperto, dal 2026-08-09:** **una riga su cinque** è implementata — `promuovere testo a istruzione ← la porta journal` (V19), da `crates/kernel/tests/compile_fail/promote_without_journal.rs`, che nomina quella riga di catalogo nella propria intestazione. Degli **altri quattro**, **due** li emettono l'arbitro (§5.6) e il filtro dei vincoli (§6.3) — **Traguardi 5 e 6**; gli altri **due**, il `Worker` e la **ricevuta**, li emette già `crates/kernel/src/ports/process.rs`, e restano scoperti per la ragione della riga di §6.10.5 più sotto: senza `Grant` non si ottiene un `Worker`. ⚠️ **Corretto il 2026-08-10:** diceva che li emettevano **tutti e quattro** l'arbitro e il filtro dei vincoli, e per due era falso — `Process::start` restituisce il `Worker` e `instruct_one`/`instruct_stream` le ricevute, tutti e tre spediti da questo traguardo. ⛔ Un costruttore di `Grant` dietro una feature di test **è stato valutato e scartato**: creerebbe il secondo modo di ottenere una concessione che §5.6 esiste per togliere dal compilatore. ⚠️ **Ricontata il 2026-08-19, Traguardo 5 Task 4:** *«avviare un worker ← una concessione»* passa da scoperta a **PARZIALMENTE** coperta — metà *«senza → non compila»* da `crates/kernel/tests/compile_fail/grant_has_no_constructor.rs`; la metà *«con → compila»* **non è scrivibile** finché nessuno emette concessioni, e l'innesco è il compito che porta `admit` (Task 5). ⛔ **Il numeratore delle COPERTE non si muove: resta una su cinque**, non due — una riga `parziale` non è chiusa, stesso trattamento di `Q8 · §5.2.1`. ⚠️ **E la frase «due li emettono l'arbitro e il filtro dei vincoli» è ora imprecisa per metà:** l'arbitro **esiste**, `Grant` vive in `crates/kernel/src/arbiter/mod.rs`, e ciò che manca non è più il modulo ma l'**emittente** — `admit`. Dettaglio nella sezione «Livello 1 · `Grant`, `Admission` e `Activity`» |
-| il resto del blocco **C** di §7.4.1 | **nove righe su diciannove** sono implementate (sopra). ⚠️ **Ricontate una seconda volta il 2026-08-10**, eseguendo il Task 2 del Traguardo 3: diceva *«sette su diciotto»*, e **sbagliava di due nel numeratore, non di uno** — il Task 1 aveva consegnato `record_without_version.rs` senza scriverne la riga qui, e il Task 2 ne ha aggiunta un'altra insieme alla propria riga di catalogo. ⛔ **È la stessa specie di prima e va detta così:** il denominatore lo muove chi tocca il catalogo e se ne accorge; **il numeratore lo muove chi scrive un caso**, che il catalogo non lo apre nemmeno. Delle due, la seconda è quella che invecchia in silenzio. ⚠️ **Ricontate il 2026-08-10:** diceva *«sei su diciassette»*, sbagliato in **entrambi** i termini — e prima ancora *«tre su sedici»*. Il numero giusto **esisteva già** in testa alla sezione «Livello 1»: era stato rimisurato e scritto in **uno solo dei due posti dello stesso file**, e il denominatore era rimasto indietro perché la riga della **regola B** entrò nel catalogo lo stesso giorno. Le **altre dieci** non cambiano — i due termini erano bassi di uno insieme — e nominano tipi che nascono coi **Traguardi 3, 5 e 6**. ⚠️ **E la loro descrizione era stretta, corretta lo stesso giorno:** diceva *«nominano tipi dell'arbitro, del giornale e del canale worker»*, e **due delle dieci non vi rientrano** — `V5`, un effetto senza classe dichiarata, e `V10`, un sensore che modifica l'artefatto. Chi le ricontasse **dalla descrizione** ne troverebbe otto: è lo stesso difetto della riga qui accanto un livello più sotto, e si ricontano **sul catalogo**, che è l'unico posto che le enumera. ⚠️ **E `V5` merita una parola, perché il Traguardo 3 l'ha resa ingannevole:** il tipo `EffectClass` **esiste** da `crates/kernel/src/record.rs` ed è un campo obbligatorio del record, ma **nessun caso lo esercita** — un tipo che esiste non è un controllo che scatta, e la riga resta fra le scoperte. ⚠️ **Ricontate il 2026-08-19, Traguardo 5 Task 1:** `Q2 · §5.1` passa da scoperta a coperta, quindi **dieci righe su diciannove**, non nove — il denominatore non si muove, `Q2` era già fra le diciannove. ⚠️ **Ricontate di nuovo lo stesso giorno, Traguardo 5 Task 3:** `Q8 · §5.2.1` passa da scoperta a **PARZIALMENTE** coperta — prima metà `crates/kernel/tests/compile_fail/admission_reads_cold_start.rs` (`E0609`), innesco scritto per la seconda («si chiude al compito che porta `admit`», Task 5. Dettaglio nella sezione «Livello 1 · `ResourceProfile` e `WorkDescriptor`»). ⛔ **Non entra nel numeratore delle coperte:** resta **dieci righe su diciannove**, non undici — una riga `parziale` non è una riga chiusa. ⚠️ **Ricontate una terza volta il 2026-08-19, Traguardo 5 Task 4:** `V4` e `I2 · §5.3` passano da scoperte a **coperte**, entrambe con le due direzioni (la seconda per mutazione, e il limite di ciò che una mutazione compra è dichiarato nella sezione del Task 4) — quindi **dodici righe su diciannove**. Il denominatore non si muove: erano già fra le diciannove. ⛔ **CORRETTO in un compito di rifinitura, stesso giorno: questa cella diceva «undici», «undici» e «tredici», e sommava `Q2 · §5.1` come DUE righe di catalogo — nel catalogo (§7.4.1 blocco C) è UNA sola, «MiB assegnati a millisecondi», la stessa voce già aperta come R3 nella sezione «Livello 1» qui sopra.** Ricontato **direttamente su §7.4.1 blocco C** (non sulla tabella «Livello 1», che per R3 continua a mostrare `Q2` come due righe di mappatura regola-a-file — una scelta dichiarata, non toccata qui): coperte `Q9·I6·V20` (regola A e B), `Q2·§5.1`, `V29·§2.1` (entrambe), `V29·§2.2`, `I2·§5.3`, `V4`, `V29·§2.8·ADR-0034` (entrambe), `Q14·§4.9`, `Q9·I6·V20·§4.9` — **dodici** righe; scoperte `V2`, `V3`, `V5`, `V10` e le due righe di §6.10 — **sei**; parziale `Q8·§5.2.1` — **una**. 12 + 6 + 1 = 19, e il conto torna. 📌 **Convenzione contata:** una riga di catalogo vale UNO nel numeratore qualunque sia il numero di casi `compile_fail` che la difendono — la stessa già in uso per la riga `Q9 · I6 · V20 · §4.9` della tabella «Livello 1»: due casi, una riga. ⚠️ **Restano scoperte `V2`, `V3`, `V5`, `V10`**, più le due righe di §6.10 e la riga di `Q8` che è parziale: si ricontano **sul catalogo**, mai da questa frase |
+| il **resto** del blocco **B** di §7.4.1 — i **gettoni** | ⚠️ **Non più interamente scoperto, dal 2026-08-09:** **una riga su cinque** è implementata — `promuovere testo a istruzione ← la porta journal` (V19), da `crates/kernel/tests/compile_fail/promote_without_journal.rs`, che nomina quella riga di catalogo nella propria intestazione. Degli **altri quattro**, **due** li emettono l'arbitro (§5.6) e il filtro dei vincoli (§6.3) — **Traguardi 5 e 6**; gli altri **due**, il `Worker` e la **ricevuta**, li emette già `crates/kernel/src/ports/process.rs`, e restano scoperti per la ragione della riga di §6.10.5 più sotto: senza `Grant` non si ottiene un `Worker`. ⚠️ **Corretto il 2026-08-10:** diceva che li emettevano **tutti e quattro** l'arbitro e il filtro dei vincoli, e per due era falso — `Process::start` restituisce il `Worker` e `instruct_one`/`instruct_stream` le ricevute, tutti e tre spediti da questo traguardo. ⛔ Un costruttore di `Grant` dietro una feature di test **è stato valutato e scartato**: creerebbe il secondo modo di ottenere una concessione che §5.6 esiste per togliere dal compilatore. ⚠️ **Ricontata il 2026-08-19, Traguardo 5 Task 4:** *«avviare un worker ← una concessione»* passa da scoperta a **PARZIALMENTE** coperta — metà *«senza → non compila»* da `crates/kernel/tests/compile_fail/grant_has_no_constructor.rs`; la metà *«con → compila»* **non è scrivibile** finché nessuno emette concessioni, e l'innesco è il compito che porta `admit` (Task 5). ⛔ **Il numeratore delle COPERTE non si muove: resta una su cinque**, non due — una riga `parziale` non è chiusa, stesso trattamento di `Q8 · §5.2.1`. ⚠️ **E la frase «due li emettono l'arbitro e il filtro dei vincoli» è ora imprecisa per metà:** l'arbitro **esiste**, `Grant` vive in `crates/kernel/src/arbiter/mod.rs`, e ciò che manca non è più il modulo ma l'**emittente** — `admit`. Dettaglio nella sezione «Livello 1 · `Grant`, `Admission` e `Activity`». ✅ **Ricontata di nuovo il 2026-08-19, Traguardo 5 Task 5, e la riga è CHIUSA:** `admit` esiste, quindi la metà *«con → compila»* è diventata scrivibile ed è scritta — `releasing_gives_back_exactly_the_reservation` in `crates/kernel/tests/arbiter_admission.rs` ottiene un `Grant` da `admit` e lo consuma. ⛔ **Il numeratore si muove per la prima volta: DUE righe su cinque.** ⚠️ **E la frase «due li emettono l'arbitro e il filtro dei vincoli» è ora imprecisa per l'altra metà:** l'emittente esiste, e ciò che resta al Traguardo 6 è il **consumatore** — `Process::start`. ⚠️ **Le altre due righe** — il `Worker` e la **ricevuta** — restano scoperte per la ragione invariata della riga di §6.10.5 più sotto: `start` non è ancora implementata da nessuno. Dettaglio nella sezione «Livello 1 · `Parameters::total_vram` e l'arbitro che ammette e rilascia» |
+| il resto del blocco **C** di §7.4.1 | **nove righe su diciannove** sono implementate (sopra). ⚠️ **Ricontate una seconda volta il 2026-08-10**, eseguendo il Task 2 del Traguardo 3: diceva *«sette su diciotto»*, e **sbagliava di due nel numeratore, non di uno** — il Task 1 aveva consegnato `record_without_version.rs` senza scriverne la riga qui, e il Task 2 ne ha aggiunta un'altra insieme alla propria riga di catalogo. ⛔ **È la stessa specie di prima e va detta così:** il denominatore lo muove chi tocca il catalogo e se ne accorge; **il numeratore lo muove chi scrive un caso**, che il catalogo non lo apre nemmeno. Delle due, la seconda è quella che invecchia in silenzio. ⚠️ **Ricontate il 2026-08-10:** diceva *«sei su diciassette»*, sbagliato in **entrambi** i termini — e prima ancora *«tre su sedici»*. Il numero giusto **esisteva già** in testa alla sezione «Livello 1»: era stato rimisurato e scritto in **uno solo dei due posti dello stesso file**, e il denominatore era rimasto indietro perché la riga della **regola B** entrò nel catalogo lo stesso giorno. Le **altre dieci** non cambiano — i due termini erano bassi di uno insieme — e nominano tipi che nascono coi **Traguardi 3, 5 e 6**. ⚠️ **E la loro descrizione era stretta, corretta lo stesso giorno:** diceva *«nominano tipi dell'arbitro, del giornale e del canale worker»*, e **due delle dieci non vi rientrano** — `V5`, un effetto senza classe dichiarata, e `V10`, un sensore che modifica l'artefatto. Chi le ricontasse **dalla descrizione** ne troverebbe otto: è lo stesso difetto della riga qui accanto un livello più sotto, e si ricontano **sul catalogo**, che è l'unico posto che le enumera. ⚠️ **E `V5` merita una parola, perché il Traguardo 3 l'ha resa ingannevole:** il tipo `EffectClass` **esiste** da `crates/kernel/src/record.rs` ed è un campo obbligatorio del record, ma **nessun caso lo esercita** — un tipo che esiste non è un controllo che scatta, e la riga resta fra le scoperte. ⚠️ **Ricontate il 2026-08-19, Traguardo 5 Task 1:** `Q2 · §5.1` passa da scoperta a coperta, quindi **dieci righe su diciannove**, non nove — il denominatore non si muove, `Q2` era già fra le diciannove. ⚠️ **Ricontate di nuovo lo stesso giorno, Traguardo 5 Task 3:** `Q8 · §5.2.1` passa da scoperta a **PARZIALMENTE** coperta — prima metà `crates/kernel/tests/compile_fail/admission_reads_cold_start.rs` (`E0609`), innesco scritto per la seconda («si chiude al compito che porta `admit`», Task 5. Dettaglio nella sezione «Livello 1 · `ResourceProfile` e `WorkDescriptor`»). ⛔ **Non entra nel numeratore delle coperte:** resta **dieci righe su diciannove**, non undici — una riga `parziale` non è una riga chiusa. ⚠️ **Ricontate una terza volta il 2026-08-19, Traguardo 5 Task 4:** `V4` e `I2 · §5.3` passano da scoperte a **coperte**, entrambe con le due direzioni (la seconda per mutazione, e il limite di ciò che una mutazione compra è dichiarato nella sezione del Task 4) — quindi **dodici righe su diciannove**. Il denominatore non si muove: erano già fra le diciannove. ⛔ **CORRETTO in un compito di rifinitura, stesso giorno: questa cella diceva «undici», «undici» e «tredici», e sommava `Q2 · §5.1` come DUE righe di catalogo — nel catalogo (§7.4.1 blocco C) è UNA sola, «MiB assegnati a millisecondi», la stessa voce già aperta come R3 nella sezione «Livello 1» qui sopra.** Ricontato **direttamente su §7.4.1 blocco C** (non sulla tabella «Livello 1», che per R3 continua a mostrare `Q2` come due righe di mappatura regola-a-file — una scelta dichiarata, non toccata qui): coperte `Q9·I6·V20` (regola A e B), `Q2·§5.1`, `V29·§2.1` (entrambe), `V29·§2.2`, `I2·§5.3`, `V4`, `V29·§2.8·ADR-0034` (entrambe), `Q14·§4.9`, `Q9·I6·V20·§4.9` — **dodici** righe; scoperte `V2`, `V3`, `V5`, `V10` e le due righe di §6.10 — **sei**; parziale `Q8·§5.2.1` — **una**. 12 + 6 + 1 = 19, e il conto torna. 📌 **Convenzione contata:** una riga di catalogo vale UNO nel numeratore qualunque sia il numero di casi `compile_fail` che la difendono — la stessa già in uso per la riga `Q9 · I6 · V20 · §4.9` della tabella «Livello 1»: due casi, una riga. ⚠️ **Restano scoperte `V2`, `V3`, `V5`, `V10`**, più le due righe di §6.10 e la riga di `Q8` che è parziale: si ricontano **sul catalogo**, mai da questa frase. ✅ **Ricontate una QUARTA volta il 2026-08-19, Traguardo 5 Task 5: `Q8 · §5.2.1` e `V2` passano a COPERTE, quindi QUATTORDICI righe su diciannove.** `Q8` era l'unica `parziale` e non lo è più — il caso ora nomina `admit`; `V2` aveva un innesco scritto in questo stesso file dal Task 3 e ha ora `crates/kernel/tests/compile_fail/admission_without_profile.rs`. Il denominatore non si muove: erano già fra le diciannove. ⛔ **Restano scoperte `V3`, `V5`, `V10` e le due righe di §6.10 — CINQUE**, e 14 + 5 = 19. ⚠️ **Nel blocco C non c'è più nessuna riga `parziale`**: chi ricontasse cercando la terza colonna non ne troverebbe |
 | i test di contratto per le **altre quattro** famiglie di porte | ✅ **`reactor` è coperta** dal Task 7 del Traguardo 2 — sonde R1…R6. ⚠️ **Ricontate il 2026-08-10:** questa riga diceva *«le altre **cinque**»* e contava `journal` fra le scoperte, e dal Task 4/5 di questo traguardo non lo è più — `crates/kernel/tests/journal_contract.rs`, sonde **J1…J8**. ⛔ **Ma è coperta a metà, e la metà va detta:** una suite di conformità vale la prova che **due** implementazioni rispondono lo stesso. ⚠️ **Ricontata il 2026-08-10 col Task 8:** la seconda implementazione **esiste** — `platform::journal::FileJournal` su `redb` — e la suite le gira contro **verde**, misurato con un file usa-e-getta; ma il file che la esegue **dentro** il repository era il **Task 9**, quindi finché non c'era, ciò che il repository comprava era la via **A6** di `boundary.rs` e otto promesse **scritte in una copia sola**, non l'accordo fra due. ⛔ *«Misurato una volta»* non è *«tenuto a ogni commit»*, ed è esattamente la differenza che questo registro esiste per non lasciar sfumare. ✅ **Ricontata una terza volta il 2026-08-10, col Task 9, e la mezza copertura è CHIUSA:** `crates/platform/tests/journal_contract_real.rs` esiste, e l'accordo fra le due implementazioni è ora **tenuto a ogni commit** — sonda **J12**, con tre contro-sonde che la provano non vacua su **tre promesse diverse** e una mutazione di controllo che non muove nulla. ✅ **Ricontata una QUARTA volta il 2026-08-10, col Task 11, e anche la promessa 7 è chiusa:** questa riga diceva *«ciò che resta scoperto di `journal` non è più il numero delle implementazioni ma la promessa 7, che entrambe soddisfano per la ragione sbagliata finché `prune` non è implementata»* — `prune` è implementata su entrambe, la promessa **7b** è la metà che discrimina, e le sonde sono **J1…J13**. ✅ **Ricontata una QUINTA volta il 2026-08-17, chiudendo T-1 e T-2 dell'audit, e le sonde sono J1…J16:** l'accordo fra le due implementazioni era tenuto **a ogni commit** ma su **tre** promesse — la 1, la 5 e la 8 — soltanto nello stato in cui ogni guardia plausibile passa, cioè un archivio **vuoto** o a **un passo solo**. Chiuse con un **passante**, senza aggiungere nessuna promessa: ciò che il registro comprava era *«le due rispondono lo stesso»*, e ciò che ora compra è *«le due rispondono lo stesso anche dove una guardia sbagliata divergerebbe»*. ⚠️ **Ciò che resta scoperto è ora dichiarato in due voci aperte** — la distinzione di ADR-0018 fra potato e mai registrato, e la terza risposta di `prune` — non più in una promessa che passa senza guardare. Restano scoperte `filesystem`, `network`, `process` e `ipc`: le loro implementazioni nascono coi **Traguardi 5 e 6**, e la suite di ciascuna nasce con esse |
 | **due residui dichiarati dentro `SystemReactor`**, e stanno qui perché un registro che li tacesse mentirebbe | ⛔ sostituire `Some(self.now())` con `Some(deadline)` in `wait_until` **non fa scattare nulla**: la conformità non può coglierlo perché **sulla finta le due espressioni coincidono**, e distinguerle sulla vera richiederebbe l'overshoot dello sleep del sistema operativo, che nessuna piattaforma garantisce — un controllo verde per fortuna e rosso per sfortuna, cioè peggio di uno assente (gotcha #24). ⚠️ E `R5` prova che `wall_time()` non è **ferma**, non che sia **esatta**: l'esattezza vorrebbe una seconda sorgente di tempo |
 | ~~i **byte congelati** del record durevole~~ ✅ **CHIUSA il 2026-08-10, col Task 10** | ⚠️ **Resta scritta perché la storia della riga è il dato.** Diceva prima *«non esiste ancora nessun record»* — falso dal Task 1 — e poi *«a non esistere è `crates/kernel/tests/frozen_bytes.rs`, e finché non esiste le tre regole sugli indici di §4.9.2 sono una convenzione e non un controllo»*, che era vero e ora non lo è: il file esiste, congela **tre** record, e le **otto** varianti sono state rinumerate una per una con **otto rossi su otto** — sonde **F1…F6** nel livello 2. ⛔ **Ciò che resta scoperto è UNA sola cosa, e va detta:** l'oracolo è un file che qualcuno può riscrivere, e la difesa è che la riscrittura **si legge nel diff** — non che sia impossibile. È la stessa forza e la stessa debolezza del gotcha **#25**, dichiarata da ADR-0036 fin dall'inizio. Vincolo 14 della §11 del [compendio](COMPENDIO.md) |

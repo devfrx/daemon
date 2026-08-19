@@ -66,12 +66,12 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 384 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 404 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i settantadue gotcha (§9), le trappole di
+     cosa NON rifare (§8), i settantatré gotcha (§9), le trappole di
      check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
   3. docs/audit-2026-08-11.md — 31 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE, ed è CHIUSO: non è più IL COMPITO, è il VERBALE
@@ -81,7 +81,7 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 384 KB in tutto
      ESEGUITE, e la §5 porta in testa il richiamo datato.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token, e il compendio
-     ne ha oltre milleseicento. È un LIMITE INFERIORE, non un totale — §12.
+     ne ha oltre tremila. È un LIMITE INFERIORE, non un totale — §12.
 
 ⛔ CODICE IN INGLESE, DOCUMENTAZIONE IN ITALIANO — §1.0 della spec.
    Crate, moduli, tipi, funzioni, messaggi d'uscita e commenti nel sorgente
@@ -92,7 +92,9 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 384 KB in tutto
 
 ⚠️ IL REPOSITORY CONTIENE CODICE RUST — QUATTRO traguardi su sei eseguiti,
    l'ultimo il Traguardo 4 (il simulatore DST: il guasto), dieci compiti su
-   dieci, GATE GREEN a tutti.
+   dieci, GATE GREEN a tutti — e il QUINTO è IN ESECUZIONE, un compito per
+   volta. ⛔ A che punto sia lo dice la §6 del compendio, in un posto solo:
+   qui non è scritto apposta, perché una cifra ricopiata marcisce.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
    x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
    in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
@@ -122,8 +124,8 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 384 KB in tutto
    risultare più PICCOLO, più GRANDE, o DI SPECIE DIVERSA.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 726 KB
-   il 2026-08-18, la spec da sola 277, i quattro piani più grandi 174, 168,
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 732 KB
+   il 2026-08-19, la spec da sola 277, i quattro piani più grandi 174, 168,
    162 e 114 — e l'idea è già nel compendio. ⛔ IL PIANO DA ESEGUIRE È IL 174,
    e si apre A COMPITI. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
@@ -142,7 +144,10 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 384 KB in tutto
    le altre. ⛔ L'ERRATA IN TESTA AL PIANO SI LEGGE PRIMA DI OGNI COMPITO,
    non una volta sola: ci sono dentro i comandi dettati che non potevano
    fallire, le mutazioni dettate che non rovesciavano il proprio caso, e
-   almeno un warning che viaggia DI PROPOSITO con una scadenza scritta. ⚠️ Non sono ricopiate qui: un rimando
+   conteggi di chiamanti sbagliati in ENTRAMBI i termini. ⚠️ E una scadenza
+   falsificabile è già SCATTATA E RISPETTATA — il warning che il Task 4
+   faceva viaggiare di proposito è sparito al Task 5, perché il campo
+   serviva davvero: non cercarlo più. ⚠️ Non sono ricopiate qui: un rimando
    a documenti già scritti è ciò che questo messaggio deve TOGLIERE invece di
    accorciare, ed è la prescrizione della 25ª misura della §12.
 
@@ -169,11 +174,13 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 384 KB in tutto
    ⚠️ Questo blocco elencava SEI difetti aperti che erano CHIUSI dal
    2026-08-18: si riscrive quando un passo si chiude, ed è la specie di riga
    che marcisce per costruzione.
-   ⛔ E il terzo posto è IL PIANO DEL TRAGUARDO 5: porta SETTE voci registrate
-   dal proprio pre-controllo, di cui TRE sono decisioni tue — un nome di tipo
-   a una lettera da uno che esiste già, una riga di catalogo che vale per due
-   regole, e due celle del catalogo che nominano identificatori ITALIANI che
-   il traguardo fa esistere in inglese. Toccano la SPEC: registrate, non prese.
+   ⛔ E il terzo posto è IL PIANO DEL TRAGUARDO 5, che ne porta due specie.
+   Dal proprio PRE-CONTROLLO, SETTE voci di cui TRE sono decisioni tue — un
+   nome di tipo a una lettera da uno che esiste già, una riga di catalogo che
+   vale per due regole, e due celle che nominano identificatori ITALIANI che
+   il traguardo fa esistere in inglese: toccano la SPEC, registrate non prese.
+   Dall'ESECUZIONE, altre TRE decisioni di disegno nell'errata — una di esse
+   VA DECISA PRIMA DEL TRAGUARDO 6, e la §6 del compendio dice quale e perché.
 
 ⚠️ Il compendio è una COMPRESSIONE, non una selezione: ci sono dentro tutte le
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento
@@ -257,8 +264,8 @@ piano si legge a COMPITI, mai intero.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **14,7 KB, E LA SERIE HA GIRATO.** Era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **353 KB** — `CLAUDE.md` più il compendio, e **384** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 353 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **373 KB** — `CLAUDE.md` più il compendio, e **404** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 373 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -272,7 +279,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **384 KB contro 726**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+resta quello che conta: **404 KB contro 732**. ⛔ **E il 2026-08-18 una passata ha trovato che il
 `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
 `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
 e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del

@@ -32,6 +32,17 @@ fn preemptible(name: &'static str, vram: u64, lane: ComputeClass) -> ResourcePro
     }
 }
 
+/// The other half of `Preemption`, and the two probes at the foot of this file need it: a
+/// resident that CANNOT be asked back is what leaves the machine only partly reclaimable.
+fn never_preemptible(name: &'static str, vram: u64, lane: ComputeClass) -> ResourceProfile {
+    ResourceProfile {
+        name,
+        reserved_vram: Mib::new(vram),
+        compute_class: lane,
+        preemption: Preemption::Never,
+    }
+}
+
 fn arbiter(total: u64, policy: VramPolicy) -> Arbiter {
     Arbiter::new(Parameters::new(TURN_LIMIT, Mib::new(total)), policy)
 }
@@ -178,4 +189,116 @@ fn each_policy_names_itself() {
         arbiter(4_096, VramPolicy::Local(LocalPolicy)).policy().name(),
         "local"
     );
+}
+
+/// ⛔ THE MACHINE IS ONLY PARTLY FULL, AND THAT IS THE WHOLE POINT OF THIS PROBE. In the five
+/// above, one resident of `4_096` fills a machine of `4_096` and the newcomer asks for `4_096`
+/// too, so the four sizes the admission juggles -- `ceiling`, `allocated()`, `asked` and the
+/// `needed` it COMPUTES -- all coincide. With all four equal, `needed` is indistinguishable
+/// from any of the other three, and the first of the two arguments `admit` hands to `ask_back`
+/// is held by nothing.
+///
+/// ✅ MEASURED AND NOT ARGUED, on 2026-08-20: with `ask_back(asked, ...)` in place of
+/// `ask_back(needed, ...)` the WHOLE WORKSPACE stayed green -- 241 passed, 0 failed -- and that
+/// mutant is not cosmetic. `ask_back` uses its first argument as the THRESHOLD
+/// (`if reclaimable < needed { return Mib::ZERO }`), so asking for the whole request instead of
+/// the shortfall makes `LocalPolicy` mark NOBODY, and degrade to `RemotePolicy` in silence,
+/// every time the machine is only PARTLY full. Here the four sizes are `4_096`, `3_072`,
+/// `2_048` and `1_024`: all different. Registered as `E97`.
+#[test]
+fn a_partly_full_machine_asks_back_the_need_and_not_the_whole_request() {
+    let mut arbiter = arbiter(4_096, VramPolicy::Local(LocalPolicy));
+    // ⛔ REALTIME AND NEVER PREEMPTIBLE: half the machine that cannot be asked back, which is
+    // what makes the shortfall SMALLER than the request.
+    let Admission::Granted(_realtime) = arbiter.admit(
+        &never_preemptible("realtime", 2_048, ComputeClass::Realtime),
+        LONG,
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("the realtime resident is seated");
+    };
+    let Admission::Granted(_batch) = arbiter.admit(
+        &preemptible("batch", 1_024, ComputeClass::Batch),
+        LONG,
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("the batch resident is seated");
+    };
+    assert_eq!(
+        arbiter.allocated(),
+        Mib::new(3_072),
+        "PARTLY full: 3_072 of 4_096"
+    );
+
+    let outcome = arbiter.admit(
+        &preemptible("newcomer", 2_048, ComputeClass::Interactive),
+        LONG,
+        Monotonic::ORIGIN,
+    );
+
+    assert!(matches!(outcome, Admission::Queued(_)));
+    // ⛔ THE ASSERTION THAT TELLS `needed` FROM `asked`: the reclaimable is `1_024`, which
+    // COVERS the shortfall of `1_024` and does NOT cover the request of `2_048`.
+    assert_eq!(
+        arbiter.revoking(),
+        1,
+        "the Batch resident is asked back for the SHORTFALL"
+    );
+}
+
+/// ⛔ AND THE SECOND ARGUMENT `admit` COMPUTES IS THE LANE, which the five probes above cannot
+/// hold either: with one resident and one newcomer the boundary never decides anything.
+/// `askable` drops a holder when `held.lane <= below`, and the order is
+/// `Realtime(0) < Interactive(1) < Batch(2)`, so passing a BETTER lane WIDENS the set of
+/// victims. Wiring `ComputeClass::Realtime` in place of the requester's own lane would have the
+/// arbiter evict an `Interactive` PEER for an `Interactive` request -- exactly what
+/// `a_grant_in_the_asking_lane_itself_is_not_asked_back` exists to forbid.
+///
+/// ⚠️ AND THAT PROBE DOES NOT SEE IT, WHICH IS WHY THIS ONE IS HERE: it calls `ask_back`
+/// DIRECTLY with explicit lanes, so it holds the boundary inside the mechanism and says nothing
+/// about the WIRING outside it. ✅ MEASURED on 2026-08-20 with
+/// `ask_back(needed, ComputeClass::Realtime, now)` in `admit`: the whole workspace stayed green,
+/// 241 passed, 0 failed. Registered as `E97`.
+///
+/// ⛔ IT IS THE "DOES NOT FIRE WHERE IT MUST NOT" DIRECTION of the probe above, and the pair is
+/// deliberate: no single scenario can hold both arguments, and the reason is measured rather
+/// than asserted -- see `E98`.
+#[test]
+fn the_admission_asks_back_below_its_own_lane_and_spares_a_peer() {
+    let mut arbiter = arbiter(4_096, VramPolicy::Local(LocalPolicy));
+    let Admission::Granted(_realtime) = arbiter.admit(
+        &never_preemptible("realtime", 1_024, ComputeClass::Realtime),
+        LONG,
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("the realtime resident is seated");
+    };
+    // ⛔ THE PEER, AND IT IS PREEMPTIBLE: nothing but the lane boundary protects it. A
+    // non-preemptible peer would be spared for the wrong reason and the probe would pass
+    // whatever `admit` passes as `below`.
+    let Admission::Granted(_peer) = arbiter.admit(
+        &preemptible("peer", 2_048, ComputeClass::Interactive),
+        LONG,
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("the peer is seated");
+    };
+
+    let outcome = arbiter.admit(
+        &preemptible("newcomer", 2_048, ComputeClass::Interactive),
+        LONG,
+        Monotonic::ORIGIN,
+    );
+
+    // ⛔ NOBODY IS ASKED BACK, AND THE POLICY SAID YES. `LocalPolicy::may_make_room` answered
+    // `true` and `admit` did call `ask_back`; what stopped it is the boundary -- the only
+    // candidate is a PEER, so the reclaimable is `Mib::ZERO` and the read-only pass marks
+    // nothing. Queued is the honest answer, not a degradation.
+    assert!(matches!(outcome, Admission::Queued(_)));
+    assert_eq!(
+        arbiter.revoking(),
+        0,
+        "an Interactive peer is not evicted for an Interactive request"
+    );
+    assert_eq!(arbiter.allocated(), Mib::new(3_072), "the books did not move");
 }

@@ -454,6 +454,29 @@ impl Arbiter {
     /// `E39`, which refused for the same reason to pin the three measured `release` values.
     /// Registered as `E53`.
     ///
+    /// ⛔ AND SINCE TASK 8 THAT JUMP IS NO LONGER THEORETICAL, WHICH IS A CHANGE OF KIND AND NOT
+    /// A DETAIL. Until task 8 `ask_back` had no production caller, so NO revocation ever happened
+    /// outside a probe and the room a revocation frees did not exist: there was nothing for a
+    /// latecomer to steal. Under `VramPolicy::Local` there is. `LocalPolicy` asks a resident back
+    /// FOR a queued ticket, the sweep frees that reservation when the grace runs out, and the
+    /// next `admit` -- which collects the expired first and then reads only `held` -- seats
+    /// WHOEVER CALLS IT on room that was made for somebody else, while the ticket it was made for
+    /// stays in its lane.
+    ///
+    /// ✅ MEASURED IN BOTH DIRECTIONS on 2026-08-20, on a throwaway probe deleted straight after,
+    /// because a claim about behaviour that no probe exercises is the species this file has
+    /// already paid for. LOCAL: a `Batch` resident of 4_096 asked back for a queued `Interactive`
+    /// ticket, then at `501` a NEW `Batch` request of 4_096 -- `Granted`, the following `promote`
+    /// comes back EMPTY, and `queued()` is still 1. REMOTE, which is exactly the world before this
+    /// task since nobody was ever asked back: the same latecomer is `Queued` and `queued()` is 2 --
+    /// nothing was freed, so nothing was taken.
+    ///
+    /// ⚠️ AND NO PROBE HOLDS ANY OF THIS EITHER, said here for the same reason as the paragraph
+    /// above: the behaviour is measured and NOT pinned, because pinning it would freeze the choice
+    /// `E51` and `E53` put in front of the owner. ⚖️ THE CLOSER IS STILL TASK 10, and it is still
+    /// an ORCHESTRATION decision -- what changed at task 8 is only that the cost of leaving it
+    /// open is now paid in production and not on paper. Registered as `E100`.
+    ///
     /// ⛔ THE TWO GUARDS BELOW ANSWER DIFFERENTLY SINCE TASK 6, and until task 6 they did
     /// not. "Bigger than the whole machine" is `Refused` -- no release will ever make room,
     /// so a ticket there would be a leak that looks like patience -- while "bigger than what
@@ -672,22 +695,28 @@ impl Arbiter {
     /// FOUR, and the property "the arbiter collects before it decides" is why `collect_expired`
     /// is private rather than a step somebody remembers to take.
     ///
-    /// ⚠️ `pub(crate)` BECAUSE ITS ONLY CALLER IS THE ADMISSION UNDER THE LOCAL POLICY. It is
-    /// not a public operation: making room is a consequence of a request, never a thing
-    /// somebody asks for. ⛔ THAT CALLER IS TASK 8 AND DOES NOT EXIST YET, which would make this
-    /// a method with no consumer -- gotcha #46 from the wrong side. What answers it here is the
-    /// answer this repository already uses: the consumer is a BENCH, and the probes of the
-    /// `#[cfg(test)] mod tests` at the foot of this file are it. The `pub(crate)` is what puts
-    /// them there instead of in `tests/`.
+    /// ⚠️ `pub(crate)` BECAUSE ITS ONLY CALLER IS THE ADMISSION UNDER THE LOCAL POLICY, AND
+    /// SINCE TASK 8 THAT CALLER EXISTS: it is `Arbiter::admit`, in the branch that cannot seat
+    /// the request, immediately after `VramPolicy::may_make_room` has answered yes. Making room
+    /// is a consequence of a request and never a thing somebody asks for, which is what the
+    /// `pub(crate)` keeps true -- and the probes of the `#[cfg(test)] mod tests` at the foot of
+    /// this file are what the `pub(crate)` puts there instead of in `tests/`.
     ///
-    /// ⏳ DEADLINE, AND IT IS THE FALSIFIABLE HALF OF THAT DECISION -- the form of `E10` at task
-    /// 4, which had it beside the code. `cargo build --locked --workspace` today prints TWO
-    /// `dead_code` warnings -- "fields lane and grace are never read" and "method ask_back is
-    /// never used" -- and the owner accepted both rather than silence them with an `#[allow]`,
-    /// which this repository treats as a prohibition switched off. ⛔ AT TASK 8 THOSE TWO
-    /// WARNINGS MUST BE GONE, because the LOCAL policy calls this method and this method reads
-    /// those fields. ⛔ IF THEY ARE STILL THERE, THIS METHOD WAS NOT NEEDED AND IT IS REMOVED --
-    /// it is not silenced. Registered as `E67`.
+    /// ⏳ RECALL OF 2026-08-20 -- A DEADLINE STOOD HERE AND TASK 8 IS WHAT MADE IT COME DUE.
+    /// `E67` and `E74` left two `dead_code` warnings standing on purpose -- "fields lane and
+    /// grace are never read" and "method ask_back is never used" -- rather than silence them
+    /// with an `#[allow]`, which this repository treats as a prohibition switched off, and the
+    /// falsifiable half was written right here in the form `E10` used at task 4: AT TASK 8 THOSE
+    /// TWO WARNINGS MUST BE GONE, and IF THEY ARE STILL THERE THIS METHOD WAS NOT NEEDED AND IT
+    /// IS REMOVED. ✅ IT CAME DUE AND IT WAS MET, measured and not deduced:
+    /// `cargo build --locked --workspace` prints ZERO warnings, against the TWO the same command
+    /// printed before the task. No `#[allow]`, no invented reader, no `pub` of convenience --
+    /// none was needed. Registered as `E91`.
+    ///
+    /// ⛔ AND THE ORDER TO REMOVE THIS METHOD IS REWRITTEN AWAY RATHER THAN LEFT BESIDE THE
+    /// FACT, because it was written in the PRESENT TENSE and this task turned it into the
+    /// opposite of true: `ask_back` is what `LocalPolicy` is made of, and whoever read the
+    /// paragraph as it stood would have been told to delete it. Registered as `E99`.
     pub(crate) fn ask_back(&mut self, needed: Mib, below: ComputeClass, now: Monotonic) -> Mib {
         self.collect_expired(now);
 
@@ -696,12 +725,21 @@ impl Arbiter {
         // reading pass and the marking pass would answer for different sets, and the arbiter
         // would promise room it then declines to take.
         //
-        // ⚠️ A CLOSURE AND NOT A METHOD, AND THE REASON IS A MEASUREMENT. `ask_back` has no
-        // production caller until task 8, so it is `dead_code`; anything it is the only caller
-        // of is dead with it, and a private helper here would add a THIRD warning to the two the
-        // owner accepted (`E67`). ✅ Measured on 2026-08-20 as an associated `Held::askable_by`:
-        // `cargo build --locked --workspace` prints three warnings, the third being
-        // `method `askable_by` is never used`. A closure is part of this body and adds none.
+        // ⚠️ A CLOSURE AND NOT A METHOD, AND THE MEASUREMENT THAT BOUGHT IT HAS EXPIRED --
+        // rewritten on 2026-08-20 rather than left standing beside the fact that killed it. The
+        // reason WAS `dead_code`: `ask_back` had no production caller, so anything it was the
+        // only caller of was dead with it, and ✅ as an associated `Held::askable_by`
+        // `cargo build --locked --workspace` printed a THIRD warning on top of the two the owner
+        // had accepted (`E67`). ⛔ TASK 8 GAVE `ask_back` A PRODUCTION CALLER AND THE PREMISE
+        // FELL WITH IT (`E91`). ✅ RE-MEASURED the same day instead of reasoned: with a private
+        // `impl Held` helper reachable ONLY from inside this closure, the build prints ZERO
+        // warnings -- `admit` reaches `ask_back`, so nothing behind it is dead any more.
+        //
+        // ⚠️ SO WHAT HOLDS THE CLOSURE TODAY IS NOT A MEASUREMENT AND IT IS SAID SO: it captures
+        // `below`, and it keeps the admissibility test inside the body both passes read -- which
+        // is the paragraph above and not this one. A `Held` method would now cost nothing and
+        // would be a defensible change; it is simply not one this task took. Registered as
+        // `E99`.
         //
         // ⛔ THREE QUESTIONS AND NOT ONE, AND THEY STAY THREE. Folding them into a single
         // `matches!(activity, Preemptible(Running))` would put the non-preemptible case behind

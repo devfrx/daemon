@@ -228,9 +228,9 @@ pub enum PreemptibleState {
 /// over-admission protection. What it does not buy is telling the caller WHICH of the three
 /// happened.
 ///
-/// ⚠️ TODAY IT COSTS NOTHING, and the reason is a measurement rather than a hope: `release`
-/// has TWO callers in this repository and both are in `tests/arbiter_admission.rs` -- no
-/// production consumer exists. It starts costing at milestone 6, where `Worker::kill` hands
+/// ⚠️ TODAY IT COSTS NOTHING, and the reason is a measurement rather than a hope: every caller of
+/// `release` in this repository is a PROBE, and they all live in `tests/arbiter_admission.rs` --
+/// NO PRODUCTION CONSUMER EXISTS. It starts costing at milestone 6, where `Worker::kill` hands
 /// the grant back when the work FINISHES, which can perfectly well be after the window; there
 /// "your release failed", "it was already done for you" and "it was TAKEN from you" are THREE
 /// different pieces of news, and the third is the one a caller can act on -- being preempted is
@@ -239,6 +239,16 @@ pub enum PreemptibleState {
 /// decision. It is a DESIGN decision either way, so it is RECORDED FOR THE OWNER in the plan's
 /// errata (`E30`, widened on 2026-08-20 by `E72`) instead of being taken by the task that
 /// noticed it.
+///
+/// ⚠️ RECALL OF 2026-08-20, SECOND REVIEW OF MILESTONE 5 TASK 7 -- THE PARAGRAPH ABOVE SAID
+/// "`release` HAS TWO CALLERS", AND THE FIGURE IS REMOVED RATHER THAN RECORRECTED. It was true
+/// when task 5 wrote it, and task 6 falsified it in the very next commit by giving the queue
+/// probes their releases: ✅ recounted with the command on 2026-08-20, NINE call sites in EIGHT
+/// probes. ⛔ AND IT IS NOT REPLACED BY A BIGGER NUMBER, because the number was never what the
+/// argument needed: "no production consumer exists" carries the whole of it, and it is the half
+/// that does not rot. A figure that lives HERE and in the plan's `E30` at once gets taken out, not
+/// realigned -- the rule of gotcha #68, applied to the document that hosts it. Registered as
+/// `E77`.
 ///
 /// ⚠️ AND NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT. A test
 /// asserting `Err` at 5_001 would freeze the very behaviour `E30` puts in front of the owner:
@@ -279,8 +289,15 @@ pub enum ReleaseError {
 ///
 /// ⚠️ `grace` IS AN `Option` AND THE `None` IS NOT A MISSING VALUE: it is `Preemption::grace`'s
 /// own word for "this profile is never revoked". That is what makes it a GUARD `ask_back` reads
-/// and not merely a number it needs -- see the two guards there, which are deliberately about
-/// two different questions.
+/// and not merely a number it needs -- see the THREE guards of the `askable` closure there, which
+/// are deliberately about three different questions.
+///
+/// ⚠️ RECALL OF 2026-08-20, SECOND REVIEW OF MILESTONE 5 TASK 7 -- IT SAID "THE TWO GUARDS", AND
+/// THE NUMBER IS REWRITTEN RATHER THAN ANNOTATED. It was true until the first wave of corrections
+/// moved the guard on the LANE inside the admissibility test, which took the count from two to
+/// three; from that moment this sentence and the closure's own "THREE QUESTIONS AND NOT ONE, AND
+/// THEY STAY THREE" were two present-tense figures contradicting each other in ONE file, which is
+/// gotcha #31 and worse than a figure that is merely missing. Registered as `E78`.
 struct Held {
     reserved: Mib,
     /// The validity window, on the MONOTONIC axis (§5.3 point 2).
@@ -583,11 +600,13 @@ impl Arbiter {
     /// decides the order BETWEEN lanes and is silent WITHIN one. ⛔ SO IT IS DECLARED AND NOT
     /// PINNED, for the reason `E50`, `E51` and `E53` give: a probe asserting "the oldest" would
     /// freeze the very choice the errata puts in front of the owner, and a probe that must be
-    /// deleted to take a decision is a vote against taking it. ✅ MEASURED on 2026-08-20, not
-    /// deduced: with the marking pass walking `self.held.values_mut().rev()` -- NEWEST first --
-    /// NOTHING goes red, 12 passed here and 20 in `tests/arbiter_admission.rs`. THE MUTANT IS
-    /// ALIVE, so the day somebody changes it this paragraph becomes false in silence with
-    /// nothing to say so. Registered as `E70`.
+    /// deleted to take a decision is a vote against taking it. ✅ RE-MEASURED on 2026-08-20
+    /// against the code of the second wave rather than carried over -- a figure quoted instead of
+    /// redone is gotcha #31, and this suite grew by a probe in between: with the marking pass
+    /// walking `self.held.values_mut().rev()` -- NEWEST first -- NOTHING goes red, 13 passed here
+    /// and 20 in `tests/arbiter_admission.rs` (row 13 of the campaign). THE MUTANT IS STILL ALIVE,
+    /// so the day somebody changes it this paragraph becomes false in silence with nothing to say
+    /// so. Registered as `E70`, re-measured under `E80`.
     ///
     /// ⛔ IT COLLECTS THE EXPIRED FIRST, like every other operation. With this one there are
     /// FOUR, and the property "the arbiter collects before it decides" is why `collect_expired`
@@ -678,10 +697,37 @@ impl Arbiter {
         // hand-written list for exactly this reason and gets its order from its own map for
         // free; `held` is keyed by `GrantId` and not by lane, so this is what buys the same
         // thing here.
-        let lanes: BTreeSet<ComputeClass> = self.held.values().map(|held| held.lane).collect();
+        //
+        // ⛔ AND IT FILTERS BY `askable`, WHICH IS WHAT MAKES THE TWO PASSES SHARE ONE SET INSTEAD
+        // OF TWO THAT MERELY AGREE. Without the filter this collects the lane of EVERY grant,
+        // admissible or not, so a lane holding no candidate at all was walked for nothing --
+        // harmless in itself, and that is not why it is filtered. It is filtered because the
+        // distance between "the lanes in the books" and "the lanes the reading pass summed" is a
+        // distance the comment below would otherwise have to PROMISE away; with the filter there
+        // is nothing left to promise, the set IS the same set. ✅ MEASURED on 2026-08-20 and not
+        // argued, by returning `lanes.len()` from here on a throwaway probe deleted straight
+        // after: with a `Realtime` resident that `below = Interactive` excludes and one `Batch`
+        // candidate, the pass walked TWO lanes before this filter and ONE after it.
+        let lanes: BTreeSet<ComputeClass> = self
+            .held
+            .values()
+            .filter(|held| askable(held).is_some())
+            .map(|held| held.lane)
+            .collect();
 
         // ⛔ SECOND PASS, AND IT MARKS. It cannot run out of candidates before `covered` reaches
-        // `needed`: the pass above has already added up the same set through the same test.
+        // `needed`, and since 2026-08-20 that is true BY CONSTRUCTION and not by promise: the set
+        // it walks is the set the reading pass summed, because `askable` builds both.
+        //
+        // ⛔ AND IT RUNS TO THE END OF THE LANES, WHICH IS A SECOND FACT AND NOT THE SAME ONE. No
+        // single lane has to cover `needed` on its own -- the reading pass added up ALL of them --
+        // so a pass that stopped after the first lane would answer LESS than it had just promised,
+        // with that lane's victims already marked: one evicted and nobody seated, which is the
+        // damage `E69` exists to remove arriving by a third road. ⚠️ AND NOTHING HELD IT UNTIL
+        // 2026-08-20, which is stated because it was measured and not deduced: `lanes.iter().rev()`
+        // cut to `.take(1)` survived the WHOLE WORKSPACE -- 34 targets, 235 passed, 0 failed, 2
+        // ignored. What holds it now is
+        // `asking_back_crosses_into_the_next_lane_when_the_worst_one_is_not_enough` (`E75`).
         let mut covered = Mib::ZERO;
         for lane in lanes.iter().rev() {
             for held in self.held.values_mut() {
@@ -1106,6 +1152,22 @@ mod tests {
             0,
             "nobody is condemned for a seat nobody gets"
         );
+        // ⚠️ AND THE THIRD ONE CANNOT FAIL TODAY, WHICH IS WRITTEN HERE INSTEAD OF BEING LEFT TO
+        // BE DISCOVERED -- AND IT IS KEPT RATHER THAN DELETED. `ask_back` never takes anything off
+        // the books itself: only `collect_expired` does, and at `ORIGIN` with `LONG` windows there
+        // is nothing to collect, so `allocated()` is `8_192` for ANY implementation of the thing
+        // under test. ✅ MEASURED on 2026-08-20 and not reasoned, with the two assertions above
+        // removed and this one left standing alone: it survives the reading pass being deleted
+        // (mutation 12, this probe's OWN sole killer -- 12 passed, 0 failed, where at full strength
+        // it is 11/1), the grace guard being dropped (mutation 8 -- 11/1, and the one that dies is
+        // somebody else), and `ask_back` freeing what it marks (mutation 1 -- 8/4, and this probe
+        // is not among the four).
+        // ⛔ SO WHAT HOLDS THIS PROBE IS THE TWO ABOVE: `asked_back` is the ANSWER and `revoking()`
+        // is the STATE, and between them they say "nothing was promised, and nobody was condemned".
+        // ⛔ AND THE REMEDY IS NOT TO CUT IT. It states the intent the NAME carries -- that the
+        // books did not move -- and it starts biting the day `ask_back` grows a road that touches
+        // them. Deleting an assertion for being green today is how that day arrives with nothing to
+        // say so (`E79`, the species of `E37`).
         assert_eq!(arbiter.allocated(), Mib::new(8_192));
     }
 
@@ -1144,6 +1206,60 @@ mod tests {
             "the Batch one, which is the cheapest to interrupt -- not the Interactive one"
         );
         assert_eq!(arbiter.revoking(), 1, "one was enough");
+    }
+
+    /// ⛔ THE MARKING PASS RUNS TO THE END OF THE LANES, and this is the direction the probe above
+    /// steps over. That one asks for `1_024` against a `Batch` of `2_048`, so the WORST lane
+    /// covers the need on its own and the pass never has to leave it; of every other probe here
+    /// seven have a single resident, two have two in the SAME lane, and one leaves through
+    /// `reclaimable < needed` before any lane is walked at all. So "it goes on into the next lane"
+    /// was asked by NOBODY. ✅ MEASURED on 2026-08-20 and not deduced: with `lanes.iter().rev()`
+    /// cut to `.take(1)` -- the outer loop stopped after the first lane -- the mutant survived the
+    /// WHOLE WORKSPACE, 34 targets, 235 passed, 0 failed, 2 ignored. Registered as `E75`.
+    ///
+    /// ⛔ AND IT IS NOT A CURIOSITY, IT IS `E69` BY A THIRD ROAD. The reading pass adds up ALL the
+    /// lanes, so it can promise `6_144` and let the marking pass hand back `2_048` with the `Batch`
+    /// holder ALREADY CONDEMNED -- one evicted and nobody seated, the very damage the two passes
+    /// were built to remove.
+    ///
+    /// ⚠️ AND IT PINS SOMETHING NOTHING ELSE STATES: THE MARKING MAY OVERSHOOT. `2_048` does not
+    /// carry `4_096`, so the whole `Interactive` grant goes too and the answer is `6_144` for a
+    /// need of `4_096`. The pass stops at the first grant that takes it OVER the line; it does not
+    /// hunt for one that lands ON it. Refusing a victim for being too big would leave the asker
+    /// unseated with the room standing right there.
+    #[test]
+    fn asking_back_crosses_into_the_next_lane_when_the_worst_one_is_not_enough() {
+        let mut arbiter = arbiter(Mib::new(8_192));
+        let Admission::Granted(_interactive) = arbiter.admit(
+            &preemptible("interactive-resident", 4_096, ComputeClass::Interactive, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("4096 of 8192 fits");
+        };
+        let Admission::Granted(_batch) = arbiter.admit(
+            &preemptible("batch-resident", 2_048, ComputeClass::Batch, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("4096 + 2048 fits 8192");
+        };
+
+        // `below` is `Realtime`, so BOTH residents are admissible; the worst lane goes first and
+        // its `2_048` does not cover the need, so the pass has to carry on into `Interactive`.
+        let asked_back =
+            arbiter.ask_back(Mib::new(4_096), ComputeClass::Realtime, Monotonic::ORIGIN);
+
+        assert_eq!(
+            asked_back,
+            Mib::new(6_144),
+            "the Batch one did not carry it, so the Interactive one went too"
+        );
+        assert_eq!(
+            arbiter.revoking(),
+            2,
+            "both: the pass did not stop at the worst lane"
+        );
     }
 
     /// ⛔ ASKING BACK TWICE DOES NOT BUY THE ROOM TWICE, AND DOES NOT EXTEND THE GRACE. This is

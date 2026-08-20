@@ -14,20 +14,29 @@
 //! SOMEWHERE ELSE -- said here because a reader who counted the revocation probes in this file
 //! would find ONE and conclude the subject is barely held. `Arbiter::ask_back` is `pub(crate)`,
 //! and a `pub(crate)` is unreachable from an integration test, which is a crate of its own
-//! (`error[E0624]`, measured). So the TWELVE probes that CALL it live in the `#[cfg(test)] mod
+//! (`error[E0624]`, measured). So the THIRTEEN probes that CALL it live in the `#[cfg(test)] mod
 //! tests` of `crates/kernel/src/arbiter/mod.rs`, with the deviation declared beside them: that
 //! asking back MARKS and does not free, that the grace is collected when it runs out and not
 //! before, the instant it runs out, that a non-preemptible grant and a lane that is not below
 //! the asking one are never touched, that a PEER in the very lane that is asking is not touched
 //! either -- `below` is exclusive -- that it stops as soon as the need is covered and takes the
-//! WORST lane first, that it marks NOTHING when what can be reclaimed does not cover the need,
-//! that asking twice does not buy the room twice, and that it collects the expired before it
-//! marks.
+//! WORST lane first, that when the worst lane does not cover the need ON ITS OWN the marking
+//! carries on into the next one, that it marks NOTHING when what can be reclaimed does not cover
+//! the need, that asking twice does not buy the room twice, and that it collects the expired
+//! before it marks.
 //!
-//! ⚠️ IT SAID "TEN" UNTIL 2026-08-20, and the number is REWRITTEN rather than annotated: a
-//! count that is quietly wrong is worse than one that is loudly missing (gotcha #31). The two
-//! that arrived came out of the review of this same task -- the LANE BOUNDARY, which no probe
-//! stood on, and the CAPACITY of what can actually be reclaimed.
+//! ⚠️ THIS COUNT IS REWRITTEN AND NEVER ANNOTATED, AND IT HAS BEEN REWRITTEN TWICE: "TEN" until
+//! 2026-08-20, "TWELVE" for the first wave of corrections of that day, THIRTEEN since the second.
+//! A count that is quietly wrong is worse than one that is loudly missing (gotcha #31). The two
+//! of the first wave were the LANE BOUNDARY, which no probe stood on, and the CAPACITY of what can
+//! actually be reclaimed; the one of the second is the marking pass CROSSING out of the worst lane
+//! when that lane does not cover the need alone.
+//!
+//! ⛔ AND THIS IS THE ONLY PLACE IN THIS FILE WHERE THAT NUMBER IS WRITTEN, since 2026-08-20 and
+//! deliberately. There was a second copy in the doc of the probe below; it said "ten" while this
+//! line said "twelve", which is gotcha #31 in one file and gotcha #68 on top -- the second copy
+//! sat right under a claim that the number had just been rewritten. A figure that lives in two
+//! places gets taken out of one, not realigned in both (`E77`).
 //!
 //! ⛔ WHAT STAYS HERE IS THE ONE PROBE THAT NEEDS NOTHING PRIVATE, and only privacy moved the
 //! others: `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` is about the
@@ -845,9 +854,19 @@ fn promote_serves_every_request_that_fits_and_not_just_the_first() {
 /// machine, so "it fits the machine but not the moment" is a ticket. Corrected against the code
 /// of today rather than against the plan, exactly as the three probes task 6 rewrote.
 ///
-/// ⚠️ IT STAYS IN THIS FILE while the other ten probes of task 7 are in
+/// ⚠️ IT STAYS IN THIS FILE while the OTHER probes of task 7 are in
 /// `crates/kernel/src/arbiter/mod.rs`, and the reason is the one the module comment gives: this
 /// one never calls `ask_back`, so nothing private is out of its reach.
+///
+/// ⚠️ RECALL OF 2026-08-20, SECOND REVIEW OF THIS TASK -- THIS SAID "THE OTHER TEN PROBES", AND
+/// THE FIGURE IS TAKEN OUT RATHER THAN RECORRECTED. They were TWELVE when it was read, and the
+/// module comment of THIS SAME FILE said so thirty lines up -- while claiming, in the paragraph
+/// right after, to have just rewritten that very number. ⛔ TWO PRESENT-TENSE COUNTS
+/// CONTRADICTING EACH OTHER IN ONE FILE IS GOTCHA #31, AND A CLAIM OF COMPLETENESS THE SAME FILE
+/// FALSIFIES IS GOTCHA #68 -- the rule that fails to bind the document hosting it, which weighs
+/// more than the figure. ⛔ SO THE COUNT NOW LIVES IN EXACTLY ONE PLACE, the module comment, and
+/// this sentence points at it instead of restating it: the second copy is what let the first one
+/// rot unseen. Registered as `E77`.
 #[test]
 fn a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep() {
     let mut arbiter = arbiter(Mib::new(4_096));

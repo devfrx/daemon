@@ -1406,20 +1406,16 @@ di `new`**, non l'assenza di ogni strada verso due policy. ✅ Con un secondo co
 `pub const fn new_with_two(parameters, a, _b)` — il caso resta **`ok`** e l'intera suite resta
 verde. A chiudere quella strada è la revisione, non il compilatore.
 
-⛔ **`Arbiter::new` AVEVA CINQUE SITI IN CINQUE FILE, E TRE ERANO CASI `compile_fail` CON
-L'ORACOLO CHE PINZA UN NUMERO DI RIGA** — `admission_has_no_is_granted.rs` (riga **26**),
+⛔ **TRE DEI SITI DI `Arbiter::new` ERANO CASI `compile_fail` CON L'ORACOLO CHE PINZA UN
+NUMERO DI RIGA** — `admission_has_no_is_granted.rs` (riga **26**),
 `admission_reads_cold_start.rs` (**27**), `admission_without_profile.rs` (**41**). Modificati **a
 parità di righe**, l'argomento nuovo dentro la chiamata esistente: ✅ **ZERO oracoli rigenerati e
 zero righe di oracolo cambiate**, verificato con `git status --porcelain` e non con `git diff`,
 che i non tracciati non li vede (`E3`, `E11`). L'unico `.stderr` nuovo è quello del caso di `V3`,
 **venti righe**, generato una volta e **letto**. ✅ Casi ricontati col comando —
 `ls crates/kernel/tests/compile_fail/*.rs | wc -l` → **29**, erano ventotto. Voce `E90`.
-⚠️ **Richiamo del 2026-08-20 — diceva *«in QUATTRO file»*, e i file sono CINQUE:** `mod.rs`,
-`arbiter_admission.rs` e i **tre** casi `compile_fail`, uno per file. ✅ Ricontati sul commit di
-partenza e non dedotti — `git grep -n "Arbiter::new" dd99e50 -- 'crates/**/*.rs'`, tolte le righe
-di commento: **cinque siti in cinque file**. ⛔ **La cifra veniva dal brief del compito ed era
-sbagliata lì**, e la riga la ripresentava come **misurata**: è la specie del gotcha **#31** presa
-dal verso in cui il numero non invecchia ma nasce già falso. Voce `E101`.
+⚠️ **Quanti siti, e in quanti file, NON è scritto qui:** la misura vive in un posto solo, la
+voce `E101` del piano (gotcha **#68**, voce `E112`).
 
 ⚠️ **REGISTRATA, NON PRESA — LA POLICY È UN SECONDO VALORE CONSEGNATO, E LA §2.8.2 NE PARLA AL
 SINGOLARE.** La regola 1 di §2.8.2 dice che il kernel *«riceve alla costruzione **un valore** che
@@ -1441,9 +1437,9 @@ ondata ha aggiunto due righe **in coda** e ha lasciato in testa un puntatore pos
 la forma di gotcha **#31** che invecchia più in fretta di una cifra. Le righe di isolamento si
 nominano, non si contano dal fondo (`E110`).
 ⚠️ **Il conteggio delle righe è TOLTO da questa frase e non riallineato**
-(2026-08-20): diceva *«tredici»* su una tabella di **quindici**, mentre il rapporto del compito
-diceva *«sedici»* su una di **diciotto** — due documenti in disaccordo, e **nessuno dei due che
-tornasse**. La tabella qui sotto **è** la misura, e un rimando non può marcire (gotcha **#68**).
+(2026-08-20): diceva *«tredici»*, mentre il rapporto del compito diceva *«sedici»* — due
+documenti in disaccordo, e **nessuno dei due che tornasse**. La tabella qui sotto **è** la
+misura, e un rimando non può marcire (gotcha **#68**).
 Voce `E102`. Ogni mutazione: entrata provata col conteggio delle occorrenze,
 **compilata in un passo separato** da quello che esegue, revocata da copia byte-esatta con `cmp`
 identico e `git diff` vuoto; zero CR prima e dopo. ⚠️ **L'esclusività è SEMPRE dichiarata col
@@ -1455,7 +1451,7 @@ un'altra volta.** La seconda ondata di correzioni ha tolto dal banco l'aiutante 
 e ha reso `preemptible` i due residenti `Realtime`; un banco che cambia invalida ogni cella
 misurata su di esso, quindi **tutte** le righe sono state rieseguite invece di essere riportate
 (`E104` per il precedente, gotcha **#31** per la ragione). ✅ **Esito: nessuna cella si è mossa** —
-i diciassette ingressi danno gli stessi conteggi e gli stessi insiemi di morte di prima, e le
+gli ingressi danno gli stessi conteggi e gli stessi insiemi di morte di prima, e le
 righe **14** e **15** restano sole nell'intero workspace a **242 passate, 1 fallita**. È la prova
 misurata che la rimozione dell'aiutante non ha comportamento: `askable` scarta i due residenti
 `Realtime` sul **primo** dei tre controlli — `held.lane <= below` — e `held.grace`, l'unica cosa
@@ -1508,7 +1504,7 @@ sole nell'**intero workspace** solo la **9**, la **10**, la **14** e la **15**; 
 sono vacue — **isolate** (le asserzioni sopra tolte) scattano sotto la riga **13**,
 `left: Mib(8192), right: Mib(4096)` — ma **a piena forza** un'asserzione **sopra** di esse scatta
 sempre per prima. ⚠️ **Il numero delle righe della campagna è tolto da questa frase**
-(2026-08-20): diceva *«tutte e tredici»* e la campagna ne ha **quindici**; la tabella è la misura
+(2026-08-20): diceva *«tutte e tredici»*; la tabella è la misura
 (`E102`).
 ⛔ **RICHIAMO DEL 2026-08-20 — QUESTA FRASE CONTAVA *«le tre»* PIÙ *«la quarta, quella della sonda
 nuova»*, E LE ASSERZIONI SU `allocated()` NEL BANCO SONO SEI.** ✅ Ricontate col comando e non a

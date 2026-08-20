@@ -1346,8 +1346,36 @@ non sulla carta. Il fatto è enunciato anche accanto ad `admit`, nel sorgente. V
 | `under_the_local_policy_the_queued_request_is_served_past_the_grace` | e che la marcatura **porti da qualche parte**: oltre la grazia il biglietto è servito, con il **suo** `TicketId`, e i libri restano a una concessione sola |
 | `under_the_remote_policy_the_same_clock_advance_serves_nobody` | la contro-sonda della precedente: **stesso avanzamento d'orologio**, e non si libera niente perché non è stato chiesto niente |
 | `each_policy_names_itself` | il nome, che la transizione giornalata della §5.4 dovrà scrivere — letto **due volte**, dall'enum e **attraverso l'arbitro**. La seconda metà è la sola cosa che tiene *«l'arbitro ha conservato la policy con cui è stato costruito»* |
-| `a_partly_full_machine_asks_back_the_need_and_not_the_whole_request` | ⛔ **AGGIUNTA NELL'ONDATA DI CORREZIONI DEL 2026-08-20**: il **primo** dei due argomenti che `admit` calcola. Macchina **parzialmente** piena — `ceiling` 4_096, `allocated()` 3_072, `asked` 2_048, `needed` 1_024, tutti diversi — quindi `needed` è finalmente distinguibile da `asked`. Voce `E97` |
-| `the_admission_asks_back_below_its_own_lane_and_spares_a_peer` | ⛔ **AGGIUNTA LO STESSO GIORNO**: il **secondo** argomento, la corsia. Un pari `Interactive` **prelazionabile** non viene sfrattato per un `Interactive`, e la policy aveva detto **sì** — a fermare l'arbitro è il confine, non la policy. È la direzione *«non scatta dove non deve»* della riga sopra. Voce `E97` |
+| `a_partly_full_machine_asks_back_the_need_and_not_the_whole_request` | ⛔ **AGGIUNTA NELL'ONDATA DI CORREZIONI DEL 2026-08-20**: il **primo** dei due argomenti che `admit` calcola. Macchina **parzialmente** piena — `ceiling` 4_096, `allocated()` 3_072, `asked` 2_048, `needed` 1_024, tutti diversi — quindi `needed` è finalmente distinguibile da `asked`. Voce `E97`. ⚠️ **Il residente `Realtime` è PRELAZIONABILE come ogni altro residente di questo file** dalla seconda ondata dello stesso giorno: a tenerlo fuori dai recuperabili è la **corsia** e non la prelazionabilità (`E105`) |
+| `the_admission_asks_back_below_its_own_lane_and_spares_a_peer` | ⛔ **AGGIUNTA LO STESSO GIORNO**: il **secondo** argomento, la corsia. Un pari `Interactive` **prelazionabile** non viene sfrattato per un `Interactive`, e la policy aveva detto **sì** — a fermare l'arbitro è il confine, non la policy. Voce `E97`. ⚠️ **Richiamo del 2026-08-20 — questa cella diceva *«è la direzione «non scatta dove non deve» della riga sopra»*, e le due righe non sono le due direzioni di UNA regola: sono DUE regole.** Quella sopra tiene il **primo** argomento nella direzione *«scatta dove deve»*; questa tiene il **secondo** nella direzione *«non scatta dove non deve»*. Le direzioni opposte esistono, ma **altrove**: per lo **scarto** in `asking_back_marks_nothing_when_the_reclaimable_does_not_cover_the_need`, per la **corsia** in `the_local_policy_asks_the_lower_lanes_back` (cablaggio) e in `only_lanes_below_the_asking_one_are_asked_back` (meccanismo). Voce `E110` |
+
+⛔ **L'AIUTANTE `never_preemptible` DELLE DUE SONDE NUOVE NON TENEVA NIENTE, ED È UN MUTANTE VIVO
+CHE L'ONDATA DI CORREZIONI SI ERA PORTATA DENTRO DA SÉ.** Il suo doc dichiarava che le due sonde
+*«ne hanno bisogno: un residente che NON può essere chiesto indietro è ciò che lascia la macchina
+solo parzialmente recuperabile»*, e in **nessuna** delle due il residente veniva mai guardato per
+la prelazionabilità: sta in corsia `Realtime` e il richiedente in `Interactive`, quindi `askable`
+lo scarta sul **primo** dei tre controlli — `if held.lane <= below` — e `held.grace`, l'unica cosa
+che `Preemption::Never` cambia, non viene **mai letto**. ✅ **MISURATO PRIMA DI SCEGLIERE, il
+2026-08-20:** sostituendo `Preemption::Never` con `Preemption::After(Millis::new(500))` dentro
+l'aiutante il banco resta **7 passate, 0 fallite** — mutante vivo, e nessun altro usava
+l'aiutante. ⛔ **Tolto, e i due residenti resi `preemptible`**: sparisce insieme una duplicazione
+verbatim (`never_preemptible` era `preemptible` a meno di un campo) e una frase falsa, e i due
+residenti restano al riparo per la sola ragione vera — la **corsia** — che è già il motivo per cui
+il pari di `the_admission_asks_back_below_…` è deliberatamente prelazionabile.
+⚠️ **E l'attribuzione in linea era sbagliata a sua volta:** il commento diceva che a rendere lo
+scarto (`1_024`) minore della richiesta (`2_048`) fosse la prelazionabilità del residente, e a
+renderlo tale è che la macchina è **parzialmente libera** — `allocated + asked - ceiling` con
+`allocated` 3_072 su un tetto di 4_096.
+⚠️ **E UNA TESI SCRITTA PRIMA DELLA MISURA È CADUTA, registrata invece che taciuta:** l'attesa era
+che l'aiutante fosse **dannoso** e non solo inerte — che con `Never` una mutazione del confine da
+`held.lane <= below` a `held.lane < below` restasse invisibile. ✅ Misurata: quella mutazione
+uccide `the_admission_asks_back_below_its_own_lane_and_spares_a_peer` **anche** con l'aiutante in
+piedi (banco **6/1**), perché a diventare recuperabile è il **pari** e non il residente `Realtime`
+— ed è uccisa pure nel `lib`, da `a_grant_in_the_asking_lane_itself_is_not_asked_back` (12/1).
+L'aiutante era **inerte**, non dannoso. ⛔ **Nessun `Preemption::Never` resta in questo banco, e
+non è una perdita di copertura:** la variante è esercitata in
+`crates/kernel/tests/arbiter_admission.rs`, nel `#[cfg(test)] mod tests` del `lib`, in
+`crates/kernel/tests/arbiter_resource.rs` e in due casi `compile_fail`. Voce `E105`.
 
 ⛔ **`Arbiter::policy()` NASCEVA SENZA CONSUMATORE, E NON L'AVREBBE DETTO NESSUNO** — è `pub`,
 quindi `dead_code` tace: è il gotcha **#46** dal verso sbagliato. Gli è stato dato un consumatore
@@ -1406,8 +1434,13 @@ letta come *«i valori consegnati»*; ② **spostare la policy dentro `Parameter
 alla lettera e costa un campo su un tipo che la §2.8 pinza, più i **diciannove** chiamanti di
 `Parameters::new` che `E18` ha contato. Voce `E94`.
 
-⛔ **LA CAMPAGNA DI MUTAZIONE, e le ultime due righe esistono per una misura di isolamento e
-non per uccidere.** ⚠️ **Il conteggio delle righe è TOLTO da questa frase e non riallineato**
+⛔ **LA CAMPAGNA DI MUTAZIONE, e la 12 e la 13 esistono per una misura di isolamento e non per
+uccidere.** ⚠️ **Richiamo del 2026-08-20 — questa frase diceva *«le ultime due righe»*, e le
+ultime due sono ora la 14 e la 15, che sono uccisori soli nell'intero workspace:** la **prima**
+ondata ha aggiunto due righe **in coda** e ha lasciato in testa un puntatore posizionale, che è
+la forma di gotcha **#31** che invecchia più in fretta di una cifra. Le righe di isolamento si
+nominano, non si contano dal fondo (`E110`).
+⚠️ **Il conteggio delle righe è TOLTO da questa frase e non riallineato**
 (2026-08-20): diceva *«tredici»* su una tabella di **quindici**, mentre il rapporto del compito
 diceva *«sedici»* su una di **diciotto** — due documenti in disaccordo, e **nessuno dei due che
 tornasse**. La tabella qui sotto **è** la misura, e un rimando non può marcire (gotcha **#68**).
@@ -1417,11 +1450,22 @@ identico e `git diff` vuoto; zero CR prima e dopo. ⚠️ **L'esclusività è SE
 proprio perimetro** — *«sola nel banco»* non è *«sola nel workspace»*, ed è la lezione di `E82`:
 un'esclusività misurata su un campione parziale si legge come una garanzia.
 
+⛔ **L'INTERA TABELLA È RIMISURATA UNA SECONDA VOLTA IL 2026-08-20, perché il BANCO è cambiato
+un'altra volta.** La seconda ondata di correzioni ha tolto dal banco l'aiutante `never_preemptible`
+e ha reso `preemptible` i due residenti `Realtime`; un banco che cambia invalida ogni cella
+misurata su di esso, quindi **tutte** le righe sono state rieseguite invece di essere riportate
+(`E104` per il precedente, gotcha **#31** per la ragione). ✅ **Esito: nessuna cella si è mossa** —
+i diciassette ingressi danno gli stessi conteggi e gli stessi insiemi di morte di prima, e le
+righe **14** e **15** restano sole nell'intero workspace a **242 passate, 1 fallita**. È la prova
+misurata che la rimozione dell'aiutante non ha comportamento: `askable` scarta i due residenti
+`Realtime` sul **primo** dei tre controlli — `held.lane <= below` — e `held.grace`, l'unica cosa
+che `Preemption::Never` cambiava, non veniva mai letto. Voce `E105`.
+
 | # | Mutazione, sul codice di produzione | Sonda attesa morta | Misurato — banco **di SETTE** · `arbiter_admission` venti · `lib` tredici |
 |---|---|---|---|
 | **1** | `RemotePolicy::may_make_room` restituisce `true` | `the_remote_policy_does_not_make_room_it_queues` e `under_the_remote_policy_…` | ✅ **le due REMOTE — 5 passate, 2 fallite.** La prima muore sull'asserzione di `revoking()`. ⚠️ **`arbiter_admission` 20/0 e `lib` 13/0**: nessuna sonda preesistente se ne accorge |
 | **2** | `LocalPolicy::may_make_room` restituisce `false` | `the_local_policy_asks_the_lower_lanes_back` | ⛔ **ne uccide TRE — 4 passate, 3 fallite:** oltre a quella attesa muoiono `under_the_local_policy_the_queued_request_is_served_past_the_grace`, che il piano non nomina (divergenza `E92`), e `a_partly_full_machine_asks_back_the_need_and_not_the_whole_request`, che nasce con l'ondata di correzioni |
-| **3a** | la domanda tolta da `admit`, **nessuno** fa spazio (il blocco `if` reso irraggiungibile) | come la **2** | ✅ **le tre sonde LOCAL — 4 passate, 3 fallite.** La direzione *«scatta dove deve»* |
+| **3a** | la domanda tolta da `admit`, **nessuno** fa spazio (il blocco `if` reso irraggiungibile) | come la **2** | ✅ **4 passate, 3 fallite** — `the_local_policy_…` (`revoking()` `left: 0, right: 1`), `under_the_local_policy_…` (`promoted.len()`) e `a_partly_full_machine_…` (`revoking()` `left: 0, right: 1`). La direzione *«scatta dove deve»*. ⚠️ **Richiamo del 2026-08-20 — questa cella diceva *«le tre sonde LOCAL»*, e le sonde che girano uno scenario `LocalPolicy` sono QUATTRO:** `grep -n "VramPolicy::Local(LocalPolicy)"` sul banco dà **quattro** corpi di sonda più le due letture di `each_policy_names_itself`, che non ammette niente. La quarta, `the_admission_asks_back_below_its_own_lane_and_spares_a_peer`, **sopravvive e ha ragione di sopravvivere**: asserisce `revoking() == 0`, che è anche ciò che *«nessuno fa spazio»* produce. Il **conteggio** era giusto, l'**etichetta** no. Voce `E108` |
 | **3b** | la domanda tolta da `admit`, **tutti** fanno spazio (la condizione resa sempre vera) | — | ✅ **le due sonde REMOTE — 5 passate, 2 fallite.** La direzione *«non scatta dove non deve»*, che è la metà che si dimentica. ⚠️ **E `arbiter_admission` resta 20/0 e `lib` 13/0** anche qui: il ramo nuovo non è tenuto da niente fuori da questo banco (`E96`) |
 | **4** | ⚠️ **il separatore che il PIANO indica**: `promote` percorre le corsie al contrario | `under_the_remote_policy_…` rossa, `the_remote_policy_…` verde | ⛔ **NESSUNA delle sette muore — 7 passate, 0 fallite.** Con una sola richiesta in attesa l'ordine fra corsie non decide niente. La riga uccide una sonda del Task 6 in `arbiter_admission` (19/1) e **non separa** la coppia della **1**. Divergenza `E92` |
 | **5** | il controllo di capienza dentro `promote` tolto: promuove senza stanza | — | ✅ **`under_the_remote_policy_the_same_clock_advance_serves_nobody`, e SOLA NEL BANCO — 6 passate, 1 fallita**, sull'asserzione `promoted.is_empty()`. È il separatore che la **4** doveva essere. Fuori dal banco: `arbiter_admission` 16/4 |
@@ -1432,8 +1476,8 @@ un'esclusività misurata su un campione parziale si legge come una garanzia.
 | **10** | il dispatch di `VramPolicy::name` risponde `"remote"` per **entrambi** i bracci | — | ✅ **`each_policy_names_itself`, e SOLA NELL'INTERO WORKSPACE — 6/1, 20/0, 13/0.** Muore sull'asserzione che legge il nome **LOCAL dall'enum**: le due metà della sonda stanno su **assi diversi**, ed è per questo che ci sono entrambe |
 | **11a** | l'`enqueue` estratto smette di far avanzare il contatore dei biglietti | — | ✅ **`arbiter_admission` 18/2**, banco 7/0. Il corpo estratto è **vivo** ed è tenuto dalle sonde del Task 6 |
 | **11b** | l'`enqueue` estratto mette **ogni** richiesta nella corsia `Batch` | — | ✅ **`arbiter_admission` 19/1**, banco 7/0. Idem, sull'altro campo |
-| **12** | la spazzata riscuote una concessione `Running` (`_ => true` diventa `_ => false`) | — | ⚠️ **Riga di ISOLAMENTO, non di uccisione.** Banco 1/6 — ma le morte muoiono sul `panic!` del `let … else` o sull'asserzione precedente, **non** su quella di `allocated()`. `arbiter_admission` 7/13, `lib` 4/9 |
-| **13** | `admit` smette di guardare il tetto (sovra-ammissione) | — | ⚠️ **Riga di ISOLAMENTO.** Banco 1/6, e **a piena forza nessuna muore sull'asserzione di `allocated()`**: le asserzioni precedenti scattano sempre prima. `arbiter_admission` 8/12, `lib` 12/1 |
+| **12** | la spazzata riscuote una concessione `Running` (`_ => true` diventa `_ => false`) | — | ⚠️ **Riga di ISOLAMENTO, non di uccisione.** Banco **1/6**: sopravvive la sola `each_policy_names_itself`, che non ammette niente. ⛔ **RICHIAMO DEL 2026-08-20 — QUESTA CELLA DICEVA CHE IL «PRIMA» ERA *«banco 3/2»*, ED ERA FALSO**, e la cifra nuova che l'ha sostituito era invece giusta: da tre passate non si scende a una aggiungendo sonde, e l'ondata non tocca **nessuna** riga eseguibile (`git diff 4b89fea..ea0cc09` su `crates/kernel/src/arbiter/mod.rs`: **zero** righe non di commento). ✅ **Rimisurato sul banco di cinque di `4b89fea` e non dedotto: 1/4** — muoiono tutte e quattro le sonde a scenario di allora e resta in piedi la sola `each_policy_names_itself`. ⛔ **E il corollario era falso a sua volta:** diceva che le morte muoiono sul `panic!` o sull'asserzione precedente *«e non su quella di `allocated()`»*, mentre `a_partly_full_machine_…` muore **esattamente lì** — `assert_eq!(allocated(), Mib::new(3_072), "PARTLY full")`, `left: Mib(1024)` — perché la spazzata svuota i libri già al secondo `admit`. Le altre cinque: `matches!(outcome, Queued(_))` per `the_remote_policy_…`, `the_local_policy_…` e `the_admission_asks_back_below_…`, il `panic!("queued")` del `let … else` per le due `under_the_…`. Voce `E106`. Fuori dal banco: `arbiter_admission` 7/13, `lib` 4/9 |
+| **13** | `admit` smette di guardare il tetto (sovra-ammissione) | — | ⚠️ **Riga di ISOLAMENTO.** Banco **1/6**, e **a piena forza nessuna muore sull'asserzione di `allocated()`** — ✅ **rimisurato il 2026-08-20 sul banco di sette invece che riportato:** `a_partly_full_machine_…` muore sul `matches!(outcome, Queued(_))`, e la sua asserzione di `allocated()`, che sta **prima**, passa. ✅ **E il «prima» di QUESTA riga regge — 1/4 sul banco di cinque, con le stesse quattro morte della 12**: è il controllo che isola l'errore della riga sopra, perché due righe con lo stesso insieme di morte non possono avere due «prima» diversi (`E106`). Fuori dal banco: `arbiter_admission` 8/12, `lib` 12/1 |
 | **14** | ⛔ **NUOVA dell'ondata di correzioni del 2026-08-20:** `admit` passa ad `ask_back` la richiesta INTERA invece dello scarto (`let needed = asked;`) | `a_partly_full_machine_asks_back_the_need_and_not_the_whole_request` | ✅ **rossa, e SOLA NELL'INTERO WORKSPACE — banco 6/1, workspace 242 passate 1 fallita**, su `revoking()` `left: 0, right: 1`. ⛔ **Era un MUTANTE VIVO**: prima della sonda nuova il workspace restava a **241 passate, 0 fallite**, perché nelle cinque sonde di partenza `ceiling`, `allocated()`, `asked` e `needed` valevano **tutti 4_096**. Voce `E97` |
 | **15** | ⛔ **NUOVA dello stesso giorno:** `admit` passa una corsia FISSA invece della propria (`ask_back(needed, ComputeClass::Realtime, now)`), che **allarga** le vittime perché `askable` scarta con `held.lane <= below` | `the_admission_asks_back_below_its_own_lane_and_spares_a_peer` | ✅ **rossa, e SOLA NELL'INTERO WORKSPACE — banco 6/1, workspace 242 passate 1 fallita**, su `revoking()` `left: 1, right: 0`: l'arbitro sfratta un **pari** `Interactive` per un `Interactive`. ⛔ **Era un MUTANTE VIVO** a 241/0, e `a_grant_in_the_asking_lane_itself_is_not_asked_back` **non lo vede**: chiama `ask_back` direttamente con corsie esplicite, quindi tiene il confine e non il **cablaggio**. Voce `E97` |
 
@@ -1449,8 +1493,10 @@ uccide **due** e la **8** ne uccide **tre**. Nessuna delle due è diventata più
 CAMPAGNA a separare di meno. Voce `E104`.
 ⚠️ **E UNA SONDA È ORA DOMINATA DENTRO QUESTA CAMPAGNA, dichiarato invece che lasciato
 scoprire** — la forma di `E37`, `E79` e `E93`: `the_local_policy_asks_the_lower_lanes_back` muore
-sotto **2, 3a, 7, 12, 13**, e `a_partly_full_machine_…` muore sotto **quelle stesse più 8, 13 e
-14**, quindi ogni mutante che uccide la prima uccide anche la seconda. ⛔ **Non si cancella:** la
+sotto **2, 3a, 7, 12, 13**, e `a_partly_full_machine_…` muore sotto **quelle stesse più 8 e 14**,
+quindi ogni mutante che uccide la prima uccide anche la seconda. ⚠️ **Richiamo del 2026-08-20:
+diceva *«più 8, 13 e 14»*, e la 13 era già nell'insieme di partenza** — l'insieme più grande ha
+**sette** righe e non otto (`E110`). ⛔ **Non si cancella:** la
 campagna è un **campione**, non una dimostrazione, e le due sonde dicono cose diverse — quella
 dominata è la coppia esatta di `the_remote_policy_…` sullo **stesso scenario**, che è la forma
 con cui ADR-0006 chiede che le due policy si distinguano. Voce `E104`.
@@ -1458,19 +1504,33 @@ con cui ADR-0006 chiede che le due policy si distinguano. Voce `E104`.
 sole nell'**intero workspace** solo la **9**, la **10**, la **14** e la **15**; la **5** e la
 **6** sono sole **dentro `tests/arbiter_policy.rs`** e uccidono fra le sonde delle code del Task 6.
 
-⚠️ **LE TRE ASSERZIONI SU `allocated()` SONO DOMINATE DENTRO LA PROPRIA SONDA, E RESTANO.** Non
+⚠️ **LE ASSERZIONI FINALI SU `allocated()` SONO DOMINATE DENTRO LA PROPRIA SONDA, E RESTANO.** Non
 sono vacue — **isolate** (le asserzioni sopra tolte) scattano sotto la riga **13**,
-`left: Mib(8192), right: Mib(4096)` — ma **a piena forza** l'asserzione sopra scatta sempre
-per prima, in **ogni** riga della campagna. ⚠️ **Il numero delle righe è tolto da questa frase**
+`left: Mib(8192), right: Mib(4096)` — ma **a piena forza** un'asserzione **sopra** di esse scatta
+sempre per prima. ⚠️ **Il numero delle righe della campagna è tolto da questa frase**
 (2026-08-20): diceva *«tutte e tredici»* e la campagna ne ha **quindici**; la tabella è la misura
-(`E102`). ⚠️ **E la quarta asserzione su `allocated()`, quella della sonda nuova
-`the_admission_asks_back_below_its_own_lane_and_spares_a_peer`, sta nella stessa condizione** e
-per la stessa ragione, che resta scritta una volta sola. ✅ **Misurato per isolamento il 2026-08-20 e non
+(`E102`).
+⛔ **RICHIAMO DEL 2026-08-20 — QUESTA FRASE CONTAVA *«le tre»* PIÙ *«la quarta, quella della sonda
+nuova»*, E LE ASSERZIONI SU `allocated()` NEL BANCO SONO SEI.** ✅ Ricontate col comando e non a
+memoria — `grep -c "arbiter.allocated()" crates/kernel/tests/arbiter_policy.rs` → **6**, e **4** sul
+banco di `4b89fea`: le originali erano già **quattro** e le nuove sono **due**, quindi la frase ne
+lasciava fuori due. ✅ **E la distinzione che conta non è il numero ma QUALE, misurata riga per
+riga della campagna:** le **cinque** asserzioni **finali** — quelle di
+`the_remote_policy_…`, `the_local_policy_…`, `under_the_local_policy_…` (*«one grant, not two»*),
+`under_the_remote_policy_…` e `the_admission_asks_back_below_…` (*«the books did not move»*) — sono
+dominate: in **ogni** riga che uccide la loro sonda a scattare è un'asserzione precedente
+(`revoking()`, `matches!(outcome, Queued(_))`, `promoted.len()` o il `panic!("queued")` del
+`let … else`). ⛔ **La sesta NON è dominata, ed è quella della sonda nuova
+`a_partly_full_machine_…`:** non è finale ma una **precondizione** —
+`assert_eq!(allocated(), Mib::new(3_072), "PARTLY full")` — ed è la sola asserzione su
+`allocated()` di tutto il banco che decide un esito, sotto la riga **12** (`left: Mib(1024)`).
+Voce `E108`.
+✅ **Misurato per isolamento il 2026-08-20 e non
 ragionato**, su un campione che si nomina perché un'esclusività misurata su un campione parziale
 si legge come una garanzia (`E82`): cinque mutazioni eseguite isolate — le due risposte delle
 policy, la **12**, la **5** e la **13**. ⛔ **Il rimedio non è cancellarle**, che è la specie di
 `E37` e `E79`: dichiarano l'intento che il nome della sonda porta — i libri non si sono mossi — e
-la ragione è scritta **una volta sola**, accanto alla prima delle tre, con le altre due che ci
+la ragione è scritta **una volta sola**, accanto alla prima di esse, con le altre che ci
 rimandano. Voce `E93`.
 
 #### Le contro-sonde delle righe nuove

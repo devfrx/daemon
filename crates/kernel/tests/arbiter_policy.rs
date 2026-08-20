@@ -32,17 +32,6 @@ fn preemptible(name: &'static str, vram: u64, lane: ComputeClass) -> ResourcePro
     }
 }
 
-/// The other half of `Preemption`, and the two probes at the foot of this file need it: a
-/// resident that CANNOT be asked back is what leaves the machine only partly reclaimable.
-fn never_preemptible(name: &'static str, vram: u64, lane: ComputeClass) -> ResourceProfile {
-    ResourceProfile {
-        name,
-        reserved_vram: Mib::new(vram),
-        compute_class: lane,
-        preemption: Preemption::Never,
-    }
-}
-
 fn arbiter(total: u64, policy: VramPolicy) -> Arbiter {
     Arbiter::new(Parameters::new(TURN_LIMIT, Mib::new(total)), policy)
 }
@@ -68,16 +57,21 @@ fn the_remote_policy_does_not_make_room_it_queues() {
 
     assert!(matches!(outcome, Admission::Queued(_)));
     assert_eq!(arbiter.revoking(), 0, "REMOTE revokes nothing to make room");
-    // ⚠️ THE THIRD ASSERTION OF THIS PROBE -- AND OF THE TWO BELOW -- IS DOMINATED INSIDE ITS
-    // OWN PROBE, AND IT IS KEPT: the species of `E37` and `E79`. It is not vacuous -- ISOLATED
-    // (the two assertions above deleted) it fires under a mutation that stops `admit` checking
-    // the ceiling, `left: Mib(8192), right: Mib(4096)` -- but AT FULL STRENGTH the assertion
-    // above fires first under every mutation of the campaign, so it never decides an outcome.
-    // ✅ MEASURED on 2026-08-20 by isolation, not reasoned, and the sample is named because an
-    // exclusivity measured on a partial one reads as a guarantee (`E82`): five mutations were
-    // run isolated -- the two policy answers, the sweep collecting a `Running` grant, `promote`
-    // ignoring its capacity check, and `admit` ignoring its ceiling. What it declares is the
-    // intent the probe's name carries: the books did not move. Registered as `E93`.
+    // ⚠️ THE FINAL ASSERTION OF THIS PROBE -- AND OF EVERY PROBE BELOW THAT CARRIES THE SAME
+    // NOTE -- IS DOMINATED INSIDE ITS OWN PROBE, AND IT IS KEPT: the species of `E37` and `E79`.
+    // It is not vacuous -- ISOLATED (the two assertions above deleted) it fires under a mutation
+    // that stops `admit` checking the ceiling, `left: Mib(8192), right: Mib(4096)` -- but AT FULL
+    // STRENGTH an assertion above it fires first in every row of the campaign, so it never
+    // decides an outcome. ✅ MEASURED on 2026-08-20 by isolation, not reasoned, and the sample is
+    // named because an exclusivity measured on a partial one reads as a guarantee (`E82`): five
+    // mutations were run isolated -- the two policy answers, the sweep collecting a `Running`
+    // grant, `promote` ignoring its capacity check, and `admit` ignoring its ceiling. What it
+    // declares is the intent the probe's name carries: the books did not move. As `E93`.
+    //
+    // ⛔ AND THE ONE `allocated()` ASSERTION OF THIS FILE THAT IS *NOT* DOMINATED IS THE ONE THAT
+    // IS NOT FINAL: the PRECONDITION of the partly-full probe at the foot of this file, which
+    // under the sweep mutation is the assertion that fires -- the only one on `allocated()` in
+    // this bench that ever decides an outcome. Registered as `E108`.
     assert_eq!(arbiter.allocated(), Mib::new(4_096));
 }
 
@@ -134,6 +128,7 @@ fn under_the_local_policy_the_queued_request_is_served_past_the_grace() {
 
     assert_eq!(promoted.len(), 1);
     assert_eq!(promoted[0].ticket, ticket);
+    // Dominated inside this probe, and kept: same reason, written once above.
     assert_eq!(arbiter.allocated(), Mib::new(4_096), "one grant, not two");
 }
 
@@ -208,10 +203,16 @@ fn each_policy_names_itself() {
 #[test]
 fn a_partly_full_machine_asks_back_the_need_and_not_the_whole_request() {
     let mut arbiter = arbiter(4_096, VramPolicy::Local(LocalPolicy));
-    // ⛔ REALTIME AND NEVER PREEMPTIBLE: half the machine that cannot be asked back, which is
-    // what makes the shortfall SMALLER than the request.
+    // ⛔ REALTIME, AND PREEMPTIBLE LIKE EVERY OTHER RESIDENT OF THIS FILE: what keeps this half
+    // out of the reclaimable set is the LANE alone -- `askable` returns on `held.lane <= below`
+    // before it ever reads `preemption`. And what makes the SHORTFALL smaller than the REQUEST
+    // is a different fact again: the machine is only PARTLY full, so `allocated + asked -
+    // ceiling` is 1_024 while `asked` is 2_048.
+    //
+    // ⚠️ IT WAS `Preemption::Never`, THROUGH A HELPER OF ITS OWN, UNTIL 2026-08-20, and that
+    // helper was a live mutant the correction wave itself introduced -- measured, see `E105`.
     let Admission::Granted(_realtime) = arbiter.admit(
-        &never_preemptible("realtime", 2_048, ComputeClass::Realtime),
+        &preemptible("realtime", 2_048, ComputeClass::Realtime),
         LONG,
         Monotonic::ORIGIN,
     ) else {
@@ -266,8 +267,10 @@ fn a_partly_full_machine_asks_back_the_need_and_not_the_whole_request() {
 #[test]
 fn the_admission_asks_back_below_its_own_lane_and_spares_a_peer() {
     let mut arbiter = arbiter(4_096, VramPolicy::Local(LocalPolicy));
+    // The Realtime resident, and it is PREEMPTIBLE for the same reason the peer below is: only
+    // the LANE keeps either of them out of the reclaimable set (`E105`).
     let Admission::Granted(_realtime) = arbiter.admit(
-        &never_preemptible("realtime", 1_024, ComputeClass::Realtime),
+        &preemptible("realtime", 1_024, ComputeClass::Realtime),
         LONG,
         Monotonic::ORIGIN,
     ) else {
@@ -300,5 +303,6 @@ fn the_admission_asks_back_below_its_own_lane_and_spares_a_peer() {
         0,
         "an Interactive peer is not evicted for an Interactive request"
     );
+    // Dominated inside this probe, and kept: same reason, written once above.
     assert_eq!(arbiter.allocated(), Mib::new(3_072), "the books did not move");
 }

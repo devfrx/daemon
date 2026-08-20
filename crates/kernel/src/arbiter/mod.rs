@@ -465,11 +465,11 @@ impl Arbiter {
     ///
     /// ✅ MEASURED IN BOTH DIRECTIONS on 2026-08-20, on a throwaway probe deleted straight after,
     /// because a claim about behaviour that no probe exercises is the species this file has
-    /// already paid for. LOCAL: a `Batch` resident of 4_096 asked back for a queued `Interactive`
-    /// ticket, then at `501` a NEW `Batch` request of 4_096 -- `Granted`, the following `promote`
-    /// comes back EMPTY, and `queued()` is still 1. REMOTE, which is exactly the world before this
-    /// task since nobody was ever asked back: the same latecomer is `Queued` and `queued()` is 2 --
-    /// nothing was freed, so nothing was taken.
+    /// already paid for. ⛔ THE FIGURES ARE NOT REPEATED HERE, AND THAT IS THE POINT AND NOT
+    /// BREVITY: they stood VERBATIM in THREE live documents at once -- this comment, the register
+    /// and the errata -- and the copy that goes stale is the one in the source, which is the
+    /// species `E99` had to rewrite in THIS file on the SAME day. They live in `E100` and in the
+    /// task 8 section of `docs/porta-di-qualita.md`: two houses, not three. Registered as `E109`.
     ///
     /// ⚠️ AND NO PROBE HOLDS ANY OF THIS EITHER, said here for the same reason as the paragraph
     /// above: the behaviour is measured and NOT pinned, because pinning it would freeze the choice

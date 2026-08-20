@@ -14,13 +14,20 @@
 //! SOMEWHERE ELSE -- said here because a reader who counted the revocation probes in this file
 //! would find ONE and conclude the subject is barely held. `Arbiter::ask_back` is `pub(crate)`,
 //! and a `pub(crate)` is unreachable from an integration test, which is a crate of its own
-//! (`error[E0624]`, measured). So the ten probes that CALL it live in the `#[cfg(test)] mod
+//! (`error[E0624]`, measured). So the TWELVE probes that CALL it live in the `#[cfg(test)] mod
 //! tests` of `crates/kernel/src/arbiter/mod.rs`, with the deviation declared beside them: that
 //! asking back MARKS and does not free, that the grace is collected when it runs out and not
 //! before, the instant it runs out, that a non-preemptible grant and a lane that is not below
-//! the asking one are never touched, that it stops as soon as the need is covered and takes the
-//! WORST lane first, that asking twice does not buy the room twice, and that it collects the
-//! expired before it marks.
+//! the asking one are never touched, that a PEER in the very lane that is asking is not touched
+//! either -- `below` is exclusive -- that it stops as soon as the need is covered and takes the
+//! WORST lane first, that it marks NOTHING when what can be reclaimed does not cover the need,
+//! that asking twice does not buy the room twice, and that it collects the expired before it
+//! marks.
+//!
+//! ⚠️ IT SAID "TEN" UNTIL 2026-08-20, and the number is REWRITTEN rather than annotated: a
+//! count that is quietly wrong is worse than one that is loudly missing (gotcha #31). The two
+//! that arrived came out of the review of this same task -- the LANE BOUNDARY, which no probe
+//! stood on, and the CAPACITY of what can actually be reclaimed.
 //!
 //! ⛔ WHAT STAYS HERE IS THE ONE PROBE THAT NEEDS NOTHING PRIVATE, and only privacy moved the
 //! others: `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` is about the

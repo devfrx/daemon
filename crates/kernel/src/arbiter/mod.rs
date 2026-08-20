@@ -198,26 +198,47 @@ pub enum PreemptibleState {
 /// paragraph is the debt to settle, and it is written where the type is instead of in a
 /// document nobody opens beside the code.
 ///
-/// ⚠️ A SECOND DECLARED LIMIT, AND IT IS THE ONE THAT BITES FIRST. `release` calls
-/// `collect_expired` BEFORE it looks, so a grant THIS ARBITER ISSUED whose window has closed
-/// is no longer in the books: `remove` answers `None` and the caller gets `UnknownGrant`.
+/// ⚠️ A SECOND AND A THIRD DECLARED LIMIT, AND THEY ARE THE ONES THAT BITE FIRST. `release`
+/// calls `collect_expired` BEFORE it looks, so anything that sweep has taken off the books is
+/// gone by the time `remove` runs: it answers `None` and the caller gets `UnknownGrant`. Since
+/// task 7 that sweep has TWO deadlines, so there are TWO ways for a grant THIS ARBITER ISSUED
+/// to be missing from its own books -- its validity window closed, or its GRACE ran out after
+/// the arbiter asked it back.
 /// ✅ MEASURED on a throwaway probe, not deduced: admitted for 5_000 ms, released at 5_001 ->
 /// `Err(UnknownGrant)`; released at 4_999 -> `Ok(Mib(4096))`; released at 5_000 EXACTLY ->
-/// `Err(UnknownGrant)` too, because the window is half-open, `[start, expiry)`.
+/// `Err(UnknownGrant)` too, because the window is half-open, `[start, expiry)`. The grace
+/// deadline is half-open by the same rule -- one rule for both, see `collect_expired`.
+/// ✅ AND THE THIRD CAUSE IS MEASURED TOO, on a throwaway probe deleted straight after and on
+/// 2026-08-20: a grant asked back at `0` with a grace of `500` and released at `500` EXACTLY ->
+/// `Err(UnknownGrant)`, and the same grant released at `499` -> `Ok(Mib(4096))`. So being under
+/// revocation is NOT by itself an obstacle to handing the grant back -- only the sweep that
+/// follows the deadline is.
 ///
-/// ⛔ SO TWO CASES ARE CONFLATED IN ONE VARIANT, and THE NAME STILL STATES THE STRONGER OF
-/// THE TWO -- which of an expired grant is simply FALSE. That is why the doc line below no
-/// longer repeats it. What the guard buys is "that is not in my books, so I will not credit
-/// it", and THAT holds in both cases: it is the whole of the over-admission protection. What
-/// it does not buy is telling the caller WHICH of the two happened.
+/// ⚠️ RECALL OF 2026-08-20, MILESTONE 5 TASK 7, IN REVIEW -- THIS BLOCK SAID "TWO CAUSES" AND
+/// SAID IT IN THREE PLACES, AND ALL THREE ARE REWRITTEN RATHER THAN ANNOTATED. A true sentence
+/// added under a false one leaves the false one standing, which is finding A-2 of this project's
+/// own audit done again. The count was right until this task gave `collect_expired` its second
+/// deadline; from the moment forced reclamation landed, a revoked grant whose grace expired
+/// answers `UnknownGrant` for a reason neither old paragraph named.
+///
+/// ⛔ SO THREE CASES ARE CONFLATED IN ONE VARIANT, and THE NAME STILL STATES THE STRONGEST OF
+/// THE THREE -- which of an expired grant, and of a reclaimed one, is simply FALSE. That is why
+/// the doc line below no longer repeats it. What the guard buys is "that is not in my books, so
+/// I will not credit it", and THAT holds in all three cases: it is the whole of the
+/// over-admission protection. What it does not buy is telling the caller WHICH of the three
+/// happened.
 ///
 /// ⚠️ TODAY IT COSTS NOTHING, and the reason is a measurement rather than a hope: `release`
 /// has TWO callers in this repository and both are in `tests/arbiter_admission.rs` -- no
 /// production consumer exists. It starts costing at milestone 6, where `Worker::kill` hands
 /// the grant back when the work FINISHES, which can perfectly well be after the window; there
-/// "your release failed" and "it was already done for you" are different news. A second
-/// variant `Expired` is the known remedy and it is a DESIGN decision, so it is RECORDED FOR
-/// THE OWNER in the plan's errata (`E30`) instead of being taken by the task that noticed it.
+/// "your release failed", "it was already done for you" and "it was TAKEN from you" are THREE
+/// different pieces of news, and the third is the one a caller can act on -- being preempted is
+/// not the same event as outliving your own window. A second variant `Expired` was the known
+/// remedy while there were two causes; with three the shape of the remedy is itself part of the
+/// decision. It is a DESIGN decision either way, so it is RECORDED FOR THE OWNER in the plan's
+/// errata (`E30`, widened on 2026-08-20 by `E72`) instead of being taken by the task that
+/// noticed it.
 ///
 /// ⚠️ AND NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT. A test
 /// asserting `Err` at 5_001 would freeze the very behaviour `E30` puts in front of the owner:
@@ -228,9 +249,10 @@ pub enum PreemptibleState {
 /// names -- turns nothing red, and this paragraph would become false in silence.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReleaseError {
-    /// Not in this arbiter's books. ⚠️ TWO CAUSES, ONE ANSWER -- see the second declared
-    /// limit above: the grant came from ANOTHER arbiter, or it was this arbiter's and its
-    /// window had already closed.
+    /// Not in this arbiter's books. ⚠️ THREE CAUSES, ONE ANSWER -- see the declared limits
+    /// above: the grant came from ANOTHER arbiter, or it was this arbiter's and its validity
+    /// window had already closed, or it was this arbiter's and the grace of a revocation had
+    /// run out, so the sweep had already taken it back.
     UnknownGrant,
 }
 
@@ -538,11 +560,34 @@ impl Arbiter {
     /// ⛔ IT STOPS AS SOON AS THE NEED IS COVERED. "It made room" is satisfied by revoking
     /// everything, which evicts two jobs to seat one.
     ///
+    /// ⛔ AND IT MARKS NOTHING AT ALL WHEN THE NEED WILL NOT BE COVERED, which is the SAME
+    /// damage by the other road: a pass that marked as it went could condemn a job -- the sweep
+    /// takes a revoked grant off the books when its grace runs out -- and still answer less than
+    /// was asked, so it would evict one and seat nobody. That is a mutation of the state left
+    /// standing beside a reported failure, which is the silent degradation ADR-0005 and ADR-0019
+    /// forbid. Hence TWO PASSES: a READ-ONLY one that adds up what could be reclaimed, and a
+    /// marking one that runs ONLY if that total covers `needed`. Registered as `E69`.
+    ///
     /// ⛔ WORST LANE FIRST: the cheapest thing to interrupt goes first. What grounds it is the
     /// lane table of design/02, which says of `ComputeClass::Interactive` that it is served
     /// before `ComputeClass::Batch`, and of `Batch` that it may wait indefinitely. What HOLDS it
     /// is `asking_back_takes_the_worst_lane_first`: before that probe the sentence was in a
     /// comment and in nothing else.
+    ///
+    /// ⚖️ WITHIN ONE LANE THE VICTIM IS THE OLDEST GRANT, AND NOTHING DECIDES THAT. The marking
+    /// pass walks `held`, which is keyed by `GrantId`, so it meets the grants of a lane in the
+    /// order they were issued and takes the first that fits the criterion -- with a `Batch` of
+    /// `4_096` and a `Batch` of `512` and a need of `512` it marks the `4_096`, evicting 4 GiB to
+    /// free half of one. The alternative -- the SMALLEST victim that suffices -- is just as
+    /// defensible, and §5.3, §5.3.1 and design/02 say nothing about either: the lane table
+    /// decides the order BETWEEN lanes and is silent WITHIN one. ⛔ SO IT IS DECLARED AND NOT
+    /// PINNED, for the reason `E50`, `E51` and `E53` give: a probe asserting "the oldest" would
+    /// freeze the very choice the errata puts in front of the owner, and a probe that must be
+    /// deleted to take a decision is a vote against taking it. ✅ MEASURED on 2026-08-20, not
+    /// deduced: with the marking pass walking `self.held.values_mut().rev()` -- NEWEST first --
+    /// NOTHING goes red, 12 passed here and 20 in `tests/arbiter_admission.rs`. THE MUTANT IS
+    /// ALIVE, so the day somebody changes it this paragraph becomes false in silence with
+    /// nothing to say so. Registered as `E70`.
     ///
     /// ⛔ IT COLLECTS THE EXPIRED FIRST, like every other operation. With this one there are
     /// FOUR, and the property "the arbiter collects before it decides" is why `collect_expired`
@@ -552,11 +597,79 @@ impl Arbiter {
     /// not a public operation: making room is a consequence of a request, never a thing
     /// somebody asks for. ⛔ THAT CALLER IS TASK 8 AND DOES NOT EXIST YET, which would make this
     /// a method with no consumer -- gotcha #46 from the wrong side. What answers it here is the
-    /// answer this repository already uses: the consumer is a BENCH, and the ten probes of the
+    /// answer this repository already uses: the consumer is a BENCH, and the probes of the
     /// `#[cfg(test)] mod tests` at the foot of this file are it. The `pub(crate)` is what puts
     /// them there instead of in `tests/`.
+    ///
+    /// ⏳ DEADLINE, AND IT IS THE FALSIFIABLE HALF OF THAT DECISION -- the form of `E10` at task
+    /// 4, which had it beside the code. `cargo build --locked --workspace` today prints TWO
+    /// `dead_code` warnings -- "fields lane and grace are never read" and "method ask_back is
+    /// never used" -- and the owner accepted both rather than silence them with an `#[allow]`,
+    /// which this repository treats as a prohibition switched off. ⛔ AT TASK 8 THOSE TWO
+    /// WARNINGS MUST BE GONE, because the LOCAL policy calls this method and this method reads
+    /// those fields. ⛔ IF THEY ARE STILL THERE, THIS METHOD WAS NOT NEEDED AND IT IS REMOVED --
+    /// it is not silenced. Registered as `E67`.
     pub(crate) fn ask_back(&mut self, needed: Mib, below: ComputeClass, now: Monotonic) -> Mib {
         self.collect_expired(now);
+
+        // ⛔ THE ADMISSIBILITY TEST, WRITTEN ONCE AND ASKED BY BOTH PASSES. A verbatim copy of
+        // it in the second pass would be the very defect the two passes exist to remove: the
+        // reading pass and the marking pass would answer for different sets, and the arbiter
+        // would promise room it then declines to take.
+        //
+        // ⚠️ A CLOSURE AND NOT A METHOD, AND THE REASON IS A MEASUREMENT. `ask_back` has no
+        // production caller until task 8, so it is `dead_code`; anything it is the only caller
+        // of is dead with it, and a private helper here would add a THIRD warning to the two the
+        // owner accepted (`E67`). ✅ Measured on 2026-08-20 as an associated `Held::askable_by`:
+        // `cargo build --locked --workspace` prints three warnings, the third being
+        // `method `askable_by` is never used`. A closure is part of this body and adds none.
+        //
+        // ⛔ THREE QUESTIONS AND NOT ONE, AND THEY STAY THREE. Folding them into a single
+        // `matches!(activity, Preemptible(Running))` would put the non-preemptible case behind
+        // two guards that mask each other's mutation, which is what `E62` measured on the
+        // dictated body and refused: each guard here has its OWN probe. ⚠️ Two of the three have
+        // a SOLE killer as well -- the lane guard through mutations 2b and 2c, the "already on
+        // its way out" one through mutation 7. The grace guard does not any more: mutation 8
+        // kills its probe AND the one that holds the read-only pass, because that scenario has a
+        // non-preemptible resident too. Written down in the register instead of left to be
+        // rediscovered (`E73`).
+        let askable = |held: &Held| -> Option<Millis> {
+            if held.lane <= below {
+                // ⛔ NOT BELOW THE ASKING LANE: a Realtime job is not evicted for an Interactive
+                // one, however preemptible its profile says it is -- AND NEITHER IS A PEER.
+                // `below` is EXCLUSIVE, so a grant in the asking lane itself is not a victim:
+                // that is the boundary `a_grant_in_the_asking_lane_itself_is_not_asked_back`
+                // stands on, and it is the case task 8 produces first.
+                return None;
+            }
+            if matches!(
+                held.activity,
+                Activity::Preemptible(PreemptibleState::Revoking { .. })
+            ) {
+                // ⛔ ALREADY ON ITS WAY OUT: leave it alone. Marking it again would hand its
+                // holder a FRESH grace for having been asked earlier, and would count its
+                // reservation a second time -- room the arbiter does not have, which is
+                // over-admission by the back door.
+                return None;
+            }
+            // ⛔ NO GRACE MEANS NEVER REVOKED, and that is `Preemption::grace`'s own word for it
+            // -- `None` "is the statement that this profile is never revoked". So this is the
+            // guard that keeps `I2 · §5.3` at runtime, and it is the ONLY one that reads it: the
+            // guard above asks a DIFFERENT question, "is it already on its way out".
+            held.grace
+        };
+
+        // ⛔ FIRST PASS, AND IT WRITES NOTHING. If everything that may be asked back does not
+        // add up to `needed`, the answer is "no room" and the books are left exactly as they
+        // were -- no condemned holder, no reservation the asker cannot use.
+        let reclaimable = self
+            .held
+            .values()
+            .filter(|held| askable(held).is_some())
+            .fold(Mib::ZERO, |sum, held| sum.saturating_add(held.reserved));
+        if reclaimable < needed {
+            return Mib::ZERO;
+        }
 
         // ⛔ THE LANES COME FROM THE BOOKS AND THE ORDER FROM `ComputeClass` ITSELF, and neither
         // is a list of the three lanes written out here. `BTreeSet` iterates in key order --
@@ -567,13 +680,10 @@ impl Arbiter {
         // thing here.
         let lanes: BTreeSet<ComputeClass> = self.held.values().map(|held| held.lane).collect();
 
+        // ⛔ SECOND PASS, AND IT MARKS. It cannot run out of candidates before `covered` reaches
+        // `needed`: the pass above has already added up the same set through the same test.
         let mut covered = Mib::ZERO;
         for lane in lanes.iter().rev() {
-            if *lane <= below {
-                // Not BELOW the asking lane: a Realtime job is not evicted for an Interactive
-                // one, however preemptible its profile says it is.
-                continue;
-            }
             for held in self.held.values_mut() {
                 if covered >= needed {
                     return covered;
@@ -581,36 +691,7 @@ impl Arbiter {
                 if held.lane != *lane {
                     continue;
                 }
-                // ⛔ ALREADY ON ITS WAY OUT: leave it alone. Marking it again would hand its
-                // holder a FRESH grace for having been asked earlier, and would count its
-                // reservation into `covered` a second time -- room the arbiter does not have,
-                // which is over-admission by the back door.
-                if matches!(
-                    held.activity,
-                    Activity::Preemptible(PreemptibleState::Revoking { .. })
-                ) {
-                    continue;
-                }
-                // ⛔ NO GRACE MEANS NEVER REVOKED, and that is `Preemption::grace`'s own word
-                // for it -- `None` "is the statement that this profile is never revoked". So
-                // this is the guard that keeps `I2 · §5.3` at runtime, and it is the ONLY one
-                // that reads it: the guard above asks a DIFFERENT question, "is it already on
-                // its way out".
-                //
-                // ⚠️ WRITTEN THIS WAY INSTEAD OF THE WAY THE PLAN DICTATES, and the reason is a
-                // MEASUREMENT rather than a taste. The dictated body wraps all of this in
-                // `if let Activity::Preemptible(PreemptibleState::Running)` and reads the grace
-                // with `match held.grace { Some(g) => .., None => continue }`, so BOTH guards
-                // answer for the non-preemptible case and each masks the other's mutation. ✅
-                // Measured on that very shape, which is green on all thirty probes: deleting
-                // the `Running` guard kills `asking_back_twice_does_not_buy_the_room_twice` and
-                // ONLY it -- `a_non_preemptible_grant_is_never_asked_back` stays green, saved by
-                // the `None` arm -- and turning `None => continue` into `None => now` kills
-                // NOTHING AT ALL, 10 passed and 20 passed, because the `Running` guard means
-                // that arm is never reached. The non-preemptible direction was therefore held by
-                // two guards and provable through neither. In this shape each guard has its own
-                // probe and its own SOLE killer. Registered as `E62`.
-                let Some(grace) = held.grace else {
+                let Some(grace) = askable(held) else {
                     continue;
                 };
                 held.activity = Activity::Preemptible(PreemptibleState::Revoking {
@@ -928,6 +1009,40 @@ mod tests {
         assert_eq!(arbiter.revoking(), 0);
     }
 
+    /// ⛔ BELOW MEANS STRICTLY BELOW, AND THIS PROBE STANDS ON THE BOUNDARY ITSELF. Every other
+    /// probe here puts its resident STRICTLY above or STRICTLY below the asking lane, so the
+    /// boundary was asked by nobody and `lane <= below` mutated to `lane < below` survived the
+    /// WHOLE WORKSPACE -- measured on 2026-08-20 against the suite AS IT WAS BEFORE this probe,
+    /// ten here and twenty in `tests/arbiter_admission.rs`, with every other target green too.
+    /// It is the species of `E29` on a third guard: the two probes either side of a boundary
+    /// step OVER it.
+    ///
+    /// ⛔ AND IT IS THE CASE TASK 8 PRODUCES FIRST, which is why it is not a curiosity: the
+    /// admission asks back BELOW ITS OWN LANE, so a peer in the very lane that is asking is the
+    /// first thing `ask_back` will be handed. Evicting a peer for a peer is exactly what "only
+    /// lanes BELOW" excludes. Registered as `E71`.
+    #[test]
+    fn a_grant_in_the_asking_lane_itself_is_not_asked_back() {
+        let mut arbiter = arbiter(Mib::new(4_096));
+        let Admission::Granted(_peer) = arbiter.admit(
+            &preemptible("interactive-resident", 4_096, ComputeClass::Interactive, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("it fills the machine");
+        };
+
+        let asked_back =
+            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+
+        assert_eq!(
+            asked_back,
+            Mib::ZERO,
+            "Interactive is not BELOW Interactive: a peer is not a victim"
+        );
+        assert_eq!(arbiter.revoking(), 0);
+    }
+
     /// ⛔ IT STOPS WHEN IT HAS ENOUGH, and the assertion is on the NUMBER: an arbiter that
     /// revoked everything preemptible would satisfy "it made room" and evict two jobs to seat
     /// one.
@@ -948,6 +1063,50 @@ mod tests {
 
         assert_eq!(asked_back, Mib::new(4_096));
         assert_eq!(arbiter.revoking(), 1, "one was enough");
+    }
+
+    /// ⛔ IT MARKS NOTHING WHEN THE NEED WILL NEVER BE COVERED, and this is the OTHER road to
+    /// the very damage the doc of `ask_back` says it is avoiding -- "it evicts two jobs to seat
+    /// one" becomes "it evicts one and seats nobody". A pass that marked as it went condemned
+    /// the `Batch` one -- at the end of its grace the sweep takes it off the books -- and still
+    /// answered less than was asked, so the asker does not sit down either.
+    ///
+    /// ⚠️ THE IMMOVABLE ONE IS IN `Batch` TOO, DELIBERATELY: under `Realtime` the lane guard
+    /// would turn it away and the probe would be about the lane instead of about the capacity
+    /// (gotcha #74, the same trap `a_non_preemptible_grant_is_never_asked_back` fell into).
+    /// `2_048` is all there is to reclaim, and `2_048` does not seat a `4_096`.
+    #[test]
+    fn asking_back_marks_nothing_when_the_reclaimable_does_not_cover_the_need() {
+        let mut arbiter = arbiter(Mib::new(8_192));
+        let Admission::Granted(_reclaimable) = arbiter.admit(
+            &preemptible("batch-reclaimable", 2_048, ComputeClass::Batch, 500),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("2048 of 8192 fits");
+        };
+        let Admission::Granted(_immovable) = arbiter.admit(
+            &profile("batch-that-is-never-preempted", 6_144, ComputeClass::Batch),
+            LONG,
+            Monotonic::ORIGIN,
+        ) else {
+            panic!("2048 + 6144 fills the machine");
+        };
+
+        let asked_back =
+            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+
+        assert_eq!(
+            asked_back,
+            Mib::ZERO,
+            "2_048 is all there is to reclaim, and it does not seat a 4_096"
+        );
+        assert_eq!(
+            arbiter.revoking(),
+            0,
+            "nobody is condemned for a seat nobody gets"
+        );
+        assert_eq!(arbiter.allocated(), Mib::new(8_192));
     }
 
     /// ⛔ THE WORST LANE FIRST, and it is the rule the doc of `ask_back` STATES -- "the cheapest

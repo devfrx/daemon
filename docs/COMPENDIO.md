@@ -3748,6 +3748,55 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > trentesima applicazione.
 
+> 🔁 **Quarantasettesima misura, il 2026-08-21 — ed è un PRE-CONTROLLO DELLA DELEGA, non una
+> passata di pesi.** Nessun file è cresciuto: [`AVVIO-CHAT.md`](AVVIO-CHAT.md) resta **28**, e il
+> **messaggio** scende da `17652` a **`17597` byte**, `−55 B`. Il resto della tabella è quello
+> della 46ª, chiusa il giorno prima.
+>
+> ⛔ **Ciò che l'ha aperta: il messaggio d'avvio si legge contro il repository come ogni altro
+> documento (gotcha #58), e una sua frase era a QUATTRO KILOBYTE dal diventare falsa.** Diceva del
+> piano *«è il SECONDO file del repository, dopo il compendio»*. Misurato oggi: compendio **434**,
+> piano **338**, [`porta-di-qualita.md`](porta-di-qualita.md) **334**. ⚠️ **E i due che si
+> contendono il secondo posto crescono insieme e allo stesso ritmo** — al Task 7 il registro
+> guadagnò 44 KB e il piano 47, al Task 8 il registro 35 e il piano 46 — quindi non è una frase
+> che *potrebbe* invecchiare: è una frase che si rovescia al primo compito che tocca più il
+> registro del piano.
+> 📌 **È la stessa frase che la 44ª misura aveva già trovato FALSA IN DUE DIREZIONI**, e che era
+> stata **riscritta** invece che tolta. Riscritta una seconda volta sarebbe stata la terza
+> occorrenza sulla stessa riga — la forma della radice **R1**. ✅ **Tolta**, e ciò che resta è la
+> metà **portante**: *«il piano da eseguire è il più grande dei quattro»*, che nomina il file da
+> aprire **senza una classifica**, e regge mentre tutto cresce.
+> 📌 **La regola che ne esce, ed è il #31 applicato a una CLASSIFICA invece che a un conteggio:**
+> *un ordinamento fra artefatti che crescono insieme non è un fatto, è una qualificazione — e si
+> toglie, perché non c'è modo di datarla.* Un conteggio stantio si vede; un *«il secondo»* stantio
+> si legge come una descrizione.
+>
+> ✅ **Le altre affermazioni verificabili della delega sono state ricontate e reggono tutte**, e si
+> scrive che sono state **eseguite** e non rilette: **37** ADR · il titolo della §9 a
+> **settantasei** · **3791** righe di compendio, quindi *«oltre tremila»* · i **quattro piani più
+> grandi** a `338, 168, 162, 114` · **quattro** traguardi su sei eseguiti · i due messaggi di
+> commit malformati ancora presenti con gli SHA citati, `8d875f4` e `0fd3ec8` · albero **pulito**,
+> ramo **allineato** al remoto, `GATE GREEN`.
+>
+> ⛔ **E la delega continua a NON nominare il prossimo passo.** Le due occorrenze di *«Task 9»* che
+> il `grep` restituisce sono **citazioni di provenienza** di due lezioni — *dove* un difetto è
+> caduto — non un puntatore: parlano di un compito **chiuso**, quindi non possono marcire. La riga
+> che non deve esistere è quella che nomina il **prossimo**, e non c'è.
+>
+> ⛔ **E questo riquadro ha mosso il file che lo contiene, che è il caso per cui la regola
+> esiste:** togliere **una** riga dalla delega ne ha scritte una trentina qui, quindi il compendio
+> passa da **430** a **434**, i **due file obbligatori** da 445 a **448 KB** e **coi tre** da 476 a
+> **479**. L'insieme *«HANDOFF + spec + `adr/`»* **non si muove**: resta **750**, perché questa
+> passata non ha toccato nessuno dei tre. 📌 **Il rapporto peggiora quindi di nuovo — decima
+> misura consecutiva — e stavolta per una passata che ha TOLTO parole dal documento che la §12
+> difende**: la tendenza che la 45ª aveva registrato non si inverte nemmeno quando si comprime,
+> perché il verbale della compressione vive qui. È il dato, e non una decisione: la compressione
+> del compendio è del proprietario.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
+> trentunesima applicazione.
+
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**
 

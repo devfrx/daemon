@@ -33,10 +33,10 @@
 //
 // ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.
 fn main() {
-    let mut arbiter = kernel::arbiter::Arbiter::new(kernel::parameters::Parameters::new(
-        10_000,
-        kernel::arbiter::Mib::new(16_384),
-    ));
+    let mut arbiter = kernel::arbiter::Arbiter::new(
+        kernel::parameters::Parameters::new(10_000, kernel::arbiter::Mib::new(16_384)),
+        kernel::arbiter::VramPolicy::Remote(kernel::arbiter::RemotePolicy),
+    );
     // The profile is what the arbiter decides ON: it has to be handed over.
     let _outcome = arbiter.admit(
         kernel::time::Millis::new(1_000),

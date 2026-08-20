@@ -22,8 +22,10 @@ use alloc::vec::Vec;
 use crate::parameters::Parameters;
 use crate::time::{Millis, Monotonic};
 
+pub mod policy;
 pub mod resource;
 
+pub use policy::{LocalPolicy, MakeRoom, RemotePolicy, VramPolicy};
 pub use resource::{ComputeClass, Mib, Preemption, ResourceProfile, WorkDescriptor};
 
 /// A grant from the arbiter. THE ONLY WAY TO START A WORKER.
@@ -354,6 +356,8 @@ struct Waiting {
 /// already kept.
 pub struct Arbiter {
     parameters: Parameters,
+    /// The ONE active VRAM policy (ADR-0006). It is asked exactly once, in `admit`.
+    policy: VramPolicy,
     next_grant: u64,
     next_ticket: u64,
     held: BTreeMap<GrantId, Held>,
@@ -367,14 +371,38 @@ impl Arbiter {
     /// a decision without the delivered parameters". A bare number would have the
     /// composition root read the total and hand it over OUTSIDE the mechanism ADR-0034
     /// exists to impose.
-    pub const fn new(parameters: Parameters) -> Self {
+    ///
+    /// ⛔ AND THE POLICY IS HANDED OVER TOO, WHICH IS `V3` AT LEVEL 1. `VramPolicy` is an
+    /// enum, so the value that arrives here carries exactly ONE policy and "two active at
+    /// once" is not expressible -- the rule §5.4 used to check with an example-based test,
+    /// risen to the compiler (§2.8.2, catalogue §7.4.1 block C).
+    ///
+    /// ⚠️ IT IS A SECOND ARGUMENT AND NOT A FIELD OF `Parameters`, which is the plan's shape
+    /// and diverges from the WORDING of §2.8.2 -- "the delivered value carries one policy",
+    /// singular. It is not a weakening: the arbiter still receives the policy at
+    /// construction and still cannot read a configuration. Registered for the owner rather
+    /// than decided here, because moving it into `Parameters` changes a type §2.8 pins.
+    pub const fn new(parameters: Parameters, policy: VramPolicy) -> Self {
         Arbiter {
             parameters,
+            policy,
             next_grant: 0,
             next_ticket: 0,
             held: BTreeMap::new(),
             queues: BTreeMap::new(),
         }
+    }
+
+    /// The policy this arbiter was built with.
+    ///
+    /// ⚠️ ITS CONSUMER IS A BENCH TODAY, AND THAT IS SAID RATHER THAN LEFT TO BE NOTICED: it
+    /// is `pub`, so `dead_code` would not have mentioned it either way. What buys it is
+    /// `each_policy_names_itself` in `tests/arbiter_policy.rs`, which reads the name THROUGH
+    /// the arbiter and so holds a fact no other probe holds -- that the arbiter kept the
+    /// policy it was handed instead of defaulting to one. Task 9's journalled transition is
+    /// the production reader.
+    pub const fn policy(&self) -> &VramPolicy {
+        &self.policy
     }
 
     /// How much VRAM is spoken for right now. ⛔ IT COLLECTS NOTHING: it reports the books
@@ -450,25 +478,53 @@ impl Arbiter {
         }
 
         if self.allocated().saturating_add(asked) > ceiling {
-            // ⛔ IT FITS THE MACHINE AND NOT THE MOMENT, so it WAITS. Refusing here would
-            // make the answer depend on the instant the request happened to arrive, and
-            // §5.3.1 wants the request kept IN ITS OWN LANE instead. The guard above is what
-            // keeps "for ever" out of this branch: a request bigger than the whole machine
-            // never reaches it.
-            let ticket = TicketId(self.next_ticket);
-            self.next_ticket += 1;
-            self.queues
-                .entry(profile.compute_class)
-                .or_default()
-                .push(Waiting {
-                    ticket,
-                    profile: *profile,
-                    valid_for,
-                });
-            return Admission::Queued(ticket);
+            // ⛔ THE ONE PLACE THE TWO POLICIES DIFFER. ADR-0006 says exactly this is where
+            // a conditional would have been planted, and why it is not one: the question is
+            // asked ONCE, of an object, instead of being an `if` on the origin of the
+            // inference that every future decision would grow another arm of.
+            if self.policy.may_make_room() {
+                let needed = self
+                    .allocated()
+                    .saturating_add(asked)
+                    .saturating_sub(ceiling);
+                // ⚠️ THE ANSWER IS DELIBERATELY NOT READ, and that is the honest shape rather
+                // than a shortcut. Asking back MARKS: the reservation stays in the books for
+                // the whole grace period, so even a fully covered need frees nothing NOW.
+                // Acting on the number here would mean seating a request on VRAM its holder
+                // is still using -- the very thing §5.3 point 4 gives the grace for. The room
+                // arrives at the sweep, and `promote` is what hands it over.
+                let _asked_back = self.ask_back(needed, profile.compute_class, now);
+            }
+            return self.enqueue(profile, valid_for);
         }
 
         Admission::Granted(self.issue(profile, valid_for, now))
+    }
+
+    /// The ONE place a request is put in its lane, and the answer that says so.
+    ///
+    /// ⛔ EXTRACTED AT TASK 8 AND NOT REWRITTEN. It was written inline inside `admit` at task
+    /// 6; the policy branch above gave the queueing a second thing standing before it, and
+    /// two statements in one branch read as one. The fields, their order and the counter are
+    /// the task 6 ones exactly -- an extraction that changed behaviour would be a task 6
+    /// rewrite wearing a task 8 label.
+    ///
+    /// ⛔ IT FITS THE MACHINE AND NOT THE MOMENT, so it WAITS. Refusing would make the answer
+    /// depend on the instant the request happened to arrive, and §5.3.1 wants the request
+    /// kept IN ITS OWN LANE instead. What keeps "for ever" out of here is `admit`'s first
+    /// guard: a request bigger than the whole machine never reaches this function.
+    fn enqueue(&mut self, profile: &ResourceProfile, valid_for: Millis) -> Admission {
+        let ticket = TicketId(self.next_ticket);
+        self.next_ticket += 1;
+        self.queues
+            .entry(profile.compute_class)
+            .or_default()
+            .push(Waiting {
+                ticket,
+                profile: *profile,
+                valid_for,
+            });
+        Admission::Queued(ticket)
     }
 
     /// How many requests are waiting, across all lanes.
@@ -878,8 +934,16 @@ mod tests {
     /// The window every probe here uses when the value does not matter.
     const LONG: Millis = Millis::new(1_000_000);
 
+    /// ⛔ IT HANDS OVER `RemotePolicy`, AND THAT IS NOT A FILLER ARGUMENT. Remote is the
+    /// DEFAULT of ADR-0006 and the one that makes no room, so every probe below keeps the
+    /// subject it was written with: with `LocalPolicy` the admission would start MARKING
+    /// victims, and a dozen probes about the revocation would silently be about something
+    /// else. The two policies have their own bench, `tests/arbiter_policy.rs`.
     fn arbiter(total: Mib) -> Arbiter {
-        Arbiter::new(Parameters::new(TURN_LIMIT, total))
+        Arbiter::new(
+            Parameters::new(TURN_LIMIT, total),
+            VramPolicy::Remote(RemotePolicy),
+        )
     }
 
     /// A profile the arbiter may NEVER ask back.

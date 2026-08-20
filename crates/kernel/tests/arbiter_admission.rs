@@ -43,6 +43,19 @@
 //! SWEEP, which is where the two deadlines of task 7 meet the validity window of task 5, and it
 //! belongs beside the other probes of that window.
 //!
+//! ⛔ AND TASK 8 ADDED NO PROBE HERE AND STILL CHANGED WHAT THIS FILE PROVES, which is why it
+//! is written down instead of left in the diff. `Arbiter::new` now takes a `VramPolicy`, and the
+//! helper below hands over `RemotePolicy` -- the DEFAULT of ADR-0006, the one that makes NO room
+//! -- so EVERY probe in this file is now scoped to the remote policy. Under `LocalPolicy` the
+//! admission would ask the lower lanes back before it queued, and a dozen probes about the
+//! queues and the sweep would silently be about the revocation instead. ⚠️ THE OTHER HALF OF
+//! THAT, MEASURED AND NOT ASSUMED: nothing here holds the new branch. With the policy question
+//! deleted from `admit` in EITHER direction -- nobody asks back, or everybody does -- this file
+//! stays at 20 passed, 0 failed and the `#[cfg(test)] mod tests` of the lib at 13, 0. The branch
+//! is held by `tests/arbiter_policy.rs` and by nothing else, and the extraction of `enqueue`
+//! that came with it IS held here: filing every request in the `Batch` lane, or freezing the
+//! ticket counter, each turns probes of this file red. Registered as `E96`.
+//!
 //! ⚠️ THE PROBES LIVE HERE AND NOT IN `arbiter_resource.rs`, and the split is by subject
 //! rather than by convenience: that file holds the vocabulary of the RESOURCE -- `Mib`, the
 //! three lanes, the grace time -- and neither `Activity` nor `Admission` is a resource.
@@ -73,7 +86,7 @@
 
 use kernel::arbiter::{
     Activity, Admission, Arbiter, ComputeClass, Mib, Preemption, PreemptibleState, Promotion,
-    ResourceProfile,
+    RemotePolicy, ResourceProfile, VramPolicy,
 };
 use kernel::parameters::Parameters;
 use kernel::time::{Millis, Monotonic};
@@ -106,8 +119,16 @@ fn preemptible(name: &'static str, vram: u64, lane: ComputeClass, grace: u64) ->
     }
 }
 
+/// ⛔ IT HANDS OVER `RemotePolicy`, AND THAT IS NOT A FILLER ARGUMENT. Remote is the DEFAULT of
+/// ADR-0006 and the one that makes NO room, so every probe in this file keeps the subject it was
+/// written with: under `LocalPolicy` the admission would start MARKING victims before it queues,
+/// and probes about the queues and the sweep would silently be about the revocation instead. The
+/// two policies have a bench of their own, `tests/arbiter_policy.rs`.
 fn arbiter(total: Mib) -> Arbiter {
-    Arbiter::new(Parameters::new(TURN_LIMIT, total))
+    Arbiter::new(
+        Parameters::new(TURN_LIMIT, total),
+        VramPolicy::Remote(RemotePolicy),
+    )
 }
 
 /// The window every probe in this file uses when the value does not matter.

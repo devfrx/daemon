@@ -9,9 +9,9 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 390 KB** (byte LF, il 2026-08-19), e con
+⚠️ **Insieme questi due file pesano 408 KB** (byte LF, il 2026-08-20), e con
 [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — **chiuso il 2026-08-18, otto decisioni
-su otto**, quindi oggi una **consultazione** — **421**. ⛔ **E il prezzo in
+su otto**, quindi oggi una **consultazione** — **439**. ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
@@ -24,11 +24,11 @@ servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un
 travestita da misura. Il metodo e il limite stanno nella §12 del compendio, quattordicesima
 misura. 📌 È la **sesta** occorrenza del gotcha **#31** su questa riga, che prima diceva
 «circa seimila token» quando i due file pesavano 24 KB, poi «88 KB» quando erano
-già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **737 KB**.
+già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **741 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **737 KB** in
-byte LF il 2026-08-19, e possono solo crescere; la spec da sola ne fa **277** — e l'idea è
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **741 KB** in
+byte LF il 2026-08-20, e possono solo crescere; la spec da sola ne fa **277** — e l'idea è
 già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
 aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione
 per cui la riga qui sopra prezza i token come **limite inferiore** e non come totale — un
@@ -101,8 +101,13 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 ## Prima di eseguire un compito di un piano
 
 ⛔ **Un piano è un'ipotesi, e il pre-controllo di ogni compito _prima_ di dispacciarlo ha
-trovato almeno un difetto reale in ventidue compiti su ventidue** — dodici su dodici al
-Traguardo 3, dieci su dieci al Traguardo 4. Si fanno **quattro domande**,
+trovato almeno un difetto reale in TUTTI i compiti dispacciati finora, senza una sola
+eccezione** — dodici su dodici al Traguardo 3, dieci su dieci al Traguardo 4, e **tutti** quelli
+eseguiti del Traguardo 5, il cui numeratore vive nella **§6 del compendio** e non qui.
+⚠️ **Questa riga portava il totale — *«ventidue su ventidue»* — e contava due traguardi su tre**:
+un cumulativo invecchia a ogni compito, mentre *«tutti, senza eccezione»* è un'affermazione che
+resta vera mentre il conto cresce, come il *«oltre mezzo megabyte»* qui sopra. Tolto, non
+riallineato. Si fanno **quattro domande**,
 e **ciascuna coglie ciò che le altre tre non colgono**. Il testo lungo, coi casi, sta nel
 gotcha **#49** della §9 del compendio e in [`docs/AVVIO-CHAT.md`](docs/AVVIO-CHAT.md): qui c'è
 il solo elenco, perché è quello che si rilegge prima di dispacciare.

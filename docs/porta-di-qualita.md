@@ -1311,10 +1311,12 @@ la stessa frase chiudeva la voce `E91`. ✅ **Riscritte — non affiancate — n
 correzioni del 2026-08-20**, e la premessa scaduta è stata **rimisurata invece che dedotta**: con
 un aiutante privato di `impl Held` raggiungibile **solo** da dentro `ask_back`,
 `cargo build --locked --workspace` stampa **zero** avvisi, perché `admit` arriva ad `ask_back` e
-niente dietro di lui è più morto. ⚠️ **E la §6 del compendio NON è stata toccata**, deliberatamente:
-lì il Task 8 è ancora *«il prossimo passo»* perché il commit di consegna non c'è ancora, e
-riallineare due frasi dentro una sezione ferma a un compito prima la lascerebbe **più**
-contraddittoria, non meno (gotcha **#68**). Voce `E99`.
+niente dietro di lui è più morto. ⚠️ **E la §6 del compendio NON è stata toccata da
+quest'ondata**, deliberatamente: quando è stata scritta questa riga il Task 8 vi era ancora
+*«il prossimo passo»*, perché il commit di
+consegna non c'era, e riallineare due frasi dentro una sezione ferma a un compito prima l'avrebbe
+lasciata **più** contraddittoria, non meno (gotcha **#68**). ✅ **Quella sezione si è mossa come un
+blocco alla consegna del 2026-08-20**, che è ciò che questa riga prevedeva. Voce `E99`.
 
 ⛔ **`E41`/`E51`/`E53` NON SI SONO MOSSE, MA LA LORO INTERAZIONE HA CAMBIATO SPECIE CON QUESTO
 COMMIT: da TEORICA a RAGGIUNGIBILE IN PRODUZIONE.** `admit` riscuote e concede subito se c'è

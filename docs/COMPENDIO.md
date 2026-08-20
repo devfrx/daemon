@@ -15,10 +15,10 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (741 KB in byte LF il 2026-08-20, e possono solo crescere — la spec da sola ne fa 277), e
+> (745 KB in byte LF il 2026-08-20, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-08-20**, al Task 7 del Traguardo 5. Manutenzione: §13.
+**Aggiornato il 2026-08-20**, al Task 8 del Traguardo 5. Manutenzione: §13.
 ⚠️ Questa riga diceva **2026-08-11** dopo decine di passate: è il gotcha **#31** sull'intestazione,
 che nessuno rilegge perché è la cornice e non il contenuto — la stessa che l'audit trovò su
 [`HANDOFF.md`](HANDOFF.md).
@@ -901,16 +901,14 @@ tabella sola in [`porta-di-qualita.md`](porta-di-qualita.md) invece che in quatt
 quattro voci aperte sullo stesso oggetto sono il modo in cui una smette di esserlo senza che
 nessuno l'abbia chiusa.
 
-⏭️ **IL PROSSIMO PASSO È IL TASK 8 DEL TRAGUARDO 5** — `VramPolicy`, due oggetti, e la
-decisione che sta **dentro** l'ammissione.
-⛔ **L'esecuzione è in corso dal 2026-08-19: sette compiti su tredici, `GATE GREEN` a
+⏭️ **IL PROSSIMO PASSO È IL TASK 9 DEL TRAGUARDO 5** — la transizione di policy come **passo
+giornalato**, e con essa la metà di contro-sonda che il Task 8 lascia aperta su `V3`.
+⛔ **L'esecuzione è in corso dal 2026-08-19: otto compiti su tredici, `GATE GREEN` a
 ciascuno**, subagent-driven, un compito per volta con revisione fra uno e l'altro. Il racconto
-sta nel riquadro subito sotto, e ciò che chi riprende deve sapere **prima** di aprire il Task 8
-sta in fondo a quel riquadro — ⛔ **e sono MISURE e non previsioni**, perché il Task 7 è stato
-eseguito. ⚠️ **E una di quelle misure ha una SCADENZA che cade proprio lì:** i due avvisi
-`dead_code` che il Task 7 ha lasciato viaggiare di proposito devono sparire al Task 8, e se sono
-ancora lì `ask_back` **si toglie**.
-⚠️ **Il numeratore ha detto *«quattro»*, *«cinque»* e *«sei»*: lo muove chi esegue, e da oggi
+sta nel riquadro subito sotto, e ciò che chi riprende deve sapere **prima** di aprire il Task 9
+sta in fondo a quel riquadro — ⛔ **e sono MISURE e non previsioni**, perché il Task 8 è stato
+eseguito.
+⚠️ **Il numeratore ha detto *«quattro»*, *«cinque»*, *«sei»* e *«sette»*: lo muove chi esegue, e
 vive QUI e in nessun altro punto di questa sezione** — ne teneva una seconda copia quattro
 riquadri più sotto, che è il modo in cui una copia marcisce senza che nessuna delle due sembri
 sbagliata (gotcha **#68**).
@@ -939,20 +937,30 @@ alla §6, in un posto solo.
 | **Task 5** | **l'arbitro che ammette e rilascia**: `Parameters` guadagna `total_vram` — **consegnato e non chiesto**, ed è l'unico dei tre addendi della §5.1 a esserlo — e `Arbiter` nasce con `admit`, `release` che **consuma** la concessione, e `allocated`. ⛔ **La scadenza E10 è SCATTATA E RISPETTATA:** il warning che il Task 4 aveva lasciato viaggiare di proposito è sparito perché `release` legge `Grant::id`, cioè il campo serviva davvero — `cargo build --locked --workspace` a **zero warning**, verificato | `d662644` · `681798e` · `70e0a22` |
 | **Task 6** | **le code, e sono per corsia**: `Admission::Queued` guadagna un **produttore**, `promote` serve **prima la corsia migliore** e dentro la corsia **per arrivo**, e la costruzione di una concessione si estrae in `issue` — l'**unico** posto della crate che ne costruisce una, che è ciò che la §5.6 esiste per tenere. ⛔ **E la revisione ha trovato un mutante vivo nell'INTERO workspace:** `promote` che non serviva mai la corsia `Realtime` lasciava **34 target su 34 verdi**, perché nessuna sonda promuoveva un'attesa in quella corsia — *«prima la corsia migliore»* era provato solo sulla **seconda** migliore. Il codice era giusto; a mancare era la **prova**. Gotcha nuovo **#74** | `47941dd` · `b297911` · `c919cee` |
 | **Task 7** | **la revoca, e la grazia che scade**: `Arbiter::revoking()`, `ask_back` che **marca e non prende** — la riserva resta nei libri per tutta la grazia — e `collect_expired` che diventa una riscossione a **due scadenze**, la finestra dichiarata dal richiedente e la grazia che una revoca ha dato. `Held` guadagna **tre** campi (`lane`, `activity`, `grace`) e ne ha **cinque**. ⛔ **Tre decisioni del proprietario prese eseguendo:** `ask_back` resta **`pub(crate)`** e le sue sonde vivono in un `#[cfg(test)] mod tests` **dentro `crates/kernel/src/arbiter/mod.rs`** — il primo di `kernel`, sul precedente di `crates/platform/src/rng.rs` — perché il doc del tipo dice che *«fare spazio è la conseguenza di una richiesta, mai una cosa che qualcuno chiede»*; i **due avvisi `dead_code`** sono **ratificati** con scadenza al Task 8, **nessun `#[allow]`**, avviso **visibile**, sul precedente di `E10`; e `ask_back` **non marca vittime quando il recuperabile non copre il bisogno**, riclassificato da politica aperta a **difetto** — sfrattare un lavoro per una richiesta che non si siede comunque è il degrado silenzioso vietato da ADR-0005 e ADR-0019 | `1b5af8d` · `7b3882e` · `83c7242` · `701987c` |
+| **Task 8** | **le due policy VRAM, e la decisione sta dentro l'ammissione**: il tratto `MakeRoom` con **una domanda sola** — *«una richiesta non entra: si può fare spazio?»* — `RemotePolicy` e `LocalPolicy` come **due oggetti**, e `VramPolicy` che ne tiene **uno alla volta**, che è `V3` al **livello 1**: *«due policy attive»* non è pronunciabile. Il ramo d'ammissione chiede la domanda in **un posto solo**; l'accodamento è **estratto** in `enqueue`, a comportamento provato invariato; e il modulo `arbiter` è ora la **cartella con tre file** che la struttura del piano prevedeva. ⛔ **E ciò che rende il compito possibile solo a questo punto del traguardo:** *«sfrattare un residente»* **è** *«revocare una concessione prelazionabile»*, cioè il meccanismo che il Task 7 ha costruito — quindi le due policy non sono gusci vuoti e non serve **nessun modello** per distinguerle (ADR-0020). Era la domanda che il disegno aveva lasciato aperta | `4b89fea` · `ea0cc09` · `a53907e` · `b49c835` |
 
-📌 **I numeri, misurati e non dedotti:** `cargo test --workspace --no-fail-fast --locked` →
-**34 target, 236 passati, 0 falliti, 2 ignorati** (erano 32 e 194 all'apertura del traguardo, e
-222 alla chiusura del Task 6); i casi di `compile_fail` restano **ventotto**, e né il Task 6 né
-il Task 7 ne hanno aggiunto — le loro sonde sono tutte di livello 2. Le sonde del Task 7 sono
-**tredici** nel `#[cfg(test)] mod tests` di `crates/kernel/src/arbiter/mod.rs` e **venti** in
-`crates/kernel/tests/arbiter_admission.rs`; la campagna di mutazione è a **ventisei** righe.
+📌 **I numeri, misurati e non dedotti:** `cargo test --locked --workspace --no-fail-fast` →
+**35 target, 243 passate, 0 fallite, 2 ignorate** (erano 32 e 194 all'apertura del traguardo,
+222 alla chiusura del Task 6 e **34 e 236** a quella del Task 7); i casi di `compile_fail`
+passano da **ventotto** a **ventinove** — il Task 8 ne aggiunge **uno**, il caso negativo di
+`V3`, ed è il primo da tre compiti: né il Task 6 né il Task 7 ne avevano aggiunti. E
+`cargo build --locked --workspace` è a **zero avvisi**, erano **due**.
+⚠️ **Quante sonde stiano in ciascun banco NON è più scritto qui:** il conteggio vive in
+[`porta-di-qualita.md`](porta-di-qualita.md), accanto alle sonde — che per giunta ne **rivendica
+l'unicità** — e questa riga ne teneva una copia, cioè il gotcha **#68** fra due documenti.
+**Tolta, non riallineata.**
 ⛔ **E il conteggio della baseline che
 il piano scrive nei propri passi è STANTIO per costruzione** — dice *«32 target, 194 passati»*,
 che era vero prima del Task 1: ogni compito **misura la propria** prima di cominciare, o
 confronta contro un numero che i compiti precedenti hanno già spostato.
 
-⛔ **L'errata del piano è a OTTANTASEI voci in sette compiti — TRENTA dal solo Task 7, da `E57`
-a `E86` — e il pre-controllo ha trovato un difetto in sette compiti su sette**, NOVE al Task 7,
+⛔ **L'errata del piano è a CENTODODICI voci in otto compiti — VENTISEI dal solo Task 8, da
+`E87` a `E112` — e il pre-controllo ha trovato un difetto in otto compiti su otto**, OTTO al
+Task 8, di cui **due bloccanti per costruzione**: il codice dettato chiamava un `enqueue` che
+**non esiste**, e una sonda dettata non compilava perché `name()` vive solo sul tratto e
+`MakeRoom` non era nella lista `use`. ⚠️ **E una cifra del pre-controllo stesso era sbagliata** —
+diceva *«cinque siti in quattro file»*, i file sono **cinque**: `E101`, e la misura ha ora una
+casa sola. Il Task 7 ne aveva prodotti NOVE,
 fra cui uno che lo rendeva **incompilabile per costruzione**: il Passo 1 metteva in un banco
 d'integrazione — che è una crate a sé — sonde che chiamano un `pub(crate)`, cioè
 `` error[E0624] ``, misurato prima di dispacciare. Nessuna riapre una decisione: cadono
@@ -964,7 +972,7 @@ più un **oracolo** che nessuno aveva contato perché non è un chiamante), e �
 l'iterazione del `BTreeMap` invece che con un array esplicito, perché l'array direbbe l'ordine
 una **seconda** volta, che è la trappola per cui `ComputeClass` non deriva `Ord`).
 ⛔ **E il Task 5 ha prodotto TRE decisioni di disegno REGISTRATE E NON PRESE**, che aspettano il
-proprietario e non bloccano il Task 8: **E30** — `release` risponde `UnknownGrant` anche a una
+proprietario e non bloccano il Task 9: **E30** — `release` risponde `UnknownGrant` anche a una
 concessione **propria ma scaduta**, perché riscuote prima di cercare, e il nome della variante
 afferma allora il falso; ⚠️ **va decisa prima del Traguardo 6**, dove `Worker::kill` restituisce
 la concessione a lavoro **finito**, che può benissimo essere dopo la finestra. ⛔ **E il Task 7
@@ -1016,7 +1024,7 @@ nella prosa**, cioè in ciò di cui un'ondata di correzioni è fatta. 📌 ***«
 è un argomento PER rivedere, non contro.**
 
 ⛔ **E DUE DECISIONI NUOVE ASPETTANO IL PROPRIETARIO — `E50` ed `E51`, chiusore il Task 10.**
-Nessuna è un difetto oggi, nessuna blocca il Task 8, ed **entrambe sono dichiarate non tenute nel
+Nessuna è un difetto oggi, nessuna blocca il Task 9, ed **entrambe sono dichiarate non tenute nel
 sorgente** invece che pinzate da una sonda. **E50** — fra corsie `promote` **scavalca**, cioè fa
 esattamente ciò che il suo stesso commento rifiuta *dentro* una corsia, con un'inversione di
 priorità sopra: misurato, un'attesa `Realtime` da 4096 accodata **prima** di una `Batch` da 1024
@@ -1031,6 +1039,18 @@ contro il prenderla»*. ⛔ **Il costo è scritto accanto ai due paragrafi:** so
 quella di allora perché è l'istantanea di allora — e i paragrafi diventano **falsi in silenzio**
 il giorno in cui il Task 10 cambiasse l'ordine. ⚠️ **Il Task 7 non lo ha cambiato:** `ask_back`
 percorre le corsie dalla **peggiore**, che è un'altra operazione e un'altra regola.
+⛔ **RICHIAMO DEL 2026-08-20 — IL TASK 8 NON HA CAMBIATO L'ORDINE MA HA CAMBIATO LA SPECIE DI
+`E51`: da TEORICA a RAGGIUNGIBILE IN PRODUZIONE**, e la frase si riscrive invece di ricevere una
+riga sotto. Fino al Task 7 `ask_back` non aveva chiamanti di produzione, quindi **nessuna revoca
+avveniva mai** fuori da una sonda e la stanza che una revoca libera **non esisteva**: non c'era
+niente da scavalcare. Sotto `VramPolicy::Local` c'è — si chiede indietro un residente **per** un
+biglietto in coda, la spazzata libera quella riserva alla scadenza della grazia, e il primo
+`admit` diretto si siede sulla stanza fatta per un altro. ✅ **Misurato nelle due direzioni** su
+una sonda usa-e-getta cancellata subito dopo: **LOCAL** → il ritardatario è `Granted`, `promote`
+torna vuoto e il biglietto resta in coda; **REMOTE**, che è il mondo prima del Task 8 → lo stesso
+ritardatario è `Queued`. ⚖️ **Il chiusore resta il Task 10**, ed è ancora una decisione di
+orchestrazione: ciò che cambia è che il costo di lasciarla aperta si paga ora **in produzione** e
+non sulla carta. Voce `E100`.
 
 ⛔ **E CIÒ CHE IL TASK 6 LASCIAVA AL TASK 7 È STATO MISURATO, e il riquadro si riscrive invece
 di appenderci sotto una riga vera** (finding **A-2**). ① Diceva che `Held` ha **due** campi e che
@@ -1086,17 +1106,83 @@ proprietario lo chiuderà, perché non c'è niente da decidere. Resta perché è
 riga di catalogo:** la §7.4 è **spec** (vincolo globale 7), quindi si **registra** e non si
 prende — stesso trattamento di `PL-1` e di `K-1`/`B-1`, stessa ragione (gotcha **#36**).
 
-⛔ **E CIÒ CHE IL TASK 7 LASCIA AL TASK 8, che NON è un pre-controllo: quello si fa prima di
+✅ **E LA SCADENZA `E67`/`E74` È SCATTATA ED È STATA ONORATA AL TASK 8 — è la parte falsificabile
+del Task 7, e queste righe sono MISURE e non più previsioni.** I **due avvisi `dead_code`** che il
+Task 7 aveva lasciato viaggiare di proposito — `` fields `lane` and `grace` are never read `` e
+`` method `ask_back` is never used ``, **nessun `#[allow]`** — sono spariti **da soli**: `admit`
+sotto `LocalPolicy` è diventato il chiamante di produzione di `ask_back`, e `ask_back` legge
+`lane` e `grace`. ✅ `cargo build --locked --workspace` → **zero avvisi**, erano due.
+⛔ **Il precedente di `E10` — campo tenuto, avviso visibile, nessun `#[allow]`, scadenza scritta
+accanto al codice — ha ora retto DUE volte su DUE**: è la sola forma di debito che questo
+traguardo si concede, e si ripaga da sé perché il compilatore la ricorda.
+⛔ **MA LA SCADENZA ERA RIMASTA SCRITTA AL PRESENTE ACCANTO AL CODICE, e il commit del compito non
+la toccava:** chi arrivava dopo vi leggeva l'ordine di **togliere il metodo appena diventato la
+spina dorsale di `LocalPolicy`**, e il rapporto la dava per tolta mentre nel diff **non c'era
+nessun hunk**. Corretta nella prima ondata (`E99`), e la falsità del rapporto registrata nella
+seconda (`E107`) — perché l'ondata che la chiudeva aveva a sua volta dichiarato di aver riscritto
+**due** frasi avendone riscritta **una**.
+
+⛔ **E IL DATO DEL TASK 8 NON È CIÒ CHE HA PORTATO: È ANCORA QUANTO È COSTATO PROVARLO — ma
+stavolta c'è anche il RIMEDIO, misurato invece che sperato.** Tre revisioni piene più una stretta
+sulla prosa, come al Task 7, e ciascuna delle prime tre ha trovato difetti reali:
+① una **scadenza scaduta** rimasta al presente nel doc di `ask_back`, quella qui sopra;
+② i due argomenti che `admit` **calcola** per `ask_back` — lo **scarto** e la **corsia** — tenuti
+da **nessuna** sonda, perché lo scenario del banco era **degenere**: `ceiling`, `allocated`,
+`asked` e `needed` valevano tutti lo stesso numero, quattro grandezze che coincidono e nessuna
+asserzione che possa distinguerle. **Due mutanti vivi sull'intero workspace** con conseguenze
+vere, di cui uno faceva **degradare `LocalPolicy` a `Remote` in silenzio** su una macchina
+parzialmente piena;
+③ un **aiutante di banco che non teneva niente**, e il cui doc dichiarava il contrario.
+📌 **E la costante: NOVE volte in due compiti un'ondata di correzioni ha chiuso dei rilievi
+APRENDONE DI NUOVI NELLA PROSA scritta per chiuderli**, e **due** volte un **rapporto** ha
+dichiarato fatta una correzione **assente dal diff**. ⛔ Il codice regge alla prima o alla seconda
+passata; le frasi no.
+✅ **E IL RIMEDIO CHE HA FUNZIONATO, ED È IL GOTCHA NUOVO #76:** all'ultima ondata è stata data
+l'istruzione di **TOGLIERE invece di riscrivere meglio** — **quattordici** righe messe contro
+**diciassette** tolte, **una** sola voce d'errata per l'intera passata — e la revisione successiva
+è tornata **pulita**. Il ciclo si è chiuso in **una** passata invece di spiralare.
+📌 *Meno parole, meno superficie per una falsità nuova.*
+⛔ **E la scelta fra gotcha nuovo e forma del #45 è scritta invece di essere lasciata implicita:
+è NUOVO.** Il #45 dice che il rimedio **nasce non provato**, e prescrive di rivedere l'ondata
+**come** il compito: agisce sul **numero di giri**. Il #76 dice quale **forma** di rimedio
+converge, e agisce sull'**istruzione** che si dà all'ondata. Due leve diverse, e la seconda porta
+una misura che la prima non ha.
+⚠️ **E gli altri due candidati NON sono stati promossi, il che è a sua volta una decisione:** una
+**correzione dichiarata e assente dal diff** (`E107`, quinta occorrenza) è coperta fra il **#65**
+— *un rapporto è un'affermazione come le altre* — e il **#45**; e una **revoca di mutazione
+fallita a metà**, che ha lasciato un file mutato per sette righe ed è stata colta dal `cmp` del
+protocollo e **non da un test** (`E111`), è una forma del **#48**. ⛔ Un gotcha che non insegna
+niente **diluisce quelli che insegnano**, e la §9 è l'elenco che si rilegge per primo.
+
+⛔ **E TRE VOCI SONO REGISTRATE E NON PRESE, nessuna delle quali è un difetto oggi.** **`E94`** —
+la policy è consegnata come **secondo argomento** di `Arbiter::new`, mentre §2.8.2 e
+[ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md) fondano `V3` sul **valore
+consegnato**, cioè `Parameters`. ✅ La forza di `V3` è **identica**, misurata; ma spostarla dentro
+`Parameters` tocca un tipo che la §2.8 pinza con **due** righe di catalogo, e quanti chiamanti
+abbia lo dice `E94` — qui non si ripete. Non è una rifinitura. **`E100`** — l'inversione di priorità di `E51`, sopra; chiusore il
+**Task 10**. **`E104`** — una **dominanza** nuova fra sonde, dichiarata e **non cancellata**: una
+campagna è un campione, non una dimostrazione (forma di `E37`/`E79`/`E93`). E restano aperte le
+voci del Task 7.
+⚠️ **`V3` È CONTATA PARZIALE E NON COPERTA, e va detto qui perché è l'innesco di un compito
+futuro:** metà della sua contro-sonda di catalogo — *«e la transizione resta un passo giornalato
+(§5.4)»* — è del **Task 9**, quindi la riga di §7.4.1 blocco C chiude a metà, sul precedente che
+[`porta-di-qualita.md`](porta-di-qualita.md) applica già due volte. ⛔ **Il numeratore delle righe
+coperte sta lì e non qui**, in una casa sola: scriverlo anche in questa sezione lo metterebbe in
+due documenti, che è il gotcha **#68**.
+
+⛔ **E CIÒ CHE IL TASK 8 LASCIA AL TASK 9, che NON è un pre-controllo: quello si fa prima di
 dispacciarlo, contro il codice di allora.** Qui c'è solo ciò che è **misurato oggi**.
-① **Due avvisi `dead_code` viaggiano di proposito** — `` fields `lane` and `grace` are never
-read `` e `` method `ask_back` is never used `` — **nessun `#[allow]`**, e la **scadenza è il
-Task 8**, scritta in due posti: nell'errata (`E67`, `E74`) e **accanto al codice**, in coda al doc
-di `ask_back`. ⛔ **Se al Task 8 sono ancora lì, `ask_back` si toglie**: è il precedente di `E10`,
-la cui scadenza scattò e fu **rispettata** al Task 5. ⚠️ **E non si spengono aggiungendo sonde**,
-per la ragione misurata due riquadri sopra. ② L'unico chiamante di produzione previsto per
-`ask_back` è **l'ammissione sotto policy locale**, cioè il Task 8: è quel compito a chiudere sia
-la scadenza sia la voce. ③ La baseline da cui il Task 8 parte è **34 target, 236 passati, 0
-falliti, 2 ignorati** — e si rimisura, non si cita.
+① **Il ramo nuovo è tenuto da un banco solo**, `crates/kernel/tests/arbiter_policy.rs`: togliendo
+la domanda dall'ammissione in **entrambe** le direzioni gli altri due bersagli restano interamente
+verdi, quindi cancellare quel file non produrrebbe nessun altro rosso. Non è un difetto — nessuna
+sonda pre-esistente costruisce un residente prelazionabile in una corsia inferiore — ma è il
+terreno su cui il Task 9 costruisce. ② **La metà giornalata della contro-sonda di `V3` si chiude
+lì**, e con essa la riga di catalogo. ③ **Le celle `arbiter_admission` e `lib` della campagna non
+sono rimisurate da due ondate**, con la ragione dichiarata — nessuna delle due ha toccato quei
+bersagli — che è però esattamente la forma d'argomento che il gotcha **#31** punisce quando smette
+di essere vera: **il primo compito che tocca `crates/kernel/tests/arbiter_admission.rs` le
+rimisura tutte.** ④ La baseline da cui il Task 9 parte è **35 target, 243 passate, 0 fallite, 2
+ignorate** — e si rimisura, non si cita.
 
 ⛔ **E il Task 5 ha insegnato DUE cose, entrambe uscite dalla revisione e non dall'esecuzione.**
 La prima è il gotcha nuovo **#73** — *fissare con una sonda un comportamento che una decisione
@@ -1108,7 +1194,7 @@ una garanzia mentre un numero stantio si vede, e l'undicesima sonda ha tolto l'e
 righe del registro senza che nulla lo dicesse (`E38`).
 ⚠️ **E una voce aperta REGISTRATA E NON PRESA, sul modo di lavorare e non sul prodotto:**
 `CLAUDE.md` prescrive che alla chiusura di ogni voce si aggiorni [`riferimenti.md`](riferimenti.md)
-*«se la voce ha portato una misura o una fonte»*, e i **sette** compiti del Traguardo 5 ne hanno
+*«se la voce ha portato una misura o una fonte»*, e gli **otto** compiti del Traguardo 5 ne hanno
 portate a decine **senza toccarlo**: vivono tutte in [`porta-di-qualita.md`](porta-di-qualita.md),
 accanto alla sonda che difendono. ⛔ Non è stato appianato qui perché scegliere fra *«spostarle»* e
 *«cambiare la regola»* è una decisione del proprietario, e cominciare a farlo a metà traguardo
@@ -1117,7 +1203,12 @@ chiuderla:** da solo ha portato **quindici** mutazioni misurate, tutte nel regis
 `riferimenti.md`. ⛔ **E il Task 7 l'ha allargata ANCORA, ed è la prova più forte finora:** la sua
 campagna è a **ventisei** righe — quasi il doppio di quella del Task 6 — rimisurata **da capo tre
 volte** perché la suite cresceva sotto di lei, e il file è cresciuto di **quarantaquattro
-kilobyte** in un compito solo, mentre `riferimenti.md` è rimasto **immobile a 198**. La voce resta
+kilobyte** in un compito solo, mentre `riferimenti.md` è rimasto **immobile a 198**.
+⛔ **E il Task 8 l'ha allargata una QUARTA volta, con la prova di specie diversa che mancava:** la
+sua campagna è stata **rieseguita per intero due volte in un giorno** — perché il banco cresceva
+sotto di lei, e poi perché un aiutante ne è stato tolto — e in una di quelle riesecuzioni **lo
+strumento di misura ha sbagliato**, colto dal `cmp` del protocollo. ⚠️ Sono esattamente *«le
+fonti e i comandi»* di cui parla la §13, e stanno **tutte** nel registro. La voce resta
 **registrata e non presa**, con una prova in più e non con una risposta: ⛔ **questa passata NON
 ha toccato `riferimenti.md`, deliberatamente**, perché spostare le misure comincerebbe la
 convenzione nuova senza che nessuno l'abbia scelta.
@@ -1830,7 +1921,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I settantacinque gotcha
+## 9. I settantasei gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -1912,6 +2003,7 @@ Il testo completo, con le misure, è in `HANDOFF.md`.
 | 73 | ⛔ **Fissare con una sonda un comportamento che una DECISIONE APERTA può cambiare trasforma la sonda in un voto contro il prenderla.** Misurato il 2026-08-19, chiudendo il Task 5 del Traguardo 5. `Arbiter::release` riscuote le scadute **prima** di cercare, quindi risponde `UnknownGrant` anche a una concessione **propria ma scaduta** — tre valori misurati su una crate usa-e-getta (`5_001` → `Err`, `4_999` → `Ok`, `5_000` → `Err`) e scritti accanto al tipo. ⛔ **Una sonda che asserisse `Err` a `5_001` congelerebbe esattamente ciò che `E30` mette davanti al proprietario:** il giorno in cui arrivasse la variante `Expired`, quella sonda andrebbe **rossa per aver avuto ragione**, e chi decide si troverebbe davanti un test da cancellare — cioè un costo che gioca contro la decisione invece che contro l'errore. ⚠️ **Non è una deroga alla regola delle due direzioni** (§7.1.4, gotcha #14): quella pretende una sonda per ogni **regola**, e qui non c'è ancora una regola — c'è una **conseguenza** di una scelta dichiarata aperta. ⛔ **E il costo si scrive invece di tacerlo**, o la rinuncia diventa una dimenticanza: spostare la riscossione dopo la ricerca — una delle due strade che `E30` nomina — **non renderebbe rosso nulla**, e il paragrafo misurato diventerebbe falso in silenzio. 📌 **Le due domande:** *questa asserzione fissa un comportamento o una DECISIONE?* e, se è una decisione, *chi la prenderà dovrà cancellare un test per prenderla?* |
 | 74 | ⛔ **Una regola che ORDINA N cose si prova con una sonda che ne nomina DUE, e l'elemento in cima — quello per cui la regola esiste — è quello che nessuno costruisce.** Misurato il 2026-08-19, in revisione del Task 6 del Traguardo 5. `Arbiter::promote` deve servire *«prima la corsia migliore»*, e le corsie sono **tre**: `Realtime` · `Interactive` · `Batch`. La sonda che prova la regola metteva `Interactive` contro `Batch` — il caso che viene naturale, perché è quello **ordinario** — e nessuna sonda del repository promuoveva mai un'attesa in corsia `Realtime`. ⛔ **Il mutante che salta la corsia in cima** (`if *lane_key == ComputeClass::Realtime { continue; }`) **lasciava 34 target su 34 verdi**: sopravviveva all'intero workspace, non solo al proprio file. Cioè la proprietà di punta del compito era provata **sulla seconda corsia migliore**, e la prima — quella dell'audio always-on, delle quote permanenti di ADR-0033 e dei numeri di M-7 — non era esercitata da niente. ⚠️ **Il codice era corretto**: il difetto stava **interamente nella prova**, che di quel compito era il prodotto principale. ⛔ **Non è il #63**, dove una promessa è provata solo nello stato in cui ogni guardia plausibile passa: qui lo stato non è degenere, è il **dominio** a essere parziale. **Non è il #24**, che chiede le due direzioni: le due direzioni c'erano entrambe. **E non è il #55**: nessun messaggio condiviso, nessuna asserzione che ne mascheri un'altra. 📌 **La causa è che «un caso normale» e «il caso in cima a un ordine» non coincidono mai**, e chi scrive la sonda costruisce il primo. Chiusa portando la sonda a **tre** corsie: lo stesso mutante è ora **rosso e solo**. 📌 **La domanda, e costa una riga:** *questa regola ordina N cose, e la sonda ne nomina quante — e fra quelle nominate c'è quella in cima?* |
 | 75 | ⛔ **Un'ESCLUSIVITÀ misurata su un campione che esclude la classe portante si legge come una garanzia, e la misura non poteva dare l'altra risposta.** Misurato il 2026-08-20, in **terza** revisione del Task 7 del Traguardo 5. Un'asserzione era dichiarata **vacua** accanto al codice — *«ciò che tiene questa sonda sono le due asserzioni sopra»* — con una misura d'isolamento a sostegno. ⛔ **Rimisurata guardando QUALE asserzione va in panico**, e non se la sonda sia rossa, era l'**uccisore solo** su due righe di campagna (`5b` e `5d`), dove le due asserzioni sopra di lei **passano**. ⛔ **La causa è il CAMPIONE:** la misura d'isolamento aveva applicato **solo** mutazioni della funzione sotto esame, cioè precisamente la classe sotto cui quell'asserzione **non può** fallire, e non ha mai eseguito le righe in cui è portante. ⚠️ **Non è il #38**, dove l'atto di misurare **modifica** lo stato: qui non si modifica niente, e lo strumento risponde correttamente — a essere scelta male è la **popolazione**. ⚠️ **E non è la quarta forma del #31**, dove un qualificatore era vero e **invecchia**: questo era **falso alla nascita**, e nessuna rimisura del *numero* lo avrebbe colto, perché il numero era giusto. 📌 **Il contro-verso, e costa una riga:** *questa misura d'esclusività ha eseguito la classe in cui l'affermazione sarebbe portante?* Se la risposta è no, ciò che si è misurato non è l'esclusività ma il **campione**. 📌 **E il corollario:** una **negazione** — *«non morde»*, *«è vacua»*, *«nessuna sonda lo tiene»* — è l'affermazione che più facilmente si prova su un campione parziale, perché il campione lo sceglie chi ha già la risposta in testa |
+| 76 | ⛔ **Un'ondata di correzioni che RISCRIVE crea la superficie del proprio giro successivo; una che TOGLIE la chiude — misurato, non argomentato.** Misurato il 2026-08-20, chiudendo il Task 8 del Traguardo 5. Fra Task 7 e Task 8, **nove** volte un'ondata mandata a chiudere dei rilievi ne ha aperti di nuovi **nella prosa scritta per chiuderli** — e **due** volte un **rapporto** ha dichiarato fatta una correzione **assente dal diff**. ✅ **All'ultima ondata è stata data un'istruzione diversa — *toglierlo* invece di *riscriverlo meglio* — e il ciclo si è chiuso in UNA passata invece di spiralare:** **quattordici** righe messe contro **diciassette** tolte, **una** sola voce d'errata per l'intera ondata, e la revisione successiva **pulita**. 📌 *Meno parole, meno superficie per una falsità nuova.* ⚠️ **Non è il #45**, che dice che il rimedio **nasce non provato** e prescrive di rivedere l'ondata **come** il compito: quello agisce sul **numero di giri**, questo sulla **forma** del rimedio, cioè sull'istruzione che si dà a chi lo scrive — e la porta con una misura, che il #45 non ha. ⛔ **Il limite, dichiarato perché la regola non si applichi dove non vale:** togliere funziona quando ciò che è falso è una **qualificazione** o un **conteggio** accanto a un fatto che regge — l'aggettivo invecchiato, il numero accanto a una tabella che si può contare, la rivendicazione d'unicità smentita da una casa in più. Quando a essere sbagliato è **il fatto**, non c'è niente da togliere: si riscrive, col richiamo datato. 📌 **La domanda, e costa una rilettura della propria correzione prima di committarla:** *quanto di questa frase è un fatto che ho misurato, e quanto una qualificazione che gli ho messo intorno?* |
 
 ---
 
@@ -3424,6 +3516,86 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > ventottesima applicazione.
+
+> 🔁 **Quarantacinquesima misura, il 2026-08-20, chiudendo il Task 8 del Traguardo 5 — e il file
+> che cresce di più non è più il registro: è il PIANO.** In byte LF, `int(n/1024 + 0.5)`, a
+> passata chiusa; righe contate **partendo dall'elenco dei file citati** e non da quelle presenti,
+> che è il movimento della quindicesima.
+>
+> | | |
+> |---|---|
+> | ⛔ **cresciuti, e i primi due sono il dato** | il **piano del Traguardo 5** `288 → 334` — **+46 KB da un compito solo**, ed è l'errata da `E87` a `E112`, **ventisei** voci · [`porta-di-qualita.md`](porta-di-qualita.md) `288 → 323`, **+35**, il registro che assorbe una campagna **rieseguita per intero due volte in un giorno** · questo file `394 → 412` · [`HANDOFF.md`](HANDOFF.md) `242 → 245`, il testo integrale del gotcha **#76** · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) `27 → 28` |
+> | ⛔ **e l'invarianza di [`riferimenti.md`](riferimenti.md) è per la QUARTA volta di seguito il dato** | **198**, immobile, mentre gli altri due grandi crescevano di ottantuno kilobyte fra loro. La voce aperta della 41ª, 42ª e 44ª con una prova in più — la campagna del Task 8 è stata **rieseguita da capo due volte**, e in una di quelle riesecuzioni **lo strumento di misura ha sbagliato** — e non con una risposta: scegliere fra *«spostare le misure»* e *«cambiare la regola»* resta del proprietario, e questa passata **non ha toccato il file**, deliberatamente |
+> | **invariati, ricontati** | spec del sotto-progetto 1 **277** · kernel-design 44 · disegno T5 31 · disegno T4 30 · [`audit-2026-08-11.md`](audit-2026-08-11.md) 31 · `CLAUDE.md` 14 · [`roadmap.md`](roadmap.md) 31 · [`README.md`](README.md) 19 · [`tracciabilita.md`](tracciabilita.md) 15 · [`semi-dst.md`](semi-dst.md) 6 · `design/08` 11 · `design/01` 5 · `design/` nove file **`5–11`** · gli altri piani 68, 50, 162, 168, 114 · ADR **`2–19`** |
+>
+> ⛔ **E LA NOTIZIA È CHE `288` AVEVA SMESSO DI IDENTIFICARE UN FILE.** Alla 44ª misura il registro
+> **e** il piano leggevano **entrambi** `288`, e la cella li elencava così, uno accanto all'altro:
+> oggi sono **323** e **334**. ⚠️ **Finché coincidevano, un `grep '288'` restituiva case di due
+> specie diverse senza modo di distinguerle** — è il **#70** nella sua forma più pura, non un numero
+> nudo pescato per un'altra ragione ma lo **stesso** numero che nomina due cose. ✅ È il motivo per
+> cui in [`AVVIO-CHAT.md`](AVVIO-CHAT.md) la cifra del piano è stata **ridotta a una casa** invece
+> che riallineata in tre: ne aveva **tre**, e due lo usavano come **nome** del file da aprire
+> (*«il piano da eseguire è il 288»*) invece che come peso. Il piano è ora nominato per
+> **posizione** — *il più grande dei quattro* — che è vero mentre cresce.
+>
+> ⛔ **E QUESTA PASSATA HA TOLTO CIFRE DA UNA SECONDA CASA IN CINQUE PUNTI, invece di
+> riallinearle**, che è il gotcha **#68** e la prescrizione della 25ª: ① il conteggio delle **sonde
+> per banco** dalla §6 di questo file — [`porta-di-qualita.md`](porta-di-qualita.md) ne **rivendica
+> l'unicità** in una propria cella, quindi la copia qui rendeva **falsa** quella rivendicazione;
+> ② il numero dei **gotcha** da [`AVVIO-CHAT.md`](AVVIO-CHAT.md), che ora rimanda al titolo della
+> §9; ③ le due case di troppo del peso del piano, sopra; ④ il **peso del messaggio** dalla tabella
+> *«Perché è così corto»*. ⚠️ **Le prime tre non erano ancora sbagliate** — tolte **prima** che
+> marcissero, che è la sola volta in cui toglierle non costa una correzione. ⛔ **La quarta invece
+> lo era già, da TRE passate:** quella cella diceva *«14,7 KB»* mentre la 42ª, la 43ª e la 44ª
+> misura rimisuravano il messaggio in questa §12 e nessuna delle tre l'aveva guardata. 📌 **È la
+> radice R1 al contrario:** non una correzione che non attraversa gli altri documenti, ma un
+> **verbale** che rimisura fedelmente in casa propria e non sa di avere un gemello fuori.
+> ⛔ **⑤ E LA QUINTA NON È UNA CIFRA: È UN NUMERATORE SCRITTO A PAROLE.** [`README.md`](README.md)
+> enumerava ciò che l'esecuzione del Traguardo 5 aveva portato — *«il modulo `arbiter` con `Mib` …
+> e le code per corsia»* — e la lista si **fermava al Task 6** con otto compiti chiusi, **due righe
+> sopra** la frase che dichiara *«a che punto sia non è scritto qui»*. La passata del 2026-08-18
+> aveva tolto da quella riga la **cifra** e lasciato l'**elenco**. 📌 *Un elenco che si allunga a
+> ogni compito è un numeratore, e invecchia peggio di uno in cifre perché non c'è nessun numero da
+> riconoscere come stantio.* **Tolto, non esteso.** ✅ [`roadmap.md`](roadmap.md) è stato guardato
+> per lo stesso difetto e **non ne aveva**: le sue tre celle del Traguardo 5 rimandano alla §6
+> senza enumerare, quindi **non è stato toccato**.
+>
+> ⚠️ **Il MESSAGGIO: `16637 → 17314` byte, `+677 B` e `+4,1 %`** — quasi identico al `+697` della
+> 44ª. Entrano **due** istruzioni operative e una cifra: il **rimedio misurato** del gotcha **#76**
+> (*all'ondata si dice TOGLIERE, non riscrivere meglio* — quattordici righe messe contro
+> diciassette tolte, e il giro dopo pulito), la **revoca di una mutazione per ripristino e non per
+> risostituzione** (forma del **#48** che è costata sette misure buttate al Task 8), e il peso del
+> piano. ⛔ **Escono** il conteggio dei gotcha e due case del peso del piano. ⛔ **Nessuna
+> compressione fatta, e va detto così:** il candidato resta quello che la 41ª, la 42ª, la 43ª e la
+> 44ª hanno già nominato — il blocco delle *«sei cose che ribadisco»* — e resta **registrato e non
+> preso**, perché è una scelta del proprietario su ciò che vuole rileggersi ogni volta.
+>
+> ✅ **Il censimento del `⏭️` è stato fatto col `grep` su `docs/` e `CLAUDE.md`, e ogni riga
+> trovata è stata letta INTERA** (gotcha **#70**, seconda forma): **ventuno** righe, di cui
+> **una sola** è il puntatore vivo — quella in cima alla §6, che passa al **Task 9** — **sei** sono
+> rimandi che nominano la §6 **senza** nominare il passo ([`HANDOFF.md`](HANDOFF.md) ×4,
+> [`README.md`](README.md), [`roadmap.md`](roadmap.md)), e le altre **quattordici** sono testo di
+> gotcha, verbali storici, la riga *registrata e non presa* sulla guardia che manca, un comando in
+> [`riferimenti.md`](riferimenti.md) e due righe del piano. **Nessuna casa da riallineare** — ⚠️ e
+> questo si scrive come **esito di una lettura**, non di un conteggio di righe del `grep`.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **741** a **745 KB**, corretto in tutte le sue
+> case — ricontate col `grep` e guardate in faccia una per una. I **due file obbligatori** passano
+> da 408 a **426 KB**, e coi tre da 439 a **457**. ⚠️ **E vale ancora l'avvertenza della 44ª:**
+> entrambe le aggregate sono a poche centinaia di byte dal confine dell'arrotondamento, quindi un
+> `+1` può essere `int(n/1024 + 0.5)` che scavalca la soglia e non una crescita.
+>
+> ⚠️ **E il rapporto che la §12 difende si muove nella direzione sbagliata per l'OTTAVA misura di
+> seguito:** il denominatore cresce dello **0,5 %**, il numeratore del **4,1 %**. ⛔ La causa è
+> di nuovo quella della 42ª e della 44ª — un compito di **codice** che produce un gotcha nuovo e un
+> racconto di misure, cioè materia che vive **qui** per costruzione — e il rapporto regge, **457
+> contro 745**. ⚠️ **Ma otto passate nella stessa direzione hanno smesso di essere un accidente da
+> annotare: sono una tendenza**, e chi chiuderà il Traguardo 5 la trova già a nove se non decide
+> nulla.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
+> ventinovesima applicazione.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

@@ -53,11 +53,16 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
                                         il compito: i suoi difetti stanno nella
                                         PROSA, e «non tocca righe eseguibili»
                                         è un argomento PER rivederla, non
-                                        contro. ⛔ AL TASK 7 SONO SERVITE TRE
-                                        REVISIONI PIENE, e tutte e tre hanno
-                                        trovato difetti reali NELLA PROSA: il
-                                        numero di giri non si decide dalla
-                                        specie del diff. ⛔ Quale piano lo dice la
+                                        contro. ⛔ AI TASK 7 E 8 SONO SERVITE
+                                        TRE REVISIONI PIENE CIASCUNO, e NOVE
+                                        volte un'ondata ha aperto rilievi nuovi
+                                        nella prosa scritta per chiuderne di
+                                        vecchi: il numero di giri non si decide
+                                        dalla specie del diff. ✅ E IL RIMEDIO È
+                                        MISURATO: all'ondata si dice TOGLIERE,
+                                        non riscrivere meglio — 14 righe messe
+                                        contro 17 tolte, e il giro dopo è
+                                        tornato pulito. ⛔ Quale piano lo dice la
                                         §6 del compendio, che leggi comunque —
                                         non è nominato qui apposta, un rimando
                                         non può marcire
@@ -77,13 +82,13 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 439 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 457 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
-     cosa NON rifare (§8), i settantacinque gotcha (§9), le trappole di
-     check-docs.sh (§10), i vincoli sul primo commit di codice (§11).
+     cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),
+     le trappole di check-docs.sh (§10), i vincoli sul primo commit (§11).
   3. docs/audit-2026-08-11.md — 31 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
      ALLA REGOLA DEI DUE, ed è CHIUSO: non è più IL COMPITO, è il VERBALE
      di COME si lavora qui. Contiene la copertura dichiarata, le
@@ -116,9 +121,9 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 439 KB in tutto
 ⛔ L'AUDIT È CHIUSO, IL BRAINSTORMING PURE, E IL PIANO È SCRITTO. LA SPECIE
    DEL LAVORO CHE VIENE È: ESEGUIRE UN PIANO, UN COMPITO PER VOLTA. Non più
    lavoro creativo, non più pianificazione — CODICE. ⛔ Il piano si legge a
-   COMPITI e mai intero (288 KB), e prima di ogni compito si fanno le SETTE
-   domande del pre-controllo. Quale piano lo dice la §6 del compendio, in un
-   posto solo.
+   COMPITI e mai intero, e prima di ogni compito si fanno le SETTE domande
+   del pre-controllo. Quale piano lo dice la §6 del compendio, in un posto
+   solo; quanto pesa, il blocco dei pesi qui sotto.
    ⚠️ Questa riga ha detto TRE traguardi, poi QUATTRO, poi «un BRAINSTORMING»,
       poi «otto decisioni», poi «ne restano TRE», poi DUE, poi UNA, poi
       «lavoro CREATIVO»: si riscrive quando il passo si chiude, ed è la riga
@@ -132,12 +137,13 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 439 KB in tutto
    risultare più PICCOLO, più GRANDE, o DI SPECIE DIVERSA.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 741 KB
-   il 2026-08-20, la spec da sola 277, i quattro piani più grandi 288, 168,
-   162 e 114 — e l'idea è già nel compendio. ⛔ IL PIANO DA ESEGUIRE È IL 288,
-   e si apre A COMPITI: è il SECONDO file del repository, dopo il compendio, e
-   cresce a ogni compito perché l'errata cresce. ⚠️ Questa riga diceva «il file
-   più grande dopo la spec» ed era falsa in DUE direzioni: il piano ha
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 745 KB
+   il 2026-08-20, la spec da sola 277, i quattro piani più grandi 334, 168,
+   162 e 114 — e l'idea è già nel compendio. ⛔ IL PIANO DA ESEGUIRE È IL PIÙ
+   GRANDE DEI QUATTRO, e si apre A COMPITI: è il SECONDO file del repository,
+   dopo il compendio, e cresce a ogni compito perché l'errata cresce.
+   ⚠️ Questa riga diceva «il file più grande dopo la spec» ed era falsa in DUE
+   direzioni: il piano ha
    superato la spec, e il più grande non è nessuno dei due. Aprirai UN file — uno — quando ti servirà
    il perché di una decisione: le alternative scartate, le misure, i costi accettati. La §12
    del compendio dice quale.
@@ -241,6 +247,9 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     contro-verso: prova che la mutazione si sia APPLICATA, compila in un passo
     separato dall'eseguire, per ogni mutazione su un valore provane DUE, e non
     ripristinare con `git checkout --` un file che stai anche scrivendo.
+    ⛔ E REVOCA RIPRISTINANDO DA UNA COPIA PRESA PRIMA, mai risostituendo
+    all'indietro: una revoca che deve CERCARE può fallire e lasciare il file
+    mutato — successo al Task 8, sette misure buttate.
     ⛔ L'audit l'ha ripetuto su sé stesso e va detto: la prima misura della
     baseline fu TRONCATA da un `| tail -80` e diede «8 target, 30 test» invece
     di 32 e 171; e la prima copia per provare check-docs.sh OMETTEVA spikes/,
@@ -280,9 +289,9 @@ piano si legge a COMPITI, mai intero.
 
 | | Prima | Adesso |
 |---|---|---|
-| il messaggio | ~9 KB | ✅ **14,7 KB, E LA SERIE HA GIRATO.** Era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **408 KB** — `CLAUDE.md` più il compendio, e **439** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 408 KB |
+| il messaggio | ~9 KB | ✅ **LA SERIE HA GIRATO, e quanto pesa OGGI non è scritto qui:** lo rimisura la **§12 del compendio** a ogni passata, e questa cella ne teneva una seconda copia **ferma al 2026-08-18** — *«14,7 KB»* — che nessuna delle tre passate successive aveva mosso. **Tolta, non riallineata** (gotcha **#68**). La storia resta perché è storia: era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **426 KB** — `CLAUDE.md` più il compendio, e **457** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 426 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -296,7 +305,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **439 KB contro 741**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+resta quello che conta: **457 KB contro 745**. ⛔ **E il 2026-08-18 una passata ha trovato che il
 `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
 `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
 e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del

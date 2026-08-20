@@ -243,12 +243,16 @@ pub enum PreemptibleState {
 /// ⚠️ RECALL OF 2026-08-20, SECOND REVIEW OF MILESTONE 5 TASK 7 -- THE PARAGRAPH ABOVE SAID
 /// "`release` HAS TWO CALLERS", AND THE FIGURE IS REMOVED RATHER THAN RECORRECTED. It was true
 /// when task 5 wrote it, and task 6 falsified it in the very next commit by giving the queue
-/// probes their releases: ✅ recounted with the command on 2026-08-20, NINE call sites in EIGHT
-/// probes. ⛔ AND IT IS NOT REPLACED BY A BIGGER NUMBER, because the number was never what the
-/// argument needed: "no production consumer exists" carries the whole of it, and it is the half
-/// that does not rot. A figure that lives HERE and in the plan's `E30` at once gets taken out, not
-/// realigned -- the rule of gotcha #68, applied to the document that hosts it. Registered as
-/// `E77`.
+/// probes their releases. ⛔ AND IT IS NOT REPLACED BY A BIGGER NUMBER, because the number was
+/// never what the argument needed: "no production consumer exists" carries the whole of it, and
+/// it is the half that does not rot. A figure that lives in more than one document gets taken
+/// out, not realigned -- the rule of gotcha #68, applied to the document that hosts it.
+/// ⛔ THE THIRD REVIEW FINISHED THAT JOB, because the second one had not: the RECOUNT that
+/// replaced the figure was itself written into four places at once, this paragraph among them,
+/// under a heading saying no bigger number replaces it. The recount now lives in the plan's
+/// `E77` alone, and everything else -- here, `E30`, the register -- points there instead of
+/// repeating it. Gotcha #68 is about a figure living in two places, not about which figure it is.
+/// Registered as `E77`, closed by `E85`.
 ///
 /// ⚠️ AND NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT. A test
 /// asserting `Err` at 5_001 would freeze the very behaviour `E30` puts in front of the owner:
@@ -704,10 +708,24 @@ impl Arbiter {
         // harmless in itself, and that is not why it is filtered. It is filtered because the
         // distance between "the lanes in the books" and "the lanes the reading pass summed" is a
         // distance the comment below would otherwise have to PROMISE away; with the filter there
-        // is nothing left to promise, the set IS the same set. ✅ MEASURED on 2026-08-20 and not
-        // argued, by returning `lanes.len()` from here on a throwaway probe deleted straight
-        // after: with a `Realtime` resident that `below = Interactive` excludes and one `Batch`
-        // candidate, the pass walked TWO lanes before this filter and ONE after it.
+        // is nothing left to promise, the set IS the same set.
+        //
+        // ✅ MEASURED on 2026-08-20 IN BOTH DIRECTIONS and not argued, by returning `lanes.len()`
+        // from here on two throwaway probes deleted straight after. IT DROPS WHAT IT MUST: with a
+        // `Realtime` resident that `below = Interactive` excludes and one `Batch` candidate, the
+        // pass walked TWO lanes before this filter and ONE after it. AND IT DROPS NOTHING ELSE:
+        // with an `Interactive` and a `Batch` candidate both under `below = Realtime`, TWO before
+        // and TWO after -- a lane that holds a candidate is never taken away from the marking pass.
+        //
+        // ⛔ AND IT IS A LIVE MUTANT, DECLARED HERE INSTEAD OF LEFT TO BE FOUND -- the form `E70`
+        // uses for the order within a lane. A suite can only see BEHAVIOUR, and this filter has
+        // none: the lanes it removes hold nothing the inner loop would have marked, because that
+        // loop asks `askable` again itself. ✅ MEASURED the same day: with this one line deleted
+        // the WHOLE WORKSPACE stays green -- 34 targets, 236 passed, 0 failed, 2 ignored, the
+        // baseline exactly. ⚠️ SO THE SENTENCE ABOVE IS HELD BY NOTHING THAT CAN GO RED, and the
+        // day somebody deletes the line for being dead weight it becomes false in silence. That is
+        // the price of buying the property by CONSTRUCTION rather than by a probe, and it is
+        // written down rather than discovered. Row 15 of the campaign, registered as `E83`.
         let lanes: BTreeSet<ComputeClass> = self
             .held
             .values()
@@ -1152,22 +1170,36 @@ mod tests {
             0,
             "nobody is condemned for a seat nobody gets"
         );
-        // ⚠️ AND THE THIRD ONE CANNOT FAIL TODAY, WHICH IS WRITTEN HERE INSTEAD OF BEING LEFT TO
-        // BE DISCOVERED -- AND IT IS KEPT RATHER THAN DELETED. `ask_back` never takes anything off
-        // the books itself: only `collect_expired` does, and at `ORIGIN` with `LONG` windows there
-        // is nothing to collect, so `allocated()` is `8_192` for ANY implementation of the thing
-        // under test. ✅ MEASURED on 2026-08-20 and not reasoned, with the two assertions above
-        // removed and this one left standing alone: it survives the reading pass being deleted
-        // (mutation 12, this probe's OWN sole killer -- 12 passed, 0 failed, where at full strength
-        // it is 11/1), the grace guard being dropped (mutation 8 -- 11/1, and the one that dies is
-        // somebody else), and `ask_back` freeing what it marks (mutation 1 -- 8/4, and this probe
-        // is not among the four).
-        // ⛔ SO WHAT HOLDS THIS PROBE IS THE TWO ABOVE: `asked_back` is the ANSWER and `revoking()`
-        // is the STATE, and between them they say "nothing was promised, and nobody was condemned".
-        // ⛔ AND THE REMEDY IS NOT TO CUT IT. It states the intent the NAME carries -- that the
-        // books did not move -- and it starts biting the day `ask_back` grows a road that touches
-        // them. Deleting an assertion for being green today is how that day arrives with nothing to
-        // say so (`E79`, the species of `E37`).
+        // ⚠️ AND THE THIRD ONE CANNOT FAIL UNDER A MUTATION OF `ask_back`, WHICH IS WRITTEN HERE
+        // INSTEAD OF BEING LEFT TO BE DISCOVERED -- AND IT IS KEPT RATHER THAN DELETED. That
+        // function never takes anything off the books itself: only `collect_expired` does, and at
+        // `ORIGIN` with `LONG` windows there is nothing to collect, so `allocated()` is `8_192`
+        // for any implementation of the thing under test. ✅ MEASURED on 2026-08-20 in the THIRD
+        // review, against the suite OF THAT MOMENT -- thirteen probes here, twenty in
+        // `tests/arbiter_admission.rs` -- with the two assertions above removed and this one left
+        // standing alone: it survives the reading pass being deleted (mutation 12, this probe's
+        // own sole killer -- 13 passed, 0 failed, where at full strength it is 12/1), the grace
+        // guard being dropped (mutation 8 -- 12/1, and the one that dies is somebody else), and
+        // `ask_back` freeing what it marks (mutation 1 -- 6/7 isolated AND 6/7 at full strength,
+        // this probe among the deaths in neither, so isolating it changes nothing there).
+        //
+        // ⛔ AND YET IT IS NOT THE TWO ABOVE THAT HOLD THIS PROBE, WHICH IS WHAT THE PARAGRAPH
+        // STANDING HERE UNTIL THE THIRD REVIEW CLAIMED. This probe dies under mutations 5b, 5d, 8,
+        // 11 and 12, and they do not all kill it through the same assertion. ✅ MEASURED on
+        // 2026-08-20 by reading WHICH one panics rather than that the probe went red: under 8 and
+        // 12 it is the first, the ANSWER (`Mib(8192)` and `Mib(2048)` against `Mib(0)`); under 11
+        // the second, the STATE (`1` against `0`); and under 5b and 5d -- the two that mutate
+        // `collect_expired` instead of `ask_back` -- the first two PASS and THIS ONE is the only
+        // one that fires, `left: Mib(0)` and `left: Mib(6144)` against `right: Mib(8192)`. On
+        // those two rows of the campaign it is this assertion that kills the probe, alone.
+        //
+        // ⚠️ THE CAUSE OF THE OLD CLAIM IS WORTH MORE THAN THE CLAIM. The isolation above samples
+        // mutations of `ask_back` ONLY -- precisely the class under which this assertion cannot
+        // fail -- and never ran the two rows on which it is load-bearing. An exclusivity measured
+        // on a partial sample reads as a guarantee. ⛔ THE REMEDY WAS RIGHT AND THE REASON WRITTEN
+        // BESIDE IT WAS WRONG, and wrong by UNDERSTATEMENT: keeping the assertion needs no appeal
+        // to a day when `ask_back` might grow a road that touches the books, because the sweep it
+        // calls first already has one. Registered as `E82`; the counts as `E81` (`E79`, corrected).
         assert_eq!(arbiter.allocated(), Mib::new(8_192));
     }
 

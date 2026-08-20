@@ -17,9 +17,12 @@
 //! would give it two owners, itself and the executor, and the borrow would not pass.
 
 use alloc::collections::{BTreeMap, BTreeSet};
+use alloc::string::String;
 use alloc::vec::Vec;
 
 use crate::parameters::Parameters;
+use crate::ports::journal::{Journal, JournalError, StepId};
+use crate::record::{EffectClass, Record, RecordKind, RecordV1, Trust};
 use crate::time::{Millis, Monotonic};
 
 pub mod policy;
@@ -393,16 +396,64 @@ impl Arbiter {
         }
     }
 
-    /// The policy this arbiter was built with.
+    /// The policy this arbiter is running.
     ///
-    /// ⚠️ ITS CONSUMER IS A BENCH TODAY, AND THAT IS SAID RATHER THAN LEFT TO BE NOTICED: it
-    /// is `pub`, so `dead_code` would not have mentioned it either way. What buys it is
-    /// `each_policy_names_itself` in `tests/arbiter_policy.rs`, which reads the name THROUGH
-    /// the arbiter and so holds a fact no other probe holds -- that the arbiter kept the
-    /// policy it was handed instead of defaulting to one. Task 9's journalled transition is
-    /// the production reader.
+    /// ⚠️ ITS CONSUMERS ARE BENCHES, AND THAT IS SAID RATHER THAN LEFT TO BE NOTICED: it is
+    /// `pub`, so `dead_code` would not have mentioned it either way. What buys it, in
+    /// `tests/arbiter_policy.rs`, is `each_policy_names_itself` and -- since task 9 --
+    /// `a_policy_transition_writes_its_intent_before_its_outcome` and
+    /// `a_refused_intent_leaves_the_policy_where_it_was`, which read the name THROUGH the
+    /// arbiter, FROM OUTSIDE THE CRATE.
+    ///
+    /// ⚠️ RECALL OF 2026-08-20, MILESTONE 5 TASK 9: this doc ended on a PREDICTION about task 9
+    /// (gotcha #57, written at task 8 about code that did not exist), and task 9 MEASURED IT
+    /// FALSE -- `set_policy` reads `self.policy`, the FIELD. The sentence is REMOVED, not
+    /// answered beside itself (gotcha #76), on the precedent of finding `A-7`.
     pub const fn policy(&self) -> &VramPolicy {
         &self.policy
+    }
+
+    /// Swaps the active policy, AS A JOURNALLED STEP (§5.4).
+    ///
+    /// ⛔ INTENT, THEN THE EFFECT, THEN THE OUTCOME -- and the order is V6 rather than
+    /// tidiness. Changing policy has real effects on the world (evictions, reloads), and
+    /// nothing executes before the intent is DURABLE. A transition cut in half leaves a step
+    /// IN DOUBT, reconcilable like every other (§4.3).
+    ///
+    /// ⛔ THE JOURNAL COMES BY REFERENCE AND IS NOT OWNED, for the mechanical reason already
+    /// written about the reactor: an arbiter that owned one would give it two owners the day
+    /// a caller needs it too, and the borrow would not pass.
+    ///
+    /// ⛔ IT TAKES NO `now`, AND THAT DIVERGES FROM THE PLAN. Every operation that collects
+    /// expired grants takes one; this one TOUCHES NEITHER BOOK -- not `held`, not `queues` --
+    /// so it has nothing to collect, and it follows the precedent of `allocated`, which
+    /// declares that it collects nothing. An ignored parameter is the dead surface this
+    /// crate took off `Record::encode` and refused `Ipc::accept`. ⚠️ THE DAY THE TRANSITION
+    /// TOUCHES THE BOOKS the argument comes back, and it comes back as a COMPILER ERROR at
+    /// every call site, not as a silent regression.
+    ///
+    /// ⛔ `EffectClass::Idempotent`, AND IT IS ARGUED RATHER THAN PICKED. ADR-0007 treats an
+    /// effect with no declared class as `Unrepeatable`, so the choice has to be earned:
+    /// "make the active policy be X" CONVERGES when re-run, which is what `Idempotent`
+    /// means. ⚠️ THE DECLARED LIMIT: what milestone 5 does here is swap an object. When the
+    /// CONTENT of an eviction arrives (L2), this class has to be looked at again -- a reload
+    /// is not free to repeat.
+    ///
+    /// ⚠️ `Trust::Instruction`, and the payload is EMPTY: no external byte reaches this
+    /// record. The label is about the payload (`Trust`'s own doc), and an empty payload that
+    /// came from nowhere is ours.
+    pub fn set_policy<J: Journal>(
+        &mut self,
+        policy: VramPolicy,
+        step: StepId,
+        journal: &mut J,
+    ) -> Result<(), JournalError> {
+        journal.intent(step, &transition_record(RecordKind::Intent, policy.name()))?;
+        self.policy = policy;
+        journal.outcome(
+            step,
+            &transition_record(RecordKind::Outcome, self.policy.name()),
+        )
     }
 
     /// How much VRAM is spoken for right now. ⛔ IT COLLECTS NOTHING: it reports the books
@@ -940,6 +991,24 @@ impl Arbiter {
             }
         });
     }
+}
+
+/// The durable record of a policy transition.
+///
+/// ⚠️ `reason` CARRIES THE NAME OF THE POLICY, and that is why `MakeRoom::name` exists: a
+/// record that said only "policy transition" would make the two directions indistinguishable
+/// in the archive, and the archive is the only thing that survives. ✅ HELD IN BOTH
+/// DIRECTIONS by `a_policy_transition_writes_its_intent_before_its_outcome` and
+/// `a_transition_names_the_policy_it_moves_to`: one alone is satisfied by a constant.
+fn transition_record(kind: RecordKind, policy: &'static str) -> Vec<u8> {
+    Record::V1(RecordV1 {
+        kind,
+        effect: EffectClass::Idempotent,
+        trust: Trust::Instruction,
+        payload: Vec::new(),
+        reason: String::from(policy),
+    })
+    .encode()
 }
 
 // ⚠️ A UNIT TEST MODULE IN `src/`, WHERE THIS CRATE OTHERWISE PUTS EVERY TEST IN `tests/`, and

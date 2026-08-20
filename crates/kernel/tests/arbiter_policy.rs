@@ -18,7 +18,11 @@ use kernel::arbiter::{
     ResourceProfile, VramPolicy,
 };
 use kernel::parameters::Parameters;
+use kernel::ports::journal::{Journal, StepId};
+use kernel::reconcile::{Resolution, steps_in_doubt};
+use kernel::record::{Record, RecordKind, RecordV1, Trust};
 use kernel::time::{Millis, Monotonic};
+use simulator::journal::{CrashingJournal, MemoryJournal};
 
 const TURN_LIMIT: u64 = 10_000;
 const LONG: Millis = Millis::new(1_000_000);
@@ -163,14 +167,12 @@ fn under_the_remote_policy_the_same_clock_advance_serves_nobody() {
 ///
 /// ⛔ AND IT IS READ THROUGH THE ARBITER TOO, WHICH IS A SECOND FACT: `Arbiter::policy` would
 /// otherwise be born with no consumer at all -- and being `pub`, no warning would say so
-/// (gotcha #46 from the wrong side). Reading the name off the arbiter proves what no other
-/// probe here proves: that the arbiter KEPT the policy it was built with, instead of
-/// defaulting to one of them. ✅ MEASURED on 2026-08-20, not argued: with `policy()` returning
-/// a fresh `VramPolicy::Remote(RemotePolicy)` the ARBITER-LOCAL assertion below is the ONLY red
-/// in the workspace, and without the two lines that read through the arbiter that mutation
-/// would have been a live mutant. ⚠️ THE TWO HALVES SIT ON DIFFERENT AXES, which is why both
-/// are here: collapsing the `VramPolicy` name dispatch instead kills the ENUM-LOCAL assertion
-/// above, also alone.
+/// (gotcha #46 from the wrong side). Reading the name off the arbiter proves that the arbiter
+/// KEPT the policy it was built with, instead of defaulting to one of them. ✅ MEASURED on
+/// 2026-08-20, not argued: with `policy()` returning a fresh `VramPolicy::Remote(RemotePolicy)`
+/// the ARBITER-LOCAL assertion below goes red. ⚠️ THE TWO HALVES SIT ON DIFFERENT AXES, which
+/// is why both are here: collapsing the `VramPolicy` name dispatch instead kills the ENUM-LOCAL
+/// assertion above.
 #[test]
 fn each_policy_names_itself() {
     assert_eq!(VramPolicy::Remote(RemotePolicy).name(), "remote");
@@ -305,4 +307,128 @@ fn the_admission_asks_back_below_its_own_lane_and_spares_a_peer() {
     );
     // Dominated inside this probe, and kept: same reason, written once above.
     assert_eq!(arbiter.allocated(), Mib::new(3_072), "the books did not move");
+}
+
+/// ⛔ THE ASSERTION IS ON THE ARCHIVE, NOT ON THE POLICY. "After the transition the policy is
+/// the other one" is green with ZERO records written, and V6 is exactly the claim that
+/// nothing happens before the intent is durable.
+#[test]
+fn a_policy_transition_writes_its_intent_before_its_outcome() {
+    let mut journal = MemoryJournal::new();
+    let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
+
+    arbiter
+        .set_policy(VramPolicy::Local(LocalPolicy), StepId::new(1), &mut journal)
+        .expect("the journal accepts");
+
+    assert_eq!(arbiter.policy().name(), "local");
+
+    let entries = journal.replay().expect("the archive reads back");
+    assert_eq!(entries.len(), 2, "an intent AND an outcome");
+
+    let records: Vec<RecordV1> = entries
+        .iter()
+        .map(|(_, bytes)| match Record::decode(bytes).expect("our own bytes") {
+            Record::V1(record) => record,
+        })
+        .collect();
+
+    assert_eq!(
+        records.iter().map(|r| r.kind).collect::<Vec<_>>(),
+        vec![RecordKind::Intent, RecordKind::Outcome]
+    );
+    // ⛔ THE NAME IS THE POINT, AND IT IS WHY `MakeRoom::name` EXISTS: a record that only said
+    // "policy transition" would make the two directions indistinguishable in the archive, and
+    // the archive is the only thing that survives. The OTHER direction is asserted in
+    // `a_transition_names_the_policy_it_moves_to` -- one alone would be satisfied by a
+    // hard-coded "local".
+    assert!(records.iter().all(|r| r.reason == "local"));
+    // ⛔ THE LABEL AND THE PAYLOAD ARE CONTRACT, NOT DECORATION: the doc of `set_policy` says no
+    // external byte reaches this record, so the payload is EMPTY and the label is
+    // `Trust::Instruction`. ✅ MEASURED: mutating either field is caught HERE AND NOWHERE ELSE
+    // -- rows 8 and 9 of the campaign, 247 passed / 1 failed each, this probe alone.
+    assert!(records.iter().all(|r| r.trust == Trust::Instruction));
+    assert!(records.iter().all(|r| r.payload.is_empty()));
+}
+
+/// ⛔ THE OTHER DIRECTION, AND IT IS NOT SYMMETRY FOR ITS OWN SAKE: with only the probe above,
+/// a `transition_record` that hard-coded "local" would stay green. Two directions kill every
+/// constant.
+#[test]
+fn a_transition_names_the_policy_it_moves_to() {
+    let mut journal = MemoryJournal::new();
+    let mut arbiter = arbiter(4_096, VramPolicy::Local(LocalPolicy));
+
+    arbiter
+        .set_policy(VramPolicy::Remote(RemotePolicy), StepId::new(1), &mut journal)
+        .expect("the journal accepts");
+
+    let entries = journal.replay().expect("the archive reads back");
+    assert_eq!(entries.len(), 2);
+    for (_, bytes) in &entries {
+        let Record::V1(record) = Record::decode(bytes).expect("our own bytes");
+        assert_eq!(record.reason, "remote");
+    }
+}
+
+/// ⛔ THE HALF THAT V6 IS ACTUALLY ABOUT: a journal that refuses the intent means the
+/// transition DOES NOT HAPPEN. Without this the write-ahead is decoration.
+#[test]
+fn a_refused_intent_leaves_the_policy_where_it_was() {
+    let mut journal = CrashingJournal::falling_at(0);
+    let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
+
+    let outcome =
+        arbiter.set_policy(VramPolicy::Local(LocalPolicy), StepId::new(1), &mut journal);
+
+    assert!(outcome.is_err());
+    assert_eq!(
+        arbiter.policy().name(),
+        "remote",
+        "nothing executes before the intent is durable"
+    );
+}
+
+/// ⛔ AND A TRANSITION CUT IN HALF LEAVES A RECONCILABLE STEP -- which is DST property 4,
+/// asserted here on ONE constructed state so that the campaign of task 12 has a shape to
+/// look for rather than a hope.
+#[test]
+fn a_transition_cut_between_intent_and_outcome_leaves_the_step_in_doubt() {
+    let mut journal = CrashingJournal::falling_at(1);
+    let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
+
+    let outcome =
+        arbiter.set_policy(VramPolicy::Local(LocalPolicy), StepId::new(7), &mut journal);
+    assert!(outcome.is_err(), "the outcome never reached the archive");
+
+    let survivor = journal.into_survivor();
+    let doubts = steps_in_doubt(&survivor).expect("the archive reads back");
+
+    assert_eq!(doubts.len(), 1);
+    assert_eq!(doubts[0].step, StepId::new(7));
+    assert_eq!(
+        doubts[0].resolution,
+        Resolution::RunAgain,
+        "a policy transition is idempotent: re-running converges"
+    );
+}
+
+/// The counter-probe of the one above, and it is the direction that is skipped: WITHOUT a
+/// crash, no step is in doubt. Otherwise "there is a doubt" would be satisfied by an arbiter
+/// that never writes an outcome at all.
+///
+/// ⚠️ DOMINATED IN EVERY ROW OF THE CAMPAIGN, and kept: the species of `E93`. It goes red only
+/// in rows 1 and 5, where `a_policy_transition_writes_its_intent_before_its_outcome` is red too
+/// (244 passed / 4 failed, both). It decides no row on its own; what it holds is the
+/// direction.
+#[test]
+fn without_a_crash_a_transition_leaves_no_step_in_doubt() {
+    let mut journal = MemoryJournal::new();
+    let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
+
+    arbiter
+        .set_policy(VramPolicy::Local(LocalPolicy), StepId::new(7), &mut journal)
+        .expect("the journal accepts");
+
+    assert!(steps_in_doubt(&journal).expect("reads back").is_empty());
 }

@@ -31,9 +31,15 @@
 //! The trait and its types. NOT the implementation (milestone 6), NOT the wire format
 //! (§6.10.3: `minicbor`, the port exchanges BYTES, every frame declares its own length
 //! and decoding checks the bytes consumed), and NOT the negative tests of §6.10.5 rows
-//! 1-4: all four need to OBTAIN a `Worker`, a `Worker` comes only from `start(grant,..)`,
-//! and no arbiter issues grants until milestone 5. A row proved in one direction only is
-//! not admissible (§7.1.1 rule 3), so they are registered as not-yet-covered in
+//! 1-4: a row proved in one direction only is not admissible (§7.1.1 rule 3), so they are
+//! registered as not-yet-covered in `docs/porta-di-qualita.md`.
+//!
+//! ⛔ RECALL OF 2026-08-21, AUDIT FINDING P-2. The reason this paragraph gave for staging
+//! them -- "all four need to OBTAIN a `Worker`, a `Worker` comes only from
+//! `start(grant,..)`, and no arbiter issues grants until milestone 5" -- was FALSE, and it
+//! is TAKEN OUT rather than reworded. A `Worker` comes from IMPLEMENTING THIS TRAIT, with
+//! no grant anywhere: measured from outside the crate, and `tests/ports_are_implementable.rs`
+//! has done it since milestone 2. The verbal and both measurements live in
 //! `docs/porta-di-qualita.md`.
 //!
 //! ⚠️ AND WHAT HOLDS THESE SIGNATURES MEANWHILE IS ONE TEST, the same one that holds

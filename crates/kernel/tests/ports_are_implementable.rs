@@ -285,7 +285,9 @@ fn id_bytes(id: u64) -> Vec<u8> {
     Vec::from(id.to_le_bytes())
 }
 
-/// The other half of the port, and the half that cannot be CALLED from here.
+/// The other half of the port. ⚠️ RECALL OF 2026-08-21: this line said "and the half that
+/// cannot be CALLED from here", spent since milestone 5 task 5 -- `Admission::Granted(Grant)`
+/// is public, so a real grant reaches this signature. Measured; see `the_process_port_is_implementable`.
 struct SpawningProcess {
     started: usize,
 }
@@ -784,19 +786,31 @@ fn killing_a_worker_consumes_it() {
     // ⚠️ WHAT IT DOES NOT BUY: that instructing after the kill FAILS TO COMPILE. `worker` is
     // moved by the line above and naming it again would not build -- but a test that
     // compiles cannot assert that something else does not. Only a `compile_fail` case
-    // proves the negative, and those are staged with the rest of §6.10.5: all four need a
+    // proves the negative, and those are staged with the rest of §6.10.5, registered as
+    // not-yet-covered in `docs/porta-di-qualita.md`.
+    //
+    // ⛔ RECALL OF 2026-08-21, FINDING P-2: the reason written here -- "all four need a
     // `Worker`, a `Worker` comes only from `start(grant, ..)`, and nothing issues grants
-    // before milestone 5. Registered as not-yet-covered in `docs/porta-di-qualita.md`.
+    // before milestone 5" -- was FALSE and is TAKEN OUT. `ScriptedWorker` twenty lines above
+    // IS a `Worker` obtained without a grant, in this very file, since milestone 2.
 }
 
 #[test]
-fn the_process_port_is_implementable_but_start_is_not_callable() {
-    // ⛔ THE DECLARED LIMIT, written here rather than left to be discovered. `Process` is
+fn the_process_port_is_implementable() {
+    // ⛔ WHAT THIS BUYS, written here rather than left to be discovered. `Process` is
     // IMPLEMENTABLE from outside the crate -- naming `Grant` in the signature is all it
-    // takes, and the impl above compiles -- but `start` cannot be CALLED by anyone, here or
-    // anywhere else, because `Grant` has no public constructor and no issuer until the
-    // arbiter arrives in milestone 5 (§5.6). That is the half of I2 that belongs to the
-    // compiler, working exactly as intended.
+    // takes, and the impl above compiles.
+    //
+    // ⚠️ RECALL OF 2026-08-21, FINDING P-2. This probe was called
+    // `..._but_start_is_not_callable`, and the paragraph here said `start` "cannot be CALLED
+    // by anyone, here or anywhere else, because `Grant` has no public constructor and no
+    // issuer until the arbiter arrives in milestone 5". BOTH HALVES ARE SPENT since milestone
+    // 5 task 5: `Arbiter::admit` issues grants and `Admission::Granted(Grant)` is public.
+    // MEASURED on a throwaway integration test -- a real grant from `admit` handed to a
+    // `Process::start` written outside the crate, compiled and passed, then deleted. THE NAME
+    // WENT WITH THE CLAIM (precedent E40): a probe whose name asserts a falsehood is read
+    // instead of its body. ⛔ Calling `start` FOR REAL here is not this correction's business:
+    // it is the counter-probe half of the four §6.10.5 rows, and it belongs to task 11.
     //
     // ⛔ AND THESE TWO LINES ARE NOT WHAT BUYS THAT -- said in full rather than half, because
     // a test that looks like coverage and is not is worse than no test (gotcha #45). WHAT

@@ -635,7 +635,7 @@ mod tests {
             assert_eq!(
                 reservation.preemption,
                 Preemption::Never,
-                "ADR-0033 asks for a NON-PREEMPTIBLE grant, and {} is where that word lives",
+                "ADR-0033 asks for a NON-PREEMPTIBLE grant, and {} is where that is CHOSEN",
                 reservation.name
             );
             assert_eq!(

@@ -812,17 +812,18 @@ sullo stesso codice:** `a_request_larger_than_the_total_is_refused_and_not_queue
 **l'unica** custode di quella guardia, e senza di essa una richiesta più grande dell'intera
 macchina verrebbe **accodata per sempre**.
 
-⚠️ **VOCE APERTA — la sonda delle due quote permanenti ha PERSO la proprietà per cui era stata
+✅ **VOCE CHIUSA — la sonda delle due quote permanenti ha PERSO la proprietà per cui era stata
 scritta, e il rimedio non sta nell'arbitro.** Fino al Task 5 una configurazione impossibile era
 **visibile**: la seconda quota permanente tornava `Refused` coi due numeri. Con le code torna
 `Queued`, e **nessuno la servirà mai** — rilasciare una concessione permanente è esattamente
 ciò che nessuno fa. È il degrado silenzioso che ADR-0005 e ADR-0019 vietano. ⛔ **L'arbitro non
 può ripararlo, e la ragione è già nel sorgente:** *«Permanence is not a type -- it is nobody
 calls release»*, quindi l'arbitro non sa distinguere un biglietto che **sarà** servito da uno
-che non lo sarà mai. ⏳ **La visibilità si sposta alla radice di composizione, al Task 10**, che
-le due concessioni permanenti le chiede **lei** e può trattare un `Queued` come un fallimento
+che non lo sarà mai. ✅ **La visibilità si è spostata alla radice di composizione, al Task 10**, che
+le due concessioni permanenti le chiede **lei** e tratta un `Queued` come un fallimento
 d'avvio. Registrato nell'errata del piano col Task 10 nominato come chiusore; scritto anche
-**accanto alla sonda**, dove lo legge chi la tocca.
+**accanto alla sonda**, dove lo legge chi la tocca. 📌 **Chiusa il 2026-08-21** nella sezione «Il
+grafo di produzione monta l'arbitro, il giornale e le due concessioni».
 
 ⚠️ **VOCE APERTA — LO SCAVALCAMENTO CHE `promote` RIFIUTA DENTRO UNA CORSIA, FRA CORSIE LO FA —
 con un'inversione di priorità sopra.** Il doc di `promote` giustificava la propria regola d'arresto
@@ -850,9 +851,9 @@ nell'errata del piano.
 corsia la cui testa non entra — nessuna caduta sulla corsia successiva — **niente va rosso**:
 `cargo test --locked -p kernel --test arbiter_admission` → **19 passate, 0 fallite**, e
 `cargo test --workspace --no-fail-fast --locked` → **34 target, 222 passate, 0 fallite, 2
-ignorate** (riga **1d** della campagna). Il mutante è **vivo**, quindi il giorno in cui il Task 7
-cambiasse l'ordine fra corsie, o il primo ciclo di orchestrazione ne scegliesse un altro, quel
-paragrafo diventerebbe **falso in silenzio**.
+ignorate** (riga **1d** della campagna). Il mutante è **vivo**, quindi il giorno in cui il primo
+ciclo di orchestrazione scegliesse un altro ordine fra corsie, quel paragrafo diventerebbe **falso
+in silenzio**. ⚠️ **Richiamo del 2026-08-21:** nominava anche il **Task 7**, passato senza cambiarlo.
 ⚖️ **E non è stato pinzato apposta, sul merito:** una sonda che congelasse la caduta
 congelerebbe la politica che **questa stessa voce** chiede al proprietario, e *«una sonda che va
 cancellata per prendere una decisione è un voto contro il prenderla»* — è la ragione di `E39`.
@@ -1714,8 +1715,8 @@ riferimento: **35 bersagli, 255 passate, 0 fallite, 2 ignorate**, zero avvisi; i
 | **4** | `reserve` cabla `name: "audio-reserved"` | `a_permanent_quota_that_only_queues_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 254 passate, 1 fallita** |
 | **5** | `reserve` cabla `name: "presentation-reserved"` | `a_permanent_quota_bigger_than_the_machine_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 254 passate, 1 fallita.** ⛔ **Con la 4 è la coppia che chiude `name`:** ogni costante cablata è rossa in almeno una delle due direzioni — gotcha **#74**, la sonda deve nominare anche l'elemento per cui la regola esiste |
 | **6** | scambiare l'ordine delle due prenotazioni | l'ordine non era dettato da nessuna riga | ✅ **253 passate, 2 fallite.** Entrambe le sonde di `E41` cambiano nome atteso: l'**ordine di arrivo** è la sola cosa che rompe la parità dentro `ComputeClass::Realtime`, ed è pinzato |
-| **7** | `FOR_EVER` → `Millis::new(1)` | `a_permanent_grant_survives_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 254 passate, 1 fallita.** ⛔ **La sonda esiste perché questa mutazione era un MUTANTE VIVO** — misurata prima: **253 passate, 0 fallite**, niente in questo binario fa avanzare l'orologio. Un'affermazione senza guardia è il gotcha **#14** |
-| **8** | `VramPolicy::Remote(RemotePolicy)` → `Local(LocalPolicy)` | `the_two_reserved_quotas_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 254 passate, 1 fallita.** ⛔ **Anche questa era un MUTANTE VIVO** (253 passate, 0 fallite): il default di ADR-0006 era **affermato in un commento e tenuto da niente**. Chiusa con una riga dentro la sonda che l'arbitro ce l'ha già in mano |
+| **7** | `FOR_EVER` → `Millis::new(1)` | `a_permanent_grant_survives_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 254 passate, 1 fallita.** ⛔ **La sonda esiste perché questa mutazione era un MUTANTE VIVO** — misurata prima: **253 passate, 0 fallite, a due sonde assenti**, niente in questo binario fa avanzare l'orologio. Un'affermazione senza guardia è il gotcha **#14** |
+| **8** | `VramPolicy::Remote(RemotePolicy)` → `Local(LocalPolicy)` | `the_two_reserved_quotas_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 254 passate, 1 fallita.** ⛔ **Anche questa era un MUTANTE VIVO** (253 passate, 0 fallite, **a due sonde assenti**): il default di ADR-0006 era **affermato in un commento e tenuto da niente**. Chiusa con una riga dentro la sonda che l'arbitro ce l'ha già in mano |
 | **9** | `EXECUTOR_TURN_LIMIT` → `0` | ⚠️ **nessuna, ed è la risposta voluta** | ⛔ **MUTANTE VIVO PER SCELTA — 255 passate, 0 fallite.** È il **residuo dichiarato** accanto alla prima sonda, rimisurato invece che ricopiato: `Executor::run` è `while !self.tasks.is_empty()`, e senza attività il corpo non gira mai, quindi qualunque valore passa. Il numero avrà la sua sonda quando ci sarà qualcosa da lanciare |
 | **10** | `run_the_graph` non chiama `build_the_arbiter` | l'arbitro non è più montato | ✅ **253 passate, 2 fallite** — le due di `E41`. È la riga che dice che le due sonde tengono il **cablaggio** e non solo `reserve` |
 | **11** | `AUDIO_RESERVATION.preemption` → `Preemption::After(Millis::new(500))` | `the_two_reservations_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 254 passate, 1 fallita.** ⛔ **Era un MUTANTE VIVO** (254 passate, 0 fallite, **a sonda assente**): queste due costanti sono il solo sito di produzione che **sceglie** `Preemption::Never`, e non lo teneva niente. ⚠️ **RICHIAMO DEL 2026-08-21:** questa cifra e le tre sotto dicevano *«255»*, che è il verde **con** la sonda — cioè uno stato in cui la mutazione non può essere viva. La misura vera è a `9c91e18`, dove `daemon` aveva **sette** sonde |
@@ -1769,8 +1770,7 @@ documento rimasto indietro era **questo**.
 `expires_at <= now`, quindi una spazzata all'**ultimo millisecondo rappresentabile** riscuote
 entrambe le quote — `allocated()` torna `Mib(0)` invece di `Mib(1792)`. ✅ **E DAL 2026-08-21 LA
 SONDA PERCORRE IL CONFINE NELLE DUE DIREZIONI** (vincolo 6): sta **un millisecondo dentro** la
-finestra, dove stanno tutte le altre sonde di confine di questo arbitro, e poi spazza a
-`u64::MAX` e **attende `Mib(0)`**. Prima era pinzato il solo lato interno.
+finestra e poi spazza a `u64::MAX` e **attende `Mib(0)`**. Prima era pinzato il solo lato interno.
 
 ⑤ **`Monotonic::ORIGIN`, il terzo argomento di `admit` dentro `reserve`, non lo tiene niente.**
 ✅ **Misurato il 2026-08-21:** cambiato in `Monotonic::from_millis(1)` l'intero workspace resta

@@ -651,15 +651,16 @@ impl Arbiter {
     /// made to stop at the first lane whose head does not fit -- a flag on the inner `break`,
     /// then `break` on the outer loop, so no lane ever falls through -- NOTHING goes red: 19
     /// passed, 0 failed in `tests/arbiter_admission.rs`, and 34 targets, 222 passed, 0 failed,
-    /// 2 ignored across the workspace. THE MUTANT IS ALIVE, so the day task 7 changes the order
-    /// across lanes, or the first orchestration cycle -- the one that decides when to call
-    /// `promote` relative to `admit` -- picks a different one, this paragraph becomes FALSE IN
-    /// SILENCE. ⚠️ RECALL OF 2026-08-21 -- THIS SAID "task 7 or task 10 changes the order
-    /// across lanes". Task 10 closed on 2026-08-21 as the composition root, and builds no
-    /// orchestration cycle: it assembles the graph and starts the executor ONCE, with no loop.
-    /// None exists yet in this repository. ⚖️ AND A PROBE IS NOT THE REMEDY: pinning the
-    /// fall-through would freeze the very policy the errata voice `E50` asks the owner to
-    /// choose. Same reasoning as `E39`; registered as `E53`.
+    /// 2 ignored across the workspace. THE MUTANT IS ALIVE, so the day the first orchestration
+    /// cycle -- the one that decides when to call `promote` relative to `admit` -- picks a
+    /// different order across lanes, this paragraph becomes FALSE IN SILENCE. ⚠️ RECALL OF
+    /// 2026-08-21 -- THIS SAID "task 7 or task 10 changes the order across lanes". Task 10 closed
+    /// on 2026-08-21 as the composition root, and builds no orchestration cycle: it assembles
+    /// the graph and starts the executor ONCE, with no loop. None exists yet in this repository.
+    /// Task 7 closed without changing the order either: `ask_back` walks the lanes from the
+    /// WORST, `lanes.iter().rev()`. ⚖️ AND A PROBE IS NOT THE REMEDY: pinning the fall-through
+    /// would freeze the very policy the errata voice `E50` asks the owner to choose. Same
+    /// reasoning as `E39`; registered as `E53`.
     ///
     /// ⚠️ `BTreeMap` ITERATES IN KEY ORDER, and `ComputeClass` orders by its explicit
     /// priority key -- so "best lane first" costs nothing here. TWO probes hold that coupling

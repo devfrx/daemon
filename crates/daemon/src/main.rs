@@ -1,4 +1,5 @@
-//! The production wiring: it mounts `platform`, builds the executor and runs it.
+//! The production wiring: it mounts `platform`, opens the journal, builds the arbiter with the
+//! two permanent grants of ADR-0033, builds the executor and runs it.
 //!
 //! # It PRODUCES the parameters, the kernel only RECEIVES them
 //!
@@ -22,14 +23,28 @@
 //!
 //! # What a run with NO activities proves
 //!
-//! Nothing is spawned, and that is not a placeholder. It is the ONE claim this binary can
-//! make today: THE WHOLE GRAPH ASSEMBLES — the real `Rng`, the real `Reactor`, the delivered
-//! `Parameters` and the executor's `Sleep` cell fit together, and the executor runs to
-//! completion. There is no work to do yet, so there is nothing else to claim.
+//! Nothing is spawned, and that is not a placeholder: there is no work to do yet. What the
+//! run claims is THE WHOLE GRAPH ASSEMBLES — the real `Rng`, the real `Reactor`, the real
+//! `Journal` on the disk, the arbiter holding the two permanent grants of ADR-0033, the
+//! delivered `Parameters` and the executor's `Sleep` cell fit together, and the executor runs
+//! to completion.
+//!
+//! ⚠️ RECALL OF 2026-08-21, MILESTONE 5 TASK 10. This heading said "it is the ONE claim this
+//! binary can make today", and this task is what made that false: the start-up gained failures
+//! it can say out loud and did not have — the journal will not open, and either permanent quota
+//! of ADR-0033 does not get in — and each of them is a claim of its own. The sentence is
+//! REWRITTEN and not answered beside itself, which is finding A-2 of this project's audit.
 
-use kernel::arbiter::Mib;
+use std::path::Path;
+
+use kernel::arbiter::{
+    Admission, Arbiter, ComputeClass, Grant, Mib, Preemption, RemotePolicy, ResourceProfile,
+    VramPolicy,
+};
 use kernel::executor::{Executor, RunError, Sleep};
 use kernel::parameters::Parameters;
+use kernel::time::{Millis, Monotonic};
+use platform::journal::{FileJournal, OpenError};
 use platform::reactor::SystemReactor;
 use platform::rng::SequentialRng;
 
@@ -91,21 +106,143 @@ const EXECUTOR_TURN_LIMIT: u64 = 100_000;
 /// delivering it rather than asking for it. That makes a systematic discrepancy a defect of
 /// this line, visible and variable, instead of an incident nobody can locate.
 ///
-/// ⚠️ NOTHING IN THIS BINARY READS IT YET beyond handing it over. No arbiter is wired here:
-/// the production wiring of the arbiter, with the two permanent grants of §4.3, is a later
-/// task of milestone 5. What this line buys today is that the value is CHOSEN IN `daemon`
-/// and travels through `Parameters`, so the day the arbiter is mounted there is no second
-/// road for it to arrive by.
+/// # What reads it, since this task
+///
+/// ⚠️ RECALL OF 2026-08-21, MILESTONE 5 TASK 10 — THIS PARAGRAPH SAID THE OPPOSITE, and the
+/// sentence it replaces was a DEADLINE IN PROSE that this task is what makes come due
+/// (gotcha #77). It read "NOTHING IN THIS BINARY READS IT YET beyond handing it over. No
+/// arbiter is wired here: the production wiring of the arbiter, with the two permanent grants
+/// of §4.3, is a later task of milestone 5". That task is THIS one. The whole paragraph is
+/// rewritten rather than contradicted underneath itself — finding A-2 — because the half that
+/// stayed true ("the value is CHOSEN IN `daemon` and travels through `Parameters`") reads as
+/// an excuse when it is left standing beside a denial.
+///
+/// It travels through `Parameters` and reaches TWO consumers now: `Executor::new`, which
+/// carries it without reading it, and `Arbiter::new`, which uses it as the ceiling every
+/// admission is measured against. There is no second road for it to arrive by.
 const TOTAL_VRAM: Mib = Mib::new(16_384);
 
-/// Builds the production graph and runs the executor, handing back what the run said.
+/// Where the journal file lives, in production.
+///
+/// ⛔ A LITERAL, ON THE SAME BOUNDARY AS `TOTAL_VRAM` and for the same reason: the value has
+/// to be chosen somewhere until the parameter store arrives, and a literal in `daemon` is
+/// visible and can be varied. ⚠️ AND IT IS RELATIVE TO THE WORKING DIRECTORY, which is
+/// declared rather than defended: where a per-user data directory should be is a decision no
+/// ADR has taken, and inventing one here would be that decision taken by whoever typed the
+/// path. Every test passes its OWN path, so nothing in the gate depends on this constant.
+const JOURNAL_PATH: &str = "journal.redb";
+
+/// The audio quota, and the presentation quota of ADR-0033.
+///
+/// ⛔ THEY ARE NOT SUBTRACTIONS, THEY ARE TWO PERMANENT GRANTS, and the difference is I2. A
+/// quota subtracted from the budget WITHOUT A HOLDER leaves I2 false for that consumer --
+/// "the subtraction is not an exemption" (ADR-0005, gotcha #4) -- whereas a grant HAS a
+/// holder by construction. ADR-0033 says it in those words: "the core REQUESTS a permanent,
+/// non-preemptible presentation grant at start-up".
+const AUDIO_QUOTA: Mib = Mib::new(1_024);
+const PRESENTATION_QUOTA: Mib = Mib::new(768);
+
+/// ⛔ "PERMANENT" IS NOT A TYPE -- it is "nobody calls release". The window is saturated on
+/// purpose: `Monotonic::saturating_add` does not wrap, so there is no special case inside the
+/// arbiter for a grant that never expires, and none is wanted.
+///
+/// ⚠️ AND IT IS NOT LITERALLY "NEVER", WHICH WAS MEASURED RATHER THAN REASONED. This comment
+/// was dictated saying "a deadline this far out NEVER ARRIVES", and it does arrive, at exactly
+/// one instant: `Monotonic::ORIGIN.saturating_add(FOR_EVER)` saturates AT `u64::MAX`, and
+/// `Arbiter::collect_expired` compares `expires_at <= now`, so a sweep at the last
+/// representable millisecond of the axis collects both quotas. ✅ MEASURED, not deduced --
+/// `allocated()` comes back `Mib(0)` instead of `Mib(1792)` there. The probe
+/// `a_permanent_grant_survives_a_sweep_at_the_far_end_of_the_axis` therefore stands ONE
+/// MILLISECOND INSIDE the window, which is where every other boundary probe of this arbiter
+/// stands. 📌 What the saturation buys is unchanged: about 584 million years of monotonic
+/// time, on a clock that starts at process start-up.
+const FOR_EVER: Millis = Millis::new(u64::MAX);
+
+/// The two profiles the composition root reserves at start-up.
+///
+/// ⛔ THE ARBITER DOES NOT KNOW THESE ARE CALLED "audio" AND "presentation". It sees two
+/// permanent grants like any other -- which is ADR-0001: no capability has privileged access.
+/// Wiring the two names inside the arbiter would be two special cases in a mechanism that has
+/// to be even-handed.
+///
+/// ⚠️ THEY ARE CONSTANTS AND NOT TWO LITERALS INSIDE THE WIRING, and the reason is that the
+/// probes name them: a profile built twice is a profile that can drift, and the probe would
+/// then be checking its own copy.
+const AUDIO_RESERVATION: ResourceProfile = ResourceProfile {
+    name: "audio-reserved",
+    reserved_vram: AUDIO_QUOTA,
+    compute_class: ComputeClass::Realtime,
+    preemption: Preemption::Never,
+};
+
+const PRESENTATION_RESERVATION: ResourceProfile = ResourceProfile {
+    name: "presentation-reserved",
+    reserved_vram: PRESENTATION_QUOTA,
+    compute_class: ComputeClass::Realtime,
+    preemption: Preemption::Never,
+};
+
+/// Why the start-up did not complete.
+///
+/// ⛔ THREE VARIANTS, AND THE THIRD IS THE ONE THAT CLOSES `E41`. An impossible VRAM
+/// configuration stopped announcing itself the day the arbiter grew queues: the second
+/// permanent quota comes back `Queued` instead of `Refused`, and nobody will ever serve it,
+/// because releasing a permanent grant is exactly what nobody does. The arbiter cannot repair
+/// that -- "permanence is not a type, it is nobody calls release", so it cannot tell a ticket
+/// that WILL be served from one that never will -- and a ticket that waits for ever is the
+/// silent degradation ADR-0005 and ADR-0019 forbid. Here it is not silent: the start-up stops
+/// and NAMES the quota.
+///
+/// ⚠️ NO `PartialEq`, AND IT IS FORCED RATHER THAN CHOSEN: `OpenError` derives `Debug` alone,
+/// so an `assert_eq!` on this type does not compile and the probes match instead. `Debug` is
+/// what the probes and `main` both need, and it is the only thing `OpenError` gives.
+#[derive(Debug)]
+enum StartupError {
+    /// The journal file would not open. Two things a human has to tell apart live inside
+    /// `OpenError`: a wrong path, and a file another journal already holds.
+    Journal(OpenError),
+    /// A permanent quota of ADR-0033 did not get in. The name is the profile's own.
+    ReservedQuota { name: &'static str },
+    /// The run stopped without finishing.
+    Run(RunError),
+}
+
+/// Builds the production graph and runs the executor, handing back what the start-up said.
 ///
 /// ⚠️ IT IS A FUNCTION RATHER THAN THE BODY OF `main` SO THAT A TEST CAN CALL IT. The
 /// quality gate runs `cargo build` and `cargo test`, never `cargo run`, so a wiring that
 /// only `main` touches would be the one part of this milestone that no check exercises —
 /// and a principle nobody can check is an intention. `main` keeps the process-level job,
 /// what to print and what to exit with, and nothing else.
-fn run_the_production_graph() -> Result<(), RunError> {
+///
+/// ⛔ THE PATH IS AN ARGUMENT, AND THAT IS NOT CAUTION. Handed a `FileJournal`, the test that
+/// already existed starts writing a REAL FILE; a fixed path in a shared directory is gotcha
+/// #52, and on Windows the clean-up of an open file fails silently, so the red would come out
+/// on Linux — the project's second system.
+fn run_the_production_graph(journal_path: &Path) -> Result<(), StartupError> {
+    run_the_graph(
+        Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM),
+        journal_path,
+    )
+}
+
+/// The graph itself, on parameters it is HANDED rather than reads.
+///
+/// ⛔ IT EXISTS SO THE TWO PERMANENT QUOTAS CAN BE PROVEN TO STOP THE START-UP, and that is
+/// worth the extra function: with the total taken from `TOTAL_VRAM` inside the body, a probe
+/// could not build a machine too small to hold them, and the error branch that closes `E41`
+/// would be reachable by no check at all. It is also the shape ADR-0034 already imposes
+/// everywhere else — the value is DELIVERED at construction, and here it is delivered one
+/// level further down.
+fn run_the_graph(parameters: Parameters, journal_path: &Path) -> Result<(), StartupError> {
+    // ⚠️ THE JOURNAL HAS NO CONSUMER IN THIS BINARY YET, and that is what this task delivers
+    // rather than a placeholder: it is OPENED, so the file exists, the exclusive lock is
+    // taken and a bad path stops the start-up here instead of at the first write. The day
+    // something journals, it journals into this one.
+    let _journal = FileJournal::open(journal_path).map_err(StartupError::Journal)?;
+
+    let _arbiter = build_the_arbiter(parameters)?;
+
     // ⚠️ THE CELL IS DECLARED FIRST, and the order is load-bearing: `Executor` borrows it for
     // `'a`, and locals drop in reverse order of declaration, so the executor goes before the
     // cell it points at. Swapping these two lines does not compile.
@@ -114,61 +251,180 @@ fn run_the_production_graph() -> Result<(), RunError> {
     let mut executor = Executor::new(
         SequentialRng::new(),
         SystemReactor::new(),
-        Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM),
+        parameters,
         &sleep,
     );
 
-    executor.run()
+    executor.run().map_err(StartupError::Run)
 }
 
-/// ⛔ DECLARED RESIDUAL — THE ERROR BRANCH BELOW IS COVERED BY NOTHING, and saying so is the
-/// point. The wiring was pulled out into a function precisely because the gate runs `build`
-/// and `test` and never `run`; this is the half that stayed behind. No check observes that a
-/// failed run writes to stderr, leaves stdout empty, and exits 1. It was verified BY HAND and
-/// does all three — but a verification by hand is a moment in time, not a control.
+/// Builds the arbiter and takes the two permanent quotas of ADR-0033 out of its budget.
+///
+/// ⛔ IT HANDS THE ARBITER BACK INSTEAD OF KEEPING IT, and that is what makes the BOOKS
+/// checkable: `run_the_graph` answers `Result<(), StartupError>` and nothing else, so a probe
+/// that wants to ask `allocated()` or `policy()` has to be given the object. A probe that
+/// assembled its own would be a second copy of the wiring, green on the day the two drift.
+///
+/// ⛔ THE ORDER IS AUDIO FIRST, AND IT IS NOT ARBITRARY: both profiles sit in
+/// `ComputeClass::Realtime`, so nothing inside the arbiter breaks the tie between two requests
+/// of one lane except arrival. On a machine too small for both, whichever is asked for SECOND
+/// is the one that does not get in -- which is what the two probes name.
+///
+/// ⚠️ THE TWO GRANTS ARE DROPPED HERE AND THE RESERVATIONS ARE NOT, and that is the point
+/// rather than an oversight: "permanent" is not a type, it is "nobody calls release". The
+/// arbiter keeps both in its books until somebody hands a grant back, and nobody ever will.
+fn build_the_arbiter(parameters: Parameters) -> Result<Arbiter, StartupError> {
+    let mut arbiter = Arbiter::new(
+        parameters,
+        // ⛔ REMOTE is the default of ADR-0006, and reopening that turns a coordinated swap
+        // from an exception into the normal case.
+        VramPolicy::Remote(RemotePolicy),
+    );
+
+    let _audio = reserve(&mut arbiter, &AUDIO_RESERVATION)?;
+    let _presentation = reserve(&mut arbiter, &PRESENTATION_RESERVATION)?;
+
+    Ok(arbiter)
+}
+
+/// Turns an `Admission` into a start-up decision.
+///
+/// ⛔ THE TWO FAILING ANSWERS ARE THE SAME FAILURE HERE, AND THEY ARE NOT THE SAME EVERYWHERE.
+/// `Refused` means "bigger than the whole machine" and `Queued` means "bigger than what is
+/// free right now"; for an ordinary request those call for different behaviour, which is why
+/// `Admission` has no `is_granted()`. For a PERMANENT quota they collapse: nobody releases a
+/// permanent grant, so a queued one waits for ever, and waiting for ever at start-up is a
+/// misconfiguration exactly like asking for more than the machine has.
+///
+/// ⚠️ AND THE COLLAPSE IS MADE HERE AND NOT INSIDE THE ARBITER, which is `E41` in one line:
+/// the arbiter cannot tell a ticket that will be served from one that never will, and a rule
+/// it cannot evaluate is not a rule it can enforce. The composition root can, because it is
+/// the one that knows nobody is ever going to release these two.
+fn reserve(arbiter: &mut Arbiter, profile: &ResourceProfile) -> Result<Grant, StartupError> {
+    match arbiter.admit(profile, FOR_EVER, Monotonic::ORIGIN) {
+        Admission::Granted(grant) => Ok(grant),
+        Admission::Queued(_) | Admission::Refused { .. } => {
+            Err(StartupError::ReservedQuota { name: profile.name })
+        }
+    }
+}
+
+/// ⛔ DECLARED RESIDUAL — THE ERROR BRANCHES BELOW ARE COVERED BY NOTHING, and saying so is
+/// the point. The wiring was pulled out into a function precisely because the gate runs
+/// `build` and `test` and never `run`; this is the half that stayed behind. No check observes
+/// that a failed start-up writes to stderr, leaves stdout empty, and exits 1.
+///
+/// ⚠️ AND WHICH BRANCHES WERE WALKED BY HAND IS NAMED, because "verified by hand" over four
+/// arms is a claim about three of them nobody made. Walked on 2026-08-21, in a scratch
+/// directory outside the repository: the `Ok` arm — exit 0, the sentence on stdout, stderr
+/// EMPTY, and a `journal.redb` of 1 056 768 bytes left behind — and the `Journal` arm, provoked
+/// by putting a DIRECTORY where the file should be: exit 1, stdout EMPTY, and
+/// `File(Os { code: 5, kind: PermissionDenied, … })` on stderr. ⛔ `ReservedQuota` AND `Run`
+/// WERE NOT WALKED: neither can be provoked from outside without editing this file, which is
+/// what the mutation campaign does and a hand-run cannot. And a verification by hand is a
+/// moment in time in any case, not a control.
 ///
 /// ⚠️ AND IT IS NOT WORTH THE PRICE, which has to be said rather than implied. Covering it
 /// means spawning the built binary as a CHILD PROCESS and reading back its two streams and
-/// its exit status, in order to hold three lines that make no decision. `platform`'s
-/// `wait_until` declares a residual for the same shape of reason: a control that is absent
-/// and DECLARED beats one that is contorted. The trade stops being fair the day this branch
-/// grows a decision of its own.
+/// its exit status, in order to hold lines that make no decision. `platform`'s `wait_until`
+/// declares a residual for the same shape of reason: a control that is absent and DECLARED
+/// beats one that is contorted. The trade stops being fair the day these branches grow a
+/// decision of their own.
+///
+/// ⛔ THE THREE FAILURES ARE SPELT OUT ONE BY ONE AND NOT FOLDED INTO ONE `{error:?}`, and it
+/// is FORCED rather than a preference: `#[derive(Debug)]` does not count as a read for the
+/// dead-code analysis, so a single arm left `Journal`'s and `Run`'s payloads flagged as
+/// "field `0` is never read" — MEASURED, two warnings on `cargo test -p daemon`. Silencing
+/// that with an `#[allow]` is a prohibition switched off (gotcha #13), and emptying the two
+/// payloads would throw away the only thing that says WHICH file and WHICH failure. Reading
+/// them is what the fix had to be, and the operator gets three different sentences out of it.
 fn main() {
-    match run_the_production_graph() {
-        Ok(()) => println!("daemon: the graph is wired, and the executor ran with no activities."),
-        Err(error) => {
-            // ⛔ stderr and exit 1: a run that stopped without finishing must be
-            // distinguishable by a caller that reads neither stream.
-            eprintln!("daemon: the executor stopped without finishing: {error:?}");
-            std::process::exit(1);
+    match run_the_production_graph(Path::new(JOURNAL_PATH)) {
+        Ok(()) => println!(
+            "daemon: the graph is wired, the two reserved quotas are held, and the executor ran \
+             with no activities."
+        ),
+        // ⛔ stderr and exit 1 on every failing branch: a start-up that did not complete must
+        // be distinguishable by a caller that reads neither stream.
+        Err(StartupError::Journal(error)) => {
+            stop(&format!(
+                "the journal at {JOURNAL_PATH} would not open: {error:?}"
+            ));
+        }
+        Err(StartupError::ReservedQuota { name }) => {
+            stop(&format!(
+                "the reserved quota {name} did not get in: this machine is too small for the \
+                 quotas of ADR-0033"
+            ));
+        }
+        Err(StartupError::Run(error)) => {
+            stop(&format!(
+                "the executor stopped without finishing: {error:?}"
+            ));
         }
     }
+}
+
+/// Says why the start-up stopped, on stderr, and leaves exit code 1 behind.
+///
+/// ⚠️ `!` AND NOT `()`, so that the three call sites above do not each need a statement saying
+/// nothing follows. It is the return type `std::process::exit` already has.
+fn stop(reason: &str) -> ! {
+    eprintln!("daemon: {reason}.");
+    std::process::exit(1)
 }
 
 #[cfg(test)]
 mod tests {
     //! ⚠️ A UNIT TEST MODULE IN `src/`, where this repository otherwise puts tests in
-    //! `tests/` — and here the deviation is NOT a preference, it is FORCED. The function
-    //! under test is private in a `bin` target, and an integration test is a crate of its own
+    //! `tests/` — and here the deviation is NOT a preference, it is FORCED. The functions
+    //! under test are private in a `bin` target, and an integration test is a crate of its own
     //! that can link only a LIBRARY. No file under `tests/` can reach
-    //! `run_the_production_graph`, so moving this module out would not relocate the test, it
-    //! would delete it.
+    //! `run_the_production_graph`, so moving this module out would not relocate the tests, it
+    //! would delete them.
     //!
-    //! ⚠️ It is one of TWO such modules in the workspace. The other is in
-    //! `crates/platform/src/rng.rs`, where the reason is different and IS a choice.
+    //! ⚠️ It is one of THREE such modules in the workspace. The other two are in
+    //! `crates/platform/src/rng.rs` and `crates/kernel/src/arbiter/mod.rs`, where the reasons
+    //! are different and one of them IS a choice.
 
     use super::*;
 
+    // ⚠️ IMPORTED HERE AND NOT AT THE TOP OF THE FILE, and it is MEASURED rather than tidy:
+    // `MakeRoom` is the trait `VramPolicy::name` lives on, nothing outside these tests calls it,
+    // and at the top it made `cargo build --locked --workspace` say `unused import` — a warning
+    // this repository does not switch off with an `#[allow]` (gotcha #13).
+    use kernel::arbiter::MakeRoom;
+
+    /// ⛔ A DIRECTORY OF ITS OWN PER CALL SITE, from `line!()`, and it is not caution: a
+    /// fixed path in a shared directory is gotcha #52, measured at milestone 3. Windows
+    /// refuses to delete a file that is open, so the removal FAILS SILENTLY there and the
+    /// red comes out on Linux -- the project's second system.
+    ///
+    /// ⚠️ AND THE PREFIX IS DIFFERENT from the two benches of `platform`, because a line
+    /// number is unique inside ONE file only and the binaries run together.
+    fn private_dir_for_line(line: u32) -> std::path::PathBuf {
+        let dir = std::env::temp_dir().join(format!("daemon-production-graph-{line}"));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).expect("a fresh directory for this call site");
+        dir
+    }
+
     /// What this buys, stated exactly: THE GRAPH ASSEMBLES AND RUNS. Not that it DOES
-    /// anything — no activity is spawned, and there is nothing to do yet — but that the real
-    /// `SequentialRng`, the real `SystemReactor`, the delivered `Parameters` and the `Sleep`
-    /// cell fit together and the executor comes back saying the run finished.
+    /// anything -- no activity is spawned, and there is nothing to do yet -- but that the real
+    /// `SequentialRng`, the real `SystemReactor`, the real `FileJournal`, the arbiter with the
+    /// two permanent grants of ADR-0033, the delivered `Parameters` and the `Sleep` cell fit
+    /// together and the executor comes back saying the run finished.
     ///
     /// ⚠️ IT CALLS THE SAME FUNCTION `main` CALLS, which is why that function exists. A test
     /// that rebuilt the wiring itself would be a second copy, and on the day the two drifted
     /// apart this one would go on passing about a graph nobody ships.
     ///
-    /// ⛔ DECLARED RESIDUAL — IT DOES NOT COVER THE VALUE OF `EXECUTOR_TURN_LIMIT`, and the
+    /// ⚠️ `assert!` AND NOT `assert_eq!`, and the reason is measured rather than stylistic:
+    /// `StartupError` carries an `OpenError`, which derives `Debug` ALONE, so the enum cannot
+    /// derive `PartialEq` and `assert_eq!(…, Ok(()))` does not compile. The `Debug` goes INTO
+    /// THE MESSAGE, because a bare `is_ok()` would not say which of the three branches fired.
+    ///
+    /// ⛔ DECLARED RESIDUAL -- IT DOES NOT COVER THE VALUE OF `EXECUTOR_TURN_LIMIT`, and the
     /// two directions were measured rather than assumed:
     ///
     /// - setting the constant to `0` leaves this test GREEN. `Executor::run` is
@@ -178,11 +434,198 @@ mod tests {
     ///   what says the assertion is not unconditionally true and that the delivered limit
     ///   really does reach the executor.
     ///
-    /// So what this test holds is the WIRING — that the graph assembles and the run
-    /// terminates — and not the sizing of the number. The number gets its own check when
+    /// So what this test holds is the WIRING -- that the graph assembles and the run
+    /// terminates -- and not the sizing of the number. The number gets its own check when
     /// something is spawned to exercise it.
     #[test]
     fn the_production_graph_assembles_and_the_executor_runs_to_completion() {
-        assert_eq!(run_the_production_graph(), Ok(()));
+        let dir = private_dir_for_line(line!());
+
+        let outcome = run_the_production_graph(&dir.join("journal.redb"));
+
+        assert!(
+            outcome.is_ok(),
+            "the production graph must assemble: {outcome:?}"
+        );
+    }
+
+    /// ⛔ WHAT THIS BUYS THAT THE ASSEMBLY TEST DOES NOT: that the journal is really OPENED.
+    /// A wiring that had simply dropped the `FileJournal::open` line would assemble and run to
+    /// completion exactly as before -- nothing in this binary reads the journal yet -- so the
+    /// test above would stay green over a graph with no durable store in it at all. The file
+    /// on the disk is the only thing that tells the two apart, and it is there because
+    /// `FileJournal::open` COMMITS on every open, which is written down beside that function.
+    #[test]
+    fn the_production_graph_leaves_its_journal_on_the_disk() {
+        let dir = private_dir_for_line(line!());
+        let path = dir.join("journal.redb");
+
+        let outcome = run_the_production_graph(&path);
+
+        assert!(
+            outcome.is_ok(),
+            "the production graph must assemble: {outcome:?}"
+        );
+        assert!(
+            path.is_file(),
+            "the journal must be a real file, and this is what says `open` was reached"
+        );
+    }
+
+    /// The other direction of the same rule (§7.1.1 rule 3): a journal that CANNOT be opened
+    /// must stop the start-up instead of being carried on without.
+    ///
+    /// ⚠️ THE FAILURE IS PROVOKED BY A DIRECTORY THAT IS NOT THERE, which is the one way to
+    /// make `open` fail that needs no privileges and behaves the same on both of the project's
+    /// systems -- a locked file would need a second process on Linux, and a read-only path
+    /// would need a mode change Windows spells differently.
+    #[test]
+    fn a_journal_that_cannot_be_opened_stops_the_start_up() {
+        let dir = private_dir_for_line(line!());
+
+        let outcome = run_the_production_graph(&dir.join("no-such-directory").join("journal.redb"));
+
+        match outcome {
+            Err(StartupError::Journal(_)) => {}
+            other => panic!("a journal that will not open must stop the start-up: {other:?}"),
+        }
+    }
+
+    /// ⛔ WHAT THIS BUYS THAT THE ASSEMBLY TEST DOES NOT: that the two quotas are HELD, not
+    /// subtracted. An arbiter that had merely lowered its ceiling would pass the test above
+    /// and leave I2 false for the two consumers -- gotcha #4, and it is the whole reason the
+    /// design diverges from the letter of §5.1.
+    ///
+    /// ⚠️ IT CALLS THE PRODUCTION BUILDER AND DOES NOT REBUILD THE ARBITER, which is the whole
+    /// reason that builder is a function of its own: `allocated()` is not reachable through
+    /// `run_the_graph`, which hands back a `Result<(), StartupError>` and nothing else, so a
+    /// probe of the BOOKS has to be handed the arbiter itself. An arbiter assembled here would
+    /// be a second copy, and the day the two drifted apart this would go on passing about a
+    /// graph nobody ships.
+    ///
+    /// ⛔ AND IT PINS THE POLICY, WHICH IS NOT DECORATION: `VramPolicy::Remote` is the DEFAULT
+    /// of ADR-0006 and the comment beside that line says so, and an assertion with no guard is
+    /// gotcha #14. ✅ MEASURED, not feared: with the wiring swapped to
+    /// `VramPolicy::Local(LocalPolicy)` and this line absent, the WHOLE WORKSPACE stayed green
+    /// -- 253 passed, 0 failed. The mutant was alive.
+    ///
+    /// ⚠️ `match` AND NOT `assert!(… .is_ok())`, and it is forced rather than chosen:
+    /// `build_the_arbiter` hands back an `Arbiter`, which has no `Debug`, so the `Result`
+    /// cannot be formatted. Taking the error out first is what lets a failure say which quota
+    /// fell.
+    #[test]
+    fn the_two_reserved_quotas_are_held_by_grants_and_not_subtracted() {
+        let arbiter = match build_the_arbiter(Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM)) {
+            Ok(arbiter) => arbiter,
+            Err(error) => panic!("a permanent quota of ADR-0033 must be granted: {error:?}"),
+        };
+
+        assert_eq!(
+            arbiter.allocated(),
+            AUDIO_QUOTA.saturating_add(PRESENTATION_QUOTA),
+            "the quotas are SPOKEN FOR, which is what a subtraction would not show"
+        );
+        assert_eq!(
+            arbiter.policy().name(),
+            "remote",
+            "the composition root runs the DEFAULT policy of ADR-0006"
+        );
+    }
+
+    /// ⛔ WHAT HOLDS `FOR_EVER`, and without it the constant was an ASSERTION WITH NO GUARD --
+    /// gotcha #14. ✅ MEASURED: with `FOR_EVER` cut to `Millis::new(1)` and this probe absent,
+    /// the WHOLE WORKSPACE stayed green, 253 passed and 0 failed. Nothing else in this binary
+    /// ever advances the clock, so nothing else can see a validity window at all.
+    ///
+    /// ⚠️ `promote` AND NOT `allocated()`, and the choice is the arbiter's own doc rather than
+    /// taste: `allocated` DELIBERATELY COLLECTS NOTHING, so asking it alone cannot tell "the
+    /// sweep happened" from "the number looks right anyway". `promote` sweeps first.
+    ///
+    /// ⛔ AND THE INSTANT IS `u64::MAX - 1` AND NOT `u64::MAX`, WHICH WAS MEASURED AND NOT
+    /// REASONED: at `u64::MAX` this probe is RED. `Monotonic::ORIGIN.saturating_add(FOR_EVER)`
+    /// saturates AT `u64::MAX`, and `collect_expired` compares `expires_at <= now`, so the last
+    /// representable instant on the axis is exactly the one at which a "permanent" grant is
+    /// swept. The window is half-open at both ends, which is one rule and not two, and this
+    /// probe stands one millisecond inside it.
+    #[test]
+    fn a_permanent_grant_survives_a_sweep_at_the_far_end_of_the_axis() {
+        let mut arbiter = match build_the_arbiter(Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM))
+        {
+            Ok(arbiter) => arbiter,
+            Err(error) => panic!("a permanent quota of ADR-0033 must be granted: {error:?}"),
+        };
+
+        let promoted = arbiter.promote(Monotonic::from_millis(u64::MAX - 1));
+
+        assert!(
+            promoted.is_empty(),
+            "nothing was ever queued, so nothing can come out of a queue"
+        );
+        assert_eq!(
+            arbiter.allocated(),
+            AUDIO_QUOTA.saturating_add(PRESENTATION_QUOTA),
+            "a permanent grant is still held after a sweep 584 million years out"
+        );
+    }
+
+    /// ⛔ THE SCENARIO OF `E41` EXACTLY, AND IT IS A PERMANENT PROBE AND NOT A MUTATION. A
+    /// direction of proof held by a mutation is held by NOTHING: the mutation is reverted and
+    /// the record is left saying the line is closed -- gotcha #72.
+    ///
+    /// `E41` says an impossible configuration stopped ANNOUNCING ITSELF when the queues
+    /// arrived: the second permanent quota comes back `Queued`, and nobody will ever serve it
+    /// because releasing a permanent grant is exactly what nobody does. The arbiter cannot
+    /// repair that -- it cannot tell a ticket that WILL be served from one that never will --
+    /// so the visibility belongs HERE, in the composition root, which asks for the two grants
+    /// itself and can say so out loud.
+    ///
+    /// ⚠️ IT GOES THROUGH THE WHOLE GRAPH and not through a hand-built arbiter, which is what
+    /// makes it hold the WIRING and not just `reserve`: with the two reservations taken out of
+    /// `run_the_graph` this probe goes red.
+    #[test]
+    fn a_permanent_quota_that_only_queues_stops_the_start_up() {
+        let dir = private_dir_for_line(line!());
+
+        // 1024 fits in 1500; 1024 + 768 does not, and under `RemotePolicy` -- which may not
+        // make room -- a request that fits the machine but not the moment is QUEUED.
+        let outcome = run_the_graph(
+            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(1_500)),
+            &dir.join("journal.redb"),
+        );
+
+        match outcome {
+            Err(StartupError::ReservedQuota { name }) => assert_eq!(
+                name, "presentation-reserved",
+                "the failure must NAME the quota that did not get in"
+            ),
+            other => panic!("a permanent quota that only queues must stop the start-up: {other:?}"),
+        }
+    }
+
+    /// The SECOND way the same failure arrives, and it is a second probe rather than a second
+    /// assertion because the two travel by different roads inside `admit` (gotcha #65):
+    /// "bigger than what is free right now" is `Queued`, "bigger than the whole machine" is
+    /// `Refused`. One probe would leave whichever road it does not take uncovered.
+    #[test]
+    fn a_permanent_quota_bigger_than_the_machine_stops_the_start_up() {
+        let dir = private_dir_for_line(line!());
+
+        // 1024 is more than the whole machine, so no release will ever make room for it.
+        let outcome = run_the_graph(
+            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(500)),
+            &dir.join("journal.redb"),
+        );
+
+        match outcome {
+            Err(StartupError::ReservedQuota { name }) => assert_eq!(
+                name, "audio-reserved",
+                "the failure must NAME the quota that did not get in"
+            ),
+            other => {
+                panic!(
+                    "a permanent quota bigger than the machine must stop the start-up: {other:?}"
+                )
+            }
+        }
     }
 }

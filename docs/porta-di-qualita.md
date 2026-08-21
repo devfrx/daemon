@@ -1618,11 +1618,141 @@ Verde di riferimento: **35 bersagli, 248 passate, 0 fallite, 2 ignorate**; il ba
 provato su **UNO stato costruito a mano** — `CrashingJournal::falling_at(1)` — e non su una
 campagna di semi: quella è del **Task 12**, e questa sonda esiste perché quella campagna abbia una
 **forma da cercare** invece di una speranza. ② `set_policy` **non ha nessun chiamante di
-produzione**: nasce al Task 10 col `daemon`, e fino ad allora i suoi soli consumatori sono le
-cinque sonde. ③ La classe `EffectClass::Idempotent` è argomentata per ciò che il Traguardo 5 fa
+produzione**, e ⚠️ **RICHIAMO DEL 2026-08-21 — QUESTA RIGA DICEVA *«nasce al Task 10 col
+`daemon`»*, E IL TASK 10 L'HA MISURATA FALSA ESEGUENDOLA:** il grafo di produzione **costruisce**
+l'arbitro con `VramPolicy::Remote(RemotePolicy)` — la scelta è consegnata al costruttore — e non
+**transita** mai; una transizione all'avvio sarebbe uno scambio che nessuno chiede, quindi non è
+stata inventata per far tornare questa frase. È il gotcha **#57**, una previsione scritta su codice
+che non esisteva, e si **riscrive** invece di affiancarle una smentita (gotcha **#76**). Il
+chiamante di produzione nasce col primo orchestratore vero, **Traguardo 6**.
+③ La classe `EffectClass::Idempotent` è argomentata per ciò che il Traguardo 5 fa
 davvero — **scambiare un oggetto**; quando arriverà il **contenuto** di uno sfratto (L2) va
 riguardata, perché una ricarica non è gratis da ripetere, e il limite è scritto anche accanto al
 codice.
+
+#### Il grafo di produzione monta l'arbitro, il giornale e le due concessioni — Traguardo 5, Task 10, e `E41` si chiude
+
+⛔ **LE DUE QUOTE DI ADR-0033 NON SONO SOTTRAZIONI, SONO DUE CONCESSIONI, E LA DIFFERENZA È `I2`.**
+Una quota sottratta al budget **senza un titolare** lascia `I2` falsa per quel consumatore — *«la
+sottrazione non è un'esenzione»*, ADR-0005 e gotcha **#4** — mentre una concessione un titolare ce
+l'ha per costruzione. `crates/daemon/src/main.rs` le chiede tramite `Arbiter::admit` come
+qualunque altra richiesta: ⛔ **l'arbitro non sa che si chiamano *audio* e *presentazione***, ed è
+ADR-0001 — nessuna capacità ha accesso privilegiato.
+
+⛔ **`E41` SI CHIUDE QUI, E NON CON UN'ASSERZIONE DENTRO UNA SONDA.** `E41` dice che una
+configurazione impossibile ha **smesso di annunciarsi** il giorno in cui l'arbitro ha avuto le
+code: la seconda quota permanente torna **`Queued`** invece di `Refused`, e nessuno la servirà mai,
+perché rilasciare una concessione permanente è esattamente ciò che nessuno fa. L'arbitro non può
+ripararlo — *«permanence is not a type, it is nobody calls release»*, quindi non sa distinguere un
+biglietto che **sarà** servito da uno che non lo sarà mai. Il chiusore è la **radice di
+composizione**: `reserve` traduce l'`Admission` in `Result<Grant, StartupError>`, e qualunque cosa
+non sia `Granted` diventa `StartupError::ReservedQuota { name }`, che **nomina la quota** e
+**ferma l'avvio**.
+
+⛔ **DUE SONDE PERMANENTI E NON UNA MUTAZIONE, E LE VIE SONO DUE PERCHÉ FALLISCONO DIVERSAMENTE.**
+Una direzione di prova tenuta da una mutazione è tenuta da **niente** — la mutazione si revoca e il
+verbale resta a dire che la riga è chiusa, gotcha **#72**. E dentro `admit` le due strade sono
+distinte (gotcha **#65**): *«più grande di ciò che è libero adesso»* è `Queued`, *«più grande della
+macchina intera»* è `Refused`. Una sonda sola lascerebbe scoperta la strada che non prende.
+
+| Sonda | `total_vram` | Cosa succede | Cosa asserisce |
+|---|---|---|---|
+| `a_permanent_quota_that_only_queues_stops_the_start_up` — è **esattamente** lo scenario di `E41` | `Mib::new(1_500)` | `audio-reserved` (1024) entra, `presentation-reserved` (768) non ci sta e viene **accodata** | `StartupError::ReservedQuota` con `name == "presentation-reserved"` |
+| `a_permanent_quota_bigger_than_the_machine_stops_the_start_up` | `Mib::new(500)` | `audio-reserved` è più grande della macchina intera → **`Refused`** | `StartupError::ReservedQuota` con `name == "audio-reserved"` |
+
+⚠️ **E LE DUE PASSANO DAL GRAFO INTERO, non da un arbitro ricostruito nella sonda.** È ciò che le
+fa tenere il **cablaggio** e non solo `reserve`: le righe **1** e **10** della campagna qui sotto
+lo misurano — tolte le due prenotazioni, o tolta la chiamata a `build_the_arbiter` dal grafo,
+diventano rosse. ⛔ **Perché la firma può scegliere il totale:** `run_the_graph` prende i
+`Parameters` come **argomento** invece di leggerli dalla costante `TOTAL_VRAM`, e senza quello le
+due sonde non sarebbero scrivibili — il ramo d'errore che chiude `E41` non sarebbe raggiungibile da
+nessun controllo.
+
+⛔ **`assert_eq!` NON COMPILA SU QUESTI TIPI, E NON È UN DETTAGLIO DI STILE.**
+`platform::journal::OpenError` deriva **il solo `Debug`**, quindi `StartupError` non può derivare
+`PartialEq`; `Admission` non deriva né `Debug` né `PartialEq`, perché `Grant` non li ha e non deve
+averli. Le sonde quindi **filtrano con `match`** e portano il `Debug` **dentro il messaggio**: un
+`is_ok()` nudo non direbbe **quale** dei rami ha sparato. **Divergenza dal brief**, che dettava un
+`assert_eq!(run_the_production_graph(&…), Ok(()))`.
+
+#### Le sette sonde del `daemon`, per nome
+
+| Sonda | Che cosa tiene |
+|---|---|
+| `the_production_graph_assembles_and_the_executor_runs_to_completion` | il **cablaggio**: `SequentialRng`, `SystemReactor`, `FileJournal`, l'arbitro con le due concessioni, i `Parameters` consegnati e la cella `Sleep` stanno insieme, e l'esecutore torna dicendo che il giro è finito |
+| `the_production_graph_leaves_its_journal_on_the_disk` | che il giornale sia davvero **aperto**. Senza questa, un cablaggio che avesse tolto la riga `FileJournal::open` sarebbe restato verde: niente in questo binario **legge** il giornale |
+| `a_journal_that_cannot_be_opened_stops_the_start_up` | la direzione opposta (§7.1.1 regola 3): una cartella che non c'è → `StartupError::Journal` |
+| `the_two_reserved_quotas_are_held_by_grants_and_not_subtracted` | che le due quote siano **spese** — `allocated()` vale `1792` MiB — **e** che la policy montata sia `"remote"`, il default di ADR-0006 |
+| `a_permanent_grant_survives_a_sweep_at_the_far_end_of_the_axis` | `FOR_EVER`: una spazzata a `u64::MAX - 1` non riscuote le due concessioni |
+| `a_permanent_quota_that_only_queues_stops_the_start_up` | `E41`, via **`Queued`** |
+| `a_permanent_quota_bigger_than_the_machine_stops_the_start_up` | `E41`, via **`Refused`** |
+
+⛔ **NESSUNA RIGA DI CATALOGO NUOVA NELLA §7.4, E LA COSA SI REGISTRA INVECE DI DECIDERLA**
+(vincolo globale 7): queste sette sonde **non hanno riga di catalogo propria**. Vivono sotto
+`I2 · §5.3` e sotto la riga blocco C `V29 · §2.8 · ADR-0034` per il verso della consegna dei
+parametri, ma *«la radice di composizione ferma l'avvio quando una quota permanente non entra»* non
+è una riga che esista: aggiungerla è una decisione del **proprietario**.
+
+⛔ **LA CAMPAGNA DI MUTAZIONE — DIECI MUTAZIONI, NOVE UCCISE E UNA VIVA PER SCELTA.** Ogni
+mutazione applicata **una alla volta**, compilata ed eseguita a sé, e revocata **ripristinando da
+una copia byte-esatta** presa prima — mai risostituendo all'indietro (gotcha **#48**) — con `cmp`
+identico dopo ogni ripristino. Il perimetro è l'**intero workspace**. Verde di riferimento:
+**35 bersagli, 254 passate, 0 fallite, 2 ignorate**, zero avvisi; il bersaglio `daemon` **sette**.
+
+| # | Mutazione, sul codice di produzione | Sonda attesa morta | Misurato — **intero workspace** |
+|---|---|---|---|
+| **1** | togliere le due `reserve` da `build_the_arbiter` | il piano ne diceva **una** | ⛔ **NE UCCIDE QUATTRO — 250 passate, 4 fallite:** le due di `E41`, `the_two_reserved_quotas_…` e `a_permanent_grant_survives_…`. **Divergenza dalla tabella dettata**, scritta invece che appianata |
+| **2** | `TOTAL_VRAM` → `Mib::new(1_000)` | le due concessioni non entrano entrambe | ✅ **250 passate, 4 fallite.** `audio-reserved` (1024) è più grande della macchina, quindi muoiono anche le due sonde d'assemblaggio: l'avvio **si ferma**, che è precisamente ciò che `E41` chiedeva |
+| **3** | `let _journal = journal_path;` — il giornale non si apre più | `the_production_graph_leaves_its_journal_on_the_disk` | ✅ **252 passate, 2 fallite.** Muore anche `a_journal_that_cannot_be_opened_…`, e ha ragione: senza `open` non c'è nessun `OpenError` da propagare |
+| **4** | `reserve` cabla `name: "audio-reserved"` | `a_permanent_quota_that_only_queues_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 253 passate, 1 fallita** |
+| **5** | `reserve` cabla `name: "presentation-reserved"` | `a_permanent_quota_bigger_than_the_machine_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 253 passate, 1 fallita.** ⛔ **Con la 4 è la coppia che chiude `name`:** ogni costante cablata è rossa in almeno una delle due direzioni — gotcha **#74**, la sonda deve nominare anche l'elemento per cui la regola esiste |
+| **6** | scambiare l'ordine delle due prenotazioni | l'ordine non era dettato da nessuna riga | ✅ **252 passate, 2 fallite.** Entrambe le sonde di `E41` cambiano nome atteso: l'**ordine di arrivo** è la sola cosa che rompe la parità dentro `ComputeClass::Realtime`, ed è pinzato |
+| **7** | `FOR_EVER` → `Millis::new(1)` | `a_permanent_grant_survives_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 253 passate, 1 fallita.** ⛔ **La sonda esiste perché questa mutazione era un MUTANTE VIVO** — misurata prima: **253 passate, 0 fallite**, niente in questo binario fa avanzare l'orologio. Un'affermazione senza guardia è il gotcha **#14** |
+| **8** | `VramPolicy::Remote(RemotePolicy)` → `Local(LocalPolicy)` | `the_two_reserved_quotas_…` | ✅ **SOLA NELL'INTERO WORKSPACE — 253 passate, 1 fallita.** ⛔ **Anche questa era un MUTANTE VIVO** (253 passate, 0 fallite): il default di ADR-0006 era **affermato in un commento e tenuto da niente**. Chiusa con una riga dentro la sonda che l'arbitro ce l'ha già in mano |
+| **9** | `EXECUTOR_TURN_LIMIT` → `0` | ⚠️ **nessuna, ed è la risposta voluta** | ⛔ **MUTANTE VIVO PER SCELTA — 254 passate, 0 fallite.** È il **residuo dichiarato** accanto alla prima sonda, rimisurato invece che ricopiato: `Executor::run` è `while !self.tasks.is_empty()`, e senza attività il corpo non gira mai, quindi qualunque valore passa. Il numero avrà la sua sonda quando ci sarà qualcosa da lanciare |
+| **10** | `run_the_graph` non chiama `build_the_arbiter` | l'arbitro non è più montato | ✅ **252 passate, 2 fallite** — le due di `E41`. È la riga che dice che le due sonde tengono il **cablaggio** e non solo `reserve` |
+
+⚠️ **CIÒ CHE QUESTO COMPITO NON COPRE, dichiarato invece che taciuto.**
+
+① **I tre rami d'errore di `main` non li osserva nessun controllo.** Il residuo era già dichiarato
+prima di questo compito ed è **peggiorato di un ramo**: adesso sono tre stampe diverse invece di
+una. Il prezzo per coprirli è ancora lanciare il binario come **processo figlio** e rileggerne i due
+flussi e il codice d'uscita, per tenere righe che non prendono nessuna decisione. ⛔ **E i tre rami
+esistono per una ragione misurata, non per gusto:** `#[derive(Debug)]` **non conta come lettura**
+per l'analisi del codice morto, quindi un ramo unico con `{error:?}` lasciava due avvisi
+`field 0 is never read` su `Journal` e `Run` — e un `#[allow]` è un divieto spento (gotcha **#13**).
+⚠️ **QUALI RAMI SIANO STATI PERCORSI A MANO È NOMINATO, invece che lasciato a un *«verificato a
+mano»* che parlerebbe di quattro archi avendone visti due.** Percorsi il 2026-08-21, in una cartella
+fuori dal repository: il ramo **`Ok`** — uscita 0, la frase su stdout, stderr **vuoto**, e un
+`journal.redb` da `1 056 768` byte lasciato lì — e il ramo **`Journal`**, provocato mettendo una
+**cartella** dove va il file: uscita 1, stdout **vuoto**, e
+`File(Os { code: 5, kind: PermissionDenied, … })` su stderr. ⛔ **`ReservedQuota` e `Run` NON sono
+stati percorsi:** nessuno dei due si provoca da fuori senza modificare il sorgente, che è ciò che
+fa la campagna di mutazione e che una prova a mano non può fare.
+
+② **`JOURNAL_PATH` non lo esercita nessuna sonda.** Ogni sonda passa il **proprio** percorso, in
+una cartella privata per sito di chiamata ricavata da `line!()` — percorso fisso in cartella
+condivisa è il gotcha **#52**, e su Windows la cancellazione a file aperto fallisce in silenzio,
+quindi il rosso uscirebbe **su Linux**. Il valore di produzione è quindi un letterale che nessun
+controllo tocca, e **dove** debba stare il file è una decisione che nessun ADR ha preso.
+
+③ **`E50`, `E51` ed `E100` NON si chiudono qui**, per decisione del proprietario del 2026-08-21, e
+la ragione è misurata leggendo il compito: il Task 10 non costruisce **nessun ciclo di
+orchestrazione** — monta il grafo e lancia l'esecutore **una volta**, senza attività — quindi il
+posto in cui si sceglie fra `admit` e `promote` **non esiste ancora**. ⛔ **Quindi
+`crates/kernel/src/arbiter/` non è stato toccato**, e i tre paragrafi che dichiarano quei mutanti
+vivi restano esattamente com'erano: pinzarli sarebbe un voto contro una decisione che il
+proprietario si tiene (gotcha **#73**). ⚠️ **Il costo, dichiarato:** quei tre paragrafi dicono *«il
+chiusore è il Task 10»*, e da oggi è falso — il chiusore si sposta al **Traguardo 6**. La frase è
+lasciata in piedi **perché toccarla è vietato da questo compito**, e la divergenza è riportata al
+coordinatore invece di essere appianata.
+
+④ **`FOR_EVER` non è letteralmente «mai», e il commento dettato diceva di sì.** ✅ **Misurato:**
+`Monotonic::ORIGIN.saturating_add(FOR_EVER)` satura **a** `u64::MAX`, e `collect_expired` confronta
+`expires_at <= now`, quindi una spazzata all'**ultimo millisecondo rappresentabile** riscuote
+entrambe le quote — `allocated()` torna `Mib(0)` invece di `Mib(1792)`. La sonda sta **un
+millisecondo dentro** la finestra, dove stanno tutte le altre sonde di confine di questo arbitro, e
+il commento accanto alla costante è stato **riscritto**.
 
 #### Le contro-sonde delle righe nuove
 
@@ -2873,7 +3003,7 @@ in tutti e tre i file.** Non è una scorciatoia: in due casi su tre non è nemme
 
 | Dove | Che cosa difende, e perché sta in `src/` |
 |---|---|
-| `crates/daemon/src/main.rs` (un test) | che il **grafo di produzione si monti e giri**: il cablaggio, non il dimensionamento del limite di turni — misurato in due direzioni, con il limite a `0` il test resta **verde** perché senza attività il corpo non gira mai. Sta in `src/` perché la funzione sotto test è **privata in un target `bin`**, e nessun test d'integrazione può linkare un binario |
+| `crates/daemon/src/main.rs` (⚠️ **quante sonde, NON è scritto qui:** il conteggio vive in un posto solo, la sezione del **Task 10** di questo file. Questa cella diceva **un test** ed era ferma a prima che il Task 10 vi portasse il giornale, l'arbitro e le due concessioni — gotcha **#31**, tolto invece che riallineato) | che il **grafo di produzione si monti e giri** — il cablaggio, non il dimensionamento del limite di turni: misurato in due direzioni, e col limite a `0` la suite resta **verde** perché senza attività il corpo non gira mai — che il **giornale** sia davvero aperto e che uno che non si apre **fermi l'avvio**, che le due quote di ADR-0033 siano **tenute e non sottratte** e che la policy montata sia il default di ADR-0006, che una concessione permanente **non scada**, e che una quota permanente che non entra fermi l'avvio **nominandosi** — per l'una e per l'altra delle due vie, `Queued` e `Refused` (`E41`). Sta in `src/` perché le funzioni sotto test sono **private in un target `bin`**, e nessun test d'integrazione può linkare un binario |
 | `crates/platform/src/rng.rs` (cinque test) | `SequentialRng`: che le estrazioni siano 0, 1, 2 e così via, che `new` e `default` siano **lo stesso** generatore, che `below` percorra gli indici a turno **a limite costante**, il limite dichiarato quando il limite **cambia**, e che il contatore **avvolga invece di traboccare**. Sta in `src/` perché l'ultimo costruisce `SequentialRng(u64::MAX)` **col campo privato**, irraggiungibile da una crate a parte senza 2^64 estrazioni o un costruttore che esisterebbe solo per il test |
 | `crates/kernel/src/arbiter/mod.rs` (⚠️ **quanti test, NON è scritto qui:** il conteggio vive in un posto solo, la sezione del Task 7 di questo file. Questa cella diceva **dodici** ed era ferma alla prima delle tre ondate del 2026-08-20 — gotcha **#31**, tolto invece che riallineato) | la **revoca** del Traguardo 5 Task 7: che chiedere indietro **marchi e non prenda**, che la grazia si riscuota quando scade e **non prima**, l'**istante** in cui scade, che una concessione non prelazionabile e una corsia non inferiore non si tocchino, che **un pari nella corsia che chiede** non si tocchi — `below` è **esclusivo** (`E71`) — che si fermi appena la stanza basta e prenda la corsia **peggiore** per prima, che **non marchi nulla** quando il recuperabile non copre il bisogno (`E69`), che chiedere **due volte** non compri la stanza due volte, e che riscuota lo scaduto **prima** di marcare. Sta in `src/` perché `ask_back` è `pub(crate)` — il suo unico chiamante di produzione è l'ammissione sotto policy LOCALE, Task 8 — e un `pub(crate)` da una crate a parte è `` error[E0624]: method `ask_back` is private ``, misurato. ⛔ **Solo la privatezza sposta una sonda lì:** l'undicesima del compito non chiama `ask_back` e **resta** in `crates/kernel/tests/arbiter_admission.rs` |
 

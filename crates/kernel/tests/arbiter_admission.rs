@@ -329,10 +329,13 @@ fn the_sum_of_the_grants_never_exceeds_the_total() {
 /// ⛔ AND THE ARBITER CANNOT REPAIR IT, WHICH IS WHY NOTHING HERE TRIES. The reason is already
 /// written beside `Activity`: "Permanence is not a type -- it is nobody calls release". The
 /// arbiter therefore cannot tell a ticket that WILL be served from one that never will, and a
-/// rule it cannot evaluate is not a rule it can enforce. The visibility moves to the
-/// COMPOSITION ROOT at task 10, which asks for the two permanent grants itself and can treat a
-/// `Queued` there as a startup failure. Registered in the plan's errata, with task 10 named as
-/// the closer.
+/// rule it cannot evaluate is not a rule it can enforce. ✅ THE VISIBILITY LIVES IN THE
+/// COMPOSITION ROOT SINCE 2026-08-21, MILESTONE 5 TASK 10, and this sentence promised it in the
+/// FUTURE until then: `crates/daemon/src/main.rs` asks for the two permanent grants itself, and
+/// anything but `Granted` becomes `StartupError::ReservedQuota`, which NAMES the quota that did
+/// not get in and stops the start-up. ⛔ TWO PROBES THERE HOLD BOTH ROADS — `Queued` on a machine
+/// of 1500 MiB, `Refused` on one of 500 — because a direction of proof held by a mutation is
+/// held by nothing (gotcha #72), and the two roads fail differently (gotcha #65).
 ///
 /// ⚠️ WHAT IS LEFT HERE IS STILL WORTH HOLDING, and it is stated so nobody reads more into the
 /// name: the second quota is NOT GRANTED. `allocated()` stays at the first one, so an

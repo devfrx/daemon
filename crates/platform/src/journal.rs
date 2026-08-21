@@ -97,24 +97,23 @@ const KIND_NOTE: u8 = 2;
 /// anything: the composition root does, once, and there a wrong path and a locked file are
 /// exactly the two things a human has to be able to tell apart.
 ///
-/// ⚠️ DATED CORRECTION, 2026-08-18 — finding A-7 of the audit. THE CLAUSE ABOVE NAMES A CALLER
-/// THAT DOES NOT EXIST YET. "The composition root does, once" is written in the present tense
-/// and reads as a measurement; measured instead, `crates/daemon/src/main.rs` wires the real
-/// `SequentialRng`, the real `SystemReactor`, the delivered `Parameters`, the `Sleep` cell and
-/// the executor — AND NO JOURNAL AT ALL. Nothing in this workspace calls `FileJournal::open`
-/// outside test benches.
+/// ⚠️ DATED RECALL OF 2026-08-21, MILESTONE 5 TASK 10 — THE CALLER HAS ARRIVED, AND THIS BLOCK
+/// SAID IT NEVER WOULD HAVE. It carried a correction of 2026-08-18, finding A-7 of the audit,
+/// which had measured that `crates/daemon/src/main.rs` wired the executor "AND NO JOURNAL AT
+/// ALL", and that "nothing in this workspace calls `FileJournal::open` outside test benches".
+/// Both sentences are FALSE from this task: the production graph opens this journal at start-up
+/// and hands a failure back as `StartupError::Journal`. The block is REWRITTEN rather than
+/// answered underneath itself — finding A-2 of the same audit — and the 📌 it used to end on,
+/// "re-read this block against the caller rather than trusting it", is exactly what this recall
+/// is doing.
 ///
-/// ⛔ THE ARGUMENT STANDS, THE EVIDENCE DOES NOT. `open` really is not an operation of the port
-/// — that is a property of `Journal`, readable today — and the two variants really are the two
-/// things a human has to tell apart. What is a PREDICTION rather than a measurement is that the
-/// composition root is where the telling-apart will happen: it is a claim about code that has
-/// not been written. Gotcha #57 — "a decision taken before the thing it names existed is a
-/// prediction, and gets cited as if it were a measurement" — applied to a justification instead
-/// of to a location.
-///
-/// 📌 WHAT TO DO WHEN THE CALLER ARRIVES: re-read this block against it rather than trusting it.
-/// If the root turns out NOT to be the place that distinguishes the two, the error type is still
-/// right and only this sentence is wrong.
+/// ✅ MEASURED AGAINST THAT CALLER, AND THE PREDICTION COMES OUT HALF RIGHT, which is worth more
+/// than a tick. The composition root IS where a failure to open surfaces, and it is where a
+/// human reads it: `main` puts the reason on stderr and exits 1. It does NOT BRANCH on which of
+/// the three it was — the whole `OpenError` goes into the message. So "the two things a human
+/// has to be able to tell apart" are bought by the `Debug` of this enum reaching a person, and
+/// not by a `match` in the root; that is enough for the argument, which was always about a HUMAN
+/// telling them apart and never about the kernel doing so.
 ///
 /// ⚠️ NO `Display` AND NO `std::error::Error`: nothing implements or consumes them here, and
 /// this repository removes items with no callers rather than keeping them for symmetry — the

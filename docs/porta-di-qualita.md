@@ -120,6 +120,14 @@ nessuna riga `parziale`.** ⛔ **Il blocco B non si muove:** questo compito non 
 riga, e la cifra si riconta sulla cella del blocco B in fondo a questo file. Il dettaglio, con la
 campagna di mutazione, sta nella sezione del Task 9 qui sotto.
 
+✅ **Richiamo del 2026-08-21 — Traguardo 5, Task 11: le righe rimaste di §6.10.5 escono dallo
+scaglionamento.** I quattro casi `compile_fail` di `crates/kernel/tests/worker_tokens.rs` — con
+le contro-sonde che ottengono un `Grant` vero da `Arbiter::admit` — tengono il `Worker` e la
+ricevuta: i numeratori dei blocchi **B** e **C** **si muovono entrambi** — le cifre si ricontano
+sulla cella del blocco B e sulla cella del blocco C in fondo a questo file, non da questa frase.
+Resta scoperta una riga sola nel blocco B, quella del filtro dei vincoli (§6.3, Traguardo 6): non
+è compito di questo task. Il dettaglio sta nella sezione «P-2» più sotto.
+
 ⛔ **`V2` non era nel brief del Task 5, ed è stato scritto lo stesso: l'innesco lo aveva
 scritto il Task 3, in questo stesso file, alla riga «si chiude insieme a `Q8` allo stesso Task
 5».** Un innesco che scatta e che nessuno raccoglie lascia il registro a mentire con
@@ -3097,6 +3105,12 @@ sul frammento più corto che resti unico, non sul nome intero.*
 restano scoperte, e adesso per la **sola** ragione vera: la direzione *«deve scattare»* non è
 scritta. La chiude il **Task 11**. P-2 si chiude quindi **nella metà chiudibile** — la ragione —
 con la copertura **indirizzata**, che è la forma già usata per il gotcha **#51**.
+
+✅ **Richiamo del 2026-08-21 — Traguardo 5, Task 11: l'innesco qui sopra è SCATTATO ed è stato
+RACCOLTO.** La direzione *«deve scattare»* è ora scritta — i quattro casi `compile_fail` con le
+contro-sonde di `crates/kernel/tests/worker_tokens.rs` — e le **quattro righe di §6.10.5** sono
+**chiuse**: la riga «le righe 1–4 di §6.10.5» della tabella «Cosa la porta NON controlla» porta
+✅ **CHIUSA il 2026-08-21, col Task 11**.
 
 ⚠️ **E una divergenza dal ledger, registrata perché il proprietario la veda.** Il pre-controllo
 del 2026-08-21 dava *«la chiusura di P-2 tocca §7.4, che è SPEC»*, cioè fuori portata per il

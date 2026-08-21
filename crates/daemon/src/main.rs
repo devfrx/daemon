@@ -300,6 +300,17 @@ fn build_the_arbiter(parameters: Parameters) -> Result<Arbiter, StartupError> {
 /// the arbiter cannot tell a ticket that will be served from one that never will, and a rule
 /// it cannot evaluate is not a rule it can enforce. The composition root can, because it is
 /// the one that knows nobody is ever going to release these two.
+///
+/// ⛔ DECLARED LIVE MUTANT -- `Monotonic::ORIGIN` IS HELD BY NOTHING, said here rather than
+/// left to be found beside the residuals that ARE declared. `FOR_EVER` saturates, so
+/// `now.saturating_add(FOR_EVER)` is `u64::MAX` whatever `now` is, and every starting instant
+/// gives the same `expires_at`. ✅ MEASURED on 2026-08-21, not deduced: with this argument
+/// changed to `Monotonic::from_millis(1)` the WHOLE WORKSPACE stays green -- 35 targets, 254
+/// passed, 0 failed, 2 ignored, the baseline exactly.
+///
+/// ⚖️ AND IT IS DECLARED AND NOT PINNED, because there is no claim behind it to defend: the
+/// indifference is an ARITHMETIC CONSEQUENCE of the saturation and not a decision somebody
+/// took. The day the window stops saturating, the starting instant starts mattering.
 fn reserve(arbiter: &mut Arbiter, profile: &ResourceProfile) -> Result<Grant, StartupError> {
     match arbiter.admit(profile, FOR_EVER, Monotonic::ORIGIN) {
         Admission::Granted(grant) => Ok(grant),
@@ -409,6 +420,24 @@ mod tests {
         dir
     }
 
+    /// The arbiter of the PRODUCTION parameters, or a red that NAMES the quota that fell.
+    ///
+    /// ⛔ IT HOLDS SOMETHING INSTEAD OF ONLY SHORTENING TWO CALL SITES, which is the shape a
+    /// bench helper has to have here -- task 8 already paid once for one that held nothing
+    /// while its doc said otherwise. What it holds is that on `TOTAL_VRAM` BOTH quotas of
+    /// ADR-0033 get in: ✅ MEASURED, with `TOTAL_VRAM` cut to `Mib::new(1_000)` every caller
+    /// goes red through this `panic!`, and row 2 of the campaign is that measurement.
+    ///
+    /// ⚠️ `match` AND NOT `.expect(…)`, and it is forced rather than chosen: `Arbiter` has no
+    /// `Debug`, so the `Result` cannot be formatted as a whole. Taking the error out first is
+    /// what lets the failure say which quota fell.
+    fn the_production_arbiter() -> Arbiter {
+        match build_the_arbiter(Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM)) {
+            Ok(arbiter) => arbiter,
+            Err(error) => panic!("a permanent quota of ADR-0033 must be granted: {error:?}"),
+        }
+    }
+
     /// What this buys, stated exactly: THE GRAPH ASSEMBLES AND RUNS. Not that it DOES
     /// anything -- no activity is spawned, and there is nothing to do yet -- but that the real
     /// `SequentialRng`, the real `SystemReactor`, the real `FileJournal`, the arbiter with the
@@ -515,10 +544,7 @@ mod tests {
     /// fell.
     #[test]
     fn the_two_reserved_quotas_are_held_by_grants_and_not_subtracted() {
-        let arbiter = match build_the_arbiter(Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM)) {
-            Ok(arbiter) => arbiter,
-            Err(error) => panic!("a permanent quota of ADR-0033 must be granted: {error:?}"),
-        };
+        let arbiter = the_production_arbiter();
 
         assert_eq!(
             arbiter.allocated(),
@@ -541,19 +567,20 @@ mod tests {
     /// taste: `allocated` DELIBERATELY COLLECTS NOTHING, so asking it alone cannot tell "the
     /// sweep happened" from "the number looks right anyway". `promote` sweeps first.
     ///
-    /// ⛔ AND THE INSTANT IS `u64::MAX - 1` AND NOT `u64::MAX`, WHICH WAS MEASURED AND NOT
-    /// REASONED: at `u64::MAX` this probe is RED. `Monotonic::ORIGIN.saturating_add(FOR_EVER)`
-    /// saturates AT `u64::MAX`, and `collect_expired` compares `expires_at <= now`, so the last
-    /// representable instant on the axis is exactly the one at which a "permanent" grant is
-    /// swept. The window is half-open at both ends, which is one rule and not two, and this
-    /// probe stands one millisecond inside it.
+    /// ⛔ AND IT WALKS THE BOUNDARY IN BOTH DIRECTIONS (§7.1.1 rule 3), which is the half that
+    /// gets forgotten. `Monotonic::ORIGIN.saturating_add(FOR_EVER)` saturates AT `u64::MAX`, and
+    /// `collect_expired` compares `expires_at <= now`, so the last representable instant on the
+    /// axis is exactly the one at which a "permanent" grant IS swept. INSIDE the window --
+    /// `u64::MAX - 1` -- both quotas survive; AT `u64::MAX` both are collected and `allocated()`
+    /// comes back `Mib::ZERO`. The window is half-open at both ends, which is one rule and not
+    /// two.
+    ///
+    /// ⚠️ AND THE OUTER SIDE IS WHAT THE COMMENT BESIDE `FOR_EVER` ASSERTS. It was written to
+    /// record a measurement and then held by nothing, which is gotcha #14 inside the paragraph
+    /// that exists to answer it; the second sweep below is what makes it a control.
     #[test]
     fn a_permanent_grant_survives_a_sweep_at_the_far_end_of_the_axis() {
-        let mut arbiter = match build_the_arbiter(Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM))
-        {
-            Ok(arbiter) => arbiter,
-            Err(error) => panic!("a permanent quota of ADR-0033 must be granted: {error:?}"),
-        };
+        let mut arbiter = the_production_arbiter();
 
         let promoted = arbiter.promote(Monotonic::from_millis(u64::MAX - 1));
 
@@ -566,6 +593,61 @@ mod tests {
             AUDIO_QUOTA.saturating_add(PRESENTATION_QUOTA),
             "a permanent grant is still held after a sweep 584 million years out"
         );
+
+        let swept = arbiter.promote(Monotonic::from_millis(u64::MAX));
+
+        assert!(
+            swept.is_empty(),
+            "still nothing was ever queued, so still nothing comes out of a queue"
+        );
+        assert_eq!(
+            arbiter.allocated(),
+            Mib::ZERO,
+            "the OTHER side of the boundary: at the last instant a permanent grant IS swept"
+        );
+    }
+
+    /// ⛔ WHAT HOLDS THE TWO FIELDS OF THE TWO RESERVATIONS, and without it each of the four
+    /// was an assertion with no guard -- gotcha #14. `Preemption::Never` is the ONLY place in
+    /// production code where ADR-0033's own word "non-preemptible" lives, and
+    /// `ComputeClass::Realtime` is the PREMISE of the sentence beside `build_the_arbiter`: both
+    /// profiles sit in one lane, so nothing inside the arbiter breaks the tie except arrival.
+    /// ✅ MEASURED on 2026-08-21: with any ONE of the four changed and this probe absent, the
+    /// WHOLE WORKSPACE stayed green -- 35 targets, 254 passed, 0 failed, 2 ignored, the
+    /// baseline exactly. Four live mutants.
+    ///
+    /// ⛔ IT PINS THE VALUE AND NOT THE CONSEQUENCE, AND THE PRICE IS WRITTEN DOWN INSTEAD OF
+    /// IMPLIED. This repository prefers the probe that attacks the MECHANISM, so that one was
+    /// BUILT AND MEASURED first: an arbiter under `VramPolicy::Local`, where `may_make_room`
+    /// answers yes, asked for more than is free and then swept past every grace. ⚠️ IT KILLS
+    /// NEITHER FIELD, because inside `Arbiter::ask_back` the two stand behind ONE ANOTHER'S
+    /// guard. `held.lane <= below` drops every `Realtime` grant -- `Realtime` is the top lane,
+    /// so a `Realtime` grant is never BELOW the asking lane, whoever asks -- and that guard runs
+    /// BEFORE the one that reads the grace, so `preemption` is never reached; with the lane
+    /// changed alone, `Preemption::Never` gives no grace and the grant falls at the second
+    /// guard instead. ✅ MEASURED, not reasoned: with that probe present each single-field
+    /// mutation left `daemon` at 8 passed and 0 failed, and only mutating BOTH fields of one
+    /// profile together turned it red -- 7 passed, 1 failed. A probe no single mutation can
+    /// kill is the vacuous probe, so it was not kept.
+    /// ⚖️ WHAT THIS ONE THEREFORE DOES NOT PROVE, said out loud: that either field changes
+    /// anything the arbiter DOES. It says ADR-0033's word and the tie-break premise are still
+    /// the ones written down.
+    #[test]
+    fn the_two_reserved_profiles_are_never_preempted_and_share_one_lane() {
+        for reservation in [&AUDIO_RESERVATION, &PRESENTATION_RESERVATION] {
+            assert_eq!(
+                reservation.preemption,
+                Preemption::Never,
+                "ADR-0033 asks for a NON-PREEMPTIBLE grant, and {} is where that word lives",
+                reservation.name
+            );
+            assert_eq!(
+                reservation.compute_class,
+                ComputeClass::Realtime,
+                "one lane for both is what leaves ARRIVAL the only tie-break, and {} left it",
+                reservation.name
+            );
+        }
     }
 
     /// ⛔ THE SCENARIO OF `E41` EXACTLY, AND IT IS A PERMANENT PROBE AND NOT A MUTATION. A

@@ -2202,7 +2202,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 114 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 19 KB |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **17,2** (17597 byte LF il 2026-08-21) | 28 KB |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **17,3** (17703 byte LF il 2026-08-21) | 29 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -3971,6 +3971,51 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > trentatreesima applicazione. ⚠️ **E vale l'avvertenza della 46ª: vicino al confine non converge
 > in un giro solo**, perché la correzione è essa stessa un ingresso della misura.
+
+> 🔁 **Cinquantesima misura, il 2026-08-21 — ed è un PRE-CONTROLLO DELLA DELEGA**, come la 40ª,
+> la 43ª e la 47ª: il messaggio d'avvio si legge **contro il repository** come ogni altro
+> documento (gotcha **#58**), eseguendo invece di rileggendo. **Non reggeva in tre punti.**
+>
+> | | |
+> |---|---|
+> | ⛔ **una cifra FALSA** | il blocco di `subagent-driven-development` diceva *«E IL RIMEDIO È MISURATO **DUE VOLTE**»* del **#76**: le misure sono **quattro** — Task 8, Task 9 e **due** sul Task 10. ✅ **Tolta, non ricorretta:** il conteggio vive nella §9 e in [`HANDOFF.md`](HANDOFF.md), e un numero che sta in tre documenti marcisce sempre in quello che non lo muove |
+> | ⚠️ **un ELENCO che è un numeratore** | *«AI TASK 7 E 8 SONO SERVITE TRE REVISIONI PIENE CIASCUNO, e NOVE volte un'ondata ha aperto rilievi nuovi»*. Vero di quei due compiti, e **già superato**: il Task 10 ne ha volute **quattro**. ✅ **Sostituito da una regola che non invecchia** — *si rivede finché una passata non torna pulita* — che è la 45ª misura applicata a un elenco invece che a una cifra |
+> | ⛔ **e la trovata nuova: una VOCE DI MANUTENZIONE sopravvissuta alla cosa che manuteneva** | l'elenco *«Cosa aggiornare qui, e quando»* prescriveva *«il numero dei gotcha quando §9 ne guadagna uno»*, e quel numero **non vive più lì**: la **45ª** misura lo aveva tolto dal messaggio, che ora rimanda al titolo della §9. L'istruzione ordinava di mantenere una cifra **inesistente** |
+>
+> 📌 **La terza è la lezione, ed è di specie nuova per questa serie.** Non è un **numero** stantio
+> — quello si riconta — è un **compito** stantio, e nessun controllo lo coglie: `check-docs.sh`
+> sa confrontare cifre, non sa che una voce di manutenzione ha perso il proprio oggetto.
+> ⚠️ **E il modo in cui è nata va detto, perché è il #68 al rovescio:** a produrla è stata una
+> passata che aveva fatto la cosa **giusta** — togliere una cifra da una casa di troppo — senza
+> rileggere l'elenco che ne prescriveva il mantenimento. *Chi toglie una cifra guarda anche chi
+> ordinava di aggiornarla.*
+>
+> ✅ **E UNA COSA È STATA AGGIUNTA, pagandola con le due tolte:** l'istruzione del gotcha **#78**
+> — *lo stato di un compito si rivede a `HEAD`, mai commit per commit* — senza la quale il
+> prossimo coordinatore rifà il difetto che al Task 10 è costato **un giro pieno** di revisione.
+> È lo stesso scambio della 43ª: entra un'**istruzione**, escono due **cifre**.
+>
+> ⚠️ **E il limite inferiore dei token è stato alzato in DUE case** — `CLAUDE.md` e il messaggio —
+> da *«oltre tremila»* a **«oltre quattromila»** righe di compendio: **4015**, misurate. ⛔ Un
+> limite inferiore **non va falso**, va **stantio**, e questo sottoprezzava del **25 %** la
+> lettura che deve far decidere. 📌 *Anche un limite inferiore si rimisura: non mente, ma smette
+> di servire.*
+>
+> ✅ **Tutto il resto della delega è stato ESEGUITO e non riletto, e regge:** **37** ADR ·
+> `crates/kernel/tests/frozen/` porta **tre** record e **una** mappa · i due commit malformati
+> ci sono ancora con gli SHA citati, `8d875f4` e `0fd3ec8` · **quattro** traguardi su sei
+> eseguiti · i quattro piani più grandi a `344, 168, 162, 114` e **il piano da eseguire è
+> davvero il più grande dei quattro** · albero **pulito**, ramo **allineato** al remoto,
+> `GATE GREEN`. ⛔ **E la delega continua a NON nominare il prossimo passo:** le tredici
+> occorrenze di *«Task N»* e *«Traguardo N»* dentro le recinzioni sono state **lette una per
+> una** — sono citazioni di **provenienza** di una lezione, cioè parlano di compiti **chiusi**,
+> e non possono marcire.
+>
+> ⚠️ **Il MESSAGGIO: `17597 → 17703` byte, `+106 B` e `+0,6 %`, una riga in più** (260 → 261) e
+> 2614 parole. [`AVVIO-CHAT.md`](AVVIO-CHAT.md) passa da **28** a **29 KB**, e questo file da
+> 455 a **459** — quasi tutto è questo riquadro. I **due file obbligatori** passano da 469 a
+> **473 KB**, e coi tre da 500 a **504**. L'insieme *«HANDOFF + spec + `adr/`»* resta **759**,
+> perché questa passata non ha toccato nessuno dei tre.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

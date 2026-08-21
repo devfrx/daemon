@@ -9,15 +9,15 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 469 KB** (byte LF, il 2026-08-21), e con
+⚠️ **Insieme questi due file pesano 473 KB** (byte LF, il 2026-08-21), e con
 [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — **chiuso il 2026-08-18, otto decisioni
-su otto**, quindi oggi una **consultazione** — **500**. ⛔ **E il prezzo in
+su otto**, quindi oggi una **consultazione** — **504**. ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
 **per difetto**. Il dato certo: leggendo il compendio, **quattrocento righe sole hanno pesato
 `25148` token** — da sole quanto questa riga attribuiva ai due file **interi** — e il
-compendio ne ha **oltre tremila**. ⚠️ **Un limite inferiore e non un totale, come la
+compendio ne ha **oltre quattromila**. ⚠️ **Un limite inferiore e non un totale, come la
 frase sul mezzo megabyte:** il file cresce, e un limite inferiore misurato **resta vero
 mentre cresce** — una cifra esatta no. ⚠️ **La cifra dei token non è scritta apposta:**
 servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un'ipotesi

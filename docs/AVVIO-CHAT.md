@@ -53,15 +53,16 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
                                         il compito: i suoi difetti stanno nella
                                         PROSA, e «non tocca righe eseguibili»
                                         è un argomento PER rivederla, non
-                                        contro. ⛔ AI TASK 7 E 8 SONO SERVITE
-                                        TRE REVISIONI PIENE CIASCUNO, e NOVE
-                                        volte un'ondata ha aperto rilievi nuovi
-                                        nella prosa scritta per chiuderne di
-                                        vecchi: il numero di giri non si decide
-                                        dalla specie del diff. ✅ E IL RIMEDIO
-                                        È MISURATO DUE VOLTE: all'ondata si
-                                        dice TOGLIERE, non riscrivere meglio,
-                                        e il giro dopo torna pulito. ⛔ E I
+                                        contro. ⛔ SI RIVEDE FINCHÉ UNA PASSATA
+                                        NON TORNA PULITA: il numero di giri non
+                                        si decide dalla specie del diff. ✅ E IL
+                                        RIMEDIO È MISURATO: all'ondata si dice
+                                        TOGLIERE, non riscrivere meglio, e il
+                                        giro dopo torna pulito. ⛔ E LO STATO DI
+                                        UN COMPITO SI RIVEDE A HEAD, MAI COMMIT
+                                        PER COMMIT: due commit corretti presi da
+                                        soli fanno uno stato falso, e il difetto
+                                        non sta in nessuno dei due diff. ⛔ E I
                                         RILIEVI SI SCRIVONO PER SPECIE, non
                                         per elenco di righe: «togli» manda a
                                         CERCARE le altre occorrenze della
@@ -86,7 +87,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 500 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 504 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -101,7 +102,7 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 500 KB in tutto
      ESEGUITE, e la §5 porta in testa il richiamo datato.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token, e il compendio
-     ne ha oltre tremila. È un LIMITE INFERIORE, non un totale — §12.
+     ne ha oltre quattromila. È un LIMITE INFERIORE, non un totale — §12.
 
 ⛔ CODICE IN INGLESE, DOCUMENTAZIONE IN ITALIANO — §1.0 della spec.
    Crate, moduli, tipi, funzioni, messaggi d'uscita e commenti nel sorgente
@@ -294,8 +295,8 @@ piano si legge a COMPITI, mai intero.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **LA SERIE HA GIRATO, e quanto pesa OGGI non è scritto qui:** lo rimisura la **§12 del compendio** a ogni passata, e questa cella ne teneva una seconda copia **ferma al 2026-08-18** — *«14,7 KB»* — che nessuna delle tre passate successive aveva mosso. **Tolta, non riallineata** (gotcha **#68**). La storia resta perché è storia: era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **469 KB** — `CLAUDE.md` più il compendio, e **500** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 469 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **473 KB** — `CLAUDE.md` più il compendio, e **504** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 473 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -309,7 +310,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **500 KB contro 759**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+resta quello che conta: **504 KB contro 759**. ⛔ **E il 2026-08-18 una passata ha trovato che il
 `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
 `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
 e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del
@@ -374,12 +375,18 @@ massima: era il ritratto di sei difetti su sei.
 > eseguire»* diceva il falso a **tre** eseguiti.
 
 ⚠️ **Cosa aggiornare qui, e quando.** Il ramo se cambia; il peso dei due file
-obbligatori quando uno dei due cresce; il numero dei gotcha quando §9 ne guadagna uno; il
+obbligatori quando uno dei due cresce; il
 **numero dei traguardi eseguiti** quando uno si chiude; il **peso del messaggio** quando il
 blocco fra le due recinzioni cresce — è la cella che nessuno rifaceva, ed era falsa di metà; i
 prerequisiti d'ambiente quando il repository comincia a richiedere uno strumento nuovo —
 è successo con `rustup`, e prima di allora non serviva niente. ⛔ **Lo SHA non è in questo
 elenco**, ed è la voce che è stata tolta: si compila incollando, non si mantiene.
+⛔ **E il 2026-08-21 ne è stata tolta una SECONDA: *«il numero dei gotcha quando §9 ne guadagna
+uno»*.** Quel numero **non vive più qui** — la 45ª misura lo aveva tolto dal messaggio, che ora
+rimanda al titolo della §9 — quindi l'elenco prescriveva di mantenere una cifra **inesistente**.
+📌 *Una voce di manutenzione sopravvive alla cosa che manuteneva*, e nessun controllo la coglie:
+non è un numero stantio, è un **compito** stantio. Trovata dal pre-controllo della delega, che
+legge questo file contro il repository come ogni altro documento (gotcha **#58**).
 
 > 🔁 **Rimisurato il 2026-08-10, chiudendo il Traguardo 3 — e la cella del messaggio era la
 > quarta cifra falsa di questo file.** Diceva **«~4 KB»**; misurato sul blocco fra le due

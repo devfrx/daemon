@@ -151,11 +151,9 @@ const PRESENTATION_QUOTA: Mib = Mib::new(768);
 /// one instant: `Monotonic::ORIGIN.saturating_add(FOR_EVER)` saturates AT `u64::MAX`, and
 /// `Arbiter::collect_expired` compares `expires_at <= now`, so a sweep at the last
 /// representable millisecond of the axis collects both quotas. ✅ MEASURED, not deduced --
-/// `allocated()` comes back `Mib(0)` instead of `Mib(1792)` there. The probe
-/// `a_permanent_grant_survives_a_sweep_at_the_far_end_of_the_axis` therefore stands ONE
-/// MILLISECOND INSIDE the window, which is where every other boundary probe of this arbiter
-/// stands. 📌 What the saturation buys is unchanged: about 584 million years of monotonic
-/// time, on a clock that starts at process start-up.
+/// `allocated()` comes back `Mib(0)` instead of `Mib(1792)` there. 📌 What the saturation
+/// buys is unchanged: about 584 million years of monotonic time, on a clock that starts at
+/// process start-up.
 const FOR_EVER: Millis = Millis::new(u64::MAX);
 
 /// The two profiles the composition root reserves at start-up.
@@ -305,8 +303,8 @@ fn build_the_arbiter(parameters: Parameters) -> Result<Arbiter, StartupError> {
 /// left to be found beside the residuals that ARE declared. `FOR_EVER` saturates, so
 /// `now.saturating_add(FOR_EVER)` is `u64::MAX` whatever `now` is, and every starting instant
 /// gives the same `expires_at`. ✅ MEASURED on 2026-08-21, not deduced: with this argument
-/// changed to `Monotonic::from_millis(1)` the WHOLE WORKSPACE stays green -- 35 targets, 254
-/// passed, 0 failed, 2 ignored, the baseline exactly.
+/// changed to `Monotonic::from_millis(1)` NOTHING in the whole workspace goes red. The count
+/// is row 15 of the mutation campaign in `docs/porta-di-qualita.md`.
 ///
 /// ⚖️ AND IT IS DECLARED AND NOT PINNED, because there is no claim behind it to defend: the
 /// indifference is an ARITHMETIC CONSEQUENCE of the saturation and not a decision somebody
@@ -579,7 +577,7 @@ mod tests {
     /// record a measurement and then held by nothing, which is gotcha #14 inside the paragraph
     /// that exists to answer it; the second sweep below is what makes it a control.
     #[test]
-    fn a_permanent_grant_survives_a_sweep_at_the_far_end_of_the_axis() {
+    fn a_permanent_grant_survives_to_the_last_instant_of_the_axis_and_is_swept_at_it() {
         let mut arbiter = the_production_arbiter();
 
         let promoted = arbiter.promote(Monotonic::from_millis(u64::MAX - 1));
@@ -608,10 +606,10 @@ mod tests {
     }
 
     /// ⛔ WHAT HOLDS THE TWO FIELDS OF THE TWO RESERVATIONS, and without it each of the four
-    /// was an assertion with no guard -- gotcha #14. `Preemption::Never` is the ONLY place in
-    /// production code where ADR-0033's own word "non-preemptible" lives, and
-    /// `ComputeClass::Realtime` is the PREMISE of the sentence beside `build_the_arbiter`: both
-    /// profiles sit in one lane, so nothing inside the arbiter breaks the tie except arrival.
+    /// was an assertion with no guard -- gotcha #14. These two constants are the only place in
+    /// production code that CHOOSES `Preemption::Never`, and `ComputeClass::Realtime` is the
+    /// PREMISE of the sentence beside `build_the_arbiter`: both profiles sit in one lane, so
+    /// nothing inside the arbiter breaks the tie except arrival.
     /// ✅ MEASURED on 2026-08-21: with any ONE of the four changed and this probe absent, the
     /// WHOLE WORKSPACE stayed green -- 35 targets, 254 passed, 0 failed, 2 ignored, the
     /// baseline exactly. Four live mutants.
@@ -625,15 +623,14 @@ mod tests {
     /// so a `Realtime` grant is never BELOW the asking lane, whoever asks -- and that guard runs
     /// BEFORE the one that reads the grace, so `preemption` is never reached; with the lane
     /// changed alone, `Preemption::Never` gives no grace and the grant falls at the second
-    /// guard instead. ✅ MEASURED, not reasoned: with that probe present each single-field
-    /// mutation left `daemon` at 8 passed and 0 failed, and only mutating BOTH fields of one
-    /// profile together turned it red -- 7 passed, 1 failed. A probe no single mutation can
-    /// kill is the vacuous probe, so it was not kept.
+    /// guard instead. A probe no single mutation can kill is the vacuous probe, so it was not
+    /// kept. What that road measured lives in the register, beside the mutation campaign.
+    ///
     /// ⚖️ WHAT THIS ONE THEREFORE DOES NOT PROVE, said out loud: that either field changes
     /// anything the arbiter DOES. It says ADR-0033's word and the tie-break premise are still
     /// the ones written down.
     #[test]
-    fn the_two_reserved_profiles_are_never_preempted_and_share_one_lane() {
+    fn the_two_reservations_declare_no_preemption_and_one_lane() {
         for reservation in [&AUDIO_RESERVATION, &PRESENTATION_RESERVATION] {
             assert_eq!(
                 reservation.preemption,

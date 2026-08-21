@@ -488,10 +488,14 @@ impl Arbiter {
     /// ticket still waiting. ⚠️ SO THE PER-LANE ORDER IS A PROPERTY OF `promote` AND NOT OF
     /// THE ARBITER: it decides who gets served out of the queue, not who gets in front of it.
     /// ⚖️ WHOSE PROBLEM IT IS, and it is not this function's: whether an admission has to yield
-    /// to a waiting ticket is an ORCHESTRATION decision -- who calls `promote`, and when --
-    /// which is task 10's, and closing it here would mean an `admit` that can refuse room that
-    /// exists. REGISTERED FOR THE OWNER in the plan's errata, where it sits beside the
-    /// permanent-quota voice it interacts with.
+    /// to a waiting ticket is an ORCHESTRATION decision -- who calls `promote`, and when.
+    /// Closing it here would mean an `admit` that can refuse room that exists. ⚠️ RECALL OF
+    /// 2026-08-21 -- THIS SAID "which is task 10's". Task 10 closed on 2026-08-21 as the
+    /// composition root: it assembles the graph and starts the executor ONCE, with no loop,
+    /// so it builds no orchestration cycle to decide this IN. The decision belongs to whoever
+    /// builds the first one -- the cycle that decides when to call `promote` relative to
+    /// `admit` -- and none exists yet in this repository. REGISTERED FOR THE OWNER in the
+    /// plan's errata, where it sits beside the permanent-quota voice it interacts with.
     ///
     /// ⛔ AND NOTHING IN THIS REPOSITORY HOLDS THE PARAGRAPH ABOVE -- said here rather than
     /// left to be discovered, because a claim about behaviour that no probe exercises is the
@@ -499,13 +503,17 @@ impl Arbiter {
     /// with `!self.queues.is_empty() ||` added to the second guard below -- so a latecomer
     /// QUEUES BEHIND the waiters instead of jumping them -- NOTHING goes red: 19 passed, 0
     /// failed in `tests/arbiter_admission.rs`, and 34 targets, 222 passed, 0 failed, 2 ignored
-    /// across the workspace. THE MUTANT IS ALIVE, so the day task 10 decides the other way this
-    /// paragraph becomes FALSE IN SILENCE with nothing going red to say so. ⚖️ AND IT IS NOT
-    /// PINNED, ON PURPOSE AND ON THE MERITS: a probe asserting `Granted` for the latecomer would
-    /// freeze exactly the choice the errata voice `E51` puts in front of the owner, and a probe
-    /// that has to be deleted to take a decision is a vote against taking it -- the precedent is
-    /// `E39`, which refused for the same reason to pin the three measured `release` values.
-    /// Registered as `E53`.
+    /// across the workspace. THE MUTANT IS ALIVE, so the day whoever builds the first
+    /// orchestration cycle -- the one that decides when to call `promote` relative to `admit`
+    /// -- decides the other way, this paragraph becomes FALSE IN SILENCE with nothing going
+    /// red to say so. ⚠️ RECALL OF 2026-08-21 -- THIS SAID "the day task 10 decides the other
+    /// way". Task 10 closed on 2026-08-21 as the composition root, and builds no such cycle:
+    /// it assembles the graph and starts the executor ONCE, with no loop. None exists yet in
+    /// this repository. ⚖️ AND IT IS NOT PINNED, ON PURPOSE AND ON THE MERITS: a probe
+    /// asserting `Granted` for the latecomer would freeze exactly the choice the errata voice
+    /// `E51` puts in front of the owner, and a probe that has to be deleted to take a decision
+    /// is a vote against taking it -- the precedent is `E39`, which refused for the same reason
+    /// to pin the three measured `release` values. Registered as `E53`.
     ///
     /// ⛔ AND SINCE TASK 8 THAT JUMP IS NO LONGER THEORETICAL, WHICH IS A CHANGE OF KIND AND NOT
     /// A DETAIL. Until task 8 `ask_back` had no production caller, so NO revocation ever happened
@@ -525,10 +533,16 @@ impl Arbiter {
     /// task 8 section of `docs/porta-di-qualita.md`: two houses, not three. Registered as `E109`.
     ///
     /// ⚠️ AND NO PROBE HOLDS ANY OF THIS EITHER, said here for the same reason as the paragraph
-    /// above: the behaviour is measured and NOT pinned, because pinning it would freeze the choice
-    /// `E51` and `E53` put in front of the owner. ⚖️ THE CLOSER IS STILL TASK 10, and it is still
-    /// an ORCHESTRATION decision -- what changed at task 8 is only that the cost of leaving it
-    /// open is now paid in production and not on paper. Registered as `E100`.
+    /// above: the behaviour is measured and NOT pinned, because pinning it would freeze the
+    /// choice `E51` and `E53` put in front of the owner. ⚖️ THE CLOSER IS WHOEVER BUILDS THE
+    /// FIRST ORCHESTRATION CYCLE -- the one that decides when to call `promote` relative to
+    /// `admit` -- and it is still an ORCHESTRATION decision: what changed at task 8 is only
+    /// that the cost of leaving it open is now paid in production and not on paper. ⚠️ RECALL
+    /// OF 2026-08-21 -- THIS SAID "THE CLOSER IS STILL TASK 10". Task 10 closed on 2026-08-21
+    /// as the composition root, and builds no orchestration cycle to be that closer: it
+    /// assembles the graph and starts the executor ONCE, with no loop. None exists yet in this
+    /// repository. REWRITTEN in place and not annotated below, which is finding A-2's rule.
+    /// Registered as `E100`.
     ///
     /// ⛔ THE TWO GUARDS BELOW ANSWER DIFFERENTLY SINCE TASK 6, and until task 6 they did
     /// not. "Bigger than the whole machine" is `Refused` -- no release will ever make room,
@@ -637,10 +651,15 @@ impl Arbiter {
     /// made to stop at the first lane whose head does not fit -- a flag on the inner `break`,
     /// then `break` on the outer loop, so no lane ever falls through -- NOTHING goes red: 19
     /// passed, 0 failed in `tests/arbiter_admission.rs`, and 34 targets, 222 passed, 0 failed,
-    /// 2 ignored across the workspace. THE MUTANT IS ALIVE, so the day task 7 or task 10 changes
-    /// the order across lanes this paragraph becomes FALSE IN SILENCE. ⚖️ AND A PROBE IS NOT
-    /// THE REMEDY: pinning the fall-through would freeze the very policy the errata voice `E50`
-    /// asks the owner to choose. Same reasoning as `E39`; registered as `E53`.
+    /// 2 ignored across the workspace. THE MUTANT IS ALIVE, so the day task 7 changes the order
+    /// across lanes, or the first orchestration cycle -- the one that decides when to call
+    /// `promote` relative to `admit` -- picks a different one, this paragraph becomes FALSE IN
+    /// SILENCE. ⚠️ RECALL OF 2026-08-21 -- THIS SAID "task 7 or task 10 changes the order
+    /// across lanes". Task 10 closed on 2026-08-21 as the composition root, and builds no
+    /// orchestration cycle: it assembles the graph and starts the executor ONCE, with no loop.
+    /// None exists yet in this repository. ⚖️ AND A PROBE IS NOT THE REMEDY: pinning the
+    /// fall-through would freeze the very policy the errata voice `E50` asks the owner to
+    /// choose. Same reasoning as `E39`; registered as `E53`.
     ///
     /// ⚠️ `BTreeMap` ITERATES IN KEY ORDER, and `ComputeClass` orders by its explicit
     /// priority key -- so "best lane first" costs nothing here. TWO probes hold that coupling

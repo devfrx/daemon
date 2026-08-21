@@ -1,0 +1,5 @@
+error[E0599]: no method named `instruct_one` found for struct `WorkerDescriptor` in the current scope
+  --> tests/compile_fail/talking_without_the_handle.rs:13:24
+   |
+13 |     let _ = descriptor.instruct_one(kernel::ports::process::Frame::new(b"hello".to_vec()));
+   |                        ^^^^^^^^^^^^ method not found in `WorkerDescriptor`

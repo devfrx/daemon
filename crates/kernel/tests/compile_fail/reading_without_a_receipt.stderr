@@ -1,0 +1,15 @@
+error[E0061]: this method takes 1 argument but 0 arguments were supplied
+   --> tests/compile_fail/reading_without_a_receipt.rs:114:20
+    |
+114 |     let _ = worker.read_one();
+    |                    ^^^^^^^^-- argument #1 of type `SingleReceipt` is missing
+    |
+note: method defined here
+   --> src/ports/process.rs
+    |
+    |     fn read_one(&mut self, receipt: SingleReceipt) -> Result<Frame, ProcessError>;
+    |        ^^^^^^^^
+help: provide the argument
+    |
+114 |     let _ = worker.read_one(/* SingleReceipt */);
+    |                             +++++++++++++++++++

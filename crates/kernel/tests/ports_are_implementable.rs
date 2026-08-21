@@ -44,11 +44,11 @@
 //! bytes of a declared path. That is A CHOICE OF THIS FAKE, not a rule of the port — the kernel
 //! does not interpret paths, so it cannot say whether two `Path` name one file.
 
+use kernel::arbiter::Grant;
 use kernel::ports::filesystem::{CheckpointId, Filesystem, FilesystemError, Path};
 use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 use kernel::ports::journal::StepId;
 use kernel::ports::network::{Endpoint, Network, NetworkError};
-use kernel::arbiter::Grant;
 use kernel::ports::process::{
     Frame, Process, ProcessError, SingleReceipt, StreamReceipt, Worker, WorkerDescriptor,
 };

@@ -85,7 +85,7 @@
 //! `assert_ne!` on it directly is fine and is what the first probe uses.
 
 use kernel::arbiter::{
-    Activity, Admission, Arbiter, ComputeClass, Mib, Preemption, PreemptibleState, Promotion,
+    Activity, Admission, Arbiter, ComputeClass, Mib, PreemptibleState, Preemption, Promotion,
     RemotePolicy, ResourceProfile, VramPolicy,
 };
 use kernel::parameters::Parameters;

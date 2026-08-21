@@ -62,11 +62,12 @@ use alloc::vec::Vec;
 /// because nothing about `ClientId` looks like a source of non-determinism.
 ///
 /// ⛔ AND §6.1.3 DOES NOT SAY "PROGRESSIVE" IN THE ABSTRACT: IT SAYS THE JOURNAL'S
-/// PROGRESSIVES. The counter is the one `journal` allocates for `StepId` -- deterministic by
-/// construction and readable in a trace -- and it does not exist yet, because the allocator
-/// arrives with the durable record in milestone 3 (see `ports::journal`). Whoever implements
-/// this port in milestone 6 draws from THAT counter rather than starting a private one of its
-/// own: two independent counters that look identical are a divergence nothing would report.
+/// PROGRESSIVES. The counter is the one `journal` will allocate for `StepId` -- deterministic
+/// by construction and readable in a trace -- and it DOES NOT EXIST YET: see `ports::journal`
+/// and the dated recall there, which is where the WHEN is registered. ⚠️ This line named
+/// milestone 3 until 2026-08-21, and that milestone closed without it. Whoever implements this
+/// port in milestone 6 draws from THAT counter rather than starting a private one of its own:
+/// two independent counters that look identical are a divergence nothing would report.
 ///
 /// ⚠️ "ASSIGNED BY THE CORE" MEANS "NOT CHOSEN BY THE CLIENT", and the line is worth spending
 /// because the other reading contradicts the signature below it. `accept` RETURNS one, so the

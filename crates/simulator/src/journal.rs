@@ -70,6 +70,13 @@ enum EntryKind {
     Note,
 }
 
+// ⛔ NO `impl Default`, AND ITS ABSENCE IS THE DECISION — the same one, for the same reason, as
+// `SystemReactor` and `VirtualReactor`: nothing calls it, and this repository removes such items
+// rather than keeping them for symmetry. `cargo clippy` asks for one on all three
+// (`new_without_default`); the warning is ACCEPTED and NOT silenced, because §7.4.3 gives clippy
+// no voice in the gate and an `#[allow]` would hide the next occurrence too. The argument is
+// written out once, in `crates/platform/src/reactor.rs`, and this comment points at it rather
+// than restating it. Added 2026-08-21: two of the three sites carried it and this one did not.
 impl MemoryJournal {
     pub const fn new() -> Self {
         MemoryJournal {

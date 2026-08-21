@@ -19,10 +19,14 @@
 //! every read. If a second engine ever arrives, the trait arrives with it.
 //!
 //! ⛔ WHAT BOTH IMPLEMENTATIONS PROMISE IS NOT WRITTEN HERE: it is in
-//! `crates/kernel/tests/journal_contract.rs`, eight promises RUN AGAINST THIS TYPE ON EVERY
+//! `crates/kernel/tests/journal_contract.rs`, and its promises RUN AGAINST THIS TYPE ON EVERY
 //! COMMIT since 2026-08-10 by `crates/platform/tests/journal_contract_real.rs`, which reaches
 //! them by `include!`. This line said "at task 9" until that file existed. What only THIS one
 //! promises — that a write survives the process — is in `crates/platform/tests/file_journal.rs`.
+//!
+//! ⚠️ RECALL OF 2026-08-21 — THIS SAID "EIGHT PROMISES", AND THEY ARE NINE SINCE 2026-08-10.
+//! The figure is REMOVED and not realigned: it lived in three files at once and went stale in
+//! the two that never recount it. It stays where it is counted — `journal_contract.rs`.
 
 use std::fs::{File, TryLockError};
 use std::io;

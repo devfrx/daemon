@@ -650,7 +650,11 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     // both binaries with `--nocapture` so that constraint 7 of §11 has its wall time, and the two
     // lines exist to be READ AS A PAIR. Two prefixes would make whoever scans that output know
     // two spellings to find one thing.
-    campaign("DST L2 short", SHORT_RECORDS, SHORT_OPERATIONS_TO_SATURATION);
+    campaign(
+        "DST L2 short",
+        SHORT_RECORDS,
+        SHORT_OPERATIONS_TO_SATURATION,
+    );
 }
 
 /// How many records the DEEP campaign writes.

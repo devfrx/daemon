@@ -178,7 +178,9 @@ pub enum PreemptibleState {
     Running,
     /// The arbiter has asked for the resource back. `deadline` is on the MONOTONIC axis --
     /// never wall time: a clock that steps backwards cannot expire a grant (§5.3 point 2).
-    Revoking { deadline: Monotonic },
+    Revoking {
+        deadline: Monotonic,
+    },
 }
 
 /// What can go wrong when handing a grant back.
@@ -1093,8 +1095,11 @@ mod tests {
             panic!("it fills the machine");
         };
 
-        let asked_back =
-            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        let asked_back = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::ORIGIN,
+        );
 
         assert_eq!(asked_back, Mib::new(4_096), "one grant covers the need");
         assert_eq!(arbiter.revoking(), 1);
@@ -1117,7 +1122,11 @@ mod tests {
         ) else {
             panic!("it fills the machine");
         };
-        let _ = arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        let _ = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::ORIGIN,
+        );
 
         // Still inside the grace: nothing is free yet.
         assert_eq!(arbiter.allocated(), Mib::new(4_096));
@@ -1148,7 +1157,11 @@ mod tests {
         ) else {
             panic!("it fills the machine");
         };
-        let _ = arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        let _ = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::ORIGIN,
+        );
 
         let Admission::Queued(_) = arbiter.admit(
             &profile("the-interactive-one", 4_096, ComputeClass::Interactive),
@@ -1180,7 +1193,11 @@ mod tests {
         ) else {
             panic!("it fills the machine");
         };
-        let _ = arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        let _ = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::ORIGIN,
+        );
 
         let after = arbiter.admit(
             &profile("the-interactive-one", 4_096, ComputeClass::Interactive),
@@ -1215,8 +1232,11 @@ mod tests {
             panic!("it fills the machine");
         };
 
-        let asked_back =
-            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        let asked_back = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::ORIGIN,
+        );
 
         assert_eq!(asked_back, Mib::ZERO, "nothing here can be taken back");
         assert_eq!(arbiter.revoking(), 0);
@@ -1237,8 +1257,11 @@ mod tests {
             panic!("it fills the machine");
         };
 
-        let asked_back =
-            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        let asked_back = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::ORIGIN,
+        );
 
         assert_eq!(asked_back, Mib::ZERO, "Realtime is not below Interactive");
         assert_eq!(arbiter.revoking(), 0);
@@ -1260,15 +1283,23 @@ mod tests {
     fn a_grant_in_the_asking_lane_itself_is_not_asked_back() {
         let mut arbiter = arbiter(Mib::new(4_096));
         let Admission::Granted(_peer) = arbiter.admit(
-            &preemptible("interactive-resident", 4_096, ComputeClass::Interactive, 500),
+            &preemptible(
+                "interactive-resident",
+                4_096,
+                ComputeClass::Interactive,
+                500,
+            ),
             LONG,
             Monotonic::ORIGIN,
         ) else {
             panic!("it fills the machine");
         };
 
-        let asked_back =
-            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        let asked_back = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::ORIGIN,
+        );
 
         assert_eq!(
             asked_back,
@@ -1293,8 +1324,11 @@ mod tests {
             assert!(matches!(outcome, Admission::Granted(_)));
         }
 
-        let asked_back =
-            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        let asked_back = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::ORIGIN,
+        );
 
         assert_eq!(asked_back, Mib::new(4_096));
         assert_eq!(arbiter.revoking(), 1, "one was enough");
@@ -1328,8 +1362,11 @@ mod tests {
             panic!("2048 + 6144 fills the machine");
         };
 
-        let asked_back =
-            arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        let asked_back = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::ORIGIN,
+        );
 
         assert_eq!(
             asked_back,
@@ -1386,7 +1423,12 @@ mod tests {
     fn asking_back_takes_the_worst_lane_first() {
         let mut arbiter = arbiter(Mib::new(8_192));
         let Admission::Granted(_interactive) = arbiter.admit(
-            &preemptible("interactive-resident", 4_096, ComputeClass::Interactive, 500),
+            &preemptible(
+                "interactive-resident",
+                4_096,
+                ComputeClass::Interactive,
+                500,
+            ),
             LONG,
             Monotonic::ORIGIN,
         ) else {
@@ -1434,7 +1476,12 @@ mod tests {
     fn asking_back_crosses_into_the_next_lane_when_the_worst_one_is_not_enough() {
         let mut arbiter = arbiter(Mib::new(8_192));
         let Admission::Granted(_interactive) = arbiter.admit(
-            &preemptible("interactive-resident", 4_096, ComputeClass::Interactive, 500),
+            &preemptible(
+                "interactive-resident",
+                4_096,
+                ComputeClass::Interactive,
+                500,
+            ),
             LONG,
             Monotonic::ORIGIN,
         ) else {
@@ -1481,7 +1528,11 @@ mod tests {
         ) else {
             panic!("it fills the machine");
         };
-        let first = arbiter.ask_back(Mib::new(4_096), ComputeClass::Interactive, Monotonic::ORIGIN);
+        let first = arbiter.ask_back(
+            Mib::new(4_096),
+            ComputeClass::Interactive,
+            Monotonic::ORIGIN,
+        );
         assert_eq!(first, Mib::new(4_096));
 
         let second = arbiter.ask_back(

@@ -158,7 +158,10 @@ fn under_the_remote_policy_the_same_clock_advance_serves_nobody() {
 
     let promoted = arbiter.promote(Monotonic::from_millis(501));
 
-    assert!(promoted.is_empty(), "REMOTE asked nobody, so nothing came free");
+    assert!(
+        promoted.is_empty(),
+        "REMOTE asked nobody, so nothing came free"
+    );
     // Dominated inside this probe, and kept: same reason, written once above.
     assert_eq!(arbiter.allocated(), Mib::new(4_096));
 }
@@ -179,11 +182,15 @@ fn each_policy_names_itself() {
     assert_eq!(VramPolicy::Local(LocalPolicy).name(), "local");
 
     assert_eq!(
-        arbiter(4_096, VramPolicy::Remote(RemotePolicy)).policy().name(),
+        arbiter(4_096, VramPolicy::Remote(RemotePolicy))
+            .policy()
+            .name(),
         "remote"
     );
     assert_eq!(
-        arbiter(4_096, VramPolicy::Local(LocalPolicy)).policy().name(),
+        arbiter(4_096, VramPolicy::Local(LocalPolicy))
+            .policy()
+            .name(),
         "local"
     );
 }
@@ -306,7 +313,11 @@ fn the_admission_asks_back_below_its_own_lane_and_spares_a_peer() {
         "an Interactive peer is not evicted for an Interactive request"
     );
     // Dominated inside this probe, and kept: same reason, written once above.
-    assert_eq!(arbiter.allocated(), Mib::new(3_072), "the books did not move");
+    assert_eq!(
+        arbiter.allocated(),
+        Mib::new(3_072),
+        "the books did not move"
+    );
 }
 
 /// ⛔ THE ASSERTION IS ON THE ARCHIVE, NOT ON THE POLICY. "After the transition the policy is
@@ -328,9 +339,11 @@ fn a_policy_transition_writes_its_intent_before_its_outcome() {
 
     let records: Vec<RecordV1> = entries
         .iter()
-        .map(|(_, bytes)| match Record::decode(bytes).expect("our own bytes") {
-            Record::V1(record) => record,
-        })
+        .map(
+            |(_, bytes)| match Record::decode(bytes).expect("our own bytes") {
+                Record::V1(record) => record,
+            },
+        )
         .collect();
 
     assert_eq!(
@@ -360,7 +373,11 @@ fn a_transition_names_the_policy_it_moves_to() {
     let mut arbiter = arbiter(4_096, VramPolicy::Local(LocalPolicy));
 
     arbiter
-        .set_policy(VramPolicy::Remote(RemotePolicy), StepId::new(1), &mut journal)
+        .set_policy(
+            VramPolicy::Remote(RemotePolicy),
+            StepId::new(1),
+            &mut journal,
+        )
         .expect("the journal accepts");
 
     let entries = journal.replay().expect("the archive reads back");
@@ -378,8 +395,7 @@ fn a_refused_intent_leaves_the_policy_where_it_was() {
     let mut journal = CrashingJournal::falling_at(0);
     let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
 
-    let outcome =
-        arbiter.set_policy(VramPolicy::Local(LocalPolicy), StepId::new(1), &mut journal);
+    let outcome = arbiter.set_policy(VramPolicy::Local(LocalPolicy), StepId::new(1), &mut journal);
 
     assert!(outcome.is_err());
     assert_eq!(
@@ -397,8 +413,7 @@ fn a_transition_cut_between_intent_and_outcome_leaves_the_step_in_doubt() {
     let mut journal = CrashingJournal::falling_at(1);
     let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
 
-    let outcome =
-        arbiter.set_policy(VramPolicy::Local(LocalPolicy), StepId::new(7), &mut journal);
+    let outcome = arbiter.set_policy(VramPolicy::Local(LocalPolicy), StepId::new(7), &mut journal);
     assert!(outcome.is_err(), "the outcome never reached the archive");
 
     let survivor = journal.into_survivor();

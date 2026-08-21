@@ -294,10 +294,17 @@ fn the_scenario_really_writes_what_the_campaign_assumes() {
     // `ACTIVITIES` or `STEPS` at zero the constant is 0, both assertions read `0 == 0` and stay
     // green — while task 3 would hand that 0 to `from_seed`, whose own guard against it is a
     // `debug_assert!` and is compiled away in release.
-    assert!(
-        WRITES_PER_RUN > 0,
-        "a scenario with no writes has nothing to fall at"
-    );
+    //
+    // ⛔ AND IT IS A `const` BLOCK AND NOT A RUNTIME `assert!`, since 2026-08-21: the operand is
+    // a CONSTANT, so the guard belongs to the compiler and a run of this test cannot be what
+    // holds it. It is §7.1.2's own preference — a rule that can rise to level 1 rises — and here
+    // it costs one word. `clippy::assertions_on_constants` is what pointed at it.
+    const {
+        assert!(
+            WRITES_PER_RUN > 0,
+            "a scenario with no writes has nothing to fall at"
+        )
+    };
 
     let (journal, trace) = run(20_260_806, CrashingJournal::without_crash());
     assert_eq!(journal.writes_done(), WRITES_PER_RUN);

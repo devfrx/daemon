@@ -36,8 +36,14 @@ fn a_subtraction_below_zero_saturates_to_zero_and_not_to_an_enormous_budget() {
 /// The ordinary path, so the two probes above are not the only thing this type is held by.
 #[test]
 fn the_ordinary_arithmetic_is_exact() {
-    assert_eq!(Mib::new(4096).saturating_add(Mib::new(2048)), Mib::new(6144));
-    assert_eq!(Mib::new(4096).saturating_sub(Mib::new(2048)), Mib::new(2048));
+    assert_eq!(
+        Mib::new(4096).saturating_add(Mib::new(2048)),
+        Mib::new(6144)
+    );
+    assert_eq!(
+        Mib::new(4096).saturating_sub(Mib::new(2048)),
+        Mib::new(2048)
+    );
     assert_eq!(Mib::new(4096).get(), 4096);
 }
 

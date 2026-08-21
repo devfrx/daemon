@@ -209,10 +209,12 @@ fn the_promotion_writes_through_note_and_the_record_says_note() {
     // port operation. `crate::reconcile` reads only the field, while the journal knows only the
     // operation, and nothing at level 1 keeps a writer honest between them.
     //
-    // ⚠️ WHY A PROBE AND NOT A HELPER: there is ONE writer in the kernel today, and this
-    // repository does not build an abstraction for a single caller. The helper is born with the
-    // second writer; until then this assertion is what stands between the two truths and a
-    // silent disagreement.
+    // ⚠️ WHY A PROBE AND NOT A HELPER, and the sentence is DATED because its premise expired.
+    // It read "there is ONE writer in the kernel today ... the helper is born with the second
+    // writer". The second writer landed on 2026-08-20 — `Arbiter::set_policy` — and nothing went
+    // red to say so. Today each writer has its own probe, this one and
+    // `a_policy_transition_writes_its_intent_before_its_outcome`, and whether to replace the two
+    // with one helper is the owner's: registered in `crate::reconcile`, not taken here.
     //
     // ⛔ AND BOTH HALVES ARE ASSERTED, WHICH THE FIRST DRAFT OF THIS TEST DID NOT DO. It claimed
     // the port half was "held by construction — `note` is the only operation whose guard admits

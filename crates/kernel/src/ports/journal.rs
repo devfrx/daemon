@@ -66,9 +66,16 @@ use alloc::vec::Vec;
 ///
 /// ⚠️ THE FUTURE TENSE IS EXACT, AND TODAY NOTHING ASSIGNS ANYTHING. `new` is public, `intent`
 /// RECEIVES the identity from its caller, and this port declares no operation that allocates
-/// one. The allocator arrives with milestone 3, where the durable record gives it something to
-/// be progressive in; until then "assigned by the journal" describes the design and not this
-/// file, and saying so is cheaper than a reader deducing a guarantee that is not here.
+/// one; so "assigned by the journal" describes the design and not this file, and saying so is
+/// cheaper than a reader deducing a guarantee that is not here.
+///
+/// ⚠️ RECALL OF 2026-08-21 — THIS SAID "the allocator arrives with milestone 3". Milestone 3
+/// closed on 2026-08-10 WITH the durable record and WITHOUT the allocator, and milestone 4
+/// closed after it: nothing under `crates/*/src/` constructs a `StepId` except
+/// `FileJournal::replay`, which rebuilds one it has just read. The milestone is REMOVED rather
+/// than moved to a later one — a date written in prose has nothing to fire it when it passes,
+/// which is the shape `crate::reconcile` records for its own expired trigger. WHEN the
+/// allocator arrives is the owner's: registered, not taken.
 ///
 /// ⚠️ The derive list is short on purpose. No ordering and no `Hash`: nothing sorts or indexes
 /// these yet, and `Hash` in particular would be an invitation in a crate where a negative case

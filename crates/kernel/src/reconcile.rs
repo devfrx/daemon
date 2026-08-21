@@ -49,14 +49,23 @@ pub struct InDoubt {
 /// kernel's property (ADR-0036). The record keeps the authority; this walk keeps trusting the
 /// field, and now does so BY DECISION rather than by default.
 ///
-/// ⚠️ THE DISAGREEMENT IS CLOSED BY WHOEVER WRITES, and today that is ONE FUNCTION —
-/// `Untrusted::promote`, which since 2026-08-10 writes through `Journal::note` a record whose
-/// `kind` is `RecordKind::Note`. So there is nothing to build an abstraction around: a helper
-/// that kept the two in step would have a single caller, and this repository does not build one
-/// for a single caller. What holds it instead is a PROBE that pins the agreement —
-/// `the_promotion_writes_through_note_and_the_record_says_note` in
-/// `crates/kernel/tests/boundary_promotion.rs`. The helper is born with the SECOND writer, and
-/// then it has two call sites to be right for.
+/// ⚠️ THE DISAGREEMENT IS CLOSED BY WHOEVER WRITES, AND THERE ARE TWO OF THEM.
+/// `Untrusted::promote` writes through `Journal::note` a record whose `kind` is
+/// `RecordKind::Note`; `Arbiter::set_policy`, since milestone 5 task 9, writes through
+/// `intent` and `outcome` records whose `kind` matches each. Each writer carries its OWN
+/// probe that pins the agreement — `the_promotion_writes_through_note_and_the_record_says_note`
+/// in `crates/kernel/tests/boundary_promotion.rs`, and
+/// `a_policy_transition_writes_its_intent_before_its_outcome` in
+/// `crates/kernel/tests/arbiter_policy.rs`, which asserts the two `kind` IN ORDER against the
+/// archive.
+///
+/// ⚠️ RECALL OF 2026-08-21 — THIS PARAGRAPH SAID "TODAY THAT IS ONE FUNCTION" AND CARRIED A
+/// TRIGGER THAT HAD ALREADY FIRED: "the helper is born with the SECOND writer". That writer
+/// landed on 2026-08-20 and NOTHING WENT RED to say so — a deadline written in prose has no
+/// mechanism behind it, unlike the `dead_code` deadlines of `E10` and `E67`, which the compiler
+/// remembers. REWRITTEN and not annotated, which is finding A-2's rule.
+/// ⛔ WHETHER TO BUILD THE HELPER IS THE OWNER'S and it is REGISTERED, NOT TAKEN: it changes
+/// the shape of code with two call sites, and the two probes hold the agreement meanwhile.
 ///
 /// ⚠️ MEASURED, BOTH DIRECTIONS, and the two do not fail alike — kept because it is the evidence
 /// that the probe above is worth its line:
@@ -69,7 +78,7 @@ pub struct InDoubt {
 ///
 /// ⚠️ AND WHAT IS *NOT* BOUGHT IS SAID PLAINLY, because "decided" reads like "held": nothing at
 /// level 1 stops a future writer from calling `outcome()` with a record whose `kind` says
-/// `Intent`. The probe covers the one writer that exists. This sentence used to read "it is not
+/// `Intent`. Each probe covers its own writer. This sentence used to read "it is not
 /// a defect today, because nothing in the kernel writes a record yet"; that reason expired on
 /// 2026-08-10, and it is replaced rather than left standing.
 pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalError> {

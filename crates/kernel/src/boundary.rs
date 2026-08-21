@@ -48,12 +48,19 @@
 //! The honesty of an implementation is not a level 1 property and never becomes one; it is
 //! what a CONFORMANCE SUITE holds, the way `tests/reactor_contract.rs` holds the `Reactor`
 //! with two deliberate liars. ⚠️ THAT SUITE EXISTS SINCE 2026-08-10 —
-//! `tests/journal_contract.rs`, eight promises and eight liars — and this paragraph is dated
+//! `tests/journal_contract.rs` — and this paragraph is dated
 //! rather than rewritten, because the sentence it replaced ("the conversion is journalled",
 //! read as a guarantee) is the mistake it exists to prevent and the correction has its own
 //! date. ⛔ WHAT THE SUITE BUYS IS STILL NOT WHAT THE TYPE SYSTEM BUYS: it is level 2, so
 //! nothing stops somebody writing a `Journal` that never meets it. Road A6 below says exactly
 //! how far it reaches.
+//!
+//! ⚠️ RECALL OF 2026-08-21 — THE COUNTS ARE GONE FROM THIS FILE AND NOT REALIGNED. This
+//! paragraph said "eight promises and eight liars", and road A6 below said "the same eight
+//! promises": they are NINE and TWELVE, and have been since 2026-08-17. A figure that lives
+//! in more than one file goes stale in the copy nobody moves, so it is REMOVED here and left
+//! where it is recounted — `tests/journal_contract.rs`, which counts its own tests with a
+//! `grep` instead of bumping a number. `CLAUDE.md`'s rule, and gotcha #68.
 
 use core::fmt;
 
@@ -267,7 +274,7 @@ impl Untrusted {
     ///   conformance suite is worth the evidence that TWO implementations answer alike, and the
     ///   second one — `redb` in `platform` — arrives at task 8. Until then what is closed is the
     ///   road, not the agreement." The second one arrived, and
-    ///   `crates/platform/tests/journal_contract_real.rs` holds it to the same eight promises ON
+    ///   `crates/platform/tests/journal_contract_real.rs` holds it to the same promises ON
     ///   EVERY COMMIT — which is the whole difference between "measured once" and "held". ⛔ IT
     ///   IS STILL A LEVEL 2 RULE AND NOT LEVEL 1: nothing stops somebody from writing a
     ///   `Journal` that never meets the suite, which is exactly why it is written here rather

@@ -15,10 +15,10 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (753 KB in byte LF il 2026-08-21, e possono solo crescere — la spec da sola ne fa 277), e
+> (759 KB in byte LF il 2026-08-21, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-08-20**, al Task 9 del Traguardo 5. Manutenzione: §13.
+**Aggiornato il 2026-08-21**, al Task 10 del Traguardo 5. Manutenzione: §13.
 ⚠️ Questa riga diceva **2026-08-11** dopo decine di passate: è il gotcha **#31** sull'intestazione,
 che nessuno rilegge perché è la cornice e non il contenuto — la stessa che l'audit trovò su
 [`HANDOFF.md`](HANDOFF.md).
@@ -901,13 +901,13 @@ tabella sola in [`porta-di-qualita.md`](porta-di-qualita.md) invece che in quatt
 quattro voci aperte sullo stesso oggetto sono il modo in cui una smette di esserlo senza che
 nessuno l'abbia chiusa.
 
-⏭️ **IL PROSSIMO PASSO È IL TASK 10 DEL TRAGUARDO 5** — `daemon` che **cabla** l'arbitro, il
-giornale e le **due concessioni permanenti**: il primo chiamante di produzione che l'arbitro
-abbia mai avuto.
-⛔ **L'esecuzione è in corso dal 2026-08-19: nove compiti su tredici, `GATE GREEN` a
+⏭️ **IL PROSSIMO PASSO È IL TASK 11 DEL TRAGUARDO 5** — i quattro casi di §6.10.5, che il
+`Grant` sblocca: le quattro righe di catalogo ferme dal Traguardo 2 perché *«senza `Grant` non
+si ottiene un `Worker`»*, e ora il `Grant` c'è.
+⛔ **L'esecuzione è in corso dal 2026-08-19: dieci compiti su tredici, `GATE GREEN` a
 ciascuno**, subagent-driven, un compito per volta con revisione fra uno e l'altro. Il racconto
-sta nel riquadro subito sotto, e ciò che chi riprende deve sapere **prima** di aprire il Task 10
-sta in fondo a quel riquadro — ⛔ **e sono MISURE e non previsioni**, perché il Task 9 è stato
+sta nel riquadro subito sotto, e ciò che chi riprende deve sapere **prima** di aprire il Task 11
+sta in fondo a quel riquadro — ⛔ **e sono MISURE e non previsioni**, perché il Task 10 è stato
 eseguito.
 ⚠️ **Il numeratore lo muove chi esegue, e vive QUI e in nessun altro punto di questa
 sezione** — ne teneva una seconda copia quattro riquadri più sotto, che è il modo in cui una
@@ -987,6 +987,7 @@ alla §6, in un posto solo.
 | **Task 7** | **la revoca, e la grazia che scade**: `Arbiter::revoking()`, `ask_back` che **marca e non prende** — la riserva resta nei libri per tutta la grazia — e `collect_expired` che diventa una riscossione a **due scadenze**, la finestra dichiarata dal richiedente e la grazia che una revoca ha dato. `Held` guadagna **tre** campi (`lane`, `activity`, `grace`) e ne ha **cinque**. ⛔ **Tre decisioni del proprietario prese eseguendo:** `ask_back` resta **`pub(crate)`** e le sue sonde vivono in un `#[cfg(test)] mod tests` **dentro `crates/kernel/src/arbiter/mod.rs`** — il primo di `kernel`, sul precedente di `crates/platform/src/rng.rs` — perché il doc del tipo dice che *«fare spazio è la conseguenza di una richiesta, mai una cosa che qualcuno chiede»*; i **due avvisi `dead_code`** sono **ratificati** con scadenza al Task 8, **nessun `#[allow]`**, avviso **visibile**, sul precedente di `E10`; e `ask_back` **non marca vittime quando il recuperabile non copre il bisogno**, riclassificato da politica aperta a **difetto** — sfrattare un lavoro per una richiesta che non si siede comunque è il degrado silenzioso vietato da ADR-0005 e ADR-0019 | `1b5af8d` · `7b3882e` · `83c7242` · `701987c` |
 | **Task 8** | **le due policy VRAM, e la decisione sta dentro l'ammissione**: il tratto `MakeRoom` con **una domanda sola** — *«una richiesta non entra: si può fare spazio?»* — `RemotePolicy` e `LocalPolicy` come **due oggetti**, e `VramPolicy` che ne tiene **uno alla volta**, che è `V3` al **livello 1**: *«due policy attive»* non è pronunciabile. Il ramo d'ammissione chiede la domanda in **un posto solo**; l'accodamento è **estratto** in `enqueue`, a comportamento provato invariato; e il modulo `arbiter` è ora la **cartella con tre file** che la struttura del piano prevedeva. ⛔ **E ciò che rende il compito possibile solo a questo punto del traguardo:** *«sfrattare un residente»* **è** *«revocare una concessione prelazionabile»*, cioè il meccanismo che il Task 7 ha costruito — quindi le due policy non sono gusci vuoti e non serve **nessun modello** per distinguerle (ADR-0020). Era la domanda che il disegno aveva lasciato aperta | `4b89fea` · `ea0cc09` · `a53907e` · `b49c835` |
 | **Task 9** | **la transizione di policy è un passo giornalato, e l'intento viene prima dell'effetto**: `Arbiter::set_policy` scrive l'**intento**, poi assegna, poi scrive l'**esito**, con la funzione libera privata `transition_record(kind, policy)` accanto all'`impl`. `EffectClass::Idempotent` è **argomentata e non scelta**; `Trust::Instruction` porta il **payload vuoto**; e `reason` porta il **nome della policy**, che è la ragione per cui `MakeRoom::name` esiste. **Cinque** sonde nuove in `crates/kernel/tests/arbiter_policy.rs`, che passa da **sette a dodici** test. ⛔ **E la scelta che le rende non vacue:** le asserzioni stanno sull'**archivio**, non sulla policy — *«dopo la transizione la policy è l'altra»* è **verde con zero record scritti**, quindi da sola non prova niente. È la **proprietà DST numero 4**, e rende scrivibile la campagna del **Task 12**. ⛔ **E un fatto di livello 1 che nessuno aveva rivendicato:** l'ordine *intento prima dell'effetto* è in parte tenuto dal **COMPILATORE** — `VramPolicy` non deriva `Copy` né `Clone`, quindi assegnare `self.policy` prima di scrivere l'intento **muove** il valore e `policy.name()` sotto è `` error[E0382] ``: la mutazione dettata dal piano **non compila**. Voce `E115` ② | `4c07d26` · `036a93a` |
+| **Task 10** | **il grafo di produzione monta l'arbitro, il giornale e le due concessioni permanenti**, ed è il primo chiamante di produzione che l'arbitro abbia mai avuto. `run_the_production_graph` prende un percorso, `StartupError` ha **tre** varianti e `daemon` passa da **una** sonda a **otto**. ⛔ **`E41` è chiusa DAVVERO, e la differenza è il punto:** il piano la chiudeva con un'asserzione dentro un test, e una quota permanente che non è `Granted` è ora un **errore d'avvio** che **nomina la quota caduta** — con **due** sonde permanenti e non una mutazione, perché le vie sono due e falliscono diversamente (`Queued` a `1_500` MiB, `Refused` a `500`). Una direzione tenuta da una mutazione è tenuta da niente (gotcha **#72**). ⛔ **E i due campi delle riserve erano QUATTRO mutanti vivi** — `Preemption::Never` è l'unico sito di produzione che **sceglie** la parola di ADR-0033, `ComputeClass::Realtime` è la premessa della frase accanto a `build_the_arbiter`, e nessuna sonda li teneva: pinzati, non dichiarati, perché la decisione l'ha presa un ADR e il doc la **afferma** (confine **#73**/**#14**). ⛔ **E `FOR_EVER` non è letteralmente «mai»:** `saturating_add` satura **a** `u64::MAX` e `collect_expired` confronta `<=`, quindi all'ultimo millisecondo rappresentabile **entrambe** le quote vengono riscosse — `allocated()` torna `Mib(0)` invece di `Mib(1792)`, misurato. Il confine è pinzato nelle **due** direzioni | `800ffeb` · `9c91e18` · `280e491` · `7fa8a37` · `a20158d` · `57e7b32` |
 
 📌 **I numeri, misurati e non dedotti:** `cargo test --locked --workspace --no-fail-fast` →
 **35 target, 248 passate, 0 fallite, 2 ignorate** (erano **32 e 194** all'apertura del traguardo
@@ -1006,9 +1007,15 @@ il piano scrive nei propri passi è STANTIO per costruzione** — dice *«32 tar
 che era vero prima del Task 1: ogni compito **misura la propria** prima di cominciare, o
 confronta contro un numero che i compiti precedenti hanno già spostato.
 
-⛔ **L'errata del piano è a CENTODICIOTTO voci in nove compiti — SEI dal solo Task 9, da
-`E113` a `E118` — e il pre-controllo ha trovato un difetto in nove compiti su nove**, SEI al
-Task 9, di cui **due bloccanti per costruzione**: **tutti** gli import mancavano — `String`,
+⛔ **L'errata del piano è a CENTOVENTINOVE voci in dieci compiti — UNDICI dal solo Task 10, da
+`E119` a `E129` — e il pre-controllo ha trovato un difetto in dieci compiti su dieci.** ⛔ **E la
+notizia del Task 10 è QUALI:** **due** delle undici sono difetti del **coordinatore** e non del
+piano — `E127`, il divieto di toccare `crates/kernel/src/arbiter/` che copriva anche tre frasi
+rese false lo stesso giorno, ed `E128`, un'**esclusività falsa dettata in un brief** e copiata nel
+sorgente. ⚠️ **In entrambi i casi chi eseguiva si è FERMATO e le ha riportate** invece di
+aggirarle, ed è la condotta che le ha rese visibili. 📌 *Un brief è un'affermazione come le
+altre* — gotcha **#65** applicato a chi coordina.
+⚠️ **SEI al Task 9**, di cui **due bloccanti per costruzione**: **tutti** gli import mancavano — `String`,
 `Record`, `RecordKind`, `Journal`, `StepId`, `JournalError` — e **nessuna sonda leggeva
 `reason`**, cioè il campo che il doc del compito dichiara essere la ragione per cui
 `MakeRoom::name` esiste. ⛔ **E una delle sei è un difetto del COORDINATORE e non del piano**,
@@ -1081,7 +1088,7 @@ tocca nessuna riga eseguibile»* — mentre i due rilievi del giro precedente st
 nella prosa**, cioè in ciò di cui un'ondata di correzioni è fatta. 📌 ***«È solo documentazione»*
 è un argomento PER rivedere, non contro.**
 
-⛔ **E DUE DECISIONI NUOVE ASPETTANO IL PROPRIETARIO — `E50` ed `E51`, chiusore il Task 10.**
+⛔ **E DUE DECISIONI NUOVE ASPETTANO IL PROPRIETARIO — `E50` ed `E51`.** ⚠️ **RICHIAMO DEL 2026-08-21:** diceva *«chiusore il Task 10»*, e il Task 10 si è chiuso **senza toccarle**: la radice di composizione **non orchestra**. Il chiusore è chi costruirà il **primo ciclo di orchestrazione** — quello che decide quando chiamare `promote` rispetto ad `admit` — e oggi non ne esiste nessuno.
 Nessuna è un difetto oggi, nessuna blocca l'esecuzione in corso, ed **entrambe sono dichiarate non tenute nel
 sorgente** invece che pinzate da una sonda. **E50** — fra corsie `promote` **scavalca**, cioè fa
 esattamente ciò che il suo stesso commento rifiuta *dentro* una corsia, con un'inversione di
@@ -1106,9 +1113,10 @@ biglietto in coda, la spazzata libera quella riserva alla scadenza della grazia,
 `admit` diretto si siede sulla stanza fatta per un altro. ✅ **Misurato nelle due direzioni** su
 una sonda usa-e-getta cancellata subito dopo: **LOCAL** → il ritardatario è `Granted`, `promote`
 torna vuoto e il biglietto resta in coda; **REMOTE**, che è il mondo prima del Task 8 → lo stesso
-ritardatario è `Queued`. ⚖️ **Il chiusore resta il Task 10**, ed è ancora una decisione di
-orchestrazione: ciò che cambia è che il costo di lasciarla aperta si paga ora **in produzione** e
-non sulla carta. Voce `E100`.
+ritardatario è `Queued`. ⚖️ **Il chiusore è chi costruirà il primo ciclo di orchestrazione**, ed
+è ancora una decisione di orchestrazione: ciò che cambia è che il costo di lasciarla aperta si
+paga ora **in produzione** e non sulla carta. ⚠️ **RICHIAMO DEL 2026-08-21:** diceva *«resta il
+Task 10»*. Voce `E100`.
 
 ⛔ **E CIÒ CHE IL TASK 6 LASCIAVA AL TASK 7 È STATO MISURATO, e il riquadro si riscrive invece
 di appenderci sotto una riga vera** (finding **A-2**). ① Diceva che `Held` ha **due** campi e che
@@ -1231,24 +1239,30 @@ di catalogo — *«e la transizione resta un passo giornalato (§5.4)»* — esi
 questa sezione lo metterebbe in due documenti, che è il gotcha **#68** — e la cella di quel file
 lo ha ricontato per la **sesta** volta invece di dedurlo.
 
-⛔ **E CIÒ CHE IL TASK 9 LASCIA AL TASK 10, che NON è un pre-controllo: quello si fa prima di
+⛔ **E CIÒ CHE IL TASK 10 LASCIA AL TASK 11, che NON è un pre-controllo: quello si fa prima di
 dispacciarlo, contro il codice di allora.** Qui c'è solo ciò che è **misurato oggi**.
-① **`set_policy` non ha ancora un chiamante di produzione.** Nasce in `daemon` al **Task 10**, ed
-è lì che si vede se la firma **senza `now`** regge: se non reggesse, l'argomento torna come
-**errore di compilazione** e non come regressione silenziosa — è il punto di `E113`.
-② **Il Task 10 è il chiusore dichiarato di TRE voci aperte:** `E50` e `E51`/`E100` —
-l'inversione di priorità, che dal Task 8 è **raggiungibile in produzione** e non più teorica —
-ed `E41`, la visibilità della seconda quota permanente, che l'arbitro **non può** riparare da sé.
-③ La baseline da cui il Task 10 parte è **35 target, 248 passate, 0 fallite, 2 ignorate** — e si
-**rimisura**, non si cita. ④ **`V3` è coperta**, e le righe del blocco C che restano scoperte
-sono `V5`, `V10` e le due di §6.10 — il numeratore lo dice
+① **`set_policy` non ha ANCORA un chiamante di produzione, e la previsione del Task 9 era
+falsa.** Misurato eseguendo: il grafo **costruisce** l'arbitro con `VramPolicy::Remote(RemotePolicy)`
+e non **transita** mai. Una transizione all'avvio sarebbe uno scambio che nessuno chiede, quindi
+**non è stata inventata** per far tornare la frase: il registro è **riscritto** e il chiamante si
+sposta al primo orchestratore.
+② **`E41` È CHIUSA — il chiusore era il Task 10, e ha chiuso.** `E50` e `E51`/`E100` **no**, e il
+loro chiusore **non è più un numero di compito**: è chi costruirà il primo ciclo di orchestrazione.
+Decisione del proprietario del **2026-08-21**, presa **prima** di dispacciare il compito, sul fatto
+misurato che la radice di composizione **non orchestra**.
+③ La baseline da cui il Task 11 parte è **35 target, 255 passate, 0 fallite, 2 ignorate**, col
+bersaglio `daemon` a **otto** sonde — e si **rimisura**, non si cita. ④ **`V3` è coperta**, e le
+righe del blocco C che restano scoperte sono `V5`, `V10` e le due di §6.10 — il numeratore lo dice
 [`porta-di-qualita.md`](porta-di-qualita.md), non questa riga. ⑤ **Voci ereditate e non chiuse
 qui**, tutte del proprietario: `E30` — ⚠️ **va decisa prima del Traguardo 6** — `E31`, `E32`,
 `E94`, `E104`.
-⚠️ **E ciò che il riquadro precedente lasciava e NON è stato raccolto qui:** le celle
-`arbiter_admission` e `lib` della campagna restano non rimisurate, perché il Task 9 non ha toccato
-`crates/kernel/tests/arbiter_admission.rs`. La regola scritta allora **non si è ancora attivata**,
-e resta com'era: *il primo compito che tocca quel file le rimisura tutte*.
+⚠️ **E la regola lasciata dal Task 9 è SCATTATA senza essere onorata, e va detto invece che
+taciuto:** *«il primo compito che tocca `crates/kernel/tests/arbiter_admission.rs` rimisura tutte
+le celle della campagna»*. Il Task 10 lo ha toccato — **quattro righe di doc, nessuna sonda** — e
+nessuna cella è stata rimisurata. ✅ Misurato oggi: quel banco porta **venti** test, mentre i
+verbali del 2026-08-19 ne dichiarano **diciannove**, che è la misura di allora e resta tale.
+**Registrata, non presa:** se una regola debba scattare su un tocco che non muove nessuna cifra è
+del proprietario.
 
 ⛔ **E il Task 5 ha insegnato DUE cose, entrambe uscite dalla revisione e non dall'esecuzione.**
 La prima è il gotcha nuovo **#73** — *fissare con una sonda un comportamento che una decisione
@@ -2005,7 +2019,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. I settantasette gotcha
+## 9. I settantotto gotcha
 
 Trappole **reali**, molte trovate correggendo errori già commessi in questo progetto.
 Il testo completo, con le misure, è in `HANDOFF.md`.
@@ -2021,6 +2035,14 @@ non insegna niente diluisce quelli che insegnano**, e la §9 è l'elenco che si 
 è la stessa decisione presa chiudendo il Task 8, quando due candidati furono lasciati fuori
 perché coperti dal #65 e dal #48. **Due volte su due la scelta è stata la stessa, e non è
 un'omissione.**
+
+⛔ **E il Task 10 ha rotto la serie: porta il #78, più DUE forme dentro righe che c'erano.** Il
+**#78** entra perché insegna un gesto che nessuna riga esistente prescrive — *lo stato di un
+compito si rivede a `HEAD`, non commit per commit* — e perché è costato un giro pieno di
+revisione. Le due forme no: una è il **#69** spostato da uno **script** a un **subagente** che
+muore a metà, l'altra è la **terza e quarta misura** sotto la stessa tesi del **#76**, con i
+numeri che la rendono una serie invece di un aneddoto — `+120` righe con l'istruzione generica,
+`−6` e `+1` con quella di togliere.
 
 | # | Trappola |
 |---|---|
@@ -2101,6 +2123,7 @@ un'omissione.**
 | 75 | ⛔ **Un'ESCLUSIVITÀ misurata su un campione che esclude la classe portante si legge come una garanzia, e la misura non poteva dare l'altra risposta.** Misurato il 2026-08-20, in **terza** revisione del Task 7 del Traguardo 5. Un'asserzione era dichiarata **vacua** accanto al codice — *«ciò che tiene questa sonda sono le due asserzioni sopra»* — con una misura d'isolamento a sostegno. ⛔ **Rimisurata guardando QUALE asserzione va in panico**, e non se la sonda sia rossa, era l'**uccisore solo** su due righe di campagna (`5b` e `5d`), dove le due asserzioni sopra di lei **passano**. ⛔ **La causa è il CAMPIONE:** la misura d'isolamento aveva applicato **solo** mutazioni della funzione sotto esame, cioè precisamente la classe sotto cui quell'asserzione **non può** fallire, e non ha mai eseguito le righe in cui è portante. ⚠️ **Non è il #38**, dove l'atto di misurare **modifica** lo stato: qui non si modifica niente, e lo strumento risponde correttamente — a essere scelta male è la **popolazione**. ⚠️ **E non è la quarta forma del #31**, dove un qualificatore era vero e **invecchia**: questo era **falso alla nascita**, e nessuna rimisura del *numero* lo avrebbe colto, perché il numero era giusto. 📌 **Il contro-verso, e costa una riga:** *questa misura d'esclusività ha eseguito la classe in cui l'affermazione sarebbe portante?* Se la risposta è no, ciò che si è misurato non è l'esclusività ma il **campione**. 📌 **E il corollario:** una **negazione** — *«non morde»*, *«è vacua»*, *«nessuna sonda lo tiene»* — è l'affermazione che più facilmente si prova su un campione parziale, perché il campione lo sceglie chi ha già la risposta in testa |
 | 76 | ⛔ **Un'ondata di correzioni che RISCRIVE crea la superficie del proprio giro successivo; una che TOGLIE la chiude — misurato, non argomentato.** Misurato il 2026-08-20, chiudendo il Task 8 del Traguardo 5. Fra Task 7 e Task 8, **nove** volte un'ondata mandata a chiudere dei rilievi ne ha aperti di nuovi **nella prosa scritta per chiuderli** — e **due** volte un **rapporto** ha dichiarato fatta una correzione **assente dal diff**. ✅ **All'ultima ondata è stata data un'istruzione diversa — *toglierlo* invece di *riscriverlo meglio* — e il ciclo si è chiuso in UNA passata invece di spiralare:** **quattordici** righe messe contro **diciassette** tolte, **una** sola voce d'errata per l'intera ondata, e la revisione successiva **pulita**. 📌 *Meno parole, meno superficie per una falsità nuova.* ⚠️ **Non è il #45**, che dice che il rimedio **nasce non provato** e prescrive di rivedere l'ondata **come** il compito: quello agisce sul **numero di giri**, questo sulla **forma** del rimedio, cioè sull'istruzione che si dà a chi lo scrive — e la porta con una misura, che il #45 non ha. ⛔ **Il limite, dichiarato perché la regola non si applichi dove non vale:** togliere funziona quando ciò che è falso è una **qualificazione** o un **conteggio** accanto a un fatto che regge — l'aggettivo invecchiato, il numero accanto a una tabella che si può contare, la rivendicazione d'unicità smentita da una casa in più. Quando a essere sbagliato è **il fatto**, non c'è niente da togliere: si riscrive, col richiamo datato. 📌 **La domanda, e costa una rilettura della propria correzione prima di committarla:** *quanto di questa frase è un fatto che ho misurato, e quanto una qualificazione che gli ho messo intorno?* ✅ **HA RETTO UNA SECONDA VOLTA il 2026-08-20, chiudendo il Task 9 — stessa istruzione, stesso esito: 12 righe messe contro 15 tolte, 145 parole contro 203, e il ciclo chiuso in UNA passata.** ⛔ **Ma la prova nuova è di specie diversa, e questa è la parte che il Task 8 non aveva:** quell'ondata si è trovata **da sola** una **quinta** esclusività stantia che **nessuna delle due revisioni aveva nominato** — *«proves what no other probe here proves»*, falsa dalla stessa uscita che smentiva le altre quattro. 📌 **Al Task 8 il #76 comprava la CONVERGENZA; qui compra anche il RITROVAMENTO:** un'istruzione a **togliere** manda a **cercare** le altre occorrenze della stessa forma, mentre una a **riscrivere** fa guardare **solo il sito indicato**. ⚠️ La differenza non è di zelo ma di **perimetro**: *riscrivi questa frase* nomina un sito, *togli le frasi di questa specie* nomina una **classe**. |
 | 77 | ⛔ **Una SCADENZA scritta in prosa non ha niente che la faccia scattare: quando arriva, non diventa rosso nulla.** Misurato il 2026-08-21, **due volte in un file solo**. `crates/kernel/src/reconcile.rs` dichiarava *«oggi chi scrive è UNA FUNZIONE sola»* e ci appendeva l'innesco: *«l'aiutante nasce col SECONDO scrittore»*. Il secondo è arrivato il **2026-08-20** — `Arbiter::set_policy`, Task 9 — e la frase è rimasta al presente in **quattro** case: quel file, `tests/boundary_promotion.rs`, [`porta-di-qualita.md`](porta-di-qualita.md) e la tabella della §6 di questo file. `crates/kernel/src/ports/journal.rs` prometteva l'allocatore di `StepId` *«col Traguardo 3»*, e i Traguardi 3 e 4 si sono chiusi senza: `crates/kernel/src/ports/ipc.rs` ripeteva la stessa data. ⛔ **E il contrasto è la parte utile, perché questo repository possiede già la forma che FUNZIONA:** le scadenze `E10`, `E67` e `E74` erano tenute da un avviso `dead_code` **lasciato viaggiare** senza `#[allow]`, e hanno retto **due volte su due** perché **il compilatore le ricorda**. Una scadenza che il compilatore non può ricordare non ha nessun altro meccanismo dietro. ⚠️ **Non è il #57**, dove una decisione è **anteriore** a ciò che nomina e la smentita arriva dopo: qui il soggetto esiste, la condizione è stata **soddisfatta**, e la domanda del #57 — *quando questa riga fu scritta, esisteva la cosa di cui parla?* — risponde **sì** e non coglie niente. ⚠️ **E non è il #31**: a invecchiare non è un numero né un qualificatore, è una **condizione** che si è avverata. 📌 **Le due domande:** *questa scadenza ha qualcosa che diventi rosso il giorno in cui scatta?* e, se no, *chi passerà di qui se ne accorgerà leggendo, o solo cercandola?* |
+| 78 | ⛔ **Una descrizione dello stato di un ALTRO artefatto è vera quando la scrivi e falsa quando un commit FRATELLO dello stesso compito tocca quell'artefatto — e nessuno dei due autori ha sbagliato.** Misurato il 2026-08-21, chiudendo il Task 10 del Traguardo 5. Il registro [`porta-di-qualita.md`](porta-di-qualita.md) dichiarava *«`crates/kernel/src/arbiter/` non è stato toccato, e i tre paragrafi che dichiarano quei mutanti vivi restano esattamente com'erano»*: **vero al commit dell'esecutore**, e reso **falso mezz'ora dopo** dal commit successivo dello stesso compito, che quei tre paragrafi li riscriveva. ⛔ **Il difetto non appartiene a nessuno dei due:** l'esecutore ha scritto una frase misurata, il coordinatore ne ha corretta una falsa, e a essere sbagliato è **lo stato di `HEAD`** — che è ciò che si consegna. ⚠️ **Non è il #68**, dove una regola non vincola il documento che la ospita: qui non c'è nessuna regola violata, c'è una **descrizione** che è invecchiata. ⚠️ **E non è la radice R1**, dove una correzione non attraversa gli **altri** documenti: qui la correzione ha attraversato, ed è stata **la correzione stessa** a rendere falsa la descrizione. ⚠️ **E non è il #31**: non invecchia un numero né un qualificatore, invecchia un **fatto su un file diverso**. 📌 **I due contro-versi, e il secondo costa zero:** un compito a più commit si rivede **a `HEAD`** e non commit per commit — l'unica revisione che lo ha colto è quella dell'intervallo intero; e una frase che descrive **lo stato di un altro artefatto** o **dice a quale commit era vera**, o non lo descrive affatto. 📌 **La domanda, e va fatta prima di scrivere la frase:** *questa frase parla di un file che qualcun altro sta toccando in questo stesso compito?* |
 
 ---
 
@@ -2158,14 +2181,14 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 277 KB |
 | ⛔ **il perimetro del Traguardo 5** — l'arbitro: quanto ne costruisce, le forme che la §5 descrive a parole, e per ogni artefatto **il controllo che lo esercita**. ⛔ **Si legge PRIMA di scriverne il piano**, ed è il file da cui si riprende | [`specs/2026-08-18-…-traguardo-5-arbitro-gpu-design.md`](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md) — ⚠️ **non è una spec**: è lo scaglionamento e le forme che la §5 non fissa | 31 KB |
-| ⛔ **come si ESEGUE il Traguardo 5** — tredici compiti in cinque parti, col codice per ogni passo, le mutazioni da provare e i comandi. ⚠️ **L'errata in testa si legge PRIMA del compito**, e il pre-controllo del piano — le sette voci — sta subito sotto | [`plans/2026-08-18-…-traguardo-5-arbitro-gpu.md`](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) — ⚠️ **a compiti, mai intero** | 338 KB |
+| ⛔ **come si ESEGUE il Traguardo 5** — tredici compiti in cinque parti, col codice per ogni passo, le mutazioni da provare e i comandi. ⚠️ **L'errata in testa si legge PRIMA del compito**, e il pre-controllo del piano — le sette voci — sta subito sotto | [`plans/2026-08-18-…-traguardo-5-arbitro-gpu.md`](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) — ⚠️ **a compiti, mai intero** | 344 KB |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 30 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 254 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 259 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
 | l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 31 KB |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 339 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 358 KB |
 | ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata | 6 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 11 KB |
 | la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 5 KB |
@@ -3891,6 +3914,63 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
 > trentaduesima applicazione.
+
+> 🔁 **Quarantanovesima misura, il 2026-08-21, chiudendo il Task 10 del Traguardo 5 — e le celle
+> stantie erano TRE, tutte e tre mosse da QUESTO compito.** In byte LF, `int(n/1024 + 0.5)`, a
+> passata chiusa; righe contate **partendo dall'elenco dei file citati**.
+>
+> 📌 **È l'opposto della 48ª, e la differenza vale più dei numeri.** Là cinque celle erano ferme
+> **dalla 42ª**, cioè per cinque passate, e nessuna delle cinque l'aveva fatta la passata che le
+> trovava; qui le tre celle sono esattamente i tre file che il Task 10 ha fatto crescere. ⚠️ Una
+> tabella stantia **per il lavoro di oggi** è manutenzione ordinaria; una stantia **per il lavoro
+> di cinque passate fa** è il difetto della sesta misura. Vanno distinte, o la seconda si nasconde
+> dentro la prima.
+>
+> | | |
+> |---|---|
+> | **cresciuti** | [`porta-di-qualita.md`](porta-di-qualita.md) `339 → 358` — **+19 KB**, il salto più grande: il registro assorbe **quindici** righe di campagna, otto sonde nominate e i verbali di due ondate · questo file `444 → 455` · [`HANDOFF.md`](HANDOFF.md) `254 → 259`, il testo integrale del **#78** e le due forme nuove dentro il #69 e il #76 · il **piano del Traguardo 5** `338 → 344`, l'errata da `E119` a `E129` |
+> | ⛔ **e l'invarianza di [`riferimenti.md`](riferimenti.md) è per la SETTIMA volta di seguito il dato** | **198**, immobile. Il Task 10 ha prodotto **quindici** righe di campagna di mutazione con l'esito misurato di ciascuna, il percorso a mano dei due rami di `main`, il censimento dei `⏳` e quello della parola di ADR-0033: **tutte** nel registro, accanto al controllo che difendono, e **nessuna** lì. ⛔ **NON toccato, deliberatamente** — è la voce aperta della 41ª, e scegliere fra *«spostare le misure»* e *«cambiare la regola»* resta del proprietario |
+> | **invariati, ricontati** | spec del sotto-progetto 1 **277** · `adr/` **223** · kernel-design 44 · disegno T5 31 · disegno T4 30 · [`audit-2026-08-11.md`](audit-2026-08-11.md) 31 · `CLAUDE.md` 14 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 28 · [`roadmap.md`](roadmap.md) 31 · [`README.md`](README.md) 19 · [`tracciabilita.md`](tracciabilita.md) 15 · [`semi-dst.md`](semi-dst.md) 6 · `design/08` 11 · `design/01` 5 · `design/` nove file **`5–11`** · gli altri piani 68, 50, 162, 168, 114 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
+>
+> ⛔ **E LA NOTIZIA È CHE QUESTA CONSEGNA AGGIUNGE UN GOTCHA, dopo due che non ne avevano
+> aggiunto nessuno.** Il titolo della §9 passa da **settantasette** a **settantotto**. La regola
+> non è cambiata — *un gotcha che non insegna niente diluisce quelli che insegnano* — ed è per
+> questo che il **#78** entra e le altre due forme no: il #78 prescrive un **gesto** che nessuna
+> riga esistente prescrive (*lo stato di un compito si rivede a `HEAD`, non commit per commit*) ed
+> è costato un giro pieno di revisione, mentre le altre due sono il **#69** spostato da uno script
+> a un subagente e la **terza e quarta misura** sotto la tesi del **#76**. ✅ **E le due misure del
+> #76 sono la parte che vale:** `+120` righe con l'istruzione generica, `−6` e `+1` con quella di
+> togliere, sullo **stesso** compito e con lo **stesso** revisore. Quattro misure su quattro nella
+> stessa direzione.
+>
+> ✅ **Il MESSAGGIO NON SI È MOSSO: `17597` byte, invariato — e non per virtù.** Le tre cifre
+> sostituite dentro le recinzioni — i due aggregati e il peso del piano — hanno lo **stesso numero
+> di cifre** di quelle che rimpiazzano, quindi il blocco **non poteva** muoversi. ⚠️ **Va detto
+> così invece di attribuirselo:** la 29ª chiuse a `0` per lo stesso accidente, la 26ª a `+4 B` per
+> una **compressione decisa**. ⛔ **Il candidato da togliere resta
+> quello che la 41ª, la 42ª, la 43ª, la 44ª, la 45ª e la 46ª hanno già nominato** — il blocco delle
+> *«sei cose che ribadisco»* — e resta **registrato e non preso**, perché è una scelta del
+> proprietario su ciò che vuole rileggersi ogni volta.
+>
+> L'insieme *«HANDOFF + spec + `adr/`»* passa da **753** a **759 KB**, corretto in tutte le sue
+> case — ricontate col `grep` e **guardate in faccia** una per una (#70): due in `CLAUDE.md`, una
+> in testa a questo file, due in [`AVVIO-CHAT.md`](AVVIO-CHAT.md), più i verbali della 47ª e della
+> 48ª, che **non** si toccano perché sono le misure di allora. I **due file obbligatori** passano
+> da 458 a **469 KB**, e coi tre da 490 a **500**. ⚠️ **E il peso del piano aveva una casa fuori
+> dalla §12** — la riga dei quattro piani più grandi in [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — che il
+> `grep` del solo aggregato non avrebbe trovato: si cerca **ogni** cifra che si muove, non solo
+> quelle che si sa di avere.
+>
+> ⚠️ **E il rapporto che la §12 difende si muove nella direzione sbagliata per la DODICESIMA
+> misura di seguito:** il denominatore cresce dello **0,8 %**, il numeratore del **2,0 %**. ⛔ La
+> causa è quella della 46ª e non quella della 47ª — è una **consegna**, che riversa nel compendio
+> ciò che il compito ha insegnato — e stavolta con un gotcha nuovo dentro. Il rapporto regge,
+> **500 contro 759**, e la compressione del compendio resta del proprietario.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura, alla
+> trentatreesima applicazione. ⚠️ **E vale l'avvertenza della 46ª: vicino al confine non converge
+> in un giro solo**, perché la correzione è essa stessa un ingresso della misura.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

@@ -2261,7 +2261,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 114 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 19 KB |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **17,3** (17703 byte LF il 2026-08-21) | 29 KB |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **17,6** (18032 byte LF il 2026-08-21) | 29 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -4084,14 +4084,25 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > | | |
 > |---|---|
-> | **cresciuti** | questo file `459 → 470` — il riquadro di P-2 in §6, il gotcha **#79** in §9 e questo verbale · [`porta-di-qualita.md`](porta-di-qualita.md) `358 → 364`, la sezione «P-2» col censimento delle sei case e le tre misure · [`HANDOFF.md`](HANDOFF.md) `259 → 262`, il testo integrale del **#79** · [`audit-2026-08-11.md`](audit-2026-08-11.md) `31 → 32`, la marca su P-2 · il **piano del Traguardo 5** `344 → 345`, la voce `E130` |
+> | **cresciuti** | questo file `459 → 471` — il riquadro di P-2 in §6, il gotcha **#79** in §9 e questo verbale · [`porta-di-qualita.md`](porta-di-qualita.md) `358 → 364`, la sezione «P-2» col censimento delle sei case e le tre misure · [`HANDOFF.md`](HANDOFF.md) `259 → 262`, il testo integrale del **#79** · [`audit-2026-08-11.md`](audit-2026-08-11.md) `31 → 32`, la marca su P-2 · il **piano del Traguardo 5** `344 → 345`, la voce `E130` |
 > | ⛔ **e l'invarianza di [`riferimenti.md`](riferimenti.md) è per l'OTTAVA volta di seguito il dato** | **198**, immobile. Questa passata ha prodotto **tre** misure — la sonda usa-e-getta che implementa `Worker` senza concessioni, la stessa che consegna un `Grant` vero a `start`, e il censimento a zero chiamanti di `.start(` — e vivono **tutte** nel registro, accanto al controllo che difendono. ⛔ **NON toccato, deliberatamente:** è la voce aperta della 41ª, e scegliere fra *«spostare le misure»* e *«cambiare la regola»* resta del proprietario |
 > | **invariati, ricontati sui file** | spec del sotto-progetto 1 **277** · `adr/` **223** · `CLAUDE.md` 14 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 29 · [`roadmap.md`](roadmap.md) 31 · [`README.md`](README.md) 19 · [`tracciabilita.md`](tracciabilita.md) 15 · [`semi-dst.md`](semi-dst.md) 6 · kernel-design 44 · disegno T5 31 · disegno T4 30 · `design/08` 11 · `design/01` 5 · `design/` nove file **`5–11`** · gli altri piani 68, 50, 162, 168, 114 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
 >
-> ✅ **Il MESSAGGIO NON SI È MOSSO: `17703` byte e 261 righe, invariato — e come alla 49ª non
-> per virtù.** Le tre cifre sostituite dentro le recinzioni — i due aggregati e il peso del piano,
-> `504 → 512`, `759 → 762`, `344 → 345` — hanno lo **stesso numero di cifre** di quelle che
-> rimpiazzano, quindi il blocco **non poteva** muoversi. ⚠️ Va detto così invece di attribuirselo.
+> ⛔ **E QUESTA PASSATA HA AVUTO IL PROPRIO PRE-CONTROLLO DELLA DELEGA, che ha trovato una frase
+> FALSA — la stessa specie di difetto che stava chiudendo.** La delega diceva che della §5
+> dell'audit *«resta solo quel che è minore»*: contate sul rapporto, **cinque** voci restano
+> **senza marca** — **T-3**, dichiarato ALTO, più S-3, A-3, K-4, PL-5 — e P-2 era la **sesta**.
+> 📌 *Se le cinque siano davvero minori non l'ha misurato nessuno*, che è il **#79** un livello
+> sopra: la frase giustificava di non guardarle, quindi nessuno le ha guardate. Corretta
+> nominandole, senza deciderne nessuna.
+>
+> ⚠️ **Il MESSAGGIO: `17703 → 18032` byte, `+329 B` e `+1,9 %`, da 261 a 265 righe** — e la sua
+> storia dentro questa passata è il **#78 applicato a me stesso**. Le tre cifre sostituite dentro
+> le recinzioni — `504 → 517`, `759 → 762`, `344 → 345` — hanno lo **stesso numero di cifre**,
+> quindi il blocco **non poteva** muoversi, e questo riquadro chiudeva dicendo *«`17703` byte,
+> invariato, e non per virtù»*. Poi il pre-controllo ha corretto la frase falsa, **nel commit
+> fratello dello stesso compito**, e la riga era già falsa. 📌 *Lo stato di una passata si scrive
+> a `HEAD`, non al proprio primo commit* — anche quando i due commit sono entrambi tuoi.
 >
 > ⛔ **E IL GOTCHA #48 SI È RIPRESENTATO NELLA SUA DECIMA FORMA, DENTRO QUESTA PASSATA, mentre si
 > aggiornava proprio questa tabella.** Uno script passato all'interprete con `python - <<'PY'` è

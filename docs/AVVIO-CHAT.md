@@ -179,11 +179,15 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 517 KB in tutto
    indirizzo, quindi sono uno scaglionamento e non un arretrato), la metà del
    gotcha #51 che resta fuori, e semi-dst.md che NON HA UN CHIUDENTE.
    ⛔ La §5 dell'AUDIT teneva quelle della QUALITÀ, e le OTTO decisioni della
-   §8 sono ESEGUITE: quel che vi resta sono i ~20 rilievi minori dichiarati
-   non corretti, più DUE residui registrati — l'asserzione 4b della conformità
-   reactor è IMPLICATA dalla 4a, quindi MUTA e non vacua, e le DIECI sonde
-   permanenti dell'esecuzione non hanno riga di catalogo, perché la §7.4 è
-   SPEC (vincolo globale 7). La tabella sta in porta-di-qualita.md.
+   §8 sono ESEGUITE. ⚠️ MA LA §5 NON E' CHIUSA, e questa riga diceva di sì:
+   contate sul rapporto il 2026-08-21, CINQUE voci restano SENZA MARCA —
+   T-3, che è dichiarato ALTO, più S-3, A-3, K-4, PL-5 — oltre ai ~20 rilievi
+   minori. P-2 era la sesta, ed è chiusa lo stesso giorno; se le cinque siano
+   davvero minori NON L'HA MISURATO NESSUNO, ed è la stessa forma con cui P-2
+   è sopravvissuto. ⚠️ Più DUE residui registrati: l'asserzione 4b della
+   conformità reactor è IMPLICATA dalla 4a, quindi MUTA e non vacua, e le
+   DIECI sonde permanenti dell'esecuzione non hanno riga di catalogo, perché
+   la §7.4 è SPEC (vincolo globale 7). La tabella sta in porta-di-qualita.md.
    ⛔ E il terzo posto è IL PIANO DEL TRAGUARDO 5, che ne porta due specie.
    Dal proprio PRE-CONTROLLO, SETTE voci di cui TRE sono decisioni tue — un
    nome di tipo a una lettera da uno che esiste già, una riga di catalogo che

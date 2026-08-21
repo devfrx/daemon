@@ -1,5 +1,5 @@
-// §6.10.5 row 3: reading demands a receipt. `read_one` takes one BY VALUE, so there is no
-// way to ask for an answer nobody asked a question for.
+// §6.10.5 row 3: this case proves `read_one` WANTS a receipt -- `E0061`, an arity error --
+// not that the receipt is authentic: `SingleReceipt::new` is `pub`, see `ports/process.rs`.
 //
 // ⛔ Names `kernel::` and declares no attributes of its own -- gotcha #39, WITH ONE MEASURED
 // EXCEPTION. `Process` and `Worker` are TRAITS: a fully-qualified `impl kernel::…::Worker for

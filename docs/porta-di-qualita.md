@@ -121,8 +121,9 @@ riga, e la cifra si riconta sulla cella del blocco B in fondo a questo file. Il 
 campagna di mutazione, sta nella sezione del Task 9 qui sotto.
 
 ✅ **Richiamo del 2026-08-21 — Traguardo 5, Task 11: le righe rimaste di §6.10.5 escono dallo
-scaglionamento.** I quattro casi `compile_fail` di `crates/kernel/tests/worker_tokens.rs` — con
-le contro-sonde che ottengono un `Grant` vero da `Arbiter::admit` — tengono il `Worker` e la
+scaglionamento.** I quattro casi `compile_fail` di `crates/kernel/tests/compile_fail/`, con le
+contro-sonde di `crates/kernel/tests/worker_tokens.rs` che ottengono un `Grant` vero da
+`Arbiter::admit`, tengono il `Worker` e la
 ricevuta: i numeratori dei blocchi **B** e **C** **si muovono entrambi** — le cifre si ricontano
 sulla cella del blocco B e sulla cella del blocco C in fondo a questo file, non da questa frase.
 Resta scoperta una riga sola nel blocco B, quella del filtro dei vincoli (§6.3, Traguardo 6): non

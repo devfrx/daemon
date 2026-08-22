@@ -1845,7 +1845,10 @@ dal Traguardo 3, `record_without_version.rs` dal Task 1 e la coppia
 `record_without_trust_label.rs` · `trust_has_no_default.rs` dal Task 2. ⚠️ **Ricontati una
 TERZA volta il 2026-08-20, Traguardo 5 Task 8, con lo stesso comando: 29.** Erano **ventotto**
 dal Task 5 (`E35`) e il Task 7 non ne aggiunse nessuno; il ventinovesimo è
-`two_policies_at_once.rs`. ⛔ **Nessuna aritmetica su questa riga: il comando è la misura.** ⛔ **Erano già tre al
+`two_policies_at_once.rs`. ✅ **Ricontati una QUARTA volta il 2026-08-21, Traguardo 5 Task 11,
+con lo stesso comando: 33**, e altrettanti `.stderr`. I quattro nuovi sono i casi di §6.10.5 —
+`talking_without_the_handle.rs`, `instructing_after_the_kill.rs`, `reading_without_a_receipt.rs`
+e `reading_twice_from_one_receipt.rs`. ⛔ **Nessuna aritmetica su questa riga: il comando è la misura.** ⛔ **Erano già tre al
 commit precedente, e nessuno aveva toccato questa cifra:** è il gotcha **#31** sul numeratore di
 un contenitore che cresce, e chi lo muove è chi scrive un caso — che questa riga non la apre
 nemmeno. La frase *«i dieci casi nuovi»* qui sopra resta **vera del Traguardo 2**, e vale identica

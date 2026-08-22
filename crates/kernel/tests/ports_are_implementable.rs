@@ -786,8 +786,15 @@ fn killing_a_worker_consumes_it() {
     // ⚠️ WHAT IT DOES NOT BUY: that instructing after the kill FAILS TO COMPILE. `worker` is
     // moved by the line above and naming it again would not build -- but a test that
     // compiles cannot assert that something else does not. Only a `compile_fail` case
-    // proves the negative, and those are staged with the rest of §6.10.5, registered as
-    // not-yet-covered in `docs/porta-di-qualita.md`.
+    // proves the negative, and the one holding THIS direction is
+    // `tests/compile_fail/instructing_after_the_kill.rs` (`E0382`, §6.10.5 row 2) -- the same
+    // consuming `kill` three lines above.
+    //
+    // ⛔ RECALL OF 2026-08-21, MILESTONE 5 TASK 11: the two lines that stood here -- "those
+    // are staged with the rest of §6.10.5, registered as not-yet-covered in
+    // `docs/porta-di-qualita.md`" -- were FALSE IN BOTH HALVES and are TAKEN OUT, replaced by
+    // the pointer above and not restated: the staging state belongs to that register's cell,
+    // and a state kept in two houses rots in the one nobody moves.
     //
     // ⛔ RECALL OF 2026-08-21, FINDING P-2: the reason written here -- "all four need a
     // `Worker`, a `Worker` comes only from `start(grant, ..)`, and nothing issues grants
@@ -811,6 +818,10 @@ fn the_process_port_is_implementable() {
     // WENT WITH THE CLAIM (precedent E40): a probe whose name asserts a falsehood is read
     // instead of its body. ⛔ Calling `start` FOR REAL here is not this correction's business:
     // it is the counter-probe half of the four §6.10.5 rows, and it belongs to task 11.
+    // ✅ THE TRIGGER FIRED AND WAS COLLECTED, 2026-08-21, milestone 5 task 11: those
+    // counter-probes live in `tests/worker_tokens.rs`, which gets a REAL `Grant` from
+    // `Arbiter::admit` and hands it to `Process::start` from outside the crate. This probe
+    // keeps its own half -- that `Process` is IMPLEMENTABLE -- and does not grow one.
     //
     // ⛔ AND THESE TWO LINES ARE NOT WHAT BUYS THAT -- said in full rather than half, because
     // a test that looks like coverage and is not is worse than no test (gotcha #45). WHAT

@@ -31,8 +31,7 @@
 //! The trait and its types. NOT the implementation (milestone 6), NOT the wire format
 //! (§6.10.3: `minicbor`, the port exchanges BYTES, every frame declares its own length
 //! and decoding checks the bytes consumed), and NOT the negative tests of §6.10.5 rows
-//! 1-4: a row proved in one direction only is not admissible (§7.1.1 rule 3), so they are
-//! registered as not-yet-covered in `docs/porta-di-qualita.md`.
+//! 1-4: a row proved in one direction only is not admissible (§7.1.1 rule 3).
 //!
 //! ⛔ RECALL OF 2026-08-21, AUDIT FINDING P-2. The reason this paragraph gave for staging
 //! them -- "all four need to OBTAIN a `Worker`, a `Worker` comes only from
@@ -41,6 +40,13 @@
 //! no grant anywhere: measured from outside the crate, and `tests/ports_are_implementable.rs`
 //! has done it since milestone 2. The verbal and both measurements live in
 //! `docs/porta-di-qualita.md`.
+//!
+//! ⛔ AND A SECOND RECALL, 2026-08-21, MILESTONE 5 TASK 11: the STATE that sentence still
+//! carried -- "so they are registered as not-yet-covered" -- IS TAKEN OUT TOO, and not
+//! rewritten. The pass above took out the false REASON and left the state standing; hours
+//! later the four `compile_fail` cases were written and the row went CLOSED. The state
+//! belongs to that register's cell alone: a figure kept in two houses rots in the one
+//! nobody moves.
 //!
 //! ⚠️ AND WHAT HOLDS THESE SIGNATURES MEANWHILE IS ONE TEST, the same one that holds
 //! `filesystem` and `network`: `tests/ports_are_implementable.rs` writes a fake for

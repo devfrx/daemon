@@ -123,11 +123,10 @@ campagna di mutazione, sta nella sezione del Task 9 qui sotto.
 ✅ **Richiamo del 2026-08-21 — Traguardo 5, Task 11: le righe rimaste di §6.10.5 escono dallo
 scaglionamento.** I quattro casi `compile_fail` di `crates/kernel/tests/compile_fail/`, con le
 contro-sonde di `crates/kernel/tests/worker_tokens.rs` che ottengono un `Grant` vero da
-`Arbiter::admit`, tengono il `Worker` e la
-ricevuta: i numeratori dei blocchi **B** e **C** **si muovono entrambi** — le cifre si ricontano
-sulla cella del blocco B e sulla cella del blocco C in fondo a questo file, non da questa frase.
-Resta scoperta una riga sola nel blocco B, quella del filtro dei vincoli (§6.3, Traguardo 6): non
-è compito di questo task. Il dettaglio sta nella sezione «P-2» più sotto.
+`Arbiter::admit`, tengono il `Worker` e la ricevuta: i numeratori dei blocchi **B** e **C**
+**si muovono entrambi** — le cifre **e ciò che resta scoperto** si ricontano sulla cella del
+blocco B e sulla cella del blocco C in fondo a questo file, non da questa frase. Il dettaglio
+sta nella sezione «P-2» più sotto.
 
 ⛔ **`V2` non era nel brief del Task 5, ed è stato scritto lo stesso: l'innesco lo aveva
 scritto il Task 3, in questo stesso file, alla riga «si chiude insieme a `Q8` allo stesso Task

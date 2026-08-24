@@ -1055,9 +1055,9 @@ il piano scrive nei propri passi è STANTIO per costruzione** — dice *«32 tar
 che era vero prima del Task 1: ogni compito **misura la propria** prima di cominciare, o
 confronta contro un numero che i compiti precedenti hanno già spostato.
 
-⛔ **L'errata del piano cresce a ogni compito E a ogni ondata, e il pre-controllo ha trovato un
-difetto in undici compiti su undici.** ⚠️ **Quante voci abbia lo dice il piano, non questa
-riga:** il totale è **tolto** e non riallineato per la seconda volta — diceva *«centotrenta»*
+⛔ **L'errata del piano cresce, e il pre-controllo ha trovato un difetto in undici compiti su
+undici.** ⚠️ **Quante voci abbia lo dice il piano, non questa riga:** il totale è **tolto** e
+non riallineato per la seconda volta — diceva *«centotrenta»*
 quando erano **141**, e un cumulativo che due sorgenti diverse fanno crescere invecchia più in
 fretta di quanto qualcuno lo riconti (gotcha **#31**). Il **numeratore dei compiti** invece
 resta, perché §6 è la sua **unica** casa e `CLAUDE.md` vi delega. ⚠️ **E non tutte le voci
@@ -1344,15 +1344,14 @@ sono sue:** il loro chiusore è **chi costruirà il primo ciclo di orchestrazion
 stessa sezione. Erano nell'elenco perché una quantificazione scritta su una lista si legge come
 verificata su tutti i nomi — gotcha **#67**, colto dalla decima revisione.
 ⛔ ⑤ **E L'ULTIMA ONDATA NON È STATA RIVISTA, e va detto invece che taciuto.** Ogni revisione del
-Task 11 ha trovato rilievi veri, e quante siano le contano i rapporti in `.superpowers/sdd/`.
-⚠️ **E la specie va detta giusta:** i **diciannove** Important della nona, della decima e
-dell'undicesima sono **diciotto** nella **prosa** e nelle **cifre derivate** e **uno** nel
-**codice** — il caso `compile_fail` che sotto la propria regressione degradava a `mismatch`,
-nona revisione. L'ondata che chiude l'ultima revisione **non ha a sua volta la propria**: la
-regola *«si rivede finché una passata non torna pulita»* è quindi **onorata a metà**, e il
-prodotto è verde ma il verbale no. ⚠️ Chi riprende decide se aprire un'altra revisione **prima**
-del Task 12 o accettare il residuo.
-⛔ **E la causa del non-convergere è misurata, non supposta:** le cifre **rimisurate sui file**
+Task 11 ha trovato rilievi veri. ⚠️ **E la specie va detta giusta:** i **diciannove** Important
+della nona, della decima e dell'undicesima sono **diciotto** nella **prosa** e nelle **cifre
+derivate** e **uno** nel **codice** — il caso `compile_fail` che sotto la propria regressione
+degradava a `mismatch`, nona revisione. L'ondata che chiude l'ultima revisione **non ha a sua
+volta la propria**: la regola *«si rivede finché una passata non torna pulita»* è quindi
+**onorata a metà**, e il prodotto è verde ma il verbale no. ⚠️ Chi riprende decide se aprire
+un'altra revisione **prima** del Task 12 o accettare il residuo.
+⛔ **E una causa del non-convergere è misurata, non supposta:** le cifre **rimisurate sui file**
 sono giuste **ventidue su ventidue**; quelle **derivate da un testo** — il totale di un'errata,
 il numeratore di un pre-controllo, il peso di un file citato altrove, un verbale che riporta i
 propri numeri — sbagliate **otto su otto**. 📌 **La decisione che ne segue è del proprietario e
@@ -4227,7 +4226,7 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > | | |
 > |---|---|
-> | **cresciuti** | questo file `471 → 491` — il riquadro del Task 11 in §6, il gotcha **#80** e la terza forma del **#70** in §9, e questo verbale · [`HANDOFF.md`](HANDOFF.md) `262 → 268`, il testo integrale del **#80** e della forma nuova · [`porta-di-qualita.md`](porta-di-qualita.md) `364 → 377` · il **piano del Traguardo 5** `345 → 356`, le voci `E131`…`E141` |
+> | **cresciuti** | questo file `471 → 492` — il riquadro del Task 11 in §6, il gotcha **#80** e la terza forma del **#70** in §9, e questo verbale · [`HANDOFF.md`](HANDOFF.md) `262 → 268`, il testo integrale del **#80** e della forma nuova · [`porta-di-qualita.md`](porta-di-qualita.md) `364 → 377` · il **piano del Traguardo 5** `345 → 356`, le voci `E131`…`E141` |
 > | ⛔ **e due di quei delta NON sono di questa passata** | il registro e il piano li ha mossi **l'intero arco del Task 11** — dal commit del prodotto in poi, e quanti siano lo dice `git log` — mentre la 51ª misura li aveva presi a `1049353`, cioè **prima** che il compito cominciasse. Scritto qui perché un delta attribuito alla passata sbagliata è una cifra vera in una casa falsa |
 > | ⛔ **`riferimenti.md` immobile a 198 per la NONA volta di seguito** | questa passata ha prodotto misure — le due direzioni del rimedio a `check-docs.sh`, i pesi, il conteggio dei fine-riga — e vivono **tutte** nel registro, accanto al controllo che difendono. **NON toccato, deliberatamente:** è la voce aperta della 41ª, e scegliere fra *«spostare le misure»* e *«cambiare la regola»* resta del proprietario |
 > | **invariati, ricontati sui file** | spec del sotto-progetto 1 **277** · `adr/` **223** · `CLAUDE.md` 14 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 29 · [`audit-2026-08-11.md`](audit-2026-08-11.md) 32 · [`roadmap.md`](roadmap.md) 31 · [`README.md`](README.md) 19 · [`tracciabilita.md`](tracciabilita.md) 15 · [`semi-dst.md`](semi-dst.md) 6 · kernel-design 44 · disegno T5 31 · disegno T4 30 · `design/08` 11 · `design/01` 5 · `design/` nove file **`5–11`** · gli altri piani 68, 50, 162, 168, 114 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
@@ -4235,8 +4234,8 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⚠️ **Il MESSAGGIO non si è mosso — `18032` byte, 265 righe — e la ragione va scritta perché
 > non è virtù:** le sostituzioni dentro le recinzioni hanno tutte **lo stesso numero di cifre**,
 > quindi il blocco **non poteva** muoversi. ⛔ **Quante siano non è più scritto qui, ed è tolto e
-> non riallineato:** il conteggio è cresciuto a ogni ondata — *«quattro»*, poi *«cinque»* — e
-> ciascuna volta è stato lasciato indietro **nello stesso commit** che lo faceva crescere.
+> non riallineato:** il conteggio è cresciuto — *«quattro»*, poi *«cinque»* — e ciascuna volta è
+> stato lasciato indietro **nello stesso commit** che lo faceva crescere.
 > ✅ **Rimisurato a `HEAD` dopo l'ultima scrittura** e non al primo commit, che è il
 > gotcha **#78** applicato a questo verbale — la 51ª lo aveva imparato su sé stessa.
 >
@@ -4248,24 +4247,36 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > scambiato con uno che mente per sempre. Lì `485` compare come
 > **sotto-stringa di `664851`**, un conteggio di byte. Riscriverla avrebbe rotto un verbale corretto credendo di riallineare un
 > peso. 📌 *Il `grep` trova dove guardare, mai cosa cambiare* — e le case si contano **dopo**
-> averle guardate una per una: **cinque** per `767`, **quattro** per `537`, **tre** per `505`.
+> averle guardate una per una: **cinque** per `767`, **quattro** per `538`, **tre** per `506`.
 >
 > ⛔ **E l'undicesima revisione ha trovato che l'aggregato aveva DUE metodi e nessuno lo sapeva.**
 > Misurato sui byte: `785422 / 1024 = 767,0` → **767**. Sommando i tre pesi **già arrotondati**
 > — `268 + 277 + 223` — si ottiene **768**. I due metodi avevano coinciso a **ogni** misura
 > precedente, e divergono per la prima volta oggi. ✅ **Vale il diretto**, perché è ciò che la
 > **seconda misura** prescrive — *«i pesi si misurano con `wc -c`, arrotondati a KiB»* — e un
-> arrotondamento non si somma. ⚠️ **Che la regola vada scritta per gli AGGREGATI e non solo per
-> i file è una voce del proprietario, registrata e non presa:** oggi la §12 non lo dice, e
-> l'ambiguità è rimasta invisibile finché i due metodi davano lo stesso numero.
+> arrotondamento non si somma. ⚠️ L'ambiguità è rimasta invisibile finché i due metodi davano lo
+> stesso numero.
 >
 > ⛔ **RICHIAMO DEL 2026-08-24, dalla dodicesima revisione: i due aggregati piccoli erano presi
 > col metodo che questo riquadro dichiara scartato, e sono RISCRITTI** nelle case censite qui
 > sopra e nel numeratore del rapporto qui sotto. `504` e `536` erano `14 + 490` e `14 + 490 + 32`,
-> cioè **pesi già arrotondati sommati**; il diretto sui byte dà **505** e **537**. ⚠️ **E oggi i
-> due metodi tornano a COINCIDERE**, perché questa passata ha portato il compendio a **491**: è la
-> coincidenza che nasconde il bivio, e la cifra scritta resta quella del **diretto**. ⚠️ **La riga
-> di metodo resta REGISTRATA E NON PRESA:** è del proprietario.
+> cioè **pesi già arrotondati sommati**; il diretto sui byte dava **505** e **537**. ⚠️ **E lì i
+> due metodi tornavano a COINCIDERE**, perché quella passata aveva portato il compendio a **491**:
+> è la coincidenza che nasconde il bivio, e la cifra scritta resta quella del **diretto**.
+>
+> ⛔ **RICHIAMO DEL 2026-08-24, dalla tredicesima revisione: quella coincidenza era uno STATO, e
+> uno stato non è un oracolo su un file che cresce.** Qui ci va la **relazione**, che si calcola e
+> non invecchia: un peso cambia cifra a `(K+0,5)·1024` byte, quindi il **diretto** scatta alla
+> soglia dell'**aggregato** e la **somma degli arrotondati** a quella di ciascun **file** — e fra
+> le due i due metodi **non possono** coincidere, senza che niente lo dica. 📌 **La prova è questa
+> stessa passata:** a **74** byte di correzioni entrambi gli aggregati avevano cambiato cifra e i
+> due metodi **divergevano**; a passata chiusa **coincidono di nuovo**, su valori diversi. La
+> coincidenza va e viene dentro una passata sola. Le celle di questo riquadro e le case a mano
+> sono **rimisurate**; il verbale qui sopra resta la misura di allora.
+> ⚠️ **La riga di metodo resta REGISTRATA E NON PRESA, e la ragione va detta giusta** — richiamo
+> del 2026-08-24, dalla tredicesima revisione: **non** *«è del proprietario»*, perché quella
+> qualificazione l'ha scritta `d13cb98`, cioè l'ondata precedente. Resta aperto **dove** la
+> regola vada scritta: qui vale come verdetto su **un caso**, non come riga del **metodo**.
 >
 > ⛔ **E il #48 si è ripresentato nella sua decima forma, con un guasto NUOVO: non ha corrotto,
 > ha APPESO.** Un `python - <<'PY'` lanciato per una misura di supporto è rimasto in attesa su
@@ -4276,9 +4287,9 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > non è affidabile nemmeno per **leggere**.
 >
 > ⚠️ **E il rapporto che la §12 difende peggiora per la QUATTORDICESIMA misura di seguito:** il
-> denominatore cresce dello **0,7 %**, il numeratore del **3,9 %**. La causa è quella della 47ª
+> denominatore cresce dello **0,7 %**, il numeratore del **4,1 %**. La causa è quella della 47ª
 > e della 51ª — una passata che **toglie** parole dai documenti e le rimette **qui**, perché il
-> verbale della correzione vive nel compendio. Il rapporto regge, **537 contro 767**, e la
+> verbale della correzione vive nel compendio. Il rapporto regge, **538 contro 767**, e la
 > compressione del compendio resta del proprietario.
 >
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo**

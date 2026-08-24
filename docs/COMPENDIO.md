@@ -4251,8 +4251,7 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > ⛔ **E l'undicesima revisione ha trovato che l'aggregato aveva DUE metodi e nessuno lo sapeva.**
 > Misurato sui byte: `785422 / 1024 = 767,0` → **767**. Sommando i tre pesi **già arrotondati**
-> — `268 + 277 + 223` — si ottiene **768**. I due metodi avevano coinciso a **ogni** misura
-> precedente, e divergono per la prima volta oggi. ✅ **Vale il diretto**, perché è ciò che la
+> — `268 + 277 + 223` — si ottiene **768**. ✅ **Vale il diretto**, perché è ciò che la
 > **seconda misura** prescrive — *«i pesi si misurano con `wc -c`, arrotondati a KiB»* — e un
 > arrotondamento non si somma. ⚠️ L'ambiguità è rimasta invisibile finché i due metodi davano lo
 > stesso numero.
@@ -4267,16 +4266,16 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **RICHIAMO DEL 2026-08-24, dalla tredicesima revisione: quella coincidenza era uno STATO, e
 > uno stato non è un oracolo su un file che cresce.** Qui ci va la **relazione**, che si calcola e
 > non invecchia: un peso cambia cifra a `(K+0,5)·1024` byte, quindi il **diretto** scatta alla
-> soglia dell'**aggregato** e la **somma degli arrotondati** a quella di ciascun **file** — e fra
-> le due i due metodi **non possono** coincidere, senza che niente lo dica. 📌 **La prova è questa
-> stessa passata:** a **74** byte di correzioni entrambi gli aggregati avevano cambiato cifra e i
-> due metodi **divergevano**; a passata chiusa **coincidono di nuovo**, su valori diversi. La
-> coincidenza va e viene dentro una passata sola. Le celle di questo riquadro e le case a mano
-> sono **rimisurate**; il verbale qui sopra resta la misura di allora.
+> soglia dell'**aggregato** e la **somma degli arrotondati** a quella di ciascun **file**, senza
+> che niente lo dica. 📌 **La prova è questa stessa passata:** a **74** byte di correzioni entrambi
+> gli aggregati avevano cambiato cifra e i due metodi **divergevano**; a passata chiusa
+> **coincidono di nuovo**, su valori diversi. La coincidenza va e viene dentro una passata sola.
+> Le celle di questo riquadro e le case a mano sono **rimisurate**; il verbale qui sopra resta la
+> misura di allora.
 > ⚠️ **La riga di metodo resta REGISTRATA E NON PRESA, e la ragione va detta giusta** — richiamo
 > del 2026-08-24, dalla tredicesima revisione: **non** *«è del proprietario»*, perché quella
-> qualificazione l'ha scritta `d13cb98`, cioè l'ondata precedente. Resta aperto **dove** la
-> regola vada scritta: qui vale come verdetto su **un caso**, non come riga del **metodo**.
+> qualificazione l'ha scritta `d13cb98`. Resta aperto **dove** la regola vada scritta: qui vale
+> come verdetto su **un caso**, non come riga del **metodo**.
 >
 > ⛔ **E il #48 si è ripresentato nella sua decima forma, con un guasto NUOVO: non ha corrotto,
 > ha APPESO.** Un `python - <<'PY'` lanciato per una misura di supporto è rimasto in attesa su

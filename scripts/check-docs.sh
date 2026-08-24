@@ -19,8 +19,9 @@ echo "== internal links =="
 #
 # ⛔ AND SO IS WHATEVER GIT IGNORES, 2026-08-24. This gate was reading .md files that are not
 # in the repository at all, so its verdict depended on the WORKING DIRECTORY instead of on
-# what gets delivered -- red today because of three links inside '.superpowers/', and green
-# by luck tomorrow. Excluding that one directory by name would leave '/scratch/' and '/tmp/'
+# what gets delivered -- red today because of three links inside '.superpowers/', and it could
+# just as well be green for a file that simply is not on disk that day. Excluding that one
+# directory by name would leave '/scratch/' and '/tmp/'
 # open, and CLAUDE.md sends every measurement into a scratchpad: the rule has to be the
 # general one.
 # ⚠️ NOT 'git ls-files': the gate runs BEFORE the commit, so a document that nobody has

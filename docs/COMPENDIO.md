@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (768 KB in byte LF il 2026-08-24, e possono solo crescere — la spec da sola ne fa 277), e
+> (767 KB in byte LF il 2026-08-24, e possono solo crescere — la spec da sola ne fa 277), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-24**, al Task 11 del Traguardo 5. Manutenzione: §13.
@@ -978,8 +978,10 @@ la stessa sonda ha consegnato una concessione vera a un `start` scritto da fuori
 passa**. Nessuno se n'era accorto perché una condizione in prosa non fa diventare rosso niente.
 ⛔ **Ciò che si chiude è la RAGIONE, non la copertura**, ed è la forma già usata per il #51: le
 quattro righe restavano scoperte per la **sola** ragione vera — mancava la direzione *«deve
-scattare»* — e le ha chiuse il **Task 11**. Rimisurato: `grep -rn "\.start(" crates/ --include=*.rs`
-dà **zero** chiamanti in tutto il workspace.
+scattare»* — e le ha chiuse il **Task 11**. ⚠️ **La misura sui chiamanti di `Process::start` non
+è più ripetuta qui:** era *«zero in tutto il workspace»*, vera **prima** del Task 11 e falsa
+adesso, perché quel compito ne ha scritti. Vive in [`porta-di-qualita.md`](porta-di-qualita.md),
+sezione «P-2», col proprio qualificatore — e un rimando non può marcire.
 ✅ **Sei case vive corrette, tre verbali non toccati**, censite col `grep` e guardate in faccia
 una per una (#70): il doc di modulo di `crates/kernel/src/ports/process.rs`, tre punti di
 `crates/kernel/tests/ports_are_implementable.rs` — fra cui il **nome** della sonda, che
@@ -1062,7 +1064,7 @@ resta, perché §6 è la sua **unica** casa e `CLAUDE.md` vi delega. ⚠️ **E 
 vengono da un compito:** `E130` nasce chiudendo il finding **P-2** prima di dispacciare il
 Task 11, ed `E141` è un difetto del **coordinatore** trovato dall'ondata a cui era stato dato
 l'oracolo sbagliato. ⛔ **E la
-notizia del Task 10 è QUALI:** **due** delle undici sono difetti del **coordinatore** e non del
+notizia del Task 10 è QUALI:** **due** delle sue voci d'errata sono difetti del **coordinatore** e non del
 piano — `E127`, il divieto di toccare `crates/kernel/src/arbiter/` che copriva anche tre frasi
 rese false lo stesso giorno, ed `E128`, un'**esclusività falsa dettata in un brief** e copiata nel
 sorgente. ⚠️ **In entrambi i casi chi eseguiva si è FERMATO e le ha riportate** invece di
@@ -1319,10 +1321,15 @@ del proprietario.
 
 ⛔ **E CIÒ CHE IL TASK 11 LASCIA AL TASK 12, che NON è un pre-controllo: quello si fa prima di
 dispacciarlo, contro il codice di allora.** Qui c'è solo ciò che è **misurato oggi**.
-① La baseline da cui il Task 12 parte è **36 target, 259 passate, 0 fallite, 2 ignorate**, con
-**trentatré** casi `compile_fail` — e si **rimisura**, non si cita.
-② **Né il blocco B né il blocco C sono chiusi**, e ciò che manca a ciascuno lo emettono
-meccanismi che non esistono ancora — il filtro dei vincoli (§6.3) e il resto del **Traguardo 6**.
+① La baseline da cui il Task 12 parte è quella scritta **una volta sola** più in alto in questa
+sezione, nel paragrafo dei numeri — e comunque si **rimisura**, non si cita. ⚠️ Questo punto la
+ricopiava, cioè teneva la stessa cifra in **due punti della stessa sezione**: è il difetto che
+il paragrafo dei numeri porta scritto nel proprio richiamo, ripetuto centocinquanta righe sotto.
+② **Né il blocco B né il blocco C sono chiusi**, e le righe che restano **non hanno tutte la
+stessa causa**: una aspetta un meccanismo che non esiste — il filtro dei vincoli, §6.3, Traguardo
+6 — e un'altra aspetta soltanto un **caso di livello 1**, perché il tipo che nomina esiste già.
+⚠️ Quale sia quale lo dice [`porta-di-qualita.md`](porta-di-qualita.md), che le enumera: dedurlo
+da una causa sola qui sarebbe falso per almeno una riga.
 ⛔ **I due numeratori NON stanno qui:** li tiene [`porta-di-qualita.md`](porta-di-qualita.md), e
 la riga che questo riquadro sostituisce lo diceva già con queste parole — *«non questa riga»*.
 Scriverli anche qui era il gotcha **#68** commesso dentro il riquadro che lo cita.
@@ -2241,7 +2248,7 @@ e non è un'omissione.
 | 77 | ⛔ **Una SCADENZA scritta in prosa non ha niente che la faccia scattare: quando arriva, non diventa rosso nulla.** Misurato il 2026-08-21, **due volte in un file solo**. `crates/kernel/src/reconcile.rs` dichiarava *«oggi chi scrive è UNA FUNZIONE sola»* e ci appendeva l'innesco: *«l'aiutante nasce col SECONDO scrittore»*. Il secondo è arrivato il **2026-08-20** — `Arbiter::set_policy`, Task 9 — e la frase è rimasta al presente in **quattro** case: quel file, `tests/boundary_promotion.rs`, [`porta-di-qualita.md`](porta-di-qualita.md) e la tabella della §6 di questo file. `crates/kernel/src/ports/journal.rs` prometteva l'allocatore di `StepId` *«col Traguardo 3»*, e i Traguardi 3 e 4 si sono chiusi senza: `crates/kernel/src/ports/ipc.rs` ripeteva la stessa data. ⛔ **E il contrasto è la parte utile, perché questo repository possiede già la forma che FUNZIONA:** le scadenze `E10`, `E67` e `E74` erano tenute da un avviso `dead_code` **lasciato viaggiare** senza `#[allow]`, e hanno retto **due volte su due** perché **il compilatore le ricorda**. Una scadenza che il compilatore non può ricordare non ha nessun altro meccanismo dietro. ⚠️ **Non è il #57**, dove una decisione è **anteriore** a ciò che nomina e la smentita arriva dopo: qui il soggetto esiste, la condizione è stata **soddisfatta**, e la domanda del #57 — *quando questa riga fu scritta, esisteva la cosa di cui parla?* — risponde **sì** e non coglie niente. ⚠️ **E non è il #31**: a invecchiare non è un numero né un qualificatore, è una **condizione** che si è avverata. 📌 **Le due domande:** *questa scadenza ha qualcosa che diventi rosso il giorno in cui scatta?* e, se no, *chi passerà di qui se ne accorgerà leggendo, o solo cercandola?* |
 | 78 | ⛔ **Una descrizione dello stato di un ALTRO artefatto è vera quando la scrivi e falsa quando un commit FRATELLO dello stesso compito tocca quell'artefatto — e nessuno dei due autori ha sbagliato.** Misurato il 2026-08-21, chiudendo il Task 10 del Traguardo 5. Il registro [`porta-di-qualita.md`](porta-di-qualita.md) dichiarava *«`crates/kernel/src/arbiter/` non è stato toccato, e i tre paragrafi che dichiarano quei mutanti vivi restano esattamente com'erano»*: **vero al commit dell'esecutore**, e reso **falso mezz'ora dopo** dal commit successivo dello stesso compito, che quei tre paragrafi li riscriveva. ⛔ **Il difetto non appartiene a nessuno dei due:** l'esecutore ha scritto una frase misurata, il coordinatore ne ha corretta una falsa, e a essere sbagliato è **lo stato di `HEAD`** — che è ciò che si consegna. ⚠️ **Non è il #68**, dove una regola non vincola il documento che la ospita: qui non c'è nessuna regola violata, c'è una **descrizione** che è invecchiata. ⚠️ **E non è la radice R1**, dove una correzione non attraversa gli **altri** documenti: qui la correzione ha attraversato, ed è stata **la correzione stessa** a rendere falsa la descrizione. ⚠️ **E non è il #31**: non invecchia un numero né un qualificatore, invecchia un **fatto su un file diverso**. 📌 **I due contro-versi, e il secondo costa zero:** un compito a più commit si rivede **a `HEAD`** e non commit per commit — l'unica revisione che lo ha colto è quella dell'intervallo intero; e una frase che descrive **lo stato di un altro artefatto** o **dice a quale commit era vera**, o non lo descrive affatto. 📌 **La domanda, e va fatta prima di scrivere la frase:** *questa frase parla di un file che qualcun altro sta toccando in questo stesso compito?* |
 | 79 | ⛔ **Una ragione che giustifica di NON fare un lavoro non viene mai falsificata, perché non produce l'artefatto che potrebbe contraddirla.** Misurato il 2026-08-21, chiudendo il finding **P-2** dell'audit. Le quattro righe di §6.10.5 erano scaglionate dal **Traguardo 2** con la ragione *«tutte e quattro pretendono di ottenere un `Worker`; un `Worker` lo restituisce solo `start(grant, ..)`; e nessuno emette concessioni prima del Traguardo 5»*. ⛔ **Era falsa il giorno in cui fu scritta, e la smentita stava nella stessa cartella:** `ScriptedWorker` in `crates/kernel/tests/ports_are_implementable.rs` è un `Worker` ottenuto **implementando il tratto**, senza concessioni — rimisurato riscrivendolo da fuori la crate, `impl Worker for W` **compila e passa**. La ragione è sopravvissuta **tre traguardi** e si è riprodotta in **sei case**, fra cui il **nome** di una sonda. ⛔ **La causa è strutturale e non distrazione: una ragione che giustifica di FARE qualcosa viene provata dal farlo** — il codice non compila, la sonda non scatta, un oracolo diventa rosso — **mentre una che giustifica un RINVIO non produce niente**, quindi nessun controllo, nessuna revisione e nessuna campagna di mutazione la incontra mai. È l'unica classe di affermazione del repository che **non ha un lettore**. ⚠️ **Non è il #57**, dove la decisione è **anteriore** a ciò che nomina e la smentita arriva dopo: qui la smentita era già committata, a due file di distanza. ⚠️ **Non è il #77**, dove una condizione scritta in prosa **si avvera** più tardi: questa nasce falsa. ⚠️ **E non è il #31**: non invecchia un numero né un qualificatore — non invecchia affatto. 📌 **Il contro-verso, e costa quanto una sonda:** *la ragione per cui un lavoro è RIMANDATO si prova nel momento in cui la si scrive, come si prova un controllo, perché è l'unica affermazione che nessun artefatto futuro potrà contraddire.* 📌 **La domanda:** *che cosa diventerebbe rosso se questa ragione fosse falsa?* Se la risposta è «niente», si misura adesso. |
-| 80 | ⛔ **Un cancello che legge file che NON si consegnano ha un verdetto che dipende dalla cartella di lavoro: è rosso per il lavoro di chi lo esegue, e la sua verdezza non dipende da ciò che si consegna.** Misurato il 2026-08-24, nona ondata del Task 11: `check-docs.sh` scandiva `find . -name '*.md'` con due sole esclusioni, quindi leggeva anche i `.md` dentro `.superpowers/` — cartella **interamente ignorata** da git (`git ls-files .superpowers/` è vuoto). Tre link rotti dentro un pacchetto di revisione, mai committato e mai committabile, davano `GATE RED`, e il rosso si leggeva come un difetto del compito. ⛔ **E il danno vero è l'altra direzione:** un cancello il cui insieme d'ingresso lo decide il disco può anche essere **verde per assenza** — nessuno se ne accorge, perché un verde non si indaga. ⚠️ **Non è il #41**, dove un filtro **esclude** ciò che il controllo dovrebbe vedere: qui il filtro **manca**, e il controllo vede ciò che non lo riguarda. ⚠️ **E non è il #38**, dove l'atto di misurare **modifica** lo stato: qui non si modifica niente, e lo strumento risponde correttamente alla domanda sbagliata. 📌 **La forma generale:** *l'insieme d'ingresso di un cancello è ciò che si CONSEGNA, non ciò che si trova sul disco.* ⛔ **E le due riparazioni ovvie sono ENTRAMBE sbagliate, il che è la metà utile di questa riga.** Escludere la cartella **per nome** lascia aperti `/scratch/` e `/tmp/`, che sono ignorati anch'essi e dove `CLAUDE.md` manda **ogni** misura: la regola giusta è quella **generale** — non si legge ciò che git ignora. E scandire i soli file **tracciati** (`git ls-files`) perde copertura **proprio nella corsa che conta**, perché il cancello gira **prima** del commit e un documento nuovo non ancora `git add`-ato sfuggirebbe: *non tracciato* e *ignorato* sono due cose diverse, e solo la seconda si scarta. ⚠️ **E il filtro va fatto FALLIRE APERTO:** se l'interrogazione a git non risponde, l'insieme degli ignorati resta vuoto e si scandisce tutto — un filtro che fallisse **chiuso** non scandirebbe nulla e uscirebbe **verde**, che è il gotcha **#26**. 📌 **La domanda, e costa una riga:** *questo controllo legge solo ciò che si consegna — e se la sua interrogazione fallisse, esce verde o rosso?* |
+| 80 | ⛔ **Un cancello che legge file che NON si consegnano ha un verdetto che dipende dalla cartella di lavoro: è rosso per il lavoro di chi lo esegue, e il suo verdetto non dipende solo da ciò che si consegna.** Misurato il 2026-08-24, nona ondata del Task 11: `check-docs.sh` scandiva `find . -name '*.md'` con due sole esclusioni, quindi leggeva anche i `.md` dentro `.superpowers/` — cartella **interamente ignorata** da git (`git ls-files .superpowers/` è vuoto). Tre link rotti dentro un pacchetto di revisione, mai committato e mai committabile, davano `GATE RED`, e il rosso si leggeva come un difetto del compito. ⛔ **E il danno vero è l'altra direzione:** un cancello il cui insieme d'ingresso lo decide il disco può anche essere **verde per assenza** — nessuno se ne accorge, perché un verde non si indaga. ⚠️ **Non è il #41**, dove un filtro **esclude** ciò che il controllo dovrebbe vedere: qui il filtro **manca**, e il controllo vede ciò che non lo riguarda. ⚠️ **E non è il #38**, dove l'atto di misurare **modifica** lo stato: qui non si modifica niente, e lo strumento risponde correttamente alla domanda sbagliata. 📌 **La forma generale:** *l'insieme d'ingresso di un cancello è ciò che si CONSEGNA, non ciò che si trova sul disco.* ⛔ **E le due riparazioni ovvie sono ENTRAMBE sbagliate, il che è la metà utile di questa riga.** Escludere la cartella **per nome** lascia aperti `/scratch/` e `/tmp/`, che sono ignorati anch'essi e dove `CLAUDE.md` manda **ogni** misura: la regola giusta è quella **generale** — non si legge ciò che git ignora. E scandire i soli file **tracciati** (`git ls-files`) perde copertura **proprio nella corsa che conta**, perché il cancello gira **prima** del commit e un documento nuovo non ancora `git add`-ato sfuggirebbe: *non tracciato* e *ignorato* sono due cose diverse, e solo la seconda si scarta. ⚠️ **E il filtro va fatto FALLIRE APERTO:** se l'interrogazione a git non risponde, l'insieme degli ignorati resta vuoto e si scandisce tutto — un filtro che fallisse **chiuso** non scandirebbe nulla e uscirebbe **verde**, che è il gotcha **#26**. 📌 **La domanda, e costa una riga:** *questo controllo legge solo ciò che si consegna — e se la sua interrogazione fallisse, esce verde o rosso?* |
 
 ---
 
@@ -4194,28 +4201,42 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > trentaquattresima applicazione.
 
 > 🔁 **Cinquantaduesima misura, il 2026-08-24, chiudendo il Task 11 del Traguardo 5 — ed è la
-> prima consegna della serie che arriva dopo NOVE ondate di correzioni.** In byte LF,
+> prima consegna della serie che arriva dopo DIECI ondate di correzioni.** ⚠️ **Questo riquadro
+> copre l'intero arco della chiusura** — la consegna e la decima ondata che l'ha corretta — e i
+> suoi pesi sono stati **rimisurati** a ogni giro invece di essere lasciati al primo: diceva
+> *«nove»* quando l'ondata che lo stava riscrivendo era la decima. In byte LF,
 > `int(n/1024 + 0.5)`, a passata chiusa; le celle **rimisurate sui file**.
 >
 > | | |
 > |---|---|
-> | **cresciuti** | questo file `471 → 487` — il riquadro del Task 11 in §6, il gotcha **#80** e la terza forma del **#70** in §9, e questo verbale · [`HANDOFF.md`](HANDOFF.md) `262 → 268`, il testo integrale del **#80** e della forma nuova · [`porta-di-qualita.md`](porta-di-qualita.md) `364 → 377` · il **piano del Traguardo 5** `345 → 356`, le voci `E131`…`E141` |
-> | ⛔ **e due di quei delta NON sono di questa passata** | il registro e il piano li ha mossi **l'intero arco del Task 11** — undici commit, dal prodotto alla nona ondata — mentre la 51ª misura li aveva presi a `1049353`, cioè **prima** che il compito cominciasse. Scritto qui perché un delta attribuito alla passata sbagliata è una cifra vera in una casa falsa |
+> | **cresciuti** | questo file `471 → 489` — il riquadro del Task 11 in §6, il gotcha **#80** e la terza forma del **#70** in §9, e questo verbale · [`HANDOFF.md`](HANDOFF.md) `262 → 268`, il testo integrale del **#80** e della forma nuova · [`porta-di-qualita.md`](porta-di-qualita.md) `364 → 377` · il **piano del Traguardo 5** `345 → 356`, le voci `E131`…`E141` |
+> | ⛔ **e due di quei delta NON sono di questa passata** | il registro e il piano li ha mossi **l'intero arco del Task 11** — dal commit del prodotto in poi, e quanti siano lo dice `git log` — mentre la 51ª misura li aveva presi a `1049353`, cioè **prima** che il compito cominciasse. Scritto qui perché un delta attribuito alla passata sbagliata è una cifra vera in una casa falsa |
 > | ⛔ **`riferimenti.md` immobile a 198 per la NONA volta di seguito** | questa passata ha prodotto misure — le due direzioni del rimedio a `check-docs.sh`, i pesi, il conteggio dei fine-riga — e vivono **tutte** nel registro, accanto al controllo che difendono. **NON toccato, deliberatamente:** è la voce aperta della 41ª, e scegliere fra *«spostare le misure»* e *«cambiare la regola»* resta del proprietario |
 > | **invariati, ricontati sui file** | spec del sotto-progetto 1 **277** · `adr/` **223** · `CLAUDE.md` 14 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 29 · [`audit-2026-08-11.md`](audit-2026-08-11.md) 32 · [`roadmap.md`](roadmap.md) 31 · [`README.md`](README.md) 19 · [`tracciabilita.md`](tracciabilita.md) 15 · [`semi-dst.md`](semi-dst.md) 6 · kernel-design 44 · disegno T5 31 · disegno T4 30 · `design/08` 11 · `design/01` 5 · `design/` nove file **`5–11`** · gli altri piani 68, 50, 162, 168, 114 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
 >
 > ⚠️ **Il MESSAGGIO non si è mosso — `18032` byte, 265 righe — e la ragione va scritta perché
-> non è virtù:** le quattro sostituzioni dentro le recinzioni hanno tutte **lo stesso numero di
-> cifre** (`517 → 533`, `762 → 768`, `345 → 356`, e la data), quindi il blocco **non poteva**
-> muoversi. ✅ **Rimisurato a `HEAD` dopo l'ultima scrittura** e non al primo commit, che è il
+> non è virtù:** le **cinque** sostituzioni dentro le recinzioni hanno tutte **lo stesso numero
+> di cifre** (`517 → 535`, `762 → 767`, `345 → 356`, `31 → 32`, e la data), quindi il blocco
+> **non poteva** muoversi. ⚠️ **Erano quattro fino alla decima ondata**, che ne ha aggiunta una
+> chiudendo un peso stantio e ha lasciato il conteggio indietro **nello stesso commit**. ✅ **Rimisurato a `HEAD` dopo l'ultima scrittura** e non al primo commit, che è il
 > gotcha **#78** applicato a questo verbale — la 51ª lo aveva imparato su sé stessa.
 >
 > ⛔ **E il censimento delle case ha dato una CANDIDATA che non è una casa, la quarta registrata
-> del gotcha #70, prima forma.** `grep -rn "485"` riportava `COMPENDIO.md:2714`, che è il
-> verbale della **ventesima** misura: `485` vi compare come **sotto-stringa di `664851`**, un
-> conteggio di byte. Riscriverla avrebbe rotto un verbale corretto credendo di riallineare un
+> del gotcha #70, prima forma.** `grep -rn "485"` riportava una riga del **verbale della
+> ventesima misura** — nominata e non numerata, perché ogni passata sposta i numeri di riga di
+> questo file, e questa stessa riga ne aveva già mancato uno. Lì `485` compare come
+> **sotto-stringa di `664851`**, un conteggio di byte. Riscriverla avrebbe rotto un verbale corretto credendo di riallineare un
 > peso. 📌 *Il `grep` trova dove guardare, mai cosa cambiare* — e le case si contano **dopo**
-> averle guardate una per una: **cinque** per `768`, **quattro** per `533`, **tre** per `501`.
+> averle guardate una per una: **cinque** per `767`, **quattro** per `535`, **tre** per `503`.
+>
+> ⛔ **E l'undicesima revisione ha trovato che l'aggregato aveva DUE metodi e nessuno lo sapeva.**
+> Misurato sui byte: `785422 / 1024 = 767,0` → **767**. Sommando i tre pesi **già arrotondati**
+> — `268 + 277 + 223` — si ottiene **768**. I due metodi avevano coinciso a **ogni** misura
+> precedente, e divergono per la prima volta oggi. ✅ **Vale il diretto**, perché è ciò che la
+> **seconda misura** prescrive — *«i pesi si misurano con `wc -c`, arrotondati a KiB»* — e un
+> arrotondamento non si somma. ⚠️ **Che la regola vada scritta per gli AGGREGATI e non solo per
+> i file è una voce del proprietario, registrata e non presa:** oggi la §12 non lo dice, e
+> l'ambiguità è rimasta invisibile finché i due metodi davano lo stesso numero.
 >
 > ⛔ **E il #48 si è ripresentato nella sua decima forma, con un guasto NUOVO: non ha corrotto,
 > ha APPESO.** Un `python - <<'PY'` lanciato per una misura di supporto è rimasto in attesa su
@@ -4226,9 +4247,9 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > non è affidabile nemmeno per **leggere**.
 >
 > ⚠️ **E il rapporto che la §12 difende peggiora per la QUATTORDICESIMA misura di seguito:** il
-> denominatore cresce dello **0,8 %**, il numeratore del **3,1 %**. La causa è quella della 47ª
+> denominatore cresce dello **0,7 %**, il numeratore del **3,5 %**. La causa è quella della 47ª
 > e della 51ª — una passata che **toglie** parole dai documenti e le rimette **qui**, perché il
-> verbale della correzione vive nel compendio. Il rapporto regge, **533 contro 768**, e la
+> verbale della correzione vive nel compendio. Il rapporto regge, **535 contro 767**, e la
 > compressione del compendio resta del proprietario.
 >
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo**

@@ -155,13 +155,9 @@ fn reading_once_with_the_receipt_compiles() {
 fn one_grant_starts_one_worker() {
     let grant = a_real_grant();
     // ⚠️ NOT `assert!(first.is_ok())`: the fake always answers `Ok`, so that assertion could
-    // never fail and would prove nothing -- a vacuous probe. And this function does not hold
-    // a shape that `a_started_worker` does not already compile: same call, same grant used
-    // exactly once, and the other three tests go through it. It is a declared place to hang
-    // the reasoning about the consumed `Grant`, not a probe; `expect` below is for the panic
-    // message, not for coverage. What actually forbids a second `start` is the compiler:
-    // `Process::start` takes `Grant` by value and `Grant` is not `Copy` -- and cannot become
-    // one, because it does not even derive `Clone`.
+    // never fail and would prove nothing -- a vacuous probe. And this function holds no shape
+    // that `a_started_worker` above does not already compile: it is a declared place to hang
+    // the reasoning, not a probe. `expect` below is for the panic message, not for coverage.
     FakeProcess
         .start(grant, WorkerDescriptor::new(b"asr.exe".to_vec()))
         .expect("the fake always starts");

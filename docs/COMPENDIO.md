@@ -1343,6 +1343,22 @@ Traguardo 6** — `E31`, `E32`, `E70`, `E94`, `E104`, e ora `E140`. ⛔ **`E50` 
 sono sue:** il loro chiusore è **chi costruirà il primo ciclo di orchestrazione**, e lo dice questa
 stessa sezione. Erano nell'elenco perché una quantificazione scritta su una lista si legge come
 verificata su tutti i nomi — gotcha **#67**, colto dalla decima revisione.
+⛔ ⑤ **E L'ULTIMA ONDATA NON È STATA RIVISTA, e va detto invece che taciuto.** Il Task 11 si è
+chiuso con **tre** revisioni piene dopo la consegna — la nona, la decima e l'undicesima — e
+ciascuna ha trovato rilievi veri: **6, 6 e 7**, tutti nella **prosa** e nelle **cifre derivate**,
+**zero** nel codice. L'ondata che ha chiuso i sette dell'undicesima **non ha avuto la propria
+revisione**: la regola *«si rivede finché una passata non torna pulita»* è quindi **onorata a
+metà**, e il prodotto è verde ma il verbale no. ⚠️ Chi riprende decide se aprire la dodicesima
+revisione **prima** del Task 12 o accettare il residuo; il dettaglio dei tre giri sta nel ledger
+di sessione e i rapporti integrali in `.superpowers/sdd/task-11-review-9|10|11.md`.
+⛔ **E la causa del non-convergere è misurata, non supposta:** le cifre **rimisurate sui file**
+sono giuste **ventidue su ventidue**; quelle **derivate da un testo** — il totale di un'errata,
+il numeratore di un pre-controllo, il peso di un file citato altrove, un verbale che riporta i
+propri numeri — sbagliate **otto su otto**. 📌 **La decisione che ne segue è del proprietario e
+non è stata presa:** `CLAUDE.md` prescrive già che *«una cifra che vive in PIÙ documenti si
+TOGLIE»*, e i **pesi** vivono a mano in **cinque** case. Toglierli e lasciarli alla sola §12
+chiuderebbe la classe di difetto che ha prodotto **diciannove rilievi su diciannove** — ma tocca
+`CLAUDE.md` e [`AVVIO-CHAT.md`](AVVIO-CHAT.md), che sono i documenti d'ingresso.
 
 ⛔ **E DUE VOCI NUOVE ASPETTANO IL PROPRIETARIO, nessuna delle quali è un difetto oggi.**
 **①** — **un quinto caso `compile_fail` è misurato e non preso:** un secondo `start` con lo
@@ -4209,14 +4225,14 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 >
 > | | |
 > |---|---|
-> | **cresciuti** | questo file `471 → 489` — il riquadro del Task 11 in §6, il gotcha **#80** e la terza forma del **#70** in §9, e questo verbale · [`HANDOFF.md`](HANDOFF.md) `262 → 268`, il testo integrale del **#80** e della forma nuova · [`porta-di-qualita.md`](porta-di-qualita.md) `364 → 377` · il **piano del Traguardo 5** `345 → 356`, le voci `E131`…`E141` |
+> | **cresciuti** | questo file `471 → 490` — il riquadro del Task 11 in §6, il gotcha **#80** e la terza forma del **#70** in §9, e questo verbale · [`HANDOFF.md`](HANDOFF.md) `262 → 268`, il testo integrale del **#80** e della forma nuova · [`porta-di-qualita.md`](porta-di-qualita.md) `364 → 377` · il **piano del Traguardo 5** `345 → 356`, le voci `E131`…`E141` |
 > | ⛔ **e due di quei delta NON sono di questa passata** | il registro e il piano li ha mossi **l'intero arco del Task 11** — dal commit del prodotto in poi, e quanti siano lo dice `git log` — mentre la 51ª misura li aveva presi a `1049353`, cioè **prima** che il compito cominciasse. Scritto qui perché un delta attribuito alla passata sbagliata è una cifra vera in una casa falsa |
 > | ⛔ **`riferimenti.md` immobile a 198 per la NONA volta di seguito** | questa passata ha prodotto misure — le due direzioni del rimedio a `check-docs.sh`, i pesi, il conteggio dei fine-riga — e vivono **tutte** nel registro, accanto al controllo che difendono. **NON toccato, deliberatamente:** è la voce aperta della 41ª, e scegliere fra *«spostare le misure»* e *«cambiare la regola»* resta del proprietario |
 > | **invariati, ricontati sui file** | spec del sotto-progetto 1 **277** · `adr/` **223** · `CLAUDE.md` 14 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) 29 · [`audit-2026-08-11.md`](audit-2026-08-11.md) 32 · [`roadmap.md`](roadmap.md) 31 · [`README.md`](README.md) 19 · [`tracciabilita.md`](tracciabilita.md) 15 · [`semi-dst.md`](semi-dst.md) 6 · kernel-design 44 · disegno T5 31 · disegno T4 30 · `design/08` 11 · `design/01` 5 · `design/` nove file **`5–11`** · gli altri piani 68, 50, 162, 168, 114 · `RISULTATI.md` 23 · `GUI-REQUISITI.md` 6 · ADR `2–19` |
 >
 > ⚠️ **Il MESSAGGIO non si è mosso — `18032` byte, 265 righe — e la ragione va scritta perché
 > non è virtù:** le **cinque** sostituzioni dentro le recinzioni hanno tutte **lo stesso numero
-> di cifre** (`517 → 535`, `762 → 767`, `345 → 356`, `31 → 32`, e la data), quindi il blocco
+> di cifre** (`517 → 536`, `762 → 767`, `345 → 356`, `31 → 32`, e la data), quindi il blocco
 > **non poteva** muoversi. ⚠️ **Erano quattro fino alla decima ondata**, che ne ha aggiunta una
 > chiudendo un peso stantio e ha lasciato il conteggio indietro **nello stesso commit**. ✅ **Rimisurato a `HEAD` dopo l'ultima scrittura** e non al primo commit, che è il
 > gotcha **#78** applicato a questo verbale — la 51ª lo aveva imparato su sé stessa.
@@ -4227,7 +4243,7 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > questo file, e questa stessa riga ne aveva già mancato uno. Lì `485` compare come
 > **sotto-stringa di `664851`**, un conteggio di byte. Riscriverla avrebbe rotto un verbale corretto credendo di riallineare un
 > peso. 📌 *Il `grep` trova dove guardare, mai cosa cambiare* — e le case si contano **dopo**
-> averle guardate una per una: **cinque** per `767`, **quattro** per `535`, **tre** per `503`.
+> averle guardate una per una: **cinque** per `767`, **quattro** per `536`, **tre** per `504`.
 >
 > ⛔ **E l'undicesima revisione ha trovato che l'aggregato aveva DUE metodi e nessuno lo sapeva.**
 > Misurato sui byte: `785422 / 1024 = 767,0` → **767**. Sommando i tre pesi **già arrotondati**
@@ -4247,9 +4263,9 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > non è affidabile nemmeno per **leggere**.
 >
 > ⚠️ **E il rapporto che la §12 difende peggiora per la QUATTORDICESIMA misura di seguito:** il
-> denominatore cresce dello **0,7 %**, il numeratore del **3,5 %**. La causa è quella della 47ª
+> denominatore cresce dello **0,7 %**, il numeratore del **3,7 %**. La causa è quella della 47ª
 > e della 51ª — una passata che **toglie** parole dai documenti e le rimette **qui**, perché il
-> verbale della correzione vive nel compendio. Il rapporto regge, **535 contro 767**, e la
+> verbale della correzione vive nel compendio. Il rapporto regge, **536 contro 767**, e la
 > compressione del compendio resta del proprietario.
 >
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo**

@@ -142,11 +142,15 @@ fn reading_once_with_the_receipt_compiles() {
 /// the 29 cases that existed before this task: none names a `Grant` moved by `start`, and the
 /// two that name `Grant` at all hold different rules (no public constructor; matched only
 /// inside `Admission`). ⛔ WHAT HOLDS "one grant starts one worker" IS THE COMPILER, not a case
-/// in this repository: `Process::start` takes `grant: Grant` BY VALUE and `Grant` derives no
-/// `Clone` (`crates/kernel/src/arbiter/mod.rs`, no `#[derive]` above `pub struct Grant`), so a
+/// in this repository: `Process::start` takes `grant: Grant` BY VALUE and `Grant` is not
+/// `Copy` -- and cannot become it, because it derives no `Clone` either
+/// (`crates/kernel/src/arbiter/mod.rs`, no `#[derive]` above `pub struct Grant`), so a
 /// second `.start(grant, ..)` below would not compile -- `grant` was moved into the call that
-/// is already there. That is why this function calls `start` exactly once: a second call is
-/// not refused at runtime, it does not exist to be written.
+/// is already there. ⚠️ `Copy` IS THE HINGE AND `Clone` IS NOT, which is what the oracles say
+/// too (`reading_twice_from_one_receipt.stderr`: "does not implement the `Copy` trait"):
+/// adding `Clone` here would not disarm anything, adding `Copy` would. That is why this
+/// function calls `start` exactly once: a second call is not refused at runtime, it does not
+/// exist to be written.
 #[test]
 fn one_grant_starts_one_worker() {
     let grant = a_real_grant();

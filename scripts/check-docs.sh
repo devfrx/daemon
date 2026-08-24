@@ -16,15 +16,31 @@ report() { echo "  ✗ $*"; failures=$((failures + 1)); }
 echo "== internal links =="
 # The plans are excluded on purpose: they contain forward references to
 # artefacts that the plan itself has yet to create.
+#
+# ⛔ AND SO IS WHATEVER GIT IGNORES, 2026-08-24. This gate was reading .md files that are not
+# in the repository at all, so its verdict depended on the WORKING DIRECTORY instead of on
+# what gets delivered -- red today because of three links inside '.superpowers/', and green
+# by luck tomorrow. Excluding that one directory by name would leave '/scratch/' and '/tmp/'
+# open, and CLAUDE.md sends every measurement into a scratchpad: the rule has to be the
+# general one.
+# ⚠️ NOT 'git ls-files': the gate runs BEFORE the commit, so a document that nobody has
+# 'git add'-ed yet must still be checked in the run that counts. Untracked and ignored are
+# different things, and only the second is dropped here.
+# ⚠️ Asked ONCE, and it FAILS OPEN: with no work tree 'git check-ignore' writes nothing, the
+# set stays empty and every file is scanned, which is the behaviour of before this change. A
+# filter that failed closed would scan nothing and exit green -- gotcha #26.
+mds=$(find . -name '*.md' -not -path './.git/*' -not -path './docs/superpowers/plans/*')
+ignored=$'\n'$(printf '%s\n' "$mds" | git check-ignore --stdin 2>/dev/null)$'\n'
 broken=$(
   while IFS= read -r f; do
+    case "$ignored" in *$'\n'"$f"$'\n'*) continue ;; esac
     d=$(dirname "$f")
     grep -o '](\([^)#]*\.md\)[^)]*)' "$f" 2>/dev/null |
       sed 's/](\(.*\))/\1/' | cut -d'#' -f1 | grep -v '^http' |
       while IFS= read -r l; do
         [ -f "$d/$l" ] || echo "$f -> $l"
       done
-  done < <(find . -name '*.md' -not -path './.git/*' -not -path './docs/superpowers/plans/*')
+  done <<<"$mds"
 )
 [ -z "$broken" ] || while IFS= read -r r; do report "broken link: $r"; done <<<"$broken"
 

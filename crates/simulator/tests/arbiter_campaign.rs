@@ -246,8 +246,24 @@ const fn party(
 /// `static` says it outright.
 static PARTIES: [Party; 4] = [
     party("voice", 1_024, ComputeClass::Realtime, 600, 900, 700, 400),
-    party("chat", 3_072, ComputeClass::Interactive, 2_500, 1_100, 1_100, 600),
-    party("render", 4_096, ComputeClass::Batch, 1_200, 1_800, 1_300, 900),
+    party(
+        "chat",
+        3_072,
+        ComputeClass::Interactive,
+        2_500,
+        1_100,
+        1_100,
+        600,
+    ),
+    party(
+        "render",
+        4_096,
+        ComputeClass::Batch,
+        1_200,
+        1_800,
+        1_300,
+        900,
+    ),
     party("index", 2_048, ComputeClass::Batch, 1_400, 900, 900, 500),
 ];
 

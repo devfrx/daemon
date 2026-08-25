@@ -1939,21 +1939,31 @@ quella che deve restare verde.
 
 **Aggiunto il 2026-08-11 col Task 9 del Traguardo 4**, e la distinzione è il motivo per cui questa
 sottosezione esiste invece di una riga nella tabella qui sopra: ⛔ **`scripts/gate.sh` ha ora sette
-passi e il catalogo resta a sei controlli.** Le asserzioni delle due campagne DST girano **già**
+passi e il catalogo resta a sei controlli.** Le asserzioni delle campagne DST girano **già**
 dentro `cargo test --workspace`, che è il secondo controllo — quella è la cadenza che il vincolo 8
 della §11 chiede — e questo passo **non può diventare rosso per una ragione che quel controllo non
-abbia già colto**.
+abbia già colto**. ⚠️ **RICHIAMO DEL 2026-08-25, TRAGUARDO 5 TASK 12: qui e nel periodo seguente
+c'era scritto «le DUE campagne DST», e da oggi sono TRE** — `crates/simulator/tests/dst_campaign.rs`,
+`crates/simulator/tests/arbiter_campaign.rs` e
+`crates/platform/tests/engine_crash_consistency.rs`. La cifra è **corretta e non affiancata da
+una smentita** (gotcha **#76**).
 
 Esiste per una cosa sola: il vincolo **7** vuole che il **tempo di parete si stampi a ogni corsa**,
 *«così l'appesantimento diventa visibile prima di diventare una tentazione»*, e `cargo test`
-**inghiotte l'uscita dei test che passano**. Le due campagne vengono quindi rieseguite con
+**inghiotte l'uscita dei test che passano**. Le campagne vengono quindi rieseguite con
 `--nocapture`.
+
+⛔ **E IL PASSO NOMINA I PROPRI BERSAGLI UNO PER UNO, quindi una campagna che non è nell'elenco è
+MUTA.** ✅ **Misurato il 2026-08-25 invece che dedotto**, con `arbiter_campaign.rs` già scritto e
+la riga di `gate.sh` non ancora aggiunta: il cancello esce **`GATE GREEN`** e la sua uscita
+contiene le quattro righe `DST arbiter` **zero volte**. È la ragione per cui il Task 12 tocca
+`scripts/gate.sh`, che non stava nella sua intestazione `Files:` — voce `E150`.
 
 | | |
 |---|---|
-| **deve restare verde, e le due righe si devono VEDERE** | misurato: `DST L1 campaign: 2000/2000 seeds crashed, largest doubt set 3, 109 distinct doubt sets, 38.6ms` e `DST L2 short: records=3 points=35 fired=35 truncated=22 partial=17 127.2ms` |
-| ⛔ **deve scattare** | misurato forzando un rosso in una campagna: **`GATE RED -- 2 checks failed`**, cioè il secondo controllo **e** questo passo |
-| **il costo, dichiarato** | le campagne brevi girano **due volte**, ~0,2 s; e un rosso della campagna si conta **due volte** |
+| **deve restare verde, e le righe si devono VEDERE** | ⚠️ **Rimisurato il 2026-08-25: le righe sono SETTE, e questa cella ne nominava DUE** — lasciava fuori `DST L1 interleaving`, che stampa dal Traguardo 4, e le quattro dell'arbitro non esistevano. L'ultima corsa del cancello di quel giorno: `DST L1 interleaving: doubt set 2 reached after 2 of 2000 seeds` · `DST L1 campaign: 2000/2000 seeds crashed, largest doubt set 3, 109 distinct doubt sets, 122.9787ms` · `DST arbiter crashes: 2000/2000 seeds crashed, 999 with a step in doubt, 149.5997ms` · `DST arbiter ceiling: highest Mib(8192) of Mib(8192) over 2000 seeds, 154.1921ms` · `DST arbiter expiry: 2000 seeds with a late holder, 1835 where the sweep made room, 155.1779ms` · `DST arbiter worlds: 7 distinct outcomes over 2000 seeds, 156.329ms` · `DST L2 short: records=3 points=35 fired=35 truncated=22 partial=17 rungs=4/4 444.8221ms`. ⛔ **E i CONTEGGI sono stabili mentre i TEMPI non lo sono, il che è la cosa da portarsi via:** in una corsa precedente dello stesso cancello, lo stesso giorno e sugli stessi byte, le quattro righe dell'arbitro davano `334.8ms`, `336.7ms`, `339.0ms` e `346.0ms` — un fattore **2,2** su questa — mentre `2000/2000`, `999`, `1835`, `Mib(8192)` e `7` **non si sono mossi**. ⚠️ Le cifre di tempo del Traguardo 4 — `38.6ms` e `127.2ms` — **non** sono state riallineate: erano la misura di quel giorno e restano tali |
+| ⛔ **deve scattare** | misurato al Traguardo 4 forzando un rosso in una campagna: **`GATE RED -- 2 checks failed`**, cioè il secondo controllo **e** questo passo. ✅ **Rimisurato il 2026-08-25 SUL BERSAGLIO NUOVO**, perché una direzione provata su un bersaglio non è provata sugli altri: con la mutazione `M3` della campagna dell'arbitro — `crash_point` che risponde sempre `0` — il cancello esce **`GATE RED -- 2 checks failed`** |
+| **il costo, dichiarato** | ⚠️ **Rimisurato il 2026-08-25: le tre campagne brevi girano due volte, e la seconda passata costa 1,45 s di tempo di test** — `dst_campaign` 0,39 s, `arbiter_campaign` 0,36 s, `engine_crash_consistency` 0,70 s, presi **dentro il binario** e non dall'orologio attorno a `cargo`. La cella diceva **~0,2 s**, cifra presa al Traguardo 4 quando le campagne erano due: si **rimisura**, non si riporta. ⚠️ **E la cifra è un ordine di grandezza:** lo stesso binario dell'arbitro, con lo stesso comando, è stato misurato a **0,63 s** e a **1,53 s** dentro questa stessa sessione — vedi il riquadro della sezione qui sotto. E un rosso della campagna si conta **due volte** |
 
 ⛔ **La doppia rossa non è un difetto ma l'unica prova che il passo esegua ciò che dichiara:** un
 passo di sola stampa che non potesse diventare rosso sarebbe **indistinguibile da uno che non
@@ -1962,6 +1972,124 @@ stampa niente**. È la regola 3 di §7.1.1 applicata a un passo che non è un co
 ⚠️ **E i due prefissi sono stati allineati nello stesso passaggio** — il livello 2 stampava
 `L2 short:` contro `DST L1 campaign:` — perché quelle righe esistono **per essere lette come
 coppia**, e due grafie per una cosa sola costringono chi scorre l'uscita a conoscerle entrambe.
+⚠️ **La campagna dell'arbitro entra nella stessa famiglia** col prefisso `DST arbiter `, per lo
+stesso motivo.
+
+#### La campagna DST dell'arbitro — Traguardo 5, Task 12
+
+⛔ **CHE COSA COMPRA, IN UNA RIGA: l'arbitro gira DENTRO l'esecutore.** I suoi banchi lo
+esercitano su **stati costruiti a mano**: `arbiter_admission.rs` con **38** `.admit(`,
+`arbiter_policy.rs` con **14**, il modulo `#[cfg(test)]` di `src/arbiter/mod.rs` con **20**, più
+`arbiter_resource.rs` — contati col `grep -c` il 2026-08-25. ✅ **E che l'interlacciamento fosse
+il buco è misurato, non dedotto:** al 2026-08-25 i file che nominano insieme `Arbiter` ed
+`Executor` sono `crates/daemon/src/main.rs` — la radice di composizione, che li costruisce
+entrambi e chiama `admit` da `fn reserve`, fuori da ogni attività — e
+`crates/kernel/src/arbiter/mod.rs`, che nomina `Executor` in **un** commento e in nient'altro.
+`crates/simulator/tests/arbiter_campaign.rs` è il terzo, ed è il posto in cui l'arbitro gira
+**dentro** l'esecutore: porta le proprietà DST **1**, **4** e **5** di §5.7. Le altre due hanno
+bisogno di `process` e `ipc`, Traguardo 6.
+
+⛔ **LO SCENARIO DETTATO DAL PIANO ERA UNA CORSA RIPETUTA DUEMILA VOLTE, E LA CAMPAGNA LO HA
+DETTO DA SÉ.** ✅ **Riprodotto il 2026-08-25 prima di cambiarlo** — corretti i due soli scarti di
+firma, voci `E142` ed `E143`, e nient'altro: **1 esito distinto** su 200, 500, 1 000, 2 000 **e
+20 000** semi, sempre lo stesso, `(granted 4, queued 8, refused 0, peak 6144)`. Cioè
+`the_campaign_sweeps_more_than_one_world` — che il piano stesso detta — era **ROSSA sul codice di
+oggi**, con la propria diagnosi. Le tre attività erano **identiche in tutto ciò che i libri
+vedono**, e permutarle cambia **chi** viene servito, non **quanti**. Il verbale sta nella voce
+`E144`, e la lezione è quella del gotcha **#14**: un rimedio che non si è visto partire da rosso
+non è un rimedio.
+
+**Che cosa è cambiato, e che cosa ciascuna cosa compra.**
+
+| Nello scenario dettato | Nello scenario di oggi | Che cosa compra |
+|---|---|---|
+| `now` viene dall'**indice del ciclo** | `now` viene dall'**orologio virtuale**, letto attraverso `SharedClock` | il commento di modulo dichiarava l'iniezione dell'orologio e l'orologio **non veniva mai letto**: adesso è vero |
+| **tre attività identiche** | **quattro parti diverse** in taglia, corsia, finestra di validità e ritmo | è la simmetria a rendere l'esito indipendente dal seme: rotta quella, l'ordine decide **chi entra** e quindi **quanto** sta nei libri |
+| una **sola** pausa | pausa **diversa** dopo una concessione e dopo un accodamento | il calendario di una parte segue le **risposte** che ha ricevuto, quindi l'istante che passa ad `admit` è funzione del seme e non dell'iterazione |
+| nessuno **rilascia** | ogni concessione torna, e chi rilascia **serve la coda** con `promote` | `release` e `promote` sono il **secondo** e il **terzo** posto in cui i libri si muovono, e `promote` emette concessioni con una guardia sul tetto **tutta sua**: senza, la proprietà 1 copriva il solo `admit` |
+
+⛔ **E `SharedClock` NON È UN OROLOGIO SU MISURA:** ogni metodo inoltra al `VirtualReactor` che
+sta dentro, quindi ciò che gira è la finta spedita. Esiste perché `Executor::new` prende il
+reattore **per valore** e un'attività non ne tiene uno — lo dice `Sleep::until` — quindi senza un
+riferimento condiviso l'unico istante che un'attività può nominare è uno che calcola da sé.
+
+**La chiusura dello spazio degli esiti**, che è il criterio con cui `SHORT_CAMPAIGN_SEEDS` è
+scelto — non «il più grande numero tondo sotto il tetto», che insegue una cifra che satura.
+Misurato il 2026-08-25, in `debug`:
+
+| semi | esiti distinti | ultimo nuovo al seme | tempo di parete |
+|---|---|---|---|
+| 200 | 7 | 38 | 36 ms |
+| 500 | 7 | 38 | 88 ms |
+| 1 000 | 7 | 38 | 189 ms |
+| 2 000 | 7 | 38 | 369 ms |
+| 20 000 | 7 | 38 | 3 690 ms |
+
+⚠️ **LE DUE COLONNE NON VALGONO LO STESSO, e dirlo batte lasciare che le cifre sembrino
+ugualmente solide.** Gli esiti distinti e il seme dell'ultimo nuovo sono usciti **identici** a
+ogni ripetizione; il tempo di parete no. Lo **stesso binario**, con lo **stesso comando**
+(`--test-threads=1`), è stato misurato a **0,63 s** all'inizio della sessione e a **1,53 s** più
+tardi — un fattore **2,4** sulla stessa macchina, dentro la stessa sessione, sugli stessi byte.
+Le cifre di tempo qui sono perciò un **ordine di grandezza** e non una costante, ed è anche il
+motivo per cui **nessuna asserzione le tocca**: ciò che il cancello raccoglie è la riga stampata,
+perché un lettore la confronti con la corsa precedente.
+
+⛔ **E il conteggio è proprietà dello SCENARIO e non dei semi che lo campionano** — gotcha **#24**,
+ed è ciò che rende `EXPECTED_OUTCOMES` un controllo invece di una scommessa. Misurato pescando i
+2 000 semi in quattro modi diversi: `seed` stesso, e `seed * K >> 33` per
+`K ∈ {0xBF58476D1CE4E5B9, 0x94D049BB133111EB, 0x2545F4914F6CDD1D}` — **7 in tutti e quattro**.
+
+⚠️ **E la lunghezza dello scenario è stata misurata invece che scelta:** a `REQUESTS` **4** lo
+spazio è di **7** esiti, a **6** di **8**, a **8** di **9**, mentre una passata da 2 000 semi passa
+da **369 ms** a **578 ms** a **750 ms**. Lo spazio è limitato dalla **forma** dello scenario, non
+dalla sua lunghezza.
+
+⚠️ **`crash_point` NON entra in questa misura**, e il Passo 4 del compito lo chiedeva: le passate
+che contano gli esiti girano con `CrashingJournal::without_crash()`, e il punto di caduta influenza
+la sola `property_4`. Le tre costanti di mescolamento sono state usate **là**: `crashes` **2000/2000**
+in tutte e tre, `doubted` **999**, **1003**, **1003**. Voce `E149`.
+
+⛔ **LA CAMPAGNA DI MUTAZIONE — NOVE MUTAZIONI, OTTO UCCISE, UN MUTANTE VIVO.** Ogni mutazione
+applicata **una alla volta**, compilata in un passo **separato** da quello che esegue, e revocata
+**ripristinando da una copia byte-esatta** presa prima — mai risostituendo all'indietro (gotcha
+**#48**) — con `cmp` identico dopo ogni ripristino, e `git status --porcelain` riletto. Il perimetro
+è l'**intero workspace**. Verde di riferimento: **37 bersagli, 264 passate, 0 fallite, 2 ignorate**.
+
+| # | Mutazione | Dove | Sonda attesa morta | Misurato — **intero workspace** |
+|---|---|---|---|---|
+| **M1** | l'ammissione smette di chiedersi se la richiesta entra in ciò che è libero | prodotto | `property_1_…` | ✅ **239 passate, 25 fallite.** ⛔ **E il messaggio è stato LETTO**, che è ciò che §5.7.1 pretende: `seed 0: allocated Mib(10240) exceeds the total Mib(8192)` — il **seme** e i **due valori** |
+| **M2** | ogni parte chiede **1 MiB**: tutto entra sempre | banco | oracolo 1 | ✅ **260 passate, 4 fallite**, e le quattro diagnosi sono **diverse**: oracolo 1 *«everything fitted»*, la non-vacuità di `property_1` *«the books never came within Mib(1) of Mib(8192)»*, il secondo testimone di `property_5`, e l'oracolo 2 sulla riga `> 1` |
+| **M3** | `crash_point` risponde sempre `0` | banco | secondo oracolo di `property_4` | ✅ **SOLA NELL'INTERO WORKSPACE — 263 passate, 1 fallita**, riga 708: *«2000 crashes and ZERO doubts»* |
+| **M4** | `without_crash()` al posto del giornale cadente | banco | primo oracolo di `property_4` | ✅ **SOLA NELL'INTERO WORKSPACE — 263 passate, 1 fallita**, riga 702: *«a seed did not reach its crash point»* |
+| **M5** | `collect_expired` non riscuote niente | prodotto | `property_5` | ✅ **252 passate, 12 fallite.** La campagna muore sul **primo** testimone (riga 638) |
+| **M6** | l'**ammissione** non riscuote più; `release` e `promote` sì | prodotto | **solo** il secondo testimone di `property_5` | ✅ **257 passate, 7 fallite**, e la campagna muore alla riga **643** col **primo testimone verde**. ⛔ **È la mutazione che prova che i due testimoni sono DUE affermazioni** — gotcha **#55**, la regola nata al Task 3 del Traguardo 4 |
+| **M7** | le quattro parti diventano **una parte quattro volte** | banco | oracolo 2 | ✅ **261 passate, 3 fallite**, e l'oracolo 2 muore sulla riga **552** — *«one run repeated 2000 times»*, cioè esattamente il difetto dello scenario dettato, riprodotto a comando |
+| **M8** | `promote` non serve mai la coda | prodotto | oracolo 1, riga `promoted` | ✅ **256 passate, 8 fallite**, campagna alla riga 519 |
+| **M9** | `release` non riscuote più prima di cercare la concessione | prodotto | — | ⛔ **MUTANTE VIVO — 37 bersagli, 264 passate, 0 fallite, 2 ignorate: l'intero workspace resta VERDE.** Vedi il riquadro qui sotto |
+
+⛔ **IL MUTANTE VIVO, DICHIARATO E NON NASCOSTO.** `Arbiter::release` chiama `collect_expired(now)`
+prima di cercare la concessione nei libri; togliendo quella chiamata **nulla in tutto il workspace
+diventa rosso**. La ragione, letta nel codice: **ogni turno di ogni parte chiama `admit`**, che
+riscuote per primo, quindi quando un ritardatario torna la spazzata l'ha già fatta qualcun altro —
+il testimone `already_collected` resta perciò `> 0`. ⚠️ **Il doc di `release` non promette quella
+riscossione**, quindi non c'è nemmeno una frase da rendere falsa. ⚖️ **Non è chiuso qui, ed è una
+scelta:** una sonda che lo uccida vive in `crates/kernel/tests/arbiter_admission.rs` — chiamare
+`release` su una concessione scaduta senza nessuna operazione in mezzo — che è **fuori
+dall'intestazione `Files:`** di questo compito. Registrato come voce `E151` perché il proprietario
+lo veda, sul precedente dei mutanti vivi dichiarati accanto ad `admit` e a `promote`.
+
+⚠️ **CIÒ CHE QUESTA CAMPAGNA NON COPRE, dichiarato invece che taciuto.** ① Che il rilascio renda
+**esattamente** la riserva lo tiene `releasing_gives_back_exactly_the_reservation`: qui `release`
+è esercitato sotto interlacciamento e ciò che si asserisce è il **tetto**, non l'importo. ② Il
+**rifiuto** non è raggiunto: nessun profilo di `PARTIES` chiede più di `TOTAL`, e la frase non è
+lasciata in piedi da sola — `the_scenario_really_makes_the_admission_decide` asserisce
+`refused == 0`, così un profilo che crescesse o un tetto che calasse diventano **rossi** invece
+che silenziosi. Il ramo lo tiene `a_request_larger_than_the_total_is_refused_and_not_queued`. Voce
+`E145`. ③ La campagna gira sotto `VramPolicy::Remote`, che è il **default** di ADR-0006, quindi
+`ask_back` non parte mai: la revoca ha le proprie sonde nel modulo `#[cfg(test)]` di
+`src/arbiter/mod.rs`. ④ L'ordine dentro un turno — rilascia, promuovi, ammetti — è una **scelta di
+questo banco** e non una decisione sul ciclo di orchestrazione: **niente qui asserisce su
+quell'ordine**, quindi le voci aperte `E51` ed `E53` restano aperte.
 
 #### Le sonde, per nome
 
@@ -2065,6 +2193,7 @@ sostengono righe del catalogo, o che tengono in piedi ciò che le righe presuppo
 | `crates/kernel/tests/ports_are_implementable.rs` (**quattordici** test — ⚠️ ricontati il 2026-08-21: la cella diceva **tredici**, giusta fino a **B-3** del 2026-08-18, che ha portato `a_restore_serves_the_checkpoint_it_was_asked_for_and_not_the_first_one`. ⛔ E il **tredici** vive ancora, giustamente, dentro quel test: è la misura dell'audit *«`restore` riscritta per prendere il primo lasciava verdi tutti e tredici»*, cioè il conto di **allora**. Gotcha **#31**) | il rimedio al gotcha **#46**: una **finta** per `Filesystem`, una per `Network`, due per `process` — `Worker` e `Process` — e una per `Ipc`, con chiamate che le esercitano in entrambe le direzioni. **Cinque finte per quattro famiglie**, ed è la copertura di **tutte** le porte dichiarate senza implementazione. È ciò che tiene in vita `Path::as_bytes()`, `Endpoint::as_bytes()` e il `Clone` su `Path` contro una passata YAGNI — su un tratto dichiarato **in anticipo** i chiamanti sono vuoti per costruzione, e il criterio non distingue il morto dalla sola porta d'ingresso di chi verrà — e prova che quelle firme siano **implementabili fuori dalla crate**, dove la privacy di modulo di una tuple-struct le renderebbe inutilizzabili. ⚠️ **Non** è una suite di conformità: quella pretende due implementazioni da confrontare |
 | `crates/simulator/tests/memory_journal.rs` (**quindici** test — ⚠️ ricontati **sul binario** il 2026-08-10 col Task 11: la riga diceva **undici** e la cifra era già stantia prima di lui, gotcha **#31**) | il **doppio in memoria** del giornale (§4.1): che l'intento riletto torni intatto, che un passo mai scritto sia **`Missing` e non vuoto**, che un esito **senza** intento sia rifiutato **e** uno **dopo** il proprio intento accettato — le due direzioni, e la seconda mancava — che il rifiuto guardi **quale** passo, che `read_back` risponda con l'**intento** e non con l'esito, che ogni passo rilegga **il proprio** primo record, che un **secondo intento** sullo stesso passo sia **rifiutato senza scrivere** e che uno su un passo **diverso** resti **accettato** — le due direzioni della guardia decisa il 2026-08-10 — e che `prune` **rifiuti un passo in dubbio senza potarlo** — ⚠️ questa riga diceva *«rifiuti senza potare»* e descriveva la non-implementazione, superata dal Task 11 — e che risponda **`Missing`** a un passo mai scritto, che è la **terza** risposta e la sola che la conformità non tiene (voce aperta 2). ⚠️ **Non** è la suite di conformità, e dal 2026-08-10 la distinzione non è più «quella non esiste» ma **quella sta altrove**: `journal_contract.rs` porta ciò che **entrambe** le implementazioni promettono, questo file ciò che è vero **di questa sola** — l'ordine *dentro* un passo, il secondo intento, e che il giornale non sopravviva alla propria caduta |
 | `crates/simulator/tests/crashing_journal.rs` (**tredici** test — ⚠️ ricontati il 2026-08-21: la cella diceva **dieci**, giusta fino a **S-1**/**S-2** del 2026-08-18, che ne hanno portate **tre** — `the_success_path_of_note_is_exercised_and_counted`, `a_refused_note_does_not_consume_a_crash_position` e `a_refused_intent_does_not_consume_a_crash_position`. Il piano ne dettava **otto**, e le due arrivate dal pre-controllo sono la scrittura rifiutata e la potatura dopo la caduta. Gotcha **#31**) | ⛔ **il giornale che CADE** (§3.3, livello 1 dei due livelli di crash di ADR-0032) — ciò che promette **solo lui**, ed è per costruzione un bugiardo, quindi la conformità non lo tiene (gotcha **#50**): che cada **alla** scrittura dichiarata e non «da qualche parte», che dopo la caduta **ogni** scrittura successiva sia rifiutata — è la differenza fra un **crash** e un **disco cattivo**, decisione D2, ed è la permanenza a fermare *tutte* le attività interlacciate — che ciò che era stato scritto **sopravviva** e si rilegga da `into_survivor`, che `has_fallen` dica **no** finché non cade, e che un giornale a cui è stato detto di **non** cadere non cada mai in centoventotto scritture: quest'ultima è la direzione che si dimentica, e ⛔ **`C7a` poggia interamente su di lei** — misurato, è l'unica sonda **verde** sotto la mutazione «cade sempre» e **rossa** sotto «non cade mai». Più le due che il piano non chiedeva: che una scrittura **rifiutata dal protocollo** non consumi una posizione del conteggio — senza, il punto estratto scivola e con un punto vicino alla fine il guasto **non scatta**, gotcha **#17** — e che `prune`, **unica operazione mutante fuori dalle tre contate**, sia rifiutata dopo la caduta **senza armarla né consumarla**. ⚠️ **Una sonda è dichiarata non falsificabile invece che tolta:** `the_same_seed_chooses_the_same_write` non può fallire perché `from_seed` è pura, e la determinatezza vera la tiene `seeded_rng.rs` — postura del gotcha **#44** |
+| `crates/simulator/tests/arbiter_campaign.rs` (**cinque** test — contati **sul binario** il 2026-08-25 con `cargo test --locked -p simulator --test arbiter_campaign`, non per aritmetica) | ⛔ **la campagna DST dell'arbitro** — le proprietà **1**, **4** e **5** di §5.7 sotto un interlacciamento scelto dal seme, che è l'unico posto in cui l'arbitro gira **dentro** l'esecutore. Due oracoli di non-vacuità distinti — *«lo scenario fa davvero decidere l'ammissione»* e *«la campagna spazza più di un mondo»* — e la sezione dedicata qui sopra porta le misure, la campagna di mutazione e il **mutante vivo** |
 | `crates/simulator/tests/dst_campaign.rs` (**cinque** test, uno dei quali `#[ignore]` — ⚠️ erano **due** al Task 2 e **quattro** al Task 3; la cifra è rimasta a quattro quando il **Task 4** ha aggiunto la campagna profonda, ed è stata ricontata **sul binario** al Task 9. Gotcha **#31**) | ⛔ **la campagna DST di livello 1** (§3.3, ADR-0032): il soggetto sotto esame è la **riconciliazione del kernel**, e nulla tocca un disco. Consegna lo **scenario giornalato** — quello di M-2, tre attività per quattro passi, ora con intento ed esito attraverso la porta — la **traccia**, che sarà l'oracolo **indipendente** di `C7b` perché viene da ciò che le attività hanno saputo essere passato e non dall'archivio, e **`C7a`**: senza crash, **nessun** passo in dubbio, su cinquanta semi. Più il pin che **fissa** `WRITES_PER_RUN = 24`, senza il quale il punto di caduta si estrarrebbe contro un numero non verificato (gotcha **#17**). ⛔ **E l'oracolo di non-vacuità di `C7a`, che il piano non chiedeva ed è la riga che conta:** *«nessun passo è in dubbio»* e *«lo scenario non ha scritto niente»* erano **lo stesso verde** — misurato con un giornale che cade alla scrittura zero. Ora il ciclo pretende `writes_done() == WRITES_PER_RUN` **prima** di guardare l'insieme, ed è il gemello di `has_fallen()` sull'altra metà della campagna. ⚠️ **Ciò che questo file NON tiene, ed è dichiarato sul doc di `run`:** che lo scenario **interlacci**. Nessuna sua sonda va rossa se le tre attività girano una dopo l'altra; la proprietà la tiene `a_crash_leaves_more_than_one_step_in_doubt_on_at_least_one_seed`, un compito più in là — e il **nome** è un vincolo, perché il rimando lo cita. ✅ **E dal Task 3 quella sonda esiste, in questo stesso file**, insieme a **`C7b`**: il crash lascia **quell'insieme e non un altro**, confrontato con l'oracolo `expected_doubt` che viene dalla **traccia** e non dall'archivio — la sola ragione per cui `C7b` non è una tautologia, e ⛔ **misurata**: rompendo l'oracolo, il confronto va rosso con `[3]` dall'archivio contro dodici passi dalla traccia. Più il **confronto ordinato** invece che insiemistico, che morde davvero — un `replay` ordinato per passo dà `left: [0, 4]` contro `right: [4, 0]`, ed è il difetto che una tabella `redb` chiavata sul passo produrrebbe da sola. ⛔ **E `C7b` ha DUE oracoli di non-vacuità e non uno, perché provano cose diverse:** che **ogni** seme raggiunga il proprio punto di caduta — uguaglianza e non `> 0`, perché un seme che non cade significa che lo scenario ha scritto meno del numero contro cui il punto è estratto — e che **almeno un seme lasci più di un passo in dubbio**, senza cui la campagna confronterebbe insiemi vuoti restando verde. ✅ **Dal Task 4 `C7b` È la campagna breve**: il corpo per-seme vive in `campaign(seeds)`, che la campagna profonda riusa sotto `#[ignore]`, e non esiste un secondo ciclo più debole accanto — ⛔ il piano ne dettava uno, e sarebbe stato **quello** a finire nel cancello. ⛔ **E il numero di semi ha una TERZA guardia, che è il criterio con cui è stato scelto:** gli insiemi in dubbio distinti che questo scenario può produrre sono **centonove**, e la campagna pretende di vederli **tutti** — `EXPECTED_DOUBT_SETS`. Non è una proprietà ma un **rilevatore di cambiamento sulla forma dello scenario**, nella postura dei byte congelati, e ⛔ **è stato adottato solo dopo aver misurato che non scattasse dove non deve**: sei costanti di mescolamento diverse danno centonove tutte e sei, quindi il conteggio è dello **scenario** e non dei semi. Provato in due direzioni — a cinquecento semi ne vede centocinque e scatta |
 | `crates/kernel/tests/reconciliation.rs` (⚠️ **undici** test — ricontati **sul binario** il 2026-08-10 chiudendo il traguardo: la cella diceva **nove**, e le due arrivate dopo sono del **Task 7**, la nota che non apre un dubbio e la nota che non tocca quello del chiamante. Gotcha **#31**) | la **riconciliazione** (§4.3, ADR-0007) — il primo consumatore di `replay()`: che un crash lasci **più** passi in dubbio e non uno (gotcha **#20**, `[3, 7]` col seme 99), che un passo con intento **ed** esito **non** sia in dubbio (la direzione che si dimentica), che la **classe decida** la risoluzione sui tre valori, e che un record indecifrabile valga `SuspendAndAsk`. ⚠️ **Quattro sonde che il compito non chiedeva:** il giornale **vuoto** — il primo avvio, che nessuna sonda dettata incontrava — l'**ordine di scrittura** scritto `7, 3, 1` perché quella dettata attendeva `[3, 7]`, che è ordine di scrittura **e** ordine numerico insieme, e le **due dell'insieme**: al più una voce per passo, e un passo che rientra **conserva il posto**. ⛔ **Ciò che questo file NON tiene, ed è dichiarato in `reconcile.rs`:** che il `kind` del record concordi con l'operazione che l'ha scritto. ⚠️ **Questo rimando diceva *«vedi la voce aperta in fondo»* e puntava a una voce che non è più aperta:** la questione delle **due verità** è **chiusa dal proprietario** il 2026-08-10 — come **decisione** e non come garanzia — e a valle esiste `the_promotion_writes_through_note_and_the_record_says_note`, che l'accordo lo fissa per **l'unico scrittore che esiste** |
 | `crates/platform/tests/file_journal.rs` (⚠️ **sei** test su Windows e **sette** su Linux — ed è il **primo conteggio del registro che dipende dal sistema**, dichiarato invece di scegliere un numero: il settimo è `cfg(unix)`) | ⛔ **La settima è `the_journal_file_is_not_world_readable`, finding PL-1, dal 2026-08-18.** ADR-0023 promette che il giornale a riposo sia *«protetto quanto il tuo account di sistema»*, e `OpenOptions::create(true)` da solo chiede `0o666 & !umask`, cioè **0644** su un Linux di serie: **leggibile da chiunque**, cioè **meno** dell'account. ✅ **Misurato su un Linux vero (WSL, `umask` 0022) invece che dedotto dai doc di `std`:** `open` a `0o666` dà **644**, a `0o600` dà **600**. ⚠️ **L'asserzione è «nessuno tranne il proprietario» (`mode & 0o077 == 0`) e non «esattamente 0600»**, perché `mode()` è ancora mascherato dall'umask: un'uguaglianza esatta andrebbe **rossa su un sistema più chiuso del richiesto**, cioè dove la promessa è **mantenuta**. ⚠️ **Direzione «deve scattare», provata dalla misura del sistema e non da una corsa del banco mutato:** senza la riga il file nasce **644**, e `644 & 0o077 = 0o044 ≠ 0`. ⛔ **E il difetto era INVISIBILE sull'host di sviluppo** — Windows non ha il modo Unix, quindi `cfg(unix)` lo compila via e il rosso poteva uscire **solo sul secondo sistema previsto dal progetto**: è il gotcha **#52** nella stessa forma. Il percorso Unix è stato **type-checkato** prima del push con `cargo check --target x86_64-unknown-linux-gnu --tests`; il **valore** lo misura la CI. ⚠️ **Limite dichiarato:** `mode()` è ignorato se il file **esiste già**, quindi un giornale creato prima di questa riga resta 0644 per sempre — è una **migrazione**, e la fixture cancella la cartella all'ingresso, quindi questa sonda **non può vederla**. ⛔ **Solo il file e NON la cartella**, ed è la scelta del proprietario fra le due: `0700` sulla cartella coprirebbe anche gli archivi futuri, ma **la cartella non ha un proprietario nel codice** — nessuno la crea — quindi la regola nominerebbe un chiamante che non esiste, che è il difetto di **A-7**. ⚠️ **Non è una riga di catalogo:** aggiungerla alla §7.4 è una decisione del proprietario, e finché non c'è questa sonda è **registrata qui come voce aperta** invece che come nota — gotcha **#36**. — E le altre sei sono ciò che **solo** il giornale su file promette (§4.1, ADR-0032), e che pretenderlo in conformità renderebbe rossa la finta — gotcha **#44**: che una scrittura **sopravviva alla riapertura**, che una transazione **mai confermata non lasci nulla** (requisito 1 di §10.6), che il contatore delle chiavi **riprenda dall'archivio** invece che da zero — altrimenti la seconda sessione **sovrascrive** la prima in silenzio — che la guardia sul **secondo intento** regga **attraverso una riapertura**, perché legge l'archivio e non un campo della sessione, e che il **lucchetto** rifiuti un secondo giornale sullo stesso file **mentre il primo è aperto** (l'altra direzione la tiene la prima sonda: chiuso il primo, la riapertura riesce). ⛔ **E la sesta è la prova che il confine è reale:** `CountingBackend` è una **seconda implementazione di `redb::StorageBackend` scritta da fuori la crate`**, `FileJournal` ci gira sopra invariato, e i contatori dicono che l'I/O **passa davvero di lì** — senza quell'asserzione un giornale che accettasse il backend e scrivesse altrove resterebbe verde. È il rimedio al gotcha **#46** applicato al confine su cui il **Traguardo 4** inietterà i guasti di livello 2. ⚠️ **Non** è la suite di conformità: quella sta in `journal_contract.rs` e gira contro **entrambe** dalla riga qui sotto |

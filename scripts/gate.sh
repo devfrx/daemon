@@ -44,18 +44,32 @@ run "attributes of the constrained crates" bash scripts/gate-attributes.sh
 run "documentation consistency"           bash scripts/check-docs.sh
 
 # ⛔ A SEVENTH STEP THAT IS NOT A SEVENTH CONTROL, and the catalogue count stays at six. The
-# assertions of both DST campaigns already run inside `cargo test --workspace` above -- that IS
-# the cadence constraint 8 of §11 asks for, and nothing here can go red for a reason that check
-# has not already caught. This runs them a SECOND time for one reason only: constraint 7 wants
-# the WALL TIME PRINTED ON EVERY RUN -- "so that the slowdown becomes visible before it becomes
-# a temptation" -- and `cargo test` swallows the output of tests that pass.
+# assertions of all three DST campaigns already run inside `cargo test --workspace` above --
+# that IS the cadence constraint 8 of §11 asks for, and nothing here can go red for a reason
+# that check has not already caught. This runs them a SECOND time for one reason only:
+# constraint 7 wants the WALL TIME PRINTED ON EVERY RUN -- "so that the slowdown becomes
+# visible before it becomes a temptation" -- and `cargo test` swallows the output of tests
+# that pass.
 #
-# ⚠️ TWO COSTS, both declared. The short campaigns run twice, which is ~0.2s. And a failing
-# campaign turns the gate red TWICE, from this step and from the second check: that redundancy
-# is not a defect but the only proof the step really executes what it claims -- a printing step
-# that could not go red would be indistinguishable from one that prints nothing.
+# ⚠️ THE THIRD IS THE ARBITER'S, ADDED AT TASK 12 OF MILESTONE 5, and it had to be added
+# HERE and not only written: this step names its targets ONE BY ONE, so a campaign absent
+# from the list is silent. Measured on 2026-08-25 with the bench in place and this line not
+# yet added -- the gate came out GREEN and its output contained the four `DST arbiter` lines
+# ZERO times.
+#
+# ⚠️ TWO COSTS, both declared. The three short campaigns run twice: measured on
+# 2026-08-25, the second pass costs 1.45s of test time -- dst_campaign 0.39s,
+# arbiter_campaign 0.36s, engine_crash_consistency 0.70s. ⚠️ THIS LINE SAID "~0.2s", a
+# figure taken at milestone 4 when there were two campaigns; it is RE-MEASURED here rather
+# than carried over -- and it is an ORDER OF MAGNITUDE: the arbiter binary alone, same
+# command, came out 0.63s and 1.53s within one session on this machine. And a failing
+# campaign turns the gate red TWICE, from this step and
+# from the second check: that redundancy is not a defect but the only proof the step really
+# executes what it claims -- a printing step that could not go red would be indistinguishable
+# from one that prints nothing.
 run "DST campaigns -- wall time" bash -c '
   cargo test --locked -p simulator --test dst_campaign -- --nocapture &&
+  cargo test --locked -p simulator --test arbiter_campaign -- --nocapture &&
   cargo test --locked -p platform --test engine_crash_consistency -- --nocapture'
 
 echo

@@ -9,9 +9,9 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 562 KB** (byte LF, il 2026-08-25), e con
+⚠️ **Insieme questi due file pesano 579 KB** (byte LF, il 2026-08-25), e con
 [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — **chiuso il 2026-08-18, otto decisioni
-su otto**, quindi oggi una **consultazione** — **594**. ⛔ **E il prezzo in
+su otto**, quindi oggi una **consultazione** — **611**. ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
@@ -24,10 +24,10 @@ servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un
 travestita da misura. Il metodo e il limite stanno nella §12 del compendio, quattordicesima
 misura. 📌 È la **sesta** occorrenza del gotcha **#31** su questa riga, che prima diceva
 «circa seimila token» quando i due file pesavano 24 KB, poi «88 KB» quando erano
-già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **775 KB**.
+già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **777 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **775 KB** in
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **777 KB** in
 byte LF il 2026-08-25, e possono solo crescere; la spec da sola ne fa **277** — e l'idea è
 già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
 aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione
@@ -136,7 +136,11 @@ si legge anche contro i propri FRATELLI.** [ADR-0026](docs/adr/0026-linguaggio-d
 dichiara fra le proprie conseguenze positive che *«il simulatore non va scritto da zero»* perché
 esiste `madsim`; [ADR-0031](docs/adr/0031-dipendenze-del-kernel-parte-del-confine.md) — **con la stessa data** —
 misura che `madsim` porta **55 crate** e lo scarta, e il codice gli dà ragione: `simulator` ha
-**una** dipendenza e **512 righe** scritte a mano. ⚠️ **Nessuno dei due nomina l'altro**, quindi
+**una** dipendenza ed è scritto **a mano**. ⚠️ **Quante righe non è scritto qui:** la cifra diceva
+**512** — misurata il 2026-08-11, e il 2026-08-25 erano **519** — e viveva in **quattro**
+documenti, contati quel giorno; **tolta, non riallineata**, perché il conto lo dà
+`find crates/simulator/src -name '*.rs' | xargs wc -l` e un comando non marcisce.
+⚠️ **Nessuno dei due nomina l'altro**, quindi
 la contraddizione non si vede da nessuno dei due lati, e le cinque domande qui sopra guardano
 tutte il compito contro il **codice** — mai una decisione contro le decisioni vicine. Gotcha
 **#59**.

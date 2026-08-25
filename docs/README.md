@@ -7,7 +7,13 @@ elencava cinque dicendo «quattro»**: il raggruppamento è quello della §1 del
 **Fase corrente: implementazione del kernel — i Traguardi da 1 a 5 sono ✅ eseguiti, e resta il
 Traguardo 6.** ⚠️ **La coda di date che stava qui è TOLTA e non riallineata:** diceva
 *«il 2026-08-08 e il 2026-08-10»* per quattro traguardi, ed era già sbagliata a sé stante —
-la riga 16 di **questo stesso file** data il Traguardo 4 al **2026-08-11**. Un elenco di date
+**questo stesso file** data il Traguardo 4 al **2026-08-11**, nel capoverso che ne annuncia il
+brainstorming. ⚠️ **RICHIAMO DEL 2026-08-25: qui c'era un NUMERO DI RIGA — *«la riga 16»* — e lo
+stesso commit che lo scriveva aveva inserito sei righe sopra di sé, spostando il bersaglio.**
+**Tolto e sostituito con un'àncora testuale:** un numero di riga dentro un documento vivo è un
+puntatore senza guardia, e lo stesso giorno la stessa cura ha tolto i **sette** rimandi per numero
+di riga della colonna *«Dove è dichiarata»* di [`porta-di-qualita.md`](porta-di-qualita.md), più la
+riga che li introduceva. Un elenco di date
 si allunga a ogni chiusura e non c'è nessun numero da riconoscere come stantio: le date, una
 per traguardo, stanno nella tabella dei traguardi di [`roadmap.md`](roadmap.md) e nella §6 del
 [`COMPENDIO.md`](COMPENDIO.md), e un rimando non può marcire.

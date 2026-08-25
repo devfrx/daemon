@@ -57,9 +57,12 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
   /superpowers:subagent-driven-development   quando quel piano ci sarà: un
                                              subagente fresco per compito, con
                                              revisione fra uno e l'altro. È la
-                                             modalità scelta, e ha portato dieci
-                                             compiti su dieci al Traguardo 4 e
-                                             dodici su dodici al 3. ⛔ E LA
+                                             modalità scelta, e ha portato TUTTI
+                                             i compiti eseguiti finora, senza
+                                             un'eccezione: il numeratore vive
+                                             nella §6 del compendio e non qui,
+                                             perché un cumulativo invecchia a
+                                             ogni chiusura. ⛔ E LA
                                              REVISIONE NON È UNA FORMALITÀ: al
                                              Task 6 ha trovato un mutante vivo
                                              nell'INTERO workspace che
@@ -92,7 +95,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 594 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 611 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -143,7 +146,7 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 594 KB in tutto
    più PICCOLO, più GRANDE, o DI SPECIE DIVERSA.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 775 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 777 KB
    il 2026-08-25, la spec da sola 277, i quattro piani più grandi 373, 168,
    162 e 114 — e l'idea è già nel compendio. ⛔ IL PIÙ GRANDE DEI QUATTRO È
    L'ULTIMO ESEGUITO, e si apre A COMPITI: è cresciuto a ogni compito, perché
@@ -220,9 +223,11 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
   · Non sono operativo in Rust. Quando l'argomento esce dal mio dominio,
     spiegamelo PRIMA a parole semplici e POI schematizza.
   · Un piano scritto qui è un'IPOTESI, non un'istruzione: il difetto è stato
-    nel piano più spesso che nel codice — DODICI compiti su dodici al
-    Traguardo 3, DIECI su dieci al Traguardo 4, su un piano scritto il giorno
-    prima. E SEI voci d'errata erano difetti di un compito SUCCESSIVO, trovati
+    nel piano più spesso che nel codice — in TUTTI i compiti dispacciati
+    finora, senza un'eccezione, su piani scritti il giorno prima. Il conto
+    per traguardo sta nella §6 del compendio, non qui: un cumulativo
+    invecchia a ogni compito, «tutti, senza eccezione» no.
+    E SEI voci d'errata erano difetti di un compito SUCCESSIVO, trovati
     misurando in anticipo: una di esse avrebbe fatto dichiarare chiuso un
     gotcha lasciandolo aperto. Prima di eseguire un compito si fanno le SETTE
     domande — le QUATTRO qui sotto più le tre che l'elenco non contiene, e
@@ -305,8 +310,8 @@ COMPITI e mai interi.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **LA SERIE HA GIRATO, e quanto pesa OGGI non è scritto qui:** lo rimisura la **§12 del compendio** a ogni passata, e questa cella ne teneva una seconda copia **ferma al 2026-08-18** — *«14,7 KB»* — che nessuna delle tre passate successive aveva mosso. **Tolta, non riallineata** (gotcha **#68**). La storia resta perché è storia: era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **562 KB** — `CLAUDE.md` più il compendio, e **594** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 562 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **579 KB** — `CLAUDE.md` più il compendio, e **611** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 579 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -320,7 +325,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **594 KB contro 775**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+resta quello che conta: **611 KB contro 777**. ⛔ **E il 2026-08-18 una passata ha trovato che il
 `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
 `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
 e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del
@@ -385,9 +390,7 @@ massima: era il ritratto di sei difetti su sei.
 > eseguire»* diceva il falso a **tre** eseguiti.
 
 ⚠️ **Cosa aggiornare qui, e quando.** Il ramo se cambia; il peso dei due file
-obbligatori quando uno dei due cresce; il
-**numero dei traguardi eseguiti** quando uno si chiude; il **peso del messaggio** quando il
-blocco fra le due recinzioni cresce — è la cella che nessuno rifaceva, ed era falsa di metà; i
+obbligatori quando uno dei due cresce; i
 prerequisiti d'ambiente quando il repository comincia a richiedere uno strumento nuovo —
 è successo con `rustup`, e prima di allora non serviva niente. ⛔ **Lo SHA non è in questo
 elenco**, ed è la voce che è stata tolta: si compila incollando, non si mantiene.
@@ -397,6 +400,21 @@ rimanda al titolo della §9 — quindi l'elenco prescriveva di mantenere una cif
 📌 *Una voce di manutenzione sopravvive alla cosa che manuteneva*, e nessun controllo la coglie:
 non è un numero stantio, è un **compito** stantio. Trovata dal pre-controllo della delega, che
 legge questo file contro il repository come ogni altro documento (gotcha **#58**).
+⛔ **E il 2026-08-25 ne sono state tolte una TERZA e una QUARTA, dallo stesso elenco.**
+① *«il **numero dei traguardi eseguiti** quando uno si chiude»*: quel numero **non vive più
+qui** — la chiusura del Traguardo 5 lo ha tolto dal messaggio, perché stava due righe sopra la
+frase che lo vieta, e ci ha messo un rimando alla §6. ② *«il **peso del messaggio** quando il
+blocco fra le due recinzioni cresce — è la cella che nessuno rifaceva, ed era falsa di metà»*:
+quella cella è la riga *«il messaggio»* della tabella *«Perché è così corto»*, **svuotata il
+2026-08-18** e oggi un rimando alla §12 del compendio, quindi **in questo file** non c'è più
+nessun peso del messaggio da rifare: lo rimisura la §12, insieme alla cella della §11 che lo
+porta. 📌 **TRE voci di questo solo elenco sono state tolte per la stessa ragione** — il numero
+dei gotcha, il numero dei traguardi, il peso del messaggio — **e tutte e tre nella stessa
+direzione:** la cosa manutenuta sparisce, la voce che la manuteneva resta, perché chi **toglie**
+un valore da un documento non rilegge l'elenco che prescriveva di mantenerlo — e togliere è la
+cura che questo repository applica più spesso. ⚠️ **La quarta voce tolta da qui, lo SHA, è di
+specie diversa:** quel campo esiste ancora, e a mancare era il modo di tenerlo aggiornato. ⛔ **La domanda che le coglie, e va fatta a ogni chiusura:**
+*ciò che questa voce ordina di aggiornare esiste ancora?*
 
 > 🔁 **Rimisurato il 2026-08-10, chiudendo il Traguardo 3 — e la cella del messaggio era la
 > quarta cifra falsa di questo file.** Diceva **«~4 KB»**; misurato sul blocco fra le due

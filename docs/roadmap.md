@@ -21,7 +21,16 @@ riga che ospita la data.
 > `Proposed`) e **non blocca nulla**.
 >
 > **Sotto-progetto 1: §0–§8 approvate**, e la riapertura su sette voci è **tutta chiusa**.
-> ✅ **Il Traguardo 1 è eseguito il 2026-08-08**: il workspace alla radice con le cinque
+> ⛔ **Quali traguardi siano eseguiti, con che data e con quanti compiti, lo dice la TABELLA DEI
+> TRAGUARDI di questo file, più in basso** — qui si racconta **che cosa** ciascuno ha portato, non a
+> che punto sia la serie. ⚠️ **RICHIAMO DEL 2026-08-25 — questa sezione era la QUARTA casa dello
+> stato per traguardo dentro lo stesso file**, dopo la tabella dei sotto-progetti, quella dei
+> piani e quella dei traguardi: la chiusura del Traguardo 5 ne ha aggiornate **tre** e non questa,
+> e chi la leggeva concludeva che il quinto fosse fermo al **disegno**. ⛔ **L'enumerazione è
+> TOLTA, non estesa al quinto** — un elenco che si allunga a ogni chiusura è un numeratore scritto
+> a parole, e questa è la stessa correzione che il Punto di ripresa di [`HANDOFF.md`](HANDOFF.md)
+> ha ricevuto lo stesso giorno.
+> ✅ **Il Traguardo 1** ha portato il workspace alla radice con le cinque
 > crate, edition **2024**, `rust-toolchain.toml` che appunta **rustc 1.95.0** e il bersaglio
 > **`x86_64-unknown-none`**, e la **porta di qualità in un comando solo** —
 > `bash scripts/gate.sh`, sei controlli, **`GATE GREEN`**. ⛔ **Zero logica di prodotto**, ed
@@ -55,20 +64,19 @@ riga che ospita la data.
 > lo stesso giorno. ✅ **Il piano del Traguardo 1 è scritto ed eseguito**, e la spec non ha
 > voci aperte.
 >
-> ✅ **Il Traguardo 2 — il substrato iniettabile — è eseguito il 2026-08-10**: piano percorso
-> **per intero, quattordici compiti su quattordici**, fra il 2026-08-09 e il 2026-08-10,
+> ✅ **Il Traguardo 2 — il substrato iniettabile** — piano percorso **per intero**,
 > `GATE GREEN` a ogni compito. ✅ **Le sei famiglie di porte sono complete** — `reactor` ·
 > `journal` · `filesystem` · `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive.
-> ✅ **Il Traguardo 3 — giornale e formato durevole — è eseguito il 2026-08-10**, dodici
-> compiti in due parti: **dodici su dodici**, `GATE GREEN` a tutti. ⚠️ **Questa riga diceva
+> ✅ **Il Traguardo 3 — giornale e formato durevole** — piano in due parti,
+> `GATE GREEN` a tutti. ⚠️ **Questa riga diceva
 > «dieci eseguiti, si riprende dal Task 11»**, e la §6 del compendio era già a undici: è la
 > lezione della tredicesima misura: la §6 giusta **nasconde** gli altri documenti di stato.
 > ✅ **Il brainstorming del Traguardo 4 è chiuso il 2026-08-11** e il disegno è scritto:
 > [Traguardo 4 — il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
 > ✅ **E il piano è scritto lo stesso giorno**, dieci compiti in tre parti:
 > [Traguardo 4](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md).
-> ✅ **E il Traguardo 4 è ESEGUITO lo stesso giorno**, subagent-driven, **dieci compiti su
-> dieci** con `GATE GREEN` a ciascuno. ⛔ **Il disegno aveva ristretto il traguardo su una
+> ✅ **E il Traguardo 4** è stato percorso subagent-driven, con `GATE GREEN` a ciascun
+> compito. ⛔ **Il disegno aveva ristretto il traguardo su una
 > misura**: delle dieci righe di guasto della §3.3 **una sola** ha oggi il proprio soggetto,
 > quindi si è costruito **il motore** della DST e non tutte le finte — le altre nove hanno
 > ciascuna il proprio indirizzo fra i Traguardi 5 e 6. ⛔ **E il 2026-08-11 il repository ha
@@ -94,6 +102,11 @@ riga che ospita la data.
 > e la loro metà d'arbitro è **una sola**. ⛔ **E il disegno ha ricontato una cifra che due
 > documenti di stato davano sbagliata:** le righe di guasto che il Traguardo 5 eredita sono
 > **una**, più una condivisa — non cinque.
+> ✅ **E il Traguardo 5 ha portato l'arbitro GPU per intero:** il vocabolario della risorsa,
+> l'ammissione, le code per corsia, il ciclo della concessione, la revoca con la propria grazia,
+> le due policy VRAM, il cablaggio di produzione e la campagna DST dell'arbitro. ⛔ **Ciò che
+> lascia aperto sta in una tabella sola** — *«Le voci aperte del Traguardo 5»* di
+> [`porta-di-qualita.md`](porta-di-qualita.md), con la colonna di **chi le chiude**.
 > ⏭️ **Il prossimo passo sta nella §6 del [`COMPENDIO.md`](COMPENDIO.md), in un posto solo** —
 > qui non si ripete. ⚠️ **Questa riga lo riscriveva**, e ha detto *«scrivere il piano»*, poi
 > *«il brainstorming»*, poi *«eseguirlo»*, poi *«l'esecuzione dell'audit … ne restano tre»*.
@@ -286,7 +299,13 @@ Alla chiusura di ogni sotto-progetto si aggiornano, **nello stesso passaggio**:
 
 1. la tabella dei sotto-progetti qui sopra;
 2. le righe corrispondenti in [tracciabilita.md](tracciabilita.md);
-3. lo stato degli spike che quel sotto-progetto ha chiuso;
-4. `CLAUDE.md` alla radice, se cambia il «prossimo passo».
+3. lo stato degli spike che quel sotto-progetto ha chiuso.
+
+⛔ **RICHIAMO DEL 2026-08-25 — la quarta voce è TOLTA:** diceva *«`CLAUDE.md` alla radice, se
+cambia il «prossimo passo»»*, e `CLAUDE.md` **non porta più** il prossimo passo — lo dice esso
+stesso (*«stanno nella §6 del compendio — non qui, o si disallineano»*), e `grep -c '⏭️'`
+su quel file dà **zero**. 📌 *Una voce di manutenzione sopravvive alla cosa che manuteneva*, e
+nessun controllo la coglie: non è un numero stantio, è un **compito** stantio. È la stessa specie
+che [`AVVIO-CHAT.md`](AVVIO-CHAT.md) ha già registrato due volte, qui alla terza casa.
 
 Un documento di stato disallineato è peggio di nessun documento: mente con autorevolezza.

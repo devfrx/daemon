@@ -9,9 +9,9 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 579 KB** (byte LF, il 2026-08-25), e con
+⚠️ **Insieme questi due file pesano 580 KB** (byte LF, il 2026-08-25), e con
 [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — **chiuso il 2026-08-18, otto decisioni
-su otto**, quindi oggi una **consultazione** — **611**. ⛔ **E il prezzo in
+su otto**, quindi oggi una **consultazione** — **612**. ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
@@ -137,9 +137,10 @@ dichiara fra le proprie conseguenze positive che *«il simulatore non va scritto
 esiste `madsim`; [ADR-0031](docs/adr/0031-dipendenze-del-kernel-parte-del-confine.md) — **con la stessa data** —
 misura che `madsim` porta **55 crate** e lo scarta, e il codice gli dà ragione: `simulator` ha
 **una** dipendenza ed è scritto **a mano**. ⚠️ **Quante righe non è scritto qui:** la cifra diceva
-**512** — misurata il 2026-08-11, e il 2026-08-25 erano **519** — e viveva in **quattro**
-documenti, contati quel giorno; **tolta, non riallineata**, perché il conto lo dà
-`find crates/simulator/src -name '*.rs' | xargs wc -l` e un comando non marcisce.
+**512** — misurata il 2026-08-11, e il 2026-08-25 erano **519** — ed è **tolta** dai documenti
+**vivi** che la portavano e **lasciata nei verbali datati**, dove dice cosa fu misurato quel
+giorno; il conto lo dà `find crates/simulator/src -name '*.rs' | xargs wc -l`, e un comando non
+marcisce.
 ⚠️ **Nessuno dei due nomina l'altro**, quindi
 la contraddizione non si vede da nessuno dei due lati, e le cinque domande qui sopra guardano
 tutte il compito contro il **codice** — mai una decisione contro le decisioni vicine. Gotcha

@@ -2068,8 +2068,8 @@ applicata **una alla volta**, compilata in un passo **separato** da quello che e
 | **M9** | `release` non riscuote più prima di cercare la concessione | prodotto | — | ⛔ **MUTANTE VIVO — 37 bersagli, 264 passate, 0 fallite, 2 ignorate: l'intero workspace resta VERDE.** Vedi il riquadro qui sotto |
 
 ⛔ **RICHIAMO DEL 2026-08-25, PRIMA ONDATA DI CORREZIONI DEL TASK 12: I SEI NUMERI DI
-RIGA DI QUESTA TABELLA SONO TOLTI E NON RIALLINEATI.** Erano **tutti e sei** sbagliati, e tre
-mandavano il lettore su un'asserzione **esistente e diversa**, che è peggio che mandarlo nel
+RIGA DI QUESTA TABELLA SONO TOLTI E NON RIALLINEATI.** Erano **tutti e sei** sbagliati, e
+mandare il lettore su un'asserzione **esistente e diversa** è peggio che mandarlo nel
 vuoto: la citazione di `M8` faceva credere che la mutazione uccidesse *«every request got
 exactly one answer»*, mentre uccide *«`promote` is not being exercised»*. Al loro posto c'è il
 **nome** di ciò che muore, che è il rimedio già scelto da `E138` per la stessa specie: un nome
@@ -2095,15 +2095,9 @@ da `4_096` ammessa per `5_000 ms` e rilasciata a `5_001` risponde `Err(UnknownGr
 **`Ok(Mib(4096))`** sotto `M9`.
 
 ⛔ **E LE FRASI CHE QUEL SALTO RENDE FALSE SI CERCANO, invece di elencarle a memoria.** Il comando
-è `grep -rnE "collects before it|COLLECTS THE EXPIRED" crates/ --include=*.rs`, e a `HEAD` il
-2026-08-25 le sue righe che parlano di `release` o di *«ogni operazione»* sono: il doc di
-`ReleaseError`, che porta la misura *«released at 5_001 -> `Err(UnknownGrant)`»*; il doc di
-`ask_back`, *«IT COLLECTS THE EXPIRED FIRST, like every other operation. With this one there are
-FOUR»*; il doc di `collect_expired`; il doc della sonda
-`ask_back_collects_the_expired_before_it_marks`; e in `crates/kernel/tests/arbiter_admission.rs`
-quelli di `a_grant_is_collected_at_the_instant_its_window_closes` e di
-`promote_collects_the_expired_before_it_serves_the_queue`. Le righe che restano **vere** parlano
-di `admit`. ⚠️ **`a_grant_is_collected_at_the_instant_its_window_closes` è la ragione per cui si cerca invece di
+è `grep -rnE "collects before it|COLLECTS THE EXPIRED" crates/ --include=*.rs`, e ogni riga che
+restituisce si legge **intera**: quelle che parlano di `release` o di *«ogni operazione»*
+diventano false sotto la mutazione, quelle che restano **vere** parlano di `admit`. ⚠️ **`a_grant_is_collected_at_the_instant_its_window_closes` è la ragione per cui si cerca invece di
 elenco:** il suo doc afferma la cosa e il suo corpo asserisce **solo** su `admit`, quindi è una
 frase che nessun rosso difende, e a leggerla a occhio non la si trova.
 

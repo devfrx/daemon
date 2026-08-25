@@ -142,9 +142,22 @@ const SHORT_CAMPAIGN_SEEDS: u64 = 2_000;
 /// | `seed * 0x2545F4914F6CDD1D >> 33` | 7            |
 ///
 /// ⚠️ WHAT INVALIDATES IT, named so that a red is read as a decision and not as a defect: a
-/// change to `PARTIES`, to `REQUESTS`, to `TOTAL`, or to the arbiter's own behaviour. When
-/// that red arrives the right move is to re-measure the space and re-choose these two numbers
-/// against it, not to edit this one until the bar turns green.
+/// change to `PARTIES`, to `REQUESTS` or to `TOTAL`. When that red arrives the right move is
+/// to re-measure the space and re-choose these two numbers against it, not to edit this one
+/// until the bar turns green.
+///
+/// ⛔ RECALL OF 2026-08-25, FIRST WAVE OF CORRECTIONS -- THAT LIST ENDED WITH "OR TO THE
+/// ARBITER'S OWN BEHAVIOUR", AND THOSE FOUR WORDS ARE TAKEN OUT RATHER THAN REPHRASED. What
+/// this constant compares is the CARDINALITY of the outcome space, so a change to the arbiter
+/// that leaves the cardinality where it is walks straight past it. ✅ MEASURED and not reasoned:
+/// with `Arbiter::promote` returning `Vec::new()` on every call,
+/// `the_campaign_sweeps_more_than_one_world` PASSES and still prints seven distinct outcomes,
+/// while the counter `property_5` prints in the same run MOVES -- the seeds on which the sweep
+/// made room go from 1835 to 1833.
+///
+/// ⛔ WHAT IT DOES HOLD is the choice of `SHORT_CAMPAIGN_SEEDS` and the SHAPE of the scenario:
+/// a sweep that collects nothing, a sweep the admission no longer performs, and four identical
+/// parties. All three turn it red, and all three COLLAPSE the space instead of permuting it.
 const EXPECTED_OUTCOMES: usize = 7;
 
 /// The clock the executor advances AND the activities read.

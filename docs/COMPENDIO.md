@@ -4253,8 +4253,7 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > Misurato sui byte: `785422 / 1024 = 767,0` → **767**. Sommando i tre pesi **già arrotondati**
 > — `268 + 277 + 223` — si ottiene **768**. ✅ **Vale il diretto**, perché è ciò che la
 > **seconda misura** prescrive — *«i pesi si misurano con `wc -c`, arrotondati a KiB»* — e un
-> arrotondamento non si somma. ⚠️ L'ambiguità è rimasta invisibile finché i due metodi davano lo
-> stesso numero.
+> arrotondamento non si somma.
 >
 > ⛔ **RICHIAMO DEL 2026-08-24, dalla dodicesima revisione: i due aggregati piccoli erano presi
 > col metodo che questo riquadro dichiara scartato, e sono RISCRITTI** nelle case censite qui

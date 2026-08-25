@@ -1,9 +1,9 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-25**, durante l'**esecuzione del Traguardo 5** del sotto-progetto 1 —
-l'ultima **chiusura piena** resta quella del Traguardo 4, l'11 agosto: il simulatore DST, il
-giornale che cade e non si riprende, il backend cadente di `redb` scritto da **fuori la crate**,
-e due campagne con **soggetti diversi**.
+Aggiornato il **2026-08-25**, alla **chiusura del Traguardo 5** del sotto-progetto 1 —
+l'arbitro GPU per intero: ammissione, code per corsia, ciclo della concessione, revoca con la
+propria grazia, le due policy VRAM, il cablaggio di produzione e la campagna DST dell'arbitro.
+⛔ **Il sotto-progetto 1 NON è chiuso:** resta il Traguardo 6.
 Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 ⚠️ **Questa riga diceva *«aggiornato il 2026-08-11»*** mentre il file era stato toccato
 **diciassette volte** dopo — contate col comando, `git log --since=2026-08-12 -- docs/HANDOFF.md`,
@@ -26,12 +26,16 @@ e pushati. È il gotcha **#31** sull'intestazione, che nessuno rilegge perché �
 il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit del 2026-08-11.
 
 > 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — la spec del
-> sotto-progetto 1 è **completa e senza voci aperte**, e i **Traguardi 1, 2, 3 e 4 sono
-> eseguiti** — l'ultimo il 2026-08-11, dieci compiti su dieci. ✅ **E il Traguardo 5 è IN
-> ESECUZIONE dal 2026-08-19**, subagent-driven, un compito per volta con revisione fra uno e
-> l'altro. ⛔ **A che punto sia — e le cose da sapere prima di riprendere — stanno nella §6 del
-> [`COMPENDIO.md`](COMPENDIO.md), in un posto solo:** qui non si ripetono, ed è la ragione per
-> cui questa riga può restare vera mentre il numeratore si muove.
+> sotto-progetto 1 è **completa e senza voci aperte**, e il sotto-progetto è **in corso**.
+> ⛔ **Quanti traguardi siano eseguiti, quali e con che data, NON è scritto qui:** lo dicono
+> le tabelle di [`roadmap.md`](roadmap.md) e la §6 del [`COMPENDIO.md`](COMPENDIO.md).
+> ⚠️ **Questa riga li ENUMERAVA** — *«i Traguardi 1, 2, 3 e 4 sono eseguiti»* più *«e il
+> Traguardo 5 è IN ESECUZIONE»* — cioè teneva un elenco che si allunga a ogni chiusura, che
+> è un numeratore scritto a parole: **tolto, non esteso**, come la 25ª misura fece col
+> puntatore e la 45ª con la riga gemella di [`README.md`](README.md). Un rimando non può
+> marcire; un elenco sì, e questo era già indietro di un traguardo il giorno in cui si è
+> chiuso il quinto. ⛔ **E le cose da sapere prima di riprendere stanno nella §6 del
+> compendio, in un posto solo**, insieme alle voci che l'ultimo traguardo lascia aperte.
 >
 > ⛔ **E lo stesso giorno il repository ha ricevuto il suo PRIMO AUDIT COMPLETO** — codice,
 > script del cancello, documenti di stato, ADR, diagrammi — con nove revisori paralleli in sola

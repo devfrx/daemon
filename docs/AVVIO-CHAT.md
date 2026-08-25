@@ -39,55 +39,60 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
-  /superpowers:subagent-driven-development  <-- SERVE SUBITO: il piano è
-                                        SCRITTO, quindi non si ri-pianifica —
-                                        si ESEGUE, un subagente fresco per
-                                        compito con revisione fra uno e l'altro.
-                                        È la modalità scelta, e ha portato dieci
-                                        compiti su dieci al Traguardo 4 e dodici
-                                        su dodici al 3. ⛔ E LA REVISIONE NON È
-                                        UNA FORMALITÀ: al Task 6 ha trovato un
-                                        mutante vivo nell'INTERO workspace che
-                                        l'esecuzione non aveva visto. Anche
-                                        un'ONDATA DI CORREZIONI si rivede come
-                                        il compito: i suoi difetti stanno nella
-                                        PROSA, e «non tocca righe eseguibili»
-                                        è un argomento PER rivederla, non
-                                        contro. ⛔ SI RIVEDE FINCHÉ UNA PASSATA
-                                        NON TORNA PULITA: il numero di giri non
-                                        si decide dalla specie del diff. ✅ E IL
-                                        RIMEDIO È MISURATO: all'ondata si dice
-                                        TOGLIERE, non riscrivere meglio, e il
-                                        giro dopo torna pulito. ⛔ E LO STATO DI
-                                        UN COMPITO SI RIVEDE A HEAD, MAI COMMIT
-                                        PER COMMIT: due commit corretti presi da
-                                        soli fanno uno stato falso, e il difetto
-                                        non sta in nessuno dei due diff. ⛔ E I
-                                        RILIEVI SI SCRIVONO PER SPECIE, non
-                                        per elenco di righe: «togli» manda a
-                                        CERCARE le altre occorrenze della
-                                        stessa forma, «riscrivi» fa guardare
-                                        solo il sito indicato. ⛔ Quale piano lo dice la
-                                        §6 del compendio, che leggi comunque —
-                                        non è nominato qui apposta, un rimando
-                                        non può marcire
-  /superpowers:test-driven-development  perché il lavoro che viene È CODICE
+  /superpowers:brainstorming            <-- SERVE SUBITO: il piano che c'era è
+                                        ESEGUITO per intero, quindi la specie
+                                        del lavoro che viene è CREATIVA e non
+                                        esecuzione. Si invoca PRIMA di entrare
+                                        in plan mode, sempre: saltarlo è
+                                        precisamente ciò che CLAUDE.md vieta.
+                                        ⛔ QUALE lavoro apra lo dice la §6 del
+                                        compendio, che leggi comunque — non è
+                                        nominato qui apposta, un rimando non
+                                        può marcire
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
-  /superpowers:brainstorming                 quando ricomincerà un lavoro
-                                             creativo. NON serve ora: quello del
-                                             Traguardo 5 è chiuso. Si invoca
-                                             comunque PRIMA di entrare in plan
-                                             mode il giorno che riapre
   /superpowers:writing-plans                 quando ci sarà un piano NUOVO da
-                                             scrivere. NON serve ora: quello del
-                                             Traguardo 5 è scritto, tredici
-                                             compiti in cinque parti
+                                             scrivere, e MAI prima che le voci
+                                             aperte siano chiuse
+  /superpowers:subagent-driven-development   quando quel piano ci sarà: un
+                                             subagente fresco per compito, con
+                                             revisione fra uno e l'altro. È la
+                                             modalità scelta, e ha portato dieci
+                                             compiti su dieci al Traguardo 4 e
+                                             dodici su dodici al 3. ⛔ E LA
+                                             REVISIONE NON È UNA FORMALITÀ: al
+                                             Task 6 ha trovato un mutante vivo
+                                             nell'INTERO workspace che
+                                             l'esecuzione non aveva visto. Anche
+                                             un'ONDATA DI CORREZIONI si rivede
+                                             come il compito: i suoi difetti
+                                             stanno nella PROSA, e «non tocca
+                                             righe eseguibili» è un argomento
+                                             PER rivederla, non contro. ⛔ SI
+                                             RIVEDE FINCHÉ UNA PASSATA NON TORNA
+                                             PULITA: il numero di giri non si
+                                             decide dalla specie del diff. ✅ E
+                                             IL RIMEDIO È MISURATO: all'ondata si
+                                             dice TOGLIERE, non riscrivere
+                                             meglio, e il giro dopo torna
+                                             pulito. ⛔ E LO STATO DI UN COMPITO
+                                             SI RIVEDE A HEAD, MAI COMMIT PER
+                                             COMMIT: due commit corretti presi
+                                             da soli fanno uno stato falso, e il
+                                             difetto non sta in nessuno dei due
+                                             diff. ⛔ E I RILIEVI SI SCRIVONO
+                                             PER SPECIE, non per elenco di
+                                             righe: «togli» manda a CERCARE le
+                                             altre occorrenze della stessa
+                                             forma, «riscrivi» fa guardare solo
+                                             il sito indicato
+  /superpowers:test-driven-development       quando comincerà il CODICE, che
+                                             viene dopo il piano e non prima
   /anthropic-skills:repo-audit               se e quando si riaprirà un audit.
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 574 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 594 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -111,11 +116,11 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 574 KB in tutto
    Non è tipografia: la regola non stava scritta, e un traguardo intero è stato
    scritto con gli identificatori italiani e poi rifatto.
 
-⚠️ IL REPOSITORY CONTIENE CODICE RUST — QUATTRO traguardi su sei eseguiti,
-   l'ultimo il Traguardo 4 (il simulatore DST: il guasto), dieci compiti su
-   dieci, GATE GREEN a tutti — e il QUINTO è IN ESECUZIONE, un compito per
-   volta. ⛔ A che punto sia lo dice la §6 del compendio, in un posto solo:
-   qui non è scritto apposta, perché una cifra ricopiata marcisce.
+⚠️ IL REPOSITORY CONTIENE CODICE RUST, e il sotto-progetto 1 è in corso.
+   ⛔ Quanti traguardi siano eseguiti e a che punto sia il prossimo lo dice la
+   §6 del compendio, in un posto solo: qui non è scritto apposta, perché una
+   cifra ricopiata marcisce. ⚠️ E questa riga la ricopiava lo stesso, due
+   righe SOPRA la frase che lo vieta — gotcha #68. Tolta, non riallineata.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
    x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
    in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
@@ -123,12 +128,13 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 574 KB in tutto
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
-⛔ L'AUDIT È CHIUSO, IL BRAINSTORMING PURE, E IL PIANO È SCRITTO. LA SPECIE
-   DEL LAVORO CHE VIENE È: ESEGUIRE UN PIANO, UN COMPITO PER VOLTA. Non più
-   lavoro creativo, non più pianificazione — CODICE. ⛔ Il piano si legge a
-   COMPITI e mai intero, e prima di ogni compito si fanno le SETTE domande
-   del pre-controllo. Quale piano lo dice la §6 del compendio, in un posto
-   solo; quanto pesa, il blocco dei pesi qui sotto.
+⛔ L'AUDIT È CHIUSO, E IL PIANO CHE C'ERA È ESEGUITO PER INTERO. LA SPECIE
+   DEL LAVORO CHE VIENE È: CREATIVA — prima un BRAINSTORMING, poi un piano, e
+   solo dopo il codice. Non si entra in plan mode saltando il brainstorming.
+   ⛔ Un piano già eseguito resta un VERBALE e non si riscrive; si legge a
+   COMPITI e mai intero, e le SETTE domande del pre-controllo valgono per ogni
+   compito del piano che verrà. Quale lavoro apra lo dice la §6 del compendio,
+   in un posto solo; quanto pesa ciascun file, il blocco dei pesi qui sotto.
    ⚠️ È la riga che invecchia per costruzione: si riscrive quando il passo si
       chiude. L'elenco di ciò che ha già detto è TOLTO, non esteso.
 
@@ -137,11 +143,11 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 574 KB in tutto
    più PICCOLO, più GRANDE, o DI SPECIE DIVERSA.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 774 KB
-   il 2026-08-25, la spec da sola 277, i quattro piani più grandi 370, 168,
-   162 e 114 — e l'idea è già nel compendio. ⛔ IL PIANO DA ESEGUIRE È IL PIÙ
-   GRANDE DEI QUATTRO, e si apre A COMPITI: cresce a ogni compito, perché
-   l'errata cresce.
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 775 KB
+   il 2026-08-25, la spec da sola 277, i quattro piani più grandi 373, 168,
+   162 e 114 — e l'idea è già nel compendio. ⛔ IL PIÙ GRANDE DEI QUATTRO È
+   L'ULTIMO ESEGUITO, e si apre A COMPITI: è cresciuto a ogni compito, perché
+   l'errata cresceva.
    Aprirai UN file — uno — quando ti servirà il perché di una decisione: le
    alternative scartate, le misure, i costi accettati. La §12 del compendio
    dice quale.
@@ -153,8 +159,8 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 574 KB in tutto
    significato di un indice non cambia mai.
 
 ⛔ LE DECISIONI PRESE ESEGUENDO, non dai piani, PUOI RIBALTARLE TUTTE:
-   NOVE al Traguardo 3, DODICI al Traguardo 4, e il piano in corso ha la
-   propria errata che NON È PIÙ VUOTA. Stanno nelle errata in testa ai piani,
+   NOVE al Traguardo 3, DODICI al Traguardo 4, e l'ultimo piano eseguito ha
+   la propria errata, che NON È VUOTA. Stanno nelle errata in testa ai piani,
    e la §6 del compendio — che leggi comunque — porta quelle che governano
    le altre. ⛔ L'ERRATA IN TESTA AL PIANO SI LEGGE PRIMA DI OGNI COMPITO,
    non una volta sola: ci sono dentro i comandi dettati che non potevano
@@ -285,11 +291,11 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
 
 Parti confermandomi cosa hai letto e qual è la tua lettura dello stato, POI
 ASPETTA le mie richieste prima di scrivere qualunque cosa. ⛔ Non c'è un
-audit da eseguire, né un brainstorming da aprire, né un piano da scrivere:
-sono chiusi tutti e tre. Quello che viene è l'ESECUZIONE di un piano già
-scritto — un compito per volta, con revisione fra uno e l'altro — e il
-piano si legge a COMPITI, mai intero.
-⚠️ Quale piano, e di che traguardo, sta nella §6 del compendio, non qui.
+audit da eseguire né un piano da eseguire: sono chiusi entrambi. Quello che
+viene è CREATIVO — si riparte dal BRAINSTORMING, poi il piano, e solo dopo
+il codice — e i piani già eseguiti restano verbali, che si leggono a
+COMPITI e mai interi.
+⚠️ Di che lavoro si tratti sta nella §6 del compendio, non qui.
 ```
 
 ---
@@ -299,8 +305,8 @@ piano si legge a COMPITI, mai intero.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **LA SERIE HA GIRATO, e quanto pesa OGGI non è scritto qui:** lo rimisura la **§12 del compendio** a ogni passata, e questa cella ne teneva una seconda copia **ferma al 2026-08-18** — *«14,7 KB»* — che nessuna delle tre passate successive aveva mosso. **Tolta, non riallineata** (gotcha **#68**). La storia resta perché è storia: era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **542 KB** — `CLAUDE.md` più il compendio, e **574** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 542 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **562 KB** — `CLAUDE.md` più il compendio, e **594** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 562 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -314,7 +320,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **574 KB contro 774**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+resta quello che conta: **594 KB contro 775**. ⛔ **E il 2026-08-18 una passata ha trovato che il
 `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
 `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
 e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del

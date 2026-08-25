@@ -4,8 +4,14 @@ Assistente desktop locale — piattaforma a **quattro pilastri paritari** (conve
 conoscenza, agenti e coding, voce, generazione asset) su kernel comune. ⚠️ **Questa riga ne
 elencava cinque dicendo «quattro»**: il raggruppamento è quello della §1 del compendio.
 
-**Fase corrente: implementazione del kernel — Traguardi 1, 2, 3 e 4 ✅ eseguiti, il 2026-08-08 e il
-2026-08-10.** Il codice del prodotto vive in [`../crates/`](../crates/) — cinque crate,
+**Fase corrente: implementazione del kernel — i Traguardi da 1 a 5 sono ✅ eseguiti, e resta il
+Traguardo 6.** ⚠️ **La coda di date che stava qui è TOLTA e non riallineata:** diceva
+*«il 2026-08-08 e il 2026-08-10»* per quattro traguardi, ed era già sbagliata a sé stante —
+la riga 16 di **questo stesso file** data il Traguardo 4 al **2026-08-11**. Un elenco di date
+si allunga a ogni chiusura e non c'è nessun numero da riconoscere come stantio: le date, una
+per traguardo, stanno nella tabella dei traguardi di [`roadmap.md`](roadmap.md) e nella §6 del
+[`COMPENDIO.md`](COMPENDIO.md), e un rimando non può marcire.
+Il codice del prodotto vive in [`../crates/`](../crates/) — cinque crate,
 `kernel` e `simulator` in `no_std` — e la porta di qualità gira con un comando solo,
 `bash scripts/gate.sh`. Il **Traguardo 3** — giornale e formato durevole — è chiuso con
 **dodici compiti su dodici**: il record come enum di versione, **due** implementazioni della
@@ -36,16 +42,23 @@ dell'account che ADR-0023 promette; ora è **0600**, misurato su Linux vero.
 [Traguardo 5 — il disegno](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md).
 Il perimetro è **l'arbitro intero**, e si prova ciò che si può provare senza un secondo
 meccanismo; `Grant` **si sposta** nel modulo dell'arbitro perché un modulo fratello non può
-costruirlo — `E0423`, misurato — e il traguardo **non crea righe di catalogo: ne chiude dodici**
-già scritte.
+costruirlo — `E0423`, misurato — e il traguardo **non crea righe di catalogo: ne tocca dodici**
+già scritte. ⚠️ **Questa riga diceva *«ne chiude dodici»***, e a chiusura il conteggio ricontato
+sulla §7.4 dice **undici chiuse e una dichiarata PARZIALE** — la riga della campagna DST, che
+resta parziale perché la §5.7 elenca cinque proprietà e la campagna dell'arbitro ne tiene tre.
+Le altre due si iniettano su `process` e `ipc`, cioè al **Traguardo 6**.
 ✅ **E lo stesso giorno il [piano del Traguardo 5](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md)
 è scritto: tredici compiti in cinque parti.** Il pre-controllo del piano ha trovato **sette**
 cose leggendo il disegno contro il codice — gotcha **#58** — e tre sono per il proprietario:
 `WorkDescriptor` dista **una lettera** da `WorkerDescriptor`, che esiste già ed è un'altra cosa;
 la riga di catalogo `Q2 · §5.1` è **una** dove le regole sono **due**; e due celle del catalogo
 nominano **identificatori italiani** che il traguardo fa esistere in inglese.
-✅ **E DAL 2026-08-19 L'ESECUZIONE È IN CORSO**, subagent-driven, `GATE GREEN` a ogni compito.
-⛔ **A CHE PUNTO SIA NON È SCRITTO QUI, ed è il rimedio e non una svista:** questa riga portava il
+✅ **E IL TRAGUARDO 5 È ESEGUITO IL 2026-08-25, tredici compiti su tredici**, subagent-driven,
+`GATE GREEN` a ogni compito, dal 2026-08-19. ⛔ **Il tredicesimo era un AUDIT e non una
+scrittura**, e ciò che ha trovato è che gran parte era già eseguita: i riconteggi non hanno
+prodotto uno scarto con i documenti, e a mancare erano le **voci aperte in una tabella sola** —
+ora in [`porta-di-qualita.md`](porta-di-qualita.md), **con la colonna di chi le chiude**.
+⛔ **A CHE PUNTO FOSSE NON ERA SCRITTO QUI, ed era il rimedio e non una svista:** questa riga portava il
 numeratore — *«cinque compiti su tredici»* — **due righe sopra** la frase che dice *«qui non si
 ripetono, ed è la ragione per cui questa riga non è mai marcita»*. Era il gotcha **#68**, una
 regola che non vincola il documento che la ospita, e la cifra è **tolta invece che ricorretta**.

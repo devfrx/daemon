@@ -54,6 +54,35 @@ controllo lo dice** — è il prezzo dichiarato dell'assenza di chiudente.
 |---|---|---|---|
 | — | — | ⚠️ **Nessuna campagna è fallita su un caso, alla chiusura del Traguardo 4.** La riga esiste per dire che l'elenco è **vuoto e non dimenticato** | — |
 
+⛔ **RICHIAMO DEL 2026-08-25 — IL TRAGUARDO 5 HA AGGIUNTO UNA TERZA CAMPAGNA, E L'ELENCO NON
+GUADAGNA UNA RIGA.** La decisione è del **Task 13**, che è l'audit di chiusura di quel
+traguardo, e gliel'aveva assegnata la §12 del [compendio](COMPENDIO.md).
+
+⛔ **Perché no, e la ragione è la regola di questa pagina e non una preferenza:** l'elenco
+raccoglie soltanto ciò che una campagna ha fatto **fallire**, e il punto 1 di *«Come si aggiunge
+una voce»* comincia con *«una campagna fallisce»*. La campagna dell'arbitro non ha fatto fallire
+nessun caso — ✅ rimisurato il 2026-08-25 e non citato: `bash scripts/gate.sh` esce
+`GATE GREEN`, e le **cinque** sonde di `crates/simulator/tests/arbiter_campaign.rs` passano.
+Una voce senza una **proprietà violata** sarebbe la falsa sicurezza che il riquadro in testa a
+questa pagina esiste per impedire.
+
+⚠️ **Ciò che invece cambia è un FATTO, e va scritto perché il riquadro qui sopra lo usa.** Il
+riquadro *«Le due campagne non si identificano allo stesso modo»* dice **due** e parla del
+**Traguardo 4**: è vero **di quel traguardo**, e resta com'è perché è un verbale. Da oggi le
+campagne sono **tre**, e la terza — `crates/simulator/tests/arbiter_campaign.rs`, dal Task 12
+del Traguardo 5 — sta nella **colonna di sinistra** di quella tabella: è di **livello 1**, e un
+suo caso si identifica con un **seme**, come `dst_campaign.rs`. ⛔ **Le costanti che rendono
+interpretabile una sua voce sono però le proprie:** `SHORT_CAMPAIGN_SEEDS` ed
+`EXPECTED_OUTCOMES` di quel file, più lo scenario che `PARTIES` descrive. ⚠️
+`EXPECTED_OUTCOMES` è un **rilevatore di cambiamento**: il giorno in cui diventa rosso il
+rimedio è **rimisurare lo spazio degli esiti e riscegliere il numero**, non editarlo finché la
+barra torna verde.
+
+⚠️ **E il chiudente di questa pagina resta quello che il riquadro in fondo dichiara: non ce
+n'è uno.** Il Task 13 ha deciso **la riga**, non la **guardia**: pretendere che ogni voce nomini
+un test esistente sarebbe una riga di catalogo nuova in `scripts/check-docs.sh`, e quella è del
+proprietario, registrata e non presa.
+
 ⚠️ **«Vuoto» non significa «il traguardo non ha trovato difetti».** Ne ha trovati molti, e stanno
 nell'errata in testa al
 [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md): erano difetti

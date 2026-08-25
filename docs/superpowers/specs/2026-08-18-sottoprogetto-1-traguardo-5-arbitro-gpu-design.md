@@ -1,7 +1,7 @@
 # Traguardo 5 — l'arbitro GPU: il disegno
 
 - **Data:** 2026-08-18
-- **Stato:** disegno approvato, piano da scrivere
+- **Stato:** disegno approvato, ✅ **piano scritto ed ESEGUITO** — tredici compiti su tredici, chiusi il 2026-08-25. ⚠️ **Richiamo del 2026-08-25:** questa riga diceva *«piano da scrivere»* ed era falsa dal **2026-08-18**, cioè dal giorno stesso in cui il disegno fu approvato — il piano fu scritto poche ore dopo. Nessuna passata l'aveva guardata perché è l'**intestazione**, e l'intestazione non è il contenuto: gotcha **#31**. Il corpo del documento resta com'è: è un **verbale**, e ciò che il traguardo ha davvero prodotto sta nella §6 del [compendio](../../COMPENDIO.md)
 - **Sostituisce:** niente. **Precisa:** la [§5 della spec del sotto-progetto 1](2026-08-06-sottoprogetto-1-kernel.md), che descrive l'arbitro **finito**
 
 > 🎯 **A cosa serve questo file.** La §5 della spec dice **cosa** è l'arbitro e con quali

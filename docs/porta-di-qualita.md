@@ -3367,6 +3367,109 @@ binaria e ricontato: il censimento è tornato **immutato**. 📌 **La regola non
 cambia chi la fa scattare:** è la terza forma, e le prime due riscrivevano il file di loro
 iniziativa mentre questa lo rimette a posto *da git*, che è il caso che non si sospetta.
 
+## ⛔ LE VOCI APERTE DEL TRAGUARDO 5, IN UNA TABELLA SOLA (2026-08-25)
+
+⛔ **Raccolte qui alla chiusura del traguardo, e la ragione è quella che la tabella
+consolidata delle sonde dell'audit scrive di sé:** più voci aperte sullo stesso oggetto sono
+il modo in cui una di esse smette di esserlo senza che nessuno l'abbia chiusa. Prima di questa
+tabella le voci del Traguardo 5 vivevano in **sei riquadri** di questo file — alle righe
+`249 · 594 · 604 · 853 · 887 · 918` al momento della raccolta — più l'errata in testa al
+[piano](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) e i riquadri
+della §6 del [compendio](COMPENDIO.md).
+
+⛔ **Come è stata costruita, perché il metodo vale più dell'elenco: non è un censimento
+dichiarato completo, è ciò che questi comandi hanno restituito**, letti riga per riga e senza
+troncarli (gotcha **#70**).
+
+```
+$ grep -n "VOCE APERTA\|VOCI APERTE" docs/porta-di-qualita.md
+    → UNDICI occorrenze prima di questa raccolta: le SEI del Traguardo 5 alle righe
+      qui sopra, DUE del Traguardo 3 (2573 e 2592), UNA che apre la tabella consolidata
+      dell'audit (2744) e DUE che vi rimandano (2858 e 2942).
+    ⚠️ Rieseguito DOPO l'inserimento ne dà TREDICI: l'intestazione di questa sezione e
+      la riga di comando qui sopra sono esse stesse due case del grep che censisce. È la
+      stessa nota che la §12 del compendio porta sul censimento del puntatore.
+
+$ grep -cE '^\| \*\*`?E[0-9]+' <piano>
+    → 152 voci d'errata. ⛔ IL FILTRO CHE LE RESTRINGE È STATO PROVATO E NON BASTA, ed
+      è il gotcha #70 in ENTRAMBE le forme. Il filtro
+        "REGISTRAT[AE], NON PRES|NON PRESA|REGISTRATE E NON PRESE|DICHIARAT[AO], NON
+         PINZAT|DICHIARATA E NON|per il proprietario|decisione del proprietario"
+      ne dà VENTICINQUE:
+        E10 E21 E30 E31 E32 E41 E47 E50 E51 E52 E62 E67 E70 E72 E74 E94 E104 E121 E122
+        E129 E137 E140 E144 E146 E151
+      Rilette una per una: TREDICI sono ancora aperte ed entrano in tabella; DODICI sono
+      già chiuse da un compito successivo — E10, E41, E52, E62, E67, E72, E74, E121,
+      E122, E129, E137, E144.
+    ⛔ E ne MANCA quattro che sono aperte: E53, E83, E100 ed E152, misurate a zero
+      contro quello stesso filtro. Trovate leggendo la §6 del compendio e i sei riquadri.
+
+$ grep -nE "riga di catalogo" docs/porta-di-qualita.md | grep -iE "non ha|non hanno|nessuna riga"
+    → DIECI righe candidate sul file com'era prima di questa raccolta, e le case sono
+      QUATTRO. 258 e 260 sono lo STESSO sito — intestazione e corpo; 941 e 1720 sono due
+      siti; 2858 è dell'audit e sta nella tabella consolidata.
+    ⚠️ Le altre SEI sono falsi positivi, e vanno dette perché sono la metà del #70 che
+      costa: 2232 parla dei permessi di un file su Unix, 3300 è un verbale del finding
+      P-2, e 3391 · 3395 · 3397 sono celle di «Cosa la porta NON controlla» dove il
+      «non ha» governa un'altra proposizione. Il primo conteggio scritto qui diceva
+      SETTE: era il risultato di un filtro DIVERSO, rilanciato invece che riletto.
+```
+
+➕ E il punto ④ del riquadro *«ciò che il Task 12 lascia al Task 13»* della §6 del
+[compendio](COMPENDIO.md), che è il censimento autoritativo delle voci ereditate: **ricontato
+qui contro l'errata e la §6, non ricopiato**.
+
+⚠️ **Ciò che questa tabella NON copre, detto perché non la si legga per più di quello che
+è.** Le voci aperte del **Traguardo 3** vivono nella tabella *«Cosa il Traguardo 3 lascia
+aperto»* della §6 del [compendio](COMPENDIO.md) — e con esse la **guardia che manca al
+puntatore** del prossimo passo, l'elenco dei semi e la guardia sui pesi, che sono voci di
+**quel** traguardo; le **dieci sonde permanenti dell'audit** vivono nella tabella consolidata
+del 2026-08-18 qui sopra, e la riga che le nomina qui è un **rimando** e non una seconda copia
+(gotcha **#68**).
+
+⛔ **La colonna «Chi la chiude» è la ragione per cui la tabella esiste, e non dice sempre
+«il proprietario».**
+
+| # | Voce | Che cosa resta aperto — rimisurato il 2026-08-25 | Dove è dichiarata | Chi la chiude |
+|---|---|---|---|---|
+| 1 | **R1** | `WorkDescriptor` (`crates/kernel/src/arbiter/resource.rs:164`) dista **una lettera** da `WorkerDescriptor` (`crates/kernel/src/ports/process.rs:76`), che è un'altra cosa | pre-controllo del piano, e §6 del compendio | il **proprietario**: un rinomino |
+| 2 | **R3** | la riga di catalogo `Q2 · §5.1` è **una** e formulata in **una** direzione — *«MiB assegnati a millisecondi»* — mentre i casi che mordono sono **quattro**, su due regole e in due direzioni | riquadro alla riga 249 di questo file | il **proprietario**: §7.4 è spec, vincolo globale 7 |
+| 3 | **R4** | `Preemption::{Never, After(Millis)}` è **una** voce dove la tabella dei campi di §5.2 ne elenca **due**, `preemptible` e `release_grace` | pre-controllo del piano, e §6 del compendio | il **proprietario** |
+| 4 | **R5** | due celle del catalogo nominano `Concessa`, `InCoda` e `InRevoca`; dal Task 4 il codice scrive `Admission::{Granted, Queued, Refused}` e `PreemptibleState::Revoking` | celle `V4` e `I2 · §5.3` della tabella «Livello 1» di questo file | il **proprietario**: §1.0 contro §7.4 |
+| 5 | **E140** | il catalogo scrive `uccidi` in §7.4.1 blocco C, in §6.10.2 e in §6.10.5; il sorgente scrive `fn kill` in `crates/kernel/src/ports/process.rs` | cella `I2 · §6.10` di questo file, ed errata del piano | il **proprietario**: stessa specie di `R5`, ma nata col Traguardo 2 |
+| 6 | il costruttore di `Grant` | `trybuild` prova la direzione **da fuori la crate**, e il caso lo dichiara nel proprio commento: da **dentro** la crate un costruttore `pub(crate)` resterebbe fuori dalla sua portata. ✅ Rimisurato: `grep -rn "impl Grant" crates/kernel/src/` non restituisce niente, e l'unico sito che ne conia una è `Arbiter::issue`, privato | commento di `crates/kernel/tests/compile_fail/grant_has_no_constructor.rs` | il **proprietario**: sarebbe una **riga di catalogo nuova** |
+| 7 | la contro-sonda di `Q8 · §5.2.1` | la cella nomina *«la proiezione di presentazione lo legge»*. ✅ Rimisurato: `grep -rn "cold_start" crates/ --include=*.rs` dà come lettore `cold_start_is_readable_outside_the_decision_path` in `crates/kernel/tests/arbiter_resource.rs`, che questo registro dichiara **una finta** | disegno del Traguardo 5, e cella `Q8 · §5.2.1` di questo file | il **proprietario**: riformulare la cella è §7.4 |
+| 8 | la divergenza su §5.1 | §5.1 dice *«I tre addendi sono parametri consegnati»*; `crates/kernel/src/parameters.rs` porta `executor_turn_limit` e `total_vram`, cioè **un** addendo su tre — gli altri due sono la riserva di due **concessioni permanenti** | disegno del Traguardo 5, e §6 del compendio | il **proprietario** |
+| 9 | il **quinto** caso `compile_fail` | un secondo `start` con lo stesso `Grant` è `E0382`, perché `Grant` non deriva `Copy` né `Clone`: **misurato e non preso** | §6 del compendio, voce ① del Task 11 | il **proprietario**: se pretenda una riga propria lo decide §7.4 |
+| 10 | la **convenzione** sulla ricevuta | *«leggere da un worker ← una ricevuta»* entra fra le **coperte** del blocco B, ma `SingleReceipt::new` è `pub`: il caso prova l'**arità** e non l'**autenticità**, mentre `Q8 · §5.2.1` e `V3` sono state tenute a PARZIALE per lacune più strette | §6 del compendio, voce ② del Task 11, e cella blocco B `I5 · Q4` | il **proprietario**: è una domanda di **coerenza**, e va decisa vedendola |
+| 11 | le sonde dei compiti **senza riga di catalogo** | ai siti che il terzo `grep` qui sopra restituisce, un compito dichiara che le proprie sonde non hanno una riga propria e vivono sotto una riga altrui | righe `260 · 941 · 1720` di questo file | il **proprietario**: §7.4 è spec |
+| 12 | le **dieci sonde permanenti dell'audit** | nessuna ha una riga nel catalogo §7.4 — ⚠️ **questa riga è un rimando**, e il contenuto sta nella tabella consolidata del 2026-08-18 qui sopra | tabella consolidata dell'audit, in questo file | il **proprietario**, dal 2026-08-18 |
+| 13 | **E21** | `a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit` prova *«non è nei miei libri»*, non *«distinguo le mie concessioni da quelle altrui»*: `GrantId` è un progressivo che riparte da zero per ogni `Arbiter` | riquadro alla riga 594 di questo file, e accanto a `ReleaseError` nel sorgente | il **proprietario**: dare un'**identità** all'arbitro |
+| 14 | **E30** | `release` risponde `UnknownGrant` a una concessione **propria** che i libri non hanno più, e dal Task 7 le cause sono **tre**: finestra scaduta, grazia di una revoca scaduta, concessione altrui | riquadro alla riga 604 di questo file, ed errata | il **proprietario** — ⚠️ **va decisa prima del Traguardo 6** |
+| 15 | **E31** | `saturating_add` può produrre **sovra-ammissione** al limite superiore: con `ceiling = u64::MAX` un secondo `admit` da 1 MiB torna `Granted` | errata del piano | il **proprietario** |
+| 16 | **E32** | `crates/kernel/src/parameters.rs` e `crates/kernel/src/arbiter/mod.rs` sono **mutuamente dipendenti** — legale in Rust, sono moduli, ed è dettato dal piano | errata del piano | il **proprietario** |
+| 17 | **E47** ① | `promote` restituisce un `Vec<Promotion>` senza `#[must_use]`, e `arbiter.promote(now);` da solo compila anche con `-D warnings` | riquadro alla riga 918 di questo file, ed errata | il **proprietario** |
+| 18 | **E53** | due frasi di doc che nessuna sonda tiene, cioè **due mutanti vivi dichiarati**: sono i paragrafi con cui `E50` ed `E51` furono scritte nel sorgente | errata, e accanto ai due paragrafi nel sorgente | il **proprietario** |
+| 19 | **E70** | dentro una corsia la vittima è la **più vecchia**, e §5.3, §5.3.1 e `design/02` tacciono: *«la più piccola che basta»* è altrettanto difendibile | errata, e accanto alla frase nel sorgente | il **proprietario**: è una politica senza risposta giusta |
+| 20 | **E94** | la policy è un **secondo valore consegnato** ad `Arbiter::new`, mentre §2.8.2 e ADR-0034 parlano di **un** valore che porta i parametri risolti | errata del piano | il **proprietario** |
+| 21 | **E104** | una **dominanza** fra sonde della campagna di mutazione, dichiarata e **non cancellata**: una campagna è un campione, non una dimostrazione | errata del piano | il **proprietario** |
+| 22 | **E151** | mutante vivo `M9`: tolta ad `Arbiter::release` la riscossione delle scadute, l'intero workspace resta verde — **dichiarato e non pinzato**, perché la sonda che lo ucciderebbe congelerebbe la scelta che `E30` mette davanti al proprietario (gotcha **#73**) | errata, e campagna di mutazione del Task 12 in questo file | il **proprietario** |
+| 23 | l'**aiutante** dei due scrittori di record | se `Untrusted::promote` e `Arbiter::set_policy` debbano condividere un aiutante che tenga in passo il `kind` e l'operazione; intanto ciascuna ha la **propria** sonda | §6 del compendio, e `crates/kernel/src/reconcile.rs` | il **proprietario** |
+| 24 | **E50** | fra corsie `promote` **scavalca**, cioè fa nell'insieme delle corsie ciò che il suo stesso commento rifiuta dentro una corsia | riquadro alla riga 853 di questo file, ed errata | **chi costruirà il primo ciclo di orchestrazione** |
+| 25 | **E51** / **E100** | `admit` non consulta mai la coda, quindi un ritardatario la scavalca; dal Task 8 l'inversione di priorità è **raggiungibile in produzione** e non più teorica | riquadro alla riga 887 di questo file, ed errata | **chi costruirà il primo ciclo di orchestrazione** |
+| 26 | **R6** | `Process::start` **consuma** il `Grant` e `Arbiter::release` lo consuma pure, quindi chi avvia un worker non ha più nulla da rilasciare | accanto a `Grant` nel sorgente, e §6 del compendio | il **Traguardo 6**: la via scritta è che `Worker::kill` restituisca la concessione |
+| 27 | **E152** | la riga di catalogo di livello 2 è **PARZIALE** e non coperta: §5.7 elenca **cinque** proprietà e la campagna dell'arbitro ne tiene **tre** | cella della campagna DST di questo file, ed errata | il **Traguardo 6**, che porta `process` e `ipc` — le altre due proprietà si iniettano lì |
+| 28 | la classe d'effetto della transizione di policy | è `Idempotent`, e la transizione oggi **scambia un oggetto**: la classe si rilegge quando la transizione avrà un contenuto | §12 del disegno del Traguardo 5, e il sorgente | **L2**, quando arriverà il contenuto dello sfratto |
+| 29 | **E83** | il `filter` sull'ammissibilità in `lanes` è un **mutante vivo garantito**, a comportamento nullo: toglierlo lascia il workspace verde, e resta perché rende vera **per costruzione** la frase che i due insiemi sono lo stesso insieme | errata, e accanto alla frase nel sorgente | ⛔ **nessuno**: non c'è niente da decidere, e la non-difendibilità è scritta con la misura |
+| 30 | **E146** | [`riferimenti.md`](riferimenti.md) non è stato toccato in tutto il traguardo: le misure vivono **qui**, accanto al controllo che difendono. ✅ Rimisurato il 2026-08-25: `git rev-list --count dc6ac4c~1..HEAD -- docs/riferimenti.md` dà **zero** | errata, e §6 del compendio — allargata a ogni compito dal Task 5 in poi | il **proprietario**: scegliere fra *«spostare le misure»* e *«cambiare la regola»* |
+| 31 | i **fine-riga**, misura nuova su una regola già presa | `git ls-files --eol` dice che **nell'indice** i file tracciati sono LF, compresi quelli che nell'albero di lavoro sono CRLF: `core.autocrlf` vale `true`, quindi il `diff` è protetto più di quanto i documenti dichiarino | §6 del compendio, dal 2026-08-20 | il **proprietario**: riaprire una decisione presa |
+
+⚠️ **E una cosa che la raccolta ha misurato e che nessuno dei sei riquadri diceva:** delle
+righe qui sopra, quelle il cui chiusore **non** è il proprietario sono **sei** — `E50`,
+`E51`/`E100`, `R6`, `E152`, la classe d'effetto della transizione, ed `E83`, che non ne ha
+nessuno. Sparse fra i riquadri si leggevano tutte come *«aspetta il proprietario»*, che è
+precisamente il modo in cui una voce smette di essere aperta senza che nessuno l'abbia chiusa.
+
 ## Cosa la porta NON controlla, in questo traguardo
 
 Righe del catalogo §7.4 che oggi **nessun file implementa** — o che lo sono **in parte**, e

@@ -36,8 +36,7 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 > [`roadmap.md`](roadmap.md) e la §6 del [`COMPENDIO.md`](COMPENDIO.md)**, ed è lì che si guarda.
 > ⚠️ **RICHIAMO DEL 2026-08-25 — questa riga aggiungeva *«NON è scritto qui»***, cioè una
 > **clausola universale** su tutto il documento, e il documento la smentiva: il `grep` su
-> *«Traguardo N è eseguito»* dentro questo file restituisce più di una casa, e la prima è
-> l'**intestazione**, scritta dal commit stesso che ha aggiunto la clausola. ⛔ **Tolta, non
+> *«Traguardo N è eseguito»* dentro questo file restituisce più di una casa. ⛔ **Tolta, non
 > ristretta:** una clausola universale non si rende vera scrivendola meglio, e ciò che serviva
 > era il **rimando**, che regge da solo. Ciò che restava di **stantio** — l'elenco dei traguardi
 > eseguiti dentro *«In trenta secondi»*, fermo al quarto — è stato tolto lì, dove viveva.

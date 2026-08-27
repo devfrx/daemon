@@ -162,3 +162,38 @@ fn one_grant_starts_one_worker() {
         .start(grant, WorkerDescriptor::new(b"asr.exe".to_vec()))
         .expect("the fake always starts");
 }
+
+/// A `Process` that never manages to spawn.
+///
+/// ⛔ IT EXISTS FOR ONE REASON, and the reason is written here so a YAGNI pass knows what it is
+/// looking at: `ProcessError::StartFailed` had neither producer nor test, and the paragraph on
+/// `ProcessError` that kept it alive leant on a prose deadline that expired in silence on
+/// 2026-08-21 (finding AUD-051). ⚠️ A DOUBLE CANNOT PROVE A REAL SPAWN FAILS. What it proves is
+/// that the word is constructible and that `start` carries a failure back to its caller — level
+/// 1, the same strength the other three variants get from the fakes that already produce them.
+struct FailingProcess;
+
+impl Process for FailingProcess {
+    type Handle = FakeWorker;
+
+    fn start(
+        &mut self,
+        _grant: Grant,
+        _descriptor: WorkerDescriptor,
+    ) -> Result<Self::Handle, ProcessError> {
+        Err(ProcessError::StartFailed)
+    }
+}
+
+/// The only producer of `StartFailed` in the workspace, and what keeps it from being a word
+/// nobody has ever written.
+///
+/// ⚠️ NOT `assert!(outcome.is_err())`: this fake always fails, so that assertion could not tell
+/// `StartFailed` from any other variant and would stay green if the fake returned `Died`. The
+/// equality is what pins the variant.
+#[test]
+fn a_spawn_that_does_not_happen_is_start_failed() {
+    let outcome = FailingProcess.start(a_real_grant(), WorkerDescriptor::new(b"asr.exe".to_vec()));
+
+    assert_eq!(outcome.err(), Some(ProcessError::StartFailed));
+}

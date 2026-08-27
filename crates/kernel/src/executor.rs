@@ -113,6 +113,20 @@ pub struct Sleep {
     until: core::cell::Cell<Option<Monotonic>>,
 }
 
+// ⛔ NO `impl Default`, AND ITS ABSENCE IS THE DECISION — the same one, for the same reason, as
+// `SystemReactor`, `VirtualReactor` and `MemoryJournal`: nothing calls it, and this repository
+// removes such items rather than keeping them for symmetry. `cargo clippy` asks for one
+// (`new_without_default`); the warning is ACCEPTED and NOT silenced, because §7.4.3 gives clippy
+// no voice in the gate and an `#[allow]` would hide the next occurrence too. The argument is
+// written out once, in `crates/platform/src/reactor.rs`, and this comment points at it rather
+// than restating it.
+//
+// ⚠️ REMOVED 2026-08-27, finding AUD-048: the impl was here, `Sleep::default()` had no caller
+// anywhere in the workspace, and it was the ONE site of the four where clippy had been obeyed —
+// against the rule `crates/kernel/src/boundary.rs` states for this crate, "an API item with no
+// caller is deleted in this repository". Four hand-written exceptions elsewhere say why THEY
+// stay; this one had no reason, and an undeclared survivor is what makes the other four
+// unreadable.
 impl Sleep {
     pub const fn new() -> Self {
         Sleep {
@@ -150,12 +164,6 @@ impl Sleep {
 
     fn take(&self) -> Option<Monotonic> {
         self.until.take()
-    }
-}
-
-impl Default for Sleep {
-    fn default() -> Self {
-        Sleep::new()
     }
 }
 

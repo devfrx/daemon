@@ -36,7 +36,18 @@ pub trait Reactor {
     /// The current monotonic instant. This is what DECISIONS read.
     fn now(&self) -> Monotonic;
 
-    /// The current time in the world. ONLY the record reads it — Q14, journal stamps.
+    /// The current time in the world.
+    ///
+    /// ⚠️ THE READER §2.1 NAMES IS THE RECORD — Q14, journal stamps — AND TODAY IT DOES NOT READ
+    /// IT. This line said "ONLY the record reads it" in the PRESENT tense until 2026-08-27,
+    /// finding AUD-052: `RecordV1` carries five fields and none of them is a stamp, `WallTime`
+    /// does not appear in `record.rs` at all, and under `crates/*/src/` nothing calls
+    /// `wall_time()`. The sentence described §2.1's DESIGN and read as a guarantee about this
+    /// file — the same distinction `StepId` and `CheckpointId` already carry, twenty lines below
+    /// the paragraph of this module that promises not to restate a rule as though it were ours.
+    ///
+    /// ⛔ AND ADDING THE FIELD IS NOT A TOUCH-UP: the frozen bytes exist, so the stamp takes a NEW
+    /// INDEX under rule 3 of ADR-0036, never a reused one.
     fn wall_time(&self) -> WallTime;
 
     /// Wait until `deadline`, or until an external event is ready, whichever comes first,

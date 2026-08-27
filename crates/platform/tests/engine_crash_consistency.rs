@@ -726,9 +726,11 @@ fn the_deep_injection_campaign() {
 #[test]
 fn the_engine_really_syncs_and_that_is_what_closes_gotcha_51() {
     // ⛔ THE PROMISE NOBODY HELD UNTIL NOW. `FileJournal` promises a write survives the death of
-    // the process, and putting `set_durability(Durability::None)` into it leaves ALL SIX tests of
+    // the process, and putting `set_durability(Durability::None)` into it leaves EVERY test of
     // `file_journal.rs` GREEN — they reopen the file inside a LIVING process, so the writes are
-    // in the operating system's hands either way. Gotcha #51.
+    // in the operating system's hands either way. Gotcha #51. ⚠️ The count is deliberately NOT
+    // written: it said "ALL SIX" while the file had seven, in three houses at once (finding
+    // AUD-061), and what the sentence needs is "the whole file", which cannot go stale.
     //
     // ⛔ AND WHAT MAKES IT OBSERVABLE IS A DELTA, NOT A COUNT — measured, because the obvious form
     // is blind. Opening alone produces seven `sync_data` calls, six of them from

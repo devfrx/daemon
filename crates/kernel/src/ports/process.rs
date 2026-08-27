@@ -211,9 +211,19 @@ impl StreamReceipt {
 /// on `FilesystemError` and `NetworkError` and for the same reason: the port has no
 /// implementation at all, so NO variant has a producer, and applying the rule on that
 /// basis would empty the enum instead of pruning it. Each of the four is a failure a real
-/// worker channel really has. ⛔ `StartFailed` is the one with neither producer NOR test,
-/// and it stays: it is the only word this vocabulary has for a spawn that did not happen,
-/// and it becomes reachable the day `start` becomes callable -- milestone 5.
+/// worker channel really has.
+///
+/// ⛔ RECALL OF 2026-08-27, finding AUD-051 — THIS SAID `StartFailed` "is the one with neither
+/// producer NOR test" and that it "becomes reachable the day `start` becomes callable --
+/// milestone 5". That day came on 2026-08-21 and NOTHING TURNED RED: a deadline written in
+/// prose has nothing that makes it fire (gotcha #77), and the commit that made `start`
+/// callable touched this file the next day for two other recalls without rereading this one.
+/// The variant now has what the other three had — a producer and a test — in
+/// `tests/worker_tokens.rs`, so what keeps it alive is something that must keep COMPILING
+/// instead of a date. ⚠️ ITS STRENGTH IS LEVEL 1, AND SAYING SO IS THE POINT: a double proves
+/// the word is constructible and that `start`'s signature carries a failure back, NOT that a
+/// real spawn failure produces it. That producer arrives with the milestone that implements
+/// this port, and it does not need a deadline in prose to be noticed missing.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ProcessError {
     /// The process could not be started.

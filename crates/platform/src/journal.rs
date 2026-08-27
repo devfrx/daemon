@@ -144,7 +144,7 @@ fn engine(error: impl Into<redb::Error>) -> OpenError {
     OpenError::Engine(error.into())
 }
 
-/// The journal's file, and THE BOUNDARY AT WHICH MILESTONE 4 WILL INJECT FAILURES (§4.6,
+/// The journal's file, and THE BOUNDARY AT WHICH MILESTONE 4 INJECTS FAILURES (§4.6,
 /// ADR-0032 requirement 4). Every byte the engine reads or writes passes through the five
 /// methods below; there is no other route to the disk.
 ///
@@ -272,10 +272,17 @@ impl FileJournal {
     /// Opens the journal over an ARBITRARY backend.
     ///
     /// ⛔ THIS IS THE ENTRY POINT THAT MAKES THE BOUNDARY REAL, and without it `FileBackend`
-    /// would be a type nobody could replace — a boundary in name. Milestone 4 hands a failing
-    /// backend in here; `the_storage_backend_is_substitutable_from_outside` hands in a counting
-    /// one today, so that the day the failing one arrives it is not also the day this signature
-    /// is discovered to be missing.
+    /// would be a type nobody could replace — a boundary in name.
+    ///
+    /// ✅ AND THE ARGUMENT IS STRONGER THAN IT USED TO BE, which is why it is rewritten and not
+    /// left alone — finding AUD-058, 2026-08-27. This said "milestone 4 HANDS a failing backend
+    /// in here" and "the day the failing one arrives", in the future, while `CrashingBackend` in
+    /// `crates/platform/tests/engine_crash_consistency.rs` has been handed in here since
+    /// 2026-08-11. So the boundary is not defended by a promise that someone will substitute it:
+    /// TWO callers from outside this crate already do — that one and the counting backend of
+    /// `the_storage_backend_is_substitutable_from_outside`. ⚠️ Line 9 of this file was already in
+    /// the present tense, so the file read two different tenses about one fact: a deadline
+    /// written in prose has nothing that makes it fire when the milestone closes (gotcha #77).
     pub fn with_backend(backend: impl StorageBackend) -> Result<Self, OpenError> {
         let database = Database::builder()
             .create_with_backend(backend)
@@ -317,7 +324,8 @@ impl FileJournal {
     /// ⛔ `Ok(())` MEANS THE RECORD REALLY REACHED THE TRANSACTION, AND THE METHOD CHECKS IT
     /// ITSELF — which it did not until a mutation said so. The first version simply staged and
     /// dropped, and the test that uses it leant on the `Ok` for its non-vacuity; a mutation that
-    /// STAGED NOTHING and still answered `Ok(())` left all six tests GREEN. The test cannot see
+    /// STAGED NOTHING and still answered `Ok(())` left EVERY test of that file GREEN — the count
+    /// is deliberately not written, finding AUD-061. The test cannot see
     /// the difference from outside — an abandoned transaction is invisible by construction — so
     /// the check has to live in here, where the transaction is still open. Gotcha #30, measured.
     ///
@@ -381,14 +389,24 @@ impl FileJournal {
     /// source, not assumed — so `commit()` returning IS the durability V6 asks for, and nothing
     /// here calls `set_durability`.
     ///
-    /// ⛔ AND NOTHING IN THE BENCH HOLDS THAT, WHICH IS MEASURED AND NOT SUPPOSED: inserting
-    /// `set_durability(Durability::None)` right here leaves ALL SIX tests of
+    /// ⚠️ AND `file_journal.rs` ALONE DOES NOT HOLD IT, which is measured and not supposed:
+    /// inserting `set_durability(Durability::None)` right here leaves EVERY test of
     /// `crates/platform/tests/file_journal.rs` green. The reason is structural rather than a
-    /// gap in the bench — the tests reopen the file inside a live process, so the writes are in
-    /// the operating system's hands either way and the file is closed cleanly. Only a process
-    /// that DIES tells the two apart, and killing itself is the one thing a test cannot do.
-    /// That is level-2 fault injection, milestone 4, through the very backend below. Declared
-    /// here rather than discovered there.
+    /// gap in that bench — its tests reopen the file inside a live process, so the writes are in
+    /// the operating system's hands either way and the file is closed cleanly.
+    ///
+    /// ✅ SOMETHING HOLDS IT SINCE MILESTONE 4, AND THIS PARAGRAPH SAID THE OPPOSITE UNTIL
+    /// 2026-08-27 — finding AUD-021. `the_engine_really_syncs_and_that_is_what_closes_gotcha_51`
+    /// in `crates/platform/tests/engine_crash_consistency.rs` carries no `#[ignore]`, so it runs
+    /// in the gate. ⛔ AND IT TELLS THE TWO APART INSIDE A LIVING PROCESS: this paragraph claimed
+    /// "only a process that DIES" could, and that is false — the probe counts the engine's
+    /// `sync_data` calls ACROSS the write, and a write is worth exactly one. What a dying process
+    /// would buy is a DIFFERENT guarantee, not this one.
+    ///
+    /// ⛔ THE HALF THAT IS STILL OPEN, so the correction does not overshoot: the probe proves the
+    /// durability is ASKED FOR, not that the operating system delivered it. That is the half of
+    /// gotcha #51 the compendium calls unclosable here. The deadline in prose — "milestone 4" —
+    /// is what expired in silence, and it is replaced by the name of the probe (gotcha #77).
     fn append(&mut self, step: StepId, kind: u8, record: &[u8]) -> Result<(), JournalError> {
         let transaction = self
             .database

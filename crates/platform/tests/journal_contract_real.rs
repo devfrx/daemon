@@ -18,15 +18,16 @@
 // one.
 //
 // ⚠️ DECLARED COST, accepted rather than unnoticed: `include!` brings the included file's
-// `#[test]` functions with it, so THE FOURTEEN TESTS OF THE SUITE — the double, the substring
-// constraint and the twelve liars — RUN A SECOND TIME inside this binary. None of them touches
+// `#[test]` functions with it, so THE FIFTEEN TESTS OF THE SUITE — the double, the substring
+// constraint and the thirteen liars — RUN A SECOND TIME inside this binary. None of them touches
 // the disk or sleeps, so it costs a few milliseconds, and it buys the single copy of the
 // assertions. ⚠️ Only `the_real_journal_honours_the_contract` below reaches a file at all, which
 // is what makes a red in this binary readable: a broken `FileJournal` turns THAT test red and
-// leaves the other fourteen green, because they never meet it.
+// leaves the other fifteen green, because they never meet it.
 // ⚠️ THE TWO FIGURES SAID "TEN" AND "EIGHT" UNTIL 2026-08-17, and were already stale before the
 // three blind journals of that day arrived: promise 7b's liar had made them eleven and nine.
-// Recounted from the source rather than bumped — gotcha #31.
+// They said "FOURTEEN" AND "TWELVE" until 2026-08-27, when the bystander of promise 3 brought a
+// thirteenth liar (finding AUD-019). Recounted from the source rather than bumped — gotcha #31.
 
 include!("../../kernel/tests/journal_contract.rs");
 

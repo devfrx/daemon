@@ -179,8 +179,37 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
     // ── 3. A step never written is Missing, not empty ─────────────────────────────────────
     // Telling "not there" from "there and empty" is the same family as gotcha #30: a bench
     // that only looks at Ok/Err does not see the WRONG ANSWER.
+    //
+    // ⛔ AND A BYSTANDER GOES IN FIRST — added 2026-08-27, finding AUD-019, and it is the SAME
+    // remedy promises 1, 5 and 8 were given on 2026-08-17 for the SAME defect. This block asked
+    // its question on an EMPTY archive, and on an empty archive «this step is not here» and
+    // «there is nothing here at all» are the same sentence. A guard that answers `Missing` from
+    // the EMPTINESS OF THE ARCHIVE rather than from the absence of THIS step satisfied it
+    // perfectly, and nothing else in the suite ever asks for an absent step in a full archive —
+    // so it satisfied the suite entire.
+    //
+    // ⚠️ MEASURED BEFORE IT WAS WRITTEN, not reasoned: `EmptinessIsMissingJournal` (J17) against
+    // this block as it stood answered «THE SUITE IS VACUOUS ON promise 3: a journal that breaks
+    // it passed the suite». With the bystander it dies here.
+    //
+    // ⚠️ AND NEITHER IMPLEMENTATION CHANGED FOR THIS, exactly as on 2026-08-17: both already ask
+    // about the step. What was missing was not the behaviour but the STATE THAT TELLS A WRONG
+    // ONE APART — the same promise, proved, and not a promise added.
+    //
+    // 📌 THE LESSON THAT OUTLIVES THIS BLOCK: on 2026-08-17 three of the nine promises were found
+    // to be proved only where every plausible guard passes, and the remedy was applied to those
+    // three. Promise 3 has the identical shape and was not re-read then. A defect corrected
+    // where it was FOUND is not corrected where it LIVES.
     {
-        let journal = build();
+        let mut journal = build();
+        let bystander = StepId::new(70);
+
+        // ⛔ FIRST, and it is the whole mutation: it makes «the archive is empty» FALSE while
+        // leaving «step 999 is not here» true. Those two sentences part company only here.
+        journal
+            .intent(bystander, b"the intent of a step nobody asked about")
+            .expect("the bystander's intent must succeed");
+
         assert_eq!(
             journal.read_back(StepId::new(999)),
             Err(JournalError::Missing),
@@ -586,10 +615,10 @@ fn no_promise_message_is_a_substring_of_another() {
 }
 
 // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3): a suite never seen to fail is not a suite. The
-// twelve tests below break the port's promises ONE EACH, and demand that the suite notices each —
+// thirteen tests below break the port's promises ONE EACH, and demand that the suite notices each —
 // and notices it ON THE RIGHT PROMISE, which is what reading the payload buys over `is_err()`.
 //
-// ⛔ TWELVE AND NOT THREE, and the nine that were added are the lesson of gotcha #14. The suite
+// ⛔ THIRTEEN AND NOT THREE, and the ten that were added are the lesson of gotcha #14. The suite
 // dies at the FIRST promise a journal breaks, so a liar that violates promise 1 never reaches
 // promise 5: with the three liars this task was dictated with, promises 2, 3 and 5 WERE NEVER
 // SEEN TO FIRE. `SilentJournal` violates promise 5 as well — its `outcome` answers `Ok(())` —
@@ -598,8 +627,14 @@ fn no_promise_message_is_a_substring_of_another() {
 //
 // ⚠️ THE COUNT WAS "SIX", THEN "EIGHT", THEN "NINE" DURING 2026-08-10, and is dated rather than
 // quietly bumped: promise 6 and its liar arrived with the guard on `intent`, promise 8 and its
-// liar with `note`, promise 7b and its liar with `prune`. It is TWELVE since 2026-08-17. A number
-// inside a sentence that stays true is the exact shape of gotcha #31.
+// liar with `note`, promise 7b and its liar with `prune`. It was TWELVE from 2026-08-17, and it is
+// THIRTEEN since 2026-08-27: `EmptinessIsMissingJournal` arrived with the bystander of promise 3
+// (finding AUD-019). A number inside a sentence that stays true is the exact shape of gotcha #31.
+//
+// ⚠️ THE PROMISES ARE STILL NINE AND THE BLOCKS STILL TEN, and that is the news rather than an
+// aside: the thirteenth liar did not add a promise, it added the STATE in which the third one
+// stops being satisfied by every plausible guard. The same shape as 2026-08-17, and for the same
+// reason.
 //
 // ⚠️ AND EACH IS BROKEN IN A DIFFERENT WAY (gotcha #45): writes dropped, the wrong record
 // returned, absence reported as emptiness, order reversed, the write-ahead guard removed on
@@ -633,6 +668,15 @@ fn a_journal_that_answers_with_the_outcome_is_caught() {
 fn a_journal_that_answers_empty_instead_of_missing_is_caught() {
     assert_caught_on(
         EmptyInsteadOfMissingJournal::new,
+        MISSING_MESSAGE,
+        "promise 3",
+    );
+}
+
+#[test]
+fn a_journal_that_reads_missing_from_emptiness_is_caught() {
+    assert_caught_on(
+        EmptinessIsMissingJournal::new,
         MISSING_MESSAGE,
         "promise 3",
     );
@@ -887,6 +931,56 @@ impl Journal for EmptyInsteadOfMissingJournal {
         // ⛔ THE DEFECT: `Missing` laundered into a successful read of nothing.
         match self.inner.read_back(step) {
             Err(JournalError::Missing) => Ok(Vec::new()),
+            other => other,
+        }
+    }
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        self.inner.replay()
+    }
+    fn prune(&mut self, step: StepId) -> Result<(), JournalError> {
+        self.inner.prune(step)
+    }
+}
+
+/// J17 — answers `Missing` from the EMPTINESS OF THE ARCHIVE instead of from the absence of
+/// THIS step. On an empty archive it is indistinguishable from a correct journal; on a full one
+/// it launders an absent step into a successful read of nothing.
+///
+/// ⛔ IT IS NOT `EmptyInsteadOfMissingJournal` WITH EXTRA STEPS, and the difference is the whole
+/// point: that one breaks `Missing` EVERYWHERE and dies on promise 3 as the block stands. This
+/// one breaks it ONLY where promise 3 never looked. Two liars broken the same way prove one
+/// thing twice (gotcha #45); these two are broken at the same place for OPPOSITE reasons.
+struct EmptinessIsMissingJournal {
+    inner: simulator::journal::MemoryJournal,
+}
+
+impl EmptinessIsMissingJournal {
+    fn new() -> Self {
+        EmptinessIsMissingJournal {
+            inner: simulator::journal::MemoryJournal::new(),
+        }
+    }
+}
+
+impl Journal for EmptinessIsMissingJournal {
+    fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.intent(step, record)
+    }
+    fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.outcome(step, record)
+    }
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.note(step, record)
+    }
+    fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
+        // ⛔ THE DEFECT, AND IT IS ONE GUARD AND NOT TWO: the question asked is «is the archive
+        // empty?» and not «is this step here?». An empty archive still answers `Missing`, which
+        // is why the block of promise 3 — which only ever asks on an empty archive — cannot see
+        // it.
+        match self.inner.read_back(step) {
+            Err(JournalError::Missing) if !self.inner.replay().unwrap_or_default().is_empty() => {
+                Ok(Vec::new())
+            }
             other => other,
         }
     }

@@ -192,7 +192,12 @@ di **ammissione** (o entra, o non parte). Calcolo = contesa **condivisibile**,
 meccanismo a **corsie**. Ogni tipo di lavoro dichiara un **profilo di risorsa**
 nominato e versionato (riserva VRAM, classe di calcolo, prelazionabilità, tempo di
 rilascio, avvio a freddo); la riserva è dichiarata dal richiedente e **verificata**
-dall'arbitro, e una riserva sistematicamente sbagliata è un difetto del profilo. **La
+dall'arbitro, e una riserva sistematicamente sbagliata è un difetto del profilo.
+⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-032:** quei cinque attributi sono realizzati da
+**due** strutture e non da un oggetto solo — `ResourceProfile` ne porta **quattro**, con
+prelazionabilità e tempo di rilascio fusi in `Preemption`, e `cold_start` vive in
+`WorkDescriptor`, che l'ammissione **non riceve**. La decisione **non è superata**; il perché
+delle due divergenze sta nel **rimando datato in testa ad ADR-0005**, in una casa sola. **La
 quota VRAM dell'audio è sottratta dal budget all'avvio e non vi rientra**: un budget
 sottratto non può essere allocato per errore, mentre una priorità può essere rispettata
 tardi. Nessun degrado silenzioso.

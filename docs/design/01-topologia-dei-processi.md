@@ -49,7 +49,7 @@ sacrificabile · **ambra** = sorgente di contenuto non fidato.
 | Da → A | Canale | Direzione | Note |
 |---|---|---|---|
 | gui ↔ core | IPC privato | bidirezionale | Un trasporto, uno schema, non versionato (I4) |
-| core ↔ worker ML | porta `process` | **bidirezionale, ma a iniziativa del core** | Avvia, istruisce, legge, chiude, uccide — **sei verbi**. Il worker non risponde **di iniziativa propria**: ogni byte che risale è coperto da una **ricevuta**. Vedi il richiamo in fondo |
+| core ↔ worker ML | porta `process` | **bidirezionale, ma a iniziativa del core** | I **sei verbi** sono i metodi del tratto `Worker`: `instruct_one` · `instruct_stream` · `read_one` · `read_next` · `close` · `kill`. ⚠️ **`Process::start` è FUORI dai sei** — restituisce il `Worker`, e il richiamo in fondo lo dice già. Il worker non risponde **di iniziativa propria**: ogni byte che risale è coperto da una **ricevuta** |
 | core ↔ worker audio | porta `process` | idem | Idem; il flusso audio risale al core **dentro una ricevuta di flusso** |
 | core ↔ server MCP | protocollo MCP | bidirezionale | **Tutto ciò che arriva da qui è contenuto non fidato**, descrizioni degli strumenti incluse |
 | core → OpenRouter | HTTPS | uscente | Unico processo autorizzato a uscire in rete verso i provider |
@@ -86,6 +86,13 @@ stateDiagram-v2
     end note
 ```
 
+⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-044:** la transizione `InCoda --> Annullato` di questo
+diagramma **non ha nessun meccanismo** nell'arbitro. Il racconto, la misura e il chiusore stanno
+in [`02-arbitrato-gpu.md`](02-arbitrato-gpu.md) accanto alla macchina a stati che la §5.3 della
+spec adotta come propria, e la voce aperta vive in
+[`porta-di-qualita.md`](../porta-di-qualita.md): qui c'è **un rimando e non una seconda copia**,
+perché un rimando non può marcire.
+
 ## Regole che il diagramma non esprime
 
 - Un worker **non** ritenta, **non** accoda, **non** decide: ogni logica di
@@ -106,7 +113,7 @@ finché il canale non esisteva; oggi esiste, ed è la porta **`process`** di
 
 | | |
 |---|---|
-| **i verbi sono sei**, contati sul sorgente | `instruct_one` · `instruct_stream` · `read_one` · `read_next` · `close` · `kill`, più `Process::start` che restituisce il `Worker` |
+| **i verbi sono sei**, contati sul sorgente | `instruct_one` · `instruct_stream` · `read_one` · `read_next` · `close` · `kill`, più `Process::start` che restituisce il `Worker`. ⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-037:** questa riga era **giusta** dal 2026-08-18, e la cella della tabella dei canali enumerava **altri cinque** verbi — *«Avvia, istruisce, legge, chiude, uccide»* — appiccicandovi lo **stesso sei**: due insiemi diversi con un numero solo, perché l'italiano comprimeva `instruct_one`/`instruct_stream` in *«istruisce»* e `read_one`/`read_next` in *«legge»* senza dichiararlo, e ci aggiungeva `start`, che i sei escludono. ⛔ **La correzione del 2026-08-18 riscrisse il numero nella cella e l'enumerazione QUI, invece di allinearle:** ora la cella porta gli stessi sei nomi, col nome esatto del sorgente (§1.0) |
 | **i frame RISALGONO** | `read_one` e `read_next` restituiscono un `Frame`: il flusso audio della riga qui sopra è esattamente questo |
 | ⛔ **ciò che resta vero, ed è la sostanza** | il worker **non risponde di iniziativa propria**. Ogni byte che risale è coperto da una **ricevuta**, e le ricevute le emette **solo un'istruzione**: un frame che nessuna ricevuta copre è un **guasto**, non un dato |
 

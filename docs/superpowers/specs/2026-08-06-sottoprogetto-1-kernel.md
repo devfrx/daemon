@@ -291,7 +291,7 @@ Il sotto-progetto 1 è chiuso quando **tutte** queste sono vere, non quando il c
 | 2 | ogni controllo statico **è stato visto fallire** su una violazione deliberata, e poi tornare verde — gotcha #14: un controllo mai visto fallire non è un controllo |
 | 3 | ogni Q in perimetro è verificato col metodo che [design/08](../../design/08-strategia-di-test.md) gli assegna, non con un altro |
 | 4 | ogni difetto trovato in simulazione conserva il proprio **seed** come caso di regressione permanente (V31) |
-| 5 | i **sei** ADR della §0.5 sono scritti, ciascuno con le proprie `Negative (accettate)`. ⚠️ erano tre fino al 2026-08-07, poi quattro con [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md), cinque con [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) e sei con [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md). La riga 3 resta l'unica decisione della §0.5 senza ADR — vive in §2.4 |
+| 5 | **gli ADR della §0.5 sono scritti**, ciascuno con le proprie `Negative (accettate)`. ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-067 — questa condizione diceva «i SEI ADR» e la sua catena datata si fermava ad ADR-0036: la §0.5 ha OTTO righe e SETTE decisioni con ADR — 0031…0037 — e i sette file esistono in `docs/adr/`.** Così com'era scritta era **soddisfatta senza ADR-0037**, cioè la definizione di «fatto» del sotto-progetto poteva dirsi vera lasciando fuori la voce più recente. ⚠️ **La nota della §0.5 VEDEVA il problema e lo lasciava dov'era** — *«la catena datata di §0.7 si ferma a sei perché è stata scritta prima»* — e la §0.1, ricontata il 2026-08-08, dice già **sette**: due affermazioni vive nella stessa §0 che si contraddicono. ✅ **Il numerale è TOLTO e non riallineato a sette**, ed è la cura invece della svista: una condizione di chiusura che porta un conto cresce con la §0.5 e nessun controllo la lega a quella tabella. Il conto lo dà la §0.5, e la catena datata resta qui sotto come **storia**: erano tre fino al 2026-08-07, poi quattro con [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md), cinque con [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md), sei con [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) e sette con [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md). La riga 3 resta l'unica decisione della §0.5 senza ADR — vive in §2.4 |
 | 6 | `roadmap.md`, `tracciabilita.md`, lo stato degli spike e `HANDOFF.md` sono aggiornati **nello stesso passaggio** |
 | 7 | `bash scripts/check-docs.sh` esce verde |
 
@@ -365,8 +365,30 @@ flowchart BT
     class P,S,SIM ada
 ```
 
-**`kernel` non dipende da nessuna crate del progetto.** È una riga del suo manifesto, e
-rende I3 verificabile guardando quella riga invece di ispezionare il codice.
+**`kernel` non dipende da nessuna crate del progetto** — **nel grafo SPEDITO**.
+
+> ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-068 — questa riga diceva *«è una riga del suo
+> manifesto, e rende I3 verificabile guardando quella riga invece di ispezionare il codice»*, e
+> applicata alla lettera oggi la ricetta risponde di NO.** `crates/kernel/Cargo.toml` nomina
+> `simulator = { path = "../simulator" }` sotto `[dev-dependencies]`, e chiude un ciclo
+> `kernel -(dev)-> simulator -> kernel` che il manifesto stesso **dichiara e giustifica**; lo
+> stesso arco esiste su `crates/platform/Cargo.toml`.
+> ✅ **La verifica arco per arco è stata rifatta sui cinque manifesti, non dedotta:** gli archi
+> **spediti** coincidono tutti col grafo qui sopra — `platform->kernel`, `secrets->kernel`,
+> `simulator->kernel`, `daemon->{kernel, platform, secrets}`, e `daemon` che **non** dipende da
+> `simulator`. I due archi che il diagramma non ha sono **entrambi di sviluppo**.
+> ⛔ **Quindi ciò che regge davvero I3 non è quella riga:** è `scripts/gate-deps.sh`, che misura
+> il grafo spedito con `-e normal,no-proc-macro` — cioè esattamente *«ispezionare»* qualcosa di
+> più di una riga di manifesto. La distinzione fra grafo **spedito** e grafo **di sviluppo**
+> esiste in questa spec ma vive nella §7.3.1, che questa sezione non richiamava.
+> 📌 **La causa, e vale oltre il caso:** la frase era **letteralmente vera** quando fu scritta,
+> perché `kernel` non aveva dipendenze di nessun tipo; le due di sviluppo sono nate dopo,
+> ciascuna giustificata **dentro il manifesto**, cioè nel posto che la ricetta dice di non dover
+> leggere. È il gotcha **#58** nella forma piccola: un documento che ha guardato la **regola**
+> non ha guardato il **file** che la regola indica.
+
+Ciò che resta vero, e che la ricetta comprava, è che I3 si verifica **senza ispezionare il
+codice**: il controllo è sul grafo, non sui sorgenti.
 
 Cinque crate e non meno: `secrets` è separata da `platform` perché V34 chiede che «un solo
 punto legge le credenziali» sia **verificabile staticamente**, e in Rust la granularità
@@ -526,9 +548,29 @@ Ogni sorgente di casualità è un punto da cui una traccia può divergere. La po
 | identità di run e passi | identificatori casuali | **progressivi, assegnati dal giornale** — deterministici per costruzione, e leggibili in un trace |
 | attesa fra due ritentativi | backoff con jitter | **senza jitter**: serve contro la contesa fra molti client, e qui il client è uno |
 
-**Elenco dei consumatori nel kernel: vuoto.** Dichiararlo vuoto è un'informazione; una porta
-generica «tanto poi servirà» è il contrario. La casualità serve al `simulator` — per
-scegliere l'ordine e iniettare guasti — non alla logica.
+**Elenco dei consumatori nella LOGICA DECISIONALE del kernel: vuoto.** Dichiararlo vuoto è
+un'informazione; una porta generica «tanto poi servirà» è il contrario.
+
+> ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-069 — questa riga diceva *«nel kernel»* e non
+> *«nella logica decisionale del kernel»*, e la differenza è un consumatore vero.**
+> `Executor` vive in `kernel` — lo colloca lì questa stessa spec — riceve un `R: Rng`, lo
+> conserva in un campo e in `crates/kernel/src/executor.rs` estrae con `below` per scegliere
+> **quale attività far avanzare**. ⚠️ **Il codice se n'era già accorto e RESTRINGEVA
+> l'affermazione invece di ripeterla:** `crates/kernel/src/rng.rs` scrive *«Consumers in the
+> kernel's DECISION LOGIC: NONE»* e poi, esplicitamente, *«the only consumer inside this crate
+> is the EXECUTOR … that is substrate, not decision logic»*. La restrizione è nata nel
+> **codice** e non era mai risalita qui.
+> ⛔ **E la conseguenza non è tipografica:** la frase faceva credere che il grafo di produzione
+> potesse essere costruito **senza** consegnare una sorgente di casualità. Non è così —
+> `Executor::new` la **pretende**, e la radice di composizione cabla `SequentialRng`. Chi legga
+> questa sezione per contare le sorgenti di non determinismo a runtime ne conta **zero** dove
+> ce n'è **una**, resa innocua da una scelta di `platform` e non dall'assenza della porta.
+> 📌 È la sesta domanda del pre-controllo di [`CLAUDE.md`](../../../CLAUDE.md) — *una sezione si
+> legge anche contro le proprie sorelle* — applicata a due sezioni della **stessa** spec invece
+> che a due ADR: la §2.4, che colloca l'esecutore in `kernel`, è stata scritta **dopo** questa.
+
+La casualità serve al `simulator` — per scegliere l'ordine e iniettare guasti — e al
+**substrato** dell'esecutore, mai a una decisione.
 
 ### 2.3 I/O — le famiglie di porte
 
@@ -874,7 +916,7 @@ punti in cui il mondo tocchi il kernel.
 | `process` | avvia, **istruisce** e uccide worker veri | worker finti: risposte, ritardi e uccisione scelti dal seme |
 | `network` | HTTPS **verso la rete** — i provider **e** l'esportazione OTLP opt-in | risposte, ritardi e perdite scelti dal seme |
 | `ipc` | named pipe verso la gui | client finto, che può **morire** quando il seme decide |
-| `rng` | seminato all'avvio | seminato dal seme della campagna |
+| `rng` | ⚠️ **`SequentialRng`: NON seminato e non casuale** — un contatore `wrapping_add(1)` che parte da zero. ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-070: questa cella diceva «seminato all'avvio»**, e non c'è nessun seme, nessun ingresso e nessuna sorgente dell'OS — `crates/platform/src/rng.rs` si apre con *«the real `rng`, and IN PRODUCTION IT IS NOT RANDOM AT ALL»*. ✅ **La divergenza è DECISA, non subita:** è la voce `D5` del piano del Traguardo 2, con l'argomento *«in produzione l'interlacciamento non si esplora, si fissa»*; era rimasta nel piano e non era mai risalita alla spec, che del piano è la fonte. ⚠️ **Perché conta per chi legge questa tabella:** la §7.4.6 confronta le **due** implementazioni della stessa porta, e *«seminato all'avvio»* fa attendere due generatori della stessa natura con semi diversi — sono invece un **contatore** contro uno **xorshift seminato**, che è una differenza di natura | seminato dal seme della campagna |
 
 > ⚠️ **La riga `process` è stata allargata il 2026-08-07**, con la §2.3 e nello stesso
 > passaggio: questa tabella dichiara di essere *«esattamente le porte della §2.3»*, quindi
@@ -1484,8 +1526,29 @@ La seconda è nuova e viene da ADR-0033. La §5.5 la argomenta.
 > dove venga `totale`**. Interrogare la GPU è una chiamata all'OS, che I3 vieta al kernel,
 > e nessuna delle famiglie di porte della §2.3 fornisce la capacità dell'hardware.
 
-**I tre addendi sono parametri consegnati** (§2.8), non numeri che l'arbitro va a
-prendere. Vale per tutti e tre lo stesso trattamento che ADR-0005 dà alla riserva —
+**UNO dei tre addendi è un parametro consegnato** (§2.8): il **totale**. Nessuno dei tre è
+un numero che l'arbitro va a prendere.
+
+> ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-071 — questa riga diceva *«i TRE addendi sono
+> parametri consegnati»*, e `Parameters` ne consegna UNO.** Il tipo dei parametri risolti porta
+> `executor_turn_limit` e `total_vram`: la **quota audio** e la **quota di presentazione** non
+> sono consegnate e **non sono sottratte da nessuna parte**. `daemon` le realizza come riserve
+> di **due concessioni permanenti**, richieste all'avvio, quindi il budget allocabile non è mai
+> il risultato di due sottrazioni.
+> ✅ **La scelta è giusta nel merito e argomentata**, e il codice la dichiara accanto al tipo:
+> *«una sottrazione senza titolare lascia I2 falso per quei due consumatori»* — gotcha **#4**,
+> ADR-0005 e ADR-0033 — e due campi in più in `Parameters` sarebbero due valori che **nessuna
+> decisione del kernel legge**. ⚠️ **E porta con sé un meccanismo che questa sezione non
+> nomina:** se una delle due concessioni non viene servita, l'avvio **fallisce** e nomina la
+> quota caduta.
+> ⛔ **La formula vive in TRE documenti** — qui, in ADR-0033 e in `design/02` — e il richiamo
+> del 2026-08-07 aveva già risolto la provenienza di `totale` lasciando in piedi l'affermazione
+> sugli altri due. È la radice **R1** su una formula duplicata, cioè il caso in cui
+> [`CLAUDE.md`](../../../CLAUDE.md) dice di **togliere** il duplicato: toglierlo però tocca due
+> documenti approvati oltre a questo, ed è una decisione del proprietario — **registrata, non
+> presa**.
+
+Al totale vale il trattamento che ADR-0005 dà alla riserva —
 *dichiarata dal richiedente, picco misurato*:
 
 | | |
@@ -1512,8 +1575,7 @@ come si esprimono.
 | `name` | identificatore nominato e versionato | V2: **ogni** lavoro GPU ne ha uno |
 | `reserved_vram` | MiB | riserva **dichiarata** dal richiedente |
 | `compute_class` | `realtime` \| `interactive` \| `batch` | la corsia |
-| `preemptible` | booleano | governa se `InRevoca` è raggiungibile — §5.3 |
-| `release_grace` | durata sull'asse **monotonic** | mai wall time |
+| `preemption` | `Never` \| `After(<durata monotonic>)` | governa se `InRevoca` è raggiungibile — §5.3 — **e**, quando lo è, con quanta grazia. ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-072: qui c'erano DUE righe, `preemptible` booleano e `release_grace` durata, e nessuno dei due nomi esiste in nessun sorgente.** `ResourceProfile` porta **un** campo, `preemption: Preemption`. ✅ **La divergenza è giusta nel merito, e il codice la argomenta:** il punto 3 della §5.3 qui sotto pretende che `InRevoca` sia **non rappresentabile** per un profilo non prelazionabile, e un booleano affiancato da una durata lascia costruibile *«non prelazionabile con una grazia di 500 ms»* — l'enum fa sparire **due** stati illegali insieme. ⛔ **Il difetto era che la spec continuava a dettare la forma SCARTATA:** questa è la sezione che traduce il profilo di `design/02` *«in quali tipi»*, quindi il documento che si legge per progettare contro il profilo dettava una forma **che non compila**. 📌 È il gotcha **#71** già a verbale — il disegno del Traguardo 5 dichiarò per esteso la divergenza dalla §5.1 e **tacque su questa gemella**, e un documento che ne dichiara una si legge come se le avesse dichiarate tutte. ⚠️ **Il rimedio era registrato e non applicato:** la voce aperta `R4` di [`porta-di-qualita.md`](../../porta-di-qualita.md) la porta con la decisione assegnata al proprietario, e fino a oggi questa sezione non aveva né la correzione né un richiamo |
 | `cold_start` | durata | ⚠️ vedi sotto |
 
 #### 5.2.1 `cold_start` non è raggiungibile dal percorso decisionale
@@ -3182,7 +3244,7 @@ l'errore.
 | Quando | Cosa gira |
 |---|---|
 | **a ogni compilazione — cioè: sempre, senza essere un passo** | tutto il **livello 1**: `no_std` · `forbid` · i gettoni · i tipi che non si scambiano |
-| **a ogni commit** | allow-list sui due grafi · cancello senza OS · test di compilazione fallita · test a esempi · **campagna DST breve** · test di contratto · `check-docs.sh` |
+| **a ogni commit** | allow-list sui due grafi · cancello senza OS · **attributi delle crate vincolate** · test di compilazione fallita · test a esempi · **campagna DST breve** · test di contratto · `check-docs.sh`. ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-073: gli attributi mancavano da questo elenco e da quello dei costi in §7.7.** `scripts/gate-attributes.sh` è il quinto passo di `scripts/gate.sh` e sostiene **due** righe del catalogo §7.4.2 — gli attributi delle crate vincolate e l'assenza di build script. ⚠️ **E la prima delle due è di ramo 1b:** cancellarla non spegne una regola, **invalida il fondamento del livello 1**, e una tabella della cadenza che non la nomina lascia credere che quel fondamento non abbia bisogno di girare. 📌 **La causa è il gotcha #68 dentro la stessa sezione:** le due righe di catalogo furono aggiunte il 2026-08-08 e il 2026-08-09 e la §7.4.2 fu aggiornata; questa tabella e quella di §7.7 sono **due terze case** dello stesso elenco, e **nessuna** delle sei asserzioni di `check-docs.sh` le lega al catalogo — quindi sono invecchiate in silenzio |
 | **su ciclo lungo** | **campagna DST profonda**: molti più semi, scenari più grandi |
 
 #### 7.5.2 La DST sta a ogni commit, e `design/08` si aggiorna
@@ -3259,7 +3321,7 @@ essere utile pur restando in funzione.
 |---|---|
 | **la porta è lavoro prima di ogni valore visibile** | come il simulatore: è lo stesso RK-9, già accettato nella spec del kernel |
 | **tredici voci sono di livello 2** | cioè cancellabili. ADR-0031 lo dichiara per una sola; qui vale per tutte, e non è mitigabile — è la natura del livello, non un'omissione. ⚠️ **Ricontato sulla tabella §7.4.2 due volte il 2026-08-08**: diceva «nove» prima delle righe di ADR-0036 e ADR-0037, e «undici» prima della riga degli **attributi**, aggiunta eseguendo il Traguardo 1. ⚠️ **Terzo riconteggio il 2026-08-09**: diceva «dodici» prima della riga del **build script**, aggiunta chiudendo la lacuna che una revisione aveva misurato — sei controlli su sei verdi con un `build.rs` nel kernel |
-| **si paga a ogni commit, non una volta** | due grafi, un cancello, una campagna, due suite di contratto |
+| **si paga a ogni commit, non una volta** | due grafi, un cancello, **gli attributi delle crate vincolate**, una campagna, due suite di contratto. ⚠️ **Voce aggiunta il 2026-08-27, finding AUD-073**, insieme alla gemella della tabella della cadenza in §7.5.1: il racconto sta lì, in una casa sola |
 | **`cargo tree` è un'interfaccia per umani** | un cambio di formato rompe **due** controlli in una volta sola |
 | **il bersaglio senza OS è un prerequisito dell'ambiente** | su una macchina pulita la porta è rossa finché non lo si installa, e per il motivo sbagliato |
 | **la porta non prova la correttezza** | §7.6.3. Sposta il confine di ciò di cui ci si può fidare, non lo elimina |

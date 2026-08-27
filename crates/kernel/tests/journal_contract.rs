@@ -433,6 +433,17 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
     // going red — MEASURED, mutation `M10`, which survived the whole workspace. It is not a hole
     // this task opened, since both refused every prune with `Missing` before it, and closing it
     // costs a promise with a liar of its own that no measurement asks for yet.
+    //
+    // ⚠️ AND A THIRD, WHICH IS THE ONE THIS SUITE CANNOT PIN EVEN IF IT WANTED TO: WHICH notion
+    // of "in doubt" promise 7 holds. This block builds the doubt by CALLING `intent` and no
+    // `outcome`, which is the PORT's notion; `crate::reconcile` builds it by DECODING, and a
+    // record this build cannot decode enters the doubt with `SuspendAndAsk`. ⛔ The two diverge
+    // in the direction that AUTHORISES pruning — MEASURED on 2026-08-27 from outside the crate,
+    // on both implementations: `steps_in_doubt` answers
+    // `[InDoubt { step: StepId(1), resolution: SuspendAndAsk }]` and `prune` answers `Ok(())`.
+    // A conformance suite cannot close it, because the PORT cannot decode (ADR-0036): the guard
+    // belongs to whoever calls. Declared on `Journal::prune` with the caller's obligation, and
+    // carried as OPEN ENTRY 3 in `docs/porta-di-qualita.md`, which is where who closes it lives.
     // ⛔ THREE ASSERTIONS AND ONE MESSAGE, because all three ARE this promise, and the second and
     // third were MEASURED to be missing rather than reasoned into place. With `is_ok()` alone,
     // TWO mutations of `prune` left the whole workspace green: one that answered `Ok(())` and

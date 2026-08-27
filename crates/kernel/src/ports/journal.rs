@@ -8,7 +8,7 @@
 //! | `note`      | appends a NOTE upon a step already open — neither of the two     |
 //! | `read_back` | re-reads ONE step BY NAME, for reconciliation                     |
 //! | `replay`    | re-reads EVERYTHING, in write order, to discover the names       |
-//! | `prune`     | replaces a payload with a fingerprint and a size (ADR-0018)      |
+//! | `prune`     | drops the records of a RECONCILED step — see its LIMITS below    |
 //!
 //! ⛔ THE PORT EXCHANGES BYTES, not typed records (ADR-0036). The encoding of the record
 //! lives in `kernel` and §4.9 states its rule. Two consequences this table does not
@@ -244,10 +244,47 @@ pub trait Journal {
     /// journal, not by this milestone.
     fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError>;
 
-    /// Replaces a payload with its fingerprint and size (ADR-0018).
+    /// Drops the RECORDS of a step that has been RECONCILED (ADR-0018).
     ///
-    /// ⛔ Pruning is IRREVERSIBLE and must be declared: an absent payload and one that
-    /// was never recorded must not be indistinguishable. And a step IN DOUBT is never
-    /// prunable until it has been reconciled.
+    /// ⛔ THE ONLY DESTRUCTIVE OPERATION OF THIS PORT, and ADR-0018 puts TWO rules on it.
+    /// Neither is fully held today, and both are written HERE rather than only beside the two
+    /// implementations: this is the one document an implementation is obliged to read, and a
+    /// rule stated as an obligation that nothing keeps reads as a promise.
+    ///
+    /// ⛔ RULE ONE — "an absent payload and one that was never recorded must not be
+    /// indistinguishable" — IS VIOLATED BY BOTH IMPLEMENTATIONS. Neither replaces anything:
+    /// `MemoryJournal` drops the entries, `FileJournal` removes the rows. MEASURED on
+    /// 2026-08-10, not argued: a pruned step and one nobody ever wrote both answer
+    /// `Err(Missing)` to `read_back`, are both absent from `replay`, and answer alike to a
+    /// second `prune`. The distinction wants the FINGERPRINT and SIZE ADR-0018 asks a pruned
+    /// record to carry; a fingerprint wants a hash function, and in the kernel that is a NEW
+    /// ENTRY IN THE LIST OF ADR-0031 — a deliberate act no measurement has prepared. Closed by
+    /// the milestone that brings retention, TOGETHER with the decision on the fingerprint
+    /// (decision D7 of the milestone-3 plan).
+    /// ⚠️ THIS IS THE RESERVE `JournalError::StepInDoubt` SENDS ITS READER HERE FOR: until what
+    /// a pruned step looks like afterwards is settled, there is no "already pruned" to name.
+    ///
+    /// ⛔ RULE TWO — "a step IN DOUBT is never prunable until it has been reconciled" — IS HELD
+    /// HERE WITH A DIFFERENT NOTION OF DOUBT, AND THE TWO CAN DIVERGE. This port asks which
+    /// OPERATIONS were called — an `intent` with no `outcome`; `crate::reconcile` asks what the
+    /// RECORDS SAY, by decoding them, and a record this build cannot decode ENTERS the doubt
+    /// with `SuspendAndAsk`. The port cannot decode (ADR-0036), so it cannot ask the second
+    /// question. ⛔ AND THE DIVERGENCE FALLS ON THE SIDE THAT AUTHORISES DESTRUCTION, which is
+    /// what makes it a limit and not a nuance — MEASURED on 2026-08-27 from OUTSIDE the crate,
+    /// on BOTH implementations: an `intent` this build reads followed by an `outcome` whose
+    /// bytes it does not gives
+    /// `steps_in_doubt -> [InDoubt { step: StepId(1), resolution: SuspendAndAsk }]` and
+    /// `prune -> Ok(())`.
+    ///
+    /// ⛔ SO RULE TWO IS THE CALLER'S OBLIGATION, and it is written before that caller exists:
+    /// MEASURED on 2026-08-27, nobody in production calls `prune` — every caller is a bench, and
+    /// the one call under `src/` is the crashing double delegating to the one it wraps. The
+    /// retention sweep that will make the first real one lives in the kernel and CAN decode — it must
+    /// consult `crate::reconcile::steps_in_doubt` and skip what that returns, rather than rest
+    /// on this guard. ⚠️ NOT PINNED BY A PROBE, and the cost is written instead of hidden: a
+    /// probe asserting today's `Ok(())` would go RED the day that sweep closes this properly,
+    /// and a test somebody must delete to take a decision is a vote against taking it (gotcha
+    /// #73). Carried as an OPEN ENTRY in `docs/porta-di-qualita.md`, because a note is read and
+    /// forgotten (gotcha #36).
     fn prune(&mut self, step: StepId) -> Result<(), JournalError>;
 }

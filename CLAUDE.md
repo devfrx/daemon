@@ -9,9 +9,9 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 580 KB** (byte LF, il 2026-08-25), e con
+⚠️ **Insieme questi due file pesano 590 KB** (byte LF, il 2026-08-27), e con
 [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — **chiuso il 2026-08-18, otto decisioni
-su otto**, quindi oggi una **consultazione** — **612**. ⛔ **E il prezzo in
+su otto**, quindi oggi una **consultazione** — **622**. ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
@@ -24,11 +24,11 @@ servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un
 travestita da misura. Il metodo e il limite stanno nella §12 del compendio, quattordicesima
 misura. 📌 È la **sesta** occorrenza del gotcha **#31** su questa riga, che prima diceva
 «circa seimila token» quando i due file pesavano 24 KB, poi «88 KB» quando erano
-già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **777 KB**.
+già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **789 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **777 KB** in
-byte LF il 2026-08-25, e possono solo crescere; la spec da sola ne fa **277** — e l'idea è
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **789 KB** in
+byte LF il 2026-08-27, e possono solo crescere; la spec da sola ne fa **284** — e l'idea è
 già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
 aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione
 per cui la riga qui sopra prezza i token come **limite inferiore** e non come totale — un

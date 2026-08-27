@@ -40,6 +40,23 @@ payload assente e un payload mai registrato non devono essere indistinguibili.
 **Un passo `InDubbio` non è mai potabile** finché non è riconciliato: la sua
 riconciliazione (§4) può dipendere dal payload.
 
+> ⚠️ **RIMANDO DEL 2026-08-27 — la decisione RESTA VALIDA e non è superata; a cadere è
+> l'affermazione che il codice di oggi la rispetti.** Findings **AUD-031** e **AUD-006** del
+> secondo audit completo. Chi apre questo ADR per prendere il *perché* deve sapere che le due
+> regole qui sopra **non sono tenute**, o le legge come descrizioni del sistema.
+>
+> | La regola | Cosa fa il codice |
+> |---|---|
+> | un record potato **dichiara di esserlo** | ⛔ **violata da entrambe le implementazioni.** Nessuna sostituisce niente — `MemoryJournal` toglie le voci, `FileJournal` toglie le righe — e nel kernel non esiste nessuna impronta. **Misurato il 2026-08-10** |
+> | un passo `InDubbio` **non è mai potabile** | ⚠️ **tenuta dalla porta con un'ALTRA nozione di dubbio.** Questa riga nomina la **§4**, cioè la riconciliazione del kernel, che **decodifica** i record; la porta scambia byte e può solo chiedere *quale operazione è stata chiamata*. ⛔ **Le due divergono nel verso che AUTORIZZA la potatura**, misurato il 2026-08-27 su entrambe |
+>
+> ⛔ **Perché non si chiude qui:** la prima regola vuole l'impronta che questo ADR chiede, e
+> un'impronta vuole una funzione di hash — nel kernel una **voce nuova nella lista di
+> ADR-0031**, cioè un atto deliberato. La seconda non è chiudibile sulla porta: la guardia
+> appartiene a chi chiama. Il limite è dichiarato accanto a `Journal::prune` in
+> `crates/kernel/src/ports/journal.rs`; le voci aperte, con chi le chiude, stanno in
+> [`porta-di-qualita.md`](../porta-di-qualita.md).
+
 ## Consequences
 
 - **Positive:**

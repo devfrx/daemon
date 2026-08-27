@@ -1047,9 +1047,44 @@ Il kernel dichiara cosa gli serve; chi lo fornisce sta fuori.
 |---|---|
 | `intent` | rende durevole **l'intenzione** di un passo, prima che l'effetto avvenga. **Uno per passo**: un secondo è rifiutato |
 | `outcome` | rende durevole **l'esito**, dopo |
+| `note` | appende una **nota** su un passo **già aperto** — né un intento né un esito. Quante se ne vuole; su un passo mai aperto è **rifiutata** |
 | `read_back` | rilegge **un** passo **per nome**, alla ripresa, per la riconciliazione |
 | `replay` | rilegge **tutto**, in ordine di scrittura, per scoprire l'insieme dei passi in dubbio |
-| `prune` | sostituisce un payload con impronta e dimensione (ADR-0018) |
+| `prune` | toglie i record di un passo **riconciliato** (ADR-0018) — ⚠️ **due limiti dichiarati**, vedi il richiamo del 2026-08-27 |
+
+> ⛔ **RICHIAMO DEL 2026-08-27 — questa tabella dichiarava CINQUE operazioni e la porta ne ha
+> SEI, e la sesta non compariva in nessuna riga di questa spec.** Finding **AUD-003** del secondo
+> audit completo, e il **solo finding ALTO che vi resti aperto** — verificabile con un `grep`,
+> mentre *«il più grave»* non lo è: la fascia non è ordinata al proprio interno.
+> ⛔ **Non è tipografia:** chi implementa `Journal` leggendo questa sezione — cioè la suite di
+> conformità della §7.4.6 — scrive cinque metodi e **non compila**. ⚠️ **E qui c'era una seconda
+> metà, TOLTA il 2026-08-27 invece che riallineata:** diceva *«e la seconda implementazione
+> durevole che il Traguardo 6 chiede a `platform`»*, che nessun documento prevede — la durevole
+> **esiste** dal Traguardo 3, e la §7.4.6 di questa stessa spec lo dice. Era l'unica affermazione
+> di questo richiamo **ripresa dal rapporto** invece che misurata: gotcha **#65**. ✅ **Misurato il 2026-08-27 da FUORI la crate**, non argomentato: un `impl Journal`
+> coi cinque metodi che questa tabella elencava dà
+> `` error[E0046]: not all trait items implemented, missing: `note` ``.
+>
+> ⚠️ **La causa è che questa sezione fu emendata DUE VOLTE lo stesso 2026-08-10** — il riquadro
+> su `replay` e quello su `intent` uno-per-passo — **e la terza operazione nata quel giorno non
+> fu riportata**. Due richiami datati sulla stessa sezione la fanno leggere come riallineata per
+> intero: è il gotcha **#31** nella forma *«una tabella che qualcuno ha appena toccato si legge
+> come aggiornata»*.
+>
+> ⛔ **E con `note` entrano due cose che questa sezione non nominava** — finding **AUD-015**.
+> `JournalError` ha **quattro** varianti, e questa sezione non ne nominava nessuna tranne
+> `OutOfOrder`: la quarta è **`StepInDoubt`**, che `prune`
+> restituisce a un passo ancora aperto, e **non** si riduce a `OutOfOrder` perché quella è
+> definita da **V6** mentre potare troppo presto viola **ADR-0018**, che è un invariante diverso
+> in un ADR diverso. E le vie di `OutOfOrder` sono **tre** e non due: vedi il richiamo dentro il
+> riquadro di `intent`, qui sotto.
+>
+> ⛔ **E la riga di `prune` prometteva ciò che nessuno fa** — finding **AUD-031**. Diceva
+> *«sostituisce un payload con impronta e dimensione»*: **entrambe** le implementazioni
+> **tolgono** i record, e nel codice non esiste nessuna impronta. La riga dice ora ciò che
+> l'operazione fa, e i **due limiti** di ADR-0018 sono dichiarati per esteso accanto al metodo in
+> `crates/kernel/src/ports/journal.rs` e nella §4.5. ⚠️ **Non si chiudono qui**, e il perché è
+> scritto lì.
 
 > ⛔ **Un'operazione aggiunta il 2026-08-10, eseguendo il Traguardo 3 — e non è un ripensamento.**
 > La §4.3 dice che la ripresa *«raccoglie **tutti** i passi con intento e senza esito»*, ma
@@ -1081,6 +1116,12 @@ Il kernel dichiara cosa gli serve; chi lo fornisce sta fuori.
 > ⚠️ **`OutOfOrder` si è allargata invece di guadagnare una variante vicina**, perché la §4.1
 > vuole il tipo d'errore povero: *«un'operazione è arrivata fuori ordine per questo passo»*
 > copre entrambe le direzioni, e il kernel non ha nulla da decidere diversamente fra le due.
+>
+> ⚠️ **RICHIAMO DEL 2026-08-27 — le vie sono TRE e non due**, e la terza è *«una `note` su un
+> passo che non ha un intento»*, nata **lo stesso 2026-08-10** di questo riquadro e poche ore
+> dopo. ⛔ **Questo capoverso non è riscritto perché è il VERBALE di quella decisione** e dice
+> cosa fu deciso allora; l'elenco vivo delle tre vie sta accanto alla variante in
+> `crates/kernel/src/ports/journal.rs`. Finding **AUD-015**.
 >
 > ⛔ **Vincola entrambe le implementazioni, ed è per questo che vive nella suite di conformità**
 > (§7.4.6) e non dentro una delle due. Una tabella chiavata sull'identità del passo — la scelta
@@ -1151,6 +1192,11 @@ giornale (ADR-0018), e sono prompt, risposte e output degli strumenti oltre alle
 trascrizioni. «Unica perdita ammessa» vale qui, non lì: un payload potato **dichiara** di
 esserlo, e quella non è una perdita silenziosa.
 
+⚠️ **RICHIAMO DEL 2026-08-27 — quella frase descrive la REGOLA di ADR-0018, non ciò che il
+codice fa:** entrambe le implementazioni **tolgono** il record invece di sostituirlo, quindi oggi
+un payload potato **non** dichiara di esserlo. La misura, e chi la chiude, stanno nel richiamo
+della §4.5. Finding **AUD-031**.
+
 La **ricomposizione della proiezione** non è in questo sotto-progetto (§0.4, regola C): non
 ha consumatore finché nessuno chiama un modello. Il *modello dei dati* però sì, perché è la
 forma del giornale e la riconciliazione lo rilegge.
@@ -1166,6 +1212,35 @@ forma del giornale e la riconciliazione lo rilegge.
 Due regole non negoziabili di [ADR-0018](../../adr/0018-ritenzione-a-livelli-del-giornale.md):
 un record potato **dichiara di esserlo** — payload assente e payload mai registrato non
 devono confondersi — e **un passo in dubbio non è potabile** finché non è riconciliato.
+
+> ⛔ **RICHIAMO DEL 2026-08-27 — NESSUNA DELLE DUE È TENUTA PER INTERO, e le regole restano
+> quelle: a cadere è l'affermazione che il codice le rispetti.** Finding **AUD-031** e
+> **AUD-006** del secondo audit completo.
+>
+> | La regola | Cosa fa il codice |
+> |---|---|
+> | un record potato **dichiara di esserlo** | ⛔ **violata da entrambe le implementazioni.** Nessuna sostituisce niente: `MemoryJournal` toglie le voci, `FileJournal` toglie le righe, e nel codice non esiste nessuna impronta. **Misurato il 2026-08-10:** un passo potato e uno **mai scritto** rispondono entrambi `Err(Missing)` a `read_back`, sono entrambi assenti da `replay`, e una seconda `prune` non li distingue |
+> | **un passo in dubbio non è potabile** | ⚠️ **tenuta dalla porta con un'ALTRA nozione di dubbio.** La porta chiede *quale operazione è stata chiamata* — un `intent` senza `outcome`; la §4.3 chiede *cosa dicono i record*, decodificandoli, e un record che questa build non decodifica **entra** nel dubbio. ⛔ **Le due divergono nel verso che AUTORIZZA la potatura**, misurato il 2026-08-27 da **fuori** la crate e su **entrambe**: `steps_in_doubt` risponde `[InDoubt { step: StepId(1), resolution: SuspendAndAsk }]` e `prune` risponde `Ok(())` |
+>
+> ⛔ **Nessuna delle due si chiude qui, e il perché è scritto invece che taciuto.** La prima
+> vuole l'**impronta** che ADR-0018 chiede a un record potato; l'impronta vuole una funzione di
+> hash, e nel kernel quella è una **voce nuova nella lista di ADR-0031** — un atto deliberato
+> che nessuna misura ha preparato. ⚠️ **E la via che sembrava non costarla è stata cercata e la
+> misura la uccide:** svuotare il payload lasciando la voce li rende distinguibili, ma
+> `steps_in_doubt` risponde allora `SuspendAndAsk` su **ogni** passo potato, a **ogni** ripresa
+> — byte vuoti sono indecifrabili. La seconda **non è chiudibile sulla porta**, che non
+> decodifica (ADR-0036): la guardia appartiene a **chi chiama**, e quel chiamante **non esiste
+> ancora**. ⚠️ **Quanti ne abbia oggi non è scritto qui:** la misura e chi la chiude stanno nella
+> **voce aperta 3** di [`porta-di-qualita.md`](../../porta-di-qualita.md), in una casa sola — una
+> frase al presente sui chiamanti di una funzione diventa falsa **nel commit che ne scrive il
+> primo**, e questo repository l'ha già pagata una volta con `ask_back`.
+>
+> ⚠️ **L'obbligo è quindi scritto accanto al metodo**, in `crates/kernel/src/ports/journal.rs`:
+> la spazzata di ritenzione vive nel kernel e **può** decodificare, quindi dovrà consultare
+> `steps_in_doubt` e saltare ciò che quello restituisce invece di poggiare sulla guardia della
+> porta. **Chi le chiude:** il traguardo che porta la ritenzione, insieme alla decisione
+> sull'impronta. Le voci aperte stanno in
+> [`porta-di-qualita.md`](../../porta-di-qualita.md).
 
 ### 4.6 I due livelli di crash
 
@@ -3407,7 +3482,7 @@ disallineano (§7.4.4, caso 2).
 | V23 | la provenienza del contenuto è visibile in interfaccia | ⏳ rimandato | vincolo interamente d'interfaccia | A (2) |
 | V24 | il giornale è la sorgente; trace, metriche e costi ne sono proiezioni | ⚠️ parziale | test a esempi: il picco di VRAM (§5.2.2) e i permessi attivi (§6.6) si ricavano **rileggendo il giornale**, e non esiste un secondo archivio da cui ricavarli. **La proiezione trace non esiste**, quindi l'altra metà non ha soggetto | A (2) |
 | V25 | nessuna telemetria **lascia la macchina** per default; un solo punto di uscita | ⚠️ parziale | il controllo gira a ogni commit e la **sonda scatta** — una chiamata di rete in `daemon` lo accende; **la contro-sonda non esiste**: la lista è vuota e non c'è niente di legittimo da lasciar passare (§7.4.2). È l'unica voce del catalogo provata in una direzione sola | B (3) |
-| V26 | la ritenzione pota i payload grezzi, mai i record strutturati | ✅ verificato qui | `prune` è un'operazione della porta `journal` (§4.1) · test a esempi sulle due regole non negoziabili di ADR-0018: un record potato **dichiara** di esserlo, e un passo in dubbio non è potabile (§4.5) | — |
+| V26 | la ritenzione pota i payload grezzi, mai i record strutturati | ✅ verificato qui | `prune` è un'operazione della porta `journal` (§4.1) · test a esempi sulle due regole non negoziabili di ADR-0018: un record potato **dichiara** di esserlo, e un passo in dubbio non è potabile (§4.5). ⚠️ **RICHIAMO DEL 2026-08-27:** la §4.5 porta ora il proprio richiamo, e dichiara che **nessuna delle due** regole è tenuta dal codice — la prima è **violata** da entrambe le implementazioni, la seconda è tenuta con un'**altra nozione** di dubbio. Senza questo rimando le due sedi si contraddicono attraverso la citazione che le lega. ⛔ **Ri-giudicare lo stato è un'altra decisione e sta altrove:** è il finding **AUD-005**, radice R7, **aperto** | — |
 | V27 | nessuna azione fallisce per una condizione già nota e non dichiarata | ⚠️ parziale | lo stato di degrado è un oggetto derivato in perimetro (§6.7) e Q18 lo verifica in DST; **che l'interfaccia lo dichiari prima** no | A (2) |
 | V28 | nessun modello nel percorso decisionale del kernel; **verificabile staticamente** | ✅ verificato qui | §7.4.2, riga I3 · V28 — corollario dell'allow-list: un percorso verso un adattatore comparirebbe nel grafo transitivo (§7.4.4 punto 2). Livello 2, sonde N1–N3 e contro-sonda N4. ⚠️ ADR-0031 dichiara il proprio limite: *«limita la superficie, non la certifica»* | — |
 | V29 | tempo, casualità, I/O, scheduling **e i parametri di decisione** iniettabili | ✅ verificato qui | `no_std` e il divieto gratuito di `HashMap`, livello 1 · allow-list e cancello senza OS, livello 2 · §7.4.1 C, righe `V29 · §2.1` e `V29 · §2.8` — scambiare monotonic e wall time non compila, e nemmeno costruire una decisione senza i parametri consegnati · la campagna DST stessa, il cui criterio C1 fallisce a ogni sorgente nascosta di non determinismo (§3.7). ⚠️ `HashMap` fuori dal kernel è **deliberatamente non controllato**: §7.4.4 punto 1. ⚠️ **Formulazione allargata il 2026-08-08 chiudendo la §7.1.1**, e confrontata con la fonte come impone §8.5.5: il testo nominava quattro assi, ADR-0034 ne aveva aggiunto un quinto il 2026-08-07. **Lo stato non cambia** — il quinto asse è difeso da un controllo di livello 1 già in perimetro | — |

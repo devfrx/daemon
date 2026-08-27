@@ -91,8 +91,8 @@ cambia la proiezione, non i dati.
 
 | Regola | Motivo |
 |---|---|
-| Un record potato **dichiara** di esserlo | payload assente e payload mai registrato non devono confondersi |
-| Un passo `InDubbio` **non è potabile** | la riconciliazione può dipendere dal payload |
+| Un record potato **dichiara** di esserlo | payload assente e payload mai registrato non devono confondersi. ⚠️ **Rimando del 2026-08-27:** non tenuta dal codice — vedi il rimando in [ADR-0018](../adr/0018-ritenzione-a-livelli-del-giornale.md) |
+| Un passo `InDubbio` **non è potabile** | la riconciliazione può dipendere dal payload. ⚠️ **Rimando del 2026-08-27:** la porta la tiene con un'altra nozione di dubbio, e le due divergono — stesso rimando in [ADR-0018](../adr/0018-ritenzione-a-livelli-del-giornale.md) |
 | I fallimenti candidati a regressione si **promuovono** prima della potatura | potare un fallimento non sfruttato butta via il dato più prezioso |
 
 È la stessa gerarchia della compattazione del contesto (§4): ciò che è strutturato

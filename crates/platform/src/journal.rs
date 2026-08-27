@@ -578,6 +578,13 @@ impl Journal for FileJournal {
         // pruning it destroys the only trace of something that MAY have happened. The refusal
         // returns BEFORE any removal and before the commit, so a refused prune leaves the
         // archive byte-identical.
+        //
+        // ⚠️ "IN DOUBT" HERE IS THE PORT'S NOTION AND NOT §4.3's — this asks which OPERATION was
+        // called, the kernel's decodes the records — ⛔ AND THE TWO CAN DIVERGE IN THE DIRECTION
+        // THAT AUTHORISES PRUNING: an outcome whose bytes the kernel cannot decode is closed
+        // here and in doubt there, measured on 2026-08-27 on both implementations. It is a
+        // LIMIT and not a nuance, and it is declared once, on `Journal::prune`, together with
+        // the obligation it puts on whoever calls.
         if !closed {
             return Err(JournalError::StepInDoubt);
         }

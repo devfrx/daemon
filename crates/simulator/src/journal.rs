@@ -204,7 +204,11 @@ impl Journal for MemoryJournal {
         // while the kernel's asks what the RECORDS say, by decoding them. The port cannot
         // decode anything (ADR-0036), which is exactly why `EntryKind` above exists and why
         // `Journal::replay` can say "the port does not know what in doubt means" without
-        // contradicting this line. ⚠️ AND THE NOTE IS NOT AN OUTCOME: a step whose only company
+        // contradicting this line. ⛔ AND THE TWO CAN DIVERGE IN THE DIRECTION THAT AUTHORISES
+        // PRUNING — an outcome whose bytes the kernel cannot decode is closed HERE and in doubt
+        // THERE, measured on 2026-08-27 on both implementations. It is a LIMIT and not a nuance,
+        // and it is declared once, on `Journal::prune`, together with the obligation it puts on
+        // whoever calls. ⚠️ AND THE NOTE IS NOT AN OUTCOME: a step whose only company
         // for its intent is a note is still in doubt, which is the whole reason this asks for
         // `EntryKind::Outcome` by name instead of counting records.
         let closed = self

@@ -95,7 +95,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              NON serve ora: quello dell'11
                                              agosto è eseguito per intero
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 612 KB in tutto
+LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 622 KB in tutto
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
@@ -146,8 +146,8 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 612 KB in tutto
    più PICCOLO, più GRANDE, o DI SPECIE DIVERSA.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 777 KB
-   il 2026-08-25, la spec da sola 277, i quattro piani più grandi 373, 168,
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 789 KB
+   il 2026-08-27, la spec da sola 284, i quattro piani più grandi 373, 168,
    162 e 114 — e l'idea è già nel compendio. ⛔ IL PIÙ GRANDE DEI QUATTRO È
    L'ULTIMO ESEGUITO, e si apre A COMPITI: è cresciuto a ogni compito, perché
    l'errata cresceva.
@@ -310,8 +310,8 @@ COMPITI e mai interi.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **LA SERIE HA GIRATO, e quanto pesa OGGI non è scritto qui:** lo rimisura la **§12 del compendio** a ogni passata, e questa cella ne teneva una seconda copia **ferma al 2026-08-18** — *«14,7 KB»* — che nessuna delle tre passate successive aveva mosso. **Tolta, non riallineata** (gotcha **#68**). La storia resta perché è storia: era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **580 KB** — `CLAUDE.md` più il compendio, e **612** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 580 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **590 KB** — `CLAUDE.md` più il compendio, e **622** con l'audit |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 590 KB |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -325,7 +325,7 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **612 KB contro 777**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+resta quello che conta: **622 KB contro 789**. ⛔ **E il 2026-08-18 una passata ha trovato che il
 `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
 `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
 e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del

@@ -119,9 +119,28 @@ fn cold_start_is_readable_outside_the_decision_path() {
 }
 
 /// ⛔ THE TWO STRUCTURES ARE TIED BY A NAME AND BY NOTHING ELSE, and §5.2.1 priced that
-/// exactly: "two structures instead of one, and one more place to keep them aligned". This
-/// probe is that place, and it is a probe rather than a type because a shared type would
-/// put `cold_start` back within reach of the admission.
+/// exactly: "two structures instead of one, and one more place to keep them aligned". It is a
+/// probe rather than a type because a shared type would put `cold_start` back within reach of
+/// the admission.
+///
+/// ⛔ THIS PROBE IS NOT THAT PLACE, and this comment claimed it was until 2026-08-27 --
+/// finding AUD-020. Both strings are LITERALS of this bench, written eight lines apart, so the
+/// `assert_eq!` compares two copies of one constant and NOTHING in `crates/kernel/src/` can
+/// turn it red. ⚠️ ITS REAL STRENGTH IS LEVEL 1, at the compiler: that the two shapes exist,
+/// carry those field names and those field types, and are constructible from OUTSIDE the crate
+/// -- the only place a missing `pub` shows up, gotcha #46.
+///
+/// ⛔ THE REGISTER HAD IT RIGHT SINCE TASK 3 AND THIS COMMENT WAS NEVER READ AGAINST IT: voice
+/// `E5` of the Milestone 5 plan, and "Livello 1 · `ResourceProfile` e `WorkDescriptor`" in
+/// `docs/porta-di-qualita.md`. `E5` also decided NOT to touch the test -- a second literal or a
+/// lookup would build a mechanism the task did not ask for -- so reopening that needs new
+/// evidence (gotcha #32).
+///
+/// ⚠️ NOTHING HOLDS THE ALIGNMENT TODAY, and that is a declared limit, not a residue: the
+/// product never builds a `WorkDescriptor` at all. Measured 2026-08-27 --
+/// `grep -rn 'WorkDescriptor {' crates/ --include=*.rs` names `resource.rs`, where the type is
+/// defined, and this file twice. The cost §5.2.1 accepted falls due at the first descriptor the
+/// product builds, and whoever writes it inherits this paragraph.
 #[test]
 fn a_descriptor_names_the_profile_it_describes() {
     let profile = ResourceProfile {

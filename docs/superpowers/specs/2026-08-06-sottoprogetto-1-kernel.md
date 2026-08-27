@@ -405,7 +405,7 @@ La colonna che conta è l'ultima. Gotcha #13: **un lint non è il compilatore.**
 | niente `HashMap` nominato nel kernel e nel simulatore | V29 | conseguenza gratuita di `no_std`: `HashMap` vive in `std`, non in `alloc` | **compilatore**, a costo zero — ma vale la riga 2: una dipendenza può portarne uno |
 | niente `HashMap` nelle altre crate | V29 | `clippy.toml` | ⚠️ **lint** — scavalcabile con una riga |
 | il kernel non ha un percorso verso il gateway per proprio conto | V28 | grafo delle crate + driver | test |
-| solo `secrets` tocca il portachiavi | V34 | grafo delle crate | test |
+| solo `secrets` tocca il portachiavi | V34 | grafo delle crate — ⚠️ **nessuno script lo misura oggi**: `gate-deps.sh` guarda i grafi di `kernel` e `simulator`, non quelli di `platform` e `secrets` (2026-08-27, AUD-026) | test — ⏳ **rimandato**, §8.3 |
 | un solo punto di uscita verso la rete | V25 | allow-list delle crate autorizzate, **oggi vuota** | test |
 
 > ✅ **Due rimandi dalla §7.4.4**, dove il catalogo dei controlli ha ridotto questa tabella
@@ -2889,7 +2889,7 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 | I3 · **V28** | allow-list, grafo **spedito** (§7.3.1) | N1 · N2 · N3 | **N4** |
 | **1b** · validità di §7.4.1 | allow-list, grafo **di build** (§7.3.1) | voce nuova non in lista | voce in lista resta verde |
 | I3 | cancello senza OS su `x86_64-unknown-none` (§7.3.2) | **B2** | **B3** |
-| V34 · Q24 | solo `secrets` raggiunge il portachiavi | il portachiavi nel grafo di `platform` → scatta | `secrets` resta verde |
+| V34 · Q24 | solo `secrets` raggiunge il portachiavi | ⚠️ **non esiste** — vedi sotto | ⚠️ **non esiste** — vedi sotto |
 | V25 · Q20 | un solo punto di uscita verso la rete | chiamata di rete in `daemon` → scatta | ⚠️ **non esiste ancora** — vedi sotto |
 | Q2 · Q3 · Q4 · Q5 · Q18 · Q22 · I1 · I2 · I5 · V1 · V6 | **la campagna DST** (§3.5) | si rompe l'ammissione: la campagna fallisce e **nomina il seme** (§5.7.1) | senza guasto iniettato, **nessun passo in dubbio** — misurato, C7a di M-2 |
 | **1b** · validità di §7.4.2, riga della campagna DST | **test di contratto** — §7.4.6 | il doppio diverge dall'implementazione reale → scatta | i due concordi → verde |
@@ -2990,6 +2990,26 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 >
 > È quindi l'unica voce del catalogo **provata in una direzione sola**. Si completa nel
 > sotto-progetto che accende la rete, e fino ad allora la §8 la registra come tale.
+
+> ⛔ **E LA RIGA DI V34 · Q24 NON HA NÉ SONDA NÉ CONTRO-SONDA — dichiarato il 2026-08-27,
+> finding AUD-026 del secondo audit.** Le due celle promettevano *«il portachiavi nel grafo
+> di `platform` → scatta»* e *«`secrets` resta verde»*, e **nessuna delle due può scattare**:
+> `scripts/gate-deps.sh` cicla su `for crate in kernel simulator` e non misura mai il grafo
+> di `platform`; e nessuna crate di portachiavi esiste — un `grep -rni` su `scripts/`,
+> `.github/` e `crates/` per *keyring*, *portachiavi* e *credential* restituisce **due righe
+> di commento** in `crates/secrets/src/lib.rs` e nient'altro (misurato il 2026-08-27).
+>
+> ⚠️ **La contro-sonda è vacua per la ragione di §8.5.3.1, non per costo:** senza nessuna
+> credenziale nel perimetro, un controllo proverebbe **l'assenza di una cosa che non c'è** —
+> gotcha #17. È la stessa lettura che ha declassato **V16**, che parla della stessa sostanza,
+> e per questo **V34**, **Q24** e **Q17** passano a ⏳ **rimandato** con innesco **B**.
+>
+> 📌 **Che le crate siano cinque e non quattro resta una scelta di scrittura giusta**
+> (§1.2) — ma una scelta di scrittura non è un controllo, ed è esattamente la distinzione
+> che la §7.0 esiste per fare. ⛔ **E gli altri due registri lo dicevano già:**
+> [`porta-di-qualita.md`](../../porta-di-qualita.md) conta il portachiavi fra le righe
+> **scoperte**, e la §6 del compendio lo porta fra le questioni **da assegnare**. A mentire
+> era questa tabella, sola contro due: è la radice **R1** dell'audit del 2026-08-27.
 
 > ⚠️ **La riga dei byte congelati è aggiunta il 2026-08-07 con
 > [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md), e porta con sé
@@ -3490,7 +3510,7 @@ disallineano (§7.4.4, caso 2).
 | V31 | ogni difetto trovato in simulazione conserva il proprio seme **come caso di regressione** | ✅ verificato qui | il seme entra nell'elenco versionato, la **proprietà** entra nella suite (§7.4.2). ⚠️ debole per natura: l'automatismo protegge la proprietà, non il seme (§3.4). Nessun innesco la rafforza — è un limite, non un pezzo mancante | — |
 | V32 | il backup contiene solo l'irriproducibile | ⏳ rimandato | il backup si scaglia per regola C (§0.4.1). ⚠️ verificarlo prima che esistano indici e pesi sarebbe **vacuo**: l'elenco delle esclusioni sarebbe vuoto | F — esistono backup e ripristino (11) |
 | V33 | i segreti non entrano mai nel backup automatico | ⏳ rimandato | idem (§0.4.1). Il **layout per natura** di ADR-0022 è invece già rispettato: `secrets` è un archivio distinto (§1.2) | F (11) |
-| V34 | il **gestore dei segreti** è l'**unico** punto di lettura delle credenziali; verificabile staticamente | ✅ verificato qui | `secrets` è una crate separata e il grafo lo rende verificabile: livello 2, con sonda e contro-sonda (§7.4.2). È il motivo per cui le crate sono cinque e non quattro (§1.2) | — |
+| V34 | il **gestore dei segreti** è l'**unico** punto di lettura delle credenziali; verificabile staticamente | ⏳ rimandato | ⛔ **DECLASSATA DA ✅ IL 2026-08-27, finding AUD-026:** la cella diceva *«livello 2, con sonda e contro-sonda (§7.4.2)»* e quel controllo **non esiste** — `gate-deps.sh` misura i grafi di `kernel` e `simulator`, mai quello di `platform`, e in tutto il repository non esiste nessuna crate di portachiavi. Che `secrets` sia una crate separata resta vero ed è il motivo per cui le crate sono cinque e non quattro (§1.2), ma è una **scelta di scrittura** e non un controllo: §8.1.2, e la stessa lettura che declassò **V16** (§8.5.3.1). Il riquadro sotto la tabella di §7.4.2 porta la misura | B (3) |
 | V35 | nessuna esecuzione di codice o comando sotto il livello 2 | ⚠️ parziale | **test a esempi**, gli stessi che rendono ✅ V37: il livello di confinamento è un campo obbligatorio dell'azione e finisce nel giornale. ⚠️ **Meccanismo rinominato il 2026-08-08:** la cella diceva «entrano (§7.4.5)», che è una voce di sezione e non una delle tre risposte ammesse da §8.1.2 — la stessa forma dei difetti §8.5.3 e §8.5.4. **Il quarto gettone si scaglia** perché nessuna porta esegue comandi qui, ed è retrofittabile: §7.4.5 | D — si esegue un comando (5) |
 | V36 | gli effetti fuori dagli ambiti dichiarati **non sono coperti dal checkpoint** e restano soggetti alle classi di effetto | ⚠️ parziale | §7.4.1 C, riga V5 — un effetto senza classe non compila, **dentro o fuori un ambito indifferentemente**, ed è ciò che V36 chiede. **Che il checkpoint copra davvero gli ambiti** richiede il filesystem reale, scaglionato (§0.4, §10) | D (5) |
 | V37 | il livello di confinamento usato entra nel giornale insieme al passo | ✅ verificato qui | test a esempi: è la parte che §7.4.5 fa entrare comunque | — |
@@ -3515,14 +3535,14 @@ disallineano (§7.4.4, caso 2).
 | Q14 | ricostruire con cosa è stato eseguito un passo di sei mesi fa | ✅ verificato qui | il record di routing è **risolto** e giornalato col passo (§6.2): test a esempi su un giornale sintetico. La proprietà è strutturale — il record non rimanda alla configurazione, quindi non dipende da essa. ⚠️ **Il meccanismo è cresciuto il 2026-08-07 con ADR-0036**, e senza di esso «sei mesi fa» era una promessa: il record **dichiara la propria versione** — enum di versione al compilatore (§7.4.1 C) — e i **byte congelati** con la mappa `indice → nome → valore atteso` provano che un giornale scritto oggi si rilegge domani (§7.4.2, §4.9.4). ⛔ Vale il limite di §4.9.4: il compilatore prova che una versione è **dichiarata**, non che sia quella **giusta**. Un campo aggiunto dopo — il passo padre di un fork, §4.9.5 — è **facoltativo con un indice nuovo**, quindi non rompe la rilettura | — |
 | Q15 | un'istruzione trovata nei dati non autorizza | ⚠️ parziale | la metà **statica** è qui: §7.4.1 C, **le due** righe Q9·I6·V20 — la regola A (`Untrusted` dove è attesa un'`Instruction`) e la regola B (nessuna via `From`/`Into`) — più il gettone `journal` sulla conversione (§7.4.1 B, V19). ⚠️ **Riletta il 2026-08-09:** la cella diceva «riga» al singolare, ed era vera finché la riga era una; dal richiamo di §7.4.1 sono due, e la seconda è quella che vede il ponte di conversione. **Lo stato non cambia** · la metà a esempi — *l'obbligo di autorizzazione* — richiede il mediatore e il ciclo di approvazione, scaglionati per regola C | C (4) |
 | Q16 | descrizione MCP cambiata dopo l'approvazione | ⏳ rimandato | il metodo è un test di contratto contro un server MCP finto, e non esistono strumenti (§0.6) | C (4) |
-| Q17 | un segreto compare in contenuto in uscita | ⚠️ parziale | lato kernel: §7.4.2, riga V34 · Q24 — solo `secrets` raggiunge il portachiavi, livello 2 provato in due direzioni · **il canary è scaglionato** (§0.4, §6) e non c'è contenuto in uscita da controllare. ⛔ **Precisato il 2026-08-08, perché la cella si attribuiva un merito altrui:** il metodo che `design/08` assegna a Q17 è il **canary a esempi**, e **non ne gira niente**; il controllo di livello 2 qui accreditato è quello che `design/08` assegna a **Q24**. Resta ⚠️ e non ⏳ perché è esattamente la classe di §0.6 — *«verificato solo lato kernel»* — che §8.1.1 dichiara essere una delle due ragioni per cui il quarto stato esiste | B (3) |
+| Q17 | un segreto compare in contenuto in uscita | ⏳ rimandato | lato kernel: §7.4.2, riga V34 · Q24 — solo `secrets` raggiunge il portachiavi, livello 2 provato in due direzioni · **il canary è scaglionato** (§0.4, §6) e non c'è contenuto in uscita da controllare. ⛔ **Precisato il 2026-08-08, perché la cella si attribuiva un merito altrui:** il metodo che `design/08` assegna a Q17 è il **canary a esempi**, e **non ne gira niente**; il controllo di livello 2 qui accreditato è quello che `design/08` assegna a **Q24**. Resta ⚠️ e non ⏳ perché è esattamente la classe di §0.6 — *«verificato solo lato kernel»* — che §8.1.1 dichiara essere una delle due ragioni per cui il quarto stato esiste ⛔ **DECLASSATA DA ⚠️ A ⏳ IL 2026-08-27, finding AUD-026:** la metà *«lato kernel»* era **la riga V34 · Q24**, e quel livello 2 **non esiste** — quindi non resta niente di verificato qui, e la ragione scritta sopra (*«resta ⚠️ perché è la classe di §0.6»*) cade con la propria premessa. ⚠️ **Il capoverso del 2026-08-08 NON si riscrive**: è un verbale, e diceva già il vero su `design/08` | B (3) |
 | Q18 | perdita della rete | ⚠️ parziale | il metodo di `design/08` — DST con iniezione del guasto — è eseguibile e verifica che il degrado sia dichiarato **prima** del primo fallimento (§3.3); ma `network` non ha implementazione reale, quindi nessuna conformità (§8.2.2) | B (3) |
 | Q19 | capire cosa è andato storto in una run di 4 ore | ⏳ rimandato | il metodo poggia sulla **proiezione trace**, scaglionata per regola C (§0.4, §7) | A (2) |
 | Q20 | nessun dato lascia la macchina | ⚠️ parziale | la metà statica è §7.4.2, riga V25 · Q20: il controllo gira, la sonda scatta, **la contro-sonda non esiste** · il test «assenza di traffico a default» è eseguibile ma **vacuo** finché nessuno può generarne — gotcha #17 | B (3) |
 | Q21 | ripristino da backup su una macchina nuova | ⏳ rimandato | il metodo di `design/08` è *«backup e ripristino su ambiente pulito»*, e qui non esiste né l'uno né l'altro: il backup si scaglia per regola C (§0.4.1). ⚠️ la §0.6 lo elencava fra i «verificati solo lato kernel»: disallineamento trovato e corretto, §8.5.1 | F (11) |
 | Q22 | annullare un passo che ha modificato file | ⚠️ parziale | la DST inietta la caduta durante la conservazione (§3.3) e il lato kernel — ambiti dichiarati, riferimento sul passo — entra; `filesystem` non ha implementazione reale (§8.2.2), quindi «l'ambito torna byte-identico» è provato su un albero in memoria | D (5) |
 | Q23 | esecuzione sotto il livello 2 di confinamento | ⚠️ parziale | ⚠️ **Riletto il 2026-08-08: `design/08` chiede _due_ cose, non una** — *«statica: nessun percorso di esecuzione senza livello richiesto»* **più** un *«test negativo: con confinamento indisponibile l'azione non parte»*. **Nessuna delle due gira qui**, e per lo stesso motivo: nessuna porta esegue comandi (§7.4.5). Ciò che entra sono i **test a esempi** su tipo, dichiarazione per azione e registrazione nel giornale — che è V37, ed è meno di quanto `design/08` chiede | D (5) |
-| Q24 | lettura di credenziali fuori dal gestore dei segreti | ✅ verificato qui | statica sul grafo delle crate: solo `secrets` raggiunge il portachiavi. Livello 2, con sonda e contro-sonda (§7.4.2) | — |
+| Q24 | lettura di credenziali fuori dal gestore dei segreti | ⏳ rimandato | ⛔ **DECLASSATA DA ✅ IL 2026-08-27, finding AUD-026:** questa cella accreditava il livello 2 di §7.4.2, riga V34 · Q24, e quel controllo **non esiste in nessuna delle due direzioni** — vedi la riga V34 di §8.3 e il riquadro sotto la tabella di §7.4.2. Il metodo che `design/08` assegna a Q24 è proprio quella statica sul grafo delle crate, quindi §8.1.3 non lascia un secondo criterio da invocare | B (3) |
 
 ### 8.5 Cinque disallineamenti che la copertura ha trovato, e tutti chiusi
 

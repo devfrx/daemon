@@ -157,6 +157,12 @@ pub struct ResourceProfile {
 /// -- and a shared type would put `cold_start` back within reach of the decision, which is
 /// the whole thing this split exists to prevent.
 ///
+/// ⚠️ AND THE PLACE THAT KEEPS THEM ALIGNED DOES NOT EXIST YET, written here because this is
+/// where whoever builds the first descriptor will look: nothing in the product builds one, so
+/// there is no pair to keep aligned and nothing that could hold it. Declared 2026-08-27,
+/// finding AUD-020 -- the paragraph that measures it sits on
+/// `a_descriptor_names_the_profile_it_describes` in `crates/kernel/tests/arbiter_resource.rs`.
+///
 /// ⚠️ NOT TO BE CONFUSED WITH `crate::ports::process::WorkerDescriptor`, which is one letter
 /// away and is a different thing: that one is WHAT TO START, opaque bytes for the OS. No
 /// file imports both unqualified.

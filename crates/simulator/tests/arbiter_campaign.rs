@@ -267,9 +267,28 @@ static PARTIES: [Party; 4] = [
     party("index", 2_048, ComputeClass::Batch, 1_400, 900, 900, 500),
 ];
 
-/// What one run of the scenario observed. ⛔ IT IS THE INDEPENDENT ORACLE, and it comes from
-/// the ACTIVITIES rather than from the arbiter: the properties below walk what the activities
-/// were told happened. An arbiter that lied about its own totals would make the two disagree.
+/// What one run of the scenario observed. ⛔ SIX OF ITS EIGHT FIELDS COME FROM THE ACTIVITIES
+/// rather than from the arbiter -- `granted`, `queued`, `refused`, `promoted`, `released` and
+/// `already_collected` are what the activities were TOLD happened, and an arbiter that lied
+/// about those answers would disagree with its own books.
+///
+/// ⛔ THE OTHER TWO READ THE BOOKS, and this header called the whole struct THE INDEPENDENT
+/// ORACLE until 2026-08-27 -- finding AUD-065. `peak` and `room_from_expiry` are filled from
+/// `Arbiter::allocated()` -- the snapshot taken before `admit`, and `watch` below -- and so is
+/// the assertion this file calls load-bearing. Both fields were added for properties 1 and 5,
+/// which NEED the number the books hold, and the opening sentence was never narrowed against
+/// them: an assertion not read against its own siblings inside one struct, gotcha #59 in its
+/// small form.
+///
+/// ⚠️ WHAT THAT COSTS PROPERTY 1, said plainly instead of left implied: `allocated() <= TOTAL`
+/// is checked against the accounting the arbiter declares of ITSELF, not against a sum of the
+/// grants the activities hold. This bench keeps those grants in `running` and never adds their
+/// reservations up -- and a raw sum would not be an oracle either, because an activity can
+/// still hold a grant the sweep has already reclaimed, which is exactly what
+/// `already_collected` counts. ⛔ THE GUARD IS NOT VACUOUS: with `admit`'s ceiling comparison
+/// mutated it was seen RED on all five probes, naming the seed and both values
+/// (`docs/porta-di-qualita.md`, Milestone 5 Task 12). What was false is only the claim of
+/// INDEPENDENCE, and building a second, genuinely independent sum is a decision for the owner.
 ///
 /// ⛔ IT IS ALSO THE POINT IN THE OUTCOME SPACE, which is why it derives `Ord`: the campaign
 /// counts how many DISTINCT ones a sweep produces, and that count is what

@@ -71,8 +71,34 @@ spec_count=$(ls docs/superpowers/specs/*.md 2>/dev/null | wc -l)
 [ "$spec_count" -gt 0 ] ||
   report "no spec found under docs/superpowers/specs/: the duplicate-section and V30 checks would both pass on nothing."
 
+# ⛔ THE PATTERN WAS WRONG IN TWO WAYS AT ONCE, both corrected 2026-08-27 -- finding AUD-025.
+# It read '^#{2,3} [0-9]+(\.[0-9]+)?' and neither half of that survived measurement.
+#
+# 1. `#{2,3}` IS BLIND TO `####`, which is where most of the numbering lives. Measured on the
+#    spec this check governs: 88 numbered headings at levels two and three, and 96 at level
+#    four. The check looked at fewer than HALF of them, and the blind half is exactly where
+#    §7.4.1, §7.4.3 and §8.6.1 live -- the anchors the two awk passes of THIS file use as
+#    delimiters, and the targets every cross-document reference points at. A duplicated §7.4.1
+#    is a duplicated delimiter for the checks below and a reference that resolves to two
+#    places. Counter-probe run on 2026-08-27:
+#      printf '#### 7.4.1 a\n#### 7.4.1 b\n' | grep -cE '^#{2,3} [0-9]+(\.[0-9]+)?'   -> 0
+#    Two identical headings, ZERO rows handed to `uniq -d`. It is gotcha #26 moved off the
+#    delimiter and onto the PATTERN: the loop runs, the file is there, `dup` is empty by
+#    construction.
+#
+# 2. `(\.[0-9]+)?` TRUNCATES AT THE SECOND GROUP, which is a FALSE RED waiting for a file to
+#    number three levels deep under `###`. Measured the same day:
+#      printf '### 7.4.1 uno\n### 7.4.2 due\n' | grep -ohE '^#{2,3} [0-9]+(\.[0-9]+)?' | sort | uniq -d
+#      -> '### 7.4'
+#    Two DIFFERENT sections reported as one duplicate. ⚠️ It does not fire today -- no `##` or
+#    `###` heading in any spec carries three groups (measured: zero in all four files) -- so
+#    this half is a landmine defused, not a red repaired. `*` instead of `?` reads the whole
+#    number, which is the only thing that can be compared for equality.
+#
+# ✅ WITH THE NEW PATTERN THE CHECK IS GREEN ON TODAY'S FILES: no real duplicate appears at any
+# level, measured before the change rather than discovered by it.
 for f in docs/superpowers/specs/*.md; do
-  dup=$(grep -ohE '^#{2,3} [0-9]+(\.[0-9]+)?' "$f" | sort | uniq -d | tr '\n' ' ')
+  dup=$(grep -ohE '^#{2,6} [0-9]+(\.[0-9]+)*' "$f" | sort | uniq -d | tr '\n' ' ')
   [ -z "${dup// /}" ] || report "duplicate sections in $f: $dup"
 done
 

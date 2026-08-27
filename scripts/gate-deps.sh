@@ -43,6 +43,18 @@ virtue"
 # Whoever "simplifies" it reopens the blind spot, and the gate goes green without saying so.
 names() { sed 's/^[^a-zA-Z0-9_-]*//' | awk '{print $1}' | grep -E '^[A-Za-z0-9_-]+$' | sort -u; }
 
+# ⛔ THE CRATES ARE A VARIABLE AND THE EXPECTED COUNT IS DERIVED FROM IT, never written twice.
+# The reverse check at the bottom is valid only if EVERY crate was measured, and a literal `2`
+# beside a list of two is the shape this repository has already paid for five times (gotcha
+# #31): the list grows, the number stays, and the guard silently starts checking a union it
+# believes complete.
+CRATES="kernel simulator"
+expected_crates=$(printf '%s\n' $CRATES | wc -l)
+measured=0
+shipped_union=""
+build_union=""
+
+
 # ⛔ `--locked` ON EVERY `cargo tree` BELOW, and it is what makes this check trustworthy at all:
 # without it cargo RE-RESOLVES, rewrites the tracked Cargo.lock, and this script then measures
 # the graph cargo has just invented instead of the one ADR-0031 approved. Measured rather than
@@ -61,7 +73,7 @@ names() { sed 's/^[^a-zA-Z0-9_-]*//' | awk '{print $1}' | grep -E '^[A-Za-z0-9_-
 # tree` that prints "Blocking waiting for file lock on package cache" would hand `names` the
 # word "Blocking", which passes its character class and would be reported as an INTRUDER on I3
 # -- a red for the wrong reason. The second run costs nothing: it happens only on the way out.
-for crate in kernel simulator; do
+for crate in $CRATES; do
   echo "== $crate: SHIPPED graph =="
   if ! shipped_raw=$(cargo tree --locked -p "$crate" -e normal,no-proc-macro --prefix none 2>/dev/null); then
     report "$crate: the SHIPPED graph could NOT be measured -- 'cargo tree --locked' failed."
@@ -102,6 +114,16 @@ for crate in kernel simulator; do
     done
   fi
 
+  # ⚠️ ACCUMULATED HERE AND NOT EARLIER, and the position is the guard: both `continue`
+  # branches above jump over this line, so a crate whose `cargo tree` failed contributes
+  # NOTHING to the union and `measured` does not count it. The reverse check below refuses to
+  # run on an incomplete union rather than reporting phantoms that are only missing.
+  shipped_union="$shipped_union
+$shipped_graph"
+  build_union="$build_union
+$build_graph"
+  measured=$((measured + 1))
+
   # Non-vacuity guard: if the two graphs COINCIDE the filter is not distinguishing
   # anything, and that is the exact condition in which M-3 was fooled (§7.2.3). It does not
   # pass in silence: the check REPORTS it.
@@ -111,9 +133,54 @@ for crate in kernel simulator; do
   fi
 done
 
+# ⛔ THE SECOND DIRECTION, ADDED 2026-08-27 -- finding AUD-027. The two loops above report what
+# is in a GRAPH and not on a LIST. NOTHING reported what is on a LIST and in no graph.
+#
+# A PHANTOM entry -- added by mistake, or left behind when the dependency was dropped from the
+# manifest -- is a permission granted in advance. The day that crate really enters the shipped
+# graph, by feature unification or on the bounce, the loop above finds it ON THE LIST and says
+# nothing: a false negative on I3, which the header of this file calls the worst way to fail for
+# this check. It also defeats what ADR-0031 asks of the gate -- that adding an entry be "a
+# deliberate and reviewable act". An entry nobody can watch arrive is neither.
+#
+# MEASURED, not reasoned: with `openssl` added as the first line of SHIPPED, this script came
+# out `OK -- the two graphs match the two lists`, exit 0.
+#
+# ⚠️ ON THE UNION AND NOT PER CRATE, and that is the point rather than a shortcut: `simulator`
+# is in the shipped graph of `simulator` and NOT in that of `kernel`, so a per-crate reverse
+# check would report it as a phantom while auditing `kernel` -- a red for the wrong reason.
+# Measured the same day: the union of the two shipped graphs is EXACTLY the five names of
+# SHIPPED, and the union of the two complements is EXACTLY the seven of BUILD_ONLY.
+#
+# ⚠️ SKIPPED WHEN A MEASUREMENT FAILED, AND THE SKIP IS ANNOUNCED. A crate whose `cargo tree`
+# failed is absent from the union, and every list entry only that crate reaches would then look
+# like a phantom. The stale lockfile is already reported above with its own remedy; reporting it
+# a second time under the wrong name is the failure §7.1.1 calls worse than no check at all.
+echo "== the two lists: entries no graph reaches =="
+if [ "$measured" -ne "$expected_crates" ]; then
+  echo "  SKIPPED -- $measured of $expected_crates graphs measured. The union is incomplete,"
+  echo "  and a phantom reported from an incomplete union would name the wrong cause."
+else
+  unione() { printf '%s\n' "$1" | grep -v '^$' | sort -u; }
+  for pair in "SHIPPED:$shipped_union" "BUILD_ONLY:$build_union"; do
+    lista_nome=${pair%%:*}
+    unione_val=${pair#*:}
+    eval "lista_val=\$$lista_nome"
+    fantasmi=$(comm -13 <(unione "$unione_val") <(unione "$lista_val"))
+    if [ -n "$fantasmi" ]; then
+      for f in $fantasmi; do
+        report "phantom entry -- '$f' is on $lista_nome and in NO graph."
+        echo "      ⛔ REMEDY: REMOVE the line. An entry that matches nothing is a permission"
+        echo "      granted in advance: the day that crate arrives, the check above stays silent."
+      done
+    fi
+  done
+  [ "$failures" -eq 0 ] && echo "  ✓ no phantom entry: every line of both lists is reached by a graph"
+fi
+
 echo
 if [ "$failures" -eq 0 ]; then
-  echo "OK -- the two graphs match the two lists."
+  echo "OK -- the two graphs match the two lists, and both directions were checked."
 else
   echo "$failures violations. Read the REMEDY: it is NOT the same for the two graphs."
   exit 1

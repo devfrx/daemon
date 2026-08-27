@@ -675,11 +675,7 @@ fn a_journal_that_answers_empty_instead_of_missing_is_caught() {
 
 #[test]
 fn a_journal_that_reads_missing_from_emptiness_is_caught() {
-    assert_caught_on(
-        EmptinessIsMissingJournal::new,
-        MISSING_MESSAGE,
-        "promise 3",
-    );
+    assert_caught_on(EmptinessIsMissingJournal::new, MISSING_MESSAGE, "promise 3");
 }
 
 #[test]

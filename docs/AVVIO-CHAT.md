@@ -116,7 +116,7 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),
      le trappole di check-docs.sh (§10), i vincoli sul primo commit (§11).
   3. docs/audit-2026-08-27.md — ⛔ SOLO FINO ALLA TABELLA DEI 73 FINDING,
-     cioè tutto cio' che sta PRIMA della sezione «Dettaglio», 50 KB. È IL
+     cioè tutto cio' che sta PRIMA della sezione «Dettaglio», 53 KB. È IL
      COMPITO DI OGGI, non un verbale.
      Contiene: come è stato condotto, la copertura, la baseline, le SETTE
      radici, lo stato dei rimedi, la sezione «Come si concludono quelli
@@ -181,7 +181,7 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
    più PICCOLO, più GRANDE, o DI SPECIE DIVERSA.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
-   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 811 KB
+   docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 812 KB
    il 2026-08-27, la spec da sola 298, i quattro piani più grandi 373, 168,
    162 e 114 — e l'idea è già nel compendio. ⛔ IL PIÙ GRANDE DEI QUATTRO È
    L'ULTIMO ESEGUITO, e si apre A COMPITI: è cresciuto a ogni compito, perché

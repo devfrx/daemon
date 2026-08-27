@@ -504,6 +504,38 @@ fn campaign(seeds: u64) -> (u64, usize) {
     // DERIVE. The budget on `SHORT_CAMPAIGN_SEEDS` is a measurement taken once, on one machine,
     // and a measurement taken once decays; printing it every run is what turns it into something
     // a reader can contradict.
+    // ⛔ NON-VACUITY FIRST, AND THE ORDER IS THE WHOLE POINT — moved here from the two callers
+    // on 2026-08-27, finding AUD-029. It used to sit AFTER `campaign` returned, in
+    // `c7b_…` and in the deep campaign, where it could not fire: the coverage assertion below
+    // runs earlier, inside this function, and is STRICTLY STRONGER. With `largest <= 1` the
+    // distinct doubt vectors are at most ACTIVITIES*STEPS + 1 — the empty set plus one singleton
+    // per step, twelve plus one today — and thirteen is less than EXPECTED_DOUBT_SETS, so the
+    // line below always fell first.
+    //
+    // ⛔ WHAT THAT COST WAS NOT A MISSING RED BUT A WRONG DIAGNOSIS, and §7.1.1 calls that worse
+    // than no check at all because it teaches people to stop reading the output. MEASURED on
+    // 2026-08-27 with `ACTIVITIES = 1` — exactly the state this guard exists to catch, and the
+    // one its own comment names:
+    //
+    //   panicked at dst_campaign.rs:519  (the coverage line, not this one)
+    //   "the campaign saw 5 of the 109 doubt vectors this scenario can produce — either the
+    //    scenario changed shape, or a sweep of 2000 seeds no longer reaches the end of the
+    //    space and the count must be re-measured"
+    //
+    // The reader is sent to re-measure the seed list. The truth was "the campaign compared empty
+    // sets", and the assertion carrying those words never spoke.
+    //
+    // ⚠️ IT IS C7b's OWN NON-VACUITY AND NOT THE CRASH ORACLE'S, which is what the callers said
+    // and still holds: the crash oracle says the fault FIRED, this one says the fault LEFT
+    // SOMETHING TO RECONCILE. They come apart — a journal that falls at write 0 makes every seed
+    // crash and every comparison `[] == []` — and it is the same defect `C7a` carried, re-imported.
+    // ⚠️ Ninety of the short campaign's seeds already compare two empty sets on their own merits;
+    // the rate walks 3.00%, 5.00%, 5.00%, 4.50%, 4.33% at 200, 500, 1 000, 2 000 and 20 000 seeds.
+    assert!(
+        largest > 1,
+        "no seed left more than one step in doubt: the campaign compared empty sets"
+    );
+
     // ⛔ THE COVERAGE CLAIM, ASSERTED WHERE THE SWEEP HAPPENS. It is what keeps the choice of
     // `SHORT_CAMPAIGN_SEEDS` honest: the reason for that number is "this many seeds see the whole
     // space of doubt vectors", and without this line that reason is a sentence in a comment that
@@ -577,24 +609,14 @@ fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
         "a seed did not reach its crash point: the scenario wrote fewer times than {WRITES_PER_RUN}"
     );
 
-    // ⛔ AND THIS IS C7b's OWN NON-VACUITY, WHICH THE LINE ABOVE IS NOT. That one says the fault
-    // FIRED; this one says the fault left something to reconcile. They come apart, measured:
-    // with a journal that falls at write 0 every seed crashes and every comparison is `[] == []`,
-    // and with a single activity every crash leaves one step at most — in both cases the
-    // assertion above is satisfied and this campaign has verified nothing. ⚠️ NINETY of these
-    // seeds already compare two empty sets on their own merits — the line read "six of these two
-    // hundred" until 2026-08-11, and it was the campaign size that moved, not the fact: six of
-    // the first two hundred seeds re-measures exactly, and the rate walks 3.00%, 5.00%, 5.00%,
-    // 4.50%, 4.33% at 200, 500, 1 000, 2 000 and 20 000 seeds — sampling noise around ~4.3%.
-    //
-    // ⚠️ IT IS THE SAME DEFECT `C7a` CARRIED UNTIL TWO TASKS AGO, re-imported: there it was
-    // "nothing was written to be in doubt about", here it is "nothing was left in doubt to
-    // disagree about". A campaign needs an oracle saying it did work, not only one saying the
-    // injection went off.
-    assert!(
-        largest > 1,
-        "no seed left more than one step in doubt: the campaign compared empty sets"
-    );
+    // ⛔ C7b's OWN NON-VACUITY IS NOT REPEATED HERE, and its absence is the fix rather than a
+    // loss — finding AUD-029, 2026-08-27. It lived on this line and could not fire: the coverage
+    // assertion inside `campaign` is strictly stronger and runs first, so a campaign that
+    // compared empty sets was reported as a seed list gone short. The guard now sits where the
+    // red is born, above that assertion, with the measurement that shows the old order gave the
+    // wrong diagnosis. ⚠️ `largest` is still returned and still printed: the number is evidence,
+    // and only the DUPLICATED assertion went.
+    let _ = largest;
 }
 
 /// The deep campaign. ⛔ `#[ignore]` rather than a shorter list: constraint 8 of §11 puts the
@@ -629,17 +651,18 @@ const DEEP_CAMPAIGN_SEEDS: u64 = SHORT_CAMPAIGN_SEEDS * 100;
 fn the_deep_campaign() {
     let (crashes, largest) = campaign(DEEP_CAMPAIGN_SEEDS);
 
-    // ⛔ THE SAME TWO ORACLES AS `c7b_…` AND NOT WEAKER ONES, because a campaign a hundred times
+    // ⛔ THE SAME ORACLES AS `c7b_…` AND NOT WEAKER ONES, because a campaign a hundred times
     // longer is a hundred times more expensive to run vacuously. Gotcha #17 does not become
     // less likely with more seeds — it becomes more silent.
+    //
+    // ⚠️ NON-VACUITY IS NOW INSIDE `campaign` AND THEREFORE ALREADY HELD HERE — finding AUD-029.
+    // This function used to repeat `largest > 1` on its own line, where the coverage assertion
+    // had always fallen first. Held once, at the place where it can actually speak.
     assert_eq!(
         crashes, DEEP_CAMPAIGN_SEEDS,
         "a seed did not reach its crash point: the scenario wrote fewer times than {WRITES_PER_RUN}"
     );
-    assert!(
-        largest > 1,
-        "no seed left more than one step in doubt: the campaign compared empty sets"
-    );
+    let _ = largest;
 }
 
 #[test]

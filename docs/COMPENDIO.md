@@ -575,11 +575,11 @@ restituito `251` al posto di `4096` senza sollevare nulla.
 
 ⛔ **IL SECONDO AUDIT COMPLETO È DEL 2026-08-27, e si legge PRIMA di riprendere:**
 [`audit-2026-08-27.md`](audit-2026-08-27.md). Diciotto revisori in parallelo, ognuno smentito da
-un secondo; **98 finding proposti, 25 scartati, 73 finali** in **sette radici**. ✅ **Sette sono
-chiusi lo stesso giorno** — AUD-019, 025, 027, 029, 047 col rosso riprodotto prima del rimedio, e
-AUD-001 e 002 sui documenti di stato. ⛔ **Gli altri sono APERTI**, e **quanti e quali non si
+un secondo; **98 finding proposti, 25 scartati, 73 finali** in **sette radici**. ✅ **Una prima serie è chiusa lo stesso
+giorno** — le cinque che toccano codice o cancello col rosso riprodotto **prima** del rimedio,
+più quelle sui documenti di stato. ⛔ **Gli altri sono APERTI**, e **quanti e quali non si
 scrive qui**: la colonna «Stato» di quel rapporto è la casa unica, e la sezione *«Come si
-concludono i 66 aperti»* è la delega. ⚠️ **Un numeratore ricopiato qui invecchierebbe al primo
+concludono quelli aperti»* è la delega. ⚠️ **Un numeratore ricopiato qui invecchierebbe al primo
 rimedio** — gotcha #68, che è la radice **R3** dell'audit stesso.
 
 **Spec del kernel §0–§10 completa.** Spec del **sotto-progetto 1** con §0–§8 approvate,

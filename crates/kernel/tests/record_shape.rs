@@ -391,8 +391,28 @@ fn bytes_that_are_not_a_record_decode_to_malformed() {
         Err(RecordError::Malformed),
         "half a record decoded as a whole one"
     );
+    // ⛔ THE INPUT THIS PROBE'S OWN HEADER PROMISED AND DID NOT HOLD — added 2026-08-27, finding
+    // AUD-047. The header says a journal hands back "whatever is on the disk, including a
+    // truncated tail AND A BYTE NOBODY WROTE", and the byte nobody wrote was never handed to
+    // `decode`. It is not the same input as the three above: those are all SHORT OR WRONG, and
+    // this one is a whole valid record with something after it.
+    //
+    // ⚠️ IT IS THE DIRECTION OF THE CONTRACT AND NOT A NEW FAILURE MODE. The three inputs above
+    // were enumerated by imagining how a write BREAKS; the counter-probe below asks that a whole
+    // record not be refused. Its twin — that something which is NOT EXACTLY a record not be
+    // ACCEPTED — was never asked, and it is the half that `Malformed`'s own words claim: "the
+    // bytes are not a record of any version this build knows". A record plus four bytes is not
+    // a record.
+    let mut with_a_tail = valid.clone();
+    with_a_tail.extend_from_slice(&[0xFF, 0xFF, 0xFF, 0xFF]);
+    assert_eq!(
+        Record::decode(&with_a_tail),
+        Err(RecordError::Malformed),
+        "a record followed by bytes nobody wrote decoded as a record, and the tail vanished"
+    );
+
     // ⚠️ And the other direction, the one that is forgotten (§7.1.1, rule 3): a `decode` that
-    // refused EVERYTHING would be green on all three assertions above.
+    // refused EVERYTHING would be green on all four assertions above.
     assert!(Record::decode(&valid).is_ok(), "a whole record was refused");
 }
 

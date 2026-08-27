@@ -372,7 +372,45 @@ impl Record {
     }
 
     /// Decodes from the bytes the `journal` port hands back.
+    ///
+    /// # ⛔ IT REFUSES A RECORD WITH ANYTHING AFTER IT, and that is the contract rather than
+    /// strictness
+    ///
+    /// `RecordError::Malformed` says "the bytes are not a record of any version this build
+    /// knows", and a record followed by four bytes nobody wrote is not a record. Until
+    /// 2026-08-27 this function answered `Ok` to exactly that and the tail VANISHED without a
+    /// word — finding AUD-047, measured rather than reasoned:
+    ///
+    /// ```text
+    /// Record::decode(&valid)           -> Ok(..)
+    /// Record::decode(&valid ++ [0xFF; 4]) -> Ok(..)   <- four bytes nobody wrote, accepted
+    /// ```
+    ///
+    /// ⚠️ THE CAUSE IS IN `minicbor` AND NOT HERE, which is why the remedy is a line of ours
+    /// rather than a bug report: `minicbor::decode` is `Decoder::new(b).decode()` (source of
+    /// 2.3.0, `src/lib.rs:173-178`) and a CBOR decoder is under no obligation to consume its
+    /// whole input — it reads one item and stops. Asking whether it stopped AT THE END is the
+    /// caller's job, and this is the caller.
+    ///
+    /// ⚠️ WHY IT MATTERS WHILE NO ARCHIVE CAN PRODUCE IT TODAY. Both implementations of the
+    /// port delimit every entry by construction, so neither hands back a tail. But that is a
+    /// property of the two IMPLEMENTATIONS, not of this TYPE, and it is this type whose doc a
+    /// reader believes. `encode` above drops its `Result` on the grounds that a stopped encoder
+    /// leaves bytes "TRUNCATED OR EMPTY" and that `decode` answers `Malformed` to both: the
+    /// opposite direction — bytes in EXCESS read as a good record — stopped nothing and was
+    /// declared nowhere. Reconciliation turns every `Err` into `SuspendAndAsk`, so an archive
+    /// that cannot be read halts the system instead of guessing (ADR-0007); an archive that is
+    /// read WRONG does neither.
     pub fn decode(bytes: &[u8]) -> Result<Self, RecordError> {
-        minicbor::decode(bytes).map_err(|_| RecordError::Malformed)
+        let mut decoder = minicbor::Decoder::new(bytes);
+        let record = decoder.decode().map_err(|_| RecordError::Malformed)?;
+
+        // ⛔ THE WHOLE OF THE FIX, AND IT IS AN EQUALITY AND NOT A `>=`: a decoder that stopped
+        // BEFORE the end left something unread, which is the same refusal for the same reason.
+        if decoder.position() != bytes.len() {
+            return Err(RecordError::Malformed);
+        }
+
+        Ok(record)
     }
 }

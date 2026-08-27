@@ -17,10 +17,18 @@ distingue da un dato; un segnaposto sì. Gotcha **#43**.
 §6 del compendio, in un posto solo. Duplicarlo qui lo farebbe divergere.
 
 ⛔ **Dice però di che _specie_ è il lavoro che viene dopo, e non è una deroga alla riga qui
-sopra.** La skill da invocare dipende dalla **specie** del lavoro — creativo, oppure
-esecuzione di un piano — non dal deliverable; e senza quella riga l'agente entra in plan
-mode **saltando il brainstorming**, che è precisamente ciò che `CLAUDE.md` vieta. Il
-*quale* deliverable resta scritto solo nella §6.
+sopra.** La skill da invocare dipende dalla **specie** del lavoro — non dal deliverable — e
+senza quella riga l'agente entra in plan mode **saltando il brainstorming**, che è
+precisamente ciò che `CLAUDE.md` vieta. Il *quale* deliverable resta scritto solo nella §6.
+
+⛔ **E le specie sono TRE, non due — la terza è nata il 2026-08-27 e va detta perché cambia la
+skill.** Prima erano *creativo* ed *esecuzione di un piano*; la terza è il **RIMEDIO DI UN
+AUDIT**, e non è nessuna delle due: non c'è niente da progettare, quindi **niente**
+brainstorming; e non c'è un piano da eseguire, perché i finding sono **indipendenti** e la
+ricetta è già scritta nel rapporto. ⚠️ **Trattarlo come creativo costa un brainstorming e un
+piano per un lavoro che non ne ha bisogno; trattarlo come esecuzione fa cercare un piano che
+non esiste.** Il messaggio qui sotto lo dice esplicitamente, ed è la riga che si riscrive per
+prima quando l'audit si chiude.
 
 ---
 
@@ -39,16 +47,18 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
-  /superpowers:brainstorming            <-- SERVE SUBITO: il piano che c'era è
-                                        ESEGUITO per intero, quindi la specie
-                                        del lavoro che viene è CREATIVA e non
-                                        esecuzione. Si invoca PRIMA di entrare
-                                        in plan mode, sempre: saltarlo è
-                                        precisamente ciò che CLAUDE.md vieta.
-                                        ⛔ QUALE lavoro apra lo dice la §6 del
-                                        compendio, che leggi comunque — non è
-                                        nominato qui apposta, un rimando non
-                                        può marcire
+  ⛔ NIENTE brainstorming, e NIENTE plan mode: la specie del lavoro che
+     viene è RIMEDIO di un audit APERTO, non creazione. La ricetta è già
+     scritta — «Come si concludono quelli aperti» nel rapporto — e i finding
+     sono indipendenti l'uno dall'altro: non c'è niente da progettare e non
+     c'è un piano da scrivere. Si prende un finding, si RIPRODUCE, si
+     corregge alla radice, si prova nelle DUE direzioni, si ricontano i
+     conteggi che il rimedio ha reso stantii, gate verde, commit, push.
+     ⚠️ Il brainstorming torna a servire quando l'audit sarà chiuso e il
+     lavoro tornerà creativo — allora PRIMA di entrare in plan mode, sempre.
+     ⛔ QUALE radice aprire lo dice il rapporto, in un posto solo: la colonna
+     «Stato» della tabella dei 73 e la sezione «L'ordine consigliato». Non è
+     nominato qui apposta, un rimando non può marcire.
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
   /superpowers:writing-plans                 quando ci sarà un piano NUOVO da
@@ -91,23 +101,33 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              il sito indicato
   /superpowers:test-driven-development       quando comincerà il CODICE, che
                                              viene dopo il piano e non prima
-  /anthropic-skills:repo-audit               se e quando si riaprirà un audit.
-                                             NON serve ora: quello dell'11
-                                             agosto è eseguito per intero
+  /anthropic-skills:repo-audit               se e quando si aprirà un audit
+                                             NUOVO. NON serve ora: quello
+                                             dell'11 agosto è chiuso, e quello
+                                             del 27 è già SCRITTO — quel che
+                                             resta è eseguirne i rimedi, che
+                                             non è un audit
 
-LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 622 KB in tutto
+LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
   1. CLAUDE.md
   2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
      cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),
      le trappole di check-docs.sh (§10), i vincoli sul primo commit (§11).
-  3. docs/audit-2026-08-11.md — 32 KB. ⛔ È IL TERZO FILE E NON È UN'ECCEZIONE
-     ALLA REGOLA DEI DUE, ed è CHIUSO: non è più IL COMPITO, è il VERBALE
-     di COME si lavora qui. Contiene la copertura dichiarata, le
-     quattro radici, i finding con causa radice e dimostrazione, ciò che è
-     stato verificato PULITO, e la §8 con le otto decisioni — TUTTE E OTTO
-     ESEGUITE, e la §5 porta in testa il richiamo datato.
+  3. docs/audit-2026-08-27.md — ⛔ SOLO FINO ALLA TABELLA DEI 73 FINDING,
+     cioè le prime ~340 righe, 42 KB. È IL COMPITO DI OGGI, non un verbale.
+     Contiene: come è stato condotto, la copertura, la baseline, le SETTE
+     radici, lo stato dei rimedi, la sezione «Come si concludono quelli
+     aperti» — che è LA DELEGA, con la disciplina in cinque passi, le due
+     trappole del repository e l'ordine consigliato — e la tabella dei 73
+     con la colonna «Stato», che è la loro CASA UNICA.
+     ⛔ IL «Dettaglio» DOPO QUELLA TABELLA NON SI LEGGE INTERO: sono 73
+     schede da ~20 righe, 205 KB, e se ne apre UNA per volta, quella del
+     finding su cui stai lavorando. Si legge a FINDING, come un piano si
+     legge a compiti.
+     ⚠️ docs/audit-2026-08-11.md — 32 KB — NON si apre più: è chiuso otto
+     decisioni su otto, e ciò che insegnava è dentro il compendio.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token, e il compendio
      ne ha oltre quattromila. È un LIMITE INFERIORE, non un totale — §12.
@@ -131,15 +151,29 @@ LEGGI QUESTI TRE FILE, PER INTERO, POI FERMATI          — 622 KB in tutto
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
-⛔ L'AUDIT È CHIUSO, E IL PIANO CHE C'ERA È ESEGUITO PER INTERO. LA SPECIE
-   DEL LAVORO CHE VIENE È: CREATIVA — prima un BRAINSTORMING, poi un piano, e
-   solo dopo il codice. Non si entra in plan mode saltando il brainstorming.
-   ⛔ Un piano già eseguito resta un VERBALE e non si riscrive; si legge a
-   COMPITI e mai intero, e le SETTE domande del pre-controllo valgono per ogni
-   compito del piano che verrà. Quale lavoro apra lo dice la §6 del compendio,
-   in un posto solo; quanto pesa ciascun file, il blocco dei pesi qui sotto.
-   ⚠️ È la riga che invecchia per costruzione: si riscrive quando il passo si
+⛔ C'È UN SECONDO AUDIT COMPLETO, DEL 2026-08-27, ED È APERTO. LA SPECIE DEL
+   LAVORO CHE VIENE È: RIMEDIO — si prende un finding, si riproduce il rosso
+   PRIMA di correggere, si corregge alla radice, si prova nelle DUE direzioni,
+   si ricontano i conteggi che il rimedio ha reso stantii. Niente
+   brainstorming, niente plan mode, nessun piano da scrivere: la ricetta è
+   nel rapporto, sezione «Come si concludono quelli aperti», ed è stata
+   MISURATA su ogni radice chiusa finora.
+   ⛔ QUANTI FINDING RESTINO E QUALI NON È SCRITTO QUI: la colonna «Stato»
+   della tabella dei 73 è la casa unica, e «L'ordine consigliato» dice da
+   dove ripartire. Un numeratore ricopiato qui invecchierebbe al primo
+   rimedio — è la radice R3 dell'audit stesso.
+   ⚠️ È la riga che invecchia per costruzione: si riscrive quando l'audit si
       chiude. L'elenco di ciò che ha già detto è TOLTO, non esteso.
+
+   ⛔ LE TRE LEZIONI DELLE RADICI GIÀ CHIUSE, IN TRE RIGHE:
+   · IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — può risultare
+     più PICCOLO, più GRANDE, o DI SPECIE DIVERSA di come il rapporto lo
+     descrive. Successo su ogni radice chiusa.
+   · UN RIMEDIO PUÒ CRESCERE DI UNA CASA: la frase che stai correggendo può
+     vivere anche altrove, e correggerne due su tre è la radice R1 commessa
+     DENTRO il rimedio. Si cerca col grep prima di chiudere.
+   · UN RIMEDIO PUÒ FERMARSI PRIMA DI DECIDERE: si chiude il fatto falso e si
+     REGISTRA la decisione vera, che è del proprietario. Registrata, non presa.
 
    ⛔ COSA HANNO INSEGNATO LE OTTO DECISIONI DELL'AUDIT, IN UNA RIGA: IL
    RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — e può risultare
@@ -295,12 +329,12 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
    io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
 
 Parti confermandomi cosa hai letto e qual è la tua lettura dello stato, POI
-ASPETTA le mie richieste prima di scrivere qualunque cosa. ⛔ Non c'è un
-audit da eseguire né un piano da eseguire: sono chiusi entrambi. Quello che
-viene è CREATIVO — si riparte dal BRAINSTORMING, poi il piano, e solo dopo
-il codice — e i piani già eseguiti restano verbali, che si leggono a
-COMPITI e mai interi.
-⚠️ Di che lavoro si tratti sta nella §6 del compendio, non qui.
+ASPETTA le mie richieste prima di scrivere qualunque cosa. ⛔ C'è un audit
+APERTO da rimediare, e NON c'è un piano da eseguire né uno da scrivere: i
+finding sono indipendenti e la ricetta è già nel rapporto. I piani già
+eseguiti restano verbali, che si leggono a COMPITI e mai interi — e lo
+stesso vale per il «Dettaglio» del rapporto, che si legge a FINDING.
+⚠️ Da dove ripartire lo dice il rapporto, non questo messaggio.
 ```
 
 ---
@@ -310,8 +344,8 @@ COMPITI e mai interi.
 | | Prima | Adesso |
 |---|---|---|
 | il messaggio | ~9 KB | ✅ **LA SERIE HA GIRATO, e quanto pesa OGGI non è scritto qui:** lo rimisura la **§12 del compendio** a ogni passata, e questa cella ne teneva una seconda copia **ferma al 2026-08-18** — *«14,7 KB»* — che nessuna delle tre passate successive aveva mosso. **Tolta, non riallineata** (gotcha **#68**). La storia resta perché è storia: era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | **590 KB** — `CLAUDE.md` più il compendio, e **622** con l'audit |
-| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, dopo 590 KB |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | ✅ **una FRAZIONE del corpus, e l'aggregato non vive più qui:** lo porta `CLAUDE.md`, in una casa sola. ⛔ **Tolto il 2026-08-27, non riallineato** — la cella diceva *«590 KB … e 622 con l'audit»*, e il terzo file è cambiato: l'audit dell'11 agosto è uscito dalla lettura obbligatoria, la **testa** di quello del 27 è entrata. Una cifra che vive in **cinque** case marcisce in quella che nessuno muove — gotcha **#31**, su questa riga per l'ennesima volta |
+| decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, e senza aprire il resto del corpus |
 
 ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
 del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
@@ -325,7 +359,8 @@ quel conteggio, che costa un comando. Prima ancora dicevano
 l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
 questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
 regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta: **622 KB contro 789**. ⛔ **E il 2026-08-18 una passata ha trovato che il
+resta quello che conta, e le due cifre vive stanno in `CLAUDE.md` invece che qui — **tolte il
+2026-08-27**, perché il terzo file è cambiato e questa era la quinta casa. ⛔ **E il 2026-08-18 una passata ha trovato che il
 `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
 `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
 e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del

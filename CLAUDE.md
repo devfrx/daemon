@@ -9,9 +9,15 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 590 KB** (byte LF, il 2026-08-27), e con
-[`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) — **chiuso il 2026-08-18, otto decisioni
-su otto**, quindi oggi una **consultazione** — **622**. ⛔ **E il prezzo in
+⚠️ **Insieme questi due file pesano 590 KB** (byte LF, il 2026-08-27), e con la **testa** di
+[`docs/audit-2026-08-27.md`](docs/audit-2026-08-27.md) — le prime ~340 righe, fino alla tabella
+dei 73 finding, **41 KB** — **631**. ⛔ **QUEL RAPPORTO È APERTO ED È IL COMPITO DI OGGI**, non
+una consultazione: la sua sezione *«Come si concludono quelli aperti»* è la **delega**, e la
+colonna *«Stato»* della sua tabella è la **casa unica** di che cosa resta. ⛔ **Il «Dettaglio»
+dopo quella tabella — 205 KB, 73 schede — NON si legge intero: se ne apre UNA per volta, quella
+del finding su cui si lavora.** ⚠️ **E [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) è
+uscito da questa riga il 2026-08-27:** è chiuso otto decisioni su otto, e ciò che insegnava vive
+nel compendio — un file chiuso non è una lettura obbligatoria. ⛔ **E il prezzo in
 token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
 usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
 del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato

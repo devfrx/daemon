@@ -89,7 +89,8 @@ riga che ospita la data.
 > `--locked`: il `Cargo.lock` **tracciato** era un **effetto** del cancello e non un suo
 > **ingresso**, quindi `gate-deps.sh` misurava il grafo che `cargo` aveva appena inventato.
 > ⛔ **E qui il rapporto sbagliava al rovescio**, prezzandolo *«una riga»*: i siti `cargo` sono
-> **sei** su **tre** script. ✅ **E la sesta lo stesso giorno** — A-1, A-2, A-4, A-7: quattro
+> **più d'uno e stanno su tutti e tre gli script** — la cifra è **tolta** il 2026-08-27 col finding
+> **AUD-009** e vive dove vive il comando, in [`riferimenti.md`](riferimenti.md). ✅ **E la sesta lo stesso giorno** — A-1, A-2, A-4, A-7: quattro
 > richiami datati, **nessuna decisione riaperta**. ✅ **E la quinta** — C-1, `bincode` non
 > mantenuto: **registrato**, non deciso, perché ha zero usi di produzione e la finestra si chiude
 > da sola al Traguardo 6. ✅ **E la quarta** — PL-1: il file del giornale nasceva **0644** su

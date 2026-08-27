@@ -73,7 +73,10 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 > invece di quello approvato da ADR-0031. ⛔ **Riprodotto prima di correggere:** tolta una
 > dipendenza da `crates/kernel/Cargo.toml`, il controllo rispondeva **`OK`, exit 0** avendo
 > riscritto il lockfile di **−33 righe**. ⛔ **E il rapporto lo prezzava «una riga», al rovescio
-> della decisione 1:** i siti `cargo` sono **sei** su **tre** script, più un ramo d'errore
+> della decisione 1:** i siti `cargo` sono **più d'uno e stanno su tutti e tre gli script** — la
+> cifra è **tolta** il 2026-08-27 col finding **AUD-009**, perché la sua scomposizione la smentiva
+> nella stessa riga, e vive dove vive il comando, in [`riferimenti.md`](riferimenti.md) — più un
+> ramo d'errore
 > esplicito — senza, il rosso c'era comunque (i due grafi vuoti coincidono) ma diceva *«la query
 > era stretta»* invece di *«il lockfile è stantio»*. Sonde **N6** e **N7**; `GATE GREEN`,
 > **32 target, 177 passati**.

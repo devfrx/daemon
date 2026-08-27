@@ -30,14 +30,24 @@ dettaglio, con la mutazione e la prova che è osservabile, sta in
 
 **Un comando solo:** `bash scripts/gate.sh`
 
-| # | Cosa lancia | |
+| # | Il passo, col nome che `gate.sh` gli dà | |
 |---|---|---|
-| 1 | `cargo build --workspace` | rende **visibile** il livello 1 |
-| 2 | `cargo test --workspace` | banco `compile_fail`, contro-sonde, round-trip delle voci spedite |
-| 3 | `bash scripts/gate-no-os.sh` | livello 2 |
-| 4 | `bash scripts/gate-deps.sh` | livello 2 |
-| 5 | `bash scripts/gate-attributes.sh` | livello 2 |
-| 6 | `bash scripts/check-docs.sh` | livello 2 |
+| 1 | `workspace build` | rende **visibile** il livello 1 |
+| 2 | `example and compile-fail tests` | banco `compile_fail`, contro-sonde, round-trip delle voci spedite |
+| 3 | `no-OS gate` | livello 2 — `scripts/gate-no-os.sh` |
+| 4 | `allow-list on the two graphs` | livello 2 — `scripts/gate-deps.sh` |
+| 5 | `attributes of the constrained crates` | livello 2 — `scripts/gate-attributes.sh` |
+| 6 | `documentation consistency` | livello 2 — `scripts/check-docs.sh` |
+| 7 | `DST campaigns -- wall time` | il **tempo di parete** delle tre campagne, ristampato con `--nocapture` |
+
+⛔ **RICHIAMO DEL 2026-08-27, finding AUD-062: questa tabella ricopiava il TESTO dei comandi e
+ometteva il settimo passo.** Diceva `cargo build --workspace` e `cargo test --workspace`, cioè la
+forma **senza `--locked`** che il finding **G-5** ha chiuso il 2026-08-18, e si fermava a sei
+righe mentre `gate.sh` ne esegue **sette**. ⛔ **Il rimedio non è riallineare il testo: è togliere
+la copia.** I comandi con le loro opzioni vivono in `scripts/gate.sh`, in una casa sola; qui i
+passi si nominano con l'**etichetta** che lo script stesso dà loro, che identifica senza invitare
+a eseguire. È la regola di `CLAUDE.md` — *un puntatore che vive in più documenti si toglie, non
+si ricorregge*.
 
 ⚠️ **I primi due non «sono» il livello 1.** Il livello 1 *è* il compilatore e vale a ogni
 compilazione, senza che nessuno lo lanci; `gate.sh` compila perché una porta che non
@@ -2145,7 +2155,7 @@ quell'ordine**, quindi le voci aperte `E51` ed `E53` restano aperte.
 | **N3** | una crate **di build** fuori lista → l'altro messaggio, e il rimedio è **AGGIUNGERLA**. Sono due grafi proprio perché i rimedi sono opposti |
 | **N4** | `getrandom` in `platform`, dove ADR-0031 lo ammette: **resta verde**. È la sonda che di solito si dimentica |
 | **N5** | un nome di crate con la **maiuscola**: prima usciva **verde**, ed era un falso negativo su I3. Corretto allargando la classe di caratteri del filtro, con la ragione scritta accanto alla classe |
-| **N6** | ⛔ **un manifesto DERIVATO dal lockfile → `cargo tree --locked` fallisce, e lo script lo DICE.** È il finding **G-5** dell'audit, chiuso il 2026-08-17. ⚠️ **Riprodotto prima di correggere, e il rapporto lo prezzava come «una riga»:** tolta la riga di `minicbor` da `crates/kernel/Cargo.toml`, `gate-deps.sh` com'era rispondeva `OK -- the two graphs match the two lists`, **exit 0**, avendo riscritto in silenzio il `Cargo.lock` **tracciato** — **1 inserzione, 33 cancellazioni** — cioè misurava un grafo che **nessuno ha approvato** credendo di misurare quello della lista. La guardia di non-vacuità non lo coglieva: i due grafi erano non vuoti e diversi. Col rimedio, stesso guasto: **exit 1**, il messaggio nomina il lockfile stantio, e il lockfile **non si muove**. Il cancello intero: **`GATE RED -- 5 checks failed`**, con `Cargo.lock` intatto per tutta la corsa. ⛔ **I siti `cargo` sono SEI e non uno** — `gate.sh` ×4, `gate-no-os.sh` ×1, `gate-deps.sh` ×3 — perché i due script si lanciano anche **da soli**, e un controllo che vale solo passando dal cancello è più debole di uno che vale sempre. ⚠️ **Due limiti dichiarati.** (1) Ciò che il ramo d'errore esplicito compra è la **diagnosi**, non il rosso: senza di esso i due grafi restano **vuoti**, coincidono, e la guardia di non-vacuità in fondo al file diventa rossa lo stesso — dicendo però *«la query era stretta»* dove la verità è *«il lockfile è stantio»*, che è il rosso illeggibile del gotcha **#24**. (2) Il messaggio di **coda** dello script resta generico — *«Read the REMEDY: it is NOT the same for the two graphs»* — mentre per questa classe di guasto il rimedio è **lo stesso** per i due grafi: lasciato invece che ramificato, perché il messaggio per-finding lo dice già giusto, e un ramo in più per una riga di prosa sarebbe sovra-ingegnerizzazione |
+| **N6** | ⛔ **un manifesto DERIVATO dal lockfile → `cargo tree --locked` fallisce, e lo script lo DICE.** È il finding **G-5** dell'audit, chiuso il 2026-08-17. ⚠️ **Riprodotto prima di correggere, e il rapporto lo prezzava come «una riga»:** tolta la riga di `minicbor` da `crates/kernel/Cargo.toml`, `gate-deps.sh` com'era rispondeva `OK -- the two graphs match the two lists`, **exit 0**, avendo riscritto in silenzio il `Cargo.lock` **tracciato** — **1 inserzione, 33 cancellazioni** — cioè misurava un grafo che **nessuno ha approvato** credendo di misurare quello della lista. La guardia di non-vacuità non lo coglieva: i due grafi erano non vuoti e diversi. Col rimedio, stesso guasto: **exit 1**, il messaggio nomina il lockfile stantio, e il lockfile **non si muove**. Il cancello intero: **`GATE RED -- 5 checks failed`**, con `Cargo.lock` intatto per tutta la corsa. ⛔ **I siti `cargo` non sono uno, e stanno su tutti e tre gli script** — perché i due script si lanciano anche **da soli**, e un controllo che vale solo passando dal cancello è più debole di uno che vale sempre. ⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-024:** qui stava *«sono SEI e non uno — `gate.sh` ×4, `gate-no-os.sh` ×1, `gate-deps.sh` ×3»*, e la scomposizione sommava **otto**. **Tolta, non riallineata:** la cifra e il comando che la produce vivono in [`riferimenti.md`](riferimenti.md), e ciò che regge qui è la **relazione** — *ogni sito eseguibile passa `--locked`*, provata nelle due direzioni. ⚠️ **Due limiti dichiarati.** (1) Ciò che il ramo d'errore esplicito compra è la **diagnosi**, non il rosso: senza di esso i due grafi restano **vuoti**, coincidono, e la guardia di non-vacuità in fondo al file diventa rossa lo stesso — dicendo però *«la query era stretta»* dove la verità è *«il lockfile è stantio»*, che è il rosso illeggibile del gotcha **#24**. (2) Il messaggio di **coda** dello script resta generico — *«Read the REMEDY: it is NOT the same for the two graphs»* — mentre per questa classe di guasto il rimedio è **lo stesso** per i due grafi: lasciato invece che ramificato, perché il messaggio per-finding lo dice già giusto, e un ramo in più per una riga di prosa sarebbe sovra-ingegnerizzazione |
 | **N7** | ⛔ **la seconda direzione di N6, e non è una formalità:** `--locked` poteva rendere **rosso uno stato corretto**, se il lockfile committato fosse stato fuori sincrono con i manifesti senza che nessuno se ne fosse accorto. Misurato, non supposto: stato pulito → `bash scripts/gate.sh` dà **`GATE GREEN`**, `cargo test --locked --workspace --no-fail-fast` dà **32 target, 177 passati, 0 falliti, 2 ignorati** — identico alla baseline — e `git status` è **vuoto dopo la corsa**, cioè il cancello non ha più il lockfile fra i propri effetti. ⚠️ Prima del rimedio quella stessa corsa lasciava anch'essa l'albero pulito: il verde di N7 **non** prova che il rimedio morda, lo prova N6. Le due sonde vanno lette in coppia |
 | **B1** | `kernel` e `simulator` compilano per il bersaglio senza OS |
 | **B2** | `getrandom` in `kernel` → `target is not supported` |

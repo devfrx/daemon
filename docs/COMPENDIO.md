@@ -714,9 +714,14 @@ grafo che `cargo` aveva appena inventato**, credendo di misurare quello approvat
 two lists`, **exit 0**, col lockfile alleggerito di **33 righe**. La guardia di non-vacuità **non**
 lo coglieva: i due grafi erano non vuoti e **diversi**.
 ⛔ **E il rapporto lo prezzava «una riga», cioè al rovescio della decisione 1:** i siti `cargo` del
-percorso del cancello sono **sei** su **tre** script — `gate.sh` ×4, `gate-no-os.sh` ×1,
-`gate-deps.sh` ×3 — perché i due script si lanciano **anche da soli**, e un controllo che vale solo
-passando dal cancello è più debole di uno che vale sempre. 📌 **Il rimedio si prezza leggendo il
+percorso del cancello sono **più d'uno e stanno su tutti e tre gli script**, perché i due script si
+lanciano **anche da soli**, e un controllo che vale solo passando dal cancello è più debole di uno
+che vale sempre. ⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-009: qui stavano una cifra e la sua
+scomposizione, e la scomposizione smentiva la cifra nella stessa riga** — *«**sei** su **tre**
+script — `gate.sh` ×4, `gate-no-os.sh` ×1, `gate-deps.sh` ×3»*, che somma **otto**. ⛔ **Tolte, non
+riallineate:** la cifra vive dove vive il **comando** che la produce, cioè in
+[`riferimenti.md`](riferimenti.md), e ciò che regge qui è la **relazione** — *ogni sito eseguibile
+passa `--locked`* — che resta vera il giorno in cui il cancello guadagna un passo. 📌 **Il rimedio si prezza leggendo il
 codice, non il rapporto** — gotcha **#65**, e stavolta la misura lo ha fatto **crescere** invece
 che restringere.
 ⛔ **E chiuderlo alla lettera avrebbe aperto una vacuità nuova.** Con `--locked` un `cargo tree`

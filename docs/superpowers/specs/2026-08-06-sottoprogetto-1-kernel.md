@@ -1424,7 +1424,7 @@ proverebbe nulla: è il gotcha #14 applicato al banco invece che al controllo.
 | Costo | |
 |---|---|
 | **il grafo di build del kernel cresce da due voci a sette** | e porta `syn` per la prima volta. Superficie di supply chain a tempo di compilazione: non può violare V29 a runtime (§7.3.1), ma va rivista invece che subita |
-| **il kernel porta due serializzatori** | uno per artefatto, con requisiti opposti. È coerente, e sono due grafi da guardare invece di uno |
+| **il kernel porta due serializzatori** | con requisiti opposti. È coerente, e sono due grafi da guardare invece di uno. ⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-033:** la cella diceva *«uno per artefatto»*, e la corrispondenza **non esiste dal 2026-08-08** — [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) dà a `minicbor` **anche** il canale `process`, quindi gli artefatti sono **tre** e i serializzatori **due**. Il numerale è **tolto e non riallineato**: la casa unica del conteggio è la tabella a tre righe del compendio |
 | **ogni campo di ogni record durevole porta un indice** | si paga a ogni riga, non una volta. Un byte sul filo, un'annotazione in più nella scrittura |
 | **la regola 4 è una disciplina** | «un indice non si riusa mai» non è imponibile dal compilatore. La regge un controllo di livello 2, cancellabile |
 | **i byte congelati sono un oracolo rigenerabile** | la difesa è che la rigenerazione **si legge nel diff**, non che sia impossibile. Stessa forza e stessa debolezza del gotcha #25 |
@@ -1816,8 +1816,9 @@ di essere vuota.
 > questa sotto-sezione restano quelle dello schema IPC; **la lista completa è §7.3.1**.
 >
 > ⛔ E non è la stessa scelta estesa a un secondo artefatto: è una scelta **diversa**, presa
-> sul requisito opposto. Il kernel porta due serializzatori perché ha due artefatti con
-> requisiti opposti — §4.9.1.
+> sul requisito opposto. Il kernel porta due serializzatori perché i suoi artefatti hanno
+> requisiti opposti — §4.9.1. ⚠️ *«due artefatti»* è **tolto** il 2026-08-27: sono tre
+> (AUD-033), e l'argomento non dipendeva dal numero.
 
 > ⚠️ **La scelta è stata verificata sul _secondo_ capo del filo — aggiunto il 2026-08-08**
 > con [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md). M-1 aveva
@@ -2093,8 +2094,8 @@ perché:
 > significa che un cambiamento fatto per uno si propaga sull'altro. È lo stesso
 > ragionamento che ADR-0036 usa per rifiutare la scorciatoia inversa — `bincode` sul
 > giornale — letto nell'altro verso. **§6.1.1 non si riapre**: il kernel porta due
-> serializzatori perché ha due artefatti con requisiti opposti, ed è la coerenza, non la
-> duplicazione.
+> serializzatori perché i suoi artefatti hanno requisiti opposti, ed è la coerenza, non la
+> duplicazione. ⚠️ *«due artefatti»* è **tolto** il 2026-08-27: sono tre (AUD-033).
 
 > ⚠️ **La _domanda_ di questa misura era incompleta, e se ne è accorta solo il 2026-08-08**
 > — [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md). «Esiste un
@@ -3502,7 +3503,7 @@ disallineano (§7.4.4, caso 2).
 | V23 | la provenienza del contenuto è visibile in interfaccia | ⏳ rimandato | vincolo interamente d'interfaccia | A (2) |
 | V24 | il giornale è la sorgente; trace, metriche e costi ne sono proiezioni | ⚠️ parziale | test a esempi: il picco di VRAM (§5.2.2) e i permessi attivi (§6.6) si ricavano **rileggendo il giornale**, e non esiste un secondo archivio da cui ricavarli. **La proiezione trace non esiste**, quindi l'altra metà non ha soggetto | A (2) |
 | V25 | nessuna telemetria **lascia la macchina** per default; un solo punto di uscita | ⚠️ parziale | il controllo gira a ogni commit e la **sonda scatta** — una chiamata di rete in `daemon` lo accende; **la contro-sonda non esiste**: la lista è vuota e non c'è niente di legittimo da lasciar passare (§7.4.2). È l'unica voce del catalogo provata in una direzione sola | B (3) |
-| V26 | la ritenzione pota i payload grezzi, mai i record strutturati | ✅ verificato qui | `prune` è un'operazione della porta `journal` (§4.1) · test a esempi sulle due regole non negoziabili di ADR-0018: un record potato **dichiara** di esserlo, e un passo in dubbio non è potabile (§4.5). ⚠️ **RICHIAMO DEL 2026-08-27:** la §4.5 porta ora il proprio richiamo, e dichiara che **nessuna delle due** regole è tenuta dal codice — la prima è **violata** da entrambe le implementazioni, la seconda è tenuta con un'**altra nozione** di dubbio. Senza questo rimando le due sedi si contraddicono attraverso la citazione che le lega. ⛔ **Ri-giudicare lo stato è un'altra decisione e sta altrove:** è il finding **AUD-005**, radice R7, **aperto** | — |
+| V26 | la ritenzione pota i payload grezzi, mai i record strutturati | ⚠️ parziale | `prune` è un'operazione della porta `journal` (§4.1) · test a esempi sulle due regole non negoziabili di ADR-0018: un record potato **dichiara** di esserlo, e un passo in dubbio non è potabile (§4.5). ⚠️ **RICHIAMO DEL 2026-08-27:** la §4.5 porta ora il proprio richiamo, e dichiara che **nessuna delle due** regole è tenuta dal codice — la prima è **violata** da entrambe le implementazioni, la seconda è tenuta con un'**altra nozione** di dubbio. Senza questo rimando le due sedi si contraddicono attraverso la citazione che le lega. ⛔ **RI-GIUDICATA IL 2026-08-27, DA ✅ A ⚠️ — finding AUD-005, e la metà che regge è la seconda.** ✅ **Verificato qui:** `prune` rifiuta un passo in dubbio e accetta uno riconciliato, con le sonde del Task 11 del Traguardo 3 — con la nozione di dubbio **divergente** che il richiamo qui sopra dichiara. ⛔ **NON verificato, e peggio che non verificato: VIOLATO.** Entrambe le implementazioni cancellano i record invece di sostituirne il payload, quindi un passo potato e uno mai scritto sono indistinguibili in tre modi — misurato il 2026-08-10, *voce aperta 1* di [`porta-di-qualita.md`](../../porta-di-qualita.md) — e l'enunciato stesso (*«mai i record strutturati»*) ne esce smentito. Nessun banco tiene quella regola. ⚠️ **Perché ⚠️ e non ⏳:** §8.1.1 chiama ⏳ *«nessun controllo qui»*, e un controllo c'è. ⚠️ **E §8.1 non ha uno stato per *violato*:** aggiungerlo cambierebbe anche §8.6, quindi il fatto è scritto nella cella invece che nella parola — il costo è dichiarato qui e non taciuto | **arriva la ritenzione** — l'**impronta** e la **dimensione** che ADR-0018 chiede a un record potato, cioè una voce nuova nella lista di ADR-0031 (decisione **D7**). ⚠️ **Il numero non è assegnato:** la roadmap non colloca la ritenzione da nessuna parte, ed è la stessa lacuna che §8.5.2 fece emergere per il backup, dal solo fatto di dover riempire questa casella |
 | V27 | nessuna azione fallisce per una condizione già nota e non dichiarata | ⚠️ parziale | lo stato di degrado è un oggetto derivato in perimetro (§6.7) e Q18 lo verifica in DST; **che l'interfaccia lo dichiari prima** no | A (2) |
 | V28 | nessun modello nel percorso decisionale del kernel; **verificabile staticamente** | ✅ verificato qui | §7.4.2, riga I3 · V28 — corollario dell'allow-list: un percorso verso un adattatore comparirebbe nel grafo transitivo (§7.4.4 punto 2). Livello 2, sonde N1–N3 e contro-sonda N4. ⚠️ ADR-0031 dichiara il proprio limite: *«limita la superficie, non la certifica»* | — |
 | V29 | tempo, casualità, I/O, scheduling **e i parametri di decisione** iniettabili | ✅ verificato qui | `no_std` e il divieto gratuito di `HashMap`, livello 1 · allow-list e cancello senza OS, livello 2 · §7.4.1 C, righe `V29 · §2.1` e `V29 · §2.8` — scambiare monotonic e wall time non compila, e nemmeno costruire una decisione senza i parametri consegnati · la campagna DST stessa, il cui criterio C1 fallisce a ogni sorgente nascosta di non determinismo (§3.7). ⚠️ `HashMap` fuori dal kernel è **deliberatamente non controllato**: §7.4.4 punto 1. ⚠️ **Formulazione allargata il 2026-08-08 chiudendo la §7.1.1**, e confrontata con la fonte come impone §8.5.5: il testo nominava quattro assi, ADR-0034 ne aveva aggiunto un quinto il 2026-08-07. **Lo stato non cambia** — il quinto asse è difeso da un controllo di livello 1 già in perimetro | — |

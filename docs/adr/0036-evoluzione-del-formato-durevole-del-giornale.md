@@ -291,3 +291,28 @@ l'insieme nominato della §8 senza aggiungere copertura, e costringerebbe a modi
   - Se un giorno servisse un cambiamento che nemmeno la regola 5 copre, l'uscita è la forma
     **D** — migrazione al riavvio — e va presa con un ADR che ne dichiari il rischio, non
     come manutenzione.
+
+
+> ⚠️ **RICHIAMO DEL 2026-08-27 — *«uno per artefatto»* È FALSO DAL GIORNO DOPO, e la decisione
+> RESTA VALIDA.** Finding **AUD-033** del secondo audit completo. La riga *«Il kernel porta due
+> serializzatori, uno per artefatto»* fra le Negative qui sopra conta **due** artefatti —
+> giornale (`minicbor`) e schema IPC (`bincode`).
+> [ADR-0037](0037-criterio-del-pari-per-il-formato-dei-canali.md), del giorno successivo,
+> assegna a `minicbor` **anche** il canale `process` verso i worker e lo dice fra le proprie
+> Negative: *«`minicbor` serve due artefatti con requisiti opposti»*. Gli artefatti sono
+> **tre**, i serializzatori **due**, e la corrispondenza non esiste più.
+>
+> ⛔ **E non è una rifinitura: è il PREZZO di questa decisione.** *«Uno per artefatto»* è
+> l'argomento che rende accettabile il costo — *«è coerente, requisiti opposti, strumenti
+> diversi»*. Con tre artefatti su due serializzatori l'argomento cade dal lato che conta:
+> `minicbor` serve ora un artefatto che **deve** evolvere e uno che vi rinuncia, cioè proprio
+> la condivisione di formato fra requisiti opposti che questo ADR rifiuta come *«la
+> scorciatoia da rifiutare»* quando la direzione è l'inversa. ADR-0037 quel costo lo paga con
+> un **pin** nel manifesto; questa riga continuava a dire che il costo non c'era.
+>
+> 📌 **La casa unica del conteggio è il compendio**, che porta la tabella a **tre** righe
+> (`ipc`/`bincode`, `process`/`minicbor`, giornale/`minicbor`): qui non si ricopia, si rimanda.
+> ⚠️ **Il follow-up di ADR-0037 nominava UN destinatario — *«il compendio»* — mentre la frase
+> viveva in quattro case**, e il perimetro della passata fu preso dalla **categoria** invece
+> che dal drift **misurato**: gotcha **#68**. Nelle altre tre il numerale è stato **tolto**, non
+> riallineato; qui non si può, perché un ADR è append-only.

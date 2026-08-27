@@ -1259,8 +1259,24 @@ per chiudersi.
 ## Come si aggiorna questo handoff
 
 Alla chiusura di ogni sotto-progetto, **nello stesso passaggio**: `roadmap.md`,
-`tracciabilita.md`, lo stato degli spike, `CLAUDE.md` se cambia il prossimo passo, e
+`tracciabilita.md`, lo stato degli spike, `CLAUDE.md` se cambia **il modo di lavorare**, e
 questo file se emergono gotcha nuovi.
+
+⛔ **RICHIAMO DEL 2026-08-27, finding AUD-011 — la terza voce diceva *«`CLAUDE.md` se cambia il
+prossimo passo»*, ed è una voce di manutenzione SOPRAVVISSUTA alla cosa che manuteneva.**
+`CLAUDE.md` non porta più il prossimo passo — lo dichiara esso stesso (*«stanno nella §6 del
+compendio, non qui, o si disallineano»*) e `grep -c '⏭️' CLAUDE.md` dà **zero**. ⚠️ **Non è
+tolta ma RIALLINEATA, e la differenza va dichiarata:** [`roadmap.md`](roadmap.md) la tolse il
+2026-08-25 perché lì era una voce **doppia**, mentre qui è l'**unica** riga che nomini
+`CLAUDE.md` — toglierla lascerebbe scoperto un dovere che esiste davvero, e la formulazione viva
+la scrive `CLAUDE.md` stesso: *«questo file se cambia il modo di lavorare»*.
+📌 *Una voce di manutenzione sopravvive alla cosa che manuteneva*, e nessun controllo la coglie:
+non è un numero stantio, è un **compito** stantio — chi lo esegue cerca in `CLAUDE.md` un
+puntatore tolto apposta, e nel caso peggiore **ce lo rimette**. È la **quarta** casa della stessa
+specie dopo le due di [`AVVIO-CHAT.md`](AVVIO-CHAT.md) e quella di `roadmap.md`, e a mancare era
+il `grep` su **tutto** il repository invece che sui due file che si stavano toccando — radice
+**R1**. ⛔ **La domanda che le coglie, e va fatta a ogni chiusura:** *ciò che questa voce ordina
+di aggiornare esiste ancora?*
 
 Di [`tracciabilita.md`](tracciabilita.md) è stato toccato **solo il riquadro in testa**,
 che conta le voci della riapertura: nessuna funzionalità ha cambiato sede, e la regola dice

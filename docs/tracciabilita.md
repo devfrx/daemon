@@ -26,15 +26,30 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 > gotcha **#27** — è **rileggere con un'altra domanda**, e questo riquadro esiste per
 > ricordare che la domanda che manca è quella.
 >
-> ⚠️ *Aggiunto il 2026-08-08: la §12 del compendio rimandava già «al riquadro in testa» per
-> questo avvertimento, e il riquadro non lo conteneva.*
-
-> ⚠️ **Questa tabella risponde a una domanda sola, e va saputo prima di fidarsene**
-> (2026-08-07). Risponde a *«dove vive questa funzionalità»*. **Non** risponde a *«di quale
-> meccanismo di kernel ha bisogno, e la spec lo nomina?»* — e in particolare un `📋`
-> significa «sotto-progetto assegnato», **non** «non richiede un meccanismo di kernel».
+> ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-041 — qui c'era una nota del 2026-08-08 che metteva
+> a verbale una MISURA SBAGLIATA.** Diceva: *«la §12 del compendio rimandava già al riquadro in
+> testa per questo avvertimento, e **il riquadro non lo conteneva**»*. Lo conteneva: il riquadro
+> qui sotto, datato **2026-08-07**, **lo portava** parola per parola nella sostanza, a tredici
+> righe di distanza — ⚠️ **al passato perché è questa stessa passata a togliercelo**, e scriverlo
+> al presente sarebbe stato il gotcha **#78** commesso dentro il rimedio: *una frase che descrive
+> lo stato di un altro artefatto che qualcuno sta toccando nello stesso compito*. Il testo che vi
+> stava lo dice `git show HEAD:docs/tracciabilita.md`, e un comando non marcisce.
+> Chi corresse cercò dove il rimando della §12 mandava — *in testa* — e non lesse il
+> riquadro successivo: è il gotcha **#48** nella forma canonica, il banco che sbaglia **verso
+> l'attesa**, e l'attesa era che mancasse.
 >
-> Rileggerla con la seconda domanda ha **riaperto la spec del sotto-progetto 1 su sette
+> ✅ **E il rimedio applicato allora fu AGGIUNGERE una seconda copia sopra la prima**, cioè creare
+> una seconda casa della stessa regola nel documento la cui unica difesa dichiarata è *rileggere
+> con un'altra domanda*. Due formulazioni della stessa regola nello stesso posto sono il gotcha
+> **#29** in attesa — *la più corta viene letta al posto di quella giusta* — e qui la più corta
+> era anche la prima che si incontrava. ⛔ **Ora l'avvertimento vive in questo riquadro e in
+> nessun altro:** quello sotto tiene il proprio **stato** e non ripete più la regola.
+
+> ⚠️ **Lo stato della riapertura del 2026-08-07, e non più la regola:** l'avvertimento che questo
+> riquadro portava ripeteva quello sopra, ed è **tolto** il 2026-08-27 — finding **AUD-041**, con
+> il racconto nel richiamo qui sopra, in una casa sola.
+>
+> Rileggere la tabella con la seconda domanda ha **riaperto la spec del sotto-progetto 1 su sette
 > voci**, ora **tutte chiuse**: elenco, classe e ordine in
 > [HANDOFF](HANDOFF.md#prima-cosa-da-fare).
 >

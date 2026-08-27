@@ -749,7 +749,7 @@ A-7.** Nessuna decisione riaperta: cadono quattro **evidenze**, non quattro scel
 | **A-1** | [ADR-0026](adr/0026-linguaggio-del-core.md): *«esiste `madsim` … quindi il simulatore non va scritto da zero»* | `simulator` ha **una** dipendenza ed è scritto **a mano** — quante righe lo dà `find crates/simulator/src -name '*.rs' \| xargs wc -l`, e la cifra che stava qui è **tolta** il 2026-08-25 (vedi la riga **#59** della §9); `madsim` non è né in `Cargo.lock` né in `crates/`. E a scartarlo fu [ADR-0031](adr/0031-dipendenze-del-kernel-parte-del-confine.md) — **stessa data** — a 55 crate |
 | **A-2** | *«il seme diventa una regressione permanente»* | falsificata in ADR-0021 il **2026-08-08**: a entrare nella suite è la **proprietà**, non il seme |
 | **A-4** | [`design/01`](design/01-topologia-dei-processi.md): canale worker **a senso unico** | il tratto `Worker` ha **sei** verbi contati sul sorgente, e i frame **risalgono** — dentro una **ricevuta** |
-| **A-7** | `OpenError`: *«la radice di composizione lo apre, una volta»* | `crates/daemon/src/main.rs` cabla `SequentialRng`, `SystemReactor`, `Parameters`, `Sleep` e l'esecutore — e **nessun giornale** |
+| **A-7** | `OpenError`: *«la radice di composizione lo apre, una volta»* | `crates/daemon/src/main.rs` cabla `SequentialRng`, `SystemReactor`, `Parameters`, `Sleep` e l'esecutore — e **nessun giornale**. ⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-008:** questa cella è il **verbale del 2026-08-18** e ciò che misurò era vero allora; **dal 2026-08-21 è falsa**. Il **Task 10** cabla `FileJournal::open` nella radice di composizione — commit `800ffeb`, con `StartupError::Journal` accanto — e la colonna si intitola *«Cosa dice il codice»*, cioè si legge al presente. ⛔ **Il sorgente lo sapeva e questa §6 no:** il doc di `OpenError` in `crates/platform/src/journal.rs` porta il proprio richiamo datato **dal giorno stesso**, e la correzione non ha attraversato la seconda casa — radice **R1**, gotcha **#68**. ✅ **L'argomento di A-7 regge intatto, e a cadere è la sola evidenza che lo illustrava:** `open` davvero non è un'operazione della porta, ed è una proprietà leggibile **oggi** |
 
 ⛔ **Due erano più larghi di come il rapporto li scrive, e in due modi diversi.** **A-2** viveva
 in **due** case oltre ad ADR-0021 — questa §5 e [`design/08`](design/08-strategia-di-test.md),
@@ -760,6 +760,11 @@ radice di composizione lo apre»* è scritta al presente e si legge come un fatt
 codice **non ancora scritto** — gotcha **#57** applicato a una **giustificazione** invece che a
 una collocazione. 📌 E il richiamo dice la cosa esatta: **l'argomento regge, l'evidenza no.**
 `open` davvero non è un'operazione della porta, e quella è una proprietà leggibile **oggi**.
+⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-008 — e *«codice non ancora scritto»* è la parte che
+è scaduta:** quel codice è scritto dal **2026-08-21**, e il racconto sta nella cella **A-7** qui
+sopra, in una casa sola. 📌 **La diagnosi del #57 regge lo stesso, e va detto perché è il
+punto:** una previsione citata come misura resta tale **anche quando la previsione si avvera** —
+a cambiare è solo che adesso nessuno può più accorgersene leggendo.
 
 ✅ **E LA QUINTA È ESEGUITA LO STESSO GIORNO — C-1, e ciò che si esegue è la REGISTRAZIONE.**
 `bincode` 2.0.1 è coperto da **RUSTSEC-2025-0141 — «Bincode is unmaintained»**, emesso il
@@ -2534,8 +2539,30 @@ passi.
 ✅ **I primi cinque sono onorati dal Traguardo 1** — cinque crate · `no_std` + `alloc` +
 `forbid` su `kernel` e `simulator` · `bincode` appuntato a `2` con la ragione accanto ·
 il bersaglio del cancello dichiarato in `rust-toolchain.toml` · `spikes/` fra gli
-`exclude`. ⚠️ Il quarto ha una sottigliezza misurata: gotcha **#38**. Gli altri dieci
-restano davanti, e chi li copre è scritto in [`porta-di-qualita.md`](porta-di-qualita.md).
+`exclude`. ⚠️ Il quarto ha una sottigliezza misurata: gotcha **#38**.
+
+⛔ **RICHIAMO DEL 2026-08-27, finding AUD-007 — questa riga diceva *«gli altri dieci restano
+davanti, e chi li copre è scritto in `porta-di-qualita.md`»*, e le affermazioni false erano
+DUE.** La prima era ferma alla chiusura del **Traguardo 1** e non è mai stata riletta:
+`git log -L 2534,2538:docs/COMPENDIO.md` dà **una sola scrittura**, `cf2983f`, in un file la
+cui intestazione si data al Traguardo 5 — e lo stesso file la smentisce in §5, dove i **byte
+congelati** (vincolo 14) esistono dal 2026-08-10. La seconda mandava al registro per una
+copertura che il registro **non tiene**: [`porta-di-qualita.md`](porta-di-qualita.md) mappa le
+righe di catalogo della **§7.4**, non i vincoli di questa sezione — e quanto poco vi si affacci
+questa §11 lo dice `grep -c '§11' docs/porta-di-qualita.md` contro `grep -c '§7.4'` sullo stesso
+file, che è un rapporto e non una cifra da tenere aggiornata.
+⛔ **E il rimedio non è riallineare la cifra a un numero nuovo, che è la parte da ricordare:**
+un numeratore che cresce a ogni traguardo è esattamente ciò che è marcito qui. Al suo posto c'è
+una **regola di lettura**, che resta vera quando una riga se ne va — la stessa cura che la §6
+ha usato per `M9`: *un elenco invecchia, una regola no*.
+
+📌 **La regola: resta davanti solo ciò che la tabella qui sotto nomina, e ogni vincolo che non
+vi compare è onorato.** Misurati uno per uno contro il codice il 2026-08-27, **coi comandi**.
+
+| Vincolo | Cosa resta davanti, e il comando che lo dice | Chi lo chiude |
+|---|---|---|
+| **8**, la sola terza gamba | la **DST profonda su ciclo lungo**: le due campagne sono `#[ignore]` con la propria ragione scritta accanto, e **nessuno le lancia mai** — `grep -nE 'schedule\|cron\|--ignored' .github/workflows/quality-gate.yml scripts/gate.sh` non torna **nulla**. ⚠️ Le altre due gambe reggono e non sono in dubbio: il livello 1 **è** il compilatore, il livello 2 gira dentro il `cargo test` del cancello | il **proprietario**: un passo di CI nuovo è una sua decisione (vincolo globale 7), come `cargo audit` della voce **X-3** dell'audit |
+| **15**, la sola metà che codifica | la porta `process` scambia **byte** ed è onorata; **non** esistono il frame che dichiara la propria lunghezza, la decodifica che verifica i byte consumati, né l'annotazione di stringa di byte **sul canale worker** — `Frame` è un `Vec<u8>` opaco, e `grep -rn minicbor crates/kernel/src/` lo trova **solo** in `record.rs`, cioè sul **giornale** | il **Traguardo 6**, che porta lo schema del canale worker — ADR-0037 e §6.10 |
 
 | # | Vincolo | Da |
 |---|---|---|

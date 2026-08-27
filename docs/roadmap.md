@@ -117,9 +117,17 @@ riga che ospita la data.
 > repository, con una mappa che il banco rilegge, e **non si rigenerano mai** — se cambiano si
 > apre una versione nuova. Tre record e non uno perché i tre enum del formato hanno **otto**
 > varianti fra loro, e ciascuna è stata rinumerata per prova: **otto rossi su otto**.
-> ⛔ **Il Task 6 ha riportato indietro una domanda invece di deciderla**, ed è la più importante
-> del traguardo: `replay()` non dice quale delle due operazioni abbia scritto una voce, mentre il
-> giornale lo sa — decisione **D6**, e chiuderla cambia una porta condivisa.
+> ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-012 — qui c'era la decisione D6 data per APERTA, ed
+> è TOLTA invece che corretta**, come la riga del prossimo passo qui sopra e per la stessa
+> ragione. Diceva *«il Task 6 ha riportato indietro una domanda invece di deciderla … e chiuderla
+> cambia una porta condivisa»*: **D6 è chiusa dal proprietario il 2026-08-10** — `replay()` non
+> cambia e il `kind` resta nel record — e lo dicevano già **tre** case, fra cui la cella del
+> Traguardo 3 **ottanta righe più sotto in questo stesso file**. ⚠️ **La decisione non è
+> ricopiata qui**: una quarta casa è ciò che `CLAUDE.md` vieta, e il sorgente la porta per esteso
+> in `crates/kernel/src/reconcile.rs`. ⛔ **Ed è il gotcha #32 a rovescio, che è la parte da
+> ricordare:** quel gotcha teme che si riproponga un'idea già scartata; qui un documento di stato
+> ripropone come **domanda aperta** una decisione **presa**, e la sezione *«Stato in una riga»*
+> è esattamente quella che legge chi non leggerà il resto.
 >
 > ✅ **La lacuna su I2 è chiusa**: [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
 > — quota di presentazione sottratta, con la concessione tenuta dal core. Il kernel non

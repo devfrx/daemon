@@ -15,7 +15,7 @@
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
-> (789 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 284), e
+> (811 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
 **Aggiornato il 2026-08-25**, alla **chiusura del Traguardo 5** — il Task 13, che è un audit e
@@ -580,7 +580,7 @@ restituito `251` al posto di `4096` senza sollevare nulla.
 
 ⛔ **IL SECONDO AUDIT COMPLETO È DEL 2026-08-27, ED È IL COMPITO DI OGGI: si legge PRIMA di
 riprendere, ma SOLO fino alla tabella dei 73 finding** — [`audit-2026-08-27.md`](audit-2026-08-27.md),
-le prime ~340 righe. ⛔ **Il «Dettaglio» che segue NON si legge intero:** sono 73 schede, 205 KB, e
+tutto ciò che sta **prima** della sezione «Dettaglio». ⛔ **E il «Dettaglio» NON si legge intero:** sono 73 schede, 204 KB, e
 se ne apre **una** per volta, quella del finding su cui si lavora — come un piano si legge a
 compiti. La misura sta in `CLAUDE.md`, in una casa sola. ⚠️ **E la specie del lavoro è RIMEDIO, non
 creazione né esecuzione di un piano:** niente brainstorming, niente plan mode, nessun piano da
@@ -2595,23 +2595,23 @@ Apri **un** file, quello che serve. Non la cartella.
 
 | Se ti serve… | Apri | Peso |
 |---|---|---|
-| ⛔ **il verbale del SECONDO audit completo, e la sua DELEGA** — i 73 finding con causa radice, riproduzione e stato, le sette radici, e la sezione *«Come si concludono quelli aperti»*, che è la **ricetta**: lo stato alla consegna, ciò che NON è verificato, la disciplina in cinque passi e l'ordine consigliato. ⛔ **La colonna «Stato» di quel rapporto è la CASA UNICA di quali finding siano chiusi** — non si ricopia altrove. ⚠️ **Si legge a FINDING, mai intero.** ⚠️ **Riga aggiunta il 2026-08-27:** mancava dalla tabella dal giorno in cui il file è nato, ed è la stessa specie di difetto che la 7ª e la 15ª misura registrarono — *per accorgersi di una riga ASSENTE bisogna partire dall'elenco dei file citati, non dalle righe presenti* | [`audit-2026-08-27.md`](audit-2026-08-27.md) — ⚠️ **a finding, mai intero** | 236 KB |
+| ⛔ **il verbale del SECONDO audit completo, e la sua DELEGA** — i 73 finding con causa radice, riproduzione e stato, le sette radici, e la sezione *«Come si concludono quelli aperti»*, che è la **ricetta**: lo stato alla consegna, ciò che NON è verificato, la disciplina in cinque passi e l'ordine consigliato. ⛔ **La colonna «Stato» di quel rapporto è la CASA UNICA di quali finding siano chiusi** — non si ricopia altrove. ⚠️ **Si legge a FINDING, mai intero.** ⚠️ **Riga aggiunta il 2026-08-27:** mancava dalla tabella dal giorno in cui il file è nato, ed è la stessa specie di difetto che la 7ª e la 15ª misura registrarono — *per accorgersi di una riga ASSENTE bisogna partire dall'elenco dei file citati, non dalle righe presenti* | [`audit-2026-08-27.md`](audit-2026-08-27.md) — ⚠️ **a finding, mai intero** | 254 KB |
 | il **verbale del primo audit completo** — le quattro radici, i finding con causa radice e dimostrazione, ciò che è stato verificato **pulito**, e la §8 con le otto decisioni, **tutte eseguite** fra il 2026-08-17 e il 2026-08-18. ⛔ **Si apre per il METODO, non per il compito:** è il posto in cui si legge come un rimedio si prezza leggendo il codice invece del rapporto — più piccolo, più grande, o di specie diversa. ⚠️ **Questa cella diceva *«COSA DEVI FARE ADESSO … ne restano tre … è il prossimo passo»***, corretta il 2026-08-18 | [`audit-2026-08-11.md`](audit-2026-08-11.md) — oggi una **consultazione** | 32 KB |
-| il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–19 KB l'uno |
-| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 284 KB |
+| il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** | 2–21 KB l'uno |
+| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** | 298 KB |
 | ⛔ **il perimetro del Traguardo 5** — l'arbitro: quanto ne costruisce, le forme che la §5 descrive a parole, e per ogni artefatto **il controllo che lo esercita**. ⛔ **Si legge PRIMA di scriverne il piano**, ed è il file da cui si riprende | [`specs/2026-08-18-…-traguardo-5-arbitro-gpu-design.md`](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md) — ⚠️ **non è una spec**: è lo scaglionamento e le forme che la §5 non fissa | 32 KB |
 | ⛔ **come si ESEGUE il Traguardo 5** — tredici compiti in cinque parti, col codice per ogni passo, le mutazioni da provare e i comandi. ⚠️ **L'errata in testa si legge PRIMA del compito**, e il pre-controllo del piano — le sette voci — sta subito sotto | [`plans/2026-08-18-…-traguardo-5-arbitro-gpu.md`](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) — ⚠️ **a compiti, mai intero** | 373 KB |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa | 30 KB |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) | 44 KB |
-| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 281 KB |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** | 284 KB |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo | ⚠️ **la sezione, non il file** |
-| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 34 KB |
-| dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 15 KB |
-| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 422 KB |
+| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) | 35 KB |
+| dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci | 17 KB |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) | 427 KB |
 | ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata; ⛔ **è CRLF integrale**, misurato il 2026-08-25 | 8 KB |
 | la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](design/08-strategia-di-test.md) | 11 KB |
-| la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 5 KB |
-| gli altri diagrammi della struttura | [`design/`](design/) — nove file | 5–11 KB l'uno |
+| la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](design/01-topologia-dei-processi.md) | 7 KB |
+| gli altri diagrammi della struttura | [`design/`](design/) — nove file | 5–14 KB l'uno |
 | gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md) | 23 KB |
 | i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../spikes/GUI-REQUISITI.md) | 6 KB |
 | la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) | 198 KB |
@@ -2621,7 +2621,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** | 168 KB |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** | 114 KB |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) | 22 KB |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **18,4** (18835 byte LF, rimisurati il 2026-08-25) | 31 KB |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **18,4** (20568 byte LF, rimisurati il 2026-08-27) | 34 KB |
 
 📏 **I pesi servono a decidere se aprire, e si rimisurano quando si toccano i file che
 contano.** Prima misura il 2026-08-08: tre erano stantii, e il quarto — *«insieme pesano
@@ -4987,6 +4987,64 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre**, finché due giri danno lo stesso numero —
 > metodo della sesta misura con la convergenza della 46ª.
+
+> 🔁 **Cinquantottesima misura, il 2026-08-27, chiudendo le RADICI R3 e R5 del secondo audit — le
+> diciassette voci sui documenti di stato e sui modelli.** In byte LF, `int(n/1024 + 0.5)`, a
+> passata chiusa; le celle **rimisurate sui file** e non censite per cifra.
+>
+> ⛔ **E la prima cosa da scrivere è la stessa della 57ª, il che la rende una SERIE e non un
+> incidente: la tabella era già stantia prima di questa passata, e per il lavoro di una passata
+> precedente.** Le chiusure di R4, R6 e R7 hanno mosso [`audit-2026-08-27.md`](audit-2026-08-27.md)
+> — la cella diceva **236** — e nessuna delle tre ha scritto la propria misura. 📌 È la distinzione
+> della **49ª**, ed è la seconda volta di fila: *una tabella stantia per il lavoro di oggi è
+> manutenzione ordinaria; una stantia per il lavoro di una passata precedente è il difetto della
+> sesta misura*. ⚠️ **Due passate di fila con lo stesso difetto sono una regola che non si applica
+> da sola**, e vale la pena dirlo invece di riallineare in silenzio.
+>
+> | | |
+> |---|---|
+> | **mossi da questa passata** | questo file `582 → 587` con `CLAUDE.md`, per i richiami di §5, §6 e §11 e per questo verbale · [`porta-di-qualita.md`](porta-di-qualita.md) `422 → 427`, la riga **32** della tabella unica e il perimetro della voce `R5` · la spec del sotto-progetto 1 `284 → 298`, **sette** richiami datati · [`HANDOFF.md`](HANDOFF.md) `281 → 284` · [`roadmap.md`](roadmap.md) `34 → 35` · [`tracciabilita.md`](tracciabilita.md) `15 → 17` · `docs/adr/` `224 → 230` per il rimando di ADR-0005 · [`AVVIO-CHAT.md`](AVVIO-CHAT.md) `31 → 34` |
+> | ⛔ **la riga che ha rotto un INTERVALLO** | `design/02` è passata a **14 KB**, e la cella di [`design/`](design/) diceva *«5–11 KB l'uno»*: un intervallo invecchia come una cifra, e **nessuno lo riconta perché sembra una descrizione**. Ora è `5–14`. Stessa specie per `docs/adr/`, `2–19 → 2–21`: ADR-0036 è cresciuto |
+> | **già stantie a `HEAD`, non mosse da qui** | [`audit-2026-08-27.md`](audit-2026-08-27.md) **236 → 254**, ferma alla 57ª · la riga di `design/01`, che diceva **5** ed era **7** |
+> | **invariati, ricontati sui file** | [`riferimenti.md`](riferimenti.md) 198 · [`README.md`](README.md) 22 · `CLAUDE.md` 15 · [`audit-2026-08-11.md`](audit-2026-08-11.md) 32 · [`semi-dst.md`](semi-dst.md) 8 · kernel-design 44 · i disegni 32 e 30 · i piani 373, 168, 162, 114, 68, 50 · `design/08` 11 · gli spike 23 e 6 |
+> | ⛔ **`riferimenti.md` NON toccato** | ⚠️ **È una decisione, non un'omissione**, ed è la voce aperta della **41ª**, riaffermata dalla 57ª: le misure di questa passata — il censimento dei nomi italiani, i dieci vincoli della §11 uno per uno, i fine-riga prima e dopo — vivono **accanto al controllo che difendono**. Scegliere fra *«spostare le misure»* e *«cambiare la regola»* resta del proprietario |
+>
+> ⛔ **E LA TESTA DELL'AUDIT ERA SBAGLIATA IN DUE CASE CON DUE VALORI, ed è la notizia di questo
+> verbale.** `CLAUDE.md` la dava **41 KB** e [`AVVIO-CHAT.md`](AVVIO-CHAT.md) **42**, mentre
+> l'aggregato *«coi tre»* della 57ª — `622 − 590` — la implicava a **32**: tre case, tre valori,
+> nessuno dei quali è quello vero. ✅ **Misurata: 51402 byte LF, cioè 50 KB**, e il «Dettaglio» che
+> segue **204** e non 205. ⛔ **E il conteggio di RIGHE è stato TOLTO da tutte e tre**, non
+> riallineato: *«le prime ~340 righe»* è un puntatore a un bersaglio che si muove a ogni rimedio —
+> oggi la testa finisce alla **390** — mentre *«tutto ciò che sta prima della sezione Dettaglio»* è
+> un delimitatore **semantico** e non marcisce. 📌 È la cura del **#31** applicata a un numero di
+> riga invece che a un peso, e la stessa che la 57ª applicò ai numeri di riga della tabella unica.
+>
+> ⛔ **I tre aggregati, rimisurati col diretto sui byte** e mai sommando kilobyte già arrotondati
+> (decisione della **52ª**): *«HANDOFF + spec + `adr/`»* passa da **789** a **811** — cresce di più
+> perché due dei tre membri sono i file che questa passata ha scritto — *«`CLAUDE.md` + questo
+> file»* da **590** a **603**, e *«coi tre»* da **631** a **653**, che porta con sé la correzione
+> della testa.
+>
+> ⚠️ **Riallineate e non tolte, e la scelta è la stessa della 57ª e per la stessa ragione:**
+> `CLAUDE.md` prescrive che *«una cifra che vive in PIÙ documenti si TOGLIE»*, e toglierle è la cura
+> vera — ma tocca i **documenti d'ingresso**, ed è la decisione che la **53ª** ha registrato come
+> **del proprietario e non presa**. 📌 **La prova in più che questa passata porta:** delle
+> **quattro** case dell'aggregato dei tre file, una era stantia di 22 KB e **due** portavano una
+> cifra derivata (la testa) che non corrispondeva a nessuna misura. Riallinearle lascia il
+> repository senza frasi false; toglierle chiuderebbe la classe.
+>
+> ⚠️ **I fine-riga contati PRIMA e DOPO su ogni file toccato.** I due CRLF integrali —
+> [`porta-di-qualita.md`](porta-di-qualita.md) e la spec — restano con `CR == LF` e **zero LF nudi**;
+> il rapporto d'audit, anch'esso CRLF integrale, passa da 1798 a 1820 righe con la stessa proprietà;
+> i file LF puri restano a **CR = 0**. `git ls-files --eol` è **immutato**: `226 i/lf`, `4 i/crlf`,
+> `3 i/-text`. ⛔ **E tutte le scritture sono passate da uno script IN UN FILE, mai via stdin** —
+> gotcha **#48**, decima forma — che **costruisce e codifica tutto prima**, scrive in un temporaneo e
+> fa `os.replace`, e **aborta senza scrivere** se un'ancora non cade esattamente il numero di volte
+> atteso (gotcha **#82**).
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre** — metodo della sesta misura con la convergenza
+> della 46ª.
 
 ⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
 **un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**

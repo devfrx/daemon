@@ -9,9 +9,9 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 590 KB** (byte LF, il 2026-08-27), e con la **testa** di
-[`docs/audit-2026-08-27.md`](docs/audit-2026-08-27.md) — le prime ~340 righe, fino alla tabella
-dei 73 finding, **41 KB** — **631**. ⛔ **QUEL RAPPORTO È APERTO ED È IL COMPITO DI OGGI**, non
+⚠️ **Insieme questi due file pesano 603 KB** (byte LF, il 2026-08-27), e con la **testa** di
+[`docs/audit-2026-08-27.md`](docs/audit-2026-08-27.md) — tutto ciò che sta **prima** della
+sezione «Dettaglio», **50 KB** — **653**. ⛔ **QUEL RAPPORTO È APERTO ED È IL COMPITO DI OGGI**, non
 una consultazione: la sua sezione *«Come si concludono quelli aperti»* è la **delega**, e la
 colonna *«Stato»* della sua tabella è la **casa unica** di che cosa resta. ⛔ **Il «Dettaglio»
 dopo quella tabella — 205 KB, 73 schede — NON si legge intero: se ne apre UNA per volta, quella
@@ -33,8 +33,8 @@ misura. 📌 È la **sesta** occorrenza del gotcha **#31** su questa riga, che p
 già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **789 KB**.
 
 ⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **789 KB** in
-byte LF il 2026-08-27, e possono solo crescere; la spec da sola ne fa **284** — e l'idea è
+`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **811 KB** in
+byte LF il 2026-08-27, e possono solo crescere; la spec da sola ne fa **298** — e l'idea è
 già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
 aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione
 per cui la riga qui sopra prezza i token come **limite inferiore** e non come totale — un

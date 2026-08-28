@@ -9,39 +9,39 @@ Il compendio contiene **tutte** le decisioni del progetto — le 37 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⚠️ **Insieme questi due file pesano 624 KB** (byte LF, il 2026-08-28), e con la **testa** di
-[`docs/audit-2026-08-27.md`](docs/audit-2026-08-27.md) — tutto ciò che sta **prima** della
-sezione «Dettaglio», **54 KB** — **678**. ⛔ **QUEL RAPPORTO È APERTO ED È IL COMPITO DI OGGI**, non
-una consultazione: la sua sezione *«Come si concludono quelli aperti»* è la **delega**, e la
-colonna *«Stato»* della sua tabella è la **casa unica** di che cosa resta. ⛔ **Il «Dettaglio»
-dopo quella tabella — 204 KB, 73 schede — NON si legge intero: se ne apre UNA per volta, quella
-del finding su cui si lavora.** ⚠️ **E [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) è
-uscito da questa riga il 2026-08-27:** è chiuso otto decisioni su otto, e ciò che insegnava vive
-nel compendio — un file chiuso non è una lettura obbligatoria. ⛔ **E il prezzo in
-token che questa riga portava era sbagliato:** diceva *«circa venticinquemila»* col rapporto
-usato per prezzarli la prima volta, e quel rapporto — mai rimisurato, perché nessuno dubita
-del numero che sostiene una regola giusta — è stato **misurato il 2026-08-10** ed è sbagliato
-**per difetto**. Il dato certo: leggendo il compendio, **quattrocento righe sole hanno pesato
-`25148` token** — da sole quanto questa riga attribuiva ai due file **interi** — e il
-compendio ne ha **oltre quattromila**. ⚠️ **Un limite inferiore e non un totale, come la
-frase sul mezzo megabyte:** il file cresce, e un limite inferiore misurato **resta vero
-mentre cresce** — una cifra esatta no. ⚠️ **La cifra dei token non è scritta apposta:**
-servirebbe un contatore dedicato, e un totale ricavato da un campione sarebbe un'ipotesi
-travestita da misura. Il metodo e il limite stanno nella §12 del compendio, quattordicesima
-misura. 📌 È la **sesta** occorrenza del gotcha **#31** su questa riga, che prima diceva
-«circa seimila token» quando i due file pesavano 24 KB, poi «88 KB» quando erano
-già 91, e fino alla chiusura del Traguardo 3 **«165»** quando erano 192. Restano comunque la lettura più economica che esista qui: l'alternativa è **789 KB**.
+⛔ **E la testa di [`docs/audit-2026-08-27.md`](docs/audit-2026-08-27.md) — tutto ciò che
+sta PRIMA della sezione «Dettaglio».** ⛔ **Quel rapporto È APERTO ED È IL COMPITO DI
+OGGI**, non una consultazione: la sua sezione *«Come si concludono quelli aperti»* è la
+**delega**, e la colonna *«Stato»* della sua tabella è la **casa unica** di che cosa resta.
+⛔ **Il «Dettaglio» dopo quella tabella NON si legge intero: se ne apre UNA scheda per
+volta, quella del finding su cui si lavora.**
 
-⛔ **Non aprire** `docs/HANDOFF.md`, la spec del sotto-progetto 1, o la cartella
-`docs/adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — **812 KB** in
-byte LF il 2026-08-27, e possono solo crescere; la spec da sola ne fa **298** — e l'idea è
-già nel compendio. ⚠️ **Rimisurati lo stesso giorno, dal Task 2 del Traguardo 3**, che li
-aveva appena fatti crescere: dicevano «622» e «271», scritti poche ore prima. È la ragione
-per cui la riga qui sopra prezza i token come **limite inferiore** e non come totale — un
-compito che scrive nella spec invalida una cifra esatta **nel commit stesso in cui la
-legge**. Il verbale è la **sedicesima misura** della §12; l'ultima rimisura è **quella in fondo alla §12** — formulata così apposta, perché l'ordinale invecchia: diceva «la ventiduesima» quando i riquadri erano **ventiquattro**, e faceva saltare le due passate che avevano mosso di più. Quando ti servirà il **perché** di
-una decisione — le alternative scartate, le misure, i costi accettati — apri **quel** file,
-uno solo. La §12 del compendio dice quale.
+⚠️ **Quanto costa questa lettura NON è scritto qui, ed è una decisione.** Ogni volta che
+un peso o un conto di token è stato scritto su questa riga è invecchiato: ha detto
+«seimila token» a 24 KB, «88 KB» a 91, «165» a 192, «624» a 213. **Sei volte, il gotcha
+**#31**.** Ora lo dice il comando, che non marcisce:
+
+```bash
+wc -c CLAUDE.md docs/COMPENDIO.md
+```
+
+📌 **E in token, se serve** — `pip install tiktoken`; è il tokenizzatore di OpenAI, quindi
+su italiano con emoji il conto di Claude è più alto e questo è un **limite inferiore**:
+
+```bash
+python -c "import tiktoken,io; e=tiktoken.get_encoding('cl100k_base'); print(sum(len(e.encode(io.open(p,encoding='utf-8').read())) for p in ['CLAUDE.md','docs/COMPENDIO.md']))"
+```
+
+⚠️ **E [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) è uscito da questa riga il
+2026-08-27:** è chiuso otto decisioni su otto, e ciò che insegnava vive nel compendio —
+un file chiuso non è una lettura obbligatoria.
+
+⛔ **Non aprire** [`docs/HANDOFF.md`](docs/HANDOFF.md), la spec del sotto-progetto 1, la
+cartella [`docs/adr/`](docs/adr/) o [`docs/archivio/`](docs/archivio/) «per farsi
+un'idea». Insieme sono **di gran lunga** la mole maggiore del repository — il conto lo dà
+`find docs -name '*.md' | xargs wc -c | sort -n` — e l'idea è già nel compendio.
+Quando ti servirà il **perché** di una decisione — le alternative scartate, le misure, i
+costi accettati — apri **quel** file, uno solo. La §12 del compendio dice quale.
 
 ⚠️ **Il compendio è una compressione, non una selezione.** Ci sono dentro tutte le
 decisioni, non quelle pertinenti al compito di oggi. Sparisce il ragionamento lungo,
@@ -98,6 +98,8 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | **ADR append-only** | superato → `Superseded by`; completato → un **rimando**. Completare una riga di verifica **non** è superare l'ADR |
 | **Richiamo datato** | ogni correzione a una sezione approvata porta il proprio richiamo con la data |
 | ⛔ **Un puntatore o una cifra che vive in PIÙ documenti si TOGLIE, non si ricorregge** | riallinearlo lo rimette nello stato in cui la **regola** è di nuovo l'unica difesa, e quella regola non ha retto **tre volte**. I documenti secondari **rimandano** alla §6 del compendio invece di riscriverla: un rimando non può marcire. ⚠️ Lo stato **per traguardo** resta nelle tabelle di [`docs/roadmap.md`](docs/roadmap.md) e [`docs/README.md`](docs/README.md) — il perimetro di una passata si prende dal drift **misurato**, non dalla categoria. Gotcha **#68** |
+| ⛔ **Un numero misurato non si scrive: si scrive il COMANDO che lo produce** | un numero invecchia al primo commit che tocca ciò che misura; un comando no. Se il numero deve comparire — perché sostiene una decisione — porta accanto il **comando** e la **data**, e vive in **una** casa sola. ⚠️ **Misurato il 2026-08-28:** il **92%** della lettura obbligatoria era storia di numeri corretti, e la testa di questo file aveva sbagliato il proprio peso **sei volte**. Gotcha **#31** |
+| ⛔ **Un verbale di correzione non resta nel documento corretto** | va in [`docs/archivio/`](docs/archivio/), con la data; il documento vivo porta ciò che è **vero adesso**. È la metà mancante della riga qui sopra: senza di essa la regola dice *dove* mettere il numero e non *dove* mettere la sua storia, e la storia si accumula esattamente dove la si è corretta. ⛔ **Il freno è nel cancello**, non nella buona volontà: `check-docs.sh` respinge un compendio sopra il proprio tetto |
 | **Le misure nello scratchpad** | non nel repository, e si ripulisce dopo |
 | ⛔ **I fine-riga sono misti _per file_** | non c'è una convenzione da seguire: c'è **un file da non cambiare**. Uno script che riscrive un sorgente ne normalizza i fine-riga senza dirlo, e `git diff` dichiara **seicento righe cambiate** che nessuno ha toccato — successo **tre volte**, l'ultima il 2026-08-18 con un `sed -i` su `crates/kernel/Cargo.toml`, **43 CR → 0**. Chi scrive uno strumento che tocca file **conserva i fine-riga di quel file**, e li **rimisura dopo** con `tr -cd '\r' \| wc -c` invece di fidarsi |
 | ⛔ **Una dipendenza si aggiunge in _due_ passi** | dal 2026-08-18 il cancello passa `--locked` a **tutti** i suoi siti `cargo` — *tutti* è la relazione che regge quando il cancello guadagna un passo, una cifra no; il comando che la verifica sta in [`docs/riferimenti.md`](docs/riferimenti.md), in una casa sola — quindi il `Cargo.lock` è un **ingresso** e non più un effetto. Toccare un manifesto da solo lascia il cancello **rosso**: il lockfile si rinfresca **fuori** dal cancello — un `cargo build` senza il flag — e si committa **insieme** al manifesto. È il punto e non il prezzo: ADR-0031 chiama l'aggiunta di una voce *«un atto deliberato e rivedibile»*, e un lockfile che il cancello aggiornava da sé non era né l'uno né l'altro. Finding **G-5** |
@@ -108,15 +110,10 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 
 ⛔ **Un piano è un'ipotesi, e il pre-controllo di ogni compito _prima_ di dispacciarlo ha
 trovato almeno un difetto reale in TUTTI i compiti dispacciati finora, senza una sola
-eccezione** — dodici su dodici al Traguardo 3, dieci su dieci al Traguardo 4, e **tutti** quelli
-eseguiti del Traguardo 5, il cui numeratore vive nella **§6 del compendio** e non qui.
-⚠️ **Questa riga portava il totale — *«ventidue su ventidue»* — e contava due traguardi su tre**:
-un cumulativo invecchia a ogni compito, mentre *«tutti, senza eccezione»* è un'affermazione che
-resta vera mentre il conto cresce, come il *«oltre mezzo megabyte»* qui sopra. Tolto, non
-riallineato. Si fanno **quattro domande**,
-e **ciascuna coglie ciò che le altre tre non colgono**. Il testo lungo, coi casi, sta nel
-gotcha **#49** della §9 del compendio e in [`docs/AVVIO-CHAT.md`](docs/AVVIO-CHAT.md): qui c'è
-il solo elenco, perché è quello che si rilegge prima di dispacciare.
+eccezione.** ⚠️ **Nessun numeratore qui**, per costruzione: un cumulativo invecchia a ogni
+compito, *«tutti, senza eccezione»* no.
+
+Si fanno **quattro domande**, e **ciascuna coglie ciò che le altre tre non colgono**.
 
 | | Il difetto | Che cosa lo coglie |
 |---|---|---|
@@ -125,41 +122,23 @@ il solo elenco, perché è quello che si rilegge prima di dispacciare.
 | 3 | l'**artefatto è sbagliato**, e compila | **solo** scriverne un'implementazione **da fuori dalla crate** |
 | 4 | il **compito è già eseguito** | *ciò che detta di produrre esiste già?* |
 
-⛔ **E una quinta cosa, misurata eseguendo il Traguardo 3 e che non sta nell'elenco: il
-contratto cresce sotto il piano.** Il Task 8 dettava «le cinque operazioni» quando erano sei;
-il Task 10 congelava quattro campi quando erano cinque; il Task 11 attendeva un rosso che era
-verde. **Un compito scritto prima si legge contro il codice di adesso, non contro il piano.**
+⛔ **E tre cose che l'elenco NON coglie, una riga l'una.** Sono istruzioni, non aneddoti:
+il **caso** che ciascuna ha prodotto vive in [`docs/HANDOFF.md`](docs/HANDOFF.md), nel
+gotcha che porta il suo numero, e si apre solo se serve.
 
-⛔ **E vale anche per un DISEGNO — misurato il 2026-08-11, gotcha #58.** Il disegno del
-Traguardo 4 fu scritto leggendo la spec, gli ADR e le **guardie**, e sbagliava due cose che
-stavano nei **banchi di prova** — di cui una scritta in un **commento**. ⚠️ **Le guardie non sono
-tutto il codice:** un documento che ha letto gli script del cancello, i manifesti e i sorgenti
-delle dipendenze **si sente verificato**, ed è lì che smette di guardare i test. E un precedente
-si cita per la **ragione** che lo ha prodotto, non per la forma.
+| | La regola | Il caso |
+|---|---|---|
+| 5 | ⛔ **Il contratto cresce sotto il piano: un compito scritto prima si legge contro il codice di ADESSO, non contro il piano** | Traguardo 3 — un compito dettava «le cinque operazioni» quando erano sei, uno congelava quattro campi quando erano cinque, uno attendeva un rosso che era verde |
+| 6 | ⛔ **Vale anche per un DISEGNO, e le guardie non sono tutto il codice: ciò che ti smentisce può stare in un BANCO DI PROVA, perfino in un commento** | gotcha **#58** |
+| 7 | ⛔ **Un ADR si legge anche contro i propri FRATELLI**, non solo contro il codice: due decisioni della stessa data possono contraddirsi senza che nessuna delle due nomini l'altra | gotcha **#59** |
+| 8 | ⛔ **Un RAPPORTO è un piano, e si prezza leggendo il CODICE — in ENTRAMBE le direzioni**: può chiedere più del necessario, e può chiedere meno | gotcha **#65** |
 
-⛔ **E una SESTA, che l'audit del 2026-08-11 ha prodotto e che nessuna delle cinque coglie: un ADR
-si legge anche contro i propri FRATELLI.** [ADR-0026](docs/adr/0026-linguaggio-del-core.md)
-dichiara fra le proprie conseguenze positive che *«il simulatore non va scritto da zero»* perché
-esiste `madsim`; [ADR-0031](docs/adr/0031-dipendenze-del-kernel-parte-del-confine.md) — **con la stessa data** —
-misura che `madsim` porta **55 crate** e lo scarta, e il codice gli dà ragione: `simulator` ha
-**una** dipendenza ed è scritto **a mano**. ⚠️ **Quante righe non è scritto qui:** la cifra diceva
-**512** — misurata il 2026-08-11, e il 2026-08-25 erano **519** — ed è **tolta** dai documenti
-**vivi** che la portavano e **lasciata nei verbali datati**, dove dice cosa fu misurato quel
-giorno; il conto lo dà `find crates/simulator/src -name '*.rs' | xargs wc -l`, e un comando non
-marcisce.
-⚠️ **Nessuno dei due nomina l'altro**, quindi
-la contraddizione non si vede da nessuno dei due lati, e le cinque domande qui sopra guardano
-tutte il compito contro il **codice** — mai una decisione contro le decisioni vicine. Gotcha
-**#59**.
-
-⛔ **E una SETTIMA, misurata il 2026-08-17 eseguendo la prima decisione dell'audit: un RAPPORTO
-è un piano, e si legge contro il codice come tutti gli altri.** L'audit prezzava quel rimedio
-come *«un'aggiunta al contratto di una porta condivisa»*, cioè caro e strutturale; letto contro
-il codice di oggi non serviva **nessuna** promessa nuova e **nessuna riga di prodotto** — mancava
-uno **stato di prova**, non un contratto. ⚠️ E nella direzione opposta il rapporto era **corto**:
-raggruppava due finding per **causa**, ma una suite che si ferma al primo rosso ha bisogno di un
-bugiardo per **blocco**, non per causa — quindi erano tre. 📌 **Il rimedio si prezza leggendo il
-codice, non il rapporto**, in entrambe le direzioni. Gotcha **#65**.
+⚠️ **Il testo lungo di queste quattro righe è stato tolto da qui il 2026-08-28**, non
+perso: erano quattro paragrafi che ricopiavano i gotcha **#49**, **#58**, **#59** e **#65**
+di [`docs/HANDOFF.md`](docs/HANDOFF.md), che ne è la casa. ⛔ **Ciò che è rimasto è
+l'ISTRUZIONE**, perché questo file è l'unica lettura obbligatoria e `HANDOFF.md` non lo è:
+una regola che sparisse di qui non verrebbe letta da nessuno. **Il caso** invece si apre
+solo quando serve, ed è per questo che può vivere altrove.
 
 ## Manutenzione della documentazione
 

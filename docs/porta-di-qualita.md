@@ -3642,11 +3642,34 @@ riga di tabella** — ma tacerla la rendeva indistinguibile da una voce dimentic
 | 31 | i **fine-riga**, misura nuova su una regola già presa | `git ls-files --eol` dice che **nell'indice** i file tracciati sono LF, compresi quelli che nell'albero di lavoro sono CRLF: `core.autocrlf` vale `true`, quindi il `diff` è protetto più di quanto i documenti dichiarino | §6 del compendio, dal 2026-08-20 | il **proprietario**: riaprire una decisione presa |
 | 32 | la transizione **`InCoda --> Annullata`** | la macchina a stati di [`design/02`](design/02-arbitrato-gpu.md), che la §5.3 della spec adotta come propria, dichiara che dalla coda si esce anche per **annullamento o scadenza**: nell'arbitro non esiste nessun meccanismo. ⚠️ **Misurato il 2026-08-27**, non dedotto: `grep -rniE 'cancel|annull' --include=*.rs crates/kernel/src/` non ha **nessun** riscontro; gli unici punti che mutano `queues` sono `enqueue`, `promote` e `new`, e `collect_expired` fa `retain` **solo** su `held`. Un biglietto consegnato è quindi **immortale**, mentre `design/02` promette all'utente *«l'opzione di annullare»*. ⛔ **E la conseguenza ha già costato codice:** `StartupError::ReservedQuota` esiste nella radice di composizione perché la seconda quota permanente torna `Queued` e nessuno la servirà mai — un tampone per **un** caso, mentre il buco resta per ogni altro chiamante | il richiamo del 2026-08-27 accanto alla macchina a stati in [`design/02`](design/02-arbitrato-gpu.md), col rimando in [`design/01`](design/01-topologia-dei-processi.md) | il **proprietario**: la scelta è fra **costruire** l'annullamento e **togliere** la transizione dal diagramma, e nessuna delle due è dell'agente. ⚠️ Voce nata dal finding **AUD-044**, che non lamentava il meccanismo mancante ma l'**arretrato anonimo**: la §9 del disegno del Traguardo 5 apre con *«ogni riga ha un indirizzo»*, e questo ramo non stava né fra le cose fatte né fra quelle rimandate |
 
-⚠️ **E una cosa che la raccolta ha misurato e che nessuno dei sei riquadri diceva:** delle
-righe qui sopra, quelle il cui chiusore **non** è il proprietario sono **sei** — `E50`,
-`E51`/`E100`, `R6`, `E152`, la classe d'effetto della transizione, ed `E83`, che non ne ha
-nessuno. Sparse fra i riquadri si leggevano tutte come *«aspetta il proprietario»*, che è
-precisamente il modo in cui una voce smette di essere aperta senza che nessuno l'abbia chiusa.
+⚠️ **E una cosa che la raccolta ha misurato e che nessuno dei sei riquadri diceva:** fra le
+righe qui sopra ce ne sono di quelle il cui chiusore **non** è il proprietario. Sparse fra i
+riquadri si leggevano tutte come *«aspetta il proprietario»*, che è precisamente il modo in cui
+una voce smette di essere aperta senza che nessuno l'abbia chiusa.
+
+⛔ **RICHIAMO DEL 2026-08-28: qui stavano una cifra — *«sono sei»* — e l'elenco dei sei nomi, ed
+erano falsi dallo stesso giorno.** `9a18f36` ha portato `E30` da *«il proprietario»* a *«il
+Traguardo 6, insieme a R6»*, e la frase **tre righe sotto la tabella** non è stata riletta: i
+nomi erano diventati **sette**, e il mancante era proprio la voce che **sblocca il traguardo che
+si stava per aprire**. È la radice **R1** — *una correzione attraversa la riga in cui nasce, non
+la frase sotto* — commessa nella tabella che il compendio dichiara casa unica.
+📌 **Tolti e non riallineati a sette**, sul precedente di **AUD-007** e **AUD-046**: *un elenco
+invecchia, una regola no*, e il prossimo spostamento di colonna li falsificherebbe di nuovo. Al
+loro posto c'è il **comando**, che le **nomina** invece di contarle:
+
+```
+awk -F'|' '/^## .*LE VOCI APERTE DEL TRAGUARDO 5/{s=1} s&&/^## Cosa la porta NON controlla/{s=0} s&&/^\| [0-9]+ \|/&&$(NF-1)!~/proprietario/{print $3}' docs/porta-di-qualita.md
+```
+
+✅ **Provato nelle DUE direzioni** (gotcha **#24**): rende esattamente le voci il cui chiusore non
+è il proprietario, e la forma complementare — `~` al posto di `!~` — non ne nomina **nessuna**.
+Il perimetro è verificato a parte: le righe che il filtro attraversa sono tutte e sole quelle
+della tabella.
+⚠️ **È ancorato alle due INTESTAZIONI e non a numeri di riga**, come il resto di questa sezione
+dal 2026-08-25: se una delle due cambia il comando **tace**, e un silenzio si nota meglio di una
+cifra sbagliata. ⚠️ **E l'ancora non può portare l'emoji dell'intestazione**: `⛔` è multi-byte e
+un `.` di `awk` ne copre **un byte solo** — misurato scrivendo questo comando, la prima forma
+rendeva zero righe.
 
 ## Cosa la porta NON controlla, in questo traguardo
 

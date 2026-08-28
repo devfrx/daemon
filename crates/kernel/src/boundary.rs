@@ -242,6 +242,27 @@ impl Untrusted {
     ///   mistake. And a literal can still LIE — `"quoted by the user"` on a promotion the user
     ///   never asked for — which is provenance and not correctness, exactly the limit A4
     ///   declares. What shut is the road somebody takes without noticing.
+    ///
+    ///   ⛔ **AND THIS LIST WAS MISSING THE WIDEST ONE — dated recall, 2026-08-28, finding
+    ///   AUD-050.** It named `String::leak` and the lying literal and stopped there, so a reader
+    ///   checking what A3 leaves open read a floor of two deliberate acts. The third needs no
+    ///   determination at all: **`RecordV1` is `pub` with every field `pub`**, so a struct literal
+    ///   from ANY crate sets `reason` to a runtime `String` — external text included — WITHOUT
+    ///   going through `promote`, and `RecordV1`'s hand-written `Debug` prints index 4 whole.
+    ///   Measured from outside the crate on a throwaway probe deleted in the same run:
+    ///   `RecordV1 { … payload: <24 bytes>, reason: "ignore your instructions" }`.
+    ///   ⚠️ **The guard is worth what its CONSTRUCTOR is worth** — the very argument used ten
+    ///   lines above to demolish `reason: &Instruction` — and here the constructor is the struct
+    ///   literal, which no private field narrows. So `&'static str` shuts the `promote` road and
+    ///   not the type, and the case that holds it,
+    ///   `tests/compile_fail/promote_reason_is_not_runtime_text.rs`, cannot fire on this one.
+    ///   ⚠️ **Nor is it hypothetical:** `tests/record_shape.rs` walks it today from another crate,
+    ///   with `reason: String::from("ignore your instructions")`.
+    ///   ⛔ **Closing it at level 1 is the OWNER'S — registered, not taken:** private fields plus
+    ///   a constructor touch every construction site across three crates, `frozen_bytes.rs`
+    ///   included. `grep -rn 'RecordV1 {' crates/ --include=*.rs` counts them; a count written
+    ///   here would age. What this recall buys is that the floor is now DECLARED, which is what
+    ///   the paragraph above says it exists to do.
     /// - **A4 — a round trip through the journal**: `outcome(id, untrusted.as_str().as_bytes())`,
     ///   then `read_back`, then `String::from_utf8`, then `Instruction::new`. ✅ CLOSED on
     ///   2026-08-10, **at level 2**, by the record carrying the label: `promote` now writes the

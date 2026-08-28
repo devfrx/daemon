@@ -37,11 +37,10 @@ Dentro il compendio il peso è concentrato in tre sezioni:
 
 📌 **Le decisioni del progetto stanno nell'8%.** Il 92% è storia.
 
-⛔ **Una cifra dichiarata sbagliata, e va scritta perché è la stessa malattia:** la testa di
-`CLAUDE.md` prezzava questa lettura *«circa venticinquemila token»* sulla base di una misura
-mai rifatta. Il rapporto che la sosteneva — `25148` token per quattrocento righe — dà
-**1,02 caratteri per token**, che è impossibile per qualunque testo. La misura era rotta, non
-solo stantia.
+⛔ **Una cifra dichiarata sbagliata, ed è la stessa malattia:** la testa di `CLAUDE.md`
+prezzava questa lettura *«circa venticinquemila token»* su una misura mai rifatta, il cui
+rapporto — `25148` token per quattrocento righe — dà **1,02 caratteri per token**,
+impossibile per qualunque testo. Era **rotta**, non solo stantia.
 
 ---
 
@@ -54,9 +53,8 @@ La regola è buona e non si tocca. Ciò che manca è la sua metà: **dove** fini
 Oggi finisce nel file che si legge a ogni sessione, quindi ogni correzione tassa ogni sessione
 futura, per sempre.
 
-⛔ **Un intervento che sposta 555 KB e lascia la regola com'è è pigrizia con l'aspetto del
-lavoro:** in poche settimane il compendio torna dov'era. Il disegno vale solo se porta anche
-il **freno**, ed è la §4.
+⛔ **Spostare 555 KB e lasciare la regola com'è è pigrizia con l'aspetto del lavoro:** in
+poche settimane il compendio torna dov'era. Il disegno vale solo col **freno**, ed è la §4.
 
 ---
 
@@ -91,9 +89,6 @@ che registrano di quanto sono cresciuti i file (*«spec `263 → 266`, HANDOFF `
 | Regola violata | *un **comando** non marcisce* — formulata dal repository stesso: `grep -rc 'comando non marcisce' docs/ CLAUDE.md` |
 | Rimedio | resta la **tabella dei puntatori**, **senza la colonna dei kilobyte**, col comando che la rifà. Bersaglio: **≤ 2 000 token** |
 | Si archivia? | **Sì** — i verbali sono datati e legittimi: vanno in archivio, non si cancellano |
-
-📌 La colonna dei pesi esisteva per decidere *se aprire un file*. Quella decisione la prende
-un `wc -c` al momento, e non marcisce.
 
 ### 2.3 §6 — è lo **stato di oggi** sepolto sotto tutti gli stati di ieri
 
@@ -146,13 +141,13 @@ E la sua metà mancante:
 
 | | |
 |---|---|
-| Asserzione | `docs/COMPENDIO.md` **non supera 80 KB** (byte, `wc -c`) |
+| Asserzione | `docs/COMPENDIO.md` non supera un tetto in byte, misurato con `wc -c` |
 | Perché una soglia e non un ideale | *«un principio che non si può controllare è un'intenzione. Gli invarianti diventano test»* (`CLAUDE.md`) |
-| Perché **80** e non 65 | il bersaglio è ~65 KB: la soglia lascia margine di crescita legittima e scatta **prima** che il file torni illeggibile. Una soglia che scatta al primo commit insegna a ignorarla |
+| ⛔ **Quanto vale il tetto NON è scritto qui** | vive in `scripts/check-docs.sh`, accanto al controllo che difende, col **perché**. ⚠️ **Richiamo del 2026-08-28:** questa riga portava una cifra tarata su una §6 **consolidata**; il proprietario ha scelto la via conservativa — i blocchi che nominano una voce **aperta** restano in §6 parola per parola — e quella cifra è diventata irraggiungibile. Rifatta **sulla misura**, non sull'attesa |
 | Due direzioni (obbligatorie) | ① scatta con un file sopra soglia; ② **non** scatta col file di oggi. La seconda si dimentica |
 | Non-vacuità | file mancante → **rosso**, non verde (gotcha #26) |
 
-⚠️ **La soglia è un tetto, non un obiettivo.** Non autorizza a crescere fino a 80.
+⚠️ **La soglia è un tetto, non un obiettivo.** Non autorizza a crescere fino a lì.
 
 ---
 
@@ -191,7 +186,7 @@ cancello e ogni rimando incrociato del repository.
 | **Chi cerca un fatto storico deve aprire un secondo file** | è il punto: la storia si consulta, non si rilegge a ogni sessione |
 | **Due file nuovi in `docs/`** | il repository ne ha 67; due in più che nessuno apre pesano meno di 555 KB che tutti aprono |
 | **Il tetto può diventare rosso su una crescita legittima** | è il comportamento voluto: costringe a decidere *dove* va il testo nuovo, invece di lasciarlo cadere nel compendio |
-| **La soglia di 80 KB è un giudizio, non una misura** | dichiarato come tale. Si sposta con un ADR se il progetto dimostra che serve |
+| **Il valore del tetto è un giudizio, non una misura** | dichiarato come tale, accanto al controllo |
 | **Il taglio di §6 e §12 è una lettura, e una lettura può sbagliare** | mitigato: **niente si cancella**, tutto va in archivio. Un errore di taglio si annulla spostando indietro un blocco |
 | **Una sessione va spesa senza risultato visibile** | il ritorno è misurabile alla prima sessione dopo: §8 |
 

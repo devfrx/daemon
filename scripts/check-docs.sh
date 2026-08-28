@@ -304,6 +304,33 @@ done
 echo "== ADR still in Proposed =="
 prop=$(grep -l 'Status:\*\* Proposed' docs/adr/*.md 2>/dev/null | tr '\n' ' ')
 [ -z "${prop// /}" ] && echo "  (none)" || echo "  awaiting approval: $prop"
+echo "== compendium size ceiling =="
+# ⛔ THE CEILING EXISTS BECAUSE THE RULE ALONE DID NOT HOLD. On 2026-08-28 the compendium
+# was 623516 bytes and 92% of it was the history of corrected numbers: every fix appended a
+# paragraph explaining why the old number was wrong, to the one file every session must read
+# in full. The rule that forbids it is in CLAUDE.md; this is what makes it checkable.
+# «A principle that cannot be checked is an intention» -- CLAUDE.md.
+#
+# ⚠️ WHY 220 KB AND NOT 80. The design of 2026-08-28 proposed 80 KB, aiming at a ~65 KB
+# compendium. That figure assumed the OPEN entries of §6 would be consolidated into a single
+# table; the owner chose the conservative route instead -- the blocks naming an open entry
+# stay in §6 WORD FOR WORD, because summarising an owner decision can lose one in silence.
+# That choice costs ~45000 tokens of §6 and puts the file at 202372 bytes. The ceiling is
+# set on what was MEASURED, with about 11% of headroom, and the design carries the dated
+# recall. ⛔ WHEN THOSE ENTRIES ARE CONSOLIDATED, THIS NUMBER COMES DOWN: it is a ceiling
+# on the file as it is, not a licence to grow into it.
+#
+# Non-vacuity: a missing file is a FAILURE, not a silent pass -- gotcha #26.
+ceiling=225280
+if [ ! -f "$compendium" ]; then
+  report "$compendium is missing: the size ceiling would be vacuous"
+else
+  size=$(wc -c < "$compendium")
+  if [ "$size" -gt "$ceiling" ]; then
+    report "$compendium is $size bytes, over the $ceiling ceiling -- see docs/superpowers/specs/2026-08-28-sfoltimento-compendio-design.md"
+  fi
+fi
+
 
 echo
 if [ "$failures" -eq 0 ]; then

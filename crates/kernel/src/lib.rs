@@ -1,9 +1,13 @@
 //! The kernel: logic, decisions, declared traits. No call to the OS.
 //!
-//! Milestone 2 is filling this crate with the INJECTABLE SUBSTRATE: the two concepts of
-//! time, the randomness port, the delivered decision parameters, the executor, and the
-//! six families of ports as traits. The kernel never takes anything from the world — it
-//! is handed a provider, and in simulation that provider is a fake governed by a seed.
+//! WHAT THIS CRATE HOLDS IS THE LIST OF `pub mod` BELOW, and that list is the only answer
+//! that cannot go stale: a prose summary of it ages the day a milestone adds a module by
+//! touching the tail of the file. ⚠️ RECALL OF 2026-08-28, AUD-046: this said "Milestone 2
+//! IS FILLING this crate with the INJECTABLE SUBSTRATE" and named FIVE things while `pub
+//! mod` named nine — four milestones had added modules without ever entering the paragraph
+//! that summarises them. REMOVED, not realigned to nine. The kernel never takes anything
+//! from the world — it is handed a provider, and in simulation that provider is a fake
+//! governed by a seed.
 //! The attributes below are NOT decoration — they are three of the level 1 rules of
 //! §7.4.1, and their negative tests live in `tests/compile_fail/`.
 

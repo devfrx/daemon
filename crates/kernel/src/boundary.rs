@@ -47,7 +47,7 @@
 //! any `Journal`, and one that answers `Ok(())` without writing a byte satisfies the bound.
 //! The honesty of an implementation is not a level 1 property and never becomes one; it is
 //! what a CONFORMANCE SUITE holds, the way `tests/reactor_contract.rs` holds the `Reactor`
-//! with two deliberate liars. ⚠️ THAT SUITE EXISTS SINCE 2026-08-10 —
+//! with deliberate liars of its own. ⚠️ THAT SUITE EXISTS SINCE 2026-08-10 —
 //! `tests/journal_contract.rs` — and this paragraph is dated
 //! rather than rewritten, because the sentence it replaced ("the conversion is journalled",
 //! read as a guarantee) is the mistake it exists to prevent and the correction has its own
@@ -61,6 +61,11 @@
 //! in more than one file goes stale in the copy nobody moves, so it is REMOVED here and left
 //! where it is recounted — `tests/journal_contract.rs`, which counts its own tests with a
 //! `grep` instead of bumping a number. `CLAUDE.md`'s rule, and gotcha #68.
+//! ⛔ AND THIS RECALL WAS ITSELF FALSE UNTIL 2026-08-28, finding AUD-049: a THIRD count sat
+//! nine lines above it — "two deliberate liars" of `tests/reactor_contract.rs`, which has had
+//! SEVEN of them since 2026-08-18 — so "the counts are gone from this file" was written with
+//! one still standing, on the very line the same pass was editing. Removed too, and left
+//! where that suite recounts its own liars.
 
 use core::fmt;
 

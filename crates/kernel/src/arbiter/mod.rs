@@ -1520,10 +1520,12 @@ mod tests {
 
     /// ⛔ THE MARKING PASS RUNS TO THE END OF THE LANES, and this is the direction the probe above
     /// steps over. That one asks for `1_024` against a `Batch` of `2_048`, so the WORST lane
-    /// covers the need on its own and the pass never has to leave it; of every other probe here
-    /// seven have a single resident, two have two in the SAME lane, and one leaves through
-    /// `reclaimable < needed` before any lane is walked at all. So "it goes on into the next lane"
-    /// was asked by NOBODY. ✅ MEASURED on 2026-08-20 and not deduced: with `lanes.iter().rev()`
+    /// covers the need on its own and the pass never has to leave it. So "it goes on into the next
+    /// lane" was asked by NOBODY. ⚠️ RECALL OF 2026-08-28, AUD-043: a per-probe breakdown stood
+    /// here -- "seven have a single resident, two have two in the SAME lane, and one leaves
+    /// through `reclaimable < needed`" -- and it was wrong at `83c7242` too AND did not add up to
+    /// the probes it claims to partition. REMOVED, not realigned: what carries this paragraph is
+    /// the mutation below, which is a measurement over the WHOLE workspace and needs no census. ✅ MEASURED on 2026-08-20 and not deduced: with `lanes.iter().rev()`
     /// cut to `.take(1)` -- the outer loop stopped after the first lane -- the mutant survived the
     /// WHOLE WORKSPACE, 34 targets, 235 passed, 0 failed, 2 ignored. Registered as `E75`.
     ///

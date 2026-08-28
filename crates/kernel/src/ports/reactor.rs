@@ -111,9 +111,33 @@ pub trait Reactor {
     /// ⚠️ And widening later is cheap BY THE PROJECT'S OWN CRITERION, not by hope: §7.4.5
     /// stages a piece by asking "is it retrofittable?", answering for the confinement token
     /// that "adding an argument to a signature with zero callers is mechanical — regola B
-    /// does not apply, so C does". This is that case: three call sites inside the repository,
-    /// no external consumer, NO DURABLE ARTEFACT. The contrast that makes it concrete is
-    /// ADR-0036 rule 3, where a new field must be optional and take a new index precisely
-    /// because bytes already written cannot be recompiled.
+    /// does not apply, so C does". This is that case, and what makes it so is a RELATION rather
+    /// than a count: EVERY call site and EVERY implementation of `wait_until` lives inside this
+    /// workspace -- the five members of the root `Cargo.toml` -- so there is no external
+    /// consumer, and widening the return is a COMPILE ERROR at each one and a silent change at
+    /// none. And NO DURABLE ARTEFACT carries its shape, which is the half the contrast is
+    /// about: ADR-0036 rule 3, where a new field must be optional and take a new index
+    /// precisely because bytes already written cannot be recompiled.
+    ///
+    /// ⛔ RECALL OF 2026-08-28, FINDING AUD-016 -- THIS SAID "three call sites inside the
+    /// repository", AND THE FIGURE IS REMOVED RATHER THAN REALIGNED TO TWELVE. It was true when
+    /// this file was written on 2026-08-09 and the executor, the conformance suite and two
+    /// simulator suites have added call sites since, without this line being reread. A count of
+    /// callers is the specimen case of a figure that rots at the next commit, so what replaces
+    /// it is the relation that holds however many arrive -- the cure gotcha #68 asks for, and
+    /// the one AUD-009 applied to the gate's `cargo` sites. The figures, if ever needed:
+    /// `grep -rn '\.wait_until(' --include=*.rs crates/ | wc -l` and the same for
+    /// `'impl Reactor for'`; on 2026-08-28 they answered 12 and 11.
+    ///
+    /// ⚖️ THE OTHER TWO CLAUSES WERE MEASURED, NOT ASSUMED, and both hold: the root manifest
+    /// lists five members and nothing outside them, and `Record` carries NO time field at all,
+    /// so nothing durable is shaped by this return. ⛔ AND "MECHANICAL" IS NOW MEASURED TOO,
+    /// which is what "not by hope" above demands: widening the return to `Option<(Monotonic,
+    /// u32)>` and running `cargo check --locked --workspace --all-targets --keep-going` gives
+    /// `error[E0308]` at `crates/kernel/src/executor.rs` and ZERO `unused`/`unreachable`
+    /// warnings -- nothing degrades quietly. ⚠️ THE OTHER SITES ARE HIDDEN BEHIND THAT FIRST
+    /// WALL and the run cannot count them, because dependents are not checked until the lib
+    /// compiles: the breakage is LOUD, and its full width is not measurable in one pass.
+    /// Mutation applied, checked, and revoked with `git diff` at zero lines.
     fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic>;
 }

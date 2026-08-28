@@ -9,10 +9,20 @@
 # remove '#![forbid(unsafe_code)]' from crates/kernel/src/lib.rs, write a REAL 'unsafe' in
 # the kernel, and the gate stays GREEN on all five preceding checks. Measured.
 #
-# ⛔ THE FOUR CASES OF tests/compile_fail/ DO NOT COVER THE HOLE, and it looks like they do.
+# ⛔ THE ATTRIBUTE CASES OF tests/compile_fail/ DO NOT COVER THE HOLE, and it looks like they do.
 # Each one REDECLARES its own attributes and none of them ever names 'kernel::': they prove
 # that the MECHANISM bites where it is declared, not that it is declared HERE. The milestone
 # Definition of done asks for the second thing and was verifying the first.
+#
+# ⛔ RECALL OF 2026-08-28, FINDING AUD-064 -- THIS SAID "THE FOUR CASES OF tests/compile_fail/",
+# AND WHAT WAS WRONG WAS THE SUBJECT AND NOT THE ARGUMENT. The two claims above are TRUE of the
+# attribute cases and FALSE of the directory, which held four cases when this was written and
+# thirty-three on the day of this recall. The count is REMOVED rather than realigned, and WHICH
+# cases they are comes from a command: 'grep -L kernel:: crates/kernel/tests/compile_fail/*.rs'.
+# ⚠️ MEASURED IN BOTH DIRECTIONS on 2026-08-28, and the measurement IS the argument: that command
+# returns exactly the same files as 'grep -l "#!\[" ...' on the same directory -- redeclaring
+# one's own attributes and never naming 'kernel::' are the same set, which is what makes a case
+# one of these rather than an ordinary one.
 #
 # ⛔ 'forbid' AND NOT 'deny', and that is the point of the rule, not a preference: 'deny' is
 # overridable by a local '#[allow(unsafe_code)]', 'forbid' is not -- E0453, and that is the

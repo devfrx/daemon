@@ -16,9 +16,9 @@
 //! that assert behaviour are gone and the real double is used; what is left is
 //! `RefusingJournal`, which exists to refuse and has no behaviour to get wrong.
 //!
-//! ⚠️ AND THE REST OF THE REPOSITORY WAS AUDITED FOR THE SAME DEFECT — TWENTY-ONE
-//! IMPLEMENTATIONS OF A PORT OUTSIDE `src/` — AND THE AUDIT FOUND A SECOND ONE, which is why it
-//! was run instead of assumed. `RefusingReactor` in `tests/executor_determinism.rs` violates
+//! ⚠️ AND THE REST OF THE REPOSITORY WAS AUDITED ON 2026-08-10 FOR THE SAME DEFECT — TWENTY-ONE
+//! IMPLEMENTATIONS OF A PORT OUTSIDE `src/` AT THAT COMMIT — AND THE AUDIT FOUND A SECOND ONE,
+//! which is why it was run instead of assumed. `RefusingReactor` in `tests/executor_determinism.rs` violates
 //! promise 3 of `tests/reactor_contract.rs`: its `wait_until` answers `None` to a deadline in the
 //! future, which the suite forbids.
 //!
@@ -37,11 +37,29 @@
 //! `RefusingReactor` stays as it is, deliberately and with the reason stated here, and the rule
 //! that comes out of the audit is the one above rather than "no fake may break a promise".
 //!
-//! ⚠️ The other NINETEEN break nothing: nine are the liars of the two suites, used nowhere
-//! else; four are `compile_fail` stubs that never run; four implement `Filesystem`, `Network`,
-//! `Worker` or `Ipc`, whose contracts have no conformance suite yet — nothing to break; one is a
-//! scripted `Rng`; and one is `RefusingJournal` below, an error fixture. ⚠️ The count is
-//! **22** today, because this task removed one implementation and added two.
+//! ⚠️ OF THOSE TWENTY-ONE THE OTHER NINETEEN BROKE NOTHING, and the past tense is deliberate:
+//! this is the BREAKDOWN OF THE 2026-08-10 AUDIT, not a statement about the repository now. Nine
+//! were the liars of the two suites, used nowhere else; four were `compile_fail` stubs that never
+//! run; four implemented `Filesystem`, `Network`, `Worker` or `Ipc`, whose contracts had no
+//! conformance suite yet — nothing to break; one was a scripted `Rng`; and one is
+//! `RefusingJournal` below, an error fixture.
+//!
+//! ⛔ RECALL OF 2026-08-28, FINDING AUD-017 — THIS ENDED WITH "The count is **22** today", AND
+//! THE FIGURE IS REMOVED RATHER THAN REALIGNED. It was written on 2026-08-10 as a snapshot in the
+//! PRESENT TENSE, in the very paragraph that opens by explaining that its predecessor ("TWENTY")
+//! had been counted on the wrong snapshot and must be RECOUNTED rather than retouched — gotcha
+//! #31 in the house that teaches it. Every task since has grown the population without rereading
+//! the line. ⛔ AND THE COUNT IS NOT THE DANGER, WHAT IT PROPPED UP IS: read at the present tense
+//! this paragraph claims COMPLETENESS — "the rest of the repository was audited" — over a
+//! population it no longer describes. Dating the audit is what removes that, and it is why the
+//! figures above are left exactly as they were: a verbale that records a MEASUREMENT ages
+//! honestly, one that asserts a state does not.
+//!
+//! 📌 THE COUNT NOW, WHENEVER "NOW" IS, COMES FROM THE COMMAND AND NOT FROM THIS LINE:
+//! `grep -rEn --include=*.rs "^\s*impl( *<[^>]*>)? *(kernel::ports::[a-z]+::)?(Journal|Reactor|Rng|Filesystem|Network|Worker|Process|Ipc)(<[^>]*>)? for " crates | grep -v "/src/" | wc -l`
+//! ⚠️ On 2026-08-28 it answered **42**; the audit that found this line answered **40** the day
+//! before. THAT GAP IS THE ARGUMENT, not a discrepancy to reconcile: two commits moved it while
+//! the finding was being written, so any number written here is stale before it is read.
 
 use kernel::boundary::{Instruction, Untrusted};
 use kernel::ports::journal::{Journal, JournalError, StepId};

@@ -1817,7 +1817,7 @@ stato sta nella §6, in un posto solo.
 | ADR nuovo | una voce in **§5** — obbligatoria, la pretende lo script |
 | ADR superato | la voce resta e si marca; gli ADR sono **append-only** |
 | voce della riapertura chiusa | la tabella e l'ordine in **§6** |
-| gotcha nuovo | una riga in **§9**, e il testo integrale in `HANDOFF.md` |
+| gotcha nuovo | ⛔ **niente qui:** la casa è **una sola**, la sezione *«I gotcha»* di [`HANDOFF.md`](HANDOFF.md), e la §9 vi **rimanda** invece di copiare. ⚠️ **RICHIAMO DEL 2026-08-28:** questa riga diceva *«una riga in §9, e il testo integrale in `HANDOFF.md`»*, cioè ordinava di **ricreare il duplicato** che lo sfoltimento aveva tolto lo stesso giorno — gotcha **#68**, dentro la tabella che governa la manutenzione |
 | **misura nuova** | le **fonti** e i **comandi** in `riferimenti.md`, la riga d'esito in `HANDOFF.md`, e le evidenze nell'ADR o nella sezione che la misura decide. ⛔ I prototipi restano nello scratchpad e si ripuliscono |
 | decisione dello stack | **§4** |
 | cambio del prossimo passo | **§6** |

@@ -757,9 +757,20 @@ fn a_journal_whose_note_guard_asks_whether_the_archive_is_empty_is_caught() {
 /// ⚠️ `contains` AND NOT EQUALITY, and it is not a weakening. `assert_eq!` with a custom message
 /// panics with `assertion `left == right` failed: <message>` followed by the two values, so the
 /// payload is never equal to the constant; only the one `assert!` in the suite would match
-/// exactly. Equality would make five of these six tests fail for a reason that has nothing to do
-/// with the journals. Substring matching is safe here because no message is a substring of
-/// another — see the doc of `READ_BACK_MESSAGE`.
+/// exactly. Equality would therefore fail EVERY CALLER BUT THAT ONE, for a reason that has
+/// nothing to do with the journals. Substring matching is safe here because no message is a
+/// substring of another — see the doc of `READ_BACK_MESSAGE`.
+///
+/// ⛔ DATED RECALL, 2026-08-28 — FINDING AUD-057. That sentence read "five of these six tests",
+/// where the six counted the callers of this helper. ⛔ IT IS GONE RATHER THAN REALIGNED: the
+/// figure sat in the doc of a HELPER instead of beside what it counts, so every task that added
+/// a liar updated the header and never came through here, and "six" survived every growth. ⚠️
+/// THE HEADER ALREADY KEEPS THAT HISTORY, and it is not repeated here — one house: it walks the
+/// count to what it is today and dates each step. ⚠️ AND THE AUDIT'S OWN REMEDY MOVED IT LAST,
+/// which is the part worth knowing: this finding measured the callers, and `79aba9e` added one
+/// more the same day. The relation left above cannot age that way; the count, when somebody
+/// wants it, is `grep -c 'assert_caught_on(' <this file>`. ⚠️ The other half was RE-MEASURED and
+/// holds: the suite contains exactly one bare `assert!`.
 fn assert_caught_on<J, F>(build: F, expected: &str, promise: &str)
 where
     J: Journal,
@@ -1039,9 +1050,26 @@ impl Journal for ShuffledJournal {
 
 /// Accepts an `outcome` for a step it never saw an intent for, and reports success.
 /// ⛔ THIS IS THE WRITE-AHEAD PROTOCOL WITH ITS GUARD REMOVED — the shape any journal has
-/// before somebody decides that V6 is the PORT's to hold rather than the caller's. It is the
-/// only journal here that reaches promise 5: every other liar either dies earlier or refuses
-/// correctly. Caught by promise 5.
+/// before somebody decides that V6 is the PORT's to hold rather than the caller's. Caught by
+/// promise 5.
+///
+/// ⚠️ IT IS NOT ALONE ON PROMISE 5, and the distinction is what gotcha #45 needs:
+/// `BlindGuardJournal::on_outcome` is caught there too, and the two defects are not the same.
+/// This one REMOVES the guard, laundering its inner `Err(OutOfOrder)` into `Ok(())`, so it dies
+/// on sub-assertion (a) at the first opportunity; that one asks the WRONG QUESTION and dies on
+/// (b). ⛔ The mechanism is written once, in the comment beside (b) in the suite — named here
+/// rather than copied, because a second house rots in the one nobody moves.
+///
+/// ⛔ DATED RECALL, 2026-08-28 — FINDING AUD-055. This doc read "It is the only journal here
+/// that reaches promise 5: every other liar either dies earlier or refuses correctly". The
+/// blind guard arrived on 2026-08-17 and the comment beside (b) was written then, saying it
+/// "survives (a) ON ITS MERITS and dies here" — so the file CONTRADICTED ITSELF, and nothing in
+/// it said which reading held. ⛔ A FALSE UNIQUENESS COSTS MORE THAN A STALE NUMBER here,
+/// because these sentences are the only place one reads which block is exercised by whom:
+/// believing it, one drops either liar as redundant and leaves a direction of promise 5
+/// unguarded — the very thing gotcha #45 exists to prevent. ⚠️ THE THREE SISTER CLAIMS IN THIS
+/// FILE WERE RE-MEASURED AND HOLD, so nobody need redo it: promises 2 and 6 have one liar each,
+/// and the ninth liar really is the only one whose defect is saying NO.
 struct PermissiveJournal {
     inner: simulator::journal::MemoryJournal,
 }

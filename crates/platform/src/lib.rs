@@ -1,7 +1,25 @@
-//! The real implementations of the traits the kernel declares: filesystem, clock,
-//! network, processes, confinement — and `rng`, which is a port of its own and not one
-//! of the six families (§2.2). In production its randomness is FAKE, deliberately: see
-//! `rng::SequentialRng`.
+//! The real implementations of the ports the kernel declares. Today they are `Journal`
+//! (`journal::FileJournal`), `Reactor` (`reactor::SystemReactor`) and `Rng`
+//! (`rng::SequentialRng`) -- the list is not written here as a fixed set, because milestone 6
+//! adds to it; it comes from
+//! `grep -rEn "^impl (Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/`,
+//! which answered those three on 2026-08-28. `Rng` is a port of its own and NOT one of the six
+//! families (§2.2): the kernel declares it in `kernel::rng`, outside `kernel::ports`. In
+//! production its randomness is FAKE, deliberately: see `rng::SequentialRng`.
+//!
+//! ⛔ RECALL OF 2026-08-28, FINDING AUD-022 -- THIS SAID "filesystem, clock, network, processes,
+//! confinement", AND EVERY ONE OF THE FIVE WAS WRONG IN ONE OF TWO WAYS. `clock` and
+//! `confinement` ARE NOT KERNEL PORTS AT ALL -- `grep -rniE "pub trait (Clock|Confinement)"
+//! crates/` answers ZERO -- and the other three are ports the kernel does declare but that THIS
+//! CRATE DOES NOT IMPLEMENT. Meanwhile the two it does implement, `Journal` and `Reactor`, were
+//! missing from the list entirely. ⛔ AND `clock` IS NOT A TYPO: a separate `clock` family was
+//! EVALUATED AND REJECTED -- decision D2 of the milestone 2 plan, recorded in
+//! `kernel::ports::reactor`, "a separate `clock` family would split one source of virtual time
+//! across two ports" -- so naming it here contradicts a decision instead of merely being stale.
+//! The sentence was a literal translation of the spec's §1.2 cell, written when the crate layout
+//! was decided; the six families were fixed AFTERWARDS in §2.3, and the line was never reread
+//! against them. `kernel::ports` declares six modules: filesystem, ipc, journal, network,
+//! process, reactor.
 //!
 //! ⛔ This crate USES `std` and WILL USE `unsafe` for FFI, and that is deliberate: it is
 //! the place where I/O has to live (ADR-0031, perimeter). The functions below exist as

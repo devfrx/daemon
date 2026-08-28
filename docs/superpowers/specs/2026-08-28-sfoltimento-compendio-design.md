@@ -83,14 +83,14 @@ Ammette di essere un rimando, e pesa quanto la fonte.
 
 ### 2.2 §12 — è un **diario di dimensioni**, e il numero non si scrive
 
-La §12 è **4 KB di tabella dei puntatori** più **~248 KB di verbali**: cinquantanove «misure»
+La §12 è **4 KB di tabella dei puntatori** più **~248 KB di verbali**: le «misure»
 che registrano di quanto sono cresciuti i file (*«spec `263 → 266`, HANDOFF `105 → 109`»*).
 
 | | |
 |---|---|
 | Regola violata | *un **comando** non marcisce* — formulata dal repository stesso: `grep -rc 'comando non marcisce' docs/ CLAUDE.md` |
 | Rimedio | resta la **tabella dei puntatori**, **senza la colonna dei kilobyte**, col comando che la rifà. Bersaglio: **≤ 2 000 token** |
-| Si archivia? | **Sì** — i cinquantanove verbali sono datati e legittimi: vanno in archivio, non si cancellano |
+| Si archivia? | **Sì** — i verbali sono datati e legittimi: vanno in archivio, non si cancellano |
 
 📌 La colonna dei pesi esisteva per decidere *se aprire un file*. Quella decisione la prende
 un `wc -c` al momento, e non marcisce.
@@ -113,7 +113,7 @@ e un verbale invecchia onestamente **in archivio**.
 
 | File nuovo | Contenuto | Origine |
 |---|---|---|
-| `docs/archivio/misure-dimensioni.md` | le 59 misure | §12 |
+| `docs/archivio/misure-dimensioni.md` | le misure storiche dei pesi | §12 |
 | `docs/archivio/stato-storico.md` | i verbali di stato passati | §6 |
 
 ⚠️ **`docs/archivio/` non è una lettura obbligatoria e non lo diventerà.** Il compendio vi

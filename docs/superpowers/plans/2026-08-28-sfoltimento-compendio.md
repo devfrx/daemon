@@ -21,6 +21,23 @@ apostrofi italiani rompono il quoting, e `sed -i` normalizza i fine-riga senza d
 
 ---
 
+## ⛔ Errata — si legge PRIMA di ogni compito
+
+Quattro voci, tutte misurate eseguendo il Compito 1 il 2026-08-28.
+
+| | La voce |
+|---|---|
+| **E1** | ⛔ **`git checkout -- <file>.md` RIPORTA IL FILE A CRLF, e questo repository lo vuole LF.** Misurato: `docs/COMPENDIO.md` è passato da `623516` byte e `CR=0` a `628803` e `CR=5287` in un solo comando, perché `core.autocrlf=true`. ⛔ **Per annullare una modifica si usa una COPIA nello scratchpad**, non `git checkout`. Se è già successo, si ripara leggendo con `newline=''` e riscrivendo con `\n` — e si **rimisura** |
+| **E2** | ⚠️ **I link relativi del testo spostato si rompono, tutti.** Il testo viveva in `docs/` e va in `docs/archivio/`: ogni bersaglio relativo guadagna un `../`. Senza, `check-docs.sh` riporta **506 link rotti**. Vale per **ogni** compito che sposta testo in archivio — quindi anche il **Compito 3** |
+| **E3** | ⚠️ **I riquadri di §12 sono SESSANTA, non cinquantanove.** Il disegno e questo piano dicevano 59, contati con un pattern che pretendeva la parola *«misura»* dopo l'ordinale: un riquadro si intitola *«Rimisurati lo stesso giorno»*. È il gotcha **#31** commesso dentro il lavoro che lo prende di mira. Il conto lo dà `grep -cE '^> 🔁 \*\*'`, e il numerale **esce** dai documenti vivi |
+| **E4** | ⛔ **La coda di §12 NON era tutta storia.** Le ultime quattro righe vive contenevano un'istruzione operativa — *«Prima di ogni commit di documentazione: `bash scripts/check-docs.sh`»*. Un taglio *«dalla prima misura fino a §13»* l'avrebbe archiviata. ⛔ **Il confine è l'ULTIMA riga di citazione**, non l'inizio della sezione successiva. 📌 Lo stesso sospetto va portato al **Compito 3**, dove il blocco da spostare è quaranta volte più grande |
+
+⚠️ **E il baseline del Compito 5 è cambiato:** sciolta la Precondizione con l'opzione A, il
+compendio di prima dello sfoltimento è **`f19f0cb`** e fa **623 516** byte — non `d902c40` con
+612 617. Il passo 2 di quel compito usa `f19f0cb`.
+
+---
+
 ## Vincoli globali
 
 Valgono per **ogni** compito. Non si ripetono nei passi.
@@ -66,7 +83,7 @@ git status --short && git diff --stat
 | File | Sorte |
 |---|---|
 | `docs/COMPENDIO.md` | **modificato** — §6, §9, §12 sfoltite. §1–5, 7, 8, 10, 11, 13 intatte |
-| `docs/archivio/misure-dimensioni.md` | **creato** — le 59 misure di §12 |
+| `docs/archivio/misure-dimensioni.md` | **creato** — le misure storiche di §12 |
 | `docs/archivio/stato-storico.md` | **creato** — i verbali di stato di §6 |
 | `CLAUDE.md` | **modificato** — regola nuova, testa sfoltita |
 | `scripts/check-docs.sh` | **modificato** — il tetto, in fondo |
@@ -88,7 +105,7 @@ grep -n '^## ' docs/COMPENDIO.md
 
 ---
 
-## Compito 1 — §12: la tabella resta, le 59 misure vanno in archivio
+## Compito 1 — §12: la tabella resta, le misure vanno in archivio
 
 **File:**
 - Modifica: `docs/COMPENDIO.md`, §12
@@ -147,7 +164,7 @@ rimando = [
     "find docs -name '*.md' | xargs wc -c | sort -n",
     '```',
     '',
-    '📚 **Le cinquantanove misure storiche** — il verbale di come i pesi sono cambiati dal',
+    '📚 **Le misure storiche** — il verbale di come i pesi sono cambiati dal',
     '2026-08-08 — stanno in [`archivio/misure-dimensioni.md`](archivio/misure-dimensioni.md).',
     '⛔ **Non è una lettura obbligatoria**: si apre solo con una domanda storica in mano.',
     '',
@@ -205,7 +222,7 @@ Atteso: **≈ 119 000** (207 603 − 89 109 + il rimando).
 - [ ] **Passo 7: commit**
 
 ```bash
-git add docs/COMPENDIO.md docs/archivio/misure-dimensioni.md && git commit -m "docs(sfoltimento): le 59 misure dei pesi escono dalla §12 e vanno in archivio" && git push origin spec/sottoprogetto-1-kernel
+git add docs/COMPENDIO.md docs/archivio/misure-dimensioni.md && git commit -m "docs(sfoltimento): le misure dei pesi escono dalla §12 e vanno in archivio" && git push origin spec/sottoprogetto-1-kernel
 ```
 
 ---

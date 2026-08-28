@@ -52,15 +52,23 @@ impl Rng for SequentialRng {
 }
 
 // ⚠️ A UNIT TEST MODULE IN `src/`, WHERE THIS REPOSITORY OTHERWISE PUTS TESTS IN `tests/`, and
-// the deviation is declared rather than left to be noticed. It is ONE OF TWO in the
-// workspace: the other is in `crates/daemon/src/main.rs`, where a unit test is not a choice
-// at all — the function under test is private in a `bin` target, and no integration test can
-// link a binary. Here it IS a choice, and the reason is
+// the deviation is declared rather than left to be noticed. HOW MANY THERE ARE, AND WHERE, COMES
+// FROM THE COMMAND AND NOT FROM THIS LINE — `grep -rn --include='*.rs' 'mod tests {' crates/*/src/`.
+// What is worth reading is the REASON, which differs from one to the next and which each of them
+// states for itself. Here it IS a choice, and the reason is
 // `the_counter_wraps_instead_of_overflowing`: it builds `SequentialRng(u64::MAX)` directly, and
 // the field is private, so from an integration test — a crate of its own — that value is
 // unreachable without either 2^64 draws or a constructor existing solely to be tested. The
 // other tests need nothing private and would sit perfectly well in `tests/`; they stay for the
 // sake of one home per type rather than two.
+//
+// ⛔ RECALL OF 2026-08-28, FINDING AUD-060 — THIS SAID "It is ONE OF TWO in the workspace" AND
+// NAMED THE OTHER. THE FIGURE IS REMOVED RATHER THAN REALIGNED TO THREE, and so is the one in
+// `crates/daemon/src/main.rs`, which said THREE and was RIGHT: the same count sat in two houses,
+// the task that added the third module (Milestone 5, `Arbiter::ask_back`) updated that one and
+// not this one, and `crates/kernel/src/arbiter/mod.rs` names THIS file as its precedent — so the
+// house the other two point at was the one telling the wrong number. Correcting only the false
+// house would leave the count in two places, which is what made them diverge; gotcha #68.
 #[cfg(test)]
 mod tests {
     use super::*;

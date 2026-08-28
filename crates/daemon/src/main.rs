@@ -392,9 +392,14 @@ mod tests {
     //! `run_the_production_graph`, so moving this module out would not relocate the tests, it
     //! would delete them.
     //!
-    //! ⚠️ It is one of THREE such modules in the workspace. The other two are in
-    //! `crates/platform/src/rng.rs` and `crates/kernel/src/arbiter/mod.rs`, where the reasons
-    //! are different and one of them IS a choice.
+    //! ⚠️ HOW MANY SUCH MODULES THERE ARE, AND WHERE, COMES FROM THE COMMAND AND NOT FROM THIS
+    //! LINE — `grep -rn --include='*.rs' 'mod tests {' crates/*/src/`. What differs between them
+    //! is the REASON, and each states its own: here it is forced, elsewhere it IS a choice.
+    //!
+    //! ⛔ RECALL OF 2026-08-28, FINDING AUD-060 — THIS SAID "one of THREE" AND NAMED THE OTHER
+    //! TWO. The figure was RIGHT and is removed anyway: the same count sat in
+    //! `crates/platform/src/rng.rs` saying TWO, and correcting only the false house would keep
+    //! the count in two places, which is what let them diverge (gotcha #68).
 
     use super::*;
 

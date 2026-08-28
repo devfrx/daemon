@@ -1162,11 +1162,29 @@ mod tests {
     }
 
     /// ⛔ A GRANT INSIDE ITS GRACE IS NOT COLLECTED, and this is the direction the probe above
-    /// steps over. Without it a sweep that freed a revoked reservation AT ONCE would satisfy
-    /// every other probe here: `allocated()` collects nothing by design, and neither `ask_back`
-    /// nor `revoking()` runs a sweep -- so an assertion written straight after an `ask_back`
-    /// passes through no sweep at all and cannot fail. The only way to catch it is to make
-    /// somebody SWEEP while the grace is still running, and `admit` is that somebody.
+    /// steps over. `allocated()` collects nothing by design, and `revoking()` runs no sweep
+    /// either -- so neither one, read on its own, exercises `collect_expired`. What catches a
+    /// grant being freed INSIDE its grace is a sweep that runs while the grace is still
+    /// running, and here that sweep is `admit`'s.
+    ///
+    /// ⛔ RECALL OF 2026-08-28, finding AUD-013 -- THIS PARAGRAPH SAID "neither `ask_back` nor
+    /// `revoking()` runs a sweep", and the `ask_back` half was FALSE: `self.collect_expired(now)`
+    /// is its first statement, which `ask_back_collects_the_expired_before_it_marks` below
+    /// already says about this SAME function. `ask_back` still does not stand in for `admit`
+    /// here, for a narrower reason than "it never sweeps": in THIS scenario it sweeps at the
+    /// instant the resident is admitted, before anything is marked `Revoking` -- the mark is
+    /// made by the REST of that same call, after its own leading sweep already ran, so that
+    /// sweep has nothing yet to test the grace-arm against.
+    ///
+    /// ⛔ AND TWO EXCLUSIVITY CLAIMS WERE ALSO FALSE, MEASURED and not assumed -- "would
+    /// satisfy every other probe here", and "the only way to catch it ... is `admit`".
+    /// Mutating `collect_expired`'s `Revoking` arm to sweep unconditionally fails TWO probes
+    /// under `cargo test --locked -p kernel --lib`, not one -- this one AND
+    /// `asking_back_twice_does_not_buy_the_room_twice` (11 passed, 2 failed). The second one
+    /// dies on `assert_eq!(arbiter.revoking(), 1)`, BEFORE the `admit` further down its body
+    /// ever runs, and the sweep that gets it there is the leading one of its own SECOND
+    /// `ask_back` -- at `200`, against a grace that runs to `500`. Both removed rather than
+    /// replaced: an exclusivity claim is bought by remeasuring it, and this task did not.
     #[test]
     fn a_grant_inside_its_grace_keeps_its_reservation() {
         let mut arbiter = arbiter(Mib::new(4_096));

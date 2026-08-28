@@ -1156,7 +1156,7 @@ che non si ferma alla prima corsia.
 | `only_lanes_below_the_asking_one_are_asked_back` | `src` | la contro-sonda per l'altra strada: un lavoro `Realtime` **prelazionabile** non viene sfrattato per uno `Interactive` |
 | `asking_back_stops_as_soon_as_the_need_is_covered` | `src` | che si fermi appena la stanza basta: *«ha fatto spazio»* è soddisfatto anche da chi revoca tutto e sfratta due lavori per sederne uno |
 | `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` | `tests/` | ⛔ **DETTATA, E CORRETTA nella variante attesa:** il piano asseriva `Refused`, e dal Task 6 *«entra nella macchina ma non in questo momento»* è `Queued`. È la contro-sonda del ramo `_` della spazzata |
-| `a_grant_inside_its_grace_keeps_its_reservation` | `src` | ⚠️ **NON dettata, e senza di lei la mutazione 5 del piano non uccide NIENTE.** `allocated()` non riscuote e `ask_back` nemmeno, quindi un'asserzione scritta subito dopo un `ask_back` **non passa da nessuna spazzata**. Questa fa spazzare qualcun altro — un `admit` a `499` su una grazia che scade a `500` — mentre la grazia corre ancora |
+| `a_grant_inside_its_grace_keeps_its_reservation` | `src` | ⚠️ **NON dettata.** `allocated()` non riscuote, e **qui** un'asserzione scritta subito dopo l'`ask_back` non passa da nessuna spazzata capace di mettere alla prova la grazia: la spazzata che `ask_back` porta con sé è la sua **prima istruzione**, e corre **prima** che `ask_back` marchi il residente `Revoking`. Questa fa spazzare qualcun altro — un `admit` a `499` su una grazia che scade a `500` — mentre la grazia corre ancora. ⛔ **RICHIAMO DEL 2026-08-28 (AUD-013):** la riga diceva *«`allocated()` non riscuote e `ask_back` nemmeno»* — falso, `ask_back` riscuote per primo, per la ragione appena scritta — e *«senza di lei la mutazione 5 del piano non uccide NIENTE»* — falso anche questo: muore pure `asking_back_twice_does_not_buy_the_room_twice`, con la sua **seconda** chiamata ad `ask_back` che spazza a `200` mentre la grazia corre fino a `500`. ⚠️ **E lo scoping conta:** dopo un `ask_back` che trovi il residente **già** `Revoking` la spazzata mette eccome alla prova la grazia — è esattamente ciò che fa quella sonda. Cifre e sonde morte: **riga 5** della tabella delle mutazioni qui sotto, voce `E64` |
 | `the_grace_runs_out_at_the_instant_of_its_deadline` | `src` | ⚠️ **NON dettata, ed è la specie di `E29` sulla SECONDA scadenza.** Le due sonde qui sopra chiedono a `501` e a `499`: su `500` esatti non chiedeva nessuno, e `deadline > now` mutato in `>=` sarebbe sopravvissuto all'intera suite. Dichiara anche **quale** semantica è quella scelta: grazia **semiaperta**, `[chiesta, scadenza)`, la stessa regola della finestra di validità |
 | `asking_back_twice_does_not_buy_the_room_twice` | `src` | ⚠️ **NON dettata.** È ciò che la guardia su `activity` compra **da sola**: una seconda passata che rimarcasse una concessione già in uscita conterebbe la sua prenotazione **due volte** in `covered` — stanza che l'arbitro non ha — e le sposterebbe la scadenza più in là, regalando al titolare **più** tempo per essere stato chiamato prima |
 | `ask_back_collects_the_expired_before_it_marks` | `src` | ⚠️ **NON dettata.** *«L'arbitro riscuote prima di decidere»* è una proprietà di **ogni** operazione, e con `ask_back` sono **quattro**. Il corpo dettato **non riscuoteva**: la riscossione è stata aggiunta per analogia con `promote`, e questa è l'unica sonda che ne esercita la riga. Nessun `release` qui dentro, come in `promote_collects_the_expired_before_it_serves_the_queue` |
@@ -1241,12 +1241,19 @@ l'ordine, quindi nessuna mutazione dell'ordine poteva separarle e una della scel
 volta che la regola *«quando una mutazione ne uccide due si cerca una terza»* produce una riga
 nuova — dopo la **3b** e la **2c** |
 
-⛔ **Che cosa se ne fa, e che cosa NON se ne fa: restano tutte e quattro.** ① La **5** deve a
-`a_grant_inside_its_grace_keeps_its_reservation` la propria unica morte utile — senza di lei la
-mutazione del piano è un **mutante vivo** (`E64`), e «dominata» non vuol dire «superflua».
-② Ciascuna dice una cosa che nessun'altra dice a voce alta, ed è ciò che si legge quando una va
+⛔ **Che cosa se ne fa, e che cosa NON se ne fa: restano tutte e quattro.**
+E «dominata» non vuol dire «superflua». ⛔ **RICHIAMO DEL 2026-08-28 (AUD-013):** qui c'era
+scritto che la **5** doveva a `a_grant_inside_its_grace_keeps_its_reservation` *«la propria
+unica morte utile»* e che *«senza di lei»* la mutazione era un mutante vivo — falso in tutt'e
+due le metà, e smentito dalla riga **5** e dalla tabella della dominanza qui sopra, dove
+l'insieme di morte di questa sonda è un **sottoinsieme** di quello di `asking_back_twice_…`:
+ogni mutazione che uccide lei uccide **anche** l'altra. ⚠️ **È la stessa frase che AUD-013
+ha corretto nella tabella delle sonde, e che lì si era fermata** — gotcha **#68**, la casa che
+il censimento non aveva aperto. La ragione per cui le quattro restano è il punto ①, non
+un'esclusività.
+① Ciascuna dice una cosa che nessun'altra dice a voce alta, ed è ciò che si legge quando una va
 rossa: *«marca e non prende»*, *«poi riscuote»*, *«dentro la grazia non riscuote»*, *«quello che
-non si può chiedere indietro non si tocca»*. ③ ⚠️ **Ma la loro non-ridondanza NON è misurata**,
+non si può chiedere indietro non si tocca»*. ② ⚠️ **Ma la loro non-ridondanza NON è misurata**,
 ed è registrata per quello che è — un'intenzione finché una mutazione non le isola. ✅ **DUE
 candidate isolanti sono state cercate e hanno funzionato**: la **3b**, che ha rotto la dominanza
 di `asking_back_stops_as_soon_as_the_need_is_covered`, la **2c** del 2026-08-20, che ha

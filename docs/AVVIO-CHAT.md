@@ -124,7 +124,7 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      trappole del repository e l'ordine consigliato — e la tabella dei 73
      con la colonna «Stato», che è la loro CASA UNICA.
      ⛔ IL «Dettaglio» DOPO QUELLA TABELLA NON SI LEGGE INTERO: sono 73
-     schede da ~20 righe, 205 KB, e se ne apre UNA per volta, quella del
+     schede da ~20 righe, 204 KB, e se ne apre UNA per volta, quella del
      finding su cui stai lavorando. Si legge a FINDING, come un piano si
      legge a compiti.
      ⚠️ docs/audit-2026-08-11.md — 32 KB — NON si apre più: è chiuso otto

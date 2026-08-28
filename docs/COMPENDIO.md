@@ -605,6 +605,42 @@ scrive qui**: la colonna «Stato» di quel rapporto è la casa unica, e la sezio
 concludono quelli aperti»* è la delega. ⚠️ **Un numeratore ricopiato qui invecchierebbe al primo
 rimedio** — gotcha #68, che è la radice **R3** dell'audit stesso.
 
+✅ **AUD-013 È CHIUSO IL 2026-08-28 — radice R1, il doc della sonda
+`a_grant_inside_its_grace_keeps_its_reservation` in `crates/kernel/src/arbiter/mod.rs`.** Il
+paragrafo affermava *«neither `ask_back` nor `revoking()` runs a sweep»* e ne concludeva che una
+spazzata capace di liberare subito una prenotazione revocata *«would satisfy every other probe
+here»*. ⛔ **Misurate, cadono tutt'e due:** `ask_back` riscuote con `self.collect_expired(now)` come
+**prima istruzione**, e quella mutazione uccide **due** sonde e non una — `11 passate, 2 fallite`
+contro `13 e 0` — perché `asking_back_twice_does_not_buy_the_room_twice` cade sul proprio
+`assert_eq!(arbiter.revoking(), 1)` **prima** dell'`admit` che ha nel corpo, sulla spazzata in testa
+al proprio **secondo** `ask_back`. La clausola falsa e le due esclusività sono **tolte e non
+sostituite**, col richiamo datato; le due metà **vere** — `allocated()` e `revoking()` non
+riscuotono — non sono state riscritte.
+
+⛔ **E il rimedio era PIÙ PICCOLO di come il rapporto lo prezza: delle tre clausole di quella frase
+ne era falsa UNA.** È il gotcha **#65** — *un rimedio si prezza leggendo il codice, non il rapporto,
+in entrambe le direzioni* — su un altro rapporto e un'altra radice. ⚠️ **È la direzione che costa
+di più:** un finding che descrive un paragrafo come sbagliato fa riscrivere il paragrafo, e
+riscrivere ciò che è già vero è il modo più rapido di aprire una falsità nuova.
+
+⛔ **Ed è costato TRE giri di revisione: i primi due hanno trovato difetti veri, il terzo è tornato
+pulito.** ① Il primo ha colto che il rimedio aveva **aperto una falsità nuova** — un'esclusività
+senza misura — dentro la prosa scritta per chiuderne una, e che una **quarta casa** era rimasta:
+il paragrafo *«Che cosa se ne fa»* di [`porta-di-qualita.md`](porta-di-qualita.md), dove la stessa
+frase viveva una seconda volta **nello stesso file** che il censimento credeva di aver aperto
+(gotcha **#68**). ② Il secondo ha colto che **due proposte del primo revisore erano a loro volta
+FALSE**, smentite misurandole. 📌 **Una proposta di revisore è un'affermazione come le altre, e si
+prezza leggendo il codice:** è il **#65** applicato a chi rivede, e sta scritto qui invece che in
+una riga nuova della §9.
+
+**Tre cose registrate chiudendo la voce, e due di esse non sono prese:**
+
+| | |
+|---|---|
+| ⛔ **una QUINTA casa, ed è del proprietario** | la voce **`E64`** del [piano del Traguardo 5](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) afferma la stessa falsità. **Non toccata:** l'audit dichiara i piani fuori perimetro — *«sono verbali di esecuzione, non contratti»* — e questa §6 ha già stabilito che i due piani e il disegno del Traguardo 5 **restano come sono**. ⚠️ **Ma qui la difesa è più DEBOLE che per una scheda d'audit, e va scritto:** la scheda **cita** la frase come reperto del finding, `E64` la **afferma in proprio, come causa, al presente** — un verbale che registra una **misura** invecchia onestamente, uno che afferma un **meccanismo** sbagliato resta sbagliato. ⛔ **E la riga corretta di [`porta-di-qualita.md`](porta-di-qualita.md) manda ora il lettore proprio là** per le cifre, che sono invece legittimamente datate. 📌 Se un verbale che afferma un meccanismo sbagliato vada corretto è **decisione del proprietario** |
+| ⚠️ **una FORMA nuova del gotcha #48, e non una riga nuova** | ⛔ `git show HEAD:<file>` **non è evidenza sui fine-riga dell'albero di lavoro**, ed è la misura che si prende per prima: rende il blob dell'**indice**, per quel file LF, e chi eseguiva ne ha concluso `CR=0` per [`porta-di-qualita.md`](porta-di-qualita.md) — che nell'albero di lavoro è **CRLF integrale** — «ripristinandolo» a LF. La **direzione** del difetto era capovolta: la conversione osservata andava verso LF, non verso CRLF. 📌 I `CR` si contano **sul file**, `tr -cd '\r' < <file> \| wc -c`, e la colonna che dice la verità è la **`w/`** di `git ls-files --eol`, non la `i/`. Il testo integrale sta in [`HANDOFF.md`](HANDOFF.md), **dentro** il #48: la cura non cambia — *il banco con cui misuri sbaglia verso l'attesa* — e un gotcha che non insegna niente diluisce quelli che insegnano |
+| ⚠️ **[`riferimenti.md`](riferimenti.md) NON toccato, ed è una decisione** | la voce ha portato misure — la mutazione col suo esito, il censimento dei fine-riga — e vivono in [`porta-di-qualita.md`](porta-di-qualita.md), **accanto al controllo che difendono**. È la **voce aperta della 41ª misura**, riaffermata da ogni passata da allora: scegliere fra *«spostare le misure»* e *«cambiare la regola»* resta del proprietario, e cominciare adesso produrrebbe **due** convenzioni invece di una |
+
 **Spec del kernel §0–§10 completa.** Spec del **sotto-progetto 1** con §0–§8 approvate,
 **riaperta su sette voci** — **tutte chiuse** — **§8 riallineata e chiusa il 2026-08-08**, e
 **audit sezione-contro-ADR passato**.
@@ -5143,6 +5179,67 @@ giusta non viene mai rimisurato, perché nessuno dubita della regola.
 > entra: è la stessa forma che la **50ª** e la **56ª** registrano come *una voce di manutenzione
 > sopravvive alla cosa che manuteneva*, e un gotcha che non insegna niente diluisce quelli che
 > insegnano. Sta **registrata e non presa** in testa a questo file, dove il difetto viveva.
+>
+> ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
+> chiuso questo riquadro e corretta **di sole cifre**, finché due giri danno lo stesso numero.
+
+> 🔁 **Sessantunesima misura, il 2026-08-28, chiudendo AUD-013 della radice R1 — il commento di
+> `a_grant_inside_its_grace_keeps_its_reservation` che affermava che né `ask_back` né
+> `revoking()` spazzano, mentre `ask_back` spazza per primo.** In byte LF,
+> `int(n/1024 + 0.5)`, a passata chiusa; le celle **rimisurate sui file** e non censite per cifra.
+>
+> ⛔ **E LA PRIMA COSA DA SCRIVERE È CHE LA TABELLA ERA GIÀ STANTIA PRIMA DI QUESTA PASSATA, e la
+> 60ª non l'ha scritta contro sé stessa — non nel VALORE, nella CASA.** `git show --stat d902c40`
+> — il commit da cui questa passata parte — elenca i file che quel commit tocca, e `CLAUDE.md` e
+> [`AVVIO-CHAT.md`](AVVIO-CHAT.md) ci sono **entrambi**; la tabella della 60ª li mette fra gli
+> **invariati**. Rimisurati sul contenuto — `CLAUDE.md` **15907** byte prima di quel commit e
+> **15907** dopo, il messaggio di [`AVVIO-CHAT.md`](AVVIO-CHAT.md) **20606** prima e **20606**
+> dopo — i **valori** reggono: `610→614`, `663→667` e `53→54 KB` sono sostituzioni di cifre
+> **della stessa lunghezza**, e un blocco che scambia tre cifre con tre cifre non si sposta di un
+> byte. 📌 È **esattamente** il caso che la **49ª** misura già chiamava *«non per virtù»*, per lo
+> stesso messaggio: quella volta la riga fu scritta, qui no — e un file toccato che finisce fra
+> gli invariati senza quella riga si legge come un file che nessuno ha aperto.
+>
+> | | |
+> |---|---|
+> | **mossi da questa passata** | [`HANDOFF.md`](HANDOFF.md) `285 → 287`, la data e la nuova forma del **#48** per esteso · [`porta-di-qualita.md`](porta-di-qualita.md) `428 → 430`, i due richiami datati sulla tabella delle sonde e su «Che cosa se ne fa» · questo file `598 → 609` — `603` la §6 già scritta quando questa passata comincia, `609` con questo verbale |
+> | ⛔ **e `CLAUDE.md` e [`AVVIO-CHAT.md`](AVVIO-CHAT.md) producono lo stesso fenomeno, stavolta dichiarato da chi lo scrive** | TOCCATI e IMMOTI, cifre della stessa lunghezza: `614→624` e `667→678` in `CLAUDE.md`, **15907** byte prima di questa passata e **15907** dopo; `205→204` in [`AVVIO-CHAT.md`](AVVIO-CHAT.md), **34 KB**, col **messaggio** a **20606** byte su **303** righe prima e dopo. La cura di due paragrafi sopra si applica alla passata che la trova |
+> | ⛔ **e quel `205 → 204` è PERIMETRO AGGIUNTO, non chiesto** | il «Dettaglio» del rapporto misura **208504** byte LF, cioè **204**, ed era già così prima di questa passata: la **58ª** l'aveva scritto e le due case d'ingresso non erano state girate. Assorbito perché vive tre righe sotto la riga che questa passata riallinea — precedenti **AUD-061 dentro AUD-021** e **AUD-034 dentro AUD-009** |
+> | **la TESTA del rapporto d'audit NON è stata toccata da questa passata** | resta **257 KB** il file intero, **54 KB** la testa: la cella *Stato* di AUD-013 la gira il coordinatore in un secondo commit |
+> | ⛔ **`riferimenti.md` NON toccato** | ⚠️ **È una decisione, non un'omissione**, la voce aperta della **41ª**: questa passata non ha prodotto una misura nuova da portarci accanto. Scegliere fra *«spostare le misure»* e *«cambiare la regola»* resta del proprietario |
+> | **invariati, ricontati sui file** | [`riferimenti.md`](riferimenti.md) 199 · la spec **298** · `adr/` **230** · tutto il resto come alla 60ª |
+>
+> ⛔ **Le case di `614` e `667` sono state ricontate col `grep` su `docs/` più `CLAUDE.md`, a
+> `HEAD`, e guardate in faccia una per una** (#70): **ventidue** occorrenze in tutto, **due
+> vive e venti candidate**.
+> Le due vive sono **entrambe in `CLAUDE.md`**. Delle candidate, **sei** sono dentro questo stesso
+> file — i verbali già datati della 12ª, 13ª, 19ª, 20ª e 60ª misura, che non si toccano
+> perché sono le misure di allora — e le rimanenti **quattordici**, in questo file, in [`HANDOFF.md`](HANDOFF.md), in
+> [`porta-di-qualita.md`](porta-di-qualita.md), in [`riferimenti.md`](riferimenti.md), nel piano
+> del Traguardo 5 e nella spec, sono tutte un `6144` di `Mib`, un conteggio di parole o l'ID
+> arXiv `2602.02614` ripetuto — mai il numero cercato. [`AVVIO-CHAT.md`](AVVIO-CHAT.md) non ne
+> porta nessuna: la sua casa vicina è `812`, fuori dallo scopo di questa cifra.
+>
+> ⛔ **Gli aggregati, col diretto sui byte e mai sommando kilobyte già arrotondati** (decisione
+> della **52ª**): *«HANDOFF + spec + `adr/`»* passa da **812** a **814 KB** — cresce solo per
+> `HANDOFF.md`, spec e `adr/` sono ferme — *«`CLAUDE.md` + questo file»* da **614** a **624**, e
+> *«coi tre»* da **667** a **678**, che crescono solo per il compendio.
+>
+> ⚠️ **Riallineate e non tolte, e la scelta è quella della 57ª, della 58ª e della 59ª:** la regola
+> di `CLAUDE.md` direbbe di **togliere** una cifra che vive in più case, ma toglierle tocca i
+> **documenti d'ingresso** — la decisione che la **53ª** misura ha registrato come **del
+> proprietario e non presa**. ⚠️ **E `812 KB` in `CLAUDE.md` e [`AVVIO-CHAT.md`](AVVIO-CHAT.md)
+> resta non toccato, per una ragione diversa dalle prime due:** quella riga già porta il proprio
+> rimando all'ultima misura in fondo alla §12 invece di pretendersi esatta al giorno — è la cura
+> che la riga stessa mostra da quando un ordinale scritto lì invecchiò.
+>
+> ⚠️ **I fine-riga contati PRIMA e DOPO su ogni file toccato.**
+> [`porta-di-qualita.md`](porta-di-qualita.md) resta **CRLF integrale**, `CR == LF`; `CLAUDE.md`,
+> questo file, [`HANDOFF.md`](HANDOFF.md) e [`AVVIO-CHAT.md`](AVVIO-CHAT.md) restano **LF
+> puri**, `CR = 0`. `git ls-files --eol` è **immutato**. ⛔ Tutte le scritture sono passate da uno script **in un file**, mai via stdin,
+> che **costruisce e codifica tutto prima**, scrive in un temporaneo e fa `os.replace`, e
+> **aborta senza scrivere** se un'ancora non cade esattamente una volta (gotcha **#82** e **#48**,
+> decima forma).
 >
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre**, finché due giri danno lo stesso numero.

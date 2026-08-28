@@ -694,11 +694,23 @@ fn a_crash_leaves_more_than_one_step_in_doubt_on_at_least_one_seed() {
     // ⚠️ THE OVERLAP IS DECLARED RATHER THAN LEFT TO BE DISCOVERED: since the review of
     // 2026-08-11 `c7b` asserts THE SAME PREDICATE at the end of its own sweep, as its
     // non-vacuity. So this probe buys no coverage `c7b` has not already bought, and it stays for
-    // two things a merged assertion would lose — its NAME, which the doc of `fn run`,
-    // `docs/HANDOFF.md` and `docs/porta-di-qualita.md` cite as the holder of the interleaving,
-    // and its DIAGNOSIS: a red here reads "the scenario stopped interleaving", a red there reads
-    // "the campaign got weaker", and the two want different repairs. ⚠️ It is also why this one
-    // stops early — the maximum over the whole campaign is `c7b`'s business now.
+    // two things a merged assertion would lose — its NAME, which the doc of `fn run` and other
+    // places cite as the holder of the interleaving, and its DIAGNOSIS: a red here reads "the
+    // scenario stopped interleaving", a red there reads "the campaign got weaker", and the two
+    // want different repairs. ⚠️ It is also why this one stops early — the maximum over the
+    // whole campaign is `c7b`'s business now.
+    //
+    // ⛔ RECALL OF 2026-08-28, FINDING AUD-066 — THIS NAMED THREE CITERS AND ONE OF THEM NEVER
+    // CITED ANYTHING. `docs/HANDOFF.md` holds neither this probe's name nor the property, and
+    // never did; the other two are real, measured. THE LIST IS REMOVED rather than realigned to
+    // two, and writing the citation into `HANDOFF.md` to make the sentence true was refused on
+    // the merits: a pointer that lives in more than one document is TAKEN OUT, not spread
+    // (`CLAUDE.md`). WHO cites it comes from the command, which cannot go stale:
+    // `grep -rln a_crash_leaves_more_than_one_step_in_doubt_on_at_least_one_seed crates/ docs/`
+    // ⚠️ AND IT HAS TO BE THE FULL NAME: `a_crash_leaves_more_than_one_step_in_doubt` is a
+    // DIFFERENT test, in `crates/kernel/tests/reconciliation.rs`, so the short form is not a
+    // shorter unique fragment but a wider one — on 2026-08-28 it answered eight files where the
+    // full name answered four.
     let mut best = 0usize;
     let mut swept = 0u64;
     for seed in 0..SHORT_CAMPAIGN_SEEDS {

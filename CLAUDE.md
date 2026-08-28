@@ -10,9 +10,12 @@ invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascun
 compressa a poche righe.
 
 ⛔ **E la testa di [`docs/audit-2026-08-27.md`](docs/audit-2026-08-27.md) — tutto ciò che
-sta PRIMA della sezione «Dettaglio».** ⛔ **Quel rapporto È APERTO ED È IL COMPITO DI
-OGGI**, non una consultazione: la sua sezione *«Come si concludono quelli aperti»* è la
-**delega**, e la colonna *«Stato»* della sua tabella è la **casa unica** di che cosa resta.
+sta PRIMA della sezione «Dettaglio».** ⚠️ **RICHIAMO DEL 2026-08-28: queste righe dicevano
+*«Quel rapporto È APERTO ED È IL COMPITO DI OGGI, non una consultazione»*, e i suoi finding
+sono chiusi.** Resta lettura d'apertura come **verbale e delega** — la sua sezione *«Come si
+concludono quelli aperti»* è **il metodo con cui qui si rimedia**, e la colonna *«Stato»*
+della sua tabella è la **casa unica** di che cosa resta, insieme alla tabella delle **voci
+senza numero AUD**, che sono le sole ancora aperte e in gran parte del proprietario.
 ⛔ **Il «Dettaglio» dopo quella tabella NON si legge intero: se ne apre UNA scheda per
 volta, quella del finding su cui si lavora.**
 

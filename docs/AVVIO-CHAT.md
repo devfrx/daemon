@@ -116,8 +116,11 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),
      le trappole di check-docs.sh (§10), i vincoli sul primo commit (§11).
   3. docs/audit-2026-08-27.md — ⛔ SOLO FINO ALLA TABELLA DEI 73 FINDING,
-     cioè tutto cio' che sta PRIMA della sezione «Dettaglio», 54 KB. È IL
-     COMPITO DI OGGI, non un verbale.
+     cioè tutto cio' che sta PRIMA della sezione «Dettaglio», 54 KB.
+     ⚠️ I suoi finding sono CHIUSI dal 2026-08-28 — questa riga diceva «È IL
+     COMPITO DI OGGI, non un verbale». Si legge come VERBALE e DELEGA: il
+     metodo con cui qui si rimedia, e le voci senza numero AUD, che sono le
+     sole ancora aperte.
      Contiene: come è stato condotto, la copertura, la baseline, le SETTE
      radici, lo stato dei rimedi, la sezione «Come si concludono quelli
      aperti» — che è LA DELEGA, con la disciplina in cinque passi, le due

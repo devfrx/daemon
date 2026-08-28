@@ -595,24 +595,21 @@ provato in **tre** direzioni. Il disegno sta in
 i verbali in [`archivio/`](archivio/). ⚠️ **I numeri si rifanno col comando**, che sta in
 [`riferimenti.md`](riferimenti.md), e non si rileggono qui.
 
-⛔ **IL SECONDO AUDIT COMPLETO È DEL 2026-08-27, ED È IL COMPITO DI OGGI: si legge PRIMA di
-riprendere, ma SOLO fino alla tabella dei 73 finding** — [`audit-2026-08-27.md`](audit-2026-08-27.md),
-tutto ciò che sta **prima** della sezione «Dettaglio». ⛔ **E il «Dettaglio» NON si legge intero:** sono 73 schede, 204 KB, e
-se ne apre **una** per volta, quella del finding su cui si lavora — come un piano si legge a
-compiti. La misura sta in `CLAUDE.md`, in una casa sola. ⚠️ **E la specie del lavoro è RIMEDIO, non
-creazione né esecuzione di un piano:** niente brainstorming, niente plan mode, nessun piano da
-scrivere — i finding sono indipendenti e la ricetta è nel rapporto. Il perché sta in
-[`AVVIO-CHAT.md`](AVVIO-CHAT.md). Diciotto revisori in parallelo, ognuno smentito da
-un secondo; **98 finding proposti, 25 scartati, 73 finali** in **sette radici**. ✅ **Una parte è chiusa**, col rosso o la
-misura riprodotti **prima** del rimedio ogni volta che il finding tocca codice o cancello.
-⚠️ **L'elenco delle categorie chiuse è TOLTO da questa riga il 2026-08-27, non esteso:** diceva
-*«le cinque che toccano codice o cancello, più quelle sui documenti di stato»*, e una passata che
-ne chiude di un'altra specie — il **contratto** di una porta — lo falsifica **senza portare un
-numero da riconoscere come stantio**. È la stessa cura che la 45ª misura applicò a
-[`README.md`](README.md): *un elenco che si allunga a ogni passata è un numeratore*. ⛔ **Gli altri sono APERTI**, e **quanti e quali non si
-scrive qui**: la colonna «Stato» di quel rapporto è la casa unica, e la sezione *«Come si
-concludono quelli aperti»* è la delega. ⚠️ **Un numeratore ricopiato qui invecchierebbe al primo
-rimedio** — gotcha #68, che è la radice **R3** dell'audit stesso.
+✅ **IL SECONDO AUDIT COMPLETO — 2026-08-27 — HA I SUOI FINDING TUTTI CHIUSI DAL 2026-08-28**,
+[`audit-2026-08-27.md`](audit-2026-08-27.md), col rosso o la misura riprodotti **prima** del
+rimedio ogni volta che il finding tocca codice o cancello. ⚠️ **Nessun numeratore qui, nemmeno
+adesso che sarebbe comodo:** lo dice la colonna «Stato» di quel rapporto, che ne è la **casa
+unica**, e il comando sta in fondo a questa sezione — gotcha #68, che è la radice **R3**
+dell'audit stesso. Diciotto revisori in parallelo, ognuno smentito da un secondo; **98 finding
+proposti, 25 scartati, 73 finali** in **sette radici**.
+⛔ **MA IL RAPPORTO NON È FINITO, e la differenza va detta invece che arrotondata:** restano le
+**voci senza numero AUD**, la cui tabella in quel file è la casa unica, e la maggior parte sono
+**decisioni del proprietario**. ⛔ **RICHIAMO DEL 2026-08-28: questo blocco diceva *«ED È IL
+COMPITO DI OGGI»* e *«la specie del lavoro è RIMEDIO — niente brainstorming, niente plan
+mode»*.** Entrambe erano vere e non lo sono più: il rapporto resta lettura d'apertura come
+**verbale e delega** — il metodo con cui qui si rimedia — e il prossimo passo **riparte proprio
+dal brainstorming**. ⛔ **Si legge fino alla tabella dei 73, mai il «Dettaglio» intero:** sono 73
+schede, e se ne apre **una** per volta, come un piano si legge a compiti.
 
 ⚠️ **I RACCONTI DEI SINGOLI FINDING NON VIVONO PIÙ QUI, dal 2026-08-28.** Questa §6 ne portava
 uno per **AUD-013** mentre due paragrafi più sopra dichiarava che *«la colonna Stato di quel
@@ -647,9 +644,15 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 
 ### Il prossimo passo
 
-⛔ **Chiudere i finding aperti dell'audit del 2026-08-27**, poi il **Traguardo 6**.
-**Quanti siano lo dice la colonna «Stato»** di [`audit-2026-08-27.md`](audit-2026-08-27.md),
-che ne è la casa unica — non questa riga:
+⛔ **Il TRAGUARDO 6** — gli altri meccanismi: il gateway di inferenza, i sensori, i permessi, lo
+stato di degrado e il canale verso i worker. ⛔ **Si riparte dal BRAINSTORMING**, come a ogni
+traguardo, e **prima** si legge ciò che il Traguardo 5 lascia aperto: la tabella *«Le voci aperte
+del Traguardo 5»* di [`porta-di-qualita.md`](porta-di-qualita.md), e in particolare **`E30`**, che
+va decisa **prima**.
+⚠️ **E ciò che lo sbarra sono decisioni del PROPRIETARIO, dette qui invece che scoperte
+aprendolo:** `E30`, e le **voci senza numero AUD** dell'audit del 2026-08-27 — la loro tabella in
+quel rapporto è la casa unica, e la maggior parte sono sue.
+✅ **I finding dell'audit sono chiusi**, e a dirlo non è questa riga ma il comando:
 
 ```
 awk -F'|' 'NF>4{gsub(/^ +| +$/,"",$5); print $5}' docs/audit-2026-08-27.md | grep -c aperto
@@ -1770,13 +1773,20 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ il **messaggio** ne è **20606 byte LF** su **303** righe, cioè le righe **fra le due recinzioni, escluse** — il metodo sta qui perché senza di esso due lettori onesti ottengono due numeri (59ª misura) |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ **il peso del messaggio lo dà il comando sotto questa tabella**, non questa cella: ⛔ **RICHIAMO DEL 2026-08-28** — diceva *«**20606 byte LF** su **303** righe»*, ed è invecchiato lo stesso giorno, quando la riga 3 del messaggio ha smesso di dire che l'audit era il compito di oggi. Ciò che **resta** qui è il **metodo** — le righe **fra le due recinzioni, escluse** — senza il quale due lettori onesti ottengono due numeri (59ª misura) |
 
 ⚠️ **I pesi non stanno più in questa tabella, e non è una svista.** Un peso scritto
 invecchia al primo commit che tocca il file; il comando che lo produce no:
 
 ```
 find docs -name '*.md' | xargs wc -c | sort -n
+```
+
+📌 **E il messaggio di [`AVVIO-CHAT.md`](AVVIO-CHAT.md), che ha un perimetro proprio** — le
+righe fra le due recinzioni, escluse:
+
+```
+awk '/^```$/{n++} n==1 && !/^```$/{c++; b+=length($0)+1} END{print c" righe, "b" byte"}' docs/AVVIO-CHAT.md
 ```
 
 📚 **Le misure storiche** — il verbale di come i pesi sono cambiati dal

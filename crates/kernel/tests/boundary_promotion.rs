@@ -1,10 +1,21 @@
 //! Counter-probes for the type boundary, and for the promotion (§6.5, V19, V20).
 //!
-//! The probes that must FIRE live in `tests/compile_fail/`, and there are three: rule A —
-//! untrusted content cannot be passed where an instruction is expected — rule B — no
-//! `From`/`Into` path leads from `Untrusted` to `Instruction` — and the journal one, that
-//! `promote` demands the port. These here are the other direction, the one that is forgotten
-//! (§7.1.1, rule 3): the declared promotion compiles AND leaves a trace in the journal.
+//! The probes that must FIRE live in `tests/compile_fail/`; WHICH ones comes from the command
+//! and not from a line here — `grep -l 'kernel::boundary' crates/kernel/tests/compile_fail/*.rs`.
+//! They hold rule A — untrusted content cannot be passed where an instruction is expected —
+//! rule B — no `From`/`Into` path leads from `Untrusted` to `Instruction` — and the `V19` row,
+//! which has TWO halves: that `promote` demands the port, and that its REASON cannot be runtime
+//! text. These here are the other direction, the one that is forgotten (§7.1.1, rule 3): the
+//! declared promotion compiles AND leaves a trace in the journal.
+//!
+//! ⛔ RECALL OF 2026-08-28, FINDING AUD-056 — THIS SAID "and there are three", AND THE FIGURE IS
+//! REMOVED RATHER THAN REALIGNED TO FOUR. It counted PROBES while enumerating RULES, so
+//! `promote_reason_is_not_runtime_text.rs` — added on 2026-08-18 with finding P-1 of the
+//! 2026-08-11 audit — made the sentence false without adding a rule, and that case names THIS
+//! file as its complementary half while this file did not name it back. A numeral goes stale at
+//! the next case; the command does not. ⚠️ THE RELATION WAS MEASURED IN BOTH DIRECTIONS: it
+//! returns exactly the four cases of the boundary and of the promotion, and every case it leaves
+//! out names `boundary` or `Untrusted` only in prose about another subject.
 //!
 //! ⛔ THE JOURNAL UNDER TEST IS `MemoryJournal`, AND THAT IS A DECISION TAKEN ON 2026-08-10
 //! AFTER A MEASUREMENT, not a convenience. This file used to carry a `RecordingJournal` whose

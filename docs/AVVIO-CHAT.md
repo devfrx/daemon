@@ -47,23 +47,27 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
-  ⛔ NIENTE brainstorming, e NIENTE plan mode: la specie del lavoro che
-     viene è RIMEDIO di un audit APERTO, non creazione. La ricetta è già
-     scritta — «Come si concludono quelli aperti» nel rapporto — e i finding
-     sono indipendenti l'uno dall'altro: non c'è niente da progettare e non
-     c'è un piano da scrivere. Si prende un finding, si RIPRODUCE, si
-     corregge alla radice, si prova nelle DUE direzioni, si ricontano i
-     conteggi che il rimedio ha reso stantii, gate verde, commit, push.
-     ⚠️ Il brainstorming torna a servire quando l'audit sarà chiuso e il
-     lavoro tornerà creativo — allora PRIMA di entrare in plan mode, sempre.
-     ⛔ QUALE radice aprire lo dice il rapporto, in un posto solo: la colonna
-     «Stato» della tabella dei 73 e la sezione «L'ordine consigliato». Non è
-     nominato qui apposta, un rimando non può marcire.
+  ⛔ IL LAVORO CHE VIENE È CREATIVO, non rimedio: si apre un TRAGUARDO NUOVO,
+     e la sequenza è brainstorming → disegno → piano → esecuzione
+     subagent-driven. ⚠️ MA NON PRIMA CHE TE LO DICA IO, e non prima che le
+     decisioni che lo sbarrano siano prese: sono MIE, e quali lo dice la §6
+     del compendio — non è nominato qui apposta, un rimando non può marcire.
+     ⚠️ RICHIAMO DEL 2026-08-28: questo blocco diceva «NIENTE brainstorming,
+     e NIENTE plan mode: la specie del lavoro che viene è RIMEDIO di un audit
+     APERTO», e prescriveva di prendere un finding per volta. Era vero fino
+     al 2026-08-28 e adesso manderebbe nella direzione opposta a quella
+     giusta.
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
+  /superpowers:brainstorming                 è la PRIMA del traguardo nuovo, e
+                                             va PRIMA di entrare in plan mode,
+                                             sempre. ⚠️ Ma non prima che io
+                                             abbia deciso ciò che lo sbarra:
+                                             la §6 dice cosa
   /superpowers:writing-plans                 quando ci sarà un piano NUOVO da
                                              scrivere, e MAI prima che le voci
-                                             aperte siano chiuse
+                                             aperte siano chiuse — che è la
+                                             condizione ancora NON soddisfatta
   /superpowers:subagent-driven-development   quando quel piano ci sarà: un
                                              subagente fresco per compito, con
                                              revisione fra uno e l'altro. È la
@@ -103,10 +107,11 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              viene dopo il piano e non prima
   /anthropic-skills:repo-audit               se e quando si aprirà un audit
                                              NUOVO. NON serve ora: quello
-                                             dell'11 agosto è chiuso, e quello
-                                             del 27 è già SCRITTO — quel che
-                                             resta è eseguirne i rimedi, che
-                                             non è un audit
+                                             dell'11 agosto è chiuso otto su
+                                             otto, e quello del 27 è chiuso nei
+                                             propri finding dal 2026-08-28.
+                                             ⚠️ Questa cella diceva «quel che
+                                             resta è eseguirne i rimedi»
 
 LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
   1. CLAUDE.md
@@ -155,33 +160,33 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
-⛔ C'È UN SECONDO AUDIT COMPLETO, DEL 2026-08-27, ED È APERTO. LA SPECIE DEL
-   LAVORO CHE VIENE È: RIMEDIO — si prende un finding, si riproduce il rosso
-   PRIMA di correggere, si corregge alla radice, si prova nelle DUE direzioni,
-   si ricontano i conteggi che il rimedio ha reso stantii. Niente
-   brainstorming, niente plan mode, nessun piano da scrivere: la ricetta è
-   nel rapporto, sezione «Come si concludono quelli aperti», ed è stata
-   MISURATA su ogni radice chiusa finora.
-   ⛔ QUANTI FINDING RESTINO E QUALI NON È SCRITTO QUI: la colonna «Stato»
-   della tabella dei 73 è la casa unica, e «L'ordine consigliato» dice da
-   dove ripartire. Un numeratore ricopiato qui invecchierebbe al primo
-   rimedio — è la radice R3 dell'audit stesso.
-   ⚠️ È la riga che invecchia per costruzione: si riscrive quando l'audit si
-      chiude. L'elenco di ciò che ha già detto è TOLTO, non esteso.
+✅ I DUE AUDIT COMPLETI SONO CHIUSI NEI PROPRI FINDING — l'11 agosto otto
+   decisioni su otto, il 27 agosto tutti i suoi. ⚠️ MA IL SECONDO NON È
+   FINITO: restano le voci SENZA numero AUD, e la maggior parte sono
+   decisioni MIE. Quali e quante non è scritto qui — la loro tabella nel
+   rapporto è la casa unica, e un numeratore ricopiato qui invecchierebbe al
+   primo che chiudo: è la radice R3 dell'audit stesso.
+   ⚠️ RICHIAMO DEL 2026-08-28, e questo blocco lo prescriveva a sé stesso
+   («si riscrive quando l'audit si chiude»): diceva «ED È APERTO. LA SPECIE
+   DEL LAVORO CHE VIENE È: RIMEDIO». Adesso la specie è CREATIVA, e il
+   rapporto si legge come VERBALE e DELEGA — il metodo, non il compito.
 
-   ⛔ LE TRE LEZIONI DELLE RADICI GIÀ CHIUSE, IN TRE RIGHE:
-   · IL RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — può risultare
-     più PICCOLO, più GRANDE, o DI SPECIE DIVERSA di come il rapporto lo
-     descrive. Successo su ogni radice chiusa.
-   · UN RIMEDIO PUÒ CRESCERE DI UNA CASA: la frase che stai correggendo può
-     vivere anche altrove, e correggerne due su tre è la radice R1 commessa
-     DENTRO il rimedio. Si cerca col grep prima di chiudere.
-   · UN RIMEDIO PUÒ FERMARSI PRIMA DI DECIDERE: si chiude il fatto falso e si
-     REGISTRA la decisione vera, che è del proprietario. Registrata, non presa.
-
-   ⛔ COSA HANNO INSEGNATO LE OTTO DECISIONI DELL'AUDIT, IN UNA RIGA: IL
-   RIMEDIO SI PREZZA LEGGENDO IL CODICE, NON IL RAPPORTO — e può risultare
-   più PICCOLO, più GRANDE, o DI SPECIE DIVERSA.
+   ⛔ IL METODO RESTA, ED È LA PARTE CHE NON INVECCHIA. Vale per un rimedio,
+   per un compito di un piano e per un rapporto letto contro il codice:
+   · IL LAVORO SI PREZZA LEGGENDO IL CODICE, NON IL DOCUMENTO CHE LO DESCRIVE
+     — può risultare più PICCOLO, più GRANDE, o DI SPECIE DIVERSA. Successo
+     su ogni radice chiusa dei due audit, e su ogni compito dispacciato.
+   · UNA CORREZIONE PUÒ CRESCERE DI UNA CASA: la frase che stai correggendo
+     può vivere anche altrove, e correggerne due su tre è la radice R1
+     commessa DENTRO il rimedio. Si cerca col grep prima di chiudere.
+   · SI PUÒ FERMARSI PRIMA DI DECIDERE: si chiude il fatto falso e si
+     REGISTRA la decisione vera, che è mia. Registrata, non presa.
+   · QUANDO UNA FRASE INVECCHIA, GUARDA SE A INVECCHIARE È L'AFFERMAZIONE O
+     IL SOGGETTO: sul secondo caso il riflesso «togli la cifra» produce una
+     frase PEGGIORE, perché una frase vera di pochi diventa un universale
+     falso su molti. Gotcha #87.
+   ⚠️ Una quarta riga diceva le stesse parole della prima ed è TOLTA, non
+      riscritta meglio — gotcha #76.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
    docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 812 KB
@@ -333,12 +338,15 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
    io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
 
 Parti confermandomi cosa hai letto e qual è la tua lettura dello stato, POI
-ASPETTA le mie richieste prima di scrivere qualunque cosa. ⛔ C'è un audit
-APERTO da rimediare, e NON c'è un piano da eseguire né uno da scrivere: i
-finding sono indipendenti e la ricetta è già nel rapporto. I piani già
-eseguiti restano verbali, che si leggono a COMPITI e mai interi — e lo
-stesso vale per il «Dettaglio» del rapporto, che si legge a FINDING.
-⚠️ Da dove ripartire lo dice il rapporto, non questo messaggio.
+ASPETTA le mie richieste prima di scrivere qualunque cosa. ⛔ NON c'è un
+piano da eseguire, e nemmeno uno da scrivere: si apre un traguardo NUOVO, e
+il primo passo è il BRAINSTORMING — che però non parte finché non lo dico io,
+perché ciò che lo sbarra sono decisioni MIE. I piani già eseguiti restano
+verbali, che si leggono a COMPITI e mai interi — e lo stesso vale per il
+«Dettaglio» del rapporto, che si legge a FINDING.
+⚠️ Da dove ripartire lo dice la §6 del compendio, non questo messaggio.
+   ⛔ Questa riga diceva «lo dice il rapporto», ed era vera finché il compito
+   era rimediarlo.
 ```
 
 ---

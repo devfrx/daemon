@@ -40,6 +40,15 @@
 //! it does not buy that they are the right signatures, and it is not the conformance suite,
 //! which needs two implementations to compare.
 //!
+//! ⚠️ DATED RECALL, 2026-08-28 — FINDING AUD-054. The FIVE is still TRUE OF THAT FILE and is
+//! kept for it; what was false is reading the sentence as the whole account for `process`,
+//! which since `5fceee1` (2026-08-21) is ALSO held by `tests/worker_tokens.rs` — where `start`
+//! is driven with a `Grant` the arbiter really issued, a path this bench never walks — and by
+//! four `tests/compile_fail/` cases at level 1. ⛔ THE COUNT IS NOT EXTENDED HERE, and that is
+//! the point: extending it would give the figure a second house and it would rot in the one
+//! nobody moves. `ports/process.rs` carries the reckoning for that family; this paragraph
+//! keeps only what it measured, which is this one file.
+//!
 //! ⛔ AND ON `process` THAT TEST EARNED ITS KEEP RATHER THAN CONFIRMING ANYTHING. The port as
 //! designed was NOT IMPLEMENTABLE: `instruct_one` has to HAND BACK a `SingleReceipt` whose
 //! only field is `pub(crate)`, so from outside the crate the return value could not be built

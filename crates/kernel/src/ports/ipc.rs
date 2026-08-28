@@ -41,11 +41,19 @@
 //! as it is today, sits on `Ipc::accept`.
 //!
 //! ⚠️ AND WHAT HOLDS THESE THREE SIGNATURES MEANWHILE IS ONE TEST, the same one that holds
-//! `filesystem`, `network` and `process`: `tests/ports_are_implementable.rs` writes a fake gui
+//! `filesystem` and `network`: `tests/ports_are_implementable.rs` writes a fake gui
 //! and calls it -- including the client that DIES WHEN THE SEED DECIDES that §3.1 asks for. It
 //! buys that the signatures are IMPLEMENTABLE FROM OUTSIDE THE CRATE and callable; it does NOT
 //! buy that they are the right signatures, and it is not the conformance suite, which needs
 //! two implementations to compare and is born with the real channel in milestone 6.
+//!
+//! ⚠️ DATED RECALL, 2026-08-28 -- FINDING AUD-054. That list read "`filesystem`, `network` and
+//! `process`", and `process` is OUT: from `5fceee1` (2026-08-21) its signatures are held by two
+//! benches plus four `compile_fail` cases, so naming it here understated it. ⛔ What is removed
+//! is ONE WORD, not the sentence: measured, `Ipc` has exactly one implementation from outside
+//! the crate, and so do `filesystem` and `network` -- which is why the claim still stands for
+//! the ports it now covers, `ipc` itself and those two. The reckoning for `process` lives on
+//! `ports/process.rs`, in one house.
 //!
 //! ⛔ AND THE SIGNATURES ARE NOT COPIED FROM A SPEC TABLE, unlike `process`'s: §6.1 fixes the
 //! schema, the stamp, the identifiers and the direction of initiative, and it does NOT carry a

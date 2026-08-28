@@ -48,12 +48,26 @@
 //! belongs to that register's cell alone: a figure kept in two houses rots in the one
 //! nobody moves.
 //!
-//! ⚠️ AND WHAT HOLDS THESE SIGNATURES MEANWHILE IS ONE TEST, the same one that holds
-//! `filesystem` and `network`: `tests/ports_are_implementable.rs` writes a fake for
-//! `Worker` and one for `Process` and calls them. It buys that the signatures are
-//! IMPLEMENTABLE FROM OUTSIDE THE CRATE and callable; it does NOT buy that they are the
-//! right signatures, and it is not the conformance suite, which needs two implementations
-//! to compare and is born with the real worker channel in milestone 6.
+//! ⚠️ AND WHAT HOLDS THESE SIGNATURES MEANWHILE IS NOT ONE TEST -- `process` is the one
+//! family where that is so, and what each bench buys DIFFERS, which is the half worth knowing.
+//! `tests/ports_are_implementable.rs` buys that the signatures are IMPLEMENTABLE FROM OUTSIDE
+//! THE CRATE and callable. `tests/worker_tokens.rs` buys more than implementability: it drives
+//! `start` with a `Grant` the arbiter really issued, so the port is exercised on the ADMISSION
+//! PATH the other bench never touches. And the `tests/compile_fail/` cases hold the TOKEN
+//! SHAPES at level 1, where no test can reach. ⛔ None of the three buys that these are the
+//! RIGHT signatures, and none is the conformance suite, which needs two implementations to
+//! compare and is born with the real worker channel in milestone 6.
+//!
+//! ⛔ DATED RECALL, 2026-08-28 -- FINDING AUD-054. The paragraph above read "IS ONE TEST, the
+//! same one that holds `filesystem` and `network`". True when written, false from `5fceee1`
+//! (2026-08-21), which landed `worker_tokens.rs` AND the four `compile_fail` cases in ONE
+//! commit. ⚠️ AND THIS FILE WAS TOUCHED TWICE AFTERWARDS WITHOUT THE PARAGRAPH MOVING --
+//! `15095be` the very next day, to announce those four cases, and `f275f0c` on 2026-08-27.
+//! ⛔ SO THE COUNT IS GONE RATHER THAN REALIGNED: it lived in THREE houses -- here, `ipc.rs`
+//! and `ports/mod.rs` -- and `CLAUDE.md` says a figure kept in more than one house is REMOVED,
+//! not re-corrected. `grep -rn 'impl Worker for' crates/` names the benches, and a count
+//! written here would age again. ⚠️ For `filesystem` and `network` the old sentence is still
+//! TRUE, measured: each has exactly ONE implementation from outside the crate.
 
 use alloc::vec::Vec;
 

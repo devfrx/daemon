@@ -40,6 +40,14 @@ dettaglio, con la mutazione e la prova che è osservabile, sta in
 | 6 | `documentation consistency` | livello 2 — `scripts/check-docs.sh` |
 | 7 | `DST campaigns -- wall time` | il **tempo di parete** delle tre campagne, ristampato con `--nocapture` |
 
+⚠️ **E IL LOG DEL CANCELLO NON È UNA CORSA SOLA: la baseline NON si aggrega da lì.** Il passo 7
+ristampa le campagne con `--nocapture`, quindi il log porta **più** righe `test result:` di
+`cargo test --locked --workspace --no-fail-fast`, e sommarle dà un totale più alto — misurato il
+2026-08-28 cascandoci, e corretto rifacendo la misura col comando giusto. 📌 **Non è promossa a
+riga di §9:** è la forma già registrata — *un contatore che parte da un valore che il soggetto
+sotto esame non ha prodotto non è un oracolo su quel soggetto* — e un gotcha che non insegna
+niente diluisce quelli che insegnano.
+
 ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-062: questa tabella ricopiava il TESTO dei comandi e
 ometteva il settimo passo.** Diceva `cargo build --workspace` e `cargo test --workspace`, cioè la
 forma **senza `--locked`** che il finding **G-5** ha chiuso il 2026-08-18, e si fermava a sei

@@ -42,6 +42,8 @@ Albero pulito, ramo pushato. Ultimo commit: <<< INCOLLA QUI: git log --oneline -
 
 ⛔ PRIMA DI PROPORRE QUALSIASI COSA: leggi, poi ASCOLTA. Non entrare in plan
    mode, non proporre passi, non scrivere file finché non te lo dico.
+   ⛔ IL BRAINSTORMING È L'ECCEZIONE, E SI APRE SUBITO DOPO LA LETTURA: fa
+   DOMANDE, non proposte, e non è plan mode.
 
 INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
@@ -49,10 +51,13 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
   ⛔ IL LAVORO CHE VIENE È CREATIVO, non rimedio: si apre un TRAGUARDO NUOVO,
      e la sequenza è brainstorming → disegno → piano → esecuzione
-     subagent-driven. ⚠️ MA NON PRIMA CHE TE LO DICA IO, e non prima che le
-     decisioni che lo sbarrano siano prese: sono MIE, e quali lo dice la §6
-     del compendio — non è nominato qui apposta, un rimando non può marcire.
-     ⚠️ RICHIAMO DEL 2026-08-28: questo blocco diceva «NIENTE brainstorming,
+     subagent-driven. ⛔ E SI COMINCIA DAL BRAINSTORMING, subito: la voce che
+     lo sbarrava è DECISA. Le altre restano aperte e NON lo sbarrano — quali,
+     lo dice la tabella unica di docs/porta-di-qualita.md, non nominata qui
+     apposta perché un rimando non può marcire.
+     ⚠️ RICHIAMO DEL 2026-08-28, LA SECONDA NELLO STESSO GIORNO: qui stava
+     «MA NON PRIMA CHE TE LO DICA IO, e non prima che le decisioni che lo
+     sbarrano siano prese». E prima ancora diceva «NIENTE brainstorming,
      e NIENTE plan mode: la specie del lavoro che viene è RIMEDIO di un audit
      APERTO», e prescriveva di prendere un finding per volta. Era vero fino
      al 2026-08-28 e adesso manderebbe nella direzione opposta a quella
@@ -61,9 +66,8 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
   /superpowers:brainstorming                 è la PRIMA del traguardo nuovo, e
                                              va PRIMA di entrare in plan mode,
-                                             sempre. ⚠️ Ma non prima che io
-                                             abbia deciso ciò che lo sbarra:
-                                             la §6 dice cosa
+                                             sempre. ⛔ Si apre SUBITO: ciò
+                                             che la sbarrava è deciso
   /superpowers:writing-plans                 quando ci sarà un piano NUOVO da
                                              scrivere, e MAI prima che le voci
                                              aperte siano chiuse — che è la
@@ -245,8 +249,7 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
    nome di tipo a una lettera da uno che esiste già, una riga di catalogo che
    vale per due regole, e due celle che nominano identificatori ITALIANI che
    il traguardo fa esistere in inglese: toccano la SPEC, registrate non prese.
-   Dall'ESECUZIONE, altre SEI decisioni di disegno nell'errata — una di esse
-   VA DECISA PRIMA DEL TRAGUARDO 6 ed è diventata PIÙ LARGA, e TRE sono
+   Dall'ESECUZIONE, altre SEI decisioni di disegno nell'errata — TRE sono
    dichiarate NON TENUTE DA NESSUNA SONDA nel sorgente stesso, di proposito:
    pinzarle congelerebbe la scelta che mettono davanti a te. ⛔ MA IL CONFINE,
    o «dichiaro» diventa una scusa per non provare: si dichiara solo ciò che è
@@ -337,11 +340,13 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
    e con due macchine sullo stesso repository quella è una scelta che faccio
    io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
 
-Parti confermandomi cosa hai letto e qual è la tua lettura dello stato, POI
-ASPETTA le mie richieste prima di scrivere qualunque cosa. ⛔ NON c'è un
-piano da eseguire, e nemmeno uno da scrivere: si apre un traguardo NUOVO, e
-il primo passo è il BRAINSTORMING — che però non parte finché non lo dico io,
-perché ciò che lo sbarra sono decisioni MIE. I piani già eseguiti restano
+Parti confermandomi cosa hai letto e qual è la tua lettura dello stato, e POI
+APRI IL BRAINSTORMING: non c'è un piano da eseguire né uno da scrivere, si
+apre un traguardo NUOVO e il brainstorming è il suo primo passo.
+⛔ RICHIAMO DEL 2026-08-28: qui stava «non parte finché non lo dico io, perché
+   ciò che lo sbarra sono decisioni MIE». Quale voce sbarri il traguardo è uno
+   STATO, e lo stato ha una casa sola: la tabella di docs/porta-di-qualita.md.
+I piani già eseguiti restano
 verbali, che si leggono a COMPITI e mai interi — e lo stesso vale per il
 «Dettaglio» del rapporto, che si legge a FINDING.
 ⚠️ Da dove ripartire lo dice la §6 del compendio, non questo messaggio.

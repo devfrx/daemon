@@ -292,6 +292,35 @@ pub enum PreemptibleState {
 /// lives here, beside the type, and moves when the decision does. ⛔ THE COST IS STATED
 /// INSTEAD OF HIDDEN: moving `collect_expired` after the lookup -- one of the two roads `E30`
 /// names -- turns nothing red, and this paragraph would become false in silence.
+///
+/// ⛔ DECISION OF 2026-08-28 -- THE ENTRY THE PARAGRAPHS ABOVE POINT AT IS NOW TAKEN IN
+/// SUBSTANCE AND BOUND IN SHAPE. The substance: `release` MUST NOT answer `Err` for a grant
+/// THIS ARBITER ISSUED. A closed validity window and an expired revocation grace are not
+/// failures of the release -- the reservation went back into the budget when the sweep took
+/// it -- and answering `Err` there forces the first real consumer to ignore an error, which is
+/// the silent degradation ADR-0005 and ADR-0019 exist to forbid. Only the grant this arbiter
+/// never issued is a caller defect, and that one stays an error.
+///
+/// ⛔ TWO SHAPES ARE CLOSED AS REJECTED, so neither is reopened without a NEW measurement.
+/// ① A SECOND VARIANT ON ITS OWN: it buckets three causes into two, so it would have to be
+/// redone the day it first bites -- and the level-1 friction it is meant to buy does not land,
+/// for the reason the recall above already measured. ② MOVING THE SWEEP AFTER THE LOOKUP:
+/// rejected on MERIT and not on cost, because the answer to one question would then depend on
+/// WHICH OPERATION SWEPT LAST, and because it breaks "the arbiter collects before it decides"
+/// as a property of EVERY operation, which is what step 4 bought.
+/// ✅ BOTH COSTS WERE RE-MEASURED BEFORE DECIDING, by applying each mutation, compiling it,
+/// and revoking it with `git diff` at zero lines: both matched what this file already declares,
+/// and NEITHER FIGURE IS REPEATED HERE -- they live above and in the register.
+///
+/// ⚖️ WHAT IS DELIBERATELY NOT DECIDED, AND WHY THAT IS NOT AN EVASION: the exact type
+/// `release` answers with. It is bound to `R6` and built WITH it at milestone 6, because the
+/// shape follows from what `Worker::kill` needs once it hands the grant back -- and that caller
+/// does not exist yet. Building it now would freeze a return shape against an imaginary
+/// consumer, which is gotcha #46 from the wrong side: the same reason `R6` itself was not built
+/// at milestone 5.
+/// ⛔ SO THIS NO LONGER BLOCKS MILESTONE 6. What had to be settled first -- what `release`
+/// PROMISES -- is settled above; what remains is a design detail with a named closer, and the
+/// register's single table now pairs the two entries instead of leaving them apart.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReleaseError {
     /// Not in this arbiter's books. ⚠️ THREE CAUSES, ONE ANSWER -- see the declared limits

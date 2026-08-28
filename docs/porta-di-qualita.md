@@ -626,13 +626,25 @@ usa-e-getta fuori dal repository**, non dedotto: ammessa per `5_000` ms e rilasc
 anche lì, perché la finestra è **semiaperta**. ⛔ **Le due scelte che lo producono sono dettate
 dal Passo 4 del piano** — la riscossione prima della ricerca, e una variante sola — quindi il
 disegno **non è stato cambiato**: la conflazione è **dichiarata** accanto a `ReleaseError` nel
-sorgente, e la scelta fra tenerla e aggiungere `ReleaseError::Expired` è **registrata per il
-proprietario** in `E30` dell'errata del piano, **non presa**. ⏳ **Oggi non costa nulla, e la
-ragione è una misura e non una speranza:** `release` ha **due** chiamanti in tutto il
-repository, entrambi in `crates/kernel/tests/arbiter_admission.rs` — nessun consumatore di
-produzione esiste. Comincia a costare al **Traguardo 6**, dove `Worker::kill` restituisce la
-concessione a lavoro **finito**, che può benissimo cadere dopo la finestra, e lì *«il rilascio è
-fallito»* e *«era già stato fatto per te»* sono notizie diverse.
+sorgente. ⛔ **RICHIAMO DEL 2026-08-28 — LA SCELTA NON È PIÙ «REGISTRATA E NON PRESA»: È PRESA
+NEL MERITO E VINCOLATA NELLA FORMA, e la frase è RISCRITTA e non affiancata** — una frase vera
+appesa sotto una falsa lascia in piedi la falsa, finding **A-2**. `release` **non** risponde
+`Err` a una concessione **propria**: finestra scaduta e grazia scaduta non sono fallimenti del
+rilascio, e solo la concessione **altrui** resta un errore. Le **due** forme scartate, col perché
+e coi costi rimisurati prima di decidere, stanno accanto a `ReleaseError` in
+`crates/kernel/src/arbiter/mod.rs`, in una casa sola. ⚖️ **Resta il tipo esatto della risposta**,
+che si disegna **insieme a `R6`** al Traguardo 6, perché discende da ciò che `Worker::kill`
+chiede quando restituisce la concessione — e quel chiamante non esiste ancora (gotcha **#46** dal
+verso sbagliato). ⏳ **Comincia a costare** proprio lì, dove la concessione torna a lavoro
+**finito**, che può benissimo cadere dopo la finestra, e *«il rilascio è fallito»* e *«era già
+stato fatto per te»* sono notizie diverse.
+⛔ **E QUESTA VOCE PORTAVA L'ESCLUSIVITÀ FALSA CHE `AUD-014` HA TOLTO DAL SORGENTE, in una casa
+che quel rimedio non toccava:** diceva *«`release` ha **due** chiamanti in tutto il repository,
+entrambi in `crates/kernel/tests/arbiter_admission.rs`»*, ed **entrambe** le clausole erano false
+— il Task 6 falsificò la cifra nel commit successivo, e il Task 12 la sede, facendo nascere un
+chiamante in **un'altra crate**. ⛔ **TOLTE e non riallineate**, che è la cura di `AUD-014`:
+resta *«nessun consumatore di produzione esiste»*, la metà che non marcisce, e il censimento lo
+rifà `grep -rn '\.release(' crates/ --include=*.rs`.
 📇 **Indicizzata nella tabella *«LE VOCI APERTE DEL TRAGUARDO 5, IN UNA TABELLA SOLA»*, in fondo
 a questo file**, che dice anche **chi la chiude** — rimando aggiunto il 2026-08-25.
 
@@ -3602,7 +3614,7 @@ riga di tabella** — ma tacerla la rendeva indistinguibile da una voce dimentic
 | 11 | le sonde dei compiti **senza riga di catalogo** | ai siti che il terzo `grep` qui sopra restituisce, un compito dichiara che le proprie sonde non hanno una riga propria e vivono sotto una riga altrui | il **blocco dei comandi** qui sopra, terzo `grep` | il **proprietario**: §7.4 è spec |
 | 12 | le **dieci sonde permanenti dell'audit** | nessuna ha una riga nel catalogo §7.4 — ⚠️ **questa riga è un rimando**, e il contenuto sta nella tabella consolidata del 2026-08-18 qui sopra | tabella consolidata dell'audit, in questo file | il **proprietario**, dal 2026-08-18 |
 | 13 | **E21** | `a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit` prova *«non è nei miei libri»*, non *«distinguo le mie concessioni da quelle altrui»*: `GrantId` è un progressivo che riparte da zero per ogni `Arbiter` | riquadro *«ciò che `release` compra davvero, e ciò che non compra»* di questo file, e accanto a `ReleaseError` nel sorgente | il **proprietario**: dare un'**identità** all'arbitro |
-| 14 | **E30** | `release` risponde `UnknownGrant` a una concessione **propria** che i libri non hanno più, e dal Task 7 le cause sono **tre**: finestra scaduta, grazia di una revoca scaduta, concessione altrui | riquadro *«`release` risponde `UnknownGrant` anche a una concessione PROPRIA ma SCADUTA»* di questo file, ed errata | il **proprietario** — ⚠️ **va decisa prima del Traguardo 6** |
+| 14 | **E30** | ✅ **DECISA NEL MERITO IL 2026-08-28, VINCOLATA NELLA FORMA.** `release` **non** risponde `Err` a una concessione **propria** — finestra scaduta e grazia scaduta non sono fallimenti del rilascio; solo la concessione **altrui** resta un errore. ⛔ **Due forme sono chiuse come scartate**, col perché e coi costi rimisurati. ⚖️ **Resta il TIPO esatto della risposta**, che discende da ciò che `Worker::kill` chiede: si disegna **insieme a `R6`**, riga 26 | accanto a `ReleaseError` in `crates/kernel/src/arbiter/mod.rs`, e riquadro *«`release` risponde `UnknownGrant` anche a una concessione PROPRIA ma SCADUTA»* di questo file | il **Traguardo 6, insieme a `R6`** — ⛔ **non sbarra più l'apertura del traguardo:** ciò che doveva essere deciso prima lo è |
 | 15 | **E31** | `saturating_add` può produrre **sovra-ammissione** al limite superiore: con `ceiling = u64::MAX` un secondo `admit` da 1 MiB torna `Granted` | errata del piano | il **proprietario** |
 | 16 | **E32** | `crates/kernel/src/parameters.rs` e `crates/kernel/src/arbiter/mod.rs` sono **mutuamente dipendenti** — legale in Rust, sono moduli, ed è dettato dal piano | errata del piano | il **proprietario** |
 | 17 | **E47** ① | `promote` restituisce un `Vec<Promotion>` senza `#[must_use]`, e `arbiter.promote(now);` da solo compila anche con `-D warnings` | riquadro *«`promote` restituisce un `Vec<Promotion>` senza `#[must_use]`»* di questo file, ed errata | il **proprietario** |
@@ -3614,7 +3626,7 @@ riga di tabella** — ma tacerla la rendeva indistinguibile da una voce dimentic
 | 23 | l'**aiutante** dei due scrittori di record | se `Untrusted::promote` e `Arbiter::set_policy` debbano condividere un aiutante che tenga in passo il `kind` e l'operazione; intanto ciascuna ha la **propria** sonda | §6 del compendio, e `crates/kernel/src/reconcile.rs` | il **proprietario** |
 | 24 | **E50** | fra corsie `promote` **scavalca**, cioè fa nell'insieme delle corsie ciò che il suo stesso commento rifiuta dentro una corsia | riquadro *«LO SCAVALCAMENTO CHE `promote` RIFIUTA DENTRO UNA CORSIA, FRA CORSIE LO FA»* di questo file, ed errata | **chi costruirà il primo ciclo di orchestrazione** |
 | 25 | **E51** / **E100** | `admit` non consulta mai la coda, quindi un ritardatario la scavalca; dal Task 8 l'inversione di priorità è **raggiungibile in produzione** e non più teorica | riquadro *«`admit` NON CONSULTA MAI LA CODA»* di questo file, ed errata | **chi costruirà il primo ciclo di orchestrazione** |
-| 26 | **R6** | `Process::start` **consuma** il `Grant` e `Arbiter::release` lo consuma pure, quindi chi avvia un worker non ha più nulla da rilasciare | accanto a `Grant` nel sorgente, e §6 del compendio | il **Traguardo 6**: la via scritta è che `Worker::kill` restituisca la concessione |
+| 26 | **R6** | `Process::start` **consuma** il `Grant` e `Arbiter::release` lo consuma pure, quindi chi avvia un worker non ha più nulla da rilasciare. ⛔ **È LA STESSA RIGA DI CODICE DI `E30`**, riga 14, **e dal 2026-08-28 le due si chiudono insieme:** `E30` fissa che cosa `release` **promette**, `R6` porta il **chiamante** da cui discende il tipo | accanto a `Grant` nel sorgente, e §6 del compendio | il **Traguardo 6**: la via scritta è che `Worker::kill` restituisca la concessione |
 | 27 | **E152** | la riga di catalogo di livello 2 è **PARZIALE** e non coperta: §5.7 elenca **cinque** proprietà e la campagna dell'arbitro ne tiene **tre** | cella della campagna DST di questo file, ed errata | il **Traguardo 6**, che porta `process` e `ipc` — le altre due proprietà si iniettano lì |
 | 28 | la classe d'effetto della transizione di policy | è `Idempotent`, e la transizione oggi **scambia un oggetto**: la classe si rilegge quando la transizione avrà un contenuto | §12 del disegno del Traguardo 5, e il sorgente | **L2**, quando arriverà il contenuto dello sfratto |
 | 29 | **E83** | il `filter` sull'ammissibilità in `lanes` è un **mutante vivo garantito**, a comportamento nullo: toglierlo lascia il workspace verde, e resta perché rende vera **per costruzione** la frase che i due insiemi sono lo stesso insieme | errata, e accanto alla frase nel sorgente | ⛔ **nessuno**: non c'è niente da decidere, e la non-difendibilità è scritta con la misura |

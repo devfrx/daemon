@@ -647,11 +647,14 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 ⛔ **Il TRAGUARDO 6** — gli altri meccanismi: il gateway di inferenza, i sensori, i permessi, lo
 stato di degrado e il canale verso i worker. ⛔ **Si riparte dal BRAINSTORMING**, come a ogni
 traguardo, e **prima** si legge ciò che il Traguardo 5 lascia aperto: la tabella *«Le voci aperte
-del Traguardo 5»* di [`porta-di-qualita.md`](porta-di-qualita.md), e in particolare **`E30`**, che
-va decisa **prima**.
+del Traguardo 5»* di [`porta-di-qualita.md`](porta-di-qualita.md), casa unica, che dice anche
+**chi chiude** ciascuna.
 ⚠️ **E ciò che lo sbarra sono decisioni del PROPRIETARIO, dette qui invece che scoperte
-aprendolo:** `E30`, e le **voci senza numero AUD** dell'audit del 2026-08-27 — la loro tabella in
+aprendolo:** le **voci senza numero AUD** dell'audit del 2026-08-27 — la loro tabella in
 quel rapporto è la casa unica, e la maggior parte sono sue.
+⛔ **RICHIAMO DEL 2026-08-28: qui e nel riquadro del Traguardo 5 si nominava `E30` come la voce
+che «va decisa prima». È DECISA nel merito, e il nome è TOLTO da entrambe invece che
+riallineato** — quale voce sbarri il traguardo è uno **stato**, e uno stato ha una casa sola.
 ✅ **I finding dell'audit sono chiusi**, e a dirlo non è questa riga ma il comando:
 
 ```
@@ -792,8 +795,8 @@ no.
 ⏭️ **IL PROSSIMO PASSO È IL TRAGUARDO 6** — gli altri meccanismi: il gateway di inferenza, i
 sensori, i permessi, lo stato di degrado e il canale verso i worker. ⛔ **Si riparte dal
 BRAINSTORMING**, come a ogni traguardo, e **prima** si legge ciò che questo lascia aperto: la
-tabella *«Le voci aperte del Traguardo 5»* di [`porta-di-qualita.md`](porta-di-qualita.md), e in
-particolare `E30`, che va decisa **prima** del Traguardo 6.
+tabella *«Le voci aperte del Traguardo 5»* di [`porta-di-qualita.md`](porta-di-qualita.md), che
+ne è la casa unica — il richiamo del 2026-08-28 sta in cima alla §6.
 ⛔ **Il sotto-progetto 1 NON è chiuso:** restano il Traguardo 6 e la §8 di
 [`tracciabilita.md`](tracciabilita.md), che si aggiorna alla chiusura del sotto-progetto e non
 di un traguardo.

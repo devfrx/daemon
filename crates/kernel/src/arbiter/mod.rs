@@ -235,9 +235,8 @@ pub enum PreemptibleState {
 /// over-admission protection. What it does not buy is telling the caller WHICH of the three
 /// happened.
 ///
-/// ⚠️ TODAY IT COSTS NOTHING, and the reason is a measurement rather than a hope: every caller of
-/// `release` in this repository is a PROBE, and they all live in `tests/arbiter_admission.rs` --
-/// NO PRODUCTION CONSUMER EXISTS. It starts costing at milestone 6, where `Worker::kill` hands
+/// ⚠️ TODAY IT COSTS NOTHING IN BEHAVIOUR, and the reason is a measurement rather than a hope:
+/// every caller of `release` in this repository is a PROBE -- NO PRODUCTION CONSUMER EXISTS. It starts costing at milestone 6, where `Worker::kill` hands
 /// the grant back when the work FINISHES, which can perfectly well be after the window; there
 /// "your release failed", "it was already done for you" and "it was TAKEN from you" are THREE
 /// different pieces of news, and the third is the one a caller can act on -- being preempted is
@@ -260,6 +259,29 @@ pub enum PreemptibleState {
 /// `E77` alone, and everything else -- here, `E30`, the register -- points there instead of
 /// repeating it. Gotcha #68 is about a figure living in two places, not about which figure it is.
 /// Registered as `E77`, closed by `E85`.
+///
+/// ⛔ RECALL OF 2026-08-28, FINDING AUD-014 -- THE SENTENCE ABOVE ALSO SAID "and they all live
+/// in `tests/arbiter_admission.rs`", AND THAT CLAUSE IS REMOVED RATHER THAN REALIGNED TO A LONGER
+/// LIST. Of its three clauses exactly ONE was false: `release` has ten call sites today, nine
+/// there and one in `crates/simulator/tests/arbiter_campaign.rs` -- ANOTHER CRATE, born at tasks
+/// 11/12, after this paragraph was written. The other two clauses hold and they carry the whole
+/// argument, so neither was rewritten. ⚖️ It is the same cure the recall above applied to "TWO
+/// CALLERS" IN THIS VERY SENTENCE, and the reason it was needed twice: a LOCATION exclusivity is a
+/// quantified claim written with a noun instead of a number, so the rule of gotcha #68 did not
+/// recognise it while it was being applied to the clause right next to it.
+///
+/// ⛔ AND THE REMOVED CLAUSE POINTED THE READER AT THE WRONG NINE -- MEASURED, NOT ARGUED. Adding
+/// the second variant `E30` names is a COMPILE BREAK, and only in the crate that clause excluded:
+/// with `Expired` added to `ReleaseError`, `cargo test --locked -p kernel --no-run` still exits 0,
+/// because eight of those nine sites reach for `.expect()` and the ninth for `.is_err()`; while
+/// `-p simulator` exits 101 on `error[E0004]: non-exhaustive patterns: Err(ReleaseError::Expired)
+/// not covered` at `arbiter_campaign.rs:400`, whose `match` carries no wildcard arm. Mutation
+/// applied, compiled, and revoked with `git diff` at zero lines, on 2026-08-28.
+/// ⚖️ WHAT THIS DOES NOT CHANGE: "costs nothing" was and remains a claim about BEHAVIOUR, and it
+/// still holds -- the campaign COUNTS the two outcomes and never acts on which cause produced one,
+/// which is why "IN BEHAVIOUR" is now written into it instead of left to the reader. What it does
+/// change is the reader's bound on the DESIGN decision: `E30` is not one file's worth of work, and
+/// the removed clause said it was.
 ///
 /// ⚠️ AND NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT. A test
 /// asserting `Err` at 5_001 would freeze the very behaviour `E30` puts in front of the owner:

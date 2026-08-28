@@ -2216,9 +2216,26 @@ quell'ordine**, quindi le voci aperte `E51` ed `E53` restano aperte.
 ⛔ **La riga del build script è entrata il 2026-08-09 su una lacuna _misurata_, e allora le
 voci di livello 2 erano sei.** ⚠️ **Legata alla data e non alla posizione, il 2026-08-10:**
 diceva *«è la sesta voce di livello 2»*, vero quando fu scritto e falso da quando la riga dei
-test di contratto è entrata poche ore dopo — nella tabella di oggi, che ne ha **sette**, il
-build script sta **quinto**. È la terza forma del gotcha **#31**: un'affermazione vera legata
-al **contenitore** invece che a ciò che fu misurato, e il contenitore cresce senza avvisare. Un `crates/kernel/build.rs` che chiama `SystemTime::now()`,
+test di contratto è entrata poche ore dopo. È la terza forma del gotcha **#31**: un'affermazione
+vera legata al **contenitore** invece che a ciò che fu misurato, e il contenitore cresce senza
+avvisare.
+
+⛔ **RICHIAMO DEL 2026-08-28, finding AUD-063 — la correzione del 2026-08-10 aveva rimesso un
+conteggio del contenitore dentro la frase che lo vieta.** Diceva, subito dopo *«poche ore
+dopo»*: *«— nella tabella di oggi, che ne ha **sette**, il build script sta **quinto**»*, e le
+righe di dati della tabella del Livello 2, **contate il 2026-08-28**, sono **nove** — le due che
+mancavano sono entrate coi Task 9 e 10 del Traguardo 3, il contratto `journal` e i byte
+congelati. ⚠️ **Quel «nove» sta qui perché è dentro un verbale datato**, che dice cosa fu
+misurato quel giorno; è la distinzione della **55ª** misura, e la stessa cifra scritta al
+presente nel paragrafo sopra sarebbe il difetto rifatto. ⛔ **Tolta e non riallineata, e con essa
+l'ORDINALE**, che era ancora giusto **per caso**: le due righe nuove sono finite in fondo, e una
+inserita prima lo avrebbe falsificato allo stesso modo — cioè era legato al contenitore quanto il
+conteggio, che è precisamente ciò che la frase dichiara di aver corretto. 📌 **Al suo posto non
+c'è un numero nuovo ma una regola di lettura** (precedente **AUD-007**): quante siano le voci di
+livello 2 lo dice **la tabella**, che è la loro casa unica, e questa sezione narrativa non ne
+tiene una seconda copia.
+
+Un `crates/kernel/build.rs` che chiama `SystemTime::now()`,
 `fs::metadata()` e `env::var()` e inietta il risultato con `cargo:rustc-env` lasciava la porta
 **verde su sei controlli su sei**: `build` e `test` lo compilano perché è il mestiere di un
 build script, `gate-no-os.sh` lo compila **per l'host anche con `--target`** e **lo esegue**,

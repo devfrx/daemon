@@ -427,10 +427,14 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
 /// both non-vacuity oracles — and the weaker of the two copies is the one that would have been
 /// called "the campaign that really runs". There is one body, and both entry points use it.
 ///
-/// ⚠️ IT PRINTS ITS WALL TIME, AND THE GATE DOES NOT YET COLLECT IT. `gate.sh` runs
-/// `cargo test --workspace` with no `--nocapture`, so today this line is visible only to whoever
-/// runs the binary by hand. It is written for the step the gate does not have yet, not to
-/// describe one it has.
+/// ⚠️ IT PRINTS ITS WALL TIME, AND THE GATE COLLECTS IT SINCE 2026-08-11 -- step 7 of
+/// `scripts/gate.sh`, "DST campaigns -- wall time", re-runs this binary with `--nocapture` so the
+/// line is READ and not buffered. ⛔ RECALL OF 2026-08-28, FINDING AUD-028: this said "AND THE
+/// GATE DOES NOT YET COLLECT IT ... written for the step the gate does not have yet", and it had
+/// been false for seventeen days. ⛔ AND THE RECALL EIGHTY-FIVE LINES DOWN ALREADY SAID THIS LINE
+/// HAD BEEN CORRECTED -- it did not exist yet, and that is the defect worth more than the count:
+/// a correction announced in one house and never made in the other reads, from either end, as
+/// done. Whether constraint 7 of §11 is discharged is NOT asserted here; §11 is its only house.
 fn campaign(seeds: u64) -> (u64, usize) {
     // ⛔ THE SET AND NOT ITS SIZE. Measured on the spike, seed 99 left `[3, 7]`: with
     // interleaved execution one crash leaves SEVERAL steps in doubt together, and a bench that
@@ -489,8 +493,9 @@ fn campaign(seeds: u64) -> (u64, usize) {
         largest = largest.max(doubts.len());
     }
 
-    // A MEASUREMENT, printed rather than guessed — run with `-- --nocapture`, and NOT visible
-    // under `gate.sh`, which captures it.
+    // A MEASUREMENT, printed rather than guessed — run with `-- --nocapture`, which step 7 of
+    // `gate.sh` does on every commit since 2026-08-11. ⛔ RECALL OF 2026-08-28, AUD-028: this said
+    // "NOT visible under `gate.sh`, which captures it".
     //
     // ⚠️ WHAT `largest` IS AND WHAT IT IS NOT, because this line claimed to be what the seed list
     // of task 8 and the campaign size of task 4 are chosen against, and it cannot be either.
@@ -579,21 +584,30 @@ fn campaign(seeds: u64) -> (u64, usize) {
 /// task 7 put the same line on the level-2 sweep in
 /// `crates/platform/tests/engine_crash_consistency.rs`, which until that day printed its counts and
 /// not its time — so the constraint was produced at one level of two and this paragraph did not
-/// know it. SHOWING it is what is still missing: `gate.sh` runs `cargo test --workspace` with no
-/// `--nocapture`, so on every commit BOTH lines go into a buffer nobody reads. **TASK 9 adds the
-/// gate step that shows them.**
+/// know it. ⛔ SHOWING IT IS DONE TOO, SINCE 2026-08-11: task 9 added step 7 of `gate.sh`, "DST
+/// campaigns -- wall time", which re-runs the three campaign binaries with `--nocapture`, and
+/// task 12 of milestone 5 gave it its third target. ⛔ RECALL OF 2026-08-28, AUD-028: this said
+/// "SHOWING it is what is still missing ... **TASK 9 adds the gate step that shows them**", in
+/// the PRESENT and the FUTURE tense, about work that had been finished for seventeen days.
 ///
 /// ⚠️ WHY THE DISTINCTION IS WORTH SEVEN LINES rather than a tidier "discharged": the closing
 /// audit of this milestone reads these claims. A file saying "discharged" here would mark the
 /// constraint closed and Task 9 redundant, and what would be left uncovered is the constraint's
 /// entire PURPOSE — not that a number exists, but that somebody SEES the campaign getting slower.
-/// The file also said "the gate does not yet collect it" eighty-five lines up, so before this
-/// correction it asserted both things at once.
+/// The file also said "the gate does not yet collect it" further up. ⛔ RECALL OF 2026-08-28,
+/// AUD-028: this ended "so before this correction it asserted both things at once" -- and THAT
+/// CORRECTION WAS NEVER MADE. The other line was still standing when this audit found it, so the
+/// sentence describing the fix outlived the fix by seventeen days. Both are corrected now, in the
+/// same commit, which is the only form that cannot repeat this.
 ///
-/// ⛔ AND DECISION D6: the campaign is a TEST and the gate does not grow a seventh check for it.
-/// `gate.sh` already runs `cargo test --workspace`, so this sweep is on every commit by being an
-/// ordinary `#[test]` — which is also why the count above is chosen against a wall-clock budget
-/// instead of against how much sweeping would be nice.
+/// ⛔ AND DECISION D6: the campaign is a TEST, and it is on every commit by being an ordinary
+/// `#[test]` under `gate.sh`'s `cargo test --workspace` — which is also why the count above is
+/// chosen against a wall-clock budget instead of against how much sweeping would be nice.
+/// ⚠️ RECALL OF 2026-08-28, AUD-028, PERIMETER ADDED AND DECLARED: this said "the gate does not
+/// grow a seventh check for it", and `gate.sh` has SEVEN `run` steps of which the seventh is
+/// exactly that. The DECISION is untouched and still holds -- step 7 does not RUN the sweep, it
+/// re-runs it with `--nocapture` to SHOW the printed line; the running is still the ordinary
+/// `#[test]`. What is removed is the sentence that counted the gate's steps.
 #[test]
 fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
     let (crashes, largest) = campaign(SHORT_CAMPAIGN_SEEDS);

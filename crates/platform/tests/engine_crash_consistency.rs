@@ -629,10 +629,14 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     // checks and both entry points call it.
     //
     // ⚠️ CONSTRAINT 7 OF §11, THE HALF THIS FILE OWNS: the wall time is PRINTED on every run — see
-    // the `println!` in `campaign`. The other half, a gate step that SHOWS it, is task 9's:
-    // `gate.sh` runs `cargo test --workspace` with no `--nocapture`, so today the line goes into a
-    // buffer nobody reads. The same sentence, for the same reason, is on
-    // `crates/simulator/tests/dst_campaign.rs`.
+    // the `println!` in `campaign`. The other half, a gate step that SHOWS it, was task 9's and is
+    // DONE since 2026-08-11: step 7 of `gate.sh` re-runs this binary with `--nocapture`, which is
+    // what the paragraph twenty lines down already says. ⛔ RECALL OF 2026-08-28, AUD-028: this
+    // said "so today the line goes into a buffer nobody reads", CONTRADICTING THAT PARAGRAPH IN
+    // THE SAME COMMENT BLOCK. One comment asserting both halves of a contradiction is worse than
+    // either half alone: whichever a reader reaches first is confirmed by the file itself. The
+    // same sentence, for the same reason, was on `crates/simulator/tests/dst_campaign.rs`, and is
+    // corrected in the same commit.
     //
     // ⛔ AND THE BUDGET IS IN `debug` AND NOT IN `--release`, which is where the plan for this task
     // had it. `gate.sh` is what pays for this file, and `gate.sh` runs `cargo build --workspace`

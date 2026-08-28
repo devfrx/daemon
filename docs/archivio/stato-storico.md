@@ -791,3 +791,68 @@ Era l'unica domanda strutturale che la spec aveva deliberatamente lasciato al pi
 | **«punto di partenza» significa che si copia** | la §2.5 dice riga per riga cosa entra in `crates/kernel/` e cosa **resta** negli spike. Nel Traguardo 1 non era salito niente. ✅ **Onorata dal Traguardo 2, verificata riga per riga il 2026-08-10:** è salito tutto ciò che la §2.5 gli assegnava — `boundary.rs`, `rng.rs` con la seminata in `simulator`, `executor.rs`, la porta `journal`, i casi di `compile_fail`. Restano negli spike le due righe che la §2.5 dichiara **non** debbano salire, e il **doppio cadente** del giornale, che è del **Traguardo 4** |
 
 ---
+
+## AUD-013 — il racconto, archiviato il 2026-08-28
+
+⚠️ **Verbale.** Stava in [`../COMPENDIO.md`](../COMPENDIO.md) §6 e ne è uscito perché
+quella sezione dichiara di sé che la casa unica dello stato dei finding è la colonna *Stato* di
+[`../audit-2026-08-27.md`](../audit-2026-08-27.md). ⛔ **Ciò che era APERTO non è stato
+archiviato con esso:** `E64` vive ora come voce **X-4** nella tabella delle voci senza numero AUD
+di quel rapporto. Le altre due voci registrate qui sotto avevano già una casa propria e la
+conservano — la forma nuova del gotcha **#48** sta in [`../HANDOFF.md`](../HANDOFF.md) **dentro il
+#48**, e la voce su [`../riferimenti.md`](../riferimenti.md) è la **41ª misura** di
+[`misure-dimensioni.md`](misure-dimensioni.md).
+
+📌 **Le misure che hanno deciso, prese il 2026-08-28** — cifre dentro un verbale datato, quindi
+reggono; nel compendio vivo non ce n'è nessuna, e il margine si rifà col comando
+`wc -c docs/COMPENDIO.md` contro il tetto scritto in `scripts/check-docs.sh`:
+
+| | |
+|---|---|
+| il blocco tolto dalla §6 | **4788** byte |
+| compendio prima · dopo | **203 053** → **199 298** byte |
+| tetto del cancello | **225 280** byte |
+| margine prima | **22 227** byte, cioè **quattro** blocchi di quella taglia |
+| finding ancora aperti allora | **ventitré** |
+
+⚠️ **E la prima stesura del rimando le aveva scritte nel compendio VIVO** — «4886», «22 227»,
+«ventitré» — cioè la radice **R1** commessa dentro il rimedio che la combatte, e con un numero
+già sbagliato: **4886** era la misura del blocco *prima* dell'estrazione, il blocco vero ne pesa
+**4788**. Corretta prima del commit. 📌 **Una cifra invecchia fra il momento in cui la misuri e
+quello in cui la scrivi**, che è il caso limite del gotcha **#31**.
+
+✅ **AUD-013 È CHIUSO IL 2026-08-28 — radice R1, il doc della sonda
+`a_grant_inside_its_grace_keeps_its_reservation` in `crates/kernel/src/arbiter/mod.rs`.** Il
+paragrafo affermava *«neither `ask_back` nor `revoking()` runs a sweep»* e ne concludeva che una
+spazzata capace di liberare subito una prenotazione revocata *«would satisfy every other probe
+here»*. ⛔ **Misurate, cadono tutt'e due:** `ask_back` riscuote con `self.collect_expired(now)` come
+**prima istruzione**, e quella mutazione uccide **due** sonde e non una — `11 passate, 2 fallite`
+contro `13 e 0` — perché `asking_back_twice_does_not_buy_the_room_twice` cade sul proprio
+`assert_eq!(arbiter.revoking(), 1)` **prima** dell'`admit` che ha nel corpo, sulla spazzata in testa
+al proprio **secondo** `ask_back`. La clausola falsa e le due esclusività sono **tolte e non
+sostituite**, col richiamo datato; le due metà **vere** — `allocated()` e `revoking()` non
+riscuotono — non sono state riscritte.
+
+⛔ **E il rimedio era PIÙ PICCOLO di come il rapporto lo prezza: delle tre clausole di quella frase
+ne era falsa UNA.** È il gotcha **#65** — *un rimedio si prezza leggendo il codice, non il rapporto,
+in entrambe le direzioni* — su un altro rapporto e un'altra radice. ⚠️ **È la direzione che costa
+di più:** un finding che descrive un paragrafo come sbagliato fa riscrivere il paragrafo, e
+riscrivere ciò che è già vero è il modo più rapido di aprire una falsità nuova.
+
+⛔ **Ed è costato TRE giri di revisione: i primi due hanno trovato difetti veri, il terzo è tornato
+pulito.** ① Il primo ha colto che il rimedio aveva **aperto una falsità nuova** — un'esclusività
+senza misura — dentro la prosa scritta per chiuderne una, e che una **quarta casa** era rimasta:
+il paragrafo *«Che cosa se ne fa»* di [`porta-di-qualita.md`](../porta-di-qualita.md), dove la stessa
+frase viveva una seconda volta **nello stesso file** che il censimento credeva di aver aperto
+(gotcha **#68**). ② Il secondo ha colto che **due proposte del primo revisore erano a loro volta
+FALSE**, smentite misurandole. 📌 **Una proposta di revisore è un'affermazione come le altre, e si
+prezza leggendo il codice:** è il **#65** applicato a chi rivede, e sta scritto qui invece che in
+una riga nuova della §9.
+
+**Tre cose registrate chiudendo la voce, e due di esse non sono prese:**
+
+| | |
+|---|---|
+| ⛔ **una QUINTA casa, ed è del proprietario** | la voce **`E64`** del [piano del Traguardo 5](../superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) afferma la stessa falsità. **Non toccata:** l'audit dichiara i piani fuori perimetro — *«sono verbali di esecuzione, non contratti»* — e questa §6 ha già stabilito che i due piani e il disegno del Traguardo 5 **restano come sono**. ⚠️ **Ma qui la difesa è più DEBOLE che per una scheda d'audit, e va scritto:** la scheda **cita** la frase come reperto del finding, `E64` la **afferma in proprio, come causa, al presente** — un verbale che registra una **misura** invecchia onestamente, uno che afferma un **meccanismo** sbagliato resta sbagliato. ⛔ **E la riga corretta di [`porta-di-qualita.md`](../porta-di-qualita.md) manda ora il lettore proprio là** per le cifre, che sono invece legittimamente datate. 📌 Se un verbale che afferma un meccanismo sbagliato vada corretto è **decisione del proprietario** |
+| ⚠️ **una FORMA nuova del gotcha #48, e non una riga nuova** | ⛔ `git show HEAD:<file>` **non è evidenza sui fine-riga dell'albero di lavoro**, ed è la misura che si prende per prima: rende il blob dell'**indice**, per quel file LF, e chi eseguiva ne ha concluso `CR=0` per [`porta-di-qualita.md`](../porta-di-qualita.md) — che nell'albero di lavoro è **CRLF integrale** — «ripristinandolo» a LF. La **direzione** del difetto era capovolta: la conversione osservata andava verso LF, non verso CRLF. 📌 I `CR` si contano **sul file**, `tr -cd '\r' < <file> \| wc -c`, e la colonna che dice la verità è la **`w/`** di `git ls-files --eol`, non la `i/`. Il testo integrale sta in [`HANDOFF.md`](../HANDOFF.md), **dentro** il #48: la cura non cambia — *il banco con cui misuri sbaglia verso l'attesa* — e un gotcha che non insegna niente diluisce quelli che insegnano |
+| ⚠️ **[`riferimenti.md`](../riferimenti.md) NON toccato, ed è una decisione** | la voce ha portato misure — la mutazione col suo esito, il censimento dei fine-riga — e vivono in [`porta-di-qualita.md`](../porta-di-qualita.md), **accanto al controllo che difendono**. È la **voce aperta della 41ª misura**, riaffermata da ogni passata da allora: scegliere fra *«spostare le misure»* e *«cambiare la regola»* resta del proprietario, e cominciare adesso produrrebbe **due** convenzioni invece di una |

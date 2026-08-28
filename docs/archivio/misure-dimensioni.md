@@ -17,7 +17,9 @@ find docs -name '*.md' | xargs wc -c | sort -n
 
 ⚠️ **E il primo conto era sbagliato di uno.** Il piano di sfoltimento diceva
 *«cinquantanove»*, contate con un pattern che pretendeva la parola *«misura»* dopo
-l'ordinale — e un riquadro si intitola *«Rimisurati lo stesso giorno»*. Sono **60**.
+l'ordinale — e un riquadro si intitola *«Rimisurati lo stesso giorno»*. ⛔ **La cifra è TOLTA e non
+riallineata il 2026-08-28**, dal riquadro che l'aveva resa stantia: il conto lo dà il comando
+qui sopra, che sta già in questa pagina e non marcisce.
 È il gotcha **#31** commesso dentro il lavoro che lo prende di mira: un numero messo a
 sostegno di una regola giusta non viene mai rimisurato. Colto da un'asserzione dello
 script di taglio, che si è fermato **prima di scrivere**.
@@ -2589,3 +2591,49 @@ script di taglio, che si è fermato **prima di scrivere**.
 >
 > ⛔ **La cifra dei due file descrive il file che la contiene**, quindi è rimisurata **dopo** aver
 > chiuso questo riquadro e corretta **di sole cifre**, finché due giri danno lo stesso numero.
+
+---
+
+> 🔁 **La colonna dei kilobyte esce dalla §12 — il 2026-08-28, completando il Compito 1 dello
+> sfoltimento, che l'aveva lasciata in piedi.** Il disegno prescriveva alla §2.2 *«resta la
+> tabella dei puntatori, **senza la colonna dei kilobyte**, col comando che la rifà»*. Il commit
+> `d864286` ha archiviato i sessanta riquadri delle misure, ha scritto sotto la tabella che
+> *«i pesi non stanno più in questa tabella»* — e la colonna era ancora lì, con **27** pesi.
+>
+> ⛔ **Il difetto non era la colonna: era che la sezione DICHIARAVA di non averla.** Una
+> documentazione lasciata a descrivere uno stato che non esiste mente con autorevolezza, e qui
+> mentiva **tre righe sotto** la tabella che la smentiva. Il commit si legge come la causa: il
+> suo messaggio dice *«resta la tabella dei puntatori, escono i sessanta riquadri»*, cioè la
+> prima metà della riga del disegno senza la seconda.
+>
+> ⚠️ **E i pesi erano già stantii dopo UN GIORNO, misurato prima di toglierli.** Il commit
+> `3fb252d` del 2026-08-27 si intitola *«i pesi della §12 tornano veri»*; rimisurati il
+> 2026-08-28 con `git ls-files | while read -r f; do echo "$(wc -c < "$f") $f"; done`:
+> [`../audit-2026-08-27.md`](../audit-2026-08-27.md) **257 → 269 KB**,
+> [`../porta-di-qualita.md`](../porta-di-qualita.md) **428 → 435**,
+> [`../HANDOFF.md`](../HANDOFF.md) **285 → 292**, la spec del sotto-progetto 1 **298 → 302**.
+> È l'argomento della riga che li sostituisce, misurato invece che asserito.
+>
+> 📌 **Cosa NON si è perso, ed è la parte che una passata frettolosa avrebbe cancellato.** La
+> sola cella della colonna che non portava un peso — *«la sezione, non il file»*, sul consuntivo
+> di [`../HANDOFF.md`](../HANDOFF.md) — è stata **spostata nella cella centrale**, non tolta. E
+> il peso del **messaggio** di [`../AVVIO-CHAT.md`](../AVVIO-CHAT.md) vive nella cella centrale
+> col proprio metodo, non nella colonna: rimisurato oggi sulle righe fra le due recinzioni,
+> **20606 byte LF su 303 righe**, invariato.
+>
+> ⚠️ **Archiviato qui insieme alla colonna, il paragrafo della prima misura**, che senza pesi
+> non aveva più soggetto — diceva *«i pesi … si rimisurano quando si toccano i file che
+> contano»*. Il testo: *«Prima misura il 2026-08-08: tre erano stantii, e il quarto — «insieme
+> pesano oltre settecento kilobyte», in testa al compendio, in `CLAUDE.md` e in `AVVIO-CHAT.md`
+> — era falso di un quarto. È il gotcha #31: un numero messo a sostegno di una regola giusta non
+> viene mai rimisurato, perché nessuno dubita della regola.»*
+>
+> ⚖️ **Ciò che NON si chiude, dichiarato:** i pesi scritti a mano dentro il **messaggio** di
+> [`../AVVIO-CHAT.md`](../AVVIO-CHAT.md) restano, e restano una decisione del proprietario — la
+> §6 del compendio la porta col proprio richiamo. Questa passata toglie una casa, non la classe.
+>
+> ⚠️ **Fine-riga contati prima e dopo su ogni file toccato:**
+> [`../COMPENDIO.md`](../COMPENDIO.md) e questo file restano **LF puri**, `CR = 0`. Tutte le
+> scritture passano da uno script in un file che **costruisce e codifica tutto prima**, scrive in
+> un temporaneo e fa `os.replace`, e **aborta senza scrivere** se un'ancora non cade esattamente
+> una volta (gotcha **#82**).

@@ -777,9 +777,23 @@ fn promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one() {
 
 /// ⛔ `promote` COLLECTS THE EXPIRED BEFORE IT DECIDES, and this is the only probe that
 /// exercises that line. "The arbiter collects before it decides" is a property of EVERY
-/// operation -- it is why `collect_expired` is private -- and with `promote` there are now
-/// THREE of them. Deleting `self.collect_expired(now)` from this one has to make something
-/// red, and before this probe nothing went red.
+/// operation -- it is why `collect_expired` is private. Deleting `self.collect_expired(now)`
+/// from this one has to make something red, and before this probe nothing went red.
+///
+/// ⛔ RECALL OF 2026-08-28, FINDING AUD-018 -- THIS SAID "and with `promote` there are now THREE
+/// of them", AND THE COUNT IS REMOVED FROM ALL THREE OF ITS HOUSES RATHER THAN REALIGNED TO FOUR.
+/// It was written at task 6 with the right figure and task 7 added `ask_back` without this line
+/// being reread. ⛔ THE FINDING NAMED TWO HOUSES AND THERE WERE THREE: this one, the doc of
+/// `ask_back` in `src/arbiter/mod.rs`, and the doc of `ask_back_collects_the_expired_before_it_
+/// marks` in the same file -- so realigning would have left a figure standing in three places
+/// that the NEXT operation falsifies again. What stays is the half that cannot rot, "a property
+/// of EVERY operation", which each of the three already said next to the number. If the figure
+/// is ever wanted: `grep -c 'self\.collect_expired(now);' crates/kernel/src/arbiter/mod.rs`, which
+/// answered 4 on 2026-08-28.
+///
+/// ⚖️ AND THE OTHER TWO HOUSES WERE NOT WRONG, WHICH IS WHY THIS IS NOT A TYPO FIX: both already
+/// said FOUR. The defect was one property counted in three places, so that a correct edit to two
+/// of them left the third lying -- gotcha #68, and the reason the cure is subtraction.
 ///
 /// ⚠️ THERE IS NO `release` CALL HERE, DELIBERATELY, and that is what makes the probe about
 /// `promote` instead of about the collection in general: the only thing that can free the room

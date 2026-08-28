@@ -786,9 +786,12 @@ impl Arbiter {
     /// so the day somebody changes it this paragraph becomes false in silence with nothing to say
     /// so. Registered as `E70`, re-measured under `E80`.
     ///
-    /// ⛔ IT COLLECTS THE EXPIRED FIRST, like every other operation. With this one there are
-    /// FOUR, and the property "the arbiter collects before it decides" is why `collect_expired`
-    /// is private rather than a step somebody remembers to take.
+    /// ⛔ IT COLLECTS THE EXPIRED FIRST, like every other operation, and the property "the
+    /// arbiter collects before it decides" is why `collect_expired` is private rather than a step
+    /// somebody remembers to take. ⚠️ RECALL OF 2026-08-28, AUD-018: this said "With this one
+    /// there are FOUR" and the count is REMOVED, not realigned -- it was CORRECT here and wrong
+    /// in the third house, which is precisely the failure a figure in three places produces. The
+    /// probe's doc in `tests/arbiter_admission.rs` carries the reasoning.
     ///
     /// ⚠️ `pub(crate)` BECAUSE ITS ONLY CALLER IS THE ADMISSION UNDER THE LOCAL POLICY, AND
     /// SINCE TASK 8 THAT CALLER EXISTS: it is `Arbiter::admit`, in the branch that cannot seat
@@ -1616,9 +1619,10 @@ mod tests {
     }
 
     /// ⛔ `ask_back` COLLECTS THE EXPIRED BEFORE IT MARKS, and "the arbiter collects before it
-    /// decides" is a property of EVERY operation -- it is why `collect_expired` is private.
-    /// With `ask_back` there are now FOUR of them, and this is the only probe that exercises
-    /// this one's line.
+    /// decides" is a property of EVERY operation -- it is why `collect_expired` is private. This
+    /// is the only probe that exercises this one's line. ⚠️ RECALL OF 2026-08-28, AUD-018: this
+    /// said "With `ask_back` there are now FOUR of them" and the count is REMOVED, not realigned,
+    /// from all three houses that carried it.
     ///
     /// ⚠️ NOTHING IS RELEASED HERE, DELIBERATELY, exactly as in
     /// `promote_collects_the_expired_before_it_serves_the_queue`: the only thing that can empty

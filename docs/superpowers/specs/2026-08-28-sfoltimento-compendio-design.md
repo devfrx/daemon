@@ -88,7 +88,7 @@ che registrano di quanto sono cresciuti i file (*«spec `263 → 266`, HANDOFF `
 
 | | |
 |---|---|
-| Regola violata | *un **comando** non marcisce* — formulata dal repository stesso, in almeno sei punti |
+| Regola violata | *un **comando** non marcisce* — formulata dal repository stesso: `grep -rc 'comando non marcisce' docs/ CLAUDE.md` |
 | Rimedio | resta la **tabella dei puntatori**, **senza la colonna dei kilobyte**, col comando che la rifà. Bersaglio: **≤ 2 000 token** |
 | Si archivia? | **Sì** — i cinquantanove verbali sono datati e legittimi: vanno in archivio, non si cancellano |
 
@@ -158,7 +158,8 @@ E la sua metà mancante:
 
 ## 5. Vincoli da non rompere, misurati sul cancello
 
-Da `scripts/check-docs.sh`, righe 253–277:
+Dal blocco che in `scripts/check-docs.sh` comincia a `compendium=docs/COMPENDIO.md`.
+⚠️ **Niente numeri di riga:** si spostano, ed è la malattia che questo documento cura.
 
 | # | Vincolo | Conseguenza sul disegno |
 |---|---|---|
@@ -179,7 +180,7 @@ cancello e ogni rimando incrociato del repository.
 | `docs/HANDOFF.md` | è la **casa** dei gotcha. Il disegno gliene manda altri, non gliene toglie |
 | i piani e i disegni dei traguardi | sono **verbali di esecuzione**, e l'audit li dichiara fuori perimetro |
 | `crates/` | **nessuna riga di prodotto**. Il cancello deve restare verde per invarianza, non per correzione |
-| i plugin e i server MCP dell'ambiente | **fuori perimetro, e registrato:** pesano ~170 000 token per sessione, più dei documenti dopo lo sfoltimento. Si spengono dalla configurazione, non da qui |
+| i plugin e i server MCP dell'ambiente | **fuori perimetro, e registrato.** ⚠️ **~170 000 token è una SOTTRAZIONE, non una misura:** 400 000 osservati meno 230 995 misurati. Resta un'ipotesi finché un contatore dell'ambiente non la conferma — ma anche sbagliata di metà pesa quanto tutto ciò che questa spec toglie, e si spegne dalla configurazione, non da qui |
 
 ---
 

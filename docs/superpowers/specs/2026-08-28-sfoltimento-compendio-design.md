@@ -175,7 +175,7 @@ cancello e ogni rimando incrociato del repository.
 | `docs/HANDOFF.md` | è la **casa** dei gotcha. Il disegno gliene manda altri, non gliene toglie |
 | i piani e i disegni dei traguardi | sono **verbali di esecuzione**, e l'audit li dichiara fuori perimetro |
 | `crates/` | **nessuna riga di prodotto**. Il cancello deve restare verde per invarianza, non per correzione |
-| i plugin e i server MCP dell'ambiente | **fuori perimetro, e registrato.** ⚠️ **~170 000 token è una SOTTRAZIONE, non una misura:** 400 000 osservati meno 230 995 misurati. Resta un'ipotesi finché un contatore dell'ambiente non la conferma — ma anche sbagliata di metà pesa quanto tutto ciò che questa spec toglie, e si spegne dalla configurazione, non da qui |
+| i plugin e i server MCP dell'ambiente | **fuori perimetro.** ⛔ **Richiamo del 2026-08-28:** questa riga stimava **~170 000** token *per sottrazione* — 400 000 osservati meno 230 995 misurati — e la misura l'ha smentita di **quaranta volte**: le descrizioni dei plugin abilitati fanno **4 355** token in tutto. 📌 **Una sottrazione non è una misura, e questa riga ne è la prova** |
 
 ---
 

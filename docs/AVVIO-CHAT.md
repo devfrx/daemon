@@ -116,7 +116,7 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),
      le trappole di check-docs.sh (§10), i vincoli sul primo commit (§11).
   3. docs/audit-2026-08-27.md — ⛔ SOLO FINO ALLA TABELLA DEI 73 FINDING,
-     cioè tutto cio' che sta PRIMA della sezione «Dettaglio», 53 KB. È IL
+     cioè tutto cio' che sta PRIMA della sezione «Dettaglio», 54 KB. È IL
      COMPITO DI OGGI, non un verbale.
      Contiene: come è stato condotto, la copertura, la baseline, le SETTE
      radici, lo stato dei rimedi, la sezione «Come si concludono quelli

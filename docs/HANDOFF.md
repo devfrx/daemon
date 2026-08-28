@@ -1,6 +1,9 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-08-27**, all'apertura dell'[audit del 2026-08-27](audit-2026-08-27.md).
+Aggiornato il **2026-08-27**, coi **rimedi** del secondo audit — non più alla sua apertura.
+⚠️ **L'ancora è stata corretta il 2026-08-27 e la DATA no**, perché era già giusta: a marcire
+qui non è il *quando* ma il *a che cosa si riferisce*, ed è la metà che il rimedio del 2026-08-11
+— *«sono due date»* — non aveva coperto. Stessa specie del finding **AUD-034** sul compendio.
 Il Traguardo 5 del sotto-progetto 1 è **chiuso dal 2026-08-25** —
 l'arbitro GPU per intero: ammissione, code per corsia, ciclo della concessione, revoca con la
 propria grazia, le due policy VRAM, il cablaggio di produzione e la campagna DST dell'arbitro.

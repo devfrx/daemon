@@ -586,6 +586,15 @@ restituito `251` al posto di `4096` senza sollevare nulla.
 
 ## 6. Dove siamo, e cosa viene dopo
 
+✅ **LO SFOLTIMENTO DEL COMPENDIO È CHIUSO IL 2026-08-28.** La lettura obbligatoria di
+apertura sessione è passata da **230 995** a **88 796** token — **2,6 volte** — senza
+perdere una decisione e senza toccare una riga di prodotto. ⛔ **Il freno è nel cancello e
+non nella buona volontà:** `check-docs.sh` respinge un compendio sopra il proprio tetto,
+provato in **tre** direzioni. Il disegno sta in
+[`superpowers/specs/2026-08-28-sfoltimento-compendio-design.md`](superpowers/specs/2026-08-28-sfoltimento-compendio-design.md),
+i verbali in [`archivio/`](archivio/). ⚠️ **I numeri si rifanno col comando**, che sta in
+[`riferimenti.md`](riferimenti.md), e non si rileggono qui.
+
 ⛔ **IL SECONDO AUDIT COMPLETO È DEL 2026-08-27, ED È IL COMPITO DI OGGI: si legge PRIMA di
 riprendere, ma SOLO fino alla tabella dei 73 finding** — [`audit-2026-08-27.md`](audit-2026-08-27.md),
 tutto ciò che sta **prima** della sezione «Dettaglio». ⛔ **E il «Dettaglio» NON si legge intero:** sono 73 schede, 204 KB, e
@@ -1652,7 +1661,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 ---
 
-## 9. Gli ottantadue gotcha
+## 9. I gotcha
 
 ⛔ **La loro casa è [`HANDOFF.md`](HANDOFF.md), sezione «I gotcha», ed è UNA SOLA.**
 Ogni voce porta la trappola, il perché fa male, e — dove è stato corretto — il verbale

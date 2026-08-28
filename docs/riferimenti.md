@@ -2168,6 +2168,41 @@ eseguire il Task 5**, non si prende da qui: il contratto cresce sotto il piano.
 
 ---
 
+## Sfoltimento del compendio — 2026-08-28: come si misura il costo di apertura sessione
+
+⛔ **Il metodo, perché la cifra non si scriva mai più a mano.** Il costo di apertura
+sessione è la lettura che `CLAUDE.md` dichiara obbligatoria. Si conta con `tiktoken`,
+codifica `cl100k_base`:
+
+```bash
+pip install tiktoken
+python -c "import tiktoken,io; e=tiktoken.get_encoding('cl100k_base'); print(sum(len(e.encode(io.open(p,encoding='utf-8').read())) for p in ['CLAUDE.md','docs/COMPENDIO.md']))"
+```
+
+⚠️ **Tre limiti dichiarati, e vanno detti o la cifra mente:**
+
+| | |
+|---|---|
+| **è il tokenizzatore di OpenAI** | l'unico presente sulla macchina. Su italiano con emoji il conto di Claude è più alto: la cifra è un **limite inferiore**, e il **rapporto** fra prima e dopo è ciò che regge |
+| ⛔ **byte ≠ caratteri** | `wc -c` conta **byte**, `len()` in python conta **caratteri**. Il 2026-08-28 il compendio faceva `623516` byte e `606513` caratteri: **17 000** di scarto, tutto emoji e lettere accentate in UTF-8. Il tetto del cancello è in **byte** |
+| **non comprende l'ambiente** | i plugin e i server MCP della sessione pesano per conto loro, e da qui non si vedono |
+
+📌 **La misura del 2026-08-28**, prima e dopo lo sfoltimento — è un **verbale datato**, e i
+valori di oggi li dà il comando qui sopra:
+
+| | prima | dopo |
+|---|---|---|
+| `CLAUDE.md` | 5 126 | 4 421 |
+| `docs/COMPENDIO.md` | 207 603 | 66 109 |
+| `docs/audit-2026-08-27.md`, testa | 18 266 | 18 266 |
+| **totale** | **230 995** | **88 796** |
+
+⚠️ **E il rapporto che questa riga sostituisce era ROTTO, non solo stantio:** `CLAUDE.md`
+prezzava la lettura su `25148` token per quattrocento righe, che dà **1,02 caratteri per
+token** — impossibile per qualunque testo.
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

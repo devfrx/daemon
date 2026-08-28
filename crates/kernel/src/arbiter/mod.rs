@@ -123,8 +123,10 @@ impl TicketId {
 /// Task 5 once there was an `admit` to obtain a real `Admission` from -- names a method that
 /// does not exist, so the day somebody adds it the case starts COMPILING and trybuild reports
 /// `error`, which no bulk regeneration disarms (gotcha #42, strong form). ✅ MEASURED, not
-/// asserted: with `is_granted` added, that case comes back `error` and the other twenty-six
-/// stay `ok`.
+/// asserted: with `is_granted` added, that case comes back `error` and EVERY OTHER CASE stays
+/// `ok`. ⚠️ RECALL OF 2026-08-28, AUD-045: this said "the other twenty-six", and the count
+/// is REMOVED, not realigned -- it was already wrong at `d662644` (28 cases, so 27), and
+/// `tests/compile_fail.rs` globs the directory, so any total here ages on its own.
 ///
 /// ⛔ `Refused` CARRIES TWO NUMBERS AND NOT A SENTENCE. design/02 wants "why it does not fit,
 /// and the workable alternative": the alternative is built by the interface, the kernel

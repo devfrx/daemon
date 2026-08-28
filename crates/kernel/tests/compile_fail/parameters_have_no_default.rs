@@ -24,7 +24,7 @@
 // regeneration is LEGITIMATE and it disarms nothing, because the rule trips as `error` and
 // never through the oracle. Regenerate by the documented route — delete the stale `.stderr`,
 // re-run, `diff -u` the old against the `wip/` one, move by hand — and NEVER with
-// `TRYBUILD=overwrite`, which would take the other nine oracles with it. Gotcha #25.
+// `TRYBUILD=overwrite`, which would take the other oracles with it. Gotcha #25.
 //
 // ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.
 

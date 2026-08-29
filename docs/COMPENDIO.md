@@ -645,10 +645,14 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 ### Il prossimo passo
 
 ⛔ **Il TRAGUARDO 6** — gli altri meccanismi: il gateway di inferenza, i sensori, i permessi, lo
-stato di degrado e il canale verso i worker. ⛔ **Si riparte dal BRAINSTORMING**, come a ogni
-traguardo, e **prima** si legge ciò che il Traguardo 5 lascia aperto: la tabella *«Le voci aperte
-del Traguardo 5»* di [`porta-di-qualita.md`](porta-di-qualita.md), casa unica, che dice anche
-**chi chiude** ciascuna.
+stato di degrado e il canale verso i worker. ⛔ **IL BRAINSTORMING È APERTO E A METÀ dal
+2026-08-28, NON da aprire:** cinque sezioni di disegno sono **approvate** dal proprietario, la
+**6** (lo schema `ipc`) e la **7** (la chiusura) non sono state nemmeno presentate. Vivono in
+[`superpowers/specs/2026-08-28-…-traguardo-6-altri-meccanismi-design.md`](superpowers/specs/2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md),
+che ne è la casa unica e dichiara di sé di essere **in corso**. ⛔ **Non si passa a
+`writing-plans` finché le due sezioni mancanti non ci sono.** ⚠️ **Prima** si legge ciò che il
+Traguardo 5 lascia aperto: la tabella *«Le voci aperte del Traguardo 5»* di
+[`porta-di-qualita.md`](porta-di-qualita.md), casa unica, che dice anche **chi chiude** ciascuna.
 ⚠️ **E ciò che lo sbarra sono decisioni del PROPRIETARIO, dette qui invece che scoperte
 aprendolo:** le **voci senza numero AUD** dell'audit del 2026-08-27 — la loro tabella in
 quel rapporto è la casa unica, e la maggior parte sono sue.

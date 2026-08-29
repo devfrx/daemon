@@ -645,16 +645,17 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 ### Il prossimo passo
 
 ⛔ **Il TRAGUARDO 6** — gli altri meccanismi: il gateway di inferenza, i sensori, i permessi, lo
-stato di degrado e il canale verso i worker. ⛔ **IL BRAINSTORMING È APERTO E A METÀ dal
-2026-08-28, NON da aprire.** ⚠️ **QUANTE sezioni siano approvate e QUALI manchino non è scritto
-qui, dal 2026-08-29:** questa riga diceva *«cinque sezioni … la 6 e la 7 non sono state nemmeno
-presentate»*, ed è diventata falsa il giorno in cui la §6 è stata approvata. **Tolto, non
-riallineato a sei** — è un conteggio che si muove a ogni sezione, e la sua casa unica è
-l'intestazione del disegno, che questa stessa frase dichiara autorevole (gotcha **#68**). Vive
-in
+stato di degrado e il canale verso i worker. ✅ **IL BRAINSTORMING È CHIUSO E IL DISEGNO È COMPLETO dal 2026-08-30**, tutte le sezioni
+approvate una per volta. ⚠️ **Nessun conteggio di sezioni qui, e non è mai stato riallineato:**
+questa riga disse *«cinque sezioni … la 6 e la 7 non sono state nemmeno presentate»*, poi fu
+**tolta** invece che portata a sei, e oggi non c'è più niente da contare. La casa unica resta
+l'intestazione del disegno (gotcha **#68**). Vive in
 [`superpowers/specs/2026-08-28-…-traguardo-6-altri-meccanismi-design.md`](superpowers/specs/2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md),
-che ne è la casa unica e dichiara di sé di essere **in corso**. ⛔ **Non si passa a
-`writing-plans` finché le sezioni mancanti non ci sono.** ⚠️ **Prima** si legge ciò che il
+che ne è la casa unica e dichiara di sé di essere **in corso**. ⛔ **Se si passi a `writing-plans` NON lo decide più una sezione mancante:** questa riga diceva
+*«finché le sezioni mancanti non ci sono»*, e non ce ne sono più. A governare il passaggio è la
+condizione **sulle voci aperte**, e le due righe di [`AVVIO-CHAT.md`](AVVIO-CHAT.md) che la
+scrivono **non concordano** — radice **R3**, registrata e non presa il 2026-08-30. Il perimetro
+sta nel *«prossimo passo»* del disegno, in una casa sola. ⚠️ **Prima** si legge ciò che il
 Traguardo 5 lascia aperto: la tabella *«Le voci aperte del Traguardo 5»* di
 [`porta-di-qualita.md`](porta-di-qualita.md), casa unica, che dice anche **chi chiude** ciascuna.
 ⚠️ **E ciò che lo sbarra sono decisioni del PROPRIETARIO, dette qui invece che scoperte

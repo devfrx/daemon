@@ -1,14 +1,17 @@
 # Traguardo 6 — gli altri meccanismi: il disegno
 
-⛔ **QUESTO DISEGNO È IN CORSO, e non è una formalità dirlo.** Le sezioni **1–6 sono
-approvate** dal proprietario, una per volta; la **7 non è stata presentata**. Chi riprende
-**non** ha un disegno completo da tradurre in piano: ha sei sezioni chiuse e una da aprire.
-Trattarlo come finito produrrebbe un piano che salta la chiusura.
+⛔ **QUESTO DISEGNO È IN CORSO, e non è una formalità dirlo.** ✅ **QUESTO DISEGNO È COMPLETO DAL 2026-08-30.** Tutte le sezioni sono **approvate** dal
+proprietario, una per volta, e la **§7** fissa la Definizione di «fatto» e chi la verifica. Chi
+riprende ha un disegno intero da tradurre in piano.
 
-⚠️ **RICHIAMO DEL 2026-08-29:** questa riga diceva *«1–5»*, *«le 6 e 7»* e *«due da
-aprire»*. La §6 è approvata; il conteggio resta **qui e in nessun altro documento** — la
-§6 del [compendio](../../COMPENDIO.md) vi **rimanda** invece di tenerne una seconda copia
-(gotcha **#68**).
+⚠️ **RICHIAMO DEL 2026-08-30:** questo riquadro diceva *«QUESTO DISEGNO È IN CORSO»*, e prima
+ancora *«1–5»*, *«le 6 e 7»* e *«due da aprire»*. ⛔ **Il conteggio delle sezioni è TOLTO e non
+portato a sette:** a disegno completo non c'è più niente da contare, e la §6 del
+[compendio](../../COMPENDIO.md) vi **rimanda** invece di tenerne una seconda copia (gotcha
+**#68**).
+
+⛔ **E «completo» NON significa «si passa al piano»:** quella condizione è scritta altrove e non
+è di questo documento — vedi la §7.4 e le voci che questo disegno apre.
 
 ⚠️ **Non è una spec.** Come i disegni dei Traguardi 4 e 5, fissa il **perimetro**, le **forme**
 che la §6 della spec descrive a parole, e per ogni artefatto **il controllo che lo esercita**.
@@ -616,13 +619,78 @@ precedente di `CrashingJournal`; ciò che `FakeGui` offre è **la forma**, non l
 | il **timbro** resta un buco dichiarato | e con esso la condizione di I4, non soddisfatta (§6.4) |
 | la **revoca** verso la GUI non esiste | una concessione discrezionale è prelazionabile nei libri e la GUI non lo sente (§6.2) |
 
-## 7. La chiusura — ⬜ **DA PRESENTARE**
+## 7. La chiusura — ✅ approvata
 
-Al Traguardo 3 e al 5 la chiusura è stata un **audit** e non una scrittura, e **gran parte era
-già eseguita** (gotcha #49, due volte). Questa sezione deve fissare le **condizioni di
-chiusura** e chi le verifica.
+### 7.1 Tre decisioni prima delle condizioni
 
----
+⛔ **I due precedenti NON concordano su chi verifica la chiusura, e la §7 deve scegliere.**
+Misurato leggendo i due disegni invece che ricordandoli:
+
+| | Traguardo 4 | Traguardo 5 |
+|---|---|---|
+| dove stanno le condizioni | §0.3 *«Definizione di "fatto"»* | §0.3, stessa forma |
+| chi le verifica | una **§12 aggiunta al disegno** il giorno della chiusura, che le rilegge una per una **contro il codice** | il **Task 13 del piano**, un audit; il verbale è finito in [`porta-di-qualita.md`](../../porta-di-qualita.md) e nel compendio, e il disegno **non ha** una sezione di chiusura |
+| cosa ha prodotto | *«la condizione 4 era scritta troppo larga»*, e una tabella **«dove il disegno è stato smentito dall'esecuzione»** | *«gran parte era già eseguita»*, e l'unica cosa che mancava era **la condizione che il piano aveva aggiunto** |
+
+📌 **Il dato che decide è quello in basso a destra.** Il Task 13 non ha trovato scarti nei
+riconteggi: a mancare era la **condizione 8**, *«le voci aperte in una tabella sola»* — **la sola
+che il piano aggiungeva alle sette del disegno**. Il disegno del Traguardo 5 aveva dimenticato una
+condizione, e a rimediare è stato chi scriveva il piano. ⛔ **Questa sezione esiste per non
+ripeterlo:** la Definizione di «fatto» di questo traguardo nasce **completa qui**.
+
+| | Decisione | Perché |
+|---|---|---|
+| **A** | la Definizione di «fatto» vive **qui**, non in una §1.5 | nei due precedenti sta in §0.3, dentro il perimetro. Qui la §1 è **approvata**, e il disegno è comunque completo prima del piano: spostarla non compra nulla e costerebbe un richiamo su una sezione chiusa. ⚠️ **La deviazione è nominata**, perché chi confronta i tre disegni non la legga come una dimenticanza |
+| **B** | ⛔ **il verbale di chiusura si scrive QUI, come la §12 del Traguardo 4 — non nel compendio** | è la forma che ha prodotto *«la condizione 4 era scritta troppo larga»* e la tabella delle smentite: un verbale accanto alla cosa che giudica. ✅ **E c'è una ragione che al Traguardo 4 non esisteva:** dal 2026-08-28 `check-docs.sh` impone un **tetto al compendio** — misurato, il passo `== compendium size ceiling ==` è nel cancello — quindi un verbale scritto lì compete con quel tetto |
+| **C** | la chiusura è un **compito del piano**, il **10** della §1.4, eseguito subagent-driven con revisione | come al Traguardo 5. La **B** dice *dove scrive*, la **C** *chi scrive*: non sono la stessa scelta, e i due precedenti le mescolavano |
+
+### 7.2 La Definizione di «fatto»
+
+⚠️ **Nessuna condizione porta un numerale che il traguardo può muovere**, e non è pedanteria: la
+condizione 4 del Traguardo 5 diceva *«le **dodici** righe di catalogo»*, e il Task 13 ha dovuto
+ricontarle. Qui le condizioni **nominano la sezione**, e il conteggio lo fa chi chiude.
+
+| # | Condizione |
+|---|---|
+| 1 | `bash scripts/gate.sh` → `GATE GREEN`, e la baseline **rimisurata** col comando, non citata |
+| 2 | le righe di catalogo che le §§**2–6** nominano sono **chiuse o dichiarate**, nessuna a metà — ricontate sulla §7.4 della spec, e *se il conteggio vero diverge, vince il conteggio* |
+| 3 | ⛔ **`V10`, `V14` e `Q10` hanno un controllo che ESISTE** — oggi portano ✅ senza averlo (§5.1) — e ciascuno è stato **visto scattare** e **visto restare verde**, che è la definizione di §8.1 |
+| 4 | **`E152` è chiusa**: le due proprietà di §5.7 che mancavano sono iniettate su `process` e `ipc`, ciascuna con la propria contro-sonda, e la **finta gui di `simulator` esiste** (§6.7) |
+| 5 | **`E30`, `R6` ed `E21` sono chiuse insieme**, nelle forme della §2.3, e la sonda `a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit` è **ancora verde** — non cancellata (§2.2) |
+| 6 | il **vincolo 15** della §11 è onorato: il frame dichiara la propria lunghezza, la decodifica verifica i byte consumati, e l'annotazione di stringa di byte è **sul canale worker** |
+| 7 | la decisione **C-1** è presa con una **misura odierna** (§3.5); se il formato cambia, manifesto e `Cargo.lock` sono committati **insieme** e fuori dal cancello (finding **G-5**) |
+| 8 | i casi `compile_fail` nuovi e i **tre toccati** dalla §2.4 hanno il proprio `.stderr` **letto uno per uno**, mai rigenerato in blocco — vincolo 10 della §11 |
+| 9 | ⛔ **ogni non-costruzione dichiarata porta il proprio innesco**: il timbro di build (§3.4), il trasporto vero (voce **5**), la revoca verso la gui (§6.2) |
+| 10 | il registro [`porta-di-qualita.md`](../../porta-di-qualita.md) è riallineato, coi **conteggi ricontati** e non dedotti |
+| 11 | ⛔ **le voci che il traguardo lascia aperte stanno in UNA tabella sola, con la colonna di chi le chiude** — ed è la condizione che al Traguardo 5 il disegno aveva dimenticato |
+| 12 | ⛔ **CONDIZIONE NEGATIVA:** `V11`, `V21`, `V27` e `Q18` restano `⚠️ parziale` e **non** sono marcate ✅ (§5.3) |
+
+📌 **La 12 non ha precedenti nei due disegni, ed è deliberata.** Le loro Definizioni potevano
+essere soddisfatte **marcando più del dovuto**, e nessuna delle due lo vietava: chiudere troppo è
+un modo di **fallire** questa Definizione, non di superarla. È l'innesco obbligatorio della §8.1
+letto dal verso che quella sezione dichiara di temere — *«`parziale` non diventi la casella
+comoda»*.
+
+### 7.3 Chi verifica, e come
+
+⛔ **La chiusura è un AUDIT e non una scrittura** — gotcha **#49**, che al Traguardo 3 e al
+Traguardo 5 si è presentato **due volte**, ogni volta con gran parte del compito **già eseguita**.
+
+| | Regola per chi chiude |
+|---|---|
+| 1 | **si parte dai numeri, non dalle frasi**: ogni conteggio si rifà col comando prima di leggere ciò che i documenti ne dicono |
+| 2 | **la prima domanda è *«è già fatto?»***, non *«come lo faccio?»* |
+| 3 | ciò che si trova già eseguito si **riconosce**, non si riesegue — e si scrive che lo era |
+| 4 | la §7.2 si rilegge **contro il codice**, mai contro sé stessa: una condizione può risultare **scritta troppo larga**, ed è successo alla 4 del Traguardo 4 |
+| 5 | il verbale finisce in una **§8 di questo disegno** — decisione **B** — con la tabella *«dove il disegno è stato smentito dall'esecuzione»* |
+
+### 7.4 Cosa la chiusura NON fa
+
+| | |
+|---|---|
+| non chiude il **sotto-progetto 1** | resta la §8 di [`tracciabilita.md`](../../tracciabilita.md), che si aggiorna alla chiusura del sotto-progetto e non di un traguardo |
+| non chiude le **voci del proprietario** | le otto che questo disegno apre, e quelle ereditate dal Traguardo 5 |
+| non tocca [`riferimenti.md`](../../riferimenti.md) | la voce **E146** è *registrata e non presa*: cominciare la convenzione nuova a metà produrrebbe **due** convenzioni invece di una |
 
 ## Cosa questo disegno ha misurato, e che non era scritto da nessuna parte
 
@@ -643,6 +711,8 @@ chiusura** e chi le verifica.
 | 11 | `admit` **non riceve un `Journal`** — solo `set_policy` lo fa — quindi lo scambio minimo di §6.2 non porta nessun identificativo, e §6.1.3 è soddisfatta **a vuoto** |
 | 12 | **`ADR-0033` fissa già lo scambio minimo**, e coincide con ciò che §5.7 riga 3 pretende: il vocabolario non è stato scelto |
 | 13 | ⛔ **la finta gui che il compito 9 richiede NON esiste**: `FakeGui` vive nel banco di `kernel` e muore per chiamata esplicita di due test, e `crates/simulator/src/` non ne ha nessuna — la prima stesura della §6 affermava il contrario, ripetendo un doc di modulo (gotcha **#65**) |
+| 14 | ⛔ **i due precedenti di chiusura NON concordano su chi verifica**: il Traguardo 4 aggiunge una sezione al proprio disegno, il Traguardo 5 lo fa dal piano e scrive altrove — la §7.1 sceglie |
+| 15 | al Traguardo 5 **il disegno aveva dimenticato una condizione di chiusura**, e a rimediare fu il piano: i riconteggi del Task 13 non produssero **nessuno** scarto, e a mancare era la sola condizione che il piano aggiungeva |
 
 📌 **E il gotcha #88, nato stamattina, si è confermato TRE volte in questa sola sessione:** un
 censimento per pattern ha restituito **meno** case di quante ce ne fossero — la frase spezzata a
@@ -670,12 +740,22 @@ Nessuna è un difetto oggi. Tutte sono **registrate e non prese**.
 
 ## Il prossimo passo
 
-⛔ **Presentare la sezione 7**, la chiusura. Poi il disegno è completo, si scrive il documento
-finale, e **solo allora** si invoca `superpowers:writing-plans`.
+✅ **Il disegno è completo.** Ciò che manca non è più una sezione: è la **condizione per passare
+al piano**, e non è scritta qui.
 
-⚠️ **Non si passa al piano con questo disegno così com'è:** la §7 non esiste, ed è quella che
-fissa **le condizioni di chiusura e chi le verifica** — senza, il traguardo non ha un criterio
-per dirsi finito.
+⛔ **E QUELLA CONDIZIONE È CONTESA — misurato il 2026-08-30, e registrato invece che risolto.**
+Due righe di [`AVVIO-CHAT.md`](../../AVVIO-CHAT.md) dicono cose diverse sullo stesso fatto:
 
-⚠️ **RICHIAMO DEL 2026-08-29:** questo blocco diceva *«Presentare la sezione 6, poi la 7»* e
-*«due sezioni su sette non esistono»*.
+| Dove | Cosa dice |
+|---|---|
+| il blocco delle skill da invocare subito | la sequenza è *«brainstorming → disegno → piano → esecuzione»*, e **«le voci aperte NON lo sbarrano»** |
+| la cella di `superpowers:writing-plans` | *«MAI prima che le voci aperte siano chiuse — che è la condizione ancora NON soddisfatta»* |
+
+`CLAUDE.md` si schiera con la seconda: *«non prima che le voci aperte siano chiuse»*. ⚠️ **Una
+lettura che le concilia esiste** — le voci non sbarrano il **traguardo**, ma sbarrano il
+**piano** — e non è l'unica: *«lo»* della prima riga ha per antecedente la **sequenza**, che il
+piano lo contiene. ⛔ **Quale valga è del proprietario:** è la radice **R3** — due documenti di
+stato che si contraddicono — sulla riga che governa il passo immediatamente successivo.
+**Registrata, non presa.**
+
+⚠️ **RICHIAMO DEL 2026-08-30:** questo blocco diceva *«Presentare la sezione 7»*.

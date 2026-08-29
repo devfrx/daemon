@@ -42,8 +42,9 @@ Albero pulito, ramo pushato. Ultimo commit: <<< INCOLLA QUI: git log --oneline -
 
 ⛔ PRIMA DI PROPORRE QUALSIASI COSA: leggi, poi ASCOLTA. Non entrare in plan
    mode, non proporre passi, non scrivere file finché non te lo dico.
-   ⛔ IL BRAINSTORMING È L'ECCEZIONE, E SI APRE SUBITO DOPO LA LETTURA: fa
-   DOMANDE, non proposte, e non è plan mode.
+   ⛔ IL BRAINSTORMING È L'ECCEZIONE, E VIENE SUBITO DOPO LA LETTURA: fa
+   DOMANDE, non proposte, e non è plan mode. Se sia da APRIRE o da RIPRENDERE
+   lo dice la §6, non questa riga.
 
 INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
@@ -51,10 +52,15 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
   ⛔ IL LAVORO CHE VIENE È CREATIVO, non rimedio: si apre un TRAGUARDO NUOVO,
      e la sequenza è brainstorming → disegno → piano → esecuzione
-     subagent-driven. ⛔ E SI COMINCIA DAL BRAINSTORMING, subito: la voce che
-     lo sbarrava è DECISA. Le altre restano aperte e NON lo sbarrano — quali,
-     lo dice la tabella unica di docs/porta-di-qualita.md, non nominata qui
-     apposta perché un rimando non può marcire.
+     subagent-driven. ⛔ A CHE PUNTO SIA quella sequenza NON è scritto qui: è
+     uno STATO, e la §6 del compendio ne è la casa unica. Le voci aperte NON
+     lo sbarrano — quali, lo dice la tabella unica di
+     docs/porta-di-qualita.md, non nominata qui apposta perché un rimando
+     non può marcire.
+     ⚠️ RICHIAMO DEL 2026-08-28, LA TERZA NELLO STESSO GIORNO: qui stava
+     «E SI COMINCIA DAL BRAINSTORMING, subito». Vero la mattina, falso la
+     sera: cinque sezioni di disegno erano gia' approvate. TOLTO, non
+     riallineato — era la seconda casa di uno stato.
      ⚠️ RICHIAMO DEL 2026-08-28, LA SECONDA NELLO STESSO GIORNO: qui stava
      «MA NON PRIMA CHE TE LO DICA IO, e non prima che le decisioni che lo
      sbarrano siano prese». E prima ancora diceva «NIENTE brainstorming,
@@ -66,8 +72,8 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
   /superpowers:brainstorming                 è la PRIMA del traguardo nuovo, e
                                              va PRIMA di entrare in plan mode,
-                                             sempre. ⛔ Si apre SUBITO: ciò
-                                             che la sbarrava è deciso
+                                             sempre. ⛔ A che punto sia lo
+                                             dice la §6, non questa cella
   /superpowers:writing-plans                 quando ci sarà un piano NUOVO da
                                              scrivere, e MAI prima che le voci
                                              aperte siano chiuse — che è la
@@ -341,8 +347,12 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
    io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
 
 Parti confermandomi cosa hai letto e qual è la tua lettura dello stato, e POI
-APRI IL BRAINSTORMING: non c'è un piano da eseguire né uno da scrivere, si
-apre un traguardo NUOVO e il brainstorming è il suo primo passo.
+RIPRENDI DA DOVE LA §6 DICE: non c'è un piano da eseguire né uno da scrivere,
+e il brainstorming è il primo passo del traguardo nuovo — ma se sia da aprire
+o da riprendere lo dice la §6, non questa riga.
+⛔ RICHIAMO DEL 2026-08-28: qui stava «POI APRI IL BRAINSTORMING», e il file
+   dichiara di sé, dodici righe più su, di NON nominare il prossimo passo.
+   Era una casa di troppo, ed è diventata falsa la sera stessa.
 ⛔ RICHIAMO DEL 2026-08-28: qui stava «non parte finché non lo dico io, perché
    ciò che lo sbarra sono decisioni MIE». Quale voce sbarri il traguardo è uno
    STATO, e lo stato ha una casa sola: la tabella di docs/porta-di-qualita.md.

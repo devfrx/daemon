@@ -1,10 +1,14 @@
 # Traguardo 6 — gli altri meccanismi: il disegno
 
-⛔ **QUESTO DISEGNO È IN CORSO, e non è una formalità dirlo.** Le sezioni **1–5 sono
-approvate** dal proprietario, una per volta; le **6 e 7 non sono state nemmeno presentate**.
-Chi riprende **non** ha un disegno completo da tradurre in piano: ha cinque sezioni chiuse e
-due da aprire. Trattarlo come finito produrrebbe un piano che salta lo schema `ipc` e la
-chiusura.
+⛔ **QUESTO DISEGNO È IN CORSO, e non è una formalità dirlo.** Le sezioni **1–6 sono
+approvate** dal proprietario, una per volta; la **7 non è stata presentata**. Chi riprende
+**non** ha un disegno completo da tradurre in piano: ha sei sezioni chiuse e una da aprire.
+Trattarlo come finito produrrebbe un piano che salta la chiusura.
+
+⚠️ **RICHIAMO DEL 2026-08-29:** questa riga diceva *«1–5»*, *«le 6 e 7»* e *«due da
+aprire»*. La §6 è approvata; il conteggio resta **qui e in nessun altro documento** — la
+§6 del [compendio](../../COMPENDIO.md) vi **rimanda** invece di tenerne una seconda copia
+(gotcha **#68**).
 
 ⚠️ **Non è una spec.** Come i disegni dei Traguardi 4 e 5, fissa il **perimetro**, le **forme**
 che la §6 della spec descrive a parole, e per ogni artefatto **il controllo che lo esercita**.
@@ -43,6 +47,35 @@ per comprare qualcosa che il precedente dice non serva.
 | 6.6 | permesso come tripla | **niente** |
 | 6.7 | stato di degrado | **niente** |
 | 6.10 | canale worker | firme e quattro casi `compile_fail` **ci sono** (T5 Task 11); manca **la metà che codifica** |
+
+⛔ **RICHIAMO DEL 2026-08-29 — QUESTA TABELLA PREZZAVA DUE RIGHE MENO DI QUANTO LA SPEC
+CHIEDA, e la divergenza ha DUE case e non una.** La §7.4.6 della spec mette in colonna
+*«Implementazione reale in questo sotto-progetto»* un ✅ sia per `ipc` (*«named pipe»*) sia per
+`process` (*«avvio, dialogo e uccisione veri»*), e la §0.4 riga §1 tiene dentro l'*«IPC lato
+core»* lasciando fuori **solo** il processo `gui`. Nel codice non c'è né l'una né l'altro:
+
+```
+grep -rn "impl Ipc" crates/ --include=*.rs ; ls crates/platform/src/
+```
+
+✅ **E la ragione per cui NON entrano è misurata, non è il costo:** un trasporto vero pretende la
+metà di **prontezza** della porta `reactor`, che **non ha un produttore** — la porta lo dichiara
+di sé (*«Readiness is the OTHER HALF of this port's contract, and it has no producer yet»*) e ha
+**tolto** un `WaitOutcome { DeadlineReached, EventReady }` proprio perché `EventReady` non ne
+aveva uno, scrivendo che il giorno in cui gli eventi esisteranno dovrà portare **quale
+registrazione** è pronta e che *«declaring it now would freeze a shape already known to be the
+wrong one»*. Costruire la pipe oggi significherebbe congelare quella forma.
+
+⚠️ **Che anche il `process` reale abbia lo stesso blocco è una DEDUZIONE e non una misura:**
+`crates/kernel/src/ports/process.rs` non nomina il `reactor`; a suggerirlo è la forma di
+`read_next -> Result<Option<Frame>, _>`, che è *«se ce n'è uno pronto»*. Va misurata prima di
+finire in un piano.
+
+📌 **Le due ✅ della §7.4.6 sono quindi una PREVISIONE**, scritta prima che si sapesse che la
+prontezza non ha produttore — la stessa specie della cella di
+[ADR-0032](../../adr/0032-motore-di-persistenza.md) sul backend cadente, gotcha **#57**. Passano
+a ⏳ **rimandato** con **richiamo datato**, e l'innesco è una **condizione**: *la prima sorgente
+di eventi esterni sulla porta `reactor`*. ⚠️ Tocca **spec** — vincolo globale 7: voce **5**.
 
 I comandi che rifanno la misura, invece delle cifre:
 
@@ -419,15 +452,169 @@ impedire.
 
 ---
 
-## 6. §6.1 — lo schema `ipc` — ⬜ **DA PRESENTARE**
+## 6. §6.1 — lo schema `ipc` — ✅ approvata
 
-Non è stata né discussa né approvata. Ciò che è già fissato altrove e la vincola:
+### 6.1 Il perimetro: la busta e due messaggi
 
-- il **formato** lo decide il compito **3bis** (§3.5), non questa sezione;
-- gli **identificativi sono i progressivi del giornale**, mai generati (§6.1.3);
-- il **timbro di build** è rinviato (§3.4), e la forma non deve precluderlo;
-- §6.1.4: il core decide **quando** emettere, la GUI non tira — *«non si costruisce ora, ma la
-  forma della porta non deve precluderlo»*.
+⛔ **Il vocabolario NON si progetta qui oltre il minimo, ed è la stessa postura della §3.4** —
+ma non per simmetria con essa: per una ragione più forte e misurabile. Lo schema ha un
+consumatore **scritto e non chiuso**, il timbro no.
+
+| | Fatto | Dove |
+|---|---|---|
+| 1 | la terza proprietà di §5.7 si inietta **sulla porta `ipc`** — *«la GUI muore tenendo una concessione discrezionale → la somma torna alla linea di base»*, requisito **Q3 esteso** | §5.7 della spec |
+| 2 | quella riga di catalogo di livello 2 è **PARZIALE**, ed è la voce **`E152`**, il cui chiusore dichiarato è **questo traguardo** | tabella unica di [`porta-di-qualita.md`](../../porta-di-qualita.md) |
+| 3 | la **suite di conformità** di `ipc` è rimandata, e la ragione scritta è *«non esiste una GUI dall'altro capo»* | §7.4.6 della spec |
+
+Quindi: il **meccanismo** è dovuto per iscritto, il **vocabolario** no.
+
+### 6.2 I due messaggi non sono stati scelti
+
+⛔ **C'è UNO scambio che ADR-0033 già fissa e che §5.7 già pretende, e sono lo stesso.**
+
+| Direzione | Messaggio | Chi lo impone |
+|---|---|---|
+| gui → core | **richiesta di concessione ordinaria**, col profilo di risorsa dichiarato | [ADR-0033](../../adr/0033-gpu-della-gui-quota-di-presentazione.md), consumatore **3**: *«viewer 3D oltre la quota → concessione ordinaria, richiesta via IPC»* |
+| core → gui | **esito dell'ammissione**, a tre vie | ADR-0033: *«esito a tre vie»* — in codice `Admission` |
+| *(nessun messaggio)* | la **disconnessione** | §5.7 riga 3, iniettata sulla porta `ipc` |
+
+📌 **Uno per direzione, e sono ciò che rende NON VACUA la campagna del compito 9.** Perché
+quella proprietà dica qualcosa, la finta gui deve **tenere davvero** una concessione
+discrezionale prima di morire: senza la richiesta e l'esito il seme ucciderebbe un client che
+non ha mai chiesto nulla, e il confronto sarebbe fra insiemi vuoti — la lezione che il
+Traguardo 4 ha imparato tre volte.
+
+⛔ **Ciò che NON entra, dichiarato invece che dimenticato: la REVOCA core → gui.** ADR-0033 la
+nomina — *«la GUI smette di renderizzare il 3D e lo dichiara»* — ed è il primo messaggio che il
+vocabolario guadagnerà. Non entra perché nessuna riga scritta la pretende oggi, e perché §5.7
+riga 3 parla di una GUI che **muore**, non di una a cui si chiede indietro. ⚠️ **Il costo è
+reale:** fino ad allora una concessione discrezionale è prelazionabile **nei libri** e la GUI
+non lo sente mai. Voce **7** per il proprietario.
+
+### 6.3 La busta
+
+```
+[ lunghezza dichiarata : larghezza fissa ] [ corpo codificato ]
+```
+
+| Scelta | Perché |
+|---|---|
+| la lunghezza sta **fuori** dal corpo, a larghezza fissa | dentro sarebbe un punto fisso: un intero codificato occupa 1, 2, 3, 5 o 9 byte secondo il valore. È la forma della §3.2, già approvata per il canale worker |
+| ⛔ **l'inquadratura è UN modulo solo in `kernel`, condiviso dai due canali privati** | è **indipendente dal formato**: entrambi i pari devono leggere un prefisso di lunghezza comunque. Nasce al compito **3** e il compito **4** la riusa |
+| ⛔ **il corpo è un'ENUMERAZIONE di messaggi**, mai una struttura sola | è ciò che rende vera la promessa *«non precludere»* della §3.4 senza costruire niente: **il timbro di build diventa un tipo di messaggio nuovo**, e aggiungerne uno non tocca l'inquadratura |
+
+⚠️ **La terza riga parla dell'INQUADRATURA, non della stabilità dei byte**, e la distinzione va
+tenuta: qui **non ci sono byte congelati** (§6.4), quindi non esiste la domanda che la §4.3 pone
+per `RecordKind`. Ciò che si compra è che un tipo di messaggio nuovo non obblighi a ridisegnare
+la busta.
+
+⛔ **E il controargomento va detto perché qualcuno lo troverà.**
+[ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) diffida degli
+argomenti **di simmetria** fra i due canali privati, e
+[ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) dice *«un
+meccanismo di trasporto e uno schema **per canale privato**»*. **La lettura di questo disegno è
+che la condivisione regge:** ciò che si condivide non è né il trasporto né lo schema — sono
+**byte di busta** — e la ragione non è la simmetria ma che il problema è **letteralmente lo
+stesso**. I due schemi restano distinti e i due formati pure. ⚠️ **Se la lettura del proprietario
+è l'altra, la scelta è sua** — voce **8**, sul precedente della divergenza dichiarata della §5.2.
+
+📌 **La larghezza in byte non si decide qui**, e non è una lacuna: si decide **una volta sola**,
+al compito 3, dove l'inquadratura nasce. Deciderla anche qui sarebbe il gotcha **#68**.
+
+### 6.4 La disciplina di evoluzione, e il buco dichiarato
+
+⛔ **`ipc` NON prende la disciplina della §4.9.** I4 rinuncia al versionamento, quindi **niente**
+enum di versione, **niente** registro di indici ritirati, **niente byte congelati**. È ciò che la
+§3 ha già deciso per il canale worker; lì la ragione era §6.10.3, qui è I4 direttamente.
+
+⚠️ **Ma il meccanismo che SOSTITUISCE il versionamento è il timbro di build, ed è rinviato dalla
+§3.4.** Va scritto senza addolcirlo:
+
+> **Finché il timbro non esiste, nulla rifiuta una GUI stantia.** I4 rinuncia al versionamento
+> *a condizione* che il timbro faccia il suo lavoro; oggi la condizione non è soddisfatta.
+
+✅ **E oggi non costa nulla, misurato e non dedotto** — non esiste nessuna GUI da rifiutare:
+
+```
+grep -rn "impl Ipc" crates/ --include=*.rs
+```
+
+restituisce **solo** la finta di un banco. Il buco si paga al sotto-progetto 2, ed è lo stesso
+innesco della voce **5**.
+
+### 6.5 Gli identificativi — la regola non ha un sito, oggi
+
+§6.1.3 dice che gli identificativi dello schema sono i **progressivi del giornale**, mai
+generati. Misurato contro il vocabolario della §6.2:
+
+```
+grep -nE 'pub fn admit|pub fn set_policy' crates/kernel/src/arbiter/mod.rs
+```
+
+Solo `set_policy` riceve un `Journal`; **`admit` prende `(profile, valid_for, now)` e
+restituisce `Admission`**. Una richiesta di concessione non è un passo di una run, non scrive
+record, e non porta né `StepId` né `RunId`.
+
+⛔ **Quindi la regola è soddisfatta A VUOTO, e dichiararlo è il punto.** Scrivere *«§6.1.3
+rispettato»* sarebbe verde avendo confrontato insiemi vuoti — la forma che questo repository si
+è impegnato a non ripetere. La formulazione onesta:
+
+> Lo schema **non conia** identificativi perché oggi **non ne porta nessuno**. Nessun controllo
+> può esercitare la regola: il primo messaggio che porterà un identificativo è il sito dove la
+> regola diventa reale, e dove nasce la sua sonda.
+
+✅ **E l'allocatore di `StepId` resta non costruito**, com'era già registrato in
+`crates/kernel/src/ports/journal.rs`. ⚠️ La frase del doc di `ClientId` — *«chi implementa questa
+porta al Traguardo 6 attinge da QUEL contatore»* — invecchia **nel soggetto** e non
+nell'affermazione (gotcha **#87**): si **ri-punta** all'implementatore reale con richiamo datato,
+non si toglie. Toglierla lascerebbe scoperto il difetto che esiste per impedire — due contatori
+identici che divergono senza che nulla lo segnali.
+
+### 6.6 Cosa NON cambia
+
+| | |
+|---|---|
+| le tre firme della porta `ipc` | ⛔ **invariate**. `send`/`receive` continuano a scambiare `&[u8]`/`Vec<u8>` e **non** guadagnano un newtype come il `Frame` di `process`: il doc della porta dichiara le proprie firme *«aperte a un argomento misurato»*, e qui non c'è nessuna misura che lo chieda |
+| la questione aperta di `accept` | ⛔ **resta aperta**, e questa sezione non la chiude: il suo prezzo è **la firma**, non una variante in più, ed è scritto sulla porta |
+| `IpcError` | **due varianti**, invariate. `MalformedMessage` acquista finalmente un produttore: oggi il suo doc promette *«i byte consumati non uguagliano la lunghezza dichiarata»* e nessun codice lo produce |
+
+### 6.7 Il controllo che esercita ciascun artefatto
+
+| Artefatto | Deve scattare | Deve restare verde |
+|---|---|---|
+| lunghezza dichiarata | frame **troncato** → `MalformedMessage` | frame intero → decodifica |
+| byte consumati uguali alla lunghezza | **coda** dopo l'ultimo elemento → `MalformedMessage` | esatto → decodifica |
+| il corpo è un'enumerazione | ⛔ **lo esercitano i DUE messaggi**, non uno: con un tipo solo il discriminante non sarebbe provato — stessa forma per cui i byte congelati del giornale sono **tre** record e non uno | |
+| §5.7 riga 3 · **Q3 esteso** | la campagna DST del compito **9** | la somma torna alla linea di base |
+| «il core decide quando emettere» | ⛔ **nessuna sonda nuova**: lo tiene la **forma della porta** — non c'è una terza operazione, e il doc di `crates/kernel/src/ports/ipc.rs` lo argomenta già | |
+| §6.1.3, non coniare | ⛔ **nessun controllo, e dichiarato**: non c'è un sito (§6.5) | |
+
+⛔ **E LA FINTA CHE SERVE AL COMPITO 9 NON ESISTE — misurato, e la prima stesura di questa
+sezione affermava il contrario.** Il doc di `crates/kernel/src/ports/ipc.rs` dice che il banco
+scrive una finta gui *«including the client that DIES WHEN THE SEED DECIDES»*, e ripeterlo era il
+gotcha **#65**: un doc di modulo è un'affermazione come le altre.
+
+```
+grep -rn '\.dies(' crates/ --include=*.rs
+ls crates/simulator/src/
+```
+
+`FakeGui` vive **solo** in `crates/kernel/tests/ports_are_implementable.rs`, e `dies` è chiamata
+da **due test in modo esplicito** — nessun seme la muove. `crates/simulator/src/` porta
+`MemoryJournal`, `CrashingJournal`, `VirtualReactor` e `SeededRng`, e **nessuna finta di `ipc`**.
+📌 **Quindi il compito 9 COSTRUISCE una finta gui in `simulator`**, guidata dal seme, sul
+precedente di `CrashingJournal`; ciò che `FakeGui` offre è **la forma**, non l'artefatto.
+
+### 6.8 I costi
+
+| Costo | |
+|---|---|
+| `kernel` guadagna **due** moduli | l'inquadratura (compito 3) e lo schema `ipc` (compito 4) |
+| `simulator` guadagna una **finta di `ipc`** | e il compito 9 è più grande di quanto la §1.4 lasci intendere — §6.7 |
+| `platform` **non** guadagna niente | nessun trasporto: è la voce **5** |
+| se il compito **3bis** scartasse `bincode` | la lista di ADR-0031 cambia, ed è un **atto deliberato in due passi** — manifesto e `Cargo.lock` insieme, fuori dal cancello (finding **G-5**) |
+| il **timbro** resta un buco dichiarato | e con esso la condizione di I4, non soddisfatta (§6.4) |
+| la **revoca** verso la GUI non esiste | una concessione discrezionale è prelazionabile nei libri e la GUI non lo sente (§6.2) |
 
 ## 7. La chiusura — ⬜ **DA PRESENTARE**
 
@@ -452,6 +639,10 @@ chiusura** e chi le verifica.
 | 7 | **nessun errore di questo repository trasporta il valore consumato** — la forma del progetto è `Admission` |
 | 8 | il **timbro di build non ha una riga di catalogo**, mentre `Q13` sì |
 | 9 | **la regola dei gettoni**: non falsificabile ⟺ produttore dentro la crate |
+| 10 | la metà di **prontezza** della porta `reactor` **non ha un produttore**, e la porta ha già **tolto** la forma che la porterebbe — è ciò che tiene fuori il trasporto vero di `ipc` e `process` (§1.2) |
+| 11 | `admit` **non riceve un `Journal`** — solo `set_policy` lo fa — quindi lo scambio minimo di §6.2 non porta nessun identificativo, e §6.1.3 è soddisfatta **a vuoto** |
+| 12 | **`ADR-0033` fissa già lo scambio minimo**, e coincide con ciò che §5.7 riga 3 pretende: il vocabolario non è stato scelto |
+| 13 | ⛔ **la finta gui che il compito 9 richiede NON esiste**: `FakeGui` vive nel banco di `kernel` e muore per chiamata esplicita di due test, e `crates/simulator/src/` non ne ha nessuna — la prima stesura della §6 affermava il contrario, ripetendo un doc di modulo (gotcha **#65**) |
 
 📌 **E il gotcha #88, nato stamattina, si è confermato TRE volte in questa sola sessione:** un
 censimento per pattern ha restituito **meno** case di quante ce ne fossero — la frase spezzata a
@@ -470,13 +661,21 @@ Nessuna è un difetto oggi. Tutte sono **registrate e non prese**.
 | 2 | se `V10`/`V14`/`Q10` siano righe **sbagliate** o notazione **in avanti** di §8 | §8 è spec |
 | 3 | la lettura di *«mantiene»* in ADR-0019: **espone** o **cachea** | tocca un ADR `Accepted` |
 | 4 | se `check-docs.sh` possa confrontare un ✅ con l'esistenza del controllo | sarebbe una riga di catalogo nuova |
+| 5 | le due righe di **§7.4.6** passano da ✅ a ⏳ con innesco *«la prima sorgente di eventi esterni sul `reactor`»* | §7.4.6 è **spec** — vincolo globale 7 |
+| 6 | se il buco del **timbro** (§6.4) debba avere una **riga C in §0.4**, come il rinvio della §3.4 | §0.4 è spec |
+| 7 | se la **revoca** verso la gui vada nel Traguardo 6 dopo tutto, dato che ADR-0033 la nomina e nessun innesco la tiene | è un allargamento di perimetro |
+| 8 | se l'**inquadratura condivisa** fra i due canali privati (§6.3) sia economia o erosione della lettura di *«singolo»* di ADR-0035 | tocca la lettura di un ADR `Accepted`, come la voce **3** |
 
 ---
 
 ## Il prossimo passo
 
-⛔ **Presentare la sezione 6**, poi la 7. Poi il disegno è completo, si scrive il documento
+⛔ **Presentare la sezione 7**, la chiusura. Poi il disegno è completo, si scrive il documento
 finale, e **solo allora** si invoca `superpowers:writing-plans`.
 
-⚠️ **Non si passa al piano con questo disegno così com'è:** due sezioni su sette non esistono, e
-una di esse — lo schema `ipc` — è il compito 4 dell'ordine.
+⚠️ **Non si passa al piano con questo disegno così com'è:** la §7 non esiste, ed è quella che
+fissa **le condizioni di chiusura e chi le verifica** — senza, il traguardo non ha un criterio
+per dirsi finito.
+
+⚠️ **RICHIAMO DEL 2026-08-29:** questo blocco diceva *«Presentare la sezione 6, poi la 7»* e
+*«due sezioni su sette non esistono»*.

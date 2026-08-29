@@ -743,19 +743,22 @@ Nessuna è un difetto oggi. Tutte sono **registrate e non prese**.
 ✅ **Il disegno è completo.** Ciò che manca non è più una sezione: è la **condizione per passare
 al piano**, e non è scritta qui.
 
-⛔ **E QUELLA CONDIZIONE È CONTESA — misurato il 2026-08-30, e registrato invece che risolto.**
-Due righe di [`AVVIO-CHAT.md`](../../AVVIO-CHAT.md) dicono cose diverse sullo stesso fatto:
+✅ **QUELLA CONDIZIONE È CHIUSA IL 2026-08-30, e non era quella che sembrava.** Due righe di
+[`AVVIO-CHAT.md`](../../AVVIO-CHAT.md) si contraddicevano — *«le voci aperte NON lo sbarrano»*
+contro *«MAI prima che le voci aperte siano chiuse»* — e `CLAUDE.md` si schierava con la seconda.
+⛔ **A cadere è stata la seconda, e non per preferenza: era INSODDISFACIBILE.** Fra le voci
+aperte ce ne sono con chiusore *«il traguardo della ritenzione»* e *«nessuno finché nessuna
+misura lo chiede»*, quindi sotto la lettera nessun piano avrebbe mai più potuto essere scritto;
+e i piani del **Traguardo 4** (2026-08-11) e del **Traguardo 5** (2026-08-18) furono scritti
+**dopo** che quelle voci erano state raccolte. Gotcha **#89**.
 
-| Dove | Cosa dice |
-|---|---|
-| il blocco delle skill da invocare subito | la sequenza è *«brainstorming → disegno → piano → esecuzione»*, e **«le voci aperte NON lo sbarrano»** |
-| la cella di `superpowers:writing-plans` | *«MAI prima che le voci aperte siano chiuse — che è la condizione ancora NON soddisfatta»* |
+📌 **La regola vera la enunciava già la raccolta stessa:** le voci si **SANNO** prima di
+scrivere. A **sbarrare** è la colonna *«Chi la chiude»* di
+[`porta-di-qualita.md`](../../porta-di-qualita.md) — e sotto quella regola le voci che nominano
+questo traguardo sono `E30`, `R6` ed `E152`, **tutte e tre portate dalle §§2, 6 e 7**.
 
-`CLAUDE.md` si schiera con la seconda: *«non prima che le voci aperte siano chiuse»*. ⚠️ **Una
-lettura che le concilia esiste** — le voci non sbarrano il **traguardo**, ma sbarrano il
-**piano** — e non è l'unica: *«lo»* della prima riga ha per antecedente la **sequenza**, che il
-piano lo contiene. ⛔ **Quale valga è del proprietario:** è la radice **R3** — due documenti di
-stato che si contraddicono — sulla riga che governa il passo immediatamente successivo.
-**Registrata, non presa.**
+⛔ **RESTA UN SOLO SBARRAMENTO, ed è la voce 5:** finché §7.4.6 dice ✅ per il trasporto di `ipc`
+e `process`, un piano scritto contro quella spec risulterebbe **mancante di due compiti**. Tocca
+**spec** — vincolo globale 7 — quindi è del proprietario e non di chi scrive il piano.
 
 ⚠️ **RICHIAMO DEL 2026-08-30:** questo blocco diceva *«Presentare la sezione 7»*.

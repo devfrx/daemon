@@ -651,11 +651,13 @@ questa riga disse *«cinque sezioni … la 6 e la 7 non sono state nemmeno prese
 **tolta** invece che portata a sei, e oggi non c'è più niente da contare. La casa unica resta
 l'intestazione del disegno (gotcha **#68**). Vive in
 [`superpowers/specs/2026-08-28-…-traguardo-6-altri-meccanismi-design.md`](superpowers/specs/2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md),
-che ne è la casa unica e dichiara di sé di essere **in corso**. ⛔ **Se si passi a `writing-plans` NON lo decide più una sezione mancante:** questa riga diceva
-*«finché le sezioni mancanti non ci sono»*, e non ce ne sono più. A governare il passaggio è la
-condizione **sulle voci aperte**, e le due righe di [`AVVIO-CHAT.md`](AVVIO-CHAT.md) che la
-scrivono **non concordano** — radice **R3**, registrata e non presa il 2026-08-30. Il perimetro
-sta nel *«prossimo passo»* del disegno, in una casa sola. ⚠️ **Prima** si legge ciò che il
+che ne è la casa unica e dichiara di sé di essere **in corso**. ✅ **La condizione per passare a `writing-plans` è CHIUSA il 2026-08-30**, e non era quella che
+sembrava. Questa riga diceva *«finché le sezioni mancanti non ci sono»*, e non ce ne sono più;
+poi che a governare fosse la chiusura delle **voci aperte**, e quella regola era
+**insoddisfacibile** — gotcha **#89**, il verbale in [`HANDOFF.md`](HANDOFF.md). ⛔ **A sbarrare
+è la colonna *«Chi la chiude»*** di [`porta-di-qualita.md`](porta-di-qualita.md): una voce il cui
+chiusore è **questo traguardo** va chiusa o portata dal piano, le altre si **sanno**. ⚠️ **Quali
+sbarrino oggi non è scritto qui:** lo dice il comando che vive in quella sezione. ⚠️ **Prima** si legge ciò che il
 Traguardo 5 lascia aperto: la tabella *«Le voci aperte del Traguardo 5»* di
 [`porta-di-qualita.md`](porta-di-qualita.md), casa unica, che dice anche **chi chiude** ciascuna.
 ⚠️ **E ciò che lo sbarra sono decisioni del PROPRIETARIO, dette qui invece che scoperte

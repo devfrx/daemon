@@ -75,9 +75,22 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              sempre. ⛔ A che punto sia lo
                                              dice la §6, non questa cella
   /superpowers:writing-plans                 quando ci sarà un piano NUOVO da
-                                             scrivere, e MAI prima che le voci
+                                             scrivere. ⛔ RICHIAMO DEL 2026-08-30:
+                                             qui stava «MAI prima che le voci
                                              aperte siano chiuse — che è la
-                                             condizione ancora NON soddisfatta
+                                             condizione ancora NON soddisfatta»,
+                                             e contraddiceva la riga «le voci
+                                             aperte NON lo sbarrano» di dodici
+                                             righe piu' su. Radice R3, e a
+                                             cadere e' questa: la regola era
+                                             INSODDISFACIBILE — ci sono voci col
+                                             chiusore «nessuno finché nessuna
+                                             misura lo chiede» — e violata da due
+                                             piani su due, il Traguardo 4 e il 5.
+                                             Si SANNO prima di scrivere; a
+                                             sbarrare e' la colonna «Chi la
+                                             chiude» di
+                                             docs/porta-di-qualita.md
   /superpowers:subagent-driven-development   quando quel piano ci sarà: un
                                              subagente fresco per compito, con
                                              revisione fra uno e l'altro. È la

@@ -36,7 +36,7 @@ faccia quel controllo.
 | **A** — la concessione che torna | 1 | ✅ **scritta** il 2026-08-30 |
 | **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
-| **D** — i meccanismi | 5, 6, 7, 8 | ▶️ **in scrittura.** Pre-controllo e voce **chiusa** — P-12…P-15, D22. Il **compito 5 è scritto**; restano **6, 7, 8** |
+| **D** — i meccanismi | 5, 6, 7, 8 | ▶️ **in scrittura.** Pre-controllo e voce **chiusa** — P-12…P-15, D22. **5 e 6 scritti**; restano **7 e 8** |
 | **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
 
 ✅ **La D è stata sbarrata e sbloccata lo stesso giorno, e il verbale è P-11.** I compiti **5**,
@@ -53,12 +53,13 @@ tenuta com'è invece di essere compattata, perché il disegno vi rimanda per num
 
 ### ▶️ Il prossimo passo, in forma eseguibile — 2026-08-30
 
-⛔ **Scrivere i compiti 6, 7 e 8.** Il pre-controllo è scritto — P-12…P-15 — la voce che sbarrava
-è **chiusa dalla D22**, e il **compito 5 è scritto**.
-⚠️ **RICHIAMO DEL 2026-08-30, tre volte nello stesso giorno:** qui stava *«Scrivere la Parte D»*
-nudo, poi *«i compiti sono FERMI su una voce del proprietario»*, poi *«scrivere i quattro
-compiti»*. È la riga che invecchia più in fretta del file, e si riscrive **quando il passo si
-chiude**.
+⛔ **Scrivere i compiti 7 e 8.** Il pre-controllo è scritto — P-12…P-15 — la voce che sbarrava è
+**chiusa dalla D22**, e i **compiti 5 e 6 sono scritti**.
+⚠️ **RICHIAMO DEL 2026-08-30, quattro volte nello stesso giorno:** qui stava *«Scrivere la Parte
+D»* nudo, poi *«i compiti sono FERMI su una voce del proprietario»*, poi *«scrivere i quattro
+compiti»*, poi *«6, 7 e 8»*. È la riga che invecchia più in fretta del file, e si riscrive
+**quando il passo si chiude** — mai appendendoci sotto un capoverso senza toccarla, che è la
+forma del gotcha **#31** che questo file ha già visto quattro volte su quattro.
 
 ⛔ **Non si esegue niente comunque:** il piano non è finito, e il perché è tre righe più su.
 
@@ -68,7 +69,7 @@ nient'altro**:
 | | Che cosa fare | Che cosa leggere **prima**, e nient'altro |
 |---|---|---|
 | 1 | ~~**compito 5** — il contratto del sensore~~ | ✅ **scritto** il 2026-08-30, in tre commit |
-| 2 | **compito 6** — il decisore e il gettone | §4.1, §4.2 e §4.3 del disegno, e §6.2 e §6.3 della [spec](../specs/2026-08-06-sottoprogetto-1-kernel.md) |
+| 2 | ~~**compito 6** — il decisore e il gettone~~ | ✅ **scritto** il 2026-08-30, in due commit |
 | 3 | **compito 7** — il permesso | la riga *«§6.6 — il permesso»* di §5.2 del disegno, e §6.6 della spec |
 | 4 | **compito 8** — il degrado | la riga *«§6.7 — il degrado»* di §5.2 del disegno, e §6.7 della spec |
 
@@ -2341,8 +2342,9 @@ scrive.
 - Modify: `crates/kernel/tests/compile_fail/record_without_version.rs` + `.stderr`, `crates/kernel/tests/compile_fail/record_without_trust_label.rs` — **P-14**
 - Create: `crates/kernel/tests/compile_fail/sensor_modifies_the_artefact.rs` + `.stderr` — il **34°** caso, `V10`
 - Create: `crates/kernel/tests/sensor_ring.rs` — le sonde di `V14` e `Q10`
-- Modify: `crates/kernel/tests/trybuild_cases.rs` — il caso nuovo, **se** i casi sono elencati a mano
 - Modify: [`porta-di-qualita.md`](../../porta-di-qualita.md)
+
+✅ **E un file che NON si tocca, verificato invece che supposto:** `crates/kernel/tests/compile_fail.rs` raccoglie i casi con un **glob** — `t.compile_fail("tests/compile_fail/*.rs")` — quindi un caso nuovo entra da solo e non c'è nessun elenco da allungare. ⚠️ **La guardia di non-vacuità di quel file conta i `.rs` della cartella e pretende che siano più di zero**, senza numero atteso: un conteggio fisso *«diventerebbe rosso il giorno in cui il banco cresce per una ragione legittima»*, e questo compito lo fa crescere.
 
 ⛔ **Leggi P-12, P-13, P-14, P-15 e la D22 prima di cominciare**, e la **D24** qui sopra. Questo
 compito tocca l'**unico artefatto irreversibile** del progetto: i byte congelati **non si
@@ -2431,7 +2433,7 @@ fn main() {}
 - [ ] **Passo 2: fai girare il caso e leggi il `.stderr`, senza rigenerarlo in blocco**
 
 ```bash
-cargo test --locked -p kernel --test trybuild_cases 2>&1 | tail -40
+cargo test --locked -p kernel --test compile_fail 2>&1 | tail -40
 ```
 
 ⛔ **Aspettati un ROSSO che dice «expected compilation to fail» oppure che il modulo `sensor`
@@ -2533,7 +2535,7 @@ the list of `pub mod` below»* proprio perché una prosa riassuntiva invecchia �
 - [ ] **Passo 5: rileggi il `.stderr` e chiudi il commit**
 
 ```bash
-cargo test --locked -p kernel --test trybuild_cases 2>&1 | tail -20
+cargo test --locked -p kernel --test compile_fail 2>&1 | tail -20
 bash scripts/gate.sh
 cargo test --locked --workspace --no-fail-fast     # rimisura, non citare (D5)
 ```
@@ -2702,7 +2704,7 @@ non si allineano in silenzio.
 | `record_without_version.rs` | aggiungi `detail: None`. ⛔ Il `.stderr` cita `inner.encode()` alla **riga 15**, **dentro** il literal: la riga si sposta a **16**, e il `.stderr` va corretto **a mano**. Il file dichiara già di sé che la stessa cosa successe il 2026-08-10 |
 
 ```bash
-cargo test --locked -p kernel --test trybuild_cases 2>&1 | tail -40
+cargo test --locked -p kernel --test compile_fail 2>&1 | tail -40
 ```
 
 ⛔ **Mai `TRYBUILD=overwrite`.**
@@ -3125,3 +3127,555 @@ git commit -m "feat(sensor): l'anello giornala il verdetto e un verdetto negativ
 - [ ] ⚠️ `V11`, `V21`, `V27` e `Q18` **non** sono state marcate ✅ — condizione 12
 - [ ] i fine-riga di ogni file toccato sono stati **rimisurati**, non supposti
 - [ ] ogni mutazione che non ha ucciso niente è **dichiarata**, non taciuta
+
+### Compito 6: §6.2 e §6.3 — il decisore, il gettone di conformità, e il record risolto
+
+**Files:**
+- Create: `crates/kernel/src/gateway/mod.rs` — `Candidate`, `Constraint`, `ConstraintClass`, `Conforming`, `GatewayError`, `resolve`, `dispatch`
+- Modify: `crates/kernel/src/lib.rs` — il `pub mod gateway;`
+- Modify: `crates/kernel/src/record.rs` — `RecordKind::Routing`, `Detail::Routing`, `RoutingDetail`
+- Modify: `crates/kernel/src/reconcile.rs` — l'arm della variante nuova (**D23**)
+- Modify: `crates/kernel/tests/frozen_bytes.rs` — l'array a mano, e il **quinto** record congelato
+- Create: `crates/kernel/tests/frozen/record_v1_routing.cbor` — ⛔ **irreversibile**
+- Modify: `crates/kernel/tests/frozen/record_v1.map` — la sezione del quinto record
+- Create: `crates/kernel/tests/compile_fail/dispatching_an_unfiltered_candidate.rs` + `.stderr` — `Q13`
+- Create: `crates/kernel/tests/compile_fail/conforming_has_no_constructor.rs` + `.stderr`
+- Create: `crates/kernel/tests/gateway_decisor.rs` — le sonde del filtro e del record
+- Modify: [`porta-di-qualita.md`](../../porta-di-qualita.md)
+
+⛔ **Il campo `detail` c'è già: lo ha pagato il compito 5 (D24).** Questo compito aggiunge la
+**propria** variante di `RecordKind`, la **propria** variante di `Detail` e il **proprio** record
+congelato — e **nient'altro** del formato. ⚠️ **Se il compito 5 non è girato, questo non è
+dispacciabile:** `Detail` non esiste.
+
+```bash
+grep -n "pub enum Detail" crates/kernel/src/record.rs     # deve rendere qualcosa
+```
+
+⛔ **E il numeratore dei record congelati si RICONTA, non si cita** — il compito 5 ne ha fatto uno
+e questo il successivo, ma l'ordine di esecuzione non è garantito:
+
+```bash
+ls crates/kernel/tests/frozen/*.cbor
+```
+
+#### Commit 6a — il filtro dei vincoli, e il gettone che non si falsifica (`Q13`)
+
+- [ ] **Passo 1: scrivi i due casi `compile_fail`, e MISURA i due errori**
+
+⛔ **Il gettone ha DUE metà, e la riga di catalogo ne nomina UNA.** Il blocco B dice *«eseguire
+una richiesta ← una prova di conformità | candidato non filtrato → **non compila** |
+filtrato → compila»*. La seconda metà — che il gettone non si **coni** — è il precedente di
+`grant_has_no_constructor.rs`, che il blocco B porta per `Grant` sotto la **stessa** riga.
+
+`crates/kernel/tests/compile_fail/dispatching_an_unfiltered_candidate.rs`:
+
+```rust
+//! Catalogue §7.4.1 block B, row `Q13` — a candidate that has NOT been through the constraint
+//! filter is not expressible as the argument of an execution. It is not that dispatching it is
+//! forbidden: it cannot be SAID.
+
+use kernel::gateway::{dispatch, Candidate};
+use kernel::ports::journal::StepId;
+use simulator::journal::MemoryJournal;
+
+fn main() {
+    let mut journal = MemoryJournal::new();
+
+    let unfiltered = Candidate {
+        model: "a-model",
+        local: true,
+        retains: false,
+        price: 0,
+    };
+
+    // The whole case: `dispatch` wants a `Conforming`, and a `Candidate` is not one.
+    let _ = dispatch(unfiltered, StepId::new(1), &mut journal);
+}
+
+// ⛔ IT REPORTS BY THE ORACLE AND NOT BY COMPILING, which is the WEAKER shape (gotcha #42), so
+// the pair matters: `conforming_has_no_constructor.rs` beside it fires the strong way. Whoever
+// widens this row reads both.
+//
+// ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.
+```
+
+`crates/kernel/tests/compile_fail/conforming_has_no_constructor.rs`:
+
+```rust
+//! The other half of block B row `Q13`: the token cannot be FORGED. `Conforming`'s fields are
+//! private and its module is `kernel::gateway`, so from out here there is no way to build one.
+//! ⛔ THE MINTER IS `resolve`, AND IT IS THE ONLY ONE — the same shape as `Arbiter::issue`
+//! for `Grant` (§5.6), and for the same reason: a token whose producer lives INSIDE the crate
+//! that defines it is not forgeable (§4.1 of the design).
+//!
+//! ⚠️ THE ERROR TEXT IS NOT GUESSED: `grant_has_no_constructor.stderr` shows that this shape of
+//! error carries NO code — bare "cannot construct ... with struct literal syntax due to private
+//! fields" — and that fact was itself a correction of a guess (gotcha #15). Measure it here too
+//! rather than copying that file's oracle: the two types have a different number of fields, and
+//! the `note:` line names them.
+fn main() {
+    let _forged = kernel::gateway::Conforming {};
+}
+
+// ⚠️ THE DECLARED LIMIT, and it is the same one `grant_has_no_constructor.rs` declares: trybuild
+// compiles its cases as SEPARATE CRATES, so what is proved is the direction FROM OUTSIDE.
+// Nothing here stops a `pub(crate)` constructor tomorrow — that would be a new catalogue row,
+// and the catalogue is spec.
+```
+
+- [ ] **Passo 2: fai girare e leggi i due rossi**
+
+```bash
+cargo test --locked -p kernel --test compile_fail 2>&1 | tail -40
+```
+
+⛔ **Aspettati che il modulo `gateway` non esista.** È il rosso di partenza, e va **letto** prima
+di scrivere: passo 2 della disciplina dell'audit. ⛔ **Mai `TRYBUILD=overwrite`.**
+
+- [ ] **Passo 3: scrivi le sonde del filtro, e le tre uscite sono TRE**
+
+`crates/kernel/tests/gateway_decisor.rs`, file nuovo — ⛔ **da FUORI la crate**:
+
+```rust
+//! The gateway decisor (§6.2): the chain, the two classes of constraint, and what each does when
+//! the chain runs out. ⛔ NO MODEL IS CALLED HERE, and that is ADR-0020 in practice: the decisor
+//! is verifiable with no provider in existence.
+
+use kernel::gateway::{dispatch, resolve, Candidate, Constraint, GatewayError};
+use kernel::ports::journal::{Journal, StepId};
+use kernel::record::{Detail, Record, RecordKind};
+use simulator::journal::MemoryJournal;
+
+const LOCAL_CHEAP: Candidate = Candidate {
+    model: "local-small",
+    local: true,
+    retains: false,
+    price: 1,
+};
+
+const REMOTE_DEAR: Candidate = Candidate {
+    model: "remote-large",
+    local: false,
+    retains: true,
+    price: 100,
+};
+
+#[test]
+fn a_conforming_candidate_is_chosen_and_nothing_is_degraded() {
+    let chain = [LOCAL_CHEAP, REMOTE_DEAR];
+    let resolved = resolve(&chain, &[Constraint::LocalOnly]).expect("resolve");
+    assert!(!resolved.was_degraded());
+}
+
+#[test]
+fn a_data_constraint_with_no_candidate_FAILS_CLOSED() {
+    // ⛔ ADR-0012: constraints on DATA AND CONFIDENTIALITY fail closed at chain exhaustion.
+    // There is no degraded road here, and the absence of one is the assertion.
+    let chain = [REMOTE_DEAR];
+    assert_eq!(
+        resolve(&chain, &[Constraint::LocalOnly]),
+        Err(GatewayError::NoConformingCandidate)
+    );
+}
+
+#[test]
+fn a_quality_constraint_with_no_candidate_DEGRADES_AND_SAYS_SO() {
+    // ⛔ The other class: quality and cost proceed, DECLARING it. The two directions of the same
+    // row, and they must not be the same test -- a single one could not tell them apart.
+    let chain = [REMOTE_DEAR];
+    let resolved = resolve(&chain, &[Constraint::PriceCeiling(10)]).expect("resolve");
+    assert!(resolved.was_degraded());
+}
+
+#[test]
+fn an_empty_chain_fails_closed_too() {
+    assert_eq!(
+        resolve(&[], &[]),
+        Err(GatewayError::NoConformingCandidate)
+    );
+}
+
+#[test]
+fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
+    // ⛔ ADR-0011: the record holds the RESOLVED decision, "not a reference to the configuration
+    // -- re-reading today's configuration does not say what happened yesterday". So the model
+    // NAME is in the record, and never an index into the chain.
+    let mut journal = MemoryJournal::new();
+    let chain = [REMOTE_DEAR];
+    let resolved = resolve(&chain, &[Constraint::PriceCeiling(10)]).expect("resolve");
+
+    dispatch(resolved, StepId::new(1), &mut journal).expect("dispatch");
+
+    let entries = journal.replay().expect("replay");
+    assert_eq!(entries.len(), 1);
+    let (step, bytes) = &entries[0];
+    assert_eq!(*step, StepId::new(1));
+    let Record::V1(body) = Record::decode(bytes).expect("decode");
+    assert_eq!(body.kind, RecordKind::Routing);
+    let Some(Detail::Routing(routing)) = &body.detail else {
+        panic!("the routing record carries no structured detail");
+    };
+    assert_eq!(routing.model, "remote-large");
+    assert_eq!(routing.evaluated, 1);
+    assert!(routing.degraded);
+}
+```
+
+⚠️ **`Candidate` come `const` pretende che i suoi campi siano tutti `const`-costruibili**, e un
+`&'static str` lo è. ⛔ **Se il compilatore lo rifiuta, NON cambiare il tipo del campo per far
+passare il banco:** `&'static str` è la scelta di **P-9** — un nome che viene da fuori sarebbe
+testo non fidato in un tipo di decisione — e il rimedio giusto è una funzione di banco, non un
+`String`.
+
+- [ ] **Passo 4: fai girare e leggi il rosso**
+
+```bash
+cargo test --locked -p kernel --test gateway_decisor 2>&1 | tail -30
+```
+
+- [ ] **Passo 5: scrivi il decisore**
+
+`crates/kernel/src/gateway/mod.rs`, file nuovo:
+
+```rust
+//! The gateway decisor (§6.2) and the proof of conformance (§6.3).
+//!
+//! ⛔ NO MODEL IS INVOKED FROM HERE, AND NONE EVER WILL BE (ADR-0020): the kernel routes, filters
+//! and journals; the provider adapters are staged out of this milestone by rule C of §0.4. What
+//! that buys is written in ADR-0020 itself — the kernel is testable end to end with no model in
+//! existence, and this file is where that stops being a slogan.
+//!
+//! ⛔ THE CHAIN IS DELIVERED PER CALL AND NOT HELD IN `Parameters`, and the choice is written
+//! rather than left to be inferred. ADR-0034 forbids the kernel to READ a parameter it was not
+//! handed; an argument IS being handed one. `Parameters` is the shape for what is fixed at
+//! CONSTRUCTION, and a candidate chain is derived per request from policy and request (ADR-0011).
+//! ⚠️ THE NEIGHBOURING OPEN VOICE IS `E94`, which asks the mirror question about the arbiter's
+//! policy — it is the owner's and it is open; this line does not answer it.
+
+use alloc::string::String;
+use alloc::vec::Vec;
+
+use crate::ports::journal::{Journal, JournalError, StepId};
+use crate::record::{Detail, EffectClass, Record, RecordKind, RecordV1, RoutingDetail, Trust};
+
+/// One candidate of the chain. ⛔ THE NAME IS `&'static str` AND THAT IS `I6`: a name arriving
+/// from outside would be untrusted text inside a type the kernel DECIDES with (ADR-0014). It is
+/// the same reasoning P-9 applied to `ResourceProfile`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Candidate {
+    pub model: &'static str,
+    /// Runs on this machine.
+    pub local: bool,
+    /// The provider keeps the data.
+    pub retains: bool,
+    pub price: u64,
+}
+
+/// ⛔ THE TWO CLASSES OF ADR-0012, AND THEY FAIL DIFFERENTLY. It is not a taxonomy: it is the
+/// only thing that decides what happens when the chain runs out.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ConstraintClass {
+    /// Data and confidentiality. ⛔ FAIL CLOSED: an error, no fallback.
+    Data,
+    /// Quality and cost. ⛔ DECLARED DEGRADATION: it proceeds, saying so.
+    Quality,
+}
+
+/// What a request demands of a candidate.
+///
+/// ⛔ A CANDIDATE THAT VIOLATES A CONSTRAINT IS NOT A FALLBACK: IT IS A DIFFERENT REQUEST
+/// (ADR-0012), discarded before evaluation. That is why the filter runs first and the choice
+/// second, rather than scoring everything and picking a winner.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Constraint {
+    /// The request may not leave this machine.
+    LocalOnly,
+    /// The provider may not keep the data.
+    NoRetention,
+    /// ⚠️ QUALITY CLASS: exceeding it degrades, it does not refuse.
+    PriceCeiling(u64),
+}
+
+impl Constraint {
+    pub fn class(self) -> ConstraintClass {
+        match self {
+            Constraint::LocalOnly | Constraint::NoRetention => ConstraintClass::Data,
+            Constraint::PriceCeiling(_) => ConstraintClass::Quality,
+        }
+    }
+
+    fn satisfied_by(self, candidate: &Candidate) -> bool {
+        match self {
+            Constraint::LocalOnly => candidate.local,
+            Constraint::NoRetention => !candidate.retains,
+            Constraint::PriceCeiling(ceiling) => candidate.price <= ceiling,
+        }
+    }
+}
+
+/// ⛔ THE PROOF OF CONFORMANCE (§6.3.1). It cannot be forged: every field is private and the only
+/// place that builds one is `resolve`, below. That makes `Q13` a PROPERTY and not a check — an
+/// unfiltered candidate is not EXPRESSIBLE as the argument of `dispatch`.
+///
+/// ⚠️ AND THE LIMIT IS §6.3.2, repeated here because it is the half that gets forgotten: A TOKEN
+/// PROVES PROVENANCE, NOT CORRECTNESS. If `resolve` has a defect it mints wrong tokens and the
+/// compiler says nothing. It removes ONE class of error — "we forgot to filter" — not two.
+///
+/// ⛔ IT CARRIES THE WHOLE RESOLVED DECISION AND HAS NO GETTER FOR IT, which is deliberate: the
+/// only consumer is `dispatch`, in this module, and a public getter would exist for nobody
+/// (the "no caller, no item" rule `ProcessError` already carries).
+#[derive(Debug)]
+pub struct Conforming {
+    model: &'static str,
+    evaluated: u32,
+    degraded: bool,
+}
+
+impl Conforming {
+    /// ⛔ DEGRADATION IS DECLARED, NEVER SILENT (ADR-0012, ADR-0019). This is the one thing a
+    /// caller can ask, and it exists because a caller that cannot tell would have no way to say
+    /// so to the user — which is the whole of "si dichiara prima, non si fallisce dopo".
+    pub fn was_degraded(&self) -> bool {
+        self.degraded
+    }
+}
+
+/// What can go wrong. ⛔ DELIBERATELY POOR, like `JournalError`: one variant, and it means the
+/// one thing that has no road onwards.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GatewayError {
+    /// ⛔ FAIL CLOSED (ADR-0012): no candidate satisfies the DATA constraints. There is no
+    /// degraded road for this class, and its absence is the guarantee.
+    NoConformingCandidate,
+}
+
+/// Walks the chain and mints the proof for the first candidate that conforms.
+///
+/// ⛔ THE TWO CLASSES ARE READ IN A FIXED ORDER, AND THE ORDER IS THE DECISION: the data
+/// constraints are a filter — a candidate that fails one is not in the running at all — and the
+/// quality constraints are a PREFERENCE among those that are left. Reading them the other way
+/// round would let a price ceiling keep a request on a machine its data was not allowed to
+/// leave, which is exactly the silent failure ADR-0012 sorts the classes to prevent.
+pub fn resolve(
+    chain: &[Candidate],
+    constraints: &[Constraint],
+) -> Result<Conforming, GatewayError> {
+    let evaluated = chain.len() as u32;
+
+    let admissible = |candidate: &Candidate| {
+        constraints
+            .iter()
+            .filter(|c| c.class() == ConstraintClass::Data)
+            .all(|c| c.satisfied_by(candidate))
+    };
+
+    let preferred = |candidate: &Candidate| {
+        constraints
+            .iter()
+            .filter(|c| c.class() == ConstraintClass::Quality)
+            .all(|c| c.satisfied_by(candidate))
+    };
+
+    // First choice: everything satisfied, nothing degraded.
+    if let Some(candidate) = chain.iter().find(|c| admissible(c) && preferred(c)) {
+        return Ok(Conforming {
+            model: candidate.model,
+            evaluated,
+            degraded: false,
+        });
+    }
+
+    // Second choice: the data constraints hold and a quality one does not. ⛔ THIS ROAD PROCEEDS,
+    // and `degraded` is how it says so.
+    if let Some(candidate) = chain.iter().find(|c| admissible(c)) {
+        return Ok(Conforming {
+            model: candidate.model,
+            evaluated,
+            degraded: true,
+        });
+    }
+
+    // ⛔ AND THERE IS NO THIRD ROAD. An empty chain arrives here too, and it is the same answer
+    // for the same reason: nothing conforms.
+    Err(GatewayError::NoConformingCandidate)
+}
+
+/// Writes the RESOLVED routing record upon the step (ADR-0011) — and it CONSUMES the proof, so
+/// one resolution dispatches once. Same shape as `Process::start` consuming a `Grant`.
+///
+/// ⛔ WHAT IS NOT HERE, AND IT IS STAGED RATHER THAN MISSING: the call to a provider. The
+/// adapters are rule C of §0.4 — there is no provider to call — and the trigger is written here
+/// rather than in prose elsewhere: THE FIRST PROVIDER ADAPTER. ⚠️ A deadline written in prose
+/// has nothing that makes it fire (gotcha #77), so this one is not a promise: what this function
+/// does today is the whole of what it claims to do.
+pub fn dispatch<J: Journal>(
+    token: Conforming,
+    step: StepId,
+    journal: &mut J,
+) -> Result<(), JournalError> {
+    // ⛔ THE RECORD CAN ONLY BE BUILT FROM THE TOKEN, and that is the point: what gets journalled
+    // cannot disagree with what was filtered, because there is nothing else to build it from.
+    let record = Record::V1(RecordV1 {
+        kind: RecordKind::Routing,
+        effect: EffectClass::Idempotent,
+        trust: Trust::Instruction,
+        payload: Vec::new(),
+        reason: String::from("the gateway resolved the routing for this step"),
+        detail: Some(Detail::Routing(RoutingDetail {
+            model: String::from(token.model),
+            evaluated: token.evaluated,
+            degraded: token.degraded,
+        })),
+    })
+    .encode();
+
+    journal.note(step, &record)
+}
+```
+
+⚠️ **`Trust::Instruction` col payload VUOTO, e il precedente è `Arbiter::set_policy`**, che fa
+esattamente questo: nessun byte esterno entra in questo record, quindi l'etichetta è **vera** e
+non decorativa. Il modello **nome** viene dalla catena consegnata, cioè da noi.
+
+- [ ] **Passo 6: dichiara il modulo**
+
+In `crates/kernel/src/lib.rs`, in coda: `pub mod gateway;` — ⛔ **e il doc di testa non si tocca**
+(AUD-046).
+
+#### Commit 6b — il record risolto entra nel formato, e il quinto record congelato
+
+⛔ **Rileggi il commit 5b prima:** questo commit rifà la sua **seconda metà** — la variante, il
+record congelato, l'array a mano — e **non** la prima, perché il campo c'è già (D24).
+
+- [ ] **Passo 1: la variante e la specie del dettaglio**
+
+In `RecordKind`, in coda, indice **4** — ⛔ **un indice non si riusa mai**:
+
+```rust
+    /// ⛔ THE RESOLVED ROUTING OF A STEP (ADR-0011), journalled WITH the step. Like `Note` and
+    /// `Verdict` it neither opens a doubt nor closes one: the doubt is about an EFFECT, and a
+    /// routing record says what was DECIDED, not what reached the world. The effect of the step
+    /// is still owed by the step's own outcome.
+    #[n(4)]
+    Routing,
+```
+
+In `Detail`, in coda, indice **1**:
+
+```rust
+    /// The resolved routing of the step (§6.2, ADR-0011).
+    #[n(1)]
+    Routing(#[n(0)] RoutingDetail),
+```
+
+E la struttura, accanto a `VerdictDetail`:
+
+```rust
+/// The RESOLVED routing decision (ADR-0011). ⛔ THE MODEL NAME AND NOT AN INDEX INTO THE CHAIN,
+/// and the ADR says why in one line: the record "holds the RESOLVED decision, not a reference to
+/// the configuration — re-reading today's configuration does not say what happened yesterday".
+/// An index would be exactly that reference.
+///
+/// ⚠️ IT IS A `String` HERE AND A `&'static str` IN `gateway::Candidate`, and the asymmetry is
+/// the point rather than an oversight: a name on the WIRE has to be decodable, and P-9 measured
+/// that a `&'static str` is not producible from arriving bytes without leaking. The conversion
+/// happens in `dispatch`, in one place.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
+pub struct RoutingDetail {
+    #[n(0)]
+    pub model: String,
+    /// How many candidates the filter walked. ⚠️ NOT the chain's length as configured TODAY —
+    /// what was evaluated THEN, which is the same distinction the ADR draws for the model.
+    #[n(1)]
+    pub evaluated: u32,
+    /// ⛔ A QUALITY CONSTRAINT WAS RELAXED, AND IT WAS DECLARED (ADR-0012). A degradation that
+    /// did not reach the record would be exactly the silent one ADR-0019 exists to forbid.
+    #[n(2)]
+    pub degraded: bool,
+}
+```
+
+- [ ] **Passo 2: l'arm di `reconcile`, RIMISURATO (D23)**
+
+```rust
+                // ⛔ A ROUTING RECORD NEITHER OPENS A DOUBT NOR CLOSES ONE, and it was measured
+                // for THIS variant rather than inherited: `enter` would leave every routed step
+                // in doubt for ever, and `leave` would close a doubt that no outcome resolved —
+                // which is the silent loss of a real doubt, the one failure ADR-0007 exists to
+                // prevent.
+                RecordKind::Routing => {}
+```
+
+⚠️ **Provalo con le due mutazioni**, come al compito 5, e se nessuna muove niente **dichiaralo**.
+
+- [ ] **Passo 3: il quinto record congelato**
+
+```rust
+        (
+            "record_v1_routing.cbor",
+            ROUTING_BYTES,
+            record(
+                RecordKind::Routing,
+                EffectClass::Idempotent,
+                Trust::Instruction,
+                Some(Detail::Routing(RoutingDetail {
+                    model: String::from("frozen"),
+                    evaluated: 2,
+                    degraded: true,
+                })),
+            ),
+        ),
+```
+
+⚠️ **`model: "frozen"` e non un nome vero:** i tre record congelati usano già `FROZEN_PAYLOAD` e
+`FROZEN_REASON` per la stessa ragione — un valore che si riconosce a occhio nella mappa, e che non
+somiglia a un dato reale. ⛔ **E `degraded: true` con `evaluated: 2`**, perché `false` e `0`
+codificano byte che somigliano a mezza tabella di indici.
+
+⛔ **L'array a mano di `frozen_bytes.rs` va esteso a CINQUE varianti**, e questa è di nuovo la riga
+che **niente** fa diventare rossa — P-12.
+
+- [ ] **Passo 4: i byte a mano, e la mappa**
+
+Come al compito 5: sonda usa-e-getta, byte scritti **a mano**, cancellazione nella stessa corsa,
+mappa **riletta dal banco**. ⛔ **Nessun percorso di rigenerazione.**
+
+- [ ] **Passo 5: il registro**
+
+La riga `Q13` del blocco B passa a **coperta**: `dispatching_an_unfiltered_candidate.rs` nella
+colonna *«deve scattare»* e `a_conforming_candidate_is_chosen_and_nothing_is_degraded` in quella
+*«deve restare verde»*. ⚠️ **E `conforming_has_no_constructor.rs` va nella stessa riga**, come
+`grant_has_no_constructor.rs` vive sotto la riga della concessione: sono le **due metà** dello
+stesso gettone.
+
+⛔ **E gli SCRITTORI DI RECORD sono adesso QUATTRO, e va scritto perché la voce aperta cresce.**
+Erano `Untrusted::promote` e `Arbiter::set_policy` quando il gotcha **#77** trovò che *«l'aiutante
+nasce col SECONDO scrittore»* era scaduto senza che nulla diventasse rosso; il compito 5 ha
+aggiunto `run_the_ring` e questo aggiunge `dispatch`. ⚖️ **La decisione del proprietario del
+2026-08-10 regge — *«ciascuno degli scrittori ha la propria sonda»*** — e questo compito la
+onora; ma la voce *«se le due funzioni debbano condividere un aiutante»* va **riaggiornata a
+quattro** nella tabella unica di [`porta-di-qualita.md`](../../porta-di-qualita.md), col richiamo
+datato. ⛔ **Non si costruisce l'aiutante:** è del proprietario, ed era già registrata e non presa.
+
+- [ ] **Passo 6: commit**
+
+```bash
+bash scripts/gate.sh
+cargo test --locked --workspace --no-fail-fast
+git add crates/kernel/ docs/porta-di-qualita.md
+git commit -m "feat(gateway): il record di routing risolto entra nel formato, e il quinto record congelato"
+```
+
+#### Criterio di chiusura del compito 6
+
+- [ ] `bash scripts/gate.sh` → `GATE GREEN` a **entrambi** i commit
+- [ ] `Q13` è **coperta** nel registro, con **entrambi** i casi `compile_fail`
+- [ ] i due `.stderr` nuovi sono stati **letti dall'uscita vera**, non copiati da `grant_has_no_constructor.stderr`
+- [ ] i record congelati sono **cinque**, la mappa li ricostruisce tutti, e i **quattro** vecchi sono byte-identici
+- [ ] l'array a mano porta **cinque** varianti, e l'`assert!` è stata **vista scattare**
+- [ ] le tre uscite del filtro hanno **tre** sonde distinte — conforme, fallimento chiuso, degrado dichiarato — e non una sola con tre asserzioni
+- [ ] ⛔ nessun modello è invocato da nessuna parte: `grep -rn "provider\|adapter" crates/kernel/src/gateway/` non nomina nessuna chiamata
+- [ ] la voce dell'**aiutante degli scrittori** è aggiornata a **quattro**, col richiamo datato, e **non** è stata chiusa
+- [ ] i fine-riga di ogni file toccato sono stati **rimisurati**

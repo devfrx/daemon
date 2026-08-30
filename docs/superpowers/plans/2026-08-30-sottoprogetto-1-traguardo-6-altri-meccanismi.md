@@ -34,8 +34,8 @@ faccia quel controllo.
 | Parte | Compiti | Stato |
 |---|---|---|
 | **A** — la concessione che torna | 1 | ✅ **scritta** il 2026-08-30 |
-| **B** — il filo | 3, 3bis | ⬜ **da scrivere** — è il prossimo |
-| **C** — lo schema `ipc` | 4 | ⬜ da scrivere |
+| **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
+| **C** — lo schema `ipc` | 4 | ⬜ **da scrivere** — è il prossimo |
 | **D** — i meccanismi | 5, 6, 7, 8 | ⬜ da scrivere |
 | **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
 
@@ -43,11 +43,15 @@ faccia quel controllo.
 alla §3.4 del disegno e diventa una non-costruzione dichiarata. La numerazione della §1.4 è
 tenuta com'è invece di essere compattata, perché il disegno vi rimanda per numero.
 
-⛔ **Ciò che chi riprende deve sapere sul compito 3bis, prima di scriverlo:** è la **misura
-C-1**, e pretende una ricerca **odierna** — *`bincode` è ancora dichiarato non mantenuto?
-esiste un'alternativa mantenuta il cui pari TypeScript abbia un lettore?* La §3.5 del disegno
-dice alla lettera che deciderlo a memoria sarebbe il gotcha **#48**. La fonte va tracciata in
+⛔ **Ciò che chi riprende deve sapere sul compito 3bis:** è la **misura C-1**, e pretende una
+ricerca **odierna** — *`bincode` è ancora dichiarato non mantenuto? esiste un'alternativa
+mantenuta il cui pari TypeScript abbia un lettore?* La §3.5 del disegno dice alla lettera che
+deciderlo a memoria sarebbe il gotcha **#48**. La fonte va tracciata in
 [`riferimenti.md`](../../riferimenti.md) con la data.
+⚠️ **RICHIAMO DEL 2026-08-30:** questa riga diceva *«prima di scriverlo»*, ed è diventata falsa
+lo stesso giorno — il compito **è scritto**. Resta perché ciò che dice non è *quando* si scrive
+ma *che cosa pretende*, e chi lo **esegue** ne ha lo stesso bisogno di chi lo scriveva. La
+disciplina per esteso sta nel compito, non qui.
 
 ---
 
@@ -147,6 +151,82 @@ altri sette cadrebbero **prima** di arrivare all'errore che asseriscono.
 e §6.1.3 vieta di generarlo, quindi il costo si **paga e si dichiara**. È il gotcha **#65**
 nella direzione che il disegno prezza **meno**: qui il lavoro è più grande di come è scritto.
 
+### P-5 — ⛔ La §11 del compendio prezza il vincolo 15 con un comando che NON riproduce la sua stessa clausola
+
+Fatto scrivendo la Parte B, il 2026-08-30. La riga del **vincolo 15** della §11 di
+[`COMPENDIO.md`](../../COMPENDIO.md) — che è la riga che il **compito 3 chiude** — scrive:
+
+> *«`grep -rn minicbor crates/kernel/src/` lo trova **solo** in `record.rs`, cioè sul
+> **giornale**»*
+
+**Rilanciato: rende DUE file, non uno.**
+
+```bash
+grep -rn minicbor crates/kernel/src/ | cut -d: -f1 | sort -u
+```
+
+| File | Che cosa è |
+|---|---|
+| `crates/kernel/src/record.rs` | il codificatore vero — **tredici** riscontri |
+| `crates/kernel/src/ports/process.rs` | **un doc di modulo**, che dichiara la non-costruzione: *«NOT the wire format (§6.10.3: `minicbor`, the port exchanges BYTES …)»* |
+
+⛔ **La sostanza regge, la clausola no, e la differenza è la parte che conta.** L'unico uso
+**come codice** è `record.rs`; ma la clausola è scritta **accanto al comando**, e il comando la
+smentisce — che è precisamente ciò contro cui il rimedio di **AUD-007** aveva sostituito un
+numerale con un comando.
+
+⚠️ **Ed era falsa dalla nascita**, misurato e non dedotto: la riga di `process.rs` arriva da
+`ff41eea`, cioè dal **Traguardo 2**, mentre la riga della §11 è stata scritta il 2026-08-27 da
+`ebbbdac`. È il gotcha **#70** — *ogni riga che il censimento restituisce si legge intera* —
+commesso dentro il rimedio che il gotcha **#68** prescriveva. Il disegno di questo traguardo la
+domanda se l'era invece posta: la §1.2 dichiara per esteso che i riscontri di `Permission` e
+`degrad` *«sono prosa nei commenti, guardati uno per uno»*.
+
+📌 **NON si corregge adesso, e la ragione è il perimetro:** il **compito 3 onora il vincolo 15**,
+quindi quella riga esce comunque dalla tabella *«cosa resta davanti»* alla chiusura. Riscriverla
+ora significherebbe scriverla due volte. ⛔ **Entra invece nel criterio di chiusura del compito
+3**, perché una riga che sparisce non è una riga corretta.
+
+### P-6 — ⛔ Il disegno non dice DOVE vive lo schema del canale worker, e la mappa dei file non ha un posto per esso
+
+La §3 del disegno decide la **meccanica** — l'inquadratura, il riuso della forma di `record.rs`,
+`Frame` che resta opaco — e **nessuna sua riga dice dove il corpo del frame sia definito**. Ma la
+condizione **6** della Definizione di «fatto» pretende che *«l'annotazione di stringa di byte sia
+**sul canale worker**»*, e un'annotazione ha bisogno di un **campo**, cioè di un tipo.
+
+**Misurato il 2026-08-30:**
+
+```bash
+ls crates/kernel/src/            # nessun framing.rs, nessun wire/
+```
+
+⛔ **E la mappa dei file di questo piano assegna `crates/kernel/src/wire/mod.rs` al compito 4.**
+Il compito 3 arriva prima e ne ha bisogno: come è scritta, la mappa gli lascia il tipo senza una
+casa.
+
+✅ **Chiuso dalla decisione D8**, che non inventa un posto ma applica il precedente che il disegno
+stesso cita: §6.10.3 dice *«la porta scambia byte, non messaggi tipizzati, **come `journal` dopo
+ADR-0036**»*, e dopo ADR-0036 lo schema del giornale vive in `crates/kernel/src/record.rs`, fuori
+dalla porta. La mappa è **corretta col richiamo datato**, non riscritta in silenzio.
+
+### P-7 — ⚠️ Il doc di modulo di `ports/process.rs` diventa falso col commit 3b, e il compito deve saperlo prima
+
+`crates/kernel/src/ports/process.rs`, doc di modulo, sotto *«What milestone 2 builds, and what it
+does not»*:
+
+> *«NOT the implementation (milestone 6), **NOT the wire format** (§6.10.3: `minicbor`, the port
+> exchanges BYTES, every frame declares its own length and decoding checks the bytes consumed),
+> and NOT the negative tests of §6.10.5 rows 1-4»*
+
+Delle tre clausole, la terza è **già** falsa dal Task 11 del Traguardo 5 — e infatti quel paragrafo
+porta già il proprio **richiamo del 2026-08-21**. La **seconda** diventa falsa col commit **3b**.
+
+📌 **Sta qui e non solo nel compito perché è il passo 5 della disciplina dell'audit** —
+*ricontà ciò che il tuo rimedio ha reso stantio* — e perché la casa del paragrafo è un file che
+il compito 3 non toccherebbe altrimenti: con questa forma dello schema (D8) il `Frame` **non
+cambia**, quindi nulla obbligherebbe a passare di lì. È esattamente il modo in cui una frase
+sopravvive al fatto che la smentisce.
+
 ---
 
 ## Le decisioni prese da questo piano
@@ -163,6 +243,12 @@ misura che le smentisce — è ciò per cui esiste l'errata.
 | **D5** | ogni compito **rimisura la propria baseline** con `cargo test --locked --workspace --no-fail-fast` e non cita quella scritta qui | una baseline citata invecchia a ogni compito — gotcha **#31**. Quella di partenza sta scritta **una volta sola**, qui sotto |
 | **D6** | ⛔ **il compito 6 congela un QUARTO record**, non solo una variante | P-2: senza, il nuovo indice di filo è tenuto da nulla, e il compilatore non lo dice |
 | **D7** | le mutazioni si provano **una alla volta**, si compila in un passo **separato** dall'eseguire, e si revoca **ripristinando da una copia presa prima** | gotcha **#48**, la trappola più frequente del progetto: una revoca che deve *cercare* può fallire e lasciare il file mutato — successo al Task 8 del Traguardo 5, sette misure buttate |
+| **D8** | ⛔ **lo schema del canale worker vive in `crates/kernel/src/wire/worker.rs`, e `wire/mod.rs` nasce al compito 3 — non al 4** | P-6: il disegno non lo colloca, ma cita il precedente che risponde. §6.10.3 dice *«la porta scambia byte … **come `journal` dopo ADR-0036**»*, e lì lo schema vive in `record.rs`, **fuori dalla porta**. Mettere il corpo dentro `ports/process.rs` rifarebbe la mescolanza che ADR-0036 ha tolto al giornale. ⚠️ **Non è un modo nuovo:** è quello che il progetto usa già |
+| **D9** | ⛔ **il corpo del canale worker porta UNA direzione sola — worker → core — e DUE varianti**, `Fragment(Vec<u8>)` e `VramPeak(Mib)` | sono le **sole** che qualcosa di scritto impone: §6.10.4 misura l'annotazione **su un frammento audio da 4096 B** e dichiara che *«il campo che questo canale fa entrare nel giornale è il **picco di VRAM** di §5.2.2: arriva dal worker»*. ⛔ **La direzione core → worker non è imposta da nessuna riga, quindi NON si costruisce** — è la stessa postura della §6.1 del disegno (*«il meccanismo è dovuto per iscritto, il vocabolario no»*), e la non-costruzione porta il **proprio innesco**, come la condizione **9** pretende |
+| **D10** | ⛔ **l'inquadratura è di QUATTRO byte, big-endian**, decisa qui **una volta sola** | §6.3 lo prescrive alla lettera: *«la larghezza non si decide qui … si decide una volta sola, al compito 3»*. **Big-endian perché il criterio è il PARI** (ADR-0037): `DataView.getUint32(0)` in TypeScript e `struct.unpack(">I", …)` in Python sono le forme **senza bandiera**, e un ordine che il pari deve ricordarsi di girare è un difetto che compila. **Quattro e non due** perché un frammento di flusso non è limitato a 64 KiB; **non otto** perché spenderebbe quattro byte a frame su una portata che nessun canale raggiunge |
+| **D11** | `WireError` nasce col commit 3a con le varianti che **`framing` produce**, e guadagna `Malformed` al **3b**, quando il suo produttore esiste | è la regola *«no caller, no item»* che `ProcessError` porta già scritta. Dichiarare al 3a una variante che nessuno produce sarebbe una promessa tenuta da niente — e il commit 3a deve essere `GATE GREEN` da solo (vincolo globale 8). ⚠️ **Quante siano lo dice il compito**, non questa cella: una cifra qui invecchierebbe al primo commit che ne aggiunge una, ed è il gotcha **#31** |
+| **D12** | ⛔ **il compito 3bis MISURA e si ferma PRIMA di decidere**, se la misura chiede un cambio di formato | §6.1.1 è **spec**: riaprirla è del proprietario, vincolo globale 7. ⚠️ **La simmetria fra i due casi è solo apparente:** se la misura dice *«`bincode` è ancora l'unica via»*, il compito **registra** e prosegue, perché non tocca nessuna sezione; se dice *«esiste un'alternativa mantenuta col lettore del pari»*, si ferma. Precedenti: **AUD-004**, **AUD-036**, **AUD-044**, tutti fermatisi prima di decidere |
+| **D13** | le **fonti** di C-1 vanno in [`riferimenti.md`](../../riferimenti.md), e **non è la convenzione nuova di `E146`** | `E146` riguarda le **misure interne**, che dal Traguardo 5 vivono in [`porta-di-qualita.md`](../../porta-di-qualita.md) accanto al controllo che difendono, e la §7.4 del disegno conferma che la chiusura non tocca quel file. Un **advisory** e lo stato di manutenzione di una crate sono l'altra cosa: la §12 del compendio chiama `riferimenti.md` *«la provenienza di ciò che non abbiamo dedotto noi, con le date»*. ⛔ Senza questa riga le due regole si leggono come un conflitto, e chi esegue ne sceglierebbe una a caso |
 
 **La baseline di partenza, misurata il 2026-08-30 e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `cargo test --locked --workspace --no-fail-fast` →
@@ -179,9 +265,11 @@ dichiarandolo.
 |---|---|---|
 | `crates/kernel/src/arbiter/mod.rs` | compito 1 | `ArbiterId`, `Released`, `release` |
 | `crates/kernel/src/parameters.rs` | compito 1 | il terzo campo consegnato |
-| `crates/kernel/src/ports/process.rs` | compiti 1, 3 | `Started`, `Killed`, e il `Frame` che diventa codificato |
-| `crates/kernel/src/framing.rs` | **creato** dal compito 3 | l'inquadratura: lunghezza dichiarata a larghezza fissa, condivisa dai due canali privati |
-| `crates/kernel/src/wire/mod.rs` | **creato** dal compito 4 | lo schema `ipc`: l'enumerazione dei messaggi |
+| `crates/kernel/src/ports/process.rs` | compiti 1, 3 | `Started`, `Killed`; e al compito 3 **solo il doc di modulo**, non il `Frame` |
+| `crates/kernel/src/framing.rs` | **creato** dal compito 3 | l'inquadratura: lunghezza dichiarata a larghezza fissa, condivisa dai due canali privati, e `WireError` |
+| `crates/kernel/src/wire/mod.rs` | **creato** dal compito 3 | la cartella dei due schemi: dichiara i due figli e nient'altro |
+| `crates/kernel/src/wire/worker.rs` | **creato** dal compito 3 | lo schema del canale worker: `FromWorker`, coi suoi `encode`/`decode` |
+| `crates/kernel/src/wire/ipc.rs` | **creato** dal compito 4 | lo schema `ipc`: l'enumerazione dei messaggi |
 | `crates/kernel/src/sensor.rs` | **creato** dal compito 5 | il contratto del sensore di ADR-0009 |
 | `crates/kernel/src/gateway/mod.rs` | **creato** dal compito 6 | il decisore, il filtro dei vincoli e il gettone di conformità |
 | `crates/kernel/src/permission.rs` | **creato** dal compito 7 | la tripla, e la proiezione dal giornale |
@@ -194,6 +282,15 @@ dichiarandolo.
 📌 **Perché file separati e non un modulo solo:** il progetto già lo fa così — `arbiter` è
 una cartella con tre file dal Task 8 del Traguardo 5, e le porte sono un file per famiglia.
 Un file per responsabilità è la convenzione, non una scelta di questo piano.
+
+⚠️ **RICHIAMO DEL 2026-08-30, scrivendo la Parte B — tre celle di questa mappa erano sbagliate,
+e la causa è la stessa: `wire/mod.rs` era assegnato al compito 4.** Lo schema del **canale
+worker** non aveva nessuna casa (P-6), quindi il compito 3 avrebbe dovuto inventarne una mentre
+la eseguiva; e la cella di `ports/process.rs` prometteva *«il `Frame` che diventa codificato»*,
+che con la forma della **D8** non succede — il `Frame` **resta identico**, e ciò che il compito 3
+tocca lì è il **doc di modulo** reso falso (P-7). ⛔ **Corretta e non riscritta in silenzio:** una
+mappa dei file è un'affermazione come le altre, ed `E154` del Traguardo 5 nasce esattamente da
+un elenco di file che non nominava due lavori veri — gotcha **#65** applicato all'intestazione.
 
 ---
 
@@ -749,3 +846,640 @@ git add -A && git commit -m "traguardo 6 (compito 1c): start e kill restituiscon
 - [ ] `ReleaseError` ha **ancora una sola variante**
 - [ ] le voci `E30`, `R6` ed `E21` della tabella unica di
       [`porta-di-qualita.md`](../../porta-di-qualita.md) sono marcate chiuse, col commit
+
+---
+
+## Parte B — il filo
+
+⛔ **Due compiti, e l'ordine fra loro non è negoziabile.** Il **3** costruisce l'inquadratura e
+lo schema del canale **worker**, il cui formato ADR-0037 ha già misurato e chiuso; il **3bis**
+decide con quale formato si scriverà lo schema **`ipc`**, e sta **prima** del compito 4 perché
+scriverlo in `bincode` **è** la decisione, presa per omissione (§3.5 del disegno, **D4**).
+
+⚠️ **I due non condividono nessun file**, misurato mentre si scriveva questa parte: il 3 tocca
+`framing.rs`, `wire/`, `lib.rs` e un doc di `ports/process.rs`; il 3bis tocca
+`crates/kernel/Cargo.toml`, [`riferimenti.md`](../../riferimenti.md) e — solo nel caso B — il
+`Cargo.lock`. Restano comunque **due dispacci separati**, perché la specie di lavoro è diversa:
+uno scrive codice, l'altro fa una **ricerca**.
+
+### Compito 3: §6.10 — l'inquadratura e lo schema del canale worker (vincolo 15)
+
+**Files:**
+- Create: `crates/kernel/src/framing.rs` — la busta e `WireError`
+- Create: `crates/kernel/src/wire/mod.rs` — la cartella dei due schemi
+- Create: `crates/kernel/src/wire/worker.rs` — `FromWorker`, `encode`, `decode`
+- Modify: `crates/kernel/src/lib.rs` — i due `pub mod` nuovi
+- Modify: `crates/kernel/src/arbiter/resource.rs` — `Mib` guadagna i due derive (Passo 4 di 3b)
+- Modify: `crates/kernel/src/ports/process.rs` — **solo il doc di modulo** (P-7)
+- Test: `crates/kernel/tests/framing.rs`, `crates/kernel/tests/worker_wire.rs` — **creati**
+- Modify: [`porta-di-qualita.md`](../../porta-di-qualita.md) — la riga `Q4 · I5 · §6.10`
+
+⛔ **Leggi P-5, P-6 e P-7 prima di cominciare.** Il primo dice che la riga della §11 che stai per
+chiudere porta una clausola falsa; il secondo perché lo schema ha una casa che il disegno non gli
+dava; il terzo quale frase il tuo commit rende stantia.
+
+⛔ **E i due banchi vivono in `tests/`, cioè FUORI dalla crate, non in un `mod tests`.** È la
+terza domanda del pre-controllo di [`../../../CLAUDE.md`](../../../CLAUDE.md): un artefatto
+sbagliato compila, e a coglierlo è solo scriverne un'implementazione da fuori. `framing::frame`
+e `FromWorker` sono `pub`: se non lo fossero abbastanza, questi banchi non compilerebbero.
+
+#### Commit 3a — l'inquadratura, e la larghezza si decide UNA volta sola
+
+- [ ] **Passo 1: scrivi le sonde che falliscono**
+
+In `crates/kernel/tests/framing.rs`, file nuovo:
+
+```rust
+//! The envelope shared by the two private channels. ⛔ THE PROBES LIVE OUTSIDE THE CRATE on
+//! purpose: what they hold is that the envelope is USABLE from outside, which is the only
+//! form of "the boundary is real" this repository accepts (milestone 3, task 8).
+
+use kernel::framing::{self, WireError};
+
+#[test]
+fn a_framed_body_comes_back_exactly() {
+    let body = [1u8, 2, 3, 4, 5];
+    let framed = framing::frame(&body).expect("frame");
+    assert_eq!(framing::unframe(&framed), Ok(&body[..]));
+}
+
+#[test]
+fn the_declared_length_is_four_bytes_big_endian() {
+    // ⛔ THE BYTE ORDER IS AN ASSERTION AND NOT A COMMENT. ADR-0037 chooses a wire format on
+    // what the PEER can read: `DataView.getUint32(0)` in TypeScript and `struct.unpack(">I")`
+    // in Python are the forms that need no flag. Flipped to little-endian, nothing else in
+    // this workspace would go red -- both peers live outside it.
+    let framed = framing::frame(&[0xAA]).expect("frame");
+    assert_eq!(framed, [0x00, 0x00, 0x00, 0x01, 0xAA]);
+}
+
+#[test]
+fn a_truncated_frame_is_refused() {
+    // Declares five, carries two.
+    let bytes = [0x00, 0x00, 0x00, 0x05, 0x01, 0x02];
+    assert_eq!(framing::unframe(&bytes), Err(WireError::Incomplete));
+}
+
+#[test]
+fn bytes_shorter_than_the_prefix_are_refused() {
+    // ⚠️ NOT the same failure as the one above, and it is worth its own probe: here there is
+    // no declared length AT ALL, so the code path that reads it must not be reached.
+    assert_eq!(framing::unframe(&[0x00, 0x00, 0x00]), Err(WireError::Incomplete));
+}
+
+#[test]
+fn a_frame_with_a_tail_is_refused() {
+    // Declares one, carries three. ⛔ THIS IS THE HALF A CBOR DECODER CANNOT SEE: it stops at
+    // the first complete element and ignores what follows (gotcha #34, measured in §6.10.4).
+    let bytes = [0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x03];
+    assert_eq!(framing::unframe(&bytes), Err(WireError::TrailingBytes));
+}
+```
+
+- [ ] **Passo 2: lancia il banco e verifica che NON COMPILI**
+
+```bash
+cargo test --locked -p kernel --test framing 2>&1 | head -20
+```
+
+Atteso: `error[E0432]` — `kernel::framing` non esiste. ⛔ **Se compila, fermati e scrivi una
+voce d'errata:** qualcuno l'ha già costruito, ed è il gotcha **#49**.
+
+- [ ] **Passo 3: scrivi `crates/kernel/src/framing.rs`**
+
+```rust
+//! The envelope of the two private channels: a declared length, then the body.
+//!
+//! ⛔ WHAT IS SHARED IS NEITHER THE TRANSPORT NOR THE SCHEMA -- it is envelope bytes.
+//! ADR-0035 reads I4 as "one transport and one schema PER PRIVATE CHANNEL", and ADR-0037
+//! distrusts arguments of SYMMETRY between the two channels. Neither is contradicted: both
+//! peers must read a length prefix whatever the body format is, so the problem here is
+//! LITERALLY the same one and not a symmetric one. §6.3 of the milestone 6 design says so,
+//! and whether that reading holds is open item 8 for the owner.
+//!
+//! ⛔ THE WIDTH IS DECIDED HERE AND NOWHERE ELSE (§6.3). Four bytes, big-endian.
+
+use alloc::vec::Vec;
+
+/// The width of the declared length, in bytes.
+const LENGTH_WIDTH: usize = 4;
+
+/// The longest body this envelope can declare.
+///
+/// ⚠️ THE GUARD ABOVE IT IS DECLARED AND NOT EXERCISED, and saying so is the point: reaching
+/// it needs a body of four gibibytes, so no probe in this repository can produce one. What is
+/// held instead is the WIDTH, by `the_declared_length_is_four_bytes_big_endian`: while the
+/// prefix is four bytes this constant cannot be anything else.
+pub const MAX_BODY_LEN: usize = u32::MAX as usize;
+
+/// What can go wrong reading an envelope.
+///
+/// ⚠️ NO VARIANT CARRIES A PAYLOAD, and that is the shape of the project rather than an
+/// omission: no error in this repository carries the value it consumed. The caller that wants
+/// the numbers has the bytes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WireError {
+    /// Fewer bytes than the frame declares -- the prefix itself may be missing.
+    Incomplete,
+    /// More bytes than the frame declares.
+    TrailingBytes,
+    /// The body is longer than a declared length can express. See `MAX_BODY_LEN`.
+    TooLong,
+}
+
+/// Wraps a body in its envelope.
+pub fn frame(body: &[u8]) -> Result<Vec<u8>, WireError> {
+    if body.len() > MAX_BODY_LEN {
+        return Err(WireError::TooLong);
+    }
+    let mut bytes = Vec::with_capacity(LENGTH_WIDTH + body.len());
+    bytes.extend_from_slice(&(body.len() as u32).to_be_bytes());
+    bytes.extend_from_slice(body);
+    Ok(bytes)
+}
+
+/// Reads a body out of its envelope.
+///
+/// ⛔ THE TWO FAILURES ARE NOT THE SAME FAULT, and §3.2 of the design puts them in one table:
+/// a TAIL is caught by a decoder that checks its own position, a TRUNCATION is caught by
+/// NOTHING BUT a declared length -- the tail is not there, and the CBOR can be complete all
+/// the same. That is why this function exists on top of the body decoder and not instead of
+/// it.
+pub fn unframe(bytes: &[u8]) -> Result<&[u8], WireError> {
+    if bytes.len() < LENGTH_WIDTH {
+        return Err(WireError::Incomplete);
+    }
+    let (prefix, body) = bytes.split_at(LENGTH_WIDTH);
+    let mut declared = [0u8; LENGTH_WIDTH];
+    declared.copy_from_slice(prefix);
+    let declared = u32::from_be_bytes(declared) as usize;
+    if body.len() < declared {
+        return Err(WireError::Incomplete);
+    }
+    if body.len() > declared {
+        return Err(WireError::TrailingBytes);
+    }
+    Ok(body)
+}
+```
+
+- [ ] **Passo 4: dichiara il modulo in `crates/kernel/src/lib.rs`**
+
+Un `pub mod framing;` accanto agli altri. ⛔ **Non toccare il paragrafo in testa al file:** dice
+già che *«ciò che questa crate contiene è la lista dei `pub mod`»*, ed è la forma che il finding
+**AUD-046** ha messo lì proprio perché non invecchiasse. Aggiungere una riga al riassunto lo
+riaprirebbe.
+
+- [ ] **Passo 5: lancia le sonde e verifica che passino**
+
+```bash
+cargo test --locked -p kernel --test framing 2>&1 | tail -5
+```
+
+Atteso: `5 passed`.
+
+- [ ] **Passo 6: le mutazioni di controllo, e sono TRE**
+
+⛔ **D7: una alla volta, compilando in un passo separato dall'eseguire, revocando da copia.**
+
+| Mutazione | Deve uccidere |
+|---|---|
+| `to_be_bytes` → `to_le_bytes` (in **entrambi** i siti, o non compila il round-trip) | `the_declared_length_is_four_bytes_big_endian`, **e nient'altro** |
+| `if body.len() < declared` → `if false` | `a_truncated_frame_is_refused` |
+| `if body.len() > declared` → `if false` | `a_frame_with_a_tail_is_refused` |
+
+⚠️ **La prima ha un oracolo in più della propria riga: deve uccidere QUELLA SOLA.** Se uccide
+anche il round-trip, la sonda dell'ordine non sta provando l'ordine ma la simmetria fra i due
+siti — e l'ordine tornerebbe indifendibile appena qualcuno li cambia insieme, che è esattamente
+il caso che conta.
+
+```bash
+cp crates/kernel/src/framing.rs "$SCRATCH/framing.rs.orig"
+# muta, poi:
+cargo build --locked -p kernel --tests
+cargo test --locked -p kernel --test framing 2>&1 | tail -8
+cp "$SCRATCH/framing.rs.orig" crates/kernel/src/framing.rs
+git diff --stat crates/kernel/src/framing.rs   # deve essere VUOTO
+```
+
+- [ ] **Passo 7: il cancello**
+
+```bash
+bash scripts/gate.sh
+```
+
+⚠️ **`cargo fmt --all --check` non è un passo del cancello** (§7.4.3), e questo compito crea file
+nuovi: lanciatelo a mano, o la deriva arriva col commit del prodotto come al Task 12 del
+Traguardo 5.
+
+- [ ] **Passo 8: commit**
+
+```bash
+git add -A && git commit -m "traguardo 6 (compito 3a): la busta dei due canali privati -- quattro byte big-endian, e la lunghezza dichiarata prende il TRONCAMENTO che nessun decodificatore CBOR puo' vedere"
+```
+
+#### Commit 3b — lo schema del canale worker, e la sola direzione che qualcosa impone
+
+- [ ] **Passo 1: scrivi le sonde che falliscono**
+
+In `crates/kernel/tests/worker_wire.rs`, file nuovo:
+
+```rust
+//! The schema of the channel towards the workers. ⛔ OUTSIDE THE CRATE, like `framing.rs`.
+
+use kernel::arbiter::Mib;
+use kernel::framing::WireError;
+use kernel::wire::worker::FromWorker;
+
+#[test]
+fn a_fragment_survives_the_round_trip() {
+    let message = FromWorker::Fragment(alloc_vec(&[9, 8, 7]));
+    let bytes = message.encode().expect("encode");
+    assert_eq!(FromWorker::decode(&bytes), Ok(message));
+}
+
+#[test]
+fn a_vram_peak_survives_the_round_trip() {
+    let message = FromWorker::VramPeak(Mib::new(1536));
+    let bytes = message.encode().expect("encode");
+    assert_eq!(FromWorker::decode(&bytes), Ok(message));
+}
+
+#[test]
+fn the_byte_string_annotation_is_measured_and_not_asserted() {
+    // ⛔ READING THE ATTRIBUTE IN THE SOURCE PROVES NOTHING -- what the annotation buys is a
+    // SIZE, and §6.10.4 measured it: a 4096 B audio fragment costs 4101 bytes as a byte
+    // string and 7813 as an array of numbers, i.e. 1.91x. Both compile, both round-trip,
+    // both are correct; one costs double the traffic in silence.
+    //
+    // ⚠️ THE ASSERTION IS A BOUND AND NOT AN EQUALITY, and that is deliberate: an exact
+    // number would go red the day the envelope or the variant index changes by a byte, i.e.
+    // where the promise is KEPT (gotcha #24, the precedent is PL-1 and its `0600`). Write the
+    // exact value you measure in this comment, dated, and leave the bound in the code.
+    let body = alloc_vec(&[0u8; 4096]);
+    let bytes = FromWorker::Fragment(body).encode().expect("encode");
+    assert!(bytes.len() < 4096 + 64, "encoded {} bytes", bytes.len());
+}
+
+#[test]
+fn a_frame_with_a_tail_does_not_decode() {
+    let mut bytes = FromWorker::VramPeak(Mib::new(1)).encode().expect("encode");
+    bytes.push(0xFF);
+    assert_eq!(FromWorker::decode(&bytes), Err(WireError::TrailingBytes));
+}
+
+#[test]
+fn junk_inside_the_declared_length_does_not_decode() {
+    // ⛔ THE OTHER HALF, AND IT IS A DIFFERENT CHECK: here the ENVELOPE is honest -- the
+    // declared length matches the body exactly -- and it is the body that carries a complete
+    // CBOR element followed by a byte. `unframe` cannot see it; `position() != len()` can.
+    // Remove either check and one of these two probes survives on its own merits.
+    let good = FromWorker::VramPeak(Mib::new(1)).encode().expect("encode");
+    let body = &good[4..];
+    let mut junked = body.to_vec();
+    junked.push(0xFF);
+    let bytes = kernel::framing::frame(&junked).expect("frame");
+    assert_eq!(FromWorker::decode(&bytes), Err(WireError::Malformed));
+}
+```
+
+⚠️ **`alloc_vec` è un aiutante del banco**, non un tipo del kernel: una `Vec<u8>` costruita dal
+test. Scrivilo come preferisci — ma **non** dargli un doc che prometta qualcosa, o è l'aiutante
+che non teneva niente del Task 8 del Traguardo 5.
+
+- [ ] **Passo 2: lancia il banco e verifica che NON COMPILI**
+
+```bash
+cargo test --locked -p kernel --test worker_wire 2>&1 | head -20
+```
+
+Atteso: `error[E0432]` su `kernel::wire`.
+
+- [ ] **Passo 3: `Mib` guadagna i due derive**
+
+In `crates/kernel/src/arbiter/resource.rs`, sul tipo `Mib`, con l'indice esplicito sul campo —
+**la forma che `record.rs` usa già**, non una che questo piano ricorda:
+
+```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Encode, Decode)]
+pub struct Mib(#[n(0)] u64);
+```
+
+⛔ **È il primo derive di `minicbor` fuori da `record.rs`, e il costo va dichiarato accanto al
+tipo:** `Mib` diventa un tipo di **filo** oltre che di decisione. La via che lo evitava —
+mettere un `u64` nudo nel messaggio — è **scartata sul merito**: `Mib` esiste perché scambiare
+MiB e millisecondi non compili, e un intero nudo che rientra dal filo è precisamente il caso che
+i quattro `compile_fail` della §5.1 esistono per togliere.
+⚠️ **Non dare per scontato `#[cbor(transparent)]`:** può esistere in `minicbor` 2.3.0 e questo
+piano **non l'ha verificato**. Usa la forma sopra, che il repository esercita da tre traguardi, e
+se vuoi l'altra **misurane i byte** prima — è la stessa disciplina con cui il Task 8 del
+Traguardo 3 rifiutò di dettare l'API di `redb` a memoria.
+
+- [ ] **Passo 4: scrivi `crates/kernel/src/wire/mod.rs` e `wire/worker.rs`**
+
+`wire/mod.rs`:
+
+```rust
+//! The schemas of the two private channels, one file each.
+//!
+//! ⛔ SHARING A FOLDER IS NOT SHARING A SCHEMA -- ADR-0035, rule 2. The two schemas are
+//! distinct and so are the two formats, and ADR-0037 measured why: the peers differ. What
+//! they do share is the envelope, and it lives in `crate::framing`.
+//!
+//! ⚠️ `ipc` IS NOT HERE YET: it arrives with task 4, in the format that task 3bis decides.
+
+pub mod worker;
+```
+
+`wire/worker.rs`:
+
+```rust
+//! The schema of the channel towards the workers (§6.10, ADR-0037).
+//!
+//! ⛔ THIS TAKES THE MECHANICS OF `record.rs` AND NOT ITS DISCIPLINE, and §6.10.3 says it in
+//! as many words: no version enum, no register of retired indices, NO FROZEN BYTES. I4 gives
+//! up versioning, and what stands in its place is the build stamp of §6.1.2 -- which this
+//! milestone deliberately does NOT build (§3.4). Until it exists, NOTHING REFUSES A STALE
+//! PEER, and the trigger is the first real worker process (§0.2).
+//!
+//! ⛔ ONE DIRECTION ONLY, worker -> core, AND THE OTHER IS A DECLARED NON-CONSTRUCTION.
+//! Nothing written imposes a core -> worker message today: `instruct_one` and
+//! `instruct_stream` take an opaque `Frame` and no production caller exists. §6.10.4 imposes
+//! exactly these two -- it measures the annotation ON AN AUDIO FRAGMENT and names the VRAM
+//! peak as the field this channel puts into the journal. Inventing a downward vocabulary now
+//! would freeze it against an imaginary consumer -- gotcha #46 from the wrong side, the same
+//! reason §3.4 gives for the stamp. The trigger is the same one.
+```
+
+Il tipo, con le due varianti di **D9**:
+
+```rust
+/// What a worker sends up.
+///
+/// ⛔ EVERY BYTE THAT RISES IS COVERED BY A RECEIPT (§6.10.1). This enum says what is INSIDE
+/// a frame; it never says that a frame may arrive unsolicited -- that one is a FAULT, and the
+/// port already has the word for it, `ProcessError::UnsolicitedFrame`.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub enum FromWorker {
+    /// One fragment of an instructed answer -- an audio chunk, a piece of a stream.
+    ///
+    /// ⛔ THE BYTE-STRING ANNOTATION IS LOAD-BEARING, not decoration, and the same sentence
+    /// sits on `RecordV1::payload`. Without it `minicbor` writes AN ARRAY OF NUMBERS:
+    /// measured in §6.10.4 on a 4096 B audio fragment, 7813 bytes against 4101, 1.91x. It
+    /// compiles, it round-trips, and it is correct -- it costs double the traffic in silence,
+    /// which is why the probe that holds it asserts a SIZE and not the attribute.
+    #[n(0)]
+    Fragment(#[cbor(n(0), with = "minicbor::bytes")] Vec<u8>),
+
+    /// The VRAM peak the work actually reached (§5.2.2).
+    ///
+    /// ⚠️ IT IS THE ONE FIELD THIS CHANNEL PUTS INTO THE JOURNAL, and there it is subject to
+    /// §4.9 -- optional, new index. Here it is not: this schema has no version enum at all.
+    #[n(1)]
+    VramPeak(#[n(0)] Mib),
+}
+```
+
+E le due funzioni, che **passano dalla busta**:
+
+```rust
+impl FromWorker {
+    /// Encodes the message and wraps it in its envelope.
+    pub fn encode(&self) -> Result<Vec<u8>, WireError> {
+        let mut body = Vec::new();
+        let _ = minicbor::encode(self, &mut body);
+        framing::frame(&body)
+    }
+
+    /// Reads a message out of an envelope.
+    ///
+    /// ⛔ TWO CHECKS AND NOT ONE, and they catch different faults: `unframe` catches a frame
+    /// whose length does not match, `position() != body.len()` catches a body that carries a
+    /// complete element AND SOMETHING AFTER IT. A CBOR decoder stops at the first complete
+    /// element; the second check is the line `Record::decode` already carries, and the reason
+    /// is written there -- finding AUD-047.
+    pub fn decode(bytes: &[u8]) -> Result<Self, WireError> {
+        let body = framing::unframe(bytes)?;
+        let mut decoder = minicbor::Decoder::new(body);
+        let message = decoder.decode().map_err(|_| WireError::Malformed)?;
+        if decoder.position() != body.len() {
+            return Err(WireError::Malformed);
+        }
+        Ok(message)
+    }
+}
+```
+
+⚠️ **`let _ = minicbor::encode(...)` non è pigrizia**, ed è la stessa riga di `Record::encode`:
+il doc di quel metodo spiega perché l'errore è irraggiungibile scrivendo su una `Vec<u8>`.
+Rileggilo invece di ricopiarne la ragione qui.
+
+- [ ] **Passo 5: `WireError` guadagna `Malformed` (D11)**
+
+In `crates/kernel/src/framing.rs`. ⛔ **Adesso e non al 3a:** ora ha un produttore.
+
+```rust
+    /// The body did not decode as a message of this channel, or it carried a complete
+    /// element followed by something else. ⚠️ PRODUCED BY THE SCHEMAS, NOT BY THIS MODULE:
+    /// the envelope knows how many bytes there are, never what they mean.
+    Malformed,
+```
+
+- [ ] **Passo 6: lancia i due banchi**
+
+```bash
+cargo test --locked -p kernel --test worker_wire --test framing 2>&1 | tail -8
+```
+
+Atteso: `6 passed` e `5 passed`. ⛔ **Scrivi nel commento della terza sonda il numero vero che
+hai misurato**, con la data — la sonda resta un limite, il numero misurato è un fatto.
+
+- [ ] **Passo 7: le mutazioni di controllo, e sono TRE**
+
+| Mutazione | Deve uccidere |
+|---|---|
+| togli `#[cbor(n(0), with = "minicbor::bytes")]` dal `Fragment` | `the_byte_string_annotation_is_measured_and_not_asserted`, **e nient'altro** |
+| togli il controllo `decoder.position() != body.len()` | `junk_inside_the_declared_length_does_not_decode`, **e non** `a_frame_with_a_tail_does_not_decode` |
+| in `encode`, sostituisci `framing::frame(&body)` con `Ok(body)` | `a_frame_with_a_tail_does_not_decode` e i due round-trip |
+
+⛔ **La seconda riga è l'oracolo che conta, e la sua colonna «e non» è metà dell'asserzione:**
+se togliendo `position()` cadessero **entrambe**, le due sonde non starebbero provando due
+guasti ma uno solo, e uno dei due controlli sarebbe dominato — è il gotcha **#45** applicato
+alle mutazioni, e la §3.2 del disegno afferma proprio che i due guasti hanno **prenditori
+diversi**. Se cadono entrambe, **fermati e scrivi una voce d'errata**: a essere sbagliata è la
+tabella della §3.2, non la tua sonda.
+
+- [ ] **Passo 8: il richiamo datato su `ports/process.rs` (P-7)**
+
+Il paragrafo *«What milestone 2 builds, and what it does not»* dice **`NOT the wire format`**, e
+da questo commit è falso. ⛔ **Si riscrive col proprio richiamo, non si accorcia:** è la forma
+che il gotcha **#76** dichiara e il suo limite — a cambiare è il **fatto**. Nomina il file che
+ora lo porta, `crate::wire::worker`, e lascia in piedi le due clausole che restano vere.
+
+- [ ] **Passo 9: il registro, e il conteggio si RICONTA**
+
+In [`porta-di-qualita.md`](../../porta-di-qualita.md):
+- la riga *«i **byte consumati** pari alla lunghezza dichiarata dal frame — non esiste ancora il
+  canale verso i worker. Traguardo 6»* di *«Cosa la porta NON controlla»* esce dalle scoperte,
+  **col richiamo datato** e non cancellata;
+- la riga di catalogo `Q4 · I5 · §6.10` del livello 2 guadagna la propria cella, con le due
+  direzioni e la mutazione che le tiene.
+
+⛔ **Il numeratore del livello 2 si riconta SUL CATALOGO e non per sottrazione**, delimitando per
+intestazione — è la forma che il registro usa già e che il gotcha **#26** prescrive:
+
+```bash
+awk '/^#### 7\.4\.2/{f=1} /^#### 7\.4\.3/{f=0} f' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md | grep -c '^| '
+```
+
+⚠️ **E il conto deve tornare**: coperte + parziali + scoperte = il totale che il comando dà meno
+l'intestazione. Se non torna, **vince il conteggio** e la divergenza è una voce d'errata.
+
+- [ ] **Passo 10: il cancello, `fmt`, e il cancello dei documenti**
+
+```bash
+cargo fmt --all --check
+bash scripts/gate.sh
+bash scripts/check-docs.sh
+```
+
+- [ ] **Passo 11: commit**
+
+```bash
+git add -A && git commit -m "traguardo 6 (compito 3b): lo schema del canale worker, e l'annotazione di stringa di byte e' tenuta da una MISURA e non dall'attributo -- la direzione core to worker resta una non-costruzione dichiarata"
+```
+
+#### Criterio di chiusura del compito 3
+
+- [ ] `GATE GREEN` a entrambi i commit
+- [ ] il **vincolo 15** della §11 è onorato in tutte e tre le clausole — lunghezza dichiarata,
+      byte consumati verificati, annotazione **sul canale worker** (condizione 6)
+- [ ] la riga di catalogo `Q4 · I5 · §6.10` è chiusa **nelle due direzioni**, e il registro la
+      porta col conteggio **ricontato**
+- [ ] ⛔ la clausola falsa di **P-5** non sopravvive: la riga del vincolo 15 nella §11 del
+      [compendio](../../COMPENDIO.md) esce dalla tabella *«cosa resta davanti»*, e non ci si
+      limita a spostarla — una riga che sparisce non è una riga corretta
+- [ ] la **non-costruzione** della direzione core → worker porta il **proprio innesco**
+      (condizione 9), scritto accanto al codice e non solo qui
+- [ ] il paragrafo di `ports/process.rs` porta il **richiamo datato** (P-7)
+- [ ] nessun byte congelato è nato: §6.10.3 lo vieta, e il banco `frozen_bytes` ha ancora **gli
+      stessi file** — `git status --porcelain crates/kernel/tests/frozen/` è **vuoto**
+
+### Compito 3bis: la misura C-1, e la decisione su §6.1.1
+
+**Files:**
+- Modify: `crates/kernel/Cargo.toml` — il richiamo datato sulla nota C-1
+- Modify: [`riferimenti.md`](../../riferimenti.md) — le fonti, con la data (**D13**)
+- Modify: [`porta-di-qualita.md`](../../porta-di-qualita.md) — la voce, col chiusore
+- Modify (**solo nel caso B**): `Cargo.lock`
+
+⛔ **Questo compito è una RICERCA, e il suo prodotto è una misura datata.** Non scrive codice.
+La §3.5 del disegno dice alla lettera che deciderlo a memoria sarebbe il gotcha **#48**.
+
+⛔ **E c'è un argomento che si rifiuta per nome.** La §8 del [compendio](../../COMPENDIO.md)
+vieta di *«riaprire §6.1.1 tanto ora c'è `minicbor` nel kernel»*: fu **tentato il 2026-08-08 e
+la misura diede torto** — i due canali hanno **pari diversi**. Se durante questo compito ti
+viene in mente quell'argomento, è **già stato scartato**, e riaprirlo pretende una misura nuova
+sul **pari**, non una simmetria. L'unico argomento vivo è **C-1**, che è di specie diversa:
+riguarda la libreria **dalla nostra parte**.
+
+- [ ] **Passo 1: rileggi il finding contro il codice di ADESSO**
+
+È il passo 1 della disciplina dell'audit. La nota C-1 vive nel manifesto, non in una tabella:
+
+```bash
+grep -n "C-1" -A20 crates/kernel/Cargo.toml
+grep -rn "bincode" crates/kernel/src/ crates/kernel/tests/
+```
+
+⚠️ **La nota afferma *«ZERO production uses»*: verificala, non citarla.** Se il secondo comando
+mostra un uso di produzione, la finestra che la nota dice aperta **si è già chiusa**, e questo
+compito cambia di specie — scrivi una voce d'errata prima di proseguire.
+
+- [ ] **Passo 2: la misura, oggi, da fonti primarie**
+
+Due domande, e sono **due**: ADR-0037 chiede del **pari**, C-1 chiede di **noi**.
+
+| | Domanda | Che cosa la risponde |
+|---|---|---|
+| **A** | `bincode` è **ancora** dichiarato non mantenuto? | l'advisory **RUSTSEC-2025-0141** com'è oggi, il repository upstream (ultimo commit, ultima release), la pagina della crate |
+| **B** | esiste un'alternativa **mantenuta** il cui pari **TypeScript** abbia un lettore conforme? | la crate candidata **e** il suo lettore TypeScript, ciascuno con la propria evidenza di manutenzione |
+
+⛔ **La B non si risponde con una lista di nomi.** È la forma di **M-11**: un candidato conta
+solo se **il pari lo legge**, e la §8 del compendio vieta di rifare M-1…M-11 — ma questa è una
+misura **nuova**, non una da rifare. ⚠️ **E il lettore TypeScript ha un precedente scomodo che va
+riletto prima di fidarsi di una promessa di pacchetto:** `bincode-ts` 1.0.0 fu misurato con
+**entrambi i punti d'ingresso pubblicati rotti su Node 24**, e funzionò dietro un bundler. La
+fragilità è dichiarata in §6.10.6 della spec: un pacchetto che *esiste* non è un pacchetto che
+*legge*.
+
+⚠️ **Novità non è maturità**, e il criterio non è «l'ultima uscita»: è ciò che oggi è **corrente
+e mantenuto**.
+
+- [ ] **Passo 3: traccia le fonti in `riferimenti.md`, con la data**
+
+⛔ **D13, e non è la convenzione nuova di `E146`:** le **misure interne** restano in
+[`porta-di-qualita.md`](../../porta-di-qualita.md), le **fonti esterne** vanno qui — è ciò che
+la §12 del compendio chiama *«la provenienza di ciò che non abbiamo dedotto noi, con le date»*.
+Ogni riga porta **l'indirizzo**, la **data di consultazione** e **che cosa dice**, non una
+parafrasi.
+
+- [ ] **Passo 4: il verdetto, e dove si ferma**
+
+| Caso | La misura dice | Che cosa fa questo compito |
+|---|---|---|
+| **A** | `bincode` resta l'unica via — nessuna alternativa mantenuta col lettore del pari, oppure l'advisory è caduto | **decide**: §6.1.1 resta com'è. Il manifesto riceve il **richiamo datato** con la misura, la voce entra nel registro col proprio chiusore, e il compito 4 procede |
+| **B** | esiste un'alternativa mantenuta il cui pari TypeScript ha un lettore conforme | ⛔ **SI FERMA PRIMA DI DECIDERE.** §6.1.1 è **spec**: riaprirla è del proprietario, vincolo globale 7. Scrivi la misura, le **due** opzioni coi costi rimisurati, e portala |
+
+⛔ **La differenza fra i due casi non è la gravità, è che cosa toccano:** il caso A **non tocca
+nessuna sezione**, quindi decidere è dovuto; il caso B ne tocca una approvata. È la forma di
+**AUD-004**, **AUD-036** e **AUD-044**, tutti fermatisi lì. ⚠️ **Fermarsi non è rimandare:** la
+misura è **fatta** ed è il prodotto del compito; ciò che manca è la scelta, che non è
+dell'agente.
+
+- [ ] **Passo 5: il caso B, se e solo se il proprietario decide un cambio**
+
+⛔ **Una dipendenza si aggiunge in DUE passi**, e il cancello passa `--locked` a **tutti** i suoi
+siti `cargo` — quindi il `Cargo.lock` è un **ingresso**:
+
+```bash
+# fuori dal cancello, SENZA --locked
+cargo build --workspace
+# poi manifesto e lockfile insieme, in UN commit
+git add crates/kernel/Cargo.toml Cargo.lock
+```
+
+Toccare il manifesto da solo lascia il cancello **rosso**. È il finding **G-5**, ed è il punto e
+non il prezzo: ADR-0031 chiama l'aggiunta di una voce *«un atto deliberato e rivedibile»*.
+⚠️ **E una voce nuova nella lista di ADR-0031 pretende la propria giustificazione scritta
+accanto**, più la riga corrispondente in `scripts/gate-deps.sh` sul grafo **transitivo** — la
+voce vecchia esce solo se nessuno la usa più.
+
+- [ ] **Passo 6: il cancello e il cancello dei documenti**
+
+```bash
+bash scripts/gate.sh
+bash scripts/check-docs.sh
+```
+
+- [ ] **Passo 7: commit**
+
+```bash
+git add -A && git commit -m "traguardo 6 (compito 3bis): la misura C-1 e' rifatta oggi invece che ricordata -- e la decisione su 6.1.1 e' quella che la misura sostiene, non quella dell'omissione"
+```
+
+#### Criterio di chiusura del compito 3bis
+
+- [ ] la condizione **7** della Definizione di «fatto» è soddisfatta: la decisione C-1 è presa
+      con una **misura odierna**
+- [ ] le fonti stanno in [`riferimenti.md`](../../riferimenti.md) **con la data di
+      consultazione**, e non sono parafrasate
+- [ ] la nota C-1 di `crates/kernel/Cargo.toml` porta il **richiamo datato** — ⛔ **anche nel
+      caso A**: una nota che dice *«decide at milestone 6»* è falsa il giorno dopo che il
+      traguardo ha deciso
+- [ ] la voce entra nella **tabella unica** delle voci aperte del traguardo (condizione 11) se
+      resta aperta, o esce col commit che la chiude
+- [ ] nel **caso B**: manifesto e `Cargo.lock` in **un** commit, e `bash scripts/gate.sh` verde
+      **dopo** — non prima
+- [ ] ⛔ nessuna riga di schema `ipc` è stata scritta: il compito **4** viene dopo, ed è la
+      ragione per cui questo compito esiste

@@ -50,9 +50,12 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
   /anthropic-skills:dev-discipline      governa il codice
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
-  ⛔ IL LAVORO CHE VIENE È CREATIVO, non rimedio: si apre un TRAGUARDO NUOVO,
-     e la sequenza è brainstorming → disegno → piano → esecuzione
-     subagent-driven. ⛔ A CHE PUNTO SIA quella sequenza NON è scritto qui: è
+  ⛔ IL LAVORO CHE VIENE È CREATIVO, non rimedio: si lavora a un TRAGUARDO
+     NUOVO, e la sequenza è brainstorming → disegno → piano → esecuzione
+     subagent-driven. ⚠️ RICHIAMO DEL 2026-08-30: qui stava «si APRE un
+     traguardo nuovo», e il traguardo è aperto dal 2026-08-28 con
+     brainstorming e disegno ormai chiusi: era uno STATO, in un file che
+     due righe più giù dichiara di non portarne. ⛔ A CHE PUNTO SIA quella sequenza NON è scritto qui: è
      uno STATO, e la §6 del compendio ne è la casa unica. Le voci aperte NON
      lo sbarrano — quali, lo dice la tabella unica di
      docs/porta-di-qualita.md, non nominata qui apposta perché un rimando

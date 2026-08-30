@@ -1,6 +1,6 @@
 # Traguardo 6 — gli altri meccanismi: il disegno
 
-⛔ **QUESTO DISEGNO È IN CORSO, e non è una formalità dirlo.** ✅ **QUESTO DISEGNO È COMPLETO DAL 2026-08-30.** Tutte le sezioni sono **approvate** dal
+✅ **QUESTO DISEGNO È COMPLETO DAL 2026-08-30.** Tutte le sezioni sono **approvate** dal
 proprietario, una per volta, e la **§7** fissa la Definizione di «fatto» e chi la verifica. Chi
 riprende ha un disegno intero da tradurre in piano.
 

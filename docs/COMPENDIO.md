@@ -651,13 +651,19 @@ questa riga disse *«cinque sezioni … la 6 e la 7 non sono state nemmeno prese
 **tolta** invece che portata a sei, e oggi non c'è più niente da contare. La casa unica resta
 l'intestazione del disegno (gotcha **#68**). Vive in
 [`superpowers/specs/2026-08-28-…-traguardo-6-altri-meccanismi-design.md`](superpowers/specs/2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md),
-che ne è la casa unica e dichiara di sé di essere **in corso**. ✅ **La condizione per passare a `writing-plans` è CHIUSA il 2026-08-30**, e non era quella che
+che ne è la casa unica e dichiara di sé di essere **completo**. ⚠️ **RICHIAMO DEL 2026-08-30:**
+qui stava *«dichiara di sé di essere in corso»*, ed è diventato falso lo stesso giorno. ✅ **La condizione per passare a `writing-plans` è CHIUSA il 2026-08-30**, e non era quella che
 sembrava. Questa riga diceva *«finché le sezioni mancanti non ci sono»*, e non ce ne sono più;
 poi che a governare fosse la chiusura delle **voci aperte**, e quella regola era
 **insoddisfacibile** — gotcha **#89**, il verbale in [`HANDOFF.md`](HANDOFF.md). ⛔ **A sbarrare
 è la colonna *«Chi la chiude»*** di [`porta-di-qualita.md`](porta-di-qualita.md): una voce il cui
 chiusore è **questo traguardo** va chiusa o portata dal piano, le altre si **sanno**. ⚠️ **Quali
-sbarrino oggi non è scritto qui:** lo dice il comando che vive in quella sezione. ⚠️ **Prima** si legge ciò che il
+sbarrino oggi non è scritto qui:** lo dice il comando che vive in quella sezione.
+⛔ **E ne resta UNO che quel comando NON restituisce, perché non è del Traguardo 5: sta nella
+tabella delle voci del disegno, tocca la §7.4.6 della SPEC, ed è quindi del proprietario**
+(vincolo globale 7). Finché la spec dà per costruito il trasporto reale di `ipc` e `process`, un
+piano scritto contro di essa risulterebbe **mancante di due compiti**. Il numero della voce non è
+ricopiato qui: la tabella si rinumera, un rimando no. ⚠️ **Prima** si legge ciò che il
 Traguardo 5 lascia aperto: la tabella *«Le voci aperte del Traguardo 5»* di
 [`porta-di-qualita.md`](porta-di-qualita.md), casa unica, che dice anche **chi chiude** ciascuna.
 ⚠️ **E ciò che lo sbarra sono decisioni del PROPRIETARIO, dette qui invece che scoperte

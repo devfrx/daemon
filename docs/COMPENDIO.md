@@ -681,11 +681,15 @@ che ne è la casa unica. ⛔ **A che punto sia NON è scritto qui**, ed è il ri
 svista: un numeratore di parti invecchierebbe a ogni scrittura, e il piano lo dichiara di sé
 nella propria intestazione — gotcha **#68**, la stessa cura che la cella del Traguardo 5 ha
 ricevuto due volte.
-📌 **Il suo pre-controllo ha già trovato quattro cose, e due cambiano il prezzo del disegno:**
-aggiungere una variante a `RecordKind` lascia i byte congelati identici ma **non compila**
-finché due match esaustivi non decidono, e il nuovo indice **non è pinzato** — il banco
-dichiara quel limite e la misura lo ha riprodotto; e un campo in `Parameters` rompe **nove**
-casi `compile_fail`, dove il disegno ne conta tre. Le misure vivono nel piano, non qui.
+📌 **Il suo pre-controllo trova qualcosa in ogni parte che viene scritta, e più d'una cambia il
+prezzo del disegno.** ⛔ **RICHIAMO DEL 2026-08-30: qui c'era *«ha già trovato quattro cose, e
+due cambiano il prezzo»*, ed era stantio dopo tre parti scritte.** Il numerale è **tolto e non
+riallineato**, come la §12 fece col peso e la §11 col numeratore dei vincoli: è un cumulativo che
+cresce a ogni parte, e la sua casa unica è la sezione del pre-controllo **dentro il piano**.
+⚠️ **La più grande finora tocca l'artefatto irreversibile** — come una **specie nuova** di record
+durevole entri nel formato — ed è chiusa **con una misura** e non con un argomento. Il racconto,
+le misure e le decisioni vivono nel piano, non qui; ciò che ne è uscito di generale è il gotcha
+**#90** di [`HANDOFF.md`](HANDOFF.md).
 ⛔ **RICHIAMO DEL 2026-08-28: qui e nel riquadro del Traguardo 5 si nominava `E30` come la voce
 che «va decisa prima». È DECISA nel merito, e il nome è TOLTO da entrambe invece che
 riallineato** — quale voce sbarri il traguardo è uno **stato**, e uno stato ha una casa sola.

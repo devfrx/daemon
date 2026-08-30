@@ -51,6 +51,55 @@ dal `payload`. Sono la **D20** e la **D21**.
 alla §3.4 del disegno e diventa una non-costruzione dichiarata. La numerazione della §1.4 è
 tenuta com'è invece di essere compattata, perché il disegno vi rimanda per numero.
 
+### ▶️ Il prossimo passo, in forma eseguibile — 2026-08-30
+
+⛔ **Scrivere la Parte D.** Non si esegue niente: il piano non è finito, e il perché è tre righe
+più su.
+
+| | Che cosa fare | Che cosa leggere **prima**, e nient'altro |
+|---|---|---|
+| 1 | **compito 5** — il contratto del sensore | §5.1 e §5.2 del [disegno](../specs/2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md) (la riga *«§6.4 — il sensore»*), e §6.4, §6.4.1, §6.4.2 della [spec](../specs/2026-08-06-sottoprogetto-1-kernel.md) |
+| 2 | **compito 6** — il decisore e il gettone | §4.1, §4.2 e §4.3 del disegno |
+| 3 | **compito 7** — il permesso | la riga *«§6.6 — il permesso»* di §5.2 del disegno, e §6.6 della spec |
+| 4 | **compito 8** — il degrado | la riga *«§6.7 — il degrado»* di §5.2 del disegno, e §6.7 della spec |
+
+⛔ **E il PRIMO PASSO del compito 6 è una misura, non una scrittura** — lo dice la chiusura di
+**P-11**: la **composizione** di `RecordKind` con una variante nuova **e** di un campo
+facoltativo nuovo che porta il dettaglio è **dedotta** dalle due misure separate, non misurata.
+Si misura come si è misurata la β: **struttura specchio** in un banco usa-e-getta, così nessuno
+dei trentanove siti di costruzione viene toccato, `cmp` contro una copia presa prima, e
+cancellazione nella stessa corsa.
+
+📌 **Ciò che ciascun compito chiude, secondo il disegno — e si riconta sulla §7.4, non si cita:**
+il **5** chiude `V10` (blocco C, livello 1) e porta a ✅ anche `V14` e `Q10`, che oggi lo dicono
+senza averlo; il **6** chiude `Q13` (blocco B); il **7** e l'**8** non chiudono righe proprie.
+⛔ **E quattro righe NON vanno marcate ✅ a fine traguardo** — `V11`, `V21`, `V27`, `Q18` — che è
+la **condizione 12**, l'unica negativa: chiudere troppo è un modo di fallire la Definizione di
+«fatto», non di superarla.
+
+⚠️ **Le decisioni già prese che governano la Parte D** sono la **D20** e la **D21** (la specie
+nuova di record), la **D17** (i derive dove i tipi vivono) e la **D5** (ogni compito rimisura la
+propria baseline). Si leggono nella tabella delle decisioni, non si ridecidono.
+
+**Lo stato del repository alla consegna, misurato il 2026-08-30 e da RIMISURARE, non da citare:**
+ramo `spec/sottoprogetto-1-kernel` **allineato a `origin`** (zero avanti, zero dietro), albero
+**pulito**, **nessuno stash**, nessun file non tracciato · `bash scripts/gate.sh` → **`GATE
+GREEN`** · `cargo test --locked --workspace --no-fail-fast` → **37 bersagli, 267 passate, 0
+fallite, 2 ignorate** · `bash scripts/check-docs.sh` → `OK`.
+⚠️ **Nessun rosso, né ereditato né introdotto**, e la ragione è che le tre parti scritte finora
+**non hanno toccato una riga di prodotto**. Il comando che lo rifà, invece della cifra — se
+nomina qualcosa, la frase è falsa:
+
+```bash
+git diff --name-only a70d563..HEAD -- crates/ scripts/ Cargo.lock
+```
+
+⚠️ **Una cifra dei file toccati NON sta qui, ed è il rimedio e non una svista:** la prima stesura
+di questa riga diceva *«nomina un solo file, questo»*, ed era vera finché non è stata scritta —
+la chiusura della sessione tocca anche [`HANDOFF.md`](../../HANDOFF.md) e
+[`COMPENDIO.md`](../../COMPENDIO.md). Corretta **prima** del commit: è la radice **R1**
+dell'audit, colta dentro la riga che la produce.
+
 ⛔ **Ciò che chi riprende deve sapere sul compito 3bis:** è la **misura C-1**, e pretende una
 ricerca **odierna** — *`bincode` è ancora dichiarato non mantenuto? esiste un'alternativa
 mantenuta il cui pari TypeScript abbia un lettore?* La §3.5 del disegno dice alla lettera che

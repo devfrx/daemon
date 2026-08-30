@@ -260,9 +260,13 @@ pub enum Released {
 ///    they answer `Ok` today. TWO of those inputs are now pinned by probes instead of by a
 ///    paragraph, `a_grant_of_this_arbiter_released_after_its_window_is_not_an_error` at
 ///    5_001 and `a_grant_released_inside_its_window_reports_what_came_back` at 4_999.
-///    ⚠️ THE OTHER TWO ARE HELD BY NOBODY, said rather than left implied: the exact
-///    boundary 5_000, and either side of a revocation grace. No bench releases a grant
-///    under revocation at all -- the probes that revoke never call `release`.
+///    ⚠️ AND WHAT NOBODY HOLDS IS NARROWER THAN THE BOUNDARY: it is `release` AT
+///    5_000. ✅ The boundary ITSELF is held -- measured 2026-08-30, `collect_expired` moved
+///    off `<=` kills `a_grant_is_collected_at_the_instant_its_window_closes` and, in
+///    `daemon`, `a_permanent_grant_survives_to_the_last_instant_of_the_axis_and_is_swept_at_it`.
+///    A release probe at 5_000 would be those two plus the 5_001 one, which is why it was
+///    refused rather than forgotten. ⚠️ The revocation grace is the real gap: no bench
+///    releases a grant under revocation at all.
 /// ③ "NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT" -- half
 ///    spent by ②, and it was right while it stood: a probe written then would have had to
 ///    be DELETED to take the decision, which is a vote against taking it.

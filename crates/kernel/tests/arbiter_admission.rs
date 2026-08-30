@@ -453,16 +453,17 @@ fn a_grant_still_inside_its_window_is_not_collected() {
 /// those two exist to hold.
 ///
 /// ⛔ AND IT WRITES DOWN WHICH SEMANTICS IS THE CHOSEN ONE, because a boundary nobody names
-/// is a boundary somebody later "fixes". `retain(|_, held| held.expires_at > now)` means
-/// that at `now == expires_at` the grant IS ALREADY COLLECTED: the window is HALF-OPEN,
-/// `[start, expiry)`, and a grant is valid up to -- and not including -- the instant it
-/// expires. A choice, not an accident.
+/// is a boundary somebody later "fixes". `collect_expired` drops every grant whose
+/// `expires_at` is `<= now`, so at `now == expires_at` the grant IS ALREADY COLLECTED:
+/// the window is HALF-OPEN, `[start, expiry)`, and a grant is valid up to -- and not
+/// including -- the instant it expires. A choice, not an accident.
 ///
 /// ⚠️ THE CONSEQUENCE THAT IS NOT OBVIOUS, and it is why the choice is worth naming:
 /// `release` collects before it looks, so at `now == expires_at` handing the grant back
 /// answers `Ok(Released::AlreadyCollected)` -- measured 2026-08-30 by moving
 /// `a_grant_of_this_arbiter_released_after_its_window_is_not_an_error` from `5_001` to
-/// `5_000`. ⚠️ AND NO PROBE STANDS THERE: this bench asks at `5_001` and at `4_999`.
+/// `5_000`. ⚠️ AND NO RELEASE PROBE STANDS THERE: the two that hand a grant back ask
+/// at `5_001` and at `4_999`. The probe below DOES stand on `5_000` -- it admits there.
 #[test]
 fn a_grant_is_collected_at_the_instant_its_window_closes() {
     let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));

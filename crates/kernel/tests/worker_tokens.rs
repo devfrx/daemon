@@ -29,8 +29,8 @@ use kernel::time::{Millis, Monotonic};
 /// A grant obtained the only way there is.
 ///
 /// ⛔ ITS ARBITER IS `ArbiterId::new(2)`, AND THE DIFFERENCE FROM `an_arbiter_and_a_real_grant`
-/// BELOW -- which uses `new(1)` -- IS LOAD-BEARING. This helper throws its arbiter away, so a
-/// grant from here can never be redeemed by the arbiter the release probes hold. Give the two
+/// BELOW -- which uses `new(1)` -- IS LOAD-BEARING. This helper throws its arbiter away, and
+/// a grant from here can never be redeemed by the arbiter the release probes hold. Give the two
 /// helpers the SAME identity and a fake that swapped one grant for the other would be
 /// indistinguishable, because `release` compares the ISSUER: measured on 2026-08-30, the
 /// mutation `grant: self.grant` -> `grant: a_real_grant()` in `FakeWorker::kill` survived the

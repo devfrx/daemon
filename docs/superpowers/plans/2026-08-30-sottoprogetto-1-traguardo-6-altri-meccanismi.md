@@ -36,16 +36,16 @@ faccia quel controllo.
 | **A** — la concessione che torna | 1 | ✅ **scritta** il 2026-08-30 |
 | **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
-| **D** — i meccanismi | 5, 6, 7, 8 | ⛔ **SBARRATA il 2026-08-30 — P-11**, e aspetta il proprietario |
+| **D** — i meccanismi | 5, 6, 7, 8 | ⬜ **da scrivere** — è il prossimo, **sbloccata** dalla chiusura di P-11 |
 | **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
 
-⛔ **Perché la D è sbarrata, in tre righe.** I compiti **5**, **6** e **7** devono mettere dati
-**strutturati e nostri** dentro un record durevole, e `RecordV1` non ha una casella per farlo:
-le sue due caselle di contenuto sono assegnate da una decisione scritta — `payload` è *«di
-qualcun altro»*, `reason` è *«testo nostro»*. Le forme coerenti sono **due**, il disegno ne ha
-scelta una alla §4.3 senza discutere l'altra, e il formato durevole è **l'unico artefatto
-irreversibile del progetto**. ⛔ **Non si delega a un compito**, e non si sceglie scrivendo il
-piano: il dettaglio, con le misure delle due forme, è in **P-11**.
+✅ **La D è stata sbarrata e sbloccata lo stesso giorno, e il verbale è P-11.** I compiti **5**,
+**6** e **7** devono mettere dati **strutturati e nostri** dentro un record durevole, e
+`RecordV1` non aveva una casella per farlo. ⛔ **La risposta non era nessuna delle due che
+sembravano esserci**, e a trovarla è stata una **misura**: un campo facoltativo da solo lascia
+un lettore vecchio leggere il record **e perderne la sostanza in silenzio**, quindi la specie
+nuova sta nel `kind` — che fa **fermare** quel lettore — e il dettaglio in un campo nuovo, fuori
+dal `payload`. Sono la **D20** e la **D21**.
 
 ⚠️ **Il compito 2 non c'è, e non è un buco:** il timbro di build è **uscito** dal perimetro
 alla §3.4 del disegno e diventa una non-costruzione dichiarata. La numerazione della §1.4 è
@@ -382,6 +382,46 @@ i compiti **8** (il degrado, che si **ricalcola** e non si scrive) e **9** (la c
 toccano il formato; e il compito 5 può essere scritto **fino al contratto del sensore** — è
 l'**anello** che giornala, non il tratto.
 
+#### ✅ P-11 È CHIUSA IL 2026-08-30, E LA MISURA HA DATO UNA TERZA RISPOSTA
+
+⛔ **Il proprietario ha rimandato la scelta ai criteri, e il primo criterio è la correttezza
+verificata: la β non era misurata per questo caso, quindi si è misurata prima di scegliere.**
+Sonda usa-e-getta in `crates/kernel/tests/`, con una **struttura specchio** di `RecordV1` — così
+nessuno dei trentanove siti di costruzione è stato toccato — compilata, letta e **cancellata
+nella stessa corsa**. `record.rs` verificato **byte-identico** con `cmp` contro una copia presa
+prima, albero pulito, baseline invariata a **37 bersagli, 267 passate, 0 fallite, 2 ignorate**.
+
+| Domanda | Esito misurato |
+|---|---|
+| il campo facoltativo a indice 5 con un **enum annidato versionato** è additivo? | ✅ **sì** — `None` dà **byte identici** al tipo a cinque campi, `85 00 01 00 43 01 02 03 63 77 68 79` in entrambi. Il `None` in coda viene **troncato**, non scritto |
+| e con `Some`? | ✅ da 12 a **18** byte: l'intestazione d'array passa `85` → `86` e in coda arriva `82 00 81 82 07 09` — cioè il dettaglio porta la **propria busta di versione**, la stessa forma di `Record` |
+| un record **vecchio** a cinque campi si legge col tipo a sei? | ✅ **sì** |
+| ⛔ un record **nuovo** con `Some` si legge col tipo a **cinque**? | ⛔ **SÌ, E QUESTA È LA NOTIZIA:** un build che non conosce il campo decodifica il record **con successo** e perde il dettaglio **in silenzio** |
+
+⛔ **La quarta riga decide, e non era in nessuna delle due opzioni.** Sotto la **α** un build che
+non conosce la variante nuova di `RecordKind` **non decodifica affatto** — `RecordError::Malformed`,
+e la riconciliazione risponde `SuspendAndAsk`: *si ferma invece di indovinare*, ed è la
+direzione che il doc di `RecordKind` dichiara **sicura**. Sotto la **β nuda**, lo stesso build
+legge il record, lo crede intero, e **butta la sostanza**. Per un record di **permesso** significa
+che la proiezione *«quali permessi sono attivi ora»* risponde con una verità parziale senza che
+nulla lo dica: è il **degrado silenzioso** che ADR-0005 e ADR-0019 vietano.
+
+📌 **E dalla misura esce anche il perché la regola 3 non basta da sola:** *«un campo nuovo è
+facoltativo»* è pensata per un'**aggiunta** — un campo la cui assenza non cambia che cosa il
+record è. Ciò che i compiti 5, 6 e 7 devono scrivere non è un'aggiunta a una specie esistente: è
+una **specie nuova**. Portarla in un campo facoltativo usa il meccanismo contro la sua ragione,
+e la misura mostra esattamente come.
+
+✅ **La scelta è quindi la COMPOSIZIONE, ed è la D20** — variante nuova di `RecordKind` **e**
+dettaglio in un campo facoltativo nuovo: la variante fa **fermare** il lettore vecchio, il campo
+tiene i byte **fuori dal `payload`**, che resta *«di qualcun altro»*.
+
+⚠️ **Ciò che NON è misurato, dichiarato:** la **composizione** dei due — un record con `kind`
+nuovo **e** `detail: Some` — è **dedotta** dalle due misure, che toccano punti indipendenti della
+codifica (l'indice della variante nel campo 0, il campo in coda). Si misura **come primo passo
+del compito 6**, prima di scrivere: è la stessa disciplina che questa voce ha appena applicato a
+sé stessa.
+
 ---
 
 ## Le decisioni prese da questo piano
@@ -396,7 +436,7 @@ misura che le smentisce — è ciò per cui esiste l'errata.
 | **D3** | ⛔ **`ArbiterId` NON è `pub`-costruibile da un letterale di tupla:** campo privato più `ArbiterId::new(u64)` pubblico | è un **parametro consegnato** (ADR-0034), quindi `daemon` deve poterlo costruire; ma la forma `ArbiterId(0)` da qualunque crate rifarebbe il difetto che **AUD-050** ha misurato su `RecordV1` — una guardia vale quanto il suo costruttore |
 | **D4** | l'ordine dei compiti è **quello della §1.4 del disegno**, e il **3bis** resta prima del **4** | scrivere lo schema `ipc` in `bincode` **è** la decisione C-1 presa per omissione (§3.5). Invertirli la prende senza accorgersene |
 | **D5** | ogni compito **rimisura la propria baseline** con `cargo test --locked --workspace --no-fail-fast` e non cita quella scritta qui | una baseline citata invecchia a ogni compito — gotcha **#31**. Quella di partenza sta scritta **una volta sola**, qui sotto |
-| **D6** | ⛔ **il compito 6 congela un QUARTO record**, non solo una variante | P-2: senza, il nuovo indice di filo è tenuto da nulla, e il compilatore non lo dice |
+| **D6** | ⛔ **il compito 6 congela un QUARTO record**, non solo una variante | P-2: senza, il nuovo indice di filo è tenuto da nulla, e il compilatore non lo dice. ⚠️ **RICHIAMO DEL 2026-08-30: questa riga non diceva CHE COSA il quarto record debba portare, e la chiusura di P-11 ha misurato che con `detail: None` non pinzerebbe niente. La precisa la D21**, che la sostituisce nel merito — la riga resta perché il *quando* (il compito 6) non è cambiato |
 | **D7** | le mutazioni si provano **una alla volta**, si compila in un passo **separato** dall'eseguire, e si revoca **ripristinando da una copia presa prima** | gotcha **#48**, la trappola più frequente del progetto: una revoca che deve *cercare* può fallire e lasciare il file mutato — successo al Task 8 del Traguardo 5, sette misure buttate |
 | **D8** | ⛔ **lo schema del canale worker vive in `crates/kernel/src/wire/worker.rs`, e `wire/mod.rs` nasce al compito 3 — non al 4** | P-6: il disegno non lo colloca, ma cita il precedente che risponde. §6.10.3 dice *«la porta scambia byte … **come `journal` dopo ADR-0036**»*, e lì lo schema vive in `record.rs`, **fuori dalla porta**. Mettere il corpo dentro `ports/process.rs` rifarebbe la mescolanza che ADR-0036 ha tolto al giornale. ⚠️ **Non è un modo nuovo:** è quello che il progetto usa già |
 | **D9** | ⛔ **il corpo del canale worker porta UNA direzione sola — worker → core — e DUE varianti**, `Fragment(Vec<u8>)` e `VramPeak(Mib)` | sono le **sole** che qualcosa di scritto impone: §6.10.4 misura l'annotazione **su un frammento audio da 4096 B** e dichiara che *«il campo che questo canale fa entrare nel giornale è il **picco di VRAM** di §5.2.2: arriva dal worker»*. ⛔ **La direzione core → worker non è imposta da nessuna riga, quindi NON si costruisce** — è la stessa postura della §6.1 del disegno (*«il meccanismo è dovuto per iscritto, il vocabolario no»*), e la non-costruzione porta il **proprio innesco**, come la condizione **9** pretende |
@@ -410,6 +450,8 @@ misura che le smentisce — è ciò per cui esiste l'errata.
 | **D17** | i derive del formato si aggiungono **dove i tipi vivono**, mai in tipi specchio dentro `wire/` | un tipo specchio è **una seconda definizione dello schema**, ed è la cosa che ADR-0037 rifiuta per il decodificatore del pari — con la differenza che lì sbaglia in silenzio *fuori*, qui sbaglierebbe in silenzio *dentro*: due definizioni si allineano finché qualcuno se ne ricorda, e nulla diventa rosso quando smette. ⚠️ Il prezzo è P-10, ed è dichiarato invece che evitato |
 | **D18** | ⛔ **il compito 4 NON dà per scontata l'API del formato** | verificato nel repository: le due chiamate di `bincode` — `encode_to_vec(v, config::standard())` e `decode_from_slice(&b, config) -> (T, usize)` — sono esercitate da `crates/kernel/tests/dependencies_usable.rs`, che le prova **girando**; **il derive no**, nessuna riga del workspace lo usa. Si verifica con una **sonda usa-e-getta** compilata e cancellata nella stessa corsa, o leggendo la sorgente vendorizzata. È il precedente del Task 8 del Traguardo 3, dove il piano **rifiutò di dettare l'API di `redb`**: dettarla a memoria produce codice *plausibile e falso* |
 | **D19** | ⚠️ **il compito 4 non chiude NESSUNA riga di catalogo, e va scritto** | misurato: nessuna riga di §7.4.1 o §7.4.2 nomina §6.1 — `awk '/^#### 7\.4\.1/{f=1} /^#### 7\.4\.3/{f=0} f' <spec> \| grep '§6\.1'` non rende niente. Ciò che il compito 4 produce è il **meccanismo** che rende chiudibile `E152` al compito **9**, e il gettone `Q13` è del compito **6**. ⛔ **Un compito che non muove un numeratore è quello su cui si è più tentati di scrivere che l'ha mosso**, ed è la specie di affermazione che la radice **R1** produce |
+| **D20** | ⛔ **UNA SPECIE NUOVA DI RECORD È UNA VARIANTE NUOVA DI `RecordKind` _PIÙ_ UN CAMPO FACOLTATIVO NUOVO PER IL SUO DETTAGLIO** — mai l'una senza l'altro, e mai byte nostri nel `payload` | è la chiusura di **P-11**, misurata. **La variante** serve perché un lettore che non la conosce **non decodifica** e la riconciliazione risponde `SuspendAndAsk` — si ferma invece di indovinare; **il campo** serve perché il `payload` è *«di qualcun altro»* per decisione scritta, e infilarci il nostro CBOR riaprirebbe il difetto chiuso il 2026-08-10 separando `reason`. ⛔ **E il campo da solo non basta, misurato:** un record con `Some` si legge **anche** col tipo che non conosce il campo, che perde la sostanza **in silenzio**. ⚠️ **Il costo, dichiarato:** un campo nuovo rompe i **trentanove** siti di costruzione di `RecordV1` in undici file, **tre** dei quali sono casi `compile_fail` i cui `.stderr` vanno riletti uno per uno (vincolo 10 della §11) — è **P-4 in un'altra casa**, e si paga **una volta sola** perché le tre specie condividono il campo |
+| **D21** | ⛔ **il quarto record congelato porta ENTRAMBE le cose insieme** — `kind` nuovo **e** `detail: Some` | un record congelato con `detail: None` non pinza **niente** dell'indice nuovo, perché un `None` in coda **non viene scritto**: misurato, i byte sono identici a quelli del tipo che il campo non ce l'ha. È la terza riga di **P-2** — *«il nuovo indice non è pinzato»* — che vale **due volte** qui, e un solo record congelato le chiude entrambe. ⚠️ Sostituisce la **D6**, che diceva *«un quarto record»* senza dire **che cosa** dovesse portare |
 
 **La baseline di partenza, misurata il 2026-08-30 e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `cargo test --locked --workspace --no-fail-fast` →

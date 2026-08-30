@@ -36,7 +36,7 @@ faccia quel controllo.
 | **A** — la concessione che torna | 1 | ✅ **scritta** il 2026-08-30 |
 | **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
-| **D** — i meccanismi | 5, 6, 7, 8 | ▶️ **pre-controllo scritto** il 2026-08-30 — P-12…P-15 — e i **compiti** aspettano **una voce del proprietario**: quante varianti di `RecordKind` la Parte D apre |
+| **D** — i meccanismi | 5, 6, 7, 8 | ▶️ **pre-controllo scritto e voce CHIUSA** il 2026-08-30 — P-12…P-15, e la **D22**: tre varianti, tre record congelati. I quattro compiti si scrivono adesso |
 | **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
 
 ✅ **La D è stata sbarrata e sbloccata lo stesso giorno, e il verbale è P-11.** I compiti **5**,
@@ -53,15 +53,16 @@ tenuta com'è invece di essere compattata, perché il disegno vi rimanda per num
 
 ### ▶️ Il prossimo passo, in forma eseguibile — 2026-08-30
 
-⛔ **Il pre-controllo della Parte D è SCRITTO, e i quattro compiti sono FERMI su una voce del
-proprietario** — quante varianti di `RecordKind` la Parte D apre. La voce sta in fondo al
-pre-controllo, con la misura che la circonda. ⚠️ **RICHIAMO DEL 2026-08-30: qui stava *«Scrivere
-la Parte D»* nudo**, ed era vero prima che il pre-controllo trovasse **P-12**.
+⛔ **Scrivere i quattro compiti della Parte D.** Il pre-controllo è scritto — P-12…P-15 — e la
+voce che sbarrava è **chiusa dalla D22**: tre varianti di `RecordKind`, tre record congelati.
+⚠️ **RICHIAMO DEL 2026-08-30, due volte nello stesso giorno:** qui stava *«Scrivere la Parte D»*
+nudo, poi *«i compiti sono FERMI su una voce del proprietario»*. La prima era vera prima che il
+pre-controllo trovasse **P-12**, la seconda finché la voce era aperta.
 
 ⛔ **Non si esegue niente comunque:** il piano non è finito, e il perché è tre righe più su.
 
-📌 **Quando la voce sarà chiusa, i quattro compiti si scrivono in quest'ordine**, e ciascuno
-legge quello che la sua riga nomina **e nient'altro**:
+📌 **I quattro compiti si scrivono in quest'ordine**, e ciascuno legge quello che la sua riga
+nomina **e nient'altro**:
 
 | | Che cosa fare | Che cosa leggere **prima**, e nient'altro |
 |---|---|---|
@@ -663,6 +664,47 @@ pagano **una volta sola** qualunque sia il conto delle varianti.
 
 ---
 
+#### ✅ LA VOCE È CHIUSA IL 2026-08-30 — TRE VARIANTI, E A DECIDERE SONO STATI DUE CRITERI SU CINQUE
+
+⛔ **Il proprietario ha rimandato ai criteri di `decision-principles`, con l'accettazione
+condizionata che quella skill definisce:** *«vale finché la condizione regge — se eseguendo
+scopri che la strada raccomandata li viola, l'accettazione decade»*. I criteri sono stati
+applicati **in ordine di precedenza**, e la risposta non è arrivata dal primo.
+
+| | Criterio | Che cosa dice **su questa** scelta |
+|---|---|---|
+| 1 | **correttezza verificata** | ⛔ **decisivo contro la variante generica.** La sicurezza della **A** è **misurata** — P-15, riga 4: il lettore vecchio si ferma con `unknown enum variant 3 at position 4`. Quella della variante generica poggia su una **deduzione** che nessuno ha misurato: che una *specie* sconosciuta **dentro** il `detail` faccia fallire la decodifica allo stesso modo. Stesso meccanismo, sì — ma *«plausibile»* non è *«misurato»*, ed è la prima cosa che questo criterio rifiuta |
+| 2 | **coerenza** | ⛔ **decisivo, e il progetto ha GIÀ RISPOSTO a questa domanda dentro QUESTO enum.** Al Task 7 del Traguardo 3 la promozione *«non è un secondo intento, è una **TERZA COSA**»*, e la risposta fu **una variante nuova di `RecordKind`** — `Note` — non un discriminante nascosto in un campo. Una specie nella busta e una dentro il `detail` sarebbero **due modi** di fare la stessa cosa, che è ciò che questo criterio vieta per nome |
+| 3 | **zero debito futuro** | tre indici che non si ritirano mai sono un costo **dichiarato e deliberato** (regola 4 di §4.9.2, ADR-0036), non debito. La variante generica invece porta debito **silenzioso**: una specie aggiunta domani **non costringe nessun lettore a passarle davanti**, perché il `match` esaustivo su `RecordKind` non cresce più |
+| 4 | **stato dell'arte** | non discrimina: il comportamento su cui poggia tutto è di `minicbor` 2.3.0, ed è stato **misurato oggi** |
+| 5 | **proporzione** | ⚠️ **è il criterio che ha quasi salvato lo scaglionamento del verdetto**, e la ragione per cui non lo salva sta sotto. Nessuna delle tre varianti è speculativa: ciascuna ha una **riga scritta** che la impone, e nessuna serve *«un caso d'uso che nessuno ha chiesto»* |
+
+⛔ **La terza riga era quella che il pre-controllo dava per NON forzata, e a forzarla è la §6.4.2
+della spec**, letta di nuovo invece che ricordata: *«l'anello raccoglie il verdetto, apre un passo
+nuovo (V14) **e vi porta il dettaglio**»*. Il dettaglio deve dunque avere una casa **in questo
+traguardo**, e le case possibili sono due e cadono entrambe:
+
+| Via | Perché cade |
+|---|---|
+| il dettaglio in `reason` | `reason` è *«ours and is always UTF-8»*, e il verdetto è **strutturato** — `(verdetto, dettaglio, costo speso)`, tre componenti. E per un sensore **inferenziale** il dettaglio è uscita di modello, cioè `payload` con `Trust::Untrusted`, non `reason` |
+| il dettaglio nell'`Intent` del passo nuovo | il dubbio si risolverebbe bene, **ma il verdetto sparirebbe in silenzio** per un lettore vecchio — misura **3** di P-15. È la stessa perdita che rende necessaria la variante per il permesso, e la stessa che ADR-0005 e ADR-0019 chiamano **degrado silenzioso** |
+
+⚠️ **E QUESTA È UNA LETTURA, NON UNA MISURA, e va detto invece che nascosto dietro le altre
+quattro righe che lo sono.** Che *«vi porta il dettaglio»* obblighi a un record proprio dipende da
+come si legge quella frase della §6.4.2. ⛔ **Se il proprietario la legge altrimenti, la terza
+variante decade e torna la via dello scaglionamento** — `V14` e `Q10` andrebbero allora riletti
+per verificare che si chiudano davvero senza il dettaglio strutturato, e il *costo speso* di
+§6.4.1 resterebbe senza casa con un innesco dichiarato. **Le prime due varianti non dipendono da
+questa lettura.**
+
+📌 **E il fatto che le tre siano indistinguibili alla RICONCILIAZIONE non è un difetto, che è
+l'obiezione da rispondere prima che qualcuno la faccia.** Tutte e tre sono *«né apre né chiude un
+dubbio»*, quindi in `crates/kernel/src/reconcile.rs` prendono **tre arm vuoti** come `Note`. Ma il
+dubbio riguarda **gli effetti**, non i fatti registrati **su** un passo: a distinguerle sono i
+**loro** consumatori — la proiezione dei permessi del compito 7 e la contabilità del compito 6 —
+e per quelli la discriminazione a livello 1 è ciò che evita di decodificare il `detail` di **ogni**
+record per sapere se interessa.
+
 ---
 
 ## Le decisioni prese da questo piano
@@ -693,6 +735,9 @@ misura che le smentisce — è ciò per cui esiste l'errata.
 | **D19** | ⚠️ **il compito 4 non chiude NESSUNA riga di catalogo, e va scritto** | misurato: nessuna riga di §7.4.1 o §7.4.2 nomina §6.1 — `awk '/^#### 7\.4\.1/{f=1} /^#### 7\.4\.3/{f=0} f' <spec> \| grep '§6\.1'` non rende niente. Ciò che il compito 4 produce è il **meccanismo** che rende chiudibile `E152` al compito **9**, e il gettone `Q13` è del compito **6**. ⛔ **Un compito che non muove un numeratore è quello su cui si è più tentati di scrivere che l'ha mosso**, ed è la specie di affermazione che la radice **R1** produce |
 | **D20** | ⛔ **UNA SPECIE NUOVA DI RECORD È UNA VARIANTE NUOVA DI `RecordKind` _PIÙ_ UN CAMPO FACOLTATIVO NUOVO PER IL SUO DETTAGLIO** — mai l'una senza l'altro, e mai byte nostri nel `payload` | è la chiusura di **P-11**, misurata. **La variante** serve perché un lettore che non la conosce **non decodifica** e la riconciliazione risponde `SuspendAndAsk` — si ferma invece di indovinare; **il campo** serve perché il `payload` è *«di qualcun altro»* per decisione scritta, e infilarci il nostro CBOR riaprirebbe il difetto chiuso il 2026-08-10 separando `reason`. ⛔ **E il campo da solo non basta, misurato:** un record con `Some` si legge **anche** col tipo che non conosce il campo, che perde la sostanza **in silenzio**. ⚠️ **Il costo, dichiarato:** un campo nuovo rompe **ogni** sito di costruzione di `RecordV1`, e i casi `compile_fail` che ne costruiscono uno hanno i `.stderr` da rileggere uno per uno (vincolo 10 della §11) — è **P-4 in un'altra casa**, e si paga **una volta sola** perché le tre specie condividono il campo. ⛔ **RICHIAMO DEL 2026-08-30: qui stavano *«trentanove siti in undici file, tre dei quali `compile_fail`»*, ed erano il `grep` GREZZO.** Riletto intero è **ventisei in nove**, i `compile_fail` sono **due**, e le tredici righe escluse non sono lavoro zero — **P-13**. **Le cifre sono TOLTE e non riallineate:** il comando che le rifà vive in P-13, in una casa sola |
 | **D21** | ⛔ **NASCE UN RECORD CONGELATO NUOVO PER OGNI VARIANTE NUOVA DI `RecordKind`, e ciascuno porta ENTRAMBE le cose insieme** — il proprio `kind` nuovo **e** `detail: Some` | un record congelato con `detail: None` non pinza **niente** dell'indice nuovo, perché un `None` in coda **non viene scritto**: misurato. È la terza riga di **P-2** — *«il nuovo indice non è pinzato»* — che vale **due volte** qui. ⛔ **RICHIAMO DEL 2026-08-30: questa riga diceva *«il QUARTO record congelato»*, al singolare, e la D20 accanto dichiara TRE specie.** Il singolare veniva da **P-2**, che misurò su **una** variante sola; con tre e un record solo il traguardo consegna **due** indici di filo tenuti da nulla, e **nessun cancello lo dice** — l'array di `frozen_bytes.rs` è scritto a mano e il banco dichiara di sé quel limite. **P-12**. 📌 **Regola e non numerale**, perché resta vera qualunque sia il conto (gotcha **#68**). ✅ **E la metà additiva NON è affar loro, misurato in P-15:** i **tre** record di oggi la tengono da soli — ricodificati dal tipo nuovo con `detail: None` devono restare a 21 byte — quindi al record nuovo tocca **l'altra** metà. ⚠️ Sostituisce la **D6**, che diceva *«un quarto record»* senza dire **che cosa** dovesse portare |
+
+| **D22** | ⛔ **LA PARTE D APRE TRE VARIANTI DI `RecordKind` — `Routing`, `Permission`, `Verdict` — E CON ESSE NASCONO TRE RECORD CONGELATI**, il quarto, il quinto e il sesto | è la chiusura della voce che **P-12** apre, decisa dal proprietario **rimandando ai criteri** e presa applicandoli in ordine. **Due** hanno deciso: la **correttezza verificata**, perché la sicurezza di questa forma è quella che **P-15 ha misurato** mentre l'alternativa poggia su una deduzione; e la **coerenza**, perché il progetto ha già risposto a questa domanda **dentro questo enum** — `Note` nacque variante propria al Traguardo 3, non discriminante nascosto in un campo. ⚠️ **La terza variante dipende da una LETTURA e non da una misura**, dichiarata nel verbale: §6.4.2 dice che l'anello *«apre un passo nuovo e **vi porta il dettaglio**»*. Il verbale, i cinque criteri e le due vie scartate stanno in fondo al pre-controllo |
+| **D23** | ⛔ **le tre varianti prendono TRE ARM VUOTI in `reconcile.rs`, come `Note`**, e la frase che lo giustifica si scrive accanto | il dubbio di ADR-0007 riguarda **gli effetti** — un passo con intento e senza esito — non i **fatti registrati su** un passo. Nessuna delle tre apre o chiude un dubbio. ⛔ **E l'arm vuoto NON è una scorciatoia:** il doc di `Note` argomenta già il proprio, e le due altre risposte *«furono MISURATE prima»*. Chi scrive i tre arm ripete quella misura per la propria variante invece di ereditarne la conclusione — è il **#65** applicato a un precedente |
 
 **La baseline di partenza, misurata il 2026-08-30 e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `cargo test --locked --workspace --no-fail-fast` →

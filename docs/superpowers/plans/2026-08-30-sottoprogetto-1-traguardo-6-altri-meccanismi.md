@@ -36,7 +36,7 @@ faccia quel controllo.
 | **A** — la concessione che torna | 1 | ✅ **scritta** il 2026-08-30 |
 | **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
-| **D** — i meccanismi | 5, 6, 7, 8 | ▶️ **in scrittura.** Pre-controllo e voce **chiusa** — P-12…P-15, D22. **5 e 6 scritti**; restano **7 e 8** |
+| **D** — i meccanismi | 5, 6, 7, 8 | ✅ **scritta** il 2026-08-30 — pre-controllo P-12…P-15, voce chiusa dalla **D22**, e i quattro compiti |
 | **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
 
 ✅ **La D è stata sbarrata e sbloccata lo stesso giorno, e il verbale è P-11.** I compiti **5**,
@@ -53,13 +53,14 @@ tenuta com'è invece di essere compattata, perché il disegno vi rimanda per num
 
 ### ▶️ Il prossimo passo, in forma eseguibile — 2026-08-30
 
-⛔ **Scrivere i compiti 7 e 8.** Il pre-controllo è scritto — P-12…P-15 — la voce che sbarrava è
-**chiusa dalla D22**, e i **compiti 5 e 6 sono scritti**.
-⚠️ **RICHIAMO DEL 2026-08-30, quattro volte nello stesso giorno:** qui stava *«Scrivere la Parte
+⛔ **Scrivere la PARTE E** — i compiti **9** (`E152`, la campagna) e **10** (la chiusura, che è un
+**audit** e non una scrittura). La Parte D è **chiusa**: pre-controllo P-12…P-15, voce chiusa
+dalla **D22**, e i quattro compiti scritti.
+⚠️ **RICHIAMO DEL 2026-08-30, cinque volte nello stesso giorno:** qui stava *«Scrivere la Parte
 D»* nudo, poi *«i compiti sono FERMI su una voce del proprietario»*, poi *«scrivere i quattro
-compiti»*, poi *«6, 7 e 8»*. È la riga che invecchia più in fretta del file, e si riscrive
-**quando il passo si chiude** — mai appendendoci sotto un capoverso senza toccarla, che è la
-forma del gotcha **#31** che questo file ha già visto quattro volte su quattro.
+compiti»*, poi *«6, 7 e 8»*, poi *«7 e 8»*. È la riga che invecchia più in fretta del file, e si
+riscrive **quando il passo si chiude** — mai appendendoci sotto un capoverso senza toccarla, che
+è la forma del gotcha **#31** che questo file ha già visto quattro volte su quattro.
 
 ⛔ **Non si esegue niente comunque:** il piano non è finito, e il perché è tre righe più su.
 
@@ -70,8 +71,8 @@ nient'altro**:
 |---|---|---|
 | 1 | ~~**compito 5** — il contratto del sensore~~ | ✅ **scritto** il 2026-08-30, in tre commit |
 | 2 | ~~**compito 6** — il decisore e il gettone~~ | ✅ **scritto** il 2026-08-30, in due commit |
-| 3 | **compito 7** — il permesso | la riga *«§6.6 — il permesso»* di §5.2 del disegno, e §6.6 della spec |
-| 4 | **compito 8** — il degrado | la riga *«§6.7 — il degrado»* di §5.2 del disegno, e §6.7 della spec |
+| 3 | ~~**compito 7** — il permesso~~ | ✅ **scritto** il 2026-08-30 |
+| 4 | ~~**compito 8** — il degrado~~ | ✅ **scritto** il 2026-08-30 |
 
 ⛔ **E i compiti 6 e 7 ereditano il campo `detail` dal 5 (D24): aggiungono la PROPRIA variante di
 `RecordKind`, la propria variante di `Detail` e il proprio record congelato, e nient'altro del
@@ -3679,3 +3680,513 @@ git commit -m "feat(gateway): il record di routing risolto entra nel formato, e 
 - [ ] ⛔ nessun modello è invocato da nessuna parte: `grep -rn "provider\|adapter" crates/kernel/src/gateway/` non nomina nessuna chiamata
 - [ ] la voce dell'**aiutante degli scrittori** è aggiornata a **quattro**, col richiamo datato, e **non** è stata chiusa
 - [ ] i fine-riga di ogni file toccato sono stati **rimisurati**
+
+### Compito 7: §6.6 — il permesso è una tripla, e «quali sono attivi ora» è una PROIEZIONE
+
+**Files:**
+- Create: `crates/kernel/src/permission.rs` — `Permission`, `Operation`, `grant`, `is_granted`
+- Modify: `crates/kernel/src/lib.rs` — il `pub mod permission;`
+- Modify: `crates/kernel/src/record.rs` — `RecordKind::Permission`, `Detail::Permission`, `PermissionDetail`
+- Modify: `crates/kernel/src/reconcile.rs` — l'arm della variante nuova (**D23**)
+- Modify: `crates/kernel/tests/frozen_bytes.rs` — l'array a mano, e il **sesto** record congelato
+- Create: `crates/kernel/tests/frozen/record_v1_permission.cbor` — ⛔ **irreversibile**
+- Modify: `crates/kernel/tests/frozen/record_v1.map`
+- Create: `crates/kernel/tests/permission_triple.rs`
+- Modify: [`porta-di-qualita.md`](../../porta-di-qualita.md)
+
+⛔ **Il campo `detail` c'è già (D24).** Questo compito aggiunge la propria variante, la propria
+specie di dettaglio e il proprio record congelato.
+
+- [ ] **Passo 1: scrivi le sonde, e le direzioni sono TRE perché i componenti sono tre**
+
+⛔ **Questa è la sonda che la §6.6 esiste per pretendere** — *«forma `(strumento × risorsa ×
+operazione)` — **mai «lo strumento»**»* — e una sola asserzione non la prova: bisogna far variare
+**ciascuno** dei tre componenti, uno per volta, contro una tripla concessa.
+
+`crates/kernel/tests/permission_triple.rs`, file nuovo — ⛔ **da FUORI la crate**:
+
+```rust
+//! §6.6 — a permission is a TRIPLE, and "which permissions are active now" is a PROJECTION of
+//! the journal, never a second archive (gotcha #7 applied to permissions).
+
+use kernel::permission::{grant, is_granted, Operation, Permission};
+use kernel::ports::journal::StepId;
+use simulator::journal::MemoryJournal;
+
+const READ_A: Permission = Permission {
+    tool: "file",
+    resource: "/a",
+    operation: Operation::Read,
+};
+
+#[test]
+fn a_granted_triple_is_granted() {
+    let mut journal = MemoryJournal::new();
+    grant(&mut journal, StepId::new(1), &READ_A).expect("grant");
+    assert!(is_granted(&journal, &READ_A).expect("project"));
+}
+
+#[test]
+fn a_different_OPERATION_is_not_covered() {
+    let mut journal = MemoryJournal::new();
+    grant(&mut journal, StepId::new(1), &READ_A).expect("grant");
+    let write_a = Permission {
+        operation: Operation::Write,
+        ..READ_A
+    };
+    assert!(!is_granted(&journal, &write_a).expect("project"));
+}
+
+#[test]
+fn a_different_RESOURCE_is_not_covered() {
+    let mut journal = MemoryJournal::new();
+    grant(&mut journal, StepId::new(1), &READ_A).expect("grant");
+    let read_b = Permission {
+        resource: "/b",
+        ..READ_A
+    };
+    assert!(!is_granted(&journal, &read_b).expect("project"));
+}
+
+#[test]
+fn a_different_TOOL_is_not_covered() {
+    // ⛔ THIS IS THE ONE §6.6 NAMES OUT LOUD -- "never «the tool»". Granting `(file, /a, read)`
+    // must not grant `(net, /a, read)`, and the three probes together are what makes the triple
+    // a triple rather than a struct with three fields nobody compares.
+    let mut journal = MemoryJournal::new();
+    grant(&mut journal, StepId::new(1), &READ_A).expect("grant");
+    let net_a = Permission {
+        tool: "net",
+        ..READ_A
+    };
+    assert!(!is_granted(&journal, &net_a).expect("project"));
+}
+
+#[test]
+fn nothing_is_granted_on_an_empty_journal() {
+    // ⛔ THE NON-VACUITY PROBE, and it is not decoration: without it a projection that answered
+    // `true` to everything would pass three of the four probes above -- no, it would pass ONE,
+    // and a projection that answered `false` to everything would pass THREE. That asymmetry is
+    // the reason this one exists.
+    let journal = MemoryJournal::new();
+    assert!(!is_granted(&journal, &READ_A).expect("project"));
+}
+```
+
+- [ ] **Passo 2: fai girare e leggi il rosso**
+
+```bash
+cargo test --locked -p kernel --test permission_triple 2>&1 | tail -30
+```
+
+- [ ] **Passo 3: scrivi la forma e la proiezione**
+
+`crates/kernel/src/permission.rs`, file nuovo:
+
+```rust
+//! The permission as a triple (§6.6), and the projection that answers "which are active now".
+
+use alloc::string::String;
+use alloc::vec::Vec;
+
+use crate::ports::journal::{Journal, JournalError, StepId};
+use crate::record::{
+    Detail, EffectClass, PermissionDetail, Record, RecordKind, RecordV1, Trust,
+};
+
+/// What may be done to the resource. ⛔ TWO VARIANTS AND NOT THREE, and the limit is declared
+/// with its trigger: ADR-0016's default preset separates "reads, tests and builds proceed" from
+/// "writes, commands and network egress ask", so READ and WRITE are the partition that preset
+/// needs. A third operation arrives with THE FIRST TOOL THAT NEEDS ONE — and there are no tools
+/// yet (rule C of §0.4, the mediator is staged).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Operation {
+    Read,
+    Write,
+}
+
+/// ⛔ A PERMISSION IS A TRIPLE, NEVER "THE TOOL" (§6.6). `(file, ~/x, read)` and not "the
+/// filesystem"; `(net, a-host, egress)` and not "the internet".
+///
+/// ⛔ THE TWO NAMES ARE `&'static str` AND THAT IS `I6`, the same reasoning as
+/// `gateway::Candidate` and P-9: a tool or resource name arriving from outside would be
+/// untrusted text inside a type the kernel DECIDES with (ADR-0014). What comes back from the
+/// journal is compared, never returned — see `is_granted`.
+///
+/// ⚠️ WHAT `V21` ASKS AND THIS DOES NOT ANSWER: "a permission holds for the granted triple AND
+/// for the CURRENT SESSION". There is no session here — no interface, no mediator, no approval
+/// cycle (rule C) — so the row stays `parziale` with its trigger, and this type holds the FORM
+/// half only. Marking it would be the comfortable box §8.1's mandatory trigger exists to refuse.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Permission {
+    pub tool: &'static str,
+    pub resource: &'static str,
+    pub operation: Operation,
+}
+
+/// Records the grant. ⛔ A GRANTED PERMISSION IS A JOURNALLED FACT (§6.6), and from that one line
+/// follows the thing that would otherwise cost a subsystem: there is NO second archive of active
+/// permissions. It is gotcha #7 applied to permissions.
+pub fn grant<J: Journal>(
+    journal: &mut J,
+    step: StepId,
+    permission: &Permission,
+) -> Result<(), JournalError> {
+    let record = Record::V1(RecordV1 {
+        kind: RecordKind::Permission,
+        effect: EffectClass::Idempotent,
+        trust: Trust::Instruction,
+        payload: Vec::new(),
+        reason: String::from("a permission was granted for this triple"),
+        detail: Some(Detail::Permission(PermissionDetail {
+            tool: String::from(permission.tool),
+            resource: String::from(permission.resource),
+            write: permission.operation == Operation::Write,
+        })),
+    })
+    .encode();
+
+    journal.note(step, &record)
+}
+
+/// ⛔ THE PROJECTION, AND IT RETURNS A `bool` RATHER THAN A LIST — which is the decision that
+/// keeps `I6` intact. A list would have to hand back DECODED names, i.e. `String`s built from
+/// bytes, and those would then be compared or displayed as if they were the kernel's own
+/// vocabulary. Answering a QUESTION instead means the decoded values never leave this function.
+///
+/// ⛔ IT RE-READS AND DERIVES, like `reconcile::steps_in_doubt`, and it is a FREE FUNCTION taking
+/// the port for the same reason: the project already has this shape, and a struct holding the
+/// journal would give the projection state (I1, I5).
+///
+/// ⚠️ NOTHING REVOKES YET, and it is declared rather than left to be discovered: a permission
+/// recorded is a permission held for ever by this function. Revocation is part of the mediator
+/// and the approval cycle, staged by rule C — and the trigger is THE FIRST REVOCATION, which
+/// will be a record of its own species and a new arm here.
+pub fn is_granted<J: Journal>(
+    journal: &J,
+    wanted: &Permission,
+) -> Result<bool, JournalError> {
+    for (_, bytes) in journal.replay()? {
+        // ⛔ A RECORD THIS BUILD CANNOT READ IS NOT AN ANSWER OF `false`. Skipping it would let a
+        // newer permission species look like "not granted", which is the silent partial truth
+        // P-15 measured and D20 exists to prevent — so a malformed record STOPS the projection.
+        let Ok(Record::V1(body)) = Record::decode(&bytes) else {
+            return Err(JournalError::Malformed);
+        };
+        if body.kind != RecordKind::Permission {
+            continue;
+        }
+        let Some(Detail::Permission(held)) = &body.detail else {
+            continue;
+        };
+        if held.tool == wanted.tool
+            && held.resource == wanted.resource
+            && held.write == (wanted.operation == Operation::Write)
+        {
+            return Ok(true);
+        }
+    }
+    Ok(false)
+}
+```
+
+⛔ **`JournalError::Malformed` è DA VERIFICARE, e se non esiste la decisione NON è inventarla.**
+`JournalError` è dichiarato *«deliberatamente povero»* e ha quattro varianti; aggiungerne una
+quinta è un atto che va argomentato come lo fu `StepInDoubt` — *«non allarga `OutOfOrder` perché
+quello è definito da V6 mentre questa è ADR-0018»*. ⚠️ **Se la variante giusta non c'è**, le vie
+sono due e vanno **misurate** prima di scegliere: aggiungerla con la propria ragione, oppure far
+tornare alla proiezione un errore **proprio** — e la seconda ha il precedente di
+`FileJournal::open`, che *«non restituisce `JournalError`»* perché nessuna delle sue varianti
+significa ciò che serviva.
+
+```bash
+grep -n "pub enum JournalError" -A 30 crates/kernel/src/ports/journal.rs
+```
+
+- [ ] **Passo 4: la variante, la specie e il sesto record congelato**
+
+`RecordKind`, indice **5**:
+
+```rust
+    /// ⛔ A PERMISSION GRANTED FOR A TRIPLE (§6.6). Like the three before it, it neither opens a
+    /// doubt nor closes one — and the empty arm was measured for this variant too (D23).
+    #[n(5)]
+    Permission,
+```
+
+`Detail`, indice **2**, e la struttura:
+
+```rust
+/// The granted triple, on the wire (§6.6).
+///
+/// ⛔ `write: bool` AND NOT AN `Operation` ENUM, and it is the SAME decision `VerdictDetail`
+/// made for its outcome — read that doc, it carries the whole argument. In one line: an enum
+/// here would be a FOURTH `index_only` enum on the wire, whose variant indices `frozen_bytes.rs`
+/// would then have to pin ONE PER FROZEN RECORD. A `bool` costs one byte, pins itself, and the
+/// day a third operation exists it RETIRES in favour of a new optional index — which is rule 3
+/// of §4.9.2 doing exactly what it is for.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
+pub struct PermissionDetail {
+    #[n(0)]
+    pub tool: String,
+    #[n(1)]
+    pub resource: String,
+    #[n(2)]
+    pub write: bool,
+}
+```
+
+Il record congelato, con l'array a mano portato a **sei** varianti:
+
+```rust
+        (
+            "record_v1_permission.cbor",
+            PERMISSION_BYTES,
+            record(
+                RecordKind::Permission,
+                EffectClass::Unrepeatable,
+                Trust::Instruction,
+                Some(Detail::Permission(PermissionDetail {
+                    tool: String::from("frozen"),
+                    resource: String::from("frozen"),
+                    write: true,
+                })),
+            ),
+        ),
+```
+
+- [ ] **Passo 5: il registro, e le due righe che NON si toccano**
+
+⛔ **`V21` resta `⚠️ parziale`** — la metà *«e per la sessione corrente»* non ha soggetto — e non
+si marca. È la **condizione 12**. ⚠️ **E la riga di `V21` va riletta, non solo lasciata stare:**
+il suo innesco esiste già ed è quello giusto; se non lo fosse, correggerlo è §8, cioè **spec** —
+si **registra** e non si prende (vincolo globale 7).
+
+- [ ] **Passo 6: commit**
+
+```bash
+bash scripts/gate.sh && cargo test --locked --workspace --no-fail-fast
+git add crates/kernel/ docs/porta-di-qualita.md
+git commit -m "feat(permission): la tripla, e quali permessi sono attivi ora e' una proiezione del giornale"
+```
+
+#### Criterio di chiusura del compito 7
+
+- [ ] le **tre** direzioni della tripla hanno **tre** sonde distinte, più quella del giornale vuoto
+- [ ] la proiezione **non restituisce** nessun nome decodificato — `grep -n "String" crates/kernel/src/permission.rs` non ne trova nessuno in un tipo di ritorno
+- [ ] i record congelati sono **sei**, la mappa li ricostruisce, e i **cinque** vecchi sono byte-identici
+- [ ] l'array a mano porta **sei** varianti, e l'`assert!` è stata **vista scattare**
+- [ ] ⚠️ `V21` **non** è stata marcata ✅
+- [ ] la scelta su `JournalError` è stata **misurata** e argomentata, non improvvisata
+
+---
+
+### Compito 8: §6.7 — lo stato di degrado si RICALCOLA, e non si cachea
+
+**Files:**
+- Create: `crates/kernel/src/degradation.rs` — `Degradation`, `degradation_now`
+- Modify: `crates/kernel/src/lib.rs` — il `pub mod degradation;`
+- Create: `crates/kernel/tests/degradation_state.rs`
+- Modify: [`porta-di-qualita.md`](../../porta-di-qualita.md)
+
+✅ **QUESTO COMPITO NON TOCCA IL FORMATO**, e P-11 lo dichiara: il degrado si **ricalcola**, non
+si scrive. Nessuna variante, nessun record congelato, nessun `.stderr`.
+
+⛔ **E porta con sé una DIVERGENZA DICHIARATA dal disegno, che chi esegue deve conoscere prima:**
+ADR-0019 e §6.7 dicono che il core *«**mantiene** uno stato di degrado corrente, **alimentato
+dagli eventi**»*, e quelle parole si leggono **anche** come mantenimento incrementale. Il disegno
+legge *«mantiene»* come *«espone»*, non come *«cachea»* — §5.2 — e **se la lettura del
+proprietario è l'altra, la scelta è sua**. Il compito costruisce la lettura del disegno e la
+dichiara accanto al tipo.
+
+- [ ] **Passo 1: scrivi le sonde, e la terza è quella che conta**
+
+`crates/kernel/tests/degradation_state.rs`, file nuovo:
+
+```rust
+//! §6.7 — the degradation state is DERIVED and recomputed, never authoritative of itself.
+
+use kernel::arbiter::{Arbiter, ComputeClass, Mib, Preemption, ResourceProfile, WorkDescriptor};
+use kernel::degradation::degradation_now;
+use kernel::gateway::{dispatch, resolve, Candidate, Constraint};
+use kernel::parameters::Parameters;
+use kernel::ports::journal::StepId;
+use simulator::journal::MemoryJournal;
+
+#[test]
+fn an_idle_machine_declares_nothing() {
+    let journal = MemoryJournal::new();
+    let arbiter = /* an arbiter with room to spare — build it the way `arbiter_admission.rs`
+                     does, and READ that file rather than guessing the constructor */;
+    let state = degradation_now(&arbiter, &journal).expect("derive");
+    assert!(!state.vram_exhausted);
+    assert!(!state.routing_degraded);
+}
+
+#[test]
+fn a_degraded_routing_shows_up_in_the_state() {
+    // ⛔ ADR-0012 says a quality constraint relaxed is a DECLARED degradation. This is where the
+    // declaration becomes observable: without it, "declared" means "written in a record nobody
+    // reads", which is the silent degradation ADR-0019 forbids.
+    let mut journal = MemoryJournal::new();
+    let chain = [Candidate { model: "remote", local: false, retains: true, price: 100 }];
+    let resolved = resolve(&chain, &[Constraint::PriceCeiling(10)]).expect("resolve");
+    dispatch(resolved, StepId::new(1), &mut journal).expect("dispatch");
+
+    let arbiter = /* the same idle arbiter */;
+    let state = degradation_now(&arbiter, &journal).expect("derive");
+    assert!(state.routing_degraded);
+}
+
+#[test]
+fn it_is_RECOMPUTED_and_not_cached() {
+    // ⛔ THIS IS THE PROBE WITHOUT WHICH "recomputed" IS A CLAIM HELD BY NOTHING. Ask once, change
+    // the world, ask again: a cached answer would repeat itself, and the whole reason §6.7
+    // recomputes is that a cache makes "never authoritative of itself" a matter of discipline
+    // instead of construction.
+    let mut journal = MemoryJournal::new();
+    let arbiter = /* the same idle arbiter */;
+
+    let before = degradation_now(&arbiter, &journal).expect("derive");
+    assert!(!before.routing_degraded);
+
+    let chain = [Candidate { model: "remote", local: false, retains: true, price: 100 }];
+    let resolved = resolve(&chain, &[Constraint::PriceCeiling(10)]).expect("resolve");
+    dispatch(resolved, StepId::new(1), &mut journal).expect("dispatch");
+
+    let after = degradation_now(&arbiter, &journal).expect("derive");
+    assert!(after.routing_degraded);
+}
+```
+
+⛔ **I tre `/* … */` sono SEGNAPOSTO E VANNO RIEMPITI LEGGENDO `arbiter_admission.rs`**, non
+ricordando la firma di `Arbiter::new`. ⚠️ **Non è una svista del piano:** la firma cambia col
+**compito 1**, che aggiunge `ArbiterId` a `Parameters` — dettarla qui sarebbe dettare uno stato
+che il traguardo stesso sta cambiando, cioè il gotcha **#57**, *una previsione citata come una
+misura*.
+
+- [ ] **Passo 2: scrivi il derivato**
+
+`crates/kernel/src/degradation.rs`, file nuovo:
+
+```rust
+//! The degradation state (§6.7, ADR-0019): DERIVED, recomputable, never authoritative of itself.
+
+use crate::arbiter::Arbiter;
+use crate::ports::journal::{Journal, JournalError};
+use crate::record::{Detail, Record, RecordKind};
+
+/// What is degraded right now. ⛔ THE SELECTION CRITERION IS §7.5's, and it is the reason this
+/// struct is short: what is shown is what CHANGES WHAT THE USER CAN DO, not every internal
+/// variation. "An interface that signals everything is indistinguishable from one that signals
+/// nothing."
+///
+/// ⛔ TWO INPUTS OF ADR-0019 HAVE NO SOURCE IN THIS MILESTONE, and they are declared rather than
+/// faked: CONNECTIVITY (§7 — `network` has no real implementation, §8.2.2) and PROVIDER HEALTH
+/// (§6.2 — the adapters are rule C). Their triggers are their implementations, and no field
+/// stands here waiting for them: a field that is always `false` reads as "fine" rather than as
+/// "unknown", which is the falsest of the two.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Degradation {
+    /// The arbiter has nothing left to admit. ⛔ IT IS AN INPUT NAMED BY ADR-0019 ITSELF, and
+    /// §5 added a revocable consumer to it (ADR-0033) — "the 3D viewer is paused during a
+    /// render" is exactly a condition that changes what the user can do.
+    pub vram_exhausted: bool,
+    /// The last routing resolved relaxed a quality constraint (ADR-0012). ⛔ DECLARED, not
+    /// silent — and this field is where the declaration stops being private to the record.
+    pub routing_degraded: bool,
+}
+
+/// Derives the state from the world as it is NOW.
+///
+/// ⛔ NO CACHE, AND THAT IS THE WHOLE DESIGN. It follows `reconcile::steps_in_doubt`: read, derive,
+/// answer. It makes "never authoritative of itself" true BY CONSTRUCTION rather than by
+/// discipline — a cache is bought the day a measurement asks for one, which is the same formula
+/// the journal's checkpoint carries.
+///
+/// ⚠️ DECLARED DIVERGENCE, and the owner may read it the other way: ADR-0019 and §6.7 say the
+/// core "MAINTAINS a current degradation state, FED BY EVENTS", and those words also read as
+/// incremental maintenance. This reads "maintains" as "exposes". §5.2 of the milestone design
+/// makes the same reading and says out loud that the other one is the owner's to choose.
+pub fn degradation_now<J: Journal>(
+    arbiter: &Arbiter,
+    journal: &J,
+) -> Result<Degradation, JournalError> {
+    // ⛔ THE LAST ROUTING AND NOT ANY ROUTING: a degradation that happened and was then resolved
+    // is not the state NOW, and "ever degraded" would be a fact about history rather than about
+    // what the user can do — which is the §7.5 criterion this file is built on.
+    let mut routing_degraded = false;
+    for (_, bytes) in journal.replay()? {
+        let Ok(Record::V1(body)) = Record::decode(&bytes) else {
+            continue;
+        };
+        if body.kind != RecordKind::Routing {
+            continue;
+        }
+        if let Some(Detail::Routing(routing)) = &body.detail {
+            routing_degraded = routing.degraded;
+        }
+    }
+
+    Ok(Degradation {
+        // ⛔ THE COMPARISON IS AGAINST WHAT THE ARBITER WAS HANDED, not against a number chosen
+        // here: `total_vram` is a DELIVERED parameter (ADR-0034), and reading the GPU would be an
+        // OS call I3 forbids.
+        vram_exhausted: arbiter.allocated() >= arbiter.ceiling(),
+        routing_degraded,
+    })
+}
+```
+
+⛔ **`Arbiter::ceiling()` PROBABILMENTE NON ESISTE, e questo è il punto del passo.** L'API
+pubblica misurata il 2026-08-30 è `set_policy`, `allocated`, `admit`, `queued`, `promote`,
+`revoking`, `release` — **niente tetto**. Le vie sono due e vanno **misurate e argomentate**, non
+scelte per comodità:
+
+| Via | Che cosa costa |
+|---|---|
+| `Arbiter` guadagna `ceiling()` | un getter nuovo su un tipo che il Traguardo 5 ha chiuso — e il precedente di `StepId::get` dice che un getter torna **col chiamante che lo pretende**, che qui esiste |
+| `degradation_now` riceve anche i `Parameters` | nessuna modifica all'arbitro, ma il chiamante deve tenere in passo due valori che l'arbitro già tiene insieme — cioè **due verità indipendenti**, la forma di `E25` |
+
+📌 **La prima ha il precedente e il chiamante; si scriva quella, e il perché accanto al getter.**
+⚠️ **E se `allocated()` e il tetto non fossero confrontabili senza un terzo valore** — le quote
+permanenti sottratte da ADR-0033 — **fermati e dichiaralo** invece di inventare la formula: la
+§5.1 dell'arbitro ha già una **voce aperta** su quali siano i tre addendi, ed è del proprietario.
+
+- [ ] **Passo 3: le mutazioni**
+
+| # | Mutazione | Che cosa deve diventare rosso |
+|---|---|---|
+| M1 | `routing_degraded` è sempre `false` | `a_degraded_routing_shows_up_in_the_state` e `it_is_RECOMPUTED_…` |
+| M2 | il ciclo si ferma al **primo** record di routing invece che all'ultimo | ⚠️ **niente, con queste sonde** — e allora la frase *«l'ultimo e non uno qualsiasi»* è un mutante vivo: o si aggiunge la sonda con **due** dispacci, o si **dichiara** |
+| M3 | `vram_exhausted` è sempre `false` | una sonda con l'arbitro pieno, che il passo 1 **non ha scritto** — ⛔ **scrivila**, o metà del tipo è tenuta da nulla |
+
+⛔ **M3 è un buco del piano trovato scrivendolo, e sta scritto invece che corretto in silenzio:**
+le sonde del passo 1 provano `routing_degraded` in tre modi e `vram_exhausted` in **nessuno**.
+Chi esegue aggiunge la quarta sonda — un arbitro saturo — prima di chiudere.
+
+- [ ] **Passo 4: il registro, e le due righe che NON si toccano**
+
+⛔ **`V27` e `Q18` restano `⚠️ parziale`.** `V27` perché *«che l'**interfaccia** lo dichiari
+prima»* non ha soggetto; `Q18` perché il metodo assegnato è DST con iniezione del guasto di rete e
+**`network` non ha implementazione reale**. È la **condizione 12**, e sono due delle quattro righe
+che il disegno vieta esplicitamente di marcare.
+
+- [ ] **Passo 5: commit**
+
+```bash
+bash scripts/gate.sh && cargo test --locked --workspace --no-fail-fast
+git add crates/kernel/ docs/porta-di-qualita.md
+git commit -m "feat(degradation): lo stato di degrado si ricalcola dal mondo, e non si cachea"
+```
+
+#### Criterio di chiusura del compito 8
+
+- [ ] la sonda *«ricalcolato e non cacheato»* esiste e **cambia il mondo fra le due domande**
+- [ ] `vram_exhausted` ha la propria sonda — il buco **M3** è chiuso
+- [ ] i due ingressi senza sorgente — connettività e salute dei provider — sono **dichiarati** accanto al tipo, e **non** hanno un campo che dica `false`
+- [ ] la divergenza dichiarata su *«mantiene»* è scritta accanto alla funzione
+- [ ] ⚠️ `V27` e `Q18` **non** sono state marcate ✅
+- [ ] la scelta fra il getter e i `Parameters` è **argomentata** accanto al codice, non solo fatta
+- [ ] ogni mutazione che non ha ucciso niente è **dichiarata**

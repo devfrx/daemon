@@ -36,7 +36,7 @@ faccia quel controllo.
 | **A** — la concessione che torna | 1 | ✅ **scritta** il 2026-08-30 |
 | **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
-| **D** — i meccanismi | 5, 6, 7, 8 | ▶️ **pre-controllo scritto e voce CHIUSA** il 2026-08-30 — P-12…P-15, e la **D22**: tre varianti, tre record congelati. I quattro compiti si scrivono adesso |
+| **D** — i meccanismi | 5, 6, 7, 8 | ▶️ **in scrittura.** Pre-controllo e voce **chiusa** — P-12…P-15, D22. Il **compito 5 è scritto**; restano **6, 7, 8** |
 | **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
 
 ✅ **La D è stata sbarrata e sbloccata lo stesso giorno, e il verbale è P-11.** I compiti **5**,
@@ -53,23 +53,28 @@ tenuta com'è invece di essere compattata, perché il disegno vi rimanda per num
 
 ### ▶️ Il prossimo passo, in forma eseguibile — 2026-08-30
 
-⛔ **Scrivere i quattro compiti della Parte D.** Il pre-controllo è scritto — P-12…P-15 — e la
-voce che sbarrava è **chiusa dalla D22**: tre varianti di `RecordKind`, tre record congelati.
-⚠️ **RICHIAMO DEL 2026-08-30, due volte nello stesso giorno:** qui stava *«Scrivere la Parte D»*
-nudo, poi *«i compiti sono FERMI su una voce del proprietario»*. La prima era vera prima che il
-pre-controllo trovasse **P-12**, la seconda finché la voce era aperta.
+⛔ **Scrivere i compiti 6, 7 e 8.** Il pre-controllo è scritto — P-12…P-15 — la voce che sbarrava
+è **chiusa dalla D22**, e il **compito 5 è scritto**.
+⚠️ **RICHIAMO DEL 2026-08-30, tre volte nello stesso giorno:** qui stava *«Scrivere la Parte D»*
+nudo, poi *«i compiti sono FERMI su una voce del proprietario»*, poi *«scrivere i quattro
+compiti»*. È la riga che invecchia più in fretta del file, e si riscrive **quando il passo si
+chiude**.
 
 ⛔ **Non si esegue niente comunque:** il piano non è finito, e il perché è tre righe più su.
 
-📌 **I quattro compiti si scrivono in quest'ordine**, e ciascuno legge quello che la sua riga
-nomina **e nient'altro**:
+📌 **I compiti si scrivono in quest'ordine**, e ciascuno legge quello che la sua riga nomina **e
+nient'altro**:
 
 | | Che cosa fare | Che cosa leggere **prima**, e nient'altro |
 |---|---|---|
-| 1 | **compito 5** — il contratto del sensore | §5.1 e §5.2 del [disegno](../specs/2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md) (la riga *«§6.4 — il sensore»*), e §6.4, §6.4.1, §6.4.2 della [spec](../specs/2026-08-06-sottoprogetto-1-kernel.md) |
-| 2 | **compito 6** — il decisore e il gettone | §4.1, §4.2 e §4.3 del disegno |
+| 1 | ~~**compito 5** — il contratto del sensore~~ | ✅ **scritto** il 2026-08-30, in tre commit |
+| 2 | **compito 6** — il decisore e il gettone | §4.1, §4.2 e §4.3 del disegno, e §6.2 e §6.3 della [spec](../specs/2026-08-06-sottoprogetto-1-kernel.md) |
 | 3 | **compito 7** — il permesso | la riga *«§6.6 — il permesso»* di §5.2 del disegno, e §6.6 della spec |
 | 4 | **compito 8** — il degrado | la riga *«§6.7 — il degrado»* di §5.2 del disegno, e §6.7 della spec |
+
+⛔ **E i compiti 6 e 7 ereditano il campo `detail` dal 5 (D24): aggiungono la PROPRIA variante di
+`RecordKind`, la propria variante di `Detail` e il proprio record congelato, e nient'altro del
+formato.** Il costo di P-13 e P-14 è già pagato.
 
 ✅ **RICHIAMO DEL 2026-08-30 — LA MISURA CHE QUESTA RIGA ASSEGNAVA AL COMPITO 6 È FATTA, ED È
 STATA ANTICIPATA QUI.** Diceva: *«il PRIMO PASSO del compito 6 è una misura, non una scrittura …
@@ -738,6 +743,10 @@ misura che le smentisce — è ciò per cui esiste l'errata.
 
 | **D22** | ⛔ **LA PARTE D APRE TRE VARIANTI DI `RecordKind` — `Routing`, `Permission`, `Verdict` — E CON ESSE NASCONO TRE RECORD CONGELATI**, il quarto, il quinto e il sesto | è la chiusura della voce che **P-12** apre, decisa dal proprietario **rimandando ai criteri** e presa applicandoli in ordine. **Due** hanno deciso: la **correttezza verificata**, perché la sicurezza di questa forma è quella che **P-15 ha misurato** mentre l'alternativa poggia su una deduzione; e la **coerenza**, perché il progetto ha già risposto a questa domanda **dentro questo enum** — `Note` nacque variante propria al Traguardo 3, non discriminante nascosto in un campo. ⚠️ **La terza variante dipende da una LETTURA e non da una misura**, dichiarata nel verbale: §6.4.2 dice che l'anello *«apre un passo nuovo e **vi porta il dettaglio**»*. Il verbale, i cinque criteri e le due vie scartate stanno in fondo al pre-controllo |
 | **D23** | ⛔ **le tre varianti prendono TRE ARM VUOTI in `reconcile.rs`, come `Note`**, e la frase che lo giustifica si scrive accanto | il dubbio di ADR-0007 riguarda **gli effetti** — un passo con intento e senza esito — non i **fatti registrati su** un passo. Nessuna delle tre apre o chiude un dubbio. ⛔ **E l'arm vuoto NON è una scorciatoia:** il doc di `Note` argomenta già il proprio, e le due altre risposte *«furono MISURATE prima»*. Chi scrive i tre arm ripete quella misura per la propria variante invece di ereditarne la conclusione — è il **#65** applicato a un precedente |
+
+| **D24** | ⛔ **il campo `detail` lo paga il COMPITO 5, e i compiti 6 e 7 ereditano** | il costo che **P-13** e **P-14** misurano — i ventisei literal, la decisione sul `Debug`, i due `.stderr` — è il costo del **campo**, non della **specie**. Pagarlo tre volte sarebbe impossibile (il campo si aggiunge una volta) e dividerlo lo renderebbe irriconoscibile: il compito 5 è il primo che ne ha bisogno, quindi è il suo. ⚠️ **Conseguenza dichiarata:** il commit 5b è il più largo del traguardo, e tocca l'artefatto irreversibile |
+| **D25** | ⛔ **il `Debug` scritto a mano STAMPA `detail`, e l'oracolo di `record_shape.rs` va rosso e si riscrive a mano** | è la scelta che **P-14** dichiara non presa da nessuna riga. Il campo porta byte **nostri** per costruzione (D20), quindi stamparlo non apre nessuna strada di §A3; **non** stamparlo darebbe a `RecordV1` un **secondo campo nascosto** che nessuno ha deciso di nascondere, contro la metà che il banco chiama *«quella che ci si dimentica»* — *«a `Debug` that hid everything would … leave a failed `assert_eq!` on a record saying nothing at all»*. ⚠️ **Il costo si scrive accanto al tipo:** la garanzia che `detail` sia sempre nostro è di **disciplina** e non di tipo, perché `RecordV1` è `pub` coi campi `pub` — **AUD-050**, registrata e non presa |
+| **D26** | ⛔ **`detail` è un TIPO — `Option<Detail>`, un enum a indici espliciti — e non byte opachi** | ADR-0036 regola 6 vuole la **codifica in `kernel`**; byte opachi pretenderebbero una **seconda** decodifica che nessuno può fare senza sapere il `kind` fuori banda, cioè il problema del `payload` spostato in una scatola nuova. ✅ **E la sicurezza è la stessa misurata in P-15:** una variante sconosciuta **non decodifica**, `Record::decode` la mappa su `Malformed` e la riconciliazione risponde `SuspendAndAsk`. ⚠️ **Il costo, dichiarato:** `kind` e specie del `detail` sono **due verità indipendenti** — la forma di `E25` in una casa nuova — e a tenerle in passo è **una funzione di costruzione per specie**, non il compilatore |
 
 **La baseline di partenza, misurata il 2026-08-30 e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `cargo test --locked --workspace --no-fail-fast` →
@@ -2304,3 +2313,815 @@ git add -A && git commit -m "traguardo 6 (compito 4): lo schema ipc -- il verdet
 - [ ] nessun byte congelato è nato: §6.4 lo vieta, e `git status --porcelain
       crates/kernel/tests/frozen/` è **vuoto**
 - [ ] ⚠️ il registro **non** dichiara chiusa nessuna riga di catalogo (D19)
+
+## Parte D — i meccanismi
+
+⛔ **Tre dei quattro compiti toccano il formato durevole, e il campo `detail` si aggiunge UNA
+VOLTA SOLA.** Il costo che **P-13** e **P-14** misurano — ventisei siti di costruzione, la
+decisione sul `Debug` scritto a mano, i due `.stderr` da rileggere — è il costo del **campo**,
+non della specie: lo paga **il primo compito che ne ha bisogno**, e i compiti 6 e 7 ereditano un
+campo che c'è già e aggiungono soltanto la **propria** variante e il **proprio** record
+congelato. È la **D24**.
+
+⚠️ **Il compito 8 non tocca il formato**, e lo dichiara P-11: il degrado si **ricalcola**, non si
+scrive.
+
+### Compito 5: §6.4 — il contratto del sensore, il campo `detail`, e l'anello che giornala
+
+**Files:**
+- Create: `crates/kernel/src/sensor.rs` — `Sensor`, `Verdict`, `VerdictOutcome`, `CostClass`, `VerdictDetail`
+- Modify: `crates/kernel/src/lib.rs` — il `pub mod sensor;`
+- Modify: `crates/kernel/src/record.rs` — `Detail` all'indice **5**, `RecordKind::Verdict`, e il `Debug` scritto a mano
+- Modify: `crates/kernel/src/reconcile.rs` — l'arm della variante nuova (**D23**)
+- Modify: `crates/kernel/tests/frozen_bytes.rs` — l'array a mano, e il **quarto** record congelato
+- Create: `crates/kernel/tests/frozen/record_v1_verdict.cbor` — ⛔ **irreversibile**
+- Modify: `crates/kernel/tests/frozen/record_v1.map` — la sezione del quarto record
+- Modify: `crates/kernel/tests/record_shape.rs` — i literal, e l'oracolo del `Debug`
+- Modify: `crates/kernel/tests/reconciliation.rs`, `crates/kernel/tests/boundary_promotion.rs`, `crates/simulator/tests/dst_campaign.rs`, `crates/kernel/src/boundary.rs`, `crates/kernel/src/arbiter/mod.rs` — i literal
+- Modify: `crates/kernel/tests/compile_fail/record_without_version.rs` + `.stderr`, `crates/kernel/tests/compile_fail/record_without_trust_label.rs` — **P-14**
+- Create: `crates/kernel/tests/compile_fail/sensor_modifies_the_artefact.rs` + `.stderr` — il **34°** caso, `V10`
+- Create: `crates/kernel/tests/sensor_ring.rs` — le sonde di `V14` e `Q10`
+- Modify: `crates/kernel/tests/trybuild_cases.rs` — il caso nuovo, **se** i casi sono elencati a mano
+- Modify: [`porta-di-qualita.md`](../../porta-di-qualita.md)
+
+⛔ **Leggi P-12, P-13, P-14, P-15 e la D22 prima di cominciare**, e la **D24** qui sopra. Questo
+compito tocca l'**unico artefatto irreversibile** del progetto: i byte congelati **non si
+rigenerano**, e se cambiano non è un aggiornamento ma un **cambio di formato** (ADR-0036).
+
+⛔ **E il numeratore «34°» si RICONTA, non si cita:** era 33 il 2026-08-30 e le Parti A, B e C
+non ne aggiungono nessuno — misurato — ma questo compito potrebbe non essere il primo a girare.
+
+```bash
+ls crates/kernel/tests/compile_fail/*.rs | wc -l
+```
+
+#### Commit 5a — il contratto, e il 34° caso `compile_fail` (`V10`)
+
+⛔ **Nessuna riga di formato in questo commit.** Il contratto è additivo puro: un modulo nuovo,
+un caso `compile_fail` nuovo, e nient'altro. Il commit deve essere `GATE GREEN` **da solo**
+(vincolo globale 8), e separarlo dal formato è ciò che rende leggibile quale dei due ha rotto
+cosa (precedente della **D1**).
+
+- [ ] **Passo 1: scrivi il caso `compile_fail`, e MISURA quale errore esce**
+
+⛔ **Le vie sono DUE e non è ovvio quale delle due la riga di catalogo compri.** La riga
+§7.4.1 blocco C dice *«un sensore che **modifica** l'artefatto — §6.4.2 lo consegna per
+riferimento immutabile»*, con contro-sonda *«osservarlo e restituire un verdetto compila»*.
+
+| Via | Che cosa prova | Errore atteso |
+|---|---|---|
+| **corpo** — un `Sensor` ben firmato il cui `observe` assegna a `*artefact` | che il sensore **non può modificare ciò che gli è stato consegnato** | `error[E0594]` — *cannot assign to `*artefact`, which is behind a `&` reference* |
+| **firma** — un `impl Sensor` che dichiara `observe(&self, artefact: &mut Untrusted)` | che un sensore che **vuole** modificare non è **dichiarabile** | `error[E0053]` — *method has an incompatible type for trait* |
+
+⛔ **Si scrive la via del CORPO**, perché è quella che la riga di catalogo formula — *«lo
+consegna per riferimento immutabile»* parla della **consegna**, non della dichiarazione — e la
+via della firma si registra nel commento del caso come **seconda strada che lo stesso meccanismo
+chiude**. ⚠️ **Misura entrambe prima di scegliere il testo atteso**, invece di dedurre il codice
+d'errore: è la stessa disciplina che il Task 10 del Traguardo 3 applicò alle due mutazioni
+dettate, che **non compilavano** per una ragione diversa da quella prevista.
+
+`crates/kernel/tests/compile_fail/sensor_modifies_the_artefact.rs`:
+
+```rust
+//! Catalogue §7.4.1 block C, row `V10` — a sensor that MODIFIES the artefact does not compile.
+//! §6.4.2 hands it over by immutable reference, so the trait method cannot reach through it.
+
+use kernel::boundary::Untrusted;
+use kernel::sensor::{CostClass, Sensor, Verdict, VerdictOutcome};
+use kernel::time::Millis;
+
+struct MeddlingSensor;
+
+impl Sensor for MeddlingSensor {
+    fn declared_cost(&self) -> CostClass {
+        CostClass::Computational
+    }
+
+    fn observe(&self, artefact: &Untrusted) -> Verdict {
+        // A sensor that rewrites what it was handed. This is the whole case.
+        *artefact = Untrusted::new("something else".into());
+
+        Verdict {
+            outcome: VerdictOutcome::Pass,
+            detail: Untrusted::new(String::new()),
+            spent: Millis::new(0),
+        }
+    }
+}
+
+fn main() {}
+
+// ⛔ THE COUNTER-PROBE IS NOT HERE, AND IT ALREADY HAS A HOME: the catalogue row's "observing it
+// and returning a verdict compiles" is `a_passing_sensor_writes_a_verdict_and_opens_nothing` in
+// `tests/sensor_ring.rs`, which implements the trait and runs it. A copy here would be gotcha
+// #49.
+//
+// ⛔ THE SECOND ROAD THE SAME MECHANISM SHUTS, measured rather than assumed: an `impl` that
+// DECLARES `observe(&self, artefact: &mut Untrusted)` does not match the trait and fails with
+// `error[E0053]`. It is not the case written here because the catalogue row is about the
+// HANDING OVER, not about what an implementor may declare — but whoever widens this row should
+// know the road exists and is already shut.
+//
+// ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.
+//
+// ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle quotes the line of the assignment, so a
+// paragraph added at the top would move the code and break it. Whoever writes here appends.
+```
+
+- [ ] **Passo 2: fai girare il caso e leggi il `.stderr`, senza rigenerarlo in blocco**
+
+```bash
+cargo test --locked -p kernel --test trybuild_cases 2>&1 | tail -40
+```
+
+⛔ **Aspettati un ROSSO che dice «expected compilation to fail» oppure che il modulo `sensor`
+non esiste** — il tratto non è ancora scritto. È il rosso di partenza, e va **riprodotto e
+letto** prima di scrivere l'implementazione: è il passo 2 della disciplina dell'audit.
+
+⚠️ **Il `.stderr` si scrive a mano dall'uscita vera.** ⛔ **Mai** `TRYBUILD=overwrite`: vincolo
+10 della §11, gotcha **#25**.
+
+- [ ] **Passo 3: scrivi il contratto**
+
+`crates/kernel/src/sensor.rs`, file nuovo:
+
+```rust
+//! The sensor contract (§6.4, ADR-0009), and the ring that carries a verdict back.
+//!
+//! ⛔ THE CONTRACT IS DELIBERATELY POOR, and that is a decision and not an omission: ADR-0009
+//! writes it `(artefact) -> (verdict, detail, cost)` and says a minimal contract can be widened
+//! while a rich and wrong one cannot. RK-5 is already accepted: it gets revisited after the
+//! SECOND real sensor in different areas, and if it does not stretch it BREAKS rather than
+//! bends.
+
+use alloc::vec::Vec;
+
+use crate::boundary::Untrusted;
+use crate::time::Millis;
+
+/// What a sensor costs BEFORE it runs (§6.4.1). ⛔ IT IS A CLASS AND NOT A NUMBER, and the
+/// reason is what V11 actually asks: "inferential sensors stay OUT of the tight ring". That is
+/// a partition, not a threshold — a number would invite a cutoff nobody has chosen.
+///
+/// ⚠️ THE SECOND VARIANT HAS NO IMPLEMENTOR TODAY, and that is written rather than hidden:
+/// §8.3 keeps V11 at `parziale` precisely because no inferential sensor exists (trigger C4).
+/// What exists here is the MECHANISM that will admit or refuse one.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CostClass {
+    /// Runs on the CPU and answers from the artefact alone — schema validation, a linter, a
+    /// test. Admitted to the tight ring.
+    Computational,
+    /// Calls a model. ⛔ REFUSED BY THE TIGHT RING (V11), and the refusal is the point: an
+    /// inferential sensor in the tight loop turns every step into two inferences.
+    Inferential,
+}
+
+/// Whether the artefact passed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum VerdictOutcome {
+    Pass,
+    /// ⛔ A NEGATIVE VERDICT IS NOT AN ERROR (ADR-0013): it is an ordinary answer that re-enters
+    /// the ring as feedback, and the correction is A NEW STEP. Modelling it as an `Err` would
+    /// make schema non-conformance an exception, which is the thing ADR-0013 exists to refuse.
+    Fail,
+}
+
+/// What a sensor answers. The triple of ADR-0009, with the two costs of §6.4.1 kept apart:
+/// the DECLARED one is on the trait and is read before running, the SPENT one is here.
+///
+/// ⛔ `detail` IS `Untrusted` AND THAT IS FORCED, not defensive. ADR-0014 makes the label
+/// HEREDITARY — "extracting, summarising, translating or concatenating still produces untrusted
+/// content" — and a detail is computed FROM the artefact. For an inferential sensor it is model
+/// output outright. So it travels in the record's `payload`, which is the box whose doc says it
+/// holds "somebody else's" bytes, and never in `reason`.
+///
+/// ⚠️ WHAT THE SPENT COST IS AND IS NOT: it is what the SENSOR reports, not what the ring
+/// measured. A sensor that lies about it is not caught here — sensors are kernel-side code and
+/// the content comes from capacities (ADR-0009). The limit is declared rather than defended.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Verdict {
+    pub outcome: VerdictOutcome,
+    pub detail: Untrusted,
+    pub spent: Millis,
+}
+
+/// The contract. ⛔ `observe` TAKES THE ARTEFACT BY SHARED REFERENCE AND THAT IS `V10` — a
+/// sensor observes and changes nothing; correcting is ring 1's job (§6.4.2). The negative case
+/// is `tests/compile_fail/sensor_modifies_the_artefact.rs`.
+pub trait Sensor {
+    /// Read BEFORE running, and it decides admission to the tight ring (§6.4.1, V11).
+    fn declared_cost(&self) -> CostClass;
+
+    /// Observe, and answer. ⛔ THE ARTEFACT IS `&`, NEVER `&mut`.
+    fn observe(&self, artefact: &Untrusted) -> Verdict;
+}
+```
+
+- [ ] **Passo 4: dichiara il modulo**
+
+In `crates/kernel/src/lib.rs`, in coda alla lista dei `pub mod`, **nell'ordine in cui i moduli
+sono già scritti** e senza toccare il paragrafo di testa:
+
+```rust
+pub mod sensor;
+```
+
+⚠️ **Il doc di testa di `lib.rs` NON si tocca:** dichiara di sé che *«what this crate holds is
+the list of `pub mod` below»* proprio perché una prosa riassuntiva invecchia — è il rimedio di
+**AUD-046**, e riaprirlo sarebbe rifare il difetto che quel finding ha chiuso.
+
+- [ ] **Passo 5: rileggi il `.stderr` e chiudi il commit**
+
+```bash
+cargo test --locked -p kernel --test trybuild_cases 2>&1 | tail -20
+bash scripts/gate.sh
+cargo test --locked --workspace --no-fail-fast     # rimisura, non citare (D5)
+```
+
+- [ ] **Passo 6: commit**
+
+```bash
+git add crates/kernel/src/sensor.rs crates/kernel/src/lib.rs \
+        crates/kernel/tests/compile_fail/sensor_modifies_the_artefact.rs \
+        crates/kernel/tests/compile_fail/sensor_modifies_the_artefact.stderr
+git commit -m "feat(sensor): il contratto di ADR-0009, e V10 diventa un caso compile_fail"
+```
+
+#### Commit 5b — il campo `detail`, la variante `Verdict`, e il quarto record congelato
+
+⛔ **QUESTO COMMIT TOCCA L'ARTEFATTO IRREVERSIBILE.** Leggi **P-13**, **P-14** e **P-15** prima
+del primo carattere, e la testa di `crates/kernel/tests/frozen_bytes.rs`.
+
+- [ ] **Passo 1: prendi la copia byte-esatta dei file che toccherai (D7)**
+
+⛔ **Prima di qualunque modifica**, e non `git checkout --` dopo: il gotcha **#48** è la trappola
+più frequente del progetto, e il vicolo cieco dell'audit del 2026-08-27 mostra che una scrittura
+che fallisce a metà **tronca**.
+
+```bash
+cp crates/kernel/src/record.rs /tmp/record.rs.orig
+tr -cd '\r' < crates/kernel/src/record.rs | wc -c    # il conto dei CR PRIMA
+```
+
+- [ ] **Passo 2: aggiungi il tipo del dettaglio, e la specie del verdetto**
+
+In `crates/kernel/src/record.rs`, **dopo** `RecordKind` e **prima** di `RecordV1`:
+
+```rust
+/// The structured detail a record of OUR OWN SPECIES carries (D20). ⛔ IT IS A TYPE AND NOT
+/// OPAQUE BYTES, and the reason is ADR-0036 rule 6: the encoding lives in `kernel`. Opaque
+/// bytes here would need a second decode nobody could perform without knowing the `kind` out of
+/// band, which is the `payload` problem moved into a new box.
+///
+/// ⛔ AN UNKNOWN VARIANT DOES NOT DECODE, and that is what makes the field safe. Measured on
+/// 2026-08-30 (P-15): `minicbor` answers `unknown enum variant N`, `Record::decode` maps every
+/// error to `RecordError::Malformed`, and `reconcile` resolves that to `SuspendAndAsk`. A build
+/// that does not know a species STOPS instead of guessing.
+///
+/// ⚠️ IT PAIRS WITH `RecordKind` AND NOTHING AT LEVEL 1 HOLDS THE PAIR — declared, not defended.
+/// A `RecordV1` with `kind: Verdict` and a `Detail::Routing` is constructible, because `RecordV1`
+/// is `pub` with public fields (finding AUD-050, registered and not taken). What holds the pair
+/// is that ONE function per species builds the record, the way `Arbiter::issue` is the only
+/// place that mints a `Grant` (§5.6). It is the shape of E25 in a new place, and it is written
+/// down rather than discovered.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub enum Detail {
+    /// A sensor verdict upon the step's artefact (§6.4).
+    #[n(0)]
+    Verdict(#[n(0)] VerdictDetail),
+}
+
+/// The structured half of a verdict (§6.4.1). ⛔ THE DETAIL TEXT IS NOT HERE: it is untrusted by
+/// inheritance (ADR-0014) and travels in the record's `payload`, under the `trust` label that
+/// exists to say so. What lives here is what is OURS and structured — the outcome, and the cost
+/// the sensor reports having spent.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
+pub struct VerdictDetail {
+    /// `false` is `VerdictOutcome::Fail`. ⚠️ A `bool` AND NOT THE ENUM, and the asymmetry is
+    /// deliberate: `sensor::VerdictOutcome` is a kernel type free to grow a third answer, while
+    /// this one is on the WIRE and an index here never retires (rule 4 of §4.9.2). The day the
+    /// enum grows, this field becomes a new optional index and the `bool` retires — which is
+    /// exactly the discipline, and it is cheaper than reserving indices for answers nobody has.
+    #[n(0)]
+    pub passed: bool,
+    #[n(1)]
+    pub spent_millis: u64,
+}
+```
+
+⚠️ **`Millis` NON entra qui**, ed è una scelta con un costo: portarlo sul filo gli darebbe i
+derive del formato, cioè **P-10** in una casa nuova, e `Millis` è già un tipo che il compito 4
+porta su `bincode`. Un `u64` col nome che dice l'unità è il minimo che regge; la conversione sta
+nella funzione di costruzione, in un posto solo.
+
+- [ ] **Passo 3: aggiungi la variante e il campo**
+
+In `RecordKind`, **in coda**, con l'indice **3** — ⛔ **un indice non si riusa mai** (regola 4):
+
+```rust
+    /// ⛔ A SENSOR VERDICT UPON THE STEP'S ARTEFACT (§6.4). Like `Note` it neither opens a doubt
+    /// nor closes one — the doubt of ADR-0007 is about EFFECTS reaching the world, and a verdict
+    /// is a fact recorded ABOUT a step, not an effect of it. ⚠️ AND THE EMPTY ARM IN
+    /// `reconcile` WAS RE-MEASURED FOR THIS VARIANT rather than inherited from `Note`'s: see
+    /// the arm itself.
+    #[n(3)]
+    Verdict,
+```
+
+In `RecordV1`, **in coda**, all'indice **5**:
+
+```rust
+    /// ⛔ OUR OWN STRUCTURED DATA, AND THE THIRD CONTENT BOX (D20). `payload` is somebody
+    /// else's and `reason` is our prose; this is our STRUCTURE, and putting it in either of the
+    /// other two was measured to be wrong — putting CBOR in `payload` reopens the defect that
+    /// splitting `reason` shut on 2026-08-10, and `reason` is text.
+    ///
+    /// ⛔ OPTIONAL, WITH `#[cbor(default)]`, AT A NEW INDEX — rule 3 of §4.9.2, and the exemption
+    /// `reason` used is SPENT: `tests/frozen_bytes.rs` exists, so this is how every field added
+    /// to V1 arrives from now on.
+    ///
+    /// ✅ ADDITIVE, MEASURED IN BOTH DIRECTIONS on 2026-08-30 (P-15): with `None` the three
+    /// frozen records encode to the SAME 21 BYTES — `minicbor` truncates a trailing `None`
+    /// instead of writing `null` — and with `Some` the array header moves `85` -> `86`.
+    ///
+    /// ⛔ AND THE FIELD ALONE IS NOT ENOUGH, WHICH IS WHY THE `kind` GROWS WITH IT (D20): a build
+    /// that does not know this index decodes a record carrying it and LOSES THE SUBSTANCE IN
+    /// SILENCE — measured. The new `kind` is what makes that build stop.
+    #[n(5)]
+    #[cbor(default)]
+    pub detail: Option<Detail>,
+```
+
+- [ ] **Passo 4: decidi il `Debug`, e la decisione è già presa — SÌ, lo stampa**
+
+⛔ **P-14 dice che le due vie sono entrambe difendibili e che nessuna riga le sceglie. La sceglie
+questo piano, ed è la D25:** il `Debug` scritto a mano **stampa `detail`**, e l'oracolo di
+`tests/record_shape.rs` va **rosso** e si riscrive a mano.
+
+**Perché**, e sono i criteri in ordine: il campo porta byte **nostri** per costruzione, quindi
+stamparlo non apre nessuna strada di §A3; e **non** stamparlo darebbe a `RecordV1` un secondo
+campo nascosto **senza che nessuno l'abbia deciso**, contro la metà che il banco dichiara essere
+*«la metà che ci si dimentica»* — *«a `Debug` that hid everything would pass the assertion above
+and leave a failed `assert_eq!` on a record saying nothing at all»*.
+
+```rust
+            "RecordV1 {{ kind: {:?}, effect: {:?}, trust: {:?}, payload: <{} bytes>, \
+             reason: {:?}, detail: {:?} }}",
+            self.kind,
+            self.effect,
+            self.trust,
+            self.payload.len(),
+            self.reason,
+            self.detail
+```
+
+⚠️ **E il costo si scrive accanto al tipo**, non solo qui: un dettaglio strutturato finisce in
+ogni `{:?}` che raggiunge un log, e la garanzia che sia sempre **nostro** è di **disciplina** —
+`RecordV1` è `pub` coi campi `pub` (AUD-050).
+
+- [ ] **Passo 5: fai il giro dei siti di costruzione, e il censimento si RILANCIA**
+
+⛔ **Non fidarti del numero di P-13:** rilancia il comando, e **leggi intera** ogni riga che
+restituisce (gotcha **#70**).
+
+```bash
+grep -rn 'RecordV1 {' crates/ --include=*.rs
+```
+
+Ogni **literal** guadagna `detail: None`, tranne quelli che il passo 7 nomina. ⚠️ **E le righe
+che NON sono literal non si toccano a caso:** i **sei commenti di doc** che mostrano un record a
+cinque campi diventano falsi — si riscrivono col **richiamo datato**, che è la convenzione qui, e
+non si allineano in silenzio.
+
+- [ ] **Passo 6: i due casi `compile_fail`, uno per volta (P-14)**
+
+| Caso | Che cosa fare |
+|---|---|
+| `record_without_trust_label.rs` | aggiungi `detail: None` al literal. ✅ Il `.stderr` cita la **riga 7**, l'apertura del literal, che **non si muove** — verificalo, non assumerlo. ⛔ Senza il campo l'errore diventa `missing fields «trust» and «detail»` e il caso smette di essere un caso sull'etichetta di fiducia |
+| `record_without_version.rs` | aggiungi `detail: None`. ⛔ Il `.stderr` cita `inner.encode()` alla **riga 15**, **dentro** il literal: la riga si sposta a **16**, e il `.stderr` va corretto **a mano**. Il file dichiara già di sé che la stessa cosa successe il 2026-08-10 |
+
+```bash
+cargo test --locked -p kernel --test trybuild_cases 2>&1 | tail -40
+```
+
+⛔ **Mai `TRYBUILD=overwrite`.**
+
+- [ ] **Passo 7: il QUARTO record congelato — irreversibile**
+
+⛔ **Un record congelato nuovo per ogni variante nuova (D21), e porta ENTRAMBE le cose:** `kind:
+Verdict` **e** `detail: Some(..)`. Con `detail: None` non pinzerebbe **niente** dell'indice 5,
+perché un `None` in coda non viene scritto — misurato.
+
+⚠️ **La fabbrica `record(kind, effect, trust)` di `frozen_bytes.rs` non basta più**, perché non
+sa mettere un `detail`. ⛔ **Non aggiungere una seconda fabbrica:** il file dichiara *«ONE
+constructor for the three frozen records … a second constructor would be a second place to keep
+aligned»*. Si **allarga** quella che c'è, con `detail` fra i parametri, e i tre siti esistenti
+passano `None`.
+
+```rust
+fn record(
+    kind: RecordKind,
+    effect: EffectClass,
+    trust: Trust,
+    detail: Option<Detail>,
+) -> Record {
+    Record::V1(RecordV1 {
+        kind,
+        effect,
+        trust,
+        payload: FROZEN_PAYLOAD.to_vec(),
+        reason: String::from(FROZEN_REASON),
+        detail,
+    })
+}
+```
+
+Il quarto record, accanto ai tre:
+
+```rust
+        (
+            "record_v1_verdict.cbor",
+            VERDICT_BYTES,
+            record(
+                RecordKind::Verdict,
+                EffectClass::Verifiable,
+                Trust::Untrusted,
+                Some(Detail::Verdict(VerdictDetail {
+                    passed: false,
+                    spent_millis: 7,
+                })),
+            ),
+        ),
+```
+
+⚠️ **`passed: false` e non `true`, e non è indifferente:** `false` codifica `f4` e `true` `f5`,
+quindi il byte **esiste** in entrambi i casi — ma un verdetto **negativo** è quello che
+l'anello fa rientrare, cioè il caso per cui la specie esiste. ⛔ **E `spent_millis: 7` non è
+zero:** uno zero codifica `00`, che è anche l'indice di variante di mezza tabella, e un byte che
+somiglia a troppe cose rende la mappa più difficile da leggere di quanto debba essere.
+
+⛔ **L'array a mano va esteso, e questa è la riga che NIENTE fa diventare rossa** — P-12, e il
+banco lo dichiara di sé:
+
+```rust
+    for kind in [
+        RecordKind::Intent,
+        RecordKind::Outcome,
+        RecordKind::Note,
+        RecordKind::Verdict,
+    ] {
+        match kind {
+            RecordKind::Intent
+            | RecordKind::Outcome
+            | RecordKind::Note
+            | RecordKind::Verdict => {}
+        }
+```
+
+- [ ] **Passo 8: i byte si producono da una sonda usa-e-getta e si scrivono A MANO**
+
+⛔ **Nessun percorso di rigenerazione**, come al Task 10 del Traguardo 3: una sonda usa-e-getta
+stampa i byte, tu li scrivi nel `.cbor` e nella mappa, e la sonda si **cancella nella stessa
+corsa**.
+
+⚠️ **La mappa `record_v1.map` è RILETTA dal banco:** offset e byte di ogni riga devono
+ricostruire il `.cbor` esattamente, quindi un segnaposto non può sopravvivere al commit
+(gotcha **#43**). La colonna di prosa è dichiarata **non verificata** dentro la mappa stessa.
+
+⚠️ **E la sezione nuova della mappa va scritta con l'inquadratura giusta:** `82 00 81` è la busta
+di versione, poi `86` — l'array a **sei** elementi, non più `85` — e in coda la busta del
+dettaglio. **Leggi l'uscita**, non dedurre gli offset.
+
+- [ ] **Passo 9: l'arm di `reconcile`, e si RIMISURA invece di ereditare (D23)**
+
+In `crates/kernel/src/reconcile.rs`, dentro il `match body.kind`:
+
+```rust
+                // ⛔ A VERDICT NEITHER OPENS A DOUBT NOR CLOSES ONE, and the empty arm was
+                // MEASURED for this variant rather than inherited from `Note`'s. The doubt of
+                // ADR-0007 is about an EFFECT that may or may not have reached the world; a
+                // verdict is a fact recorded ABOUT a step's artefact, and the step it names
+                // already owes its own outcome. Both other answers were tried: `enter` makes a
+                // finished step re-open forever, `leave` closes a doubt no effect resolved —
+                // which is the silent loss ADR-0007 exists to prevent.
+                RecordKind::Verdict => {}
+```
+
+⚠️ **Provalo:** metti `enter` al posto dell'arm vuoto e guarda che cosa diventa rosso, poi
+`leave`, poi revoca **da copia**. Se **nessuna** delle due muove niente, la sonda che dovrebbe
+tenerlo manca — ed è un mutante vivo da dichiarare, non da ignorare (gotcha **#73**).
+
+- [ ] **Passo 10: rimisura i fine-riga, e chiudi**
+
+```bash
+tr -cd '\r' < crates/kernel/src/record.rs | wc -c    # deve valere quanto il passo 1
+git ls-files --eol crates/kernel/tests/frozen/record_v1_verdict.cbor
+bash scripts/gate.sh
+cargo test --locked --workspace --no-fail-fast
+```
+
+⛔ **Il `.cbor` è BINARIO:** verifica che `.gitattributes` non lo normalizzi. I tre esistenti
+sono il precedente — se non hanno una riga, questo non ne ha bisogno; se ce l'hanno, questo la
+prende uguale.
+
+- [ ] **Passo 11: commit**
+
+```bash
+git add crates/kernel/src/record.rs crates/kernel/src/reconcile.rs \
+        crates/kernel/tests/ crates/simulator/tests/ crates/kernel/src/boundary.rs \
+        crates/kernel/src/arbiter/mod.rs
+git commit -m "feat(record): il campo detail all'indice 5, la variante Verdict, e il quarto record congelato"
+```
+
+#### Commit 5c — l'anello che giornala (`V14`, `Q10`)
+
+- [ ] **Passo 1: scrivi le sonde che falliscono**
+
+`crates/kernel/tests/sensor_ring.rs`, file nuovo — ⛔ **da FUORI la crate**, che è la terza
+domanda del pre-controllo di `CLAUDE.md`:
+
+```rust
+//! The ring: it collects a verdict, journals it, and a NEGATIVE one opens a new step (V14, Q10).
+
+use kernel::boundary::Untrusted;
+use kernel::ports::journal::{Journal, StepId};
+use kernel::record::{Detail, Record, RecordKind};
+use kernel::sensor::{run_the_ring, CostClass, Sensor, Verdict, VerdictOutcome};
+use kernel::time::Millis;
+use simulator::journal::MemoryJournal;
+
+/// A sensor whose verdict the TEST chooses — §6.4.2 asks for exactly this double.
+struct ScriptedSensor {
+    cost: CostClass,
+    outcome: VerdictOutcome,
+}
+
+impl Sensor for ScriptedSensor {
+    fn declared_cost(&self) -> CostClass {
+        self.cost
+    }
+
+    fn observe(&self, _artefact: &Untrusted) -> Verdict {
+        Verdict {
+            outcome: self.outcome,
+            detail: Untrusted::new("field `name` is missing".into()),
+            spent: Millis::new(7),
+        }
+    }
+}
+
+fn records(journal: &MemoryJournal) -> Vec<(StepId, Record)> {
+    journal
+        .replay()
+        .expect("replay")
+        .into_iter()
+        .map(|(step, bytes)| (step, Record::decode(&bytes).expect("decode")))
+        .collect()
+}
+
+#[test]
+fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
+    // ⛔ THIS IS ALSO THE COUNTER-PROBE OF CATALOGUE ROW V10 — "observing it and returning a
+    // verdict compiles". It lives here and not beside the compile_fail case: gotcha #49.
+    let mut journal = MemoryJournal::new();
+    let sensor = ScriptedSensor {
+        cost: CostClass::Computational,
+        outcome: VerdictOutcome::Pass,
+    };
+
+    let opened = run_the_ring(
+        &sensor,
+        &Untrusted::new("the artefact".into()),
+        StepId::new(1),
+        StepId::new(2),
+        &mut journal,
+    )
+    .expect("the ring");
+
+    assert_eq!(opened, None);
+    let written = records(&journal);
+    assert_eq!(written.len(), 1);
+    let (step, Record::V1(body)) = &written[0];
+    assert_eq!(*step, StepId::new(1));
+    assert_eq!(body.kind, RecordKind::Verdict);
+}
+
+#[test]
+fn a_failing_verdict_opens_a_new_step_and_carries_the_detail() {
+    // V14: "a negative verdict re-entering the ring is a NEW STEP, journalled" -- and Q10:
+    // it re-enters WITHOUT HUMAN INTERVENTION, which is why nothing here asks anybody anything.
+    let mut journal = MemoryJournal::new();
+    let sensor = ScriptedSensor {
+        cost: CostClass::Computational,
+        outcome: VerdictOutcome::Fail,
+    };
+
+    let opened = run_the_ring(
+        &sensor,
+        &Untrusted::new("the artefact".into()),
+        StepId::new(1),
+        StepId::new(2),
+        &mut journal,
+    )
+    .expect("the ring");
+
+    assert_eq!(opened, Some(StepId::new(2)));
+
+    let written = records(&journal);
+    assert_eq!(written.len(), 2);
+
+    // The verdict, upon the step that was judged.
+    let (step, Record::V1(verdict)) = &written[0];
+    assert_eq!(*step, StepId::new(1));
+    assert_eq!(verdict.kind, RecordKind::Verdict);
+    // ⛔ THE ASSERTION IS ON THE ARCHIVE, NOT ON THE RETURN VALUE, and that is what keeps it from
+    // being vacuous -- the same choice task 9 of milestone 5 made for the policy transition.
+    let Some(Detail::Verdict(detail)) = &verdict.detail else {
+        panic!("the verdict record carries no structured detail");
+    };
+    assert!(!detail.passed);
+    assert_eq!(detail.spent_millis, 7);
+    // The untrusted half travelled in the payload, under the label that says so.
+    assert_eq!(verdict.payload, b"field `name` is missing");
+
+    // The new step's intent, carrying the feedback.
+    let (next, Record::V1(intent)) = &written[1];
+    assert_eq!(*next, StepId::new(2));
+    assert_eq!(intent.kind, RecordKind::Intent);
+    assert_eq!(intent.payload, b"field `name` is missing");
+}
+
+#[test]
+fn an_inferential_sensor_is_refused_by_the_tight_ring() {
+    // V11's first half: the DECLARED cost decides admission, and it is read BEFORE running.
+    // ⚠️ The row stays `parziale` all the same -- its second half has no subject while no
+    // inferential sensor exists (§8.3, trigger C4). Condition 12 of the design: do NOT mark it.
+    let mut journal = MemoryJournal::new();
+    let sensor = ScriptedSensor {
+        cost: CostClass::Inferential,
+        outcome: VerdictOutcome::Fail,
+    };
+
+    let opened = run_the_ring(
+        &sensor,
+        &Untrusted::new("the artefact".into()),
+        StepId::new(1),
+        StepId::new(2),
+        &mut journal,
+    )
+    .expect("the ring");
+
+    assert_eq!(opened, None);
+    // ⛔ AND NOTHING WAS WRITTEN, which is the half that would be missed: a ring that refused to
+    // OPEN a step but journalled the verdict anyway would pass the assertion above.
+    assert!(records(&journal).is_empty());
+}
+```
+
+⚠️ **`MemoryJournal::new` e il percorso `simulator::journal` sono da VERIFICARE, non da
+ricordare** — è la stessa regola che la D18 impone al derive di `bincode`:
+
+```bash
+grep -rn "pub struct MemoryJournal" -A6 crates/simulator/src/
+grep -n "simulator" crates/kernel/Cargo.toml
+```
+
+- [ ] **Passo 2: fai girare, e leggi il rosso**
+
+```bash
+cargo test --locked -p kernel --test sensor_ring 2>&1 | tail -30
+```
+
+⛔ **Aspettati che `run_the_ring` non esista.** È il rosso di partenza.
+
+- [ ] **Passo 3: scrivi l'anello**
+
+In coda a `crates/kernel/src/sensor.rs`:
+
+```rust
+/// Runs one sensor over one artefact and carries the answer back into the journal.
+///
+/// ⛔ A FREE FUNCTION THAT TAKES THE PORT, like `reconcile::steps_in_doubt` — the project already
+/// has this shape for "read the journal and derive", and this one writes as well. A struct
+/// holding the journal would give the ring state, and I5 keeps state in one place.
+///
+/// ⛔ `next` IS DELIVERED AND NOT ALLOCATED, and that is not laziness: `StepId` HAS NO ALLOCATOR,
+/// `ports/journal.rs` says so beside the type, and whether one arrives is the owner's — registered
+/// and not taken since 2026-08-21. Inventing one here would take that decision by writing it.
+///
+/// Returns the id of the step it opened, or `None` when nothing was opened — either the verdict
+/// passed, or the sensor was refused by the tight ring.
+pub fn run_the_ring<S: Sensor, J: Journal>(
+    sensor: &S,
+    artefact: &Untrusted,
+    step: StepId,
+    next: StepId,
+    journal: &mut J,
+) -> Result<Option<StepId>, JournalError> {
+    // ⛔ THE DECLARED COST IS READ BEFORE `observe` IS CALLED, and that ordering IS V11: a cost
+    // that came back with the verdict would arrive after the expense (§6.4.1). Nothing is
+    // journalled on this road — a sensor that never ran produced no verdict, and writing one
+    // would be the record of an event that did not happen.
+    if sensor.declared_cost() == CostClass::Inferential {
+        return Ok(None);
+    }
+
+    let verdict = sensor.observe(artefact);
+
+    // The verdict, upon the step whose artefact was judged. ⛔ `Verifiable` AND NOT
+    // `Unrepeatable`: the class describes how a DOUBT about this record's effect would be
+    // reconciled, and a verdict has no effect on the world — re-running the sensor over the same
+    // artefact answers the same thing. ⚠️ It is never actually reconciled, because a `Verdict`
+    // record opens no doubt (see `reconcile`); the field is mandatory and must still be true.
+    let record = Record::V1(RecordV1 {
+        kind: RecordKind::Verdict,
+        effect: EffectClass::Verifiable,
+        trust: Trust::Untrusted,
+        payload: verdict.detail.as_str().as_bytes().to_vec(),
+        reason: String::from("a sensor judged the artefact of this step"),
+        detail: Some(Detail::Verdict(VerdictDetail {
+            passed: verdict.outcome == VerdictOutcome::Pass,
+            spent_millis: verdict.spent.get(),
+        })),
+    })
+    .encode();
+    journal.note(step, &record)?;
+
+    if verdict.outcome == VerdictOutcome::Pass {
+        return Ok(None);
+    }
+
+    // ⛔ A NEGATIVE VERDICT RE-ENTERS AS A NEW STEP (V14), AND NOBODY IS ASKED (Q10). The intent
+    // carries the same untrusted detail as the feedback the next attempt has to answer.
+    let feedback = Record::V1(RecordV1 {
+        kind: RecordKind::Intent,
+        effect: EffectClass::Idempotent,
+        trust: Trust::Untrusted,
+        payload: verdict.detail.as_str().as_bytes().to_vec(),
+        reason: String::from("a sensor verdict re-entered the ring as a new step"),
+        detail: None,
+    })
+    .encode();
+    journal.intent(next, &feedback)?;
+
+    Ok(Some(next))
+}
+```
+
+⚠️ **`Millis::get()` è da VERIFICARE**, come tutto il resto: se il getter non c'è, il rimedio è
+la stessa domanda che `StepId::get` si pose al Traguardo 3 — *serve a un chiamante che esiste* —
+e va aggiunto **con quel chiamante**, non «per completezza».
+
+- [ ] **Passo 4: le mutazioni, una alla volta e revocate da copia (D7)**
+
+| # | Mutazione | Che cosa deve diventare rosso |
+|---|---|---|
+| M1 | l'anello **non** scrive il record di verdetto | `a_passing_sensor_…` e `a_failing_verdict_…` |
+| M2 | l'anello apre il passo nuovo **anche** su `Pass` | `a_passing_sensor_writes_a_verdict_and_opens_nothing` |
+| M3 | il controllo del costo dichiarato è **dopo** `observe` | ⚠️ **misura che cosa succede davvero:** se **niente** diventa rosso, l'ordinamento che il doc chiama *«IS V11»* è tenuto da nulla, ed è un mutante vivo da dichiarare |
+| M4 | `passed` è sempre `true` | `a_failing_verdict_…`, sull'**archivio** |
+| M5 | il `payload` del passo nuovo è vuoto | `a_failing_verdict_…`, ultima asserzione |
+
+⛔ **Se una mutazione non uccide nulla, il rimedio è una sonda in più, non un'asserzione più
+larga** — e se la sonda che la ucciderebbe congelasse una decisione aperta, si **dichiara** invece
+di pinzarla (gotcha **#73**).
+
+- [ ] **Passo 5: il registro, e le righe di catalogo**
+
+In [`porta-di-qualita.md`](../../porta-di-qualita.md): la riga `V10` del blocco C passa a
+**coperta**, col caso `sensor_modifies_the_artefact.rs` nella colonna *«deve scattare»* e
+`a_passing_sensor_writes_a_verdict_and_opens_nothing` in quella *«deve restare verde»*.
+
+⛔ **E QUATTRO righe NON si toccano** — `V11`, `V21`, `V27`, `Q18` — che è la **condizione 12**
+del disegno, l'unica negativa. ⚠️ **`V11` in particolare è la tentazione di questo compito:** il
+meccanismo di ammissione all'anello stretto **esiste** dopo il commit 5c e ha la sua sonda, ma la
+seconda metà della riga *«gli inferenziali restano fuori»* non ha soggetto finché nessun sensore
+inferenziale esiste. **Il meccanismo si costruisce, la riga non si muove.**
+
+⚠️ **Le sonde di questo compito non hanno una riga di catalogo propria**, tranne `V10`. Si
+**registra** come voce aperta e non si prende: la §7.4 è **spec**, vincolo globale 7 — stesso
+trattamento di `PL-1`, `K-1`/`B-1` e delle sonde del Traguardo 5, stessa ragione (gotcha #36).
+
+- [ ] **Passo 6: commit**
+
+```bash
+bash scripts/gate.sh
+cargo test --locked --workspace --no-fail-fast
+git add crates/kernel/src/sensor.rs crates/kernel/tests/sensor_ring.rs docs/porta-di-qualita.md
+git commit -m "feat(sensor): l'anello giornala il verdetto e un verdetto negativo apre un passo nuovo (V14, Q10)"
+```
+
+#### Criterio di chiusura del compito 5
+
+- [ ] `bash scripts/gate.sh` → `GATE GREEN` **a ciascuno dei tre commit**, non solo all'ultimo
+- [ ] i casi `compile_fail` sono **uno in più**, e il numero si riconta col comando
+- [ ] i record congelati sono **quattro**, e `record_v1.map` li ricostruisce tutti e quattro
+- [ ] ⛔ i **tre** `.cbor` vecchi sono **byte-identici** — `git status --porcelain crates/kernel/tests/frozen/` nomina **solo** i file nuovi e la mappa
+- [ ] l'array a mano di `frozen_bytes.rs` porta **quattro** varianti, e la sua `assert!` è stata **vista scattare** togliendo il quarto record
+- [ ] i due `.stderr` toccati sono stati **riletti a mano**, e la corsa che li ha prodotti è girata **senza** `TRYBUILD=overwrite`
+- [ ] il `Debug` stampa `detail`, e l'oracolo di `record_shape.rs` è stato visto **rosso** prima di essere riscritto
+- [ ] i **sei** commenti di doc che mostravano un record a cinque campi portano il proprio **richiamo datato**
+- [ ] ⚠️ `V11`, `V21`, `V27` e `Q18` **non** sono state marcate ✅ — condizione 12
+- [ ] i fine-riga di ogni file toccato sono stati **rimisurati**, non supposti
+- [ ] ogni mutazione che non ha ucciso niente è **dichiarata**, non taciuta

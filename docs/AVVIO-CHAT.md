@@ -376,11 +376,16 @@ RIPRENDI DA DOVE LA §6 DICE.
 ⛔ RICHIAMO DEL 2026-08-30: qui seguiva «: non c'è un piano da eseguire né uno
    da scrivere, e il brainstorming è il primo passo del traguardo nuovo».
    TOLTO, non riallineato: era di nuovo uno STATO in un file che due righe più
-   giù dichiara di non portarne, ed era falso in entrambe le metà — il
-   brainstorming è chiuso dal 2026-08-30 e un piano ESISTE, aperto e in
-   scrittura. È la terza volta che questa riga porta uno stato e la terza che
-   invecchia; stavolta non c'è niente da riallineare perché non c'è più
-   nessuna affermazione. Gotcha #68.
+   giù dichiara di non portarne, ed era falso in entrambe le metà — al
+   2026-08-30 il brainstorming era già chiuso e un piano ESISTEVA. È la terza
+   volta che questa riga porta uno stato e la terza che invecchia; stavolta
+   non c'è niente da riallineare perché non c'è più nessuna affermazione.
+   Gotcha #68.
+   ⚠️ E LA GIUSTIFICAZIONE QUI SOPRA PORTAVA A SUA VOLTA UNO STATO AL
+   PRESENTE — «un piano ESISTE, aperto e IN SCRITTURA» — che è invecchiato lo
+   stesso giorno, quando il piano è stato finito. Ancorata alla propria data:
+   dentro un verbale datato un fatto regge, al presente mente. Qual è lo stato
+   OGGI lo dice la §6, non questo richiamo.
 ⛔ RICHIAMO DEL 2026-08-28: qui stava «POI APRI IL BRAINSTORMING», e il file
    dichiara di sé, dodici righe più su, di NON nominare il prossimo passo.
    Era una casa di troppo, ed è diventata falsa la sera stessa.

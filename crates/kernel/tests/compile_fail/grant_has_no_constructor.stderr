@@ -4,4 +4,4 @@ error: cannot construct `Grant` with struct literal syntax due to private fields
 10 |     let _forged = kernel::arbiter::Grant {};
    |                   ^^^^^^^^^^^^^^^^^^^^^^
    |
-   = note: private field `id` that was not provided
+   = note: private fields `id` and `issuer` that were not provided

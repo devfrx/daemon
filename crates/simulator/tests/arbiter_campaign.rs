@@ -36,7 +36,7 @@ use std::collections::BTreeSet;
 
 use kernel::arbiter::{
     Admission, Arbiter, ArbiterId, ComputeClass, Grant, LocalPolicy, Mib, Preemption, ReleaseError,
-    RemotePolicy, ResourceProfile, VramPolicy,
+    Released, RemotePolicy, ResourceProfile, VramPolicy,
 };
 use kernel::executor::{Executor, Sleep};
 use kernel::parameters::Parameters;
@@ -303,12 +303,20 @@ struct Observed {
     /// Grants issued OUT OF THE QUEUE. ⛔ It is a second place grants are born, with a
     /// ceiling guard of its own, so property 1 covers `promote` and not only `admit`.
     promoted: usize,
-    /// Hand-backs the arbiter accepted.
+    /// Hand-backs that really took a reservation out of the books -- `Released::Now`.
     released: usize,
-    /// Hand-backs that found the grant ALREADY OFF THE BOOKS -- `ReleaseError::UnknownGrant`.
+    /// Hand-backs that found the grant ALREADY OFF THE BOOKS -- `Released::AlreadyCollected`.
     /// ⛔ IT IS A WITNESS OF PROPERTY 5 seen from the holder's side. This scenario builds ONE
     /// arbiter and hands each grant back at most once, so the reading this bench takes from
-    /// that error is that the sweep had already removed the grant.
+    /// that answer is that the sweep had already removed the grant.
+    ///
+    /// ⚠️ RECALL OF 2026-08-30, MILESTONE 6 TASK 1 -- THIS LINE READ `ReleaseError::UnknownGrant`
+    /// AND IS CORRECTED RATHER THAN ANNOTATED. The distinction did not move: it is still
+    /// "the sweep got there first". What moved is where `release` draws it -- inside `Ok`
+    /// instead of across `Ok`/`Err` -- because a grant of one's OWN arbiter is no longer an
+    /// error whatever the clock did (`E30`). ⛔ THE FALSE NAME WAS NOT LOUD: the `match` that
+    /// fills these two fields went on compiling with `Ok(_)` on the other arm, so what caught
+    /// it was the non-vacuity guard below going red, not the compiler.
     already_collected: usize,
     /// Admissions that were GRANTED although the books, read in the same breath, had no room
     /// for them.
@@ -397,11 +405,26 @@ fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Observed) {
                 let due = take_due(running, now);
                 let handed_back = !due.is_empty();
                 for grant in due {
+                    // ⛔ THREE ARMS SINCE 2026-08-30, AND THE SPLIT MOVED INSIDE `Ok`. Until
+                    // milestone 6 task 1 the two counters were told apart by `Ok` against
+                    // `Err`; `release` now answers `Err` ONLY for a grant of another arbiter,
+                    // and this scenario builds ONE. Left as `Ok(_)` the match still COMPILED
+                    // and `already_collected` stayed 0 on every seed -- which is why the two
+                    // witnesses below are `assert!` and not a count printed for a reader.
                     match arbiter.borrow_mut().release(grant, now) {
-                        Ok(_) => observed.borrow_mut().released += 1,
-                        Err(ReleaseError::UnknownGrant) => {
+                        Ok(Released::Now(_)) => observed.borrow_mut().released += 1,
+                        Ok(Released::AlreadyCollected) => {
                             observed.borrow_mut().already_collected += 1;
                         }
+                        // ⛔ NOT A COUNTER: in this scenario it cannot happen, so counting it
+                        // would bury the one thing it could ever mean. One arbiter issues
+                        // every grant here, and `take_due` hands back only grants it took from
+                        // `running` -- so an `Err` says the ISSUER STAMP is wrong, which is a
+                        // defect of `issue` or of `release` and not an outcome of the world.
+                        Err(ReleaseError::UnknownGrant) => panic!(
+                            "seed {seed}: the one arbiter of this scenario disowned a grant it \
+                             issued itself"
+                        ),
                     }
                     watch(seed, arbiter, observed);
                 }

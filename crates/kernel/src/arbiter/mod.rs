@@ -106,10 +106,23 @@ impl ArbiterId {
 /// buy for free and cost an `#[allow(dead_code)]`, which this repository treats as a
 /// prohibition switched off (gotcha #13). ⛔ THAT PARAGRAPH IS NOT COPIED, because the shape
 /// it described no longer exists: the named field is back, dictated again by the milestone 5
-/// design, and it is `id` that lets `Arbiter::release` tell a grant of THIS arbiter from a
-/// grant of another one -- with the limit of that written beside `ReleaseError`.
+/// design, and it is `id` that names the grant inside the books of the arbiter that issued it.
+///
+/// ⛔ RECALL OF 2026-08-30, MILESTONE 6 TASK 1 -- THE SENTENCE ABOVE ENDED "and it is `id`
+/// that lets `Arbiter::release` tell a grant of THIS arbiter from a grant of another one --
+/// with the limit of that written beside `ReleaseError`", AND IT IS CORRECTED RATHER THAN
+/// LEFT STANDING. It never was `id` that did that, which is exactly what the declared limit
+/// it pointed at said: `GrantId` restarts at zero in every arbiter, so `id` alone cannot tell
+/// two arbiters' grants apart. The field that does it is `issuer`, born here with `E30`.
+///
+/// ⚠️ BOTH FIELDS ARE PRIVATE, and `issuer` for one reason more than `id`: it is the whole of
+/// the guard in `Arbiter::release`, so a caller that could write it could hand any arbiter a
+/// grant it never issued and have the reservation credited. A guard is worth exactly what its
+/// constructor is worth (gotcha #67), and `Grant` deliberately has none.
 pub struct Grant {
     id: GrantId,
+    /// Which arbiter issued this grant. Written by `issue` and by nothing else.
+    issuer: ArbiterId,
 }
 
 /// The identity of a grant, inside the arbiter that issued it.
@@ -207,6 +220,21 @@ pub enum PreemptibleState {
     },
 }
 
+//// What handing a grant back actually did.
+///
+/// ⛔ TWO ANSWERS AND NOT A `bool`, because the caller has something to do with the
+/// difference: `Now` says this many MiB came back to the budget in this call, and
+/// `AlreadyCollected` says the sweep had already taken them -- the books are the same either
+/// way, and only the first is a change the caller caused.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Released {
+    /// Taken back now. The `Mib` is what returned to the budget.
+    Now(Mib),
+    /// The sweep had it already -- the declared window closed, or the grace of a revocation
+    /// ran out. NOT an error: the reservation is not held by anyone either way.
+    AlreadyCollected,
+}
+
 /// What can go wrong when handing a grant back.
 ///
 /// ⛔ ONE VARIANT, AND IT IS REACHABLE -- which is what keeps this `Result` from being the
@@ -215,140 +243,43 @@ pub enum PreemptibleState {
 /// other. Crediting it silently would corrupt the budget of an arbiter that never issued
 /// it, which is over-admission arriving by the back door.
 ///
-/// ⚠️ DECLARED LIMIT, AND IT IS WRITTEN HERE BECAUSE THE PROBE CANNOT SAY IT. What
-/// `release` actually answers is "THAT IS NOT IN MY BOOKS", not "I can tell my grants from
-/// somebody else's". `GrantId` is a counter that restarts at zero for every `Arbiter`, so
-/// two arbiters that have BOTH issued grants share the same id space, and the second one
-/// would credit the first one's grant as if it were its own. The bench catches the case it
-/// can -- an empty second arbiter -- and no more.
+/// ⛔ RECALL OF 2026-08-30, MILESTONE 6 TASK 1 -- THIS BLOCK CARRIED THE WHOLE HISTORY OF
+/// `E30` AND IS REWRITTEN RATHER THAN ANNOTATED, because this commit spent every claim in it
+/// and a true sentence appended under false ones leaves them standing (finding A-2). What it
+/// argued, and what closed each piece:
+/// ① "THREE CAUSES, ONE ANSWER" -- spent. Two of the three answer `Ok` now, and the variant
+///    below states the one that is left.
+/// ② The three measured pairs -- released at 5_001 and at 5_000 exactly answering `Err`,
+///    at 4_999 answering `Ok`, and the same either side of a revocation grace -- spent: those
+///    inputs answer `Ok(Released::AlreadyCollected)` and `Ok(Released::Now(_))` today, and
+///    TWO PROBES pin them instead of a paragraph,
+///    `a_grant_of_this_arbiter_released_after_its_window_is_not_an_error` and
+///    `a_grant_released_inside_its_window_reports_what_came_back`.
+/// ③ "NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT" -- spent
+///    by ②, and it was right while it stood: a probe written then would have had to be
+///    DELETED to take the decision, which is a vote against taking it.
+/// ④ "THE DESIGN IS NOT CHANGED TO CLOSE IT, because closing it means giving an `Arbiter` an
+///    IDENTITY, and that is a decision for the owner" -- TAKEN, and the identity is
+///    `ArbiterId`. With it the declared limit that paragraph guarded is CLOSED: `GrantId`
+///    still restarts at zero in every arbiter, but `release` compares `Grant::issuer` BEFORE
+///    it reads the books, so two arbiters no longer need disjoint id spaces to be safe.
+/// ⑤ "WHAT IS DELIBERATELY NOT DECIDED: the exact type `release` answers with" -- decided,
+///    and it is `Released` above, built WITH `R6` exactly as that paragraph said it would be.
+/// ⛔ THE ARGUMENT IS NOT COPIED DOWN HERE, only its outcome. It lives in the milestone 6
+/// design and in the plan's `E30`; what belongs beside a type is what the type means TODAY.
 ///
-/// ⛔ AND THE DESIGN IS NOT CHANGED TO CLOSE IT, because closing it means giving an
-/// `Arbiter` an IDENTITY, and that is a decision for the owner rather than for the task
-/// that noticed. What buys the protection today is that one process has one arbiter: the
-/// several that exist at once exist in BENCHES. The day a second real arbiter is wired, this
-/// paragraph is the debt to settle, and it is written where the type is instead of in a
-/// document nobody opens beside the code.
-///
-/// ⚠️ A SECOND AND A THIRD DECLARED LIMIT, AND THEY ARE THE ONES THAT BITE FIRST. `release`
-/// calls `collect_expired` BEFORE it looks, so anything that sweep has taken off the books is
-/// gone by the time `remove` runs: it answers `None` and the caller gets `UnknownGrant`. Since
-/// task 7 that sweep has TWO deadlines, so there are TWO ways for a grant THIS ARBITER ISSUED
-/// to be missing from its own books -- its validity window closed, or its GRACE ran out after
-/// the arbiter asked it back.
-/// ✅ MEASURED on a throwaway probe, not deduced: admitted for 5_000 ms, released at 5_001 ->
-/// `Err(UnknownGrant)`; released at 4_999 -> `Ok(Mib(4096))`; released at 5_000 EXACTLY ->
-/// `Err(UnknownGrant)` too, because the window is half-open, `[start, expiry)`. The grace
-/// deadline is half-open by the same rule -- one rule for both, see `collect_expired`.
-/// ✅ AND THE THIRD CAUSE IS MEASURED TOO, on a throwaway probe deleted straight after and on
-/// 2026-08-20: a grant asked back at `0` with a grace of `500` and released at `500` EXACTLY ->
-/// `Err(UnknownGrant)`, and the same grant released at `499` -> `Ok(Mib(4096))`. So being under
-/// revocation is NOT by itself an obstacle to handing the grant back -- only the sweep that
-/// follows the deadline is.
-///
-/// ⚠️ RECALL OF 2026-08-20, MILESTONE 5 TASK 7, IN REVIEW -- THIS BLOCK SAID "TWO CAUSES" AND
-/// SAID IT IN THREE PLACES, AND ALL THREE ARE REWRITTEN RATHER THAN ANNOTATED. A true sentence
-/// added under a false one leaves the false one standing, which is finding A-2 of this project's
-/// own audit done again. The count was right until this task gave `collect_expired` its second
-/// deadline; from the moment forced reclamation landed, a revoked grant whose grace expired
-/// answers `UnknownGrant` for a reason neither old paragraph named.
-///
-/// ⛔ SO THREE CASES ARE CONFLATED IN ONE VARIANT, and THE NAME STILL STATES THE STRONGEST OF
-/// THE THREE -- which of an expired grant, and of a reclaimed one, is simply FALSE. That is why
-/// the doc line below no longer repeats it. What the guard buys is "that is not in my books, so
-/// I will not credit it", and THAT holds in all three cases: it is the whole of the
-/// over-admission protection. What it does not buy is telling the caller WHICH of the three
-/// happened.
-///
-/// ⚠️ TODAY IT COSTS NOTHING IN BEHAVIOUR, and the reason is a measurement rather than a hope:
-/// every caller of `release` in this repository is a PROBE -- NO PRODUCTION CONSUMER EXISTS. It starts costing at milestone 6, where `Worker::kill` hands
-/// the grant back when the work FINISHES, which can perfectly well be after the window; there
-/// "your release failed", "it was already done for you" and "it was TAKEN from you" are THREE
-/// different pieces of news, and the third is the one a caller can act on -- being preempted is
-/// not the same event as outliving your own window. A second variant `Expired` was the known
-/// remedy while there were two causes; with three the shape of the remedy is itself part of the
-/// decision. It is a DESIGN decision either way, so it is RECORDED FOR THE OWNER in the plan's
-/// errata (`E30`, widened on 2026-08-20 by `E72`) instead of being taken by the task that
-/// noticed it.
-///
-/// ⚠️ RECALL OF 2026-08-20, SECOND REVIEW OF MILESTONE 5 TASK 7 -- THE PARAGRAPH ABOVE SAID
-/// "`release` HAS TWO CALLERS", AND THE FIGURE IS REMOVED RATHER THAN RECORRECTED. It was true
-/// when task 5 wrote it, and task 6 falsified it in the very next commit by giving the queue
-/// probes their releases. ⛔ AND IT IS NOT REPLACED BY A BIGGER NUMBER, because the number was
-/// never what the argument needed: "no production consumer exists" carries the whole of it, and
-/// it is the half that does not rot. A figure that lives in more than one document gets taken
-/// out, not realigned -- the rule of gotcha #68, applied to the document that hosts it.
-/// ⛔ THE THIRD REVIEW FINISHED THAT JOB, because the second one had not: the RECOUNT that
-/// replaced the figure was itself written into four places at once, this paragraph among them,
-/// under a heading saying no bigger number replaces it. The recount now lives in the plan's
-/// `E77` alone, and everything else -- here, `E30`, the register -- points there instead of
-/// repeating it. Gotcha #68 is about a figure living in two places, not about which figure it is.
-/// Registered as `E77`, closed by `E85`.
-///
-/// ⛔ RECALL OF 2026-08-28, FINDING AUD-014 -- THE SENTENCE ABOVE ALSO SAID "and they all live
-/// in `tests/arbiter_admission.rs`", AND THAT CLAUSE IS REMOVED RATHER THAN REALIGNED TO A LONGER
-/// LIST. Of its three clauses exactly ONE was false: `release` has ten call sites today, nine
-/// there and one in `crates/simulator/tests/arbiter_campaign.rs` -- ANOTHER CRATE, born at tasks
-/// 11/12, after this paragraph was written. The other two clauses hold and they carry the whole
-/// argument, so neither was rewritten. ⚖️ It is the same cure the recall above applied to "TWO
-/// CALLERS" IN THIS VERY SENTENCE, and the reason it was needed twice: a LOCATION exclusivity is a
-/// quantified claim written with a noun instead of a number, so the rule of gotcha #68 did not
-/// recognise it while it was being applied to the clause right next to it.
-///
-/// ⛔ AND THE REMOVED CLAUSE POINTED THE READER AT THE WRONG NINE -- MEASURED, NOT ARGUED. Adding
-/// the second variant `E30` names is a COMPILE BREAK, and only in the crate that clause excluded:
-/// with `Expired` added to `ReleaseError`, `cargo test --locked -p kernel --no-run` still exits 0,
-/// because eight of those nine sites reach for `.expect()` and the ninth for `.is_err()`; while
-/// `-p simulator` exits 101 on `error[E0004]: non-exhaustive patterns: Err(ReleaseError::Expired)
-/// not covered` at `arbiter_campaign.rs:400`, whose `match` carries no wildcard arm. Mutation
-/// applied, compiled, and revoked with `git diff` at zero lines, on 2026-08-28.
-/// ⚖️ WHAT THIS DOES NOT CHANGE: "costs nothing" was and remains a claim about BEHAVIOUR, and it
-/// still holds -- the campaign COUNTS the two outcomes and never acts on which cause produced one,
-/// which is why "IN BEHAVIOUR" is now written into it instead of left to the reader. What it does
-/// change is the reader's bound on the DESIGN decision: `E30` is not one file's worth of work, and
-/// the removed clause said it was.
-///
-/// ⚠️ AND NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT. A test
-/// asserting `Err` at 5_001 would freeze the very behaviour `E30` puts in front of the owner:
-/// the day the second variant arrives, that probe goes red FOR HAVING BEEN RIGHT, and a probe
-/// that must be deleted to take a decision is a vote against taking it. So the measurement
-/// lives here, beside the type, and moves when the decision does. ⛔ THE COST IS STATED
-/// INSTEAD OF HIDDEN: moving `collect_expired` after the lookup -- one of the two roads `E30`
-/// names -- turns nothing red, and this paragraph would become false in silence.
-///
-/// ⛔ DECISION OF 2026-08-28 -- THE ENTRY THE PARAGRAPHS ABOVE POINT AT IS NOW TAKEN IN
-/// SUBSTANCE AND BOUND IN SHAPE. The substance: `release` MUST NOT answer `Err` for a grant
-/// THIS ARBITER ISSUED. A closed validity window and an expired revocation grace are not
-/// failures of the release -- the reservation went back into the budget when the sweep took
-/// it -- and answering `Err` there forces the first real consumer to ignore an error, which is
-/// the silent degradation ADR-0005 and ADR-0019 exist to forbid. Only the grant this arbiter
-/// never issued is a caller defect, and that one stays an error.
-///
-/// ⛔ TWO SHAPES ARE CLOSED AS REJECTED, so neither is reopened without a NEW measurement.
-/// ① A SECOND VARIANT ON ITS OWN: it buckets three causes into two, so it would have to be
-/// redone the day it first bites -- and the level-1 friction it is meant to buy does not land,
-/// for the reason the recall above already measured. ② MOVING THE SWEEP AFTER THE LOOKUP:
-/// rejected on MERIT and not on cost, because the answer to one question would then depend on
-/// WHICH OPERATION SWEPT LAST, and because it breaks "the arbiter collects before it decides"
-/// as a property of EVERY operation, which is what step 4 bought.
-/// ✅ BOTH COSTS WERE RE-MEASURED BEFORE DECIDING, by applying each mutation, compiling it,
-/// and revoking it with `git diff` at zero lines: both matched what this file already declares,
-/// and NEITHER FIGURE IS REPEATED HERE -- they live above and in the register.
-///
-/// ⚖️ WHAT IS DELIBERATELY NOT DECIDED, AND WHY THAT IS NOT AN EVASION: the exact type
-/// `release` answers with. It is bound to `R6` and built WITH it at milestone 6, because the
-/// shape follows from what `Worker::kill` needs once it hands the grant back -- and that caller
-/// does not exist yet. Building it now would freeze a return shape against an imaginary
-/// consumer, which is gotcha #46 from the wrong side: the same reason `R6` itself was not built
-/// at milestone 5.
-/// ⛔ SO THIS NO LONGER BLOCKS MILESTONE 6. What had to be settled first -- what `release`
-/// PROMISES -- is settled above; what remains is a design detail with a named closer, and the
-/// register's single table now pairs the two entries instead of leaving them apart.
+/// ⚠️ THE DECLARED LIMIT THAT SURVIVES, AND IT IS THE ONLY ONE. What `release` compares is
+/// EQUALITY of `ArbiterId`, and that value is DELIVERED -- §6.1.3 forbids the kernel to mint
+/// one. Two arbiters handed the SAME id ARE the same arbiter as far as this guard can tell,
+/// and nothing here can see otherwise: making them differ is the composition root's statement
+/// to make, and `Parameters::arbiter_id` is where it is made.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReleaseError {
-    /// Not in this arbiter's books. ⚠️ THREE CAUSES, ONE ANSWER -- see the declared limits
-    /// above: the grant came from ANOTHER arbiter, or it was this arbiter's and its validity
-    /// window had already closed, or it was this arbiter's and the grace of a revocation had
-    /// run out, so the sweep had already taken it back.
+    /// A grant THIS ARBITER NEVER ISSUED, and since 2026-08-30 that is the whole of it -- a
+    /// CALLER DEFECT and not an accident of timing. The two causes that used to share this
+    /// variant, the window that closed and the grace that ran out, are
+    /// `Released::AlreadyCollected` now: in both of them the arbiter DID issue the grant and
+    /// the reservation is already back in the budget.
     UnknownGrant,
 }
 
@@ -436,6 +367,13 @@ struct Waiting {
 /// already kept.
 pub struct Arbiter {
     parameters: Parameters,
+    /// Who this arbiter IS, lifted out of `parameters` once at construction.
+    ///
+    /// ⚠️ IT IS A COPY AND NOT A SECOND SOURCE OF TRUTH: `Parameters::arbiter_id` is where the
+    /// value comes from and `new` is the only place that reads it, so the two cannot disagree.
+    /// What the field buys is that `issue` and `release` say `self.id` instead of reaching
+    /// through the parameters for a value that never changes.
+    id: ArbiterId,
     /// The ONE active VRAM policy (ADR-0006). It is asked exactly once, in `admit`.
     policy: VramPolicy,
     next_grant: u64,
@@ -464,6 +402,7 @@ impl Arbiter {
     /// than decided here, because moving it into `Parameters` changes a type §2.8 pins.
     pub const fn new(parameters: Parameters, policy: VramPolicy) -> Self {
         Arbiter {
+            id: parameters.arbiter_id(),
             parameters,
             policy,
             next_grant: 0,
@@ -1013,16 +952,34 @@ impl Arbiter {
         covered
     }
 
-    /// Hands a grant back, and answers with the reservation that returned to the budget.
+    /// Hands a grant back.
     ///
     /// ⛔ IT CONSUMES THE GRANT: releasing twice DOES NOT COMPILE, which is level 1 and
-    /// cheaper than any runtime guard. The consequence for milestone 6 is written beside
-    /// `Grant`.
-    pub fn release(&mut self, grant: Grant, now: Monotonic) -> Result<Mib, ReleaseError> {
+    /// cheaper than any runtime guard.
+    ///
+    /// ⛔ DECISION OF 2026-08-28: a grant THIS arbiter issued is never an `Err`. Its window
+    /// may have closed and its grace may have run out; in both cases the sweep took the
+    /// reservation back and the answer is `AlreadyCollected`. Only the grant this arbiter
+    /// NEVER ISSUED is a caller defect, and that one stays an error.
+    ///
+    /// ⚠️ `UnknownGrant` NOW MEANS ONE THING, where it used to mean three. The two causes
+    /// that left it are the two above; what remains is a grant minted by another arbiter,
+    /// which `Parameters::arbiter_id` is what lets us see.
+    ///
+    /// ⛔ THE ISSUER IS CHECKED BEFORE THE SWEEP RUNS, AND THE ORDER IS THE ANSWER AND NOT A
+    /// PREFERENCE. A foreign grant must answer `Err` whatever this arbiter's own books happen
+    /// to hold, and sweeping first would make that answer depend on a state the question has
+    /// nothing to do with. "The arbiter collects before it decides" is untouched: the decision
+    /// this sweep precedes is `Now` against `AlreadyCollected`, which is the only one that
+    /// reads the books.
+    pub fn release(&mut self, grant: Grant, now: Monotonic) -> Result<Released, ReleaseError> {
+        if grant.issuer != self.id {
+            return Err(ReleaseError::UnknownGrant);
+        }
         self.collect_expired(now);
         match self.held.remove(&grant.id) {
-            Some(held) => Ok(held.reserved),
-            None => Err(ReleaseError::UnknownGrant),
+            Some(held) => Ok(Released::Now(held.reserved)),
+            None => Ok(Released::AlreadyCollected),
         }
     }
 
@@ -1060,7 +1017,13 @@ impl Arbiter {
                 grace: profile.preemption.grace(),
             },
         );
-        Grant { id }
+        // ⛔ `issuer` IS WRITTEN HERE AND NOWHERE ELSE, which is what makes it worth checking:
+        // `issue` is the ONE construction site of a `Grant` (§5.6), so a grant that names this
+        // arbiter is a grant this arbiter really booked.
+        Grant {
+            id,
+            issuer: self.id,
+        }
     }
 
     /// ⛔ PRIVATE, AND DELIBERATELY. A public `collect` would be a SECOND way of advancing

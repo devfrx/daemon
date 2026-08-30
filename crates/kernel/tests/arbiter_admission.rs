@@ -86,7 +86,7 @@
 
 use kernel::arbiter::{
     Activity, Admission, Arbiter, ArbiterId, ComputeClass, Mib, PreemptibleState, Preemption,
-    Promotion, RemotePolicy, ResourceProfile, VramPolicy,
+    Promotion, Released, RemotePolicy, ResourceProfile, VramPolicy,
 };
 use kernel::parameters::Parameters;
 use kernel::time::{Millis, Monotonic};
@@ -124,9 +124,15 @@ fn preemptible(name: &'static str, vram: u64, lane: ComputeClass, grace: u64) ->
 /// written with: under `LocalPolicy` the admission would start MARKING victims before it queues,
 /// and probes about the queues and the sweep would silently be about the revocation instead. The
 /// two policies have a bench of their own, `tests/arbiter_policy.rs`.
-fn arbiter(total: Mib) -> Arbiter {
+///
+/// ⛔ THE IDENTITY IS AN ARGUMENT AND NOT A CONSTANT INSIDE, and that is load-bearing since
+/// milestone 6 task 1. `a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit`
+/// builds TWO arbiters: with one identity baked in here they would be THE SAME ARBITER as far
+/// as `release` can tell, the probe would go green for the wrong reason, and its name would
+/// stop describing what it does.
+fn arbiter(id: ArbiterId, total: Mib) -> Arbiter {
     Arbiter::new(
-        Parameters::new(TURN_LIMIT, total, ArbiterId::new(1)),
+        Parameters::new(TURN_LIMIT, total, id),
         VramPolicy::Remote(RemotePolicy),
     )
 }
@@ -206,7 +212,7 @@ fn an_admission_is_distinguishable_three_ways() {
 /// RESERVATION.
 #[test]
 fn a_grant_takes_exactly_its_reservation_out_of_the_budget() {
-    let mut arbiter = arbiter(TOTAL);
+    let mut arbiter = arbiter(ArbiterId::new(1), TOTAL);
     assert_eq!(arbiter.allocated(), Mib::ZERO);
 
     let outcome = arbiter.admit(
@@ -223,7 +229,7 @@ fn a_grant_takes_exactly_its_reservation_out_of_the_budget() {
 /// need to know WHO held a grant, only that releasing puts the reservation back.
 #[test]
 fn releasing_gives_back_exactly_the_reservation() {
-    let mut arbiter = arbiter(TOTAL);
+    let mut arbiter = arbiter(ArbiterId::new(1), TOTAL);
     let Admission::Granted(grant) = arbiter.admit(
         &profile("trellis2-512-lean", 6_144, ComputeClass::Batch),
         LONG,
@@ -237,7 +243,7 @@ fn releasing_gives_back_exactly_the_reservation() {
         .release(grant, Monotonic::ORIGIN)
         .expect("the arbiter issued this grant");
 
-    assert_eq!(returned, Mib::new(6_144));
+    assert_eq!(returned, Released::Now(Mib::new(6_144)));
     assert_eq!(arbiter.allocated(), Mib::ZERO);
 }
 
@@ -245,8 +251,20 @@ fn releasing_gives_back_exactly_the_reservation() {
 /// surface this repository removed from `Record::encode` and refused to `Ipc::accept`. Two
 /// arbiters, a grant from the first handed to the second.
 ///
-/// ⚠️ WHAT IT PROVES IS "IT IS NOT IN MY BOOKS", NOT "I TELL MINE FROM SOMEBODY ELSE'S", and
-/// the declared limit beside `ReleaseError` says why: the second arbiter here is EMPTY.
+/// ⛔ RECALL OF 2026-08-30, MILESTONE 6 TASK 1 -- THIS PARAGRAPH SAID "WHAT IT PROVES IS 'IT
+/// IS NOT IN MY BOOKS', NOT 'I TELL MINE FROM SOMEBODY ELSE'S', and the declared limit beside
+/// `ReleaseError` says why: the second arbiter here is EMPTY". IT IS SPENT, and rewritten
+/// rather than annotated (finding A-2). `release` now compares `Grant::issuer` against the
+/// arbiter's own delivered `ArbiterId` BEFORE it reads any books, so this probe proves the
+/// stronger of the two sentences -- and it proves it only because the two arbiters are handed
+/// TWO DIFFERENT identities. ⚠️ THAT IS THE WHOLE LOAD, AND IT SITS IN THE HELPER: give
+/// `arbiter` a constant identity of its own and these two ARE one arbiter, `first`'s grant is
+/// released cleanly by `second`, and this probe goes red -- which is the right way round.
+///
+/// ⚠️ WHAT IT STILL DOES NOT PROVE, so the trade is not silently upgraded: that two arbiters
+/// which were handed the SAME id can be told apart. Nothing can, and nothing should -- the
+/// identity is DELIVERED (§6.1.3), so "these are two arbiters" is the composition root's
+/// statement and not a fact the kernel could check.
 ///
 /// ⛔ AND THE SECOND ASSERTION CANNOT FAIL, WRITTEN DOWN INSTEAD OF QUIETLY KEPT -- the
 /// species this milestone has already paid for as `E17`. `release` can only REMOVE from the
@@ -258,8 +276,8 @@ fn releasing_gives_back_exactly_the_reservation() {
 /// like.
 #[test]
 fn a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit() {
-    let mut first = arbiter(TOTAL);
-    let mut second = arbiter(TOTAL);
+    let mut first = arbiter(ArbiterId::new(1), TOTAL);
+    let mut second = arbiter(ArbiterId::new(2), TOTAL);
 
     let Admission::Granted(grant) = first.admit(
         &profile("asr-realtime", 1_024, ComputeClass::Realtime),
@@ -286,7 +304,7 @@ fn a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit() {
 /// `a_request_larger_than_the_total_is_refused_and_not_queued`.
 #[test]
 fn the_sum_of_the_grants_never_exceeds_the_total() {
-    let mut arbiter = arbiter(Mib::new(8_192));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(8_192));
     for name in ["a", "b"] {
         let outcome = arbiter.admit(
             &profile(name, 4_096, ComputeClass::Batch),
@@ -342,7 +360,7 @@ fn the_sum_of_the_grants_never_exceeds_the_total() {
 /// impossible configuration does not become OVER-ADMISSION. It has only stopped being loud.
 #[test]
 fn a_total_smaller_than_the_two_permanent_quotas_does_not_grant_the_second_one() {
-    let mut arbiter = arbiter(Mib::new(1_500));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(1_500));
 
     let audio = arbiter.admit(
         &profile("audio-reserved", 1_024, ComputeClass::Realtime),
@@ -370,7 +388,7 @@ fn a_total_smaller_than_the_two_permanent_quotas_does_not_grant_the_second_one()
 /// nobody -- and at the first one who looks it is already freed. §5.7 property 5.
 #[test]
 fn an_expired_grant_does_not_stay_allocated() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let outcome = arbiter.admit(
         &profile("short-lived", 4_096, ComputeClass::Batch),
         Millis::new(5_000),
@@ -407,7 +425,7 @@ fn an_expired_grant_does_not_stay_allocated() {
 /// the other defect: a queued request that RESERVED anyway, which would read `8_192`.
 #[test]
 fn a_grant_still_inside_its_window_is_not_collected() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let outcome = arbiter.admit(
         &profile("still-running", 4_096, ComputeClass::Batch),
         Millis::new(5_000),
@@ -446,7 +464,7 @@ fn a_grant_still_inside_its_window_is_not_collected() {
 /// `ReleaseError` is where that lives.
 #[test]
 fn a_grant_is_collected_at_the_instant_its_window_closes() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let outcome = arbiter.admit(
         &profile("short-lived", 4_096, ComputeClass::Batch),
         Millis::new(5_000),
@@ -471,7 +489,7 @@ fn a_grant_is_collected_at_the_instant_its_window_closes() {
 /// like patience.
 #[test]
 fn a_request_larger_than_the_total_is_refused_and_not_queued() {
-    let mut arbiter = arbiter(Mib::new(8_192));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(8_192));
     let Admission::Refused { asked, ceiling } = arbiter.admit(
         &profile("too-big", 32_768, ComputeClass::Batch),
         LONG,
@@ -486,7 +504,7 @@ fn a_request_larger_than_the_total_is_refused_and_not_queued() {
 /// A request that does not fit NOW but could fit later is queued, not refused.
 #[test]
 fn a_request_that_fits_the_machine_but_not_the_moment_is_queued() {
-    let mut arbiter = arbiter(Mib::new(8_192));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(8_192));
     let Admission::Granted(resident) = arbiter.admit(
         &profile("resident", 8_192, ComputeClass::Batch),
         LONG,
@@ -541,7 +559,7 @@ fn a_request_that_fits_the_machine_but_not_the_moment_is_queued() {
 /// above still pass, and that line does not.
 #[test]
 fn the_queue_promotes_by_lane_and_not_in_arrival_order() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let Admission::Granted(resident) = arbiter.admit(
         &profile("resident", 4_096, ComputeClass::Batch),
         LONG,
@@ -599,7 +617,7 @@ fn the_queue_promotes_by_lane_and_not_in_arrival_order() {
 /// not "any order at all".
 #[test]
 fn inside_one_lane_the_order_is_the_order_of_arrival() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let Admission::Granted(resident) = arbiter.admit(
         &profile("resident", 4_096, ComputeClass::Batch),
         LONG,
@@ -636,7 +654,7 @@ fn inside_one_lane_the_order_is_the_order_of_arrival() {
 /// the queue": with no room freed it promotes NOTHING and the books do not move.
 #[test]
 fn promote_with_no_room_freed_promotes_nothing() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let Admission::Granted(_resident) = arbiter.admit(
         &profile("resident", 4_096, ComputeClass::Batch),
         LONG,
@@ -663,7 +681,7 @@ fn promote_with_no_room_freed_promotes_nothing() {
 /// books never learned about.
 #[test]
 fn a_promoted_grant_is_a_grant_like_any_other() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let Admission::Granted(resident) = arbiter.admit(
         &profile("resident", 4_096, ComputeClass::Batch),
         LONG,
@@ -690,7 +708,7 @@ fn a_promoted_grant_is_a_grant_like_any_other() {
     let returned = arbiter
         .release(promotion.grant, Monotonic::ORIGIN)
         .expect("the promotion came from this arbiter");
-    assert_eq!(returned, Mib::new(2_048));
+    assert_eq!(returned, Released::Now(Mib::new(2_048)));
     assert_eq!(arbiter.allocated(), Mib::ZERO);
 }
 
@@ -720,7 +738,7 @@ fn a_promoted_grant_is_a_grant_like_any_other() {
 /// `the_queue_promotes_by_lane_and_not_in_arrival_order` already holds.
 #[test]
 fn promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let Admission::Granted(_bulk) = arbiter.admit(
         &profile("bulk", 3_072, ComputeClass::Batch),
         LONG,
@@ -757,7 +775,7 @@ fn promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one() {
         .expect("this arbiter issued it");
     assert_eq!(
         returned,
-        Mib::new(1_024),
+        Released::Now(Mib::new(1_024)),
         "exactly the small waiter's room, and not the big one's"
     );
 
@@ -801,7 +819,7 @@ fn promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one() {
 /// `5_000` and the promotion is asked at `5_001`.
 #[test]
 fn promote_collects_the_expired_before_it_serves_the_queue() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let Admission::Granted(_short_lived) = arbiter.admit(
         &profile("short-lived", 4_096, ComputeClass::Batch),
         Millis::new(5_000),
@@ -845,7 +863,7 @@ fn promote_collects_the_expired_before_it_serves_the_queue() {
 /// gotcha #30 warns about.
 #[test]
 fn promote_serves_every_request_that_fits_and_not_just_the_first() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let Admission::Granted(resident) = arbiter.admit(
         &profile("resident", 4_096, ComputeClass::Batch),
         LONG,
@@ -907,7 +925,7 @@ fn promote_serves_every_request_that_fits_and_not_just_the_first() {
 /// rot unseen. Registered as `E77`.
 #[test]
 fn a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep() {
-    let mut arbiter = arbiter(Mib::new(4_096));
+    let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
     let Admission::Granted(_resident) = arbiter.admit(
         &preemptible("resident", 4_096, ComputeClass::Batch, 500),
         Millis::new(5_000),
@@ -924,4 +942,41 @@ fn a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep() {
         panic!("nothing has expired and nothing was asked back, so the late-comer waits");
     };
     assert_eq!(arbiter.allocated(), Mib::new(4_096));
+}
+
+#[test]
+fn a_grant_of_this_arbiter_released_after_its_window_is_not_an_error() {
+    // ⛔ THIS IS THE DECISION OF 2026-08-28: release NEVER answers `Err` to a grant of its
+    // own. An expired window is not a failure of the release -- the sweep simply got there
+    // first -- and the caller learns that from `AlreadyCollected`, not from an error.
+    let mut arbiter = arbiter(ArbiterId::new(1), TOTAL);
+    let Admission::Granted(grant) = arbiter.admit(
+        &profile("short-lived", 4_096, ComputeClass::Batch),
+        Millis::new(5_000),
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("4096 of 16384 fits");
+    };
+
+    let released = arbiter.release(grant, Monotonic::from_millis(5_001));
+
+    assert_eq!(released, Ok(Released::AlreadyCollected));
+}
+
+/// The counter-probe, and it is the direction that is skipped: inside the window the release
+/// says WHAT CAME BACK. Without it, "always answer AlreadyCollected" stays green.
+#[test]
+fn a_grant_released_inside_its_window_reports_what_came_back() {
+    let mut arbiter = arbiter(ArbiterId::new(1), TOTAL);
+    let Admission::Granted(grant) = arbiter.admit(
+        &profile("short-lived", 4_096, ComputeClass::Batch),
+        Millis::new(5_000),
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("4096 of 16384 fits");
+    };
+
+    let released = arbiter.release(grant, Monotonic::from_millis(4_999));
+
+    assert_eq!(released, Ok(Released::Now(Mib::new(4_096))));
 }

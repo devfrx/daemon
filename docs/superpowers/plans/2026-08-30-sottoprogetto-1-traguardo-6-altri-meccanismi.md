@@ -36,8 +36,16 @@ faccia quel controllo.
 | **A** — la concessione che torna | 1 | ✅ **scritta** il 2026-08-30 |
 | **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
-| **D** — i meccanismi | 5, 6, 7, 8 | ⬜ **da scrivere** — è il prossimo |
+| **D** — i meccanismi | 5, 6, 7, 8 | ⛔ **SBARRATA il 2026-08-30 — P-11**, e aspetta il proprietario |
 | **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
+
+⛔ **Perché la D è sbarrata, in tre righe.** I compiti **5**, **6** e **7** devono mettere dati
+**strutturati e nostri** dentro un record durevole, e `RecordV1` non ha una casella per farlo:
+le sue due caselle di contenuto sono assegnate da una decisione scritta — `payload` è *«di
+qualcun altro»*, `reason` è *«testo nostro»*. Le forme coerenti sono **due**, il disegno ne ha
+scelta una alla §4.3 senza discutere l'altra, e il formato durevole è **l'unico artefatto
+irreversibile del progetto**. ⛔ **Non si delega a un compito**, e non si sceglie scrivendo il
+piano: il dettaglio, con le misure delle due forme, è in **P-11**.
 
 ⚠️ **Il compito 2 non c'è, e non è un buco:** il timbro di build è **uscito** dal perimetro
 alla §3.4 del disegno e diventa una non-costruzione dichiarata. La numerazione della §1.4 è
@@ -301,6 +309,78 @@ dato quelli di `minicbor`: un tipo solo, due formati, due insiemi di attributi.
 diventi.** *«Con `minicbor` anche su `ipc` basterebbe un insieme di derive»* è un argomento di
 **simmetria e di comodità**, e [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md)
 li rifiuta per nome: il criterio là è il **pari**, misurato. Il costo si **registra**, non decide.
+
+### P-11 — ⛔ SBARRA LA PARTE D: tre compiti su quattro devono mettere dati STRUTTURATI E NOSTRI in un record durevole, e `RecordV1` non ha una casella per farlo
+
+Trovato scrivendo la Parte D, il 2026-08-30, e **non è una lacuna di dettaglio**: tocca l'unico
+artefatto del progetto che non si corregge.
+
+**I tre compiti, e la riga che li obbliga:**
+
+| Compito | La riga | Che cosa deve entrare nel giornale |
+|---|---|---|
+| **5** — sensore | §6.4.1: il costo **speso** *«nel verdetto, misurato, **entra nel giornale**»*; e `V14`: l'anello *«apre un passo nuovo»* e vi porta il **dettaglio** | verdetto + dettaglio + costo speso |
+| **6** — decisore | §4.3 del disegno: il **record di routing risolto** è giornalato col passo, e *«la disciplina di §4.9 si applica per intero»* | il record di ADR-0011: modello, destinazione, provider, parametri, vincoli, catena di riserva, tentativi, esito |
+| **7** — permesso | §6.6: *«un permesso concesso è un **fatto giornalato**»*, e *«quali permessi sono attivi ora»* è una **proiezione del giornale** | la tripla concessa, che la proiezione rilegge |
+
+**E il record non ha dove metterli, misurato in `crates/kernel/src/record.rs`:**
+
+`RecordV1` ha cinque campi, e le **due** caselle di contenuto sono **già assegnate da una
+decisione scritta**:
+
+| Campo | Che cosa il suo doc dice di sé |
+|---|---|
+| `#[n(3)] payload: Vec<u8>` | *«somebody else's and may be anything»* — è il posto del contenuto **esterno**, e *«anything that may have come from outside belongs HERE and nowhere else»* |
+| `#[n(4)] reason: String` | *«ours and is always UTF-8»* — testo **nostro**, e *«the asymmetry is the point rather than an accident of typing»* |
+
+⛔ **Nessuna delle due è una casella per dati STRUTTURATI e NOSTRI**, e infilare il CBOR di un
+record di routing dentro `payload` **riaprirebbe il difetto che il 2026-08-10 fu chiuso
+separando `reason`**: fino a quel giorno `Untrusted::promote` metteva la propria giustificazione
+nel `payload` etichettandola `Trust::Untrusted`, e il doc di `reason` scrive che quel record
+*«avrebbe portato un'affermazione falsa nell'unico campo il cui mestiere è essere vero»*.
+⚠️ **Il precedente vivo dice l'altra metà:** `Arbiter::set_policy` scrive `Trust::Instruction`
+col **payload vuoto** e la ragione in `reason`. Byte nostri dentro `payload` **non li scrive
+nessuno**.
+
+**E la seconda metà è il `kind`, misurata anch'essa:**
+
+```bash
+grep -rn "RecordKind::" crates/kernel/src/    # chi COSTRUISCE e chi FA MATCH
+```
+
+✅ Confermato che i match esaustivi sono **due e solo due** — `crates/kernel/src/reconcile.rs`
+(righe 91, 92 e 114) e `crates/kernel/tests/frozen_bytes.rs:224`; `arbiter/mod.rs` e
+`boundary.rs` **costruiscono**, non decidono. ⚠️ E il doc di `RecordKind` **ha già misurato la
+quarta variante**, col nome `Amend`: *«never reaches any bench, because `crate::reconcile`
+matches this enum exhaustively and the LIBRARY stops with `E0004`»*.
+
+⛔ **Perché questo FERMA il piano invece di essere una voce d'errata.** Il formato durevole è
+l'**unico artefatto irreversibile** del progetto — la quarta proprietà della §3 del
+[compendio](../../COMPENDIO.md), *«una finestra che si chiude alla prima riga di codice che
+scrive un record»*, e quella riga è stata scritta il 2026-08-10 — e
+[ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) dice che se i byte
+congelati cambiano *«non è un aggiornamento, è un **cambio di formato**»*. Un piano che
+dettasse questa scelta la **delegherebbe a un subagente**, ed è la sola specie di decisione che
+non si delega.
+
+**Le due forme coerenti, con ciò che è misurato e ciò che è dedotto:**
+
+| | Forma | Stato dell'evidenza |
+|---|---|---|
+| **α** | **una variante nuova di `RecordKind` per specie** (`Routing`, poi il permesso, poi forse il verdetto), e la struttura codificata **nel `payload`** | ⛔ è la direzione che il **disegno** prende (§4.3) e che **P-2** ha misurato per la variante: byte congelati identici, non compila finché i due match non decidono, indice **non pinzato** finché non nasce un record congelato nuovo. ⚠️ **Ma contraddice il doc di `payload`**, e nessuno ci ha mai messo byte nostri |
+| **β** | **un campo facoltativo nuovo su `RecordV1`, a indice libero**, che porta un **enum versionato** del dettaglio strutturato; `RecordKind` **non si tocca** | ✅ la **regola 3 di §4.9.2** lo prevede — *«un campo nuovo è facoltativo e prende un indice nuovo»* — quindi **non è un cambio di formato**; e il Task 10 del Traguardo 3 ha **misurato** che un campo facoltativo a indice libero lascia i byte **identici** finché è `None` (gotcha **#54**). ⚠️ **DEDOTTO e non misurato per QUESTO caso:** che regga con un enum annidato all'indice 5 di `RecordV1` |
+
+⚖️ **Non è presa qui, ed è del proprietario.** La differenza fra le due non è di eleganza: la α
+mette byte nostri in una casella che dichiara di essere di qualcun altro e allunga un enum
+`index_only` **una volta per specie**; la β lascia `RecordKind` alle tre risposte che dà al
+dubbio e concentra l'evoluzione in **un** posto disciplinato. ⛔ **E la β non è la mia da
+prendere nemmeno se sembra migliore**, perché il disegno approvato ha già scelto la α alla §4.3:
+cambiarla è un **richiamo datato su una sezione approvata**, non un ritocco di piano.
+
+⚠️ **Ciò che NON è in dubbio, e va detto per non far sembrare il buco più grande di quanto sia:**
+i compiti **8** (il degrado, che si **ricalcola** e non si scrive) e **9** (la campagna) non
+toccano il formato; e il compito 5 può essere scritto **fino al contratto del sensore** — è
+l'**anello** che giornala, non il tratto.
 
 ---
 

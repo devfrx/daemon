@@ -363,9 +363,15 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
    io. NON toccarli di iniziativa; se te lo chiedo, allora sì.
 
 Parti confermandomi cosa hai letto e qual è la tua lettura dello stato, e POI
-RIPRENDI DA DOVE LA §6 DICE: non c'è un piano da eseguire né uno da scrivere,
-e il brainstorming è il primo passo del traguardo nuovo — ma se sia da aprire
-o da riprendere lo dice la §6, non questa riga.
+RIPRENDI DA DOVE LA §6 DICE.
+⛔ RICHIAMO DEL 2026-08-30: qui seguiva «: non c'è un piano da eseguire né uno
+   da scrivere, e il brainstorming è il primo passo del traguardo nuovo».
+   TOLTO, non riallineato: era di nuovo uno STATO in un file che due righe più
+   giù dichiara di non portarne, ed era falso in entrambe le metà — il
+   brainstorming è chiuso dal 2026-08-30 e un piano ESISTE, aperto e in
+   scrittura. È la terza volta che questa riga porta uno stato e la terza che
+   invecchia; stavolta non c'è niente da riallineare perché non c'è più
+   nessuna affermazione. Gotcha #68.
 ⛔ RICHIAMO DEL 2026-08-28: qui stava «POI APRI IL BRAINSTORMING», e il file
    dichiara di sé, dodici righe più su, di NON nominare il prossimo passo.
    Era una casa di troppo, ed è diventata falsa la sera stessa.

@@ -674,6 +674,18 @@ chiude** ciascuna. ⚠️ **Le voci senza numero AUD** dell'audit del 2026-08-27
 gran parte del proprietario — la loro tabella in quel rapporto è la casa unica — ⛔ **ma NON
 sbarrano:** questa riga diceva *«ciò che lo sbarra sono decisioni del PROPRIETARIO»*, contro la
 riga qui sopra e contro il gotcha **#89**, a nove righe di distanza nello stesso blocco.
+
+▶️ **E IL PIANO È APERTO DAL 2026-08-30, in scrittura e NON finito.** Vive in
+[`superpowers/plans/2026-08-30-…-traguardo-6-altri-meccanismi.md`](superpowers/plans/2026-08-30-sottoprogetto-1-traguardo-6-altri-meccanismi.md),
+che ne è la casa unica. ⛔ **A che punto sia NON è scritto qui**, ed è il rimedio e non una
+svista: un numeratore di parti invecchierebbe a ogni scrittura, e il piano lo dichiara di sé
+nella propria intestazione — gotcha **#68**, la stessa cura che la cella del Traguardo 5 ha
+ricevuto due volte.
+📌 **Il suo pre-controllo ha già trovato quattro cose, e due cambiano il prezzo del disegno:**
+aggiungere una variante a `RecordKind` lascia i byte congelati identici ma **non compila**
+finché due match esaustivi non decidono, e il nuovo indice **non è pinzato** — il banco
+dichiara quel limite e la misura lo ha riprodotto; e un campo in `Parameters` rompe **nove**
+casi `compile_fail`, dove il disegno ne conta tre. Le misure vivono nel piano, non qui.
 ⛔ **RICHIAMO DEL 2026-08-28: qui e nel riquadro del Traguardo 5 si nominava `E30` come la voce
 che «va decisa prima». È DECISA nel merito, e il nome è TOLTO da entrambe invece che
 riallineato** — quale voce sbarri il traguardo è uno **stato**, e uno stato ha una casa sola.

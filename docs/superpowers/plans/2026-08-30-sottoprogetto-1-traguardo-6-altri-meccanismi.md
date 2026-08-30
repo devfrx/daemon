@@ -24,6 +24,33 @@ worker; il formato dello schema `ipc` lo decide il **compito 3bis**. La porta di
 
 ---
 
+## ▶️ A che punto è QUESTO PIANO — casa unica, e si aggiorna scrivendo
+
+⛔ **IL PIANO NON È FINITO. Non si esegue finché non lo è**, e il perché è la §7.1 del
+disegno: al Traguardo 5 il disegno aveva **dimenticato una condizione di chiusura** e a
+rimediare fu chi scriveva il piano. Un piano eseguito a metà scrittura non ha nessuno che
+faccia quel controllo.
+
+| Parte | Compiti | Stato |
+|---|---|---|
+| **A** — la concessione che torna | 1 | ✅ **scritta** il 2026-08-30 |
+| **B** — il filo | 3, 3bis | ⬜ **da scrivere** — è il prossimo |
+| **C** — lo schema `ipc` | 4 | ⬜ da scrivere |
+| **D** — i meccanismi | 5, 6, 7, 8 | ⬜ da scrivere |
+| **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
+
+⚠️ **Il compito 2 non c'è, e non è un buco:** il timbro di build è **uscito** dal perimetro
+alla §3.4 del disegno e diventa una non-costruzione dichiarata. La numerazione della §1.4 è
+tenuta com'è invece di essere compattata, perché il disegno vi rimanda per numero.
+
+⛔ **Ciò che chi riprende deve sapere sul compito 3bis, prima di scriverlo:** è la **misura
+C-1**, e pretende una ricerca **odierna** — *`bincode` è ancora dichiarato non mantenuto?
+esiste un'alternativa mantenuta il cui pari TypeScript abbia un lettore?* La §3.5 del disegno
+dice alla lettera che deciderlo a memoria sarebbe il gotcha **#48**. La fonte va tracciata in
+[`riferimenti.md`](../../riferimenti.md) con la data.
+
+---
+
 ## ⚠️ L'errata di questo piano — si legge PRIMA di ogni compito, non una volta sola
 
 ⛔ **Nasce vuota, e non resterà vuota.** Il pre-controllo ha trovato un difetto reale in

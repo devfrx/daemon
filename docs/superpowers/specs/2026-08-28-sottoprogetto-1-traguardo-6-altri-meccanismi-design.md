@@ -12,6 +12,10 @@ portato a sette:** a disegno completo non c'è più niente da contare, e la §6 
 
 ⛔ **E «completo» NON significa «si passa al piano»:** quella condizione è scritta altrove e non
 è di questo documento — vedi la §7.4 e le voci che questo disegno apre.
+✅ **RICHIAMO DEL 2026-08-30 — e la condizione è SODDISFATTA:** l'ultima voce che sbarrava, la
+**5**, è chiusa lo stesso giorno; la frase qui sopra resta perché dice **dove** vive la
+condizione, non che sia aperta. ⛔ **E chiudendola si è misurato che la §1.2 sbagliava la
+RAGIONE del perimetro, non il perimetro:** il richiamo sta lì, e si legge **prima** della §1.2.
 
 ⚠️ **Non è una spec.** Come i disegni dei Traguardi 4 e 5, fissa il **perimetro**, le **forme**
 che la §6 della spec descrive a parole, e per ogni artefatto **il controllo che lo esercita**.
@@ -61,24 +65,42 @@ core»* lasciando fuori **solo** il processo `gui`. Nel codice non c'è né l'un
 grep -rn "impl Ipc" crates/ --include=*.rs ; ls crates/platform/src/
 ```
 
-✅ **E la ragione per cui NON entrano è misurata, non è il costo:** un trasporto vero pretende la
-metà di **prontezza** della porta `reactor`, che **non ha un produttore** — la porta lo dichiara
-di sé (*«Readiness is the OTHER HALF of this port's contract, and it has no producer yet»*) e ha
-**tolto** un `WaitOutcome { DeadlineReached, EventReady }` proprio perché `EventReady` non ne
-aveva uno, scrivendo che il giorno in cui gli eventi esisteranno dovrà portare **quale
-registrazione** è pronta e che *«declaring it now would freeze a shape already known to be the
-wrong one»*. Costruire la pipe oggi significherebbe congelare quella forma.
+⛔ **RICHIAMO DEL 2026-08-30 — LA CONCLUSIONE REGGE, L'ARGOMENTO NO, ed era proprio quello che
+questa sezione dichiarava di aver misurato.** Qui stava: *«un trasporto vero pretende la metà di
+**prontezza** della porta `reactor`, che non ha un produttore … costruire la pipe oggi
+significherebbe congelare quella forma»*, con accanto la clausola onesta che per `process` fosse
+una **deduzione** da *«va misurata prima di finire in un piano»*. ✅ **Misurata: è falsa per
+entrambe.** Le due porte sono **a interrogazione** per costruzione, e lo dicono di sé:
 
-⚠️ **Che anche il `process` reale abbia lo stesso blocco è una DEDUZIONE e non una misura:**
-`crates/kernel/src/ports/process.rs` non nomina il `reactor`; a suggerirlo è la forma di
-`read_next -> Result<Option<Frame>, _>`, che è *«se ce n'è uno pronto»*. Va misurata prima di
-finire in un piano.
+| Porta | Firma | Ciò che il sorgente dichiara |
+|---|---|---|
+| `ipc` | `accept(&mut self) -> Option<ClientId>` | la finta: *«`accept` NEVER BLOCKS, so "nobody is waiting" has to be an ordinary answer rather than a wait»* |
+| `ipc` | `receive(..) -> Result<Option<Vec<u8>>, IpcError>` | *«`Ok(None)` IS NOT AN ERROR … or the core could not **poll** this port at all»* |
+| `process` | `read_next(..) -> Result<Option<Frame>, ProcessError>` | stessa forma |
 
-📌 **Le due ✅ della §7.4.6 sono quindi una PREVISIONE**, scritta prima che si sapesse che la
-prontezza non ha produttore — la stessa specie della cella di
-[ADR-0032](../../adr/0032-motore-di-persistenza.md) sul backend cadente, gotcha **#57**. Passano
-a ⏳ **rimandato** con **richiamo datato**, e l'innesco è una **condizione**: *la prima sorgente
-di eventi esterni sulla porta `reactor`*. ⚠️ Tocca **spec** — vincolo globale 7: voce **5**.
+⛔ **La parola *«poll»* è della porta, non di chi la prezza:** un trasporto che interroga non ha
+bisogno di nessuna sveglia, quindi la prontezza mancante **non è ciò che tiene fuori il
+trasporto**. ✅ **Ciò che lo tiene fuori era già scritto in due posti, ed è più solido:** la
+**§0.2** — *«nessuna interfaccia grafica»* (sotto-progetto 2, [ADR-0029](../../adr/0029-guscio-della-gui.md)
+è `Proposed`) e *«nessun worker Python»* — e la **§0.4 riga §1**, che fa entrare lo **schema**
+IPC lato core e scaglia il **processo `gui`**. La §7.4.6 lo scriveva già nella **propria terza
+colonna**: *«non esistono worker da avviare (§0.2)»*, *«non esiste una GUI dall'altro capo»*.
+
+📌 **Che i fatti su `reactor` restino veri è la parte da non confondere:** la prontezza **non ha
+davvero** un produttore, e `WaitOutcome { DeadlineReached, EventReady }` è stato **tolto** per
+quella ragione. Sono veri e non sostengono questa conclusione — che è la forma esatta del
+**#65**: *un rapporto è un piano, e si prezza leggendo il codice*, qui applicato al richiamo di un
+disegno. Chi lo scrisse aveva letto una **guardia** (`reactor.rs`) e non le **due porte** che
+stava prezzando.
+
+✅ **LA VOCE 5 È CHIUSA IL 2026-08-30, e la correzione è più PICCOLA di come questa sezione la
+prezzava** — gotcha **#65** nella direzione che costa di più. Le due celle passano a **❌
+scaglionata**, che è la parola che quella colonna **già usa** per `filesystem` e `network`:
+nessuno stato nuovo, e l'innesco è la **sezione che scaglia** invece di una condizione da
+inventare. ⛔ **L'innesco che questa sezione proponeva — *«la prima sorgente di eventi esterni
+sulla porta `reactor`»* — NON è stato scritto:** la §8.1 lo pretende obbligatorio, quindi in una
+sezione normativa sarebbe stato difeso da nulla e **sbagliato**, cioè peggio del ✅ che
+sostituisce. Il richiamo datato vive nella §7.4.6 della spec, che ne è la casa.
 
 I comandi che rifanno la misura, invece delle cifre:
 
@@ -707,7 +729,7 @@ Traguardo 5 si è presentato **due volte**, ogni volta con gran parte del compit
 | 7 | **nessun errore di questo repository trasporta il valore consumato** — la forma del progetto è `Admission` |
 | 8 | il **timbro di build non ha una riga di catalogo**, mentre `Q13` sì |
 | 9 | **la regola dei gettoni**: non falsificabile ⟺ produttore dentro la crate |
-| 10 | la metà di **prontezza** della porta `reactor` **non ha un produttore**, e la porta ha già **tolto** la forma che la porterebbe — è ciò che tiene fuori il trasporto vero di `ipc` e `process` (§1.2) |
+| 10 | la metà di **prontezza** della porta `reactor` **non ha un produttore**, e la porta ha già **tolto** la forma che la porterebbe. ⛔ **RICHIAMO DEL 2026-08-30:** qui seguiva *«— è ciò che tiene fuori il trasporto vero di `ipc` e `process`»*, ed è **falso, misurato**: le due porte sono a **interrogazione** e non chiedono nessuna sveglia. A tenerle fuori sono §0.2 e §0.4 riga §1 — vedi il richiamo in §1.2. La scoperta **resta**, la conseguenza cade |
 | 11 | `admit` **non riceve un `Journal`** — solo `set_policy` lo fa — quindi lo scambio minimo di §6.2 non porta nessun identificativo, e §6.1.3 è soddisfatta **a vuoto** |
 | 12 | **`ADR-0033` fissa già lo scambio minimo**, e coincide con ciò che §5.7 riga 3 pretende: il vocabolario non è stato scelto |
 | 13 | ⛔ **la finta gui che il compito 9 richiede NON esiste**: `FakeGui` vive nel banco di `kernel` e muore per chiamata esplicita di due test, e `crates/simulator/src/` non ne ha nessuna — la prima stesura della §6 affermava il contrario, ripetendo un doc di modulo (gotcha **#65**) |
@@ -731,7 +753,7 @@ Nessuna è un difetto oggi. Tutte sono **registrate e non prese**.
 | 2 | se `V10`/`V14`/`Q10` siano righe **sbagliate** o notazione **in avanti** di §8 | §8 è spec |
 | 3 | la lettura di *«mantiene»* in ADR-0019: **espone** o **cachea** | tocca un ADR `Accepted` |
 | 4 | se `check-docs.sh` possa confrontare un ✅ con l'esistenza del controllo | sarebbe una riga di catalogo nuova |
-| 5 | le due righe di **§7.4.6** passano da ✅ a ⏳ con innesco *«la prima sorgente di eventi esterni sul `reactor`»* | §7.4.6 è **spec** — vincolo globale 7 |
+| 5 | ~~le due righe di **§7.4.6** passano da ✅ a ⏳ con innesco *«la prima sorgente di eventi esterni sul `reactor`»*~~ — ✅ **CHIUSA IL 2026-08-30, e non nella forma qui scritta:** passano a **❌ scaglionata**, la parola che quella colonna già usa, e l'**innesco proposto era sbagliato** (§1.2) | era §7.4.6, **spec** — vincolo globale 7. ⛔ **Chiusa dal proprietario**, che ha visto la misura prima della scrittura |
 | 6 | se il buco del **timbro** (§6.4) debba avere una **riga C in §0.4**, come il rinvio della §3.4 | §0.4 è spec |
 | 7 | se la **revoca** verso la gui vada nel Traguardo 6 dopo tutto, dato che ADR-0033 la nomina e nessun innesco la tiene | è un allargamento di perimetro |
 | 8 | se l'**inquadratura condivisa** fra i due canali privati (§6.3) sia economia o erosione della lettura di *«singolo»* di ADR-0035 | tocca la lettura di un ADR `Accepted`, come la voce **3** |
@@ -757,8 +779,26 @@ scrivere. A **sbarrare** è la colonna *«Chi la chiude»* di
 [`porta-di-qualita.md`](../../porta-di-qualita.md) — e sotto quella regola le voci che nominano
 questo traguardo sono `E30`, `R6` ed `E152`, **tutte e tre portate dalle §§2, 6 e 7**.
 
-⛔ **RESTA UN SOLO SBARRAMENTO, ed è la voce 5:** finché §7.4.6 dice ✅ per il trasporto di `ipc`
-e `process`, un piano scritto contro quella spec risulterebbe **mancante di due compiti**. Tocca
-**spec** — vincolo globale 7 — quindi è del proprietario e non di chi scrive il piano.
+✅ **E L'ULTIMO SBARRAMENTO È CADUTO IL 2026-08-30: NON RESTA NULLA FRA QUESTO DISEGNO E IL
+PIANO.** Era la **voce 5** — finché §7.4.6 diceva ✅ per il trasporto di `ipc` e `process`, un
+piano scritto contro quella spec risultava **mancante di due compiti**. Le due celle passano a
+**❌ scaglionata** col richiamo datato, e la spec smette di pretendere un trasporto che §0.2 e
+§0.4 riga §1 scaglionano.
 
-⚠️ **RICHIAMO DEL 2026-08-30:** questo blocco diceva *«Presentare la sezione 7»*.
+⛔ **E chiudendola si è misurato che questo disegno sbagliava la RAGIONE, non il perimetro:** il
+richiamo in §1.2 la attribuiva alla prontezza mancante del `reactor`, e le due porte sono **a
+interrogazione**. Il perimetro regge intatto; l'argomento è **riscritto**, non appeso. Chi
+scrive il piano legge quel richiamo **prima** della §1.2, o riderivarebbe la ragione sbagliata.
+
+⛔ **Che cosa venga dopo NON è scritto qui, ed è deliberato:** è uno **stato**, e la sua casa
+unica è la §6 del [compendio](../../COMPENDIO.md). ⚠️ **La prima stesura di questo blocco lo
+scriveva lo stesso, con un `⏭️`** — cioè apriva una seconda casa del puntatore dentro il
+documento che chiude l'ultimo sbarramento. Gotcha **#68**, tolto prima del commit.
+
+📌 **Ciò che questo disegno consegna a chi scriverà il piano**, che è suo e non un puntatore: i
+**dieci compiti** ordinati dalla §1.4, la Definizione di «fatto» della §7.2, e le voci il cui
+chiusore è **questo traguardo** — `E30`, `R6`, `E152` — portate dalle §§2, 6 e 7 e da **chiudere
+nel piano**. ⛔ **Le altre voci aperte non sbarrano: si SANNO** (gotcha **#89**).
+
+⚠️ **RICHIAMO DEL 2026-08-30:** questo blocco diceva *«Presentare la sezione 7»*, poi
+*«RESTA UN SOLO SBARRAMENTO»*.

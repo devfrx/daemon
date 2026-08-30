@@ -3202,10 +3202,36 @@ dove esistono **entrambe** le implementazioni.
 |---|---|---|
 | `journal` | ✅ `redb` in `platform` | ✅ **sì** — e §4.6 ne copre già il livello 2 |
 | `reactor` | ✅ l'attesa vera sull'OS | ✅ **sì**, ed è la più importante: la validità della DST poggia lì |
-| `process` | ✅ avvio, **dialogo** e uccisione veri | ⚠️ **rimandata**: non esistono worker da avviare (§0.2) — e con il dialogo la suite acquista **un'affermazione in più**, sotto |
-| `ipc` | ✅ named pipe | ⚠️ **rimandata**: non esiste una GUI dall'altro capo |
+| `process` | ❌ **scaglionata (§0.2)** — la porta e il **ciclo di vita** entrano (§0.4 riga §1); il **worker vero** no | ⚠️ **rimandata**: non esistono worker da avviare (§0.2) — e con il dialogo la suite acquista **un'affermazione in più**, sotto |
+| `ipc` | ❌ **scaglionata (§0.4 riga §1)** — lo **schema** entra, il **trasporto** no: il processo `gui` è scaglionato | ⚠️ **rimandata**: non esiste una GUI dall'altro capo |
 | `filesystem` | ❌ scaglionata (§0.4) | ❌ |
 | `network` | ❌ scaglionata | ❌ |
+
+> ⛔ **RICHIAMO DEL 2026-08-30 — le celle di `process` e `ipc` dicevano ✅, e quel ✅ era una
+> PREVISIONE.** Dicevano *«avvio, **dialogo** e uccisione veri»* e *«named pipe»*, scritte prima
+> che il codice esistesse. ✅ **Misurato oggi:** `crates/platform/src/` porta `journal.rs`,
+> `lib.rs`, `reactor.rs` e `rng.rs`, e ogni implementazione delle due porte nel workspace vive in
+> un **banco di prova** — `grep -rn "impl Ipc\|impl .*Process for" crates/ --include=*.rs`. La
+> riga si contraddiceva **dentro sé stessa**: la seconda colonna dava per esistente
+> l'implementazione reale, la terza dichiara che non c'è nessuno dall'altro capo contro cui
+> provarla. La terza ha ragione.
+>
+> ⛔ **E la ragione va detta giusta, perché quella scritta altrove è FALSA e verrebbe
+> riderivata.** Il [disegno del Traguardo 6](2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md)
+> attribuiva in §1.2 la non-costruzione alla metà di **prontezza** della porta `reactor`, che non
+> ha un produttore. ⛔ **Misurato sui contratti delle due porte: non è quello a tenerle fuori.**
+> Sono **porte a interrogazione** per costruzione — `Ipc::accept` rende `Option<ClientId>` senza
+> attendere, `Ipc::receive` e `Worker::read_next` rendono `Ok(None)` come risposta **ordinaria**,
+> e il doc di `receive` scrive che senza di essa *«the core could not poll this port at all»*. A
+> tenerle fuori sono la **§0.2** — nessuna interfaccia grafica, nessun worker Python — e la
+> **§0.4 riga §1**, che fa entrare lo **schema** IPC lato core e scaglia il **processo `gui`**.
+> 📌 Gotcha **#57**, una previsione citata come misura, e **#65** applicato al richiamo di un
+> disegno: si prezza leggendo il codice, non il documento che lo descrive.
+>
+> ⚠️ **Nessuno stato nuovo, ed è deliberato:** ❌ **scaglionata** è la parola che questa colonna
+> già usa per `filesystem` e `network`, quindi l'innesco è la **sezione che scaglia** e non una
+> condizione da inventare. La §8.1 pretende l'innesco obbligatorio: uno inventato in una sezione
+> normativa sarebbe difeso da nulla, cioè peggio del ✅ che sostituisce.
 
 > ⚠️ **L'affermazione in più su `process` — aggiunta il 2026-08-08** con la §6.10. Con il
 > solo avvio e la sola uccisione, la conformità riguardava il **ciclo di vita**: il

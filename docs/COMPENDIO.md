@@ -659,16 +659,21 @@ poi che a governare fosse la chiusura delle **voci aperte**, e quella regola era
 è la colonna *«Chi la chiude»*** di [`porta-di-qualita.md`](porta-di-qualita.md): una voce il cui
 chiusore è **questo traguardo** va chiusa o portata dal piano, le altre si **sanno**. ⚠️ **Quali
 sbarrino oggi non è scritto qui:** lo dice il comando che vive in quella sezione.
-⛔ **E ne resta UNO che quel comando NON restituisce, perché non è del Traguardo 5: sta nella
-tabella delle voci del disegno, tocca la §7.4.6 della SPEC, ed è quindi del proprietario**
-(vincolo globale 7). Finché la spec dà per costruito il trasporto reale di `ipc` e `process`, un
-piano scritto contro di essa risulterebbe **mancante di due compiti**. Il numero della voce non è
-ricopiato qui: la tabella si rinumera, un rimando no. ⚠️ **Prima** si legge ciò che il
-Traguardo 5 lascia aperto: la tabella *«Le voci aperte del Traguardo 5»* di
-[`porta-di-qualita.md`](porta-di-qualita.md), casa unica, che dice anche **chi chiude** ciascuna.
-⚠️ **E ciò che lo sbarra sono decisioni del PROPRIETARIO, dette qui invece che scoperte
-aprendolo:** le **voci senza numero AUD** dell'audit del 2026-08-27 — la loro tabella in
-quel rapporto è la casa unica, e la maggior parte sono sue.
+✅ **E L'ULTIMO SBARRAMENTO È CADUTO IL 2026-08-30.** Era la §7.4.6 della **spec**, che dava per
+costruito il **trasporto reale** di `ipc` e `process`: un piano scritto contro di essa sarebbe
+risultato **mancante di due compiti**. Le due celle passano a **❌ scaglionata** — la parola che
+quella colonna già usa — col richiamo datato, deciso dal proprietario (vincolo globale 7).
+⛔ **E chiudendolo si è misurato che il DISEGNO sbagliava la RAGIONE, non il perimetro:**
+attribuiva la non-costruzione alla metà di **prontezza** del `reactor`, mentre le due porte sono
+**a interrogazione** — `Ok(None)` è risposta ordinaria, e il doc di `Ipc::receive` scrive
+*«or the core could not poll this port at all»*. A tenerle fuori sono **§0.2** e **§0.4 riga §1**.
+Terza occorrenza del gotcha **#58**: chi prezzava aveva letto una **guardia**, non le due porte.
+⚠️ **Prima** si legge ciò che il Traguardo 5 lascia aperto: la tabella *«Le voci aperte del
+Traguardo 5»* di [`porta-di-qualita.md`](porta-di-qualita.md), casa unica, che dice anche **chi
+chiude** ciascuna. ⚠️ **Le voci senza numero AUD** dell'audit del 2026-08-27 restano aperte e in
+gran parte del proprietario — la loro tabella in quel rapporto è la casa unica — ⛔ **ma NON
+sbarrano:** questa riga diceva *«ciò che lo sbarra sono decisioni del PROPRIETARIO»*, contro la
+riga qui sopra e contro il gotcha **#89**, a nove righe di distanza nello stesso blocco.
 ⛔ **RICHIAMO DEL 2026-08-28: qui e nel riquadro del Traguardo 5 si nominava `E30` come la voce
 che «va decisa prima». È DECISA nel merito, e il nome è TOLTO da entrambe invece che
 riallineato** — quale voce sbarri il traguardo è uno **stato**, e uno stato ha una casa sola.

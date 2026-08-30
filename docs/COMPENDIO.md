@@ -692,11 +692,20 @@ durevole entri nel formato — ed è chiusa **con una misura** e non con un argo
 poggia, e la **forma** che ne discende è una decisione del proprietario **rimandata ai criteri**.
 Il racconto, le misure e le decisioni vivono nel piano, non qui; ciò che ne è uscito di generale
 è il gotcha **#90** di [`HANDOFF.md`](HANDOFF.md).
-⏭️ **IL PROSSIMO PASSO È ESEGUIRE IL COMPITO 1**, subagent-driven — un subagente fresco per
-compito con revisione fra uno e l'altro — e **prima** il pre-controllo delle quattro domande di
+✅ **IL COMPITO 1 È ESEGUITO, e con esso si chiudono TRE voci aperte del Traguardo 5** — `E30`,
+`R6` ed `E21`, marcate nella tabella unica di [`porta-di-qualita.md`](porta-di-qualita.md) col
+proprio commit. L'arbitro ha un'**identità consegnata**, `release` risponde **tre** cose e non due,
+e la porta `process` **restituisce la concessione** — anche sull'avvio fallito, la via che nessuno
+aveva discusso. ⛔ **A che punto sia il piano NON è scritto qui**, e il racconto compito per compito
+neppure: la casa unica è l'intestazione del piano, e le divergenze la sua **errata**.
+⚠️ **E il pre-controllo ha tenuto: ha prodotto voci d'errata PRIMA di dispacciare**, fra cui una sonda dettata che
+**non poteva compilare** e un censimento che non vedeva tre file su cinque. Il ciclo di revisione è
+**tornato pulito**, e ciò che ne è uscito di generale è il gotcha **#91**.
+⏭️ **IL PROSSIMO PASSO È ESEGUIRE IL COMPITO 3** — il compito 2 non esiste, ed è dichiarato nel
+piano: il timbro di build è **uscito dal perimetro**. Subagent-driven, un subagente fresco per
+compito con revisione fra uno e l'altro, e **prima** il pre-controllo delle quattro domande di
 [`../CLAUDE.md`](../CLAUDE.md), che ha trovato un difetto reale in **tutti** i compiti dispacciati
-finora. ⛔ **Lo sbarramento *«non si esegue finché il piano non è finito»* è caduto**, e il piano
-lo dichiara nella propria testa.
+finora — **compreso questo**.
 ⛔ **RICHIAMO DEL 2026-08-28: qui e nel riquadro del Traguardo 5 si nominava `E30` come la voce
 che «va decisa prima». È DECISA nel merito, e il nome è TOLTO da entrambe invece che
 riallineato** — quale voce sbarri il traguardo è uno **stato**, e uno stato ha una casa sola.

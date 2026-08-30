@@ -36,7 +36,7 @@ faccia quel controllo.
 | **A** — la concessione che torna | 1 | ✅ **scritta** il 2026-08-30 |
 | **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
-| **D** — i meccanismi | 5, 6, 7, 8 | ⬜ **da scrivere** — è il prossimo, **sbloccata** dalla chiusura di P-11 |
+| **D** — i meccanismi | 5, 6, 7, 8 | ▶️ **pre-controllo scritto** il 2026-08-30 — P-12…P-15 — e i **compiti** aspettano **una voce del proprietario**: quante varianti di `RecordKind` la Parte D apre |
 | **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
 
 ✅ **La D è stata sbarrata e sbloccata lo stesso giorno, e il verbale è P-11.** I compiti **5**,
@@ -53,8 +53,15 @@ tenuta com'è invece di essere compattata, perché il disegno vi rimanda per num
 
 ### ▶️ Il prossimo passo, in forma eseguibile — 2026-08-30
 
-⛔ **Scrivere la Parte D.** Non si esegue niente: il piano non è finito, e il perché è tre righe
-più su.
+⛔ **Il pre-controllo della Parte D è SCRITTO, e i quattro compiti sono FERMI su una voce del
+proprietario** — quante varianti di `RecordKind` la Parte D apre. La voce sta in fondo al
+pre-controllo, con la misura che la circonda. ⚠️ **RICHIAMO DEL 2026-08-30: qui stava *«Scrivere
+la Parte D»* nudo**, ed era vero prima che il pre-controllo trovasse **P-12**.
+
+⛔ **Non si esegue niente comunque:** il piano non è finito, e il perché è tre righe più su.
+
+📌 **Quando la voce sarà chiusa, i quattro compiti si scrivono in quest'ordine**, e ciascuno
+legge quello che la sua riga nomina **e nient'altro**:
 
 | | Che cosa fare | Che cosa leggere **prima**, e nient'altro |
 |---|---|---|
@@ -63,12 +70,12 @@ più su.
 | 3 | **compito 7** — il permesso | la riga *«§6.6 — il permesso»* di §5.2 del disegno, e §6.6 della spec |
 | 4 | **compito 8** — il degrado | la riga *«§6.7 — il degrado»* di §5.2 del disegno, e §6.7 della spec |
 
-⛔ **E il PRIMO PASSO del compito 6 è una misura, non una scrittura** — lo dice la chiusura di
-**P-11**: la **composizione** di `RecordKind` con una variante nuova **e** di un campo
-facoltativo nuovo che porta il dettaglio è **dedotta** dalle due misure separate, non misurata.
-Si misura come si è misurata la β: **struttura specchio** in un banco usa-e-getta, così nessuno
-dei trentanove siti di costruzione viene toccato, `cmp` contro una copia presa prima, e
-cancellazione nella stessa corsa.
+✅ **RICHIAMO DEL 2026-08-30 — LA MISURA CHE QUESTA RIGA ASSEGNAVA AL COMPITO 6 È FATTA, ED È
+STATA ANTICIPATA QUI.** Diceva: *«il PRIMO PASSO del compito 6 è una misura, non una scrittura …
+la composizione è dedotta dalle due misure separate»*. ⛔ **Anticiparla non è stato uno zelo:** la
+Parte D si scrive **sopra** quella deduzione, e la §4.3 del disegno prescrive di misurarla
+*«prima di scrivere»* — non prima di eseguire. Il verbale, le cinque domande e i byte stanno in
+**P-15**; la composizione **regge**, e la misura ha portato un fatto che la deduzione non aveva.
 
 📌 **Ciò che ciascun compito chiude, secondo il disegno — e si riconta sulla §7.4, non si cita:**
 il **5** chiude `V10` (blocco C, livello 1) e porta a ✅ anche `V14` e `Q10`, che oggi lo dicono
@@ -471,6 +478,191 @@ codifica (l'indice della variante nel campo 0, il campo in coda). Si misura **co
 del compito 6**, prima di scrivere: è la stessa disciplina che questa voce ha appena applicato a
 sé stessa.
 
+### P-12 — ⛔ La D20 dice TRE specie, la conclusione di P-2 fu misurata su UNA, e la D21 ha portato il singolare
+
+La **D20** scrive nella propria clausola di costo che il campo si paga una volta sola *«perché
+le **tre specie** condividono il campo»*, e la sua intestazione dice che **una specie nuova è
+una variante nuova di `RecordKind` più il campo**. Tre specie sono quindi **tre** varianti
+nuove. La **D21** dice *«il **quarto** record congelato»* — **uno**.
+
+⛔ **Un record congelato porta UN `kind`**, quindi tre varianti nuove ne pretendono **tre**.
+
+📌 **Da dove viene il singolare, e non è una svista di battitura:** viene da **P-2**, che misurò
+aggiungendo **una** variante — `#[n(3)] Routing` — e la cui conclusione è corretta *sotto quella
+premessa*: *«chi aggiunge la variante deve … congelare un quarto record che la porti»*. La D20 ha
+poi cambiato la premessa da una specie a tre, e **nessuno ha riprezzato P-2 contro la premessa
+nuova**. È il gotcha **#31** nella forma che costa di più — una conclusione vera resta scritta
+mentre l'ipotesi da cui pendeva si è mossa — e il gotcha **#59** applicato a **due decisioni
+dello stesso piano, scritte lo stesso giorno**, nessuna delle quali nomina l'altra.
+
+⛔ **E LO SCARTO NON DIVENTA ROSSO, per la ragione che P-2 ha misurato lei stessa.** L'array di
+`crates/kernel/tests/frozen_bytes.rs` è **scritto a mano**:
+
+```rust
+for kind in [RecordKind::Intent, RecordKind::Outcome, RecordKind::Note] {
+    match kind { RecordKind::Intent | RecordKind::Outcome | RecordKind::Note => {} }
+    assert!(kinds.contains(&kind),
+        "no frozen record carries {kind:?}: its wire index is held by nothing");
+}
+```
+
+Il `match` esaustivo ferma la **compilazione** alla prima variante nuova, e questo si vede; ma
+estendere l'`arm` **senza** estendere l'array lascia tutto **verde**, ed è il limite che quel
+banco **dichiara di avere** — *«extending the arm without extending the array above still
+compiles»*. ⚠️ **Quindi con tre varianti e un solo record congelato il traguardo consegna DUE
+indici di filo tenuti da nulla**, e nessun cancello lo dice: è la stessa condizione che il Task
+10 del Traguardo 3 misurò — *«un record solo fissa tre indici di variante su otto … cinque indici
+su otto sarebbero rimasti tenuti da nulla»* — e la cui cura fu congelare **tre** record, *«il
+minimo che li copra tutti»*.
+
+✅ **La metà meccanica si chiude qui e NON torna al proprietario**, perché la direzione è già sua:
+la **D21** si riscrive come una **regola** invece che come un numerale — *un record congelato
+nuovo per **ogni** variante nuova* — che è la cura che questo repository applica ai numeratori
+(gotcha **#68**), e che resta vera qualunque sia il conto. ⚖️ È anche la forma che l'audit del
+2026-08-27 chiama *«un'esecuzione lasciata a metà da un disegno approvato si completa, non si
+ripropone al proprietario»*.
+
+⚖️ **La metà che NON si chiude qui, ed è del proprietario: QUANTE varianti apre la Parte D.**
+Vedi la voce aperta in fondo a questo pre-controllo.
+
+⛔ **E NESSUN GOTCHA NUOVO, che è una decisione e non una dimenticanza.** Il **#31** dice già
+questo alla lettera — *«una stima di costo prezzata sulla variante sbagliata sopravvive, perché
+viene **citata** invece che **rifatta**»* — e sia P-12 sia **P-13** ne sono occorrenze: la
+conclusione di P-2 citata sotto una premessa nuova, e il `grep` grezzo citato invece che riletto.
+📌 *Un gotcha che non insegna niente diluisce quelli che insegnano*, e la §9 è l'elenco che si
+rilegge per primo.
+
+### P-13 — ⛔ Il censimento della D20 è il `grep` GREZZO, e lo scarto cade nelle due direzioni
+
+La **D20** prezza il campo nuovo così: *«rompe i **trentanove** siti di costruzione di `RecordV1`
+in **undici** file, **tre** dei quali sono casi `compile_fail`»*. Il numero viene dal comando che
+il sorgente stesso nomina — `grep -rn 'RecordV1 {' crates/ --include=*.rs`, citato in
+`crates/kernel/src/record.rs` e in `crates/kernel/src/boundary.rs`. **Rilette intere le trentanove
+righe** (gotcha **#70**), i siti di costruzione sono **ventisei in nove file**, e i casi
+`compile_fail` che ne costruiscono uno sono **due**, non tre.
+
+```bash
+grep -rn 'RecordV1 {' crates/ --include=*.rs \
+ | grep -v '^[^:]*:[0-9]*: *//' | grep -v 'pub struct RecordV1 {' \
+ | grep -v 'impl fmt::Debug for RecordV1 {' | grep -v 'RecordV1 {{' \
+ | grep -v '"V1(RecordV1 {' | grep -v -- '-> RecordV1 {'
+```
+
+⛔ **Il terzo caso `compile_fail` non esiste:** in `promote_reason_is_not_runtime_text.rs` la riga
+che il `grep` restituisce è **dentro un commento** — la riproduzione del reperto di P-1 — e quel
+file non costruisce nessun `RecordV1`.
+
+⛔ **Ma le tredici righe escluse NON sono lavoro zero, ed è la direzione che il numerale nasconde
+invece di gonfiare** (gotcha **#65**, nelle **due** direzioni sulla stessa cifra):
+
+| Che cos'è | Quante | Che cosa il campo nuovo le fa |
+|---|---|---|
+| la **definizione** della struttura | 1 | è il sito che il campo aggiunge |
+| l'`impl fmt::Debug` e la sua **stringa di formato** | 2 | ⛔ obbligano a una decisione — **P-14** |
+| un **tipo di ritorno** (`fn last_record(..) -> RecordV1`) | 1 | niente |
+| l'**oracolo** del `Debug` in `tests/record_shape.rs` | 1 | ⛔ verde o rosso a seconda di **P-14** |
+| **commenti di doc** che mostrano un record a cinque campi | 6 | ⚠️ diventano **falsi in silenzio**, ed è la specie che la radice **R1** produce |
+| la **riga del comando** che il sorgente cita per contarli | 2 | ⚠️ il censimento conta **sé stesso**, come il `grep` delle voci aperte del Traguardo 5 |
+
+📌 **La conseguenza sul compito 6 è che il lavoro non è «ventisei sostituzioni»:** sono ventisei
+literal **più** una decisione **più** sei commenti di doc da riscrivere o da datare. ⚠️ **Il
+numerale della D20 è TOLTO e non riallineato a ventisei**, perché il comando qui sopra lo rifà e
+non marcisce.
+
+### P-14 — ⛔ Il campo nuovo obbliga a una decisione sul `Debug` scritto a mano, e i due `.stderr` si comportano DIVERSAMENTE
+
+**Il `Debug` di `RecordV1` è scritto a mano e stampa cinque campi**, e il suo oracolo è un
+`assert_eq!` sulla **stringa esatta** in `crates/kernel/tests/record_shape.rs`:
+
+```
+"V1(RecordV1 { kind: Intent, effect: Idempotent, trust: Untrusted, "
+"payload: <24 bytes>, reason: \"why this step exists\" })"
+```
+
+| Se il `Debug` … | L'oracolo | Che cosa si compra, e che cosa si paga |
+|---|---|---|
+| **non** stampa `detail` | resta **verde** | ⛔ `RecordV1` guadagna un **secondo campo nascosto** senza che nessuno l'abbia deciso, e la metà *«gli altri quattro campi devono restare leggibili»* — che il banco dichiara essere *«la metà che ci si dimentica»* — smette di valere per il campo nuovo |
+| **stampa** `detail` | va **ROSSO** | la stringa attesa si riscrive **a mano**, e il dettaglio strutturato finisce in ogni `{:?}` che raggiunge un log |
+
+⛔ **E non è una scelta di cosmetica: è I6.** Il doc dell'indice 3 dice che *«anything that may
+have come from outside belongs HERE and nowhere else in this struct. Putting untrusted content at
+any other index would print it in the first `{:?}` that reaches a log»*. Il campo `detail` porta
+byte **nostri** per costruzione (D20), quindi stamparlo è legittimo — **ma la garanzia è di
+disciplina, non di tipo**, esattamente come per `reason`, per cui **AUD-050** ha misurato che un
+literal scritto da qualunque crate ci mette dentro una `String` di esecuzione.
+
+⚠️ **E i due casi `compile_fail` che costruiscono un `RecordV1` NON si comportano allo stesso
+modo**, misurato leggendo i loro `.stderr`:
+
+| Caso | L'oracolo cita | Che cosa gli fa il campo nuovo |
+|---|---|---|
+| `record_without_version` | **la riga 15**, `inner.encode()` — *dentro* il literal | ⛔ `detail: None` la porta a **16**, e il `.stderr` va corretto **a mano**. Il file lo dichiara già di sé: la stessa cosa successe il 2026-08-10 con l'indice 4, *«corrected BY HAND to match. Not regenerated»* |
+| `record_without_trust_label` | **la riga 7**, l'apertura del literal | ✅ non si muove — **ma il campo va aggiunto lo stesso**, o l'errore diventa `missing fields «trust» and «detail»` e il caso **smette di essere un caso sull'etichetta di fiducia**. Il file lo scrive già: *«A negative case that fires for a second reason is a case that stops proving the first»* |
+
+📌 **Vincolo 10 della §11 e gotcha #25:** i due `.stderr` si rileggono **uno per uno**, e la corsa
+che li produce si lancia **senza** `TRYBUILD=overwrite`. È la **D2** applicata a due file che la
+D2 non nominava.
+
+### P-15 — ✅ La composizione è MISURATA, e la deduzione regge — anticipata dal compito 6 al pre-controllo
+
+La **P-11** chiude dichiarando: *«la **composizione** dei due — un record con `kind` nuovo **e**
+`detail: Some` — è **dedotta** dalle due misure … si misura come primo passo del compito 6»*.
+⛔ **È stata misurata QUI invece che lì**, e la ragione è la stessa che P-11 dà a sé stessa: la
+Parte D si scrive **sopra** quella deduzione, e un piano scritto su un'ipotesi non misurata detta
+a un subagente ciò che nessuno ha verificato. La §4.3 del disegno lo prescrive con parole proprie
+— *«si misura **prima di scrivere**, in due direzioni»*.
+
+**Come, e la disciplina è quella della D7:** banco usa-e-getta in `crates/kernel/tests/` con una
+**struttura specchio** di `RecordV1` e dei tre enum `index_only` — così nessuno dei siti di
+costruzione è stato toccato — compilato, letto e **cancellato nella stessa corsa**; albero di
+lavoro verificato **pulito** con `git status --porcelain` dopo la cancellazione.
+
+⛔ **E lo specchio è stato provato PRIMA di credergli, che è la misura senza la quale le altre non
+provano niente:** i tre file congelati veri sono stati **ricostruiti byte per byte** dallo
+specchio.
+
+| # | Domanda | Esito misurato il 2026-08-30 |
+|---|---|---|
+| 1 | lo specchio **è** il record? | ✅ i tre `.cbor` ricostruiti identici — `820081850001014666726f7a656e6666726f7a656e` e i due fratelli |
+| 2 | variante nuova **e** campo nuovo insieme muovono i byte esistenti? | ✅ **no** — `kind` vecchio e `detail: None` danno i **21 byte identici** su tutti e tre |
+| 3 | il **campo da solo** ferma il lettore vecchio? | ⛔ **no** — decodifica `Ok`, `kind=Intent`, e il dettaglio **sparisce in silenzio**. È la quarta riga di P-11, riprodotta sul record vero |
+| 4 | la **variante** ferma il lettore vecchio? | ✅ **sì** — `unknown enum variant 3 at position 4`, e `Record::decode` mappa **ogni** errore di `minicbor` su `RecordError::Malformed` (`record.rs:423`), che `reconcile.rs:119` risolve in `SuspendAndAsk` |
+| 5 | la **composizione intera**? | ✅ 40 byte, il lettore vecchio si ferma con lo stesso errore, e il tipo nuovo rilegge `kind` **e** dettaglio |
+
+📌 **E la misura porta un fatto che la deduzione non aveva:** l'intestazione d'array passa da `85`
+a `86` **solo** quando `detail` è `Some`. Quindi, una volta che il campo esiste sul tipo vero, i
+**tre** record congelati di oggi tengono **da soli** la metà additiva — vengono ricodificati dal
+tipo nuovo con `detail: None` e devono restare a 21 byte — e il record congelato nuovo non deve
+portarne una seconda copia: gli tocca **l'altra** metà, che è l'indice della variante **più** la
+posizione del campo. È la ragione per cui la **D21** pretende `Some` e non `None`, ora misurata
+invece che argomentata.
+
+### ⚖️ La voce che questo pre-controllo apre per il proprietario
+
+⛔ **QUANTE varianti di `RecordKind` apre la Parte D, e quindi quanti record congelati nascono.**
+La **D20** dice *«tre specie»*; ciascuna riga che le impone è scritta, ma **quale delle tre
+pretenda davvero una variante propria non lo è**:
+
+| Specie | La riga che la impone | Serve una variante propria? |
+|---|---|---|
+| **record di routing** (compito 6) | ADR-0011: giornalato **col passo** | ⛔ **sì, e sembra forzato:** non apre né chiude un dubbio, quindi è la forma del `Note`; ma metterlo *dentro* `Note` fa perdere la sostanza in silenzio a un lettore vecchio — la misura 3 di **P-15** |
+| **permesso concesso** (compito 7) | §6.6: *«un fatto giornalato»*, e la proiezione lo **rilegge** | ⛔ **sì, per la stessa ragione**, e in più la proiezione deve **trovarlo** fra gli altri record |
+| **verdetto di sensore** (compito 5) | §6.4.1: il costo speso *«entra nel giornale»*; `V14`: *«un passo nuovo, giornalato»* | ⚠️ **NON forzato:** *«un passo nuovo»* sono un `Intent` e un `Outcome`, che esistono già. Se il verdetto viaggi come record proprio o dentro l'esito del passo nuovo **non è scritto da nessuna parte** |
+
+⛔ **Perché è del proprietario e non mia:** il formato durevole è l'**unico artefatto
+irreversibile** del progetto, ADR-0036 dice che se i byte congelati cambiano *«non è un
+aggiornamento, è un cambio di formato»*, e P-11 si è fermata **davanti a questa stessa porta** per
+una domanda più piccola. ⚖️ **E la differenza fra due e tre varianti non è di stile:** ogni
+variante è un indice di filo che **non si ritira mai** (regola 4 di §4.9.2) e un record congelato
+in più che **non si rigenera**.
+
+⚠️ **Ciò che NON dipende dalla risposta, e si scrive comunque:** il **compito 8** non tocca il
+formato (P-11 lo dichiara), la **forma** del campo `detail` è la D20 in ogni caso, il
+**contratto** del sensore del compito 5 è indipendente, e le decisioni **P-13** e **P-14** si
+pagano **una volta sola** qualunque sia il conto delle varianti.
+
+---
+
 ---
 
 ## Le decisioni prese da questo piano
@@ -499,8 +691,8 @@ misura che le smentisce — è ciò per cui esiste l'errata.
 | **D17** | i derive del formato si aggiungono **dove i tipi vivono**, mai in tipi specchio dentro `wire/` | un tipo specchio è **una seconda definizione dello schema**, ed è la cosa che ADR-0037 rifiuta per il decodificatore del pari — con la differenza che lì sbaglia in silenzio *fuori*, qui sbaglierebbe in silenzio *dentro*: due definizioni si allineano finché qualcuno se ne ricorda, e nulla diventa rosso quando smette. ⚠️ Il prezzo è P-10, ed è dichiarato invece che evitato |
 | **D18** | ⛔ **il compito 4 NON dà per scontata l'API del formato** | verificato nel repository: le due chiamate di `bincode` — `encode_to_vec(v, config::standard())` e `decode_from_slice(&b, config) -> (T, usize)` — sono esercitate da `crates/kernel/tests/dependencies_usable.rs`, che le prova **girando**; **il derive no**, nessuna riga del workspace lo usa. Si verifica con una **sonda usa-e-getta** compilata e cancellata nella stessa corsa, o leggendo la sorgente vendorizzata. È il precedente del Task 8 del Traguardo 3, dove il piano **rifiutò di dettare l'API di `redb`**: dettarla a memoria produce codice *plausibile e falso* |
 | **D19** | ⚠️ **il compito 4 non chiude NESSUNA riga di catalogo, e va scritto** | misurato: nessuna riga di §7.4.1 o §7.4.2 nomina §6.1 — `awk '/^#### 7\.4\.1/{f=1} /^#### 7\.4\.3/{f=0} f' <spec> \| grep '§6\.1'` non rende niente. Ciò che il compito 4 produce è il **meccanismo** che rende chiudibile `E152` al compito **9**, e il gettone `Q13` è del compito **6**. ⛔ **Un compito che non muove un numeratore è quello su cui si è più tentati di scrivere che l'ha mosso**, ed è la specie di affermazione che la radice **R1** produce |
-| **D20** | ⛔ **UNA SPECIE NUOVA DI RECORD È UNA VARIANTE NUOVA DI `RecordKind` _PIÙ_ UN CAMPO FACOLTATIVO NUOVO PER IL SUO DETTAGLIO** — mai l'una senza l'altro, e mai byte nostri nel `payload` | è la chiusura di **P-11**, misurata. **La variante** serve perché un lettore che non la conosce **non decodifica** e la riconciliazione risponde `SuspendAndAsk` — si ferma invece di indovinare; **il campo** serve perché il `payload` è *«di qualcun altro»* per decisione scritta, e infilarci il nostro CBOR riaprirebbe il difetto chiuso il 2026-08-10 separando `reason`. ⛔ **E il campo da solo non basta, misurato:** un record con `Some` si legge **anche** col tipo che non conosce il campo, che perde la sostanza **in silenzio**. ⚠️ **Il costo, dichiarato:** un campo nuovo rompe i **trentanove** siti di costruzione di `RecordV1` in undici file, **tre** dei quali sono casi `compile_fail` i cui `.stderr` vanno riletti uno per uno (vincolo 10 della §11) — è **P-4 in un'altra casa**, e si paga **una volta sola** perché le tre specie condividono il campo |
-| **D21** | ⛔ **il quarto record congelato porta ENTRAMBE le cose insieme** — `kind` nuovo **e** `detail: Some` | un record congelato con `detail: None` non pinza **niente** dell'indice nuovo, perché un `None` in coda **non viene scritto**: misurato, i byte sono identici a quelli del tipo che il campo non ce l'ha. È la terza riga di **P-2** — *«il nuovo indice non è pinzato»* — che vale **due volte** qui, e un solo record congelato le chiude entrambe. ⚠️ Sostituisce la **D6**, che diceva *«un quarto record»* senza dire **che cosa** dovesse portare |
+| **D20** | ⛔ **UNA SPECIE NUOVA DI RECORD È UNA VARIANTE NUOVA DI `RecordKind` _PIÙ_ UN CAMPO FACOLTATIVO NUOVO PER IL SUO DETTAGLIO** — mai l'una senza l'altro, e mai byte nostri nel `payload` | è la chiusura di **P-11**, misurata. **La variante** serve perché un lettore che non la conosce **non decodifica** e la riconciliazione risponde `SuspendAndAsk` — si ferma invece di indovinare; **il campo** serve perché il `payload` è *«di qualcun altro»* per decisione scritta, e infilarci il nostro CBOR riaprirebbe il difetto chiuso il 2026-08-10 separando `reason`. ⛔ **E il campo da solo non basta, misurato:** un record con `Some` si legge **anche** col tipo che non conosce il campo, che perde la sostanza **in silenzio**. ⚠️ **Il costo, dichiarato:** un campo nuovo rompe **ogni** sito di costruzione di `RecordV1`, e i casi `compile_fail` che ne costruiscono uno hanno i `.stderr` da rileggere uno per uno (vincolo 10 della §11) — è **P-4 in un'altra casa**, e si paga **una volta sola** perché le tre specie condividono il campo. ⛔ **RICHIAMO DEL 2026-08-30: qui stavano *«trentanove siti in undici file, tre dei quali `compile_fail`»*, ed erano il `grep` GREZZO.** Riletto intero è **ventisei in nove**, i `compile_fail` sono **due**, e le tredici righe escluse non sono lavoro zero — **P-13**. **Le cifre sono TOLTE e non riallineate:** il comando che le rifà vive in P-13, in una casa sola |
+| **D21** | ⛔ **NASCE UN RECORD CONGELATO NUOVO PER OGNI VARIANTE NUOVA DI `RecordKind`, e ciascuno porta ENTRAMBE le cose insieme** — il proprio `kind` nuovo **e** `detail: Some` | un record congelato con `detail: None` non pinza **niente** dell'indice nuovo, perché un `None` in coda **non viene scritto**: misurato. È la terza riga di **P-2** — *«il nuovo indice non è pinzato»* — che vale **due volte** qui. ⛔ **RICHIAMO DEL 2026-08-30: questa riga diceva *«il QUARTO record congelato»*, al singolare, e la D20 accanto dichiara TRE specie.** Il singolare veniva da **P-2**, che misurò su **una** variante sola; con tre e un record solo il traguardo consegna **due** indici di filo tenuti da nulla, e **nessun cancello lo dice** — l'array di `frozen_bytes.rs` è scritto a mano e il banco dichiara di sé quel limite. **P-12**. 📌 **Regola e non numerale**, perché resta vera qualunque sia il conto (gotcha **#68**). ✅ **E la metà additiva NON è affar loro, misurato in P-15:** i **tre** record di oggi la tengono da soli — ricodificati dal tipo nuovo con `detail: None` devono restare a 21 byte — quindi al record nuovo tocca **l'altra** metà. ⚠️ Sostituisce la **D6**, che diceva *«un quarto record»* senza dire **che cosa** dovesse portare |
 
 **La baseline di partenza, misurata il 2026-08-30 e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `cargo test --locked --workspace --no-fail-fast` →

@@ -44,14 +44,20 @@
 //! bytes of a declared path. That is A CHOICE OF THIS FAKE, not a rule of the port — the kernel
 //! does not interpret paths, so it cannot say whether two `Path` name one file.
 
-use kernel::arbiter::Grant;
+use kernel::arbiter::{
+    Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption, RemotePolicy,
+    ResourceProfile, VramPolicy,
+};
+use kernel::parameters::Parameters;
 use kernel::ports::filesystem::{CheckpointId, Filesystem, FilesystemError, Path};
 use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 use kernel::ports::journal::StepId;
 use kernel::ports::network::{Endpoint, Network, NetworkError};
 use kernel::ports::process::{
-    Frame, Process, ProcessError, SingleReceipt, StreamReceipt, Worker, WorkerDescriptor,
+    Frame, Killed, Process, ProcessError, SingleReceipt, Started, StreamReceipt, Worker,
+    WorkerDescriptor,
 };
+use kernel::time::{Millis, Monotonic};
 
 // ============================================================================================
 // THE `filesystem` FAKE
@@ -165,6 +171,38 @@ impl Network for RecordingNetwork {
 // THE `process` FAKES -- `Worker` and `Process`
 // ============================================================================================
 
+/// A grant obtained the only way there is.
+///
+/// ⛔ IT ARRIVED AT MILESTONE 6 TASK 1, AND IT IS A COST AND NOT A CONVENIENCE. `Worker::kill`
+/// now answers a `Killed`, which CARRIES a `Grant`; `Grant` has no public constructor (§5.6,
+/// `tests/compile_fail/grant_has_no_constructor.rs`), so from outside the crate the only way to
+/// build one is a real admission. Every fake in this file that implements `Worker` therefore
+/// needs an arbiter, where before it needed nothing.
+///
+/// ⚠️ IT IS DUPLICATED FROM `tests/worker_tokens.rs` ON PURPOSE, and the reason is the one
+/// already written for `Yield`: test code does not cross a crate boundary, and these two benches
+/// buy DIFFERENT things -- that one drives the ADMISSION PATH, this one only needs a token to
+/// hand back. Sharing it would tie the two together for no gain.
+fn a_real_grant() -> Grant {
+    let mut arbiter = Arbiter::new(
+        Parameters::new(10_000, Mib::new(16_384), ArbiterId::new(1)),
+        VramPolicy::Remote(RemotePolicy),
+    );
+    let Admission::Granted(grant) = arbiter.admit(
+        &ResourceProfile {
+            name: "asr-realtime",
+            reserved_vram: Mib::new(1_024),
+            compute_class: ComputeClass::Realtime,
+            preemption: Preemption::Never,
+        },
+        Millis::new(1_000_000),
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("1024 of 16384 fits");
+    };
+    grant
+}
+
 /// A scripted worker, and it CORRELATES on purpose. §6.10.1 gives the port its shape --
 /// every byte that flows back is covered by a receipt -- so a fake that ignored which
 /// receipt asked would exercise the method names and not the contract. An audio worker
@@ -176,14 +214,22 @@ struct ScriptedWorker {
     streams: Vec<(u64, usize)>,
     /// A worker can die without warning (§5.3). This drives the REFUSING direction.
     dead: bool,
+    /// ⛔ THE GRANT, SINCE MILESTONE 6 TASK 1, AND THE PORT LEAVES NO CHOICE: `kill` answers a
+    /// `Killed`, which CARRIES the grant, and `Grant` has no public constructor -- so a worker
+    /// that did not keep the one it was started with could not honour the signature at all.
+    /// ⚠️ IT IS THE FIRST TIME THIS FAKE NEEDS A REAL ADMISSION. Finding P-2's sentence still
+    /// holds -- a `Worker` is obtained by IMPLEMENTING the trait, not by holding a grant --
+    /// but building one now costs an arbiter, which is why `a_real_grant` sits below.
+    grant: Grant,
 }
 
 impl ScriptedWorker {
-    fn new() -> Self {
+    fn new(grant: Grant) -> Self {
         ScriptedWorker {
             next_id: 1,
             streams: Vec::new(),
             dead: false,
+            grant,
         }
     }
 
@@ -272,12 +318,19 @@ impl Worker for ScriptedWorker {
         }
     }
 
-    fn kill(self) -> Result<(), ProcessError> {
+    fn kill(self) -> Killed {
         // ⛔ AND IT DOES NOT REFUSE, DELIBERATELY -- not even a worker already dead. The
         // port says killing is ALWAYS LAWFUL (§5.3 point 4), so a fake that answered
         // `Err(Died)` here would be contradicting the contract it exists to exercise.
         // The refusing direction lives on the instruct and read paths above.
-        Ok(())
+        //
+        // ⛔ AND THE GRANT COMES BACK ON BOTH ARMS, which is the half `Killed` exists to make
+        // unforgettable: the reservation is a fact of the BOOKS, so it is owed back even by a
+        // worker that died. `self.alive()` is not consulted here for that reason either.
+        Killed {
+            grant: self.grant,
+            outcome: Ok(()),
+        }
     }
 }
 
@@ -295,13 +348,14 @@ struct SpawningProcess {
 impl Process for SpawningProcess {
     type Handle = ScriptedWorker;
 
-    fn start(
-        &mut self,
-        _grant: Grant,
-        _descriptor: WorkerDescriptor,
-    ) -> Result<Self::Handle, ProcessError> {
+    fn start(&mut self, grant: Grant, _descriptor: WorkerDescriptor) -> Started<Self::Handle> {
+        // ⛔ IT DOES NOT BECOME INFALLIBLE FOR CONVENIENCE, and the doc above says what it
+        // buys: this fake answers `Running` because it is the SPAWNING half of the port, and
+        // the refusing half has its own fake in `tests/worker_tokens.rs`. What changed at
+        // milestone 6 task 1 is only that the grant now travels INTO the worker instead of
+        // being dropped on the floor -- the `_grant` of before was the defect `R6` closes.
         self.started += 1;
-        Ok(ScriptedWorker::new())
+        Started::Running(ScriptedWorker::new(grant))
     }
 }
 
@@ -590,7 +644,7 @@ fn the_network_port_can_be_implemented_and_called() {
 
 #[test]
 fn the_process_port_can_be_implemented_and_called() {
-    let mut worker = ScriptedWorker::new();
+    let mut worker = ScriptedWorker::new(a_real_grant());
 
     // One instruction, one answer, and the answer NAMES the receipt that asked for it.
     let receipt = worker
@@ -630,7 +684,7 @@ fn the_process_fake_refuses_where_it_must() {
     // ⚠️ WHAT REFUSES IS THE FAKE, not the port -- same caveat as the filesystem above: the
     // kernel exchanges bytes and does not read them, so "this frame is malformed" is the
     // implementation's judgement. What the port fixes is that the VOCABULARY exists.
-    let mut worker = ScriptedWorker::new();
+    let mut worker = ScriptedWorker::new(a_real_grant());
 
     // ⚠️ `unwrap_err` AND NOT `assert_eq!` ON THE WHOLE `Result`, and the reason is a
     // decision rather than a style: comparing the `Result` would demand `PartialEq` on the
@@ -701,7 +755,7 @@ fn answers_are_correlated_to_the_receipt_that_asked() {
     // does not correlate AT ALL satisfied the whole suite -- so the argument that keeps
     // `SingleReceipt::id` alive rested on nothing. This test is what makes it rest on
     // something.
-    let mut worker = ScriptedWorker::new();
+    let mut worker = ScriptedWorker::new(a_real_grant());
 
     // TWO single receipts open at once, read in the REVERSE order. Reading them in issue
     // order would pass against a fake that simply answers a queue.
@@ -762,7 +816,7 @@ fn answers_are_correlated_to_the_receipt_that_asked() {
 
 #[test]
 fn killing_a_worker_consumes_it() {
-    let mut worker = ScriptedWorker::new();
+    let mut worker = ScriptedWorker::new(a_real_grant());
     let receipt = worker
         .instruct_one(Frame::new(b"describe".to_vec()))
         .expect("the instruction was accepted");
@@ -772,16 +826,20 @@ fn killing_a_worker_consumes_it() {
     // by value is not free -- it makes the trait non-object-safe for that method, and a
     // signature one cannot call is exactly the class of defect this file exists to catch.
     // Killing is ALWAYS LAWFUL (§5.3 point 4), so this direction has no refusing twin.
-    assert_eq!(worker.kill(), Ok(()));
+    // ⚠️ `outcome` AND NOT THE WHOLE `Killed`, SINCE MILESTONE 6 TASK 1: the value now carries
+    // the GRANT beside the outcome, and it derives nothing -- `Grant` has neither `Debug` nor
+    // `PartialEq` by design, so `assert_eq!` on a `Killed` does not exist to be written. What
+    // the line buys is unchanged.
+    assert!(worker.kill().outcome.is_ok());
 
     // ⛔ AND KILLING A WORKER ALREADY DEAD IS LAWFUL TOO, which is the half that was DECLARED
     // and not tested. Measured: before this line, adding `self.alive()?` to `kill` -- turning
     // the one lawful-always operation into one that refuses -- left all 9 tests GREEN. Four
     // lines of comment asserting the exception, and nothing holding it: an invariant nobody
     // can check is an intention (§5.3 point 4).
-    let mut already_dead = ScriptedWorker::new();
+    let mut already_dead = ScriptedWorker::new(a_real_grant());
     already_dead.die();
-    assert_eq!(already_dead.kill(), Ok(()));
+    assert!(already_dead.kill().outcome.is_ok());
 
     // ⚠️ WHAT IT DOES NOT BUY: that instructing after the kill FAILS TO COMPILE. `worker` is
     // moved by the line above and naming it again would not build -- but a test that

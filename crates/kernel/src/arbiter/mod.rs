@@ -88,11 +88,18 @@ impl ArbiterId {
 /// `Admission` cannot derive `Debug` or `PartialEq` either, so probes match on it with
 /// `matches!` and `let … else` instead of `assert_eq!`.
 ///
-/// ⛔ DECLARED, FOR MILESTONE 6, so that milestone does not rediscover it: `Process::start`
-/// CONSUMES the grant, and `Arbiter::release` consumes it too. Whoever starts a worker
-/// therefore has nothing left to release. The natural way back is for `Worker::kill` to
-/// HAND THE GRANT BACK -- killing IS the release -- and it is not built now because that
-/// caller does not exist yet (gotcha #46 from the wrong side).
+/// ⛔ THE PARAGRAPH THAT WAS DECLARED FOR MILESTONE 6 IS NOW SPENT, AND IT CAME TRUE ON
+/// 2026-08-30. It read: "`Process::start` CONSUMES the grant, and `Arbiter::release` consumes
+/// it too. Whoever starts a worker therefore has nothing left to release. The natural way back
+/// is for `Worker::kill` to HAND THE GRANT BACK -- killing IS the release -- and it is not
+/// built now because that caller does not exist yet". ⛔ IT IS BUILT: `Worker::kill` answers a
+/// `Killed`, which carries the grant, and the deadline in prose was collected rather than left
+/// to rot (gotcha #77 avoided, this time).
+///
+/// ⚠️ AND THE HALF THAT PARAGRAPH DID NOT SEE, worth writing because the design had to measure
+/// it: a start that FAILS has no worker to give the grant to. That road is `Started::Rejected`,
+/// which carries the grant home by name -- see `ports::process::Started`. Without it a failed
+/// spawn dropped a reservation nobody could rebuild, and only the sweep got it back.
 ///
 /// ⚠️ RECALL OF 2026-08-19, MILESTONE 5 TASK 4 -- WHAT THIS COMMENT SAID BEFORE THE MOVE,
 /// written out because a moved comment that keeps its old tense is the finding A-2 of this

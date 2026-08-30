@@ -1,7 +1,7 @@
 error[E0061]: this method takes 1 argument but 0 arguments were supplied
-   --> tests/compile_fail/reading_without_a_receipt.rs:114:20
+   --> tests/compile_fail/reading_without_a_receipt.rs:119:20
     |
-114 |     let _ = worker.read_one();
+119 |     let _ = worker.read_one();
     |                    ^^^^^^^^-- argument #1 of type `SingleReceipt` is missing
     |
 note: method defined here
@@ -11,5 +11,5 @@ note: method defined here
     |        ^^^^^^^^
 help: provide the argument
     |
-114 |     let _ = worker.read_one(/* SingleReceipt */);
+119 |     let _ = worker.read_one(/* SingleReceipt */);
     |                             +++++++++++++++++++

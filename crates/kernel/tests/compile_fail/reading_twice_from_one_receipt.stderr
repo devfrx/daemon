@@ -1,10 +1,10 @@
 error[E0382]: use of moved value: `receipt`
-   --> tests/compile_fail/reading_twice_from_one_receipt.rs:119:35
+   --> tests/compile_fail/reading_twice_from_one_receipt.rs:124:35
     |
-115 |     let receipt = worker
+120 |     let receipt = worker
     |         ------- move occurs because `receipt` has type `SingleReceipt`, which does not implement the `Copy` trait
 ...
-118 |     let _first = worker.read_one(receipt);
+123 |     let _first = worker.read_one(receipt);
     |                                  ------- value moved here
-119 |     let _second = worker.read_one(receipt);
+124 |     let _second = worker.read_one(receipt);
     |                                   ^^^^^^^ value used here after move

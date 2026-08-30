@@ -16,12 +16,13 @@
 //! the admission like everybody else.
 
 use kernel::arbiter::{
-    Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption, RemotePolicy,
+    Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption, Released, RemotePolicy,
     ResourceProfile, VramPolicy,
 };
 use kernel::parameters::Parameters;
 use kernel::ports::process::{
-    Frame, Process, ProcessError, SingleReceipt, StreamReceipt, Worker, WorkerDescriptor,
+    Frame, Killed, Process, ProcessError, SingleReceipt, Started, StreamReceipt, Worker,
+    WorkerDescriptor,
 };
 use kernel::time::{Millis, Monotonic};
 
@@ -51,6 +52,10 @@ fn a_real_grant() -> Grant {
 /// suite, and it needs two implementations and a real worker (milestone 6).
 struct FakeWorker {
     next: u64,
+    /// ⛔ THE GRANT THE START WAS GIVEN, AND IT IS NOT DECORATION: `kill` has to HAND IT BACK,
+    /// so a worker that dropped it on the way in could not honour the signature. Every
+    /// implementation of this port carries one for the same reason.
+    grant: Grant,
 }
 
 impl Worker for FakeWorker {
@@ -76,8 +81,11 @@ impl Worker for FakeWorker {
         Ok(())
     }
 
-    fn kill(self) -> Result<(), ProcessError> {
-        Ok(())
+    fn kill(self) -> Killed {
+        Killed {
+            grant: self.grant,
+            outcome: Ok(()),
+        }
     }
 }
 
@@ -86,19 +94,18 @@ struct FakeProcess;
 impl Process for FakeProcess {
     type Handle = FakeWorker;
 
-    fn start(
-        &mut self,
-        _grant: Grant,
-        _descriptor: WorkerDescriptor,
-    ) -> Result<Self::Handle, ProcessError> {
-        Ok(FakeWorker { next: 0 })
+    fn start(&mut self, grant: Grant, _descriptor: WorkerDescriptor) -> Started<Self::Handle> {
+        Started::Running(FakeWorker { next: 0, grant })
     }
 }
 
 fn a_started_worker() -> FakeWorker {
-    FakeProcess
-        .start(a_real_grant(), WorkerDescriptor::new(b"asr.exe".to_vec()))
-        .expect("the fake always starts")
+    let Started::Running(worker) =
+        FakeProcess.start(a_real_grant(), WorkerDescriptor::new(b"asr.exe".to_vec()))
+    else {
+        panic!("the fake always starts");
+    };
+    worker
 }
 
 /// §6.10.5 row 1, counter-probe: WITH the handle, talking compiles and works.
@@ -118,7 +125,11 @@ fn instructing_before_the_kill_compiles() {
     let _ = worker
         .instruct_one(Frame::new(b"hello".to_vec()))
         .expect("answered");
-    worker.kill().expect("killing is always lawful");
+    // ⛔ `outcome` AND NOT THE WHOLE `Killed`: since milestone 6 task 1 the kill hands the
+    // GRANT back beside its outcome, and `Killed` derives nothing -- `Grant` has no `Debug`
+    // and no `PartialEq` by design, so there is no `assert_eq!` to write here. What this
+    // counter-probe buys is unchanged: instructing BEFORE the kill compiles.
+    assert!(worker.kill().outcome.is_ok(), "killing is always lawful");
 }
 
 /// §6.10.5 rows 3 and 4, counter-probe: reading ONCE, with the receipt, compiles.
@@ -154,13 +165,16 @@ fn reading_once_with_the_receipt_compiles() {
 #[test]
 fn one_grant_starts_one_worker() {
     let grant = a_real_grant();
-    // ⚠️ NOT `assert!(first.is_ok())`: the fake always answers `Ok`, so that assertion could
-    // never fail and would prove nothing -- a vacuous probe. And this function holds no shape
-    // that `a_started_worker` above does not already compile: it is a declared place to hang
-    // the reasoning, not a probe. `expect` below is for the panic message, not for coverage.
-    FakeProcess
-        .start(grant, WorkerDescriptor::new(b"asr.exe".to_vec()))
-        .expect("the fake always starts");
+    // ⚠️ NOT `assert!(matches!(first, Started::Running(_)))`: the fake always answers
+    // `Running`, so that assertion could never fail and would prove nothing -- a vacuous
+    // probe. And this function holds no shape that `a_started_worker` above does not already
+    // compile: it is a declared place to hang the reasoning, not a probe. The `else` arm below
+    // is for the panic message, not for coverage.
+    let Started::Running(_worker) =
+        FakeProcess.start(grant, WorkerDescriptor::new(b"asr.exe".to_vec()))
+    else {
+        panic!("the fake always starts");
+    };
 }
 
 /// A `Process` that never manages to spawn.
@@ -176,24 +190,103 @@ struct FailingProcess;
 impl Process for FailingProcess {
     type Handle = FakeWorker;
 
-    fn start(
-        &mut self,
-        _grant: Grant,
-        _descriptor: WorkerDescriptor,
-    ) -> Result<Self::Handle, ProcessError> {
-        Err(ProcessError::StartFailed)
+    fn start(&mut self, grant: Grant, _descriptor: WorkerDescriptor) -> Started<Self::Handle> {
+        // ⛔ IT HANDS THE GRANT BACK, and since milestone 6 task 1 it has no choice: a start
+        // that fails has no worker to give the reservation to, so `Started::Rejected` is the
+        // only way home for it. Before this shape the fake DROPPED it, and so would a real
+        // `platform` -- the defect `R6` closes.
+        Started::Rejected {
+            grant,
+            error: ProcessError::StartFailed,
+        }
     }
 }
 
 /// The only producer of `StartFailed` in the workspace, and what keeps it from being a word
 /// nobody has ever written.
 ///
-/// ⚠️ NOT `assert!(outcome.is_err())`: this fake always fails, so that assertion could not tell
-/// `StartFailed` from any other variant and would stay green if the fake returned `Died`. The
-/// equality is what pins the variant.
+/// ⚠️ NOT `assert!(matches!(outcome, Started::Rejected { .. }))`: this fake always fails, so
+/// that assertion could not tell `StartFailed` from any other variant and would stay green if
+/// the fake returned `Died`. The equality on `error` is what pins the variant.
+///
+/// ⛔ RECALL OF 2026-08-30, MILESTONE 6 TASK 1 -- THIS PROBE ASSERTED `outcome.err()`, AND IT IS
+/// REWRITTEN RATHER THAN DELETED. `start` no longer answers a `Result`, so `.err()` does not
+/// exist; what the probe bought -- the EQUALITY on the variant, against a bare `is_err()` --
+/// is bought here by destructuring `Started::Rejected` and comparing `error`. ⚠️ AND IT IS NOT
+/// THE SAME PROBE AS `a_start_that_fails_gives_the_grant_back_by_name`: that one is about the
+/// RESERVATION coming home and needs the arbiter's books; this one is about the WORD
+/// `StartFailed` having a producer at all, which is what finding AUD-051 asked for.
 #[test]
 fn a_spawn_that_does_not_happen_is_start_failed() {
     let outcome = FailingProcess.start(a_real_grant(), WorkerDescriptor::new(b"asr.exe".to_vec()));
 
-    assert_eq!(outcome.err(), Some(ProcessError::StartFailed));
+    let Started::Rejected { error, .. } = outcome else {
+        panic!("FailingProcess refuses every start");
+    };
+    assert_eq!(error, ProcessError::StartFailed);
+}
+
+/// The arbiter AND the grant it issued. ⛔ `a_real_grant` throws the arbiter away, which is
+/// right for the probes about token SHAPE; these two are about the reservation coming home,
+/// so they need the books that hold it.
+fn an_arbiter_and_a_real_grant() -> (Arbiter, Grant) {
+    let mut arbiter = Arbiter::new(
+        Parameters::new(10_000, Mib::new(16_384), ArbiterId::new(1)),
+        VramPolicy::Remote(RemotePolicy),
+    );
+    let Admission::Granted(grant) = arbiter.admit(
+        &ResourceProfile {
+            name: "asr-realtime",
+            reserved_vram: Mib::new(1_024),
+            compute_class: ComputeClass::Realtime,
+            preemption: Preemption::Never,
+        },
+        Millis::new(1_000_000),
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("1024 of 16384 fits");
+    };
+    (arbiter, grant)
+}
+
+#[test]
+fn a_worker_that_is_killed_gives_the_grant_back() {
+    let (mut arbiter, grant) = an_arbiter_and_a_real_grant();
+    let Started::Running(worker) =
+        FakeProcess.start(grant, WorkerDescriptor::new(b"asr.exe".to_vec()))
+    else {
+        panic!("the fake starts every worker it is asked for");
+    };
+
+    let killed = worker.kill();
+
+    // ⛔ THE GRANT IS OUTSIDE EVERY `Result`, and this assertion is why: the reservation is a
+    // fact of the BOOKS, not of the worker's health. `kill` is always lawful (§5.3 point 4),
+    // so a worker that died badly still owes its reservation back.
+    assert!(killed.outcome.is_ok());
+    assert_eq!(
+        arbiter.release(killed.grant, Monotonic::ORIGIN),
+        Ok(Released::Now(Mib::new(1_024)))
+    );
+}
+
+#[test]
+fn a_start_that_fails_gives_the_grant_back_by_name() {
+    // ⛔ THIS VIA WAS NOT DISCUSSED ANYWHERE before the milestone 6 design measured it: today
+    // `start` takes the grant BY VALUE and drops it on `Err`, and nothing can rebuild it --
+    // `GrantId` is private and `grant_has_no_constructor.rs` pins that. The reservation then
+    // sat in the books for the whole declared window, and only the sweep got it back.
+    let (mut arbiter, grant) = an_arbiter_and_a_real_grant();
+
+    let Started::Rejected { grant, error } =
+        FailingProcess.start(grant, WorkerDescriptor::new(b"asr.exe".to_vec()))
+    else {
+        panic!("FailingProcess refuses every start, so this must be the rejected arm");
+    };
+
+    assert_eq!(error, ProcessError::StartFailed);
+    assert_eq!(
+        arbiter.release(grant, Monotonic::ORIGIN),
+        Ok(Released::Now(Mib::new(1_024)))
+    );
 }

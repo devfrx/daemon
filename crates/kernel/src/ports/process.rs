@@ -253,6 +253,43 @@ pub enum ProcessError {
     UnsolicitedFrame,
 }
 
+/// What starting a worker did. ⛔ NOT a `Result`, and the shape is `Admission`'s.
+///
+/// ⛔ THE REJECTED ARM CARRIES THE GRANT BACK BY NAME. `start` consumes it, so before this
+/// type a failed start dropped a reservation nobody could rebuild -- `GrantId` is private and
+/// `tests/compile_fail/grant_has_no_constructor.rs` pins it -- and the books held it for the
+/// whole declared window. The sweep was the only way back.
+///
+/// ⚠️ WHY NOT `Result<H, (Grant, ProcessError)>`: no error in this repository carries the
+/// value it consumed, measured with
+/// `grep -rnE "Result<[^,]+, *\([A-Z]" crates/ --include=*.rs`, which returns nothing. The
+/// shape this project uses for "several outcomes, each carrying what belongs to it" is
+/// `Admission`. A second idiom would be a second way to say one thing.
+#[must_use]
+pub enum Started<H> {
+    /// The worker is alive, and the grant is now its.
+    Running(H),
+    /// It never started. The grant comes back, and so does the reason.
+    Rejected { grant: Grant, error: ProcessError },
+}
+
+/// What killing a worker did.
+///
+/// ⛔ A STRUCT AND NOT AN ENUM, because there are not two states: there is ONE state with two
+/// facts. The grant comes back whatever happened, and `outcome` says whether the kill itself
+/// went cleanly.
+///
+/// ⛔ THE GRANT SITS OUTSIDE EVERY `Result`, and that is the teaching part: it comes back even
+/// on the arm where the worker died badly. `kill` is ALWAYS LAWFUL (§5.3 point 4), and a
+/// reservation is a fact of the books, not of the process's health.
+#[must_use]
+pub struct Killed {
+    /// The reservation, back to whoever will hand it to the arbiter.
+    pub grant: Grant,
+    /// Whether the kill itself succeeded.
+    pub outcome: Result<(), ProcessError>,
+}
+
 /// The handle of a live worker. Obtained ONLY from `Process::start`.
 pub trait Worker {
     /// An instruction expecting one answer.
@@ -275,7 +312,8 @@ pub trait Worker {
     /// Kills the worker, and it is ALWAYS lawful (§5.3, point 4).
     ///
     /// ⛔ CONSUMES the `Worker`: instructing it after the kill does not compile.
-    fn kill(self) -> Result<(), ProcessError>;
+    /// ⛔ AND IT RETURNS THE GRANT, outside the `Result` -- see `Killed`.
+    fn kill(self) -> Killed;
 }
 
 pub trait Process {
@@ -288,9 +326,8 @@ pub trait Process {
     /// does not compile. This is the half of I2 that belongs to the compiler; the other
     /// half -- that `process` is the only port towards processes -- rests on a level 2
     /// check and is therefore deletable. Declared, not hidden (§5.6).
-    fn start(
-        &mut self,
-        grant: Grant,
-        descriptor: WorkerDescriptor,
-    ) -> Result<Self::Handle, ProcessError>;
+    ///
+    /// ⛔ IT RETURNS `Started` AND NOT A `Result`, so the grant of a failed start has a way
+    /// home -- see `Started::Rejected`.
+    fn start(&mut self, grant: Grant, descriptor: WorkerDescriptor) -> Started<Self::Handle>;
 }

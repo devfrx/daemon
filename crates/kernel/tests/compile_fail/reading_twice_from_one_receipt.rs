@@ -40,6 +40,7 @@ fn a_real_grant() -> kernel::arbiter::Grant {
 
 struct FakeWorker {
     next: u64,
+    grant: kernel::arbiter::Grant,
 }
 
 impl kernel::ports::process::Worker for FakeWorker {
@@ -82,8 +83,11 @@ impl kernel::ports::process::Worker for FakeWorker {
         Ok(())
     }
 
-    fn kill(self) -> Result<(), kernel::ports::process::ProcessError> {
-        Ok(())
+    fn kill(self) -> kernel::ports::process::Killed {
+        kernel::ports::process::Killed {
+            grant: self.grant,
+            outcome: Ok(()),
+        }
     }
 }
 
@@ -94,20 +98,21 @@ impl kernel::ports::process::Process for FakeProcess {
 
     fn start(
         &mut self,
-        _grant: kernel::arbiter::Grant,
+        grant: kernel::arbiter::Grant,
         _descriptor: kernel::ports::process::WorkerDescriptor,
-    ) -> Result<Self::Handle, kernel::ports::process::ProcessError> {
-        Ok(FakeWorker { next: 0 })
+    ) -> kernel::ports::process::Started<Self::Handle> {
+        kernel::ports::process::Started::Running(FakeWorker { next: 0, grant })
     }
 }
 
 fn a_started_worker() -> FakeWorker {
-    FakeProcess
-        .start(
-            a_real_grant(),
-            kernel::ports::process::WorkerDescriptor::new(b"asr.exe".to_vec()),
-        )
-        .expect("the fake always starts")
+    let kernel::ports::process::Started::Running(worker) = FakeProcess.start(
+        a_real_grant(),
+        kernel::ports::process::WorkerDescriptor::new(b"asr.exe".to_vec()),
+    ) else {
+        panic!("the fake always starts");
+    };
+    worker
 }
 
 fn main() {

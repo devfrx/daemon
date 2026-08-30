@@ -42,3 +42,8 @@ fn main() {
         kernel::arbiter::VramPolicy::Local(kernel::arbiter::LocalPolicy),
     );
 }
+
+// ⛔ THE `Parameters::new` CALL ABOVE RUNS LONG ON PURPOSE, AND THIS NOTE SITS AT THE
+// BOTTOM FOR THE SAME REASON: anything inserted above it shifts the asserted error below
+// and rewrites this case's `.stderr` line numbers for nothing. `cargo fmt` does not reach
+// this directory, so nothing else objects to the width.

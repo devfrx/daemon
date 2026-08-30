@@ -460,8 +460,9 @@ fn a_grant_still_inside_its_window_is_not_collected() {
 ///
 /// ⚠️ THE CONSEQUENCE THAT IS NOT OBVIOUS, and it is why the choice is worth naming:
 /// `release` collects before it looks, so at `now == expires_at` handing the grant back
-/// answers `Err(ReleaseError::UnknownGrant)` -- measured. The limit written beside
-/// `ReleaseError` is where that lives.
+/// answers `Ok(Released::AlreadyCollected)` -- measured 2026-08-30 by moving
+/// `a_grant_of_this_arbiter_released_after_its_window_is_not_an_error` from `5_001` to
+/// `5_000`. ⚠️ AND NO PROBE STANDS THERE: this bench asks at `5_001` and at `4_999`.
 #[test]
 fn a_grant_is_collected_at_the_instant_its_window_closes() {
     let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));

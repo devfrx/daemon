@@ -256,26 +256,27 @@ pub enum Released {
 /// argued, and what closed each piece:
 /// ① "THREE CAUSES, ONE ANSWER" -- spent. Two of the three answer `Ok` now, and the variant
 ///    below states the one that is left.
-/// ② The three measured pairs -- released at 5_001 and at 5_000 exactly answering `Err`,
-///    at 4_999 answering `Ok`, and the same either side of a revocation grace -- spent: those
-///    inputs answer `Ok(Released::AlreadyCollected)` and `Ok(Released::Now(_))` today, and
-///    TWO PROBES pin them instead of a paragraph,
-///    `a_grant_of_this_arbiter_released_after_its_window_is_not_an_error` and
-///    `a_grant_released_inside_its_window_reports_what_came_back`.
-/// ③ "NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT" -- spent
-///    by ②, and it was right while it stood: a probe written then would have had to be
-///    DELETED to take the decision, which is a vote against taking it.
+/// ② The measured pairs, which said 5_001 and the grace deadline answer `Err` -- spent:
+///    they answer `Ok` today. TWO of those inputs are now pinned by probes instead of by a
+///    paragraph, `a_grant_of_this_arbiter_released_after_its_window_is_not_an_error` at
+///    5_001 and `a_grant_released_inside_its_window_reports_what_came_back` at 4_999.
+///    ⚠️ THE OTHER TWO ARE HELD BY NOBODY, said rather than left implied: the exact
+///    boundary 5_000, and either side of a revocation grace. No bench releases a grant
+///    under revocation at all -- the probes that revoke never call `release`.
+/// ③ "NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT" -- half
+///    spent by ②, and it was right while it stood: a probe written then would have had to
+///    be DELETED to take the decision, which is a vote against taking it.
 /// ④ "THE DESIGN IS NOT CHANGED TO CLOSE IT, because closing it means giving an `Arbiter` an
 ///    IDENTITY, and that is a decision for the owner" -- TAKEN, and the identity is
 ///    `ArbiterId`. With it the declared limit that paragraph guarded is CLOSED: `GrantId`
 ///    still restarts at zero in every arbiter, but `release` compares `Grant::issuer` BEFORE
 ///    it reads the books, so two arbiters no longer need disjoint id spaces to be safe.
 /// ⑤ "WHAT IS DELIBERATELY NOT DECIDED: the exact type `release` answers with" -- decided,
-///    and it is `Released` above, built WITH `R6` exactly as that paragraph said it would be.
+///    and it is `Released` above.
 /// ⛔ THE ARGUMENT IS NOT COPIED DOWN HERE, only its outcome. It lives in the milestone 6
 /// design and in the plan's `E30`; what belongs beside a type is what the type means TODAY.
 ///
-/// ⚠️ THE DECLARED LIMIT THAT SURVIVES, AND IT IS THE ONLY ONE. What `release` compares is
+/// ⚠️ A DECLARED LIMIT THAT SURVIVES. What `release` compares is
 /// EQUALITY of `ArbiterId`, and that value is DELIVERED -- §6.1.3 forbids the kernel to mint
 /// one. Two arbiters handed the SAME id ARE the same arbiter as far as this guard can tell,
 /// and nothing here can see otherwise: making them differ is the composition root's statement
@@ -533,8 +534,8 @@ impl Arbiter {
     /// this repository. ⚖️ AND IT IS NOT PINNED, ON PURPOSE AND ON THE MERITS: a probe
     /// asserting `Granted` for the latecomer would freeze exactly the choice the errata voice
     /// `E51` puts in front of the owner, and a probe that has to be deleted to take a decision
-    /// is a vote against taking it -- the precedent is `E39`, which refused for the same reason
-    /// to pin the three measured `release` values. Registered as `E53`.
+    /// is a vote against taking it -- the precedent is `E39`, which refused a probe for the
+    /// same reason. Registered as `E53`.
     ///
     /// ⛔ AND SINCE TASK 8 THAT JUMP IS NO LONGER THEORETICAL, WHICH IS A CHANGE OF KIND AND NOT
     /// A DETAIL. Until task 8 `ask_back` had no production caller, so NO revocation ever happened

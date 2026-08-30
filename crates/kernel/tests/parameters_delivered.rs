@@ -41,6 +41,14 @@ fn parameters_are_comparable_so_a_substitution_is_observable() {
         Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1)),
         Parameters::new(10_000, Mib::new(8_192), ArbiterId::new(1))
     );
+    // And the third, for the same reason again -- differing in the IDENTITY alone.
+    // ✅ Measured 2026-08-30: with `PartialEq` written by hand over the other two fields
+    // only, the whole workspace stayed green without this line. "Substituting the arbiter
+    // this decision belongs to is observable" was held by nothing.
+    assert_ne!(
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1)),
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(2))
+    );
 }
 
 #[test]
@@ -104,6 +112,16 @@ fn the_arbiter_identity_is_delivered_and_not_invented() {
     // ⛔ THE POINT IS THE ABSENCE OF A DEFAULT. §6.1.3 forbids the kernel to MINT an
     // identifier, and ADR-0034 says a decision reads only what it was handed: an arbiter
     // that chose its own id would be doing both.
-    let parameters = Parameters::new(64, Mib::new(8_192), ArbiterId::new(7));
-    assert_eq!(parameters.arbiter_id(), ArbiterId::new(7));
+    //
+    // ⛔ TWO VALUES AND NOT ONE, for the reason the sisters above carry: a reader that
+    // answered a CONSTANT would satisfy a single-value probe, so one value tests the
+    // constructor's arity and not what it delivers.
+    assert_eq!(
+        Parameters::new(64, Mib::new(8_192), ArbiterId::new(7)).arbiter_id(),
+        ArbiterId::new(7)
+    );
+    assert_eq!(
+        Parameters::new(64, Mib::new(8_192), ArbiterId::new(u64::MAX)).arbiter_id(),
+        ArbiterId::new(u64::MAX)
+    );
 }

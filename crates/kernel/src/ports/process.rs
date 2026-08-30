@@ -261,10 +261,14 @@ pub enum ProcessError {
 /// whole declared window. The sweep was the only way back.
 ///
 /// ⚠️ WHY NOT `Result<H, (Grant, ProcessError)>`: no error in this repository carries the
-/// value it consumed, measured with
-/// `grep -rnE "Result<[^,]+, *\([A-Z]" crates/ --include=*.rs`, which returns nothing. The
-/// shape this project uses for "several outcomes, each carrying what belongs to it" is
+/// value it consumed, measured on 2026-08-30 with
+/// `grep -rnE "Result<[^,]+, *\([A-Z]" crates/ --include=*.rs`, which returns ONE line --
+/// this one, quoting the shape it rejects. The shape this project uses for "several
+/// outcomes, each carrying what belongs to it" is
 /// `Admission`. A second idiom would be a second way to say one thing.
+///
+/// ⚠️ NO `Debug` AND NO `PartialEq`, for the reason `Admission` has neither: `Rejected`
+/// carries a `Grant`. Probes destructure with `let … else` instead of `assert_eq!`.
 #[must_use]
 pub enum Started<H> {
     /// The worker is alive, and the grant is now its.
@@ -282,6 +286,9 @@ pub enum Started<H> {
 /// ⛔ THE GRANT SITS OUTSIDE EVERY `Result`, and that is the teaching part: it comes back even
 /// on the arm where the worker died badly. `kill` is ALWAYS LAWFUL (§5.3 point 4), and a
 /// reservation is a fact of the books, not of the process's health.
+///
+/// ⚠️ NO `Debug` AND NO `PartialEq`, same reason again -- it carries a `Grant`. The bench
+/// asserts on `outcome`, which is a `Result<(), ProcessError>` and derives both.
 #[must_use]
 pub struct Killed {
     /// The reservation, back to whoever will hand it to the arbiter.

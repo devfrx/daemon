@@ -42,9 +42,16 @@ Albero pulito, ramo pushato. Ultimo commit: <<< INCOLLA QUI: git log --oneline -
 
 ⛔ PRIMA DI PROPORRE QUALSIASI COSA: leggi, poi ASCOLTA. Non entrare in plan
    mode, non proporre passi, non scrivere file finché non te lo dico.
-   ⛔ IL BRAINSTORMING È L'ECCEZIONE, E VIENE SUBITO DOPO LA LETTURA: fa
-   DOMANDE, non proposte, e non è plan mode. Se sia da APRIRE o da RIPRENDERE
-   lo dice la §6, non questa riga.
+   ⛔ L'ECCEZIONE È LA TAPPA CHE LA §6 INDICA, e QUALE sia non è scritto qui:
+   la sequenza è brainstorming → disegno → piano → esecuzione, e a che punto
+   sia lo dice la §6 del compendio, casa unica. Se è il BRAINSTORMING, viene
+   subito dopo la lettura e fa DOMANDE, non proposte, e non è plan mode.
+   ⚠️ RICHIAMO DEL 2026-08-30: qui stava «IL BRAINSTORMING È L'ECCEZIONE, E
+   VIENE SUBITO DOPO LA LETTURA», con accanto la riga che rimanda alla §6 —
+   cioè una tappa NOMINATA e uno stato NEGATO nella stessa frase. Il
+   brainstorming del Traguardo 6 è chiuso e il piano è finito, quindi la
+   frase mandava a riaprire una tappa conclusa. TOLTA la tappa, tenuto il
+   rimando: era la stessa forma già corretta due volte in questo file.
 
 INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
@@ -94,7 +101,9 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              sbarrare e' la colonna «Chi la
                                              chiude» di
                                              docs/porta-di-qualita.md
-  /superpowers:subagent-driven-development   quando quel piano ci sarà: un
+  /superpowers:subagent-driven-development   quando c'è un piano FINITO da
+                                             eseguire — e se c'è lo dice la
+                                             §6, non questa cella: un
                                              subagente fresco per compito, con
                                              revisione fra uno e l'altro. È la
                                              modalità scelta, e ha portato TUTTI

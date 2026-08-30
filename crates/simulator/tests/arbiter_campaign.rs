@@ -35,7 +35,7 @@ use core::cell::RefCell;
 use std::collections::BTreeSet;
 
 use kernel::arbiter::{
-    Admission, Arbiter, ComputeClass, Grant, LocalPolicy, Mib, Preemption, ReleaseError,
+    Admission, Arbiter, ArbiterId, ComputeClass, Grant, LocalPolicy, Mib, Preemption, ReleaseError,
     RemotePolicy, ResourceProfile, VramPolicy,
 };
 use kernel::executor::{Executor, Sleep};
@@ -368,7 +368,7 @@ impl Default for Observed {
 /// and not about the concurrency.
 fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Observed) {
     let arbiter = RefCell::new(Arbiter::new(
-        Parameters::new(TURN_LIMIT, TOTAL),
+        Parameters::new(TURN_LIMIT, TOTAL, ArbiterId::new(1)),
         VramPolicy::Remote(RemotePolicy),
     ));
     let observed = RefCell::new(Observed::default());
@@ -380,7 +380,7 @@ fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Observed) {
     let mut executor = Executor::new(
         SeededRng::new(seed),
         SharedClock { inner: &clock },
-        Parameters::new(TURN_LIMIT, TOTAL),
+        Parameters::new(TURN_LIMIT, TOTAL, ArbiterId::new(1)),
         &sleep,
     );
 

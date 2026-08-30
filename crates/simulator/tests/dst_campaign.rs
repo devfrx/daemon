@@ -7,7 +7,7 @@
 use core::cell::RefCell;
 use std::collections::BTreeSet;
 
-use kernel::arbiter::Mib;
+use kernel::arbiter::{ArbiterId, Mib};
 use kernel::executor::{Executor, Sleep};
 use kernel::parameters::Parameters;
 use kernel::ports::journal::{Journal, StepId};
@@ -205,7 +205,7 @@ fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Trace) {
     let mut executor = Executor::new(
         SeededRng::new(seed),
         VirtualReactor::new(),
-        Parameters::new(TURN_LIMIT, TOTAL_VRAM),
+        Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1)),
         &sleep,
     );
 

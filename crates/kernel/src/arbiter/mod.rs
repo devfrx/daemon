@@ -31,6 +31,28 @@ pub mod resource;
 pub use policy::{LocalPolicy, MakeRoom, RemotePolicy, VramPolicy};
 pub use resource::{ComputeClass, Mib, Preemption, ResourceProfile, WorkDescriptor};
 
+/// The identity of one arbiter, DELIVERED and never minted.
+///
+/// ⛔ IT EXISTS FOR ONE QUESTION: `release` must be able to tell "a grant I issued and have
+/// already swept" from "a grant of ANOTHER arbiter". Without it `held.remove` answers `None`
+/// to both, and the two need opposite answers -- see `Released` and `ReleaseError`.
+///
+/// ⛔ DELIVERED, per ADR-0034: it travels in `Parameters`, and §6.1.3 forbids the kernel to
+/// mint an identifier. Nothing here generates one.
+///
+/// ⚠️ THE FIELD IS PRIVATE AND THE CONSTRUCTOR IS NOT, and the asymmetry is the whole of it:
+/// `daemon` has to build one, so a tuple literal from any crate would give the same forgery
+/// `RecordV1` gave in AUD-050 -- a guard is worth exactly what its constructor is worth.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ArbiterId(u64);
+
+impl ArbiterId {
+    /// The identity in. It is a value the composition root hands down, not a choice.
+    pub const fn new(value: u64) -> Self {
+        ArbiterId(value)
+    }
+}
+
 /// A grant from the arbiter. THE ONLY WAY TO START A WORKER.
 ///
 /// ⛔ IT LIVES HERE AND NOT IN `ports::process`, and the move was forced by a measured
@@ -1126,7 +1148,7 @@ mod tests {
     /// else. The two policies have their own bench, `tests/arbiter_policy.rs`.
     fn arbiter(total: Mib) -> Arbiter {
         Arbiter::new(
-            Parameters::new(TURN_LIMIT, total),
+            Parameters::new(TURN_LIMIT, total, ArbiterId::new(1)),
             VramPolicy::Remote(RemotePolicy),
         )
     }

@@ -38,8 +38,8 @@
 use std::path::Path;
 
 use kernel::arbiter::{
-    Admission, Arbiter, ComputeClass, Grant, Mib, Preemption, RemotePolicy, ResourceProfile,
-    VramPolicy,
+    Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption, RemotePolicy,
+    ResourceProfile, VramPolicy,
 };
 use kernel::executor::{Executor, RunError, Sleep};
 use kernel::parameters::Parameters;
@@ -121,6 +121,20 @@ const EXECUTOR_TURN_LIMIT: u64 = 100_000;
 /// carries it without reading it, and `Arbiter::new`, which uses it as the ceiling every
 /// admission is measured against. There is no second road for it to arrive by.
 const TOTAL_VRAM: Mib = Mib::new(16_384);
+
+/// Which arbiter this binary runs.
+///
+/// ⛔ A LITERAL, ON THE SAME BOUNDARY AS `TOTAL_VRAM` and for the same reason: §6.1.3 forbids
+/// the kernel to MINT an identifier, so the value has to be chosen HERE and delivered through
+/// `Parameters`. There is nothing to derive it from — this process runs exactly one arbiter,
+/// and the identity exists so `Arbiter::release` can tell a grant of its own from a grant of
+/// somebody else's arbiter, not so anyone can enumerate them.
+///
+/// ⚠️ THE VALUE IS ARBITRARY AND THAT IS NOT A GAP: what `release` compares is EQUALITY, so
+/// any value works as long as two arbiters that are meant to differ are given different ones.
+/// The day a second arbiter is wired here, it gets a second literal — and that is precisely
+/// the friction §2.8.5 wants a parameter to have.
+const ARBITER_ID: ArbiterId = ArbiterId::new(0);
 
 /// Where the journal file lives, in production.
 ///
@@ -219,7 +233,7 @@ enum StartupError {
 /// on Linux — the project's second system.
 fn run_the_production_graph(journal_path: &Path) -> Result<(), StartupError> {
     run_the_graph(
-        Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM),
+        Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID),
         journal_path,
     )
 }
@@ -435,7 +449,7 @@ mod tests {
     /// `Debug`, so the `Result` cannot be formatted as a whole. Taking the error out first is
     /// what lets the failure say which quota fell.
     fn the_production_arbiter() -> Arbiter {
-        match build_the_arbiter(Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM)) {
+        match build_the_arbiter(Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID)) {
             Ok(arbiter) => arbiter,
             Err(error) => panic!("a permanent quota of ADR-0033 must be granted: {error:?}"),
         }
@@ -673,7 +687,7 @@ mod tests {
         // 1024 fits in 1500; 1024 + 768 does not, and under `RemotePolicy` -- which may not
         // make room -- a request that fits the machine but not the moment is QUEUED.
         let outcome = run_the_graph(
-            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(1_500)),
+            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(1_500), ARBITER_ID),
             &dir.join("journal.redb"),
         );
 
@@ -696,7 +710,7 @@ mod tests {
 
         // 1024 is more than the whole machine, so no release will ever make room for it.
         let outcome = run_the_graph(
-            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(500)),
+            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(500), ARBITER_ID),
             &dir.join("journal.redb"),
         );
 

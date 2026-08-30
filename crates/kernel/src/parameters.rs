@@ -21,7 +21,7 @@
 //! friction is the point: §2.8.5 declares it, and it is what stops a parameter from
 //! quietly re-entering as a constant.
 
-use crate::arbiter::Mib;
+use crate::arbiter::{ArbiterId, Mib};
 
 /// The parameters the kernel has been configured with.
 ///
@@ -45,6 +45,7 @@ use crate::arbiter::Mib;
 pub struct Parameters {
     executor_turn_limit: u64,
     total_vram: Mib,
+    arbiter_id: ArbiterId,
 }
 
 impl Parameters {
@@ -55,11 +56,21 @@ impl Parameters {
     /// would put a number chosen inside the kernel just as surely as an `impl Default`
     /// would, and it is cheaper to write. Validation is outside the perimeter above for
     /// this reason, not for laziness.
-    pub const fn new(executor_turn_limit: u64, total_vram: Mib) -> Self {
+    pub const fn new(executor_turn_limit: u64, total_vram: Mib, arbiter_id: ArbiterId) -> Self {
         Parameters {
             executor_turn_limit,
             total_vram,
+            arbiter_id,
         }
+    }
+
+    /// Which arbiter these parameters belong to.
+    ///
+    /// ⛔ DELIVERED, never invented: the kernel has no way to produce one, and §6.1.3 says
+    /// it must not. Two arbiters built from the same value ARE the same arbiter as far as
+    /// `release` is concerned, and that is the caller's statement to make, not ours.
+    pub const fn arbiter_id(self) -> ArbiterId {
+        self.arbiter_id
     }
 
     /// How many turns the executor may take before declaring a block.

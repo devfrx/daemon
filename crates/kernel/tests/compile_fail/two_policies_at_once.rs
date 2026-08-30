@@ -37,7 +37,7 @@
 // ⛔ Names `kernel::` and declares no attributes of its own -- gotcha #39.
 fn main() {
     let _arbiter = kernel::arbiter::Arbiter::new(
-        kernel::parameters::Parameters::new(10_000, kernel::arbiter::Mib::new(16_384)),
+        kernel::parameters::Parameters::new(10_000, kernel::arbiter::Mib::new(16_384), kernel::arbiter::ArbiterId::new(1)),
         kernel::arbiter::VramPolicy::Remote(kernel::arbiter::RemotePolicy),
         kernel::arbiter::VramPolicy::Local(kernel::arbiter::LocalPolicy),
     );

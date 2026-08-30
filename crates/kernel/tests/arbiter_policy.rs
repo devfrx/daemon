@@ -14,8 +14,8 @@
 //! `` help: items from traits can only be used if the trait is in scope ``. Registered as `E88`.
 
 use kernel::arbiter::{
-    Admission, Arbiter, ComputeClass, LocalPolicy, MakeRoom, Mib, Preemption, RemotePolicy,
-    ResourceProfile, VramPolicy,
+    Admission, Arbiter, ArbiterId, ComputeClass, LocalPolicy, MakeRoom, Mib, Preemption,
+    RemotePolicy, ResourceProfile, VramPolicy,
 };
 use kernel::parameters::Parameters;
 use kernel::ports::journal::{Journal, StepId};
@@ -37,7 +37,10 @@ fn preemptible(name: &'static str, vram: u64, lane: ComputeClass) -> ResourcePro
 }
 
 fn arbiter(total: u64, policy: VramPolicy) -> Arbiter {
-    Arbiter::new(Parameters::new(TURN_LIMIT, Mib::new(total)), policy)
+    Arbiter::new(
+        Parameters::new(TURN_LIMIT, Mib::new(total), ArbiterId::new(1)),
+        policy,
+    )
 }
 
 /// ⛔ THE DEFAULT, AND IT IS NOT A DETAIL: ADR-0006 makes REMOTE the default, and reopening

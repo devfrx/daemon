@@ -85,8 +85,8 @@
 //! `assert_ne!` on it directly is fine and is what the first probe uses.
 
 use kernel::arbiter::{
-    Activity, Admission, Arbiter, ComputeClass, Mib, PreemptibleState, Preemption, Promotion,
-    RemotePolicy, ResourceProfile, VramPolicy,
+    Activity, Admission, Arbiter, ArbiterId, ComputeClass, Mib, PreemptibleState, Preemption,
+    Promotion, RemotePolicy, ResourceProfile, VramPolicy,
 };
 use kernel::parameters::Parameters;
 use kernel::time::{Millis, Monotonic};
@@ -126,7 +126,7 @@ fn preemptible(name: &'static str, vram: u64, lane: ComputeClass, grace: u64) ->
 /// two policies have a bench of their own, `tests/arbiter_policy.rs`.
 fn arbiter(total: Mib) -> Arbiter {
     Arbiter::new(
-        Parameters::new(TURN_LIMIT, total),
+        Parameters::new(TURN_LIMIT, total, ArbiterId::new(1)),
         VramPolicy::Remote(RemotePolicy),
     )
 }

@@ -16,8 +16,8 @@
 //! the admission like everybody else.
 
 use kernel::arbiter::{
-    Admission, Arbiter, ComputeClass, Grant, Mib, Preemption, RemotePolicy, ResourceProfile,
-    VramPolicy,
+    Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption, RemotePolicy,
+    ResourceProfile, VramPolicy,
 };
 use kernel::parameters::Parameters;
 use kernel::ports::process::{
@@ -28,7 +28,7 @@ use kernel::time::{Millis, Monotonic};
 /// A grant obtained the only way there is.
 fn a_real_grant() -> Grant {
     let mut arbiter = Arbiter::new(
-        Parameters::new(10_000, Mib::new(16_384)),
+        Parameters::new(10_000, Mib::new(16_384), ArbiterId::new(1)),
         VramPolicy::Remote(RemotePolicy),
     );
     let Admission::Granted(grant) = arbiter.admit(

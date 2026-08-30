@@ -35,8 +35,8 @@ faccia quel controllo.
 |---|---|---|
 | **A** — la concessione che torna | 1 | ✅ **scritta** il 2026-08-30 |
 | **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
-| **C** — lo schema `ipc` | 4 | ⬜ **da scrivere** — è il prossimo |
-| **D** — i meccanismi | 5, 6, 7, 8 | ⬜ da scrivere |
+| **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
+| **D** — i meccanismi | 5, 6, 7, 8 | ⬜ **da scrivere** — è il prossimo |
 | **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
 
 ⚠️ **Il compito 2 non c'è, e non è un buco:** il timbro di build è **uscito** dal perimetro
@@ -227,6 +227,81 @@ il compito 3 non toccherebbe altrimenti: con questa forma dello schema (D8) il `
 cambia**, quindi nulla obbligherebbe a passare di lì. È esattamente il modo in cui una frase
 sopravvive al fatto che la smentisce.
 
+### P-8 — ⛔ `Admission` non è un tipo di filo, e metterlo sul filo conierebbe concessioni dai byte
+
+La §6.2 del disegno mette in tabella *«core → gui: **esito dell'ammissione**, a tre vie — in
+codice `Admission`»*. **Preso alla lettera non è implementabile**, e le ragioni misurate sono
+tre, indipendenti:
+
+| | Misurato in `crates/kernel/src/arbiter/mod.rs` |
+|---|---|
+| 1 | `Admission::Granted(Grant)`, e `Grant { id: GrantId }` con `GrantId` **privato** — un tipo che non esce dal modulo |
+| 2 | `Grant` **non porta nessun derive**, e `Admission` **non deriva `Debug` né `PartialEq`** *deliberatamente*, col perché scritto accanto: darglieli significherebbe darli a `Grant` per comodità del banco |
+| 3 | ⛔ **la terza è quella che conta:** un `Grant` **decodificabile** è una concessione **coniata dai byte**. §5.6 tiene che l'unico sito che ne conia una sia `Arbiter::issue`, e `crates/kernel/tests/compile_fail/grant_has_no_constructor.rs` esiste per renderlo impronunciabile da fuori. Sarebbe **AUD-050 rifatto sul gettone più forte del progetto** — *una guardia vale quanto il suo costruttore* |
+
+✅ **E la lettura giusta della §6.2 è PIÙ PICCOLA della falsità apparente** — gotcha **#65**
+nella direzione che costa meno. Quella cella **identifica il concetto**: l'*«esito a tre vie»*
+di [ADR-0033](../../adr/0033-gpu-della-gui-quota-di-presentazione.md) è ciò che il codice chiama
+`Admission`. Non prescrive il tipo che viaggia.
+
+📌 **E il filo non ne ha bisogno, per una ragione che ADR-0033 scrive da sé:** la concessione è
+**stato del core** (I1). Alla gui serve il **verdetto**, non il gettone — e un verdetto non è un
+gettone. Chiuso dalla **D15**.
+
+### P-9 — ⛔ `ResourceProfile` non è decodificabile, e il difetto è UN campo
+
+La §6.2 dice *«richiesta di concessione ordinaria, **col profilo di risorsa dichiarato**»*.
+Misurato in `crates/kernel/src/arbiter/resource.rs`:
+
+```rust
+pub struct ResourceProfile {
+    pub name: &'static str,   // ⛔ questo
+    pub reserved_vram: Mib,
+    pub compute_class: ComputeClass,
+    pub preemption: Preemption,
+}
+```
+
+⛔ **Un `&'static str` non si produce da byte in arrivo**, se non **leakando** — che è la via
+**A3** dichiarata aperta in `crates/kernel/src/boundary.rs` — e ciò che vi finirebbe è **testo
+scelto dalla gui**, cioè contenuto **non fidato** (ADR-0014) dentro un campo di un tipo che
+l'arbitro usa per **decidere**. Non è un fastidio di lifetime: è I6.
+
+⛔ **E il secondo corno è chiuso pure lui, misurato:** portare il **nome** e risolverlo non è una
+via, perché **non esiste nessun registro nome → profilo**.
+
+```bash
+grep -rn "ResourceProfile {" crates/ --include=*.rs
+```
+
+rende **due costanti in `crates/daemon/src/main.rs`** e **due aiutanti di banco**. Niente mappa
+un nome su un profilo, e costruirne una sarebbe un meccanismo che nessuna riga scritta chiede.
+
+✅ **Chiuso dalla D16, e il rimedio RINFORZA il confine invece di indebolirlo:** la richiesta
+porta i **tre campi rappresentabili** e il **nome lo mette il core**. ADR-0005 dice che *«la
+riserva è **dichiarata dal richiedente** e verificata dall'arbitro»* — cioè esattamente questa
+ripartizione — e nessun testo non fidato raggiunge mai un tipo di decisione.
+
+### P-10 — ⚠️ Il raggio dei derive è più grande di come la §6.8 lo prezza
+
+La §6.8 elenca fra i costi *«`kernel` guadagna due moduli»*. **I moduli sono il costo piccolo.**
+I tipi che devono guadagnare i derive del formato **vivono fuori da `wire/`**:
+
+| Tipo | Dove | Chi lo porta sul filo |
+|---|---|---|
+| `Mib` | `crates/kernel/src/arbiter/resource.rs` | compito 3 (`minicbor`) **e** compito 4 |
+| `ComputeClass` | idem | compito 4 |
+| `Preemption` | idem | compito 4 |
+| `Millis` | `crates/kernel/src/time.rs` | compito 4, dentro `Preemption::After(Millis)` |
+
+⚠️ **E `Mib` li porta DUE VOLTE se il 3bis conferma `bincode`**, perché il compito 3 gli ha già
+dato quelli di `minicbor`: un tipo solo, due formati, due insiemi di attributi.
+
+⛔ **QUESTO NON È UN ARGOMENTO PER IL 3BIS, e scriverlo serve proprio a impedire che lo
+diventi.** *«Con `minicbor` anche su `ipc` basterebbe un insieme di derive»* è un argomento di
+**simmetria e di comodità**, e [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md)
+li rifiuta per nome: il criterio là è il **pari**, misurato. Il costo si **registra**, non decide.
+
 ---
 
 ## Le decisioni prese da questo piano
@@ -249,6 +324,12 @@ misura che le smentisce — è ciò per cui esiste l'errata.
 | **D11** | `WireError` nasce col commit 3a con le varianti che **`framing` produce**, e guadagna `Malformed` al **3b**, quando il suo produttore esiste | è la regola *«no caller, no item»* che `ProcessError` porta già scritta. Dichiarare al 3a una variante che nessuno produce sarebbe una promessa tenuta da niente — e il commit 3a deve essere `GATE GREEN` da solo (vincolo globale 8). ⚠️ **Quante siano lo dice il compito**, non questa cella: una cifra qui invecchierebbe al primo commit che ne aggiunge una, ed è il gotcha **#31** |
 | **D12** | ⛔ **il compito 3bis MISURA e si ferma PRIMA di decidere**, se la misura chiede un cambio di formato | §6.1.1 è **spec**: riaprirla è del proprietario, vincolo globale 7. ⚠️ **La simmetria fra i due casi è solo apparente:** se la misura dice *«`bincode` è ancora l'unica via»*, il compito **registra** e prosegue, perché non tocca nessuna sezione; se dice *«esiste un'alternativa mantenuta col lettore del pari»*, si ferma. Precedenti: **AUD-004**, **AUD-036**, **AUD-044**, tutti fermatisi prima di decidere |
 | **D13** | le **fonti** di C-1 vanno in [`riferimenti.md`](../../riferimenti.md), e **non è la convenzione nuova di `E146`** | `E146` riguarda le **misure interne**, che dal Traguardo 5 vivono in [`porta-di-qualita.md`](../../porta-di-qualita.md) accanto al controllo che difendono, e la §7.4 del disegno conferma che la chiusura non tocca quel file. Un **advisory** e lo stato di manutenzione di una crate sono l'altra cosa: la §12 del compendio chiama `riferimenti.md` *«la provenienza di ciò che non abbiamo dedotto noi, con le date»*. ⛔ Senza questa riga le due regole si leggono come un conflitto, e chi esegue ne sceglierebbe una a caso |
+| **D14** | ⛔ **il corpo di `ipc` è UN enum solo, `IpcMessage`, con due varianti — una per direzione — e la direzione è DOCUMENTATA, non tipizzata** | la §6.7 dice che l'enumerazione *«la esercitano i DUE messaggi, non uno: con un tipo solo il discriminante non sarebbe provato»*. **Due** enum da una variante ciascuno lascerebbero **entrambi** i discriminanti non provati, cioè il difetto in doppia copia. ⚠️ **E tipizzare la direzione non compra niente ALLA PORTA:** `send` prende `&[u8]` e `receive` rende `Vec<u8>` — il confine non vede nessun tipo, quindi la garanzia esisterebbe solo fra siti del kernel che **oggi non esistono**. Il costo si dichiara accanto al tipo |
+| **D15** | ⛔ **il core → gui porta un verdetto a TRE VIE SENZA IL GETTONE** — `Granted` è una variante **unitaria**, `Queued` pure, `Refused` porta i **due numeri** | P-8. ⚠️ **E l'asimmetria fra le tre non è arbitraria:** i due numeri di `Refused` sono l'unica cosa che il filo deve trasportare perché `design/02` vuole *«perché non entra, e l'alternativa praticabile»* e ADR-0020 vieta al kernel di suggerirla — *l'interfaccia costruisce l'alternativa, il kernel le passa il materiale*, quindi la gui **è** il consumatore scritto di quei due numeri. `Queued` invece resta unitaria: `TicketId::get()` è portante *«per un chiamante che ha accodato DUE richieste»*, e la gui ne ha una. Guadagnerà il biglietto col secondo consumatore, non prima |
+| **D16** | ⛔ **la richiesta porta i TRE campi rappresentabili del profilo — `reserved_vram`, `compute_class`, `preemption` — e il NOME lo mette il core** | P-9, e non è un ripiego: ADR-0005 dice che *«la riserva è **dichiarata dal richiedente** e verificata dall'arbitro»*, cioè questa ripartizione esatta; e il nome è la parte che, venendo da fuori, sarebbe **testo non fidato dentro un tipo di decisione** (ADR-0014, I6). ⚠️ **Il costo dichiarato:** il core sceglie **un** profilo per la gui, quindi la gui non può chiederne uno arbitrario — ed è ciò che ADR-0033 descrive, un consumatore solo, il viewer 3D oltre la quota |
+| **D17** | i derive del formato si aggiungono **dove i tipi vivono**, mai in tipi specchio dentro `wire/` | un tipo specchio è **una seconda definizione dello schema**, ed è la cosa che ADR-0037 rifiuta per il decodificatore del pari — con la differenza che lì sbaglia in silenzio *fuori*, qui sbaglierebbe in silenzio *dentro*: due definizioni si allineano finché qualcuno se ne ricorda, e nulla diventa rosso quando smette. ⚠️ Il prezzo è P-10, ed è dichiarato invece che evitato |
+| **D18** | ⛔ **il compito 4 NON dà per scontata l'API del formato** | verificato nel repository: le due chiamate di `bincode` — `encode_to_vec(v, config::standard())` e `decode_from_slice(&b, config) -> (T, usize)` — sono esercitate da `crates/kernel/tests/dependencies_usable.rs`, che le prova **girando**; **il derive no**, nessuna riga del workspace lo usa. Si verifica con una **sonda usa-e-getta** compilata e cancellata nella stessa corsa, o leggendo la sorgente vendorizzata. È il precedente del Task 8 del Traguardo 3, dove il piano **rifiutò di dettare l'API di `redb`**: dettarla a memoria produce codice *plausibile e falso* |
+| **D19** | ⚠️ **il compito 4 non chiude NESSUNA riga di catalogo, e va scritto** | misurato: nessuna riga di §7.4.1 o §7.4.2 nomina §6.1 — `awk '/^#### 7\.4\.1/{f=1} /^#### 7\.4\.3/{f=0} f' <spec> \| grep '§6\.1'` non rende niente. Ciò che il compito 4 produce è il **meccanismo** che rende chiudibile `E152` al compito **9**, e il gettone `Q13` è del compito **6**. ⛔ **Un compito che non muove un numeratore è quello su cui si è più tentati di scrivere che l'ha mosso**, ed è la specie di affermazione che la radice **R1** produce |
 
 **La baseline di partenza, misurata il 2026-08-30 e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `cargo test --locked --workspace --no-fail-fast` →
@@ -270,6 +351,9 @@ dichiarandolo.
 | `crates/kernel/src/wire/mod.rs` | **creato** dal compito 3 | la cartella dei due schemi: dichiara i due figli e nient'altro |
 | `crates/kernel/src/wire/worker.rs` | **creato** dal compito 3 | lo schema del canale worker: `FromWorker`, coi suoi `encode`/`decode` |
 | `crates/kernel/src/wire/ipc.rs` | **creato** dal compito 4 | lo schema `ipc`: l'enumerazione dei messaggi |
+| `crates/kernel/src/ports/ipc.rs` | compito 4 | **solo due richiami datati**: il formato e il timbro nel doc di modulo, e la frase di `ClientId` che si **ri-punta** (§6.5) |
+| `crates/kernel/src/arbiter/resource.rs` | compiti 3, 4 | i derive di filo su `Mib` (3), `ComputeClass` e `Preemption` (4) — **D17**, e il raggio è **P-10** |
+| `crates/kernel/src/time.rs` | compito 4 | il derive di filo su `Millis`, che `Preemption::After` trascina |
 | `crates/kernel/src/sensor.rs` | **creato** dal compito 5 | il contratto del sensore di ADR-0009 |
 | `crates/kernel/src/gateway/mod.rs` | **creato** dal compito 6 | il decisore, il filtro dei vincoli e il gettone di conformità |
 | `crates/kernel/src/permission.rs` | **creato** dal compito 7 | la tripla, e la proiezione dal giornale |
@@ -1483,3 +1567,332 @@ git add -A && git commit -m "traguardo 6 (compito 3bis): la misura C-1 e' rifatt
       **dopo** — non prima
 - [ ] ⛔ nessuna riga di schema `ipc` è stata scritta: il compito **4** viene dopo, ed è la
       ragione per cui questo compito esiste
+
+---
+
+## Parte C — lo schema `ipc`
+
+⛔ **Un compito solo, e la scelta va detta perché contraddice il precedente della D1.** Il
+compito 1 si consegna in tre commit perché le sue tre parti hanno **raggi diversi**; qui il
+cambiamento è **uno**, e la prosa che il codice rende falsa deve atterrare **nello stesso
+commit** del fatto che la smentisce — è la lezione di **P-7**, e spezzarla in due commit la
+rimetterebbe in piedi per la durata di uno.
+
+### Compito 4: §6.1 — la busta porta due messaggi, nel formato che il 3bis ha deciso
+
+**Files:**
+- Create: `crates/kernel/src/wire/ipc.rs` — `IpcMessage`, `encode`, `decode`
+- Modify: `crates/kernel/src/wire/mod.rs` — il `pub mod ipc;`
+- Modify: `crates/kernel/src/arbiter/resource.rs` — i derive su `ComputeClass` e `Preemption`
+- Modify: `crates/kernel/src/time.rs` — il derive su `Millis`
+- Modify: `crates/kernel/src/ports/ipc.rs` — **due** richiami datati, e nient'altro
+- Test: `crates/kernel/tests/ipc_wire.rs` — **creato**
+- Modify: [`porta-di-qualita.md`](../../porta-di-qualita.md)
+
+⛔ **Leggi P-8, P-9 e P-10 prima di cominciare.** Due celle della §6.2 del disegno **non sono
+implementabili alla lettera**, e la ragione non è un fastidio di tipi: metterle sul filo
+conierebbe concessioni dai byte e farebbe entrare testo non fidato in un tipo di decisione.
+
+- [ ] **Passo 0: leggi il verdetto del compito 3bis, e se non c'è FERMATI**
+
+⛔ **Il formato non si decide qui.** Scrivere questo schema in `bincode` senza che il 3bis sia
+girato **è** la decisione C-1, presa per omissione — D4, e la §3.5 del disegno lo dice alla
+lettera. Se il 3bis non è stato eseguito, questo compito non è dispacciabile.
+
+```bash
+grep -n "C-1" -A6 crates/kernel/Cargo.toml     # deve portare il richiamo datato del 3bis
+```
+
+📌 **Da qui in poi il compito ha DUE rami, e cambiano tre righe in tutto:** i derive sul tipo, la
+chiamata che codifica e quella che decodifica. Tutto il resto — la busta, l'enumerazione, le
+sonde, le mutazioni — è **identico**, ed è il motivo per cui questo compito si è potuto scrivere
+prima che il 3bis girasse.
+
+| | `bincode` (il ramo che il manifesto ha oggi) | `minicbor` (se il 3bis lo ha scelto) |
+|---|---|---|
+| derive | `#[derive(bincode::Encode, bincode::Decode)]` — ⛔ **da VERIFICARE, D18** | `#[derive(minicbor::Encode, minicbor::Decode)]` con gli indici, come `record.rs` |
+| codifica | `bincode::encode_to_vec(self, bincode::config::standard())` ✅ **verificata in repo** | `minicbor::encode(self, &mut body)` ✅ verificata |
+| byte consumati | il `usize` che `decode_from_slice` **restituisce già** ✅ verificata | `decoder.position()`, come `Record::decode` ✅ verificata |
+
+- [ ] **Passo 1: verifica il derive del formato, non ricordarlo (D18)**
+
+Nessuna riga del workspace usa il derive di `bincode`: `dependencies_usable.rs` prova le due
+**funzioni** su un `u32`, non gli attributi. Scrivi una **sonda usa-e-getta**, compilala,
+leggi l'esito, **cancellala nella stessa corsa** — è la forma che questo repository usa per
+P-2 e per il quinto caso `compile_fail`. In alternativa, leggi la sorgente vendorizzata:
+
+```bash
+ls -d ~/.cargo/registry/src/*/bincode-2.0.1
+```
+
+⚠️ **Ciò che va verificato, e non è solo «il derive esiste»:** che si applichi a un **enum**,
+quale sia il **percorso** dell'attributo, e se il tratto porti parametri generici che la firma
+di `decode` deve nominare. Un derive che compila su una struct e non su un enum è esattamente il
+genere di cosa che un ricordo non distingue.
+
+- [ ] **Passo 2: scrivi le sonde che falliscono**
+
+In `crates/kernel/tests/ipc_wire.rs`, file nuovo:
+
+```rust
+//! The schema of the `ipc` channel. ⛔ OUTSIDE THE CRATE, like `framing` and `worker_wire`.
+
+use kernel::arbiter::{ComputeClass, Mib, Preemption};
+use kernel::framing::WireError;
+use kernel::time::Millis;
+use kernel::wire::ipc::{GrantRequest, IpcMessage, Verdict};
+
+fn a_request() -> GrantRequest {
+    GrantRequest {
+        reserved_vram: Mib::new(2048),
+        compute_class: ComputeClass::Interactive,
+        preemption: Preemption::After(Millis::new(500)),
+    }
+}
+
+#[test]
+fn a_grant_request_survives_the_round_trip() {
+    let message = IpcMessage::Request(a_request());
+    let bytes = message.encode().expect("encode");
+    assert_eq!(IpcMessage::decode(&bytes), Ok(message));
+}
+
+#[test]
+fn a_verdict_survives_the_round_trip() {
+    // ⛔ THIS IS THE PROBE THAT EXERCISES THE DISCRIMINANT, and it is why §6.7 asks for TWO
+    // messages rather than one: with a single message type the tag never varies, and a bug in
+    // how it is written or read would be invisible. Same shape as the journal freezing THREE
+    // records instead of one.
+    let message = IpcMessage::Verdict(Verdict::Refused {
+        asked: Mib::new(4096),
+        ceiling: Mib::new(1024),
+    });
+    let bytes = message.encode().expect("encode");
+    assert_eq!(IpcMessage::decode(&bytes), Ok(message));
+}
+
+#[test]
+fn a_message_with_a_tail_does_not_decode() {
+    let mut bytes = IpcMessage::Verdict(Verdict::Granted).encode().expect("encode");
+    bytes.push(0xFF);
+    assert_eq!(IpcMessage::decode(&bytes), Err(WireError::TrailingBytes));
+}
+
+#[test]
+fn junk_inside_the_declared_length_does_not_decode() {
+    // ⛔ THE ENVELOPE IS HONEST HERE and the body is not -- the other half of the pair, and it
+    // is a DIFFERENT check. See the same probe in `worker_wire.rs`.
+    let good = IpcMessage::Verdict(Verdict::Granted).encode().expect("encode");
+    let mut junked = good[4..].to_vec();
+    junked.push(0xFF);
+    let bytes = kernel::framing::frame(&junked).expect("frame");
+    assert_eq!(IpcMessage::decode(&bytes), Err(WireError::Malformed));
+}
+```
+
+✅ **I nomi di questa sonda sono VERIFICATI nel sorgente, non ricordati** — `ComputeClass` ha
+`Realtime`, `Interactive`, `Batch`, e `Millis::new` esiste:
+
+```bash
+grep -n "pub enum ComputeClass" -A20 crates/kernel/src/arbiter/resource.rs
+grep -n "impl Millis" -A8 crates/kernel/src/time.rs
+```
+
+⚠️ **Rilanciali comunque prima di scrivere:** è il passo 1 della disciplina dell'audit, e il
+rimedio di **AUD-036** ha già tradotto `interattivo` in `interactive` in `design/02` — cioè
+questa famiglia di nomi si è mossa una volta.
+
+- [ ] **Passo 3: lancia il banco e verifica che NON COMPILI**
+
+```bash
+cargo test --locked -p kernel --test ipc_wire 2>&1 | head -20
+```
+
+Atteso: `error[E0432]` su `kernel::wire::ipc`.
+
+- [ ] **Passo 4: i derive sui tipi condivisi (D17, P-10)**
+
+Su `Mib`, `ComputeClass` e `Preemption` in `crates/kernel/src/arbiter/resource.rs`, e su
+`Millis` in `crates/kernel/src/time.rs`. ⛔ **Accanto a ciascuno va scritto PERCHÉ ce l'ha**, e
+la frase è la stessa: *questo tipo attraversa un canale privato*. Un derive senza una ragione
+accanto è ciò che il Task 11 del Traguardo 5 ha passato una revisione intera a potare.
+
+⚠️ **`Mib` può finire con DUE insiemi di attributi** — quelli di `minicbor` dal compito 3 e
+quelli del formato di `ipc` — e non è un difetto: è il costo di ADR-0037, che ha scelto **due
+formati misurati** per due pari diversi. ⛔ **Non «sanarlo»:** la §8 del compendio vieta di
+riaprire §6.1.1 per simmetria, e questa sarebbe la stessa mossa travestita da pulizia.
+
+- [ ] **Passo 5: scrivi `crates/kernel/src/wire/ipc.rs`**
+
+Il doc di modulo, e le tre cose che deve dire:
+
+```rust
+//! The schema of the `ipc` channel: the envelope of `crate::framing` carrying ONE enum.
+//!
+//! ⛔ ONE ENUM FOR BOTH DIRECTIONS, AND THE DIRECTION IS DOCUMENTED RATHER THAN TYPED. Two
+//! enums of one variant each would leave BOTH discriminants unexercised, which is the very
+//! thing §6.7 asks two messages for. And typing the direction would buy nothing at the port:
+//! `send` takes `&[u8]` and `receive` returns `Vec<u8>`, so the boundary sees no type at all.
+//! ⚠️ THE COST, stated: nothing stops a caller from encoding a `Verdict` and sending it UP.
+//! Today there is no such caller -- the transport is staged out (open item 5) -- and the day
+//! there is one, the guard that pays for itself is on the composition side, not here.
+//!
+//! ⛔ THE SCHEMA MINTS NO IDENTIFIERS BECAUSE IT CARRIES NONE, and saying it that way is the
+//! point (§6.5). Writing "§6.1.3 is satisfied" would be green having compared empty sets. A
+//! grant request is not a step of a run: it writes no record and carries neither `StepId` nor
+//! `RunId`. The first message that carries an identifier is where the rule becomes real, and
+//! where its probe is born.
+//!
+//! ⛔ NO VERSION ENUM, NO RETIRED-INDEX REGISTER, NO FROZEN BYTES -- I4 renounces versioning
+//! (§6.4). What stands in its place is the BUILD STAMP of §6.1.2, WHICH THIS MILESTONE DOES
+//! NOT BUILD (§3.4). Until it exists, NOTHING REFUSES A STALE GUI, and today that costs
+//! nothing because there is no gui to refuse -- `grep -rn "impl Ipc" crates/` returns a bench
+//! fake. The trigger is milestone 2 of the subproject, the one that brings the shell.
+//!
+//! ⛔ AND THE REVOCATION core -> gui IS A DECLARED NON-CONSTRUCTION. ADR-0033 names it -- "the
+//! gui stops rendering the 3D and says so" -- and it is the first message this vocabulary will
+//! gain. It is not here because no written line demands it today and because §5.7 row 3 speaks
+//! of a gui that DIES, not one that is asked. ⚠️ THE COST IS REAL: until then a discretionary
+//! grant is preemptible IN THE BOOKS and the gui never hears about it. Open item 7.
+```
+
+E il tipo, con la forma della **D14**, della **D15** e della **D16**:
+
+```rust
+/// What the gui asks for: an ordinary grant beyond the presentation quota (ADR-0033).
+///
+/// ⛔ IT IS NOT A `ResourceProfile`, AND THE MISSING FIELD IS THE REASON. `ResourceProfile`
+/// carries `name: &'static str`, which cannot be produced from arriving bytes without leaking
+/// -- and what would be leaked is text CHOSEN BY THE GUI, i.e. untrusted content (ADR-0014)
+/// inside a type the arbiter DECIDES with. The split here is the one ADR-0005 already
+/// describes: THE REQUESTER DECLARES THE RESERVATION, and the core names the profile.
+pub struct GrantRequest {
+    pub reserved_vram: Mib,
+    pub compute_class: ComputeClass,
+    pub preemption: Preemption,
+}
+
+/// The three-way outcome, WITHOUT the grant.
+///
+/// ⛔ `Granted` IS A UNIT VARIANT AND CARRIES NO `Grant`, which is the whole of this type. A
+/// decodable `Grant` would be a capability MINTED FROM BYTES: §5.6 holds that the only site
+/// that mints one is `Arbiter::issue`, and `tests/compile_fail/grant_has_no_constructor.rs`
+/// exists to make it unspeakable from outside. It would be AUD-050 done again on the
+/// strongest token in the project -- a guard is worth exactly what its constructor is worth.
+/// ⚠️ AND THE GUI DOES NOT NEED ONE: ADR-0033 says the grant is STATE OF THE CORE (I1). What
+/// crosses is the verdict.
+///
+/// ⚠️ `Refused` CARRIES TWO NUMBERS AND `Queued` CARRIES NOTHING, and the asymmetry is
+/// argued: design/02 wants "why it does not fit and the workable alternative", ADR-0020
+/// forbids the kernel to suggest one, so THE INTERFACE BUILDS IT AND THE KERNEL HANDS OVER
+/// THE MATERIAL -- the gui is the written consumer of those two. A ticket, by contrast, is
+/// load-bearing only for a caller with TWO requests outstanding, and the gui has one.
+pub enum Verdict {
+    Granted,
+    Queued,
+    Refused { asked: Mib, ceiling: Mib },
+}
+
+/// One message on the `ipc` wire.
+pub enum IpcMessage {
+    /// gui -> core.
+    Request(GrantRequest),
+    /// core -> gui.
+    Verdict(Verdict),
+}
+```
+
+E le due funzioni, **identiche nella forma a quelle di `wire::worker`**: `encode` codifica e
+poi chiama `framing::frame`; `decode` chiama `framing::unframe`, decodifica, e **verifica i byte
+consumati** contro la lunghezza del corpo. ⛔ **Sono due controlli e non uno**, e il doc lo deve
+dire: la busta prende il **troncamento**, il conteggio dei consumati prende la **coda dentro** la
+lunghezza dichiarata.
+
+- [ ] **Passo 6: lancia il banco e verifica che passi**
+
+```bash
+cargo test --locked -p kernel --test ipc_wire 2>&1 | tail -5
+```
+
+- [ ] **Passo 7: le mutazioni di controllo, e sono TRE**
+
+⛔ **D7: una alla volta, compilando in un passo separato dall'eseguire, revocando da copia.**
+
+| Mutazione | Deve uccidere |
+|---|---|
+| in `encode`, `framing::frame(&body)` → `Ok(body)` | `a_message_with_a_tail_does_not_decode` e i due round-trip |
+| ⛔ l'encoder scrive **sempre** il discriminante della prima variante | `a_verdict_survives_the_round_trip`, **e NON** `a_grant_request_survives_the_round_trip` |
+| togli il confronto fra byte consumati e lunghezza del corpo | `junk_inside_the_declared_length_does_not_decode`, **e NON** `a_message_with_a_tail_does_not_decode` |
+
+⛔ **Le due colonne «e NON» sono metà dell'asserzione, e la seconda riga è l'oracolo di questo
+compito:** è la sola prova che il corpo è davvero **un'enumerazione** e non un tipo solo travestito.
+Se quella mutazione uccide **entrambi** i round-trip, il discriminante non sta distinguendo
+niente — fermati e scrivi una voce d'errata.
+⚠️ **Come si scrive la seconda mutazione dipende dal formato** e questo piano non la detta: con
+un derive il tag lo scrive la macro, quindi la via è **scambiare i corpi delle due varianti**
+nel punto in cui si costruiscono, oppure codificare a mano il tag sbagliato. Sceglila leggendo
+il codice che hai scritto, e **scrivi quale hai usato**.
+
+- [ ] **Passo 8: i due richiami datati su `crates/kernel/src/ports/ipc.rs` (P-7 nella sua forma qui)**
+
+⛔ **Due, e sono di specie diversa.**
+
+① Il doc di modulo dice: *«Milestone 6 brings the SCHEMA — **`bincode` in `kernel`** … and the
+**BUILD STAMP** of §6.1.2»*. **Entrambe le metà cambiano**, e la seconda più della prima: il
+formato è quello che il 3bis ha deciso, e **il timbro NON arriva** — §3.4 lo toglie dal
+perimetro e ne fa una non-costruzione dichiarata. ⚠️ **È una scadenza in prosa**, gotcha **#77**,
+e questa è la corsa in cui scade: nulla è mai diventato rosso per lei.
+
+② La frase di `ClientId`: *«Whoever implements this port in milestone 6 draws from THAT
+counter»*. ⛔ **Si RI-PUNTA, non si toglie**, e lo prescrive la §6.5 del disegno: invecchia nel
+**soggetto** e non nell'affermazione — gotcha **#87** — perché il Traguardo 6 **non implementa
+la porta** (voce 5, il trasporto è scaglionato). Toglierla lascerebbe scoperto il difetto che
+esiste per impedire: **due contatori identici che divergono senza che nulla lo segnali**.
+
+- [ ] **Passo 9: il registro, e ciò che NON si scrive**
+
+In [`porta-di-qualita.md`](../../porta-di-qualita.md): la sezione del compito, con le sonde, le
+tre mutazioni e il **loro esito misurato**.
+
+⛔ **E ciò che NON si scrive è la parte che va letta due volte (D19): questo compito non chiude
+nessuna riga di catalogo.** Nessuna riga di §7.4 nomina §6.1. Non muovere nessun numeratore, e
+**scrivi che non si muove** — la riga della campagna DST resta `PARZIALE` fino al compito 9, e
+il gettone `Q13` fino al compito 6.
+
+⚖️ **Una voce si registra e non si prende:** un caso `compile_fail` che tenga *«un verdetto non
+può portare un `Grant`»* sarebbe una **riga di catalogo nuova**, cioè §7.4, cioè **spec** —
+vincolo globale 7. Oggi quella proprietà è tenuta dal **fatto che `Verdict::Granted` è unitario**
+e dal doc accanto; è **livello 1 per costruzione, non per un caso negativo**, ed è una
+distinzione da scrivere invece che da lasciare intendere.
+
+- [ ] **Passo 10: il cancello, `fmt`, e il cancello dei documenti**
+
+```bash
+cargo fmt --all --check
+bash scripts/gate.sh
+bash scripts/check-docs.sh
+```
+
+- [ ] **Passo 11: commit**
+
+```bash
+git add -A && git commit -m "traguardo 6 (compito 4): lo schema ipc -- il verdetto NON porta il gettone, e la richiesta non porta il nome del profilo: due celle della 6.2 non erano implementabili alla lettera"
+```
+
+#### Criterio di chiusura del compito 4
+
+- [ ] `GATE GREEN`, e la baseline **rimisurata** col comando (D5)
+- [ ] il corpo è **un enum con due varianti**, e la mutazione del discriminante ne uccide
+      **una sola** — è la prova che §6.7 chiede
+- [ ] ⛔ **nessun `Grant` è raggiungibile dal filo**: `grep -rn "Grant" crates/kernel/src/wire/`
+      non deve restituire **niente** fuori dai commenti, e i commenti dicono **perché**
+- [ ] ⛔ **nessun `&'static str` e nessuna stringa nello schema:** un campo di testo che arriva
+      dalla gui è contenuto **non fidato**, e `Untrusted` è il solo tipo che può portarlo
+      (ADR-0014). Se un messaggio futuro ne avrà bisogno, quello è il tipo, non `String`
+- [ ] i **due richiami datati** di `ports/ipc.rs` ci sono, e il secondo **ri-punta** invece di
+      togliere (§6.5)
+- [ ] le **due** non-costruzioni — il **timbro** e la **revoca verso la gui** — portano ciascuna
+      il proprio **innesco**, scritto accanto al codice (condizione 9)
+- [ ] nessun byte congelato è nato: §6.4 lo vieta, e `git status --porcelain
+      crates/kernel/tests/frozen/` è **vuoto**
+- [ ] ⚠️ il registro **non** dichiara chiusa nessuna riga di catalogo (D19)

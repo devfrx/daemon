@@ -675,21 +675,28 @@ gran parte del proprietario — la loro tabella in quel rapporto è la casa unic
 sbarrano:** questa riga diceva *«ciò che lo sbarra sono decisioni del PROPRIETARIO»*, contro la
 riga qui sopra e contro il gotcha **#89**, a nove righe di distanza nello stesso blocco.
 
-▶️ **E IL PIANO È APERTO DAL 2026-08-30, in scrittura e NON finito.** Vive in
+✅ **E IL PIANO È FINITO IL 2026-08-30**, cinque parti in un giorno. Vive in
 [`superpowers/plans/2026-08-30-…-traguardo-6-altri-meccanismi.md`](superpowers/plans/2026-08-30-sottoprogetto-1-traguardo-6-altri-meccanismi.md),
-che ne è la casa unica. ⛔ **A che punto sia NON è scritto qui**, ed è il rimedio e non una
-svista: un numeratore di parti invecchierebbe a ogni scrittura, e il piano lo dichiara di sé
-nella propria intestazione — gotcha **#68**, la stessa cura che la cella del Traguardo 5 ha
-ricevuto due volte.
-📌 **Il suo pre-controllo trova qualcosa in ogni parte che viene scritta, e più d'una cambia il
+che ne è la casa unica. ⚠️ **RICHIAMO DEL 2026-08-30: qui stava *«APERTO … in scrittura e NON
+finito»*.** ⛔ **Quanti compiti abbia e a che punto sia NON è scritto qui**, ed è il rimedio e non
+una svista: un numeratore invecchierebbe a ogni passo, e il piano lo dichiara di sé nella propria
+intestazione — gotcha **#68**, la stessa cura che la cella del Traguardo 5 ha ricevuto due volte.
+📌 **Il suo pre-controllo ha trovato qualcosa in ogni parte scritta, e più d'una ha cambiato il
 prezzo del disegno.** ⛔ **RICHIAMO DEL 2026-08-30: qui c'era *«ha già trovato quattro cose, e
 due cambiano il prezzo»*, ed era stantio dopo tre parti scritte.** Il numerale è **tolto e non
-riallineato**, come la §12 fece col peso e la §11 col numeratore dei vincoli: è un cumulativo che
-cresce a ogni parte, e la sua casa unica è la sezione del pre-controllo **dentro il piano**.
-⚠️ **La più grande finora tocca l'artefatto irreversibile** — come una **specie nuova** di record
-durevole entri nel formato — ed è chiusa **con una misura** e non con un argomento. Il racconto,
-le misure e le decisioni vivono nel piano, non qui; ciò che ne è uscito di generale è il gotcha
-**#90** di [`HANDOFF.md`](HANDOFF.md).
+riallineato**, come la §12 fece col peso e la §11 col numeratore dei vincoli: è un cumulativo, e
+la sua casa unica è la sezione del pre-controllo **dentro il piano**.
+⚠️ **La più grande tocca l'artefatto irreversibile** — come una **specie nuova** di record
+durevole entri nel formato — ed è chiusa **con una misura** e non con un argomento; la
+**composizione** è stata misurata sui byte congelati veri prima di scrivere la parte che vi
+poggia, e la **forma** che ne discende è una decisione del proprietario **rimandata ai criteri**.
+Il racconto, le misure e le decisioni vivono nel piano, non qui; ciò che ne è uscito di generale
+è il gotcha **#90** di [`HANDOFF.md`](HANDOFF.md).
+⏭️ **IL PROSSIMO PASSO È ESEGUIRE IL COMPITO 1**, subagent-driven — un subagente fresco per
+compito con revisione fra uno e l'altro — e **prima** il pre-controllo delle quattro domande di
+[`../CLAUDE.md`](../CLAUDE.md), che ha trovato un difetto reale in **tutti** i compiti dispacciati
+finora. ⛔ **Lo sbarramento *«non si esegue finché il piano non è finito»* è caduto**, e il piano
+lo dichiara nella propria testa.
 ⛔ **RICHIAMO DEL 2026-08-28: qui e nel riquadro del Traguardo 5 si nominava `E30` come la voce
 che «va decisa prima». È DECISA nel merito, e il nome è TOLTO da entrambe invece che
 riallineato** — quale voce sbarri il traguardo è uno **stato**, e uno stato ha una casa sola.
@@ -831,11 +838,17 @@ nella direzione tabella → riquadro, e chi arrivava al riquadro vedeva una voce
 non sapeva che esistesse un indice, e chiudendola lì lasciava viva e falsa la riga
 corrispondente. La lettera della condizione **8** era soddisfatta — **una** tabella — e lo scopo
 no.
-⏭️ **IL PROSSIMO PASSO È IL TRAGUARDO 6** — gli altri meccanismi: il gateway di inferenza, i
-sensori, i permessi, lo stato di degrado e il canale verso i worker. ⛔ **Si riparte dal
-BRAINSTORMING**, come a ogni traguardo, e **prima** si legge ciò che questo lascia aperto: la
-tabella *«Le voci aperte del Traguardo 5»* di [`porta-di-qualita.md`](porta-di-qualita.md), che
-ne è la casa unica — il richiamo del 2026-08-28 sta in cima alla §6.
+⚠️ **RICHIAMO DEL 2026-08-30 — QUESTA RIGA PORTAVA IL MARCATORE DEL PROSSIMO PASSO, ed è
+corretta invece che cancellata**, sul precedente identico del riquadro del Traguardo 4: era il
+puntatore **di allora**, dentro il racconto della chiusura del Traguardo 5, e nessuno l'ha
+spento quando quel racconto ha smesso di essere in corso. **Il puntatore vivo sta nella *«Il
+prossimo passo»* di questa §6, in un posto solo** — e a trovare la seconda casa è stato il
+censimento col `grep`, non la memoria. ⚠️ **E il marcatore è nominato QUI A PAROLE per forza:**
+scritto com'è, questo capoverso diventerebbe esso stesso una casa del `grep` che lo censisce, ed
+è la nota che il registro porta già sul censimento delle voci aperte. ⛔ **E diceva anche *«si riparte dal BRAINSTORMING»***: il brainstorming del Traguardo
+6 è **chiuso**, il disegno **completo** e il piano **finito**. Ciò che resta vero della riga è
+che **prima** si legge ciò che il Traguardo 5 lascia aperto — la tabella *«Le voci aperte del
+Traguardo 5»* di [`porta-di-qualita.md`](porta-di-qualita.md), che ne è la casa unica.
 ⛔ **Il sotto-progetto 1 NON è chiuso:** restano il Traguardo 6 e la §8 di
 [`tracciabilita.md`](tracciabilita.md), che si aggiorna alla chiusura del sotto-progetto e non
 di un traguardo.

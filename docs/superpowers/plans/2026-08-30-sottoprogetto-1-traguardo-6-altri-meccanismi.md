@@ -26,10 +26,22 @@ worker; il formato dello schema `ipc` lo decide il **compito 3bis**. La porta di
 
 ## ▶️ A che punto è QUESTO PIANO — casa unica, e si aggiorna scrivendo
 
-⛔ **IL PIANO NON È FINITO. Non si esegue finché non lo è**, e il perché è la §7.1 del
-disegno: al Traguardo 5 il disegno aveva **dimenticato una condizione di chiusura** e a
-rimediare fu chi scriveva il piano. Un piano eseguito a metà scrittura non ha nessuno che
-faccia quel controllo.
+✅ **IL PIANO È FINITO IL 2026-08-30 — dieci compiti in cinque parti.**
+⚠️ **RICHIAMO DEL 2026-08-30:** qui stava *«IL PIANO NON È FINITO. Non si esegue finché non lo
+è»*, e la ragione che portava resta vera e vale la pena tenerla scritta: al Traguardo 5 il
+disegno aveva **dimenticato una condizione di chiusura** e a rimediare fu chi scriveva il piano;
+un piano eseguito a metà scrittura non ha nessuno che faccia quel controllo. ✅ **Quel controllo
+è stato fatto:** la §7.2 del disegno nasce completa, e il pre-controllo di ogni parte ha trovato
+qualcosa — **sedici** voci, e le ultime cinque hanno cambiato il prezzo dei compiti che stavano
+per essere scritti.
+
+⛔ **UN COSTO DICHIARATO, e chi esegue lo deve sapere prima:** i compiti **8** e **9** lasciano
+**vuoti dei corpi di sonda**, con scritto **che cosa leggere** per riempirli invece del codice.
+Non è un segnaposto: la firma di `Arbiter::new` e la risposta di `Arbiter::release` **cambiano
+dentro questo stesso piano**, col compito **1**, e dettarle qui sarebbe dettare uno stato che il
+traguardo sta cambiando — il gotcha **#57**, *una previsione citata come una misura*. È il
+precedente del Task 8 del Traguardo 3, dove il piano **rifiutò di dettare l'API di `redb`**
+perché dettarla a memoria produce *«codice plausibile e falso»*.
 
 | Parte | Compiti | Stato |
 |---|---|---|
@@ -37,7 +49,7 @@ faccia quel controllo.
 | **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
 | **D** — i meccanismi | 5, 6, 7, 8 | ✅ **scritta** il 2026-08-30 — pre-controllo P-12…P-15, voce chiusa dalla **D22**, e i quattro compiti |
-| **E** — la prova e la chiusura | 9, 10 | ⬜ da scrivere |
+| **E** — la prova e la chiusura | 9, 10 | ✅ **scritta** il 2026-08-30 — e il pre-controllo ha trovato **P-16**, un meccanismo che la mappa dei file non ospitava |
 
 ✅ **La D è stata sbarrata e sbloccata lo stesso giorno, e il verbale è P-11.** I compiti **5**,
 **6** e **7** devono mettere dati **strutturati e nostri** dentro un record durevole, e
@@ -53,30 +65,48 @@ tenuta com'è invece di essere compattata, perché il disegno vi rimanda per num
 
 ### ▶️ Il prossimo passo, in forma eseguibile — 2026-08-30
 
-⛔ **Scrivere la PARTE E** — i compiti **9** (`E152`, la campagna) e **10** (la chiusura, che è un
-**audit** e non una scrittura). La Parte D è **chiusa**: pre-controllo P-12…P-15, voce chiusa
-dalla **D22**, e i quattro compiti scritti.
-⚠️ **RICHIAMO DEL 2026-08-30, cinque volte nello stesso giorno:** qui stava *«Scrivere la Parte
-D»* nudo, poi *«i compiti sono FERMI su una voce del proprietario»*, poi *«scrivere i quattro
-compiti»*, poi *«6, 7 e 8»*, poi *«7 e 8»*. È la riga che invecchia più in fretta del file, e si
-riscrive **quando il passo si chiude** — mai appendendoci sotto un capoverso senza toccarla, che
-è la forma del gotcha **#31** che questo file ha già visto quattro volte su quattro.
+⛔ **ESEGUIRE IL COMPITO 1**, e la modalità è quella scelta dal proprietario:
+`superpowers:subagent-driven-development` — **un subagente fresco per compito**, con revisione
+fra uno e l'altro. Il piano è finito, quindi lo sbarramento della testa è caduto.
 
-⛔ **Non si esegue niente comunque:** il piano non è finito, e il perché è tre righe più su.
+⛔ **E PRIMA DI DISPACCIARLO, il pre-controllo delle QUATTRO DOMANDE di `CLAUDE.md`**, che ha
+trovato almeno un difetto reale in **tutti** i compiti dispacciati finora, senza una sola
+eccezione — più le quattro righe che quell'elenco **non** coglie, prima fra tutte: *un compito
+scritto prima si legge contro il codice di **ADESSO**, non contro il piano*. ⚠️ **Questo piano è
+stato scritto in un giorno solo e il codice non si è mosso**, ma l'errata nasce vuota proprio
+perché quella regola non fa eccezioni.
 
-📌 **I compiti si scrivono in quest'ordine**, e ciascuno legge quello che la sua riga nomina **e
-nient'altro**:
+⚠️ **RICHIAMO DEL 2026-08-30, sei volte nello stesso giorno:** qui sono passati *«Scrivere la
+Parte D»* nudo, *«i compiti sono FERMI su una voce del proprietario»*, *«scrivere i quattro
+compiti»*, *«6, 7 e 8»*, *«7 e 8»* e *«scrivere la Parte E»*. È la riga che invecchia più in
+fretta del file, e si riscrive **quando il passo si chiude** — mai appendendoci sotto un
+capoverso senza toccarla, che è la forma del gotcha **#31** che questo file ha già visto quattro
+volte su quattro.
 
-| | Che cosa fare | Che cosa leggere **prima**, e nient'altro |
-|---|---|---|
-| 1 | ~~**compito 5** — il contratto del sensore~~ | ✅ **scritto** il 2026-08-30, in tre commit |
-| 2 | ~~**compito 6** — il decisore e il gettone~~ | ✅ **scritto** il 2026-08-30, in due commit |
-| 3 | ~~**compito 7** — il permesso~~ | ✅ **scritto** il 2026-08-30 |
-| 4 | ~~**compito 8** — il degrado~~ | ✅ **scritto** il 2026-08-30 |
+📌 **I dieci compiti, e l'ordine è quello della §1.4 del disegno** — ciascuno legge quello che
+la sua riga nomina **e nient'altro**:
 
-⛔ **E i compiti 6 e 7 ereditano il campo `detail` dal 5 (D24): aggiungono la PROPRIA variante di
-`RecordKind`, la propria variante di `Detail` e il proprio record congelato, e nient'altro del
-formato.** Il costo di P-13 e P-14 è già pagato.
+| # | Compito | Commit | Che cosa porta |
+|---|---|---|---|
+| **1** | `E30` + `R6` + `E21` | **tre** (D1) | l'identità dell'arbitro, `release` a tre risposte, la concessione che torna dalla porta `process` |
+| ~~2~~ | ~~il timbro di build~~ | — | ⛔ **uscito dal perimetro** — §3.4 del disegno, non-costruzione dichiarata |
+| **3** | §6.10, la metà che codifica | **due** | l'inquadratura condivisa e lo schema del canale worker — chiude il **vincolo 15** |
+| **3bis** | la misura **C-1** | uno | e ⛔ **si ferma prima di decidere** se la misura chiede un cambio di formato (D12) |
+| **4** | §6.1, lo schema `ipc` | uno | la busta e i due messaggi, nel formato che il 3bis ha deciso |
+| **5** | §6.4, il sensore | **tre** | il contratto, **il campo `detail`** (D24) e l'anello che giornala |
+| **6** | §6.2 e §6.3 | **due** | il decisore, il gettone di conformità (`Q13`) e il record di routing risolto |
+| **7** | §6.6, il permesso | uno | la tripla, e la proiezione che risponde a una domanda invece di rendere una lista |
+| **8** | §6.7, il degrado | uno | derivato e **ricalcolato**; ⛔ non tocca il formato |
+| **9** | `E152` | **due** | la riconciliazione alla disconnessione (**P-16**) e le due proprietà di §5.7 che mancano |
+| **10** | la chiusura | uno | ⛔ **è un AUDIT e non una scrittura**, e il verbale va in una **§8 del disegno** |
+
+⛔ **Tre cose che governano l'esecuzione, e stanno qui perché nessun compito da solo le vede.**
+
+| | |
+|---|---|
+| **il formato lo apre il 5, non il 6** | il campo `detail` si aggiunge **una volta sola** e lo paga il compito 5 (**D24**); i compiti 6 e 7 aggiungono la **propria** variante di `RecordKind`, la propria specie di `Detail` e il **proprio** record congelato — e nient'altro del formato |
+| **i record congelati diventano tre in più** | uno per variante nuova (**D21**, **D22**), e ⛔ **lo scarto NON diventa rosso da solo**: l'array di `frozen_bytes.rs` è scritto a mano — **P-12** |
+| **ogni compito RIMISURA la propria baseline** | **D5**. Quella di partenza sta scritta **una volta sola**, sotto la tabella delle decisioni |
 
 ✅ **RICHIAMO DEL 2026-08-30 — LA MISURA CHE QUESTA RIGA ASSEGNAVA AL COMPITO 6 È FATTA, ED È
 STATA ANTICIPATA QUI.** Diceva: *«il PRIMO PASSO del compito 6 è una misura, non una scrittura …
@@ -645,6 +675,41 @@ portarne una seconda copia: gli tocca **l'altra** metà, che è l'indice della v
 posizione del campo. È la ragione per cui la **D21** pretende `Some` e non `None`, ora misurata
 invece che argomentata.
 
+### P-16 — ⛔ La terza proprietà di §5.7 pretende un meccanismo che NON ESISTE, e la mappa dei file non ha un posto per esso
+
+Trovato scrivendo la Parte E, il 2026-08-30. **È P-6 nella stessa forma**, un compito più
+avanti: il disegno dice **che cosa** si inietta e non dice **chi** risponde.
+
+La §5.7 della spec chiede: *«la GUI muore tenendo una concessione discrezionale → **la somma
+torna alla linea di base**»*, ed è la voce **`E152`**, il cui chiusore dichiarato è questo
+traguardo. [ADR-0033](../../adr/0033-gpu-della-gui-quota-di-presentazione.md) nomina il
+meccanismo: *«se la GUI muore tenendo una concessione ordinaria, il core se ne accorge dalla
+**disconnessione IPC** e riconcilia»*.
+
+⛔ **Nessuno riconcilia, misurato:** non esiste nulla che leghi una concessione a un client, e
+`Arbiter` non conosce i client — la sua API pubblica è `set_policy`, `allocated`, `admit`,
+`queued`, `promote`, `revoking`, `release`.
+
+```bash
+grep -rniE "ClientId" crates/kernel/src/ --include=*.rs
+```
+
+⚠️ **E la mappa dei file dà al compito 9 UN SOLO file** — `crates/simulator/src/ipc.rs`, *«la
+finta gui guidata dal seme»* — cioè il **generatore del guasto** e non ciò che vi risponde. Un
+compito scritto contro quella mappa costruirebbe l'iniezione e troverebbe la proprietà **falsa**,
+oppure — peggio — la terrebbe **dentro il banco**, che è una proprietà del sistema tenuta dal
+test che dovrebbe misurarla.
+
+✅ **Chiuso dalla D27:** nasce `crates/kernel/src/client.rs` con `ClientGrants` e `on_disconnect`.
+
+⛔ **E la cosa da NON confondere, perché qualcuno lo farà: questo non è il ciclo di
+orchestrazione.** `E50` ed `E51`/`E100` aspettano *«chi costruirà il primo ciclo di
+orchestrazione»*, cioè chi decide **quando** chiamare `promote` rispetto ad `admit`.
+`on_disconnect` non decide niente del genere: risponde a **un** evento con **un** rilascio. ⚖️ Le
+due voci restano **aperte**, e il doc del modulo nuovo lo dichiara — altrimenti il primo che le
+rilegge le crede chiuse da un file che si chiama come loro.
+
+
 ### ⚖️ La voce che questo pre-controllo apre per il proprietario
 
 ⛔ **QUANTE varianti di `RecordKind` apre la Parte D, e quindi quanti record congelati nascono.**
@@ -750,6 +815,8 @@ misura che le smentisce — è ciò per cui esiste l'errata.
 | **D25** | ⛔ **il `Debug` scritto a mano STAMPA `detail`, e l'oracolo di `record_shape.rs` va rosso e si riscrive a mano** | è la scelta che **P-14** dichiara non presa da nessuna riga. Il campo porta byte **nostri** per costruzione (D20), quindi stamparlo non apre nessuna strada di §A3; **non** stamparlo darebbe a `RecordV1` un **secondo campo nascosto** che nessuno ha deciso di nascondere, contro la metà che il banco chiama *«quella che ci si dimentica»* — *«a `Debug` that hid everything would … leave a failed `assert_eq!` on a record saying nothing at all»*. ⚠️ **Il costo si scrive accanto al tipo:** la garanzia che `detail` sia sempre nostro è di **disciplina** e non di tipo, perché `RecordV1` è `pub` coi campi `pub` — **AUD-050**, registrata e non presa |
 | **D26** | ⛔ **`detail` è un TIPO — `Option<Detail>`, un enum a indici espliciti — e non byte opachi** | ADR-0036 regola 6 vuole la **codifica in `kernel`**; byte opachi pretenderebbero una **seconda** decodifica che nessuno può fare senza sapere il `kind` fuori banda, cioè il problema del `payload` spostato in una scatola nuova. ✅ **E la sicurezza è la stessa misurata in P-15:** una variante sconosciuta **non decodifica**, `Record::decode` la mappa su `Malformed` e la riconciliazione risponde `SuspendAndAsk`. ⚠️ **Il costo, dichiarato:** `kind` e specie del `detail` sono **due verità indipendenti** — la forma di `E25` in una casa nuova — e a tenerle in passo è **una funzione di costruzione per specie**, non il compilatore |
 
+| **D27** | ⛔ **la riconciliazione alla disconnessione nasce in `crates/kernel/src/client.rs`, e NON dentro `Arbiter`** | è la chiusura di **P-16**. L'arbitro conosce riserve, corsie e concessioni, e **niente** dei client: dargli un `ClientId` metterebbe una nozione della porta `ipc` dentro il tipo che ADR-0005 tiene sulla **risorsa**. ⛔ **E il doc del modulo dichiara che NON è il ciclo di orchestrazione**, o il primo che rilegge `E50` ed `E51` le crede chiuse da un file che si chiama come loro: quel ciclo decide **quando** `promote` gira rispetto ad `admit`, questo risponde a **un** evento con **un** rilascio |
+
 **La baseline di partenza, misurata il 2026-08-30 e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `cargo test --locked --workspace --no-fail-fast` →
 **37 bersagli, 267 passate, 0 fallite, 2 ignorate**.
@@ -780,6 +847,8 @@ dichiarandolo.
 | `crates/kernel/src/record.rs` | compito 6 | la variante `RecordKind` del record di routing |
 | `crates/kernel/tests/frozen/` | compito 6 | il **quarto** record congelato (D6) |
 | `crates/simulator/src/ipc.rs` | **creato** dal compito 9 | la finta gui guidata dal seme, sul precedente di `CrashingJournal` |
+| `crates/kernel/src/client.rs` | **creato** dal compito 9 | ⛔ **riga aggiunta il 2026-08-30, finding P-16:** `ClientGrants` e `on_disconnect` — la riconciliazione che §5.7 riga 3 pretende e che la mappa non ospitava |
+| `crates/kernel/tests/frozen/` | compiti 5, **6** e **7** | ⛔ **riga corretta il 2026-08-30:** diceva *«il quarto record congelato (D6)»* e il compito 6, ed erano **due** cose sbagliate — i record nuovi sono **uno per variante** (D21, D22), quindi **tre**, e il primo lo fa il compito **5** |
 | `crates/daemon/src/main.rs` | compiti 1, 6, 7, 8 | i default letterali dei parametri nuovi |
 
 📌 **Perché file separati e non un modulo solo:** il progetto già lo fa così — `arbiter` è
@@ -4190,3 +4259,276 @@ git commit -m "feat(degradation): lo stato di degrado si ricalcola dal mondo, e 
 - [ ] ⚠️ `V27` e `Q18` **non** sono state marcate ✅
 - [ ] la scelta fra il getter e i `Parameters` è **argomentata** accanto al codice, non solo fatta
 - [ ] ogni mutazione che non ha ucciso niente è **dichiarata**
+
+## Parte E — la prova e la chiusura
+
+⛔ **La Parte E non aggiunge meccanismi: li mette sotto prova e chiude.** Un'eccezione, ed è
+P-16: la terza proprietà di §5.7 pretende una **riconciliazione alla disconnessione** che oggi
+non esiste e che la mappa dei file non ospita.
+
+### Compito 9: `E152` — le due proprietà di §5.7 che mancano, iniettate su `process` e `ipc`
+
+**Files:**
+- Create: `crates/kernel/src/client.rs` — `ClientGrants`, `on_disconnect` (**P-16**)
+- Modify: `crates/kernel/src/lib.rs` — il `pub mod client;`
+- Create: `crates/simulator/src/ipc.rs` — la finta gui guidata dal seme
+- Modify: `crates/simulator/src/lib.rs` — il `pub mod ipc;`
+- Create: `crates/simulator/tests/gui_death_campaign.rs` — la proprietà **3**
+- Modify: `crates/simulator/tests/arbiter_campaign.rs` — la proprietà **2**, o un banco nuovo se il file cresce troppo
+- Modify: [`porta-di-qualita.md`](../../porta-di-qualita.md)
+
+⛔ **Non è dispacciabile prima dei compiti 3 e 4:** le due proprietà si iniettano su `process` e
+`ipc`, e lo schema `ipc` nasce col 4. Lo dice la §1.4 del disegno.
+
+- [ ] **Passo 0: riconta quali proprietà mancano, non fidarti di «due»**
+
+⛔ **`E152` dice *«§5.7 elenca cinque proprietà e la campagna dell'arbitro ne tiene tre»*, e il
+conteggio si rifà sul codice** — è la regola 1 della §7.3 del disegno, e il precedente è il Task
+13 del Traguardo 5, dove *«se il conteggio vero diverge, vince il conteggio»*.
+
+```bash
+grep -n "property_" crates/simulator/tests/arbiter_campaign.rs
+```
+
+📌 **Le cinque, e le loro porte**, dalla §5.7 della spec: la somma non supera il budget
+(`reactor`) · nessun processo è attivo senza concessione valida (**`process`**) · la gui muore
+tenendo una concessione discrezionale (**`ipc`**) · una transizione di policy interrotta lascia
+un passo riconciliabile (`journal`) · una concessione scaduta non resta allocata (`reactor`).
+
+#### Commit 9a — la riconciliazione alla disconnessione (**P-16**)
+
+- [ ] **Passo 1: scrivi le sonde**
+
+`crates/kernel/tests/client_grants.rs`, file nuovo:
+
+```rust
+//! ADR-0033: "if the GUI dies holding an ordinary grant, the core notices from the IPC
+//! DISCONNECTION and reconciles". This is that reconciliation, seen from outside the crate.
+
+#[test]
+fn a_disconnected_client_gives_its_grant_back() {
+    // baseline -> admit for the client -> disconnect -> the sum is back to baseline.
+    // ⛔ THE ASSERTION IS ON `allocated()`, not on a bookkeeping flag: the property of §5.7 is
+    // about THE SUM, and a flag could be right while the sum was wrong.
+}
+
+#[test]
+fn a_disconnect_gives_back_only_that_client_s_grants() {
+    // ⛔ THE HALF THAT GETS FORGOTTEN (§7.1.1 rule 3): a reconciliation that released EVERYTHING
+    // would pass the probe above. Two clients, one dies, the other keeps its reservation.
+}
+
+#[test]
+fn a_disconnect_of_a_client_that_holds_nothing_changes_nothing() {
+    // ⛔ AND IT MUST NOT BE AN ERROR: a client may die before it ever asked, and treating that as
+    // a fault would make an ordinary event look like a defect -- the shape of `ReleaseError`,
+    // whose `UnknownGrant` §5.6 spent a whole open voice on.
+}
+```
+
+⚠️ **I corpi sono da scrivere leggendo `arbiter_admission.rs`**, non ricordando le firme: il
+compito **1** cambia `Arbiter::new` e `Parameters`, e dettarle qui sarebbe il gotcha **#57**.
+
+- [ ] **Passo 2: scrivi il registro delle concessioni dei client**
+
+`crates/kernel/src/client.rs`, file nuovo:
+
+```rust
+//! Which grant belongs to which IPC client, and what happens when one disconnects.
+//!
+//! ⛔ WHY THIS EXISTS AT ALL, and it is the finding P-16: §5.7 asks that the sum return to
+//! baseline when a GUI dies holding a discretionary grant, and ADR-0033 names the mechanism —
+//! "the core notices from the IPC DISCONNECTION and reconciles". Nothing performed that
+//! reconciliation, and no file in the plan's map had a place for it.
+//!
+//! ⛔ THIS IS NOT THE ORCHESTRATION LOOP, and the distinction matters because `E50` and `E51`
+//! wait for one. That loop decides WHEN `promote` runs relative to `admit`; this decides nothing
+//! of the sort — it answers one event with one release. The two open voices stay open.
+//!
+//! ⛔ WHY IT IS NOT INSIDE `Arbiter`: the arbiter knows reservations, lanes and grants, and
+//! nothing about clients. Giving it a `ClientId` would put a notion of the `ipc` port inside the
+//! type that ADR-0005 keeps about RESOURCE — and I3's shape of argument applies within the crate
+//! too: a boundary is worth what it refuses to know.
+```
+
+⛔ **La forma: `ClientGrants` tiene le coppie e `on_disconnect` le restituisce all'arbitro.** Una
+concessione **si consuma** rilasciandola (`Arbiter::release` prende `Grant` per valore), quindi la
+struttura deve poterla **estrarre**, non solo leggerla. ⚠️ **E `release` risponde tre cose dal
+compito 1 (`E30`):** l'esito di una concessione **scaduta** non è un errore, e chi scrive
+`on_disconnect` deve **leggere la forma che il compito 1 ha consegnato**, non quella di oggi.
+
+- [ ] **Passo 3: le mutazioni**
+
+| # | Mutazione | Che cosa deve diventare rosso |
+|---|---|---|
+| M1 | `on_disconnect` non rilascia niente | `a_disconnected_client_gives_its_grant_back` |
+| M2 | `on_disconnect` rilascia **tutte** le concessioni | `a_disconnect_gives_back_only_that_client_s_grants` |
+| M3 | un client sconosciuto è un errore | `a_disconnect_of_a_client_that_holds_nothing_changes_nothing` |
+
+#### Commit 9b — la finta gui guidata dal seme, e le due campagne
+
+- [ ] **Passo 1: la finta gui, sul precedente di `CrashingJournal`**
+
+`crates/simulator/src/ipc.rs`, file nuovo. ⛔ **Si legge `crates/simulator/src/journal.rs`
+prima**, perché la forma è quella: un guasto **permanente** deciso dal seme, non riprendibile —
+*«un giornale che rifiuta una volta e poi riparte modella un disco cattivo, non un crash»*, e per
+una gui vale identico: un client che muore non torna.
+
+⚠️ **E il punto di morte si estrae da un generatore DIVERSO da quello dell'interlacciamento, con
+seme derivato** — è la decisione 2 del piano del Traguardo 4: due `SeededRng` costruiti dallo
+stesso numero danno la **stessa** sequenza, e la campagna esplorerebbe una **diagonale** dello
+spazio invece dello spazio.
+
+- [ ] **Passo 2: la campagna della proprietà 3, e la NON-VACUITÀ è obbligatoria**
+
+⛔ **§5.7.1 lo pretende alla lettera, ed è il gotcha #17 nella sua forma esatta:** *«iniettare un
+kill dove il codice non arriva è una prova vacua che sembra un successo. Si conta **prima**
+quante operazioni compie davvero quel percorso, si inietta **dentro** quel numero, e si
+**verifica che il guasto sia scattato** — non solo che il test sia passato.»*
+
+📌 **E la finta gui deve TENERE DAVVERO una concessione prima di morire**, che è ciò che la §6.2
+del disegno dice di sé: senza la richiesta e l'esito il seme ucciderebbe un client che non ha mai
+chiesto nulla, e il confronto sarebbe **fra insiemi vuoti** — la lezione che il Traguardo 4 ha
+imparato **tre volte**, ogni volta dopo che la precedente era stata chiusa.
+
+Gli **oracoli** sono due, e servono entrambi:
+
+| Oracolo | Che cosa coglie |
+|---|---|
+| il guasto è **scattato** — il conteggio dei punti di morte raggiunti è maggiore di zero | una campagna che non uccide mai nessuno |
+| c'era **qualcosa da verificare** — in almeno un mondo la gui ha ottenuto `Granted` prima di morire | una campagna che uccide client che non hanno mai chiesto nulla |
+
+⛔ **Il secondo è quello che il Traguardo 4 ha dovuto aggiungere tre volte.** Senza, *«la somma
+torna alla linea di base»* è verde perché **non se n'era mai mossa**.
+
+⚠️ **E la costante di non-vacuità è un RILEVATORE DI CAMBIAMENTO**, sul precedente di
+`EXPECTED_OUTCOMES` e `EXPECTED_DOUBT_SETS`: il giorno in cui diventa rossa si **rimisura lo
+spazio e si riscelgono i numeri**, non si edita la costante finché la barra torna verde — che
+sarebbe il gotcha **#25**. La frase si scrive **accanto** alla costante.
+
+- [ ] **Passo 3: la campagna della proprietà 2, su `process`**
+
+*«Nessun processo è `Attiva` senza concessione valida»* — iniezione: **kill in istanti
+arbitrari**. ⚠️ **La porta `process` ha già i suoi gettoni e i quattro casi `compile_fail` dal
+Task 11 del Traguardo 5**, quindi ciò che manca non è la forma: è l'iniezione. Si legge
+`crates/kernel/tests/worker_tokens.rs` prima di scrivere.
+
+- [ ] **Passo 4: la campagna di mutazione, una alla volta e revocata da copia (D7)**
+
+⛔ **E la regola del Traguardo 4 vale qui:** quando due mutazioni uccidono la **stessa**
+asserzione, prima di concludere che la sonda non distingue i due difetti (gotcha **#55**) si
+cerca **una terza mutazione che lasci passare la prima asserzione** — se esiste, le due non erano
+in competizione ma su assi diversi.
+
+- [ ] **Passo 5: il registro, e `E152`**
+
+La riga di livello 2 passa da **PARZIALE** a coperta, con le **cinque** proprietà nominate una
+per una. ⛔ **E il numeratore si riconta**, non si deduce da *«tre più due»*.
+
+⚠️ **`E152` si chiude nella tabella unica** di [`porta-di-qualita.md`](../../porta-di-qualita.md),
+col commit che la chiude — non si ricopia altrove.
+
+#### Criterio di chiusura del compito 9
+
+- [ ] le **cinque** proprietà di §5.7 hanno ciascuna la propria sonda, ricontate sul file
+- [ ] i **due** oracoli di non-vacuità esistono, e il secondo è stato **visto rosso** su una campagna che uccide client senza concessione
+- [ ] la costante di non-vacuità porta accanto la frase che dice **come si rimedia** a un suo rosso
+- [ ] `on_disconnect` ha le **tre** sonde, e la seconda — *«solo quelle di quel client»* — è stata vista rossa con M2
+- [ ] ⛔ `E50` ed `E51` **non** sono state chiuse: `client.rs` non è il ciclo di orchestrazione, e il suo doc lo dichiara
+- [ ] `E152` è chiusa nella tabella unica, col commit
+
+---
+
+### Compito 10: la chiusura — è un AUDIT, non una scrittura
+
+**Files:**
+- Modify: il [disegno](../specs/2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md) — una **§8** nuova, col verbale (decisione **B** della §7.1)
+- Modify: [`porta-di-qualita.md`](../../porta-di-qualita.md), [`COMPENDIO.md`](../../COMPENDIO.md), [`HANDOFF.md`](../../HANDOFF.md), [`roadmap.md`](../../roadmap.md), [`README.md`](../../README.md)
+
+⛔ **IL VERBALE VA NEL DISEGNO E NON NEL COMPENDIO**, ed è la decisione **B** della §7.1: dal
+2026-08-28 `check-docs.sh` impone un **tetto al compendio** — il passo
+`== compendium size ceiling ==` è nel cancello — quindi un verbale scritto lì compete con quel
+tetto.
+
+⛔ **E SI PARTE DAI NUMERI, NON DALLE FRASI.** È il gotcha **#49**, che al Traguardo 3 e al
+Traguardo 5 si è presentato **due volte**, ogni volta con **gran parte del compito già
+eseguita**. La prima domanda è *«è già fatto?»*, non *«come lo faccio?»*.
+
+- [ ] **Passo 1: rifai OGNI conteggio col comando, prima di leggere che cosa i documenti ne dicono**
+
+```bash
+bash scripts/gate.sh
+cargo test --locked --workspace --no-fail-fast
+ls crates/kernel/tests/compile_fail/*.rs | wc -l
+ls crates/kernel/tests/frozen/*.cbor
+awk '/^#### 7\.4\.1/{f=1} /^#### 7\.4\.3/{f=0} f' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md | grep -c '^|'
+git diff --name-only <primo-commit-del-traguardo>..HEAD -- crates/ scripts/ Cargo.lock
+```
+
+⚠️ **Se un conteggio diverge da ciò che un documento scrive, VINCE IL CONTEGGIO**, e la
+divergenza si **registra** invece di essere appianata.
+
+- [ ] **Passo 2: rileggi la §7.2 del disegno CONTRO IL CODICE, una condizione per volta**
+
+⛔ **Mai contro sé stessa.** Una condizione può risultare **scritta troppo larga**, ed è successo
+alla **4** del Traguardo 4. Le dodici sono nella §7.2 e **non si ricopiano qui**: si aprono lì.
+
+📌 **Le due che hanno più probabilità di sorprendere, dette in anticipo:**
+
+| | Perché |
+|---|---|
+| la **3** — *«`V10`, `V14` e `Q10` hanno un controllo che ESISTE»* | la definizione di §8.1 pretende **visto scattare** *e* **visto restare verde**. Un controllo che esiste e che nessuno ha visto fallire non la soddisfa |
+| la **12**, negativa | è la sola che si fallisce **facendo troppo**. Si verifica leggendo le quattro righe in §8.3/§8.4 e controllando che portino ancora `⚠️ parziale` |
+
+- [ ] **Passo 3: le voci aperte in UNA tabella sola, con la colonna di chi le chiude**
+
+⛔ **È la condizione 11, e al Traguardo 5 il disegno l'aveva DIMENTICATA** — a rimediare fu chi
+scriveva il piano, col Task 13. Qui nasce completa, e va **eseguita**: le voci che questo
+traguardo lascia aperte — le otto del disegno, quelle che i compiti hanno registrato, e quelle
+**ereditate** dal Traguardo 5 che restano — in **una** tabella, con **chi le chiude**.
+
+⚠️ **E la colonna porta la notizia:** al Traguardo 5 si scoprì che per alcune il chiusore **non**
+era il proprietario, e sparse fra i riquadri si leggevano tutte come *«aspetta il proprietario»*.
+
+⛔ **Il metodo è il `grep`, non la memoria**, e ogni riga che restituisce si legge **intera**
+(gotcha **#70**). Il blocco di comandi che il Traguardo 5 ha lasciato in
+[`porta-di-qualita.md`](../../porta-di-qualita.md) è il precedente, e **dichiara di sé che il
+filtro non basta**: ne restituì ventitré, di cui undici già chiuse, e ne **mancava cinque** che
+si trovarono leggendo la §6 del compendio.
+
+- [ ] **Passo 4: scrivi la §8 del disegno, con la tabella delle smentite**
+
+⛔ **La tabella *«dove il disegno è stato smentito dall'esecuzione»* è la parte che vale**, ed è
+la forma che al Traguardo 4 produsse *«la condizione 4 era scritta troppo larga»*. Il
+pre-controllo di questo piano ne ha già **cinque** candidate — P-1, P-5, P-6, P-8, P-9 — e i
+compiti ne aggiungeranno.
+
+📌 **E le cose che il disegno ha detto e che l'esecuzione ha CONFERMATO vanno scritte pure**, in
+una riga sola ciascuna: un verbale che elenca solo le smentite fa sembrare il disegno peggiore di
+com'era, ed è la stessa disonestà del verbale che elenca solo i successi.
+
+- [ ] **Passo 5: la manutenzione, nello stesso passaggio**
+
+`CLAUDE.md` la elenca: [`COMPENDIO.md`](../../COMPENDIO.md), [`roadmap.md`](../../roadmap.md),
+[`README.md`](../../README.md), lo stato degli spike, [`HANDOFF.md`](../../HANDOFF.md) se
+emergono gotcha nuovi, e `CLAUDE.md` se cambia il modo di lavorare.
+
+⛔ **Ciò che la chiusura NON fa**, dalla §7.4 del disegno: non chiude il **sotto-progetto 1** —
+resta la §8 di [`tracciabilita.md`](../../tracciabilita.md), che si aggiorna alla chiusura del
+sotto-progetto — non chiude le **voci del proprietario**, e **non tocca**
+[`riferimenti.md`](../../riferimenti.md), perché `E146` è *registrata e non presa* e cominciare la
+convenzione nuova a metà produrrebbe **due** convenzioni invece di una.
+
+⚠️ **E il compendio §6 va toccato con la mano leggera:** il suo tetto è nel cancello, e la §6
+dichiara di sé che *«a che punto sia NON è scritto qui»*. Ciò che cambia è la **tabella dei sei
+traguardi** e il **prossimo passo** — non un racconto.
+
+#### Criterio di chiusura del compito 10
+
+- [ ] tutti i conteggi sono stati **rifatti col comando** e le divergenze **registrate**
+- [ ] le **dodici** condizioni della §7.2 sono state rilette **contro il codice**, una per volta
+- [ ] ⛔ la condizione **12** è stata verificata **leggendo le quattro righe**, non ricordandole
+- [ ] le voci aperte stanno in **una** tabella sola, con la colonna di chi le chiude, e il censimento è stato fatto **col `grep`** e riletto intero
+- [ ] la **§8** del disegno esiste, con la tabella delle smentite **e** quella delle conferme
+- [ ] `check-docs.sh` è **verde**, compreso il tetto del compendio
+- [ ] ⛔ ciò che si è trovato **già eseguito** è scritto come tale, non rieseguito

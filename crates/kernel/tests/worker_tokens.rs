@@ -249,6 +249,30 @@ fn an_arbiter_and_a_real_grant() -> (Arbiter, Grant) {
     (arbiter, grant)
 }
 
+/// ⛔ THE DECLARED LIMIT OF THIS PROBE AND OF THE ONE BELOW, AND IT IS ONE LIMIT SHARED BY
+/// BOTH, written here once. What the two buy is that A GRANT COMES HOME AND IS REDEEMABLE:
+/// `release` accepts what `kill` and `Started::Rejected` hand back, and the budget goes whole
+/// again. What they do NOT buy is that it is THE SAME GRANT the port was given.
+///
+/// ✅ MEASURED ON 2026-08-30, not deduced -- two mutations of `FakeWorker::kill`, each
+/// applied from a copy, compiled in a step of its own and revoked with `git diff` at zero lines:
+/// ① `grant: self.grant` -> `grant: a_real_grant()`: 7 PASSED, 0 FAILED. The only trace it
+///   leaves is the warning "field `grant` is never read", which stops neither `cargo test`
+///   nor the gate.
+/// ② `drop(self.grant);` first, so the field stays read, then `grant: a_real_grant()`:
+///   7 PASSED, 0 FAILED and a SILENT build -- not even that warning.
+/// A fake that quietly swapped the reservation for another one of the same size would therefore
+/// pass both probes.
+///
+/// ⛔ AND IT IS NOT PINNED, WHICH IS A DECISION AND NOT AN OVERSIGHT. Telling two grants
+/// apart from here needs `Grant` to derive `PartialEq` or to expose its `id`, and it deliberately
+/// does neither (§5.6, and the `Grant` doc lists each absence as load-bearing) -- so a probe
+/// for this would be a probe demanding a change to the very type `E30`/`R6` have just settled.
+/// ⚖️ WHAT CARRIES THE REST IS THE TYPE, and that is why the hole is narrow: `Grant` has no
+/// public constructor and no `Clone`, so outside this bench the only way to obtain a second one
+/// is a second real admission. A `platform` worker cannot invent the substitute a fake can.
+/// ⚠️ THE SHAPE THAT WOULD CLOSE IT is the conformance suite of §6.10 -- two implementations
+/// compared against each other -- which is born with the real worker channel, not here.
 #[test]
 fn a_worker_that_is_killed_gives_the_grant_back() {
     let (mut arbiter, grant) = an_arbiter_and_a_real_grant();
@@ -270,6 +294,9 @@ fn a_worker_that_is_killed_gives_the_grant_back() {
     );
 }
 
+/// ⚠️ IT CARRIES THE SAME DECLARED LIMIT AS THE PROBE ABOVE, written once there: it holds
+/// that A grant comes home, not that THE grant does. The mutation that survives is measured
+/// beside that one.
 #[test]
 fn a_start_that_fails_gives_the_grant_back_by_name() {
     // ⛔ THIS VIA WAS NOT DISCUSSED ANYWHERE before the milestone 6 design measured it: today

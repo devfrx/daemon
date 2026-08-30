@@ -227,7 +227,7 @@ pub enum PreemptibleState {
     },
 }
 
-//// What handing a grant back actually did.
+/// What handing a grant back actually did.
 ///
 /// ⛔ TWO ANSWERS AND NOT A `bool`, because the caller has something to do with the
 /// difference: `Now` says this many MiB came back to the budget in this call, and

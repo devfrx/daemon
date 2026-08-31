@@ -28,6 +28,15 @@
 //! it: ONE accepted value, and a gui that carries a different one does not start and says so.
 //! It is not a contract, it is an identity.
 //!
+//! ⛔ DATED RECALL, 2026-08-31 -- THE FORMAT NAMED ABOVE IS NO LONGER SETTLED. Milestone 6
+//! redid the C-1 measurement from primary sources: RUSTSEC-2025-0141 is still active,
+//! `bincode` upstream is archived, and MAINTAINED alternatives exist -- one of them claiming
+//! the same wire format, which would leave the TypeScript peer reader exactly where M-11 left
+//! it. ⚖️ The MEASUREMENT is done; the CHOICE is not, because §6.1.1 is spec and reopening it
+//! belongs to the owner. Until that ruling this paragraph names the entry the manifest CARRIES
+//! today, not a decided outcome. See docs/riferimenti.md, section on decision 5 (C-1), and the
+//! open entry in docs/porta-di-qualita.md.
+//!
 //! ⛔ The port exchanges BYTES, like `journal` and `process`. The schema lives in
 //! `kernel` and the simulator therefore exchanges bytes too, so the DST campaign really
 //! exercises encoding and decoding instead of going around them.

@@ -1589,8 +1589,56 @@ simulatore già scritto. Cade un argomento di comodità, non uno di merito.
 
 ✅ **Zero usi di produzione**, quindi il rapporto aveva ragione e la cifra ora è misurata invece
 che citata. Lo schema del canale `ipc` nasce al **Traguardo 6**: è una finestra che **si chiude
-da sola**, come la quarta proprietà della §3 del compendio, e si decide **allora**, mentre la
-scelta è ancora libera.
+da sola**, come la quarta proprietà della §3 del compendio.
+
+⛔ **RICHIAMO DEL 2026-08-31 — QUI STAVA una frase che il Traguardo 6 ha reso stantia:**
+*«e si decide allora, mentre la scelta è ancora libera»*. **Il Traguardo 6 È ARRIVATO**, e il
+compito 3bis ha **rifatto** la misura da fonti primarie invece di ricordarla: rispondere a
+memoria sarebbe stato il gotcha **#48**.
+⚖️ **Ciò che è cambiato non è l'esito, è la sua specie:** non c'è più una finestra che si chiude
+da sola, c'è una **scelta davanti al proprietario**, perché §6.1.1 è spec e riaprirla è la
+**D12**. Le domande erano **due**, ed erano diverse, e queste sono le loro risposte.
+
+| | La domanda | La risposta del 2026-08-31 |
+|---|---|---|
+| **A** | `bincode` è **ancora** dichiarato non mantenuto? | ✅ **sì, e più di prima** |
+| **B** | esiste un'alternativa **mantenuta** il cui pari TypeScript abbia un lettore conforme? | ⚠️ **sì** — ed è la ragione per cui il compito si è fermato **prima** di decidere |
+
+**Le fonti, ciascuna con l'indirizzo e ciò che dice — tutte consultate il 2026-08-31.**
+
+| Fonte | Che cosa dice |
+|---|---|
+| [RUSTSEC-2025-0141](https://rustsec.org/advisories/RUSTSEC-2025-0141.html) | **attivo, non ritirato.** Segnalato il **2025-12-16**, emesso il **2026-01-07**, ultima modifica il **2026-01-16**; tipo `INFO — unmaintained`, **nessuna versione corretta**. Dichiara che lo sviluppo è cessato **in via definitiva** dopo un episodio di doxxing e molestie, e designa la **1.3.3** come *«a complete version of bincode that is not in need of any updates»*. Raccomanda `wincode`, `postcard`, `bitcode`, `rkyv` |
+| [github.com/bincode-org/bincode](https://github.com/bincode-org/bincode) | **archiviato e in sola lettura**: *«This repository was archived by the owner on Aug 15, 2025. It is now read-only.»* La cronologia è ridotta a **un commit** e il README rimanda a sourcehut |
+| [git.sr.ht/~stygianentity/bincode](https://git.sr.ht/~stygianentity/bincode) | ⛔ **NON VERIFICATO — `HTTP 502` alla consultazione.** L'ultimo commit del monte nuovo **non è stato misurato**, e non lo si afferma. È la sola fonte di questa sezione che non ha risposto, e la riga resta perché un buco dichiarato non è un buco |
+| [crates.io/api/v1/crates/bincode](https://crates.io/api/v1/crates/bincode) | l'ultima versione pubblicata è la **3.0.0 del 2025-12-16**, cioè il segnaposto `compile_error!` del gotcha **#22**; la **2.0.1** che il manifesto appunta è del **2025-03-10** |
+| [registry.npmjs.org/bincode-ts](https://registry.npmjs.org/bincode-ts) | **fermo alla 1.0.0 del 2025-07-17**, con gli stessi punti d'ingresso pubblicati che §6.10.6 dichiara rotti su Node 24. ⚖️ **Il pari non è cambiato da M-11**: né migliorato né peggiorato |
+| [ricerca npm su «bincode»](https://registry.npmjs.org/-/v1/search?text=bincode) | **nessun lettore TypeScript nuovo** per il formato. Oltre a `bincode-ts` ci sono `ts-binary` (2020) e `ts-rust-bridge-bincode` (2019), fermi, e `@inversealtruism/csd-codec` 0.1.16 del 2026-07-31, che è **mantenuto** ma dichiara **fixint-LE**, cioè la configurazione 1.x già respinta da M-11. Il nome `bincode` su npm è una CLI di sviluppo con l'IA — gotcha **#33** |
+
+⛔ **I candidati della domanda B, uno per uno — e un candidato conta SOLO SE IL PARI LO LEGGE.**
+L'elenco che l'avviso propone è di **nomi**, non di risposte, ed è precisamente la forma di
+**M-11**: la crate e il suo lettore TypeScript, **ciascuno** con la propria evidenza.
+
+| Candidato | Il nostro capo del filo | Il pari TypeScript | Esito |
+|---|---|---|---|
+| [`bincode-next` 3.1.1](https://crates.io/api/v1/crates/bincode-next) | ✅ **mantenuto**: 3.1.1 del **2026-06-20**, monte spinto il **2026-08-28**, ventuno versioni dal 2025-12-19. Il README dichiara *«wire-compatible with Bincode 2.x when using the same configurations»*, *«Works seamlessly with `std::io` (Reader/Writer) and `no_std` environments»*, derive `Encode`/`Decode` propri e **serde non richiesto** | = `bincode-ts`, **immutato**: se la compatibilità regge, il pari **non si tocca** ed è quello che M-11 ha già misurato conforme | ⚠️ **VIVO, ed è la ragione del caso B.** ⛔ Ma la compatibilità è **dichiarata dal candidato, non misurata da noi**, e le spie sono tre: un manutentore solo, una licenza che il registro dà `MIT OR Apache-2.0` e il monte lascia senza SPDX, e una `.jules` cancellata il 2026-08-20 |
+| [`oxicode` 0.2.6](https://crates.io/api/v1/crates/oxicode) | ✅ 0.2.6 del **2026-08-06**, *«successor to bincode»*, varint compatto | idem, **se** la compatibilità regge | ⚠️ secondo candidato della stessa specie, ancora `0.x` e con un manutentore solo |
+| [`wincode` 0.6.1](https://crates.io/api/v1/crates/wincode) | ✅ **il più solido dei tre**: 0.6.1 del **2026-08-10**, `anza-xyz`, tre revisioni di sicurezza indipendenti dichiarate, derive propri, senza serde | ⛔ l'esempio del README confronta con `bincode::serialize`, che è l'**API della 1.x**, cioè **fixint**; `bincode-ts` dichiara **varint**. ⚠️ **Dedotto dal nome dell'API, non misurato** | ⛔ scartato **finché la configurazione non è misurata** — e misurarla è un banco, non una lettura |
+| [`postcard` 1.1.3](https://crates.io/api/v1/crates/postcard) | ⚠️ ultima uscita **2025-07-24** | `postcard-bindgen` 0.8.0 del **2026-07-30** è mantenuto, ma genera **JavaScript ES2021** senza dichiarazioni TypeScript, e il pacchetto si **genera in locale** invece di essere pubblicato | ⛔ scartato, e **già scartato da M-1**: richiederebbe `serde` nel grafo spedito, e ADR-0037 lo scrive alla lettera |
+| [`bitcode` 0.6.9](https://crates.io/api/v1/crates/bitcode) | ⚠️ ultima uscita **2025-12-18** | ⛔ **nessun lettore** su npm | ⛔ scartato |
+| [`rkyv` + `rkyv-js` 0.3.0](https://www.npmjs.com/package/rkyv-js) | ✅ vivo | ✅ **il solo lettore nuovo e davvero mantenuto**: 0.3.0 del **2026-08-21**, tipi TypeScript dichiarati, monte spinto il **2026-08-26**, conformità verificata contro `rkyv` 0.8.18 | ⛔ **scartato sul merito**, e la ragione è nel suo README: *«No input validation: like rkyv's `access_unchecked`, decoding assumes trusted bytes. Do not decode untrusted data.»* Un decodificatore che non può **rifiutare** byte malformati non è conforme a una porta che deve rendere un errore invece di indovinare. ⚠️ E il pacchetto ha **sette mesi**: novità non è maturità |
+
+⚖️ **DOVE SI FERMA, e perché fermarsi non è rimandare.** La misura è **fatta** ed è il prodotto
+del compito; ciò che manca è la **scelta**, che non è dell'agente: cambiare la voce tocca la
+tabella di **§6.1.1**, la lista di **§7.3.1** e la riga di `scripts/gate-deps.sh` sul grafo
+**transitivo**, cioè tre sezioni approvate. ⛔ **E il manifesto non è stato toccato**: nessun
+cambio di formato, nessuna voce nuova, nessun `Cargo.lock` rinfrescato.
+
+⛔ **Un argomento che NON è stato usato, e va detto perché verrebbe in mente per primo:**
+*«tanto ora c'è `minicbor` nel kernel»*. Fu tentato il **2026-08-08** e la misura gli diede
+torto — i due canali privati hanno **pari diversi** (ADR-0037), e la simmetria non è un
+argomento. Ciò che regge C-1 è di specie diversa: riguarda la libreria **dal nostro** capo del
+filo, che è esattamente la domanda che nessuno dei due criteri poneva.
 
 📌 **La lezione non è l'avviso: è il BUCO FRA DUE CRITERI**, ed è il gotcha **#64**.
 [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) chiede *«il pari ha un lettore

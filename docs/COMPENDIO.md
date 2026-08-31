@@ -704,14 +704,13 @@ neppure: la casa unica è l'intestazione del piano, e le divergenze la sua **err
 ✅ **IL COMPITO 3 È ESEGUITO IL 2026-08-31, e con esso il VINCOLO 15 della §11 è ONORATO** — la
 busta dei due canali privati e lo schema del canale worker. La riga del vincolo 15 **esce** dalla
 tabella *«cosa resta davanti»* della §11, che è la forma che quella sezione prescrive: una riga che
-sparisce non è una riga corretta. ⛔ **A che punto sia il piano NON è scritto qui**: la casa unica
-è la sua intestazione, e le divergenze la sua **errata**.
+sparisce non è una riga corretta.
 ⚠️ **E il pre-controllo ha tenuto una seconda volta, con la voce più cara del traguardo: una sonda
 dettata era VACUA.** Non sbagliata — **corretta**, e disarmata dal **dato** che il piano le dava:
 sarebbe passata **verde** senza distinguere ciò che esiste per distinguere. ⛔ **E la revisione ne ha
-trovata una seconda della stessa specie sul prodotto:** una via d'errore che **nessuna** sonda
-raggiungeva — mutata, l'intero workspace restava verde **cifra per cifra**. Ciò che ne è uscito di
-generale è il gotcha **#92**.
+trovata una seconda sul prodotto — stesso verde che non prova niente, ma specie diversa:** una via
+d'errore che **nessuna** sonda raggiungeva — mutata, l'intero workspace restava verde **cifra per
+cifra**. Ciò che ne è uscito di generale è il gotcha **#92**.
 ⏭️ **IL PROSSIMO PASSO È ESEGUIRE IL COMPITO 3BIS** — la misura **C-1**, cioè la decisione su
 §6.1.1. ⛔ **Pretende una ricerca ODIERNA e non una risposta a memoria**, e il disegno lo scrive alla
 lettera: deciderlo ricordando sarebbe il gotcha **#48**. ⚖️ **Il compito si ferma PRIMA di decidere**

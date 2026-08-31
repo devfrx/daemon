@@ -35,3 +35,5 @@ pub mod reconcile;
 pub mod arbiter;
 
 pub mod framing;
+
+pub mod wire;

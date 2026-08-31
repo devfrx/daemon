@@ -1783,7 +1783,6 @@ vi compare è onorato.** Misurati uno per uno contro il codice il 2026-08-27, **
 | Vincolo | Cosa resta davanti, e il comando che lo dice | Chi lo chiude |
 |---|---|---|
 | **8**, la sola terza gamba | la **DST profonda su ciclo lungo**: le due campagne sono `#[ignore]` con la propria ragione scritta accanto, e **nessuno le lancia mai** — `grep -nE 'schedule\|cron\|--ignored' .github/workflows/quality-gate.yml scripts/gate.sh` non torna **nulla**. ⚠️ Le altre due gambe reggono e non sono in dubbio: il livello 1 **è** il compilatore, il livello 2 gira dentro il `cargo test` del cancello | il **proprietario**: un passo di CI nuovo è una sua decisione (vincolo globale 7), come `cargo audit` della voce **X-3** dell'audit |
-| **15**, la sola metà che codifica | la porta `process` scambia **byte** ed è onorata; **non** esistono il frame che dichiara la propria lunghezza, la decodifica che verifica i byte consumati, né l'annotazione di stringa di byte **sul canale worker** — `Frame` è un `Vec<u8>` opaco, e `grep -rn minicbor crates/kernel/src/` lo trova **solo** in `record.rs`, cioè sul **giornale** | il **Traguardo 6**, che porta lo schema del canale worker — ADR-0037 e §6.10 |
 
 | # | Vincolo | Da |
 |---|---|---|

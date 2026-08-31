@@ -35,6 +35,10 @@ pub enum WireError {
     TrailingBytes,
     /// The body is longer than a declared length can express. See `MAX_BODY_LEN`.
     TooLong,
+    /// The body did not decode as a message of this channel, or it carried a complete
+    /// element followed by something else. ⚠️ PRODUCED BY THE SCHEMAS, NOT BY THIS MODULE:
+    /// the envelope knows how many bytes there are, never what they mean.
+    Malformed,
 }
 
 /// Wraps a body in its envelope.

@@ -68,6 +68,17 @@
 //! not re-corrected. `grep -rn 'impl Worker for' crates/` names the benches, and a count
 //! written here would age again. ⚠️ For `filesystem` and `network` the old sentence is still
 //! TRUE, measured: each has exactly ONE implementation from outside the crate.
+//!
+//! ⛔ DATED RECALL, 2026-08-31 -- MILESTONE 6 TASK 3. "NOT the wire format" was TWO claims
+//! inside one clause: a statement about MILESTONE 2, still true, and a description of
+//! something nobody had built. The second half died with this commit. ✅ THE FORMAT EXISTS:
+//! the envelope is `crate::framing` -- a declared length, four bytes big-endian -- and the
+//! schema that rides inside it is `crate::wire::worker`, whose `decode` checks the bytes
+//! consumed. ⚠️ AND THIS FILE DID NOT MOVE, which is the half worth saying: `Frame` is still
+//! an opaque `Vec<u8>` and no signature here changed. The schema lives OUTSIDE the port,
+//! where the journal's has lived since ADR-0036 -- §6.10.3, "the port exchanges BYTES, not
+//! typed messages". ⚠️ The other two clauses stand: there is still no implementation of this
+//! trait outside the benches, and the rows 1-4 sentence is a statement about milestone 2.
 
 use alloc::vec::Vec;
 

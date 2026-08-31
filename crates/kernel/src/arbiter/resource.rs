@@ -2,6 +2,7 @@
 //! rather than a number.
 
 use crate::time::Millis;
+use minicbor::{Decode, Encode};
 
 /// VRAM, in whole MiB.
 ///
@@ -14,8 +15,17 @@ use crate::time::Millis;
 /// ⛔ WHOLE MiB, AND THE QUANTISATION IS THE POINT. The resource is quantised; an integer
 /// removes every question about rounding, and a rounding question inside a deterministic
 /// decision path is debt (§5.1).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct Mib(u64);
+///
+/// ⛔ AND IT IS A WIRE TYPE AS WELL AS A DECISION TYPE, from milestone 6 -- the FIRST
+/// `minicbor` derive outside `record.rs`. The cost is declared here rather than left to be
+/// found: `minicbor` now serves two artefacts with opposite requirements (§6.10.7), and a
+/// change made for `crate::wire::worker` reaches a type the arbiter decides on.
+///
+/// ⛔ THE ROAD THAT AVOIDED IT WAS REFUSED ON THE MERITS AND NOT ON COST: putting a bare
+/// `u64` in the message is exactly the case those four `compile_fail` cases exist to remove
+/// -- an integer that comes back off the wire and that nobody has to call MiB.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Encode, Decode)]
+pub struct Mib(#[n(0)] u64);
 
 impl Mib {
     /// No VRAM at all. It is the identity of `saturating_add` and the floor of

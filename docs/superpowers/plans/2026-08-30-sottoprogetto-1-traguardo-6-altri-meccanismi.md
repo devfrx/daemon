@@ -46,7 +46,7 @@ perché dettarla a memoria produce *«codice plausibile e falso»*.
 | Parte | Compiti | Stato |
 |---|---|---|
 | **A** — la concessione che torna | 1 | ✅ **ESEGUITA** — `c4cf942` · `9ecc13d` · `822db6d`, più `07720cc` e `5ef4fc3` e `8c522a3` di revisione. `GATE GREEN` a ciascuno |
-| **B** — il filo | 3, 3bis | ✅ **scritta** il 2026-08-30 |
+| **B** — il filo | 3, 3bis | ▶️ **il compito 3 è ESEGUITO** il 2026-08-31 — `9bd70f0` · `a5c84c1`, più `6b8397a` e `7aa5e73` di revisione. `GATE GREEN` a ciascuno. **Resta il 3bis** |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
 | **D** — i meccanismi | 5, 6, 7, 8 | ✅ **scritta** il 2026-08-30 — pre-controllo P-12…P-15, voce chiusa dalla **D22**, e i quattro compiti |
 | **E** — la prova e la chiusura | 9, 10 | ✅ **scritta** il 2026-08-30 — e il pre-controllo ha trovato **P-16**, un meccanismo che la mappa dei file non ospitava |
@@ -65,17 +65,21 @@ tenuta com'è invece di essere compattata, perché il disegno vi rimanda per num
 
 ### ▶️ Il prossimo passo, in forma eseguibile — 2026-08-30
 
-⛔ **ESEGUIRE IL COMPITO 3.** ⚠️ **RICHIAMO DEL 2026-08-30: qui stava *«il compito 1»*, ed è
-eseguito** — tre commit più tre di revisione, `GATE GREEN` a ciascuno, e con esso si chiudono
-`E30`, `R6` ed `E21`. ⛔ **Il compito 2 NON esiste**, e non è un salto: il timbro di build è uscito
-dal perimetro alla §3.4 del disegno.
-📌 **Che cosa il ciclo del compito 1 ha insegnato, e serve al compito 3:** il pre-controllo ha
-prodotto **cinque** voci prima di dispacciare — `E1`-`E5` — e l'esecuzione altre **sette**,
-`E6`-`E12`. ⛔ **Le due più costose non erano nel meccanismo:** il **doc** che il compito rende
-falso (109 righe di commento contro 29 di codice in un file solo), e un **censimento** scritto col
-`grep` sbagliato. 📌 *Il censimento che serve non è «chi CHIAMA ciò che cambio» ma «chi lo
-NOMINA»*: sui chiamanti di `release` rende 14 righe, sui nominanti **131**, e le frasi false
-stavano nella differenza.
+⛔ **ESEGUIRE IL COMPITO 3BIS.** ⚠️ **RICHIAMO DEL 2026-08-31: qui stava *«il compito 3»*, ed è
+eseguito** — `9bd70f0` e `a5c84c1`, più `6b8397a` e `7aa5e73` di revisione, `GATE GREEN` a ciascuno,
+e con esso il **vincolo 15** della §11 è onorato. ⛔ **Il compito 2 NON esiste**, e non è un salto:
+il timbro di build è uscito dal perimetro alla §3.4 del disegno.
+⛔ **E il 3bis non è una scrittura: è una RICERCA, e pretende una risposta ODIERNA.** *`bincode` è
+ancora dichiarato non mantenuto? esiste un'alternativa mantenuta il cui pari TypeScript abbia un
+lettore?* La §3.5 del disegno dice alla lettera che deciderlo a memoria sarebbe il gotcha **#48**, e
+la fonte va tracciata in [`riferimenti.md`](../../riferimenti.md) **con la data**. ⚖️ **Si ferma
+prima di decidere** se la misura chiede un cambio di formato — **D12**, del proprietario.
+📌 **Che cosa il ciclo del compito 3 ha insegnato, e serve a chi viene dopo:** il pre-controllo ha
+prodotto **cinque** voci prima di dispacciare, e la bloccante non era nel meccanismo ma nel **dato**
+— una sonda **corretta** che il proprio ingresso rendeva **vacua** (gotcha **#92**). Le due revisioni
+hanno trovato, nell'ordine: una **via d'errore che nessuna sonda raggiungeva** — mutata, l'intero
+workspace restava verde **cifra per cifra** — e poi **due affermazioni false nella prosa scritta per
+chiuderne un'altra**. 📌 *Il prodotto regge alla prima passata; le frasi no.*
 La modalità resta quella scelta dal proprietario: `superpowers:subagent-driven-development` — **un
 subagente fresco per compito**, con revisione fra uno e l'altro.
 
@@ -198,6 +202,13 @@ scrive **qui**, con il proprio numero, prima di eseguirlo. Un piano è un'ipotes
 | **E19** | ⛔ **IL BLOCCO DI `crates/kernel/src/wire/worker.rs` NON PORTA NESSUN `use`, e nessuno dei nomi che adopera e' in scope.** Mancano `Encode`, `Decode`, `Vec`, `Mib`, `framing`, `WireError` e `minicbor` — il tipo, le due funzioni e i due derive li usano tutti. ⚠️ **`crates/kernel/src/framing.rs` invece il proprio `use alloc::vec::Vec;` ce l'ha**, quindi lo scarto e' fra i due blocchi dello stesso compito e non una convenzione del piano. E' il precedente del Task 9 del Traguardo 5, dove *«tutti gli import mancavano»* era una delle due voci **bloccanti per costruzione**. 📌 **Non cambia il disegno, cambia se il Passo 4 compila.** |
 | **E20** | ⚠️ **Il Passo 6 di 3b attende «`6 passed` e `5 passed`»: le sonde di `crates/kernel/tests/worker_wire.rs` sono CINQUE.** Ricontate sul blocco che il Passo 1 detta: `a_fragment_survives_the_round_trip`, `a_vram_peak_survives_the_round_trip`, `the_byte_string_annotation_is_measured_and_not_asserted`, `a_frame_with_a_tail_does_not_decode`, `junk_inside_the_declared_length_does_not_decode`. Quelle di `framing.rs` sono cinque pure, e li' il Passo 5 di 3a dice **cinque**: la cifra sbagliata e' una sola. ⚖️ **Non cambia il lavoro**, cambia il numero che chi esegue si aspetta di vedere — e un'attesa sbagliata di uno si legge come una sonda che non ha compilato. |
 | **E21** | ⛔ **LA TESTA DI QUESTO PIANO DICHIARAVA «le tre parti scritte finora NON HANNO TOCCATO UNA RIGA DI PRODOTTO», e il comando che vi stava accanto per verificarlo la smentiva.** Trovata **riprendendo il 2026-08-31**, non eseguendo: il compito 1 ha toccato il prodotto, e `git diff --name-only a70d563..HEAD -- crates/ scripts/ Cargo.lock` nomina i suoi file — mentre la clausola scritta li' diceva *«se nomina qualcosa, la frase e' falsa»*. ⚠️ **E la tabella delle parti, tre righe piu' su, era gia' aggiornata a «Parte A ESEGUITA»:** una correzione che attraversa una casa e non l'altra, gotcha **#85**, dentro la sezione che si dichiara casa unica dello stato del piano. ✅ **TOLTA e non riallineata**, col richiamo datato: era una quantificazione universale su una popolazione che **ogni compito** muove, cioe' la radice **R1** dell'audit. Cio' che resta e' la regola — *ogni compito rimisura la propria baseline* (**D5**). |
+| **E22** | ⚠️ **Il Passo 2 del commit 3b attende `error[E0432]` e il rosso vero e' `error[E0433]`, piu' un `E0599` che il compito non nomina.** Misurato eseguendo. ⚖️ **Non cambia il lavoro**, cambia il codice d'errore che chi esegue confronta col passo — e un rosso diverso da quello atteso si legge come *«ho sbagliato qualcosa»* invece che come *«il passo ha sbagliato la previsione»*. E' la specie di `E7` al compito 1. |
+| **E23** | ⚠️ **Il Passo 4 del commit 3b detta `crates/kernel/src/wire/mod.rs` e `wire/worker.rs` ma NON dice di dichiarare `pub mod wire;` in `lib.rs`** — che il Passo 4 del commit **3a** invece dice per `framing`. Senza, i due file non entrano nella crate e il banco non compila. 📌 Non e' una decisione: e' una riga che manca al passo, ed e' la stessa specie di **E19**. |
+| **E24** | ⚖️ **L'aiutante `alloc_vec` che il Passo 1 di 3b nomina NON e' stato scritto, ed e' una decisione presa eseguendo.** Il compito lo introduce con *«scrivilo come preferisci — ma **non** dargli un doc che prometta qualcosa»*; scritto, avrebbe avuto **un solo** chiamante e avrebbe incapsulato `to_vec()`, cioe' sarebbe stato l'**aiutante che non tiene niente** contro cui il compito stesso mette in guardia (precedente: il Task 8 del Traguardo 5). ⛔ **Dichiarata e non taciuta**, perche' un nome che il piano detta e il codice non porta si legge come una dimenticanza. |
+| **E25** | ⚠️ **Il piano e' INTERNAMENTE INCOERENTE sulla forma dell'annotazione di `minicbor`, e la divergenza e' fra due suoi passi.** Il Passo 3 di 3b prescrive per `Mib` *«la forma che `record.rs` usa gia', non una che questo piano ricorda»*; il Passo 4 detta poi per `Fragment` la forma **combinata** `#[cbor(n(0), with = "minicbor::bytes")]`, che `record.rs` **non** usa — li' sono **due attributi su due righe**, `#[n(3)]` e `#[cbor(with = ...)]`. ✅ **Entrambe compilano**, misurato nel pre-controllo su una sonda usa-e-getta scritta da fuori la crate. ⚖️ **Risolta usando la forma di `record.rs` in entrambi i siti**, cioe' obbedendo alla regola del Passo 3 invece che al letterale del Passo 4: una convenzione sola batte due modi di dire la stessa cosa. |
+| **E26** | ⛔ **IL PROTOCOLLO DELLE MUTAZIONI DELLA `D7` HA UN ORACOLO VACUO, e vale per OGNI compito futuro di questo piano.** Il Passo 6 di 3a detta `git diff --stat <file>` per verificare che la revoca sia completa, con la nota *«deve essere VUOTO»*. ⛔ **Su un file che git non traccia ancora — e `framing.rs` nasce in quello stesso passo — quel comando e' vuoto SEMPRE**, revoca riuscita o no: e' verde per la ragione sbagliata, cioe' precisamente la specie di oracolo che questo repository chiama vacuo. 📌 **La forma che tiene e' `cmp` contro la copia byte-esatta presa prima**, che non dipende dallo stato dell'indice. Usata in tutte le mutazioni di questo compito. |
+| **E27** | ⛔ **LE CINQUE SONDE CHE IL COMPITO DETTA PER `worker_wire.rs` NON RAGGIUNGONO IL RAMO D'ERRORE DI `FromWorker::decode`, e nessun passo lo nota.** Trovato dalla revisione, non dall'esecuzione. Misurato: sostituito `.map_err(\|_\| WireError::Malformed)?` con `.expect("decode")` — cioe' *il kernel va in panico su un frame malformato che arriva da un worker* — l'intero workspace resta **verde, identico alla baseline cifra per cifra**. ⛔ **E la meta' che rende il rilievo bloccante:** il Passo 4 fa poggiare `let _ = minicbor::encode(...)` sul precedente di `Record::encode` e ordina di **rileggerlo**; riletto, quel doc non dice *«l'errore e' irraggiungibile, quindi si scarta»* ma che il caso impossibile e' **contenuto**, e il contenimento e' una sonda **nominata** su **due** ingressi. ✅ Chiuse con `an_empty_body_in_an_honest_envelope_does_not_decode` e `a_truncated_body_in_an_honest_envelope_does_not_decode` — **due `#[test]` separati**, perche' con uno solo il secondo ingresso non sarebbe mai esercitato (gotcha **#14**). Sotto la mutazione muoiono **quelle due e nessun'altra**, riprodotto dal coordinatore. |
+| **E28** | ⛔ **LA PROSA SCRITTA PER CHIUDERE IL GOTCHA #31 NE HA COMMESSO UNO, e il rilievo che la coglieva sottocontava a sua volta.** La passata che ha tolto le cifre duplicate ha scritto che §6.10.4 *«e' la loro casa»*: la coppia `7813`/`4101`/`1,91x` vive in **tre** case — §6.10.4, `crates/kernel/src/record.rs` e `crates/kernel/tests/record_shape.rs` — ed e' esattamente il numero che la frase accanto usa come proprio argomento. ⚠️ **La revisione ne nominava due e l'affermazione stava in due siti e non uno**, il secondo in `crates/kernel/tests/worker_wire.rs`: chiuderne uno solo sarebbe stato il difetto stesso che il rilievo denunciava. ✅ **Chiusa TOGLIENDO** e non riallineando a «tre» — un conteggio dentro un doc e' cio' che era appena marcito — e la passata ha messo **quindici** righe contro **dodici** tolte, chiudendosi in **un** giro: e' il gotcha **#76** applicato una seconda volta con lo stesso esito. 📌 *Nove volte in due compiti, in questo repository, un'ondata di correzioni ha chiuso rilievi aprendone di nuovi nella prosa scritta per chiuderli.* |
 
 ---
 

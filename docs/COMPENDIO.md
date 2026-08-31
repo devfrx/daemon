@@ -701,11 +701,25 @@ neppure: la casa unica è l'intestazione del piano, e le divergenze la sua **err
 ⚠️ **E il pre-controllo ha tenuto: ha prodotto voci d'errata PRIMA di dispacciare**, fra cui una sonda dettata che
 **non poteva compilare** e un censimento che non vedeva tre file su cinque. Il ciclo di revisione è
 **tornato pulito**, e ciò che ne è uscito di generale è il gotcha **#91**.
-⏭️ **IL PROSSIMO PASSO È ESEGUIRE IL COMPITO 3** — il compito 2 non esiste, ed è dichiarato nel
-piano: il timbro di build è **uscito dal perimetro**. Subagent-driven, un subagente fresco per
-compito con revisione fra uno e l'altro, e **prima** il pre-controllo delle quattro domande di
-[`../CLAUDE.md`](../CLAUDE.md), che ha trovato un difetto reale in **tutti** i compiti dispacciati
-finora — **compreso questo**.
+✅ **IL COMPITO 3 È ESEGUITO IL 2026-08-31, e con esso il VINCOLO 15 della §11 è ONORATO** — la
+busta dei due canali privati e lo schema del canale worker. La riga del vincolo 15 **esce** dalla
+tabella *«cosa resta davanti»* della §11, che è la forma che quella sezione prescrive: una riga che
+sparisce non è una riga corretta. ⛔ **A che punto sia il piano NON è scritto qui**: la casa unica
+è la sua intestazione, e le divergenze la sua **errata**.
+⚠️ **E il pre-controllo ha tenuto una seconda volta, con la voce più cara del traguardo: una sonda
+dettata era VACUA.** Non sbagliata — **corretta**, e disarmata dal **dato** che il piano le dava:
+sarebbe passata **verde** senza distinguere ciò che esiste per distinguere. ⛔ **E la revisione ne ha
+trovata una seconda della stessa specie sul prodotto:** una via d'errore che **nessuna** sonda
+raggiungeva — mutata, l'intero workspace restava verde **cifra per cifra**. Ciò che ne è uscito di
+generale è il gotcha **#92**.
+⏭️ **IL PROSSIMO PASSO È ESEGUIRE IL COMPITO 3BIS** — la misura **C-1**, cioè la decisione su
+§6.1.1. ⛔ **Pretende una ricerca ODIERNA e non una risposta a memoria**, e il disegno lo scrive alla
+lettera: deciderlo ricordando sarebbe il gotcha **#48**. ⚖️ **Il compito si ferma PRIMA di decidere**
+se la misura chiede un cambio di formato — è la **D12**, ed è del proprietario. ⚠️ **Il compito 2 non
+esiste**, ed è dichiarato nel piano: il timbro di build è **uscito dal perimetro**. Subagent-driven,
+un subagente fresco per compito con revisione fra uno e l'altro, e **prima** il pre-controllo delle
+quattro domande di [`../CLAUDE.md`](../CLAUDE.md), che ha trovato un difetto reale in **tutti** i
+compiti dispacciati finora — **compreso questo**.
 ⛔ **RICHIAMO DEL 2026-08-28: qui e nel riquadro del Traguardo 5 si nominava `E30` come la voce
 che «va decisa prima». È DECISA nel merito, e il nome è TOLTO da entrambe invece che
 riallineato** — quale voce sbarri il traguardo è uno **stato**, e uno stato ha una casa sola.

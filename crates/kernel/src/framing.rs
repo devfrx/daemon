@@ -12,7 +12,14 @@
 use alloc::vec::Vec;
 
 /// The width of the declared length, in bytes.
-const LENGTH_WIDTH: usize = 4;
+///
+/// ⚠️ PUBLIC SINCE 2026-08-31, AND IT IS A DEDUPLICATION RATHER THAN AN API WIDENING:
+/// `crates/kernel/tests/worker_wire.rs` cuts a body off a framed message and spelled the `4`
+/// itself, so the width the module doc claims is "decided here and nowhere else" had a second
+/// site. ⛔ READING THIS CONSTANT PROVES NOTHING, and no probe may use it as an oracle: the
+/// oracle is `the_declared_length_is_four_bytes_big_endian`, which asserts the prefix as a
+/// LITERAL. A probe that compared against this constant would assert the code against itself.
+pub const LENGTH_WIDTH: usize = 4;
 
 /// The longest body this envelope can declare.
 ///
@@ -59,6 +66,16 @@ pub fn frame(body: &[u8]) -> Result<Vec<u8>, WireError> {
 /// NOTHING BUT a declared length -- the tail is not there, and the CBOR can be complete all
 /// the same. That is why this function exists on top of the body decoder and not instead of
 /// it.
+///
+/// ⛔ AND IT IS NOT A STREAM READER, WHICH IS A DECLARED LIMIT AND NOT AN OVERSIGHT. Refusing
+/// every tail means this takes ONE frame and exactly one: it cannot walk a byte stream that
+/// carries several frames back to back, and it cannot be asked where the next one begins. The
+/// catalogue line `Q4 · I5 · §6.10` is what imposes it -- the bytes consumed must equal the
+/// declared length, and a reader that handed back the rest would be free to consume fewer.
+/// ⚠️ A REAL TRANSPORT WILL WANT A SECOND ENTRY POINT, one that answers "this frame, and where
+/// the next starts", and it is a NEW function beside this one rather than a loosening of this
+/// one -- `TrailingBytes` is the whole of what `a_frame_with_a_tail_is_refused` holds. Written
+/// here so the transport does not rediscover it, the way `MAX_BODY_LEN` declares its own limit.
 pub fn unframe(bytes: &[u8]) -> Result<&[u8], WireError> {
     if bytes.len() < LENGTH_WIDTH {
         return Err(WireError::Incomplete);

@@ -27,19 +27,40 @@ use crate::framing::{self, WireError};
 /// a frame; it never says that a frame may arrive unsolicited -- that one is a FAULT, and the
 /// port already has the word for it, `ProcessError::UnsolicitedFrame`.
 ///
-/// ⚠️ NO `#[cbor(array)]`, WHERE `record.rs` WRITES ITS DEFAULT OUT, and the difference is the
-/// one §6.10.3 draws: the journal has FROZEN BYTES, so a default that changed under it would
-/// move an oracle that is never regenerated. Here there are none, and both ends of this wire
-/// are rebuilt together -- that is what the build stamp of §6.1.2 is for.
+/// ⛔ `#[cbor(array)]` IS WRITTEN OUT EVEN THOUGH IT IS THE DEFAULT, exactly as `record.rs`
+/// does, and for the reason written there: A DEFAULT NOBODY WROTE DOWN IS A DEFAULT SOMEBODY
+/// CHANGES. ⚠️ THE ATTRIBUTE WAS ABSENT UNTIL 2026-08-31, on an argument that was wrong twice.
+/// It made the FROZEN BYTES of the journal the REASON `record.rs` writes its default out, when
+/// they are only what would CATCH the change afterwards; and it leaned on the build stamp of
+/// §6.1.2 to say both ends of this wire are rebuilt together, four lines under a paragraph of
+/// this same file saying the stamp is NOT BUILT and NOTHING REFUSES A STALE PEER.
+///
+/// ⛔ READ STRAIGHT, THE ASYMMETRY RUNS THE OTHER WAY. `record.rs` has an oracle that goes red
+/// if the shape moves; this channel has NONE, §6.10.3 forbids it one, and both peers live
+/// OUTSIDE this workspace. A silent switch to `map` would break them and no probe here would
+/// see it -- which makes writing the choice down worth more here, not less.
+///
+/// ⚠️ AND THAT IT COSTS NOTHING WAS MEASURED, not assumed: with and without the attribute on
+/// this type and on `Mib`, the framed bytes are identical -- `Fragment(vec![9, 8, 7])` is
+/// `00 00 00 07 82 00 81 43 09 08 07` and `VramPeak(Mib::new(1536))` is
+/// `00 00 00 07 82 01 81 81 19 06 00` under both shapes, and the whole workspace stays green.
+/// Measured 2026-08-31 on a throwaway probe outside the crate, run and deleted in the same run.
+/// ⛔ THOSE BYTES ARE A MEASUREMENT AND NOT AN ORACLE: nothing holds them, and nothing may.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
 pub enum FromWorker {
     /// One fragment of an instructed answer -- an audio chunk, a piece of a stream.
     ///
     /// ⛔ THE BYTE-STRING ANNOTATION IS LOAD-BEARING, not decoration, and the same sentence
-    /// sits on `RecordV1::payload`. Without it `minicbor` writes AN ARRAY OF NUMBERS:
-    /// measured in §6.10.4 on a 4096 B audio fragment, 7813 bytes against 4101, 1.91x. It
-    /// compiles, it round-trips, and it is correct -- it costs double the traffic in silence,
-    /// which is why the probe that holds it asserts a SIZE and not the attribute.
+    /// sits on `RecordV1::payload`. Without it `minicbor` writes AN ARRAY OF NUMBERS: it
+    /// compiles, it round-trips, and it is correct -- it costs close to DOUBLE the traffic in
+    /// silence, which is why the probe that holds it asserts a SIZE and not the attribute.
+    ///
+    /// ⚠️ THE FIGURES ARE NOT COPIED HERE, AND THAT IS THE POINT. §6.10.4 measured the ratio on
+    /// a 4096 B audio fragment and is its house; the measurement that holds THIS line lives in
+    /// the comment of `the_byte_string_annotation_is_measured_and_not_asserted`, in
+    /// `crates/kernel/tests/worker_wire.rs`. Both pairs stood verbatim in this doc until
+    /// 2026-08-31 -- gotcha #31, and a number in three houses is corrected in none of them.
     #[n(0)]
     Fragment(
         #[n(0)]

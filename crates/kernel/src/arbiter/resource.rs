@@ -24,7 +24,14 @@ use minicbor::{Decode, Encode};
 /// ⛔ THE ROAD THAT AVOIDED IT WAS REFUSED ON THE MERITS AND NOT ON COST: putting a bare
 /// `u64` in the message is exactly the case those four `compile_fail` cases exist to remove
 /// -- an integer that comes back off the wire and that nobody has to call MiB.
+///
+/// ⚠️ `#[cbor(array)]` IS THE DEFAULT AND IS WRITTEN OUT ANYWAY, added 2026-08-31 together with
+/// the same attribute on `crate::wire::worker::FromWorker`, WHICH IS THE HOUSE OF THE ARGUMENT
+/// and of the measurement that it costs nothing. It is repeated here and not merely inherited
+/// because the attribute is per type: leaving it off this one would leave the shape of the
+/// field inside the message decided by a default after all.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Encode, Decode)]
+#[cbor(array)]
 pub struct Mib(#[n(0)] u64);
 
 impl Mib {

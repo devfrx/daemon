@@ -3528,6 +3528,78 @@ un pre-controllo è un'affermazione, e si prezza leggendo il codice.*
 
 📌 **Baseline a passata chiusa:** rimisurata sotto, insieme al cancello.
 
+### La revisione del compito 5 del Traguardo 6 — due mutanti vivi e un conteggio stantio (2026-08-31)
+
+⛔ **Questa passata è il ciclo di revisione che la voce `E53` dichiarava mancante**, fatto da una
+sessione fresca e **non** da un sotto-agente, che restavano disabilitati. Il residuo che resta è
+scritto in `E53` stessa, che ne è la casa unica; qui stanno le **misure**.
+
+📌 **Baseline della passata, rimisurata e non citata:** `bash scripts/gate.sh` → `GATE GREEN`;
+`cargo test --locked --workspace --no-fail-fast` → **41 bersagli, 297 passate, 0 fallite,
+2 ignorate**. È il termine di paragone di ogni cifra qui sotto.
+
+⚠️ **Le cinque mutazioni dettate dal compito erano già state eseguite** e ne era uscita `E51`.
+⛔ **Le due che seguono NON erano fra quelle cinque**, ed è la ragione per cui erano vive: una
+campagna di mutazione prova ciò che elenca, e il criterio *«ogni mutazione che non ha ucciso
+niente è dichiarata»* non può mordere una mutazione che nessuno ha scritto.
+
+| | La mutazione | Esito misurato | Che cosa se n'è fatto |
+|---|---|---|---|
+| **S-1** | una **seconda variante** `#[n(1)]` su `Detail` | ⛔ **41 bersagli, 297 passate, 0 fallite, 2 ignorate** — identico alla baseline **cifra per cifra**: mutante vivo | ✅ **chiuso** — `match` esaustivo su `Detail` in `frozen_bytes.rs`, e la stessa mutazione ora dà `` error[E0004]: non-exhaustive patterns: `&Detail::Routing(_)` not covered ``. Voce `E54` |
+| **S-2** | `EffectClass::Idempotent` → `Unrepeatable` nel record di **feedback** di `run_the_ring` | ⛔ **41 bersagli, 297 passate, 0 fallite, 2 ignorate** — identico: mutante vivo | ⚖️ **dichiarato accanto al codice e NON pinzato**, gotcha **#73** — il merito è del proprietario. Voce `E55` |
+| **di controllo** | una **quinta variante** `#[n(4)]` su `RecordKind` | ✅ `` error[E0004]: non-exhaustive patterns: `RecordKind::Routing` not covered `` | è la **seconda direzione**: dice che il rimedio di `S-1` porta `Detail` dove i suoi tre fratelli già erano |
+
+⛔ **Perché `S-1` contava, e non è una rifinitura.** Gli indici di `Detail` viaggiano **sul filo**
+e non si ritirano mai (regola 4 di §4.9.2), mentre `frozen_bytes.rs` dichiara di sé che *«una
+variante nuova di questi enum è un CAMBIO DI FORMATO»* e che il compilatore lo ferma. Quella
+garanzia era vera di **tre** enum ed enunciata per il formato: un quarto enum sul filo entrava
+senza che niente diventasse rosso. È la forma del difetto che il Task 10 del Traguardo 3 pagò —
+*«un record solo fissa tre indici di variante su otto»* — su una popolazione nuova.
+
+⚠️ **Il rimedio è deliberatamente NON più forte dei tre fratelli.** Estendere l'arm senza
+congelare un record compila ancora: è il **limite dichiarato** che gli altri tre portano già,
+scritto accanto a loro. Renderlo più forte per il solo `Detail` sarebbe una **seconda
+convenzione** per una proprietà sola, che è ciò che §7.4.4 rifiuta.
+
+⛔ **Perché `S-2` è dichiarato e non pinzato, ed è la distinzione che conta.** La classe del
+record di verdetto — `Verifiable` — `reconcile` **non la legge mai**, ed è provato dall'arm vuoto
+di `RecordKind::Verdict`; il codice lo scrive e porta cinque righe a giustificarla. La classe del
+record di **feedback** — `Idempotent` — `reconcile` **la legge**, `RecordKind::Intent => enter(..,
+resolution_of(body.effect))`, e decide come ogni passo correttivo dell'anello viene riconciliato
+dopo una caduta: e non porta **nessuna** giustificazione. ⚠️ **È la forma che la revisione del
+compito 4 aveva già trovato**, in un posto nuovo: il campo che si **rifiuta** è argomentato,
+quelli a cui si **obbedisce** no.
+⚖️ **Il merito è del proprietario:** l'anello dichiara *«riesegui»* per un passo il cui effetto
+nessuno conosce ancora, e ADR-0007 decide il contrario per quella situazione — *«un effetto senza
+classe dichiarata è trattato come irripetibile»*. Una sonda congelerebbe la scelta stessa.
+
+✅ **E un terzo rilievo, che non è una mutazione ma un censimento** — voce `E56`. Due commenti di
+sorgente dicevano **al presente** che `frozen_bytes.rs` congela *«TRE»* record, e questo compito
+ne ha fatto il quarto: `crates/kernel/src/record.rs` e `crates/kernel/tests/record_shape.rs`.
+⚠️ **Entrambi stanno dentro un capoverso che si dichiara datato**, ed è esattamente la distinzione
+della **55ª misura** del compendio: quei capoversi datano ciò che **dicevano prima** e poi
+affermano il conteggio **al presente**, cioè cadono dal lato che mente. Il conteggio è **tolto e
+non riallineato a quattro**; la misura degli otto rossi resta attribuita al 2026-08-10, dove è
+vera.
+
+⚠️ **E UNA DIVERGENZA DI DATA, REGISTRATA E NON APPIANATA.** Le due celle di questo file che
+datano una misura del compito 5 al **2026-09-01** — la riga `V10` del blocco C e l'ottavo
+riconteggio del blocco — **restano come sono**, e `git log` data tutti e tre i commit di quel
+compito al **2026-08-31**. ⛔ **Ciò che è stato tolto sono le due affermazioni di STATO** — la §6
+del compendio e la tabella delle parti del piano — perché lì la data diceva *«il compito è stato
+eseguito il»*, e per quella domanda l'autorità è il commit: *ogni riga porta il proprio commit, e
+il commit È la sua data*. ⚠️ **Un verbale invece registra ciò che quella sessione credeva quando
+misurò**, e riscriverlo distruggerebbe l'unica prova di che cosa fu creduto: è la distinzione
+della **55ª misura**, applicata a una data invece che a una cifra. Il racconto sta nella tabella
+delle parti del piano, in una casa sola.
+
+📌 **La lezione di metodo, e vale oltre il caso.** Tutti e tre i rilievi vivono in ciò che il
+compito **ha reso stantio** senza toccarlo: un enum nuovo che nessuna guardia copriva, un campo
+il cui valore nessuna delle mutazioni elencate raggiungeva, e due frasi che erano vere finché i
+record congelati erano tre. ⛔ **Nessuno dei tre si vede rileggendo il diff**, che è pulito e
+argomentato riga per riga: si vedono **mutando** e **censendo**. È la ragione per cui `E53`
+diceva che una rilettura dell'autore non vale una revisione.
+
 ## Livello 3 — vuoto, e non è una svista
 
 `clippy` gira come igiene del codice ma **non ha voce nella porta**: nessun V dipende da

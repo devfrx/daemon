@@ -15,8 +15,11 @@
 //! level 2 check §4.9.2 names for exactly this. ⛔ THE TENSE WAS FUTURE UNTIL 2026-08-10 and it
 //! is dated rather than quietly rewritten: this paragraph said that file "DOES NOT EXIST YET, so
 //! at this commit the wire numbers are held by NOTHING AT ALL", and that was true. It exists
-//! now. It freezes THREE records, because the three enums have EIGHT variants between them and
-//! one record would pin three; each of the eight was renumbered one at a time and turned it red.
+//! now. ⚠️ RECALL OF 2026-08-31: this sentence said, AT THE PRESENT, that it "freezes THREE
+//! records, because the three enums have EIGHT variants between them", and both counts grew the
+//! day `Verdict`, `Detail` and index 5 arrived. DATED rather than realigned — on 2026-08-10 one
+//! record would have pinned three of the eight, and each of the eight was renumbered one at a
+//! time and turned it red. How many are frozen NOW is `the_frozen_records()` in that file.
 //!
 //! ⚠️ WHAT DIES HERE IS THE ASYMMETRIC DEFECT, and that was measured — twice per field, because
 //! the two directions do NOT give the same answer and the first draft of this paragraph got it

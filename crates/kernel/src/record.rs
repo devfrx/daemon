@@ -221,10 +221,13 @@ pub struct VerdictDetail {
 /// paragraph said "TODAY NOTHING HOLDS THEM", and it was true: measured at that commit, moving a
 /// variant onto a FREE index left the whole bench green — the derive renumbers encoding and
 /// decoding together, so no round trip can see it. ⛔ `tests/frozen_bytes.rs` NOW EXISTS AND THE
-/// THREE RULES ARE A CHECK. It freezes THREE records, which between them pin all EIGHT variant
-/// indices of the three enums above, and each of the eight was renumbered ONE AT A TIME and
-/// turned it red — eight out of eight. ⛔ AND THE THREE `.cbor` FILES ARE NEVER REGENERATED: if
-/// they move it is a NEW VERSION of the record, not an updated test.
+/// THREE RULES ARE A CHECK. ⚠️ RECALL OF 2026-08-31: this passage said, AT THE PRESENT, that it
+/// "freezes THREE records, which between them pin all EIGHT variant indices of the three enums
+/// above", and both counts grew the day `Verdict`, `Detail` and index 5 arrived. DATED rather
+/// than realigned, because the measurement belongs to 2026-08-10 — each of the eight renumbered
+/// ONE AT A TIME, red eight times out of eight. How many are frozen NOW is `the_frozen_records()`
+/// in that file, in one house. ⛔ AND THE `.cbor` FILES ARE NEVER REGENERATED: if they move it is
+/// a NEW VERSION of the record, not an updated test.
 ///
 /// ⚠️ `Clone` HAS NO CALLER IN THE CRATE AT THIS COMMIT, and is kept deliberately rather than
 /// by inattention — the derive lists of `StepId` and `ClientId` are justified line by line and

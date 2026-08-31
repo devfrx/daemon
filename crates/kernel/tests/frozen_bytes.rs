@@ -245,11 +245,16 @@ fn the_frozen_records_are_distinguishable_in_the_bytes() {
 }
 
 #[test]
-fn every_variant_of_the_three_enums_is_pinned_by_a_frozen_record() {
-    // ⛔ THIS IS WHY THERE ARE THREE FILES. Pinning `Intent`, `Idempotent` and `Untrusted`
-    // alone would hold THREE indices out of eight and leave `Outcome`, `Note`, `Verifiable`,
-    // `Unrepeatable` and `Instruction` held by nothing — and `record_shape.rs` MEASURED that
-    // every other probe survives a symmetric renumbering, so "nothing" is exact.
+fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
+    // ⛔ THIS IS WHY THERE IS MORE THAN ONE FILE. Pinning `Intent`, `Idempotent` and
+    // `Untrusted` alone would hold THREE indices out of eight and leave `Outcome`, `Note`,
+    // `Verifiable`, `Unrepeatable` and `Instruction` held by nothing — and `record_shape.rs`
+    // MEASURED that every other probe survives a symmetric renumbering, so "nothing" is exact.
+    //
+    // ⚠️ RECALL OF 2026-08-31 — THE NAME SAID `..._of_the_three_enums_...` AND IT COUNTED ITS
+    // OWN SUBJECTS. Renamed and not realigned to four, on the precedent this same file set for
+    // `the_three_frozen_records_are_distinguishable_in_the_bytes`: a name that carries a count
+    // is a count like any other, and this population grows with the format.
     let frozen = the_frozen_records();
     let kinds: Vec<RecordKind> = frozen.iter().map(|(_, _, Record::V1(r))| r.kind).collect();
     let effects: Vec<EffectClass> = frozen
@@ -268,7 +273,7 @@ fn every_variant_of_the_three_enums_is_pinned_by_a_frozen_record() {
         // `RecordKind` STOPS THIS FILE COMPILING, and the author lands on the list beside it.
         // ⚠️ DECLARED LIMIT, because half of it is held by a reader and not by the compiler:
         // extending the arm without extending the array above still compiles. What makes that
-        // acceptable is that a new variant of these three enums is A FORMAT CHANGE by the head
+        // acceptable is that a new variant of these wire enums is A FORMAT CHANGE by the head
         // of this file, so it can never be a quiet addition.
         match kind {
             RecordKind::Intent | RecordKind::Outcome | RecordKind::Note | RecordKind::Verdict => {}
@@ -301,6 +306,35 @@ fn every_variant_of_the_three_enums_is_pinned_by_a_frozen_record() {
             trusts.contains(&trust),
             "no frozen record carries {trust:?}: its wire index is held by nothing"
         );
+    }
+
+    // ⛔ AND `Detail` IS THE FOURTH WIRE ENUM, WHICH THIS TEST DID NOT HOLD UNTIL 2026-08-31.
+    // Its indices never retire either (rule 4 of §4.9.2), so the guarantee written above was
+    // true of three enums while the head of this file claims it for the format. ⚠️ MEASURED IN
+    // BOTH DIRECTIONS on 2026-08-31, reviewing the task that added the species: a second variant
+    // on `Detail` left the WHOLE WORKSPACE green — 41 targets, 297 passed, 0 failed, 2 ignored,
+    // identical to the baseline figure for figure — while the same addition to `RecordKind` is
+    // `error[E0004]: non-exhaustive patterns`.
+    //
+    // ⚠️ THE SHAPE DIFFERS FROM THE THREE ABOVE BECAUSE THE ENUM CARRIES DATA: a variant cannot
+    // go in an array literal without inventing a value, and comparing values would assert the
+    // frozen CONTENT instead of the species. So the exhaustive `match` runs over the species the
+    // frozen records really carry, and the assertion above it is what stops it from being a
+    // `match` over an empty list. ⛔ THE DECLARED LIMIT IS THE SAME ONE ITS THREE SIBLINGS
+    // CARRY, deliberately: extending the arm without freezing a record still compiles. Making
+    // this one stronger alone would be a second convention for one property (§7.4.4).
+    let details: Vec<&Detail> = frozen
+        .iter()
+        .filter_map(|(_, _, Record::V1(r))| r.detail.as_ref())
+        .collect();
+    assert!(
+        !details.is_empty(),
+        "no frozen record carries a `detail`: index 5 and every species under it are held by          nothing"
+    );
+    for detail in details {
+        match detail {
+            Detail::Verdict(_) => {}
+        }
     }
 }
 

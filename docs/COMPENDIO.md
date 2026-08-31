@@ -744,7 +744,7 @@ campi NON si restringono.** Restringerli riaprirebbe la **D16** per proteggere u
 non esiste**, cioè il gotcha **#46** dal verso sbagliato. ⛔ **L'innesco è il CONSUMATORE:** il
 compito che per primo decodificherà byte in un `ResourceProfile` è dove si scrive la metà
 **verificante** di ADR-0005, che oggi non ha casa.
-✅ **IL COMPITO 5 È ESEGUITO IL 2026-09-01, `GATE GREEN` a ciascuno dei tre commit** — il
+✅ **IL COMPITO 5 È ESEGUITO, `GATE GREEN` a ciascuno dei tre commit** — il
 contratto del sensore, il campo `detail` all'indice **5** con la variante `RecordKind::Verdict`, e
 l'anello che giornala. `V10` passa a **coperta** nel catalogo, e nel blocco C resta scoperta la
 sola `V5`. ⛔ **E il traguardo ha toccato l'ARTEFATTO IRREVERSIBILE:** nasce il **quarto** record
@@ -761,12 +761,20 @@ la riga di setup ma gli **oracoli**, riscritti tutti e tre.
 larga:** l'ordine *«il costo dichiarato si legge PRIMA di eseguire»* — che il doc chiama **V11** —
 non era tenuto da nulla, perché un sensore che gira e viene scartato **non scrive niente** come
 uno che non gira. Da lì il gotcha **#95**.
-⚠️ **E IL COMPITO 5 LASCIA UN RESIDUO DI METODO, dichiarato perché chi riprende non lo scopra: NON HA AVUTO IL CICLO DI REVISIONE INDIPENDENTE.** È stato eseguito **in sessione** e non
-subagent-driven, perché quella sessione aveva i sotto-agenti disabilitati; le cinque mutazioni sono
-state eseguite e il criterio di chiusura riletto punto per punto — è da lì che sono uscite `E51` ed
-`E52` — ma **una rilettura fatta da chi ha scritto il codice non vale una revisione**, ed è la
-revisione che in questo repository ha trovato i mutanti vivi (gotcha **#74**). ⛔ **La voce è `E53`
-dell'errata, che ne è la casa unica, e NON si chiude eseguendo il compito 6.**
+⚠️ **IL COMPITO 5 HA LASCIATO UN RESIDUO DI METODO — NESSUN CICLO DI REVISIONE INDIPENDENTE — E
+IL 2026-08-31 LA REVISIONE È STATA FATTA, da una sessione fresca e non da un subagente.** ⛔ **E
+ha trovato TRE rilievi, di cui DUE mutanti vivi sull'intero workspace**, nessuno dei quali le
+cinque mutazioni dettate poteva vedere perché **nessuna delle cinque li toccava**: `Detail` era il
+**quarto enum sul filo senza nessuna guardia di crescita** — una variante nuova entrava nel formato
+durevole lasciando la baseline identica **cifra per cifra**, mentre la stessa aggiunta a
+`RecordKind` è `` error[E0004] `` — e la **classe d'effetto del passo di feedback** è tenuta da
+nulla e non argomentata, mentre quella del verdetto, che `reconcile` non legge mai, porta cinque
+righe. ✅ Il primo è **chiuso**; il secondo è **dichiarato e non pinzato** (#73) ed è **del
+proprietario**, perché l'anello dichiara *«riesegui»* per un passo il cui effetto nessuno conosce
+ancora e ADR-0007 decide il contrario. ⛔ **Il residuo è RIDOTTO e non chiuso:** un solo giro dove
+gli altri compiti ne hanno avuti da tre a cinque, e quel giro ha trovato tre difetti veri — che è
+la ragione per cui la regola dice *«finché una passata non torna pulita»*. La casa unica resta
+`E53` dell'errata; le misure stanno in [`porta-di-qualita.md`](porta-di-qualita.md).
 ⏭️ **IL PROSSIMO PASSO È IL COMPITO 6** — §6.2 e §6.3: il decisore, il gettone di conformità e il
 record risolto. ⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
 propria variante e il proprio record congelato; e la voce `E50` gli dice che l'elenco dei file di

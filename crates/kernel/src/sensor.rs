@@ -133,6 +133,22 @@ pub fn run_the_ring<S: Sensor, J: Journal>(
 
     // ⛔ A NEGATIVE VERDICT RE-ENTERS AS A NEW STEP (V14), AND NOBODY IS ASKED (Q10). The intent
     // carries the same untrusted detail as the feedback the next attempt has to answer.
+    //
+    // ⚠️ AND `Idempotent` IS A LIVE MUTANT, DECLARED ON 2026-08-31 AND DELIBERATELY NOT PINNED.
+    // Unlike the verdict's class above — which `reconcile` provably never reads — THIS one IS
+    // read: `RecordKind::Intent => enter(.., resolution_of(body.effect))`, so it decides how
+    // every corrective step this ring opens gets reconciled after a crash. MEASURED by the
+    // review of this task: turned to `Unrepeatable`, the whole workspace stays green — 41
+    // targets, 297 passed, 0 failed, 2 ignored, identical to the baseline figure for figure. It
+    // was not among the task's five dictated mutations, so nobody had ever run it.
+    //
+    // ⛔ AND THE MERIT IS THE OWNER'S, WHICH IS WHY NO PROBE PINS IT. The ring declares "re-run
+    // me" for a step whose effect NOBODY KNOWS YET — the correction has not been written, and
+    // this record is the step's ONLY intent (`E19` refuses a second one), so the class is fixed
+    // here and forever. ADR-0007 rules the opposite way for exactly that situation: "an effect
+    // with no declared class is treated as UNREPEATABLE — facing a doubt it cannot resolve the
+    // system STOPS, it does not guess." A probe here would freeze the very choice that is open,
+    // which is gotcha #73. Registered as `E55` of this plan's errata.
     let feedback = Record::V1(RecordV1 {
         kind: RecordKind::Intent,
         effect: EffectClass::Idempotent,

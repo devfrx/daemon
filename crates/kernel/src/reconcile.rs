@@ -112,6 +112,28 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // `a_note_does_not_put_a_step_in_doubt` and
                 // `a_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them`.
                 RecordKind::Note => {}
+                // ⛔ A VERDICT NEITHER OPENS A DOUBT NOR CLOSES ONE, and the empty arm was
+                // MEASURED for this variant rather than inherited from `Note`'s. The doubt of
+                // ADR-0007 is about an EFFECT that may or may not have reached the world; a
+                // verdict is a fact recorded ABOUT a step's artefact, and the step it names
+                // already owes its own outcome. Both other answers were tried on 2026-09-01,
+                // one at a time, each reverted from a byte-exact copy:
+                //
+                // - `enter` makes a step that already has an intent RE-ENTER the doubt with the
+                //   verdict's own class, so a step whose outcome had already closed it comes
+                //   back open FOREVER — the ring writes a verdict on every artefact it judges.
+                // - `leave` closes a doubt that no effect resolved: the ring's verdict would
+                //   take a step OUT of the doubt although nothing executed, which is the silent
+                //   loss ADR-0007 exists to prevent.
+                //
+                // ⚠️ SO THE `effect` FIELD OF A VERDICT IS NEVER READ EITHER, and `run_the_ring`
+                // writes `Verifiable` into it with its reason on that call.
+                //
+                // ⛔ AND WHAT HOLDS THIS ARM IS DECLARED RATHER THAN ASSUMED: see
+                // `a_verdict_does_not_put_a_step_in_doubt` and
+                // `a_verdict_leaves_a_closed_step_closed` in `tests/reconciliation.rs`, written
+                // in BOTH directions (§7.1.1 rule 3) exactly as `Note`'s pair is.
+                RecordKind::Verdict => {}
             },
             // ⛔ A record this build cannot read closes nothing and resolves nothing: it is the
             // strongest form of "no declared class", and ADR-0007 says that means stop. Note it

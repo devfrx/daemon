@@ -89,6 +89,13 @@ pub enum RecordKind {
     /// the step it names is the caller's, which already owes an outcome.
     #[n(2)]
     Note,
+    /// ⛔ A SENSOR VERDICT UPON THE STEP'S ARTEFACT (§6.4). Like `Note` it neither opens a doubt
+    /// nor closes one — the doubt of ADR-0007 is about EFFECTS reaching the world, and a verdict
+    /// is a fact recorded ABOUT a step, not an effect of it. ⚠️ AND THE EMPTY ARM IN
+    /// `reconcile` WAS RE-MEASURED FOR THIS VARIANT rather than inherited from `Note`'s: see
+    /// the arm itself.
+    #[n(3)]
+    Verdict,
 }
 
 /// How an effect may be reconciled after a crash (ADR-0007).
@@ -149,6 +156,59 @@ pub enum Trust {
     /// `Untrusted`, never a `String` that somebody may hand to the instruction channel.
     #[n(1)]
     Untrusted,
+}
+
+/// The structured detail a record of OUR OWN SPECIES carries (D20). ⛔ IT IS A TYPE AND NOT
+/// OPAQUE BYTES, and the reason is ADR-0036 rule 6: the encoding lives in `kernel`. Opaque
+/// bytes here would need a second decode nobody could perform without knowing the `kind` out of
+/// band, which is the `payload` problem moved into a new box.
+///
+/// ⛔ AN UNKNOWN VARIANT DOES NOT DECODE, and that is what makes the field safe. Measured on
+/// 2026-08-30 (P-15): `minicbor` answers `unknown enum variant N`, `Record::decode` maps every
+/// error to `RecordError::Malformed`, and `reconcile` resolves that to `SuspendAndAsk`. A build
+/// that does not know a species STOPS instead of guessing.
+///
+/// ⚠️ NO `#[cbor(..)]` ATTRIBUTE, AND THAT IS MEASURED RATHER THAN OVERLOOKED. `Record` above
+/// carries an explicit `#[cbor(array)]` and this one does not, which reads as an asymmetry
+/// between the only two data-carrying enums of the crate. Measured on 2026-09-01 against
+/// `minicbor` 2.3.0 outside the repository: the two forms put the SAME bytes on the wire —
+/// `82 00 81 82 f4 07` either way — because array is already the derive's default. The
+/// asymmetry is therefore cosmetic, and it is written down so that nobody "harmonises" it
+/// believing they are fixing a format. Errata `E47`.
+///
+/// ⚠️ IT PAIRS WITH `RecordKind` AND NOTHING AT LEVEL 1 HOLDS THE PAIR — declared, not defended.
+/// A `RecordV1` with `kind: Verdict` and some other `Detail` is constructible, because
+/// `RecordV1` is `pub` with public fields (finding AUD-050, registered and not taken). What
+/// holds the pair is that ONE function per species builds the record, the way `Arbiter::issue`
+/// is the only place that mints a `Grant` (§5.6). It is the shape of E25 in a new place, and it
+/// is written down rather than discovered.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub enum Detail {
+    /// A sensor verdict upon the step's artefact (§6.4).
+    #[n(0)]
+    Verdict(#[n(0)] VerdictDetail),
+}
+
+/// The structured half of a verdict (§6.4.1). ⛔ THE DETAIL TEXT IS NOT HERE: it is untrusted by
+/// inheritance (ADR-0014) and travels in the record's `payload`, under the `trust` label that
+/// exists to say so. What lives here is what is OURS and structured — the outcome, and the cost
+/// the sensor reports having spent.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
+pub struct VerdictDetail {
+    /// `false` is `VerdictOutcome::Fail`. ⚠️ A `bool` AND NOT THE ENUM, and the asymmetry is
+    /// deliberate: `sensor::VerdictOutcome` is a kernel type free to grow a third answer, while
+    /// this one is on the WIRE and an index here never retires (rule 4 of §4.9.2). The day the
+    /// enum grows, this field becomes a new optional index and the `bool` retires — which is
+    /// exactly the discipline, and it is cheaper than reserving indices for answers nobody has.
+    #[n(0)]
+    pub passed: bool,
+    /// ⚠️ `Millis` DOES NOT COME HERE, and the cost is declared: carrying it would give a time
+    /// type the format's derives, and the conversion would still have to happen somewhere. A
+    /// `u64` whose name says the unit is the smallest thing that holds, and the conversion lives
+    /// in the one function that builds this record.
+    #[n(1)]
+    pub spent_millis: u64,
 }
 
 /// Version 1 of the durable record.
@@ -232,6 +292,25 @@ pub struct RecordV1 {
     /// this one, because a failed assertion on a record has to say what the record was FOR.
     #[n(4)]
     pub reason: String,
+    /// ⛔ OUR OWN STRUCTURED DATA, AND THE THIRD CONTENT BOX (D20). `payload` is somebody
+    /// else's and `reason` is our prose; this is our STRUCTURE, and putting it in either of the
+    /// other two was measured to be wrong — putting CBOR in `payload` reopens the defect that
+    /// splitting `reason` shut on 2026-08-10, and `reason` is text.
+    ///
+    /// ⛔ OPTIONAL, WITH `#[cbor(default)]`, AT A NEW INDEX — rule 3 of §4.9.2, and the exemption
+    /// `reason` used is SPENT: `tests/frozen_bytes.rs` exists, so this is how every field added
+    /// to V1 arrives from now on.
+    ///
+    /// ✅ ADDITIVE, MEASURED IN BOTH DIRECTIONS on 2026-08-30 (P-15): with `None` the three
+    /// frozen records encode to the SAME 21 BYTES — `minicbor` truncates a trailing `None`
+    /// instead of writing `null` — and with `Some` the array header moves `85` -> `86`.
+    ///
+    /// ⛔ AND THE FIELD ALONE IS NOT ENOUGH, WHICH IS WHY THE `kind` GROWS WITH IT (D20): a build
+    /// that does not know this index decodes a record carrying it and LOSES THE SUBSTANCE IN
+    /// SILENCE — measured. The new `kind` is what makes that build stop.
+    #[n(5)]
+    #[cbor(default)]
+    pub detail: Option<Detail>,
 }
 
 /// ⛔ THE PAYLOAD IS NOT PRINTED, and it is the same defence `Untrusted` carries, applied to
@@ -282,6 +361,14 @@ pub struct RecordV1 {
 /// nothing nobody chose, and hiding it would leave a failed assertion unable to say what the
 /// record was for.
 ///
+/// ⛔ AND `detail` IS PRINTED, WHICH IS THE D25 AND NOT AN OVERSIGHT. The field carries OUR
+/// bytes by construction (D20), so printing it opens no road A3; NOT printing it would give
+/// `RecordV1` a second hidden field that nobody decided to hide, against the half this doc calls
+/// "the one that gets forgotten" — a `Debug` that hid everything would pass the assertion below
+/// and leave a failed `assert_eq!` on a record saying nothing at all. ⚠️ THE GUARANTEE IS
+/// DISCIPLINE AND NOT TYPE, exactly as for `reason`: a struct literal from any crate can put
+/// anything at index 5, which is AUD-050 in a second place.
+///
 /// ⚠️ Pinned by `the_debug_of_a_record_does_not_print_the_payload`, because a closed road that
 /// no test holds is a road that reopens the day somebody puts `Debug` back in the derive list
 /// above, with the gate staying green.
@@ -289,12 +376,14 @@ impl fmt::Debug for RecordV1 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "RecordV1 {{ kind: {:?}, effect: {:?}, trust: {:?}, payload: <{} bytes>, reason: {:?} }}",
+            "RecordV1 {{ kind: {:?}, effect: {:?}, trust: {:?}, payload: <{} bytes>, \
+             reason: {:?}, detail: {:?} }}",
             self.kind,
             self.effect,
             self.trust,
             self.payload.len(),
-            self.reason
+            self.reason,
+            self.detail
         )
     }
 }

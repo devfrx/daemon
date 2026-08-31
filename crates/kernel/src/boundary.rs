@@ -338,6 +338,7 @@ impl Untrusted {
             trust: Trust::Untrusted,
             payload: self.0.as_bytes().to_vec(),
             reason: String::from(reason),
+            detail: None,
         })
         .encode();
 

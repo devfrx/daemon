@@ -2,7 +2,7 @@
 
 use kernel::ports::journal::{Journal, StepId};
 use kernel::reconcile::{InDoubt, Resolution, steps_in_doubt};
-use kernel::record::{EffectClass, Record, RecordKind, RecordV1, Trust};
+use kernel::record::{Detail, EffectClass, Record, RecordKind, RecordV1, Trust, VerdictDetail};
 use simulator::journal::MemoryJournal;
 
 fn record(kind: RecordKind, effect: EffectClass) -> Vec<u8> {
@@ -12,6 +12,7 @@ fn record(kind: RecordKind, effect: EffectClass) -> Vec<u8> {
         trust: Trust::Instruction,
         payload: Vec::new(),
         reason: String::from("why this step exists"),
+        detail: None,
     })
     .encode()
 }
@@ -30,8 +31,99 @@ fn a_note() -> Vec<u8> {
         trust: Trust::Untrusted,
         payload: b"what the web page said".to_vec(),
         reason: String::from("the user asked for this page"),
+        detail: None,
     })
     .encode()
+}
+
+/// A verdict record, the shape `sensor::run_the_ring` writes. ⛔ ITS OWN HELPER AND NOT
+/// `record(..)` WITH A THIRD ARGUMENT: what makes a verdict a verdict here is that it carries a
+/// `detail`, and a helper that could produce one without it would let a probe pass while
+/// proving the wrong thing.
+fn a_verdict() -> Vec<u8> {
+    Record::V1(RecordV1 {
+        kind: RecordKind::Verdict,
+        // ⚠️ `Verifiable` IS INERT HERE, exactly as the note's class is: `reconcile` never reads
+        // the `effect` of a record whose arm is empty. It is written because the field is
+        // mandatory, not because this function consults it.
+        effect: EffectClass::Verifiable,
+        trust: Trust::Untrusted,
+        payload: b"field `name` is missing".to_vec(),
+        reason: String::from("a sensor judged the artefact of this step"),
+        detail: Some(Detail::Verdict(VerdictDetail {
+            passed: false,
+            spent_millis: 7,
+        })),
+    })
+    .encode()
+}
+
+#[test]
+fn a_verdict_does_not_put_a_step_in_doubt() {
+    // ⛔ ONE HALF OF THE EMPTY ARM (§7.1.1 rule 3), and it is the half a mutation reaches first:
+    // a `Verdict` arm written as `enter(..)` would put a step in doubt that has already
+    // finished — and unlike the note's case this one happens on EVERY judged artefact, because
+    // the ring writes a verdict each time it runs.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    journal
+        .intent(step, &record(RecordKind::Intent, EffectClass::Idempotent))
+        .expect("intent");
+    journal.note(step, &a_verdict()).expect("verdict");
+    journal
+        .outcome(step, &record(RecordKind::Outcome, EffectClass::Idempotent))
+        .expect("outcome");
+    // And a verdict AFTER the outcome, which is the case that separates "does not open" from
+    // "does not reopen" — and it is the ordinary case: a sensor judges what a step produced.
+    journal
+        .note(step, &a_verdict())
+        .expect("verdict after outcome");
+
+    assert!(
+        steps_in_doubt(&journal).expect("reconcile").is_empty(),
+        "a verdict put a finished step back in doubt"
+    );
+}
+
+#[test]
+fn a_verdict_leaves_a_closed_step_closed() {
+    // ⛔ THE OTHER HALF: written as an `Outcome`, the arm would take a step OUT of the doubt
+    // although nothing executed — the silent loss ADR-0007 exists to prevent. The comparison is
+    // THE WHOLE VECTOR and not the identities, for the reason the note's twin gives: both
+    // defects keep the identities exactly right.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    let other = StepId::new(2);
+    journal
+        .intent(step, &record(RecordKind::Intent, EffectClass::Idempotent))
+        .expect("intent");
+    journal
+        .intent(other, &record(RecordKind::Intent, EffectClass::Verifiable))
+        .expect("intent");
+
+    let before = steps_in_doubt(&journal).expect("reconcile");
+    journal.note(step, &a_verdict()).expect("verdict");
+    let after = steps_in_doubt(&journal).expect("reconcile");
+
+    assert_eq!(
+        after, before,
+        "the verdict changed the doubt: it was read as an intent or as an outcome"
+    );
+    // ⚠️ And `before` is pinned to its literal value, because two equal vectors prove nothing if
+    // both are empty — a reconciliation that reported nothing at all would pass the line above.
+    assert_eq!(
+        before,
+        vec![
+            InDoubt {
+                step,
+                resolution: Resolution::RunAgain
+            },
+            InDoubt {
+                step: other,
+                resolution: Resolution::AskTheWorld
+            }
+        ]
+    );
 }
 
 #[test]

@@ -91,6 +91,7 @@ fn callers_intent() -> Vec<u8> {
         trust: Trust::Instruction,
         payload: b"call the weather service".to_vec(),
         reason: String::from("the user asked for the forecast"),
+        detail: None,
     })
     .encode()
 }

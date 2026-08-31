@@ -56,7 +56,7 @@
 //! the real output rather than deduced; `record_shape.rs` says the same four bytes from the
 //! other side, in `82 00 81 85 00 01 00 40 60`.
 
-use kernel::record::{EffectClass, Record, RecordKind, RecordV1, Trust};
+use kernel::record::{Detail, EffectClass, Record, RecordKind, RecordV1, Trust, VerdictDetail};
 
 /// The bytes on disk. ⛔ `include_bytes!` AND NOT A READ AT RUN TIME: the artefact enters the
 /// test binary, so a `.cbor` deleted or renamed is a COMPILE error and not a check that
@@ -64,6 +64,7 @@ use kernel::record::{EffectClass, Record, RecordKind, RecordV1, Trust};
 const INTENT_BYTES: &[u8] = include_bytes!("frozen/record_v1_intent.cbor");
 const OUTCOME_BYTES: &[u8] = include_bytes!("frozen/record_v1_outcome.cbor");
 const NOTE_BYTES: &[u8] = include_bytes!("frozen/record_v1_note.cbor");
+const VERDICT_BYTES: &[u8] = include_bytes!("frozen/record_v1_verdict.cbor");
 
 /// The map, included for the same reason and READ BACK by
 /// `the_map_lists_the_bytes_that_are_really_frozen` instead of being believed.
@@ -93,13 +94,14 @@ const FORMAT_CHANGED: &str = "\n⛔ THE DURABLE FORMAT CHANGED.\n\
 /// three frozen records AND for the mutants of `every_field_sits_at_the_offset_the_map_gives_it`:
 /// a second constructor would be a second place to keep aligned, and the first one to stop
 /// being updated lies in silence (§7.4.4).
-fn record(kind: RecordKind, effect: EffectClass, trust: Trust) -> Record {
+fn record(kind: RecordKind, effect: EffectClass, trust: Trust, detail: Option<Detail>) -> Record {
     Record::V1(RecordV1 {
         kind,
         effect,
         trust,
         payload: FROZEN_PAYLOAD.to_vec(),
         reason: String::from(FROZEN_REASON),
+        detail,
     })
 }
 
@@ -110,7 +112,7 @@ fn record(kind: RecordKind, effect: EffectClass, trust: Trust) -> Record {
 ///
 /// ⚠️ THE ORDER IS THE MAP'S ORDER, and `the_map_lists_the_bytes_that_are_really_frozen`
 /// compares the names pairwise, so the two cannot drift apart in silence.
-fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 3] {
+fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 4] {
     [
         (
             "record_v1_intent.cbor",
@@ -119,6 +121,7 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 3] {
                 RecordKind::Intent,
                 EffectClass::Idempotent,
                 Trust::Untrusted,
+                None,
             ),
         ),
         (
@@ -128,12 +131,40 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 3] {
                 RecordKind::Outcome,
                 EffectClass::Unrepeatable,
                 Trust::Instruction,
+                None,
             ),
         ),
         (
             "record_v1_note.cbor",
             NOTE_BYTES,
-            record(RecordKind::Note, EffectClass::Verifiable, Trust::Untrusted),
+            record(
+                RecordKind::Note,
+                EffectClass::Verifiable,
+                Trust::Untrusted,
+                None,
+            ),
+        ),
+        // ⛔ THE FOURTH CARRIES BOTH THINGS AT ONCE (D21), and `None` here would pin NOTHING of
+        // index 5: a trailing `None` is not written, measured. So this record is the only place
+        // that holds the new variant index AND the new field's position on the wire.
+        //
+        // ⚠️ `passed: false` AND NOT `true`: `false` encodes `f4` and `true` `f5`, so the byte
+        // exists either way — but a NEGATIVE verdict is the one the ring feeds back, which is
+        // the case the species exists for. And `spent_millis: 7` is not zero, because `00` is
+        // also half the variant indices in this table and a byte that resembles too many things
+        // makes the map harder to read than it needs to be.
+        (
+            "record_v1_verdict.cbor",
+            VERDICT_BYTES,
+            record(
+                RecordKind::Verdict,
+                EffectClass::Verifiable,
+                Trust::Untrusted,
+                Some(Detail::Verdict(VerdictDetail {
+                    passed: false,
+                    spent_millis: 7,
+                })),
+            ),
         ),
     ]
 }
@@ -167,12 +198,16 @@ fn the_frozen_bytes_still_decode_to_their_records() {
 }
 
 #[test]
-fn the_three_frozen_records_are_distinguishable_in_the_bytes() {
+fn the_frozen_records_are_distinguishable_in_the_bytes() {
     // ⛔ TWO FROZEN RECORDS THAT ENCODED ALIKE WOULD PIN ONE THING BETWEEN THEM, and the file
     // count would flatter the coverage: three artefacts, two indices held. The pairs are all
     // compared, not the adjacent ones — two colliding while the third stays apart is exactly
     // the shape a partial comparison lets through, and it is the shape
     // `the_three_record_kinds_are_distinguishable_in_the_bytes` was widened for.
+    //
+    // ⚠️ THE NAME SAID `the_three_…` UNTIL 2026-09-01, AND IT IS RENAMED RATHER THAN LEFT: the
+    // fourth frozen record arrived that day and a name that counts its own subjects is a count
+    // like any other. The pairwise comparison itself never mentioned three.
     let frozen = the_frozen_records();
     for (i, (left_name, left, _)) in frozen.iter().enumerate() {
         for (right_name, right, _) in frozen.iter().skip(i + 1) {
@@ -182,14 +217,23 @@ fn the_three_frozen_records_are_distinguishable_in_the_bytes() {
                  variant and not two"
             );
 
-            // ⚠️ AND THE DIFFERENCE IS WHERE THE MAP SAYS IT IS. The three records were chosen
-            // to differ in the three enum fields and in NOTHING else, so a byte moving outside
-            // 4..7 means either the constructors above drifted apart or the framing changed.
-            assert_eq!(
-                left.len(),
-                right.len(),
-                "the frozen records are not the same length"
-            );
+            // ⚠️ AND THE DIFFERENCE IS WHERE THE MAP SAYS IT IS — FOR THE PAIRS THAT CARRY THE
+            // SAME FIELDS. The records of one arity were chosen to differ in the three enum
+            // fields and in NOTHING else, so a byte moving outside 4..7 means either the
+            // constructors above drifted apart or the framing changed.
+            //
+            // ⛔ A PAIR OF DIFFERENT ARITY IS SKIPPED HERE, AND IT IS NOT A HOLE — it is the
+            // D21 showing through: the fourth record exists precisely BECAUSE it carries a
+            // field the other three do not, so it differs at the array header (`85` -> `86`)
+            // and in the whole tail, by construction. Asserting equal length across arities
+            // would assert that the D21 did not happen. ⚠️ WHAT WOULD BE A HOLE is dropping
+            // the pair entirely: the `assert_ne!` above runs on EVERY pair, arity included, so
+            // "two frozen records that encode alike" is still caught between any two of them.
+            // What is skipped is only the WHERE of the difference, which has no meaning across
+            // two different shapes.
+            if left.len() != right.len() {
+                continue;
+            }
             let moved: Vec<usize> = (0..left.len()).filter(|&i| left[i] != right[i]).collect();
             assert!(
                 moved.iter().all(|&i| (4..7).contains(&i)),
@@ -214,7 +258,12 @@ fn every_variant_of_the_three_enums_is_pinned_by_a_frozen_record() {
         .collect();
     let trusts: Vec<Trust> = frozen.iter().map(|(_, _, Record::V1(r))| r.trust).collect();
 
-    for kind in [RecordKind::Intent, RecordKind::Outcome, RecordKind::Note] {
+    for kind in [
+        RecordKind::Intent,
+        RecordKind::Outcome,
+        RecordKind::Note,
+        RecordKind::Verdict,
+    ] {
         // ⛔ THE EXHAUSTIVE `match` IS THE HALF THAT DOES NOT AGE: a variant added to
         // `RecordKind` STOPS THIS FILE COMPILING, and the author lands on the list beside it.
         // ⚠️ DECLARED LIMIT, because half of it is held by a reader and not by the compiler:
@@ -222,7 +271,7 @@ fn every_variant_of_the_three_enums_is_pinned_by_a_frozen_record() {
         // acceptable is that a new variant of these three enums is A FORMAT CHANGE by the head
         // of this file, so it can never be a quiet addition.
         match kind {
-            RecordKind::Intent | RecordKind::Outcome | RecordKind::Note => {}
+            RecordKind::Intent | RecordKind::Outcome | RecordKind::Note | RecordKind::Verdict => {}
         }
         assert!(
             kinds.contains(&kind),
@@ -290,6 +339,7 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
         RecordKind::Intent,
         EffectClass::Idempotent,
         Trust::Untrusted,
+        None,
     )
     .encode();
 
@@ -297,6 +347,7 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
         RecordKind::Outcome,
         EffectClass::Idempotent,
         Trust::Untrusted,
+        None,
     )
     .encode();
     only_inside("kind", &base, &moved_kind, 4, 5);
@@ -305,6 +356,7 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
         RecordKind::Intent,
         EffectClass::Unrepeatable,
         Trust::Untrusted,
+        None,
     )
     .encode();
     only_inside("effect", &base, &moved_effect, 5, 6);
@@ -313,6 +365,7 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
         RecordKind::Intent,
         EffectClass::Idempotent,
         Trust::Instruction,
+        None,
     )
     .encode();
     only_inside("trust", &base, &moved_trust, 6, 7);
@@ -323,6 +376,7 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
         trust: Trust::Untrusted,
         payload: b"FROZEN".to_vec(),
         reason: String::from(FROZEN_REASON),
+        detail: None,
     })
     .encode();
     only_inside("payload", &base, &moved_payload, 7, 14);
@@ -333,6 +387,7 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
         trust: Trust::Untrusted,
         payload: FROZEN_PAYLOAD.to_vec(),
         reason: String::from("FROZEN"),
+        detail: None,
     })
     .encode();
     only_inside("reason", &base, &moved_reason, 14, 21);
@@ -421,9 +476,10 @@ fn the_map_lists_the_bytes_that_are_really_frozen() {
     // comparison below would be between two empty things.
     assert_eq!(
         sections.len(),
-        3,
-        "the map describes {} records and there are three frozen files",
-        sections.len()
+        the_frozen_records().len(),
+        "the map describes {} records and there are {} frozen files",
+        sections.len(),
+        the_frozen_records().len()
     );
 
     for ((name, bytes), (file, frozen, _)) in sections.iter().zip(the_frozen_records()) {

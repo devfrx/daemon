@@ -9,6 +9,7 @@ fn main() {
         effect: kernel::record::EffectClass::Idempotent,
         payload: Vec::new(),
         reason: String::new(),
+        detail: None,
     });
 }
 

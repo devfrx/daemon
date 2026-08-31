@@ -156,6 +156,7 @@ fn record(kind: RecordKind) -> Vec<u8> {
         trust: Trust::Instruction,
         payload: Vec::new(),
         reason: String::from("a step of the DST scenario"),
+        detail: None,
     })
     .encode()
 }
@@ -410,6 +411,15 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
             }
             RecordKind::Outcome => open.retain(|s| s != step),
             RecordKind::Note => {}
+            // ⛔ UNREACHABLE IN THIS SCENARIO, AND ASSERTED FOR THE SAME REASON AS THE
+            // SECOND INTENT ABOVE: nothing here runs a sensor, so no verdict can enter this
+            // trace. Writing the empty arm `reconcile` writes would make this oracle agree with
+            // the implementation BY CONSTRUCTION on a case it has never seen -- which is the one
+            // thing the paragraph four above says this oracle must not do. The day the scenario
+            // grows a sensor, the red is a decision being asked for, not a defect being reported.
+            RecordKind::Verdict => panic!(
+                "step {step} carries a verdict: this scenario has grown a sensor, and this                  oracle must decide what a verdict does to a doubt before it can stay independent"
+            ),
         }
     }
     open

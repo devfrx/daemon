@@ -72,3 +72,15 @@ record_v1_note.cbor
   6 | 01                   | index 2 · trust   · Trust::Untrusted
   7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
  14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+
+record_v1_verdict.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 86                   | array(6) — the SIX fields of RecordV1, and the 85 -> 86 IS the new field
+  4 | 03                   | index 0 · kind    · RecordKind::Verdict
+  5 | 00                   | index 1 · effect  · EffectClass::Verifiable
+  6 | 01                   | index 2 · trust   · Trust::Untrusted
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+ 21 | 82 00 81 82 f4 07    | index 5 · detail  · Some(Detail::Verdict { passed: false, spent: 7 })

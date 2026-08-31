@@ -1082,6 +1082,7 @@ fn transition_record(kind: RecordKind, policy: &'static str) -> Vec<u8> {
         trust: Trust::Instruction,
         payload: Vec::new(),
         reason: String::from(policy),
+        detail: None,
     })
     .encode()
 }

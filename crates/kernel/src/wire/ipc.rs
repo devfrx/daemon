@@ -46,13 +46,42 @@ use crate::framing::{self, WireError};
 /// describes: THE REQUESTER DECLARES THE RESERVATION, and the core names the profile.
 ///
 /// ⛔ AND CARRYING THE NAME AND RESOLVING IT IS NOT THE OTHER ROAD: NOTHING MAPS A NAME ONTO
-/// A PROFILE -- `grep -rn "ResourceProfile {" crates/ --include=*.rs` shows every site spelling
-/// the fields out, and no register anywhere. Building one would be a mechanism no written line
-/// asks for.
+/// A PROFILE. `grep -rn "^[^/]*ResourceProfile {" crates/ --include=*.rs` gives the
+/// declaration, the bench helpers that BUILD one, and the sites that spell the fields out; no
+/// line maps a name onto a profile, and building one would be a mechanism no written line asks
+/// for. ⛔ ANCHORED PAST THE DOC COMMENT, for the reason `crate::ports::ipc` writes down for
+/// `impl Ipc for`: an unanchored one matches the paragraph that quotes it.
 ///
-/// ⚠️ THE COST, stated: the core picks ONE profile for the gui, so the gui cannot ask for an
-/// arbitrary one. That is what ADR-0033 describes -- a single consumer, the 3D viewer beyond
-/// the quota -- and it stops being enough the day a second one exists.
+/// ⚠️ THE COST, stated: WHAT THE CORE PICKS IS THE NAME, NOT THE PROFILE. The three fields
+/// below are the gui's, and `name` is the one field NO ARBITER DECISION READS: `crate::arbiter`
+/// copies out of the profile what it decides with and leaves the name behind, calling one kept
+/// inside the arbiter "state no decision reads". ADR-0033 describes a single consumer, the 3D
+/// viewer beyond the quota, and that stops being enough the day a second one exists.
+///
+/// ⛔ SO THE UNTRUSTED HALF IS NOT ONLY THE NAME: `compute_class` AND `preemption` REACH THE
+/// ARBITER FROM THE SAME PEER AS THE NAME THIS TYPE REFUSES, AND THE ARBITER OBEYS THEM. Read
+/// in `crate::arbiter` rather than inherited. `admit` hands `profile.compute_class` to
+/// `ask_back` as `below`, where the `askable` closure drops every holder with
+/// `held.lane <= below`; the order is `ComputeClass::priority`, so a request declaring
+/// `Realtime` clears that guard for every `Interactive` and `Batch` holder, and one declaring
+/// `Batch` clears it for none. The same field is the lane `enqueue` files a waiting request
+/// under. `preemption` is read by `issue`, which maps `Preemption::Never` onto
+/// `Activity::NonPreemptible` and takes `grace` from that same field, so a request declaring
+/// `Never` books a grant `ask_back` can never pick. Both are a stronger privilege than a
+/// string, and NEITHER IS CHECKED AGAINST ANYTHING -- `reserved_vram`, by contrast, has to
+/// clear the ceiling in `admit`.
+///
+/// ⛔ WHICH IS TO SAY THE OTHER HALF OF ADR-0005 HAS NO HOUSE YET: the reservation is
+/// "declared by the requester and VERIFIED BY THE ARBITER", and only the declaring half is
+/// built here. It is not exploitable today because THE CONSUMER DOES NOT EXIST -- nothing
+/// turns a message into a `ResourceProfile`, and
+/// `grep -rnE "^[^/]*(GrantRequest|IpcMessage)" crates/` names only this file and
+/// `crates/kernel/tests/ipc_wire.rs`. ⛔ THE TRIGGER IS THAT CONSUMER: the task that first
+/// decodes arriving bytes into a profile is where the verifying half is written and where its
+/// probe is born. ⚠️ NARROWING THE FIELDS HERE IS NOT THE SMALLER FIX: the three are what
+/// decision D16 of the milestone-6 plan and §6.2 of the design ask for, and cutting them would
+/// reopen a design decision to protect a caller that does not exist -- gotcha #46 from the
+/// wrong side.
 ///
 /// ⚠️ THE DERIVES, MEASURED ONE AT A TIME ON 2026-08-31 RATHER THAN ARGUED, because task 11 of
 /// milestone 5 spent a review pruning derives nobody could name a consumer for, and a list

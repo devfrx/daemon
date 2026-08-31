@@ -1628,6 +1628,72 @@ L'elenco che l'avviso propone è di **nomi**, non di risposte, ed è precisament
 | [`bitcode` 0.6.9](https://crates.io/api/v1/crates/bitcode) | ⚠️ ultima uscita **2025-12-18** | ⛔ **nessun lettore** su npm | ⛔ scartato |
 | `rkyv` + `rkyv-js` 0.3.0 — [il registro](https://registry.npmjs.org/rkyv-js) e [il monte](https://github.com/cometkim/rkyv-js) | ✅ vivo | ✅ **il solo lettore nuovo e davvero mantenuto**: 0.3.0 del **2026-08-21**, tipi TypeScript dichiarati, monte spinto il **2026-08-26**, conformità verificata contro `rkyv` 0.8.18 | ⛔ **scartato sul merito**, e la ragione è nel README del **monte**: *«No input validation: like rkyv's `access_unchecked`, decoding assumes trusted bytes. Do not decode untrusted data.»* Un decodificatore che non può **rifiutare** byte malformati non è conforme a una porta che deve rendere un errore invece di indovinare. ⚠️ E il pacchetto ha **sette mesi**: novità non è maturità. ⛔ **RICHIAMO DEL 2026-08-31, in revisione: questa riga portava UN indirizzo solo, `npmjs.com/package/rkyv-js`, e diceva *«la ragione è nel suo README»*.** ✅ **Misurato invece che dedotto:** al registro il campo `readme` è **vuoto** — la frase citata **non è a quell'indirizzo**, sta nel README del monte, dov'è verbatim. La citazione era giusta, l'**indirizzo** no. 📌 *Una fonte porta l'indirizzo che dice la cosa, non quello del pacchetto che la contiene* — e le due metà della riga hanno ora una fonte ciascuna: la **versione e la data** dal registro, la **frase** dal monte |
 
+⛔ **M-12 — LA COMPATIBILITÀ SUL FILO ERA UNA DICHIARAZIONE, ED È STATA MISURATA. 2026-08-31.**
+Decisione del proprietario: *misurare prima di scegliere*. La frase sotto esame è del candidato
+— *«wire-compatible with Bincode 2.x when using the same configurations»* — e un README non è
+una misura. ⚙️ `cargo` **1.95.0** · Node **v24.9.0** · npm **11.6.0**, le stesse versioni di M-11.
+⛔ **Fuori dal workspace**, in una crate usa-e-getta dello scratchpad: nessun manifesto del
+repository toccato, nessun `Cargo.lock`, nessuna riga di `scripts/gate-deps.sh`.
+
+⛔ **Il banco mette i DUE encoder nella STESSA corsa**, con lo stesso enum dichiarato due volte —
+uno per derive — così un'eventuale differenza non può venire dalla varianza del banco. I casi
+sono scelti sui modi di fallire che questo repository ha già misurato: **4096** è il valore che
+un lettore ingenuo del varint rese **251** (gotcha **#30**), l'enum porta un **indice di
+variante**, e una stringa di byte più un `u64` grande esercitano lunghezza e varint.
+
+| Caso | `bincode` 2.0.1 | `bincode-next` 3.1.1 | Byte |
+|---|---|---|---|
+| `Hello { id: 4096, ok: true }` | `00 fb 00 10 01` | `00 fb 00 10 01` | ✅ identici |
+| `Data([de ad be ef])` | `01 04 de ad be ef` | `01 04 de ad be ef` | ✅ identici |
+| `Text("ciao")` | `02 04 63 69 61 6f` | `02 04 63 69 61 6f` | ✅ identici |
+| `Big(0x0000deadbeefcafe)` | `03 fd fe ca ef be ad de 00 00` | `03 fd fe ca ef be ad de 00 00` | ✅ identici |
+| `Nothing` | `04` | `04` | ✅ identici |
+
+✅ **Cinque casi, ZERO scarti**, e l'andata-e-ritorno incrociata è **sui valori** e non
+sull'assenza di eccezioni (ADR-0037, regola 1): ciascuna crate decodifica i byte scritti
+dall'**altra**, rende il valore giusto e **consuma tutti i byte**.
+
+✅ **E IL PARI LI LEGGE, misurato oggi e non dedotto dall'identità dei byte.** `bincode-ts`
+1.0.0 su Node v24.9.0, sugli stessi byte che il fork ha scritto: `Hello({"id":4096,"ok":true})`
+— **4096 e non 251** — `Data([[222,173,190,239]])`, `Text(["ciao"])`,
+`Big(["244837814094590"])`, `Nothing([])`, e **tutti i byte consumati** in tutti e cinque.
+
+⛔ **NON-VACUITÀ, nelle due direzioni (gotcha #14, #24), perché un verde che non sa diventare
+rosso non prova niente.**
+
+| Direzione | La mutazione | Esito |
+|---|---|---|
+| il banco **discrimina**? | un solo valore in un solo caso, `4096` → `4097` sul lato del fork | ✅ **quel** caso `DIFFERENT`, gli altri **quattro** `IDENTICAL` |
+| il pari **rifiuta** un formato estraneo? | i byte CBOR `81 00`, cioè ciò che il canale worker mette sul proprio filo | ✅ rifiutati: `Invalid enum variant index: 129` |
+
+⚠️ **Una mutazione più larga era stata provata per prima e non dice niente**: cambiando la
+**configurazione** del fork a fixint, tutti e cinque i casi vanno `DIFFERENT` insieme — è la
+forma del vicolo cieco dell'audit del 2026-08-27, *se una mutazione fa cadere più cose di
+quella che stai provando, non ti dice niente su quella*. La revoca è stata verificata col
+`cmp` contro una copia byte-esatta, non con `git diff`, perché su un file non tracciato quel
+comando è vacuo (voce `E26` del piano).
+
+⛔ **E DUE COSTI SONO MISURATI, perché la misura non è solo il «sì».**
+
+| Il costo | La misura |
+|---|---|
+| il **grafo spedito cresce** | con le feature vere del kernel — `default-features = false, features = ["alloc", "derive"]` — `cargo tree -e normal,no-proc-macro` dà `bincode` 2.0.1 → **`unty`**, e `bincode-next` 3.1.1 → **`rapidhash` + `unty-next`**. La lista di ADR-0031 guadagnerebbe **una voce netta**, e ogni voce pretende la **propria giustificazione scritta** |
+| il **pari resta rotto come spedito** | e non c'entra col fork: `bincode-ts` 1.0.0 su Node 24 non si carica da **nessuno** dei due punti d'ingresso, ed è **la stessa** fragilità che §6.10.6 dichiara. ✅ **Ora la causa è misurata e non solo constatata:** il pacchetto dichiara `"type": "module"` e spedisce il build **CJS con estensione `.js`**, che Node legge allora come ESM; e il build **ESM** porta due violazioni indipendenti — `from "./utils"` **senza estensione** in `index.js`, e `from "."`, cioè un **import di directory**, in `utils.js`. Si aggira come fece M-11, con una copia locale corretta. ⚖️ È un costo di `bincode` **su `ipc`**, quindi si paga **in entrambi i rami** |
+
+⚠️ **Due esiti negativi della prima corsa erano del BANCO e non del pari**, ed è il gotcha
+**#17** nella direzione che M-11 aveva già incontrato: un `Uint8Array` dove la libreria vuole
+un `ArrayBuffer`, e un enum dichiarato senza `Variant(indice, tipo)`. ⛔ **La seconda è la più
+istruttiva:** in quello stato la sonda di non-vacuità *«il CBOR è rifiutato»* era **verde per
+la ragione sbagliata** — rifiutava **tutto**, anche l'input valido. Un oracolo che rifiuta
+tutto non è un oracolo.
+
+⚖️ **CHE COSA QUESTA MISURA DECIDE, E CHE COSA NO.** Decide che la compatibilità sul filo è
+**vera**, non dichiarata: il formato e il pari **non cambierebbero**. ⛔ **Non decide se
+adottare il fork:** restano il grafo che cresce, un manutentore solo, e il fatto che una
+**compatibilità misurata oggi su cinque casi** non è una garanzia sulle versioni future — un
+fork la può rompere quando vuole, e nulla ce lo direbbe se non un banco che oggi non esiste.
+La scelta resta la **D12**, del proprietario.
+
 ⚖️ **DOVE SI FERMA, e perché fermarsi non è rimandare.** La misura è **fatta** ed è il prodotto
 del compito; ciò che manca è la **scelta**, che non è dell'agente: cambiare la voce tocca la
 tabella di **§6.1.1**, la lista di **§7.3.1** e la riga di `scripts/gate-deps.sh` sul grafo

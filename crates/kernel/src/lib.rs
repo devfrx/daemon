@@ -37,3 +37,5 @@ pub mod arbiter;
 pub mod framing;
 
 pub mod wire;
+
+pub mod sensor;

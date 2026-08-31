@@ -779,9 +779,15 @@ un payload che viene da un artefatto `Untrusted`, cioè **I6 dentro il formato d
 affermazioni di data della specie che la passata precedente aveva **deciso** di togliere,
 sopravvissute perché quel censimento non arrivò mai al sorgente (radice **R1**, passo 3 della
 disciplina d'audit). ✅ **Il prodotto della prima passata REGGE**, misurato e non assunto.
-⛔ **Il residuo è RIDOTTO UNA SECONDA VOLTA e ancora non chiuso**, per la regola stessa: **due**
-giri dove gli altri compiti ne hanno avuti da tre a cinque, ed **entrambi** hanno trovato difetti
-veri — *«finché una passata non torna pulita»*. La casa unica resta `E53` dell'errata; le misure
+⛔ **E IL TERZO GIRO È STATO FATTO LO STESSO GIORNO, IL PRIMO DA UN SOTTO-AGENTE** — il
+proprietario li ha autorizzati, ed era la condizione che `E53` registrava come mancante. Altri
+**sei** rilievi, `E67`–`E72`: il gotcha **#98** che riproduce sul campo accanto, i conteggi del
+compito 5 sopravvissuti nella testa dei byte congelati e nella loro mappa, e un'annotazione che
+due documenti dichiaravano portante ed è **inerte**, misurata. ⚠️ **E uno dei sei era prezzato più
+grande del difetto** — gotcha **#65** applicato al rapporto di un sotto-agente.
+⛔ **Il residuo è RIDOTTO UNA TERZA VOLTA e ancora non chiuso**, per la regola stessa: **tre**
+giri, e **tutti e tre** hanno trovato difetti veri — *«finché una passata non torna pulita»*.
+La casa unica resta `E53` dell'errata; le misure
 stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito di generale sono i
 gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
 **formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro

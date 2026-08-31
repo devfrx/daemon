@@ -86,7 +86,15 @@ fn a_verdict_does_not_put_a_step_in_doubt() {
 }
 
 #[test]
-fn a_verdict_leaves_a_closed_step_closed() {
+fn a_verdict_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
+    // ⚠️ RENAMED ON 2026-08-31: it was `a_verdict_leaves_a_closed_step_closed`, and there is no
+    // CLOSED step in this bench at all — both steps here are OPEN, and what is asserted is that
+    // the doubt AND its resolutions come out exactly as they went in. The name described its
+    // SIBLING above, which does build a closed step and does assert it stays closed. ⛔ The
+    // name it now carries is its twin's in the `Note` pair, word for word, and that pair maps
+    // scenario to name the same way — which is what made the mismatch legible. Censused over
+    // the three houses that carried the old name, `reconcile.rs` cites it BY NAME. Errata `E69`.
+    //
     // ⛔ THE OTHER HALF: written as an `Outcome`, the arm would take a step OUT of the doubt
     // although nothing executed — the silent loss ADR-0007 exists to prevent. The comparison is
     // THE WHOLE VECTOR and not the identities, for the reason the note's twin gives: both

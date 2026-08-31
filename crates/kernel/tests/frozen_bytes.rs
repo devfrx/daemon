@@ -5,9 +5,17 @@
 //! next is meant to hit first. Three things become forbidden that were free until the commit
 //! that created these bytes:
 //!
-//! 1. A FIELD ADDED TO `RecordV1` MUST BE `Option<..>` WITH `#[cbor(default)]` AND A NEW
-//!    INDEX. `reason` came in at index 4 as a mandatory field precisely because no archive
-//!    existed yet; that exemption is spent.
+//! 1. A FIELD ADDED TO `RecordV1` MUST BE `Option<..>` AT A NEW INDEX, and is written
+//!    `#[cbor(default)]` by convention. `reason` came in at index 4 as a mandatory field
+//!    precisely because no archive existed yet; that exemption is spent.
+//!    ⚠️ WHICH HALF CARRIES IT WAS MEASURED ON 2026-08-31, AND IT IS THE `Option`: with the
+//!    annotation removed from `detail` the whole workspace stays green — 41 targets, 298
+//!    passed — INCLUDING the backward direction, because the 21-byte files still decode to
+//!    `detail: None`. `minicbor` already treats a missing `Option` field as `None`, so on an
+//!    `Option` the annotation is belt AND braces rather than the belt. ⛔ SAID OUT LOUD BECAUSE
+//!    THIS LINE CLAIMED IT WAS LOAD-BEARING AND NOTHING HELD IT: a field arriving without it
+//!    would turn nothing red, so a reader must not mistake the convention for the defence.
+//!    Errata `E72`.
 //! 2. THE MEANING OF AN EXISTING INDEX NEVER CHANGES. Index 3 changed role once, from "the
 //!    reason" to "the untrusted content", and it was free. Rule 4 of §4.9.2 now forbids it,
 //!    and the reuse was MEASURED: it decodes to the WRONG SILENCE, not to an error.
@@ -33,21 +41,34 @@
 //! there green, because the derive renumbers encoding and decoding together and no round trip
 //! can see a symmetric change.
 //!
-//! ⛔ THREE RECORDS AND NOT ONE, AND THE COUNT IS FORCED BY WHAT THERE IS TO PIN. A record
-//! carries ONE variant of each of the three `index_only` enums, and between them those enums
-//! have EIGHT variants — `RecordKind` three, `EffectClass` three, `Trust` two. One frozen
-//! record would pin three indices out of eight and leave five held by nothing at all, which is
-//! the state `record_shape.rs` describes and which this file exists to end. Three records are
-//! the FEWEST that cover all eight, because the widest enum has three variants; the effects
-//! and the kinds are laid out as a Latin square so that no pair of fields can be swapped
-//! without moving at least one of the three files.
+//! ⛔ MORE THAN ONE RECORD, AND HOW MANY IS FORCED BY WHAT THERE IS TO PIN — NOT CHOSEN. A
+//! record carries exactly ONE variant of each `index_only` enum, so a single frozen record
+//! pins one index per enum and leaves every other variant held by nothing at all, which is the
+//! state `record_shape.rs` describes and which this file exists to end. Two rules follow, and
+//! both are rules rather than counts: the set must cover EVERY variant of every one of those
+//! enums, and it therefore cannot be smaller than the WIDEST of them. The effects and the
+//! kinds are laid out as a Latin square, so no pair of fields can be swapped without moving at
+//! least one file.
 //!
-//! ⚠️ AND THE THREE DIFFER IN NOTHING ELSE, deliberately: same payload, same reason, same
-//! framing. Two consequences that are both wanted — any pair of the three files differs only
-//! inside bytes 4, 5 and 6, so the map's claim about where the enums sit is legible by
-//! inspection; and the same six characters travel as a CBOR BYTE STRING at index 3 and as
-//! CBOR TEXT at index 4, one nibble apart in the frozen bytes, so the asymmetry `reason`
-//! exists for is visible in the artefact instead of only in the source.
+//! ⛔ RECALL OF 2026-08-31 — THIS PARAGRAPH CARRIED THREE NUMERALS AND ALL THREE HAD GONE
+//! FALSE: "THREE RECORDS", "EIGHT variants — `RecordKind` three", and "Three records are the
+//! FEWEST that cover all eight". `Verdict` made the kinds four and the total nine, and the
+//! fourth record arrived in the same commit that left this head untouched — the probes below
+//! were renamed for exactly this reason on that day, and the paragraph justifying them was
+//! not. ⚠️ TAKEN OUT AND NOT REALIGNED, because the population grows with the format: how many
+//! records there are is `the_frozen_records()` below, whose return type carries the count the
+//! compiler checks, and how many variants there are is the enums themselves. Errata `E70`.
+//!
+//! ⚠️ AND THE RECORDS DIFFER IN AS LITTLE AS THE FORMAT ALLOWS, deliberately: same payload,
+//! same reason, same framing. Two consequences that are both wanted — the ones carrying NO
+//! `detail` differ from each other only inside bytes 4, 5 and 6, so the map's claim about
+//! where the enums sit is legible by inspection; and the same six characters travel as a CBOR
+//! BYTE STRING at index 3 and as CBOR TEXT at index 4, one nibble apart in the frozen bytes,
+//! so the asymmetry `reason` exists for is visible in the artefact instead of only in the
+//! source. ⛔ A RECORD THAT CARRIES A `detail` IS LONGER AND ALSO MOVES BYTE 3, the field-array
+//! header — measured, `85` against `86` — so the "bytes 4, 5 and 6" reading holds WITHIN the
+//! detail-less ones and nowhere else. It said "any pair of the three files" until 2026-08-31,
+//! which was true when only three existed and false the moment the fourth arrived.
 //!
 //! ⚠️ THE FRAMING IS FOUR BYTES AND NOT THREE, and it is written here because the obvious
 //! reading gets it wrong: `82 00` is the version enum and its variant index, and then comes
@@ -90,8 +111,8 @@ const FORMAT_CHANGED: &str = "\n⛔ THE DURABLE FORMAT CHANGED.\n\
      There is deliberately no way to regenerate these files: read the head of this one.\n\
      The map of `offset -> bytes -> field` is in tests/frozen/record_v1.map.\n";
 
-/// Builds a record with the frozen payload and the frozen reason. ⛔ ONE CONSTRUCTOR for the
-/// three frozen records AND for the mutants of `every_field_sits_at_the_offset_the_map_gives_it`:
+/// Builds a record with the frozen payload and the frozen reason. ⛔ ONE CONSTRUCTOR for ALL
+/// the frozen records AND for the mutants of `every_field_sits_at_the_offset_the_map_gives_it`:
 /// a second constructor would be a second place to keep aligned, and the first one to stop
 /// being updated lies in silence (§7.4.4).
 fn record(kind: RecordKind, effect: EffectClass, trust: Trust, detail: Option<Detail>) -> Record {
@@ -105,10 +126,13 @@ fn record(kind: RecordKind, effect: EffectClass, trust: Trust, detail: Option<De
     })
 }
 
-/// The three frozen records, each beside the name of the file that holds its bytes.
+/// The frozen records, each beside the name of the file that holds its bytes. ⚠️ HOW MANY
+/// THERE ARE IS THE RETURN TYPE, one line below, which the compiler checks — it is not written
+/// in this sentence, which said "The three frozen records" while the signature already said
+/// four (errata `E70`).
 ///
-/// ⛔ CHANGING ANY OF THESE VALUES CHANGES THE BYTES: this function and the three files are
-/// ONE artefact in four pieces, and the pieces are only ever read together.
+/// ⛔ CHANGING ANY OF THESE VALUES CHANGES THE BYTES: this function and the `.cbor` files are
+/// ONE artefact, and its pieces are only ever read together.
 ///
 /// ⚠️ THE ORDER IS THE MAP'S ORDER, and `the_map_lists_the_bytes_that_are_really_frozen`
 /// compares the names pairwise, so the two cannot drift apart in silence.
@@ -203,7 +227,7 @@ fn the_frozen_records_are_distinguishable_in_the_bytes() {
     // count would flatter the coverage: three artefacts, two indices held. The pairs are all
     // compared, not the adjacent ones — two colliding while the third stays apart is exactly
     // the shape a partial comparison lets through, and it is the shape
-    // `the_three_record_kinds_are_distinguishable_in_the_bytes` was widened for.
+    // `the_record_kinds_are_distinguishable_in_the_bytes` was widened for.
     //
     // ⚠️ THE NAME SAID `the_three_…` UNTIL THE FOURTH FROZEN RECORD ARRIVED, AND IT IS RENAMED
     // RATHER THAN LEFT: a name that counts its own subjects is a count like any other. The
@@ -237,8 +261,8 @@ fn the_frozen_records_are_distinguishable_in_the_bytes() {
             let moved: Vec<usize> = (0..left.len()).filter(|&i| left[i] != right[i]).collect();
             assert!(
                 moved.iter().all(|&i| (4..7).contains(&i)),
-                "`{left_name}` and `{right_name}` differ at bytes {moved:?}, and the three \
-                 frozen records are meant to differ only at 4, 5 and 6"
+                "`{left_name}` and `{right_name}` differ at bytes {moved:?}, and frozen records \
+                 of the same arity are meant to differ only at 4, 5 and 6"
             );
         }
     }
@@ -247,9 +271,13 @@ fn the_frozen_records_are_distinguishable_in_the_bytes() {
 #[test]
 fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
     // ⛔ THIS IS WHY THERE IS MORE THAN ONE FILE. Pinning `Intent`, `Idempotent` and
-    // `Untrusted` alone would hold THREE indices out of eight and leave `Outcome`, `Note`,
-    // `Verifiable`, `Unrepeatable` and `Instruction` held by nothing — and `record_shape.rs`
-    // MEASURED that every other probe survives a symmetric renumbering, so "nothing" is exact.
+    // `Untrusted` alone would hold ONE index per enum and leave EVERY OTHER variant of the
+    // three held by nothing — and `record_shape.rs` MEASURED that every other probe survives a
+    // symmetric renumbering, so "nothing" is exact. ⚠️ THE LEFTOVERS ARE NOT LISTED BY NAME
+    // HERE, and that is the fix rather than the shortcut: this sentence used to enumerate them
+    // and to say "THREE indices out of eight", and the list went one short and the total one
+    // low the day `Verdict` arrived. What enumerates them is the assertion below, which reads
+    // the enums instead of quoting them (errata `E70`).
     //
     // ⚠️ RECALL OF 2026-08-31 — THE NAME SAID `..._of_the_three_enums_...` AND IT COUNTED ITS
     // OWN SUBJECTS. Renamed and not realigned to four, on the precedent this same file set for

@@ -300,9 +300,14 @@ pub struct RecordV1 {
     /// other two was measured to be wrong — putting CBOR in `payload` reopens the defect that
     /// splitting `reason` shut on 2026-08-10, and `reason` is text.
     ///
-    /// ⛔ OPTIONAL, WITH `#[cbor(default)]`, AT A NEW INDEX — rule 3 of §4.9.2, and the exemption
-    /// `reason` used is SPENT: `tests/frozen_bytes.rs` exists, so this is how every field added
-    /// to V1 arrives from now on.
+    /// ⛔ OPTIONAL, AT A NEW INDEX — rule 3 of §4.9.2, and the exemption `reason` used is SPENT:
+    /// `tests/frozen_bytes.rs` exists, so this is how every field added to V1 arrives from now
+    /// on. ⚠️ THE `#[cbor(default)]` BELOW IS CONVENTION AND NOT THE MECHANISM, measured on
+    /// 2026-08-31: removed, the whole workspace stays green and the older 21-byte records still
+    /// decode to `None`, because `minicbor` already reads a missing `Option` field as `None`.
+    /// It is kept — belt and braces cost nothing on an artefact that cannot be regenerated —
+    /// but it is `Option` that carries the rule, and this doc used to say otherwise. Errata
+    /// `E72`.
     ///
     /// ✅ ADDITIVE, MEASURED IN BOTH DIRECTIONS on 2026-08-30 (P-15): with `None` the three
     /// frozen records encode to the SAME 21 BYTES — `minicbor` truncates a trailing `None`

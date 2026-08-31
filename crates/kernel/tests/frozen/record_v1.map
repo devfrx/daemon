@@ -6,11 +6,14 @@
 # hexadecimal output of a throwaway probe that was deleted in the same commit.
 # ⛔ NOT REGENERATED. If the bytes change, a new VERSION of the record is opened.
 #
-# ⛔ ONE MAP FOR THREE FILES, AND THE ASYMMETRY IS DELIBERATE. The `.cbor` files are separate
+# ⛔ ONE MAP FOR ALL THE FILES, AND THE ASYMMETRY IS DELIBERATE. The `.cbor` files are separate
 # because each one is an irreproducible artefact and a single blob would make a one-record
 # change look like a whole-archive change; the map is one because it describes ONE format, and
-# three maps would be three places to keep aligned for one property — the very thing the
-# paragraph above refuses.
+# a map per file would be one place per file to keep aligned for a single property — the very
+# thing the paragraph above refuses.
+# ⚠️ RECALL OF 2026-08-31: this line said "FOR THREE FILES" and the map had four sections by
+# then. Taken out and not realigned — how many files there are is the sections below, and the
+# bench reads them (errata `E70`).
 #
 # ⛔ WHAT IS CHECKED HERE AND WHAT IS NOT — read this before believing a cell.
 #   Rows are `offset | hex bytes | prose`, and a line that is only a file name opens a section.
@@ -30,11 +33,17 @@
 # `82 00` is the version enum and its variant index, then `81` — the ONE-ELEMENT ARRAY of the
 # variant's body — and only then `85`, the five fields. So the fields begin at byte 4.
 #
-# ⛔ THE THREE RECORDS DIFFER ONLY AT BYTES 4, 5 AND 6, on purpose: between them the three
-# `index_only` enums have EIGHT variants — RecordKind 3, EffectClass 3, Trust 2 — and a single
-# record would pin three of them and leave five held by nothing. Three is the fewest that cover
-# all eight. Everything else is identical, so the difference between any two files is exactly
-# the three enum bytes.
+# ⛔ RECORDS OF THE SAME ARITY DIFFER ONLY AT BYTES 4, 5 AND 6, on purpose: a record pins ONE
+# variant of each `index_only` enum, so a single record would leave every other variant of them
+# held by nothing, and the set has to cover them all. Everything else about those records is
+# identical, so the difference between two files of one arity is exactly the enum bytes.
+# ⛔ A RECORD CARRYING A `detail` IS LONGER AND ALSO MOVES BYTE 3, the field-array header —
+# `85` against `86` — so it differs from the others outside 4..7 by construction, and the bench
+# compares the WHERE only within one arity.
+# ⚠️ RECALL OF 2026-08-31: this paragraph said "THE THREE RECORDS", "EIGHT variants —
+# RecordKind 3", "Three is the fewest" and "the difference between any two files"; all four
+# went false when `Verdict` and index 5 arrived. Taken out and not realigned to four and nine,
+# because both grow with the format (errata `E70`).
 #
 # ⚠️ `payload` AND `reason` CARRY THE SAME SIX CHARACTERS, so the two major types sit side by
 # side in the bytes: `46` is a byte string of 6, `66` is text of 6. One nibble apart, and the

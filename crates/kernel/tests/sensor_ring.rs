@@ -18,9 +18,19 @@ use kernel::time::Millis;
 use simulator::journal::MemoryJournal;
 
 /// A sensor whose verdict the TEST chooses — §6.4.2 asks for exactly this double.
+///
+/// ⛔ `spent` IS CHOSEN BY THE TEST AND NOT FIXED, AND IT HAD TO BECOME SO. It was the literal
+/// `Millis::new(7)` until 2026-08-31, which made `7` the ONLY cost that ever crossed the
+/// conversion in the whole workspace — so `spent_millis: 7` written as a CONSTANT in
+/// `run_the_ring` survived every test there is, 41 targets and 298 passed, identical to the
+/// baseline. ⚠️ THE PROBES DELIBERATELY USE DIFFERENT VALUES (gotcha #48): a ring that ignored
+/// the sensor and wrote either constant fails on the other, which is what a single value can
+/// never ask. It is the shape of `E65` on a field `E65` did not reach, and of the two-value
+/// probe this same file already uses for the corrective step's class. Errata `E67`.
 struct ScriptedSensor {
     cost: CostClass,
     outcome: VerdictOutcome,
+    spent: u64,
 }
 
 impl Sensor for ScriptedSensor {
@@ -32,7 +42,7 @@ impl Sensor for ScriptedSensor {
         Verdict {
             outcome: self.outcome,
             detail: Untrusted::new("field `name` is missing".into()),
-            spent: Millis::new(7),
+            spent: Millis::new(self.spent),
         }
     }
 }
@@ -76,6 +86,7 @@ fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
     let sensor = ScriptedSensor {
         cost: CostClass::Computational,
         outcome: VerdictOutcome::Pass,
+        spent: 3,
     };
 
     let opened = run_the_ring(
@@ -115,7 +126,12 @@ fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
         detail.passed,
         "a passing sensor wrote a verdict that says it failed"
     );
-    assert_eq!(detail.spent_millis, 7);
+    // ⛔ AND `3` AND NOT `7`, WHICH IS THE WHOLE OF THIS LINE. The failing probe below asserts
+    // `7`, so the two together refuse a ring that writes EITHER constant — and until this pair
+    // existed `7` was the only cost that ever crossed the conversion, so `spent_millis: 7`
+    // written as a literal in `run_the_ring` survived the whole workspace. Same shape as
+    // `passed` above, on the field beside it. Errata `E67`.
+    assert_eq!(detail.spent_millis, 3);
 
     // ⛔ AND THE TWO FIELDS NOBODY READ. `effect` is argued at length beside the record — it is
     // `Verifiable` because re-running a sensor over the same artefact answers the same thing —
@@ -128,9 +144,18 @@ fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
     assert_eq!(body.effect, EffectClass::Verifiable);
     assert_eq!(body.reason, "a sensor judged the artefact of this step");
 
-    // ⚠️ AND THE VERDICT IS ON THE JUDGED STEP AND NOWHERE ELSE, which is the half that would be
-    // missed: a ring that wrote its verdict against the NEXT step would satisfy every line above
-    // except this one.
+    // ⚠️ AND THE VERDICT IS ON THE JUDGED STEP AND NOWHERE ELSE. ⛔ RECALL OF 2026-08-31: this
+    // said "a ring that wrote its verdict against the NEXT step would satisfy every line above
+    // except this one", and the measurement says otherwise — such a ring reaches NO line above,
+    // because `note` on a step nobody opened is `Err(OutOfOrder)` and the probe dies on the
+    // `.expect` at the call. Measured: `note(next, ..)` gives 41 targets, 294 passed, 4 FAILED,
+    // panicking with `the ring: OutOfOrder`.
+    //
+    // ⚠️ SO THIS ASSERTION IS DOMINATED, AND IT STAYS ANYWAY — declared rather than deleted.
+    // Entry 0 is the intent this test wrote itself and entry 1 is already pinned three lines
+    // up, so nothing a single mutation of `run_the_ring` can do makes it the FIRST to fail. It
+    // costs one line and states the property in the form a reader looks for; what it must not
+    // do is claim a discriminating power it does not have. Errata `E68`.
     assert!(
         written.iter().all(|(s, _)| *s == judged),
         "the ring touched a step other than the one it judged"
@@ -149,6 +174,7 @@ fn a_failing_verdict_opens_a_new_step_and_carries_the_detail() {
     let sensor = ScriptedSensor {
         cost: CostClass::Computational,
         outcome: VerdictOutcome::Fail,
+        spent: 7,
     };
 
     let opened = run_the_ring(
@@ -221,6 +247,7 @@ fn an_inferential_sensor_is_refused_by_the_tight_ring() {
     let sensor = ScriptedSensor {
         cost: CostClass::Inferential,
         outcome: VerdictOutcome::Fail,
+        spent: 99,
     };
 
     let opened = run_the_ring(
@@ -274,6 +301,7 @@ fn the_class_of_the_corrective_step_is_the_one_the_caller_delivered() {
         let sensor = ScriptedSensor {
             cost: CostClass::Computational,
             outcome: VerdictOutcome::Fail,
+            spent: 7,
         };
 
         run_the_ring(

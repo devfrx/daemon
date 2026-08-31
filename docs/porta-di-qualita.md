@@ -3631,7 +3631,7 @@ ignorate**, `GATE GREEN` — rimisurata e non citata.
 not covered `` aggiungendo una variante, e la mutazione è stata revocata da copia byte-esatta. Le
 due sonde nuove di `reconciliation.rs` uccidono **entrambe** le vie alternative dell'arm `Verdict`
 di `steps_in_doubt`: trattato come `enter` → `a_verdict_does_not_put_a_step_in_doubt` **e**
-`a_verdict_leaves_a_closed_step_closed` rosse (**2 fallite**); trattato come `leave` → la seconda
+`a_verdict_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them` rosse (**2 fallite**); trattato come `leave` → la seconda
 rossa (**1 fallita**). ⛔ **Il commento accanto all'arm AFFERMA che entrambe furono provate, ed è
 un'affermazione come le altre** (gotcha **#65**): rimisurata, **regge**.
 
@@ -3689,6 +3689,60 @@ di questo file restano come sono**, per la stessa decisione: sono verbali.
 ⚠️ **E `riferimenti.md` NON è stato toccato, deliberatamente, per la settima passata di seguito:**
 le misure di questa revisione vivono qui, accanto ai controlli che difendono. La voce aperta resta
 del proprietario, con una prova in più e non con una risposta.
+
+### La TERZA passata — la prima da un sotto-agente, e il gotcha #98 riproduce lo stesso giorno
+
+⛔ **Fatta il 2026-08-31 da un SOTTO-AGENTE, dopo che il proprietario li ha autorizzati** — ed è
+la condizione che `E53` registrava come mancante da due passate. Sei rilievi, `E67`–`E72`.
+⚠️ **Tutti riverificati prima di agire**, perché ciò che torna da un sotto-agente è
+un'affermazione e non un fatto; e uno era **prezzato più grande del difetto**.
+
+⛔ **`E67` — IL GOTCHA #98 ALLA SECONDA OCCORRENZA, LO STESSO GIORNO E SUL CAMPO ACCANTO.** Vale
+più della sua prima misura, perché una classe che riproduce entro poche ore su un campo adiacente
+non è un caso: è la forma. `spent_millis: verdict.spent.get()` sostituito con la **costante 7**
+lasciava `41 · 298 · 0`, identico alla baseline, per la **stessa** ragione di `passed` — il doppio
+di banco restituiva il letterale `Millis::new(7)`, quindi **un solo costo attraversava la
+conversione in tutto il workspace**, e i tre letterali di banco (`frozen_bytes.rs`,
+`reconciliation.rs`, `record_shape.rs`) portano anch'essi `7` senza passare dall'anello.
+✅ **Chiuso col doppio a valore consegnato e due valori distinti fra le sonde** — `3` e `7`,
+gotcha **#48** — e **rimisurato nelle due direzioni**: costante `7` → `41 · 297 · 1`, costante `3`
+→ `41 · 297 · 1`. Nessuna delle due passa più.
+
+⛔ **`E70` — LA TESTA DI `frozen_bytes.rs` E LA MAPPA DEI BYTE, cioè le due case che il censimento
+di `E56` non ha raggiunto.** Misurato sui file veri e non dedotto:
+
+| | |
+|---|---|
+| record congelati | **4** — `intent` 21, `outcome` 21, `note` 21, `verdict` **27** byte |
+| varianti degli enum `index_only` | **9** — `RecordKind` 4, `EffectClass` 3, `Trust` 2 |
+| coppie di **pari arità** | differiscono solo ai byte 4, 5, 6 — **regge** |
+| coppie che includono il verdetto | differiscono anche al byte **3** (`85` → `86`) e in tutta la coda |
+
+⛔ **E il fatto che pesa non è il numero: è che le SONDE di quel file erano già state corrette e il
+capoverso che le giustifica no.** Nello stesso commit due sonde furono rinominate scrivendo la
+regola *«a name that counts its own subjects is a count like any other»*, e il codice porta già il
+salto delle coppie di arità diversa con la propria spiegazione. ✅ **Numerali tolti e non
+riallineati**, sostituiti dalla **regola** e dal rimando a `the_frozen_records()`, il cui tipo di
+ritorno porta il conto che **il compilatore** controlla.
+
+⚠️ **`E72` — un'annotazione dichiarata portante da due documenti, e inerte.** Tolto
+`#[cbor(default)]` da `detail`, il workspace resta `41 · 298 · 0`, **compresa** la direzione
+all'indietro: i `.cbor` da 21 byte decodificano ancora a `None`, perché `minicbor` legge già un
+`Option` mancante come `None`. ⚖️ **Corretta la REGOLA, non aggiunta una sonda** — l'annotazione
+resta come cintura e bretelle, ma i due doc ora dicono **quale metà difende**. Il confronto che lo
+rende visibile: `#[cbor(with = "minicbor::bytes")]` su `payload` è dichiarato portante **ed è
+pinzato** da una sonda propria.
+
+⚠️ **E `E69` È LA LEZIONE SUL DELEGARE: il rapporto prezzava DUE nomi scambiati, ed era sbagliato
+UNO.** La coppia di `Note`, che porta i nomi giusti, mappa scenario→nome **allo stesso modo**,
+quindi `a_verdict_does_not_put_a_step_in_doubt` è corretto. Gotcha **#65** applicato al rapporto di
+un sotto-agente, colto leggendo la **coppia gemella** invece del rapporto — e il rinomino è stato
+censito sulle **tre** case del nome vecchio, fra cui `reconcile.rs`, che lo cita per nome.
+
+📌 **Baseline invariata a passata chiusa: `GATE GREEN`, 41 bersagli, 298 passate, 0 fallite, 2
+ignorate.** ⛔ **L'invarianza del numeratore è il dato di tutte e tre le passate:** i rimedi hanno
+allargato sonde e corretto prose, non aggiunto casi — a mancare erano **asserzioni**, e il
+conteggio dei test non le vede.
 
 ## Livello 3 — vuoto, e non è una svista
 

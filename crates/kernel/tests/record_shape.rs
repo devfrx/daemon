@@ -114,7 +114,7 @@ fn a_payload_is_a_byte_string_and_not_an_array_of_numbers() {
 }
 
 #[test]
-fn the_three_record_kinds_are_distinguishable_in_the_bytes() {
+fn the_record_kinds_are_distinguishable_in_the_bytes() {
     let intent = Record::V1(RecordV1 {
         kind: RecordKind::Intent,
         effect: EffectClass::Idempotent,
@@ -157,13 +157,13 @@ fn the_three_record_kinds_are_distinguishable_in_the_bytes() {
 }
 
 #[test]
-fn every_record_kind_survives_the_round_trip_and_the_three_differ_in_the_bytes() {
+fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes() {
     // ⛔ Gotcha #30 on the field `src/record.rs` calls the one the whole write-ahead protocol
     // rests on: a step with an intent and no outcome is IN DOUBT, and the doubt is what makes
     // recovery possible. A `decode` that answered `Intent` to everything would erase the
     // distinction — every step would look in doubt for ever — and it was measured that every
     // OTHER test written at this commit stays green under exactly that defect, including
-    // `the_three_record_kinds_are_distinguishable_in_the_bytes`, which never reads a `kind` back.
+    // `the_record_kinds_are_distinguishable_in_the_bytes`, which never reads a `kind` back.
     //
     // ⚠️ THE BYTE HALF BELOW OVERLAPS THAT TEST DELIBERATELY, and the overlap is the cheaper
     // choice: the three `every_..._survives` probes are meant to be read as one shape, and a
@@ -181,7 +181,20 @@ fn every_record_kind_survives_the_round_trip_and_the_three_differ_in_the_bytes()
     };
 
     // The VALUE READ BACK, not the outcome of reading.
-    for kind in [RecordKind::Intent, RecordKind::Outcome, RecordKind::Note] {
+    //
+    // ⚠️ `Verdict` JOINED THIS LIST ON 2026-08-31, AND ITS ABSENCE WAS THE NAME'S PROBLEM RATHER
+    // THAN A HOLE: the probe says "EVERY record kind" and walked three of four from the day the
+    // fourth variant arrived. One array element makes the claim true, which is cheaper than
+    // weakening the name. ⛔ THE PAIRWISE BLOCK BELOW DELIBERATELY STAYS AT THREE: that the
+    // fourth is distinguishable in the bytes is held by `frozen_bytes.rs`, over EVERY pair
+    // including it, and asserting it here too would be a second house for one property (§7.4.4).
+    // Errata `E71`.
+    for kind in [
+        RecordKind::Intent,
+        RecordKind::Outcome,
+        RecordKind::Note,
+        RecordKind::Verdict,
+    ] {
         let Record::V1(read) = Record::decode(&encoded(kind)).expect("decode");
         assert_eq!(
             read.kind, kind,

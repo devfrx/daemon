@@ -35,6 +35,23 @@ fn a_verdict_survives_the_round_trip() {
 }
 
 #[test]
+fn a_queued_verdict_survives_the_round_trip() {
+    // ⛔ THE THIRD WAY OF THE VERDICT, AND IT WAS THE ONE NOTHING TOUCHED. `Refused` makes the
+    // round trip above and `Granted` is encoded by the two probes below, so `Queued` was the
+    // only variant of this enum that never reached the wire at all -- a wrong tag on it would
+    // have been read by no assertion in the workspace. Mutation G5 measures the gap it closes.
+    //
+    // ⚠️ ITS OWN `#[test]` AND NOT A SECOND ASSERTION IN `a_verdict_survives_the_round_trip`,
+    // for the reason written on the pair at the bottom of this file -- gotcha #14. That probe
+    // asserts on `Refused` FIRST, so a red there would stop it before this input ran, and the
+    // one variant with no other exercise anywhere is exactly the one that must not depend on
+    // another assertion passing.
+    let message = IpcMessage::Verdict(Verdict::Queued);
+    let bytes = message.encode().expect("encode");
+    assert_eq!(IpcMessage::decode(&bytes), Ok(message));
+}
+
+#[test]
 fn a_message_with_a_tail_does_not_decode() {
     let mut bytes = IpcMessage::Verdict(Verdict::Granted)
         .encode()

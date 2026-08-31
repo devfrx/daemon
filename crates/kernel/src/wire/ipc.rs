@@ -17,8 +17,8 @@
 //! ⛔ NO VERSION ENUM, NO RETIRED-INDEX REGISTER, NO FROZEN BYTES -- I4 renounces versioning
 //! (§6.4). What stands in its place is the BUILD STAMP of §6.1.2, WHICH THIS MILESTONE DOES
 //! NOT BUILD (§3.4). Until it exists, NOTHING REFUSES A STALE GUI, and today that costs
-//! nothing because there is no gui to refuse -- `grep -rn "impl Ipc" crates/` returns a bench
-//! fake. The trigger is milestone 2 of the subproject, the one that brings the shell.
+//! nothing because there is no gui to refuse -- `grep -rnE "^ *impl Ipc for" crates/` returns
+//! a bench fake. The trigger is milestone 2 of the subproject, the one that brings the shell.
 //!
 //! ⛔ AND THE REVOCATION core -> gui IS A DECLARED NON-CONSTRUCTION. ADR-0033 names it -- "the
 //! gui stops rendering the 3D and says so" -- and it is the first message this vocabulary will
@@ -45,10 +45,10 @@ use crate::framing::{self, WireError};
 /// inside a type the arbiter DECIDES with. The split here is the one ADR-0005 already
 /// describes: THE REQUESTER DECLARES THE RESERVATION, and the core names the profile.
 ///
-/// ⛔ AND CARRYING THE NAME AND RESOLVING IT IS NOT THE OTHER ROAD, measured rather than
-/// argued: `grep -rn "ResourceProfile {" crates/ --include=*.rs` finds two constants in
-/// `daemon` and two bench helpers, and NOTHING that maps a name onto a profile. Building such
-/// a register would be a mechanism no written line asks for.
+/// ⛔ AND CARRYING THE NAME AND RESOLVING IT IS NOT THE OTHER ROAD: NOTHING MAPS A NAME ONTO
+/// A PROFILE -- `grep -rn "ResourceProfile {" crates/ --include=*.rs` shows every site spelling
+/// the fields out, and no register anywhere. Building one would be a mechanism no written line
+/// asks for.
 ///
 /// ⚠️ THE COST, stated: the core picks ONE profile for the gui, so the gui cannot ask for an
 /// arbitrary one. That is what ADR-0033 describes -- a single consumer, the 3D viewer beyond
@@ -125,9 +125,12 @@ impl IpcMessage {
     /// argument `Record::encode` makes and `crate::wire::worker::FromWorker::encode` borrows
     /// -- READ AGAINST THIS TYPE'S GRAPH RATHER THAN COPIED. That graph is `Mib(u64)`,
     /// `ComputeClass`, `Preemption`, `Millis(u64)` and unit variants; the writer is a `Vec`
-    /// that grows. Of `EncodeError`'s variants reachable without `std`, `UnexpectedEnd` is a
-    /// writer out of room, and the other two want a `RefCell` or a caller-supplied string --
-    /// none of which this graph has.
+    /// that grows. No variant of `EncodeError` reachable without `std` is producible by it:
+    /// they want a writer out of room, a borrowed `RefCell`, or a string the caller supplies.
+    /// ⛔ AND THEY ARE NOT ENUMERATED, WHICH IS THE CHOICE: `EncodeError` is
+    /// `#[non_exhaustive]` and the manifest asks for `version = "2"` rather than an exact pin,
+    /// so a list of its variants is an assertion a future release can falsify IN SILENCE, with
+    /// nothing here to go red. The relation survives a variant being added; a tally does not.
     ///
     /// ⚠️ THE SHAPE DIFFERS FROM THE TWIN'S AND THE ARGUMENT DOES NOT. `minicbor::encode`
     /// writes into a `Vec` the caller already owns, so its `Result` is dropped with `let _`;

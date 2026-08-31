@@ -110,9 +110,11 @@ use alloc::vec::Vec;
 /// ⛔ DATED RECALL, 2026-08-31 -- THE SUBJECT AGED AND THE CLAIM DID NOT, so the sentence is
 /// RE-POINTED AND NOT REMOVED (§6.5, gotcha #87). MILESTONE 6 DOES NOT IMPLEMENT THIS PORT: it
 /// brings the SCHEMA -- `crate::wire::ipc` -- and the transport is staged out (open item 5).
-/// Measured rather than assumed: `grep -rn "impl Ipc" crates/` still finds ONE bench fake and
-/// nothing else. ⚠️ Read "whoever implements this port" WITH NO MILESTONE ATTACHED. This line
-/// has now named two, and naming a third would only schedule the same correction again.
+/// Measured rather than assumed: `grep -rnE "^ *impl Ipc for" crates/` still finds ONE bench
+/// fake and nothing else. ⛔ ANCHORED, AND SPELLING OUT `for`: the bare `impl Ipc` matches
+/// `impl IpcMessage` too, and an unanchored one matches the paragraphs that quote it.
+/// ⚠️ Read "whoever implements this port" WITH NO MILESTONE ATTACHED. This line has now
+/// named two, and naming a third would only schedule the same correction again.
 /// ⛔ AND REMOVING IT WOULD LEAVE UNGUARDED THE VERY DEFECT IT EXISTS TO PREVENT, which is the
 /// whole reason the fix is a re-point: two independent counters that look identical, diverging
 /// with nothing to report it.

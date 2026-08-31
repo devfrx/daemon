@@ -774,7 +774,8 @@ proprietario**, perché l'anello dichiara *«riesegui»* per un passo il cui eff
 ancora e ADR-0007 decide il contrario. ⛔ **Il residuo è RIDOTTO e non chiuso:** un solo giro dove
 gli altri compiti ne hanno avuti da tre a cinque, e quel giro ha trovato tre difetti veri — che è
 la ragione per cui la regola dice *«finché una passata non torna pulita»*. La casa unica resta
-`E53` dell'errata; le misure stanno in [`porta-di-qualita.md`](porta-di-qualita.md).
+`E53` dell'errata; le misure stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che
+ne è uscito di generale è il gotcha **#96**.
 ⏭️ **IL PROSSIMO PASSO È IL COMPITO 6** — §6.2 e §6.3: il decisore, il gettone di conformità e il
 record risolto. ⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
 propria variante e il proprio record congelato; e la voce `E50` gli dice che l'elenco dei file di

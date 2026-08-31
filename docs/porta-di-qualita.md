@@ -3593,6 +3593,12 @@ misurò**, e riscriverlo distruggerebbe l'unica prova di che cosa fu creduto: è
 della **55ª misura**, applicata a una data invece che a una cifra. Il racconto sta nella tabella
 delle parti del piano, in una casa sola.
 
+⚠️ **E `riferimenti.md` NON è stato toccato, deliberatamente**, come le sei passate precedenti:
+le misure di questa revisione vivono qui, accanto ai controlli che difendono. È la voce aperta
+che la §6 del compendio porta da sei passate — scegliere fra *«spostarle»* e *«cambiare la
+regola»* è del proprietario, e cominciare a metà traguardo produrrebbe **due** convenzioni invece
+di una. Questa passata la allarga di un'occorrenza e non la chiude.
+
 📌 **La lezione di metodo, e vale oltre il caso.** Tutti e tre i rilievi vivono in ciò che il
 compito **ha reso stantio** senza toccarlo: un enum nuovo che nessuna guardia copriva, un campo
 il cui valore nessuna delle mutazioni elencate raggiungeva, e due frasi che erano vere finché i

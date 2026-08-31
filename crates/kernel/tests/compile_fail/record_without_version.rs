@@ -49,8 +49,8 @@ fn main() {
 // match. Not regenerated: `TRYBUILD=overwrite` would have rewritten the oracle wholesale and a
 // real change hiding in it would have gone in unread.
 //
-// ⛔ AND IT MOVED AGAIN ON 2026-09-01, THE SAME WAY AND FOR THE SAME REASON: index 5 --
-// `detail` -- added a line inside the literal, so `inner.encode()` went from line 15 to line
+// ⛔ AND IT MOVED AGAIN WHEN INDEX 5 ARRIVED, THE SAME WAY AND FOR THE SAME REASON: `detail`
+// added a line inside the literal, so `inner.encode()` went from line 15 to line
 // 16, and the `.stderr` was corrected BY HAND once more. ⚠️ THE NOTE ABOVE SAID "LINE 14"
 // AND WAS ALREADY ONE BEHIND when this happened, which is worth more than the number: the
 // paragraph warning about the hazard had itself gone stale, and nothing turns that red. So

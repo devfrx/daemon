@@ -3619,6 +3619,77 @@ record congelati erano tre. ⛔ **Nessuno dei tre si vede rileggendo il diff**, 
 argomentato riga per riga: si vedono **mutando** e **censendo**. È la ragione per cui `E53`
 diceva che una rilettura dell'autore non vale una revisione.
 
+### La SECONDA passata di revisione del compito 5 — quattro mutanti vivi, e una radice sola
+
+⛔ **Fatta il 2026-08-31 da una sessione fresca, sul perimetro allargato che la prima passata ha
+lasciato:** `E53` chiede *«un secondo giro, sul perimetro che ora è più largo perché la revisione
+stessa ha scritto codice»*. La baseline di partenza è **41 bersagli, 298 passate, 0 fallite, 2
+ignorate**, `GATE GREEN` — rimisurata e non citata.
+
+✅ **PRIMA COSA MISURATA: IL PRODOTTO DELLA PRIMA PASSATA REGGE.** La guardia di crescita su
+`Detail` — il rimedio di `E54` — dà `` error[E0004]: non-exhaustive patterns: `&Detail::Routing(_)`
+not covered `` aggiungendo una variante, e la mutazione è stata revocata da copia byte-esatta. Le
+due sonde nuove di `reconciliation.rs` uccidono **entrambe** le vie alternative dell'arm `Verdict`
+di `steps_in_doubt`: trattato come `enter` → `a_verdict_does_not_put_a_step_in_doubt` **e**
+`a_verdict_leaves_a_closed_step_closed` rosse (**2 fallite**); trattato come `leave` → la seconda
+rossa (**1 fallita**). ⛔ **Il commento accanto all'arm AFFERMA che entrambe furono provate, ed è
+un'affermazione come le altre** (gotcha **#65**): rimisurata, **regge**.
+
+⛔ **QUATTRO MUTANTI VIVI SU `run_the_ring`, e la radice è che la funzione scrive DUE record
+mentre il banco ne teneva per intero uno.** Ciascuna applicata da sola, revocata da copia
+byte-esatta, e ciascuna col medesimo esito **identico alla baseline**:
+
+| | Mutazione | Prima | Dopo il rimedio |
+|---|---|---|---|
+| ① | record di **feedback**: `trust: Untrusted` → `Instruction` | 41 · 298 · **0 fallite** | 41 · 297 · **1 fallita** |
+| ② | `passed: verdict.outcome == Pass` → `passed: false` | 41 · 298 · **0 fallite** | 41 · 297 · **1 fallita** |
+| ③ | **verdetto**: `effect: Verifiable` → `Unrepeatable` | 41 · 298 · **0 fallite** | 41 · 297 · **1 fallita** |
+| ④ | **verdetto**: `reason` sostituito | 41 · 298 · **0 fallite** | 41 · 297 · **1 fallita** |
+
+⛔ **① È DI SPECIE DIVERSA DALLE ALTRE TRE, ed è I6.** Il payload di quel record è il **dettaglio
+del sensore**, che ha osservato un artefatto `Untrusted`; ADR-0014 rende l'etichetta **ereditaria**,
+quindi marcarlo `Instruction` fa attraversare a contenuto esterno il confine delle istruzioni —
+e lo scrive nel **formato durevole**. ⚠️ **E il buco aveva una forma che si riconosce:** la riga che
+asserisce **quello stesso campo** sul record del **verdetto** stava tredici righe sopra. Il banco
+teneva uno dei due record che una sola funzione scrive, che è il **#96** — *una difesa protegge il
+soggetto su cui è scritta e non segue il secondo che nasce* — spostato da una guardia di livello 1
+a un banco.
+
+⛔ **② HA UN DATO CHE LA SPIEGA, ed è il gotcha nuovo #98: `passed: true` NON ESISTEVA IN TUTTO IL
+WORKSPACE.** Censito con `grep -rn '\.passed\|passed:' crates/ --include='*.rs'`: **ogni** sito
+porta `false` — il quarto record congelato, `reconciliation.rs`, `record_shape.rs` e la sonda
+negativa — e l'unico che lo **calcola** è `crates/kernel/src/sensor.rs`. Quindi la costante era
+indistinguibile dal calcolo. ⛔ **E il record congelato non poteva difenderlo:** `the_frozen_records()`
+costruisce i quattro record da un **letterale di banco**, quindi è un oracolo di **formato** e non
+di comportamento — e il suo commento **argomenta** la scelta di `passed: false` per buone ragioni
+di formato (`f4` contro `f5`), cioè la scelta giusta lì è ciò che ha lasciato l'altro valore
+inesercitato ovunque.
+
+✅ **CHIUSE ALLARGANDO LE DUE SONDE ESISTENTI E NON AGGIUNGENDONE, e il conteggio resta 298:**
+mancavano **asserzioni**, non casi, e l'invarianza del numeratore è il dato. `a_passing_sensor_writes_a_verdict_and_opens_nothing`
+guadagna `passed` **vero** — il primo del workspace — più `effect` e `reason`;
+`a_failing_verdict_opens_a_new_step_and_carries_the_detail` guadagna `trust` e `reason` del record
+di feedback. ⚠️ **Le mutazioni rimisurate dopo sono STRETTE:** ciascuna uccide **una** sonda e una
+sola, che è la forma che il vicolo cieco dell'audit del 2026-08-27 prescrive — una mutazione che
+ne uccide più di una non dice niente su quella che stavi provando.
+
+⚖️ **③ e ④ sono PINZATE e non dichiarate**, ed è il confine del Task 10 del Traguardo 5: *un doc
+che **afferma** un valore riceve una sonda; si lascia dichiarato solo ciò che una decisione
+**aperta** può ancora cambiare* (gotcha **#73**). Qui nessuna è aperta — `reconcile` non legge
+**mai** la classe di un verdetto, e non è dedotto dal commento ma **misurato** mutandone l'arm
+nelle due direzioni, sopra.
+
+⚠️ **E UNA SECONDA COSA, DI SPECIE DOCUMENTALE — `E66`.** La passata precedente aveva censito la
+divergenza di data (`2026-09-01` contro i commit) **in questo file soltanto**, e deciso: le
+affermazioni di **stato** si tolgono, i **verbali** di misura restano. `grep -rn '2026-09-' crates/`
+rendeva **sei** righe, di cui **tre** erano affermazioni di stato mai toccate. Tolte, sostituite
+dall'**evento** invece che riallineate — cura di **AUD-007** applicata a una data. ⛔ **Le due celle
+di questo file restano come sono**, per la stessa decisione: sono verbali.
+
+⚠️ **E `riferimenti.md` NON è stato toccato, deliberatamente, per la settima passata di seguito:**
+le misure di questa revisione vivono qui, accanto ai controlli che difendono. La voce aperta resta
+del proprietario, con una prova in più e non con una risposta.
+
 ## Livello 3 — vuoto, e non è una svista
 
 `clippy` gira come igiene del codice ma **non ha voce nella porta**: nessun V dipende da

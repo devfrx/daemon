@@ -772,11 +772,20 @@ nulla e non argomentata, mentre quella del verdetto, che `reconcile` non legge m
 righe. ✅ **Entrambi sono chiusi**, il secondo per **decisione del proprietario del 2026-08-31: la classe
 la consegna il chiamante**, `correction_effect: EffectClass`. ⚖️ **E a decidere non è la lettera di
 ADR-0007 ma la coerenza:** è ciò che quella stessa funzione fa una riga sopra per `next`, ed è la
-forma di ADR-0034 — l'anello non sa che cosa farà la correzione, e smette di indovinarla. ⛔ **Il residuo è RIDOTTO e non chiuso:** un solo giro dove
-gli altri compiti ne hanno avuti da tre a cinque, e quel giro ha trovato tre difetti veri — che è
-la ragione per cui la regola dice *«finché una passata non torna pulita»*. La casa unica resta
-`E53` dell'errata; le misure stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che
-ne è uscito di generale sono i gotcha **#96** e **#97** — il secondo dalla revisione del rimedio.
+forma di ADR-0034 — l'anello non sa che cosa farà la correzione, e smette di indovinarla. ⛔ **E LA SECONDA PASSATA È STATA FATTA LO STESSO GIORNO, sul perimetro allargato che la prima
+lascia: ALTRI DUE rilievi, `E65` ed `E66`.** Quattro **mutanti vivi** su `run_the_ring`, che scrive
+**due** record mentre il banco ne teneva per intero uno — e il più grave fa marcare `Instruction`
+un payload che viene da un artefatto `Untrusted`, cioè **I6 dentro il formato durevole**. E tre
+affermazioni di data della specie che la passata precedente aveva **deciso** di togliere,
+sopravvissute perché quel censimento non arrivò mai al sorgente (radice **R1**, passo 3 della
+disciplina d'audit). ✅ **Il prodotto della prima passata REGGE**, misurato e non assunto.
+⛔ **Il residuo è RIDOTTO UNA SECONDA VOLTA e ancora non chiuso**, per la regola stessa: **due**
+giri dove gli altri compiti ne hanno avuti da tre a cinque, ed **entrambi** hanno trovato difetti
+veri — *«finché una passata non torna pulita»*. La casa unica resta `E53` dell'errata; le misure
+stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito di generale sono i
+gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
+**formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro
+inesercitato in tutto il workspace.
 ⏭️ **IL PROSSIMO PASSO È IL COMPITO 6** — §6.2 e §6.3: il decisore, il gettone di conformità e il
 record risolto. ✅ **IL SUO PRE-CONTROLLO È FATTO IL 2026-08-31, PRIMA di dispacciarlo, e ha
 tenuto una QUARTA volta: sei voci, `E57`–`E62`, DUE bloccanti.** Una sonda dettata **non può

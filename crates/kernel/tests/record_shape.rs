@@ -466,12 +466,19 @@ fn the_debug_of_a_record_does_not_print_the_payload() {
     // it discloses nothing nobody chose — and hiding it would leave a failed assertion unable to
     // say what the record was for. The payload is somebody else's; this is ours.
     //
-    // ⛔ AND `detail` IS ON THE READABLE SIDE TOO, WHICH IS THE D25, arrived on 2026-09-01 with
-    // index 5. The field carries OUR structured bytes by construction (D20), so printing it
+    // ⛔ AND `detail` IS ON THE READABLE SIDE TOO, WHICH IS THE D25, and it arrived with index 5.
+    // The field carries OUR structured bytes by construction (D20), so printing it
     // opens no road A3; NOT printing it would have given `RecordV1` a SECOND hidden field that
     // nobody decided to hide, which is the half this comment calls the forgotten one. ⚠️ The
     // guarantee that index 5 is ours is DISCIPLINE and not type — AUD-050 — and that is written
     // beside the field itself.
+    //
+    // ⚠️ AND THIS CLAUSE CARRIES NO DATE WHILE ITS SIBLING ABOVE DOES, which is deliberate and
+    // not an oversight. It said "arrived on 2026-09-01", and `git log` dates every commit of the
+    // task that brought index 5 to 2026-08-31 — so the date was a session's belief that the
+    // commits contradict, and for "when did this arrive" the authority IS the commit. TAKEN OUT
+    // rather than realigned, the same cure the milestone-6 plan and `porta-di-qualita.md` applied
+    // to their own copies; index 4's `2026-08-10` above is CORRECT and stays. Errata `E66`.
     assert_eq!(
         printed,
         concat!(

@@ -205,9 +205,9 @@ fn the_frozen_records_are_distinguishable_in_the_bytes() {
     // the shape a partial comparison lets through, and it is the shape
     // `the_three_record_kinds_are_distinguishable_in_the_bytes` was widened for.
     //
-    // ⚠️ THE NAME SAID `the_three_…` UNTIL 2026-09-01, AND IT IS RENAMED RATHER THAN LEFT: the
-    // fourth frozen record arrived that day and a name that counts its own subjects is a count
-    // like any other. The pairwise comparison itself never mentioned three.
+    // ⚠️ THE NAME SAID `the_three_…` UNTIL THE FOURTH FROZEN RECORD ARRIVED, AND IT IS RENAMED
+    // RATHER THAN LEFT: a name that counts its own subjects is a count like any other. The
+    // pairwise comparison itself never mentioned three.
     let frozen = the_frozen_records();
     for (i, (left_name, left, _)) in frozen.iter().enumerate() {
         for (right_name, right, _) in frozen.iter().skip(i + 1) {

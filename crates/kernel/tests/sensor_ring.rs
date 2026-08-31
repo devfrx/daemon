@@ -101,6 +101,33 @@ fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
     assert_eq!(*step, judged);
     assert_eq!(body.kind, RecordKind::Verdict);
 
+    // ⛔ AND `passed` IS TRUE HERE, WHICH IS THE ONLY `true` IN THE WORKSPACE. Every other site
+    // of that field carries `false` — the frozen record, `reconciliation.rs`, `record_shape.rs`
+    // and the failing probe below — so until this line a ring that wrote the CONSTANT `false`
+    // was indistinguishable from one that computed the outcome. Measured: `passed: false` in
+    // `run_the_ring` survived the whole workspace, 41 targets and 298 passed, identical to the
+    // baseline. It is the second direction of a two-valued field, and the second direction is
+    // the one that gets forgotten. Errata `E65`.
+    let Some(Detail::Verdict(detail)) = &body.detail else {
+        panic!("the verdict of a passing sensor carries no structured detail");
+    };
+    assert!(
+        detail.passed,
+        "a passing sensor wrote a verdict that says it failed"
+    );
+    assert_eq!(detail.spent_millis, 7);
+
+    // ⛔ AND THE TWO FIELDS NOBODY READ. `effect` is argued at length beside the record — it is
+    // `Verifiable` because re-running a sensor over the same artefact answers the same thing —
+    // and `reason` says what the record is FOR. Both went on the wire held by nothing: turned to
+    // `Unrepeatable` and to another string, each survived the whole workspace. ⚠️ PINNED AND NOT
+    // DECLARED, which is the task 10 boundary of milestone 5: a doc that AFFIRMS a value gets a
+    // probe, and only a value some OPEN decision could still change is left declared (#73). No
+    // decision is open here — `reconcile` provably never reads a verdict's class, measured by
+    // mutating its arm in both directions.
+    assert_eq!(body.effect, EffectClass::Verifiable);
+    assert_eq!(body.reason, "a sensor judged the artefact of this step");
+
     // ⚠️ AND THE VERDICT IS ON THE JUDGED STEP AND NOWHERE ELSE, which is the half that would be
     // missed: a ring that wrote its verdict against the NEXT step would satisfy every line above
     // except this one.
@@ -163,6 +190,23 @@ fn a_failing_verdict_opens_a_new_step_and_carries_the_detail() {
     assert_eq!(*opened_step, next);
     assert_eq!(intent.kind, RecordKind::Intent);
     assert_eq!(intent.payload, b"field `name` is missing");
+
+    // ⛔ AND ITS LABEL, WHICH IS THE ONE THAT MATTERS: the payload of this record is the sensor's
+    // detail, and the sensor read an `Untrusted` artefact. ADR-0014 makes the label HEREDITARY —
+    // extracting, summarising or concatenating still yields untrusted content — so a feedback
+    // record labelled `Instruction` would carry outside content across the instruction boundary
+    // that I6 exists to keep shut, and would carry it into the DURABLE format.
+    //
+    // ⚠️ IT WAS HELD BY NOTHING UNTIL 2026-08-31, and the shape of the gap is worth more than
+    // the fix: the line thirteen rows above asserts exactly this field on the VERDICT record, so
+    // the bench held one of the two records the ring writes and not the other. Turned to
+    // `Trust::Instruction` here, the whole workspace stayed green — 41 targets, 298 passed,
+    // identical to the baseline. Errata `E65`.
+    assert_eq!(intent.trust, Trust::Untrusted);
+    assert_eq!(
+        intent.reason,
+        "a sensor verdict re-entered the ring as a new step"
+    );
 }
 
 #[test]

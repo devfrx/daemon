@@ -329,7 +329,7 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
         .collect();
     assert!(
         !details.is_empty(),
-        "no frozen record carries a `detail`: index 5 and every species under it are held by          nothing"
+        "no frozen record carries a `detail`: index 5 and its species are held by nothing"
     );
     for detail in details {
         match detail {

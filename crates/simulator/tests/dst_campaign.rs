@@ -417,8 +417,13 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
             // the implementation BY CONSTRUCTION on a case it has never seen -- which is the one
             // thing the paragraph four above says this oracle must not do. The day the scenario
             // grows a sensor, the red is a decision being asked for, not a defect being reported.
+            // ⚠️ AND THE MESSAGE BELOW CARRIED A RUN OF SPACES UNTIL 2026-08-31, where a line
+            // continuation had collapsed: gotcha #97, and this was its FIRST instance — found
+            // reviewing task 5, one census after the same defect was corrected in the reviewer's
+            // own remedy. A workspace-wide census found no third one.
             RecordKind::Verdict => panic!(
-                "step {step} carries a verdict: this scenario has grown a sensor, and this                  oracle must decide what a verdict does to a doubt before it can stay independent"
+                "step {step} carries a verdict: this scenario has grown a sensor, and this \
+                 oracle must decide what a verdict does to a doubt before it can stay independent"
             ),
         }
     }

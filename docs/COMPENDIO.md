@@ -785,7 +785,12 @@ occorrenza**, e l'oracolo non si aggiusta col solo setup perché conta i record 
 due **non compilano**, `assert_eq!` su un `Result` il cui `Ok` non è `PartialEq`, misurato con
 `rustc`. ⚠️ **E la più cara non è bloccante:** `Constraint::NoRetention` non è nominato da
 **nessuna** sonda, quindi nasce mutante vivo su un vincolo di classe **`Data`**, cioè quello che
-ADR-0012 fa fallire **chiuso**. ⛔ **Il compito NON è dispacciato**, e la ragione è di metodo: il
+ADR-0012 fa fallire **chiuso**. ⛔ **E due voci sono uscite CHIUDENDO la sessione, `E63` ed `E64`:**
+la lista dei file del compito non nomina `crates/simulator/tests/dst_campaign.rs`, che il compito
+rende rosso — e la voce che lo diceva, `E50`, **esisteva già** — e il difetto del gotcha **#97**
+**esisteva già nel prodotto del compito 5**, non visto dalla prima passata di revisione perché
+quella cercava mutanti e conteggi, non letterali. ✅ Censita la **radice** e non l'occorrenza: in
+tutto `crates/` erano **due**, entrambe chiuse. ⛔ **Il compito NON è dispacciato**, e la ragione è di metodo: il
 piano prescrive subagent-driven, e i sotto-agenti restano non autorizzati. ⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
 propria variante e il proprio record congelato; e la voce `E50` gli dice che l'elenco dei file di
 un compito che tocca `RecordKind` deve nominare **anche** `crates/simulator/tests/dst_campaign.rs`,

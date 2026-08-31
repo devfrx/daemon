@@ -46,7 +46,7 @@ perché dettarla a memoria produce *«codice plausibile e falso»*.
 | Parte | Compiti | Stato |
 |---|---|---|
 | **A** — la concessione che torna | 1 | ✅ **ESEGUITA** — `GATE GREEN` a ogni commit del compito |
-| **B** — il filo | 3, 3bis | ▶️ **il compito 3 è ESEGUITO** il 2026-08-31 — `GATE GREEN` a ogni commit del compito. **Resta il 3bis** |
+| **B** — il filo | 3, 3bis | ✅ **ESEGUITA** il 2026-08-31 — entrambi i compiti, `GATE GREEN` a ogni commit. Il **3bis** era una misura, e il proprietario ha deciso **C-1** lo stesso giorno: `bincode` 2.0.1 resta |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
 | **D** — i meccanismi | 5, 6, 7, 8 | ✅ **scritta** il 2026-08-30 — pre-controllo P-12…P-15, voce chiusa dalla **D22**, e i quattro compiti |
 | **E** — la prova e la chiusura | 9, 10 | ✅ **scritta** il 2026-08-30 — e il pre-controllo ha trovato **P-16**, un meccanismo che la mappa dei file non ospitava |
@@ -68,39 +68,45 @@ dal `payload`. Sono la **D20** e la **D21**.
 alla §3.4 del disegno e diventa una non-costruzione dichiarata. La numerazione della §1.4 è
 tenuta com'è invece di essere compattata, perché il disegno vi rimanda per numero.
 
-### ▶️ Il prossimo passo, in forma eseguibile
+### ▶️ Come si esegue un compito di questo piano
 
-⛔ **ESEGUIRE IL COMPITO 3BIS.** ⚠️ **RICHIAMO DEL 2026-08-31: qui stava *«il compito 3»*, ed è
-eseguito**, e con esso il **vincolo 15** della §11 è onorato. ⛔ **Il compito 2 NON esiste**, e non
-è un salto: il timbro di build è uscito dal perimetro alla §3.4 del disegno.
-⛔ **E il 3bis non è una scrittura: è una RICERCA, e pretende una risposta ODIERNA.** *`bincode` è
-ancora dichiarato non mantenuto? esiste un'alternativa mantenuta il cui pari TypeScript abbia un
-lettore?* La §3.5 del disegno dice alla lettera che deciderlo a memoria sarebbe il gotcha **#48**, e
-la fonte va tracciata in [`riferimenti.md`](../../riferimenti.md) **con la data**. ⚖️ **Si ferma
-prima di decidere** se la misura chiede un cambio di formato — **D12**, del proprietario.
-📌 **Che cosa il ciclo del compito 3 ha insegnato, e serve a chi viene dopo:** il pre-controllo ha
-prodotto **cinque** voci prima di dispacciare, e la bloccante non era nel meccanismo ma nel **dato**
-— una sonda **corretta** che il proprio ingresso rendeva **vacua** (gotcha **#92**). Le revisioni che
-sono seguite hanno trovato una **via d'errore che nessuna sonda raggiungeva** — mutata, l'intero
-workspace restava verde **cifra per cifra** — e poi, ondata dopo ondata, **affermazioni false nella
-prosa scritta per chiuderne un'altra**: è la specie che si è ripetuta.
-📌 *Il prodotto regge alla prima passata; le frasi no.*
+⛔ **QUALE compito venga dopo NON è scritto qui:** vive nella **§6 del
+[`COMPENDIO.md`](../../COMPENDIO.md)**, in un posto solo, come già fanno
+[`HANDOFF.md`](../../HANDOFF.md) e [`README.md`](../../README.md). È la regola del 2026-08-18,
+che il piano del Traguardo 5 scrive per esteso: *«il puntatore al prossimo passo NON si ricopia
+negli altri documenti»*. ⚠️ **Ciò che resta qui è la POSIZIONE del piano** — la tabella delle
+parti qui sopra, che si aggiorna eseguendo — e **come** si esegue, che è un'altra cosa dal
+**quale**.
+
+⛔ **Il compito 2 NON esiste**, e non è un salto: il timbro di build è uscito dal perimetro
+alla §3.4 del disegno.
+
 La modalità resta quella scelta dal proprietario: `superpowers:subagent-driven-development` — **un
 subagente fresco per compito**, con revisione fra uno e l'altro.
 
 ⛔ **E PRIMA DI DISPACCIARLO, il pre-controllo delle QUATTRO DOMANDE di `CLAUDE.md`**, che ha
 trovato almeno un difetto reale in **tutti** i compiti dispacciati finora, senza una sola
 eccezione — più le quattro righe che quell'elenco **non** coglie, prima fra tutte: *un compito
-scritto prima si legge contro il codice di **ADESSO**, non contro il piano*. ⚠️ **Questo piano è
-stato scritto in un giorno solo e il codice non si è mosso**, ma l'errata nasce vuota proprio
-perché quella regola non fa eccezioni.
+scritto prima si legge contro il codice di **ADESSO**, non contro il piano*.
 
-⚠️ **RICHIAMO DEL 2026-08-30, sei volte nello stesso giorno:** qui sono passati *«Scrivere la
-Parte D»* nudo, *«i compiti sono FERMI su una voce del proprietario»*, *«scrivere i quattro
-compiti»*, *«6, 7 e 8»*, *«7 e 8»* e *«scrivere la Parte E»*. È la riga che invecchia più in
-fretta del file, e si riscrive **quando il passo si chiude** — mai appendendoci sotto un
-capoverso senza toccarla, che è la forma del gotcha **#31** che questo file ha già visto quattro
-volte su quattro.
+📌 **Che cosa i cicli dei compiti 3 e 3bis hanno insegnato, e serve a chi viene dopo:** il
+pre-controllo del compito 3 ha prodotto **cinque** voci prima di dispacciare, e la bloccante non
+era nel meccanismo ma nel **dato** — una sonda **corretta** che il proprio ingresso rendeva
+**vacua** (gotcha **#92**). Le revisioni che sono seguite hanno trovato una **via d'errore che
+nessuna sonda raggiungeva** — mutata, l'intero workspace restava verde **cifra per cifra** — e
+poi, ondata dopo ondata, **affermazioni false nella prosa scritta per chiuderne un'altra**: è la
+specie che si è ripetuta.
+📌 *Il prodotto regge alla prima passata; le frasi no.*
+
+⛔ **RICHIAMO DEL 2026-08-31 — QUESTA SEZIONE PORTAVA IL PUNTATORE, ED È TOLTO E NON
+RIALLINEATO.** Si intitolava *«Il prossimo passo, in forma eseguibile»* e apriva con *«ESEGUIRE
+IL COMPITO 3BIS»*: falso **il minuto dopo** che il 3bis è girato, e infatti il commit che ha
+chiuso quel compito ha aggiornato la §6 e **non** questa riga. ⚠️ **Ed era la settima volta:**
+il 2026-08-30 la stessa riga era già passata per *«Scrivere la Parte D»* nudo, *«i compiti sono
+FERMI su una voce del proprietario»*, *«scrivere i quattro compiti»*, *«6, 7 e 8»*, *«7 e 8»* e
+*«scrivere la Parte E»*. ⛔ **Riallinearla comprerebbe un giro e nient'altro** — è il corollario
+del gotcha **#68**: *il rimedio a una seconda casa è toglierla*. La voce **E16** dell'errata la
+registrava come nota, e si chiude lì.
 
 📌 **I dieci compiti, e l'ordine è quello della §1.4 del disegno** — ciascuno legge quello che
 la sua riga nomina **e nient'altro**:
@@ -201,7 +207,7 @@ scrive **qui**, con il proprio numero, prima di eseguirlo. Un piano è un'ipotes
 | **E13** | ⚠️ **GUARDATA E NON PRESA, con la ragione — `crates/kernel/src/arbiter/mod.rs`, il doc di `collect_expired`.** Dice *«both comparisons are `>`»*, mentre il confronto su `expires_at` e' scritto `if held.expires_at <= now { return false; }` dentro una chiusura a due clausole: logicamente la stessa cosa, tipograficamente no. ⛔ **NON e' la stessa specie della citazione tolta nello stesso commit** — quella fingeva un `retain(…)` **verbatim** che non esisteva; questa enuncia una **proprieta'** (*le due finestre sono semiaperte*), e la proprieta' e' **vera e misurata**: mutando `<=` in `<` muoiono due sonde. ⚖️ **Lasciata di proposito:** riscrivere prosa **non falsa** e' cio' che il gotcha **#76** ha misurato costare piu' di quanto compri. ⚠️ **L'attrito che resta e' reale e va detto:** chi cerca col `grep` un `>` su `expires_at` non lo trova. Se il prossimo che tocca quel doc vuole scioglierlo, sappia che non sta correggendo un errore. |
 | **E14** | ⚠️ **TRE file di `tests/compile_fail/` portano la riga da 123 colonne SENZA la nota che gli altri quattro hanno, e l'esclusione e' MISURATA.** La nota che dichiara *perche'* la riga non si spezza sta in `admission_has_no_is_granted.rs`, `admission_reads_cold_start.rs`, `admission_without_profile.rs` e `two_policies_at_once.rs`. **Manca** in `instructing_after_the_kill.rs`, `reading_twice_from_one_receipt.rs` e `reading_without_a_receipt.rs`. ✅ **Perche', verificato:** quei tre sono lunghi **120-125 righe**, quindi una nota in **fondo** starebbe un centinaio di righe dopo cio' che spiega — e non verrebbe letta — mentre una in **testa** sposterebbe i riferimenti d'oracolo che stanno a 119-124, cioe' disferebbe proprio cio' che la riga lunga compra (precedente **AUD-042/045**). ⛔ **Dichiararli costerebbe una rigenerazione di `.stderr` per file**, che e' piu' di cio' che comprano. ⚠️ **Chi accorcia una di quelle righe rompe un oracolo e non trovera' nessun commento a dirglielo.** |
 | **E15** | ⚠️ **DUE DOMANDE DI FORMA PER IL PROPRIETARIO, registrate e non prese, nessuna delle quali e' un difetto.** ① **`Arbiter::id` e' un SECONDO IDIOMA per leggere un parametro consegnato:** `total_vram` si legge come `self.parameters.total_vram()`, mentre `arbiter_id` viene **sollevato in un campo** dell'arbitro. La giustificazione scritta accanto (*un valore che non cambia mai*) varrebbe identica per `total_vram`, che sollevato non e'; e `Parameters` e' `Copy` con `arbiter_id()` `const`, quindi il campo si potrebbe togliere. ⚖️ **Non e' un difetto** — il doc dichiara che e' una copia, e `new` ne e' l'unico lettore, verificato — ma sono **due modi di dire una cosa** dentro lo stesso tipo. ② **`Started::Rejected` si legge come una contraddizione:** il tipo risponde *«che cosa ha fatto l'avvio»*, e una delle due risposte e' *«non e' mai partito»*. `Admission` non ha il problema perche' nomina l'**atto**, non l'esito. ⛔ **Il nome e' dettato dal piano**, quindi la domanda e' del proprietario e non dell'esecutore. |
-| **E16** | ⚠️ **IL PUNTATORE DEL PROSSIMO PASSO HA DUE CASE, ed e' preesistente a questo traguardo.** La §6 del compendio dichiara di sé di essere *«la casa unica»* del `⏭️`, e il censimento `grep -rn "⏭️" docs/ CLAUDE.md` conferma che ogni riga viva fuori dal compendio **nomina** la §6 invece di riscriverla. ⛔ **Ma questo piano ne porta una propria**, la sezione *«Il prossimo passo, in forma eseguibile»* della sua testa, che dice **quale compito** eseguire — e va tenuta in passo con la §6 a mano, perche' nessun controllo le confronta. ⚖️ **Le due non sono la stessa cosa** — la §6 punta il passo del **progetto**, questa la posizione **dentro il piano** — ed e' la ragione per cui non e' stata tolta. ⚠️ **Registrata perche' il prossimo che chiude un compito le aggiorni ENTRAMBE**, e perche' se il proprietario vuole una casa sola sappia che questa e' la seconda. |
+| **E16** | ⚠️ **IL PUNTATORE DEL PROSSIMO PASSO HA DUE CASE, ed e' preesistente a questo traguardo.** La §6 del compendio dichiara di sé di essere *«la casa unica»* del `⏭️`, e il censimento `grep -rn "⏭️" docs/ CLAUDE.md` conferma che ogni riga viva fuori dal compendio **nomina** la §6 invece di riscriverla. ⛔ **Ma questo piano ne porta una propria**, la sezione *«Il prossimo passo, in forma eseguibile»* della sua testa, che dice **quale compito** eseguire — e va tenuta in passo con la §6 a mano, perche' nessun controllo le confronta. ⚖️ **Le due non sono la stessa cosa** — la §6 punta il passo del **progetto**, questa la posizione **dentro il piano** — ed e' la ragione per cui non e' stata tolta. ⚠️ **Registrata perche' il prossimo che chiude un compito le aggiorni ENTRAMBE**, e perche' se il proprietario vuole una casa sola sappia che questa e' la seconda. ✅ **CHIUSA il 2026-08-31 — decisione del proprietario: la seconda casa è TOLTA.** ⛔ **E la ragione per cui questa voce non l'aveva tolta è FALSIFICATA, non ignorata:** diceva che *«le due non sono la stessa cosa — la §6 punta il passo del progetto, questa la posizione dentro il piano»*, ma la §6 scrive **il numero del compito** — *«IL PROSSIMO PASSO È IL COMPITO 4»* — cioè esattamente la posizione dentro il piano: le due case dicevano la stessa cosa nelle **stesse unità**. ⚠️ **E la difesa che questa voce proponeva — *«il prossimo che chiude un compito le aggiorni ENTRAMBE»* — ha ceduto alla PRIMA occasione:** il commit del 3bis ha aggiornato la §6 e lasciato ferma la sezione, in questo stesso file. 📌 *Registrare una seconda casa non la difende; solo toglierla la difende* — corollario del gotcha **#68**, misurato invece che citato. |
 | **E17** | ⛔ **BLOCCANTE — LA SONDA `the_byte_string_annotation_is_measured_and_not_asserted` E' VACUA COSI' COM'E' DETTATA, e la sua mutazione non uccide niente.** Il corpo che il Passo 1 di 3b detta e' `alloc_vec(&[0u8; 4096])`, e **tutti gli zeri stanno nel range a un byte del CBOR** (0..=23): un array di numeri e una stringa di byte costano allora **lo stesso**. ✅ **Misurato su una sonda usa-e-getta scritta da fuori la crate, compilata, eseguita e cancellata nella stessa corsa** — non dedotto: con `[0u8; 4096]` il corpo e' **4102 byte con l'annotazione e 4102 senza**, rapporto **1,00x**, e la forma incorniciata (**4106**) sta sotto il limite `< 4096 + 64` **in entrambi i casi**. ⛔ **Quindi la prima riga della tabella delle mutazioni del Passo 7 uccide ZERO sonde, non «quella sola».** ✅ **Con byte reali il divario c'e' ed e' quello della §6.10.4:** `(0..4096).map(|i| (i % 256) as u8)` da' **4102 contro 7814**, rapporto **1,90x** — che riproduce il *7813 contro 4101* di quella sezione a meno del byte di busta. 📌 **Rimedio: il corpo della sonda porta byte fuori dal range a un byte**, e la ragione si scrive accanto, perche' e' precisamente cio' che rende la sonda non vacua. E' il precedente di `E144` al Task 12 del Traguardo 5: *il compito cosi' com'e' scritto non puo' passare* — qui in una forma peggiore, perche' **passerebbe verde**. |
 | **E18** | ⛔ **LA PRIMA MUTAZIONE DI 3a NE UCCIDE DUE, non «quella sola», e la seconda morte e' legittima.** ✅ **Misurato eseguendo le cinque sonde contro le due varianti del modulo**, non dedotto: `to_le_bytes` in entrambi i siti lascia verdi `a_framed_body_comes_back_exactly`, `a_truncated_frame_is_refused` e `bytes_shorter_than_the_prefix_are_refused`, e fa rossi `the_declared_length_is_four_bytes_big_endian` **e `a_frame_with_a_tail_is_refused`**. ⛔ **La causa non e' la simmetria fra i due siti** — che e' l'unico caso che la clausola del piano nomina, e il round-trip **sopravvive**, quindi la proprieta' per cui la clausola esiste **regge**. E' che la sonda della coda porta un **letterale big-endian**: `00 00 00 01` letto little-endian vale **16 777 216**, quindi il corpo da tre byte e' *troncato* e non *con una coda*, e la risposta passa da `TrailingBytes` a `Incomplete`. 📌 **Rimedio: la colonna «Deve uccidere» della prima riga diventa «`the_declared_length_is_four_bytes_big_endian` e `a_frame_with_a_tail_is_refused`, e NON il round-trip».** ⚠️ **Senza questa voce chi esegue si ferma su un rosso che il piano gli ordina di trattare come un difetto**, ed e' il caso opposto: la mutazione fa esattamente il proprio lavoro. |
 | **E19** | ⛔ **IL BLOCCO DI `crates/kernel/src/wire/worker.rs` NON PORTA NESSUN `use`, e nessuno dei nomi che adopera e' in scope.** Mancano `Encode`, `Decode`, `Vec`, `Mib`, `framing`, `WireError` e `minicbor` — il tipo, le due funzioni e i due derive li usano tutti. ⚠️ **`crates/kernel/src/framing.rs` invece il proprio `use alloc::vec::Vec;` ce l'ha**, quindi lo scarto e' fra i due blocchi dello stesso compito e non una convenzione del piano. E' il precedente del Task 9 del Traguardo 5, dove *«tutti gli import mancavano»* era una delle due voci **bloccanti per costruzione**. 📌 **Non cambia il disegno, cambia se il Passo 4 compila.** |

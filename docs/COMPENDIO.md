@@ -710,7 +710,7 @@ dettata era VACUA.** Non sbagliata — **corretta**, e disarmata dal **dato** ch
 sarebbe passata **verde** senza distinguere ciò che esiste per distinguere. ⛔ **E la revisione ne ha
 trovata una seconda sul prodotto — stesso verde che non prova niente, ma specie diversa:** una via
 d'errore che **nessuna** sonda raggiungeva — mutata, l'intero workspace restava verde **cifra per
-cifra**. Ciò che ne è uscito di generale è il gotcha **#92**.
+cifra**. Ciò che ne è uscito di generale è il gotcha **#92**, dalla prima.
 ⏭️ **IL PROSSIMO PASSO È ESEGUIRE IL COMPITO 3BIS** — la misura **C-1**, cioè la decisione su
 §6.1.1. ⛔ **Pretende una ricerca ODIERNA e non una risposta a memoria**, e il disegno lo scrive alla
 lettera: deciderlo ricordando sarebbe il gotcha **#48**. ⚖️ **Il compito si ferma PRIMA di decidere**

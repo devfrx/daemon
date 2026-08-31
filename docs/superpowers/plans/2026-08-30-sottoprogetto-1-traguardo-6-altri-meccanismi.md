@@ -45,11 +45,16 @@ perché dettarla a memoria produce *«codice plausibile e falso»*.
 
 | Parte | Compiti | Stato |
 |---|---|---|
-| **A** — la concessione che torna | 1 | ✅ **ESEGUITA** — `c4cf942` · `9ecc13d` · `822db6d`, più `07720cc` e `5ef4fc3` e `8c522a3` di revisione. `GATE GREEN` a ciascuno |
-| **B** — il filo | 3, 3bis | ▶️ **il compito 3 è ESEGUITO** il 2026-08-31 — `9bd70f0` · `a5c84c1`, più `6b8397a` e `7aa5e73` di revisione. `GATE GREEN` a ciascuno. **Resta il 3bis** |
+| **A** — la concessione che torna | 1 | ✅ **ESEGUITA** — `GATE GREEN` a ogni commit del compito |
+| **B** — il filo | 3, 3bis | ▶️ **il compito 3 è ESEGUITO** il 2026-08-31 — `GATE GREEN` a ogni commit del compito. **Resta il 3bis** |
 | **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
 | **D** — i meccanismi | 5, 6, 7, 8 | ✅ **scritta** il 2026-08-30 — pre-controllo P-12…P-15, voce chiusa dalla **D22**, e i quattro compiti |
 | **E** — la prova e la chiusura | 9, 10 | ✅ **scritta** il 2026-08-30 — e il pre-controllo ha trovato **P-16**, un meccanismo che la mappa dei file non ospitava |
+
+📌 **Gli hash non stanno in questa tabella:** una lista di commit si allunga a ogni ondata
+di revisione e va riscritta in **ogni** sito che la porta — quella del compito 3 era già
+indietro, e viveva in due siti. Al suo posto sta il comando, che rende i commit che **nominano**
+un compito: `git log --format='%h %s' | grep -E 'compito 3'`, col numero della colonna «Compiti».
 
 ✅ **La D è stata sbarrata e sbloccata lo stesso giorno, e il verbale è P-11.** I compiti **5**,
 **6** e **7** devono mettere dati **strutturati e nostri** dentro un record durevole, e
@@ -66,9 +71,8 @@ tenuta com'è invece di essere compattata, perché il disegno vi rimanda per num
 ### ▶️ Il prossimo passo, in forma eseguibile
 
 ⛔ **ESEGUIRE IL COMPITO 3BIS.** ⚠️ **RICHIAMO DEL 2026-08-31: qui stava *«il compito 3»*, ed è
-eseguito** — `9bd70f0` e `a5c84c1`, più `6b8397a` e `7aa5e73` di revisione, `GATE GREEN` a ciascuno,
-e con esso il **vincolo 15** della §11 è onorato. ⛔ **Il compito 2 NON esiste**, e non è un salto:
-il timbro di build è uscito dal perimetro alla §3.4 del disegno.
+eseguito**, e con esso il **vincolo 15** della §11 è onorato. ⛔ **Il compito 2 NON esiste**, e non
+è un salto: il timbro di build è uscito dal perimetro alla §3.4 del disegno.
 ⛔ **E il 3bis non è una scrittura: è una RICERCA, e pretende una risposta ODIERNA.** *`bincode` è
 ancora dichiarato non mantenuto? esiste un'alternativa mantenuta il cui pari TypeScript abbia un
 lettore?* La §3.5 del disegno dice alla lettera che deciderlo a memoria sarebbe il gotcha **#48**, e
@@ -76,10 +80,11 @@ la fonte va tracciata in [`riferimenti.md`](../../riferimenti.md) **con la data*
 prima di decidere** se la misura chiede un cambio di formato — **D12**, del proprietario.
 📌 **Che cosa il ciclo del compito 3 ha insegnato, e serve a chi viene dopo:** il pre-controllo ha
 prodotto **cinque** voci prima di dispacciare, e la bloccante non era nel meccanismo ma nel **dato**
-— una sonda **corretta** che il proprio ingresso rendeva **vacua** (gotcha **#92**). Le due revisioni
-hanno trovato, nell'ordine: una **via d'errore che nessuna sonda raggiungeva** — mutata, l'intero
-workspace restava verde **cifra per cifra** — e poi **due affermazioni false nella prosa scritta per
-chiuderne un'altra**. 📌 *Il prodotto regge alla prima passata; le frasi no.*
+— una sonda **corretta** che il proprio ingresso rendeva **vacua** (gotcha **#92**). Le revisioni che
+sono seguite hanno trovato una **via d'errore che nessuna sonda raggiungeva** — mutata, l'intero
+workspace restava verde **cifra per cifra** — e poi, ondata dopo ondata, **affermazioni false nella
+prosa scritta per chiuderne un'altra**: è la specie che si è ripetuta.
+📌 *Il prodotto regge alla prima passata; le frasi no.*
 La modalità resta quella scelta dal proprietario: `superpowers:subagent-driven-development` — **un
 subagente fresco per compito**, con revisione fra uno e l'altro.
 
@@ -208,7 +213,7 @@ scrive **qui**, con il proprio numero, prima di eseguirlo. Un piano è un'ipotes
 | **E25** | ⚠️ **Il piano e' INTERNAMENTE INCOERENTE sulla forma dell'annotazione di `minicbor`, e la divergenza e' fra due suoi passi.** Il Passo 3 di 3b prescrive per `Mib` *«la forma che `record.rs` usa gia', non una che questo piano ricorda»*; il Passo 4 detta poi per `Fragment` la forma **combinata** `#[cbor(n(0), with = "minicbor::bytes")]`, che `record.rs` **non** usa — li' sono **due attributi su due righe**, `#[n(3)]` e `#[cbor(with = ...)]`. ✅ **Entrambe compilano**, misurato nel pre-controllo su una sonda usa-e-getta scritta da fuori la crate. ⚖️ **Risolta usando la forma di `record.rs` in entrambi i siti**, cioe' obbedendo alla regola del Passo 3 invece che al letterale del Passo 4: una convenzione sola batte due modi di dire la stessa cosa. |
 | **E26** | ⛔ **IL PROTOCOLLO DELLE MUTAZIONI DELLA `D7` HA UN ORACOLO VACUO, e vale per OGNI compito futuro di questo piano.** Il Passo 6 di 3a detta `git diff --stat <file>` per verificare che la revoca sia completa, con la nota *«deve essere VUOTO»*. ⛔ **Su un file che git non traccia ancora — e `framing.rs` non lo e' fino al commit del Passo 8 — quel comando e' vuoto SEMPRE**, revoca riuscita o no: e' verde per la ragione sbagliata, cioe' precisamente la specie di oracolo che questo repository chiama vacuo. 📌 **La forma che tiene e' `cmp` contro la copia byte-esatta presa prima**, che non dipende dallo stato dell'indice. Usata in tutte le mutazioni di questo compito. |
 | **E27** | ⛔ **LE CINQUE SONDE CHE IL COMPITO DETTA PER `worker_wire.rs` NON RAGGIUNGONO IL RAMO D'ERRORE DI `FromWorker::decode`, e nessun passo lo nota.** Trovato dalla revisione, non dall'esecuzione. Misurato: sostituito `.map_err(\|_\| WireError::Malformed)?` con `.expect("decode")` — cioe' *il kernel va in panico su un frame malformato che arriva da un worker* — l'intero workspace resta **verde, identico alla baseline cifra per cifra**. ⛔ **E la meta' che rende il rilievo bloccante:** il Passo 4 fa poggiare `let _ = minicbor::encode(...)` sul precedente di `Record::encode` e ordina di **rileggerlo**; riletto, quel doc non dice *«l'errore e' irraggiungibile, quindi si scarta»* ma che il caso impossibile e' **contenuto**, e il contenimento e' una sonda **nominata** su **due** ingressi. ✅ Chiuse con `an_empty_body_in_an_honest_envelope_does_not_decode` e `a_truncated_body_in_an_honest_envelope_does_not_decode` — **due `#[test]` separati**, perche' con uno solo il secondo ingresso non sarebbe mai esercitato (gotcha **#14**). Sotto la mutazione muoiono **quelle due e nessun'altra**, riprodotto dal coordinatore. |
-| **E28** | ⛔ **LA PROSA SCRITTA PER CHIUDERE IL GOTCHA #31 NE HA COMMESSO UNO, e il rilievo che la coglieva sottocontava a sua volta.** La passata che ha tolto le cifre duplicate ha scritto che §6.10.4 *«e' la loro casa»*: le cifre `7813`/`4101`/`1,91x` vivono in **piu'** case, e §6.10.4 e' solo una. ⚠️ **La revisione ne nominava due e l'affermazione stava in due siti e non uno**, il secondo in `crates/kernel/tests/worker_wire.rs`: chiuderne uno solo sarebbe stato il difetto stesso che il rilievo denunciava. ✅ **Chiusa TOGLIENDO** e non riallineando a un numerale — un conteggio dentro un doc e' cio' che era appena marcito — e la passata ha messo **quindici** righe contro **dodici** tolte: e' il gotcha **#76** applicato una seconda volta. 📌 *Nove volte in due compiti, in questo repository, un'ondata di correzioni ha chiuso rilievi aprendone di nuovi nella prosa scritta per chiuderli.* |
+| **E28** | ⛔ **LA PROSA SCRITTA PER CHIUDERE IL GOTCHA #31 NE HA COMMESSO UNO, e il rilievo che la coglieva sottocontava a sua volta.** La passata che ha tolto le cifre duplicate ha scritto che §6.10.4 *«e' la loro casa»*: le cifre `7813`/`4101`/`1,91x` vivono in **piu'** case, e §6.10.4 e' solo una. ⚠️ **La revisione ne nominava due e l'affermazione stava in due siti e non uno**, il secondo in `crates/kernel/tests/worker_wire.rs`: chiuderne uno solo sarebbe stato il difetto stesso che il rilievo denunciava. ✅ **Chiusa TOGLIENDO** e non riallineando a un numerale — un conteggio dentro un doc e' cio' che era appena marcito — e la passata ha messo **quindici** righe contro **dodici** tolte: e' il gotcha **#76** applicato una seconda volta. |
 
 ---
 

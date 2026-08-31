@@ -52,8 +52,8 @@ use crate::framing::{self, WireError};
 /// for. ⛔ ANCHORED PAST THE DOC COMMENT, for the reason `crate::ports::ipc` writes down for
 /// `impl Ipc for`: an unanchored one matches the paragraph that quotes it.
 ///
-/// ⚠️ THE COST, stated: WHAT THE CORE PICKS IS THE NAME, NOT THE PROFILE. The three fields
-/// below are the gui's, and `name` is the one field NO ARBITER DECISION READS: `crate::arbiter`
+/// ⚠️ THE COST, stated: WHAT THE CORE PICKS IS THE NAME, NOT THE PROFILE. The three fields below
+/// are the gui's, and `name` is the one field NO ARBITER DECISION READS: `crate::arbiter::Held`
 /// copies out of the profile what it decides with and leaves the name behind, calling one kept
 /// inside the arbiter "state no decision reads". ADR-0033 describes a single consumer, the 3D
 /// viewer beyond the quota, and that stops being enough the day a second one exists.

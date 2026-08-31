@@ -731,12 +731,23 @@ che decide non è nessuna delle due che sembravano:** la radice di C-1 è il **b
 crate lasciando il buco aperto per le altre **sette**. La cura alla radice è la voce **X-3**
 dell'audit del 2026-08-27, che resta **aperta e del proprietario**. Le cinque ragioni stanno in
 [`porta-di-qualita.md`](porta-di-qualita.md), voce **C-1**, in una casa sola.
-⏭️ **IL PROSSIMO PASSO È IL COMPITO 4** — lo schema `ipc`, sul ramo `bincode` che il compito
-stesso prevede, e il ramo lo sceglie la decisione C-1 e non l'omissione. ⛔ **RICHIAMO DEL
-2026-08-31: qui stava *«scriverlo prima che quella decisione ci sia È la decisione, presa per
-omissione»*, e la decisione ORA C'È** — quindi lo sbarramento della **D4** è **caduto**, non
-aggirato. ⚠️ La **D4 resta la regola** e non è riscritta: dice che l'ordine 3bis→4 non si
-inverte, ed è ciò che ha fatto arrivare la misura prima dello schema.
+✅ **IL COMPITO 4 È ESEGUITO IL 2026-08-31, `GATE GREEN` a ogni commit** — la busta `ipc` porta
+i due messaggi, sul ramo `bincode` che la decisione **C-1** ha lasciato dov'era.
+⛔ **E il fatto che conta è un RILIEVO DI MERITO della revisione, non un difetto del prodotto:**
+il doc del tipo spendeva **quattro** paragrafi sul campo che **rifiuta** — `name`, contenuto non
+fidato — e **nessuno** sui due che l'arbitro **obbedisce**. `compute_class` sceglie la corsia e
+apre la guardia di `ask_back`; `preemption` decide se una concessione possa essere richiamata:
+arrivano dal **medesimo pari** del nome, sono un privilegio **più forte di una stringa**, e non
+sono controllati contro **niente** — mentre `reserved_vram` deve superare il tetto in `admit`.
+⚖️ **Decisione del proprietario, il 2026-08-31: si DICHIARA il costo col proprio innesco, e i
+campi NON si restringono.** Restringerli riaprirebbe la **D16** per proteggere un chiamante **che
+non esiste**, cioè il gotcha **#46** dal verso sbagliato. ⛔ **L'innesco è il CONSUMATORE:** il
+compito che per primo decodificherà byte in un `ResourceProfile` è dove si scrive la metà
+**verificante** di ADR-0005, che oggi non ha casa.
+⏭️ **IL PROSSIMO PASSO È IL COMPITO 5** — §6.4: il contratto del sensore, il campo `detail` e
+l'anello che giornala. ⚠️ **La D4 resta la regola** e non è riscritta: dice che l'ordine 3bis→4
+non si inverte, ed è ciò che ha fatto arrivare la misura **prima** dello schema — il suo
+sbarramento è caduto con la decisione **C-1**, non aggirato.
 ⚠️ **Il compito 2 non
 esiste**, ed è dichiarato nel piano: il timbro di build è **uscito dal perimetro**. Subagent-driven,
 un subagente fresco per compito con revisione fra uno e l'altro, e **prima** il pre-controllo delle

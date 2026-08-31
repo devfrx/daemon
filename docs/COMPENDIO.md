@@ -744,10 +744,28 @@ campi NON si restringono.** Restringerli riaprirebbe la **D16** per proteggere u
 non esiste**, cioè il gotcha **#46** dal verso sbagliato. ⛔ **L'innesco è il CONSUMATORE:** il
 compito che per primo decodificherà byte in un `ResourceProfile` è dove si scrive la metà
 **verificante** di ADR-0005, che oggi non ha casa.
-⏭️ **IL PROSSIMO PASSO È IL COMPITO 5** — §6.4: il contratto del sensore, il campo `detail` e
-l'anello che giornala. ⚠️ **La D4 resta la regola** e non è riscritta: dice che l'ordine 3bis→4
-non si inverte, ed è ciò che ha fatto arrivare la misura **prima** dello schema — il suo
-sbarramento è caduto con la decisione **C-1**, non aggirato.
+✅ **IL COMPITO 5 È ESEGUITO IL 2026-09-01, `GATE GREEN` a ciascuno dei tre commit** — il
+contratto del sensore, il campo `detail` all'indice **5** con la variante `RecordKind::Verdict`, e
+l'anello che giornala. `V10` passa a **coperta** nel catalogo, e nel blocco C resta scoperta la
+sola `V5`. ⛔ **E il traguardo ha toccato l'ARTEFATTO IRREVERSIBILE:** nasce il **quarto** record
+congelato, che porta insieme la variante nuova **e** `detail: Some` — con `None` non pinzerebbe
+niente dell'indice 5, perché un `None` in coda non viene scritto. ✅ **L'additività è provata sui
+file veri e non su uno specchio:** i tre `.cbor` esistenti, ricodificati dal tipo a sei campi,
+tornano **byte-identici**.
+⛔ **E ciò che conta di più è che il pre-controllo ha tenuto una TERZA volta, con due voci
+bloccanti:** il file dettato **non compilava** — undici nomi fuori dalla lista `use` — e **due
+sonde su tre non potevano passare**, perché l'anello scrive una **nota** su un passo che nessuno
+aveva aperto e il contratto della porta la rifiuta con `OutOfOrder`. Il costo del rimedio non era
+la riga di setup ma gli **oracoli**, riscritti tutti e tre.
+⚠️ **E una mutazione è sopravvissuta, chiusa con una sonda in più invece che con un'asserzione più
+larga:** l'ordine *«il costo dichiarato si legge PRIMA di eseguire»* — che il doc chiama **V11** —
+non era tenuto da nulla, perché un sensore che gira e viene scartato **non scrive niente** come
+uno che non gira. Da lì il gotcha **#95**.
+⏭️ **IL PROSSIMO PASSO È IL COMPITO 6** — §6.2 e §6.3: il decisore, il gettone di conformità e il
+record risolto. ⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
+propria variante e il proprio record congelato; e la voce `E50` gli dice che l'elenco dei file di
+un compito che tocca `RecordKind` deve nominare **anche** `crates/simulator/tests/dst_campaign.rs`,
+che porta un oracolo con un `match` esaustivo.
 ⚠️ **Il compito 2 non
 esiste**, ed è dichiarato nel piano: il timbro di build è **uscito dal perimetro**. Subagent-driven,
 un subagente fresco per compito con revisione fra uno e l'altro, e **prima** il pre-controllo delle

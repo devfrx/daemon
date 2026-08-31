@@ -13,10 +13,11 @@ use alloc::vec::Vec;
 
 /// The width of the declared length, in bytes.
 ///
-/// ⚠️ PUBLIC SINCE 2026-08-31, AND IT IS A DEDUPLICATION RATHER THAN AN API WIDENING:
+/// ⚠️ PUBLIC SINCE 2026-08-31, AND IT IS A DEDUPLICATION AND AN API WIDENING BOTH:
 /// `crates/kernel/tests/worker_wire.rs` cuts a body off a framed message and spelled the `4`
 /// itself, so the width the module doc claims is "decided here and nowhere else" had a second
-/// site. ⛔ READING THIS CONSTANT PROVES NOTHING, and no probe may use it as an oracle: the
+/// site. ⚠️ THE WIDENING IS REAL: outside this file the only caller is that bench.
+/// ⛔ READING THIS CONSTANT PROVES NOTHING, and no probe may use it as an oracle: the
 /// oracle is `the_declared_length_is_four_bytes_big_endian`, which asserts the prefix as a
 /// LITERAL. A probe that compared against this constant would assert the code against itself.
 pub const LENGTH_WIDTH: usize = 4;

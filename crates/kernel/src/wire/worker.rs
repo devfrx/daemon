@@ -56,11 +56,10 @@ pub enum FromWorker {
     /// compiles, it round-trips, and it is correct -- it costs close to DOUBLE the traffic in
     /// silence, which is why the probe that holds it asserts a SIZE and not the attribute.
     ///
-    /// ⚠️ THE FIGURES ARE NOT COPIED HERE, AND THAT IS THE POINT. §6.10.4 measured the ratio on
-    /// a 4096 B audio fragment and is its house; the measurement that holds THIS line lives in
-    /// the comment of `the_byte_string_annotation_is_measured_and_not_asserted`, in
-    /// `crates/kernel/tests/worker_wire.rs`. Both pairs stood verbatim in this doc until
-    /// 2026-08-31 -- gotcha #31, and a number in three houses is corrected in none of them.
+    /// ⚠️ THE FIGURES ARE NOT COPIED HERE, AND THAT IS THE POINT -- gotcha #31. §6.10.4 measured
+    /// the ratio on a 4096 B audio fragment; the measurement that holds THIS line lives in the
+    /// comment of `the_byte_string_annotation_is_measured_and_not_asserted`, in
+    /// `crates/kernel/tests/worker_wire.rs`.
     #[n(0)]
     Fragment(
         #[n(0)]
@@ -78,6 +77,9 @@ pub enum FromWorker {
 
 impl FromWorker {
     /// Encodes the message and wraps it in its envelope.
+    ///
+    /// ⛔ THE DROPPED `Result` OF `minicbor::encode` STANDS ON THE ARGUMENT AT `Record::encode`
+    /// IN `record.rs`, READ AGAINST THIS TYPE'S GRAPH -- `Vec<u8>` and `Mib(u64)` -- NOT COPIED.
     pub fn encode(&self) -> Result<Vec<u8>, WireError> {
         let mut body = Vec::new();
         let _ = minicbor::encode(self, &mut body);

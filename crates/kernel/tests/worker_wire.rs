@@ -22,9 +22,8 @@ fn a_vram_peak_survives_the_round_trip() {
 fn the_byte_string_annotation_is_measured_and_not_asserted() {
     // ⛔ READING THE ATTRIBUTE IN THE SOURCE PROVES NOTHING -- what the annotation buys is a
     // SIZE. Both shapes compile, both round-trip, both are correct; one costs close to double
-    // the traffic in silence. §6.10.4 measured that ratio on a 4096 B audio fragment and is
-    // ITS house -- the figures are not copied here, and this comment is the house of the ones
-    // below instead (gotcha #31; they stood in two more places until 2026-08-31).
+    // the traffic in silence. §6.10.4 measured that ratio on a 4096 B audio fragment; the
+    // figures are not copied here, and this comment is the house of the ones below (gotcha #31).
     //
     // ⛔ THE BODY MUST NOT BE ALL ZEROS, AND THAT IS THE WHOLE OF WHY THIS PROBE IS NOT
     // VACUOUS. CBOR encodes 0..=23 in a SINGLE byte, so an array of 4096 zeros and a byte
@@ -73,7 +72,7 @@ fn junk_inside_the_declared_length_does_not_decode() {
 
 #[test]
 fn an_empty_body_in_an_honest_envelope_does_not_decode() {
-    // ⛔ THE HALF OF `FromWorker::encode`'s BORROWED ARGUMENT THAT NOTHING HELD. That method
+    // ⛔ THE HALF THAT NOTHING HELD OF THE ARGUMENT `FromWorker::encode` BORROWS. That method
     // drops the `Result` of `minicbor::encode` on the precedent of `Record::encode`, and the
     // precedent does NOT say "the error is unreachable, so throw it away". It says the
     // impossible case is CONTAINED: an encoder that stopped early leaves bytes TRUNCATED OR

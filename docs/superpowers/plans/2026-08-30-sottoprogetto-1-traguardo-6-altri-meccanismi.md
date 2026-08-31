@@ -47,7 +47,7 @@ perché dettarla a memoria produce *«codice plausibile e falso»*.
 |---|---|---|
 | **A** — la concessione che torna | 1 | ✅ **ESEGUITA** — `GATE GREEN` a ogni commit del compito |
 | **B** — il filo | 3, 3bis | ✅ **ESEGUITA** il 2026-08-31 — entrambi i compiti, `GATE GREEN` a ogni commit. Il **3bis** era una misura, e il proprietario ha deciso **C-1** lo stesso giorno: `bincode` 2.0.1 resta |
-| **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 |
+| **C** — lo schema `ipc` | 4 | ✅ **scritta** il 2026-08-30 — e il **pre-controllo del compito 4 è FATTO** il 2026-08-31: **cinque** voci, `E32`–`E36`, **due bloccanti**. ▶️ **Resta il dispaccio**, e le voci si leggono **prima** |
 | **D** — i meccanismi | 5, 6, 7, 8 | ✅ **scritta** il 2026-08-30 — pre-controllo P-12…P-15, voce chiusa dalla **D22**, e i quattro compiti |
 | **E** — la prova e la chiusura | 9, 10 | ✅ **scritta** il 2026-08-30 — e il pre-controllo ha trovato **P-16**, un meccanismo che la mappa dei file non ospitava |
 

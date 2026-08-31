@@ -3605,6 +3605,13 @@ che la §6 del compendio porta da sei passate — scegliere fra *«spostarle»* 
 regola»* è del proprietario, e cominciare a metà traguardo produrrebbe **due** convenzioni invece
 di una. Questa passata la allarga di un'occorrenza e non la chiude.
 
+⚠️ **E IL RIMEDIO STESSO È STATO RIVISTO — che è il #45 — E CI SI È TROVATO UN DIFETTO.** Il
+messaggio dell'asserzione nuova era **collassato su una riga**, con l'indentazione dentro la
+stringa: **110 caratteri**, perché una continuazione di riga non sopravvive a uno script che
+riscrive il sorgente. ⛔ **E `cargo fmt --all --check` esce VERDE su quella riga**, rimisurato
+rimettendo il commit in albero — né il cancello né `fmt` possono vederlo. Da lì il gotcha **#97**.
+Chiuso in `488cae0`.
+
 📌 **La lezione di metodo, e vale oltre il caso.** Tutti e tre i rilievi vivono in ciò che il
 compito **ha reso stantio** senza toccarlo: un enum nuovo che nessuna guardia copriva, un campo
 il cui valore nessuna delle mutazioni elencate raggiungeva, e due frasi che erano vere finché i

@@ -776,7 +776,7 @@ forma di ADR-0034 — l'anello non sa che cosa farà la correzione, e smette di 
 gli altri compiti ne hanno avuti da tre a cinque, e quel giro ha trovato tre difetti veri — che è
 la ragione per cui la regola dice *«finché una passata non torna pulita»*. La casa unica resta
 `E53` dell'errata; le misure stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che
-ne è uscito di generale è il gotcha **#96**.
+ne è uscito di generale sono i gotcha **#96** e **#97** — il secondo dalla revisione del rimedio.
 ⏭️ **IL PROSSIMO PASSO È IL COMPITO 6** — §6.2 e §6.3: il decisore, il gettone di conformità e il
 record risolto. ✅ **IL SUO PRE-CONTROLLO È FATTO IL 2026-08-31, PRIMA di dispacciarlo, e ha
 tenuto una QUARTA volta: sei voci, `E57`–`E62`, DUE bloccanti.** Una sonda dettata **non può

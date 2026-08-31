@@ -83,6 +83,7 @@ fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
         &Untrusted::new("the artefact".into()),
         judged,
         StepId::new(2),
+        EffectClass::Idempotent,
         &mut journal,
     )
     .expect("the ring");
@@ -128,6 +129,7 @@ fn a_failing_verdict_opens_a_new_step_and_carries_the_detail() {
         &Untrusted::new("the artefact".into()),
         judged,
         next,
+        EffectClass::Idempotent,
         &mut journal,
     )
     .expect("the ring");
@@ -182,6 +184,7 @@ fn an_inferential_sensor_is_refused_by_the_tight_ring() {
         &Untrusted::new("the artefact".into()),
         judged,
         StepId::new(2),
+        EffectClass::Idempotent,
         &mut journal,
     )
     .expect("the ring");
@@ -201,6 +204,52 @@ fn an_inferential_sensor_is_refused_by_the_tight_ring() {
     );
     let (_, Record::V1(only)) = &written[0];
     assert_eq!(only.kind, RecordKind::Intent);
+}
+
+#[test]
+fn the_class_of_the_corrective_step_is_the_one_the_caller_delivered() {
+    // ⛔ THE RING DOES NOT KNOW WHAT THE CORRECTION WILL DO, SO IT DOES NOT NAME ITS CLASS. Until
+    // 2026-08-31 it wrote a literal `Idempotent` and NOTHING held it: turned to `Unrepeatable`
+    // the whole workspace stayed green — 41 targets, 297 passed, identical to the baseline. It
+    // was not among this task's five dictated mutations, which is why it was never run. Errata
+    // `E55`.
+    //
+    // ⚠️ TWO VALUES AND NOT ONE (gotcha #48), AND NEITHER IS THE OLD LITERAL: a ring that
+    // ignored the argument and kept writing `Idempotent` fails on BOTH, so the probe cannot pass
+    // by resembling the code it replaced.
+    //
+    // ⚠️ AND WHAT IS ASSERTED IS THE ARCHIVE, NOT THE RESOLUTION. That the class then decides the
+    // reconciliation is `reconciliation.rs`'s half, proved there on its own values; composing two
+    // proved facts into a third probe would be a second house for one property (§7.4.4).
+    for effect in [EffectClass::Unrepeatable, EffectClass::Verifiable] {
+        let mut journal = MemoryJournal::new();
+        let judged = StepId::new(1);
+        let next = StepId::new(2);
+        open_the_step(&mut journal, judged);
+
+        let sensor = ScriptedSensor {
+            cost: CostClass::Computational,
+            outcome: VerdictOutcome::Fail,
+        };
+
+        run_the_ring(
+            &sensor,
+            &Untrusted::new("the artefact".into()),
+            judged,
+            next,
+            effect,
+            &mut journal,
+        )
+        .expect("the ring");
+
+        let written = records(&journal);
+        let (opened, Record::V1(intent)) = &written[2];
+        assert_eq!(*opened, next);
+        assert_eq!(
+            intent.effect, effect,
+            "the ring wrote a class of its own instead of the one it was handed"
+        );
+    }
 }
 
 /// A sensor that records whether it was ever RUN. ⛔ `Cell` AND NOT A COUNTER: what is asked is
@@ -252,6 +301,7 @@ fn an_inferential_sensor_is_never_run_at_all() {
         &Untrusted::new("the artefact".into()),
         judged,
         StepId::new(2),
+        EffectClass::Idempotent,
         &mut journal,
     )
     .expect("the ring");
@@ -274,6 +324,7 @@ fn an_inferential_sensor_is_never_run_at_all() {
         &Untrusted::new("the artefact".into()),
         judged,
         StepId::new(3),
+        EffectClass::Idempotent,
         &mut journal,
     )
     .expect("the ring");

@@ -3546,7 +3546,7 @@ niente è dichiarata»* non può mordere una mutazione che nessuno ha scritto.
 | | La mutazione | Esito misurato | Che cosa se n'è fatto |
 |---|---|---|---|
 | **S-1** | una **seconda variante** `#[n(1)]` su `Detail` | ⛔ **41 bersagli, 297 passate, 0 fallite, 2 ignorate** — identico alla baseline **cifra per cifra**: mutante vivo | ✅ **chiuso** — `match` esaustivo su `Detail` in `frozen_bytes.rs`, e la stessa mutazione ora dà `` error[E0004]: non-exhaustive patterns: `&Detail::Routing(_)` not covered ``. Voce `E54` |
-| **S-2** | `EffectClass::Idempotent` → `Unrepeatable` nel record di **feedback** di `run_the_ring` | ⛔ **41 bersagli, 297 passate, 0 fallite, 2 ignorate** — identico: mutante vivo | ⚖️ **dichiarato accanto al codice e NON pinzato**, gotcha **#73** — il merito è del proprietario. Voce `E55` |
+| **S-2** | `EffectClass::Idempotent` → `Unrepeatable` nel record di **feedback** di `run_the_ring` | ⛔ **41 bersagli, 297 passate, 0 fallite, 2 ignorate** — identico: mutante vivo | ✅ **chiuso il 2026-08-31, per decisione del proprietario:** la classe la **consegna il chiamante**, e la sonda la pinza su **due** valori, nessuno dei quali è il letterale vecchio. La mutazione ora muore col proprio messaggio. Voce `E55` |
 | **di controllo** | una **quinta variante** `#[n(4)]` su `RecordKind` | ✅ `` error[E0004]: non-exhaustive patterns: `RecordKind::Routing` not covered `` | è la **seconda direzione**: dice che il rimedio di `S-1` porta `Detail` dove i suoi tre fratelli già erano |
 
 ⛔ **Perché `S-1` contava, e non è una rifinitura.** Gli indici di `Detail` viaggiano **sul filo**
@@ -3569,9 +3569,15 @@ resolution_of(body.effect))`, e decide come ogni passo correttivo dell'anello vi
 dopo una caduta: e non porta **nessuna** giustificazione. ⚠️ **È la forma che la revisione del
 compito 4 aveva già trovato**, in un posto nuovo: il campo che si **rifiuta** è argomentato,
 quelli a cui si **obbedisce** no.
-⚖️ **Il merito è del proprietario:** l'anello dichiara *«riesegui»* per un passo il cui effetto
-nessuno conosce ancora, e ADR-0007 decide il contrario per quella situazione — *«un effetto senza
-classe dichiarata è trattato come irripetibile»*. Una sonda congelerebbe la scelta stessa.
+✅ **DECISO IL 2026-08-31: la classe la consegna il chiamante**, `correction_effect: EffectClass`.
+⚖️ **E la ragione che decide non è la lettera di ADR-0007 — che pure tirava da quella parte — ma la
+COERENZA:** è ciò che quella stessa funzione fa **una riga sopra** per `next`, *«consegnato e non
+allocato … inventarne uno qui prenderebbe quella decisione scrivendola»*, ed è la forma di
+ADR-0034. L'anello non sa che cosa farà la correzione; chi lo sa è il chiamante. Così non si
+sceglie fra *«riesegui alla cieca»* e *«fermati sempre»*: si smette di **indovinare**.
+⚠️ **Costo dichiarato:** un sesto parametro, e quattro siti di chiamata che lo passano. La sonda
+usa **due** valori e **nessuno è `Idempotent`** (gotcha #48), quindi un anello che ignorasse
+l'argomento e riscrivesse il letterale vecchio fallirebbe su **entrambi** — misurato: fallisce.
 
 ✅ **E un terzo rilievo, che non è una mutazione ma un censimento** — voce `E56`. Due commenti di
 sorgente dicevano **al presente** che `frozen_bytes.rs` congela *«TRE»* record, e questo compito

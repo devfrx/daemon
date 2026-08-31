@@ -769,9 +769,10 @@ cinque mutazioni dettate poteva vedere perché **nessuna delle cinque li toccava
 durevole lasciando la baseline identica **cifra per cifra**, mentre la stessa aggiunta a
 `RecordKind` è `` error[E0004] `` — e la **classe d'effetto del passo di feedback** è tenuta da
 nulla e non argomentata, mentre quella del verdetto, che `reconcile` non legge mai, porta cinque
-righe. ✅ Il primo è **chiuso**; il secondo è **dichiarato e non pinzato** (#73) ed è **del
-proprietario**, perché l'anello dichiara *«riesegui»* per un passo il cui effetto nessuno conosce
-ancora e ADR-0007 decide il contrario. ⛔ **Il residuo è RIDOTTO e non chiuso:** un solo giro dove
+righe. ✅ **Entrambi sono chiusi**, il secondo per **decisione del proprietario del 2026-08-31: la classe
+la consegna il chiamante**, `correction_effect: EffectClass`. ⚖️ **E a decidere non è la lettera di
+ADR-0007 ma la coerenza:** è ciò che quella stessa funzione fa una riga sopra per `next`, ed è la
+forma di ADR-0034 — l'anello non sa che cosa farà la correzione, e smette di indovinarla. ⛔ **Il residuo è RIDOTTO e non chiuso:** un solo giro dove
 gli altri compiti ne hanno avuti da tre a cinque, e quel giro ha trovato tre difetti veri — che è
 la ragione per cui la regola dice *«finché una passata non torna pulita»*. La casa unica resta
 `E53` dell'errata; le misure stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che

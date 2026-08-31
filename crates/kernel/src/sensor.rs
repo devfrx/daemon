@@ -88,6 +88,16 @@ pub trait Sensor {
 /// MEASURED THE HARD WAY: the dictated probes of this task judged a step nobody had opened, and
 /// two of the three could not pass. Errata `E45`.
 ///
+/// ⛔ AND `correction_effect` IS DELIVERED FOR THE SAME REASON `next` IS. The ring opens a step
+/// it will not execute, and the class of an effect says how a DOUBT about it is reconciled
+/// (ADR-0007) — so naming it here would classify an effect nobody has written yet. ⚠️ IT USED TO
+/// BE A LITERAL `Idempotent` UNTIL 2026-08-31, held by nothing: turned to `Unrepeatable` the whole
+/// workspace stayed green, 41 targets and 297 passed, identical to the baseline. ⛔ AND THE
+/// DEFAULT ADR-0007 GIVES AN UNCLASSIFIED EFFECT IS THE OPPOSITE ONE — "an effect with no declared
+/// class is treated as UNREPEATABLE: facing a doubt it cannot resolve the system STOPS, it does
+/// not guess" — so the literal was not merely unheld, it guessed in the permissive direction.
+/// Errata `E55`, decided by the owner on 2026-08-31.
+///
 /// Returns the id of the step it opened, or `None` when nothing was opened — either the verdict
 /// passed, or the sensor was refused by the tight ring.
 pub fn run_the_ring<S: Sensor, J: Journal>(
@@ -95,6 +105,7 @@ pub fn run_the_ring<S: Sensor, J: Journal>(
     artefact: &Untrusted,
     step: StepId,
     next: StepId,
+    correction_effect: EffectClass,
     journal: &mut J,
 ) -> Result<Option<StepId>, JournalError> {
     // ⛔ THE DECLARED COST IS READ BEFORE `observe` IS CALLED, and that ordering IS V11: a cost
@@ -134,24 +145,16 @@ pub fn run_the_ring<S: Sensor, J: Journal>(
     // ⛔ A NEGATIVE VERDICT RE-ENTERS AS A NEW STEP (V14), AND NOBODY IS ASKED (Q10). The intent
     // carries the same untrusted detail as the feedback the next attempt has to answer.
     //
-    // ⚠️ AND `Idempotent` IS A LIVE MUTANT, DECLARED ON 2026-08-31 AND DELIBERATELY NOT PINNED.
-    // Unlike the verdict's class above — which `reconcile` provably never reads — THIS one IS
-    // read: `RecordKind::Intent => enter(.., resolution_of(body.effect))`, so it decides how
-    // every corrective step this ring opens gets reconciled after a crash. MEASURED by the
-    // review of this task: turned to `Unrepeatable`, the whole workspace stays green — 41
-    // targets, 297 passed, 0 failed, 2 ignored, identical to the baseline figure for figure. It
-    // was not among the task's five dictated mutations, so nobody had ever run it.
-    //
-    // ⛔ AND THE MERIT IS THE OWNER'S, WHICH IS WHY NO PROBE PINS IT. The ring declares "re-run
-    // me" for a step whose effect NOBODY KNOWS YET — the correction has not been written, and
-    // this record is the step's ONLY intent (`E19` refuses a second one), so the class is fixed
-    // here and forever. ADR-0007 rules the opposite way for exactly that situation: "an effect
-    // with no declared class is treated as UNREPEATABLE — facing a doubt it cannot resolve the
-    // system STOPS, it does not guess." A probe here would freeze the very choice that is open,
-    // which is gotcha #73. Registered as `E55` of this plan's errata.
+    // ⛔ AND THE CLASS IS THE CALLER'S, NOT A LITERAL. Unlike the verdict's class above — which
+    // `reconcile` provably never reads — THIS one IS read:
+    // `RecordKind::Intent => enter(.., resolution_of(body.effect))`, so it decides how every
+    // corrective step this ring opens gets reconciled after a crash. And this record is the
+    // step's ONLY intent (`E19` refuses a second one), so whatever is written here is fixed for
+    // that step forever. The ring does not know what the correction will do; the caller does.
+    // The reason it is delivered rather than invented is on the signature, with the measure.
     let feedback = Record::V1(RecordV1 {
         kind: RecordKind::Intent,
-        effect: EffectClass::Idempotent,
+        effect: correction_effect,
         trust: Trust::Untrusted,
         payload: verdict.detail.as_str().as_bytes().to_vec(),
         reason: String::from("a sensor verdict re-entered the ring as a new step"),

@@ -6,7 +6,11 @@
 //! SECOND real sensor in different areas, and if it does not stretch it BREAKS rather than
 //! bends.
 
+use alloc::string::String;
+
 use crate::boundary::Untrusted;
+use crate::ports::journal::{Journal, JournalError, StepId};
+use crate::record::{Detail, EffectClass, Record, RecordKind, RecordV1, Trust, VerdictDetail};
 use crate::time::Millis;
 
 /// What a sensor costs BEFORE it runs (§6.4.1). ⛔ IT IS A CLASS AND NOT A NUMBER, and the
@@ -64,4 +68,81 @@ pub trait Sensor {
 
     /// Observe, and answer. ⛔ THE ARTEFACT IS `&`, NEVER `&mut`.
     fn observe(&self, artefact: &Untrusted) -> Verdict;
+}
+
+/// Runs one sensor over one artefact and carries the answer back into the journal.
+///
+/// ⛔ A FREE FUNCTION THAT TAKES THE PORT, like `reconcile::steps_in_doubt` — the project already
+/// has this shape for "read the journal and derive", and this one writes as well. A struct
+/// holding the journal would give the ring state, and I5 keeps state in one place.
+///
+/// ⛔ `next` IS DELIVERED AND NOT ALLOCATED, and that is not laziness: `StepId` HAS NO ALLOCATOR,
+/// `ports/journal.rs` says so beside the type, and whether one arrives is the owner's — registered
+/// and not taken since 2026-08-21. Inventing one here would take that decision by writing it.
+///
+/// ⛔ AND THE STEP MUST ALREADY BE OPEN: the verdict is written with `Journal::note`, whose
+/// contract is that "a note for a step with NO INTENT is `OutOfOrder`". So this function answers
+/// `Err(JournalError::OutOfOrder)` when `step` was never opened, and that is the write-ahead
+/// discipline of ADR-0007 rather than a limitation of this function — an artefact belongs to a
+/// step that exists, and the one who opened it is the caller. ⚠️ WRITTEN DOWN BECAUSE IT WAS
+/// MEASURED THE HARD WAY: the dictated probes of this task judged a step nobody had opened, and
+/// two of the three could not pass. Errata `E45`.
+///
+/// Returns the id of the step it opened, or `None` when nothing was opened — either the verdict
+/// passed, or the sensor was refused by the tight ring.
+pub fn run_the_ring<S: Sensor, J: Journal>(
+    sensor: &S,
+    artefact: &Untrusted,
+    step: StepId,
+    next: StepId,
+    journal: &mut J,
+) -> Result<Option<StepId>, JournalError> {
+    // ⛔ THE DECLARED COST IS READ BEFORE `observe` IS CALLED, and that ordering IS V11: a cost
+    // that came back with the verdict would arrive after the expense (§6.4.1). Nothing is
+    // journalled on this road — a sensor that never ran produced no verdict, and writing one
+    // would be the record of an event that did not happen.
+    if sensor.declared_cost() == CostClass::Inferential {
+        return Ok(None);
+    }
+
+    let verdict = sensor.observe(artefact);
+
+    // The verdict, upon the step whose artefact was judged. ⛔ `Verifiable` AND NOT
+    // `Unrepeatable`: the class describes how a DOUBT about this record's effect would be
+    // reconciled, and a verdict has no effect on the world — re-running the sensor over the same
+    // artefact answers the same thing. ⚠️ It is never actually reconciled, because a `Verdict`
+    // record opens no doubt (see `crate::reconcile`); the field is mandatory and must still be
+    // true.
+    let record = Record::V1(RecordV1 {
+        kind: RecordKind::Verdict,
+        effect: EffectClass::Verifiable,
+        trust: Trust::Untrusted,
+        payload: verdict.detail.as_str().as_bytes().to_vec(),
+        reason: String::from("a sensor judged the artefact of this step"),
+        detail: Some(Detail::Verdict(VerdictDetail {
+            passed: verdict.outcome == VerdictOutcome::Pass,
+            spent_millis: verdict.spent.get(),
+        })),
+    })
+    .encode();
+    journal.note(step, &record)?;
+
+    if verdict.outcome == VerdictOutcome::Pass {
+        return Ok(None);
+    }
+
+    // ⛔ A NEGATIVE VERDICT RE-ENTERS AS A NEW STEP (V14), AND NOBODY IS ASKED (Q10). The intent
+    // carries the same untrusted detail as the feedback the next attempt has to answer.
+    let feedback = Record::V1(RecordV1 {
+        kind: RecordKind::Intent,
+        effect: EffectClass::Idempotent,
+        trust: Trust::Untrusted,
+        payload: verdict.detail.as_str().as_bytes().to_vec(),
+        reason: String::from("a sensor verdict re-entered the ring as a new step"),
+        detail: None,
+    })
+    .encode();
+    journal.intent(next, &feedback)?;
+
+    Ok(Some(next))
 }

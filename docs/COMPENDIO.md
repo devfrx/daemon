@@ -761,6 +761,12 @@ la riga di setup ma gli **oracoli**, riscritti tutti e tre.
 larga:** l'ordine *«il costo dichiarato si legge PRIMA di eseguire»* — che il doc chiama **V11** —
 non era tenuto da nulla, perché un sensore che gira e viene scartato **non scrive niente** come
 uno che non gira. Da lì il gotcha **#95**.
+⚠️ **E IL COMPITO 5 LASCIA UN RESIDUO DI METODO, dichiarato perché chi riprende non lo scopra: NON HA AVUTO IL CICLO DI REVISIONE INDIPENDENTE.** È stato eseguito **in sessione** e non
+subagent-driven, perché quella sessione aveva i sotto-agenti disabilitati; le cinque mutazioni sono
+state eseguite e il criterio di chiusura riletto punto per punto — è da lì che sono uscite `E51` ed
+`E52` — ma **una rilettura fatta da chi ha scritto il codice non vale una revisione**, ed è la
+revisione che in questo repository ha trovato i mutanti vivi (gotcha **#74**). ⛔ **La voce è `E53`
+dell'errata, che ne è la casa unica, e NON si chiude eseguendo il compito 6.**
 ⏭️ **IL PROSSIMO PASSO È IL COMPITO 6** — §6.2 e §6.3: il decisore, il gettone di conformità e il
 record risolto. ⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
 propria variante e il proprio record congelato; e la voce `E50` gli dice che l'elenco dei file di

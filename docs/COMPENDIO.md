@@ -792,7 +792,17 @@ stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito 
 gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
 **formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro
 inesercitato in tutto il workspace.
-⏭️ **IL PROSSIMO PASSO È IL COMPITO 6** — §6.2 e §6.3: il decisore, il gettone di conformità e il
+⏭️ **IL PROSSIMO PASSO È IL QUARTO GIRO DI REVISIONE DEL COMPITO 5, POI IL COMPITO 6.**
+⛔ **RICHIAMO DEL 2026-08-31: questa riga diceva soltanto *«il prossimo passo è il compito 6»*, e
+l'ORDINE è cambiato** — `E53` dichiara di sé che **non si chiude eseguendo il compito 6**, e vale
+la riga *«chiudi ciò che è aperto prima di aprire altro»*. Tre giri fatti, **nessuno pulito**;
+il quarto si dispaccia col perimetro `git diff 4e4b725^..HEAD -- crates/`, battendo **per prime**
+le affermazioni introdotte dai commit `eba6344` e `16365f2`. La casa unica del residuo è `E53`
+dell'errata, che porta il metodo e il perché.
+✅ **E IL PROPRIETARIO HA AUTORIZZATO I SOTTO-AGENTI IL 2026-08-31**, quindi la modalità che il
+piano prescrive in testa — *un subagente fresco per compito, con revisione fra uno e l'altro* — è
+di nuovo praticabile, e il compito 6 **non è più sbarrato dal metodo**.
+⏳ **POI IL COMPITO 6** — §6.2 e §6.3: il decisore, il gettone di conformità e il
 record risolto. ✅ **IL SUO PRE-CONTROLLO È FATTO IL 2026-08-31, PRIMA di dispacciarlo, e ha
 tenuto una QUARTA volta: sei voci, `E57`–`E62`, DUE bloccanti.** Una sonda dettata **non può
 passare** — `dispatch` scrive una nota su un passo che nessuno ha aperto, cioè `E45` alla **seconda
@@ -805,8 +815,10 @@ la lista dei file del compito non nomina `crates/simulator/tests/dst_campaign.rs
 rende rosso — e la voce che lo diceva, `E50`, **esisteva già** — e il difetto del gotcha **#97**
 **esisteva già nel prodotto del compito 5**, non visto dalla prima passata di revisione perché
 quella cercava mutanti e conteggi, non letterali. ✅ Censita la **radice** e non l'occorrenza: in
-tutto `crates/` erano **due**, entrambe chiuse. ⛔ **Il compito NON è dispacciato**, e la ragione è di metodo: il
-piano prescrive subagent-driven, e i sotto-agenti restano non autorizzati. ⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
+tutto `crates/` erano **due**, entrambe chiuse. ⛔ **Il compito NON è ancora dispacciato**, ma la ragione **non è più quella**: qui stava
+*«i sotto-agenti restano non autorizzati»*, e il proprietario li ha **autorizzati** il 2026-08-31.
+A precederlo è ora `E53`, per la riga *«chiudi ciò che è aperto prima di aprire altro»*.
+⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
 propria variante e il proprio record congelato; e la voce `E50` gli dice che l'elenco dei file di
 un compito che tocca `RecordKind` deve nominare **anche** `crates/simulator/tests/dst_campaign.rs`,
 che porta un oracolo con un `match` esaustivo.

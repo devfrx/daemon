@@ -732,8 +732,11 @@ crate lasciando il buco aperto per le altre **sette**. La cura alla radice è la
 dell'audit del 2026-08-27, che resta **aperta e del proprietario**. Le cinque ragioni stanno in
 [`porta-di-qualita.md`](porta-di-qualita.md), voce **C-1**, in una casa sola.
 ⏭️ **IL PROSSIMO PASSO È IL COMPITO 4** — lo schema `ipc`, sul ramo `bincode` che il compito
-stesso prevede. ⛔ **Scriverlo prima che quella decisione ci sia È la decisione, presa per omissione**: è la
-**D4**, e il piano scrive il compito 4 in **due rami** proprio perché il formato non era deciso.
+stesso prevede, e il ramo lo sceglie la decisione C-1 e non l'omissione. ⛔ **RICHIAMO DEL
+2026-08-31: qui stava *«scriverlo prima che quella decisione ci sia È la decisione, presa per
+omissione»*, e la decisione ORA C'È** — quindi lo sbarramento della **D4** è **caduto**, non
+aggirato. ⚠️ La **D4 resta la regola** e non è riscritta: dice che l'ordine 3bis→4 non si
+inverte, ed è ciò che ha fatto arrivare la misura prima dello schema.
 ⚠️ **Il compito 2 non
 esiste**, ed è dichiarato nel piano: il timbro di build è **uscito dal perimetro**. Subagent-driven,
 un subagente fresco per compito con revisione fra uno e l'altro, e **prima** il pre-controllo delle

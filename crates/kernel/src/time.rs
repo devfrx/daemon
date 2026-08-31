@@ -23,7 +23,22 @@
 //! Unit: the millisecond, everywhere (decision D1 of the milestone 2 plan).
 
 /// A duration. Not an instant: it has no origin.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+///
+/// ⛔ IT CARRIES THE `bincode` DERIVES BECAUSE THIS TYPE CROSSES A PRIVATE CHANNEL, and it is
+/// the only one of the four that no message names: it arrives through
+/// `crate::arbiter::Preemption::After(Millis)`, inside `crate::wire::ipc::GrantRequest`. ⚠️ SO
+/// NO DECLARATION UNDER `wire/` NAMES THIS TYPE -- `grep -rn "Millis" crates/kernel/src/wire/`
+/// finds prose and no code. That is why this says where to look, instead of leaving two
+/// derives with no findable caller.
+///
+/// ⛔ AND IT IS `Millis` AND NOT `Monotonic` OR `WallTime` THAT GOES, which is the whole of the
+/// module doc above holding at the boundary: what the gui declares is a DURATION -- how long
+/// it would take to hand the resource back -- and neither clock crosses. A decodable
+/// `Monotonic` would be an instant on OUR scale minted by a peer, and a decodable `WallTime`
+/// would put the clock this kernel refuses to decide with into a decision type.
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, bincode::Encode, bincode::Decode,
+)]
 pub struct Millis(u64);
 
 impl Millis {

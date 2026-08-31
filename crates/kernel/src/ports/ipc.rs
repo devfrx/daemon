@@ -45,6 +45,19 @@
 //! ⚠️ THIS FILE WAS THE HOUSE THAT RULING MISSED: the deciding commit touched five others and
 //! not this one, so the paragraph above said "the choice is not [made]" for a day after it was.
 //!
+//! ⛔ DATED RECALL, 2026-08-31 -- THE OTHER HALF OF THAT SENTENCE, AND IT IS THE HALF NOTHING
+//! HAS CORRECTED: THE BUILD STAMP DOES NOT ARRIVE WITH MILESTONE 6. §3.4 takes it out of the
+//! perimeter and makes it a DECLARED NON-CONSTRUCTION, so "milestone 6 brings ... the BUILD
+//! STAMP of §6.1.2" above is A DEADLINE WRITTEN IN PROSE (gotcha #77), and this is the run in
+//! which it falls due. Nothing ever went red for it, and nothing could have: a sentence about
+//! a future milestone has no oracle.
+//! ⚠️ WHAT IS CORRECTED IS THE *WHEN* AND NOT THE *WHAT*. The paragraph above stays because it
+//! is the only place that says what the stamp IS; its TRIGGER, and what it costs to live
+//! without it meanwhile, live beside the schema in `crate::wire::ipc` -- ONE house, so that the
+//! two cannot drift apart.
+//! ✅ THE SCHEMA HALF DID ARRIVE, and in the format named: `crate::wire::ipc` carries
+//! `IpcMessage` over the envelope of `crate::framing`.
+//!
 //! ⛔ The port exchanges BYTES, like `journal` and `process`. The schema lives in
 //! `kernel` and the simulator therefore exchanges bytes too, so the DST campaign really
 //! exercises encoding and decoding instead of going around them.
@@ -93,6 +106,16 @@ use alloc::vec::Vec;
 /// milestone 3 until 2026-08-21, and that milestone closed without it. Whoever implements this
 /// port in milestone 6 draws from THAT counter rather than starting a private one of its own:
 /// two independent counters that look identical are a divergence nothing would report.
+///
+/// ⛔ DATED RECALL, 2026-08-31 -- THE SUBJECT AGED AND THE CLAIM DID NOT, so the sentence is
+/// RE-POINTED AND NOT REMOVED (§6.5, gotcha #87). MILESTONE 6 DOES NOT IMPLEMENT THIS PORT: it
+/// brings the SCHEMA -- `crate::wire::ipc` -- and the transport is staged out (open item 5).
+/// Measured rather than assumed: `grep -rn "impl Ipc" crates/` still finds ONE bench fake and
+/// nothing else. ⚠️ Read "whoever implements this port" WITH NO MILESTONE ATTACHED. This line
+/// has now named two, and naming a third would only schedule the same correction again.
+/// ⛔ AND REMOVING IT WOULD LEAVE UNGUARDED THE VERY DEFECT IT EXISTS TO PREVENT, which is the
+/// whole reason the fix is a re-point: two independent counters that look identical, diverging
+/// with nothing to report it.
 ///
 /// ⚠️ "ASSIGNED BY THE CORE" MEANS "NOT CHOSEN BY THE CLIENT", and the line is worth spending
 /// because the other reading contradicts the signature below it. `accept` RETURNS one, so the

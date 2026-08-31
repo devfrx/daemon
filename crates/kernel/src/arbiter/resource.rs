@@ -30,7 +30,33 @@ use minicbor::{Decode, Encode};
 /// and of the measurement that it costs nothing. It is repeated here and not merely inherited
 /// because the attribute is per type: leaving it off this one would leave the shape of the
 /// field inside the message decided by a default after all.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Encode, Decode)]
+///
+/// ⛔ AND FROM 2026-08-31 IT CARRIES TWO SETS OF WIRE DERIVES, one per private channel: THIS
+/// TYPE CROSSES BOTH. `minicbor` for `crate::wire::worker`, `bincode` for `crate::wire::ipc`.
+/// ⚠️ IT IS THE DECLARED PRICE OF ADR-0037 AND NOT A DEFECT TO TIDY AWAY: that ADR chose the
+/// format of each channel on a MEASURED peer -- Python one side, TypeScript the other -- and
+/// refuses arguments of symmetry between them by name. Collapsing to one format so that one
+/// type would carry one set is that refused argument wearing the clothes of housekeeping, and
+/// §6.1.1 is spec besides.
+///
+/// ⚠️ AND THE TWO ARE WRITTEN ASYMMETRICALLY -- `Encode, Decode` bare, `bincode::Encode,
+/// bincode::Decode` qualified -- BECAUSE THE FILE IMPORTS ONE OF THE TWO PAIRS: the bare names
+/// here are `minicbor`'s. Qualifying the second pair is what keeps the reader from having to
+/// remember which import won.
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    Encode,
+    Decode,
+    bincode::Encode,
+    bincode::Decode,
+)]
 #[cbor(array)]
 pub struct Mib(#[n(0)] u64);
 
@@ -73,7 +99,20 @@ impl Mib {
 /// ceremony. A DERIVED `Ord` follows the order in which the variants are DECLARED, so
 /// reordering them would change the arbiter's priorities and NOTHING WOULD GO RED.
 /// Removing the trap beats watching it.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+///
+/// ⛔ IT CARRIES THE `bincode` DERIVES BECAUSE THIS TYPE CROSSES A PRIVATE CHANNEL: it is a
+/// field of `crate::wire::ipc::GrantRequest`, which is what the gui declares when it asks for
+/// a grant (ADR-0005: the requester declares the reservation). ⚠️ ONE FORMAT AND NOT TWO,
+/// unlike `Mib`: nothing sends a compute class to a worker.
+///
+/// ⚠️ AND THE DECLARATION ORDER NOW DECIDES SOMETHING ELSE, STATED AND NOT HELD: the wire tag
+/// is the declaration index, so reordering these variants moves the bytes -- and NOTHING HERE
+/// WOULD SAY SO, because §6.4 forbids this channel the frozen bytes that catch exactly that on
+/// the journal. What the hand-written `Ord` above buys is the other half, and it still buys
+/// it: the arbiter's priorities come from `priority()`, so they do not follow the wire. ⛔ The
+/// peer that would notice lives OUTSIDE this workspace, which is the same asymmetry
+/// `crate::wire::worker` writes down for its own default attribute.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, bincode::Encode, bincode::Decode)]
 pub enum ComputeClass {
     /// Wake word, VAD, STT, TTS. Never preempted, and its VRAM is held by a PERMANENT
     /// GRANT rather than subtracted from the budget -- a subtraction without a holder
@@ -121,7 +160,15 @@ impl Ord for ComputeClass {
 /// `preemptible: boolean` and `release_grace: duration` -- and this is ONE. The spirit of
 /// §5.3 point 3 is what forces it; the letter of §5.2 is what it costs. Registered in the
 /// errata of the milestone 5 plan so the owner can overturn it seeing it.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+///
+/// ⛔ IT CARRIES THE `bincode` DERIVES BECAUSE THIS TYPE CROSSES A PRIVATE CHANNEL: it is the
+/// third field of `crate::wire::ipc::GrantRequest`. ⚠️ AND IT DRAGS `Millis` ONTO THE WIRE WITH
+/// IT, through `After(Millis)` -- which is why `crate::time::Millis` carries the same pair,
+/// with no message naming it directly.
+///
+/// ⚠️ SAME STATED-AND-NOT-HELD COST AS `ComputeClass`: the tag is the declaration index, and
+/// §6.4 gives this channel no frozen bytes to notice a reorder.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, bincode::Encode, bincode::Decode)]
 pub enum Preemption {
     /// The arbiter never takes it back. ⚠️ NOT "permanent": a job that cannot be
     /// interrupted still FINISHES and releases. Permanence is not a type -- it is "nobody

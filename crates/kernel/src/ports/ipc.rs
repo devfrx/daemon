@@ -28,14 +28,22 @@
 //! it: ONE accepted value, and a gui that carries a different one does not start and says so.
 //! It is not a contract, it is an identity.
 //!
-//! ⛔ DATED RECALL, 2026-08-31 -- THE FORMAT NAMED ABOVE IS NO LONGER SETTLED. Milestone 6
-//! redid the C-1 measurement from primary sources: RUSTSEC-2025-0141 is still active,
-//! `bincode` upstream is archived, and MAINTAINED alternatives exist -- one of them claiming
-//! the same wire format, which would leave the TypeScript peer reader exactly where M-11 left
-//! it. ⚖️ The MEASUREMENT is done; the CHOICE is not, because §6.1.1 is spec and reopening it
-//! belongs to the owner. Until that ruling this paragraph names the entry the manifest CARRIES
-//! today, not a decided outcome. See docs/riferimenti.md, section on decision 5 (C-1), and the
-//! open entry in docs/porta-di-qualita.md.
+//! ⛔ DATED RECALL, 2026-08-31 -- THE FORMAT NAMED ABOVE WAS REOPENED AND IS SETTLED AGAIN.
+//! ⚠️ THIS HEADING READ "IS NO LONGER SETTLED", and it is corrected rather than deleted: what
+//! follows is a MINUTE and stands as written, but a heading is what gets read. Gotcha #31, the
+//! same correction this crate's manifest received the same day.
+//!
+//! Milestone 6 redid the C-1 measurement from primary sources: RUSTSEC-2025-0141 is still
+//! active, `bincode` upstream is archived, and MAINTAINED alternatives exist -- one of them
+//! claiming the same wire format, which would leave the TypeScript peer reader exactly where
+//! M-11 left it. ⚖️ The MEASUREMENT was done and the CHOICE was not, because §6.1.1 is spec
+//! and reopening it belongs to the owner.
+//!
+//! ✅ AND THE OWNER RULED THE SAME DAY: `bincode` 2.0.1 STAYS, §6.1.1 IS NOT REOPENED -- with
+//! measure M-12 in hand rather than around it. The reasons live in ONE house, the `bincode`
+//! note in this crate's Cargo.toml; the entry is closed in docs/porta-di-qualita.md.
+//! ⚠️ THIS FILE WAS THE HOUSE THAT RULING MISSED: the deciding commit touched five others and
+//! not this one, so the paragraph above said "the choice is not [made]" for a day after it was.
 //!
 //! ⛔ The port exchanges BYTES, like `journal` and `process`. The schema lives in
 //! `kernel` and the simulator therefore exchanges bytes too, so the DST campaign really

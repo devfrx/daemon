@@ -778,7 +778,15 @@ la ragione per cui la regola dice *«finché una passata non torna pulita»*. La
 `E53` dell'errata; le misure stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che
 ne è uscito di generale è il gotcha **#96**.
 ⏭️ **IL PROSSIMO PASSO È IL COMPITO 6** — §6.2 e §6.3: il decisore, il gettone di conformità e il
-record risolto. ⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
+record risolto. ✅ **IL SUO PRE-CONTROLLO È FATTO IL 2026-08-31, PRIMA di dispacciarlo, e ha
+tenuto una QUARTA volta: sei voci, `E57`–`E62`, DUE bloccanti.** Una sonda dettata **non può
+passare** — `dispatch` scrive una nota su un passo che nessuno ha aperto, cioè `E45` alla **seconda
+occorrenza**, e l'oracolo non si aggiusta col solo setup perché conta i record e li indicizza — e
+due **non compilano**, `assert_eq!` su un `Result` il cui `Ok` non è `PartialEq`, misurato con
+`rustc`. ⚠️ **E la più cara non è bloccante:** `Constraint::NoRetention` non è nominato da
+**nessuna** sonda, quindi nasce mutante vivo su un vincolo di classe **`Data`**, cioè quello che
+ADR-0012 fa fallire **chiuso**. ⛔ **Il compito NON è dispacciato**, e la ragione è di metodo: il
+piano prescrive subagent-driven, e i sotto-agenti restano non autorizzati. ⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
 propria variante e il proprio record congelato; e la voce `E50` gli dice che l'elenco dei file di
 un compito che tocca `RecordKind` deve nominare **anche** `crates/simulator/tests/dst_campaign.rs`,
 che porta un oracolo con un `match` esaustivo.

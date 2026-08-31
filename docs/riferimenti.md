@@ -1692,7 +1692,7 @@ tutto non è un oracolo.
 adottare il fork:** restano il grafo che cresce, un manutentore solo, e il fatto che una
 **compatibilità misurata oggi su cinque casi** non è una garanzia sulle versioni future — un
 fork la può rompere quando vuole, e nulla ce lo direbbe se non un banco che oggi non esiste.
-La scelta resta la **D12**, del proprietario.
+✅ **E LA SCELTA È STATA FATTA LO STESSO GIORNO — `bincode` 2.0.1 RESTA** — con questa misura in mano e non al posto suo: le cinque ragioni vivono nella voce **C-1** di [`porta-di-qualita.md`](porta-di-qualita.md), in una casa sola. 📌 **Ciò che vale la pena ricordare di questa misura è che ha cambiato la domanda:** ha detto **sì** alla compatibilità e ha fatto emergere **due costi** che nessuno aveva contato, e sono quelli — non la compatibilità — ad aver deciso.
 
 ⚖️ **DOVE SI FERMA, e perché fermarsi non è rimandare.** La misura è **fatta** ed è il prodotto
 del compito; ciò che manca è la **scelta**, che non è dell'agente: cambiare la voce tocca la

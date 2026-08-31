@@ -42,11 +42,33 @@ publish.workspace = true
 # one of them claiming the SAME WIRE FORMAT, which would leave the TypeScript peer reader
 # exactly where M-11 left it. So there is no longer a window closing by itself -- there is a
 # CHOICE, and it is not the agent's: §6.1.1 is spec, and reopening it belongs to the owner.
-# ⚖️ THE MEASUREMENT IS DONE, THE CHOICE IS NOT. Nothing in this manifest is changed by it:
-# the entry below is the one §6.1.1 names, and it stays until the owner rules. The sources,
-# each with its consultation date and what it says, live in ONE house -- docs/riferimenti.md,
-# section on decision 5 (C-1) -- and the open entry with its closer is in
-# docs/porta-di-qualita.md.
+#
+# ✅ DECIDED 2026-08-31 BY THE OWNER: `bincode` 2.0.1 STAYS, AND §6.1.1 IS NOT REOPENED.
+# The wire compatibility of the fork was measured first and it HOLDS -- measure M-12, five
+# cases byte-for-byte identical, the peer reading them with the right values -- so this is a
+# choice made against evidence, not around it. Five reasons, and the last one is the one that
+# decides:
+#   1. The advisory says UNMAINTAINED, not BROKEN. No fixed version exists because there is
+#      nothing to fix: the upstream team calls 2.x complete.
+#   2. I4 renounces versioning and this channel is private, so the format is frozen BY DESIGN.
+#      A finished library is what such a channel wants. And ADR-0031 exists to keep the graph
+#      inside I3 SMALL: adopting the fork grows the shipped graph by one net node.
+#   3. Staying leaves DECLARED debt -- this note, gotcha #64, the register entry. Adopting
+#      would create a NEW and SILENT one: compatibility measured TODAY over five cases, a
+#      single maintainer, and no check anywhere that would tell us if a later release broke
+#      it. Silent debt is the worse kind.
+#   4. Novelty is not maturity: the fork is eight months old with one maintainer, and RustSec
+#      does NOT recommend it -- the alternatives the advisory names are wincode, postcard,
+#      bitcode and rkyv, and all four fell, each with its own measurement.
+#   5. THE ROOT OF C-1 IS NOT THIS CRATE. What C-1 named is the HOLE BETWEEN TWO CRITERIA:
+#      nobody asks how the library at OUR end is doing. Swapping this one library cures ONE
+#      crate and leaves the hole open for the other seven. The cure at the root is entry X-3
+#      of the 2026-08-27 audit -- no advisory scanning at all -- and it is still open.
+# ⚠️ SO THE RESIDUE IS NAMED AND NOT SETTLED: X-3 stays open and belongs to the owner, because
+# adding a step to the gate is global constraint 7. Naming it is part of this decision, never
+# a substitute for it.
+# The sources, each with its consultation date and what it says, live in ONE house --
+# docs/riferimenti.md, section on decision 5 (C-1) -- and M-12 is there too.
 bincode = { version = "2", default-features = false, features = ["alloc", "derive"] }
 
 # ⚠️ `unty` 0.0.4 is NOT declared here, and that is deliberate: it arrives as a dependency

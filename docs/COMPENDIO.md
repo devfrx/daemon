@@ -106,7 +106,7 @@ dell'unico archivio irriproducibile**.
 | worker ML | **Python** | ADR-0028 |
 | persistenza | **`redb` 4.1.0**, con `StorageBackend` scritto da noi | ADR-0032 |
 | dipendenze del kernel | **allow-list sul grafo transitivo**, due grafi con rimedi opposti | ADR-0031 · §7.3.1 |
-| schema IPC | **`bincode` 2.0.1** — appuntato a `2`. ⚠️ **Dichiarato NON MANTENUTO** — RUSTSEC-2025-0141, `INFO`, non una vulnerabilità. ⛔ **RICHIAMO DEL 2026-08-31: qui stava *«registrato il 2026-08-18, si decide al Traguardo 6»*, e il Traguardo 6 ha MISURATO.** L'avviso è ancora attivo e il monte è archiviato; esistono alternative **mantenute**, e per una di esse lo **stesso formato sul filo** non è più una dichiarazione ma una **misura** — **M-12**, del 2026-08-31. ⚖️ **La misura è fatta, la scelta no:** §6.1.1 è spec, riaprirla è del **proprietario** — fonti in [`riferimenti.md`](riferimenti.md), voce aperta in [`porta-di-qualita.md`](porta-di-qualita.md) | M-1 · §6.1.1 · gotcha #22 · C-1 |
+| schema IPC | **`bincode` 2.0.1** — appuntato a `2`. ⚠️ **Dichiarato NON MANTENUTO** — RUSTSEC-2025-0141, `INFO`, non una vulnerabilità. ⛔ **RICHIAMO DEL 2026-08-31: qui stava *«registrato il 2026-08-18, si decide al Traguardo 6»*, e il Traguardo 6 ha MISURATO.** L'avviso è ancora attivo e il monte è archiviato; esistono alternative **mantenute**, e per una di esse lo **stesso formato sul filo** non è più una dichiarazione ma una **misura** — **M-12**, del 2026-08-31. ✅ **DECISO il 2026-08-31 dal proprietario: `bincode` 2.0.1 RESTA e §6.1.1 non si riapre** — contro l'evidenza di **M-12** e non attorno, perché la radice di C-1 è il **buco fra due criteri** e non questa crate; la cura alla radice è la voce **X-3**, che resta aperta. Le ragioni in [`porta-di-qualita.md`](porta-di-qualita.md), le fonti in [`riferimenti.md`](riferimenti.md) | M-1 · §6.1.1 · gotcha #22 · C-1 |
 | formato del **giornale** | **versione + indici espliciti** — `minicbor` 2.3.0, codifica in `kernel` | ADR-0036 · §4.9 |
 | formato del **canale worker** | **`minicbor` 2.3.0**, codifica in `kernel`, porta a **byte** | ADR-0037 · §6.10 |
 | **edition** | **2024**, su tutte e cinque le crate | scelta dal piano del Traguardo 1 |
@@ -573,7 +573,7 @@ parte, e P1 sembrava rispondervi pur avendo **due binari Rust** ai due capi.
 
 | Canale | Il pari | Misura | Formato |
 |---|---|---|---|
-| `ipc` | TypeScript | **M-11**: `bincode-ts` decodifica, valori giusti | **`bincode`** — §6.1.1 **confermata**, non riaperta. ⛔ **RICHIAMO DEL 2026-08-31:** la misura **C-1** del Traguardo 6 ha trovato alternative **mantenute** al **nostro** capo del filo, e **M-12** ha misurato che una di esse mette gli **stessi byte** sul filo — quindi la riapertura è **davanti al proprietario** con l'evidenza in mano, non con un argomento. ⚠️ Il **pari** invece non è cambiato: `bincode-ts` è fermo alla 1.0.0 del 2025-07-17, cioè esattamente ciò che M-11 misurò |
+| `ipc` | TypeScript | **M-11**: `bincode-ts` decodifica, valori giusti | **`bincode`** — §6.1.1 **confermata**, non riaperta. ⛔ **RICHIAMO DEL 2026-08-31:** la misura **C-1** del Traguardo 6 ha trovato alternative **mantenute** al **nostro** capo del filo, e **M-12** ha misurato che una di esse mette gli **stessi byte** sul filo — e il proprietario ha **deciso il 2026-08-31 di NON riaprirla**, con quell'evidenza in mano: §6.1.1 resta **confermata**. ⚠️ Il **pari** invece non è cambiato: `bincode-ts` è fermo alla 1.0.0 del 2025-07-17, cioè esattamente ciò che M-11 misurò |
 | `process` | Python | **M-10**: nessuna libreria per `bincode` | **`minicbor`** — voce già spedita, lista invariata |
 
 ⚠️ **Due canali privati con formati diversi non sono un'incoerenza:** la differenza è
@@ -725,8 +725,14 @@ un **fatto misurato**: cinque casi byte per byte identici, andata-e-ritorno incr
 valori**, e il pari `bincode-ts` che legge i byte del fork **coi valori giusti**. ⛔ **E la misura
 ha portato due costi che nessuno aveva:** il grafo spedito di ADR-0031 crescerebbe di **una voce
 netta**, e una compatibilità misurata **oggi** non vincola le versioni **future** del fork.
-⏭️ **IL PROSSIMO PASSO È LA DECISIONE DEL PROPRIETARIO SU C-1** — ora con l'evidenza in mano — e
-**poi** il compito 4 — lo schema `ipc`. ⛔ **Scriverlo prima che quella decisione ci sia È la decisione, presa per omissione**: è la
+✅ **E C-1 È DECISA LO STESSO GIORNO: `bincode` 2.0.1 RESTA, §6.1.1 non si riapre.** ⛔ **La ragione
+che decide non è nessuna delle due che sembravano:** la radice di C-1 è il **buco fra due criteri**
+— nessuno chiede come stia la libreria al **nostro** capo — e sostituire **una** libreria cura una
+crate lasciando il buco aperto per le altre **sette**. La cura alla radice è la voce **X-3**
+dell'audit del 2026-08-27, che resta **aperta e del proprietario**. Le cinque ragioni stanno in
+[`porta-di-qualita.md`](porta-di-qualita.md), voce **C-1**, in una casa sola.
+⏭️ **IL PROSSIMO PASSO È IL COMPITO 4** — lo schema `ipc`, sul ramo `bincode` che il compito
+stesso prevede. ⛔ **Scriverlo prima che quella decisione ci sia È la decisione, presa per omissione**: è la
 **D4**, e il piano scrive il compito 4 in **due rami** proprio perché il formato non era deciso.
 ⚠️ **Il compito 2 non
 esiste**, ed è dichiarato nel piano: il timbro di build è **uscito dal perimetro**. Subagent-driven,

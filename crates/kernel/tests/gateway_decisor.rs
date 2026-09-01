@@ -30,8 +30,8 @@ const REMOTE_DEAR: Candidate = Candidate {
 ///
 /// ⚠️ RICHIAMO DEL 2026-09-01: this said "how many were WALKED", unqualified, and that is false
 /// of the FIRST pass — which exhausts the chain in the probe below, so its count is three as well.
-/// `E100` corrected exactly this claim INSIDE that probe and left this one standing sixty lines
-/// up: the remedy closed the occurrence and not the sentence. What separates the first pass is the
+/// `E100` corrected exactly this claim INSIDE that probe and left this one standing, above it:
+/// the remedy closed the occurrence and not the sentence. What separates the first pass is the
 /// other probe, where it stops at index 0. Errata `E119`.
 const LOCAL_PRICEY: Candidate = Candidate {
     model: "local-medium",
@@ -181,8 +181,8 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
     // ⚠ RICHIAMO DEL 2026-09-01: this said "THE THREE FIELDS" and "`dispatch` writes six fields
     // and only four were read back", and the arithmetic did not close with ITSELF -- six minus
     // four is two, not three. The counts mixed units: `four` counted ASSERTIONS and `six` counted
-    // FIELDS. The field that fell outside both was `payload`, and it was still a live mutant a
-    // day later. The numerals are GONE rather than realigned; what holds is the rule below --
+    // FIELDS. The field that fell outside both was `payload`, and it was still a live mutant
+    // hours later. The numerals are GONE rather than realigned; what holds is the rule below --
     // every field this record carries is read back. Errata `E116`.
     //
     // ⚠ `effect` IS PINNED THOUGH `reconcile` NEVER READS IT, and that is deliberate: the
@@ -239,6 +239,7 @@ fn dispatch_does_not_swallow_the_journal_saying_no() {
 }
 
 #[test]
+#[allow(non_snake_case)]
 fn evaluated_is_what_the_chain_OFFERED_and_not_what_the_first_pass_walked() {
     // ⛔ THE THIRD READING OF "evaluated", AND THIS IS THE ONLY PROBE THAT CLOSES IT. Its
     // sister above cannot: there the first pass finds nothing and walks all three, so "offered"

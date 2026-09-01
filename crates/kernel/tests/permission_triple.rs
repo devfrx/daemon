@@ -255,8 +255,8 @@ fn a_different_TOOL_is_not_covered() {
 #[test]
 fn nothing_is_granted_on_an_empty_journal() {
     // ⛔ THE NON-VACUITY PROBE, and the asymmetry it exists for is worth the line: a projection
-    // answering `true` to everything passes exactly ONE of the four above, and one answering
-    // `false` to everything passes THREE. Only this probe and `a_granted_triple_is_granted`
+    // answering `true` to everything passes exactly ONE of the four probes above that ask
+    // `is_granted`, and one answering `false` to everything passes THREE of them. Only this probe and `a_granted_triple_is_granted`
     // together pin both ends, and without this one an empty journal granting everything would go
     // unnoticed.
     let journal = MemoryJournal::new();

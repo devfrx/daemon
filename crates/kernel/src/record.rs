@@ -320,7 +320,7 @@ pub struct RoutingDetail {
 impl RoutingDetail {
     /// The ONLY way to build one IN SOURCE, and `model` is a `&'static str` on purpose — errata
     /// `E94`. ⚠️ The qualifier arrived on 2026-09-01: `E101` added it to the doc of the TYPE and
-    /// left this one, sixty lines below, saying it unqualified — while the sister constructor
+    /// left this one, below it, saying it unqualified — while the sister constructor
     /// `PermissionDetail::new` already carried it. `Decode` builds this type from BYTES, so
     /// "in source" is the whole of what the constructor buys. Errata `E121`. The
     /// conversion to the wire's `String` happens here, so a caller cannot hand this type text it

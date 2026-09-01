@@ -287,9 +287,10 @@ impl Untrusted {
     ///   hand-written `Debug`. Reproduced from OUTSIDE the crate on a throwaway probe. So naming
     ///   `RoutingDetail::model` alone was this list committing the SAME omission a second time, in
     ///   the very bullet written to close it — which is the lesson below happening twice on one
-    ///   list. 📌 The rule that replaces the enumeration: **every field of every `Detail`
-    ///   species is on this road**, and a species added tomorrow is on it without anyone editing
-    ///   here. Errata `E120`.
+    ///   list. 📌 The rule that replaces the enumeration: **every TEXT field of every `Detail`
+    ///   species is on this road** — a `bool` or a `u64` carries none, as `VerdictDetail` says of
+    ///   itself — and a species added tomorrow is on it without anyone editing here. Errata
+    ///   `E120`, narrowed by `E127`.
     ///   📌 The lesson is the one AUD-050's own card gave: *the defect was not the sentence but the
     ///   LIST that declares the floor*, and a list rewritten while closing a hole is exactly where
     ///   the next omission goes.

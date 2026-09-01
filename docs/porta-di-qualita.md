@@ -4145,7 +4145,7 @@ attivi ora»* si risponde **rileggendo il giornale**, senza secondo archivio. Il
 |---|---|
 | `permission::grant` — la sua **via d'errore** | `a_journal_that_refuses_the_note_makes_the_grant_fail` |
 | `permission::grant` — ciò che **scrive**: `kind`, `effect`, `trust`, `payload`, `reason`, `detail` | ⚠️ **riga aggiunta il 2026-09-01**: `grant_writes_every_field_it_says_it_writes`, che rilegge il record **dal giornale**. Prima nulla rileggeva quel record e quattro campi su sei erano scoperti |
-| `permission::is_granted` | le **tre** sonde della tripla, più `a_granted_triple_is_granted`, più il giornale vuoto, più le **quattro** vie |
+| `permission::is_granted` | le sonde della tripla — una per componente — più `a_granted_triple_is_granted`, più il giornale vuoto, più le vie d'errore del §4 elencate sotto. ⚠️ **Nessun conteggio qui dal 2026-09-01, nono giro:** la riga ne portava due, ed è l'elenco che la cella per-file dello stesso commit vieta — si contano **sul binario**, `cargo test --locked -p kernel --test permission_triple` (`E128`) |
 | `RecordKind::Permission` (indice **5**) | `crates/kernel/tests/frozen_bytes.rs` — il **sesto** record congelato |
 | `Detail::Permission` (indice **2**) | idem: è l'unico record congelato che lo porta |
 | `PermissionDetail` — gli indici **0** e **1** dei due nomi | ⚠️ **riga aggiunta il 2026-09-01**: `the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror`, nello stesso file. Il record congelato porta `"frozen"` due volte e **non può** vederli scambiati |
@@ -4196,7 +4196,7 @@ prodotto e non lo è. Si revoca con `cp` semplice, o si fa `touch` dopo.
 | `grant` scrive `EffectClass::Idempotent` | **vivo**, stessa cifra | idem |
 | `grant` scrive una `reason` vuota | **vivo**, stessa cifra | idem |
 | `grant` scrive un byte di `payload` | **vivo**, stessa cifra | idem |
-| `Operation::Write` registrata come `write: false` | **vivo**, stessa cifra — ⛔ tutte e quattro le chiamate a `grant` del workspace passavano `Operation::Read`, quindi la via `Write → true` **non era percorsa da niente** | idem |
+| `Operation::Write` registrata come `write: false` | **vivo**, stessa cifra — ⛔ tutte le chiamate a `grant` del workspace passavano `Operation::Read` (⚠️ *«e quattro»* è uscito il 2026-09-01, nono giro: erano **sei** a `8d45eea`, tutte `READ_A` — `E128`), quindi la via `Write → true` **non era percorsa da niente** | idem |
 | in `record.rs`, gli indici `#[n(0)]` di `tool` e `#[n(1)]` di `resource` **scambiati** | **vivo**, stessa cifra — il sesto record congelato porta `"frozen"` **due volte**, quindi lo scambio non muove un byte | `the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror` |
 
 ⛔ **Il difetto di prodotto dietro i primi cinque è `E97` VERBATIM, sulla funzione sorella:** il
@@ -4328,7 +4328,7 @@ sottrazione; ciò che resta è **registrato e non preso**, del proprietario, e d
 pinzato** — una sonda sul silenzio di oggi sarebbe un voto contro il cambiarlo (gotcha **#73**).
 
 ⛔ **`E109` — `==` NON È UNA GUARDIA, E L'ASSENZA NON SI TROVA MUTANDO.** `CostClass` e
-`VerdictOutcome` erano tenuti da **quattro `==` e da nessun `match`**. ⛔ **La prova è un
+`VerdictOutcome` erano tenuti da **soli `==` e da nessun `match`**. ⚠️ **RICHIAMO DEL 2026-09-01, nono giro:** qui e in altre due case stava *«quattro `==`»*, ed erano **tre**, tutti in `sensor.rs` — `git grep -nE 'CostClass|VerdictOutcome' 52efadd -- 'crates/*.rs' | grep -c '=='`. Tolto dalle tre case (`E128`). ⛔ **La prova è un
 CENSIMENTO e non una mutazione, ed è più forte:** una mutazione dice che *una* corsa è restata
 verde, il censimento dice che in **tutto** `crates/` non esiste un `match` su quei tipi, quindi
 **niente in nessun punto** potrebbe cogliere una variante nuova. È la ragione per cui quattro
@@ -4368,7 +4368,7 @@ riscrivere il paragrafo intero — gotcha **#65** applicato al rapporto di un so
 
 ⚠️ **E UNA VOCE REGISTRATA E NON PRESA, che il sotto-agente non ha visto.** Il doc di **modulo** di
 `record.rs` dice *«with and without `#[cbor(array)]` on the two types below»*, e i tipi che sotto di
-esso portano quell'attributo sono **tre**. ⛔ **Non toccata, ed è una decisione:** la frase descrive
+esso portano quell'attributo sono più dei due che nomina — quanti, lo dice `grep -c '^#\[cbor(array)\]' crates/kernel/src/record.rs`. ⚠️ **RICHIAMO DEL 2026-09-01, nono giro:** qui stava *«tre»*, falso alla misura (`E128`). ⛔ **Non toccata, ed è una decisione:** la frase descrive
 una **misura passata** e non un censimento, quindi non è chiaramente falsa, e correggerla di
 iniziativa significherebbe prezzare come difetto ciò che potrebbe essere un verbale. È del
 proprietario.

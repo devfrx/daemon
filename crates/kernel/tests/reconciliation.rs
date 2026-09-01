@@ -674,8 +674,8 @@ fn an_unreadable_record_after_a_readable_outcome_puts_the_step_back_in_doubt() {
 ///
 /// ⛔ IT IS THE ONLY ROAD INTO THE `Err` OF `steps_in_doubt`, and until the probe below nothing
 /// reached it: every caller in the workspace hands in a `MemoryJournal` that replays, and every
-/// one of them `.expect(..)`s the answer. `FileJournal::replay` returns `Err` from three separate
-/// sites, so the road is a real archive's and not this fake's invention.
+/// one of them `.expect(..)`s the answer. `FileJournal::replay` returns `Err` from every fallible
+/// call it makes into the engine, so the road is a real archive's and not this fake's invention.
 struct ReplayRefusingJournal;
 
 impl Journal for ReplayRefusingJournal {

@@ -145,8 +145,8 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // in doubt for ever, and `leave` would close a doubt that no outcome resolved —
                 // which is the silent loss of a real doubt, the one failure ADR-0007 exists to
                 // prevent. Both were tried on 2026-09-01, one at a time, each reverted from a
-                // byte-exact copy, and each killed exactly the half of the pair below that
-                // exists to reach it.
+                // byte-exact copy: `leave` killed the second of the pair below alone, and
+                // `enter` killed both.
                 //
                 // ⚠️ AND THE DIFFERENCE FROM `Verdict` IS WORTH ONE LINE, because it is what
                 // makes `leave` the sharper of the two defects here: a verdict is written ABOUT
@@ -168,8 +168,9 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // what the user ALLOWED; the doubt of ADR-0007 is about an EFFECT that may or may
                 // not have reached the world, and an allowance is not an effect. Both other
                 // answers were tried on 2026-09-01, one at a time, each reverted from a byte-exact
-                // copy, and each killed exactly the half of the pair below that exists to reach
-                // it:
+                // copy: `leave` killed the second of the pair below alone, and `enter` killed both
+                // — ⚠️ this said "each killed exactly the half … that exists to reach it", copied
+                // from the `Routing` arm above, where it was false too (errata `E125`):
                 //
                 // - `enter` puts the step back in doubt with the permission's own class, and a
                 //   step whose outcome had already closed the doubt comes back open FOR EVER —

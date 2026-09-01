@@ -805,6 +805,9 @@ pushato — la mutazione lasciata in `crates/kernel/src/boundary.rs` è stata **
 i file di build **corrotti dal crash** (`LNK1285`) hanno preteso un `cargo clean` prima che qualunque
 rosso volesse dire qualcosa. ⛔ **E la pista del revisore interrotto era VERA**, completata invece che
 buttata insieme al file sporco: è `E106`.
+⛔ **Il brief di quel giro è la voce `E107` dell'errata, e sta LÌ per una ragione misurata:** il ledger
+di `.superpowers/` è **`git`-ignorato**, quindi ogni istruzione lasciata in esso **non raggiunge
+un'altra macchina** — voce `E43`, colta stavolta prima che costasse.
 ✅ **Il pre-controllo È FINITO il 2026-09-01 — casa unica `E102` più `E103`.** Le quattro domande
 hanno dato un **terzo bloccante** che `E102` non aveva: `grant` scrive una **nota** su un passo che
 nessuno ha aperto, e la porta la rifiuta — **tutte e cinque** le sonde dettate falliscono. Seconda

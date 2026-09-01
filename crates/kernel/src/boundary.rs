@@ -265,10 +265,21 @@ impl Untrusted {
     ///   `tests/compile_fail/record_reason_is_not_runtime_text.rs`, and it is NOT a copy of the
     ///   `promote` one — measured, widening the constructors to `&str` makes the new case fire
     ///   while the old stays `ok`, which is what proves the two hold different roads.
-    ///   ⚠️ **What it cost is what the recall predicted:** every construction site across three
-    ///   crates, `frozen_bytes.rs` included — and the frozen bytes did NOT move, checked first.
+    ///   ⚠️ **What it cost is what the recall predicted:** every construction site,
+    ///   `frozen_bytes.rs` included — and the frozen bytes did NOT move, checked first.
+    ///   ⚠️ **It said "across three crates" until 2026-09-01, and they are TWO** — the numeral is
+    ///   taken out and not realigned, on the precedent of AUD-018 and AUD-060: it lived in six
+    ///   houses, and the measure with its command lives in `porta-di-qualita.md`, in one.
     ///   ⛔ **And what stays open on A3 is written, so the floor is not read as flat:**
     ///   `String::leak` and the lying literal, above. Those are deliberate acts; this one was not.
+    ///   ⛔ **And a THIRD, which takes no deliberate act at all — added 2026-09-01, measured:**
+    ///   `Record::decode`. The list above was written the day AUD-050 was shut and named only the
+    ///   two acts; the derived `Decode` builds `RecordV1` from BYTES, so runtime text reaches
+    ///   index 4 and the hand-written `Debug` prints it whole. It is A4's road and not a new one —
+    ///   the reproduction lives beside the species constructors in `crate::record`, in one house.
+    ///   📌 The lesson is the one AUD-050's own card gave: *the defect was not the sentence but the
+    ///   LIST that declares the floor*, and a list rewritten while closing a hole is exactly where
+    ///   the next omission goes.
     /// - **A4 — a round trip through the journal**: `outcome(id, untrusted.as_str().as_bytes())`,
     ///   then `read_back`, then `String::from_utf8`, then `Instruction::new`. ✅ CLOSED on
     ///   2026-08-10, **at level 2**, by the record carrying the label: `promote` now writes the

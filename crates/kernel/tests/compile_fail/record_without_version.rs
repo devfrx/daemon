@@ -3,14 +3,12 @@
 //! record is expected.
 
 fn main() {
-    let inner = kernel::record::RecordV1 {
-        kind: kernel::record::RecordKind::Intent,
-        effect: kernel::record::EffectClass::Idempotent,
-        trust: kernel::record::Trust::Instruction,
-        payload: Vec::new(),
-        reason: String::new(),
-        detail: None,
-    };
+    let inner = kernel::record::RecordV1::intent(
+        kernel::record::EffectClass::Idempotent,
+        kernel::record::Trust::Instruction,
+        Vec::new(),
+        "",
+    );
 
     // The bare V1 body is NOT a record: only `Record::V1(..)` is.
     let _bytes = inner.encode();
@@ -38,6 +36,17 @@ fn main() {
 // `TRYBUILD=overwrite` rewrites `.stderr` files and nothing else, so a bulk regeneration
 // CANNOT silence a case that fires by compiling. No second case of a different shape is owed
 // here — unlike a rule watched only by `mismatch`, which a regeneration switches off quietly.
+//
+// ⛔ AND THAT PARAGRAPH WENT FALSE ON 2026-09-01 AND WAS TRUE AGAIN THE SAME DAY, which is worth
+// more than either state. AUD-050 made the fields of `RecordV1` private; this case built one by
+// STRUCT LITERAL, so the disarming mutation stopped reaching `E0599` and hit `E0451` first —
+// measured: `mismatch`, `ACTUAL OUTPUT: error[E0451]: fields .. are private`. The case still
+// passed, because privacy checking runs after type-checking and `E0599` aborts first, so
+// NOTHING TURNED RED while the shape silently degraded from strong to weak. ✅ Restored by
+// building through `RecordV1::intent` — the road that now exists — and the strong shape is
+// measured in both directions again: green as written, and `error` + `Expected test case to
+// fail to compile, but it succeeded.` under the inherent `encode`. The `.stderr` moved from
+// line 16 to 14 and was corrected BY HAND, as the paragraph below prescribes.
 //
 // ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle quotes the LINE OF THE CALL, so a paragraph
 // added at the top would move the code and break it. Whoever writes here appends.

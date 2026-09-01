@@ -26,9 +26,15 @@ fn main() {
     ));
 }
 
-// ⛔ THIS CASE REPORTS BY COMPILING, which is the strong shape (gotcha #42): widen any species
-// constructor back to `&str` and this file COMPILES, and trybuild reports "expected compilation
-// to fail" outright instead of through its oracle. A bulk `TRYBUILD=overwrite` cannot disarm it.
+// ⛔ THIS CASE REPORTS BY COMPILING, which is the strong shape (gotcha #42): widen ALL FIVE
+// `reason: &'static str` — the four species AND the private `of` they all go through — back to
+// `&str`, and this file COMPILES, with trybuild reporting "expected compilation to fail"
+// outright instead of through its oracle. A bulk `TRYBUILD=overwrite` cannot disarm it.
+// ⚠️ ALL FIVE, MEASURED ON 2026-09-01: this line said "any species constructor", and widening
+// ONE is not a smaller version of the recipe but a different outcome — `of` still wants
+// `'static`, so the crate itself stops compiling with `error[E0521]: borrowed data escapes
+// outside of associated function` and trybuild never runs. A recipe that cannot be executed as
+// written is worse than none: whoever tries it reads a red that is not the one promised.
 //
 // ⚠️ IT IS NOT A COPY OF `promote_reason_is_not_runtime_text.rs`, and the difference is the
 // whole of AUD-050: that one holds ONE caller's signature, this one holds the TYPE. With that

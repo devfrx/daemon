@@ -3885,8 +3885,25 @@ il campo guardato sigillato e quello non guardato spalancato. È **P-1 attravers
 bocca**, e la scheda `AUD-050` lo dice: *una guardia vale quanto il suo costruttore*.
 
 ⛔ **Il perimetro è stato RIMISURATO contro il codice di adesso**, perché la scheda è del
-2026-08-27: `grep -rn 'RecordV1 {' crates/ --include=*.rs` rendeva **45 siti in 13 file su 3
-crate**, più 37 siti di lettura.
+2026-08-27: `grep -rn 'RecordV1 {' crates/ --include=*.rs` rendeva **45 siti in 13 file**.
+
+⛔ **RICHIAMO DEL 2026-09-01, sesto giro di revisione — QUESTA RIGA DICEVA *«45 siti in 13 file su
+3 crate, più 37 siti di lettura»*, e DUE delle quattro clausole erano FALSE il giorno in cui furono
+scritte.** Non stantie: sbagliate alla misura. **Questa è la casa unica**, perché è la sola che
+porti accanto il comando; le altre cinque hanno perso la cifra invece di riallinearla.
+
+| La clausola | La misura del 2026-09-01 |
+|---|---|
+| «45 siti» | ✅ **vera del comando** — `git grep -c "RecordV1 {" c63c8c8^ -- 'crates/**/*.rs'` dà **45** |
+| «13 file» | ✅ **vera del comando** — stesso comando, **13** file |
+| «su 3 crate» | ⛔ **falsa: sono DUE.** `git grep -l "RecordV1 {" c63c8c8^ \| cut -d/ -f2 \| sort \| uniq -c` dà `12 kernel` e `1 simulator`; e `git log -S RecordV1 -- crates/platform crates/daemon crates/secrets` non rende **nessun commit** — quelle tre crate non hanno **mai** nominato `RecordV1` |
+| «più 37 siti di lettura» | ⛔ **non riproducibile da nessuna forma del comando.** Oggi gli accessori sono **40**; al padre le letture di campo, contate con lo stesso regex, sono **51**. Il 37 non si rifà, quindi **esce** |
+
+⚠️ **E la cifra vera del comando non è la cifra della frase, che è la parte da ricordare:** dei 45
+hit solo **31** sono siti di **costruzione**, in **11** file — gli altri 14 sono la definizione,
+l'`impl Debug`, un tipo di ritorno, la stringa di formato `RecordV1 {{`, due `assert_eq!` di
+`record_shape.rs` e otto righe di commento. Scrivere *«45 siti di costruzione»* dove il comando
+dice *«45 hit»* è la radice **R1** in miniatura: il numero è giusto, il **sostantivo** no.
 
 | La forma | |
 |---|---|

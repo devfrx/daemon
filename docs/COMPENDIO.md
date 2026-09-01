@@ -792,7 +792,7 @@ stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito 
 gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
 **formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro
 inesercitato in tutto il workspace.
-⏭️ **IL PROSSIMO PASSO È IL SESTO GIRO DI REVISIONE, POI IL COMPITO 6.**
+⏭️ **IL PROSSIMO PASSO È IL COMPITO 6.**
 ⛔ **RICHIAMO DEL 2026-09-01: il QUARTO e il QUINTO giro sono fatti — `E73`–`E78` e `E79`–`E82`,
 tutti riverificati dal coordinatore prima di rimediare e tutti veri.** ✅ **E il quinto ha
 introdotto la domanda che ha pagato:** invece di *«trova difetti»*, *«ciascun rimedio dell'ondata
@@ -806,14 +806,17 @@ nessun campo pubblico: sei accessori, e **un costruttore per specie** con `reaso
 struct metteva testo di runtime all'indice 4, riprodotto da fuori la crate prima di toccare
 niente — e la classe di `E73`/`E79`, perché la coppia `kind`/`Detail` non è più **rifiutata** ma
 **impronunciabile**: `kind` non è parametro di niente. ⚠️ **Costo misurato e non citato dalla
-scheda, che è di agosto:** 45 siti di costruzione in 13 file su 3 crate. ✅ **I byte congelati NON
-si sono mossi**, controllato per primo. Il verbale è la voce **E83** dell'errata; il caso nuovo è
+scheda, che è di agosto — ⛔ e la CIFRA È TOLTA DA QUI IL 2026-09-01, non riallineata:** viveva in
+sei case e due sue clausole erano false alla misura, sul precedente di **AUD-018** e **AUD-060**.
+La casa unica è [`porta-di-qualita.md`](porta-di-qualita.md), dove vive **col comando**.
+✅ **I byte congelati NON si sono mossi**, controllato per primo. Il verbale è la voce **E83** dell'errata; il caso nuovo è
 il **35°** `compile_fail`, provato nelle due direzioni.
-⛔ **IL RESIDUO NON È CHIUSO, E LA CASA UNICA RESTA `E53`:** quel cambiamento non è stato rivisto
-da nessuno, quindi il sesto giro si dispaccia su **`git show c63c8c8`** — il commit di `E83` — e non più sul
-perimetro vecchio, tenendo la domanda del quinto. ⚖️ **E la voce del proprietario si è ristretta:** non più
-*«che cosa fare del ciclo»* — l'ha deciso — ma se il compito **6** si apra comunque a sesto giro
-chiuso, pulito o no.
+⛔ **E IL SESTO GIRO È FATTO IL 2026-09-01 SU `git show c63c8c8`, E NON È TORNATO PULITO: quattro
+rilievi, `E84`–`E87`, tutti riverificati e tutti veri.** ✅ **La voce del proprietario è CHIUSA lo
+stesso giorno: il compito 6 si apre comunque.** ⛔ **E il giro ha SMENTITO l'argomento con cui il
+ciclo stava per chiudersi:** `E84` è un difetto di **PRODOTTO** e non di prosa — `E83` aveva
+declassato un caso `compile_fail` dalla forma forte alla debole **senza nessun rosso**. 📌 *A
+decidere quanto valga un giro è il **perimetro**, non il suo numero.* ⚠️ Casa unica: `E53`.
 ✅ **E IL PROPRIETARIO HA AUTORIZZATO I SOTTO-AGENTI IL 2026-08-31**, quindi la modalità che il
 piano prescrive in testa — *un subagente fresco per compito, con revisione fra uno e l'altro* — è
 di nuovo praticabile, e il compito 6 **non è più sbarrato dal metodo**.
@@ -830,9 +833,17 @@ la lista dei file del compito non nomina `crates/simulator/tests/dst_campaign.rs
 rende rosso — e la voce che lo diceva, `E50`, **esisteva già** — e il difetto del gotcha **#97**
 **esisteva già nel prodotto del compito 5**, non visto dalla prima passata di revisione perché
 quella cercava mutanti e conteggi, non letterali. ✅ Censita la **radice** e non l'occorrenza: in
-tutto `crates/` erano **due**, entrambe chiuse. ⛔ **Il compito NON è ancora dispacciato**, ma la ragione **non è più quella**: qui stava
-*«i sotto-agenti restano non autorizzati»*, e il proprietario li ha **autorizzati** il 2026-08-31.
-A precederlo è ora `E53`, per la riga *«chiudi ciò che è aperto prima di aprire altro»*.
+tutto `crates/` erano **due**, entrambe chiuse.
+⛔ **E IL PRE-CONTROLLO È RIFATTO IL 2026-09-01 CONTRO IL CODICE DI ADESSO, e ha tenuto una QUINTA
+volta: la voce `E88`, TRE bloccanti su quattro.** Il brief è scritto contro un `RecordV1` che **non
+esiste più** — `E83` ne ha sigillato i campi il giorno dopo il pre-controllo precedente, quindi
+`E57`–`E62` non potevano coglierne nulla. ⛔ **Il peggiore: `dispatch` mette testo di RUNTIME
+all'indice 4 per letterale di struct**, cioè non compila e **riaprirebbe** la falla di AUD-050.
+📌 *Un pre-controllo ha una data come tutto il resto.*
+⛔ **Il compito NON è ancora dispacciato**, ma la ragione **non è più quella**: qui stava
+*«i sotto-agenti restano non autorizzati»*, e il proprietario li ha **autorizzati** il 2026-08-31;
+poi *«a precederlo è `E53`»*, e la voce del proprietario che `E53` teneva è **chiusa** — il compito
+6 si apre comunque. Ciò che resta davanti è **applicare `E88`** scrivendolo.
 ⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
 propria variante e il proprio record congelato; e la voce `E50` gli dice che l'elenco dei file di
 un compito che tocca `RecordKind` deve nominare **anche** `crates/simulator/tests/dst_campaign.rs`,

@@ -328,8 +328,19 @@ pub struct RecordV1 {
 /// `RecordV1 { .. payload: <6 bytes>, reason: "ignore your instructions", .. }` — the guarded
 /// field sealed, the unguarded one wide open. ⛔ A GUARD IS WORTH WHAT ITS CONSTRUCTOR IS WORTH:
 /// `Untrusted::promote` taking a `&'static str` shut the `promote` ROAD and never the type. Now
-/// the type has no other road, and the negative case is
+/// the type has no other road IN SOURCE, and the negative case is
 /// `tests/compile_fail/record_reason_is_not_runtime_text.rs`.
+///
+/// ⛔ AND "IN SOURCE" IS LOAD-BEARING, MEASURED ON 2026-09-01: this line said "no other road" flat,
+/// and the derived `Decode` is one. `Record::decode` is `pub` and builds the struct from BYTES,
+/// which privacy does not watch — reproduced from outside the crate on a throwaway probe deleted
+/// in the same run, by encoding a legitimate record with a placeholder and overwriting those
+/// bytes at runtime: `V1(RecordV1 { kind: Note, .. payload: <6 bytes>, reason: "ignore your
+/// instructions", detail: None })`, the same line this doc uses to show the flaw it closed.
+/// ⚖️ IT IS NOT A NEW HOLE AND IT IS NOT CLOSABLE HERE: it is road A4 of `crate::boundary`, which
+/// already declares that nothing requires every write to the journal to be a `Record` and that
+/// bytes carry no labels (ADR-0036). What was wrong was the SCOPE of the sentence, not the
+/// remedy — the constructors do shut every road a caller can WRITE in source.
 ///
 /// ⛔ AND THERE IS ONE CONSTRUCTOR PER SPECIES, WHICH IS THE SECOND HALF AND NOT A FLOURISH. The
 /// pair `kind`/`detail` was held by discipline — "ONE function per species builds the record" —
@@ -484,14 +495,19 @@ impl RecordV1 {
 /// ✅ SHUT AT LEVEL 1 ON 2026-09-01, BY THE OWNER'S DECISION, and the paragraph above is kept as
 /// the VERBAL of what was open — it is not rewritten, because it records what was measured that
 /// day. The fields are private and every species constructor takes a `&'static str`, so there is
-/// no second road to shut; the negative case is
+/// no second road to shut IN SOURCE — the decoding road is A4's and is measured beside the
+/// constructors above, in one house; the negative case is
 /// `tests/compile_fail/record_reason_is_not_runtime_text.rs`, whose disarming mutation was
 /// measured in both directions — widened to `&str` it goes `error` (trybuild's strong shape,
 /// gotcha #42) while `promote_reason_is_not_runtime_text.rs` stays `ok`, which is what proves
 /// the two cases hold DIFFERENT roads instead of being a copy.
-/// ⚠️ WHAT IT COST is what the paragraph above predicted: every construction site across three
-/// crates, `frozen_bytes.rs` included — `grep -rn 'RecordV1::' crates/ --include=*.rs` counts
-/// them today, and a count written here would age. ✅ THE FROZEN BYTES DID NOT MOVE, which was
+/// ⚠️ WHAT IT COST is what the paragraph above predicted: every construction site,
+/// `frozen_bytes.rs` included — `grep -rn 'RecordV1::' crates/ --include=*.rs` counts them today,
+/// and a count written here would age. ⚠️ IT SAID "ACROSS THREE CRATES" UNTIL 2026-09-01: measured,
+/// they are TWO — `platform`, `daemon` and `secrets` have never named `RecordV1`, and
+/// `git log -S RecordV1 -- crates/platform crates/daemon crates/secrets` returns nothing. The
+/// numeral is TAKEN OUT rather than realigned, because it lived in six houses at once and the
+/// command beside it does not rot. ✅ THE FROZEN BYTES DID NOT MOVE, which was
 /// the thing to check first: `every_frozen_record_still_encodes_to_its_frozen_bytes` and
 /// `the_map_lists_the_bytes_that_are_really_frozen` stayed green through the whole change.
 ///

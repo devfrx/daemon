@@ -182,8 +182,13 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      ⚠️ docs/audit-2026-08-11.md — 32 KB — NON si apre più: è chiuso otto
      decisioni su otto, e ciò che insegnava è dentro il compendio.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
-     quattrocento righe del solo compendio pesano 25148 token, e il compendio
-     ne ha oltre quattromila. È un LIMITE INFERIORE, non un totale — §12.
+     quattrocento righe del solo compendio pesano 25148 token. È un LIMITE INFERIORE, non un totale — §12.
+     ⚠️ RICHIAMO DEL 2026-09-01: qui seguiva «e il compendio ne ha oltre
+     quattromila», scritto il 2026-08-21 su un file di 5287 righe. Lo
+     sfoltimento del 28 lo ha portato sotto le duemila, e la cifra e' rimasta
+     qui QUATTRO giorni, ricopiata da ogni sessione. TOLTA, non riallineata:
+     quante righe abbia lo dice `wc -l docs/COMPENDIO.md`, e il rapporto
+     token/riga che questa frase misura non dipende dalla lunghezza del file.
 
 ⛔ CODICE IN INGLESE, DOCUMENTAZIONE IN ITALIANO — §1.0 della spec.
    Crate, moduli, tipi, funzioni, messaggi d'uscita e commenti nel sorgente

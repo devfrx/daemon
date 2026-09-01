@@ -43,9 +43,10 @@ fn a_note() -> Vec<u8> {
 fn a_verdict() -> Vec<u8> {
     Record::V1(RecordV1 {
         kind: RecordKind::Verdict,
-        // ⚠️ `Verifiable` IS INERT HERE, exactly as the note's class is: `reconcile` never reads
-        // the `effect` of a record whose arm is empty. It is written because the field is
-        // mandatory, not because this function consults it.
+        // ⚠️ `Verifiable` DIFFERS from the `Idempotent` the steps declare, for the reason
+        // `a_note()` gives above: measured on 2026-09-01, harmonising it leaves the workspace
+        // green, but under the `enter` mutation of `reconcile` only ONE of the pair below dies
+        // instead of two — the sibling loses its killer and nothing goes red to say so.
         effect: EffectClass::Verifiable,
         trust: Trust::Untrusted,
         payload: b"field `name` is missing".to_vec(),

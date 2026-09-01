@@ -792,13 +792,19 @@ stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito 
 gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
 **formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro
 inesercitato in tutto il workspace.
-⏭️ **IL PROSSIMO PASSO È IL QUARTO GIRO DI REVISIONE DEL COMPITO 5, POI IL COMPITO 6.**
-⛔ **RICHIAMO DEL 2026-08-31: questa riga diceva soltanto *«il prossimo passo è il compito 6»*, e
-l'ORDINE è cambiato** — `E53` dichiara di sé che **non si chiude eseguendo il compito 6**, e vale
-la riga *«chiudi ciò che è aperto prima di aprire altro»*. Tre giri fatti, **nessuno pulito**;
-il quarto si dispaccia col perimetro `git diff 4e4b725^..HEAD -- crates/`, battendo **per prime**
-le affermazioni introdotte dai commit `eba6344` e `16365f2`. La casa unica del residuo è `E53`
-dell'errata, che porta il metodo e il perché.
+⏭️ **IL PROSSIMO PASSO È IL QUINTO GIRO DI REVISIONE DEL COMPITO 5, POI IL COMPITO 6.**
+⛔ **RICHIAMO DEL 2026-09-01: il QUARTO giro è fatto — sotto-agente fresco, SEI rilievi `E73`–`E78`,
+tutti riverificati dal coordinatore prima di rimediare e tutti veri.** L'ordine non cambia: `E53`
+dichiara di sé che **non si chiude eseguendo il compito 6**, e vale *«chiudi ciò che è aperto
+prima di aprire altro»*. ⚠️ **La serie è `3 · 2 · 6 · 6` e NON converge, ma la FORMA sì:** uno solo
+era un mutante vivo, **quattro** erano censimenti incompleti dei rimedi precedenti — la classe che
+`E56` → `E70` ha già dato due volte — e **cinque rimedi su sei TOLGONO righe**, col conteggio dei
+test invariato a **298**. ⛔ **Nessun gotcha nuovo, ed è una decisione:** i sei sono forme del
+**#65**, **#70**, **#76**, **#97** e **#98**, e uno che non insegna niente diluisce quelli che
+insegnano. ⛔ **La casa unica del residuo resta `E53`**, che porta il perimetro e la domanda nuova
+da porre al quinto giro — *«questa ondata ha chiuso la CLASSE o l'occorrenza?»* — più la voce, del
+**proprietario**, su che cosa significhi *«finché una passata non torna pulita»* quando il prodotto
+è verde e immutato da quattro giri.
 ✅ **E IL PROPRIETARIO HA AUTORIZZATO I SOTTO-AGENTI IL 2026-08-31**, quindi la modalità che il
 piano prescrive in testa — *un subagente fresco per compito, con revisione fra uno e l'altro* — è
 di nuovo praticabile, e il compito 6 **non è più sbarrato dal metodo**.

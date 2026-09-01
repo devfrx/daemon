@@ -279,7 +279,7 @@ pub struct RecordV1 {
     /// `Option` no reader would ever find `None` in would have been dead surface, the same
     /// argument that took the `Result` off `encode`. ⛔ THE EXEMPTION IS SPENT, AND THIS IS THE
     /// LAST MANDATORY FIELD V1 WILL EVER HAVE: `tests/frozen_bytes.rs` exists, so a field added
-    /// to V1 MUST be `Option` with `#[cbor(default)]` and a NEW index, and the meaning of an
+    /// to V1 MUST be `Option` at a NEW index, and the meaning of an
     /// index that already exists must never change (rule 4 — the reuse was measured, and it
     /// decodes to the WRONG SILENCE rather than to an error).
     ///

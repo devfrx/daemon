@@ -229,6 +229,13 @@ fn a_failing_verdict_opens_a_new_step_and_carries_the_detail() {
     // `Trust::Instruction` here, the whole workspace stayed green — 41 targets, 298 passed,
     // identical to the baseline. Errata `E65`.
     assert_eq!(intent.trust, Trust::Untrusted);
+    // ⚠️ AND `detail` IS `None` ON PURPOSE: the structured half belongs to the VERDICT
+    // species, and an `Intent` carrying a `Detail::Verdict` would enter the durable format
+    // with a pair `RecordKind` and `Detail` that nothing at level 1 forbids. What holds the
+    // pair is that ONE function per species builds the record, and this line is what holds
+    // THIS function to it. Turned to `Some(..)`, the whole workspace stayed green — 41
+    // targets, 298 passed, identical to the baseline. Errata `E73`.
+    assert_eq!(intent.detail, None);
     assert_eq!(
         intent.reason,
         "a sensor verdict re-entered the ring as a new step"

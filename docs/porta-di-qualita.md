@@ -3744,6 +3744,75 @@ ignorate.** ⛔ **L'invarianza del numeratore è il dato di tutte e tre le passa
 allargato sonde e corretto prose, non aggiunto casi — a mancare erano **asserzioni**, e il
 conteggio dei test non le vede.
 
+### La QUARTA passata — un mutante vivo, e QUATTRO censimenti che i rimedi precedenti non avevano chiuso
+
+⛔ **Fatta il 2026-09-01 da un sotto-agente fresco, sul perimetro `git diff 4e4b725^..HEAD --
+crates/`** — 16 file, `+1047/−75` — con l'ordine di battere **per prime** le affermazioni
+introdotte da `eba6344` e `16365f2`. Sei rilievi, `E73`–`E78`.
+⚠️ **Tutti riverificati dal coordinatore PRIMA di rimediare**, perché ciò che torna da un
+sotto-agente è un'affermazione e non un fatto — e stavolta **tutti e sei erano veri**, il che è
+esso stesso un dato dopo che la terza passata ne aveva prezzato uno più grande del difetto.
+
+⛔ **`E73` — L'UNICO MUTANTE VIVO, ED È IL CAMPO CHE IL COMPITO 5 HA INTRODOTTO.** `run_the_ring`
+scrive **due** record; dopo `E65` il banco teneva cinque campi su sei del secondo, e il sesto —
+`detail` — nessuno. ✅ **Misurato nelle due direzioni, non dedotto:**
+
+| Direzione | Comando | Esito |
+|---|---|---|
+| **non deve scattare** | codice corretto, `cargo test --locked --workspace --no-fail-fast` | **41 · 298 · 0 · 2** |
+| il mutante **prima** del rimedio | `detail: Some(Detail::Verdict(VerdictDetail { passed: true, spent_millis: 0 }))` in `crates/kernel/src/sensor.rs` | **41 · 298 · 0 · 2** — identico, **vivo** |
+| **deve scattare** | la stessa mutazione **col rimedio** | **41 · 297 · 1 · 2**, e muore `a_failing_verdict_opens_a_new_step_and_carries_the_detail` **e nessun'altra** |
+
+⚠️ **Gli altri due siti del campo — `crates/kernel/src/boundary.rs` e
+`crates/kernel/src/arbiter/mod.rs` — portano lo stesso mutante vivo, misurato, e NON sono tre
+rilievi:** sono aggiunte meccaniche imposte dall'arrivo del campo, non decisioni, e il sito che
+**possiede** la coppia `kind`/`Detail` è uno solo. Gotcha **#65**.
+
+⛔ **`E75` — UN LETTERALE DICHIARATO INERTE CHE PORTA IL KILLER DELLA SONDA GEMELLA, e la misura
+è a TRE passate perché due non bastano a distinguerlo.** L'aiutante `a_verdict()` di
+`crates/kernel/tests/reconciliation.rs` dichiarava `EffectClass::Verifiable` *«INERT HERE»*,
+mentre il doc del fratello `a_note()` venti righe sopra dice che la classe diversa è *«tutto ciò
+che rende non vacue le due sonde sotto»*.
+
+| Che cosa | Esito |
+|---|---|
+| aiutante armonizzato a `Idempotent`, codice **corretto** | **41 · 298 · 0 · 2** — verde: *il commento è vero del codice corretto*, ed è ciò che lo rende ingannevole |
+| mutazione `RecordKind::Verdict => enter(&mut open, step, resolution_of(body.effect))`, aiutante **intatto** | **41 · 296 · 2 · 2** — muoiono **entrambe** le sonde |
+| la **stessa** mutazione con l'aiutante armonizzato | **41 · 297 · 1 · 2** — ne muore **una sola** |
+
+⛔ **Quindi `a_verdict_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them` — la sonda la
+cui unica ragione d'esistere è *«l'altra metà»* — smette di sparare, e niente diventa rosso per
+dirlo.** 📌 È il gotcha **#98** in una terza forma: un letterale scelto per un campo può lasciare
+**un'altra sonda** inesercitata, non solo un campo accanto.
+
+⛔ **E LA MESSE VERA SONO I QUATTRO CENSIMENTI INCOMPLETI, che è la classe che questo ciclo non
+riesce a chiudere.** `E74` — `E72` aveva corretto la regola su `#[cbor(default)]` in **due** case
+su quattro, e una delle mancanti è la costante **`FORMAT_CHANGED`**, cioè la prosa che l'oracolo
+stampa **quando il formato durevole si muove**. `E76` — `E70` aveva chiuso la **testa** di
+`frozen_bytes.rs` e la mappa, non i **corpi**: *«three artefacts … the third»* dove
+`the_frozen_records()` ha tipo di ritorno `[…; 4]`. `E78` — il letterale `85`/`86` viveva in
+**cinque** case, e il terzo giro **ne aveva aggiunte due** a una cifra che ne aveva già tre.
+`E77` — la rinomina di `16365f2` ha lasciato una riga di commento a **129 caratteri** dove le
+vicine stanno a ≤ 83, e nessun controllo lo vede: `rustfmt` non tocca i commenti e §7.4.3 non dà
+voce a `clippy` nel cancello.
+
+✅ **LA CONTROMISURA, MISURATA SU QUESTA ONDATA: cinque rimedi su sei TOLGONO righe**, e il solo
+che aggiunge è **una** asserzione dentro una sonda che esiste già. È il gotcha **#76** applicato
+**prima** invece che all'ultima ondata.
+⛔ **E `E78` è stato chiuso su TRE case e non sulle due nuove:** correggerne due lasciando la terza
+a mentire è la forma che **AUD-018** e **AUD-060** hanno già pagato. ⚖️ **Le due che restano hanno
+ciascuna la propria ragione:** la riga **89** di `record_v1.map` è la colonna **hex che il banco
+ricostruisce**, e quella di `record.rs` sta dentro il **verbale datato** di **P-15** — la **55ª**
+misura dice che lì una cifra regge.
+
+📌 **Baseline invariata a passata chiusa: `GATE GREEN`, 41 bersagli, 298 passate, 0 fallite, 2
+ignorate**, `cargo fmt --all --check` exit 0. ⛔ **L'invarianza del numeratore è ora il dato di
+tutte e QUATTRO le passate**, e dice la stessa cosa ogni volta: a mancare sono **asserzioni** e
+**censimenti**, non casi — e il conteggio dei test non vede né gli uni né gli altri.
+⚠️ **Fine-riga conservati e rimisurati file per file** (`tr -cd '\r' | wc -c`), censimento
+`git ls-files --eol` immutato a **quattro** `i/crlf`; ogni mutazione revocata da copia
+byte-esatta, `git diff` a zero a campagna chiusa.
+
 ## Livello 3 — vuoto, e non è una svista
 
 `clippy` gira come igiene del codice ma **non ha voce nella porta**: nessun V dipende da

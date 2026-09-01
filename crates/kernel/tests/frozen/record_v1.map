@@ -38,7 +38,7 @@
 # held by nothing, and the set has to cover them all. Everything else about those records is
 # identical, so the difference between two files of one arity is exactly the enum bytes.
 # ⛔ A RECORD CARRYING A `detail` IS LONGER AND ALSO MOVES BYTE 3, the field-array header —
-# `85` against `86` — so it differs from the others outside 4..7 by construction, and the bench
+# so it differs from the others outside 4..7 by construction, and the bench
 # compares the WHERE only within one arity.
 # ⚠️ RECALL OF 2026-08-31: this paragraph said "THE THREE RECORDS", "EIGHT variants —
 # RecordKind 3", "Three is the fewest" and "the difference between any two files"; all four

@@ -66,7 +66,7 @@
 //! BYTE STRING at index 3 and as CBOR TEXT at index 4, one nibble apart in the frozen bytes,
 //! so the asymmetry `reason` exists for is visible in the artefact instead of only in the
 //! source. ⛔ A RECORD THAT CARRIES A `detail` IS LONGER AND ALSO MOVES BYTE 3, the field-array
-//! header — measured, `85` against `86` — so the "bytes 4, 5 and 6" reading holds WITHIN the
+//! header — measured — so the "bytes 4, 5 and 6" reading holds WITHIN the
 //! detail-less ones and nowhere else. It said "any pair of the three files" until 2026-08-31,
 //! which was true when only three existed and false the moment the fourth arrived.
 //!
@@ -105,7 +105,7 @@ const FROZEN_REASON: &str = "frozen";
 /// message written three times is a message that ages twice — gotcha #31.
 const FORMAT_CHANGED: &str = "\n⛔ THE DURABLE FORMAT CHANGED.\n\
      This is not a test to update: it is the oracle of §4.9.4. If a field was added it must \
-     be OPTIONAL, WITH `#[cbor(default)]` AND A NEW INDEX, and these bytes must be UNCHANGED. \
+     be OPTIONAL AND AT A NEW INDEX, and these bytes must be UNCHANGED. \
      If they are not, an index was reused or renumbered — rule 4 of §4.9.2 — and what is \
      needed is A NEW VERSION of the record, not a new oracle.\n\
      There is deliberately no way to regenerate these files: read the head of this one.\n\
@@ -224,8 +224,8 @@ fn the_frozen_bytes_still_decode_to_their_records() {
 #[test]
 fn the_frozen_records_are_distinguishable_in_the_bytes() {
     // ⛔ TWO FROZEN RECORDS THAT ENCODED ALIKE WOULD PIN ONE THING BETWEEN THEM, and the file
-    // count would flatter the coverage: three artefacts, two indices held. The pairs are all
-    // compared, not the adjacent ones — two colliding while the third stays apart is exactly
+    // count would flatter the coverage. The pairs are all
+    // compared, not the adjacent ones — two colliding while the others stay apart is exactly
     // the shape a partial comparison lets through, and it is the shape
     // `the_record_kinds_are_distinguishable_in_the_bytes` was widened for.
     //
@@ -248,7 +248,7 @@ fn the_frozen_records_are_distinguishable_in_the_bytes() {
             //
             // ⛔ A PAIR OF DIFFERENT ARITY IS SKIPPED HERE, AND IT IS NOT A HOLE — it is the
             // D21 showing through: the fourth record exists precisely BECAUSE it carries a
-            // field the other three do not, so it differs at the array header (`85` -> `86`)
+            // field the other three do not, so it differs at the array header
             // and in the whole tail, by construction. Asserting equal length across arities
             // would assert that the D21 did not happen. ⚠️ WHAT WOULD BE A HOLE is dropping
             // the pair entirely: the `assert_ne!` above runs on EVERY pair, arity included, so

@@ -131,7 +131,8 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 //
                 // ⛔ AND WHAT HOLDS THIS ARM IS DECLARED RATHER THAN ASSUMED: see
                 // `a_verdict_does_not_put_a_step_in_doubt` and
-                // `a_verdict_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them` in `tests/reconciliation.rs`, written
+                // `a_verdict_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them`
+                // in `tests/reconciliation.rs`, written
                 // in BOTH directions (§7.1.1 rule 3) exactly as `Note`'s pair is.
                 RecordKind::Verdict => {}
             },

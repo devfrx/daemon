@@ -2,7 +2,9 @@
 
 use kernel::ports::journal::{Journal, StepId};
 use kernel::reconcile::{InDoubt, Resolution, steps_in_doubt};
-use kernel::record::{EffectClass, Record, RecordV1, RoutingDetail, Trust, VerdictDetail};
+use kernel::record::{
+    EffectClass, PermissionDetail, Record, RecordV1, RoutingDetail, Trust, VerdictDetail,
+};
 use simulator::journal::MemoryJournal;
 
 /// ⛔ THE SPECIES IS A CONSTRUCTOR AND NOT A `kind` ARGUMENT, since 2026-09-01: `RecordV1`
@@ -75,6 +77,29 @@ fn a_routing() -> Vec<u8> {
         Vec::new(),
         "the gateway resolved the routing for this step",
         RoutingDetail::new("local-medium", 3, true),
+    ))
+    .encode()
+}
+
+/// A permission record, the shape `permission::grant` writes — class included.
+///
+/// ⛔ ITS OWN HELPER AND NOT `record(..)` WITH A THIRD ARGUMENT, for the reason `a_verdict()`
+/// gives: what makes a permission record one is that it carries a `detail`, and a helper able to
+/// produce one without it would let a probe pass while proving the wrong thing.
+///
+/// ⚠️ THE CLASS IS `Unrepeatable` AND IT IS NOT CHOSEN FOR THE BENCH: it is what `grant` writes.
+/// That it also DIFFERS from the `Idempotent` the steps below declare is what keeps the pair
+/// non-vacuous, and it is luck rather than design — `a_routing()` had to take the difference from
+/// the other side because `dispatch` writes the same class the steps do. Said out loud so that
+/// nobody "harmonises" this value: measured on 2026-09-01, with the helper carrying `Idempotent`
+/// the `enter` mutation of `reconcile` kills only ONE of the pair below instead of both.
+fn a_permission() -> Vec<u8> {
+    Record::V1(RecordV1::permission(
+        EffectClass::Unrepeatable,
+        Trust::Instruction,
+        Vec::new(),
+        "a permission was granted for this triple",
+        PermissionDetail::new("file", "/a", false),
     ))
     .encode()
 }
@@ -296,6 +321,80 @@ fn a_routing_record_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them
             InDoubt {
                 step: other,
                 resolution: Resolution::RunAgain
+            }
+        ]
+    );
+}
+
+#[test]
+fn a_permission_does_not_put_a_step_in_doubt() {
+    // ⛔ ONE HALF OF THE EMPTY ARM (§7.1.1 rule 3), and it is the half a mutation reaches first: a
+    // `Permission` arm written as `enter(..)` would put a step in doubt that has already finished.
+    // ⚠️ AND HERE THAT DEFECT OUTLIVES ITS STEP, which is what makes it sharper than the routing
+    // one: a permission is granted once and then re-read by `permission::is_granted` for ever, so
+    // the record that reopened the doubt never stops being replayed.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    journal
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
+        .expect("intent");
+    journal.note(step, &a_permission()).expect("permission");
+    journal
+        .outcome(step, &record(RecordV1::outcome, EffectClass::Idempotent))
+        .expect("outcome");
+    // And a permission AFTER the outcome, which is the case that separates "does not open" from
+    // "does not reopen".
+    journal
+        .note(step, &a_permission())
+        .expect("permission after outcome");
+
+    assert!(
+        steps_in_doubt(&journal).expect("reconcile").is_empty(),
+        "a permission record put a finished step back in doubt"
+    );
+}
+
+#[test]
+fn a_permission_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
+    // ⛔ THE OTHER HALF: written as an `Outcome`, the arm would take a step OUT of the doubt
+    // although nothing executed — the silent loss ADR-0007 exists to prevent. The comparison is
+    // THE WHOLE VECTOR and not the identities, for the reason the note's twin gives: both defects
+    // keep the identities exactly right.
+    //
+    // ⚠️ THE STEPS DECLARE `Idempotent` AND `Verifiable` WHILE `a_permission()` CARRIES
+    // `Unrepeatable`, so the `enter` mutation re-enters the step with a resolution it did NOT have
+    // and the vector moves. Unlike `a_routing()`'s twin the flip does not have to be arranged from
+    // this side: `grant` already writes a class no step here declares.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    let other = StepId::new(2);
+    journal
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
+        .expect("intent");
+    journal
+        .intent(other, &record(RecordV1::intent, EffectClass::Verifiable))
+        .expect("intent");
+
+    let before = steps_in_doubt(&journal).expect("reconcile");
+    journal.note(step, &a_permission()).expect("permission");
+    let after = steps_in_doubt(&journal).expect("reconcile");
+
+    assert_eq!(
+        after, before,
+        "the permission record changed the doubt: it was read as an intent or as an outcome"
+    );
+    // ⚠️ And `before` is pinned to its literal value, because two equal vectors prove nothing if
+    // both are empty — a reconciliation that reported nothing at all would pass the line above.
+    assert_eq!(
+        before,
+        vec![
+            InDoubt {
+                step,
+                resolution: Resolution::RunAgain
+            },
+            InDoubt {
+                step: other,
+                resolution: Resolution::AskTheWorld
             }
         ]
     );

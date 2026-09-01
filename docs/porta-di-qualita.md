@@ -1898,6 +1898,7 @@ Per file — la direzione che si dimentica (§7.1.1 regola 3):
 | `crates/simulator/tests/seeded_rng.rs` | **blocco C** · `V29 · §2.2` | otto test |
 | `crates/kernel/tests/boundary_promotion.rs` | **blocco C** · `Q9 · I6 · V20`, **entrambe** — la promozione dichiarata è la contro-sonda della regola A e della regola B — **e blocco B** · `V19` | ⚠️ **quindici** test — ricontati **sul binario** il 2026-08-10 chiudendo il traguardo: la cella diceva **otto**, ed era ferma a prima che il Task 7 vi portasse le sonde della nota, dell'accordo fra `kind` e operazione, e le due in cui la sonda dettata è stata **divisa**. Gotcha **#31** |
 | `crates/kernel/tests/parameters_delivered.rs` | le **due** righe **blocco C** · `V29 · §2.8 · ADR-0034` | ⚠️ **cinque** test — erano quattro fino al Traguardo 5 Task 5, che ha aggiunto la metà di §2.8.4 per `total_vram`. Ricontati **sul binario** |
+| `crates/kernel/tests/permission_triple.rs` | ⛔ **nessuna riga di catalogo** — i due casi `compile_fail` che accompagnano questo banco non ne hanno una, ed è una voce **registrata e non presa** (§7.4 è spec, vincolo globale 7). Ciò che tiene è `V21`, che resta **`⚠️ parziale`**: le **tre** direzioni della tripla, il giornale vuoto e le **quattro** vie d'errore | ⚠️ **Nessun numerale qui, e il precedente è di `gateway_decisor.rs` (voce `E97`):** una cella che conta i propri soggetti invecchia al primo giro di revisione. Si contano **sul binario** — `cargo test --locked -p kernel --test permission_triple`. Le mutazioni e il loro esito stanno nella sezione «Il compito 7 del Traguardo 6» |
 | `crates/kernel/tests/arbiter_admission.rs` | **blocco C** · `V4` — la direzione *«distinguere le tre compila»* — `I2 · §5.3` — la direzione *«quello legale SI COSTRUISCE»* — **e dal Task 5** `V2` (*«con il profilo compila»*) e la riga del **blocco B** *«avviare un worker ← una concessione»* (*«con la concessione compila»*). Nessuna tenibile dal rispettivo caso negativo. ⚠️ **File nuovo del Traguardo 5 Task 4**, e cresce coi Task 6–7 | ⚠️ **venti** test — erano **due** alla nascita; le otto dell'ammissione sono del Task 5, l'undicesima — il **confine della scadenza** — è della revisione del 2026-08-19, le **otto** delle code sono del Task 6, e la ventesima è del Task 7. ⛔ **UNA SOLA dal Task 7, e TUTTE LE ALTRE vivono in `crates/kernel/src/arbiter/mod.rs`** — ⚠️ **quante, NON è scritto qui: il conteggio di quel modulo vive in un posto solo**, la sezione del Task 7 di questo file. Questa cella diceva **dodici**, ferma alla prima ondata del 2026-08-20 mentre la seconda ne portava un'altra: gotcha **#31**, e il rimedio è **toglierlo** e non riallinearlo (gotcha **#68**) **—** `ask_back` è `pub(crate)` e da qui non si vede — `` error[E0624] ``, misurato. Ricontati **sul binario** |
 | `crates/kernel/tests/arbiter_policy.rs` | **blocco C** · `V3` — la direzione *«con UNA policy compila»*, e con **entrambe** le policy: il banco costruisce un arbitro per ciascuna, da fuori la crate. ⚠️ **File nuovo del Traguardo 5 Task 8.** ✅ **E dal Task 9 la seconda metà della contro-sonda di catalogo — *«e la transizione resta un passo giornalato (§5.4)»* — È QUI:** le cinque sonde di `Arbiter::set_policy`, che chiudono la riga `V3` (`E103`) | ⚠️ **dodici** test — erano cinque alla nascita del file; le due dell'ondata di correzioni del 2026-08-20 sono `a_partly_full_machine_asks_back_the_need_and_not_the_whole_request` e `the_admission_asks_back_below_its_own_lane_and_spares_a_peer` (`E97`), e le **cinque** della transizione sono del Task 9. Ricontati **sul binario** |
 | `crates/kernel/tests/record_shape.rs` | **blocco C** · `Q14 · §4.9` **e** `Q9 · I6 · V20 · §4.9` — la contro-sonda dell'etichetta è `every_trust_label_survives_the_round_trip_and_the_two_differ_in_the_bytes`, che scrive **entrambi** i valori e ne confronta i byte | ⚠️ **dodici** test — ricontati **sul binario** il 2026-08-10 chiudendo il traguardo: la cella diceva **dieci**, e i due mancanti sono `the_reason_survives_the_round_trip_and_travels_beside_the_payload` e `an_empty_record_is_nine_bytes_and_the_inner_array_holds_five`, arrivati col **Task 7** — verificati col `diff` fra i due commit invece che dedotti. Gotcha **#31** |
@@ -4133,6 +4134,104 @@ si dimentica, una voce aperta no).
 **ignorate** — **invariata**, e l'invarianza è il dato per la stessa ragione del blocco qui sopra:
 un caso `compile_fail` in più non aggiunge un `#[test]`, gira dentro `level_1_rules_do_not_compile`
 insieme a tutti gli altri.
+
+### Il compito 7 del Traguardo 6 — la tripla del permesso, e la proiezione del giornale (2026-09-01)
+
+⛔ **Il permesso è una TRIPLA** — `(strumento × risorsa × operazione)` — e *«quali permessi sono
+attivi ora»* si risponde **rileggendo il giornale**, senza secondo archivio. Il banco nuovo è
+`crates/kernel/tests/permission_triple.rs`; il meccanismo è `crates/kernel/src/permission.rs`.
+
+| Artefatto | Che cosa lo esercita |
+|---|---|
+| `permission::grant` | `a_granted_triple_is_granted` e `a_journal_that_refuses_the_note_makes_the_grant_fail` |
+| `permission::is_granted` | le **tre** sonde della tripla, più il giornale vuoto, più le **quattro** vie |
+| `RecordKind::Permission` (indice **5**) | `crates/kernel/tests/frozen_bytes.rs` — il **sesto** record congelato |
+| `Detail::Permission` (indice **2**) | idem: è l'unico record congelato che lo porta |
+| l'arm vuoto in `reconcile` | `a_permission_does_not_put_a_step_in_doubt` e il suo gemello, in `reconciliation.rs` |
+| `PermissionDetail` sigillata | **due** casi `compile_fail`, uno per parametro |
+
+#### Le mutazioni, col proprio esito MISURATO
+
+⛔ **Dieci mutanti su `permission.rs`, uno per volta, ciascuno ripristinato da una copia
+byte-esatta.** Nessuno è sopravvissuto, ed è la domanda che il difetto `E101` del compito 6 ha
+insegnato a fare: *per ogni via, quale controllo la esercita?*
+
+| Mutante | Chi muore |
+|---|---|
+| il confronto su `tool` cade | `a_different_TOOL_is_not_covered` **e** la sonda della specie diversa — **due** |
+| il confronto su `resource` cade | `a_different_RESOURCE_is_not_covered` |
+| il confronto su `write` cade | `a_different_OPERATION_is_not_covered` |
+| `grant` inghiotte il rifiuto della nota | `a_journal_that_refuses_the_note_makes_the_grant_fail` |
+| il record illeggibile viene **saltato** invece che propagato | `a_record_that_will_not_decode_is_not_an_answer_of_false` |
+| `replay` che rifiuta diventa `Ok(false)` | `a_journal_that_will_not_replay_is_not_an_answer_of_false` |
+| il `Permission` senza `detail` viene **saltato** | `a_permission_record_without_its_detail_is_not_an_answer_of_false` |
+| il controllo sulla **specie** cade | **cinque** sonde |
+| `is_granted` risponde sempre `true` | **otto** sonde |
+| `is_granted` risponde sempre `false` | **cinque** sonde |
+
+⚠️ **E l'asimmetria che il pre-controllo aveva ASSERITO è stata VERIFICATA invece che creduta**,
+ristretta alle **quattro** sonde dettate: `true` a tutto ne passa **una**
+(`a_granted_triple_is_granted`), `false` a tutto ne passa **tre**. È esattamente la ragione per cui
+`nothing_is_granted_on_an_empty_journal` esiste. ⛔ **Ma va detta anche la metà scomoda:** fra i
+dieci mutanti sopra **nessuno è ucciso da quella sola sonda** — la uccide `true a tutto`, insieme
+ad altre sette. Resta la sola sonda che parte da un giornale **vuoto**, e quella proprietà — *nessun
+record ⇒ niente concesso* — non è tenuta da nient'altro.
+
+#### Le due direzioni dei casi `compile_fail`, e perché sono DUE
+
+⛔ **`PermissionDetail::new` ha DUE parametri di testo, quindi due strade.** Un caso solo che li
+nominasse entrambi resterebbe `error` allargandone **uno qualsiasi**: è la forma **debole**, quella
+che `E83` aveva prodotto per sbaglio e il sesto giro di revisione ha ripreso. Misurato il
+2026-09-01, allargando un parametro per volta:
+
+| Allargato a `&str` | `..._tool_...` | `..._resource_...` | i tre fratelli (`routing_detail`, `record_reason`, `promote_reason`) |
+|---|---|---|---|
+| `tool` | **`error`** | `ok` | `ok` |
+| `resource` | `ok` | **`error`** | `ok` |
+
+✅ **Ogni caso tiene una strada propria**, e nessuno dei due fa cadere i fratelli: è ciò che prova
+che difendono strade **diverse** e non la stessa due volte.
+
+#### Le quattro vie del §4 — tutte raggiungibili, tutte con una sonda
+
+| | La via | Esito |
+|---|---|---|
+| ① | il giornale rifiuta la nota | **sonda**, e ne ha **due**: quella di `grant` (`note` rifiutata) e quella di `is_granted` (`replay` rifiutata) |
+| ② | il record **illeggibile** | **sonda** — byte scritti attraverso la porta, che non convalida nulla (strada A4 di `boundary`) |
+| ③ | un record di **specie diversa** | **sonda**, con un giornale misto che porta anche un record `Routing` — cioè una specie che un `detail` ce l'ha |
+| ④ | un `Permission` **senza** `detail` | ⚠️ **RAGGIUNGIBILE, e misurato invece che dichiarato impossibile.** Impronunciabile **in sorgente** (`RecordV1::permission` prende il `detail` per valore), costruibile **dai byte** con un solo byte cambiato: `Ok(V1(RecordV1 { kind: Permission, .. detail: None }))`. Ha la sua **sonda** |
+
+#### Le decisioni prese, e ciò che costano
+
+| | |
+|---|---|
+| `is_granted` restituisce un **errore proprio** che compone `JournalError` e `RecordError` | `JournalError` **non** ha guadagnato varianti — `git diff crates/kernel/src/ports/journal.rs` è **vuoto** |
+| ⛔ è il **primo errore di `kernel` con un carico** | e `framing.rs` diceva che nessuno nel repository ne porta. ⚠️ **Misurato con `git log -S`:** quella frase è del 2026-08-31 e `platform::journal::OpenError` porta `io::Error` dal **2026-08-10** — era falsa **quando fu scritta**. Corretta con un richiamo datato, non risposta sotto |
+| `write: bool` sul filo e non un `enum` | quarto `index_only` sul filo, un indice che non si ritira mai, e `frozen_bytes.rs` a pinzarne le varianti **una per record congelato**. Il `bool` si pinza da sé |
+| `Permission` resta a campi `pub`, `PermissionDetail` no | il primo è un tipo di **decisione** (`&'static str` **è** la guardia), il secondo è **sul filo** e porta `String` |
+| ⚠️ **niente revoca**, e niente **sessione** | dichiarati sul modulo, con l'innesco: la prima revoca sarà una specie propria. `V21` resta **`⚠️ parziale`** |
+
+⚠️ **`V21` è stata RILETTA e non solo lasciata stare** — vive nella **spec**
+(`docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`), non in questo file. Il suo innesco
+dice *«test a esempi sulla forma del permesso e sulla sua registrazione nel giornale (§6.6): una
+tripla concessa non copre una tripla diversa»*, ed è **esattamente** ciò che il banco fa: l'innesco
+è giusto e non va corretto. La metà *«e per la sessione corrente»* non ha soggetto — nessuna
+sessione, nessun mediatore, nessun ciclo d'approvazione — e **non si marca**.
+
+⚠️ **VOCE APERTA REGISTRATA E NON PRESA, ed è del proprietario:** i due casi `compile_fail` nuovi
+**non hanno una riga di catalogo propria**. La §7.4 è **spec**, vincolo globale 7 — stesso
+trattamento e stessa ragione del caso di `E94` qui sopra.
+
+⛔ **E UN DIFETTO PREESISTENTE, TROVATO E NON INTRODOTTO:** `cargo fmt --all --check` era **già
+rosso alla BASE `bf1e677`** — `crates/kernel/tests/gateway_decisor.rs:179`, una `assert_eq!` che il
+compito 6 ha lasciato non formattata. Misurato con `rustfmt --check --edition 2024` sul file preso
+da `git show bf1e677:`, uscita **1**. È rimediato in questo commit perché `cargo fmt` non è un passo
+del cancello e nessun rosso lo avrebbe mai detto.
+
+📌 **Baseline a cambiamento chiuso: `GATE GREEN`, 43 bersagli, 321 passate, 0 fallite, 2**
+**ignorate** — era **42 / 309 / 0 / 2**. Lo scarto è **+1 bersaglio** (`permission_triple`) e **+12**
+**passate**: **dieci** dal banco nuovo e **due** da `reconciliation.rs`, che tiene l'arm vuoto nelle
+sue due direzioni.
 
 ## Livello 3 — vuoto, e non è una svista
 

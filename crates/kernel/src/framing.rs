@@ -32,9 +32,24 @@ pub const MAX_BODY_LEN: usize = u32::MAX as usize;
 
 /// What can go wrong reading an envelope.
 ///
-/// ⚠️ NO VARIANT CARRIES A PAYLOAD, and that is the shape of the project rather than an
-/// omission: no error in this repository carries the value it consumed. The caller that wants
-/// the numbers has the bytes.
+/// ⚠️ NO VARIANT HERE CARRIES A PAYLOAD, and that is deliberate rather than an omission: this
+/// error does not carry the value it consumed, and the caller that wants the numbers has the
+/// bytes.
+///
+/// ⛔ RECALL OF 2026-09-01 — THIS SAID "and that is THE SHAPE OF THE PROJECT: no error in THIS
+/// REPOSITORY carries the value it consumed", AND THE GENERALISATION WAS FALSE WHEN IT WAS
+/// WRITTEN. Measured with `git log -S` rather than remembered: `platform::journal::OpenError` has
+/// carried `File(io::Error)` and `Engine(redb::Error)` since `bb2e440`, 2026-08-10, and this
+/// sentence landed on 2026-08-31 — three weeks later. What was true was the narrower claim, which
+/// is what is left standing above: that no error in `kernel` carried one, and that none carries
+/// the value it CONSUMED. The second half still holds everywhere; the first is now dated too.
+///
+/// ⛔ AND FROM 2026-09-01 THE `kernel` HALF IS SPENT AS WELL: `permission::PermissionError`
+/// composes `JournalError` and `RecordError`, because `permission::is_granted` returns a `bool`
+/// and a `bool` has no room for "I do not know". Those payloads are CAUSES and not consumed
+/// values, they keep the type `Copy`, and the reasoning lives on that type — one house. The
+/// sentence is corrected rather than answered underneath itself: a true line appended under a
+/// false one leaves the false one standing, which is finding A-2 of this project's own audit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WireError {
     /// Fewer bytes than the frame declares -- the prefix itself may be missing.

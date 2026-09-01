@@ -437,6 +437,23 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
                  this oracle must decide what a routing record does to a doubt before it can \
                  stay independent"
             ),
+            // ⛔ UNREACHABLE IN THIS SCENARIO TOO, AND `panic!` RATHER THAN THE EMPTY ARM FOR THE
+            // REASON THE TWO ABOVE GIVE — read them, the argument is one and it is this file's
+            // whole claim. Nothing here grants a permission, so no permission record can enter
+            // this trace; writing the empty arm `reconcile` writes would make this oracle agree
+            // with the implementation BY CONSTRUCTION on a case it has never seen, which is the
+            // one thing the paragraph above `expected_doubt` says it must not do. ⚠️ AND THE
+            // CHOICE WAS MADE BY READING THAT PARAGRAPH, not by copying the neighbour: the empty
+            // arm would be right if this were `reconcile`, and it is wrong HERE precisely because
+            // this is the independent oracle that checks `reconcile`. Errata `E50`.
+            //
+            // ⚠️ THE DAY THE SCENARIO GROWS A PERMISSION, THE RED IS A DECISION BEING ASKED FOR
+            // and not a defect being reported — same as its two siblings.
+            RecordKind::Permission => panic!(
+                "step {step} carries a permission record: this scenario has grown a permission \
+                 grant, and this oracle must decide what a permission does to a doubt before it \
+                 can stay independent"
+            ),
         }
     }
     open

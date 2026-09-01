@@ -39,7 +39,8 @@
 //! `every_..._survives_the_round_trip` probes exist rather than resting on the round trip.
 
 use kernel::record::{
-    EffectClass, Record, RecordError, RecordKind, RecordV1, RoutingDetail, Trust, VerdictDetail,
+    EffectClass, PermissionDetail, Record, RecordError, RecordKind, RecordV1, RoutingDetail, Trust,
+    VerdictDetail,
 };
 
 #[test]
@@ -204,6 +205,17 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
             "why this step exists",
             RoutingDetail::new("local-medium", 3, true),
         ),
+        // ⚠️ THE SIXTH SPECIES, AND THE GUARD ABOVE PUT IT HERE AGAIN: `RecordKind::Permission`
+        // made this closure `error[E0004]` on the day it arrived. Its detail is not optional
+        // either, and its two names are `&'static str` at both levels — `PermissionDetail::new`
+        // takes nothing else (`E95`).
+        RecordKind::Permission => RecordV1::permission(
+            EffectClass::Idempotent,
+            Trust::Instruction,
+            Vec::new(),
+            "why this step exists",
+            PermissionDetail::new("file", "/a", false),
+        ),
     };
     let encoded = |kind| Record::V1(of(kind)).encode();
 
@@ -221,12 +233,16 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
     // ARRAY does not — extending the closure and forgetting the array leaves the name "every
     // record kind" walking a subset in silence, exactly as `E71` had to correct by hand. ⛔ The
     // pairwise block below deliberately stays at three, for the reason written above it.
+    // ⚠️ AND `Permission` JOINED IT ON 2026-09-01 FOR THE SAME REASON THE TWO BEFORE IT DID, and
+    // the second half of the note above is why it had to be added BY HAND: the `match` goes red on
+    // a new species, this ARRAY does not.
     for kind in [
         RecordKind::Intent,
         RecordKind::Outcome,
         RecordKind::Note,
         RecordKind::Verdict,
         RecordKind::Routing,
+        RecordKind::Permission,
     ] {
         let Record::V1(read) = Record::decode(&encoded(kind)).expect("decode");
         assert_eq!(

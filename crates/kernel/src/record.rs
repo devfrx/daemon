@@ -102,6 +102,13 @@ pub enum RecordKind {
     /// is still owed by the step's own outcome.
     #[n(4)]
     Routing,
+    /// ⛔ A PERMISSION GRANTED FOR A TRIPLE (§6.6). Like the three before it, it neither opens a
+    /// doubt nor closes one — a permission says what the user ALLOWED, and an allowance is not an
+    /// effect that may or may not have reached the world. The step it names still owes its own
+    /// outcome. ⚠️ AND THE EMPTY ARM IN `reconcile` WAS MEASURED FOR THIS VARIANT rather than
+    /// inherited from the three above it: see the arm itself.
+    #[n(5)]
+    Permission,
 }
 
 /// How an effect may be reconciled after a crash (ADR-0007).
@@ -198,6 +205,9 @@ pub enum Detail {
     /// The resolved routing of the step (§6.2, ADR-0011).
     #[n(1)]
     Routing(#[n(0)] RoutingDetail),
+    /// The triple a permission was granted for (§6.6, ADR-0016).
+    #[n(2)]
+    Permission(#[n(0)] PermissionDetail),
 }
 
 /// The structured half of a verdict (§6.4.1). ⛔ THE DETAIL TEXT IS NOT HERE: it is untrusted by
@@ -308,6 +318,82 @@ impl RoutingDetail {
     /// Whether a quality constraint was relaxed, declared rather than silent (ADR-0012).
     pub fn degraded(&self) -> bool {
         self.degraded
+    }
+}
+
+/// The TRIPLE a permission was granted for (§6.6, ADR-0016): a tool, a resource, and what may
+/// be done to it. ⛔ NEVER "THE FILESYSTEM" AND NEVER "THE TOOL" — `(file, ~/x, read)` is the
+/// unit, and a permission that named only one of the three would grant everything the other two
+/// range over.
+///
+/// ⛔ IT IS SEALED FROM THE DAY IT ARRIVES, and that is `E94` paid forward rather than a
+/// precaution: `RoutingDetail` was born with `pub` fields and had to be shut one commit later,
+/// because a struct literal from ANY crate put a runtime `String` in a `Detail` and the
+/// hand-written `Debug` of `RecordV1` prints `detail` in full (D25). This type carries TWO text
+/// fields, so it would have been that mouth twice over. The rule `E94` states is the one obeyed
+/// here: every species that grows a `Detail` with text of its own owes the same signature.
+///
+/// ⛔ THE QUALIFIER `RoutingDetail` CARRIES APPLIES HERE WORD FOR WORD, and it is not a hedge:
+/// this type derives `Decode` and `Record::decode` is `pub`, so BYTES build one without passing
+/// through `new`. That is road A4 of `crate::boundary`, which already declares that nothing
+/// requires every write to the journal to be a `Record` and that bytes carry no labels
+/// (ADR-0036). What `new` shuts is every road a caller can WRITE IN SOURCE — errata `E101`.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
+pub struct PermissionDetail {
+    #[n(0)]
+    tool: String,
+    #[n(1)]
+    resource: String,
+    /// ⛔ A `bool` AND NOT THE `permission::Operation` ENUM, AND IT IS THE SAME DECISION
+    /// `VerdictDetail` TOOK FOR ITS OWN OUTCOME — read that field, the argument is one. In one
+    /// line: an enum here would be a FOURTH `index_only` enum ON THE WIRE, whose variant indices
+    /// `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index on the
+    /// wire never retires (rule 4 of §4.9.2). A `bool` costs one byte, pins itself, and the day a
+    /// THIRD operation exists this field RETIRES in favour of a new optional index — which is
+    /// rule 3 of §4.9.2 doing exactly its job, and cheaper than reserving indices for operations
+    /// nobody has.
+    ///
+    /// ⚠️ SO THE TWO OPERATIONS OF `permission::Operation` ARE THE WHOLE OF WHAT THIS FIELD CAN
+    /// SAY, and the enum's own doc carries the trigger for a third.
+    #[n(2)]
+    write: bool,
+}
+
+impl PermissionDetail {
+    /// The ONLY way to build one in source, and BOTH names are `&'static str` on purpose. The
+    /// conversion to the wire's `String` happens here, so a caller cannot hand this type text it
+    /// computed at runtime — the `E94` signature on a type with two mouths instead of one.
+    ///
+    /// ⚠️ THE FIELDS THEMSELVES STAY `String`, for the reason `RoutingDetail::new` gives: a name
+    /// on the wire has to be DECODABLE, and P-9 measured that a `&'static str` is not producible
+    /// from arriving bytes without leaking. The arriving road is `Decode`'s, not this one's.
+    ///
+    /// ⛔ AND THE NEGATIVE CASES ARE TWO AND NOT ONE, because the roads are two: widening only
+    /// `tool` leaves `resource` open and vice versa. `tests/compile_fail/` carries one case per
+    /// parameter — measured, a single case naming both parameters stays `error` when EITHER is
+    /// widened and would hold neither road on its own.
+    pub fn new(tool: &'static str, resource: &'static str, write: bool) -> Self {
+        Self {
+            tool: String::from(tool),
+            resource: String::from(resource),
+            write,
+        }
+    }
+
+    /// The tool the permission was granted to, as it was named THEN.
+    pub fn tool(&self) -> &str {
+        &self.tool
+    }
+
+    /// The resource the permission was granted over, as it was named THEN.
+    pub fn resource(&self) -> &str {
+        &self.resource
+    }
+
+    /// Whether the granted operation WRITES. See the field for why it is a `bool`.
+    pub fn write(&self) -> bool {
+        self.write
     }
 }
 
@@ -519,6 +605,28 @@ impl RecordV1 {
             payload,
             reason,
             Some(Detail::Routing(detail)),
+        )
+    }
+
+    /// A PERMISSION GRANTED FOR A TRIPLE (§6.6, ADR-0016). ⛔ ITS DETAIL IS NOT OPTIONAL EITHER,
+    /// for the reason `verdict` and `routing` give: a species that declares a structured half is
+    /// not constructible without it. Here that pairing is what makes the triple whole — a
+    /// permission record without its detail names no tool, no resource and no operation, so it
+    /// could only ever be a record that grants nothing while claiming to be a grant.
+    pub fn permission(
+        effect: EffectClass,
+        trust: Trust,
+        payload: Vec<u8>,
+        reason: &'static str,
+        detail: PermissionDetail,
+    ) -> Self {
+        Self::of(
+            RecordKind::Permission,
+            effect,
+            trust,
+            payload,
+            reason,
+            Some(Detail::Permission(detail)),
         )
     }
 

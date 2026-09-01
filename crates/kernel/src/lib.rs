@@ -41,3 +41,5 @@ pub mod wire;
 pub mod sensor;
 
 pub mod gateway;
+
+pub mod permission;

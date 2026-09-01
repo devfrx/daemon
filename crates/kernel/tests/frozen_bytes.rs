@@ -79,7 +79,8 @@
 //! other side, in `82 00 81 85 00 01 00 40 60`.
 
 use kernel::record::{
-    Detail, EffectClass, Record, RecordKind, RecordV1, RoutingDetail, Trust, VerdictDetail,
+    Detail, EffectClass, PermissionDetail, Record, RecordKind, RecordV1, RoutingDetail, Trust,
+    VerdictDetail,
 };
 
 /// The bytes on disk. ⛔ `include_bytes!` AND NOT A READ AT RUN TIME: the artefact enters the
@@ -90,6 +91,7 @@ const OUTCOME_BYTES: &[u8] = include_bytes!("frozen/record_v1_outcome.cbor");
 const NOTE_BYTES: &[u8] = include_bytes!("frozen/record_v1_note.cbor");
 const VERDICT_BYTES: &[u8] = include_bytes!("frozen/record_v1_verdict.cbor");
 const ROUTING_BYTES: &[u8] = include_bytes!("frozen/record_v1_routing.cbor");
+const PERMISSION_BYTES: &[u8] = include_bytes!("frozen/record_v1_permission.cbor");
 
 /// The map, included for the same reason and READ BACK by
 /// `the_map_lists_the_bytes_that_are_really_frozen` instead of being believed.
@@ -137,7 +139,7 @@ fn record(species: impl FnOnce(Vec<u8>, &'static str) -> RecordV1) -> Record {
 ///
 /// ⚠️ THE ORDER IS THE MAP'S ORDER, and `the_map_lists_the_bytes_that_are_really_frozen`
 /// compares the names pairwise, so the two cannot drift apart in silence.
-fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 5] {
+fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 6] {
     [
         (
             "record_v1_intent.cbor",
@@ -199,6 +201,41 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 5] {
                     p,
                     r,
                     RoutingDetail::new("frozen", 2, true),
+                )
+            }),
+        ),
+        // ⛔ THE SIXTH IS THE THIRD SPECIES THAT CARRIES A `detail`, AND WHAT IT PINS THAT THE
+        // OTHER TWO CANNOT IS INDEX 2 OF `Detail` — and, with it, index 5 of `RecordKind`. A wire
+        // index never retires (rule 4 of §4.9.2), so until this file both were held by nothing at
+        // all.
+        //
+        // ⚠️ `EffectClass::Unrepeatable` AND `Trust::Instruction` ARE WHAT `permission::grant`
+        // REALLY WRITES, which is true here and is NOT what makes the choice right: this table is
+        // laid out for COVERAGE of the wire enums, not to model writers. `record_v1_note.cbor`
+        // carries `Verifiable` while `Untrusted::promote` writes `Unrepeatable`, and it is correct
+        // — measured on 2026-09-01 rather than assumed from the neighbouring pair.
+        //
+        // ⚠️ AND BOTH NAMES ARE `"frozen"`, for the reason `FROZEN_PAYLOAD` and `FROZEN_REASON`
+        // exist: a value recognisable at a glance in the map that resembles no real datum. ⛔ THE
+        // TWO BEING EQUAL IS NOT A HOLE HERE, and it was checked rather than waved through — that
+        // `tool` and `resource` are two DISTINCT fields is held by
+        // `tests/permission_triple.rs`, which grants one triple and asks about another differing
+        // in exactly one of them. This file holds the OFFSETS, and two equal strings at two
+        // offsets pin two offsets.
+        //
+        // ⚠️ `write: true` AND NOT `false`, for the reason the verdict's `spent_millis: 7` gives:
+        // `f4` is also what half this table's `false`s encode to, and `f5` is the byte that says
+        // this field is really being read.
+        (
+            "record_v1_permission.cbor",
+            PERMISSION_BYTES,
+            record(|p, r| {
+                RecordV1::permission(
+                    EffectClass::Unrepeatable,
+                    Trust::Instruction,
+                    p,
+                    r,
+                    PermissionDetail::new("frozen", "frozen", true),
                 )
             }),
         ),
@@ -315,6 +352,7 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
         RecordKind::Note,
         RecordKind::Verdict,
         RecordKind::Routing,
+        RecordKind::Permission,
     ] {
         // ⛔ THE EXHAUSTIVE `match` IS THE HALF THAT DOES NOT AGE: a variant added to
         // `RecordKind` STOPS THIS FILE COMPILING, and the author lands on the list beside it.
@@ -327,7 +365,8 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
             | RecordKind::Outcome
             | RecordKind::Note
             | RecordKind::Verdict
-            | RecordKind::Routing => {}
+            | RecordKind::Routing
+            | RecordKind::Permission => {}
         }
         assert!(
             kinds.contains(&kind),
@@ -386,6 +425,7 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
         match detail {
             Detail::Verdict(_) => {}
             Detail::Routing(_) => {}
+            Detail::Permission(_) => {}
         }
     }
 }

@@ -158,6 +158,37 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // in `tests/reconciliation.rs`, written in BOTH directions (§7.1.1 rule 3)
                 // exactly as the `Note` and `Verdict` pairs are.
                 RecordKind::Routing => {}
+                // ⛔ A PERMISSION RECORD NEITHER OPENS A DOUBT NOR CLOSES ONE, and it was measured
+                // for THIS variant rather than inherited from the three above. A permission says
+                // what the user ALLOWED; the doubt of ADR-0007 is about an EFFECT that may or may
+                // not have reached the world, and an allowance is not an effect. Both other
+                // answers were tried on 2026-09-01, one at a time, each reverted from a byte-exact
+                // copy, and each killed exactly the half of the pair below that exists to reach
+                // it:
+                //
+                // - `enter` puts the step back in doubt with the permission's own class, and a
+                //   step whose outcome had already closed the doubt comes back open FOR EVER —
+                //   `grant` writes `Unrepeatable`, so the reopened step also comes back asking to
+                //   suspend.
+                // - `leave` closes a doubt that no effect resolved: recording a permission would
+                //   take a step OUT of the doubt although nothing executed, which is the silent
+                //   loss ADR-0007 exists to prevent.
+                //
+                // ⚠️ AND THE DIFFERENCE FROM `Routing` IS WORTH ONE LINE, because it is what makes
+                // `enter` the sharper of the two defects here rather than `leave`: a routing record
+                // is written once per resolution, whereas a permission is granted ONCE and then
+                // re-read by `permission::is_granted` on every question thereafter. The record that
+                // reopened the doubt would outlive every step that ever consulted it.
+                //
+                // ⚠️ SO THE `effect` FIELD OF A PERMISSION RECORD IS NEVER READ EITHER, and
+                // `permission::grant` writes `Unrepeatable` into it with its reason on that call.
+                //
+                // ⛔ AND WHAT HOLDS THIS ARM IS DECLARED RATHER THAN ASSUMED: see
+                // `a_permission_does_not_put_a_step_in_doubt` and
+                // `a_permission_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them`
+                // in `tests/reconciliation.rs`, written in BOTH directions (§7.1.1 rule 3) exactly
+                // as the `Note`, `Verdict` and `Routing` pairs are.
+                RecordKind::Permission => {}
             },
             // ⛔ A record this build cannot read closes nothing and resolves nothing: it is the
             // strongest form of "no declared class", and ADR-0007 says that means stop. Note it

@@ -811,9 +811,24 @@ sono attivi ora»* è una **proiezione del giornale** e non un secondo archivio.
 record congelato, e i cinque vecchi sono **byte-identici**, controllato per primo. `E94` è **decisa e
 chiusa** lo stesso giorno, e da essa nascono `E95` — che detta al compito 7 di nascere sigillato, ed è
 stata **eseguita** — ed `E96`, che è del proprietario.
-⏭️ **IL PROSSIMO PASSO È IL SECONDO GIRO DI REVISIONE DEL COMPITO 7**, e non un compito nuovo. Il
-primo giro è **fatto** — `E105` — e ciò che resta è la regola di sempre: *si rivede finché una passata
-non torna pulita*, e il rimedio dei cinque rilievi è **codice nuovo**. ⚠️ **Il primo giro era stato
+⏭️ **IL PROSSIMO PASSO È L'OTTAVO GIRO DEL CICLO DI `E53`**, e non un compito nuovo: il perimetro è
+`git show 9441e6d` — l'ondata che chiuse `E97`–`E101`, che **nessun giro ha ancora rivisto** — e la
+casa unica di quel ciclo resta la voce `E53` dell'errata.
+✅ **IL SECONDO GIRO DI REVISIONE DEL COMPITO 7 È FATTO IL 2026-09-01 E NON È TORNATO PULITO: cinque
+rilievi, `E114`, tutti riverificati dal coordinatore prima di rimediare e tutti veri.** ⛔ **Il primo
+è di PRODOTTO ed è la specie di `E109` sul TERZO sito:** `Operation` era tenuto da due `matches!` e da
+nessun `match`, quindi una terza operazione sarebbe entrata nel formato **durevole** come una
+**lettura**, e `is_granted` avrebbe concesso una lettura che nessuno aveva concesso — col workspace
+verde **cifra per cifra**. ⛔ **E la notizia non è il sito ma il PERCHÉ era ancora lì:** il censimento
+di `E109` era limitato ai due tipi che rimediava, cioè chiuse l'**occorrenza** e non la **classe**.
+✅ **La classe è stata ricensita su tutti gli enum pubblici di `kernel/src/` e aveva esattamente DUE
+membri vivi**, chiusi entrambi — il secondo, `ConstraintClass`, **fuori dal perimetro e dichiarato**
+(`E115`), perché chiuderne uno solo **è** il difetto che il rilievo nomina. ⚠️ **E il censimento del
+coordinatore ha mentito la prima volta**, dando per scoperto un tipo tenuto da dieci bracci: da lì il
+gotcha **#106**. ✅ **E DUE PASSATE SONO TORNATE PULITE**, che è un risultato: la sonda degli indici
+CBOR tiene le **posizioni** e non i valori, e i rimedi del primo giro non hanno aperto difetti nuovi.
+⚠️ **Il primo giro è `E105`**, e la regola di sempre resta: *si rivede finché una passata non torna
+pulita*, **forte** dopo un cambiamento di codice. ⚠️ **Il primo giro era stato
 rilanciato e il crash del PC lo ha interrotto a metà mutazione:** niente è andato perso — tutto era
 pushato — la mutazione lasciata in `crates/kernel/src/boundary.rs` è stata **revocata byte-esatta**, e
 i file di build **corrotti dal crash** (`LNK1285`) hanno preteso un `cargo clean` prima che qualunque

@@ -801,8 +801,10 @@ occorrenza esatta della voce bloccante del compito 5, e ciò che la smentiva sta
 compito** (gotcha **#58**). ✅ **E LA SCELTA CHE RESTAVA È DECISA LO STESSO GIORNO, ed è più piccola di entrambe le vie —
 `E104`:** `RecordError::Malformed` **esiste già** e il piano ha nominato l'**enum sbagliato**, quindi
 non si aggiunge nessuna variante alla porta e non si inventa nessun errore. `is_granted` restituisce un
-errore **proprio** che compone le due cause esistenti, che è la forma con cui il kernel risponde già
-**otto** volte. ⛔ **Letto prima di decidere:** `steps_in_doubt` tiene `JournalError` solo perché
+errore **proprio** che compone le due cause esistenti. ⛔ **RICHIAMO DEL 2026-09-01: qui stava *«la forma
+con cui il kernel risponde già OTTO volte»*, e la prova era FALSA** — misurato, nessuno degli otto errori
+nominati porta un carico. Reggono come precedente di *«un errore proprio»*, non di **composizione**, il cui
+unico precedente è `OpenError` e vive in `platform`. Trovata dall'implementatore, non da chi decise. ⛔ **Letto prima di decidere:** `steps_in_doubt` tiene `JournalError` solo perché
 trasforma il record illeggibile in una **risposta**, stanza che un `bool` non ha. ⚠️ **RICHIAMO DEL
 2026-09-01: qui stavano DUE scelte del proprietario, e la seconda non era una scelta** — `E95` decide già
 la forma sigillata di `PermissionDetail`. ⛔ **Il compito 7 resta da riscrivere prima di dispacciarlo**,

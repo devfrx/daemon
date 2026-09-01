@@ -3,7 +3,7 @@
 //! is verifiable with no provider in existence.
 
 use kernel::gateway::{Candidate, Constraint, GatewayError, dispatch, resolve};
-use kernel::ports::journal::{Journal, StepId};
+use kernel::ports::journal::{Journal, JournalError, StepId};
 use kernel::record::{Detail, EffectClass, Record, RecordKind, RecordV1, Trust};
 use simulator::journal::MemoryJournal;
 
@@ -133,10 +133,16 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
     // -- re-reading today's configuration does not say what happened yesterday". So the model
     // NAME is in the record, and never an index into the chain.
     //
-    // ⛔ THE CHAIN IS THREE LONG AND THE CHOSEN ONE IS FIRST, deliberately: `evaluated` is how
-    // many the chain OFFERED, and with a chain of one that is indistinguishable from how many
-    // the filter WALKED. Here the two differ -- one walked on the road taken, three offered --
-    // so the assertion below can only pass for one of the two readings. Errata `E59`.
+    // ⛔ THE CHAIN IS THREE LONG, deliberately: `evaluated` is how many the chain OFFERED, and
+    // with a chain of one that is indistinguishable from how many the filter WALKED. Here the
+    // road TAKEN walks one and the chain offers three, so the assertion below rules out "how
+    // many the SECOND pass walked". Errata `E59`.
+    //
+    // ⚠ AND IT DOES NOT RULE OUT THE THIRD READING, which is said rather than left to be
+    // discovered: the FIRST pass finds nothing here and therefore EXHAUSTS the chain, so "how
+    // many the FIRST pass walked" is also three. Measured -- rewriting `evaluated` to that count
+    // left the whole workspace green. The reading that closes it is the probe below, where the
+    // first pass stops at index 0. Errata `E100`.
     let mut journal = MemoryJournal::new();
     let step = StepId::new(1);
     open_the_step(&mut journal, step);
@@ -161,10 +167,81 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
     assert_eq!(*at, step);
     let Record::V1(body) = Record::decode(bytes).expect("decode");
     assert_eq!(body.kind(), RecordKind::Routing);
+    // ⛔ THE THREE FIELDS NOTHING HELD, AND `trust` IS THE ONE THAT MATTERS: it is the `I6`
+    // label of ADR-0014 on a DURABLE record. Until this line a `dispatch` writing `Untrusted`
+    // left the WHOLE workspace green -- measured before writing it, `42 targets, 307 passed`,
+    // identical to the baseline. `reason` and `effect` were the same shape: `dispatch` writes
+    // six fields and only four were read back. Errata `E97`.
+    //
+    // ⚠ `effect` IS PINNED THOUGH `reconcile` NEVER READS IT, and that is deliberate: the
+    // doc beside the call AFFIRMS the value is true of this record, and an affirmation nobody
+    // holds is what the four fields above already were. It is the Task 10 precedent -- pinned,
+    // not declared, because a doc asserts it.
+    assert_eq!(body.trust(), Trust::Instruction);
+    assert_eq!(body.effect(), EffectClass::Idempotent);
+    assert_eq!(body.reason(), "the gateway resolved the routing for this step");
     let Some(Detail::Routing(routing)) = body.detail() else {
         panic!("the routing record carries no structured detail");
     };
     assert_eq!(routing.model(), "local-medium");
     assert_eq!(routing.evaluated(), 3);
     assert!(routing.degraded());
+}
+
+#[test]
+fn dispatch_does_not_swallow_the_journal_saying_no() {
+    // ⛔ THE ERROR ROAD, REACHABLE BY NOTHING UNTIL THIS PROBE. `dispatch` returns
+    // `Result<(), JournalError>` and no probe ever looked at the `Err`. Measured before writing
+    // it: turning the last line into `let _ = journal.note(..); Ok(())` left the whole workspace
+    // green -- `42 targets, 307 passed`, identical to the baseline. A `dispatch` that reports
+    // success while the routing record never reached the journal is the silent loss ADR-0007
+    // exists to forbid. Errata `E98`.
+    //
+    // ⚠ THE STEP IS NOT OPENED ON PURPOSE, which is the one thing `open_the_step` exists to
+    // avoid everywhere else in this bench: `Journal::note` refuses a note upon a step with no
+    // intent, and that refusal is the promise the doc of `dispatch` makes out loud.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+
+    let chain = [LOCAL_CHEAP];
+    let resolved = resolve(&chain, &[Constraint::LocalOnly]).expect("resolve");
+
+    assert_eq!(
+        dispatch(resolved, step, &mut journal),
+        Err(JournalError::OutOfOrder)
+    );
+}
+
+#[test]
+fn evaluated_is_what_the_chain_OFFERED_and_not_what_the_first_pass_walked() {
+    // ⛔ THE THIRD READING OF "evaluated", AND THIS IS THE ONLY PROBE THAT CLOSES IT. Its
+    // sister above cannot: there the first pass finds nothing and walks all three, so "offered"
+    // and "first pass walked" are the same number and no assertion can separate them.
+    //
+    // ⛔ HERE THE FIRST PASS STOPS AT INDEX 0 -- no quality constraint exists, so `preferred`
+    // is vacuously true and `LOCAL_CHEAP` is admissible -- so it walks ONE while the chain offers
+    // THREE. `evaluated == 3` is therefore false of "walked" under both readings at once, which
+    // is what makes the number mean the chain and not the traversal. Errata `E100`.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    open_the_step(&mut journal, step);
+
+    let chain = [LOCAL_CHEAP, REMOTE_DEAR, LOCAL_PRICEY];
+    let resolved = resolve(&chain, &[Constraint::LocalOnly]).expect("resolve");
+    assert!(!resolved.was_degraded());
+
+    dispatch(resolved, step, &mut journal).expect("dispatch");
+
+    let entries = journal.replay().expect("replay");
+    let (_, bytes) = &entries[1];
+    let Record::V1(body) = Record::decode(bytes).expect("decode");
+    let Some(Detail::Routing(routing)) = body.detail() else {
+        panic!("the routing record carries no structured detail");
+    };
+    // ⚠ THE MODEL IS PINNED TOO, and not as decoration: without it a `resolve` that walked
+    // the chain backwards would still offer three and the probe would say nothing about WHICH
+    // one stopped the first pass.
+    assert_eq!(routing.model(), "local-small");
+    assert_eq!(routing.evaluated(), 3);
+    assert!(!routing.degraded());
 }

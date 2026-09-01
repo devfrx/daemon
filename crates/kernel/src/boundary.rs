@@ -277,6 +277,11 @@ impl Untrusted {
     ///   two acts; the derived `Decode` builds `RecordV1` from BYTES, so runtime text reaches
     ///   index 4 and the hand-written `Debug` prints it whole. It is A4's road and not a new one —
     ///   the reproduction lives beside the species constructors in `crate::record`, in one house.
+    ///   ⛔ **And the SAME road reaches index 5 — added 2026-09-01:** `Detail` rides that very
+    ///   `Decode`, so `RoutingDetail::model` takes runtime text too, and the hand-written `Debug`
+    ///   prints `detail` WHOLE instead of shutting it the way it shuts the payload. Naming index 4
+    ///   alone was this list committing, one day after being rewritten, the omission the lesson
+    ///   right below describes. Errata `E101`.
     ///   📌 The lesson is the one AUD-050's own card gave: *the defect was not the sentence but the
     ///   LIST that declares the floor*, and a list rewritten while closing a hole is exactly where
     ///   the next omission goes.

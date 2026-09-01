@@ -244,7 +244,12 @@ pub struct VerdictDetail {
 /// worth — landing on a second type. `&'static str` on `RecordV1`'s species shut the `reason`
 /// road, never a `Detail` that carries text of its own.
 /// ✅ THE CONVERSION NOW HAPPENS IN `RoutingDetail::new`, which is what the sentence above meant
-/// to promise: one place, and one that no caller can walk around.
+/// to promise: one place IN SOURCE, and one that no caller in source can walk around.
+/// ⛔ THE QUALIFIER IS NOT A HEDGE, and it is the class of `E86` reopening on the sister type one
+/// commit later: `RoutingDetail` derives `Decode` and `Record::decode` is `pub`, so BYTES build
+/// one without passing through `new`, exactly as they do for `RecordV1`. It is A3's third road
+/// and not a new one — `crate::boundary` carries it, in one house. Unqualified, the sentence
+/// reads as a level-1 guarantee this type does not have. Errata `E101`.
 /// ⚠️ THE WIRE FORM DOES NOT CHANGE, and it was the thing to check first — the field is still a
 /// `String`, so the frozen bytes do not move (the precedent is `E83`).
 /// ⚠️ `VerdictDetail` IS NOT SEALED, and that is MEASURED rather than an oversight: it carries a

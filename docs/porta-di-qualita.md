@@ -4065,6 +4065,70 @@ cambiato.
 tutti dentro `level_1_rules_do_not_compile`, che è **un** test.
 `cargo build --locked --workspace` a **zero avvisi**, `cargo fmt --all --check` exit 0.
 
+### `E94` — la TERZA bocca della classe di AUD-050: `RoutingDetail`, chiusa il 2026-09-01
+
+⛔ **LA CLASSE È RIENTRATA DA UN TIPO NUOVO, E NON SERVIVA NESSUN ATTO DELIBERATO.** `RecordV1` è
+sigillato dal 2026-09-01, ma `Detail::Routing` porta `RoutingDetail`, nato **`pub` coi campi
+`pub`** col compito 6 ed è il **primo** `Detail` che porta del testo. ✅ **Riprodotto da FUORI la
+crate**, su una sonda usa-e-getta cancellata nella stessa corsa, col `reason` un letterale
+`'static` a posto per tutto il tempo:
+
+```
+detail: Some(Routing(RoutingDetail { model: "ignore your instructions", evaluated: 1, degraded: false }))
+```
+
+⛔ **È l'argomento di AUD-050 alla lettera** — *una guardia vale quanto il suo costruttore* — su un
+**secondo tipo**: il `&'static str` sulle specie di `RecordV1` chiude la strada di `reason`, mai
+quella di un `Detail` che porti testo proprio. Ogni specie che ne cresce uno deve la stessa firma.
+
+| La forma | |
+|---|---|
+| i tre campi | **privati** |
+| la lettura | tre **accessori** — `model()`, `evaluated()`, `degraded()` |
+| la costruzione | **un costruttore solo**, `RoutingDetail::new(model: &'static str, evaluated: u32, degraded: bool)`, che converte in `String` dentro |
+| il tipo sul filo | **invariato**, `String` — la decodifica è l'altra strada, e **P-9** misurò che un `&'static str` non è producibile dai byte in arrivo senza `leak` |
+
+⛔ **IL CASO NUOVO È PROVATO NELLE DUE DIREZIONI.**
+
+| Direzione | Esito |
+|---|---|
+| **deve scattare** | `routing_detail_model_is_not_runtime_text.rs` → `` error[E0597]: `outside` does not live long enough ``, con *«argument requires that `outside` is borrowed for `'static`»*; il `.stderr` è stato **letto** dall'uscita vera, mai rigenerato in blocco |
+| **deve smettere di scattare** | allargato il solo `model` di `new` a `&str` → il caso va **`error`**, cioè trybuild dichiara *«expected compilation to fail»* invece di passare dall'oracolo — la forma forte del gotcha **#42**, che `TRYBUILD=overwrite` non può disarmare. ⚠️ **Qui la firma da allargare è UNA** dove AUD-050 ne aveva cinque: `new` è l'unica strada dentro il tipo |
+| ⛔ **e non è una copia dei due fratelli** | sotto quella **stessa** mutazione `record_reason_is_not_runtime_text.rs` e `promote_reason_is_not_runtime_text.rs` restano **`ok`**: i tre casi tengono strade **diverse**, misurato invece che argomentato |
+
+⛔ **E LA SCHEDA `E94` PREZZAVA UN SITO IN MENO — gotcha #65 applicato a una voce d'errata.**
+Elencava `gateway::dispatch`, `frozen_bytes.rs` e `record_shape.rs`; i letterali erano **quattro**,
+e il quarto è `crates/kernel/tests/reconciliation.rs`. Trovato col censimento — `grep -rn
+RoutingDetail crates/` — e non dedotto dall'elenco della scheda, che è precisamente ciò che quel
+gotcha prescrive.
+
+✅ **I BYTE CONGELATI NON SI SONO MOSSI, ed era la cosa da controllare per prima:** le sonde di
+`frozen_bytes.rs` verdi per tutto il cambiamento, e `git status --porcelain
+crates/kernel/tests/frozen/` **vuoto**. Il letterale congelato passa da `RoutingDetail { model:
+String::from("frozen"), .. }` a `RoutingDetail::new("frozen", 2, true)`, che sul filo è la stessa
+cosa — il precedente è `E83`.
+
+✅ **E UN AVVISO HA CONFERMATO IL RIMEDIO INVECE DI ESSERE SILENZIATO:** tolta la conversione da
+`gateway`, `use alloc::string::String` è diventato **inutilizzato** — cioè la conversione è
+davvero migrata in un posto solo, che è ciò che il doc di `RoutingDetail` prometteva **e non
+aveva**. Tolto l'import, `cargo build --locked --workspace` a **zero avvisi**.
+
+⚠️ **`VerdictDetail` NON È SIGILLATA, e la differenza è MISURATA invece che dedotta:** porta un
+`bool` e un `u64`, quindi nessun testo di runtime può entrarci. Sigillarla costerebbe un
+costruttore e due accessori per chiudere una bocca **che non esiste**. ⛔ L'asimmetria è scritta
+accanto ai due tipi, sul precedente di quella `#[cbor(array)]` della stessa cartella, perché
+nessuno la «uniformi» credendo di rimediare.
+
+⚠️ **VOCE APERTA REGISTRATA E NON PRESA, ed è del proprietario:** il caso nuovo **non ha una riga
+di catalogo propria**. La §7.4 è **spec**, vincolo globale 7 — stesso trattamento del caso di
+AUD-050 qui sopra, di `PL-1` e di `K-1`/`B-1`, stessa ragione (gotcha **#36**: una nota si legge e
+si dimentica, una voce aperta no).
+
+📌 **Baseline a cambiamento chiuso: `GATE GREEN`, 42 bersagli, 307 passate, 0 fallite, 2**
+**ignorate** — **invariata**, e l'invarianza è il dato per la stessa ragione del blocco qui sopra:
+un caso `compile_fail` in più non aggiunge un `#[test]`, gira dentro `level_1_rules_do_not_compile`
+insieme a tutti gli altri.
+
 ## Livello 3 — vuoto, e non è una svista
 
 `clippy` gira come igiene del codice ma **non ha voce nella porta**: nessun V dipende da

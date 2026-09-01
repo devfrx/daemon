@@ -198,11 +198,7 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 5] {
                     Trust::Instruction,
                     p,
                     r,
-                    RoutingDetail {
-                        model: String::from("frozen"),
-                        evaluated: 2,
-                        degraded: true,
-                    },
+                    RoutingDetail::new("frozen", 2, true),
                 )
             }),
         ),

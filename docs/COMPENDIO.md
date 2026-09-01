@@ -792,8 +792,8 @@ stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito 
 gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
 **formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro
 inesercitato in tutto il workspace.
-⏭️ **IL PROSSIMO PASSO È LA DECISIONE `E94` — è del proprietario e costa meno del compito 7 — POI
-IL COMPITO 7.**
+⏭️ **IL PROSSIMO PASSO È IL COMPITO 7** — `E94` è **decisa e chiusa** il 2026-09-01, e da essa
+nascono `E95`, che detta al compito 7 di nascere sigillato, ed `E96`, che è del proprietario.
 ⛔ **RICHIAMO DEL 2026-09-01: il QUARTO e il QUINTO giro sono fatti — `E73`–`E78` e `E79`–`E82`,
 tutti riverificati dal coordinatore prima di rimediare e tutti veri.** ✅ **E il quinto ha
 introdotto la domanda che ha pagato:** invece di *«trova difetti»*, *«ciascun rimedio dell'ondata
@@ -829,12 +829,14 @@ primo importa un tipo che nasce nel secondo: voce `E89`. ⛔ **E il pre-controll
 QUINTA volta, `E88`:** il brief era scritto contro un `RecordV1` che `E83` aveva sigillato il giorno
 prima, e il peggiore dei tre bloccanti avrebbe **riaperto AUD-050**. 📌 *Un pre-controllo ha una
 data come tutto il resto.*
-⛔ **E IL COMPITO HA APERTO UNA VOCE DEL PROPRIETARIO, `E94`, che costa MENO decidere ADESSO:**
-`RoutingDetail` è **la terza bocca** della classe di AUD-050 — è `pub` coi campi `pub`, quindi una
-`String` di runtime entra nel record e il `Debug` la stampa intera, col `reason` a posto. Riprodotta
-da fuori la crate. ⚠️ **Non è un difetto oggi** (`Candidate::model` è `&'static str`): il buco è nel
-**tipo**. ⛔ **Il compito 7 la TRIPLICA**, perché il suo `PermissionDetail` porta **due** `String`
-pubbliche. Il rimedio è la forma di AUD-050, e i byte congelati non si muovono.
+✅ **E LA VOCE `E94` CHE IL COMPITO AVEVA APERTO È CHIUSA IL 2026-09-01, per decisione del
+proprietario:** `RoutingDetail` prende la forma di AUD-050 — campi privati, un costruttore che
+prende `&'static str` — e i byte congelati **non si sono mossi**, controllato per primo. ⛔ **E la
+scheda prezzava un sito in meno**, gotcha **#65** su una voce d'errata. Il racconto, le due
+direzioni della prova e la ragione per cui `VerdictDetail` **non** è sigillata stanno in
+[`porta-di-qualita.md`](porta-di-qualita.md), in una casa sola. ⛔ **Ne nascono DUE voci:** `E95`
+detta al compito 7 di far nascere `PermissionDetail` già sigillato, ed `E96` è **del proprietario**
+— un rimando `E<n>` nel sorgente non è un riferimento, perché il numero è unico dentro **un** piano.
 ⚠️ La voce `E50` dice che l'elenco dei file di un compito che tocca `RecordKind` deve nominare
 **anche** `crates/simulator/tests/dst_campaign.rs`, che porta un oracolo con un `match` esaustivo.
 ⚠️ **Il compito 2 non

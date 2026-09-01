@@ -202,11 +202,7 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
             Trust::Instruction,
             Vec::new(),
             "why this step exists",
-            RoutingDetail {
-                model: String::from("local-medium"),
-                evaluated: 3,
-                degraded: true,
-            },
+            RoutingDetail::new("local-medium", 3, true),
         ),
     };
     let encoded = |kind| Record::V1(of(kind)).encode();

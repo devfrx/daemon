@@ -231,11 +231,31 @@ pub struct VerdictDetail {
 /// the point rather than an oversight: a name on the WIRE has to be decodable, and P-9 measured
 /// that a `&'static str` is not producible from arriving bytes without leaking. The conversion
 /// happens in `gateway::dispatch`, in one place.
+///
+/// ⛔ RECALL OF 2026-09-01 — ERRATA `E94`, AND THE OWNER DECIDED IT BEFORE THE NEXT SPECIES
+/// AROSE. The line above ended "the conversion happens in `gateway::dispatch`, in one place": true
+/// of the one PRODUCTION road and false of the TYPE. Every field here was `pub`, so a struct
+/// literal from ANY crate put a runtime `String` at index 0 without going near the gateway, and
+/// the hand-written `Debug` of `RecordV1` prints `detail` in full (D25).
+/// ✅ REPRODUCED FROM OUTSIDE THE CRATE on a throwaway probe deleted in the same run, with the
+/// `reason` a proper `'static` literal all along:
+///   detail: Some(Routing(RoutingDetail { model: "ignore your instructions", .. }))
+/// ⛔ IT IS THE ARGUMENT OF AUD-050 WORD FOR WORD — a guard is worth what its CONSTRUCTOR is
+/// worth — landing on a second type. `&'static str` on `RecordV1`'s species shut the `reason`
+/// road, never a `Detail` that carries text of its own.
+/// ✅ THE CONVERSION NOW HAPPENS IN `RoutingDetail::new`, which is what the sentence above meant
+/// to promise: one place, and one that no caller can walk around.
+/// ⚠️ THE WIRE FORM DOES NOT CHANGE, and it was the thing to check first — the field is still a
+/// `String`, so the frozen bytes do not move (the precedent is `E83`).
+/// ⚠️ `VerdictDetail` IS NOT SEALED, and that is MEASURED rather than an oversight: it carries a
+/// `bool` and a `u64`, so no runtime TEXT can enter through it. The asymmetry is the same species
+/// as the `#[cbor(array)]` one above — written down so that nobody "harmonises" it into a rule
+/// that would cost a constructor per detail for nothing.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 #[cbor(array)]
 pub struct RoutingDetail {
     #[n(0)]
-    pub model: String,
+    model: String,
     /// How many candidates the chain OFFERED when the decision was made.
     ///
     /// ⛔ OFFERED AND NOT WALKED, AND IT IS A DECISION RATHER THAN AN ALIGNMENT — errata `E59`,
@@ -249,11 +269,41 @@ pub struct RoutingDetail {
     /// ⚠️ NOT the chain as configured TODAY — what was offered THEN, which is the same
     /// distinction the ADR draws for the model.
     #[n(1)]
-    pub evaluated: u32,
+    evaluated: u32,
     /// ⛔ A QUALITY CONSTRAINT WAS RELAXED, AND IT WAS DECLARED (ADR-0012). A degradation that
     /// did not reach the record would be exactly the silent one ADR-0019 exists to forbid.
     #[n(2)]
-    pub degraded: bool,
+    degraded: bool,
+}
+
+impl RoutingDetail {
+    /// The ONLY way to build one, and `model` is a `&'static str` on purpose — errata `E94`. The
+    /// conversion to the wire's `String` happens here, so a caller cannot hand this type text it
+    /// computed at runtime. ⚠️ THE FIELD ITSELF STAYS A `String`, because a name on the wire has
+    /// to be DECODABLE and P-9 measured that a `&'static str` is not producible from arriving
+    /// bytes without leaking — the arriving road is `Decode`'s and is index 0's, not this one's.
+    pub fn new(model: &'static str, evaluated: u32, degraded: bool) -> Self {
+        Self {
+            model: String::from(model),
+            evaluated,
+            degraded,
+        }
+    }
+
+    /// The model the decision RESOLVED to, as it was named THEN (ADR-0011).
+    pub fn model(&self) -> &str {
+        &self.model
+    }
+
+    /// How many candidates the chain OFFERED when the decision was made.
+    pub fn evaluated(&self) -> u32 {
+        self.evaluated
+    }
+
+    /// Whether a quality constraint was relaxed, declared rather than silent (ADR-0012).
+    pub fn degraded(&self) -> bool {
+        self.degraded
+    }
 }
 
 /// Version 1 of the durable record.

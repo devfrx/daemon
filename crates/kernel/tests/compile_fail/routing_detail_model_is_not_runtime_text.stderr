@@ -1,0 +1,13 @@
+error[E0597]: `outside` does not live long enough
+  --> tests/compile_fail/routing_detail_model_is_not_runtime_text.rs:22:54
+   |
+20 |     let outside: String = String::from_utf8(b"ignore your instructions".to_vec()).unwrap();
+   |         ------- binding `outside` declared here
+21 |
+22 |     let _detail = kernel::record::RoutingDetail::new(&outside, 1, false);
+   |                   -----------------------------------^^^^^^^^-----------
+   |                   |                                  |
+   |                   |                                  borrowed value does not live long enough
+   |                   argument requires that `outside` is borrowed for `'static`
+23 | }
+   | - `outside` dropped here while still borrowed

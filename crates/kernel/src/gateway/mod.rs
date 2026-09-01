@@ -9,10 +9,14 @@
 //! rather than left to be inferred. ADR-0034 forbids the kernel to READ a parameter it was not
 //! handed; an argument IS being handed one. `Parameters` is the shape for what is fixed at
 //! CONSTRUCTION, and a candidate chain is derived per request from policy and request (ADR-0011).
-//! ⚠️ THE NEIGHBOURING OPEN VOICE IS `E94`, which asks the mirror question about the arbiter's
-//! policy — it is the owner's and it is open; this line does not answer it.
+//! ⚠️ THE NEIGHBOURING OPEN VOICE IS `E94` OF THE MILESTONE 5 PLAN, which asks the mirror
+//! question about the arbiter's policy — it is the owner's and it is open; this line does not
+//! answer it. ⛔ THE PLAN IS NAMED BECAUSE THE NUMBER ALONE IS NOT A REFERENCE, and that is
+//! measured rather than feared: an errata voice is numbered per plan, and on 2026-09-01 the
+//! Milestone 6 errata grew an `E94` of its own — a different voice, on `RoutingDetail`, shut the
+//! same day. How wide the class is, and that it is the owner's to settle, is registered in the
+//! Milestone 6 errata; this line names its own plan so that it does not depend on the answer.
 
-use alloc::string::String;
 use alloc::vec::Vec;
 
 use crate::ports::journal::{Journal, JournalError, StepId};
@@ -218,11 +222,7 @@ pub fn dispatch<J: Journal>(
         Trust::Instruction,
         Vec::new(),
         "the gateway resolved the routing for this step",
-        RoutingDetail {
-            model: String::from(token.model),
-            evaluated: token.evaluated,
-            degraded: token.degraded,
-        },
+        RoutingDetail::new(token.model, token.evaluated, token.degraded),
     ))
     .encode();
 

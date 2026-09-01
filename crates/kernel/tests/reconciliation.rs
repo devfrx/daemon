@@ -74,11 +74,7 @@ fn a_routing() -> Vec<u8> {
         Trust::Instruction,
         Vec::new(),
         "the gateway resolved the routing for this step",
-        RoutingDetail {
-            model: String::from("local-medium"),
-            evaluated: 3,
-            degraded: true,
-        },
+        RoutingDetail::new("local-medium", 3, true),
     ))
     .encode()
 }

@@ -164,7 +164,7 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
     let Some(Detail::Routing(routing)) = body.detail() else {
         panic!("the routing record carries no structured detail");
     };
-    assert_eq!(routing.model, "local-medium");
-    assert_eq!(routing.evaluated, 3);
-    assert!(routing.degraded);
+    assert_eq!(routing.model(), "local-medium");
+    assert_eq!(routing.evaluated(), 3);
+    assert!(routing.degraded());
 }

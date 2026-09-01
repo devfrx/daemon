@@ -4290,6 +4290,94 @@ storia del commit `8d45eea`.** I rimedi ai cinque rilievi aggiungono **due** son
 bersaglio, perché entrambe entrano in banchi che esistono già: `GATE GREEN`, **43 bersagli, 323
 passate, 0 fallite, 2 ignorate**. Lo scarto è **+2 passate**.
 
+### La passata INDIPENDENTE sul perimetro del compito 5 — un'affermazione di sicurezza falsa in `src/` (2026-09-01)
+
+⛔ **Non è un giro del ciclo di `E53`: è una passata a sé, e la differenza è il METODO.** Fatta da
+un sotto-agente fresco a cui la lettura d'apertura di [`../CLAUDE.md`](../CLAUDE.md) è stata
+**VIETATA** — niente compendio, niente piano, niente questo registro. Le passate precedenti le
+fecero sessioni e sotto-agenti che avevano letto la §6 e sapevano quindi **che cosa era già stato
+trovato**; questa no, e ha reso **sei** rilievi che i giri precedenti non avevano visto,
+`E108`–`E113`. ⚠️ **Tutti riverificati dal coordinatore prima di agire**, e uno **sovrapprezzato**.
+
+⛔ **`E108` — LA VOCE BLOCCANTE, E STA IN `src/`: UN PARAGRAFO CHE SPIEGA PERCHÉ UN CAMPO DEL
+FORMATO DUREVOLE È SICURO, E CHE LA MISURA SMENTISCE.** Il doc di `Detail` diceva *«AN UNKNOWN
+VARIANT DOES NOT DECODE, and that is what makes the field safe … A build that does not know a
+species STOPS instead of guessing»*. ✅ **Riprodotto dal coordinatore su una sonda usa-e-getta
+scritta da fuori la crate, compilata, eseguita e cancellata nella stessa corsa**, sui byte
+congelati del verdetto:
+
+| Byte cambiato | Risposta di `Record::decode` |
+|---|---|
+| indice di variante di `Detail`, `00` → `03` (il primo libero) | ⛔ **`Ok(V1(RecordV1 { .. detail: None .. }))`** |
+| lo stesso, `00` → `09` | ⛔ **`Ok(.. detail: None ..)`** |
+| `kind` `03` → `09` | ✅ `Err(Malformed)` |
+| corpo di `Detail` da `array(2)` ad `array(3)` | ✅ `Err(Malformed)` |
+
+⛔ **Quindi il difetto è isolato all'indice di variante, e ciò che ferma una build vecchia è il
+`kind` APPAIATO** — esattamente ciò che il doc di `RecordV1::detail` dice nello stesso file:
+*«LOSES THE SUBSTANCE IN SILENCE — the new `kind` is what makes that build stop»*. **Due paragrafi
+di una crate si contraddicevano**, e la misura dà ragione a quello dell'indice 5. 📌 **Gotcha #98
+alla terza occorrenza:** la misura citata era **vera** e apparteneva agli enum sotto
+`#[cbor(index_only)]`, cioè al campo **accanto**.
+⛔ **E LA COPPIA TENUTA AL LIVELLO 1 DA `AUD-050` NON CHIUDE QUESTA STRADA**, che è la distinzione
+da tenere e la ragione per cui il rilievo sopravvive alla cura di stamattina: il livello 1 rende
+**incostruibile** una coppia sbagliata, mentre qui si **decodificano byte già scritti**. Una
+**seconda specie** di `Detail` sotto un `kind` **esistente** verrebbe ingoiata da una build vecchia.
+⚖️ **Il formato non è insicuro oggi** e il paragrafo è stato corretto **sulla misura**, per
+sottrazione; ciò che resta è **registrato e non preso**, del proprietario, e deliberatamente **non
+pinzato** — una sonda sul silenzio di oggi sarebbe un voto contro il cambiarlo (gotcha **#73**).
+
+⛔ **`E109` — `==` NON È UNA GUARDIA, E L'ASSENZA NON SI TROVA MUTANDO.** `CostClass` e
+`VerdictOutcome` erano tenuti da **quattro `==` e da nessun `match`**. ⛔ **La prova è un
+CENSIMENTO e non una mutazione, ed è più forte:** una mutazione dice che *una* corsa è restata
+verde, il censimento dice che in **tutto** `crates/` non esiste un `match` su quei tipi, quindi
+**niente in nessun punto** potrebbe cogliere una variante nuova. È la ragione per cui quattro
+passate a mutazioni non l'avevano vista — **una mutazione coglie un comportamento CAMBIATO, mai un
+tipo CRESCIUTO**, gotcha **#104**. ⛔ **E la caduta di `CostClass` è dalla parte SBAGLIATA:** tutto
+ciò che non è `Inferential` **entra** nell'anello stretto, cioè la cosa che V11 esiste per
+rifiutare — stessa forma di `E55`. ⚖️ **Decisione del proprietario: guardia su entrambi.**
+✅ **Provata nelle due direzioni**, `` error[E0004]: `CostClass::Remote` not covered `` e
+`` error[E0004]: `VerdictOutcome::Inconclusive` not covered ``, revocate con `cp` **più `touch`** —
+la cura del gotcha **#103**, applicata invece che riscoperta.
+
+⛔ **`E110` — l'unica strada di `run_the_ring` che risponde `Err`, e non la raggiungeva nessuna
+sonda.** Il doc **afferma** il valore e la testa del banco lo **descrive**, ma descrivere non è
+tenere. ✅ Misurato prima: col `?` di `journal.note` in `let _ = ..` il workspace resta identico
+alla baseline. ✅ Chiusa con una sonda che asserisce **due** cose — `Err(OutOfOrder)` **e** archivio
+**vuoto** — perché è la seconda che conta. ✅ **Controllo dopo:** con la stessa mutazione è
+**l'unica rossa del banco**, `5 passed; 1 failed`.
+
+⚠️ **`E111`, `E112`, `E113` — le tre di prosa, tutte chiuse per SOTTRAZIONE**, e la seconda porta
+un metodo. `E111`: tre clausole del doc di `Detail` — *«`Record` ABOVE»* (è **sotto**), *«the only
+two data-carrying enums»* (`wire::worker::FromWorker` è un terzo, e porta l'argomento **opposto**) e
+una data smentita da `git log -L`. `E113`: *«a record is 21 bytes and not 20»* e *«before `85`, the
+five fields»*, mentre i record congelati sono **sei** e vanno da **21** a **40** byte — chiusa in
+**entrambe** le case, `frozen_bytes.rs` e la mappa.
+⛔ **`E112` È LA PIÙ ISTRUTTIVA, e cambia la forma di `E66`:** dal 2026-09-01 la **maggior parte**
+delle date `2026-09-01` nel sorgente è **legittima**, perché quei commit sono davvero di oggi.
+Quindi **un `grep` non basta e uno sweep sarebbe stato un difetto peggiore di quello che correggeva**:
+ogni occorrenza è stata datata con `git log -1 -L <riga>,<riga>:<file>`. Cinque occorrenze, **tre**
+scritte oggi — vere, restano — e **due** scritte da commit del **2026-08-31**, quindi false e tolte.
+📌 *Un censimento che sweepa una parola invece di datarla riga per riga produce l'errore che stava
+correggendo.*
+
+⚖️ **DOVE IL RAPPORTO SOVRAPPREZZAVA.** Su `E108` dava *«cinque clausole false su sei»*. Ricontate:
+**tre** flatamente false, **una vera** (`decode` mappa ogni errore a `Malformed`) e **due** vere ma
+su una strada mai percorsa. Non cambia gravità né rimedio, ma il rimedio doveva **sottrarre** e non
+riscrivere il paragrafo intero — gotcha **#65** applicato al rapporto di un sotto-agente.
+
+⚠️ **E UNA VOCE REGISTRATA E NON PRESA, che il sotto-agente non ha visto.** Il doc di **modulo** di
+`record.rs` dice *«with and without `#[cbor(array)]` on the two types below»*, e i tipi che sotto di
+esso portano quell'attributo sono **tre**. ⛔ **Non toccata, ed è una decisione:** la frase descrive
+una **misura passata** e non un censimento, quindi non è chiaramente falsa, e correggerla di
+iniziativa significherebbe prezzare come difetto ciò che potrebbe essere un verbale. È del
+proprietario.
+
+📌 **Baseline a passata chiusa: `GATE GREEN`, 43 bersagli, 324 passate, 0 fallite, 2 ignorate**, da
+**323**. ⛔ **Lo scarto è +1, ed è una sonda sola:** `sensor_ring.rs` passa da cinque test a sei e
+nessun altro banco ne guadagna — misurato con `grep -c '^#\[test\]'` contro la versione di `HEAD`,
+non dedotto. `cargo fmt --all --check` pulito, fine-riga dei sei file di `crates/` **immutati**.
+
 ## Livello 3 — vuoto, e non è una svista
 
 `clippy` gira come igiene del codice ma **non ha voce nella porta**: nessun V dipende da

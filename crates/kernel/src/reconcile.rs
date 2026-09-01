@@ -116,8 +116,13 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // MEASURED for this variant rather than inherited from `Note`'s. The doubt of
                 // ADR-0007 is about an EFFECT that may or may not have reached the world; a
                 // verdict is a fact recorded ABOUT a step's artefact, and the step it names
-                // already owes its own outcome. Both other answers were tried on 2026-09-01,
-                // one at a time, each reverted from a byte-exact copy:
+                // already owes its own outcome. Both other answers were tried one at a time, each
+                // reverted from a byte-exact copy. ⚠️ THE DATE CAME OUT ON 2026-09-01 AND IS NOT
+                // REALIGNED: it read "on 2026-09-01" while `git log` dates the commit that wrote
+                // this arm 2026-08-31, so it was a session's belief the commits contradict — same
+                // cure as `E66`. ⛔ THE TWO ARMS BELOW KEEP THEIR 2026-09-01, and the difference is
+                // the point: `git log` dates THEIR commits to that day, so the census had to
+                // DISCRIMINATE rather than sweep. Errata `E112`.
                 //
                 // - `enter` makes a step that already has an intent RE-ENTER the doubt with the
                 //   verdict's own class, so a step whose outcome had already closed it comes

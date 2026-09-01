@@ -11,7 +11,7 @@
 use core::cell::Cell;
 
 use kernel::boundary::Untrusted;
-use kernel::ports::journal::{Journal, StepId};
+use kernel::ports::journal::{Journal, JournalError, StepId};
 use kernel::record::{Detail, EffectClass, Record, RecordKind, RecordV1, Trust};
 use kernel::sensor::{CostClass, Sensor, Verdict, VerdictOutcome, run_the_ring};
 use kernel::time::Millis;
@@ -357,7 +357,7 @@ impl Sensor for WatchfulSensor {
 fn an_inferential_sensor_is_never_run_at_all() {
     // ⛔ THIS IS THE SECOND HALF OF V11, AND IT WAS ADDED BECAUSE A MUTATION SURVIVED. The doc of
     // `run_the_ring` says the declared cost is read BEFORE `observe` and that "that ordering IS
-    // V11". Measured on 2026-09-01 by moving the cost check AFTER `observe`: the whole workspace
+    // V11". Measured by moving the cost check AFTER `observe`: the whole workspace
     // stayed GREEN — `an_inferential_sensor_is_refused_by_the_tight_ring` only ever looked at
     // what was WRITTEN, and a sensor that runs and is then discarded writes nothing either.
     //
@@ -409,5 +409,48 @@ fn an_inferential_sensor_is_never_run_at_all() {
     assert!(
         admitted.observed.get(),
         "the ring did not run a computational sensor either: it refuses everything"
+    );
+}
+
+#[test]
+fn a_step_nobody_opened_is_refused_and_nothing_is_written() {
+    // ⛔ THE ONE ROAD OF THIS FUNCTION THAT ANSWERS `Err`, AND NO PROBE REACHED IT. The doc of
+    // `run_the_ring` AFFIRMS a value — "this function answers `Err(JournalError::OutOfOrder)` when
+    // `step` was never opened" — and every probe in this file opens the step first and then
+    // `.expect("the ring")`s, so the `Err` arm of the return type had no reader at all. The header
+    // of this file describes that road and `E45` measured it, but describing is not holding.
+    // ⚠️ MEASURED ON 2026-09-01 rather than argued: with the `?` on `journal.note` turned into
+    // `let _ = ..`, the whole workspace stayed green, identical to the baseline. A doc that AFFIRMS
+    // a value gets a probe — the same rule the passing probe above cites for `effect` and `reason`.
+    // Errata `E110`.
+    //
+    // ⛔ AND IT ASSERTS TWO THINGS, because one of them alone proves less than it looks. That the
+    // call is `Err` says the refusal happened; that the archive is EMPTY says the ring wrote
+    // nothing BEFORE refusing — and it is the second that matters, since a verdict landing on a
+    // step nobody opened is the write-ahead order of ADR-0007 broken, not a return value.
+    let mut journal = MemoryJournal::new();
+
+    let sensor = ScriptedSensor {
+        cost: CostClass::Computational,
+        outcome: VerdictOutcome::Fail,
+        spent: 3,
+    };
+
+    let refused = run_the_ring(
+        &sensor,
+        &Untrusted::new("the artefact".into()),
+        StepId::new(1),
+        StepId::new(2),
+        EffectClass::Idempotent,
+        &mut journal,
+    );
+
+    assert!(
+        matches!(refused, Err(JournalError::OutOfOrder)),
+        "the ring judged the artefact of a step nobody had opened"
+    );
+    assert!(
+        records(&journal).is_empty(),
+        "the ring wrote to the archive before refusing"
     );
 }

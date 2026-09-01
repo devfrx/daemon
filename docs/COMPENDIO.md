@@ -785,13 +785,27 @@ proprietario li ha autorizzati, ed era la condizione che `E53` registrava come m
 compito 5 sopravvissuti nella testa dei byte congelati e nella loro mappa, e un'annotazione che
 due documenti dichiaravano portante ed è **inerte**, misurata. ⚠️ **E uno dei sei era prezzato più
 grande del difetto** — gotcha **#65** applicato al rapporto di un sotto-agente.
-⛔ **Il residuo è RIDOTTO UNA TERZA VOLTA e ancora non chiuso**, per la regola stessa: **tre**
-giri, e **tutti e tre** hanno trovato difetti veri — *«finché una passata non torna pulita»*.
-La casa unica resta `E53` dell'errata; le misure
-stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito di generale sono i
-gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
-**formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro
-inesercitato in tutto il workspace.
+⛔ **Il ciclo di revisione non è raccontato qui, e il numeratore dei giri neppure:** la casa unica è
+`E53` dell'errata, che porta la serie, la specie di ciascun giro e il perimetro del successivo.
+⚠️ **Questa riga diceva *«RIDOTTO UNA TERZA VOLTA … tre giri»*, ed era ferma a quel giorno** — una
+seconda casa di uno stato che si muove, cioè il gotcha **#68**, e la stessa cura che il 2026-09-01
+è stata data alla cella di posizione del piano. Le misure stanno in
+[`porta-di-qualita.md`](porta-di-qualita.md); ciò che ne è uscito di generale sono i gotcha
+**#96**, **#97**, **#98** e **#104**.
+⛔ **E IL 2026-09-01 UNA PASSATA INDIPENDENTE HA RIBATTUTO IL PERIMETRO DEL COMPITO 5 — sotto-agente
+fresco, con la lettura d'apertura di [`../CLAUDE.md`](../CLAUDE.md) VIETATA — E HA TROVATO SEI COSE
+CHE I GIRI PRECEDENTI NON AVEVANO VISTO**, `E108`–`E113`.
+⛔ **La prima è BLOCCANTE e sta in `src/`:** il doc di `Detail` spiegava perché il campo è sicuro
+dicendo che una specie sconosciuta **non decodifica** — e la misura dice il contrario: decodifica, e
+diventa `None` **in silenzio**. La misura che citava era **vera** e apparteneva al campo **accanto**,
+gli enum `index_only`; è il gotcha **#98** alla terza occorrenza, stavolta in `src/`. ⛔ **E la coppia
+tenuta al livello 1 dal 2026-09-01 non chiude quella strada:** rende *incostruibile* una coppia
+sbagliata, mentre lì si **decodificano byte già scritti**. Registrata e non presa, del proprietario.
+⛔ **La seconda è una LENTE che mancava, il gotcha #104:** `CostClass` e `VerdictOutcome` erano
+tenuti da `==` e da **nessun `match`**, quindi una terza variante compilava in silenzio — e nessuna
+passata a mutazioni poteva vederlo, perché *una mutazione coglie un comportamento CAMBIATO, mai un
+tipo CRESCIUTO*. Si trova **censendo**, non mutando. ⚖️ Guardia su entrambi, **decisa dal
+proprietario**, provata con `error[E0004]` nelle due direzioni.
 ✅ **IL COMPITO 7 È ESEGUITO IL 2026-09-01, `GATE GREEN`** — il permesso è una tripla, e *«quali
 sono attivi ora»* è una **proiezione del giornale** e non un secondo archivio. Nasce il **sesto**
 record congelato, e i cinque vecchi sono **byte-identici**, controllato per primo. `E94` è **decisa e

@@ -33,7 +33,13 @@
 #
 # ⚠️ THE FRAMING IS FOUR BYTES, NOT THREE, and it is the thing the obvious reading gets wrong:
 # `82 00` is the version enum and its variant index, then `81` — the ONE-ELEMENT ARRAY of the
-# variant's body — and only then `85`, the five fields. So the fields begin at byte 4.
+# variant's body — and only then the field-array header, `85` or `86`. So the fields begin at
+# byte 4.
+# ⚠️ RECALL OF 2026-09-01: it said "and only then `85`, the five fields", which the paragraph
+# below already contradicts by saying a record carrying a `detail` moves byte 3 — and half the
+# sections here are `86`. Closed HERE TOO and not only in the twin sentence of `frozen_bytes.rs`,
+# because a fix that lands in one house of a claim and not the other is how the two drift apart
+# (errata `E113`).
 #
 # ⛔ RECORDS OF THE SAME ARITY DIFFER ONLY AT BYTES 4, 5 AND 6, on purpose: a record pins ONE
 # variant of each `index_only` enum, so a single record would leave every other variant of them

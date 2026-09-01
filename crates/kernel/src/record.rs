@@ -176,18 +176,44 @@ pub enum Trust {
 /// bytes here would need a second decode nobody could perform without knowing the `kind` out of
 /// band, which is the `payload` problem moved into a new box.
 ///
-/// ⛔ AN UNKNOWN VARIANT DOES NOT DECODE, and that is what makes the field safe. Measured on
-/// 2026-08-30 (P-15): `minicbor` answers `unknown enum variant N`, `Record::decode` maps every
-/// error to `RecordError::Malformed`, and `reconcile` resolves that to `SuspendAndAsk`. A build
-/// that does not know a species STOPS instead of guessing.
+/// ⛔ AN UNKNOWN SPECIES DECODES, AND IT DECODES TO `None` IN SILENCE. Measured 2026-09-01 from
+/// outside the crate on the frozen verdict record: the variant index of `Detail` turned from `00`
+/// to `03` — the first free one — or to `09` answers `Ok(V1(RecordV1 { .. detail: None .. }))`.
+/// No error is produced, so none reaches `Record::decode`'s mapping and none reaches `reconcile`.
 ///
-/// ⚠️ NO `#[cbor(..)]` ATTRIBUTE, AND THAT IS MEASURED RATHER THAN OVERLOOKED. `Record` above
-/// carries an explicit `#[cbor(array)]` and this one does not, which reads as an asymmetry
-/// between the only two data-carrying enums of the crate. Measured on 2026-09-01 against
-/// `minicbor` 2.3.0 outside the repository: the two forms put the SAME bytes on the wire —
-/// `82 00 81 82 f4 07` either way — because array is already the derive's default. The
+/// ⛔ THIS PARAGRAPH SAID THE OPPOSITE UNTIL 2026-09-01, and how it got there is the part worth
+/// keeping: it read "AN UNKNOWN VARIANT DOES NOT DECODE, and that is what makes the field safe …
+/// A build that does not know a species STOPS instead of guessing". The measurement it cited was
+/// REAL and belongs to the enums under `#[cbor(index_only)]`, which are a DIFFERENT field of the
+/// same record — measured the same day, `kind` turned to `09` is `Err(Malformed)`, and so is a
+/// body of the wrong arity. It is gotcha #98 in its own words: a measurement that reproduces on
+/// the field NEXT DOOR. ⚠️ AND FOUR PASSES OF REVIEW WENT PAST IT. Errata `E108`.
+///
+/// ⛔ SO WHAT MAKES AN OLD BUILD STOP IS THE PAIRED `kind`, AND NOTHING HERE — which is what
+/// `RecordV1::detail` says below: "a build that does not know this index decodes a record carrying
+/// it and LOSES THE SUBSTANCE IN SILENCE — the new `kind` is what makes that build stop". Two
+/// paragraphs of one crate contradicted each other, and the measurement sides with that one.
+/// ⚠️ AND THE LEVEL-1 PAIRING BELOW DOES NOT CLOSE THIS ROAD, which is the distinction to keep:
+/// it makes a wrong pair UNCONSTRUCTIBLE, and this is about DECODING BYTES that arrive already
+/// written. A second species under an EXISTING `kind` is swallowed by an older build with nothing
+/// to say so. ⛔ REGISTERED AND NOT TAKEN — it touches the artefact that is never regenerated —
+/// and deliberately NOT pinned: a probe on today's silence would be a vote against changing it
+/// (gotcha #73).
+///
+/// ⚠️ NO `#[cbor(..)]` ATTRIBUTE, AND THAT IS MEASURED RATHER THAN OVERLOOKED. `Record` below
+/// carries an explicit `#[cbor(array)]` and this one does not, which reads as an asymmetry.
+/// Measured against `minicbor` 2.3.0 outside the repository: the two forms put the SAME bytes on
+/// the wire — `82 00 81 82 f4 07` either way — because array is already the derive's default. The
 /// asymmetry is therefore cosmetic, and it is written down so that nobody "harmonises" it
 /// believing they are fixing a format. Errata `E47`.
+///
+/// ⚠️ THREE CLAUSES CAME OUT OF THE PARAGRAPH ABOVE ON 2026-09-01, NONE OF THEM REALIGNED. It said
+/// "`Record` ABOVE" — `Record` is BELOW this type; "between the only two data-carrying enums of
+/// the crate", where `wire::worker::FromWorker` is a third that carries data and pulls the OTHER
+/// WAY, its doc arguing the attribute is worth MORE there because that channel has no oracle and
+/// both its peers live outside this workspace; and "Measured on 2026-09-01", while `git log` dates
+/// the commit that wrote it 2026-08-31 — the cure `E66` already applied to a sibling. What the
+/// three sat beside, the measurement itself, is untouched. Errata `E111`.
 ///
 /// ✅ IT PAIRS WITH `RecordKind`, AND SINCE 2026-09-01 THE PAIR IS HELD AT LEVEL 1 — it used to
 /// be "declared, not defended". `RecordV1` has no public field (AUD-050, shut that day) and

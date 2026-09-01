@@ -110,11 +110,33 @@ pub fn run_the_ring<S: Sensor, J: Journal>(
     // that came back with the verdict would arrive after the expense (§6.4.1). Nothing is
     // journalled on this road — a sensor that never ran produced no verdict, and writing one
     // would be the record of an event that did not happen.
-    if sensor.declared_cost() == CostClass::Inferential {
-        return Ok(None);
+    //
+    // ⛔ MATCHED AND NOT COMPARED, since 2026-09-01, AND THE `==` IT REPLACES WAS HELD BY NOTHING
+    // ANYWHERE. Censused rather than mutated, which is the stronger evidence: `grep -rn CostClass
+    // crates/` found no `match` on this type in the whole workspace, so a third variant compiled
+    // in silence — and here it fell the WRONG WAY, because everything that is not `Inferential`
+    // ENTERS the tight ring, which is the one thing V11 exists to refuse. Same shape as `E55` on
+    // the parameter below, whose literal "guessed in the permissive direction", cured the way
+    // `E54` cured `Detail`: a variant added to `CostClass` is now `error[E0004]` here. ⚠️ FOUR
+    // REVIEW PASSES OF MUTATIONS DID NOT SEE IT, and that is the gotcha #104: a mutation catches
+    // a behaviour that CHANGED, never a type that GREW. Errata `E109`.
+    match sensor.declared_cost() {
+        CostClass::Inferential => return Ok(None),
+        CostClass::Computational => {}
     }
 
     let verdict = sensor.observe(artefact);
+
+    // ⛔ THE SAME GUARD ON THE SECOND ENUM THIS RING DECIDES ON, and it is read ONCE so the two
+    // consequences below cannot drift apart. `VerdictOutcome` was compared with `==` in two places
+    // and matched in none, and its own doc on `VerdictDetail::passed` says it is "free to grow a
+    // third answer" — so the growth was PLANNED and nothing made the plan visible here. Untouched,
+    // a third answer would have gone into the DURABLE format as `passed: false` and would have
+    // opened a corrective step, both in silence. Errata `E109`.
+    let passed = match verdict.outcome {
+        VerdictOutcome::Pass => true,
+        VerdictOutcome::Fail => false,
+    };
 
     // The verdict, upon the step whose artefact was judged. ⛔ `Verifiable` AND NOT
     // `Unrepeatable`: the class describes how a DOUBT about this record's effect would be
@@ -128,14 +150,14 @@ pub fn run_the_ring<S: Sensor, J: Journal>(
         verdict.detail.as_str().as_bytes().to_vec(),
         "a sensor judged the artefact of this step",
         VerdictDetail {
-            passed: verdict.outcome == VerdictOutcome::Pass,
+            passed,
             spent_millis: verdict.spent.get(),
         },
     ))
     .encode();
     journal.note(step, &record)?;
 
-    if verdict.outcome == VerdictOutcome::Pass {
+    if passed {
         return Ok(None);
     }
 

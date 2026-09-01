@@ -73,10 +73,18 @@
 //!
 //! ⚠️ THE FRAMING IS FOUR BYTES AND NOT THREE, and it is written here because the obvious
 //! reading gets it wrong: `82 00` is the version enum and its variant index, and then comes
-//! `81` — the ONE-ELEMENT ARRAY of the variant's body — before `85`, the five fields. So the
-//! fields start at byte 4 and not at byte 3, and a record is 21 bytes and not 20. Measured off
-//! the real output rather than deduced; `record_shape.rs` says the same four bytes from the
-//! other side, in `82 00 81 85 00 01 00 40 60`.
+//! `81` — the ONE-ELEMENT ARRAY of the variant's body — before the field-array header, `85` or
+//! `86` according to whether the record carries a `detail`. So the fields start at byte 4 and not
+//! at byte 3. Measured off the real output rather than deduced; `record_shape.rs` says the same
+//! four bytes from the other side, in `82 00 81 85 00 01 00 40 60`.
+//!
+//! ⚠️ RECALL OF 2026-09-01: this said "before `85`, the five fields" and "a record is 21 bytes and
+//! not 20". BOTH TAKEN OUT and neither realigned, because both grow with the format — the frozen
+//! records span 21 to 40 bytes today, and the count is `the_frozen_records()` below, not a line of
+//! prose. ⚖️ Priced honestly: the paragraph one row up already says a record carrying a `detail`
+//! "IS LONGER AND ALSO MOVES BYTE 3", so a careful reader was not misled. What earns the cut is
+//! WHERE it sat — that neighbouring paragraph was corrected on 2026-08-31 for exactly this reason
+//! and this one was left standing beside it, which is the shape of AUD-049. Errata `E113`.
 
 use kernel::record::{
     Detail, EffectClass, PermissionDetail, Record, RecordKind, RecordV1, RoutingDetail, Trust,

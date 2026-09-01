@@ -135,17 +135,31 @@ pub fn resolve(
     // following the traversal would depend on which of the two roads was taken. Errata `E59`.
     let evaluated = chain.len() as u32;
 
+    // ⛔ BOTH FILTERS `match` EXHAUSTIVELY, AND NEITHER IS WRITTEN AS THE COMPLEMENT OF THE OTHER.
+    // `ConstraintClass` was compared with `==` in these two places and matched in none, so a third
+    // class fell out of BOTH filters — a constraint nobody applies, which is the permissive
+    // direction ADR-0012 exists to forbid. Measured on 2026-09-01: with `Residency` added to the
+    // enum, `cargo check --locked --workspace --all-targets` stayed at ZERO errors. Writing one
+    // filter as `!admissible` would only move the silent fall: the third class would be absorbed
+    // into whichever side held the negation. It is `E109`'s cure — gotcha #104, a mutation catches
+    // a behaviour that CHANGED, never a type that GREW — on the site its census did not reach.
     let admissible = |candidate: &Candidate| {
         constraints
             .iter()
-            .filter(|c| c.class() == ConstraintClass::Data)
+            .filter(|c| match c.class() {
+                ConstraintClass::Data => true,
+                ConstraintClass::Quality => false,
+            })
             .all(|c| c.satisfied_by(candidate))
     };
 
     let preferred = |candidate: &Candidate| {
         constraints
             .iter()
-            .filter(|c| c.class() == ConstraintClass::Quality)
+            .filter(|c| match c.class() {
+                ConstraintClass::Quality => true,
+                ConstraintClass::Data => false,
+            })
             .all(|c| c.satisfied_by(candidate))
     };
 

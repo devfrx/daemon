@@ -794,6 +794,7 @@ gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è
 inesercitato in tutto il workspace.
 ⏭️ **IL PROSSIMO PASSO È IL COMPITO 7** — `E94` è **decisa e chiusa** il 2026-09-01, e da essa
 nascono `E95`, che detta al compito 7 di nascere sigillato, ed `E96`, che è del proprietario.
+⚠️ **Pre-controllo cominciato e NON finito — casa unica `E102`. Chi dispaccia lo FINISCE.**
 ⛔ **RICHIAMO DEL 2026-09-01: il QUARTO e il QUINTO giro sono fatti — `E73`–`E78` e `E79`–`E82`,
 tutti riverificati dal coordinatore prima di rimediare e tutti veri.** ✅ **E il quinto ha
 introdotto la domanda che ha pagato:** invece di *«trova difetti»*, *«ciascun rimedio dell'ondata

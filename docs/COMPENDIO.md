@@ -792,7 +792,8 @@ stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito 
 gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
 **formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro
 inesercitato in tutto il workspace.
-⏭️ **IL PROSSIMO PASSO È IL COMPITO 6.**
+⏭️ **IL PROSSIMO PASSO È LA DECISIONE `E94` — è del proprietario e costa meno del compito 7 — POI
+IL COMPITO 7.**
 ⛔ **RICHIAMO DEL 2026-09-01: il QUARTO e il QUINTO giro sono fatti — `E73`–`E78` e `E79`–`E82`,
 tutti riverificati dal coordinatore prima di rimediare e tutti veri.** ✅ **E il quinto ha
 introdotto la domanda che ha pagato:** invece di *«trova difetti»*, *«ciascun rimedio dell'ondata
@@ -820,34 +821,22 @@ decidere quanto valga un giro è il **perimetro**, non il suo numero.* ⚠️ Ca
 ✅ **E IL PROPRIETARIO HA AUTORIZZATO I SOTTO-AGENTI IL 2026-08-31**, quindi la modalità che il
 piano prescrive in testa — *un subagente fresco per compito, con revisione fra uno e l'altro* — è
 di nuovo praticabile, e il compito 6 **non è più sbarrato dal metodo**.
-⏳ **POI IL COMPITO 6** — §6.2 e §6.3: il decisore, il gettone di conformità e il
-record risolto. ✅ **IL SUO PRE-CONTROLLO È FATTO IL 2026-08-31, PRIMA di dispacciarlo, e ha
-tenuto una QUARTA volta: sei voci, `E57`–`E62`, DUE bloccanti.** Una sonda dettata **non può
-passare** — `dispatch` scrive una nota su un passo che nessuno ha aperto, cioè `E45` alla **seconda
-occorrenza**, e l'oracolo non si aggiusta col solo setup perché conta i record e li indicizza — e
-due **non compilano**, `assert_eq!` su un `Result` il cui `Ok` non è `PartialEq`, misurato con
-`rustc`. ⚠️ **E la più cara non è bloccante:** `Constraint::NoRetention` non è nominato da
-**nessuna** sonda, quindi nasce mutante vivo su un vincolo di classe **`Data`**, cioè quello che
-ADR-0012 fa fallire **chiuso**. ⛔ **E due voci sono uscite CHIUDENDO la sessione, `E63` ed `E64`:**
-la lista dei file del compito non nomina `crates/simulator/tests/dst_campaign.rs`, che il compito
-rende rosso — e la voce che lo diceva, `E50`, **esisteva già** — e il difetto del gotcha **#97**
-**esisteva già nel prodotto del compito 5**, non visto dalla prima passata di revisione perché
-quella cercava mutanti e conteggi, non letterali. ✅ Censita la **radice** e non l'occorrenza: in
-tutto `crates/` erano **due**, entrambe chiuse.
-⛔ **E IL PRE-CONTROLLO È RIFATTO IL 2026-09-01 CONTRO IL CODICE DI ADESSO, e ha tenuto una QUINTA
-volta: la voce `E88`, TRE bloccanti su quattro.** Il brief è scritto contro un `RecordV1` che **non
-esiste più** — `E83` ne ha sigillato i campi il giorno dopo il pre-controllo precedente, quindi
-`E57`–`E62` non potevano coglierne nulla. ⛔ **Il peggiore: `dispatch` mette testo di RUNTIME
-all'indice 4 per letterale di struct**, cioè non compila e **riaprirebbe** la falla di AUD-050.
-📌 *Un pre-controllo ha una data come tutto il resto.*
-⛔ **Il compito NON è ancora dispacciato**, ma la ragione **non è più quella**: qui stava
-*«i sotto-agenti restano non autorizzati»*, e il proprietario li ha **autorizzati** il 2026-08-31;
-poi *«a precederlo è `E53`»*, e la voce del proprietario che `E53` teneva è **chiusa** — il compito
-6 si apre comunque. Ciò che resta davanti è **applicare `E88`** scrivendolo.
-⚠️ **Eredita un campo `detail` che ora ESISTE** — la **D24** — quindi paga solo la
-propria variante e il proprio record congelato; e la voce `E50` gli dice che l'elenco dei file di
-un compito che tocca `RecordKind` deve nominare **anche** `crates/simulator/tests/dst_campaign.rs`,
-che porta un oracolo con un `match` esaustivo.
+✅ **IL COMPITO 6 È ESEGUITO IL 2026-09-01, `GATE GREEN`, in UN commit e non due** — il decisore del
+gateway, il gettone di conformità e il record risolto. `Q13` è coperta con **entrambe** le metà, il
+formato guadagna la specie `Routing` col **quinto** record congelato, e i quattro vecchi sono
+**byte-identici**, controllato per primo. ⛔ **I due commit dettati NON erano ordinabili** — il
+primo importa un tipo che nasce nel secondo: voce `E89`. ⛔ **E il pre-controllo ha tenuto una
+QUINTA volta, `E88`:** il brief era scritto contro un `RecordV1` che `E83` aveva sigillato il giorno
+prima, e il peggiore dei tre bloccanti avrebbe **riaperto AUD-050**. 📌 *Un pre-controllo ha una
+data come tutto il resto.*
+⛔ **E IL COMPITO HA APERTO UNA VOCE DEL PROPRIETARIO, `E94`, che costa MENO decidere ADESSO:**
+`RoutingDetail` è **la terza bocca** della classe di AUD-050 — è `pub` coi campi `pub`, quindi una
+`String` di runtime entra nel record e il `Debug` la stampa intera, col `reason` a posto. Riprodotta
+da fuori la crate. ⚠️ **Non è un difetto oggi** (`Candidate::model` è `&'static str`): il buco è nel
+**tipo**. ⛔ **Il compito 7 la TRIPLICA**, perché il suo `PermissionDetail` porta **due** `String`
+pubbliche. Il rimedio è la forma di AUD-050, e i byte congelati non si muovono.
+⚠️ La voce `E50` dice che l'elenco dei file di un compito che tocca `RecordKind` deve nominare
+**anche** `crates/simulator/tests/dst_campaign.rs`, che porta un oracolo con un `match` esaustivo.
 ⚠️ **Il compito 2 non
 esiste**, ed è dichiarato nel piano: il timbro di build è **uscito dal perimetro**. Subagent-driven,
 un subagente fresco per compito con revisione fra uno e l'altro, e **prima** il pre-controllo delle

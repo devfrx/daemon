@@ -811,9 +811,15 @@ sono attivi ora»* è una **proiezione del giornale** e non un secondo archivio.
 record congelato, e i cinque vecchi sono **byte-identici**, controllato per primo. `E94` è **decisa e
 chiusa** lo stesso giorno, e da essa nascono `E95` — che detta al compito 7 di nascere sigillato, ed è
 stata **eseguita** — ed `E96`, che è del proprietario.
-⏭️ **IL PROSSIMO PASSO È IL DECIMO GIRO DEL CICLO DI `E53`**, e non un compito nuovo: il perimetro è
-`git diff 02d2162..HEAD -- crates/` — l'ondata del nono, che è **codice** — e la casa unica di quel
-ciclo resta la voce `E53` dell'errata.
+⏭️ **IL PROSSIMO PASSO È UNA DECISIONE DEL PROPRIETARIO, registrata in `E53` con la raccomandazione**, e
+poi il **pre-controllo del compito 8** — lo stato di degrado — con le quattro domande di
+[`../CLAUDE.md`](../CLAUDE.md): il decimo giro ha riletto un'ondata di **codice** senza trovare un
+difetto di prodotto, i suoi rimedi sono soltanto prosa, e se serva un undicesimo giro documentale su
+`git diff 3b23f3c..HEAD -- crates/` lo decide lui; la casa unica del ciclo resta la voce `E53`.
+✅ **IL DECIMO È FATTO IL 2026-09-01: tre rilievi, `E135`, tutti di prosa o registro, uno fuori dal
+perimetro** — la specie dei numerali di distanza, colta dalla domanda di classe sull'intero `crates/`.
+I quattro predicati del nono giro sono misurati tenuti braccio per braccio, e trentasette enum censiti
+facendoli crescere.
 ✅ **IL NONO È FATTO IL 2026-09-01 e NON è tornato pulito: sei rilievi, `E130`, tutti riverificati dal
 coordinatore e tutti veri.** ⛔ **E la domanda di classe ha pagato una QUARTA volta, stavolta sul
 CENSIMENTO:** `E114` aveva chiuso a *«due membri»* la classe degli enum decisi senza un `match`, e ne

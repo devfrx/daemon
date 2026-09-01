@@ -4389,7 +4389,7 @@ uno del coordinatore: le voci sono `E124`–`E129`. Qui stanno le **misure**.
 
 | Rimedio | Verdetto | Prova |
 |---|---|---|
-| `E114` — `Operation::is_write` | ⛔ **occorrenza** → `E124` | `grep -rnE "(==\|!=) *[A-Z]\w*::[A-Z]\|matches!\(" crates/*/src` rende, oltre a `RecordKind` (tenuto), `Activity`/`PreemptibleState`, `TaskState` ed `EntryKind`: cresciuti di una variante, **zero `E0004`** su tutti e quattro |
+| `E114` — `Operation::is_write` | ⛔ **occorrenza** → `E124` | `grep -rnE "(==\|!=) *[A-Z]\w*::[A-Z]\|matches!\(" crates/*/src` rendeva, prima di `fe52039`, oltre a `RecordKind` e ad `Admission` (tenuti — il secondo da quattro `matches!` nel modulo di test dell'arbitro, e cresciuto dà `E0004`), `Activity`/`PreemptibleState`, `TaskState` ed `EntryKind`: cresciuti di una variante, **zero `E0004`** su tutti e quattro. ⚠️ Diceva *«rende, oltre a `RecordKind`»* e ometteva `Admission`: corretto al decimo giro, `E133` |
 | `E115` — `ConstraintClass` | occorrenza, stessa classe | oggi tenuto: cresciuto, `E0004` in `gateway/mod.rs` — misurato dal revisore |
 | `E109` — `CostClass`, `VerdictOutcome` | occorrenza, stessa classe | oggi tenuti: cresciuti, `E0004` in `sensor.rs` — misurato dal revisore |
 | `E116` — il `payload` di `dispatch` | ✅ classe chiusa | ogni sito di `src/` che scrive un record — `grep -rnE 'journal\.(note\|intent\|outcome)\(' crates/*/src` — ha un banco che ne rilegge **ogni** campo; l'unico non asserito per nome, l'`effect` di `set_policy`, è tenuto da `Resolution::RunAgain` in due sonde (mutazione `M1` sotto) |
@@ -4464,6 +4464,69 @@ cancello, ed è del proprietario (vincolo globale 7).
 invariata, perché il rimedio di prodotto non aggiunge sonde: aggiunge `match`. `cargo fmt --all
 --check` exit 0 (un hunk sistemato a mano), build a zero avvisi, fine-riga invariati. ⚠️ **E
 `riferimenti.md` NON è stato toccato, deliberatamente**, per la stessa ragione di ogni passata.
+
+### La DECIMA passata — la prima ondata di CODICE riletta senza un difetto di prodotto (2026-09-01)
+
+⛔ **Fatta il 2026-09-01 da un sotto-agente fresco con la lettura d'apertura vietata**, perimetro
+`git diff 02d2162..HEAD -- crates/` — i due commit del nono giro; il brief è `E131` e il verbale
+`E135` del piano del Traguardo 6. Tre rilievi, `E132`–`E134`, tutti di prosa o di registro, tutti
+riverificati dal coordinatore e tutti veri. Qui stanno le **misure**, del revisore salvo dove detto.
+
+#### I quattro predicati di `fe52039`, braccio per braccio
+
+Baseline `43 · 326 · 0 · 2`; ogni rovescio applicato da solo, revocato byte-esatto con `mtime`
+rinfrescato, e confermato su una riga di codice.
+
+| Predicato | Braccio rovesciato | Quaterna | Chi muore |
+|---|---|---|---|
+| `Activity::is_revoking` | `NonPreemptible => true` | 43 · 322 · 4 · 2 | `a_non_preemptible_grant_is_never_asked_back`, `the_grace_runs_out_at_the_instant_of_its_deadline` e altre due |
+| | `Preemptible(Running) => true` | 43 · 312 · 14 · 2 | fra cui `asking_back_twice_does_not_buy_the_room_twice` |
+| | `Preemptible(Revoking { .. }) => false` | 43 · 318 · 8 · 2 | fra cui `a_grant_inside_its_grace_keeps_its_reservation` |
+| i bracci nominati di `collect_expired` | `NonPreemptible => false` | 43 · 306 · 20 · 2 | in quattro bersagli, `daemon` compreso |
+| | `Preemptible(Running) => false` | 43 · 307 · 19 · 2 | fra cui `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` |
+| `TaskState::is_runnable` | `Runnable => false` | 43 · 306 · 20 · 2 | `executor_determinism`, `arbiter_campaign`, `dst_campaign` |
+| | `Sleeping(_) => true` | 43 · 321 · 5 · 2 | fra cui `a_reactor_that_will_not_advance_is_an_error_and_not_a_spin` |
+| `TaskState::sleeping_until` | `Sleeping(until) => None` | 43 · 310 · 16 · 2 | sedici |
+| | `Runnable => Some(..)` | ⚠️ **43 · 326 · 0 · 2, verde** | **equivalente per costruzione**: entrambi i chiamanti girano solo dopo `poll_one_turn() == false`, cioè senza attività `Runnable`. **Dichiarato nel doc del predicato** (`E135`) |
+| `EntryKind::is_intent` | `Intent => false` | 43 · 248 · 78 · 2 | settantotto |
+| | `Outcome => true` | ⚠️ **43 · 326 · 0 · 2, verde** | **equivalente per costruzione**: `outcome` esige `has_intent`, quindi nessun passo porta un `Outcome` senza un `Intent`. **Dichiarato nel doc del predicato** (`E135`) |
+| | `Note => true` | ⚠️ **43 · 326 · 0 · 2, verde** | equivalente **e già dichiarato** sull'enum: *«Filing a note under `EntryKind::Intent` leaves the ENTIRE workspace green»* |
+| `EntryKind::is_outcome` | `Outcome => false` | 43 · 319 · 7 · 2 | le sonde di `prune` nei due binari della conformità |
+| | `Intent => true` | 43 · 319 · 7 · 2 | idem, più `prune_refuses_and_leaves_the_record_where_it_was` |
+| | `Note => true` | 43 · 322 · 4 · 2 | fra cui `the_in_memory_journal_honours_the_contract` |
+
+📌 **Un rovescio verde non è qui un mutante vivo da chiudere ma una proprietà da dichiarare**, ed è
+la forma di `E70`: ciò che i predicati comprano è l'`E0004` sulla crescita, e la crescita è tenuta.
+
+#### Il censimento della crescita — tutti gli enum di `crates/*/src`
+
+`cargo check --locked --workspace --all-targets --keep-going`, una variante per volta, in una copia
+del workspace; la seconda direzione con un indice `#[n(..)]` dove `minicbor` rifiuta.
+
+| Esito | Enum |
+|---|---|
+| **tenuti** in `src/` | `Activity`, `PreemptibleState`, `TaskState`, `EntryKind` (i quattro di `E124`, `E0004` in due punti ciascuno) · `Operation` · `Admission` (tre punti, `daemon` compreso) · `StartupError` · `VramPolicy`, `Constraint`, `ConstraintClass`, `Preemption` (due punti) · `ComputeClass`, `CostClass`, `VerdictOutcome`, `RecordKind`, `EffectClass` · `Record` (`E0004` più `E0005` sul `let Record::V1(body)` di `is_granted`) |
+| tenuti **solo da un banco** | `Trust`, `Detail` (`frozen_bytes.rs`; `Detail` è deciso in `src/` dal `let … else` di `is_granted`, verso fail-closed) · `Released`, `ReleaseError` (`arbiter_campaign.rs`) |
+| a `exit 0`, **e nessuno decide** su di essi in `src/` — si nominano, non sono rilievi | `Resolution` (come registrato al nono giro) · `RunError`, `WireError`, `GatewayError`, `PermissionError`, `FilesystemError`, `IpcError`, `JournalError`, `NetworkError`, `ProcessError`, `Started`, `RecordError`, `wire::Verdict`, `IpcMessage`, `FromWorker`, `OpenError`: costruiti e propagati |
+
+⚠️ **Il limite dichiarato dal revisore:** quando l'`E0004` cade nella libreria, i banchi non vengono
+compilati, quindi un `match` in un banco resta invisibile — irrilevante per *«tenuto»*. E i quattro
+di `E124` rimisurati coi blob di `02d2162` danno **exit 0, zero errori** prima del rimedio.
+
+#### I tre rilievi, e la domanda di classe
+
+| | Specie | Che cosa |
+|---|---|---|
+| `E132` | prosa del perimetro | il commento nuovo di `collect_expired` diceva *«for ever»*: la guardia `expires_at <= now` raccoglie ogni stato alla chiusura della finestra — misurato con una sonda usa-e-getta, `promote(4_999)` lascia `4_096`, `promote(5_000)` azzera |
+| `E133` | registro | la riga `E114` della tabella della NONA passata ometteva `Admission` fra ciò che il comando rende |
+| `E134` | prosa **fuori dal perimetro**, specie di `E129` | tre numerali di distanza falsi oggi in `dst_campaign.rs` e `ports_are_implementable.rs`, e uno di essi era un **fatto**: `ScriptedWorker` prende una concessione da `822db6d` |
+
+✅ **Il campione delle misure del nono giro, rifatto dal revisore, coincide col registro:** `M1`,
+`M5`, le due di `E125` e tutte le crescite.
+
+📌 **Baseline a passata chiusa: `GATE GREEN`, 43 bersagli, 326 passate, 0 fallite, 2 ignorate**,
+`cargo fmt --all --check` exit 0, zero avvisi su `build` e su `check --all-targets`. ⚠️ **E
+`riferimenti.md` NON è stato toccato, deliberatamente.**
 
 ## Livello 3 — vuoto, e non è una svista
 

@@ -25,8 +25,14 @@ const REMOTE_DEAR: Candidate = Candidate {
 };
 
 /// ⚠️ THE THIRD EXISTS FOR ONE REASON: a chain of three lets `evaluated` be told apart from
-/// "how many were walked". With a chain of one the two numbers are both 1 and no assertion can
-/// separate them — errata `E59`.
+/// "how many the SECOND pass walked". With a chain of one the two numbers are both 1 and no
+/// assertion can separate them — errata `E59`.
+///
+/// ⚠️ RICHIAMO DEL 2026-09-01: this said "how many were WALKED", unqualified, and that is false
+/// of the FIRST pass — which exhausts the chain in the probe below, so its count is three as well.
+/// `E100` corrected exactly this claim INSIDE that probe and left this one standing sixty lines
+/// up: the remedy closed the occurrence and not the sentence. What separates the first pass is the
+/// other probe, where it stops at index 0. Errata `E119`.
 const LOCAL_PRICEY: Candidate = Candidate {
     model: "local-medium",
     local: true,

@@ -36,7 +36,8 @@ fn main() {
 // while the recipe still said five, so taking it at its word produces the very `E0521` it exists
 // to warn against. A count that grows with every species belongs in a command, never in a recipe
 // — `grep -c "reason: &'static str" crates/kernel/src/record.rs`. Errata `E99`.
-// ⚠️ EVERY ONE OF THEM, and widening
+// ⚠️ EVERY ONE OF THEM, MEASURED ON 2026-09-01: this line used to say "any species
+// constructor", and widening
 // ONE is not a smaller version of the recipe but a different outcome — `of` still wants
 // `'static`, so the crate itself stops compiling with `error[E0521]: borrowed data escapes
 // outside of associated function` and trybuild never runs. A recipe that cannot be executed as

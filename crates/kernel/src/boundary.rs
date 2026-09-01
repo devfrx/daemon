@@ -282,6 +282,14 @@ impl Untrusted {
     ///   prints `detail` WHOLE instead of shutting it the way it shuts the payload. Naming index 4
     ///   alone was this list committing, one day after being rewritten, the omission the lesson
     ///   right below describes. Errata `E101`.
+    ///   ⛔ **And index 5 has THREE mouths and not one — measured 2026-09-01:** `PermissionDetail`
+    ///   rides the same `Decode` and carries `tool` AND `resource`, both printed whole by the same
+    ///   hand-written `Debug`. Reproduced from OUTSIDE the crate on a throwaway probe. So naming
+    ///   `RoutingDetail::model` alone was this list committing the SAME omission a second time, in
+    ///   the very bullet written to close it — which is the lesson below happening twice on one
+    ///   list. 📌 The rule that replaces the enumeration: **every field of every `Detail`
+    ///   species is on this road**, and a species added tomorrow is on it without anyone editing
+    ///   here. Errata `E120`.
     ///   📌 The lesson is the one AUD-050's own card gave: *the defect was not the sentence but the
     ///   LIST that declares the floor*, and a list rewritten while closing a hole is exactly where
     ///   the next omission goes.

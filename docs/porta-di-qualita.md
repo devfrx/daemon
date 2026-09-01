@@ -4143,18 +4143,36 @@ attivi ora»* si risponde **rileggendo il giornale**, senza secondo archivio. Il
 
 | Artefatto | Che cosa lo esercita |
 |---|---|
-| `permission::grant` | `a_granted_triple_is_granted` e `a_journal_that_refuses_the_note_makes_the_grant_fail` |
-| `permission::is_granted` | le **tre** sonde della tripla, più il giornale vuoto, più le **quattro** vie |
+| `permission::grant` — la sua **via d'errore** | `a_journal_that_refuses_the_note_makes_the_grant_fail` |
+| `permission::grant` — ciò che **scrive**: `kind`, `effect`, `trust`, `payload`, `reason`, `detail` | ⚠️ **riga aggiunta il 2026-09-01**: `grant_writes_every_field_it_says_it_writes`, che rilegge il record **dal giornale**. Prima nulla rileggeva quel record e quattro campi su sei erano scoperti |
+| `permission::is_granted` | le **tre** sonde della tripla, più `a_granted_triple_is_granted`, più il giornale vuoto, più le **quattro** vie |
 | `RecordKind::Permission` (indice **5**) | `crates/kernel/tests/frozen_bytes.rs` — il **sesto** record congelato |
 | `Detail::Permission` (indice **2**) | idem: è l'unico record congelato che lo porta |
+| `PermissionDetail` — gli indici **0** e **1** dei due nomi | ⚠️ **riga aggiunta il 2026-09-01**: `the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror`, nello stesso file. Il record congelato porta `"frozen"` due volte e **non può** vederli scambiati |
 | l'arm vuoto in `reconcile` | `a_permission_does_not_put_a_step_in_doubt` e il suo gemello, in `reconciliation.rs` |
 | `PermissionDetail` sigillata | **due** casi `compile_fail`, uno per parametro |
 
 #### Le mutazioni, col proprio esito MISURATO
 
-⛔ **Dieci mutanti su `permission.rs`, uno per volta, ciascuno ripristinato da una copia
-byte-esatta.** Nessuno è sopravvissuto, ed è la domanda che il difetto `E101` del compito 6 ha
-insegnato a fare: *per ogni via, quale controllo la esercita?*
+⛔ **RICHIAMO DEL 2026-09-01 — QUESTA SEZIONE RIVENDICAVA UNA DOMANDA CHE NON AVEVA FATTO.** Qui
+stava *«Dieci mutanti su `permission.rs`, uno per volta … **Nessuno è sopravvissuto**, ed è la
+domanda che il difetto `E101` del compito 6 ha insegnato a fare: per ogni via, quale controllo la
+esercita?»*. I dieci sono veri e stanno qui sotto, **rimisurati**; la **domanda** no. Tutti e dieci
+attaccavano la **domanda** — `is_granted` — e **nessuno** la **registrazione**: né i campi che
+`grant` scrive, né gli indici del record che ne esce. La settima passata di revisione l'ha fatta
+davvero e ha trovato **sei** risposte «nessuno», cinque su `permission.rs` e una su `record.rs`.
+Chi leggeva questa riga ne concludeva che `permission.rs` fosse coperto.
+
+⛔ **La campagna è stata RIFATTA il 2026-09-01**, uno per volta, ciascuno applicato da solo e
+revocato da una **copia byte-esatta** presa prima. La baseline contro cui va letta la colonna «Chi
+muore» è **43 bersagli, 323 passate, 0 fallite, 2 ignorate**.
+
+⚠️ **E UN GOTCHA DELLO STRUMENTO, misurato qui e non altrove:** revocare la mutazione con
+`cp -p` — che **conserva l'mtime** — lascia `cargo` convinto che il sorgente sia fresco, e la
+misura successiva gira contro l'**oggetto mutato**. Costa un rosso che sembra un difetto del
+prodotto e non lo è. Si revoca con `cp` semplice, o si fa `touch` dopo.
+
+**① I DIECI SULLA DOMANDA — la prima campagna, rimisurata e confermata riga per riga:**
 
 | Mutante | Chi muore |
 |---|---|
@@ -4169,13 +4187,41 @@ insegnato a fare: *per ogni via, quale controllo la esercita?*
 | `is_granted` risponde sempre `true` | **otto** sonde |
 | `is_granted` risponde sempre `false` | **cinque** sonde |
 
+**② I SEI SULLA REGISTRAZIONE — che la prima campagna non aveva cercato.** Ciascuno misurato
+**prima** del rimedio, da solo, sul workspace intero:
+
+| Mutante | Prima | Dopo |
+|---|---|---|
+| `grant` scrive `Trust::Untrusted` | **vivo** — 43 / 321 / 0 / 2, la baseline di allora, cifra per cifra | `grant_writes_every_field_it_says_it_writes` |
+| `grant` scrive `EffectClass::Idempotent` | **vivo**, stessa cifra | idem |
+| `grant` scrive una `reason` vuota | **vivo**, stessa cifra | idem |
+| `grant` scrive un byte di `payload` | **vivo**, stessa cifra | idem |
+| `Operation::Write` registrata come `write: false` | **vivo**, stessa cifra — ⛔ tutte e quattro le chiamate a `grant` del workspace passavano `Operation::Read`, quindi la via `Write → true` **non era percorsa da niente** | idem |
+| in `record.rs`, gli indici `#[n(0)]` di `tool` e `#[n(1)]` di `resource` **scambiati** | **vivo**, stessa cifra — il sesto record congelato porta `"frozen"` **due volte**, quindi lo scambio non muove un byte | `the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror` |
+
+⛔ **Il difetto di prodotto dietro i primi cinque è `E97` VERBATIM, sulla funzione sorella:** il
+commit `9441e6d` aveva chiuso esattamente questo su `gateway::dispatch` **un'ora e quaranta prima**
+di `8d45eea`, e la forma del rimedio è stata **riusata** da `crates/kernel/tests/gateway_decisor.rs`
+invece che inventata. `grant` scrive **sei** campi e `is_granted` ne legge **due**: gli altri
+quattro erano affermazioni che nessuno teneva — e i doc di `grant` le fanno per iscritto
+(*«the label is TRUE rather than decorative»*, *«filled with what is TRUE of this record»*), con
+`crates/kernel/tests/reconciliation.rs` che ne fa una **terza** su `grant` da un altro file.
+
+⚠️ **LE DUE DIREZIONI, perché la seconda si dimentica (§7.1.1, regola 3):**
+
+| Il controllo | Scatta dove deve | E non scatta dove non deve |
+|---|---|---|
+| il flag `write` che `grant` **registra** | appiattito a `false` → muore la sonda nuova, e **lei sola** | appiattito a `true` → muoiono **tre** sonde, fra cui `a_different_OPERATION_is_not_covered`: l'altro verso era già tenuto |
+| i due nomi sul **filo** | indici scambiati → muore la sonda nuova, e **lei sola** | sul repository non mutato è **verde**, e la campagna ① non la fa scattare mai |
+| i due nomi come **campi del tipo** | argomenti di `PermissionDetail::new` scambiati dentro `grant` → muoiono **tre** sonde di `permission_triple.rs` | ⛔ e lo **scambio degli indici** non ne fa cadere **nessuna**: è la prova che quel banco tiene i **campi** e non le **posizioni**, perché codifica e decodifica attraverso la **stessa** derive |
+
 ⚠️ **E l'asimmetria che il pre-controllo aveva ASSERITO è stata VERIFICATA invece che creduta**,
 ristretta alle **quattro** sonde dettate: `true` a tutto ne passa **una**
 (`a_granted_triple_is_granted`), `false` a tutto ne passa **tre**. È esattamente la ragione per cui
 `nothing_is_granted_on_an_empty_journal` esiste. ⛔ **Ma va detta anche la metà scomoda:** fra i
-dieci mutanti sopra **nessuno è ucciso da quella sola sonda** — la uccide `true a tutto`, insieme
-ad altre sette. Resta la sola sonda che parte da un giornale **vuoto**, e quella proprietà — *nessun
-record ⇒ niente concesso* — non è tenuta da nient'altro.
+dieci mutanti della tabella ① **nessuno è ucciso da quella sola sonda** — la uccide `true a tutto`,
+insieme ad altre sette. Resta la sola sonda che parte da un giornale **vuoto**, e quella proprietà
+— *nessun record ⇒ niente concesso* — non è tenuta da nient'altro.
 
 #### Le due direzioni dei casi `compile_fail`, e perché sono DUE
 
@@ -4225,13 +4271,24 @@ trattamento e stessa ragione del caso di `E94` qui sopra.
 ⛔ **E UN DIFETTO PREESISTENTE, TROVATO E NON INTRODOTTO:** `cargo fmt --all --check` era **già
 rosso alla BASE `bf1e677`** — `crates/kernel/tests/gateway_decisor.rs:179`, una `assert_eq!` che il
 compito 6 ha lasciato non formattata. Misurato con `rustfmt --check --edition 2024` sul file preso
-da `git show bf1e677:`, uscita **1**. È rimediato in questo commit perché `cargo fmt` non è un passo
-del cancello e nessun rosso lo avrebbe mai detto.
+da `git show bf1e677:`, uscita **1**.
+
+⚠️ **RICHIAMO DEL 2026-09-01: qui stava «È rimediato in questo commit», e non è vero.** Il rimedio
+è in **`b66295d`**, un commit **precedente e separato**, il cui messaggio lo dichiara staccato
+perché *«è l'unico pezzo ORDINABILE»*; questa sezione vive in **`8d45eea`**, che ne è il
+discendente — `git merge-base --is-ancestor b66295d 8d45eea` esce **0**. La *ragione* per cui è
+stato rimediato invece che sorvegliato resta intatta: `cargo fmt` non è un passo del cancello, e
+nessun rosso lo avrebbe mai detto.
 
 📌 **Baseline a cambiamento chiuso: `GATE GREEN`, 43 bersagli, 321 passate, 0 fallite, 2**
 **ignorate** — era **42 / 309 / 0 / 2**. Lo scarto è **+1 bersaglio** (`permission_triple`) e **+12**
 **passate**: **dieci** dal banco nuovo e **due** da `reconciliation.rs`, che tiene l'arm vuoto nelle
 sue due direzioni.
+
+⚠️ **RICHIAMO DEL 2026-09-01 — LA REVISIONE HA SPOSTATO QUESTA CIFRA, e la riga sopra resta come
+storia del commit `8d45eea`.** I rimedi ai cinque rilievi aggiungono **due** sonde e **nessun**
+bersaglio, perché entrambe entrano in banchi che esistono già: `GATE GREEN`, **43 bersagli, 323
+passate, 0 fallite, 2 ignorate**. Lo scarto è **+2 passate**.
 
 ## Livello 3 — vuoto, e non è una svista
 

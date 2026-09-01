@@ -17,7 +17,9 @@
 
 use kernel::permission::{Operation, Permission, PermissionError, grant, is_granted};
 use kernel::ports::journal::{Journal, JournalError, StepId};
-use kernel::record::{EffectClass, Record, RecordError, RecordV1, RoutingDetail, Trust};
+use kernel::record::{
+    Detail, EffectClass, Record, RecordError, RecordKind, RecordV1, RoutingDetail, Trust,
+};
 use simulator::journal::MemoryJournal;
 
 /// The triple every probe grants, and the one the three "not covered" probes vary ONE component
@@ -118,6 +120,79 @@ fn a_granted_triple_is_granted() {
     grant(&mut journal, step, &READ_A).expect("grant");
 
     assert!(is_granted(&journal, &READ_A).expect("is_granted"));
+}
+
+#[test]
+fn grant_writes_every_field_it_says_it_writes() {
+    // ⛔ `grant` WRITES SIX FIELDS AND `is_granted` READS TWO, so four of them were held by
+    // NOTHING and a fifth road was walked by nobody. Every probe above reaches the record only
+    // through `is_granted`, which looks at `kind()` and `detail()`. Measured on 2026-09-01, one
+    // mutation at a time with the whole workspace run after each: `trust`
+    // `Instruction → Untrusted`, `effect` `Unrepeatable → Idempotent`, `reason` → `""`, an
+    // `alloc::vec![0xAA]` in place of the empty `payload`, and the `write` flag flattened to
+    // `false` — five mutants, five times `43 targets, 321 passed, 0 failed, 2 ignored`, identical
+    // to the baseline figure for figure.
+    //
+    // ⛔ IT IS ERRATA `E97` ON THE SISTER FUNCTION, not a species of its own: the commit before
+    // this one closed exactly this on `gateway::dispatch`, and the shape is reused from
+    // `tests/gateway_decisor.rs` rather than invented. An affirmation nobody holds is what those
+    // fields already were.
+    //
+    // ⛔ AND THE DOCS DO AFFIRM THEM, which is what makes them claims and not decoration: `grant`
+    // says of `trust` that "the label is TRUE rather than decorative", of `effect` that it is
+    // "filled with what is TRUE of this record", and `tests/reconciliation.rs` says of its own
+    // helper that the class "is what `grant` writes" — an affirmation ABOUT `grant` that lives in
+    // another file and that nothing tied back to `grant`.
+    //
+    // ⚠️ THE TRIPLE GRANTED HERE IS A `Write`, AND THAT IS THE ONE THING THAT CANNOT BE BORROWED
+    // FROM `READ_A`: every other call to `grant` in the workspace passes a `Read`, so the road
+    // `Operation::Write → write: true` was walked by nothing at all and flattening the flag to
+    // `false` cost nothing. ⛔ THE OTHER DIRECTION IS HELD BY
+    // `a_different_OPERATION_is_not_covered` — measured, flattening the same flag to `true` turns
+    // it red — so between the two probes one line is held both ways (§7.1.1, rule 3).
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    open_the_step(&mut journal, step);
+
+    let write_a = Permission {
+        operation: Operation::Write,
+        ..READ_A
+    };
+    grant(&mut journal, step, &write_a).expect("grant");
+
+    let entries = journal.replay().expect("replay");
+    // ⚠️ TWO AND NOT ONE, and the grant is the second: the first is the intent that opened the
+    // step, which the write-ahead discipline demands before any note upon it.
+    assert_eq!(entries.len(), 2);
+    let (at, bytes) = &entries[1];
+    assert_eq!(*at, step);
+
+    let Record::V1(body) = Record::decode(bytes).expect("decode");
+    assert_eq!(body.kind(), RecordKind::Permission);
+    assert_eq!(body.trust(), Trust::Instruction);
+    assert_eq!(body.effect(), EffectClass::Unrepeatable);
+    assert_eq!(body.reason(), "a permission was granted for this triple");
+    assert!(
+        body.payload().is_empty(),
+        "the payload carries {} bytes, and `grant` affirms that no external byte enters this \
+         record",
+        body.payload().len()
+    );
+
+    let Some(Detail::Permission(detail)) = body.detail() else {
+        panic!("the permission record carries no structured detail");
+    };
+    // ⚠️ THE TWO NAMES WERE ALREADY HELD and are asserted here anyway, so that WHAT `grant` WRITES
+    // is legible in one place instead of being deduced from four probes that ask questions.
+    // Measured on 2026-09-01: swapping the two arguments of `PermissionDetail::new` inside
+    // `grant` turns THREE probes of this file red — `a_granted_triple_is_granted`,
+    // `a_record_of_another_species_is_stepped_over_and_not_read_as_a_permission`, and this one.
+    assert_eq!(detail.tool(), "file");
+    assert_eq!(detail.resource(), "/a");
+    assert!(
+        detail.write(),
+        "a granted WRITE was written down as a read, and the grant could never be found again"
+    );
 }
 
 #[test]

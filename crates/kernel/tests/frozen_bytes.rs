@@ -216,12 +216,27 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 6] {
         // — measured on 2026-09-01 rather than assumed from the neighbouring pair.
         //
         // ⚠️ AND BOTH NAMES ARE `"frozen"`, for the reason `FROZEN_PAYLOAD` and `FROZEN_REASON`
-        // exist: a value recognisable at a glance in the map that resembles no real datum. ⛔ THE
-        // TWO BEING EQUAL IS NOT A HOLE HERE, and it was checked rather than waved through — that
-        // `tool` and `resource` are two DISTINCT fields is held by
-        // `tests/permission_triple.rs`, which grants one triple and asks about another differing
-        // in exactly one of them. This file holds the OFFSETS, and two equal strings at two
-        // offsets pin two offsets.
+        // exist: a value recognisable at a glance in the map that resembles no real datum.
+        //
+        // ⛔ RECALL OF 2026-09-01 — THE TWO BEING EQUAL *IS* A HOLE, AND THIS COMMENT SAID IT WAS
+        // NOT. It read "two equal strings at two offsets pin two offsets", and that is false:
+        // they pin ONE offset and its mirror image. Measured — exchanging the `#[n(0)]` of `tool`
+        // and the `#[n(1)]` of `resource` in `src/record.rs` moves no byte of this record, and
+        // the whole workspace stayed at `43 targets, 321 passed, 0 failed, 2 ignored`, identical
+        // to the baseline.
+        //
+        // ⛔ AND THE RESCUE IT NAMED DOES NOT CARRY THE LOAD: `tests/permission_triple.rs`
+        // encodes and decodes through the SAME derive, which renumbers both directions together,
+        // so any permutation of these indices is invisible to it — the symmetric change
+        // `record_shape.rs` measured for the enums, holding here word for word. What that bench
+        // really holds is that the two are distinct FIELDS OF THE TYPE: measured on 2026-09-01,
+        // swapping the two arguments of `PermissionDetail::new` inside `permission::grant` turns
+        // three of its probes red. Their two WIRE INDICES were held by nothing at all.
+        //
+        // ⛔ WHAT HOLDS THEM NOW IS
+        // `the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror` BELOW — a probe
+        // with two DIFFERENT names beside the artefact, and not a seventh frozen record nor an
+        // edit to this one.
         //
         // ⚠️ `write: true` AND NOT `false`, for the reason the verdict's `spent_millis: 7` gives:
         // `f4` is also what half this table's `false`s encode to, and `f5` is the byte that says
@@ -493,6 +508,86 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
     ))
     .encode();
     only_inside("reason", &base, &moved_reason, 14, 21);
+}
+
+/// What a `PermissionDetail` whose two names are DIFFERENT must encode to: `82 02` is the
+/// `Detail` enum and its variant index 2, `81` the one-element array of the variant's body,
+/// `83` the three fields of the detail, then text(2) `"AA"`, text(4) `"BBBB"`, and `f5` for
+/// `write: true`.
+///
+/// ⛔ WRITTEN FROM THE FORMAT AND THEN CONFIRMED BY THE MEASUREMENT, in that order, and the
+/// order is declared because it is the weaker one: these thirteen bytes were an EXPECTATION until
+/// the probe below was run, and it passed first time — so there was no divergence to record. What
+/// makes them more than a tautology of the derive is the mutant, and it was run: with the two
+/// indices exchanged the probe goes red.
+///
+/// ⚠️ THE TWO LENGTHS DIFFER ON PURPOSE — a two-character name and a four-character one — so
+/// that exchanging the two indices changes the BYTES and not merely their meaning.
+const TWO_DIFFERENT_NAMES: &[u8] = &[
+    0x82, 0x02, 0x81, 0x83, 0x62, 0x41, 0x41, 0x64, 0x42, 0x42, 0x42, 0x42, 0xf5,
+];
+
+#[test]
+fn the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror() {
+    // ⛔ THIS IS WHAT THE FROZEN PERMISSION RECORD CANNOT SEE, and it was measured rather than
+    // feared. `record_v1_permission.cbor` carries `"frozen"` as BOTH the tool and the resource,
+    // so exchanging the `#[n(0)]` of `tool` and the `#[n(1)]` of `resource` in `src/record.rs`
+    // moves no byte of it at all — measured on 2026-09-01, the whole workspace stayed at
+    // `43 targets, 321 passed, 0 failed, 2 ignored`, identical to the baseline. Two EQUAL strings
+    // at two offsets pin ONE offset and its mirror image.
+    //
+    // ⛔ AND THE FIX IS NOT A SEVENTH FROZEN RECORD, NOR AN EDIT TO THE SIXTH. These bytes are
+    // never regenerated: if they move it is a change of FORMAT and not an updated test, which is
+    // the whole head of this file. So the second pair of names arrives as a probe BESIDE the
+    // artefact, and the artefact is left exactly as it was.
+    //
+    // ⚠️ THAT THE INDEX REALLY GOVERNS THE POSITION WAS CHECKED IN BOTH DIRECTIONS on the same
+    // day, on this very pair of names: unmutated `83 62 41 41 64 42 42 42 42 f5` reads
+    // `["AA", "BBBB", true]`, and with the two indices exchanged `83 64 42 42 42 42 62 41 41 f5`
+    // reads `["BBBB", "AA", true]`. So the assertion below is not a tautology of the derive.
+    let encoded = record(|p, r| {
+        RecordV1::permission(
+            EffectClass::Unrepeatable,
+            Trust::Instruction,
+            p,
+            r,
+            PermissionDetail::new("AA", "BBBB", true),
+        )
+    })
+    .encode();
+
+    // The lengths first, or the two slicings below panic on a bounds check and say nothing about
+    // the format — the failure mode that reads like a bug in the bench, which `record_shape.rs`
+    // guards its own indexing against.
+    assert!(
+        encoded.len() > TWO_DIFFERENT_NAMES.len(),
+        "a permission record encoded to {} bytes, too few to carry a detail at all",
+        encoded.len()
+    );
+    let at = encoded.len() - TWO_DIFFERENT_NAMES.len();
+    assert!(
+        at <= PERMISSION_BYTES.len(),
+        "the head of this record is {at} bytes and the frozen permission record is {} long: the \
+         two are no longer the same shape",
+        PERMISSION_BYTES.len()
+    );
+
+    // ⛔ THE HEAD IS THE FROZEN RECORD'S HEAD, BYTE FOR BYTE, and asserting it is what puts this
+    // probe AT AN OFFSET instead of merely somewhere in the tail. Same species, same class, same
+    // label, same payload, same reason — only the two names differ — so everything before the
+    // detail has to be identical to `record_v1_permission.cbor`, and the offset the map declares
+    // for index 5 is not written here a second time (§7.4.4).
+    assert_eq!(
+        &encoded[..at],
+        &PERMISSION_BYTES[..at],
+        "the head of a permission record moved: this probe is no longer looking at index 5"
+    );
+    assert_eq!(
+        &encoded[at..],
+        TWO_DIFFERENT_NAMES,
+        "{FORMAT_CHANGED}The two names of a `PermissionDetail` no longer encode where they did. \
+         `tool` is index 0 and `resource` is index 1, and an index never retires.\n"
+    );
 }
 
 /// Reads the map back — `offset | hex bytes | prose`, one section per `.cbor` file, a section

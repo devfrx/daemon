@@ -4389,12 +4389,12 @@ uno del coordinatore: le voci sono `E124`–`E129`. Qui stanno le **misure**.
 
 | Rimedio | Verdetto | Prova |
 |---|---|---|
-| `E114` — `Operation::is_write` | ⛔ **occorrenza** → `E124` | `grep -rnE "(==\|!=) *[A-Z]\\w*::[A-Z]\|matches!\\(" crates/*/src` rende, oltre a `RecordKind` (tenuto), `Activity`/`PreemptibleState`, `TaskState` ed `EntryKind`: cresciuti di una variante, **zero `E0004`** su tutti e quattro |
+| `E114` — `Operation::is_write` | ⛔ **occorrenza** → `E124` | `grep -rnE "(==\|!=) *[A-Z]\w*::[A-Z]\|matches!\(" crates/*/src` rende, oltre a `RecordKind` (tenuto), `Activity`/`PreemptibleState`, `TaskState` ed `EntryKind`: cresciuti di una variante, **zero `E0004`** su tutti e quattro |
 | `E115` — `ConstraintClass` | occorrenza, stessa classe | oggi tenuto: cresciuto, `E0004` in `gateway/mod.rs` — misurato dal revisore |
 | `E109` — `CostClass`, `VerdictOutcome` | occorrenza, stessa classe | oggi tenuti: cresciuti, `E0004` in `sensor.rs` — misurato dal revisore |
-| `E116` — il `payload` di `dispatch` | ✅ classe chiusa | ogni sito di `src/` che scrive un record — `grep -rnE 'journal\\.(note\|intent\|outcome)\\(' crates/*/src` — ha un banco che ne rilegge **ogni** campo; l'unico non asserito per nome, l'`effect` di `set_policy`, è tenuto da `Resolution::RunAgain` in due sonde (mutazione `M1` sotto) |
+| `E116` — il `payload` di `dispatch` | ✅ classe chiusa | ogni sito di `src/` che scrive un record — `grep -rnE 'journal\.(note\|intent\|outcome)\(' crates/*/src` — ha un banco che ne rilegge **ogni** campo; l'unico non asserito per nome, l'`effect` di `set_policy`, è tenuto da `Resolution::RunAgain` in due sonde (mutazione `M1` sotto) |
 | `E117` — la seconda scrittura di `run_the_ring` | ✅ classe chiusa | l'altra funzione a due scritture, `Arbiter::set_policy`, ha l'`outcome` tenuto da `CrashingJournal::falling_at(1)` (`M2`) |
-| `E118` — `steps_in_doubt` | ✅ classe chiusa, prosa no → `E126` | i lettori del giornale in `src/` — `grep -rnE 'journal\\.(replay\|read_back)\\(' crates/*/src` — sono `reconcile.rs` e `permission.rs`, entrambi con la sonda del `replay` rifiutato (`M5`, `M16`) |
+| `E118` — `steps_in_doubt` | ✅ classe chiusa, prosa no → `E126` | i lettori del giornale in `src/` — `grep -rnE 'journal\.(replay\|read_back)\(' crates/*/src` — sono `reconcile.rs` e `permission.rs`, entrambi con la sonda del `replay` rifiutato (`M5`, `M16`) |
 | `E119`, `E121` | ✅ classe chiusa, numerali no → `E129` | `grep -rn "were walked" crates/` e `grep -rn "ONLY way to build" crates/`: ciò che resta è una definizione o è già qualificato |
 | `E120` — la regola A3 | occorrenza, regola sovra-generale → `E127` | `VerdictDetail` porta `bool` e `u64`, e lo dice di sé |
 | le due celle de-enumerate dell'ottavo giro | ⛔ **occorrenza** → `E128` | la riga `permission::is_granted` della tabella del compito 7 enumerava ancora |

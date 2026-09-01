@@ -798,11 +798,15 @@ nascono `E95`, che detta al compito 7 di nascere sigillato, ed `E96`, che è del
 hanno dato un **terzo bloccante** che `E102` non aveva: `grant` scrive una **nota** su un passo che
 nessuno ha aperto, e la porta la rifiuta — **tutte e cinque** le sonde dettate falliscono. Seconda
 occorrenza esatta della voce bloccante del compito 5, e ciò che la smentiva stava **nel banco di quel
-compito** (gotcha **#58**). ⚖️ **UNA scelta aspetta il proprietario e il compito NON si dispaccia
-prima:** la variante di `JournalError`, e solo in una delle due vie — aggiungerla tocca il
-**contratto di una porta** condivisa da due implementazioni, un errore **proprio** della proiezione
-no. ⛔ **RICHIAMO DEL 2026-09-01: qui ne stavano DUE, e la seconda non era una scelta** — `E95`
-decide già la forma sigillata di `PermissionDetail` e la scrive per esteso; il compito la esegue.
+compito** (gotcha **#58**). ✅ **E LA SCELTA CHE RESTAVA È DECISA LO STESSO GIORNO, ed è più piccola di entrambe le vie —
+`E104`:** `RecordError::Malformed` **esiste già** e il piano ha nominato l'**enum sbagliato**, quindi
+non si aggiunge nessuna variante alla porta e non si inventa nessun errore. `is_granted` restituisce un
+errore **proprio** che compone le due cause esistenti, che è la forma con cui il kernel risponde già
+**otto** volte. ⛔ **Letto prima di decidere:** `steps_in_doubt` tiene `JournalError` solo perché
+trasforma il record illeggibile in una **risposta**, stanza che un `bool` non ha. ⚠️ **RICHIAMO DEL
+2026-09-01: qui stavano DUE scelte del proprietario, e la seconda non era una scelta** — `E95` decide già
+la forma sigillata di `PermissionDetail`. ⛔ **Il compito 7 resta da riscrivere prima di dispacciarlo**,
+per i bloccanti ④ e ⑤ di `E103`.
 ⛔ **RICHIAMO DEL 2026-09-01: il QUARTO e il QUINTO giro sono fatti — `E73`–`E78` e `E79`–`E82`,
 tutti riverificati dal coordinatore prima di rimediare e tutti veri.** ✅ **E il quinto ha
 introdotto la domanda che ha pagato:** invece di *«trova difetti»*, *«ciascun rimedio dell'ondata

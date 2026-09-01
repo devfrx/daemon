@@ -179,7 +179,10 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
     // not declared, because a doc asserts it.
     assert_eq!(body.trust(), Trust::Instruction);
     assert_eq!(body.effect(), EffectClass::Idempotent);
-    assert_eq!(body.reason(), "the gateway resolved the routing for this step");
+    assert_eq!(
+        body.reason(),
+        "the gateway resolved the routing for this step"
+    );
     let Some(Detail::Routing(routing)) = body.detail() else {
         panic!("the routing record carries no structured detail");
     };

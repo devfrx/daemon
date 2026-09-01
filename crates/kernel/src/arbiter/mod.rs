@@ -226,6 +226,26 @@ pub enum PreemptibleState {
     },
 }
 
+impl Activity {
+    /// Whether the arbiter has already asked for this grant back.
+    ///
+    /// ⛔ AN EXHAUSTIVE `match` IN ONE PLACE, AND NOT THE `matches!` THAT `revoking()` AND
+    /// `ask_back` EACH CARRIED — the cure of `permission::Operation::is_write`, for the same
+    /// reason. Both enums here decide something: a third `PreemptibleState`, or a third
+    /// `Activity`, fell out of `ask_back`'s guard as a FRESH victim — re-marked `Revoking` with a
+    /// new grace, which is the over-admission by the back door that guard exists to refuse — and
+    /// out of `revoking()` uncounted. Measured on 2026-09-01, ninth review round: with `Suspended`
+    /// added to `PreemptibleState`, or `Shared` to `Activity`, `cargo check --locked --workspace
+    /// --all-targets` stayed at ZERO errors. The census that had closed this class (`E114`) named
+    /// two members and missed these two, both `pub` in `kernel/src/`. Errata `E124`.
+    pub(crate) fn is_revoking(self) -> bool {
+        match self {
+            Activity::NonPreemptible | Activity::Preemptible(PreemptibleState::Running) => false,
+            Activity::Preemptible(PreemptibleState::Revoking { .. }) => true,
+        }
+    }
+}
+
 /// What handing a grant back actually did.
 ///
 /// ⛔ TWO ANSWERS AND NOT A `bool`, because the caller has something to do with the
@@ -738,12 +758,7 @@ impl Arbiter {
     pub fn revoking(&self) -> usize {
         self.held
             .values()
-            .filter(|held| {
-                matches!(
-                    held.activity,
-                    Activity::Preemptible(PreemptibleState::Revoking { .. })
-                )
-            })
+            .filter(|held| held.activity.is_revoking())
             .count()
     }
 
@@ -860,10 +875,7 @@ impl Arbiter {
                 // stands on, and it is the case task 8 produces first.
                 return None;
             }
-            if matches!(
-                held.activity,
-                Activity::Preemptible(PreemptibleState::Revoking { .. })
-            ) {
+            if held.activity.is_revoking() {
                 // ⛔ ALREADY ON ITS WAY OUT: leave it alone. Marking it again would hand its
                 // holder a FRESH grace for having been asked earlier, and would count its
                 // reservation a second time -- room the arbiter does not have, which is
@@ -1059,9 +1071,11 @@ impl Arbiter {
             if held.expires_at <= now {
                 return false;
             }
+            // ⛔ NAMED AND NOT `_`: a wildcard here kept a third state for ever, and read as a
+            // `match` to any census that looked for one — errata `E124`.
             match held.activity {
                 Activity::Preemptible(PreemptibleState::Revoking { deadline }) => deadline > now,
-                _ => true,
+                Activity::NonPreemptible | Activity::Preemptible(PreemptibleState::Running) => true,
             }
         });
     }

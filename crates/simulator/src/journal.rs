@@ -63,11 +63,32 @@ struct Entry {
 /// somebody writes `has_outcome` — which nobody has yet. It is an argument, not a red, and it is
 /// labelled as one. A test was written to hold it and REMOVED when the mutation survived; the
 /// note on that removal is in `crates/simulator/tests/memory_journal.rs`.
-#[derive(PartialEq, Eq)]
 enum EntryKind {
     Intent,
     Outcome,
     Note,
+}
+
+impl EntryKind {
+    /// ⛔ EXHAUSTIVE `match`ES AND NOT THE `==` THE TWO QUESTIONS CARRIED — the cure of
+    /// `kernel::permission::Operation::is_write`, for the same reason. A fourth kind fell out of
+    /// both questions as "neither", which here is the conservative direction — it is treated as a
+    /// note — but it fell in silence: measured on 2026-09-01, ninth review round, with a variant
+    /// added `cargo check --locked --workspace --all-targets` stayed at ZERO errors. Now it is
+    /// `error[E0004]` here. Errata `E124`.
+    fn is_intent(&self) -> bool {
+        match self {
+            EntryKind::Intent => true,
+            EntryKind::Outcome | EntryKind::Note => false,
+        }
+    }
+
+    fn is_outcome(&self) -> bool {
+        match self {
+            EntryKind::Outcome => true,
+            EntryKind::Intent | EntryKind::Note => false,
+        }
+    }
 }
 
 // ⛔ NO `impl Default`, AND ITS ABSENCE IS THE DECISION — the same one, for the same reason, as
@@ -87,7 +108,7 @@ impl MemoryJournal {
     fn has_intent(&self, step: StepId) -> bool {
         self.entries
             .iter()
-            .any(|e| e.step == step && e.kind == EntryKind::Intent)
+            .any(|e| e.step == step && e.kind.is_intent())
     }
 }
 
@@ -214,7 +235,7 @@ impl Journal for MemoryJournal {
         let closed = self
             .entries
             .iter()
-            .any(|e| e.step == step && e.kind == EntryKind::Outcome);
+            .any(|e| e.step == step && e.kind.is_outcome());
         if !closed {
             return Err(JournalError::StepInDoubt);
         }

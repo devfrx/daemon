@@ -70,9 +70,16 @@ impl Operation {
     /// ⚖️ THIS IS `E109`'s CURE ON THE SITES ITS CENSUS DID NOT REACH. That census was scoped to
     /// the two types it was fixing (`CostClass`, `VerdictOutcome`), so it closed the OCCURRENCE and
     /// not the CLASS — an enum the kernel decides on, held by `==`/`matches!` and by no `match`.
-    /// Re-censused on 2026-09-01: the class had exactly two members left, this one and
-    /// `gateway::ConstraintClass`. `Admission` is held by ten arms and `Trust` by `minicbor`, which
-    /// refuses a variant without an index; both were measured rather than assumed.
+    /// Re-censused on 2026-09-01 over the public enums of `kernel/src/`: the census named this one
+    /// and `gateway::ConstraintClass`, and measured `Admission` held by ten arms and `Trust` by
+    /// `minicbor`, which refuses a variant without an index.
+    ///
+    /// ⛔ RECALL OF 2026-09-01, NINTH REVIEW ROUND: this said the class had "exactly two members
+    /// left", and the census was wrong INSIDE its own perimeter — `arbiter::Activity` and
+    /// `arbiter::PreemptibleState` are `pub` in `kernel/src/`, were decided on with `matches!` and
+    /// a `_` arm, and grew to `exit 0`; so did `executor::TaskState` and the simulator's
+    /// `EntryKind`. A count is not a closure: a grep only names candidates, and the class is closed
+    /// by GROWING each enum and reading `error[E0004]`. Errata `E124`.
     pub fn is_write(self) -> bool {
         match self {
             Operation::Read => false,

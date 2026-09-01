@@ -83,6 +83,30 @@ enum TaskState {
     Sleeping(Monotonic),
 }
 
+impl TaskState {
+    /// ⛔ TWO EXHAUSTIVE `match`ES IN ONE PLACE, AND NOT THE `==`, THE `if let` AND THE `_ => None`
+    /// THAT THE THREE CALL SITES CARRIED. A third state — `Blocked`, say — was neither polled by
+    /// `runnable_order` nor woken by `wake_those_due_at` nor a deadline for the reactor: a task
+    /// parked in silence until the turn limit ended the run. Measured on 2026-09-01, ninth review
+    /// round: with the variant added, `cargo check --locked --workspace --all-targets` stayed at
+    /// ZERO errors. Now it is `error[E0004]` here — the cure of `permission::Operation::is_write`.
+    /// Errata `E124`.
+    fn is_runnable(self) -> bool {
+        match self {
+            TaskState::Runnable => true,
+            TaskState::Sleeping(_) => false,
+        }
+    }
+
+    /// The instant a sleeping task is due at, and `None` for one that can run now.
+    fn sleeping_until(self) -> Option<Monotonic> {
+        match self {
+            TaskState::Runnable => None,
+            TaskState::Sleeping(until) => Some(until),
+        }
+    }
+}
+
 struct Task<'a> {
     future: Pin<Box<dyn Future<Output = ()> + 'a>>,
     state: TaskState,
@@ -248,9 +272,10 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
             let earliest = self
                 .tasks
                 .iter()
-                .filter_map(|task| match task.state {
-                    TaskState::Sleeping(deadline) if deadline > now => Some(deadline),
-                    _ => None,
+                .filter_map(|task| {
+                    task.state
+                        .sleeping_until()
+                        .filter(|deadline| *deadline > now)
                 })
                 .min();
 
@@ -284,7 +309,7 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
     fn wake_those_due_at(&mut self, instant: Monotonic) -> bool {
         let mut woken = false;
         for task in &mut self.tasks {
-            if let TaskState::Sleeping(until) = task.state
+            if let Some(until) = task.state.sleeping_until()
                 && until <= instant
             {
                 task.state = TaskState::Runnable;
@@ -363,7 +388,7 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
             .tasks
             .iter()
             .enumerate()
-            .filter(|(_, task)| task.state == TaskState::Runnable)
+            .filter(|(_, task)| task.state.is_runnable())
             .map(|(index, _)| index)
             .collect();
 

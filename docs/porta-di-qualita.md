@@ -4378,6 +4378,93 @@ proprietario.
 nessun altro banco ne guadagna — misurato con `grep -c '^#\[test\]'` contro la versione di `HEAD`,
 non dedotto. `cargo fmt --all --check` pulito, fine-riga dei sei file di `crates/` **immutati**.
 
+### La NONA passata — la domanda di classe coglie il CENSIMENTO che aveva chiuso una classe (2026-09-01)
+
+⛔ **Fatta il 2026-09-01 da un sotto-agente fresco con la lettura d'apertura vietata**, perimetro
+`git diff 9441e6d..HEAD -- crates/`; il brief è `E123` e il verbale `E130` del piano del Traguardo 6.
+Sei rilievi del revisore, tutti riverificati dal coordinatore prima di rimediare e tutti veri, più
+uno del coordinatore: le voci sono `E124`–`E129`. Qui stanno le **misure**.
+
+#### La domanda di classe, rimedio per rimedio
+
+| Rimedio | Verdetto | Prova |
+|---|---|---|
+| `E114` — `Operation::is_write` | ⛔ **occorrenza** → `E124` | `grep -rnE "(==\|!=) *[A-Z]\\w*::[A-Z]\|matches!\\(" crates/*/src` rende, oltre a `RecordKind` (tenuto), `Activity`/`PreemptibleState`, `TaskState` ed `EntryKind`: cresciuti di una variante, **zero `E0004`** su tutti e quattro |
+| `E115` — `ConstraintClass` | occorrenza, stessa classe | oggi tenuto: cresciuto, `E0004` in `gateway/mod.rs` — misurato dal revisore |
+| `E109` — `CostClass`, `VerdictOutcome` | occorrenza, stessa classe | oggi tenuti: cresciuti, `E0004` in `sensor.rs` — misurato dal revisore |
+| `E116` — il `payload` di `dispatch` | ✅ classe chiusa | ogni sito di `src/` che scrive un record — `grep -rnE 'journal\\.(note\|intent\|outcome)\\(' crates/*/src` — ha un banco che ne rilegge **ogni** campo; l'unico non asserito per nome, l'`effect` di `set_policy`, è tenuto da `Resolution::RunAgain` in due sonde (mutazione `M1` sotto) |
+| `E117` — la seconda scrittura di `run_the_ring` | ✅ classe chiusa | l'altra funzione a due scritture, `Arbiter::set_policy`, ha l'`outcome` tenuto da `CrashingJournal::falling_at(1)` (`M2`) |
+| `E118` — `steps_in_doubt` | ✅ classe chiusa, prosa no → `E126` | i lettori del giornale in `src/` — `grep -rnE 'journal\\.(replay\|read_back)\\(' crates/*/src` — sono `reconcile.rs` e `permission.rs`, entrambi con la sonda del `replay` rifiutato (`M5`, `M16`) |
+| `E119`, `E121` | ✅ classe chiusa, numerali no → `E129` | `grep -rn "were walked" crates/` e `grep -rn "ONLY way to build" crates/`: ciò che resta è una definizione o è già qualificato |
+| `E120` — la regola A3 | occorrenza, regola sovra-generale → `E127` | `VerdictDetail` porta `bool` e `u64`, e lo dice di sé |
+| le due celle de-enumerate dell'ottavo giro | ⛔ **occorrenza** → `E128` | la riga `permission::is_granted` della tabella del compito 7 enumerava ancora |
+| `E105`, `E106`, `E108`, `E110`–`E113` | ✅ classe chiusa | le mutazioni sotto; `E110` per equivalenza — `dispatch`, `promote` e `grant` hanno ciascuno la propria via `Err` tenuta; `E112` con `git log -S` sulle tre date degli arm |
+
+#### La crescita, enum per enum
+
+`cargo check --locked --workspace --all-targets`, una variante aggiunta da sola e revocata byte-esatta.
+
+| Enum | Prima del rimedio | Dopo il rimedio (`fe52039`) |
+|---|---|---|
+| `arbiter::PreemptibleState` (`pub`) | **exit 0, zero `E0004`** — rimisurato dal coordinatore | `E0004` in due punti: `Activity::is_revoking` e `collect_expired` |
+| `arbiter::Activity` (`pub`) | **exit 0, zero `E0004`** — rimisurato | `E0004` in due punti, gli stessi |
+| `executor::TaskState` | **exit 0, zero `E0004`** — rimisurato | `E0004` in due punti: `is_runnable`, `sleeping_until` |
+| `simulator::journal::EntryKind` | **exit 0, zero `E0004`** — rimisurato | `E0004` in due punti: `is_intent`, `is_outcome` |
+| `permission::Operation`, il controllo | `E0004` a `is_write` — rimisurato | invariato |
+| `ConstraintClass`, `CostClass`, `VerdictOutcome`, `RecordKind`, `EffectClass`, `Constraint`, `Record`, `Detail`, `Trust` | **tenuti** — misurati dal revisore e non rifatti dal coordinatore; `Trust` nei due versi: con indice → `E0004` in `frozen_bytes.rs`, senza indice → `minicbor` rifiuta la variante | — |
+| `reconcile::Resolution` | cresce a `exit 0` **e nessuno la decide oggi**, né in `src/` né nei banchi | ⚠️ **registrata, non presa:** il primo consumatore la decide con un `match` |
+
+⛔ **La caduta dei due dell'arbitro era dalla parte PERMISSIVA:** uno stato terzo non era colto dalla
+guardia di `ask_back` e veniva rimarcato `Revoking` con una grazia **fresca** — la sovra-ammissione
+dalla porta di servizio che quella guardia esiste per rifiutare — e `revoking()` lo sotto-contava.
+`TaskState` parcheggiava un'attività in silenzio fino al limite di turni; `EntryKind` cadeva dalla
+parte conservativa, ma in silenzio. ⛔ **E il braccio `_` di `collect_expired` è la terza bocca del
+censimento:** a chi cerca un `match` compare come guardia, e lascia passare la crescita come un `==`.
+
+#### Le mutazioni di prodotto del revisore — tutte rosse
+
+Baseline `43 · 326 · 0 · 2`; ciascuna applicata da sola, revocata con `cp` più `touch` e confermata
+col `cmp`, e ogni frammento confermato su una riga di codice. ⚠️ **Misurate dal revisore; il
+coordinatore ha rifatto le due di `E125` e le cinque crescite qui sopra.**
+
+| Mutazione | Quaterna | Chi muore |
+|---|---|---|
+| `M1` `transition_record`: `Idempotent` → `Unrepeatable` | 43 · 324 · 2 · 2 | `a_transition_cut_between_intent_and_outcome_leaves_the_step_in_doubt`, `property_4_a_severed_transition_leaves_a_reconcilable_step` |
+| `M2` `set_policy` inghiotte `journal.outcome` | 43 · 325 · 1 · 2 | `a_transition_cut_between…` |
+| `M3` `dispatch`, tre byte nel `payload` | 43 · 325 · 1 · 2 | `the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it` |
+| `M4` `run_the_ring`: `let _ = journal.intent(next, ..)` | 43 · 325 · 1 · 2 | `the_second_write_of_the_ring_is_not_swallowed_either` |
+| `M5` `steps_in_doubt`: `replay().unwrap_or_default()` | 43 · 325 · 1 · 2 | `an_archive_that_will_not_replay_is_not_an_answer_of_no_doubt` |
+| `M6` `promote`: `Unrepeatable` → `Idempotent` | 43 · 325 · 1 · 2 | `the_promoted_content_is_the_payload_and_it_is_labelled_untrusted` |
+| `M7` `run_the_ring`: `let _ = journal.note(step, ..)` | 43 · 325 · 1 · 2 | `a_step_nobody_opened_is_refused_and_nothing_is_written` |
+| `M8`–`M11` `grant`: `trust` → `Untrusted`, `effect` → `Idempotent`, un byte di `payload`, `reason` vuota | 43 · 325 · 1 · 2, ciascuna | `grant_writes_every_field_it_says_it_writes` |
+| `M12a` il flag `write` di `grant` appiattito a `false` | 43 · 325 · 1 · 2 | idem, e lei sola |
+| `M12b` appiattito a `true` | 43 · 323 · 3 · 2 | `a_different_OPERATION_is_not_covered`, `a_granted_triple_is_granted`, `a_record_of_another_species_…` |
+| `M13a`/`b`/`c` `is_granted` senza il congiunto `tool` / `resource` / `write` | 43 · 324 · 2 · 2 / 43 · 325 · 1 · 2 / 43 · 325 · 1 · 2 | `a_different_TOOL_…` più la specie diversa / `a_different_RESOURCE_…` / `a_different_OPERATION_…` |
+| `M14` il record illeggibile saltato | 43 · 325 · 1 · 2 | `a_record_that_will_not_decode_is_not_an_answer_of_false` |
+| `M15` il `Permission` senza `detail` saltato | 43 · 325 · 1 · 2 | `a_permission_record_without_its_detail_is_not_an_answer_of_false` |
+| `M16` `replay` rifiutato → `Ok(false)` | 43 · 325 · 1 · 2 | `a_journal_that_will_not_replay_is_not_an_answer_of_false` |
+| `M17` `grant` inghiotte la nota | 43 · 325 · 1 · 2 | `a_journal_that_refuses_the_note_makes_the_grant_fail` |
+| `M18` il controllo di specie disattivato | 43 · 321 · 5 · 2 | le cinque che la tabella ① del compito 7 nomina |
+| `M19` `grant` scambia `tool` e `resource` | 43 · 323 · 3 · 2 | le tre che `frozen_bytes.rs` e `permission_triple.rs` nominano |
+| `M20` gli indici `#[n(0)]`/`#[n(1)]` di `tool` e `resource` scambiati | 43 · 325 · 1 · 2 | `the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror`, e lei sola |
+| `M21` `resource: &str` in `PermissionDetail::new` | 43 · 325 · 1 · 2 | `level_1_rules_do_not_compile`: `permission_detail_resource_…` → `error`, il gemello e i tre fratelli → `ok` |
+| `E125`, rifatte dal coordinatore: l'arm `Permission` → `enter(..)` / → `leave(..)` | 43 · 324 · **2** · 2 / 43 · 325 · **1** · 2 | entrambe le sonde della coppia / la sola `…_leaves_…` — la frase *«exactly the half»* era falsa |
+
+#### Il rilievo del coordinatore, trovato rimediando
+
+`evaluated_is_what_the_chain_OFFERED_and_not_what_the_first_pass_walked` in
+`crates/kernel/tests/gateway_decisor.rs`, nato in `9441e6d`, era l'unico nome con maiuscole del file
+senza `#[allow(non_snake_case)]`: `cargo check --locked -p kernel --test gateway_decisor` stampava
+**un** avviso, e la misura *«`cargo build --locked --workspace` a zero avvisi»* non lo vede perché
+**non compila i banchi**. Chiuso col precedente dei tre fratelli dello stesso file; dopo, zero avvisi.
+⚠️ **Registrata, non presa:** se la riga a zero avvisi debba passare a `--all-targets` tocca il
+cancello, ed è del proprietario (vincolo globale 7).
+
+📌 **Baseline a passata chiusa: `GATE GREEN`, 43 bersagli, 326 passate, 0 fallite, 2 ignorate** —
+invariata, perché il rimedio di prodotto non aggiunge sonde: aggiunge `match`. `cargo fmt --all
+--check` exit 0 (un hunk sistemato a mano), build a zero avvisi, fine-riga invariati. ⚠️ **E
+`riferimenti.md` NON è stato toccato, deliberatamente**, per la stessa ragione di ogni passata.
+
 ## Livello 3 — vuoto, e non è una svista
 
 `clippy` gira come igiene del codice ma **non ha voce nella porta**: nessun V dipende da

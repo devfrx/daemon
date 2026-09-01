@@ -811,8 +811,15 @@ sono attivi ora»* è una **proiezione del giornale** e non un secondo archivio.
 record congelato, e i cinque vecchi sono **byte-identici**, controllato per primo. `E94` è **decisa e
 chiusa** lo stesso giorno, e da essa nascono `E95` — che detta al compito 7 di nascere sigillato, ed è
 stata **eseguita** — ed `E96`, che è del proprietario.
-⏭️ **IL PROSSIMO PASSO È IL NONO GIRO DEL CICLO DI `E53`**, e non un compito nuovo: il perimetro è
-`git diff 9441e6d..HEAD -- crates/`, e la casa unica di quel ciclo resta la voce `E53` dell'errata.
+⏭️ **IL PROSSIMO PASSO È IL DECIMO GIRO DEL CICLO DI `E53`**, e non un compito nuovo: il perimetro è
+`git diff 02d2162..HEAD -- crates/` — l'ondata del nono, che è **codice** — e la casa unica di quel
+ciclo resta la voce `E53` dell'errata.
+✅ **IL NONO È FATTO IL 2026-09-01 e NON è tornato pulito: sei rilievi, `E130`, tutti riverificati dal
+coordinatore e tutti veri.** ⛔ **E la domanda di classe ha pagato una QUARTA volta, stavolta sul
+CENSIMENTO:** `E114` aveva chiuso a *«due membri»* la classe degli enum decisi senza un `match`, e ne
+restavano **quattro**, due dei quali `pub` dentro il perimetro che dichiarava ricensito — un conteggio
+non è una chiusura, la chiude il compilatore. L'unico rilievo di prodotto non ha chiesto una riga di
+comportamento; quattro dei cinque di prosa erano scritti dai rimedi dell'ottavo giro.
 ✅ **L'OTTAVO È FATTO IL 2026-09-01 e NON è tornato pulito: dieci rilievi, `E122`, tutti riverificati
 dal coordinatore e tutti veri.** ⛔ **E la domanda di classe ha pagato una TERZA volta: SETTE rimedi
 su otto avevano chiuso l'OCCORRENZA e non la CLASSE.** ⛔ **Tre erano mutanti vivi di PRODOTTO**, e
@@ -827,9 +834,11 @@ nessun `match`, quindi una terza operazione sarebbe entrata nel formato **durevo
 **lettura**, e `is_granted` avrebbe concesso una lettura che nessuno aveva concesso — col workspace
 verde **cifra per cifra**. ⛔ **E la notizia non è il sito ma il PERCHÉ era ancora lì:** il censimento
 di `E109` era limitato ai due tipi che rimediava, cioè chiuse l'**occorrenza** e non la **classe**.
-✅ **La classe è stata ricensita su tutti gli enum pubblici di `kernel/src/` e aveva esattamente DUE
-membri vivi**, chiusi entrambi — il secondo, `ConstraintClass`, **fuori dal perimetro e dichiarato**
-(`E115`), perché chiuderne uno solo **è** il difetto che il rilievo nomina. ⚠️ **E il censimento del
+✅ **La classe è stata ricensita su tutti gli enum pubblici di `kernel/src/`**, e il censimento ne diede
+**due**, chiusi entrambi — il secondo, `ConstraintClass`, **fuori dal perimetro e dichiarato**
+(`E115`), perché chiuderne uno solo **è** il difetto che il rilievo nomina. ⛔ **RICHIAMO DEL
+2026-09-01, nono giro: *«esattamente DUE membri vivi»* era FALSO** — ne restavano quattro, due `pub`
+dentro quel perimetro (`E124`). ⚠️ **E il censimento del
 coordinatore ha mentito la prima volta**, dando per scoperto un tipo tenuto da dieci bracci: da lì il
 gotcha **#106**. ✅ **E DUE PASSATE SONO TORNATE PULITE**, che è un risultato: la sonda degli indici
 CBOR tiene le **posizioni** e non i valori, e i rimedi del primo giro non hanno aperto difetti nuovi.

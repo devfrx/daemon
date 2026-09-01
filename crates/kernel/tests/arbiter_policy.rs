@@ -388,6 +388,10 @@ fn a_transition_names_the_policy_it_moves_to() {
     for (_, bytes) in &entries {
         let Record::V1(record) = Record::decode(bytes).expect("our own bytes");
         assert_eq!(record.reason, "remote");
+        // ⚠️ AND `detail` IS `None` ON BOTH, for the reason the note's is: a policy transition
+        // declares no structured species. Turned to `Some(..)`, the whole workspace stayed
+        // green — 41 targets, 298 passed, identical to the baseline. Errata `E79`.
+        assert_eq!(record.detail, None);
     }
 }
 

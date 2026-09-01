@@ -3813,6 +3813,58 @@ tutte e QUATTRO le passate**, e dice la stessa cosa ogni volta: a mancare sono *
 `git ls-files --eol` immutato a **quattro** `i/crlf`; ogni mutazione revocata da copia
 byte-esatta, `git diff` a zero a campagna chiusa.
 
+### La QUINTA passata — la domanda cambia, e tutti i rilievi vengono dall'ondata precedente
+
+⛔ **Fatta il 2026-09-01 da un sotto-agente fresco, e la NOVITÀ non è il perimetro ma la DOMANDA.**
+Invece di *«trova difetti»*, il primo passo dettato è stato: prendere i **sei** rimedi di `bd37d59`
+uno per uno e rispondere **col `grep`** a *«ha chiuso la CLASSE, o il punto dove l'ho trovato?»*.
+📌 **È la domanda che i quattro giri precedenti non avevano**, ed è quella che ha reso i rilievi.
+
+| Rimedio del quarto giro | Censimento rifatto | Verdetto |
+|---|---|---|
+| `E73` — l'asserzione su `detail` | i siti di produzione che scrivono `detail: None` sono **tre**, e il rimedio ne aveva chiuso **uno** | ⛔ **occorrenza** → `E79` |
+| `E74` — la regola su `#[cbor(default)]` | `grep -rn 'cbor(default)' crates/` → otto occorrenze, lette **intere**: nessuna riafferma l'obbligo | ✅ **classe chiusa** |
+| `E75` — il letterale di `a_verdict()` | il fratello `a_note()` misurato in due passate: la sua dichiarazione **regge** | ✅ **classe chiusa** |
+| `E76` — i numerali nei corpi | la **testa** dello stesso file conta ancora *«three `.cbor` files»*, e la mappa **una** produzione | ⛔ **occorrenza** → `E80`, `E81` |
+| `E77` — l'a-capo rotto | la riga più lunga fra quelle **aggiunte** dal perimetro è **104**, contro le ~101–103 diffuse in `crates/` | ✅ **classe chiusa** |
+| `E78` — il letterale `85`/`86` | censite al padre `d4c906d`: le case erano **sei** e non cinque, quindi ne restavano **tre** | ⛔ **occorrenza** → `E82` |
+
+⛔ **`E79` È IL RILIEVO CARO, ED È L'UNICO CON MUTANTI VIVI.** Il rimedio di `E73` aveva chiuso
+`crates/kernel/src/sensor.rs` e lasciato `crates/kernel/src/boundary.rs` (`Untrusted::promote`) e
+`crates/kernel/src/arbiter/mod.rs` (`transition_record`).
+
+| Sito | `detail: None` → `Some(Detail::Verdict(..))` | Col rimedio |
+|---|---|---|
+| `crates/kernel/src/sensor.rs` (chiuso da `E73`) | — | `41 · 297 · 1` — muore `a_failing_verdict_opens_a_new_step_and_carries_the_detail` |
+| `crates/kernel/src/boundary.rs` | **`41 · 298 · 0 · 2`** — identico alla baseline, **vivo** | `41 · 297 · 1` — muore `the_promoted_content_is_the_payload_and_it_is_labelled_untrusted` |
+| `crates/kernel/src/arbiter/mod.rs` | **`41 · 298 · 0 · 2`** — identico alla baseline, **vivo** | `41 · 297 · 1` — muore `a_transition_names_the_policy_it_moves_to` |
+
+⚠️ **Ogni mutazione applicata una per volta e revocata da copia byte-esatta prima della
+successiva**, e in ciascuna direzione muore **una sonda sola**, nominata. Conteggio invariato a
+**298**: sono asserzioni dentro sonde che esistono già, non casi nuovi.
+⛔ **E l'errata di `E73` li NOMINAVA prezzandoli male** — *«aggiunte meccaniche, non tre rilievi»*.
+La prima metà era vera, la seconda no: l'argomento di `E73` vale **alla lettera** anche per un
+`Note` e per una transizione di policy. È la radice **R1** dentro il rimedio, la seconda volta in
+due ondate.
+
+⛔ **E LA CURA DI CLASSE NON È STATA INVENTATA, ed è scritto perché.** Una guardia di **livello 1**
+sulla coppia `kind`/`Detail` — campi privati e un costruttore per specie — è il finding
+**AUD-050**, già **del proprietario e registrato**; e una sonda che congelasse oggi *«`detail` è
+`Some` se e solo se `kind` è `Verdict`»* fisserebbe una partizione che i **compiti 6 e 7** stanno
+per cambiare, cioè il gotcha **#57** — *una previsione citata come una misura*.
+
+📌 **`E80` è la QUARTA occorrenza della stessa classe nello stesso file** — `E56` → `E70` (la
+testa) → `E76` (i corpi) → `E80` (la testa di nuovo, e la mappa) — e `E70` aveva corretto un
+paragrafo a **venti righe** da quello che ha lasciato in piedi.
+📌 **`E82` corregge una giustificazione di `E78` che era mezza sbagliata:** la riga 89 di
+`record_v1.map` è la colonna **hex** solo per il **byte `86`**; il confronto *«the 85 -> 86»* stava
+nella **colonna di prosa**, che la testa della mappa dichiara **non verificata**. ✅ Ora quel
+confronto vive in **una** casa sola, il verbale P-15 sul doc di `detail`.
+
+📌 **Baseline a passata chiusa: `GATE GREEN`, 41 bersagli, 298 passate, 0 fallite, 2 ignorate**,
+`cargo fmt --all --check` exit 0, fine-riga conservati file per file, `i/crlf` fermo a **quattro**.
+⚠️ **Tre rimedi su quattro TOLGONO righe**, e il quarto aggiunge **due** asserzioni.
+
 ## Livello 3 — vuoto, e non è una svista
 
 `clippy` gira come igiene del codice ma **non ha voce nella porta**: nessun V dipende da

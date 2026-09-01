@@ -792,19 +792,24 @@ stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito 
 gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
 **formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro
 inesercitato in tutto il workspace.
-⏭️ **IL PROSSIMO PASSO È IL QUINTO GIRO DI REVISIONE DEL COMPITO 5, POI IL COMPITO 6.**
-⛔ **RICHIAMO DEL 2026-09-01: il QUARTO giro è fatto — sotto-agente fresco, SEI rilievi `E73`–`E78`,
+⏭️ **IL PROSSIMO PASSO È IL SESTO GIRO DI REVISIONE DEL COMPITO 5, POI IL COMPITO 6.**
+⛔ **RICHIAMO DEL 2026-09-01: il QUARTO e il QUINTO giro sono fatti — `E73`–`E78` e `E79`–`E82`,
 tutti riverificati dal coordinatore prima di rimediare e tutti veri.** L'ordine non cambia: `E53`
-dichiara di sé che **non si chiude eseguendo il compito 6**, e vale *«chiudi ciò che è aperto
-prima di aprire altro»*. ⚠️ **La serie è `3 · 2 · 6 · 6` e NON converge, ma la FORMA sì:** uno solo
-era un mutante vivo, **quattro** erano censimenti incompleti dei rimedi precedenti — la classe che
-`E56` → `E70` ha già dato due volte — e **cinque rimedi su sei TOLGONO righe**, col conteggio dei
-test invariato a **298**. ⛔ **Nessun gotcha nuovo, ed è una decisione:** i sei sono forme del
-**#65**, **#70**, **#76**, **#97** e **#98**, e uno che non insegna niente diluisce quelli che
-insegnano. ⛔ **La casa unica del residuo resta `E53`**, che porta il perimetro e la domanda nuova
-da porre al quinto giro — *«questa ondata ha chiuso la CLASSE o l'occorrenza?»* — più la voce, del
-**proprietario**, su che cosa significhi *«finché una passata non torna pulita»* quando il prodotto
-è verde e immutato da quattro giri.
+dichiara di sé che **non si chiude eseguendo il compito 6**, e vale *«chiudi ciò che è aperto prima
+di aprire altro»*. ✅ **E il quinto giro ha introdotto la domanda che ha pagato:** invece di *«trova
+difetti»*, *«ciascun rimedio dell'ondata precedente ha chiuso la CLASSE o l'occorrenza?»*, con
+risposta al `grep`. ⛔ **Tutti e quattro i suoi rilievi sono venuti da lì**, e il più caro è `E79`:
+il rimedio di `E73` aveva chiuso **un sito su tre**, e gli altri due erano **mutanti vivi**.
+⚠️ **La serie è `3 · 2 · 6 · 6 · 4`**, e la contromisura misurata resta la stessa — **togliere
+invece di riscrivere meglio**, col conteggio dei test invariato a **298**. ⛔ **Nessun gotcha nuovo
+in nessuna delle due ondate, ed è una decisione:** sono forme del **#65**, **#70**, **#76**, **#97**
+e **#98**, e uno che non insegna niente diluisce quelli che insegnano.
+⛔ **LA CASA UNICA DEL RESIDUO RESTA `E53`, e la voce del proprietario vi si è fatta NETTA:** i
+rilievi del quinto giro sono **tutti e quattro** generati dai rimedi del quarto, cioè il ciclo **si
+autoalimenta** invece di convergere, mentre il prodotto è verde e — tolte le due asserzioni di
+`E79` — immutato da cinque giri. Le vie sono **tre**, ed `E53` le porta con i costi: continuare ·
+dichiarare il ciclo chiuso sul prodotto e trattare i censimenti come passata documentale a sé ·
+chiudere alla **radice**, che è il finding **AUD-050**, anch'esso suo.
 ✅ **E IL PROPRIETARIO HA AUTORIZZATO I SOTTO-AGENTI IL 2026-08-31**, quindi la modalità che il
 piano prescrive in testa — *un subagente fresco per compito, con revisione fra uno e l'altro* — è
 di nuovo praticabile, e il compito 6 **non è più sbarrato dal metodo**.

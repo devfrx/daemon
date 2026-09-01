@@ -175,6 +175,12 @@ fn the_promoted_content_is_the_payload_and_it_is_labelled_untrusted() {
     );
     // And the reason travels beside it rather than instead of it, at its own index.
     assert_eq!(body.reason, "quoted from an email");
+    // ⚠️ AND `detail` IS `None`, BECAUSE A NOTE IS NOT A VERDICT. The structured box belongs
+    // to the species that declares one, and a `Note` carrying a `Detail::Verdict` would enter
+    // the durable format with a pair nothing at level 1 forbids. Turned to `Some(..)`, the
+    // whole workspace stayed green — 41 targets, 298 passed, identical to the baseline.
+    // Errata `E79`.
+    assert_eq!(body.detail, None);
 }
 
 /// A conforming journal that also remembers WHICH OPERATION was called.

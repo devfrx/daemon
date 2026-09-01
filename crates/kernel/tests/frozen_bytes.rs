@@ -30,9 +30,10 @@
 //!
 //! ⛔ AND THERE IS DELIBERATELY NO WAY TO REGENERATE THEM FROM HERE. No flag, no environment
 //! variable, no `--bless`. That is exactly how `trybuild` gets disarmed: an oracle with a
-//! regeneration path is an oracle one keystroke away from being a tautology. The three
-//! `.cbor` files were TYPED BY HAND from the hexadecimal output of a throwaway probe, and the
-//! probe was deleted in the same commit.
+//! regeneration path is an oracle one keystroke away from being a tautology. Every `.cbor`
+//! file here was TYPED BY HAND from the hexadecimal output of a throwaway probe, and each
+//! probe was deleted in the commit that added its file — how many files there are is
+//! `the_frozen_records()`, whose return type the compiler checks.
 //!
 //! ⚠️ WHAT THIS CATCHES THAT THE COMPILER CANNOT: an index REUSED or RENUMBERED. The compiler
 //! sees types, not the numbers written inside an annotation — rule 4 of §4.9.2 is a

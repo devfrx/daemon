@@ -283,13 +283,11 @@ pub struct RecordV1 {
     /// index that already exists must never change (rule 4 — the reuse was measured, and it
     /// decodes to the WRONG SILENCE rather than to an error).
     ///
-    /// ✅ AND THE ADDITIVE HALF WAS MEASURED THE SAME DAY, IN BOTH DIRECTIONS, because a rule
-    /// nobody has run is a hope. An `Option<u64>` at the free index 5 leaves the frozen bytes
-    /// BYTE-IDENTICAL while it is `None` — `minicbor` TRUNCATES a trailing `None` instead of
-    /// writing a `null`, so 21 bytes and the inner array header still `85` — and it carries the
-    /// value when it is `Some`, 22 bytes with `86` and the number at the end. Both halves matter:
-    /// without the second, "the bytes did not move" would only have proved the field never
-    /// reached the wire. The old 21-byte records still decode under the six-field type.
+    /// ✅ AND THE ADDITIVE HALF WAS MEASURED, IN BOTH DIRECTIONS, because a rule nobody has run
+    /// is a hope. ⛔ THE MEASURE IS NOT REPEATED HERE: it lives on `detail` below, on the field
+    /// that really carries it (P-15, 2026-08-30), and a pointer cannot rot. The sentence that
+    /// stood here named "the free index 5" — free on 2026-08-10, and `detail`'s since
+    /// `4e4b725`, so the recipe it gave no longer compiles: `duplicate index numbers`.
     ///
     /// ⚠️ AND IT STAYS PRINTABLE, deliberately: the hand-written `Debug` hides index 3 and shows
     /// this one, because a failed assertion on a record has to say what the record was FOR.
@@ -329,10 +327,12 @@ pub struct RecordV1 {
 /// `trust` field exists to say the bytes came from outside. A `{:?}` in a log line, a panic
 /// message, a failed `assert_eq!`, and the payload is out.
 ///
-/// ⚠️ THE OTHER FOUR FIELDS STAY READABLE, deliberately and for the reason the length stays on
-/// `Untrusted`: a failed `assert_eq!` has to remain diagnostic. `kind`, `effect`, `trust` and
-/// `reason` are the kernel's own vocabulary — nobody outside chose them — and they are exactly
-/// what one wants to read when a record comes back wrong. Only the payload is somebody else's.
+/// ⚠️ EVERY OTHER FIELD STAYS READABLE, deliberately and for the reason the length stays on
+/// `Untrusted`: a failed `assert_eq!` has to remain diagnostic. `kind`, `effect`, `trust`,
+/// `reason` and `detail` are the kernel's own vocabulary — nobody outside chose them — and they
+/// are exactly what one wants to read when a record comes back wrong. Only the payload is
+/// somebody else's, and the list above is the whole of it: the numeral is gone rather than
+/// realigned, because it has already aged twice.
 ///
 /// ⛔ DATED RECALL, 2026-08-18 — FINDING P-1. That sentence was true of three fields out of four
 /// and FALSE OF `reason`, which the CALLER chooses. `promote` took a `&str`, so

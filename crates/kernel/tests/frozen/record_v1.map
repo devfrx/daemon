@@ -2,8 +2,9 @@
 # would be a second place to keep aligned for the same property, and the first one to stop
 # being updated lies in silence (§7.4.4). This map lives INSIDE the artefact it describes.
 #
-# Produced 2026-08-10 from `the_frozen_records()` in ../frozen_bytes.rs, by hand, from the
-# hexadecimal output of a throwaway probe that was deleted in the same commit.
+# Produced from `the_frozen_records()` in ../frozen_bytes.rs, by hand, from the hexadecimal
+# output of a throwaway probe deleted in the commit that added its file — the first three
+# on 2026-08-10, the verdict on 2026-08-31. Each file, its own probe.
 # ⛔ NOT REGENERATED. If the bytes change, a new VERSION of the record is opened.
 #
 # ⛔ ONE MAP FOR ALL THE FILES, AND THE ASYMMETRY IS DELIBERATE. The `.cbor` files are separate
@@ -86,7 +87,7 @@ record_v1_verdict.cbor
   0 | 82                   | array(2) — the version enum
   1 | 00                   | variant index 0 = Record::V1
   2 | 81                   | array(1) — the body of the variant
-  3 | 86                   | array(6) — the SIX fields of RecordV1, and the 85 -> 86 IS the new field
+  3 | 86                   | array(6) — the SIX fields of RecordV1
   4 | 03                   | index 0 · kind    · RecordKind::Verdict
   5 | 00                   | index 1 · effect  · EffectClass::Verifiable
   6 | 01                   | index 2 · trust   · Trust::Untrusted

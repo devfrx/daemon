@@ -469,7 +469,7 @@ fn the_debug_of_a_record_does_not_print_the_payload() {
         !printed.contains("ignore"),
         "the untrusted payload leaked into Debug: {printed}"
     );
-    // ⚠️ AND THE OTHER FOUR FIELDS MUST STAY READABLE, which is the half that gets forgotten
+    // ⚠️ AND EVERY OTHER FIELD MUST STAY READABLE, which is the half that gets forgotten
     // (§7.1.1, rule 3): a `Debug` that hid everything would pass the assertion above and leave
     // a failed `assert_eq!` on a record saying nothing at all. The length survives for the
     // reason it survives on `Untrusted` — a byte count discloses nothing about the content.

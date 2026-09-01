@@ -2,18 +2,21 @@
 
 use kernel::ports::journal::{Journal, StepId};
 use kernel::reconcile::{InDoubt, Resolution, steps_in_doubt};
-use kernel::record::{Detail, EffectClass, Record, RecordKind, RecordV1, Trust, VerdictDetail};
+use kernel::record::{EffectClass, Record, RecordV1, Trust, VerdictDetail};
 use simulator::journal::MemoryJournal;
 
-fn record(kind: RecordKind, effect: EffectClass) -> Vec<u8> {
-    Record::V1(RecordV1 {
-        kind,
+/// ⛔ THE SPECIES IS A CONSTRUCTOR AND NOT A `kind` ARGUMENT, since 2026-09-01: `RecordV1`
+/// has no public field, so a bench names the species by calling it (AUD-050).
+fn record(
+    species: fn(EffectClass, Trust, Vec<u8>, &'static str) -> RecordV1,
+    effect: EffectClass,
+) -> Vec<u8> {
+    Record::V1(species(
         effect,
-        trust: Trust::Instruction,
-        payload: Vec::new(),
-        reason: String::from("why this step exists"),
-        detail: None,
-    })
+        Trust::Instruction,
+        Vec::new(),
+        "why this step exists",
+    ))
     .encode()
 }
 
@@ -25,14 +28,12 @@ fn record(kind: RecordKind, effect: EffectClass) -> Vec<u8> {
 /// `SuspendAndAsk`. A note carrying the same class as its step could not tell the two apart —
 /// the palindrome of errata E12 in a third dress.
 fn a_note() -> Vec<u8> {
-    Record::V1(RecordV1 {
-        kind: RecordKind::Note,
-        effect: EffectClass::Unrepeatable,
-        trust: Trust::Untrusted,
-        payload: b"what the web page said".to_vec(),
-        reason: String::from("the user asked for this page"),
-        detail: None,
-    })
+    Record::V1(RecordV1::note(
+        EffectClass::Unrepeatable,
+        Trust::Untrusted,
+        b"what the web page said".to_vec(),
+        "the user asked for this page",
+    ))
     .encode()
 }
 
@@ -41,21 +42,20 @@ fn a_note() -> Vec<u8> {
 /// `detail`, and a helper that could produce one without it would let a probe pass while
 /// proving the wrong thing.
 fn a_verdict() -> Vec<u8> {
-    Record::V1(RecordV1 {
-        kind: RecordKind::Verdict,
+    Record::V1(RecordV1::verdict(
         // ⚠️ `Verifiable` DIFFERS from the `Idempotent` the steps declare, for the reason
         // `a_note()` gives above: measured on 2026-09-01, harmonising it leaves the workspace
         // green, but under the `enter` mutation of `reconcile` only ONE of the pair below dies
         // instead of two — the sibling loses its killer and nothing goes red to say so.
-        effect: EffectClass::Verifiable,
-        trust: Trust::Untrusted,
-        payload: b"field `name` is missing".to_vec(),
-        reason: String::from("a sensor judged the artefact of this step"),
-        detail: Some(Detail::Verdict(VerdictDetail {
+        EffectClass::Verifiable,
+        Trust::Untrusted,
+        b"field `name` is missing".to_vec(),
+        "a sensor judged the artefact of this step",
+        VerdictDetail {
             passed: false,
             spent_millis: 7,
-        })),
-    })
+        },
+    ))
     .encode()
 }
 
@@ -68,11 +68,11 @@ fn a_verdict_does_not_put_a_step_in_doubt() {
     let mut journal = MemoryJournal::new();
     let step = StepId::new(1);
     journal
-        .intent(step, &record(RecordKind::Intent, EffectClass::Idempotent))
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
         .expect("intent");
     journal.note(step, &a_verdict()).expect("verdict");
     journal
-        .outcome(step, &record(RecordKind::Outcome, EffectClass::Idempotent))
+        .outcome(step, &record(RecordV1::outcome, EffectClass::Idempotent))
         .expect("outcome");
     // And a verdict AFTER the outcome, which is the case that separates "does not open" from
     // "does not reopen" — and it is the ordinary case: a sensor judges what a step produced.
@@ -104,10 +104,10 @@ fn a_verdict_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
     let step = StepId::new(1);
     let other = StepId::new(2);
     journal
-        .intent(step, &record(RecordKind::Intent, EffectClass::Idempotent))
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
         .expect("intent");
     journal
-        .intent(other, &record(RecordKind::Intent, EffectClass::Verifiable))
+        .intent(other, &record(RecordV1::intent, EffectClass::Verifiable))
         .expect("intent");
 
     let before = steps_in_doubt(&journal).expect("reconcile");
@@ -142,11 +142,11 @@ fn a_note_does_not_put_a_step_in_doubt() {
     let mut journal = MemoryJournal::new();
     let step = StepId::new(1);
     journal
-        .intent(step, &record(RecordKind::Intent, EffectClass::Idempotent))
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
         .expect("intent");
     journal.note(step, &a_note()).expect("note");
     journal
-        .outcome(step, &record(RecordKind::Outcome, EffectClass::Idempotent))
+        .outcome(step, &record(RecordV1::outcome, EffectClass::Idempotent))
         .expect("outcome");
     // And a note AFTER the outcome, which is the case that separates "does not open" from
     // "does not reopen".
@@ -174,10 +174,10 @@ fn a_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
     let step = StepId::new(1);
     let other = StepId::new(2);
     journal
-        .intent(step, &record(RecordKind::Intent, EffectClass::Idempotent))
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
         .expect("intent");
     journal
-        .intent(other, &record(RecordKind::Intent, EffectClass::Verifiable))
+        .intent(other, &record(RecordV1::intent, EffectClass::Verifiable))
         .expect("intent");
 
     let before = steps_in_doubt(&journal).expect("reconcile");
@@ -214,14 +214,14 @@ fn a_crash_leaves_more_than_one_step_in_doubt() {
         journal
             .intent(
                 StepId::new(step),
-                &record(RecordKind::Intent, EffectClass::Idempotent),
+                &record(RecordV1::intent, EffectClass::Idempotent),
             )
             .expect("intent");
     }
     journal
         .outcome(
             StepId::new(1),
-            &record(RecordKind::Outcome, EffectClass::Idempotent),
+            &record(RecordV1::outcome, EffectClass::Idempotent),
         )
         .expect("outcome");
 
@@ -241,13 +241,13 @@ fn a_step_with_both_intent_and_outcome_is_not_in_doubt() {
     journal
         .intent(
             StepId::new(1),
-            &record(RecordKind::Intent, EffectClass::Idempotent),
+            &record(RecordV1::intent, EffectClass::Idempotent),
         )
         .expect("intent");
     journal
         .outcome(
             StepId::new(1),
-            &record(RecordKind::Outcome, EffectClass::Idempotent),
+            &record(RecordV1::outcome, EffectClass::Idempotent),
         )
         .expect("outcome");
 
@@ -260,19 +260,19 @@ fn the_class_decides_the_resolution() {
     journal
         .intent(
             StepId::new(1),
-            &record(RecordKind::Intent, EffectClass::Verifiable),
+            &record(RecordV1::intent, EffectClass::Verifiable),
         )
         .expect("intent");
     journal
         .intent(
             StepId::new(2),
-            &record(RecordKind::Intent, EffectClass::Idempotent),
+            &record(RecordV1::intent, EffectClass::Idempotent),
         )
         .expect("intent");
     journal
         .intent(
             StepId::new(3),
-            &record(RecordKind::Intent, EffectClass::Unrepeatable),
+            &record(RecordV1::intent, EffectClass::Unrepeatable),
         )
         .expect("intent");
 
@@ -342,14 +342,14 @@ fn the_set_comes_back_in_write_order_and_not_in_step_order() {
         journal
             .intent(
                 StepId::new(step),
-                &record(RecordKind::Intent, EffectClass::Idempotent),
+                &record(RecordV1::intent, EffectClass::Idempotent),
             )
             .expect("intent");
     }
     journal
         .outcome(
             StepId::new(1),
-            &record(RecordKind::Outcome, EffectClass::Idempotent),
+            &record(RecordV1::outcome, EffectClass::Idempotent),
         )
         .expect("outcome");
 
@@ -382,7 +382,7 @@ fn a_step_is_in_doubt_at_most_once_however_many_records_it_carries() {
     journal
         .intent(
             StepId::new(5),
-            &record(RecordKind::Intent, EffectClass::Idempotent),
+            &record(RecordV1::intent, EffectClass::Idempotent),
         )
         .expect("intent");
     journal
@@ -415,7 +415,7 @@ fn a_step_that_re_enters_doubt_keeps_the_place_it_first_took() {
         journal
             .intent(
                 StepId::new(step),
-                &record(RecordKind::Intent, EffectClass::Idempotent),
+                &record(RecordV1::intent, EffectClass::Idempotent),
             )
             .expect("intent");
     }
@@ -455,13 +455,13 @@ fn an_unreadable_record_after_a_readable_outcome_puts_the_step_back_in_doubt() {
     journal
         .intent(
             StepId::new(5),
-            &record(RecordKind::Intent, EffectClass::Idempotent),
+            &record(RecordV1::intent, EffectClass::Idempotent),
         )
         .expect("intent");
     journal
         .outcome(
             StepId::new(5),
-            &record(RecordKind::Outcome, EffectClass::Idempotent),
+            &record(RecordV1::outcome, EffectClass::Idempotent),
         )
         .expect("outcome");
     journal

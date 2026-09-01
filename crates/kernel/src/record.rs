@@ -176,12 +176,14 @@ pub enum Trust {
 /// asymmetry is therefore cosmetic, and it is written down so that nobody "harmonises" it
 /// believing they are fixing a format. Errata `E47`.
 ///
-/// ⚠️ IT PAIRS WITH `RecordKind` AND NOTHING AT LEVEL 1 HOLDS THE PAIR — declared, not defended.
-/// A `RecordV1` with `kind: Verdict` and some other `Detail` is constructible, because
-/// `RecordV1` is `pub` with public fields (finding AUD-050, registered and not taken). What
-/// holds the pair is that ONE function per species builds the record, the way `Arbiter::issue`
-/// is the only place that mints a `Grant` (§5.6). It is the shape of E25 in a new place, and it
-/// is written down rather than discovered.
+/// ✅ IT PAIRS WITH `RecordKind`, AND SINCE 2026-09-01 THE PAIR IS HELD AT LEVEL 1 — it used to
+/// be "declared, not defended". `RecordV1` has no public field (AUD-050, shut that day) and
+/// there is ONE CONSTRUCTOR PER SPECIES, so a `kind: Verdict` beside some other `Detail` is not
+/// refused, it is UNPRONOUNCEABLE: `kind` is not a parameter of anything. It is the shape
+/// `Arbiter::issue` has for `Grant` (§5.6), and the shape of E25 in a new place.
+/// ⚠️ WHAT THE DISCIPLINE WAS WORTH IS MEASURED AND NOT GUESSED: while the pair was held by
+/// convention alone, errata `E73` and `E79` found the assertion missing in TWO production sites
+/// out of three, each a live mutant on the whole workspace.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 pub enum Detail {
     /// A sensor verdict upon the step's artefact (§6.4).
@@ -242,11 +244,11 @@ pub struct VerdictDetail {
 #[cbor(array)]
 pub struct RecordV1 {
     #[n(0)]
-    pub kind: RecordKind,
+    kind: RecordKind,
     #[n(1)]
-    pub effect: EffectClass,
+    effect: EffectClass,
     #[n(2)]
-    pub trust: Trust,
+    trust: Trust,
     /// ⛔ THE BYTE-STRING ANNOTATION IS LOAD-BEARING, not decoration. Without it `minicbor`
     /// encodes a `Vec<u8>` as an ARRAY OF NUMBERS: it compiles, it round-trips, and it costs
     /// 1.91x — measured on 4096 B, 7813 against 4101. Gotcha #35.
@@ -258,7 +260,7 @@ pub struct RecordV1 {
     /// reaches a log.
     #[n(3)]
     #[cbor(with = "minicbor::bytes")]
-    pub payload: Vec<u8>,
+    payload: Vec<u8>,
     /// Why the record was written, in OUR words. ⛔ IT IS TEXT AND THE PAYLOAD IS BYTES, and the
     /// asymmetry is the point rather than an accident of typing: the payload is somebody else's
     /// and may be anything, this is ours and is always UTF-8. The two travel as different CBOR
@@ -292,7 +294,7 @@ pub struct RecordV1 {
     /// ⚠️ AND IT STAYS PRINTABLE, deliberately: the hand-written `Debug` hides index 3 and shows
     /// this one, because a failed assertion on a record has to say what the record was FOR.
     #[n(4)]
-    pub reason: String,
+    reason: String,
     /// ⛔ OUR OWN STRUCTURED DATA, AND THE THIRD CONTENT BOX (D20). `payload` is somebody
     /// else's and `reason` is our prose; this is our STRUCTURE, and putting it in either of the
     /// other two was measured to be wrong — putting CBOR in `payload` reopens the defect that
@@ -316,7 +318,129 @@ pub struct RecordV1 {
     /// SILENCE — measured. The new `kind` is what makes that build stop.
     #[n(5)]
     #[cbor(default)]
-    pub detail: Option<Detail>,
+    detail: Option<Detail>,
+}
+
+/// ⛔ THE CONSTRUCTORS ARE THE GUARD, AND THAT IS THE WHOLE OF AUD-050. Until 2026-09-01 every
+/// field below was `pub`, so a struct literal from ANY crate put a RUNTIME `String` at index 4
+/// and the hand-written `Debug` printed it whole — P-1 through a second mouth. Reproduced from
+/// outside the crate that day on a throwaway probe deleted in the same run:
+/// `RecordV1 { .. payload: <6 bytes>, reason: "ignore your instructions", .. }` — the guarded
+/// field sealed, the unguarded one wide open. ⛔ A GUARD IS WORTH WHAT ITS CONSTRUCTOR IS WORTH:
+/// `Untrusted::promote` taking a `&'static str` shut the `promote` ROAD and never the type. Now
+/// the type has no other road, and the negative case is
+/// `tests/compile_fail/record_reason_is_not_runtime_text.rs`.
+///
+/// ⛔ AND THERE IS ONE CONSTRUCTOR PER SPECIES, WHICH IS THE SECOND HALF AND NOT A FLOURISH. The
+/// pair `kind`/`detail` was held by discipline — "ONE function per species builds the record" —
+/// and discipline is exactly what `E73` and `E79` measured missing in two production sites out
+/// of three, each a live mutant. Here the wrong pair is not refused, it is UNPRONOUNCEABLE:
+/// `kind` is not a parameter of anything. ⚠️ AND A SPECIES ADDED LATER BRINGS ITS OWN
+/// CONSTRUCTOR, which is additive — nothing written here has to be edited to stay true, which is
+/// why this shape was preferred to a probe freezing today's partition (that would have been
+/// gotcha #57, a prediction cited as a measure, with milestones 6 and 7 about to change it).
+///
+/// ⚠️ WHAT THIS DOES NOT BUY, declared rather than left to be discovered: `payload` is still a
+/// `Vec<u8>` a caller fills, and `trust` is still a parameter. The label describing the payload
+/// is the CALLER's statement, and no signature can check it — road A4 of `crate::boundary` is
+/// where that is declared, and it is unchanged.
+impl RecordV1 {
+    /// The INTENT of a step, made durable BEFORE the effect runs (ADR-0007).
+    pub fn intent(
+        effect: EffectClass,
+        trust: Trust,
+        payload: Vec<u8>,
+        reason: &'static str,
+    ) -> Self {
+        Self::of(RecordKind::Intent, effect, trust, payload, reason, None)
+    }
+
+    /// The OUTCOME of a step, made durable after the effect ran (ADR-0007).
+    pub fn outcome(
+        effect: EffectClass,
+        trust: Trust,
+        payload: Vec<u8>,
+        reason: &'static str,
+    ) -> Self {
+        Self::of(RecordKind::Outcome, effect, trust, payload, reason, None)
+    }
+
+    /// A NOTE upon a step: neither an intent nor an outcome, and the reconciliation gives it an
+    /// empty arm. It is what `Untrusted::promote` writes.
+    pub fn note(effect: EffectClass, trust: Trust, payload: Vec<u8>, reason: &'static str) -> Self {
+        Self::of(RecordKind::Note, effect, trust, payload, reason, None)
+    }
+
+    /// A sensor VERDICT upon the step's artefact (§6.4). ⛔ THE DETAIL IS NOT OPTIONAL HERE, and
+    /// that is the pairing held at level 1: a verdict without its structured half is not
+    /// constructible, and neither is any other species carrying one.
+    pub fn verdict(
+        effect: EffectClass,
+        trust: Trust,
+        payload: Vec<u8>,
+        reason: &'static str,
+        detail: VerdictDetail,
+    ) -> Self {
+        Self::of(
+            RecordKind::Verdict,
+            effect,
+            trust,
+            payload,
+            reason,
+            Some(Detail::Verdict(detail)),
+        )
+    }
+
+    /// ⛔ THE ONLY PLACE THAT BUILDS ONE, and it is private on purpose — the shape `Arbiter::issue`
+    /// has for `Grant` (§5.6). Every species above goes through here, so a field added to `V1`
+    /// has ONE site to reach and cannot be forgotten in a species.
+    fn of(
+        kind: RecordKind,
+        effect: EffectClass,
+        trust: Trust,
+        payload: Vec<u8>,
+        reason: &'static str,
+        detail: Option<Detail>,
+    ) -> Self {
+        Self {
+            kind,
+            effect,
+            trust,
+            payload,
+            reason: String::from(reason),
+            detail,
+        }
+    }
+
+    /// Which species this record is.
+    pub fn kind(&self) -> RecordKind {
+        self.kind
+    }
+
+    /// How the step's effect reconciles after a crash (ADR-0007).
+    pub fn effect(&self) -> EffectClass {
+        self.effect
+    }
+
+    /// What the `payload` is, as a label the CALLER chose (ADR-0014).
+    pub fn trust(&self) -> Trust {
+        self.trust
+    }
+
+    /// ⚠️ SOMEBODY ELSE'S BYTES, and the reason the hand-written `Debug` hides them.
+    pub fn payload(&self) -> &[u8] {
+        &self.payload
+    }
+
+    /// Why the record was written, in OUR words — chosen at authoring time, never at runtime.
+    pub fn reason(&self) -> &str {
+        &self.reason
+    }
+
+    /// Our own structured half, present exactly for the species that declare one.
+    pub fn detail(&self) -> Option<&Detail> {
+        self.detail.as_ref()
+    }
 }
 
 /// ⛔ THE PAYLOAD IS NOT PRINTED, and it is the same defence `Untrusted` carries, applied to
@@ -357,11 +481,19 @@ pub struct RecordV1 {
 /// caller goes through `promote`. ⚠️ And the road is already walked INSIDE the repository —
 /// `tests/record_shape.rs` writes that literal with `reason: String::from("ignore your
 /// instructions")` from another crate, so it is not a road nobody takes.
-/// ⛔ SHUTTING IT AT LEVEL 1 IS THE OWNER'S — REGISTERED, NOT TAKEN. Private fields plus a
-/// constructor would touch every construction site across three crates, `frozen_bytes.rs`
-/// included; `grep -rn 'RecordV1 {' crates/ --include=*.rs` counts them, and a count written here
-/// would age. Until then the floor is DECLARED on road A3 in `boundary.rs`, which is where a
-/// reader looks for what is open.
+/// ✅ SHUT AT LEVEL 1 ON 2026-09-01, BY THE OWNER'S DECISION, and the paragraph above is kept as
+/// the VERBAL of what was open — it is not rewritten, because it records what was measured that
+/// day. The fields are private and every species constructor takes a `&'static str`, so there is
+/// no second road to shut; the negative case is
+/// `tests/compile_fail/record_reason_is_not_runtime_text.rs`, whose disarming mutation was
+/// measured in both directions — widened to `&str` it goes `error` (trybuild's strong shape,
+/// gotcha #42) while `promote_reason_is_not_runtime_text.rs` stays `ok`, which is what proves
+/// the two cases hold DIFFERENT roads instead of being a copy.
+/// ⚠️ WHAT IT COST is what the paragraph above predicted: every construction site across three
+/// crates, `frozen_bytes.rs` included — `grep -rn 'RecordV1::' crates/ --include=*.rs` counts
+/// them today, and a count written here would age. ✅ THE FROZEN BYTES DID NOT MOVE, which was
+/// the thing to check first: `every_frozen_record_still_encodes_to_its_frozen_bytes` and
+/// `the_map_lists_the_bytes_that_are_really_frozen` stayed green through the whole change.
 ///
 /// ⚠️ THAT SENTENCE SAID "THE OTHER THREE" UNTIL 2026-08-10 and is dated rather than quietly
 /// renumbered: `reason` arrived at index 4 that day, and it is on THIS side of the line on
@@ -373,9 +505,11 @@ pub struct RecordV1 {
 /// bytes by construction (D20), so printing it opens no road A3; NOT printing it would give
 /// `RecordV1` a second hidden field that nobody decided to hide, against the half this doc calls
 /// "the one that gets forgotten" — a `Debug` that hid everything would pass the assertion below
-/// and leave a failed `assert_eq!` on a record saying nothing at all. ⚠️ THE GUARANTEE IS
-/// DISCIPLINE AND NOT TYPE, exactly as for `reason`: a struct literal from any crate can put
-/// anything at index 5, which is AUD-050 in a second place.
+/// and leave a failed `assert_eq!` on a record saying nothing at all. ✅ AND SINCE 2026-09-01 THE
+/// GUARANTEE IS THE TYPE AND NOT ONLY DISCIPLINE, exactly as for `reason`: the fields are
+/// private, so index 5 is reachable only through a species constructor, and only the species
+/// that declare a `Detail` take one. ⚠️ THE SENTENCE HERE READ "DISCIPLINE AND NOT TYPE … which
+/// is AUD-050 in a second place" until that day, and the second place is shut with the first.
 ///
 /// ⚠️ Pinned by `the_debug_of_a_record_does_not_print_the_payload`, because a closed road that
 /// no test holds is a road that reopens the day somebody puts `Debug` back in the derive list

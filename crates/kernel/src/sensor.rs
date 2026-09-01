@@ -6,11 +6,9 @@
 //! SECOND real sensor in different areas, and if it does not stretch it BREAKS rather than
 //! bends.
 
-use alloc::string::String;
-
 use crate::boundary::Untrusted;
 use crate::ports::journal::{Journal, JournalError, StepId};
-use crate::record::{Detail, EffectClass, Record, RecordKind, RecordV1, Trust, VerdictDetail};
+use crate::record::{EffectClass, Record, RecordV1, Trust, VerdictDetail};
 use crate::time::Millis;
 
 /// What a sensor costs BEFORE it runs (§6.4.1). ⛔ IT IS A CLASS AND NOT A NUMBER, and the
@@ -124,17 +122,16 @@ pub fn run_the_ring<S: Sensor, J: Journal>(
     // artefact answers the same thing. ⚠️ It is never actually reconciled, because a `Verdict`
     // record opens no doubt (see `crate::reconcile`); the field is mandatory and must still be
     // true.
-    let record = Record::V1(RecordV1 {
-        kind: RecordKind::Verdict,
-        effect: EffectClass::Verifiable,
-        trust: Trust::Untrusted,
-        payload: verdict.detail.as_str().as_bytes().to_vec(),
-        reason: String::from("a sensor judged the artefact of this step"),
-        detail: Some(Detail::Verdict(VerdictDetail {
+    let record = Record::V1(RecordV1::verdict(
+        EffectClass::Verifiable,
+        Trust::Untrusted,
+        verdict.detail.as_str().as_bytes().to_vec(),
+        "a sensor judged the artefact of this step",
+        VerdictDetail {
             passed: verdict.outcome == VerdictOutcome::Pass,
             spent_millis: verdict.spent.get(),
-        })),
-    })
+        },
+    ))
     .encode();
     journal.note(step, &record)?;
 
@@ -152,14 +149,12 @@ pub fn run_the_ring<S: Sensor, J: Journal>(
     // step's ONLY intent (`E19` refuses a second one), so whatever is written here is fixed for
     // that step forever. The ring does not know what the correction will do; the caller does.
     // The reason it is delivered rather than invented is on the signature, with the measure.
-    let feedback = Record::V1(RecordV1 {
-        kind: RecordKind::Intent,
-        effect: correction_effect,
-        trust: Trust::Untrusted,
-        payload: verdict.detail.as_str().as_bytes().to_vec(),
-        reason: String::from("a sensor verdict re-entered the ring as a new step"),
-        detail: None,
-    })
+    let feedback = Record::V1(RecordV1::intent(
+        correction_effect,
+        Trust::Untrusted,
+        verdict.detail.as_str().as_bytes().to_vec(),
+        "a sensor verdict re-entered the ring as a new step",
+    ))
     .encode();
     journal.intent(next, &feedback)?;
 

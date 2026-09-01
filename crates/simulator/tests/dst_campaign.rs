@@ -149,15 +149,15 @@ fn crash_seed(seed: u64) -> u64 {
 /// dated rather than rewritten away: the assertion exists now, inside
 /// `c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open`, and it is what makes this
 /// single class load-bearing instead of merely convenient.
-fn record(kind: RecordKind) -> Vec<u8> {
-    Record::V1(RecordV1 {
-        kind,
-        effect: EffectClass::Idempotent,
-        trust: Trust::Instruction,
-        payload: Vec::new(),
-        reason: String::from("a step of the DST scenario"),
-        detail: None,
-    })
+/// ⛔ THE SPECIES IS A CONSTRUCTOR AND NOT A `kind` ARGUMENT, since 2026-09-01: `RecordV1`
+/// has no public field, so a bench names the species by calling it (AUD-050).
+fn record(species: fn(EffectClass, Trust, Vec<u8>, &'static str) -> RecordV1) -> Vec<u8> {
+    Record::V1(species(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        "a step of the DST scenario",
+    ))
     .encode()
 }
 
@@ -223,7 +223,7 @@ fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Trace) {
                 // everything after the first fall (decision D2), so do all the others.
                 if journal
                     .borrow_mut()
-                    .intent(StepId::new(id), &record(RecordKind::Intent))
+                    .intent(StepId::new(id), &record(RecordV1::intent))
                     .is_err()
                 {
                     return;
@@ -237,7 +237,7 @@ fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Trace) {
 
                 if journal
                     .borrow_mut()
-                    .outcome(StepId::new(id), &record(RecordKind::Outcome))
+                    .outcome(StepId::new(id), &record(RecordV1::outcome))
                     .is_err()
                 {
                     return;

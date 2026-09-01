@@ -116,15 +116,12 @@ const FORMAT_CHANGED: &str = "\n⛔ THE DURABLE FORMAT CHANGED.\n\
 /// the frozen records AND for the mutants of `every_field_sits_at_the_offset_the_map_gives_it`:
 /// a second constructor would be a second place to keep aligned, and the first one to stop
 /// being updated lies in silence (§7.4.4).
-fn record(kind: RecordKind, effect: EffectClass, trust: Trust, detail: Option<Detail>) -> Record {
-    Record::V1(RecordV1 {
-        kind,
-        effect,
-        trust,
-        payload: FROZEN_PAYLOAD.to_vec(),
-        reason: String::from(FROZEN_REASON),
-        detail,
-    })
+/// ⛔ STILL ONE CONSTRUCTOR, AND THE SPECIES ARRIVES AS A CLOSURE — since 2026-09-01
+/// `RecordV1` has no public field (AUD-050), so the species is named by calling it. The
+/// property this helper exists for is UNCHANGED: `FROZEN_PAYLOAD` and `FROZEN_REASON` are
+/// still written in ONE place, which is the pair that must not drift.
+fn record(species: impl FnOnce(Vec<u8>, &'static str) -> RecordV1) -> Record {
+    Record::V1(species(FROZEN_PAYLOAD.to_vec(), FROZEN_REASON))
 }
 
 /// The frozen records, each beside the name of the file that holds its bytes. ⚠️ HOW MANY
@@ -142,32 +139,17 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 4] {
         (
             "record_v1_intent.cbor",
             INTENT_BYTES,
-            record(
-                RecordKind::Intent,
-                EffectClass::Idempotent,
-                Trust::Untrusted,
-                None,
-            ),
+            record(|p, r| RecordV1::intent(EffectClass::Idempotent, Trust::Untrusted, p, r)),
         ),
         (
             "record_v1_outcome.cbor",
             OUTCOME_BYTES,
-            record(
-                RecordKind::Outcome,
-                EffectClass::Unrepeatable,
-                Trust::Instruction,
-                None,
-            ),
+            record(|p, r| RecordV1::outcome(EffectClass::Unrepeatable, Trust::Instruction, p, r)),
         ),
         (
             "record_v1_note.cbor",
             NOTE_BYTES,
-            record(
-                RecordKind::Note,
-                EffectClass::Verifiable,
-                Trust::Untrusted,
-                None,
-            ),
+            record(|p, r| RecordV1::note(EffectClass::Verifiable, Trust::Untrusted, p, r)),
         ),
         // ⛔ THE FOURTH CARRIES BOTH THINGS AT ONCE (D21), and `None` here would pin NOTHING of
         // index 5: a trailing `None` is not written, measured. So this record is the only place
@@ -181,15 +163,18 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 4] {
         (
             "record_v1_verdict.cbor",
             VERDICT_BYTES,
-            record(
-                RecordKind::Verdict,
-                EffectClass::Verifiable,
-                Trust::Untrusted,
-                Some(Detail::Verdict(VerdictDetail {
-                    passed: false,
-                    spent_millis: 7,
-                })),
-            ),
+            record(|p, r| {
+                RecordV1::verdict(
+                    EffectClass::Verifiable,
+                    Trust::Untrusted,
+                    p,
+                    r,
+                    VerdictDetail {
+                        passed: false,
+                        spent_millis: 7,
+                    },
+                )
+            }),
         ),
     ]
 }
@@ -285,12 +270,18 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
     // `the_three_frozen_records_are_distinguishable_in_the_bytes`: a name that carries a count
     // is a count like any other, and this population grows with the format.
     let frozen = the_frozen_records();
-    let kinds: Vec<RecordKind> = frozen.iter().map(|(_, _, Record::V1(r))| r.kind).collect();
+    let kinds: Vec<RecordKind> = frozen
+        .iter()
+        .map(|(_, _, Record::V1(r))| r.kind())
+        .collect();
     let effects: Vec<EffectClass> = frozen
         .iter()
-        .map(|(_, _, Record::V1(r))| r.effect)
+        .map(|(_, _, Record::V1(r))| r.effect())
         .collect();
-    let trusts: Vec<Trust> = frozen.iter().map(|(_, _, Record::V1(r))| r.trust).collect();
+    let trusts: Vec<Trust> = frozen
+        .iter()
+        .map(|(_, _, Record::V1(r))| r.trust())
+        .collect();
 
     for kind in [
         RecordKind::Intent,
@@ -354,7 +345,7 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
     // this one stronger alone would be a second convention for one property (§7.4.4).
     let details: Vec<&Detail> = frozen
         .iter()
-        .filter_map(|(_, _, Record::V1(r))| r.detail.as_ref())
+        .filter_map(|(_, _, Record::V1(r))| r.detail())
         .collect();
     assert!(
         !details.is_empty(),
@@ -398,60 +389,36 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
     // ⚠️ THE MUTANTS KEEP THE LENGTH, deliberately: an upper-case payload of the same six
     // bytes and a reason of the same six characters. A shorter value would move every byte
     // after it and the assertion would degrade into "something changed".
-    let base = record(
-        RecordKind::Intent,
-        EffectClass::Idempotent,
-        Trust::Untrusted,
-        None,
-    )
-    .encode();
+    let base =
+        record(|p, r| RecordV1::intent(EffectClass::Idempotent, Trust::Untrusted, p, r)).encode();
 
-    let moved_kind = record(
-        RecordKind::Outcome,
-        EffectClass::Idempotent,
-        Trust::Untrusted,
-        None,
-    )
-    .encode();
+    let moved_kind =
+        record(|p, r| RecordV1::outcome(EffectClass::Idempotent, Trust::Untrusted, p, r)).encode();
     only_inside("kind", &base, &moved_kind, 4, 5);
 
-    let moved_effect = record(
-        RecordKind::Intent,
-        EffectClass::Unrepeatable,
-        Trust::Untrusted,
-        None,
-    )
-    .encode();
+    let moved_effect =
+        record(|p, r| RecordV1::intent(EffectClass::Unrepeatable, Trust::Untrusted, p, r)).encode();
     only_inside("effect", &base, &moved_effect, 5, 6);
 
-    let moved_trust = record(
-        RecordKind::Intent,
-        EffectClass::Idempotent,
-        Trust::Instruction,
-        None,
-    )
-    .encode();
+    let moved_trust =
+        record(|p, r| RecordV1::intent(EffectClass::Idempotent, Trust::Instruction, p, r)).encode();
     only_inside("trust", &base, &moved_trust, 6, 7);
 
-    let moved_payload = Record::V1(RecordV1 {
-        kind: RecordKind::Intent,
-        effect: EffectClass::Idempotent,
-        trust: Trust::Untrusted,
-        payload: b"FROZEN".to_vec(),
-        reason: String::from(FROZEN_REASON),
-        detail: None,
-    })
+    let moved_payload = Record::V1(RecordV1::intent(
+        EffectClass::Idempotent,
+        Trust::Untrusted,
+        b"FROZEN".to_vec(),
+        FROZEN_REASON,
+    ))
     .encode();
     only_inside("payload", &base, &moved_payload, 7, 14);
 
-    let moved_reason = Record::V1(RecordV1 {
-        kind: RecordKind::Intent,
-        effect: EffectClass::Idempotent,
-        trust: Trust::Untrusted,
-        payload: FROZEN_PAYLOAD.to_vec(),
-        reason: String::from("FROZEN"),
-        detail: None,
-    })
+    let moved_reason = Record::V1(RecordV1::intent(
+        EffectClass::Idempotent,
+        Trust::Untrusted,
+        FROZEN_PAYLOAD.to_vec(),
+        "FROZEN",
+    ))
     .encode();
     only_inside("reason", &base, &moved_reason, 14, 21);
 }

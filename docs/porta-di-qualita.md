@@ -3865,6 +3865,93 @@ confronto vive in **una** casa sola, il verbale P-15 sul doc di `detail`.
 `cargo fmt --all --check` exit 0, fine-riga conservati file per file, `i/crlf` fermo a **quattro**.
 ⚠️ **Tre rimedi su quattro TOLGONO righe**, e il quarto aggiunge **due** asserzioni.
 
+### `AUD-050` chiuso a LIVELLO 1 — la cura alla radice, scelta dal proprietario (2026-09-01)
+
+⛔ **È la terza delle tre vie che `E53` metteva davanti al proprietario**, e la sola che toglie il
+problema invece di inseguirlo: il ciclo di revisione del compito 5 non convergeva perché ogni
+ondata chiudeva un'occorrenza, e la classe di `E73`/`E79` — la coppia `kind`/`Detail` tenuta dalla
+**disciplina** — era tenuta da niente al livello 1.
+
+**La falla, riprodotta PRIMA di toccare qualsiasi cosa** (passo 2 della disciplina dell'audit),
+da **fuori la crate**, su una sonda usa-e-getta cancellata nella stessa corsa:
+
+```
+RecordV1 { kind: Note, effect: Unrepeatable, trust: Untrusted, payload: <6 bytes>,
+           reason: "ignore your instructions", detail: None }
+```
+
+Testo calcolato a **runtime** all'indice 4, per letterale di struct, senza passare da `promote` —
+il campo guardato sigillato e quello non guardato spalancato. È **P-1 attraverso una seconda
+bocca**, e la scheda `AUD-050` lo dice: *una guardia vale quanto il suo costruttore*.
+
+⛔ **Il perimetro è stato RIMISURATO contro il codice di adesso**, perché la scheda è del
+2026-08-27: `grep -rn 'RecordV1 {' crates/ --include=*.rs` rendeva **45 siti in 13 file su 3
+crate**, più 37 siti di lettura.
+
+| La forma | |
+|---|---|
+| i sei campi | **privati** |
+| la lettura | sei **accessori** |
+| la costruzione | **un costruttore per specie** — `intent`, `outcome`, `note`, `verdict` — ciascuno con `reason: &'static str` |
+| l'unico che costruisce | un `of` **privato**, sul precedente di `Arbiter::issue` per `Grant` (§5.6) |
+
+✅ **E la seconda metà chiude la classe di `E79` senza congelare una partizione:** la coppia
+sbagliata non è *rifiutata*, è **impronunciabile** — `kind` non è parametro di niente. ⚖️ **Ed è la
+ragione per cui questa forma è stata preferita a una sonda:** una sonda che fissasse oggi *«`detail`
+è `Some` se e solo se `kind` è `Verdict`»* congelerebbe una partizione che i **compiti 6 e 7**
+stanno per cambiare — gotcha **#57** — mentre una specie nuova porta il **proprio** costruttore, che
+è additivo.
+
+⛔ **IL CASO NUOVO È IL 35°, E LA SUA NON-VACUITÀ È MISURATA NELLE DUE DIREZIONI.**
+
+| Direzione | Esito |
+|---|---|
+| **deve scattare** | `record_reason_is_not_runtime_text.rs` → `error[E0597]: `outside` does not live long enough`, `.stderr` **scritto a mano** dall'uscita vera |
+| **deve smettere di scattare** | allargati i cinque `reason: &'static str` a `&str` → il caso va **`error`**, cioè trybuild dice *«expected compilation to fail»* — la forma forte del gotcha **#42**, che `TRYBUILD=overwrite` non può disarmare |
+| ⛔ **e non è una copia** | sotto quella **stessa** mutazione `promote_reason_is_not_runtime_text.rs` resta **`ok`**: i due casi tengono strade **diverse**, misurato invece che argomentato (gotcha #49 evitato con una misura) |
+
+⛔ **E UN CASO ESISTENTE HA DOVUTO MUOVERSI, NON ESSERE RIALLINEATO.**
+`record_without_trust_label.rs` lasciava `trust` fuori da un **letterale** e attendeva `E0063`;
+col letterale rifiutato scattava per una **seconda ragione** — *cannot construct with struct
+literal syntax due to private fields* — e il suo stesso doc scrive che *«un caso negativo che
+scatta per una seconda ragione smette di provare la prima»*. ✅ Riscritto sulla strada che esiste:
+l'**arità** del costruttore, `error[E0061]`, la forma che `reading_without_a_receipt.rs` usa già.
+
+✅ **I BYTE CONGELATI NON SI SONO MOSSI, ed era la cosa da controllare per prima:**
+`every_frozen_record_still_encodes_to_its_frozen_bytes` e
+`the_map_lists_the_bytes_that_are_really_frozen` verdi per tutto il cambiamento, e
+`git status --porcelain crates/kernel/tests/frozen/` **vuoto**. ⚠️ **L'aiutante di quel banco
+resta UNO**, com'era: la specie arriva come **chiusura**, quindi `FROZEN_PAYLOAD` e
+`FROZEN_REASON` continuano a vivere in un posto solo — che è la proprietà per cui quell'aiutante
+esiste.
+
+⛔ **E LA TRAPPOLA DEI FINE-RIGA È SCATTATA, MISURATA INVECE CHE TEMUTA — quarta forma.**
+`cargo fmt --all --check` era rosso su cinque file dopo il cambiamento; `rustfmt` lanciato **file
+per file** (mai `cargo fmt`, voce `E41`) li ha portati da **`CR` = righe a `CR` = 0**. Ripristinati
+in CRLF e **rimisurati uno per uno**; censimento `git ls-files --eol` **immutato a quattro**
+`i/crlf`.
+
+⚠️ **CINQUE case nel sorgente dichiaravano la falla APERTA, censite col `grep` e guardate una per
+una** (#70): il doc di `Detail`, i due paragrafi del `Debug` di `record.rs`, la voce **A3** di
+`boundary.rs` e il commento di `record_shape.rs`. ⛔ **I verbali datati NON sono riscritti** — 55ª
+misura: il richiamo del 2026-08-28 resta e riceve il proprio.
+
+⚠️ **VOCE APERTA REGISTRATA E NON PRESA, ed è del proprietario:** il 35° caso **non ha una riga di
+catalogo propria**. La §7.4 è **spec**, vincolo globale 7 — stesso trattamento di `PL-1`, di
+`K-1`/`B-1` e delle sonde del Traguardo 5, stessa ragione (gotcha **#36**: una nota si legge e si
+dimentica, una voce aperta no). Oggi il caso difende la stessa proprietà della riga che copre
+`promote_reason_is_not_runtime_text.rs`, e che siano **due strade** è dichiarato qui e nel caso.
+
+⚠️ **Che cosa NON compra, dichiarato invece che scoperto:** `payload` resta un `Vec<u8>` che il
+chiamante riempie e `trust` resta un parametro — l'etichetta è l'affermazione del **chiamante**, e
+nessuna firma la può controllare. È il limite che la via **A4** di `boundary.rs` dichiara, e non è
+cambiato.
+
+📌 **Baseline a cambiamento chiuso: `GATE GREEN`, 41 bersagli, 298 passate, 0 fallite, 2 ignorate**
+— **invariata**, e l'invarianza è il dato: i casi `compile_fail` passano da 34 a **35** ma girano
+tutti dentro `level_1_rules_do_not_compile`, che è **un** test.
+`cargo build --locked --workspace` a **zero avvisi**, `cargo fmt --all --check` exit 0.
+
 ## Livello 3 — vuoto, e non è una svista
 
 `clippy` gira come igiene del codice ma **non ha voce nella porta**: nessun V dipende da

@@ -792,24 +792,28 @@ stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito 
 gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
 **formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro
 inesercitato in tutto il workspace.
-⏭️ **IL PROSSIMO PASSO È IL SESTO GIRO DI REVISIONE DEL COMPITO 5, POI IL COMPITO 6.**
+⏭️ **IL PROSSIMO PASSO È IL SESTO GIRO DI REVISIONE, POI IL COMPITO 6.**
 ⛔ **RICHIAMO DEL 2026-09-01: il QUARTO e il QUINTO giro sono fatti — `E73`–`E78` e `E79`–`E82`,
-tutti riverificati dal coordinatore prima di rimediare e tutti veri.** L'ordine non cambia: `E53`
-dichiara di sé che **non si chiude eseguendo il compito 6**, e vale *«chiudi ciò che è aperto prima
-di aprire altro»*. ✅ **E il quinto giro ha introdotto la domanda che ha pagato:** invece di *«trova
-difetti»*, *«ciascun rimedio dell'ondata precedente ha chiuso la CLASSE o l'occorrenza?»*, con
-risposta al `grep`. ⛔ **Tutti e quattro i suoi rilievi sono venuti da lì**, e il più caro è `E79`:
-il rimedio di `E73` aveva chiuso **un sito su tre**, e gli altri due erano **mutanti vivi**.
-⚠️ **La serie è `3 · 2 · 6 · 6 · 4`**, e la contromisura misurata resta la stessa — **togliere
-invece di riscrivere meglio**, col conteggio dei test invariato a **298**. ⛔ **Nessun gotcha nuovo
-in nessuna delle due ondate, ed è una decisione:** sono forme del **#65**, **#70**, **#76**, **#97**
-e **#98**, e uno che non insegna niente diluisce quelli che insegnano.
-⛔ **LA CASA UNICA DEL RESIDUO RESTA `E53`, e la voce del proprietario vi si è fatta NETTA:** i
-rilievi del quinto giro sono **tutti e quattro** generati dai rimedi del quarto, cioè il ciclo **si
-autoalimenta** invece di convergere, mentre il prodotto è verde e — tolte le due asserzioni di
-`E79` — immutato da cinque giri. Le vie sono **tre**, ed `E53` le porta con i costi: continuare ·
-dichiarare il ciclo chiuso sul prodotto e trattare i censimenti come passata documentale a sé ·
-chiudere alla **radice**, che è il finding **AUD-050**, anch'esso suo.
+tutti riverificati dal coordinatore prima di rimediare e tutti veri.** ✅ **E il quinto ha
+introdotto la domanda che ha pagato:** invece di *«trova difetti»*, *«ciascun rimedio dell'ondata
+precedente ha chiuso la CLASSE o l'occorrenza?»*, con risposta al `grep`. Tutti e quattro i suoi
+rilievi sono venuti da lì, e il più caro è `E79`: il rimedio di `E73` aveva chiuso **un sito su
+tre**, e gli altri due erano **mutanti vivi**.
+✅ **E IL 2026-09-01 IL PROPRIETARIO HA SCELTO DI CHIUDERE ALLA RADICE — `AUD-050` È CHIUSO A
+LIVELLO 1**, che era la terza delle tre vie che `E53` gli metteva davanti. `RecordV1` non ha più
+nessun campo pubblico: sei accessori, e **un costruttore per specie** con `reason: &'static str`.
+⛔ **Chiude DUE cose insieme:** la fuga di P-1 *«attraverso una seconda bocca»* — un letterale di
+struct metteva testo di runtime all'indice 4, riprodotto da fuori la crate prima di toccare
+niente — e la classe di `E73`/`E79`, perché la coppia `kind`/`Detail` non è più **rifiutata** ma
+**impronunciabile**: `kind` non è parametro di niente. ⚠️ **Costo misurato e non citato dalla
+scheda, che è di agosto:** 45 siti di costruzione in 13 file su 3 crate. ✅ **I byte congelati NON
+si sono mossi**, controllato per primo. Il verbale è la voce **E83** dell'errata; il caso nuovo è
+il **35°** `compile_fail`, provato nelle due direzioni.
+⛔ **IL RESIDUO NON È CHIUSO, E LA CASA UNICA RESTA `E53`:** quel cambiamento non è stato rivisto
+da nessuno, quindi il sesto giro si dispaccia **sul commit di `E83`** e non più sul perimetro
+vecchio, tenendo la domanda del quinto. ⚖️ **E la voce del proprietario si è ristretta:** non più
+*«che cosa fare del ciclo»* — l'ha deciso — ma se il compito **6** si apra comunque a sesto giro
+chiuso, pulito o no.
 ✅ **E IL PROPRIETARIO HA AUTORIZZATO I SOTTO-AGENTI IL 2026-08-31**, quindi la modalità che il
 piano prescrive in testa — *un subagente fresco per compito, con revisione fra uno e l'altro* — è
 di nuovo praticabile, e il compito 6 **non è più sbarrato dal metodo**.

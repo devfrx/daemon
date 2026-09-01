@@ -350,7 +350,7 @@ fn a_policy_transition_writes_its_intent_before_its_outcome() {
         .collect();
 
     assert_eq!(
-        records.iter().map(|r| r.kind).collect::<Vec<_>>(),
+        records.iter().map(|r| r.kind()).collect::<Vec<_>>(),
         vec![RecordKind::Intent, RecordKind::Outcome]
     );
     // ⛔ THE NAME IS THE POINT, AND IT IS WHY `MakeRoom::name` EXISTS: a record that only said
@@ -358,13 +358,13 @@ fn a_policy_transition_writes_its_intent_before_its_outcome() {
     // the archive is the only thing that survives. The OTHER direction is asserted in
     // `a_transition_names_the_policy_it_moves_to` -- one alone would be satisfied by a
     // hard-coded "local".
-    assert!(records.iter().all(|r| r.reason == "local"));
+    assert!(records.iter().all(|r| r.reason() == "local"));
     // ⛔ THE LABEL AND THE PAYLOAD ARE CONTRACT, NOT DECORATION: the doc of `set_policy` says no
     // external byte reaches this record, so the payload is EMPTY and the label is
     // `Trust::Instruction`. ✅ MEASURED: mutating either field is caught HERE AND NOWHERE ELSE
     // -- rows 8 and 9 of the campaign, 247 passed / 1 failed each, this probe alone.
-    assert!(records.iter().all(|r| r.trust == Trust::Instruction));
-    assert!(records.iter().all(|r| r.payload.is_empty()));
+    assert!(records.iter().all(|r| r.trust() == Trust::Instruction));
+    assert!(records.iter().all(|r| r.payload().is_empty()));
 }
 
 /// ⛔ THE OTHER DIRECTION, AND IT IS NOT SYMMETRY FOR ITS OWN SAKE: with only the probe above,
@@ -387,11 +387,11 @@ fn a_transition_names_the_policy_it_moves_to() {
     assert_eq!(entries.len(), 2);
     for (_, bytes) in &entries {
         let Record::V1(record) = Record::decode(bytes).expect("our own bytes");
-        assert_eq!(record.reason, "remote");
+        assert_eq!(record.reason(), "remote");
         // ⚠️ AND `detail` IS `None` ON BOTH, for the reason the note's is: a policy transition
         // declares no structured species. Turned to `Some(..)`, the whole workspace stayed
         // green — 41 targets, 298 passed, identical to the baseline. Errata `E79`.
-        assert_eq!(record.detail, None);
+        assert_eq!(record.detail(), None);
     }
 }
 

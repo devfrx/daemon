@@ -17,12 +17,11 @@
 //! would give it two owners, itself and the executor, and the borrow would not pass.
 
 use alloc::collections::{BTreeMap, BTreeSet};
-use alloc::string::String;
 use alloc::vec::Vec;
 
 use crate::parameters::Parameters;
 use crate::ports::journal::{Journal, JournalError, StepId};
-use crate::record::{EffectClass, Record, RecordKind, RecordV1, Trust};
+use crate::record::{EffectClass, Record, RecordV1, Trust};
 use crate::time::{Millis, Monotonic};
 
 pub mod policy;
@@ -476,11 +475,11 @@ impl Arbiter {
         step: StepId,
         journal: &mut J,
     ) -> Result<(), JournalError> {
-        journal.intent(step, &transition_record(RecordKind::Intent, policy.name()))?;
+        journal.intent(step, &transition_record(RecordV1::intent, policy.name()))?;
         self.policy = policy;
         journal.outcome(
             step,
-            &transition_record(RecordKind::Outcome, self.policy.name()),
+            &transition_record(RecordV1::outcome, self.policy.name()),
         )
     }
 
@@ -1075,15 +1074,22 @@ impl Arbiter {
 /// in the archive, and the archive is the only thing that survives. ✅ HELD IN BOTH
 /// DIRECTIONS by `a_policy_transition_writes_its_intent_before_its_outcome` and
 /// `a_transition_names_the_policy_it_moves_to`: one alone is satisfied by a constant.
-fn transition_record(kind: RecordKind, policy: &'static str) -> Vec<u8> {
-    Record::V1(RecordV1 {
-        kind,
-        effect: EffectClass::Idempotent,
-        trust: Trust::Instruction,
-        payload: Vec::new(),
-        reason: String::from(policy),
-        detail: None,
-    })
+/// ⛔ THE SPECIES IS A CONSTRUCTOR AND NOT A `kind` ARGUMENT, since 2026-09-01: `RecordV1`
+/// has no public field, so `kind` is not a thing a caller can name (AUD-050). Passing
+/// `RecordV1::intent` or `RecordV1::outcome` keeps the three shared fields in ONE place —
+/// which is why this helper exists — while leaving the two calls where they are, because the
+/// ORDER between them is held by the compiler (`E115` ②) and building both up front would
+/// throw that away.
+fn transition_record(
+    species: fn(EffectClass, Trust, Vec<u8>, &'static str) -> RecordV1,
+    policy: &'static str,
+) -> Vec<u8> {
+    Record::V1(species(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        policy,
+    ))
     .encode()
 }
 

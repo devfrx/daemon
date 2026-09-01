@@ -63,14 +63,12 @@ fn records(journal: &MemoryJournal) -> Vec<(StepId, Record)> {
 /// arrives is the owner's — so it would be incoherent for it to mint the intent of a step it did
 /// not open either.
 fn open_the_step(journal: &mut MemoryJournal, step: StepId) {
-    let intent = Record::V1(RecordV1 {
-        kind: RecordKind::Intent,
-        effect: EffectClass::Idempotent,
-        trust: Trust::Instruction,
-        payload: Vec::new(),
-        reason: String::from("the step whose artefact is judged"),
-        detail: None,
-    })
+    let intent = Record::V1(RecordV1::intent(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        "the step whose artefact is judged",
+    ))
     .encode();
     journal.intent(step, &intent).expect("intent");
 }
@@ -110,7 +108,7 @@ fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
 
     let (step, Record::V1(body)) = &written[1];
     assert_eq!(*step, judged);
-    assert_eq!(body.kind, RecordKind::Verdict);
+    assert_eq!(body.kind(), RecordKind::Verdict);
 
     // ⛔ AND `passed` IS TRUE HERE, WHICH IS THE ONLY `true` IN THE WORKSPACE. Every other site
     // of that field carries `false` — the frozen record, `reconciliation.rs`, `record_shape.rs`
@@ -119,7 +117,7 @@ fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
     // `run_the_ring` survived the whole workspace, 41 targets and 298 passed, identical to the
     // baseline. It is the second direction of a two-valued field, and the second direction is
     // the one that gets forgotten. Errata `E65`.
-    let Some(Detail::Verdict(detail)) = &body.detail else {
+    let Some(Detail::Verdict(detail)) = &body.detail() else {
         panic!("the verdict of a passing sensor carries no structured detail");
     };
     assert!(
@@ -141,8 +139,8 @@ fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
     // probe, and only a value some OPEN decision could still change is left declared (#73). No
     // decision is open here — `reconcile` provably never reads a verdict's class, measured by
     // mutating its arm in both directions.
-    assert_eq!(body.effect, EffectClass::Verifiable);
-    assert_eq!(body.reason, "a sensor judged the artefact of this step");
+    assert_eq!(body.effect(), EffectClass::Verifiable);
+    assert_eq!(body.reason(), "a sensor judged the artefact of this step");
 
     // ⚠️ AND THE VERDICT IS ON THE JUDGED STEP AND NOWHERE ELSE. ⛔ RECALL OF 2026-08-31: this
     // said "a ring that wrote its verdict against the NEXT step would satisfy every line above
@@ -199,23 +197,23 @@ fn a_failing_verdict_opens_a_new_step_and_carries_the_detail() {
     // The verdict, upon the step that was judged.
     let (step, Record::V1(verdict)) = &written[1];
     assert_eq!(*step, judged);
-    assert_eq!(verdict.kind, RecordKind::Verdict);
+    assert_eq!(verdict.kind(), RecordKind::Verdict);
     // ⛔ THE ASSERTION IS ON THE ARCHIVE, NOT ON THE RETURN VALUE, and that is what keeps it from
     // being vacuous -- the same choice task 9 of milestone 5 made for the policy transition.
-    let Some(Detail::Verdict(detail)) = &verdict.detail else {
+    let Some(Detail::Verdict(detail)) = &verdict.detail() else {
         panic!("the verdict record carries no structured detail");
     };
     assert!(!detail.passed);
     assert_eq!(detail.spent_millis, 7);
     // The untrusted half travelled in the payload, under the label that says so.
-    assert_eq!(verdict.payload, b"field `name` is missing");
-    assert_eq!(verdict.trust, Trust::Untrusted);
+    assert_eq!(verdict.payload(), b"field `name` is missing");
+    assert_eq!(verdict.trust(), Trust::Untrusted);
 
     // The new step's intent, carrying the feedback.
     let (opened_step, Record::V1(intent)) = &written[2];
     assert_eq!(*opened_step, next);
-    assert_eq!(intent.kind, RecordKind::Intent);
-    assert_eq!(intent.payload, b"field `name` is missing");
+    assert_eq!(intent.kind(), RecordKind::Intent);
+    assert_eq!(intent.payload(), b"field `name` is missing");
 
     // ⛔ AND ITS LABEL, WHICH IS THE ONE THAT MATTERS: the payload of this record is the sensor's
     // detail, and the sensor read an `Untrusted` artefact. ADR-0014 makes the label HEREDITARY —
@@ -228,16 +226,16 @@ fn a_failing_verdict_opens_a_new_step_and_carries_the_detail() {
     // the bench held one of the two records the ring writes and not the other. Turned to
     // `Trust::Instruction` here, the whole workspace stayed green — 41 targets, 298 passed,
     // identical to the baseline. Errata `E65`.
-    assert_eq!(intent.trust, Trust::Untrusted);
+    assert_eq!(intent.trust(), Trust::Untrusted);
     // ⚠️ AND `detail` IS `None` ON PURPOSE: the structured half belongs to the VERDICT
     // species, and an `Intent` carrying a `Detail::Verdict` would enter the durable format
     // with a pair `RecordKind` and `Detail` that nothing at level 1 forbids. What holds the
     // pair is that ONE function per species builds the record, and this line is what holds
     // THIS function to it. Turned to `Some(..)`, the whole workspace stayed green — 41
     // targets, 298 passed, identical to the baseline. Errata `E73`.
-    assert_eq!(intent.detail, None);
+    assert_eq!(intent.detail(), None);
     assert_eq!(
-        intent.reason,
+        intent.reason(),
         "a sensor verdict re-entered the ring as a new step"
     );
 }
@@ -281,7 +279,7 @@ fn an_inferential_sensor_is_refused_by_the_tight_ring() {
         "the ring wrote although it refused the sensor"
     );
     let (_, Record::V1(only)) = &written[0];
-    assert_eq!(only.kind, RecordKind::Intent);
+    assert_eq!(only.kind(), RecordKind::Intent);
 }
 
 #[test]
@@ -325,7 +323,8 @@ fn the_class_of_the_corrective_step_is_the_one_the_caller_delivered() {
         let (opened, Record::V1(intent)) = &written[2];
         assert_eq!(*opened, next);
         assert_eq!(
-            intent.effect, effect,
+            intent.effect(),
+            effect,
             "the ring wrote a class of its own instead of the one it was handed"
         );
     }

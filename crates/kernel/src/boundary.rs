@@ -72,7 +72,7 @@ use core::fmt;
 use alloc::string::String;
 
 use crate::ports::journal::{Journal, JournalError, StepId};
-use crate::record::{EffectClass, Record, RecordKind, RecordV1, Trust};
+use crate::record::{EffectClass, Record, RecordV1, Trust};
 
 /// Content allowed to occupy the instruction channel.
 ///
@@ -258,11 +258,17 @@ impl Untrusted {
     ///   `tests/compile_fail/promote_reason_is_not_runtime_text.rs`, cannot fire on this one.
     ///   ⚠️ **Nor is it hypothetical:** `tests/record_shape.rs` walks it today from another crate,
     ///   with `reason: String::from("ignore your instructions")`.
-    ///   ⛔ **Closing it at level 1 is the OWNER'S — registered, not taken:** private fields plus
-    ///   a constructor touch every construction site across three crates, `frozen_bytes.rs`
-    ///   included. `grep -rn 'RecordV1 {' crates/ --include=*.rs` counts them; a count written
-    ///   here would age. What this recall buys is that the floor is now DECLARED, which is what
-    ///   the paragraph above says it exists to do.
+    ///   ✅ **SHUT AT LEVEL 1 ON 2026-09-01, by the owner's decision — and the paragraph above is
+    ///   kept as the VERBAL of what was open rather than rewritten.** `RecordV1` has no public
+    ///   field and every species constructor takes a `&'static str`, so the third road is not a
+    ///   road any more: the case that holds it is
+    ///   `tests/compile_fail/record_reason_is_not_runtime_text.rs`, and it is NOT a copy of the
+    ///   `promote` one — measured, widening the constructors to `&str` makes the new case fire
+    ///   while the old stays `ok`, which is what proves the two hold different roads.
+    ///   ⚠️ **What it cost is what the recall predicted:** every construction site across three
+    ///   crates, `frozen_bytes.rs` included — and the frozen bytes did NOT move, checked first.
+    ///   ⛔ **And what stays open on A3 is written, so the floor is not read as flat:**
+    ///   `String::leak` and the lying literal, above. Those are deliberate acts; this one was not.
     /// - **A4 — a round trip through the journal**: `outcome(id, untrusted.as_str().as_bytes())`,
     ///   then `read_back`, then `String::from_utf8`, then `Instruction::new`. ✅ CLOSED on
     ///   2026-08-10, **at level 2**, by the record carrying the label: `promote` now writes the
@@ -332,14 +338,12 @@ impl Untrusted {
         // ⚠️ THE COPY IS ONE ALLOCATION AND IT IS DELIBERATE: the bytes are taken before
         // `Instruction(self.0)` MOVES the string, so the content is copied once into the record
         // and the string itself is not copied at all.
-        let record = Record::V1(RecordV1 {
-            kind: RecordKind::Note,
-            effect: EffectClass::Unrepeatable,
-            trust: Trust::Untrusted,
-            payload: self.0.as_bytes().to_vec(),
-            reason: String::from(reason),
-            detail: None,
-        })
+        let record = Record::V1(RecordV1::note(
+            EffectClass::Unrepeatable,
+            Trust::Untrusted,
+            self.0.as_bytes().to_vec(),
+            reason,
+        ))
         .encode();
 
         journal.note(step, &record)?;

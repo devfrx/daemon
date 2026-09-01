@@ -1,5 +1,21 @@
-error[E0063]: missing field `trust` in initializer of `RecordV1`
- --> tests/compile_fail/record_without_trust_label.rs:7:46
-  |
-7 |     let _record = kernel::record::Record::V1(kernel::record::RecordV1 {
-  |                                              ^^^^^^^^^^^^^^^^^^^^^^^^ missing `trust`
+error[E0061]: this function takes 4 arguments but 3 arguments were supplied
+  --> tests/compile_fail/record_without_trust_label.rs:7:46
+   |
+ 7 |     let _record = kernel::record::Record::V1(kernel::record::RecordV1::intent(
+   |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 8 |         kernel::record::EffectClass::Idempotent,
+ 9 |         Vec::new(),
+   |         ---------- argument #2 of type `Trust` is missing
+   |
+note: associated function defined here
+  --> src/record.rs
+   |
+   |     pub fn intent(
+   |            ^^^^^^
+help: provide the argument
+   |
+ 7 |     let _record = kernel::record::Record::V1(kernel::record::RecordV1::intent(
+ 8 |         kernel::record::EffectClass::Idempotent,
+ 9 ~         /* Trust */,
+10 ~         Vec::new(),
+   |

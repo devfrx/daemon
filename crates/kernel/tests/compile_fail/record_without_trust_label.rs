@@ -3,14 +3,12 @@
 //! `#[cbor(default)]`, and `Trust` implements no `Default`.
 
 fn main() {
-    // Four fields out of five. `trust` is the one left out, and leaving it out is the point.
-    let _record = kernel::record::Record::V1(kernel::record::RecordV1 {
-        kind: kernel::record::RecordKind::Intent,
-        effect: kernel::record::EffectClass::Idempotent,
-        payload: Vec::new(),
-        reason: String::new(),
-        detail: None,
-    });
+    // Three arguments out of four. `trust` is the one left out, and leaving it out is the point.
+    let _record = kernel::record::Record::V1(kernel::record::RecordV1::intent(
+        kernel::record::EffectClass::Idempotent,
+        Vec::new(),
+        "why this step exists",
+    ));
 }
 
 // ⛔ THE MECHANISM IS THE ABSENCE OF A WAY TO OMIT THE FIELD, and this case is what keeps that
@@ -46,3 +44,18 @@ fn main() {
 // `missing fields `reason` and `trust`` — still an error, still `ok`, and no longer a case
 // about the trust label at all. A negative case that fires for a second reason is a case that
 // stops proving the first.
+
+// ⛔ DATED RECALL, 2026-09-01 — AUD-050. This case used to leave `trust` out of a STRUCT
+// LITERAL and expect `error[E0063]: missing field`. Since AUD-050 was shut, `RecordV1` has no
+// public field, so the literal is refused for a SECOND REASON — `cannot construct with struct
+// literal syntax due to private fields` — and the paragraph above says what that means:
+// "a negative case that fires for a second reason is a case that stops proving the first".
+// ✅ SO THE CASE MOVED TO THE ROAD THAT EXISTS: the species constructor, whose signature takes
+// the label. Leaving it out is now an ARITY error, and the property is unchanged — a record
+// cannot be built without saying what its TRUST LABEL is. The `E0061` shape is already used by the
+// gate for the same purpose in `reading_without_a_receipt.rs`.
+//
+// ⚠️ AND THE MUTATION THAT DISARMS IT MOVED WITH IT: it is no longer "delete the field" but
+// "give `intent` a default for `trust`", which Rust cannot express — so what this case now
+// holds is the SIGNATURE. Deleting the field from `RecordV1` breaks the constructor's body and
+// the whole crate stops compiling, which is a louder red than this case.

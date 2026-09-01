@@ -87,8 +87,8 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
     let mut open: Vec<InDoubt> = Vec::new();
     for (step, bytes) in entries {
         match Record::decode(&bytes) {
-            Ok(Record::V1(body)) => match body.kind {
-                RecordKind::Intent => enter(&mut open, step, resolution_of(body.effect)),
+            Ok(Record::V1(body)) => match body.kind() {
+                RecordKind::Intent => enter(&mut open, step, resolution_of(body.effect())),
                 RecordKind::Outcome => leave(&mut open, step),
                 // ⛔ A NOTE NEITHER OPENS A DOUBT NOR CLOSES ONE, AND THE EMPTY ARM IS THE
                 // WHOLE OF IT. A note says something happened WITHIN a step — today, that

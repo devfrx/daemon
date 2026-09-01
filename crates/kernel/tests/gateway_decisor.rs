@@ -167,11 +167,17 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
     assert_eq!(*at, step);
     let Record::V1(body) = Record::decode(bytes).expect("decode");
     assert_eq!(body.kind(), RecordKind::Routing);
-    // ⛔ THE THREE FIELDS NOTHING HELD, AND `trust` IS THE ONE THAT MATTERS: it is the `I6`
+    // ⛔ THE FIELDS NOTHING HELD, AND `trust` IS THE ONE THAT MATTERS: it is the `I6`
     // label of ADR-0014 on a DURABLE record. Until this line a `dispatch` writing `Untrusted`
     // left the WHOLE workspace green -- measured before writing it, `42 targets, 307 passed`,
-    // identical to the baseline. `reason` and `effect` were the same shape: `dispatch` writes
-    // six fields and only four were read back. Errata `E97`.
+    // identical to the baseline. `reason` and `effect` were the same shape. Errata `E97`.
+    //
+    // ⚠ RICHIAMO DEL 2026-09-01: this said "THE THREE FIELDS" and "`dispatch` writes six fields
+    // and only four were read back", and the arithmetic did not close with ITSELF -- six minus
+    // four is two, not three. The counts mixed units: `four` counted ASSERTIONS and `six` counted
+    // FIELDS. The field that fell outside both was `payload`, and it was still a live mutant a
+    // day later. The numerals are GONE rather than realigned; what holds is the rule below --
+    // every field this record carries is read back. Errata `E116`.
     //
     // ⚠ `effect` IS PINNED THOUGH `reconcile` NEVER READS IT, and that is deliberate: the
     // doc beside the call AFFIRMS the value is true of this record, and an affirmation nobody
@@ -182,6 +188,17 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
     assert_eq!(
         body.reason(),
         "the gateway resolved the routing for this step"
+    );
+    // ⛔ AND THE `payload`, WHICH IS THE PREMISE OF THE `trust` LINE ABOVE RATHER THAN ONE MORE
+    // FIELD. `Trust::Instruction` is true of this record ONLY BECAUSE no external byte is in it,
+    // so an unread payload leaves the `I6` label resting on nothing. Measured on 2026-09-01:
+    // three bytes put into the payload left the whole workspace green, `43 targets, 324 passed`,
+    // identical to the baseline. The wording is the sister bench's, `permission_triple.rs`, where
+    // the same class was closed first. Errata `E116`.
+    assert!(
+        body.payload().is_empty(),
+        "the payload carries {} bytes, and `dispatch` affirms that no external byte enters this record",
+        body.payload().len()
     );
     let Some(Detail::Routing(routing)) = body.detail() else {
         panic!("the routing record carries no structured detail");

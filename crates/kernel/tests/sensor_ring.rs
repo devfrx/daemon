@@ -454,3 +454,59 @@ fn a_step_nobody_opened_is_refused_and_nothing_is_written() {
         "the ring wrote to the archive before refusing"
     );
 }
+
+#[test]
+fn the_second_write_of_the_ring_is_not_swallowed_either() {
+    // ⛔ `run_the_ring` WRITES TWICE AND ONLY THE FIRST HAD A READER. The probe above holds the
+    // `note`; the `intent` that OPENS the corrective step had nothing at all. Measured on
+    // 2026-09-01 before writing this: with `journal.intent(next, ..)?` turned into
+    // `let _ = journal.intent(next, ..);`, the whole workspace stayed green -- `43 targets, 324
+    // passed, 0 failed, 2 ignored`, identical to the baseline. Errata `E117`.
+    //
+    // ⛔ AND WHAT IS LOST IS NOT A RETURN VALUE. Swallowing that refusal makes the ring answer
+    // `Ok(Some(next))` -- "the corrective step is open" -- while no intent ever reached the
+    // journal, so the untrusted feedback the next attempt has to answer disappears with nothing
+    // going red. It is the silent loss of ADR-0007 that `E98` closed on the sister function, on
+    // the road the sister does not have: `dispatch` writes once, this writes twice.
+    //
+    // ⚠️ THE ROAD IS REAL AND NEEDS NO FAKE: `MemoryJournal::intent` refuses a SECOND intent upon
+    // the same step with `OutOfOrder`, which is promise 6 of the conformance suite and binds BOTH
+    // implementations. Opening `next` beforehand is an ordinary archive, not a liar.
+    let mut journal = MemoryJournal::new();
+    let judged = StepId::new(1);
+    let next = StepId::new(2);
+    open_the_step(&mut journal, judged);
+    open_the_step(&mut journal, next);
+
+    let before = records(&journal).len();
+
+    let sensor = ScriptedSensor {
+        cost: CostClass::Computational,
+        outcome: VerdictOutcome::Fail,
+        spent: 5,
+    };
+
+    let refused = run_the_ring(
+        &sensor,
+        &Untrusted::new("the artefact".into()),
+        judged,
+        next,
+        EffectClass::Idempotent,
+        &mut journal,
+    );
+
+    assert!(
+        matches!(refused, Err(JournalError::OutOfOrder)),
+        "the ring reported success while the corrective step was never opened"
+    );
+
+    // ⛔ AND THE SECOND ASSERTION IS THE ONE THAT MATTERS, as in the probe above. The verdict IS
+    // written before the refusal -- it is a note upon a step that WAS open -- so what this holds
+    // is that the archive grew by the verdict ALONE, and never by the intent that failed. A ring
+    // that wrote the corrective intent and then reported the refusal would be a different defect.
+    assert_eq!(
+        records(&journal).len(),
+        before + 1,
+        "the ring wrote something besides the verdict before refusing"
+    );
+}

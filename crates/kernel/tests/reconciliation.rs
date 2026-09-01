@@ -1,6 +1,6 @@
 //! Reconciliation on a SET (§4.3), and the counter-probes of the rules it applies.
 
-use kernel::ports::journal::{Journal, StepId};
+use kernel::ports::journal::{Journal, JournalError, StepId};
 use kernel::reconcile::{InDoubt, Resolution, steps_in_doubt};
 use kernel::record::{
     EffectClass, PermissionDetail, Record, RecordV1, RoutingDetail, Trust, VerdictDetail,
@@ -668,4 +668,51 @@ fn an_unreadable_record_after_a_readable_outcome_puts_the_step_back_in_doubt() {
     assert_eq!(in_doubt.len(), 1, "the same step came back more than once");
     assert_eq!(in_doubt[0].step, StepId::new(5));
     assert_eq!(in_doubt[0].resolution, Resolution::SuspendAndAsk);
+}
+
+/// A journal whose `replay` refuses outright.
+///
+/// ⛔ IT IS THE ONLY ROAD INTO THE `Err` OF `steps_in_doubt`, and until the probe below nothing
+/// reached it: every caller in the workspace hands in a `MemoryJournal` that replays, and every
+/// one of them `.expect(..)`s the answer. `FileJournal::replay` returns `Err` from three separate
+/// sites, so the road is a real archive's and not this fake's invention.
+struct ReplayRefusingJournal;
+
+impl Journal for ReplayRefusingJournal {
+    fn intent(&mut self, _step: StepId, _record: &[u8]) -> Result<(), JournalError> {
+        Ok(())
+    }
+    fn outcome(&mut self, _s: StepId, _r: &[u8]) -> Result<(), JournalError> {
+        Ok(())
+    }
+    fn note(&mut self, _s: StepId, _r: &[u8]) -> Result<(), JournalError> {
+        Ok(())
+    }
+    fn read_back(&self, _s: StepId) -> Result<Vec<u8>, JournalError> {
+        Err(JournalError::Missing)
+    }
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        Err(JournalError::NotDurable)
+    }
+    fn prune(&mut self, _s: StepId) -> Result<(), JournalError> {
+        Ok(())
+    }
+}
+
+#[test]
+fn an_archive_that_will_not_replay_is_not_an_answer_of_no_doubt() {
+    // ⛔ THE ERROR ROAD OF THE RESUME SCAN, REACHED BY NOTHING UNTIL THIS PROBE. Measured on
+    // 2026-09-01 before writing it: with `journal.replay()?` turned into
+    // `journal.replay().unwrap_or_default()`, the whole workspace stayed green -- `43 targets,
+    // 324 passed, 0 failed, 2 ignored`, identical to the baseline. Errata `E118`.
+    //
+    // ⛔ AND THE CONSEQUENCE IS THE WORST ONE ADR-0007 NAMES. Swallowed, the scan answers
+    // `Ok(vec![])` -- "no step is in doubt" -- about an archive it could not read, on the one
+    // road where that answer is acted upon: RESUME AFTER A CRASH. A doubt that is never reported
+    // is never reconciled, and `SuspendAndAsk` never happens. It is the same shape `is_granted`
+    // refuses in `permission_triple.rs`, where "I do not know" reported as "no" is the silent
+    // degradation ADR-0019 forbids -- here it is the same mistake on the durable side.
+    let journal = ReplayRefusingJournal;
+
+    assert_eq!(steps_in_doubt(&journal), Err(JournalError::NotDurable));
 }

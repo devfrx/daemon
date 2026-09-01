@@ -792,8 +792,19 @@ stanno in [`porta-di-qualita.md`](porta-di-qualita.md), e ciò che ne è uscito 
 gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è un oracolo di
 **formato** e non di comportamento, e il valore che il suo letterale sceglie può lasciare l'altro
 inesercitato in tutto il workspace.
-⏭️ **IL PROSSIMO PASSO È IL COMPITO 7** — `E94` è **decisa e chiusa** il 2026-09-01, e da essa
-nascono `E95`, che detta al compito 7 di nascere sigillato, ed `E96`, che è del proprietario.
+✅ **IL COMPITO 7 È ESEGUITO IL 2026-09-01, `GATE GREEN`** — il permesso è una tripla, e *«quali
+sono attivi ora»* è una **proiezione del giornale** e non un secondo archivio. Nasce il **sesto**
+record congelato, e i cinque vecchi sono **byte-identici**, controllato per primo. `E94` è **decisa e
+chiusa** lo stesso giorno, e da essa nascono `E95` — che detta al compito 7 di nascere sigillato, ed è
+stata **eseguita** — ed `E96`, che è del proprietario.
+⏭️ **IL PROSSIMO PASSO È IL SECONDO GIRO DI REVISIONE DEL COMPITO 7**, e non un compito nuovo. Il
+primo giro è **fatto** — `E105` — e ciò che resta è la regola di sempre: *si rivede finché una passata
+non torna pulita*, e il rimedio dei cinque rilievi è **codice nuovo**. ⚠️ **Il primo giro era stato
+rilanciato e il crash del PC lo ha interrotto a metà mutazione:** niente è andato perso — tutto era
+pushato — la mutazione lasciata in `crates/kernel/src/boundary.rs` è stata **revocata byte-esatta**, e
+i file di build **corrotti dal crash** (`LNK1285`) hanno preteso un `cargo clean` prima che qualunque
+rosso volesse dire qualcosa. ⛔ **E la pista del revisore interrotto era VERA**, completata invece che
+buttata insieme al file sporco: è `E106`.
 ✅ **Il pre-controllo È FINITO il 2026-09-01 — casa unica `E102` più `E103`.** Le quattro domande
 hanno dato un **terzo bloccante** che `E102` non aveva: `grant` scrive una **nota** su un passo che
 nessuno ha aperto, e la porta la rifiuta — **tutte e cinque** le sonde dettate falliscono. Seconda
@@ -807,8 +818,19 @@ nominati porta un carico. Reggono come precedente di *«un errore proprio»*, no
 unico precedente è `OpenError` e vive in `platform`. Trovata dall'implementatore, non da chi decise. ⛔ **Letto prima di decidere:** `steps_in_doubt` tiene `JournalError` solo perché
 trasforma il record illeggibile in una **risposta**, stanza che un `bool` non ha. ⚠️ **RICHIAMO DEL
 2026-09-01: qui stavano DUE scelte del proprietario, e la seconda non era una scelta** — `E95` decide già
-la forma sigillata di `PermissionDetail`. ⛔ **Il compito 7 resta da riscrivere prima di dispacciarlo**,
-per i bloccanti ④ e ⑤ di `E103`.
+la forma sigillata di `PermissionDetail`.
+⛔ **E IL PRIMO GIRO DI REVISIONE HA RESPINTO LA QUALITÀ — `E105`, sei mutanti vivi misurati, e i due
+gravi sono `E97` VERBATIM sulla funzione sorella, a un'ora e quarantadue di distanza.** `grant` scrive
+**sei** campi e nessuna sonda ne rileggeva il record; e la strada `Operation::Write` **non era percorsa
+da niente** in tutto il workspace, quindi concedere una scrittura poteva registrare una lettura senza un
+rosso. ✅ **Chiusi tutti e cinque**, e il coordinatore ha **riverificato le tre mutazioni una per una**:
+ciascuna uccide una sonda. Da lì i gotcha **#102** e **#103**.
+✅ **E `E106` È CHIUSA LO STESSO GIORNO, FUORI DAL PERIMETRO E DICHIARATO:** `EffectClass` in
+`Untrusted::promote` non era tenuto da niente — ed è ciò con cui **ADR-0007 riconcilia un dubbio**,
+quindi un cambiamento silenzioso lì fa sparire un dubbio vero dentro un ritentativo automatico, sul
+confine dei dati non fidati. ⛔ **È la TERZA occorrenza della classe del #102**, su codice del
+Traguardo 2/3: quella classe **non è di questo traguardo**, e nessun controllo la impone.
+✅ **L'etichetta `I6` invece REGGEVA già**, misurata nella stessa passata.
 ⛔ **RICHIAMO DEL 2026-09-01: il QUARTO e il QUINTO giro sono fatti — `E73`–`E78` e `E79`–`E82`,
 tutti riverificati dal coordinatore prima di rimediare e tutti veri.** ✅ **E il quinto ha
 introdotto la domanda che ha pagato:** invece di *«trova difetti»*, *«ciascun rimedio dell'ondata

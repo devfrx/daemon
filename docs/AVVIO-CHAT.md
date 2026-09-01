@@ -8,6 +8,10 @@ messaggio è il **modello**: un hash scritto qui nasce già vecchio di uno, perc
 che lo aggiorna lo contiene. È la stessa ragione per cui [`HANDOFF.md`](HANDOFF.md) non ne
 porta, e quella riga delega esplicitamente a qui.
 
+⚠️ **RICHIAMO DEL 2026-09-01: il blocco sul formato congelato diceva «TRE record», e il compito 6 del
+Traguardo 6 ha portato il quinto.** Il numerale è **tolto e non riallineato** — gotcha **#31**: quanti
+siano lo dice `ls crates/kernel/tests/frozen/*.cbor`, e un comando non marcisce.
+
 ⛔ **Prima questo campo portava un valore vero, e non ha funzionato.** È stato incollato
 tale e quale **due volte** — l'ultima vecchio di **quattro** commit — e due commit
 (`a2ac9f9`, `c7f3203`) sono serviti solo a rincorrerlo. Un valore d'esempio valido non si
@@ -234,7 +238,7 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
    dice quale.
 
 ⛔ IL FORMATO DUREVOLE È CONGELATO. I byte in crates/kernel/tests/frozen/ —
-   tre record e una mappa che il banco rilegge — NON si rigenerano mai: se
+   i record congelati e una mappa che il banco rilegge — NON si rigenerano mai: se
    cambiano non è un aggiornamento, è un CAMBIO DI FORMATO. Un campo nuovo
    dev'essere Option con #[cbor(default)] e prendere un INDICE NUOVO, e il
    significato di un indice non cambia mai.

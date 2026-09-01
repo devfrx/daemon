@@ -810,8 +810,8 @@ scheda, che è di agosto:** 45 siti di costruzione in 13 file su 3 crate. ✅ **
 si sono mossi**, controllato per primo. Il verbale è la voce **E83** dell'errata; il caso nuovo è
 il **35°** `compile_fail`, provato nelle due direzioni.
 ⛔ **IL RESIDUO NON È CHIUSO, E LA CASA UNICA RESTA `E53`:** quel cambiamento non è stato rivisto
-da nessuno, quindi il sesto giro si dispaccia **sul commit di `E83`** e non più sul perimetro
-vecchio, tenendo la domanda del quinto. ⚖️ **E la voce del proprietario si è ristretta:** non più
+da nessuno, quindi il sesto giro si dispaccia su **`git show c63c8c8`** — il commit di `E83` — e non più sul
+perimetro vecchio, tenendo la domanda del quinto. ⚖️ **E la voce del proprietario si è ristretta:** non più
 *«che cosa fare del ciclo»* — l'ha deciso — ma se il compito **6** si apra comunque a sesto giro
 chiuso, pulito o no.
 ✅ **E IL PROPRIETARIO HA AUTORIZZATO I SOTTO-AGENTI IL 2026-08-31**, quindi la modalità che il

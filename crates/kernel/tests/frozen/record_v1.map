@@ -4,7 +4,7 @@
 #
 # Produced from `the_frozen_records()` in ../frozen_bytes.rs, by hand, from the hexadecimal
 # output of a throwaway probe deleted in the commit that added its file — the first three
-# on 2026-08-10, the verdict on 2026-08-31. Each file, its own probe.
+# on 2026-08-10, the verdict on 2026-08-31, the routing on 2026-09-01. Each file, its own probe.
 # ⛔ NOT REGENERATED. If the bytes change, a new VERSION of the record is opened.
 #
 # ⛔ ONE MAP FOR ALL THE FILES, AND THE ASYMMETRY IS DELIBERATE. The `.cbor` files are separate
@@ -94,3 +94,15 @@ record_v1_verdict.cbor
   7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
  14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
  21 | 82 00 81 82 f4 07    | index 5 · detail  · Some(Detail::Verdict { passed: false, spent: 7 })
+
+record_v1_routing.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 86                   | array(6) — the SIX fields of RecordV1
+  4 | 04                   | index 0 · kind    · RecordKind::Routing
+  5 | 01                   | index 1 · effect  · EffectClass::Idempotent
+  6 | 00                   | index 2 · trust   · Trust::Instruction
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+ 21 | 82 01 81 83 66 66 72 6f 7a 65 6e 02 f5 | index 5 · detail · Some(Detail::Routing { model: "frozen", evaluated: 2, degraded: true })

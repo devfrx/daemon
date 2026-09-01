@@ -78,7 +78,9 @@
 //! the real output rather than deduced; `record_shape.rs` says the same four bytes from the
 //! other side, in `82 00 81 85 00 01 00 40 60`.
 
-use kernel::record::{Detail, EffectClass, Record, RecordKind, RecordV1, Trust, VerdictDetail};
+use kernel::record::{
+    Detail, EffectClass, Record, RecordKind, RecordV1, RoutingDetail, Trust, VerdictDetail,
+};
 
 /// The bytes on disk. ⛔ `include_bytes!` AND NOT A READ AT RUN TIME: the artefact enters the
 /// test binary, so a `.cbor` deleted or renamed is a COMPILE error and not a check that
@@ -87,6 +89,7 @@ const INTENT_BYTES: &[u8] = include_bytes!("frozen/record_v1_intent.cbor");
 const OUTCOME_BYTES: &[u8] = include_bytes!("frozen/record_v1_outcome.cbor");
 const NOTE_BYTES: &[u8] = include_bytes!("frozen/record_v1_note.cbor");
 const VERDICT_BYTES: &[u8] = include_bytes!("frozen/record_v1_verdict.cbor");
+const ROUTING_BYTES: &[u8] = include_bytes!("frozen/record_v1_routing.cbor");
 
 /// The map, included for the same reason and READ BACK by
 /// `the_map_lists_the_bytes_that_are_really_frozen` instead of being believed.
@@ -134,7 +137,7 @@ fn record(species: impl FnOnce(Vec<u8>, &'static str) -> RecordV1) -> Record {
 ///
 /// ⚠️ THE ORDER IS THE MAP'S ORDER, and `the_map_lists_the_bytes_that_are_really_frozen`
 /// compares the names pairwise, so the two cannot drift apart in silence.
-fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 4] {
+fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 5] {
     [
         (
             "record_v1_intent.cbor",
@@ -172,6 +175,33 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 4] {
                     VerdictDetail {
                         passed: false,
                         spent_millis: 7,
+                    },
+                )
+            }),
+        ),
+        // ⛔ THE FIFTH IS THE SECOND SPECIES THAT CARRIES A `detail`, AND THAT IS WHAT IT PINS
+        // THAT THE FOURTH CANNOT: index 1 of `Detail`. A wire index never retires (rule 4 of
+        // §4.9.2), and until this file a variant of that enum other than `Verdict` was held by
+        // nothing at all.
+        //
+        // ⚠️ `model: "frozen"` AND NOT A REAL NAME, for the reason `FROZEN_PAYLOAD` and
+        // `FROZEN_REASON` exist: a value that is recognisable at a glance in the map and that
+        // resembles no real datum. ⛔ AND `evaluated: 2` WITH `degraded: true`, because `0` and
+        // `false` encode bytes that look like half the variant indices of this table — `00` and
+        // `f4` — and a byte that resembles too many things makes the map harder to read.
+        (
+            "record_v1_routing.cbor",
+            ROUTING_BYTES,
+            record(|p, r| {
+                RecordV1::routing(
+                    EffectClass::Idempotent,
+                    Trust::Instruction,
+                    p,
+                    r,
+                    RoutingDetail {
+                        model: String::from("frozen"),
+                        evaluated: 2,
+                        degraded: true,
                     },
                 )
             }),
@@ -288,6 +318,7 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
         RecordKind::Outcome,
         RecordKind::Note,
         RecordKind::Verdict,
+        RecordKind::Routing,
     ] {
         // ⛔ THE EXHAUSTIVE `match` IS THE HALF THAT DOES NOT AGE: a variant added to
         // `RecordKind` STOPS THIS FILE COMPILING, and the author lands on the list beside it.
@@ -296,7 +327,11 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
         // acceptable is that a new variant of these wire enums is A FORMAT CHANGE by the head
         // of this file, so it can never be a quiet addition.
         match kind {
-            RecordKind::Intent | RecordKind::Outcome | RecordKind::Note | RecordKind::Verdict => {}
+            RecordKind::Intent
+            | RecordKind::Outcome
+            | RecordKind::Note
+            | RecordKind::Verdict
+            | RecordKind::Routing => {}
         }
         assert!(
             kinds.contains(&kind),
@@ -354,6 +389,7 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
     for detail in details {
         match detail {
             Detail::Verdict(_) => {}
+            Detail::Routing(_) => {}
         }
     }
 }

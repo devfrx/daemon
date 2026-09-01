@@ -39,7 +39,7 @@
 //! `every_..._survives_the_round_trip` probes exist rather than resting on the round trip.
 
 use kernel::record::{
-    EffectClass, Record, RecordError, RecordKind, RecordV1, Trust, VerdictDetail,
+    EffectClass, Record, RecordError, RecordKind, RecordV1, RoutingDetail, Trust, VerdictDetail,
 };
 
 #[test]
@@ -194,6 +194,20 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
                 spent_millis: 7,
             },
         ),
+        // ⚠️ THE FIFTH SPECIES, AND THE GUARD ABOVE IS WHAT PUT IT HERE: `RecordKind::Routing`
+        // made this closure `error[E0004]` on the day it arrived, which is the growth guard
+        // doing exactly what the paragraph above promises. Its detail is not optional either.
+        RecordKind::Routing => RecordV1::routing(
+            EffectClass::Idempotent,
+            Trust::Instruction,
+            Vec::new(),
+            "why this step exists",
+            RoutingDetail {
+                model: String::from("local-medium"),
+                evaluated: 3,
+                degraded: true,
+            },
+        ),
     };
     let encoded = |kind| Record::V1(of(kind)).encode();
 
@@ -206,11 +220,17 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
     // fourth is distinguishable in the bytes is held by `frozen_bytes.rs`, over EVERY pair
     // including it, and asserting it here too would be a second house for one property (§7.4.4).
     // Errata `E71`.
+    // ⚠️ AND `Routing` JOINED IT ON 2026-09-01 FOR THE SAME REASON `Verdict` did, which is why
+    // this half is a SECOND place and not one: the `match` above goes red on a new species, this
+    // ARRAY does not — extending the closure and forgetting the array leaves the name "every
+    // record kind" walking a subset in silence, exactly as `E71` had to correct by hand. ⛔ The
+    // pairwise block below deliberately stays at three, for the reason written above it.
     for kind in [
         RecordKind::Intent,
         RecordKind::Outcome,
         RecordKind::Note,
         RecordKind::Verdict,
+        RecordKind::Routing,
     ] {
         let Record::V1(read) = Record::decode(&encoded(kind)).expect("decode");
         assert_eq!(

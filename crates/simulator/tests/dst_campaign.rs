@@ -425,6 +425,18 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
                 "step {step} carries a verdict: this scenario has grown a sensor, and this \
                  oracle must decide what a verdict does to a doubt before it can stay independent"
             ),
+            // ⛔ UNREACHABLE IN THIS SCENARIO TOO, AND ASSERTED FOR THE SAME REASON: nothing here
+            // resolves a routing, so no routing record can enter this trace. Writing the empty
+            // arm `reconcile` writes would make this oracle agree with the implementation BY
+            // CONSTRUCTION on a case it has never seen. ⚠️ AND THIS FILE IS NOT IN THE TASK'S
+            // `Modify:` LIST, which is the reason the arm is worth a line of its own: an oracle
+            // that declares independence is not a literal to be extended in passing — errata
+            // `E50`, whose lesson was written for exactly this variant.
+            RecordKind::Routing => panic!(
+                "step {step} carries a routing record: this scenario has grown a gateway, and \
+                 this oracle must decide what a routing record does to a doubt before it can \
+                 stay independent"
+            ),
         }
     }
     open

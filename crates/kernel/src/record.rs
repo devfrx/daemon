@@ -96,6 +96,12 @@ pub enum RecordKind {
     /// the arm itself.
     #[n(3)]
     Verdict,
+    /// ⛔ THE RESOLVED ROUTING OF A STEP (ADR-0011), journalled WITH the step. Like `Note` and
+    /// `Verdict` it neither opens a doubt nor closes one: the doubt is about an EFFECT, and a
+    /// routing record says what was DECIDED, not what reached the world. The effect of the step
+    /// is still owed by the step's own outcome.
+    #[n(4)]
+    Routing,
 }
 
 /// How an effect may be reconciled after a crash (ADR-0007).
@@ -189,6 +195,9 @@ pub enum Detail {
     /// A sensor verdict upon the step's artefact (§6.4).
     #[n(0)]
     Verdict(#[n(0)] VerdictDetail),
+    /// The resolved routing of the step (§6.2, ADR-0011).
+    #[n(1)]
+    Routing(#[n(0)] RoutingDetail),
 }
 
 /// The structured half of a verdict (§6.4.1). ⛔ THE DETAIL TEXT IS NOT HERE: it is untrusted by
@@ -211,6 +220,40 @@ pub struct VerdictDetail {
     /// in the one function that builds this record.
     #[n(1)]
     pub spent_millis: u64,
+}
+
+/// The RESOLVED routing decision (ADR-0011). ⛔ THE MODEL NAME AND NOT AN INDEX INTO THE CHAIN,
+/// and the ADR says why in one line: the record "holds the RESOLVED decision, not a reference to
+/// the configuration — re-reading today's configuration does not say what happened yesterday".
+/// An index would be exactly that reference.
+///
+/// ⚠️ IT IS A `String` HERE AND A `&'static str` IN `gateway::Candidate`, and the asymmetry is
+/// the point rather than an oversight: a name on the WIRE has to be decodable, and P-9 measured
+/// that a `&'static str` is not producible from arriving bytes without leaking. The conversion
+/// happens in `gateway::dispatch`, in one place.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
+pub struct RoutingDetail {
+    #[n(0)]
+    pub model: String,
+    /// How many candidates the chain OFFERED when the decision was made.
+    ///
+    /// ⛔ OFFERED AND NOT WALKED, AND IT IS A DECISION RATHER THAN AN ALIGNMENT — errata `E59`,
+    /// which found the code saying one and the doc the other with no probe able to tell them
+    /// apart. Two reasons, and the first is the ADR's own words: ADR-0011 lists what a resolved
+    /// routing record holds, and "the EVALUATED fallback chain" and "the attempts MADE" are two
+    /// SEPARATE items of that list — so the chain is the population in play, and how far the
+    /// filter got is the other item, which this milestone does not carry. The second is that
+    /// "walked" is not even one number here: `gateway::resolve` may traverse the chain TWICE,
+    /// so a count that followed the traversal would depend on which road was taken.
+    /// ⚠️ NOT the chain as configured TODAY — what was offered THEN, which is the same
+    /// distinction the ADR draws for the model.
+    #[n(1)]
+    pub evaluated: u32,
+    /// ⛔ A QUALITY CONSTRAINT WAS RELAXED, AND IT WAS DECLARED (ADR-0012). A degradation that
+    /// did not reach the record would be exactly the silent one ADR-0019 exists to forbid.
+    #[n(2)]
+    pub degraded: bool,
 }
 
 /// Version 1 of the durable record.
@@ -399,6 +442,28 @@ impl RecordV1 {
             payload,
             reason,
             Some(Detail::Verdict(detail)),
+        )
+    }
+
+    /// The RESOLVED ROUTING of a step (§6.2, ADR-0011). ⛔ ITS DETAIL IS NOT OPTIONAL EITHER,
+    /// for the reason `verdict` gives above: a species that declares a structured half is not
+    /// constructible without it. ⚠️ A NEW SPECIES BRINGS ITS OWN CONSTRUCTOR, and that is what
+    /// keeps the `kind`/`Detail` pair at level 1 rather than by convention — a `kind: Routing`
+    /// beside some other `Detail` is not refused, it is unpronounceable.
+    pub fn routing(
+        effect: EffectClass,
+        trust: Trust,
+        payload: Vec<u8>,
+        reason: &'static str,
+        detail: RoutingDetail,
+    ) -> Self {
+        Self::of(
+            RecordKind::Routing,
+            effect,
+            trust,
+            payload,
+            reason,
+            Some(Detail::Routing(detail)),
         )
     }
 

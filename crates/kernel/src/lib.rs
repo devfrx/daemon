@@ -39,3 +39,5 @@ pub mod framing;
 pub mod wire;
 
 pub mod sensor;
+
+pub mod gateway;

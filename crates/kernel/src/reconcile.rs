@@ -135,6 +135,29 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // in `tests/reconciliation.rs`, written
                 // in BOTH directions (§7.1.1 rule 3) exactly as `Note`'s pair is.
                 RecordKind::Verdict => {}
+                // ⛔ A ROUTING RECORD NEITHER OPENS A DOUBT NOR CLOSES ONE, and it was measured
+                // for THIS variant rather than inherited: `enter` would leave every routed step
+                // in doubt for ever, and `leave` would close a doubt that no outcome resolved —
+                // which is the silent loss of a real doubt, the one failure ADR-0007 exists to
+                // prevent. Both were tried on 2026-09-01, one at a time, each reverted from a
+                // byte-exact copy, and each killed exactly the half of the pair below that
+                // exists to reach it.
+                //
+                // ⚠️ AND THE DIFFERENCE FROM `Verdict` IS WORTH ONE LINE, because it is what
+                // makes `leave` the sharper of the two defects here: a verdict is written ABOUT
+                // an artefact a step already produced, whereas a routing record is written
+                // BEFORE the effect it describes ever reaches a provider. Closing a doubt on it
+                // would declare finished exactly the step most likely to be in flight.
+                //
+                // ⚠️ SO THE `effect` FIELD OF A ROUTING RECORD IS NEVER READ EITHER, and
+                // `gateway::dispatch` writes `Idempotent` into it with its reason on that call.
+                //
+                // ⛔ AND WHAT HOLDS THIS ARM IS DECLARED RATHER THAN ASSUMED: see
+                // `a_routing_record_does_not_put_a_step_in_doubt` and
+                // `a_routing_record_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them`
+                // in `tests/reconciliation.rs`, written in BOTH directions (§7.1.1 rule 3)
+                // exactly as the `Note` and `Verdict` pairs are.
+                RecordKind::Routing => {}
             },
             // ⛔ A record this build cannot read closes nothing and resolves nothing: it is the
             // strongest form of "no declared class", and ADR-0007 says that means stop. Note it

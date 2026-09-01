@@ -2,7 +2,7 @@
 
 use kernel::ports::journal::{Journal, StepId};
 use kernel::reconcile::{InDoubt, Resolution, steps_in_doubt};
-use kernel::record::{EffectClass, Record, RecordV1, Trust, VerdictDetail};
+use kernel::record::{EffectClass, Record, RecordV1, RoutingDetail, Trust, VerdictDetail};
 use simulator::journal::MemoryJournal;
 
 /// ⛔ THE SPECIES IS A CONSTRUCTOR AND NOT A `kind` ARGUMENT, since 2026-09-01: `RecordV1`
@@ -54,6 +54,30 @@ fn a_verdict() -> Vec<u8> {
         VerdictDetail {
             passed: false,
             spent_millis: 7,
+        },
+    ))
+    .encode()
+}
+
+/// A routing record, the shape `gateway::dispatch` writes — class included.
+///
+/// ⛔ ITS OWN HELPER AND NOT `record(..)` WITH A THIRD ARGUMENT, for the reason `a_verdict()`
+/// gives: what makes a routing record one is that it carries a `detail`, and a helper able to
+/// produce one without it would let a probe pass while proving the wrong thing.
+///
+/// ⚠️ THE CLASS IS `Idempotent` AND IT IS NOT CHOSEN FOR THE BENCH: it is what `dispatch`
+/// writes, and a helper that carried a different one would model a record nobody writes. How
+/// the probes below stay non-vacuous all the same is on the second of them.
+fn a_routing() -> Vec<u8> {
+    Record::V1(RecordV1::routing(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        "the gateway resolved the routing for this step",
+        RoutingDetail {
+            model: String::from("local-medium"),
+            evaluated: 3,
+            degraded: true,
         },
     ))
     .encode()
@@ -200,6 +224,82 @@ fn a_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
             InDoubt {
                 step: other,
                 resolution: Resolution::AskTheWorld
+            }
+        ]
+    );
+}
+
+#[test]
+fn a_routing_record_does_not_put_a_step_in_doubt() {
+    // ⛔ ONE HALF OF THE EMPTY ARM (§7.1.1 rule 3), and it is the half a mutation reaches first:
+    // a `Routing` arm written as `enter(..)` would put a step in doubt that has already
+    // finished — and like the verdict's case this one happens on EVERY routed step, because
+    // `gateway::dispatch` writes one for each resolution.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    journal
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
+        .expect("intent");
+    journal.note(step, &a_routing()).expect("routing");
+    journal
+        .outcome(step, &record(RecordV1::outcome, EffectClass::Idempotent))
+        .expect("outcome");
+    // And a routing record AFTER the outcome, which is the case that separates "does not open"
+    // from "does not reopen".
+    journal
+        .note(step, &a_routing())
+        .expect("routing after outcome");
+
+    assert!(
+        steps_in_doubt(&journal).expect("reconcile").is_empty(),
+        "a routing record put a finished step back in doubt"
+    );
+}
+
+#[test]
+fn a_routing_record_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
+    // ⛔ THE OTHER HALF: written as an `Outcome`, the arm would take a step OUT of the doubt
+    // although nothing executed — and for routing that is the sharpest form of the silent loss
+    // ADR-0007 exists to prevent, because a routing record is written BEFORE the effect it
+    // describes ever reaches a provider. The comparison is THE WHOLE VECTOR and not the
+    // identities, for the reason the note's twin gives: both defects keep the identities right.
+    // ⛔ THE JUDGED STEP DECLARES `Verifiable` HERE AND `Idempotent` IN ITS TWO SIBLINGS ABOVE,
+    // AND THE FLIP IS WHAT MAKES THIS PROBE NON-VACUOUS. `a_note` and `a_verdict` differ from
+    // their step's class by carrying a different one THEMSELVES; a routing record carries the
+    // class `gateway::dispatch` really writes — `Idempotent` — so the difference has to come
+    // from the other side or the `enter` mutation would re-enter the step with the resolution it
+    // already had and nothing would move. Measured: with both `Idempotent`, `enter` kills only
+    // the sibling above and this one stays green.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    let other = StepId::new(2);
+    journal
+        .intent(step, &record(RecordV1::intent, EffectClass::Verifiable))
+        .expect("intent");
+    journal
+        .intent(other, &record(RecordV1::intent, EffectClass::Idempotent))
+        .expect("intent");
+
+    let before = steps_in_doubt(&journal).expect("reconcile");
+    journal.note(step, &a_routing()).expect("routing");
+    let after = steps_in_doubt(&journal).expect("reconcile");
+
+    assert_eq!(
+        after, before,
+        "the routing record changed the doubt: it was read as an intent or as an outcome"
+    );
+    // ⚠️ And `before` is pinned to its literal value, because two equal vectors prove nothing if
+    // both are empty — a reconciliation that reported nothing at all would pass the line above.
+    assert_eq!(
+        before,
+        vec![
+            InDoubt {
+                step,
+                resolution: Resolution::AskTheWorld
+            },
+            InDoubt {
+                step: other,
+                resolution: Resolution::RunAgain
             }
         ]
     );

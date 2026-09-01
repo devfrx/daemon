@@ -6,7 +6,11 @@
 # in `0a` fra l'albero di lavoro e l'indice, e il file tornerebbe DIVERSO da quello che è stato
 # misurato — con l'oracolo rosso e nessun colpevole.
 #
-# ⚠️ OGGI NESSUNO DEI TRE FILE CONTIENE UN `0a` O UN `0d`, e per giunta contengono `00`, che
+# ⚠️ RICHIAMO DEL 2026-09-01: questa riga diceva «NESSUNO DEI **TRE** FILE» e i file erano
+# quattro; il quinto è arrivato col compito 6 del Traguardo 6. ⛔ Il numerale è TOLTO e non
+# riallineato — gotcha #31, e il rimedio è una sottrazione: quanti sono lo dice
+# `ls crates/kernel/tests/frozen/*.cbor`, che non marcisce.
+# ⚠️ OGGI NESSUNO DEI FILE CONGELATI CONTIENE UN `0a` O UN `0d`, e per giunta contengono `00`, che
 # basta a git per riconoscerli binari da sé. ⛔ MA È UN ACCIDENTE DEL CONTENUTO E NON UNA
 # GARANZIA: un record congelato di domani può portare quei byte, e allora la protezione
 # servirebbe e non ci sarebbe. Dichiarata adesso, mentre costa una riga.

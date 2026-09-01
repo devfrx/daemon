@@ -35,14 +35,50 @@ use alloc::vec::Vec;
 ///
 /// ⚠️ IT IS A KERNEL TYPE AND NOT A WIRE TYPE, which is what leaves it free to grow: on the wire
 /// the operation travels as the `bool` of `record::PermissionDetail`, whose doc carries the whole
-/// argument. An enum here costs nothing the day it grows a third variant; an enum THERE would
-/// cost an index that never retires.
+/// argument. An enum here costs ONE `error[E0004]`, at `is_write`, the day it grows a third
+/// variant, where an enum THERE would cost an index that never retires.
+///
+/// ⚠️ RICHIAMO DEL 2026-09-01: this said "costs NOTHING the day it grows a third variant", and
+/// the measure said otherwise — the third variant reached the durable record as a READ and widened
+/// a permission, with the workspace green digit for digit. It costs nothing only BECAUSE
+/// `is_write` now makes the day a compile error; the sentence was true of the wish and false of
+/// the code.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Operation {
     /// Reading the resource. Encoded as `write: false`.
     Read,
     /// Changing the resource. Encoded as `write: true`.
     Write,
+}
+
+impl Operation {
+    /// How the operation reaches the wire: `false` for `Read`, `true` for `Write`.
+    ///
+    /// ⛔ AN EXHAUSTIVE `match` AND NOT `matches!`, AND THAT IS THE ONLY REASON THIS FUNCTION
+    /// EXISTS. `matches!(op, Operation::Write)` folds EVERY other variant into `false`, so a third
+    /// operation would reach the DURABLE record as a read. Measured on 2026-09-01, with `Execute`
+    /// added to the enum: `cargo check --locked --workspace --all-targets` stayed at ZERO errors
+    /// and the whole suite stayed green digit for digit (43 targets, 324 passed), while a
+    /// throwaway probe written from OUTSIDE the crate showed `grant` writing `write: false` for an
+    /// `Execute` and `is_granted` then answering `true` for a read nobody ever granted. The
+    /// aliasing runs both ways. A `match` makes that day `error[E0004]` instead.
+    ///
+    /// ⚠️ AND IT IS ONE FUNCTION RATHER THAN TWO `match`es, because the two call sites read two
+    /// DIFFERENT values and could drift apart, while one exhaustive `match` is already enough to
+    /// make the growth a compile error — the lesson `E109` wrote for `verdict.outcome`.
+    ///
+    /// ⚖️ THIS IS `E109`'s CURE ON THE SITES ITS CENSUS DID NOT REACH. That census was scoped to
+    /// the two types it was fixing (`CostClass`, `VerdictOutcome`), so it closed the OCCURRENCE and
+    /// not the CLASS — an enum the kernel decides on, held by `==`/`matches!` and by no `match`.
+    /// Re-censused on 2026-09-01: the class had exactly two members left, this one and
+    /// `gateway::ConstraintClass`. `Admission` is held by ten arms and `Trust` by `minicbor`, which
+    /// refuses a variant without an index; both were measured rather than assumed.
+    pub fn is_write(self) -> bool {
+        match self {
+            Operation::Read => false,
+            Operation::Write => true,
+        }
+    }
 }
 
 /// The triple itself.
@@ -55,8 +91,17 @@ pub enum Operation {
 /// ⚠️ AND THE FIELDS STAY `pub`, WHICH IS NOT THE CHOICE `record::PermissionDetail` MAKES — the
 /// asymmetry is deliberate and is the whole distinction `E95` draws. That type is ON THE WIRE, so
 /// it carries `String` fields a runtime value could reach and needs a constructor to shut the
-/// road. This one cannot be handed runtime text at all: `&'static str` IS the guard, and a
-/// constructor around two `'static` names would be ceremony that shuts nothing.
+/// road. This one cannot be handed runtime text WITHOUT LEAKING, and a constructor around two
+/// `'static` names would be ceremony that shuts nothing — it is aimed at exactly the road the
+/// leak already goes around.
+///
+/// ⚠️ RICHIAMO DEL 2026-09-01: this said "cannot be handed runtime text AT ALL", and that is
+/// false to the measure — `String::leak` yields a `&'static str` from arriving bytes, and
+/// `boundary.rs` declares that road OPEN rather than papering over it. The qualified form is the
+/// one this repository already owns, three times over in `record.rs`: "not producible from
+/// arriving bytes WITHOUT LEAKING". ⛔ The CONCLUSION was never in doubt and is unchanged; it was
+/// the PREMISE that overclaimed, and an overclaimed premise under a true conclusion is the shape
+/// a reader trusts and should not.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Permission {
     pub tool: &'static str,
@@ -136,7 +181,7 @@ pub fn grant<J: Journal>(
         PermissionDetail::new(
             permission.tool,
             permission.resource,
-            matches!(permission.operation, Operation::Write),
+            permission.operation.is_write(),
         ),
     ))
     .encode();
@@ -162,7 +207,7 @@ pub fn grant<J: Journal>(
 /// the same checkpoint that operation names, and it is closed by the first consumer that measures a
 /// large journal — not invented here.
 pub fn is_granted<J: Journal>(journal: &J, wanted: &Permission) -> Result<bool, PermissionError> {
-    let wanted_write = matches!(wanted.operation, Operation::Write);
+    let wanted_write = wanted.operation.is_write();
 
     for (_, bytes) in journal.replay().map_err(PermissionError::Journal)? {
         // ⛔ A RECORD THIS BUILD CANNOT READ STOPS THE ANSWER, and it does NOT skip to the next

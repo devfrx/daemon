@@ -794,7 +794,14 @@ gotcha **#96**, **#97** e **#98** — l'ultimo è che un **record congelato** è
 inesercitato in tutto il workspace.
 ⏭️ **IL PROSSIMO PASSO È IL COMPITO 7** — `E94` è **decisa e chiusa** il 2026-09-01, e da essa
 nascono `E95`, che detta al compito 7 di nascere sigillato, ed `E96`, che è del proprietario.
-⚠️ **Pre-controllo cominciato e NON finito — casa unica `E102`. Chi dispaccia lo FINISCE.**
+✅ **Il pre-controllo È FINITO il 2026-09-01 — casa unica `E102` più `E103`.** Le quattro domande
+hanno dato un **terzo bloccante** che `E102` non aveva: `grant` scrive una **nota** su un passo che
+nessuno ha aperto, e la porta la rifiuta — **tutte e cinque** le sonde dettate falliscono. Seconda
+occorrenza esatta della voce bloccante del compito 5, e ciò che la smentiva stava **nel banco di quel
+compito** (gotcha **#58**). ⚖️ **DUE scelte aspettano il proprietario e il compito NON si dispaccia
+prima:** la variante di `JournalError`, che tocca il **contratto di una porta** condivisa da due
+implementazioni, e la **forma sigillata** che `E95` impone a `PermissionDetail`, dove il precedente si
+biforca fra `RoutingDetail` e `VerdictDetail`.
 ⛔ **RICHIAMO DEL 2026-09-01: il QUARTO e il QUINTO giro sono fatti — `E73`–`E78` e `E79`–`E82`,
 tutti riverificati dal coordinatore prima di rimediare e tutti veri.** ✅ **E il quinto ha
 introdotto la domanda che ha pagato:** invece di *«trova difetti»*, *«ciascun rimedio dell'ondata

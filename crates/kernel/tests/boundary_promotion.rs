@@ -173,6 +173,16 @@ fn the_promoted_content_is_the_payload_and_it_is_labelled_untrusted() {
     );
     // And the reason travels beside it rather than instead of it, at its own index.
     assert_eq!(body.reason(), "quoted from an email");
+    // ⛔ AND THE EFFECT CLASS, WHICH NOTHING HELD UNTIL 2026-09-01 -- errata `E106`. Turned to
+    // `EffectClass::Idempotent`, the whole workspace stayed green: 43 targets, 323 passed, 0 failed,
+    // identical to the baseline. It is not one field among six: `EffectClass` is what ADR-0007
+    // reconciles a DOUBT with -- `Unrepeatable` means "suspend and ask the user", `Idempotent`
+    // means "just run it again" -- so a silent change here makes a true doubt vanish into an
+    // automatic retry, on the untrusted-data boundary of all places. ⚠️ THE DOC BESIDE `promote`
+    // AFFIRMS this value is true of the record, and an affirmation nobody holds is exactly what
+    // gotcha #102 is about -- the same class `gateway::dispatch` and `permission::grant` carried,
+    // found here on THIRD, on code that predates both.
+    assert_eq!(body.effect(), EffectClass::Unrepeatable);
     // ⚠️ AND `detail` IS `None`, BECAUSE A NOTE IS NOT A VERDICT. The structured box belongs
     // to the species that declares one, and a `Note` carrying a `Detail::Verdict` would enter
     // the durable format with a pair nothing at level 1 forbids. Turned to `Some(..)`, the

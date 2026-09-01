@@ -1547,184 +1547,28 @@ collisione `record`/`boundary` del Traguardo 3 riscrisse **due oracoli**; la rig
 **`Parameters`** e non un `Mib` nudo, che è la forma di `Executor::new` e la riga di catalogo
 `V29 · §2.8 · ADR-0034`. Le altre sette stanno in testa al piano.
 
-1. ~~**§8**~~ — ✅ **chiusa il 2026-08-08**, toccata una volta sola come previsto.
-2. ~~**Il piano**~~ — ✅ **scritto**: [Traguardo 1](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md).
-3. ~~**Il codice del Traguardo 1**~~ — ✅ **eseguito** subagent-driven, otto compiti più quattro di riallineamento alla §1.0. `GATE GREEN`.
-4. ~~**Il piano del Traguardo 2**~~ — ✅ **scritto il 2026-08-09**: [Traguardo 2](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md), quattordici compiti in due parti.
-5. ~~**Il codice del Traguardo 2**~~ — ✅ **eseguito il 2026-08-10**, `GATE GREEN`. **Tutti e quattordici i compiti** subagent-driven, fra il 2026-08-09 e il 2026-08-10, con `GATE GREEN` a ogni compito; alla chiusura `cargo test --workspace` dà **72 target verdi e zero fallimenti**, e dentro il banco `compile_fail` esegue **quattordici** casi via `trybuild`. ✅ **Col Task 12 le sei famiglie di porte sono complete**: `reactor` · `journal` · `filesystem` · `network` · `process` · `ipc`, e §3.1 le dichiara esaustive. ⛔ **E il Task 13 ha scoperto di essere già eseguito**: dettava di *aggiungere* al registro [`porta-di-qualita.md`](porta-di-qualita.md) righe che i Task 1–12 vi avevano già scritto a ogni passo, e a mancare non era l'aggiunta ma il **riconteggio** — gotcha **#49**. ✅ **E la voce che restava aperta è chiusa il 2026-08-09:** il caso `no_conversion_from_untrusted_to_instruction` del Task 9 — misurato **portante** — ha ora la propria riga nel **catalogo §7.4.1 blocco C**, la **regola B** della coppia `Untrusted`/`Instruction` accanto alla regola A (`Q9 · I6 · V20`), con richiamo datato. ⛔ **Non era una rifinitura, ed è il punto da ricordare:** la regola A è **cieca** proprio a quella via — con `impl From<Untrusted> for Instruction` presente il caso resta `ok` invece di dare il `mismatch` che il gotcha #42 prevede, perché lì lo scarto è fra **riferimenti** — quindi senza la riga B la porta resta verde **col confine già caduto**. Il blocco C passa da diciassette a **diciotto** righe, e §7.4.7, §8.3 (`Q9` e `Q15`) e [`porta-di-qualita.md`](porta-di-qualita.md) sono riallineate nello stesso passaggio.
-6. ~~**Il piano del Traguardo 3**~~ — ✅ **scritto il 2026-08-10**: [Traguardo 3](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md), **dodici compiti in due parti**. ⛔ **Sette decisioni prese dal piano, e la prima governa tutte le altre:** i **byte congelati sono l'ultimo compito**, non il primo. Il nome del traguardo li mette in vetrina e la tentazione è produrli subito, ma non si rigenerano mai — congelarli prima che un consumatore vero e **due** implementazioni abbiano esercitato il formato significherebbe congelare la forma sbagliata, che è il difetto del Task 11 del Traguardo 2 nella sua forma più cara. ⚠️ **Due voci aperte del codice trovano risposta**: una promozione **non è un passo proprio** (ADR-0007 fissa la granularità), e l'**etichetta di fiducia entra nel record** perché è l'unico campo che, se manca, porta informazione che **si perde per sempre**. ⛔ **E la porta guadagna `replay()`**, perché `read_back` chiede un passo **per nome** e dopo un crash il kernel non sa i nomi: non era una decisione presa, era una **lacuna** — ADR-0007 dice *«per ogni passo in dubbio»* senza dire come si scoprono.
-7. ~~**Il codice del Traguardo 3**~~ — ✅ **eseguito il 2026-08-10**, subagent-driven, un compito per volta con revisione fra uno e l'altro. **Dodici compiti su dodici**, `GATE GREEN` a tutti. ⚠️ **Ricontati una QUARTA volta il 2026-08-10, chiudendo il traguardo:** questa riga diceva *«undici»*, e la cifra è invecchiata **quattro volte su quattro** — è la riga più stantia del file per costruzione, e il rimedio scritto sotto (*«si riconta prima di appendere il capoverso»*) non ha retto nemmeno una volta. ⚠️ **Ricontati una terza volta il 2026-08-10, col Task 10**, che è la terza volta di seguito che questa cifra viene appesa senza essere toccata — gotcha **#31** sul numeratore, e a questo punto è la riga più stantia del file per costruzione: si riconta **prima** di appendere il capoverso, non dopo. ⚠️ **Ricontati una seconda volta il 2026-08-10, col Task 9:** questa riga diceva *«sette compiti»* mentre il capoverso del **Task 8** le era già stato appeso sotto senza toccare la cifra — la **stessa** forma del difetto che la nota qui accanto descrive, ripetuta dallo stesso file due paragrafi dopo averla dichiarata. Una cifra dentro una frase che resta vera è il gotcha **#31**. ⚠️ **Ricontati il 2026-08-10:** questa riga diceva *«tre compiti»* e vi era stato **appeso** il capoverso sui Task 4 e 5 senza toccare la cifra — la §6 dello stesso file era già stata portata a cinque, quindi il documento si contraddiceva **dentro sé stesso**, che è la forma peggiore. I primi tre: il **record durevole** — enum di versione `Record::V1`, quattro campi con indice esplicito, `Debug` scritto a mano che non stampa il payload — la **riga di catalogo dell'etichetta di fiducia** (`Q9 · I6 · V20 · §4.9`) col caso `record_without_trust_label.rs`, e il **doppio in memoria del giornale** con la variante `JournalError::OutOfOrder`, che tiene V6 sulla **porta** invece che sulla diligenza del chiamante. ⛔ **Un'errata in testa al piano, sette voci dal solo Task 1**, e i costi misurati stanno in [`riferimenti.md`](riferimenti.md): la collisione `record`/`boundary` che ha riscritto **due oracoli pre-esistenti** è permanente. ⛔ **E il Task 3 ha trovato la lacuna di specie 2 più netta del progetto**: il criterio di chiusura che il piano dettava — `4 passed` — è soddisfatto da un giornale che **non registra nessun esito**.
-   ✅ **Task 4 e 5 eseguiti il 2026-08-10, e come un compito solo**, perché separati non funzionano: il Task 4 scrive una suite che chiama `replay()`, che la porta guadagna solo al Task 5, e il suo commit lascerebbe la **porta rossa** contro il vincolo globale 8; per giunta il `git add` del Task 5 non nominava il file del Task 4, che così non sarebbe **mai** entrato nel repository. Ne sono usciti **sette bugiardi e non tre**, uno per promessa — sei eseguendo, il settimo dalla decisione presa in revisione: la suite muore alla **prima** promessa violata, quindi con tre bugiardi **due promesse non si vedevano mai fallire** — gotcha **#14**. ⛔ **E due promesse dettate erano vacue contro il proprio bugiardo, misurate e non rilette:** quella sull'ordine di `replay` confrontava le **sole identità** dei passi e la sequenza `1, 2, 1` **è un palindromo**, così `ShuffledJournal` passava la suite intera; e la promessa 1 rileggeva con un `expect` che ingoiava proprio la via **A6**, l'unica cosa per cui la suite esiste. ⚠️ **Due promesse in più che nessun compito chiedeva:** dopo intento **ed** esito, `read_back` deve rendere ancora l'**intento** — senza, al Task 8 una tabella `redb` chiavata sul passo risponde l'esito e **nulla diventa rosso** — e, **decisa dal coordinatore in revisione**, un **secondo `intent`** sullo stesso passo è **rifiutato**: la promessa 2 costringe già `redb` a chiavare più fine del passo, ma è un accordo **per accidente del disegno della chiave** e non per contratto. ✅ **Task 6 eseguito il 2026-08-10**, la **riconciliazione** — e in due commit, perché un passo preliminare toglie a `Record::encode` un `Result` che non poteva essere `Err` (**E22**, decisione del coordinatore). ⛔ **Tre difetti del compito dettato, trovati col pre-controllo e tutti misurati prima di decidere:** la §1.0 violata una **terza** volta nei commenti dettati (**E23**) · lo stesso passo che compariva **due volte** nell'insieme, con **due** produttori e non uno (**E24**) · e le **due verità indipendenti** su «intento o esito», che è la domanda riportata al proprietario (**E25**). ⚠️ **Quattro sonde che nessun compito chiedeva:** il giornale **vuoto**, l'**ordine** — che l'unica sonda dettata teneva per accidente, seconda forma del palindromo di E12 — e le due dell'insieme. ✅ **Task 7 eseguito il 2026-08-10** — `Untrusted::promote` è il **primo codice del kernel che scrive un record vero**, e il compito dettato aveva **due conflitti di formato**, misurati prima di decidere. ⛔ **Primo: la promozione non è un secondo intento, è una TERZA COSA.** Il `promote` dettato scriveva con `intent()` sul passo del chiamante, che da **E19** lo rifiuta — e il test dettato non lo vedeva perché poggiava su `RecordingJournal`, che è **riga per riga il bugiardo J7** della conformità. ⛔ **E anche a guardia rilassata il disegno resta rotto, per una ragione indipendente che nessuno aveva visto:** un secondo record `Intent` sullo stesso passo fa **sostituire** alla riconciliazione la risoluzione del chiamante — misurato, `Idempotent` torna `SuspendAndAsk`, cioè la promozione **declassa in silenzio un passo che non le appartiene**; e la sonda dettata confrontava le **sole identità**, quindi era cieca proprio a quello (terza occorrenza del palindromo di E12). **Decisione del coordinatore, confermata dal proprietario:** la porta guadagna **`note()`** e il record **`RecordKind::Note`**, insieme — una nota deve pur portare un `kind`, e i due esistenti sono i due difetti; la riconciliazione le dà un **arm vuoto**. Scartate e misurate: rilassare la guardia (non ripara nulla), scrivere con `outcome()` (`steps_in_doubt` risponde `[]`, un dubbio vero sparisce in silenzio) e la variante `Note` trasportata da `outcome()` — la più economica, scartata perché istanzia di proposito la divergenza di **E25**. ⛔ **Secondo: l'etichetta di fiducia era attaccata alla stringa sbagliata.** Il record dettato metteva nel `payload` la **ragione scritta dal chiamante** e la marcava `Trust::Untrusted`: nessun byte esterno entrava, e l'etichetta non era decorativa ma **falsa**, perché il doc di `Trust` dice che riguarda **il payload**. Il record guadagna quindi **`reason` all'indice 4**, e l'indice 3 porta il **contenuto non fidato** — assegnazione **forzata**, perché il `Debug` scritto a mano nasconde **solo l'indice 3**. ✅ **Così la via A4 si chiude, ma a LIVELLO 2 e non "al formato":** la via come `boundary.rs` la scrive passa da **byte grezzi**, non da un `Record`, e nulla impone che ogni scrittura sia un record. Le vie chiuse sono **tre** — A3, A4, A6 — e le **quattro** che restano sono tutte dichiarate **non chiudibili**: ciò che resta non è un arretrato, è il **pavimento**. ⛔ **`RecordingJournal` è stato tolto e non riparato**, e l'audit delle **ventuno** implementazioni di porta fuori da `src/` ne ha trovata una seconda che rompe un contratto — `RefusingReactor` — **che resta**, perché la regola giusta è *una finta può rompere un contratto quando il test parla della rottura*. ⚠️ **Costo contato:** dieci `E0046` (undici dopo il Task 8), una promessa nuova in conformità col proprio bugiardo («valida e poi butta»), e **due nomi di test corretti** invece che lasciati stantii. `cargo test --workspace`: **26 target, 127 test**.
-   ✅ **Task 8 eseguito il 2026-08-10** — `redb` e il **backend scritto da noi**, in `platform`. ⛔ **Il piano era stantio sul contratto e lo dichiarava: non detta il codice di `redb`**, perché quando fu scritto l'API 4.1.0 non era verificabile e dettarla a memoria avrebbe prodotto codice *plausibile e falso*. Letta nella cache del registro **prima** di scrivere. ⛔ **La chiave è un PROGRESSIVO DELLA SCRITTURA e non il passo**, ed è tutto il disegno: `redb` è un B-tree **ordinato per chiave**, quindi chiavare sul passo darebbe a `replay` l'ordine **delle identità** invece di quello di scrittura, e un passo terrebbe **un solo record** — l'esito sovrascriverebbe l'intento e cadrebbe anche la promessa 2. ⚠️ **Il prezzo della chiave progressiva, che il piano non nomina: le guardie diventano SCANSIONI** — misurato **~56 ns per record** in release, lineare, con il pavimento della scrittura all'`fsync` (**~1,45 ms**): la scansione lo supera solo **oltre ~26 000 record**, quindi **non è ottimizzata** e il rimedio del giorno in cui morderà è lo stesso **checkpoint** che `replay` dichiara già di volere. ⛔ **Due decisioni che cambiano firme pubbliche:** `StepId::get()` **torna** — senza, la porta **non è implementabile fuori da `kernel`**, e il doc di `CheckpointId` aveva già fissato quel giorno *«con quel chiamante»* — e **`open` NON restituisce `JournalError`** ma un errore proprio, perché nessuna delle tre varianti significa *«non ho potuto aprire il file»* e `open` non è un'operazione della porta. ⛔ **La prova che il confine è reale, che il piano non chiedeva:** un confine dichiarato in anticipo non ha chiamanti per costruzione (gotcha **#46**), quindi una **seconda implementazione di `StorageBackend` scritta da fuori** gira nel banco — ed è servito aggiungere `FileJournal::with_backend`, che il piano non nomina: con la sola `open(path)` il confine sarebbe stato **inesistente in pratica**, il difetto del Task 11 del Traguardo 2. ⛔ **Due gotcha nuovi, entrambi dalle mutazioni o dalla misura:** **#51** — una garanzia sulla **morte del processo** non è osservabile da dentro il processo: `Durability::None` lascia **sei test su sei verdi**, ed è dichiarato accanto al codice invece che scoperto al Traguardo 4 — e **#52** — un difetto di parallelismo **mascherato dal sistema operativo**: la cancellazione della cartella condivisa avviene davvero (**tre volte su sei**) ma Windows rifiuta di cancellare un file aperto, quindi il rosso esce **su Linux**. ⚠️ **E una mutazione ha trovato un difetto vero:** il rimedio alla vacuità era esso stesso vacuo — terza occorrenza del **#45**. `cargo test --workspace --no-fail-fast`: **27 target, 133 test**.
-   ✅ **Task 9 eseguito il 2026-08-10** — la conformità gira contro **entrambe** le implementazioni **a ogni commit**, `crates/platform/tests/journal_contract_real.rs`, che raggiunge le asserzioni per `include!` come `reactor_contract_real.rs` fa per `reactor`. ✅ **Ricontate leggendo il sorgente e non fidandosi della misura anticipata del Task 8: le promesse sono OTTO e passano tutte e otto**; il binario di `platform` porta **undici** test, i dieci inclusi più quello vero, e il costo — i bugiardi che girano una seconda volta — è **scritto**, non nascosto. ⚠️ **Sono cifre del Task 9, superate dal Task 11 e ricontate eseguendo il 2026-08-10:** con la promessa **7b** le promesse sono **nove** e i bugiardi **nove**, `kernel --test journal_contract` porta **undici** test e il binario di `platform` **dodici**. ⛔ **Tre difetti nel codice dettato, tutti nella fabbrica, e il compito valeva quelli:** il piano cancellava un **percorso fisso in una cartella condivisa** — su Windows la cancellazione **fallisce in silenzio** a file aperto, quindi la fabbrica riaprirebbe **i dati vecchi** (gotcha **#52**, nato il giorno prima); la fabbrica è chiamata **nove volte** e `FileJournal` tiene un **lucchetto esclusivo**; e `assert_journal_contract` prende **`Fn`** e non `FnMut`, quindi numerare le chiamate richiede un `AtomicU64`. Rimedio: **un file nuovo a ogni chiamata** — un nome mai esistito non può essere sporco — in una cartella **per call site** dal `line!()`, con **prefisso diverso** da quello di `file_journal.rs`, perché un numero di riga è unico dentro **un** file solo e i due binari girano insieme. Provato **otto** volte di seguito sull'intero workspace: **28 target, 144 test**, otto su otto verdi. ⛔ **E lo Step 3 è stato fatto in TRE direzioni invece di una**, perché una sola proverebbe una promessa su otto: `read_back` rotta muore sulla **promessa 1**, la guardia del secondo intento tolta sulla **promessa 6** — dopo aver superato cinque promesse sui propri meriti — `replay` rovesciato sulla **promessa 4**, ciascuna **col proprio messaggio**; e la **mutazione di controllo** non muove nulla. ✅ **I due lati sono separati, misurato:** con `FileJournal` rotta, `kernel --test journal_contract` resta **verde 10 su 10** e dentro `platform` restano verdi i dieci test inclusi. ✅ **Con esso la via A6 di `boundary.rs` passa da «chiusa la strada» a «chiuso l'accordo»**: era dichiarata chiusa *«fino a che la seconda implementazione non c'è»*, e ora c'è ed è tenuta.
-   ✅ **Task 10 eseguito il 2026-08-10 — i BYTE CONGELATI, l'unico artefatto del progetto che non si corregge.** ⛔ **Il compito dettato era stantio sul record che doveva congelare, e i difetti erano sei più uno.** Il costruttore dettato ha **quattro** campi dove `RecordV1` ne ha cinque; `.encode().expect("encode")` non compila dal Task 6; ⛔ **entrambe le mutazioni dettate sono INDICI DUPLICATI e non compilano** — `error: duplicate index numbers` — quindi quella che «deve scattare» non si sarebbe **mai vista scattare** sull'oracolo che non si rigenera, e quella che «deve restare verde» sarebbe stata un errore di compilazione che il piano dichiara equivalente ad **ADR-0036 smentito**. ⛔ **E il settimo, che nessuno aveva visto: la mappa dettata sbagliava l'OFFSET, non solo l'arità** — il byte 2 è `81`, l'array a **un elemento** del corpo della variante, e l'array dei campi sta al byte **3**; l'inquadratura è `82 00 81 85` e un record misura **21** byte. Misurato sull'uscita vera invece che dedotto. ⛔ **Il difetto grosso era la COPERTURA:** un record solo fissa **tre** indici di variante su **otto** — `RecordKind` 3, `EffectClass` 3, `Trust` 2, ricontate sul sorgente — e il Task 1 aveva già misurato che ogni altra sonda sopravvive a una rinumerazione simmetrica, quindi cinque indici su otto sarebbero rimasti tenuti da **nulla**. ✅ **Congelati TRE record**, il minimo che li copra tutti, con `kind` ed `effect` a **quadrato latino** perché nessuna coppia di campi si possa scambiare senza muovere almeno un file; **le otto varianti rinumerate una per una, otto rossi su otto**. ✅ **L'additività misurata in DUE direzioni, e la seconda è il gotcha nuovo #54:** un campo facoltativo all'indice libero 5 lascia i byte **identici** con `None` — `minicbor` **tronca** un `None` in coda invece di scrivere `null` — e li porta a 22 con `Some(9)`; senza la seconda misura, «i byte non si sono mossi» sarebbe stato compatibile con un campo che sul filo non arriva mai, e ADR-0036 sarebbe stato «confermato» da una misura vuota. ✅ **La mappa è RILETTA dal banco** — offset e byte devono ricostruire il `.cbor` — così un `<fill in>` non può sopravvivere al commit (gotcha #43), e la colonna di prosa è dichiarata **non verificata** dentro la mappa stessa. ⛔ **Nessun percorso di rigenerazione:** i byte sono stati **scritti a mano** dall'uscita di una sonda usa-e-getta, cancellata nello stesso commit. ⚠️ **E un `.gitattributes` di UNA riga** — mai un `* text=auto`, che normalizzerebbe sorgenti che nessuno ha toccato — verificato con `git check-attr` e col blob dell'indice invece che dato per scontato. `cargo test --workspace --no-fail-fast`: **29 target, 150 test**.
-   ✅ **Task 11 eseguito il 2026-08-10** — `prune` rifiuta un passo **in dubbio** e accetta uno riconciliato, su **entrambe** le implementazioni; chiude la voce aperta di **E11**, che aspettava `prune` da sei compiti. ⛔ **Lo Step 1 attendeva un ROSSO e la partenza era VERDE**: `prune` rispondeva `Missing` a tutto, quindi `is_err()` passava e la promessa 7 era soddisfatta **per caso** — a renderla non-vacua è la sola contro-sonda nuova, la **7b**, col bugiardo `AlwaysInDoubtJournal` che rifiuta tutto **con la parola giusta**. ⛔ **Il `prune` dettato viola una regola non negoziabile di ADR-0018 e la misura lo conferma su entrambe:** un payload potato e uno mai registrato sono indistinguibili in **tre** modi; la via che sembrava non costare l'impronta funziona ma fa rispondere `SuspendAndAsk` alla riconciliazione su ogni passo potato, quindi non è economica — dichiarata in due **voci aperte** invece che chiusa a metà. ⛔ **`JournalError` guadagna `StepInDoubt`, quarta variante su un tipo dichiarato «deliberatamente povero»**, e non allarga `OutOfOrder` perché quello è definito da **V6** mentre questa è ADR-0018 — invarianti diversi — e perché il chiamante deve distinguere un difetto da una spazzata ordinaria. ⛔ **`FileJournal` NON POTEVA rispondere alla domanda** e la sua tabella `redb` guadagna il **byte dell'operazione**: contare i record è sbagliato perché una **nota** non è un esito, e decodificare i byte è vietato da ADR-0036. ⛔ **Quattro mutazioni su quindici sopravvissute al primo giro, e tre erano difetti veri:** `prune` che risponde `Ok` e **non pota niente**, `prune` che pota **l'intero giornale**, e una **nota archiviata come esito** che rendeva potabile un passo in dubbio. Chiuse tutte e tre **senza decidere nulla sulla ritenzione**. `cargo test --workspace --no-fail-fast` → **29 target, 152 test**.
-   ✅ **Task 12 eseguito il 2026-08-10 — ed era un AUDIT, non una scrittura: il gotcha #49 per la seconda volta, previsto dal compito stesso.** ⛔ **Le quattro righe che lo Step 2 dettava di spostare fra le coperte erano già spostate tutte e quattro**, dai compiti che le avevano prodotte; a mancare non era l'aggiunta ma il **riconteggio**, come al Traguardo 2. ⛔ **E la classe che non si vede leggendo ne ha data una vera:** partendo dall'elenco dei bugiardi invece che dalla colonna, **`J13` non era mai entrato** nella colonna «deve scattare» della riga di catalogo dei test di contratto — esisteva nella tabella delle sonde dal Task 11 e da lì risultava inesistente. ⛔ **Cinque conteggi di test erano stantii nel registro** — `boundary_promotion.rs` otto contro **quindici**, `record_shape.rs` dieci contro **dodici**, `reconciliation.rs` nove contro **undici**, `journal_contract_real.rs` undici contro **dodici**, i casi `compile_fail` quattordici contro **diciassette** — e la campagna della conformità si intestava *«otto promesse, otto bugiardi»* dove sono **nove e nove**: la cifra della passata **non è stata alzata per simmetria**, perché sarebbe stata un'ipotesi, e la **7b** è dichiarata misurata altrove, da `M14b`. ⛔ **E la Definizione di «fatto» era stantia in tre condizioni su dodici** — la 4 dice *«tre bugiardi»*, la 6 *«A4 chiusa al formato»* che **E31** aveva già respinto, la 9 detta due direzioni che **E51** ha misurato **incompilabili** — corrette **nell'errata** e non nel testo, che è il registro di ciò che fu deciso. ✅ **Il confronto con ADR-0036 sulla dimensione del record è stato misurato al posto giusto:** i totali non sono confrontabili, perché la forma del record che l'ADR prezzava **non è scritta da nessuna parte**; ciò che è confrontabile è **quanto costa la busta di versione**, e **converge esattamente** — `+3` byte, `82 00 81`, sia su un record pieno (18 → **21**) sia su uno vuoto (6 → **9**), dove l'ADR misurò `27 → 30`. ⚠️ **Diverge la percentuale, e si registra invece di arrotondarla:** `+11 %` là, **`+17 %`** qui, perché la base è più corta. `bash scripts/gate.sh` → `GATE GREEN`; `cargo test --workspace --no-fail-fast` → **29 target, 152 test**.
-   ✅ **Audit di chiusura della sessione, il 2026-08-10 — dopo il Task 12 e distinto da esso.** Il
-   Task 12 aveva chiuso il **traguardo**; questa passata ha riletto **tutti e nove** i documenti di
-   stato contro il repository, partendo dai numeri invece che dalle frasi. ⛔ **La classe di difetto
-   della sessione — la stessa cifra in più posti con valori diversi — ne ha dati altri sei**, e il
-   più caro attraversava **tre** file: l'errata del Traguardo 3 diceva *«settanta voci in otto
-   passate»* in `HANDOFF.md` (due volte) e in [`roadmap.md`](roadmap.md), col valore giusto —
-   **settantasette in nove** — scritto nella §12 di **questo** file. Gli altri: le **promesse** della
-   conformità, otto in due punti di questa §6 e nove in un terzo · i **test** dei due binari del
-   giornale, undici e dieci · le **funzionalità** di [`tracciabilita.md`](tracciabilita.md),
-   centosettanta in §8 contro **centosettantuno** ricontate · il **peso del messaggio** di
-   [`AVVIO-CHAT.md`](AVVIO-CHAT.md), *«~4 KB»* contro **6,2** misurati · e i **pilastri** di
-   [`README.md`](README.md), che ne elencava cinque dicendo quattro. ⛔ **E tre affermazioni di
-   stato erano false in `HANDOFF.md`:** il punto di ripresa nominava il solo **Traguardo 1**, il
-   giornale write-ahead *«sale col Traguardo 3»* al futuro, e la mappa dei piani dava il piano del
-   Traguardo 3 come **da eseguire**. ⚠️ **Due divergenze sono state REGISTRATE e non appianate,
-   perché stanno nel sorgente e questa era una passata documentale:** l'intestazione di
-   `crates/platform/tests/journal_contract_real.rs` dice *«le DIECI prove della suite — la finta, il
-   vincolo sulle sottostringhe e gli OTTO bugiardi»* dove sono **undici e nove**, e il file gemello
-   `crates/kernel/tests/journal_contract.rs` porta le cifre **giuste** dieci righe più su; e le *«72
-   target verdi»* attribuite alla chiusura del Traguardo 2 — scritte identiche qui e in `HANDOFF.md`
-   — non riconciliano con nessun'altra misura del progetto (**25 target** a quella data, **29**
-   oggi), e non sono state riscritte perché rifarle richiederebbe uno stato che non esiste più.
-   ⚠️ **Questa riga diceva *«il prossimo è l'ESECUZIONE DELL'AUDIT … e non il Traguardo 5»***,
-   ed è corretta il 2026-08-18: l'audit è **chiuso**, e il puntatore vivo sta in cima alla §6. ✅ Il
-   brainstorming del Traguardo 4, il disegno, il piano **e la sua esecuzione** si sono chiusi
-   tutti il 2026-08-11, e lo stesso giorno il repository ha ricevuto il suo **primo audit
-   completo**.
-   ⚠️ Questa riga ha detto *«il brainstorming»*, poi *«il piano»*, poi *«l'esecuzione»*, poi il
-   Task 2, il 3, il 4 e il 5 **nello stesso giorno**: è la riga che invecchia più in fretta del
-   file, e si riscrive **quando il passo si chiude**. ⚠️ **E diceva «una delle TRE in cui il
-   prossimo passo vive dentro questa sola sezione»: sono QUATTRO**, ricontate col `grep` invece
-   che citate — righe 618, qui, 794 e la riga del Traguardo 4 nella tabella dei sei. È il gotcha
-   **#31** nella forma che la **ventesima misura** aveva descritto per i pesi: *le case si contano
-   una volta sola, quando si scrive il rimedio*, e chi riconta non si fidi del numero scritto nel
-   verbale precedente.
-8. ~~**Il brainstorming del Traguardo 4**~~ — ✅ **chiuso il 2026-08-11**, e il disegno è scritto:
-   [Traguardo 4 — il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
-   ⛔ **Ha trovato una collocazione non eseguibile in un ADR `Accepted`**, e non riaprendo una
-   decisione ma misurandola: il backend cadente di [ADR-0032](adr/0032-motore-di-persistenza.md)
-   *«vive in `simulator`»*, e `simulator` è `no_std`, si costruisce per `x86_64-unknown-none` e ha
-   un grafo spedito a lista chiusa la cui unica cura per un intruso è **togliere la dipendenza**.
-   `redb` non ha `no_std`. **Rimando datato**, non `Superseded by`: è sbagliata una **cella**, non
-   la decisione — ed è la **seconda** volta per quell'ADR. ⚠️ **La stessa cella viveva anche nella
-   §5 di questo file**, ed è stata corretta nello stesso passaggio: la classe di difetto della
-   sessione precedente, colta stavolta **prima** di committare.
-   ⚠️ **E una lettura affrettata è stata registrata invece che taciuta:** `StorageBackend` ha
-   **sei** metodi, non cinque — `close` ha un'implementazione predefinita — e l'ADR li dichiarava
-   giusti. L'errore andava **a sfavore** dell'oracolo, non a favore: il conteggio dei punti scattati
-   è la non-vacuità della campagna, quindi un metodo in meno sarebbe stato un oracolo più debole
-   senza che nulla lo dicesse.
-9. ~~**Il piano del Traguardo 4**~~ — ✅ **scritto il 2026-08-11**:
-   [Traguardo 4](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci
-   compiti in tre parti**. ⛔ **Sette decisioni prese dal piano**, e la seconda è quella che governa
-   il resto: la caduta **non si riprende** — un giornale che rifiuta una volta e poi riparte modella
-   un disco cattivo, non un crash, e la permanenza è ciò che fa fermare **tutte** le attività
-   interlacciate e non solo quella che ha toccato il confine. ⚠️ **E il punto di caduta si estrae da
-   un generatore diverso da quello dell'interlacciamento**, con seme derivato: due `SeededRng`
-   costruiti dallo stesso numero danno la **stessa** sequenza, quindi la campagna esplorerebbe una
-   **diagonale** dello spazio invece dello spazio.
-10. ~~**L'esecuzione del Traguardo 4**~~ — ✅ **ESEGUITO il 2026-08-11**, subagent-driven, un
-    compito per volta con revisione fra uno e l'altro: **dieci compiti su dieci**, `GATE GREEN` a
-    ciascuno; `cargo test --workspace` → **32 target, 171 test** di cui
-    **due** ignorati, le due campagne profonde. ⛔ **E il Task 7 ha stabilito cosa compra una
-    campagna PROFONDA, misurandolo: non lo spazzamento.** Allargare l'intervallo oltre la
-    saturazione dà corse **indistinguibili da corse senza iniezione** — a ottocento punti ne
-    scattano sempre trentacinque — mentre **approfondire lo scenario compra stati nuovi uno per
-    record**, e la metrica che lo dimostra sono i **pioli**: le lunghezze di prefisso distinte che
-    tornano sono `record + 1` a ogni profondità misurata. ⚠️ **E la saturazione non è lineare:** il
-    terzo record costa dieci operazioni dove il primo ne costa sei, e il `Drop` ne costa quattordici
-    a due record e dodici altrove — dedurla avrebbe sbagliato. ✅ **E il gotcha #51 è chiuso nella
-    metà chiudibile**, col perimetro di ciò che **non** compra scritto per esteso — perché
-    *«è chiuso»* nella forma nuda mentirebbe. ⛔ **Ma la lezione del Task 6 è un'altra, ed è la
-    terza volta che questo traguardo la impara: un ciclo che verifica la COERENZA e un oracolo che
-    verifica che il GUASTO SIA SCATTATO possono essere entrambi verdi mentre la proprietà per cui
-    esistono è sparita.** Misurato: togliendo la durabilità, il ciclo di coerenza è **interamente
-    verde**; a renderlo un secondo testimone è un'asserzione sui **gradini** — che esistano punti in
-    cui torna *qualcosa ma non tutto* — perché senza durabilità la scala collassa a **zero-o-tutto**.
-    📌 Serve un controllo che guardi **la forma di ciò che sopravvive**, non solo che qualcosa sia
-    sopravvissuto. ⛔ **E il Task 5 ha trovato, prima
-    che il Task 6 fosse scritto, che l'oracolo destinato a chiudere il gotcha #51 NON FUNZIONA.**
-    Il piano voleva contare le chiamate a `sync_data`: ma **sei sync su sette nascono prima che
-    esista un record** — `create_with_backend` nudo ne fa sei — quindi il conteggio è dominato
-    dall'apertura ed è **cieco** proprio alla perdita per cui esisterebbe. Misurato: con la
-    durabilità tolta, la sonda in quella forma resta **verde**. 📌 **La forma generale: un
-    contatore che parte da un valore che il soggetto sotto esame non ha prodotto non è un oracolo
-    su quel soggetto** — la cura è il **delta**, non il totale. ⛔ **E lo scenario di livello 2
-    SATURA a cinquantotto operazioni**, quindi la campagna profonda che il Task 7 detta
-    costerebbe **venti volte tanto esplorando zero stati in più**. ⛔ **E il Task 4 ha stabilito come si sceglie il numero
-    di semi, che è la decisione che il vincolo 7 della §11 chiedeva: NON massimizzando.** *«Il più
-    grande multiplo di cento sotto il tetto»* insegue una cifra che **satura** — i ventiquattro
-    punti di caduta sono coperti già a duecento semi e l'insieme in dubbio massimo vale **tre**,
-    che è il suo tetto **strutturale**. Il criterio vero è la **chiusura dello spazio degli
-    esiti**: gli insiemi in dubbio distinti sono **centonove**, l'ultimo compare al seme **1038**,
-    e ventimila semi in più non ne producono altri. Scelti **duemila**, che costano l'**11 %** del
-    tetto. ⛔ **E la guardia su quel criterio è stata adottata solo dopo aver misurato che non
-    scattasse dove non deve:** sei costanti di mescolamento diverse danno **centonove tutte e
-    sei**, quindi il conteggio è proprietà dello **scenario** e non dei semi che lo campionano.
-    ⚠️ **Due misure del coordinatore sono state smentite da chi eseguiva:** il modello di costo
-    `2 × semi × costo` sbagliava del **37 %** — una corsa che cade si ferma al proprio punto,
-    `C7a` arriva in fondo — e il tetto vero cade a ~19 000 semi. ⛔ **E il Task 3 — `C7b` — ha
-    trovato il difetto più istruttivo del traguardo: la non-vacuità che una campagna dichiara non
-    è quella che le serve.** *«L'iniezione è avvenuta»* e *«c'era qualcosa da verificare»* sono
-    **due** affermazioni, e il piano ne teneva una sola: con un giornale che cade al primo byte,
-    duecento semi su duecento cadono davvero **e duecento confronti su duecento sono
-    `[] == []`** — verde, e nulla verificato. ⚠️ **Ed era il difetto che il Task 2 aveva chiuso per `C7a` un
-    compito prima, reimportato**: chiuderlo in un posto non lo chiude nell'altro. Ora `C7b` ha
-    **due** oracoli, e il discrimine fra loro è **provato** — le mutazioni che svuotano la
-    campagna sparano sul secondo, quelle che spengono il guasto sul primo. ⛔ **Il Task 2 — lo scenario giornalato e `C7a` — ha trovato che `C7a` era verde
-    su un archivio VUOTO:** *«nessun passo è in dubbio»* e *«lo scenario non ha scritto niente»*
-    erano lo stesso verde, misurato con un giornale che cade alla scrittura zero, e il piano vi
-    rispondeva con una mutazione **una tantum** mentre allo stesso buco su `C7b` dà un oracolo
-    **permanente**. ⛔ **E una regola nuova, uscita da una mutazione che nessuno aveva chiesto:**
-    quando due mutazioni uccidono la **stessa** asserzione, prima di concludere che la sonda non
-    distingue i due difetti (gotcha **#55**) si cerca **una terza mutazione che lasci passare la
-    prima asserzione** — se esiste, le due non erano in competizione ma su assi diversi.
-    ✅ **E la decisione di NON fissare qui l'interlacciamento è stata verificata in negativo**,
-    costruendo il controfattuale sequenziale: il massimo insieme in dubbio scende da **tre** a
-    **uno**, quindi la sonda del Task 3 va davvero rossa e una in più qui sarebbe stata
-    duplicazione (gotcha **#49**). Il Task 1:
-    `CrashingJournal` in `crates/simulator/src/journal.rs`, **dieci** sonde in
-    `crates/simulator/tests/crashing_journal.rs`, **cinque mutazioni uccise su cinque**.
-    ⛔ **Il pre-controllo ha trovato un difetto vero, ed è la specie che non si vede leggendo:**
-    il doc di `may_write` dichiara che il contatore si muove **solo su un `Ok`**, e nessuna delle
-    otto sonde dettate faceva mai fallire una scrittura interna — la mutazione corrispondente
-    **sopravviveva a tutte e otto**. ⛔ **E la revisione ne ha trovato un secondo, peggiore:
-    `prune` mutava l'archivio DOPO la caduta**, unica operazione mutante fuori dalla guardia,
-    mentre il doc prometteva *«ogni scrittura successiva è rifiutata»* e il limite dichiarato
-    nominava le **sole letture**. 📌 La classe vale oltre il caso — è il gotcha **#29** spostato
-    su un limite dichiarato: **una partizione scritta in un doc lascia scoperto il membro che non
-    appartiene a nessuna delle due categorie**, e nulla lo segnala perché il doc *sembra*
-    esaustivo. Le otto voci d'errata stanno in testa al piano; le misure in
-    [`riferimenti.md`](riferimenti.md), la campagna in [`porta-di-qualita.md`](porta-di-qualita.md).
-    ⚠️ **Questa riga diceva *«il prossimo è il Task 2»* a traguardo CHIUSO da dieci compiti**, ed è
-    corretta il 2026-08-17 invece che cancellata: era il puntatore di avanzamento **dentro** il
-    racconto del Traguardo 4, e nessuno l'ha spento quando il racconto ha smesso di essere in
-    corso. Il puntatore vivo sta **in cima alla §6**, in un posto solo — gotcha **#31** nella forma
-    che la §6 stessa dichiara di temere: *la riga che invecchia per costruzione*.
-11. ~~**Il brainstorming del Traguardo 5**~~ — ✅ **chiuso il 2026-08-18**, e il disegno è scritto:
-    [Traguardo 5 — il disegno](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md),
-    **dodici sezioni**. Il racconto per esteso sta nel riquadro in cima alla §6; qui basta ciò che
-    governa il piano: il perimetro è **l'arbitro intero**, le due proprietà «impossibili» sono
-    **due metà** e la loro metà d'arbitro è **una sola**, `Grant` **si sposta** nel modulo
-    dell'arbitro perché un fratello non può costruirlo (`E0423`, misurato), e le righe di catalogo
-    che il traguardo tocca sono **dodici già scritte** e nessuna nuova.
-12. ~~**Il piano del Traguardo 5**~~ — ✅ **scritto il 2026-08-18**:
-    [Traguardo 5](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md),
-    **tredici compiti in cinque parti**. ⛔ **Otto decisioni prese dal piano, e la prima governa
-    le altre:** `Arbiter::new` prende **`Parameters`**, non un `Mib` nudo. Le altre: `Grant`
-    porta un identificatore privato e `release` lo **consuma** · `release` risponde
-    `Result<Mib, ReleaseError>`, e l'`Err` **è raggiungibile** — una concessione rilasciata
-    sull'arbitro sbagliato · `ComputeClass` implementa `Ord` **a mano**, da una chiave esplicita ·
-    la riscossione delle scadute è **privata** e gira in testa a ogni operazione · la transizione
-    di policy prende il giornale **per riferimento** · il modulo è una **cartella con tre file** ·
-    `Grant` **non** è ri-esportato da `ports::process`. ⚠️ **Il racconto del pre-controllo — le
-    sette voci — sta nel riquadro in cima alla §6.**
-13. ~~**L'esecuzione del Traguardo 5**~~ — ✅ **ESEGUITA il 2026-08-25**, subagent-driven, un
-    compito per volta con revisione fra uno e l'altro, `GATE GREEN` a ciascuno, dal 2026-08-19.
-    ⚠️ **Il numeratore non è scritto qui — richiamo del 2026-08-25:** questa voce lo portava, ed
-    era la **seconda** copia dentro la §6 mentre il riquadro in cima dichiara che vive *«QUI e in
-    nessun altro punto di questa sezione»*. **Tolto, non riallineato.** Il tredicesimo era un
-    **audit** e non una scrittura, e
-    ha trovato che **gran parte era già eseguita**: i riconteggi non hanno prodotto uno scarto e
-    il *«dodici»* delle righe di catalogo ha retto: a mancare erano le **voci aperte in una
-    tabella sola**. Il racconto compito per compito, i numeri e ciò che resta aperto stanno nei
-    riquadri in cima alla §6.
+⛔ **I TREDICI PASSI CHIUSI DEI TRAGUARDI 1–5 SONO USCITI DA QUI il 2026-09-01, e non
+riassunti:** stanno in [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per
+parola. Erano un elenco **barrato**, ogni voce ✅ chiusa fra il 2026-08-08 e il 2026-08-25 —
+cioè un **verbale**, e un verbale invecchia onestamente in archivio. È il criterio di taglio
+del disegno del [2026-08-28](superpowers/specs/2026-08-28-sfoltimento-compendio-design.md):
+*«resta in §6 ciò che è vero adesso»*.
+
+⚠️ **La cernita è stata PROVATA, non dedotta.** Nessuna delle tredici voci era aperta; e i
+codici d'errata ancora vivi che il blocco nominava — `E25`, `E31`, `E51` — hanno **altre case
+in questa stessa §6**, quindi nessuna decisione del proprietario ha perso la propria riga viva.
+Gli altri codici citati appartengono a traguardi **chiusi**, e vi erano nominati al passato.
+
+📌 **Perché adesso e non alla prossima passata:** il tetto del compendio lasciava **ventun
+byte** — misurato il 2026-09-01 con `wc -c docs/COMPENDIO.md` contro il tetto di
+`scripts/check-docs.sh` — e il **prossimo** commit di documentazione avrebbe fatto rosso il
+cancello. ⛔ **Il tetto è SCESO nello stesso passaggio**, perché un tetto che resta alto dopo
+uno sfoltimento è il permesso di ricrescere: il numero e il suo perché vivono accanto al
+controllo che difendono, in `scripts/check-docs.sh`, e in nessun altro posto.
+
+⚠️ **E la consolidazione delle voci APERTE resta da fare, dichiarata e non fatta:** è il debito
+che il riquadro in cima a questa sottosezione registra, ed è una voce del proprietario, da
+presentare una per una — non un effetto collaterale di questo sfoltimento.
 
 ⛔ **E quattro questioni restano aperte nel sorgente, dichiarate e non risolte.** Nessuna delle
 quattro è un difetto oggi, ed è scritto **perché**; tutte si pagano più avanti, e chi riprende
@@ -2018,6 +1862,7 @@ Per questo la sua completezza **non è lasciata alla buona volontà**:
 | **il livello di forza** | **2 — controllo esterno.** Se cancelli lo script, la regola sparisce: sotto non c'è nient'altro. Il livello 1 non è raggiungibile — nessun compilatore legge un `.md` |
 | **la guardia di non-vacuità** | se il blocco §5 non si trova, o è vuoto, **è un fallimento** — gotcha #26 |
 | ⛔ **ciò che il controllo NON copre** | il controllo accoppia le voci ai **file in `docs/adr/`**: una decisione che vive in una **sezione di spec** non è pretesa da nessuno, e se manca qui **per chi legge non esiste**. Successo con la §1.0, ed è costato un traguardo intero da rifare — gotcha **#40**. ⛔ Il rimedio non è irrigidire lo script: è che **chi scrive una decisione fuori da un ADR la porta a mano nel compendio**, perché è l'unico che può saperlo |
+| ⛔ **e un SECONDO controllo, sulla TAGLIA** | `check-docs.sh` respinge un compendio sopra un **tetto in byte**. Il numero e il suo perché vivono **accanto al controllo**, in `scripts/check-docs.sh`, e in nessun altro posto. ⚠️ **È un tetto, non un obiettivo, e il verde NON è un segnale di margine:** il 2026-09-01 era verde a **ventun byte** dal rosso. Chi aggiunge testo qui si chiede **prima dove va**: ciò che è vero adesso resta, un **verbale** va in [`archivio/`](archivio/) — gotcha **#100** |
 
 📋 **Il messaggio da incollare all'inizio di una chat** vive in
 [`AVVIO-CHAT.md`](AVVIO-CHAT.md). Non nomina il prossimo passo, deliberatamente: lo

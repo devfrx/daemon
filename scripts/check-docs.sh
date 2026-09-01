@@ -311,17 +311,29 @@ echo "== compendium size ceiling =="
 # in full. The rule that forbids it is in CLAUDE.md; this is what makes it checkable.
 # «A principle that cannot be checked is an intention» -- CLAUDE.md.
 #
-# ⚠️ WHY 220 KB AND NOT 80. The design of 2026-08-28 proposed 80 KB, aiming at a ~65 KB
-# compendium. That figure assumed the OPEN entries of §6 would be consolidated into a single
-# table; the owner chose the conservative route instead -- the blocks naming an open entry
-# stay in §6 WORD FOR WORD, because summarising an owner decision can lose one in silence.
-# That choice costs ~45000 tokens of §6 and puts the file at 202372 bytes. The ceiling is
-# set on what was MEASURED, with about 11% of headroom, and the design carries the dated
-# recall. ⛔ WHEN THOSE ENTRIES ARE CONSOLIDATED, THIS NUMBER COMES DOWN: it is a ceiling
-# on the file as it is, not a licence to grow into it.
+# ⚠️ WHY THIS NUMBER AND NOT 80 KB. The design of 2026-08-28 proposed 80 KB, aiming at a
+# ~65 KB compendium. That figure assumed the OPEN entries of §6 would be consolidated into a
+# single table; the owner chose the conservative route instead -- the blocks naming an open
+# entry stay in §6 WORD FOR WORD, because summarising an owner decision can lose one in
+# silence. The ceiling is set on what was MEASURED, with about 11% of headroom, and the design
+# carries the dated recall. ⛔ WHEN THOSE ENTRIES ARE CONSOLIDATED, THIS NUMBER COMES DOWN:
+# it is a ceiling on the file as it is, not a licence to grow into it.
+#
+# ⛔ RECALL OF 2026-09-01 -- AND THE SENTENCE ABOVE WAS HONOURED, NOT QUOTED. The first
+# ceiling was 225280 (220 KiB), set on a file of 202372 bytes. By 2026-09-01 the compendium
+# had grown to 225259: TWENTY-ONE bytes short of red, i.e. the whole 11% had been eaten, and
+# the next documentation commit -- which CLAUDE.md mandates at every closed entry -- would
+# have turned the gate red. The thirteen CLOSED milestone steps of §6 (Traguardi 1-5, struck
+# through, ✅ between 2026-08-08 and 2026-08-25) went to docs/archivio/stato-storico.md word
+# for word, and the file measured 187826 bytes. ⛔ SO THE CEILING CAME DOWN, by the same rule
+# that set it: measured + ~11%, aligned to a whole KiB. Leaving it at 220 KiB would have been
+# the licence to regrow that the line above forbids.
+#
+# ⚠️ STILL OPEN, DECLARED AND NOT DONE: consolidating the OPEN entries of §6. That is an
+# owner decision, to be brought one entry at a time -- §6 says so itself.
 #
 # Non-vacuity: a missing file is a FAILURE, not a silent pass -- gotcha #26.
-ceiling=225280
+ceiling=208896
 if [ ! -f "$compendium" ]; then
   report "$compendium is missing: the size ceiling would be vacuous"
 else

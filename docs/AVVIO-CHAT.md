@@ -160,7 +160,12 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),
      le trappole di check-docs.sh (§10), i vincoli sul primo commit (§11).
   3. docs/audit-2026-08-27.md — ⛔ SOLO FINO ALLA TABELLA DEI 73 FINDING,
-     cioè tutto cio' che sta PRIMA della sezione «Dettaglio», 54 KB.
+     cioè tutto cio' che sta PRIMA della sezione «Dettaglio».
+     ⚠️ RICHIAMO DEL 2026-09-01: qui stava «54 KB», e sono 81 — la testa è
+     cresciuta a ogni rimedio, perché è lì che vive la tabella dei rimedi.
+     TOLTO e non riallineato: un peso misurato lo dà il comando, che non
+     marcisce — awk '/^## Dettaglio/{exit} {b+=length($0)+1} END{print b}'
+     docs/audit-2026-08-27.md
      ⚠️ I suoi finding sono CHIUSI dal 2026-08-28 — questa riga diceva «È IL
      COMPITO DI OGGI, non un verbale». Si legge come VERBALE e DELEGA: il
      metodo con cui qui si rimedia, e le voci senza numero AUD, che sono le

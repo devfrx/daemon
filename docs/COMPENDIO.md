@@ -811,9 +811,15 @@ sono attivi ora»* è una **proiezione del giornale** e non un secondo archivio.
 record congelato, e i cinque vecchi sono **byte-identici**, controllato per primo. `E94` è **decisa e
 chiusa** lo stesso giorno, e da essa nascono `E95` — che detta al compito 7 di nascere sigillato, ed è
 stata **eseguita** — ed `E96`, che è del proprietario.
-⏭️ **IL PROSSIMO PASSO È L'OTTAVO GIRO DEL CICLO DI `E53`**, e non un compito nuovo: il perimetro è
-`git show 9441e6d` — l'ondata che chiuse `E97`–`E101`, che **nessun giro ha ancora rivisto** — e la
-casa unica di quel ciclo resta la voce `E53` dell'errata.
+⏭️ **IL PROSSIMO PASSO È IL NONO GIRO DEL CICLO DI `E53`**, e non un compito nuovo: il perimetro è
+`git diff 9441e6d..HEAD -- crates/`, e la casa unica di quel ciclo resta la voce `E53` dell'errata.
+✅ **L'OTTAVO È FATTO IL 2026-09-01 e NON è tornato pulito: dieci rilievi, `E122`, tutti riverificati
+dal coordinatore e tutti veri.** ⛔ **E la domanda di classe ha pagato una TERZA volta: SETTE rimedi
+su otto avevano chiuso l'OCCORRENZA e non la CLASSE.** ⛔ **Tre erano mutanti vivi di PRODOTTO**, e
+il peggiore è `reconcile::steps_in_doubt`, che inghiottiva l'errore di `replay` — cioè rispondeva
+*«nessun passo è in dubbio»* su un archivio illeggibile, sull'**unica** strada dove quella risposta
+viene agita, la **ripresa dopo un crash**. ✅ **E nessuno dei tre ha chiesto una riga di prodotto:**
+il codice era giusto, a mancare era la **prova** — forma del gotcha **#74**.
 ✅ **IL SECONDO GIRO DI REVISIONE DEL COMPITO 7 È FATTO IL 2026-09-01 E NON È TORNATO PULITO: cinque
 rilievi, `E114`, tutti riverificati dal coordinatore prima di rimediare e tutti veri.** ⛔ **Il primo
 è di PRODOTTO ed è la specie di `E109` sul TERZO sito:** `Operation` era tenuto da due `matches!` e da

@@ -76,6 +76,14 @@ impl EntryKind {
     /// note — but it fell in silence: measured on 2026-09-01, ninth review round, with a variant
     /// added `cargo check --locked --workspace --all-targets` stayed at ZERO errors. Now it is
     /// `error[E0004]` here. Errata `E124`.
+    ///
+    /// ⚠️ AND THE `Outcome` ARM IS HELD BY NOTHING, for a reason that is a property of this
+    /// journal and not a gap: `outcome` refuses a step without an intent (`OutOfOrder`), so no
+    /// step ever carries an `Outcome` entry without an `Intent` one, and answering `true` for
+    /// `Outcome` changes no answer. Measured on 2026-09-01, tenth review round: the whole
+    /// workspace stayed green, `43 · 326 · 0 · 2`. The `Note` arm's equivalence is declared on
+    /// the enum above; this one was not, and a reader mutating it would have read a gap
+    /// (errata `E135`).
     fn is_intent(&self) -> bool {
         match self {
             EntryKind::Intent => true,

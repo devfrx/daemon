@@ -1071,8 +1071,10 @@ impl Arbiter {
             if held.expires_at <= now {
                 return false;
             }
-            // ⛔ NAMED AND NOT `_`: a wildcard here kept a third state for ever, and read as a
-            // `match` to any census that looked for one — errata `E124`.
+            // ⛔ NAMED AND NOT `_`: a wildcard here kept a third state until its validity window
+            // closed, whatever grace it owed — no grace deadline ever collected it — and read as a
+            // `match` to any census that looked for one. ⚠️ This said "for ever": the guard above
+            // collects every state at `expires_at`, measured (errata `E132`). Errata `E124`.
             match held.activity {
                 Activity::Preemptible(PreemptibleState::Revoking { deadline }) => deadline > now,
                 Activity::NonPreemptible | Activity::Preemptible(PreemptibleState::Running) => true,

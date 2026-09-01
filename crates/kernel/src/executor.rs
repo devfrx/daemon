@@ -99,6 +99,14 @@ impl TaskState {
     }
 
     /// The instant a sleeping task is due at, and `None` for one that can run now.
+    ///
+    /// ⚠️ THE `Runnable` ARM IS HELD BY NOTHING, AND IT IS SAID RATHER THAN LEFT TO BE FOUND: both
+    /// callers run only after `poll_one_turn()` returned `false`, that is when no task is
+    /// `Runnable`, so the arm is never taken. Measured on 2026-09-01, tenth review round — turned
+    /// into `Some(..)` of the origin, the whole workspace stayed green, `43 · 326 · 0 · 2`. It is
+    /// an equivalent mutant of the shape of `E70`, not a gap: what this predicate buys is the
+    /// `E0004` on growth, and the `Sleeping` arm is held by the run loop's own probes
+    /// (errata `E135`).
     fn sleeping_until(self) -> Option<Monotonic> {
         match self {
             TaskState::Runnable => None,

@@ -841,12 +841,12 @@ fn killing_a_worker_consumes_it() {
     already_dead.die();
     assert!(already_dead.kill().outcome.is_ok());
 
-    // ⚠️ WHAT IT DOES NOT BUY: that instructing after the kill FAILS TO COMPILE. `worker` is
-    // moved by the line above and naming it again would not build -- but a test that
+    // ⚠️ WHAT IT DOES NOT BUY: that instructing after the kill FAILS TO COMPILE. Each worker
+    // above is moved by its `kill()` and naming it again would not build -- but a test that
     // compiles cannot assert that something else does not. Only a `compile_fail` case
     // proves the negative, and the one holding THIS direction is
     // `tests/compile_fail/instructing_after_the_kill.rs` (`E0382`, §6.10.5 row 2) -- the same
-    // consuming `kill` three lines above.
+    // consuming `kill` as above.
     //
     // ⛔ RECALL OF 2026-08-21, MILESTONE 5 TASK 11: the two lines that stood here -- "those
     // are staged with the rest of §6.10.5, registered as not-yet-covered in
@@ -856,8 +856,13 @@ fn killing_a_worker_consumes_it() {
     //
     // ⛔ RECALL OF 2026-08-21, FINDING P-2: the reason written here -- "all four need a
     // `Worker`, a `Worker` comes only from `start(grant, ..)`, and nothing issues grants
-    // before milestone 5" -- was FALSE and is TAKEN OUT. `ScriptedWorker` twenty lines above
-    // IS a `Worker` obtained without a grant, in this very file, since milestone 2.
+    // before milestone 5" -- was FALSE and is TAKEN OUT. `ScriptedWorker`, in this very file,
+    // WAS a `Worker` obtained without a grant from milestone 2 until `822db6d` (2026-08-30,
+    // milestone 6 task 1c), when `kill` began returning the grant and `new` began taking one --
+    // `a_real_grant()` now passes through `Arbiter::admit`. ⚠️ This read "twenty lines above IS
+    // a `Worker` obtained without a grant" until 2026-09-01, false since that commit; what P-2
+    // established stands: implementing the trait, not `start`, is what makes a `Worker`
+    // (errata `E134`).
 }
 
 #[test]

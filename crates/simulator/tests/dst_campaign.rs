@@ -181,7 +181,7 @@ type Trace = Vec<(u64, RecordKind)>;
 /// ⚠️ THE SHAPE IS NAMED AND NOT SPELLED OUT — this line read "3 activities x 4 steps" and
 /// "5000 VIRTUAL milliseconds" until the review of 2026-08-11. Prose that restates a constant
 /// goes false IN SILENCE the day the constant moves, which is gotcha #31, and the numbers here
-/// are `ACTIVITIES`, `STEPS` and the literal nine lines below. ⚠️ The same sentence in
+/// are `ACTIVITIES`, `STEPS` and the literal in the `sleep.until(..)` call below. ⚠️ The same sentence in
 /// `crates/kernel/tests/executor_determinism.rs` is CORRECT as it stands, and the difference is
 /// worth the line: there the numbers are the literals of the code itself, with no constant to
 /// drift away from.

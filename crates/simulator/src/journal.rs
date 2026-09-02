@@ -37,8 +37,8 @@ use kernel::rng::RngExt;
 /// reach.
 ///
 /// ⛔ RECALL OF 2026-09-02: THE TWO CLAIMS ABOVE ARE FALSE AGAINST THE PORT THEY DESCRIBE.
-/// `replay` owes the WHOLE write order and not "the order ACROSS steps" -- `ports/journal.rs`
-/// says "Re-reads EVERYTHING, in write order" and "WRITE ORDER IS PART OF THE PROMISE" -- and
+/// `replay` owes the WHOLE write order and not "the order ACROSS steps" — `ports/journal.rs`
+/// says "Re-reads EVERYTHING, in write order" and "WRITE ORDER IS PART OF THE PROMISE" — and
 /// conformance DOES reach inside a step: promise 8(c) asserts `[(step, intent), (step, note)]`,
 /// two records of one step in write order. What the suite does not exercise is TWO NOTES upon
 /// ONE step: measured, of the four `.note` calls in `assert_journal_contract` two are asserted

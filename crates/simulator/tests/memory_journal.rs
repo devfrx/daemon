@@ -136,6 +136,15 @@ fn each_step_reads_back_its_own_first_record() {
     // kernel's job. That is what THIS test asks, and NOT "as much as the surface can be asked".
     // An earlier version of this line said the second, and it was false: that is the sentence
     // that stops the next reader from looking, so it does not get written again.
+    //
+    // ⛔ RECALL OF 2026-09-02: THE TWO CLAIMS ABOVE ARE FALSE AGAINST THE PORT. `replay` owes
+    // the WHOLE write order and not only the order ACROSS steps — `ports/journal.rs` says
+    // "Re-reads EVERYTHING, in write order" and "WRITE ORDER IS PART OF THE PROMISE" — and
+    // conformance DOES reach inside a step: promise 8(c) asserts `[(step, intent), (step, note)]`,
+    // two records of one step in write order. What the suite does not exercise is TWO NOTES upon
+    // ONE step: measured, of the four `.note` calls in `assert_journal_contract` two are asserted
+    // refused and the two that succeed sit on different steps. So the scope claimed above is
+    // wider than the truth, and it is the SUITE that stops, never the contract.
     let mut journal = MemoryJournal::new();
     let first = StepId::new(1);
     let second = StepId::new(2);
@@ -261,6 +270,11 @@ fn a_step_may_carry_many_notes_and_they_keep_their_order() {
     // ⚠️ AND THE ORDER WITHIN THE STEP IS THE HALF CONFORMANCE DOES NOT REACH, for the reason
     // `each_step_reads_back_its_own_first_record` gives: `replay` owes the order ACROSS steps,
     // and what is asked here is the order WITHIN one.
+    // ⛔ RECALL OF 2026-09-02: "the half conformance does not reach" IS FALSE, and the correction
+    // is NOT restated here — it is in the recall inside
+    // `each_step_reads_back_its_own_first_record`, which this paragraph already points at. What
+    // the suite does not exercise is TWO NOTES upon ONE step, which is exactly what this test
+    // writes, so this is the case that is held here and nowhere else.
     let mut journal = MemoryJournal::new();
     let step = StepId::new(1);
     journal

@@ -70,20 +70,38 @@
 //! a third variant of `IpcError`. The full argument, and why the signature nevertheless stays
 //! as it is today, sits on `Ipc::accept`.
 //!
-//! ⚠️ AND WHAT HOLDS THESE THREE SIGNATURES MEANWHILE IS ONE TEST, the same one that holds
-//! `filesystem` and `network`: `tests/ports_are_implementable.rs` writes a fake gui
-//! and calls it -- including the client that DIES WHEN THE SEED DECIDES that §3.1 asks for. It
-//! buys that the signatures are IMPLEMENTABLE FROM OUTSIDE THE CRATE and callable; it does NOT
-//! buy that they are the right signatures, and it is not the conformance suite, which needs
-//! two implementations to compare and is born with the real channel in milestone 6.
+//! ⚠️ AND WHAT HOLDS THESE THREE SIGNATURES IS TWO IMPLEMENTATIONS FROM OUTSIDE THE CRATE:
+//! `tests/ports_are_implementable.rs` writes a fake gui and calls it, and
+//! `simulator::ipc::DyingGui` is a second one. They buy that the signatures are IMPLEMENTABLE
+//! FROM OUTSIDE THE CRATE and callable; they do NOT buy that they are the right signatures, and
+//! neither is the conformance suite, which compares two implementations against ONE contract and
+//! is born with the real channel.
+//!
+//! ⛔ DATED RECALL, 2026-09-02, MILESTONE 6 TASK 9 -- THE PARAGRAPH ABOVE SAID "ONE TEST, the
+//! same one that holds `filesystem` and `network`", AND IT NAMED "the client that DIES WHEN THE
+//! SEED DECIDES that §3.1 asks for". BOTH HALVES ARE REWRITTEN AND NOT ANNOTATED BELOW, which is
+//! finding A-2's rule, and they went for different reasons.
+//! ⚠️ The second half was FALSE BEFORE THIS COMMIT and not because of it: the milestone 6 design
+//! measured it at §6.7 -- `FakeGui::dies` is called EXPLICITLY by two tests and no seed moves it,
+//! so the fake next door has never been the one §3.1 asks for. ✅ That fake exists now, and it
+//! exists ELSEWHERE: `simulator::ipc::DyingGui` dies at an operation drawn from the seed, with
+//! its own bench in `crates/simulator/tests/dying_gui.rs` and the campaign of §5.7's third
+//! property in `crates/simulator/tests/gui_death_campaign.rs`.
+//! ⚠️ The first half went with it -- MEASURED, not reasoned: `grep -rnE "^ *impl Ipc for"
+//! crates/` returns TWO lines on 2026-09-02, and a count that is quietly wrong is worse than one
+//! that is loudly missing (gotcha #31).
 //!
 //! ⚠️ DATED RECALL, 2026-08-28 -- FINDING AUD-054. That list read "`filesystem`, `network` and
 //! `process`", and `process` is OUT: from `5fceee1` (2026-08-21) its signatures are held by two
 //! benches plus four `compile_fail` cases, so naming it here understated it. ⛔ What is removed
-//! is ONE WORD, not the sentence: measured, `Ipc` has exactly one implementation from outside
-//! the crate, and so do `filesystem` and `network` -- which is why the claim still stands for
-//! the ports it now covers, `ipc` itself and those two. The reckoning for `process` lives on
-//! `ports/process.rs`, in one house.
+//! is ONE WORD, not the sentence. ⛔ DATED RECALL, 2026-09-02: this went on to say "measured,
+//! `Ipc` has exactly one implementation from outside the crate, and so do `filesystem` and
+//! `network`", and the `ipc` half of that measurement EXPIRED with milestone 6 task 9 -- there
+//! are two now, counted above. What the AUD-054 correction was ABOUT is untouched, because it was
+//! about `process` being named in a list it had outgrown; the reckoning for `process` lives on
+//! `ports/process.rs`, in one house, and the figure for `filesystem` and `network` lives on
+//! theirs rather than being restated here (`E77`: a number that lives in two places gets taken
+//! out of one).
 //!
 //! ⛔ AND THE SIGNATURES ARE NOT COPIED FROM A SPEC TABLE, unlike `process`'s: §6.1 fixes the
 //! schema, the stamp, the identifiers and the direction of initiative, and it does NOT carry a
@@ -110,9 +128,15 @@ use alloc::vec::Vec;
 /// ⛔ DATED RECALL, 2026-08-31 -- THE SUBJECT AGED AND THE CLAIM DID NOT, so the sentence is
 /// RE-POINTED AND NOT REMOVED (§6.5, gotcha #87). MILESTONE 6 DOES NOT IMPLEMENT THIS PORT: it
 /// brings the SCHEMA -- `crate::wire::ipc` -- and the transport is staged out (open item 5).
-/// Measured rather than assumed: `grep -rnE "^ *impl Ipc for" crates/` still finds ONE bench
-/// fake and nothing else. ⛔ ANCHORED, AND SPELLING OUT `for`: the bare `impl Ipc` matches
+/// Measured rather than assumed: `grep -rnE "^ *impl Ipc for" crates/` finds TWO FAKES and no
+/// transport. ⛔ ANCHORED, AND SPELLING OUT `for`: the bare `impl Ipc` matches
 /// `impl IpcMessage` too, and an unanchored one matches the paragraphs that quote it.
+/// ⚠️ DATED RECALL, 2026-09-02: that line read "still finds ONE bench fake and nothing else",
+/// and task 9 of this milestone added the second -- `simulator::ipc::DyingGui`. ⛔ THE CLAIM IT
+/// SUPPORTS IS UNCHANGED AND THAT IS WHY THE FIGURE IS CORRECTED RATHER THAN DROPPED: a fake is
+/// not a transport, so "this milestone does not implement this port" is as true at two as it was
+/// at one, and the counter it guards -- two independent progressive counters that look identical
+/// -- is guarded by neither number but by the sentence above.
 /// ⚠️ Read "whoever implements this port" WITH NO MILESTONE ATTACHED. This line has now
 /// named two, and naming a third would only schedule the same correction again.
 /// ⛔ AND REMOVING IT WOULD LEAVE UNGUARDED THE VERY DEFECT IT EXISTS TO PREVENT, which is the

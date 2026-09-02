@@ -1,5 +1,12 @@
-//! The DST campaign of the arbiter (§5.7). Three of the five properties: the two that need
-//! `process` and `ipc` are milestone 6.
+//! The DST campaign of the arbiter (§5.7). Three of the five properties — 1, 4 and 5.
+//!
+//! ⛔ RECALL OF 2026-09-02, MILESTONE 6 TASK 9 — THE LINE ABOVE READ "the two that need
+//! `process` and `ipc` are milestone 6", AND IT IS REWRITTEN AND NOT ANNOTATED UNDER, because a
+//! true sentence appended below a false one leaves the false one standing (finding A-2). Those
+//! two properties EXIST now and they are NOT here: property 2 — no process runs without a valid
+//! grant — is `crates/simulator/tests/worker_kill_campaign.rs`, and property 3 — the gui dies
+//! holding a discretionary grant — is `crates/simulator/tests/gui_death_campaign.rs`. What this
+//! file holds is still THREE, and that numeral is written here and nowhere else in it.
 //!
 //! ⛔ THE ARBITER UNDER TEST IS THE REAL ONE. There is no fake: the arbiter is logic, not a
 //! port, so in simulation the shipped object runs. What is injected comes from elsewhere --

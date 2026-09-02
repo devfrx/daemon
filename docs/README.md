@@ -53,6 +53,14 @@ già scritte. ⚠️ **Questa riga diceva *«ne chiude dodici»***, e a chiusura
 sulla §7.4 dice **undici chiuse e una dichiarata PARZIALE** — la riga della campagna DST, che
 resta parziale perché la §5.7 elenca cinque proprietà e la campagna dell'arbitro ne tiene tre.
 Le altre due si iniettano su `process` e `ipc`, cioè al **Traguardo 6**.
+⛔ **RICHIAMO DEL 2026-09-02: quella riga NON è più parziale, ed è il compito 9 del Traguardo 6 a
+chiuderla** — `E152`. Le due proprietà mancanti hanno la propria sonda: la **2** in
+`crates/simulator/tests/worker_kill_campaign.rs` e la **3** in
+`crates/simulator/tests/gui_death_campaign.rs`, che riconcilia con `kernel::client::ClientGrants`
+alla disconnessione. ⚠️ **Il periodo qui sopra resta perché è un verbale del 2026-08-18 e in
+quella data era vero**; ciò che è **falso adesso** è soltanto il presente *«resta parziale»*, e
+lo stato di oggi vive in **una casa sola** — la §6 del compendio e la tabella di
+[`porta-di-qualita.md`](porta-di-qualita.md), non qui.
 ✅ **E lo stesso giorno il [piano del Traguardo 5](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md)
 è scritto: tredici compiti in cinque parti.** Il pre-controllo del piano ha trovato **sette**
 cose leggendo il disegno contro il codice — gotcha **#58** — e tre sono per il proprietario:

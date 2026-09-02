@@ -895,6 +895,11 @@ falsa.
 è la §0.7 della spec** — i sei traguardi sono eseguiti, il sotto-progetto no, e resta anche la §8 di
 [`tracciabilita.md`](tracciabilita.md). ⛔ **Si apre col brainstorming**, che [`../CLAUDE.md`](../CLAUDE.md)
 prescrive prima di qualunque lavoro creativo e prima di entrare in plan mode.
+✅ **IL BRAINSTORMING DELLA CHIUSURA È FATTO IL 2026-09-02, sei sezioni approvate una per volta, E IL DISEGNO NON È
+ANCORA SCRITTO:** le sezioni approvate, le tre scelte del proprietario e la strada in quattro compiti stanno in
+[`superpowers/specs/2026-09-02-…-chiusura-design.md`](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md),
+che ne è la casa unica, dichiara di sé di essere una **consegna** e non il disegno, e dice alla sessione successiva
+come riscriversi sul posto in disegno — poi `writing-plans`. ⚠️ Il prossimo passo **dopo** la chiusura sta lì, non qui.
 ✅ **IL DECIMO È FATTO IL 2026-09-01: tre rilievi, `E135`, tutti di prosa o registro, uno fuori dal
 perimetro** — la specie dei numerali di distanza, colta dalla domanda di classe sull'intero `crates/`.
 I quattro predicati del nono giro sono misurati tenuti braccio per braccio, e trentasette enum censiti

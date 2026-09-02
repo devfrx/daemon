@@ -18,8 +18,8 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-08-27**, coi rimedi del secondo audit; l'ultimo contenuto di **merito** è la
-chiusura del Traguardo 5 — il Task 13, che è un audit e non una scrittura. Manutenzione: §13.
+**Aggiornato il 2026-09-02**, col pre-controllo del compito 8 del Traguardo 6; l'ultimo contenuto di **merito** è
+il compito 7 e la chiusura del suo ciclo di revisione, decisa dal proprietario. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -811,11 +811,13 @@ sono attivi ora»* è una **proiezione del giornale** e non un secondo archivio.
 record congelato, e i cinque vecchi sono **byte-identici**, controllato per primo. `E94` è **decisa e
 chiusa** lo stesso giorno, e da essa nascono `E95` — che detta al compito 7 di nascere sigillato, ed è
 stata **eseguita** — ed `E96`, che è del proprietario.
-⏭️ **IL PROSSIMO PASSO È UNA DECISIONE DEL PROPRIETARIO, registrata in `E53` con la raccomandazione**, e
-poi il **pre-controllo del compito 8** — lo stato di degrado — con le quattro domande di
-[`../CLAUDE.md`](../CLAUDE.md): il decimo giro ha riletto un'ondata di **codice** senza trovare un
-difetto di prodotto, i suoi rimedi sono soltanto prosa, e se serva un undicesimo giro documentale su
-`git diff 3b23f3c..HEAD -- crates/` lo decide lui; la casa unica del ciclo resta la voce `E53`.
+⏭️ **IL PROSSIMO PASSO È IL COMPITO 8 — lo stato di degrado — ED È PRE-CONTROLLATO.** ⚖️ **Il proprietario
+ha deciso il 2026-09-02: il ciclo di `E53` è CHIUSO SUL PRODOTTO** (richiamo ⑨), e la specie di `E129` — i
+numerali di distanza — è passata a sé sull'intero `crates/`, voce `E136`. ✅ **Il pre-controllo del compito 8 è
+FATTO con le quattro domande di [`../CLAUDE.md`](../CLAUDE.md), e ha dato DUE bloccanti misurati prima di
+dispacciare** — `E137`, il codice dettato legge campi sigillati da `E83`/`E94`; `E138`, le tre sonde dettate
+scrivono su un passo che nessuno ha aperto, alla **TERZA** occorrenza sui compiti 5, 7 e 8 — e il brief è `E141`.
+La casa unica resta l'errata del piano.
 ✅ **IL DECIMO È FATTO IL 2026-09-01: tre rilievi, `E135`, tutti di prosa o registro, uno fuori dal
 perimetro** — la specie dei numerali di distanza, colta dalla domanda di classe sull'intero `crates/`.
 I quattro predicati del nono giro sono misurati tenuti braccio per braccio, e trentasette enum censiti

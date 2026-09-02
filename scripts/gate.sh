@@ -44,25 +44,39 @@ run "attributes of the constrained crates" bash scripts/gate-attributes.sh
 run "documentation consistency"           bash scripts/check-docs.sh
 
 # ⛔ A SEVENTH STEP THAT IS NOT A SEVENTH CONTROL, and the catalogue count stays at six. The
-# assertions of all three DST campaigns already run inside `cargo test --workspace` above --
-# that IS the cadence constraint 8 of §11 asks for, and nothing here can go red for a reason
-# that check has not already caught. This runs them a SECOND time for one reason only:
+# assertions of every DST campaign named below already run inside `cargo test --workspace`
+# above -- that IS the cadence constraint 8 of §11 asks for, and nothing here can go red for a
+# reason that check has not already caught. This runs them a SECOND time for one reason only:
 # constraint 7 wants the WALL TIME PRINTED ON EVERY RUN -- "so that the slowdown becomes
 # visible before it becomes a temptation" -- and `cargo test` swallows the output of tests
 # that pass.
 #
-# ⚠️ THE THIRD IS THE ARBITER'S, ADDED AT TASK 12 OF MILESTONE 5, and it had to be added
-# HERE and not only written: this step names its targets ONE BY ONE, so a campaign absent
-# from the list is silent. Measured on 2026-08-25 with the bench in place and this line not
-# yet added -- the gate came out GREEN and its output contained the four `DST arbiter` lines
-# ZERO times.
+# ⚠️ EVERY CAMPAIGN HAS TO BE ADDED HERE BY NAME, and that is the lesson rather than the
+# history: this step names its targets ONE BY ONE, so a campaign absent from the list is
+# SILENT. It has been learned TWICE, both times the same way -- the bench in place, the line
+# not yet added, and the gate GREEN over it:
+#   - the arbiter's, task 12 of milestone 5. Measured on 2026-08-25: the gate came out GREEN
+#     and its output contained the four `DST arbiter` lines ZERO times.
+#   - the gui's and the worker's, task 9 of milestone 6. Measured on 2026-09-02:
+#     `bash scripts/gate.sh | grep -c "DST gui death\|DST worker kills"` came out 0 with the
+#     gate GREEN, and greater than zero with the two targets in the list -- the same command
+#     in both directions.
+# ⛔ AND THE NUMBER OF TARGETS IS WRITTEN NOWHERE BUT IN THE `run` BELOW, which IS the list.
+# This comment said "all three DST campaigns" until 2026-09-02 and the campaigns were five: a
+# tally in a comment ages the day somebody adds one, and the list cannot (gotcha #31).
 #
-# ⚠️ TWO COSTS, both declared. The three short campaigns run twice: measured on
-# 2026-08-25, the second pass costs 1.45s of test time -- dst_campaign 0.39s,
-# arbiter_campaign 0.36s, engine_crash_consistency 0.70s. ⚠️ THIS LINE SAID "~0.2s", a
-# figure taken at milestone 4 when there were two campaigns; it is RE-MEASURED here rather
-# than carried over -- and it is an ORDER OF MAGNITUDE: the arbiter binary alone, same
-# command, came out 0.63s and 1.53s within one session on this machine. And a failing
+# ⚠️ TWO COSTS, both declared. The short campaigns run twice: RE-MEASURED on 2026-09-02,
+# the second pass costs 0.81s of test time -- dst_campaign 0.21s, arbiter_campaign 0.16s,
+# gui_death_campaign 0.01s, worker_kill_campaign 0.02s, engine_crash_consistency 0.41s.
+# ⚠️ THE FIGURE IS RE-MEASURED WHENEVER THIS LIST CHANGES AND NEVER REALIGNED FROM MEMORY,
+# which is why it carries its date: it said "~0.2s" at milestone 4 with two campaigns and
+# "1.45s" on 2026-08-25 with three. ⛔ AND THE RE-MEASUREMENT IS NOT THE ARITHMETIC ANYBODY
+# WOULD HAVE PREDICTED: the three targets of that 1.45s cost 0.78s of today's 0.81s -- the
+# same binaries, the same machine, at roughly half the price -- so the two new campaigns add
+# 0.03s and the figure still FELL. Which is the point: it is an ORDER OF MAGNITUDE and not a
+# constant -- the arbiter binary alone, same command, came out 0.63s and 1.53s within one
+# session on this machine -- so nothing asserts on it, and what the gate collects is the
+# printed line, for a reader to compare against the run before. And a failing
 # campaign turns the gate red TWICE, from this step and
 # from the second check: that redundancy is not a defect but the only proof the step really
 # executes what it claims -- a printing step that could not go red would be indistinguishable
@@ -70,6 +84,8 @@ run "documentation consistency"           bash scripts/check-docs.sh
 run "DST campaigns -- wall time" bash -c '
   cargo test --locked -p simulator --test dst_campaign -- --nocapture &&
   cargo test --locked -p simulator --test arbiter_campaign -- --nocapture &&
+  cargo test --locked -p simulator --test gui_death_campaign -- --nocapture &&
+  cargo test --locked -p simulator --test worker_kill_campaign -- --nocapture &&
   cargo test --locked -p platform --test engine_crash_consistency -- --nocapture'
 
 echo

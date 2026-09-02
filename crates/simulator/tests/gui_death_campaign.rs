@@ -393,7 +393,7 @@ fn run(seed: u64) -> Observed {
 /// seen from the port — AND IT IS, BY TWO CHECKS RATHER THAN ONE CONJUNCTION. The second half is
 /// the per-seed assertion in `run`, which is STRONGER than a conjunct here: it holds on EVERY
 /// seed instead of on at least one, and it is where the red of the "the fake never dies" mutation
-/// comes from. What is left for this function is the FIRST half, which nothing else holds.
+/// comes from. What is left for this function is the FIRST half.
 /// ⚠️ A CONJUNCT ON `death_seen_from_port` STOOD HERE AND WAS REMOVED: with the per-seed
 /// assertion above it, the field is constant `true` in every value this loop sees, so the
 /// conjunction reduced to its left operand and read as a guarantee it was not giving.

@@ -322,6 +322,30 @@ fn run(seed: u64, tally: &mut Tally) -> Observed {
         );
     }
 
+    // ⛔ ORACLE ONE OF §5.7.1 — THE INJECTION FIRED — AND IT IS PER SEED, which is the shape
+    // this repository prefers: it names the seed, and it holds on every one instead of on a sum.
+    // Every recruit that was started must have been killed, so the running set is empty.
+    //
+    // ⚠️ WHAT IT IS FALSIFIABLE BY, MEASURED AND NOT ASSUMED, because the honest ceiling for this
+    // campaign is lower than for its siblings. With one kill skipped it goes RED (`seed 0: a
+    // recruit was never killed`); with the SAME skip and this line absent the bench is GREEN,
+    // which is the gap it exists to close. ⛔ BUT NO MUTATION OF PRODUCTION CODE CAN REACH IT:
+    // `order` is a permutation of `0..RECRUITS.len()` and each turn removes exactly one element,
+    // so only a change to THIS LOOP can leave the set non-empty. That is not a defect of the
+    // assertion but a consequence of `E155`'s own decision — a seed-driven fake in
+    // `crates/simulator/src/` "does not serve, because it is the bench and not the worker that
+    // decides the kill" — so here the injection IS the bench's control flow.
+    // ⛔ AND THE AGGREGATE THIS REPLACES WAS NOT LESS FALSIFIABLE, which is why it is worth
+    // saying: `tally.kills == SEEDS * RECRUITS.len()` dies to the very same skipped kill, measured
+    // on 2026-09-02. What that one really lacked was this one's two virtues — it was cross-seed,
+    // and it named nothing.
+    assert!(
+        running.is_empty(),
+        "seed {seed}: a recruit was never killed — {} of {} are still running",
+        running.len(),
+        RECRUITS.len()
+    );
+
     Observed { inside_the_window }
 }
 
@@ -330,17 +354,15 @@ fn run(seed: u64, tally: &mut Tally) -> Observed {
 /// each of the four kills of every seed; this test is what sweeps the seeds and reports which one
 /// broke.
 ///
-/// ⛔ ORACLE ONE — THE INJECTION FIRED — IS NOT IN THIS FUNCTION. What holds it is the per-kill
-/// work inside `run`: every kill that HAPPENS is followed by a `release` whose answer is pinned
-/// against the window and by the books being read. ⚠️ AN AGGREGATE
-/// `tally.kills == SEEDS * RECRUITS.len()` STOOD HERE AND WAS REMOVED, not reworded: the loop
-/// increments it once per recruit over a permutation of fixed length, so no implementation could
-/// make it red. Gotcha #76 — subtract rather than rewrite better.
-/// ⛔ AND THE SUBSTITUTE CLAIM IS NARROWER THAN THE ONE THAT WENT, said rather than left to be
-/// assumed: nothing here holds that every recruit IS killed. A kill that was skipped leaves that
-/// recruit's `killed` flag false, the expected sum below keeps its reservation, the books agree,
-/// and no assertion after the loop reads whether `running` is empty. The aggregate did not hold
-/// it either — it counted the same loop — so what is declared is a gap that was always there.
+/// ⛔ ORACLE ONE — THE INJECTION FIRED — IS NOT IN THIS FUNCTION, IT IS PER SEED INSIDE `run`:
+/// the running set must be empty when the kill loop ends. ⚠️ AN AGGREGATE
+/// `tally.kills == SEEDS * RECRUITS.len()` STOOD HERE, WAS REMOVED AS DOMINATED, AND THE REMOVAL
+/// OPENED A REAL GAP — for two review rounds nothing held that every recruit was killed, and a
+/// skipped kill was measured GREEN across the whole bench. ⛔ THE DIAGNOSIS THAT REMOVED IT WAS
+/// WRONG ON THE FACTS, and it is written down so the mistake is not repeated in either direction:
+/// that aggregate DID die to a skipped kill, measured. What it lacked was not falsifiability but
+/// the two things the per-seed form has — it names the seed, and it holds on each seed rather
+/// than on a sum.
 ///
 /// ⛔ ORACLE TWO — THERE WAS SOMETHING TO VERIFY — IS HERE, and it is a different claim: a
 /// campaign whose workers all expired before their kill would hand back nothing but

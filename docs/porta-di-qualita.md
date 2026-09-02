@@ -4677,17 +4677,21 @@ nell'indice** (`E146`, gotcha **#107**): `git diff -- <file>` a **zero** righe d
 | `MB1` | la riconciliazione non avviene | `gui_death_campaign` rossa |
 | `MB2` | la riconciliazione rilascia **tutto** | `gui_death_campaign` rossa **sulla somma**: `left: Mib(1024)`, `right: Mib(2048)` — la linea di base **sparita**, che è esattamente ciò che `E156` ② prescrive di cogliere |
 | `MB3` | la finta non muore mai | **oracolo 1** rosso: *«the gui was told to die at operation 0 of 3 and the port never said so, so this run injected nothing»*. Uccide anche **cinque** sonde di `dying_gui.rs` |
-| `MB4` | il punto di morte estratto è sempre 0, quindi la gui non chiede mai | **oracolo 2** rosso: *«2000 deaths and ZERO grants to reconcile, so the sum was compared against a baseline it never left»*, e il rilevatore di cambiamento con lui — **4** mondi dei **12** |
+| `MB4` | il punto di morte estratto è sempre 0, quindi la gui non chiede mai | **oracolo 2** rosso, col testo **rimisurato il 2026-09-02** e non dedotto dal sorgente: *«on no seed did the gui hold a grant when the port reported it gone: every one of the 2000 seeds died before it was granted anything, so the sum was compared against a baseline it never left»*. E il rilevatore di cambiamento con lui: *«the campaign saw 4 of the 12 worlds this scenario can produce»*. ⚠️ **Questa cella citava il testo di PRIMA della seconda ondata**, che aveva tolto il contatore `deaths` e riscritto il messaggio: un esito misurato che nessuna corsa poteva più produrre |
+| `MC3` | un kill **saltato** nel ciclo del banco | ⛔ **l'oracolo 1 di `worker_kill_campaign`**, per seme: *«seed 0: a recruit was never killed — 1 of 4 are still running»*. ⚠️ **È una mutazione sul BANCO e non sulla produzione**, ed è il tetto onesto per questa campagna: `E155` toglie la finta guidata dal seme perché *«a decidere il kill è il banco e non il worker»*, quindi qui l'iniezione **è** il flusso di controllo del banco |
 | `MB5` | `release` riferisce la riserva ma non la toglie dai libri | `property_2` rossa col **seme** e i **due valori**: *«seed 0: after killing indexer at Monotonic(1445) the books hold Mib(9216) and the workers still running with an open window reserve Mib(5120)»* |
 | `MB6` | il costruttore *«non muore mai»* muore subito | `a_gui_told_not_to_die_never_does`, **una sola** — la direzione che si dimentica (§7.1.1 regola 3) |
 | `MB7` | la richiesta attraversa come corpo **vuoto** | `what_the_gui_said_before_dying_is_a_real_encoded_request`, **una sola** |
 | `MB8` | il punto estratto può cadere **oltre** l'ultima operazione | `the_drawn_point_lies_inside_the_operations_the_path_performs` e `every_operation_of_the_path_can_be_the_one_that_kills_it` — gotcha **#17** in entrambe le metà |
 
 ⛔ **I DUE ORACOLI DI NON-VACUITÀ DI CIASCUNA CAMPAGNA SONO STATI VISTI ROSSI, ed è un criterio
-di chiusura e non un consiglio.** Per `gui_death_campaign`: l'oracolo 1 con `MB3`, l'oracolo 2 con
-`MB4`. Per `worker_kill_campaign`: l'oracolo 2 con `MC1` e il rilevatore di degenerazione con
-`MC2`, entrambi con mutazioni **sul generatore** — `RngExt::below`, che è codice di produzione in
-`crates/kernel/src/rng.rs` e non il banco.
+di chiusura e non un consiglio.** Per `gui_death_campaign`: l'oracolo **1** con `MB3`, l'oracolo
+**2** con `MB4`. Per `worker_kill_campaign`: l'oracolo **1** con `MC3`, l'oracolo **2** con `MC1`,
+e in più il rilevatore di degenerazione con `MC2`. ⚠️ **`MC1` ed `MC2` mutano il GENERATORE** —
+`RngExt::below`, codice di produzione in `crates/kernel/src/rng.rs` — **mentre `MC3` muta il
+banco**, e la differenza è dichiarata invece che nascosta: `E155` toglie a questa campagna la
+finta guidata dal seme perché *«a decidere il kill è il banco e non il worker»*, quindi non
+esiste un difetto di produzione che possa far mancare un kill.
 
 ⛔ **E L'ORACOLO 1 DELLE DUE CAMPAGNE NON È UN'ASSERZIONE AGGREGATA, perché quelle scritte al
 compito erano DOMINATE e sono state TOLTE alla prima ondata di revisione** (gotcha **#76**):
@@ -4697,8 +4701,11 @@ conteggio che il ciclo stesso produceva, e nessuna mutazione poteva farle rosse.
 invece che sulla somma, e nomina il seme e l'operazione — e nella seconda ondata sono caduti anche
 il contatore `deaths` e il congiunto su `death_seen_from_port`, per la stessa ragione: dopo
 l'asserzione per seme quel campo è **costante `true`**, quindi un congiunto su di lui si riduce al
-proprio operando sinistro. ✅ **Rimisurato dopo averli tolti:** la campagna stampa gli stessi 643
-semi, e `MB3` ed `MB4` restano rossi.
+proprio operando sinistro. ✅ **Rimisurato dopo averli tolti, e la cifra NON si scrive qui:** la
+riga `DST gui death:` che `cargo test --locked -p simulator --test gui_death_campaign --
+--nocapture` stampa porta lo stesso numero di semi prima e dopo la rimozione, e `MB3` ed `MB4`
+restano rossi. ⚠️ **Questa riga portava quel numero nudo**, mentre la cella della campagna
+sorella enuncia la regola opposta: un numero misurato non si scrive, si scrive il comando.
 
 ⚠️ **Una sola sonda non è uccisa da nessuna mutazione — `the_same_seed_chooses_the_same_operation`
 — ed è INFALSIFICABILE PER COSTRUZIONE**, `from_seed` essendo una funzione pura dei suoi

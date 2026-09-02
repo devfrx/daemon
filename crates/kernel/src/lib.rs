@@ -45,3 +45,5 @@ pub mod gateway;
 pub mod permission;
 
 pub mod degradation;
+
+pub mod client;

@@ -276,8 +276,11 @@ per voce, leggendo, non per codice.
 Una sezione nuova in `archivio/stato-storico.md`: titolo `## Il racconto del Traguardo 6 —
 archiviato il <data>`, il riquadro «Verbale, non stato», il perché in due righe, il criterio di
 taglio «resta in §6 ciò che è vero adesso», le tre eccezioni, poi il blocco verbatim. I link
-relativi che contiene — sei il 2026-09-02 — prendono il prefisso `../`, e `check-docs.sh` lo
-verifica.
+relativi che contiene prendono **tutti** il prefisso `../`, e `check-docs.sh` lo verifica.
+⚠️ **RICHIAMO DEL 2026-09-02, scrivendo il piano:** qui stava *«sei il 2026-09-02»*, e il
+comando — il `grep` dei bersagli sul blocco estratto, **P-1** del piano — ne rende **otto**: la
+cifra veniva dalla consegna, misurata prima che la sua stessa riga entrasse nel blocco. **Tolta,
+non riallineata:** conta la regola, ogni bersaglio.
 
 ### 4.5 Il puntatore che resta in §6
 
@@ -499,6 +502,12 @@ chiusura in nessuna riga.
 | 3 | il pre-controllo delle quattro domande su ciascun compito, nella sessione che scrive il piano | [`CLAUDE.md`](../../../CLAUDE.md), «Prima di eseguire un compito di un piano» |
 | 4 | l'esecuzione in una sessione **nuova**, un subagente fresco per compito, revisione fra uno e l'altro | `superpowers:subagent-driven-development` |
 | 5 | quando il compito 4 è committato e pushato: la §6 del compendio porta il prossimo passo, cioè i due brainstorming, e questo disegno porta la §7 datata e chiusa | la §5.2 lo prescrive |
+
+✅ **RICHIAMO DEL 2026-09-02: i passi 1, 2 e 3 sono fatti lo stesso giorno** — il proprietario ha
+riletto il disegno, il piano vive in
+[`plans/2026-09-02-sottoprogetto-1-chiusura.md`](../plans/2026-09-02-sottoprogetto-1-chiusura.md)
+e il pre-controllo delle quattro domande sta nella sua errata. Ciò che resta è l'esecuzione, in
+una sessione **nuova**; a che punto sia lo dice la §6 del compendio, non questa riga.
 
 📌 **Ciò che questo disegno consegna a chi scriverà il piano**, che è suo e non un puntatore: i
 quattro compiti ordinati dalla §5.4, con ciò che ciascun commit può dire; la Definizione di

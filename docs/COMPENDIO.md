@@ -891,16 +891,20 @@ proprietario — quali lo dice il comando che vive in quella sezione.
 della quarta ondata e l'ultima frase del registro del compito 8. Nessuna riga è stata corretta, perché nessuna era
 falsa.
 ⚠️ **Il ciclo di revisione non è raccontato qui: la casa unica è `E181`** dell'errata del piano.
-⏭️ **IL PROSSIMO PASSO È DEL PROPRIETARIO: chiudere il SOTTO-PROGETTO 1 contro la sua Definizione di «fatto», che
-è la §0.7 della spec** — i sei traguardi sono eseguiti, il sotto-progetto no, e resta anche la §8 di
-[`tracciabilita.md`](tracciabilita.md). ⛔ **Si apre col brainstorming**, che [`../CLAUDE.md`](../CLAUDE.md)
-prescrive prima di qualunque lavoro creativo e prima di entrare in plan mode.
-✅ **IL BRAINSTORMING DELLA CHIUSURA È FATTO IL 2026-09-02, sei sezioni approvate una per volta, E IL DISEGNO È
-SCRITTO LO STESSO GIORNO** dalla sessione successiva, sul posto della consegna e per scelta del proprietario: vive in
+⏭️ **IL PROSSIMO PASSO È ESEGUIRE IL PIANO DELLA CHIUSURA del sotto-progetto 1, in una sessione NUOVA** — quattro
+compiti nell'ordine della §5.4 del disegno, un subagente fresco per compito con revisione fra uno e l'altro, e
+l'errata del piano letta **prima** di ciascuno. Il piano vive in
+[`superpowers/plans/2026-09-02-…-chiusura.md`](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md), che ne è la
+casa unica; a che punto sia lo dice la **sua** tabella della posizione, non questa riga. ⚠️ Il prossimo passo **dopo**
+la chiusura lo scrive qui il compito 4, con le parole della §5.2 del disegno.
+✅ **IL BRAINSTORMING DELLA CHIUSURA È FATTO IL 2026-09-02, sei sezioni approvate una per volta; IL DISEGNO È SCRITTO
+LO STESSO GIORNO** dalla sessione successiva, sul posto della consegna e per scelta del proprietario, che lo ha riletto;
+**E IL PIANO È SCRITTO E PRE-CONTROLLATO LO STESSO GIORNO**, nella sessione dopo: il disegno vive in
 [`superpowers/specs/2026-09-02-…-chiusura-design.md`](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md),
-che ne è la casa unica e dichiara di sé di essere **completo**. ⚠️ **RICHIAMO DEL 2026-09-02:** qui stava *«IL DISEGNO
-NON È ANCORA SCRITTO … una consegna e non il disegno»*, ed è diventato falso lo stesso giorno. Il proprietario lo
-rivede, poi `writing-plans`. ⚠️ Il prossimo passo **dopo** la chiusura sta lì, non qui.
+completo, col verbale che nascerà come sua **§7**; il pre-controllo ha reso **cinque** voci d'errata, e una cifra della
+consegna era falsa lo stesso giorno — le righe ⏳/⚠️ della §8 con una sede nell'innesco sono **36 su 37**, `V26` la
+ritenzione non ne ha. ⚠️ **RICHIAMO DEL 2026-09-02:** questa riga ha detto *«il disegno non è ancora scritto»* e poi *«il
+proprietario lo rivede, poi `writing-plans`»*, ed entrambe sono diventate false in giornata.
 ✅ **IL DECIMO È FATTO IL 2026-09-01: tre rilievi, `E135`, tutti di prosa o registro, uno fuori dal
 perimetro** — la specie dei numerali di distanza, colta dalla domanda di classe sull'intero `crates/`.
 I quattro predicati del nono giro sono misurati tenuti braccio per braccio, e trentasette enum censiti

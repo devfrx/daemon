@@ -877,7 +877,7 @@ stessa disonestà del verbale che elenca solo i successi.
 
 | | Dove | Che cosa l'esecuzione ha confermato |
 |---|---|---|
-| 1 | §1.2 — il **perimetro** | intatto: nessun trasporto è stato costruito, e `platform` non ha guadagnato niente — `git diff --name-only c4cf942..HEAD -- crates/platform/src/` non rende **niente** |
+| 1 | §1.2 — il **perimetro** | intatto: nessun trasporto è stato costruito, e il **codice di produzione** di `platform` non ha guadagnato niente — `git diff --name-only c4cf942..HEAD -- crates/platform/src/` non rende **niente** |
 | 2 | §4.2 — *«la riga di catalogo che il traguardo chiude è una, ed esiste già»* | il traguardo **non crea** righe di catalogo, come il Traguardo 5. ✅ Misurato invece che asserito: `git diff --name-only c4cf942..HEAD -- <la spec>` non rende **niente**, e il conteggio delle righe di catalogo è lo stesso a `c4cf942~1` e a `HEAD` |
 | 3 | §4.3 — la composizione dei byte congelati, dichiarata **deduzione e non misura** | misurata **prima di scrivere**, e la deduzione regge — `P-15` |
 | 4 | §5.1 — *«tre righe dicono ✅ e non hanno un controllo»* | vero, e i tre controlli esistono adesso — condizione 3 |

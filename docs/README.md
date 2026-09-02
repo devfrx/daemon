@@ -4,8 +4,9 @@ Assistente desktop locale — piattaforma a **quattro pilastri paritari** (conve
 conoscenza, agenti e coding, voce, generazione asset) su kernel comune. ⚠️ **Questa riga ne
 elencava cinque dicendo «quattro»**: il raggruppamento è quello della §1 del compendio.
 
-**Fase corrente: implementazione del kernel — i Traguardi da 1 a 5 sono ✅ eseguiti, e resta il
-Traguardo 6.** ⚠️ **La coda di date che stava qui è TOLTA e non riallineata:** diceva
+**Fase corrente: implementazione del kernel — i sei traguardi sono ✅ eseguiti, il 6 il
+2026-09-02; il sotto-progetto NON è chiuso, e la sua Definizione di «fatto» è la §0.7 della
+spec.** ⚠️ **La coda di date che stava qui è TOLTA e non riallineata:** diceva
 *«il 2026-08-08 e il 2026-08-10»* per quattro traguardi, ed era già sbagliata a sé stante —
 **questo stesso file** data il Traguardo 4 al **2026-08-11**, nel capoverso che ne annuncia il
 brainstorming. ⚠️ **RICHIAMO DEL 2026-08-25: qui c'era un NUMERO DI RIGA — *«la riga 16»* — e lo

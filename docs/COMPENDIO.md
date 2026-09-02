@@ -635,7 +635,7 @@ contro il tetto che lo sfoltimento ha messo nel cancello.
 | 3 | giornale e formato durevole | ✅ 2026-08-10 |
 | 4 | simulatore DST — il guasto | ✅ 2026-08-11 |
 | 5 | arbitro GPU | ✅ 2026-08-25 |
-| 6 | gli altri meccanismi | ⬜ **davanti** |
+| 6 | gli altri meccanismi | ✅ 2026-09-02 |
 
 ⚠️ **Nessun numeratore di compiti in questa tabella**, per costruzione: invecchierebbe a
 ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
@@ -644,8 +644,8 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 
 ### Il prossimo passo
 
-⛔ **Il TRAGUARDO 6** — gli altri meccanismi: il gateway di inferenza, i sensori, i permessi, lo
-stato di degrado e il canale verso i worker. ✅ **IL BRAINSTORMING È CHIUSO E IL DISEGNO È COMPLETO dal 2026-08-30**, tutte le sezioni
+✅ **IL TRAGUARDO 6 È CHIUSO IL 2026-09-02** — gli altri meccanismi: il gateway di inferenza,
+i sensori, i permessi, lo stato di degrado e il canale verso i worker. ✅ **IL BRAINSTORMING È CHIUSO E IL DISEGNO È COMPLETO dal 2026-08-30**, tutte le sezioni
 approvate una per volta. ⚠️ **Nessun conteggio di sezioni qui, e non è mai stato riallineato:**
 questa riga disse *«cinque sezioni … la 6 e la 7 non sono state nemmeno presentate»*, poi fu
 **tolta** invece che portata a sei, e oggi non c'è più niente da contare. La casa unica resta
@@ -881,13 +881,19 @@ commit aveva appena cancellato dal sorgente.
 la **§8** del disegno e la tabella delle voci aperte del Traguardo 6 **non esistono** — ma la condizione **12** sì, e
 si verifica **leggendo**. Ha reso un **segnaposto non risolto** nel comando del Passo 1, un `awk` che conta **otto**
 righe che non sono di catalogo, e una **collisione di codici**: `P-n` nomina due popolazioni diverse.
-⏭️ **IL PROSSIMO PASSO È DISPACCIARE IL COMPITO 10 IN UNA SESSIONE NUOVA**, per la pratica del proprietario: un
-subagente fresco col brief, e la revisione dopo. ⚠️ **E il vincolo operativo è il TETTO del compendio**, che il
-compito tocca: quanto margine resti lo dice `wc -c` contro `scripts/check-docs.sh`, e il verde **non** è margine. ⚠️ **E due cose che il compito 9 gli lascia, misurate
-oggi:** l'ultima frase del registro del compito 8 e le tre correzioni della quarta ondata di questo **non sono
-state riviste da nessuno**; e `E164` è metodo che vale per tutti — un comando messo accanto a un'affermazione
-misura **l'affermazione** e non una sua approssimazione, e il numero di un comando non ancorato **non si scrive in
-nessuna casa**, perché la riga che lo scrive è essa stessa un'occorrenza.
+✅ **IL COMPITO 10 È ESEGUITO IL 2026-09-02, ED È LA CHIUSURA: le dodici condizioni della §7.2 del disegno sono
+rilette contro il codice una per volta, e il verbale sta nella §8 di quel disegno** — decisione **B** della §7.1,
+perché il compendio ha un tetto nel cancello. ⛔ **La 12 era già soddisfatta e si verifica LEGGENDO**, scritta come
+tale invece di essere «eseguita» (gotcha **#49**). Le voci aperte stanno in **una** tabella sola di
+[`porta-di-qualita.md`](porta-di-qualita.md) con la colonna di chi le chiude, e per alcune il chiusore **non** è il
+proprietario — quali lo dice il comando che vive in quella sezione.
+⚠️ **E i due residui che il compito 9 lasciava sono stati RILETTI contro il codice e REGGONO:** le tre correzioni
+della quarta ondata e l'ultima frase del registro del compito 8. Nessuna riga è stata corretta, perché nessuna era
+falsa.
+⏭️ **IL PROSSIMO PASSO È DEL PROPRIETARIO: chiudere il SOTTO-PROGETTO 1 contro la sua Definizione di «fatto», che
+è la §0.7 della spec** — i sei traguardi sono eseguiti, il sotto-progetto no, e resta anche la §8 di
+[`tracciabilita.md`](tracciabilita.md). ⛔ **Si apre col brainstorming**, che [`../CLAUDE.md`](../CLAUDE.md)
+prescrive prima di qualunque lavoro creativo e prima di entrare in plan mode.
 ✅ **IL DECIMO È FATTO IL 2026-09-01: tre rilievi, `E135`, tutti di prosa o registro, uno fuori dal
 perimetro** — la specie dei numerali di distanza, colta dalla domanda di classe sull'intero `crates/`.
 I quattro predicati del nono giro sono misurati tenuti braccio per braccio, e trentasette enum censiti
@@ -1780,7 +1786,7 @@ nessuno l'abbia chiusa.
 | **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ✅ **eseguito il 2026-08-10, dodici compiti su dodici**, `GATE GREEN` a tutti. ⚠️ **Ricontati il 2026-08-10 chiudendo il traguardo:** diceva *«otto compiti»*, ed era la terza delle tre cifre discordi dello stesso file. ⚠️ **Ricontati il 2026-08-10:** diceva *«due compiti»* ed era già indietro di uno al commit precedente, di **tre** a questo — e chiamava il compito *«la conformità coi **tre** bugiardi»* quando i bugiardi consegnati sono **sette**. Il numeratore lo muove chi esegue, e chi esegue guarda la §6. [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**, dodici compiti in due parti: ✅ il record versionato · ✅ la riga di catalogo dell'etichetta · ✅ il **doppio in memoria** · ✅ la **conformità coi sette bugiardi** e ✅ `replay()`, eseguiti come un compito solo · ✅ la **riconciliazione su un insieme**, che ha riportato indietro la firma di `replay()` invece di deciderla · ✅ **`promote` che diventa una nota**, con l'operazione `note()` e la variante `RecordKind::Note` che il compito ha dovuto inventare · ✅ **`redb` in `platform`** col **backend nostro**, la chiave progressiva e la prova che il confine è **sostituibile da fuori** · ✅ la conformità contro **entrambe** a ogni commit · ✅ **i byte congelati**, tre record e una mappa riletta dal banco · ✅ `prune` che rifiuta un passo in dubbio · ✅ la **chiusura**, che è stata un **audit** e non una scrittura. ⛔ **Congelamento per ultimo**, che è la decisione D1 del piano |
 | 4 | il simulatore DST — **il guasto**, non il tempo virtuale: quello è del Traguardo 2 | ✅ **eseguito il 2026-08-11, dieci compiti su dieci**, `GATE GREEN` a ciascuno. ⛔ **L'errata è a settanta voci in nove passate, di cui dodici DECISIONI** — il pre-controllo ha trovato un difetto in **dieci compiti su dieci**. La più importante è **E52**: due righe dei **documenti di stato** dicevano il falso su come chiudere il gotcha **#51**, e lo dicevano **dal brainstorming**. ⛔ **E la lezione imparata TRE volte:** *«l'iniezione è avvenuta»* e *«c'era qualcosa da verificare»* sono **due** affermazioni, e una campagna che tiene solo la prima è **verde avendo confrontato insiemi vuoti** — successo a `C7a`, poi a `C7b`, poi al ciclo di livello 2, **ogni volta dopo che la precedente era stata chiusa**. ✅ **Brainstorming, disegno e piano tutti il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md), che fissa il perimetro (il **motore**, non tutte le finte), i **due livelli come due campagne**, l'oracolo di non-vacuità e i **sette** artefatti col controllo che esercita ciascuno; e il [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci compiti in tre parti** — il giornale cadente · lo scenario giornalato e `C7a` · `C7b` con l'oracolo preso dalla **traccia** e non dall'archivio · la campagna breve col numero di semi **misurato** · il backend cadente scritto **da fuori la crate** · la coerenza dopo la riapertura e il **#51 chiuso dal conteggio dei `sync_data`** · la campagna di livello 2 · l'elenco dei semi · il tempo di parete nel cancello · la chiusura. ⚠️ Il titolo diceva *«tempo virtuale, guasti, campagna, semi»* e il tempo virtuale era eseguito da due traguardi |
 | 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ✅ **ESEGUITO il 2026-08-25**, `GATE GREEN` a ciascun compito — aperto il 2026-08-18 con brainstorming chiuso, [disegno](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md) e [piano](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) scritti lo stesso giorno, esecuzione dal 2026-08-19. ⛔ **Il traguardo non CREA righe di catalogo: ne CHIUDE dodici** già scritte — **undici chiuse e una dichiarata PARZIALE**, ricontate sulla §7.4 dal Task 13. ⛔ **Le voci che lascia aperte stanno in una tabella sola** di [`porta-di-qualita.md`](porta-di-qualita.md), con la colonna di chi le chiude. ⛔ **A che punto sia NON è scritto qui**, ed è il rimedio e non una svista: questa cella ha detto *«esecuzione da fare»* e poi *«QUATTRO compiti su tredici»* mentre la §6 diceva **cinque**, cioè la stessa cifra in due posti dello **stesso file** con due valori — la forma peggiore del gotcha **#31**. Il numeratore lo muove chi **esegue**, e chi esegue guarda **la §6**, dove vive in un posto solo. ⛔ **RICHIAMO DEL 2026-08-25: la chiusura del traguardo ce l'ha RIMESSO** — *«tredici compiti su tredici»*, nella stessa cella che qui sopra dichiara di non portarlo, e insieme alla voce 13 dell'ordine faceva **tre** case dentro la §6 contro l'*«in nessun altro punto di questa sezione»* del riquadro in cima. **Tolto di nuovo**, ed è il **#68** ricreato dentro il riquadro che lo vieta: una regola scritta in un documento non vincola quel documento, nemmeno quando il documento è quello che la ospita. ⚠️ **Questa cella diceva *«eredita CINQUE delle nove righe di guasto»*, e la cifra era sbagliata**: contate sulla §7 del disegno del Traguardo 4 sono **una**, più una condivisa. Non è ricorretta qui — **è tolta**, e la cella rimanda alla fonte: una cifra che vive in più documenti si toglie (`CLAUDE.md`). ⛔ **E non porta il puntatore al suo posto:** quello vive **in cima a questa sezione**, in un posto solo |
-| 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ⬜ — eredita **le altre**, e quante sono lo dice la §7 del disegno del Traguardo 4, non questa cella |
+| 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ✅ **eseguito il 2026-09-02**, `GATE GREEN` — eredita **le altre**, e quante sono lo dice la §7 del disegno del Traguardo 4, non questa cella. Il verbale di chiusura è la **§8 del disegno** del traguardo |
 
 ⚠️ **E il Traguardo 4 lascia aperte tre cose, dichiarate e non risolte.** ⛔ **Le nove righe di
 guasto della §3.3 che restano scoperte**, ciascuna col proprio indirizzo ai Traguardi 5 e 6 — non

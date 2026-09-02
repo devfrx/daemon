@@ -5019,3 +5019,133 @@ esista.
 | ~~le **righe 1–4 di §6.10.5** — i casi negativi della porta `process`~~ ✅ **CHIUSA il 2026-08-21, col Task 11** | ⛔ **RISCRITTA IL 2026-08-21 — FINDING P-2 DELL'AUDIT: LA RAGIONE DELLO SCAGLIONAMENTO ERA FALSA.** Si **riscrive** col richiamo datato invece di accorciarla, perché a essere sbagliato è il **fatto** e non una qualificazione intorno a esso: è il limite dichiarato del gotcha **#76**. Diceva: *«tutte e quattro pretendono di ottenere un `Worker`; un `Worker` lo restituisce solo `start(grant, ..)`; e nessuno emette concessioni prima del Traguardo 5»*. ✅ **Misurato su una sonda d'integrazione usa-e-getta, compilata e cancellata nella stessa corsa** — non dedotto, e non ripreso dal rapporto d'audit (gotcha **#65**): un `Worker` si ottiene **implementando il tratto da fuori dalla crate**, `impl Worker for W` con **zero** concessioni, e `crates/kernel/tests/ports_are_implementable.rs` lo fa dal **Traguardo 2** con `ScriptedWorker`. ⛔ **Ciò che una concessione sblocca è UNA cosa sola: chiamare `Process::start`.** Rimisurato prima di questo compito: `grep -rn "\.start(" crates/ --include=*.rs` dà **zero** chiamanti in tutto il workspace. ✅ **E anche quella metà è spesa dal Traguardo 5 Task 5**, misurata nella stessa corsa: `Admission::Granted(Grant)` è **pubblica**, quindi una concessione vera di `admit` raggiunge un `Process::start` scritto da fuori — la sonda ha compilato e passato. ⚠️ **Ciò che NON è stato rimisurato, e va detto invece di dedotto:** se i quattro casi fossero stati scrivibili già al Traguardo 2. Scriverli **è** il Task 11, e una misura anticipata varrebbe come previsione e mai come collaudo (gotcha **#53**). ⛔ **L'unica ragione che resta è quella vera fin dall'inizio:** una regola provata in **una direzione sola** non è ammissibile (§7.1.1 regola 3), e la direzione *«deve scattare»* — i quattro casi `compile_fail` — non è scritta. La chiude il **Task 11**. ⚠️ Un costruttore di `Grant` dietro una feature di test resta **scartato** per la ragione già scritta nella riga del blocco **B** qui sopra: il verdetto non cambia, cambia il fatto che non serviva. Quel che le sostituisce intanto è `ports_are_implementable.rs`, che le firme le esercita **in entrambe le direzioni** con una finta costruita direttamente dal test. ✅ **RICONTATA DI NUOVO IL 2026-08-21, TRAGUARDO 5 TASK 11, E LA RIGA È CHIUSA.** La direzione che mancava — «deve scattare» — è scritta: quattro casi `compile_fail` (`talking_without_the_handle.rs`, `instructing_after_the_kill.rs`, `reading_without_a_receipt.rs`, `reading_twice_from_one_receipt.rs`) e le loro contro-sonde in `crates/kernel/tests/worker_tokens.rs`, che ottengono un `Grant` vero da `Arbiter::admit` — MAI un costruttore di test, scartato per la ragione già scritta qui sopra. Oracoli letti uno per uno, non rigenerati alla cieca (vincolo globale 5): `E0599` (riga 1, senza la maniglia), `E0382` (riga 2, dopo l'uccisione), `E0061` (riga 3, senza ricevuta), `E0382` (riga 4, due letture). ⚠️ **`E0061` prova solo l'ARITÀ, non l'autenticità della ricevuta:** `SingleReceipt::new` è `pub` e raggiungibile da fuori la crate — lo dimostra `worker_tokens.rs` stesso, che la chiama da un banco d'integrazione — quindi `worker.read_one(SingleReceipt::new(7))` compila; il limite è già dichiarato accanto a `SingleReceipt::new` in `crates/kernel/src/ports/process.rs`. È il contrario del gettone `Grant`, che ha `grant_has_no_constructor.rs` proprio perché un costruttore pubblico non c'è. Le quattro funzioni passano da sole (`cargo test --locked -p kernel --test worker_tokens`) e **due** sono state provate portanti per mutazione, ciascuna revocata da una copia presa prima: **M1** (`read_one` risponde una costante invece dei byte della ricevuta) uccide da sola `reading_once_with_the_receipt_compiles`; **M2** (`instruct_one` non incrementa `next`) uccide da sola `with_the_handle_the_worker_can_be_instructed`. ⚠️ **Un terzo candidato esplorato e NON contato come copertura:** `kill` che rifiuta sempre uccide da sola `instructing_before_the_kill_compiles`, ma quel test non ha asserzioni oltre agli `expect` e la sua vera pretesa — che istruire PRIMA della `kill` COMPILI — non è una proprietà che una mutazione a runtime può provare; la tiene il fatto che il file compila, e la metà opposta la tiene `instructing_after_the_kill.rs`. ⚠️ **E il quarto, `one_grant_starts_one_worker`, non è stato esplorato per mutazione perché non ha un'asserzione a runtime sul proprio soggetto:** il panico raggiungibile condiviso con gli altri tre è quello di `a_real_grant()` — se muore, muoiono tutti e quattro insieme; quello dentro `one_grant_starts_one_worker` non scatta, perché `FakeProcess::start` risponde `Ok` incondizionatamente — e il commento nel sorgente lo dichiara già: non tiene nessuna forma che `a_started_worker` non compili già. ⚖️ **Un quinto caso `compile_fail`** — un secondo `start` con lo stesso `Grant`, `E0382` perché `Grant` non è `Copy`, e non lo può diventare perché non deriva nemmeno `Clone` — resta **registrato e non preso**: se pretenda una propria riga di catalogo lo decide la spec (vincolo globale 7), non questo compito |
 | solo `secrets` raggiunge il **portachiavi** | nessuno script lo verifica oggi: `gate-deps.sh` guarda i grafi di `kernel` e `simulator`, non quelli di `platform` e `secrets` |
 | un solo **punto di uscita verso la rete** | la lista delle crate autorizzate è **vuota**, e una lista vuota passa sempre. Il catalogo lo dichiara già: è l'unica voce provata in una direzione sola, e si completa nel sotto-progetto che accende la rete |
+
+## ⛔ LE VOCI APERTE DEL TRAGUARDO 6, IN UNA TABELLA SOLA (2026-09-02)
+
+⛔ **Raccolte alla chiusura del traguardo, ed è la condizione 11 della §7.2 del suo disegno** —
+quella che al Traguardo 5 il disegno aveva **dimenticato** e che a rimediare fu chi scriveva il
+piano. Qui era scritta, e questa sezione la **esegue**.
+
+⚠️ **STA IN FONDO AL FILE E NON ACCANTO ALLA TABELLA DEL TRAGUARDO 5, e la ragione è misurata:**
+il blocco di comandi di quella sezione è ancorato a **due intestazioni** — la propria e quella di
+*«Cosa la porta NON controlla»* — quindi una sezione infilata fra le due farebbe restituire al suo
+`awk` anche **queste** righe. ✅ **Provato nelle DUE direzioni su una copia usa-e-getta fuori dal
+repository, e non dedotto:** col blocco in fondo, il comando del Traguardo 5 rende esattamente le
+proprie righe, com'era prima di questa aggiunta; con questa sezione spostata **fra** le due
+intestazioni ne rende **due in più**, e sono righe di questa tabella.
+
+⛔ **Come è stata costruita, perché il metodo vale più dell'elenco: non è un censimento dichiarato
+completo, è ciò che questi comandi hanno restituito**, letti riga per riga e senza troncarli
+(gotcha **#70**). Il piano è
+[quello del Traguardo 6](superpowers/plans/2026-08-30-sottoprogetto-1-traguardo-6-altri-meccanismi.md),
+guardato a **`0aaa080`** — lo SHA e non «il piano», perché il commit che scrive questa sezione ne
+aggiunge voci e sposterebbe ogni cifra scritta qui.
+
+```
+$ grep -cE '^\| \*\*`?E[0-9]+' <piano>
+    ⛔ QUANTE SIANO NON È SCRITTO QUI: lo dice il comando, sul piano che si sta guardando.
+
+$ grep -nE '^\| \*\*`?E[0-9]+' <piano> | grep -E "<il filtro del Traguardo 5, verbatim>"
+    → a 0aaa080 rende VENTI candidate:
+        E5 E11 E12 E13 E16 E30 E37 E38 E40 E41 E51 E53 E62 E94 E96 E135 E148 E152
+        E158 E166
+      Rilette una per una: DIECI sono aperte ed entrano in tabella — E5 E11 E12 E13 E37
+      E38 E40 E41 E62 E96 — più il richiamo ⑥ di E53, che è aperto dentro una voce
+      chiusa. Le altre NOVE sono verbali o già chiuse.
+    ⛔ IL FILTRO NON BASTA, ed è il gotcha #70 in ENTRAMBE le forme, come al Traguardo 5.
+      ① NE MANCA di aperte: E15, E48 ed E108, misurate a zero contro quel filtro e
+        trovate allargandolo a "registrat|resta apert|è apert|e sua".
+      ② NE RESTITUISCE di chiuse: nove su venti.
+
+$ grep -nE "riga di catalogo" docs/porta-di-qualita.md | grep -iE "non ha|non hanno|nessuna riga|sarebbe una riga"
+    → i siti in cui un compito dichiara che il proprio caso non ha una riga di catalogo
+      propria. Quelli del Traguardo 6 sono la riga 22 di questa tabella, che li indicizza
+      invece di ricopiarli.
+    ⚠️ Come al Traguardo 5, il grep rende CANDIDATE e non case — righe di altri traguardi
+      e falsi positivi comprese: ogni riga si legge intera.
+```
+
+⛔ **E CIÒ CHE NESSUN `grep` HA RESO, trovato LEGGENDO — è la metà che costa:**
+
+- le **sette** voci ancora aperte che il disegno apre per il proprietario: la sua tabella
+  *«Le voci che questo disegno apre per il proprietario»* ne porta otto, e la **5** è chiusa dal
+  2026-08-30. Sono le righe **1**–**7** qui sotto;
+- le voci che vivono in **questo** file e non nell'errata — il doc di modulo di `record.rs`,
+  `reconcile::Resolution`, la riga *«zero avvisi»* del cancello e la metà temporale di
+  *«concessione valida»*: righe **23**–**26**;
+- l'altra metà di **ADR-0005**, il cui **innesco** vive nel doc di `GrantRequest` in
+  `crates/kernel/src/wire/ipc.rs` e il cui racconto sta nella §6 del [compendio](COMPENDIO.md), e
+  che **nessuno** dei tre comandi qui sopra rendeva: riga **27**;
+- la voce **nuova** che questa chiusura ha misurato: riga **28**.
+
+⚠️ **E una voce che questa tabella NON indicizza, detta perché non la si cerchi:** due citazioni di
+riga sbagliate restano nel rapporto del compito 9, che vive in `.superpowers/` — **git lo ignora**,
+quindi è fuori da ciò che si consegna, e sono dichiarate lì con un richiamo datato. È il precedente
+del ciclo del Task 11 del Traguardo 5: **vale una riga di esclusione, non una riga di tabella**.
+
+⛔ **La colonna «Chi la chiude» è la ragione per cui la tabella esiste, e non dice sempre «il
+proprietario»:** delle righe qui sotto, quelle il cui chiusore **non** è il proprietario le nomina
+il comando in fondo alla sezione.
+
+| # | Voce | Che cosa resta aperto — misurato il 2026-09-02 | Dove è dichiarata | Chi la chiude |
+|---|---|---|---|---|
+| 1 | la **riga C in §0.4** per il timbro di build | §0.3 dice che *«un pezzo scaglionato senza una riga C esplicita è un errore di questa sezione»*, e il rinvio del timbro (§3.4 del disegno) non ne ha una | disegno del Traguardo 6, voce **1** del proprietario | il **proprietario**: §0.4 è spec, vincolo globale 7 |
+| 2 | `V10`, `V14`, `Q10` — righe **sbagliate** o **notazione in avanti** | portavano ✅ senza avere un controllo; i tre controlli ora esistono, ma **quale** delle due cose fosse la §8 non lo dice | disegno, voce **2** | il **proprietario**: §8 è spec |
+| 3 | la lettura di *«mantiene»* in ADR-0019 | **espone** o **cachea**: questo traguardo ha letto *«espone»* e ha costruito il degrado come **derivato**, dichiarando la divergenza invece di appianarla | disegno voce **3**, e il riquadro del compito 8 di questo file | il **proprietario**: tocca un ADR `Accepted` |
+| 4 | se `check-docs.sh` possa confrontare un ✅ con l'**esistenza** del controllo | oggi verifica l'innesco di `parziale`/`rimandato` e non questo — la deduzione è dichiarata **non misurata** dal disegno stesso | disegno, voce **4** | il **proprietario**: sarebbe una riga di catalogo nuova |
+| 5 | se il buco del **timbro** (§6.4 del disegno) debba avere una riga C in §0.4 | è la gemella della riga 1, su un buco diverso: là il rinvio, qui la conseguenza su I4 | disegno, voce **6** | il **proprietario**: §0.4 è spec |
+| 6 | la **revoca** core → gui | ADR-0033 la nomina, nessun innesco scritto la pretende oggi, e fino ad allora una concessione discrezionale è prelazionabile **nei libri** senza che la gui lo senta | disegno voce **7**, e il doc di modulo di `crates/kernel/src/wire/ipc.rs`, che ne porta l'innesco | il **proprietario**: è un allargamento di perimetro |
+| 7 | l'**inquadratura condivisa** fra i due canali privati | economia, o erosione della lettura di *«singolo»* di ADR-0035 | disegno, voce **8** | il **proprietario**: tocca la lettura di un ADR `Accepted`, come la riga 3 |
+| 8 | **E5** | il `#[must_use]` su `Started` e su `Killed` non è tenuto da niente — **mutante vivo** dal giorno in cui nasce — e non è decorativo: un avvio scartato **lascia cadere una concessione**, che è il difetto per cui `R6` esiste | errata del piano | il **proprietario**: pinzarlo è un caso `compile_fail`, cioè una riga di catalogo nuova |
+| 9 | **E11** | le due sonde del compito 1 provano che torna **una** concessione, non che torna **quella**: per `release` due arbitri con la stessa identità sono un arbitro solo | errata | ⛔ **la suite di conformità di §6.10**, che nasce col canale worker vero — **non** il proprietario |
+| 10 | **E12** | i **due lati della grazia** di una revoca non sono tenuti da nessuna sonda: nessun banco rilascia una concessione sotto revoca | errata | ⛔ **il compito che darà alla revoca un chiamante** — **non** il proprietario |
+| 11 | **E13** | il doc di `collect_expired` dice *«both comparisons are `>`»* dove il confronto è scritto `<=`. ⛔ **La proprietà è vera e misurata**, e l'attrito è che chi cerca col `grep` un `>` non lo trova | errata, e il doc in `crates/kernel/src/arbiter/mod.rs` | ⛔ **chi tocca quel doc**, sapendo che **non** sta correggendo un errore — **non** il proprietario |
+| 12 | **E15** | due domande di forma, e la prima è che `Arbiter::id` è un **secondo idioma** per leggere un parametro consegnato: `total_vram` si legge da `Parameters`, l'identità è sollevata in un campo | errata | il **proprietario** |
+| 13 | **E37** | `G5` e `G-5` vivono nello **stesso** documento — le mutazioni del compito 4 e il finding dell'audit del 2026-08-11 — e li distingue un trattino | errata | il **proprietario**: rinominare tocca un verbale |
+| 14 | **E38** | il doc di `GrantRequest` è molto più denso di prosa del gemello, e il candidato a essere tolto è il blocco sui **derive** | errata | il **proprietario**: si accorcia **da sé** il giorno in cui risponde su `Eq` e `Clone` |
+| 15 | **E40** | `crates/kernel/tests/worker_wire.rs` dichiara di essere **la casa** di certe cifre, e la casa non è una | errata | il **proprietario** |
+| 16 | **E41** | la riga dei **fine-riga** di [`../CLAUDE.md`](../CLAUDE.md) nomina `sed -i`, e lo strumento che ha fatto scattare la trappola **due volte** è `cargo fmt`, che non si scrive: si lancia | errata | il **proprietario**: tocca il contratto d'ingresso |
+| 17 | **E48** | un fatto d'**ambiente** — `core.autocrlf` — scritto senza dire **di quale** ambiente, e le macchine sono due. ✅ Rimisurato il 2026-09-02 chiudendo il traguardo: `git config --get core.autocrlf` risponde **`true`** su questa macchina, contro il `false` che `E48` misurò sull'altra. La voce **non** si chiude: è la lacuna, non il valore | errata | il **proprietario**: tocca il contratto d'ingresso, come la riga 16 |
+| 18 | **E62** | *«`dispatch` consuma il gettone, quindi una risoluzione dispaccia una volta sola»* non è tenuto da niente. ⚠️ **Il tipo la regge già** — `Conforming` non deriva `Copy` né `Clone` — a mancare è chi la dica | errata | il **proprietario**: sarebbe una riga di catalogo nuova, come il quinto caso di `Grant` |
+| 19 | **E96** | un rimando `E<n>` nel sorgente **non è un riferimento**: il numero è unico dentro **un** piano, e i piani lo riusano dall'inizio. ⚠️ A difendere il rimando è la **prosa** accanto, che nessun controllo tiene | errata | il **proprietario**: le vie sono almeno due e cambiano una **convenzione** |
+| 20 | **E108** | il doc di `Detail`: una specie **sconosciuta decodifica a `None` in silenzio**, e la coppia tenuta al livello 1 dal 2026-09-01 non chiude quella strada — lì si decodificano byte **già scritti** | errata, e il doc in `crates/kernel/src/record.rs` | il **proprietario**, e **non pinzata**: una sonda sul silenzio di oggi sarebbe un voto contro il cambiarlo (gotcha **#73**) |
+| 21 | **E53**, richiamo ⑥ | se la **domanda di classe** — *«ciascun rimedio ha chiuso la CLASSE o l'occorrenza?»* — diventi una condizione **scritta** di ogni ondata di revisione. ⚠️ È aperta dentro una voce chiusa, e per questo il filtro la restituisce come chiusa | errata, voce `E53` | il **proprietario** |
+| 22 | i **casi `compile_fail` senza riga di catalogo** | il 35°, quello di `RoutingDetail` e i **due** del permesso: ciascuno dichiara accanto a sé di non avere una riga propria. ⚠️ **Questa riga li indicizza e non li copia** (gotcha **#68**) | i riquadri di questo file, ai siti che il terzo `grep` qui sopra restituisce | il **proprietario**: §7.4 è spec, vincolo globale 7 |
+| 23 | il doc di **modulo** di `record.rs` | dice *«with and without `#[cbor(array)]` on the two types below»*, e i tipi che portano quell'attributo sono più di due — quanti lo dice `grep -c '^#\[cbor(array)\]' crates/kernel/src/record.rs`. ⛔ **Non toccata**: la frase descrive una **misura passata**, e prezzarla come difetto invece che come verbale è una scelta | riquadro della nona passata di questo file | il **proprietario** |
+| 24 | `reconcile::Resolution` | cresce a `exit 0` e **nessuno la decide oggi**, né in `src/` né nei banchi: è l'unico membro rimasto della classe che il nono giro ha censito | tabella della domanda di classe in questo file | ⛔ **il primo consumatore**, che la decide con un `match` — **non** il proprietario |
+| 25 | la riga *«zero avvisi»* del cancello | `cargo build --locked --workspace` **non compila i banchi**, quindi un avviso di banco non la fa rossa — misurato sul nome con maiuscole di `gateway_decisor.rs`. Se debba passare a `--all-targets` tocca il cancello | riquadro del compito 7 di questo file | il **proprietario**: vincolo globale 7 |
+| 26 | la metà **temporale** di *«concessione valida»* | `Process::start` non prende `now` e non interroga l'arbitro, `GrantId` è privato, e nessuna API risponde *«questa concessione è ancora nei libri?»*: la campagna del compito 9 la **conta e la dichiara** invece di asserirla | riquadro del compito 9 di questo file | il **proprietario** (gotcha **#73**) |
+| 27 | l'altra metà di **ADR-0005** | `compute_class` e `preemption` raggiungono l'arbitro dal **medesimo pari** del nome che il tipo rifiuta, e l'arbitro **obbedisce** a entrambi: uno sceglie la corsia e apre la guardia di `ask_back`, l'altro decide se una concessione sia richiamabile. ⛔ **Nessuno dei due è controllato contro niente**, mentre `reserved_vram` deve superare il tetto in `admit`. ⚠️ Non è sfruttabile oggi: **il consumatore non esiste** | doc di `GrantRequest` in `crates/kernel/src/wire/ipc.rs`, che ne porta l'innesco per esteso | ⛔ **il compito che per primo decodificherà byte in un `ResourceProfile`** — **non** il proprietario |
+| 28 | il **CR isolato** del piano del Traguardo 6 | un carattere `CR` nudo sta dentro un code span della voce `E136`, dove il testo intendeva i **due caratteri** che scrivono l'escape. ⛔ **La conseguenza non è tipografica:** git classifica allora l'intero file come **non-testo** — `git ls-files --eol` dà `i/-text w/-text` — quindi i suoi CRLF stanno **nell'indice** e nessuna normalizzazione li tocca. ✅ **Misurato nelle due direzioni** in un repository usa-e-getta fuori da questo: la copia **com'è** dà `i/-text`, la copia col solo CR sostituito dai due caratteri dà `i/lf w/crlf`. ⛔ **Toglierlo riscriverebbe in LF ogni riga del file al primo `git add`**, che è la trappola dei fine-riga di [`../CLAUDE.md`](../CLAUDE.md) alla scala dell'intero piano. Comparso con `307fa18` | voce `E179` dell'errata del piano | ⛔ **nessuno oggi, e la ragione è misurata:** il rimedio costa più del difetto. Lo chiude chi riscriverà quel file per un'altra ragione |
+| 29 | le voci **ereditate dal Traguardo 5** | ⚠️ **Questa riga è un rimando e non una seconda copia** (gotcha **#68**): la tabella unica del Traguardo 5, qui sopra, resta la loro casa e non è stata riscritta. Il Traguardo 6 ne ha chiuse quattro — `E21`, `E30`, `R6` ed `E152` — e ciascuna è marcata **nella propria riga** col commit che la chiude. ⛔ **Quali restino aperte lo dice il comando** qui sotto, non questa cella | la tabella unica del Traguardo 5, in questo file | ⚠️ **varia per riga**, e lo dice la colonna omonima di quella tabella |
+
+⛔ **Le righe il cui chiusore NON è il proprietario, e il comando che le nomina invece di
+contarle** — sul precedente della tabella del Traguardo 5, e ancorato alle **due intestazioni**:
+
+```
+awk -F'|' '/^## .*LE VOCI APERTE DEL TRAGUARDO 6/{s=1} s&&/^\| +[0-9]+ \| +le voci \*\*ereditate/{s=0} s&&/^\| [0-9]+ \|/&&$(NF-1)!~/il \*\*proprietario\*\*/{print $2": "$3}' docs/porta-di-qualita.md
+```
+
+⛔ **NON è il filtro del Traguardo 5, e la differenza è misurata invece che scelta:** là il
+discriminante è la parola `proprietario` nuda, e qui non funziona — le celle di questa tabella
+scrivono *«**non** il proprietario»* **per esteso**, che è la notizia che la colonna porta, quindi
+un filtro sulla parola nuda ne rende **una** riga su sei. Il discriminante è la forma **in
+grassetto**, `il **proprietario**`, che compare solo dove il chiusore lo è davvero.
+✅ **Provato nelle DUE direzioni** (gotcha **#24**): rende le righe **9**, **10**, **11**, **24**,
+**27** e **28**, e la forma complementare — `~` al posto di `!~` — rende tutte le altre e nessuna
+di queste. ✅ **E provato di non essere su misura di questa tabella:** lo stesso discriminante,
+puntato sulla tabella del Traguardo 5, rende **lo stesso insieme** del filtro che quella sezione
+porta da sé.
+⚠️ **Si ferma alla riga 29 e non all'intestazione successiva**, perché questa sezione è
+l'ultima del file: la riga 29 è un **rimando** e il suo chiusore *«varia per riga»* non è una
+risposta, quindi contarla fra le une o fra le altre mentirebbe in entrambi i modi.
+
+⛔ **E le voci del Traguardo 5 che restano aperte, col comando e non con un elenco** — un elenco
+di ventinove nomi invecchierebbe alla prima che si chiude:
+
+```
+awk -F'|' '/^## .*LE VOCI APERTE DEL TRAGUARDO 5/{s=1} s&&/^## Cosa la porta NON controlla/{s=0} s&&/^\| [0-9]+ \|/&&$4!~/CHIUSA/{print $2": "$3}' docs/porta-di-qualita.md
+```
+
+⚠️ **La colonna che discrimina è la TERZA e non la quinta**, perché è lì che ogni riga chiusa porta
+`✅ CHIUSA` col proprio commit — letto, non dedotto.

@@ -712,7 +712,7 @@ Traguardo 5 si è presentato **due volte**, ogni volta con gran parte del compit
 |---|---|
 | non chiude il **sotto-progetto 1** | resta la §8 di [`tracciabilita.md`](../../tracciabilita.md), che si aggiorna alla chiusura del sotto-progetto e non di un traguardo |
 | non chiude le **voci del proprietario** | le otto che questo disegno apre, e quelle ereditate dal Traguardo 5 |
-| non tocca [`riferimenti.md`](../../riferimenti.md) | la voce **E146** è *registrata e non presa*: cominciare la convenzione nuova a metà produrrebbe **due** convenzioni invece di una |
+| non tocca [`riferimenti.md`](../../riferimenti.md) | la voce **E146 del piano del Traguardo 5** è *registrata e non presa*: cominciare la convenzione nuova a metà produrrebbe **due** convenzioni invece di una. ⛔ **RICHIAMO DEL 2026-09-02:** qui stava *«la voce `E146`»* nuda, e il piano del Traguardo 6 ha una **propria** `E146` che dice un'altra cosa — un numero d'errata non è un riferimento fuori dal proprio piano (`E96`), e si qualifica dove diventerebbe fuorviante |
 
 ## Cosa questo disegno ha misurato, e che non era scritto da nessuna parte
 
@@ -802,3 +802,101 @@ nel piano**. ⛔ **Le altre voci aperte non sbarrano: si SANNO** (gotcha **#89**
 
 ⚠️ **RICHIAMO DEL 2026-08-30:** questo blocco diceva *«Presentare la sezione 7»*, poi
 *«RESTA UN SOLO SBARRAMENTO»*.
+
+---
+
+## 8. Il verbale della chiusura — 2026-09-02
+
+⛔ **Sta qui e non nel compendio, ed è la decisione B della §7.1:** dal 2026-08-28
+`check-docs.sh` impone un **tetto** al compendio, e un verbale scritto lì competerebbe con quel
+tetto. Scritto eseguendo il **compito 10** del piano, che è un **audit** e non una scrittura
+(§7.3).
+
+### 8.1 I conteggi, rifatti col comando prima di leggere che cosa i documenti ne dicono
+
+| Che cosa | Comando | Esito |
+|---|---|---|
+| il cancello | `bash scripts/gate.sh` | `GATE GREEN` |
+| la baseline | `cargo test --locked --workspace --no-fail-fast`, sommando le righe `test result:` | **nessuno scarto** con la riga di baseline che `porta-di-qualita.md` porta alla chiusura del compito 9 — rieseguita, non citata. ⚠️ Sommare le righe dell'uscita del **cancello** darebbe un altro numero: il settimo passo ne rilancia tre — voce `E42` dell'errata |
+| i casi di livello 1 | `ls crates/kernel/tests/compile_fail/*.rs \| wc -l` | **quaranta**. ⚠️ Le cifre più basse che altri documenti portano — questa §5.1 compresa — stanno dentro **verbali datati**, e restano come sono: un verbale invecchia onestamente |
+| i record congelati | `ls crates/kernel/tests/frozen/*.cbor` | **sei**, uno per specie di `RecordKind` |
+| le righe di catalogo di §7.4.1 e §7.4.2 | ⛔ l'`awk` dettato dal Passo 1 conta **anche** intestazioni e separatori, e la voce `E172` dell'errata del piano ne è la casa | **nessuno scarto** coi numeratori del registro, ricontati blocco per blocco |
+| il perimetro del traguardo | `git diff --name-only c4cf942..HEAD -- crates/ scripts/ Cargo.lock` | **ottantacinque** file, e `Cargo.lock` **non** è fra essi — che è la seconda metà della condizione 7 |
+
+⚠️ **Il primo commit del traguardo è `c4cf942`, e la scelta si dichiara:** è il primo che tocca
+`crates/`; i due che lo precedono sono di sola documentazione — voce `E171`.
+
+### 8.2 Le dodici condizioni della §7.2, rilette contro il codice
+
+⛔ **Nessuna è stata riletta contro sé stessa**, che è la regola 4 della §7.3.
+
+| # | | L'evidenza, letta o rilanciata il 2026-09-02 |
+|---|---|---|
+| 1 | ✅ | il cancello e la baseline della §8.1 |
+| 2 | ✅ | le righe che le §§2–6 nominano, **rilette una per una nelle sezioni che le nominano** e non ricordate: `Q13` (§4.2), `V10` (§5.3), le **due** di §2.8 che pinzano `Parameters` (§2.4), i **byte consumati dal frame** e la **campagna DST** (§6.7). **Tutte coperte**, nessuna a metà. ⛔ E le quattro che §5.3 dichiara restare `⚠️ parziale` sono **dichiarate** e non chiuse, che è l'altro ramo della condizione — è la 12. ⛔ Ricontate **sul catalogo**: i numeratori e ciò che resta stanno nelle celle del blocco B, del blocco C e della campagna DST di *«Cosa la porta NON controlla»* del registro, in una casa sola |
+| 3 | ✅ | `V10` — `crates/kernel/tests/compile_fail/sensor_modifies_the_artefact.rs` porta `error[E0594]` nel proprio `.stderr` (**visto scattare**) e la contro-sonda `a_passing_sensor_writes_a_verdict_and_opens_nothing` di `crates/kernel/tests/sensor_ring.rs` è verde (**visto restare verde**). `V14` e `Q10` — `a_failing_verdict_opens_a_new_step_and_carries_the_detail`, nello stesso banco, **vista rossa e sola** sotto la mutazione del compito 5 registrata in `porta-di-qualita.md`, e verde nella baseline di oggi |
+| 4 | ✅ | `crates/simulator/src/ipc.rs` esiste con il proprio banco `crates/simulator/tests/dying_gui.rs`; le due proprietà vivono in `crates/simulator/tests/worker_kill_campaign.rs` e `crates/simulator/tests/gui_death_campaign.rs`, ciascuna con l'oracolo *«l'iniezione è scattata»* **per seme** e l'oracolo *«c'era qualcosa da verificare»*. Riga 27 della tabella unica del Traguardo 5 |
+| 5 | ✅ | `ArbiterId`, `Released::{Now, AlreadyCollected}`, `Started::{Running, Rejected}` e `Killed` sono nelle forme della §2.3; `a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit` è **ancora nel banco** e verde. Righe 13, 14 e 26 della tabella unica del Traguardo 5 |
+| 6 | ✅ | `crates/kernel/src/framing.rs` porta il prefisso di lunghezza; `decode` di `crates/kernel/src/wire/worker.rs` rifiuta quando `position() != body.len()`; l'annotazione di stringa di byte è su `Fragment`, nel canale worker. Il vincolo 15 è **uscito** dalla tabella *«cosa resta davanti»* della §11 del compendio |
+| 7 | ✅ | `C-1` è decisa il 2026-08-31 con una misura odierna e con `M-12`: `bincode` 2.0.1 resta. ⛔ Il formato **non** è cambiato, quindi la seconda metà della condizione non si applica — misurato: `git log --oneline c4cf942..HEAD -- Cargo.lock` non rende **niente** |
+| 8 | ✅ | i casi nuovi sono sette e i `.stderr` mossi sei — `git diff --name-status c4cf942..HEAD -- crates/kernel/tests/compile_fail/`. ⛔ **Che siano stati letti uno per uno lo prova un rosso, non una dichiarazione:** `E84` ha trovato che un caso era **degradato** dalla forma forte alla debole senza che nulla diventasse rosso, ed `E87`/`E99` che la sua ricetta di disarmo non era eseguibile come scritta |
+| 9 | ✅ | il **timbro di build** — *«the trigger is milestone 2 of the subproject, the one that brings the shell»*, doc di modulo di `crates/kernel/src/wire/ipc.rs`; la **revoca verso la gui** — *«its trigger is the same shell»*, scritto per esteso nello stesso doc invece che ereditato; il **trasporto vero** — l'innesco è la **sezione che scaglia**, §0.2 e §0.4 riga §1, col richiamo del 2026-08-30 accanto alle celle di §7.4.6 |
+| 10 | ✅ | il registro porta i numeratori **ricontati** e non dedotti a ogni compito, ciascuno con l'enumerazione e la somma che torna: il blocco **B** è **chiuso** col compito 6, il blocco **C** è ricontato col compito 5 e vi resta scoperta la sola `V5`, la §7.4.2 è ricontata col compito 9 |
+| 11 | ✅ | la sezione *«LE VOCI APERTE DEL TRAGUARDO 6, IN UNA TABELLA SOLA»* di `porta-di-qualita.md`, col censimento e la colonna *«Chi la chiude»* |
+| 12 | ✅ | `V11`, `V21`, `V27` e `Q18` portano **ancora** `⚠️ parziale` nella terza colonna di §8.3 e §8.4 della spec — **lette** delimitando per sezione, non cercate col nome, perché quelle sigle compaiono anche in prosa. Voce `E173` |
+
+⚠️ **La 12 era già soddisfatta prima che il compito cominciasse, ed è scritta come tale invece di
+essere «eseguita»** — gotcha **#49** colto prima e non dopo.
+
+### 8.3 Dove il disegno è stato smentito dall'esecuzione
+
+⛔ **È la parte che vale**, e nessuna di queste righe è un difetto di prodotto: sono posti in cui
+il disegno diceva una cosa e la misura ne ha detta un'altra.
+
+| | Dove | Che cosa l'esecuzione ha misurato |
+|---|---|---|
+| 1 | §1.2 — la **ragione** del perimetro | attribuiva la non-costruzione del trasporto alla metà di **prontezza** del `reactor`; le due porte sono **a interrogazione** e non chiedono nessuna sveglia. Il perimetro regge, la ragione no — `P-1`, e il richiamo del 2026-08-30 vive nella riga 10 di *«Cosa questo disegno ha misurato»* |
+| 2 | §2.4 — i costi di `E21` | conta *«tre casi `compile_fail` toccati»*, i tre della porta `process`. ⛔ `P-4` ha misurato che sono **nove** e che i tre nominati ne sono un **sottoinsieme**, perché `Parameters::new` è **posizionale**; ed `E7`, eseguendo, ha misurato che dei nove ne toccano **sette** e che la previsione di `P-4` sui `.stderr` era vera a **metà** |
+| 3 | §3 — il canale worker | il disegno **non dice dove vive** lo schema, e la mappa dei file del piano non aveva un posto per esso — `P-6` |
+| 4 | §6.2 — *«esito dell'ammissione … in codice `Admission`»* | `Admission` **non è un tipo di filo**: metterlo sul filo conierebbe concessioni dai byte — `P-8` |
+| 5 | §6.2 — il profilo che la gui dichiara | `ResourceProfile` **non è decodificabile**, e il difetto è **un** campo — `P-9` |
+| 6 | §§5–6 — i meccanismi che giornalano | tre compiti su quattro devono mettere dati **strutturati e nostri** dentro un record durevole, e `RecordV1` non aveva una casella per farlo: la Parte D è stata **sbarrata e sbloccata** lo stesso giorno — `P-11`, decisioni `D20` e `D21` |
+| 7 | §6.7 — la terza proprietà di §5.7 | pretende un meccanismo che **non esisteva**, la riconciliazione alla disconnessione: nasce col compito 9 come `kernel::client::ClientGrants` — `P-16` |
+| 8 | §7.4 — *«la voce `E146`»* | quel numero **non è un riferimento** fuori dal proprio piano, e la voce intesa è del **Traguardo 5**; l'omonima di questo piano dice un'altra cosa. Qualificata col richiamo del 2026-09-02, sul precedente di `E96` |
+
+⚠️ **`P-5` era fra le cinque candidate che il piano nominava e NON è in questa tabella:** smentisce
+la §11 del **compendio**, non questo disegno — e il vincolo 15 è onorato, condizione 6.
+⚠️ **Questa tabella è ciò che la chiusura ha raccolto, non un totale che qualcuno debba tenere
+aggiornato:** la casa unica delle smentite raccolte dai compiti è l'**errata del piano**, che si legge
+dall'alto — voce `E176`.
+
+### 8.4 Dove il disegno ha retto
+
+📌 **Un verbale che elenca solo le smentite fa sembrare il disegno peggiore di com'era**, ed è la
+stessa disonestà del verbale che elenca solo i successi.
+
+| | Dove | Che cosa l'esecuzione ha confermato |
+|---|---|---|
+| 1 | §1.2 — il **perimetro** | intatto: nessun trasporto è stato costruito, e `platform` non ha guadagnato niente — `git diff --name-only c4cf942..HEAD -- crates/platform/src/` non rende **niente** |
+| 2 | §4.2 — *«la riga di catalogo che il traguardo chiude è una, ed esiste già»* | il traguardo **non crea** righe di catalogo, come il Traguardo 5. ✅ Misurato invece che asserito: `git diff --name-only c4cf942..HEAD -- <la spec>` non rende **niente**, e il conteggio delle righe di catalogo è lo stesso a `c4cf942~1` e a `HEAD` |
+| 3 | §4.3 — la composizione dei byte congelati, dichiarata **deduzione e non misura** | misurata **prima di scrivere**, e la deduzione regge — `P-15` |
+| 4 | §5.1 — *«tre righe dicono ✅ e non hanno un controllo»* | vero, e i tre controlli esistono adesso — condizione 3 |
+| 5 | §5.2 — il degrado **si ricalcola e non si cachea** | costruito così dal compito 8, e la divergenza dichiarata su *«mantiene»* resta aperta invece di essere appianata |
+| 6 | §6.2 — *«uno per direzione, e sono ciò che rende NON VACUA la campagna del compito 9»* | la campagna esiste, e i suoi oracoli di non-vacuità sono stati **visti rossi** |
+| 7 | §6.7 — *«la finta gui che il compito 9 richiede NON esiste»* | vero: il compito l'ha costruita in `crates/simulator/src/ipc.rs` |
+| 8 | §7.1 decisione **B** — il verbale accanto alla cosa che giudica | questa §8. Il compendio non l'ha ospitato e il suo tetto non è stato speso per essa |
+| 9 | §7.2 — la Definizione di «fatto» nasce **completa qui** | nessuna condizione è stata aggiunta da chi scriveva il piano, che è precisamente ciò che al Traguardo 5 era mancato — `E177` ② |
+
+### 8.5 Che cosa questa chiusura NON ha fatto
+
+| | |
+|---|---|
+| non chiude il **sotto-progetto 1** | resta la sua Definizione di «fatto», la §0.7 della spec, e resta la §8 di [`tracciabilita.md`](../../tracciabilita.md), che si aggiorna alla chiusura del sotto-progetto. Il prossimo passo vive nella §6 del [compendio](../../COMPENDIO.md), in una casa sola |
+| non chiude le **voci del proprietario** | quelle che il traguardo lascia stanno nella tabella unica del Traguardo 6, in `porta-di-qualita.md`, con chi le chiude; le **ereditate** restano nella tabella del Traguardo 5, che l'ultima riga di quella nuova **rimanda** invece di ricopiare |
+| non ha toccato [`riferimenti.md`](../../riferimenti.md) | è la §7.4, e la voce — `E146` del piano del **Traguardo 5** — resta *registrata e non presa* |
+| non ha marcato ✅ nessuna delle quattro righe della condizione **12** | che è il solo modo di fallire questa Definizione **facendo troppo** |
+
+⚠️ **E due residui che il compito 9 lasciava a questa chiusura sono stati riletti contro il
+codice, non ereditati:** le tre correzioni della quarta ondata e l'ultima frase del registro del
+compito 8. **Reggono**, e il verbale della rilettura sta nel rapporto del compito 10;
+nessuna riga è stata corretta perché nessuna era falsa.

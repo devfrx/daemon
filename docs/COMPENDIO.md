@@ -836,11 +836,15 @@ legge esaustivo, e la stessa cella lo smentiva con la terza risposta di `prune`.
 6, perché il brief del round 4 l'aveva dichiarata fuori discussione **senza misurarla** — difetto del coordinatore.
 ⚠️ **Il residuo, detto e non arrotondato:** l'ultima frase del registro non è stata rivista da nessuno; la vede
 l'audit del compito 10. Il verbale, le sviste del coordinatore e la casa in `E148` dichiarata e non toccata stanno
-in **`E152`** dell'errata. ⏭️ **IL PROSSIMO PASSO È IL COMPITO 9, PRE-CONTROLLATO PRIMA** con le quattro domande di
-[`../CLAUDE.md`](../CLAUDE.md), contro il codice di **allora** e da chi lo dispaccia — un pre-controllo ha una data
-(`E88`). ⚠️ **Da sapere prima:** `E146` — un file nuovo si mette nell'**indice** prima della campagna di mutazione, o
-*«`git diff` a zero»* non prova nulla — e i file nuovi del compito 9 sono più di quanti la sua mappa `Files:` ne
-elenchi: **`E153`**, trovata leggendo il compito e non pre-controllandolo. La casa unica resta l'errata del piano.
+in **`E152`** dell'errata. ✅ **IL PRE-CONTROLLO DEL COMPITO 9 È FATTO IL 2026-09-02, contro il codice di quel giorno — casa unica
+`E154`–`E157` dell'errata del piano.** La domanda 3 è risposta **per costruzione** — una sonda usa-e-getta
+da fuori la crate, quattro sonde verdi, e le tre mutazioni dettate che uccidono ciascuna la propria — e ha reso
+**tre** vincoli di forma che il compito non scrive; la sonda della proprietà **2 manca** dal testo e la sua forma
+è prescritta; la finta gui non ha un banco proprio; e i file nuovi sono **cinque**, non tre (`E153` ne aveva
+visto il quarto). ⚠️ `E146` vale per tutti: nell'**indice** prima della campagna di mutazione.
+⏭️ **IL PROSSIMO PASSO È DISPACCIARE IL COMPITO 9 IN UNA SESSIONE NUOVA**, per decisione del proprietario del
+2026-09-02: un subagente fresco, col brief `E158` — il file intero, `task-9-brief.md`, sta nel ledger di
+questa macchina, che git ignora — e la revisione dopo. Nessun gotcha nuovo, e `HANDOFF.md` non è toccato.
 ✅ **IL DECIMO È FATTO IL 2026-09-01: tre rilievi, `E135`, tutti di prosa o registro, uno fuori dal
 perimetro** — la specie dei numerali di distanza, colta dalla domanda di classe sull'intero `crates/`.
 I quattro predicati del nono giro sono misurati tenuti braccio per braccio, e trentasette enum censiti

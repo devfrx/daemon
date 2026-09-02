@@ -5047,7 +5047,7 @@ $ grep -cE '^\| \*\*`?E[0-9]+' <piano>
 
 $ grep -nE '^\| \*\*`?E[0-9]+' <piano> | grep -E "<il filtro>"
     dove <il filtro> è quello scritto sotto il SECONDO $ del blocco di comandi
-    della sezione del Traguardo 5, copiato verbatim e senza -i.
+    della sezione del Traguardo 5, copiato verbatim — sta su due righe e si ricongiunge — e senza -i.
     → a 0aaa080 rende VENTI candidate:
         E5 E11 E12 E13 E16 E30 E37 E38 E40 E41 E51 E53 E62 E94 E96 E135 E148 E152
         E158 E166
@@ -5057,7 +5057,7 @@ $ grep -nE '^\| \*\*`?E[0-9]+' <piano> | grep -E "<il filtro>"
     ⛔ IL FILTRO NON BASTA, ed è il gotcha #70 in ENTRAMBE le forme, come al Traguardo 5.
       ① NE MANCA di aperte: E15, E48 ed E108, misurate a zero contro quel filtro
         lanciato SENZA -i, e trovate allargandolo a
-        "registrat|resta apert|è apert|e sua".
+        "registrat|non pres|non pinzat|per il proprietario|del proprietario|resta apert|è apert|e sua|APERTA".
       ⚠️ La maiuscola è PORTANTE, misurato: con -i lo stesso filtro ne cattura
         due delle tre.
       ② NE RESTITUISCE di chiuse: nove su venti.
@@ -5122,7 +5122,7 @@ il comando in fondo alla sezione.
 | 26 | la metà **temporale** di *«concessione valida»* | `Process::start` non prende `now` e non interroga l'arbitro, `GrantId` è privato, e nessuna API risponde *«questa concessione è ancora nei libri?»*: la campagna del compito 9 la **conta e la dichiara** invece di asserirla | riquadro del compito 9 di questo file | il **proprietario** (gotcha **#73**) |
 | 27 | l'altra metà di **ADR-0005** | `compute_class` e `preemption` raggiungono l'arbitro dal **medesimo pari** del nome che il tipo rifiuta, e l'arbitro **obbedisce** a entrambi: uno sceglie la corsia e apre la guardia di `ask_back`, l'altro decide se una concessione sia richiamabile. ⛔ **Nessuno dei due è controllato contro niente**, mentre `reserved_vram` deve superare il tetto in `admit`. ⚠️ Non è sfruttabile oggi: **il consumatore non esiste** | doc di `GrantRequest` in `crates/kernel/src/wire/ipc.rs`, che ne porta l'innesco per esteso | ⛔ **il compito che per primo decodificherà byte in un `ResourceProfile`** — **non** il proprietario |
 | 28 | il **CR isolato** del piano del Traguardo 6 | un carattere `CR` nudo sta dentro un code span della voce `E136`, dove il testo intendeva i **due caratteri** che scrivono l'escape. ⛔ **La conseguenza non è tipografica:** git classifica allora l'intero file come **non-testo** — `git ls-files --eol` dà `i/-text w/-text` — quindi i suoi CRLF stanno **nell'indice** e nessuna normalizzazione li tocca. ✅ **Misurato nelle due direzioni** in un repository usa-e-getta fuori da questo: la copia **com'è** dà `i/-text`, la copia col solo CR sostituito dai due caratteri dà `i/lf w/crlf`. ⛔ **Toglierlo riscriverebbe in LF ogni riga del file al primo `git add`**, che è la trappola dei fine-riga di [`../CLAUDE.md`](../CLAUDE.md) alla scala dell'intero piano. Comparso con `307fa18` | voce `E179` dell'errata del piano | ⛔ **nessuno oggi, e la ragione è misurata:** il rimedio costa più del difetto. Lo chiude chi riscriverà quel file per un'altra ragione |
-| 29 | le voci **ereditate dal Traguardo 5** | ⚠️ **Questa riga è un rimando e non una seconda copia** (gotcha **#68**): la tabella unica del Traguardo 5, qui sopra, resta la loro casa e non è stata riscritta. Le righe che sono state **chiuse** portano `✅ CHIUSA` nella **terza** colonna, ciascuna nella propria riga. ⛔ **Quali siano chiuse e quali restino aperte lo dicono le due forme del comando** qui sotto, non questa cella | la tabella unica del Traguardo 5, in questo file | ⚠️ **varia per riga**, e lo dice la colonna omonima di quella tabella |
+| 29 | le voci **ereditate dal Traguardo 5** | ⚠️ **Questa riga è un rimando e non una seconda copia** (gotcha **#68**): la tabella unica del Traguardo 5, qui sopra, resta la loro casa e non è stata riscritta. Le righe che sono state **chiuse** portano `✅ CHIUSA` nella **terza** colonna, ciascuna nella propria riga. ⛔ **Quali restino aperte lo dice il comando** qui sotto — e le chiuse lo stesso comando con `~` al posto di `!~` — non questa cella | la tabella unica del Traguardo 5, in questo file | ⚠️ **varia per riga**, e lo dice la colonna omonima di quella tabella |
 
 ⛔ **Le righe il cui chiusore NON è il proprietario, e il comando che le nomina invece di
 contarle** — sul precedente della tabella del Traguardo 5, e ancorato alle **due intestazioni**:
@@ -5153,4 +5153,4 @@ awk -F'|' '/^## .*LE VOCI APERTE DEL TRAGUARDO 5/{s=1} s&&/^## Cosa la porta NON
 ```
 
 ⚠️ **La colonna che discrimina è la TERZA e non la quinta**, perché è lì che ogni riga chiusa porta
-`✅ CHIUSA` col proprio commit — letto, non dedotto.
+`✅ CHIUSA` — letto, non dedotto.

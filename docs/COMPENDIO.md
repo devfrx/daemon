@@ -18,8 +18,8 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-02**, col compito 9 del Traguardo 6 eseguito e rivisto; l'ultimo contenuto di **merito** è
-il compito 9 — la riconciliazione alla disconnessione e le due proprietà DST che mancavano — e le sue quattro ondate. Manutenzione: §13.
+**Aggiornato il 2026-09-02**, col **Traguardo 6 CHIUSO** dal compito 10, eseguito e rivisto; l'ultimo contenuto di **merito** è
+il compito 10 — la chiusura: le dodici condizioni rilette contro il codice, il verbale nella §8 del disegno, le voci aperte in una tabella sola — e le sue due ondate. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -890,6 +890,7 @@ proprietario — quali lo dice il comando che vive in quella sezione.
 ⚠️ **E i due residui che il compito 9 lasciava sono stati RILETTI contro il codice e REGGONO:** le tre correzioni
 della quarta ondata e l'ultima frase del registro del compito 8. Nessuna riga è stata corretta, perché nessuna era
 falsa.
+⚠️ **Il ciclo di revisione non è raccontato qui: la casa unica è `E181`** dell'errata del piano.
 ⏭️ **IL PROSSIMO PASSO È DEL PROPRIETARIO: chiudere il SOTTO-PROGETTO 1 contro la sua Definizione di «fatto», che
 è la §0.7 della spec** — i sei traguardi sono eseguiti, il sotto-progetto no, e resta anche la §8 di
 [`tracciabilita.md`](tracciabilita.md). ⛔ **Si apre col brainstorming**, che [`../CLAUDE.md`](../CLAUDE.md)

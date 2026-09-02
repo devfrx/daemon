@@ -4528,6 +4528,82 @@ di `E124` rimisurati coi blob di `02d2162` danno **exit 0, zero errori** prima d
 `cargo fmt --all --check` exit 0, zero avvisi su `build` e su `check --all-targets`. ⚠️ **E
 `riferimenti.md` NON è stato toccato, deliberatamente.**
 
+### Il compito 8 del Traguardo 6 — lo stato di degrado si RICALCOLA, e non si cachea (2026-09-02)
+
+⛔ **Lo stato di degrado è un DERIVATO e non un archivio.** `crates/kernel/src/degradation.rs`
+porta `Degradation`, `DegradationError` e `degradation_now`, che rilegge il giornale e interroga
+l'arbitro **a ogni domanda**; il banco nuovo è `crates/kernel/tests/degradation_state.rs`. È la
+forma di `permission::is_granted` e di `reconcile::steps_in_doubt`: nessuna cache accanto alle due
+fonti, quindi *«mai autorevole di sé stesso»* è vero **per costruzione** e non per disciplina.
+Il formato durevole **non è toccato** — nessuna variante nuova, nessun record congelato, nessun
+`.stderr`.
+
+| Artefatto | Che cosa lo esercita |
+|---|---|
+| `Degradation::routing_degraded` | `a_degraded_routing_shows_up_in_the_state`, `it_is_RECOMPUTED_and_not_cached` e `the_LAST_routing_wins_and_not_any_routing` |
+| `Degradation::vram_exhausted` | ⛔ `a_full_arbiter_declares_its_vram_exhausted` — **la sonda che il piano non aveva scritto**: le tre dettate provavano il routing in tre modi e il tetto in **nessuno**, e il buco sta scritto nel piano stesso come `M3` invece di essere corretto in silenzio |
+| *«l'ULTIMO routing e non uno qualsiasi»* | `the_LAST_routing_wins_and_not_any_routing`, che dispaccia **due** volte sullo stesso passo aperto — un routing degradato, poi uno pulito |
+| il **ricalcolo** | `it_is_RECOMPUTED_and_not_cached`, che cambia il mondo **fra** le due domande e tiene fermo l'arbitro, così che l'unica cosa mossa sia il giornale |
+| la **non-vacuità** dei due campi | `an_idle_machine_declares_nothing`, la sola sonda che parte da una macchina ferma **e** da un giornale vuoto |
+| `DegradationError::Journal` | `a_journal_that_will_not_replay_is_not_an_answer_of_nothing_degraded` |
+| `DegradationError::Record` | **due** sonde, una per strada: il record che non si decodifica, e il `Routing` senza il proprio `detail` |
+| `Arbiter::ceiling` | ogni sonda che legge `vram_exhausted`; il getter nasce col chiamante che lo pretende e non ne ha altri |
+
+#### Le mutazioni, col proprio esito MISURATO
+
+⛔ **Applicate una per volta sul codice di PRODUZIONE**, ciascuna revocata da una copia
+byte-esatta presa prima e verificata con `git diff -- crates/kernel/src/degradation.rs` a **zero**
+righe. La baseline contro cui va letta la colonna «Chi muore» è quella a cambiamento chiuso,
+**44 bersagli, 334 passate, 0 fallite, 2 ignorate**.
+
+⚠️ **Il file nuovo va messo nell'INDICE prima di misurare**, e costa un rilievo che sembra un
+verde: su un file **non tracciato** `git diff` è vuoto **qualunque** cosa il file contenga, quindi
+la revoca risulterebbe provata da nulla. Le prime due revoche sono state verificate con
+`sha256sum`, le altre con `git diff` dopo `git add`.
+
+| # | Mutazione | Chi muore | Misura |
+|---|---|---|---|
+| **M1** | `routing_degraded = routing.degraded()` → `= false` | **tre** — `a_degraded_routing_shows_up_in_the_state`, `it_is_RECOMPUTED_and_not_cached`, `the_LAST_routing_wins_and_not_any_routing` | **44 bersagli, 331 passate, 3 fallite, 2 ignorate** |
+| **M2** | il ciclo si ferma al **PRIMO** record di routing — un `break` dopo l'assegnazione | **una sola**, `the_LAST_routing_wins_and_not_any_routing`, con *«a degradation that was resolved is still being reported as the state NOW»* | **333 passate, 1 fallita**. ⛔ **Il piano prevedeva che questa mutazione non uccidesse niente** e lasciava la scelta fra la sonda e una dichiarazione: la sonda è stata scritta, e il mutante muore. La frase *«l'ultimo e non uno qualsiasi»* non è più un'intenzione |
+| **M3** | `vram_exhausted` → `false` fisso | **una sola**, `a_full_arbiter_declares_its_vram_exhausted` | **333 passate, 1 fallita**. ⛔ **Senza la sonda nuova era un mutante VIVO**: nessuna delle tre sonde dettate tocca il tetto |
+| **M4** | `allocated() >= ceiling()` → `>` | **una sola**, `a_full_arbiter_declares_its_vram_exhausted` | **333 passate, 1 fallita**. ⚠️ **Aggiunta perché il commento della sonda AFFERMA il confine** — *«a `>` in place of the `>=` answers "fine" to a full machine»* — e un'affermazione che nessuno tiene è un'intenzione. La macchina è riempita **esattamente**, quindi la sonda sta **sopra** il confine invece di scavalcarlo |
+| **M5** | il record illeggibile viene **saltato**: `let Ok(..) = Record::decode(..) else { continue }` | **una sola**, `a_record_that_will_not_decode_is_not_an_answer_of_nothing_degraded` | **333 passate, 1 fallita**. ⛔ **È ALLA LETTERA IL CODICE CHE IL PIANO DETTAVA**, corretto da `E139` prima del dispaccio: la correzione è ora **misurata** e non solo argomentata |
+| **M6** | il `Routing` il cui `detail` non è un `Routing` viene saltato da un `if let` silenzioso | **una sola**, `a_routing_record_without_its_detail_is_not_an_answer_of_nothing_degraded` | **333 passate, 1 fallita**. ⛔ **Anche questo è il codice dettato dal piano**, e la strada è raggiungibile **dai byte**: impronunciabile in sorgente perché `RecordV1::routing` prende il `detail` per valore, costruibile riscrivendo **un** byte della specie |
+| **M7** | `journal.replay()` che rifiuta diventa un archivio **vuoto** (`unwrap_or_default`) | **una sola**, `a_journal_that_will_not_replay_is_not_an_answer_of_nothing_degraded` | **333 passate, 1 fallita**. ⛔ È la ragione per cui `DegradationError` esiste: *«non lo so»* riportato come *«niente è degradato»* è il degrado silenzioso che ADR-0019 vieta |
+| **M8** | `routing_degraded` parte da `true` | **tre** — `an_idle_machine_declares_nothing`, `it_is_RECOMPUTED_and_not_cached`, `a_full_arbiter_declares_its_vram_exhausted` | **331 passate, 3 fallite**. ⚠️ **E NON uccide `the_LAST_routing_wins_…`**, il che è giusto: quella sonda dispaccia due volte e il ciclo sovrascrive comunque il valore iniziale. La direzione *«vero a tutto»* la tiene la sonda della macchina ferma, e nient'altro |
+| **M9** | `vram_exhausted` → `true` fisso | **due** — `an_idle_machine_declares_nothing` e `a_degraded_routing_shows_up_in_the_state` | **332 passate, 2 fallite**. ⚠️ La seconda muore sull'asserzione *«e l'altro campo no»*, che esiste perché i due campi sono derivati da **due mondi indipendenti** e una derivazione che li muovesse insieme passerebbe la prima asserzione |
+
+✅ **Nessun mutante è sopravvissuto, e ogni sonda del banco ha almeno un mutante che la uccide.**
+La seconda metà è la domanda che si dimentica: `an_idle_machine_declares_nothing` non era uccisa
+da nessuna delle mutazioni del piano, e `M8`/`M9` sono state scritte **per** interrogarla invece di
+darla per buona.
+
+#### Le decisioni prese, e ciò che costano
+
+| | |
+|---|---|
+| `degradation_now` restituisce un **errore proprio** che compone `JournalError` e `RecordError` | è la forma che il proprietario decise per il compito 7 (`E104`), applicata per coerenza. Nessun chiamante esisteva, quindi nessuna firma è cambiata sotto qualcuno. Voce `E139` |
+| `Arbiter` guadagna `ceiling()`, e **nient'altro** | un getter su un tipo che il Traguardo 5 aveva chiuso, sul precedente di `StepId::get`: nasce col chiamante che lo pretende. L'alternativa — passare i `Parameters` anche a `degradation_now` — avrebbe fatto tenere in passo al chiamante **due verità indipendenti** che l'arbitro già tiene insieme, la forma di `E25`. Voce `E140` |
+| ⛔ **nessun terzo addendo**, e non è una scorciatoia | le due quote permanenti di ADR-0033 entrano dall'arbitro **attraverso `admit`** (`crates/daemon/src/main.rs`), quindi stanno già **dentro** `allocated()`, e i due numeri sono confrontabili come stanno. La voce aperta della §5.1 dell'arbitro **non** viene toccata |
+| il tipo è **corto**, e i due ingressi senza sorgente non hanno un campo | connettività (`network` non ha implementazione reale) e salute dei provider (gli adattatori sono regola C) sono **dichiarati accanto al tipo**: un campo sempre `false` si legge *«tutto bene»* invece di *«non lo so»*, che è il più falso dei due |
+| ⚠️ la **divergenza dichiarata** su *«mantiene»* | ADR-0019 e §6.7 dicono che il core *«mantiene uno stato di degrado corrente, alimentato dagli eventi»*, e quelle parole si leggono **anche** come mantenimento incrementale. Il codice legge *«mantiene»* come *«espone»*, e la divergenza è scritta **accanto alla funzione** perché la lettura opposta è del proprietario |
+| il costo della rilettura | è quello che `Journal::replay` già dichiara: l'archivio intero per una domanda. Il rimedio è il **checkpoint** che quella operazione nomina, e si compra il giorno che una misura lo chiede — non qui |
+
+⚠️ **`V27` e `Q18` sono state RILETTE e non solo lasciate stare**, e vivono nella **spec**
+(§8.3 e §8.4), non in questo file. `V27` chiede che *«l'interfaccia lo dichiari prima»* e
+un'interfaccia non c'è; `Q18` ha per metodo assegnato una campagna DST con iniezione del guasto di
+rete, e `network` non ha implementazione reale. Restano **`⚠️ parziale`**, che è la condizione 12.
+
+⚠️ **E il commento per modulo che il dispaccio si aspettava in `crates/kernel/src/lib.rs` NON
+esiste:** le righe vicine sono `pub mod` nude separate da una riga bianca, e il doc del modulo dice
+che *«la lista è l'unica risposta che non può invecchiare»*. La riga nuova segue **il file**, non
+l'attesa, ed è in coda perché la lista è in ordine d'arrivo.
+
+📌 **Baseline a compito chiuso: `GATE GREEN`, 44 bersagli, 334 passate, 0 fallite, 2 ignorate** —
+era **43 / 326 / 0 / 2**. Lo scarto è **+1 bersaglio** (`degradation_state`) e **+8 passate**,
+tutte del banco nuovo. `cargo fmt --all --check` exit 0, zero avvisi su
+`cargo build --locked --workspace`.
+
 ## Livello 3 — vuoto, e non è una svista
 
 `clippy` gira come igiene del codice ma **non ha voce nella porta**: nessun V dipende da

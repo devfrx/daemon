@@ -512,6 +512,28 @@ impl Arbiter {
             .fold(Mib::ZERO, |sum, held| sum.saturating_add(held.reserved))
     }
 
+    /// The ceiling the admission compares against: the total VRAM this arbiter was
+    /// DELIVERED (ADR-0034).
+    ///
+    /// ⛔ IT IS A GETTER AND NOT A SECOND NUMBER. `admit` and `promote` both read
+    /// `self.parameters.total_vram()`, and this hands that same value out unchanged, so a
+    /// caller cannot be told a ceiling the admission does not use.
+    ///
+    /// ⛔ AND IT IS BORN WITH THE CALLER THAT DEMANDS IT, which is the precedent `StepId::get`
+    /// set rather than a convenience: `crate::degradation::degradation_now` has to compare
+    /// `allocated()` against something. The alternative was handing that function the
+    /// `Parameters` as well, which would make ITS caller keep in step two values this type
+    /// already keeps together -- two independent truths, the shape of `E25` -- so the getter is
+    /// the cheaper of the two roads and the one with the precedent.
+    ///
+    /// ⚠️ NOTHING IS SUBTRACTED FROM IT, AND THAT IS MEASURED RATHER THAN ASSUMED: the two
+    /// permanent quotas of ADR-0033 are asked for through `admit` in `crates/daemon/src/main.rs`,
+    /// so they are already INSIDE `allocated()`. The two numbers are therefore comparable as
+    /// they stand, with no third addend of the kind §5.1 still has an open entry about.
+    pub const fn ceiling(&self) -> Mib {
+        self.parameters.total_vram()
+    }
+
     /// Admission (§5.3). THREE ways out, and the caller must face all three.
     ///
     /// ⛔ IT COLLECTS THE EXPIRED FIRST, and the declared limit of that is written where the

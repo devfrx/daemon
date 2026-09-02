@@ -207,7 +207,7 @@ fn the_LAST_routing_wins_and_not_any_routing() {
     // ⚠️ TWO NOTES UPON ONE STEP, which the port allows and says so: `Journal::note` places no
     // limit on how many notes a step carries, and only the INTENT is once-only. ⛔ THE PORT OWES
     // THEIR ORDER — `replay` promises write order for EVERYTHING — but the conformance suite
-    // never writes two notes upon one step, so that case is held here and nowhere else.
+    // never writes two notes upon one step, and this probe does.
     let mut journal = MemoryJournal::new();
     let step = StepId::new(1);
     open_the_step(&mut journal, step);

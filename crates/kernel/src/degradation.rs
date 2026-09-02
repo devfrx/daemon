@@ -99,7 +99,7 @@ pub fn degradation_now<J: Journal>(
     // conformance suite does not exercise is TWO NOTES UPON ONE STEP, which is the case this
     // rests on: measured 2026-09-02, of the four `.note` calls in `assert_journal_contract` two
     // are asserted refused and the two that succeed sit on different steps. The order is owed;
-    // the case is untested, and it is `tests/degradation_state.rs` that holds it.
+    // the case is untested by the suite, and `tests/degradation_state.rs` holds it.
     let mut routing_degraded = false;
 
     for (_, bytes) in journal.replay().map_err(DegradationError::Journal)? {

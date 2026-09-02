@@ -542,11 +542,10 @@ impl Arbiter {
     /// freed. The property holds AT EVERY POINT WHERE IT IS OBSERVABLE, which is why the
     /// probe advances the clock and then ASKS.
     ///
-    /// ⚠️ RECALL OF 2026-09-02: "at the first one who looks" NOW HAS AN EXCEPTION, and it is
-    /// the one looker that does not collect -- `allocated`, which declares of itself that it
-    /// collects nothing. `crate::degradation::degradation_now` reads the books through it, so an
-    /// expired grant it still sees reads as VRAM exhausted; the limit is declared beside that
-    /// comparison, and the direction is conservative.
+    /// ⚠️ RECALL OF 2026-09-02: "at the first one who looks" NOW HAS EXCEPTIONS -- lookers that
+    /// declare of themselves that they collect nothing. `crate::degradation::degradation_now`
+    /// reads the books through `allocated`, so an expired grant it still sees reads as VRAM
+    /// exhausted; the limit is declared beside that comparison, and the direction is conservative.
     ///
     /// ⛔ AND IT DOES NOT RECEIVE A `WorkDescriptor`. `cold_start` is not reachable from
     /// here, and that is `Q8 · §5.2.1` held by the shape of this signature rather than by a

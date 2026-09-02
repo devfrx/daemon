@@ -274,7 +274,7 @@ fn a_step_may_carry_many_notes_and_they_keep_their_order() {
     // is NOT restated here — it is in the recall inside
     // `each_step_reads_back_its_own_first_record`, which this paragraph already points at. What
     // the suite does not exercise is TWO NOTES upon ONE step, which is exactly what this test
-    // writes, so this is the case that is held here and nowhere else.
+    // writes.
     let mut journal = MemoryJournal::new();
     let step = StepId::new(1);
     journal

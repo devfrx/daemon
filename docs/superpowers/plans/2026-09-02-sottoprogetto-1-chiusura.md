@@ -53,7 +53,7 @@ sessione che ha scritto il piano, come il disegno prescrive.
 | # | Compito | Commit | Stato |
 |---|---|---|---|
 | **1** | l'audit — le condizioni 1–5 della §0.7 rilette contro il codice, il verbale in bozza nella **§7** del disegno | uno | ✅ 2026-09-03 |
-| **2** | `tracciabilita.md` riletta con la seconda domanda | **due** (D3) | ⬜ da eseguire |
+| **2** | `tracciabilita.md` riletta con la seconda domanda | **due** (D3) | ✅ 2026-09-03 |
 | **3** | il racconto del Traguardo 6 esce dalla §6, e il tetto scende | **due** (D3) | ⬜ da eseguire |
 | **4** | il passaggio unico sui documenti di stato, **l'unico che dice «chiuso»** | uno | ⬜ da eseguire |
 

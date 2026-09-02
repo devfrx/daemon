@@ -544,6 +544,7 @@ cifra e il suo comando hanno una casa sola, e un rimando non marcisce.
 | **F** — gli ADR della §0.5 con le proprie `Negative (accettate)` | sette su sette | sette file, ciascuno con la sezione **una** volta | no |
 | **G** — le campagne DST | cinque | cinque file: quattro in `crates/simulator/tests/` e `crates/platform/tests/engine_crash_consistency.rs` | no |
 | **H** — i casi `compile_fail` e i loro `.stderr` | 40 e 40, nessuno vuoto | `40` · `40` · `0` vuoti | no |
+| **C** — le righe di `tracciabilita.md` per stato | 171: 71 ✅ · 25 🔶 · 74 📋 · 0 ⚠️ · 1 ❌ | ⚠️ **rilanciato dal compito 2 il 2026-09-03 sul commit `a084f79`**, non su `9214255`: `71 · 25 · 74 · 0 · 1`, totale `171`, zero CR | no |
 
 La baseline è stata rimisurata prima di leggere qualunque documento: `bash scripts/gate.sh` →
 `GATE GREEN`, `bash scripts/check-docs.sh` → `OK — no inconsistencies.`, `git status --porcelain`
@@ -659,6 +660,107 @@ di verifica» di [`design/08`](../../design/08-strategia-di-test.md).
 |---|---|---|---|
 | **4** | la §0.7 dice: «ogni difetto trovato in simulazione conserva il proprio **seed** come caso di regressione permanente (V31)» | [ADR-0021](../../adr/0021-simulazione-deterministica-e-iniettabilita.md), dal 2026-08-08, ha una tabella che risponde **no** a due letture, e la prima è la lettera di questa condizione: a «il seed è un caso di regressione **permanente**» risponde «un seed non riproduce la stessa esecuzione dopo un cambio di codice. È un **punto di ripartenza per indagare**, non un oracolo»; a «i seed formano una **suite di regressione**» risponde «a entrare nella suite è la **proprietà** che quel difetto violava». La cella di `V31` in §8.3 lo ripete — «debole per natura: l'automatismo protegge la proprietà, non il seme» — e [`semi-dst.md`](../../semi-dst.md) esiste per dirlo | la condizione è soddisfatta **nella lettura di ADR-0021**, e in quella soltanto: presa alla lettera pretenderebbe un oracolo che lo stesso ADR ha scartato con l'argomento scritto, e che nessun automatismo qui fornisce. ⛔ **La §0.7 non si tocca**: è spec, ed è del proprietario — vincolo globale 1 del piano. È la voce **5** della tabella qui sotto, che il disegno aveva aperta come **deduzione** e che questo compito ha **misurato** |
 
+### 7.4 La rilettura di `tracciabilita.md` — le righe cambiate, e i gruppi che restano
+
+⚠️ **Misurata il 2026-09-03 sul commit di base `a084f79`**, con le tre fonti della §3.1 nel loro
+ordine e nessuna risposta a memoria. Il conteggio per stato prima e dopo sta nella §7.1, riga del
+blocco **C**; il totale delle righe con stato non si muove, e il comando che lo rifà vive in testa
+a [`tracciabilita.md`](../../tracciabilita.md), in una casa sola.
+
+⛔ **Il criterio, scritto perché sia controllabile e non dipenda da chi legge.** Per ogni riga si
+prende il meccanismo che la colonna **Sede** nomina, e:
+
+| | Il caso | L'esito |
+|---|---|---|
+| **a** | il meccanismo sta nella colonna «Entra» della sua §N in §0.4, e un modulo di `crates/kernel/src/` lo porta | **resta ✅**, dentro un gruppo del prospetto qui sotto |
+| **b** | il meccanismo sta nella colonna «Si scaglia» | **🔶**, col sotto-progetto preso dall'innesco della riga V o Q che lo governa (**D8** del piano) |
+| **c** | il meccanismo sta in «Entra» ma **nessun modulo lo porta**, e la riga V o Q che lo governa è ⏳ o ⚠️ in §8 | **🔶** con lo stesso innesco, e una riga in §7.7: la §0.4 lo fa entrare e il codice non lo dà |
+| **d** | è scaglionato e **nessuna** delle tre fonti gli dà un sotto-progetto | **🔶** con `sede da assegnare`, e una voce in §7.8 — del proprietario |
+
+Il caso **c** è la voce **E1** dell'errata del piano, che il pre-controllo ha aggiunto alla tabella
+degli esiti della §3.2: il disegno non lo aveva, e il caso esiste.
+
+📌 **La lettera dell'innesco ha una casa sola, e non è il blocco B:** è la tabella *«Le condizioni
+che ricorrono»* della §8.2 della [spec](2026-08-06-sottoprogetto-1-kernel.md), che le definisce
+una per una e vi affianca il numero. ⛔ **E la spec dice di quel numero che cos'è:** *«l'innesco
+nomina la **condizione**; il numero del sotto-progetto sta fra parentesi come *chi la soddisfa per
+primo oggi*»*. La §7.7 registra dove questo morde.
+
+**Le righe cambiate.** Tutte da ✅ a 🔶: nessuna è passata a ⚠️, quindi la sezione «Lacune» non
+guadagna righe e resta a `L-1`…`L-5`. Le 📋 e la ❌ non sono state toccate, e la legenda nemmeno.
+Quante siano lo dice il comando, non questa prosa:
+
+```bash
+git show 0cea274 -- docs/tracciabilita.md | grep -c '^+| .* | 🔶 |'
+```
+
+| Funzionalità | Da → a | Meccanismo, e dove sta in §0.4 | Fonte della sede |
+|---|---|---|---|
+| Structured output e constrained decoding | ✅ → 🔶 | ADR-0013 fa della conformità allo schema un **verdetto di sensore**: un sensore reale, §5 «Si scaglia»; e il decoding vincolato sta negli **adattatori dei provider**, §3 «Si scaglia» | condizione **B** — *«qualcuno chiama un modello: proiezione, **provider reale**, rete»* — **(3)** → Conversazione. ⚠️ La metà del **sensore** cadrebbe sotto **C**; vince B perché la Sede nomina §3, e la §7.4.2 lo dichiara |
+| Gestione del contesto e compattazione | ✅ → 🔶 | la **ricomposizione della proiezione** (ADR-0008, ADR-0010), §4 «Si scaglia» | innesco `V13` — **B (3)** → Conversazione |
+| Indicatore di riempimento contesto | ✅ → 🔶 | la misura è sull'occupazione della proiezione, e la cella di `Q11` dice *«nessuna proiezione da misurare»* | innesco `Q11` — **B (3)** → Conversazione |
+| Orchestrazione e sub-agenti | ✅ → 🔶 | la **proiezione ristretta** (ADR-0008), §4 «Si scaglia»; e `grep -rniE 'sub_run\|subrun' crates/kernel/src --include=*.rs` non rende niente | innesco `V13` — **B (3)** → Conversazione |
+| MCP | ✅ → 🔶 | il **ciclo di approvazione MCP**, §6 «Si scaglia»; ADR-0015 fissa le descrizioni all'approvazione, ed è lì che vive | innesco `V22` — **C (4)** → Agenti |
+| Skills | ✅ → 🔶 | il **registro delle guide**, §5 «Si scaglia» | ⛔ nessuna: caso **d**, §7.8 |
+| Replay dei trace | ✅ → 🔶 | la **proiezione trace**, §7 «Si scaglia» — ADR-0017: il giornale è la sorgente, il trace ne è una proiezione | innesco `Q19` — **A (2)** → GUI minima |
+| Regole e vincoli di progetto | ✅ → 🔶 | il **registro delle guide**, §5 «Si scaglia» | ⛔ nessuna: caso **d**, §7.8 |
+| Sandboxing ed esecuzione | ✅ → 🔶 | **caso c**: la §10 fa entrare il lato kernel del confinamento — *dichiarare, richiedere, giornalare* — e `grep -rniE 'confinement\|sandbox' crates/kernel/src --include=*.rs` rende una riga di commento e nessun tipo | innesco `V35` — **D (5)**, *«si esegue un comando»* → Coding |
+| Progress e notifiche per job lunghi | ✅ → 🔶 | **caso c**: la **notifica all'utente** che `V9` separa dall'evento; e l'evento non ha soggetto, §7.2 riga `V9` | innesco `V9` — **A (2)** → GUI minima |
+| Permessi e sandbox policy | ✅ → 🔶 | **caso c**, stesso comando della riga *Sandboxing*: il livello di confinamento non esiste come tipo | innesco `V35` — **D (5)** → Coding |
+| Difesa da tool poisoning | ✅ → 🔶 | il **ciclo di approvazione**, §6 «Si scaglia»: ADR-0015 vive lì e non nel confine dei tipi, che è ADR-0014 | innesco `V22` — **C (4)** → Agenti |
+| Gestione segreti e credenziali | ✅ → 🔶 | **caso c**: la §10 fa entrare il lato kernel dei segreti, e `crates/secrets/src/lib.rs` è un blocco di commento senza nessun elemento — `grep -cE '^pub ' crates/secrets/src/lib.rs` rende `0` | innesco `V34` — **B (3)** → Conversazione |
+| Storage e cifratura a riposo | ✅ → 🔶 | la **cifratura reale**, §10 «Si scaglia». Il *layout per natura* di ADR-0022 è invece già rispettato (§0.4.1) ed è la metà che regge | ⛔ nessuna: caso **d**, §7.8 |
+| Backup ed export dei dati | ✅ → 🔶 | **backup e ripristino**, §10 «Si scaglia» per regola C (§0.4.1) | innesco `V32` — **F (11)** → Backup e ripristino |
+| Osservabilità e tracing locale | ✅ → 🔶 | la **proiezione trace**, §7 «Si scaglia»; la cella di `V24` lo ripete: *«la proiezione trace non esiste»* | innesco `Q19` — **A (2)** → GUI minima |
+| Avvio automatico e daemon in background | ✅ → 🔶 | le **implementazioni di piattaforma**, §10 «Si scaglia». ⚠️ **Cambia il solo marcatore:** la cella portava già *«implementazione → L3»*, cioè la forma 🔶 sotto un marcatore ✅ | la sede era già scritta, e il sotto-progetto **10** di [`roadmap.md`](../../roadmap.md) è *Integrazione OS completa*, L3 |
+| Notifica «l'agente ha bisogno di te» | ✅ → 🔶 | **caso c**: la riga poggia su `V9` per intero, e la sua Sede non nomina altro | innesco `V9` — **A (2)** → GUI minima |
+| Backup della KB indipendente dall'app | ✅ → 🔶 | **backup e ripristino**, §10 «Si scaglia» | innesco `V33` — **F (11)** → Backup e ripristino |
+| Canary per esfiltrazione dati | ✅ → 🔶 | **il canary**, §6 «Si scaglia», e la cella di `Q17` lo ripete: *«il canary è scaglionato (§0.4, §6)»* | innesco `Q17` — **B (3)** → Conversazione |
+| Modalità di permessi a più livelli | ✅ → 🔶 | **i preset**, §6 «Si scaglia», e la cella di `V21` lo ripete: *«il mediatore, i preset e il ciclo di approvazione sono scaglionati per regola C»* | innesco `V21` — **C (4)** → Agenti |
+| Validazione della mesh prima dell'export | ✅ → 🔶 | **i sensori reali**, §5 «Si scaglia» | ⚠️ **la condizione c'è, e il suo numero non è la sede:** **C** dice *«esistono strumenti e permessi da mediare, **e sensori reali da eseguire**»* — **(4)**. Ma quel numero è *«chi la soddisfa per primo oggi»*, non dove la cosa si costruisce, e la cella 🔶 chiede la seconda. → **Generazione asset**, sotto-progetto **7** di [`roadmap.md`](../../roadmap.md). §7.4.2 |
+
+**Le righe rimaste ✅, raggruppate per meccanismo**, ciascuna col modulo che `ls crates/kernel/src/`
+mostra il 2026-09-03. Sono gruppi, non righe una per una: è la forma che la §3.4 prescrive.
+
+| Meccanismo, e la sua §N in §0.4 «Entra» | Modulo in `crates/kernel/src/` | Righe |
+|---|---|---|
+| arbitrato GPU: ammissione, corsie, ciclo della concessione, revoca, le due policy (§2) | `arbiter/mod.rs`, `arbiter/policy.rs`, `arbiter/resource.rs` | Budget VRAM esplicito · Modalità VRAM per profilo di carico · Eviction e scarico modelli · Swap coordinato LLM/embedding ↔ TRELLIS2 · Policy differenziata remoto vs locale · Tetto ai modelli residenti · Stima di fit prima del caricamento · Convivenza pipeline audio ↔ job GPU · Parametri di qualità 3D configurabili · Coda dei job di generazione · Semaforo unico delle risorse GPU · Precedenza della voce sui job pesanti · Avviso di conflitto e stima d'attesa · Passaggio suggerito a OpenRouter durante i render · Warm-up e cold-start visibili · Budget di VRAM riservata all'audio |
+| il **decisore** del gateway: routing risolto, filtro dei vincoli, catena, contabilità, record risolto (§3) | `gateway/mod.rs`, `record.rs` | Routing locale/remoto con fallback · Fallback a catena tra modelli · Preferenze di provider (OpenRouter) · Routing per compito/costo · Contabilità token e costi · Selettore di modello per compito · Parametri di generazione configurabili · Analisi dei costi per run e per sub-agente · Zero-Data-Retention selettivo · Politica di routing come oggetto versionato · Auto-retry su errori transitori |
+| giornale write-ahead, riconciliazione e modello dello stato durevole (§4) — con la **ritenzione a livelli** di §7, che `Journal::prune` porta | `ports/journal.rs`, `reconcile.rs`, `record.rs` | Run persistenti, ripresa e cancellazione · Task in background · Cronologia e riproducibilità · Logging |
+| il **lato kernel** del checkpoint: dichiarare, richiedere, giornalare (§10) | `ports/filesystem.rs` — `CheckpointId`, `preserve`, `restore` | Checkpoint e rollback · Undo/checkpoint del filesystem |
+| il **confine dei tipi**, la forma del permesso e le classi di effetto (§6, §4) | `boundary.rs`, `permission.rs`, `record.rs` | Tool calling · HITL: approvazioni · Approvazione comandi distruttivi · Difese da prompt injection · Estensibilità e plugin |
+| confini di autonomia, e i parametri **consegnati** invece che letti (§4, §0.4.2) | `executor.rs`, `parameters.rs` | Avvisi e tetti di spesa · Limiti di autonomia configurabili |
+| lo **stato di degrado osservabile** (§7) | `degradation.rs` — `Degradation`, `degradation_now` | Comportamento offline · Degrado esplicito quando manca la rete |
+| ciclo di vita dei worker e **IPC lato core** (§1) | `ports/process.rs`, `wire/worker.rs`, `client.rs`, `framing.rs` | Ecosistema dei worker ML · Streaming delle risposte · Fatturazione a stream interrotto |
+| substrato iniettabile, e le **sorgenti dell'anello 3 dichiarate** con la loro porta (§8, §0.4.3) | `rng.rs`, `time.rs`, `ports/reactor.rs` | Determinismo/replay riproducibile · Dataset dai fallimenti · Scheduling |
+| **un solo punto di uscita** verso la rete (§2.3, le sei famiglie di porte) | `ports/network.rs` | Telemetria locale e «no telemetry» garantito |
+
+#### 7.4.1 La prova, nelle due direzioni della §3.4
+
+| Direzione | Il comando, rilanciato il 2026-09-03 | Resa |
+|---|---|---|
+| ogni riga passata a 🔶 doveva cambiare: il meccanismo compare in «Si scaglia» di §0.4 | `sed -n '/^### 0\.4 /,/^### 0\.5 /p' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md \| grep -oE 'i sensori reali\|gli adattatori dei provider reali\|il registro delle guide\|ricomposizione della proiezione\|la proiezione trace\|il ciclo di approvazione MCP\|i preset\|il canary\|cifratura reale\|backup e ripristino\|le implementazioni di piattaforma' \| sort -u` | ogni voce dell'alternanza è un meccanismo che la tabella qui sopra nomina, e il comando le rende **tutte** |
+| … e il sotto-progetto viene dall'innesco della riga che lo governa | `awk '/^## 8\. /{i=1} i && /^\|[[:space:]]*(V7\|V9\|V13\|V21\|V22\|V32\|V33\|V34\|V35\|Q11\|Q17\|Q19)[[:space:]]*\|/ {split($0,c,"\|"); printf "%s ->%s\n", c[2], c[6]}' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | `V7 B (3)` · `V9 A (2)` · `V13 B (3)` · `V21 C (4)` · `V22 C (4)` · `V32 F (11)` · `V33 F (11)` · `V34 B (3)` · `V35 D (5)` · `Q11 B (3)` · `Q17 B (3)` · `Q19 A (2)` — e i nomi vengono dalla tabella dei sotto-progetti di [`roadmap.md`](../../roadmap.md) |
+| ogni riga rimasta ✅ doveva restare: il gruppo nomina un modulo che esiste | `ls crates/kernel/src/` | ogni modulo citato dal prospetto compare nell'elenco |
+| il totale non si muove, e i fine-riga nemmeno | il blocco **C**, più `tr -cd '\r' < docs/tracciabilita.md \| wc -c` e `git ls-files --eol docs/tracciabilita.md` | totale `171`, zero CR, `i/lf w/lf` prima e dopo |
+
+#### 7.4.2 Le letture di confine, e come sono state decise
+
+⛔ **Sono le righe dove la lettura poteva andare in due modi.** Stanno qui perché il criterio da
+solo non le decide, e chi rilegge deve poter dissentire sapendo su che cosa.
+
+| Riga | Le due letture | Scelta, e perché |
+|---|---|---|
+| Telemetria locale e «no telemetry» garantito | la *telemetria locale* vuole la proiezione trace, che si scaglia; la **garanzia** vuole il punto unico d'uscita, che entra | **resta ✅**: la garanzia è la metà portante, e `ports/network.rs` la porta. La proiezione ha già la sua riga — *Osservabilità e tracing locale* — che questa passata ha mosso: le due righe si dividono esattamente lungo Entra/Si scaglia |
+| Modalità VRAM per profilo di carico · Parametri di qualità 3D configurabili | §2 scaglia *«la taratura dei profili reali (SP-1, SP-2)»*, e la curva 3D è taratura di SP-1 | **restano ✅**: la §0.4 dice di sé stessa che *«i valori dei profili sono parametri, non impianto»*, e il meccanismo — `ResourceProfile` più i parametri consegnati — entra |
+| Avvisi e tetti di spesa · Limiti di autonomia configurabili | la §7.2 trova `V8` ❌, perché la transizione ad `AttesaUmano` non esiste | **restano ✅**: il caso **c** vuole una riga ⏳ o ⚠️, e `V8` è ✅ con innesco vuoto; il **tetto** esiste ed è provato — `turn_limit` in `executor.rs`. Ciò che manca è il *controllo* che la §8 promette, ed è la voce **6** della §7.8, non una sede da scaglionare |
+| Checkpoint e rollback · Undo/checkpoint del filesystem | §10 scaglia *«checkpoint su filesystem reale»* | **restano ✅**: la Sede nomina il lato kernel e gli **ambiti dichiarati**, che entrano e che `ports/filesystem.rs` porta. È la stessa §10 dove il confinamento cade nel caso **c**, e la differenza è misurata: lì nessun tipo, qui `CheckpointId` |
+| Preferenze di provider (OpenRouter) | §3 scaglia *«gli adattatori dei provider reali»* | **resta ✅**: la Sede nomina *«vincoli della richiesta»*, cioè il **filtro dei vincoli**, che è nella colonna «Entra». Se bastasse *«prima o poi servirà un adattatore»* nessuna riga §3 potrebbe restare ✅, e il criterio si dissolverebbe |
+| Estensibilità e plugin | i suoi due meccanismi concreti — `MCP` e `Skills` — sono passati a 🔶 | **resta ✅**: la riga registra una **decisione** (nessun codice di terze parti nel processo, ADR-0003), e ciò su cui poggia — isolamento di processo e permesso a tripla — entra e ha i suoi moduli. I due meccanismi hanno righe proprie, e sono lì che si sono mosse |
+| Logging | §7 fa entrare la **ritenzione a livelli**, e ADR-0018 porta un richiamo che dice che il codice non tiene nessuna delle sue due regole | **resta ✅**: il caso **c** chiede che *nessun modulo* lo porti, e `Journal::prune` in `ports/journal.rs` lo porta. Che le due regole non siano tenute è già registrato — finding AUD-031 e AUD-006, e le voci aperte del [registro](../../porta-di-qualita.md) — e non è una sede da assegnare |
+| Validazione della mesh prima dell'export | la condizione **C** copre *«sensori reali da eseguire»* e oggi è soddisfatta da **4**, *Agenti*; ma il sensore che valida una mesh si costruisce dove si costruiscono le mesh | **🔶 → Generazione asset**: la cella 🔶 dice *«implementazione nel sotto-progetto indicato»*, e scrivervi **4** sarebbe falso su quel punto. Le quattro righe 🔶 già nel file che poggiano su un sensore — `git show a084f79:docs/tracciabilita.md \| grep -E '^\| .* \| 🔶 \|' \| grep -iE 'sensor'` — prendono tutte il sotto-progetto della **capacità**, non quello dell'innesco. ⚠️ **La divergenza fra le due nozioni è la riga 12 della §7.7**, e sceglierne una sola è del proprietario |
+| Notifiche (già 🔶) | la cella dice `→ L3`, l'innesco di `V9` dice **A (2)** | **lasciata com'è**, e registrata nella §7.8: le due nominano metà diverse — la superficie in-app che l'innesco sblocca, e il canale dell'OS che L3 costruisce — quindi la cella non è falsa |
+
 ### 7.7 Dove il disegno è stato smentito dall'esecuzione, e dove ha retto
 
 ⚠️ **Le conferme valgono quanto le smentite**: un verbale di sole smentite farebbe sembrare il
@@ -673,6 +775,11 @@ disegno peggiore di com'era.
 | 5 | §2.2 e §6.3 condizione 2: la revoca di una mutazione si prova «con `git diff` a zero» | **il piano la stringe, e l'esecuzione ha usato la forma stretta**: vincolo globale 7 — copia byte-esatta presa **prima** e `cmp`. `cmp` dice `RESTORED` sulle **tre** prove che mutano un file; la quarta non muta niente, e la sua revoca è la cancellazione, provata da `git status --porcelain` senza righe |
 | 6 | il disegno e il piano datano ogni cifra al **2026-09-02** | ⚠️ **l'esecuzione ha attraversato la mezzanotte.** `date +%FT%T` rendeva `2026-09-03T00:06:17` al rilancio dei blocchi, e le misure di questa §7 portano quindi il **2026-09-03**. La data non è stata allineata all'attesa: è la voce **E6** dell'errata del piano |
 | 7 | §1.2: la chiusura «non crea righe di catalogo, e non marca ✅ nessuna riga ⚠️ o ⏳ della §8» | **ha retto, ed è servito**: su otto righe si poteva tentare una correzione nella §8 o un caso nuovo in `crates/`. Nessuna è stata toccata; sono registrate nella §7.8, dove il rimedio lo sceglie il proprietario |
+| 8 | §3.5: «circa **26** candidate a 🔶 per euristica sulla colonna Sede — il numero vero lo dà la rilettura, e vince lui» | **ha retto, ed è servito che vincesse la rilettura**: l'euristica era alta. Le righe cambiate stanno una per una nella §7.4, e a contarle è il comando che quella sezione porta, non una cifra qui |
+| 9 | §3.2 e **P-8** del piano: il caso «sede da assegnare» «esiste già, misurato» — la **ritenzione a livelli** di ADR-0018, che `V26` dichiara senza sede | ⛔ **smentito nella previsione, confermato nella forma.** Nessuna riga di `tracciabilita.md` nomina la ritenzione come proprio meccanismo: la §7 la fa **entrare** e `Journal::prune` in `crates/kernel/src/ports/journal.rs` la porta, quindi il caso **d** non è mai scattato per `V26`. È scattato su meccanismi diversi, che la §7.4 elenca e la §7.8 registra. Il disegno aveva ragione a lasciare il conteggio alla rilettura invece di scriverlo |
+| 10 | **E1** dell'errata del piano: la tabella degli esiti non ha la riga per «è in Entra, ma il codice non lo dà», e il caso esiste | **ha retto, e ha morso più di quanto E1 prevedesse.** E1 lo aveva misurato sulle righe di `§10`; la rilettura lo ha trovato anche su `V9`, dove la §0.4 fa entrare la notifica e la §7.2 aveva già misurato che l'evento non ha soggetto. Le righe col caso **c** sono marcate come tali nella §7.4 |
+| 11 | §3.2: le righe già 🔶 «si rileggono, cambia **solo** se la sede è sbagliata» | **ha retto, e nessuna è cambiata.** Una sola tensione, **registrata invece che risolta**: `Notifiche` porta *«V9 §4 · implementazione → L3»* e l'innesco di `V9` è **A (2)**. Le due nominano metà diverse del meccanismo, quindi la cella non è falsa; la §7.8 la apre al proprietario |
+| 12 | §3.1, fonte **2**: «per un meccanismo rinviato, l'**innesco** dà il sotto-progetto che lo porta» — ed è la **D8** del piano | ⚠️ **ha retto quasi ovunque, e su una riga risponde a un'altra domanda.** La §8.2 della spec dice di quel numero che è *«chi la soddisfa per primo oggi»*, mentre la cella 🔶 di `tracciabilita.md` dice *«implementazione nel sotto-progetto indicato»*: due nozioni diverse. Coincidono su ogni riga cambiata da questa passata tranne *Validazione della mesh prima dell'export*, dove la condizione **C** dà **4** e la mesh si costruisce al **7**. La §7.4.2 dichiara la scelta e la §7.8 la apre |
 
 ### 7.8 Le voci aperte della chiusura, con chi le chiude
 
@@ -690,3 +797,5 @@ aveva già aperte; dalla sesta in poi le apre questo compito.
 | 7 | **le due righe della §8.4 verificate con una tecnica diversa da quella che `design/08` assegna** — `Q13` e `Q23`, entrambe **dichiarate nella cella stessa** e non nascoste | §7.2, tabella della condizione 3 | il proprietario: o `design/08` cambia il metodo assegnato, o la §8.4 dichiara la divergenza come permanente. Nessuno dei due è un rimedio di questa chiusura |
 | 8 | **nessuno script del cancello misura il grafo di `daemon`**: `gate-deps.sh` cicla su `kernel simulator` e `gate-attributes.sh` dichiara che `daemon` non è controllato. È la stessa lacuna che declassò `V34`, e sulla riga `V25` — con la metà statica di `Q20` che vi poggia — è **aperta** | §7.2, righe `V25` e `Q20` | il proprietario decide se è una voce di **prodotto**, cioè un controllo da scrivere, o una **rilettura** della §8 come fu per `V34` |
 | 9 | ⛔ **le condizioni 1 e 3 della §0.7 sono ❌ il 2026-09-03**, e la §0.7 dice che il sotto-progetto è chiuso quando **tutte** le sue condizioni sono vere | §7.2, le due righe con la propria evidenza | ⛔ **il proprietario, e prima del compito 4**: il compito 4 è l'unico che può scrivere «chiuso», e questo verbale non decide al suo posto |
+| 10 | ⛔ **tre righe di `tracciabilita.md` restano `sede da assegnare`**, ed è la resa concreta della voce **3** qui sopra: `Skills` e `Regole e vincoli di progetto` poggiano sul **registro delle guide** (§5 «Si scaglia»), `Storage e cifratura a riposo` sulla **cifratura reale** (§10 «Si scaglia»). Nessuna riga di §8.3 o §8.4 governa quei due meccanismi, e lo dicono due comandi sulle sole righe V e Q della §8 — `awk '/^## 8\. /{i=1} i && /^\|[[:space:]]*[VQ][0-9]+[[:space:]]*\|/' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` tubato in `grep -icE 'guida\|guide'`, che rende `0`, e in `grep -inE 'cifratur\|a riposo\|portachiav'`, che rende solo le righe del **portachiavi**, cioè `V34` e `Q17` | §7.4, le tre righe con `sede da assegnare` | il proprietario, nella roadmap. ⚠️ **Non sono la ritenzione che P-8 prevedeva:** quella non ha nessuna riga in questo file, e la §7.7 lo registra |
+| 11 | la sede della **notifica**: la riga `Notifiche` dice `→ L3`, l'innesco di `V9` dice **A (2)** = GUI minima, e dopo questa rilettura il file porta entrambe — su righe diverse e per metà diverse dello stesso meccanismo | §7.4.2, letture di confine, e §7.7 riga 11 | il proprietario, se vuole una casa sola. Nessuna delle due è falsa oggi, ed è perché la rilettura non ha scelto al suo posto |

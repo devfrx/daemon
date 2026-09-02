@@ -330,13 +330,17 @@ fn run(seed: u64, tally: &mut Tally) -> Observed {
 /// each of the four kills of every seed; this test is what sweeps the seeds and reports which one
 /// broke.
 ///
-/// ⛔ ORACLE ONE — THE INJECTION FIRED — IS NOT IN THIS FUNCTION, and saying so is the point. It
-/// is the per-kill assertion inside `run`: every kill is followed by a `release` whose answer is
-/// pinned and by the books being read, on every seed and every recruit, so a kill that did not
-/// happen cannot get past it. ⚠️ AN AGGREGATE `tally.kills == SEEDS * RECRUITS.len()` STOOD HERE
-/// AND WAS REMOVED, not reworded: the loop increments it once per recruit over a permutation of
-/// fixed length, so no implementation could make it red, and a probe that cannot fail is a line a
-/// reader has to check for nothing. Gotcha #76 — subtract rather than rewrite better.
+/// ⛔ ORACLE ONE — THE INJECTION FIRED — IS NOT IN THIS FUNCTION. What holds it is the per-kill
+/// work inside `run`: every kill that HAPPENS is followed by a `release` whose answer is pinned
+/// against the window and by the books being read. ⚠️ AN AGGREGATE
+/// `tally.kills == SEEDS * RECRUITS.len()` STOOD HERE AND WAS REMOVED, not reworded: the loop
+/// increments it once per recruit over a permutation of fixed length, so no implementation could
+/// make it red. Gotcha #76 — subtract rather than rewrite better.
+/// ⛔ AND THE SUBSTITUTE CLAIM IS NARROWER THAN THE ONE THAT WENT, said rather than left to be
+/// assumed: nothing here holds that every recruit IS killed. A kill that was skipped leaves that
+/// recruit's `killed` flag false, the expected sum below keeps its reservation, the books agree,
+/// and no assertion after the loop reads whether `running` is empty. The aggregate did not hold
+/// it either — it counted the same loop — so what is declared is a gap that was always there.
 ///
 /// ⛔ ORACLE TWO — THERE WAS SOMETHING TO VERIFY — IS HERE, and it is a different claim: a
 /// campaign whose workers all expired before their kill would hand back nothing but

@@ -157,12 +157,16 @@ struct Observed {
     death_at: u64,
     /// How many grants the reconciliation handed back.
     reconciled: usize,
-    /// Whether the death reached the core AS AN `Err(Disconnected)` FROM THE PORT. ⛔ IT IS
-    /// WRITTEN IN THE `Err(IpcError::Disconnected)` ARMS AND NOWHERE ELSE, which is the whole of
-    /// what it is worth: assigned after the fact — below the assertion, say — it would be
-    /// CONSTANT `true` on every value `run` returns, the second half of oracle two could never
-    /// fail, and `E156` ① would be satisfied in the text and not in the effect. It was exactly
-    /// that until the first review round.
+    /// Whether the death reached the core AS AN `Err(Disconnected)` FROM THE PORT, written in
+    /// the `Err(IpcError::Disconnected)` arms and nowhere else.
+    ///
+    /// ⛔ IT IS `true` ON EVERY `Observed` THAT LEAVES `run`, AND THAT IS NOT A DEFECT — it is
+    /// what the per-seed assertion below MAKES true by refusing anything else. So the second half
+    /// of `E156` ①'s oracle — "the death was seen from the port" — is held THERE, on every seed,
+    /// and testing it again after the fact would be testing the assertion rather than the world.
+    /// ⚠️ THE CONSEQUENCE IS WRITTEN DOWN BECAUSE IT IS EASY TO GET WRONG TWICE: any aggregate
+    /// that reads this field is reading a constant, and a conjunct on it is dead weight. One
+    /// stood in `property_3` until the second review round.
     death_seen_from_port: bool,
 }
 
@@ -375,32 +379,35 @@ fn run(seed: u64) -> Observed {
 
 /// ⛔ ORACLE ONE — THE INJECTION FIRED — IS NOT IN THIS FUNCTION, and saying so is the point.
 /// It is the per-seed `assert!` inside `run`: every seed must see the port report the gui gone.
-/// ⚠️ AN AGGREGATE `deaths == SHORT_CAMPAIGN_SEEDS` STOOD HERE AND WAS REMOVED, not reworded —
-/// `deaths` is incremented only under the very flag that assertion has already checked, so it
-/// could never have gone red, and the red attributed to it in the first mutation campaign really
-/// came from the per-seed one. The per-seed form is also STRONGER: it names the seed and the
-/// operation, and it holds on each seed rather than on a sum. Gotcha #76 — subtract rather than
-/// rewrite better. The counter stays because the PRINTED line is worth having.
+/// ⚠️ AN AGGREGATE `deaths == SHORT_CAMPAIGN_SEEDS` STOOD HERE AND WAS REMOVED, not reworded,
+/// and a `deaths` counter went with it in the second round: both read a flag the per-seed
+/// assertion has already refused to let be false, so neither could ever have gone red. Gotcha
+/// #76 — subtract rather than rewrite better.
 ///
 /// ⛔ ORACLE TWO — THERE WAS SOMETHING TO VERIFY, and it is a DIFFERENT claim. This is the lesson
 /// milestone 4 learned THREE times, each time after closing the previous one: a campaign that
 /// kills clients which never asked for anything compares EMPTY SETS, and "the sum came back to
-/// the baseline" is green because it never moved. It is written whole — the gui obtained
-/// `Granted` before dying AND the death was seen from the port — because the second half is what
-/// keeps the property out of the bench (`E156`).
+/// the baseline" is green because it never moved.
+///
+/// ⛔ `E156` ① WANTS IT WRITTEN WHOLE — the gui obtained `Granted` before dying AND the death was
+/// seen from the port — AND IT IS, BY TWO CHECKS RATHER THAN ONE CONJUNCTION. The second half is
+/// the per-seed assertion in `run`, which is STRONGER than a conjunct here: it holds on EVERY
+/// seed instead of on at least one, and it is where the red of the "the fake never dies" mutation
+/// comes from. What is left for this function is the FIRST half, which nothing else holds.
+/// ⚠️ A CONJUNCT ON `death_seen_from_port` STOOD HERE AND WAS REMOVED: with the per-seed
+/// assertion above it, the field is constant `true` in every value this loop sees, so the
+/// conjunction reduced to its left operand and read as a guarantee it was not giving.
 #[test]
 fn property_3_a_gui_that_dies_holding_a_grant_gives_it_back() {
     let started = std::time::Instant::now();
-    let mut deaths = 0u64;
     let mut held_a_grant_and_died = 0u64;
     let mut reconciled = 0usize;
 
     for seed in 0..SHORT_CAMPAIGN_SEEDS {
         let observed = run(seed);
-        if observed.death_seen_from_port {
-            deaths += 1;
-        }
-        if observed.answer == Answer::Granted && observed.death_seen_from_port {
+        // ⛔ NO CONJUNCT ON `death_seen_from_port`: `run` returns only values on which it is
+        // `true`, so it would add nothing here. That half is held per seed, inside `run`.
+        if observed.answer == Answer::Granted {
             held_a_grant_and_died += 1;
         }
         reconciled += observed.reconciled;
@@ -409,13 +416,14 @@ fn property_3_a_gui_that_dies_holding_a_grant_gives_it_back() {
 
     assert!(
         held_a_grant_and_died > 0,
-        "on no seed did the gui hold a grant when the port reported it gone: {deaths} deaths and \
-         ZERO grants to reconcile, so the sum was compared against a baseline it never left"
+        "on no seed did the gui hold a grant when the port reported it gone: every one of the \
+         {SHORT_CAMPAIGN_SEEDS} seeds died before it was granted anything, so the sum was \
+         compared against a baseline it never left"
     );
 
     println!(
-        "DST gui death: {deaths}/{SHORT_CAMPAIGN_SEEDS} seeds saw the port report the gui gone, \
-         {held_a_grant_and_died} of them holding a grant, {reconciled} grants handed back, \
+        "DST gui death: {held_a_grant_and_died} of {SHORT_CAMPAIGN_SEEDS} seeds had the gui \
+         holding a grant when the port reported it gone, {reconciled} grants handed back, \
          {elapsed:?}"
     );
 }

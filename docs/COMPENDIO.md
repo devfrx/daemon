@@ -826,18 +826,21 @@ tre frasi false scritte dalla prima, la terza per la casa della stessa frase che
 perimetro** — *il prodotto regge alla prima passata; le frasi no*, anche qui.
 ⚖️ **Il proprietario ha deciso il 2026-09-02: il ciclo di `E53` è CHIUSO SUL PRODOTTO** (richiamo ⑨), e la specie
 di `E129` — i numerali di distanza — è passata a sé sull'intero `crates/`, voce `E136`.
-⏭️ **IL PROSSIMO PASSO È IL ROUND 4 DEL COMPITO 8 — `E151` — E IL COMPITO NON È CHIUSO.** La ri-revisione delle
-ondate 2 e 3 ha chiuso tutti i punti ma ha trovato **due** rotture nuove — prosa falsa scritta per chiudere un
-rilievo, per la **terza** ondata di seguito: un'unicità che il file stesso smentisce, e due *«nowhere else»* sullo
-stesso caso che si falsificano a vicenda — più una **quarta** casa in italiano, sopravvissuta a un censimento fatto
-in inglese. ⚖️ **Il proprietario ha deciso il 2026-09-02: *«basta dopo questo giro»*** — il round 4 non è stato
-dispacciato, ed è il punto esatto da cui si riprende. ⛔ **Chi riprende NON rifà la revisione e NON marca il compito
-chiuso: dispaccia il round 4 col brief `E151`** (togliere le rivendicazioni di esclusività, non riscriverle — gotcha
-**#76** — e il censimento finale in **entrambe** le lingue), poi la ri-revisione mirata su `4497130..HEAD`, e **solo
-dopo** il compito 9 — che va **pre-controllato prima** con le quattro domande di [`../CLAUDE.md`](../CLAUDE.md), come
-ogni compito di questo traguardo, che ha avuto almeno un bloccante ciascuno. ⚠️ **Da sapere prima del 9:** `E146` —
-un file nuovo si mette nell'**indice** prima della campagna di mutazione, o la revoca *«`git diff` a zero»* non prova
-nulla; e il compito 9 **crea tre file**. La casa unica resta l'errata del piano.
+✅ **IL ROUND 4 È ESEGUITO IL 2026-09-02** (`29b85b8`, da un implementatore fresco): le tre rivendicazioni di
+esclusività **tolte** e non riscritte, e la quarta casa richiamata nel registro. ⛔ **E la ri-revisione mirata su
+`4497130..HEAD` ha chiuso i tre rilievi e ne ha aperto UNO nuovo, ancora prosa scritta per chiudere:** il richiamo
+nuovo del registro portava un **costrutto scisso** — *«ciò che questo file esercita e la conformità no È…»* — che si
+legge esaustivo, e la stessa cella lo smentiva con la terza risposta di `prune`. ⚖️ **Il proprietario ha deciso il
+2026-09-02: BASTA — il round 5 lo fa il coordinatore a mano, senza ri-revisione, e il compito 8 è CHIUSO.** Fatto in
+`82464b4` per sottrazione; e la clausola sorella *«il secondo intento»* richiamata dopo aver **misurato** la promessa
+6, perché il brief del round 4 l'aveva dichiarata fuori discussione **senza misurarla** — difetto del coordinatore.
+⚠️ **Il residuo, detto e non arrotondato:** l'ultima frase del registro non è stata rivista da nessuno; la vede
+l'audit del compito 10. Il verbale, le sviste del coordinatore e la casa in `E148` dichiarata e non toccata stanno
+in **`E152`** dell'errata. ⏭️ **IL PROSSIMO PASSO È IL COMPITO 9, PRE-CONTROLLATO PRIMA** con le quattro domande di
+[`../CLAUDE.md`](../CLAUDE.md), contro il codice di **allora** e da chi lo dispaccia — un pre-controllo ha una data
+(`E88`). ⚠️ **Da sapere prima:** `E146` — un file nuovo si mette nell'**indice** prima della campagna di mutazione, o
+*«`git diff` a zero»* non prova nulla — e i file nuovi del compito 9 sono più di quanti la sua mappa `Files:` ne
+elenchi: **`E153`**, trovata leggendo il compito e non pre-controllandolo. La casa unica resta l'errata del piano.
 ✅ **IL DECIMO È FATTO IL 2026-09-01: tre rilievi, `E135`, tutti di prosa o registro, uno fuori dal
 perimetro** — la specie dei numerali di distanza, colta dalla domanda di classe sull'intero `crates/`.
 I quattro predicati del nono giro sono misurati tenuti braccio per braccio, e trentasette enum censiti

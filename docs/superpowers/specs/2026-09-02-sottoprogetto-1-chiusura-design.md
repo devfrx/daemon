@@ -517,3 +517,176 @@ compito 2 incontra per primo.
 ⛔ **Che cosa venga dopo la chiusura NON è scritto qui col marcatore, ed è deliberato:** è uno
 **stato**, e la sua casa unica è la §6 del [compendio](../../COMPENDIO.md). La scelta 3 del
 proprietario dice che cosa vi andrà scritto; a scriverlo sarà il compito 4.
+
+---
+
+## 7. Il verbale della chiusura — in bozza dal compito 1
+
+⛔ **Sta qui e non nel compendio** — decisione **B** del disegno del Traguardo 6, per la stessa
+ragione: il compendio ha un tetto nel cancello. Scritto eseguendo il piano della chiusura, che
+è un audit prima di essere una scrittura. ⚠️ **In bozza finché il compito 4 non lo data:** le
+righe 6 e 7 della §7.2, la §7.4, la §7.5, la §7.6 e la §7.9 le scrivono i compiti che seguono.
+
+### 7.1 I conteggi, rifatti col comando prima di leggere che cosa i documenti ne dicono
+
+⚠️ **La data di queste misure è il 2026-09-03, non il 2026-09-02.** L'esecuzione del compito 1 è
+cominciata la sera del 2026-09-02 e ha attraversato la mezzanotte: `date +%FT%T` rendeva
+`2026-09-03T00:06:17` al rilancio dei blocchi. Il commit su cui è misurato è quello che
+`git rev-parse --short HEAD` rende, ed è lo stesso prima e dopo l'audit — il compito 1 non tocca
+`crates/` né `scripts/` in nessun commit. La voce **E6** dell'errata del piano lo registra.
+
+⛔ **Il comando di ogni riga vive nel proprio blocco della §1.3 e non è ricopiato qui:** una
+cifra e il suo comando hanno una casa sola, e un rimando non marcisce.
+
+| Blocco della §1.3 | Il 2026-09-02, dal disegno | Rilanciato il 2026-09-03 su `9214255` | Diverge? |
+|---|---|---|---|
+| **A** — le righe della §8 per stato | 45: 30 V (16 ✅ e 14 ⚠️) e 15 Q (8 ✅ e 7 ⚠️) | `V ok 16` · `V parziale 14` · `V rimandato 7` · `Q ok 8` · `Q parziale 7` · `Q rimandato 9` | no |
+| **F** — gli ADR della §0.5 con le proprie `Negative (accettate)` | sette su sette | sette file, ciascuno con la sezione **una** volta | no |
+| **G** — le campagne DST | cinque | cinque file: quattro in `crates/simulator/tests/` e `crates/platform/tests/engine_crash_consistency.rs` | no |
+| **H** — i casi `compile_fail` e i loro `.stderr` | 40 e 40, nessuno vuoto | `40` · `40` · `0` vuoti | no |
+
+La baseline è stata rimisurata prima di leggere qualunque documento: `bash scripts/gate.sh` →
+`GATE GREEN`, `bash scripts/check-docs.sh` → `OK — no inconsistencies.`, `git status --porcelain`
+senza righe.
+
+### 7.2 Le cinque condizioni della §0.7, rilette contro il codice
+
+⚠️ **Le righe 6 e 7 le scrive il compito 4**, come lo scheletro del piano prescrive.
+
+⛔ **Il criterio con cui sono giudicate le condizioni 1 e 3, scritto perché sia controllabile e
+non dipenda da chi legge.** Per la **condizione 1** una riga è ✅ quando la cella nomina una delle
+tre risposte di §8.1.2 **e** un comando trova quella cosa in `crates/`: il caso `compile_fail` col
+proprio `.stderr`, la funzione di test col proprio nome, o il file della campagna. È ❌ quando il
+**soggetto** che la cella nomina non esiste in `crates/` — è la classe del finding AUD-026, quello
+che declassò `V34`. Per la **condizione 3** il confronto è quello che il piano detta: la tecnica
+dell'ultima colonna di [`design/08`](../../design/08-strategia-di-test.md) contro ciò che la cella
+di §8.4 nomina come controllo.
+
+⛔ **Nulla è stato corretto: la §8 e il catalogo §7.4 sono spec, e restano del proprietario**
+(vincolo globale 1 del piano). Ciò che l'audit trova si **registra**, e la §7.8 dice chi lo chiude.
+
+| # | Condizione | Esito | Evidenza letta o rilanciata il 2026-09-03 |
+|---|---|---|---|
+| 1 | ogni V in perimetro ha un controllo che gira in automatico | ❌ | le trenta righe del blocco **A** — 16 ✅ e 14 ⚠️ — lette una per una: **ventitré** hanno il controllo, **sette** no: `V5`, `V8`, `V9`, `V25`, `V35`, `V36`, `V37`. I due conteggi si rifanno contando le colonne «Esito» della tabella qui sotto |
+| 2 | ogni controllo statico è stato visto fallire su una violazione deliberata, e poi tornare verde | ✅ | livello 1, blocco **H**: `40` casi, `40` `.stderr`, `0` vuoti, nessuna riga `SENZA STDERR`, e `cargo test --locked -p kernel --test compile_fail` verde. I quattro script: quattro rossi **letti** e quattro revoche provate con `cmp`. La tabella qui sotto |
+| 3 | ogni Q in perimetro è verificato col metodo che `design/08` gli assegna, non con un altro | ❌ | le quindici righe del blocco **A** — 8 ✅ e 7 ⚠️ — confrontate una per una: **tredici** coincidono, **due** no: `Q13` e `Q23`, e la divergenza è **dichiarata nella cella stessa**, non nascosta. La tabella qui sotto |
+| 4 | ogni difetto trovato in simulazione conserva il proprio seme come caso di regressione permanente (V31) | ✅ **salvo il richiamo** per le due campagne del Traguardo 6, che scrive il compito 4 | la riga `V31` di §8.3 è `✅ verificato qui` e dice «debole per natura»; l'elenco di [`semi-dst.md`](../../semi-dst.md) ha la sola riga che si dichiara **vuota e non dimenticata**; il cancello è verde su tutte le campagne. ⚠️ La lettera della condizione è più larga della decisione: §7.3 |
+| 5 | gli ADR della §0.5 sono scritti, ciascuno con le proprie `Negative (accettate)` | ✅ | blocco **F**: sette file, ciascuno con la sezione una volta. La riga 3 della §0.5 è decisa in §2.4 della spec, che dichiara di essere «la decisione n. 3 della §0.5», e la §0.7 dichiara che quella riga resta l'unica decisione della §0.5 senza ADR |
+
+**Condizione 1, riga per riga.** Le trenta righe sono quelle che il comando del Passo 2 rende: le
+✅ e le ⚠️ di §8.3. Per una ⚠️ è provata la sola **metà verificata**, che la cella separa da ciò
+che manca.
+
+| V | Stato in §8.3 | Che cosa la cella nomina | Dove l'ho trovato | Esito |
+|---|---|---|---|---|
+| `V1` | ✅ | gettone sulla porta `process`, livello 1 (§7.4.1 B), e la campagna DST (§7.4.2) | `crates/kernel/tests/compile_fail/talking_without_the_handle.rs` e `grant_has_no_constructor.rs`, ciascuno col proprio `.stderr`; `one_grant_starts_one_worker` in `crates/kernel/tests/worker_tokens.rs`; le campagne del blocco **G** | ✅ |
+| `V2` | ✅ | riga di catalogo §7.4.1 C, `V2` | `compile_fail/admission_without_profile.rs`, che dichiara la propria riga in testa, col proprio `.stderr` | ✅ |
+| `V3` | ⚠️ | riga §7.4.1 C `V3`, e la campagna DST sulla transizione interrotta | `compile_fail/two_policies_at_once.rs`; `a_transition_cut_between_intent_and_outcome_leaves_the_step_in_doubt` in `crates/kernel/tests/arbiter_policy.rs` | ✅ |
+| `V4` | ⚠️ | riga §7.4.1 C `V4` | `compile_fail/admission_is_not_two_ways.rs` e `admission_has_no_is_granted.rs` | ✅ |
+| `V5` | ✅ | riga §7.4.1 C `V5`, «con **test di compilazione fallita**» | ⛔ nessun caso lo esercita: `grep -rln 'V5' crates/kernel/tests/compile_fail/` non rende niente, e il comando del registro — `grep -n 'V5 \|riga V5' docs/porta-di-qualita.md` — nemmeno. Il [registro](../../porta-di-qualita.md) lo **dichiara**: «il tipo `EffectClass` esiste ma nessun caso lo esercita», e «un test di comportamento **non la copre**: sono due proprietà diverse con lo stesso nome» | ❌ manca il caso `compile_fail` che la cella promette |
+| `V6` | ✅ | campagna DST su `journal` con la suite di conformità, e due livelli di crash | `the_in_memory_journal_honours_the_contract` in `crates/kernel/tests/journal_contract.rs`; `a_crashed_archive_reopens_in_a_coherent_state` in `crates/platform/tests/engine_crash_consistency.rs` | ✅ |
+| `V7` | ⚠️ | test a esempi: ciò che è dichiarato non sacrificabile si rilegge dal giornale dopo una ripresa | `what_was_written_survives_reopening_the_file` in `crates/platform/tests/file_journal.rs` | ✅ |
+| `V8` | ✅ | test a esempi sulla **transizione ad `AttesaUmano`**, che è il metodo di Q7 | ⛔ la transizione non esiste: `grep -rniE 'awaiting\|autonomy\|attesaumano' crates/ --include=*.rs` non rende niente. Il **tetto** esiste ed è provato — `turn_limit` e `RunError::TurnLimitReached` in `crates/kernel/src/executor.rs`, con `the_delivered_turn_limit_is_honoured_by_its_value` in `crates/kernel/tests/executor_determinism.rs` — ma è un errore di fine corsa, non la transizione nominata | ❌ il soggetto nominato non esiste |
+| `V9` | ⚠️ | test a esempi sull'**evento emesso e giornalato** | ⛔ nessun evento: `grep -rnE 'pub (enum\|struct) [A-Za-z]*Event' crates/ --include=*.rs` non rende niente, e `crates/kernel/src/executor.rs` non nomina mai il giornale | ❌ la metà verificata non ha soggetto |
+| `V10` | ✅ | riga §7.4.1 C `V10` | `compile_fail/sensor_modifies_the_artefact.rs` | ✅ |
+| `V11` | ⚠️ | test a esempi: il costo dichiarato decide l'ammissione all'anello stretto | `an_inferential_sensor_is_refused_by_the_tight_ring` e `an_inferential_sensor_is_never_run_at_all` in `crates/kernel/tests/sensor_ring.rs` | ✅ |
+| `V14` | ✅ | test a esempi con sensore finto e verdetto scelto dal test | `a_passing_sensor_writes_a_verdict_and_opens_nothing` in `crates/kernel/tests/sensor_ring.rs` | ✅ |
+| `V15` | ✅ | test a esempi sul decisore | `a_conforming_candidate_is_chosen_and_nothing_is_degraded` in `crates/kernel/tests/gateway_decisor.rs` | ✅ |
+| `V16` | ⚠️ | la metà **positiva**: il record risolto di §6.2, con lo stesso test a esempi che rende ✅ V15 e Q14 | `the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it` in `crates/kernel/tests/gateway_decisor.rs` | ✅ |
+| `V17` | ✅ | test a esempi sul discriminante di §6.2 — *il modello ha prodotto output?* | `a_passing_sensor_writes_a_verdict_and_opens_nothing` e `a_failing_verdict_opens_a_new_step_and_carries_the_detail` in `crates/kernel/tests/sensor_ring.rs`, che sono le due vie del discriminante | ✅ |
+| `V18` | ⚠️ | test a esempi: l'errore del filtro porta il nome del vincolo non soddisfatto | `a_data_constraint_with_no_candidate_FAILS_CLOSED` e `a_quality_constraint_with_no_candidate_DEGRADES_AND_SAYS_SO` in `crates/kernel/tests/gateway_decisor.rs` | ✅ |
+| `V19` | ✅ | gettone `journal` sulla conversione, livello 1 (§7.4.1 B) | `compile_fail/promote_without_journal.rs`, che dichiara la propria riga del blocco B | ✅ |
+| `V20` | ✅ | test di compilazione fallita, livello 1 (§7.4.1 C) | `compile_fail/untrusted_as_instruction.rs` e `no_conversion_from_untrusted_to_instruction.rs`, che sono le regole A e B della stessa riga | ✅ |
+| `V21` | ⚠️ | test a esempi sulla forma del permesso e sulla sua registrazione nel giornale | `a_granted_triple_is_granted` e `grant_writes_every_field_it_says_it_writes` in `crates/kernel/tests/permission_triple.rs` | ✅ |
+| `V24` | ⚠️ | test a esempi: il picco di VRAM e i permessi attivi si ricavano rileggendo il giornale | i permessi: `nothing_is_granted_on_an_empty_journal` in `crates/kernel/tests/permission_triple.rs`, che rilegge il giornale. Il picco: `VramPeak` in `crates/kernel/src/wire/worker.rs` è il campo che il canale mette nel giornale, provato da `a_vram_peak_survives_the_round_trip` in `crates/kernel/tests/worker_wire.rs` | ✅ |
+| `V25` | ⚠️ | «il controllo gira a ogni commit e la **sonda scatta** — una chiamata di rete in `daemon` lo accende» | ⛔ nessuno script guarda `daemon`: `grep -n '^CRATES=' scripts/gate-deps.sh` rende `CRATES="kernel simulator"`, e `scripts/gate-attributes.sh` dichiara in un proprio commento che `platform`, `secrets` e `daemon` **non sono controllati**. `grep -n 'daemon' scripts/*.sh` non rende nessuna riga eseguibile | ❌ è la lacuna che declassò `V34` alla riga accanto, e su questa riga è aperta |
+| `V26` | ⚠️ | la metà che regge: `prune` rifiuta un passo in dubbio | `a_journal_that_prunes_a_step_in_doubt_is_caught` in `crates/kernel/tests/journal_contract.rs` | ✅ |
+| `V27` | ⚠️ | lo stato di degrado è un oggetto derivato in perimetro, e Q18 lo verifica in DST | `degradation_now` in `crates/kernel/src/degradation.rs`; `a_degraded_routing_shows_up_in_the_state` in `crates/kernel/tests/degradation_state.rs` | ✅ |
+| `V28` | ✅ | riga §7.4.2 `I3 · V28`, livello 2, sonde N1–N3 e contro-sonda N4 | `scripts/gate-deps.sh`, visto rosso e tornato verde nella condizione 2; le quattro sonde sono nominate una per una nel [registro](../../porta-di-qualita.md) | ✅ |
+| `V29` | ✅ | `no_std` livello 1 · allow-list e cancello senza OS livello 2 · righe §7.4.1 C `V29 · §2.1` e `V29 · §2.8` · la campagna DST | `compile_fail/std_in_kernel.rs`, `monotonic_as_wall.rs`, `wall_as_monotonic.rs`, `executor_without_parameters.rs`, `parameters_have_no_default.rs`; `scripts/gate-no-os.sh` e `scripts/gate-deps.sh`, entrambi visti rossi e tornati verdi | ✅ |
+| `V30` | ✅ | `check-docs.sh`, livello 2, già in esercizio | `scripts/check-docs.sh`, visto rosso su un link rotto e tornato `OK — no inconsistencies.` | ✅ |
+| `V31` | ✅ | il seme entra nell'elenco versionato, la **proprietà** entra nella suite (§7.4.2) | [`semi-dst.md`](../../semi-dst.md) è l'elenco versionato; le cinque campagne del blocco **G** sono nella suite e verdi nel cancello | ✅ |
+| `V35` | ⚠️ | test a esempi, «gli stessi che rendono ✅ `V37`» | ⛔ vedi la riga `V37`: il soggetto è lo stesso e non esiste | ❌ |
+| `V36` | ⚠️ | riga §7.4.1 C `V5` — un effetto senza classe non compila | ⛔ vedi la riga `V5`: la riga di catalogo su cui questa poggia non ha nessun caso che la eserciti | ❌ |
+| `V37` | ✅ | test a esempi: la parte che §7.4.5 fa entrare comunque — il **tipo** del livello di confinamento, la sua dichiarazione per azione, la sua registrazione nel giornale | ⛔ il tipo non esiste: `grep -rniE 'confinement\|sandbox\|confin' crates/ --include=*.rs` rende **tre righe di commento** e nessun tipo, e una di quelle righe è `crates/platform/src/lib.rs`, che porta il comando e la propria risposta — `grep -rniE "pub trait (Clock\|Confinement)" crates/` **risponde zero**, rilanciato oggi. `Permission` in `crates/kernel/src/permission.rs` porta `tool`, `resource` e `operation`, e `PermissionDetail` in `crates/kernel/src/record.rs` porta `tool`, `resource` e `write`: nessun livello di confinamento | ❌ il soggetto nominato non esiste |
+
+**Condizione 2, i quattro script.** Ogni prova nella forma *copia · muta · rosso letto ·
+ripristina · `cmp` · verde*, una per volta, sul commit `9214255`. Le copie e l'aiutante vivono
+nello scratchpad; i due file mutati **non entrano in nessun commit**, e i loro fine-riga sono
+stati misurati prima e dopo ogni mutazione — `49` CR per `crates/kernel/src/lib.rs`, `187` per
+`scripts/gate-deps.sh`, invariati.
+
+| Script | Violazione deliberata | Messaggio letto | Exit | Revoca provata |
+|---|---|---|---|---|
+| `gate-no-os.sh` | `extern crate std;` aggiunto accanto a `extern crate alloc;` in `crates/kernel/src/lib.rs` | ``error[E0463]: can't find crate for `std` `` nell'uscita di cargo, e `✗ kernel or simulator do NOT build for x86_64-unknown-none.` | `1`, poi `0` | `cp` della copia presa prima, `cmp` → `RESTORED`; poi `✓ kernel and simulator build without an operating system` |
+| `gate-deps.sh` | `unty` rinominato in `unty_renamed` nella lista `SHIPPED` dello script, che produce un **intruso e un fantasma insieme** | `✗ I3 violated -- kernel ships 'unty', which is not on the list.` · `✗ I3 violated -- simulator ships 'unty', which is not on the list.` · `✗ phantom entry -- 'unty_renamed' is on SHIPPED and in NO graph.` · `3 violations. Read the REMEDY: it is NOT the same for the two graphs.` | `1`, poi `0` | `cp` più `cmp` → `RESTORED`; poi `OK -- the two graphs match the two lists, and both directions were checked.` |
+| `gate-attributes.sh` | `#![forbid(unsafe_code)]` sostituito da `#![deny(unsafe_code)]` in `crates/kernel/src/lib.rs` | `✗ crates/kernel/src/lib.rs declares 'deny(unsafe_code)' where 'forbid' is required.` · `✗ crates/kernel/src/lib.rs does not declare '#![forbid(unsafe_code)]'.` | `1`, poi `0` | `cp` più `cmp` → `RESTORED`; poi `OK -- kernel and simulator declare the three attributes, neither uses 'deny', and neither has a build script.` |
+| `check-docs.sh` | un `.md` **non tracciato** con un link rotto, letto perché il cancello gira **prima** del commit | `✗ broken link: ./docs/zz-sonda-condizione-2.md -> non-esiste.md` · `1 inconsistencies to fix.` | `1`, poi `0` | il file cancellato — nessun file esistente era stato toccato — poi `OK — no inconsistencies.` |
+
+⛔ **La prova che nulla è rimasto mutato**, dopo tutte e quattro: `git status --porcelain` e
+`git diff --stat` senza righe, e `git ls-files --eol crates/kernel/src/lib.rs scripts/gate-deps.sh`
+invariato — `i/lf` e `w/crlf` per entrambi.
+
+📌 **Rilanciate e non citate, ed è il punto.** Le prove in negativo di questi script vivevano
+sparse fra il piano del Traguardo 1, l'audit e la §8.6.3 della spec, e gli script sono cambiati
+dopo: una misura ereditata non è il verbale che la condizione 2 chiede.
+
+**Condizione 3, riga per riga.** Le quindici righe sono quelle che il comando del Passo 5 rende:
+le ✅ e le ⚠️ di §8.4. La tecnica è l'**ultima colonna** della tabella «Mappa requisito → metodo
+di verifica» di [`design/08`](../../design/08-strategia-di-test.md).
+
+| Q | Tecnica assegnata da `design/08` | Che cosa la cella di §8.4 nomina | Coincide? |
+|---|---|---|---|
+| `Q2` | DST | campagna DST su `reactor` con la suite di conformità, e una sonda negativa esplicita | ✅ |
+| `Q3` | DST | DST con morte del client, eseguibile qui; manca la suite di conformità su `ipc` | ✅ sulla metà verificata |
+| `Q4` | DST | DST con il kill e i quattro guasti del dialogo, più il livello 1 sul ciclo di vita e sul filo | ✅ sulla metà verificata |
+| `Q5` | DST + crash-injection | DST con crash-injection su `journal`, suite di conformità presente, e il livello 2 dentro il motore | ✅ |
+| `Q7` | esempi | test a esempi sulla transizione ad `AttesaUmano` | ✅ come **tecnica**. ⚠️ il test nominato non esiste: è la riga `V8` della condizione 1 |
+| `Q8` | esempi | test a esempi sull'evento emesso prima dell'attesa, più `compile_fail/admission_reads_cold_start.rs` al compilatore | ✅ come **tecnica**. ⚠️ l'evento non ha soggetto: è la riga `V9` |
+| `Q9` | statica | non compila: test negativo di compilazione, livello 1 con visibilità di livello 2 | ✅ |
+| `Q10` | esempi | test a esempi con sensore finto, «che è il metodo assegnato da `design/08`» | ✅ |
+| `Q13` | **proprietà** | **gettone di conformità**, livello 1: la proprietà è resa non esprimibile | ❌ **divergenza dichiarata nella cella**, il 2026-08-08, «invece che nascosta»: il metodo assegnato è una verifica di proprietà su catene generate, e qui è sostituito da uno che la cella argomenta più forte. Resta una sostituzione, e §8.1.3 pretende che si dica |
+| `Q14` | esempi | test a esempi su un giornale sintetico, più l'enum di versione al compilatore e i byte congelati | ✅ |
+| `Q15` | statica + esempi | la metà statica: le **due** righe `Q9 · I6 · V20` di §7.4.1 C, più il gettone `journal` sulla conversione | ✅ sulla metà verificata |
+| `Q18` | DST | DST con iniezione del guasto, che verifica il degrado dichiarato **prima** del primo fallimento | ✅ sulla metà verificata |
+| `Q20` | statica + esempi | la metà statica è la riga `V25 · Q20` di §7.4.2; il test «assenza di traffico a default» è eseguibile ma **vacuo** | ✅ come **tecnica**. ⚠️ la metà statica poggia sul controllo della riga `V25`, che la condizione 1 trova ❌ |
+| `Q22` | DST + crash-injection | la DST inietta la caduta durante la conservazione, e il lato kernel entra | ✅ sulla metà verificata |
+| `Q23` | **statica + esempi** | la cella dichiara che **nessuna delle due** gira qui, «e per lo stesso motivo: nessuna porta esegue comandi»; ciò che entra sono i test a esempi di `V37` | ❌ **dichiarato nella cella stessa**: «ed è meno di quanto `design/08` chiede». ⚠️ e quei test a esempi non esistono: è la riga `V37` della condizione 1 |
+
+### 7.3 Dove la condizione era scritta troppo larga
+
+| Condizione | La lettera | La decisione che la restringe | Che cosa ne segue |
+|---|---|---|---|
+| **4** | la §0.7 dice: «ogni difetto trovato in simulazione conserva il proprio **seed** come caso di regressione permanente (V31)» | [ADR-0021](../../adr/0021-simulazione-deterministica-e-iniettabilita.md), dal 2026-08-08, ha una tabella che risponde **no** a due letture, e la prima è la lettera di questa condizione: a «il seed è un caso di regressione **permanente**» risponde «un seed non riproduce la stessa esecuzione dopo un cambio di codice. È un **punto di ripartenza per indagare**, non un oracolo»; a «i seed formano una **suite di regressione**» risponde «a entrare nella suite è la **proprietà** che quel difetto violava». La cella di `V31` in §8.3 lo ripete — «debole per natura: l'automatismo protegge la proprietà, non il seme» — e [`semi-dst.md`](../../semi-dst.md) esiste per dirlo | la condizione è soddisfatta **nella lettura di ADR-0021**, e in quella soltanto: presa alla lettera pretenderebbe un oracolo che lo stesso ADR ha scartato con l'argomento scritto, e che nessun automatismo qui fornisce. ⛔ **La §0.7 non si tocca**: è spec, ed è del proprietario — vincolo globale 1 del piano. È la voce **5** della tabella qui sotto, che il disegno aveva aperta come **deduzione** e che questo compito ha **misurato** |
+
+### 7.7 Dove il disegno è stato smentito dall'esecuzione, e dove ha retto
+
+⚠️ **Le conferme valgono quanto le smentite**: un verbale di sole smentite farebbe sembrare il
+disegno peggiore di com'era.
+
+| | Il disegno diceva | L'esecuzione ha trovato |
+|---|---|---|
+| 1 | §2.2, condizione 1: la prova è «la classe di AUD-026 **ricensita su tutte le righe**» | ⛔ **ha retto, e ha morso.** Sette righe della §8.3 nominano un controllo che nessun comando trova in `crates/`. Il disegno aveva previsto la **classe**, non il numero; il numero sta nella §7.2 e non era scritto da nessuna parte |
+| 2 | §1.3, le cifre dei blocchi **A**, **F**, **G**, **H**, misurate il 2026-09-02 | **ha retto**: rilanciati il 2026-09-03, nessuna divergenza. Reggono al giorno dopo perché il commit non è cambiato — `git rev-parse --short HEAD` rendeva `9214255` prima e dopo l'audit — ed è la ragione per cui il disegno vuole che si rifacciano invece di citarli |
+| 3 | «Cosa questo disegno ha misurato», riga 5: il [registro](../../porta-di-qualita.md) non ha sezioni per gli script del cancello, quindi la condizione 2 si **rilancia**, quattro prove | **ha retto due volte**: il registro non rende niente nemmeno col comando del Passo 2 sulla riga `V5`, ed è così che la prima ❌ della condizione 1 è venuta fuori. Le quattro prove sono state rilanciate e **misurate**, non citate |
+| 4 | §2.3: la condizione 4 è «la candidata» a essere scritta troppo larga, «ed è una **deduzione** e non una misura» | **la deduzione è diventata una misura**: ADR-0021 lo scrive alla lettera nella propria tabella, e la cella di `V31` lo ripete. La §7.3 la registra, e la decisione resta del proprietario come il disegno prescriveva |
+| 5 | §2.2 e §6.3 condizione 2: la revoca di una mutazione si prova «con `git diff` a zero» | **il piano la stringe, e l'esecuzione ha usato la forma stretta**: vincolo globale 7 — copia byte-esatta presa **prima** e `cmp`. Rese entrambe: `cmp` dice `RESTORED` su tutte e quattro le prove, e `git status --porcelain` e `git diff --stat` restano senza righe |
+| 6 | il disegno e il piano datano ogni cifra al **2026-09-02** | ⚠️ **l'esecuzione ha attraversato la mezzanotte.** `date +%FT%T` rendeva `2026-09-03T00:06:17` al rilancio dei blocchi, e le misure di questa §7 portano quindi il **2026-09-03**. La data non è stata allineata all'attesa: è la voce **E6** dell'errata del piano |
+| 7 | §1.2: la chiusura «non crea righe di catalogo, e non marca ✅ nessuna riga ⚠️ o ⏳ della §8» | **ha retto, ed è servito**: sette righe avrebbero potuto tentare una correzione nella §8 o un caso nuovo in `crates/`. Nessuna è stata toccata; tutte sono registrate nella §7.8, dove il rimedio lo sceglie il proprietario |
+
+### 7.8 Le voci aperte della chiusura, con chi le chiude
+
+⛔ **Nessuna è decisa al posto del proprietario.** Le prime cinque sono quelle che il disegno
+aveva già aperte; dalla sesta in poi le apre questo compito.
+
+| # | Voce | Dove è dichiarata | Chi la chiude |
+|---|---|---|---|
+| 1 | il brainstorming del **riconoscimento gesti** dalla telecamera: le decisioni di kernel elencate in testa a questo disegno | la tabella «Le voci che questo disegno apre per il proprietario» | il proprietario, dopo la chiusura e prima del sotto-progetto 2 |
+| 2 | il brainstorming della **knowledge base** mista, e se pretenda un meccanismo che «non si aggiunge dopo» | idem | il proprietario, stesso momento, brainstorming **distinto** |
+| 3 | le «sedi da assegnare» che la rilettura di `tracciabilita.md` lascerà, e una è già nota: la ritenzione a livelli che `V26` dichiara senza sede | idem | il proprietario, nella roadmap; il compito 2 le registra |
+| 4 | la consolidazione delle voci aperte della §6 del compendio | idem | già registrata, del proprietario, una per una. **Non** è di questa chiusura |
+| 5 | se la condizione 4 della §0.7 vada riallineata ad ADR-0021 — la proprietà e non il seme | idem, e la §7.3 la misura invece di dedurla | il proprietario: la §0.7 è spec, vincolo globale 1 |
+| 6 | **le sette righe della §8.3 il cui controllo non esiste in `crates/`** — `V5`, `V8`, `V9`, `V25`, `V35`, `V36`, `V37`. È la classe del finding AUD-026, quello che declassò `V34`; nessuna è stata corretta qui | §7.2, tabella della condizione 1, riga per riga col comando | il proprietario: la §8 e il catalogo §7.4 sono spec. ⚠️ **Il rimedio non è unico** — riscrivere la cella, scrivere il controllo che manca, o ri-giudicare lo stato della riga — e sceglierlo è suo |
+| 7 | **le due righe della §8.4 verificate con una tecnica diversa da quella che `design/08` assegna** — `Q13` e `Q23`, entrambe **dichiarate nella cella stessa** e non nascoste | §7.2, tabella della condizione 3 | il proprietario: o `design/08` cambia il metodo assegnato, o la §8.4 dichiara la divergenza come permanente. Nessuno dei due è un rimedio di questa chiusura |
+| 8 | **nessuno script del cancello misura il grafo di `daemon`**: `gate-deps.sh` cicla su `kernel simulator` e `gate-attributes.sh` dichiara che `daemon` non è controllato. È la stessa lacuna che declassò `V34`, e sulla riga `V25` — con la metà statica di `Q20` che vi poggia — è **aperta** | §7.2, righe `V25` e `Q20` | il proprietario decide se è una voce di **prodotto**, cioè un controllo da scrivere, o una **rilettura** della §8 come fu per `V34` |
+| 9 | ⛔ **le condizioni 1 e 3 della §0.7 sono ❌ il 2026-09-03**, e la §0.7 dice che il sotto-progetto è chiuso quando **tutte** le sue condizioni sono vere | §7.2, le due righe con la propria evidenza | ⛔ **il proprietario, e prima del compito 4**: il compito 4 è l'unico che può scrivere «chiuso», e questo verbale non decide al suo posto |

@@ -18,8 +18,8 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-02**, col pre-controllo del compito 8 del Traguardo 6; l'ultimo contenuto di **merito** è
-il compito 7 e la chiusura del suo ciclo di revisione, decisa dal proprietario. Manutenzione: §13.
+**Aggiornato il 2026-09-02**, col compito 8 del Traguardo 6 eseguito e rivisto; l'ultimo contenuto di **merito** è
+il compito 8 — lo stato di degrado che si ricalcola — e la sua ondata di revisione. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -811,16 +811,33 @@ sono attivi ora»* è una **proiezione del giornale** e non un secondo archivio.
 record congelato, e i cinque vecchi sono **byte-identici**, controllato per primo. `E94` è **decisa e
 chiusa** lo stesso giorno, e da essa nascono `E95` — che detta al compito 7 di nascere sigillato, ed è
 stata **eseguita** — ed `E96`, che è del proprietario.
-⏭️ **IL PROSSIMO PASSO È IL COMPITO 8 — lo stato di degrado — ED È PRE-CONTROLLATO.** ⚖️ **Il proprietario
-ha deciso il 2026-09-02: il ciclo di `E53` è CHIUSO SUL PRODOTTO** (richiamo ⑨), e la specie di `E129` — i
-numerali di distanza — è passata a sé sull'intero `crates/`, voce `E136`. ✅ **Il pre-controllo del compito 8 è
-FATTO con le quattro domande di [`../CLAUDE.md`](../CLAUDE.md), e ha dato DUE bloccanti misurati prima di
-dispacciare** — `E137`, il codice dettato legge campi sigillati da `E83`/`E94`; `E138`, le tre sonde dettate
-scrivono su un passo che nessuno ha aperto, alla **TERZA** occorrenza sui compiti 5, 7 e 8 — e il brief è `E141`.
-⛔ **Chi riprende NON rifà il pre-controllo e non rilegge il ciclo: DISPACCIA il compito 8** — un sotto-agente
-fresco col brief `E141` (il § *Compito 8* del piano, le voci `E137`–`E140`, i tre file modello), poi la
-revisione fra un compito e l'altro come l'intestazione del piano prescrive. Il ledger di `.superpowers/` è
-git-ignorato: su un'altra macchina il brief è `E141` e basta. La casa unica resta l'errata del piano.
+✅ **IL COMPITO 8 È ESEGUITO IL 2026-09-02, `GATE GREEN`, E LA SUA REVISIONE È TORNATA SENZA UN DIFETTO DI
+PRODOTTO** — lo stato di degrado è un **derivato** che si ricalcola dal giornale e dall'arbitro a ogni domanda:
+`Degradation` con due campi soltanto, `DegradationError` che compone le due cause come `permission::is_granted`,
+e `Arbiter::ceiling()` che nasce col chiamante che lo pretende. ⛔ **Il formato non si è mosso**, controllato per
+primo. ✅ **Il pre-controllo ha tenuto ANCORA:** `E137` ed `E138` erano bloccanti veri — il codice dettato leggeva
+campi sigillati da `E83`/`E94`, e le tre sonde scrivevano su un passo mai aperto, per la terza volta sui compiti
+5, 7 e 8. ⛔ **E chi ha eseguito ha trovato che il pre-controllo stesso sbagliava in due punti** (`E144`, `E145`):
+un `use` dettato che sarebbe stato un avviso, e una forma di `lib.rs` che il file non ha. La campagna di mutazione
+ha interrogato anche la sonda che nessuna mutazione dettata toccava — vacua per misura finché `M8`/`M9` non l'hanno
+tenuta — e ha trovato che **`git diff` su un file NUOVO è vuoto anche con la mutazione in sede**: gotcha **#107**.
+La revisione ha reso sei rilievi Minor, tutti di prosa o di forma, chiusi in **tre** ondate (`E148`): la seconda per
+tre frasi false scritte dalla prima, la terza per la casa della stessa frase che il censimento ha trovato **fuori dal
+perimetro** — *il prodotto regge alla prima passata; le frasi no*, anche qui.
+⚖️ **Il proprietario ha deciso il 2026-09-02: il ciclo di `E53` è CHIUSO SUL PRODOTTO** (richiamo ⑨), e la specie
+di `E129` — i numerali di distanza — è passata a sé sull'intero `crates/`, voce `E136`.
+⏭️ **IL PROSSIMO PASSO È IL ROUND 4 DEL COMPITO 8 — `E151` — E IL COMPITO NON È CHIUSO.** La ri-revisione delle
+ondate 2 e 3 ha chiuso tutti i punti ma ha trovato **due** rotture nuove — prosa falsa scritta per chiudere un
+rilievo, per la **terza** ondata di seguito: un'unicità che il file stesso smentisce, e due *«nowhere else»* sullo
+stesso caso che si falsificano a vicenda — più una **quarta** casa in italiano, sopravvissuta a un censimento fatto
+in inglese. ⚖️ **Il proprietario ha deciso il 2026-09-02: *«basta dopo questo giro»*** — il round 4 non è stato
+dispacciato, ed è il punto esatto da cui si riprende. ⛔ **Chi riprende NON rifà la revisione e NON marca il compito
+chiuso: dispaccia il round 4 col brief `E151`** (togliere le rivendicazioni di esclusività, non riscriverle — gotcha
+**#76** — e il censimento finale in **entrambe** le lingue), poi la ri-revisione mirata su `4497130..HEAD`, e **solo
+dopo** il compito 9 — che va **pre-controllato prima** con le quattro domande di [`../CLAUDE.md`](../CLAUDE.md), come
+ogni compito di questo traguardo, che ha avuto almeno un bloccante ciascuno. ⚠️ **Da sapere prima del 9:** `E146` —
+un file nuovo si mette nell'**indice** prima della campagna di mutazione, o la revoca *«`git diff` a zero»* non prova
+nulla; e il compito 9 **crea tre file**. La casa unica resta l'errata del piano.
 ✅ **IL DECIMO È FATTO IL 2026-09-01: tre rilievi, `E135`, tutti di prosa o registro, uno fuori dal
 perimetro** — la specie dei numerali di distanza, colta dalla domanda di classe sull'intero `crates/`.
 I quattro predicati del nono giro sono misurati tenuti braccio per braccio, e trentasette enum censiti

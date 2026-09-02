@@ -43,8 +43,8 @@ pub trait Reactor {
     /// finding AUD-052: `RecordV1` carries five fields and none of them is a stamp, `WallTime`
     /// does not appear in `record.rs` at all, and under `crates/*/src/` nothing calls
     /// `wall_time()`. The sentence described §2.1's DESIGN and read as a guarantee about this
-    /// file — the same distinction `StepId` and `CheckpointId` already carry, twenty lines below
-    /// the paragraph of this module that promises not to restate a rule as though it were ours.
+    /// file — the same distinction `StepId` and `CheckpointId` already carry, below the very
+    /// paragraph of this module that promises not to restate a rule as though it were ours.
     ///
     /// ⛔ AND ADDING THE FIELD IS NOT A TOUCH-UP: the frozen bytes exist, so the stamp takes a NEW
     /// INDEX under rule 3 of ADR-0036, never a reused one.

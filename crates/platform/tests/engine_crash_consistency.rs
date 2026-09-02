@@ -631,7 +631,7 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     // ⚠️ CONSTRAINT 7 OF §11, THE HALF THIS FILE OWNS: the wall time is PRINTED on every run — see
     // the `println!` in `campaign`. The other half, a gate step that SHOWS it, was task 9's and is
     // DONE since 2026-08-11: step 7 of `gate.sh` re-runs this binary with `--nocapture`, which is
-    // what the paragraph twenty lines down already says. ⛔ RECALL OF 2026-08-28, AUD-028: this
+    // what the paragraph on the `DST` prefix, below, already says. ⛔ RECALL OF 2026-08-28, AUD-028: this
     // said "so today the line goes into a buffer nobody reads", CONTRADICTING THAT PARAGRAPH IN
     // THE SAME COMMENT BLOCK. One comment asserting both halves of a contradiction is worse than
     // either half alone: whichever a reader reaches first is confirmed by the file itself. The

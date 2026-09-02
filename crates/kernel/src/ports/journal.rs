@@ -129,8 +129,8 @@ pub enum JournalError {
     /// refusing journal refuses the promotion too.
     ///
     /// ⚠️ THE SECOND AND THIRD HALVES BOTH ARRIVED ON 2026-08-10, and each WIDENED this variant
-    /// instead of adding a neighbour. That is deliberate and it is this enum's own rule, three
-    /// lines above: a rich error type invites the kernel to branch on the reason, and the reason
+    /// instead of adding a neighbour. That is deliberate and it is this enum's own rule, stated in its doc
+    /// above: a rich error type invites the kernel to branch on the reason, and the reason
     /// belongs to whoever implements the port. "Out of order for this step" is one sentence that
     /// covers all three, and the kernel has nothing to decide differently between them.
     ///

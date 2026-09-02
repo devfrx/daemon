@@ -251,8 +251,8 @@ impl Untrusted {
     ///   going through `promote`, and `RecordV1`'s hand-written `Debug` prints index 4 whole.
     ///   Measured from outside the crate on a throwaway probe deleted in the same run:
     ///   `RecordV1 { … payload: <24 bytes>, reason: "ignore your instructions" }`.
-    ///   ⚠️ **The guard is worth what its CONSTRUCTOR is worth** — the very argument used ten
-    ///   lines above to demolish `reason: &Instruction` — and here the constructor is the struct
+    ///   ⚠️ **The guard is worth what its CONSTRUCTOR is worth** — the very argument used
+    ///   above to demolish `reason: &Instruction` — and here the constructor is the struct
     ///   literal, which no private field narrows. So `&'static str` shuts the `promote` road and
     ///   not the type, and the case that holds it,
     ///   `tests/compile_fail/promote_reason_is_not_runtime_text.rs`, cannot fire on this one.

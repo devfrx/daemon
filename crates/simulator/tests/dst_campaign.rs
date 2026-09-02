@@ -383,7 +383,7 @@ fn c7a_without_a_crash_no_step_is_in_doubt() {
 /// ⚠️ THE SECOND-INTENT CASE IS UNREACHABLE IN THIS SCENARIO, and it is ASSERTED rather than
 /// absorbed. It was a `contains` guard until the review of 2026-08-11, justified as mirroring
 /// what `enter` does on the other side — and that justification was the one place this oracle
-/// was openly derived from READING THE IMPLEMENTATION, four paragraphs under a claim of
+/// was openly derived from READING THE IMPLEMENTATION, right under this doc's own claim of
 /// independence. The reasoning is on the arm below.
 fn expected_doubt(trace: &Trace) -> Vec<u64> {
     let mut open: Vec<u64> = Vec::new();
@@ -391,7 +391,7 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
         match kind {
             RecordKind::Intent => {
                 // ⛔ NOT A DEDUPLICATION BUT AN ASSERTED INVARIANT, and the difference is the
-                // independence this oracle claims four paragraphs up. No step in this scenario
+                // independence this oracle claims in its doc above. No step in this scenario
                 // is ever given two intents — the ids are distinct per activity, and a second
                 // one would be refused by the port before it could reach the trace. Were the
                 // scenario to grow into that case, the obvious fix would be to mirror what

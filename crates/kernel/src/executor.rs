@@ -276,7 +276,7 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
             //
             // ⚠️ The filter cannot exclude anything today — the promotion above has already
             // removed every candidate it would reject — and it stays because it states that
-            // precondition where the call is made rather than three lines away.
+            // precondition where the call is made rather than at the promotion above.
             let earliest = self
                 .tasks
                 .iter()

@@ -1245,7 +1245,7 @@ impl Journal for EagerPruner {
 /// evidence, this one never destroys anything and never asks the question.
 ///
 /// ⛔ IT ANSWERS `StepInDoubt` AND NOT `Missing`, WHICH IS THE WHOLE POINT AND NOT A DETAIL. With
-/// `Missing` it would die on promise 7, six lines earlier, and promise 7b would go on being
+/// `Missing` it would die on promise 7, which runs first, and promise 7b would go on being
 /// unproven while a test claimed otherwise — the shape of gotcha #14 rebuilt inside its own
 /// remedy. To die on 7b it has to pass 7 ON ITS MERITS, and passing 7 on its merits means
 /// giving the right refusal for the right case by accident.

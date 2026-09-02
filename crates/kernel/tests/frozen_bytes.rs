@@ -138,7 +138,7 @@ fn record(species: impl FnOnce(Vec<u8>, &'static str) -> RecordV1) -> Record {
 }
 
 /// The frozen records, each beside the name of the file that holds its bytes. ⚠️ HOW MANY
-/// THERE ARE IS THE RETURN TYPE, one line below, which the compiler checks — it is not written
+/// THERE ARE IS THE RETURN TYPE, right below this doc, which the compiler checks — it is not written
 /// in this sentence, which said "The three frozen records" while the signature already said
 /// four (errata `E70`).
 ///

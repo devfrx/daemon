@@ -11,11 +11,14 @@
 //! defect P-16 names.
 //!
 //! ✅ MEASURED RATHER THAN PROMISED, AND WITH THE COMMAND THAT MEASURES THE CLAIM:
-//! `grep -cE '\.has_died\(' ` on this file returns 0 — CALLS, not mentions. ⚠️ THE OBVIOUS
-//! COMMAND IS THE WRONG ONE and it was caught before it was written down: a bare
-//! `grep -c has_died` returns 2 here, and the two are the paragraph above. ⛔ AND THE OTHER
-//! DIRECTION, without which a zero measures nothing: the same command returns 6 on
-//! `crates/simulator/tests/dying_gui.rs`, which is where asking the fake is the right thing to do.
+//! `grep -cE '\.has_died\(' ` on this file returns 0 — CALLS, not mentions. ⛔ THE OBVIOUS
+//! COMMAND IS THE WRONG ONE: a bare `grep -c has_died` counts the paragraphs that SAY the fake is
+//! not asked, this one included, so it answers a number greater than zero for a file that never
+//! calls it. ⚠️ AND NO TALLY OF THOSE MENTIONS IS WRITTEN HERE, deliberately: a line that said
+//! how many there are would be made false by adding it, which is what happened when this
+//! paragraph first tried (gotcha #31). ⛔ AND THE OTHER DIRECTION, without which a zero measures
+//! nothing: the anchored command returns 6 on `crates/simulator/tests/dying_gui.rs`, which is
+//! where asking the fake is the right thing to do.
 //!
 //! ⛔ AND THE BASELINE IS NOT ZERO, which is the second half nothing else would catch. "The sum
 //! comes back to the baseline" is green for a reconciliation that releases EVERYTHING when the
@@ -148,13 +151,18 @@ struct Observed {
     asked: u64,
     answer: Answer,
     /// The operation the death landed on, as the fake was TOLD — not as the port reported it.
-    /// ⚠️ It is here to count worlds and for nothing else; no assertion below reads it.
+    /// ⚠️ IT IS NOT AN ORACLE: what it feeds is the world count, and the DIAGNOSTIC of the
+    /// per-seed assertion below, which names it when the port never reported a death. Nothing
+    /// asserts ON it, because "the fake was told to die at 2" is a fact about the fake.
     death_at: u64,
     /// How many grants the reconciliation handed back.
     reconciled: usize,
-    /// Whether the death reached the core AS AN `Err(Disconnected)` FROM THE PORT. ⛔ It is the
-    /// second half of oracle two and it is recorded here, at the only place it can honestly be
-    /// recorded: inside the `Err` arm.
+    /// Whether the death reached the core AS AN `Err(Disconnected)` FROM THE PORT. ⛔ IT IS
+    /// WRITTEN IN THE `Err(IpcError::Disconnected)` ARMS AND NOWHERE ELSE, which is the whole of
+    /// what it is worth: assigned after the fact — below the assertion, say — it would be
+    /// CONSTANT `true` on every value `run` returns, the second half of oracle two could never
+    /// fail, and `E156` ① would be satisfied in the text and not in the effect. It was exactly
+    /// that until the first review round.
     death_seen_from_port: bool,
 }
 
@@ -246,7 +254,10 @@ fn run(seed: u64) -> Observed {
     // ⛔ THE WHOLE OF THE CORE'S SIDE, and every arm that meets a `Disconnected` reconciles and
     // stops. A `Disconnected` is PERMANENT (the fake's own bench holds that), so carrying on
     // would be the core talking to a process it has just buried.
-    let mut disconnected = false;
+    //
+    // ⛔ AND THE STATE IS `observed.death_seen_from_port` ITSELF, not a local copied into it
+    // afterwards: the field has to be written where the `Err` is READ, or it stops being evidence
+    // of anything.
 
     // Operation 0: what the gui has to say.
     match gui.receive(client) {
@@ -284,34 +295,36 @@ fn run(seed: u64) -> Observed {
             };
             // Operation 1: the answer goes back.
             if gui.send(client, &bytes) == Err(IpcError::Disconnected) {
-                disconnected = true;
+                observed.death_seen_from_port = true;
             }
         }
         Ok(None) => panic!("seed {seed}: the gui was accepted and had nothing to say"),
-        Err(IpcError::Disconnected) => disconnected = true,
+        Err(IpcError::Disconnected) => observed.death_seen_from_port = true,
         Err(IpcError::MalformedMessage) => {
             panic!("seed {seed}: this fake never sends bytes it did not encode itself")
         }
     }
 
     // Operation 2: the core polls again, which is where a gui that survived the first two dies.
-    if !disconnected {
+    if !observed.death_seen_from_port {
         match gui.receive(client) {
             Ok(_) => {}
-            Err(IpcError::Disconnected) => disconnected = true,
+            Err(IpcError::Disconnected) => observed.death_seen_from_port = true,
             Err(IpcError::MalformedMessage) => {
                 panic!("seed {seed}: this fake never sends bytes it did not encode itself")
             }
         }
     }
 
+    // ⛔ ORACLE ONE OF §5.7.1 — THE INJECTION FIRED — AND IT IS ASSERTED PER SEED, which is
+    // stronger than any total taken afterwards: it holds on EVERY seed instead of on the sum, and
+    // it is where the red of the "the fake never dies" mutation comes from.
     assert!(
-        disconnected,
+        observed.death_seen_from_port,
         "seed {seed}: the gui was told to die at operation {} of {OPERATIONS} and the port never \
          said so, so this run injected nothing",
         observed.death_at
     );
-    observed.death_seen_from_port = true;
 
     // ⛔ AND THIS IS THE RECONCILIATION, triggered by the `Err` above and by nothing else.
     let released = clients
@@ -360,16 +373,14 @@ fn run(seed: u64) -> Observed {
     observed
 }
 
-/// ⛔ ORACLE ONE — THE INJECTION FIRED. §5.7.1 demands it in those words, and gotcha #17 is what
-/// it is for: injecting a kill where the code never arrives is a vacuous proof that looks like a
-/// success. The count is asserted INSIDE `run`, on every seed, and this sweep is what gives that
-/// assertion its chances.
-///
-/// ⛔ IT IS AN EQUALITY AND NOT `> 0`, the shape `property_4` uses in `arbiter_campaign.rs` and
-/// for its reason: the point is drawn inside `0..OPERATIONS` and the path performs exactly that
-/// many operations, so EVERY seed must reach its point. A single seed that did not would mean the
-/// path performed fewer operations than the number the point was drawn against, which is the
-/// silent no-op of gotcha #17; `> 0` would let all but one seed go quiet.
+/// ⛔ ORACLE ONE — THE INJECTION FIRED — IS NOT IN THIS FUNCTION, and saying so is the point.
+/// It is the per-seed `assert!` inside `run`: every seed must see the port report the gui gone.
+/// ⚠️ AN AGGREGATE `deaths == SHORT_CAMPAIGN_SEEDS` STOOD HERE AND WAS REMOVED, not reworded —
+/// `deaths` is incremented only under the very flag that assertion has already checked, so it
+/// could never have gone red, and the red attributed to it in the first mutation campaign really
+/// came from the per-seed one. The per-seed form is also STRONGER: it names the seed and the
+/// operation, and it holds on each seed rather than on a sum. Gotcha #76 — subtract rather than
+/// rewrite better. The counter stays because the PRINTED line is worth having.
 ///
 /// ⛔ ORACLE TWO — THERE WAS SOMETHING TO VERIFY, and it is a DIFFERENT claim. This is the lesson
 /// milestone 4 learned THREE times, each time after closing the previous one: a campaign that
@@ -396,11 +407,6 @@ fn property_3_a_gui_that_dies_holding_a_grant_gives_it_back() {
     }
     let elapsed = started.elapsed();
 
-    assert_eq!(
-        deaths, SHORT_CAMPAIGN_SEEDS,
-        "a seed did not reach its death point: the path performed fewer than {OPERATIONS} \
-         operations on the port"
-    );
     assert!(
         held_a_grant_and_died > 0,
         "on no seed did the gui hold a grant when the port reported it gone: {deaths} deaths and \

@@ -59,8 +59,8 @@ chiuderla** — `E152`. Le due proprietà mancanti hanno la propria sonda: la **
 `crates/simulator/tests/gui_death_campaign.rs`, che riconcilia con `kernel::client::ClientGrants`
 alla disconnessione. ⚠️ **Il periodo qui sopra resta perché è un verbale del 2026-08-18 e in
 quella data era vero**; ciò che è **falso adesso** è soltanto il presente *«resta parziale»*, e
-lo stato di oggi vive in **una casa sola** — la §6 del compendio e la tabella di
-[`porta-di-qualita.md`](porta-di-qualita.md), non qui.
+lo stato di oggi **non vive qui** — si legge nella §6 del compendio, e la riga di catalogo che
+questo periodo cita si legge in [`porta-di-qualita.md`](porta-di-qualita.md).
 ✅ **E lo stesso giorno il [piano del Traguardo 5](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md)
 è scritto: tredici compiti in cinque parti.** Il pre-controllo del piano ha trovato **sette**
 cose leggendo il disegno contro il codice — gotcha **#58** — e tre sono per il proprietario:

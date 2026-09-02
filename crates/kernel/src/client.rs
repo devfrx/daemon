@@ -40,8 +40,8 @@ use crate::time::Monotonic;
 /// ⛔ ONE CLIENT MAY HOLD SEVERAL, which is why the pairs are not a client-keyed anything: a gui
 /// that asked twice and was granted twice holds two, and `on_disconnect` owes both back.
 ///
-/// ⚠️ NO `Default`, and its absence is the decision this repository has already taken three
-/// times — `SystemReactor`, `VirtualReactor`, `MemoryJournal`: nothing calls it. The argument,
+/// ⚠️ NO `Default`, and its absence is the decision this repository has already taken on
+/// `SystemReactor`, `VirtualReactor` and `MemoryJournal`: nothing calls it. The argument,
 /// including why the `clippy::new_without_default` warning is accepted rather than silenced, is
 /// written out once in `crates/platform/src/reactor.rs`.
 pub struct ClientGrants {

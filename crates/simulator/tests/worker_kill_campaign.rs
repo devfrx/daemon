@@ -6,9 +6,12 @@
 //! scenario — four parties asking, queueing and handing back inside the executor — and its
 //! constants, its `Observed` and its two oracles all describe THAT scenario. This one has a
 //! different subject, a different fake and a different injection, and folding it in would have
-//! given that file two scenarios sharing a header that describes one. The cost is declared: it is
-//! a fifth bench in `crates/simulator/tests/`, and the wall-time line it prints is not collected
-//! by `scripts/gate.sh`, whose last step names its campaigns one by one.
+//! given that file two scenarios sharing a header that describes one. ⛔ THE COST IS DECLARED: it
+//! is one more bench in `crates/simulator/tests/` — how many that is, `ls` says, and no numeral is
+//! written here to age — and it is one more TARGET that `scripts/gate.sh` has to name. That step
+//! names its campaigns ONE BY ONE, so a campaign absent from the list prints nothing while the
+//! gate stays green; this one is IN the list since `0976d9f`, and the comment on that step carries
+//! the measurement in both directions.
 //!
 //! ⛔ WHAT IS ASSERTED IS THE BOOKS, AND THE TEMPORAL HALF IS COUNTED INSTEAD — which is a
 //! decision and not an omission. "A valid grant" has two halves: the grant EXISTS, which
@@ -19,8 +22,9 @@
 //! against taking the decision that is still the owner's — `E30`/`E39` of milestone 5, gotcha
 //! #73. The counter below reports how often this campaign walked into it.
 //!
-//! ⚠️ `FakeWorker` AND `FakeProcess` ARE DUPLICATED WORD FOR WORD from
-//! `crates/kernel/tests/worker_tokens.rs`, and it is declared rather than left to be discovered:
+//! ⚠️ `FakeWorker` AND `FakeProcess` ARE COPIED from `crates/kernel/tests/worker_tokens.rs` —
+//! the CODE word for word, the docs abridged where they described that bench's subject rather
+//! than this one — and it is declared rather than left to be discovered:
 //! TEST CODE DOES NOT CROSS CRATE BOUNDARIES, so there is no place both benches could reach.
 //! It is the same deviation `Yield` carries in `arbiter_campaign.rs`, for the same reason.
 //! ⚠️ A SEED-DRIVEN FAKE IN `crates/simulator/src/` WOULD BUY NOTHING HERE: what the seed decides
@@ -29,8 +33,8 @@
 use std::collections::BTreeSet;
 
 use kernel::arbiter::{
-    Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption, ReleaseError, Released,
-    RemotePolicy, ResourceProfile, VramPolicy,
+    Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption, Released, RemotePolicy,
+    ResourceProfile, VramPolicy,
 };
 use kernel::parameters::Parameters;
 use kernel::ports::process::{
@@ -104,8 +108,9 @@ static RECRUITS: [Recruit; 4] = [
 /// test here is the ARBITER'S BOOKS, not a worker channel.
 struct FakeWorker {
     next: u64,
-    /// ⛔ THE GRANT THE START WAS GIVEN, AND IT IS NOT DECORATION: `kill` has to HAND IT BACK, so
-    /// a worker that dropped it on the way in could not honour the signature.
+    /// ⛔ THE GRANT THE START WAS GIVEN, AND IT IS NOT DECORATION: `kill` has to HAND IT BACK,
+    /// so a worker that dropped it on the way in could not honour the signature. Every
+    /// implementation of this port carries one for the same reason.
     grant: Grant,
 }
 
@@ -294,12 +299,6 @@ fn run(seed: u64, tally: &mut Tally) -> Observed {
             );
             tally.past_the_window += 1;
         }
-        assert_ne!(
-            answer,
-            Err(ReleaseError::UnknownGrant),
-            "seed {seed}: the one arbiter of this scenario disowned a grant it issued itself"
-        );
-
         // ⛔ PROPERTY 2, ASSERTED AFTER EVERY KILL AND NOT AT THE END: the books must hold
         // EXACTLY the reservations of the workers this bench knows are still running and whose
         // windows have not closed. A check only at the end is green for an arbiter that keeps a
@@ -331,15 +330,24 @@ fn run(seed: u64, tally: &mut Tally) -> Observed {
 /// each of the four kills of every seed; this test is what sweeps the seeds and reports which one
 /// broke.
 ///
-/// ⛔ TWO ORACLES AND NOT ONE, §5.7.1. `kills` says the injection fired; `released_now` says
-/// there was something to verify — a campaign whose workers all expired before their kill would
-/// hand back nothing but `AlreadyCollected` and be green having compared the books against a
-/// budget that was already empty.
+/// ⛔ ORACLE ONE — THE INJECTION FIRED — IS NOT IN THIS FUNCTION, and saying so is the point. It
+/// is the per-kill assertion inside `run`: every kill is followed by a `release` whose answer is
+/// pinned and by the books being read, on every seed and every recruit, so a kill that did not
+/// happen cannot get past it. ⚠️ AN AGGREGATE `tally.kills == SEEDS * RECRUITS.len()` STOOD HERE
+/// AND WAS REMOVED, not reworded: the loop increments it once per recruit over a permutation of
+/// fixed length, so no implementation could make it red, and a probe that cannot fail is a line a
+/// reader has to check for nothing. Gotcha #76 — subtract rather than rewrite better.
 ///
-/// ⛔ THE FIRST IS AN EQUALITY AND NOT `> 0`, the shape `property_4` uses in
-/// `arbiter_campaign.rs`: every seed kills every recruit, so a total short of the product would
-/// mean a worker was never reached — the silent no-op of gotcha #17, which `> 0` would let all
-/// but one seed hide.
+/// ⛔ ORACLE TWO — THERE WAS SOMETHING TO VERIFY — IS HERE, and it is a different claim: a
+/// campaign whose workers all expired before their kill would hand back nothing but
+/// `AlreadyCollected` and be green having compared the books against a budget that was already
+/// empty. ✅ SEEN RED, and with a mutation on the generator rather than on the bench: with
+/// `RngExt::below` drawing its top value every time, every kill lands past every window and this
+/// assertion is the one that goes.
+///
+/// ⛔ AND THE THIRD IS THE ONE THAT SAYS THE SEED MATTERS AT ALL. ✅ Also seen red: with `below`
+/// drawing 0 every time, every kill lands at the origin, every worker is inside its window, and
+/// two thousand seeds become one experiment repeated.
 #[test]
 fn property_2_a_killed_worker_leaves_no_reservation_behind() {
     let started = std::time::Instant::now();
@@ -355,11 +363,6 @@ fn property_2_a_killed_worker_leaves_no_reservation_behind() {
     }
     let elapsed = started.elapsed();
 
-    assert_eq!(
-        tally.kills,
-        SHORT_CAMPAIGN_SEEDS * RECRUITS.len() as u64,
-        "a recruit was never killed: the scenario performed fewer kills than it started workers"
-    );
     assert!(
         tally.released_now > 0,
         "no kill ever landed inside a worker's window: every reservation was already swept, so \

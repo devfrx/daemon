@@ -22,6 +22,11 @@ use kernel::parameters::Parameters;
 use kernel::ports::ipc::ClientId;
 use kernel::time::{Millis, Monotonic};
 
+/// ⚠️ BOTH TAKEN FROM `crates/kernel/tests/arbiter_admission.rs`, and declared rather than left
+/// to be noticed: TEST CODE DOES NOT CROSS CRATE BOUNDARIES, let alone bench boundaries, so a
+/// figure shared with another bench is COPIED and the copy is named. It is the deviation `Yield`
+/// carries in `crates/simulator/tests/arbiter_campaign.rs`, for the same reason. Nothing here
+/// depends on their staying equal: they are a machine big enough that every profile below fits.
 const TURN_LIMIT: u64 = 10_000;
 const TOTAL: Mib = Mib::new(16_384);
 
@@ -38,6 +43,8 @@ const GUI_QUOTA: Mib = Mib::new(1_024);
 const WINDOW: Millis = Millis::new(5_000);
 
 /// The window the core's own quota declares — long enough that nothing here ever collects it.
+/// ⚠️ It is `LONG` of `arbiter_admission.rs` under another name, copied for the reason given on
+/// `TURN_LIMIT` above.
 const FOREVER: Millis = Millis::new(1_000_000);
 
 fn new_arbiter() -> Arbiter {
@@ -179,15 +186,15 @@ fn a_disconnect_of_a_client_that_holds_nothing_changes_nothing() {
 
     let released = clients.on_disconnect(ClientId::new(7), &mut arbiter, Monotonic::ORIGIN);
 
+    // ⚠️ ONE ASSERTION AND NOT TWO. An `assert_ne!` against `Err(UnknownGrant)` stood here and
+    // was REMOVED rather than reworded: the equality above already fails on any `Err`, so it
+    // could never have been the one to go red, and a probe that cannot fail is a line a reader
+    // has to check. What it was there to SAY is in this message instead.
     assert_eq!(
         released,
         Ok(Vec::new()),
-        "a client that never asked for anything is not a caller defect"
-    );
-    assert_ne!(
-        released,
-        Err(ReleaseError::UnknownGrant),
-        "an ordinary death was reported as a fault"
+        "a client that never asked for anything is not a caller defect: an ordinary death was \
+         reported as a fault"
     );
     assert_eq!(
         arbiter.allocated(),
@@ -222,4 +229,84 @@ fn a_disconnect_after_the_window_reports_already_collected() {
         CORE_QUOTA,
         "the baseline went with the expired grant"
     );
+}
+
+#[test]
+fn a_foreign_grant_is_the_caller_s_defect_and_leaves_the_rest_registered() {
+    // ⛔ THE ONLY PROBE THAT REACHES THE `Err` ARM, and until it existed the whole argument for
+    // the shape of `on_disconnect` rested on a paragraph. The four probes above all take the
+    // happy path, so `drain(..)` WITH repartition -- the form the plan prescribed -- was green on
+    // every one of them and diverged from the shipped form on exactly the road none of them
+    // walked. Measured: it dies here and nowhere else.
+    //
+    // ⛔ AND THE `Err` IS THE CALLER'S DEFECT AND NOT THE CLOCK'S. `Arbiter::release` answers
+    // `Err(UnknownGrant)` for one cause only since 2026-08-30 -- a grant ANOTHER arbiter issued.
+    // The window closing is `Ok(AlreadyCollected)`, which the probe above holds.
+    let (mut arbiter, _core) = an_arbiter_with_a_baseline();
+
+    // ⛔ THE SECOND ARBITER'S IDENTITY IS LOAD-BEARING: `release` compares `Grant::issuer`, so two
+    // arbiters handed the SAME `ArbiterId` ARE one as far as this guard can tell, and the probe
+    // would go green for the wrong reason. It is the argument `arbiter_admission.rs` makes about
+    // its own two helpers.
+    let mut elsewhere = Arbiter::new(
+        Parameters::new(TURN_LIMIT, TOTAL, ArbiterId::new(2)),
+        VramPolicy::Remote(RemotePolicy),
+    );
+    let foreign = granted(
+        &mut elsewhere,
+        "gui-elsewhere",
+        GUI_QUOTA,
+        WINDOW,
+        Monotonic::ORIGIN,
+    );
+
+    let gui = ClientId::new(1);
+    let mut clients = ClientGrants::new();
+    // ⛔ THE ORDER IS THE PROBE: native, foreign, native. The `?` returns on the SECOND pair, so
+    // the THIRD is the one that has to survive the failure -- and with a `drain` that took every
+    // pair out before releasing any, it would not.
+    clients.register(
+        gui,
+        granted(&mut arbiter, "gui-a", GUI_QUOTA, WINDOW, Monotonic::ORIGIN),
+    );
+    clients.register(gui, foreign);
+    clients.register(
+        gui,
+        granted(&mut arbiter, "gui-b", GUI_QUOTA, WINDOW, Monotonic::ORIGIN),
+    );
+
+    let both = CORE_QUOTA
+        .saturating_add(GUI_QUOTA)
+        .saturating_add(GUI_QUOTA);
+    assert_eq!(
+        arbiter.allocated(),
+        both,
+        "the two native grants are in the books; the foreign one is in another arbiter's"
+    );
+
+    assert_eq!(
+        clients.on_disconnect(gui, &mut arbiter, Monotonic::ORIGIN),
+        Err(ReleaseError::UnknownGrant),
+        "a grant this arbiter never issued is the caller's defect, and the one thing that is"
+    );
+
+    // ⛔ WHAT THE `Err` COST, STATED EXACTLY: the first native grant went back BEFORE the failure
+    // -- `release` had already answered for it -- and the foreign one is gone, consumed by the
+    // call that refused it. Neither is recoverable, and the doc of `on_disconnect` says so.
+    assert_eq!(
+        arbiter.allocated(),
+        CORE_QUOTA.saturating_add(GUI_QUOTA),
+        "the grant released before the failure did not come back, or the failing call took more \
+         than the grant it was given"
+    );
+
+    // ⛔ AND THIS IS THE ASSERTION THE WHOLE PROBE EXISTS FOR: the third pair is STILL REGISTERED.
+    // A caller that comes back with the right arbiter loses none of what it still held. Under
+    // `drain` this answers `Ok([])` and the reservation is unreachable for ever.
+    assert_eq!(
+        clients.on_disconnect(gui, &mut arbiter, Monotonic::ORIGIN),
+        Ok(vec![Released::Now(GUI_QUOTA)]),
+        "the failure threw away a grant it had not been asked to release"
+    );
+    assert_eq!(arbiter.allocated(), CORE_QUOTA);
 }

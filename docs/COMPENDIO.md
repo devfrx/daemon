@@ -876,8 +876,14 @@ compito, che git ignora. ⛔ **Il fatto che conta: il PRODOTTO ha retto dalla pr
 revisione ha più trovato un difetto di comportamento — **mentre ogni ondata ha aperto frasi false scrivendo quelle
 che chiudevano i rilievi**, alla stessa specie di sempre: un conteggio, un'esclusività, un esito citato che il
 commit aveva appena cancellato dal sorgente.
-⏭️ **IL PROSSIMO PASSO È IL COMPITO 10, PRE-CONTROLLATO PRIMA**, con le quattro domande di
-[`../CLAUDE.md`](../CLAUDE.md) contro il codice di allora. ⚠️ **E due cose che il compito 9 gli lascia, misurate
+✅ **IL PRE-CONTROLLO DEL COMPITO 10 È FATTO IL 2026-09-02 — casa unica `E170`–`E177` dell'errata.** La domanda 3
+**non si applica**, perché il compito è un audit e non produce codice; la domanda 4 dice che **non** è già eseguito —
+la **§8** del disegno e la tabella delle voci aperte del Traguardo 6 **non esistono** — ma la condizione **12** sì, e
+si verifica **leggendo**. Ha reso un **segnaposto non risolto** nel comando del Passo 1, un `awk` che conta **otto**
+righe che non sono di catalogo, e una **collisione di codici**: `P-n` nomina due popolazioni diverse.
+⏭️ **IL PROSSIMO PASSO È DISPACCIARE IL COMPITO 10 IN UNA SESSIONE NUOVA**, per la pratica del proprietario: un
+subagente fresco col brief, e la revisione dopo. ⚠️ **E il vincolo operativo è il TETTO del compendio**, che il
+compito tocca: quanto margine resti lo dice `wc -c` contro `scripts/check-docs.sh`, e il verde **non** è margine. ⚠️ **E due cose che il compito 9 gli lascia, misurate
 oggi:** l'ultima frase del registro del compito 8 e le tre correzioni della quarta ondata di questo **non sono
 state riviste da nessuno**; e `E164` è metodo che vale per tutti — un comando messo accanto a un'affermazione
 misura **l'affermazione** e non una sua approssimazione, e il numero di un comando non ancorato **non si scrive in

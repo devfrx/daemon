@@ -817,7 +817,10 @@ numerali di distanza — è passata a sé sull'intero `crates/`, voce `E136`. �
 FATTO con le quattro domande di [`../CLAUDE.md`](../CLAUDE.md), e ha dato DUE bloccanti misurati prima di
 dispacciare** — `E137`, il codice dettato legge campi sigillati da `E83`/`E94`; `E138`, le tre sonde dettate
 scrivono su un passo che nessuno ha aperto, alla **TERZA** occorrenza sui compiti 5, 7 e 8 — e il brief è `E141`.
-La casa unica resta l'errata del piano.
+⛔ **Chi riprende NON rifà il pre-controllo e non rilegge il ciclo: DISPACCIA il compito 8** — un sotto-agente
+fresco col brief `E141` (il § *Compito 8* del piano, le voci `E137`–`E140`, i tre file modello), poi la
+revisione fra un compito e l'altro come l'intestazione del piano prescrive. Il ledger di `.superpowers/` è
+git-ignorato: su un'altra macchina il brief è `E141` e basta. La casa unica resta l'errata del piano.
 ✅ **IL DECIMO È FATTO IL 2026-09-01: tre rilievi, `E135`, tutti di prosa o registro, uno fuori dal
 perimetro** — la specie dei numerali di distanza, colta dalla domanda di classe sull'intero `crates/`.
 I quattro predicati del nono giro sono misurati tenuti braccio per braccio, e trentasette enum censiti

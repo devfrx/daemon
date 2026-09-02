@@ -18,8 +18,8 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-02**, col compito 8 del Traguardo 6 eseguito e rivisto; l'ultimo contenuto di **merito** è
-il compito 8 — lo stato di degrado che si ricalcola — e la sua ondata di revisione. Manutenzione: §13.
+**Aggiornato il 2026-09-02**, col compito 9 del Traguardo 6 eseguito e rivisto; l'ultimo contenuto di **merito** è
+il compito 9 — la riconciliazione alla disconnessione e le due proprietà DST che mancavano — e le sue quattro ondate. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -842,9 +842,46 @@ da fuori la crate, quattro sonde verdi, e le tre mutazioni dettate che uccidono 
 **tre** vincoli di forma che il compito non scrive; la sonda della proprietà **2 manca** dal testo e la sua forma
 è prescritta; la finta gui non ha un banco proprio; e i file nuovi sono **cinque**, non tre (`E153` ne aveva
 visto il quarto). ⚠️ `E146` vale per tutti: nell'**indice** prima della campagna di mutazione.
-⏭️ **IL PROSSIMO PASSO È DISPACCIARE IL COMPITO 9 IN UNA SESSIONE NUOVA**, per decisione del proprietario del
-2026-09-02: un subagente fresco, col brief `E158` — il file intero, `task-9-brief.md`, sta nel ledger di
-questa macchina, che git ignora — e la revisione dopo. Nessun gotcha nuovo, e `HANDOFF.md` non è toccato.
+✅ **IL COMPITO 9 È ESEGUITO IL 2026-09-02, `GATE GREEN` a ciascun commit, e con esso `E152` si chiude: le due
+proprietà di §5.7 che mancavano sono iniettate su `process` e `ipc`.** Nasce `ClientGrants`, che è la
+riconciliazione che ADR-0033 nomina — *«il core se ne accorge dalla disconnessione IPC»* — e che **nessuno
+eseguiva**: il finding **P-16**. ⛔ **E non vive dentro `Arbiter`**, che sa di risorsa e non di client: è la forma
+d'argomento di I3 applicata **dentro** la crate. `E50` ed `E51` restano aperte, e il doc lo dichiara.
+⛔ **La riconciliazione è innescata da `Err(IpcError::Disconnected)` letto ATTRAVERSO la porta**, mai chiedendo
+alla finta se è morta — chiederlo terrebbe la proprietà dentro il banco, che è il difetto che P-16 nomina — e la
+linea di base **non è zero**, o *«la somma torna alla base»* sarebbe verde anche per una riconciliazione che
+rilascia tutto.
+⚠️ **E il pre-controllo ha tenuto una SESTA volta, con la voce più cara: la sonda della proprietà 2 MANCAVA dal
+testo del compito.** I file nuovi si sono rivelati **cinque** dove la mappa ne elencava tre.
+⛔ **E IL COMPITO HA TROVATO UN BUCO CHE NON ERA SUO, ed è mancato DUE VOLTE SU DUE:** il settimo passo di
+`scripts/gate.sh` nomina i propri bersagli **uno per uno**, quindi una campagna assente dall'elenco gira e **non
+stampa il proprio tempo**, contro il vincolo **7** della §11 — misurato, il cancello verde e le due righe nuove
+**zero volte**. ⚖️ **Perimetro allargato dal coordinatore e non portato al proprietario**, perché il precedente
+identico è scritto **dentro quel file** e il passo dichiara di sé che *«the catalogue count stays at six»*: nessuna
+riga di catalogo nasce. 📌 **Per i piani che verranno, ed è la voce `E162`: un compito che crea una campagna DST
+crea anche un bersaglio del passo 7, e `scripts/gate.sh` va nei suoi `Modify:`.**
+⛔ **E IL DIFETTO CHE INSEGNA DI PIÙ È DEL COORDINATORE — `E168`: una diagnosi vera su un sito è stata applicata
+al sito gemello PER ANALOGIA, senza controllare se la premessa vi reggesse.** Due campagne portavano
+un'asserzione aggregata che nessuna mutazione faceva rossa, e furono tolte entrambe sull'argomento che la pretesa
+restava tenuta dall'asserzione **per seme**. ✅ Vero in una. ⛔ **Falso nell'altra, dove quell'asserzione per seme
+NON ESISTEVA:** l'oracolo 1 di `E155` ③ è rimasto tenuto da niente, e un kill saltato lasciava **l'intero banco
+verde** per due ondate. ⛔ **E la diagnosi era falsa anche nel merito:** sottoposta allo stesso kill saltato
+l'aggregata legge **6000** contro **8000** e va rossa. A distinguere le due forme non è mai stata la
+falsificabilità — sotto la sola restrizione vera l'asserzione che l'ha sostituita è irraggiungibile quanto lei —
+ma che la forma per seme **nomina il seme**. ⚠️ **E un rilievo Minor nominava già quel vuoto e fu chiuso
+dichiarandolo invece di riempirlo**, cioè una lacuna è passata per scelta.
+⚠️ **Il ciclo di revisione non è raccontato qui e il numeratore delle ondate neppure: la casa unica è `E169`**,
+che porta la serie degli Important contata sui rapporti, il residuo e le due citazioni lasciate nel rapporto del
+compito, che git ignora. ⛔ **Il fatto che conta: il PRODOTTO ha retto dalla prima ondata in poi** — nessuna
+revisione ha più trovato un difetto di comportamento — **mentre ogni ondata ha aperto frasi false scrivendo quelle
+che chiudevano i rilievi**, alla stessa specie di sempre: un conteggio, un'esclusività, un esito citato che il
+commit aveva appena cancellato dal sorgente.
+⏭️ **IL PROSSIMO PASSO È IL COMPITO 10, PRE-CONTROLLATO PRIMA**, con le quattro domande di
+[`../CLAUDE.md`](../CLAUDE.md) contro il codice di allora. ⚠️ **E due cose che il compito 9 gli lascia, misurate
+oggi:** l'ultima frase del registro del compito 8 e le tre correzioni della quarta ondata di questo **non sono
+state riviste da nessuno**; e `E164` è metodo che vale per tutti — un comando messo accanto a un'affermazione
+misura **l'affermazione** e non una sua approssimazione, e il numero di un comando non ancorato **non si scrive in
+nessuna casa**, perché la riga che lo scrive è essa stessa un'occorrenza.
 ✅ **IL DECIMO È FATTO IL 2026-09-01: tre rilievi, `E135`, tutti di prosa o registro, uno fuori dal
 perimetro** — la specie dei numerali di distanza, colta dalla domanda di classe sull'intero `crates/`.
 I quattro predicati del nono giro sono misurati tenuti braccio per braccio, e trentasette enum censiti

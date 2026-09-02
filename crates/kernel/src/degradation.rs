@@ -94,11 +94,12 @@ pub fn degradation_now<J: Journal>(
     // therefore an assignment and never an `|=`, and `tests/degradation_state.rs` holds the
     // difference with two dispatches upon one step.
     //
-    // ⚠️ AND "LAST" IS `replay`'s ORDER, WHICH THE PORT OWES ONLY ACROSS STEPS. `MemoryJournal`
-    // holds the order WITHIN a step as well and says so, but the conformance suite does not reach
-    // inside a step — so this is true of the implementation the probe runs against and is not
-    // owed by a second one. The day a `Journal` returns a step's notes in another order, this
-    // reads the wrong routing; the trigger is THAT implementation, not a rule written here.
+    // ⚠️ AND "LAST" IS `replay`'s WRITE ORDER, WHICH THE PORT DOES OWE — it promises to "re-read
+    // EVERYTHING, in write order", and that "WRITE ORDER IS PART OF THE PROMISE". What the
+    // conformance suite does not exercise is TWO NOTES UPON ONE STEP, which is the case this
+    // rests on: measured 2026-09-02, of the four `.note` calls in `assert_journal_contract` two
+    // are asserted refused and the two that succeed sit on different steps. The order is owed;
+    // the case is untested, and it is `tests/degradation_state.rs` that holds it.
     let mut routing_degraded = false;
 
     for (_, bytes) in journal.replay().map_err(DegradationError::Journal)? {

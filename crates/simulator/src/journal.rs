@@ -35,6 +35,15 @@ use kernel::rng::RngExt;
 /// The order is now held from outside by `crates/kernel/tests/journal_contract.rs`;
 /// `memory_journal.rs` continues to hold the order WITHIN a step, which conformance does not
 /// reach.
+///
+/// ⛔ RECALL OF 2026-09-02: THE TWO CLAIMS ABOVE ARE FALSE AGAINST THE PORT THEY DESCRIBE.
+/// `replay` owes the WHOLE write order and not "the order ACROSS steps" -- `ports/journal.rs`
+/// says "Re-reads EVERYTHING, in write order" and "WRITE ORDER IS PART OF THE PROMISE" -- and
+/// conformance DOES reach inside a step: promise 8(c) asserts `[(step, intent), (step, note)]`,
+/// two records of one step in write order. What the suite does not exercise is TWO NOTES upon
+/// ONE step: measured, of the four `.note` calls in `assert_journal_contract` two are asserted
+/// refused and the two that succeed sit on different steps. That untested case is the one
+/// `kernel::degradation::degradation_now` rests on, and it is declared beside its loop.
 pub struct MemoryJournal {
     entries: Vec<Entry>,
 }

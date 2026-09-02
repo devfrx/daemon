@@ -85,7 +85,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Fallback a catena tra modelli | ✅ | §3 · ADR-0012 |
 | Preferenze di provider (OpenRouter) | ✅ | §3 · vincoli della richiesta |
 | Routing per compito/costo | ✅ | §3 · politica di routing |
-| Structured output e constrained decoding | 🔶 | sensore §5 (ADR-0013) · sensore reale → Conversazione |
+| Structured output e constrained decoding | 🔶 | sensore §5 (ADR-0013) + adattatori §3 · provider reale → Conversazione |
 | Contabilità token e costi | ✅ | §3 · ADR-0011 |
 | Avvisi e tetti di spesa | ✅ | §3 + §4 · V8 |
 | Selettore di modello per compito | ✅ | §3 · profili |
@@ -98,7 +98,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Funzionalità | | Sede |
 |---|---|---|
 | UI/UX della chat | 📋 | GUI |
-| Streaming delle risposte | ✅ | §3 + GUI |
+| Streaming delle risposte | 🔶 | trasporto §3 · resa nel processo `gui` → GUI minima |
 | Sessioni multiple | 🔶 | gerarchia §3 (ADR-0011) · politica → Conversazione |
 | Fork e branching | 📋 | Conversazione — il giornale lo consente |
 | Modifica e rigenerazione | 📋 | Conversazione |
@@ -142,10 +142,10 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Orchestrazione e sub-agenti | 🔶 | sub-run §4 · proiezione ristretta (ADR-0008) → Conversazione |
 | Planning e decomposizione dei task | 🔶 | piano nello stato durevole §4 · politica → Agenti |
 | Modalità piano vs esecuzione | 🔶 | preset §6 · politica → Agenti |
-| Tool calling | ✅ | §3 schema + §6 permessi |
+| Tool calling | 🔶 | schema §3 + permessi §6 · mediatore completo → Agenti |
 | MCP | 🔶 | ADR-0003 · ciclo di approvazione MCP §6 (ADR-0015) → Agenti |
 | Skills | 🔶 | guide §5 (ADR-0003) · registro delle guide → sede da assegnare |
-| HITL: approvazioni | ✅ | §6 · ADR-0016 |
+| HITL: approvazioni | 🔶 | §6 · ADR-0016 · ciclo di approvazione → Agenti |
 | HITL: interruzione e steering | 🔶 | `AttesaUmano` §4 · politica → Agenti |
 | Domande di chiarimento | 📋 | Agenti |
 | Checkpoint e rollback | ✅ | giornale §4 + §10 · ADR-0024 |

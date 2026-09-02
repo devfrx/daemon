@@ -22,9 +22,9 @@ use crate::record::{Detail, Record, RecordError, RecordKind};
 /// "unknown", which is the falsest of the two.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Degradation {
-    /// The arbiter has nothing left to admit. ⛔ IT IS AN INPUT NAMED BY ADR-0019 ITSELF, and
-    /// §5 added a revocable consumer to it (ADR-0033) — "the 3D viewer is paused during a
-    /// render" is exactly a condition that changes what the user can do.
+    /// The arbiter's books have reached the ceiling, with the limit of that declared beside the
+    /// comparison. ⛔ IT IS AN INPUT NAMED BY ADR-0019 ITSELF, and §5 added a revocable consumer
+    /// to it (ADR-0033) — "the 3D viewer is paused during a render" changes what the user can do.
     pub vram_exhausted: bool,
     /// The last routing resolved relaxed a quality constraint (ADR-0012). ⛔ DECLARED, not
     /// silent — and this field is where the declaration stops being private to the record.
@@ -93,6 +93,12 @@ pub fn degradation_now<J: Journal>(
     // what the user can do — which is the §7.5 criterion this file is built on. The assignment is
     // therefore an assignment and never an `|=`, and `tests/degradation_state.rs` holds the
     // difference with two dispatches upon one step.
+    //
+    // ⚠️ AND "LAST" IS `replay`'s ORDER, WHICH THE PORT OWES ONLY ACROSS STEPS. `MemoryJournal`
+    // holds the order WITHIN a step as well and says so, but the conformance suite does not reach
+    // inside a step — so this is true of the implementation the probe runs against and is not
+    // owed by a second one. The day a `Journal` returns a step's notes in another order, this
+    // reads the wrong routing; the trigger is THAT implementation, not a rule written here.
     let mut routing_degraded = false;
 
     for (_, bytes) in journal.replay().map_err(DegradationError::Journal)? {
@@ -126,10 +132,16 @@ pub fn degradation_now<J: Journal>(
         // here: `ceiling` is the DELIVERED `total_vram` (ADR-0034), and reading the GPU would be
         // an OS call `I3` forbids.
         //
-        // ⛔ AND IT IS `>=` AND NOT `>`: a machine whose books exactly equal its ceiling has
-        // nothing left to admit, which is what the field says. Nothing has to be subtracted from
-        // either side — the two permanent quotas of ADR-0033 reach the arbiter through `admit`,
-        // so they are already inside `allocated()`.
+        // ⛔ AND IT IS `>=` AND NOT `>`: a machine whose books exactly equal its ceiling is full.
+        // Nothing has to be subtracted from either side — the two permanent quotas of ADR-0033
+        // reach the arbiter through `admit`, so they are already inside `allocated()`.
+        //
+        // ⚠️ AND THE LIMIT IT INHERITS FROM `allocated`, which declares of itself that it
+        // "COLLECTS NOTHING": between two operations an EXPIRED grant stays in the books, so
+        // there is an instant where this answers `true` while `admit` — which collects before it
+        // decides — would grant. The direction is CONSERVATIVE: it says "exhausted" a moment
+        // before the arbiter contradicts it, never the reverse. It is closed by the collection
+        // `admit` already performs, not by a sweep invented here.
         vram_exhausted: arbiter.allocated() >= arbiter.ceiling(),
         routing_degraded,
     })

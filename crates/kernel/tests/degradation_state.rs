@@ -20,7 +20,8 @@
 //! one open step is what separates them.
 
 use kernel::arbiter::{
-    Arbiter, ArbiterId, ComputeClass, Mib, Preemption, RemotePolicy, ResourceProfile, VramPolicy,
+    Admission, Arbiter, ArbiterId, ComputeClass, Mib, Preemption, RemotePolicy, ResourceProfile,
+    VramPolicy,
 };
 use kernel::degradation::{DegradationError, degradation_now};
 use kernel::gateway::{Candidate, Constraint, dispatch, resolve};
@@ -204,7 +205,9 @@ fn the_LAST_routing_wins_and_not_any_routing() {
     // second. Two probes asserting one end each could each be satisfied by a constant.
     //
     // ⚠️ TWO NOTES UPON ONE STEP, which the port allows and says so: `Journal::note` places no
-    // limit on how many notes a step carries, and only the INTENT is once-only.
+    // limit on how many notes a step carries, and only the INTENT is once-only. ⛔ THEIR ORDER,
+    // though, is `MemoryJournal`'s and not the port's — conformance does not reach inside a step
+    // — so this holds the rule against the implementation it runs on. Declared beside the loop.
     let mut journal = MemoryJournal::new();
     let step = StepId::new(1);
     open_the_step(&mut journal, step);
@@ -240,7 +243,11 @@ fn a_full_arbiter_declares_its_vram_exhausted() {
     let mut arbiter = arbiter(Mib::new(4_096));
     let journal = MemoryJournal::new();
 
-    let _ = arbiter.admit(&profile("resident", 4_096), LONG, Monotonic::ORIGIN);
+    let Admission::Granted(_resident) =
+        arbiter.admit(&profile("resident", 4_096), LONG, Monotonic::ORIGIN)
+    else {
+        panic!("it fills the machine exactly");
+    };
     assert_eq!(
         arbiter.allocated(),
         Mib::new(4_096),

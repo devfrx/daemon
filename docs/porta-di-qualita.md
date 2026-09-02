@@ -4552,14 +4552,13 @@ Il formato durevole **non è toccato** — nessuna variante nuova, nessun record
 #### Le mutazioni, col proprio esito MISURATO
 
 ⛔ **Applicate una per volta sul codice di PRODUZIONE**, ciascuna revocata da una copia
-byte-esatta presa prima e verificata con `git diff -- crates/kernel/src/degradation.rs` a **zero**
-righe. La baseline contro cui va letta la colonna «Chi muore» è quella a cambiamento chiuso,
+byte-esatta presa prima: le prime due verifiche con `sha256sum`, le altre con
+`git diff -- crates/kernel/src/degradation.rs` a **zero** righe. ⚠️ **La differenza non è
+stilistica, ed è un rilievo che sembra un verde:** su un file **non tracciato** `git diff` è vuoto
+**qualunque** cosa il file contenga, quindi finché `degradation.rs` non è entrato nell'**indice**
+quella verifica non provava nulla. Un file nuovo si mette nell'indice **prima** della campagna.
+La baseline contro cui va letta la colonna «Chi muore» è quella a cambiamento chiuso,
 **44 bersagli, 334 passate, 0 fallite, 2 ignorate**.
-
-⚠️ **Il file nuovo va messo nell'INDICE prima di misurare**, e costa un rilievo che sembra un
-verde: su un file **non tracciato** `git diff` è vuoto **qualunque** cosa il file contenga, quindi
-la revoca risulterebbe provata da nulla. Le prime due revoche sono state verificate con
-`sha256sum`, le altre con `git diff` dopo `git add`.
 
 | # | Mutazione | Chi muore | Misura |
 |---|---|---|---|
@@ -4572,6 +4571,7 @@ la revoca risulterebbe provata da nulla. Le prime due revoche sono state verific
 | **M7** | `journal.replay()` che rifiuta diventa un archivio **vuoto** (`unwrap_or_default`) | **una sola**, `a_journal_that_will_not_replay_is_not_an_answer_of_nothing_degraded` | **333 passate, 1 fallita**. ⛔ È la ragione per cui `DegradationError` esiste: *«non lo so»* riportato come *«niente è degradato»* è il degrado silenzioso che ADR-0019 vieta |
 | **M8** | `routing_degraded` parte da `true` | **tre** — `an_idle_machine_declares_nothing`, `it_is_RECOMPUTED_and_not_cached`, `a_full_arbiter_declares_its_vram_exhausted` | **331 passate, 3 fallite**. ⚠️ **E NON uccide `the_LAST_routing_wins_…`**, il che è giusto: quella sonda dispaccia due volte e il ciclo sovrascrive comunque il valore iniziale. La direzione *«vero a tutto»* la tiene la sonda della macchina ferma, e nient'altro |
 | **M9** | `vram_exhausted` → `true` fisso | **due** — `an_idle_machine_declares_nothing` e `a_degraded_routing_shows_up_in_the_state` | **332 passate, 2 fallite**. ⚠️ La seconda muore sull'asserzione *«e l'altro campo no»*, che esiste perché i due campi sono derivati da **due mondi indipendenti** e una derivazione che li muovesse insieme passerebbe la prima asserzione |
+| **M10** | il **filtro per specie** tolto: `if body.kind() != RecordKind::Routing { continue; }` | **tre** — `a_degraded_routing_shows_up_in_the_state`, `it_is_RECOMPUTED_and_not_cached`, `the_LAST_routing_wins_and_not_any_routing`, tutte con `derive: Record(Malformed)` | **331 passate, 3 fallite**. ⛔ **Misurata il 2026-09-02 perché era tenuta per DEDUZIONE:** senza il filtro l'`Intent` che apre il passo arriva al controllo del `detail`, non ne ha, e la risposta diventa `Malformed`. ⚠️ **E le tre sonde delle vie d'errore restano VERDI**, una di esse per la ragione sbagliata: `a_routing_record_without_its_detail_…` attende `Malformed` e lo riceve dall'`Intent` invece che dal record che ha rietichettato |
 
 ✅ **Nessun mutante è sopravvissuto, e ogni sonda del banco ha almeno un mutante che la uccide.**
 La seconda metà è la domanda che si dimentica: `an_idle_machine_declares_nothing` non era uccisa

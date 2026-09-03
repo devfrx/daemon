@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-09-03**, alla chiusura del **sotto-progetto 1** contro la §0.7 della sua spec.
+Ultimo aggiornamento: **2026-09-03**, alla chiusura del **sotto-progetto 1** contro la §0.7 della sua spec, e lo stesso giorno con la riga del piano del riconoscimento gesti nella tabella dei piani.
 ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
 passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
 resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
@@ -215,6 +215,7 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 | [Sotto-progetto 1 · Traguardo 5](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) | l'**arbitro intero**: ammissione, corsie, ciclo della concessione, revoca, le due policy | ✅ **scritto il 2026-08-18**, **tredici compiti in cinque parti** — ✅ **ESEGUITO PER INTERO il 2026-08-25, tredici compiti su tredici**, `GATE GREEN` a ciascuno, dal 2026-08-19. ⚠️ **L'errata in testa NON è più vuota e si legge PRIMA di ogni compito.** ⛔ **Si legge il [disegno](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md) prima**, per intero. ⛔ **E il pre-controllo del piano ha trovato SETTE cose leggendo il disegno contro il codice**, gotcha **#58**: le due che contano di più sono **omissioni di dichiarazione** — il disegno cambia i due campi `preemptible`/`release_grace` della §5.2 in **uno** e non lo dichiara, e `Admission` **non può derivare `Debug` né `PartialEq`** perché `Grant` non li ha, il che cambia come si scrive ogni sonda dell'arbitro. ⚠️ **Otto decisioni prese dal piano**, e la prima governa le altre: `Arbiter::new` prende **`Parameters`** e non un `Mib` nudo |
 | [Sotto-progetto 1 · Traguardo 6](superpowers/plans/2026-08-30-sottoprogetto-1-traguardo-6-altri-meccanismi.md) | gli **altri meccanismi**: la concessione che torna, i due schemi di filo, il sensore, il gateway col gettone, il permesso, il degrado, e le due proprietà di §5.7 che mancavano | ✅ **eseguito il 2026-09-02**, `GATE GREEN` a ogni commit; il verbale nella §8 del suo disegno |
 | [Sotto-progetto 1 · chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) | la chiusura contro la §0.7: l'audit delle condizioni, `tracciabilita.md` riletta, l'archivio del Traguardo 6, il passaggio unico | ✅ **eseguito il 2026-09-03** |
+| [Riconoscimento gesti](superpowers/plans/2026-09-03-riconoscimento-gesti.md) | i due ADR — il registro delle funzioni del programma, la telecamera come sorgente di percezione — i tre richiami datati, la riga 12 «Gesti», le righe di tracciabilità, le fonti, la sonda S3, lo spike **SP-7** | ✅ **scritto il 2026-09-03**, dal [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) riletto lo stesso giorno — **esecuzione in una sessione nuova**; a che punto sia lo dice la tabella della posizione del piano |
 
 ⛔ **Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano.** Scriverne
 uno per codice che non esiste ancora significa inventare. I sei traguardi sono elencati nel

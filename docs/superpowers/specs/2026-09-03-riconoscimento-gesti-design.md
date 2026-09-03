@@ -379,7 +379,9 @@ ha approvato, con le spunte di oggi:
 3. ✅ il **proprietario rilegge** questo disegno — fatto il 2026-09-03, sotto **accettazione
    condizionata**: *«se è coerente col progetto e col codice e si allinea a decision-principles»*.
    La verifica è scritta nella sezione *«Cosa questo disegno ha misurato»*, e regge.
-4. poi il piano con `superpowers:writing-plans`. Compiti attesi: i due ADR — ciascuno con la propria
+4. ✅ **il piano è scritto il 2026-09-03** con `superpowers:writing-plans` — [`plans/2026-09-03-riconoscimento-gesti.md`](../plans/2026-09-03-riconoscimento-gesti.md), nove compiti,
+   pre-controllo fatto; l'**esecuzione** va in una sessione nuova, e a che punto sia lo dice la tabella della
+   posizione del piano. Compiti attesi: i due ADR — ciascuno con la propria
    voce nella §5 del compendio, che `check-docs.sh` pretende — e i tre richiami datati; la riga 12 e le
    dipendenze in `roadmap.md`; le righe di `tracciabilita.md`; le fonti F1–F9 in `riferimenti.md`, con
    F8 risalita a OpenMMLab e il motivo della chiusura di F9 — **entrambi letti scrivendo questo
@@ -552,6 +554,10 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 ⛔ **Lo dice la §6 del [compendio](../../COMPENDIO.md), in un posto solo.** L'ordine approvato, con
 le spunte di oggi, è nella §5.5 di questo disegno; la prima riga senza spunta è il **piano**, in una
 sessione nuova.
+
+⚠️ **RICHIAMO DEL 2026-09-03, la stessa sera:** il piano è scritto; la riga 4 della §5.5 porta la spunta della
+**scrittura**, e l'esecuzione — che è il passo che la §6 del compendio nomina ora — non ha una spunta finché il
+compito 9 del piano non la scrive.
 
 ### Come si riprende — scritto alla chiusura della sessione del 2026-09-03, coi comandi
 

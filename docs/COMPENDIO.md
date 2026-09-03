@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-03**, col **SOTTO-PROGETTO 1 CHIUSO** contro la §0.7 della sua spec, dal piano della chiusura eseguito e rivisto; l'ultimo contenuto di **merito** è il puntatore della §6 al **piano** dei gesti da scrivere, col disegno riletto dal proprietario lo stesso giorno in cui è nato. Manutenzione: §13.
+**Aggiornato il 2026-09-03**, col **SOTTO-PROGETTO 1 CHIUSO** contro la §0.7 della sua spec; l'ultimo contenuto di **merito** è il puntatore della §6 al **piano** del riconoscimento gesti, **scritto** lo stesso giorno del disegno e della sua rilettura, da eseguire in una sessione nuova. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -645,16 +645,16 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 
 ✅ **IL SOTTO-PROGETTO 1 È CHIUSO IL 2026-09-03 contro la §0.7 della spec**, e il verbale è la §7 del
 [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md).
-⏭️ **IL PROSSIMO PASSO: SCRIVERE IL PIANO del RICONOSCIMENTO GESTI con `superpowers:writing-plans`**, in una
-sessione nuova, dal disegno scritto **sul posto** e **riletto dal proprietario il 2026-09-03** — brainstorming,
-disegno e rilettura lo stesso giorno — in
-[`specs/2026-09-03-riconoscimento-gesti-design.md`](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md),
-che chi riprende legge **per intero**; la consegna da cui è nato sta in
-[`archivio/consegna-brainstorming-gesti.md`](archivio/consegna-brainstorming-gesti.md), parola per parola.
-⚠️ **La rilettura è un'accettazione condizionata** — *«se è coerente col progetto e col codice e si allinea a
-decision-principles»* — verificata quel giorno e scritta nel disegno, sezione *«Cosa questo disegno ha misurato»*;
-una parola della riga 12 della roadmap resta da scegliere scrivendo il piano, ed è la voce 4 delle *«voci che
-questo disegno apre»*. Poi il brainstorming **distinto** della knowledge base; entrambi prima di aprire il
+✅ **IL PIANO DEL RICONOSCIMENTO GESTI È SCRITTO IL 2026-09-03** — [`plans/2026-09-03-riconoscimento-gesti.md`](superpowers/plans/2026-09-03-riconoscimento-gesti.md), dal
+[disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) riletto dal proprietario lo stesso giorno,
+col pre-controllo delle quattro domande su ciascun compito fatto nella sessione che lo ha scritto; la consegna da
+cui il disegno è nato sta in [`archivio/consegna-brainstorming-gesti.md`](archivio/consegna-brainstorming-gesti.md),
+parola per parola. ⏭️ **IL PROSSIMO PASSO: ESEGUIRE QUEL PIANO con `superpowers:subagent-driven-development`, in
+una sessione NUOVA** — un subagente fresco per compito, revisione fra uno e l'altro; l'errata in testa al piano si
+legge **prima** di ogni compito, e la sua tabella della posizione dice a che punto è. ⚠️ Il compito 8 — la misura di
+SP-7 — vuole il **proprietario** con la telecamera di questa macchina; la voce 4 del disegno — l'etichetta di strato
+della riga 12 — è presa dal piano col consiglio scritto, **«L2 + L1 est.»**, e si ribalta nell'errata se il
+proprietario dice altro. Poi il brainstorming **distinto** della knowledge base; entrambi prima di aprire il
 sotto-progetto 2. Nessuna voce aperta li sbarra: le voci 1 e 2 della §7.8 del disegno della chiusura li nominano
 come proprio chiusore, e nessun'altra li condiziona.
 

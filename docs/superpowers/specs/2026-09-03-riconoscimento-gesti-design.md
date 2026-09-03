@@ -1,10 +1,10 @@
 # Riconoscimento gesti dalla telecamera — la consegna del brainstorming
 
 ⚠️ **QUESTO FILE È LA CONSEGNA DEL BRAINSTORMING, NON IL DISEGNO.** Il brainstorming è **in
-corso**: le decisioni prese in chat il 2026-09-03 stanno qui, la sezione 1 del disegno è stata
-**presentata e non approvata**, le sezioni 2–5 sono **da presentare**. Chi riprende legge questo
-file **per intero** dopo la lettura obbligatoria di [`CLAUDE.md`](../../../CLAUDE.md) e del
-[compendio](../../COMPENDIO.md), e continua **dalla sezione 1**, ripresentandola.
+corso**: le decisioni prese in chat stanno qui, e **lo stato di ogni sezione del disegno sta nella
+tabella della §2**, in una casa sola. Chi riprende legge questo file **per intero** dopo la lettura
+obbligatoria di [`CLAUDE.md`](../../../CLAUDE.md) e del [compendio](../../COMPENDIO.md), e continua
+dalla prima sezione che la §2 non dà per approvata.
 Quando il disegno sarà scritto, sarà scritto **sul posto, a questo stesso percorso**, come fu per
 il [disegno della chiusura](2026-09-02-sottoprogetto-1-chiusura-design.md): il puntatore della §6
 del compendio non cambia casa. **Il prossimo passo lo dice la §6 del compendio**, in un posto solo.
@@ -52,7 +52,7 @@ opzioni, perché chi riprende sappia che cosa è stato scartato e non solo che c
 | 2 | Le finestre e i menu da muovere con le mani sono **A** quelle **del programma** (la sua GUI: tutta presentazione, nessuna porta nuova) o **B** anche quelle **del sistema operativo** (effetto OS via modulo di piattaforma, azione con permesso ADR-0016, una **settima famiglia di porte** dove oggi sono sei per decisione)? | **A** | nessuna porta nuova nel kernel. B è **esclusa** da questo brainstorming: se mai, nel sotto-progetto 10 con un ADR suo |
 | 3 | Che cosa significa *«self-use dell'agente sulle funzioni del programma»*? **A** l'agente invoca **le stesse azioni** che un gesto invoca; il gesto è solo uno degli invocatori, come la voce o il click. **B** l'agente usa la telecamera per sé | **«A mutuale»**: *l'agente può richiamare nativamente **tutte** le funzioni esistenti del programma; una **fetta** di quelle (tutte o solo alcune, si deciderà) le uso anch'io gestualmente* | **un registro unico** delle funzioni del programma, **molti invocatori**, **lo stesso permesso** per tutti. Nessuna logica «solo per gesti». È un ADR nuovo (§7, sezione 3) |
 | 4 | Approccio **1**, sorgente di percezione **sotto il core**, o **2**, tracciamento **dentro la GUI**? | **1**, dopo la sfida *«sicuro che rispetti tutti i principi?»* e le **tre correzioni** della §4, sotto accettazione condizionata | la §4 è la forma vincolante |
-| 5 | La **sezione 1** del disegno, il perimetro | **presentata, NON approvata**: il proprietario ha aperto questa consegna invece di rispondere | chi riprende la **ripresenta** (testo integrale in §6) |
+| 5 | La **sezione 1** del disegno, il perimetro | ✅ **approvata il 2026-09-03**, ripresentata nella sessione successiva. ⚠️ Prima diceva *«presentata, NON approvata»*: il proprietario aveva aperto questa consegna invece di rispondere | il testo approvato è in §6, con la clausola aggiunta rileggendolo |
 
 **Le premesse dette dal proprietario**, che il disegno deve onorare: l'agente è **dormiente e risvegliabile con la wake word**; i gesti sono *«stile Jarvis»*; vuole *«basarmi sulla reale architettura del progetto ed integrare le cose in modo professionale, seguendo prima lo stato dell'arte e i principi di decision-principles»*; e ha *«molti buchi tecnici e soprattutto logici»* in testa, che la §3 scioglie coi documenti del repo.
 
@@ -148,7 +148,7 @@ opzioni, perché chi riprende sappia che cosa è stato scartato e non solo che c
 
 ---
 
-## 6. La sezione 1 del disegno, come presentata e NON approvata
+## 6. La sezione 1 del disegno, il testo presentato
 
 > **Sezione 1 — Il perimetro**
 >
@@ -169,6 +169,10 @@ opzioni, perché chi riprende sappia che cosa è stato scartato e non solo che c
 > Cosa **esclude**: le finestre dell'OS (B della seconda domanda) → sotto-progetto 10, con un ADR suo; la telecamera come occhio (B della prima) → capacità futura; la GPU per il tracciamento → voce registrata, si apre quando esiste un tracciatore su GPU.
 >
 > Il prodotto finale, dopo il disegno: **due ADR nuovi** (funzioni del programma; telecamera come sorgente di percezione), **tre richiami datati** (ADR-0001, ADR-0011, ADR-0023), le righe di roadmap e tracciabilità, e lo spike. I numeri degli ADR si danno quando si scrivono, non oggi.
+
+📌 **Clausola aggiunta il 2026-09-03, ripresentandola:** il richiamo datato su ADR-0001 vale se i gesti
+entrano nel pilastro Voce; con un quinto pilastro al suo posto serve un ADR che **supera** ADR-0001. La
+scelta è la decisione 1 della §8, e si prende nella sezione 3.
 
 ---
 
@@ -240,8 +244,8 @@ opzioni, perché chi riprende sappia che cosa è stato scartato e non solo che c
 
 1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -3`: si parte da `main`, e questo file deve esserci.
 2. La lettura obbligatoria di `CLAUDE.md`, per intero; poi questo file, per intero.
-3. Si dichiara al proprietario, in poche righe: dove siamo (§0 e §2), che la sezione 1 è da approvare, e che l'accettazione condizionata (§1) è in vigore.
-4. Si **ripresenta la sezione 1** (§6). Poi le sezioni 2, 3, 4, 5 della §7, una per volta, ciascuna controllata contro i cinque criteri prima di proporla; le decisioni della §8 si portano nella sezione che le ospita, con le opzioni.
+3. Si dichiara al proprietario, in poche righe: dove siamo (§0 e §2), quale sezione è la prossima, e che l'accettazione condizionata (§1) è in vigore.
+4. Si presenta la prossima sezione della §7, una per volta, ciascuna controllata contro i cinque criteri prima di proporla; le decisioni della §8 si portano nella sezione che le ospita, con le opzioni. ⚠️ Le sezioni già approvate stanno nella §2 con la data, e non si ripresentano.
 5. A brainstorming chiuso: il disegno si scrive **sul posto, in questo file**, nella sessione che il proprietario sceglie (la regola del 2026-09-02 dice *la successiva*); poi `superpowers:writing-plans`, poi l'esecuzione con `superpowers:subagent-driven-development`.
 6. Poi il brainstorming **distinto** della knowledge base, prima di aprire il sotto-progetto 2.
 

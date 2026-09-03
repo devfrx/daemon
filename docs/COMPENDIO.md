@@ -646,8 +646,8 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 ✅ **IL SOTTO-PROGETTO 1 È CHIUSO IL 2026-09-03 contro la §0.7 della spec**, e il verbale è la §7 del
 [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md).
 ⏭️ **IL PROSSIMO PASSO: il brainstorming del RICONOSCIMENTO GESTI è IN CORSO dal 2026-09-03**, e la sua
-consegna — le decisioni prese in chat, l'approccio scelto sotto accettazione condizionata, la sezione 1
-presentata e **non ancora approvata**, le sezioni 2–5 da presentare — sta in
+consegna — le decisioni prese in chat, l'approccio scelto sotto accettazione condizionata, e **lo stato
+sezione per sezione**, che vive lì e non qui — sta in
 [`specs/2026-09-03-riconoscimento-gesti-design.md`](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md),
 che chi riprende legge **per intero prima di proporre**. Poi il brainstorming **distinto** della knowledge
 base; entrambi prima di aprire il sotto-progetto 2. Nessuna voce aperta li sbarra: le voci 1 e 2 della

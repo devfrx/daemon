@@ -2247,3 +2247,88 @@ conteggio si rifà col comando prima di leggere che cosa un documento ne dice** 
 revisione lo rifà una seconda volta.
 
 ⛔ **Vicoli ciechi di questa sessione: nessuno.** Nessuna decisione del disegno è stata riaperta.
+
+### Come si riprende — scritto alla chiusura della sessione di RIPRESA del 2026-09-03, coi comandi
+
+⚠️ **È il documento di consegna della sessione che ha ripreso dal compito 3 non rivisto**, lo ha
+fatto rivedere, ha eseguito e fatto rivedere i compiti 4 e 5, ed è stata chiusa su richiesta del
+proprietario subito dopo la revisione del compito 5 — *«a prescindere da tutto»* — e chiusa il
+2026-09-04, a mezzanotte passata. Le due sezioni
+qui sopra sono le consegne delle sessioni precedenti e restano com'erano: verbali. Ogni riga di
+questa è stata **riletta coi comandi** prima di essere scritta.
+
+⛔ **DA SAPERE SUBITO: niente è a metà.** I compiti 1–5 sono committati, pushati e **rivisti** —
+tre revisioni in questa sessione (compiti 3, 4, 5), tutte «Approvato», nessun Critical, nessun
+Important, nessuna ondata aperta. L'albero è pulito. I compiti **6** e **7** hanno brief e
+dispaccio già scritti nel ledger ma **non sono stati dispacciati**. Il primo passo della ripresa è
+dispacciare il compito 6.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb` dopo `git fetch --all --prune`. Albero pulito, nessuno stash, nessuna operazione a metà |
+| I commit di questa sessione | `git log --oneline 0f98839..HEAD`: `60bdee7` (compito 4: riga 12 in roadmap, tracciabilità, «dodici» tolto, più le voci E8/E9 dell'errata), `684b352` (compito 5: le fonti F1–F9 in `riferimenti.md`) — più il commit di questa sezione |
+| La posizione del piano | la tabella in testa: **1–5 ✅**, 6–9 ⬜. Il numeratore vive lì e in nessun altro posto |
+| Le revisioni | compito 3 su `ee4bae5..cc001b4`, compito 4 su `0f98839..60bdee7`, compito 5 su `60bdee7..684b352`: tutte **Approvato**, ogni comando rilanciato dal revisore; i Minor rimandati sono elencati sotto |
+| Codice di prodotto | **non toccato**: `git diff --stat 1c0a633..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml` non rende nulla |
+| Cancello | `bash scripts/check-docs.sh` → `OK`; `bash scripts/gate.sh` → `GATE GREEN`; `cargo fmt --all --check` → pulito — **rilanciati alla chiusura dal coordinatore** su `684b352`. Si rilanciano, non si citano |
+| Fine-riga | il piano `i/lf w/lf`; `roadmap.md`, `tracciabilita.md`, `HANDOFF.md`, il compendio e `riferimenti.md` `i/lf w/crlf` con CR = righe: `git ls-files --eol docs/roadmap.md docs/tracciabilita.md docs/HANDOFF.md docs/COMPENDIO.md docs/riferimenti.md docs/superpowers/plans/2026-09-03-riconoscimento-gesti.md` |
+| Margine del compendio | positivo, col comando del vincolo 12; il compito 9 lo consuma ancora |
+| L'errata | **E1–E9**, tutte committate, nessuna aperta. **E8** ed **E9** sono del **compito 6**, trovate dal pre-controllo di questa sessione ed entrate nel commit del compito 4 (precedente: E6/E7 nel commit del compito 3): due *Trova* del compito 6 non erano unici — l'ultima riga del banco è `}`, e la riga del confronto di M-b vive anche in `promote` |
+| File temporanei | nessuno nel repository. Il ledger `.superpowers/sdd/2026-09-03-riconoscimento-gesti/` — **git-ignorato, solo su questa macchina** — porta `progress.md` con ogni decisione «Ruling:», i brief, i dispacci, i rapporti e le revisioni dei compiti 1–5, e per i compiti **6** e **7** `task-N-brief.md`, `task-N-dispatch.md` e `task-N-review-dispatch.md` già scritti. ⚠️ **Quei dispacci nominano l'aiutante `replace_unique.py` nello scratchpad di QUESTA sessione, che non esiste più:** chi riprende lo riestrae dal piano — `sed -n '35,70p'` di questo file — nel proprio scratchpad e corregge il percorso nei dispacci prima di inviarli. Se il ledger non c'è, **questa sezione basta**: brief = strumenti (righe 23–78) + vincoli (84–111) + errata (156–176) + il compito, verbatim, come i precedenti |
+
+**Le decisioni prese dal coordinatore riprendendo ed eseguendo, col perché** — nessuna è del piano,
+e il proprietario può ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | la consegna precedente è stata **riletta coi comandi** e confermata prima di tutto, e la baseline (cancello, `check-docs.sh`) rimisurata prima di toccare | regola della ripresa: la realtà del repo vince sul racconto; costo: qualche minuto |
+| 2 | il dispaccio della revisione del compito 3 — scritto dalla sessione precedente e mai inviato — è stato riscritto in due punti: *«una decisione del coordinatore che non è tua da riaprire»* è diventata contesto con l'invito a segnalare se la posizione contraddice un ADR (la skill SDD vieta di pre-giudicare un rilievo), e `git log -1 --format=%B` è stato appuntato a `cc001b4` perché `HEAD` era il commit della consegna | la revisione ha confermato la posizione in testa (il disegno §3.2 la prescrive, ADR-0039 la dice tre volte): costo zero |
+| 3 | **E8** ed **E9** scritte nel piano **prima** di dispacciare il compito 4, e committate col compito 4 | un difetto trovato si scrive quando lo si trova; costo: due voci d'errata in un commit che non le riguarda |
+| 4 | il pre-controllo dei compiti 4, 5, 6 e 7 **rifatto sul codice di adesso** mentre giravano le revisioni (sole letture, e prove fuori dall'albero): le due sonde S3 del compito 6 appese parola per parola a una copia usa-e-getta del banco compilano e passano (`2 passed`, copia cancellata, albero pulito); il relay del compito 7 compila **senza avvisi** in una cartella fuori dal repository (cargo 1.95, edition 2024); i due `.py` passano `py -3.10 -m py_compile`; `check-docs.sh` legge anche `spikes/*.md` e i quattro link del protocollo risolvono; nessuno script del cancello cammina `spikes/` | domanda 3 di `CLAUDE.md`: un artefatto sbagliato che compila si coglie solo compilandolo; costo: nessuno, le prove sono cancellate |
+| 5 | modelli: esecutore `sonnet`, revisore `opus`, come la sessione precedente; i **Minor** non entrano in ondate, si registrano per la revisione finale (regola SDD) | tre revisioni pulite al primo giro; costo se sbagliato: un Minor che era un fatto — nessuno lo è, riletti uno per uno |
+| 6 | **D4** (`L2 + L1 est.`) eseguita senza attendere il proprietario, che ha il consiglio scritto nel disegno (voce 4) e la ribalta nell'errata se vuole altro | il piano la prende con quel consiglio; costo: una parola in una riga della roadmap |
+| 7 | il compito 5 dispacciato subito dopo la revisione pulita del 4, senza fermarsi; il 6 e il 7 **non** dispacciati per ordine del proprietario | la consegna precedente prescriveva 5, 6 e 7 in ordine; il proprietario ha chiuso dopo il 5 |
+
+**I rilievi Minor rimandati alla revisione finale**, con la casa — nessuno rende falso un file
+committato, e due sono per il **compito 9**:
+
+- **compito 3** (`task-3-review-1.md`): ADR-0001, riga 12 del rimando, *«come il kernel lo è in quattro»* è una cifra in prosa senza comando, verbatim dal disegno §5.1 (*plan-mandated*); la §1 del compendio dice «voce e gesti» senza puntatore mentre `CLAUDE.md` porta *«(ADR-0001, col rimando datato in testa)»*; il rimando di ADR-0011 restringe la cella *«evento, che può avviare una run»* e sta sessanta righe sopra — attrito, non contraddizione; ⛔ **per il compito 9:** il disegno **§3.2** dice *«La forma è quella di AUD-032: il richiamo va in testa all'ADR»* — la **forma** regge, la **posizione** attribuita ad AUD-032 è falsa (E4: sta dentro la Decision di ADR-0005), e §3.2 è approvata senza richiamo datato.
+- **compito 4** (`task-4-review-1.md`): in `tracciabilita.md` la riga della telecamera cita `§6.10` della spec del **sotto-progetto 1** mentre gli altri `§N` del file sono della spec del kernel — convenzione già mista, `(ADR-0039)` accanto disambigua; le due righe 🔶 nuove citano gli ADR in due stili (link e in chiaro).
+- **compito 5** (`task-5-review-1.md`): solo nel **rapporto** dell'esecutore, non nel repository, un blocco detto «integrale» che non lo è; `riferimenti.md` ricopia la misura di `py -0` che vive in **P-4** (seconda casa, attenuata dal comando e dal rimando); ⛔ **per il compito 9:** la riga **F4** porta *«il modello `hand_landmarker.task` in float16»*, proposizione che la §7/§6.2 del disegno non ha (viene da P-7) — o entra nel disegno con richiamo datato, o esce da `riferimenti.md`.
+
+**Il compito della sessione successiva: il compito 6, poi il 7.** In ordine, e ogni riga è
+eseguibile:
+
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -6`: si parte da `main`,
+   e la testa deve essere il commit di questa sezione o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa
+   dell'audit del 2026-08-27 — poi **questo piano fino alla mappa dei file**, l'errata per intero
+   (E1–E9), questa sezione, e il disegno per intero.
+3. `replace_unique.py` riestratto nello scratchpad (`sed -n '35,70p'` di questo file, identico al
+   testo); se il ledger c'è, il percorso corretto in `task-6-dispatch.md`, `task-7-dispatch.md` e
+   `task-6-review-dispatch.md`; se non c'è, brief e dispacci ricostruiti dal piano.
+4. **Il compito 6** con `superpowers:subagent-driven-development`: le quattro domande di
+   `CLAUDE.md` contro il codice **di allora** (il pre-controllo di questa sessione è nella
+   decisione 4 qui sopra e nelle voci E8/E9); un solo file di `crates/` committato — il banco —
+   e `crates/kernel/src/arbiter/mod.rs` **mutato e ripristinato byte-esatto**, mai committato; il
+   capoverso del doc di modulo entra dopo la riga unica *«`assert_ne!` on it directly is fine and
+   is what the first probe uses.»* e prima di `use kernel::arbiter::{`; `cargo fmt --all --check`
+   alla fine e **mai `cargo fmt`** (normalizzerebbe i CRLF del banco). Il revisore **rilancia le
+   due mutazioni** e ripristina con `cmp`; le righe `test result` misurate vanno nel registro al
+   posto dei segnaposto.
+5. **Il compito 7**: due commit (D6), il protocollo **prima** del codice; i sette file nuovi nascono
+   **LF** col tool Write, `.gitignore` con l'aiutante (CRLF, Trova `/spikes/gui-ipc/Cargo.lock`
+   unico); `cargo build --release` **solo** dentro `spikes/gesti/relay`, dopo `.gitignore`;
+   `git status --porcelain -uall` per vedere i file nuovi uno per uno.
+6. Il **compito 8 solo col proprietario** e la telecamera; il **compito 9** chiude, muove la §6 del
+   compendio al brainstorming della knowledge base, e porta al disegno i due Minor marcati «per il
+   compito 9» — come richiami datati o come voci d'errata, a scelta del proprietario.
+
+📌 **Trovato eseguendo, e non promosso a gotcha:** i due difetti d'errata di questa sessione (E8,
+E9) sono la stessa specie dei sette precedenti — un *Trova* scritto senza contarne le occorrenze —
+e il rimedio che ha retto è sempre quello del vincolo 8: **ogni conteggio si rifà col comando**,
+compreso `grep -c` sul testo che un compito dice di sostituire. Le tre revisioni hanno trovato
+solo Minor: il codice e i testi dettati reggono alla prima passata, il pre-controllo no.
+
+⛔ **Vicoli ciechi di questa sessione: nessuno.** Nessuna decisione del disegno o del piano è
+stata riaperta.

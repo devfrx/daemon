@@ -5,8 +5,9 @@ conoscenza, agenti e coding, voce, generazione asset) su kernel comune. ⚠️ *
 elencava cinque dicendo «quattro»**: il raggruppamento è quello della §1 del compendio.
 
 **Fase corrente: il sotto-progetto 1 è ✅ chiuso il 2026-09-03 contro la §0.7 della sua spec; il
-prossimo passo lo dice la §6 del [compendio](COMPENDIO.md).** ⚠️ **La coda di date che stava qui è TOLTA e non riallineata:** diceva
-*«il 2026-08-08 e il 2026-08-10»* per quattro traguardi, ed era già sbagliata a sé stante —
+prossimo passo lo dice la §6 del [compendio](COMPENDIO.md).** ⚠️ **La coda di date che la «Fase
+corrente» portava è TOLTA e non riallineata:** diceva *«il 2026-08-08 e il 2026-08-10»* per
+quattro traguardi, ed era già sbagliata a sé stante —
 **questo stesso file** data il Traguardo 4 al **2026-08-11**, nel capoverso che ne annuncia il
 brainstorming. ⚠️ **RICHIAMO DEL 2026-08-25: qui c'era un NUMERO DI RIGA — *«la riga 16»* — e lo
 stesso commit che lo scriveva aveva inserito sei righe sopra di sé, spostando il bersaglio.**

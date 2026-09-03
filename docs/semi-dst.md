@@ -78,7 +78,9 @@ interpretabile una sua voce sono però le proprie:** `SHORT_CAMPAIGN_SEEDS` ed
 rimedio è **rimisurare lo spazio degli esiti e riscegliere il numero**, non editarlo finché la
 barra torna verde.
 
-⚠️ **RICHIAMO DEL 2026-09-03, alla chiusura del sotto-progetto 1: le campagne sono CINQUE.** Le due
+⚠️ **RICHIAMO DEL 2026-09-03, ALLA CHIUSURA DEL SOTTO-PROGETTO 1 — IL TRAGUARDO 6 HA
+AGGIUNTO DUE CAMPAGNE, E IL CUMULATIVO È TOLTO.** Qui stava *«le campagne sono CINQUE»*:
+un cumulativo invecchia alla campagna successiva, ed è il gotcha **#31**. Le due
 nate col Traguardo 6 — `crates/simulator/tests/gui_death_campaign.rs` e
 `crates/simulator/tests/worker_kill_campaign.rs` — stanno nella **colonna di sinistra** della
 tabella qui sopra: livello **1**, un caso si identifica con un **seme**. Le costanti che rendono

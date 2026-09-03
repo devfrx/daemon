@@ -647,8 +647,8 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md).
 ⏭️ **IL PROSSIMO PASSO: il brainstorming delle DUE FUNZIONI CORE** — il riconoscimento gesti dalla
 telecamera, e la knowledge base — **due brainstorming distinti**, prima di aprire il sotto-progetto 2.
-Nessuna voce aperta lo sbarra: la colonna «chi la chiude» della §7.8 di quel disegno non nomina
-questo passo.
+Nessuna voce aperta lo sbarra: le voci 1 e 2 della §7.8 di quel disegno lo nominano come
+proprio chiusore, e nessun'altra lo condiziona.
 
 ⛔ **IL RACCONTO DEL TRAGUARDO 6 È USCITO DA QUI il 2026-09-03, e non riassunto:** sta in
 [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola, con le eccezioni
@@ -1496,7 +1496,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 | ❌ **rifare gli spike SP-5 e SP-6** | esiti, seed, versioni e comandi in `spikes/RISULTATI.md` |
 | ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta è **M5** (senza trattino), e richiede una GUI |
 | ❌ **riaprire le due decisioni della §7.3** | prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
-| ❌ **riaprire la copertura della §8** | |
+| ❌ **riaprire la copertura della §8** | la §8 è **spec**, e il vincolo globale 1 del piano della chiusura vieta di toccarla: le righe si leggono, non si ri-giudicano. ⚠️ **RICHIAMO DEL 2026-09-03: il sotto-progetto 1 l'ha riaperta una volta**, e per decisione del **proprietario** — la via **A**, voce `E10` dell'errata del [piano della chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) — col vincolo **sospeso** per il solo compito 3bis e per le sole §8.3 e §8.4. Riaprirla di nuovo richiede la stessa decisione |
 | ❌ **riaprire F3, F6, F5, F1a, F2, F7** | chiuse, con i limiti dichiarati |
 | ⛔ **riaprire §6.1.1** «tanto ora c'è `minicbor` nel kernel» | **tentato il 2026-08-08, e la misura ha dato torto**: i due canali privati non sono lo stesso problema, perché i loro **pari** sono diversi (ADR-0037, M-11). Riaprirla richiede una misura nuova sul pari, non un argomento di simmetria |
 | ⛔ **rigenerare i byte congelati del giornale** | se cambiano non è un aggiornamento, è un cambio di formato: si apre una versione nuova |

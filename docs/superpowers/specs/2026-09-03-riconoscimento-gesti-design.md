@@ -53,6 +53,8 @@ opzioni, perché chi riprende sappia che cosa è stato scartato e non solo che c
 | 3 | Che cosa significa *«self-use dell'agente sulle funzioni del programma»*? **A** l'agente invoca **le stesse azioni** che un gesto invoca; il gesto è solo uno degli invocatori, come la voce o il click. **B** l'agente usa la telecamera per sé | **«A mutuale»**: *l'agente può richiamare nativamente **tutte** le funzioni esistenti del programma; una **fetta** di quelle (tutte o solo alcune, si deciderà) le uso anch'io gestualmente* | **un registro unico** delle funzioni del programma, **molti invocatori**, **lo stesso permesso** per tutti. Nessuna logica «solo per gesti». È un ADR nuovo (§7, sezione 3) |
 | 4 | Approccio **1**, sorgente di percezione **sotto il core**, o **2**, tracciamento **dentro la GUI**? | **1**, dopo la sfida *«sicuro che rispetti tutti i principi?»* e le **tre correzioni** della §4, sotto accettazione condizionata | la §4 è la forma vincolante |
 | 5 | La **sezione 1** del disegno, il perimetro | ✅ **approvata il 2026-09-03**, ripresentata nella sessione successiva. ⚠️ Prima diceva *«presentata, NON approvata»*: il proprietario aveva aperto questa consegna invece di rispondere | il testo approvato è in §6, con la clausola aggiunta rileggendolo |
+| 6 | La **sezione 2** del disegno, la forma nel kernel | ✅ **approvata il 2026-09-03** sotto accettazione condizionata, letta contro il sorgente di quel giorno | il testo approvato è in §6 |
+| 7 | Dove vivono i **worker Python** (decisione 8 della §8) | **`workers/` alla radice**, fuori da `crates/`, con un lockfile Python per worker — sotto accettazione condizionata, raccomandazione accolta | il lockfile non è cosmesi: §6.10.7 della spec fa reggere il timbro di build su un ambiente Python **nostro e versionato** |
 
 **Le premesse dette dal proprietario**, che il disegno deve onorare: l'agente è **dormiente e risvegliabile con la wake word**; i gesti sono *«stile Jarvis»*; vuole *«basarmi sulla reale architettura del progetto ed integrare le cose in modo professionale, seguendo prima lo stato dell'arte e i principi di decision-principles»*; e ha *«molti buchi tecnici e soprattutto logici»* in testa, che la §3 scioglie coi documenti del repo.
 
@@ -148,7 +150,7 @@ opzioni, perché chi riprende sappia che cosa è stato scartato e non solo che c
 
 ---
 
-## 6. La sezione 1 del disegno, il testo presentato
+## 6. Il testo approvato, sezione per sezione
 
 > **Sezione 1 — Il perimetro**
 >
@@ -173,6 +175,47 @@ opzioni, perché chi riprende sappia che cosa è stato scartato e non solo che c
 📌 **Clausola aggiunta il 2026-09-03, ripresentandola:** il richiamo datato su ADR-0001 vale se i gesti
 entrano nel pilastro Voce; con un quinto pilastro al suo posto serve un ADR che **supera** ADR-0001. La
 scelta è la decisione 1 della §8, e si prende nella sezione 3.
+
+#### Sezione 2 — La forma nel kernel, approvata il 2026-09-03
+
+Sotto accettazione condizionata, letta contro il sorgente di `3ec1ac2`; i comandi stanno accanto alle
+affermazioni, e si rilanciano.
+
+| Pezzo | Forma | Dove vive |
+|---|---|---|
+| il worker | Python, possiede la telecamera, MediaPipe su CPU; senza stato, uccidibile in ogni istante (ADR-0028, I5); i fotogrammi non escono mai | `workers/` alla radice, fuori da `crates/` (decisione 8 della §8), con un lockfile Python |
+| il profilo | `ResourceProfile { name: <letterale>, reserved_vram: Mib::ZERO, compute_class: ComputeClass::Realtime, preemption: Preemption::Never }`, finestra `FOR_EVER` — la forma di `AUDIO_RESERVATION` | letterale in `crates/daemon/src/main.rs` |
+| la concessione | segue la vita del worker: entra con `Process::start(grant, descriptor)`, torna con `Killed.grant` ad `Arbiter::release`. Con la telecamera opt-in si chiede all'accensione, non all'avvio del core | già così nel porto `process` |
+| il canale in su | `FromWorker` guadagna due varianti — lo stato della mano (21 punti per mano, coordinate **intere**) e il gesto (`kind`: enum chiuso `#[cbor(index_only)]`, `confidence`: intero) — a indici nuovi `#[n(2)]` e `#[n(3)]`, sotto le regole di §6.10 | `crates/kernel/src/wire/worker.rs` |
+| il canale in giù | la prima istruzione vera del canale, «traccia le mani», mandata una volta con `instruct_stream`; oggi la direzione core → worker non ha nessun messaggio | stesso file |
+| il core | legge `read_next`, campiona alla frequenza che riceve come **parametro consegnato** (ADR-0034: un campo nuovo di `Parameters`, letterale in `daemon`), manda alla GUI con `Ipc::send`; un gesto di **comando** prende la strada della wake word (ADR-0011) | il primo lettore di produzione di una porta: `grep -rn read_next crates/kernel/src crates/daemon/src crates/platform/src` trova solo commenti, e lo stesso vale per `.receive(` e `.accept(` |
+| verso la GUI | una variante nuova di `IpcMessage` con la mano campionata; **si definisce quando la GUI esiste** (sotto-progetto 2), perché prima non ha destinatario — la regola già scritta per la revoca in testa a `crates/kernel/src/wire/ipc.rs` | `crates/kernel/src/wire/ipc.rs` |
+| «riservato» | nel codice non esiste (`grep -rni riservato crates/` → niente); spegnere la telecamera è un richiamo ad ADR-0023, il meccanismo arriva col profilo | ADR-0023 |
+| degrado | `Degradation` guadagna «telecamera assente o spenta» **solo quando il worker esiste**: la regola *«un campo sempre `false` si legge come "va bene" e non come "non so"»* è già scritta in testa al tipo | `crates/kernel/src/degradation.rs` |
+
+**Tre regole di forma, verificate nel sorgente:**
+
+| Regola | Perché, e il comando |
+|---|---|
+| **niente decimali nel kernel**: sul filo viaggiano interi, la conversione la fa il worker | `grep -rnw f32 crates/kernel/src` e `grep -rnw f64 crates/kernel/src` → niente; MediaPipe dà coordinate normalizzate fra 0 e 1 (F4) |
+| **nessun testo dal worker arriva a una decisione**: il gesto è un enum chiuso, non una stringa | l'argomento di `GrantRequest`, che rifiuta `name` perché testo scelto dal pari è contenuto non fidato (ADR-0014). Il vocabolario dei gesti resta della capacità; il **tipo** si fissa ora |
+| **le regole del canale restano quelle di §6.10**: un `#[n(i)]` per campo, niente enum di versione, niente byte congelati, stringhe di byte annotate | testa di `crates/kernel/src/wire/worker.rs` |
+
+**Ciò che il codice dice e la consegna non diceva: la telecamera sarebbe il PRIMO worker vero, e il
+primo paga.** Verificato il 2026-09-03:
+
+| Che cosa manca | Dove lo dice |
+|---|---|
+| nessuna implementazione di `Process` o `Worker` fuori dai banchi: la piattaforma deve imparare ad avviare un processo e parlargli su una pipe | `grep -rn 'impl Process for' crates/` e `grep -rn 'impl Worker for' crates/` → solo `tests/` |
+| il canale worker ha una direzione sola, in su; in giù nessun messaggio, e il grilletto dichiarato è *«il primo processo worker vero»* | testa di `crates/kernel/src/wire/worker.rs` |
+| il timbro di build non esiste: niente rifiuta un worker stantio; e §6.10.7 della spec fa reggere il timbro su un ambiente Python **nostro e versionato** — quindi il lockfile in `workers/` non è cosmesi | stessa testa; spec §6.10.7 |
+| il reattore conosce solo il tempo (`now`, `wall_time`, `wait_until`): «pronto da leggere» per una pipe non c'è, e allargarlo è dichiarato meccanico nel file | `crates/kernel/src/ports/reactor.rs` |
+| nessun codice di produzione legge una porta: il ciclo che legge lo stream nasce con questo | il comando della riga «il core» |
+
+Non cambia l'approccio: è il prezzo, lo paga chi arriva primo fra voce e gesti — come la strada della
+wake word — e va scritto nell'ADR B come **costo dichiarato**.
+
+**Ipotesi che restano tali:** una riserva da `Mib::ZERO` passa l'ammissione — sonda nel kernel, §5.
 
 ---
 
@@ -202,7 +245,7 @@ scelta è la decisione 1 della §8, e si prende nella sezione 3.
 | 5 | l'anteprima video nella GUI | (a) nessuna, la mano si disegna dai punti · (b) anteprima | (a) |
 | 6 | un gesto può invocare un'azione con effetto **irripetibile** (ADR-0007)? | (a) mai da solo: chiede conferma · (b) sì, se la confidenza supera una soglia | (a): un gesto mal riconosciuto non deve poter autorizzare ciò che non si disfa |
 | 7 | dove finisce la **cattura** con un gesto | run corrente · knowledge base · entrambe | **brainstorming 2**, dipendenza dichiarata |
-| 8 | dove vivono i **worker Python** nel repo | una cartella nuova, per esempio `workers/` · dentro `crates/` | fuori da `crates/`: non sono Rust, e il cancello misura `crates/` |
+| 8 | dove vivono i **worker Python** nel repo | ✅ **DECISA il 2026-09-03: `workers/` alla radice**, con un lockfile per worker — sotto accettazione condizionata (§2, riga 7). Scartato *«dentro `crates/`»*: Cargo tratta `crates/` come workspace, e un pacchetto non Rust lì confonde il cancello e ADR-0031 | — |
 | 9 | la **terza quota** di ADR-0005 | si apre quando esiste un tracciatore su GPU | registrata, non presa |
 
 ---

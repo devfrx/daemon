@@ -55,7 +55,8 @@ sessione che ha scritto il piano, come il disegno prescrive.
 | **1** | l'audit — le condizioni 1–5 della §0.7 rilette contro il codice, il verbale in bozza nella **§7** del disegno | uno | ✅ 2026-09-03 |
 | **2** | `tracciabilita.md` riletta con la seconda domanda | **due** (D3) | ✅ 2026-09-03 |
 | **3** | il racconto del Traguardo 6 esce dalla §6, e il tetto scende | **due** (D3) | ✅ 2026-09-03 |
-| **4** | il passaggio unico sui documenti di stato, **l'unico che dice «chiuso»** | uno | ⬜ da eseguire — ⛔ **dopo la decisione del proprietario** sulla voce 9 di §7.8 (**E9**) |
+| **3bis** | la voce 9 di §7.8 — la §8 smette di promettere controlli che non esistono | **due** (D3) | ⬜ da eseguire |
+| **4** | il passaggio unico sui documenti di stato, **l'unico che dice «chiuso»** | uno | ⬜ da eseguire — ⛔ **dopo il compito 3bis**, che è la decisione del proprietario sulla voce 9 di §7.8 (**E9**, **E10**) |
 
 ⛔ **QUALE compito venga dopo NON è scritto qui:** vive nella §6 del
 [`COMPENDIO.md`](../../COMPENDIO.md), in un posto solo. Ciò che resta qui è la **posizione** del
@@ -94,7 +95,7 @@ con il proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E7** | ⚠️ **COMPITO 2 — la lettera di D8 contraddice il Passo 4 dello stesso piano, sulle righe che poggiano su un sensore reale.** D8 dice di prendere il sotto-progetto dall'innesco; la condizione **C** della §8.2 della spec copre *«esistono strumenti e permessi da mediare, **e sensori reali da eseguire**»* e vale **4**, *Agenti*. Ma il Passo 4 vuole che una riga 🔶 preesistente cambi **solo se la sede è sbagliata**, e le tre 🔶 che poggiano su un sensore dicono *Conoscenza*, *Coding*, *Coding* — che l'innesco contraddirebbe tutte e tre. ⛔ **La spec scioglie il nodo e va letta prima di D8:** il numero fra parentesi è *«chi la soddisfa per primo oggi»*, non dove la cosa si costruisce, mentre la cella 🔶 dice *«meccanismo deciso, politica o implementazione nel sotto-progetto indicato»*. 📌 **Rimedio, applicato:** per una riga 🔶 di **sensore reale** il sotto-progetto è quello della **capacità**, come il file già fa — `Validazione della mesh prima dell'export` → *Generazione asset*. Il fatto ha casa nella §7.4, §7.4.2 e §7.7 riga 12 del disegno, e la §7.8 lo apre al proprietario; questa voce vi rimanda invece di ripeterlo. |
 | **E8** | ⚠️ **COMPITO 3, Passi 4 e 5 — «TRE eccezioni restano in §6» e la terza non ha reso nessuna riga.** Il testo dell'archivio e quello del puntatore, dettati alla lettera, annunciano **tre** eccezioni; la cernita del Passo 3 ne ha trovate **due**. La terza — *«una riga che sia una regola per i piani futuri senza altra casa»* — non ha pescato niente: ogni riga di forma regolativa del blocco ha una casa fuori dal blocco, `E162` compreso, che il Passo 3 dava già per partente. Misurato riga per riga, con le case aperte e lette: la tabella *«La terza eccezione, riga per riga»* della **§7.5** del disegno le elenca con il comando che le rifà. 📌 **Rimedio, univoco e dentro il perimetro, applicato:** il numerale è **tolto** invece che riallineato — il puntatore in §6 dice *«con le eccezioni dichiarate lì»*, e l'intestazione dell'archivio dichiara che la terza non ha reso nessuna riga e rimanda alla §7.5. È la regola 5 della §6.2 del disegno — *si toglie invece di riscrivere meglio* — e il vincolo globale 9. La divergenza sta anche nella §7.7 riga 15. ⚠️ **Seconda divergenza dallo stesso testo dettato, colta dalla revisione e chiusa nella prima ondata:** quel testo chiama *«la riga del marcatore»* ciò che **E5** misura essere un **capoverso** di sei righe. Nel puntatore la parola non compare, e nella §7.5 era già scritta giusta; nell'archivio — che è il documento che sopravvive — è corretta in *«il capoverso del marcatore»*, commit `2f203a2`. |
 | **E9** | ⛔ **COMPITO 4 — non si dispaccia finché il proprietario non ha deciso la voce 9 della §7.8 del disegno.** L'audit del compito 1 ha letto ❌ le condizioni **1** e **3** della §0.7: nella §7.2 del disegno le righe `V5`, `V8`, `V9`, `V24`, `V25`, `V35`, `V36`, `V37`, `Q13` e `Q23` nominano un controllo che nessun comando trova, o una tecnica diversa da quella di `design/08` — la classe di **AUD-026** — e la §0.7 dice che il sotto-progetto è fatto quando **tutte** le condizioni sono vere. Il compito 4 è l'unico che scrive «chiuso» (vincolo globale 11), e scriverlo così sarebbe falso; la spec è del proprietario (vincolo globale 1). **Le due vie, nessuna presa:** **A** — ri-giudicare quelle righe in §8, da ✅/⚠️ a ⏳/⚠️ con innesco e richiamo datato, sul precedente di **AUD-026** del 2026-08-27, come compito in più con revisione, poi il compito 4 com'è scritto; **B** — chiudere dichiarando le due ❌ in ogni frase «chiuso» dei documenti di stato, con una voce d'errata che riscriva le frasi del compito 4. Registrata il 2026-09-03 dalla sessione che ha eseguito i compiti 1–3; i compiti 2 e 3 sono proceduti perché i loro commit dicono cose vere a prescindere dalla chiusura (disegno §5.4). |
----
+| **E10** | ✅ **LA VOCE 9 È DECISA DAL PROPRIETARIO IL 2026-09-03, ed è la via A di E9 — con TRE eccezioni MISURATE.** La scelta è **A**: la §8 smette di promettere controlli che non esistono, e il compito 4 va poi com'è scritto. ⛔ **Ma le dieci righe NON sono della stessa specie, e leggerle contro il codice lo mostra** — gotcha **#65** applicato al rapporto del compito 1, e nelle **due** direzioni: chiede **più** del necessario su tre righe e **meno** su una. **(a) `V5` non si declassa: si scrive il caso che la sua riga di catalogo promette dal 2026-08-10.** `RecordV1::intent(effect, trust, payload, reason)` prende la classe **per posizione**, quindi ometterla è `error[E0061]` — la stessa forma del gemello `crates/kernel/tests/compile_fail/record_without_trust_label.rs`, che tiene lo stesso contratto per `trust`; e la seconda metà del vincolo — *«l'assenza vale `irripetibile`»* — è **già tenuta**: `crates/kernel/src/reconcile.rs` manda un record che questa build non decodifica in `Resolution::SuspendAndAsk`, con le sonde in `crates/kernel/tests/reconciliation.rs`. ⛔ **E nessuno dei due inneschi di §8.2 calzava**: la lacuna non aspetta né un consumatore né una misura, e §8.2 dichiara di aver cercato una terza specie e non averla trovata. **(b) `V8` non si declassa: la cella si attribuiva un merito altrui.** Il testo del vincolo è *«ogni run ha un tetto, con default conservativo»*, e §8.1.3 dice che per i V l'autorità è **il testo del vincolo**; il tetto esiste ed è consegnato — `Parameters::executor_turn_limit`, `RunError::TurnLimitReached`, sonda `the_delivered_turn_limit_is_honoured_by_its_value`. La transizione ad `AttesaUmano` che la cella accreditava è il metodo di **Q7**, non di V8 — la stessa forma corretta su `Q17` il 2026-08-08. **(c) `Q13` non si declassa: è la CONDIZIONE 3 a essere scritta più larga della decisione**, e la cura è la §7.3 del disegno, sul precedente della **condizione 4** nella stessa sezione. Il metodo qui non è **assente**: è **più forte**, e **dichiarato dal 2026-08-08**. Declassare una riga il cui controllo eccede il richiesto direbbe il falso nella direzione opposta. **(d) E `V36` NON si tocca affatto** — è la direzione in cui il rapporto chiede meno del vero: il suo ❌ nasce dalla riga di catalogo `V5` senza caso, e sparisce da sé quando il caso esiste. ⛔ **Restano CINQUE righe della specie di AUD-026 — `V9`, `V25`, `V35`, `V37`, `Q23` — che scendono a ⏳ rimandato**, più `V24` che resta ⚠️ e perde il picco VRAM dalla metà verificata. ⛔ **IL VINCOLO GLOBALE 1 È SOSPESO DAL PROPRIETARIO** per il solo compito 3bis e per le sole righe che quel compito elenca: la spec si tocca, e **solo** in §8.3 e §8.4. ⛔ **Il vincolo globale 2 resta INTERO:** nessuna riga ⚠️ o ⏳ passa a ✅, e nessuna riga di catalogo nasce — `V5` è già ✅ e ci resta, e ciò che nasce è il **caso**, non la riga. ⛔ **Il vincolo globale 3 cede su [`porta-di-qualita.md`](../../porta-di-qualita.md)** per la clausola che già porta — *«salvo una riga falsa trovata dall'audit»* — e per il passo **5** della disciplina dell'audit del 2026-08-27: *un rimedio riconta i conteggi che ha reso stantii*. |
 
 ## Il pre-controllo del piano — che cosa il disegno dice e il repository smentisce
 
@@ -850,6 +851,161 @@ git push
 - [ ] `check-docs.sh` verde, `GATE GREEN`, entrambi i commit pushati, posizione del piano aggiornata
 
 ---
+
+## Compito 3bis: la voce 9 di §7.8 — la §8 smette di promettere controlli che non esistono
+
+⛔ **Si legge E10 PRIMA di questo compito.** È la decisione del proprietario che lo apre, e porta
+le **tre eccezioni misurate**: `V5`, `V8` e `Q13` **non** si declassano, e `V36` non si tocca
+affatto. Chi esegue non ri-giudica quelle quattro: sono decise.
+
+**Files:**
+- Create: `crates/kernel/tests/compile_fail/effect_without_its_class.rs` e il suo `.stderr`
+- Modify, commit **1** — il prodotto: `docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` (⛔ **CRLF**) · `docs/porta-di-qualita.md` (⛔ **CRLF**)
+- Modify, commit **2** — il verbale: il disegno (LF) · questo piano (LF)
+- Read: **§8.1**, **§8.1.2**, **§8.1.3**, **§8.2**, **§8.2.1** della spec — il vocabolario degli stati e come si scrive un innesco; la **§7.2 del disegno**, che porta l'evidenza riga per riga e i comandi che l'hanno prodotta
+
+⛔ **I DUE FILE DEL COMMIT 1 SONO CRLF NELL'ALBERO, E IL VINCOLO GLOBALE 6 NON LI ELENCA** —
+misurato il 2026-09-03, perché nessun compito prima di questo li toccava: la spec e il registro
+sono entrambi `i/lf w/crlf`, e `tr -cd '\r' < <file> \| wc -c` dà il valore di partenza da
+rimisurare dopo. Si scrivono **solo** con Python `io.open(..., encoding="utf-8", newline="")`,
+contenuto costruito e codificato **per intero prima**, file temporaneo, `os.replace` — gotcha
+**#82**, e il vicolo cieco del 2026-08-27 che svuotò la spec a zero byte. `git ls-files --eol`
+prima e dopo, invariato. ⛔ Un `sed -i` no, e `git checkout --` su un file che si sta scrivendo
+nemmeno.
+
+⛔ **§8.3 e §8.4 SONO LETTE PER POSIZIONE da `check-docs.sh`:** cinque colonne, lo **stato** in
+terza e l'**innesco** in quinta, e i delimitatori sono intestazioni. Una riga che perde una
+colonna è un rosso, non un ritocco (trappola **3**).
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+bash scripts/gate.sh; bash scripts/check-docs.sh
+git ls-files --eol docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md docs/porta-di-qualita.md
+for f in docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md docs/porta-di-qualita.md; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+ls crates/kernel/tests/compile_fail/*.rs | wc -l
+grep -c '' crates/kernel/tests/compile_fail/record_without_trust_label.stderr
+```
+
+L'ultimo conteggio è il numero di casi **prima**: dopo il Passo 2 deve essere uno in più, e
+`tests/compile_fail.rs` li raccoglie con un **glob** — nessun elenco da aggiornare.
+
+- [ ] **Passo 2: il caso `compile_fail` che la riga di catalogo `V5` promette dal 2026-08-10**
+
+La riga del catalogo è, alla lettera:
+`| **V5** | un effetto **senza classe dichiarata** — §7.4.4 | un effetto con la classe compila |`
+— l'ultima colonna è la **contro-sonda**, e il caso deve nominarla.
+
+⛔ **Il modello è il GEMELLO**, `crates/kernel/tests/compile_fail/record_without_trust_label.rs`:
+tiene lo stesso contratto per `trust`, sulla **stessa** funzione, con la **stessa** forma `E0061`.
+Si legge per intero prima di scrivere — porta già l'argomento sul perché la mutazione che lo
+disarma è la **firma** e non il campo, e il proprio richiamo datato di AUD-050.
+
+| | |
+|---|---|
+| **Che cosa non deve compilare** | `RecordV1::intent(effect, trust, payload, reason)` chiamata **senza il primo argomento**: tre argomenti su quattro, e a mancare è la classe |
+| **L'errore atteso** | `error[E0061]`, con la nota `argument #1 of type `EffectClass` is missing` — ⛔ **si LEGGE l'uscita vera e la si copia**, non si indovina; `TRYBUILD=overwrite` esiste ma il `.stderr` **si legge nel diff** (gotcha **#25**) |
+| **La contro-sonda, che esiste già** | `every_effect_class_survives_the_round_trip_and_the_three_differ_in_the_bytes` in `crates/kernel/tests/record_shape.rs` — il caso la **nomina**, come il gemello nomina la propria |
+| **La seconda metà del vincolo** | *«l'assenza vale `irripetibile`»* è **già tenuta e non va scritta**: `crates/kernel/src/reconcile.rs` manda un record che questa build non decodifica in `Resolution::SuspendAndAsk`, con le sonde in `crates/kernel/tests/reconciliation.rs`. Il caso lo **dichiara** invece di ripeterlo |
+| **Attributi** | ⛔ nomina `kernel::` e **non ridichiara attributi propri** — gotcha **#39**, ed è ciò che `gate-attributes.sh` legge |
+| **Il commento va SOTTO `fn main`** | l'oracolo cita un numero di riga: un capoverso in testa sposta il codice e rende il caso `mismatch`. Il gemello lo scrive a chiare lettere |
+
+⛔ **Le due direzioni, provate e scritte nel rapporto:** *deve scattare* — il caso esce `ok` da
+`cargo test --locked -p kernel --test compile_fail`, cioè **non compila** con l'errore atteso;
+*non deve scattare* — la contro-sonda nominata sopra è verde, e un `intent` **con** la classe
+compila. ⚠️ **Se esce `mismatch` invece di `ok`**, l'atteso e il vero divergono: si legge l'uscita
+e si corregge il `.stderr`, **non** si rigenera in blocco.
+
+- [ ] **Passo 3: le sei righe della §8 — stato, innesco, e che cosa il richiamo deve dire**
+
+⛔ **La forma del richiamo è quella di `V34` e di `Q24`**, scritte il 2026-08-27 chiudendo
+AUD-026: si legge una delle due nella spec prima di scriverne una nuova. Ogni richiamo porta la
+data **2026-09-03** e nomina la propria origine — *voce 9 di §7.8 del disegno della chiusura* —
+e i comandi che lo sostengono stanno nella **§7.2 del disegno**, da cui si copiano invece di
+riscriverli. ⚠️ **Un capoverso che è un VERBALE datato non si riscrive** (vincolo globale 9): il
+richiamo nuovo gli si affianca, come fa `Q17`.
+
+| Riga | Stato: da → a | Innesco | Che cosa il richiamo deve dire |
+|---|---|---|---|
+| `V5` | ✅ → **✅**, invariato | `—` | la cella prometteva un *«test di compilazione fallita»* che **non esisteva**, e il registro lo dichiarava dal 2026-08-10. ✅ **Il caso è stato scritto** invece di declassare la riga, perché nessuno dei due inneschi di §8.2 calzava. La cella nuova nomina il caso del Passo 2, la contro-sonda, e la seconda metà tenuta da `reconcile.rs` |
+| `V8` | ✅ → **✅**, invariato | `—` | la cella accreditava *«i confini di autonomia entrano (§0.4, §4)»*, che è una **voce di sezione** e non una delle tre risposte di §8.1.2 — forma già corretta su `V35` il 2026-08-08 — e *«la transizione ad `AttesaUmano`»*, che **non esiste**. ⛔ Quel test è il metodo di **`Q7`**, non di V8: la riga si attribuiva un merito altrui, come `Q17` prima del 2026-08-08. **Resta ✅ perché per un V l'autorità è il TESTO del vincolo** (§8.1.3), e il tetto esiste, è **consegnato** ed è provato |
+| `V9` | ⚠️ → **⏳ rimandato** | `A (2)`, invariato | la metà dichiarata verificata — *«l'evento emesso e giornalato»* — **non ha soggetto**: nessun tipo evento, e l'executor non scrive sul giornale in nessun percorso. Senza la metà verificata non resta niente qui, e §8.1 dice `rimandato` — la stessa lettura che declassò **V16** (§8.5.3.1) e **V34** (AUD-026) |
+| `V24` | ⚠️ → **⚠️ parziale**, invariato | `A (2)`, invariato | ⛔ **la cella dichiarava verificate DUE cose e una sola lo è.** I **permessi** rileggono davvero il giornale — `is_granted` chiama `journal.replay()`, provato da `nothing_is_granted_on_an_empty_journal`. Il **picco di VRAM** no: le chiamate a `journal.replay()` del kernel stanno in `degradation.rs`, `permission.rs` e `reconcile.rs`, e nessuna legge il picco. Il picco **esce** dalla metà verificata; la proiezione trace resta fuori come già era |
+| `V25` | ⚠️ → **⏳ rimandato** | `B (3)`, invariato | la metà dichiarata verificata — *«il controllo gira a ogni commit e la sonda scatta, una chiamata di rete in `daemon` lo accende»* — è **falsa**: nessuno script guarda `daemon`. ⚠️ **L'altra metà RESTA vera e non si riscrive**: la contro-sonda non esiste perché la lista è vuota (§7.4.2). È la stessa lacuna che declassò `V34` |
+| `V35` | ⚠️ → **⏳ rimandato** | `D (5)`, invariato | poggiava sui *«test a esempi, gli stessi che rendono ✅ `V37`»*, e il soggetto di `V37` **non esiste**. ⚠️ Il capoverso del 2026-08-08 sul rinomino del meccanismo è un **verbale**: non si riscrive |
+| `V37` | ✅ → **⏳ rimandato** | **`D (5)`**, nuovo | il **tipo del livello di confinamento non esiste**: la ricerca rende tre righe di **commento** e nessun tipo, e una di quelle righe porta già il proprio comando con la propria risposta. `Permission` e `PermissionDetail` portano altri campi: nessun livello di confinamento. ⛔ **L'innesco è nuovo perché la riga era ✅** e §8.6 lo pretende ora: la condizione è `D` — si esegue codice o un comando (**5**) — la stessa di `V35` e `Q23`, che poggiano sullo stesso soggetto |
+| `Q23` | ⚠️ → **⏳ rimandato** | `D (5)`, invariato | ⛔ **la cella dichiarava già che nessuna delle due tecniche gira qui**; ciò che vi entrava erano i test a esempi di `V37`, che **non esistono**. Quindi non resta niente di verificato, e lo stato segue. ⚠️ Il capoverso del 2026-08-08 è un **verbale**: non si riscrive |
+
+⛔ **`V36` e `Q13` NON si toccano**, ed è una decisione e non una dimenticanza (E10): il ❌ di
+`V36` nasceva dalla riga di catalogo `V5` senza caso e sparisce col Passo 2; `Q13` è trattata al
+Passo 6, e la sua cura non sta nella §8.
+
+- [ ] **Passo 4: il registro — il conteggio del blocco C, che il Passo 2 ha reso stantio**
+
+⛔ **È l'unica cosa che si tocca in [`porta-di-qualita.md`](../../porta-di-qualita.md)**, ed è
+dovuta al passo **5** della disciplina dell'audit del 2026-08-27 — *un rimedio riconta i conteggi
+che ha reso stantii*. Il file dichiara oggi il blocco C a **diciotto righe su diciannove**, con
+*«scoperta la sola `V5`»* e il capoverso che spiega perché — *«un tipo che esiste non è un
+controllo che scatta»*. Col caso scritto, `V5` è **coperta**.
+
+⚠️ **Si ricontà sul catalogo §7.4.1 blocco C, non da questa frase**, com'è scritto nella cella
+stessa; e la cella porta già **otto** ricontate datate: la nona si **affianca**, con la propria
+data, e non riscrive le precedenti. ⛔ **Il capoverso `⚠️ E `V5` resta scoperta anche adesso…`
+è la riga che diventa FALSA**: riceve il proprio richiamo datato.
+
+- [ ] **Passo 5: il commit del prodotto**
+
+```bash
+tr -cd '\r' < docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md | wc -c
+tr -cd '\r' < docs/porta-di-qualita.md | wc -c
+git ls-files --eol docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md docs/porta-di-qualita.md
+git diff --stat -- docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+bash scripts/gate.sh && bash scripts/check-docs.sh
+```
+
+⛔ **Il diff sulla spec deve nominare SOLO righe di §8.3 e §8.4.** Se ne nomina altre, ci si
+ferma: il vincolo globale 1 è sospeso per quelle due tabelle e per nient'altro (E10). Il commit
+**non** dice «chiuso» (vincolo globale 11).
+
+- [ ] **Passo 6: `Q13` e la condizione 3 — la restrizione va nella §7.3 del disegno**
+
+⛔ **Non si tocca la §8, e non si tocca la §0.7.** La §7.3 del disegno ha **una** riga, per la
+**condizione 4**, e la sua forma è: la **lettera** della condizione · la **decisione** che la
+restringe · **che cosa ne segue**. Se ne aggiunge una **seconda**, per la **condizione 3**, con
+la stessa forma:
+
+| | |
+|---|---|
+| **la lettera** | la §0.7 dice *«ogni Q in perimetro è verificato col metodo che `design/08` gli assegna, **non con un altro**»* |
+| **la decisione che la restringe** | la cella di `Q13` in §8.4 **dichiara la sostituzione dal 2026-08-08**, e la argomenta: il metodo assegnato è una **verifica di proprietà** su catene generate; qui la proprietà è resa **non esprimibile** da un gettone di livello 1, e *«una proprietà provata su N catene lascia scoperta la N+1, un tipo no»*. È la stessa mossa di §5.3 punto 3, e §8.1.3 pretende che si **dica** — cosa che quella cella fa |
+| **che cosa ne segue** | la condizione è soddisfatta **in quella lettura, e in quella soltanto**: presa alla lettera rifiuterebbe una sostituzione **più forte**, dichiarata, e già registrata da tre traguardi. ⛔ **La §0.7 non si tocca**: è spec, ed è del proprietario. ✅ **Deciso dal proprietario il 2026-09-03**, voce 9 di §7.8 |
+
+- [ ] **Passo 7: la §7.2, la voce 9, e la voce nuova**
+
+| Dove | Che cosa |
+|---|---|
+| §7.2 del disegno, riga **1** della tabella delle condizioni | l'esito passa da ❌ a **✅**, e la cella dice che le otto righe scoperte sono state **risolte**: `V5` col caso, `V8` con la cella corretta, `V9` `V25` `V35` `V37` declassate, `V24` con la metà verificata ristretta. ⚠️ **Il conteggio si rifà col comando**, non si riscrive a memoria |
+| §7.2 del disegno, riga **3** | l'esito passa da ❌ a **✅**: `Q23` declassata, `Q13` risolta dalla §7.3 |
+| §7.2 del disegno, le celle di `V5` `V8` `V9` `V24` `V25` `V35` `V37` `Q13` `Q23` nelle due tabelle riga-per-riga | ⛔ **NON si riscrivono: sono un VERBALE datato 2026-09-03** (vincolo globale 9). Ricevono **una** riga ciascuna che nomina come sono state chiuse |
+| §7.8, **voce 9** | passa a **chiusa**, con la data, la decisione del proprietario e il rimando a **E10** — che è la casa unica delle tre eccezioni. ⛔ Le tre eccezioni **non si ricopiano qui** |
+| §7.8, **voce nuova** | ⚠️ **REGISTRATA E NON PRESA, ed è del proprietario:** `Q7`, `Q8` e `Q20` di §8.4 restano ✅ sulla **tecnica**, ma le loro celle accreditano soggetti che `V8`, `V9` e `V25` **smettono** di accreditare in questo stesso commit — il test sulla transizione ad `AttesaUmano`, l'evento emesso, e la metà statica che poggia su `V25`. ⛔ **Cade fra le due condizioni:** la 1 parla dei soli **V**, la 3 dei soli **metodi**, quindi nessuna delle due lo coglie. Se le celle di `Q7`, `Q8` e `Q20` debbano essere ri-giudicate è del proprietario |
+| questo piano | la tabella della posizione passa il compito 3bis a ✅ con la data |
+
+- [ ] **Passo 8: il commit del verbale, e le verifiche**
+
+```bash
+bash scripts/gate.sh; bash scripts/check-docs.sh
+git diff --name-only <base>..HEAD -- docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+grep -c '' crates/kernel/tests/compile_fail/effect_without_its_class.stderr
+cargo test --locked -p kernel --test compile_fail
+```
+
+- [ ] `GATE GREEN` e `check-docs.sh` verdi **prima di ciascuno** dei due commit
+- [ ] le due direzioni del caso `V5` **misurate e scritte nel rapporto**, con l'uscita vera
+- [ ] `git ls-files --eol` **invariato** su spec e registro, e i `CR` rimisurati
+- [ ] il diff sulla spec nomina **solo** §8.3 e §8.4
+- [ ] nessun commit dice «chiuso» del sotto-progetto (vincolo globale 11)
+- [ ] entrambi i commit pushati, posizione del piano aggiornata
 
 ## Compito 4: il passaggio unico — l'unico che dice «chiuso»
 

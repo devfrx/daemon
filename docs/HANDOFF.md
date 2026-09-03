@@ -1276,7 +1276,7 @@ per chiudersi.
 | [`../CLAUDE.md`](../CLAUDE.md) | istruzioni operative per l'agente |
 | ⛔ [`COMPENDIO.md`](COMPENDIO.md) | **l'unica lettura obbligatoria** insieme a `CLAUDE.md`: tutte le decisioni compresse, le invarianti, lo stack, i gotcha, **lo stato di oggi e il prossimo passo (§6)**. ⚠️ **Mancava da questa tabella**, ed è stato aggiunto il 2026-08-10: il file più importante del repository non compariva nella mappa che dice dove va cosa, pur essendo nominato dieci volte nella prosa qui intorno |
 | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | il messaggio da incollare all'inizio di una sessione, e il perché di ogni sua riga. ⚠️ Mancava anche questo |
-| [`roadmap.md`](roadmap.md) | dodici sotto-progetti, ordine, dipendenze, decisioni aperte |
+| [`roadmap.md`](roadmap.md) | i sotto-progetti, l'ordine, le dipendenze, le decisioni aperte — **quanti** siano lo dice la sua tabella |
 | [`tracciabilita.md`](tracciabilita.md) | le funzionalità della mappa originale → dove vive ciascuna; **quante** lo dice il comando nel riquadro in testa a quel file. ⚠️ **RICHIAMO DEL 2026-09-03:** la cifra è **tolta** e non riallineata — viveva qui e nel compendio, ed è la specie che il richiamo qui sotto già registra. ⚠️ Questa cella diceva *«170»*, cifra che l'audit del 2026-08-10 aveva già ricontata e corretta **nel compendio e non qui**: la stessa cifra in due posti con due valori, colta il 2026-08-11 |
 | [`README.md`](README.md) | indice di ADR e diagrammi |
 | [`porta-di-qualita.md`](porta-di-qualita.md) | **dove vive ogni controllo**: ogni riga del catalogo §7.4 → il file che la implementa, le sonde per nome, e ciò che la porta **non** controlla ancora |

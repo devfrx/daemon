@@ -67,6 +67,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 >
 > ✅ **Sotto-progetto 1 chiuso il 2026-09-03 contro la §0.7**: la tabella si riaggiorna a ogni
 > sotto-progetto chiuso, come dice la riga sotto il titolo.
+>
+> ✅ **Aggiornata il 2026-09-03 con le righe del riconoscimento gesti**, dalla §5.2 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) approvato dal proprietario — fuori da una chiusura di sotto-progetto, e per questo detto: la sezione 6 diventa «Voce e gesti», e la riga del registro delle funzioni entra nella sezione 2 accanto ai comandi rapidi.
 
 ---
 
@@ -114,6 +116,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Preview renderizzate | 📋 | GUI |
 | Allegati in chat | 📋 | Conversazione (+ etichettatura I6) |
 | Comandi rapidi e slash-command | 📋 | GUI |
+| Registro delle funzioni del programma | 🔶 | registro di [ADR-0038](adr/0038-registro-delle-funzioni-del-programma.md), nella forma dei registri §5 (ADR-0009) · registrazione, invocazione, permesso come tripla, giornale · implementazione → GUI minima, col primo invocatore |
 | Template e prompt salvati | 📋 | Conversazione |
 | Esportazione conversazioni | 📋 | Conversazione |
 
@@ -178,7 +181,9 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Anteprima applicazioni | 📋 | Coding + GUI |
 | Approvazione comandi distruttivi | ✅ | §6 + effetti `irripetibili` §4 |
 
-## 6. Voce
+## 6. Voce e gesti
+
+⚠️ **RICHIAMO DEL 2026-09-03:** la sezione si chiamava «Voce»; con [ADR-0039](adr/0039-telecamera-come-sorgente-di-percezione.md) il pilastro si legge «voce e gesti» — rimando datato in testa ad ADR-0001 — e le righe dei gesti stanno qui, con sede **Gesti**, il sotto-progetto 12.
 
 | Funzionalità | | Sede |
 |---|---|---|
@@ -197,6 +202,12 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Cancellazione eco / anti auto-attivazione | 📋 | Voce |
 | Lettura vocale delle notifiche | 📋 | Voce |
 | Convivenza pipeline audio ↔ job GPU | ✅ | §2 · quota sottratta, corsie (ADR-0005) |
+| Telecamera come sorgente di percezione always-on | 🔶 | porta `process` §6.10 (ADR-0039) · il worker, le due specie di evento, il campo di degrado · implementazione → Gesti |
+| Tracciamento delle mani — 21 punti, stato continuo | 📋 | Gesti |
+| Gesti di comando | 📋 | Gesti |
+| Manipolazione di pannelli e menu con le mani | 📋 | GUI + Gesti |
+| Cattura con un gesto | 📋 | Gesti — la destinazione la decide il brainstorming della knowledge base (decisione 7 del disegno) |
+| Indicatore di telecamera accesa | 📋 | GUI |
 
 ## 7. Multimodalità e generazione
 

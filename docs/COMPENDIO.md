@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-03**, coi tre rimandi datati del riconoscimento gesti — ADR-0001, ADR-0011, ADR-0023 — nelle voci di §5; l'ultimo contenuto di **merito** è quello. Manutenzione: §13.
+**Aggiornato il 2026-09-03**, con la riga 12 «Gesti» in roadmap e le righe di tracciabilità dal piano del riconoscimento gesti; l'ultimo contenuto di **merito** è la §12 che smette di contare i sotto-progetti. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -1657,7 +1657,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) |
 | il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** |
 | ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo. ⚠️ **La sezione, non il file** |
-| l'ordine dei dodici sotto-progetti e le dipendenze | [`roadmap.md`](roadmap.md) |
+| l'ordine dei sotto-progetti e le dipendenze — quanti siano lo dice la tabella di quel file | [`roadmap.md`](roadmap.md) |
 | dove vive una funzionalità della mappa originale | [`tracciabilita.md`](tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci |
 | **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](porta-di-qualita.md) |
 | ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata; ⛔ **è CRLF integrale**, misurato il 2026-08-25 |

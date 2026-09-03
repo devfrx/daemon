@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-09-03**, alla chiusura del **sotto-progetto 1** contro la §0.7 della sua spec, e lo stesso giorno con la riga del piano del riconoscimento gesti nella tabella dei piani.
+Ultimo aggiornamento: **2026-09-03**, con la riga **12 «Gesti»**, la dipendenza nuova della riga 8 e lo spike **SP-7** — dalla §5.1 del [disegno del riconoscimento gesti](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md).
 ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
 passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
 resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
@@ -162,10 +162,11 @@ flowchart LR
 | 5 | Coding | L2 | ⬜ | 4, 0b |
 | 6 | Conoscenza / RAG | L2 | ⬜ | 3 |
 | 7 | Generazione asset | L2 | ⬜ | 1 · chiude **SP-1** |
-| 8 | Voce | L2 | ⬜ | 7 · chiude **SP-2** |
+| 8 | Voce | L2 | ⬜ | 7, **12** · chiude **SP-2** |
 | 9 | Gestione modelli locali | L1 est. | ⬜ | 1 |
 | 10 | Integrazione OS completa | L3 | ⬜ | 2 |
 | 11 | **Backup e ripristino** — [ADR-0022](adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md); chiude **V32 · V33 · Q21** | L0 + L3 | ⬜ | 5, 6, 9 |
+| 12 | **Gesti** — il riconoscimento gesti dalla telecamera: il worker sotto il core, le due specie di evento, il primo invocatore gestuale del registro — [ADR-0038](adr/0038-registro-delle-funzioni-del-programma.md) · [ADR-0039](adr/0039-telecamera-come-sorgente-di-percezione.md) · [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) | L2 + L1 est. | ⬜ | 2, 3 |
 
 ## Perché quest'ordine
 
@@ -176,6 +177,7 @@ flowchart LR
 | Conversazione come prima capacità | è il consumatore più sottile di *tutti* i meccanismi del kernel: lo valida da capo a fondo con il minimo codice |
 | Agenti prima di Coding | Coding usa gli anelli e i sensori che Agenti introduce per primo |
 | Generazione asset prima di Voce | chiude **SP-1** (il rischio più grande) prima; e **SP-2** richiede che esistano *entrambi* — voce e job GPU pesante |
+| **Gesti dopo GUI minima e Conversazione, e prima di Voce** | dal 2 i pannelli mobili e il primo invocatore del registro ([ADR-0038](adr/0038-registro-delle-funzioni-del-programma.md)); dal 3 la run che un gesto di comando comanda. Il **primo worker vero paga** — trasporto di `process`, messaggio in giù, timbro di build, prontezza del reattore, ciclo di lettura — e la Voce li **riusa** (§2.4 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md)). I gesti non usano la GPU: la ragione che mette Voce dopo Generazione asset — SP-2 vuole voce e job GPU pesante insieme — non li riguarda (decisione 11) |
 | L3 completo per ultimo | packaging, i18n e accessibilità non sbloccano nulla a monte |
 | **Backup dopo indici e pesi** | non è comodità, è non-vacuità. V32 dice che il backup **esclude indici e pesi perché ricostruibili**: prima che 6 e 9 li producano, l'elenco delle esclusioni è vuoto, e verificare V32 su un elenco vuoto è una prova che non può fallire — gotcha #17. Serve inoltre il filesystem reale, che arriva con 5, e l'interfaccia che dichiara le esclusioni **al momento del backup** (follow-up di ADR-0022) |
 
@@ -200,6 +202,7 @@ Costo accettato in ADR-0001: arriva più tardi che in un'architettura con barice
 | SP-2 | Q1 (voce < 600 ms) sotto carico GPU | taratura corsie §2 | ⬜ |
 | SP-3 | budget della proiezione per modello | taratura §5 | ⬜ |
 | SP-4 | provider con annullamento senza addebito | ordine di preferenza §3 | ⬜ |
+| SP-7 | MediaPipe su CPU regge 30 Hz su questa macchina? quanto costa il giro worker → core → GUI a 30 Hz? | il sotto-progetto **12**: le tre ipotesi della §6.4 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md), coi criteri scritti prima in `spikes/gesti/PROTOCOLLO.md` | ⬜ |
 
 Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-design.md).
 

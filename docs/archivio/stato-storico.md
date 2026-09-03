@@ -1060,8 +1060,8 @@ cancellato.
 compendio un margine che il passaggio unico della chiusura consumerebbe. Il criterio di taglio è
 quello del disegno del 2026-08-28: **resta in §6 ciò che è vero adesso**.
 
-⚠️ **Le eccezioni che restano in §6, dichiarate qui:** la riga del marcatore del prossimo passo,
-che è il puntatore vivo; e il blocco *«i finding dell'audit sono chiusi»*, col suo comando.
+⚠️ **Le eccezioni che restano in §6, dichiarate qui:** il capoverso del marcatore del prossimo
+passo, che è il puntatore vivo; e il blocco *«i finding dell'audit sono chiusi»*, col suo comando.
 ⛔ **La terza che il disegno prevedeva — una riga che sia una regola per i piani futuri senza
 altra casa — non ha reso nessuna riga**, e il numerale è **tolto** invece che riallineato: la
 cernita ha trovato un'altra casa a ciascuna, coi comandi che stanno nella §7.5 del

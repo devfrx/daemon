@@ -56,6 +56,7 @@ opzioni, perché chi riprende sappia che cosa è stato scartato e non solo che c
 | 6 | La **sezione 2** del disegno, la forma nel kernel | ✅ **approvata il 2026-09-03** sotto accettazione condizionata, letta contro il sorgente di quel giorno | il testo approvato è in §6 |
 | 7 | Dove vivono i **worker Python** (decisione 8 della §8) | **`workers/` alla radice**, fuori da `crates/`, con un lockfile Python per worker — sotto accettazione condizionata, raccomandazione accolta | il lockfile non è cosmesi: §6.10.7 della spec fa reggere il timbro di build su un ambiente Python **nostro e versionato** |
 | 8 | La **sezione 3** del disegno, le decisioni in append | ✅ **approvata il 2026-09-03** sotto accettazione condizionata; con essa le decisioni 1, 3, 4 e 6 della §8 | il testo approvato è in §6 |
+| 9 | La **sezione 4** del disegno, la GUI e lo spike SP-7 | ✅ **approvata il 2026-09-03** dal proprietario; con essa la decisione 5 della §8 | il testo approvato è in §6 |
 
 **Le premesse dette dal proprietario**, che il disegno deve onorare: l'agente è **dormiente e risvegliabile con la wake word**; i gesti sono *«stile Jarvis»*; vuole *«basarmi sulla reale architettura del progetto ed integrare le cose in modo professionale, seguendo prima lo stato dell'arte e i principi di decision-principles»*; e ha *«molti buchi tecnici e soprattutto logici»* in testa, che la §3 scioglie coi documenti del repo.
 
@@ -248,6 +249,35 @@ dei parametri (ADR-0034, ADR-0022), che non esiste, e lo chiude chi lo costruisc
 capacità nella roadmap — con la scelta 1 il sotto-progetto 8 si allarga a «voce e gesti», e se i gesti
 vengano prima della voce si decide nella sezione 5.
 
+#### Sezione 4 — La GUI, il sotto-progetto 2 e lo spike SP-7, approvata il 2026-09-03
+
+Letta contro [`spikes/GUI-REQUISITI.md`](../../../spikes/GUI-REQUISITI.md) (G6, G20, P1–P3), le righe
+M1–M5 di ADR-0029, il consumatore 1 della tabella di ADR-0033 e il formato di
+[`spikes/RISULTATI.md`](../../../spikes/RISULTATI.md).
+
+| Pezzo | Forma | Da dove |
+|---|---|---|
+| la mano sullo schermo | la GUI **disegna la mano dai 21 punti**, in un livello sopra i pannelli; **niente video** (decisione 5 della §8) | il disegno è compositing della webview: sta **dentro la quota di presentazione**, nessuna concessione da chiedere — ADR-0033, consumatore 1 |
+| l'indicatore | un segno **sempre visibile** quando la telecamera è accesa; lo accende il **core** con un messaggio, la GUI non lo indovina | lo spirito di ADR-0023: *una falsa sicurezza è peggio di nessuna sicurezza* |
+| pannelli e menu | il sotto-progetto 2 costruisce pannelli e menu che si muovono con **qualunque puntatore**; la mano è un puntatore in più, e la aggiunge la capacità (pinch che trascina, menu virtuali). Solo stato di presentazione | ADR-0004: la GUI possiede solo presentazione. Il messaggio IPC con la mano si definisce da lì in poi, non prima (sezione 2) |
+| accessibilità | un gesto **non è mai l'unica strada**: ogni funzione gestuale si raggiunge anche da tastiera e click | G20; segue da «un registro, molti invocatori» (ADR A) |
+| ADR-0029 | **nessuna misura in più**; ma **M4** — «P3 con rendering vero» — deve includere la mano disegnata a 30 Hz quando la si lancia: P3 è già stretto (21,43 % su 25) | ADR-0029 righe M1–M5; GUI-REQUISITI P3 |
+
+**Lo spike SP-7** — usa e getta, in `spikes/`, fuori dal workspace (`exclude = ["spikes"]` in `Cargo.toml`).
+I criteri si scrivono **prima** di misurare; l'esito va in `spikes/RISULTATI.md` con le versioni degli
+strumenti, la CPU della macchina e le evidenze, nella forma di SP-5 e SP-6.
+
+| # | Domanda | Criterio, scritto prima | Come |
+|---|---|---|---|
+| S1 | MediaPipe Hand Landmarker su CPU regge 30 Hz su questa macchina? | tempo per fotogramma **< 33 ms** — mediana e p95 riportati — a due mani, 640×480, modo LIVE_STREAM. Il margine si **riporta**, non si promette | Python, `mediapipe` 1.0.1 (F1), telecamera vera |
+| S2 | quanto costa il giro worker → core → GUI a 30 Hz? | latenza da cattura a disegno, mediana e p95; il solo salto core → GUI contro il numero che il repo ha già, **P2 < 100 ms**. L'accettabilità della mano sul pannello la giudica il **proprietario provandola**: nessuna soglia inventata | Python + un relay Rust usa e getta + una pagina che disegna i 21 punti |
+| S3 | una riserva da zero MiB passa l'ammissione? | `Admission::Granted` con `reserved_vram: Mib::ZERO`, **anche a macchina piena**; e la contro-sonda: una riserva vera a macchina piena resta `Queued` | **sonda nel kernel**, `crates/kernel/tests/arbiter_admission.rs` — non spike |
+
+**Decisione della §8 presa qui**, sotto accettazione condizionata: **5** → (a) nessuna anteprima video.
+
+**Registrata, non presa:** se la posizione dei pannelli sopravvive a un riavvio — è configurazione
+(archivio di ADR-0022), che non esiste; la chiude chi costruisce l'archivio.
+
 ---
 
 ## 7. Le sezioni che restano, con ciò che ciascuna porta al proprietario
@@ -273,13 +303,14 @@ vengano prima della voce si decide nella sezione 5.
 | 2 | **quali** funzioni del programma sono gestuali | tutte · una lista | si decide nel sotto-progetto della capacità, non ora |
 | 3 | un gesto può **svegliare** l'agente dormiente, cioè aprire una run senza wake word? | ✅ **DECISA il 2026-09-03: (a)** — solo la wake word sveglia, i gesti di comando valgono a run aperta; (b), il gesto di attenzione, resta aggiungibile dopo senza rifare niente | — |
 | 4 | la telecamera è accesa **per default**? | ✅ **DECISA il 2026-09-03: (a) opt-in** — spenta finché l'utente non la accende, e accenderla è una funzione del registro; dove l'interruttore si salva è la riga 10 | — |
-| 5 | l'anteprima video nella GUI | (a) nessuna, la mano si disegna dai punti · (b) anteprima | (a) |
+| 5 | l'anteprima video nella GUI | ✅ **DECISA il 2026-09-03: (a) nessuna** — la mano si disegna dai punti; il video costerebbe una misura in più per ADR-0029 e una telecamera divisa fra due processi | — |
 | 6 | un gesto può invocare un'azione con effetto **irripetibile** (ADR-0007)? | ✅ **DECISA il 2026-09-03: (a)** — chiede conferma a qualunque invocatore (ADR-0016), e per default la conferma **non è gestuale**: un gesto letto male non deve poter confermare sé stesso | — |
 | 7 | dove finisce la **cattura** con un gesto | run corrente · knowledge base · entrambe | **brainstorming 2**, dipendenza dichiarata |
 | 8 | dove vivono i **worker Python** nel repo | ✅ **DECISA il 2026-09-03: `workers/` alla radice**, con un lockfile per worker — sotto accettazione condizionata (§2, riga 7). Scartato *«dentro `crates/`»*: Cargo tratta `crates/` come workspace, e un pacchetto non Rust lì confonde il cancello e ADR-0031 | — |
 | 9 | la **terza quota** di ADR-0005 | si apre quando esiste un tracciatore su GPU | registrata, non presa |
 | 10 | dove si **salva l'interruttore** della telecamera fra un avvio e l'altro | l'archivio dei parametri (ADR-0034, ADR-0022), che non esiste | registrata, non presa: la chiude chi costruisce l'archivio |
 | 11 | la **posizione nella roadmap** della capacità | il sotto-progetto 8 allargato a «voce e gesti» · i gesti prima della voce | si decide nella sezione 5 |
+| 12 | se la **posizione dei pannelli** sopravvive a un riavvio | configurazione, archivio di ADR-0022, che non esiste | registrata, non presa: la chiude chi costruisce l'archivio |
 
 ---
 

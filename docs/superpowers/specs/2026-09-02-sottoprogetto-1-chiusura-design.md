@@ -525,7 +525,8 @@ proprietario dice che cosa vi andrà scritto; a scriverlo sarà il compito 4.
 ⛔ **Sta qui e non nel compendio** — decisione **B** del disegno del Traguardo 6, per la stessa
 ragione: il compendio ha un tetto nel cancello. Scritto eseguendo il piano della chiusura, che
 è un audit prima di essere una scrittura. ⚠️ **In bozza finché il compito 4 non lo data:** le
-righe 6 e 7 della §7.2, la §7.4, la §7.5, la §7.6 e la §7.9 le scrivono i compiti che seguono.
+righe 6 e 7 della §7.2, la §7.6 e la §7.9 le scrivono i compiti che seguono; la §7.4 è del
+compito 2 e la §7.5 del compito 3, e sono scritte.
 
 ### 7.1 I conteggi, rifatti col comando prima di leggere che cosa i documenti ne dicono
 
@@ -545,6 +546,9 @@ cifra e il suo comando hanno una casa sola, e un rimando non marcisce.
 | **G** — le campagne DST | cinque | cinque file: quattro in `crates/simulator/tests/` e `crates/platform/tests/engine_crash_consistency.rs` | no |
 | **H** — i casi `compile_fail` e i loro `.stderr` | 40 e 40, nessuno vuoto | `40` · `40` · `0` vuoti | no |
 | **C** — le righe di `tracciabilita.md` per stato | 171: 71 ✅ · 25 🔶 · 74 📋 · 0 ⚠️ · 1 ❌ | ⚠️ **rilanciato dal compito 2 il 2026-09-03 sul commit `a084f79`**, non su `9214255`: `71 · 25 · 74 · 0 · 1`, totale `171`, zero CR | no |
+| **D** — i byte del blocco della §6 da archiviare | 38 713 | ⚠️ **rilanciato dal compito 3 il 2026-09-03 sul commit di base `20bb9bf`**, che è quello del compito 2: `39257`. ⛔ E il comando conta **byte LF**: il `sed` di questa Git Bash toglie i `CR`, mentre il file ne porta uno per riga — i byte veri del blocco sono `39642`, misurati in Python. §7.7 righe 13 e 17 | **sì** |
+| **E** — il margine sotto il tetto del compendio | 2147 byte | ⚠️ **stesso commit `20bb9bf`**: `1598`. Dopo l'archiviazione: `19418`, col tetto sceso nello stesso commit. §7.7 riga 13 | **sì** |
+| i fine-riga dei tre file di questo compito — «Cosa ha misurato» riga 6 | CRLF nell'albero per `COMPENDIO.md` e `scripts/check-docs.sh`, LF per `archivio/stato-storico.md`; nell'indice tutti LF | prima **e dopo** ogni scrittura: `CR` uguale al numero di righe sui due CRLF, `0` sull'archivio, e `git ls-files --eol` invariato — `i/lf w/crlf`, `i/lf w/lf`, `i/lf w/crlf` | no |
 
 La baseline è stata rimisurata prima di leggere qualunque documento: `bash scripts/gate.sh` →
 `GATE GREEN`, `bash scripts/check-docs.sh` → `OK — no inconsistencies.`, `git status --porcelain`
@@ -769,6 +773,86 @@ solo non le decide, e chi rilegge deve poter dissentire sapendo su che cosa.
 | Validazione della mesh prima dell'export | la condizione **C** copre *«sensori reali da eseguire»* e oggi è soddisfatta da **4**, *Agenti*; ma il sensore che valida una mesh si costruisce dove si costruiscono le mesh | **🔶 → Generazione asset**: la cella 🔶 dice *«meccanismo deciso, **politica o implementazione** nel sotto-progetto indicato»*, e scrivervi **4** sarebbe falso sulla seconda metà. Le quattro righe 🔶 già nel file che poggiano su un sensore — `git show a084f79:docs/tracciabilita.md \| grep -E '^\| .* \| 🔶 \|' \| grep -iE 'sensor'` — prendono il sotto-progetto della **capacità**: tre di quelle quattro divergono dall'innesco, e sulla quarta — *Classificatore di sicurezza delle azioni* — capacità e innesco coincidono, perché sono entrambi Agenti. ⚠️ **La divergenza fra le due nozioni è la riga 12 della §7.7**, e sceglierne una sola è del proprietario |
 | Notifiche (già 🔶) | la cella dice `→ L3`, l'innesco di `V9` dice **A (2)** | **lasciata com'è**, e registrata nella §7.8: le due nominano metà diverse — la superficie in-app che l'innesco sblocca, e il canale dell'OS che L3 costruisce — quindi la cella non è falsa |
 
+### 7.5 L'archiviazione del racconto del Traguardo 6, e il tetto
+
+⚠️ **Misurata il 2026-09-03 sul commit di base `20bb9bf`**, quello che il compito 2 ha lasciato.
+Le cifre della §1.3 sono del 2026-09-02 e sono state **rifatte prima** di leggere che cosa il
+disegno ne dicesse: due divergono, e la §7.7 dice di quanto e perché. ⛔ **Il blocco resta
+ri-lanciabile per intero** anche adesso che è uscito dal compendio:
+
+```bash
+git show 20bb9bf:docs/COMPENDIO.md | sed -n '/^### Il prossimo passo/,/^✅ \*\*I finding dell/p' | head -n -1 | tail -n +2
+```
+
+| | Misurato il 2026-09-03 | Comando |
+|---|---|---|
+| byte del blocco, e byte usciti davvero | `39257` il blocco intero; ne escono `38614`, perché il capoverso del marcatore **resta** in §6 | blocco **D** del disegno; poi `wc -c` sul blocco estratto meno le eccezioni |
+| byte del compendio, prima → dopo | `207298` → `168998` | `wc -c < docs/COMPENDIO.md`, prima e dopo |
+| tetto, prima → dopo | `208896` → `188416` | `grep -oE '^ceiling=[0-9]+' scripts/check-docs.sh`, e la formula del disegno §4.6 applicata al compendio **dopo** |
+| margine dopo, e in percentuale | `19418` byte | blocco **E**; e per la percentuale, che non si scrive qui, `c=$(grep -oE '^ceiling=[0-9]+' scripts/check-docs.sh \| cut -d= -f2); s=$(wc -c < docs/COMPENDIO.md); echo $(( (c - s) * 100 / s ))` |
+| link prefissati | `18` occorrenze, `7` bersagli distinti, fra cui `../../CLAUDE.md` | il `grep` del Passo 2 sul blocco uscito, e l'espressione del Passo 4 che li riscrive |
+| fine-riga | compendio `2063`→`1695` `CR` = righe · archivio `0` · script `353`→`358` = righe | il `for` del Passo 1, rilanciato dopo ogni scrittura |
+
+⚠️ **I bersagli del blocco intero sono otto e ne sono stati prefissati sette:** l'ottavo — il piano
+della chiusura — sta nel capoverso del marcatore, che **resta** in §6 e non va prefissato. **P-1**
+del piano aveva ragione sulla regola («ogni bersaglio relativo») e il suo numero vale sul blocco
+prima della cernita, non dopo.
+
+**Che cosa resta in §6, e perché.** Il blocco pesava `384` righe; ne resta **un capoverso solo**,
+di sei righe, sotto la propria intestazione.
+
+| Che cosa resta | La ragione | La regola |
+|---|---|---|
+| l'intestazione `### Il prossimo passo` | non è un verbale: è il **delimitatore** di ciò che resta, e il marcatore vivo deve avere un'intestazione sopra di sé | **D1** del piano, da **P-4** |
+| il capoverso che apre con `⏭️` — dalla riga del marcatore fino a quella **prima** di `✅ **IL BRAINSTORMING DELLA CHIUSURA` | è il **puntatore vivo**; un marcatore nell'archivio sarebbe un secondo puntatore, morto. Riconosciuto dal **marcatore** e non dal contenuto, e non toccato: lo riscrive il compito 4 | §4.1 prima eccezione, **P-5**, ed **E5** dell'errata, che ne misura l'estensione — sono **sei** righe, non una |
+| il blocco `✅ **I finding dell'audit sono chiusi**`, col suo `awk` | è vero adesso, ed è la casa dello stato dell'audit **col comando** | §4.1 seconda eccezione. ⚠️ Era già **fuori** dal perimetro per costruzione: quella riga è il marcatore di **fine** del taglio, che quindi non l'ha mai raggiunta |
+| ⛔ **nessuna riga per la terza eccezione** | una **regola per i piani futuri senza altra casa**: non ce n'è nessuna. Ogni riga di forma regolativa del blocco dichiara o ha una casa fuori dal blocco, e la tabella qui sotto le apre una per una | §4.1 terza eccezione. §7.7 riga 15 |
+
+**La cernita, in due direzioni.** I due comandi del Passo 3 sul blocco estratto, rilanciati il
+2026-09-03; ogni riga resa è stata letta **intera** (gotcha **#70**).
+
+| Direzione | Il marcatore | Righe rese |
+|---|---|---|
+| 1 — ogni voce che il blocco chiama aperta ha un'altra casa | `apert\|non pres\|del proprietario\|registrat\|E[0-9]+` | `90` |
+| 2 — ciò che parte, ripassato con marcatori **diversi** | `decision\|da decidere\|chiusore\|sbarra\|aspetta\|voce` | `33` |
+
+⛔ **Nessuna voce è rimasta senza casa, e quindi nessuna riga è restata per la direzione 1.** Le
+case, per famiglia — e trovate **per voce**, leggendo, non per codice, come la §4.3 pretende:
+
+| La voce, come il blocco la chiama | La casa | Come si rifà |
+|---|---|---|
+| `E21`, `E30`, `R6` — «tre voci aperte del Traguardo 5 si chiudono» | la tabella *«LE VOCI APERTE DEL TRAGUARDO 5»* di [`porta-di-qualita.md`](../../porta-di-qualita.md), righe 13, 14 e 26: ciascuna ✅ **CHIUSA** col proprio commit | `grep -nE '\*\*(E21\|E30\|R6)\*\*' docs/porta-di-qualita.md` |
+| `E50` ed `E51`, «restano aperte, e il doc lo dichiara» | stessa tabella, righe 24 e 25. ⛔ **Sono le `E50`/`E51` del piano del Traguardo 5**, non quelle del 6: è esattamente il caso per cui la cernita si fa per voce | idem, con `E50\|E51` |
+| `C-1`, e la **D12** che la rimandava al proprietario | `C-1` è la riga 33 della stessa tabella, ✅ **CHIUSA il 2026-08-31**; `D12` sta nella tabella delle decisioni del [piano del Traguardo 6](../plans/2026-08-30-sottoprogetto-1-traguardo-6-altri-meccanismi.md) | `grep -nE '\*\*(C-1\|D12)\*\*'` sui due file |
+| `X-3` dell'audit, «resta aperta e del proprietario» | la tabella delle voci **senza numero AUD** dell'[audit del 2026-08-27](../../audit-2026-08-27.md) | `grep -n '^\| \*\*X-' docs/audit-2026-08-27.md` |
+| `E96` «del proprietario» ed `E108` «registrata e non presa» | la tabella *«LE VOCI APERTE DEL TRAGUARDO 6»* dello stesso registro, righe 19 e 20 | `grep -nE '\*\*(E96\|E108)\*\*' docs/porta-di-qualita.md` |
+| ogni codice `E<n>` che il blocco nomina | una riga **propria** nell'errata del [piano del Traguardo 6](../plans/2026-08-30-sottoprogetto-1-traguardo-6-altri-meccanismi.md) | il `for` sui codici distinti contro `^\| \*\*E<n>\*\*` nel piano: tutti `1`, tranne `E0004`, che non è una voce — §7.7 riga 16 |
+
+**La terza eccezione, riga per riga: perché nessuna regola resta.** Sono le righe di forma
+regolativa che i due comandi hanno pescato. Ciascuna ha una casa **fuori** dal blocco, aperta e
+letta e non dedotta dal nome.
+
+| La regola, come il blocco la scrive | L'altra casa | Come si rifà |
+|---|---|---|
+| *«a sbarrare è la colonna «Chi la chiude» di `porta-di-qualita.md`: una voce il cui chiusore è questo traguardo va chiusa o portata dal piano»* | [`CLAUDE.md`](../../../CLAUDE.md), nella riga di `superpowers:writing-plans` col richiamo del 2026-08-30; e il gotcha **89** di [`HANDOFF.md`](../../HANDOFF.md), che il blocco stesso nomina | `grep -c 'Chi la chiude' CLAUDE.md` → `1`; `grep -nE '(^\|[^0-9])89([^0-9]\|$)' docs/HANDOFF.md` → la riga del gotcha |
+| `E162` — *«un compito che crea una campagna DST crea anche un bersaglio del passo 7, e `scripts/gate.sh` va nei suoi `Modify:`»* | l'errata del piano del Traguardo 6, **e** il commento del settimo passo di `scripts/gate.sh`, che la scrive in proprio: *«EVERY CAMPAIGN HAS TO BE ADDED HERE BY NAME»* | `grep -n 'ADDED HERE BY NAME' scripts/gate.sh`. È il precedente che il Passo 3 nomina, e ha retto |
+| *«un rimando `E<n>` nel sorgente non è un riferimento: il numero è unico dentro un piano»* | `E96` dell'errata **e** la riga 19 della tabella del Traguardo 6 nel registro, che la scrive per esteso | `grep -nE '\*\*E96\*\*' docs/porta-di-qualita.md` |
+| *«a decidere quanto valga un giro è il perimetro, non il suo numero»* · *«si rivede finché una passata non torna pulita, forte dopo un cambiamento di codice»* | `E53` dell'errata, che il blocco stesso dichiara **casa unica** due volte | `grep -cE '^\| \*\*E53\*\*'` sul piano del Traguardo 6 → `1` |
+| *«un pre-controllo ha una data come tutto il resto»* | `E88` dell'errata, che porta il caso e rimanda alla regola **5** di [`CLAUDE.md`](../../../CLAUDE.md) | idem con `E88` |
+| *«l'elenco dei file di un compito che tocca `RecordKind` deve nominare anche `crates/simulator/tests/dst_campaign.rs`»* | `E50` dell'errata del piano del **Traguardo 6** — ⛔ letta per voce, ed è un'altra `E50` da quella della riga 24 del registro | idem con `E50` |
+| *«`E146` vale per tutti: nell'indice prima della campagna di mutazione»* | `E146` dell'errata, che lo misura su un file nuovo | idem con `E146` |
+| *«il pre-controllo delle quattro domande ha trovato un difetto reale in tutti i compiti dispacciati finora»* | [`CLAUDE.md`](../../../CLAUDE.md), *«Prima di eseguire un compito di un piano»* | `grep -c 'TUTTI i compiti dispacciati finora' CLAUDE.md` → `1` |
+
+**Le prove, rilanciate il 2026-09-03 prima del commit del prodotto.**
+
+| La prova | Il comando | Resa |
+|---|---|---|
+| parola per parola | `diff` fra il blocco estratto — `CR` tolti, link prefissati — e la coda dell'archivio | **zero differenze** su `378` righe |
+| la §6 ha perso **esattamente** quelle righe | `diff` fra la §6 di prima, presa da una copia fatta **prima** della scrittura, e quella di dopo | tolte le `378` righe, aggiunto il solo puntatore |
+| link dell'archivio e tetto | `bash scripts/check-docs.sh` | `OK — no inconsistencies.` |
+| il commit del prodotto | `git diff --stat` | **tre** file esatti |
+| il cancello | `bash scripts/gate.sh` | `GATE GREEN` |
+
 ### 7.7 Dove il disegno è stato smentito dall'esecuzione, e dove ha retto
 
 ⚠️ **Le conferme valgono quanto le smentite**: un verbale di sole smentite farebbe sembrare il
@@ -788,6 +872,11 @@ disegno peggiore di com'era.
 | 10 | **E1** dell'errata del piano: la tabella degli esiti non ha la riga per «è in Entra, ma il codice non lo dà», e il caso esiste | **ha retto, e ha morso più di quanto E1 prevedesse.** E1 lo aveva misurato sulle righe di `§10`; la rilettura lo ha trovato anche su `V9`, dove la §0.4 fa entrare la notifica e la §7.2 aveva già misurato che l'evento non ha soggetto. Le righe col caso **c** sono marcate come tali nella §7.4 |
 | 11 | §3.2: le righe già 🔶 «si rileggono, cambia **solo** se la sede è sbagliata» | **ha retto, e nessuna è cambiata.** Una sola tensione, **registrata invece che risolta**: `Notifiche` porta *«V9 §4 · implementazione → L3»* e l'innesco di `V9` è **A (2)**. Le due nominano metà diverse del meccanismo, quindi la cella non è falsa; la §7.8 la apre al proprietario |
 | 12 | §3.1, fonte **2**: «per un meccanismo rinviato, l'**innesco** dà il sotto-progetto che lo porta» — ed è la **D8** del piano | ⚠️ **ha retto quasi ovunque, e su una riga risponde a un'altra domanda.** La §8.2 della spec dice di quel numero che è *«chi la soddisfa per primo oggi»*, mentre la cella 🔶 di `tracciabilita.md` dice *«meccanismo deciso, **politica o implementazione** nel sotto-progetto indicato»*: due nozioni diverse. Su *Validazione della mesh prima dell'export* divergono: la condizione **C** dà **4** e la mesh si costruisce al **7**. Le righe la cui sede **non** viene da un innesco stanno nella §7.4.2, che le dichiara una per una; la §7.8 apre quella della mesh |
+| 13 | §1.3, i blocchi **D** ed **E**: `38 713` byte da archiviare e `2147` di margine, misurati sul commit `f61fd53` | ⛔ **il disegno era esatto, e il commit del piano lo ha invecchiato in giornata.** Rilanciati sull'albero al commit di base `20bb9bf`: `39257` e `1598`. A crescere è il blocco, di `544` byte, perché il **commit del piano** ha scritto in §6 il capoverso del prossimo passo; il margine ne perde `549`. ⚠️ **E per rimisurare su `f61fd53` non basta `git show`:** rende il blob dell'**indice**, che è LF, e il margine ne risulterebbe `4205`; sull'albero, che è CRLF, torna esattamente `2147`, cioè `LF + righe` — `204691 + 2058`. È la forma del gotcha **#48** che l'archivio porta già, e la colonna che dice la verità è la `w/` di `git ls-files --eol`. La §1.3 aveva scritto di sé che si rifà, ed è il gotcha **#31** nella sua forma più stretta |
+| 14 | **P-1**: *«ogni bersaglio relativo prende il prefisso»*, e sono otto | ⚠️ **ha retto la regola, non il numero — e per una ragione nuova.** Otto sono i bersagli del **blocco intero**; ne escono sette, perché l'ottavo — il piano della chiusura — sta nel capoverso del marcatore, che **resta** in §6. Prefissati `18` occorrenze su `7` bersagli, e il `diff` con l'archivio è a zero. Un numero misurato prima della cernita non è quello di dopo |
+| 15 | §4.1: **tre** eccezioni restano in §6 | ⛔ **due su tre, e la terza non ha reso nessuna riga.** La cernita ha trovato un'altra casa a ogni riga di forma regolativa del blocco — la tabella della §7.5 le apre una per una, `E162` compreso, che il Passo 3 dava già per partente. Il numerale è **tolto** dal puntatore e dall'intestazione dell'archivio invece che riallineato, ed è la voce **E8** dell'errata del piano. ⚠️ E la **seconda** eccezione era fuori perimetro per costruzione: il blocco `✅ I finding` è il marcatore di **fine** del taglio |
+| 16 | §4.3: il blocco *«nominava 58 codici `E<n>` distinti e ognuno ha una riga nell'errata»* | **ha retto sul merito, e il comando del piano ne conta uno in più.** `grep -oE 'E[0-9]+' \| sort -u \| wc -l` rende `59` sia oggi sia su `f61fd53`; il 59° è `E0004`, che sta dentro `` error[E0004] `` ed è un codice del **compilatore**, non una voce d'errata. Le altre `58` hanno ciascuna la propria riga, verificate una per una. La prosa del disegno era giusta; il `grep` del Passo 2 non distingue le due popolazioni |
+| 17 | §4.7 e il Passo 4: *«il blocco viene da un file CRLF, quindi si convertono i CR con `tr -d '\r'` prima»* | ⚠️ **arriva già senza `CR`, e la conversione è un `no-op` — misurato, non supposto.** Il `sed` di questa Git Bash legge in modo testuale e **toglie** i `CR`: `sed -n '645,646p' docs/COMPENDIO.md \| od -c` non ne mostra nessuno dove `head -n 646 \| tail -n 2 \| od -c` ne mostra due. ⛔ **La conseguenza non è cosmetica:** il blocco **D** conta perciò byte **LF**, `39257`, mentre i byte che escono davvero dal file sono `39642` — uno in più per riga. La cautela del piano è stata applicata lo stesso e la misura `tr -cd '\r' \| wc -c` → `0` la conferma; il comando del blocco **D** resta dipendente dall'ambiente, ed è la voce **12** della §7.8 |
 
 ### 7.8 Le voci aperte della chiusura, con chi le chiude
 
@@ -807,3 +896,4 @@ aveva già aperte; dalla sesta in poi le apre questo compito.
 | 9 | ⛔ **le condizioni 1 e 3 della §0.7 sono ❌ il 2026-09-03**, e la §0.7 dice che il sotto-progetto è chiuso quando **tutte** le sue condizioni sono vere | §7.2, le due righe con la propria evidenza | ⛔ **il proprietario, e prima del compito 4**: il compito 4 è l'unico che può scrivere «chiuso», e questo verbale non decide al suo posto |
 | 10 | ⛔ **le righe di `tracciabilita.md` che restano `sede da assegnare`** — quante lo dice `grep -cE '^\| .* \| 🔶 \|.*sede da assegnare' docs/tracciabilita.md`, ed è la resa concreta della voce **3** qui sopra: `Skills` e `Regole e vincoli di progetto` poggiano sul **registro delle guide** (§5 «Si scaglia»), `Storage e cifratura a riposo` sulla **cifratura reale** (§10 «Si scaglia»). Nessuna riga di §8.3 o §8.4 governa quei due meccanismi, e lo dicono due comandi sulle sole righe V e Q della §8 — `awk '/^## 8\. /{i=1} i && /^\|[[:space:]]*[VQ][0-9]+[[:space:]]*\|/' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` tubato in `grep -icE 'guida\|guide'`, che rende `0`, e in `grep -inE 'cifratur\|a riposo\|portachiav'`, che rende solo le righe del **portachiavi**, cioè `V34` e `Q17` | §7.4, le righe con `sede da assegnare` | il proprietario, nella roadmap. ⚠️ **Non sono la ritenzione che P-8 prevedeva:** quella non ha nessuna riga in questo file, e la §7.7 lo registra |
 | 11 | la sede della **notifica**: la riga `Notifiche` dice `→ L3`, l'innesco di `V9` dice **A (2)** = GUI minima, e dopo questa rilettura il file porta entrambe — su righe diverse e per metà diverse dello stesso meccanismo | §7.4.2, letture di confine, e §7.7 riga 11 | il proprietario, se vuole una casa sola. Nessuna delle due è falsa oggi, ed è perché la rilettura non ha scelto al suo posto |
+| 12 | ⛔ **il comando del blocco D della §1.3 misura il proprio testo e non il file, e la differenza dipende dall'ambiente**: il `sed` di questa Git Bash toglie i `CR`, quindi il blocco rende `39257` byte LF dove il compendio ne perde `39642` in CRLF. Su una macchina il cui `sed` conservasse i `CR` lo stesso comando renderebbe un altro numero, e nessuna delle due letture è sbagliata: sono due domande diverse | §7.5, riga «byte del blocco», e §7.7 riga 17 | il proprietario: se il blocco **D** debba misurare **il file** — per esempio con `python -c` o con `head`/`tail` invece del `sed` — o restare com'è, dichiarando che conta il **testo**. Non è un difetto oggi: il blocco è già archiviato, e la §7.5 porta entrambe le cifre |

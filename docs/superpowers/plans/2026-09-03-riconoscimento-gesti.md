@@ -2164,3 +2164,84 @@ chi lo incontra una seconda volta.
 ⛔ **Vicoli ciechi di questa sessione: nessuno nuovo.** L'unica cosa caduta è un'attesa: che il
 compendio portasse **un** marcatore `⏭️` — ne porta due a `1c0a633`, il puntatore e la riga della
 tabella delle voci aperte che lo nomina — corretta nel compito 9 prima del commit.
+
+### Come si riprende — scritto alla chiusura della sessione di ESECUZIONE del 2026-09-03, coi comandi
+
+⚠️ **È il documento di consegna della sessione che ha eseguito i compiti 1, 2 e 3**, chiusa su
+richiesta del proprietario prima della revisione del compito 3. La sezione qui sopra è la consegna
+della sessione che ha scritto il piano e resta com'è: un verbale. Ogni riga di questa è stata
+**riletta coi comandi** prima di essere scritta.
+
+⛔ **DA SAPERE SUBITO: il compito 3 è committato e pushato ma NON RIVISTO.** I compiti 1 e 2 hanno
+avuto la revisione piena (e il compito 1 un'ondata di correzione con ri-revisione mirata); il
+compito 3 no — l'esecutore ha consegnato `cc001b4`, il cancello è verde, ma nessun revisore ha
+rilanciato i comandi né riletto i tre rimandi contro gli ADR che estendono. **La revisione del
+compito 3 è il primo passo della ripresa**, prima di dispacciare il compito 4.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb`. Albero pulito, nessuno stash, nessuna operazione a metà |
+| I commit di questa sessione | `git log --oneline 4d16f33..HEAD`: **quattro** — `5cdc25a` (compito 1: ADR-0038, voce §5, indice, totali), `4062f7e` (compito 1, ondata 1: il richiamo datato in ADR-0038 e le voci E3/E4), `ee4bae5` (compito 2: ADR-0039), `cc001b4` (compito 3: i tre rimandi in testa ad ADR-0001, ADR-0011, ADR-0023, le voci di §5, «voce e gesti» in §1 e in `CLAUDE.md`) — più il commit di questa sezione |
+| La posizione del piano | la tabella in testa: **1, 2, 3 ✅**, 4–9 ⬜. Il numeratore vive lì e in nessun altro posto |
+| Codice di prodotto | **non toccato**: `git diff --stat 1c0a633..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml` non rende nulla; sotto `docs/adr/` ci sono i due ADR nuovi e i tre coi rimandi (solo righe aggiunte: `git diff ee4bae5..cc001b4 -- docs/adr/` non ha righe `-`) |
+| Cancello | `bash scripts/check-docs.sh` → `OK`; `bash scripts/gate.sh` → `GATE GREEN` — **rilanciati alla chiusura dal coordinatore** su `cc001b4`. Si rilanciano, non si citano |
+| Fine-riga | il piano `i/lf w/lf`; il compendio, `README.md`, `HANDOFF.md`, `roadmap.md`, `AVVIO-CHAT.md`, `CLAUDE.md`, ADR-0023 `i/lf w/crlf` con CR = righe; ADR-0038, ADR-0039, ADR-0001, ADR-0011 `i/lf w/lf`: `git ls-files --eol docs/adr/00{01,11,23,38,39}-*.md docs/COMPENDIO.md docs/superpowers/plans/2026-09-03-riconoscimento-gesti.md` |
+| Margine del compendio | positivo alla chiusura, col comando del vincolo 12; i compiti 4 e 9 lo consumano ancora |
+| L'errata | **E1–E7**, tutte committate, nessuna aperta: E1–E2 e E6–E7 dal pre-controllo dei compiti 1 e 4, E3 dalla revisione del compito 1, E5 dal pre-controllo del compito 2, E4 dal coordinatore — e **corretta dalla ri-revisione**, perché diceva il falso su ADR-0005. Il pre-controllo ha trovato un difetto in **tre compiti su tre** dispacciati: la regola di `CLAUDE.md` regge ancora |
+| File temporanei | nessuno nel repository. La ledger SDD e i dispacci di questa sessione stanno in `.superpowers/sdd/2026-09-03-riconoscimento-gesti/` — **git-ignorata, solo su questa macchina**: `progress.md` (baseline, pre-flight scan, ogni decisione con «Ruling:»), `task-N-brief.md`, `task-N-dispatch.md`, `task-N-report.md`, `task-N-review-*.md`, i pacchetti `review-<base>..<head>.diff`. Se non c'è, **questa sezione basta**: tutto ciò che conta è qui |
+
+**Le decisioni prese dal coordinatore eseguendo, col perché** — nessuna è del piano, e il
+proprietario può ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | si lavora su `main` e si committa e pusha a ogni compito, come `CLAUDE.md` prescrive, contro la regola del worktree della skill SDD | le istruzioni del repo vincono sulla skill; costo: commit su `main` da revertire uno per uno |
+| 2 | i brief si estraggono a mano con `sed -n` sulle righe del piano; i modelli sono `sonnet` per l'esecutore e `opus` per il revisore; le ri-revisioni mirate `sonnet` | `task-brief` della skill non riconosce «Compito N»; il testo dei compiti è completo ma i file CRLF vogliono cura |
+| 3 | il richiamo di **E3** in ADR-0038 sta **accanto alla frase falsa**, come i richiami storici (AUD-032, AUD-004, AUD-033 — in tre sezioni diverse, mai in testa) | un ADR è append-only e un richiamo si legge dove si legge la frase; il vincolo 10 del piano descriveva male la forma di AUD-032 (E4) |
+| 4 | i tre rimandi del **compito 3** stanno invece **in testa, sotto `Deciders`**, come il piano detta (D15) | nessuna riga dei tre ADR è falsa: i rimandi estendono la lettura dell'ADR intero; e ADR-0039, già `Accepted`, dice «in testa» in tre punti — spostarli lo renderebbe falso. Costo: tre note lette in testa invece che accanto alla riga |
+| 5 | i **Minor** delle revisioni non entrano nelle ondate: si registrano e li giudica la revisione finale del piano | regola della skill SDD; nessuno è un fatto falso |
+| 6 | la finestra in cui ADR-0039 e la voce 0039 di §5 nominano *«le fonti F1–F9 in `riferimenti.md`»* mentre quel file non le porta ancora **non è una voce d'errata**: è l'ordine che il piano dichiara, e la chiude il compito 5 | la riga *Produces* del compito 5 lo dice; costo: una finestra di falsità di poche ore su `main` |
+
+**I rilievi Minor rimandati alla revisione finale**, con la casa: ADR-0038 dice *«tre modalità di
+supervisione»* dove ADR-0016 dice *«preset»*; in ADR-0039 la riga della sezione *«Costo dichiarato»*
+che porta la frase di E5 non è riavvolta (`awk 'length > 200' docs/adr/0039-*.md`); la lettura di
+*«vita breve»* in ADR-0039 poggia sul solo worker audio, mentre la §2.2 del disegno portava anche
+il requisito R2 di ADR-0004; e la finestra delle fonti F1–F9 (decisione 6 sopra).
+
+**Il compito della sessione successiva: la revisione del compito 3, poi il piano dal compito 4.**
+In ordine, e ogni riga è eseguibile:
+
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -6`: si parte da `main`,
+   e la testa deve essere il commit di questa sezione o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa
+   dell'audit del 2026-08-27 — poi **questo piano fino alla mappa dei file**, l'errata per intero,
+   questa sezione, e il disegno per intero.
+3. **La revisione del compito 3**, con `superpowers:subagent-driven-development`: il brief è il
+   compito 3 più l'errata verbatim; il diff è `git diff ee4bae5..cc001b4`; il revisore **rilancia
+   ogni comando** del Passo 5 del compito, verifica che nei tre ADR il diff abbia solo righe `+`,
+   che i tre blockquote siano identici al Passo 2 (data a parte), che le tre voci di §5 rimandino
+   in una frase appesa, che la §1 e `CLAUDE.md` dicano «voce e gesti», che `README.md` non sia nel
+   diff (D3); e rilegge ciascun rimando contro la frase che estende — ADR-0001 riga *«quattro
+   aree»*, ADR-0011 la cella *«**evento**, che può *avviare* una run»*, ADR-0023 il punto 5 — e
+   contro ADR-0038 e ADR-0039 che i rimandi linkano (gotcha #59). Un Important apre un'ondata
+   con ri-revisione mirata; i Minor si registrano.
+4. Il **compito 4**: il suo pre-controllo contro `ee4bae5` è fatto — E6 ed E7 — e si **rifà**
+   contro il codice di allora: la tabella dei sotto-progetti con la sonda di E7, le due case di
+   «dodici» (`grep -rn 'dodici sotto-progetti' docs/*.md CLAUDE.md` → due vive più il gotcha
+   #70), i conteggi per stato di `tracciabilita.md` (misurati il 2026-09-03: ✅ 46 · 🔶 50 ·
+   📋 74 · ⚠️ 0 · ❌ 1 — si rimisurano, e dopo il compito salgono di **due** 🔶 e **cinque** 📋).
+   La voce **4** del disegno — l'etichetta di strato — è presa da D4, *«L2 + L1 est.»*: il
+   proprietario la ribalta nell'errata prima di dispacciare, se vuole altro.
+5. Poi i compiti 5, 6 e 7 nell'ordine della tabella; il compito 8 **solo col proprietario**
+   presente; il compito 9 chiude e muove la §6 del compendio al brainstorming della knowledge
+   base. A ogni compito le quattro domande di `CLAUDE.md` contro il codice **di allora**, la
+   tabella della posizione aggiornata nel commit, `GATE GREEN` prima, push dopo.
+
+📌 **Trovato eseguendo, e non promosso a gotcha:** ognuno dei sei difetti d'errata di questa
+sessione è un'**attesa scritta senza rilanciare il comando** — nel piano (E1, E2, E6, E7), nel testo
+dettato di un ADR (E3, E5) e perfino nell'errata del coordinatore (E4): la forma dei gotcha #31 e
+#65, non una nuova. L'unico rimedio che ha retto è quello che il piano già prescrive: **ogni
+conteggio si rifà col comando prima di leggere che cosa un documento ne dice** (vincolo 8), e la
+revisione lo rifà una seconda volta.
+
+⛔ **Vicoli ciechi di questa sessione: nessuno.** Nessuna decisione del disegno è stata riaperta.

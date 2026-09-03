@@ -4,7 +4,9 @@
 proprietario, una per volta, in chat il 2026-09-03 — le sezioni 2, 3 e 5 sotto **accettazione
 condizionata**, la cui regola sta qui sotto — e la **§5** fissa dove va la capacità, le dipendenze e
 l'ordine di ciò che segue. Chi riprende ha un disegno intero da tradurre in piano — **dopo** che il
-proprietario lo ha riletto in questa forma.
+proprietario lo ha riletto in questa forma. ✅ **Riletto il 2026-09-03**, sotto accettazione
+condizionata: la verifica di coerenza che quella condizione chiedeva è scritta nella sezione *«Cosa
+questo disegno ha misurato»*, con ciò che ha aggiunto.
 
 ⚠️ **RICHIAMO DEL 2026-09-03, lo stesso giorno:** questo file è nato come **consegna** del
 brainstorming — le cinque sezioni approvate, le scelte del proprietario, lo stato del repository alla
@@ -76,6 +78,7 @@ puntano qui.
 | 10 | dove si **salva l'interruttore** della telecamera fra un avvio e l'altro | ⏳ registrata, non presa | l'**archivio dei parametri** (ADR-0034, ADR-0022), che non esiste: la chiude chi lo costruisce | — |
 | 11 | la **posizione nella roadmap** della capacità | ✅ decisa, sotto accettazione condizionata | una riga nuova, il **sotto-progetto 12 «Gesti»**, che dipende da 2 e 3; Voce dipende anche da 12 (§5.1) | dentro il sotto-progetto 8, Voce: lo rimandava per una ragione — SP-2 — che non riguarda i gesti |
 | 12 | se la **posizione dei pannelli** sopravvive a un riavvio | ⏳ registrata, non presa | configurazione, archivio di ADR-0022, che non esiste: la chiude chi lo costruisce | — |
+| 13 | il **confinamento** del worker telecamera — ⚠️ **non era nella consegna**: trovata il 2026-09-03 verificando la coerenza del disegno contro ADR-0025 | ⏳ registrata, non presa | ADR-0028 rende **obbligatorio il confine di processo**; se quel processo debba essere anche **ristretto** — il livello 2 di ADR-0025 — nessun ADR lo decide, e nel codice non c'è dove dirlo: `WorkerDescriptor` è byte opachi e nel kernel non esiste un tipo di confinamento (`grep -rn -i confinement crates/kernel/src`). La chiude il sotto-progetto 12, col proprietario, quando avvia il primo worker vero | — |
 
 ---
 
@@ -143,6 +146,7 @@ presentazione, lo consuma la GUI, e non tocca mai il giornale, come i frammenti 
 | «Se l'agente dorme, quando succede?» | il core è sempre sveglio; un evento di comando apre un passo in una run — e con la decisione 3 la run la apre **solo la wake word** | quali gesti sono **comando** e quali **manipolazione**: la lista è della capacità |
 | «La foto va in che contesto?» | una cattura è un **artefatto**: file su disco, nel giornale solo il **riferimento** (ADR-0018, ADR-0022); entra nel contesto come **proiezione** (ADR-0008), nella run in corso | se vada **anche** nella knowledge base: brainstorming 2, decisione 7 |
 | «Una foto può dare ordini?» | no: è contenuto **non fidato**, informa e non autorizza (ADR-0014, I6). Un gesto non concede permessi (ADR-0016): un'azione invocata a gesti chiede lo stesso permesso che chiederebbe da tastiera | niente |
+| «Il kernel decide sui gesti?» | no: il gesto è un evento, **dato opaco** (ADR-0020), smistato come la trascrizione che diventa messaggio (ADR-0011); passa dal registro **con lo stesso permesso** di ogni invocatore (ADR A). Il kernel resta **testabile senza modello**: l'evento si inietta a copione, come ogni porta (ADR-0021) | niente |
 | «Chi tiene i fotogrammi?» | il worker, in Python, senza stato, uccidibile in ogni istante (ADR-0028, I5). Al core arrivano **eventi** | la forma dell'evento continuo sul canale `process`: §2.2 |
 | «E la GPU?» | audio e presentazione sono **concessioni permanenti tenute dal core** (ADR-0033, montate dal Task 10 del Traguardo 5). Il porto `process` **pretende una concessione per avviare qualunque worker**: `Process::start(grant, descriptor)` (§5.6 della spec) | niente di nuovo oggi: il worker telecamera chiede una concessione da **zero MiB**, non prelazionabile (§2.2) |
 | «Profilo riservato» | spegne la voce always-on (ADR-0023) | spegne **anche** la telecamera: un richiamo datato, §3.2 |
@@ -192,7 +196,7 @@ I comandi stanno accanto alle affermazioni, e si rilanciano.
 
 | Pezzo | Forma | Dove vive |
 |---|---|---|
-| il worker | Python, possiede la telecamera, MediaPipe su CPU; senza stato, uccidibile in ogni istante (ADR-0028, I5); i fotogrammi non escono mai | `workers/` alla radice, fuori da `crates/` (decisione 8), con un lockfile Python. ⚠️ La cartella **non esiste ancora**, e non la crea questo disegno: nasce col primo worker di prodotto, cioè col sotto-progetto 12 |
+| il worker | Python, possiede la telecamera, MediaPipe su CPU; senza stato, uccidibile in ogni istante (ADR-0028, I5); i fotogrammi non escono mai. ⚠️ ADR-0004 dice dei worker *«vita breve»*: il precedente dell'always-on è il worker **audio**, la cui ricevuta di stream resta aperta *«for its whole life»* (doc di modulo di `crates/kernel/src/ports/process.rs`), e ADR-0004 stesso elenca fra i requisiti strutturali *«Voce always-on con daemon in background»*. Ciò che regge sono **senza stato** e **uccidibile**, e il worker telecamera le ha entrambe | `workers/` alla radice, fuori da `crates/` (decisione 8), con un lockfile Python. ⚠️ La cartella **non esiste ancora**, e non la crea questo disegno: nasce col primo worker di prodotto, cioè col sotto-progetto 12 |
 | il profilo | `ResourceProfile { name: <letterale>, reserved_vram: Mib::ZERO, compute_class: ComputeClass::Realtime, preemption: Preemption::Never }`, finestra `FOR_EVER` — la forma di `AUDIO_RESERVATION`: `grep -n -A5 'const AUDIO_RESERVATION' crates/daemon/src/main.rs` | letterale in `crates/daemon/src/main.rs` |
 | la concessione | segue la vita del worker: entra con `Process::start(grant, descriptor)`, torna con `Killed.grant` ad `Arbiter::release`. Con la telecamera opt-in (decisione 4) si chiede all'**accensione**, non all'avvio del core | già così nel porto `process`: `grep -n -E '^\s*(pub trait\|fn )' crates/kernel/src/ports/process.rs` |
 | il canale in su | `FromWorker` guadagna due varianti — lo stato della mano (21 punti per mano, coordinate **intere**) e il gesto (`kind`: enum chiuso `#[cbor(index_only)]`, `confidence`: intero) — a indici nuovi `#[n(2)]` e `#[n(3)]`, sotto le regole di §6.10 | `crates/kernel/src/wire/worker.rs`, che oggi ha `Fragment` a `#[n(0)]` e `VramPeak` a `#[n(1)]` |
@@ -313,7 +317,7 @@ versioni degli strumenti, la CPU della macchina e le evidenze, nella forma di SP
 |---|---|---|---|
 | S1 | MediaPipe Hand Landmarker su CPU regge 30 Hz su questa macchina? | tempo per fotogramma **< 33 ms** — mediana e p95 riportati — a due mani, 640×480, modo LIVE_STREAM. Il margine si **riporta**, non si promette | Python, `mediapipe` 1.0.1 (F1), telecamera vera |
 | S2 | quanto costa il giro worker → core → GUI a 30 Hz? | latenza da cattura a disegno, mediana e p95; il solo salto core → GUI contro il numero che il repo ha già, **P2 < 100 ms**. L'accettabilità della mano sul pannello la giudica il **proprietario provandola**: nessuna soglia inventata | Python + un relay Rust usa e getta + una pagina che disegna i 21 punti |
-| S3 | una riserva da zero MiB passa l'ammissione? | `Admission::Granted` con `reserved_vram: Mib::ZERO`, **anche a macchina piena**; e la contro-sonda: una riserva vera a macchina piena resta `Queued` | **sonda nel kernel**, `crates/kernel/tests/arbiter_admission.rs` — non spike. ⚠️ `Admission` non deriva `Debug` né `PartialEq`, perché `Grant` non li ha e non deve averli: le asserzioni sono `matches!` e `let … else`, come ogni sonda dell'arbitro (disegno del Traguardo 5) |
+| S3 | una riserva da zero MiB passa l'ammissione? | `Admission::Granted` con `reserved_vram: Mib::ZERO`, **anche a macchina piena**; e la contro-sonda: una riserva vera a macchina piena resta `Queued` | **sonda nel kernel**, `crates/kernel/tests/arbiter_admission.rs` — non spike. ⚠️ `Admission` non deriva `Debug` né `PartialEq`, perché `Grant` non li ha e non deve averli: le asserzioni sono `matches!` e `let … else`, come ogni sonda dell'arbitro (disegno del Traguardo 5). ⚠️ La sonda **non ha una riga di catalogo**: la §7.4 è spec (vincolo globale 7), quindi si **registra** e non si prende — stesso trattamento di PL-1 e di K-1/B-1, stessa ragione (gotcha #36) |
 
 ### 4.3 Registrata, non presa
 
@@ -372,7 +376,9 @@ ha approvato, con le spunte di oggi:
 1. ✅ la sezione 5 approvata **chiude il brainstorming** il 2026-09-03.
 2. ✅ la sessione successiva scrive il disegno **sul posto, in questo file** — fatto il 2026-09-03
    (regola del proprietario del 2026-09-02).
-3. il **proprietario rilegge** questo disegno.
+3. ✅ il **proprietario rilegge** questo disegno — fatto il 2026-09-03, sotto **accettazione
+   condizionata**: *«se è coerente col progetto e col codice e si allinea a decision-principles»*.
+   La verifica è scritta nella sezione *«Cosa questo disegno ha misurato»*, e regge.
 4. poi il piano con `superpowers:writing-plans`. Compiti attesi: i due ADR — ciascuno con la propria
    voce nella §5 del compendio, che `check-docs.sh` pretende — e i tre richiami datati; la riga 12 e le
    dipendenze in `roadmap.md`; le righe di `tracciabilita.md`; le fonti F1–F9 in `riferimenti.md`, con
@@ -482,6 +488,9 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 | 5 | il disegno del Traguardo 6 entrò nella §12 del compendio e in `README.md` **alla chiusura del sotto-progetto**, non quando fu scritto: `git log --format='%h %ad' --date=short -S'traguardo-6-altri-meccanismi-design' -- docs/COMPENDIO.md docs/README.md` dà il primo commit al 2026-09-03, contro un file nato il 2026-08-29 | «questo file nella §12» resta un **compito del piano**, come la consegna prevedeva: questo disegno **non** vi si aggiunge da solo. Il puntatore della §6 del compendio, invece, è mosso oggi, perché il prossimo passo è cambiato |
 | 6 | il compendio è **uniformemente CRLF** nell'albero di lavoro e LF nell'indice; ventuno file di `docs/adr/` su trentasette sono CRLF nell'albero e tutti LF nell'indice: `git ls-files --eol docs/COMPENDIO.md docs/adr/` | chi scrive gli ADR nuovi li scrive **LF**, e chi tocca il compendio conserva i CR e li rimisura: oggi `tr -cd '\r' < docs/COMPENDIO.md \| wc -c` è uguale a `wc -l`, prima e dopo la modifica |
 | 7 | `GrantRequest` attraversa il canale `ipc` con **tre campi e nessun `name`**: `grep -n -A4 'pub struct GrantRequest' crates/kernel/src/wire/ipc.rs` | è il precedente vivo della regola *«nessun testo dal worker arriva a una decisione»* (§2.3), col file esatto invece di un nome nudo |
+| 8 | **La verifica di coerenza chiesta dal proprietario rileggendo** — *«se è coerente col progetto e col codice e si allinea a decision-principles»* — fatta il 2026-09-03 contro le sei invarianti e contro ADR-0004, 0009, 0011, 0014, 0016, 0019, 0020, 0021, 0025, 0028, 0031, 0033, 0034, 0035, 0037, coi comandi di questa sezione e della §6. **Regge**, con tre letture che il disegno non scriveva e ora scrive: la *«vita breve»* di ADR-0004 (§2.2, worker), il gesto come dato opaco di ADR-0020 (§1.5), la sonda S3 senza riga di catalogo (§4.2) | nessuna decisione cambia; le tre letture sono scritte dove il lettore le cerca |
+| 9 | **una lacuna trovata dalla stessa verifica:** nessun ADR decide se il processo del worker sia **ristretto** (livello 2 di ADR-0025) oltre che separato (ADR-0028), e `WorkerDescriptor` è byte opachi: `grep -n -A2 'pub struct WorkerDescriptor' crates/kernel/src/ports/process.rs` | la decisione **13**, registrata col suo chiusore; non sbarra il piano |
+| 10 | la roadmap segna l'**ulteriore strato** quando un sotto-progetto tocca il kernel — `grep -n -E 'L1 est\|L0 \+ L3' docs/roadmap.md` rende le righe 9 e 11 — e la riga 12 approvata dice **L2** mentre paga lavoro di kernel (§2.4) | la voce **4** per il proprietario: una parola, col consiglio scritto |
 
 ---
 
@@ -492,6 +501,9 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 | 1 | la tabella dei controlli per artefatto (§1.4) e la Definizione di «fatto» proposta (§5.5) sono **aggiunte dello scrivente** | il merito viene dalle sezioni approvate, la forma no: si approvano o si cambiano rileggendo questo file, **prima** del piano, che le copia da qui. Consiglio: approvarle così — sono la forma di ogni disegno del repo, e nessuna riga vi decide qualcosa che le sezioni non dicessero |
 | 2 | F8 più debole di come era scritta | nessuna decisione ne dipende oggi. Consiglio: **non** cercare ora una seconda alternativa a MediaPipe — sarebbe lavoro per una voce registrata (la 9), cioè sfoggio; si rimisura quando la voce si apre |
 | 3 | le decisioni **2, 7, 9, 10, 12**, aperte con un chiusore scritto | nessuna sbarra il disegno né il piano; restano nella tabella delle dodici, in una casa sola |
+| 4 | l'**etichetta di strato** della riga 12 della roadmap: la sezione approvata dice **L2**, ma la riga paga anche lavoro di kernel (§2.4), e la roadmap segna l'ulteriore strato quando c'è — la riga 9 è *«L1 est.»*, la 11 *«L0 + L3»* | una parola, presa **scrivendo la riga** nel piano. Consiglio: **«L2 + L1 est.»**, sulla forma delle righe 9 e 11 — se il proprietario non dice altro, il piano la scrive così |
+| 5 | la decisione **13**, il confinamento del worker telecamera | registrata; la chiude il sotto-progetto 12 col proprietario. Consiglio: **processo ristretto**, perché la telecamera è un dispositivo di privacy e ADR-0025 dice che un confinamento più debole non è un ripiego; ma non si decide prima che esista il primo worker, o sarebbe una previsione (gotcha #57) |
+| 6 | la sonda S3 **senza riga di catalogo** | registrata, come PL-1 e K-1/B-1: una riga nuova in §7.4 è spec, vincolo globale 7 |
 
 ---
 
@@ -536,4 +548,5 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 ## Il prossimo passo
 
 ⛔ **Lo dice la §6 del [compendio](../../COMPENDIO.md), in un posto solo.** L'ordine approvato, con
-le spunte di oggi, è nella §5.5 di questo disegno; la prima riga senza spunta è del **proprietario**.
+le spunte di oggi, è nella §5.5 di questo disegno; la prima riga senza spunta è il **piano**, in una
+sessione nuova.

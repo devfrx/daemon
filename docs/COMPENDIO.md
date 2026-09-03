@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-03**, col **SOTTO-PROGETTO 1 CHIUSO** contro la §0.7 della sua spec, dal piano della chiusura eseguito e rivisto; l'ultimo contenuto di **merito** è il puntatore della §6 al disegno dei gesti **scritto**, da rileggere — brainstorming e disegno lo stesso giorno. Manutenzione: §13.
+**Aggiornato il 2026-09-03**, col **SOTTO-PROGETTO 1 CHIUSO** contro la §0.7 della sua spec, dal piano della chiusura eseguito e rivisto; l'ultimo contenuto di **merito** è il puntatore della §6 al **piano** dei gesti da scrivere, col disegno riletto dal proprietario lo stesso giorno in cui è nato. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -645,14 +645,18 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 
 ✅ **IL SOTTO-PROGETTO 1 È CHIUSO IL 2026-09-03 contro la §0.7 della spec**, e il verbale è la §7 del
 [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md).
-⏭️ **IL PROSSIMO PASSO: IL PROPRIETARIO RILEGGE IL DISEGNO del RICONOSCIMENTO GESTI**, scritto **sul posto il
-2026-09-03**, lo stesso giorno in cui il brainstorming si è chiuso con le cinque sezioni approvate, in
+⏭️ **IL PROSSIMO PASSO: SCRIVERE IL PIANO del RICONOSCIMENTO GESTI con `superpowers:writing-plans`**, in una
+sessione nuova, dal disegno scritto **sul posto** e **riletto dal proprietario il 2026-09-03** — brainstorming,
+disegno e rilettura lo stesso giorno — in
 [`specs/2026-09-03-riconoscimento-gesti-design.md`](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md),
 che chi riprende legge **per intero**; la consegna da cui è nato sta in
-[`archivio/consegna-brainstorming-gesti.md`](archivio/consegna-brainstorming-gesti.md), parola per parola. Poi il
-piano con `superpowers:writing-plans`; poi il brainstorming **distinto** della knowledge base; entrambi prima di
-aprire il sotto-progetto 2. Nessuna voce aperta li sbarra: le voci 1 e 2 della §7.8 del disegno della chiusura li
-nominano come proprio chiusore, e nessun'altra li condiziona.
+[`archivio/consegna-brainstorming-gesti.md`](archivio/consegna-brainstorming-gesti.md), parola per parola.
+⚠️ **La rilettura è un'accettazione condizionata** — *«se è coerente col progetto e col codice e si allinea a
+decision-principles»* — verificata quel giorno e scritta nel disegno, sezione *«Cosa questo disegno ha misurato»*;
+una parola della riga 12 della roadmap resta da scegliere scrivendo il piano, ed è la voce 4 delle *«voci che
+questo disegno apre»*. Poi il brainstorming **distinto** della knowledge base; entrambi prima di aprire il
+sotto-progetto 2. Nessuna voce aperta li sbarra: le voci 1 e 2 della §7.8 del disegno della chiusura li nominano
+come proprio chiusore, e nessun'altra li condiziona.
 
 ⛔ **IL RACCONTO DEL TRAGUARDO 6 È USCITO DA QUI il 2026-09-03, e non riassunto:** sta in
 [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola, con le eccezioni

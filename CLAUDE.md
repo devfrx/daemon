@@ -5,7 +5,7 @@
 Leggi **questo file** e poi **[`docs/COMPENDIO.md`](docs/COMPENDIO.md)**, per intero.
 Poi **fermati**.
 
-Il compendio contiene **tutte** le decisioni del progetto — le 38 ADR, le sei
+Il compendio contiene **tutte** le decisioni del progetto — le 39 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 

@@ -175,6 +175,7 @@ sotto-progetto**, nello stesso passaggio.
 | [0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md) | L'evoluzione del formato durevole del giornale | Accepted |
 | [0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) | Il criterio del pari: il formato di un canale privato si sceglie anche sull'ecosistema di chi lo legge | Accepted |
 | [0038](adr/0038-registro-delle-funzioni-del-programma.md) | Il registro delle funzioni del programma: un registro, molti invocatori, lo stesso permesso | Accepted |
+| [0039](adr/0039-telecamera-come-sorgente-di-percezione.md) | La telecamera come sorgente di percezione always-on sotto il core | Accepted |
 
 ## Indice dei diagrammi
 

@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-03**, con **ADR-0038** — il registro delle funzioni del programma — in §5, dal piano del riconoscimento gesti; l'ultimo contenuto di **merito** è quella voce. Manutenzione: §13.
+**Aggiornato il 2026-09-03**, con **ADR-0038** e **ADR-0039** — il registro delle funzioni del programma, la telecamera come sorgente di percezione — in §5, dal piano del riconoscimento gesti; l'ultimo contenuto di **merito** sono quelle due voci. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -157,7 +157,7 @@ Solo **due delle cinque** — `kernel` e `simulator` — sono vincolate da ADR-0
 
 ## 5. Le decisioni, una per ADR
 
-Sono **38 ADR**, di cui **37 ADR in stato Accepted** e uno `Proposed` (0029).
+Sono **39 ADR**, di cui **38 ADR in stato Accepted** e uno `Proposed` (0029).
 Ordine numerico. Il *perché*, le alternative scartate e i costi accettati stanno nel
 file di ciascuno: `docs/adr/`.
 
@@ -590,6 +590,22 @@ analogia); un effetto irripetibile chiede conferma a qualunque invocatore, e **p
 conferma non è gestuale**. La manipolazione della GUI — pannelli, menu — è presentazione e
 **non passa dal registro**. ⛔ **Nessun codice nasce con l'ADR:** il registro lo costruisce il
 primo invocatore, il click del sotto-progetto 2; quali funzioni siano gestuali lo decide il 12.
+
+**0039 — La telecamera come sorgente di percezione always-on sotto il core.** Un worker Python
+**possiede** la telecamera e i fotogrammi **non escono mai**; al core arrivano **eventi** — lo
+stato continuo della mano (21 punti, coordinate **intere**) e il gesto discreto (enum chiuso,
+confidenza intera) — sul porto `process`, una `instruct_stream` poi `read_next` per tutta la
+vita, `minicbor` (§6.10). **Eventi, non passi** (ADR-0011): il core smista la manipolazione alla
+GUI con `Ipc::send`, **campionata** a una frequenza consegnata (ADR-0034); un gesto di **comando**
+apre un passo nella run aperta, dal registro di ADR-0038. **Solo la wake word apre una run.**
+Concessione da **zero MiB**, `Preemption::Never`, chiesta all'**accensione**: la telecamera è
+**spenta per default**, e accenderla è una funzione del registro; **«riservato» la spegne**
+(rimando ad ADR-0023); il campo di `Degradation` nasce col worker. La GUI **disegna la mano dai
+21 punti**, niente video, e porta un **indicatore** acceso dal core. ⛔ **Il primo worker vero paga**
+— trasporto di `process`, messaggio in giù, timbro di build, prontezza del reattore, ciclo di
+lettura — e lo paga il sotto-progetto **12**; la Voce riusa. Tre ipotesi le misurano **SP-7** e
+la sonda S3; il confinamento del worker (decisione 13) e la terza quota (decisione 9) restano
+**registrati**. Le fonti F1–F9 in [`riferimenti.md`](riferimenti.md).
 
 ---
 
@@ -1508,7 +1524,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 | | |
 |---|---|
-| ❌ **ri-derivare l'architettura** | è nei 38 ADR, ciascuno con alternative scartate e motivo |
+| ❌ **ri-derivare l'architettura** | è nei 39 ADR, ciascuno con alternative scartate e motivo |
 | ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ **rifare gli spike SP-5 e SP-6** | esiti, seed, versioni e comandi in `spikes/RISULTATI.md` |

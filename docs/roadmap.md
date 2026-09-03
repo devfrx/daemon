@@ -15,7 +15,7 @@ riga che ospita la data.
 
 ## Stato in una riga
 
-> Spec del kernel **completa e approvata** (§0–§10, 38 ADR). Stack deciso **tranne il
+> Spec del kernel **completa e approvata** (§0–§10, 39 ADR). Stack deciso **tranne il
 > guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**, worker ML in
 > **Python**; Tauri contro Electron resta aperto ([ADR-0029](adr/0029-guscio-della-gui.md),
 > `Proposed`) e **non blocca nulla**.

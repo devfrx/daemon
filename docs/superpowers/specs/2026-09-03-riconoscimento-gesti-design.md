@@ -55,6 +55,7 @@ opzioni, perché chi riprende sappia che cosa è stato scartato e non solo che c
 | 5 | La **sezione 1** del disegno, il perimetro | ✅ **approvata il 2026-09-03**, ripresentata nella sessione successiva. ⚠️ Prima diceva *«presentata, NON approvata»*: il proprietario aveva aperto questa consegna invece di rispondere | il testo approvato è in §6, con la clausola aggiunta rileggendolo |
 | 6 | La **sezione 2** del disegno, la forma nel kernel | ✅ **approvata il 2026-09-03** sotto accettazione condizionata, letta contro il sorgente di quel giorno | il testo approvato è in §6 |
 | 7 | Dove vivono i **worker Python** (decisione 8 della §8) | **`workers/` alla radice**, fuori da `crates/`, con un lockfile Python per worker — sotto accettazione condizionata, raccomandazione accolta | il lockfile non è cosmesi: §6.10.7 della spec fa reggere il timbro di build su un ambiente Python **nostro e versionato** |
+| 8 | La **sezione 3** del disegno, le decisioni in append | ✅ **approvata il 2026-09-03** sotto accettazione condizionata; con essa le decisioni 1, 3, 4 e 6 della §8 | il testo approvato è in §6 |
 
 **Le premesse dette dal proprietario**, che il disegno deve onorare: l'agente è **dormiente e risvegliabile con la wake word**; i gesti sono *«stile Jarvis»*; vuole *«basarmi sulla reale architettura del progetto ed integrare le cose in modo professionale, seguendo prima lo stato dell'arte e i principi di decision-principles»*; e ha *«molti buchi tecnici e soprattutto logici»* in testa, che la §3 scioglie coi documenti del repo.
 
@@ -217,6 +218,36 @@ wake word — e va scritto nell'ADR B come **costo dichiarato**.
 
 **Ipotesi che restano tali:** una riserva da `Mib::ZERO` passa l'ammissione — sonda nel kernel, §5.
 
+#### Sezione 3 — Le decisioni in append, approvata il 2026-09-03
+
+Sotto accettazione condizionata. Le righe degli ADR citate sono state lette quel giorno, coi comandi
+`grep -n -i quattro docs/adr/0001-*.md`, `grep -n -i percettiv docs/adr/0011-*.md`,
+`grep -n -i riservato docs/adr/0023-*.md`, `grep -n -i 'strumenti interni' docs/adr/0025-*.md`,
+`grep -n -i irripetibil docs/adr/0016-*.md` e `grep -n -i registro docs/adr/0009-*.md`.
+
+| ADR nuovo | Decide | Negative (accettate) |
+|---|---|---|
+| **A — il registro delle funzioni del programma** | un registro unico di **strumenti interni** (il livello 1 di ADR-0025), meccanismo di kernel nella forma di ADR-0009: il kernel dà registrazione, invocazione, il permesso come tripla di ADR-0016 e il giornale; le capacità e la GUI portano le funzioni. **Molti invocatori** — agente, gesto, voce, click — **con lo stesso permesso**, e nessuna logica «solo per gesti». Un gesto è un evento di percezione: **informa, mai autorizza** (ADR-0014 per analogia). Un effetto irripetibile chiede conferma a qualunque invocatore (ADR-0016, già così), e **per default la conferma non è gestuale**. La manipolazione della GUI — pannelli, menu virtuali — è presentazione e **non passa dal registro**. Quali funzioni siano gestuali lo decide la capacità (decisione 2 della §8) | un meccanismo di kernel in più prima di ogni capacità; ogni funzione con effetto va dichiarata come tripla; lo stesso permesso pesa anche sulle funzioni banali invocate dalla GUI |
+| **B — la telecamera come sorgente di percezione always-on sotto il core** | la forma della sezione 2 per intero. Più: telecamera **spenta per default**, e accenderla è una funzione del registro; **solo la wake word apre una run**, un gesto di comando entra come passo in una run aperta; «riservato» la spegne; il campo di `Degradation` nasce col worker. **Non costruzioni dichiarate:** il messaggio alla GUI aspetta il sotto-progetto 2; la terza quota aspetta un tracciatore su GPU | un processo Python su CPU finché la telecamera è accesa; un salto in più sulla manipolazione, misurato da SP-7; il conto del **primo worker** (sezione 2); niente GPU su Windows per il tracciatore (F2) |
+
+**I tre richiami datati:**
+
+| ADR | La riga | Il richiamo |
+|---|---|---|
+| ADR-0001 | *«quattro aree — conversazione, agenti/coding, voce, …»* (riga 9) e i consumatori paritari (riga 30) | «voce» si legge **«voce e gesti»**; i pilastri restano quattro, nessun ADR superato |
+| ADR-0011 | la tabella *«inferenza percettiva always-on»*, esempi *«wake word, VAD, trascrizione continua»* (righe 57–64) | entra **il tracciamento delle mani**; un gesto di comando fa come la trascrizione che diventa messaggio — il gesto apre un passo, i fotogrammi no |
+| ADR-0023 | punto 5, *«disattiva avvio automatico e voce always-on»* (riga 65) | entra **«e la telecamera»** |
+
+**ADR-0005 e ADR-0033 non cambiano**: la terza quota resta voce registrata (decisione 9 della §8).
+
+**Le decisioni della §8 prese qui**, sotto accettazione condizionata: **1** → (a) dentro Voce; **3** → (a) solo
+la wake word sveglia; **4** → (a) opt-in; **6** → (a) mai da solo, e la conferma non è gestuale per default.
+
+**Registrate, non prese:** dove si salva l'interruttore della telecamera fra un avvio e l'altro — è l'archivio
+dei parametri (ADR-0034, ADR-0022), che non esiste, e lo chiude chi lo costruisce; e la posizione della
+capacità nella roadmap — con la scelta 1 il sotto-progetto 8 si allarga a «voce e gesti», e se i gesti
+vengano prima della voce si decide nella sezione 5.
+
 ---
 
 ## 7. Le sezioni che restano, con ciò che ciascuna porta al proprietario
@@ -238,15 +269,17 @@ wake word — e va scritto nell'ADR B come **costo dichiarato**.
 
 | # | Decisione | Opzioni | Consiglio |
 |---|---|---|---|
-| 1 | il pilastro (sezione 3) | (a) dentro Voce, con richiamo · (b) quinto pilastro, con ADR che supera 0001 | (a) |
+| 1 | il pilastro (sezione 3) | ✅ **DECISA il 2026-09-03: (a) dentro Voce**, con richiamo ad ADR-0001 — sotto accettazione condizionata. Scartato (b), il quinto pilastro: vorrebbe un ADR che supera 0001 per un contendente della GPU che oggi non la usa | — |
 | 2 | **quali** funzioni del programma sono gestuali | tutte · una lista | si decide nel sotto-progetto della capacità, non ora |
-| 3 | un gesto può **svegliare** l'agente dormiente, cioè aprire una run senza wake word? | (a) solo la wake word sveglia, i gesti di comando valgono a run aperta · (b) un **gesto di attenzione** deliberato, gemello della wake word | la premessa del proprietario dice (a); (b) è coerente con ADR-0011 e si aggiunge dopo senza rifare niente |
-| 4 | la telecamera è accesa **per default**? | (a) opt-in, spenta finché l'utente non la accende · (b) always-on come il microfono | (a): una telecamera è più sensibile di un microfono, e il default conservativo è la forma di ADR-0006 e ADR-0023 |
+| 3 | un gesto può **svegliare** l'agente dormiente, cioè aprire una run senza wake word? | ✅ **DECISA il 2026-09-03: (a)** — solo la wake word sveglia, i gesti di comando valgono a run aperta; (b), il gesto di attenzione, resta aggiungibile dopo senza rifare niente | — |
+| 4 | la telecamera è accesa **per default**? | ✅ **DECISA il 2026-09-03: (a) opt-in** — spenta finché l'utente non la accende, e accenderla è una funzione del registro; dove l'interruttore si salva è la riga 10 | — |
 | 5 | l'anteprima video nella GUI | (a) nessuna, la mano si disegna dai punti · (b) anteprima | (a) |
-| 6 | un gesto può invocare un'azione con effetto **irripetibile** (ADR-0007)? | (a) mai da solo: chiede conferma · (b) sì, se la confidenza supera una soglia | (a): un gesto mal riconosciuto non deve poter autorizzare ciò che non si disfa |
+| 6 | un gesto può invocare un'azione con effetto **irripetibile** (ADR-0007)? | ✅ **DECISA il 2026-09-03: (a)** — chiede conferma a qualunque invocatore (ADR-0016), e per default la conferma **non è gestuale**: un gesto letto male non deve poter confermare sé stesso | — |
 | 7 | dove finisce la **cattura** con un gesto | run corrente · knowledge base · entrambe | **brainstorming 2**, dipendenza dichiarata |
 | 8 | dove vivono i **worker Python** nel repo | ✅ **DECISA il 2026-09-03: `workers/` alla radice**, con un lockfile per worker — sotto accettazione condizionata (§2, riga 7). Scartato *«dentro `crates/`»*: Cargo tratta `crates/` come workspace, e un pacchetto non Rust lì confonde il cancello e ADR-0031 | — |
 | 9 | la **terza quota** di ADR-0005 | si apre quando esiste un tracciatore su GPU | registrata, non presa |
+| 10 | dove si **salva l'interruttore** della telecamera fra un avvio e l'altro | l'archivio dei parametri (ADR-0034, ADR-0022), che non esiste | registrata, non presa: la chiude chi costruisce l'archivio |
+| 11 | la **posizione nella roadmap** della capacità | il sotto-progetto 8 allargato a «voce e gesti» · i gesti prima della voce | si decide nella sezione 5 |
 
 ---
 

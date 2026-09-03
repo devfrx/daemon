@@ -520,13 +520,12 @@ proprietario dice che cosa vi andrà scritto; a scriverlo sarà il compito 4.
 
 ---
 
-## 7. Il verbale della chiusura — in bozza dal compito 1
+## 7. Il verbale della chiusura — 2026-09-03
 
 ⛔ **Sta qui e non nel compendio** — decisione **B** del disegno del Traguardo 6, per la stessa
 ragione: il compendio ha un tetto nel cancello. Scritto eseguendo il piano della chiusura, che
-è un audit prima di essere una scrittura. ⚠️ **In bozza finché il compito 4 non lo data:** le
-righe 6 e 7 della §7.2, la §7.6 e la §7.9 le scrivono i compiti che seguono; la §7.4 è del
-compito 2 e la §7.5 del compito 3, e sono scritte.
+è un audit prima di essere una scrittura. ⚠️ **RICHIAMO DEL 2026-09-03: non è più in bozza.** Il compito 4 ha scritto le righe 6 e 7 della
+§7.2, la §7.6 e la §7.9, e ha datato l'intestazione qui sopra.
 
 ### 7.1 I conteggi, rifatti col comando prima di leggere che cosa i documenti ne dicono
 
@@ -554,9 +553,12 @@ La baseline è stata rimisurata prima di leggere qualunque documento: `bash scri
 `GATE GREEN`, `bash scripts/check-docs.sh` → `OK — no inconsistencies.`, `git status --porcelain`
 senza righe.
 
-### 7.2 Le cinque condizioni della §0.7, rilette contro il codice
+### 7.2 Le condizioni della §0.7, rilette contro il codice
 
-⚠️ **Le righe 6 e 7 le scrive il compito 4**, come lo scheletro del piano prescrive.
+⚠️ **RICHIAMO DEL 2026-09-03:** qui stava *«le righe 6 e 7 le scrive il compito 4»*, e il compito 4
+le ha scritte. E il titolo di questa sezione diceva *«le CINQUE condizioni»* mentre la §0.7 ne
+porta sette: il numerale è **tolto** e non riallineato — voce **E19** dell'errata del
+[piano](../plans/2026-09-02-sottoprogetto-1-chiusura.md).
 
 ⛔ **Il criterio con cui sono giudicate le condizioni 1 e 3, scritto perché sia controllabile e
 non dipenda da chi legge.** Per la **condizione 1** una riga è ✅ quando la cella nomina una delle
@@ -579,6 +581,8 @@ di §8.4 nomina come controllo.
 | 3 | ogni Q in perimetro è verificato col metodo che `design/08` gli assegna, non con un altro | ✅ | le quindici righe del blocco **A** — 8 ✅ e 7 ⚠️ — confrontate una per una: **tredici** coincidono, **due** no: `Q13` e `Q23`, e la divergenza è **dichiarata nella cella stessa**, non nascosta. La tabella qui sotto. ✅ **RICHIAMO DEL 2026-09-03 — le due sono RISOLTE dal compito 3bis, e l'esito passa da ❌ a ✅. Le cifre qui sopra restano quelle dell'audit** (vincolo globale 9): `Q23` **declassata a ⏳**, che la §0.7 non conta · `Q13` risolta dalla **§7.3**, che registra la condizione scritta più larga della decisione, sul precedente della condizione 4 nella stessa sezione. Decisione del proprietario, voce **9** di §7.8, voce **E10** dell'errata del piano |
 | 4 | ogni difetto trovato in simulazione conserva il proprio seme come caso di regressione permanente (V31) | ✅ **salvo il richiamo** per le due campagne del Traguardo 6, che scrive il compito 4 | la riga `V31` di §8.3 è `✅ verificato qui` e dice «debole per natura»; l'elenco di [`semi-dst.md`](../../semi-dst.md) ha la sola riga che si dichiara **vuota e non dimenticata**; il cancello è verde su tutte le campagne. ⚠️ La lettera della condizione è più larga della decisione: §7.3 |
 | 5 | gli ADR della §0.5 sono scritti, ciascuno con le proprie `Negative (accettate)` | ✅ | blocco **F**: sette file, ciascuno con la sezione una volta. La riga 3 della §0.5 è decisa in §2.4 della spec, che dichiara di essere «la decisione n. 3 della §0.5», e la §0.7 dichiara che quella riga resta l'unica decisione della §0.5 senza ADR |
+| 6 | `roadmap.md`, `tracciabilita.md`, lo stato degli spike e `HANDOFF.md` sono aggiornati **nello stesso passaggio** | ✅ | il passaggio unico del compito 4: **un** commit, e `git show --stat HEAD` nomina i **nove** file, che sono quelli della tabella della §5.2 e il piano di questa chiusura: `roadmap.md`, `README.md`, `HANDOFF.md`, `AVVIO-CHAT.md`, `COMPENDIO.md`, `tracciabilita.md`, `semi-dst.md`, questo disegno e il piano. ⚠️ **Lo stato degli spike è aggiornato nel senso che la §5.2 gli assegna: la tabella «Spike aperti» è VERIFICATA e invariata**, perché il sotto-progetto 1 non ne chiude nessuno (§1.3), e la §7.6 lo dichiara. ⛔ **Questa riga è scritta prima del commit e riletta dopo**, perché la sua evidenza è il commit stesso |
+| 7 | `bash scripts/check-docs.sh` esce verde | ✅ | `OK — no inconsistencies.`, uscita 0, rilanciato il 2026-09-03 dopo l'ultimo tocco del passaggio unico. Il cancello intero — `bash scripts/gate.sh` — rende `GATE GREEN` sullo stesso albero |
 
 **Condizione 1, riga per riga.** Le trenta righe sono quelle che il comando del Passo 2 rende: le
 ✅ e le ⚠️ di §8.3. Per una ⚠️ è provata la sola **metà verificata**, che la cella separa da ciò
@@ -858,6 +862,99 @@ letta e non dedotta dal nome.
 | il commit del prodotto | `git diff --stat` | **tre** file esatti |
 | il cancello | `bash scripts/gate.sh` | `GATE GREEN` |
 
+### 7.6 Il passaggio unico sui documenti di stato
+
+⛔ **Un commit solo**, come vogliono la condizione 6 della §0.7 e la §5.4 di questo disegno: è
+l'unico commit della chiusura che scrive «chiuso» del sotto-progetto, e la sua evidenza è
+`git show --stat HEAD`, che nomina i nove file.
+
+⚠️ **Ogni cifra di questa sezione porta accanto il comando che la rifà, e la data.**
+
+#### 7.6.1 I nove file, e che cosa ha perso ciascuno
+
+⚠️ **«Tolto»** significa sottratto senza riscriverlo altrove; **«richiamo»** significa che la riga
+vecchia resta e una riga datata dichiara che cosa non vale più. È la regola 5 della §6.2, e il
+vincolo globale 9 del piano.
+
+| File | Che cosa cambia | Tolto, o richiamo |
+|---|---|---|
+| [`roadmap.md`](../../roadmap.md) | la data in testa · la cella del sotto-progetto 1 · due righe nella tabella dei piani · l'elenco di quali piani siano scritti | **tolti**: il racconto dei sei traguardi dalla cella — è **P-2**, e la §5.2 lo prescrive — e l'enumerazione dei piani scritti. **Due** richiami datati, uno per sottrazione |
+| [`README.md`](../../README.md) | la fase corrente · due righe nella tabella delle spec | nulla tolto: il capoverso di richiami che segue la fase corrente **resta**, e la sostituzione si ferma a `spec.**` (voce **E3**) |
+| [`HANDOFF.md`](../../HANDOFF.md) | l'intestazione · la riga «NON è chiuso» · il punto di ripresa · due celle della mappa | **tolte**: la cifra delle funzionalità mappate, e l'enumerazione dei disegni nella cella di `superpowers/specs/`. **Un** richiamo datato sulla cifra; il richiamo del 2026-08-11 che la seguiva resta |
+| [`AVVIO-CHAT.md`](../../AVVIO-CHAT.md) | una riga del messaggio | **per sottrazione**, e nulla la rimpiazza: la riga sotto dice già che a che punto siamo lo dice la §6 del compendio |
+| [`COMPENDIO.md`](../../COMPENDIO.md) | l'intestazione · il capoverso del marcatore in §6 · il ritratto pieno in §6 · la riga della cifra in §8 · quattro righe in §12 | **tolte** le cifre del ritratto, e al loro posto il **comando** che le riconta; **un** richiamo datato accanto alla riga del blocco del Traguardo 5, che resta parola per parola |
+| [`tracciabilita.md`](../../tracciabilita.md) | la seconda data del riquadro in testa (**D4**) | nulla tolto: la rilettura del compito 2 resta, e la chiusura le si aggiunge sotto |
+| [`semi-dst.md`](../../semi-dst.md) | un richiamo datato per le due campagne del Traguardo 6 | l'elenco dei semi **non** guadagna righe: nessuna delle due campagne è fallita su un caso |
+| questo disegno | la §7 datata, le righe 6 e 7 della §7.2, questa sezione e la §7.9 | **tolto** il numerale «cinque» dal titolo della §7.2, che le due righe nuove rendevano falso — voce **E19** |
+| il [piano](../plans/2026-09-02-sottoprogetto-1-chiusura.md) | la tabella della posizione, e l'errata con **E18** ed **E19** | |
+
+⛔ **Il capoverso del marcatore in §6 è un capoverso, non una riga** (voce **E5**), e la
+sostituzione si ferma **prima** del puntatore dell'archivio, che il compito 3 aveva scritto e che
+resta. ⛔ **E la cella di `roadmap.md` si sostituisce fino al grassetto di chiusura incluso**
+(voce **E14**): fermarsi un carattere prima lascerebbe un `**` orfano attaccato alla colonna
+successiva.
+
+#### 7.6.2 I quattro indici, e il finding della §5.1
+
+⛔ **Il disegno e il piano del Traguardo 6 non stavano in nessun indice**, dal 2026-08-30. È la
+classe del finding **AUD-040**, e il passaggio unico la chiude — insieme a quella del disegno e
+del piano della chiusura, che nascevano con lo stesso buco.
+
+| Indice | Traguardo 6 | La chiusura |
+|---|---|---|
+| tabella dei piani di [`roadmap.md`](../../roadmap.md) | ✅ il piano | ✅ il piano |
+| tabella delle spec di [`README.md`](../../README.md) | ✅ il disegno | ✅ il disegno |
+| mappa dei documenti di [`HANDOFF.md`](../../HANDOFF.md) | ✅ **per rimando**, non per enumerazione | ✅ idem |
+| §12 di [`COMPENDIO.md`](../../COMPENDIO.md) | ✅ disegno e piano | ✅ disegno e piano |
+
+⚠️ **In `HANDOFF.md` la cella smette di enumerare** e rimanda alla cartella e alla tabella delle
+spec del README, come già faceva la cella dei piani. È il motivo per cui si era fermata al
+Traguardo 4: un elenco invecchia, un rimando no.
+
+#### 7.6.3 Le righe che il `grep` della chiusura lascia, e perché ciascuna è legittima
+
+Il comando è quello della §5.5, rilanciato il 2026-09-03 prima e dopo il passaggio:
+
+```bash
+grep -rn 'NON è chiuso\|è in corso' docs/*.md
+```
+
+⛔ **Prima rendeva cinque righe, dopo ne rende due**, e nessuna delle due è viva sullo stato del
+sotto-progetto 1. Sono elencate una per una perché il criterio di chiusura le pretende qui:
+
+| Riga | Perché resta |
+|---|---|
+| [`COMPENDIO.md`](../../COMPENDIO.md), dentro il blocco del Traguardo 5 — *«Il sotto-progetto 1 NON è chiuso: restano il Traguardo 6 e la §8 di `tracciabilita.md`»* | il blocco è **tenuto parola per parola**: archiviarlo è la consolidazione del proprietario, che la §1.2 esclude. E la riga non resta muta — **subito sotto** ha il richiamo datato del 2026-09-03 che dichiara la chiusura |
+| [`porta-di-qualita.md`](../../porta-di-qualita.md) — *«non dice nulla su una scrittura fatta mentre nessun poll è in corso»* | ⛔ **falso positivo**: non parla del sotto-progetto ma di un poll dell'orologio. E il vincolo globale 3 vieta di toccare quel file, salvo una riga falsa trovata dall'audit — questa non lo è |
+
+⚠️ **Le tre righe vive sono sparite, non riscritte altrove:** `README.md` e `HANDOFF.md` dicono
+ora la chiusura con la data e il rimando a questo verbale; `AVVIO-CHAT.md` per **sola
+sottrazione**.
+
+#### 7.6.4 Il tetto del compendio, e gli spike
+
+Il margine, col comando del blocco **E** della §1.3, il 2026-09-03:
+
+```bash
+echo $(( $(grep -oE '^ceiling=[0-9]+' scripts/check-docs.sh | cut -d= -f2) - $(wc -c < docs/COMPENDIO.md) ))
+```
+
+| | Margine |
+|---|---|
+| prima del passaggio unico | **19418** |
+| dopo | **18069** |
+
+⛔ **Il tetto non è stato alzato** — è **P-9**, e la risposta a un tetto rosso sarebbe stata
+togliere prosa dalla §6, non alzarlo. Non è servito: la §6 guadagna il capoverso del marcatore
+riscritto, un richiamo e il comando del ritratto, e perde le cifre del ritratto e una riga
+d'intestazione.
+
+⛔ **La tabella «Spike aperti» di [`roadmap.md`](../../roadmap.md) è verificata e INVARIATA: il
+sotto-progetto 1 non chiude nessuno spike.** `SP-1` e `SP-2` li chiudono i sotto-progetti 7 e 8
+(§1.3). La condizione 6 della §0.7 chiede che lo stato degli spike sia aggiornato *nello stesso
+passaggio*, non che **cambi**: dichiararlo qui è ciò che la §5.2 prescrive al posto di un tocco
+inutile.
+
 ### 7.7 Dove il disegno è stato smentito dall'esecuzione, e dove ha retto
 
 ⚠️ **Le conferme valgono quanto le smentite**: un verbale di sole smentite farebbe sembrare il
@@ -888,6 +985,10 @@ disegno peggiore di com'era.
 
 ⛔ **Nessuna è decisa al posto del proprietario.** Le prime cinque sono quelle che il disegno
 aveva già aperte; dalla sesta in poi le apre questo compito.
+⚠️ **RICHIAMO DEL 2026-09-03:** *«questo compito»* è il **compito 1**, che scrisse questo capoverso.
+Le voci dalla **8** in poi le hanno aperte i compiti 2, 3 e 3bis e le loro revisioni; il
+compito 4 non ne apre nessuna. **Chi** apre una voce non cambia **chi la chiude**, che è la
+sola colonna che conta qui.
 
 | # | Voce | Dove è dichiarata | Chi la chiude |
 |---|---|---|---|
@@ -906,3 +1007,29 @@ aveva già aperte; dalla sesta in poi le apre questo compito.
 | 13 | ⚠️ **REGISTRATA E NON PRESA, ed è del proprietario: `Q7`, `Q8` e `Q20` di §8.4 restano ✅ sulla TECNICA, ma accreditano soggetti che questo stesso commit smette di accreditare altrove.** `Q7` poggia sul test della transizione ad `AttesaUmano` che la riga `V8` ha appena smesso di accreditare; `Q8` sull'**evento emesso**, che è la riga `V9`, declassata; `Q20` sulla **metà statica** della riga `V25`, declassata anch'essa. ⛔ **Cade fra le due condizioni:** la **1** parla dei soli **V**, la **3** dei soli **metodi**, quindi nessuna delle due lo coglie, e il compito 3bis non l'ha toccata | le celle di `Q7`, `Q8` e `Q20` in §8.4, contro le righe `V8`, `V9` e `V25` di §8.3 dopo questo commit | il proprietario: se quelle tre celle debbano essere ri-giudicate è suo, come lo era la voce **9**. ⚠️ **Nessuna delle tre è ❌ per la §0.7 oggi**, perché la condizione 3 guarda la **tecnica** e la tecnica coincide |
 | 14 | ⛔ **TRE frasi VIVE della spec, fuori da §8.3 e §8.4, che il commit del compito 3bis ha reso false — REGISTRATE E NON CORRETTE.** La sospensione del vincolo globale 1 copre le sole **§8.3** e **§8.4** (voce **E10**), quindi correggerle sfonderebbe il perimetro che il proprietario ha fissato — e *un rimedio può fermarsi prima di decidere*, precedente **AUD-004**. ① **§8.1.1**, la tabella *«Perché quattro e non tre»*, che **giustifica il vocabolario a quattro stati** con **due sole** righe d'esempio: il commit ha portato a ⏳ entrambe le righe della prima — `V25` e `Q20` — togliendole la premessa *«il controllo gira già a ogni commit, e la sonda scatta»*, che il richiamo di `V25` dichiara falsa. ② **§8.1.3**, capoverso *«Conseguenza visibile»*: dice che `V9` *«è invece ⚠️»* e che *«quel test è eseguibile qui»*, in prosa **viva e non datata**, e `V9` è ora ⏳. ③ **§0.4.1**: *«quindi V35 non è rimandabile»*, dentro il capoverso che la spec chiama *«quello su cui voglio più attenzione in revisione»*, e `V35` è ora ⏳ — ⚠️ qui le due parole *«rimandabile»* hanno **sensi diversi**, scaglionamento del meccanismo contro esistenza del controllo, ed è la ragione per cui va **detta** invece che lasciata a chi legge | la voce **E15** dell'errata del [piano](../plans/2026-09-02-sottoprogetto-1-chiusura.md), che porta il comando che trova ciascuna delle tre | il proprietario: sono prosa di spec **fuori** dal perimetro sospeso, e il rimedio — correggere la frase, datarla, o lasciarla — è suo |
 | 15 | ⚠️ **la §5.4 di questo disegno — approvata — elenca i commit dei compiti 1, 2, 3 e 4 e non ha nessuna riga per il compito 3bis**, che il proprietario ha aggiunto al piano il 2026-09-03 (voce **E10**). Non è **falsa** — non dice *«e nessun altro»* — ma è **incompleta**, e finora il 3bis vive solo nel rapporto dell'implementatore, che non è un documento del repository. ⛔ **La posizione dei compiti ha già una casa unica** — la tabella della posizione del [piano](../plans/2026-09-02-sottoprogetto-1-chiusura.md) — quindi il rimedio non è ricopiarla qui | §5.4, contro la tabella della posizione del piano | il proprietario: §5.4 è una sezione **approvata**, e riscriverla è suo (vincolo globale 9) |
+
+### 7.9 Che cosa questa chiusura NON ha fatto
+
+⛔ **Le righe della §1.2 rilette a chiusura avvenuta**, più ciò che i compiti hanno lasciato.
+Chiudere troppo è un modo di fallire quanto chiudere troppo poco — è la condizione 12 del
+Traguardo 6, e vale qui.
+
+| La §1.2 diceva | Com'è andata |
+|---|---|
+| non tocca la spec | ⚠️ **smentita dal proprietario, non dall'esecuzione**: il vincolo globale 1 è stato **sospeso** il 2026-09-03 per il solo compito 3bis e per le sole **§8.3** e **§8.4** (voce **E10**). Fuori da quelle due tabelle la spec non è toccata, **nemmeno** per le tre frasi vive che quel commit ha reso false — voce **14** della §7.8, voce **E15** dell'errata |
+| non chiude le voci aperte del proprietario | ✅ **tenuta**: la §7.8 le **dichiara** con la colonna «chi la chiude», e per nessuna il chiusore è questo piano |
+| non riordina la roadmap | ✅ **tenuta**: la tabella dei sotto-progetti e quella dei traguardi restano nell'ordine che avevano. Cambiano una cella di stato, la data in testa, e la tabella dei piani guadagna due righe |
+| non archivia il blocco «voci aperte e racconto del Traguardo 5» | ✅ **tenuta**: il blocco resta in §6 parola per parola e riceve **un** richiamo datato di una riga. Ciò che è uscito dalla §6 è il racconto del **Traguardo 6**, che è un'altra cosa e l'ha fatto il compito 3 |
+| non tocca [`riferimenti.md`](../../riferimenti.md) | ✅ **tenuta**: `git diff --name-only <base>..HEAD -- docs/riferimenti.md` non rende niente |
+| non rilancia tutte le mutazioni | ⚠️ **tenuta per il livello 2, e superata per il livello 1**: il compito 1 ha rilanciato davvero le quattro violazioni deliberate, una per script, e le ha revocate da una copia byte-esatta. La condizione 2 poggia su rossi **misurati**, non citati — ed è più forte di ciò che il disegno prometteva |
+| non crea righe di catalogo, e non marca ✅ nessuna riga ⚠️ o ⏳ della §8 | ✅ **tenuta intera**: il compito 3bis ha **declassato** righe, mai promosse; il caso `compile_fail` che ha scritto esercita una riga di catalogo che esisteva dal 2026-08-10, e nessuna riga nuova è nata |
+
+**E ciò che i compiti hanno lasciato, che la §1.2 non prevedeva.**
+
+| | |
+|---|---|
+| le voci della **§7.8** restano tutte aperte | nessuna è chiusa qui: la colonna «chi la chiude» nomina il proprietario, un sotto-progetto futuro, o una misura che ancora non esiste. La chiusura del sotto-progetto 1 è contro la **§0.7**, non contro l'insieme delle voci aperte |
+| la §8 della spec resta con righe ⏳ | è il rimando in coda alla §0.7 a dirlo: *«una riga rimandato non le viola»*. Le condizioni 1 e 3 si leggono sulle righe in perimetro |
+| nessun documento di stato porta più un conteggio di righe della §8 | il ritratto pieno del compendio è ora un **comando**. Chi vuole le cifre lancia il blocco **A**: quelle che c'erano erano stantie già il 2026-09-02 |
+| `ADR-0029` resta in `Proposed` | `check-docs.sh` lo dichiara a ogni giro — *«awaiting approval»* — ed è del proprietario. Non è una condizione della §0.7, e la chiusura non l'ha toccato |
+| le tre frasi vive della spec rese false dal compito 3bis | registrate e **non** corrette: voce **14** della §7.8. Un rimedio può fermarsi prima di decidere — precedente **AUD-004** |

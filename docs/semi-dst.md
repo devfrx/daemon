@@ -78,6 +78,14 @@ interpretabile una sua voce sono però le proprie:** `SHORT_CAMPAIGN_SEEDS` ed
 rimedio è **rimisurare lo spazio degli esiti e riscegliere il numero**, non editarlo finché la
 barra torna verde.
 
+⚠️ **RICHIAMO DEL 2026-09-03, alla chiusura del sotto-progetto 1: le campagne sono CINQUE.** Le due
+nate col Traguardo 6 — `crates/simulator/tests/gui_death_campaign.rs` e
+`crates/simulator/tests/worker_kill_campaign.rs` — stanno nella **colonna di sinistra** della
+tabella qui sopra: livello **1**, un caso si identifica con un **seme**. Le costanti che rendono
+interpretabile una loro voce sono le proprie: `SHORT_CAMPAIGN_SEEDS` ed `EXPECTED_WORLDS` nella
+prima, `SHORT_CAMPAIGN_SEEDS` e `KILL_HORIZON` nella seconda. ⛔ **L'elenco non guadagna righe:**
+nessuna delle due è fallita su un caso, e il verbale della chiusura lo dichiara.
+
 ⚠️ **E il chiudente di questa pagina resta quello che il riquadro in fondo dichiara: non ce
 n'è uno.** Il Task 13 ha deciso **la riga**, non la **guardia**: pretendere che ogni voce nomini
 un test esistente sarebbe una riga di catalogo nuova in `scripts/check-docs.sh`, e quella è del

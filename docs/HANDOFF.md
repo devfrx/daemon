@@ -1,14 +1,14 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-09-02**, con la **chiusura del Traguardo 6** e il gotcha **#110** — ⚠️ questa riga diceva **2026-08-28** dopo tre tocchi del 2026-09-01: la data segue il file (finding **AUD-039**), e qui non l'aveva seguito.
+Aggiornato il **2026-09-03**, con la **chiusura del sotto-progetto 1** — ⚠️ questa riga diceva **2026-08-28** dopo tre tocchi del 2026-09-01: la data segue il file (finding **AUD-039**), e qui non l'aveva seguito.
 ⚠️ **L'ancora è stata corretta il 2026-08-27 e la DATA no**, perché era già giusta: a marcire
 qui non è il *quando* ma il *a che cosa si riferisce*, ed è la metà che il rimedio del 2026-08-11
 — *«sono due date»* — non aveva coperto. Stessa specie del finding **AUD-034** sul compendio.
 Il Traguardo 5 del sotto-progetto 1 è **chiuso dal 2026-08-25** —
 l'arbitro GPU per intero: ammissione, code per corsia, ciclo della concessione, revoca con la
 propria grazia, le due policy VRAM, il cablaggio di produzione e la campagna DST dell'arbitro.
-⛔ **Il sotto-progetto 1 NON è chiuso:** i sei traguardi sono eseguiti — il **6** il
-2026-09-02 — e resta la sua **Definizione di «fatto»**, che è la §0.7 della spec.
+✅ **Il sotto-progetto 1 è chiuso il 2026-09-03 contro la §0.7 della spec**, e il verbale è la §7 del
+[disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md).
 Serve a riprendere senza rifare, e senza rilitigare ciò che è già deciso.
 ⚠️ **Questa riga diceva *«aggiornato il 2026-08-11»*** mentre il file era stato toccato
 **diciassette volte** dopo — contate col comando, `git log --since=2026-08-12 -- docs/HANDOFF.md`,
@@ -31,7 +31,8 @@ e pushati. È il gotcha **#31** sull'intestazione, che nessuno rilegge perché �
 il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit del 2026-08-11.
 
 > 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — la spec del
-> sotto-progetto 1 è **completa e senza voci aperte**, e il sotto-progetto è **in corso**.
+> sotto-progetto 1 è **completa e senza voci aperte**, e il sotto-progetto 1 è **chiuso**; il prossimo
+> passo lo dice la §6 del [compendio](COMPENDIO.md).
 > ⚠️ ***«Senza voci aperte»* significa *nessuna sezione lasciata da approvare*, non *nulla in
 > sospeso sulla spec***: fra le voci che il Traguardo 5 lascia aperte ce ne sono che toccano la
 > **§7.4**, che **è** spec, e stanno tutte nella tabella *«Le voci aperte del Traguardo 5, in
@@ -1275,12 +1276,12 @@ per chiudersi.
 | ⛔ [`COMPENDIO.md`](COMPENDIO.md) | **l'unica lettura obbligatoria** insieme a `CLAUDE.md`: tutte le decisioni compresse, le invarianti, lo stack, i gotcha, **lo stato di oggi e il prossimo passo (§6)**. ⚠️ **Mancava da questa tabella**, ed è stato aggiunto il 2026-08-10: il file più importante del repository non compariva nella mappa che dice dove va cosa, pur essendo nominato dieci volte nella prosa qui intorno |
 | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | il messaggio da incollare all'inizio di una sessione, e il perché di ogni sua riga. ⚠️ Mancava anche questo |
 | [`roadmap.md`](roadmap.md) | dodici sotto-progetti, ordine, dipendenze, decisioni aperte |
-| [`tracciabilita.md`](tracciabilita.md) | **171** funzionalità → dove vive ciascuna. ⚠️ Questa cella diceva *«170»*, cifra che l'audit del 2026-08-10 aveva già ricontata e corretta **nel compendio e non qui**: la stessa cifra in due posti con due valori, colta il 2026-08-11 |
+| [`tracciabilita.md`](tracciabilita.md) | le funzionalità della mappa originale → dove vive ciascuna; **quante** lo dice il comando nel riquadro in testa a quel file. ⚠️ **RICHIAMO DEL 2026-09-03:** la cifra è **tolta** e non riallineata — viveva qui e nel compendio, ed è la specie che il richiamo qui sotto già registra. ⚠️ Questa cella diceva *«170»*, cifra che l'audit del 2026-08-10 aveva già ricontata e corretta **nel compendio e non qui**: la stessa cifra in due posti con due valori, colta il 2026-08-11 |
 | [`README.md`](README.md) | indice di ADR e diagrammi |
 | [`porta-di-qualita.md`](porta-di-qualita.md) | **dove vive ogni controllo**: ogni riga del catalogo §7.4 → il file che la implementa, le sonde per nome, e ciò che la porta **non** controlla ancora |
 | [`adr/`](adr/) | **37 decisioni architetturali**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
-| [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§8 complete, con tutte le evidenze delle misure. ✅ **E dal 2026-08-11 il disegno del Traguardo 4**, che non è una spec nuova: è lo **scaglionamento** che la §3 deliberatamente non fissa — perimetro, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita** |
+| [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§8 complete, con tutte le evidenze delle misure. e i **disegni** dei traguardi e della chiusura, che non sono spec nuove: sono lo scaglionamento e le forme che la spec non fissa, e per ogni artefatto il controllo che lo esercita. ⛔ **Quali siano non è scritto qui:** lo dice la cartella, e la tabella delle spec di [`README.md`](README.md) — come già fa la cella dei piani |
 | [`superpowers/plans/`](superpowers/plans/) | i piani, uno per traguardo più quello dello **stack**. ⛔ **Quanti siano e a che punto stiano NON è scritto qui:** lo dicono la tabella dei piani di [`roadmap.md`](roadmap.md) e la §6 del [compendio](COMPENDIO.md), in un posto solo ciascuno. ⚠️ **RICHIAMO DEL 2026-08-21 — questa cella ne enumerava *«quattro»* e li elencava per nome, fermandosi al Traguardo 3 del 2026-08-10: ne mancavano **due**, il Traguardo 4 e il Traguardo 5. È **TOLTA e non riallineata**, perché un elenco che si allunga a ogni traguardo è un numeratore, e invecchia peggio di una cifra — non c'è nessun numero da riconoscere come stantio (`CLAUDE.md`, e la 45ª misura applicò la stessa correzione a [`README.md`](README.md)). ⛔ Ciascuno porta un'**errata in testa** che documenta dove il piano sbagliava, e il conteggio delle voci vive **nell'errata stessa**. ⛔ Un piano non si riscrive: è il registro di ciò che fu osservato eseguendolo |
 | [`../crates/`](../crates/) | **il codice del prodotto.** Cinque crate: `kernel` e `simulator` in `no_std` + `alloc` + `forbid(unsafe_code)`; `platform`, `secrets` e `daemon` sono il posto dove l'I/O deve vivere |
 | [`audit-2026-08-11.md`](audit-2026-08-11.md) | il **primo** audit completo, **chiuso il 2026-08-18** — otto decisioni su otto. Consultazione |

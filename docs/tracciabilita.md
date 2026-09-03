@@ -64,6 +64,9 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 > [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md): una
 > casa sola. ⚠️ **Le righe per stato non stanno qui**, le conta il comando:
 > `for s in ✅ 🔶 📋 ⚠️ ❌; do printf '%s ' "$s"; grep -cE "^\| .* \| $s \|" docs/tracciabilita.md; done`
+>
+> ✅ **Sotto-progetto 1 chiuso il 2026-09-03 contro la §0.7**: la tabella si riaggiorna a ogni
+> sotto-progetto chiuso, come dice la riga sotto il titolo.
 
 ---
 

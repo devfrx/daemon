@@ -18,8 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-02**, col **Traguardo 6 CHIUSO** dal compito 10, eseguito e rivisto; l'ultimo contenuto di **merito** è
-il compito 10 — la chiusura: le dodici condizioni rilette contro il codice, il verbale nella §8 del disegno, le voci aperte in una tabella sola — e le sue due ondate. Manutenzione: §13.
+**Aggiornato il 2026-09-03**, col **SOTTO-PROGETTO 1 CHIUSO** contro la §0.7 della sua spec, dal piano della chiusura eseguito e rivisto; l'ultimo contenuto di **merito** è il passaggio unico. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -644,12 +643,12 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 
 ### Il prossimo passo
 
-⏭️ **IL PROSSIMO PASSO È ESEGUIRE IL PIANO DELLA CHIUSURA del sotto-progetto 1, in una sessione NUOVA** — quattro
-compiti nell'ordine della §5.4 del disegno, un subagente fresco per compito con revisione fra uno e l'altro, e
-l'errata del piano letta **prima** di ciascuno. Il piano vive in
-[`superpowers/plans/2026-09-02-…-chiusura.md`](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md), che ne è la
-casa unica; a che punto sia lo dice la **sua** tabella della posizione, non questa riga. ⚠️ Il prossimo passo **dopo**
-la chiusura lo scrive qui il compito 4, con le parole della §5.2 del disegno.
+✅ **IL SOTTO-PROGETTO 1 È CHIUSO IL 2026-09-03 contro la §0.7 della spec**, e il verbale è la §7 del
+[disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md).
+⏭️ **IL PROSSIMO PASSO: il brainstorming delle DUE FUNZIONI CORE** — il riconoscimento gesti dalla
+telecamera, e la knowledge base — **due brainstorming distinti**, prima di aprire il sotto-progetto 2.
+Nessuna voce aperta lo sbarra: la colonna «chi la chiude» della §7.8 di quel disegno non nomina
+questo passo.
 
 ⛔ **IL RACCONTO DEL TRAGUARDO 6 È USCITO DA QUI il 2026-09-03, e non riassunto:** sta in
 [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola, con le eccezioni
@@ -811,6 +810,8 @@ Traguardo 5»* di [`porta-di-qualita.md`](porta-di-qualita.md), che ne è la cas
 ⛔ **Il sotto-progetto 1 NON è chiuso:** restano il Traguardo 6 e la §8 di
 [`tracciabilita.md`](tracciabilita.md), che si aggiorna alla chiusura del sotto-progetto e non
 di un traguardo.
+⚠️ **RICHIAMO DEL 2026-09-03:** il sotto-progetto 1 è chiuso quel giorno contro la §0.7; la riga sopra
+resta perché questo blocco è tenuto parola per parola.
 ⚠️ **Il numeratore lo muove chi esegue, e vive QUI e in nessun altro punto di questa
 sezione** — ne teneva una seconda copia quattro riquadri più sotto, che è il modo in cui una
 copia marcisce senza che nessuna delle due sembri sbagliata (gotcha **#68**).
@@ -1441,9 +1442,13 @@ lettera del suo enunciato, la **morte del processo**: il perimetro esatto sta in
 senza: una guardia in `check-docs.sh` che pretenda che ogni voce nomini un test esistente sarebbe
 una **riga di catalogo nuova**, cioè una decisione **del proprietario — registrata, non presa**.
 
-📌 **Il ritratto pieno, per il confronto della prossima volta:** **diciotto ✅ · tredici ⚠️ ·
-sei ⏳** per i V · **nove · otto · sette** per i Q. ⚠️ «Tredici» era anche il numero di
-partenza, ma per una tabella diversa: la storia sta in §8.8, e si riconta **ogni volta**.
+📌 **Il ritratto pieno si riconta OGNI VOLTA, e le cifre non stanno qui** — il 2026-09-02 erano
+già stantie in entrambe le tabelle. Il comando, che è il blocco **A** della §1.3 del
+[disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md):
+
+```bash
+awk '/^## 8\. /{i=1} i && /^\|[[:space:]]*[VQ][0-9]+[[:space:]]*\|/ {r=$0; gsub(/\\\|/,"",r); split(r,c,"|"); id=c[2]; gsub(/ /,"",id); k=(c[4]~/verificato qui/)?"ok":(c[4]~/parziale/)?"parziale":(c[4]~/rimandato/)?"rimandato":"altro"; n[substr(id,1,1)" "k]++} END{for (x in n) print x, n[x]}' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+```
 
 ---
 
@@ -1486,7 +1491,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 | | |
 |---|---|
 | ❌ **ri-derivare l'architettura** | è nei 37 ADR, ciascuno con alternative scartate e motivo |
-| ❌ **riscrivere `tracciabilita.md` da zero** | **centosettantuno** funzionalità già mappate — ricontate sulle quindici tabelle il 2026-08-10, ché questa riga diceva *«centosettanta»*: si **aggiorna**, e **solo alla chiusura del sotto-progetto 1** — quindi non ora |
+| ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ **rifare gli spike SP-5 e SP-6** | esiti, seed, versioni e comandi in `spikes/RISULTATI.md` |
 | ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta è **M5** (senza trattino), e richiede una GUI |
@@ -1610,6 +1615,10 @@ Apri **un** file, quello che serve. Non la cartella.
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** |
 | ⛔ **il perimetro del Traguardo 5** — l'arbitro: quanto ne costruisce, le forme che la §5 descrive a parole, e per ogni artefatto **il controllo che lo esercita**. ⛔ **Si legge PRIMA di scriverne il piano**, ed è il file da cui si riprende | [`specs/2026-08-18-…-traguardo-5-arbitro-gpu-design.md`](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md) — ⚠️ **non è una spec**: è lo scaglionamento e le forme che la §5 non fissa |
 | ⛔ **come si ESEGUE il Traguardo 5** — tredici compiti in cinque parti, col codice per ogni passo, le mutazioni da provare e i comandi. ⚠️ **L'errata in testa si legge PRIMA del compito**, e il pre-controllo del piano — le sette voci — sta subito sotto | [`plans/2026-08-18-…-traguardo-5-arbitro-gpu.md`](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **il perimetro del Traguardo 6** — gli altri meccanismi, le forme, il controllo per artefatto, e la **§8** col verbale della sua chiusura | [`specs/2026-08-28-…-traguardo-6-altri-meccanismi-design.md`](superpowers/specs/2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md) |
+| ⛔ **come si è ESEGUITO il Traguardo 6** — dieci compiti in cinque parti, con l'errata in testa | [`plans/2026-08-30-…-traguardo-6-altri-meccanismi.md`](superpowers/plans/2026-08-30-sottoprogetto-1-traguardo-6-altri-meccanismi.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **come si è CHIUSO il sotto-progetto 1** — le condizioni della §0.7 rilette contro il codice, e la **§7** col verbale | [`specs/2026-09-02-…-chiusura-design.md`](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md) |
+| il piano della chiusura, con l'errata in testa e la tabella della posizione | [`plans/2026-09-02-…-chiusura.md`](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) |
 | il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** |

@@ -197,7 +197,7 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
    Non è tipografia: la regola non stava scritta, e un traguardo intero è stato
    scritto con gli identificatori italiani e poi rifatto.
 
-⚠️ IL REPOSITORY CONTIENE CODICE RUST, e il sotto-progetto 1 è in corso.
+⚠️ IL REPOSITORY CONTIENE CODICE RUST.
    ⛔ Quanti traguardi siano eseguiti e a che punto sia il prossimo lo dice la
    §6 del compendio, in un posto solo: qui non è scritto apposta, perché una
    cifra ricopiata marcisce. ⚠️ E questa riga la ricopiava lo stesso, due

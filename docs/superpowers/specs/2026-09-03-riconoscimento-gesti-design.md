@@ -15,16 +15,17 @@ accanto il comando che la rifà, e le fonti portano la data.
 
 ---
 
-## 0. Lo stato del repository alla consegna — 2026-09-03, coi comandi
+## 0. Lo stato del repository — aggiornato alla chiusura del brainstorming, 2026-09-03, coi comandi
 
 | | |
 |---|---|
 | Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb` |
 | Il sotto-progetto 1 | **mergiato su `main` il 2026-09-03**: commit di merge `e77329a` (due genitori, albero identico alla testa del ramo), poi `a38d898` che ha portato su `main` il punto di ripresa di `HANDOFF.md` e la riga `branch` di `AVVIO-CHAT.md`. Il ramo `spec/sottoprogetto-1-kernel` è **cancellato**, in locale e su `origin` |
 | Albero | pulito, nessuno stash, nessuna operazione a metà |
-| Cancello | `bash scripts/gate.sh` → `GATE GREEN` sull'albero mergiato, **prima** del push; `bash scripts/check-docs.sh` → `OK`. Si **rilanciano**, non si citano |
-| Codice di prodotto | **non toccato** da questo brainstorming: nessun file in `crates/`, `scripts/`, `Cargo.lock` |
-| Questo file | entra col commit di consegna, insieme al puntatore nuovo della §6 del compendio |
+| Cancello | `bash scripts/check-docs.sh` → `OK` a ogni commit della sessione che ha chiuso il brainstorming. `bash scripts/gate.sh` **non rilanciato** in quella sessione, e dichiarato: nessun file di codice è stato toccato, lo prova il comando della riga sotto; l'ultimo `GATE GREEN` è quello sull'albero mergiato, **prima** del push del merge. Si **rilanciano**, non si citano |
+| Codice di prodotto | **non toccato** dal brainstorming, dall'apertura alla chiusura: `git diff --stat c8e234e..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml` non rende nulla |
+| Questo file | è entrato col commit di consegna `c8e234e`, poi un commit per sezione approvata e uno per la chiusura: `git log --oneline c8e234e~1..HEAD -- docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md` li elenca. Tutti su `main`, tutti pushati |
+| Fine-riga | questo file è **LF** nell'indice e nell'albero di lavoro; il compendio è LF nell'indice e **CRLF** nell'albero: `git ls-files --eol docs/COMPENDIO.md docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md`. Chi li riscrive **conserva i fine-riga di ciascuno** e li rimisura dopo col comando `tr -cd` di `CLAUDE.md`; nella sessione del brainstorming ha funzionato Python con `newline=""`, scrittura su un temporaneo e `os.replace` (gotcha #82) |
 
 ---
 
@@ -395,7 +396,7 @@ GPU), **10** e **12** (→ l'archivio dei parametri). Nessuna sbarra il disegno.
 ## 11. Come si riprende
 
 1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -3`: si parte da `main`, e questo file deve esserci.
-2. La lettura obbligatoria di `CLAUDE.md`, per intero; poi questo file, per intero.
+2. La lettura obbligatoria che `CLAUDE.md` prescrive — il compendio per intero, in più letture e non in una, e la testa dell'audit del 2026-08-27 — poi questo file, per intero.
 3. Si dichiara al proprietario, in poche righe: il brainstorming è **chiuso** (§2), il compito è **scrivere il disegno**, e l'accettazione condizionata (§1) è in vigore.
 4. Si scrive il disegno **sul posto, in questo file**, al passo «Write design doc» di `superpowers:brainstorming`: il testo approvato della §6 diventa le sezioni del disegno, le decisioni della §8 e le fonti della §10 entrano dove il disegno le ospita. ⚠️ Dove finisca il verbale di questa consegna lo decide chi scrive, con la regola di `CLAUDE.md`: un documento vivo porta ciò che è vero adesso, e un verbale va in [`archivio/`](../../archivio/). ⚠️ E ogni affermazione verificata qui si rilegge contro il codice di **allora**: i comandi stanno accanto.
 5. Poi la revisione del disegno dal proprietario, poi `superpowers:writing-plans`, poi l'esecuzione con `superpowers:subagent-driven-development`.

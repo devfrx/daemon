@@ -2317,6 +2317,38 @@ token** — impossibile per qualunque testo.
 
 ---
 
+## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)
+
+Consultate il **2026-09-03** scrivendo il
+[disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md), e portate qui col piano,
+come la §7 del disegno prescrive. **Nessuna misura in questa sezione:** sono fonti, e le tre
+ipotesi che ne discendono le misurano **SP-7** — l'esito in
+[`spikes/RISULTATI.md`](../spikes/RISULTATI.md) — e la sonda S3 nel kernel. **F8** e **F9** sono
+state rilette alla radice quel giorno, ed è per questo che un'affermazione della consegna del
+brainstorming risulta qui **più debole** di come era scritta.
+
+| | Fonte | Che cosa sostiene | Letta il |
+|---|---|---|---|
+| F1 | PyPI, `mediapipe` — https://pypi.org/project/mediapipe/ | versione **1.0.1** del 2026-08-14; Python 3.9–3.12; ruote per Windows x86-64 e ARM64; Apache 2.0 | 2026-09-03 |
+| F2 | Google AI Edge, `BaseOptions` — https://ai.google.dev/edge/api/mediapipe/python/mp/tasks/BaseOptions | *«GPU support is currently limited to Ubuntu platforms»* | 2026-09-03 |
+| F3 | Google AI Edge, Gesture Recognizer per Python — https://developers.google.com/edge/mediapipe/solutions/vision/gesture_recognizer/python | modi IMAGE, VIDEO, **LIVE_STREAM** con risultati per callback; **otto** gesti pronti — `None`, `Closed_Fist`, `Open_Palm`, `Pointing_Up`, `Thumb_Down`, `Thumb_Up`, `Victory`, `ILoveYou`; gesti propri con `custom_gestures_classifier_options` | 2026-09-03 |
+| F4 | Google AI Edge, Hand Landmarker — https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker | **21 punti** per mano, coordinate normalizzate e in metri; su Pixel 6 **17,12 ms** su CPU e **12,27 ms** su GPU; `num_hands` e tre soglie di confidenza; il modello `hand_landmarker.task` in float16 | 2026-09-03 |
+| F5 | Google AI Edge, Hand Landmarker per il Web — https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker/web_js | `detectForVideo` è sincrono e **blocca il thread della UI**: servono web worker | 2026-09-03 |
+| F6 | GitHub, issue *WebGPU support for Vision Tasks* — https://github.com/google-ai-edge/mediapipe/issues/5826 | aperta dal 2025-01-15, in attesa di Google: nel browser oggi è **WebGL** | 2026-09-03 |
+| F7 | GitHub, release — https://github.com/google-ai-edge/mediapipe/releases | `v1.0.0` del 2026-07-28, dopo `v0.10.35` e `v0.10.33` | 2026-09-03 |
+| F8 | OpenMMLab, RTMPose in `mmpose` — https://github.com/open-mmlab/mmpose/tree/main/projects/rtmpose, e il repository https://api.github.com/repos/open-mmlab/mmpose con l'ultimo rilascio https://api.github.com/repos/open-mmlab/mmpose/releases/latest | Apache 2.0, **non archiviato**; sezione *«Hand 2d (21 Keypoints)»* su COCO-Wholebody-Hand, OneHand10K, FreiHand2d, RHD2d e Halpe; esportazione **ONNX e TensorRT** via MMDeploy, con istruzioni per Windows e `mmdeploy_runtime` su onnxruntime. ⚠️ **Ultimo rilascio `v1.3.2` del 2024-07-12, ultimo push 2025-08-04, novità della pagina ferme a dicembre 2023.** 📌 La consegna del brainstorming citava una fonte **di terza mano** — Forasoft, https://www.forasoft.com/learn/ai-for-video-engineering/articles-ai/openpose-mediapipe-rtmpose-pose-tracking — che diceva *«mantenuta»*: la parola **non regge** letta alla fonte, ed è sostituita qui. Nessuno la citi di nuovo senza risalire a OpenMMLab | 2026-09-03 |
+| F9 | GitHub, issue *GPU Delegate is not yet supported for Windows* — https://github.com/google-ai-edge/mediapipe/issues/5126, letta via https://api.github.com/repos/google-ai-edge/mediapipe/issues/5126 e i suoi commenti | aperta il 2024-02-08, **chiusa il 2024-02-25 dal bot per inattività** — *«This issue was closed due to lack of activity after being marked stale for past 7 days»* — con `state_reason: completed`, che è la parola del bot e non una risoluzione. L'unico commento di un collaboratore, del 2024-02-09: *«GPU support in Python is available for Regular Linux and macOS from version 0.10.8 onwards. Unfortunately, Windows support is not yet available.»* F9 **rafforza** F2 | 2026-09-03 |
+
+⚠️ **Che cosa NON è una fonte primaria, dichiarato:** che il pinch si ricavi dalla distanza fra la
+punta del pollice e quella dell'indice è la pratica corrente nei progetti che usano i 21 punti, e
+il disegno lo dichiara **dedotto** (§6.3). Lo spike SP-7 lo usa così.
+
+⚠️ **E che cosa la versione di Python decide:** F1 dà `mediapipe` 1.0.1 per Python **3.9–3.12**;
+su questa macchina `py -0` elenca 3.14, 3.13 e 3.10, quindi lo spike gira su **`py -3.10`** —
+pre-controllo P-4 del [piano](superpowers/plans/2026-09-03-riconoscimento-gesti.md).
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |
@@ -2328,6 +2360,9 @@ token** — impossibile per qualunque testo.
 | Piattaforme di observability gestite (Braintrust, LangSmith, Phoenix, Datadog…) | incompatibili con il local-first per default. Restano raggiungibili come **destinazione opt-in** dell'esportazione OTLP, scelta dall'utente |
 | Macchina virtuale leggera (microVM) come confinamento **sempre attivo** | costo e complessità su ogni esecuzione, anche per far girare un linter. Resta il **livello 3**, da attivare quando servirà eseguire codice di provenienza ignota ([ADR-0025](adr/0025-confinamento-a-livelli.md)) |
 | Passphrase come cifratura predefinita | romperebbe avvio automatico, daemon e voce always-on: tre requisiti strutturali. Resta il **profilo riservato**, che rinuncia esplicitamente a quei tre ([ADR-0023](adr/0023-cifratura-a-riposo-e-gestore-dei-segreti.md)) |
+| Il tracciamento delle mani **dentro la GUI** — l'approccio 2 del disegno del riconoscimento gesti | muore con la GUI, contraddice lo slot di ADR-0011, blocca il thread della UI (F5): la sorgente di percezione sta **sotto il core** ([ADR-0039](adr/0039-telecamera-come-sorgente-di-percezione.md)). La latenza in più si **misura** (SP-7) invece di darsi per buona |
+| Una **terza quota** permanente nella formula di ADR-0005, oggi | varrebbe zero, e il porto `process` pretende già una concessione: si apre quando esiste un tracciatore su **GPU** — decisione 9 del disegno, registrata |
+| **Forasoft** come fonte su RTMPose | di terza mano: la parola *«mantenuta»* non regge letta alla fonte (F8, qui sopra) |
 
 ## Avvertenza sulla stabilità delle fonti
 

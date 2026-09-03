@@ -1,10 +1,10 @@
 # Riconoscimento gesti dalla telecamera — la consegna del brainstorming
 
-⚠️ **QUESTO FILE È LA CONSEGNA DEL BRAINSTORMING, NON IL DISEGNO.** Il brainstorming è **in
-corso**: le decisioni prese in chat stanno qui, e **lo stato di ogni sezione del disegno sta nella
-tabella della §2**, in una casa sola. Chi riprende legge questo file **per intero** dopo la lettura
-obbligatoria di [`CLAUDE.md`](../../../CLAUDE.md) e del [compendio](../../COMPENDIO.md), e continua
-dalla prima sezione che la §2 non dà per approvata.
+⚠️ **QUESTO FILE È LA CONSEGNA DEL BRAINSTORMING, NON ANCORA IL DISEGNO.** Il brainstorming è
+**CHIUSO il 2026-09-03**: le cinque sezioni sono approvate, il testo di ciascuna sta nella §6 e lo stato
+nella tabella della §2, in una casa sola. Chi riprende legge questo file **per intero** dopo la lettura
+obbligatoria di [`CLAUDE.md`](../../../CLAUDE.md) e del [compendio](../../COMPENDIO.md), e **scrive il
+disegno sul posto**, come dice la §11.
 Quando il disegno sarà scritto, sarà scritto **sul posto, a questo stesso percorso**, come fu per
 il [disegno della chiusura](2026-09-02-sottoprogetto-1-chiusura-design.md): il puntatore della §6
 del compendio non cambia casa. **Il prossimo passo lo dice la §6 del compendio**, in un posto solo.
@@ -57,6 +57,7 @@ opzioni, perché chi riprende sappia che cosa è stato scartato e non solo che c
 | 7 | Dove vivono i **worker Python** (decisione 8 della §8) | **`workers/` alla radice**, fuori da `crates/`, con un lockfile Python per worker — sotto accettazione condizionata, raccomandazione accolta | il lockfile non è cosmesi: §6.10.7 della spec fa reggere il timbro di build su un ambiente Python **nostro e versionato** |
 | 8 | La **sezione 3** del disegno, le decisioni in append | ✅ **approvata il 2026-09-03** sotto accettazione condizionata; con essa le decisioni 1, 3, 4 e 6 della §8 | il testo approvato è in §6 |
 | 9 | La **sezione 4** del disegno, la GUI e lo spike SP-7 | ✅ **approvata il 2026-09-03** dal proprietario; con essa la decisione 5 della §8 | il testo approvato è in §6 |
+| 10 | La **sezione 5** del disegno, voci aperte, dipendenze e prossimo passo | ✅ **approvata il 2026-09-03** sotto accettazione condizionata; con essa la decisione 11 della §8, e il brainstorming è **chiuso** | il testo approvato è in §6 |
 
 **Le premesse dette dal proprietario**, che il disegno deve onorare: l'agente è **dormiente e risvegliabile con la wake word**; i gesti sono *«stile Jarvis»*; vuole *«basarmi sulla reale architettura del progetto ed integrare le cose in modo professionale, seguendo prima lo stato dell'arte e i principi di decision-principles»*; e ha *«molti buchi tecnici e soprattutto logici»* in testa, che la §3 scioglie coi documenti del repo.
 
@@ -278,11 +279,55 @@ strumenti, la CPU della macchina e le evidenze, nella forma di SP-5 e SP-6.
 **Registrata, non presa:** se la posizione dei pannelli sopravvive a un riavvio — è configurazione
 (archivio di ADR-0022), che non esiste; la chiude chi costruisce l'archivio.
 
+#### Sezione 5 — Voci aperte, dipendenze e prossimo passo, approvata il 2026-09-03
+
+Sotto accettazione condizionata. Letta contro la tabella «Sotto-progetti» e il «Perché quest'ordine» di
+[`roadmap.md`](../../roadmap.md), e la sezione 6 di [`tracciabilita.md`](../../tracciabilita.md).
+
+**Dove va la capacità — decisione 11 della §8: una riga nuova, il sotto-progetto 12 «Gesti».** Non dentro
+«Voce»: la roadmap mette Voce dopo Generazione asset perché SP-2 vuole *voce e job GPU pesante insieme*,
+e i gesti non usano la GPU — quella ragione non li riguarda. Si appende **senza rinumerare**, come 0b, 0c
+e 11. Il pilastro resta «voce e gesti» (richiamo ad ADR-0001), costruito in due sotto-progetti come il
+kernel lo è in quattro.
+
+| Riga della roadmap | Dipende da | Perché |
+|---|---|---|
+| **12 — Gesti**, L2 | 2 e 3 | dal 2 i pannelli mobili e il registro delle funzioni (ADR A); dal 3 la run che un gesto di comando comanda |
+| **8 — Voce** | 7, e ora anche **12** | riusa ciò che il primo worker paga (sezione 2): trasporto di `process`, messaggio in giù, timbro di build, prontezza del reattore, ciclo di lettura |
+| **2 — GUI minima** | invariata | ma è il **primo invocatore** del registro di ADR A, col click: chi arriva primo lo costruisce |
+
+**Le righe di tracciabilità:** nella sezione 6, che si intitola «Voce e gesti», con sede «Gesti» —
+tracciamento delle mani, gesti di comando, manipolazione di pannelli e menu con le mani (sede GUI +
+Gesti), cattura con un gesto (Gesti + brainstorming 2), indicatore di telecamera accesa (GUI). Il registro
+delle funzioni va accanto a «Comandi rapidi e slash-command», sede GUI, come meccanismo deciso.
+
+**Le dipendenze dichiarate:**
+
+| Cosa | Da chi dipende |
+|---|---|
+| dove finisce la **cattura** (decisione 7) | il brainstorming 2, la knowledge base |
+| la strada «un evento di percezione apre un passo» (ADR-0011) | la costruisce il **12**, primo con una sorgente di percezione; la voce la riusa |
+| l'interruttore della telecamera e la posizione dei pannelli (decisioni 10 e 12) | l'archivio dei parametri, che nessun sotto-progetto colloca ancora — registrato |
+| il timbro di build sui due canali (§6.1.2) | GUI col **2**, worker col **12**: i due grilletti già scritti in testa a `crates/kernel/src/wire/ipc.rs` e `crates/kernel/src/wire/worker.rs` |
+
+**Le voci che restano aperte**, tutte con un chiusore scritto nella §8: **2** (quali funzioni sono
+gestuali → la capacità), **7** (la cattura → brainstorming 2), **9** (la terza quota → un tracciatore su
+GPU), **10** e **12** (→ l'archivio dei parametri). Nessuna sbarra il disegno.
+
+**Il prossimo passo, in ordine:**
+
+1. ✅ questa sezione approvata **chiude il brainstorming** il 2026-09-03.
+2. la **sessione successiva** scrive il disegno **sul posto, in questo file** (regola del proprietario del 2026-09-02).
+3. poi il piano con `superpowers:writing-plans`. Compiti attesi: i due ADR — ciascuno con la propria voce nella §5 del compendio, che `check-docs.sh` pretende — e i tre richiami datati; la riga 12 e le dipendenze in `roadmap.md`; le righe di `tracciabilita.md`; le fonti F1–F9 in `riferimenti.md`, con F8 risalita a OpenMMLab e il motivo della chiusura di F9 letto; lo spike SP-7 in `spikes/` con l'esito in `spikes/RISULTATI.md`; la sonda S3 nel kernel; questo file nella §12 del compendio.
+4. poi il brainstorming **distinto** della knowledge base; poi il sotto-progetto 2.
+
 ---
 
 ## 7. Le sezioni che restano, con ciò che ciascuna porta al proprietario
 
 ⛔ **Sono il contenuto previsto, non deciso.** Ogni sezione si presenta, si discute, si approva; e ogni decisione si controlla contro i cinque criteri prima di proporla.
+
+⚠️ **RICHIAMO DEL 2026-09-03: le cinque sezioni sono tutte approvate.** Il testo che vale è quello della §6; questa tabella resta come verbale di ciò che era previsto, e dove i due divergono vince la §6.
 
 | Sezione | Contenuto previsto | Decisioni che porta al proprietario |
 |---|---|---|
@@ -309,7 +354,7 @@ strumenti, la CPU della macchina e le evidenze, nella forma di SP-5 e SP-6.
 | 8 | dove vivono i **worker Python** nel repo | ✅ **DECISA il 2026-09-03: `workers/` alla radice**, con un lockfile per worker — sotto accettazione condizionata (§2, riga 7). Scartato *«dentro `crates/`»*: Cargo tratta `crates/` come workspace, e un pacchetto non Rust lì confonde il cancello e ADR-0031 | — |
 | 9 | la **terza quota** di ADR-0005 | si apre quando esiste un tracciatore su GPU | registrata, non presa |
 | 10 | dove si **salva l'interruttore** della telecamera fra un avvio e l'altro | l'archivio dei parametri (ADR-0034, ADR-0022), che non esiste | registrata, non presa: la chiude chi costruisce l'archivio |
-| 11 | la **posizione nella roadmap** della capacità | il sotto-progetto 8 allargato a «voce e gesti» · i gesti prima della voce | si decide nella sezione 5 |
+| 11 | la **posizione nella roadmap** della capacità | ✅ **DECISA il 2026-09-03: una riga nuova, il sotto-progetto 12 «Gesti»**, che dipende da 2 e 3; Voce dipende anche da 12 — sotto accettazione condizionata. Scartato *«dentro il sotto-progetto 8»*: rimandava i gesti per una ragione, SP-2, che non li riguarda | — |
 | 12 | se la **posizione dei pannelli** sopravvive a un riavvio | configurazione, archivio di ADR-0022, che non esiste | registrata, non presa: la chiude chi costruisce l'archivio |
 
 ---
@@ -351,9 +396,9 @@ strumenti, la CPU della macchina e le evidenze, nella forma di SP-5 e SP-6.
 
 1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -3`: si parte da `main`, e questo file deve esserci.
 2. La lettura obbligatoria di `CLAUDE.md`, per intero; poi questo file, per intero.
-3. Si dichiara al proprietario, in poche righe: dove siamo (§0 e §2), quale sezione è la prossima, e che l'accettazione condizionata (§1) è in vigore.
-4. Si presenta la prossima sezione della §7, una per volta, ciascuna controllata contro i cinque criteri prima di proporla; le decisioni della §8 si portano nella sezione che le ospita, con le opzioni. ⚠️ Le sezioni già approvate stanno nella §2 con la data, e non si ripresentano.
-5. A brainstorming chiuso: il disegno si scrive **sul posto, in questo file**, nella sessione che il proprietario sceglie (la regola del 2026-09-02 dice *la successiva*); poi `superpowers:writing-plans`, poi l'esecuzione con `superpowers:subagent-driven-development`.
+3. Si dichiara al proprietario, in poche righe: il brainstorming è **chiuso** (§2), il compito è **scrivere il disegno**, e l'accettazione condizionata (§1) è in vigore.
+4. Si scrive il disegno **sul posto, in questo file**, al passo «Write design doc» di `superpowers:brainstorming`: il testo approvato della §6 diventa le sezioni del disegno, le decisioni della §8 e le fonti della §10 entrano dove il disegno le ospita. ⚠️ Dove finisca il verbale di questa consegna lo decide chi scrive, con la regola di `CLAUDE.md`: un documento vivo porta ciò che è vero adesso, e un verbale va in [`archivio/`](../../archivio/). ⚠️ E ogni affermazione verificata qui si rilegge contro il codice di **allora**: i comandi stanno accanto.
+5. Poi la revisione del disegno dal proprietario, poi `superpowers:writing-plans`, poi l'esecuzione con `superpowers:subagent-driven-development`.
 6. Poi il brainstorming **distinto** della knowledge base, prima di aprire il sotto-progetto 2.
 
 ## Che cosa questa consegna NON ha fatto

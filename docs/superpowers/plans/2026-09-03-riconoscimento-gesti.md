@@ -2102,3 +2102,58 @@ che questo piano lascia aperte stanno nella sezione *«Le voci aperte che questo
 chiude»*, e per nessuna il chiusore è questo piano; la decisione **13** — il confinamento del
 worker telecamera — aspetta il sotto-progetto 12 col proprietario, e il consiglio scritto è nel
 perimetro negativo di ADR-0039.
+
+### Come si riprende — scritto alla chiusura della sessione del 2026-09-03, coi comandi
+
+⚠️ **È il documento di consegna della sessione che ha scritto questo piano**, e sta qui e non in
+un file a parte perché il repo ha già la sua convenzione: lo stato vive in file **tracciati**, il
+puntatore vive nella §6 del compendio, e chi riprende legge il piano **a compiti**. Ogni riga è
+stata **riletta coi comandi** prima di essere scritta, non ricordata.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb`. Nessuno stash, nessuna operazione a metà, nessun file non tracciato |
+| I commit di questa sessione | `git log --oneline 1c0a633..HEAD`: **uno**, `903dca1` — questo piano, il puntatore della §6, la riga nella tabella dei piani, la spunta nella §5.5 del disegno; più il commit di questa sezione |
+| Codice di prodotto | **non toccato**: `git diff --stat 1c0a633..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` non rende nulla. La sonda usa-e-getta di S3 (P-5) è stata compilata, passata e **cancellata** nella stessa corsa |
+| Cancello | `bash scripts/check-docs.sh` → `OK`; `bash scripts/gate.sh` → `GATE GREEN`, **rilanciato alla chiusura**. Si rilanciano, non si citano |
+| Fine-riga | questo piano e il disegno **LF** nell'albero e nell'indice; il compendio e la roadmap LF nell'indice e **CRLF** nell'albero, con CR = righe: `git ls-files --eol docs/COMPENDIO.md docs/roadmap.md docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md docs/superpowers/plans/2026-09-03-riconoscimento-gesti.md` |
+| Margine del compendio | il comando del vincolo 12 → positivo alla chiusura; i compiti 1, 2, 3, 4 e 9 lo consumano (P-9) |
+| File temporanei | nessuno nel repository; lo scratchpad della sessione è stato svuotato |
+| Debito lasciato | **nessuno non dichiarato**: gli slot `<data>` e `<esito>` dei compiti 6, 8 e 9 sono slot di **misura**, da riempire eseguendo; la voce 4 del disegno è presa da D4 e si ribalta nell'errata |
+
+⛔ **Che cosa NON è verificato, detto prima di fidarsi:** il codice dello spike — `s1_bench.py`,
+`s2_worker.py`, il relay e la pagina — è **scritto e non eseguito**: né `mediapipe` né `cv2` sono
+installati fuori da una `venv` (P-4), e il relay non è stato compilato. L'API è riletta alla
+fonte (P-7), ma il primo `py -3.10 s1_bench.py` del compito 8 è la prova, e ciò che non gira va
+nell'errata. Le due **mutazioni** di S3 (compito 6) non sono state provate: la sonda usa-e-getta
+ha provato solo il **verde**.
+
+**Il compito della sessione successiva: eseguire il piano.** In ordine, e ogni riga è eseguibile:
+
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -3`: si parte da `main`,
+   e la testa deve essere il commit di questa sezione o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa
+   dell'audit del 2026-08-27 — poi **questo piano fino alla mappa dei file**, e il disegno per
+   intero. I compiti si leggono **uno per volta**, quando si dispacciano.
+3. `superpowers:subagent-driven-development`: un subagente fresco per compito, revisione fra uno
+   e l'altro, nell'ordine della tabella della posizione. Il brief di un compito è il compito
+   stesso più l'errata **verbatim**; il revisore rilancia ogni comando (regola 5 di *«Come si
+   esegue»*).
+4. Prima di dispacciare un compito, le quattro domande di `CLAUDE.md` contro il codice **di
+   allora**: il pre-controllo di questa sessione è del 2026-09-03 su `1c0a633`, e il contratto
+   cresce sotto il piano.
+5. Il compito 8 si dispaccia solo col **proprietario** presente: la telecamera e il giudizio
+   sono suoi.
+6. A ogni compito: la tabella della posizione aggiornata nel commit, `GATE GREEN` prima, push
+   dopo.
+7. A piano eseguito, il compito 9 muove la §6 del compendio al brainstorming della knowledge
+   base.
+
+📌 **Trovato scrivendo, e non promosso a gotcha:** il piano della chiusura nomina un aiutante
+`mutate.py` che non è tracciato — viveva nello scratchpad di quella sessione — e per chi riprende
+non esiste. Questo piano porta il proprio aiutante nel testo. Se sia un gotcha nuovo lo decide
+chi lo incontra una seconda volta.
+
+⛔ **Vicoli ciechi di questa sessione: nessuno nuovo.** L'unica cosa caduta è un'attesa: che il
+compendio portasse **un** marcatore `⏭️` — ne porta due a `1c0a633`, il puntatore e la riga della
+tabella delle voci aperte che lo nomina — corretta nel compito 9 prima del commit.

@@ -1,0 +1,13 @@
+error[E0308]: mismatched types
+ --> tests/compile_fail/millis_as_mib.rs:8:18
+  |
+8 |     takes_a_size(kernel::time::Millis::new(4096));
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Mib`, found `Millis`
+  |     |
+  |     arguments to this function are incorrect
+  |
+note: function defined here
+ --> tests/compile_fail/millis_as_mib.rs:5:4
+  |
+5 | fn takes_a_size(_value: kernel::arbiter::Mib) {}
+  |    ^^^^^^^^^^^^ ----------------------------

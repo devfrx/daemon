@@ -63,6 +63,11 @@ API è un vettore di fuga**, non una comodità.
 La scelta concreta del motore è un **ADR successivo**, dopo quello sul linguaggio del
 core: dipende da cosa quell'ecosistema offre.
 
+> ✅ **Rimando — il motore è scelto:** [ADR-0032](0032-motore-di-persistenza.md), `redb`
+> 4.1.0 con `StorageBackend` scritto da noi. Il requisito che ha deciso è il **4**, l'I/O
+> iniettabile: è l'unico che i candidati non esponevano tutti, ed è il punto in cui il
+> secondo livello di crash diventa iniettabile.
+
 ## Consequences
 
 - **Positive:**
@@ -79,3 +84,22 @@ core: dipende da cosa quell'ecosistema offre.
   - L'interfaccia deve dichiarare **cosa il backup non contiene al momento in cui lo
     si crea**, non al momento del ripristino. Scoprirlo mentre si ripristina è il modo
     peggiore di scoprirlo.
+
+> 📌 **Rimando — dove vive questa decisione, aggiunto il 2026-08-07.** Le due metà di
+> questo ADR si realizzano in **due momenti diversi**, e confonderle è ciò che aveva
+> lasciato il backup senza proprietario:
+>
+> | Metà | Quando |
+> |---|---|
+> | il **layout per natura** — archivi separati, ciascuno con la propria politica | **già rispettato** nel sotto-progetto 1: giornale e segreti nascono come archivi distinti, per V34 e per la struttura delle crate |
+> | **backup e ripristino**, con V32, V33 e Q21 | **sotto-progetto 11** della [roadmap](../roadmap.md), dopo il 5, il 6 e il 9 |
+>
+> L'ordine non è comodità. V32 esclude *indici e pesi perché ricostruibili*: finché il
+> sotto-progetto 6 non produce indici e il 9 non porta pesi, l'elenco delle esclusioni è
+> **vuoto**, e verificarlo su un elenco vuoto è una prova che non può fallire. Il
+> follow-up qui sopra — dichiarare le esclusioni *al momento del backup* — è la ragione
+> per cui serve anche un'interfaccia.
+>
+> La lacuna era rimasta invisibile fino alla §8 della
+> [spec del sotto-progetto 1](../superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md),
+> che ha dovuto assegnare un innesco a V32, V33 e Q21 e non ha trovato nessun destinatario.

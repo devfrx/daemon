@@ -40,6 +40,24 @@ freddo). La riserva è **dichiarata dal richiedente e verificata dall'arbitro**:
 picco reale viene misurato e registrato, e una riserva sistematicamente sbagliata è
 un difetto del profilo, non un incidente.
 
+> ⚠️ **Rimando del 2026-08-27 — finding AUD-032. I cinque attributi sono realizzati da DUE
+> strutture e non da un oggetto solo, e la decisione resta valida e non è superata.** Nel codice
+> del Traguardo 5 `ResourceProfile` ha **quattro** campi — `name`, `reserved_vram`,
+> `compute_class`, `preemption` — e le divergenze sono due, entrambe deliberate:
+>
+> | | |
+> |---|---|
+> | *prelazionabilità* e *tempo di rilascio* | sono **un** campo, `Preemption::{Never, After(Millis)}`: due campi separati rendono pronunciabile *«non prelazionabile con una grazia di 500 ms»*, che è uno stato illegale. La §5.3 della spec pretende che `InRevoca` sia **non rappresentabile**, e un booleano non può renderlo tale |
+> | *avvio a freddo* | **non è nel profilo affatto**. `cold_start` vive in `WorkDescriptor`, che l'ammissione **non riceve**: serve ad **avvisare l'utente**, mai a decidere, e una decisione che volesse leggerlo **non ha una strada**. Non è una dimenticanza ma una **regola di livello 1**, tenuta dal caso `crates/kernel/tests/compile_fail/admission_reads_cold_start.rs`, che attende `E0609` |
+>
+> ⛔ **Perché il rimando arriva solo oggi, ed è la parte da ricordare:** le due divergenze erano
+> state discusse e registrate contro la **spec** (§5.1, §5.2, §5.2.1) e contro l'errata del piano
+> del Traguardo 5, e la catena si è fermata lì. Il documento di **origine** della lista dei cinque
+> attributi non è stato toccato, come non lo era stato il compendio che la ricopia — gotcha
+> **#68** applicato a un **elenco di campi** invece che a un numero. ⚠️ E la pratica opposta era
+> visibile a due passi: [ADR-0004](0004-topologia-di-processo.md) porta due richiami e
+> [ADR-0006](0006-due-policy-vram-come-oggetti-distinti.md) uno, per la stessa ragione.
+
 **3. La quota VRAM dell'audio è sottratta dal budget allocabile all'avvio** e non vi
 rientra. Nessun altro lavoro può richiederla, nemmeno a GPU scarica.
 

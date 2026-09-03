@@ -1,0 +1,6 @@
+[toolchain]
+channel = "1.95.0"
+components = ["rustfmt", "clippy"]
+# The target of the no-OS gate (§7.3.2). Declaring it here installs it by itself on a clean
+# machine: without it, the gate is red for the wrong reason -- constraint 4 of §11.
+targets = ["x86_64-unknown-none"]

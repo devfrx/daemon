@@ -1,0 +1,20 @@
+error[E0061]: this function takes 2 arguments but 3 arguments were supplied
+  --> tests/compile_fail/two_policies_at_once.rs:39:20
+   |
+39 |     let _arbiter = kernel::arbiter::Arbiter::new(
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+42 |         kernel::arbiter::VramPolicy::Local(kernel::arbiter::LocalPolicy),
+   |         ---------------------------------------------------------------- unexpected argument #3 of type `VramPolicy`
+   |
+note: associated function defined here
+  --> src/arbiter/mod.rs
+   |
+   |     pub const fn new(parameters: Parameters, policy: VramPolicy) -> Self {
+   |                  ^^^
+help: remove the extra argument
+   |
+41 -         kernel::arbiter::VramPolicy::Remote(kernel::arbiter::RemotePolicy),
+42 -         kernel::arbiter::VramPolicy::Local(kernel::arbiter::LocalPolicy),
+41 +         kernel::arbiter::VramPolicy::Remote(kernel::arbiter::RemotePolicy),
+   |

@@ -1,0 +1,12 @@
+error[E0618]: expected function, found `Activity`
+ --> tests/compile_fail/revoking_a_non_preemptible_grant.rs:5:23
+  |
+5 |       let _impossible = kernel::arbiter::Activity::NonPreemptible(
+  |                         -^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^- help: consider using a semicolon here to finish the statement: `;`
+  |  _______________________|
+  | |
+6 | |         kernel::arbiter::PreemptibleState::Revoking {
+7 | |             deadline: kernel::time::Monotonic::from_millis(1_000),
+8 | |         },
+9 | |     );
+  | |_____- call expression requires function

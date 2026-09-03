@@ -16,6 +16,58 @@ Ogni funzionalità della mappa funzionale originale, con la sua sede nel progett
 **Il kernel non implementa nessuna funzionalità utente.** Fornisce i meccanismi su cui
 tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
+> ⛔ **QUESTA TABELLA RISPONDE A UNA DOMANDA SOLA, ed è «dove vive».**
+> **Non** risponde a *«di quale meccanismo di kernel ha bisogno questa funzionalità, e la
+> spec lo nomina?»*. In particolare `📋` significa **«sotto-progetto assegnato»**, non «non
+> richiede un meccanismo di kernel»: sono due cose diverse, e chi legge assume la seconda.
+>
+> **È la crepa da cui sono uscite le sette voci della riapertura del 2026-08-07**, tre delle
+> quali di classe **B**, cioè non retrofittabili. Il rimedio non è riscrivere la legenda —
+> gotcha **#27** — è **rileggere con un'altra domanda**, e questo riquadro esiste per
+> ricordare che la domanda che manca è quella.
+>
+> ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-041 — qui c'era una nota del 2026-08-08 che metteva
+> a verbale una MISURA SBAGLIATA.** Diceva: *«la §12 del compendio rimandava già al riquadro in
+> testa per questo avvertimento, e **il riquadro non lo conteneva**»*. Lo conteneva: il riquadro
+> qui sotto, datato **2026-08-07**, **lo portava** parola per parola nella sostanza, a tredici
+> righe di distanza — ⚠️ **al passato perché è questa stessa passata a togliercelo**, e scriverlo
+> al presente sarebbe stato il gotcha **#78** commesso dentro il rimedio: *una frase che descrive
+> lo stato di un altro artefatto che qualcuno sta toccando nello stesso compito*. Il testo che vi
+> stava lo dice `git show HEAD:docs/tracciabilita.md`, e un comando non marcisce.
+> Chi corresse cercò dove il rimando della §12 mandava — *in testa* — e non lesse il
+> riquadro successivo: è il gotcha **#48** nella forma canonica, il banco che sbaglia **verso
+> l'attesa**, e l'attesa era che mancasse.
+>
+> ✅ **E il rimedio applicato allora fu AGGIUNGERE una seconda copia sopra la prima**, cioè creare
+> una seconda casa della stessa regola nel documento la cui unica difesa dichiarata è *rileggere
+> con un'altra domanda*. Due formulazioni della stessa regola nello stesso posto sono il gotcha
+> **#29** in attesa — *la più corta viene letta al posto di quella giusta* — e qui la più corta
+> era anche la prima che si incontrava. ⛔ **Ora l'avvertimento vive in questo riquadro e in
+> nessun altro:** quello sotto tiene il proprio **stato** e non ripete più la regola.
+
+> ⚠️ **Lo stato della riapertura del 2026-08-07, e non più la regola:** l'avvertimento che questo
+> riquadro portava ripeteva quello sopra, ed è **tolto** il 2026-08-27 — finding **AUD-041**, con
+> il racconto nel richiamo qui sopra, in una casa sola.
+>
+> Rileggere la tabella con la seconda domanda ha **riaperto la spec del sotto-progetto 1 su sette
+> voci**, ora **tutte chiuse**: elenco, classe e ordine in
+> [HANDOFF](HANDOFF.md#prima-cosa-da-fare).
+>
+> ✅ **F4 chiusa il 2026-08-08**, ed era l'ultima. Le due righe che vi pendevano hanno ora
+> un meccanismo collocato **e** una porta: *Scheduling* e *File watching* entrano entrambe
+> da `reactor` — la prima è già coperta, la seconda è **dichiarata** con implementazione
+> scaglionata (§0.4.3).
+>
+> ✅ **Riletta il 2026-09-03 con la seconda domanda** — *«quale meccanismo del kernel le serve, e il
+> codice lo dà oggi o è scaglionato?»* — contro la §0.4 della spec e gli inneschi della §8. Le
+> righe cambiate, con la ragione di ciascuna, stanno nella §7.4 del
+> [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md): una
+> casa sola. ⚠️ **Le righe per stato non stanno qui**, le conta il comando:
+> `for s in ✅ 🔶 📋 ⚠️ ❌; do printf '%s ' "$s"; grep -cE "^\| .* \| $s \|" docs/tracciabilita.md; done`
+>
+> ✅ **Sotto-progetto 1 chiuso il 2026-09-03 contro la §0.7**: la tabella si riaggiorna a ogni
+> sotto-progetto chiuso, come dice la riga sotto il titolo.
+
 ---
 
 ## 1. Modelli e risorse
@@ -36,7 +88,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Fallback a catena tra modelli | ✅ | §3 · ADR-0012 |
 | Preferenze di provider (OpenRouter) | ✅ | §3 · vincoli della richiesta |
 | Routing per compito/costo | ✅ | §3 · politica di routing |
-| Structured output e constrained decoding | ✅ | §3 · ADR-0013 |
+| Structured output e constrained decoding | 🔶 | sensore §5 (ADR-0013) + adattatori §3 · provider reale → Conversazione |
 | Contabilità token e costi | ✅ | §3 · ADR-0011 |
 | Avvisi e tetti di spesa | ✅ | §3 + §4 · V8 |
 | Selettore di modello per compito | ✅ | §3 · profili |
@@ -49,15 +101,15 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Funzionalità | | Sede |
 |---|---|---|
 | UI/UX della chat | 📋 | GUI |
-| Streaming delle risposte | ✅ | §3 + GUI |
+| Streaming delle risposte | 🔶 | trasporto §3 · resa nel processo `gui` → GUI minima |
 | Sessioni multiple | 🔶 | gerarchia §3 (ADR-0011) · politica → Conversazione |
 | Fork e branching | 📋 | Conversazione — il giornale lo consente |
 | Modifica e rigenerazione | 📋 | Conversazione |
 | Ricerca nello storico | 📋 | Conversazione |
 | System prompt, personas e profili | 🔶 | guide §5 · politica → Conversazione |
 | Memoria persistente | 🔶 | stato durevole §4 · politica → Conoscenza |
-| Gestione del contesto e compattazione | ✅ | §4 ADR-0008 · §5 ADR-0010 |
-| Indicatore di riempimento contesto | ✅ | §7 · misura per categoria |
+| Gestione del contesto e compattazione | 🔶 | giornale §4 · ricomposizione della proiezione (ADR-0008, ADR-0010) → Conversazione |
+| Indicatore di riempimento contesto | 🔶 | misura §7 · proiezione da misurare → Conversazione |
 | Artifacts/canvas | 📋 | GUI |
 | Preview renderizzate | 📋 | GUI |
 | Allegati in chat | 📋 | Conversazione (+ etichettatura I6) |
@@ -90,13 +142,13 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Orchestrazione e sub-agenti | ✅ | §4 · sub-run, proiezione ristretta (ADR-0008) |
+| Orchestrazione e sub-agenti | 🔶 | sub-run §4 · proiezione ristretta (ADR-0008) → Conversazione |
 | Planning e decomposizione dei task | 🔶 | piano nello stato durevole §4 · politica → Agenti |
 | Modalità piano vs esecuzione | 🔶 | preset §6 · politica → Agenti |
-| Tool calling | ✅ | §3 schema + §6 permessi |
-| MCP | ✅ | ADR-0003 · ADR-0015 |
-| Skills | ✅ | guide §5 · ADR-0003 |
-| HITL: approvazioni | ✅ | §6 · ADR-0016 |
+| Tool calling | 🔶 | schema §3 + permessi §6 · mediatore completo → Agenti |
+| MCP | 🔶 | ADR-0003 · ciclo di approvazione MCP §6 (ADR-0015) → Agenti |
+| Skills | 🔶 | guide §5 (ADR-0003) · registro delle guide → sede da assegnare |
+| HITL: approvazioni | 🔶 | §6 · ADR-0016 · ciclo di approvazione → Agenti |
 | HITL: interruzione e steering | 🔶 | `AttesaUmano` §4 · politica → Agenti |
 | Domande di chiarimento | 📋 | Agenti |
 | Checkpoint e rollback | ✅ | giornale §4 + §10 · ADR-0024 |
@@ -104,9 +156,9 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Task in background | ✅ | §4 + ADR-0004 |
 | Scheduling | ✅ | trigger anello 3 §5 |
 | Coda e priorità delle run | 🔶 | corsie §2 · coda generica → Agenti |
-| Replay dei trace | ✅ | §7 · ADR-0017 |
+| Replay dei trace | 🔶 | giornale §4 · proiezione trace §7 (ADR-0017) → GUI minima |
 | Valutazione degli agenti | 📋 | Agenti — esplicitamente **fuori** dal kernel (§8) |
-| Regole e vincoli di progetto | ✅ | guide §5 |
+| Regole e vincoli di progetto | 🔶 | guide §5 · registro delle guide → sede da assegnare |
 | Agenti in parallelo isolati | 🔶 | sub-run §4 · isolamento su disco → Coding |
 | Limiti di autonomia configurabili | ✅ | §4 · V8 |
 
@@ -114,7 +166,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Sandboxing ed esecuzione | ✅ | permessi §6 + §10 · ADR-0025 — quattro livelli |
+| Sandboxing ed esecuzione | 🔶 | permessi §6 + §10 · ADR-0025 — confinamento reale → Coding |
 | Edit dei file e diff review | 📋 | Coding |
 | Terminale integrato | 📋 | Coding |
 | LSP e analisi statica | 🔶 | sensori §5 · implementazione → Coding |
@@ -162,25 +214,25 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Libreria degli asset generati | 📋 | Generazione asset |
 | Cronologia e riproducibilità | ✅ | giornale §4 + record di routing §3 |
 | Coda dei job di generazione | ✅ | code §2 + run §4 |
-| Progress e notifiche per job lunghi | ✅ | §7 + V9 |
+| Progress e notifiche per job lunghi | 🔶 | §7 + V9 · notifica all'utente → GUI minima |
 | Rimozione dello sfondo/preparazione input | 📋 | Generazione asset |
 
 ## 8. Sistema
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Permessi e sandbox policy | ✅ | §6 + §10 · ADR-0025 |
+| Permessi e sandbox policy | 🔶 | §6 + §10 · ADR-0025 — confinamento reale → Coding |
 | Difese da prompt injection | ✅ | §6 · ADR-0014 |
-| Difesa da tool poisoning | ✅ | §6 · ADR-0015 |
-| Gestione segreti e credenziali | ✅ | §10 · ADR-0023 — gestore unico |
-| Storage e cifratura a riposo | ✅ | §10 · ADR-0022 + ADR-0023 |
-| Backup ed export dei dati | ✅ | §10 · ADR-0022 — solo l'irriproducibile |
-| Osservabilità e tracing locale | ✅ | §7 · ADR-0017 |
+| Difesa da tool poisoning | 🔶 | §6 · ADR-0015 · ciclo di approvazione → Agenti |
+| Gestione segreti e credenziali | 🔶 | §10 · ADR-0023 — gestore unico · implementazione → Conversazione |
+| Storage e cifratura a riposo | 🔶 | layout §10 (ADR-0022) già rispettato · cifratura reale (ADR-0023) → sede da assegnare |
+| Backup ed export dei dati | 🔶 | §10 · ADR-0022 — solo l'irriproducibile · implementazione → Backup e ripristino |
+| Osservabilità e tracing locale | 🔶 | giornale §4 · proiezione trace §7 (ADR-0017) → GUI minima |
 | Logging | ✅ | §7 |
 | Hotkey globale, tray e clipboard | 📋 | L3 |
 | Automazione OS | 📋 | L3 |
 | Notifiche | 🔶 | V9 §4 · implementazione → L3 |
-| Avvio automatico e daemon in background | ✅ | ADR-0004 · implementazione → L3 |
+| Avvio automatico e daemon in background | 🔶 | ADR-0004 · implementazione → L3 |
 | Packaging e aggiornamenti | 📋 | L3 |
 | Estensibilità e plugin | ✅ | ADR-0003 |
 | Accessibilità | 📋 | GUI |
@@ -207,7 +259,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Notifica «l'agente ha bisogno di te» | ✅ | V9 |
+| Notifica «l'agente ha bisogno di te» | 🔶 | V9 §4 · notifica all'utente → GUI minima |
 | Determinismo/replay riproducibile | ✅ | §4 + §8 (seed) |
 | Hook sul ciclo di vita | 🔶 | trigger e anelli §5 · politica → Agenti |
 | Classificatore di sicurezza delle azioni | 🔶 | si realizza come **sensore** §5 · politica → Agenti |
@@ -220,7 +272,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 |---|---|---|
 | RAG «agentico» su filesystem | 📋 | Conoscenza |
 | Sincronizzazione automatica delle cartelle | 🔶 | trigger §5 · politica → Conoscenza |
-| Backup della KB indipendente dall'app | ✅ | §10 · ADR-0022 — documenti nel backup, indice ricostruito |
+| Backup della KB indipendente dall'app | 🔶 | §10 · ADR-0022 — documenti nel backup, indice ricostruito · implementazione → Backup e ripristino |
 | Memoria selettiva ed episodica | 📋 | Conoscenza |
 | Gestione delle contraddizioni nella memoria | 📋 | Conoscenza |
 | Full-context mode per singolo allegato | 📋 | Conoscenza |
@@ -243,8 +295,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Zero-Data-Retention selettivo | ✅ | §3 ADR-0012 + §6 ADR-0016 (escalation) |
 | Fatturazione a stream interrotto | ✅ | §3 · ADR-0011 |
 | Politica di routing come oggetto versionato | ✅ | §3 · ADR-0011 |
-| Canary per esfiltrazione dati | ✅ | §6 · ADR-0016 |
-| Modalità di permessi a più livelli | ✅ | §6 · preset |
+| Canary per esfiltrazione dati | 🔶 | §6 · ADR-0016 · canary → Conversazione |
+| Modalità di permessi a più livelli | 🔶 | preset §6 · implementazione → Agenti |
 | Marketplace/registry di estensioni | ❌ | **escluso** da ADR-0003 (nessun plugin nativo). Resta la scoperta di server MCP → 📋 GUI |
 | Overlay/finestra fluttuante sempre in primo piano | 📋 | GUI + L3 |
 | Telemetria locale e «no telemetry» garantito | ✅ | §7 · ADR-0017, V25 |
@@ -255,7 +307,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 |---|---|---|
 | Workflow a nodi/pipeline riusabili | 📋 | Generazione asset |
 | Batch e generazione a lotti | 🔶 | code §2/§4 · politica → Generazione asset |
-| Validazione della mesh prima dell'export | ✅ | sensore §5 · ADR-0009 |
+| Validazione della mesh prima dell'export | 🔶 | sensore §5 · ADR-0009 · sensore reale → Generazione asset |
 | Confronto varianti | 📋 | Generazione asset + GUI |
 | Rendering di anteprima video dell'asset | 📋 | Generazione asset |
 

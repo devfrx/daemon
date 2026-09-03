@@ -1,0 +1,19 @@
+error[E0061]: this method takes 3 arguments but 2 arguments were supplied
+  --> tests/compile_fail/admission_without_profile.rs:41:28
+   |
+41 |     let _outcome = arbiter.admit(
+   |                            ^^^^^
+42 |         kernel::time::Millis::new(1_000),
+   |         -------------------------------- argument #1 of type `&ResourceProfile` is missing
+   |
+note: method defined here
+  --> src/arbiter/mod.rs
+   |
+   |     pub fn admit(
+   |            ^^^^^
+help: provide the argument
+   |
+41 |     let _outcome = arbiter.admit(
+42 ~         /* &ResourceProfile */,
+43 ~         kernel::time::Millis::new(1_000),
+   |

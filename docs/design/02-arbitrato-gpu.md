@@ -26,10 +26,30 @@ non un numero sparso nel codice.
 |---|---|---|
 | `nome` | identificatore | es. `trellis2-single-image-q-media` |
 | `vram_riservata` | MiB | riserva di picco dichiarata, non misurata a posteriori |
-| `classe_calcolo` | `realtime` \| `interattivo` \| `batch` | corsia di appartenenza |
+| `classe_calcolo` | `realtime` \| `interactive` \| `batch` | corsia di appartenenza |
 | `prelazionabile` | sì / no | se l'arbitro può richiamare le risorse |
 | `tempo_di_rilascio` | ms | quanto può metterci a liberarle prima del kill |
 | `avvio_a_freddo` | ms stimati | usato per avvisare l'utente, non per decidere |
+
+> ⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-032 — questi sei campi sono realizzati da DUE
+> strutture e non da un descrittore solo.** `ResourceProfile` ne porta **quattro**:
+> `prelazionabile` e `tempo_di_rilascio` sono **un** campo, `Preemption::{Never, After(Millis)}`,
+> perché due campi separati rendono pronunciabile *«non prelazionabile con una grazia di
+> 500 ms»*; e `avvio_a_freddo` **non è nel profilo affatto** — `cold_start` vive in
+> `WorkDescriptor`, che l'ammissione **non riceve**, così che una decisione che volesse leggerlo
+> **non abbia una strada**. ⚠️ Nel merito la riga *«usato per avvisare l'utente, non per
+> decidere»* è quindi più che rispettata: da intenzione è diventata una **regola di livello 1**,
+> tenuta dal caso `crates/kernel/tests/compile_fail/admission_reads_cold_start.rs`. Il perché
+> per esteso sta nel rimando in testa a [ADR-0005](../adr/0005-arbitrato-gpu-su-due-dimensioni.md),
+> in una casa sola.
+>
+> ⚠️ **E `interattivo` è diventato `interactive` — finding AUD-036, ma solo qui e con la
+> ragione.** Le altre due voci della stessa enumerazione erano **già inglesi**, e la §5.5 della
+> spec scrive `interactive`: ciò che si chiude è un **dialetto misto dentro un'enumerazione
+> sola**, che la §4 del compendio chiama *«la condizione peggiore delle due»*. ⛔ **Gli altri
+> nomi italiani di questo file NON sono tradotti**, ed è deliberato: sono il **vocabolario del
+> modello**, e tradurli tocca ciò che gli ADR e la spec approvata scrivono. La voce è
+> **registrata e non presa** in [`porta-di-qualita.md`](../porta-di-qualita.md).
 
 **Un tipo di lavoro può avere più profili.** Il fabbisogno di TRELLIS2 dipende dalla
 risoluzione e dai parametri di qualità, quindi non produce un numero ma una **curva**:
@@ -77,6 +97,31 @@ stateDiagram-v2
     end note
 ```
 
+⛔ **RICHIAMO DEL 2026-08-27, finding AUD-044 — la transizione `InCoda --> Annullata` NON HA
+NESSUN MECCANISMO nell'arbitro, e fino a oggi non aveva nemmeno un indirizzo.** Misurato invece
+che dedotto: `grep -rniE 'cancel|annull' --include=*.rs crates/kernel/src/` non ha **nessun**
+riscontro; gli unici punti che mutano `queues` in `crates/kernel/src/arbiter/mod.rs` sono
+`enqueue`, `promote` e `new`, e `collect_expired` fa `retain` **solo** su `held`. Quindi
+dalla coda si esce **soltanto** per promozione, e un biglietto consegnato è **immortale** —
+mentre più in basso questo stesso file promette all'utente *«posizione e stima d'attesa, con
+opzione di annullare»*.
+
+⚠️ **La conseguenza è già visibile e ha già costato codice:** `StartupError::ReservedQuota` in
+`crates/daemon/src/main.rs` esiste perché la seconda quota permanente torna `Queued` e
+**nessuno la servirà mai**, cioè il degrado silenzioso che ADR-0005 e ADR-0019 vietano. Il
+tampone è nella **radice di composizione** e vale per **un** caso; il buco resta per ogni altro
+chiamante.
+
+⛔ **Il rimedio si ferma PRIMA di decidere, ed è deliberato:** se la macchina a stati mantenga
+la promessa — e allora qualcuno costruisce l'annullamento — o se la transizione esca dal
+diagramma, è una scelta del **proprietario**. Ciò che si chiude oggi è l'**arretrato anonimo**:
+la voce ha ora una riga nella tabella *«Le voci aperte del Traguardo 5, in una tabella sola»* di
+[`porta-di-qualita.md`](../porta-di-qualita.md), che è la sua casa unica. 📌 La §9 del disegno
+del Traguardo 5 si intitola *«Cosa non entra, e dove va»* e apre con *«ogni riga ha un
+indirizzo»*: questo ramo non compariva **né** fra le cose fatte **né** fra quelle rimandate,
+perché la §6 aveva tradotto in tipi **quattro** punti della macchina e li aveva trattati come la
+macchina intera.
+
 ### Regole che il diagramma non esprime
 
 - **`Rifiutata` è diversa da `InCoda`.** Rifiutata significa "non entrerebbe *mai*",
@@ -93,7 +138,7 @@ stateDiagram-v2
 | Corsia | Chi la usa | Prelazionabile | Garanzia |
 |---|---|---|---|
 | `realtime` | wake word, VAD, STT, TTS | **mai** | quota VRAM riservata, fuori dal pool allocabile |
-| `interattivo` | chat e agente in primo piano | sì, grazia breve | servita prima di `batch` |
+| `interactive` | chat e agente in primo piano | sì, grazia breve | servita prima di `batch` |
 | `batch` | render 3D, indicizzazione, run in background | sì | può attendere indefinitamente |
 
 ### La quota audio è sottratta, non prioritaria
@@ -111,6 +156,56 @@ detiene una **concessione permanente e non prelazionabile** sulla quota riservat
 I2 vale anche per lui — nessun processo tocca la GPU senza concessione. Ciò che cambia
 non è l'obbligo, è che la sua concessione non può essere revocata né contesa.
 
+### La quota di presentazione della GUI
+
+Decisione: [ADR-0033](../adr/0033-gpu-della-gui-quota-di-presentazione.md).
+
+Anche il processo `gui` tocca la GPU: il **compositing** della webview sempre, il
+**viewer 3D** (G6) quando serve. Si modella come **tre consumatori distinti**, perché
+hanno percorsi di richiesta diversi.
+
+| # | Consumo | Governo | Corsia | Rifiuto esecutivo? |
+|---|---|---|---|---|
+| 1 | compositing della webview | quota di **presentazione** sottratta | `realtime`, **mai in coda** | ❌ no |
+| 2 | viewer 3D **entro** la quota | stessa quota | `realtime`, **mai in coda** | ❌ no |
+| 3 | viewer 3D **oltre** la quota | **concessione ordinaria** via IPC | `interactive` | ✅ sì |
+
+> ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-010 — la colonna «Corsia» diceva *«fuori dalle
+> corsie: l'arbitro non lo schedula»* per i primi due e `interattivo` per il terzo, e la §5.5
+> della spec aveva corretto la tabella gemella il 2026-08-08 — diciassette giorni prima che
+> l'arbitro venisse scritto.** *«Fuori dalle corsie»* sarebbe un **quarto valore che il tipo non
+> ha:** `ComputeClass` ne porta **tre** — `Realtime`, `Interactive`, `Batch` — e `compute_class`
+> è un campo **obbligatorio** di `ResourceProfile`, perché la concessione di presentazione è una
+> concessione **con un titolare** (ADR-0033) e non un'esenzione. ✅ **Il codice sta con la spec, e
+> non è dedotto:** `crates/daemon/src/main.rs` dichiara `PRESENTATION_RESERVATION` con
+> `compute_class: ComputeClass::Realtime`, e la sonda
+> `the_two_reservations_declare_no_preemption_and_one_lane` fissa proprio quel valore.
+> ⚠️ **Ciò che la vecchia cella diceva male resta comunque vero, e va tenuto:** i consumatori 1 e
+> 2 non entrano **mai in coda**, perché una concessione permanente non torna in ammissione. È un
+> fatto sul **ciclo di vita**, non un valore di tipo.
+> ⛔ **E il secondo scarto, sullo stesso rigo, era la §1.0:** `interattivo` è un riferimento al
+> codice scritto in italiano, e la regola vuole il **nome esatto del sorgente**.
+> 📌 **La causa, e vale oltre il caso:** la correzione del 2026-08-08 è nata nella spec e non ha
+> attraversato questo file — radice **R1** — mentre la §5.4 afferma che *«`design/02` è
+> aggiornato nello stesso passaggio»*. Era vero della riga delle policy VRAM e **non** di questa
+> cella: un aggiornamento **parziale letto come completo**, che è il gotcha **#71**.
+
+```
+budget allocabile = totale − quota audio − quota presentazione
+```
+
+**La concessione di presentazione la tiene il core**, non la GUI: la richiede all'avvio,
+permanente e non prelazionabile. Così la sottrazione non diventa un'esenzione (I2 resta
+vero) e nulla si perde quando la GUI muore — il titolare è il core, la cui vita è lunga
+e indipendente.
+
+⚠️ **Con una differenza di forza da dichiarare.** Verso un worker il rifiuto
+dell'arbitro è *esecutivo*: il processo non parte. Verso il compositor **non lo è**:
+compone lo stesso. La quota è una **promessa di budget, non un'imposizione**.
+
+Il valore della quota è **non misurato**: lo chiude M5, insieme a M1–M4 di
+[ADR-0029](../adr/0029-guscio-della-gui.md).
+
 ### Contesa di calcolo
 
 Il calcolo GPU non è prelazionabile a grana fine come la memoria. La leva praticabile
@@ -127,13 +222,13 @@ certezza: è oggetto dello spike SP-2 in §9 della spec.
 flowchart LR
     subgraph R["Policy REMOTA — default"]
         direction TB
-        r1["VRAM occupata:<br/>solo audio riservato"]
+        r1["VRAM occupata:<br/>audio riservato<br/>+ presentazione GUI"]
         r2["Job 3D: parte subito<br/>nessuno swap"]
         r3["Chat durante il render:<br/>inalterata, gira su OpenRouter"]
     end
     subgraph L["Policy LOCALE"]
         direction TB
-        l1["VRAM occupata:<br/>audio + LLM + embedding"]
+        l1["VRAM occupata:<br/>audio + presentazione<br/>+ LLM + embedding"]
         l2["Job 3D: richiede eviction<br/>coordinata e ricarica dopo"]
         l3["Chat durante il render:<br/>attende, o si dirotta su remoto"]
     end
@@ -143,7 +238,7 @@ flowchart LR
 
 | | Policy REMOTA *(default)* | Policy LOCALE |
 |---|---|---|
-| Chi occupa VRAM | audio riservato soltanto | audio + LLM + embedding locali |
+| Chi occupa VRAM | audio riservato **+ presentazione** | audio + presentazione + LLM + embedding locali |
 | Prima di un job 3D | nulla da fare | eviction coordinata, obbligatoria |
 | Dopo un job 3D | nulla da fare | ricarica con avvio a freddo visibile |
 | Chat durante un render | inalterata | bloccata, oppure dirottata su remoto |
@@ -168,5 +263,6 @@ qualcosa al posto dell'utente, glielo dice.
 | `Rifiutata` | perché non entra, e l'alternativa concreta (qualità ridotta, backend remoto) |
 | `InCoda` | posizione e stima d'attesa, con opzione di annullare |
 | `InRevoca` | cosa sta per essere fermato e perché |
+| Viewer 3D revocato durante un render | che il 3D è in pausa e perché, con la ripresa attesa ([ADR-0033](../adr/0033-gpu-della-gui-quota-di-presentazione.md)) |
 | Avvio a freddo | che un modello si sta ricaricando, con attesa stimata |
 | Policy in transizione | che il backend è cambiato, e per quali richieste |

@@ -40,7 +40,7 @@ kernel**. Un fallimento del kernel non è mai variabilità — è un difetto.
 | **analisi statica** | I3 (nessuna chiamata OS nel kernel), I6/V19 (confine dei tipi), V5 (effetti classificati), V25 (un solo punto di uscita), V34 (lettura dei segreti), V35 (livello di confinamento), ADR-0020 | totale, a compilazione |
 | **test a esempi** | comportamenti puntuali, macchine a stati, tabelle di decisione | totale |
 | **simulazione deterministica (DST)** | concorrenza, crash, ripristino: I1, I2, I5, Q2, Q4, Q5 | riproducibile **per seed** |
-| **test di contratto** | worker, server MCP, provider: dati stantii, risposte malformate, timeout | totale, con doppi |
+| **test di contratto** | worker, server MCP, provider: dati stantii, risposte malformate, timeout. ⭐ E la **conformità fra l'implementazione reale di una porta e la sua finta** — è ciò che impedisce di provare Q4 e Q5 contro una finzione | totale, con doppi |
 
 ## Mappa requisito → metodo di verifica
 
@@ -96,9 +96,34 @@ dove esiste»**.
 | Regola | Motivo |
 |---|---|
 | Nessuna sezione della spec è «fatta» senza i test dei suoi requisiti | un requisito senza verifica è un'intenzione |
-| Ogni difetto trovato in simulazione **conserva il proprio seed** | il seed diventa un caso di regressione permanente |
+| Ogni difetto trovato in simulazione **conserva il proprio seed** | ⛔ a entrare nella suite è la **proprietà** che quel difetto violava, **non il seed** — vedi il richiamo in fondo |
 | I fallimenti promossi dall'anello 4 (§5) entrano nella stessa suite | un artefatto, non due |
-| Analisi statica e test a esempi girano a **ogni commit**; DST su cicli più lunghi | «tieni la qualità a sinistra» (§5) |
+| Analisi statica, test a esempi **e campagna DST breve** girano a **ogni commit**; la campagna DST **profonda** su cicli più lunghi | «tieni la qualità a sinistra» (§5) |
+
+> ⭐ **La riga sulla cadenza è cambiata dopo una misura.** Diceva «DST su cicli più
+> lunghi», perché si dava per scontato che una campagna fosse cara. **M-2 l'ha smentito**:
+> una corsa dello scenario minimo costa **25,8 µs**, quindi migliaia di semi stanno dentro
+> un secondo. I cicli lunghi servono ad andare **più a fondo**, non a rendere possibile la
+> DST. Riserva dichiarata: 25,8 µs è lo scenario *minimo*, e quelli reali saranno più
+> pesanti — la misura dice che il substrato non è il collo di bottiglia, non che le
+> campagne siano gratis.
+>
+> ⛔ **Richiamo del 2026-08-11 — la conclusione regge, il numero che la sostiene è morto, ed è
+> questa formulazione a produrre il malinteso.** Chiudendo il Task 4 del Traguardo 4 la campagna
+> è stata misurata sul codice che **spedisce**, e i 25,8 µs **non sono confrontabili con niente
+> che esista oggi**: il prototipo che li produsse non è nel repository, l'esecutore era un altro
+> — lo spike sceglieva un'attività **a caso** — e la cifra era un colpo singolo invece di una
+> media. ⚠️ **E le parole *«scenario minimo»* di questo riquadro sono la causa prossima
+> dell'errore**: lo scenario di M-2 il giornale **ce l'aveva**, quindi *«minimo»* qui non
+> significa *«senza il giornale»*, e chi lo ha letto così ha visto un paradosso — una corsa che
+> fa **di più** costando **di meno**. ✅ Ciò che il riquadro conclude è vero e per difetto: in
+> `release` un secondo compra **centinaia di migliaia** di semi, e in `debug` — che è il profilo
+> con cui gira il cancello, e la distinzione mancava qui — **circa diciannovemila**. 📌 Il numero
+> vivo e il metodo con cui è stato scelto stanno in [`riferimenti.md`](../riferimenti.md).
+>
+> 📄 **Il meccanismo di questa porta** — ogni controllo con il proprio livello di forza, la
+> sonda che deve scattare e la contro-sonda che deve restare verde — è la **§7 della spec
+> del sotto-progetto 1**. Qui vive il *metodo*; là il *catalogo* e la cadenza operativa.
 
 ## Regole che le tabelle non esprimono
 
@@ -110,3 +135,27 @@ dove esiste»**.
   decisione di architettura.
 - Un fallimento del kernel è **sempre** un difetto. Se un test del kernel è
   intermittente, il difetto è nel test o nell'iniettabilità — mai «è il modello».
+
+---
+
+## ⚠️ Richiamo — «il seed diventa una regressione permanente» è falsificato (2026-08-18)
+
+La riga della porta di qualità diceva *«il seed diventa un caso di regressione permanente»*.
+La **§3.4** della spec del sotto-progetto 1 e il **rimando del 2026-08-08 in
+[ADR-0021](../adr/0021-simulazione-deterministica-e-iniettabilita.md)** la restringono in due
+punti, e la restrizione non era mai arrivata fin qui:
+
+| Cosa diceva | Cosa vale |
+|---|---|
+| il seed è un caso di regressione **permanente** | ⚠️ **no**: un seed **non riproduce la stessa esecuzione dopo un cambio di codice**. È un **punto di ripartenza per indagare**, non un oracolo |
+| i seed formano una **suite di regressione** | ⚠️ **no**: a entrare nella suite è la **proprietà** che quel difetto violava. Un elenco di semi presentato come suite sarebbe una **falsa sicurezza** |
+
+⛔ **La sostanza regge:** ogni difetto trovato in simulazione conserva il proprio seed, e il
+seed si versiona — [`semi-dst.md`](../semi-dst.md) esiste per quello, e dichiara esso stesso
+che al livello 2 *«un seme»* non identifica un caso.
+
+📌 **Perché il richiamo è arrivato qui per ultimo, ed è il dato:** questo file **si dichiara
+fonte di verità sulla porta di qualità**, quindi è l'ultimo posto in cui una formulazione
+falsificata dovrebbe sopravvivere — e ci è sopravvissuta **dieci giorni**. È la radice **R1**
+dell'[audit](../audit-2026-08-11.md): *una correzione attraversa il documento in cui nasce, non
+gli altri*, e le altre case si cercano **col `grep`**, non a memoria. Finding **A-2**.

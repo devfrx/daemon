@@ -141,9 +141,9 @@ valutare C#/.NET. Non è stato necessario.
     `#![forbid(unsafe_code)]` rifiuta anche un `#[allow]` locale (`E0453`, misurato).
   - I3 e V28 sono verificabili con un meccanismo del compilatore e non un lint: una
     crate `#![no_std]` rifiuta `std::fs` con `E0433`, misurato in entrambe le direzioni.
-  - Esiste un runtime deterministico di ecosistema — `madsim` 0.2.34 con
+  - ⚠️ ~~Esiste un runtime deterministico di ecosistema — `madsim` 0.2.34 con
     `madsim-tokio` 0.2.30 come sostituto di tokio, `turmoil` 0.7.2 — quindi il
-    simulatore non va scritto da zero.
+    simulatore non va scritto da zero.~~ **FALSIFICATA — vedi il rimando in fondo.**
   - Il packaging resta un binario singolo per il core, senza runtime esterno da
     installare accanto. Rileva rispetto a [ADR-0028](0028-ecosistema-dei-worker-ml.md),
     che ne introduce già uno per i worker.
@@ -178,3 +178,30 @@ valutare C#/.NET. Non è stato necessario.
   - Le quattro conseguenze negative tecniche sopra vanno tradotte in **guide del
     progetto** ([ADR-0009](0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md)) e
     in controlli automatici, non lasciate alla memoria.
+
+---
+
+## ⚠️ Rimando — la conseguenza positiva su `madsim` è falsificata da un ADR FRATELLO della stessa data (2026-08-18)
+
+Fra le `Positive` questo ADR scriveva *«esiste un runtime deterministico di ecosistema —
+`madsim` 0.2.34 … — quindi il simulatore non va scritto da zero»*.
+[ADR-0031](0031-dipendenze-del-kernel-parte-del-confine.md) — **`Date: 2026-08-06`, la stessa
+di questo** — misura che una crate `no_std` che dipende da `madsim` compila con **55 crate** nel
+grafo, e conclude *«55 crate di superficie non verificabile contro un esecutore che nel prototipo
+è ~30 righe»*. Lo **scarta**.
+
+| | |
+|---|---|
+| **il codice dà ragione a 0031** | `crates/simulator/` ha **una** dipendenza — `kernel` — e **512 righe** scritte a mano. `madsim` non compare né in `Cargo.lock` né in `crates/` |
+| ⛔ **nessuno dei due ADR nomina l'altro** | quindi la contraddizione **non è visibile da nessuno dei due lati**, ed entrambi sono coerenti con sé stessi |
+| **non è il gotcha #57** | là la decisione è **anteriore** a ciò che nomina e la smentita arriva **dopo**, dal codice. Qui la smentita è **contemporanea** e sta in un altro file della **stessa cartella** |
+
+⛔ **L'ADR non è superato, e la decisione — il core si scrive in Rust — è invariata.** A cadere
+è **una** conseguenza positiva su cinque, e non era fra quelle che hanno deciso: a decidere fu
+lo **spareggio #1**, il controllo deterministico *posseduto* invece che *fornito*. Se ne va un
+argomento di comodità, non un argomento di merito.
+
+📌 **La lezione ha un numero: è il gotcha #59, ed è nato da questo.** *Un ADR si legge anche
+contro i propri **fratelli**, non solo contro il codice* — nessuna delle quattro domande del
+pre-controllo lo coglie, perché guardano tutte il compito contro il codice. Finding **A-1**
+dell'[audit del 2026-08-11](../audit-2026-08-11.md).

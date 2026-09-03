@@ -1,0 +1,16 @@
+name: quality gate
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # rust-toolchain.toml declares version and target: rustup installs them by itself,
+      # and that is why constraint 4 of §11 does not require a step here.
+      - run: rustup show
+      - run: bash scripts/gate.sh

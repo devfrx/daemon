@@ -1,0 +1,7 @@
+error[E0277]: the trait bound `WallTime: From<Monotonic>` is not satisfied
+  --> tests/compile_fail/no_conversion_from_monotonic_to_wall.rs:21:37
+   |
+21 |     let _stamp: WallTime = deadline.into();
+   |                                     ^^^^ the trait `From<Monotonic>` is not implemented for `WallTime`
+   |
+   = note: required for `Monotonic` to implement `Into<WallTime>`

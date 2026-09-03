@@ -14,6 +14,35 @@ Questo le rende l'**unica eccezione strutturale** a
 [ADR-0014](0014-confine-dei-dati-non-fidati-nel-sistema-di-tipi.md): contenuto scritto
 da terzi che per funzionare deve entrare nel canale che influenza il comportamento.
 
+> ⛔ **RICHIAMO DEL 2026-08-27 — *«l'unica»* È FALSO, E LA DECISIONE RESTA VALIDA.** Finding
+> **AUD-004** del secondo audit completo. A cadere è il **conteggio**, non le cinque difese qui
+> sotto: l'eccezione è reale e le difese sono quelle giuste. Ma [ADR-0003](0003-estensibilita-solo-mcp-e-skill-dichiarative.md)
+> ammette **due** meccanismi di estensione, e il secondo — la **skill dichiarativa** — è per
+> definizione *«istruzioni e dati»* scritti da terzi;
+> [ADR-0009](0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md) le colloca (*«sono
+> guide»*) e dà al kernel *«l'iniezione nella proiezione»*. Contenuto di terzi che per
+> funzionare entra nel canale che influenza il comportamento: la definizione di questa riga,
+> parola per parola.
+>
+> ⚠️ **E la conseguenza non è tipografica.** Le cinque difese qui sotto — il testo integrale
+> all'approvazione, l'impronta fissata, la **sospensione** se cambia, la marcatura in
+> proiezione, il non concedere permessi — **non hanno nessun equivalente per le skill**, perché
+> nessun ADR le riconosce come contenuto non fidato. Una skill aggiornata dopo l'approvazione
+> è un **rug pull identico contro la stessa superficie**, senza nessuna delle cinque.
+> ⛔ **E la giustificazione di ADR-0003 — *«nessuna esecuzione, quindi nessun isolamento
+> necessario»* — è il ragionamento che ADR-0014 confuta**: quel confine classifica per
+> **provenienza**, non per eseguibilità.
+>
+> ⛔ **COSA È DECISO QUI E COSA NO.** È deciso che *«unica»* non si legga più come un fatto.
+> **NON è deciso** se le cinque difese si estendano alle skill: sarebbe una decisione nuova, e
+> tocca ADR-0003, ADR-0009 e ADR-0014 insieme — quindi un **ADR proprio**, del proprietario.
+> **Registrata, non presa.**
+>
+> 📌 **La forma del difetto, perché non si ripeta:** i quattro ADR sono stati scritti
+> guardando ciascuno il proprio oggetto, e **nessuno dei quattro nomina l'altro su questo
+> punto**, quindi la contraddizione non si vede da nessuno dei lati. È il gotcha **#59** — un
+> ADR si legge anche contro i propri **fratelli**.
+
 I due attacchi rilevanti sono documentati:
 
 | Attacco | Meccanica |

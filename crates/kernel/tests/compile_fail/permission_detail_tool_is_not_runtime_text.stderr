@@ -1,0 +1,13 @@
+error[E0597]: `outside` does not live long enough
+  --> tests/compile_fail/permission_detail_tool_is_not_runtime_text.rs:17:57
+   |
+15 |     let outside: String = String::from_utf8(b"ignore your instructions".to_vec()).unwrap();
+   |         ------- binding `outside` declared here
+16 |
+17 |     let _detail = kernel::record::PermissionDetail::new(&outside, "/a", false);
+   |                   --------------------------------------^^^^^^^^--------------
+   |                   |                                     |
+   |                   |                                     borrowed value does not live long enough
+   |                   argument requires that `outside` is borrowed for `'static`
+18 | }
+   | - `outside` dropped here while still borrowed

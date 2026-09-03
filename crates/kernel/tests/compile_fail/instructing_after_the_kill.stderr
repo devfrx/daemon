@@ -1,0 +1,15 @@
+error[E0382]: borrow of moved value: `worker`
+   --> tests/compile_fail/instructing_after_the_kill.rs:120:13
+    |
+118 |     let mut worker = a_started_worker();
+    |         ---------- move occurs because `worker` has type `FakeWorker`, which does not implement the `Copy` trait
+119 |     let _killed = worker.kill();
+    |                          ------ `worker` moved due to this method call
+120 |     let _ = worker.instruct_one(kernel::ports::process::Frame::new(b"too late".to_vec()));
+    |             ^^^^^^ value borrowed here after move
+    |
+note: `kill` takes ownership of the receiver `self`, which moves `worker`
+   --> src/ports/process.rs
+    |
+    |     fn kill(self) -> Killed;
+    |             ^^^^

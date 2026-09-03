@@ -49,8 +49,8 @@ sacrificabile · **ambra** = sorgente di contenuto non fidato.
 | Da → A | Canale | Direzione | Note |
 |---|---|---|---|
 | gui ↔ core | IPC privato | bidirezionale | Un trasporto, uno schema, non versionato (I4) |
-| core → worker ML | comando | core comanda | Avvia, istruisce, uccide. Il worker non risponde di iniziativa propria |
-| core → worker audio | comando | core comanda | Idem; il flusso audio risale al core |
+| core ↔ worker ML | porta `process` | **bidirezionale, ma a iniziativa del core** | I **sei verbi** sono i metodi del tratto `Worker`: `instruct_one` · `instruct_stream` · `read_one` · `read_next` · `close` · `kill`. ⚠️ **`Process::start` è FUORI dai sei** — restituisce il `Worker`, e il richiamo in fondo lo dice già. Il worker non risponde **di iniziativa propria**: ogni byte che risale è coperto da una **ricevuta** |
+| core ↔ worker audio | porta `process` | idem | Idem; il flusso audio risale al core **dentro una ricevuta di flusso** |
 | core ↔ server MCP | protocollo MCP | bidirezionale | **Tutto ciò che arriva da qui è contenuto non fidato**, descrizioni degli strumenti incluse |
 | core → OpenRouter | HTTPS | uscente | Unico processo autorizzato a uscire in rete verso i provider |
 
@@ -86,6 +86,13 @@ stateDiagram-v2
     end note
 ```
 
+⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-044:** la transizione `InCoda --> Annullato` di questo
+diagramma **non ha nessun meccanismo** nell'arbitro. Il racconto, la misura e il chiusore stanno
+in [`02-arbitrato-gpu.md`](02-arbitrato-gpu.md) accanto alla macchina a stati che la §5.3 della
+spec adotta come propria, e la voce aperta vive in
+[`porta-di-qualita.md`](../porta-di-qualita.md): qui c'è **un rimando e non una seconda copia**,
+perché un rimando non può marcire.
+
 ## Regole che il diagramma non esprime
 
 - Un worker **non** ritenta, **non** accoda, **non** decide: ogni logica di
@@ -95,3 +102,28 @@ stateDiagram-v2
 - `Concesso → Attivo` è l'unico punto in cui un processo può toccare la GPU, e
   richiede una concessione valida dell'arbitro (I2).
 - Il numero di classi di processo è **tre**. Aggiungerne una quarta richiede un ADR.
+
+---
+
+## ⚠️ Richiamo — il canale worker non è a senso unico, e il codice lo dice da due traguardi (2026-08-18)
+
+La tabella dei canali dava `core → worker` come **comando a senso unico**. Era la lettura giusta
+finché il canale non esisteva; oggi esiste, ed è la porta **`process`** di
+[ADR-0035](../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) — `crates/kernel/src/ports/process.rs`.
+
+| | |
+|---|---|
+| **i verbi sono sei**, contati sul sorgente | `instruct_one` · `instruct_stream` · `read_one` · `read_next` · `close` · `kill`, più `Process::start` che restituisce il `Worker`. ⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-037:** questa riga era **giusta** dal 2026-08-18, e la cella della tabella dei canali enumerava **altri cinque** verbi — *«Avvia, istruisce, legge, chiude, uccide»* — appiccicandovi lo **stesso sei**: due insiemi diversi con un numero solo, perché l'italiano comprimeva `instruct_one`/`instruct_stream` in *«istruisce»* e `read_one`/`read_next` in *«legge»* senza dichiararlo, e ci aggiungeva `start`, che i sei escludono. ⛔ **La correzione del 2026-08-18 riscrisse il numero nella cella e l'enumerazione QUI, invece di allinearle:** ora la cella porta gli stessi sei nomi, col nome esatto del sorgente (§1.0) |
+| **i frame RISALGONO** | `read_one` e `read_next` restituiscono un `Frame`: il flusso audio della riga qui sopra è esattamente questo |
+| ⛔ **ciò che resta vero, ed è la sostanza** | il worker **non risponde di iniziativa propria**. Ogni byte che risale è coperto da una **ricevuta**, e le ricevute le emette **solo un'istruzione**: un frame che nessuna ricevuta copre è un **guasto**, non un dato |
+
+⛔ **La tensione che questo file conteneva è stata SCIOLTA, non ignorata:** *«il worker non
+risponde di iniziativa propria»* contro *«il flusso audio risale al core»* è la contraddizione
+che la voce **F1b** doveva conciliare, e il gettone della ricevuta è come l'ha conciliata. Le
+**due** ricevute sono tipi distinti — singola e di flusso — perché *«una risposta singola diventa
+un flusso»* non deve essere **esprimibile**.
+
+📌 **Perché la riga è rimasta stretta:** è stata scritta quando il canale era un disegno, e
+nessuno l'ha riletta il giorno in cui è diventato codice. È la radice **R3** dell'[audit del
+2026-08-11](../audit-2026-08-11.md) — *un doc scritto quando la cosa non esisteva, mai ridatato*
+— finding **A-4**.

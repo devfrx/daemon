@@ -5,6 +5,20 @@ Data di esecuzione: **2026-08-06**
 Criteri e soglie: [PROTOCOLLO.md](PROTOCOLLO.md) — congelato al primo commit di
 codice di spike.
 
+> ⚠️ **Aggiornato il 2026-08-08 — gli spike restano FUORI dal workspace.** Il piano del
+> Traguardo 1 crea il workspace alla radice con `crates/{kernel,platform,secrets,simulator,daemon}`
+> e mette `spikes` fra gli `exclude`. Due ragioni, entrambe misurate: `spikes/rust/` è a sua
+> volta un **workspace annidato**, e porta un `clippy.toml` che a livello di workspace
+> scatterebbe addosso a `platform` — che *deve* chiamare l'orologio e il filesystem
+> (vincolo 5 della §11, §7.4.4).
+>
+> ⛔ **«Punto di partenza» significa che si copia, non che sale.** La
+> [§2.5 della spec](../docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) dice
+> riga per riga cosa entra in `crates/kernel/` e cosa **resta qui**: `esegui_thread` resta,
+> perché non è codice ma l'evidenza che C6 non è vacuo; e l'aiutante `passo_in_dubbio`
+> **non sale così com'è**, perché assume esecuzione sequenziale e con l'interlacciamento dà
+> un falso negativo (gotcha #20).
+
 **Dove sono i prototipi.** Quello del candidato vincente resta in `spikes/rust/` e
 diventa il punto di partenza del simulatore del sotto-progetto 1. Quelli di Go e
 TypeScript sono stati rimossi dopo ADR-0026, ma restano nella storia: l'ultimo commit

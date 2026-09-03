@@ -1,0 +1,38 @@
+[package]
+name = "platform"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[dependencies]
+kernel = { path = "../kernel" }
+
+# The persistence engine (ADR-0032), driven through a `StorageBackend` OF OUR OWN instead of
+# the default file one — that is the point at which requirement 4, injectable I/O, becomes
+# real. ⚠️ It lives HERE and not in `kernel`: ADR-0031 constrains the graphs of `kernel` and
+# `simulator`, and `platform` is where I/O is supposed to live. Verified by RUNNING
+# `scripts/gate-deps.sh`, not deduced — gotcha #41.
+#
+# ⛔ THE MINOR IS NAMED ON PURPOSE, AND IT IS NOT DECORATION — gotcha #22, the same reason
+# `bincode` is pinned to "2". `"4.1.0"` is a caret and accepts any `4.x`; what it resolves to
+# today is EXACTLY 4.1.0, measured with `cargo tree -p platform` and not assumed. Naming the
+# minor records WHICH API `journal.rs` was written against, and it was written by READING the
+# source of 4.1.0 in the registry cache rather than from memory.
+#
+# ⚠️ MEASURED, not deduced: `rust-version` 1.89 against our 1.95; default features are the
+# EMPTY set, and `cargo tree -p redb` on this host answers with one line — `redb` and nothing
+# under it. Its three optional dependencies (`log`, `uuid`, `chrono`) stay off.
+#
+# ⚠️ AND ONE THING THE TREE DOES NOT SHOW, written down because a reader WILL find it and
+# wonder: `Cargo.lock` gained `libc` along with `redb`. It is not built here — it appears only
+# under `cargo tree -p redb --target all`, because `redb` names it for `wasi` alone, and the
+# lockfile resolves the UNION of every target rather than this one. Measured both ways.
+redb = "4.1.0"
+
+[dev-dependencies]
+# ⚠️ Needed by the CONFORMANCE SUITE, not by this crate: tests/reactor_contract_real.rs
+# `include!`s crates/kernel/tests/reactor_contract.rs, and that file builds a `VirtualReactor`
+# for the two tests it carries with it. A dev-dependency, so it does not enter the shipped
+# graph — and `platform` is outside the ADR-0031 allow-list anyway, which measures `kernel`
+# and `simulator`.
+simulator = { path = "../simulator" }

@@ -1,0 +1,16 @@
+error[E0599]: no method named `encode` found for struct `RecordV1` in the current scope
+  --> tests/compile_fail/record_without_version.rs:14:24
+   |
+14 |     let _bytes = inner.encode();
+   |                        ^^^^^^ method not found in `RecordV1`
+   |
+  ::: $CARGO/minicbor-$VERSION/src/encode.rs
+   |
+   |     fn encode<W: Write>(&self, e: &mut Encoder<W>, ctx: &mut C) -> Result<(), Error<W::Error>>;
+   |        ------ the method is available for `RecordV1` here
+   |
+   = help: items from traits can only be used if the trait is in scope
+help: trait `Encode` which provides `encode` is implemented but not in scope; perhaps you want to import it
+   |
+ 5 + use minicbor::encode::Encode;
+   |

@@ -1,19 +1,27 @@
-# Sistema operativo
+# Operating system
 Thumbs.db
 Desktop.ini
 .DS_Store
 
-# Editor
+# Editors
 .vscode/
 .idea/
 *.swp
 
-# Scratch e artefatti locali
+# Scratch and local artefacts
 /scratch/
 /tmp/
 *.log
 
-# Artefatti di build degli spike — le prove si conservano, i binari no
+# Build artefacts of the product
+/target/
+# ⛔ /Cargo.lock IS NOT ignored, and that is deliberate: gate-deps.sh checks the TRANSITIVE
+# dependency graph against the allow-list of ADR-0031. Without a versioned lockfile the
+# graph resolves differently on another machine or on another day, and the check would
+# measure a graph nobody has approved. The spikes below ignore their own because they are
+# throwaway probes; this is the product.
+
+# Build artefacts of the spikes -- the probes are kept, the binaries are not
 /spikes/rust/target/
 /spikes/rust/Cargo.lock
 /spikes/gui-ipc/target/
@@ -22,7 +30,7 @@ Desktop.ini
 /spikes/ts/dist/
 /spikes/**/wip/
 
-# Segreti — nessuna credenziale entra mai nel repo
+# Secrets -- no credential ever enters the repository
 .env
 .env.*
 !.env.example

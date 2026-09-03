@@ -1,0 +1,7 @@
+error[E0609]: no field `cold_start` on type `ResourceProfile`
+  --> tests/compile_fail/admission_reads_cold_start.rs:27:33
+   |
+27 |     let _decide_on_it = profile.cold_start;
+   |                                 ^^^^^^^^^^ unknown field
+   |
+   = note: available fields are: `name`, `reserved_vram`, `compute_class`, `preemption`

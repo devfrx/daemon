@@ -1,0 +1,127 @@
+# The map of the frozen records — §4.9.4. ⛔ One check and not two: a separate index registry
+# would be a second place to keep aligned for the same property, and the first one to stop
+# being updated lies in silence (§7.4.4). This map lives INSIDE the artefact it describes.
+#
+# Produced from `the_frozen_records()` in ../frozen_bytes.rs, by hand, from the hexadecimal
+# output of a throwaway probe deleted in the commit that added its file — the first three
+# on 2026-08-10, the verdict on 2026-08-31, the routing and the permission on 2026-09-01. Each
+# file, its own probe.
+# ⛔ NOT REGENERATED. If the bytes change, a new VERSION of the record is opened.
+#
+# ⛔ ONE MAP FOR ALL THE FILES, AND THE ASYMMETRY IS DELIBERATE. The `.cbor` files are separate
+# because each one is an irreproducible artefact and a single blob would make a one-record
+# change look like a whole-archive change; the map is one because it describes ONE format, and
+# a map per file would be one place per file to keep aligned for a single property — the very
+# thing the paragraph above refuses.
+# ⚠️ RECALL OF 2026-08-31: this line said "FOR THREE FILES" and the map had four sections by
+# then. Taken out and not realigned — how many files there are is the sections below, and the
+# bench reads them (errata `E70`).
+#
+# ⛔ WHAT IS CHECKED HERE AND WHAT IS NOT — read this before believing a cell.
+#   Rows are `offset | hex bytes | prose`, and a line that is only a file name opens a section.
+#   ✅ The OFFSET and the HEX columns are CHECKED, by `the_map_lists_the_bytes_that_are_really_
+#      frozen` in ../frozen_bytes.rs: every row is read back, the offsets must be contiguous,
+#      and the bytes must rebuild the `.cbor` file exactly. A placeholder left in the hex column
+#      does not parse, and a byte typed wrong does not match.
+#   ✅ The claim that byte 4 is `kind`, byte 5 `effect`, byte 6 `trust`, 7..14 the payload and
+#      14..21 the reason is CHECKED too, by `every_field_sits_at_the_offset_the_map_gives_it`,
+#      which changes one field at a time and demands that the encoding move there and nowhere
+#      else.
+#   ⚠️ The rest of the PROSE column is PROSE — unverified. Nothing reads the words `array(2)`
+#      or `EffectClass::Idempotent`. It is said out loud because a document half checked and
+#      not saying which half is worse than one nobody checks at all.
+#
+# ⚠️ THE FRAMING IS FOUR BYTES, NOT THREE, and it is the thing the obvious reading gets wrong:
+# `82 00` is the version enum and its variant index, then `81` — the ONE-ELEMENT ARRAY of the
+# variant's body — and only then the field-array header, `85` or `86`. So the fields begin at
+# byte 4.
+# ⚠️ RECALL OF 2026-09-01: it said "and only then `85`, the five fields", which the paragraph
+# below already contradicts by saying a record carrying a `detail` moves byte 3 — and half the
+# sections here are `86`. Closed HERE TOO and not only in the twin sentence of `frozen_bytes.rs`,
+# because a fix that lands in one house of a claim and not the other is how the two drift apart
+# (errata `E113`).
+#
+# ⛔ RECORDS OF THE SAME ARITY DIFFER ONLY AT BYTES 4, 5 AND 6, on purpose: a record pins ONE
+# variant of each `index_only` enum, so a single record would leave every other variant of them
+# held by nothing, and the set has to cover them all. Everything else about those records is
+# identical, so the difference between two files of one arity is exactly the enum bytes.
+# ⛔ A RECORD CARRYING A `detail` IS LONGER AND ALSO MOVES BYTE 3, the field-array header —
+# so it differs from the others outside 4..7 by construction, and the bench
+# compares the WHERE only within one arity.
+# ⚠️ RECALL OF 2026-08-31: this paragraph said "THE THREE RECORDS", "EIGHT variants —
+# RecordKind 3", "Three is the fewest" and "the difference between any two files"; all four
+# went false when `Verdict` and index 5 arrived. Taken out and not realigned to four and nine,
+# because both grow with the format (errata `E70`).
+#
+# ⚠️ `payload` AND `reason` CARRY THE SAME SIX CHARACTERS, so the two major types sit side by
+# side in the bytes: `46` is a byte string of 6, `66` is text of 6. One nibble apart, and the
+# asymmetry is in the archive instead of only in the source.
+
+record_v1_intent.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 85                   | array(5) — the five fields of RecordV1
+  4 | 00                   | index 0 · kind    · RecordKind::Intent
+  5 | 01                   | index 1 · effect  · EffectClass::Idempotent
+  6 | 01                   | index 2 · trust   · Trust::Untrusted
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+
+record_v1_outcome.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 85                   | array(5) — the five fields of RecordV1
+  4 | 01                   | index 0 · kind    · RecordKind::Outcome
+  5 | 02                   | index 1 · effect  · EffectClass::Unrepeatable
+  6 | 00                   | index 2 · trust   · Trust::Instruction
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+
+record_v1_note.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 85                   | array(5) — the five fields of RecordV1
+  4 | 02                   | index 0 · kind    · RecordKind::Note
+  5 | 00                   | index 1 · effect  · EffectClass::Verifiable
+  6 | 01                   | index 2 · trust   · Trust::Untrusted
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+
+record_v1_verdict.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 86                   | array(6) — the SIX fields of RecordV1
+  4 | 03                   | index 0 · kind    · RecordKind::Verdict
+  5 | 00                   | index 1 · effect  · EffectClass::Verifiable
+  6 | 01                   | index 2 · trust   · Trust::Untrusted
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+ 21 | 82 00 81 82 f4 07    | index 5 · detail  · Some(Detail::Verdict { passed: false, spent: 7 })
+
+record_v1_routing.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 86                   | array(6) — the SIX fields of RecordV1
+  4 | 04                   | index 0 · kind    · RecordKind::Routing
+  5 | 01                   | index 1 · effect  · EffectClass::Idempotent
+  6 | 00                   | index 2 · trust   · Trust::Instruction
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+ 21 | 82 01 81 83 66 66 72 6f 7a 65 6e 02 f5 | index 5 · detail · Some(Detail::Routing { model: "frozen", evaluated: 2, degraded: true })
+
+record_v1_permission.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 86                   | array(6) — the SIX fields of RecordV1
+  4 | 05                   | index 0 · kind    · RecordKind::Permission
+  5 | 02                   | index 1 · effect  · EffectClass::Unrepeatable
+  6 | 00                   | index 2 · trust   · Trust::Instruction
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+ 21 | 82 02 81 83 66 66 72 6f 7a 65 6e 66 66 72 6f 7a 65 6e f5 | index 5 · detail · Some(Detail::Permission { tool: "frozen", resource: "frozen", write: true })

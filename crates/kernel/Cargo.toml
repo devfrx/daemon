@@ -1,0 +1,102 @@
+[package]
+name = "kernel"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+# ⛔ EVERY ENTRY HERE IS A LINE OF THE ADR-0031 LIST, and adding one is a deliberate and
+# reviewable act. The justification is written next to it, not elsewhere: the single home
+# of the list is §7.3.1 of the spec, and this manifest mirrors it.
+# The check that verifies them is scripts/gate-deps.sh, on the TWO graphs.
+[dependencies]
+
+# Serializes the schema of the private `ipc` channel (I4). Reaches: NOTHING — it builds for
+# a target without an OS, and no source of randomness appears in the graph.
+# ⛔ PINNED TO "2" AND NOT TO "3": 3.0.0 is the last published version and its entire source
+# is `compile_error!("https://xkcd.com/2347/")`, a placeholder against name squatting.
+# Without this pin, the next update "fixes" the constraint and breaks the build.
+# Gotcha #22, constraint 3 of §11.
+#
+# ✅ DECIDED 2026-08-31 -- `bincode` STAYS. The reasons are in the dated recall at the bottom of
+# this note; what follows first is the 2026-08-18 record, kept verbatim because it is a minute.
+# ⚠️ THE MARKER USED TO READ "REGISTERED 2026-08-18, NOT DECIDED" and it was corrected on
+# 2026-08-31, not deleted: the recall was already at the bottom, but the HEADING is the frame
+# nobody re-reads, and it said the opposite of the truth. Gotcha #31, in its declared form.
+#
+# ⚠️ REGISTERED 2026-08-18 — finding C-1 of the audit. `bincode` 2.0.1 is covered by
+# RUSTSEC-2025-0141, "Bincode is unmaintained", issued 2026-01-07. It is category INFO: NOT a
+# vulnerability, and the other seven dependencies are clean (checked on OSV.dev).
+#
+# ⛔ IT IS THE HOLE BETWEEN TWO CRITERIA, and that is the part worth remembering. ADR-0037 asks
+# "does the PEER have a conformant and MAINTAINED reader?" — pointed at the far end of the wire,
+# TypeScript, measure M-11. M-1 pointed at us and asked something else: "is the transitive graph
+# acceptable for I3?". NEITHER asks whether the library at OUR end is still maintained, and
+# gate-deps.sh checks WHICH crates are here, not HOW THEY ARE. The advisory was public SEVEN
+# MONTHS before §6.1.1 was reconfirmed on 2026-08-08, and nobody saw it.
+#
+# ✅ ACTING COSTS ALMOST NOTHING TODAY AND THE COST GROWS BY ITSELF: measured 2026-08-18, this
+# crate has ZERO production uses of `bincode` — one doc comment in `src/ports/ipc.rs` and one
+# probe in `tests/dependencies_usable.rs`. The `ipc` schema is Milestone 6. It is a window that
+# closes on its own, like the fourth property of §3 of the compendium: DECIDE AT MILESTONE 6,
+# while the choice is still free.
+#
+# ⛔ DATED RECALL, 2026-08-31 -- MILESTONE 6 MEASURED IT AGAIN INSTEAD OF REMEMBERING IT, and
+# the note above asked for exactly that. From primary sources, all read on 2026-08-31:
+# RUSTSEC-2025-0141 is STILL ACTIVE and unwithdrawn; the GitHub upstream has been ARCHIVED and
+# read-only since 2025-08-15; the newest published version is the `compile_error!` placeholder.
+# ⛔ AND THE SECOND QUESTION CHANGED THE SPECIES OF THIS ENTRY: MAINTAINED ALTERNATIVES EXIST,
+# one of them claiming the SAME WIRE FORMAT, which would leave the TypeScript peer reader
+# exactly where M-11 left it. So there is no longer a window closing by itself -- there is a
+# CHOICE, and it is not the agent's: §6.1.1 is spec, and reopening it belongs to the owner.
+#
+# ✅ DECIDED 2026-08-31 BY THE OWNER: `bincode` 2.0.1 STAYS, AND §6.1.1 IS NOT REOPENED.
+# The wire compatibility of the fork was measured first and it HOLDS -- measure M-12, five
+# cases byte-for-byte identical, the peer reading them with the right values -- so this is a
+# choice made against evidence, not around it. Five reasons, and the last one is the one that
+# decides:
+#   1. The advisory says UNMAINTAINED, not BROKEN. No fixed version exists because there is
+#      nothing to fix: the upstream team calls 2.x complete.
+#   2. I4 renounces versioning and this channel is private, so the format is frozen BY DESIGN.
+#      A finished library is what such a channel wants. And ADR-0031 exists to keep the graph
+#      inside I3 SMALL: adopting the fork grows the shipped graph by one net node.
+#   3. Staying leaves DECLARED debt -- this note, gotcha #64, the register entry. Adopting
+#      would create a NEW and SILENT one: compatibility measured TODAY over five cases, a
+#      single maintainer, and no check anywhere that would tell us if a later release broke
+#      it. Silent debt is the worse kind.
+#   4. Novelty is not maturity: the fork is eight months old with one maintainer, and RustSec
+#      does NOT recommend it -- the alternatives the advisory names are wincode, postcard,
+#      bitcode and rkyv, and all four fell, each with its own measurement.
+#   5. THE ROOT OF C-1 IS NOT THIS CRATE. What C-1 named is the HOLE BETWEEN TWO CRITERIA:
+#      nobody asks how the library at OUR end is doing. Swapping this one library cures ONE
+#      crate and leaves the hole open for the other seven. The cure at the root is entry X-3
+#      of the 2026-08-27 audit -- no advisory scanning at all -- and it is still open.
+# ⚠️ SO THE RESIDUE IS NAMED AND NOT SETTLED: X-3 stays open and belongs to the owner, because
+# adding a step to the gate is global constraint 7. Naming it is part of this decision, never
+# a substitute for it.
+# The sources, each with its consultation date and what it says, live in ONE house --
+# docs/riferimenti.md, section on decision 5 (C-1) -- and M-12 is there too.
+bincode = { version = "2", default-features = false, features = ["alloc", "derive"] }
+
+# ⚠️ `unty` 0.0.4 is NOT declared here, and that is deliberate: it arrives as a dependency
+# of `bincode`, and declaring it directly would create an unused entry. It is ON THE LIST
+# in scripts/gate-deps.sh all the same, because the check measures the TRANSITIVE graph —
+# the danger arrives on the bounce, and that is the reason ADR-0031 does not look at direct
+# dependencies alone.
+
+# Encodes the durable journal record, by explicit index (§4.9, ADR-0036), AND the schema of
+# the channel towards the workers (§6.10, ADR-0037). A single entry for two artefacts: the
+# channel reuses an already shipped entry, and the list does NOT grow.
+minicbor = { version = "2.3.0", default-features = false, features = ["alloc", "derive"] }
+
+[dev-dependencies]
+trybuild = "1"
+
+# ⚠️ DEV-dependency, not a shipped one: `gate-deps.sh` measures the shipped graph with
+# `-e normal,no-proc-macro`, so this does not enter the ADR-0031 list. Verified by
+# running the gate, not deduced — gotcha #41.
+#
+# ⚠️ AND IT CLOSES A CYCLE, `kernel -> (dev) -> simulator -> kernel`. Cargo accepts it
+# because a dev-dependency does not take part in building the library; it was still run
+# once rather than assumed. The test lives here and not in `simulator/tests/` because what
+# it proves is THE KERNEL'S EXECUTOR under a fake reactor.
+simulator = { path = "../simulator" }

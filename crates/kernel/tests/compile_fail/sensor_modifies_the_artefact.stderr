@@ -1,0 +1,8 @@
+error[E0594]: cannot assign to `*artefact`, which is behind a `&` reference
+  --> tests/compile_fail/sensor_modifies_the_artefact.rs:17:9
+   |
+15 |     fn observe(&self, artefact: &Untrusted) -> Verdict {
+   |                       -------- this is an immutable reference
+16 |         // A sensor that rewrites what it was handed. This is the whole case.
+17 |         *artefact = Untrusted::new("something else".into());
+   |         ^^^^^^^^^ `artefact` is a `&` reference, so it cannot be written to

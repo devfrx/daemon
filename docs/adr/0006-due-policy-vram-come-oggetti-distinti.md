@@ -19,6 +19,11 @@ Il sistema ha due regimi di occupazione della GPU, e sono profondamente diversi:
 Non condividono né le invarianti né i modi di fallire. L'unica cosa che condividono è
 il punto in cui vengono interrogate.
 
+> ⚠️ **Rimando — [ADR-0033](0033-gpu-della-gui-quota-di-presentazione.md).** La riga
+> «chi occupa VRAM» della policy REMOTA è **incompleta**: sono audio riservato **più**
+> la quota di presentazione della GUI. La decisione di questo ADR — due policy come
+> oggetti distinti — resta valida e non è superata; cambia il budget su cui operano.
+
 Alternative considerate:
 
 - **Un condizionale sull'origine dell'inferenza,** sparso nei punti di decisione

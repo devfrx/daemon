@@ -87,3 +87,35 @@ non si possono avere entrambe, e fingere il contrario sarebbe disonesto.
     e *da cosa no*, in una riga.
   - Nel profilo «riservato», il sistema deve **rifiutarsi** di abilitare l'avvio
     automatico, non limitarsi a sconsigliarlo.
+
+---
+
+## ✅ Rimando — «protetto quanto il tuo account» ha un PERMESSO DI FILE, e non ce l'aveva (2026-08-18)
+
+Questo ADR dichiara che «cifrato a riposo» qui significa **protetto quanto il tuo account di
+sistema**, e pretende che la frase sia scritta **in interfaccia** perché una falsa sicurezza è
+peggio di nessuna sicurezza. ⛔ **Non diceva però nulla sui permessi del file**, e il file del
+giornale nasceva **0644 su Linux** — cioè **meno** dell'account: leggibile da qualunque utente
+della macchina. Finding **PL-1** dell'[audit del 2026-08-11](../audit-2026-08-11.md).
+
+| | |
+|---|---|
+| **la causa** | `OpenOptions::create(true)` chiede al sistema `0o666 & !umask`. Misurato su Linux con `umask` 0022: **644**. Non c'era **nessun** `.mode()` in tutto `crates/` |
+| **la decisione del proprietario** | **`0600` sul file**, non `0700` sulla cartella |
+| **perché non la cartella** | coprirebbe anche gli archivi futuri in un colpo solo, ma **la cartella non ha un proprietario nel codice**: nessuno la crea. La regola nominerebbe un chiamante che non esiste — è il difetto del finding **A-7**, e prenderselo per risparmiare una riga era lo scambio peggiore |
+| **dove vive** | `FileBackend::open` in `crates/platform/src/journal.rs`, dietro `cfg(unix)`: è il **modulo di piattaforma**, che è dove I3 vuole il codice specifico dell'OS |
+| **come è tenuto** | `the_journal_file_is_not_world_readable` in `crates/platform/tests/file_journal.rs`, `cfg(unix)`, che gira sulla **CI Linux**. Asserisce *«nessuno tranne il proprietario»* e non *«esattamente 0600»*, perché l'umask può solo **chiudere** di più e un'uguaglianza esatta andrebbe rossa dove la promessa è mantenuta |
+
+⛔ **La cosa da ricordare non è il permesso: è che il difetto era INVISIBILE dove si lavora.**
+Windows non ha il modo Unix, quindi né il codice né una sonda potevano dire niente sull'host di
+sviluppo, e il rosso era **programmato per uscire il giorno del secondo sistema** — la stessa
+forma del gotcha **#52**, e la ragione per cui l'audit dichiarava PL-1 *fuori copertura*. A
+renderlo misurabile è stato notare che la **CI gira su `ubuntu-latest`**.
+
+⚠️ **Limite dichiarato:** `mode()` vale solo alla **creazione**. Un giornale creato prima del
+2026-08-18 resta 0644, e portarlo a 0600 è una **migrazione** — non è coperta da questa
+decisione, e non esiste ancora un archivio da migrare.
+
+⛔ **L'ADR non è superato:** la decisione — chiavi dell'OS, gestore dei segreti unico, onestà
+sulla forza reale — è invariata. Ciò che si aggiunge è **il permesso che rende vera la frase
+che l'ADR pretende di mostrare in interfaccia**.

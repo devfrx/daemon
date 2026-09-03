@@ -30,7 +30,7 @@ eseguito** — e prima ancora «alla chiusura del Traguardo 2» con undici compi
 e pushati. È il gotcha **#31** sull'intestazione, che nessuno rilegge perché è la cornice e non
 il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit del 2026-08-11.
 
-> 📍 **Punto di ripresa: la testa del ramo `spec/sottoprogetto-1-kernel`** — la spec del
+> 📍 **Punto di ripresa: la testa di `main`**, dove il ramo `spec/sottoprogetto-1-kernel` è stato mergiato il 2026-09-03 — la spec del
 > sotto-progetto 1 è **completa e senza voci aperte**, e il sotto-progetto 1 è **chiuso**; il prossimo
 > passo lo dice la §6 del [compendio](COMPENDIO.md).
 > ⚠️ ***«Senza voci aperte»* significa *nessuna sezione lasciata da approvare*, non *nulla in

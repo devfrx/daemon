@@ -41,7 +41,7 @@ Riprendo un progetto già progettato, in corso.
 
 Repo:   due macchine — C:\Users\zagor\Desktop\harness
                        E:\ALL\DEV\MY_REPOS\daemon
-Remote: https://github.com/devfrx/daemon.git · branch spec/sottoprogetto-1-kernel
+Remote: https://github.com/devfrx/daemon.git · branch main
 Albero pulito, ramo pushato. Ultimo commit: <<< INCOLLA QUI: git log --oneline -1 >>>
 
 ⛔ PRIMA DI PROPORRE QUALSIASI COSA: leggi, poi ASCOLTA. Non entrare in plan

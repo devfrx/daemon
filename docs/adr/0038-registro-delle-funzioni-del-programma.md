@@ -30,6 +30,26 @@ Ciò che gli ADR già dicono, letto il 2026-09-03:
 `grep -n -i -E 'strument[oi] intern|registro degli strumenti|palette|scorciatoi' docs/superpowers/specs/2026-08-06-kernel-design.md docs/adr/*.md`
 rende la sola riga di ADR-0025.
 
+> ⚠️ **RICHIAMO DEL 2026-09-03, lo stesso giorno, dalla revisione del compito 1 del piano — *«la sola
+> riga»* È FALSO DALLA NASCITA, e la conclusione regge.** Rilanciato sul repository di **prima** di
+> questo file, il comando qui sopra —
+> `git grep -n -i -E 'strument[oi] intern|registro degli strumenti|palette|scorciatoi' 4d16f33 -- docs/superpowers/specs/2026-08-06-kernel-design.md 'docs/adr/*.md'`
+> — rende **sette** righe in cinque ADR, sei delle quali sul ramo `scorciatoi`; sul repository di
+> oggi ne rende di più, perché questo stesso file porta le parole che cerca. Nessuna di quelle righe
+> è un registro delle funzioni del programma, e l'unica riga **vicina** è quella di ADR-0025: è ciò
+> che il disegno del 2026-09-03 diceva in §6.1, e che il piano ha irrigidito in *«la sola riga»*. Il
+> comando che dice ciò che la frase voleva dire, appuntato al commit di prima di questo file perché
+> non invecchi:
+> `git grep -n -i -E 'strument[oi] intern|registro degli strumenti|palette' 4d16f33 -- docs/superpowers/specs/2026-08-06-kernel-design.md 'docs/adr/*.md'`
+> → la sola riga 52 di ADR-0025. La frase qui sopra resta com'è: un ADR è append-only.
+> ⚠️ **E tre precisazioni dalla stessa revisione.** La regola 7 attribuisce a G20 *«anche da
+> tastiera e click»*: G20 dà la metà *«tastiera»*, e il click segue dalla regola 1. La tabella qui
+> sopra dice che ADR-0007 non dice *«chi possa confermare»*: ADR-0007 dice *«chiedi all'utente»*,
+> nomina il **chi** e tace la **strada**, che è ciò che la regola 4 decide. E la *Decision* non
+> ripete che le funzioni del registro sono gli **strumenti interni** del livello 1 di ADR-0025, come
+> la riga A della §3.1 del disegno diceva: lo dice la tabella qui sopra, e vale. Voce **E3**
+> dell'errata del piano.
+
 ### Alternative considerate
 
 - **Una logica «solo per gesti»** — un vocabolario di gesti che invoca direttamente le proprie

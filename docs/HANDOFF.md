@@ -204,7 +204,7 @@ il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit 
 ## In trenta secondi
 
 Assistente desktop locale, utente singolo, GPU singola RTX 5080 16 GB. **Piattaforma a
-quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 37 ADR**.
+quattro pilastri paritari** su kernel comune. Spec del kernel **§0–§10 completa, 38 ADR**.
 Stack deciso **tranne il guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**,
 worker ML in **Python**; Tauri contro Electron è ancora aperto
 ([ADR-0029](adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.
@@ -1049,7 +1049,7 @@ Conseguenze **misurate**, non raccomandazioni. Vanno tradotte in controlli autom
 
 ## Non rilitigabile
 
-36 ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
+37 ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
 nuovo che lo superi** (`Superseded by`), non una conversazione. Le decisioni che
 è più probabile qualcuno voglia riaprire per comodità, e la ragione per cui non si fa:
 
@@ -1235,7 +1235,7 @@ diventassero codice.
 
 | | |
 |---|---|
-| ❌ ri-derivare l'architettura | è in **37 ADR**, ciascuno con alternative scartate e motivo |
+| ❌ ri-derivare l'architettura | è in **38 ADR**, ciascuno con alternative scartate e motivo |
 | ❌ riscrivere `tracciabilita.md` da zero | le funzionalità sono **già mappate**: si **aggiorna**, non si rigenera. ⛔ **Questa cella portava la cifra, e diceva «170» mentre la mappa dei documenti diceva «171»** — tolta e non riallineata, che è il gotcha **#68**: la cifra ha una casa sola, ed è la riga di `tracciabilita.md` più in basso. Finding **AUD-038** |
 | ❌ ri-cercare lo stato dell'arte già tracciato | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ rifare gli spike SP-5 e SP-6 | esiti, seed, versioni e comandi sono in [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md). I prototipi esclusi sono recuperabili dalla storia git, lo SHA è lì |
@@ -1280,7 +1280,7 @@ per chiudersi.
 | [`tracciabilita.md`](tracciabilita.md) | le funzionalità della mappa originale → dove vive ciascuna; **quante** lo dice il comando nel riquadro in testa a quel file. ⚠️ **RICHIAMO DEL 2026-09-03:** la cifra è **tolta** e non riallineata — viveva qui e nel compendio, ed è la specie che il richiamo qui sotto già registra. ⚠️ Questa cella diceva *«170»*, cifra che l'audit del 2026-08-10 aveva già ricontata e corretta **nel compendio e non qui**: la stessa cifra in due posti con due valori, colta il 2026-08-11 |
 | [`README.md`](README.md) | indice di ADR e diagrammi |
 | [`porta-di-qualita.md`](porta-di-qualita.md) | **dove vive ogni controllo**: ogni riga del catalogo §7.4 → il file che la implementa, le sonde per nome, e ciò che la porta **non** controlla ancora |
-| [`adr/`](adr/) | **37 decisioni architetturali**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
+| [`adr/`](adr/) | **38 decisioni architetturali**. Leggi **0001** e **0004** per primi: tutto il resto ne discende. Poi **0026** (linguaggio) se devi scrivere codice |
 | [`design/`](design/) | 9 diagrammi Mermaid della struttura corrente |
 | [`superpowers/specs/`](superpowers/specs/) | la spec del kernel §0–§10, **e quella del sotto-progetto 1** — §0–§8 complete, con tutte le evidenze delle misure. E i **disegni** dei traguardi e della chiusura, che non sono spec nuove: sono lo scaglionamento e le forme che la spec non fissa, e per ogni artefatto il controllo che lo esercita. ⛔ **Quali siano non è scritto qui:** lo dice la cartella, e la tabella delle spec di [`README.md`](README.md) — come già fa la cella dei piani |
 | [`superpowers/plans/`](superpowers/plans/) | i piani, uno per traguardo più quello dello **stack**. ⛔ **Quanti siano e a che punto stiano NON è scritto qui:** lo dicono la tabella dei piani di [`roadmap.md`](roadmap.md) e la §6 del [compendio](COMPENDIO.md), in un posto solo ciascuno. ⚠️ **RICHIAMO DEL 2026-08-21 — questa cella ne enumerava *«quattro»* e li elencava per nome, fermandosi al Traguardo 3 del 2026-08-10: ne mancavano **due**, il Traguardo 4 e il Traguardo 5. È **TOLTA e non riallineata**, perché un elenco che si allunga a ogni traguardo è un numeratore, e invecchia peggio di una cifra — non c'è nessun numero da riconoscere come stantio (`CLAUDE.md`, e la 45ª misura applicò la stessa correzione a [`README.md`](README.md)). ⛔ Ciascuno porta un'**errata in testa** che documenta dove il piano sbagliava, e il conteggio delle voci vive **nell'errata stessa**. ⛔ Un piano non si riscrive: è il registro di ciò che fu osservato eseguendolo |

@@ -120,7 +120,7 @@ piano»* qui sotto, fatto nella sessione che ha scritto il piano, come il disegn
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
-| **1** | ADR-0038, il registro delle funzioni del programma — con la voce in §5, la riga nell'indice e i totali | uno | ⬜ |
+| **1** | ADR-0038, il registro delle funzioni del programma — con la voce in §5, la riga nell'indice e i totali | uno | ✅ 2026-09-03 |
 | **2** | ADR-0039, la telecamera come sorgente di percezione — idem | uno | ⬜ |
 | **3** | i tre richiami datati in testa ad ADR-0001, ADR-0011 e ADR-0023, e i rimandi in §5 | uno | ⬜ |
 | **4** | la riga 12 e le dipendenze in `roadmap.md`; le righe di `tracciabilita.md`; lo spike SP-7 nella tabella degli spike | uno | ⬜ |
@@ -163,6 +163,8 @@ disegno** — l'etichetta di strato della riga 12 — è presa da questo piano c
 
 | # | Voce |
 |---|---|
+| **E1** | **Compito 1, Passo 6 — il `grep` sui link `../` dell'ADR rende quattro righe, non «due».** Scritta dal pre-controllo del 2026-09-03, prima di dispacciare, contando sul testo dettato al Passo 2: `grep -c '](\.\./'` conta le **righe** che portano un rimando relativo, e sono quattro — `../tracciabilita.md` in *Context* e in *Follow-up*, `../superpowers/specs/…` in *Context*, `../../spikes/GUI-REQUISITI.md` nella regola 7. La frase contava i **bersagli** distinti. Il criterio di chiusura non cambia: è il controllo dei link di `check-docs.sh`; il valore atteso del `grep` è **quattro** |
+| **E2** | **Compito 1, Passo 6 — `git status --porcelain` nomina otto file, non «sette».** Stesso pre-controllo: l'ottavo è **questo piano**, che il compito modifica nello stesso commit — la tabella della posizione e questa errata — e che il `git add` dettato già elenca. «Sette» contava la mappa dei file del compito e non il piano |
 
 ---
 

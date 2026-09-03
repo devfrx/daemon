@@ -11,14 +11,14 @@
 >
 > 📖 **Come si usa.** Leggi questo file per intero. Poi, se e solo se ti serve il
 > ragionamento dietro una decisione — le alternative scartate, le misure, i costi
-> accettati — apri **quel** file. Uno, non trentasette. La §12 dice quale.
+> accettati — apri **quel** file. Uno, non tutti. La §12 dice quale.
 >
 > ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-03**, col **SOTTO-PROGETTO 1 CHIUSO** contro la §0.7 della sua spec; l'ultimo contenuto di **merito** è il puntatore della §6 al **piano** del riconoscimento gesti, **scritto** lo stesso giorno del disegno e della sua rilettura, da eseguire in una sessione nuova. Manutenzione: §13.
+**Aggiornato il 2026-09-03**, con **ADR-0038** — il registro delle funzioni del programma — in §5, dal piano del riconoscimento gesti; l'ultimo contenuto di **merito** è quella voce. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -155,9 +155,9 @@ Solo **due delle cinque** — `kernel` e `simulator` — sono vincolate da ADR-0
 
 ---
 
-## 5. Le trentasette decisioni
+## 5. Le decisioni, una per ADR
 
-Sono **37 ADR**, di cui **36 ADR in stato Accepted** e uno `Proposed` (0029).
+Sono **38 ADR**, di cui **37 ADR in stato Accepted** e uno `Proposed` (0029).
 Ordine numerico. Il *perché*, le alternative scartate e i costi accettati stanno nel
 file di ciascuno: `docs/adr/`.
 
@@ -580,6 +580,16 @@ parte, e P1 sembrava rispondervi pur avendo **due binari Rust** ai due capi.
 mantenuto **da noi** nel linguaggio del pari **non è una via**: è una seconda definizione
 dello schema, e misurato sbaglia **in silenzio** — un lettore ingenuo del varint ha
 restituito `251` al posto di `4096` senza sollevare nulla.
+
+**0038 — Il registro delle funzioni del programma.** **Un registro unico, molti invocatori,
+lo stesso permesso.** Il kernel dà registrazione, invocazione, il permesso come tripla di ADR-0016
+e il giornale, nella forma dei registri di ADR-0009; le capacità e la GUI portano le funzioni.
+Agente, gesto, voce e click passano dalla **stessa** porta con la **stessa** tripla, e nessuna
+logica «solo per gesti» esiste. Un evento di percezione **informa, mai autorizza** (ADR-0014 per
+analogia); un effetto irripetibile chiede conferma a qualunque invocatore, e **per default la
+conferma non è gestuale**. La manipolazione della GUI — pannelli, menu — è presentazione e
+**non passa dal registro**. ⛔ **Nessun codice nasce con l'ADR:** il registro lo costruisce il
+primo invocatore, il click del sotto-progetto 2; quali funzioni siano gestuali lo decide il 12.
 
 ---
 
@@ -1498,7 +1508,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 | | |
 |---|---|
-| ❌ **ri-derivare l'architettura** | è nei 37 ADR, ciascuno con alternative scartate e motivo |
+| ❌ **ri-derivare l'architettura** | è nei 38 ADR, ciascuno con alternative scartate e motivo |
 | ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ **rifare gli spike SP-5 e SP-6** | esiti, seed, versioni e comandi in `spikes/RISULTATI.md` |

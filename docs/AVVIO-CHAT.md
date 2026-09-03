@@ -160,7 +160,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
 
 LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
   1. CLAUDE.md
-  2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 37 ADR
+  2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 38 ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
      cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),

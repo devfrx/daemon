@@ -4,6 +4,15 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-09-03 — il profilo «riservato» disattiva anche la telecamera.** Il punto 5
+> della decisione dice *«disattiva avvio automatico e voce always-on»*: con
+> [ADR-0039](0039-telecamera-come-sorgente-di-percezione.md) la telecamera è una seconda
+> sorgente di percezione always-on sotto il core, e il
+> [disegno](../superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) (§3.2) la mette nella
+> stessa frase — *«e la telecamera»*. La ragione è quella di questo ADR: le due cose sono
+> mutuamente esclusive, e fingere il contrario sarebbe disonesto. Nessuna riga è superata; il
+> meccanismo arriva col profilo, che nel codice non esiste ancora.
+
 ## Context
 
 Tre requisiti strutturali del progetto entrano in tensione diretta con la cifratura:

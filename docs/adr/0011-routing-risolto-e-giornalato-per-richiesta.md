@@ -4,6 +4,16 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-09-03 — nella tabella dell'inferenza percettiva always-on entra il
+> tracciamento delle mani.** Il [disegno del riconoscimento gesti](../superpowers/specs/2026-09-03-riconoscimento-gesti-design.md)
+> e [ADR-0039](0039-telecamera-come-sorgente-di-percezione.md) leggono la riga *«wake word, VAD,
+> trascrizione continua»* con un esempio in più: lo **stato continuo della mano** e il **gesto
+> discreto** sono eventi di una sorgente di percezione, non passi — non passano dal gateway e
+> non si giornalano per fotogramma. Un gesto di **comando** fa come la trascrizione che diventa
+> messaggio: **apre un passo** in una run già aperta; i fotogrammi che l'hanno prodotto no. E
+> per decisione 3 del disegno **solo la wake word apre una run**: la cella *«può avviare una
+> run»* resta vera della voce, non del gesto. Nessuna riga è superata.
+
 ## Context
 
 Il gateway decide, per ogni chiamata a un modello: quale modello, quale destinazione

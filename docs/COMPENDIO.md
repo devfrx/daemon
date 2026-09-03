@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-03**, con **ADR-0038** e **ADR-0039** — il registro delle funzioni del programma, la telecamera come sorgente di percezione — in §5, dal piano del riconoscimento gesti; l'ultimo contenuto di **merito** sono quelle due voci. Manutenzione: §13.
+**Aggiornato il 2026-09-03**, coi tre rimandi datati del riconoscimento gesti — ADR-0001, ADR-0011, ADR-0023 — nelle voci di §5; l'ultimo contenuto di **merito** è quello. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -39,7 +39,7 @@ Assistente desktop locale, utente singolo, Windows primario poi Linux, **GPU sin
 RTX 5080 da 16 GB**, OpenRouter primario con inferenza locale opzionale.
 
 **Piattaforma a quattro pilastri paritari** — conversazione e conoscenza, agenti e
-coding, voce, generazione asset 3D — su un **kernel comune**. Nessun pilastro prevale,
+coding, voce e gesti, generazione asset 3D — su un **kernel comune**. Nessun pilastro prevale,
 nessuno ha accesso privilegiato al kernel.
 
 Il vincolo dominante **non è funzionale ma di risorsa**: quattro aree che si contendono
@@ -166,7 +166,7 @@ Conversazione, conoscenza, agenti, coding, voce e generazione asset sono consuma
 **paritari** degli stessi servizi centrali: arbitro GPU, gateway di inferenza,
 persistenza, permessi, bus eventi. **Nessuna capacità ha accesso privilegiato né
 scorciatoie verso il kernel** — è questa regola a rendere la scelta reale invece che
-dichiarativa. È la decisione fondativa: tutto il resto ne discende.
+dichiarativa. È la decisione fondativa: tutto il resto ne discende. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** «voce» si legge **«voce e gesti»**, i pilastri restano quattro, nessuna riga superata — ADR-0039.
 
 **0002 — Windows primario, con confine OS esplicito.** Si sviluppa e si testa su
 Windows, ma ogni punto OS-specifico sta fin da subito dietro un **modulo di
@@ -275,7 +275,7 @@ run interattiva di lunga durata. **Non esiste un percorso «chat» accanto a un 
 VAD, trascrizione continua — **non** è un passo: è una **sorgente di eventi** (anello
 3), non passa dal gateway, e giornalarla violerebbe Q1. La trascrizione che diventa un
 messaggio **apre** un passo; i frammenti audio che l'hanno prodotta no. Il costo si
-registra **anche per gli stream interrotti**.
+registra **anche per gli stream interrotti**. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** nell'inferenza percettiva entra il **tracciamento delle mani**; un gesto di comando apre un passo, i fotogrammi no — ADR-0039.
 
 **0012 — L'equivalenza del fallback è definita dai vincoli, e sui dati si fallisce
 chiuso.** Un candidato che viola un vincolo della richiesta **non è un fallback: è una
@@ -401,7 +401,7 @@ l'unico punto di lettura delle credenziali**, e da questo punto unico discendono
 meccanismi già decisi: mascheratura nel record di routing, escalation automatica dei
 vincoli sui dati, canary di esfiltrazione. **Profilo «riservato»** opzionale con
 passphrase, che **disattiva avvio automatico e voce always-on** — mutuamente esclusivi,
-e fingere il contrario sarebbe disonesto.
+e fingere il contrario sarebbe disonesto. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** il profilo «riservato» disattiva **anche la telecamera** — ADR-0039.
 
 **0024 — Il checkpoint del filesystem copre ambiti dichiarati.** Un **ambito di
 lavoro** è un insieme di percorsi dichiarato esplicitamente; il checkpoint copre quelli

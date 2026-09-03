@@ -55,7 +55,7 @@ non la decisione: nessuna può sfuggirti perché «non sembrava attinente».
 Assistente desktop locale, utente singolo, Windows primario poi Linux, **GPU singola
 RTX 5080 da 16 GB**, OpenRouter primario con inferenza locale opzionale.
 **Piattaforma a quattro pilastri paritari** — conversazione e conoscenza, agenti e
-coding, voce, generazione asset 3D — su un **kernel comune** (ADR-0001).
+coding, voce e gesti, generazione asset 3D — su un **kernel comune** (ADR-0001, col rimando datato in testa).
 
 Il vincolo dominante non è funzionale ma **di risorsa**. Il kernel **non implementa
 nessuna funzionalità utente**: fornisce i meccanismi.

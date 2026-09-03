@@ -4,6 +4,17 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-09-03 — il pilastro «voce» si legge «voce e gesti», e i pilastri restano
+> quattro.** Il [disegno del riconoscimento gesti](../superpowers/specs/2026-09-03-riconoscimento-gesti-design.md)
+> (decisione 1, sotto accettazione condizionata) mette il riconoscimento gesti dalla telecamera
+> **dentro** il pilastro della voce, come sorgente di percezione sorella della wake word
+> ([ADR-0039](0039-telecamera-come-sorgente-di-percezione.md)), e costruisce quel pilastro in
+> due sotto-progetti — l'8 «Voce» e il 12 «Gesti» — come il kernel lo è in quattro. **Nessuna
+> riga di questo ADR è superata:** un quinto pilastro avrebbe richiesto un ADR che supera la
+> parola «quattro» per un contendente della GPU che oggi non la usa, ed è stato scartato. I
+> consumatori paritari guadagnano un invocatore in più — il gesto — con lo stesso permesso di
+> tutti gli altri ([ADR-0038](0038-registro-delle-funzioni-del-programma.md)).
+
 ## Context
 
 La mappa funzionale descrive quattro aree — conversazione, agenti/coding, voce,

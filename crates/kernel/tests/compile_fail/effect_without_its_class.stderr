@@ -1,0 +1,19 @@
+error[E0061]: this function takes 4 arguments but 3 arguments were supplied
+  --> tests/compile_fail/effect_without_its_class.rs:8:46
+   |
+ 8 |     let _record = kernel::record::Record::V1(kernel::record::RecordV1::intent(
+   |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 9 |         kernel::record::Trust::Instruction,
+   |         ---------------------------------- argument #1 of type `EffectClass` is missing
+   |
+note: associated function defined here
+  --> src/record.rs
+   |
+   |     pub fn intent(
+   |            ^^^^^^
+help: provide the argument
+   |
+ 8 |     let _record = kernel::record::Record::V1(kernel::record::RecordV1::intent(
+ 9 ~         /* EffectClass */,
+10 ~         kernel::record::Trust::Instruction,
+   |

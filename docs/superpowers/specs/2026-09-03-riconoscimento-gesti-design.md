@@ -120,7 +120,7 @@ ADR si danno quando si scrivono**, non oggi: l'ultimo lo dice `ls docs/adr | tai
 ⚠️ **La tabella qui sotto è un'aggiunta dello scrivente**, non un testo approvato: il *prodotto* viene
 dalla sezione approvata, la colonna *«il controllo che lo esercita»* è la forma che ogni disegno di
 questo repository porta, riempita leggendo `scripts/check-docs.sh` e `scripts/gate.sh` il 2026-09-03.
-Si approva rileggendo questo file.
+✅ **Approvata il 2026-09-03 con la rilettura del disegno**, sotto accettazione condizionata.
 
 | Artefatto | Il controllo che lo esercita | Specie |
 |---|---|---|
@@ -387,9 +387,11 @@ ha approvato, con le spunte di oggi:
    kernel; questo file nella §12 del compendio. Esecuzione con `superpowers:subagent-driven-development`.
 5. poi il brainstorming **distinto** della knowledge base; poi il sotto-progetto 2.
 
-⚠️ **Proposta dello scrivente, non approvata: la Definizione di «fatto» dell'esecuzione.** È l'elenco
-del punto 4 letto come condizioni, nella forma che i disegni dei Traguardi 5 e 6 danno alla propria
-chiusura; il proprietario la approva o la cambia rileggendo questo file, e il piano la copia **da qui**.
+✅ **La Definizione di «fatto» dell'esecuzione — proposta dallo scrivente, APPROVATA il 2026-09-03 con
+la rilettura del disegno**, sotto la stessa accettazione condizionata. È l'elenco del punto 4 letto come
+condizioni, nella forma che i disegni dei Traguardi 5 e 6 danno alla propria chiusura; il piano la copia
+**da qui**. ⚠️ Questo capoverso diceva *«proposta, non approvata»*: la rilettura l'ha approvata, e la
+riga si riscrive invece di ricevere una nota sotto.
 
 | # | Condizione | Chi la verifica |
 |---|---|---|
@@ -498,7 +500,7 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 
 | # | Voce | Perché è sua, e il consiglio |
 |---|---|---|
-| 1 | la tabella dei controlli per artefatto (§1.4) e la Definizione di «fatto» proposta (§5.5) sono **aggiunte dello scrivente** | il merito viene dalle sezioni approvate, la forma no: si approvano o si cambiano rileggendo questo file, **prima** del piano, che le copia da qui. Consiglio: approvarle così — sono la forma di ogni disegno del repo, e nessuna riga vi decide qualcosa che le sezioni non dicessero |
+| 1 | la tabella dei controlli per artefatto (§1.4) e la Definizione di «fatto» (§5.5) sono **aggiunte dello scrivente** | ✅ **Approvate il 2026-09-03 con la rilettura del disegno**, sotto accettazione condizionata: il piano le copia da qui. Il merito viene dalle sezioni approvate, la forma no, ed è per questo che erano portate al proprietario invece di essere date per approvate |
 | 2 | F8 più debole di come era scritta | nessuna decisione ne dipende oggi. Consiglio: **non** cercare ora una seconda alternativa a MediaPipe — sarebbe lavoro per una voce registrata (la 9), cioè sfoggio; si rimisura quando la voce si apre |
 | 3 | le decisioni **2, 7, 9, 10, 12**, aperte con un chiusore scritto | nessuna sbarra il disegno né il piano; restano nella tabella delle dodici, in una casa sola |
 | 4 | l'**etichetta di strato** della riga 12 della roadmap: la sezione approvata dice **L2**, ma la riga paga anche lavoro di kernel (§2.4), e la roadmap segna l'ulteriore strato quando c'è — la riga 9 è *«L1 est.»*, la 11 *«L0 + L3»* | una parola, presa **scrivendo la riga** nel piano. Consiglio: **«L2 + L1 est.»**, sulla forma delle righe 9 e 11 — se il proprietario non dice altro, il piano la scrive così |
@@ -550,3 +552,55 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 ⛔ **Lo dice la §6 del [compendio](../../COMPENDIO.md), in un posto solo.** L'ordine approvato, con
 le spunte di oggi, è nella §5.5 di questo disegno; la prima riga senza spunta è il **piano**, in una
 sessione nuova.
+
+### Come si riprende — scritto alla chiusura della sessione del 2026-09-03, coi comandi
+
+⚠️ **È il documento di consegna di questa sessione**, e sta qui e non in un file a parte perché il
+repo ha già la sua convenzione: lo stato vive in file **tracciati**, e chi riprende legge **questo**
+file per intero. Ogni riga è stata **riletta coi comandi** prima di essere scritta, non ricordata.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb`. Nessuno stash, nessuna operazione a metà |
+| I commit di questa sessione | `git log --oneline 066008a..HEAD`: il disegno scritto sul posto (`c9fcd40`), la rilettura del proprietario con la verifica di coerenza (`b28a038`), e questa chiusura |
+| Codice di prodotto | **non toccato**: `git diff --stat 066008a..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml` non rende nulla. Sono cambiati tre file di documentazione: questo, il compendio, e l'archivio della consegna |
+| Cancello | `bash scripts/check-docs.sh` → `OK` a ogni commit; `bash scripts/gate.sh` → **`GATE GREEN`, rilanciato alla chiusura** — e all'apertura, dove la consegna lo dichiarava non rilanciato. Si rilanciano, non si citano |
+| Fine-riga | questo file e l'archivio sono **LF** nell'indice e nell'albero; il compendio è LF nell'indice e **CRLF** nell'albero, uniformemente: `git ls-files --eol docs/COMPENDIO.md docs/archivio/consegna-brainstorming-gesti.md docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md`. Chi li riscrive conserva i fine-riga di ciascuno e li rimisura dopo (trappola 3) |
+| File temporanei | nessuno nel repository: le misure e gli script di questa sessione stanno nello scratchpad, fuori dall'albero, come `CLAUDE.md` prescrive |
+| Debito lasciato | **nessuno non dichiarato**: le voci aperte sono le decisioni 2, 7, 9, 10, 12 e 13 e la voce 4 — l'etichetta di strato — tutte nelle tabelle di questo file col loro chiusore |
+
+**Il compito della sessione successiva: scrivere il piano.** In ordine, e ogni riga è eseguibile:
+
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -3`: si parte da `main`, e la
+   testa deve essere il commit di questa chiusura o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa dell'audit
+   del 2026-08-27 — poi **questo file, per intero**. L'archivio della consegna **non** è lettura
+   obbligatoria.
+3. Prima di scrivere, la regola di `CLAUDE.md` su `superpowers:writing-plans`: le voci aperte **si
+   sanno prima**. Dove stanno: la tabella *«Le voci aperte del Traguardo 5, in una tabella sola»* di
+   [`porta-di-qualita.md`](../../porta-di-qualita.md), col comando che vive lì; le voci senza numero
+   AUD dell'[audit](../../audit-2026-08-27.md); la tabella delle tredici decisioni di questo file.
+   ⚠️ Quali abbiano come chiusore **questo piano** o *«il proprietario, prima»* lo decide chi lo
+   scrive leggendo la colonna *«Chi la chiude»*, non questa riga: quelle si chiudono o si portano nel
+   piano, le altre si conoscono e si dichiarano nell'errata in testa.
+4. `superpowers:writing-plans`: il piano in `docs/superpowers/plans/<data>-riconoscimento-gesti.md`,
+   coi compiti del punto 4 della §5.5, la Definizione di «fatto» della §5.5 **copiata da qui**, e la
+   voce 4 presa scrivendo la riga della roadmap. In testa: modalità subagent-driven, errata,
+   pre-controllo — la forma dei piani precedenti, `ls docs/superpowers/plans/`.
+5. Il pre-controllo delle quattro domande di `CLAUDE.md` su ciascun compito, **nella sessione che
+   scrive il piano**; ogni compito si legge contro il codice di **allora**, e la sezione *«Le
+   trappole»* dice dove guardare.
+6. L'esecuzione in una sessione **nuova**, un subagente fresco per compito, revisione fra uno e
+   l'altro (`superpowers:subagent-driven-development`): la regola del proprietario.
+7. A piano eseguito: la §6 del compendio porta il passo successivo — il brainstorming **distinto**
+   della knowledge base — e questo file entra nella §12 del compendio e in `README.md`, come la
+   condizione 8 della Definizione di «fatto» prescrive.
+
+📌 **Ciò che questo disegno consegna a chi scriverà il piano**, ed è suo e non un puntatore: i
+compiti del punto 4 della §5.5; la Definizione di «fatto» approvata; la tabella dei controlli per
+artefatto della §1.4; le trappole; le fonti F1–F9 della §7, già rilette alla radice, che entrano in
+`riferimenti.md` così come sono; e il consiglio scritto sulla voce 4.
+
+⛔ **Vicoli ciechi di questa sessione: nessuno nuovo.** L'unico tentativo caduto è una fonte —
+Forasoft, di terza mano, che diceva *«mantenuta»* di RTMPose — ed è registrato nella riga F8 della
+§7, perché nessuno la citi di nuovo senza risalire a OpenMMLab.

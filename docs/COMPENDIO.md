@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-03**, col **SOTTO-PROGETTO 1 CHIUSO** contro la §0.7 della sua spec, dal piano della chiusura eseguito e rivisto; l'ultimo contenuto di **merito** è il passaggio unico. Manutenzione: §13.
+**Aggiornato il 2026-09-03**, col **SOTTO-PROGETTO 1 CHIUSO** contro la §0.7 della sua spec, dal piano della chiusura eseguito e rivisto; l'ultimo contenuto di **merito** è il puntatore della §6 al brainstorming dei gesti, in corso. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -645,10 +645,13 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 
 ✅ **IL SOTTO-PROGETTO 1 È CHIUSO IL 2026-09-03 contro la §0.7 della spec**, e il verbale è la §7 del
 [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md).
-⏭️ **IL PROSSIMO PASSO: il brainstorming delle DUE FUNZIONI CORE** — il riconoscimento gesti dalla
-telecamera, e la knowledge base — **due brainstorming distinti**, prima di aprire il sotto-progetto 2.
-Nessuna voce aperta lo sbarra: le voci 1 e 2 della §7.8 di quel disegno lo nominano come
-proprio chiusore, e nessun'altra lo condiziona.
+⏭️ **IL PROSSIMO PASSO: il brainstorming del RICONOSCIMENTO GESTI è IN CORSO dal 2026-09-03**, e la sua
+consegna — le decisioni prese in chat, l'approccio scelto sotto accettazione condizionata, la sezione 1
+presentata e **non ancora approvata**, le sezioni 2–5 da presentare — sta in
+[`specs/2026-09-03-riconoscimento-gesti-design.md`](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md),
+che chi riprende legge **per intero prima di proporre**. Poi il brainstorming **distinto** della knowledge
+base; entrambi prima di aprire il sotto-progetto 2. Nessuna voce aperta li sbarra: le voci 1 e 2 della
+§7.8 di quel disegno li nominano come proprio chiusore, e nessun'altra li condiziona.
 
 ⛔ **IL RACCONTO DEL TRAGUARDO 6 È USCITO DA QUI il 2026-09-03, e non riassunto:** sta in
 [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola, con le eccezioni

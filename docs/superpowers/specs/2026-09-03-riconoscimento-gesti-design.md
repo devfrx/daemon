@@ -65,7 +65,7 @@ perché chi riprende sappia che cosa non rifare. Le domande com'erano poste stan
 puntano qui.
 
 ⛔ **RICHIAMO DEL 2026-09-04 — questa riga diceva *«Le DODICI decisioni»* e la tabella ne porta
-TREDICI.** La cifra è **TOLTA e non riallineata**, in tutte le sue case: qui, nella §5.4, nella
+TREDICI.** La cifra è **TOLTA e non riallineata** dalle case **vive**: qui, nella §5.4, nella
 voce 3 delle voci aperte, e nei **due indici** che il compito 9 aveva appena scritto — la §12 del
 compendio e la tabella *«Specifiche»* di [`README.md`](../../README.md). Un cardinale scritto sopra
 una tabella che cresce invecchia al primo rigo aggiunto, ed è quello che è successo: la decisione
@@ -73,11 +73,14 @@ una tabella che cresce invecchia al primo rigo aggiunto, ed è quello che è suc
 unica è **la tabella**, e il conto lo dà il comando, delimitato per **testo** e non per numero di riga:
 `awk '/^\*\*Le decisioni, numerate/{s=1} s&&/^## 1\./{s=0} s&&/^\| [0-9]+ \|/{n++} END{print n}' docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md`.
 ⛔ **La prima stesura di questo richiamo ancorava il comando ai NUMERI DI RIGA, e il richiamo stesso
-lo ha reso falso prima del commit:** le sue undici righe hanno spostato la tabella e il comando
+lo ha reso falso prima del commit:** il richiamo stesso ha spostato la tabella e il comando
 rendeva **5**. ✅ **Provato nelle due direzioni:** con cinquanta righe inserite sopra rende ancora
 **13**, e con una riga di tabella in più rende **14**.
-⚠️ **La riga della sezione *«Come si riprende»* che dice *«tredici»* NON è toccata:** è un **verbale
-datato**, e un verbale invecchia onestamente. Trovato dalla **revisione** del compito 9.
+⚠️ **Che cosa NON è toccato, e la ragione è una sola:** la riga della sezione *«Come si riprende»*
+qui sotto e le occorrenze del [piano](../plans/2026-09-03-riconoscimento-gesti.md) dicono
+*«tredici»*, cioè il valore **vero**, dentro **verbali datati** di un piano **chiuso** — e un
+verbale invecchia onestamente. Trovato dalla **revisione** del compito 9; il censimento delle case
+allargato dalla **ri-revisione** dell'ondata, che ne aveva contate sei su dieci.
 
 | # | Decisione | Stato al 2026-09-03 | Scelta, o chi la chiude | Scartato, e perché |
 |---|---|---|---|---|

@@ -2335,3 +2335,110 @@ solo Minor: il codice e i testi dettati reggono alla prima passata, il pre-contr
 
 ⛔ **Vicoli ciechi di questa sessione: nessuno.** Nessuna decisione del disegno o del piano è
 stata riaperta.
+
+### Come si riprende — scritto alla chiusura della sessione dei COMPITI 6 e 7, il 2026-09-04, coi comandi
+
+⚠️ **È il documento di consegna della sessione che ha ripreso dal compito 6 non dispacciato**, ha
+eseguito e fatto rivedere i compiti **6** e **7**, ha portato al proprietario le due voci che il
+compito 7 ha aperto, e ha applicato le sue decisioni. Chiusa su richiesta del proprietario — *«il
+prossimo compito si fa a sessione pulita con il prossimo agente»*. Le tre sezioni qui sopra sono
+le consegne delle sessioni precedenti e restano com'erano: sono **verbali**. Ogni riga di questa è
+stata **riletta coi comandi** prima di essere scritta.
+
+⛔ **DA SAPERE SUBITO: niente è a metà, e il compito 8 NON si dispaccia.** I compiti 1–7 sono
+committati, pushati e **rivisti** — due revisioni piene e una re-revisione ristretta in questa
+sessione, tutte chiuse, nessun Critical, nessun Important aperto, nessuna ondata in corso. Albero
+pulito, nessuno stash, nessuna operazione git a metà. ⛔ **Il compito 8 vuole il PROPRIETARIO
+davanti alla telecamera di questa macchina**, e il suo giudizio a parole è **parte del criterio
+S2**: non è un compito da subagente, e il primo passo della ripresa è **chiederglielo**, non
+dispacciarlo.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb` dopo `git fetch --all --prune`. Albero pulito con `git status --porcelain -uall`, nessuno stash, nessuna operazione a metà |
+| I commit di questa sessione | `git log --oneline d357ec1..HEAD`: `43ce0a0` (compito 6), `36db024` (compito 7, protocollo), `1edf65a` (compito 7, codice), `311bce0` (compito 7, il metro — la decisione del proprietario) — più il commit di questa sezione. **Quanti siano lo dice il comando** |
+| La posizione del piano | la tabella in testa: **1–7 ✅**, 8–9 ⬜. Il numeratore vive lì e in nessun altro posto (vincolo 16) |
+| Le revisioni | compito 6 su `d357ec1..43ce0a0` → **Approvato**, 0 Critical, 0 Important, 1 Minor, col revisore che ha **rilanciato le due mutazioni**; compito 7 su `43ce0a0..1edf65a` → **Approvato**, 0 Critical, **1 Important** sul metro, 7 Minor; re-revisione ristretta su `1edf65a..311bce0` → **entrambe le voci ADDRESSED**, nessuna rottura nuova |
+| Codice di prodotto | il piano intero ne tocca **un solo file**, ed è un banco: `git diff --name-only 1c0a633..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml` rende `crates/kernel/tests/arbiter_admission.rs` e nient'altro |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `cargo fmt --all --check` → pulito; `cargo test --locked -p kernel --test arbiter_admission` → `24 passed; 0 failed` — **rilanciati alla chiusura dal coordinatore** su `311bce0`. Si rilanciano, non si citano |
+| Fine-riga | `git ls-files --eol docs/superpowers/plans/2026-09-03-riconoscimento-gesti.md docs/porta-di-qualita.md crates/kernel/tests/arbiter_admission.rs .gitignore spikes/gesti/PROTOCOLLO.md spikes/gesti/relay/page.html` — il piano e i due file dello spike `i/lf w/lf`, gli altri tre `i/lf w/crlf` con CR = righe |
+| Margine del compendio | positivo, col comando del vincolo 12. ⚠️ **Questa sessione non ha toccato il compendio:** il compito 9 lo consuma ancora |
+| L'errata | **E1–E12**, tutte committate, nessuna aperta. **E10**, **E11** ed **E12** sono nate in questa sessione: la 10 eseguendo il compito 6, la 11 dalla **revisione** del compito 7, la 12 dal **coordinatore** prezzando un `DONE_WITH_CONCERNS` |
+| File temporanei | nessuno nel repository. Il ledger `.superpowers/sdd/2026-09-03-riconoscimento-gesti/` — **git-ignorato, solo su questa macchina** — porta `progress.md` con ogni `Ruling:`, i brief, i dispacci, i rapporti e le revisioni dei compiti 1–7. ⛔ **Per i compiti 8 e 9 NON esiste nessun brief né dispaccio:** si scrivono dal piano, come i precedenti — strumenti (righe 23–78) + vincoli (84–111) + errata (156–179) + il compito, verbatim |
+
+**Le decisioni del PROPRIETARIO, prese in questa sessione** — sono sue, non del coordinatore, e
+stanno nell'errata perché non si perdano:
+
+| | Decisione | Dove vive |
+|---|---|---|
+| 1 | il **metro di S2**: il criterio **non cambia** — resta `p95 < 100 ms` — e si aggiunge il **massimo** a *«Che cosa si riporta»* e al `dump` della pagina, con un richiamo datato che dichiara la modifica al metro | voce **E11**, e il richiamo in `spikes/gesti/PROTOCOLLO.md` |
+| 2 | `__pycache__/` e `*.pyc` entrano nel `.gitignore`, in una **sezione propria** e non nel blocco degli spike | voce **E12**, e le righe nuove del `.gitignore` |
+
+**Le decisioni prese dal coordinatore, col perché** — nessuna è del piano, e il proprietario può
+ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | si lavora su **`main` senza worktree**, come i compiti 1–5 | è il vincolo 14 del piano, e l'ordine del proprietario di dispacciare era il consenso che la skill SDD chiede; costo: un commit su `main` invece che su un ramo, revocabile con `git revert` |
+| 2 | il pre-controllo dei compiti 6 e 7 **rifatto sul codice di adesso** prima di ciascun dispaccio, invece di fidarsi di quello della sessione precedente | domanda 5 di `CLAUDE.md` — il contratto cresce sotto il piano; costo: qualche minuto, e ha confermato che `git diff --name-only 60bdee7..HEAD -- crates/` era vuoto |
+| 3 | **E10** scritta dal coordinatore e lo **stesso** esecutore ripreso, invece di un esecutore fresco | il suo contesto era intatto e il difetto era del piano, non suo; costo se sbagliato: un giro in più |
+| 4 | l'**Important del compito 7 portato al proprietario** invece di deciso eseguendo, contro la regola *«rulings, not stalls»* della skill SDD | tre ragioni scritte: il protocollo è **congelato** e la sua clausola pretende che una modifica al metro sia detta; il metro è un criterio che il proprietario ha **approvato** nel disegno §4.2, e `CLAUDE.md` con `decision-principles` gli manda le modifiche a un contratto approvato; e **non era uno stallo**, perché il compito 8 lo vuole comunque. Costo se sbagliato: una domanda che si poteva risolvere da soli |
+| 5 | il massimo si prende con **`percentile(a, 1)`** e non con `Math.max(...a)` | riusa l'aiutante che la pagina ha già e lo spread su un array lungo può far saltare lo stack; **provato** su cinque array fino a 601 elementi, non dedotto; costo se sbagliato: nessuno, il re-revisore l'ha riprovato per conto suo |
+| 6 | modelli: esecutore **`sonnet`**, revisore **`opus`**, re-revisore **`sonnet`** (diff piccolo, valori attesi esatti) | come le sessioni precedenti; costo se sbagliato: un rilievo mancato — il ciclo del compito 7 ne ha trovato uno vero e importante |
+| 7 | **non indagare oltre** sulla sparizione dell'aiutante dallo scratchpad | il rimedio costa dieci secondi ed è riuscito due volte su due; criterio **5**, proporzione. Costo se sbagliato: la causa resta ignota e il fenomeno si ripete — ma non fa danno |
+| 8 | la cella *«**due** (D6)»* della colonna *Commit* del compito 7 **non corretta qui** | è una tabella che aggiorna **chi esegue**; registrata per il compito 9 — vedi sotto |
+
+**I rilievi Minor rimandati alla revisione finale**, con la casa — nessuno rende falso un file
+committato:
+
+- **compito 6** (`task-6-review-1.md`): ① il `finished in 0.00s` dentro le due righe `test result` di `docs/porta-di-qualita.md` è un tempo di parete che non si riproduce (l'esecutore `0.01s` poi `0.00s`, il revisore `0.01s`); tutti i campi che portano il fatto coincidono, e la difesa prescritta è l'etichetta *«Esito misurato il 2026-09-04»* che le righe già portano. Rimedio possibile: troncare prima di `finished in`. ② ⛔ **per il proprietario:** la sezione nuova del registro dice *«la §7.4 è spec (vincolo globale 7)»*, ma in **questo** piano quel numero è il **vincolo 2**; *«vincolo globale 7»* è però un termine **consolidato** di `docs/porta-di-qualita.md`, usato con lo stesso significato in almeno quindici righe di traguardi precedenti, ed è dettato verbatim dal disegno §4.2. La cura sarebbe quella del gotcha **#68** e tocca disegno, piano e le quindici righe insieme.
+- **compito 7** (`task-7-review-1.md`), sette voci, tutte *plan-mandated*: `cargo fmt --check` rosso sul relay (stessa specie di **E10**, ma `spikes/` è fuori dal workspace e il cancello non lo raggiunge); `clippy::zombie_processes` con `child.kill()` irraggiungibile perché `incoming()` non termina mai; il brief dice *«i tre link del protocollo»* e sono **quattro** (specie di **E1**/**E2**); `results/s` di `s1_bench.py` calcolato su un intervallo che include lo `sleep(0.5)`, ~1,6% conservativo; ⛔ **`page.html` conta i seicento campioni anche a mani FUORI campo** — il push è incondizionato e la callback scatta con `hand_landmarks` vuoto; la tensione non scritta fra *«`cargo` sempre con `--locked`»* e il Passo 7 che lo omette **a ragione**; cinque nomi d'API che **P-7 non ha letto alla fonte** — `HandLandmarker.create_from_options` e i quattro percorsi `mp.tasks.*`.
+- ⛔ **per il compito 9**, tre voci che toccano il **disegno** e non un file committato: le due ereditate dalla sessione precedente — la posizione attribuita ad AUD-032 in §3.2 (**E4**), e la proposizione *«float16»* di **F4** che la §7/§6.2 del disegno non ha — più la cella *«due (D6)»* della colonna *Commit* del compito 7, che `git log --oneline 43ce0a0..311bce0` conta **tre**: la cella documenta la **prescrizione** di D6 e non un conteggio, ma letta come numero lo diventa. O la cella dice che cosa conta, o il numero esce e resta il rimando a `git log`.
+
+⛔ **Ciò che NON è verificato, e va detto prima di fidarsi.** ① **Perché `replace_unique.py` sia
+sparito dallo scratchpad** — l'esecutore del compito 7 l'ha riportato assente a **entrambi** i
+giri; misurato alla chiusura, il file **c'è** ed è byte-identico al piano, col timestamp della
+ricostruzione del **primo** giro, quindi l'assenza al secondo giro il filesystem non la conferma.
+La causa **non è determinata** e non si inventa. ② Che il cancello fosse verde **prima di ciascuno**
+dei due commit del compito 7 non è verificabile a posteriori: il revisore lo attesta su `HEAD`, e
+il rapporto dell'esecutore ne porta l'uscita.
+
+**Il compito della sessione successiva: il compito 8, poi il 9.** In ordine, e ogni riga è
+eseguibile:
+
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -6`: si parte da `main`, e
+   la testa deve essere il commit di questa sezione o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa
+   dell'audit del 2026-08-27 — poi **questo piano fino alla mappa dei file**, l'errata per intero
+   (**E1–E12**), questa sezione, e il disegno per intero.
+3. ⛔ **`replace_unique.py` si riestrae e si RICONFRONTA prima di usarlo**, invece di darlo per
+   presente: `sed -n '35,70p'` di questo file nel proprio scratchpad, poi `diff` contro le stesse
+   righe. **E non si cancella ripulendo lo scratchpad.**
+4. ⛔ **Il compito 8 si CONCORDA col proprietario, non si dispaccia.** Vuole la telecamera di
+   questa macchina e il suo **giudizio a parole** sul pannello che segue il pinch, che il criterio
+   S2 mette **dentro** l'esito. Il coordinatore guida i comandi, il proprietario guarda e giudica.
+   Quattro cose da portare nel suo brief, raccolte qui perché non si riscoprano: **(a)** `page.html`
+   conta i seicento campioni anche a mani **fuori campo** → mani in campo per tutta la corsa;
+   **(b)** se un import di MediaPipe cade, i cinque nomi che P-7 non ha letto alla fonte sono i
+   primi da guardare, e si registra una **voce d'errata** invece di «aggiustare» in silenzio;
+   **(c)** il criterio S2 riporta ora anche il **massimo**, e il `dump` della pagina lo produce —
+   `percentile(…, 1)`; **(d)** `py -3.10` è l'interprete (P-4), e `.venv`, `*.task`, `*.csv`,
+   `__pycache__` e `*.pyc` sono tutti ignorati, quindi l'albero resta pulito da sé.
+5. Il **compito 9** chiude: la §6, la §8 e la §12 del compendio, `README.md`, `roadmap.md`, il
+   disegno, e la Definizione di «fatto». Porta al **disegno** le tre voci marcate «per il compito 9»
+   qui sopra — come richiami datati o come voci d'errata, a scelta del proprietario — e muove il
+   prossimo passo della §6 al **brainstorming della knowledge base**.
+
+📌 **Trovato eseguendo, e non promosso a gotcha: la quarta domanda del pre-controllo di `CLAUDE.md`
+è quella che entrambi i difetti di questa sessione hanno eluso, e per la stessa ragione.** **E10**
+e **E11** sono la stessa specie: un **artefatto dettato dal piano che nessun controllo esercitava**.
+Le due sonde del compito 6 erano state provate su una copia usa-e-getta — che provava che
+**passano**, mai che siano **formattate**, e `cargo fmt` non è un passo del cancello; il criterio di
+S2 citava P2 senza che nulla confrontasse la **statistica** citata con quella del metro. ⛔ È la
+domanda **2** — *per ogni artefatto che il compito produce, quale controllo lo esercita?* — e il
+piano avverte già che *«non si vede leggendo: non c'è niente da leggere»*. Nessun gotcha nuovo: uno
+che non insegna niente diluisce quelli che insegnano.
+
+⛔ **Vicoli ciechi di questa sessione: nessuno.** Nessuna decisione del disegno o del piano è stata
+riaperta; l'unica riaperta è il **metro di S2**, e l'ha riaperta il **proprietario**, con la misura
+in mano e col richiamo datato che lo dichiara.

@@ -201,6 +201,7 @@ sotto-progetto**, nello stesso passaggio.
 | [Traguardo 5 — il disegno](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md) | l'arbitro GPU | ⛔ **Non è una spec:** è lo scaglionamento e le **forme** che la §5 descrive a parole — dove vive l'arbitro, dove vive `Grant` e perché si sposta, i parametri consegnati, il ciclo della concessione, le due policy, e per ogni artefatto **il controllo che lo esercita**. ✅ **Scritto il 2026-08-18**, ⛔ e **si legge PRIMA di scriverne il piano** — cosa che il piano dello stesso giorno ha fatto, trovandovi **sette** cose |
 | [Traguardo 6 — il disegno](superpowers/specs/2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md) | gli altri meccanismi | ⛔ **Non è una spec:** perimetro, forme e il controllo che esercita ciascun artefatto; la **§8** è il verbale della chiusura del traguardo |
 | [La chiusura — il disegno](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md) | la chiusura del sotto-progetto 1 | ⛔ **Non è una spec:** come si rilegge la §0.7 contro il codice; la **§7** è il verbale |
+| [Riconoscimento gesti — il disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) | il riconoscimento gesti dalla telecamera | ⛔ **Non è una spec:** perimetro, forme e il controllo che esercita ciascun artefatto; le tredici decisioni col loro chiusore; la §6.4 porta l'esito di SP-7 |
 
 ## Decomposizione del sistema
 

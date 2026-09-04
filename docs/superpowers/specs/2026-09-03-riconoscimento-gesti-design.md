@@ -125,7 +125,7 @@ questo repository porta, riempita leggendo `scripts/check-docs.sh` e `scripts/ga
 | Artefatto | Il controllo che lo esercita | Specie |
 |---|---|---|
 | gli ADR A e B, in `docs/adr/` | `check-docs.sh` pretende **una voce in §5 del compendio per ogni file** di `docs/adr/`, accoppiata per numero: un ADR senza voce è rosso. ⚠️ E lo stesso script confronta con la realtà i **totali** degli ADR scritti nei documenti di stato: si aggiornano **nello stesso commit** degli ADR, e quali siano lo dice il comando `grep -n -o -E '[0-9]+ ADR( in stato [A-Za-z]+)?\|[0-9]+ decisioni architetturali' docs/HANDOFF.md docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/AVVIO-CHAT.md CLAUDE.md` | livello 2, cancello |
-| i tre richiami datati su ADR-0001, ADR-0011, ADR-0023 | **nessuno script**: li difende chi rilegge l'ADR e la revisione del compito che li scrive. ⚠️ Dichiarato invece che taciuto: è la specie di affermazione della radice R1 dell'[audit](../../audit-2026-08-27.md), e la forma che regge è quella di AUD-032 — il richiamo **in testa all'ADR**, e il compendio che vi **rimanda** invece di ricopiarlo | revisione |
+| i tre richiami datati su ADR-0001, ADR-0011, ADR-0023 | **nessuno script**: li difende chi rilegge l'ADR e la revisione del compito che li scrive. ⚠️ Dichiarato invece che taciuto: è la specie di affermazione della radice R1 dell'[audit](../../audit-2026-08-27.md), e la forma che regge è quella di AUD-032 — il richiamo **in testa all'ADR**, e il compendio che vi **rimanda** invece di ricopiarlo. ⚠️ **RICHIAMO DEL 2026-09-04:** l'attribuzione ad AUD-032 è corretta nella §3.2 — la posizione «in testa» è una scelta di questo disegno, non la forma di AUD-032 | revisione |
 | la riga 12 e le dipendenze in [`roadmap.md`](../../roadmap.md) | il controllo dei link di `check-docs.sh`; *«senza rinumerare»* lo tiene chi rilegge la tabella «Sotto-progetti» intera, perché nessuno script la legge per posizione | livello 2 sui link, revisione sul resto |
 | le righe di [`tracciabilita.md`](../../tracciabilita.md) | il riquadro in testa conta le funzionalità **col comando** e non con una cifra, quindi le righe nuove non falsificano niente; il controllo dei link sul resto | comando |
 | F1–F9 in [`riferimenti.md`](../../riferimenti.md) | il controllo dei link; la data accanto a ogni fonte, come il resto del file | livello 2 sui link |
@@ -270,6 +270,16 @@ entrano negli ADR come sono, e il piano non le accorcia.
 voce dell'ADR nella §5 del compendio vi **rimanda** invece di ricopiarlo. I numeri di riga qui sopra sono
 quelli del 2026-09-03 e servono a ritrovare la frase col `grep`, non a citarla per posizione.
 
+⚠️ **RICHIAMO DEL 2026-09-04:** *«la forma è quella di AUD-032»* è falso **sull'attribuzione**, non sulla
+scelta. Il rimando di AUD-032 non sta in testa: vive **dentro la Decision** di ADR-0005, accanto al paragrafo
+che corregge — `grep -n 'Rimando del 2026-08-27' docs/adr/0005-arbitrato-gpu-su-due-dimensioni.md` letto contro
+`grep -n '^## ' docs/adr/0005-arbitrato-gpu-su-due-dimensioni.md` — come il rimando di AUD-004 in ADR-0015, che
+sta nella Context, e quello di AUD-033 in ADR-0036, che sta nelle Consequences: **un richiamo si legge dove si
+legge la frase che corregge**, in qualunque sezione viva. La posizione **in testa** resta quella giusta per i
+tre richiami di questo disegno, perché correggono l'**ADR intero** e non una frase — ma è una scelta di questo
+lavoro, non «la forma di AUD-032». La stessa attribuzione sta nella tabella della §1.4 e nella trappola 8, e
+tutte e due rimandano qui.
+
 ### 3.3 Che cosa NON cambia
 
 **ADR-0005 e ADR-0033 non cambiano**: la formula del budget resta a due quote sottratte, e la terza
@@ -380,8 +390,8 @@ ha approvato, con le spunte di oggi:
    condizionata**: *«se è coerente col progetto e col codice e si allinea a decision-principles»*.
    La verifica è scritta nella sezione *«Cosa questo disegno ha misurato»*, e regge.
 4. ✅ **il piano è scritto il 2026-09-03** con `superpowers:writing-plans` — [`plans/2026-09-03-riconoscimento-gesti.md`](../plans/2026-09-03-riconoscimento-gesti.md), nove compiti,
-   pre-controllo fatto; l'**esecuzione** va in una sessione nuova, e a che punto sia lo dice la tabella della
-   posizione del piano. Compiti attesi: i due ADR — ciascuno con la propria
+   pre-controllo fatto; **eseguito il 2026-09-04**, nove compiti su nove; l'esecuzione è chiusa, e il verbale
+   per compito sta nella tabella della posizione del piano. Compiti attesi: i due ADR — ciascuno con la propria
    voce nella §5 del compendio, che `check-docs.sh` pretende — e i tre richiami datati; la riga 12 e le
    dipendenze in `roadmap.md`; le righe di `tracciabilita.md`; le fonti F1–F9 in `riferimenti.md`, con
    F8 risalita a OpenMMLab e il motivo della chiusura di F9 — **entrambi letti scrivendo questo
@@ -475,7 +485,7 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 | F1 | PyPI, `mediapipe` — https://pypi.org/project/mediapipe/ | versione 1.0.1 del 2026-08-14, Python 3.9–3.12, ruote Windows, Apache 2.0 |
 | F2 | Google AI Edge, `BaseOptions` — https://ai.google.dev/edge/api/mediapipe/python/mp/tasks/BaseOptions | *«GPU support is currently limited to Ubuntu platforms»* |
 | F3 | Google AI Edge, Gesture Recognizer per Python — https://developers.google.com/edge/mediapipe/solutions/vision/gesture_recognizer/python | modi, callback in LIVE_STREAM, gli otto gesti, i gesti propri |
-| F4 | Google AI Edge, Hand Landmarker — https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker | 21 punti, coordinate, latenze su Pixel 6, opzioni |
+| F4 | Google AI Edge, Hand Landmarker — https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker | 21 punti, coordinate, latenze su Pixel 6, opzioni. ⚠️ **RICHIAMO DEL 2026-09-04:** questa riga non diceva **quale bundle**, e lo spike SP-7 ha usato il `float16`: l'URL, riletto alla fonte il giorno della misura, sta nella tabella delle versioni di SP-7 in `spikes/RISULTATI.md`, in una casa sola. È la proposizione che la riga F4 di [`riferimenti.md`](../../riferimenti.md) porta già |
 | F5 | Google AI Edge, Hand Landmarker per il Web — https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker/web_js | `detectForVideo` sincrono, web worker |
 | F6 | GitHub, issue WebGPU support for Vision Tasks — https://github.com/google-ai-edge/mediapipe/issues/5826 | aperta dal 2025-01-15, WebGL oggi |
 | F7 | GitHub, release — https://github.com/google-ai-edge/mediapipe/releases | `v1.0.0` del 2026-07-28, `v0.10.35`, `v0.10.33` |
@@ -544,7 +554,7 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 | 5 | il controllo dei link verifica il **file**, mai il frammento: un'ancora è un rimando che nessuno difende | una sezione si **nomina**, non si collega con un cancelletto; i percorsi sono relativi alla cartella di **ciascun** file |
 | 6 | la roadmap si appende **senza rinumerare**, e il «Perché quest'ordine» parla dell'ordine di Voce | la riga 12 va in coda alla tabella «Sotto-progetti»; la riga 8 guadagna la dipendenza da 12; il «Perché quest'ordine» si rilegge e, se dice il falso sulla Voce, riceve un richiamo datato |
 | 7 | la sezione 6 di `tracciabilita.md` cambia titolo — «Voce» → «Voce e gesti» | si controlla che nessun comando o rimando la cerchi per titolo: `grep -rn 'Voce' docs/tracciabilita.md scripts/check-docs.sh` prima di rinominarla |
-| 8 | i richiami datati vivono **in testa all'ADR**, e il compendio **rimanda** | forma di AUD-032: nessuna copia del richiamo nella voce di §5, solo il rinvio |
+| 8 | i richiami datati vivono **in testa all'ADR**, e il compendio **rimanda** | forma di AUD-032: nessuna copia del richiamo nella voce di §5, solo il rinvio. ⚠️ **RICHIAMO DEL 2026-09-04:** l'attribuzione ad AUD-032 è corretta nella §3.2 — la posizione «in testa» è una scelta di questo disegno, non la forma di AUD-032 |
 | 9 | SP-7 ha bisogno della **telecamera vera** e di **questa macchina**, e il relay Rust è usa e getta | tutto in `spikes/`, fuori dal workspace; nulla in `crates/` né in `workers/`, che non esiste ancora e non nasce da questo piano |
 | 10 | S3 su un `Admission` che non deriva `Debug` né `PartialEq` | `matches!` e `let … else`, come ogni sonda di `crates/kernel/tests/arbiter_admission.rs`; e la **contro-sonda** — una riserva vera a macchina piena resta `Queued` — è la seconda direzione, non un lusso |
 | 11 | **i numeri degli ADR** si danno quando si scrivono | `ls docs/adr \| tail -1` dice l'ultimo; l'accoppiamento per numero con la voce di §5 è ciò che lo script controlla |
@@ -561,6 +571,8 @@ sessione nuova.
 ⚠️ **RICHIAMO DEL 2026-09-03, la stessa sera:** il piano è scritto; la riga 4 della §5.5 porta la spunta della
 **scrittura**, e l'esecuzione — che è il passo che la §6 del compendio nomina ora — non ha una spunta finché il
 compito 9 del piano non la scrive.
+
+✅ **RICHIAMO DEL 2026-09-04:** il piano è eseguito; la §6 del compendio porta il passo successivo, il brainstorming della knowledge base.
 
 ### Come si riprende — scritto alla chiusura della sessione del 2026-09-03, coi comandi
 

@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-03**, con la riga 12 «Gesti» in roadmap e le righe di tracciabilità dal piano del riconoscimento gesti; l'ultimo contenuto di **merito** è la §12 che smette di contare i sotto-progetti. Manutenzione: §13.
+**Aggiornato il 2026-09-04**, col **PIANO DEL RICONOSCIMENTO GESTI ESEGUITO** e il puntatore della §6 mosso al brainstorming della knowledge base; l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -671,18 +671,14 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 
 ✅ **IL SOTTO-PROGETTO 1 È CHIUSO IL 2026-09-03 contro la §0.7 della spec**, e il verbale è la §7 del
 [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md).
-✅ **IL PIANO DEL RICONOSCIMENTO GESTI È SCRITTO IL 2026-09-03** — [`plans/2026-09-03-riconoscimento-gesti.md`](superpowers/plans/2026-09-03-riconoscimento-gesti.md), dal
-[disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) riletto dal proprietario lo stesso giorno,
-col pre-controllo delle quattro domande su ciascun compito fatto nella sessione che lo ha scritto; la consegna da
-cui il disegno è nato sta in [`archivio/consegna-brainstorming-gesti.md`](archivio/consegna-brainstorming-gesti.md),
-parola per parola. ⏭️ **IL PROSSIMO PASSO: ESEGUIRE QUEL PIANO con `superpowers:subagent-driven-development`, in
-una sessione NUOVA** — un subagente fresco per compito, revisione fra uno e l'altro; l'errata in testa al piano si
-legge **prima** di ogni compito, e la sua tabella della posizione dice a che punto è. ⚠️ Il compito 8 — la misura di
-SP-7 — vuole il **proprietario** con la telecamera di questa macchina; la voce 4 del disegno — l'etichetta di strato
-della riga 12 — è presa dal piano col consiglio scritto, **«L2 + L1 est.»**, e si ribalta nell'errata se il
-proprietario dice altro. Poi il brainstorming **distinto** della knowledge base; entrambi prima di aprire il
-sotto-progetto 2. Nessuna voce aperta li sbarra: le voci 1 e 2 della §7.8 del disegno della chiusura li nominano
-come proprio chiusore, e nessun'altra li condiziona.
+✅ **IL PIANO DEL RICONOSCIMENTO GESTI È ESEGUITO IL 2026-09-04** — [piano](superpowers/plans/2026-09-03-riconoscimento-gesti.md),
+dal [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md): ADR-0038 e ADR-0039 in §5, i tre rimandi
+datati, la riga 12 «Gesti» in roadmap, le righe di tracciabilità, le fonti, la sonda S3 nel cancello, e SP-7 misurato
+— l'esito in `spikes/RISULTATI.md`, sezione SP-7. ⏭️ **IL PROSSIMO PASSO: il brainstorming DISTINTO della KNOWLEDGE
+BASE** con `superpowers:brainstorming`, in una sessione nuova — è la voce 2 della §7.8 del
+[disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md), e la decisione 7 del
+disegno dei gesti — dove finisce la cattura — vi entra come domanda. Poi il sotto-progetto 2. Nessuna voce aperta lo
+sbarra.
 
 ⛔ **IL RACCONTO DEL TRAGUARDO 6 È USCITO DA QUI il 2026-09-03, e non riassunto:** sta in
 [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola, con le eccezioni
@@ -1527,7 +1523,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 | ❌ **ri-derivare l'architettura** | è nei 39 ADR, ciascuno con alternative scartate e motivo |
 | ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
-| ❌ **rifare gli spike SP-5 e SP-6** | esiti, seed, versioni e comandi in `spikes/RISULTATI.md` |
+| ❌ **rifare gli spike SP-5, SP-6 e SP-7** | esiti, seed, versioni e comandi in `spikes/RISULTATI.md`; per SP-7 il protocollo congelato in `spikes/gesti/PROTOCOLLO.md` |
 | ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta è **M5** (senza trattino), e richiede una GUI |
 | ❌ **riaprire le due decisioni della §7.3** | prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
 | ❌ **riaprire la copertura della §8** | la §8 è **spec**, e il vincolo globale 1 del piano della chiusura vieta di toccarla: le righe si leggono, non si ri-giudicano. ⚠️ **RICHIAMO DEL 2026-09-03: il sotto-progetto 1 l'ha riaperta una volta**, e per decisione del **proprietario** — la via **A**, voce `E10` dell'errata del [piano della chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) — col vincolo **sospeso** per il solo compito 3bis e per le sole §8.3 e §8.4. Riaprirla di nuovo richiede la stessa decisione |
@@ -1653,6 +1649,8 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **come si è ESEGUITO il Traguardo 6** — dieci compiti in cinque parti, con l'errata in testa | [`plans/2026-08-30-…-traguardo-6-altri-meccanismi.md`](superpowers/plans/2026-08-30-sottoprogetto-1-traguardo-6-altri-meccanismi.md) — ⚠️ **a compiti, mai intero** |
 | ⛔ **come si è CHIUSO il sotto-progetto 1** — le condizioni della §0.7 rilette contro il codice, e la **§7** col verbale | [`specs/2026-09-02-…-chiusura-design.md`](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md) |
 | il piano della chiusura, con l'errata in testa e la tabella della posizione | [`plans/2026-09-02-…-chiusura.md`](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) |
+| ⛔ **il perimetro del RICONOSCIMENTO GESTI** — la forma della telecamera nel kernel, il registro delle funzioni, le tredici decisioni col loro chiusore, e per ogni artefatto il controllo che lo esercita | [`specs/2026-09-03-riconoscimento-gesti-design.md`](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) — ⚠️ **non è una spec** |
+| come si è **eseguito** il riconoscimento gesti — i due ADR, i rimandi, la roadmap, SP-7 e la sonda S3, con l'errata in testa e la tabella della posizione | [`plans/2026-09-03-riconoscimento-gesti.md`](superpowers/plans/2026-09-03-riconoscimento-gesti.md) — ⚠️ **a compiti, mai intero** |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) |
 | il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** |

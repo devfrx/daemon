@@ -126,9 +126,9 @@ piano»* qui sotto, fatto nella sessione che ha scritto il piano, come il disegn
 | **4** | la riga 12 e le dipendenze in `roadmap.md`; le righe di `tracciabilita.md`; lo spike SP-7 nella tabella degli spike | uno | ✅ 2026-09-03 |
 | **5** | le fonti F1–F9 in `riferimenti.md` | uno | ✅ 2026-09-03 |
 | **6** | la sonda S3 nel kernel, nelle due direzioni, e la sua riga nel registro | uno | ✅ 2026-09-04 |
-| **7** | SP-7: il protocollo, **poi** il codice | **due** (D6) | ✅ 2026-09-04 |
+| **7** | SP-7: il protocollo, **poi** il codice | **D6**: il protocollo prima del codice — quanti siano lo dice `git log --oneline 43ce0a0..311bce0`. ⚠️ **RICHIAMO DEL 2026-09-04:** qui stava *«due»*, che quel comando smentisce; il numero esce, resta il comando | ✅ 2026-09-04 |
 | **8** | SP-7: la misura col proprietario, e l'esito in `spikes/RISULTATI.md` | uno | ✅ 2026-09-04 |
-| **9** | la chiusura: §6, §8 e §12 del compendio, `README.md`, `roadmap.md`, il disegno; la Definizione di «fatto» | uno | ⬜ |
+| **9** | la chiusura: §6, §8 e §12 del compendio, `README.md`, `roadmap.md`, il disegno; la Definizione di «fatto» | uno | ✅ 2026-09-04 |
 
 ⛔ **QUALE compito venga dopo NON è scritto qui:** vive nella §6 del
 [`COMPENDIO.md`](../../COMPENDIO.md), in un posto solo. Ciò che resta qui è la **posizione** del

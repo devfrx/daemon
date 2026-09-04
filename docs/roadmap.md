@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-09-04**, con lo spike **SP-7 chiuso** nella tabella degli spike e il **piano del riconoscimento gesti eseguito** nella tabella dei piani; il 2026-09-03 erano arrivate la riga **12 «Gesti»** e la dipendenza nuova della riga 8 — dalla §5.1 del [disegno del riconoscimento gesti](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md).
+Ultimo aggiornamento: **2026-09-04**, con la riga del **piano dei documenti della knowledge base** nella tabella dei piani — scritto, da eseguire in una sessione nuova; lo stesso giorno lo spike **SP-7 chiuso** e il **piano del riconoscimento gesti eseguito**; il 2026-09-03 erano arrivate la riga **12 «Gesti»** e la dipendenza nuova della riga 8 — dalla §5.1 del [disegno del riconoscimento gesti](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md).
 ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
 passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
 resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
@@ -224,6 +224,7 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 | [Sotto-progetto 1 · Traguardo 6](superpowers/plans/2026-08-30-sottoprogetto-1-traguardo-6-altri-meccanismi.md) | gli **altri meccanismi**: la concessione che torna, i due schemi di filo, il sensore, il gateway col gettone, il permesso, il degrado, e le due proprietà di §5.7 che mancavano | ✅ **eseguito il 2026-09-02**, `GATE GREEN` a ogni commit; il verbale nella §8 del suo disegno |
 | [Sotto-progetto 1 · chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) | la chiusura contro la §0.7: l'audit delle condizioni, `tracciabilita.md` riletta, l'archivio del Traguardo 6, il passaggio unico | ✅ **eseguito il 2026-09-03** |
 | [Riconoscimento gesti](superpowers/plans/2026-09-03-riconoscimento-gesti.md) | i due ADR — il registro delle funzioni del programma, la telecamera come sorgente di percezione — i tre richiami datati, la riga 12 «Gesti», le righe di tracciabilità, le fonti, la sonda S3, lo spike **SP-7** | ✅ **scritto il 2026-09-03, eseguito il 2026-09-04** — `GATE GREEN` a ogni compito; SP-7 nella tabella degli spike, la sonda S3 nel cancello |
+| [Knowledge base — i documenti](superpowers/plans/2026-09-04-knowledge-base-documenti.md) | i rimandi datati in testa a ADR-0008, ADR-0009, ADR-0010 e ADR-0038 e nella riga di ADR-0039; la riga 13 «Registro delle guide, trigger e proiezione», le celle 3 e 6 e «Perché quest'ordine»; le sei righe di tracciabilità; la decisione 7 dei gesti chiusa in tutte le sue case; il disegno negli indici. **Nessun codice** | ✅ **scritto il 2026-09-04**, col pre-controllo fatto; l'esecuzione va in una sessione nuova, e a che punto sia lo dice la tabella della posizione del piano |
 
 ⛔ **Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano.** Scriverne
 uno per codice che non esiste ancora significa inventare. I sei traguardi sono elencati nel

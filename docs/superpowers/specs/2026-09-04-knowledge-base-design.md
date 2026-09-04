@@ -377,7 +377,10 @@ questo disegno, non il piano dei documenti.
    lo stesso giorno.
 3. ✅ il proprietario rilegge — **fatto il 2026-09-04**, in chat: sei voci in forma A/B, una per
    volta, e il consiglio scritto scelto sei volte su sei.
-4. il **piano dei documenti** con `superpowers:writing-plans` — **nessun codice**: i rimandi datati
+4. ✅ il **piano dei documenti** con `superpowers:writing-plans` — **scritto il 2026-09-04, pre-controllo
+   fatto**, in [`plans/2026-09-04-knowledge-base-documenti.md`](../plans/2026-09-04-knowledge-base-documenti.md);
+   l'**esecuzione** va in una sessione nuova, e a che punto sia lo dice la tabella della posizione del piano
+   — **nessun codice**: i rimandi datati
    (0009, 0008, 0010, 0038, 0039); la riga 13 e le celle 3 e 6 in `roadmap.md`; le sei righe di
    `tracciabilita.md`; la decisione 7 chiusa nel disegno gesti; questo file nella §12 del compendio e in
    `README.md`; il puntatore della §6. Esecuzione con `superpowers:subagent-driven-development`.
@@ -559,6 +562,7 @@ le spunte, è nella §5.5 di questo disegno; la prima riga senza spunta è il **
 ⚠️ **RICHIAMO DEL 2026-09-04:** qui stava *«la rilettura del proprietario, poi il piano dei documenti
 in una sessione nuova»*. La rilettura è fatta quel giorno, e il piano si scrive **nella stessa
 sessione**, che è la strada B della sezione qui sotto.
+✅ **RICHIAMO DEL 2026-09-04, sera:** il piano è scritto col pre-controllo; l'esecuzione va in una sessione nuova, e la §6 del compendio lo dice.
 
 ### Come si riprende — scritto alla chiusura della sessione del 2026-09-04, coi comandi
 

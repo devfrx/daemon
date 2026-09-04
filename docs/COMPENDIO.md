@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-04**, col **DISEGNO DELLA KNOWLEDGE BASE SCRITTO** sul posto **E RILETTO** dal proprietario — brainstorming, disegno e rilettura lo stesso giorno, la consegna in archivio — e il puntatore della §6 mosso al piano dei documenti; l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
+**Aggiornato il 2026-09-04**, col **DISEGNO DELLA KNOWLEDGE BASE SCRITTO** sul posto, **RILETTO** dal proprietario **E TRADOTTO IN PIANO** — brainstorming, disegno, rilettura e piano lo stesso giorno — e il puntatore della §6 mosso all'esecuzione del piano; l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -684,10 +684,10 @@ guide, trigger e proiezione, decisi in ADR-0009, 0008 e 0010 e senza codice, si 
 kernel **prima** del 3 — e la decisione 7 dei gesti **chiusa**: la cattura atterra nella knowledge base. ✅ **IL
 DISEGNO È RILETTO DAL PROPRIETARIO IL 2026-09-04**, in chat, sotto la sua accettazione condizionata — le sei voci per
 lui poste una per volta in forma A/B, e il consiglio scritto scelto sei volte su sei; l'esito sta nel disegno, nella
-sezione *«Le voci che questo disegno apre per il proprietario»*. ⏭️ **IL PROSSIMO PASSO: IL PIANO DEI DOCUMENTI** con
-`superpowers:writing-plans`, nella stessa sessione, col pre-controllo delle quattro domande su ogni compito;
-l'esecuzione in una sessione **nuova**, subagent-driven; poi il sotto-progetto 2 con AUD-004 in parallelo, il 13, il 3.
-⛔ **AUD-004 sbarra il 13**, non il disegno né il piano.
+sezione *«Le voci che questo disegno apre per il proprietario»*. ✅ **E IL PIANO DEI DOCUMENTI È SCRITTO LO STESSO GIORNO**, col pre-controllo delle quattro domande su ciascun compito —
+[piano](superpowers/plans/2026-09-04-knowledge-base-documenti.md). ⏭️ **IL PROSSIMO PASSO: ESEGUIRE QUEL PIANO in una sessione NUOVA**,
+un subagente fresco per compito con revisione fra uno e l'altro (`superpowers:subagent-driven-development`); a che punto sia lo dice
+la tabella della posizione del piano. Poi il sotto-progetto 2 con AUD-004 in parallelo, il 13, il 3. ⛔ **AUD-004 sbarra il 13**, non il piano.
 
 ⛔ **IL RACCONTO DEL TRAGUARDO 6 È USCITO DA QUI il 2026-09-03, e non riassunto:** sta in
 [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola, con le eccezioni

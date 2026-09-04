@@ -1,0 +1,70 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SP-7 · S2</title>
+<style>
+  body { margin: 0; font: 14px system-ui; background: #111; color: #ddd; }
+  #stage { position: relative; width: 640px; height: 480px; }
+  canvas { position: absolute; left: 0; top: 0; }
+  #panel { position: absolute; left: 200px; top: 150px; width: 160px; height: 100px;
+           background: #2a6; opacity: .8; border-radius: 8px; }
+  #stats { white-space: pre; padding: 8px; }
+</style>
+<div id="stage"><div id="panel"></div><canvas id="c" width="640" height="480"></canvas></div>
+<button id="dump">dump stats</button>
+<pre id="stats"></pre>
+<script>
+// SP-7 / S2 -- the page that stands where the GUI will stand. It draws the 21 points of each
+// hand (mirrored, so the hand moves the way the owner moves it), drags the panel while the first
+// hand PINCHES -- thumb tip 4 and index tip 8 closer than PINCH pixels -- and measures with its
+// own wall clock: capture -> draw, and relay -> draw. Nothing here is product code.
+const PINCH = 40;
+const CHAINS = [[0,1,2,3,4],[0,5,6,7,8],[5,9,10,11,12],[9,13,14,15,16],[13,17,18,19,20],[0,17]];
+const ctx = document.getElementById('c').getContext('2d');
+const panel = document.getElementById('panel');
+const captureToDraw = [], relayToDraw = [];
+let grab = null;
+
+const mirror = (hand) => hand.map(([x, y]) => [640 - x, y]);
+function percentile(a, q) { const s = [...a].sort((x, y) => x - y); return s[Math.min(s.length - 1, Math.floor(q * (s.length - 1)))]; }
+
+function draw(hands) {
+  ctx.clearRect(0, 0, 640, 480);
+  ctx.strokeStyle = '#8cf'; ctx.fillStyle = '#fff'; ctx.lineWidth = 2;
+  for (const hand of hands) {
+    for (const chain of CHAINS) {
+      ctx.beginPath();
+      chain.forEach((i, k) => k ? ctx.lineTo(hand[i][0], hand[i][1]) : ctx.moveTo(hand[i][0], hand[i][1]));
+      ctx.stroke();
+    }
+    for (const [x, y] of hand) { ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill(); }
+  }
+}
+
+function pinch(hands) {
+  if (!hands.length) { grab = null; return; }
+  const [tx, ty] = hands[0][4], [ix, iy] = hands[0][8];
+  if (Math.hypot(tx - ix, ty - iy) > PINCH) { grab = null; return; }
+  if (!grab) grab = { dx: ix - panel.offsetLeft, dy: iy - panel.offsetTop };
+  panel.style.left = (ix - grab.dx) + 'px';
+  panel.style.top = (iy - grab.dy) + 'px';
+}
+
+new EventSource('/stream').onmessage = (e) => {
+  const m = JSON.parse(e.data);
+  const hands = m.hands.map(mirror);
+  draw(hands);
+  pinch(hands);
+  const now = Date.now();
+  captureToDraw.push(now - m.t_capture_ms);
+  relayToDraw.push(now - m.t_relay_ms);
+};
+
+document.getElementById('dump').onclick = () => {
+  const stats = {
+    samples: captureToDraw.length,
+    capture_to_draw_ms: { median: percentile(captureToDraw, 0.5), p95: percentile(captureToDraw, 0.95) },
+    relay_to_draw_ms: { median: percentile(relayToDraw, 0.5), p95: percentile(relayToDraw, 0.95) },
+  };
+  document.getElementById('stats').textContent = JSON.stringify(stats, null, 2);
+};
+</script>

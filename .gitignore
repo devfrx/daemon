@@ -26,6 +26,11 @@ Desktop.ini
 /spikes/rust/Cargo.lock
 /spikes/gui-ipc/target/
 /spikes/gui-ipc/Cargo.lock
+/spikes/gesti/.venv/
+/spikes/gesti/relay/target/
+/spikes/gesti/relay/Cargo.lock
+/spikes/gesti/*.task
+/spikes/gesti/*.csv
 /spikes/ts/node_modules/
 /spikes/ts/dist/
 /spikes/**/wip/

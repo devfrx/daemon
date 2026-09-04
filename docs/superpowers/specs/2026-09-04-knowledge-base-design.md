@@ -417,7 +417,7 @@ con gli stessi comandi e **gli stessi esiti** — il codice non è cambiato fra 
 |---|---|
 | la knowledge base ha già una sede: il sotto-progetto **6** «Conoscenza / RAG», L2, che dipende dal 3; il 3 dipende da 1 e 2; l'ultima riga della tabella è la **12**, e la **8** dipende anche da 12 | [`roadmap.md`](../../roadmap.md), tabella «Sotto-progetti»: `grep -n -E '^\| \*{0,2}[0-9]{1,2}\*{0,2} \|' docs/roadmap.md` |
 | la tabella «Perché quest'ordine» della roadmap porta **una riga per ogni scelta d'ordine**, e la riga 12 ne ha ricevuta una — *«Gesti dopo GUI minima e Conversazione, e prima di Voce»* | `grep -n 'Gesti dopo' docs/roadmap.md`. ⚠️ **Conseguenza per il piano:** la riga 13 ne vuole una, e la cella del 3 pure — trappola 6 |
-| la tabella «Decisioni ancora da prendere» della roadmap **non nomina** la knowledge base né le guide: non c'è una riga da barrare | `awk '/^## Decisioni ancora da prendere/{s=1} s&&/^## Regola/{s=0} s' docs/roadmap.md \| grep -ci -e guid -e knowledge` rende **0** |
+| la tabella «Decisioni ancora da prendere» della roadmap **non nomina** la knowledge base né le guide: non c'è una riga da barrare | `awk '/^## Decisioni ancora da prendere/{s=1} s&&/^## Regola/{s=0} s' docs/roadmap.md \| grep -ci guid`, e lo stesso con `knowledge`: **0** entrambi. ⚠️ Due `grep` e non uno, per la trappola 14 |
 | `Skills` e `Regole e vincoli di progetto` poggiano sul registro delle guide con **sede da assegnare**; la terza riga col marcatore è `Storage e cifratura a riposo`, che resta: da **3** a **1** | [`tracciabilita.md`](../../tracciabilita.md): `grep -n 'sede da assegnare' docs/tracciabilita.md` |
 | le **sei** righe della §5.2 sono sei **righe di `tracciabilita.md`** — `Skills` e `Regole e vincoli` sono due righe distinte — in cinque righe della tabella della §5.2 | `grep -n -E 'Skills\|Regole e vincoli\|Collezioni e knowledge base\|Memoria persistente\|File watching\|Cattura con un gesto' docs/tracciabilita.md` rende **sei** righe di funzionalità più una di commento |
 | ⛔ **RICHIAMO DEL 2026-09-04 — la consegna diceva *«le diciotto funzionalità della sezione 3 «Conoscenza»»*, e sono SEDICI.** Contate delimitando per intestazione, con il comando accanto; la consegna aveva scritto la cifra **senza** comando, ed è la specie di affermazione che il gotcha **#31** produce. Nessuna decisione ne dipende: la cifra è **tolta**, resta il comando | `awk '/^## 3\. Conoscenza/{s=1;next} s&&/^## /{s=0} s&&/^[|] /&&!/^[|] Funzionalità/{n++} END{print n}' docs/tracciabilita.md` |
@@ -543,6 +543,7 @@ all'affermazione che sostengono.
 | 11 | `README.md` è un **documento di stato** per la guardia dei conteggi, e la tabella «Specifiche» ha una riga per disegno, sulla forma della riga del disegno dei gesti | `grep -n 'riconoscimento-gesti-design' docs/README.md` dà la forma; la riga nuova la copia, con *«⛔ Non è una spec»* |
 | 12 | la **pre-verifica di ogni compito** trova un difetto in tutti i compiti dispacciati finora, senza eccezione (`CLAUDE.md`) | ogni compito si rilegge contro il codice e i documenti di **allora**, non contro questo disegno né contro il piano |
 | 13 | `riferimenti.md` **non si tocca** per questo disegno (§7) | il piano lo dichiara, come le passate del Traguardo 5 dichiaravano il contrario; una voce che non porta fonti non ne aggiunge |
+| 14 | ⛔ **il `grep` di questa macchina — GNU grep 3.0 in Git Bash — ha due forme che tradiscono, misurate il 2026-09-04 scrivendo questo file:** con `-i` e **più di un** `-e` va in *Aborted* (exit 134); con `-E` e l'alternanza scritta `\|` la barra è **letterale** e il comando rende **0 anche dove la parola c'è** — un verde vacuo, colto solo provando la direzione «deve trovare» su un input che contiene la parola | un'alternanza si scrive in **due** `grep`, o con `-E` e la barra nuda **fuori da una cella di tabella**; e ogni `grep -c` che deve rendere 0 si prova **prima** su un input dove deve rendere 1 — la seconda direzione di `CLAUDE.md` |
 
 ---
 
@@ -614,7 +615,7 @@ In ordine, e ogni riga è eseguibile:
 
 📌 **Ciò che questo disegno consegna a chi scriverà il piano**, ed è suo e non un puntatore: i
 compiti del punto 4 della §5.5; la Definizione di «fatto» approvata; la tabella dei controlli per
-artefatto della §1.5; le tredici trappole; le sei voci per il proprietario coi consigli scritti; e le
+artefatto della §1.5; le quattordici trappole; le sei voci per il proprietario coi consigli scritti; e le
 misure 4, 7, 8, 9 e 10, che sono le cose che il piano avrebbe dovuto scoprire da sé.
 
 📌 **La lezione di questa sessione, e non è un gotcha nuovo.** L'unica riga della consegna scritta

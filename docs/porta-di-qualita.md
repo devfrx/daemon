@@ -5154,3 +5154,22 @@ awk -F'|' '/^## .*LE VOCI APERTE DEL TRAGUARDO 5/{s=1} s&&/^## Cosa la porta NON
 
 ⚠️ **La colonna che discrimina è la TERZA e non la quinta**, perché è lì che ogni riga chiusa porta
 `✅ CHIUSA` — letto, non dedotto.
+
+## ⛔ LA SONDA S3 DEL RICONOSCIMENTO GESTI — 2026-09-04
+
+Due sonde in `crates/kernel/tests/arbiter_admission.rs`, dal compito 6 del
+[piano del riconoscimento gesti](superpowers/plans/2026-09-03-riconoscimento-gesti.md), per la
+§4.2 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md):
+`a_zero_reservation_is_granted_even_on_a_full_machine` e
+`on_the_same_full_machine_a_real_reservation_is_queued_and_not_granted`. ⚠️ **Non hanno una
+riga di catalogo**: la §7.4 è spec (vincolo globale 7), quindi la sonda si **registra** e non si
+prende — stesso trattamento di PL-1 e di K-1/B-1, stessa ragione (gotcha #36). Se pretenda una
+riga propria lo decide il proprietario: voce 6 delle *«voci che questo disegno apre»* del disegno.
+
+| Mutazione, su `crates/kernel/src/arbiter/mod.rs` | Esito misurato il 2026-09-04 |
+|---|---|
+| in `admit`, dopo `let asked = profile.reserved_vram;`: `if asked == Mib::ZERO { return Admission::Refused { asked, ceiling }; }` | `a_zero_reservation_is_granted_even_on_a_full_machine` **rossa**, l'altra verde: `test result: FAILED. 23 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s` |
+| in `admit`, nel confronto `self.allocated().saturating_add(asked) > ceiling`, `asked` sostituito da `Mib::ZERO` | `on_the_same_full_machine_a_real_reservation_is_queued_and_not_granted` **rossa**, e con essa le sonde delle code che quel confronto tiene: `test result: FAILED. 11 passed; 13 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s` |
+
+Revocate entrambe da una copia byte-esatta presa prima, `cmp` a zero, e `git status` che nomina
+solo il banco.

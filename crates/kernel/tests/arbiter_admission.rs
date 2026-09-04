@@ -83,6 +83,14 @@
 //! `ports::process` refused, so every probe below uses `matches!` and `let … else`, never
 //! `assert_eq!` on an `Admission`. `Activity` carries no grant and derives both, so
 //! `assert_ne!` on it directly is fine and is what the first probe uses.
+//!
+//! ⛔ AND THE ZERO RESERVATION FROM THE GESTURE DESIGN OF 2026-09-03, WHICH IS A FOURTH SUBJECT:
+//! that a request of `Mib::ZERO` is `Granted` even on a machine that is exactly full, and -- the
+//! other direction, on the SAME full machine -- that a reservation of one MiB waits. It is the
+//! sonda S3 of that design (§4.2): the camera worker of ADR-0039 tracks on the CPU and asks for
+//! zero, and `Process::start` still wants a grant. ⚠️ NO CATALOGUE ROW holds these two probes --
+//! §7.4 is spec -- and the register `docs/porta-di-qualita.md` says so in its own words, where
+//! its index command looks.
 
 use kernel::arbiter::{
     Activity, Admission, Arbiter, ArbiterId, ComputeClass, Mib, PreemptibleState, Preemption,
@@ -981,4 +989,70 @@ fn a_grant_released_inside_its_window_reports_what_came_back() {
     let released = arbiter.release(grant, Monotonic::from_millis(4_999));
 
     assert_eq!(released, Ok(Released::Now(Mib::new(4_096))));
+}
+
+/// ⛔ A RESERVATION OF ZERO IS GRANTED EVEN WHEN THE MACHINE IS FULL, and that is the sonda S3
+/// of the gesture design (2026-09-03, §4.2): the camera worker of ADR-0039 tracks on the CPU and
+/// asks for `Mib::ZERO`, and the port `process` still wants a grant to start it (§5.6). `admit`
+/// asks two questions -- "bigger than the whole machine?" and "does it fit NOW?" -- and zero
+/// answers no to both whatever the books say; a third question, "is zero a request at all?",
+/// does not exist, and this probe is what keeps it from being added by accident. ⚠️ NO
+/// CATALOGUE ROW: §7.4 is spec, so the probe is registered and not taken -- the same treatment
+/// as PL-1 and K-1/B-1 (gotcha #36) -- and `docs/porta-di-qualita.md` says so in its own words.
+#[test]
+fn a_zero_reservation_is_granted_even_on_a_full_machine() {
+    let mut arbiter = arbiter(ArbiterId::new(1), TOTAL);
+    let Admission::Granted(_resident) = arbiter.admit(
+        &profile("resident", 16_384, ComputeClass::Batch),
+        LONG,
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("it fills the machine exactly");
+    };
+    assert_eq!(arbiter.allocated(), TOTAL);
+
+    let camera = ResourceProfile {
+        name: "camera-reserved",
+        reserved_vram: Mib::ZERO,
+        compute_class: ComputeClass::Realtime,
+        preemption: Preemption::Never,
+    };
+    let Admission::Granted(_camera) = arbiter.admit(&camera, LONG, Monotonic::ORIGIN) else {
+        panic!("zero fits a full machine: there is nothing to wait for");
+    };
+    assert_eq!(
+        arbiter.allocated(),
+        TOTAL,
+        "a zero reservation takes nothing"
+    );
+    assert_eq!(arbiter.queued(), 0, "and it never waited");
+}
+
+/// The other direction of S3, and it is the one that makes the first non-vacuous: on the SAME
+/// full machine a reservation that is not zero -- one MiB is enough -- waits. Without this probe
+/// an `admit` that granted everything would keep the probe above green (gotcha #24).
+#[test]
+fn on_the_same_full_machine_a_real_reservation_is_queued_and_not_granted() {
+    let mut arbiter = arbiter(ArbiterId::new(1), TOTAL);
+    let Admission::Granted(_resident) = arbiter.admit(
+        &profile("resident", 16_384, ComputeClass::Batch),
+        LONG,
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("it fills the machine exactly");
+    };
+
+    let Admission::Queued(_) = arbiter.admit(
+        &profile("real", 1, ComputeClass::Realtime),
+        LONG,
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("one MiB on a full machine waits");
+    };
+    assert_eq!(arbiter.queued(), 1);
+    assert_eq!(
+        arbiter.allocated(),
+        TOTAL,
+        "a queued request reserves nothing"
+    );
 }

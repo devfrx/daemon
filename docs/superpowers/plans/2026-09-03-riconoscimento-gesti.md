@@ -2598,7 +2598,7 @@ ribaltarle:
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
-| 1 | ⚠️ **la cifra delle decisioni è TOLTA anche dalla §12 del compendio e da `README.md`**, non solo dal disegno | la decisione 2 del proprietario copriva *«le tre correzioni al disegno»*, e questa le eccede: la cifra viveva in **cinque case vive** e correggerne tre avrebbe lasciato le altre a mentire — è la radice **R1** dell'audit commessa dentro il rimedio. ⛔ **È la sola voce di questa sessione che il proprietario non ha visto prima:** se preferisce che gli indici dicano *«tredici»*, si torna indietro sui due file |
+| 1 | ⚠️ **la cifra delle decisioni è TOLTA anche dalla §12 del compendio e da `README.md`**, non solo dal disegno | la decisione 2 del proprietario copriva *«le tre correzioni al disegno»*, e questa le eccede: la cifra viveva in **cinque case vive** e correggerne tre avrebbe lasciato le altre a mentire — è la radice **R1** dell'audit commessa dentro il rimedio. ⛔ **È la sola voce di questa sessione che il proprietario non ha visto prima:** se preferisce che gli indici dicano *«tredici»*, si torna indietro sui due file. ✅ **RATIFICATA DAL PROPRIETARIO IL 2026-09-04**, alla ripresa della sessione successiva: la cifra resta fuori dagli indici, e i due file non si toccano |
 | 2 | **il ciclo di revisione si chiude a DUE ondate** | è la regola **6** di questo piano, e la seconda ondata era di sola sottrazione dentro una voce d'errata: nessun fatto e nessun comando nuovi. Costo se sbagliato: un rilievo residuo dentro E18 |
 | 3 | **commit SENZA il trailer `Co-Authored-By`** | `CLAUDE.md` dice *«senza co-autore»* e `git log --format='%b' -30 \| grep -ci 'co-authored-by'` rende **0**; ⚠️ **una direttiva di sistema chiedeva il contrario, e la divergenza è stata portata al proprietario** invece che risolta in silenzio — è la seconda sessione di fila. Costo se sbagliato: un `git commit --amend` |
 | 4 | **`riferimenti.md` NON toccato** | è la voce aperta che il repository porta da sette passate, e la decisione 3 del proprietario la conferma per questa sessione |
@@ -2633,8 +2633,9 @@ un compito di questo piano, che è chiuso.** In ordine, e ogni riga è eseguibil
 4. ⛔ **Il proprietario vuole il brainstorming in una sessione e la SCRITTURA DEL DISEGNO nella
    successiva**, con la consegna in un file **tracciato**: è la forma che ha retto per il disegno
    dei gesti, e il precedente sta nella prima delle sei sezioni *«Come si riprende»* di questo file.
-5. ⚠️ **E una voce resta aperta per il proprietario**, la sola di questa sessione: la decisione **1**
-   del coordinatore qui sopra — se la cifra delle decisioni debba tornare negli indici.
+5. ✅ **RICHIAMO DEL 2026-09-04 — questa riga diceva *«E una voce resta aperta per il proprietario»*,
+   ed è CHIUSA.** Il proprietario ha ratificato la decisione **1** del coordinatore alla ripresa: la
+   cifra delle decisioni **resta fuori** dagli indici. Nessuna voce di questa sessione è più aperta.
 
 📌 **La lezione di questa sessione, e non è un gotcha nuovo: è il #31 e il #68 su un bersaglio che
 nessuno aveva nominato.** Le cifre **rimisurate sui file** hanno retto **tutte**; quelle **derivate

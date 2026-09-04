@@ -1,55 +1,49 @@
 # Knowledge base: il disegno
 
-⚠️ **QUESTO FILE È NATO COME CONSEGNA del brainstorming del 2026-09-04**, e la sessione successiva lo
-**riscrive sul posto**, allo stesso percorso, come disegno intero — la regola del proprietario del
-2026-09-02: brainstorming in **una** sessione, disegno nella **successiva**, con la consegna in un file
-**tracciato**. È la forma che ha retto per il
-[disegno dei gesti](2026-09-03-riconoscimento-gesti-design.md), nato allo stesso modo e riscritto il
-giorno dopo; la sua consegna vive parola per parola in
-[`archivio/consegna-brainstorming-gesti.md`](../../archivio/consegna-brainstorming-gesti.md), e questa
-farà lo stesso viaggio. Il percorso non cambia perché il puntatore della §6 del
-[compendio](../../COMPENDIO.md) non cambi casa.
+✅ **QUESTO DISEGNO È COMPLETO DAL 2026-09-04.** Le cinque sezioni sono **approvate** dal
+proprietario, una per volta, in chat il 2026-09-04, sotto l'**accettazione condizionata** la cui
+regola sta qui sotto — e la **§5** fissa dove va la capacità, le dipendenze e l'ordine di ciò che
+segue. Chi riprende ha un disegno intero da tradurre in un **piano dei documenti** — **dopo** che il
+proprietario lo ha riletto in questa forma. ⏳ **La rilettura del proprietario è da fare:** è il
+passo 3 della §5.5, e il puntatore della §6 del [compendio](../../COMPENDIO.md) la nomina.
 
-Le **cinque sezioni** sono **approvate dal proprietario, una per volta, in chat il 2026-09-04**, e il
-loro testo sta nella sezione 6 di questo file **così com'è stato approvato**, con le modifiche che il
-proprietario ha chiesto durante l'approvazione già dentro. Chi riscrive **non ne tocca il merito**:
-aggiunge ciò che misura, e dichiara ciò che risulta più debole di come era detto.
+⚠️ **RICHIAMO DEL 2026-09-04, lo stesso giorno:** questo file è nato come **consegna** del
+brainstorming — le cinque sezioni approvate, le dodici risposte del proprietario, lo stato del
+repository alla chiusura — e il proprietario ha scelto che il disegno lo scrivesse la sessione
+**successiva**. Riscritto **sul posto**, allo stesso percorso, perché il puntatore della §6 del
+compendio non cambiasse casa, come fu per il
+[disegno dei gesti](2026-09-03-riconoscimento-gesti-design.md). Il merito delle cinque sezioni è
+quello approvato e **non è stato toccato**; la consegna sta **parola per parola** in
+[`archivio/consegna-brainstorming-knowledge-base.md`](../../archivio/consegna-brainstorming-knowledge-base.md);
+ciò che la riscrittura ha **misurato** in più sta nella sezione *«Cosa questo disegno ha misurato»*,
+e **un'affermazione della consegna vi risulta più debole di come era scritta** — il conteggio delle
+funzionalità della sezione 3 di `tracciabilita.md`, §6.2.
 
 ⚠️ **Non è una spec.** Come i disegni dei Traguardi 4, 5 e 6 e dei gesti, fissa il **perimetro**, le
 **forme** che gli ADR descrivono a parole, e per ogni artefatto **il controllo che lo esercita**. Gli
-ADR restano l'autorità, e ciò che questo disegno vi aggiunge lo **dichiara** come rimando in append,
-nella sezione 3 del testo approvato.
+ADR restano l'autorità — 0009 per le guide, 0008 e 0010 per la proiezione, 0038 per il registro delle
+funzioni, 0022 e 0024 per i file — e ciò che questo disegno vi aggiunge lo **dichiara** come rimando
+in append, nella §3. ⛔ **E non disegna la capacità:** il compendio (§8) vieta di progettare una
+capacità L2 prima del suo sotto-progetto. Qui si decide che cosa la knowledge base **chiede al
+kernel**, e dove va.
 
 📌 **Metodo.** Ogni affermazione porta la sua specie — **verificata** (letta nel sorgente o in un
-documento del repository, con la data), **dedotta**, o **assunta** — e le tre sono separate nella
-sezione 5. Le affermazioni sul sorgente sono state lette il 2026-09-04 contro `c3c7a5d`. I comandi
-stanno accanto alle affermazioni e **si rilanciano**, non si citano.
+documento del repository, con la data), **dedotta**, o **assunta** — e le tre sono separate nella §6.
+Le affermazioni sul sorgente sono state lette il 2026-09-04 contro `07ab6dc`, e il codice non è
+cambiato dalla consegna: `git diff --stat c3c7a5d..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml
+rust-toolchain.toml docs/adr/` non rende nulla. I comandi stanno accanto alle affermazioni e **si
+rilanciano**, non si citano: le cifre invecchiano al primo commit che tocca ciò che misurano, i
+comandi no.
 
----
-
-## 0. Lo stato del repository alla chiusura del brainstorming — 2026-09-04, coi comandi
-
-| | Stato, e il comando che lo rifà |
-|---|---|
-| Ramo | `main`, allineato a `origin`: `git fetch --all --prune && git status -sb`. Nessuno stash, nessuna operazione a metà |
-| Il commit da cui questa consegna parte | `c3c7a5d` — la chiusura della sola voce aperta della sessione del compito 9 dei gesti. I commit di questa sessione: `git log --oneline c3c7a5d..HEAD` |
-| Codice di prodotto | **non toccato**: `git diff --stat c3c7a5d..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` non rende nulla |
-| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura della sessione, exit 0; `bash scripts/check-docs.sh` → `OK` a ogni commit. Si rilanciano, non si citano |
-| Il compendio e il suo tetto | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh`. Misurato il 2026-09-04 prima di questa consegna: **188 416 − 174 962 = 13 454** byte di margine; la consegna ne consuma una parte, e il piano dei documenti lo **rimisura** |
-| Fine-riga | il compendio è LF nell'indice e **CRLF** nell'albero, CR = righe: `tr -cd '\r' < docs/COMPENDIO.md \| wc -c` contro `wc -l`. Ogni scrittura è passata da `replace_unique.py` — l'aiutante che vive nel [piano dei gesti](../plans/2026-09-03-riconoscimento-gesti.md), `sed -n '35,70p'` — e i CR sono stati rimisurati dopo. Questo file: `git ls-files --eol docs/superpowers/specs/2026-09-04-knowledge-base-design.md` |
-| File temporanei | nessuno nel repository: i testi di sostituzione stanno nello scratchpad, fuori dall'albero |
-
----
-
-## 1. Le regole di questo brainstorming, decise dal proprietario
+**Le regole di questo lavoro, decise dal proprietario**
 
 | Regola | Da dove viene |
 |---|---|
 | La strada è quella del repo: **brainstorming → disegno scritto → piano → esecuzione** | scelta 5 del 2026-09-02, in testa al [disegno della chiusura](2026-09-02-sottoprogetto-1-chiusura-design.md) |
-| ⛔ **Ogni decisione si controlla contro i cinque criteri di `anthropic-skills:decision-principles`**, e i principi governano la decisione senza occuparla. Il proprietario lo ha ripetuto in chat il 2026-09-04: *«lavoriamo e progettiamo sempre secondo i principi di questa per favore»* | accettazione condizionata del proprietario, confermata oggi |
+| ⛔ **Ogni decisione si controlla contro i cinque criteri di `anthropic-skills:decision-principles`**, e i principi governano la decisione senza occuparla. Il proprietario lo ha ripetuto in chat il 2026-09-04: *«lavoriamo e progettiamo sempre secondo i principi di questa per favore»*. È un'**accettazione condizionata**, che vale finché regge: se una scelta li viola, ci si **ferma e lo si dice**, non si tratta come delega in bianco | chat del 2026-09-04 |
 | Brainstorming in **una** sessione, disegno nella **successiva**, con la consegna in un file **tracciato** | scelta del proprietario del 2026-09-02 |
 | Questo brainstorming è **distinto** da quello dei gesti, e ha **una** domanda da chiudere: *se la knowledge base pretenda un meccanismo di kernel «che non si aggiunge dopo», o sia tutta L2 nel sotto-progetto 6* | voce 2 della §7.8 del disegno della chiusura; la §3 del compendio per «non si aggiunge dopo» |
-| **Non si disegna la capacità**: il compendio (§8) vieta di progettare una capacità L2 prima del suo sotto-progetto. Qui si decide che cosa la knowledge base **chiede al kernel**, e dove va | compendio §8, riga *«progettare una capacità L2»* |
+| **Non si disegna la capacità**: il compendio (§8) vieta di progettare una capacità L2 prima del suo sotto-progetto | compendio §8, riga *«progettare una capacità L2»* |
 | Codice in inglese, documenti in italiano; nessun numero senza comando; nessuna fonte senza data | [`CLAUDE.md`](../../../CLAUDE.md) |
 | **Prima a parole, poi lo schema**: il proprietario non è operativo in Rust, e ogni scelta gli è stata spiegata a parole prima della tabella | `CLAUDE.md`, *«Ma prima a parole»* |
 
@@ -61,12 +55,10 @@ cartelle, mappi quello che c'è già»*; *«vorrei che la ricerca fosse efficien
 funzioni BENE, non a volte sì a volte no»*; e il test di completamento: *«una sessione nuova di zecca
 trova il file giusto attraverso i router al primo salto»*.
 
----
-
-## 2. Le domande d'apertura e le risposte del proprietario — 2026-09-04
+**Le dodici domande d'apertura, e le risposte del proprietario — 2026-09-04**
 
 ⛔ **Sono sue e non si riaprono senza di lui.** Ogni riga porta anche ciò che è stato **scartato**,
-perché chi riprende sappia che cosa non rifare.
+perché chi riprende sappia che cosa non rifare. Le domande com'erano poste stanno nell'archivio.
 
 | # | La domanda | La risposta | Scartato, e perché |
 |---|---|---|---|
@@ -83,26 +75,16 @@ perché chi riprende sappia che cosa non rifare.
 | 11 | l'ordine dopo il piano dei documenti | **2, poi 13, poi 3** | *13, poi 2, poi 3*: la GUI aspetterebbe, e il 13 aspetta comunque AUD-004 |
 | 12 | il pannello della mappa nasce col 6 o col 2 | **col 6**: è la UI di una capacità, nasce con la capacità | *col 2*: il 2 disegnerebbe un indice che nessuno produce ancora |
 
----
+**Le decisioni, numerate come nella consegna** — vivono nella tabella della **§3.4**, che è la loro
+**casa unica**, da 1 a 18; i rimandi *«decisione N»* di questo disegno puntano lì. ⛔ **Non sono
+ricopiate qui**, deliberatamente: una seconda tabella sarebbe il gotcha **#68** dentro il file che
+lo cita. Quante siano lo dice il comando, delimitato per testo e non per numero di riga:
+`awk '/^### 3\.4/{s=1} s&&/^## 4\./{s=0} s&&/^[|] [0-9]+(–[0-9]+)? [|]/{n++} END{print n}' docs/superpowers/specs/2026-09-04-knowledge-base-design.md`
+— ⚠️ conta le **righe** della tabella, e la prima riga ne raccoglie sette (le decisioni 1–7 del
+proprietario), quindi il comando rende **dodici** righe per **diciotto** decisioni; chi aggiunge una
+riga sa che cosa muove.
 
-## 3. I «buchi logici», sciolti coi documenti del repo
-
-Il proprietario ha detto che la sua idea era *«grezza»*. Ciascun buco ha una casa già scritta.
-
-| Il buco | Sciolto da |
-|---|---|
-| «chi aggiorna il router quando un file si sposta?» | l'assistente, come scrittura giornalata (ADR-0007) dentro un ambito con checkpoint (ADR-0024); e un **sensore** (ADR-0009 — `Sensor::observe(&Untrusted)` esiste in `crates/kernel/src/sensor.rs`) che verifica i router: un puntatore rotto è un **verdetto negativo** che rientra nell'anello |
-| «e se il router marcisce lo stesso?» | l'anello di miglioramento (ADR-0009): il kernel vede la ricorrenza e **propone** la voce; il proprietario approva. La regola «il router si aggiorna nello stesso turno» diventa un meccanismo, non una speranza. ⚠️ **È la lezione di questo stesso repository:** la regola «un puntatore si toglie, non si ricorregge» ha ceduto tre volte finché era solo scritta; il freno è nel cancello — `check-docs.sh` — e non nella buona volontà |
-| «come non saturo il contesto?» | la proiezione ha un **budget per modello** (ADR-0010), misurato per categoria nel giornale; la mappa è una categoria; le foglie entrano come **riferimenti** e si rileggono su richiesta (ADR-0008) |
-| «e se modifico un file a mano?» | trigger su cambiamento di file (ADR-0009) → contenuto da fuori (I6, ADR-0014) finché il proprietario non approva. Una skill cambiata → AUD-004 |
-| «come so se funziona BENE?» | ogni salto è un passo con costo (ADR-0011): salti-per-trovare e salti-a-vuoto sono **numeri nel giornale**; il test «al primo salto» si misura. La valutazione probabilistica sta in L2 (ADR-0020) |
-| «la foto in che contesto?» | decisione 7: nella knowledge base come artefatto, la run la vede come riferimento (ADR-0018, 0022, 0008) |
-| «cosa è privato e resta fuori dagli indici?» — dal concetto del proprietario | ⚠️ **NON sciolto qui.** I segreti stanno nel gestore dei segreti (ADR-0023), mai in file. «Privato ma non segreto» è una regola della capacità: **voce aperta** per il sotto-progetto 6, sezione 7 |
-| «come funziona se uso modelli diversi?» | il modello **non tocca mai il disco**: il kernel compone il contesto (ADR-0008) e lo consegna. Ciò che cambia col modello è la **guida** (ADR-0009, una foglia per modello) e il **budget** (ADR-0010); la mappa è una. Se il proprietario tiene sempre un modello, il meccanismo esiste e non scatta mai: costo zero |
-
----
-
-## 4. L'approccio scelto: la strada B, e le due scartate
+**L'approccio scelto: la strada B, e le due scartate**
 
 **La risposta alla domanda della voce 2:** **nessuna sesta proprietà** «che non si aggiunge dopo». Tutto
 ciò che la mappa chiede è già deciso in un ADR. C'è però un **vincolo d'ordine**, ed è questo che non
@@ -124,76 +106,9 @@ approvate ora» è la stessa forma.
 
 ---
 
-## 5. Verificato, dedotto, assunto
+## 1. Il perimetro — ✅ approvata il 2026-09-04
 
-### Verificato nel sorgente, il 2026-09-04, contro `c3c7a5d`
-
-| Affermazione | Comando |
-|---|---|
-| il registro delle guide **non esiste** nel codice; nemmeno i trigger né la proiezione come tipi | `grep -rl --include='*.rs' -E 'Guide|Trigger|Projection' crates/` rende **0** file |
-| il tratto `Sensor` esiste, con `declared_cost()` e `observe(&self, artefact: &Untrusted) -> Verdict` | `sed -n '/^pub trait Sensor/,/^}/p' crates/kernel/src/sensor.rs` |
-| `CheckpointId` esiste nella porta `filesystem`; il tipo «ambito» no | `grep -rnE --include='*.rs' 'pub (struct|enum) \w*(Scope|Checkpoint)\w*' crates/` |
-| `Untrusted` e `Instruction` esistono ed entrano in molti file | `grep -rl --include='*.rs' 'Untrusted' crates/ \| wc -l` |
-| «attivo ora è una proiezione del giornale, non un secondo archivio» è la forma di `permission.rs` e `degradation.rs` | `grep -rn --include='*.rs' -i 'projection' crates/kernel/src/` |
-| i moduli pubblici di `kernel`, con `sensor`, `gateway`, `permission`, `degradation` | `grep -n '^pub mod' crates/kernel/src/lib.rs` |
-
-### Verificato nei documenti, il 2026-09-04
-
-| Affermazione | Dove |
-|---|---|
-| la knowledge base ha già una sede: il sotto-progetto **6** «Conoscenza / RAG», che dipende dal 3; il 3 dipende da 1 e 2 | [`roadmap.md`](../../roadmap.md), tabella «Sotto-progetti» |
-| `Skills` e `Regole e vincoli di progetto` poggiano sul registro delle guide con **sede da assegnare**; il conteggio: `grep -cE 'sede da assegnare' docs/tracciabilita.md` rende **3** | [`tracciabilita.md`](../../tracciabilita.md) |
-| le diciotto funzionalità della sezione 3 «Conoscenza» | idem, sezione 3 |
-| **AUD-004**: se le difese di ADR-0015 si estendano alle skill *«NON è deciso — vuole un ADR proprio, del proprietario»* | [`audit-2026-08-27.md`](../../audit-2026-08-27.md), tabella «Stato dei rimedi» e scheda AUD-004 |
-| il registro delle guide fa *«archiviazione, versionamento, iniezione nella proiezione»*, e le skill dichiarative *«sono guide»*; i trigger partono da *«pianificazione, cambiamento di file, fine di un'altra run»* | [ADR-0009](../../adr/0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md) |
-| il routing risolve una **configurazione** e la giornala; «modello preferito» è un vincolo dell'utente | [ADR-0011](../../adr/0011-routing-risolto-e-giornalato-per-richiesta.md) riga 21 e 51; [ADR-0012](../../adr/0012-equivalenza-del-fallback-e-fallimento-chiuso.md) righe 42 e 60 |
-| artefatti: non cifrati, **nel backup**; indici ed embedding: **no**, rigenerabili | [ADR-0022](../../adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md) |
-| il registro delle funzioni: *«un registro, molti invocatori, lo stesso permesso»*; lo costruisce *«il primo invocatore, il click del sotto-progetto 2»*; la manipolazione della GUI **non** passa dal registro | [ADR-0038](../../adr/0038-registro-delle-funzioni-del-programma.md), e la voce §5 del compendio |
-| la decisione 7 dei gesti: *«dove finisce la cattura → il brainstorming 2, la knowledge base: run corrente · knowledge base · entrambe»*; una cattura è un artefatto, riferimento nel giornale | [disegno dei gesti](2026-09-03-riconoscimento-gesti-design.md), tabella delle decisioni e §1.5; [ADR-0039](../../adr/0039-telecamera-come-sorgente-di-percezione.md), riga *«la destinazione di una cattura»* |
-| G7 — artefatti con anteprima viva — è nella mappa funzionale, area 2 | `spikes/GUI-REQUISITI.md`, riga G7 |
-| «conversazione e **conoscenza**» è già il primo pilastro | [ADR-0001](../../adr/0001-architettura-a-kernel-con-capacita-paritarie.md), e la §1 del compendio |
-| il tetto del compendio | `grep -n '^ceiling=' scripts/check-docs.sh` |
-
-### Verificato nello stato dell'arte — nessuna fonte esterna, e dichiarato
-
-⚠️ **Questo brainstorming non ha aperto nessuna fonte esterna, deliberatamente:** ogni decisione presa
-oggi poggia su decisioni **del repository**, e sul progetto stesso la fonte più aggiornata è il
-progetto. Il concetto di partenza del proprietario — i tre livelli, i router, il *visual second brain* —
-è **suo**, e sta nella sezione 1 con le sue parole. ⛔ **Il piano 2 — embedding, indici, ricerca
-ibrida — vorrà fonti primarie con la data** quando il sotto-progetto 6 lo disegnerà: non qui, perché
-qui non si disegna.
-
-### Dedotto, e dichiarato tale
-
-| Deduzione | Da che cosa |
-|---|---|
-| che «guida per modello» sia il modo giusto di realizzare il `claude.md`/`deepseek.md` del proprietario | ADR-0009 (iniezione per contesto) + ADR-0010 (budget per modello) + ADR-0011 (il modello risolto nel record) |
-| che le **due pretese** sul registro delle guide — chiave di contesto; provenienza e impronta con «approvate ora» come proiezione — siano **tutte** le pretese della mappa | la lettura dei piani 0 e 1 contro ADR-0009 e `permission.rs`. Il disegno le mette alla prova sezione per sezione |
-| che l'«ambito» del piano 0 sia l'**ambito di lavoro** di ADR-0024, riusato | ADR-0024: un insieme di percorsi dichiarato; `CheckpointId` esiste. La forma la dà il sotto-progetto 13 |
-| che nessun ADR nuovo serva, e bastino rimandi datati | la regola append-only di `CLAUDE.md`: *completato → un rimando* |
-| che «tenuto dal core» per l'indice non violi I1 | è derivato e rigenerabile, come il degrado: la forma di `degradation.rs` |
-| la forma dell'indice (nodi, attributi, frecce, segnali) nella sezione 4 del testo approvato | è la proposta minima; il 6 la mette alla prova |
-
-### Assunto, e chi lo misura
-
-| Assunzione | Chi la misura |
-|---|---|
-| che il sotto-progetto **3** sia la prima capacità che inietta una guida — la roadmap non lo dice | la §5 del testo approvato: se non lo è, il 13 va comunque prima della prima che lo fa |
-| che la mappa (router centrale + router dell'ambito) stia nel budget del modello **più piccolo** che il proprietario userà | il sotto-progetto 6, sul primo modello locale |
-| che «al primo salto» si ottenga davvero | il 6, coi numeri del giornale |
-| che misurare la proiezione per categoria costi poco | il 13, quando la costruisce |
-
----
-
-## 6. Il testo approvato, sezione per sezione
-
-Le sezioni sono qui **come approvate in chat il 2026-09-04**, con le modifiche chieste dal proprietario
-durante l'approvazione già dentro (la riga **g** della §1; la riga del registro e la regola **4** della
-§2; l'ordine e il pannello nella §5). Chi riscrive il disegno ne conserva il **merito**.
-
-#### Sezione 1 — Il perimetro, approvata il 2026-09-04
-
-**1.1 Che cosa decide ora**
+### 1.1 Che cosa decide ora
 
 | | Decisione |
 |---|---|
@@ -205,7 +120,7 @@ durante l'approvazione già dentro (la riga **g** della §1; la riga del registr
 | **f** | La pagina visuale è un **pannello della GUI** che disegna un **indice rigenerabile tenuto dal core**, via IPC, aggiornato come la mano di ADR-0039. L'HTML autonomo, se mai, è un'esportazione dello stesso indice |
 | **g** | Il pannello agisce **solo attraverso il registro delle funzioni** (ADR-0038). La capacità registra le **CRUD** dei propri file e gruppi — creare, leggere, aggiungere al contesto, aggiornare, spostare (dentro lo spazio, dentro da fuori, fuori), cancellare — come funzioni del registro: ognuna è un effetto con classe dichiarata, giornalato, checkpointato dentro l'ambito. «Aggiungi al contesto» è **una** funzione con **due invocatori**: il click e il modello |
 
-**1.2 Che cosa rimanda, e a chi**
+### 1.2 Che cosa rimanda, e a chi
 
 | Voce | A chi |
 |---|---|
@@ -216,7 +131,7 @@ durante l'approvazione già dentro (la riga **g** della §1; la riga del registr
 | sintassi dei router, forma dell'indice, aspetto del pannello | sotto-progetti 6 e 2: sono la capacità, e il compendio vieta di disegnarla prima |
 | se l'«ambito» del piano 0 sia l'**ambito di lavoro** di ADR-0024 | §2 di questo disegno, a parole; la forma la dà il 13 |
 
-**1.3 Che cosa esclude**
+### 1.3 Che cosa esclude
 
 - Altri strumenti che leggono o scrivono la cartella (decisione **b**).
 - Ingest di documenti (PDF, OCR, web): righe L2 già in `tracciabilita.md`, sotto-progetto 6.
@@ -225,14 +140,27 @@ durante l'approvazione già dentro (la riga **g** della §1; la riga del registr
 - Riaprire ADR-0009 (le guide sono meccanismo di kernel), ADR-0022 (i file sono artefatti
   dell'utente), ADR-0020 (nessun modello nel kernel).
 
-**1.4 I «buchi logici», sciolti coi documenti del repo** — la tabella è la sezione 3 di questa
-consegna, e il disegno la porta qui.
+### 1.4 I «buchi logici», sciolti coi documenti del repo
 
-**1.5 Il prodotto di questo disegno, e il controllo che esercita ciascun artefatto**
+Il proprietario ha detto che la sua idea era *«grezza»*. Ciascun buco ha una casa già scritta. La
+tabella è quella della consegna, portata qui come la sezione approvata prescriveva.
+
+| Il buco | Sciolto da |
+|---|---|
+| «chi aggiorna il router quando un file si sposta?» | l'assistente, come scrittura giornalata (ADR-0007) dentro un ambito con checkpoint (ADR-0024); e un **sensore** (ADR-0009 — `Sensor::observe(&Untrusted)` esiste in `crates/kernel/src/sensor.rs`) che verifica i router: un puntatore rotto è un **verdetto negativo** che rientra nell'anello |
+| «e se il router marcisce lo stesso?» | l'anello di miglioramento (ADR-0009): il kernel vede la ricorrenza e **propone** la voce; il proprietario approva. La regola «il router si aggiorna nello stesso turno» diventa un meccanismo, non una speranza. ⚠️ **È la lezione di questo stesso repository:** la regola «un puntatore si toglie, non si ricorregge» ha ceduto tre volte finché era solo scritta; il freno è nel cancello — `check-docs.sh` — e non nella buona volontà |
+| «come non saturo il contesto?» | la proiezione ha un **budget per modello** (ADR-0010), misurato per categoria nel giornale; la mappa è una categoria; le foglie entrano come **riferimenti** e si rileggono su richiesta (ADR-0008) |
+| «e se modifico un file a mano?» | trigger su cambiamento di file (ADR-0009) → contenuto da fuori (I6, ADR-0014) finché il proprietario non approva. Una skill cambiata → AUD-004 |
+| «come so se funziona BENE?» | ogni salto è un passo con costo (ADR-0011): salti-per-trovare e salti-a-vuoto sono **numeri nel giornale**; il test «al primo salto» si misura. La valutazione probabilistica sta in L2 (ADR-0020) |
+| «la foto in che contesto?» | decisione 7: nella knowledge base come artefatto, la run la vede come riferimento (ADR-0018, 0022, 0008) |
+| «cosa è privato e resta fuori dagli indici?» — dal concetto del proprietario | ⚠️ **NON sciolto qui.** I segreti stanno nel gestore dei segreti (ADR-0023), mai in file. «Privato ma non segreto» è una regola della capacità: **voce aperta** per il sotto-progetto 6, decisione 13 della §3.4 |
+| «come funziona se uso modelli diversi?» | il modello **non tocca mai il disco**: il kernel compone il contesto (ADR-0008) e lo consegna. Ciò che cambia col modello è la **guida** (ADR-0009, una foglia per modello) e il **budget** (ADR-0010); la mappa è una. Se il proprietario tiene sempre un modello, il meccanismo esiste e non scatta mai: costo zero |
+
+### 1.5 Il prodotto di questo disegno, e il controllo che esercita ciascun artefatto
 
 | Artefatto | Controllo |
 |---|---|
-| questo disegno, riscritto dalla sessione successiva | `check-docs.sh` (link, tetto); la sezione verificato/dedotto/assunto; ogni cifra col comando |
+| questo disegno, riscritto dalla sessione successiva — ✅ **fatto il 2026-09-04, è questo file** | `check-docs.sh` (link, tetto); la sezione verificato/dedotto/assunto; ogni cifra col comando |
 | rimando datato in testa ad **ADR-0009**: le due pretese e l'ordine | ADR append-only; `check-docs.sh` accoppia la §5 del compendio |
 | rimando in **ADR-0039** («destinazione di una cattura») e decisione 7 del disegno gesti → **chiusa** | `grep` sulla frase; la tabella delle decisioni dei gesti |
 | `roadmap.md`: riga nuova del sotto-progetto di kernel; riga 6 aggiornata (mappa poi ricerca; dipende dal nuovo) | «nessuna rinumerazione»; conteggi di `check-docs.sh` |
@@ -240,12 +168,16 @@ consegna, e il disegno la porta qui.
 | compendio §6 (puntatore) e §12 (riga); `README.md` (riga) | tetto; link |
 | **codice: nessuno** | `git diff --stat -- crates/` vuoto, a fine piano |
 
-#### Sezione 2 — La forma nel kernel, approvata il 2026-09-04
+---
 
-**2.1 In una frase.** Il kernel **fornisce tre meccanismi** che mancano e **riusa quattro** che esistono.
-La capacità (L2, sotto-progetto 6) li **compone**. **Nessuna porta nuova.**
+## 2. La forma nel kernel — ✅ approvata il 2026-09-04
 
-**2.2 I pezzi, e dove vive ciascuno**
+### 2.1 In una frase
+
+Il kernel **fornisce tre meccanismi** che mancano e **riusa quattro** che esistono. La capacità (L2,
+sotto-progetto 6) li **compone**. **Nessuna porta nuova.**
+
+### 2.2 I pezzi, e dove vive ciascuno
 
 | Pezzo | Vive in | Esiste al 2026-09-04? | Cosa fa per la mappa |
 |---|---|---|---|
@@ -259,7 +191,7 @@ La capacità (L2, sotto-progetto 6) li **compone**. **Nessuna porta nuova.**
 | **la cartella** su disco | artefatti dell'utente (ADR-0022): non cifrata, **nel backup** | — | router, foglie, guide, catture |
 | **confine dei tipi** (ADR-0014) | `crates/kernel/src/boundary.rs` | ✅ | ogni foglia è `Untrusted` o `Instruction`, e l'etichetta è ereditaria |
 
-**2.3 Quattro regole di forma**
+### 2.3 Quattro regole di forma
 
 | | Regola | Da |
 |---|---|---|
@@ -268,22 +200,30 @@ La capacità (L2, sotto-progetto 6) li **compone**. **Nessuna porta nuova.**
 | 3 | una foglia entra **sempre** con provenienza ed etichetta; il registro delle guide **rifiuta** una guida senza impronta | ADR-0014 · 1.1e |
 | 4 | **lo spazio designato è l'ambito, e il confine conta.** Dentro (crea, aggiorna, rinomina, sposta fra gruppi, cancella): checkpointato, **reversibile**, il router segue e il sensore verifica. **Da fuori a dentro**: il file entra come `Untrusted` con provenienza *«importato da ‹percorso› al passo ‹S›»*; se è una skill, serve l'approvazione — AUD-004. **Da dentro a fuori**: il router **perde** la voce; il giornale **tiene** il riferimento **con la destinazione** — un file uscito e uno cancellato non devono essere indistinguibili, la forma di ADR-0018; ⚠️ da lì in poi il checkpoint **non lo copre più**, il limite dichiarato di ADR-0024 | ADR-0024 · 0018 · 0014 |
 
-**2.4 Il costo dichiarato: il primo paga.** I tre meccanismi nascono per la knowledge base e per il
-sotto-progetto 3, e **il 13 li paga** — come ADR-0039 dice del primo worker. Il 3 e il 6 riusano. Se
-il 13 li costruisce male, lo scoprono loro: per questo le due pretese di 1.1e sono scritte **prima**.
+### 2.4 Il costo dichiarato: il primo paga
 
-**2.5 Ipotesi che restano tali** — la tabella «Assunto» della sezione 5 di questa consegna.
+I tre meccanismi nascono per la knowledge base e per il sotto-progetto 3, e **il 13 li paga** — come
+ADR-0039 dice del primo worker. Il 3 e il 6 riusano. Se il 13 li costruisce male, lo scoprono loro: per
+questo le due pretese di 1.1e sono scritte **prima**.
 
-#### Sezione 3 — Le decisioni in append, approvata il 2026-09-04
+### 2.5 Ipotesi che restano tali
 
-**3.1 Nessun ADR nuovo, e perché.** Tutti i meccanismi sono **già decisi**: 0009 (guide, sensori,
-trigger), 0008 e 0010 (proiezione), 0038 (registro delle funzioni), 0022 (artefatti e indici), 0024
-(ambiti), 0014 (confine). La knowledge base è una **capacità L2**, e la forma di una capacità vive nella
-**roadmap** e nel suo disegno, non in un ADR. Ciò che è nuovo — l'**ordine**, le **due pretese**, la
-**decisione 7 chiusa** — sono **rimandi datati** in testa a ADR esistenti: *«completato → un
-rimando»*, la regola append-only di `CLAUDE.md`. Nessuno supera niente.
+La tabella «Assunto» della **§6.5**.
 
-**3.2 I rimandi datati**
+---
+
+## 3. Le decisioni in append — ✅ approvata il 2026-09-04
+
+### 3.1 Nessun ADR nuovo, e perché
+
+Tutti i meccanismi sono **già decisi**: 0009 (guide, sensori, trigger), 0008 e 0010 (proiezione), 0038
+(registro delle funzioni), 0022 (artefatti e indici), 0024 (ambiti), 0014 (confine). La knowledge base
+è una **capacità L2**, e la forma di una capacità vive nella **roadmap** e nel suo disegno, non in un
+ADR. Ciò che è nuovo — l'**ordine**, le **due pretese**, la **decisione 7 chiusa** — sono **rimandi
+datati** in testa a ADR esistenti: *«completato → un rimando»*, la regola append-only di `CLAUDE.md`.
+Nessuno supera niente.
+
+### 3.2 I rimandi datati
 
 | ADR | Il rimando, in testa | Perché è un rimando e non un superamento |
 |---|---|---|
@@ -294,7 +234,7 @@ rimando»*, la regola append-only di `CLAUDE.md`. Nessuno supera niente.
 | **0022**, **0024**, **0014** | **nessuno**: la tabella di 0022 dice già artefatti sì / indici no; la cartella-ambito è un **uso** di 0024; le etichette sono un uso di 0014 | un uso non è un cambiamento |
 | **0001** | **nessuno**: «conversazione e **conoscenza**» è già il primo pilastro | i gesti dovettero toccarlo; qui no |
 
-**3.3 Che cosa NON cambia**
+### 3.3 Che cosa NON cambia
 
 | | Regge perché |
 |---|---|
@@ -307,7 +247,9 @@ rimando»*, la regola append-only di `CLAUDE.md`. Nessuno supera niente.
 | le **cinque proprietà** della §3 del compendio | nessuna sesta; la prima (confine nei tipi) è ciò su cui la regola 3 poggia |
 | **ADR-0020** | il piano 0 usa chiavi, mai testo |
 
-**3.4 Le decisioni: prese, registrate, dipendenze** — ⛔ **casa unica** del loro stato.
+### 3.4 Le decisioni: prese, registrate, dipendenze
+
+⛔ **Casa unica** del loro stato.
 
 | # | Decisione | Stato | Chi la chiude |
 |---|---|---|---|
@@ -324,15 +266,18 @@ rimando»*, la regola append-only di `CLAUDE.md`. Nessuno supera niente.
 | 17 | il pannello nasce **col 6** | ✅ presa, sua | — |
 | 18 | ricerca ibrida o solo vettori | ⏳ registrata | il sotto-progetto 6 |
 
-#### Sezione 4 — La GUI, il sotto-progetto 6 e la ricerca, approvata il 2026-09-04
+---
 
-**4.1 Collegamenti, non posizione.** Un file ha **due indirizzi**: dove sta sul disco, e chi lo punta.
-**L'agente naviga la mappa, mai le cartelle** — al piano 0 il kernel carica il router, al piano 1 il
-modello segue un collegamento; nessuno «elenca una cartella». Quindi **il pannello disegna la mappa**,
-o mostrerebbe una cosa mentre l'agente ne usa un'altra. È la regola del proprietario — *«non
-riorganizzi le cartelle, mappi quello che c'è»* — ed è come funziona questo repository: la §12 del
-compendio è un router che punta a file in cinque cartelle, e `check-docs.sh` verifica i
-**collegamenti**, non le cartelle.
+## 4. La GUI, il sotto-progetto 6 e la ricerca — ✅ approvata il 2026-09-04
+
+### 4.1 Collegamenti, non posizione
+
+Un file ha **due indirizzi**: dove sta sul disco, e chi lo punta. **L'agente naviga la mappa, mai le
+cartelle** — al piano 0 il kernel carica il router, al piano 1 il modello segue un collegamento;
+nessuno «elenca una cartella». Quindi **il pannello disegna la mappa**, o mostrerebbe una cosa mentre
+l'agente ne usa un'altra. È la regola del proprietario — *«non riorganizzi le cartelle, mappi quello
+che c'è»* — ed è come funziona questo repository: la §12 del compendio è un router che punta a file in
+cinque cartelle, e `check-docs.sh` verifica i **collegamenti**, non le cartelle.
 
 | | Collegamenti (la mappa) | Posizione (la cartella) |
 |---|---|---|
@@ -342,7 +287,7 @@ compendio è un router che punta a file in cinque cartelle, e `check-docs.sh` ve
 | **cosa mostra il pannello in più** | gli **orfani**: file nello spazio che **nessun router punta** → per l'agente **non esistono**; i **collegamenti rotti**: un router che punta a un file assente | il sensore di integrità, **nelle due direzioni**, reso visibile |
 | **una regola** | i collegamenti puntano a **file**, non ad ancore dentro un file: la trappola 6 di `check-docs.sh` — un'ancora nessun controllo la difende | — |
 
-**4.2 L'indice**
+### 4.2 L'indice
 
 | | |
 |---|---|
@@ -354,29 +299,35 @@ compendio è un router che punta a file in cinque cartelle, e `check-docs.sh` ve
 | **chi lo tiene** | il core, come derivato — non è stato autorevole (I1), come il degrado |
 | **come arriva alla GUI** | via `ipc`, spinto dal core quando un trigger dice che la cartella è cambiata — lo stesso giro della mano |
 
-**4.3 Il pannello.** **Fa:** disegna il grafo raggruppato per router; filtra per specie, cartella,
-etichetta; cerca **sui nomi** mentre si scrive — non sul significato, quello è il piano 2; al click
-mostra il nodo (percorso, provenienza, etichetta) e le **funzioni del registro** su di esso (aggiungi al
-contesto, apri, sposta, cancella…). **Non fa:** toccare file; tenere stato (ADR-0004). Se muore, non si
-perde niente.
+### 4.3 Il pannello
 
-**4.4 Il sotto-progetto 6, in due metà**
+**Fa:** disegna il grafo raggruppato per router; filtra per specie, cartella, etichetta; cerca **sui
+nomi** mentre si scrive — non sul significato, quello è il piano 2; al click mostra il nodo (percorso,
+provenienza, etichetta) e le **funzioni del registro** su di esso (aggiungi al contesto, apri, sposta,
+cancella…). **Non fa:** toccare file; tenere stato (ADR-0004). Se muore, non si perde niente.
+
+### 4.4 Il sotto-progetto 6, in due metà
 
 | Metà | Cosa | Condizione di chiusura |
 |---|---|---|
 | **prima — la mappa** | router, gruppi, foglie, guide-modello, note, catture; il **sensore** d'integrità; l'**indice**; le funzioni CRUD nel registro; il **pannello**; le **misure** nel giornale (salti-per-trovare, salti-a-vuoto, token per salto) | il test del proprietario: *una run nuova trova il file giusto al piano 0 più un salto*, misurato su un insieme di domande — la valutazione probabilistica di L2 (ADR-0020) |
 | **seconda — la ricerca** (piano 2) | embedding sulla GPU via arbitro (ADR-0005; lo swap coordinato è già ✅ in tracciabilità); indice **fuori dal backup** (ADR-0022); i pezzetti entrano come `Untrusted`; la ricerca è una **funzione del registro**; ibrida o no lo decide il 6 | **non si disegna qui** |
 
-**4.5 Registrate, non prese** — l'esportazione HTML dell'indice (decisione 14) · «privato ma non
-segreto» (13) · ricerca ibrida o solo vettori (18). Il pannello nasce col 6 (17, presa).
+### 4.5 Registrate, non prese
 
-#### Sezione 5 — Voci aperte, dipendenze e prossimo passo, approvata il 2026-09-04
+L'esportazione HTML dell'indice (decisione 14) · «privato ma non segreto» (13) · ricerca ibrida o solo
+vettori (18). Il pannello nasce col 6 (17, presa).
 
-**5.1 Dove va: una riga nuova, e una cella riscritta.** **Decisione 12: una riga nuova, il
-sotto-progetto 13 «Registro delle guide, trigger e proiezione»**, strato **L0 + L1** come la riga 1,
-dipende da **1** e da **AUD-004 deciso**. Si appende **senza rinumerare**, come 11 e 12. Non un
-«Traguardo 7» dell'1: l'1 è **chiuso contro la §0.7**, e riaprirlo direbbe che non lo era. Non dentro
-il 3: mescolerebbe kernel e capacità in una riga sola.
+---
+
+## 5. Voci aperte, dipendenze e prossimo passo — ✅ approvata il 2026-09-04
+
+### 5.1 Dove va: una riga nuova, e una cella riscritta
+
+**Decisione 12: una riga nuova, il sotto-progetto 13 «Registro delle guide, trigger e proiezione»**,
+strato **L0 + L1** come la riga 1, dipende da **1** e da **AUD-004 deciso**. Si appende **senza
+rinumerare**, come 11 e 12. Non un «Traguardo 7» dell'1: l'1 è **chiuso contro la §0.7**, e riaprirlo
+direbbe che non lo era. Non dentro il 3: mescolerebbe kernel e capacità in una riga sola.
 
 | Riga | Dipende da | Cosa cambia |
 |---|---|---|
@@ -386,7 +337,7 @@ il 3: mescolerebbe kernel e capacità in una riga sola.
 | **12** — Gesti | **invariata** | la cattura atterra nello spazio come file + riferimento; finché il 6 non c'è è un **orfano** che il 6 mapperà. Nessuna dipendenza nuova |
 | **2** — GUI minima | invariata | costruisce il registro (ADR-0038) e il canale; il pannello della mappa nasce col **6** (decisione 17) |
 
-**5.2 Le righe di tracciabilità — sei**
+### 5.2 Le righe di tracciabilità — sei
 
 | Riga | Da | A |
 |---|---|---|
@@ -399,7 +350,7 @@ il 3: mescolerebbe kernel e capacità in una riga sola.
 `grep -cE 'sede da assegnare' docs/tracciabilita.md` passa da **3 a 1** — resta la cifratura reale.
 Si prova nelle due direzioni.
 
-**5.3 Le dipendenze dichiarate**
+### 5.3 Le dipendenze dichiarate
 
 | Cosa | Da chi dipende |
 |---|---|
@@ -409,15 +360,18 @@ Si prova nelle due direzioni.
 | il piano 2, la ricerca | l'arbitro (c'è); i modelli locali del **9** se gli embedding sono locali |
 | la cattura nella knowledge base | **nessuna nuova**: file + riferimento bastano oggi |
 
-**5.4 Le voci che restano aperte.** Tutte col chiusore nella tabella 3.4. ⛔ **Una sola sbarra
-qualcosa: AUD-004 sbarra il 13** — non questo disegno, non il piano dei documenti.
+### 5.4 Le voci che restano aperte
 
-**5.5 L'ordine di ciò che segue**
+Tutte col chiusore nella tabella 3.4. ⛔ **Una sola sbarra qualcosa: AUD-004 sbarra il 13** — non
+questo disegno, non il piano dei documenti.
+
+### 5.5 L'ordine di ciò che segue
 
 ⛔ **Il prossimo passo vive nella §6 del compendio, in un posto solo.** Qui sta l'ordine approvato:
 
 1. ✅ la §5 approvata **chiude il brainstorming**, 2026-09-04.
-2. la sessione successiva scrive il disegno **sul posto, in questo file**.
+2. ✅ la sessione successiva scrive il disegno **sul posto, in questo file** — **fatto il 2026-09-04**,
+   lo stesso giorno.
 3. il proprietario rilegge.
 4. il **piano dei documenti** con `superpowers:writing-plans` — **nessun codice**: i rimandi datati
    (0009, 0008, 0010, 0038, 0039); la riga 13 e le celle 3 e 6 in `roadmap.md`; le sei righe di
@@ -440,20 +394,119 @@ qualcosa: AUD-004 sbarra il 13** — non questo disegno, non il piano dei docume
 
 ---
 
-## 7. Le decisioni aperte per il proprietario
+## 6. Verificato, dedotto, assunto
 
-La tabella 3.4 del testo approvato è la **casa unica** dello stato; qui solo il **perché** di quelle
-che aspettano lui.
+### 6.1 Verificato nel sorgente, il 2026-09-04
 
-| Voce | Perché è sua |
+Letto il giorno dell'approvazione contro `c3c7a5d`, e riletto scrivendo il disegno contro `07ab6dc`,
+con gli stessi comandi e **gli stessi esiti** — il codice non è cambiato fra i due commit.
+
+| Affermazione | Comando |
 |---|---|
-| **AUD-004** | tocca tre ADR insieme (0003, 0009, 0014, contro 0015) e l'audit del 2026-08-27 la registra come *«vuole un ADR proprio, del proprietario»*. ⛔ **Sbarra il 13**: il registro delle guide deve sapere se una skill è una descrizione di strumento |
-| «privato ma non segreto» | è una regola sul contenuto della **sua** knowledge base, non un meccanismo |
-| il nome esatto della riga 13 | la roadmap è sua; qui è **proposto** e approvato nella forma |
+| il registro delle guide **non esiste** nel codice; nemmeno i trigger né la proiezione come tipi | `grep -rl --include='*.rs' -E 'Guide\|Trigger\|Projection' crates/` rende **0** file |
+| il tratto `Sensor` esiste, con `declared_cost()` e `observe(&self, artefact: &Untrusted) -> Verdict`, e il doc dice *«THE ARTEFACT IS `&`, NEVER `&mut`»* | `sed -n '/^pub trait Sensor/,/^}/p' crates/kernel/src/sensor.rs` |
+| `CheckpointId(u64)` esiste nella porta `filesystem`; il tipo «ambito» no — nessun `Scope` in tutto `crates/` | `grep -rnE --include='*.rs' 'pub (struct\|enum) \w*(Scope\|Checkpoint)\w*' crates/` rende **una** riga, in `crates/kernel/src/ports/filesystem.rs` |
+| `Untrusted` e `Instruction` esistono ed entrano in molti file | `grep -rl --include='*.rs' 'Untrusted' crates/ \| wc -l` |
+| «attivo ora è una proiezione del giornale, non un secondo archivio» è la forma di `permission.rs` e `degradation.rs` — e `degradation.rs` lo dice **citando** `permission`: *«IT IS A PROJECTION AND NOT A SECOND ARCHIVE, exactly as `crate::permission` is»* | `grep -rn --include='*.rs' -i 'projection' crates/kernel/src/` |
+| i moduli pubblici di `kernel`, con `sensor`, `gateway`, `permission`, `degradation`; nessuno che si chiami `guide`, `trigger`, `projection` o `knowledge` | `grep -n '^pub mod' crates/kernel/src/lib.rs` |
+| il codice **non è cambiato** fra la consegna e questo disegno | `git diff --stat c3c7a5d..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` non rende niente |
+
+### 6.2 Verificato nei documenti, il 2026-09-04
+
+| Affermazione | Dove, e il comando |
+|---|---|
+| la knowledge base ha già una sede: il sotto-progetto **6** «Conoscenza / RAG», L2, che dipende dal 3; il 3 dipende da 1 e 2; l'ultima riga della tabella è la **12**, e la **8** dipende anche da 12 | [`roadmap.md`](../../roadmap.md), tabella «Sotto-progetti»: `grep -n -E '^\| \*{0,2}[0-9]{1,2}\*{0,2} \|' docs/roadmap.md` |
+| la tabella «Perché quest'ordine» della roadmap porta **una riga per ogni scelta d'ordine**, e la riga 12 ne ha ricevuta una — *«Gesti dopo GUI minima e Conversazione, e prima di Voce»* | `grep -n 'Gesti dopo' docs/roadmap.md`. ⚠️ **Conseguenza per il piano:** la riga 13 ne vuole una, e la cella del 3 pure — trappola 6 |
+| la tabella «Decisioni ancora da prendere» della roadmap **non nomina** la knowledge base né le guide: non c'è una riga da barrare | `awk '/^## Decisioni ancora da prendere/{s=1} s&&/^## Regola/{s=0} s' docs/roadmap.md \| grep -ci -e guid -e knowledge` rende **0** |
+| `Skills` e `Regole e vincoli di progetto` poggiano sul registro delle guide con **sede da assegnare**; la terza riga col marcatore è `Storage e cifratura a riposo`, che resta: da **3** a **1** | [`tracciabilita.md`](../../tracciabilita.md): `grep -n 'sede da assegnare' docs/tracciabilita.md` |
+| le **sei** righe della §5.2 sono sei **righe di `tracciabilita.md`** — `Skills` e `Regole e vincoli` sono due righe distinte — in cinque righe della tabella della §5.2 | `grep -n -E 'Skills\|Regole e vincoli\|Collezioni e knowledge base\|Memoria persistente\|File watching\|Cattura con un gesto' docs/tracciabilita.md` rende **sei** righe di funzionalità più una di commento |
+| ⛔ **RICHIAMO DEL 2026-09-04 — la consegna diceva *«le diciotto funzionalità della sezione 3 «Conoscenza»»*, e sono SEDICI.** Contate delimitando per intestazione, con il comando accanto; la consegna aveva scritto la cifra **senza** comando, ed è la specie di affermazione che il gotcha **#31** produce. Nessuna decisione ne dipende: la cifra è **tolta**, resta il comando | `awk '/^## 3\. Conoscenza/{s=1;next} s&&/^## /{s=0} s&&/^[|] /&&!/^[|] Funzionalità/{n++} END{print n}' docs/tracciabilita.md` |
+| **AUD-004**: il **finding** è ✅ chiuso nella tabella dei 73 (`5d66088`) — ha chiuso il *fatto falso*, *«l'unica eccezione»* — e la **decisione** che il rimedio ha registrato, *se le cinque difese si estendano alle skill*, è *«registrata, non presa … vuole un ADR proprio, del proprietario»*. ⚠️ **Quindi «AUD-004 sbarra il 13» si legge: la DECISIONE registrata da AUD-004**, non il finding, che nessuno deve riaprire | [`audit-2026-08-27.md`](../../audit-2026-08-27.md), riga **004** della tabella dei 73 e la riga *«Un rimedio può fermarsi PRIMA di decidere»* di «Le decisioni prese rimediando»; la scheda: `grep -n 'AUD-004' docs/audit-2026-08-27.md` |
+| il registro delle guide fa *«archiviazione, versionamento, iniezione nella proiezione»*, e le skill dichiarative *«sono guide»*; i trigger partono da *«pianificazione, cambiamento di file, fine di un'altra run»* | [ADR-0009](../../adr/0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md): `grep -n 'Registro delle guide\|sono guide' docs/adr/0009-*.md` |
+| il routing risolve una **configurazione** e la giornala; «modello preferito» è un vincolo dell'utente | [ADR-0011](../../adr/0011-routing-risolto-e-giornalato-per-richiesta.md) riga 21 e 51; [ADR-0012](../../adr/0012-equivalenza-del-fallback-e-fallimento-chiuso.md) righe 42 e 60 |
+| artefatti: non cifrati, **nel backup**; indici ed embedding: **no**, rigenerabili | [ADR-0022](../../adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md) |
+| un **ambito di lavoro** è *«un insieme di percorsi dichiarato esplicitamente»*, il checkpoint *«copre quelli e nient'altro»*, e la Conoscenza è nominata fra chi scrive: *«Conoscenza scrive indici e documenti derivati»* | [ADR-0024](../../adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md), «Decision» 1 e 4, e il «Context». ⚠️ Il file si chiama *ad-ambiti*, non *su-ambiti*: `ls docs/adr \| grep 0024` |
+| il registro delle funzioni: *«un registro, molti invocatori, lo stesso permesso»*; lo costruisce *«il primo invocatore, il click del sotto-progetto 2»*; la manipolazione della GUI **non** passa dal registro | [ADR-0038](../../adr/0038-registro-delle-funzioni-del-programma.md), e la voce §5 del compendio |
+| la decisione 7 dei gesti: la tabella delle decisioni del disegno dei gesti la dà *«⏳ aperta, dipendenza dichiarata — il brainstorming 2, la knowledge base»*; ADR-0039 ha la riga *«la destinazione di una cattura \| il brainstorming della knowledge base — decisione 7»* | [disegno dei gesti](2026-09-03-riconoscimento-gesti-design.md), tabella delle decisioni; [ADR-0039](../../adr/0039-telecamera-come-sorgente-di-percezione.md): `grep -n -i 'destinazione' docs/adr/0039-*.md` |
+| la forma del **rimando in testa a un ADR** è già in uso: un blocco citato subito sotto `Deciders`, che comincia con *«⚠️ Rimando del ‹data› — …»* e dichiara *«Nessuna riga di questo ADR è superata»* | [ADR-0001](../../adr/0001-architettura-a-kernel-con-capacita-paritarie.md), righe 7–16: `sed -n '7,16p' docs/adr/0001-*.md`. Le teste di 0008, 0009, 0010 e 0038 **non** portano ancora un rimando: `sed -n '1,8p'` su ciascuno |
+| G7 — artefatti con anteprima viva — è nella mappa funzionale, area 2 | `spikes/GUI-REQUISITI.md`, riga G7 |
+| «conversazione e **conoscenza**» è già il primo pilastro | [ADR-0001](../../adr/0001-architettura-a-kernel-con-capacita-paritarie.md), e la §1 del compendio |
+| la §12 del compendio punta a file in **cinque** cartelle distinte — la frase della §4.1 | `awk '/^## 12\./{s=1;next} s&&/^## /{s=0} s&&/^[|]/' docs/COMPENDIO.md \| grep -oE '\]\(([^)#]*\.md)' \| sed 's/^](//' \| sed 's#/[^/]*$##' \| sed 's#^[^/]*\.md$#.#' \| sort -u \| wc -l` |
+| il tetto del compendio | `grep -n '^ceiling=' scripts/check-docs.sh` contro `wc -c docs/COMPENDIO.md` |
+
+### 6.3 Verificato nello stato dell'arte — nessuna fonte esterna, e dichiarato
+
+⚠️ **Né il brainstorming né questo disegno hanno aperto una fonte esterna, deliberatamente:** ogni
+decisione poggia su decisioni **del repository**, e sul progetto stesso la fonte più aggiornata è il
+progetto. Il concetto di partenza del proprietario — i tre livelli, i router, il *visual second brain* —
+è **suo**, e sta nelle premesse con le sue parole. ⛔ **Il piano 2 — embedding, indici, ricerca
+ibrida — vorrà fonti primarie con la data** quando il sotto-progetto 6 lo disegnerà: non qui, perché
+qui non si disegna.
+
+### 6.4 Dedotto, e dichiarato tale
+
+| Deduzione | Da che cosa |
+|---|---|
+| che «guida per modello» sia il modo giusto di realizzare il `claude.md`/`deepseek.md` del proprietario | ADR-0009 (iniezione per contesto) + ADR-0010 (budget per modello) + ADR-0011 (il modello risolto nel record) |
+| che le **due pretese** sul registro delle guide — chiave di contesto; provenienza e impronta con «approvate ora» come proiezione — siano **tutte** le pretese della mappa | la lettura dei piani 0 e 1 contro ADR-0009 e `permission.rs`. Il disegno le ha messe alla prova sezione per sezione, e il 13 le riprova costruendo |
+| che l'«ambito» del piano 0 sia l'**ambito di lavoro** di ADR-0024, riusato | ADR-0024: un insieme di percorsi dichiarato; `CheckpointId` esiste. La forma la dà il sotto-progetto 13 — decisione 15 |
+| che nessun ADR nuovo serva, e bastino rimandi datati | la regola append-only di `CLAUDE.md`: *completato → un rimando* |
+| che «tenuto dal core» per l'indice non violi I1 | è derivato e rigenerabile, come il degrado: la forma di `degradation.rs` |
+| la forma dell'indice (nodi, attributi, frecce, segnali) nella §4.2 | è la proposta minima; il 6 la mette alla prova |
+
+### 6.5 Assunto, e chi lo misura
+
+| Assunzione | Chi la misura |
+|---|---|
+| che il sotto-progetto **3** sia la prima capacità che inietta una guida — la roadmap non lo dice | la §5.1: se non lo è, il 13 va comunque prima della prima che lo fa |
+| che la mappa (router centrale + router dell'ambito) stia nel budget del modello **più piccolo** che il proprietario userà | il sotto-progetto 6, sul primo modello locale |
+| che «al primo salto» si ottenga davvero | il 6, coi numeri del giornale |
+| che misurare la proiezione per categoria costi poco | il 13, quando la costruisce |
 
 ---
 
-## 8. Vicoli ciechi e scelte scartate, col perché
+## 7. Le fonti
+
+**Nessuna esterna**, dichiarato nella §6.3: ogni affermazione poggia su un documento o un sorgente del
+repository, letto il 2026-09-04, col comando accanto. ⚠️ **Quindi il piano dei documenti non porta
+niente in `riferimenti.md`** per questo disegno: la regola di `CLAUDE.md` scatta *«se la voce ha
+portato una misura o una fonte»*, e qui le misure sono comandi sul repository, che vivono accanto
+all'affermazione che sostengono.
+
+---
+
+## Cosa questo disegno ha misurato, e che non era scritto da nessuna parte
+
+| # | Misurato il 2026-09-04 | Che cosa ne segue |
+|---|---|---|
+| 1 | **la sezione 3 di `tracciabilita.md` ha SEDICI righe, non diciotto** — contate delimitando per intestazione, comando nella §6.2 | l'affermazione della consegna è **più debole di come era scritta**; nessuna decisione ne dipende, la cifra è tolta e resta il comando. È il gotcha **#31** dentro una consegna che dichiara *«ogni cifra col comando»*: la riga non aveva il comando, ed è stata la sola a sbagliare |
+| 2 | il codice **non è cambiato** fra la consegna e il disegno: `git diff --stat c3c7a5d..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` è vuoto; e da `c3c7a5d` a `07ab6dc` c'è **un** commit, la consegna | le verifiche della consegna valgono per il codice di oggi; sono state comunque **rilanciate**, non citate, e gli esiti coincidono |
+| 3 | il cancello rilanciato **all'apertura**, prima di toccare un file: `bash scripts/gate.sh` → `GATE GREEN`, `bash scripts/check-docs.sh` → `OK`; e `cargo test --locked --workspace --no-fail-fast` → **48 target, 354 passate, 0 fallite, 2 ignorate**, contate con `grep -oE 'test result: ok\. [0-9]+ passed; [0-9]+ failed; [0-9]+ ignored' \| awk '{t++; p+=$4; f+=$6; g+=$8} END{print t, p, f, g}'` | la baseline da cui il piano parte è verde, e si **rimisura** all'apertura del piano invece di leggersi qui. ⚠️ La cifra sta qui **una volta**, con la data e il comando, perché è la baseline di questa sessione e non vive in nessun altro documento |
+| 4 | il margine del compendio **prima** di muovere il puntatore: `wc -c docs/COMPENDIO.md` → 175 499 contro `ceiling=188416` in `scripts/check-docs.sh`, cioè **12 917** byte; la consegna ne aveva misurati 13 454, e la differenza è ciò che il puntatore della consegna ha consumato | il piano dei documenti aggiungerà **cinque** rimandi nelle voci di §5 e **una** riga in §12: si misura **prima** di scrivere, e ciò che è verbale va in `archivio/`. Trappola 2 |
+| 5 | la §12 del compendio punta a file in **cinque** cartelle distinte — comando nella §6.2 | la frase della §4.1, *«un router che punta a file in cinque cartelle»*, **regge** letta col comando; era scritta a occhio |
+| 6 | il disegno dei gesti entrò nella §12 del compendio e in `README.md` con l'**esecuzione del piano** (`92feec3`, compito 9), non quando fu scritto (`c9fcd40`): `git log --format='%h %ad %s' --date=short -S'2026-09-03-riconoscimento-gesti-design' -- docs/COMPENDIO.md docs/README.md` | «questo file nella §12 e in `README.md`» resta un **compito del piano**, come la §5.5 già dice: questo disegno **non** vi si aggiunge da solo. Il puntatore della §6, invece, è mosso oggi, perché il prossimo passo è cambiato — lo stesso precedente |
+| 7 | i **fine-riga** dei file che il piano toccherà: `docs/COMPENDIO.md`, `docs/README.md`, `docs/roadmap.md` e `docs/tracciabilita.md` sono LF nell'indice e **CRLF** nell'albero; i cinque ADR che ricevono un rimando (0008, 0009, 0010, 0038, 0039) e il disegno dei gesti sono **LF** in entrambi; e ventuno ADR su trentanove sono CRLF nell'albero: `git ls-files --eol docs/COMPENDIO.md docs/README.md docs/roadmap.md docs/tracciabilita.md docs/adr/` | chi esegue il piano conserva i fine-riga **di ciascun file** e li rimisura dopo — trappola 3. ⚠️ I cinque ADR da toccare sono tutti LF: una scrittura CRLF su di essi sarebbe visibile nel diff come righe cambiate che nessuno ha toccato |
+| 8 | la forma del rimando in testa a un ADR **esiste già** e ha un precedente vivo: il blocco citato di ADR-0001 del 2026-09-03, subito sotto `Deciders`, con la frase *«Nessuna riga di questo ADR è superata»*; le teste di 0008, 0009, 0010 e 0038 non ne portano ancora | il piano copia **quella** forma — non ne inventa una — e la frase sulla non-superazione è la parte che rende il rimando un rimando (§3.1) |
+| 9 | ADR-0024 si chiama `0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md`, mentre il suo titolo dice *«copre ambiti dichiarati»*: chi lo collega **per nome dedotto dal titolo** scrive un link rotto | `ls docs/adr \| grep 0024` prima di scrivere il link; `check-docs.sh` lo coglierebbe, ma dopo |
+| 10 | **la tabella «Perché quest'ordine» della roadmap ha una riga per scelta d'ordine**, e il piano dei gesti ne aggiunse una per la riga 12; la tabella «Decisioni ancora da prendere» non nomina la knowledge base | la riga 13 e la nuova dipendenza del 3 vogliono una riga lì — la §5.5 la nomina come *«riletto»*, e il piano la scrive; nessuna riga da barrare nell'altra tabella |
+| 11 | **la verifica di coerenza fatta scrivendo** — il testo approvato riletto contro le sei invarianti, le cinque proprietà della §3 del compendio e contro ADR-0001, 0007, 0008, 0009, 0010, 0011, 0012, 0014, 0018, 0020, 0022, 0023, 0024, 0038, 0039, coi comandi della §6 | **regge**, e nessuna decisione cambia. ⚠️ Con **una precisione** che il testo non faceva: *«AUD-004 sbarra il 13»* nomina la **decisione registrata** dal rimedio di AUD-004, non il finding, che è ✅ chiuso nella tabella dei 73 — §6.2 |
+
+---
+
+## Le voci che questo disegno apre per il proprietario
+
+| # | Voce | Perché è sua, e il consiglio |
+|---|---|---|
+| 1 | **la rilettura di questo disegno**, sotto accettazione condizionata | le cinque sezioni sono approvate nel merito; ciò che questa riscrittura aggiunge — la §6, la sezione «Cosa ha misurato», le trappole, la correzione della cifra — è dello scrivente, e va letto come tale. È il passo 3 della §5.5, e il puntatore della §6 del compendio lo nomina |
+| 2 | la cifra *«diciotto»* diventata **sedici** | nessuna decisione ne dipende. Consiglio: nessuna azione; la riga vive ora col comando, e il piano non la tocca |
+| 3 | la decisione **11** — la decisione registrata da AUD-004, se le difese di ADR-0015 si estendano alle skill | è la sola che **sbarra** qualcosa, il 13, e vuole un ADR suo. Consiglio: scriverlo **in parallelo** al sotto-progetto 2 (§5.5, punto 5), perché il 13 viene dopo il 2 (decisione 16) e non deve aspettare; e scriverlo **prima** del brainstorming del 13, perché il registro *«deve saperlo per nascere giusto»* (§1.2) |
+| 4 | il **nome esatto** della riga 13 | proposto e approvato nella forma: *«Registro delle guide, trigger e proiezione»*, L0 + L1. Consiglio: tenerlo com'è; se il proprietario non dice altro, il piano lo scrive così |
+| 5 | la riga di *«Perché quest'ordine»* per il 13 | una frase, presa **scrivendo la riga** nel piano. Consiglio: *«13 dopo la GUI minima e prima di Conversazione: i tre meccanismi senza codice si costruiscono prima della prima capacità che inietta una guida (§1.1d di questo disegno), e il 2 non li usa»* — se il proprietario non dice altro, il piano la scrive così |
+| 6 | le decisioni **13, 14, 15, 18**, aperte con un chiusore scritto | nessuna sbarra il disegno né il piano; restano nella tabella 3.4, in una casa sola |
+
+---
+
+## Vicoli ciechi e scelte scartate, col perché
 
 | Scartato | Perché, e che cosa insegna |
 |---|---|
@@ -465,95 +518,108 @@ che aspettano lui.
 | «anche altri agenti da fuori» | router che marciscono per mano altrui; skill riscritte da altri che entrano nel contesto |
 | il **sistema che scrive le note in automatico dal giornale** | un meccanismo nuovo di proiezione giornale → file, e file non modificabili a mano |
 | le **cartelle come struttura della mappa** | il pannello mostrerebbe una cosa e l'agente ne userebbe un'altra |
+| «più kernel e meno modello» — router con parole-chiave abbinate dal kernel | più rigido, e più lavoro del proprietario per tenere le chiavi; offerto e non scelto — domanda 4 |
+| il pannello **col 2** invece che col 6 | il 2 disegnerebbe un indice che nessuno produce ancora — domanda 12 |
+| l'ordine **13, poi 2, poi 3** | la GUI aspetterebbe, e il 13 aspetta comunque AUD-004 — domanda 11 |
+| un ADR nuovo per la knowledge base | una capacità L2 vive nella roadmap e nel suo disegno; tutti i meccanismi sono già decisi — §3.1 |
+| **una seconda tabella delle decisioni in testa a questo file**, sulla forma del disegno dei gesti | lì la consegna la portava in testa; qui la §3.4 approvata si dichiara *«casa unica»*, e ricopiarla sarebbe il gotcha **#68** dentro il file che lo cita. Il testo in testa **rimanda** |
 
 ---
 
-## 9. Le fonti
+## Le trappole che mordono scrivendo il piano
 
-**Nessuna esterna**, dichiarato nella sezione 5: ogni affermazione poggia su un documento o un
-sorgente del repository, letto il 2026-09-04, col comando accanto. Il concetto di partenza — i tre
-livelli, i router, il *visual second brain* — è del **proprietario**, e sta nella sezione 1 con le sue
-parole.
+| # | Trappola | Che cosa fare |
+|---|---|---|
+| 1 | i **rimandi datati** vanno in testa all'ADR, **append-only**, e le voci §5 del compendio vi rimandano con una riga — non copiano | la forma è il blocco citato di ADR-0001 (misura 8): sotto `Deciders`, *«⚠️ Rimando del ‹data› — …»*, con la frase *«Nessuna riga di questo ADR è superata»*. Nel compendio, la forma delle voci 0001, 0011 e 0023: *«⚠️ Rimando del ‹data›, in testa all'ADR: …»*, una riga |
+| 2 | il compendio ha un **tetto in byte**, e il verde non è un margine | prima di aggiungere una riga si misura `wc -c docs/COMPENDIO.md` contro `ceiling=` in `scripts/check-docs.sh`; ciò che è verbale va in `archivio/`, non in §6. Il margine misurato oggi è nella misura 4, e si **rimisura** |
+| 3 | i **fine-riga sono misti per file**: compendio, README, roadmap e tracciabilità sono CRLF nell'albero; i cinque ADR da toccare e il disegno dei gesti sono LF | si scrive con Python `newline=""` su un temporaneo e `os.replace` (gotcha #82) — l'aiutante `replace_unique.py` del [piano dei gesti](../plans/2026-09-03-riconoscimento-gesti.md) fa esattamente questo; si **rimisura dopo** con `git ls-files --eol` e `tr -cd '\r' \| wc -c` |
+| 4 | i numeri di sezione **duplicati** sono un rosso, letti con `^#{2,6} [0-9]+(\.[0-9]+)*` per file | nessun `## N.` ripetuto; le sotto-sotto-sezioni con `####` |
+| 5 | il controllo dei link verifica il **file**, mai il frammento: un'ancora è un rimando che nessuno difende | una sezione si **nomina**, non si collega con un cancelletto; i percorsi sono relativi alla cartella di **ciascun** file — ed è la regola che la §4.1 dà alla knowledge base stessa |
+| 6 | la roadmap si appende **senza rinumerare**; la tabella «Perché quest'ordine» ha **una riga per scelta d'ordine** (misura 10) | la riga 13 va in coda alla tabella «Sotto-progetti»; la cella del 3 guadagna la dipendenza da 13; la cella del 6 si riscrive con le due metà e guadagna il 2; «Perché quest'ordine» riceve la riga del 13 — la voce 5 per il proprietario porta il testo consigliato |
+| 7 | `tracciabilita.md`: il marcatore `sede da assegnare` è **contato** (`grep -cE`), e la riga `Cattura con un gesto` dice *«la destinazione la decide il brainstorming della knowledge base»* | da **3 a 1**, provato nelle due direzioni; la riga della cattura si riscrive **con la decisione** e non con una riga sotto; il comando del riquadro in testa al file **si rilancia** |
+| 8 | ADR-0024 si chiama *ad-ambiti*, non *su-ambiti* (misura 9) | `ls docs/adr \| grep 0024` prima del link |
+| 9 | la guardia dei **conteggi** di `check-docs.sh` legge `<cifra> ADR` nei documenti di stato — compendio, README, roadmap fra questi — come **totale** | *«cinque rimandi»* si scrive a parole, mai una cifra in numero seguita da «ADR»; e il totale degli ADR **non cambia**, perché non nasce nessun ADR |
+| 10 | il disegno dei gesti chiude la decisione 7 **nella tabella**, con richiamo datato, e il suo comando `awk` che conta le decisioni deve rendere ancora **13** | si riscrive la **cella** della riga 7 — stato e chiusura — senza aggiungere righe; si rilancia il comando della sua testa prima e dopo |
+| 11 | `README.md` è un **documento di stato** per la guardia dei conteggi, e la tabella «Specifiche» ha una riga per disegno, sulla forma della riga del disegno dei gesti | `grep -n 'riconoscimento-gesti-design' docs/README.md` dà la forma; la riga nuova la copia, con *«⛔ Non è una spec»* |
+| 12 | la **pre-verifica di ogni compito** trova un difetto in tutti i compiti dispacciati finora, senza eccezione (`CLAUDE.md`) | ogni compito si rilegge contro il codice e i documenti di **allora**, non contro questo disegno né contro il piano |
+| 13 | `riferimenti.md` **non si tocca** per questo disegno (§7) | il piano lo dichiara, come le passate del Traguardo 5 dichiaravano il contrario; una voce che non porta fonti non ne aggiunge |
 
 ---
 
-## 10. Come si riprende — scritto alla chiusura della sessione del 2026-09-04, coi comandi
+## Il prossimo passo
 
-⚠️ **È il documento di consegna di questa sessione**, e sta qui perché il repo ha già la sua
-convenzione: lo stato vive in file **tracciati**, il puntatore nella §6 del compendio, e chi riprende
-legge **questo** file per intero. Ogni riga è stata **riletta coi comandi** prima di essere scritta.
+⛔ **Lo dice la §6 del [compendio](../../COMPENDIO.md), in un posto solo.** L'ordine approvato, con
+le spunte di oggi, è nella §5.5 di questo disegno; la prima riga senza spunta è la **rilettura del
+proprietario**, poi il **piano dei documenti** in una sessione nuova.
+
+### Come si riprende — scritto alla chiusura della sessione del 2026-09-04, coi comandi
+
+⚠️ **È il documento di consegna di questa sessione**, e sta qui e non in un file a parte perché il
+repo ha già la sua convenzione: lo stato vive in file **tracciati**, e chi riprende legge **questo**
+file per intero. Ogni riga è stata **riletta coi comandi** prima di essere scritta, non ricordata.
 
 ⛔ **DA SAPERE SUBITO: niente è a metà.** Albero pulito, nessuno stash, nessuna operazione git a metà,
-tutto pushato, nessun codice toccato. La sessione ha fatto **due** cose prima del brainstorming, ed
-entrambe sono committate: la ripresa verificata coi comandi, e la chiusura della sola voce aperta della
-sessione precedente (`c3c7a5d`). ⚠️ **Il messaggio di `c3c7a5d` porta un `@` in testa e uno in coda**:
-un errore di sintassi di chi lo ha scritto — here-string di PowerShell dentro il tool Bash — **non
-corretto**, perché riscrivere un commit già pushato su `main` per due caratteri è uno scambio peggiore
-del difetto. Il testo del messaggio è intero e leggibile.
+tutto pushato, nessun codice toccato.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
-| Ramo | `main`, allineato a `origin`: `git status -sb` dopo `git fetch --all --prune`. Nessuno stash, nessuna operazione a metà |
-| I commit di questa sessione | `git log --oneline d34e96b..HEAD` — quanti siano lo dice il comando |
-| Codice di prodotto | **nessuno**: `git diff --name-only d34e96b..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` è **vuoto** |
-| Cancelli | `bash scripts/check-docs.sh` → `OK`; `bash scripts/gate.sh` → `GATE GREEN` all'apertura della sessione, e nessun file che il cancello legga è cambiato da allora. Si rilanciano, non si citano |
-| Fine-riga | il compendio CRLF in albero con CR = righe, rimisurato dopo la scrittura; questo file: `git ls-files --eol` lo dice |
-| Debito lasciato | **nessuno non dichiarato**: le voci aperte sono nella tabella 3.4 col loro chiusore; il piano dei documenti è ancora da scrivere, e lo dice la §6 |
-
-**Le decisioni del PROPRIETARIO, prese in questa sessione** — sono nella sezione 2 (le dodici
-risposte) e nella tabella 3.4. **Una in più, prima del brainstorming:** la cifra delle decisioni del
-disegno gesti **resta fuori** dagli indici (ratifica della decisione 1 del coordinatore della sessione
-precedente, `c3c7a5d`).
+| Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb` dopo `git fetch --all --prune`. Nessuno stash, nessuna operazione a metà |
+| I commit di questa sessione | `git log --oneline 07ab6dc..HEAD` — il disegno scritto sul posto, l'archivio della consegna, il puntatore della §6 |
+| Codice di prodotto | **non toccato**: `git diff --stat 07ab6dc..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` non rende nulla. Sono cambiati tre file di documentazione: questo, il compendio, e l'archivio della consegna |
+| Cancello | `bash scripts/check-docs.sh` → `OK`; `bash scripts/gate.sh` → **`GATE GREEN`, rilanciato all'apertura** — misura 3 — e nessun file che il cancello legga è cambiato da allora. Si rilanciano, non si citano |
+| Fine-riga | questo file e l'archivio sono **LF** nell'indice e nell'albero; il compendio è LF nell'indice e **CRLF** nell'albero, con CR = righe: `git ls-files --eol docs/COMPENDIO.md docs/archivio/consegna-brainstorming-knowledge-base.md docs/superpowers/specs/2026-09-04-knowledge-base-design.md`, e `tr -cd '\r' < docs/COMPENDIO.md \| wc -c` contro `wc -l < docs/COMPENDIO.md` |
+| File temporanei | nessuno nel repository: gli script di questa sessione stanno nello scratchpad, fuori dall'albero, come `CLAUDE.md` prescrive |
+| Debito lasciato | **nessuno non dichiarato**: le voci aperte sono nella tabella 3.4 col loro chiusore, e le sei voci per il proprietario nella sezione omonima |
 
 **Le decisioni prese dal coordinatore, col perché** — il proprietario può ribaltarle:
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
-| 1 | **commit senza il trailer `Co-Authored-By`** | `CLAUDE.md` dice *«senza co-autore»*, e `git log --format='%b' -30 \| grep -ci 'co-authored-by'` rende **0**; una direttiva di sistema chiedeva il contrario, e la divergenza è stata **portata al proprietario** — terza sessione di fila. Costo se sbagliato: un `--amend` |
-| 2 | **nessuna fonte esterna aperta** | ogni decisione è interna al repo; il piano 2 ne vorrà quando il 6 lo disegnerà. Costo se sbagliato: una fonte da aggiungere nel disegno |
-| 3 | la consegna è **un file solo** più il compendio, come `c8e234e` per i gesti: né `README.md` né `roadmap.md` né `tracciabilita.md` sono toccati | è il precedente; quei tre li tocca il **piano dei documenti**. Costo se sbagliato: zero, il piano li tocca comunque |
-| 4 | il numero **13** per la riga nuova | il precedente di 11 e 12: si appende senza rinumerare. Costo se sbagliato: un nome diverso nel piano |
+| 1 | **commit senza il trailer `Co-Authored-By`** | `CLAUDE.md` dice *«senza co-autore»*, e `git log --format='%b' -40 \| grep -ci 'co-authored-by'` rende **0**; una direttiva di sistema chiedeva il contrario, e la divergenza è **portata al proprietario** — quarta sessione di fila. Costo se sbagliato: un `--amend` |
+| 2 | la tabella delle decisioni **non è ricopiata in testa** al file, contro la forma del disegno dei gesti | la §3.4 approvata si dichiara casa unica; il testo in testa rimanda. Costo se sbagliato: zero — il rimando c'è |
+| 3 | la cifra *«diciotto»* **tolta** dalla §6.2 e sostituita dal comando, con richiamo datato | `CLAUDE.md`: una cifra che marcisce si toglie; e la riga era l'unica senza comando. Costo se sbagliato: zero |
+| 4 | questo disegno **non entra** in §12 né in `README.md` da solo | il precedente dei gesti (misura 6): è la condizione 5 della Definizione di «fatto», cioè del piano. Costo se sbagliato: una riga nel piano in meno |
+| 5 | `riferimenti.md` **non toccato** | nessuna fonte esterna, nessuna misura che non sia un comando sul repo (§7). Costo se sbagliato: una riga da aggiungere |
 
-**Il lavoro della sessione successiva: SCRIVERE IL DISEGNO sul posto, in questo file.** In ordine, e
-ogni riga è eseguibile:
+**Il compito della sessione successiva: la rilettura del proprietario, poi il piano dei documenti.**
+In ordine, e ogni riga è eseguibile:
 
-1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -6`: si parte da `main`, e la
-   testa deve essere il commit di questa consegna o uno successivo.
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -3`: si parte da `main`, e la
+   testa deve essere il commit di questa chiusura o uno successivo.
 2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa dell'audit
-   del 2026-08-27 — poi **questo file, per intero**.
-3. Si riscrive **questo file, allo stesso percorso**, nella forma del
-   [disegno dei gesti](2026-09-03-riconoscimento-gesti-design.md): la testa (stato, «non è una spec»,
-   metodo, regole, premesse, domande e risposte), le **cinque sezioni** — merito **invariato**, è ciò
-   che è stato approvato — la sezione «Verificato, dedotto, assunto», «Cosa questo disegno ha
-   misurato», le voci aperte, i vicoli ciechi, le trappole, «Il prossimo passo». La consegna va
-   **parola per parola** in `docs/archivio/consegna-brainstorming-knowledge-base.md`, come per i
-   gesti.
-4. Ogni affermazione sul sorgente si **rilegge contro il codice di allora**: i comandi della sezione
-   5 si rilanciano, e dove divergono si scrive la divergenza (gotcha #58 vale per un disegno).
-5. Il proprietario **rilegge** il disegno, sotto la sua accettazione condizionata.
-6. Poi `superpowers:writing-plans` per il **piano dei documenti**, con la Definizione di «fatto» della
-   §5.5 copiata da qui, e il pre-controllo delle quattro domande di `CLAUDE.md` su ciascun compito;
-   l'esecuzione in una sessione **nuova**, subagent-driven.
-7. ⚠️ **Il margine del compendio si misura prima di scrivere**, col comando della sezione 0: cinque
-   voci di §5 riceveranno un rimando, e la §12 una riga.
+   del 2026-08-27 — poi **questo file, per intero**. L'archivio della consegna **non** è lettura
+   obbligatoria.
+3. Il proprietario **rilegge** il disegno sotto la sua accettazione condizionata — passo 3 della §5.5.
+   Le sei voci per lui stanno nella sezione omonima, con un consiglio ciascuna; se non dice altro, il
+   piano scrive i consigli.
+4. Prima di scrivere il piano, la regola di `CLAUDE.md` su `superpowers:writing-plans`: le voci aperte
+   **si sanno prima**. Dove stanno: la tabella 3.4 di questo file; le voci senza numero AUD
+   dell'[audit](../../audit-2026-08-27.md); la tabella *«Le voci aperte del Traguardo 5, in una tabella
+   sola»* di [`porta-di-qualita.md`](../../porta-di-qualita.md). ⚠️ Quali abbiano come chiusore
+   **questo piano** o *«il proprietario, prima»* lo decide chi lo scrive leggendo la colonna *«Chi la
+   chiude»*, non questa riga: qui la sola che sbarra è la decisione **11**, e sbarra il **13**, non il
+   piano.
+5. `superpowers:writing-plans`: il piano in `docs/superpowers/plans/<data>-knowledge-base-documenti.md`,
+   coi compiti del punto 4 della §5.5, la Definizione di «fatto» della §5.5 **copiata da qui**, e le
+   voci 4 e 5 prese scrivendo le righe della roadmap. In testa: modalità subagent-driven, errata,
+   pre-controllo — la forma dei piani precedenti, `ls docs/superpowers/plans/`.
+6. Il pre-controllo delle quattro domande di `CLAUDE.md` su ciascun compito, **nella sessione che
+   scrive il piano**; ogni compito si legge contro i documenti di **allora**, e la sezione *«Le
+   trappole»* dice dove guardare.
+7. L'esecuzione in una sessione **nuova**, un subagente fresco per compito, revisione fra uno e
+   l'altro (`superpowers:subagent-driven-development`): la regola del proprietario.
+8. A piano eseguito: la §6 del compendio porta il passo successivo — il sotto-progetto **2**, con
+   AUD-004 in parallelo (§5.5, punti 5 e 6) — e questo file entra nella §12 del compendio e in
+   `README.md`, come la condizione 5 della Definizione di «fatto» prescrive.
 
-📌 **La lezione di questa sessione, e non è un gotcha nuovo.** Due volte una cosa detta **a memoria** è
-stata corretta o riverificata — «il routing sceglie» e «l'artefatto arriva prima» — ed entrambe le
-volte la verifica costava un comando o una riga di roadmap. La domanda *«su cosa mi baso»* di
-`decision-principles` va fatta **prima** di scrivere il consiglio, non dopo che il proprietario chiede
-perché.
+📌 **Ciò che questo disegno consegna a chi scriverà il piano**, ed è suo e non un puntatore: i
+compiti del punto 4 della §5.5; la Definizione di «fatto» approvata; la tabella dei controlli per
+artefatto della §1.5; le tredici trappole; le sei voci per il proprietario coi consigli scritti; e le
+misure 4, 7, 8, 9 e 10, che sono le cose che il piano avrebbe dovuto scoprire da sé.
 
-⛔ **Vicoli ciechi di questa sessione:** sono nella sezione 8. Nessuno ha toccato il repository.
+📌 **La lezione di questa sessione, e non è un gotcha nuovo.** L'unica riga della consegna scritta
+**senza** il comando accanto è l'unica che ha sbagliato — *«diciotto»* per sedici. La regola di
+`CLAUDE.md` non è un ornamento: una cifra col comando si rifà, una cifra senza comando si crede.
 
----
-
-## Che cosa questa consegna NON ha fatto
-
-| | |
-|---|---|
-| non ha toccato nessun ADR | i rimandi datati sono del **piano dei documenti** |
-| non ha toccato `roadmap.md`, `tracciabilita.md`, `README.md` | idem: precedente `c8e234e` |
-| non ha scritto codice | `git diff --stat -- crates/` vuoto |
-| non ha disegnato la capacità | il compendio lo vieta prima del sotto-progetto 6; qui si decide che cosa chiede al kernel, e dove va |
-| non ha deciso AUD-004 | è del proprietario, con un ADR suo |
-| non ha aperto fonti esterne | dichiarato nelle sezioni 5 e 9 |
+⛔ **Vicoli ciechi di questa sessione: nessuno nuovo.** L'unica cosa scartata scrivendo è la seconda
+tabella delle decisioni in testa al file, ed è registrata nella sezione dei vicoli ciechi col perché.

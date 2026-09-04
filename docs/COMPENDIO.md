@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-04**, col **PIANO DEL RICONOSCIMENTO GESTI ESEGUITO** e il puntatore della §6 mosso al brainstorming della knowledge base; l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
+**Aggiornato il 2026-09-04**, col **BRAINSTORMING DELLA KNOWLEDGE BASE CHIUSO** — cinque sezioni approvate, la consegna in un file tracciato — e il puntatore della §6 mosso alla scrittura del suo disegno; l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -674,11 +674,14 @@ ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
 ✅ **IL PIANO DEL RICONOSCIMENTO GESTI È ESEGUITO IL 2026-09-04** — [piano](superpowers/plans/2026-09-03-riconoscimento-gesti.md),
 dal [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md): ADR-0038 e ADR-0039 in §5, i tre rimandi
 datati, la riga 12 «Gesti» in roadmap, le righe di tracciabilità, le fonti, la sonda S3 nel cancello, e SP-7 misurato
-— l'esito in `spikes/RISULTATI.md`, sezione SP-7. ⏭️ **IL PROSSIMO PASSO: il brainstorming DISTINTO della KNOWLEDGE
-BASE** con `superpowers:brainstorming`, in una sessione nuova — è la voce 2 della §7.8 del
-[disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md), e la decisione 7 del
-disegno dei gesti — dove finisce la cattura — vi entra come domanda. Poi il sotto-progetto 2. Nessuna voce aperta lo
-sbarra.
+— l'esito in `spikes/RISULTATI.md`, sezione SP-7. ✅ **IL BRAINSTORMING DELLA KNOWLEDGE BASE È CHIUSO IL 2026-09-04** — cinque sezioni approvate in
+chat, la consegna in [`specs/2026-09-04-knowledge-base-design.md`](superpowers/specs/2026-09-04-knowledge-base-design.md):
+**nessuna sesta proprietà** «che non si aggiunge dopo», ma un **vincolo d'ordine** — registro delle guide, trigger e
+proiezione, decisi in ADR-0009, 0008 e 0010 e senza codice, si costruiscono in un sotto-progetto di kernel **prima**
+del 3 — e la decisione 7 dei gesti **chiusa**: la cattura atterra nella knowledge base. ⏭️ **IL PROSSIMO PASSO:
+scrivere il DISEGNO della knowledge base sul posto, in quel file**, in una sessione nuova — la regola del
+proprietario, brainstorming in una e disegno nella successiva. Poi il piano dei documenti; poi il sotto-progetto 2,
+il 13, il 3. ⛔ **AUD-004 sbarra il 13**, non il disegno né il piano.
 
 ⛔ **IL RACCONTO DEL TRAGUARDO 6 È USCITO DA QUI il 2026-09-03, e non riassunto:** sta in
 [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola, con le eccezioni

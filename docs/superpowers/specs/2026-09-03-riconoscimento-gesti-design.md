@@ -61,8 +61,23 @@ perché chi riprende sappia che cosa non rifare. Le domande com'erano poste stan
 | 3 | *«self-use dell'agente sulle funzioni del programma»* significa **A mutuale**: l'agente può richiamare nativamente **tutte** le funzioni esistenti del programma; una **fetta** di quelle (tutte o solo alcune, si deciderà) è anche gestuale. Ne segue **un registro unico, molti invocatori, lo stesso permesso** — l'ADR A della §3 | una logica «solo per gesti»; l'agente che usa la telecamera per sé |
 | 4 | **approccio 1**, la sorgente di percezione **sotto il core**, dopo la sfida *«sicuro che rispetti tutti i principi?»* e le **tre correzioni** della §2.1, sotto accettazione condizionata | l'approccio 2 — tracciamento **dentro la GUI** — e l'ibrido: sezione *«Vicoli ciechi»* |
 
-**Le dodici decisioni, numerate come nella consegna** — i rimandi *«decisione N»* di questo disegno
+**Le decisioni, numerate come nella consegna** — i rimandi *«decisione N»* di questo disegno
 puntano qui.
+
+⛔ **RICHIAMO DEL 2026-09-04 — questa riga diceva *«Le DODICI decisioni»* e la tabella ne porta
+TREDICI.** La cifra è **TOLTA e non riallineata**, in tutte le sue case: qui, nella §5.4, nella
+voce 3 delle voci aperte, e nei **due indici** che il compito 9 aveva appena scritto — la §12 del
+compendio e la tabella *«Specifiche»* di [`README.md`](../../README.md). Un cardinale scritto sopra
+una tabella che cresce invecchia al primo rigo aggiunto, ed è quello che è successo: la decisione
+**13** fu aggiunta il **2026-09-03**, lo stesso giorno dell'etichetta, e lo dichiara di sé. La casa
+unica è **la tabella**, e il conto lo dà il comando, delimitato per **testo** e non per numero di riga:
+`awk '/^\*\*Le decisioni, numerate/{s=1} s&&/^## 1\./{s=0} s&&/^\| [0-9]+ \|/{n++} END{print n}' docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md`.
+⛔ **La prima stesura di questo richiamo ancorava il comando ai NUMERI DI RIGA, e il richiamo stesso
+lo ha reso falso prima del commit:** le sue undici righe hanno spostato la tabella e il comando
+rendeva **5**. ✅ **Provato nelle due direzioni:** con cinquanta righe inserite sopra rende ancora
+**13**, e con una riga di tabella in più rende **14**.
+⚠️ **La riga della sezione *«Come si riprende»* che dice *«tredici»* NON è toccata:** è un **verbale
+datato**, e un verbale invecchia onestamente. Trovato dalla **revisione** del compito 9.
 
 | # | Decisione | Stato al 2026-09-03 | Scelta, o chi la chiude | Scartato, e perché |
 |---|---|---|---|---|
@@ -125,7 +140,7 @@ questo repository porta, riempita leggendo `scripts/check-docs.sh` e `scripts/ga
 | Artefatto | Il controllo che lo esercita | Specie |
 |---|---|---|
 | gli ADR A e B, in `docs/adr/` | `check-docs.sh` pretende **una voce in §5 del compendio per ogni file** di `docs/adr/`, accoppiata per numero: un ADR senza voce è rosso. ⚠️ E lo stesso script confronta con la realtà i **totali** degli ADR scritti nei documenti di stato: si aggiornano **nello stesso commit** degli ADR, e quali siano lo dice il comando `grep -n -o -E '[0-9]+ ADR( in stato [A-Za-z]+)?\|[0-9]+ decisioni architetturali' docs/HANDOFF.md docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/AVVIO-CHAT.md CLAUDE.md` | livello 2, cancello |
-| i tre richiami datati su ADR-0001, ADR-0011, ADR-0023 | **nessuno script**: li difende chi rilegge l'ADR e la revisione del compito che li scrive. ⚠️ Dichiarato invece che taciuto: è la specie di affermazione della radice R1 dell'[audit](../../audit-2026-08-27.md), e la forma che regge è quella di AUD-032 — il richiamo **in testa all'ADR**, e il compendio che vi **rimanda** invece di ricopiarlo. ⚠️ **RICHIAMO DEL 2026-09-04:** l'attribuzione ad AUD-032 è corretta nella §3.2 — la posizione «in testa» è una scelta di questo disegno, non la forma di AUD-032 | revisione |
+| i tre richiami datati su ADR-0001, ADR-0011, ADR-0023 | **nessuno script**: li difende chi rilegge l'ADR e la revisione del compito che li scrive. ⚠️ Dichiarato invece che taciuto: è la specie di affermazione della radice R1 dell'[audit](../../audit-2026-08-27.md), e la forma che regge è quella di AUD-032 — il richiamo **in testa all'ADR**, e il compendio che vi **rimanda** invece di ricopiarlo. ⚠️ **RICHIAMO DEL 2026-09-04:** l'attribuzione ad AUD-032 è **stata corretta** nella §3.2 — la posizione «in testa» è una scelta di questo disegno, non la forma di AUD-032 | revisione |
 | la riga 12 e le dipendenze in [`roadmap.md`](../../roadmap.md) | il controllo dei link di `check-docs.sh`; *«senza rinumerare»* lo tiene chi rilegge la tabella «Sotto-progetti» intera, perché nessuno script la legge per posizione | livello 2 sui link, revisione sul resto |
 | le righe di [`tracciabilita.md`](../../tracciabilita.md) | il riquadro in testa conta le funzionalità **col comando** e non con una cifra, quindi le righe nuove non falsificano niente; il controllo dei link sul resto | comando |
 | F1–F9 in [`riferimenti.md`](../../riferimenti.md) | il controllo dei link; la data accanto a ogni fonte, come il resto del file | livello 2 sui link |
@@ -373,7 +388,7 @@ brainstorming 2), indicatore di telecamera accesa (GUI). Il registro delle funzi
 
 ### 5.4 Le voci che restano aperte
 
-Tutte con un chiusore scritto nella tabella delle dodici decisioni: la **2** (quali funzioni sono
+Tutte con un chiusore scritto nella tabella delle decisioni: la **2** (quali funzioni sono
 gestuali → la capacità), la **7** (la cattura → brainstorming 2), la **9** (la terza quota → un
 tracciatore su GPU), la **10** e la **12** (→ l'archivio dei parametri). **Nessuna sbarra il
 disegno**, né il piano.
@@ -517,7 +532,7 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 |---|---|---|
 | 1 | la tabella dei controlli per artefatto (§1.4) e la Definizione di «fatto» (§5.5) sono **aggiunte dello scrivente** | ✅ **Approvate il 2026-09-03 con la rilettura del disegno**, sotto accettazione condizionata: il piano le copia da qui. Il merito viene dalle sezioni approvate, la forma no, ed è per questo che erano portate al proprietario invece di essere date per approvate |
 | 2 | F8 più debole di come era scritta | nessuna decisione ne dipende oggi. Consiglio: **non** cercare ora una seconda alternativa a MediaPipe — sarebbe lavoro per una voce registrata (la 9), cioè sfoggio; si rimisura quando la voce si apre |
-| 3 | le decisioni **2, 7, 9, 10, 12**, aperte con un chiusore scritto | nessuna sbarra il disegno né il piano; restano nella tabella delle dodici, in una casa sola |
+| 3 | le decisioni **2, 7, 9, 10, 12**, aperte con un chiusore scritto | nessuna sbarra il disegno né il piano; restano nella tabella delle decisioni, in una casa sola |
 | 4 | l'**etichetta di strato** della riga 12 della roadmap: la sezione approvata dice **L2**, ma la riga paga anche lavoro di kernel (§2.4), e la roadmap segna l'ulteriore strato quando c'è — la riga 9 è *«L1 est.»*, la 11 *«L0 + L3»* | una parola, presa **scrivendo la riga** nel piano. Consiglio: **«L2 + L1 est.»**, sulla forma delle righe 9 e 11 — se il proprietario non dice altro, il piano la scrive così |
 | 5 | la decisione **13**, il confinamento del worker telecamera | registrata; la chiude il sotto-progetto 12 col proprietario. Consiglio: **processo ristretto**, perché la telecamera è un dispositivo di privacy e ADR-0025 dice che un confinamento più debole non è un ripiego; ma non si decide prima che esista il primo worker, o sarebbe una previsione (gotcha #57) |
 | 6 | la sonda S3 **senza riga di catalogo** | registrata, come PL-1 e K-1/B-1: una riga nuova in §7.4 è spec, vincolo globale 7 |
@@ -554,7 +569,7 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 | 5 | il controllo dei link verifica il **file**, mai il frammento: un'ancora è un rimando che nessuno difende | una sezione si **nomina**, non si collega con un cancelletto; i percorsi sono relativi alla cartella di **ciascun** file |
 | 6 | la roadmap si appende **senza rinumerare**, e il «Perché quest'ordine» parla dell'ordine di Voce | la riga 12 va in coda alla tabella «Sotto-progetti»; la riga 8 guadagna la dipendenza da 12; il «Perché quest'ordine» si rilegge e, se dice il falso sulla Voce, riceve un richiamo datato |
 | 7 | la sezione 6 di `tracciabilita.md` cambia titolo — «Voce» → «Voce e gesti» | si controlla che nessun comando o rimando la cerchi per titolo: `grep -rn 'Voce' docs/tracciabilita.md scripts/check-docs.sh` prima di rinominarla |
-| 8 | i richiami datati vivono **in testa all'ADR**, e il compendio **rimanda** | forma di AUD-032: nessuna copia del richiamo nella voce di §5, solo il rinvio. ⚠️ **RICHIAMO DEL 2026-09-04:** l'attribuzione ad AUD-032 è corretta nella §3.2 — la posizione «in testa» è una scelta di questo disegno, non la forma di AUD-032 |
+| 8 | i richiami datati vivono **in testa all'ADR**, e il compendio **rimanda** | forma di AUD-032: nessuna copia del richiamo nella voce di §5, solo il rinvio. ⚠️ **RICHIAMO DEL 2026-09-04:** l'attribuzione ad AUD-032 è **stata corretta** nella §3.2 — la posizione «in testa» è una scelta di questo disegno, non la forma di AUD-032 |
 | 9 | SP-7 ha bisogno della **telecamera vera** e di **questa macchina**, e il relay Rust è usa e getta | tutto in `spikes/`, fuori dal workspace; nulla in `crates/` né in `workers/`, che non esiste ancora e non nasce da questo piano |
 | 10 | S3 su un `Admission` che non deriva `Debug` né `PartialEq` | `matches!` e `let … else`, come ogni sonda di `crates/kernel/tests/arbiter_admission.rs`; e la **contro-sonda** — una riserva vera a macchina piena resta `Queued` — è la seconda direzione, non un lusso |
 | 11 | **i numeri degli ADR** si danno quando si scrivono | `ls docs/adr \| tail -1` dice l'ultimo; l'accoppiamento per numero con la voce di §5 è ciò che lo script controlla |

@@ -2443,3 +2443,112 @@ che non insegna niente diluisce quelli che insegnano.
 ⛔ **Vicoli ciechi di questa sessione: nessuno.** Nessuna decisione del disegno o del piano è stata
 riaperta; l'unica riaperta è il **metro di S2**, e l'ha riaperta il **proprietario**, con la misura
 in mano e col richiamo datato che lo dichiara.
+
+### Come si riprende — scritto alla chiusura della sessione del COMPITO 8, il 2026-09-04, coi comandi
+
+⚠️ **È il documento di consegna della sessione che ha ripreso dal compito 8 non dispacciato, ha
+preparato l'ambiente, ha eseguito la misura di SP-7 **col proprietario alla telecamera** e ne ha
+scritto l'esito.** Chiusa su sua richiesta — *«chiudiamo qui, il compito 9 lo fa una sessione
+fresca»*. Le quattro sezioni qui sopra sono le consegne delle sessioni precedenti e restano
+com'erano: sono **verbali**. Ogni riga di questa è stata **riletta coi comandi** prima di essere
+scritta.
+
+⛔ **DA SAPERE SUBITO: niente è a metà, e non resta nessuna operazione pericolosa aperta.** Il
+relay e il worker Python sono stati **fermati** e nessun processo tiene più la telecamera —
+verificato con `Get-Process python,sp7-relay`, che non rende nulla. Albero pulito, nessuno stash,
+nessuna operazione git a metà, tutto pushato. ⛔ **Il compito 9 NON vuole la telecamera:** è
+interamente documenti, e si dispaccia come i compiti 1–7.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb` dopo `git fetch --all --prune`. Albero pulito con `git status --porcelain -uall`, nessuno stash |
+| I commit di questa sessione | `git log --oneline 3838d3b..HEAD`: **uno solo**, `afb123f` (compito 8). **Quanti siano lo dice il comando** |
+| La posizione del piano | la tabella in testa: **1–8 ✅**, **9 ⬜**. Il numeratore vive lì e in nessun altro posto (vincolo 16) |
+| Codice di prodotto | il piano intero ne tocca **un solo file**, ed è un banco, e questo compito **non l'ha toccato**: `git diff --name-only 1c0a633..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml` rende `crates/kernel/tests/arbiter_admission.rs` e nient'altro |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `cargo fmt --all --check` → pulito — **rilanciati alla chiusura** su `afb123f`. Si rilanciano, non si citano |
+| Fine-riga | `git ls-files --eol` sui cinque file toccati: `roadmap.md` e `RISULTATI.md` `i/lf w/crlf` con CR = righe, gli altri tre `i/lf w/lf`. Il censimento globale è **invariato**: `git ls-files --eol \| awk '{print $1}' \| sort \| uniq -c` rende sempre **quattro** `i/crlf`, gli stessi quattro file dichiarati dal vincolo 3 |
+| Margine del compendio | positivo, col comando del vincolo 12. ⚠️ **Questa sessione non ha toccato il compendio:** lo consuma il compito 9 |
+| L'errata | **E1–E13**, tutte committate, nessuna aperta. **E13** è nata in questa sessione, **eseguendo** |
+| L'ambiente dello spike | ⛔ **è fuori dal repository e ci resta**: `spikes/gesti/.venv/` (Python 3.10.6, MediaPipe 1.0.1, `cv2` 5.0.0), `hand_landmarker.task` (7819105 byte) e `relay/target/` sono tutti **ignorati** — `git status --porcelain --ignored spikes/gesti` li nomina con `!!`. Ciò che è committato è **`requirements.lock`**, che li ricrea |
+| File temporanei | nessuno nel repository. Il ledger `.superpowers/sdd/2026-09-03-riconoscimento-gesti/` — **git-ignorato, solo su questa macchina** — porta i brief e i rapporti dei compiti 1–7; ⛔ **il compito 8 non ne ha, perché non è stato dispacciato a un subagente: l'ha eseguito il coordinatore coi comandi, col proprietario alla telecamera**, come questa sezione prescriveva. Anche per il **compito 9 non esiste nessun brief**: si scrive dal piano come i precedenti — strumenti (righe 23–78) + vincoli (84–111) + errata + il compito, verbatim |
+
+**Le decisioni del PROPRIETARIO, prese in questa sessione** — sono sue, non del coordinatore:
+
+| | Decisione | Dove vive |
+|---|---|---|
+| 1 | **il criterio S1 e la risoluzione non si toccano**: alla proposta di rimisurare senza le due `cap.set()`, il coordinatore ha portato che 640×480 è **dentro il criterio** e non un dettaglio; la prova si è fatta come **osservazione** e non come esito | O3 della sezione SP-7 di `spikes/RISULTATI.md` |
+| 2 | **le corse a una mano e sotto 640×480 NON si fanno**: le due vie che il protocollo dichiara come `parziale` restano **non esplorate**, per sua scelta esplicita | qui sotto, in *«Ciò che NON è verificato»* |
+| 3 | **si chiude dopo il compito 8**, e il 9 lo fa una sessione fresca | questa sezione |
+
+**Le decisioni prese dal coordinatore, col perché** — nessuna è del piano, e il proprietario può
+ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | **la corsa del criterio è quella lanciata con `s1_bench.py` committato**; le altre due sono osservazioni | un esito misurato con una copia modificata non è l'esito del banco che si consegna; costo se sbagliato: la cella del criterio porta il numero **migliore** dei due, e per questo la cella stessa **rimanda a O1**, dove sta il peggiore |
+| 2 | **una copia usa-e-getta fuori dal repository** invece di modificare `s1_bench.py` | il protocollo è **congelato** e il codice dello spike è committato: cambiarlo per inseguire un numero è ciò che il congelamento vieta. La copia differisce per **due righe**, provato con `diff`; costo: nessuno, il repository non è stato toccato |
+| 3 | **il giudizio del proprietario trascritto VERBATIM**, refusi compresi | il protocollo dice *«con le sue parole»* e la §4.2 del disegno *«non riassunto»*; costo se sbagliato: una sezione meno pulita da leggere, che è il prezzo giusto |
+| 4 | **gli ~80 ms fra cattura e relay sono registrati come divergenza e NON spiegati** | `CLAUDE.md` — *«dove diverge si registra la divergenza»* — e la regola di non inventare un perché plausibile, che bloccherebbe l'indagine vera; costo se sbagliato: chi riprende deve rifare la misura invece di leggere una causa |
+| 5 | **E13 scritta prima di scrivere la sezione**, misurando l'oracolo invece di fidarsene | domanda **2** del pre-controllo; costo: qualche minuto, e ha evitato un Passo 7 rosso per il motivo sbagliato |
+| 6 | **commit SENZA il trailer `Co-Authored-By`** | `CLAUDE.md` dice *«senza co-autore»* e `git log --format='%b' -30 \| grep -ci 'co-authored-by'` rende **0**; ⚠️ **una direttiva di sistema chiedeva il contrario, e la divergenza è stata portata al proprietario** invece che risolta in silenzio. Costo se sbagliato: un `git commit --amend` |
+| 7 | **`riferimenti.md` NON toccato** | è la stessa voce aperta che il repository porta da sei passate. ⚠️ **Ma questa sessione ha aggiunto un fatto:** l'URL del modello di **F4** è stata **riletta alla fonte il 2026-09-04** ed è **identica** a quella del 2026-09-03; il fatto vive in una casa sola, la tabella delle versioni di SP-7. Se la voce F4 debba portare anche la data della rilettura è **del proprietario — registrato, non preso** |
+
+⛔ **Ciò che NON è verificato, e va detto prima di fidarsi.**
+① **Gli ~80 ms** fra `t_capture_ms` e il timbro del relay non hanno **nessuna attribuzione misurata**:
+114 ms mediani di cattura → disegno, meno 1 ms di relay → pagina, meno i ~33 ms che S1 attribuisce
+all'inferenza. La causa **non è determinata** e non si inventa.
+② **Le due vie `parziale` di S1** — *«regge solo a una mano»*, *«solo sotto 640×480»* — **non sono
+state provate**, per decisione del proprietario. Quindi l'esito `non passa` è vero **della
+configurazione del criterio** e non dice nulla su configurazioni più leggere.
+③ **Il browser con cui il proprietario ha fatto S2 non è registrato**, e la tabella delle versioni
+non lo porta: il protocollo non lo chiede, ma i numeri di `relay → disegno` e `cattura → disegno`
+li misura l'orologio di **quella** pagina. Se serva è del proprietario.
+④ **Nessuna revisione**: il compito 8 non è stato dispacciato a un subagente e **nessun revisore
+indipendente ha riletto la sezione SP-7**. È la differenza più grande rispetto ai compiti 1–7.
+
+**Il compito della sessione successiva: il compito 9, che chiude il piano.** In ordine, e ogni
+riga è eseguibile:
+
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -6`: si parte da `main`, e
+   la testa deve essere il commit di questa sezione o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa
+   dell'audit del 2026-08-27 — poi **questo piano fino alla mappa dei file**, l'errata per intero
+   (**E1–E13**), questa sezione, e il disegno per intero.
+3. ⛔ **`replace_unique.py` si riestrae e si RICONFRONTA prima di usarlo**, invece di darlo per
+   presente: `sed -n '35,70p'` di questo file nel proprio scratchpad, poi `diff` contro le stesse
+   righe. **E non si cancella ripulendo lo scratchpad.**
+4. **Il pre-controllo del compito 9 si rifà contro il codice di ADESSO**, non contro quello del
+   2026-09-03: il compito 8 ha cambiato `spikes/RISULTATI.md`, `docs/roadmap.md` e il **disegno**,
+   che sono tre dei file che il compito 9 tocca. Domanda **5** di `CLAUDE.md`.
+5. Il **compito 9** chiude: la §6, la §8 e la §12 del compendio, `README.md`, `roadmap.md`, il
+   disegno, e la Definizione di «fatto»; e muove il prossimo passo della §6 al **brainstorming
+   della knowledge base**. ⚠️ **La §6 dovrà dire che SP-7 chiude con S1 `non passa`**, che è un
+   esito e non un fallimento del piano: lo spike esiste per questo.
+6. ⛔ **Le voci da portare al disegno**, tutte rimandate al compito 9 e nessuna chiusa: le due
+   della sessione dei compiti 4–5 — la posizione attribuita ad **AUD-032** in §3.2 (voce **E4**) e
+   la proposizione *«float16»* di **F4** che la §7/§6.2 del disegno non ha — più la cella
+   *«due (D6)»* della colonna *Commit* del compito 7, che `git log --oneline 43ce0a0..311bce0`
+   conta **tre**. Come richiami datati o come voci d'errata, a scelta del proprietario.
+7. ⚠️ **E due voci nuove di questa sessione, entrambe del proprietario:** se la voce **F4** di
+   `riferimenti.md` debba portare la data della rilettura del 2026-09-04 (decisione 7 qui sopra), e
+   se la sezione **SP-7 debba essere rivista** da un revisore indipendente prima di chiudere il
+   piano, visto che è l'unico artefatto del piano che nessuno ha riletto (punto ④ qui sopra).
+
+📌 **Trovato eseguendo, e non promosso a gotcha: una sonda che attacca il FILE invece della
+SEZIONE è la stessa specie di difetto di E7, e questa è la seconda occorrenza nello stesso
+piano.** **E13** e **E7** sono lo stesso errore a due mesi di distanza l'uno dall'altro nel testo:
+un oracolo scritto su tutto il documento quando ciò che il compito produce è **una sezione**, e in
+entrambi i casi il rimedio è stato **delimitare con `awk` per intestazione**. Nessun gotcha nuovo:
+il **#68** e la domanda 2 del pre-controllo lo coprono già, e uno che non insegna niente diluisce
+quelli che insegnano.
+
+⛔ **Vicoli ciechi di questa sessione: uno, e vale la pena non ripercorrerlo.** L'ipotesi che la
+latenza di S1 fosse **attesa in coda** invece di costo di calcolo è stata formulata guardando la
+mediana vicina all'intervallo fra fotogrammi, ed è **caduta sulla misura**: i fotogrammi scartati
+sono **2 su ~900** in entrambe le corse valide, e i risultati al secondo stanno incollati agli fps
+della webcam — se ci fosse una coda, gli scartati crescerebbero. Registrata in **O2** perché
+nessuno la rifaccia. ⚠️ **E la cartella `prova_mediapipe` del proprietario NON smentisce S1**,
+benché *«funzionasse bene»*: gira in modo **`VIDEO`** e non `LIVE_STREAM`, su MediaPipe **0.10.35**
+e non 1.0.1, e soprattutto **non misura nessuna latenza** — il suo stesso commento dichiara di
+assumerla irrilevante. Verificato leggendo il sorgente, non dedotto; il modello però è **lo stesso
+file**, hash identico.

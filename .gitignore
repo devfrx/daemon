@@ -35,6 +35,10 @@ Desktop.ini
 /spikes/ts/dist/
 /spikes/**/wip/
 
+# Python bytecode -- regenerated on every run, never committed
+__pycache__/
+*.pyc
+
 # Secrets -- no credential ever enters the repository
 .env
 .env.*

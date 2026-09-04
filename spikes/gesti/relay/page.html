@@ -62,8 +62,8 @@ new EventSource('/stream').onmessage = (e) => {
 document.getElementById('dump').onclick = () => {
   const stats = {
     samples: captureToDraw.length,
-    capture_to_draw_ms: { median: percentile(captureToDraw, 0.5), p95: percentile(captureToDraw, 0.95) },
-    relay_to_draw_ms: { median: percentile(relayToDraw, 0.5), p95: percentile(relayToDraw, 0.95) },
+    capture_to_draw_ms: { median: percentile(captureToDraw, 0.5), p95: percentile(captureToDraw, 0.95), max: percentile(captureToDraw, 1) },
+    relay_to_draw_ms: { median: percentile(relayToDraw, 0.5), p95: percentile(relayToDraw, 0.95), max: percentile(relayToDraw, 1) },
   };
   document.getElementById('stats').textContent = JSON.stringify(stats, null, 2);
 };

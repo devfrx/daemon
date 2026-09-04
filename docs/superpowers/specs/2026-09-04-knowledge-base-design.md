@@ -4,8 +4,11 @@
 proprietario, una per volta, in chat il 2026-09-04, sotto l'**accettazione condizionata** la cui
 regola sta qui sotto — e la **§5** fissa dove va la capacità, le dipendenze e l'ordine di ciò che
 segue. Chi riprende ha un disegno intero da tradurre in un **piano dei documenti** — **dopo** che il
-proprietario lo ha riletto in questa forma. ⏳ **La rilettura del proprietario è da fare:** è il
-passo 3 della §5.5, e il puntatore della §6 del [compendio](../../COMPENDIO.md) la nomina.
+proprietario lo ha riletto in questa forma. ✅ **Riletto il 2026-09-04**, in chat, sotto accettazione
+condizionata: le sei voci della sezione *«Le voci che questo disegno apre per il proprietario»* sono
+state poste **una per volta**, in forma A/B, col consiglio scritto, e il proprietario ha scelto il
+consiglio **sei volte su sei**. ⚠️ Questa riga diceva *«⏳ La rilettura del proprietario è da fare»*,
+ed è riscritta invece di ricevere una riga sotto, sul precedente del disegno dei gesti.
 
 ⚠️ **RICHIAMO DEL 2026-09-04, lo stesso giorno:** questo file è nato come **consegna** del
 brainstorming — le cinque sezioni approvate, le dodici risposte del proprietario, lo stato del
@@ -372,7 +375,8 @@ questo disegno, non il piano dei documenti.
 1. ✅ la §5 approvata **chiude il brainstorming**, 2026-09-04.
 2. ✅ la sessione successiva scrive il disegno **sul posto, in questo file** — **fatto il 2026-09-04**,
    lo stesso giorno.
-3. il proprietario rilegge.
+3. ✅ il proprietario rilegge — **fatto il 2026-09-04**, in chat: sei voci in forma A/B, una per
+   volta, e il consiglio scritto scelto sei volte su sei.
 4. il **piano dei documenti** con `superpowers:writing-plans` — **nessun codice**: i rimandi datati
    (0009, 0008, 0010, 0038, 0039); la riga 13 e le celle 3 e 6 in `roadmap.md`; le sei righe di
    `tracciabilita.md`; la decisione 7 chiusa nel disegno gesti; questo file nella §12 del compendio e in
@@ -490,6 +494,7 @@ all'affermazione che sostengono.
 | 9 | ADR-0024 si chiama `0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md`, mentre il suo titolo dice *«copre ambiti dichiarati»*: chi lo collega **per nome dedotto dal titolo** scrive un link rotto | `ls docs/adr \| grep 0024` prima di scrivere il link; `check-docs.sh` lo coglierebbe, ma dopo |
 | 10 | **la tabella «Perché quest'ordine» della roadmap ha una riga per scelta d'ordine**, e il piano dei gesti ne aggiunse una per la riga 12; la tabella «Decisioni ancora da prendere» non nomina la knowledge base | la riga 13 e la nuova dipendenza del 3 vogliono una riga lì — la §5.5 la nomina come *«riletto»*, e il piano la scrive; nessuna riga da barrare nell'altra tabella |
 | 11 | **la verifica di coerenza fatta scrivendo** — il testo approvato riletto contro le sei invarianti, le cinque proprietà della §3 del compendio e contro ADR-0001, 0007, 0008, 0009, 0010, 0011, 0012, 0014, 0018, 0020, 0022, 0023, 0024, 0038, 0039, coi comandi della §6 | **regge**, e nessuna decisione cambia. ⚠️ Con **una precisione** che il testo non faceva: *«AUD-004 sbarra il 13»* nomina la **decisione registrata** dal rimedio di AUD-004, non il finding, che è ✅ chiuso nella tabella dei 73 — §6.2 |
+| 12 | **la rilettura del proprietario, il 2026-09-04 in chat, dopo la lettura obbligatoria** — le sei voci della sezione omonima poste una per volta in forma A/B, col consiglio scritto; e i comandi della sezione *«Come si riprende»* rilanciati **prima**, con lo stato dichiarato che regge riga per riga: albero pulito, nessun codice mosso da `07ab6dc`, `GATE GREEN`, `check-docs.sh` `OK`, dodici righe nella 3.4, tre `sede da assegnare`, zero finding aperti, compendio sotto il tetto | il consiglio scelto **sei volte su sei**: nessuna decisione cambia, nessun merito nuovo, e il piano scrive i consigli. ⚠️ **Ciò che la rilettura aggiunge è solo questo:** che le aggiunte dello scrivente sono ora **accettate** e non più «da leggere come sue». Nessuna verifica di coerenza nuova, perché la misura 11 era già scritta e il codice non è cambiato |
 
 ---
 
@@ -497,12 +502,12 @@ all'affermazione che sostengono.
 
 | # | Voce | Perché è sua, e il consiglio |
 |---|---|---|
-| 1 | **la rilettura di questo disegno**, sotto accettazione condizionata | le cinque sezioni sono approvate nel merito; ciò che questa riscrittura aggiunge — la §6, la sezione «Cosa ha misurato», le trappole, la correzione della cifra — è dello scrivente, e va letto come tale. È il passo 3 della §5.5, e il puntatore della §6 del compendio lo nomina |
-| 2 | la cifra *«diciotto»* diventata **sedici** | nessuna decisione ne dipende. Consiglio: nessuna azione; la riga vive ora col comando, e il piano non la tocca |
-| 3 | la decisione **11** — la decisione registrata da AUD-004, se le difese di ADR-0015 si estendano alle skill | è la sola che **sbarra** qualcosa, il 13, e vuole un ADR suo. Consiglio: scriverlo **in parallelo** al sotto-progetto 2 (§5.5, punto 5), perché il 13 viene dopo il 2 (decisione 16) e non deve aspettare; e scriverlo **prima** del brainstorming del 13, perché il registro *«deve saperlo per nascere giusto»* (§1.2) |
-| 4 | il **nome esatto** della riga 13 | proposto e approvato nella forma: *«Registro delle guide, trigger e proiezione»*, L0 + L1. Consiglio: tenerlo com'è; se il proprietario non dice altro, il piano lo scrive così |
-| 5 | la riga di *«Perché quest'ordine»* per il 13 | una frase, presa **scrivendo la riga** nel piano. Consiglio: *«13 dopo la GUI minima e prima di Conversazione: i tre meccanismi senza codice si costruiscono prima della prima capacità che inietta una guida (§1.1d di questo disegno), e il 2 non li usa»* — se il proprietario non dice altro, il piano la scrive così |
-| 6 | le decisioni **13, 14, 15, 18**, aperte con un chiusore scritto | nessuna sbarra il disegno né il piano; restano nella tabella 3.4, in una casa sola |
+| 1 | **la rilettura di questo disegno**, sotto accettazione condizionata | ✅ **Riletto il 2026-09-04**, in chat: le aggiunte dello scrivente — la §6, la sezione «Cosa ha misurato», le trappole, la correzione della cifra — sono state dette a parole, con la precisione su AUD-004 (misura 11), e **accettate** come sue. Le cinque sezioni restano approvate nel merito. È il passo 3 della §5.5 |
+| 2 | la cifra *«diciotto»* diventata **sedici** | nessuna decisione ne dipende. ✅ **Scelto il 2026-09-04: nessuna azione.** La riga vive col comando, il piano non la tocca, e l'archivio della consegna resta com'era perché è un verbale. Il comando della §6.2, rilanciato quel giorno, rende ancora sedici |
+| 3 | la decisione **11** — la decisione registrata da AUD-004, se le difese di ADR-0015 si estendano alle skill | è la sola che **sbarra** qualcosa, il 13, e vuole un ADR suo. ✅ **Scelto il 2026-09-04 — il QUANDO, non il merito:** l'ADR si scrive **in parallelo** al sotto-progetto 2 (§5.5, punto 5), perché il 13 viene dopo il 2 (decisione 16) e non deve aspettare; e **prima** del brainstorming del 13, perché il registro *«deve saperlo per nascere giusto»* (§1.2). Il merito resta suo e non è stato deciso |
+| 4 | il **nome esatto** della riga 13 | ✅ **Scelto il 2026-09-04:** *«Registro delle guide, trigger e proiezione»*, L0 + L1, com'era proposto. Il piano lo scrive così |
+| 5 | la riga di *«Perché quest'ordine»* per il 13 | ✅ **Scelta il 2026-09-04**, la frase com'era consigliata: *«13 dopo la GUI minima e prima di Conversazione: i tre meccanismi senza codice si costruiscono prima della prima capacità che inietta una guida (§1.1d di questo disegno), e il 2 non li usa»*. Il piano la scrive così |
+| 6 | le decisioni **13, 14, 15, 18**, aperte con un chiusore scritto | nessuna sbarra il disegno né il piano. ✅ **Scelto il 2026-09-04: restano aperte**, nella tabella 3.4, in una casa sola, ciascuna col proprio chiusore |
 
 ---
 
@@ -550,8 +555,10 @@ all'affermazione che sostengono.
 ## Il prossimo passo
 
 ⛔ **Lo dice la §6 del [compendio](../../COMPENDIO.md), in un posto solo.** L'ordine approvato, con
-le spunte di oggi, è nella §5.5 di questo disegno; la prima riga senza spunta è la **rilettura del
-proprietario**, poi il **piano dei documenti** in una sessione nuova.
+le spunte, è nella §5.5 di questo disegno; la prima riga senza spunta è il **piano dei documenti**.
+⚠️ **RICHIAMO DEL 2026-09-04:** qui stava *«la rilettura del proprietario, poi il piano dei documenti
+in una sessione nuova»*. La rilettura è fatta quel giorno, e il piano si scrive **nella stessa
+sessione**, che è la strada B della sezione qui sotto.
 
 ### Come si riprende — scritto alla chiusura della sessione del 2026-09-04, coi comandi
 

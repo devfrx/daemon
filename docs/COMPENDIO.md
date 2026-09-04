@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-04**, col **DISEGNO DELLA KNOWLEDGE BASE SCRITTO** sul posto — brainstorming e disegno lo stesso giorno, la consegna in archivio — e il puntatore della §6 mosso alla rilettura del proprietario; l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
+**Aggiornato il 2026-09-04**, col **DISEGNO DELLA KNOWLEDGE BASE SCRITTO** sul posto **E RILETTO** dal proprietario — brainstorming, disegno e rilettura lo stesso giorno, la consegna in archivio — e il puntatore della §6 mosso al piano dei documenti; l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -681,12 +681,13 @@ legge **per intero**; la consegna da cui è nato sta in
 [`archivio/consegna-brainstorming-knowledge-base.md`](archivio/consegna-brainstorming-knowledge-base.md), parola per
 parola. Il verdetto: **nessuna sesta proprietà** «che non si aggiunge dopo», ma un **vincolo d'ordine** — registro delle
 guide, trigger e proiezione, decisi in ADR-0009, 0008 e 0010 e senza codice, si costruiscono in un sotto-progetto di
-kernel **prima** del 3 — e la decisione 7 dei gesti **chiusa**: la cattura atterra nella knowledge base. ⏭️ **IL
-PROSSIMO PASSO: IL PROPRIETARIO RILEGGE IL DISEGNO**, sotto la sua accettazione condizionata — le sei voci per lui,
-con un consiglio ciascuna, stanno nel disegno. ⚠️ La sessione del 2026-09-04 si è chiusa **prima** della rilettura,
-per scelta del proprietario: la sessione nuova **apre con essa**, e la sezione *«Come si riprende»* del disegno dice
-come. Poi il piano dei documenti con `superpowers:writing-plans`, nella stessa sessione se il contesto regge; poi il
-sotto-progetto 2, il 13, il 3. ⛔ **AUD-004 sbarra il 13**, non il disegno né il piano.
+kernel **prima** del 3 — e la decisione 7 dei gesti **chiusa**: la cattura atterra nella knowledge base. ✅ **IL
+DISEGNO È RILETTO DAL PROPRIETARIO IL 2026-09-04**, in chat, sotto la sua accettazione condizionata — le sei voci per
+lui poste una per volta in forma A/B, e il consiglio scritto scelto sei volte su sei; l'esito sta nel disegno, nella
+sezione *«Le voci che questo disegno apre per il proprietario»*. ⏭️ **IL PROSSIMO PASSO: IL PIANO DEI DOCUMENTI** con
+`superpowers:writing-plans`, nella stessa sessione, col pre-controllo delle quattro domande su ogni compito;
+l'esecuzione in una sessione **nuova**, subagent-driven; poi il sotto-progetto 2 con AUD-004 in parallelo, il 13, il 3.
+⛔ **AUD-004 sbarra il 13**, non il disegno né il piano.
 
 ⛔ **IL RACCONTO DEL TRAGUARDO 6 È USCITO DA QUI il 2026-09-03, e non riassunto:** sta in
 [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola, con le eccezioni

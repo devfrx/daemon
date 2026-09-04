@@ -562,12 +562,24 @@ file per intero. Ogni riga è stata **riletta coi comandi** prima di essere scri
 ⛔ **DA SAPERE SUBITO: niente è a metà.** Albero pulito, nessuno stash, nessuna operazione git a metà,
 tutto pushato, nessun codice toccato.
 
+⚠️ **RICHIAMO DEL 2026-09-04, alla chiusura — la sessione si è chiusa PRIMA della rilettura.** Il
+proprietario ha chiuso con l'istruzione *«continuiamo col prossimo step nella prossima sessione, nuovo
+agente»*, senza rileggere il disegno in chat: il passo 3 della §5.5 resta **senza spunta**, e la
+sessione nuova **apre con esso**. ⛔ **Nessuno lo dà per fatto:** il sì del proprietario è condizionato
+e si dà in chat, non si deduce da una chiusura. La **domanda minima** con cui la sessione nuova apre,
+dopo la lettura obbligatoria: *«il disegno è riletto?»* — **A**, sì: si scrive il piano dei documenti
+(punti 5–7 qui sotto); **B**, no: si presentano le sei voci della sezione *«Le voci che questo disegno
+apre per il proprietario»* una per volta, in forma A/B, col consiglio scritto, e **poi** si scrive il
+piano nella stessa sessione se il contesto regge — la rilettura è chat, non lettura di file. La
+verifica di coerenza che l'accettazione condizionata chiede è **già fatta e scritta** (misura 11); ciò
+che la rilettura aggiunge si registra nella stessa sezione, come fece il disegno dei gesti.
+
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb` dopo `git fetch --all --prune`. Nessuno stash, nessuna operazione a metà |
-| I commit di questa sessione | `git log --oneline 07ab6dc..HEAD` — il disegno scritto sul posto, l'archivio della consegna, il puntatore della §6 |
+| I commit di questa sessione | `git log --oneline 07ab6dc..HEAD` — il primo: il disegno scritto sul posto, l'archivio della consegna, il puntatore della §6; il secondo: la trappola 14; il terzo: questa chiusura |
 | Codice di prodotto | **non toccato**: `git diff --stat 07ab6dc..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` non rende nulla. Sono cambiati tre file di documentazione: questo, il compendio, e l'archivio della consegna |
-| Cancello | `bash scripts/check-docs.sh` → `OK`; `bash scripts/gate.sh` → **`GATE GREEN`, rilanciato all'apertura** — misura 3 — e nessun file che il cancello legga è cambiato da allora. Si rilanciano, non si citano |
+| Cancello | `bash scripts/check-docs.sh` → `OK` a ogni commit; `bash scripts/gate.sh` → **`GATE GREEN`, rilanciato all'apertura (misura 3) e alla chiusura** — e nessun file che il cancello legga è cambiato fra le due corse. Si rilanciano, non si citano |
 | Fine-riga | questo file e l'archivio sono **LF** nell'indice e nell'albero; il compendio è LF nell'indice e **CRLF** nell'albero, con CR = righe: `git ls-files --eol docs/COMPENDIO.md docs/archivio/consegna-brainstorming-knowledge-base.md docs/superpowers/specs/2026-09-04-knowledge-base-design.md`, e `tr -cd '\r' < docs/COMPENDIO.md \| wc -c` contro `wc -l < docs/COMPENDIO.md` |
 | File temporanei | nessuno nel repository: gli script di questa sessione stanno nello scratchpad, fuori dall'albero, come `CLAUDE.md` prescrive |
 | Debito lasciato | **nessuno non dichiarato**: le voci aperte sono nella tabella 3.4 col loro chiusore, e le sei voci per il proprietario nella sezione omonima |

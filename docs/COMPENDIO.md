@@ -683,8 +683,10 @@ parola. Il verdetto: **nessuna sesta proprietà** «che non si aggiunge dopo», 
 guide, trigger e proiezione, decisi in ADR-0009, 0008 e 0010 e senza codice, si costruiscono in un sotto-progetto di
 kernel **prima** del 3 — e la decisione 7 dei gesti **chiusa**: la cattura atterra nella knowledge base. ⏭️ **IL
 PROSSIMO PASSO: IL PROPRIETARIO RILEGGE IL DISEGNO**, sotto la sua accettazione condizionata — le sei voci per lui,
-con un consiglio ciascuna, stanno nel disegno. Poi il piano dei documenti con `superpowers:writing-plans`, in una
-sessione nuova; poi il sotto-progetto 2, il 13, il 3. ⛔ **AUD-004 sbarra il 13**, non il disegno né il piano.
+con un consiglio ciascuna, stanno nel disegno. ⚠️ La sessione del 2026-09-04 si è chiusa **prima** della rilettura,
+per scelta del proprietario: la sessione nuova **apre con essa**, e la sezione *«Come si riprende»* del disegno dice
+come. Poi il piano dei documenti con `superpowers:writing-plans`, nella stessa sessione se il contesto regge; poi il
+sotto-progetto 2, il 13, il 3. ⛔ **AUD-004 sbarra il 13**, non il disegno né il piano.
 
 ⛔ **IL RACCONTO DEL TRAGUARDO 6 È USCITO DA QUI il 2026-09-03, e non riassunto:** sta in
 [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola, con le eccezioni

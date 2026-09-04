@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-09-03**, con la riga **12 «Gesti»**, la dipendenza nuova della riga 8 e lo spike **SP-7** — dalla §5.1 del [disegno del riconoscimento gesti](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md).
+Ultimo aggiornamento: **2026-09-04**, con lo spike **SP-7 chiuso** nella tabella degli spike; il 2026-09-03 erano arrivate la riga **12 «Gesti»** e la dipendenza nuova della riga 8 — dalla §5.1 del [disegno del riconoscimento gesti](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md).
 ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
 passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
 resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
@@ -12,6 +12,11 @@ Sono **due date**, e ora ci sono entrambe: è lo stesso rimedio che l'intestazio
 riallinea** — chi tocca questo file per una cella di tabella non si sente l'autore della sua
 intestazione — quindi la prossima occorrenza è prevista, non esclusa: gotcha **#31** sulla
 riga che ospita la data.
+⛔ **RICHIAMO DEL 2026-09-04 — la previsione si è avverata al PRIMO tocco successivo:** `afb123f`
+ha chiuso la riga SP-7 lasciando questa riga al 2026-09-03, e a coglierlo è stata una **revisione**
+e non chi ha toccato il file. Riallineata qui, come AUD-034 fece col compendio. ⚠️ **La cura
+strutturale è del proprietario, registrata e non presa:** un controllo che confronti questa data
+con `git log -1 --format=%ad --date=short -- docs/roadmap.md` è una **riga di catalogo nuova**.
 
 ## Stato in una riga
 

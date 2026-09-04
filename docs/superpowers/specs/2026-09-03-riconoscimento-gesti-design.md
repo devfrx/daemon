@@ -455,9 +455,12 @@ comandi e gli stessi esiti.
 
 1. Il giro **worker → core → GUI a 30 Hz** su questa macchina ha una latenza accettabile per spostare
    un pannello con la mano. **Non misurato** → S2.
+   ⚠️ **Misurato il 2026-09-04:** l'assunto **regge sul giudizio del proprietario**, e il criterio passa — ma misura il salto relay → pagina, che non era il rischio: il costo vive a monte, e una parte non ha una spiegazione misurata — l'esito in [`spikes/RISULTATI.md`](../../../spikes/RISULTATI.md), sezione SP-7.
 2. MediaPipe su CPU su questa macchina regge **30 Hz** con margine: i 17 ms del Pixel 6 lo fanno
    sperare, non lo provano. **Non misurato** → S1.
+   ⚠️ **Misurato il 2026-09-04:** l'assunto **cade** — su questa CPU il tracciatore a due mani non ha margine sui 30 Hz, e il criterio è bocciato su due corse indipendenti; la speranza del Pixel 6 non regge — l'esito in [`spikes/RISULTATI.md`](../../../spikes/RISULTATI.md), sezione SP-7.
 3. Una riserva da **zero MiB** passa l'ammissione. **Sonda nel kernel**, non spike → S3.
+   ⚠️ **Misurato il 2026-09-04:** l'assunto **regge** — la sonda S3 è nel cancello dal compito 6 del piano, nelle due direzioni.
 
 ---
 

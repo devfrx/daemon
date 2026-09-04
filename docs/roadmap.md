@@ -202,7 +202,7 @@ Costo accettato in ADR-0001: arriva più tardi che in un'architettura con barice
 | SP-2 | Q1 (voce < 600 ms) sotto carico GPU | taratura corsie §2 | ⬜ |
 | SP-3 | budget della proiezione per modello | taratura §5 | ⬜ |
 | SP-4 | provider con annullamento senza addebito | ordine di preferenza §3 | ⬜ |
-| SP-7 | MediaPipe su CPU regge 30 Hz su questa macchina? quanto costa il giro worker → core → GUI a 30 Hz? | il sotto-progetto **12**: le tre ipotesi della §6.4 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md), coi criteri scritti prima in `spikes/gesti/PROTOCOLLO.md` | ⬜ |
+| SP-7 | MediaPipe su CPU regge 30 Hz su questa macchina? quanto costa il giro worker → core → GUI a 30 Hz? | il sotto-progetto **12**: le tre ipotesi della §6.4 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md), coi criteri scritti prima in [spikes/gesti/PROTOCOLLO.md](../spikes/gesti/PROTOCOLLO.md) | ✅ **chiuso il 2026-09-04**: **S1 `non passa`** — il tracciatore a due mani sta sul budget dei 30 Hz senza margine, e il criterio cade su due corse indipendenti; **S2 `passa`** sul proprio criterio, che però misura un salto su `localhost` mentre il costo vero sta a monte. Le cifre in [RISULTATI.md](../spikes/RISULTATI.md), sezione SP-7 |
 
 Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-design.md).
 

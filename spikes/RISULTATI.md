@@ -1,6 +1,6 @@
 # Risultati degli spike
 
-Data di esecuzione: **2026-08-06**
+Data di esecuzione: **2026-08-06** per SP-5 e SP-6; **SP-7** porta la propria data nella sua sezione
 
 Criteri e soglie: [PROTOCOLLO.md](PROTOCOLLO.md) — congelato al primo commit di
 codice di spike.
@@ -24,6 +24,53 @@ diventa il punto di partenza del simulatore del sotto-progetto 1. Quelli di Go e
 TypeScript sono stati rimossi dopo ADR-0026, ma restano nella storia: l'ultimo commit
 che li contiene è **`da653a1`**. Un ADR che cita misure deve lasciarle rifacibili —
 `git show da653a1:spikes/go/sched/c6_test.go` e simili.
+
+## SP-7 — Riconoscimento gesti: MediaPipe su CPU, e il giro worker → core → GUI — eseguito il 2026-09-04
+
+Criteri e soglie: [`gesti/PROTOCOLLO.md`](gesti/PROTOCOLLO.md), congelato il 2026-09-04
+al primo commit di codice dello spike, **prima** della misura. Codice in `gesti/`; dati grezzi
+fuori dal repository. La terza ipotesi del disegno, S3, non è qui: è una sonda nel kernel,
+registrata in `docs/porta-di-qualita.md`.
+
+| Criterio | Esito | Misura |
+|---|---|---|
+| S1 — su CPU, due mani, 640×480, LIVE_STREAM: mediana e p95 < 33 ms su ≥ 600 risultati a due mani | ❌ **`non passa`** | mediana **31,67 ms**, p95 **35,54 ms**, massimo 54,98 ms; 895 risultati, 28,5 al secondo, 897 inviati, 2 scartati; 895 risultati a due mani su 895. ⛔ La mediana regge, il **p95 no**. Ripetuto sulla stessa configurazione: **bocciato una seconda volta e peggio** — vedi O1 |
+| S2 — relay → pagina p95 < 100 ms (P2); cattura → disegno **riportato** | ✅ **`passa`** | relay → disegno: mediana **1 ms**, p95 **1 ms**, massimo 38 ms; cattura → disegno: mediana **114 ms**, p95 **144 ms**, massimo 203 ms; 627 campioni. ⚠️ Il criterio passa di cento volte perché misura un salto su `localhost`: vedi O5 |
+
+**Il giudizio del proprietario sulla mano che muove il pannello, con le sue parole:** «il pinch lo prende e la mano si vede, solo che non si vede a schermo intero ma in una piccola area della pagina (non funzionale al successo del test, solo un'accortezza), lo scheletro della mano si vede e pinchando riesco a spostare la forma verde, unica cosa, sembra che io non debba obbligatoriamente pinchare la forma verder per poterla muovere (anche se pincho dove l'area è vuota riesco a muovere il rettangolo nella posizione dove si trova, inoltre anche facendo il pungo (va bene non fa niente, è anche comodo ma bisogna ponderare quali azioni servono per fare altri comandi come il click etc..), di base funziona».
+
+### SP-7 · Osservazioni registrate — non criteri
+
+| # | Osservazione |
+|---|---|
+| O1 | ⛔ **S1 è stato misurato due volte sulla stessa configurazione, e il verdetto regge mentre il numero balla.** Seconda corsa valida (898 risultati a due mani su 898): mediana **33,18 ms**, p95 **42,26 ms**, massimo 60,32 ms — cioè **peggio** della prima. Il p95 si muove del 19% fra due corse consecutive, quindi 35,54 non è un valore, è un punto in una nuvola. 📌 **Ciò che entrambe dicono:** il tracciatore costa **~33 ms per fotogramma a due mani** su questa CPU, che è **esattamente** il budget dei 30 Hz, con margine **zero**. I 17,12 ms del Pixel 6 della pagina F4 sono la metà |
+| O2 | **Nessuna coda: la pipeline sta dietro alla telecamera.** In entrambe le corse valide i fotogrammi inviati senza risultato sono **2 su ~900**, e i risultati al secondo (28,5 e 28,9) stanno incollati ai fotogrammi al secondo della webcam. Quindi la latenza misurata è **costo di calcolo**, non attesa in coda — l'ipotesi della coda è stata considerata e **cade sulla misura** |
+| O3 | **Su questa macchina le due `cap.set()` di `s1_bench.py` sono una no-op:** il default della webcam è **già** 640×480. Misurato con una copia usa-e-getta dello script identica tranne quelle due righe, che stampa `camera frame: 640x480` lo stesso. Non cambia nulla per il criterio; conta per chi rileggesse il banco chiedendosi che cosa forzi davvero |
+| O4 | ⚠️ **Perdere il tracciamento costa caro, ed è la ragione per cui il criterio pretende risultati a due mani.** In una corsa in cui le mani sono state fuori campo per più di metà del tempo — **359 risultati a due mani su 866** — la mediana sale a **37,93 ms** e il p95 a **63,95 ms**, coi fotogrammi scartati da 2 a **34**. Quando la mano si perde, MediaPipe rilancia il rilevatore del palmo, che è la parte pesante. Quella corsa **non è confrontabile** col criterio: non raggiunge nemmeno la soglia dei 600 |
+| O5 | ⛔ **Il criterio di S2 passa di cento volte perché guarda il salto che non era il rischio, e il costo vero non ha un nome.** `relay → pagina` è una scrittura su `localhost`: **1 ms** contro un budget di 100. Il numero che si sente addosso è l'altro, quello che il protocollo riporta **senza soglia**: **114 ms** mediani da cattura a disegno. La scomposizione, coi numeri di oggi: 1 ms è relay → pagina, **~33 ms** sono l'inferenza secondo S1, e **~80 ms restano senza spiegazione**. 📌 **Registrato come divergenza e NON spiegato:** nessuna misura di questa sessione li attribuisce, e inventare una causa plausibile la renderebbe più difficile da trovare |
+| O6 | **Il pannello di `page.html` non ha nessun controllo di collisione: una pinza in qualunque punto lo afferra.** Notato dal proprietario provandolo, poi verificato nel sorgente: `pinch()` memorizza lo scarto fra dito e angolo del pannello quando la pinza si chiude e non confronta **mai** il dito col rettangolo. ⚠️ **Non è un difetto dello spike ma una scorciatoia dichiarata:** qui si misura il **giro**, non l'interazione. Per il sotto-progetto 12 è una delle cose da progettare |
+| O7 | ⛔ **Un pugno chiuso vale come pinza, e conferma il confine che il protocollo dichiara.** La «pinza» di `page.html` è **solo** questo: punta del pollice e punta dell'indice più vicine di **40 pixel**, e un pugno soddisfa la condizione. Il proprietario l'ha notato provandolo e ne ha tratto la conseguenza giusta — *«bisogna ponderare quali azioni servono per fare altri comandi»*. 📌 È esattamente ciò che il protocollo mette **fuori** perimetro: lo spike non misura il riconoscimento di un gesto discreto, e il **vocabolario è della capacità** (F3, ADR-0038, ADR-0039) |
+| O8 | **La scena della pagina è fissa a 640×480**, e la mano si disegna in quell'area invece che a schermo intero. È voluto: il worker manda i punti in **pixel interi** di un fotogramma 640×480 — la regola del disegno — e la pagina li disegna 1:1 senza scalarli. Cosmetico, notato dal proprietario |
+
+### SP-7 · Versioni degli strumenti
+
+| Strumento | Comando | Output |
+|---|---|---|
+| Python | `spikes/gesti/.venv/Scripts/python --version` | `Python 3.10.6` — **`py -3.10`**, perché `mediapipe` 1.0.1 vuole 3.9–3.12 (F1) |
+| MediaPipe | `pip show mediapipe` | `Version: 1.0.1`; il resto dell'ambiente in `gesti/requirements.lock` |
+| Rust, il relay | `rustc --version` | `rustc 1.95.0 (59807616e 2026-04-14)` |
+| CPU | `Get-CimInstance Win32_Processor` | `Intel(R) Core(TM) i7-14700HX` |
+| Telecamera | `Get-PnpDevice -Class Camera` | `HP True Vision FHD Camera` — la macchina ne espone anche una `HP IR Camera`, non usata |
+| Modello | l'URL letto su F4 il 2026-09-04 | `hand_landmarker.task`, float16, 7819105 byte. ✅ **L'URL è la stessa letta il 2026-09-03**, riletta alla fonte il giorno della misura: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task` |
+
+### SP-7 · Evidenze
+
+| Criterio | Comando | Output osservato | Divergenza dall'attesa |
+|---|---|---|---|
+| S1, la corsa del criterio | `cd spikes/gesti && .venv/Scripts/python s1_bench.py --model hand_landmarker.task --seconds 30 --csv …` con il CSV **fuori dal repository** | `camera frame: 640x480` · `results 895  sent 897  dropped 2  results/s 28.5` · `latency ms: median 31.67  p95 35.54  max 54.98` · `results with two hands: 895 of 895` | ⛔ **L'attesa erano i 17,12 ms del Pixel 6 di F4, come speranza e non come prova, e la speranza cade: il costo è il doppio.** Il disegno lo dichiarava — *«lo fanno sperare, non lo provano»*. E ciò che cade è il **p95**, non la mediana: il tracciatore sta sulla riga dei 30 Hz e la supera nella coda |
+| S1, la ripetizione | la copia usa-e-getta di O3, stessa configurazione, cancellata dopo la corsa | `results 898  sent 900  dropped 2  results/s 28.9` · `latency ms: median 33.18  p95 42.26  max 60.32` · `results with two hands: 898 of 898` | ⛔ **Non era attesa nessuna ripetizione, e ha cambiato la lettura:** la seconda corsa è **peggiore** della prima e boccia anche la **mediana**. Una corsa sola avrebbe fatto leggere 35,54 come un valore |
+| S1, la corsa con le mani fuori campo | la stessa copia usa-e-getta | `results 866  sent 900  dropped 34  results/s 27.8` · `latency ms: median 37.93  p95 63.95  max 70.33` · `results with two hands: 359 of 866` | **Fuori criterio per costruzione** (meno di 600 a due mani). Registrata perché misura il costo della perdita di tracciamento, che nessun criterio chiedeva — O4 |
+| S2 | `cd spikes/gesti/relay && cargo run --release -- ../.venv/Scripts/python ../s2_worker.py ../hand_landmarker.task`, poi *dump stats* | `{ "samples": 627, "capture_to_draw_ms": { "median": 114, "p95": 144, "max": 203 }, "relay_to_draw_ms": { "median": 1, "p95": 1, "max": 38 } }` | ⛔ **Il criterio è passato di due ordini di grandezza, e questa è la divergenza:** ci si attendeva che il giro fosse il rischio, e il salto misurato dal criterio non lo è. Il rischio sta **a monte** del relay, dove **~80 ms su 114 non hanno una spiegazione misurata** — O5 |
 
 ## SP-6 — Confine dei dati non fidati, e confini statici del kernel
 

@@ -2557,3 +2557,98 @@ benché *«funzionasse bene»*: gira in modo **`VIDEO`** e non `LIVE_STREAM`, su
 e non 1.0.1, e soprattutto **non misura nessuna latenza** — il suo stesso commento dichiara di
 assumerla irrilevante. Verificato leggendo il sorgente, non dedotto; il modello però è **lo stesso
 file**, hash identico.
+
+### Come si riprende — scritto alla chiusura della sessione del COMPITO 9, il 2026-09-04, coi comandi
+
+⚠️ **È il documento di consegna della sessione che ha CHIUSO questo piano.** Ha ripreso dal compito 8
+non rivisto, ha fatto rivedere SP-7, ha eseguito il compito 9 con un subagente, e ha chiuso i due
+cicli di revisione con due ondate. Le **cinque** sezioni qui sopra sono le consegne delle sessioni
+precedenti e restano com'erano: sono **verbali**. Ogni riga di questa è stata **riletta coi comandi**
+prima di essere scritta.
+
+⛔ **DA SAPERE SUBITO: niente è a metà e non resta nessuna operazione pericolosa aperta.** Albero
+pulito, nessuno stash, nessuna operazione git a metà, tutto pushato, nessun processo che tenga la
+telecamera. ⛔ **E il punto ④ della consegna del compito 8 — *«nessuna revisione, è la differenza
+più grande rispetto ai compiti 1–7»* — NON è più vero:** quella sezione resta com'è perché è un
+verbale, ma SP-7 **è stata rivista** in questa sessione, e l'esito è la voce **E14**.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb` dopo `git fetch --all --prune`. Albero pulito con `git status --porcelain -uall`, nessuno stash |
+| Il piano | ⛔ **CHIUSO, nove compiti su nove.** La tabella della posizione ne è la casa unica (vincolo 16); il **prossimo passo del progetto** vive nella §6 del [`COMPENDIO.md`](../../COMPENDIO.md), in un posto solo |
+| I commit di questa sessione | `git log --oneline 01640e4..HEAD`: **quattro** — l'ondata del compito 8, il compito 9, e le **due** ondate del suo ciclo di revisione. **Quanti siano lo dice il comando** |
+| Codice di prodotto | **nessuno**: `git diff --name-only 01640e4..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml` è **vuoto**. La sessione ha toccato **sei** documenti |
+| Cancelli | `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `cargo fmt --all --check` → pulito — **rilanciati alla chiusura** su `ff6644c`. Si rilanciano, non si citano |
+| Fine-riga | censimento globale **invariato**: `git ls-files --eol \| awk '{print $1}' \| sort \| uniq -c` rende sempre **quattro** `i/crlf`, gli stessi quattro del vincolo 3. Ogni scrittura è passata da `replace_unique.py`, e i CR sono stati rimisurati dopo ciascuna |
+| Margine del compendio | positivo, col comando del vincolo 12. La sessione lo ha consumato **due volte** e non lo ha mai portato in rosso |
+| L'errata | **E1–E18**, tutte committate, nessuna aperta. **E14–E18** sono nate in questa sessione: E14 il verbale della revisione di SP-7, E15–E17 il pre-controllo del compito 9, E18 il verbale della revisione del compito 9 e della sua ri-revisione |
+| L'ambiente dello spike | ⛔ **fuori dal repository e ci resta**, invariato dal compito 8: `git status --porcelain --ignored spikes/gesti` li nomina con `!!`. Ciò che è committato è `requirements.lock` |
+| File temporanei | **nessuno nel repository**. Lo scratchpad di sessione portava `replace_unique.py`, i brief e i dispacci: sono usa-e-getta, e l'aiutante **si riestrae dal piano** con `sed -n '35,70p'` |
+
+**Le decisioni del PROPRIETARIO, prese in questa sessione** — sono sue, non del coordinatore:
+
+| | Decisione | Dove vive |
+|---|---|---|
+| 1 | ⛔ **SP-7 si fa RIVEDERE prima di chiudere il piano**, perché era l'unico artefatto che nessun revisore avesse riletto e il compito 9 ne copia l'esito nei documenti di stato | voce **E14** |
+| 2 | **le correzioni al disegno vanno come RICHIAMI DATATI accanto alla frase**, non come voci d'errata: chi legge il disegno non legge l'errata del piano | voce **E17** |
+| 3 | **la voce F4 di `riferimenti.md` NON porta la data della rilettura del 2026-09-04**: il fatto vive già in una casa sola, la tabella delle versioni di SP-7 | voce **E18**, fra i Minor non presi |
+
+**Le decisioni prese dal coordinatore, col perché** — nessuna è del piano, e il proprietario può
+ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | ⚠️ **la cifra delle decisioni è TOLTA anche dalla §12 del compendio e da `README.md`**, non solo dal disegno | la decisione 2 del proprietario copriva *«le tre correzioni al disegno»*, e questa le eccede: la cifra viveva in **cinque case vive** e correggerne tre avrebbe lasciato le altre a mentire — è la radice **R1** dell'audit commessa dentro il rimedio. ⛔ **È la sola voce di questa sessione che il proprietario non ha visto prima:** se preferisce che gli indici dicano *«tredici»*, si torna indietro sui due file |
+| 2 | **il ciclo di revisione si chiude a DUE ondate** | è la regola **6** di questo piano, e la seconda ondata era di sola sottrazione dentro una voce d'errata: nessun fatto e nessun comando nuovi. Costo se sbagliato: un rilievo residuo dentro E18 |
+| 3 | **commit SENZA il trailer `Co-Authored-By`** | `CLAUDE.md` dice *«senza co-autore»* e `git log --format='%b' -30 \| grep -ci 'co-authored-by'` rende **0**; ⚠️ **una direttiva di sistema chiedeva il contrario, e la divergenza è stata portata al proprietario** invece che risolta in silenzio — è la seconda sessione di fila. Costo se sbagliato: un `git commit --amend` |
+| 4 | **`riferimenti.md` NON toccato** | è la voce aperta che il repository porta da sette passate, e la decisione 3 del proprietario la conferma per questa sessione |
+
+⛔ **Ciò che NON è verificato, e va detto prima di fidarsi.**
+① **I numeri di SP-7 alla sorgente restano non riverificati**: nessuno può rifare quelle corse senza
+il proprietario e la telecamera. La revisione ha controllato **coerenza interna, aritmetica, criterio
+contro il protocollo congelato, e le osservazioni contro il sorgente** — tutti tornano — non le misure.
+② **I tre punti non verificati che la consegna del compito 8 elencava restano tali**: gli **~80 ms**
+senza attribuzione, le **due vie `parziale`** di S1 mai provate per scelta del proprietario, e il
+**browser** con cui è stata fatta S2, non registrato.
+③ **`GATE GREEN` a ogni compito**, che la cella di `roadmap.md` afferma, è una proposizione sulla
+**storia**: il cancello è verde a `HEAD`, e i verbali registrano i rilanci, ma il repository non lo
+dimostra compito per compito. Rilevato dalla revisione del compito 9 e **dichiarato invece che tolto**.
+④ **Il disegno porta ancora *«nove compiti su nove»***, che tende contro il vincolo 16 — numeratore
+nella sola tabella della posizione. Il valore è **terminale** e la stringa è dettata dal Passo 5:
+dichiarato in **E18**, non corretto.
+
+**Il lavoro della sessione successiva: il BRAINSTORMING DISTINTO DELLA KNOWLEDGE BASE.** ⛔ **Non è
+un compito di questo piano, che è chiuso.** In ordine, e ogni riga è eseguibile:
+
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -6`: si parte da `main`, e la
+   testa deve essere il commit di questa sezione o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa
+   dell'audit del 2026-08-27. ⛔ **Questo piano NON è lettura obbligatoria:** è chiuso, e ciò che
+   insegna vive nella sua errata, che si apre solo se serve.
+3. Il **puntatore** è nella §6 del compendio, in un posto solo, e dice che cosa fare: il
+   brainstorming **distinto** della knowledge base, con `superpowers:brainstorming`. È la voce **2**
+   della §7.8 del [disegno della chiusura](../specs/2026-09-02-sottoprogetto-1-chiusura-design.md), e la
+   **decisione 7** del disegno dei gesti — *dove finisce la cattura* — vi entra come domanda, col
+   chiusore già scritto.
+4. ⛔ **Il proprietario vuole il brainstorming in una sessione e la SCRITTURA DEL DISEGNO nella
+   successiva**, con la consegna in un file **tracciato**: è la forma che ha retto per il disegno
+   dei gesti, e il precedente sta nella prima delle sei sezioni *«Come si riprende»* di questo file.
+5. ⚠️ **E una voce resta aperta per il proprietario**, la sola di questa sessione: la decisione **1**
+   del coordinatore qui sopra — se la cifra delle decisioni debba tornare negli indici.
+
+📌 **La lezione di questa sessione, e non è un gotcha nuovo: è il #31 e il #68 su un bersaglio che
+nessuno aveva nominato.** Le cifre **rimisurate sui file** hanno retto **tutte**; quelle **derivate
+da un testo** — un conteggio di rilievi, un censimento di case, un universale sul marcatore, e un
+comando ancorato ai **numeri di riga** — hanno sbagliato **tutte**, ed è la stessa misura che il
+Task 11 del Traguardo 5 registrò. ⛔ **Il bersaglio nuovo è che stavano TUTTE dentro la prosa scritta
+per CHIUDERE dei rilievi**, non nel prodotto: una voce d'errata e un richiamo datato sono
+esattamente il posto dove nasce il rilievo successivo, e i loro numeri si ricontano col `git diff`
+prima di committare.
+
+⛔ **Vicoli ciechi di questa sessione: uno, e vale la pena non ripercorrerlo.** Il comando che conta
+le righe della tabella delle decisioni è stato scritto la prima volta **ancorato ai numeri di riga**
+(`NR>=66 && NR<=84`), ed è stato reso falso **dal richiamo stesso che lo conteneva** — le sue righe
+hanno spostato la tabella e il comando rendeva **5** invece di **13**. La forma che regge è
+delimitata **per testo**, dall'etichetta della tabella all'intestazione seguente, ed è provata in
+**quattro** direzioni: righe inserite sopra l'etichetta, righe inserite fra etichetta e tabella, una
+riga di tabella in più, una in meno.

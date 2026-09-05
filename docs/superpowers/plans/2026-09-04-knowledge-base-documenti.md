@@ -959,9 +959,9 @@ disegno), questo piano col pre-controllo, e i puntatori.
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | Ramo | `main`, allineato a `origin`: `git status -sb` dopo `git fetch --all --prune`. Nessuno stash, nessuna operazione a metà |
-| I commit di questa sessione | `git log --oneline 8fb9a94..HEAD` — la rilettura registrata; questo piano coi puntatori |
+| I commit di questa sessione | `git log --oneline 8fb9a94..HEAD` — la rilettura registrata; questo piano coi puntatori; la chiusura della sessione, che ha riletto questa sezione coi comandi e corretto la riga del cancello |
 | Codice di prodotto | **non toccato**: `git diff --stat 8fb9a94..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` non rende nulla |
-| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, rilanciato all'apertura e prima di ogni commit; `bash scripts/check-docs.sh` → `OK`. Si rilanciano, non si citano |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, rilanciato all'apertura, prima del commit del piano e prima del commit di questa chiusura. ⚠️ Il commit della rilettura, `7c4881c`, di soli documenti, ha avuto il solo `bash scripts/check-docs.sh` → `OK`, e il cancello intero è passato subito dopo sullo stesso contenuto — detto invece che arrotondato. Si rilanciano, non si citano |
 | Fine-riga | questo piano e i due disegni sono **LF** nell'indice e nell'albero; il compendio e `roadmap.md` sono LF nell'indice e **CRLF** nell'albero, con CR = righe: `git ls-files --eol docs/COMPENDIO.md docs/roadmap.md docs/superpowers/specs/2026-09-04-knowledge-base-design.md docs/superpowers/plans/2026-09-04-knowledge-base-documenti.md` |
 | File temporanei | nessuno nel repository: l'aiutante e i ritagli stanno nello scratchpad, fuori dall'albero |
 | Debito lasciato | **nessuno non dichiarato**: le voci aperte sono nella tabella *«Le voci aperte che questo piano SA»*, col loro chiusore |

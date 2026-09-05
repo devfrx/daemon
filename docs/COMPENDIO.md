@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-05**, col rimando della cattura nella voce di ADR-0039 — la decisione 7 dei gesti chiusa dalla knowledge base; l'ultimo contenuto di **merito** è quello. Manutenzione: §13.
+**Aggiornato il 2026-09-05**, col **PIANO DEI DOCUMENTI DELLA KNOWLEDGE BASE ESEGUITO** e il puntatore della §6 mosso al sotto-progetto 2 con AUD-004 in parallelo; l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -685,9 +685,7 @@ kernel **prima** del 3 — e la decisione 7 dei gesti **chiusa**: la cattura att
 DISEGNO È RILETTO DAL PROPRIETARIO IL 2026-09-04**, in chat, sotto la sua accettazione condizionata — le sei voci per
 lui poste una per volta in forma A/B, e il consiglio scritto scelto sei volte su sei; l'esito sta nel disegno, nella
 sezione *«Le voci che questo disegno apre per il proprietario»*. ✅ **E IL PIANO DEI DOCUMENTI È SCRITTO LO STESSO GIORNO**, col pre-controllo delle quattro domande su ciascun compito —
-[piano](superpowers/plans/2026-09-04-knowledge-base-documenti.md). ⏭️ **IL PROSSIMO PASSO: ESEGUIRE QUEL PIANO in una sessione NUOVA**,
-un subagente fresco per compito con revisione fra uno e l'altro (`superpowers:subagent-driven-development`); a che punto sia lo dice
-la tabella della posizione del piano. Poi il sotto-progetto 2 con AUD-004 in parallelo, il 13, il 3. ⛔ **AUD-004 sbarra il 13**, non il piano.
+[piano](superpowers/plans/2026-09-04-knowledge-base-documenti.md). ✅ **E IL PIANO È ESEGUITO IL 2026-09-05**, `GATE GREEN` a ogni compito: i quattro rimandi in testa a ADR-0008, 0009, 0010 e 0038 e la riga di ADR-0039; la riga 13 «Registro delle guide, trigger e proiezione» in roadmap con le celle 3 e 6; le sei righe di tracciabilità; la decisione 7 dei gesti chiusa in tutte le sue case. ⏭️ **IL PROSSIMO PASSO: IL SOTTO-PROGETTO 2, la GUI minima** — dal suo brainstorming con `superpowers:brainstorming`, in una sessione nuova; ADR-0029 si chiude con M1–M5 al suo inizio (§4) — **e in parallelo AUD-004**, l'ADR del proprietario che sbarra il 13 (voce 3 della rilettura del disegno della knowledge base); poi il 13, poi il 3 — decisione 16. ⛔ **AUD-004 sbarra il 13**, non il 2.
 
 ⛔ **IL RACCONTO DEL TRAGUARDO 6 È USCITO DA QUI il 2026-09-03, e non riassunto:** sta in
 [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola, con le eccezioni
@@ -1660,6 +1658,8 @@ Apri **un** file, quello che serve. Non la cartella.
 | il piano della chiusura, con l'errata in testa e la tabella della posizione | [`plans/2026-09-02-…-chiusura.md`](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) |
 | ⛔ **il perimetro del RICONOSCIMENTO GESTI** — la forma della telecamera nel kernel, il registro delle funzioni, le decisioni col loro chiusore, e per ogni artefatto il controllo che lo esercita | [`specs/2026-09-03-riconoscimento-gesti-design.md`](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) — ⚠️ **non è una spec** |
 | come si è **eseguito** il riconoscimento gesti — i due ADR, i rimandi, la roadmap, SP-7 e la sonda S3, con l'errata in testa e la tabella della posizione | [`plans/2026-09-03-riconoscimento-gesti.md`](superpowers/plans/2026-09-03-riconoscimento-gesti.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **il perimetro della KNOWLEDGE BASE** — che cosa la mappa chiede al kernel e dove va: la strada B, i tre meccanismi del sotto-progetto 13 con le due pretese, le CRUD nel registro delle funzioni, il pannello col 6, le decisioni col loro chiusore, e per ogni artefatto il controllo che lo esercita | [`specs/2026-09-04-knowledge-base-design.md`](superpowers/specs/2026-09-04-knowledge-base-design.md) — ⚠️ **non è una spec**, e **non disegna la capacità** |
+| come si è **eseguito** il piano dei documenti della knowledge base — i rimandi in testa a quattro ADR e nella riga di ADR-0039, la riga 13 in roadmap, le righe di tracciabilità, la decisione 7 dei gesti chiusa, con l'errata in testa e la tabella della posizione | [`plans/2026-09-04-knowledge-base-documenti.md`](superpowers/plans/2026-09-04-knowledge-base-documenti.md) — ⚠️ **a compiti, mai intero** |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) |
 | il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** |

@@ -379,7 +379,7 @@ questo disegno, non il piano dei documenti.
    volta, e il consiglio scritto scelto sei volte su sei.
 4. ✅ il **piano dei documenti** con `superpowers:writing-plans` — **scritto il 2026-09-04, pre-controllo
    fatto**, in [`plans/2026-09-04-knowledge-base-documenti.md`](../plans/2026-09-04-knowledge-base-documenti.md);
-   l'**esecuzione** va in una sessione nuova, e a che punto sia lo dice la tabella della posizione del piano
+   **eseguito il 2026-09-05**, tutti i compiti con `GATE GREEN`; il verbale per compito sta nella tabella della posizione del piano
    — **nessun codice**: i rimandi datati
    (0009, 0008, 0010, 0038, 0039); la riga 13 e le celle 3 e 6 in `roadmap.md`; le sei righe di
    `tracciabilita.md`; la decisione 7 chiusa nel disegno gesti; questo file nella §12 del compendio e in
@@ -410,7 +410,7 @@ con gli stessi comandi e **gli stessi esiti** — il codice non è cambiato fra 
 
 | Affermazione | Comando |
 |---|---|
-| il registro delle guide **non esiste** nel codice; nemmeno i trigger né la proiezione come tipi | `grep -rl --include='*.rs' -E 'Guide\|Trigger\|Projection' crates/` rende **0** file |
+| il registro delle guide **non esiste** nel codice; nemmeno i trigger né la proiezione come tipi | `grep -rl --include='*.rs' Guide crates/`, poi lo stesso con `Trigger`, poi con `Projection` — tre `grep` separati — rendono **0** file ciascuno; la direzione «deve trovare», `grep -rl --include='*.rs' Sensor crates/ \| wc -l`, rende più di zero. ⚠️ **RICHIAMO DEL 2026-09-05:** qui stava un solo `grep -E` con l'alternanza scritta con la barra rovesciata davanti alla barra verticale, che copiato dal sorgente cerca la stringa letterale e rende 0 qualunque cosa ci sia — la trappola 14 di questo stesso disegno; trovato dalla revisione del compito 1 del piano dei documenti, voce E3 della sua errata. La sostanza reggeva |
 | il tratto `Sensor` esiste, con `declared_cost()` e `observe(&self, artefact: &Untrusted) -> Verdict`, e il doc dice *«THE ARTEFACT IS `&`, NEVER `&mut`»* | `sed -n '/^pub trait Sensor/,/^}/p' crates/kernel/src/sensor.rs` |
 | `CheckpointId(u64)` esiste nella porta `filesystem`; il tipo «ambito» no — nessun `Scope` in tutto `crates/` | `grep -rnE --include='*.rs' 'pub (struct\|enum) \w*(Scope\|Checkpoint)\w*' crates/` rende **una** riga, in `crates/kernel/src/ports/filesystem.rs` |
 | `Untrusted` e `Instruction` esistono ed entrano in molti file | `grep -rl --include='*.rs' 'Untrusted' crates/ \| wc -l` |
@@ -563,6 +563,7 @@ le spunte, è nella §5.5 di questo disegno; la prima riga senza spunta è il **
 in una sessione nuova»*. La rilettura è fatta quel giorno, e il piano si scrive **nella stessa
 sessione**, che è la strada B della sezione qui sotto.
 ✅ **RICHIAMO DEL 2026-09-04, sera:** il piano è scritto col pre-controllo; l'esecuzione va in una sessione nuova, e la §6 del compendio lo dice.
+✅ **RICHIAMO DEL 2026-09-05:** il piano è eseguito; la §6 del compendio porta il passo successivo, il sotto-progetto 2 con AUD-004 in parallelo.
 
 ### Come si riprende — scritto alla chiusura della sessione del 2026-09-04, coi comandi
 

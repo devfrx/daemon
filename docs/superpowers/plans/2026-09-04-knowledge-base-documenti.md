@@ -125,7 +125,7 @@ piano»* qui sotto, fatto nella sessione che ha scritto il piano, come il disegn
 | # | Compito | Commit | Stato |
 |---|---|---|---|
 | **1** | i quattro rimandi datati in testa a ADR-0008, ADR-0009, ADR-0010 e ADR-0038, e le loro voci di §5 nel compendio | uno | ✅ 2026-09-05 |
-| **2** | la decisione 7 dei gesti **chiusa in tutte le sue case**: la riga di ADR-0039 e la sua voce di §5, le sette case del disegno dei gesti, la riga di `tracciabilita.md` | uno | ✅ 2026-09-05 |
+| **2** | la decisione 7 dei gesti **chiusa in tutte le sue case**: la riga di ADR-0039 e la sua voce di §5, le sette case del disegno dei gesti, la riga di `tracciabilita.md` | uno | ✅ 2026-09-05 — ⚠️ **committato e pushato, NON rivisto**: la revisione è il primo passo della sessione successiva, vedi *«Come si riprende — 2026-09-05, ESECUZIONE»* in coda |
 | **3** | `roadmap.md`: la riga 13, le celle 3 e 6, la riga di «Perché quest'ordine», l'intestazione | uno | ⬜ |
 | **4** | `tracciabilita.md`: le cinque righe che restano, e il riquadro in testa — `sede da assegnare` da tre a uno | uno | ⬜ |
 | **5** | la chiusura: la Definizione di «fatto» coi comandi; il disegno e questo piano nella §12 del compendio e in `README.md`; il puntatore della §6; la riga di questo piano in roadmap; la spunta nel disegno | uno | ⬜ |
@@ -166,6 +166,10 @@ prima dell'esecuzione, la prima voce di questa errata lo registra.
 | — | *(vuota alla scrittura, 2026-09-04)* |
 | **E1** | **Compito 2, Passo 6 — la sonda sulle quattro righe del primo censimento è VACUA: rende 4 anche PRIMA del compito.** Scritta dal pre-controllo del 2026-09-05, prima di dispacciare, rilanciando il comando sul repository a `1a8ee6d`: `grep -n -i 'decisione 7' "$G" \| grep -c -i 'decis\|chiusa\|sciolta'` rende **4** oggi, perché «decision*e*» contiene «decis» e tutte e quattro le righe la portano — la sonda non distingue prima da dopo, ed è la domanda **1** del pre-controllo, un verde vacuo. La sonda vera è il segno di spunta, che oggi nessuna delle quattro porta: `grep -n -i 'decisione 7' "$G" \| grep -c '✅'` rende **0** prima e deve rendere **4** dopo; la direzione «deve trovare» è provata sullo stesso file, dove `grep -c '✅' "$G"` rende più di zero oggi. L'attesa «→ **4**» del Passo 6 si legge su questa sonda, e il Passo 6 del brief resta com'è: è un verbale |
 | **E2** | **Compito 1, Passo 4 — la sonda `grep -c 'Nessuna riga di questo ADR è superata'` rende 0 su ADR-0010: la frase dettata va a capo fra «riga» e «di», e un grep a riga singola non la vede.** Misurata dall'implementatore il 2026-09-05 dopo il commit `8f7d078` e confermata dal coordinatore: il testo nel file è quello del brief carattere per carattere, e il precedente — la testa di ADR-0001 — spezza la stessa frase allo stesso modo («**Nessuna» / «riga di questo ADR è superata:**»), quindi la sonda non avrebbe retto nemmeno sul modello. È la domanda **1** del pre-controllo: la sonda attacca la riga, il testo va a capo. Il testo **non** è stato riscritto per farla passare (vincolo 7). La sonda che regge ai capoversi, provata su tutti e quattro e su ADR-0001: `for f in docs/adr/0008-*.md docs/adr/0009-*.md docs/adr/0010-*.md docs/adr/0038-*.md; do tr -d '\r' < "$f" \| tr '\n' ' ' \| sed 's/> //g' \| grep -o 'Nessuna riga di questo ADR è superata' \| wc -l; done` → **1** ciascuno. La seconda cifra dell'attesa «`1` e `1` per ciascun ADR» del Passo 4 si legge su questa sonda |
+| **E3** | **Disegno della knowledge base, §6.1, prima riga — il comando che «rende 0 file» è VACUO com'è scritto: `-E` con l'alternanza scritta con la barra rovesciata davanti alla barra verticale, dentro una cella, cioè la trappola 14 dello stesso disegno.** Trovato dalla revisione del compito 1, il 2026-09-05, come rilievo fuori perimetro, e verificato dal coordinatore: copiato dal sorgente, il comando cerca la stringa letterale e rende 0 qualunque cosa ci sia; la sostanza **regge** — `grep -rl --include='*.rs' Guide crates/`, poi lo stesso con `Trigger`, poi con `Projection`, tre `grep` separati, rendono **0** file ciascuno — e la direzione «deve trovare» è provata sullo stesso albero: `grep -rl --include='*.rs' Sensor crates/ \| wc -l` rende più di zero. Il rimando di ADR-0009 scritto dal compito 1 poggia su quella riga e resta vero. Chiusore: il **compito 5**, che tocca già il disegno (mappa dei file), sul precedente del commit `2b52d7e` — la cella riscritta in tre `grep`, con la direzione «deve trovare» accanto e un richiamo datato in coda alla cella. Registrato qui prima del rimedio |
+| **E4** | **Compito 2, Passo 6 — l'attesa «`0` celle *«aperta, dipendenza dichiarata»*» è INSODDISFACIBILE per costruzione: il testo dettato per la casa 2 cita la frase vecchia nel proprio richiamo.** Misurata dall'implementatore dopo il commit `c481394` e confermata dal coordinatore il 2026-09-05: `grep -c 'aperta, dipendenza dichiarata' "$G"` rende **1** — la citazione *«Questa cella diceva «⏳ aperta, dipendenza dichiarata»»* dentro la cella nuova — mentre la frase **come cella a sé**, `grep -c '\| ⏳ aperta, dipendenza dichiarata \|' "$G"`, rende **1** su `8f7d078` e **0** dopo. Domanda **1** del pre-controllo: la sonda contava la frase, l'attesa voleva la cella. Il testo dettato non è stato toccato; l'attesa si legge sulla sonda della cella |
+| **E5** | **Compito 5, Passo 6 — l'attesa «`1` e `1` link a questo piano» è sbagliata per il compendio: sono DUE.** Misurato il 2026-09-05: il Trova della §6 comincia a `⏭️`, quindi la riga che lo ospita conserva il proprio `[piano](…knowledge-base-documenti.md)`, e la riga nuova di §12 ne porta un secondo. `grep -c 'knowledge-base-documenti' docs/COMPENDIO.md docs/roadmap.md` deve rendere **2** e **1**. Domanda 1 del pre-controllo, attesa sbagliata; scritto prima di dispacciare il compito |
+| **E6** | **Compito 5, Passo 1 — «`<base>` è il comando del vincolo 9» indica il comando sbagliato: il vincolo 9 è il margine del compendio.** Il comando di `<base>` sta nell'introduzione dei vincoli globali — `git log --format=%h --diff-filter=A -- docs/superpowers/plans/2026-09-04-knowledge-base-documenti.md` — e rende `9ebfec1`, misurato il 2026-09-05. Chi esegue usa quello |
 
 ---
 
@@ -1009,5 +1013,101 @@ decisione 7 (P-4); la sonda giusta per la cella di ADR-0039 (P-3); e la regola d
 della riga 7»* come casa unica di una decisione era stato scritto guardando la tabella: il
 censimento con **due** forme ne ha trovate nove. È il gotcha **#70** — *un `grep` restituisce
 candidate, non case* — nella direzione che costa di più: quella in cui la parola cercata non c'è.
+
+⛔ **Vicoli ciechi di questa sessione: nessuno nuovo.**
+
+### Come si riprende — scritto alla chiusura della sessione del 2026-09-05, ESECUZIONE, coi comandi
+
+⚠️ **È il documento di consegna della sessione che ha ESEGUITO i compiti 1 e 2**, aperta con
+`/anthropic-skills:session-resume` e chiusa dal proprietario con `/anthropic-skills:session-handoff`
+mentre il compito 2 era in volo. La sezione «Come si riprende» del 2026-09-04 qui sopra resta come
+verbale. Ogni riga di questa è stata **riletta coi comandi** prima di essere scritta.
+
+⛔ **DA SAPERE SUBITO: il compito 2 è COMMITTATO E PUSHATO, MA NON RIVISTO.** L'implementatore — un
+subagente in background — è morto col processo di Claude Code **dopo** il commit e il push e **prima**
+di riportare al coordinatore: il commit `c481394` è a `HEAD`, l'albero è pulito, ma nessun revisore lo
+ha letto, e la revisione è il cancello di ogni compito di questo piano. **La sessione nuova apre con la
+revisione del compito 2, non col compito 3.** La cella della riga 2 della tabella della posizione lo
+dice, e perde il «non rivisto» quando la revisione chiude.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main`, allineato a `origin`: `git fetch --all --prune` e poi `git status -sb`. Nessuno stash, nessuna operazione git a metà |
+| I commit di questa sessione | `git log --oneline 1a8ee6d..HEAD` — il compito 1 (`8f7d078`), il compito 2 (`c481394`), e questa chiusura, che porta le voci **E3–E6** dell'errata e la cella della riga 2 |
+| Codice di prodotto e spec | **non toccati**: `git diff --stat 9ebfec1..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` non rende nulla |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura su `1a8ee6d`, e — per i rapporti dei due implementatori — prima di ciascuno dei due commit; `bash scripts/check-docs.sh` → `OK` rilanciato dal revisore del compito 1 e dal coordinatore su `c481394`; il cancello intero rilanciato prima del commit di questa chiusura. Si rilanciano, non si citano |
+| Fine-riga | invariati per file — i cinque ADR e i due disegni LF, il compendio e `tracciabilita.md` CRLF con CR = righe: `git ls-files --eol docs/COMPENDIO.md docs/tracciabilita.md docs/roadmap.md docs/README.md docs/adr/0008-*.md docs/adr/0009-*.md docs/adr/0010-*.md docs/adr/0038-*.md docs/adr/0039-*.md docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md`, e `tr -cd '\r' < docs/COMPENDIO.md \| wc -c` contro `wc -l < docs/COMPENDIO.md` |
+| Margine del compendio | il comando del vincolo 9: **10844** byte alla chiusura, **12063** all'apertura — si rimisura |
+| File temporanei | nessuno nel repository. ⚠️ Il ledger della skill, `.superpowers/sdd/2026-09-04-knowledge-base-documenti/`, è **git-ignorato e vive solo sulla macchina di questa sessione**: brief, vincoli, estratti del disegno, dispacci (`task-N-dispatch.md`, `task-N-review-dispatch.md`), i rapporti dei due implementatori e del revisore, il pacchetto `review-8f7d078..c481394.diff`. Su un'altra macchina non c'è, e non serve: tutto ciò che vincola sta in questo piano |
+| Debito lasciato | **nessuno non dichiarato**: le voci **E1–E6** nell'errata, col chiusore; i tre Minor del compito 1 rimandati alla revisione finale (sotto) |
+
+**La posizione**, letta nella tabella e non ricordata: compito **1** ✅ eseguito e **rivisto** (giudizio
+*Approvato*: 0 Critical, 0 Important, 3 Minor); compito **2** ✅ committato e ⚠️ **non rivisto**;
+compiti **3, 4, 5** ⬜, ciascuno col pre-controllo già fatto il 2026-09-05 contro `1a8ee6d` (punto 4
+qui sotto), da **rimisurare** prima del dispaccio.
+
+**I tre Minor del compito 1, rimandati alla revisione finale** — nessuno tocca un fatto: M1, la frase
+*«nessuno dei meccanismi qui decisi»* nel rimando di ADR-0009, dove l'ADR ne decide quattro e `Sensor` ha
+codice (l'apposizione «registro delle guide, trigger» la restringe); M2, lo stesso rimando descrive
+l'anello di miglioramento senza la parola **ricorrenza**, che ADR-0009 fa costitutiva; M3 è **E3**.
+M1 e M2 sono testo dettato dal piano: se meritino un'ondata di **sottrazione** si decide a piano finito,
+in un punto solo (gotcha #76).
+
+**Le decisioni prese dal coordinatore, col perché** — il proprietario può ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | **commit senza il trailer `Co-Authored-By`** | `CLAUDE.md` dice *«senza co-autore»*; una direttiva di sistema chiedeva il contrario, e la divergenza è **portata al proprietario** — sesta sessione di fila. Costo: un `--amend` |
+| 2 | un subagente **fresco per compito**, in **background**, col **dispaccio salvato in un file** prima di lanciarlo, e un prompt di tre righe che lo punta; implementatore `sonnet` (testo dettato per intero), revisore `opus` (legge gli ADR contro i fratelli, gotcha #59) | il file del dispaccio ha reso il compito 2 **recuperabile** quando il processo è morto, e ha tenuto leggero il coordinatore, che non ha letto nessun rapporto per intero. Costo: un giro in più se il modello sbaglia |
+| 3 | **il testo dettato non si tocca per far passare una sonda**: quando una sonda o un'attesa sbaglia, si corregge **lei**, nell'errata (E1, E2, E4, E5) | vincolo 7; e la sonda a riga singola di E2 falliva anche sul precedente ADR-0001. Costo: una riga da riavvolgere, se il proprietario preferisce la sonda al testo |
+| 4 | i tre Minor del compito 1 **restano rimandati** alla revisione finale | le frasi non reggono alla terza ondata come alla prima; si decide in un punto solo. Costo: un'ondata di sottrazione a piano finito |
+| 5 | il rimedio di **E3** va nel **compito 5**, non in un commit a sé | il disegno è già nella mappa dei file del 5; precedente `2b52d7e`. Costo: una cella da rimettere |
+| 6 | la ⚠️ del revisore del compito 1 — *«`gate.sh` non rilanciato»* — chiusa **senza** una corsa in più | il rapporto dell'implementatore porta `GATE GREEN` dopo tutte le scritture e prima del commit, l'albero era pulito dopo il commit, il diff non tocca codice. Costo: zero |
+| 7 | il compito 2 **non** è marcato rivisto e **non** è stato riletto dal coordinatore al posto del revisore | la revisione è il cancello del compito, e il coordinatore non ha il contesto per farla senza saturarsi. Costo: un giro di revisione, che era comunque dovuto |
+
+**Il compito della sessione successiva**, in ordine, e ogni riga è eseguibile:
+
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -3`: si parte da `main`, e la
+   testa deve essere il commit di questa chiusura o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa dell'audit del
+   2026-08-27 — poi il **disegno della knowledge base per intero**, poi **questo piano**: i vincoli
+   globali, l'**errata per intero** (E1–E6), «Come si esegue un compito», e il testo del compito 2.
+3. **La revisione del compito 2** con `superpowers:subagent-driven-development`, revisore `opus`, in
+   sola lettura sul diff `git diff 8f7d078..c481394` (e `--stat`): al revisore si danno il testo del
+   compito 2, i vincoli globali, l'errata, la risposta 7 e la regola 4 della §2.3 del disegno, P-3 e P-4
+   — non il piano intero — e l'ordine di **rilanciare ogni comando**: i **due** censimenti
+   (`grep -n -i 'decisione 7'` e `grep -n -i 'cattura'` sul disegno dei gesti) più una terza forma sua,
+   letti **riga per riga** (gotcha #70); la sonda D3 sull'ADR — una riga `-`, una `+`; la sonda di
+   **E1** → 4; il fatto di **E4** — la frase «aperta, dipendenza dichiarata» resta **una** volta, dentro
+   il richiamo della cella nuova, e come cella a sé è sparita; 13 decisioni; `sede da assegnare` 3 e
+   gli stati `46 · 52 · 79 · 0 · 1` invariati; «in testa all'ADR» 7; i testi dettati **carattere per
+   carattere** contro il compito 2; ADR-0039 letto intero. Il rapporto dell'implementatore esiste solo
+   sulla macchina di questa sessione: dove non c'è, il revisore giudica il **diff**, che basta. Poi le
+   ondate come la regola 6 di «Come si esegue» prescrive; a revisione chiusa, la cella della riga 2
+   perde il «non rivisto».
+4. I compiti **3, 4, 5** in sequenza, un subagente fresco ciascuno con revisione fra uno e l'altro;
+   **prima** di ciascuno il coordinatore lo rilegge contro il repository di **allora** (i Trova dal
+   file). Il pre-controllo del 2026-09-05 contro `1a8ee6d` ha dato: compito **3** — coda `10`, `11`,
+   `12`; righe 3 e 6 nella forma esatta; riga 12 e «Gesti dopo» presenti; 0 righe 13; link al disegno
+   0 → 5: **nessun difetto**; compito **4** — le cinque righe esatte; `sede da assegnare` 3; sezione 3 a
+   sedici; il riquadro alla riga 71 seguito da una riga vuota e da `---`: **nessun difetto**; compito
+   **5** — due attese corrette (**E5**, **E6**) e il rimedio di **E3** aggiunto al suo perimetro, nella
+   prima riga della tabella §6.1 del disegno: la cella riscritta con i tre `grep` separati, la direzione
+   «deve trovare» con `Sensor`, e un richiamo datato in coda. Si **rimisurano** tutti.
+5. Ogni difetto nuovo va nell'errata **prima** del rimedio, col proprio numero, da **E7** in avanti.
+6. A piano eseguito il compito 5 ha mosso la §6 del compendio: la sessione successiva apre il
+   **sotto-progetto 2** dal suo brainstorming, e il proprietario scrive **AUD-004** in parallelo.
+
+📌 **Ciò che questa sessione consegna a chi riprende**, ed è suo e non un puntatore: le voci **E1–E6**,
+tutte misurate; la sonda che regge ai capoversi per la frase di non-superazione (E2); il doppio
+censimento **verificato sul risultato** del compito 2 — quattro righe con ✅, la cella «⏳ aperta…»
+sparita come cella; e il pre-controllo dei compiti 3–5.
+
+📌 **La lezione di questa sessione, e non è un gotcha nuovo.** Un subagente in background è morto col
+processo — il proprietario ha chiuso la sessione — ma **dopo** il commit e il push: la notifica diceva
+*failed*, `git log` diceva *fatto*. Un esito si legge nel **repository**, non nella notifica: è il gotcha
+**#65** — *un rapporto è un'affermazione come le altre* — applicato a una notifica di sistema, e nella
+direzione **opposta** al caso del 2026-09-03, dove una riga *dispatched* nel ledger non provava il
+dispaccio. Prima di ridispacciare si guardano `git log --oneline -3` e `git status --porcelain`.
 
 ⛔ **Vicoli ciechi di questa sessione: nessuno nuovo.**

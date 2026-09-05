@@ -70,7 +70,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 >
 > ✅ **Aggiornata il 2026-09-03 con le righe del riconoscimento gesti**, dalla §5.2 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) approvato dal proprietario — fuori da una chiusura di sotto-progetto, e per questo detto: la sezione 6 diventa «Voce e gesti», e la riga del registro delle funzioni entra nella sezione 2 accanto ai comandi rapidi.
 >
-> ✅ **Aggiornata il 2026-09-05 con le righe della knowledge base**, dalla §5.2 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md) approvato e riletto dal proprietario — fuori da una chiusura di sotto-progetto, e per questo detto: il registro delle guide e i trigger hanno la sede **13**, «Registro delle guide, trigger e proiezione»; la Conoscenza è il **6** in due metà, la mappa e poi la ricerca; e la cattura con un gesto ha la destinazione decisa. Il marcatore `sede da assegnare` resta sulla sola cifratura reale.
+> ✅ **Aggiornata il 2026-09-05 con le righe della knowledge base**, dalla §5.2 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md) approvato e riletto dal proprietario — fuori da una chiusura di sotto-progetto, e per questo detto: il registro delle guide e i trigger hanno la sede **13**, «Registro delle guide, trigger e proiezione»; la Conoscenza è il **6** in due metà, la mappa e poi la ricerca; e la cattura con un gesto ha la destinazione decisa.
 
 ---
 

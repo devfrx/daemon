@@ -90,7 +90,7 @@ per decisione 11 del disegno è il sotto-progetto **12**. La Voce lo **riusa**.
 | Non è | |
 |---|---|
 | il **vocabolario** dei gesti, e quali funzioni siano gestuali | la capacità, sotto-progetto 12 — decisione 2 |
-| la **destinazione** di una cattura | il brainstorming della knowledge base — decisione 7 |
+| la **destinazione** di una cattura | il brainstorming della knowledge base — decisione 7. ✅ **Rimando del 2026-09-05: decisa** — la cattura atterra nello spazio della knowledge base come **artefatto**, un file in un gruppo con il router che segue, e la run la vede come **riferimento**; [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md), risposta 7 e regola 4 della §2.3. Nessuna riga di questo ADR è superata |
 | il messaggio IPC verso la GUI con la mano campionata | **si definisce quando la GUI esiste** (sotto-progetto 2): prima non ha destinatario, come la revoca dichiarata in testa a `crates/kernel/src/wire/ipc.rs` |
 | una terza quota nella formula di ADR-0005 | decisione 9: si apre con un tracciatore su GPU |
 | il **confinamento** del processo del worker — se, oltre a separato (ADR-0028), sia **ristretto** al livello 2 di [ADR-0025](0025-confinamento-a-livelli.md) | **nessun ADR lo decide** e nel codice non c'è dove dirlo: `WorkerDescriptor` è byte opachi. Decisione 13 del disegno, registrata: la chiude il sotto-progetto 12 col proprietario, quando avvia il primo worker vero. Consiglio scritto: processo **ristretto**, perché la telecamera è un dispositivo di privacy e ADR-0025 dice che un confinamento più debole non è un ripiego |

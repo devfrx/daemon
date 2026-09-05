@@ -206,7 +206,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Tracciamento delle mani — 21 punti, stato continuo | 📋 | Gesti |
 | Gesti di comando | 📋 | Gesti |
 | Manipolazione di pannelli e menu con le mani | 📋 | GUI + Gesti |
-| Cattura con un gesto | 📋 | Gesti — la destinazione la decide il brainstorming della knowledge base (decisione 7 del disegno) |
+| Cattura con un gesto | 📋 | Gesti — la destinazione è **decisa il 2026-09-04**: nello spazio della knowledge base come file, la run la vede come riferimento (decisione 7 del disegno dei gesti, chiusa dal [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md)) |
 | Indicatore di telecamera accesa | 📋 | GUI |
 
 ## 7. Multimodalità e generazione

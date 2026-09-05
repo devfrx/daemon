@@ -56,7 +56,7 @@ perché chi riprende sappia che cosa non rifare. Le domande com'erano poste stan
 
 | # | La risposta | Scartato, e perché |
 |---|---|---|
-| 1 | la telecamera è **una sorgente di eventi**: un gesto riconosciuto è un evento come la wake word, e i fotogrammi **non escono mai** dal worker. *«Ma conta che deve avere del potenziale»*: predisposta a **menu virtuali** e a **spostare pannelli con le mani** (pinch e simili), quindi lo **stato continuo della mano** è un evento necessario per la manipolazione diretta, non un lusso | la telecamera come **occhio** dell'agente — immagini nel contesto di un modello: contenuto non fidato, gateway — è un'altra cosa, e si aggiunge dopo come capacità. La **cattura** con un gesto resta un caso d'uso, con la destinazione **aperta**: *«che contesto? conversazionale? un posto nella knowledge base?»* — decisione 7 |
+| 1 | la telecamera è **una sorgente di eventi**: un gesto riconosciuto è un evento come la wake word, e i fotogrammi **non escono mai** dal worker. *«Ma conta che deve avere del potenziale»*: predisposta a **menu virtuali** e a **spostare pannelli con le mani** (pinch e simili), quindi lo **stato continuo della mano** è un evento necessario per la manipolazione diretta, non un lusso | la telecamera come **occhio** dell'agente — immagini nel contesto di un modello: contenuto non fidato, gateway — è un'altra cosa, e si aggiunge dopo come capacità. La **cattura** con un gesto resta un caso d'uso, con la destinazione **aperta**: *«che contesto? conversazionale? un posto nella knowledge base?»* — decisione 7, ✅ **decisa il 2026-09-04** (riga 7 della tabella) |
 | 2 | i pannelli e i menu mossi con le mani sono quelli **del programma**, la sua GUI: tutta presentazione, **nessuna porta nuova** nel kernel | le finestre dell'**OS**: effetto OS via modulo di piattaforma, azione con permesso (ADR-0016), una **settima famiglia di porte** dove oggi sono sei per decisione → se mai, nel sotto-progetto 10 con un ADR suo |
 | 3 | *«self-use dell'agente sulle funzioni del programma»* significa **A mutuale**: l'agente può richiamare nativamente **tutte** le funzioni esistenti del programma; una **fetta** di quelle (tutte o solo alcune, si deciderà) è anche gestuale. Ne segue **un registro unico, molti invocatori, lo stesso permesso** — l'ADR A della §3 | una logica «solo per gesti»; l'agente che usa la telecamera per sé |
 | 4 | **approccio 1**, la sorgente di percezione **sotto il core**, dopo la sfida *«sicuro che rispetti tutti i principi?»* e le **tre correzioni** della §2.1, sotto accettazione condizionata | l'approccio 2 — tracciamento **dentro la GUI** — e l'ibrido: sezione *«Vicoli ciechi»* |
@@ -90,7 +90,7 @@ allargato dalla **ri-revisione** dell'ondata, che ne aveva contate sei su dieci.
 | 4 | la telecamera è accesa **per default**? | ✅ decisa | **(a) opt-in**: spenta finché l'utente non la accende, e accenderla è una funzione del registro | accesa per default |
 | 5 | l'anteprima video nella GUI | ✅ decisa | **(a) nessuna**: la mano si disegna dai 21 punti | il video costerebbe una misura in più per ADR-0029 e una telecamera divisa fra due processi |
 | 6 | un gesto può invocare un'azione con effetto **irripetibile** (ADR-0007)? | ✅ decisa | **(a)**: chiede conferma a qualunque invocatore (ADR-0016, già così), e per default la conferma **non è gestuale** — un gesto letto male non deve poter confermare sé stesso | la conferma a gesti |
-| 7 | dove finisce la **cattura** con un gesto | ⏳ aperta, dipendenza dichiarata | il **brainstorming 2**, la knowledge base: run corrente · knowledge base · entrambe | — |
+| 7 | dove finisce la **cattura** con un gesto | ✅ **presa il 2026-09-04** dal brainstorming della knowledge base, sotto accettazione condizionata. ⚠️ Questa cella diceva *«⏳ aperta, dipendenza dichiarata»* | **nella knowledge base**: la cattura atterra come file in un gruppo dello spazio, il router segue, la run riceve il **riferimento** — [disegno della knowledge base](2026-09-04-knowledge-base-design.md), risposta 7 e regola 4 della §2.3 | *solo nella run, poi decide l'assistente*: due posti per un file, e una foto dimenticata non è nella mappa; *entrambe*: idem |
 | 8 | dove vivono i **worker Python** nel repo | ✅ decisa, sotto accettazione condizionata | **`workers/` alla radice**, fuori da `crates/`, con un lockfile Python per worker | dentro `crates/`: Cargo tratta `crates/` come workspace, e un pacchetto non Rust lì confonde il cancello e ADR-0031 |
 | 9 | la **terza quota** nella formula di ADR-0005 | ⏳ registrata, non presa | si apre quando esiste un **tracciatore su GPU** | aggiungerla oggi, a zero: sfoggio (§2.1) |
 | 10 | dove si **salva l'interruttore** della telecamera fra un avvio e l'altro | ⏳ registrata, non presa | l'**archivio dei parametri** (ADR-0034, ADR-0022), che non esiste: la chiude chi lo costruisce | — |
@@ -117,7 +117,7 @@ allargato dalla **ri-revisione** dell'ondata, che ne aveva contate sei su dieci.
 |---|---|
 | il vocabolario dei gesti, e quali funzioni sono gestuali | il sotto-progetto della capacità, il 12 — decisione 2 |
 | menu virtuali e pannelli mossi con le mani | le **forme** nel sotto-progetto 2, la **logica** nella capacità |
-| dove finisce la foto catturata | il brainstorming 2, la knowledge base — decisione 7 |
+| dove finisce la foto catturata | il brainstorming 2, la knowledge base — decisione 7. ✅ **Decisa il 2026-09-04**: nella knowledge base, la run la vede — riga 7 della tabella delle decisioni |
 | la strada «un evento apre una run» | chi la costruisce per primo, la voce o i gesti — con la decisione 11 è il **12** (§5.3) |
 
 ### 1.3 Che cosa esclude
@@ -162,7 +162,7 @@ presentazione, lo consuma la GUI, e non tocca mai il giornale, come i frammenti 
 | Buco | Che cosa dice già l'architettura | Che cosa resta da decidere |
 |---|---|---|
 | «Se l'agente dorme, quando succede?» | il core è sempre sveglio; un evento di comando apre un passo in una run — e con la decisione 3 la run la apre **solo la wake word** | quali gesti sono **comando** e quali **manipolazione**: la lista è della capacità |
-| «La foto va in che contesto?» | una cattura è un **artefatto**: file su disco, nel giornale solo il **riferimento** (ADR-0018, ADR-0022); entra nel contesto come **proiezione** (ADR-0008), nella run in corso | se vada **anche** nella knowledge base: brainstorming 2, decisione 7 |
+| «La foto va in che contesto?» | una cattura è un **artefatto**: file su disco, nel giornale solo il **riferimento** (ADR-0018, ADR-0022); entra nel contesto come **proiezione** (ADR-0008), nella run in corso | se vada **anche** nella knowledge base: brainstorming 2, decisione 7 — ✅ **sì, decisa il 2026-09-04**: la cartella della knowledge base **è** l'archivio, la foto atterra in un gruppo, la run riceve il riferimento (riga 7 della tabella delle decisioni) |
 | «Una foto può dare ordini?» | no: è contenuto **non fidato**, informa e non autorizza (ADR-0014, I6). Un gesto non concede permessi (ADR-0016): un'azione invocata a gesti chiede lo stesso permesso che chiederebbe da tastiera | niente |
 | «Il kernel decide sui gesti?» | no: il gesto è un evento, **dato opaco** (ADR-0020), smistato come la trascrizione che diventa messaggio (ADR-0011); passa dal registro **con lo stesso permesso** di ogni invocatore (ADR A). Il kernel resta **testabile senza modello**: l'evento si inietta a copione, come ogni porta (ADR-0021) | niente |
 | «Chi tiene i fotogrammi?» | il worker, in Python, senza stato, uccidibile in ogni istante (ADR-0028, I5). Al core arrivano **eventi** | la forma dell'evento continuo sul canale `process`: §2.2 |
@@ -377,14 +377,14 @@ quattro.
 
 Nella sezione 6, che si intitola «Voce e gesti», con sede «Gesti»: tracciamento delle mani, gesti di
 comando, manipolazione di pannelli e menu con le mani (sede GUI + Gesti), cattura con un gesto (Gesti +
-brainstorming 2), indicatore di telecamera accesa (GUI). Il registro delle funzioni va accanto a
+brainstorming 2 — ✅ **decisa il 2026-09-04**, riga 7 della tabella), indicatore di telecamera accesa (GUI). Il registro delle funzioni va accanto a
 «Comandi rapidi e slash-command», sede GUI, come meccanismo deciso.
 
 ### 5.3 Le dipendenze dichiarate
 
 | Cosa | Da chi dipende |
 |---|---|
-| dove finisce la **cattura** (decisione 7) | il brainstorming 2, la knowledge base |
+| dove finisce la **cattura** (decisione 7) | il brainstorming 2, la knowledge base — ✅ **sciolta il 2026-09-04**: nella knowledge base, la run la vede (riga 7 della tabella delle decisioni) |
 | la strada «un evento di percezione apre un passo» (ADR-0011) | la costruisce il **12**, primo con una sorgente di percezione; la voce la riusa |
 | l'interruttore della telecamera e la posizione dei pannelli (decisioni 10 e 12) | l'archivio dei parametri, che nessun sotto-progetto colloca ancora — registrato |
 | il timbro di build sui due canali (§6.1.2) | GUI col **2**, worker col **12**: i due grilletti già scritti in testa a `crates/kernel/src/wire/ipc.rs` e `crates/kernel/src/wire/worker.rs` |
@@ -392,7 +392,7 @@ brainstorming 2), indicatore di telecamera accesa (GUI). Il registro delle funzi
 ### 5.4 Le voci che restano aperte
 
 Tutte con un chiusore scritto nella tabella delle decisioni: la **2** (quali funzioni sono
-gestuali → la capacità), la **7** (la cattura → brainstorming 2), la **9** (la terza quota → un
+gestuali → la capacità), la **7** (la cattura → brainstorming 2 — ✅ **chiusa il 2026-09-04**, riga 7 della tabella), la **9** (la terza quota → un
 tracciatore su GPU), la **10** e la **12** (→ l'archivio dei parametri). **Nessuna sbarra il
 disegno**, né il piano.
 

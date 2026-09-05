@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-05**, coi quattro rimandi datati della knowledge base — ADR-0008, ADR-0009, ADR-0010, ADR-0038 — nelle voci di §5; l'ultimo contenuto di **merito** è quello. Manutenzione: §13.
+**Aggiornato il 2026-09-05**, col rimando della cattura nella voce di ADR-0039 — la decisione 7 dei gesti chiusa dalla knowledge base; l'ultimo contenuto di **merito** è quello. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -605,7 +605,7 @@ Concessione da **zero MiB**, `Preemption::Never`, chiesta all'**accensione**: la
 — trasporto di `process`, messaggio in giù, timbro di build, prontezza del reattore, ciclo di
 lettura — e lo paga il sotto-progetto **12**; la Voce riusa. Tre ipotesi le misurano **SP-7** e
 la sonda S3; il confinamento del worker (decisione 13) e la terza quota (decisione 9) restano
-**registrati**. Le fonti F1–F9 in [`riferimenti.md`](riferimenti.md).
+**registrati**. Le fonti F1–F9 in [`riferimenti.md`](riferimenti.md). ✅ **Rimando del 2026-09-05, nella riga del perimetro negativo:** la destinazione di una cattura è **decisa** — nella knowledge base come artefatto, la run la vede come riferimento (decisione 7 dei gesti, chiusa dal disegno della knowledge base).
 
 ---
 

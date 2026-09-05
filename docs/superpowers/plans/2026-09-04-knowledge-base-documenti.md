@@ -1215,3 +1215,93 @@ dall'implementatore del compito 4 — rientra nella trappola 14 dentro una cella
 del disegno con un richiamo datato ciascuna — quattro tocchi a sezioni approvate per una frase ridondante
 del piano; usare `c481394` come base della ri-revisione del compito 2 — avrebbe portato dentro le cento
 righe della chiusura di ieri.
+
+### Come si riprende — scritto alla chiusura della TERZA sessione di ESECUZIONE, aperta il 2026-09-05 e chiusa il 2026-09-06, coi comandi
+
+⚠️ **È il documento di consegna della sessione che ha ESEGUITO il compito 5, fatto la REVISIONE FINALE dell'intero
+piano e la sua unica ondata**, aperta con `/anthropic-skills:decision-principles /anthropic-skills:session-resume`
+sulla chiusura della seconda sessione (`5e4c75a`). Le tre sezioni «Come si riprende» qui sopra restano come verbali.
+Ogni riga di questa è stata **riletta coi comandi** prima di essere scritta.
+
+✅ **IL PIANO È CHIUSO** — l'ondata finale `da653ca`, ultimo commit di prodotto, è del 2026-09-05; la sua ri-revisione e questa chiusura sono del 2026-09-06 (`git log --format='%h %ad' --date=short 5e4c75a..HEAD`)**:** cinque compiti su cinque eseguiti e rivisti; la revisione finale dell'intero
+piano (`9ebfec1..e54394d`, sul modello più capace) ha trovato zero Critical e due Important — **E12** ed **E13**, già
+registrate e rimandate a lei — chiusi dall'unica ondata (`da653ca`) e verificati dalla ri-revisione; la §6 del
+compendio nomina il sotto-progetto 2. ⛔ **DA SAPERE SUBITO: niente è a metà.** Albero pulito, nessuno stash, nessuna
+operazione git a metà, tutto pushato, nessun codice toccato.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main`, allineato a `origin`: `git fetch --all --prune` e poi `git status -sb`. Nessuno stash, nessuna operazione git a metà |
+| I commit di questa sessione | `git log --oneline 5e4c75a..HEAD` — il compito 5 (`e54394d`), l'ondata finale (`da653ca`), e questa chiusura |
+| Codice di prodotto e spec | **non toccati**: `git diff --stat 9ebfec1..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` non rende nulla |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura su `5e4c75a` e — per i rapporti dei due implementatori — prima di ciascuno dei due commit; `bash scripts/check-docs.sh` → `OK` rilanciato da ogni revisore; il cancello intero rilanciato prima del commit di questa chiusura. Si rilanciano, non si citano |
+| La Definizione di «fatto» | sette su sette, coi comandi del Passo 1 del compito 5, rilanciati da chi ha eseguito, da chi ha rivisto il compito e dalla revisione finale; la condizione 4 si legge sulle sonde di **E14** |
+| Fine-riga | invariati per file: `git ls-files --eol docs/COMPENDIO.md docs/README.md docs/roadmap.md docs/tracciabilita.md docs/adr/0039-*.md docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md docs/superpowers/specs/2026-09-04-knowledge-base-design.md docs/superpowers/plans/2026-09-04-knowledge-base-documenti.md` — i quattro documenti di stato `i/lf w/crlf` con CR = righe (`tr -cd '\r' < <file> \| wc -c` contro `wc -l < <file>`), gli altri `i/lf w/lf` |
+| Margine del compendio | il comando del vincolo 9 — positivo; il compito 5 è l'unico di questa sessione ad aver toccato il compendio |
+| File temporanei | nessuno nel repository. Il ledger `.superpowers/sdd/2026-09-04-knowledge-base-documenti/` è git-ignorato e vive su **questa** macchina, **non cancellato** a piano chiuso: `progress.md` coi ruling, i dispacci e i rapporti di tutti i compiti, della revisione finale (`final-review-1.md`) e dell'ondata (`final-fix-1-report.md`, `final-fix-1-review.md`), i pacchetti `review-*.diff`. Chi vuole lo toglie con un comando: la storia è in git |
+| Debito lasciato | **nessuno non dichiarato**: **E14** nell'errata; E12 ed E13 rimediate; ciò che resta aperto è nella tabella del triage qui sotto |
+
+**La posizione**, letta nella tabella e non ricordata: cinque ✅. Il piano è chiuso quando la tabella porta cinque ✅ e
+la §6 del compendio nomina il sotto-progetto 2, ed entrambe le cose sono vere:
+`awk '/^## ▶️ A che punto/{s=1} s&&/^### /{s=0} s&&/^\| \*\*[1-5]\*\* \|/&&/✅/{n++} END{print n}' docs/superpowers/plans/2026-09-04-knowledge-base-documenti.md`
+→ 5; `grep -c 'IL PROSSIMO PASSO: IL SOTTO-PROGETTO 2' docs/COMPENDIO.md` → 1.
+
+**Le voci d'errata di questa sessione:** **E14** — la condizione 4 del Passo 1 del compito 5, sonda sbagliata, trovata
+dal pre-controllo dinamico prima del dispaccio; e i richiami in coda a **E10**, **E12** ed **E13** dalla revisione
+finale.
+
+**Il triage dei Minor rimandati, fatto dalla revisione finale in un punto solo** (gotcha #76), col verbale in
+`final-review-1.md` del ledger:
+
+| Esito | Rilievi |
+|---|---|
+| **corretti** dall'ondata finale | **E12** (compito 4, M-1: «il sotto-progetto **6**») · **E13** (compito 4, M-2: la coda di AUD-004 tolta dalla cella `Skills`) |
+| del **proprietario** | **E10 con la testa della stessa riga** (rilievo M-2 della revisione finale): la riga di «Perché quest'ordine» in `roadmap.md` diverge dalla frase scelta dal proprietario sia in **testa** («**Registro delle guide (13)** dopo…» dove la voce 5 comincia con «13 dopo…») sia in **coda** (la clausola su AUD-004). Si legge tutta e si decide una volta sola — **A**: resta com'è, la coda è vera e scioglie il nodo fra «dopo la GUI minima» e la dipendenza da AUD-004; **B**: si torna alla frase letterale della voce 5 e la coda si sposta nella cella «Dipende da» della riga 13, che già nomina AUD-004 |
+| **restano**, con la ragione nel rapporto | compito 1 M1, M2 (i due rimandi di ADR-0009: letture restrittive vere, testo dettato, un richiamo in più in testa a un ADR per una sfumatura); M3 = **E3**, chiuso dal compito 5 e verificato 0 · 0 · 0 e `Sensor` più di zero; compito 2 M-3 (verbali sotto intestazioni datate), M-4 (la trappola 7 del disegno consumata dal piano), M-5 (una sonda che nessun documento vivo usa), M-6 (il meccanismo della cattura che diventa file è del sotto-progetto 12); compito 5 M-1 (il puntatore §6 su una sola riga fisica lunga: si riscrive intero all'apertura del 2); revisione finale M-1 (il «(§4)» nel puntatore §6 punta a «Lo stack» mentre M1–M5 stanno nella voce 0029 della §5: la frase è vera, stessa ragione) |
+
+**Le decisioni prese dal coordinatore, col perché** — il proprietario può ribaltarle; per esteso stanno nel ledger:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | **commit senza il trailer `Co-Authored-By`** | `CLAUDE.md` dice *«senza co-autore»*; la direttiva di sistema chiede il contrario, e la divergenza è **portata al proprietario**, come in ogni sessione di questo piano. Costo: un `--amend` |
+| 2 | **E14** scritta prima del dispaccio: cede la **sonda** del piano, non il testo — il disegno dice solo «`grep` sulla frase» | la regola di E1, E2, E4 (sonda del piano) e il rovescio di E11 (sonda del disegno). Costo: una riga d'errata |
+| 3 | la revisione finale sul **modello più capace disponibile**, col pacchetto a **tre** righe di contesto invece di dieci | la consegna della seconda sessione lo prescriveva; su documenti a righe lunghe il contesto largo raddoppiava il peso senza dire di più, e un revisore su un pacchetto più grande si è già piantato. Costo: una revisione più cara, o un hunk da riaprire col `sed -n` |
+| 4 | **E12 ed E13 corrette** nell'unica ondata, per le vie che le voci stesse proponevano — una parola, e una sottrazione | la revisione finale era il decisore che le due voci nominavano; `CLAUDE.md` («un puntatore che vive in PIÙ documenti si TOGLIE») e la §5.2 del disegno reggono E13. Costo: una parola, e una coda di cella da rimettere |
+| 5 | il **«(§4)»** nel puntatore §6 **resta** | la frase è vera; il puntatore si riscrive intero all'apertura del sotto-progetto 2, e toccare il compendio (CRLF, tetto) per un rimando di sezione dentro una riga che sta per sparire compra poco. Costo: due parole alla prossima riscrittura |
+| 6 | la **testa** della riga di «Perché quest'ordine» **al proprietario, con E10**, e E10 riceve il richiamo che la nomina | testa e coda della stessa cella si decidono una volta sola. Costo: zero |
+| 7 | i richiami a E10, E12 ed E13 scritti dal coordinatore nel piano, con un aiutante che appende dentro l'ultima cella della riga conservando i fine-riga, e portati dal commit dell'ondata; la riga 4 della posizione **non** si tocca | lo stato delle voci d'errata vive nell'errata; la posizione dice se un compito è eseguito e rivisto. Costo: zero |
+| 8 | il ledger **non si cancella** a piano chiuso, contro la lettera della skill | è la pratica delle sessioni precedenti di questo repository, i rapporti vi restano leggibili, ed è git-ignorato: cancellarlo è un comando del proprietario, non una scelta da prendere per lui. Costo: una cartella da togliere |
+| 9 | questa chiusura si **committa e si pusha** | convenzione di `CLAUDE.md` e dei piani precedenti; la skill di handoff dice il contrario e qui vince il repository. Costo: un revert |
+
+**Il compito della sessione successiva**, in ordine, e ogni riga è eseguibile:
+
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -3`: si parte da `main`, e la testa deve
+   essere il commit di questa chiusura o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa dell'audit del
+   2026-08-27. ⛔ **Questo piano non è più lettura di ripresa:** è chiuso, e la §12 del compendio lo indicizza
+   «a compiti, mai intero».
+3. Il **sotto-progetto 2**, la GUI minima, dal suo brainstorming con `superpowers:brainstorming`, in una sessione
+   nuova — è ciò che la §6 del compendio dice, in un posto solo; ADR-0029 si chiude con M1–M5 al suo inizio.
+   **In parallelo il proprietario scrive AUD-004**, l'ADR che sbarra il 13 (voce 3 della rilettura del disegno
+   della knowledge base).
+4. Le scelte del **proprietario**, che nessuna sessione prende per lui: la riga di «Perché quest'ordine» (E10 con
+   la testa: **A** o **B**, nella tabella del triage), e — se vuole — togliere il ledger.
+
+📌 **Ciò che questa sessione consegna a chi riprende**, ed è suo e non un puntatore: il piano dei documenti
+**chiuso**, con la Definizione di «fatto» rilanciata tre volte coi comandi; **E14**, che conferma dal lato del piano
+la regola di E11 (quale delle due cede: la sonda del piano, il testo dettato dal disegno); e la forma
+dell'aiutante che appende dentro una cella di tabella — venti righe sul modello di `replace_unique.py`, nello
+scratchpad, si ricrea se serve.
+
+📌 **La lezione di questa sessione, e non è un gotcha nuovo.** La consegna della seconda sessione elencava la
+parte «dinamica» del pre-controllo del compito 5 come una lista di comandi da rilanciare, e la lista non conteneva
+la condizione 4: **E14 l'ha resa il rilancio del Passo 1 intero**, non la lista. Una lista di comandi ereditata è
+essa stessa un'affermazione (gotcha #65): si rilancia il **compito** contro il codice di adesso, non la lista di
+allora.
+
+⛔ **Vicoli ciechi di questa sessione, col perché:** il pacchetto della revisione finale a dieci righe di
+contesto — su documenti a righe lunghe pesava quasi quanto quello su cui un revisore si è già piantato:
+rigenerato a tre, e il primo resta accanto nel ledger; correggere il «(§4)» del puntatore §6 dentro l'ondata —
+tocca il compendio per due parole dentro una riga che il sotto-progetto 2 riscrive; una seconda ondata per la
+testa della riga di «Perché quest'ordine» — è una scelta del proprietario, e una riscrittura in più della stessa
+cella è il gotcha #76.

@@ -127,7 +127,7 @@ piano»* qui sotto, fatto nella sessione che ha scritto il piano, come il disegn
 | **1** | i quattro rimandi datati in testa a ADR-0008, ADR-0009, ADR-0010 e ADR-0038, e le loro voci di §5 nel compendio | uno | ✅ 2026-09-05 |
 | **2** | la decisione 7 dei gesti **chiusa in tutte le sue case**: la riga di ADR-0039 e la sua voce di §5, le sette case del disegno dei gesti, la riga di `tracciabilita.md` — e la **decima**, la voce 3 delle voci aperte del disegno dei gesti, trovata dalla revisione (E7) | due | ✅ 2026-09-05, rivisto: la prima revisione ha trovato la decima casa (I-1), chiusa dall'ondata 1 e ri-rivista |
 | **3** | `roadmap.md`: la riga 13, le celle 3 e 6, la riga di «Perché quest'ordine», l'intestazione | uno | ✅ 2026-09-05 |
-| **4** | `tracciabilita.md`: le cinque righe che restano, e il riquadro in testa — `sede da assegnare` da tre a uno | uno | ✅ 2026-09-05 |
+| **4** | `tracciabilita.md`: le cinque righe che restano, e il riquadro in testa — `sede da assegnare` da tre a uno | due | ✅ 2026-09-05, con l'ondata 1 (E11); rivisto: *Approvato*, due Minor plan-mandated → E12, E13 |
 | **5** | la chiusura: la Definizione di «fatto» coi comandi; il disegno e questo piano nella §12 del compendio e in `README.md`; il puntatore della §6; la riga di questo piano in roadmap; la spunta nel disegno | uno | ⬜ |
 
 ⛔ **QUALE compito venga dopo NON è scritto qui:** vive nella §6 del
@@ -175,6 +175,8 @@ prima dell'esecuzione, la prima voce di questa errata lo registra.
 | **E9** | **P-3, D3 e il dispaccio della revisione del compito 2 — «la riga `+` comincia con la riga `-`» è falsa presa alla lettera: la `+` comincia con la `-` MENO il suo delimitatore di cella finale, perché il richiamo si appende dentro la cella.** Misurato dalla revisione del compito 2 (rilievo M-2): il confronto di prefisso sulla riga intera rende falso, sulla riga vecchia senza gli ultimi due caratteri rende vero. La sostanza — il testo vecchio in testa — regge. P-3 è un verbale del 2026-09-04 e non si riscrive; la sonda si legge così |
 | **E10** | **Compito 3, Passo 3, contro P-14 e D4 — la riga di «Perché quest'ordine» dettata dal piano appende alla frase scelta dal proprietario (voce 5) una coda che la voce non contiene: «⛔ A sbarrare il 13 è la decisione registrata da AUD-004 — un ADR del proprietario, da scrivere in parallelo al 2 — non il 2», mentre P-14 diceva «nient'altro cambia della frase».** Trovata dalla revisione del compito 3 il 2026-09-05 (rilievo Minor, plan-mandated). La coda è vera e fondata — §5.4 e §5.5 punto 5 del disegno — e scioglie il nodo fra «dopo la GUI minima» e la cella «Dipende da» del 13, che non nomina il 2: per questo la riga RESTA com'è scritta (vincolo 7: si toglie il di più, non ciò che regge), e P-14 si legge come «la frase del proprietario non cambia», non come «la cella non contiene altro». Se il proprietario vuole la sua riga pulita, la coda si sposta nella cella «Dipende da» della riga 13, che già nomina AUD-004: è una sua scelta, registrata qui |
 | **E11** | **Compito 4, Passo 3 e Passo 4 — la riga del riquadro dettata dal piano cita il marcatore alla lettera («Il marcatore `sede da assegnare` resta sulla sola cifratura reale»), quindi la sonda del DISEGNO `grep -cE 'sede da assegnare'` — che vive in quattro case vive del disegno approvato (§1.5, §5.2, §5.5 condizione 3, trappola 7) e nell'attesa del Passo 4 — rende 2 e non 1 dopo il compito: la riga della cifratura più la menzione.** Misurata dall'implementatore (DONE_WITH_CONCERNS, commit `10d145c`) e dal coordinatore il 2026-09-05. Qui la sonda NON è del piano ma del disegno, che è l'autorità: a cedere è il testo dettato, non la sonda — l'opposto di E1, E2 ed E4, dove la sonda era del piano. Rimedio: **ondata 1 del compito 4**, la frase è TOLTA dalla riga del riquadro (vincolo 7: si toglie, non si riscrive meglio) e la sonda torna a rendere **1** in ogni casa senza un richiamo nel disegno; la riga della cifratura porta ancora il marcatore, e basta. La sonda che distingue il valore di cella dalla menzione, se mai servisse: `grep -c '→ sede da assegnare' docs/tracciabilita.md` → 3 prima del compito, 1 dopo |
+| **E12** | **Compito 4, Passo 3 — nel riquadro di `tracciabilita.md` la riga nuova dice «la Conoscenza è il 6 in due metà», e la riga del 2026-09-03 subito sopra usa «la sezione 6» per una sezione di quel file: lo stesso numero con due significati in due righe consecutive, mentre la Conoscenza è la sezione 3 del file.** Trovata dalla revisione del compito 4 il 2026-09-05 (rilievo M-1, Minor, plan-mandated). La frase è vera letta come sotto-progetto, e la parola «sede» nella stessa frase la disambigua; il rimedio — una parola, «il **sotto-progetto** 6» — non è stato eseguito: il proprietario ha fermato la sessione dopo l'ondata 1, e si decide in un punto solo alla revisione finale, o lo decide lui. Registrata, non presa |
+| **E13** | **Compito 4, Passo 2, contro la §5.2 del disegno — la cella `Skills` dettata dal piano appende «se le difese di ADR-0015 si estendano alle skill: AUD-004, un ADR del proprietario prima del 13», mentre la §5.2 dettava solo «registro delle guide → 13»: la dipendenza da AUD-004 ha così una SECONDA casa viva accanto alla cella «Dipende da» della riga 13 di `roadmap.md`, scritta dal compito 3.** Trovata dalla revisione del compito 4 il 2026-09-05 (rilievo M-2, Minor, plan-mandated), misurata con `grep -rn 'difese di ADR-0015 si estend' docs --include='*.md'`: due case vive di stato, più il disegno (l'autorità), il piano e l'archivio. Stessa famiglia di E10. Quando l'ADR di AUD-004 sarà scritto, entrambe le celle andranno toccate — la forma contro cui `CLAUDE.md` mette in guardia. Le due vie: la coda resta e si accetta la seconda casa (come per E10), oppure la cella si accorcia a «registro delle guide → **13**, con provenienza e impronta all'approvazione (§1.1e …)» lasciando AUD-004 alla sola roadmap. Del proprietario, o della revisione finale: registrata, non presa |
 
 ---
 
@@ -1116,3 +1118,99 @@ direzione **opposta** al caso del 2026-09-03, dove una riga *dispatched* nel led
 dispaccio. Prima di ridispacciare si guardano `git log --oneline -3` e `git status --porcelain`.
 
 ⛔ **Vicoli ciechi di questa sessione: nessuno nuovo.**
+
+### Come si riprende — scritto alla chiusura della SECONDA sessione di ESECUZIONE, 2026-09-05, coi comandi
+
+⚠️ **È il documento di consegna della sessione che ha RIVISTO il compito 2 ed ESEGUITO i compiti 3 e 4**,
+aperta con `/anthropic-skills:decision-principles /anthropic-skills:session-resume` sulla chiusura di ieri
+(`129e86e`) e fermata dal proprietario con *«fermati dopo questo fix»* subito dopo l'ondata 1 del compito 4.
+Le due sezioni «Come si riprende» qui sopra restano come verbali. Ogni riga di questa è stata **riletta coi
+comandi** prima di essere scritta.
+
+⛔ **DA SAPERE SUBITO: niente è a metà.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto
+pushato, nessun codice toccato. Il compito **4** è **rivisto**: *Approvato*, zero Important, due Minor plan-mandated registrati come **E12** ed **E13** — nessuna ondata dovuta, nessuna in volo.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main`, allineato a `origin`: `git fetch --all --prune` e poi `git status -sb`. Nessuno stash, nessuna operazione git a metà |
+| I commit di questa sessione | `git log --oneline 129e86e..HEAD` — l'ondata 1 del compito 2 (`0f08096`), il compito 3 (`838f16d`), il compito 4 (`10d145c`) e la sua ondata 1 (`66cf575`), e questa chiusura |
+| Codice di prodotto e spec | **non toccati**: `git diff --stat 9ebfec1..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` non rende nulla |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura su `129e86e` e — per i rapporti dei quattro implementatori — prima di ciascuno dei quattro commit; `bash scripts/check-docs.sh` → `OK` rilanciato da ogni revisore; il cancello intero rilanciato prima del commit di questa chiusura. Si rilanciano, non si citano |
+| Fine-riga | invariati per file: `git ls-files --eol docs/COMPENDIO.md docs/tracciabilita.md docs/roadmap.md docs/README.md docs/adr/0039-*.md docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md docs/superpowers/specs/2026-09-04-knowledge-base-design.md docs/superpowers/plans/2026-09-04-knowledge-base-documenti.md` — i quattro documenti di stato `i/lf w/crlf` con CR = righe (`tr -cd '\r' < <file> \| wc -c` contro `wc -l < <file>`), gli altri `i/lf w/lf`. ⚠️ L'avviso di git *«LF will be replaced by CRLF»* che ogni implementatore ha segnalato è `core.autocrlf` **deliberato e già registrato** (la voce aperta sui fine-riga nella §6 del compendio): non è un difetto e non si «sistema» |
+| Margine del compendio | il comando del vincolo 9 — **10844** alla chiusura, invariato da ieri: nessun compito di questa sessione ha toccato il compendio; il compito 5 lo tocca |
+| File temporanei | nessuno nel repository. Il ledger `.superpowers/sdd/2026-09-04-knowledge-base-documenti/` è git-ignorato e vive su **questa** macchina: `progress.md` coi ruling, i dispacci (`task-N-dispatch.md`, `task-N-review-dispatch.md`, `task-2-fix-1-dispatch.md`, `task-4-fix-1-dispatch.md`), i rapporti (`task-2-review-1.md`, `task-2-fix-1-report.md`, `task-2-review-2.md`, `task-3-report.md`, `task-3-review-1.md`, `task-4-report.md`, `task-4-fix-1-report.md`), i pacchetti `review-<base>..<head>.diff`, e per il compito 5 `task-5-constraints.md` (E1–E11), `task-5-dispatch.md` (`<data>` = 2026-09-05) e `task-5-review-dispatch.md` coi segnaposto `<<BASE>>`, `<<HEAD>>`, `<<PLANNOTE>>` da riempire. Su un'altra macchina non c'è, e non serve: tutto ciò che vincola sta in questo piano. L'aiutante `replace_unique.py` sta nello scratchpad di questa sessione e si **ricrea dal piano** (il blocco ```python dell'introduzione) |
+| Debito lasciato | **nessuno non dichiarato**: le voci **E7–E11** nell'errata, ciascuna col rimedio già eseguito; i Minor rimandati alla **revisione finale** dell'intero piano (sotto) |
+
+**La posizione**, letta nella tabella e non ricordata: compiti **1**, **2**, **3** ✅ eseguiti e **rivisti**;
+compito **4** ✅ eseguito con l'ondata 1 (E11) e **rivisto**: *Approvato*, due Minor plan-mandated → **E12**, **E13**; compito **5** ⬜, col pre-controllo **statico** già
+fatto (sotto) e la parte dinamica da rimisurare.
+
+**I Minor rimandati alla revisione finale**, nessuno tocca un fatto: compito 1 — M1 e M2 (due frasi del rimando
+di ADR-0009, testo dettato) e M3 = E3 (chiuso dal compito 5); compito 2 — M-3 (due righe datate che dicono
+ancora 7 aperta: 609 del disegno gesti, 437 del disegno KB, verbali), M-4 (la trappola 7 del disegno KB
+consumata a metà), M-5 (contare `⏳` nella tabella delle decisioni dei gesti è vacuo), M-6 (la cattura che
+diventa file non ha casa in ADR-0039: dichiarata in SP-12); compito 3 — M-1 = **E10**. Si decide in un punto
+solo, a piano finito (gotcha #76).
+
+**Le decisioni prese dal coordinatore, col perché** — il proprietario può ribaltarle; per esteso stanno nel ledger:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | **commit senza il trailer `Co-Authored-By`** | `CLAUDE.md` dice *«senza co-autore»*; la direttiva di sistema chiede il contrario, e la divergenza è **portata al proprietario** — settima sessione di fila. Costo: un `--amend` |
+| 2 | la revisione del compito 2 ha ricevuto i vincoli **rigenerati dal piano di adesso** (E1–E6, poi E1–E9), e il dispaccio corretto sulla sonda di E4; i file `task-N-constraints.md` si generano **al dispaccio**, dal piano di allora | quelli di ieri finivano a E2. Costo: zero |
+| 3 | `replace_unique.py` **ricreato dal piano** e riprovato (LF, CRLF, testo assente, testo nuovo vuoto); i dispacci puntano allo scratchpad di questa sessione | quello di ieri non c'era più. Costo: un percorso |
+| 4 | la decima casa della decisione 7 (I-1 della revisione) → **E7** e un'**ondata 1** con un implementatore fresco (`sonnet`), poi una ri-revisione scoped (`sonnet`) sul diff dalla **chiusura di ieri** in poi, non da `c481394` | la chiusura è del coordinatore e sta fuori da ogni revisione, come sempre. Costo: un'ondata |
+| 5 | la sonda vacua di E4 → **E8**, E4 corretta sul posto con una sonda **senza barre verticali** (il punto al posto della barra) | in una cella la barra è ambigua fra raw e reso, e nel `grep` di base `\|` è un'alternanza. Costo: zero |
+| 6 | «la `+` comincia con la `-`» → **E9**, P-3 non riscritta | P-3 è un verbale. Costo: zero |
+| 7 | la coda appesa dal piano alla frase della voce 5 in «Perché quest'ordine» **resta** → **E10**; spostarla nella cella «Dipende da» della riga 13 è del **proprietario** | è vera (§5.4, §5.5 punto 5) e scioglie il nodo fra «dopo la GUI minima» e la dipendenza senza il 2. Costo: una riga di roadmap da accorciare |
+| 8 | la frase del riquadro di tracciabilità che citava il marcatore alla lettera è **TOLTA** (ondata 1 del compito 4) → **E11**: qui cede il testo dettato e non la sonda, perché la sonda è del **disegno approvato** (quattro case) e non del piano | l'opposto di E1/E2/E4; scartati: quattro richiami nel disegno, e la sonda ancorata `\|$` (trappola 14 dentro una cella). Costo: una frase da rimettere |
+| 9 | la revisione del compito 4 si fa **una** volta, dopo l'ondata, sui due commit insieme | il dubbio dell'implementatore era di correttezza e si chiude prima della revisione. Costo: zero |
+| 10 | ogni ⚠️ *«`gate.sh` non rilanciato dal revisore»* chiuso **senza** una corsa in più | il rapporto dell'implementatore porta `GATE GREEN` prima del commit, l'albero era pulito dopo, e il diff non tocca codice. Costo: zero |
+| 11 | questa chiusura si **committa e si pusha** | convenzione di `CLAUDE.md` e dei piani precedenti; la skill di handoff dice il contrario e qui vince il repository. Costo: un revert |
+
+**Il compito della sessione successiva**, in ordine, e ogni riga è eseguibile:
+
+1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -3`: si parte da `main`, e la
+   testa deve essere il commit di questa chiusura o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e la testa dell'audit del
+   2026-08-27 — poi il **disegno della knowledge base per intero**, poi **questo piano**: i vincoli
+   globali, l'**errata per intero** (E1–E11), «Come si esegue un compito», e il testo del compito 5.
+3. Niente da rivedere: i quattro compiti sono chiusi. Le sole cose aperte prima del compito 5 sono le scelte su **E12** ed **E13** (la parola «sotto-progetto» nel riquadro di tracciabilità; la seconda casa di AUD-004 nella cella `Skills`) e su **E10** (la coda in «Perché quest'ordine»): del proprietario, o della revisione finale — il compito 5 non ne dipende.
+4. Il **compito 5** con `superpowers:subagent-driven-development`, implementatore `sonnet` e revisore `opus`.
+   **Prima** del dispaccio: la parte **dinamica** del pre-controllo, rimisurata sul repository di allora —
+   `awk '/^## Sotto-progetti/{s=1;next} s&&/^## /{s=0} s&&/^[|] /' docs/roadmap.md \| tail -3 \| cut -c1-12`
+   → `11`, `12`, `13`; `grep -c '^| \*\*Registro delle guide (13) dopo' docs/roadmap.md` → 1;
+   `grep -cE 'sede da assegnare' docs/tracciabilita.md` → 1; `grep -c '→ \*\*13\*\*' docs/tracciabilita.md`
+   → 3; `grep -c 'decisa il 2026-09-04' docs/tracciabilita.md` → 1; `grep -n '⏭️' docs/COMPENDIO.md` → due
+   righe; il Trova di §6 del compendio letto intero (righe 688–690 oggi); `grep -c 'knowledge-base-design'
+   docs/COMPENDIO.md docs/README.md` → 1 e 0; `grep -c 'knowledge-base-documenti' docs/COMPENDIO.md
+   docs/roadmap.md` → 1 e 1; il margine del vincolo 9; `git log -1 --format=%ad --date=short --
+   docs/roadmap.md` (la riga «Ultimo aggiornamento» porta la stessa data). La parte **statica** è già fatta
+   il 2026-09-05 e sta nel ledger: ogni Trova del compito 5 è unico, i link risolvono, E3 rilanciata rende
+   0 · 0 · 0 e `Sensor` 3. Poi: `<data>` = il giorno del dispaccio in `task-5-dispatch.md` (oggi porta
+   2026-09-05 — se il giorno è un altro si sostituisce, e l'intestazione di roadmap deve portare la data del
+   **commit**); `task-5-constraints.md` rigenerato dal piano di allora; i segnaposto di
+   `task-5-review-dispatch.md`; e se il piano porta modifiche del coordinatore non committate, il dispaccio
+   lo dice come per i compiti 3 e 4.
+5. Ogni difetto nuovo va nell'errata **prima** del rimedio, col proprio numero, da **E12** in avanti.
+6. A piano eseguito: la **revisione finale dell'intero piano** (`superpowers:subagent-driven-development`,
+   modello più capace, pacchetto `9ebfec1..HEAD`), puntata alla lista dei Minor rimandati qui sopra; poi il
+   compito 5 ha mosso la §6 del compendio, e la sessione successiva apre il **sotto-progetto 2** dal suo
+   brainstorming, col proprietario che scrive **AUD-004** in parallelo.
+
+📌 **Ciò che questa sessione consegna a chi riprende**, ed è suo e non un puntatore: le voci **E7–E11**, tutte
+misurate e tutte già rimediate; la decima casa della decisione 7 chiusa; le sonde **senza barre** (E8, E11)
+che reggono sia copiate dal sorgente sia lette rese; e la distinzione che E11 scrive: quando la sonda che
+non torna è del **disegno approvato**, cede il testo dettato dal piano — quando è del piano, cede la sonda.
+
+📌 **La lezione di questa sessione, e non è un gotcha nuovo.** Il doppio censimento di P-4 cercava le
+**parole** («decisione 7», «cattura») e la decima casa scriveva il **numero** in un elenco («le decisioni 2,
+7, 9, 10, 12»): la terza forma che l'ha resa è `, 7,`. È il gotcha **#70** — *un `grep` restituisce
+candidate, non case* — applicato al censimento del piano invece che a chi lo esegue: quando si censiscono le
+case di una decisione numerata, una forma cerca il numero e non la parola.
+
+⛔ **Vicoli ciechi di questa sessione, col perché:** la sonda ancorata `'sede da assegnare \|$'` proposta
+dall'implementatore del compito 4 — rientra nella trappola 14 dentro una cella; correggere le quattro case
+del disegno con un richiamo datato ciascuna — quattro tocchi a sezioni approvate per una frase ridondante
+del piano; usare `c481394` come base della ri-revisione del compito 2 — avrebbe portato dentro le cento
+righe della chiusura di ieri.

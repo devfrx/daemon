@@ -70,7 +70,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 >
 > ✅ **Aggiornata il 2026-09-03 con le righe del riconoscimento gesti**, dalla §5.2 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) approvato dal proprietario — fuori da una chiusura di sotto-progetto, e per questo detto: la sezione 6 diventa «Voce e gesti», e la riga del registro delle funzioni entra nella sezione 2 accanto ai comandi rapidi.
 >
-> ✅ **Aggiornata il 2026-09-05 con le righe della knowledge base**, dalla §5.2 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md) approvato e riletto dal proprietario — fuori da una chiusura di sotto-progetto, e per questo detto: il registro delle guide e i trigger hanno la sede **13**, «Registro delle guide, trigger e proiezione»; la Conoscenza è il **6** in due metà, la mappa e poi la ricerca; e la cattura con un gesto ha la destinazione decisa.
+> ✅ **Aggiornata il 2026-09-05 con le righe della knowledge base**, dalla §5.2 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md) approvato e riletto dal proprietario — fuori da una chiusura di sotto-progetto, e per questo detto: il registro delle guide e i trigger hanno la sede **13**, «Registro delle guide, trigger e proiezione»; la Conoscenza è il sotto-progetto **6** in due metà, la mappa e poi la ricerca; e la cattura con un gesto ha la destinazione decisa.
 
 ---
 
@@ -152,7 +152,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Modalità piano vs esecuzione | 🔶 | preset §6 · politica → Agenti |
 | Tool calling | 🔶 | schema §3 + permessi §6 · mediatore completo → Agenti |
 | MCP | 🔶 | ADR-0003 · ciclo di approvazione MCP §6 (ADR-0015) → Agenti |
-| Skills | 🔶 | guide §5 (ADR-0003) · registro delle guide → **13**, con provenienza e impronta all'approvazione (§1.1e del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md)) · se le difese di ADR-0015 si estendano alle skill: AUD-004, un ADR del proprietario prima del 13 |
+| Skills | 🔶 | guide §5 (ADR-0003) · registro delle guide → **13**, con provenienza e impronta all'approvazione (§1.1e del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md)) |
 | HITL: approvazioni | 🔶 | §6 · ADR-0016 · ciclo di approvazione → Agenti |
 | HITL: interruzione e steering | 🔶 | `AttesaUmano` §4 · politica → Agenti |
 | Domande di chiarimento | 📋 | Agenti |

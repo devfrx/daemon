@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-04**, col **DISEGNO DELLA KNOWLEDGE BASE SCRITTO** sul posto, **RILETTO** dal proprietario **E TRADOTTO IN PIANO** — brainstorming, disegno, rilettura e piano lo stesso giorno — e il puntatore della §6 mosso all'esecuzione del piano; l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
+**Aggiornato il 2026-09-05**, coi quattro rimandi datati della knowledge base — ADR-0008, ADR-0009, ADR-0010, ADR-0038 — nelle voci di §5; l'ultimo contenuto di **merito** è quello. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -238,7 +238,7 @@ vincoli e regole applicabili, piano e stato dei passi, decisioni con il motivo, 
 con la provenienza, artefatti come **riferimenti** (il contenuto si rilegge su
 richiesta). **L'unica cosa sacrificabile è la trascrizione grezza** — ed è il cuore
 della decisione: tutto ciò che serve a proseguire è strutturato, quindi non finisce mai
-nel tritacarne del riassunto.
+nel tritacarne del riassunto. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** la proiezione si costruisce nel sotto-progetto **13**, prima della prima capacità che la usa; la mappa della knowledge base entra **per chiave**, le foglie come riferimenti — disegno della knowledge base.
 
 **0009 — Guide, sensori e anelli sono meccanismi di kernel.** Il kernel espone quattro
 meccanismi **generici**; il contenuto lo portano le capacità: **registro delle guide**
@@ -251,14 +251,14 @@ deliberatamente povero: `(artefatto) → (verdetto, dettaglio, costo)` — un co
 minimo si può allargare, uno ricco e sbagliato no. **Anello di miglioramento:** quando
 un problema si ripete **si migliora il controllo, non il prompt**; il kernel rileva la
 ricorrenza e **propone**, l'utente **approva**. Non si auto-modifica in silenzio. Le
-skill dichiarative di 0003 sono **guide**.
+skill dichiarative di 0003 sono **guide**. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** registro delle guide e trigger si costruiscono nel sotto-progetto **13**, prima della prima capacità che inietta una guida; le due pretese della mappa — chiave di contesto (ambito, run, modello); provenienza e impronta, con «approvate ora» come proiezione del giornale — disegno della knowledge base.
 
 **0010 — La proiezione ha un budget di qualità, non una soglia di riempimento.** Budget
 target espresso come frazione della finestra, configurabile per modello. La
 ricomposizione è **continua e proattiva**: serve a mantenere il budget, non a evitare
 l'overflow. Il limite della finestra resta come **guardia**, non come politica. La
 proiezione è **misurata per categoria** e la misura entra nel giornale — senza, «il
-contesto è troppo pieno» è un'impressione e non un dato.
+contesto è troppo pieno» è un'impressione e non un dato. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** la proiezione nasce nel sotto-progetto **13**; la mappa della knowledge base è una **categoria** del budget, per modello — disegno della knowledge base.
 
 **0011 — La politica di routing è risolta e giornalata per ogni richiesta.** Ogni
 richiesta produce un **record di routing risolto**: modello, destinazione, provider,
@@ -589,7 +589,7 @@ logica «solo per gesti» esiste. Un evento di percezione **informa, mai autoriz
 analogia); un effetto irripetibile chiede conferma a qualunque invocatore, e **per default la
 conferma non è gestuale**. La manipolazione della GUI — pannelli, menu — è presentazione e
 **non passa dal registro**. ⛔ **Nessun codice nasce con l'ADR:** il registro lo costruisce il
-primo invocatore, il click del sotto-progetto 2; quali funzioni siano gestuali lo decide il 12.
+primo invocatore, il click del sotto-progetto 2; quali funzioni siano gestuali lo decide il 12. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** la knowledge base registra le **CRUD** dei propri file e gruppi come funzioni del registro, spostamenti compresi; «aggiungi al contesto» ha **due invocatori**, il click e il modello — disegno della knowledge base.
 
 **0039 — La telecamera come sorgente di percezione always-on sotto il core.** Un worker Python
 **possiede** la telecamera e i fotogrammi **non escono mai**; al core arrivano **eventi** — lo

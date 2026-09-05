@@ -4,6 +4,20 @@
 - **Date:** 2026-09-03
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-09-05 — la knowledge base registra le CRUD dei propri file e gruppi come
+> funzioni del registro, e «aggiungi al contesto» ha due invocatori.** Il
+> [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md) (§1.1g e
+> §2.3, sotto accettazione condizionata, riletto dal proprietario il 2026-09-04) è il caso che
+> questo ADR prevedeva con *«molti invocatori»*: la capacità del sotto-progetto 6 registra creare,
+> leggere, aggiungere al contesto, aggiornare, spostare — dentro lo spazio, dentro da fuori, fuori —
+> e cancellare, ciascuna un effetto con classe dichiarata, giornalato e checkpointato dentro
+> l'ambito di [ADR-0024](0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md); il pannello della
+> mappa e il modello sono **invocatori** delle stesse funzioni, con la stessa tripla di permesso, e
+> nessuno dei due tocca un file di lato. Disegnare il grafo, filtrare e cercare sui nomi restano
+> **presentazione** e non passano dal registro, come questo ADR già dice della manipolazione della
+> GUI. Il registro lo costruisce ancora il primo invocatore, il click del sotto-progetto 2; la
+> knowledge base vi si registra col 6. **Nessuna riga di questo ADR è superata.**
+
 ## Context
 
 Le funzioni del programma — aprire un pannello, accendere la telecamera, catturare, cambiare

@@ -124,7 +124,7 @@ piano»* qui sotto, fatto nella sessione che ha scritto il piano, come il disegn
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
-| **1** | i quattro rimandi datati in testa a ADR-0008, ADR-0009, ADR-0010 e ADR-0038, e le loro voci di §5 nel compendio | uno | ⬜ |
+| **1** | i quattro rimandi datati in testa a ADR-0008, ADR-0009, ADR-0010 e ADR-0038, e le loro voci di §5 nel compendio | uno | ✅ 2026-09-05 |
 | **2** | la decisione 7 dei gesti **chiusa in tutte le sue case**: la riga di ADR-0039 e la sua voce di §5, le sette case del disegno dei gesti, la riga di `tracciabilita.md` | uno | ⬜ |
 | **3** | `roadmap.md`: la riga 13, le celle 3 e 6, la riga di «Perché quest'ordine», l'intestazione | uno | ⬜ |
 | **4** | `tracciabilita.md`: le cinque righe che restano, e il riquadro in testa — `sede da assegnare` da tre a uno | uno | ⬜ |

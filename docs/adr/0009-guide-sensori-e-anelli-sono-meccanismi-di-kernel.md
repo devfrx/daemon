@@ -4,6 +4,24 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-09-05 — il registro delle guide e i trigger si costruiscono in un sotto-progetto
+> di kernel PRIMA della prima capacità che inietta una guida, e il registro porta due pretese.** Il
+> [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md) (§1.1d–e
+> e §2, sotto accettazione condizionata, riletto dal proprietario il 2026-09-04) ha misurato che al
+> 2026-09-04 nessuno dei meccanismi qui decisi — registro delle guide, trigger — né la proiezione di
+> [ADR-0008](0008-contesto-come-proiezione-dello-stato.md) ha una riga di codice (§6.1 del disegno,
+> col comando), e ha fissato l'**ordine**: nascono nel sotto-progetto **13** della roadmap, prima del
+> 3, o la prima capacità si inietta le skill a modo suo e nascono due strade. Le due pretese: la
+> **chiave di contesto** con cui il registro inietta esprime *ambito, run, modello*; ciò che il
+> registro conserva porta **provenienza e impronta** all'approvazione, e «approvate ora» è una
+> **proiezione del giornale**, non un secondo archivio — la forma che `crates/kernel/src/permission.rs`
+> già usa per i permessi. Il sensore d'integrità dei router e l'anello che propone una voce quando
+> un puntatore marcisce sono **usi** del contratto del sensore e dell'anello di miglioramento, non
+> cambiamenti. **Nessuna riga di questo ADR è superata.** ⚠️ Se le difese di
+> [ADR-0015](0015-descrizioni-degli-strumenti-fissate-all-approvazione.md) si estendano alle skill —
+> la decisione registrata dal rimedio di AUD-004 — resta del proprietario, con un ADR suo, prima
+> del 13.
+
 ## Context
 
 Lo stato dell'arte 2026 tratta l'harness — cioè **tutto ciò che sta attorno al

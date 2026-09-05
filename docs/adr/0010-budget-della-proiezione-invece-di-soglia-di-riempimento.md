@@ -4,6 +4,20 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-09-05 — la proiezione nasce nel sotto-progetto 13, e la mappa della knowledge
+> base è una categoria del budget.** Il
+> [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md) (§1.1d,
+> §2.2 e §6.5, sotto accettazione condizionata, riletto dal proprietario il 2026-09-04) colloca la
+> proiezione — decisa qui e in [ADR-0008](0008-contesto-come-proiezione-dello-stato.md), senza
+> codice al 2026-09-04 — nel sotto-progetto **13** della roadmap, insieme al registro delle guide e
+> ai trigger di [ADR-0009](0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md), prima della
+> prima capacità che la usa. Per la knowledge base la **mappa** — il router centrale e quello
+> dell'ambito — è una **categoria** del budget, misurata per categoria nel giornale come tutte le
+> altre; il budget resta **per modello**, e ciò che cambia col modello è la guida e il budget, non la
+> mappa, che è una. Che la mappa stia nel budget del modello più piccolo che il proprietario userà è
+> un'**assunzione dichiarata** (§6.5 del disegno), e la misura il sotto-progetto 6. **Nessuna riga
+> di questo ADR è superata.**
+
 ## Context
 
 [ADR-0008](0008-contesto-come-proiezione-dello-stato.md) stabilisce che il contesto è

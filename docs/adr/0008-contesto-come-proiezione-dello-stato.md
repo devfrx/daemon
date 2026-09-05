@@ -4,6 +4,20 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-09-05 — la proiezione si costruisce nello stesso sotto-progetto di kernel del
+> registro delle guide, prima della prima capacità che la usa; e la mappa della knowledge base è una
+> categoria della proiezione.** Il
+> [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md) (§1.1d e
+> §2.2, sotto accettazione condizionata, riletto dal proprietario il 2026-09-04) ha misurato che al
+> 2026-09-04 la proiezione qui decisa non ha una riga di codice (§6.1 del disegno, col comando), e
+> la colloca nel sotto-progetto **13** della roadmap con il registro delle guide e i trigger di
+> [ADR-0009](0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md). Per la knowledge base il
+> router centrale e quello dell'ambito entrano nella proiezione a ogni passo **per chiave** —
+> ambito, run, modello — mai per lettura del loro testo
+> ([ADR-0020](0020-nessun-modello-nel-percorso-decisionale-del-kernel.md)); le foglie entrano come
+> **riferimenti** e si rileggono su richiesta, che è già la regola di questo ADR per gli artefatti.
+> **Nessuna riga di questo ADR è superata.**
+
 ## Context
 
 Le run lunghe falliscono quasi sempre per la stessa ragione: la finestra di contesto

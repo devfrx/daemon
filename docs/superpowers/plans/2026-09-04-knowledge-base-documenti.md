@@ -125,8 +125,8 @@ piano»* qui sotto, fatto nella sessione che ha scritto il piano, come il disegn
 | # | Compito | Commit | Stato |
 |---|---|---|---|
 | **1** | i quattro rimandi datati in testa a ADR-0008, ADR-0009, ADR-0010 e ADR-0038, e le loro voci di §5 nel compendio | uno | ✅ 2026-09-05 |
-| **2** | la decisione 7 dei gesti **chiusa in tutte le sue case**: la riga di ADR-0039 e la sua voce di §5, le sette case del disegno dei gesti, la riga di `tracciabilita.md` | uno | ✅ 2026-09-05 — ⚠️ **committato e pushato, NON rivisto**: la revisione è il primo passo della sessione successiva, vedi *«Come si riprende — 2026-09-05, ESECUZIONE»* in coda |
-| **3** | `roadmap.md`: la riga 13, le celle 3 e 6, la riga di «Perché quest'ordine», l'intestazione | uno | ⬜ |
+| **2** | la decisione 7 dei gesti **chiusa in tutte le sue case**: la riga di ADR-0039 e la sua voce di §5, le sette case del disegno dei gesti, la riga di `tracciabilita.md` — e la **decima**, la voce 3 delle voci aperte del disegno dei gesti, trovata dalla revisione (E7) | due | ✅ 2026-09-05, rivisto: la prima revisione ha trovato la decima casa (I-1), chiusa dall'ondata 1 e ri-rivista |
+| **3** | `roadmap.md`: la riga 13, le celle 3 e 6, la riga di «Perché quest'ordine», l'intestazione | uno | ✅ 2026-09-05 |
 | **4** | `tracciabilita.md`: le cinque righe che restano, e il riquadro in testa — `sede da assegnare` da tre a uno | uno | ⬜ |
 | **5** | la chiusura: la Definizione di «fatto» coi comandi; il disegno e questo piano nella §12 del compendio e in `README.md`; il puntatore della §6; la riga di questo piano in roadmap; la spunta nel disegno | uno | ⬜ |
 

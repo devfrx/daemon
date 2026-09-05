@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-09-04**, con la riga del **piano dei documenti della knowledge base** nella tabella dei piani — scritto, da eseguire in una sessione nuova; lo stesso giorno lo spike **SP-7 chiuso** e il **piano del riconoscimento gesti eseguito**; il 2026-09-03 erano arrivate la riga **12 «Gesti»** e la dipendenza nuova della riga 8 — dalla §5.1 del [disegno del riconoscimento gesti](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md).
+Ultimo aggiornamento: **2026-09-05**, con la riga **13 «Registro delle guide, trigger e proiezione»**, la dipendenza nuova della riga 3, la riga 6 riscritta in due metà e la riga di «Perché quest'ordine» — dalla §5.1 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md).
 ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
 passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
 resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
@@ -162,16 +162,17 @@ flowchart LR
 | **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
 | 1 | Implementazione del kernel + simulatore DST | L0 + L1 | ✅ **chiuso il 2026-09-03 contro la §0.7** della spec — il verbale è la §7 del [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md). Lo stato per traguardo sta nella tabella dei traguardi di questo file, e il puntatore nella §6 del compendio: una casa sola ciascuno. ⚠️ **RICHIAMO DEL 2026-09-03:** questa cella portava il racconto dei sei traguardi e una voce *«registrata e non presa, del proprietario»* sul toglierlo; la §5.2 del disegno della chiusura, approvata dal proprietario, l'ha deciso — P-2 del piano | 0, 0b, 0c |
 | 2 | GUI minima (shell, chat, stato) | — | ⬜ | 1, ADR-0027 |
-| 3 | Conversazione | L2 | ⬜ | 1, 2 |
+| 3 | Conversazione | L2 | ⬜ | 1, 2, **13** — è la prima capacità che inietta una guida, assunzione dichiarata nella §6.5 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md): se non lo fosse, il 13 va comunque prima della prima che lo fa |
 | 4 | Agenti | L2 | ⬜ | 3 |
 | 5 | Coding | L2 | ⬜ | 4, 0b |
-| 6 | Conoscenza / RAG | L2 | ⬜ | 3 |
+| 6 | **Conoscenza — la mappa, poi la ricerca** — in due metà: la **mappa** (archivio unico di file a router → gruppi → foglie, skill comprese, una guida per modello; il sensore d'integrità; l'indice tenuto dal core e il pannello della GUI; le misure nel giornale), poi la **ricerca** per somiglianza sulla stessa cartella, via arbitro — [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md), §4.4 | L2 | ⬜ | 3 (→ 13), e **2** per il pannello |
 | 7 | Generazione asset | L2 | ⬜ | 1 · chiude **SP-1** |
 | 8 | Voce | L2 | ⬜ | 7, **12** · chiude **SP-2** |
 | 9 | Gestione modelli locali | L1 est. | ⬜ | 1 |
 | 10 | Integrazione OS completa | L3 | ⬜ | 2 |
 | 11 | **Backup e ripristino** — [ADR-0022](adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md); chiude **V32 · V33 · Q21** | L0 + L3 | ⬜ | 5, 6, 9 |
 | 12 | **Gesti** — il riconoscimento gesti dalla telecamera: il worker sotto il core, le due specie di evento, il primo invocatore gestuale del registro — [ADR-0038](adr/0038-registro-delle-funzioni-del-programma.md) · [ADR-0039](adr/0039-telecamera-come-sorgente-di-percezione.md) · [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) | L2 + L1 est. | ⬜ | 2, 3 |
+| 13 | **Registro delle guide, trigger e proiezione** — i tre meccanismi decisi in [ADR-0009](adr/0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md), [ADR-0008](adr/0008-contesto-come-proiezione-dello-stato.md) e [ADR-0010](adr/0010-budget-della-proiezione-invece-di-soglia-di-riempimento.md), senza codice al 2026-09-04, costruiti **prima** della prima capacità che inietta una guida; le due pretese della mappa — chiave di contesto (ambito, run, modello); provenienza e impronta, con «approvate ora» come proiezione del giornale — e l'ambito della cartella ([ADR-0024](adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md)) — [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md), §1.1d–e e §2 | L0 + L1 | ⬜ | 1 · **AUD-004 deciso**: se le difese di ADR-0015 si estendano alle skill è un ADR del proprietario — la decisione registrata in [`audit-2026-08-27.md`](audit-2026-08-27.md), *«Le decisioni prese rimediando»* |
 
 ## Perché quest'ordine
 
@@ -183,6 +184,7 @@ flowchart LR
 | Agenti prima di Coding | Coding usa gli anelli e i sensori che Agenti introduce per primo |
 | Generazione asset prima di Voce | chiude **SP-1** (il rischio più grande) prima; e **SP-2** richiede che esistano *entrambi* — voce e job GPU pesante |
 | **Gesti dopo GUI minima e Conversazione, e prima di Voce** | dal 2 i pannelli mobili e il primo invocatore del registro ([ADR-0038](adr/0038-registro-delle-funzioni-del-programma.md)); dal 3 la run che un gesto di comando comanda. Il **primo worker vero paga** — trasporto di `process`, messaggio in giù, timbro di build, prontezza del reattore, ciclo di lettura — e la Voce li **riusa** (§2.4 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md)). I gesti non usano la GPU: la ragione che mette Voce dopo Generazione asset — SP-2 vuole voce e job GPU pesante insieme — non li riguarda (decisione 11) |
+| **Registro delle guide (13) dopo la GUI minima e prima di Conversazione** | i tre meccanismi senza codice si costruiscono prima della prima capacità che inietta una guida (§1.1d del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md)), e il 2 non li usa. ⛔ A sbarrare il 13 è la decisione registrata da AUD-004 — un ADR del proprietario, da scrivere in parallelo al 2 — non il 2 |
 | L3 completo per ultimo | packaging, i18n e accessibilità non sbloccano nulla a monte |
 | **Backup dopo indici e pesi** | non è comodità, è non-vacuità. V32 dice che il backup **esclude indici e pesi perché ricostruibili**: prima che 6 e 9 li producano, l'elenco delle esclusioni è vuoto, e verificare V32 su un elenco vuoto è una prova che non può fallire — gotcha #17. Serve inoltre il filesystem reale, che arriva con 5, e l'interfaccia che dichiara le esclusioni **al momento del backup** (follow-up di ADR-0022) |
 

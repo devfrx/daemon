@@ -191,3 +191,80 @@ git fetch --all --prune && git status -sb && git log --oneline -3
 bash scripts/check-docs.sh
 bash scripts/gate.sh
 ```
+
+---
+
+## ⚠️ Punto fermo del 2026-09-06, scritto a metà brainstorming
+
+Aggiunto dalla sessione che ha ripreso da questa consegna e ha fatto il brainstorming. Serve a
+non perdere le decisioni se la sessione cade: si lavora da più macchine, e ciò che non è in un
+file tracciato non esiste. ⛔ **La procedura di chiusura in testa a questo file resta valida:**
+alla chiusura il file si riscrive sul posto e il testo originale della consegna va in archivio
+parola per parola — l'originale è `git show ae40fa0:docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md`,
+quindi questo blocco non lo inquina.
+
+**Ripresa verificata coi comandi della tabella in testa**, nessuna divergenza; `GATE GREEN` e
+`check-docs.sh` `OK` rilanciati all'apertura. Percorso confermato **architetturale**.
+
+### Le risposte del proprietario, una per domanda
+
+| # | Domanda | Risposta |
+|---|---|---|
+| 1 | la chat del 2 parla con un modello vero? | **A** — no: finestra della chat e filo col core; il flusso lo manda un core finto; il modello vero col 3 |
+| 2 | quale «stato» mostra il 2? | **A** — solo ciò che il kernel sa oggi: degrado, `Refused` e `Queued` distinti (G15), policy VRAM e budget, la riga G16 |
+| 3 | in che ordine? | **A** — prima lo spike M1–M5 che chiude ADR-0029, poi il trasporto in `platform`, poi la SPA |
+| 4 | chi decodifica `bincode` lato GUI? | **A** — lo decide la misura: riga qualitativa del protocollo M1–M5. ADR-0027 riletto: «nessun tipo condiviso» è un costo accettato, non un divieto, e rimanda al guscio le conseguenze |
+| 5 | prima funzione del registro? | **A** — il cambio di policy VRAM, `Arbiter::set_policy` |
+| 6 | dove vive la GUI, chi la controlla? | **A** — `gui/` alla radice, fuori dal workspace Cargo, toolchain propria; **un passo nuovo del cancello, approvato** (vincolo globale 7) |
+| 7 | il kit UI? | **B** — primitive senza stile, **dipendenza nuova approvata** |
+| 7-bis | quale libreria? | **A — Reka UI** |
+| 8 | testi e accessibilità dal primo giorno? | **A** — stringhe in un file di risorse con `vue-i18n`, **dipendenza nuova approvata**; tastiera e contrasto da subito |
+| 8-bis | la lingua del file di risorse? | **A — italiano** |
+| 9 | chi avvia chi? | **A** — la GUI trova il core; se manca lo dichiara (ADR-0019); avvio del core a mano fino al 10 |
+| 10 | come si prova lo specchio? | **A** — i byte di `crates/kernel/tests/ipc_wire.rs` diventano fixture del lato GUI; una variante nuova li rigenera |
+| 11 | la casella per scrivere nella chat? | **A** — nel 3: nel 2 la finestra mostra il flusso che arriva (G4) con la provenienza in vista (G13); il finto manda a tempo; una casella oggi manderebbe nel vuoto, lo stesso motivo del no ai pannelli vuoti |
+| strada | che fa il core vero, dove vive il finto? | **A** — il daemon vero impara il filo, la stretta di mano col timbro, manda degrado, verdetti e policy, riceve il cambio di policy; il finto è un programma Rust a parte in `gui/`, fuori dal workspace, con lo schema vero del kernel e il filo vero di `platform`; manda token a tempo come lo spike. Scartate: il finto in TypeScript (dovrebbe scrivere `bincode`, e non prova né filo né codifica) e l'interruttore «chat finta» nel daemon (codice finto nel prodotto, e o costruisce run e passo — metà del 3 — o è il «percorso chat» che ADR-0011 vieta) |
+
+### Lo stato dell'arte verificato oggi, e il comando
+
+Fonte primaria: il registro npm, interrogato il 2026-09-06. ⚠️ **Casa provvisoria**: alla
+chiusura passa in [`riferimenti.md`](../../riferimenti.md), e qui resta il rimando.
+
+```
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+for p in ["reka-ui", "@ark-ui/vue", "primevue", "vuetify", "@headlessui/vue", "vue-i18n", "vue"]:
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    v = d["dist-tags"]["latest"]; print(p, v, d["time"][v][:10], d["versions"][v].get("license"), d["versions"][v].get("peerDependencies", {}).get("vue"))
+    w = json.load(urllib.request.urlopen("https://api.npmjs.org/downloads/point/last-week/" + urllib.parse.quote(p, safe="@")))
+    print("  download/settimana:", w["downloads"])
+EOF
+```
+
+| Pacchetto | Versione | Pubblicata | Licenza | Vue richiesto | Download/settimana (23–29 ago) |
+|---|---|---|---|---|---|
+| `reka-ui` | 2.10.4 | 2026-08-25 | MIT | ≥ 3.4.0 | 1 819 411 |
+| `@ark-ui/vue` | 5.39.1 | 2026-08-28 | MIT | ≥ 3.5.0 | 26 395 |
+| `primevue` | 5.0.1 | 2026-08-13 | MIT (`LICENSE.md` letto su GitHub) | — | 812 258 |
+| `vuetify` | 4.2.0 | 2026-09-02 | MIT | ^3.5 | 1 040 959 |
+| `@headlessui/vue` | 1.7.23 | **2024-09-09** | MIT | ^3.2 | non misurato: fermo da due anni, escluso |
+| `vue-i18n` | 11.4.10 | 2026-08-25 | MIT | ^3.0 | non misurato |
+| `vue` | 3.5.42 | 2026-08-27 | MIT | — | non misurato |
+
+Ciò che ha deciso 7-bis: la logica di Ark UI è agnostica dal framework, cosa che ADR-0030
+apprezza, ma il suo pacchetto Vue è usato molto meno di Reka UI — i due numeri stanno nella
+tabella; per una libreria di primitive, che è un adattatore Vue in ogni caso, pesa di più chi la
+tiene viva.
+
+### Ciò che il codice dice, letto oggi per scegliere la strada
+
+- `IpcMessage` in `crates/kernel/src/wire/ipc.rs` ha oggi **due** varianti, `Request(GrantRequest)` e `Verdict(Verdict)`: niente token, niente degrado, niente policy sul filo. Il 2 lo allarga.
+- `crates/daemon/src/main.rs` **non nomina `Ipc`**: il grafo di produzione non accetta nessun client.
+- `Degradation` ha **due** campi, `vram_exhausted` e `routing_degraded`, e nasce da una lettura del giornale.
+- `spikes/gui-ipc/` parla **JSON a righe** su `interprocess 2.4`, non lo schema del kernel: per M1–M5 si riusa l'emissione a tempo, non il formato.
+- il cancello aggiunge un passo con `run "<etichetta>" <comando>` in `scripts/gate.sh`.
+
+### Ancora da fare in questa sessione
+
+Le sezioni del disegno, una per volta con approvazione; alla chiusura la procedura in testa al
+file.

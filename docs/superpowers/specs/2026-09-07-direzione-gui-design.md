@@ -101,6 +101,9 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     codice (`crates/kernel/src/degradation.rs`); le registrate sul grafico dell'occupazione GPU e su chi
     costruisce l'esportazione OTLP; la seconda passata su ADR e tracciabilità, chiesta dal proprietario, ha
     trovato altre righe candidate, che si scrivono solo dopo l'approvazione.
+12. Le cinque righe candidate dello Stato (8–12) approvate (**A**) e scritte; la riga 18 della Chat guadagna la
+    fonte «Run persistenti, ripresa e cancellazione», letta nella spec del kernel come annullamento (SP-4) e non
+    come cancellazione dallo storico.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -267,7 +270,7 @@ del core finto, la finestra di permesso — e dal **3**, la chat vera. Messaggi 
 | 15 | barra, per run | il microfono: dettatura e push-to-talk, gli stati ascolto, pensiero, parlato | righe «Push-to-talk e dettatura» e «Stati di ascolto/pensiero/parlato» · ADR-0011 | 8 | fonte verificata; il «dove» dedotto |
 | 16 | barra, per run | le guide attive per questa run: skill e profilo | ADR-0009 · righe «Skills» e «System prompt, personas e profili» | 13 il registro, 3 la mostra | fonte verificata; il «dove» dedotto |
 | 17 | barra, per run | gli strumenti di questa run: server MCP attivi e sospesi | ADR-0003 · ADR-0019 · righe «MCP» e «Tool calling» | 4 | fonte verificata; il «dove» dedotto |
-| 18 | comando | ferma la risposta; il costo dello stream interrotto resta nel giornale | riga «HITL: interruzione e steering» · ADR-0011 | 4 | verificato |
+| 18 | comando | ferma la risposta; il costo dello stream interrotto resta nel giornale | riga «HITL: interruzione e steering» · riga «Run persistenti, ripresa e cancellazione» — la «cancellazione» è l'annullamento di una run o di una richiesta in corso, SP-4 della spec del kernel · ADR-0011 | 4 | verificato; fonte allargata il 2026-09-07 dopo l'approvazione, contenuto invariato |
 | 19 | comando | «+ nuova run»: una chat è una run | ADR-0011, corollario | 3 | verificato; «chiede la cartella» nelle registrate |
 | 20 | comando | «stacca» la scheda in un pannello libero o in un'altra finestra; manipolazione della GUI, non passa dal registro | `dockview` · ADR-0038 | 2 | verificato |
 | 21 | comando | fork e branching, modifica e rigenerazione, ricerca nello storico, template e prompt salvati, esportazione: una riga ciascuno quando il 3 li disegna | le cinque righe di tracciabilità, casa Conversazione | 3 | verificato |
@@ -280,7 +283,7 @@ continua e proattiva (ADR-0010): il contesto si vede (riga 11), non si comanda; 
 non fidato — si marca, non si sana (ADR-0014).
 
 **Esaminate e senza fonte oggi**, quindi fuori finché non diventano una riga G: rinominare una run;
-cancellare una chat (il giornale è append-only, ADR-0007: sarebbe una decisione, non una riga); «pensa di
+cancellare una chat dallo storico (il giornale è append-only, ADR-0007: sarebbe una decisione, non una riga; la «cancellazione» di tracciabilità è un'altra cosa, l'annullamento di una run in corso, riga 18); «pensa di
 più»; un interruttore «modalità piano» nella barra (il piano è del 4 come capacità, non come interruttore);
 mettere in coda un messaggio mentre il modello scrive; fissare o archiviare una chat.
 
@@ -309,16 +312,24 @@ Messaggi IPC del disegno del 2, nomi provvisori (§4 del 2): `Degradation`, `Pol
 | 5 | il profilo «riservato» attivo e ciò che spegne: avvio automatico, voce always-on, telecamera | ADR-0023 · ADR-0039 | 3, col gestore dei segreti (riga «Gestione segreti e credenziali») | fonte verificata; il «chi» dedotto |
 | 6 | la transizione di policy, quando è offerta: gli effetti osservabili prima di accettarla — eviction, ricarica, notifica | ADR-0006 · riga «Swap coordinato» | 9 | fonte verificata; il «chi» dedotto |
 | 7 | l'occupazione della GPU nel tempo, come grafico | G8 · ADR-0005 | 9 | fonte verificata; se vive qui o nel modulo Modelli locali: nelle registrate |
+| 8 | chi tiene la VRAM adesso: le concessioni attive per titolare — i worker, la quota audio, la quota di presentazione della GUI stessa | ADR-0005 · ADR-0033 · righe «Semaforo unico delle risorse GPU» e «Budget di VRAM riservata all'audio» | 7 o 9, chi porta il primo worker che tiene VRAM | fonte verificata; il «chi» dedotto; serve un messaggio IPC nuovo, dedotto |
+| 9 | i livelli di confinamento disponibili su questa macchina; se manca il livello 2, l'esecuzione di codice non parte | ADR-0025 · ADR-0019 · righe «Sandboxing ed esecuzione» e «Permessi e sandbox policy», L-5 | 5 | fonte verificata; se qui o nel modulo Permessi: dedotto |
+| 10 | dopo un riavvio: la riconciliazione del giornale, e quanti passi restano in dubbio | ADR-0007 · ADR-0018 · riga «Run persistenti, ripresa e cancellazione» | 3 | fonte verificata; il «dove» dedotto |
+| 11 | la telemetria: nessuna lascia la macchina per default; se l'esportazione è accesa, verso dove | ADR-0017 · V25 · riga «Telemetria locale e «no telemetry» garantito» | chi costruisce l'esportazione: nelle registrate, del proprietario | fonte verificata; il «chi» dedotto |
+| 12 | la versione del programma, e se c'è un aggiornamento | riga «Packaging e aggiornamenti» | 10 | fonte verificata; se qui o nel modulo Impostazioni: dedotto |
 
 **Nessun comando:** il cambio di policy è una funzione del registro e sta nel modulo Impostazioni (§5 e §6a
 del 2, ADR-0038): Stato mostra, non comanda.
 
 **Esaminate e senza fonte oggi:** l'uso di CPU e RAM (M1–M5 sono misure dello spike, non righe della GUI); un
-tasto «riavvia il core» (la fascia ha «riprova», che ricollega, §6a del 2). Il registro degli eventi non è
-qui: è il modulo Passi (riga «Osservabilità e tracing locale → GUI minima»).
+tasto «riavvia il core» (la fascia ha «riprova», che ricollega, §6a del 2); l'elenco dei worker (ADR-0004 e
+ADR-0028 li descrivono, nessuna riga dice di mostrarli: entrano solo come titolari di VRAM, riga 8). Il registro
+degli eventi non è qui: è il modulo Passi (riga «Osservabilità e tracing locale → GUI minima»).
 
-Debiti dichiarati: le righe del 3, del 9 e del 12 nascono a parole nel 2. 🔶 Dedotto, da confermare da chi
-costruisce: le quote sottratte della riga 2; il «chi» delle righe 5 e 6; la casa della riga 7.
+Debiti dichiarati: le righe del 3, del 5, del 7, del 9, del 10 e del 12 nascono a parole nel 2. 🔶 Dedotto, da
+confermare da chi costruisce: le quote sottratte della riga 2; il «chi» delle righe 5, 6, 8 e 11; la casa delle
+righe 7, 9, 10 e 12; il messaggio IPC della riga 8. ✅ Le righe 8–12 vengono dalla seconda passata su ADR e
+tracciabilità chiesta dal proprietario, approvate il 2026-09-07 prima di essere scritte.
 
 Controllo sui cinque criteri: fonti lette il 2026-09-07 — la §5 del compendio, le righe G, tracciabilità, la
 §4 e la §6a del 2, e i due campi nel codice; stessa forma della tabella Chat; le voci aperte nelle registrate;
@@ -389,9 +400,9 @@ dopo la misura.
 riparte dalla **sezione 1**, il catalogo dei moduli allargato. L'elenco resta com'era, come verbale.
 
 ✅ **Alla seconda ripresa dello stesso giorno:** le tabelle **Chat** e **Stato** della sezione 1 sono approvate e
-scritte; per Stato la seconda passata su ADR e tracciabilità ha trovato altre righe candidate, che si scrivono
-solo dopo l'approvazione; poi **Permessi** e gli altri moduli nell'ordine della proposta, una tabella per volta
-in forma A/B, ciascuna con verificato e dedotto separati.
+scritte, Stato in due passate; si prosegue con **Permessi** e gli altri moduli nell'ordine della proposta, una
+tabella per volta in forma A/B, ciascuna con verificato e dedotto separati, e con una seconda passata su ADR e
+tracciabilità prima di chiudere ogni tabella.
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa
    chiusura o uno successivo.

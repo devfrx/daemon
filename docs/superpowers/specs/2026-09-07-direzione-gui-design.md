@@ -19,7 +19,7 @@ viaggio della knowledge base (`07ab6dc` → `6a7967a`) e del 2 (`ae40fa0` → `6
 
 Stella polare a metà: sette decisioni del proprietario più la modularità, quattro wireframe disegnati e
 salvati — Home approvata; Lavoro e Compatta col grafo **approvati come mappa alla ripresa del 2026-09-07**,
-con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **cominciata**, tabelle Chat e Stato approvate; nessun codice toccato; mancano il resto della sezione 1, le altre cinque sezioni della stella polare e le §7–§10 del 2,
+con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **cominciata**, tabelle Chat, Stato e Permessi approvate; nessun codice toccato; mancano il resto della sezione 1, le altre cinque sezioni della stella polare e le §7–§10 del 2,
 poi i due disegni e il piano.
 
 ## ⛔ Da sapere subito
@@ -104,6 +104,9 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 12. Le cinque righe candidate dello Stato (8–12) approvate (**A**) e scritte; la riga 18 della Chat guadagna la
     fonte «Run persistenti, ripresa e cancellazione», letta nella spec del kernel come annullamento (SP-4) e non
     come cancellazione dallo storico.
+13. La **tabella Permessi**, dieci righe, con le due passate fatte prima della presentazione, approvata (**A**) e
+    scritta; la correzione del «chi» della riga 12 della Chat — i preset sono del 4, riga «Modalità di permessi a
+    più livelli» — approvata insieme, con richiamo datato.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -264,7 +267,7 @@ del core finto, la finestra di permesso — e dal **3**, la chat vera. Messaggi 
 | 9 | flusso | il primo uso di uno strumento MCP: descrizione integrale e impronta all'approvazione; se cambia, sospeso col diff | ADR-0015 · righe «MCP» e «Difesa da tool poisoning» di tracciabilità | 4 | verificato |
 | 10 | barra, per run | la casella di scrittura e «invia» | G4 · §1 del 2: «casella di scrittura → il 3» | 3 | verificato |
 | 11 | barra, per run | il contesto della run: occupazione per categoria | G11 · ADR-0010 · riga «Indicatore di riempimento contesto» | 3, col dato dal 13 | verificato, decisione 10 |
-| 12 | barra, per run | la modalità di esecuzione: i tre preset | ADR-0016 | 3 | verificato, decisione 10; per run o globale nelle registrate |
+| 12 | barra, per run | la modalità di esecuzione: i tre preset | ADR-0016 · riga «Modalità di permessi a più livelli» | 4 i preset, 3 la mostra per run | verificato, decisione 10; per run o globale nelle registrate. ✅ **Richiamo del 2026-09-07:** il «chi» diceva 3; la riga di tracciabilità assegna i preset al 4, corretto con l'approvazione del proprietario |
 | 13 | barra, per run | il modello in uso, dal record di routing | ADR-0011 · riga «Indicatore di stato modello» | 3 | verificato, decisione 11; il selettore a mano nelle registrate |
 | 14 | barra, per run | «+ allegati»: file e immagini, marcati non fidati | righe «Allegati in chat» e «Input immagini e vision» · ADR-0014 | 3 | verificato; il rapporto con «aggiungi al contesto» nelle registrate |
 | 15 | barra, per run | il microfono: dettatura e push-to-talk, gli stati ascolto, pensiero, parlato | righe «Push-to-talk e dettatura» e «Stati di ascolto/pensiero/parlato» · ADR-0011 | 8 | fonte verificata; il «dove» dedotto |
@@ -335,11 +338,47 @@ Controllo sui cinque criteri: fonti lette il 2026-09-07 — la §5 del compendio
 §4 e la §6a del 2, e i due campi nel codice; stessa forma della tabella Chat; le voci aperte nelle registrate;
 nessuna dipendenza da scegliere; solo righe con una fonte oggi.
 
+#### Permessi · approvata il 2026-09-07
+
+**Tipo** registrato nella SPA; **esemplare**: uno. È la tessera «Permessi» della Home, viva nel 2 — la tripla del
+registro, oggi una, e la finestra di conferma; la voce «permessi» della striscia ne è il riassunto. Costruito dal
+**2**, poi dal 3 (le run) e dal 4 (i preset, i server MCP). Messaggi IPC del disegno del 2: `PermissionRequired`,
+`Approve`; la lista delle triple concesse chiede un messaggio nuovo (riga 1).
+
+| # | Cosa mostra o fa | Fonte | Chi | Verificato · dedotto |
+|---|---|---|---|---|
+| 1 | le triple concesse nella sessione — strumento, risorsa, operazione — ognuna con chi l'ha chiesta, quando, per quale run | G10 · V21 · ADR-0016 · ADR-0038 | 2 la tripla del registro, 3 per run | fonte verificata; il messaggio IPC con la lista, dal core (I1): dedotto |
+| 2 | quanto dura un permesso: quella tripla, quella sessione; finché il 3 non costruisce il confine di sessione la GUI non lo promette | ADR-0016 · V21 · §5 del 2, letto nel codice: `is_granted` rilegge tutto il giornale | 2 dichiara, 3 costruisce | verificato |
+| 3 | la richiesta in attesa, e quante ce ne sono per run: la tripla a parole di tutti i giorni, la classe dell'effetto, chi la invoca, il livello di confinamento richiesto e se c'è | ADR-0016 · ADR-0038 · ADR-0007 · ADR-0025 · `PermissionRequired` · riga «HITL: approvazioni» | 2 il click, 3 l'agente, 5 il livello, 8 la voce, 12 il gesto | verificato; il livello qui o in Stato (riga 9 di Stato): dedotto |
+| 4 | il preset attivo — chiede sempre, auto-approva sicuri (default), autonomo — e cosa ognuno lascia passare | ADR-0016 · riga «Modalità di permessi a più livelli» | 4 | verificato; per run o globale nelle registrate |
+| 5 | i vincoli sui dati del profilo: ritenzione, provider esclusi, solo locale; e l'escalation automatica quando un contenuto è passato dal gestore dei segreti | ADR-0016 · ADR-0012 · ADR-0023 · riga «Zero-Data-Retention selettivo» | 3 | fonte verificata; qui o in Stato: dedotto |
+| 6 | i server MCP e i loro strumenti: la descrizione approvata con l'impronta; sospeso col diff se cambia | ADR-0003 · ADR-0015 · righe «MCP» e «Difesa da tool poisoning» | 4 | verificato |
+| 7 | regola: si chiede uguale anche se la richiesta nasce da contenuto non fidato o da un evento di percezione — informano, non autorizzano | ADR-0014 · ADR-0038 | 2 in poi | verificato |
+| 8 | regola: un effetto irripetibile chiede conferma a chiunque lo invochi; per default la conferma non è gestuale, e quali funzioni siano gestuali lo decide il 12 | ADR-0038 · ADR-0007 · riga «Approvazione comandi distruttivi» | 2, 12 | verificato |
+| 9 | comando: consenti o rifiuta; nel 2 la finestra con la trappola di focus, dal 3 anche in riga nella chat | ADR-0016 · `Approve` · §6a del 2 · G20 | 2, 3 | verificato; «in riga» dedotto |
+| 10 | comando: revoca un server MCP | ADR-0003, «revocabile» | 4 | verificato |
+
+**Non entra, per decisione già presa:** spostare pannelli e menu non chiede permesso — è presentazione, non passa
+dal registro (ADR-0038).
+
+**Esaminate e senza fonte oggi:** revocare una singola tripla già concessa (nel codice non c'è); «ricorda per
+sempre» (contro «un'approvazione non si estende», ADR-0016); una lista di regole scritta a mano; una scadenza a
+tempo di un permesso.
+
+Debiti dichiarati: le righe del 3, del 4, del 5, dell'8 e del 12 nascono a parole nel 2; nel 2 la lista delle
+triple è una. 🔶 Dedotto, da confermare da chi costruisce: il messaggio IPC della riga 1; la casa del livello
+(riga 3) e della riga 5; «in riga» della riga 9.
+
+Controllo sui cinque criteri: fonti lette il 2026-09-07 — la §5 del compendio, le righe G, V21, tracciabilità, la
+§5 e la §6a del 2 e `is_granted` nel codice; stessa forma delle tabelle Chat e Stato; le voci aperte nelle
+registrate; nessuna dipendenza da scegliere; solo righe con una fonte oggi. La seconda passata su ADR e
+tracciabilità, fatta prima della presentazione, ha portato la correzione del «chi» della riga 12 della Chat.
+
 ## Le sezioni che mancano — proposte del coordinatore, non decisioni
 
 | § | Che cosa | La proposta da cui partire |
 |---|---|---|
-| 1 | **il catalogo dei moduli**: tipi, numero del sotto-progetto, messaggi IPC che consumano | una tabella per tipo: Chat (2, 3 · `Token`, e col 3 i messaggi della run), Stato (2 · `Degradation`, `Policy`, `Accepted`, `Verdict`), Permessi (2 · `PermissionRequired`, `Approve`), Passi (2, 3 · un messaggio nuovo con la lista dei passi), Attività (3, 4, 13), Ambito (5), Diff (5), Anteprima (3), Terminale (5), Sensori (4), Costi (3), Knowledge base e Nucleo a pagina intera (6), Asset 3D (7), Voce e gesti (8, 12), Backup (11), Checkpoint (5), Modelli locali (9), Impostazioni (2, il cambio di policy è già una funzione del registro). La regola: un modulo il cui sotto-progetto non è chiuso mostra a parole chi lo riempie. ⚠️ **Allargata alla ripresa del 2026-09-07, decisione 10:** per ogni modulo anche **cosa mostra** e **quali comandi ha**, riga per riga con la **fonte** — G, ADR, riga di tracciabilità — e il sotto-progetto che costruisce la riga; e il «dove» dentro il modulo quando conta: contesto della run, modalità di esecuzione e «+ allegati» nella barra della chat, per run ✅ **RICHIAMO DEL 2026-09-07, seconda ripresa:** la sezione è **cominciata**: le tabelle **Chat** e **Stato** sono approvate e stanno nella §1 delle sezioni approvate qui sopra; restano gli altri moduli, uno per volta |
+| 1 | **il catalogo dei moduli**: tipi, numero del sotto-progetto, messaggi IPC che consumano | una tabella per tipo: Chat (2, 3 · `Token`, e col 3 i messaggi della run), Stato (2 · `Degradation`, `Policy`, `Accepted`, `Verdict`), Permessi (2 · `PermissionRequired`, `Approve`), Passi (2, 3 · un messaggio nuovo con la lista dei passi), Attività (3, 4, 13), Ambito (5), Diff (5), Anteprima (3), Terminale (5), Sensori (4), Costi (3), Knowledge base e Nucleo a pagina intera (6), Asset 3D (7), Voce e gesti (8, 12), Backup (11), Checkpoint (5), Modelli locali (9), Impostazioni (2, il cambio di policy è già una funzione del registro). La regola: un modulo il cui sotto-progetto non è chiuso mostra a parole chi lo riempie. ⚠️ **Allargata alla ripresa del 2026-09-07, decisione 10:** per ogni modulo anche **cosa mostra** e **quali comandi ha**, riga per riga con la **fonte** — G, ADR, riga di tracciabilità — e il sotto-progetto che costruisce la riga; e il «dove» dentro il modulo quando conta: contesto della run, modalità di esecuzione e «+ allegati» nella barra della chat, per run ✅ **RICHIAMO DEL 2026-09-07, seconda ripresa:** la sezione è **cominciata**: le tabelle **Chat**, **Stato** e **Permessi** sono approvate e stanno nella §1 delle sezioni approvate qui sopra; restano gli altri moduli, uno per volta |
 | 2 | **viste e disposizione**: i layout come JSON, l'archivio minimo nel core, i due messaggi | `Layout` dal core all'accoglienza, dopo `Accepted`; `SaveLayout` dalla GUI; l'archivio in `platform` con una voce, nella forma dell'archivio «configurazione, guide, profili» di ADR-0022, consegnato al daemon e non letto dal kernel (ADR-0034); ⚠️ da decidere lì: se «salva disposizione» sia una **funzione del registro** con la propria tripla (ADR-0038 dice che la manipolazione della GUI non passa dal registro; il salvataggio durevole è un'altra cosa) o una scrittura di configurazione fuori dal registro; le tre viste di default come JSON committati in `gui/` |
 | 3 | **la fetta del 2 ritagliata**: che cosa costruisce adesso, e come si riscrivono §1 e §6a | §1 del 2 guadagna: il motore dei moduli (`dockview-core`, dipendenza nuova, in due passi), le tre viste con Compatta come segnaposto, il modulo Passi col suo messaggio, l'archivio della disposizione coi due messaggi; §6a: «le due schermate» diventano «Home e Lavoro nella cornice», la finestra di permesso resta; il pezzo 6 della tabella di §1 cambia forma. Tutto con richiamo datato, non riscrittura silenziosa |
 | 4 | **lo spike di accettazione** di `dockview`, dentro lo spike del guscio | in `spikes/gui-shell/`, sul frontend minimo di §2 del 2: una Home finta con `dockview-core` — nucleo bloccato, quattro tessere, una libera, una a pagina intera, presa grande — e la giudica il **proprietario provandola**, come per la mano in SP-7; il criterio scritto **prima** in `spikes/gui-shell/PROTOCOLLO.md`; se non dà il «Jarvis», si passa a `interactjs` prima di scrivere la SPA. In più M4 misura P3 con `dockview` acceso |
@@ -399,10 +438,10 @@ dopo la misura.
 ⚠️ **Alla ripresa del 2026-09-07 il punto 5 è avanzato:** le due conferme sono date (decisione 10), e si
 riparte dalla **sezione 1**, il catalogo dei moduli allargato. L'elenco resta com'era, come verbale.
 
-✅ **Alla seconda ripresa dello stesso giorno:** le tabelle **Chat** e **Stato** della sezione 1 sono approvate e
-scritte, Stato in due passate; si prosegue con **Permessi** e gli altri moduli nell'ordine della proposta, una
-tabella per volta in forma A/B, ciascuna con verificato e dedotto separati, e con una seconda passata su ADR e
-tracciabilità prima di chiudere ogni tabella.
+✅ **Alla seconda ripresa dello stesso giorno:** le tabelle **Chat**, **Stato** e **Permessi** della sezione 1 sono
+approvate e scritte; si prosegue con **Passi** e gli altri moduli nell'ordine della proposta, una tabella per
+volta in forma A/B, ciascuna con verificato e dedotto separati, e con una seconda passata su ADR e tracciabilità
+prima di chiudere ogni tabella.
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa
    chiusura o uno successivo.

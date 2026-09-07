@@ -15,10 +15,23 @@ parola per parola. È il viaggio della consegna della knowledge base (`07ab6dc` 
 ⚠️ **Non è una spec e non è ancora il disegno.** Il prossimo passo sta nella §6 del
 [compendio](../../COMPENDIO.md), in un posto solo.
 
+⚠️ **RICHIAMO DEL 2026-09-07 — il brainstorming è proseguito e si è ALLARGATO, per scelta del
+proprietario, alla forma di tutta la GUI.** La consegna di quella sessione è
+[`2026-09-07-direzione-gui-design.md`](2026-09-07-direzione-gui-design.md), la **stella polare**, e si
+legge **prima** di questo file. Le decisioni prese lì che **ritagliano il 2**, in una riga ciascuna: il 2
+costruisce la **cornice** — le viste Home, Lavoro e Compatta, i moduli mobili con `dockview-core`, la Home
+col nucleo che a parole dice «niente ancora» — più la sua fetta di oggi; il modulo **Passi** nasce col 2,
+con un messaggio IPC per la lista dei passi; l'**archivio della disposizione** — una voce sola, due
+messaggi — nasce col 2; la chat **non** sta nella Home di default. I wireframe di Home e Lavoro
+sostituiscono la proposta della §6b qui sotto. ⛔ **Le §1 e §6a restano approvate com'erano**, e si
+riscrivono col disegno sulla base della stella polare, non prima: ciascuna porta il proprio richiamo.
+Il «Prossimo passo» di questo file è **superato** da quello della stella polare.
+
 ## Stato in una riga
 
-Brainstorming del 2 a metà: undici risposte più la strada, le sezioni §1–§6a approvate, nessun
-codice toccato; mancano i wireframe e le sezioni §6b–§10, poi il disegno scritto e il piano.
+Brainstorming del 2 a metà, poi allargato alla stella polare il 2026-09-07: undici risposte più la
+strada, le sezioni §1–§6a approvate coi richiami datati, nessun codice toccato; mancano le sezioni
+scritte della stella polare e le §7–§10 di questo file, poi i due disegni scritti e il piano.
 
 ## ⛔ Da sapere subito
 
@@ -163,6 +176,12 @@ libreria di primitive, che è un adattatore Vue in ogni caso, pesa di più chi l
 
 ### §1 — Il perimetro del 2 · approvata il 2026-09-06
 
+⚠️ **RICHIAMO DEL 2026-09-07:** la stella polare aggiunge al perimetro — con richiamo, non con
+riscrittura — il motore dei moduli (`dockview-core`, dipendenza nuova, in due passi), le tre viste con
+Compatta come segnaposto, il modulo Passi col suo messaggio, e l'archivio della disposizione coi due
+messaggi; il pezzo 6 cambia forma. La riscrittura è del disegno: sezione 3 della tabella *«Le sezioni che
+mancano»* di [`2026-09-07-direzione-gui-design.md`](2026-09-07-direzione-gui-design.md).
+
 Costruisce, in quest'ordine:
 
 | # | Pezzo | Dove vive |
@@ -306,6 +325,11 @@ vuoto in produzione (chiusore il 10, un watchdog dell'OS).
 
 ### §6a — La GUI: struttura, strati, regole · approvata il 2026-09-06, a condizione
 
+⚠️ **RICHIAMO DEL 2026-09-07:** «le due schermate» diventano **Home e Lavoro dentro la cornice** di
+`dockview-core`; `panels/` ospita i moduli e le tre viste come JSON; la finestra di conferma del permesso
+resta; la vista chat non sta nella Home di default (domanda 7 della stella polare). La riscrittura è del
+disegno, sulla base di [`2026-09-07-direzione-gui-design.md`](2026-09-07-direzione-gui-design.md).
+
 | Pezzo | Forma |
 |---|---|
 | dove e con che cosa | `gui/` alla radice, fuori dal workspace Cargo; toolchain web propria: Node LTS con la versione appuntata nel progetto, `vite` 8.2.2, Vue 3.5.42, `pinia` 4.0.3, Reka UI 2.10.4, `vue-i18n` 11.4.10, TypeScript. Il `package-lock.json` si committa: nel cancello gira `npm ci`, gemello di `--locked`, e manifesto e lockfile viaggiano insieme |
@@ -360,6 +384,10 @@ ambiguità, perimetro), la rilettura del proprietario, e `superpowers:writing-pl
 - contare la quaterna dei test con un `awk` sul log del cancello: conta due volte i bersagli del passo 7.
 
 ## Prossimo passo, eseguibile
+
+⚠️ **RICHIAMO DEL 2026-09-07: questo elenco è SUPERATO.** Il passo vivo sta nella sezione omonima di
+[`2026-09-07-direzione-gui-design.md`](2026-09-07-direzione-gui-design.md), e il puntatore nella §6 del
+compendio. L'elenco resta com'era, come verbale di ciò che la sessione del 2026-09-06 lasciava.
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di
    questa chiusura o uno successivo.

@@ -1,0 +1,61 @@
+<svg viewBox="0 0 680 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t2 d2">
+<title id="t2">Wireframe della vista Lavoro</title>
+<desc id="d2">Barra in alto, elenco delle run e ambito a sinistra, chat a schede al centro con provenienza e richiesta di permesso, diff e anteprima a destra, passi e sensori in basso, striscia di stato. Presentato il 2026-09-07; il proprietario ha scelto A sul modulo Passi (nasce col 2) e non ha chiesto modifiche; approvazione da confermare alla ripresa.</desc>
+<style>
+svg{color:#2c2c2a;font-family:system-ui,sans-serif;background:#fff}
+.t{fill:#2c2c2a}.ts{fill:#5f5e5a}
+.c-gray rect{fill:#d3d1c7;stroke:#888780}
+.c-amber rect,.c-amber circle{fill:#fac775;stroke:#854f0b}
+</style>
+<rect x="8" y="8" width="56" height="22" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="36" y="23" class="ts" font-size="12" text-anchor="middle">Home</text>
+<g class="c-gray"><rect x="70" y="8" width="56" height="22" rx="4"/></g><text x="98" y="23" class="t" font-size="12" text-anchor="middle">Lavoro</text>
+<rect x="132" y="8" width="66" height="22" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="165" y="23" class="ts" font-size="12" text-anchor="middle">Compatta</text>
+<rect x="246" y="8" width="200" height="22" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.5"/><text x="256" y="23" class="ts" font-size="12">cerca artefatti…</text>
+<rect x="560" y="8" width="112" height="22" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="616" y="23" class="ts" font-size="11" text-anchor="middle">core: collegato</text>
+<rect x="8" y="38" width="664" height="18" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"/><text x="340" y="51" class="ts" font-size="11" text-anchor="middle">fascia: solo se il core manca o il timbro è sbagliato</text>
+<rect x="8" y="64" width="142" height="160" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="5 3"/><rect x="14" y="70" width="10" height="3" fill="currentColor" fill-opacity="0.4"/><rect x="14" y="75" width="10" height="3" fill="currentColor" fill-opacity="0.4"/><text x="30" y="79" class="t" font-size="12">Attività</text><text x="144" y="79" class="ts" font-size="11" text-anchor="end">3 · 4</text>
+<g class="c-gray"><rect x="14" y="88" width="130" height="18" rx="3"/></g><text x="20" y="101" class="t" font-size="11">run 12 · in corso</text>
+<text x="28" y="121" class="ts" font-size="11">sub-run 12.1 · test</text><text x="28" y="137" class="ts" font-size="11">sub-run 12.2 · docs</text>
+<text x="20" y="157" class="t" font-size="11">run 9 · aspetta te</text><text x="20" y="173" class="ts" font-size="11">run 7 · finita</text><text x="20" y="189" class="ts" font-size="11">run 4 · finita</text>
+<rect x="14" y="200" width="130" height="16" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="79" y="212" class="ts" font-size="11" text-anchor="middle">+ nuova run</text>
+<rect x="8" y="232" width="142" height="236" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="5 3"/><rect x="14" y="238" width="10" height="3" fill="currentColor" fill-opacity="0.4"/><rect x="14" y="243" width="10" height="3" fill="currentColor" fill-opacity="0.4"/><text x="30" y="247" class="t" font-size="12">Ambito</text><text x="144" y="247" class="ts" font-size="11" text-anchor="end">5</text>
+<text x="16" y="266" class="ts" font-size="11">cosa copre il checkpoint</text>
+<text x="16" y="286" class="t" font-size="11">progetto/</text><text x="26" y="302" class="ts" font-size="11">src/</text><text x="36" y="318" class="ts" font-size="11">main.rs · modificato</text><text x="36" y="334" class="ts" font-size="11">lib.rs</text><text x="26" y="350" class="ts" font-size="11">docs/</text><text x="36" y="366" class="ts" font-size="11">README.md</text>
+<text x="16" y="392" class="ts" font-size="11">fuori ambito: non coperto</text>
+<text x="16" y="412" class="ts" font-size="11">file grande: escluso, con avviso</text>
+<rect x="158" y="64" width="322" height="328" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.6"/>
+<g class="c-gray"><rect x="164" y="70" width="88" height="20" rx="3"/></g><text x="208" y="84" class="t" font-size="11" text-anchor="middle">Chat · run 12</text>
+<rect x="256" y="70" width="84" height="20" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="298" y="84" class="ts" font-size="11" text-anchor="middle">Chat · run 9</text>
+<rect x="344" y="70" width="22" height="20" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="355" y="84" class="ts" font-size="11" text-anchor="middle">+</text>
+<rect x="418" y="70" width="56" height="20" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="446" y="84" class="ts" font-size="11" text-anchor="middle">stacca</text>
+<g class="c-gray"><rect x="168" y="102" width="52" height="14" rx="7"/></g><text x="194" y="112" class="t" font-size="11" text-anchor="middle">tu</text>
+<rect x="168" y="120" width="260" height="8" rx="2" fill="currentColor" fill-opacity="0.15"/><rect x="168" y="132" width="180" height="8" rx="2" fill="currentColor" fill-opacity="0.15"/>
+<g class="c-amber"><rect x="168" y="150" width="118" height="14" rx="7"/></g><text x="227" y="160" class="t" font-size="11" text-anchor="middle">modello · non fidato</text>
+<rect x="168" y="168" width="290" height="8" rx="2" fill="currentColor" fill-opacity="0.15"/><rect x="168" y="180" width="240" height="8" rx="2" fill="currentColor" fill-opacity="0.15"/>
+<rect x="168" y="194" width="290" height="28" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="176" y="212" class="ts" font-size="11">blocco di codice · testo, mai HTML</text>
+<rect x="168" y="230" width="290" height="8" rx="2" fill="currentColor" fill-opacity="0.15"/><text x="464" y="238" class="ts" font-size="11">▌</text>
+<rect x="168" y="248" width="300" height="52" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.6"/><text x="176" y="264" class="t" font-size="11">vuole scrivere in progetto/src/main.rs</text><text x="176" y="278" class="ts" font-size="11">strumento: file · risorsa: src/ · operazione: scrittura</text>
+<rect x="176" y="284" width="60" height="12" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.5"/><text x="206" y="293" class="ts" font-size="11" text-anchor="middle">consenti</text><rect x="242" y="284" width="52" height="12" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.5"/><text x="268" y="293" class="ts" font-size="11" text-anchor="middle">rifiuta</text>
+<text x="168" y="322" class="ts" font-size="11">la run aspetta te · notifica inviata</text>
+<rect x="164" y="336" width="310" height="48" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.5"/><text x="172" y="352" class="ts" font-size="11">scrivi… · allegati · col 3</text><rect x="420" y="360" width="48" height="16" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.5"/><text x="444" y="372" class="ts" font-size="11" text-anchor="middle">invia</text>
+<rect x="488" y="64" width="184" height="328" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="5 3"/>
+<g class="c-gray"><rect x="494" y="70" width="44" height="20" rx="3"/></g><text x="516" y="84" class="t" font-size="11" text-anchor="middle">Diff</text>
+<rect x="542" y="70" width="64" height="20" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="574" y="84" class="ts" font-size="11" text-anchor="middle">Anteprima</text>
+<rect x="610" y="70" width="56" height="20" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="638" y="84" class="ts" font-size="11" text-anchor="middle">Term.</text>
+<text x="666" y="106" class="ts" font-size="11" text-anchor="end">5 · 3</text>
+<text x="496" y="106" class="ts" font-size="11">src/main.rs</text>
+<rect x="496" y="114" width="164" height="10" rx="2" fill="currentColor" fill-opacity="0.12"/><text x="500" y="122" class="ts" font-size="11">- let x = old();</text>
+<rect x="496" y="128" width="164" height="10" rx="2" fill="currentColor" fill-opacity="0.12"/><text x="500" y="136" class="ts" font-size="11">+ let x = new();</text>
+<rect x="496" y="142" width="164" height="10" rx="2" fill="currentColor" fill-opacity="0.12"/><text x="500" y="150" class="ts" font-size="11">+ log(x);</text>
+<rect x="496" y="164" width="72" height="16" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.5"/><text x="532" y="176" class="ts" font-size="11" text-anchor="middle">approva</text><rect x="574" y="164" width="60" height="16" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.5"/><text x="604" y="176" class="ts" font-size="11" text-anchor="middle">rifiuta</text>
+<text x="496" y="204" class="ts" font-size="11">versione prima: conservata</text><text x="496" y="220" class="ts" font-size="11">ripristina dal checkpoint</text>
+<text x="496" y="372" class="ts" font-size="11">anteprima viva: artefatti</text>
+<rect x="158" y="400" width="514" height="68" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="5 3"/>
+<g class="c-gray"><rect x="164" y="406" width="48" height="18" rx="3"/></g><text x="188" y="419" class="t" font-size="11" text-anchor="middle">Passi</text>
+<rect x="216" y="406" width="60" height="18" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="246" y="419" class="ts" font-size="11" text-anchor="middle">Sensori</text>
+<text x="666" y="419" class="ts" font-size="11" text-anchor="end">2 · 3</text>
+<text x="166" y="440" class="ts" font-size="11">12.3 · file · scrittura · intento scritto · esito: aspetta te</text>
+<text x="166" y="456" class="ts" font-size="11">12.2 · modello · 812 token · 0,004 $ · esito ok · sensore: schema ok</text>
+<rect x="8" y="478" width="664" height="24" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.6"/><text x="16" y="494" class="ts" font-size="11">striscia sempre visibile:</text><text x="150" y="494" class="t" font-size="11">degrado</text><text x="210" y="494" class="t" font-size="11">permessi</text><text x="272" y="494" class="t" font-size="11">contesto</text><text x="334" y="494" class="t" font-size="11">costo e tetto</text><text x="420" y="494" class="t" font-size="11">attese: 1</text><text x="480" y="494" class="t" font-size="11">telecamera</text><text x="558" y="494" class="t" font-size="11">microfono</text><rect x="614" y="481" width="54" height="18" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="641" y="494" class="ts" font-size="11" text-anchor="middle">+ moduli</text>
+<text x="8" y="526" class="ts" font-size="11">numero = sotto-progetto · tratteggio = modulo mobile · ambra = contenuto non fidato · le schede sono esemplari dello stesso tipo</text>
+</svg>

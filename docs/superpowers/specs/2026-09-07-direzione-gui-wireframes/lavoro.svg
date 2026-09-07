@@ -1,6 +1,6 @@
 <svg viewBox="0 0 680 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t2 d2">
 <title id="t2">Wireframe della vista Lavoro</title>
-<desc id="d2">Barra in alto, elenco delle run e ambito a sinistra, chat a schede al centro con provenienza e richiesta di permesso, diff e anteprima a destra, passi e sensori in basso, striscia di stato. Presentato il 2026-09-07; il proprietario ha scelto A sul modulo Passi (nasce col 2) e non ha chiesto modifiche; approvazione da confermare alla ripresa.</desc>
+<desc id="d2">Barra in alto, elenco delle run e ambito a sinistra, chat a schede al centro con provenienza e richiesta di permesso, diff e anteprima a destra, passi e sensori in basso, striscia di stato. Presentato il 2026-09-07; il proprietario ha scelto A sul modulo Passi (nasce col 2) e non ha chiesto modifiche; approvata come mappa alla ripresa dello stesso giorno; lo stato vive nella tabella dei wireframe della stella polare.</desc>
 <style>
 svg{color:#2c2c2a;font-family:system-ui,sans-serif;background:#fff}
 .t{fill:#2c2c2a}.ts{fill:#5f5e5a}

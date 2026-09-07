@@ -1,6 +1,6 @@
 <svg viewBox="0 0 680 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t3 d3">
 <title id="t3">Wireframe della vista Compatta e del nucleo a pagina intera</title>
-<desc id="d3">A sinistra una finestrella sempre in primo piano con la rete viva, lo stato della voce e l'ultima notifica. A destra il grafo della knowledge base a pagina intera con ricerca, filtri, gruppi per router, dettaglio del nodo e funzioni del registro. Presentato il 2026-09-07 e NON ancora approvato: il proprietario ha chiuso la sessione prima di rispondere.</desc>
+<desc id="d3">A sinistra una finestrella sempre in primo piano con la rete viva, lo stato della voce e l'ultima notifica. A destra il grafo della knowledge base a pagina intera con ricerca, filtri, gruppi per router, dettaglio del nodo e funzioni del registro. Presentato il 2026-09-07 e approvato come mappa alla ripresa dello stesso giorno; lo stato vive nella tabella dei wireframe della stella polare.</desc>
 <style>
 svg{color:#2c2c2a;font-family:system-ui,sans-serif;background:#fff}
 .t{fill:#2c2c2a}.ts{fill:#5f5e5a}

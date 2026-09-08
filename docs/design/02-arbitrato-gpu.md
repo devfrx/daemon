@@ -232,7 +232,7 @@ flowchart LR
         l2["Job 3D: richiede eviction<br/>coordinata e ricarica dopo"]
         l3["Chat durante il render:<br/>attende, o si dirotta su remoto"]
     end
-    R -.->|"cambio di profilo di configurazione"| L
+    R -.->|"transizione esplicita — dal 2 una funzione del registro"| L
     L -.-> R
 ```
 
@@ -249,6 +249,13 @@ modi di fallire diversi; un condizionale sparso nell'arbitro deriva in silenzio 
 a che nessuno sa più quale regola valga. La policy attiva è determinata dal profilo
 di configurazione, e il passaggio da una all'altra è una **transizione esplicita**
 con effetti osservabili — non un cambio di flag.
+
+⚠️ **RICHIAMO DEL 2026-09-08:** «determinata dal profilo di configurazione» si legge *il profilo dà
+il default, il giornale la corrente*: la policy attiva è la proiezione dell'ultima transizione che
+`Arbiter::set_policy` scrive come intento ed esito, e dal sotto-progetto 2 la transizione è una
+funzione del registro (ADR-0038) — l'etichetta della freccia qui sopra lo dice. Rimando in testa ad
+[ADR-0006](../adr/0006-due-policy-vram-come-oggetti-distinti.md), decisione 17 della stella polare
+della GUI; il daemon che rilegge all'avvio è compito del piano del 2.
 
 Il "passaggio suggerito a OpenRouter durante i render" della mappa funzionale è
 esattamente questa transizione, offerta all'utente invece che imposta.

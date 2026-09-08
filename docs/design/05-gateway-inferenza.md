@@ -150,7 +150,7 @@ Sono cose diverse e V3 riguarda solo la prima.
 
 | | Cosa determina | Chi la cambia |
 |---|---|---|
-| **Policy VRAM** (§2) | cosa risiede in memoria: solo audio, oppure audio + LLM + embedding | il profilo di configurazione, con transizione esplicita |
+| **Policy VRAM** (§2) | cosa risiede in memoria: solo audio, oppure audio + LLM + embedding | una transizione esplicita — dal 2 una funzione del registro; la corrente è la proiezione del giornale, il profilo dà il default (rimando del 2026-09-08 in ADR-0006) |
 | **Destinazione della richiesta** (§3) | dove viene eseguita *questa* chiamata | il routing, richiesta per richiesta |
 
 In policy LOCALE una singola richiesta può benissimo finire su un provider remoto —

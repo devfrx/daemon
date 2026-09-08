@@ -10,16 +10,25 @@ Decisioni: [ADR-0022](../adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato
 
 ## Gli archivi
 
+⚠️ **RICHIAMO DEL 2026-09-08 — la sezione 1 della passata sui diagrammi della stella polare della GUI.**
+Il diagramma e le due tabelle sono riscritti: la **configurazione** contiene i profili e, col 2, la
+**disposizione dei pannelli**, che il kernel raggiunge da una settima porta; le **guide** sono file
+della cartella della knowledge base, artefatti dell'utente (disegno del 2026-09-04); la **policy VRAM
+corrente non è configurazione**, è la proiezione del giornale (decisione 17); il giornale porta anche i
+permessi, le transizioni di policy e, col 13, le guide approvate. Una voce segnata «(col N)» è
+**decisa**, e la costruisce il sotto-progetto N. Il perché sta nella
+[stella polare](../superpowers/specs/2026-09-07-direzione-gui-design.md), §2 e decisioni 14–18.
+
 ```mermaid
 flowchart TB
     subgraph CIF["cifrati"]
-        G[("giornale<br/>run, passi, routing<br/>verdetti, costi")]
+        G[("giornale<br/>run, passi, routing, verdetti, costi<br/>permessi, transizioni di policy<br/>invocazioni del registro (col 2)<br/>guide approvate (col 13)")]
         S[("segreti<br/>chiave propria")]
     end
     subgraph CHI["in chiaro"]
-        C[("configurazione<br/>profili, guide, policy")]
-        A[("artefatti<br/>file prodotti")]
-        I[("indici<br/>embedding, RAG")]
+        C[("configurazione<br/>profili<br/>disposizione dei pannelli (col 2)")]
+        A[("artefatti<br/>file prodotti<br/>la cartella della knowledge base (col 6):<br/>router, foglie, guide, catture")]
+        I[("indici<br/>embedding, RAG<br/>indice della mappa (col 6)")]
         M[("pesi dei<br/>modelli locali")]
     end
 
@@ -36,14 +45,14 @@ flowchart TB
     class C,A,I,M plain
 ```
 
-| Archivio | Cifrato | Nel backup | Ricostruibile |
-|---|---|---|---|
-| giornale | **sì** | sì | no |
-| segreti | **sì**, chiave propria | **mai** | no, ma re-inseribili |
-| configurazione, guide, profili | no | sì | no |
-| artefatti prodotti | no — sono già file dell'utente | sì | no |
-| indici ed embedding | no | **no** | sì, dai documenti |
-| pesi dei modelli locali | no | **no** | sì, riscaricabili |
+| Archivio | Cifrato | Nel backup | Ricostruibile | Chi lo raggiunge |
+|---|---|---|---|---|
+| giornale | **sì** | sì | no | il kernel dalla porta `journal`; `redb` in `platform` (ADR-0032) |
+| segreti | **sì**, chiave propria | **mai** | no, ma re-inseribili | la crate `secrets`, unico punto di lettura — vuota oggi, per decisione |
+| configurazione: i profili e, col 2, la disposizione dei pannelli | no | sì | no | **due vie**: i profili li legge il **daemon** via `platform` e li **consegna** al kernel, che non li legge mai (ADR-0034; oggi i default sono letterali nel daemon); la **disposizione** dalla **settima porta**, custodita e mai letta per decidere (col 2) |
+| artefatti prodotti e, col 6, la cartella della knowledge base | no — sono già file dell'utente | sì | no | il kernel dalla porta `filesystem` (ambiti e checkpoint, ADR-0024); l'implementazione vera col 5 |
+| indici ed embedding e, col 6, l'indice della mappa | no | **no** | sì, dai documenti | la capacità (6) li costruisce e li rigenera; l'indice della mappa lo tiene il core e lo manda alla GUI via `ipc` |
+| pesi dei modelli locali | no | **no** | sì, riscaricabili | gestione dedicata (9) |
 
 **Il backup contiene solo l'irriproducibile.** Un backup che trascina decine di GB di
 pesi riscaricabili non viene fatto; uno che trasporta chiavi API è un vettore di fuga.
@@ -81,13 +90,15 @@ suona più forte di quanto sia, e una falsa sicurezza è peggio di nessuna sicur
 
 ### La composizione mutuamente esclusiva
 
-| Profilo | Chiave | Avvio automatico | Voce always-on |
-|---|---|---|---|
-| **normale** *(default)* | facility dell'OS | ✅ | ✅ |
-| **riservato** | passphrase all'avvio | ❌ | ❌ |
+| Profilo | Chiave | Avvio automatico | Voce always-on | Telecamera |
+|---|---|---|---|---|
+| **normale** *(default)* | facility dell'OS | ✅ | ✅ | ✅ — spenta per default, si accende dal registro |
+| **riservato** | passphrase all'avvio | ❌ | ❌ | ❌ |
 
 Non si possono avere entrambe. Nel profilo riservato il sistema **rifiuta** di
 abilitare l'avvio automatico, non si limita a sconsigliarlo.
+⚠️ La colonna della telecamera è del 2026-09-08: ADR-0039, col suo rimando ad ADR-0023 — «riservato»
+spegne anche la telecamera.
 
 ## Checkpoint del filesystem
 
@@ -165,3 +176,10 @@ Perciò l'azione non parte — su una piattaforma non ancora supportata l'app no
   troppo grande viene **escluso con avviso**, non silenziosamente.
 - Ogni operazione di I/O di questo strato resta **iniettabile** (V29): è lo strato che
   la simulazione deterministica deve poter sostituire per intero.
+- La **disposizione dei pannelli** è un **pacchetto opaco**: il core la custodisce dalla settima
+  porta e la restituisce alla GUI, non la legge mai per decidere. Non è un parametro consegnato
+  (ADR-0034): è ciò che la GUI gli affida — stella polare della GUI, decisioni 14 e 15 del 2026-09-08.
+- La **policy VRAM corrente non è configurazione**: è la proiezione del giornale, l'ultima
+  transizione che `Arbiter::set_policy` scrive come intento ed esito. Il profilo dà il **default**
+  (ADR-0006, rimando del 2026-09-08); il daemon la rilegge all'avvio — compito del piano del 2,
+  perché oggi `build_the_arbiter` riparte da `Remote` e nessuno chiama `set_policy` in produzione.

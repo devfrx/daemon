@@ -4,6 +4,19 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-09-08 — il profilo dà il DEFAULT, il giornale la policy CORRENTE.** La
+> frase «uno solo è attivo, determinato dal profilo di configurazione corrente» si legge così: il
+> profilo di configurazione dà la policy di **default** — OpenRouter, VRAM libera — e la policy
+> **corrente** è la **proiezione del giornale**: l'ultima transizione, che `Arbiter::set_policy`
+> scrive come intento ed esito con la policy per nome — la forma che `is_granted` e
+> `degradation_now` già usano per rileggere il giornale. Un secondo archivio per un fatto che il
+> giornale ha già sarebbe una casa doppia (I1, ADR-0009). Il daemon la rilegge all'avvio —
+> compito del piano del sotto-progetto 2, perché oggi `build_the_arbiter` riparte da `Remote` e
+> nessuno chiama `set_policy` in produzione. Decisione 17 della
+> [stella polare della GUI](../superpowers/specs/2026-09-07-direzione-gui-design.md), delegata al
+> coordinatore e presa il 2026-09-08; il diagramma vivo è
+> [design/09](../design/09-l0-fisico.md). **Nessuna riga di questo ADR è superata.**
+
 ## Context
 
 Il sistema ha due regimi di occupazione della GPU, e sono profondamente diversi:

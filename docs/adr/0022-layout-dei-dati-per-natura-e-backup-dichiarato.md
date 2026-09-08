@@ -4,6 +4,19 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-09-08 — le guide NON stanno nell'archivio di configurazione, e la
+> configurazione guadagna la disposizione dei pannelli.** La riga «configurazione, guide, profili»
+> delle due tabelle si legge così: le **guide** sono file della cartella della knowledge base,
+> artefatti dell'utente — §2.2 del
+> [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md),
+> del 2026-09-04; la **configurazione** contiene i profili e, col sotto-progetto 2, la
+> **disposizione dei pannelli**, che il kernel raggiunge da una **settima porta** — §2 della
+> [stella polare della GUI](../superpowers/specs/2026-09-07-direzione-gui-design.md),
+> decisioni 14 e 15. I profili li legge il daemon e li **consegna** (ADR-0034); la disposizione
+> il kernel la **custodisce** e non la legge mai per decidere. La politica della riga — in chiaro,
+> nel backup, permanente — **non cambia**; il diagramma vivo è
+> [design/09](../design/09-l0-fisico.md). **Nessuna riga di questo ADR è superata.**
+
 ## Context
 
 [ADR-0007](0007-giornale-write-ahead-e-riconciliazione.md) e

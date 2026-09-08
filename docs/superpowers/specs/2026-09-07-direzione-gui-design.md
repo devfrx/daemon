@@ -28,7 +28,8 @@ preso la **decisione 18**: il metodo vale per ogni studio, brainstorming e diagr
 e il rimando ad ADR-0019 scritti (A). ✅ **La sesta ripresa, lo stesso giorno, ha SCRITTO design/03** (A) e il richiamo alla
 tabella Passi (A). ✅ **La settima ripresa, lo stesso giorno, ha SCRITTO design/08** (A): la sezione 2 della passata è
 **chiusa**; la domanda sulla lettera **E** della §8.2 della spec è **posta e senza risposta** — si riprende da lì, poi dalla
-**sezione 3**, i disegni nuovi, col materiale già letto.
+**sezione 3**, i disegni nuovi, col materiale già letto. ✅ **L'ottava ripresa, lo stesso giorno, ha DECISO la lettera E su
+delega — A, il numero è 12 — e l'ha scritta nella spec**: si riprende dalla sezione 3.
 
 ## ⛔ Da sapere subito
 
@@ -84,6 +85,12 @@ della sessione nuova; nessun file della spec è toccato. Il materiale per la sez
 coi percorsi e i comandi. Stato riletto coi comandi, `check-docs.sh` OK e `GATE GREEN` alla chiusura; la consegna è questo
 file; nessun codice toccato.
 
+✅ **L'ottava ripresa, il 2026-09-08, ha chiuso la lettera E** — delegata dal proprietario («decidi secondo la skill»), decisa
+**A** coi tre controlli della decisione 18: il numero è **12** nelle **tre** righe della spec che lo portavano — la tabella delle
+lettere di §8.2, la riga `process` di §8.2.2, la riga Q4 di §8.4 — col richiamo datato nel paragrafo «Sulla E»; fine-riga CRLF
+della spec conservati e rimisurati; `check-docs.sh` OK. È la prima volta che questa passata tocca la **spec**, e lo fa su delega.
+⛔ **Si riprende dalla sezione 3**, i disegni nuovi; la seconda registrata (l'innesco B di Q6/Q11) resta ferma.
+
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
 decisione viola un criterio di `anthropic-skills:decision-principles`, l'accettazione decade: ci si
@@ -114,8 +121,8 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e questa chiusura |
-| codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec |
+| codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla, tranne la spec del sotto-progetto 1: tre righe e un richiamo nella §8.2, l'ottava ripresa su delega (decisione 19) |
 | cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
 | fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg` | il compendio `i/lf w/crlf`, gli altri `i/lf w/lf` |
@@ -229,6 +236,12 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     giornale in `platform`, i sei record congelati, ADR-0024, la §2.2 e la §4.2 del disegno della knowledge base, design/09
     e design/01 — e scritto nel prossimo passo coi percorsi; stato riletto coi comandi, `check-docs.sh` OK e `GATE GREEN`
     alla chiusura; il puntatore della §6 del compendio; la memoria dell'agente aggiornata; nessun codice toccato.
+27. **All'ottava ripresa, il 2026-09-08:** ripresa con `session-resume` — stato riletto coi comandi, nessuna divergenza,
+    `check-docs.sh` OK e `GATE GREEN` all'apertura; la domanda sulla lettera E riverificata contro la spec, ADR-0039 e la
+    roadmap, e trovato che il 7 viveva in **tre** righe della spec e non in una; nessun worker vero nel codice
+    (`grep -rln 'impl Worker for' crates/*/src` rende solo la prosa della porta). Il proprietario ha **delegato** («decidi
+    secondo la skill»): decisa **A** e scritta — le tre righe a 12, il richiamo datato in «Sulla E» — coi fine-riga CRLF
+    conservati; la decisione 19 e la 25, la registrata chiusa, il puntatore della §6; `check-docs.sh` OK, commit e push.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -253,6 +266,7 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 | 16 | **alla terza ripresa** — la sezione 3 (**A**, con le due registrate), e la domanda *«tutto questo è integrato e studiato nell'architettura, schemi ER ecc.?»* | **Il mandato per la sessione nuova, con un agente nuovo:** aggiornare i diagrammi esistenti, **crearli dove mancano** — ER compresi — e **correggere la progettazione** dove un diagramma mostra un errore. Viene **prima** delle sezioni 4–6; una correzione a una sezione approvata torna al proprietario in forma A/B, con richiamo datato. La risposta verificata sta nella §3, tabella *«Cosa è già studiato, e dove»* |
 | 17 | **alla quarta ripresa, 2026-09-08** — dove vive la policy VRAM: la registrata della terza ripresa, portata come domanda 1 della passata sui diagrammi. A: la corrente è la **proiezione del giornale** e il profilo dà il default; B: l'archivio di configurazione di ADR-0022, come design/09 diceva | **delegata al coordinatore, «decidi secondo la skill»: A.** Letto nel codice: `Arbiter::set_policy` in `crates/kernel/src/arbiter/mod.rs` scrive già ogni transizione come intento ed esito, con la policy per nome nel `reason`; `is_granted` e `degradation_now` rileggono già il giornale così; e design/09 dice da solo che solo il giornale è autorevole — un secondo archivio per un fatto che il giornale ha già sarebbe una casa doppia. Il profilo dà il **default** (Remote, ADR-0006); il daemon rilegge l'ultima transizione all'avvio, **compito del piano del 2** (`build_the_arbiter` riparte da `Remote`). Costo: un rimando in testa ad ADR-0006 — «determinato dal profilo» diventa «il profilo dà il default, il giornale il corrente» — l'etichetta della freccia e una riga in design/02, una riga in design/05. 🔶 **Dedotto, lo decide il disegno del 2:** la transizione guadagna un **dettaglio tipizzato**, sul precedente di `PermissionDetail`, perché la rilettura non cerchi una stringa; oggi non porta dettaglio. Scartata B: il default nel profilo e il corrente altrove, due case per un fatto |
 | 18 | **alla quinta ripresa, 2026-09-08** — la sezione 1 della passata (design/09 e le sue conseguenze), e la domanda *«stai tenendo conto di scalabilità, di quanto verrà e di quanto già esiste? è lo schema a modificare le logiche, gli ADR e il codice esistenti se è più corretto di essi»* | **A, con le due correzioni** trovate rispondendo: «guide approvate (col 13)» nel nodo «giornale», e le **due vie** nella cella «Chi lo raggiunge» della configurazione — i profili consegnati dal daemon (ADR-0034), la disposizione dalla settima porta. ⛔ **E il metodo vale per tutti gli studi, i brainstorming e i diagrammi futuri:** ogni proposta controlla esplicitamente che cosa **esiste già** (codice, ADR, disegni), che cosa **arriva** (la roadmap) e se **regge crescendo**, e lo dice a parole prima dell'A/B; se lo schema è più corretto di una logica, di un ADR o del codice, si correggono **quelli** — l'ADR col richiamo datato, il codice come compito del piano, sempre in forma A/B, mai in silenzio. Scritto in `CLAUDE.md`, «Come si lavora qui» |
+| 19 | **all'ottava ripresa, 2026-09-08** — la lettera E della §8.2 della spec: il primo worker vero è del 7 (la spec, 2026-08-08) o del 12 (ADR-0039 e la roadmap, 2026-09-03)? A: la spec dice 12, col richiamo datato; B: la spec resta com'è e la voce resta registrata | **delegata al coordinatore, «decidi secondo la skill»: A.** I tre controlli: **esiste** — nessun worker vero nel codice (`grep -rln 'impl Worker for' crates/*/src` rende solo la prosa della porta), la spec porta il 7 in **tre** righe (la tabella delle lettere di §8.2, la riga `process` di §8.2.2, la riga Q4 di §8.4) e la §8.2.1 dice da sola che *«se la roadmap cambia, la condizione resta vera e il numero si aggiorna»*; **arriva** — ADR-0039 e la roadmap dicono 12 dal 2026-09-03, e la Voce riusa; **regge crescendo** — se il 7 o il 6 arrivassero prima, la condizione resta e il numero si aggiorna di nuovo per la stessa regola, e il richiamo lo dice. Costo: tre numeri e un richiamo datato in «Sulla E»; correggerne una riga sola avrebbe lasciato due a mentire. Scartata B: due documenti approvati che si contraddicono senza nominarsi (gotcha #59), e una registrata che nessuno chiude |
 
 ## Ciò che il repo diceva già, letto per decidere
 
@@ -803,6 +817,7 @@ dopo la misura.
 | 22 | **passata, quinta ripresa** — il sorgente di un diagramma, una volta scritto nel file di `docs/design/`, **esce** dalla stella polare: qui resta il rimando | una seconda casa diverge in silenzio (gotcha #68): ciò che il proprietario approva è il file. Costo: chi rilegge la proposta apre design/09 |
 | 23 | **passata, sesta ripresa** — i due passi per invocazione **registrati e non decisi**: la forma è approvata nella §5 del 2 per il 2, e decidere per il 3 senza il disegno di run e passo sarebbe una scelta strutturale presa fuori posto | autonomia e proporzione: costa una riga oggi, e chi disegna il 3 la trova con le due vie. Costo: fino al 3 ogni invocazione paga quattro scritture |
 | 24 | **passata, settima ripresa** — design/08 non porta lo **stato** delle Q: rimanda alla §8.4 della spec, casa unica; e la GUI entra nel diagramma come seconda scatola dello strato deterministico, non come terzo strato | gotcha #68; e la GUI non decide mai su un modello (G13, ADR-0014): le sue prove sulle fixture sono deterministiche come quelle del kernel. Costo: chi cerca «Q3 è verificata?» in design/08 apre la spec |
+| 25 | **passata, ottava ripresa** — la lettera E della §8.2 della spec: **delegata** dal proprietario | la tabella delle sue decisioni, riga 19 |
 
 ## Registrate, non prese — del proprietario
 
@@ -825,7 +840,7 @@ dopo la misura.
 | ✅ **chiusa il 2026-09-08, quinta ripresa — design/09 e il rimando in testa ad ADR-0022 scritti.** Era — ⚠️ nata alla terza ripresa: design/09 mette le **guide** nell'archivio di configurazione; il [disegno della knowledge base](2026-09-04-knowledge-base-design.md) (2026-09-04) le fa file nella cartella della KB, artefatti dell'utente. Il diagramma era indietro di un disegno | chiusa con la sezione 1, scritta il 2026-09-08 |
 | 🔶 **nata alla quarta ripresa, 2026-09-08** — la forma con cui la transizione di policy si rilegge dal giornale: oggi `set_policy` scrive intento ed esito **senza dettaglio**, con la policy nel `reason`; la rilettura coerente col repo legge un **dettaglio tipizzato** — `PermissionDetail` è il precedente — che è una variante nuova di `Detail`, additiva (ADR-0036, regola 3) coi suoi byte congelati in più, oppure legge l'invocazione del registro del 2, che il dettaglio lo ha già | il disegno del 2, con la §4 (lo schema) e la §5 (il registro); il piano ne fa un compito |
 | 🔶 **nata alla sesta ripresa, 2026-09-08, scrivendo design/03** — la §5 del 2 fa dell'invocazione del registro un passo suo (A) e dell'effetto un altro passo (B, `set_policy` com'è): quattro scritture per un click. Nel 2 regge: una funzione, invocata dall'utente. Col 3, se ogni chiamata di strumento passa dal registro (ADR-0038: un registro per tutti gli invocatori), sono **due passi per interazione**, contro il «non più fine di un'interazione» di ADR-0007, e il doppio della «parte piccola» che ADR-0018 tiene per sempre. Le due vie: tenere A e B; oppure l'effetto scrive **sul passo dell'invocazione**, e allora `set_policy` non apre più il proprio passo — cambia contratto, e la sonda `E115` ② con lui | il **3**, col disegno di run e passo; tocca la §5 del 2 e `Arbiter::set_policy` |
-| 🔶 **nata alla settima ripresa, 2026-09-08, scrivendo design/08** — la lettera **E** della §8.2 della spec («esiste un worker reale da avviare e uccidere») dice **7**, Generazione asset; ADR-0039 e la roadmap (riga 12, «il worker sotto il core») dicono che il primo worker vero lo paga il **12**. Due documenti che non si nominano (gotcha #59): la §8.2 è spec, e il richiamo datato lì è del proprietario; design/08 scrive «col primo worker vero» senza scegliere | il proprietario, con un richiamo datato nella §8.2 — o la roadmap, se l'ordine fra 7 e 12 dice altro |
+| ✅ **chiusa il 2026-09-08, ottava ripresa — decisione 19, delegata: A, il numero è 12 nelle tre righe della spec, col richiamo datato in «Sulla E».** Era — 🔶 nata alla settima ripresa, 2026-09-08, scrivendo design/08 — la lettera **E** della §8.2 della spec («esiste un worker reale da avviare e uccidere») dice **7**, Generazione asset; ADR-0039 e la roadmap (riga 12, «il worker sotto il core») dicono che il primo worker vero lo paga il **12**. Due documenti che non si nominano (gotcha #59): la §8.2 è spec, e il richiamo datato lì è del proprietario; design/08 scrive «col primo worker vero» senza scegliere | chiusa: decisione 19; scritto nella spec il 2026-09-08, ottava ripresa |
 | 🔶 **nata alla settima ripresa** — l'innesco **B (3)** di Q6 e Q11 nella §8.4 della spec («qualcuno chiama un modello: proiezione…»): la proiezione nasce col **13**, prima del 3 (rimandi del 2026-09-05 in ADR-0008 e ADR-0010), e le due prove — ricomposizioni ripetute, occupazione sotto il budget — non chiedono un modello. La lettera resta vera come innesco del primo uso; se lo stato debba potersi chiudere già col 13 è del proprietario | il proprietario, con la §8.2 e la §8.4 |
 
 ## Vicoli ciechi di questa sessione
@@ -960,6 +975,10 @@ A/B, parola per parola:
 > **B**: la spec resta com'è, e la voce resta registrata qui. Consiglio: **A** — costa una riga, e la spec aveva già detto che
 > il numero sarebbe cambiato. La seconda registrata — l'innesco B (3) di Q6/Q11 — resta ferma, salvo che il proprietario la
 > voglia decidere.
+
+✅ **All'ottava ripresa, il 2026-09-08: RISPOSTA — delegata («decidi secondo la skill»), A, scritta.** Le tre righe della spec
+dicono 12 e il richiamo datato sta in «Sulla E»; la seconda registrata resta ferma. **Si riparte dalla sezione 3**, dalla
+tabella qui sotto.
 
 Poi la **sezione 3**, i disegni nuovi, ciascuno A/B coi tre controlli della decisione 18, a parole e col diagramma reso dal
 sorgente identico (decisione 21). ⛔ **Il materiale è già letto, e sta qui perché non si rilegga da capo** — si riverifica

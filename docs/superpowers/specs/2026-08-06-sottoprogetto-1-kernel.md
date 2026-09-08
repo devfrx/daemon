@@ -3513,7 +3513,7 @@ esteso:
 | **B** | qualcuno chiama un modello: proiezione, provider reale, rete | **3** — Conversazione |
 | **C** | esistono strumenti e permessi da mediare, **e sensori reali da eseguire** | **4** — Agenti |
 | **D** | si esegue codice o un comando, e si scrive su file reali | **5** — Coding |
-| **E** | esiste un worker reale da avviare e uccidere | **7** — Generazione asset ⚠️ |
+| **E** | esiste un worker reale da avviare e uccidere | **12** — Gesti ⚠️ |
 | **F** | esistono backup e ripristino | **11** — Backup e ripristino |
 | **SP-2** | la misura di Q1 sotto carico GPU | spike, dentro **8** — Voce |
 
@@ -3521,6 +3521,15 @@ esteso:
 proprio. Il sotto-progetto 6 potrebbe anticiparla se l'indicizzazione girasse in locale
 invece che su un provider remoto: la condizione resta quella, il numero è il candidato
 odierno.
+
+⚠️ **RICHIAMO DEL 2026-09-08 — il numero è 12, la condizione non cambia (§8.2.1).** Il 7 era il
+candidato del 2026-08-08. Il 2026-09-03 [ADR-0039](../../adr/0039-telecamera-come-sorgente-di-percezione.md)
+e la roadmap (riga *«Gesti dopo GUI minima e Conversazione, e prima di Voce»*) hanno deciso che il
+**primo worker vero lo paga il 12**, il tracciatore della telecamera, e la Voce lo riusa; il 7 la
+anticipa se venisse prima, come il 6 qui sopra. Le **tre** righe che portano il numero — questa
+tabella, la riga `process` di §8.2.2 e la riga Q4 di §8.4 — dicono 12: correggerne una sola avrebbe
+lasciato le altre due a mentire. Trovato scrivendo [design/08](../../design/08-strategia-di-test.md)
+nella passata sui diagrammi della stella polare della GUI, e deciso su delega del proprietario.
 
 📌 **Sulla F, e sul perché questa colonna non è decorativa.** Quel numero **non esisteva**
 quando la tabella è stata compilata: la roadmap non collocava il backup da nessuna parte, e
@@ -3539,7 +3548,7 @@ Q; la §7.4.6 dice **quali porte hanno la suite di conformità** fra la finta e 
 |---|---|---|---|---|
 | `journal` | ✅ c'è — e §4.6 ne copre anche il livello 2 | **Q5** | ✅ | — |
 | `reactor` | ✅ c'è — ed è la più importante | **Q2** | ✅ | — |
-| `process` | ⚠️ rimandata: non ci sono worker da avviare — e col **dialogo** (§6.10) la suite acquista un'affermazione in più, sul **filo** oltre che sul ciclo di vita (§7.4.6) | **Q4** | ⚠️ | E — esiste un worker reale (7) |
+| `process` | ⚠️ rimandata: non ci sono worker da avviare — e col **dialogo** (§6.10) la suite acquista un'affermazione in più, sul **filo** oltre che sul ciclo di vita (§7.4.6) | **Q4** | ⚠️ | E — esiste un worker reale (12) |
 | `ipc` | ⚠️ rimandata: non c'è una GUI dall'altro capo | **Q3** | ⚠️ | A — esiste un'interfaccia (2) |
 | `filesystem` | ❌ scaglionata (§0.4) | **Q22** | ⚠️ | D — si scrive su file reali (5) |
 | `network` | ❌ scaglionata | **Q18** | ⚠️ | B — qualcuno chiama un modello (3) |
@@ -3611,7 +3620,7 @@ disallineano (§7.4.4, caso 2).
 | Q1 | voce sotto i 600 ms con job GPU pesante | ⏳ rimandato | il metodo di `design/08` è una **misura end-to-end**, che richiede voce e carico reali. §7.6.2 lo dichiara già: il tempo di parete dell'arbitro non è un cancello, perché è un numero rumoroso | **SP-2** (spike, dentro 8) |
 | Q2 | zero OOM | ✅ verificato qui | campagna DST su `reactor`, che ha la suite di conformità (§8.2.2) · sonda negativa esplicita: si concede oltre il budget, la campagna fallisce e nomina il seme (§5.7.1) | — |
 | Q3 | crash della GUI durante una run | ⚠️ parziale | il metodo di `design/08` — DST con morte del client — **è eseguibile qui** (§5.7); manca la **suite di conformità su `ipc`**, quindi la prova è contro una finta (§8.2.2) | A (2) |
-| Q4 | kill di un worker in qualsiasi istante | ⚠️ parziale | idem su `process`: la DST inietta il kill **e i quattro guasti del dialogo** (§3.3) · la vita del worker è al compilatore — parlargli pretende il `Worker` che l'avvio ha restituito, leggere pretende una **ricevuta**, `uccidi` consuma il `Worker` (§7.4.1 B e C) · sul filo, i byte consumati devono pareggiare la lunghezza dichiarata (§7.4.2, gotcha #34). ⚠️ **Riletta il 2026-08-08 con F1b:** non esiste un worker reale contro cui provare la conformità della finta, e col dialogo ciò che manca alla suite è cresciuto — anche il **filo**, non solo il ciclo di vita (§7.4.6). **Lo stato non cambia** | E (7) |
+| Q4 | kill di un worker in qualsiasi istante | ⚠️ parziale | idem su `process`: la DST inietta il kill **e i quattro guasti del dialogo** (§3.3) · la vita del worker è al compilatore — parlargli pretende il `Worker` che l'avvio ha restituito, leggere pretende una **ricevuta**, `uccidi` consuma il `Worker` (§7.4.1 B e C) · sul filo, i byte consumati devono pareggiare la lunghezza dichiarata (§7.4.2, gotcha #34). ⚠️ **Riletta il 2026-08-08 con F1b:** non esiste un worker reale contro cui provare la conformità della finta, e col dialogo ciò che manca alla suite è cresciuto — anche il **filo**, non solo il ciclo di vita (§7.4.6). **Lo stato non cambia** | E (12) |
 | Q5 | riavvio del core a metà run, nessun effetto rieseguito | ✅ verificato qui | DST con crash-injection su `journal`, suite di conformità presente, **e** il livello 2 dentro il motore: M-8, 12 punti scattati, 12/12 riaperti coerenti (§4.6). ⚠️ **Rafforzato il 2026-08-08 con ADR-0036:** la porta `journal` scambia **byte** e la codifica vive in `kernel` (§4.9.3), quindi il crash cade **dentro** la scrittura e la campagna esercita davvero codifica e decodifica — prima le avrebbe scavalcate | — |
 | Q6 | contesto esaurito | ⏳ rimandato | il metodo è una proprietà su ricomposizioni ripetute, e la ricomposizione è scaglionata (§0.6) | B (3) |
 | Q7 | tetto di passi, tempo o costo superato | ✅ verificato qui | test a esempi sulla transizione ad `AttesaUmano` — il metodo di `design/08` è interamente lato kernel ed è eseguibile qui (§8.1.3) | — |

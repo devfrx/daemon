@@ -20,7 +20,9 @@ viaggio della knowledge base (`07ab6dc` → `6a7967a`) e del 2 (`ae40fa0` → `6
 Stella polare a metà: sette decisioni del proprietario più la modularità, quattro wireframe disegnati e
 salvati — Home approvata; Lavoro e Compatta col grafo **approvati come mappa alla ripresa del 2026-09-07**,
 con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **chiusa** — cinque tabelle piene e una corta, decisione 12 — e le decisioni 11, 12 e 13; le sezioni 2 e 3 **chiuse il 2026-09-08** — viste e disposizione con una **settima porta** (decisioni 14 e 15 delegate), e la fetta del 2 ritagliata (A) — e il **mandato** del proprietario per la sessione nuova, la passata sui diagrammi (decisione 16); nessun codice toccato; mancano le sezioni 4–6 della stella polare e le §7–§10 del 2,
-poi i due disegni e il piano.
+poi i due disegni e il piano; **la quarta ripresa, il 2026-09-08, ha APERTO la passata sui diagrammi** (decisione 16): i nove file di
+`docs/design/` letti diagramma per diagramma, la **decisione 17 delegata e presa** — la policy VRAM corrente è la proiezione del
+giornale — e la **sezione 1 della passata, design/09, presentata e NON ancora approvata**; nessun diagramma toccato.
 
 ## ⛔ Da sapere subito
 
@@ -38,6 +40,12 @@ stato riletto coi comandi, nessuna divergenza, `check-docs.sh` OK all'apertura; 
 agente nuovo: la **passata sui diagrammi** — aggiornare quelli esistenti, crearli dove mancano (ER compresi), e **correggere la
 progettazione** dove un diagramma mostra un errore. Può riaprire sezioni approvate: una correzione torna al proprietario in
 forma A/B, con richiamo datato, mai in silenzio. Il come sta in «Prossimo passo, eseguibile».
+
+✅ **La quarta ripresa, il 2026-09-08, ha toccato solo questo file** e il puntatore della §6 del compendio: stato riletto coi comandi,
+nessuna divergenza; `GATE GREEN` rilanciato alla chiusura. ⛔ **La passata sui diagrammi è APERTA e nessun diagramma è scritto:** la
+**sezione 1** — design/09 con le sue conseguenze — è **presentata e attende A/B**; la proposta sta parola per parola, col sorgente
+mermaid, in «Prossimo passo, eseguibile», e si scrive **solo dopo il sì**. La **decisione 17** — la policy VRAM, delegata — è presa e
+sta nella tabella delle decisioni del proprietario; ciò che costa si scrive con la sezione 1.
 
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
@@ -69,9 +77,9 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con questa chiusura |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, questa chiusura |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
 | fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg` | il compendio `i/lf w/crlf`, gli altri `i/lf w/lf` |
 | i wireframe esistono | `ls docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/` | `compatta-e-grafo.svg  home.svg  lavoro.svg` |
@@ -140,6 +148,14 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 20. Chiusura della terza ripresa: il **mandato** del proprietario per la sessione nuova (decisione 16) scritto nel prossimo
     passo; il puntatore della §6 del compendio riscritto; `GATE GREEN` rilanciato; la memoria dell'agente aggiornata; nessun
     codice toccato.
+21. **Alla quarta ripresa, il 2026-09-08 — la passata sui diagrammi, aperta e non chiusa:** stato riletto coi comandi, nessuna
+    divergenza; i nove file di `docs/design/` letti diagramma per diagramma (`grep -c mermaid docs/design/*.md` li conta, una riga
+    per blocco), col disegno della knowledge base e la consegna del 2, e per ciascuno misurato che cosa le decisioni di questa
+    stella polare cambiano — la tabella *«I diagrammi, uno per uno»* nel prossimo passo. La registrata della terza ripresa sulla
+    **policy VRAM** portata al proprietario come domanda 1 e **delegata**: decisa **A**, la proiezione del giornale (decisione 17).
+    La **sezione 1** della passata — design/09 e le sue conseguenze in ADR-0022, ADR-0006, design/02 e design/05 — **presentata** a
+    parole, con la tabella dei cambiamenti e il diagramma nuovo reso in chat dal suo sorgente mermaid; la sessione si è chiusa
+    **sulla domanda A/B, senza risposta**: niente è scritto nei file di design.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -162,6 +178,7 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 | 14 | **alla terza ripresa, 2026-09-08** — se «salva disposizione» passi dal registro delle funzioni con una tripla, o sia una scrittura fuori dal registro | **delegata al coordinatore, «decidi secondo la skill»: fuori dal registro.** ADR-0038 regola 5 tiene fuori lo spostare un pannello; salvarlo è lo stesso fatto reso durevole, e una tripla chiederebbe il permesso di sistemare le proprie finestre a ogni avvio (ADR-0016: un'approvazione vale quella tripla, quella sessione). §2 |
 | 15 | **alla terza ripresa** — dove la disposizione si conserva, letto che `SaveLayout` arriva dentro il kernel (§5 del 2) e che nessuna delle sei porte tiene un pacchetto opaco: una **settima porta**, o il giornale forzato | **delegata al coordinatore: la settima porta.** Scartato il giornale — ADR-0018 tiene per sempre «la parte piccola», e un pacchetto di pannelli decine di volte al giorno non lo è — e, già alla domanda 4, il non salvare. Costo: la §3.1 della spec passa da sei a sette famiglie con richiamo datato, compito del piano. §2 |
 | 16 | **alla terza ripresa** — la sezione 3 (**A**, con le due registrate), e la domanda *«tutto questo è integrato e studiato nell'architettura, schemi ER ecc.?»* | **Il mandato per la sessione nuova, con un agente nuovo:** aggiornare i diagrammi esistenti, **crearli dove mancano** — ER compresi — e **correggere la progettazione** dove un diagramma mostra un errore. Viene **prima** delle sezioni 4–6; una correzione a una sezione approvata torna al proprietario in forma A/B, con richiamo datato. La risposta verificata sta nella §3, tabella *«Cosa è già studiato, e dove»* |
+| 17 | **alla quarta ripresa, 2026-09-08** — dove vive la policy VRAM: la registrata della terza ripresa, portata come domanda 1 della passata sui diagrammi. A: la corrente è la **proiezione del giornale** e il profilo dà il default; B: l'archivio di configurazione di ADR-0022, come design/09 diceva | **delegata al coordinatore, «decidi secondo la skill»: A.** Letto nel codice: `Arbiter::set_policy` in `crates/kernel/src/arbiter/mod.rs` scrive già ogni transizione come intento ed esito, con la policy per nome nel `reason`; `is_granted` e `degradation_now` rileggono già il giornale così; e design/09 dice da solo che solo il giornale è autorevole — un secondo archivio per un fatto che il giornale ha già sarebbe una casa doppia. Il profilo dà il **default** (Remote, ADR-0006); il daemon rilegge l'ultima transizione all'avvio, **compito del piano del 2** (`build_the_arbiter` riparte da `Remote`). Costo: un rimando in testa ad ADR-0006 — «determinato dal profilo» diventa «il profilo dà il default, il giornale il corrente» — l'etichetta della freccia e una riga in design/02, una riga in design/05. 🔶 **Dedotto, lo decide il disegno del 2:** la transizione guadagna un **dettaglio tipizzato**, sul precedente di `PermissionDetail`, perché la rilettura non cerchi una stringa; oggi non porta dettaglio. Scartata B: il default nel profilo e il corrente altrove, due case per un fatto |
 
 ## Ciò che il repo diceva già, letto per decidere
 
@@ -704,6 +721,8 @@ dopo la misura.
 | 17 | **§3** — **un** componente segnaposto, con nome e numero, per ogni modulo non costruito, non diciotto | YAGNI. Costo: nessuno |
 | 18 | **§3** — la settima porta è un **pezzo suo** (5), fra il registro e il daemon, non dentro «il filo» | tre implementazioni e una suite propria; i compiti del piano si tagliano per pezzo. Costo: un pezzo in più |
 | 19 | **§3** — **nessun ADR nuovo** per la settima porta: l'archivio lo decide ADR-0022, la porta è il suo meccanismo; la spec e `ports/mod.rs` ricevono il richiamo, il perché vive nella §2 | proporzione: un ADR per un tratto a due operazioni sarebbe sfoggio. Costo: se il proprietario vuole l'ADR, è un compito in più |
+| 20 | **passata sui diagrammi, 2026-09-08** — la policy VRAM corrente è la proiezione del giornale: **delegata** dal proprietario | la tabella delle sue decisioni, riga 17 |
+| 21 | **passata** — un diagramma proposto si presenta **a parole** (una tabella «dove, prima, dopo, fonte») **e** reso in chat dal **sorgente mermaid identico** a quello che andrà nel file, non da un disegno a mano | «prima a parole, poi lo schema» di `CLAUDE.md`; un SVG a mano può divergere dal sorgente, con mermaid ciò che il proprietario approva è ciò che si scrive. Costo: nessuno; il come sta nei vicoli ciechi |
 
 ## Registrate, non prese — del proprietario
 
@@ -722,8 +741,9 @@ dopo la misura.
 | dove vive il grafico dell'occupazione GPU (G8): nel modulo Stato o nel modulo Modelli locali; notata scrivendo la riga 7 della tabella Stato | il **9** |
 | chi costruisce l'esportazione OTLP opt-in di ADR-0017, che nessuna riga della roadmap assegna; senza di essa lo stato «nessuna telemetria lascia la macchina» è una costante, non un dato | il proprietario, prima del modulo che la mostra |
 | se il preset «auto-approva sicuri» approvi le **letture ovunque** o solo **dentro l'ambito** della run: ADR-0016 dice che una tripla di lettura vale «lì, e solo lì» e che nel preset le letture procedono, non dice su quali percorsi; notata con la decisione 13 | il **4**, coi preset, sentito il 5 |
-| ⚠️ **nata alla terza ripresa, 2026-09-08** — la **policy VRAM scelta non sopravvive al riavvio**: design/09 la mette nell'archivio di configurazione, ma `build_the_arbiter` in `crates/daemon/src/main.rs` riparte sempre da `Remote`, e il 2 la cambia dalle Impostazioni. La via coerente col repo è la **proiezione del giornale** all'avvio — l'ultima transizione è «struttura», ADR-0018 la tiene — nessuna porta in più; nessun documento lo decide | il piano del 2, o il proprietario prima; e la passata sui diagrammi la vede |
-| ⚠️ **nata alla terza ripresa** — design/09 mette le **guide** nell'archivio di configurazione; il [disegno della knowledge base](2026-09-04-knowledge-base-design.md) (2026-09-04) le fa file nella cartella della KB, artefatti dell'utente. Il diagramma è indietro di un disegno | la passata sui diagrammi della sessione nuova, decisione 16 |
+| ✅ **chiusa il 2026-09-08, quarta ripresa — decisione 17, delegata: la proiezione del giornale.** Era: la **policy VRAM scelta non sopravvive al riavvio**: design/09 la mette nell'archivio di configurazione, ma `build_the_arbiter` in `crates/daemon/src/main.rs` riparte sempre da `Remote`, e il 2 la cambia dalle Impostazioni. La via coerente col repo è la **proiezione del giornale** all'avvio — l'ultima transizione è «struttura», ADR-0018 la tiene — nessuna porta in più; nessun documento lo decide | chiusa: decisione 17; il rimando ad ADR-0006 e le righe di design/02 e design/05 si scrivono con la sezione 1 della passata |
+| ⚠️ **nata alla terza ripresa** — design/09 mette le **guide** nell'archivio di configurazione; il [disegno della knowledge base](2026-09-04-knowledge-base-design.md) (2026-09-04) le fa file nella cartella della KB, artefatti dell'utente. Il diagramma è indietro di un disegno | la **sezione 1** della passata: presentata il 2026-09-08 alla quarta ripresa, attende A/B; si chiude quando design/09 e il rimando ad ADR-0022 sono scritti |
+| 🔶 **nata alla quarta ripresa, 2026-09-08** — la forma con cui la transizione di policy si rilegge dal giornale: oggi `set_policy` scrive intento ed esito **senza dettaglio**, con la policy nel `reason`; la rilettura coerente col repo legge un **dettaglio tipizzato** — `PermissionDetail` è il precedente — che è una variante nuova di `Detail`, additiva (ADR-0036, regola 3) coi suoi byte congelati in più, oppure legge l'invocazione del registro del 2, che il dettaglio lo ha già | il disegno del 2, con la §4 (lo schema) e la §5 (il registro); il piano ne fa un compito |
 
 ## Vicoli ciechi di questa sessione
 
@@ -741,6 +761,12 @@ dopo la misura.
 - **seconda ripresa:** il percorso dello scratchpad supera i 259 caratteri di `MAX_PATH`, e `python percorso.py`
   fallisce con *«No such file or directory»* anche se il file c'è; si lancia con `python - < percorso`, che apre
   il file da Bash.
+- **quarta ripresa:** il `read_me` dello strumento inline della chat, modulo `diagram`, supera il tetto del risultato e viene
+  salvato in un file: si legge con `grep` sul file salvato, non intero. Il diagramma mermaid si rende in chat con un widget HTML
+  che importa `mermaid@11` da `esm.sh` — nella lista consentita — col blocco di inizializzazione che il `read_me` dà per gli
+  `erDiagram`: funziona uguale per un `flowchart`, col sorgente del file dentro un template literal.
+- **quarta ripresa:** `docs/design/` ha **nove** file, 01–09: un file nuovo è il **10**, non l'11 come una prima stesura del
+  prossimo passo diceva. `ls docs/design/` prima di numerare.
 
 ## Prossimo passo, eseguibile
 
@@ -774,6 +800,106 @@ porta e le decisioni 14 e 15 delegate, la §3 approvata (A) con le due registrat
    proprietario in forma A/B**, con richiamo datato: mai in silenzio. Le due divergenze già trovate stanno nelle registrate.
 4. Poi le sezioni **4–6** di «Le sezioni che mancano», poi le §7–§10 del 2, ciascuna in forma A/B col controllo sui
    cinque criteri; poi i due disegni e il piano.
+
+✅ **Alla quarta ripresa, il 2026-09-08, e alla sua chiusura: la passata è APERTA.** I diagrammi sono letti tutti e la tabella
+qui sotto dice per ciascuno che cosa cambia; la decisione 17 è presa; la proposta per la sezione 1 è scritta qui, parola per
+parola, e **non è nei file**. I quattro punti qui sopra restano come verbale; l'ordine eseguibile è questo:
+
+1. Al proprietario, **la domanda A/B sulla sezione 1** — design/09 con le sue conseguenze — dal blocco *«La proposta per la
+   sezione 1»* qui sotto, a parole e col diagramma reso in chat (decisione 21 del coordinatore). **Se A:** scrivere design/09 (il
+   diagramma, la tabella degli archivi con la colonna «Chi lo raggiunge», la colonna Telecamera nella tabella di «riservato», le
+   due regole, il richiamo datato), il rimando in testa ad ADR-0022 e ad ADR-0006, l'etichetta della freccia e il richiamo in
+   design/02, la riga in design/05 — **conservando i fine-riga di ciascun file**: `git ls-files --eol` dice design/09 e design/05
+   `w/lf`, design/02 e i due ADR `w/crlf` — poi `bash scripts/check-docs.sh`, commit, push. **Se B:** correggere e ripresentare.
+2. La **sezione 2**, un file per volta e A/B: design/07, *«Cosa deve essere sempre visibile»*, contro la striscia della §3
+   (decisione 16 del coordinatore: nella cornice del 2 mostra solo ciò che è vivo) — un richiamo, non un diagramma; design/03, se
+   il ciclo di vita del passo copre **un'invocazione del registro** (§5 del 2: intento, nota col dettaglio, esito) — 🔶
+   probabilmente una riga; design/08, se la mappa requisito → verifica guadagna la conformità della **settima porta** e la sonda
+   «salva, riavvia, ritrova» — 🔶 forse una riga. design/01, design/04 e design/06 letti: nessuna decisione della stella polare
+   li tocca — 🔶 giudizio di questa sessione, non scritto altrove.
+3. La **sezione 3**, i disegni nuovi, ciascuno A/B **prima** di scriverlo: `docs/design/10-modello-dei-dati-durevoli.md` con
+   l'`erDiagram` — i record del giornale di ADR-0036 con la nota `Invocation` del 2, gli archivi di design/09 con la chiave della
+   disposizione, i checkpoint — e **la GUI dentro**: moduli, esemplari, viste, i due messaggi della disposizione, il ciclo
+   salva/riavvia/ritrova; dove viva — design/01 allargato, un file `docs/design/11-…`, o questa stella polare — lo giudica chi
+   disegna, e un diagramma che non aggiunge nulla al testo non si fa. Un file nuovo in `docs/design/` va nell'indice di
+   `README.md`: `check-docs.sh` confronta i due.
+4. Poi le sezioni 4–6 e le §7–§10 del 2, come nel punto 4 del verbale.
+
+#### I diagrammi, uno per uno — letti il 2026-09-08
+
+| File | Diagrammi | Che cosa cambia | Sezione |
+|---|---|---|---|
+| [design/09](../../design/09-l0-fisico.md) | 3 flowchart, 1 stateDiagram | «Gli archivi»: la disposizione, le guide, la policy, i permessi e le transizioni nel giornale, l'indice della mappa; la colonna «Chi lo raggiunge»; Telecamera in «riservato»; due regole | **1**, presentata |
+| [ADR-0022](../../adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md) | tabelle | rimando in testa: le guide sono file della knowledge base; la politica della riga non cambia | 1 |
+| [ADR-0006](../../adr/0006-due-policy-vram-come-oggetti-distinti.md) | — | rimando in testa: il profilo dà il default, il giornale il corrente (decisione 17) | 1 |
+| [design/02](../../design/02-arbitrato-gpu.md) | 1 flowchart, 1 stateDiagram | l'etichetta «cambio di profilo di configurazione» e la frase «determinata dal profilo» (righe 235 e 249 al 2026-09-08) | 1 |
+| [design/05](../../design/05-gateway-inferenza.md) | 3 flowchart | la riga «Policy VRAM · chi la cambia: il profilo di configurazione» (riga 153 al 2026-09-08) | 1 |
+| [design/07](../../design/07-osservabilita-e-degrado.md) | 2 flowchart | «Cosa deve essere sempre visibile» contro la striscia della §3: un richiamo | 2 |
+| [design/03](../../design/03-run-durevoli.md) | 2 flowchart, 1 stateDiagram | 🔶 l'invocazione del registro come passo | 2 |
+| [design/08](../../design/08-strategia-di-test.md) | 1 flowchart | 🔶 la conformità della settima porta, la sonda della disposizione | 2 |
+| [design/01](../../design/01-topologia-dei-processi.md) | 1 flowchart, 1 stateDiagram | la GUI è una scatola e resta tale; la GUI dentro è un disegno nuovo | 3 |
+| [design/04](../../design/04-anelli-e-sensori.md) · [design/06](../../design/06-permessi-e-confine-dei-dati.md) | 2 · 3 | 🔶 nulla, giudizio di questa sessione | — |
+| tutto `docs/` | — | nessun diagramma a entità: `grep -rE '^\s*erDiagram' docs/` è vuoto | 3 |
+
+#### La proposta per la sezione 1 — presentata il 2026-09-08, NON approvata, NON scritta
+
+A parole, cosa cambia — la tabella presentata al proprietario:
+
+| Dove | Prima | Dopo | Fonte |
+|---|---|---|---|
+| nodo «configurazione» | profili, guide, policy | profili, **disposizione dei pannelli** (col 2) | stella polare §2 |
+| nodo «artefatti» | file prodotti | + la **cartella della knowledge base**: router, foglie, **guide**, catture (col 6) | disegno della knowledge base §2.2 |
+| nodo «giornale» | run, passi, routing, verdetti, costi | + **permessi, transizioni di policy**, invocazioni del registro (col 2) | `permission.rs` · `set_policy` · §5 del 2 |
+| nodo «indici» | embedding, RAG | + l'**indice della mappa** (col 6), rigenerabile | disegno della knowledge base §2.2 |
+| tabella degli archivi | quattro colonne | + colonna **«Chi lo raggiunge»**: giornale → porta `journal`, `redb` in `platform`; configurazione → la **settima porta** (col 2); artefatti → porta `filesystem` (ambiti e checkpoint; la vera col 5); segreti → la crate `secrets`, unico punto di lettura, vuota oggi per decisione; indici → la capacità (6) li costruisce e li rigenera, l'indice della mappa lo tiene il core e lo manda alla GUI via `ipc`; pesi → gestione dedicata (9) | spec §2.3 · stella polare §2 · ADR-0023 |
+| tabella «riservato» | avvio automatico ❌, voce ❌ | + **telecamera ❌** | ADR-0039, rimando ad ADR-0023 |
+| regole in fondo | — | + la disposizione è un **pacchetto opaco**; + la **policy non è configurazione** — i testi qui sotto | decisioni 14, 15 e 17 |
+| ADR-0022 | riga «configurazione, guide, profili» | rimando datato in testa: le guide sono file della knowledge base; la politica della riga — in chiaro, nel backup, permanente — non cambia | disegno della knowledge base |
+| ADR-0006 · design/02 · design/05 | «determinata dal profilo di configurazione» | rimando: il profilo dà il default, il giornale il corrente; in design/02 l'etichetta della freccia fra le due policy diventa «transizione esplicita — dal 2 una funzione del registro» | decisione 17 |
+
+Il diagramma nuovo, da mettere in design/09 al posto del blocco di «Gli archivi» — il sorgente reso in chat è questo, parola per
+parola:
+
+```mermaid
+flowchart TB
+    subgraph CIF["cifrati"]
+        G[("giornale<br/>run, passi, routing, verdetti, costi<br/>permessi, transizioni di policy<br/>invocazioni del registro (col 2)")]
+        S[("segreti<br/>chiave propria")]
+    end
+    subgraph CHI["in chiaro"]
+        C[("configurazione<br/>profili<br/>disposizione dei pannelli (col 2)")]
+        A[("artefatti<br/>file prodotti<br/>la cartella della knowledge base (col 6):<br/>router, foglie, guide, catture")]
+        I[("indici<br/>embedding, RAG<br/>indice della mappa (col 6)")]
+        M[("pesi dei<br/>modelli locali")]
+    end
+
+    G --> B{{"BACKUP"}}
+    C --> B
+    A --> B
+    I -.->|"escluso:<br/>si ricostruisce"| B
+    M -.->|"escluso:<br/>si riscarica"| B
+    S -.->|"MAI:<br/>vettore di fuga"| B
+
+    classDef enc fill:#1d4ed8,stroke:#1e3a8a,color:#fff
+    classDef plain fill:#0f766e,stroke:#134e4a,color:#fff
+    class G,S enc
+    class C,A,I,M plain
+```
+
+Le due regole da aggiungere a *«Regole che i diagrammi non esprimono»* di design/09: **(1)** la disposizione dei pannelli è un
+pacchetto opaco — il core la custodisce dalla settima porta e la restituisce alla GUI, non la legge mai per decidere: non è un
+parametro consegnato (ADR-0034), è ciò che la GUI gli affida (decisioni 14 e 15); **(2)** la policy VRAM corrente non è
+configurazione — è la proiezione del giornale, l'ultima transizione che `Arbiter::set_policy` scrive come intento ed esito; il
+profilo dà il default (ADR-0006, rimando del 2026-09-08); il daemon la rilegge all'avvio, compito del piano del 2.
+
+I due rimandi vanno in testa all'ADR, sotto «Deciders», nella forma del rimando di ADR-0009 (blocco citato, data, grassetto sul
+fatto, «nessuna riga superata»). **ADR-0022:** la riga «configurazione, guide, profili» delle due tabelle — le guide sono file
+della cartella della knowledge base, artefatti dell'utente, dal disegno del 2026-09-04 (§2.2); la configurazione contiene i
+profili e, col 2, la disposizione dei pannelli, raggiunta dal kernel da una settima porta (stella polare §2); la politica della
+riga non cambia. **ADR-0006:** «uno solo è attivo, determinato dal profilo di configurazione corrente» — il profilo dà il default,
+e la policy corrente è la proiezione del giornale (decisione 17 della stella polare). In design/02 la frase «la policy attiva è
+determinata dal profilo di configurazione» riceve il richiamo datato con lo stesso contenuto; in design/05 la riga «Policy VRAM ·
+chi la cambia» dice «una transizione esplicita — dal 2 una funzione del registro; la corrente è la proiezione del giornale».
 
 Le skill della sessione nuova: quelle dell'elenco qui sotto, più `anthropic-skills:design-docs`, che governa i diagrammi.
 L'elenco numerato qui sotto resta com'era, come verbale.

@@ -104,7 +104,7 @@ skill»), decisioni 21–23. Disegnare ha trovato **due buchi in sezioni approva
 del 2: il permesso non aveva un passo su cui posarsi — `Approve` porta ora anche l'invocazione, §4, §5 e §6a — e «il core chiude»
 non è un'operazione della porta `ipc` — il core non ascolta più il client rifiutato, la GUI esce, §3 e §5. ⛔ **La sezione 3 e la
 passata sui diagrammi (decisione 16) sono CHIUSE: si riprende dalle sezioni 4–6** di «Le sezioni che mancano», poi le §7–§10 del 2,
-poi i due disegni e il piano. `check-docs.sh` OK e `GATE GREEN` all'apertura; nessun codice toccato.
+poi i due disegni e il piano. `check-docs.sh` OK e `GATE GREEN` all'apertura e alla chiusura; la chiusura è chiesta dal proprietario con `session-handoff` («prima dimmi quanto manca e dove ci troviamo»), e la risposta sta nel prossimo passo; la consegna è questo file; nessun codice toccato.
 
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
@@ -136,9 +136,9 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec, design/10 e la sua chiusura; la nona ripresa: «la GUI dentro», le tre sequenze coi richiami alla consegna del 2 |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec, design/10 e la sua chiusura; la nona ripresa: «la GUI dentro», le tre sequenze coi richiami alla consegna del 2, e la sua chiusura |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla, tranne la spec del sotto-progetto 1: tre righe e un richiamo nella §8.2, l'ottava ripresa su delega (decisione 19) |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta, e all'apertura e alla chiusura dell'ottava, e all'apertura della nona; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta, e all'apertura e alla chiusura dell'ottava, e all'apertura e alla chiusura della nona; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
 | fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg docs/design/10-modello-dei-dati-durevoli.md` | il compendio `i/lf w/crlf`, gli altri `i/lf w/lf` — su questa macchina: un clone nuovo con `core.autocrlf=true` li mostra `w/crlf`, e non è una divergenza |
 | i wireframe esistono | `ls docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/` | `compatta-e-grafo.svg  home.svg  lavoro.svg` |
@@ -283,6 +283,11 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     domanda del proprietario *«tutti i diagrammi di ora e delle sessioni precedenti dove sono salvati?»* la risposta coi comandi, in
     chat: le case sono `docs/design/`, le due spec del kernel, questo file e i tre SVG dei wireframe — i comandi stanno nella riga
     «tutto `docs/`» della tabella «I diagrammi, uno per uno».
+32. Chiusura della nona ripresa, chiesta dal proprietario con `session-handoff` («prima dimmi quanto manca e dove ci troviamo»):
+    la risposta in chat e nel prossimo passo — la passata sui diagrammi è chiusa; restano le sezioni 4–6, le §7–§10 del 2, i due
+    disegni, il piano in due parti, poi l'esecuzione; stato riletto coi comandi, `check-docs.sh` OK e `GATE GREEN` alla chiusura;
+    in questo file «Da sapere subito», la tabella dello stato e questo punto; la memoria dell'agente aggiornata; scratchpad
+    pulito; nessun codice toccato.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -1206,7 +1211,10 @@ aperte, come si riprende (5); dove vive la stella polare (6) — ciascuna in for
 §7–§10 del 2; poi i due disegni scritti sul posto e il piano in due parti. Restano del proprietario le registrate: l'innesco B (3)
 di Q6/Q11, e le due nate disegnando — i due passi per invocazione, col 3; l'archivio della disposizione che non si apre, del
 disegno del 2. La struttura moduli/esemplari/viste resta a parole nella tabella «Il modello della GUI»: un disegno si fa solo se il
-proprietario lo chiede (decisione 29 del coordinatore).
+proprietario lo chiede (decisione 29 del coordinatore). **Quanto manca, in passi:** tre sezioni della stella polare — la 4, la 5 (che
+sono le §7–§10 del 2) e la 6 — una per volta e A/B; poi i due disegni scritti sul posto, con le due consegne archiviate parola per
+parola; poi il piano del 2 in due parti, la prima fino allo spike compreso; poi l'esecuzione, subagent-driven, in sessioni nuove; in
+parallelo AUD-004, l'ADR del proprietario che sbarra il 13.
 
 Poi la **sezione 3**, i disegni nuovi, ciascuno A/B coi tre controlli della decisione 18, a parole e col diagramma reso dal
 sorgente identico (decisione 21). ⛔ **Il materiale è già letto, e sta qui perché non si rilegga da capo** — si riverifica

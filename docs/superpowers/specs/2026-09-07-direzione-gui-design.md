@@ -28,6 +28,9 @@ poi i due disegni e il piano.
 pushato, **nessun codice toccato**: questa sessione ha prodotto solo documenti — questo file, i tre
 wireframe SVG nella cartella accanto, i richiami datati nella consegna del 2, il puntatore della §6.
 
+✅ **Le due riprese del 2026-09-07 hanno toccato solo questo file** e, alla chiusura della seconda, il puntatore
+della §6 del compendio; `GATE GREEN` rilanciato alla chiusura della seconda ripresa, dopo l'ultimo commit di merito.
+
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
 decisione viola un criterio di `anthropic-skills:decision-principles`, l'accettazione decade: ci si
@@ -58,9 +61,9 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | il commit di questa chiusura |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, e questa chiusura |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti di questa chiusura, e `check-docs.sh` rilanciato dopo. Si rilancia, non si cita |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
 | fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg` | il compendio `i/lf w/crlf`, gli altri `i/lf w/lf` |
 | i wireframe esistono | `ls docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/` | `compatta-e-grafo.svg  home.svg  lavoro.svg` |
@@ -114,6 +117,9 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 16. Alla domanda «non stiamo complicando le cose?» la risposta onesta — sì, sui moduli lontani — e la decisione 12;
     la decisione 13 sull'Ambito, letta in ADR-0016 (una tripla di lettura vale «lì, e solo lì») e nel follow-up di
     ADR-0024; la tabella corta dei tredici moduli scritta; la **§1 chiusa**.
+17. Chiusura della seconda ripresa: stato riletto coi comandi, `GATE GREEN` rilanciato, il puntatore della §6 del
+    compendio riscritto — le conferme date, la §1 chiusa, si riparte dalla sezione 2 — i vicoli ciechi di questa
+    ripresa scritti qui sotto, la memoria dell'agente aggiornata; nessun codice toccato.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -554,6 +560,11 @@ dopo la misura.
   `https://dockview.dev/sitemap.xml`.
 - la ricerca degli argomenti nella pagina `docs/` di dockview.dev non rende link: il menu è costruito dal
   JavaScript, si usa il sitemap.
+- **seconda ripresa:** un heredoc Bash di circa 9 KB con righe di tabella lunghe fallisce con *«unexpected EOF while
+  looking for matching `''»* anche con `<<'EOF'`; si scrive lo script Python nello scratchpad col tool `Write`.
+- **seconda ripresa:** il percorso dello scratchpad supera i 259 caratteri di `MAX_PATH`, e `python percorso.py`
+  fallisce con *«No such file or directory»* anche se il file c'è; si lancia con `python - < percorso`, che apre
+  il file da Bash.
 
 ## Prossimo passo, eseguibile
 
@@ -563,7 +574,8 @@ riparte dalla **sezione 1**, il catalogo dei moduli allargato. L'elenco resta co
 ✅ **Alla seconda ripresa dello stesso giorno:** la sezione 1 è **chiusa** — Chat, Stato, Permessi, Passi e Attività
 in tabella piena, gli altri tredici moduli nella tabella corta (decisione 12); si prosegue con la **sezione 2**, viste
 e disposizione, poi le sezioni 3–6, ciascuna in forma A/B col controllo sui cinque criteri e verificato, dedotto e
-assunto separati.
+assunto separati. La proposta da cui partire è la riga 2 della tabella «Le sezioni che mancano»; la sua domanda
+aperta — se «salva disposizione» sia una funzione del registro — è già nelle registrate.
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa
    chiusura o uno successivo.

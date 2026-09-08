@@ -19,7 +19,7 @@ viaggio della knowledge base (`07ab6dc` → `6a7967a`) e del 2 (`ae40fa0` → `6
 
 Stella polare a metà: sette decisioni del proprietario più la modularità, quattro wireframe disegnati e
 salvati — Home approvata; Lavoro e Compatta col grafo **approvati come mappa alla ripresa del 2026-09-07**,
-con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **cominciata**, tabelle Chat, Stato, Permessi, Passi e Attività approvate; nessun codice toccato; mancano il resto della sezione 1, le altre cinque sezioni della stella polare e le §7–§10 del 2,
+con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **chiusa** — cinque tabelle piene e una corta, decisione 12 — e le decisioni 11, 12 e 13; nessun codice toccato; mancano le altre cinque sezioni della stella polare e le §7–§10 del 2,
 poi i due disegni e il piano.
 
 ## ⛔ Da sapere subito
@@ -111,6 +111,9 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     le specie di dettaglio letti in `crates/kernel/src/record.rs`, approvata (**A**) e scritta.
 15. La **tabella Attività**, sedici righe, con le due passate fatte prima della presentazione, approvata (**A**) e
     scritta.
+16. Alla domanda «non stiamo complicando le cose?» la risposta onesta — sì, sui moduli lontani — e la decisione 12;
+    la decisione 13 sull'Ambito, letta in ADR-0016 (una tripla di lettura vale «lì, e solo lì») e nel follow-up di
+    ADR-0024; la tabella corta dei tredici moduli scritta; la **§1 chiusa**.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -128,6 +131,8 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 | 9 | il PC «come Cowork» | «lavorare sui tuoi file e lanciare comandi va bene, per ora»: deciso nei meccanismi (ADR-0016, ADR-0024, ADR-0025) e visibile col 5. Guidare schermo, mouse e tastiera resta **solo un nome** — righe «Automazione OS → L3» e «Screenshot e comprensione dello schermo → L3 + Conversazione» — senza definizione: registrata, non presa |
 | 10 | **alla ripresa, 2026-09-07** — quanto dettaglio porta un wireframe: il proprietario ha notato che nella barra della chat di Lavoro mancano il contesto della run, la modalità di esecuzione e il tasto «+ allegati», e che «se dovessimo mettere tutte le info mancanti ce ne sarebbero un botto» | **A** — un wireframe è una **mappa**: dove sta ogni modulo e chi lo costruisce; Lavoro e Compatta col grafo sono **approvati come mappa**. Tutto ciò che un modulo mostra, e i comandi che ha, va nel **catalogo dei moduli** (sezione 1 delle sezioni che mancano): una tabella per modulo con la **fonte** di ogni riga — G, ADR, riga di tracciabilità — e il sotto-progetto che la costruisce. Le tre cose notate hanno fonte (G11 · ADR-0016 · «Allegati in chat» di tracciabilità) ed entrano nella riga Chat, nella **barra della chat, per run**; la striscia sempre visibile resta il riassunto. Scartata B, ridisegnare i wireframe con tutto dentro: disegna oggi cose che arrivano col 3, 5, 6 e 13 e si rifanno col design system — la stessa ragione della B della domanda 0 |
 | 11 | **alla seconda ripresa dello stesso giorno** — il proprietario ha aggiunto il **modello selezionato** alle cose che mancano nella barra della chat, e ha chiesto quando e dove si scrivono le informazioni che i wireframe non portano, per non crescere feature su feature | **A** — il metodo è la decisione 10, e il momento è la sezione 1, prima del disegno e del piano. Il modello entra nella riga Chat come **indicatore** del modello in uso, con fonte: il record di routing di ADR-0011 e la riga «Indicatore di stato modello» di tracciabilità, casa GUI. Un **selettore** a mano per chat non ha fonte, e tracciabilità ha già «Selettore di modello per compito ✅ §3 · profili»: la domanda «posso anche sceglierlo a mano, per run?» è registrata, chiusore il **3** col disegno del modulo Chat. Scartata B, decidere il selettore adesso: una riga G nuova e la riapertura di come si sceglie il routing, decisione strutturale che non si prende a fine giornata |
+| 12 | **alla seconda ripresa** — la profondità del catalogo: «non stiamo complicando le cose?» | **A** — sì, sui moduli lontani. Le tabelle piene restano per i moduli del 2 e del 3 già scritti (Chat, Stato, Permessi, Passi, Attività); gli altri **tredici** entrano in **una tabella corta**: chi li costruisce, ciò che ADR e requisiti impongono di mostrare, le fonti — niente comandi, regole o dedotti, che scrive il sotto-progetto col suo disegno (sezione 6). Riletti i doppioni: le righe che tornano in più tabelle sono **facce diverse** dello stesso fatto, una per modulo, e restano; i doppioni veri stavano nella proposta di Ambito, non scritta. Il paragrafo dei criteri resta dov'è già scritto e si fa una volta per la tabella corta. Scartata B, tredici tabelle piene: circa seicento righe che i sotto-progetti riscriverebbero — la ragione della B della domanda 10 |
+| 13 | **alla seconda ripresa** — l'Ambito: «che cos'è? vorrei che funzionasse simil Claude Desktop; ha interazione diretta con i permessi?» | l'ambito è la **cartella di lavoro della run** più la copia di sicurezza di ogni file prima che l'agente lo tocchi (ADR-0024): non un albero del disco, non il diff. **Simil Claude Desktop, deciso**: la cartella si sceglie all'avvio della run e si vede sempre nell'intestazione della chat; se ne aggiungono altre durante la run, e ogni aggiunta è una dichiarazione di ambito; pannello o riga lo decide il 5. Coi permessi, letto negli ADR: sono **due meccanismi distinti** — la tripla dice cosa l'agente **può fare** su un percorso, e una tripla di lettura vale «lì, e solo lì» (ADR-0016, tabella delle triple); l'ambito dice **dove c'è la copia di sicurezza** (ADR-0024, che non nomina i permessi). Si incontrano in un punto: la richiesta di permesso su un file, dove la GUI dice se il percorso è dentro l'ambito o fuori, **prima** che l'agente scriva (G18, follow-up di ADR-0024). Registrata: se il preset «auto-approva sicuri» approvi le letture ovunque o solo dentro l'ambito |
 
 ## Ciò che il repo diceva già, letto per decidere
 
@@ -240,7 +245,7 @@ cosa per tutti i moduli, quindi non ha un wireframe suo.
 
 ## Le sezioni approvate del disegno — il merito com'è stato approvato
 
-### §1 — Il catalogo dei moduli · in corso: la tabella Chat approvata il 2026-09-07
+### §1 — Il catalogo dei moduli · chiusa il 2026-09-07: cinque tabelle piene e una corta (decisione 12)
 
 La regola, dalla decisione 10: un wireframe è una **mappa**; tutto ciò che un modulo mostra, e i comandi
 che ha, sta qui, **una tabella per modulo**. Ogni riga porta la **fonte** — una riga G di
@@ -461,11 +466,40 @@ il modello della GUI; stessa forma delle tabelle precedenti; le voci aperte nell
 scegliere; solo righe con una fonte oggi. Seconda passata su ADR e tracciabilità fatta prima della presentazione:
 da lì le righe 4, 5, 6, 8 e 14.
 
+#### Gli altri tredici moduli, in una tabella corta · approvata il 2026-09-07 (decisione 12)
+
+Qui ogni modulo ha una riga: chi lo costruisce, ciò che ADR e requisiti gli **impongono** di mostrare, le fonti.
+Niente comandi, niente regole, niente dedotti: la tabella piena la scrive il sotto-progetto col suo disegno, quando
+arriva (sezione 6), e quel giorno sostituisce la riga con richiamo datato. La **cornice** — la barra delle viste, la
+ricerca, il chip del core, la fascia, la striscia, il cassetto «+ moduli» — non è un modulo: la descrive «Il modello
+della GUI».
+
+| Modulo | Chi | Ciò che le fonti impongono di mostrare | Fonti |
+|---|---|---|---|
+| **Ambito** | 5 | la cartella di lavoro della run, scelta all'avvio e sempre visibile nell'intestazione della chat; le cartelle aggiunte durante la run, ogni aggiunta una dichiarazione di ambito; cosa copre il checkpoint e cosa no, **prima** che l'agente scriva; il file troppo grande escluso, con avviso. Simil Claude Desktop: decisione 13; pannello o riga lo decide il 5. Coi permessi: la richiesta di scrittura su un file dice se il percorso è dentro l'ambito (copia di sicurezza) o fuori (nessuna) | ADR-0024 e il suo follow-up · G18 · ADR-0016 · righe «Checkpoint e rollback» e «Undo/checkpoint del filesystem» |
+| **Diff** | 5 | le modifiche a un file, approvabili o rifiutabili; la versione prima, conservata, e «ripristina dal checkpoint»; il renderer è una libreria da scegliere il giorno del 5 col comando sul registro npm — CodeMirror, già scelto come editor da ADR-0030, porta una vista diff e merge, da verificare quel giorno | G5 · ADR-0024 · ADR-0030 |
+| **Anteprima** | 3 | artifacts e canvas con anteprima viva; il contenuto non fidato resta segnato; la webview esegue solo contenuto locale nostro | G7 · G13 · ADR-0014 · ADR-0027 e il suo follow-up |
+| **Terminale** | 5 | i comandi eseguiti dall'agente e il loro output, col livello di confinamento — mai sotto il 2 per codice e comandi; l'output è contenuto non fidato | ADR-0025 · ADR-0014 · righe «Sandboxing ed esecuzione» e «Permessi e sandbox policy» |
+| **Sensori** | 4 | i sensori registrati, con la classe di costo; i verdetti nel giornale; l'anello di miglioramento — la ricorrenza rilevata e la **proposta**, che l'utente approva; il canary di esfiltrazione come verdetto che blocca | ADR-0009 · ADR-0013 · ADR-0016 |
+| **Costi** | 3 | costo corrente e distanza dal tetto; costo per run e per sub-run come aggregazioni della gerarchia; i grafici di costo; gli avvisi e i tetti di spesa | G12 · G8 · V8 · ADR-0011 · righe «Avvisi e tetti di spesa» e «Analisi dei costi per run e per sub-agente» |
+| **Knowledge base e Nucleo a pagina intera** | 6 | il pannello della §4.3 del disegno della knowledge base: il grafo per router, i filtri per specie, cartella ed etichetta, la ricerca sui nomi, il nodo con le funzioni del registro, orfani e collegamenti rotti; a pagina intera è il nucleo (domanda 2); nell'anello solo file, per data (domanda 1) | [disegno della knowledge base](2026-09-04-knowledge-base-design.md), §4.3 · ADR-0008 · ADR-0018 · ADR-0038 |
+| **Asset 3D** | 7 | il viewer 3D — rotazione, zoom, materiali — entro la quota di presentazione, con concessione ordinaria oltre (`Request`, `Verdict`); la coda dei job e il progresso; l'export della mesh | G6 · ADR-0033 · ADR-0030 · righe «Coda dei job di generazione», «Progress e notifiche per job lunghi» e «Export mesh (GLB/OBJ/PLY)» |
+| **Voce e gesti** | 8, 12 | gli stati ascolto, pensiero, parlato; microfono e telecamera accesi dal core, con indicatore; la mano disegnata dai 21 punti, niente video; solo la wake word apre una run; «riservato» spegne voce always-on e telecamera | ADR-0039 · ADR-0023 · ADR-0011 · righe «Stati di ascolto/pensiero/parlato», «Wake word», «Push-to-talk e dettatura» e «Controlli di privacy del microfono» |
+| **Backup** | 11 | cosa il backup **non** contiene, al momento del backup — indici ed embedding, pesi dei modelli, e mai i segreti; il ripristino | G17 · ADR-0022 · righe «Backup ed export dei dati» e «Backup della KB indipendente dall'app» |
+| **Checkpoint** | 5 | le versioni conservate per passo e il ripristino: vivono dentro Diff e Ambito; se sia un modulo a sé lo decide il 5 | ADR-0024 · righe «Checkpoint e rollback» e «Undo/checkpoint del filesystem» |
+| **Modelli locali** | 9 | catalogo e download; caricamento su richiesta, pre-caricamento, scarico per inattività; il tetto ai modelli residenti; l'indicatore di stato modello; il grafico dell'occupazione GPU, se vive qui (registrata) | ADR-0005 · ADR-0006 · righe «Catalogo e download modelli locali», «Caricamento su richiesta e pre-caricamento», «Scarico per inattività (TTL)», «Tetto ai modelli residenti» e «Indicatore di stato modello» |
+| **Impostazioni** | 2, poi 3 e 10 | nel 2 il cambio di policy VRAM, funzione del registro con la sua tripla; poi le preferenze di provider, la telemetria opt-in e la sua destinazione, il profilo «riservato», l'avvio automatico, la lingua | §5 e §6a del 2 · ADR-0038 · ADR-0006 · ADR-0017 · ADR-0023 · G21 · righe «Preferenze di provider (OpenRouter)» e «Avvio automatico e daemon in background» |
+
+Controllo sui cinque criteri, per la tabella corta: fonti lette il 2026-09-07 — la §5 del compendio, le righe G,
+tracciabilità, e ADR-0016 e ADR-0024 aperti per la decisione 13; stessa forma delle tabelle piene ma senza comandi,
+regole e dedotti, per proporzione (decisione 12); le voci aperte nelle registrate; nessuna dipendenza scelta qui —
+CodeMirror è già di ADR-0030, il renderer del diff si verifica il giorno del 5; niente disegno in pixel.
+
 ## Le sezioni che mancano — proposte del coordinatore, non decisioni
 
 | § | Che cosa | La proposta da cui partire |
 |---|---|---|
-| 1 | **il catalogo dei moduli**: tipi, numero del sotto-progetto, messaggi IPC che consumano | una tabella per tipo: Chat (2, 3 · `Token`, e col 3 i messaggi della run), Stato (2 · `Degradation`, `Policy`, `Accepted`, `Verdict`), Permessi (2 · `PermissionRequired`, `Approve`), Passi (2, 3 · un messaggio nuovo con la lista dei passi), Attività (3, 4, 13), Ambito (5), Diff (5), Anteprima (3), Terminale (5), Sensori (4), Costi (3), Knowledge base e Nucleo a pagina intera (6), Asset 3D (7), Voce e gesti (8, 12), Backup (11), Checkpoint (5), Modelli locali (9), Impostazioni (2, il cambio di policy è già una funzione del registro). La regola: un modulo il cui sotto-progetto non è chiuso mostra a parole chi lo riempie. ⚠️ **Allargata alla ripresa del 2026-09-07, decisione 10:** per ogni modulo anche **cosa mostra** e **quali comandi ha**, riga per riga con la **fonte** — G, ADR, riga di tracciabilità — e il sotto-progetto che costruisce la riga; e il «dove» dentro il modulo quando conta: contesto della run, modalità di esecuzione e «+ allegati» nella barra della chat, per run ✅ **RICHIAMO DEL 2026-09-07, seconda ripresa:** la sezione è **cominciata**: le tabelle **Chat**, **Stato**, **Permessi**, **Passi** e **Attività** sono approvate e stanno nella §1 delle sezioni approvate qui sopra; restano gli altri moduli, uno per volta |
+| 1 | **il catalogo dei moduli**: tipi, numero del sotto-progetto, messaggi IPC che consumano | una tabella per tipo: Chat (2, 3 · `Token`, e col 3 i messaggi della run), Stato (2 · `Degradation`, `Policy`, `Accepted`, `Verdict`), Permessi (2 · `PermissionRequired`, `Approve`), Passi (2, 3 · un messaggio nuovo con la lista dei passi), Attività (3, 4, 13), Ambito (5), Diff (5), Anteprima (3), Terminale (5), Sensori (4), Costi (3), Knowledge base e Nucleo a pagina intera (6), Asset 3D (7), Voce e gesti (8, 12), Backup (11), Checkpoint (5), Modelli locali (9), Impostazioni (2, il cambio di policy è già una funzione del registro). La regola: un modulo il cui sotto-progetto non è chiuso mostra a parole chi lo riempie. ⚠️ **Allargata alla ripresa del 2026-09-07, decisione 10:** per ogni modulo anche **cosa mostra** e **quali comandi ha**, riga per riga con la **fonte** — G, ADR, riga di tracciabilità — e il sotto-progetto che costruisce la riga; e il «dove» dentro il modulo quando conta: contesto della run, modalità di esecuzione e «+ allegati» nella barra della chat, per run ✅ **RICHIAMO DEL 2026-09-07, seconda ripresa:** la sezione è **CHIUSA**: cinque tabelle piene — Chat, Stato, Permessi, Passi, Attività — e la tabella corta degli altri tredici moduli, nella §1 delle sezioni approvate qui sopra (decisione 12) |
 | 2 | **viste e disposizione**: i layout come JSON, l'archivio minimo nel core, i due messaggi | `Layout` dal core all'accoglienza, dopo `Accepted`; `SaveLayout` dalla GUI; l'archivio in `platform` con una voce, nella forma dell'archivio «configurazione, guide, profili» di ADR-0022, consegnato al daemon e non letto dal kernel (ADR-0034); ⚠️ da decidere lì: se «salva disposizione» sia una **funzione del registro** con la propria tripla (ADR-0038 dice che la manipolazione della GUI non passa dal registro; il salvataggio durevole è un'altra cosa) o una scrittura di configurazione fuori dal registro; le tre viste di default come JSON committati in `gui/` |
 | 3 | **la fetta del 2 ritagliata**: che cosa costruisce adesso, e come si riscrivono §1 e §6a | §1 del 2 guadagna: il motore dei moduli (`dockview-core`, dipendenza nuova, in due passi), le tre viste con Compatta come segnaposto, il modulo Passi col suo messaggio, l'archivio della disposizione coi due messaggi; §6a: «le due schermate» diventano «Home e Lavoro nella cornice», la finestra di permesso resta; il pezzo 6 della tabella di §1 cambia forma. Tutto con richiamo datato, non riscrittura silenziosa |
 | 4 | **lo spike di accettazione** di `dockview`, dentro lo spike del guscio | in `spikes/gui-shell/`, sul frontend minimo di §2 del 2: una Home finta con `dockview-core` — nucleo bloccato, quattro tessere, una libera, una a pagina intera, presa grande — e la giudica il **proprietario provandola**, come per la mano in SP-7; il criterio scritto **prima** in `spikes/gui-shell/PROTOCOLLO.md`; se non dà il «Jarvis», si passa a `interactjs` prima di scrivere la SPA. In più M4 misura P3 con `dockview` acceso |
@@ -507,6 +541,7 @@ dopo la misura.
 | se «+ allegati» nella barra della chat e «aggiungi al contesto» del registro (ADR-0038, rimando del 2026-09-05: due invocatori, il click e il modello) siano la stessa funzione o due; notata scrivendo la riga 14 della tabella Chat | il **3**, col **6** |
 | dove vive il grafico dell'occupazione GPU (G8): nel modulo Stato o nel modulo Modelli locali; notata scrivendo la riga 7 della tabella Stato | il **9** |
 | chi costruisce l'esportazione OTLP opt-in di ADR-0017, che nessuna riga della roadmap assegna; senza di essa lo stato «nessuna telemetria lascia la macchina» è una costante, non un dato | il proprietario, prima del modulo che la mostra |
+| se il preset «auto-approva sicuri» approvi le **letture ovunque** o solo **dentro l'ambito** della run: ADR-0016 dice che una tripla di lettura vale «lì, e solo lì» e che nel preset le letture procedono, non dice su quali percorsi; notata con la decisione 13 | il **4**, coi preset, sentito il 5 |
 
 ## Vicoli ciechi di questa sessione
 
@@ -525,10 +560,10 @@ dopo la misura.
 ⚠️ **Alla ripresa del 2026-09-07 il punto 5 è avanzato:** le due conferme sono date (decisione 10), e si
 riparte dalla **sezione 1**, il catalogo dei moduli allargato. L'elenco resta com'era, come verbale.
 
-✅ **Alla seconda ripresa dello stesso giorno:** le tabelle **Chat**, **Stato**, **Permessi**, **Passi** e
-**Attività** della sezione 1 sono approvate e scritte; si prosegue con **Ambito** e gli altri moduli nell'ordine
-della proposta, una tabella per volta in forma A/B, ciascuna con verificato e dedotto separati, e con una seconda
-passata su ADR e tracciabilità prima di chiudere ogni tabella.
+✅ **Alla seconda ripresa dello stesso giorno:** la sezione 1 è **chiusa** — Chat, Stato, Permessi, Passi e Attività
+in tabella piena, gli altri tredici moduli nella tabella corta (decisione 12); si prosegue con la **sezione 2**, viste
+e disposizione, poi le sezioni 3–6, ciascuna in forma A/B col controllo sui cinque criteri e verificato, dedotto e
+assunto separati.
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa
    chiusura o uno successivo.

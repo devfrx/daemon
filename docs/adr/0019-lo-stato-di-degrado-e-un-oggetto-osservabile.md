@@ -4,6 +4,19 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-09-08 — la lista degli eventi non è chiusa, e la GUI resta viva a GPU
+> satura.** La riga «aggiornato dagli eventi (connettività, arbitro GPU, salute dei provider, permessi,
+> strumenti sospesi)» si legge come un elenco **aperto**: il codice del Traguardo 6 deriva lo stato da
+> due campi — `vram_exhausted`, l'arbitro GPU, e `routing_degraded`, il **fallback dichiarato** di
+> ADR-0012 su un vincolo di qualità — e il secondo è una fonte che questa lista non nominava, mentre
+> connettività e salute dei provider non hanno ancora una fonte e lo dichiarano
+> (`crates/kernel/src/degradation.rs`); ADR-0039 aggiunge la **telecamera**, col sotto-progetto 12.
+> E nella tabella delle condizioni la riga «GPU satura» tiene viva anche **la GUI**, dentro la quota di
+> presentazione di ADR-0033, e fa cadere il viewer 3D oltre la quota. Il diagramma vivo è
+> [design/07](../design/07-osservabilita-e-degrado.md), riscritto nella sezione 2 della passata sui
+> diagrammi della [stella polare della GUI](../superpowers/specs/2026-09-07-direzione-gui-design.md)
+> (decisione 18). **Nessuna riga di questo ADR è superata.**
+
 ## Context
 
 Il sistema ha molte condizioni in cui funziona **parzialmente**: rete assente, GPU

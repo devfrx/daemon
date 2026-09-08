@@ -859,7 +859,8 @@ arriva, se regge crescendo; e lo schema corregge ciò che esiste se è più corr
 | [ADR-0006](../../adr/0006-due-policy-vram-come-oggetti-distinti.md) | — | rimando in testa: il profilo dà il default, il giornale il corrente (decisione 17) | 1, ✅ scritta |
 | [design/02](../../design/02-arbitrato-gpu.md) | 1 flowchart, 1 stateDiagram | l'etichetta «cambio di profilo di configurazione» e la frase «determinata dal profilo» (righe 235 e 249 al 2026-09-08) | 1, ✅ scritta |
 | [design/05](../../design/05-gateway-inferenza.md) | 3 flowchart | la riga «Policy VRAM · chi la cambia: il profilo di configurazione» (riga 153 al 2026-09-08) | 1, ✅ scritta |
-| [design/07](../../design/07-osservabilita-e-degrado.md) | 2 flowchart | «Cosa deve essere sempre visibile» contro la striscia della §3: un richiamo | 2 |
+| [design/07](../../design/07-osservabilita-e-degrado.md) | 2 flowchart | «Cosa deve essere sempre visibile» contro la striscia della §3: un richiamo | 2, ✅ scritta il 2026-09-08 — e non un richiamo solo: sette fonti del degrado, la GUI viva a GPU satura, le proiezioni a classi, «Dove» e «Chi» |
+| [ADR-0019](../../adr/0019-lo-stato-di-degrado-e-un-oggetto-osservabile.md) | tabella | rimando in testa: la lista degli eventi è aperta — il fallback dichiarato di ADR-0012 c'è già nel codice, la telecamera arriva con ADR-0039 — e a GPU satura resta viva anche la GUI (ADR-0033) | 2, ✅ scritta |
 | [design/03](../../design/03-run-durevoli.md) | 2 flowchart, 1 stateDiagram | 🔶 l'invocazione del registro come passo | 2 |
 | [design/08](../../design/08-strategia-di-test.md) | 1 flowchart | 🔶 la conformità della settima porta, la sonda della disposizione | 2 |
 | [design/01](../../design/01-topologia-dei-processi.md) | 1 flowchart, 1 stateDiagram | la GUI è una scatola e resta tale; la GUI dentro è un disegno nuovo | 3 |

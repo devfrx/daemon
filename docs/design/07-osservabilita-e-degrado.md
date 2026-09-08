@@ -7,6 +7,17 @@ Decisioni: [ADR-0017](../adr/0017-giornale-sorgente-trace-proiezione.md) ·
 [ADR-0018](../adr/0018-ritenzione-a-livelli-del-giornale.md) ·
 [ADR-0019](../adr/0019-lo-stato-di-degrado-e-un-oggetto-osservabile.md).
 
+⚠️ **RICHIAMO DEL 2026-09-08 — la sezione 2 della passata sui diagrammi della stella polare della GUI.**
+Il diagramma dello stato di degrado, la tabella delle condizioni, il diagramma delle proiezioni e la
+tabella di ciò che è sempre visibile sono riscritti contro il codice e le decisioni di oggi: le fonti del
+degrado sono **sette** e non cinque — il fallback dichiarato di ADR-0012 c'è già nel codice
+(`routing_degraded`), la telecamera arriva con ADR-0039 — e ADR-0019 riceve il rimando; la GUI resta viva
+anche a GPU satura (ADR-0033); le proiezioni del giornale sono classi e non un elenco di sei; la striscia
+del 2 mostra solo ciò che è vivo (decisione 16 del coordinatore). Una voce segnata «(col N)» è decisa e
+la costruisce il sotto-progetto N; «oggi» dice che esiste nel codice. Il perché sta nella
+[stella polare](../superpowers/specs/2026-09-07-direzione-gui-design.md), sezione 2 della passata,
+decisione 18.
+
 ## Tassonomia degli errori
 
 Ogni classe ha già un meccanismo, deciso in una sezione precedente. Nessun errore
@@ -30,13 +41,15 @@ violata è un difetto del sistema, non una condizione da gestire.
 
 ```mermaid
 flowchart LR
-    E1["connettivita"] --> S
-    E2["arbitro GPU"] --> S
-    E3["salute dei provider"] --> S
-    E4["permessi"] --> S
-    E5["strumenti sospesi"] --> S
-    S["STATO DI DEGRADO<br/>derivato, ricalcolabile<br/>mai autorevole di per se"]
-    S --> U["interfaccia:<br/>cosa e disponibile ORA"]
+    E1["connettivita (col 3)"] --> S
+    E2["arbitro GPU<br/>oggi: vram_exhausted"] --> S
+    E3["salute dei provider (col 3)"] --> S
+    E4["permessi (col 4)"] --> S
+    E5["strumenti sospesi (col 4)"] --> S
+    E6["fallback dichiarato, ADR-0012<br/>oggi: routing_degraded"] --> S
+    E7["telecamera (col 12)"] --> S
+    S["STATO DI DEGRADO<br/>derivato, ricalcolabile<br/>mai autorevole di per se<br/>oggi: degradation_now, dal giornale"]
+    S --> U["interfaccia:<br/>cosa e disponibile ORA<br/>la striscia e il modulo Stato (col 2)"]
     S --> C["capacita:<br/>si adattano invece di fallire"]
     S --> M["metrica:<br/>quanto tempo in stato parziale"]
 
@@ -44,13 +57,19 @@ flowchart LR
     class S der
 ```
 
+Oggi il codice ne deriva **due** campi, `vram_exhausted` e `routing_degraded`, e dichiara nel loro doc
+che connettività e salute dei provider non hanno ancora una fonte — nessun campo aspetta fingendo
+«va tutto bene» (`crates/kernel/src/degradation.rs`). Il fallback dichiarato di ADR-0012 è una fonte
+che ADR-0019 non elencava: il rimando in testa a quell'ADR lo dice.
+
 | Condizione | Resta disponibile | Cade |
 |---|---|---|
 | **offline** | inferenza locale, RAG locale, generazione asset, voce | OpenRouter, ricerca web |
-| **GPU satura** | tutto ciò che è remoto; **voce** (quota riservata, §2) | inferenza locale, generazione asset |
+| **GPU satura** | tutto ciò che è remoto; **voce** (quota riservata, §2); **la GUI** (quota di presentazione, ADR-0033) | inferenza locale, generazione asset, il viewer 3D oltre la quota |
 | **provider indisponibile** | fallback della catena; locale se configurato | quel provider |
 | **modello locale scaricato** | tutto, con avvio a freddo dichiarato (Q8) | latenza del primo token |
 | **strumento MCP sospeso** | tutto il resto | quello strumento, fino a ri-approvazione (§6) |
+| **telecamera indisponibile** (col 12) | tutto il resto | il tracciamento delle mani e i gesti; l'indicatore lo dice (ADR-0039) |
 
 **Si dichiara prima, non si fallisce dopo.** Nessuna azione deve fallire per una
 condizione che era già nota e non era stata mostrata.
@@ -62,7 +81,9 @@ flowchart LR
     J[("GIORNALE<br/>sorgente unica di verita")]
 
     J --> R["ripresa<br/>riconciliazione (§4)"]
-    J --> P["proiezione di contesto<br/>(§4)"]
+    J --> P["proiezione di contesto<br/>(§4, col 13)"]
+    J --> K["cio che il core sa di se<br/>degrado e permessi (oggi)<br/>policy VRAM corrente (col 2)<br/>guide approvate (col 13)"]
+    J --> G["cio che la GUI mostra<br/>Passi (col 2) · Attivita (col 3)<br/>mai uno stato suo (I1)"]
     J --> T["trace<br/>vocabolario OTel GenAI"]
     J --> C["contabilita<br/>token, costi, tetti"]
     J --> M["metriche<br/>latenza, esiti, qualita"]
@@ -76,8 +97,11 @@ flowchart LR
     class X out
 ```
 
-**Un substrato, sei scopi.** Il giornale nasce per la ripresa dopo crash (§4); tutto
-il resto sono viste. Il vocabolario OpenTelemetry GenAI si applica alla **proiezione
+**Un substrato, molte viste.** Il giornale nasce per la ripresa dopo crash (§4); tutto
+il resto sono proiezioni, e la regola non ha un numero: ciò che il core sa di sé — degrado,
+permessi, policy VRAM corrente, guide approvate — e ciò che la GUI mostra si rilegge dal
+giornale, mai da un secondo archivio (I1, ADR-0009); oggi lo fanno `degradation_now` e
+`is_granted`. Il vocabolario OpenTelemetry GenAI si applica alla **proiezione
 trace**, non all'archiviazione: se la convenzione cambia — ed è ancora pre-stabile —
 cambia la proiezione, non i dati.
 
@@ -100,14 +124,21 @@ sopravvive, il grezzo si sacrifica.
 
 ## Cosa deve essere sempre visibile
 
-| Elemento | Perché | Vincolo |
-|---|---|---|
-| stato di degrado corrente | si dichiara prima, non si fallisce dopo | V27 |
-| permessi attivi nella sessione | un permesso concesso e dimenticato è indistinguibile da uno mai concesso | V21 · §6 |
-| occupazione del contesto **per categoria** | senza misura è un'impressione | §5 · ADR-0010 |
-| costo corrente e distanza dal tetto | i tetti sospendono: l'utente deve vederli arrivare | §3 · V8 |
-| provenienza del contenuto | senza, si approva alla cieca | V23 · §6 |
-| run in `AttesaUmano` | una run bloccata in silenzio è indistinguibile da una morta | V9 |
+| Elemento | Perché | Vincolo | Dove | Chi |
+|---|---|---|---|---|
+| stato di degrado corrente | si dichiara prima, non si fallisce dopo | V27 · G9 | la striscia, e il modulo Stato per intero | 2 |
+| permessi attivi nella sessione | un permesso concesso e dimenticato è indistinguibile da uno mai concesso | V21 · §6 · G10 | la striscia, e il modulo Permessi | 2; il confine di sessione col 3 |
+| occupazione del contesto **per categoria** | senza misura è un'impressione | §5 · ADR-0010 · G11 | la striscia; per run, nella barra della chat | 3, col dato dal 13 |
+| costo corrente e distanza dal tetto | i tetti sospendono: l'utente deve vederli arrivare | §3 · V8 · G12 | la striscia, e il modulo Costi | 3 |
+| provenienza del contenuto | senza, si approva alla cieca | V23 · §6 · G13 | nel flusso, su ogni pezzo — non nella striscia | 2 |
+| run in `AttesaUmano` | una run bloccata in silenzio è indistinguibile da una morta | V9 · G14 | la striscia (attese), e Attività | 3 |
+| telecamera accesa dal core | i fotogrammi non escono mai: l'indicatore è l'unica prova che è accesa | ADR-0039 | la striscia | 12 |
+| microfono acceso dal core | la voce always-on si vede, e «riservato» la spegne | ADR-0023 · riga «Controlli di privacy del microfono» di tracciabilità | la striscia | 8 |
+
+⚠️ **Richiamo del 2026-09-08:** «sempre visibile» è del prodotto, non del 2: nella cornice del 2 la
+striscia mostra solo ciò che è vivo — degrado e permessi — e ogni altra voce la porta il modulo che la
+riempie, col suo numero (stella polare, decisione 16 del coordinatore). Le colonne «Dove» e «Chi» vengono
+dal modello della GUI approvato il 2026-09-07 e dal catalogo dei moduli.
 
 ## Regole che i diagrammi non esprimono
 

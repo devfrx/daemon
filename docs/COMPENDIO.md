@@ -352,7 +352,7 @@ Il core mantiene uno **stato di degrado corrente**, aggiornato dagli eventi
 espone come oggetto osservabile. **Il principio: si dichiara prima, non si fallisce
 dopo** — l'utente deve sapere cosa è disponibile *prima* di tentare. Generalizza a
 tutto il sistema il «nessun degrado silenzioso» di ADR-0005: era una regola locale,
-diventa una proprietà del kernel.
+diventa una proprietà del kernel. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** la lista degli eventi è **aperta** — il codice deriva già il fallback dichiarato di ADR-0012, la telecamera arriva con ADR-0039 — e a GPU satura resta viva anche la **GUI** (ADR-0033); il diagramma vivo è design/07.
 
 **0020 — Nessun modello nel percorso decisionale del kernel.** I modelli sono invocati
 *attraverso* il kernel e i loro esiti sono **dati opachi**, mai giudizi su cui il

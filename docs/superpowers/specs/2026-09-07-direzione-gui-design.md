@@ -30,7 +30,7 @@ tabella Passi (A). ✅ **La settima ripresa, lo stesso giorno, ha SCRITTO design
 **chiusa**; la domanda sulla lettera **E** della §8.2 della spec è **posta e senza risposta** — si riprende da lì, poi dalla
 **sezione 3**, i disegni nuovi, col materiale già letto. ✅ **L'ottava ripresa, lo stesso giorno, ha DECISO la lettera E su
 delega — A, il numero è 12 — e l'ha scritta nella spec; poi ha SCRITTO design/10, il primo disegno della sezione 3 (A su
-delega, decisione 20)**: si riprende dal secondo disegno, «la GUI dentro».
+delega, decisione 20)**: si riprende dal secondo disegno, «la GUI dentro». ✅ **La nona ripresa, lo stesso giorno, ha SCRITTO il secondo disegno su delega (decisioni 21–23):** le tre sequenze come `sequenceDiagram` in questo file, sotto «Il modello della GUI», e due correzioni alla consegna del 2 (§3, §4, §5, §6a) col richiamo datato; **la sezione 3 e la passata sui diagrammi sono CHIUSE**, si riprende dalle sezioni 4–6.
 
 ## ⛔ Da sapere subito
 
@@ -98,6 +98,14 @@ per il piano del 2, non corretto qui. Chiusura chiesta dal proprietario con `ses
 `check-docs.sh` OK e `GATE GREEN` alla chiusura; la consegna è questo file; nessun codice toccato. ⛔ **Si riprende dal secondo
 disegno della sezione 3, «la GUI dentro»**: il come, coi percorsi, sta nel prossimo passo.
 
+✅ **La nona ripresa, il 2026-09-08, ha scritto «la GUI dentro»** — le tre sequenze (l'accoglienza, il giro salva/riavvia/ritrova,
+l'invocazione) come `sequenceDiagram` in questo file, sotto la tabella «Il modello della GUI» — su delega («decidi secondo la
+skill»), decisioni 21–23. Disegnare ha trovato **due buchi in sezioni approvate del 2**, corretti col richiamo datato nella consegna
+del 2: il permesso non aveva un passo su cui posarsi — `Approve` porta ora anche l'invocazione, §4, §5 e §6a — e «il core chiude»
+non è un'operazione della porta `ipc` — il core non ascolta più il client rifiutato, la GUI esce, §3 e §5. ⛔ **La sezione 3 e la
+passata sui diagrammi (decisione 16) sono CHIUSE: si riprende dalle sezioni 4–6** di «Le sezioni che mancano», poi le §7–§10 del 2,
+poi i due disegni e il piano. `check-docs.sh` OK e `GATE GREEN` all'apertura; nessun codice toccato.
+
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
 decisione viola un criterio di `anthropic-skills:decision-principles`, l'accettazione decade: ci si
@@ -128,9 +136,9 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec, design/10 e questa chiusura |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec, design/10 e la sua chiusura; la nona ripresa: «la GUI dentro», le tre sequenze coi richiami alla consegna del 2 |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla, tranne la spec del sotto-progetto 1: tre righe e un richiamo nella §8.2, l'ottava ripresa su delega (decisione 19) |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta, e all'apertura e alla chiusura dell'ottava; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta, e all'apertura e alla chiusura dell'ottava, e all'apertura della nona; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
 | fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg docs/design/10-modello-dei-dati-durevoli.md` | il compendio `i/lf w/crlf`, gli altri `i/lf w/lf` — su questa macchina: un clone nuovo con `core.autocrlf=true` li mostra `w/crlf`, e non è una divergenza |
 | i wireframe esistono | `ls docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/` | `compatta-e-grafo.svg  home.svg  lavoro.svg` |
@@ -259,6 +267,22 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     e `GATE GREEN` alla chiusura; in questo file lo stato in una riga, «Da sapere subito», la tabella dello stato, i vicoli
     ciechi, il prossimo passo; il puntatore della §6 del compendio e l'intestazione; la memoria dell'agente aggiornata; gli
     script di modifica dello scratchpad cancellati; nessun codice toccato.
+30. **Alla nona ripresa, il 2026-09-08:** ripresa con `session-resume` — stato riletto coi comandi, nessuna divergenza,
+    `check-docs.sh` OK e `GATE GREEN` all'apertura; il materiale di «la GUI dentro» riverificato nel codice — il tratto `Ipc`
+    (tre operazioni, nessuna chiusura), `IpcMessage` (due varianti), il daemon senza attività e senza `Ipc`, `permission::grant`
+    (una nota su un passo aperto da altri) e `is_granted`, `Arbiter::set_policy`, `degradation_now`, `ClientGrants::on_disconnect`,
+    `DyingGui` e `gui_death_campaign.rs`, design/01, la §6.1.2 e la §6.1.4 della spec; nessun `sequenceDiagram` in `docs/`
+    (`grep -rn '^\s*sequenceDiagram' docs/`). Le tre sequenze presentate coi tre controlli della decisione 18 e rese in chat dal
+    sorgente identico (decisione 21 del coordinatore); disegnare ha trovato **due buchi** nella consegna del 2 — il permesso senza
+    un passo, «il core chiude» senza un'operazione — portati in forma A/B insieme alla casa dei diagrammi.
+31. Il proprietario ha **delegato** («decidi secondo la skill»): decise **A, A, A** (decisioni 21, 22, 23) — le sequenze scritte in
+    questo file sotto «Il modello della GUI» dal sorgente identico a quello reso; i richiami datati nella consegna del 2, §3, §4, §5
+    e §6a, più la cifra dei record congelati (sei, non quattro) nella riga «il giornale» della §5, la stessa correzione della sesta
+    ripresa nell'altra casa; la registrata sull'archivio della disposizione che non si apre all'avvio; le righe di questo file; il
+    puntatore della §6 del compendio; fine-riga di ciascun file conservati e rimisurati; `check-docs.sh` OK, commit e push. Alla
+    domanda del proprietario *«tutti i diagrammi di ora e delle sessioni precedenti dove sono salvati?»* la risposta coi comandi, in
+    chat: le case sono `docs/design/`, le due spec del kernel, questo file e i tre SVG dei wireframe — i comandi stanno nella riga
+    «tutto `docs/`» della tabella «I diagrammi, uno per uno».
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -285,6 +309,9 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 | 18 | **alla quinta ripresa, 2026-09-08** — la sezione 1 della passata (design/09 e le sue conseguenze), e la domanda *«stai tenendo conto di scalabilità, di quanto verrà e di quanto già esiste? è lo schema a modificare le logiche, gli ADR e il codice esistenti se è più corretto di essi»* | **A, con le due correzioni** trovate rispondendo: «guide approvate (col 13)» nel nodo «giornale», e le **due vie** nella cella «Chi lo raggiunge» della configurazione — i profili consegnati dal daemon (ADR-0034), la disposizione dalla settima porta. ⛔ **E il metodo vale per tutti gli studi, i brainstorming e i diagrammi futuri:** ogni proposta controlla esplicitamente che cosa **esiste già** (codice, ADR, disegni), che cosa **arriva** (la roadmap) e se **regge crescendo**, e lo dice a parole prima dell'A/B; se lo schema è più corretto di una logica, di un ADR o del codice, si correggono **quelli** — l'ADR col richiamo datato, il codice come compito del piano, sempre in forma A/B, mai in silenzio. Scritto in `CLAUDE.md`, «Come si lavora qui» |
 | 19 | **all'ottava ripresa, 2026-09-08** — la lettera E della §8.2 della spec: il primo worker vero è del 7 (la spec, 2026-08-08) o del 12 (ADR-0039 e la roadmap, 2026-09-03)? A: la spec dice 12, col richiamo datato; B: la spec resta com'è e la voce resta registrata | **delegata al coordinatore, «decidi secondo la skill»: A.** I tre controlli: **esiste** — nessun worker vero nel codice (`grep -rln 'impl Worker for' crates/*/src` rende solo la prosa della porta), la spec porta il 7 in **tre** righe (la tabella delle lettere di §8.2, la riga `process` di §8.2.2, la riga Q4 di §8.4) e la §8.2.1 dice da sola che *«se la roadmap cambia, la condizione resta vera e il numero si aggiorna»*; **arriva** — ADR-0039 e la roadmap dicono 12 dal 2026-09-03, e la Voce riusa; **regge crescendo** — se il 7 o il 6 arrivassero prima, la condizione resta e il numero si aggiorna di nuovo per la stessa regola, e il richiamo lo dice. Costo: tre numeri e un richiamo datato in «Sulla E»; correggerne una riga sola avrebbe lasciato due a mentire. Scartata B: due documenti approvati che si contraddicono senza nominarsi (gotcha #59), e una registrata che nessuno chiude |
 | 20 | **all'ottava ripresa, 2026-09-08** — la sezione 3, primo disegno: il modello dei dati durevoli in un file nuovo, `docs/design/10-modello-dei-dati-durevoli.md`, con due `erDiagram` (A), o dentro design/03 e design/09 (B) | **delegata al coordinatore, «decidi secondo la skill»: A.** I tre controlli, detti prima della domanda: **esiste** — sei campi con indice, sei `RecordKind`, tre `Detail`, la tabella `redb` del giornale, cinque scrittori di produzione, `prune` che cancella, la porta `filesystem` con `CheckpointId` e senza implementazione vera; nessun `erDiagram` in `docs/`; **arriva** — col 2 l'invocazione e la disposizione, col 3 run e sub-run, col 5 ambito e checkpoint, col 6 la cartella e l'indice della knowledge base, col 13 le guide approvate (forma dedotta); **regge crescendo** — una specie nuova è un indice nuovo di `Detail` (ADR-0036, regola 3), un archivio nuovo è una porta o una tabella sua, e un'entità costruita passa dal secondo diagramma al primo con richiamo datato, regola scritta nel file. Presentato a parole e col diagramma reso in chat dal sorgente identico (decisione 21); scritto design/10, la riga di `README.md` (il cancello conta file e righe), «nove file» tolto dalla §12 del compendio. Un difetto trovato disegnando e **registrato**: un commento di `crates/platform/src/journal.rs` dice che `boundary.rs` scrive byte che non sono un `Record`, ed è falso — codice, compito del piano (decisione 18). Scartata B: un modello dei dati spezzato in tre case diverge in silenzio (gotcha #68) |
+| 21 | **alla nona ripresa, 2026-09-08** — «la GUI dentro», primo buco trovato disegnando: la §5 del 2 dice `Approve` → `permission::grant` → la GUI rimanda `Invoke`, ma `grant` scrive una **nota** e vuole un passo già aperto con un intento (il suo doc: *«upon a step somebody else opened»*), e nel giro approvato quel passo non c'è. A: `Approve` porta anche la funzione e l'argomento, il core apre il passo A, scrive invocazione e permesso, fa l'effetto, chiude A; B: `Approve` resta la sola tripla, e il core tiene la tripla approvata in memoria per quel client fino al prossimo `Invoke` | **delegata al coordinatore, «decidi secondo la skill»: A.** I tre controlli: **esiste** — `grant` è una nota su un passo altrui, come `run_the_ring` e il routing (tre annotazioni, una regola), e il daemon non ha stato fra due messaggi; **arriva** — col 3 il permesso di un agente si posa sul passo della run che aspetta, stessa regola «sul passo che sblocca», e il gesto del 12 rifà la sequenza; **regge crescendo** — un messaggio in meno e nessun sospeso da riconciliare, dove B lascerebbe in memoria una tripla approvata che il giornale non sa. Costo: richiamo datato su §4 (la riga `Approve`), §5 (le righe «il giornale» e «il permesso») e §6a (la riga «il cambio di policy») della consegna del 2. Scartata B: stato del core fuori dal giornale per un fatto che il giornale deve avere |
+| 22 | **alla nona ripresa** — secondo buco: la §3 e la §5 del 2 dicono che col timbro sbagliato il core manda `StaleBuild` **e chiude**, e la spec §6.1.2 che «la GUI non parte e lo dichiara»; il tratto `Ipc` ha `accept`, `send`, `receive` e **nessuna chiusura** (`grep -nE '^\s*fn ' crates/kernel/src/ports/ipc.rs`). A: nessuna operazione nuova — il core segna il client come rifiutato e non lo ascolta più, la GUI esce da sola e il core vede `Disconnected`; B: la porta guadagna una quarta operazione | **delegata: A.** **Esiste** — la morte della GUI è già letta solo come `Err(Disconnected)` (`gui_death_campaign.rs`), e la §6.1.2 mette l'uscita dalla parte della GUI; **arriva** — col 2 il trasporto vero di `platform`, che vede sparire il client quando la GUI esce; **regge crescendo** — la GUI è 0..1 e sacrificabile (ADR-0004), un client rifiutato che resta è uno solo e costa un `receive` a giro. Costo: richiamo datato su §3 («la stretta di mano») e §5 (`Hello`) della consegna del 2. Scartata B: tratto, finte, suite di conformità e la §3.1 della spec per un caso che la GUI chiude da sé |
+| 23 | **alla nona ripresa** — dove vivono le tre sequenze: A in questo file, sotto «Il modello della GUI»; B un file nuovo in `docs/design/` | **delegata: A**, come la settima ripresa aveva giudicato. **Esiste** — le due spec del kernel portano già blocchi mermaid (`grep -rlE '^\s*(flowchart|stateDiagram|erDiagram|sequenceDiagram)' docs/superpowers/specs`), e design/01 disegna la GUI come una scatola sola; **arriva** — il disegno del 2 rimanda qui per la forma (sezione 6 delle sezioni che mancano); **regge crescendo** — le sequenze restano tre anche col 3 e col 12: un invocatore nuovo rifà la 3, un messaggio nuovo segue «il core manda il pezzo che cambia». Scartata B: `docs/design/` è la struttura del kernel, e un file per il protocollo della GUI ne disegnerebbe l'interno, che ADR-0001 tiene fuori dai diagrammi del kernel |
 
 ## Ciò che il repo diceva già, letto per decidere
 
@@ -394,6 +421,152 @@ cosa per tutti i moduli, quindi non ha un wireframe suo.
 | **la disposizione** | vive nel core, archivio di configurazione di ADR-0022, che il 2 costruisce con una voce sola; il core la manda al collegamento, la GUI manda «salva disposizione» | domanda 4 |
 | **la mano** | i moduli si muovono con qualunque puntatore; il 12 aggiunge il pinch: `dockview` supporta tocco e penna e le librerie terze di trascinamento | §4.1 del disegno dei gesti; la doc di `dockview` |
 | **cosa mostra davvero il 2** | la cornice con `dockview`; Home col nucleo che a parole dice «niente ancora», Stato e Permessi vivi; Lavoro con la chat del core finto, la finestra di permesso, Passi con le invocazioni del registro; le altre tessere dicono a parole chi le riempie; Compatta non esiste ancora | domande 0 e 8 |
+
+### La GUI dentro — le tre sequenze del protocollo core ↔ GUI · scritte il 2026-09-08, nona ripresa (decisioni 21–23)
+
+Il secondo disegno della sezione 3 della passata sui diagrammi (decisione 16).
+[design/01](../../design/01-topologia-dei-processi.md) disegna la GUI come **una scatola**, e qui resta tale: le sequenze mostrano
+che cosa passa sul filo fra il core e quella scatola, non l'interno della GUI, che sta nella tabella qui sopra e nei wireframe. Tre
+schemi e non un disegno per messaggio: un messaggio nuovo è una variante in più dell'enum unico (§4 del 2) e segue «il core manda il
+pezzo che cambia» (§6.1.4 della spec); un invocatore nuovo — il gesto del 12, l'agente del 3, la voce dell'8 — rifà la terza
+sequenza tale e quale (ADR-0038). I nomi dei messaggi sono quelli **provvisori** della §4 del 2 e della §2 qui sopra; «la lista dei
+passi» non ha ancora un nome. Letto il 2026-09-08 nel codice: il tratto `Ipc` in `crates/kernel/src/ports/ipc.rs` (tre operazioni,
+nessuna chiusura), `IpcMessage` in `crates/kernel/src/wire/ipc.rs` (due varianti oggi), `permission::grant` e `is_granted`,
+`Arbiter::set_policy`, `degradation_now`, `ClientGrants::on_disconnect`, `DyingGui` in `crates/simulator/src/ipc.rs` e la campagna
+`gui_death_campaign.rs`; il daemon non nomina `Ipc` e non fa girare attività; nella spec la §6.1.2 e la §6.1.4.
+
+⛔ **Disegnare ha corretto due sezioni approvate della consegna del 2**, col richiamo datato lì (decisioni 21 e 22): il permesso
+non aveva un passo su cui posarsi — `grant` è una nota e vuole un intento già scritto — quindi `Approve` porta anche la funzione e
+l'argomento, e il core apre il passo A quando arriva; e «il core chiude» non è un'operazione della porta — il core non ascolta più il
+client rifiutato, la GUI esce da sola (§6.1.2) e il core vede `Disconnected`. Registrata, non decisa: l'archivio della disposizione
+che non si apre all'avvio (tabella delle registrate).
+
+#### Sequenza 1 — l'accoglienza
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant G as GUI<br/>(la SPA nel guscio)
+    participant C as core<br/>(attivita del kernel nel daemon)
+    participant J as giornale
+    participant A as arbitro
+    participant P as settima porta<br/>(custodia della disposizione)
+    G->>C: Hello (il timbro di build)
+    alt timbro uguale
+        C-->>G: Accepted (la protezione del giornale, ADR-0023, come valore)
+        C->>J: degradation_now rilegge il giornale
+        C-->>G: Degradation (i due campi di oggi)
+        C->>A: policy attiva, budget allocato e totale
+        C-->>G: Policy
+        C->>P: ridammi i byte sotto la chiave Disposizione
+        C-->>G: Layout (il pacchetto opaco, o niente)
+        C->>J: replay, le invocazioni del registro
+        C-->>G: la lista dei passi (messaggio nuovo, domanda 8)
+        Note over G,C: da qui il core manda solo il pezzo che cambia<br/>(6.1.4 della spec) e la GUI non tira
+    else timbro diverso
+        C-->>G: StaleBuild (il timbro atteso)
+        Note over C: segna il client come rifiutato e non lo ascolta piu,<br/>la porta non ha una chiusura
+        Note over G: la GUI non parte e lo dichiara (6.1.2 della spec),<br/>esce, e il core vede Disconnected
+    end
+    Note over G,P: in ogni sequenza un Err(Disconnected) su send o su receive porta a on_disconnect di ClientGrants<br/>e il client esce dalla tabella (gui_death_campaign.rs)
+```
+
+A parole: la GUI si presenta col timbro di build (§6.1.2 della spec); se il timbro è quello, il core manda in fila ciò che sa — la
+protezione del giornale come valore (ADR-0023), il degrado (`degradation_now`), la policy col budget (l'arbitro), la disposizione
+custodita dalla settima porta (§2 qui sopra) e la lista dei passi, che nel 2 sono le invocazioni del registro (domanda 8) — poi solo
+il pezzo che cambia; se il timbro è un altro, manda il timbro atteso e non ascolta più quel client. In ogni sequenza la morte della
+GUI si legge solo come `Err(Disconnected)` su `send` o `receive`, che porta a `on_disconnect`: è la proprietà 3 della §5.7, già
+provata da `gui_death_campaign.rs`.
+
+#### Sequenza 2 — salva, riavvia, ritrova
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant G as GUI
+    participant C as core
+    participant P as settima porta<br/>(custodia della disposizione)
+    Note over G: la disposizione si ferma, o la finestra si chiude<br/>(decisione 12 del coordinatore)
+    G->>C: SaveLayout (il pacchetto opaco, toJSON di dockview e la vista attiva)
+    C->>P: conserva questi byte sotto la chiave Disposizione
+    alt scrittura riuscita
+        P-->>C: fatto
+        C->>P: ridammi i byte
+        C-->>G: Layout (il nuovo)
+    else scrittura fallita
+        P-->>C: errore
+        C->>P: ridammi i byte
+        C-->>G: Layout (il vecchio, riletto)
+        Note over G: la GUI confronta e trova il vecchio,<br/>nessuna variante di errore (decisione 13)
+    end
+    Note over G,P: riavvio del core, poi della GUI
+    G->>C: Hello, e la sequenza 1 fino a Policy
+    C->>P: ridammi i byte sotto la chiave Disposizione
+    alt un pacchetto
+        C-->>G: Layout (il pacchetto)
+        Note over G: la GUI lo applica, un pannello che punta a un tipo<br/>o a una run sparita lo dice a parole e si chiude (riga 8 della sezione 2)
+    else niente
+        C-->>G: Layout (niente)
+        Note over G: la GUI usa le tre viste di default<br/>committate in gui/ (decisione 11)
+    end
+```
+
+A parole: la GUI salva da sola quando la disposizione si ferma o la finestra si chiude (decisione 12 del coordinatore); il core
+conserva il pacchetto opaco dalla settima porta e **rimanda sempre ciò che tiene dopo la scrittura** (decisione 13): se la scrittura
+è fallita torna il vecchio, e la GUI lo vede confrontando, senza una variante di errore. Al riavvio il core rilegge la porta
+all'accoglienza: un pacchetto si applica — un pannello che punta a un tipo o a una run sparita lo dice a parole e si chiude,
+controllo della GUI (riga 8 della §2) — e «niente» fa usare le tre viste di default committate in `gui/` (decisione 11). È la sonda
+«salva, riavvia, ritrova» del piano del 2.
+
+#### Sequenza 3 — l'invocazione
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant G as GUI
+    participant C as core<br/>(il registro delle funzioni)
+    participant J as giornale
+    participant A as arbitro
+    G->>C: Invoke (la funzione, il suo argomento, chi la invoca)
+    Note over C: funzione non registrata, rifiutata senza scrivere nulla
+    C->>J: is_granted sulla tripla della funzione (rilegge il giornale)
+    alt tripla gia concessa
+        Note over C: si prosegue
+    else tripla non concessa
+        C-->>G: PermissionRequired (la tripla)
+        Note over G: la finestra di conferma, la tripla a parole,<br/>trappola di focus (G20)
+        G->>C: Approve (la tripla, con la funzione e il suo argomento)
+    end
+    C->>J: intent sul passo A (la classe della funzione, Idempotent per il cambio di policy)
+    C->>J: note su A, dettaglio Invocation (funzione, invocatore, argomento)
+    opt dopo un Approve
+        C->>J: note su A, dettaglio Permission, la tripla concessa (grant di permission.rs)
+    end
+    C->>A: set_policy sul passo B
+    A->>J: intent su B
+    A->>A: la policy cambia
+    A->>J: outcome su B
+    C->>J: outcome sul passo A
+    C-->>G: Policy (la nuova)
+    C-->>G: la lista dei passi (aggiornata, pezzo 6 della sezione 3)
+```
+
+A parole: il click manda `Invoke` con la funzione, l'argomento e chi la invoca (il `ClientId` della GUI); una funzione non
+registrata è rifiutata senza scrivere nulla (§5 del 2). Il registro chiede a `is_granted` se la tripla della funzione è concessa: se
+sì prosegue; se no manda `PermissionRequired`, la GUI apre la finestra di conferma con la tripla a parole (G20) e, al sì, manda
+`Approve` **con la funzione e l'argomento** (decisione 21). Da lì il giro della §5 del 2: intento sul passo A con la classe della
+funzione, la nota `Invocation`, la nota `Permission` se c'è stato un `Approve` — il permesso si posa sul passo che sblocca, come
+`run_the_ring` posa il verdetto sul passo che giudica — l'effetto come passo B di `Arbiter::set_policy` com'è, l'esito su A; poi
+`Policy` e la lista dei passi aggiornata (pezzo 6 della §3). Col 3 il permesso di un agente si poserà sul passo della run che
+aspetta, stessa regola; col 12 il gesto entra come invocatore, stesso giro, e per default non conferma (ADR-0038). Registrata alla
+sesta ripresa e non decisa: i due passi per invocazione, col 3.
+
+Controllo sui cinque criteri: fonti lette il 2026-09-08 nel codice e nella spec, elencate sopra, con verificato e dedotto separati —
+🔶 **dedotto**, da confermare da chi costruisce: che la lista dei passi si mandi all'accoglienza e dopo ogni invocazione (§3, pezzo
+6), e che il client rifiutato resti nella tabella fino al `Disconnected`; **assunto:** niente; stessa forma dei diagrammi di
+`docs/design/` — sorgente mermaid, niente accenti né due punti nel testo dei messaggi — e degli altri blocchi mermaid delle spec; il
+debito è scritto: la registrata sull'archivio che non si apre, e i nomi provvisori; nessuna dipendenza; tre sequenze e non un
+disegno per messaggio, il minimo che dice ciò che le tabelle della §4 e della §5 del 2 non mostrano — l'ordine, e chi apre il passo.
 
 ## Le sezioni approvate del disegno — il merito com'è stato approvato
 
@@ -770,7 +943,7 @@ Il proprietario ha chiesto se tutto questo sia *«integrato e studiato nell'arch
 | l'archivio di configurazione | ✅ sì | ADR-0022, la tabella degli archivi per natura · [design/09](../../design/09-l0-fisico.md), nodo «configurazione: profili, guide, policy», non cifrato, nel backup · tracciabilità, «Impostazioni e profili → pannello GUI» | niente: la disposizione è un contenuto in più di un archivio già disegnato; il nodo può guadagnare la parola, un ritocco datato |
 | le porte del kernel | ✅ sì — sei, **esaustive** | spec §2.3 (la tabella) e §3.1 (il simulatore le sostituisce tutte) · `crates/kernel/src/ports/mod.rs` · [design/01](../../design/01-topologia-dei-processi.md) | ⛔ **la settima porta è l'unica cosa nuova**, e non è inventata: è **trovata**. Due documenti approvati non si toccavano — ADR-0022 dice «esiste un archivio di configurazione», la §2.3 dice «il kernel tocca il mondo solo da queste sei» — e nessuna delle sei arriva a quell'archivio. Invisibile finché nessuno provava a scriverci da dentro il kernel |
 | i messaggi `Layout`, `SaveLayout`, i passi | ✅ il canale sì, le varianti no — di proposito | spec §6.1: privato, unico, non versionato; §6.1.2 il timbro; §6.1.4 «il core decide *quando* emettere, la GUI non tira» | le varianti le decide il disegno del 2 (§4), non la spec; la regola è rispettata |
-| la GUI dentro — cornice, moduli, viste, `dockview` | ❌ no, e non deve | design/01 disegna la GUI come **una scatola**: «client sottile, 0..1, solo presentazione»; ADR-0027/0030 decidono web, Vue, librerie agnostiche; ADR-0029 il guscio, aperto | i diagrammi del kernel non disegnano la GUI (ADR-0001). Lo studio della GUI **è questa stella polare**: i wireframe sono i suoi diagrammi, le decisioni 0–16 il suo merito |
+| la GUI dentro — cornice, moduli, viste, `dockview` | ❌ no, e non deve | design/01 disegna la GUI come **una scatola**: «client sottile, 0..1, solo presentazione»; ADR-0027/0030 decidono web, Vue, librerie agnostiche; ADR-0029 il guscio, aperto | i diagrammi del kernel non disegnano la GUI (ADR-0001). Lo studio della GUI **è questa stella polare**: i wireframe sono i suoi diagrammi, le decisioni 0–16 il suo merito. ✅ **RICHIAMO DEL 2026-09-08, nona ripresa:** le tre sequenze del protocollo core ↔ GUI esistono, nella sottosezione «La GUI dentro» sotto «Il modello della GUI» (decisione 23) |
 | uno schema ER | ❌ non esiste, per nessun archivio. ✅ **RICHIAMO DEL 2026-09-08, ottava ripresa:** esiste — [design/10](../../design/10-modello-dei-dati-durevoli.md), due `erDiagram` (decisione 20) | `grep -rn erDiagram docs/` → zero, quel giorno | non c'è un database relazionale: `redb` è chiave → valore; il modello dei dati è il record del giornale (ADR-0036) e design/09. La disposizione è una chiave e un valore opaco |
 
 ⚠️ **Due divergenze trovate guardando, e non toccate** — nelle registrate qui sotto, con chi le chiude: design/09 mette la
@@ -837,6 +1010,9 @@ dopo la misura.
 | 24 | **passata, settima ripresa** — design/08 non porta lo **stato** delle Q: rimanda alla §8.4 della spec, casa unica; e la GUI entra nel diagramma come seconda scatola dello strato deterministico, non come terzo strato | gotcha #68; e la GUI non decide mai su un modello (G13, ADR-0014): le sue prove sulle fixture sono deterministiche come quelle del kernel. Costo: chi cerca «Q3 è verificata?» in design/08 apre la spec |
 | 25 | **passata, ottava ripresa** — la lettera E della §8.2 della spec: **delegata** dal proprietario | la tabella delle sue decisioni, riga 19 |
 | 26 | **passata, ottava ripresa** — design/10: **delegata** dal proprietario; il file nasce **LF** come design/09; le entità decise e non costruite stanno in un **secondo** diagramma con «(col N)», non mescolate al primo | la tabella delle sue decisioni, riga 20; due diagrammi perché «esiste» e «arriva» sono i primi due controlli della decisione 18, e un lettore deve vederli separati. Costo: quando un sotto-progetto costruisce un'entità, la riga si sposta — la regola sta nel file |
+| 27 | **passata, nona ripresa** — `Approve` porta l'invocazione, e il permesso si posa sul passo A: **delegata** dal proprietario | la tabella delle sue decisioni, riga 21 |
+| 28 | **passata, nona ripresa** — nessuna chiusura nella porta `ipc`, il client rifiutato non si ascolta più: **delegata** | la tabella delle sue decisioni, riga 22 |
+| 29 | **passata, nona ripresa** — le tre sequenze vivono in questo file: **delegata**; e **nessun quarto diagramma** per la struttura moduli/esemplari/viste, che resta a parole nella tabella «Il modello della GUI», la quale la dice già per intero («un diagramma che non aggiunge nulla al testo non si fa», punto 2 del mandato) | la tabella delle sue decisioni, riga 23. Costo: se il proprietario vorrà il disegno della struttura, è una proposta A/B in più |
 
 ## Registrate, non prese — del proprietario
 
@@ -862,6 +1038,7 @@ dopo la misura.
 | ✅ **chiusa il 2026-09-08, ottava ripresa — decisione 19, delegata: A, il numero è 12 nelle tre righe della spec, col richiamo datato in «Sulla E».** Era — 🔶 nata alla settima ripresa, 2026-09-08, scrivendo design/08 — la lettera **E** della §8.2 della spec («esiste un worker reale da avviare e uccidere») dice **7**, Generazione asset; ADR-0039 e la roadmap (riga 12, «il worker sotto il core») dicono che il primo worker vero lo paga il **12**. Due documenti che non si nominano (gotcha #59): la §8.2 è spec, e il richiamo datato lì è del proprietario; design/08 scrive «col primo worker vero» senza scegliere | chiusa: decisione 19; scritto nella spec il 2026-09-08, ottava ripresa |
 | 🔶 **nata all'ottava ripresa, 2026-09-08, scrivendo design/10** — il commento di `crates/platform/src/journal.rs` sopra la `TableDefinition` («`boundary.rs` writes some that are not a `Record` at all») è **falso**: `Untrusted::promote` scrive un `Record::V1` normale — una nota `Unrepeatable`, `Untrusted` — e byte che non sono un record li scrivono solo i banchi (`grep -rln 'note(.*, b"' crates/*/tests`). La regola che il commento difende — la porta non decodifica — resta vera. È codice: si corregge come compito del piano, non qui (decisione 18) | il piano del 2, nel primo compito che tocca `crates/platform/src/journal.rs`; o il proprietario, prima |
 | 🔶 **nata alla settima ripresa** — l'innesco **B (3)** di Q6 e Q11 nella §8.4 della spec («qualcuno chiama un modello: proiezione…»): la proiezione nasce col **13**, prima del 3 (rimandi del 2026-09-05 in ADR-0008 e ADR-0010), e le due prove — ricomposizioni ripetute, occupazione sotto il budget — non chiedono un modello. La lettera resta vera come innesco del primo uso; se lo stato debba potersi chiudere già col 13 è del proprietario | il proprietario, con la §8.2 e la §8.4 |
+| 🔶 **nata alla nona ripresa, 2026-09-08, disegnando la sequenza dell'accoglienza** — se all'avvio l'archivio della disposizione (la settima porta) **non si apre**, il core si ferma come per il giornale (`StartupError` in `crates/daemon/src/main.rs`, dove `FileJournal::open` che fallisce ferma l'avvio) o parte senza e manda `Layout` «niente»: la §2 copre la scrittura fallita («la GUI riceve il vecchio»), non l'archivio che non si legge. La disposizione non è stato autorevole, quindi la via coerente con ADR-0019 è **partire e dichiararlo** — un archivio cosmetico non dovrebbe fermare il core — ma è una scelta del disegno del 2, con la sua sonda | il disegno del 2, §5 e §8 |
 
 ## Vicoli ciechi di questa sessione
 
@@ -902,6 +1079,11 @@ dopo la misura.
   un `id` diverso per ciascuno; il blocco di inizializzazione è quello del `read_me` (modulo `diagram`, righe 384–441 del
   file salvato). Nel sorgente niente accenti, apostrofi, due punti né punti e virgola: è la convenzione dei file di
   `docs/design/`, e evita le trappole del parser.
+- **nona ripresa:** in un `sequenceDiagram` il testo di un messaggio viene dopo i due punti, quindi «niente due punti» vale
+  **dentro** il testo (`permission::grant` si scrive «grant di permission.rs»); le `Note over A,B` lunghe si spezzano con `<br/>`
+  per tenere il disegno stretto. Tre sequenze in un widget solo funzionano come i due `erDiagram` dell'ottava — un `id` per
+  ciascuna, `overflow-x: auto` sul contenitore — e il sorgente si salva prima in un file dello scratchpad, da cui lo script di
+  scrittura lo rilegge: così ciò che il proprietario approva e ciò che finisce nel file sono la stessa stringa.
 
 ## Prossimo passo, eseguibile
 
@@ -1016,6 +1198,16 @@ salva/riavvia/ritrova, l'invocazione) come `sequenceDiagram`; la casa proposta �
 «Il modello della GUI», non un file di `docs/design/` (giudizio della settima ripresa, da confermare A/B coi tre controlli e
 col diagramma reso dal sorgente identico); poi le sezioni 4–6.
 
+✅ **Alla nona ripresa, il 2026-09-08: il secondo disegno è SCRITTO (A su delega, decisioni 21–23)** — le tre sequenze nella
+sottosezione «La GUI dentro», sotto «Il modello della GUI», dal sorgente identico a quello reso in chat; i richiami datati nella
+consegna del 2 (§3, §4, §5, §6a). ⛔ **La sezione 3 e la passata sui diagrammi (decisione 16) sono CHIUSE.** ⏭️ **Si riprende dalle
+sezioni 4–6 di «Le sezioni che mancano»** — lo spike di accettazione di `dockview` (4); core finto, prove e cancello, decisioni
+aperte, come si riprende (5); dove vive la stella polare (6) — ciascuna in forma A/B coi tre controlli della decisione 18; poi le
+§7–§10 del 2; poi i due disegni scritti sul posto e il piano in due parti. Restano del proprietario le registrate: l'innesco B (3)
+di Q6/Q11, e le due nate disegnando — i due passi per invocazione, col 3; l'archivio della disposizione che non si apre, del
+disegno del 2. La struttura moduli/esemplari/viste resta a parole nella tabella «Il modello della GUI»: un disegno si fa solo se il
+proprietario lo chiede (decisione 29 del coordinatore).
+
 Poi la **sezione 3**, i disegni nuovi, ciascuno A/B coi tre controlli della decisione 18, a parole e col diagramma reso dal
 sorgente identico (decisione 21). ⛔ **Il materiale è già letto, e sta qui perché non si rilegga da capo** — si riverifica
 coi comandi, non si cita:
@@ -1026,7 +1218,7 @@ coi comandi, non si cita:
 | idem, l'archivio | la tabella `redb` del giornale: chiave `u64` progressiva → (`step: u64`, `kind: u8`, i byte del record); `FileJournal` porta `next_key` | `crates/platform/src/journal.rs`, la riga `const RECORDS: TableDefinition` |
 | idem, i byte congelati | sei record, uno per `RecordKind`, più la mappa | `ls crates/kernel/tests/frozen/` |
 | idem, ciò che arriva | col 2 la specie `Invocation` (funzione, invocatore, argomento) e la chiave della disposizione (enum chiuso, una variante, valore opaco); col 3 run e sub-run — oggi non esiste `RunId`, solo `StepId`; col 4 il piano; col 5 la versione conservata dal checkpoint, riferita dal passo, dentro un ambito dichiarato; col 6 la cartella della knowledge base e il suo indice — nodi router · gruppo · foglia · skill · guida-modello · cattura; attributi percorso · specie · etichetta · provenienza · ultima modifica; frecce router → gruppo → foglia → skill → router; col 13 le guide approvate | §5 del 2 · §2 qui sopra · ADR-0024, Decision 1–2 · disegno della knowledge base §2.2 e §4.2 · design/09 e design/03 |
-| «la GUI dentro» | design/01 disegna la GUI come una scatola, e la §3 qui sopra dice che deve restarlo; il modello è nella tabella «Il modello della GUI», e le tre sequenze — l'accoglienza (`Hello` → `Accepted` → `Degradation`, `Policy`, `Layout`), il giro salva/riavvia/ritrova (`SaveLayout` → settima porta → `Layout`, e il vecchio se la scrittura fallisce), l'invocazione (`Invoke` → `PermissionRequired` → `Approve` → `Invoke` → `Policy`) — non hanno un diagramma. 🔶 **Giudizio di chi ha letto, non deciso:** la casa è **questa stella polare**, come `sequenceDiagram` accanto alla tabella del modello — non un file di `docs/design/`, che è la struttura del kernel, né design/01 | §4, §5, §6a del 2 · §2 qui sopra · la tabella «Cosa è già studiato, e dove» |
+| «la GUI dentro» | design/01 disegna la GUI come una scatola, e la §3 qui sopra dice che deve restarlo; il modello è nella tabella «Il modello della GUI», e le tre sequenze — l'accoglienza (`Hello` → `Accepted` → `Degradation`, `Policy`, `Layout`), il giro salva/riavvia/ritrova (`SaveLayout` → settima porta → `Layout`, e il vecchio se la scrittura fallisce), l'invocazione (`Invoke` → `PermissionRequired` → `Approve` → `Invoke` → `Policy`) — non hanno un diagramma. 🔶 **Giudizio di chi ha letto, non deciso:** la casa è **questa stella polare**, come `sequenceDiagram` accanto alla tabella del modello — non un file di `docs/design/`, che è la struttura del kernel, né design/01. ✅ **RICHIAMO DEL 2026-09-08, nona ripresa: deciso A (decisione 23) e scritto** | §4, §5, §6a del 2 · §2 qui sopra · la tabella «Cosa è già studiato, e dove» |
 | il cancello | un file nuovo in `docs/design/` va nell'indice di `README.md`: `check-docs.sh` conta i file e le righe della tabella che linkano `design/`, e devono coincidere; e ogni riga `Q` di design/08 deve avere un metodo (V30) | `scripts/check-docs.sh`, le righe `d_file=` e `d_idx=` |
 
 Poi le sezioni 4–6 e le §7–§10 del 2, come nel punto 4 del verbale.
@@ -1047,7 +1239,8 @@ Poi le sezioni 4–6 e le §7–§10 del 2, come nel punto 4 del verbale.
 | [design/01](../../design/01-topologia-dei-processi.md) | 1 flowchart, 1 stateDiagram | la GUI è una scatola e resta tale; la GUI dentro è un disegno nuovo | 3 |
 | [design/04](../../design/04-anelli-e-sensori.md) · [design/06](../../design/06-permessi-e-confine-dei-dati.md) | 2 · 3 | 🔶 nulla, giudizio di questa sessione | — |
 | [design/10](../../design/10-modello-dei-dati-durevoli.md) | 2 erDiagram | **nuovo**: il giornale a entità com'è nel codice — passo, voce, record, dettaglio, coi due «kind» — e ciò che è deciso per sotto-progetto, con «(col N)»; chi scrive oggi ogni specie; le regole; i comandi | 3, ✅ scritto il 2026-09-08, ottava ripresa |
-| tutto `docs/` | — | nessun diagramma a entità: `grep -rE '^\s*erDiagram' docs/` è vuoto. ✅ **RICHIAMO DEL 2026-09-08, ottava ripresa:** ora ne restituisce due, in design/10 | 3 |
+| questo file, «La GUI dentro» | 3 sequenceDiagram | **nuovo**: l'accoglienza, il giro salva/riavvia/ritrova, l'invocazione — il protocollo core ↔ GUI con la GUI come una scatola sola; due correzioni alla consegna del 2 trovate disegnando | 3, ✅ scritto il 2026-09-08, nona ripresa |
+| tutto `docs/` | — | nessun diagramma a entità: `grep -rE '^\s*erDiagram' docs/` è vuoto. ✅ **RICHIAMO DEL 2026-09-08, ottava ripresa:** ora ne restituisce due, in design/10; ✅ **e alla nona** i `sequenceDiagram` sono tre, in questo file. Dove vive ogni diagramma lo dice il comando `grep -rlE '^\s*(flowchart|stateDiagram|erDiagram|sequenceDiagram)' docs`, e i tre wireframe SVG `ls docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/` | 3 |
 
 #### La proposta per la sezione 1 — presentata il 2026-09-08, NON approvata, NON scritta
 

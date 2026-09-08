@@ -29,7 +29,8 @@ e il rimando ad ADR-0019 scritti (A). ✅ **La sesta ripresa, lo stesso giorno, 
 tabella Passi (A). ✅ **La settima ripresa, lo stesso giorno, ha SCRITTO design/08** (A): la sezione 2 della passata è
 **chiusa**; la domanda sulla lettera **E** della §8.2 della spec è **posta e senza risposta** — si riprende da lì, poi dalla
 **sezione 3**, i disegni nuovi, col materiale già letto. ✅ **L'ottava ripresa, lo stesso giorno, ha DECISO la lettera E su
-delega — A, il numero è 12 — e l'ha scritta nella spec**: si riprende dalla sezione 3.
+delega — A, il numero è 12 — e l'ha scritta nella spec; poi ha SCRITTO design/10, il primo disegno della sezione 3 (A su
+delega, decisione 20)**: si riprende dal secondo disegno, «la GUI dentro».
 
 ## ⛔ Da sapere subito
 
@@ -89,7 +90,13 @@ file; nessun codice toccato.
 **A** coi tre controlli della decisione 18: il numero è **12** nelle **tre** righe della spec che lo portavano — la tabella delle
 lettere di §8.2, la riga `process` di §8.2.2, la riga Q4 di §8.4 — col richiamo datato nel paragrafo «Sulla E»; fine-riga CRLF
 della spec conservati e rimisurati; `check-docs.sh` OK. È la prima volta che questa passata tocca la **spec**, e lo fa su delega.
-⛔ **Si riprende dalla sezione 3**, i disegni nuovi; la seconda registrata (l'innesco B di Q6/Q11) resta ferma.
+⛔ **Si riprende dalla sezione 3**, dal suo secondo disegno; la seconda registrata (l'innesco B di Q6/Q11) resta ferma.
+
+✅ **E ha scritto design/10** — il modello dei dati durevoli, due `erDiagram`, A su delega (decisione 20) — con la riga di
+`README.md` e «nove file» tolto dalla §12 del compendio; un commento falso di `crates/platform/src/journal.rs` è **registrato**
+per il piano del 2, non corretto qui. Chiusura chiesta dal proprietario con `session-handoff`: stato riletto coi comandi,
+`check-docs.sh` OK e `GATE GREEN` alla chiusura; la consegna è questo file; nessun codice toccato. ⛔ **Si riprende dal secondo
+disegno della sezione 3, «la GUI dentro»**: il come, coi percorsi, sta nel prossimo passo.
 
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
@@ -121,11 +128,11 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec, design/10 e questa chiusura |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla, tranne la spec del sotto-progetto 1: tre righe e un richiamo nella §8.2, l'ottava ripresa su delega (decisione 19) |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta, e all'apertura e alla chiusura dell'ottava; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
-| fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg` | il compendio `i/lf w/crlf`, gli altri `i/lf w/lf` |
+| fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg docs/design/10-modello-dei-dati-durevoli.md` | il compendio `i/lf w/crlf`, gli altri `i/lf w/lf` — su questa macchina: un clone nuovo con `core.autocrlf=true` li mostra `w/crlf`, e non è una divergenza |
 | i wireframe esistono | `ls docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/` | `compatta-e-grafo.svg  home.svg  lavoro.svg` |
 | margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo |
 
@@ -248,6 +255,10 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     il proprietario ha **delegato** («decidi secondo la skill»): decisa **A** (decisione 20) — design/10 scritto, la riga di
     `README.md`, «nove file» tolto dal compendio, le righe di questo file; un commento falso in `platform/src/journal.rs`
     registrato per il piano; `check-docs.sh` OK, commit e push.
+29. Chiusura dell'ottava ripresa, chiesta dal proprietario con `session-handoff`: stato riletto coi comandi, `check-docs.sh` OK
+    e `GATE GREEN` alla chiusura; in questo file lo stato in una riga, «Da sapere subito», la tabella dello stato, i vicoli
+    ciechi, il prossimo passo; il puntatore della §6 del compendio e l'intestazione; la memoria dell'agente aggiornata; gli
+    script di modifica dello scratchpad cancellati; nessun codice toccato.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -882,6 +893,15 @@ dopo la misura.
   una chiamata ha fatto girare la baseline e i comandi successivi dentro quella cartella — `No such file or directory`, exit
   127 — mentre i comandi git, che risalgono da soli alla radice, non se ne accorgevano. Percorsi assoluti, o `cd` alla radice
   in testa a ogni chiamata.
+- **ottava ripresa:** col tool Bash l'uscita di una chiamata ha un tetto di **30 000 caratteri**, oltre il quale finisce su un
+  file: il compendio si legge a **200** righe per chiamata, la testa dell'audit a **150**, e la tabella dei rimedi dell'audit
+  (righe 151–225) a **40**. Il tool Read ha un altro tetto, 25k token, e regge 400 righe.
+- **ottava ripresa:** `grep '8\.2' scripts/check-docs.sh` non trova nulla perché le etichette dello script sono in inglese: il
+  controllo della §8 si trova con `grep -n trigger scripts/check-docs.sh` — stato in `c[4]`, innesco in `c[6]`.
+- **ottava ripresa:** due `erDiagram` in un solo widget funzionano coi sorgenti in un oggetto e un ciclo di `mermaid.render`,
+  un `id` diverso per ciascuno; il blocco di inizializzazione è quello del `read_me` (modulo `diagram`, righe 384–441 del
+  file salvato). Nel sorgente niente accenti, apostrofi, due punti né punti e virgola: è la convenzione dei file di
+  `docs/design/`, e evita le trappole del parser.
 
 ## Prossimo passo, eseguibile
 

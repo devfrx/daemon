@@ -19,7 +19,7 @@ viaggio della knowledge base (`07ab6dc` → `6a7967a`) e del 2 (`ae40fa0` → `6
 
 Stella polare a metà: sette decisioni del proprietario più la modularità, quattro wireframe disegnati e
 salvati — Home approvata; Lavoro e Compatta col grafo **approvati come mappa alla ripresa del 2026-09-07**,
-con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **chiusa** — cinque tabelle piene e una corta, decisione 12 — e le decisioni 11, 12 e 13; la sezione 2 **chiusa il 2026-09-08** — viste e disposizione, con una **settima porta** e le decisioni 14 e 15 delegate; nessun codice toccato; mancano le sezioni 3–6 della stella polare e le §7–§10 del 2,
+con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **chiusa** — cinque tabelle piene e una corta, decisione 12 — e le decisioni 11, 12 e 13; le sezioni 2 e 3 **chiuse il 2026-09-08** — viste e disposizione con una **settima porta** (decisioni 14 e 15 delegate), e la fetta del 2 ritagliata (A) — e il **mandato** del proprietario per la sessione nuova, la passata sui diagrammi (decisione 16); nessun codice toccato; mancano le sezioni 4–6 della stella polare e le §7–§10 del 2,
 poi i due disegni e il piano.
 
 ## ⛔ Da sapere subito
@@ -31,8 +31,13 @@ wireframe SVG nella cartella accanto, i richiami datati nella consegna del 2, il
 ✅ **Le due riprese del 2026-09-07 hanno toccato solo questo file** e, alla chiusura della seconda, il puntatore
 della §6 del compendio; `GATE GREEN` rilanciato alla chiusura della seconda ripresa, dopo l'ultimo commit di merito.
 
-✅ **La terza ripresa, il 2026-09-08, tocca solo questo file** fino alla chiusura: stato riletto coi comandi, nessuna
-divergenza, `check-docs.sh` OK all'apertura; cancello non rilanciato perché non si tocca codice, si rilancia alla chiusura.
+✅ **La terza ripresa, il 2026-09-08, ha toccato solo questo file** e, alla chiusura, il puntatore della §6 del compendio:
+stato riletto coi comandi, nessuna divergenza, `check-docs.sh` OK all'apertura; `GATE GREEN` rilanciato alla chiusura.
+
+⛔ **Il prossimo passo NON è la sezione 4.** È il **mandato** del proprietario (decisione 16), per una sessione nuova con un
+agente nuovo: la **passata sui diagrammi** — aggiornare quelli esistenti, crearli dove mancano (ER compresi), e **correggere la
+progettazione** dove un diagramma mostra un errore. Può riaprire sezioni approvate: una correzione torna al proprietario in
+forma A/B, con richiamo datato, mai in silenzio. Il come sta in «Prossimo passo, eseguibile».
 
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
@@ -64,7 +69,7 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la §2 della terza ripresa del 2026-09-08 |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con questa chiusura |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla |
 | cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
@@ -128,6 +133,13 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     proposta scritta («consegnato al daemon e non letto dal kernel») è **caduta**: `SaveLayout` arriva dentro il kernel
     (§5 del 2) e nessuna delle sei porte tiene un pacchetto opaco. Le due domande delegate dal proprietario («decidi
     secondo la skill») e decise: fuori dal registro (14), una settima porta (15); la §2 scritta qui sotto.
+19. La **sezione 3** presentata — i nove pezzi in ordine, le sezioni del 2 che cambiano, il «non costruisce», le decisioni
+    16–19 del coordinatore. Alla domanda del proprietario *«tutto questo è integrato e studiato nell'architettura, schemi ER
+    ecc.?»* la risposta **verificata nei file** e non a memoria — la tabella *«Cosa è già studiato, e dove»* nella §3 — con
+    le due divergenze trovate in design/09. **Approvata, A**, con le due registrate.
+20. Chiusura della terza ripresa: il **mandato** del proprietario per la sessione nuova (decisione 16) scritto nel prossimo
+    passo; il puntatore della §6 del compendio riscritto; `GATE GREEN` rilanciato; la memoria dell'agente aggiornata; nessun
+    codice toccato.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -149,6 +161,7 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 | 13 | **alla seconda ripresa** — l'Ambito: «che cos'è? vorrei che funzionasse simil Claude Desktop; ha interazione diretta con i permessi?» | l'ambito è la **cartella di lavoro della run** più la copia di sicurezza di ogni file prima che l'agente lo tocchi (ADR-0024): non un albero del disco, non il diff. **Simil Claude Desktop, deciso**: la cartella si sceglie all'avvio della run e si vede sempre nell'intestazione della chat; se ne aggiungono altre durante la run, e ogni aggiunta è una dichiarazione di ambito; pannello o riga lo decide il 5. Coi permessi, letto negli ADR: sono **due meccanismi distinti** — la tripla dice cosa l'agente **può fare** su un percorso, e una tripla di lettura vale «lì, e solo lì» (ADR-0016, tabella delle triple); l'ambito dice **dove c'è la copia di sicurezza** (ADR-0024, che non nomina i permessi). Si incontrano in un punto: la richiesta di permesso su un file, dove la GUI dice se il percorso è dentro l'ambito o fuori, **prima** che l'agente scriva (G18, follow-up di ADR-0024). Registrata: se il preset «auto-approva sicuri» approvi le letture ovunque o solo dentro l'ambito |
 | 14 | **alla terza ripresa, 2026-09-08** — se «salva disposizione» passi dal registro delle funzioni con una tripla, o sia una scrittura fuori dal registro | **delegata al coordinatore, «decidi secondo la skill»: fuori dal registro.** ADR-0038 regola 5 tiene fuori lo spostare un pannello; salvarlo è lo stesso fatto reso durevole, e una tripla chiederebbe il permesso di sistemare le proprie finestre a ogni avvio (ADR-0016: un'approvazione vale quella tripla, quella sessione). §2 |
 | 15 | **alla terza ripresa** — dove la disposizione si conserva, letto che `SaveLayout` arriva dentro il kernel (§5 del 2) e che nessuna delle sei porte tiene un pacchetto opaco: una **settima porta**, o il giornale forzato | **delegata al coordinatore: la settima porta.** Scartato il giornale — ADR-0018 tiene per sempre «la parte piccola», e un pacchetto di pannelli decine di volte al giorno non lo è — e, già alla domanda 4, il non salvare. Costo: la §3.1 della spec passa da sei a sette famiglie con richiamo datato, compito del piano. §2 |
+| 16 | **alla terza ripresa** — la sezione 3 (**A**, con le due registrate), e la domanda *«tutto questo è integrato e studiato nell'architettura, schemi ER ecc.?»* | **Il mandato per la sessione nuova, con un agente nuovo:** aggiornare i diagrammi esistenti, **crearli dove mancano** — ER compresi — e **correggere la progettazione** dove un diagramma mostra un errore. Viene **prima** delle sezioni 4–6; una correzione a una sezione approvata torna al proprietario in forma A/B, con richiamo datato. La risposta verificata sta nella §3, tabella *«Cosa è già studiato, e dove»* |
 
 ## Ciò che il repo diceva già, letto per decidere
 
@@ -584,13 +597,81 @@ assunto separati; stessa forma delle porte esistenti, stesso motore, stesso back
 solo per i messaggi; il debito è scritto qui e nella §3.1; nessuna dipendenza nuova; due operazioni e una chiave, il
 minimo che risolve alla radice — il core non aveva un posto per ciò che non è giornale, e ADR-0022 diceva che deve averlo.
 
+### §3 — La fetta del 2 ritagliata · approvata il 2026-09-08 (A)
+
+Il 2 costruisce la **cornice** di tutta la GUI più la propria fetta (domanda 0), e da oggi anche la settima porta
+(decisione 15). Questa sezione dice **cosa** costruisce, in che **ordine**, e quali sezioni approvate del 2 cambiano:
+non le riscrive — ricevono un richiamo datato, e la riscrittura è del disegno del 2 (decisione 7 del coordinatore).
+
+| # | Pezzo | Dove vive | Da dove viene |
+|---|---|---|---|
+| 1 | lo spike M1–M5 sui due gusci **più l'accettazione di `dockview`** (sezione 4), e la chiusura di ADR-0029 | `spikes/gui-shell/` | §2 del 2 · domanda 6 |
+| 2 | il filo: trasporto `ipc` in `platform`, stretta di mano col timbro, `ClientId` dal contatore, suite di conformità — **invariato** | `crates/platform/src/ipc.rs` | §3 del 2 |
+| 3 | lo schema che cresce: le varianti della §4 del 2 **più tre** — `Layout`, `SaveLayout`, la lista dei passi — con le fixture e il timbro | `crates/kernel/src/wire/ipc.rs` | §4 del 2 · §2 qui · domanda 8 |
+| 4 | il registro delle funzioni, col click e il cambio di policy — **invariato** | modulo nuovo di `kernel` | §5 del 2 |
+| 5 | **la settima porta**: il tratto in `kernel::ports`, la finta in `ports_are_implementable.rs`, l'implementazione `redb` in `platform`, la finta del simulatore, la suite di conformità; e i **richiami datati** alla §2.3 e alla §3.1 della spec e alla testa di `ports/mod.rs` | `kernel/src/ports/`, `platform/src/`, `simulator/src/` | §2 qui, decisione 15 |
+| 6 | il daemon che ascolta: accoglie, manda ciò che sa — **ora anche `Layout` e i passi** — esegue il registro, **scrive la disposizione** e la rimanda; il percorso dell'archivio come argomento | `crates/daemon/src/main.rs` | §5 del 2 · §2 qui |
+| 7 | la SPA: Vue 3, `pinia`, Reka UI, `vue-i18n`, token, **più la cornice con `dockview-core`** — barra delle viste, chip del core, fascia, striscia, cassetto «+ moduli» — **le tre viste** come JSON (Compatta segnaposto), **i moduli**: Stato e Permessi vivi, Chat col core finto in Lavoro, Passi con le invocazioni, il nucleo che dice «niente ancora», gli altri segnaposto col numero; la finestra di permesso; le scorciatoie da tastiera per spostare un pannello sopra `moveTo` (G20) | `gui/` | §6a del 2 · il modello della GUI · domande 3, 7, 8 |
+| 8 | il core finto, come la §7 proposta del 2, **più `Layout`/`SaveLayout` e la lista dei passi** | `gui/fake-core/` | §7 proposta del 2 |
+| 9 | il passo del cancello per `gui/` | `scripts/gate-gui.sh` | §8 proposta del 2 |
+
+Il piano resta in **due parti**: la prima fino al pezzo 1 compreso, la seconda scritta dopo la misura. Non cambia.
+
+**Le sezioni del 2 che cambiano, e come:**
+
+| Sezione del 2 | Cosa cambia | Come |
+|---|---|---|
+| §1 perimetro | la tabella qui sopra al posto degli otto pezzi; il «non costruisce» cresce | richiamo datato, riscritta col disegno |
+| §2 spike | guadagna l'accettazione di `dockview` (sezione 4) | idem |
+| §3 filo | **niente** | — |
+| §4 schema | tre varianti nuove, chi le manda, perché nel 2; «il core decide quando emettere» copre anche `Layout` e i passi | richiamo datato |
+| §5 registro e daemon | il dispaccio guadagna `SaveLayout` → porta → `Layout`; dopo ogni invocazione rimanda i passi | richiamo datato |
+| §6a GUI | «le due schermate» → **Home e Lavoro nella cornice**; `panels/` ospita i tipi di modulo e le tre viste come JSON; il ponte manda **quattro** messaggi (più `SaveLayout`); il pannello di stato → il modulo Stato; la vista chat → una scheda di Lavoro, non in Home; la finestra di permesso resta; G20 include muovere i pannelli da tastiera | richiamo datato, riscritta col disegno |
+
+**Cosa il 2 NON costruisce, in più rispetto alla §1 del 2:** Compatta vera → il 10 · il nucleo, la ricerca e la casella
+nella barra → il 6 · la casella di scrittura e le run → il 3 · un tetto di dimensione alla disposizione → un parametro,
+quando serve · la navigazione spaziale da tastiera e le guide di aggancio a pagamento di `dockview` → mai: G20 è coperto
+dalle scorciatoie nostre · «ripristina la vista di default», esporta e importa una disposizione → una riga quando serve ·
+il kit UI → alla seconda occorrenza.
+
+#### Cosa è già studiato, e dove — la risposta alla domanda del proprietario, verificata nei file
+
+Il proprietario ha chiesto se tutto questo sia *«integrato e studiato nell'architettura, schemi ER ecc.»*. Letto il
+2026-09-08 in `docs/design/`, nella spec, negli ADR e in tracciabilità, coi comandi:
+
+| Cosa | Già nell'architettura? | Dove | Cosa è nuovo |
+|---|---|---|---|
+| l'archivio di configurazione | ✅ sì | ADR-0022, la tabella degli archivi per natura · [design/09](../../design/09-l0-fisico.md), nodo «configurazione: profili, guide, policy», non cifrato, nel backup · tracciabilità, «Impostazioni e profili → pannello GUI» | niente: la disposizione è un contenuto in più di un archivio già disegnato; il nodo può guadagnare la parola, un ritocco datato |
+| le porte del kernel | ✅ sì — sei, **esaustive** | spec §2.3 (la tabella) e §3.1 (il simulatore le sostituisce tutte) · `crates/kernel/src/ports/mod.rs` · [design/01](../../design/01-topologia-dei-processi.md) | ⛔ **la settima porta è l'unica cosa nuova**, e non è inventata: è **trovata**. Due documenti approvati non si toccavano — ADR-0022 dice «esiste un archivio di configurazione», la §2.3 dice «il kernel tocca il mondo solo da queste sei» — e nessuna delle sei arriva a quell'archivio. Invisibile finché nessuno provava a scriverci da dentro il kernel |
+| i messaggi `Layout`, `SaveLayout`, i passi | ✅ il canale sì, le varianti no — di proposito | spec §6.1: privato, unico, non versionato; §6.1.2 il timbro; §6.1.4 «il core decide *quando* emettere, la GUI non tira» | le varianti le decide il disegno del 2 (§4), non la spec; la regola è rispettata |
+| la GUI dentro — cornice, moduli, viste, `dockview` | ❌ no, e non deve | design/01 disegna la GUI come **una scatola**: «client sottile, 0..1, solo presentazione»; ADR-0027/0030 decidono web, Vue, librerie agnostiche; ADR-0029 il guscio, aperto | i diagrammi del kernel non disegnano la GUI (ADR-0001). Lo studio della GUI **è questa stella polare**: i wireframe sono i suoi diagrammi, le decisioni 0–16 il suo merito |
+| uno schema ER | ❌ non esiste, per nessun archivio | `grep -rn erDiagram docs/` → zero | non c'è un database relazionale: `redb` è chiave → valore; il modello dei dati è il record del giornale (ADR-0036) e design/09. La disposizione è una chiave e un valore opaco |
+
+⚠️ **Due divergenze trovate guardando, e non toccate** — nelle registrate qui sotto, con chi le chiude: design/09 mette la
+**policy** nell'archivio di configurazione mentre il codice riparte sempre da `Remote`; design/09 mette le **guide** nello
+stesso archivio mentre il disegno della knowledge base le fa file nella cartella della KB.
+
+Debiti dichiarati: la roadmap dà il 2 come «GUI minima (shell, chat, stato)», titolo **più stretto** del perimetro di oggi —
+aggiornarlo è un compito del piano (decisione 9 del coordinatore); `ports/mod.rs` porta in prosa «SIX families», «FIVE
+fakes» e «the simulator substitutes SEVEN things» (`rng` è fuori dalle famiglie, deliberatamente): con la porta diventano
+sette, sei e **otto**, cifre in prosa che il piano deve toccare, gotcha #31; i richiami vanno alla §2.3 e alla §3.1 della
+spec. 🔶 **Dedotto**, da confermare da chi costruisce: l'ordine dei pezzi 2–9; che la SPA si costruisca contro il ponte
+finto prima del daemon (lo dice già la §6a); che i passi si mandino all'accoglienza e dopo ogni invocazione. **Assunto:**
+niente di nuovo — `toJSON` è già nella §2.
+
+Controllo sui cinque criteri: fonti lette il 2026-09-08 — la consegna del 2 intera, la roadmap, `ports/mod.rs`, la spec
+alle due sezioni, `docs/design/` per la tabella qui sopra; stessa forma della §1 del 2, richiami datati e non riscritture;
+il perimetro cresciuto è **scritto**, non nascosto, e le cifre in prosa da toccare sono nominate; nessuna versione scelta
+qui, `dockview-core` si riverifica allo spike; un componente segnaposto e non diciotto, nessun ADR per un tratto a due
+operazioni.
+
 ## Le sezioni che mancano — proposte del coordinatore, non decisioni
 
 | § | Che cosa | La proposta da cui partire |
 |---|---|---|
 | 1 | **il catalogo dei moduli**: tipi, numero del sotto-progetto, messaggi IPC che consumano | una tabella per tipo: Chat (2, 3 · `Token`, e col 3 i messaggi della run), Stato (2 · `Degradation`, `Policy`, `Accepted`, `Verdict`), Permessi (2 · `PermissionRequired`, `Approve`), Passi (2, 3 · un messaggio nuovo con la lista dei passi), Attività (3, 4, 13), Ambito (5), Diff (5), Anteprima (3), Terminale (5), Sensori (4), Costi (3), Knowledge base e Nucleo a pagina intera (6), Asset 3D (7), Voce e gesti (8, 12), Backup (11), Checkpoint (5), Modelli locali (9), Impostazioni (2, il cambio di policy è già una funzione del registro). La regola: un modulo il cui sotto-progetto non è chiuso mostra a parole chi lo riempie. ⚠️ **Allargata alla ripresa del 2026-09-07, decisione 10:** per ogni modulo anche **cosa mostra** e **quali comandi ha**, riga per riga con la **fonte** — G, ADR, riga di tracciabilità — e il sotto-progetto che costruisce la riga; e il «dove» dentro il modulo quando conta: contesto della run, modalità di esecuzione e «+ allegati» nella barra della chat, per run ✅ **RICHIAMO DEL 2026-09-07, seconda ripresa:** la sezione è **CHIUSA**: cinque tabelle piene — Chat, Stato, Permessi, Passi, Attività — e la tabella corta degli altri tredici moduli, nella §1 delle sezioni approvate qui sopra (decisione 12) |
 | 2 | **viste e disposizione**: i layout come JSON, l'archivio minimo nel core, i due messaggi | `Layout` dal core all'accoglienza, dopo `Accepted`; `SaveLayout` dalla GUI; l'archivio in `platform` con una voce, nella forma dell'archivio «configurazione, guide, profili» di ADR-0022, consegnato al daemon e non letto dal kernel (ADR-0034); ⚠️ da decidere lì: se «salva disposizione» sia una **funzione del registro** con la propria tripla (ADR-0038 dice che la manipolazione della GUI non passa dal registro; il salvataggio durevole è un'altra cosa) o una scrittura di configurazione fuori dal registro; le tre viste di default come JSON committati in `gui/` ✅ **RICHIAMO DEL 2026-09-08, terza ripresa: la sezione è CHIUSA** — la §2 delle sezioni approvate qui sopra, con le decisioni 14 e 15 delegate. ⛔ La forma proposta in questa riga, *«consegnato al daemon e non letto dal kernel»*, **non reggeva** contro la §5 del 2 e la §3.1 della spec: `SaveLayout` arriva dentro il kernel e nessuna delle sei porte tiene un pacchetto; serve una **settima porta**, e la §2 dice perché e cosa costa |
-| 3 | **la fetta del 2 ritagliata**: che cosa costruisce adesso, e come si riscrivono §1 e §6a | §1 del 2 guadagna: il motore dei moduli (`dockview-core`, dipendenza nuova, in due passi), le tre viste con Compatta come segnaposto, il modulo Passi col suo messaggio, l'archivio della disposizione coi due messaggi; §6a: «le due schermate» diventano «Home e Lavoro nella cornice», la finestra di permesso resta; il pezzo 6 della tabella di §1 cambia forma. Tutto con richiamo datato, non riscrittura silenziosa |
+| 3 | **la fetta del 2 ritagliata**: che cosa costruisce adesso, e come si riscrivono §1 e §6a | §1 del 2 guadagna: il motore dei moduli (`dockview-core`, dipendenza nuova, in due passi), le tre viste con Compatta come segnaposto, il modulo Passi col suo messaggio, l'archivio della disposizione coi due messaggi; §6a: «le due schermate» diventano «Home e Lavoro nella cornice», la finestra di permesso resta; il pezzo 6 della tabella di §1 cambia forma. Tutto con richiamo datato, non riscrittura silenziosa ✅ **RICHIAMO DEL 2026-09-08, terza ripresa: la sezione è CHIUSA** — la §3 delle sezioni approvate qui sopra, A, con la tabella *«Cosa è già studiato, e dove»* |
 | 4 | **lo spike di accettazione** di `dockview`, dentro lo spike del guscio | in `spikes/gui-shell/`, sul frontend minimo di §2 del 2: una Home finta con `dockview-core` — nucleo bloccato, quattro tessere, una libera, una a pagina intera, presa grande — e la giudica il **proprietario provandola**, come per la mano in SP-7; il criterio scritto **prima** in `spikes/gui-shell/PROTOCOLLO.md`; se non dà il «Jarvis», si passa a `interactjs` prima di scrivere la SPA. In più M4 misura P3 con `dockview` acceso |
 | 5 | le sezioni che già mancavano al 2: **core finto, prove e cancello, decisioni aperte, come si riprende** | le proposte stanno nella consegna del 2, tabella «Le sezioni che mancano»; Passi aggiunge al core finto l'invio della lista dei passi; le prove aggiungono la sonda sul giro «salva disposizione, riavvia, ritrova» |
 | 6 | **dove vive la stella polare**, e come il disegno del 2 la rimanda | questo file diventa `2026-09-07-direzione-gui-design.md` come disegno, ⛔ **non è una spec e non disegna le capacità**: colloca i moduli, le viste e le regole, e ogni sotto-progetto disegna i propri moduli quando arriva; il disegno del 2 rimanda qui per la forma e non la ricopia; una riga nella §12 del compendio e in «Dove va cosa» di `README.md` è un **compito del piano**, come fu per la knowledge base |
@@ -619,6 +700,10 @@ dopo la misura.
 | 13 | **§2** — `Layout` rimandato dopo ogni `SaveLayout`, con ciò che il core tiene dopo la scrittura | è la regola della §6.1.4 del 2, «rimanda il pezzo che è cambiato»; una scrittura fallita si vede senza una variante nuova. Costo: il pacchetto viaggia due volte a ogni salvataggio |
 | 14 | **§2** — fuori dal registro: **delegata** dal proprietario | la tabella delle sue decisioni, riga 14, e la §2 |
 | 15 | **§2** — la settima porta: **delegata** dal proprietario | la tabella delle sue decisioni, riga 15, e la §2 |
+| 16 | **§3** — nella cornice del 2 la **striscia** mostra solo ciò che è vivo (degrado, permessi); la casella di ricerca dice chi la riempie; il **cassetto** elenca tutti i tipi col numero | sette «arriva col N» in una striscia sottile sono rumore; il cassetto è il posto per «chi riempie cosa». Costo: la striscia cresce pezzo per pezzo |
+| 17 | **§3** — **un** componente segnaposto, con nome e numero, per ogni modulo non costruito, non diciotto | YAGNI. Costo: nessuno |
+| 18 | **§3** — la settima porta è un **pezzo suo** (5), fra il registro e il daemon, non dentro «il filo» | tre implementazioni e una suite propria; i compiti del piano si tagliano per pezzo. Costo: un pezzo in più |
+| 19 | **§3** — **nessun ADR nuovo** per la settima porta: l'archivio lo decide ADR-0022, la porta è il suo meccanismo; la spec e `ports/mod.rs` ricevono il richiamo, il perché vive nella §2 | proporzione: un ADR per un tratto a due operazioni sarebbe sfoggio. Costo: se il proprietario vuole l'ADR, è un compito in più |
 
 ## Registrate, non prese — del proprietario
 
@@ -637,6 +722,8 @@ dopo la misura.
 | dove vive il grafico dell'occupazione GPU (G8): nel modulo Stato o nel modulo Modelli locali; notata scrivendo la riga 7 della tabella Stato | il **9** |
 | chi costruisce l'esportazione OTLP opt-in di ADR-0017, che nessuna riga della roadmap assegna; senza di essa lo stato «nessuna telemetria lascia la macchina» è una costante, non un dato | il proprietario, prima del modulo che la mostra |
 | se il preset «auto-approva sicuri» approvi le **letture ovunque** o solo **dentro l'ambito** della run: ADR-0016 dice che una tripla di lettura vale «lì, e solo lì» e che nel preset le letture procedono, non dice su quali percorsi; notata con la decisione 13 | il **4**, coi preset, sentito il 5 |
+| ⚠️ **nata alla terza ripresa, 2026-09-08** — la **policy VRAM scelta non sopravvive al riavvio**: design/09 la mette nell'archivio di configurazione, ma `build_the_arbiter` in `crates/daemon/src/main.rs` riparte sempre da `Remote`, e il 2 la cambia dalle Impostazioni. La via coerente col repo è la **proiezione del giornale** all'avvio — l'ultima transizione è «struttura», ADR-0018 la tiene — nessuna porta in più; nessun documento lo decide | il piano del 2, o il proprietario prima; e la passata sui diagrammi la vede |
+| ⚠️ **nata alla terza ripresa** — design/09 mette le **guide** nell'archivio di configurazione; il [disegno della knowledge base](2026-09-04-knowledge-base-design.md) (2026-09-04) le fa file nella cartella della KB, artefatti dell'utente. Il diagramma è indietro di un disegno | la passata sui diagrammi della sessione nuova, decisione 16 |
 
 ## Vicoli ciechi di questa sessione
 
@@ -666,11 +753,30 @@ e disposizione, poi le sezioni 3–6, ciascuna in forma A/B col controllo sui ci
 assunto separati. La proposta da cui partire è la riga 2 della tabella «Le sezioni che mancano»; la sua domanda
 aperta — se «salva disposizione» sia una funzione del registro — è già nelle registrate.
 
-✅ **Alla terza ripresa, il 2026-09-08:** la sezione 2 è **chiusa** — la §2 delle sezioni approvate, con la settima porta
-e le decisioni 14 e 15 delegate; si prosegue con la **sezione 3**, la fetta del 2 ritagliata, che ora conta anche la
-settima porta, la sua implementazione in `platform`, la sua finta e la sua suite di conformità, e il richiamo alla §3.1
-della spec; poi le sezioni 4–6, ciascuna in forma A/B col controllo sui cinque criteri e verificato, dedotto e assunto
-separati. La proposta da cui partire è la riga 3 della tabella «Le sezioni che mancano».
+✅ **Alla terza ripresa, il 2026-09-08, e alla sua chiusura:** le sezioni 2 e 3 sono **chiuse** — la §2 con la settima
+porta e le decisioni 14 e 15 delegate, la §3 approvata (A) con le due registrate. ⏭️ **Il prossimo passo NON è la sezione
+4: è il mandato del proprietario (decisione 16), in una sessione nuova con un agente nuovo — la passata sui diagrammi.**
+
+1. **Aggiornare i diagrammi esistenti** che le decisioni di questa stella polare rendono stantii, con richiamo datato:
+   [design/09](../../design/09-l0-fisico.md) — il nodo «configurazione» guadagna la **disposizione**; le **guide** sono
+   file della knowledge base dal disegno del 2026-09-04; la **policy** al riavvio, registrata — e le **sette famiglie**
+   dove le sei sono scritte: spec §2.3 e §3.1, `crates/kernel/src/ports/mod.rs` (con le cifre in prosa «SIX», «FIVE
+   fakes», «SEVEN things»), `crates/kernel/tests/ports_are_implementable.rs`. [design/01](../../design/01-topologia-dei-processi.md)
+   si rilegge: la GUI vi è una scatola, e deve restarlo.
+2. **Crearli dove mancano.** Nessun diagramma disegna la GUI dentro — moduli, esemplari, viste, i due messaggi della
+   disposizione, il ciclo salva/riavvia/ritrova — e nessun `erDiagram` esiste in tutto `docs/`: il modello dei dati
+   durevoli (i record del giornale di ADR-0036, gli archivi di design/09, la chiave della disposizione) non ha un disegno
+   a entità. Quale forma meriti ciascuno lo giudica chi disegna, e un diagramma che non aggiunge nulla al testo **non si
+   fa**. Un file nuovo in `docs/design/` va nell'indice di `README.md`: `check-docs.sh` confronta i due.
+3. ⛔ **Correggere la progettazione dove un diagramma mostra un errore** — è la parte che il proprietario ha chiesto per
+   nome: disegnare è una verifica, e se il disegno non chiude, sbaglia il disegno o sbaglia la decisione. Una correzione a
+   una sezione **approvata** — di questa stella polare, della consegna del 2, della spec, di un ADR — **torna al
+   proprietario in forma A/B**, con richiamo datato: mai in silenzio. Le due divergenze già trovate stanno nelle registrate.
+4. Poi le sezioni **4–6** di «Le sezioni che mancano», poi le §7–§10 del 2, ciascuna in forma A/B col controllo sui
+   cinque criteri; poi i due disegni e il piano.
+
+Le skill della sessione nuova: quelle dell'elenco qui sotto, più `anthropic-skills:design-docs`, che governa i diagrammi.
+L'elenco numerato qui sotto resta com'era, come verbale.
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa
    chiusura o uno successivo.

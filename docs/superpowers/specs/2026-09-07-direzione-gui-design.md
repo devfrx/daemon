@@ -19,7 +19,7 @@ viaggio della knowledge base (`07ab6dc` → `6a7967a`) e del 2 (`ae40fa0` → `6
 
 Stella polare a metà: sette decisioni del proprietario più la modularità, quattro wireframe disegnati e
 salvati — Home approvata; Lavoro e Compatta col grafo **approvati come mappa alla ripresa del 2026-09-07**,
-con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **cominciata**, tabelle Chat, Stato, Permessi e Passi approvate; nessun codice toccato; mancano il resto della sezione 1, le altre cinque sezioni della stella polare e le §7–§10 del 2,
+con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **cominciata**, tabelle Chat, Stato, Permessi, Passi e Attività approvate; nessun codice toccato; mancano il resto della sezione 1, le altre cinque sezioni della stella polare e le §7–§10 del 2,
 poi i due disegni e il piano.
 
 ## ⛔ Da sapere subito
@@ -109,6 +109,8 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     più livelli» — approvata insieme, con richiamo datato.
 14. La **tabella Passi**, quattordici righe, con le due passate fatte prima della presentazione e i tipi di record e
     le specie di dettaglio letti in `crates/kernel/src/record.rs`, approvata (**A**) e scritta.
+15. La **tabella Attività**, sedici righe, con le due passate fatte prima della presentazione, approvata (**A**) e
+    scritta.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -418,11 +420,52 @@ Controllo sui cinque criteri: fonti lette il 2026-09-07 — la §5 del compendio
 dipendenza da scegliere; solo righe con una fonte oggi. Seconda passata su ADR e tracciabilità fatta prima della
 presentazione: da lì le righe 8–11, 13 e 14.
 
+#### Attività · approvata il 2026-09-07
+
+**Tipo** registrato nella SPA; **esemplare**: uno. È la tessera «Attività» della Home e il pannello in alto a sinistra
+di Lavoro: l'indice di tutte le run (domanda 1). Costruito dal **3** (le run), dal **4** (piano, coda, trigger come
+funzione) e dal **13** (il meccanismo dei trigger); nel 2 la tessera dice a parole «arriva col 3». Messaggi IPC: quelli
+delle run, del 3.
+
+| # | Cosa mostra o fa | Fonte | Chi | Verificato · dedotto |
+|---|---|---|---|---|
+| 1 | l'indice di tutte le run: numero, stato, quando; una chat è una run | ADR-0011, corollario · domanda 1 · riga «Sessioni multiple» | 3 | verificato |
+| 2 | le sub-run sotto la run padre; dal 5 il loro isolamento su disco | ADR-0011 · [design/03](../../design/03-run-durevoli.md) · righe «Orchestrazione e sub-agenti» e «Agenti in parallelo isolati» | 3, 5 | verificato |
+| 3 | lo stato di ogni run: in corso; aspetta te, con notifica; finita; annullata; in dubbio dopo un riavvio | G14 · V9 · ADR-0007 · righe «Run persistenti, ripresa e cancellazione» e «Notifica «l'agente ha bisogno di te»» | 3; la notifica di sistema col 10 (riga «Notifiche → L3») | verificato; i nomi degli stati li fissa il 3: dedotto |
+| 4 | se la richiesta di una run è in coda dall'arbitro: l'avviso di conflitto e la stima d'attesa; in coda e rifiutata distinti | G15 · V4 · ADR-0012 · riga «Avviso di conflitto e stima d'attesa» | 3 | verificato |
+| 5 | la coda e le priorità delle run | riga «Coda e priorità delle run» · ADR-0005, le corsie | 4 | verificato |
+| 6 | le run partite da un trigger e non dall'utente — pianificazione, cambiamento di file, fine di un'altra run, hook del ciclo di vita — con la causa | ADR-0009 · righe «Scheduling», «File watching e awareness del progetto» e «Hook sul ciclo di vita» | 13 il meccanismo, 4 la funzione, 6 la politica dei file | verificato |
+| 7 | il piano di una run e lo stato dei suoi passi | ADR-0008 · riga «Planning e decomposizione dei task» | 4 | verificato |
+| 8 | l'avanzamento e la notifica dei job lunghi | riga «Progress e notifiche per job lunghi → GUI minima» · V9 | 2 il meccanismo, 7 il primo job | fonte verificata; qui o nella striscia: dedotto |
+| 9 | il costo per run e per sub-run | ADR-0011 · riga «Analisi dei costi per run e per sub-agente» | 3 | verificato; anche nel modulo Costi |
+| 10 | la cartella o l'ambito della run | la registrata «ambito per progetto o per run» | 3 | dedotto, segue la registrata |
+| 11 | comando: «+ nuova run»; la cartella: registrata | ADR-0011 | 3 | verificato |
+| 12 | comando: apri la run — la sua chat come scheda, esemplare del tipo Chat | domanda 3, la regola unica del modello | 2 l'apertura, 3 | verificato |
+| 13 | comando: ferma o annulla una run; riprendi una run che aspetta | righe «Run persistenti, ripresa e cancellazione» e «HITL: interruzione e steering» · ADR-0007 | 3, 4 | verificato |
+| 14 | comando: fork — una run nuova da un punto di un'altra | riga «Fork e branching» | 3 | verificato |
+| 15 | comando: cerca nello storico; esporta | righe «Ricerca nello storico» e «Esportazione conversazioni» | 3 | verificato; stessa funzione della Chat (riga 21), qui sull'indice |
+| 16 | regola: Attività è un indice, proiezione del giornale; la Home non si allunga — l'anello mostra i file, Attività le run | il modello della GUI, «come cresce» · I1 · ADR-0008 | 2 | verificato |
+
+**Non entra, per decisione già presa:** cancellare una run dallo storico — il giornale è append-only (ADR-0007),
+come per la Chat.
+
+**Esaminate e senza fonte oggi:** appuntare o archiviare una run; ordinare a mano; etichette; cartelle di run
+(l'ambito come progetto è già registrata, chiusore il 3).
+
+Debiti dichiarati: nel 2 la tessera dice a parole «arriva col 3»; le righe del 4, del 5, del 6, del 7, del 10 e
+del 13 nascono a parole nel 3. 🔶 Dedotto, da confermare da chi costruisce: i nomi degli stati (riga 3); la casa
+della riga 8; la riga 10, che segue la registrata.
+
+Controllo sui cinque criteri: fonti lette il 2026-09-07 — la §5 del compendio, le righe G, V4, V9, tracciabilità,
+il modello della GUI; stessa forma delle tabelle precedenti; le voci aperte nelle registrate; nessuna dipendenza da
+scegliere; solo righe con una fonte oggi. Seconda passata su ADR e tracciabilità fatta prima della presentazione:
+da lì le righe 4, 5, 6, 8 e 14.
+
 ## Le sezioni che mancano — proposte del coordinatore, non decisioni
 
 | § | Che cosa | La proposta da cui partire |
 |---|---|---|
-| 1 | **il catalogo dei moduli**: tipi, numero del sotto-progetto, messaggi IPC che consumano | una tabella per tipo: Chat (2, 3 · `Token`, e col 3 i messaggi della run), Stato (2 · `Degradation`, `Policy`, `Accepted`, `Verdict`), Permessi (2 · `PermissionRequired`, `Approve`), Passi (2, 3 · un messaggio nuovo con la lista dei passi), Attività (3, 4, 13), Ambito (5), Diff (5), Anteprima (3), Terminale (5), Sensori (4), Costi (3), Knowledge base e Nucleo a pagina intera (6), Asset 3D (7), Voce e gesti (8, 12), Backup (11), Checkpoint (5), Modelli locali (9), Impostazioni (2, il cambio di policy è già una funzione del registro). La regola: un modulo il cui sotto-progetto non è chiuso mostra a parole chi lo riempie. ⚠️ **Allargata alla ripresa del 2026-09-07, decisione 10:** per ogni modulo anche **cosa mostra** e **quali comandi ha**, riga per riga con la **fonte** — G, ADR, riga di tracciabilità — e il sotto-progetto che costruisce la riga; e il «dove» dentro il modulo quando conta: contesto della run, modalità di esecuzione e «+ allegati» nella barra della chat, per run ✅ **RICHIAMO DEL 2026-09-07, seconda ripresa:** la sezione è **cominciata**: le tabelle **Chat**, **Stato**, **Permessi** e **Passi** sono approvate e stanno nella §1 delle sezioni approvate qui sopra; restano gli altri moduli, uno per volta |
+| 1 | **il catalogo dei moduli**: tipi, numero del sotto-progetto, messaggi IPC che consumano | una tabella per tipo: Chat (2, 3 · `Token`, e col 3 i messaggi della run), Stato (2 · `Degradation`, `Policy`, `Accepted`, `Verdict`), Permessi (2 · `PermissionRequired`, `Approve`), Passi (2, 3 · un messaggio nuovo con la lista dei passi), Attività (3, 4, 13), Ambito (5), Diff (5), Anteprima (3), Terminale (5), Sensori (4), Costi (3), Knowledge base e Nucleo a pagina intera (6), Asset 3D (7), Voce e gesti (8, 12), Backup (11), Checkpoint (5), Modelli locali (9), Impostazioni (2, il cambio di policy è già una funzione del registro). La regola: un modulo il cui sotto-progetto non è chiuso mostra a parole chi lo riempie. ⚠️ **Allargata alla ripresa del 2026-09-07, decisione 10:** per ogni modulo anche **cosa mostra** e **quali comandi ha**, riga per riga con la **fonte** — G, ADR, riga di tracciabilità — e il sotto-progetto che costruisce la riga; e il «dove» dentro il modulo quando conta: contesto della run, modalità di esecuzione e «+ allegati» nella barra della chat, per run ✅ **RICHIAMO DEL 2026-09-07, seconda ripresa:** la sezione è **cominciata**: le tabelle **Chat**, **Stato**, **Permessi**, **Passi** e **Attività** sono approvate e stanno nella §1 delle sezioni approvate qui sopra; restano gli altri moduli, uno per volta |
 | 2 | **viste e disposizione**: i layout come JSON, l'archivio minimo nel core, i due messaggi | `Layout` dal core all'accoglienza, dopo `Accepted`; `SaveLayout` dalla GUI; l'archivio in `platform` con una voce, nella forma dell'archivio «configurazione, guide, profili» di ADR-0022, consegnato al daemon e non letto dal kernel (ADR-0034); ⚠️ da decidere lì: se «salva disposizione» sia una **funzione del registro** con la propria tripla (ADR-0038 dice che la manipolazione della GUI non passa dal registro; il salvataggio durevole è un'altra cosa) o una scrittura di configurazione fuori dal registro; le tre viste di default come JSON committati in `gui/` |
 | 3 | **la fetta del 2 ritagliata**: che cosa costruisce adesso, e come si riscrivono §1 e §6a | §1 del 2 guadagna: il motore dei moduli (`dockview-core`, dipendenza nuova, in due passi), le tre viste con Compatta come segnaposto, il modulo Passi col suo messaggio, l'archivio della disposizione coi due messaggi; §6a: «le due schermate» diventano «Home e Lavoro nella cornice», la finestra di permesso resta; il pezzo 6 della tabella di §1 cambia forma. Tutto con richiamo datato, non riscrittura silenziosa |
 | 4 | **lo spike di accettazione** di `dockview`, dentro lo spike del guscio | in `spikes/gui-shell/`, sul frontend minimo di §2 del 2: una Home finta con `dockview-core` — nucleo bloccato, quattro tessere, una libera, una a pagina intera, presa grande — e la giudica il **proprietario provandola**, come per la mano in SP-7; il criterio scritto **prima** in `spikes/gui-shell/PROTOCOLLO.md`; se non dà il «Jarvis», si passa a `interactjs` prima di scrivere la SPA. In più M4 misura P3 con `dockview` acceso |
@@ -482,10 +525,10 @@ dopo la misura.
 ⚠️ **Alla ripresa del 2026-09-07 il punto 5 è avanzato:** le due conferme sono date (decisione 10), e si
 riparte dalla **sezione 1**, il catalogo dei moduli allargato. L'elenco resta com'era, come verbale.
 
-✅ **Alla seconda ripresa dello stesso giorno:** le tabelle **Chat**, **Stato**, **Permessi** e **Passi** della
-sezione 1 sono approvate e scritte; si prosegue con **Attività** e gli altri moduli nell'ordine della proposta, una
-tabella per volta in forma A/B, ciascuna con verificato e dedotto separati, e con una seconda passata su ADR e
-tracciabilità prima di chiudere ogni tabella.
+✅ **Alla seconda ripresa dello stesso giorno:** le tabelle **Chat**, **Stato**, **Permessi**, **Passi** e
+**Attività** della sezione 1 sono approvate e scritte; si prosegue con **Ambito** e gli altri moduli nell'ordine
+della proposta, una tabella per volta in forma A/B, ciascuna con verificato e dedotto separati, e con una seconda
+passata su ADR e tracciabilità prima di chiudere ogni tabella.
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa
    chiusura o uno successivo.

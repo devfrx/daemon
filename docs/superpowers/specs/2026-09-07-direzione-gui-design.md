@@ -25,7 +25,8 @@ poi i due disegni e il piano; **la quarta ripresa, il 2026-09-08, ha APERTO la p
 giornale — e la **sezione 1 della passata, design/09, presentata e NON ancora approvata**; nessun diagramma toccato. ✅ **La quinta ripresa, lo stesso giorno, ha SCRITTO la
 sezione 1** — approvata A con due correzioni trovate rispondendo alla domanda del proprietario su scalabilità ed esistente — e ha
 preso la **decisione 18**: il metodo vale per ogni studio, brainstorming e diagramma futuro. ✅ **E la sezione 2 è cominciata:** design/07
-e il rimando ad ADR-0019 scritti (A); **si riprende da design/03**, poi design/08, poi la sezione 3.
+e il rimando ad ADR-0019 scritti (A). ✅ **La sesta ripresa, lo stesso giorno, ha SCRITTO design/03** (A) e il richiamo alla
+tabella Passi (A): **si riprende da design/08**, poi la sezione 3.
 
 ## ⛔ Da sapere subito
 
@@ -60,6 +61,13 @@ le proiezioni a classi, «Dove» e «Chi» in «sempre visibile» — col rimand
 `GATE GREEN` rilanciati alla chiusura. ⛔ **Si riprende da design/03**, poi design/08, poi la sezione 3: il come sta nel prossimo
 passo. La consegna è questo file, chiesta dal proprietario con `session-handoff`; nessun codice toccato.
 
+✅ **La sesta ripresa, il 2026-09-08, ha scritto design/03** — i tre diagrammi ritoccati e il richiamo in testa — e, in questo
+file, il richiamo alla tabella Passi (sei tipi di record, non quattro), la registrata sui due passi per invocazione, la
+decisione 23, il punto 24 del fatto; e il puntatore della §6 del compendio. `check-docs.sh` OK e `GATE GREEN` all'apertura e
+alla chiusura; fine-riga rimisurati (LF di design/03 e di questo file, CRLF del compendio). ⛔ **Si riprende da design/08**,
+poi la sezione 3, un file per volta e A/B, coi tre controlli della decisione 18 detti a parole prima della domanda. La
+consegna è questo file, chiesta dal proprietario con `session-handoff`; nessun codice toccato.
+
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
 decisione viola un criterio di `anthropic-skills:decision-principles`, l'accettazione decade: ci si
@@ -90,7 +98,7 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, questa chiusura |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e questa chiusura |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla |
 | cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
@@ -185,6 +193,14 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     controlli della decisione 18 e i due diagrammi resi dal sorgente identico; **approvato A** e scritto, col rimando in testa ad
     ADR-0019 — lo schema ha corretto l'ADR: la lista degli eventi non è chiusa, la GUI resta viva a GPU satura. Poi la consegna,
     chiesta dal proprietario; `GATE GREEN` e `check-docs.sh` OK alla chiusura.
+24. **Alla sesta ripresa, il 2026-09-08:** ripresa con `session-resume` — stato riletto coi comandi, nessuna divergenza,
+    `check-docs.sh` OK e `GATE GREEN` all'apertura; design/03 letto contro `record.rs`, `reconcile.rs`, `ports/journal.rs`,
+    le due implementazioni del giornale, `Arbiter::set_policy`, ADR-0007, ADR-0008, design/09 e la §5 del 2, e trovato che
+    la consegna diceva «quattro tipi di record» dove sono **sei**; presentato coi tre controlli della decisione 18 e i tre
+    diagrammi resi dal sorgente identico; **approvato A e A** — design/03, e il richiamo alla tabella Passi — sotto la
+    condizione del proprietario, e scritto coi fine-riga conservati; la registrata sui due passi per invocazione, con la
+    decisione 23 del coordinatore; poi la consegna, chiesta dal proprietario con `session-handoff`; `check-docs.sh` OK e
+    `GATE GREEN` alla chiusura; nessun codice toccato.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -466,7 +482,10 @@ Lavoro. Costruito dal **2** — le invocazioni del registro, gli unici passi che
 (decisione 5 del coordinatore, domanda 8) — e dal **3**, i passi delle run. Messaggio IPC: la lista dei passi, nuovo,
 già nel costo della domanda 8. Nel codice il giornale ha oggi quattro tipi di record — `Intent`, `Outcome`, `Note`,
 `Verdict` — e tre specie di dettaglio — `Routing`, `Permission`, `Verdict` — in `crates/kernel/src/record.rs`; il 2
-aggiunge `Invocation` (§5 del 2).
+aggiunge `Invocation` (§5 del 2). ⚠️ **RICHIAMO DEL 2026-09-08, sesta ripresa: i tipi di record sono SEI, non quattro** —
+`Routing` e `Permission` sono varianti proprie di `RecordKind` (indici 4 e 5), non note con dettaglio; le tre specie di
+dettaglio reggono. Trovato scrivendo design/03 (decisione 18); approvato dal proprietario (A). Le righe della tabella non
+cambiano.
 
 | # | Cosa mostra o fa | Fonte | Chi | Verificato · dedotto |
 |---|---|---|---|---|
@@ -754,6 +773,7 @@ dopo la misura.
 | 20 | **passata sui diagrammi, 2026-09-08** — la policy VRAM corrente è la proiezione del giornale: **delegata** dal proprietario | la tabella delle sue decisioni, riga 17 |
 | 21 | **passata** — un diagramma proposto si presenta **a parole** (una tabella «dove, prima, dopo, fonte») **e** reso in chat dal **sorgente mermaid identico** a quello che andrà nel file, non da un disegno a mano | «prima a parole, poi lo schema» di `CLAUDE.md`; un SVG a mano può divergere dal sorgente, con mermaid ciò che il proprietario approva è ciò che si scrive. Costo: nessuno; il come sta nei vicoli ciechi |
 | 22 | **passata, quinta ripresa** — il sorgente di un diagramma, una volta scritto nel file di `docs/design/`, **esce** dalla stella polare: qui resta il rimando | una seconda casa diverge in silenzio (gotcha #68): ciò che il proprietario approva è il file. Costo: chi rilegge la proposta apre design/09 |
+| 23 | **passata, sesta ripresa** — i due passi per invocazione **registrati e non decisi**: la forma è approvata nella §5 del 2 per il 2, e decidere per il 3 senza il disegno di run e passo sarebbe una scelta strutturale presa fuori posto | autonomia e proporzione: costa una riga oggi, e chi disegna il 3 la trova con le due vie. Costo: fino al 3 ogni invocazione paga quattro scritture |
 
 ## Registrate, non prese — del proprietario
 
@@ -775,6 +795,7 @@ dopo la misura.
 | ✅ **chiusa il 2026-09-08, quarta ripresa — decisione 17, delegata: la proiezione del giornale.** Era: la **policy VRAM scelta non sopravvive al riavvio**: design/09 la mette nell'archivio di configurazione, ma `build_the_arbiter` in `crates/daemon/src/main.rs` riparte sempre da `Remote`, e il 2 la cambia dalle Impostazioni. La via coerente col repo è la **proiezione del giornale** all'avvio — l'ultima transizione è «struttura», ADR-0018 la tiene — nessuna porta in più; nessun documento lo decide | chiusa: decisione 17; il rimando in testa ad ADR-0006 e le righe di design/02 e design/05 **scritti il 2026-09-08, quinta ripresa** |
 | ✅ **chiusa il 2026-09-08, quinta ripresa — design/09 e il rimando in testa ad ADR-0022 scritti.** Era — ⚠️ nata alla terza ripresa: design/09 mette le **guide** nell'archivio di configurazione; il [disegno della knowledge base](2026-09-04-knowledge-base-design.md) (2026-09-04) le fa file nella cartella della KB, artefatti dell'utente. Il diagramma era indietro di un disegno | chiusa con la sezione 1, scritta il 2026-09-08 |
 | 🔶 **nata alla quarta ripresa, 2026-09-08** — la forma con cui la transizione di policy si rilegge dal giornale: oggi `set_policy` scrive intento ed esito **senza dettaglio**, con la policy nel `reason`; la rilettura coerente col repo legge un **dettaglio tipizzato** — `PermissionDetail` è il precedente — che è una variante nuova di `Detail`, additiva (ADR-0036, regola 3) coi suoi byte congelati in più, oppure legge l'invocazione del registro del 2, che il dettaglio lo ha già | il disegno del 2, con la §4 (lo schema) e la §5 (il registro); il piano ne fa un compito |
+| 🔶 **nata alla sesta ripresa, 2026-09-08, scrivendo design/03** — la §5 del 2 fa dell'invocazione del registro un passo suo (A) e dell'effetto un altro passo (B, `set_policy` com'è): quattro scritture per un click. Nel 2 regge: una funzione, invocata dall'utente. Col 3, se ogni chiamata di strumento passa dal registro (ADR-0038: un registro per tutti gli invocatori), sono **due passi per interazione**, contro il «non più fine di un'interazione» di ADR-0007, e il doppio della «parte piccola» che ADR-0018 tiene per sempre. Le due vie: tenere A e B; oppure l'effetto scrive **sul passo dell'invocazione**, e allora `set_policy` non apre più il proprio passo — cambia contratto, e la sonda `E115` ② con lui | il **3**, col disegno di run e passo; tocca la §5 del 2 e `Arbiter::set_policy` |
 
 ## Vicoli ciechi di questa sessione
 
@@ -880,6 +901,12 @@ funzioni (col 2) e registro delle guide, trigger, proiezione (col 13) nel nodo d
 riavvia, ritrova» è del 2 e vive nel suo piano e nel registro della porta di qualità, non nella mappa Q. Poi la sezione 3, i
 disegni nuovi. Ciascuno A/B coi tre controlli della decisione 18, a parole e col diagramma reso dal sorgente identico.
 
+✅ **Alla sesta ripresa, il 2026-09-08: design/03 è SCRITTO** (A, coi tre controlli della decisione 18): i tre diagrammi
+ritoccati e il richiamo in testa. La lettura del paragrafo qui sopra è confermata nel codice, con una correzione: `RecordKind`
+ha **sei** varianti — `Intent`, `Outcome`, `Note`, `Verdict`, `Routing`, `Permission` — non quattro; e una nota vuole solo
+l'intento, anche dopo l'esito (le due implementazioni controllano solo quello). Registrata e non decisa la sola cosa che non
+regge crescendo: due passi per ogni invocazione, col 3. **Si riprende da design/08**, come detto qui sopra, poi la sezione 3.
+
 #### I diagrammi, uno per uno — letti il 2026-09-08
 
 | File | Diagrammi | Che cosa cambia | Sezione |
@@ -891,7 +918,7 @@ disegni nuovi. Ciascuno A/B coi tre controlli della decisione 18, a parole e col
 | [design/05](../../design/05-gateway-inferenza.md) | 3 flowchart | la riga «Policy VRAM · chi la cambia: il profilo di configurazione» (riga 153 al 2026-09-08) | 1, ✅ scritta |
 | [design/07](../../design/07-osservabilita-e-degrado.md) | 2 flowchart | «Cosa deve essere sempre visibile» contro la striscia della §3: un richiamo | 2, ✅ scritta il 2026-09-08 — e non un richiamo solo: sette fonti del degrado, la GUI viva a GPU satura, le proiezioni a classi, «Dove» e «Chi» |
 | [ADR-0019](../../adr/0019-lo-stato-di-degrado-e-un-oggetto-osservabile.md) | tabella | rimando in testa: la lista degli eventi è aperta — il fallback dichiarato di ADR-0012 c'è già nel codice, la telecamera arriva con ADR-0039 — e a GPU satura resta viva anche la GUI (ADR-0033) | 2, ✅ scritta |
-| [design/03](../../design/03-run-durevoli.md) | 2 flowchart, 1 stateDiagram | 🔶 l'invocazione del registro come passo | 2 |
+| [design/03](../../design/03-run-durevoli.md) | 2 flowchart, 1 stateDiagram | l'invocazione del registro come passo; il giornale separato dagli altri archivi, coi «(col N)»; le note nel ciclo di vita; il ramo «non dichiarata» → «non leggibile» | 2, ✅ scritta il 2026-09-08, sesta ripresa |
 | [design/08](../../design/08-strategia-di-test.md) | 1 flowchart | 🔶 la conformità della settima porta, la sonda della disposizione | 2 |
 | [design/01](../../design/01-topologia-dei-processi.md) | 1 flowchart, 1 stateDiagram | la GUI è una scatola e resta tale; la GUI dentro è un disegno nuovo | 3 |
 | [design/04](../../design/04-anelli-e-sensori.md) · [design/06](../../design/06-permessi-e-confine-dei-dati.md) | 2 · 3 | 🔶 nulla, giudizio di questa sessione | — |

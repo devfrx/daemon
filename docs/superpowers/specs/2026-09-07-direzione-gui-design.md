@@ -27,7 +27,8 @@ sezione 1** — approvata A con due correzioni trovate rispondendo alla domanda 
 preso la **decisione 18**: il metodo vale per ogni studio, brainstorming e diagramma futuro. ✅ **E la sezione 2 è cominciata:** design/07
 e il rimando ad ADR-0019 scritti (A). ✅ **La sesta ripresa, lo stesso giorno, ha SCRITTO design/03** (A) e il richiamo alla
 tabella Passi (A). ✅ **La settima ripresa, lo stesso giorno, ha SCRITTO design/08** (A): la sezione 2 della passata è
-**chiusa**; **si riprende dalla sezione 3**, i disegni nuovi.
+**chiusa**; la domanda sulla lettera **E** della §8.2 della spec è **posta e senza risposta** — si riprende da lì, poi dalla
+**sezione 3**, i disegni nuovi, col materiale già letto.
 
 ## ⛔ Da sapere subito
 
@@ -77,6 +78,12 @@ su ADR-0026 — approvato A coi tre controlli della decisione 18; `check-docs.sh
 **registrate**, del proprietario: la lettera E della §8.2 della spec (il primo worker vero: 7 lì, 12 per ADR-0039) e
 l'innesco B (3) di Q6/Q11 (la proiezione nasce col 13).
 
+⛔ **Alla chiusura della settima ripresa, chiesta dal proprietario con `session-handoff` («si fa nella prossima sessione»):
+la domanda A/B sulla lettera E è stata POSTA e NON ha risposta.** Sta parola per parola nel prossimo passo ed è la prima cosa
+della sessione nuova; nessun file della spec è toccato. Il materiale per la sezione 3 è già letto e sta nel prossimo passo,
+coi percorsi e i comandi. Stato riletto coi comandi, `check-docs.sh` OK e `GATE GREEN` alla chiusura; la consegna è questo
+file; nessun codice toccato.
+
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
 decisione viola un criterio di `anthropic-skills:decision-principles`, l'accettazione decade: ci si
@@ -107,7 +114,7 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e questa chiusura |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla |
 | cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
@@ -216,6 +223,12 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     «DST campaigns» di `gate.sh`, la §8.2 e la §8.4 della spec, la §11 del compendio; presentato coi tre controlli della
     decisione 18 e il diagramma reso dal sorgente identico; **approvato A** e scritto coi fine-riga conservati (CRLF); due
     divergenze registrate, del proprietario.
+26. Chiusura della settima ripresa, chiesta dal proprietario con `session-handoff`: la domanda sulla lettera E della §8.2
+    posta in forma A/B e lasciata **senza risposta** per la sessione nuova; il materiale della sezione 3 letto — `record.rs`
+    (i sei campi di `RecordV1` coi loro indici, i sei `RecordKind`, le tre specie di `Detail`), la tabella `redb` del
+    giornale in `platform`, i sei record congelati, ADR-0024, la §2.2 e la §4.2 del disegno della knowledge base, design/09
+    e design/01 — e scritto nel prossimo passo coi percorsi; stato riletto coi comandi, `check-docs.sh` OK e `GATE GREEN`
+    alla chiusura; il puntatore della §6 del compendio; la memoria dell'agente aggiornata; nessun codice toccato.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -935,6 +948,33 @@ campagne DST del cancello sono cinque, nominate una per una nel passo «DST camp
 le campagne profonde sono `#[ignore]` e nessuno le lancia (vincolo 8 della §11 del compendio). **Si riprende dalla sezione 3**,
 i disegni nuovi — il punto 3 dell'ordine eseguibile qui sopra — ciascuno A/B coi tre controlli, a parole e col diagramma reso
 dal sorgente identico; prima, la domanda al proprietario sulla lettera E della §8.2 della spec.
+
+⛔ **Alla chiusura della settima ripresa: la domanda sulla lettera E è POSTA e NON RISPOSTA.** Si riparte da qui, in forma
+A/B, parola per parola:
+
+> **La lettera E della spec.** La §8.2 della spec dice quando ogni prova diventa possibile. La lettera E vuol dire «esiste un
+> worker vero da avviare e uccidere», e la spec la assegna al **7**, la generazione asset, aggiungendo «il numero è il candidato
+> odierno» (2026-08-08). Il 2026-09-03 ADR-0039 e la roadmap (riga «Gesti dopo GUI minima e Conversazione, e prima di Voce»)
+> hanno deciso che il primo worker vero lo paga il **12**. I due documenti non si nominano; Q4 dipende dalla E. **A**:
+> correggere la riga E nella §8.2 col richiamo datato — 7 diventa 12, e resta scritto che il 7 la anticipa se venisse prima.
+> **B**: la spec resta com'è, e la voce resta registrata qui. Consiglio: **A** — costa una riga, e la spec aveva già detto che
+> il numero sarebbe cambiato. La seconda registrata — l'innesco B (3) di Q6/Q11 — resta ferma, salvo che il proprietario la
+> voglia decidere.
+
+Poi la **sezione 3**, i disegni nuovi, ciascuno A/B coi tre controlli della decisione 18, a parole e col diagramma reso dal
+sorgente identico (decisione 21). ⛔ **Il materiale è già letto, e sta qui perché non si rilegga da capo** — si riverifica
+coi comandi, non si cita:
+
+| Per | Che cosa esiste, letto il 2026-09-08 | Dove |
+|---|---|---|
+| l'`erDiagram` di `docs/design/10-modello-dei-dati-durevoli.md` | `RecordV1` ha **sei** campi con indice: `kind` (0), `effect` (1), `trust` (2), `payload` (3, byte), `reason` (4), `detail` (5, `Option<Detail>`, facoltativo, indice nuovo); `RecordKind` sei varianti — `Intent`, `Outcome`, `Note`, `Verdict`, `Routing`, `Permission`; `Detail` tre specie — `Verdict` (`passed`, `spent_millis`), `Routing` (`model`, `evaluated`, `degraded`), `Permission` (`tool`, `resource`, `write`); `Record` è l'enum di versione con la sola `V1` | `crates/kernel/src/record.rs`: `grep -n -A1 '#\[n(' crates/kernel/src/record.rs` |
+| idem, l'archivio | la tabella `redb` del giornale: chiave `u64` progressiva → (`step: u64`, `kind: u8`, i byte del record); `FileJournal` porta `next_key` | `crates/platform/src/journal.rs`, la riga `const RECORDS: TableDefinition` |
+| idem, i byte congelati | sei record, uno per `RecordKind`, più la mappa | `ls crates/kernel/tests/frozen/` |
+| idem, ciò che arriva | col 2 la specie `Invocation` (funzione, invocatore, argomento) e la chiave della disposizione (enum chiuso, una variante, valore opaco); col 3 run e sub-run — oggi non esiste `RunId`, solo `StepId`; col 4 il piano; col 5 la versione conservata dal checkpoint, riferita dal passo, dentro un ambito dichiarato; col 6 la cartella della knowledge base e il suo indice — nodi router · gruppo · foglia · skill · guida-modello · cattura; attributi percorso · specie · etichetta · provenienza · ultima modifica; frecce router → gruppo → foglia → skill → router; col 13 le guide approvate | §5 del 2 · §2 qui sopra · ADR-0024, Decision 1–2 · disegno della knowledge base §2.2 e §4.2 · design/09 e design/03 |
+| «la GUI dentro» | design/01 disegna la GUI come una scatola, e la §3 qui sopra dice che deve restarlo; il modello è nella tabella «Il modello della GUI», e le tre sequenze — l'accoglienza (`Hello` → `Accepted` → `Degradation`, `Policy`, `Layout`), il giro salva/riavvia/ritrova (`SaveLayout` → settima porta → `Layout`, e il vecchio se la scrittura fallisce), l'invocazione (`Invoke` → `PermissionRequired` → `Approve` → `Invoke` → `Policy`) — non hanno un diagramma. 🔶 **Giudizio di chi ha letto, non deciso:** la casa è **questa stella polare**, come `sequenceDiagram` accanto alla tabella del modello — non un file di `docs/design/`, che è la struttura del kernel, né design/01 | §4, §5, §6a del 2 · §2 qui sopra · la tabella «Cosa è già studiato, e dove» |
+| il cancello | un file nuovo in `docs/design/` va nell'indice di `README.md`: `check-docs.sh` conta i file e le righe della tabella che linkano `design/`, e devono coincidere; e ogni riga `Q` di design/08 deve avere un metodo (V30) | `scripts/check-docs.sh`, le righe `d_file=` e `d_idx=` |
+
+Poi le sezioni 4–6 e le §7–§10 del 2, come nel punto 4 del verbale.
 
 #### I diagrammi, uno per uno — letti il 2026-09-08
 

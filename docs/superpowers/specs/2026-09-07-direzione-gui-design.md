@@ -26,7 +26,8 @@ giornale — e la **sezione 1 della passata, design/09, presentata e NON ancora 
 sezione 1** — approvata A con due correzioni trovate rispondendo alla domanda del proprietario su scalabilità ed esistente — e ha
 preso la **decisione 18**: il metodo vale per ogni studio, brainstorming e diagramma futuro. ✅ **E la sezione 2 è cominciata:** design/07
 e il rimando ad ADR-0019 scritti (A). ✅ **La sesta ripresa, lo stesso giorno, ha SCRITTO design/03** (A) e il richiamo alla
-tabella Passi (A): **si riprende da design/08**, poi la sezione 3.
+tabella Passi (A). ✅ **La settima ripresa, lo stesso giorno, ha SCRITTO design/08** (A): la sezione 2 della passata è
+**chiusa**; **si riprende dalla sezione 3**, i disegni nuovi.
 
 ## ⛔ Da sapere subito
 
@@ -68,6 +69,14 @@ alla chiusura; fine-riga rimisurati (LF di design/03 e di questo file, CRLF del 
 poi la sezione 3, un file per volta e A/B, coi tre controlli della decisione 18 detti a parole prima della domanda. La
 consegna è questo file, chiesta dal proprietario con `session-handoff`; nessun codice toccato.
 
+✅ **La settima ripresa, il 2026-09-08, ha scritto design/08** — il diagramma dei due strati con la GUI come seconda scatola
+dello strato deterministico (col 2), le suite di conformità nominate con la regola che le fa crescere, le sei campagne DST le
+stesse nella tabella e nella mappa, la riga Q3, le due note sotto la mappa, il richiamo sul «ciclo lungo» della DST profonda e
+su ADR-0026 — approvato A coi tre controlli della decisione 18; `check-docs.sh` OK e `GATE GREEN` all'apertura. ⛔ **La sezione
+2 della passata è chiusa: si riprende dalla sezione 3**, i disegni nuovi, ciascuno A/B prima di scriverlo. Due divergenze
+**registrate**, del proprietario: la lettera E della §8.2 della spec (il primo worker vero: 7 lì, 12 per ADR-0039) e
+l'innesco B (3) di Q6/Q11 (la proiezione nasce col 13).
+
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
 decisione viola un criterio di `anthropic-skills:decision-principles`, l'accettazione decade: ci si
@@ -98,7 +107,7 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e questa chiusura |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla |
 | cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
@@ -201,6 +210,12 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     condizione del proprietario, e scritto coi fine-riga conservati; la registrata sui due passi per invocazione, con la
     decisione 23 del coordinatore; poi la consegna, chiesta dal proprietario con `session-handoff`; `check-docs.sh` OK e
     `GATE GREEN` alla chiusura; nessun codice toccato.
+25. **Alla settima ripresa, il 2026-09-08:** ripresa con `session-resume` — stato riletto coi comandi, nessuna divergenza,
+    `check-docs.sh` OK e `GATE GREEN` all'apertura; design/08 letto contro `crates/kernel/src/lib.rs`, le suite
+    `journal_contract` e `reactor_contract` coi gemelli `_real` di `platform`, `dying_gui.rs`, le cinque campagne del passo
+    «DST campaigns» di `gate.sh`, la §8.2 e la §8.4 della spec, la §11 del compendio; presentato coi tre controlli della
+    decisione 18 e il diagramma reso dal sorgente identico; **approvato A** e scritto coi fine-riga conservati (CRLF); due
+    divergenze registrate, del proprietario.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -774,6 +789,7 @@ dopo la misura.
 | 21 | **passata** — un diagramma proposto si presenta **a parole** (una tabella «dove, prima, dopo, fonte») **e** reso in chat dal **sorgente mermaid identico** a quello che andrà nel file, non da un disegno a mano | «prima a parole, poi lo schema» di `CLAUDE.md`; un SVG a mano può divergere dal sorgente, con mermaid ciò che il proprietario approva è ciò che si scrive. Costo: nessuno; il come sta nei vicoli ciechi |
 | 22 | **passata, quinta ripresa** — il sorgente di un diagramma, una volta scritto nel file di `docs/design/`, **esce** dalla stella polare: qui resta il rimando | una seconda casa diverge in silenzio (gotcha #68): ciò che il proprietario approva è il file. Costo: chi rilegge la proposta apre design/09 |
 | 23 | **passata, sesta ripresa** — i due passi per invocazione **registrati e non decisi**: la forma è approvata nella §5 del 2 per il 2, e decidere per il 3 senza il disegno di run e passo sarebbe una scelta strutturale presa fuori posto | autonomia e proporzione: costa una riga oggi, e chi disegna il 3 la trova con le due vie. Costo: fino al 3 ogni invocazione paga quattro scritture |
+| 24 | **passata, settima ripresa** — design/08 non porta lo **stato** delle Q: rimanda alla §8.4 della spec, casa unica; e la GUI entra nel diagramma come seconda scatola dello strato deterministico, non come terzo strato | gotcha #68; e la GUI non decide mai su un modello (G13, ADR-0014): le sue prove sulle fixture sono deterministiche come quelle del kernel. Costo: chi cerca «Q3 è verificata?» in design/08 apre la spec |
 
 ## Registrate, non prese — del proprietario
 
@@ -796,6 +812,8 @@ dopo la misura.
 | ✅ **chiusa il 2026-09-08, quinta ripresa — design/09 e il rimando in testa ad ADR-0022 scritti.** Era — ⚠️ nata alla terza ripresa: design/09 mette le **guide** nell'archivio di configurazione; il [disegno della knowledge base](2026-09-04-knowledge-base-design.md) (2026-09-04) le fa file nella cartella della KB, artefatti dell'utente. Il diagramma era indietro di un disegno | chiusa con la sezione 1, scritta il 2026-09-08 |
 | 🔶 **nata alla quarta ripresa, 2026-09-08** — la forma con cui la transizione di policy si rilegge dal giornale: oggi `set_policy` scrive intento ed esito **senza dettaglio**, con la policy nel `reason`; la rilettura coerente col repo legge un **dettaglio tipizzato** — `PermissionDetail` è il precedente — che è una variante nuova di `Detail`, additiva (ADR-0036, regola 3) coi suoi byte congelati in più, oppure legge l'invocazione del registro del 2, che il dettaglio lo ha già | il disegno del 2, con la §4 (lo schema) e la §5 (il registro); il piano ne fa un compito |
 | 🔶 **nata alla sesta ripresa, 2026-09-08, scrivendo design/03** — la §5 del 2 fa dell'invocazione del registro un passo suo (A) e dell'effetto un altro passo (B, `set_policy` com'è): quattro scritture per un click. Nel 2 regge: una funzione, invocata dall'utente. Col 3, se ogni chiamata di strumento passa dal registro (ADR-0038: un registro per tutti gli invocatori), sono **due passi per interazione**, contro il «non più fine di un'interazione» di ADR-0007, e il doppio della «parte piccola» che ADR-0018 tiene per sempre. Le due vie: tenere A e B; oppure l'effetto scrive **sul passo dell'invocazione**, e allora `set_policy` non apre più il proprio passo — cambia contratto, e la sonda `E115` ② con lui | il **3**, col disegno di run e passo; tocca la §5 del 2 e `Arbiter::set_policy` |
+| 🔶 **nata alla settima ripresa, 2026-09-08, scrivendo design/08** — la lettera **E** della §8.2 della spec («esiste un worker reale da avviare e uccidere») dice **7**, Generazione asset; ADR-0039 e la roadmap (riga 12, «il worker sotto il core») dicono che il primo worker vero lo paga il **12**. Due documenti che non si nominano (gotcha #59): la §8.2 è spec, e il richiamo datato lì è del proprietario; design/08 scrive «col primo worker vero» senza scegliere | il proprietario, con un richiamo datato nella §8.2 — o la roadmap, se l'ordine fra 7 e 12 dice altro |
+| 🔶 **nata alla settima ripresa** — l'innesco **B (3)** di Q6 e Q11 nella §8.4 della spec («qualcuno chiama un modello: proiezione…»): la proiezione nasce col **13**, prima del 3 (rimandi del 2026-09-05 in ADR-0008 e ADR-0010), e le due prove — ricomposizioni ripetute, occupazione sotto il budget — non chiedono un modello. La lettera resta vera come innesco del primo uso; se lo stato debba potersi chiudere già col 13 è del proprietario | il proprietario, con la §8.2 e la §8.4 |
 
 ## Vicoli ciechi di questa sessione
 
@@ -823,6 +841,10 @@ dopo la misura.
   si è fermato due volte su un aggancio sbagliato di tre parole senza toccare nessun file: la forma regge, e vale più di un `sed`
   per file. E `design/07` è CRLF nell'albero di lavoro mentre `design/09` e `design/05` sono LF: `git ls-files --eol` **prima** di
   ogni script, e gli agganci su più righe si convertono al fine-riga del file, o una riga nasce mista.
+- **settima ripresa:** il cwd dello strumento Bash **persiste** fra una chiamata e l'altra: un `cd docs/superpowers/specs` in
+  una chiamata ha fatto girare la baseline e i comandi successivi dentro quella cartella — `No such file or directory`, exit
+  127 — mentre i comandi git, che risalgono da soli alla radice, non se ne accorgevano. Percorsi assoluti, o `cd` alla radice
+  in testa a ogni chiamata.
 
 ## Prossimo passo, eseguibile
 
@@ -907,6 +929,13 @@ ha **sei** varianti — `Intent`, `Outcome`, `Note`, `Verdict`, `Routing`, `Perm
 l'intento, anche dopo l'esito (le due implementazioni controllano solo quello). Registrata e non decisa la sola cosa che non
 regge crescendo: due passi per ogni invocazione, col 3. **Si riprende da design/08**, come detto qui sopra, poi la sezione 3.
 
+✅ **Alla settima ripresa, il 2026-09-08: design/08 è SCRITTO** (A, coi tre controlli della decisione 18) — la sezione 2 della
+passata è **chiusa**. Letto nel codice: la GUI che muore è già provata (`gui_death_campaign.rs`, proprietà 3 della §5.7) e le
+campagne DST del cancello sono cinque, nominate una per una nel passo «DST campaigns»; `ipc` non ha suite né trasporto vero;
+le campagne profonde sono `#[ignore]` e nessuno le lancia (vincolo 8 della §11 del compendio). **Si riprende dalla sezione 3**,
+i disegni nuovi — il punto 3 dell'ordine eseguibile qui sopra — ciascuno A/B coi tre controlli, a parole e col diagramma reso
+dal sorgente identico; prima, la domanda al proprietario sulla lettera E della §8.2 della spec.
+
 #### I diagrammi, uno per uno — letti il 2026-09-08
 
 | File | Diagrammi | Che cosa cambia | Sezione |
@@ -919,7 +948,7 @@ regge crescendo: due passi per ogni invocazione, col 3. **Si riprende da design/
 | [design/07](../../design/07-osservabilita-e-degrado.md) | 2 flowchart | «Cosa deve essere sempre visibile» contro la striscia della §3: un richiamo | 2, ✅ scritta il 2026-09-08 — e non un richiamo solo: sette fonti del degrado, la GUI viva a GPU satura, le proiezioni a classi, «Dove» e «Chi» |
 | [ADR-0019](../../adr/0019-lo-stato-di-degrado-e-un-oggetto-osservabile.md) | tabella | rimando in testa: la lista degli eventi è aperta — il fallback dichiarato di ADR-0012 c'è già nel codice, la telecamera arriva con ADR-0039 — e a GPU satura resta viva anche la GUI (ADR-0033) | 2, ✅ scritta |
 | [design/03](../../design/03-run-durevoli.md) | 2 flowchart, 1 stateDiagram | l'invocazione del registro come passo; il giornale separato dagli altri archivi, coi «(col N)»; le note nel ciclo di vita; il ramo «non dichiarata» → «non leggibile» | 2, ✅ scritta il 2026-09-08, sesta ripresa |
-| [design/08](../../design/08-strategia-di-test.md) | 1 flowchart | 🔶 la conformità della settima porta, la sonda della disposizione | 2 |
+| [design/08](../../design/08-strategia-di-test.md) | 1 flowchart | la GUI nello strato deterministico (col 2); le suite di conformità e la regola che le fa crescere; le sei campagne DST; la riga Q3; lo stato delle Q lasciato alla §8.4 della spec; il «ciclo lungo» della DST profonda che non esiste; ADR-0026 | 2, ✅ scritta il 2026-09-08, settima ripresa |
 | [design/01](../../design/01-topologia-dei-processi.md) | 1 flowchart, 1 stateDiagram | la GUI è una scatola e resta tale; la GUI dentro è un disegno nuovo | 3 |
 | [design/04](../../design/04-anelli-e-sensori.md) · [design/06](../../design/06-permessi-e-confine-dei-dati.md) | 2 · 3 | 🔶 nulla, giudizio di questa sessione | — |
 | tutto `docs/` | — | nessun diagramma a entità: `grep -rE '^\s*erDiagram' docs/` è vuoto | 3 |

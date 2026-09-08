@@ -190,6 +190,7 @@ sotto-progetto**, nello stesso passaggio.
 | [Osservabilità e degrado](design/07-osservabilita-e-degrado.md) | Tassonomia degli errori, stato di degrado, proiezioni del giornale |
 | [Strategia di test](design/08-strategia-di-test.md) | I due strati, le quattro tecniche, mappa Q1–Q24 → metodo |
 | [L0 fisico](design/09-l0-fisico.md) | Archivi, chiavi e segreti, checkpoint, livelli di confinamento |
+| [Modello dei dati durevoli](design/10-modello-dei-dati-durevoli.md) | Il giornale a entità, ciò che è deciso per sotto-progetto, le due verità sul record |
 
 ## Specifiche
 

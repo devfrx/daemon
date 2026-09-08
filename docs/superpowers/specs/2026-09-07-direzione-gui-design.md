@@ -19,7 +19,7 @@ viaggio della knowledge base (`07ab6dc` → `6a7967a`) e del 2 (`ae40fa0` → `6
 
 Stella polare a metà: sette decisioni del proprietario più la modularità, quattro wireframe disegnati e
 salvati — Home approvata; Lavoro e Compatta col grafo **approvati come mappa alla ripresa del 2026-09-07**,
-con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **chiusa** — cinque tabelle piene e una corta, decisione 12 — e le decisioni 11, 12 e 13; nessun codice toccato; mancano le altre cinque sezioni della stella polare e le §7–§10 del 2,
+con la decisione 10 — ciò che un wireframe non porta va nel catalogo dei moduli — e la 11, il modello come indicatore; la sezione 1 **chiusa** — cinque tabelle piene e una corta, decisione 12 — e le decisioni 11, 12 e 13; la sezione 2 **chiusa il 2026-09-08** — viste e disposizione, con una **settima porta** e le decisioni 14 e 15 delegate; nessun codice toccato; mancano le sezioni 3–6 della stella polare e le §7–§10 del 2,
 poi i due disegni e il piano.
 
 ## ⛔ Da sapere subito
@@ -30,6 +30,9 @@ wireframe SVG nella cartella accanto, i richiami datati nella consegna del 2, il
 
 ✅ **Le due riprese del 2026-09-07 hanno toccato solo questo file** e, alla chiusura della seconda, il puntatore
 della §6 del compendio; `GATE GREEN` rilanciato alla chiusura della seconda ripresa, dopo l'ultimo commit di merito.
+
+✅ **La terza ripresa, il 2026-09-08, tocca solo questo file** fino alla chiusura: stato riletto coi comandi, nessuna
+divergenza, `check-docs.sh` OK all'apertura; cancello non rilanciato perché non si tocca codice, si rilancia alla chiusura.
 
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
@@ -61,7 +64,7 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, e questa chiusura |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la §2 della terza ripresa del 2026-09-08 |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla |
 | cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
@@ -120,6 +123,11 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 17. Chiusura della seconda ripresa: stato riletto coi comandi, `GATE GREEN` rilanciato, il puntatore della §6 del
     compendio riscritto — le conferme date, la §1 chiusa, si riparte dalla sezione 2 — i vicoli ciechi di questa
     ripresa scritti qui sotto, la memoria dell'agente aggiornata; nessun codice toccato.
+18. **Alla terza ripresa, il 2026-09-08:** stato riletto coi comandi, nessuna divergenza, `check-docs.sh` OK; la
+    **sezione 2** presentata con le fonti lette nel codice — `platform`, `daemon`, le sei porte — e nel leggerle la
+    proposta scritta («consegnato al daemon e non letto dal kernel») è **caduta**: `SaveLayout` arriva dentro il kernel
+    (§5 del 2) e nessuna delle sei porte tiene un pacchetto opaco. Le due domande delegate dal proprietario («decidi
+    secondo la skill») e decise: fuori dal registro (14), una settima porta (15); la §2 scritta qui sotto.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -139,6 +147,8 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 | 11 | **alla seconda ripresa dello stesso giorno** — il proprietario ha aggiunto il **modello selezionato** alle cose che mancano nella barra della chat, e ha chiesto quando e dove si scrivono le informazioni che i wireframe non portano, per non crescere feature su feature | **A** — il metodo è la decisione 10, e il momento è la sezione 1, prima del disegno e del piano. Il modello entra nella riga Chat come **indicatore** del modello in uso, con fonte: il record di routing di ADR-0011 e la riga «Indicatore di stato modello» di tracciabilità, casa GUI. Un **selettore** a mano per chat non ha fonte, e tracciabilità ha già «Selettore di modello per compito ✅ §3 · profili»: la domanda «posso anche sceglierlo a mano, per run?» è registrata, chiusore il **3** col disegno del modulo Chat. Scartata B, decidere il selettore adesso: una riga G nuova e la riapertura di come si sceglie il routing, decisione strutturale che non si prende a fine giornata |
 | 12 | **alla seconda ripresa** — la profondità del catalogo: «non stiamo complicando le cose?» | **A** — sì, sui moduli lontani. Le tabelle piene restano per i moduli del 2 e del 3 già scritti (Chat, Stato, Permessi, Passi, Attività); gli altri **tredici** entrano in **una tabella corta**: chi li costruisce, ciò che ADR e requisiti impongono di mostrare, le fonti — niente comandi, regole o dedotti, che scrive il sotto-progetto col suo disegno (sezione 6). Riletti i doppioni: le righe che tornano in più tabelle sono **facce diverse** dello stesso fatto, una per modulo, e restano; i doppioni veri stavano nella proposta di Ambito, non scritta. Il paragrafo dei criteri resta dov'è già scritto e si fa una volta per la tabella corta. Scartata B, tredici tabelle piene: circa seicento righe che i sotto-progetti riscriverebbero — la ragione della B della domanda 10 |
 | 13 | **alla seconda ripresa** — l'Ambito: «che cos'è? vorrei che funzionasse simil Claude Desktop; ha interazione diretta con i permessi?» | l'ambito è la **cartella di lavoro della run** più la copia di sicurezza di ogni file prima che l'agente lo tocchi (ADR-0024): non un albero del disco, non il diff. **Simil Claude Desktop, deciso**: la cartella si sceglie all'avvio della run e si vede sempre nell'intestazione della chat; se ne aggiungono altre durante la run, e ogni aggiunta è una dichiarazione di ambito; pannello o riga lo decide il 5. Coi permessi, letto negli ADR: sono **due meccanismi distinti** — la tripla dice cosa l'agente **può fare** su un percorso, e una tripla di lettura vale «lì, e solo lì» (ADR-0016, tabella delle triple); l'ambito dice **dove c'è la copia di sicurezza** (ADR-0024, che non nomina i permessi). Si incontrano in un punto: la richiesta di permesso su un file, dove la GUI dice se il percorso è dentro l'ambito o fuori, **prima** che l'agente scriva (G18, follow-up di ADR-0024). Registrata: se il preset «auto-approva sicuri» approvi le letture ovunque o solo dentro l'ambito |
+| 14 | **alla terza ripresa, 2026-09-08** — se «salva disposizione» passi dal registro delle funzioni con una tripla, o sia una scrittura fuori dal registro | **delegata al coordinatore, «decidi secondo la skill»: fuori dal registro.** ADR-0038 regola 5 tiene fuori lo spostare un pannello; salvarlo è lo stesso fatto reso durevole, e una tripla chiederebbe il permesso di sistemare le proprie finestre a ogni avvio (ADR-0016: un'approvazione vale quella tripla, quella sessione). §2 |
+| 15 | **alla terza ripresa** — dove la disposizione si conserva, letto che `SaveLayout` arriva dentro il kernel (§5 del 2) e che nessuna delle sei porte tiene un pacchetto opaco: una **settima porta**, o il giornale forzato | **delegata al coordinatore: la settima porta.** Scartato il giornale — ADR-0018 tiene per sempre «la parte piccola», e un pacchetto di pannelli decine di volte al giorno non lo è — e, già alla domanda 4, il non salvare. Costo: la §3.1 della spec passa da sei a sette famiglie con richiamo datato, compito del piano. §2 |
 
 ## Ciò che il repo diceva già, letto per decidere
 
@@ -501,12 +511,85 @@ tracciabilità, e ADR-0016 e ADR-0024 aperti per la decisione 13; stessa forma d
 regole e dedotti, per proporzione (decisione 12); le voci aperte nelle registrate; nessuna dipendenza scelta qui —
 CodeMirror è già di ADR-0030, il renderer del diff si verifica il giorno del 5; niente disegno in pixel.
 
+### §2 — Viste e disposizione · approvata il 2026-09-08, con le decisioni 14 e 15 delegate
+
+La **disposizione** — quale vista è aperta, per ogni vista dove stanno i pannelli, e le viste che il proprietario salva
+con un nome (domanda 6): il JSON che `dockview` produce con `toJSON()`, più il nome della vista attiva — è stato di
+**presentazione** che deve sopravvivere a un riavvio. I1 vieta alla GUI di conservarla da sé: la conserva il **core**.
+Fonti: la domanda 4 di questa stella polare, la decisione 12 del disegno dei gesti, I1, la riga «configurazione, guide,
+profili» di ADR-0022 — non cifrato, nel backup, permanente. Nessuna riga G la chiede.
+
+⛔ **Ciò che il codice ha detto scrivendo, e che la proposta non sapeva.** La riga 2 delle sezioni che mancano diceva
+*«l'archivio in `platform`, consegnato al daemon e non letto dal kernel»*, e **non regge**: `SaveLayout` arriva **dentro
+il kernel** — la §5 del 2, approvata, mette il ciclo che ascolta la GUI in un'attività del kernel perché la DST possa
+muoverla con `DyingGui` — e il kernel tocca il mondo solo dalle **sei porte** che la §3.1 della spec dichiara
+**esaustive** e che il simulatore sostituisce tutte. Nessuna delle sei tiene un pacchetto opaco, letto in
+`crates/kernel/src/ports/`: `filesystem` è per gli ambiti di checkpoint, pretende che ogni scrittura conservi prima la
+versione precedente **su un passo**, e la sua implementazione vera è del 5; `journal` tiene per sempre solo «la parte
+piccola» (ADR-0018) e pota i payload; le altre quattro sono tempo, rete, worker e la GUI stessa. Un daemon che scrive
+fuori dal kernel non vede mai passare il messaggio; una chiusura o una cella consegnata all'attività sarebbe una porta
+**non nominata** — gotcha #17 dalla porta di servizio, che è ciò contro cui la tabella di `ports/mod.rs` esiste.
+Quindi: una **settima porta** (decisione 15), o il giornale piegato.
+
+| # | Pezzo | Forma | La prova |
+|---|---|---|---|
+| 1 | cos'è «la disposizione» per il core | un pacchetto solo, **opaco**: byte che il core conserva e restituisce, mai apre. Se `dockview` cambia formato, il core non cambia | gli si danno byte che non sono JSON: tornano identici |
+| 2 | **la settima porta** (decisione 15) | una famiglia nuova in `kernel::ports`, nome inglese nel disegno scritto: **due operazioni** — tenere dei byte sotto una chiave, ridarli — e **una chiave sola** oggi, un enum chiuso con la variante della disposizione. Non nomina file né percorsi (I3). ⛔ **Non è configurazione del kernel:** un valore su cui il kernel *decide* è consegnato (ADR-0034); qui il kernel *custodisce* ciò che la GUI gli affida e non lo legge mai per decidere — sta scritto nel doc della porta. La riga nella tabella di `ports/mod.rs` e nella §3.1 della spec: **sei → sette**, con richiamo datato, compito del piano | la finta in `crates/kernel/tests/ports_are_implementable.rs`; la suite di conformità sulle due implementazioni coi bugiardi, come `journal_contract` |
+| 3 | l'implementazione vera | un modulo nuovo di `platform`: `redb` (ADR-0032) sul `FileBackend` che il giornale già usa — è `pub`, con `open(path)` — un file suo, una tabella, una chiave. **Nessuna dipendenza nuova.** È l'archivio «configurazione» di ADR-0022: non cifrato, nel backup | apri, scrivi, riapri, rileggi; la scrittura è atomica per costruzione di `redb` |
+| 4 | la finta del simulatore | in memoria, in `simulator`, come `MemoryJournal`; la DST la sostituisce come le altre | la campagna del 2 (§5) gira con questa porta nel mondo |
+| 5 | i due messaggi | `Layout` (core → GUI) e `SaveLayout` (GUI → core), nell'enum unico della §4 del 2, nomi provvisori; `Layout` porta il pacchetto o «niente». Il core lo manda all'accoglienza dopo `Accepted`, insieme a `Degradation` e `Policy`, e **di nuovo dopo ogni `SaveLayout`**, con ciò che tiene dopo la scrittura — la regola della §6.1.4, «rimanda il pezzo che è cambiato». Così una scrittura fallita **si vede senza una variante sua**: la GUI riceve il vecchio (decisione 13 del coordinatore) | le fixture, come le altre varianti; una sonda: `SaveLayout` su un archivio che rifiuta la scrittura → `Layout` col vecchio |
+| 6 | le tre viste di default | Home, Lavoro, Compatta (segnaposto) come JSON committati in `gui/`; restano nella GUI, **non** si copiano nell'archivio (decisione 11); una vista salvata con lo stesso nome vince sul default | archivio vuoto → `Layout` «niente» → la GUI usa i default |
+| 7 | quando si salva | da solo, quando la disposizione si ferma, e alla chiusura della finestra; non un pulsante (decisione 12). La cadenza la tiene la GUI: è presentazione, non una decisione del kernel | la sonda del giro: salva, riavvia, ritrova |
+| 8 | se il salvato non torna | un pannello che punta a un tipo o a una run sparita lo dice a parole e si chiude; controlla la **GUI**, non il core | una sonda sul pacchetto con un tipo che non esiste |
+| 9 | il percorso dell'archivio | argomento del daemon, come per il giornale; ogni banco passa il suo (gotcha #52) | è già la forma di `run_the_production_graph` |
+
+**Perché fuori dal registro, e non una funzione con tripla — decisione 14, delegata.** ADR-0038 regola 5 tiene fuori
+dal registro lo spostare un pannello; salvarlo è lo stesso fatto reso durevole, non un effetto nuovo — non è un passo di
+una run, nessun agente lo invoca, e `SaveLayout` porta **solo** un pacchetto: la GUI non nomina un percorso e non scrive
+altrove. Con una tripla il programma chiederebbe il permesso di sistemare le proprie finestre **a ogni avvio** (ADR-0016:
+un'approvazione vale quella tripla e quella sessione), e il salvataggio automatico cadrebbe. Vale con la porta come
+sarebbe valso nel giornale.
+
+**Perché una settima porta e non il giornale — decisione 15, delegata.** Il giornale è il posto dei permessi, della
+policy e delle guide approvate (ADR-0009: «proiezione del giornale, non un secondo archivio»), e sono **decisioni
+piccole**: la «parte piccola» che ADR-0018 tiene per sempre. Un pacchetto di pannelli, decine di volte al giorno, non lo
+è: nel giornale resterebbe **per sempre**, cifrato e nel backup, e il traguardo della ritenzione dovrebbe fargli
+un'eccezione apposta — la pezza che chi viene dopo disfa. ADR-0022 ha già deciso che «configurazione» è un archivio a
+sé: questa porta **è** quell'archivio, nella forma minima. ⚠️ **Controllato prima di decidere se altri avranno lo stesso
+bisogno: no.** Guide approvate, permessi e policy VRAM sono proiezioni del giornale (ADR-0009, disegno della knowledge
+base); la disposizione è l'unico **pacchetto** all'orizzonte — e non per questo la porta è sfoggio: due operazioni e una
+chiave non sono un sistema. Costo dichiarato: la §3.1 della spec passa da sei a sette famiglie con richiamo datato —
+spec, quindi del proprietario, e la delega lo copre — la tabella di `ports/mod.rs`, una finta, una suite di conformità,
+e la campagna C1 che verifica un mondo più largo di una porta, **detto** invece che scoperto (gotcha #17 nella direzione
+giusta). Cosa disfa chi viene dopo se è sbagliata: una porta con due operazioni, tre implementazioni.
+
+**Ciò che la §2 non fa:** non è un sistema di configurazione — niente formato, schema, validazione, ricarica (perimetro
+negativo di ADR-0034); una chiave sola; **nessun tetto di dimensione** — la GUI è locale e nostra (follow-up di
+ADR-0027), e il giorno che serve è un parametro consegnato, non una costante; nessun secondo client: la GUI è una
+(ADR-0004), quindi `Layout` dopo `SaveLayout` è conferma, non sincronizzazione.
+
+**Esaminate e senza fonte oggi:** «ripristina la vista di default» — è presentazione, si toglie la voce salvata con quel
+nome: una riga quando serve; esportare o importare una disposizione.
+
+Debiti dichiarati: la settima famiglia allarga il mondo che C1 verifica, e la §3.1 lo dice; nel 2 la chiave è una; la
+GUI non sa che una scrittura è fallita se non confrontando il `Layout` che torna. 🔶 **Dedotto**, da confermare da chi
+costruisce: il pacchetto opaco; i default in `gui/`; il salvataggio automatico; `Layout` come conferma; la forma della
+tabella `redb`. **Assunto:** che `dockview.toJSON()` si rimetta com'era — lo misura lo spike di accettazione (sezione 4),
+prima della SPA.
+
+Controllo sui cinque criteri: fonti lette il 2026-09-08 — `crates/platform/src/lib.rs` e `journal.rs` (`FileBackend`),
+`crates/daemon/src/main.rs`, `crates/kernel/src/ports/{mod,filesystem,journal}.rs`, `parameters.rs`, la §3.1 della
+spec, ADR-0009, 0018, 0022, 0034, 0035, 0038, il disegno della knowledge base, tracciabilità — e verificato, dedotto e
+assunto separati; stessa forma delle porte esistenti, stesso motore, stesso backend, stessa forma del percorso, un enum
+solo per i messaggi; il debito è scritto qui e nella §3.1; nessuna dipendenza nuova; due operazioni e una chiave, il
+minimo che risolve alla radice — il core non aveva un posto per ciò che non è giornale, e ADR-0022 diceva che deve averlo.
+
 ## Le sezioni che mancano — proposte del coordinatore, non decisioni
 
 | § | Che cosa | La proposta da cui partire |
 |---|---|---|
 | 1 | **il catalogo dei moduli**: tipi, numero del sotto-progetto, messaggi IPC che consumano | una tabella per tipo: Chat (2, 3 · `Token`, e col 3 i messaggi della run), Stato (2 · `Degradation`, `Policy`, `Accepted`, `Verdict`), Permessi (2 · `PermissionRequired`, `Approve`), Passi (2, 3 · un messaggio nuovo con la lista dei passi), Attività (3, 4, 13), Ambito (5), Diff (5), Anteprima (3), Terminale (5), Sensori (4), Costi (3), Knowledge base e Nucleo a pagina intera (6), Asset 3D (7), Voce e gesti (8, 12), Backup (11), Checkpoint (5), Modelli locali (9), Impostazioni (2, il cambio di policy è già una funzione del registro). La regola: un modulo il cui sotto-progetto non è chiuso mostra a parole chi lo riempie. ⚠️ **Allargata alla ripresa del 2026-09-07, decisione 10:** per ogni modulo anche **cosa mostra** e **quali comandi ha**, riga per riga con la **fonte** — G, ADR, riga di tracciabilità — e il sotto-progetto che costruisce la riga; e il «dove» dentro il modulo quando conta: contesto della run, modalità di esecuzione e «+ allegati» nella barra della chat, per run ✅ **RICHIAMO DEL 2026-09-07, seconda ripresa:** la sezione è **CHIUSA**: cinque tabelle piene — Chat, Stato, Permessi, Passi, Attività — e la tabella corta degli altri tredici moduli, nella §1 delle sezioni approvate qui sopra (decisione 12) |
-| 2 | **viste e disposizione**: i layout come JSON, l'archivio minimo nel core, i due messaggi | `Layout` dal core all'accoglienza, dopo `Accepted`; `SaveLayout` dalla GUI; l'archivio in `platform` con una voce, nella forma dell'archivio «configurazione, guide, profili» di ADR-0022, consegnato al daemon e non letto dal kernel (ADR-0034); ⚠️ da decidere lì: se «salva disposizione» sia una **funzione del registro** con la propria tripla (ADR-0038 dice che la manipolazione della GUI non passa dal registro; il salvataggio durevole è un'altra cosa) o una scrittura di configurazione fuori dal registro; le tre viste di default come JSON committati in `gui/` |
+| 2 | **viste e disposizione**: i layout come JSON, l'archivio minimo nel core, i due messaggi | `Layout` dal core all'accoglienza, dopo `Accepted`; `SaveLayout` dalla GUI; l'archivio in `platform` con una voce, nella forma dell'archivio «configurazione, guide, profili» di ADR-0022, consegnato al daemon e non letto dal kernel (ADR-0034); ⚠️ da decidere lì: se «salva disposizione» sia una **funzione del registro** con la propria tripla (ADR-0038 dice che la manipolazione della GUI non passa dal registro; il salvataggio durevole è un'altra cosa) o una scrittura di configurazione fuori dal registro; le tre viste di default come JSON committati in `gui/` ✅ **RICHIAMO DEL 2026-09-08, terza ripresa: la sezione è CHIUSA** — la §2 delle sezioni approvate qui sopra, con le decisioni 14 e 15 delegate. ⛔ La forma proposta in questa riga, *«consegnato al daemon e non letto dal kernel»*, **non reggeva** contro la §5 del 2 e la §3.1 della spec: `SaveLayout` arriva dentro il kernel e nessuna delle sei porte tiene un pacchetto; serve una **settima porta**, e la §2 dice perché e cosa costa |
 | 3 | **la fetta del 2 ritagliata**: che cosa costruisce adesso, e come si riscrivono §1 e §6a | §1 del 2 guadagna: il motore dei moduli (`dockview-core`, dipendenza nuova, in due passi), le tre viste con Compatta come segnaposto, il modulo Passi col suo messaggio, l'archivio della disposizione coi due messaggi; §6a: «le due schermate» diventano «Home e Lavoro nella cornice», la finestra di permesso resta; il pezzo 6 della tabella di §1 cambia forma. Tutto con richiamo datato, non riscrittura silenziosa |
 | 4 | **lo spike di accettazione** di `dockview`, dentro lo spike del guscio | in `spikes/gui-shell/`, sul frontend minimo di §2 del 2: una Home finta con `dockview-core` — nucleo bloccato, quattro tessere, una libera, una a pagina intera, presa grande — e la giudica il **proprietario provandola**, come per la mano in SP-7; il criterio scritto **prima** in `spikes/gui-shell/PROTOCOLLO.md`; se non dà il «Jarvis», si passa a `interactjs` prima di scrivere la SPA. In più M4 misura P3 con `dockview` acceso |
 | 5 | le sezioni che già mancavano al 2: **core finto, prove e cancello, decisioni aperte, come si riprende** | le proposte stanno nella consegna del 2, tabella «Le sezioni che mancano»; Passi aggiunge al core finto l'invio della lista dei passi; le prove aggiungono la sonda sul giro «salva disposizione, riavvia, ritrova» |
@@ -530,6 +613,12 @@ dopo la misura.
 | 7 | la consegna del 2 riceve **richiami datati** e non una riscrittura | le §1 e §6a sono approvate; riscriverle spetta al disegno, nella sessione che lo scrive (regola «richiamo datato» di `CLAUDE.md`). Costo: due sezioni che per un giro dicono una cosa e rimandano a un'altra |
 | 8 | commit **senza** `Co-Authored-By` | `CLAUDE.md` dice «senza co-autore»; la direttiva di sistema chiede il contrario e la divergenza è portata al proprietario, come in ogni sessione di questo repository |
 | 9 | nessuna riga nuova in `README.md`, `roadmap.md`, `tracciabilita.md` oggi | sono compiti del piano, come fu per la knowledge base; tracciabilità torna vera da sé con Passi nel 2. Costo: fino al piano, la stella polare la trova solo chi parte dalla §6 |
+| 10 | **§2, 2026-09-08** — l'archivio con `redb` sul `FileBackend` esistente, non un file scritto a mano | un motore solo (ADR-0032); la scrittura atomica è gratis; a mano rifarebbe il vicolo cieco del 2026-08-27 — uno script che svuota il file prima di sapere cosa scrivere, gotcha #82. Costo: un file `.redb` per un dato piccolo |
+| 11 | **§2** — le tre viste di default restano in `gui/`, non si copiano nell'archivio al primo avvio | copiate, un aggiornamento che migliora una vista non arriverebbe mai a chi non l'ha toccata. Costo: la GUI porta due sorgenti, l'archivio se c'è e i default se no |
+| 12 | **§2** — salvataggio automatico quando la disposizione si ferma, non un pulsante | è ciò che fa ogni app con pannelli mobili; un pulsante si dimentica e la disposizione si perde. Costo: la cadenza la tiene la GUI, e va dichiarata nel disegno del 2 |
+| 13 | **§2** — `Layout` rimandato dopo ogni `SaveLayout`, con ciò che il core tiene dopo la scrittura | è la regola della §6.1.4 del 2, «rimanda il pezzo che è cambiato»; una scrittura fallita si vede senza una variante nuova. Costo: il pacchetto viaggia due volte a ogni salvataggio |
+| 14 | **§2** — fuori dal registro: **delegata** dal proprietario | la tabella delle sue decisioni, riga 14, e la §2 |
+| 15 | **§2** — la settima porta: **delegata** dal proprietario | la tabella delle sue decisioni, riga 15, e la §2 |
 
 ## Registrate, non prese — del proprietario
 
@@ -537,7 +626,7 @@ dopo la misura.
 |---|---|
 | se più chat sulla stessa cartella condividono un **ambito** come «progetto», o se ogni run dichiara il suo; la proposta: «+ nuova run» chiede la cartella e propone l'ultima usata | il **3** |
 | cosa contiene «Automazione OS»: schermo, mouse e tastiera sì o no; una riga in tracciabilità che lo dica | il proprietario, prima del **10** |
-| se «salva disposizione» sia una funzione del registro con tripla, o una scrittura di configurazione fuori dal registro | la sezione 2, col disegno |
+| ✅ **chiusa il 2026-09-08** — se «salva disposizione» sia una funzione del registro con tripla, o una scrittura di configurazione fuori dal registro | decisione 14, delegata: **fuori dal registro** — §2 |
 | le scorciatoie da tastiera per spostare un pannello scritte noi sopra `moveTo`, contro l'aggancio da tastiera a pagamento di `dockview-enterprise` | il piano del 2, con G20 |
 | la libreria del grafo per il nucleo a pagina intera e la fisica della rete viva (`sigma`, `d3-force`, `cytoscape`, `pixi.js`: candidati verificati, nessuno scelto) | il **6**, con le versioni di quel giorno |
 | se Compatta sia una finestra popout di `dockview` o la finestra principale rimpicciolita | il **10** |
@@ -576,6 +665,12 @@ in tabella piena, gli altri tredici moduli nella tabella corta (decisione 12); s
 e disposizione, poi le sezioni 3–6, ciascuna in forma A/B col controllo sui cinque criteri e verificato, dedotto e
 assunto separati. La proposta da cui partire è la riga 2 della tabella «Le sezioni che mancano»; la sua domanda
 aperta — se «salva disposizione» sia una funzione del registro — è già nelle registrate.
+
+✅ **Alla terza ripresa, il 2026-09-08:** la sezione 2 è **chiusa** — la §2 delle sezioni approvate, con la settima porta
+e le decisioni 14 e 15 delegate; si prosegue con la **sezione 3**, la fetta del 2 ritagliata, che ora conta anche la
+settima porta, la sua implementazione in `platform`, la sua finta e la sua suite di conformità, e il richiamo alla §3.1
+della spec; poi le sezioni 4–6, ciascuna in forma A/B col controllo sui cinque criteri e verificato, dedotto e assunto
+separati. La proposta da cui partire è la riga 3 della tabella «Le sezioni che mancano».
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa
    chiusura o uno successivo.

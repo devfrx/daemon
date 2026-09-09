@@ -1088,3 +1088,211 @@ nella consegna del 2, sotto «Le sezioni approvate del disegno», nella forma de
 «decidi secondo la skill» (decisioni 34 e 35: A e A); entrambe sono scritte** nella consegna del 2 sotto «Le sezioni approvate
 del disegno», nella forma delle §3–§6a, con le righe 7 e 8 di «Le sezioni che mancano» della consegna col richiamo; i blocchi
 delle proposte com'erano sono nella cronaca in archivio. ⏭️ **L'ordine da qui:** il punto 4 (§9, §10 e la sezione 6), poi il 5.
+
+## La quindicesima ripresa, 2026-09-09 — la cronaca, scritta alla chiusura
+
+Ripresa con `anthropic-skills:session-resume` sulla stella polare: `git fetch`, albero pulito e allineato a `origin/main`,
+`check-docs.sh` OK e `GATE GREEN` rilanciato e letto dal log all'apertura; la lettura obbligatoria (`CLAUDE.md`, il compendio per
+intero a blocchi, i due pezzi dell'audit); le parti di stato della stella polare e i tre blocchi delle proposte; della consegna
+del 2 le §3–§8 e «Le sezioni che mancano»; le sezioni «Come si riprende» e «Le voci che questo disegno apre» del disegno della
+knowledge base per la forma; le righe dei due disegni in «Dove va cosa» di `README.md`. Le versioni degli attrezzi web
+**rimisurate** al registro npm col comando del blocco della §9, con lo stesso esito della proposta, e le date che al blocco
+mancavano aggiunte alla §9. Poi il punto 4 eseguito: la §9 e la §10 scritte nella consegna del 2 sotto «Le sezioni approvate del
+disegno», nella forma delle §3–§8, con le righe 9 e 10 di «Le sezioni che mancano» e lo «Stato in una riga» di quel file col
+richiamo; la §6 scritta nella stella polare dopo la §4, con le righe 5 e 6 di «Le sezioni che mancano» e le decisioni 36–38 col
+richiamo; «Stato in una riga», «Da sapere subito» e «Prossimo passo, eseguibile» della stella polare allo stato di oggi, col
+punto 5 reso eseguibile; il puntatore della §6 del compendio e la sua intestazione; questa cronaca. Nessun codice toccato;
+fine-riga conservati e rimisurati. I testi com'erano stanno qui sotto.
+
+### I paragrafi di stato com'erano alla chiusura della quattordicesima ripresa
+
+**«Stato in una riga»:**
+
+Stella polare quasi intera: le sezioni **1–4** sono chiuse e scritte qui sotto — il catalogo dei moduli, viste e
+disposizione con la **settima porta**, la fetta del 2 ritagliata, lo spike di accettazione di `dockview` con otto mosse — e
+la passata sui diagrammi (decisione 16) è chiusa. **Le §9 e §10 del 2 e la sezione 6 sono DECISE e NON SCRITTE** — delegate A, A e A alla chiusura della quattordicesima
+ripresa (decisioni 36–38), le proposte parola per parola nel prossimo passo; le §7 e §8, il core finto e le prove col cancello,
+sono **scritte** lo stesso giorno (decisioni 33–35); poi i due disegni scritti sul posto e il piano
+del 2 in due parti. Nessun codice toccato. ✅ **Il mandato del proprietario (decisione 26) — sfoltire la lettura d'apertura — è ESEGUITO il 2026-09-09:** cinque
+tagli, tutti A (decisioni 27–31) — questo file, la testa dell'audit, il riquadro delle voci aperte della §6 del compendio,
+il puntatore della §6, `CLAUDE.md` — e `AVVIO-CHAT.md` resta com'è perché il proprietario non lo incolla più (decisione
+32). ⛔ **Alla chiusura della quattordicesima ripresa, chiesta dal proprietario con `session-handoff` («decidi secondo la skill e
+fai session handoff prima di eseguire tutto»), la §9, la §10 e la sezione 6 sono DECISE su delega e DA SCRIVERE**: si riprende
+dal punto 4 del prossimo passo, dai tre blocchi «La proposta per…» scritti lì parola per parola. La cronaca ripresa per ripresa sta in archivio (il richiamo in testa).
+
+**«Da sapere subito», il secondo paragrafo:**
+
+⛔ **Il prossimo passo è SCRIVERE la §9 e la §10 del 2 e la sezione 6 di questo file**, decise su delega alla chiusura della
+quattordicesima ripresa (2026-09-09, decisioni 36–38: A, A, A) e **non scritte**, perché il proprietario ha chiuso con
+`session-handoff` prima dell'esecuzione: le proposte stanno parola per parola nei tre blocchi del punto 4 di «Prossimo passo,
+eseguibile», coi fatti letti alle fonti quel giorno — versioni, date, licenze e download dal registro npm, la regola di lint alla
+sua pagina, le opzioni di `markdown-it` lette dentro il pacchetto — e le decisioni 51–57 del coordinatore col perché. ✅ **Lo
+stesso giorno il proprietario ha risposto A alla §7** (decisione 33) **e ha delegato la §8 e l'archivio che non si apre**
+(«decidi secondo la skill»: decisioni 34 e 35, A e A): le §7 e §8 sono scritte nella consegna del 2, sotto «Le sezioni approvate
+del disegno», nella forma delle §3–§6a; i fatti del codice su cui poggia sono stati riletti quel
+giorno, prima della domanda (`gui/` non esiste, `exclude = ["spikes"]`, nessun `impl Ipc for` fuori dai commenti,
+`Executor::spawn` con vita `'a`, `RefCell` fra attività in `executor_determinism.rs`). Il paragrafo com'era è in archivio.
+
+**Il paragrafo in testa a «Prossimo passo, eseguibile», dopo il mandato:**
+
+✅ **Le domande 4 e 5, e quella su `AVVIO-CHAT.md`, hanno avuto risposta alla tredicesima ripresa (decisioni 30, 31 e 32)**:
+i testi com'erano in archivio, i blocchi delle proposte nella cronaca. ✅ **Alla quattordicesima ripresa (2026-09-09) la §7 ha avuto risposta A (decisione 33) e la §8 è stata delegata con
+«decidi secondo la skill» (decisioni 34 e 35: A e A); entrambe sono scritte** nella consegna del 2 sotto «Le sezioni approvate
+del disegno», nella forma delle §3–§6a, con le righe 7 e 8 di «Le sezioni che mancano» della consegna col richiamo; i blocchi
+delle proposte com'erano sono nella cronaca in archivio. ⛔ **Alla chiusura della stessa ripresa, chiesta dal proprietario con
+`session-handoff` («decidi secondo la skill e fai session handoff prima di eseguire tutto»), la §9, la §10 e la sezione 6 sono
+DECISE su delega (decisioni 36–38: A, A, A) e NON scritte.** ⏭️ **L'ordine della sessione nuova:** il punto 4 — scrivere la §9
+e la §10 nella consegna del 2, sotto «Le sezioni approvate del disegno», dai blocchi «La proposta per la §9» e «La proposta per
+la §10» qui sotto, parola per parola nel merito e nella forma delle §3–§8, e la sezione 6 in questo file dal blocco «La proposta
+per la sezione 6» — con le righe 9 e 10 di «Le sezioni che mancano» della consegna e la riga 6 di questo file col richiamo; le
+versioni degli attrezzi si rimisurano col comando del blocco prima di scriverle; `check-docs.sh`, commit, push; poi il 5. **Le letture che bastano:** le parti
+di stato di questo file (fino alla tabella delle decisioni, e da «Prossimo passo, eseguibile» in giù), poi la §3 qui sopra e
+«La GUI dentro»; della consegna del 2 le §3–§8 e la tabella «Le sezioni che mancano» (`grep -n '^## \|^### '` dà le righe);
+per la sezione 6, la §1 di questo file e le righe dei disegni dei gesti e della knowledge base nella §12 del compendio e in
+«Dove va cosa» di `README.md`.
+
+**I punti 4 e 5:**
+
+4. ⛔ **La §9, la §10 e la sezione 6: DECISE il 2026-09-09 su delega (decisioni 36–38), DA SCRIVERE.** I tre blocchi qui sotto
+   sono le proposte com'erano presentate, coi fatti letti alle fonti quel giorno e le decisioni 51–57 del coordinatore; chi scrive
+   li porta nella forma delle sezioni approvate, rimisura le versioni col comando, e mette i richiami. Il punto com'era è nella
+   cronaca in archivio.
+5. Poi i due disegni scritti sul posto, con le due consegne archiviate parola per parola; poi il piano del 2 in due parti.
+
+### I tre blocchi delle proposte com'erano — §9 e §10 del 2 e la sezione 6, decisi A/A/A su delega alla quattordicesima ripresa, scritti alla quindicesima
+
+#### La proposta per la §9 del 2 — le decisioni aperte col chiusore · presentata e decisa A su delega il 2026-09-09, quattordicesima ripresa, NON scritta
+
+**A parole.** Una tabella: ogni voce aperta, chi la chiude, e un consiglio scritto — così il piano procede anche se il
+proprietario non dice altro (il precedente: «Le voci che questo disegno apre per il proprietario» del disegno della knowledge
+base). Le voci vengono dalla riga 9 della consegna del 2, dai debiti dichiarati delle §3–§8, dalle registrate di questo file
+che dicono «il disegno del 2», e dalla §8. Gli attrezzi web sono **misurati** al registro npm il 2026-09-09 col comando qui
+sotto; chi scrive la §9 lo rilancia e scrive le versioni di quel giorno, non queste.
+
+| # | Voce | Chi la chiude | Il consiglio, o la decisione presa |
+|---|---|---|---|
+| 1 | il renderer di markdown della chat (§6a) | il piano del 2, compito della SPA | **`markdown-it`** — decisione 51 del coordinatore: preset `default`, `html: false` e `linkify: false`, `validateLink` che rifiuta `javascript:` e simili, letto dentro il pacchetto; i link si rendono senza navigare da soli (§6a), con una regola del renderer nostra; scartati `marked` (vuole `dompurify`) e `micromark` |
+| 2 | gli attrezzi di prova della GUI (§6a, §8) | il piano | `vitest` 4.1.11 e non la 5 (decisione 52); `jsdom` (53); `@vue/test-utils` 2.5.0; `axe-core` diretto, `vitest-axe` no (54); il capo a capo dopo il guscio con `@playwright/test` e `@axe-core/playwright` (54); `vue-tsc` 3.3.11 per i tipi nella build |
+| 3 | la regola di lint per le scritte (§6a, §8) | il piano: `npm run lint` in `gate-gui.sh`, richiamo alla riga delle scritte della §8 | **sì**: `@intlify/eslint-plugin-vue-i18n`, regola `no-raw-text` (decisione 55) |
+| 4 | dove va la crate Rust del guscio se vince Tauri (§2) | la parte 2 del piano, dopo M1–M5 | `gui/shell/`, fuori dal workspace come il finto (decisione 57) |
+| 5 | la prontezza I/O del reattore: il filo si interroga a ogni giro col tick (§3, §5) | il **proprietario**, registrata; probabilmente il 3, con la rete | resta com'è nel 2; il piano riporta la CPU a riposo del daemon col tick, **senza soglia**, così il 3 decide con un numero |
+| 6 | l'allocatore dentro la porta `journal` — la B della §3 | il proprietario, registrata | resta A finché un secondo consumatore non lo chiede |
+| 7 | il confine di sessione dei permessi: `is_granted` rilegge tutto il giornale, ADR-0016 dice «per quella sessione» (§5) | il **3**, con le run | nessuna azione nel 2; la §5 lo dichiara |
+| 8 | il watchdog e lo spegnimento pulito (§5) | il **10** | nessuna azione nel 2: si uccide il processo, ADR-0007 |
+| 9 | come il daemon rilegge la policy all'avvio (decisione 17; registrata alla quarta ripresa) | **questa sezione**, poi il piano | il dettaglio tipizzato scritto da `set_policy` sul passo B (decisione 56); un record congelato in più |
+| 10 | il commento falso in `crates/platform/src/journal.rs` (registrata all'ottava ripresa) | il piano del 2, il primo compito che tocca il file | si corregge lì, decisione 18 |
+| 11 | AUD-004 — l'ADR del proprietario sulle skill | il **proprietario**, in parallelo al 2, prima del brainstorming del 13 | com'era deciso il 2026-09-04: non sbarra il 2 |
+| 12 | il ledger `.superpowers/sdd/` sull'altra macchina | il proprietario, un comando | si lascia: è ignorato da git e non raggiunge nessuno; si toglie quando il piano del 2 apre il suo |
+| 13 | la metà Windows della CI, X-1, e la scansione degli avvisi, X-3, con `npm audit` come secondo mondo (§8) | il **proprietario**: passi di CI, vincolo globale 7 | pesano di più col trasporto OS-specifico: si portano come domanda A/B **quando si scrive il piano**; consiglio sì a entrambi |
+| 14 | la cache npm in CI (§8) | il piano, quando misura | no, decisione 47 |
+| 15 | il titolo della riga 2 della roadmap e le cifre in prosa di `ports/mod.rs` (§3 di questo file) | il piano, decisione 9 | — |
+| 16 | i nomi provvisori dei messaggi e della lista dei passi (§4; §2 e §3 di questo file) | il disegno del 2 scritto sul posto, nomi inglesi | — |
+| 17 | Compatta: popout di `dockview` o finestra rimpicciolita | il **10** | — |
+| 18 | se il preset «auto-approva sicuri» approvi le letture ovunque o solo dentro l'ambito (decisione 13) | il **4**, sentito il 5 | — |
+
+**Il comando che rifà la misura** — registro npm e download dell'ultima settimana. Il 2026-09-09 ha reso: `markdown-it`
+15.0.1 del 2026-08-27; `marked` 18.0.12 del 2026-09-07; `micromark` 4.0.2 del 2025-02-27; `dompurify` 3.4.15; `vitest` 5.0.0 del
+2026-09-03, col tag `V4` a 4.1.11 del 2026-08-18; `@vue/test-utils` 2.5.0; `jsdom` 30.0.1 del 2026-07-29; `happy-dom` 20.14.0;
+`@playwright/test` 1.63.0 del 2026-09-04; `axe-core` 4.13.0 del 2026-08-05; `vitest-axe` 0.1.0 del 2022-10-21;
+`@axe-core/playwright` 4.13.0; `eslint` 10.10.0; `eslint-plugin-vue` 10.11.0; `@intlify/eslint-plugin-vue-i18n` 4.5.1 del
+2026-06-02; `vue-tsc` 3.3.11. Licenze MIT, tranne Playwright Apache-2.0, `axe-core` e `@axe-core/playwright` MPL-2.0, `dompurify`
+MPL-2.0 o Apache-2.0. Il tag `V4` di `vitest` si legge dai `dist-tags` del registro.
+
+```
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+def npm(p):
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    v = d["dist-tags"]["latest"]; return v, d["time"][v][:10], d["versions"][v].get("license"), d["dist-tags"].get("V4")
+def downloads(p):
+    return json.load(urllib.request.urlopen("https://api.npmjs.org/downloads/point/last-week/" + urllib.parse.quote(p, safe="@")))["downloads"]
+for p in ["markdown-it", "marked", "micromark", "dompurify", "vitest", "@vue/test-utils", "jsdom", "happy-dom",
+          "@playwright/test", "axe-core", "vitest-axe", "@axe-core/playwright", "eslint", "eslint-plugin-vue",
+          "@intlify/eslint-plugin-vue-i18n", "vue-tsc"]:
+    print(p, *npm(p), downloads(p))
+EOF
+```
+
+Le opzioni di `markdown-it` si leggono **dentro il pacchetto**, perché il sito e i sorgenti su GitHub non hanno risposto il
+2026-09-09: scaricato `markdown-it-15.0.1.tgz` dal registro (`dist.tarball` nei metadati), in `dist/markdown-it.mjs` i tre
+preset — `default` e `zero` con `html: false`, `commonmark` con `html: true` — tutti con `linkify: false`, e
+`BAD_PROTO_RE = /^(vbscript|javascript|file|data):/` con l'eccezione delle immagini `data:image/(gif|png|jpeg|webp)`. La regola
+`no-raw-text`: la pagina `eslint-plugin-vue-i18n.intlify.dev/rules/no-raw-text.html`, letta lo stesso giorno, la descrive come
+«disallow to string literal in template or JSX», nel preset `recommended`.
+
+**I tre controlli (decisione 18).** *Esiste:* la riga 9 della consegna del 2; i debiti dichiarati delle §3–§8; le registrate di
+questo file; le fonti della consegna del 2 (registro npm, il 2026-09-06) e le misure qui sopra; il precedente della knowledge
+base per la forma. *Arriva:* il 3 chiude le voci 5 e 7, il 10 la 8 e la 17, il 4 la 18; il 13 aspetta AUD-004. *Regge
+crescendo:* una voce nuova è una riga con un chiusore; nessuna voce resta senza.
+
+**Controllo sui cinque criteri.** Verificato il 2026-09-09: le versioni e le date al registro, la regola alla sua pagina, le
+opzioni nel pacchetto. Coerenza: la forma della knowledge base; le versioni si rimisurano il giorno del piano. Debito: nessuno
+nuovo; le voci 5, 6, 11 e 13 restano del proprietario con un consiglio. Stato dell'arte: alle fonti, con la data. Proporzione:
+nessuna scelta oltre ciò che il piano deve sapere. 🔶 **Dedotto:** che data e download del registro misurino la manutenzione,
+non la qualità; che `axe-core` si chiami sul DOM di `jsdom` senza un adattatore pubblicato. **Assunto:** niente.
+
+> La §9 così? **A:** sì, coi consigli scritti dentro. **B:** sì, ma gli attrezzi web restano aperti fino al piano. Consiglio:
+> **A**. ✅ **Delegata al coordinatore, «decidi secondo la skill»: A** (decisione 36).
+
+#### La proposta per la §10 del 2 — come si riprende · presentata e decisa A su delega il 2026-09-09, NON scritta
+
+**A parole.** Quando il disegno del 2 sarà scritto sul posto (punto 5), chiude con una sezione «Come si riprende», nella forma
+dei disegni dei gesti e della knowledge base: (1) la tabella dello stato alla chiusura coi comandi che lo rifanno — ramo, i
+commit della sessione, codice non toccato, cancello, fine-riga, file temporanei, debito lasciato; (2) il compito della sessione
+successiva, in ordine e con ogni riga eseguibile — fetch, la lettura obbligatoria, le voci aperte da sapere prima (la colonna
+«Chi la chiude» di `porta-di-qualita.md`, le voci senza numero AUD, la §9), `superpowers:writing-plans` per il piano del 2 in
+**due parti**, la prima fino allo spike compreso; il pre-controllo delle quattro domande di `CLAUDE.md` nella sessione che scrive
+il piano; l'esecuzione in una sessione nuova, subagent-driven; (3) ciò che il disegno consegna a chi scrive il piano: i pezzi
+della §3 di questo file, la tabella artefatto → controllo della §8, le trappole, le fonti (npm e crates.io con le date) che
+entrano in `riferimenti.md`; (4) la **Definizione di «fatto» della parte 1 del piano**, che il piano copia da lì — la bozza:
+
+| # | Condizione | Chi la verifica |
+|---|---|---|
+| 1 | il protocollo dello spike congelato in `spikes/gui-shell/PROTOCOLLO.md` **al primo commit di codice**, con M1–M5, Q1–Q4 e le otto mosse | `git log` sul file: il primo commit precede ogni misura |
+| 2 | i numeri di M1–M5 e le righe Q1–Q4 in ADR-0029, lo stato ad `Accepted` con l'innesco Linux scritto; la riga del guscio nella §4 del compendio chiusa | `check-docs.sh`, che non elenca più ADR in `Proposed`; il richiamo datato |
+| 3 | le otto mosse giudicate dal proprietario con le sue parole in `spikes/RISULTATI.md`, la mossa 7 come due JSON uguali; l'esito di `dockview` scritto — resta, o la tela libera | la sezione nuova di `RISULTATI.md` |
+| 4 | `.gitignore` con le cartelle di build dello spike; i lockfile dello spike committati | `git status --porcelain` vuoto dopo lo spike |
+| 5 | **nessun codice di prodotto toccato** dalla parte 1: `git diff --stat <base>..HEAD -- crates/ scripts/ Cargo.lock` vuoto | il comando |
+| 6 | fine-riga rimisurati per ogni file toccato | chi esegue |
+| 7 | la parte 2 del piano scritta **dopo** la misura, con lo stesso pre-controllo | la sessione che la scrive |
+
+Una sola «Come si riprende», nel disegno del 2 (decisione 37): questo file tiene la tabella dello stato e rimanda alla §6 del
+compendio, in un posto solo; la consegna della sessione che scrive i due disegni va lì, perché da lì parte il piano.
+
+**I tre controlli.** *Esiste:* le sezioni «Come si riprende» dei disegni dei gesti (`2026-09-03-riconoscimento-gesti-design.md`)
+e della knowledge base, lette il 2026-09-09; la Definizione di «fatto» del piano dei documenti della knowledge base (§5.5 di quel
+disegno), da cui la forma della tabella; la §8 del 2. *Arriva:* la parte 2 del piano, dopo la misura. *Regge crescendo:* la
+sezione si riscrive a ogni chiusura come diario, nello stesso file.
+
+**Controllo sui cinque criteri.** Verificato: i due precedenti, letti. Coerenza: stessa forma. Debito: nessuno. Stato
+dell'arte: non c'entra. Proporzione: una sezione, una tabella. **Dedotto:** niente. **Assunto:** niente.
+
+> La §10 così, e una sola? **A:** solo nel disegno del 2. **B:** in tutti e due i file. Consiglio: **A**. ✅ **Delegata al
+> coordinatore, «decidi secondo la skill»: A** (decisione 37).
+
+#### La proposta per la sezione 6 — dove vive la stella polare · presentata e decisa A su delega il 2026-09-09, NON scritta
+
+**A parole.** Questo file resta al suo percorso, `docs/superpowers/specs/2026-09-07-direzione-gui-design.md`, e diventa il
+**disegno della direzione della GUI** quando sarà scritto sul posto: la testa dice che ⛔ **non è una spec e non disegna le
+capacità** — colloca i moduli, le viste, la disposizione, le regole e il protocollo core ↔ GUI; ogni sotto-progetto disegna i
+propri moduli quando arriva (il 3 la Chat e i Passi delle run, il 6 il nucleo, il 10 Compatta, il 12 la mano) e, quando
+costruisce un modulo, mette un **richiamo datato** nella riga di quel modulo nella §1 di questo file — la regola di design/10,
+un'entità costruita passa con richiamo datato. Il disegno del 2 **rimanda qui per la forma** — le viste, i moduli, la
+disposizione, le tre sequenze — e non ricopia (gotcha #68). La riga nella §12 del compendio e in «Dove va cosa» di `README.md`
+è un **compito del piano** (decisione 9 del coordinatore), nella forma delle righe dei disegni dei gesti e della knowledge base:
+*«⛔ Non è una spec e non disegna le capacità: la stella polare di tutta la GUI — viste, moduli, disposizione, il protocollo
+core ↔ GUI — con le decisioni del proprietario e le sezioni approvate»*. Quando il disegno sarà scritto, il resto di questa
+consegna — cronaca, decisioni, registrate, vicoli ciechi, prossimo passo — va nello stesso file d'archivio, in coda, parola per
+parola (il richiamo in testa). La consegna della sessione che scrive i due disegni va nel disegno del 2 (decisione 37).
+
+**I tre controlli.** *Esiste:* la domanda 0 (stella polare in un documento suo); la decisione 6 del coordinatore; le righe dei
+due disegni precedenti in `README.md` e nella §12 del compendio, lette il 2026-09-09; la regola di design/10. *Arriva:* il 3, il
+6, il 10 e il 12 con richiami datati nella §1. *Regge crescendo:* un modulo nuovo è una riga nella §1; un sotto-progetto che
+disegna i suoi moduli non riscrive questo file.
+
+**Controllo sui cinque criteri.** Verificato: le righe dei precedenti, lette. Coerenza: la forma della knowledge base. Debito:
+nessuno; le righe nel compendio e nel README restano compito del piano, dichiarato. Stato dell'arte: non c'entra. Proporzione:
+un file, nessun secondo. **Dedotto:** niente. **Assunto:** niente.
+
+> La stella polare come disegno? **A:** file suo, come ora; il 2 rimanda. **B:** fusa nel disegno del 2 come sua parte
+> iniziale. Consiglio: **A**. ✅ **Delegata al coordinatore, «decidi secondo la skill»: A** (decisione 38).

@@ -32,7 +32,7 @@ Il «Prossimo passo» di questo file è **superato** da quello della stella pola
 Brainstorming del 2 a metà, poi allargato alla stella polare il 2026-09-07: undici risposte più la
 strada, le sezioni §1–§6a approvate coi richiami datati, nessun codice toccato; mancano le sezioni
 scritte della stella polare e le §7–§10 di questo file, poi i due disegni scritti e il piano. ✅ **Richiamo del 2026-09-09:** le **§7 e §8** sono scritte (decisioni 33–35
-della stella polare); le §9 e §10 sono **decise** su delega (36 e 37) e si scrivono nella sessione nuova.
+della stella polare); le §9 e §10 sono **decise** su delega (36 e 37) e si scrivono nella sessione nuova. ✅ **Richiamo della quindicesima ripresa, lo stesso giorno:** le §9 e §10 sono **scritte** — tutte le sezioni §1–§10 sono approvate; mancano i due disegni scritti sul posto, punto 5 del prossimo passo della stella polare.
 
 ## ⛔ Da sapere subito
 
@@ -529,6 +529,127 @@ nome, protocollo congelato come SP-7, sonde registrate e non prese come S3; **de
 dell'arte** — versioni di Node, dell'azione e degli attrezzi al piano, alla fonte; **proporzione** — uno script,
 una riga, un passo di CI, tre righe di ignore; niente matrice, niente cache, niente secondo workflow.
 
+### §9 — Le decisioni aperte col chiusore · approvata il 2026-09-09 (delegata, «decidi secondo la skill»: A, decisione 36 della stella polare)
+
+Una tabella: ogni voce aperta, chi la chiude, e un consiglio scritto — così il piano procede anche se il proprietario non
+dice altro. Il precedente è «Le voci che questo disegno apre per il proprietario» del
+[disegno della knowledge base](2026-09-04-knowledge-base-design.md). Le voci vengono dalla riga 9 di «Le sezioni che
+mancano» qui sotto, dai debiti dichiarati delle §3–§8, dalle registrate della stella polare che dicono «il disegno del 2»,
+e dalla §8. Delegata dal proprietario alla chiusura della quattordicesima ripresa della stella polare e **scritta alla
+quindicesima**, lo stesso giorno: **A**, coi consigli dentro, verificati alla fonte; B era lasciare gli attrezzi web aperti
+fino al piano, e avrebbe spostato la stessa verifica di un giro. I numeri delle decisioni sono quelli delle due tabelle della
+stella polare, del proprietario (fino alla 38) e del coordinatore (dalla 46 in su). Gli attrezzi web sono **misurati** al
+registro npm il 2026-09-09 col comando qui sotto, **due volte** nello stesso giorno — alla proposta e alla scrittura — con lo
+stesso esito; il piano lo rilancia e scrive le versioni del **suo** giorno, non queste.
+
+| # | Voce | Chi la chiude | Il consiglio, o la decisione presa |
+|---|---|---|---|
+| 1 | il renderer di markdown della chat (§6a) | il piano del 2, compito della SPA | **`markdown-it`** — decisione 51 del coordinatore: preset `default`, `html: false` e `linkify: false`, `validateLink` che rifiuta `javascript:` e simili, letto dentro il pacchetto; i link si rendono senza navigare da soli (§6a), con una regola del renderer nostra; scartati `marked` (vuole `dompurify`) e `micromark` |
+| 2 | gli attrezzi di prova della GUI (§6a, §8) | il piano | `vitest` 4.1.11 e non la 5 (decisione 52); `jsdom` (53); `@vue/test-utils` 2.5.0; `axe-core` diretto, `vitest-axe` no (54); il capo a capo dopo il guscio con `@playwright/test` e `@axe-core/playwright` (54); `vue-tsc` 3.3.11 per i tipi nella build |
+| 3 | la regola di lint per le scritte (§6a, §8) | il piano: `npm run lint` in `gate-gui.sh`, richiamo alla riga delle scritte della §8 | **sì**: `@intlify/eslint-plugin-vue-i18n`, regola `no-raw-text` (decisione 55) |
+| 4 | dove va la crate Rust del guscio se vince Tauri (§2) | la parte 2 del piano, dopo M1–M5 | `gui/shell/`, fuori dal workspace come il finto (decisione 57) |
+| 5 | la prontezza I/O del reattore: il filo si interroga a ogni giro col tick (§3, §5) | il **proprietario**, registrata; probabilmente il 3, con la rete | resta com'è nel 2; il piano riporta la CPU a riposo del daemon col tick, **senza soglia**, così il 3 decide con un numero |
+| 6 | l'allocatore dentro la porta `journal` — la B della §3 | il proprietario, registrata | resta A finché un secondo consumatore non lo chiede |
+| 7 | il confine di sessione dei permessi: `is_granted` rilegge tutto il giornale, ADR-0016 dice «per quella sessione» (§5) | il **3**, con le run | nessuna azione nel 2; la §5 lo dichiara |
+| 8 | il watchdog e lo spegnimento pulito (§5) | il **10** | nessuna azione nel 2: si uccide il processo, ADR-0007 |
+| 9 | come il daemon rilegge la policy all'avvio (decisione 17 del proprietario; registrata alla quarta ripresa della stella polare) | **questa sezione**, poi il piano | il dettaglio tipizzato scritto da `set_policy` sul passo B (decisione 56); un record congelato in più |
+| 10 | il commento falso in `crates/platform/src/journal.rs` (registrata all'ottava ripresa della stella polare) | il piano del 2, il primo compito che tocca il file | si corregge lì, decisione 18 del proprietario |
+| 11 | AUD-004 — l'ADR del proprietario sulle skill | il **proprietario**, in parallelo al 2, prima del brainstorming del 13 | com'era deciso il 2026-09-04: non sbarra il 2 |
+| 12 | il ledger `.superpowers/sdd/` sull'altra macchina | il proprietario, un comando | si lascia: è ignorato da git e non raggiunge nessuno; si toglie quando il piano del 2 apre il suo |
+| 13 | la metà Windows della CI, X-1, e la scansione degli avvisi, X-3, con `npm audit` come secondo mondo (§8) | il **proprietario**: passi di CI, vincolo globale 7 | pesano di più col trasporto OS-specifico: si portano come domanda A/B **quando si scrive il piano**; consiglio sì a entrambi |
+| 14 | la cache npm in CI (§8) | il piano, quando misura | no, decisione 47 |
+| 15 | il titolo della riga 2 della roadmap e le cifre in prosa di `ports/mod.rs` (§3 della stella polare) | il piano, decisione 9 | — |
+| 16 | i nomi provvisori dei messaggi e della lista dei passi (§4; §2 e §3 della stella polare) | il disegno del 2 scritto sul posto, nomi inglesi | — |
+| 17 | Compatta: popout di `dockview` o finestra rimpicciolita | il **10** | — |
+| 18 | se il preset «auto-approva sicuri» approvi le letture ovunque o solo dentro l'ambito (decisione 13 del proprietario) | il **4**, sentito il 5 | — |
+
+**Il comando che rifà la misura** — registro npm e download dell'ultima settimana. Il 2026-09-09 ha reso: `markdown-it`
+15.0.1 del 2026-08-27; `marked` 18.0.12 del 2026-09-07; `micromark` 4.0.2 del 2025-02-27; `dompurify` 3.4.15 del 2026-09-06;
+`vitest` 5.0.0 del 2026-09-03, col tag `V4` a 4.1.11 del 2026-08-18; `@vue/test-utils` 2.5.0 del 2026-08-27; `jsdom` 30.0.1 del
+2026-07-29; `happy-dom` 20.14.0 del 2026-09-03; `@playwright/test` 1.63.0 del 2026-09-04; `axe-core` 4.13.0 del 2026-08-05;
+`vitest-axe` 0.1.0 del 2022-10-21; `@axe-core/playwright` 4.13.0 del 2026-08-11; `eslint` 10.10.0 del 2026-09-04;
+`eslint-plugin-vue` 10.11.0 del 2026-09-06; `@intlify/eslint-plugin-vue-i18n` 4.5.1 del 2026-06-02; `vue-tsc` 3.3.11 del
+2026-08-21. Licenze MIT, tranne Playwright Apache-2.0, `axe-core` e `@axe-core/playwright` MPL-2.0, `dompurify` MPL-2.0 o
+Apache-2.0. Il tag `V4` di `vitest` si legge dai `dist-tags` del registro. I download che hanno pesato nelle decisioni 51–55
+stanno in quelle righe della tabella del coordinatore della stella polare, con la data, in una casa sola.
+
+```
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+def npm(p):
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    v = d["dist-tags"]["latest"]; return v, d["time"][v][:10], d["versions"][v].get("license"), d["dist-tags"].get("V4")
+def downloads(p):
+    return json.load(urllib.request.urlopen("https://api.npmjs.org/downloads/point/last-week/" + urllib.parse.quote(p, safe="@")))["downloads"]
+for p in ["markdown-it", "marked", "micromark", "dompurify", "vitest", "@vue/test-utils", "jsdom", "happy-dom",
+          "@playwright/test", "axe-core", "vitest-axe", "@axe-core/playwright", "eslint", "eslint-plugin-vue",
+          "@intlify/eslint-plugin-vue-i18n", "vue-tsc"]:
+    print(p, *npm(p), downloads(p))
+EOF
+```
+
+Le opzioni di `markdown-it` si leggono **dentro il pacchetto**, perché il sito e i sorgenti su GitHub non hanno risposto il
+2026-09-09: scaricato `markdown-it-15.0.1.tgz` dal registro (`dist.tarball` nei metadati), in `dist/markdown-it.mjs` i tre
+preset — `default` e `zero` con `html: false`, `commonmark` con `html: true` — tutti con `linkify: false`, e
+`BAD_PROTO_RE = /^(vbscript|javascript|file|data):/` con l'eccezione delle immagini `data:image/(gif|png|jpeg|webp)`. La regola
+`no-raw-text`: la pagina `eslint-plugin-vue-i18n.intlify.dev/rules/no-raw-text.html`, letta lo stesso giorno, la descrive come
+«disallow to string literal in template or JSX», nel preset `recommended`.
+
+**I tre controlli (decisione 18).** *Esiste:* la riga 9 di «Le sezioni che mancano»; i debiti dichiarati delle §3–§8; le
+registrate della stella polare; le fonti di «Lo stato dell'arte verificato» qui sopra (registro npm, il 2026-09-06) e le misure
+di questa sezione; il precedente della knowledge base per la forma. *Arriva:* il 3 chiude le voci 5 e 7, il 10 la 8 e la 17, il
+4 la 18; il 13 aspetta AUD-004. *Regge crescendo:* una voce nuova è una riga con un chiusore; nessuna voce resta senza.
+
+**Ciò che la §9 non fa:** non prende le decisioni del proprietario — le voci 5, 6, 11 e 13 restano sue, con un consiglio — e non
+fissa le versioni del piano, che si rimisurano il giorno in cui si scrive.
+
+**Controllo sui cinque criteri.** Verificato il 2026-09-09, due volte: le versioni e le date al registro, la regola alla sua
+pagina, le opzioni nel pacchetto. Coerenza: la forma della knowledge base; le versioni si rimisurano il giorno del piano. Debito:
+nessuno nuovo; le voci 5, 6, 11 e 13 restano del proprietario con un consiglio. Stato dell'arte: alle fonti, con la data.
+Proporzione: nessuna scelta oltre ciò che il piano deve sapere. 🔶 **Dedotto:** che data e download del registro misurino la
+manutenzione, non la qualità; che `axe-core` si chiami sul DOM di `jsdom` senza un adattatore pubblicato. **Assunto:** niente.
+
+**Decisioni del coordinatore in questa sezione**, nella tabella omonima della stella polare: 51–57.
+
+### §10 — Come si riprende · approvata il 2026-09-09 (delegata, «decidi secondo la skill»: A, decisione 37 della stella polare)
+
+Quando il disegno del 2 sarà scritto sul posto (punto 5 del prossimo passo della stella polare), chiude con una sezione
+«Come si riprende», nella forma dei disegni dei [gesti](2026-09-03-riconoscimento-gesti-design.md) e della
+[knowledge base](2026-09-04-knowledge-base-design.md): è il documento di consegna della sessione che scrive i due disegni, e
+sta nel disegno del 2 perché da lì parte il piano. **Una sola** — A, decisione 37; B era una in ciascuno dei due file: la
+stella polare tiene la propria tabella dello stato e rimanda alla §6 del compendio, in un posto solo (gotcha #68). Questa
+sezione dice che cosa conterrà, così chi la scrive non decide da capo.
+
+| Parte | Che cosa porta | Da dove viene la forma |
+|---|---|---|
+| 1 | la tabella dello stato alla chiusura coi comandi che lo rifanno — ramo, i commit della sessione, codice non toccato, cancello, fine-riga, file temporanei, debito lasciato | la tabella «Stato alla chiusura, e il comando che lo rifà» del disegno della knowledge base |
+| 2 | il compito della sessione successiva, in ordine e con ogni riga eseguibile — fetch, la lettura obbligatoria, le voci aperte da sapere prima (la colonna «Chi la chiude» di `porta-di-qualita.md`, le voci senza numero AUD, la §9), `superpowers:writing-plans` per il piano del 2 in **due parti**, la prima fino allo spike compreso; il pre-controllo delle quattro domande di `CLAUDE.md` nella sessione che scrive il piano; l'esecuzione in una sessione nuova, subagent-driven | `CLAUDE.md`, e il modo scelto dal proprietario |
+| 3 | ciò che il disegno consegna a chi scrive il piano: i pezzi della §3 della stella polare, la tabella artefatto → controllo della §8, le trappole, le fonti — npm e crates.io con le date — che entrano in `riferimenti.md` | le §3–§9 qui sopra e la §3 della stella polare |
+| 4 | la **Definizione di «fatto» della parte 1 del piano**, che il piano copia da lì — la bozza qui sotto | la §5.5 del disegno della knowledge base, da cui la forma della tabella |
+
+La bozza della Definizione di «fatto» della parte 1:
+
+| # | Condizione | Chi la verifica |
+|---|---|---|
+| 1 | il protocollo dello spike congelato in `spikes/gui-shell/PROTOCOLLO.md` **al primo commit di codice**, con M1–M5, Q1–Q4 e le otto mosse | `git log` sul file: il primo commit precede ogni misura |
+| 2 | i numeri di M1–M5 e le righe Q1–Q4 in ADR-0029, lo stato ad `Accepted` con l'innesco Linux scritto; la riga del guscio nella §4 del compendio chiusa | `check-docs.sh`, che non elenca più ADR in `Proposed`; il richiamo datato |
+| 3 | le otto mosse giudicate dal proprietario con le sue parole in `spikes/RISULTATI.md`, la mossa 7 come due JSON uguali; l'esito di `dockview` scritto — resta, o la tela libera | la sezione nuova di `RISULTATI.md` |
+| 4 | `.gitignore` con le cartelle di build dello spike; i lockfile dello spike committati | `git status --porcelain` vuoto dopo lo spike |
+| 5 | **nessun codice di prodotto toccato** dalla parte 1: `git diff --stat <base>..HEAD -- crates/ scripts/ Cargo.lock` vuoto | il comando |
+| 6 | fine-riga rimisurati per ogni file toccato | chi esegue |
+| 7 | la parte 2 del piano scritta **dopo** la misura, con lo stesso pre-controllo | la sessione che la scrive |
+
+**I tre controlli (decisione 18).** *Esiste:* le sezioni «Come si riprende» dei disegni dei gesti e della knowledge base, lette
+il 2026-09-09; la Definizione di «fatto» del piano dei documenti della knowledge base (§5.5 di quel disegno), da cui la forma
+della tabella; la §8 qui sopra. *Arriva:* la parte 2 del piano, dopo la misura. *Regge crescendo:* la sezione si riscrive a ogni
+chiusura come diario, nello stesso file.
+
+**Ciò che la §10 non fa:** non è ancora la consegna — si scrive alla chiusura della sessione che scrive i due disegni, coi
+comandi rilanciati quel giorno, non ricordati.
+
+**Controllo sui cinque criteri.** Verificato: i due precedenti, letti. Coerenza: stessa forma. Debito: nessuno. Stato
+dell'arte: non c'entra. Proporzione: una sezione, una tabella. **Dedotto:** niente. **Assunto:** niente.
+
 ## Le sezioni che mancano — proposte del coordinatore, non decisioni
 
 | § | Che cosa | La proposta da cui partire |
@@ -536,8 +657,8 @@ una riga, un passo di CI, tre righe di ignore; niente matrice, niente cache, nie
 | 6b | la **forma** delle due schermate, coi wireframe a bassa fedeltà mostrati in chat | **schermata 1**: la vista chat a sinistra, larga; il pannello di stato a destra, stretto, con degrado, policy col controllo a due stati, budget, riga G16, e la riga di evento del verdetto sotto quando c'è; in alto la fascia dello stato di connessione, visibile solo se il core manca o il timbro è sbagliato. **Schermata 2**: la finestra di conferma del permesso, sopra la 1, con la tripla a parole («la GUI vuole cambiare la policy della memoria grafica»), due pulsanti, focus nel pulsante che rifiuta. Il proprietario ha chiesto di vederli **nella sessione nuova** |
 | 7 | il core finto in `gui/fake-core/` | un binario Rust fuori dal workspace che dipende da `kernel` e `platform` per percorso; ascolta sullo stesso nome del daemon; accetta `Hello` e risponde `Accepted`, poi manda `Degradation` e `Policy`; poi **token a tempo** come lo spike (2000 in dieci secondi, testo non fidato), e su comando da riga di comando un `Verdict` o un cambio di `Degradation` per provare la riga di evento; risponde a `Invoke` come il daemon farebbe, con `PermissionRequired` la prima volta. Il suo `Cargo.lock` **si committa**, perché lo usa il cancello: è un attrezzo, non uno spike ✅ **RICHIAMO DEL 2026-09-09, quattordicesima ripresa della stella polare (decisione 33): la sezione è SCRITTA** — la §7 delle sezioni approvate qui sopra, **A**: l'attività vera del kernel su porte in memoria, più il rubinetto; questa riga era la forma B |
 | 8 | le prove e il cancello | `scripts/gate-gui.sh`: `npm ci`, `npm run build`, `npm test`, chiamato da una riga `run` in `gate.sh`; la CI guadagna `actions/setup-node` con la versione appuntata; `.gitignore` guadagna `/gui/node_modules/`, `/gui/dist/`, `/gui/fake-core/target/`; per ogni artefatto il controllo che lo esercita, nella forma dei disegni precedenti: la tabella si compone dalle colonne «prova» delle §3–§6a, più le prove del core finto (una sonda che lo fa girare contro `FakeGui`? no: contro il trasporto vero, da un thread) e della SPA (unit sulle fixture, componenti con verifica di accessibilità, capo a capo **dopo il guscio**, con la prova del ponte in Node o in Rust secondo il vincitore) ✅ **RICHIAMO DEL 2026-09-09, quattordicesima ripresa della stella polare (decisioni 34 e 35, delegate: A e A): la sezione è SCRITTA** — la §8 delle sezioni approvate qui sopra; il passo del cancello, la CI, `.gitignore` e la tabella artefatto → controllo com'erano proposti qui, più la decisione sull'archivio che non si apre |
-| 9 | le decisioni aperte del proprietario, col chiusore | il renderer di markdown; gli attrezzi di prova della GUI (`vitest` 5.0.0 di tre giorni contro la 4, `@playwright/test`, uno strumento di verifica dell'accessibilità); la regola di lint per le scritte; dove va la crate Rust del guscio se vince Tauri; la prontezza I/O del reattore (probabilmente il 3); l'allocatore dentro la porta `journal` (registrato); il confine di sessione dei permessi (il 3); il watchdog e lo spegnimento (il 10); AUD-004 in parallelo al 2; il ledger `.superpowers/sdd/` ✅ **RICHIAMO DEL 2026-09-09, chiusura della quattordicesima ripresa della stella polare: DECISA A su delega (decisione 36) e NON scritta** — la proposta parola per parola nel prossimo passo della stella polare, blocco «La proposta per la §9», coi consigli verificati alla fonte quel giorno |
-| 10 | come si riprende | la sezione di consegna del disegno, sul precedente dei disegni dei gesti e della knowledge base ✅ **RICHIAMO DEL 2026-09-09: DECISA A su delega (decisione 37) e NON scritta** — una sola «Come si riprende», in questo file quando sarà il disegno; il blocco «La proposta per la §10» nel prossimo passo della stella polare |
+| 9 | le decisioni aperte del proprietario, col chiusore | il renderer di markdown; gli attrezzi di prova della GUI (`vitest` 5.0.0 di tre giorni contro la 4, `@playwright/test`, uno strumento di verifica dell'accessibilità); la regola di lint per le scritte; dove va la crate Rust del guscio se vince Tauri; la prontezza I/O del reattore (probabilmente il 3); l'allocatore dentro la porta `journal` (registrato); il confine di sessione dei permessi (il 3); il watchdog e lo spegnimento (il 10); AUD-004 in parallelo al 2; il ledger `.superpowers/sdd/` ✅ **RICHIAMO DEL 2026-09-09, chiusura della quattordicesima ripresa della stella polare: DECISA A su delega (decisione 36) e NON scritta** — la proposta parola per parola nel prossimo passo della stella polare, blocco «La proposta per la §9», coi consigli verificati alla fonte quel giorno. ✅ **RICHIAMO DEL 2026-09-09, quindicesima ripresa della stella polare: SCRITTA** — la §9 delle sezioni approvate qui sopra, con le misure rifatte quel giorno; il blocco com'era nella cronaca in archivio della stella polare |
+| 10 | come si riprende | la sezione di consegna del disegno, sul precedente dei disegni dei gesti e della knowledge base ✅ **RICHIAMO DEL 2026-09-09: DECISA A su delega (decisione 37) e NON scritta** — una sola «Come si riprende», in questo file quando sarà il disegno; il blocco «La proposta per la §10» nel prossimo passo della stella polare. ✅ **RICHIAMO DEL 2026-09-09, quindicesima ripresa della stella polare: SCRITTA** — la §10 delle sezioni approvate qui sopra |
 
 Poi: il disegno scritto **sul posto** — la sessione che lo scrive può essere quella stessa o la
 successiva, come il proprietario preferisce — con la revisione del disegno (segnaposto, coerenza,

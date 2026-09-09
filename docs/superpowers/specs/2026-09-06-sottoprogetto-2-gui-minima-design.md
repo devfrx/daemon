@@ -114,7 +114,7 @@ cose che sono del 2 e non della stella polare: decisione 2 del coordinatore di q
 | i debiti del 2 come intero | le varianti `Token` senza produttore di prodotto fino al 3 (§4); la Chat che lo dice a parole (§6a); i moduli non costruiti che dicono chi li riempie, con **un** componente segnaposto (decisione 17 del coordinatore della stella polare) |
 
 **I nomi inglesi che le sezioni lasciavano «al disegno scritto»** — fissati qui, decisione 9 del coordinatore di questa sessione
-(§10), ribaltabili dal proprietario prima che esista codice:
+(§10), ribaltabili dal proprietario prima che esista codice — ✅ **confermati A dal proprietario il 2026-09-09, alla rilettura dei disegni: decisione 46 della stella polare**:
 
 | Cosa | Nome | Perché così |
 |---|---|---|
@@ -610,7 +610,7 @@ e **poi** si scrive il piano nella stessa sessione, se il contesto regge. ✅ **
 | 6 | le misure npm e crates.io delle due consegne passate in `riferimenti.md`, in una sezione datata coi comandi; nei disegni il rimando | lo prevedevano le consegne stesse («casa unica provvisoria», decisione 6 del coordinatore del 2026-09-06) e `CLAUDE.md`. La tabella dei fatti di `dockview` 8.x resta nella stella polare perché le sue §2 e §4 la citano «qui sopra». Costo: chi vuole una versione apre `riferimenti.md`, e comunque la rimisura |
 | 7 | nella stella polare restano vive le due tabelle delle decisioni, le registrate e i vicoli ciechi; escono la cronaca, le «sezioni che mancano» (tutte chiuse) e il «prossimo passo» (la §6 del compendio); il file **intero** com'era va in coda all'archivio come istantanea | le sezioni citano le decisioni per numero; un'istantanea intera è ciò che la decisione 37 del coordinatore della stella polare aveva già scelto. Costo: l'archivio cresce del file intero, e non è lettura obbligatoria |
 | 8 | in questo file escono lo stato, il «fatto», le «sezioni che mancano» e il «prossimo passo» superato dal 2026-09-07; restano le risposte del proprietario, i fatti del codice, le decisioni del coordinatore del 2026-09-06 e i vicoli ciechi | stessa regola: il vivo porta ciò che è vero adesso. Costo: nessuno, l'archivio ha tutto |
-| 9 | i **nomi inglesi** fissati nella §1: la settima porta `custody` (`Custody`, `keep`, `retrieve`, `CustodyKey::Layout`), il registro `registry`, i messaggi della §4 confermati e la lista dei passi `Steps` | le sezioni li lasciavano «al disegno scritto» (voce 16 della §9); `custody` è la parola dei disegni stessi, i verbi corti come le altre porte. Costo se sbagliato: un rinomina prima che esista codice |
+| 9 | i **nomi inglesi** fissati nella §1: la settima porta `custody` (`Custody`, `keep`, `retrieve`, `CustodyKey::Layout`), il registro `registry`, i messaggi della §4 confermati e la lista dei passi `Steps` | le sezioni li lasciavano «al disegno scritto» (voce 16 della §9); `custody` è la parola dei disegni stessi, i verbi corti come le altre porte. Costo se sbagliato: un rinomina prima che esista codice ✅ **Tenuta dal proprietario il 2026-09-09: decisione 46 della stella polare** |
 | 10 | nessuna riga nuova in `README.md`, `roadmap.md`, `tracciabilita.md` e nella §12 del compendio | compito del piano, decisione 9 del coordinatore della stella polare e §6. Costo: fino al piano, i due disegni li trova solo chi parte dalla §6 del compendio |
 | 11 | la rilettura del proprietario **non è data per fatta**: la riga «⏳» in testa ai due disegni, e la domanda minima qui sopra | il sì è condizionato e si dà in chat. Costo: nessuno |
 

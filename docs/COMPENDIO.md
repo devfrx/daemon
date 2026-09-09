@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-09**, col puntatore della §6 riscritto per la **sezione 4** della stella polare della GUI — lo spike di accettazione di `dockview`, otto mosse, la mossa 8 decisa dal proprietario — **scritta**, e **sfoltito** della cronaca delle riprese, che vive nella stella polare e, parola per parola, in [`archivio/stato-storico.md`](archivio/stato-storico.md); l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
+**Aggiornato il 2026-09-09**, col puntatore della §6 riscritto per la **sezione 4** della stella polare della GUI — lo spike di accettazione di `dockview`, otto mosse, la mossa 8 decisa dal proprietario — **scritta**, e **sfoltito** della cronaca delle riprese, che vive nella stella polare e, parola per parola, in [`archivio/stato-storico.md`](archivio/stato-storico.md), e alla chiusura per il **mandato del proprietario** sulla lettura d'apertura (decisione 26 della stella polare); l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -703,8 +703,12 @@ lettera E della §8.2 della spec dice 12 (19); e la **decisione 18**, scritta in
 controlla ciò che esiste, ciò che arriva e se regge crescendo, e lo schema corregge logiche, ADR e codice se è più corretto.
 ⛔ **La cronaca ripresa per ripresa NON sta più qui dal 2026-09-09:** vive nella stella polare — «Da sapere subito» e «Fatto in questa
 sessione» — e il testo che stava in questo puntatore è in [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola
-(gotcha #100: il margine del tetto lo dà il comando nella tabella dello stato della stella polare). ⏭️ **Si riparte dalle sezioni 5
-e 6** della stella polare — la 5 sono le §7–§10 del 2: core finto, prove e cancello, decisioni aperte, come si riprende; la 6, dove
+(gotcha #100: il margine del tetto lo dà il comando nella tabella dello stato della stella polare). ⛔ **PRIMA DI OGNI ALTRA COSA, IL MANDATO DEL PROPRIETARIO DEL 2026-09-09 (decisione 26 della stella polare): la
+sessione nuova SFOLTISCE la lettura d'apertura** — che occupa **~350 000 token** appena la sessione comincia — misurandola coi
+comandi che stanno nel prossimo passo della stella polare e proponendo ogni taglio in A/B: questo compendio (la §6 e le sue voci
+aperte, **voce per voce** col proprietario), la stella polare (la cronaca in archivio), la testa dell'audit e `CLAUDE.md`. ⏭️ **Poi
+si riparte dalla sezione 5** della stella polare, dalla domanda A/B sulla **§7 del 2 — il core finto — posta e senza risposta** —
+la 5 sono le §7–§10 del 2: core finto, prove e cancello, decisioni aperte, come si riprende; la 6, dove
 vive la stella polare — poi i due disegni scritti sul posto e il piano del 2 in **due parti**, la prima fino allo spike compreso; poi
 l'esecuzione, subagent-driven, in sessioni nuove. ADR-0029 si chiude con M1–M5 all'inizio del 2 (voce 0029 della §5) — **e in
 parallelo AUD-004**, l'ADR del proprietario che sbarra il 13 (voce 3 della rilettura del disegno della knowledge base); poi il 13, poi

@@ -30,7 +30,7 @@ tabella Passi (A). ✅ **La settima ripresa, lo stesso giorno, ha SCRITTO design
 **chiusa**; la domanda sulla lettera **E** della §8.2 della spec è **posta e senza risposta** — si riprende da lì, poi dalla
 **sezione 3**, i disegni nuovi, col materiale già letto. ✅ **L'ottava ripresa, lo stesso giorno, ha DECISO la lettera E su
 delega — A, il numero è 12 — e l'ha scritta nella spec; poi ha SCRITTO design/10, il primo disegno della sezione 3 (A su
-delega, decisione 20)**: si riprende dal secondo disegno, «la GUI dentro». ✅ **La nona ripresa, lo stesso giorno, ha SCRITTO il secondo disegno su delega (decisioni 21–23):** le tre sequenze come `sequenceDiagram` in questo file, sotto «Il modello della GUI», e due correzioni alla consegna del 2 (§3, §4, §5, §6a) col richiamo datato; **la sezione 3 e la passata sui diagrammi sono CHIUSE**, si riprende dalle sezioni 4–6. ✅ **La decima ripresa, lo stesso giorno, ha PRESENTATO la sezione 4** — lo spike di accettazione di `dockview`, sette mosse giudicate dal proprietario più le misure — **approvata A (decisione 24) e NON scritta**: si scrive nella sessione nuova dal blocco «La proposta per la sezione 4» del prossimo passo; la domanda del proprietario sulla telecamera ha aperto una **mossa 8**, la mano di SP-7 come puntatore, proposta in forma A/B e **senza risposta**. ✅ **L'undicesima ripresa, il 2026-09-09, ha DECISO la mossa 8 — A, dal proprietario (decisione 25) — e ha SCRITTO la §4** con otto mosse e la riga Q4, col richiamo datato nella §2 del 2; il puntatore della §6 del compendio è sfoltito della cronaca delle riprese, archiviata: si riprende dalla **sezione 5**, poi dalla 6.
+delega, decisione 20)**: si riprende dal secondo disegno, «la GUI dentro». ✅ **La nona ripresa, lo stesso giorno, ha SCRITTO il secondo disegno su delega (decisioni 21–23):** le tre sequenze come `sequenceDiagram` in questo file, sotto «Il modello della GUI», e due correzioni alla consegna del 2 (§3, §4, §5, §6a) col richiamo datato; **la sezione 3 e la passata sui diagrammi sono CHIUSE**, si riprende dalle sezioni 4–6. ✅ **La decima ripresa, lo stesso giorno, ha PRESENTATO la sezione 4** — lo spike di accettazione di `dockview`, sette mosse giudicate dal proprietario più le misure — **approvata A (decisione 24) e NON scritta**: si scrive nella sessione nuova dal blocco «La proposta per la sezione 4» del prossimo passo; la domanda del proprietario sulla telecamera ha aperto una **mossa 8**, la mano di SP-7 come puntatore, proposta in forma A/B e **senza risposta**. ✅ **L'undicesima ripresa, il 2026-09-09, ha DECISO la mossa 8 — A, dal proprietario (decisione 25) — e ha SCRITTO la §4** con otto mosse e la riga Q4, col richiamo datato nella §2 del 2; il puntatore della §6 del compendio è sfoltito della cronaca delle riprese, archiviata: si riprende dalla **sezione 5**, poi dalla 6. ⛔ **Alla chiusura dell'undicesima ripresa la §7 del 2 — il core finto — è presentata in forma A/B e SENZA risposta, e il proprietario ha dato il mandato di SFOLTIRE la lettura d'apertura prima di ripartire (decisione 26): la sessione occupa ~350 000 token appena comincia.**
 
 ## ⛔ Da sapere subito
 
@@ -129,6 +129,14 @@ rimanda; le tabelle della proposta sono uscite dal prossimo passo (decisione 22)
 e dice lo stato di adesso (decisione 35). ⏭️ **Si riprende dalla sezione 5** — core finto, prove e cancello, decisioni aperte,
 come si riprende: le §7–§10 del 2 — poi dalla 6; il come sta nel prossimo passo. Nessun codice toccato.
 
+⛔ **Alla chiusura dell'undicesima ripresa, chiesta dal proprietario con `session-handoff`: la §7 del 2 — il core finto — è
+PRESENTATA in forma A/B (reuse contro imitazione, consiglio A) e NON ha risposta**, e il proprietario ha dato un **mandato** per
+la sessione nuova (decisione 26, con le sue parole): **prima di partire**, dare una pulita e un ordine alla documentazione di
+ripresa e a tutto ciò che è obbligatorio leggere, e ridimensionarli dove serve, perché appena la sessione comincia ne occupa
+**~350 000 token**. ⏭️ **Il prossimo passo NON è la §7: è quel mandato**, poi la §7 dalla domanda lasciata aperta, poi §8–§10 e
+la sezione 6. La lettura d'apertura è **misurata coi comandi** nel prossimo passo — byte e token, blocco per blocco — e lì sta
+l'ordine eseguibile. `check-docs.sh` OK e `GATE GREEN` alla chiusura; nessun codice toccato.
+
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
 decisione viola un criterio di `anthropic-skills:decision-principles`, l'accettazione decade: ci si
@@ -159,9 +167,9 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec, design/10 e la sua chiusura; la nona ripresa: «la GUI dentro», le tre sequenze coi richiami alla consegna del 2, e la sua chiusura; la decima ripresa: la sezione 4 presentata e approvata, non scritta — la sua chiusura; l'undicesima ripresa del 2026-09-09: la mossa 8 decisa A e la §4 scritta, il richiamo nella §2 del 2, il puntatore della §6 del compendio sfoltito e la cronaca archiviata |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec, design/10 e la sua chiusura; la nona ripresa: «la GUI dentro», le tre sequenze coi richiami alla consegna del 2, e la sua chiusura; la decima ripresa: la sezione 4 presentata e approvata, non scritta — la sua chiusura; l'undicesima ripresa del 2026-09-09: la mossa 8 decisa A e la §4 scritta, il richiamo nella §2 del 2, il puntatore della §6 del compendio sfoltito e la cronaca archiviata — e la sua chiusura |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla, tranne la spec del sotto-progetto 1: tre righe e un richiamo nella §8.2, l'ottava ripresa su delega (decisione 19) |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta, e all'apertura e alla chiusura dell'ottava, e all'apertura e alla chiusura della nona e della decima, e all'apertura dell'undicesima; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta, e all'apertura e alla chiusura dell'ottava, e all'apertura e alla chiusura della nona e della decima, e all'apertura e alla chiusura dell'undicesima; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
 | fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg docs/design/10-modello-dei-dati-durevoli.md` | il compendio `i/lf w/crlf`, gli altri `i/lf w/lf` — su questa macchina: un clone nuovo con `core.autocrlf=true` li mostra `w/crlf`, e non è una divergenza |
 | i wireframe esistono | `ls docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/` | `compatta-e-grafo.svg  home.svg  lavoro.svg` |
@@ -341,6 +349,12 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     tabelle del blocco tolte dal prossimo passo (decisione 22); il puntatore della §6 del compendio e la sua intestazione riscritti
     allo stato di adesso e sfoltiti della cronaca delle riprese, archiviata parola per parola (decisione 35); fine-riga conservati e
     rimisurati; `check-docs.sh` OK, commit e push.
+36. Chiusura dell'undicesima ripresa, chiesta dal proprietario con `session-handoff` (le sue parole nella decisione 26): la
+    **§7** del 2 presentata in forma A/B — il core finto che **riusa** l'attività del kernel su porte in memoria contro un copione
+    che **imita** il daemon, consiglio A — e lasciata **senza risposta**, parola per parola nel prossimo passo; il mandato dello
+    sfoltimento scritto come **primo passo** della sessione nuova, con la lettura d'apertura misurata coi comandi, in byte e in
+    token, blocco per blocco; stato riletto coi comandi, `check-docs.sh` OK e `GATE GREEN` alla chiusura; il puntatore della §6
+    del compendio e la sua intestazione; la memoria dell'agente aggiornata; scratchpad pulito; nessun codice toccato.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -372,6 +386,7 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 | 23 | **alla nona ripresa** — dove vivono le tre sequenze: A in questo file, sotto «Il modello della GUI»; B un file nuovo in `docs/design/` | **delegata: A**, come la settima ripresa aveva giudicato. **Esiste** — le due spec del kernel portano già blocchi mermaid (`grep -rlE '^\s*(flowchart|stateDiagram|erDiagram|sequenceDiagram)' docs/superpowers/specs`), e design/01 disegna la GUI come una scatola sola; **arriva** — il disegno del 2 rimanda qui per la forma (sezione 6 delle sezioni che mancano); **regge crescendo** — le sequenze restano tre anche col 3 e col 12: un invocatore nuovo rifà la 3, un messaggio nuovo segue «il core manda il pezzo che cambia». Scartata B: `docs/design/` è la struttura del kernel, e un file per il protocollo della GUI ne disegnerebbe l'interno, che ADR-0001 tiene fuori dai diagrammi del kernel |
 | 24 | **alla decima ripresa, 2026-09-08** — la sezione 4: lo spike di accettazione di `dockview` dentro lo spike del guscio — sette mosse giudicate dal proprietario provandole, il protocollo congelato prima in `spikes/gui-shell/PROTOCOLLO.md`, le misure (la mossa 7 come confronto di JSON, M4 con `dockview` acceso, Q3 per il popout), la riserva `interactjs` costruita solo su un no, chat e scena dello spike dentro due tessere | **A**, con la domanda *«ma si fa anche la prova con la telecamera per spostarle con mediapipe?»* — la risposta è la **mossa 8** con la riga Q4, proposta nel prossimo passo, in attesa della sua A/B (consiglio A). ⛔ La sezione **non è scritta**: il proprietario ha chiuso la sessione con `session-handoff` («la si scrive nella prossima sessione»); la proposta sta parola per parola nel prossimo passo |
 | 25 | **all'undicesima ripresa, 2026-09-09** — la mossa 8 e la riga Q4 nella sezione 4: A, otto mosse; B, sette, la mano tutta al 12 | **A.** La §4 è scritta con otto mosse e la riga Q4; la forma è quella della decisione 33 del coordinatore — il worker e il relay di SP-7 com'è, la pinza tradotta in eventi del puntatore, `dockview` in `dndStrategy: 'pointer'`, provata nel browser — col limite di `'pointer'` dichiarato: la mossa 4 dal comando (decisione 34). Scartata B: il 2 costruisce già pannelli che si muovono con qualunque puntatore (disegno dei gesti, §4.1), e provarlo solo col 12 sarebbe scoprirlo dopo la SPA |
+| 26 | **alla chiusura dell'undicesima ripresa, 2026-09-09** — con `session-handoff`: *«continuiamo in una nuova sessione, prima di partire l'agente deve dare una pulita/ordine alla documentazione di resume di sessione e tutto ciò di obbligatorio da leggere e ridimensionarli dove serve per tornare ad avere un consumo umano di token dato che appena inizia la sessione ne vengono occupati 350k»* | **Il mandato per la sessione nuova, prima di ogni altra cosa:** sfoltire la lettura d'apertura — questo file, il compendio (la §6 e le sue voci aperte), la testa dell'audit, `CLAUDE.md` — misurando prima coi comandi e proponendo ogni taglio in forma A/B; la cronaca va in archivio parola per parola, nel documento vivo resta lo stato; le voci aperte del compendio sono decisioni del proprietario e si consolidano **voce per voce** con lui, mai riassunte d'iniziativa. L'ordine e le misure stanno nel prossimo passo. La §7 resta aperta finché il mandato non è eseguito |
 
 ## Ciò che il repo diceva già, letto per decidere
 
@@ -1251,6 +1266,17 @@ dopo la misura.
   da quel log (il passo 7 rilancia bersagli con `--nocapture` e un `awk` sulle righe `test result` li conta due volte, com'è
   scritto nella consegna del 2): dal log si legge solo `GATE GREEN`, la baseline la dà `cargo test --workspace --no-fail-fast
   --locked` da solo.
+- **undicesima ripresa:** `git diff` e `git commit` stampano *«LF will be replaced by CRLF the next time Git touches it»* per i
+  due file `w/lf`: non è una divergenza — l'indice resta LF (`git ls-files --eol`) e l'albero di lavoro non cambia finché nessuno
+  rifà un checkout; si ignora.
+- **undicesima ripresa:** il vecchio puntatore della §6 del compendio cominciava **a metà riga**, in coda al racconto del piano
+  della knowledge base: uno script che sostituisce «dalla freccia in poi» conserva la testa della riga, e `git diff` mostra
+  comunque l'intera riga cambiata — non è un errore.
+- **undicesima ripresa:** `tiktoken` è installato: lo snippet di `CLAUDE.md` gira; sull'italiano con emoji è un limite inferiore,
+  e i ~350 000 token del proprietario comprendono anche le skill e il prompt di sistema, che nessun comando del repo misura.
+- **undicesima ripresa:** il cancello in background — `bash scripts/gate.sh > <log> 2>&1` nello scratchpad, poi
+  `grep -E 'GATE (GREEN|RED)'` — costa qualche minuto e si lancia all'apertura e alla chiusura mentre si scrive; dal log si legge
+  solo il verdetto, non la quaterna.
 
 ## Prossimo passo, eseguibile
 
@@ -1408,6 +1434,96 @@ sezione 5** — core finto, prove e cancello, decisioni aperte, come si riprende
 «Le sezioni che mancano» della consegna del 2, con la lista dei passi nel core finto e, nelle prove, «salva, riavvia, ritrova» e le
 otto mosse dello spike — poi la **sezione 6**, dove vive la stella polare; ciascuna A/B coi tre controlli della decisione 18; poi il
 punto 4.
+
+⛔ **Alla chiusura dell'undicesima ripresa, il 2026-09-09, chiesta dal proprietario con `session-handoff`: la §7 è PRESENTATA e
+SENZA risposta, e il proprietario ha dato il mandato dello SFOLTIMENTO (decisione 26).** ⏭️ **L'ordine eseguibile della sessione
+nuova:**
+
+1. ⛔ **Prima di tutto, il mandato: sfoltire la lettura d'apertura.** Misurata alla chiusura, il 2026-09-09, coi comandi qui sotto:
+   la lettura obbligatoria — `CLAUDE.md`, il compendio intero, la testa dell'audit fino a «Dettaglio», questo file intero, la
+   consegna del 2 — pesa **536 KB** e **174 387 token** `cl100k` (limite inferiore: su italiano con emoji Claude conta di più), e la
+   sessione ne occupa **~350 000** appena comincia (misura del proprietario, che comprende le skill e il prompt di sistema, che
+   nessun comando qui misura). Dove pesa, in byte, blocco per blocco:
+
+   | Documento | Peso | Ciò che è cronaca, o chiuso | Dove va |
+   |---|---|---|---|
+   | `docs/COMPENDIO.md` | 182 701 B · 59 534 token | la §6 è **104 078 B**, di cui **93 878** il riquadro «Le voci ancora aperte»: blocchi tenuti parola per parola perché nominano decisioni del proprietario — il **debito dichiarato** dello sfoltimento del 2026-08-28, che prevedeva la consolidazione in una tabella sola *«da presentare al proprietario una per una»* | la consolidazione: **voce per voce** col proprietario, in A/B; il racconto in `docs/archivio/stato-storico.md`; il tetto di `check-docs.sh` scende con lo sfoltimento (gotcha #100) |
+   | questo file | 207 902 B · 67 280 token | cronaca: «Da sapere subito» **11 991**, «Fatto in questa sessione» **19 424**, «Prossimo passo, eseguibile» **30 947**; merito: «Le sezioni approvate» 59 911, le due tabelle delle decisioni 31 178, «Il modello della GUI» 13 174 | la cronaca in `docs/archivio/consegna-brainstorming-direzione-gui.md` (o un file gemello), parola per parola coi link riscritti; qui restano lo stato in poche righe, le decisioni, le sezioni approvate, le registrate, i vicoli ciechi ancora utili e il solo prossimo passo **vivo** |
+   | `docs/audit-2026-08-27.md`, righe 1–450 | 82 907 B · 27 475 token | «Stato dei rimedi» **36 121** e «I 73 finding» **19 591**: tutti chiusi (`awk -F'\|' 'NF>4{gsub(/^ +\| +$/,"",$5); print $5}' docs/audit-2026-08-27.md \| grep -c aperto` → 0) | la lettura d'apertura si restringe a «Come si concludono quelli aperti» e alla tabella delle voci senza numero AUD; è una riga di `CLAUDE.md`, quindi del **proprietario** |
+   | `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` | 46 757 B · 15 078 token | poco: le sezioni approvate sono merito | resta; i richiami datati si rileggono quando il disegno del 2 si scrive |
+   | `CLAUDE.md` | 15 914 B · 5 020 token | i richiami lunghi nella testa e nelle tabelle | è il modo di lavorare: ogni riga tolta è del **proprietario**, A/B |
+
+   I comandi che rifanno la misura — byte: `wc -c CLAUDE.md docs/COMPENDIO.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+   docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` e `sed -n '1,450p' docs/audit-2026-08-27.md | wc -c`;
+   token: lo snippet `tiktoken` di `CLAUDE.md`, esteso ai cinque file (`tiktoken` è installato su questa macchina); per blocco:
+   `awk '/^## /{if(h!="")printf "%7d  %s\n", b, h; h=$0; b=0} {b+=length($0)+1} END{printf "%7d  %s\n", b, h}' <file>`.
+   **Il metodo, e le regole che non si negoziano:** si misura di nuovo prima di tagliare; per ogni documento una proposta A/B —
+   che cosa esce, dove va, che cosa resta — e si scrive solo dopo il sì; **niente si cancella**: un verbale va in `docs/archivio/`
+   parola per parola con la data e i link riscritti (regola di `CLAUDE.md`); nessuna decisione del proprietario si riassume
+   d'iniziativa; i puntatori restano in una casa sola (gotcha #68); `bash scripts/check-docs.sh` dopo ogni file e i fine-riga
+   rimisurati (`git ls-files --eol`: questo file e la consegna del 2 `w/lf`, il compendio e l'archivio `w/crlf`); la memoria
+   dell'agente sui blocchi di lettura si aggiorna quando le taglie cambiano.
+2. Al proprietario, **la domanda A/B sulla §7**, dal blocco *«La proposta per la sezione 5 — §7, il core finto»* qui sotto,
+   parola per parola; consiglio **A**. Se A o B: scrivere la §7 nella consegna del 2, sotto «Le sezioni approvate del disegno»,
+   nella forma delle §3–§6a (Pezzo · Forma · La prova), la riga 7 di «Le sezioni che mancano» della consegna col richiamo;
+   `check-docs.sh`, commit, push.
+3. La **§8** — prove e cancello: `scripts/gate-gui.sh` (il core finto con `cargo test --locked --manifest-path`, poi `npm ci`,
+   `npm run build`, `npm test`) da una riga `run` di `gate.sh`; la CI con `actions/setup-node` appuntato; `.gitignore` per `gui/`
+   e per le cartelle di build dello spike; la tabella artefatto → controllo dalle colonne «prova» delle §3–§6a più la sonda
+   del core finto contro il trasporto vero da un thread, le prove della SPA sulle fixture, la sonda «salva, riavvia, ritrova»,
+   la suite di conformità della settima porta, la campagna DST del 2 (§5), le otto mosse dello spike. Poi, come domanda a sé,
+   la registrata della nona ripresa: **l'archivio della disposizione che non si apre all'avvio** — A: il core parte e lo
+   dichiara con un terzo stato di `Layout`, «non disponibile», e ogni `SaveLayout` riceve lo stesso (richiamo datato sulla riga
+   5 della §2 di questo file, che oggi dice «il pacchetto o niente»); B: il core si ferma come per il giornale (`StartupError`).
+   Consiglio A, ADR-0019: si dichiara prima, non si fallisce dopo, e un archivio cosmetico non ferma il core.
+4. La **§9** — le decisioni aperte col chiusore: quelle della riga 9 della consegna del 2, più le registrate di questo file che
+   dicono «il disegno del 2», più il commento falso di `crates/platform/src/journal.rs` (piano del 2). Poi la **§10**, come si
+   riprende, sul precedente dei disegni dei gesti e della knowledge base. Poi la **sezione 6** di questo file, dove vive la stella
+   polare. Ciascuna A/B coi tre controlli della decisione 18.
+5. Poi i due disegni scritti sul posto, con le due consegne archiviate parola per parola; poi il piano del 2 in due parti.
+
+#### La proposta per la sezione 5 — §7, il core finto · presentata il 2026-09-09, undicesima ripresa, SENZA risposta
+
+**A parole.** Un programma piccolo in `gui/fake-core/` che finge di essere il core, così la GUI si costruisce e si prova prima
+che il daemon vero faccia tutto e prima che esista un modello. Parla sul filo vero con lo schema vero. Già approvato (§1 e la
+riga 7 della consegna del 2, la §3 di questo file): fuori dal workspace Cargo (`gui` in `exclude`), il suo `Cargo.lock`
+committato perché lo usa il cancello, token a tempo come lo spike (2000 in dieci secondi, testo non fidato, markdown), `Invoke`
+→ `PermissionRequired` la prima volta, `Layout`/`SaveLayout` e la lista dei passi.
+
+**La domanda: quanto è finto?**
+
+> **A — riusa.** Il finto fa girare l'attività **vera** del kernel che ascolta la GUI — quella che il daemon farà girare, e che
+> il 2 costruisce come attività del kernel perché la DST la muova con `DyingGui` (§5 del 2) — su porte in memoria: il giornale
+> del simulatore, la finta del simulatore per la settima porta, un arbitro vero, e il trasporto vero di `platform`. Finto è solo
+> un **rubinetto**: un'attività che manda i token a tempo e, su un comando di una parola da stdin, un `Verdict` o un record di
+> routing degradato nel giornale in memoria. Tutto il resto — `Hello`/`Accepted`/`StaleBuild`, `Degradation`, `Policy`,
+> `Layout`/`SaveLayout`, `Invoke`/`PermissionRequired`/`Approve`, la lista dei passi — è il codice vero.
+> **B — imita.** Un copione a sé che parla lo schema e il filo e scrive a mano ogni risposta del daemon (la riga 7 della consegna
+> del 2 com'è scritta).
+> Consiglio: **A** — il modo del repo è la logica vera su porte sostituite, cioè il simulatore; B è una seconda copia del
+> dispaccio, e il giorno che il daemon cambia il finto diverge senza che nulla diventi rosso.
+
+**Il costo di A, dichiarato:** il finto dipende anche da `simulator` per percorso; l'attività del kernel deve potersi costruire da
+fuori, cosa che la campagna DST della §5 già pretende; il rubinetto condivide il trasporto con l'attività attraverso una `RefCell`,
+il modo dell'esecutore; la disposizione vive finché il finto non riparte — la persistenza vera è del daemon, provata dalla sonda
+della §8.
+
+**I tre controlli (decisione 18).** *Esiste:* l'emettitore di `spikes/gui-ipc/src/bin/core.rs` — righe JSON, tre canali,
+sopravvive alla GUI che muore e accetta una riconnessione; `IpcMessage` con due varianti e otto sonde di andata e ritorno e di
+rifiuto in `crates/kernel/tests/ipc_wire.rs`; `FakeGui` in `crates/kernel/tests/ports_are_implementable.rs` e `DyingGui` in
+`crates/simulator/src/ipc.rs`; il dispaccio di `gui_death_campaign.rs` scritto **dentro il banco** (`accept`/`receive`/`send` in
+riga), quindi nessuna attività «servi la GUI» esiste ancora nel kernel: la costruisce il pezzo 6 della §3; nessun trasporto in
+`platform`; `gui/` non esiste; il manifesto di radice esclude solo `spikes`. *Arriva:* col 3 il core vero produce i token e il
+rubinetto perde quel compito, ma resta per ogni modulo il cui produttore arriva dopo; col 12 il gesto come invocatore, stessa
+attività. *Regge crescendo:* una variante nuova è un ramo del `match` nell'attività vera, e con A il finto la segue gratis; con
+B è una risposta in più scritta a mano.
+
+**Controllo sui cinque criteri.** Verificato il 2026-09-09: i file sopra, letti. 🔶 **Dedotto:** che un'attività e un rubinetto
+possano condividere la porta con una `RefCell` — `Executor::spawn` prende future con vita `'a`, e la campagna dell'arbitro fa
+già girare più attività su stato condiviso; che il valore di `Accepted` sia consegnato al finto come al daemon. **Assunto:**
+niente. Debito scritto: il rubinetto è codice finto fuori dal prodotto; il suo «degrada» è un meccanismo vero con una causa finta.
+
+> La §7 così? **A:** riusa — l'attività vera su porte in memoria, più il rubinetto. **B:** imita — un copione a sé. Consiglio: **A**.
 
 #### La proposta per la sezione 4 — presentata e approvata (A) il 2026-09-08, decima ripresa; SCRITTA il 2026-09-09
 

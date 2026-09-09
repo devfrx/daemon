@@ -764,3 +764,51 @@ L'elenco numerato qui sotto resta com'era, come verbale.
    proprietario e 36–42 del coordinatore, due registrate, i vicoli ciechi, il prossimo passo col blocco della domanda 4 e
    l'abbozzo della domanda 5), questa cronaca, il richiamo nel puntatore della §6 del compendio; `check-docs.sh` OK e il
    cancello rilanciato; scratchpad pulito; nessun codice toccato.
+
+## La tredicesima ripresa, 2026-09-09 — la cronaca, scritta man mano
+
+⚠️ **Dal taglio 1 in poi la cronaca di ogni ripresa si scrive qui**, non nel documento vivo (decisione 27 del proprietario,
+36 del coordinatore). Ciò che è vero adesso sta nella stella polare.
+
+1. Ripresa con `anthropic-skills:decision-principles` e `anthropic-skills:session-resume`, più `dev-discipline` e
+   `dev-communication`: `git fetch`, stato riletto coi comandi della tabella dello stato; nessuna divergenza dalla consegna
+   della dodicesima ripresa, tranne la misura della lettura d'apertura, cresciuta col commit di chiusura stesso (la stella
+   polare da 157 266 a 167 456 byte). `check-docs.sh` OK e `GATE GREEN` all'apertura. Letti il compendio intero, i due pezzi
+   dell'audit e le sole parti di stato della stella polare, a blocchi misurati prima coi byte per blocco, nessuna chiamata
+   traboccata.
+2. La lettura d'apertura rimisurata coi comandi del punto 1 del prossimo passo: 335 806 byte e 108 738 token `cl100k` sui
+   cinque pezzi.
+3. La **domanda 4** riposta al proprietario com'era, con la misura del giorno — il puntatore, dal titolo alla sottosezione
+   seguente: 7 195 byte, `awk '/^### Il prossimo passo/{s=1} s&&/^### Le voci ancora aperte/{s=0} s{b+=length($0)+1} END{print b}'
+   docs/COMPENDIO.md`. **Risposta A (decisione 30):** il puntatore riscritto allo stato di oggi (4 231 byte con lo stesso
+   comando), il testo com'era in `docs/archivio/stato-storico.md` coi link riscritti; l'intestazione del compendio nomina il
+   taglio; la riga del comando nella tabella dello stato della stella polare; decisione 43 del coordinatore (il comando dei
+   finding chiusi resta nella §6, fuori dal taglio) e una registrata nuova (quanto della stella polare si legga all'apertura).
+   Qui sotto, com'erano, il paragrafo di «Da sapere subito» e il blocco della proposta.
+
+### Il paragrafo di «Da sapere subito» com'era alla chiusura della dodicesima ripresa
+
+✅ **La dodicesima ripresa, il 2026-09-09, ha eseguito TRE tagli del mandato, tutti approvati A (decisioni 27–29):** la
+cronaca di questo file in archivio; la lettura dell'audit ristretta a due pezzi, con le tre case dell'istruzione riscritte
+(`CLAUDE.md`, la §6 del compendio, la voce 3 del messaggio di `AVVIO-CHAT.md`) e i testi vecchi in
+`docs/archivio/lettura-di-apertura-storico.md`; il riquadro delle voci aperte della §6 del compendio ridotto agli indici dopo
+il censimento voce per voce (32 righe in chat, due orfane), il racconto in `docs/archivio/stato-storico.md`, il tetto di
+`check-docs.sh` sceso. La lettura d'apertura, rimisurata coi comandi del punto 1 del prossimo passo: da 551 293 a 324 341 byte,
+da 179 219 a 105 267 token `cl100k` — il dopo lo rifà il comando. ⛔ **Alla chiusura, chiesta dal proprietario con
+`session-handoff` («appena concludi»), la domanda 4 — il puntatore della §6 — è POSTA e SENZA risposta:** sta nel prossimo
+passo, parola per parola. `check-docs.sh` OK e `GATE GREEN` all'apertura; alla chiusura `check-docs.sh` OK e `GATE GREEN`
+rilanciato e letto dal log. Nessun codice toccato; toccato `scripts/check-docs.sh`, il tetto.
+
+### La proposta per il taglio 4, com'era — posta alla dodicesima ripresa, chiusa A alla tredicesima
+
+#### La proposta per il taglio 4 — il puntatore «Il prossimo passo» della §6 · posta il 2026-09-09, dodicesima ripresa, SENZA risposta
+
+> **Domanda 4 — il puntatore «Il prossimo passo» della §6** (6,8 KB). Oggi è una catena di ✅ su cose chiuse: sotto-progetto 1,
+> piano dei gesti, knowledge base, sezioni 1–4, passata sui diagrammi, più il paragrafo sul racconto del Traguardo 6 uscito.
+>
+> - **A:** lo riscrivo allo stato di oggi, in poche righe: cosa è chiuso (con la data e il link, senza il racconto), il mandato in
+>   corso, e il prossimo passo vivo (la §7 del 2, poi §8–§10, la sezione 6, i due disegni, il piano in due parti, ADR-0029 con
+>   M1–M5, AUD-004 in parallelo). Il testo com'è va in `docs/archivio/stato-storico.md`, parola per parola. Da 6,8 KB a ~2,5 KB.
+> - **B:** resta com'è.
+>
+> **Consiglio: A.** È l'unico posto dove vive il prossimo passo: più è corto, meno invecchia.

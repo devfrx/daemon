@@ -29,8 +29,9 @@ disposizione con la **settima porta**, la fetta del 2 ritagliata, lo spike di ac
 la passata sui diagrammi (decisione 16) è chiusa. **Mancano la sezione 5** — le §7–§10 del 2: core finto, prove e cancello,
 decisioni aperte, come si riprende — **e la 6**, dove vive la stella polare; poi i due disegni scritti sul posto e il piano
 del 2 in due parti. Nessun codice toccato. ⛔ **In corso il mandato del proprietario (decisione 26): sfoltire la lettura
-d'apertura**, un documento per volta e in A/B — fatti il 2026-09-09 questo file, la testa dell'audit e il riquadro delle
-voci aperte della §6 del compendio (censite una per una); restano il puntatore della §6 — ⛔ **la domanda 4 su di esso è POSTA e SENZA risposta alla chiusura della dodicesima ripresa**, chiesta dal proprietario con `session-handoff` — e `CLAUDE.md`. La **§7 del 2 è presentata in forma A/B e senza
+d'apertura**, un documento per volta e in A/B — fatti il 2026-09-09 questo file, la testa dell'audit, il riquadro delle
+voci aperte della §6 del compendio (censite una per una) e, alla tredicesima ripresa, il puntatore «Il prossimo passo» della §6
+(decisione 30); resta `CLAUDE.md`, la domanda 5. La **§7 del 2 è presentata in forma A/B e senza
 risposta**: si riprende da lì, a mandato eseguito. La cronaca ripresa per ripresa sta in archivio (il richiamo in testa).
 
 ## ⛔ Da sapere subito
@@ -44,16 +45,13 @@ compendio, e l'archivio della cronaca.
 ⛔ **Il prossimo passo è il mandato (decisione 26), poi la §7 del 2** dalla domanda lasciata aperta: il come, coi comandi,
 sta in «Prossimo passo, eseguibile».
 
-✅ **La dodicesima ripresa, il 2026-09-09, ha eseguito TRE tagli del mandato, tutti approvati A (decisioni 27–29):** la
-cronaca di questo file in archivio; la lettura dell'audit ristretta a due pezzi, con le tre case dell'istruzione riscritte
-(`CLAUDE.md`, la §6 del compendio, la voce 3 del messaggio di `AVVIO-CHAT.md`) e i testi vecchi in
-`docs/archivio/lettura-di-apertura-storico.md`; il riquadro delle voci aperte della §6 del compendio ridotto agli indici dopo
-il censimento voce per voce (32 righe in chat, due orfane), il racconto in `docs/archivio/stato-storico.md`, il tetto di
-`check-docs.sh` sceso. La lettura d'apertura, rimisurata coi comandi del punto 1 del prossimo passo: da 551 293 a 324 341 byte,
-da 179 219 a 105 267 token `cl100k` — il dopo lo rifà il comando. ⛔ **Alla chiusura, chiesta dal proprietario con
-`session-handoff` («appena concludi»), la domanda 4 — il puntatore della §6 — è POSTA e SENZA risposta:** sta nel prossimo
-passo, parola per parola. `check-docs.sh` OK e `GATE GREEN` all'apertura; alla chiusura `check-docs.sh` OK e `GATE GREEN`
-rilanciato e letto dal log. Nessun codice toccato; toccato `scripts/check-docs.sh`, il tetto.
+✅ **Il mandato alla tredicesima ripresa, il 2026-09-09: QUATTRO tagli eseguiti, tutti approvati A (decisioni 27–30):** la
+cronaca di questo file in archivio; la lettura dell'audit ristretta a due pezzi; il riquadro delle voci aperte della §6 del
+compendio ridotto agli indici; il puntatore «Il prossimo passo» della §6 riscritto allo stato di oggi — da 7 195 a 4 231 byte,
+il comando nella tabella dello stato — e il testo com'era in `docs/archivio/stato-storico.md`. Resta `CLAUDE.md`, la domanda
+5; poi `AVVIO-CHAT.md`, se il proprietario lo incolla ancora. La lettura d'apertura, rimisurata all'apertura coi comandi del
+punto 1 del prossimo passo: 335 806 byte e 108 738 token `cl100k` — il dopo lo rifà il comando. `check-docs.sh` OK e
+`GATE GREEN` all'apertura. Nessun codice toccato. Il paragrafo che stava qui, sulla dodicesima ripresa, è in archivio.
 
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
@@ -79,6 +77,7 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/archivio/consegna-brainstorming-direzione-gui.md docs/archivio/lettura-di-apertura-storico.md docs/archivio/stato-storico.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg docs/design/10-modello-dei-dati-durevoli.md` | il compendio e `stato-storico.md` `i/lf w/crlf`, gli altri `i/lf w/lf` — su questa macchina: un clone nuovo con `core.autocrlf=true` li mostra `w/crlf`, e non è una divergenza |
 | i wireframe esistono | `ls docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/` | `compatta-e-grafo.svg  home.svg  lavoro.svg` |
 | dove vive ogni diagramma | `grep -rlE '^\s*(flowchart\|stateDiagram\|erDiagram\|sequenceDiagram)' docs` | i file di `docs/design/`, la roadmap, le due spec del kernel, questo file (le tre sequenze); i tre wireframe SVG li dà la riga sopra |
+| il puntatore della §6 | `awk '/^### Il prossimo passo/{s=1} s&&/^### Le voci ancora aperte/{s=0} s{b+=length($0)+1} END{print b}' docs/COMPENDIO.md` | poche righe — lo stato di oggi, il mandato, il prossimo passo vivo — più il blocco del comando dei finding chiusi; cresce solo se cambia il prossimo passo |
 | margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo; scende con lo sfoltimento della §6 (gotcha #100), nello stesso commit |
 | la lettura d'apertura | i comandi del punto 1 del prossimo passo | si rimisura prima di ogni taglio, non si cita |
 
@@ -117,6 +116,7 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 | 26 | **alla chiusura dell'undicesima ripresa, 2026-09-09** — con `session-handoff`: *«continuiamo in una nuova sessione, prima di partire l'agente deve dare una pulita/ordine alla documentazione di resume di sessione e tutto ciò di obbligatorio da leggere e ridimensionarli dove serve per tornare ad avere un consumo umano di token dato che appena inizia la sessione ne vengono occupati 350k»* | **Il mandato per la sessione nuova, prima di ogni altra cosa:** sfoltire la lettura d'apertura — questo file, il compendio (la §6 e le sue voci aperte), la testa dell'audit, `CLAUDE.md` — misurando prima coi comandi e proponendo ogni taglio in forma A/B; la cronaca va in archivio parola per parola, nel documento vivo resta lo stato; le voci aperte del compendio sono decisioni del proprietario e si consolidano **voce per voce** con lui, mai riassunte d'iniziativa. L'ordine e le misure stanno nel prossimo passo. La §7 resta aperta finché il mandato non è eseguito |
 | 27 | **alla dodicesima ripresa, 2026-09-09** — taglio 1: la cronaca delle undici riprese esce da questo file? A: in archivio parola per parola, qui lo stato in poche righe, le decisioni, le sezioni approvate, le registrate, i vicoli ciechi e il solo prossimo passo vivo; B: resta tutto finché il disegno non è scritto | **A.** In `docs/archivio/consegna-brainstorming-direzione-gui.md`, coi soli link riscritti; questo file da 222 315 a 157 266 byte (da 71 886 a 50 755 token `cl100k`) |
 | 28 | **alla dodicesima ripresa** — taglio 2: la lettura d'apertura dell'audit? A: solo due pezzi, la tabella delle voci senza numero AUD e «La disciplina, in cinque passi»; B: tutta la testa fino a «Dettaglio» come prima | **A.** Il file dell'audit non cambia (le tabelle restano la casa unica dello stato); riscritte col richiamo datato le tre case dell'istruzione — `CLAUDE.md`, la §6 del compendio, la voce 3 del messaggio di `AVVIO-CHAT.md` — coi testi vecchi in `docs/archivio/lettura-di-apertura-storico.md`; e la cella «R1 — APERTA» dell'ordine consigliato, stantia, corretta col richiamo. Da 82 907 a 4 806 byte |
+| 30 | **alla tredicesima ripresa, 2026-09-09** — taglio 4: il puntatore «Il prossimo passo» della §6 del compendio? A: riscritto allo stato di oggi in poche righe — cosa è chiuso con la data e il posto del verbale, il mandato in corso, il prossimo passo vivo — e il testo com'era in `docs/archivio/stato-storico.md`; B: resta com'è | **A.** Il puntatore da 7 195 a 4 231 byte (il comando nella tabella dello stato); il testo com'era in archivio coi link riscritti; il blocco della domanda e il paragrafo di «Da sapere subito» com'erano in `docs/archivio/consegna-brainstorming-direzione-gui.md`. Resta `CLAUDE.md`, la domanda 5 |
 | 29 | **alla dodicesima ripresa** — taglio 3: il riquadro «Le voci ancora aperte» della §6 del compendio? A: il racconto in archivio, nella §6 restano gli indici, la tabella del 2026-08-10 com'è più le due voci orfane; B: resta com'è. Ogni voce censita una per una contro gli indici, in una tabella di 32 righe in chat | **A.** Il racconto in `docs/archivio/stato-storico.md`; il registro e l'intestazione dell'archivio ricevono il richiamo; il tetto di `check-docs.sh` da 188 416 a 111 616 (misurato + 11%, la regola scritta lì). Il compendio da 182 850 a 100 546 byte (da 59 760 a 32 694 token) |
 
 ## Ciò che il repo diceva già, letto per decidere
@@ -919,6 +919,7 @@ dopo la misura.
 | 39 | **taglio 2** — la cella «R1 — APERTA» dell'audit e la sua testa corrette **sul posto** col richiamo datato, non spostate in archivio | è la convenzione di quel file (richiami in linea), e una testa che contraddicesse `CLAUDE.md` sarebbe il gotcha #59. Costo: due richiami in più in un file che non si legge più all'apertura |
 | 40 | **taglio 3** — le due voci orfane entrano nella tabella del 2026-08-10 del compendio, com'era stato approvato, e non nella tabella del Traguardo 5 del registro, benché la prima sia un fatto del Traguardo 5 | è la tabella che si legge all'apertura; il registro riceve il richiamo che rimanda all'archivio. Costo: l'indice del T5 non elenca l'orfana 1; il compendio sì |
 | 41 | **taglio 3** — le 14 righe della tabella del 2026-08-10 restano **byte per byte**, storie interne comprese (la riga «durabilità» porta un verbale di ~2 KB) | «senza riscriverne una» era la forma approvata; sfoltire le celle è un taglio a parte, A/B. Costo: ~9 KB che restano |
+| 43 | **taglio 4** — il blocco «I finding dell'audit sono chiusi» col suo comando resta nella §6 al suo posto, fuori dal taglio; e la riga «da leggere per intero» sulla stella polare resta nel puntatore com'era | `CLAUDE.md` e la testa della §6 lo chiamano «il comando in fondo alla §6»: spostarlo vorrebbe due richiami per un puntatore (gotcha #68). Quanto della stella polare si legga all'apertura è del proprietario: registrata qui sotto. Costo: nessuno |
 | 42 | **taglio 3** — l'indice nel compendio è fatto di **comandi** (i due `awk` sulle tabelle del registro) e non di elenchi di nomi | un elenco invecchia alla prima voce che si chiude; i comandi sono provati nelle due direzioni (29 aperte e 5 chiuse al T5, 28 al T6). Costo: chi legge lancia un comando |
 
 ## Registrate, non prese — del proprietario
@@ -947,6 +948,7 @@ dopo la misura.
 | 🔶 **nata alla settima ripresa** — l'innesco **B (3)** di Q6 e Q11 nella §8.4 della spec («qualcuno chiama un modello: proiezione…»): la proiezione nasce col **13**, prima del 3 (rimandi del 2026-09-05 in ADR-0008 e ADR-0010), e le due prove — ricomposizioni ripetute, occupazione sotto il budget — non chiedono un modello. La lettera resta vera come innesco del primo uso; se lo stato debba potersi chiudere già col 13 è del proprietario | il proprietario, con la §8.2 e la §8.4 |
 | 🔶 **nata alla nona ripresa, 2026-09-08, disegnando la sequenza dell'accoglienza** — se all'avvio l'archivio della disposizione (la settima porta) **non si apre**, il core si ferma come per il giornale (`StartupError` in `crates/daemon/src/main.rs`, dove `FileJournal::open` che fallisce ferma l'avvio) o parte senza e manda `Layout` «niente»: la §2 copre la scrittura fallita («la GUI riceve il vecchio»), non l'archivio che non si legge. La disposizione non è stato autorevole, quindi la via coerente con ADR-0019 è **partire e dichiararlo** — un archivio cosmetico non dovrebbe fermare il core — ma è una scelta del disegno del 2, con la sua sonda | il disegno del 2, §5 e §8 |
 | 🔶 **nata alla dodicesima ripresa, 2026-09-09** — il messaggio di `AVVIO-CHAT.md` pesa 26 224 byte (l'`awk` della §12 del compendio lo rifà) e oggi il proprietario non l'ha incollato, la sessione è ripartita dalle skill: se non lo usa più è un taglio a parte, se lo usa si sfoltisce come gli altri | il proprietario, dopo la domanda 5 |
+| 🔶 **nata alla tredicesima ripresa, 2026-09-09** — se all'apertura la stella polare si legga **per intero**, com'è scritto in testa e nel puntatore della §6 del compendio, o solo le parti di stato («Stato in una riga», «Da sapere subito», la tabella dello stato, «Prossimo passo, eseguibile», «Come tornare operativi») col merito letto prima di scrivere; la tredicesima ripresa ha letto solo le parti di stato per il taglio 4, e lo dichiara | il **proprietario**, dentro il mandato (decisione 26): è una riga di lettura obbligatoria, e la stella polare pesa quanto dicono `wc -c` e lo snippet `tiktoken` |
 | 🔶 **nata alla dodicesima ripresa** — le storie dentro le celle della tabella del 2026-08-10 della §6 del compendio (decisione 41 del coordinatore): sfoltirle in archivio è un taglio a parte | il proprietario, A/B, dopo il mandato |
 
 ## Vicoli ciechi di questa sessione
@@ -1033,18 +1035,18 @@ dopo la misura.
 
 ## Prossimo passo, eseguibile
 
-✅ **Stato del mandato al 2026-09-09, dodicesima ripresa — tre tagli fatti, tutti A:** questo file **sfoltito**, la cronaca in
+✅ **Stato del mandato al 2026-09-09, tredicesima ripresa — quattro tagli fatti, tutti A:** questo file **sfoltito**, la cronaca in
 [`../../archivio/consegna-brainstorming-direzione-gui.md`](../../archivio/consegna-brainstorming-direzione-gui.md); la lettura
 dell'audit ristretta a due pezzi (`CLAUDE.md`, §6 del compendio, `AVVIO-CHAT.md`, coi testi vecchi in
 `docs/archivio/lettura-di-apertura-storico.md`); il riquadro delle voci aperte della §6 ridotto agli indici, ogni voce censita
-**una per una**, il racconto in `docs/archivio/stato-storico.md`, il tetto di `check-docs.sh` sceso. Restano il puntatore
-«Il prossimo passo» della §6 e `CLAUDE.md`; la consegna del 2 resta com'è. Il punto 1 qui sotto resta com'era scritto
-alla chiusura dell'undicesima ripresa: è la misura datata e il metodo, e si rimisura prima di ogni taglio.
+**una per una**, il racconto in `docs/archivio/stato-storico.md`, il tetto di `check-docs.sh` sceso; il puntatore «Il prossimo
+passo» della §6 riscritto allo stato di oggi (decisione 30), il testo com'era in `docs/archivio/stato-storico.md`. Resta
+`CLAUDE.md`; la consegna del 2 resta com'è. Il punto 1 qui sotto resta com'era scritto alla chiusura dell'undicesima ripresa: è
+la misura datata e il metodo, e si rimisura prima di ogni taglio.
 
-⛔ **Alla chiusura della dodicesima ripresa, chiesta dal proprietario con `session-handoff` («appena concludi»): la domanda 4 — il
-puntatore — è POSTA e SENZA risposta**, e sta nel blocco qui sotto, parola per parola. ⏭️ **L'ordine della sessione nuova:** la
-risposta alla domanda 4 — se A, il puntatore riscritto allo stato di oggi e il testo com'era in `docs/archivio/stato-storico.md` —
-poi la domanda 5 su `CLAUDE.md`, poi `AVVIO-CHAT.md` se serve, poi il punto 2 qui sotto: la §7.
+✅ **La domanda 4 ha avuto risposta A alla tredicesima ripresa (decisione 30)**: il puntatore riscritto, il testo com'era in
+`docs/archivio/stato-storico.md`; il blocco della proposta, com'era, sta nella cronaca in archivio. ⏭️ **L'ordine da qui:** la
+domanda 5 su `CLAUDE.md`, qui sotto, poi `AVVIO-CHAT.md` se serve, poi il punto 2: la §7.
 
 ⏭️ **L'ordine eseguibile:**
 
@@ -1091,19 +1093,7 @@ poi la domanda 5 su `CLAUDE.md`, poi `AVVIO-CHAT.md` se serve, poi il punto 2 qu
    polare. Ciascuna A/B coi tre controlli della decisione 18.
 5. Poi i due disegni scritti sul posto, con le due consegne archiviate parola per parola; poi il piano del 2 in due parti.
 
-#### La proposta per il taglio 4 — il puntatore «Il prossimo passo» della §6 · posta il 2026-09-09, dodicesima ripresa, SENZA risposta
-
-> **Domanda 4 — il puntatore «Il prossimo passo» della §6** (6,8 KB). Oggi è una catena di ✅ su cose chiuse: sotto-progetto 1,
-> piano dei gesti, knowledge base, sezioni 1–4, passata sui diagrammi, più il paragrafo sul racconto del Traguardo 6 uscito.
->
-> - **A:** lo riscrivo allo stato di oggi, in poche righe: cosa è chiuso (con la data e il link, senza il racconto), il mandato in
->   corso, e il prossimo passo vivo (la §7 del 2, poi §8–§10, la sezione 6, i due disegni, il piano in due parti, ADR-0029 con
->   M1–M5, AUD-004 in parallelo). Il testo com'è va in `docs/archivio/stato-storico.md`, parola per parola. Da 6,8 KB a ~2,5 KB.
-> - **B:** resta com'è.
->
-> **Consiglio: A.** È l'unico posto dove vive il prossimo passo: più è corto, meno invecchia.
-
-⏭️ **E la domanda 5, da porre dopo la 4 — `CLAUDE.md` (15,9 KB):** i verbali dentro la testa e dentro le righe delle tabelle — le
+⏭️ **La domanda 5, da porre adesso che la 4 è chiusa — `CLAUDE.md` (15,9 KB):** i verbali dentro la testa e dentro le righe delle tabelle — le
 sei volte del gotcha #31 sul peso della lettura, il richiamo del 2026-08-30 sulla riga di `writing-plans`, le storie dei fine-riga
 e di G-5, il capoverso del 2026-08-28 sotto le quattro domande — escono in `docs/archivio/lettura-di-apertura-storico.md`; ogni
 **regola** resta, con una riga di perché. Stima: a ~10 KB. È il documento del proprietario: ogni riga tolta è sua, A/B. Il guadagno

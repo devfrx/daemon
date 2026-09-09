@@ -56,3 +56,71 @@ volta, quella del finding su cui si lavora.**
      finding su cui stai lavorando. Si legge a FINDING, come un piano si
      legge a compiti.
 ```
+
+## Taglio 5 — i verbali dentro `CLAUDE.md` · approvato A il 2026-09-09
+
+⛔ **Il taglio 5 del mandato (decisione 26), approvato A il 2026-09-09, tredicesima ripresa (decisione 31 della
+[stella polare della GUI](../superpowers/specs/2026-09-07-direzione-gui-design.md)):** i verbali dentro la testa e
+dentro le celle delle tabelle di `CLAUDE.md` escono; ogni regola resta, col suo perché in una riga e il rimando «il
+verbale in archivio». Misurato prima di chiedere: 2 173 byte e 753 token `cl100k` su 15 728 byte e 5 019 token (LF),
+meno dell'1% della lettura d'apertura — contro la stima *«a ~10 KB, ~2 000 token»* della dodicesima ripresa, e la
+divergenza è stata detta al proprietario prima della domanda. I pezzi com'erano al commit `b0901e4`, **parola per
+parola**, coi soli link riscritti per questa cartella, e per ciascuno dove stava:
+
+### In testa — le sei volte del gotcha #31, dentro la riga sul costo della lettura
+
+Stava fra *«ed è una decisione.»* e *«Ora lo dice il comando, che non marcisce:»*.
+
+Ogni volta che
+un peso o un conto di token è stato scritto su questa riga è invecchiato: ha detto
+«seimila token» a 24 KB, «88 KB» a 91, «165» a 192, «624» a 213. **Sei volte, il gotcha
+**#31**.**
+
+### In testa — la riga su `docs/audit-2026-08-11.md`
+
+Stava fra il comando `tiktoken` e il capoverso *«Non aprire»*.
+
+⚠️ **E [`docs/audit-2026-08-11.md`](../audit-2026-08-11.md) è uscito da questa riga il
+2026-08-27:** è chiuso otto decisioni su otto, e ciò che insegnava vive nel compendio —
+un file chiuso non è una lettura obbligatoria.
+
+### La riga `superpowers:writing-plans` della tabella delle skill — il richiamo del 2026-08-30
+
+Stava fra *«quando si scriverà il piano.»* e *«**si SANNO prima di scrivere**»*.
+
+⛔ **RICHIAMO DEL 2026-08-30: qui stava *«non prima che le voci aperte siano chiuse»*, ed era INSODDISFACIBILE** — fra le voci aperte ce ne sono con chiusore *«il traguardo della ritenzione»* o *«nessuno finché nessuna misura lo chiede»*, quindi nessun piano avrebbe più potuto essere scritto. **E la pratica la violava da due piani su due:** le voci raccolte il 2026-08-10 *«perché chi riprende deve saperle PRIMA di scrivere»* erano aperte quando furono scritti i piani del **Traguardo 4** (2026-08-11) e del **Traguardo 5** (2026-08-18), e lo sono ancora. La regola vera è quella che la raccolta stessa enuncia:
+
+### La riga dei fine-riga di «Come si lavora qui» — le tre volte e il `sed -i`
+
+Stava dopo *«che nessuno ha toccato»*.
+
+— successo **tre volte**, l'ultima il 2026-08-18 con un `sed -i` su `crates/kernel/Cargo.toml`, **43 CR → 0**.
+
+### La riga della dipendenza in due passi — la relazione «tutti»
+
+Stava dopo *«a **tutti** i suoi siti `cargo`»*.
+
+— *tutti* è la relazione che regge quando il cancello guadagna un passo, una cifra no; il comando che la verifica sta in [`docs/riferimenti.md`](../riferimenti.md), in una casa sola —
+
+### La riga della dipendenza in due passi — «il punto e non il prezzo»
+
+Stava prima di *«Finding **G-5**»*.
+
+È il punto e non il prezzo: ADR-0031 chiama l'aggiunta di una voce *«un atto deliberato e rivedibile»*, e un lockfile che il cancello aggiornava da sé non era né l'uno né l'altro.
+
+### Sotto le quattro domande del pre-controllo — il capoverso del 2026-08-28
+
+Stava dopo la tabella delle righe 5–8, prima di «Manutenzione della documentazione».
+
+⚠️ **Il testo lungo di queste quattro righe è stato tolto da qui il 2026-08-28**, non
+perso: erano quattro paragrafi che ricopiavano i gotcha **#49**, **#58**, **#59** e **#65**
+di [`docs/HANDOFF.md`](../HANDOFF.md), che ne è la casa. ⛔ **Ciò che è rimasto è
+l'ISTRUZIONE**, perché questo file è l'unica lettura obbligatoria e `HANDOFF.md` non lo è:
+una regola che sparisse di qui non verrebbe letta da nessuno. **Il caso** invece si apre
+solo quando serve, ed è per questo che può vivere altrove.
+
+### La riga «Uno schema è una verifica» — la prima applicazione
+
+Stava in coda alla cella, dopo *«mai in silenzio»*.
+
+La prima applicazione, la sezione 1 della passata sui diagrammi, ha trovato due difetti in nove righe

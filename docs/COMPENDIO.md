@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-09**, col puntatore della §6 riscritto per la **sezione 4** della stella polare della GUI — lo spike di accettazione di `dockview`, otto mosse, la mossa 8 decisa dal proprietario — **scritta**, e **sfoltito** della cronaca delle riprese, che vive nella stella polare e, parola per parola, in [`archivio/stato-storico.md`](archivio/stato-storico.md), e alla chiusura per il **mandato del proprietario** sulla lettura d'apertura (decisione 26 della stella polare); poi, lo stesso giorno, il paragrafo dell'audit della §6 riscritto per il **taglio 2** del mandato, e il riquadro delle voci aperte ridotto agli **indici** per il **taglio 3**, e — alla tredicesima ripresa dello stesso giorno — il puntatore «Il prossimo passo» riscritto allo **stato di oggi** per il **taglio 4**; l'ultimo contenuto di **merito** resta la sezione 4. Manutenzione: §13.
+**Aggiornato il 2026-09-09**, col puntatore della §6 riscritto per la **sezione 4** della stella polare della GUI — lo spike di accettazione di `dockview`, otto mosse, la mossa 8 decisa dal proprietario — **scritta**, e **sfoltito** della cronaca delle riprese, che vive nella stella polare e, parola per parola, in [`archivio/stato-storico.md`](archivio/stato-storico.md), e alla chiusura per il **mandato del proprietario** sulla lettura d'apertura (decisione 26 della stella polare); poi, lo stesso giorno, il paragrafo dell'audit della §6 riscritto per il **taglio 2** del mandato, e il riquadro delle voci aperte ridotto agli **indici** per il **taglio 3**, e — alla tredicesima ripresa dello stesso giorno — il puntatore «Il prossimo passo» riscritto allo **stato di oggi** per il **taglio 4**, e il suo stato del mandato aggiornato al **taglio 5** (`CLAUDE.md`); l'ultimo contenuto di **merito** resta la sezione 4. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -658,8 +658,8 @@ stato di oggi: è l'unico posto dove vive il prossimo passo, e più è corto men
 
 ⛔ **In corso: il mandato del proprietario del 2026-09-09 — sfoltire la lettura d'apertura** (decisione 26 della stella
 polare): un documento per volta, ogni taglio in A/B, la cronaca in archivio parola per parola, la misura coi comandi e mai
-citata. Fatti: la stella polare, la testa dell'audit, il riquadro delle voci aperte di questa §6, questo puntatore. Resta
-`CLAUDE.md`; poi `AVVIO-CHAT.md`, se il proprietario lo incolla ancora.
+citata. Fatti: la stella polare, la testa dell'audit, il riquadro delle voci aperte di questa §6, questo puntatore,
+`CLAUDE.md`. Resta `AVVIO-CHAT.md`, se il proprietario lo incolla ancora.
 
 ⏭️ **IL PROSSIMO PASSO: IL SOTTO-PROGETTO 2, E PRIMA LA SUA STELLA POLARE.** Si riprende da
 [`specs/2026-09-07-direzione-gui-design.md`](superpowers/specs/2026-09-07-direzione-gui-design.md), da leggere **per intero**,

@@ -18,10 +18,9 @@ si lavora. ✅ **RICHIAMO DEL 2026-09-09, decisione 26:** qui stava *«tutta la 
 «Dettaglio»»*, in gran parte le due tabelle dei finding chiusi; il testo com'era è in
 [`docs/archivio/lettura-di-apertura-storico.md`](docs/archivio/lettura-di-apertura-storico.md).
 
-⚠️ **Quanto costa questa lettura NON è scritto qui, ed è una decisione.** Ogni volta che
-un peso o un conto di token è stato scritto su questa riga è invecchiato: ha detto
-«seimila token» a 24 KB, «88 KB» a 91, «165» a 192, «624» a 213. **Sei volte, il gotcha
-**#31**.** Ora lo dice il comando, che non marcisce:
+⚠️ **Quanto costa questa lettura NON è scritto qui, ed è una decisione.** Ogni peso scritto su
+questa riga è invecchiato — sei volte, gotcha **#31**; il verbale in
+[`docs/archivio/lettura-di-apertura-storico.md`](docs/archivio/lettura-di-apertura-storico.md). Ora lo dice il comando, che non marcisce:
 
 ```bash
 wc -c CLAUDE.md docs/COMPENDIO.md
@@ -33,10 +32,6 @@ su italiano con emoji il conto di Claude è più alto e questo è un **limite in
 ```bash
 python -c "import tiktoken,io; e=tiktoken.get_encoding('cl100k_base'); print(sum(len(e.encode(io.open(p,encoding='utf-8').read())) for p in ['CLAUDE.md','docs/COMPENDIO.md']))"
 ```
-
-⚠️ **E [`docs/audit-2026-08-11.md`](docs/audit-2026-08-11.md) è uscito da questa riga il
-2026-08-27:** è chiuso otto decisioni su otto, e ciò che insegnava vive nel compendio —
-un file chiuso non è una lettura obbligatoria.
 
 ⛔ **Non aprire** [`docs/HANDOFF.md`](docs/HANDOFF.md), la spec del sotto-progetto 1, la
 cartella [`docs/adr/`](docs/adr/) o [`docs/archivio/`](docs/archivio/) «per farsi
@@ -77,7 +72,7 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | `anthropic-skills:dev-discipline` | governa il **codice**: esplora prima di scrivere, YAGNI, convenzioni del repo, niente scorciatoie non dichiarate |
 | `anthropic-skills:dev-communication` | governa la **conversazione** intorno al codice: cosa si decide da soli e cosa si porta al proprietario |
 | `superpowers:brainstorming` | prima di qualunque lavoro creativo, e **prima di entrare in plan mode** |
-| `superpowers:writing-plans` | quando si scriverà il piano. ⛔ **RICHIAMO DEL 2026-08-30: qui stava *«non prima che le voci aperte siano chiuse»*, ed era INSODDISFACIBILE** — fra le voci aperte ce ne sono con chiusore *«il traguardo della ritenzione»* o *«nessuno finché nessuna misura lo chiede»*, quindi nessun piano avrebbe più potuto essere scritto. **E la pratica la violava da due piani su due:** le voci raccolte il 2026-08-10 *«perché chi riprende deve saperle PRIMA di scrivere»* erano aperte quando furono scritti i piani del **Traguardo 4** (2026-08-11) e del **Traguardo 5** (2026-08-18), e lo sono ancora. La regola vera è quella che la raccolta stessa enuncia: **si SANNO prima di scrivere**. A **sbarrare** è la colonna *«Chi la chiude»* di [`docs/porta-di-qualita.md`](docs/porta-di-qualita.md): una voce il cui chiusore è **questo traguardo** o **il proprietario, prima** va chiusa o portata dal piano; le altre si conoscono e si dichiarano |
+| `superpowers:writing-plans` | quando si scriverà il piano. Le voci aperte non si aspettano chiuse (richiamo del 2026-08-30: la regola vecchia, *«non prima che le voci aperte siano chiuse»*, era insoddisfacibile, perché alcune voci hanno chiusore *«il traguardo della ritenzione»* o *«nessuno»* — il verbale in archivio): **si SANNO prima di scrivere**. A **sbarrare** è la colonna *«Chi la chiude»* di [`docs/porta-di-qualita.md`](docs/porta-di-qualita.md): una voce il cui chiusore è **questo traguardo** o **il proprietario, prima** va chiusa o portata dal piano; le altre si conoscono e si dichiarano |
 | `superpowers:subagent-driven-development` | per **eseguire** un piano: un subagente fresco per compito, con revisione fra uno e l'altro. È la modalità scelta dal proprietario |
 | `superpowers:test-driven-development` | quando comincerà il codice |
 
@@ -95,7 +90,7 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | **Schema-first** | tabelle, diagrammi, elenchi numerati. Niente muri di testo |
 | **Ma prima a parole** | quando l'argomento esce dal dominio del proprietario (non è operativo in Rust), si spiega **prima** a parole semplici e **poi** si schematizza |
 | **Stato dell'arte verificato** | se una nozione non è certa si cerca **prima** di scrivere, e la fonte si traccia in [`docs/riferimenti.md`](docs/riferimenti.md). **Mai inventare** |
-| ⛔ **Uno schema è una verifica, e corregge ciò che esiste** | **decisione del proprietario del 2026-09-08, e vale per ogni studio, brainstorming o diagramma futuro:** prima dell'A/B si controllano esplicitamente tre cose — che cosa **esiste già** (codice, ADR, disegni), che cosa **arriva** (la roadmap) e se **regge crescendo** — e si dicono a parole. Se lo schema è più corretto di una logica, di un ADR o del codice, si correggono **quelli**: l'ADR col richiamo datato, il codice come compito del piano, sempre in forma A/B, mai in silenzio. La prima applicazione, la sezione 1 della passata sui diagrammi, ha trovato due difetti in nove righe |
+| ⛔ **Uno schema è una verifica, e corregge ciò che esiste** | **decisione del proprietario del 2026-09-08, e vale per ogni studio, brainstorming o diagramma futuro:** prima dell'A/B si controllano esplicitamente tre cose — che cosa **esiste già** (codice, ADR, disegni), che cosa **arriva** (la roadmap) e se **regge crescendo** — e si dicono a parole. Se lo schema è più corretto di una logica, di un ADR o del codice, si correggono **quelli**: l'ADR col richiamo datato, il codice come compito del piano, sempre in forma A/B, mai in silenzio |
 | **Dichiarare i costi** | ogni decisione elenca ciò che peggiora. Un ADR senza `Negative (accettate)` è incompleto |
 | **Un'idea nuova può essere già stata scartata** | prima di proporre qualcosa che **sostituisce** una decisione presa, si cerca **dove era già stata valutata e perché era caduta**. Si riapre **solo con una prova nuova**; e se la prova nuova gioca contro, si **registra e si chiude**. Vale anche — soprattutto — per le proprie idee |
 | **ADR append-only** | superato → `Superseded by`; completato → un **rimando**. Completare una riga di verifica **non** è superare l'ADR |
@@ -104,8 +99,8 @@ Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
 | ⛔ **Un numero misurato non si scrive: si scrive il COMANDO che lo produce** | un numero invecchia al primo commit che tocca ciò che misura; un comando no. Se il numero deve comparire — perché sostiene una decisione — porta accanto il **comando** e la **data**, e vive in **una** casa sola. ⚠️ **Misurato il 2026-08-28:** il **92%** della lettura obbligatoria era storia di numeri corretti, e la testa di questo file aveva sbagliato il proprio peso **sei volte**. Gotcha **#31** |
 | ⛔ **Un verbale di correzione non resta nel documento corretto** | va in [`docs/archivio/`](docs/archivio/), con la data; il documento vivo porta ciò che è **vero adesso**. È la metà mancante della riga qui sopra: senza di essa la regola dice *dove* mettere il numero e non *dove* mettere la sua storia, e la storia si accumula esattamente dove la si è corretta. ⛔ **Il freno è nel cancello**, non nella buona volontà: `check-docs.sh` respinge un compendio sopra il proprio tetto |
 | **Le misure nello scratchpad** | non nel repository, e si ripulisce dopo |
-| ⛔ **I fine-riga sono misti _per file_** | non c'è una convenzione da seguire: c'è **un file da non cambiare**. Uno script che riscrive un sorgente ne normalizza i fine-riga senza dirlo, e `git diff` dichiara **seicento righe cambiate** che nessuno ha toccato — successo **tre volte**, l'ultima il 2026-08-18 con un `sed -i` su `crates/kernel/Cargo.toml`, **43 CR → 0**. Chi scrive uno strumento che tocca file **conserva i fine-riga di quel file**, e li **rimisura dopo** con `tr -cd '\r' \| wc -c` invece di fidarsi |
-| ⛔ **Una dipendenza si aggiunge in _due_ passi** | dal 2026-08-18 il cancello passa `--locked` a **tutti** i suoi siti `cargo` — *tutti* è la relazione che regge quando il cancello guadagna un passo, una cifra no; il comando che la verifica sta in [`docs/riferimenti.md`](docs/riferimenti.md), in una casa sola — quindi il `Cargo.lock` è un **ingresso** e non più un effetto. Toccare un manifesto da solo lascia il cancello **rosso**: il lockfile si rinfresca **fuori** dal cancello — un `cargo build` senza il flag — e si committa **insieme** al manifesto. È il punto e non il prezzo: ADR-0031 chiama l'aggiunta di una voce *«un atto deliberato e rivedibile»*, e un lockfile che il cancello aggiornava da sé non era né l'uno né l'altro. Finding **G-5** |
+| ⛔ **I fine-riga sono misti _per file_** | non c'è una convenzione da seguire: c'è **un file da non cambiare**. Uno script che riscrive un sorgente ne normalizza i fine-riga senza dirlo, e `git diff` dichiara **seicento righe cambiate** che nessuno ha toccato — successo **tre volte** (il verbale in archivio). Chi scrive uno strumento che tocca file **conserva i fine-riga di quel file**, e li **rimisura dopo** con `tr -cd '\r' \| wc -c` invece di fidarsi |
+| ⛔ **Una dipendenza si aggiunge in _due_ passi** | dal 2026-08-18 il cancello passa `--locked` a **tutti** i suoi siti `cargo` (il comando che lo verifica sta in [`docs/riferimenti.md`](docs/riferimenti.md)) — quindi il `Cargo.lock` è un **ingresso** e non più un effetto. Toccare un manifesto da solo lascia il cancello **rosso**: il lockfile si rinfresca **fuori** dal cancello — un `cargo build` senza il flag — e si committa **insieme** al manifesto. Il perché: ADR-0031 vuole che aggiungere una voce sia *«un atto deliberato e rivedibile»*; il verbale in archivio. Finding **G-5** |
 | **Audit a ogni chiusura** | `bash scripts/check-docs.sh` prima di ogni commit di documentazione |
 | **Commit e push** | alla chiusura di ogni voce si **committa e si pusha**, senza chiedere, e **senza co-autore** |
 
@@ -135,13 +130,6 @@ gotcha che porta il suo numero, e si apre solo se serve.
 | 6 | ⛔ **Vale anche per un DISEGNO, e le guardie non sono tutto il codice: ciò che ti smentisce può stare in un BANCO DI PROVA, perfino in un commento** | gotcha **#58** |
 | 7 | ⛔ **Un ADR si legge anche contro i propri FRATELLI**, non solo contro il codice: due decisioni della stessa data possono contraddirsi senza che nessuna delle due nomini l'altra | gotcha **#59** |
 | 8 | ⛔ **Un RAPPORTO è un piano, e si prezza leggendo il CODICE — in ENTRAMBE le direzioni**: può chiedere più del necessario, e può chiedere meno | gotcha **#65** |
-
-⚠️ **Il testo lungo di queste quattro righe è stato tolto da qui il 2026-08-28**, non
-perso: erano quattro paragrafi che ricopiavano i gotcha **#49**, **#58**, **#59** e **#65**
-di [`docs/HANDOFF.md`](docs/HANDOFF.md), che ne è la casa. ⛔ **Ciò che è rimasto è
-l'ISTRUZIONE**, perché questo file è l'unica lettura obbligatoria e `HANDOFF.md` non lo è:
-una regola che sparisse di qui non verrebbe letta da nessuno. **Il caso** invece si apre
-solo quando serve, ed è per questo che può vivere altrove.
 
 ## Manutenzione della documentazione
 

@@ -785,6 +785,13 @@ L'elenco numerato qui sotto resta com'era, come verbale.
    taglio; la riga del comando nella tabella dello stato della stella polare; decisione 43 del coordinatore (il comando dei
    finding chiusi resta nella §6, fuori dal taglio) e una registrata nuova (quanto della stella polare si legga all'apertura).
    Qui sotto, com'erano, il paragrafo di «Da sapere subito» e il blocco della proposta.
+4. **Taglio 5, A (decisione 31):** misurati prima i sette pezzi di cronaca di `CLAUDE.md` — 2 173 byte e 753 token su
+   5 019, contro la stima di ~2 000 token della dodicesima ripresa: divergenza detta al proprietario prima della domanda, e il
+   consiglio A dato per coerenza (la regola di `CLAUDE.md` sui verbali) e non per i token. I sette pezzi in
+   `docs/archivio/lettura-di-apertura-storico.md` con la data e dove stavano; `CLAUDE.md` da 15 892 a 14 412 byte, ogni regola
+   col suo perché e il rimando «il verbale in archivio» (decisione 44 del coordinatore); il puntatore della §6 del compendio
+   e la sua intestazione aggiornati allo stato del mandato. Qui sotto, com'erano, il paragrafo di «Da sapere subito» dopo il
+   taglio 4 e il paragrafo della domanda 5.
 
 ### Il paragrafo di «Da sapere subito» com'era alla chiusura della dodicesima ripresa
 
@@ -812,3 +819,22 @@ rilanciato e letto dal log. Nessun codice toccato; toccato `scripts/check-docs.s
 > - **B:** resta com'è.
 >
 > **Consiglio: A.** È l'unico posto dove vive il prossimo passo: più è corto, meno invecchia.
+
+### Il paragrafo di «Da sapere subito» com'era dopo il taglio 4
+
+✅ **Il mandato alla tredicesima ripresa, il 2026-09-09: QUATTRO tagli eseguiti, tutti approvati A (decisioni 27–30):** la
+cronaca di questo file in archivio; la lettura dell'audit ristretta a due pezzi; il riquadro delle voci aperte della §6 del
+compendio ridotto agli indici; il puntatore «Il prossimo passo» della §6 riscritto allo stato di oggi — da 7 195 a 4 231 byte,
+il comando nella tabella dello stato — e il testo com'era in `docs/archivio/stato-storico.md`. Resta `CLAUDE.md`, la domanda
+5; poi `AVVIO-CHAT.md`, se il proprietario lo incolla ancora. La lettura d'apertura, rimisurata all'apertura coi comandi del
+punto 1 del prossimo passo: 335 806 byte e 108 738 token `cl100k` — il dopo lo rifà il comando. `check-docs.sh` OK e
+`GATE GREEN` all'apertura. Nessun codice toccato. Il paragrafo che stava qui, sulla dodicesima ripresa, è in archivio.
+
+### La domanda 5 com'era, nel prossimo passo — abbozzata alla dodicesima ripresa, chiusa A alla tredicesima
+
+⏭️ **La domanda 5, da porre adesso che la 4 è chiusa — `CLAUDE.md` (15,9 KB):** i verbali dentro la testa e dentro le righe delle tabelle — le
+sei volte del gotcha #31 sul peso della lettura, il richiamo del 2026-08-30 sulla riga di `writing-plans`, le storie dei fine-riga
+e di G-5, il capoverso del 2026-08-28 sotto le quattro domande — escono in `docs/archivio/lettura-di-apertura-storico.md`; ogni
+**regola** resta, con una riga di perché. Stima: a ~10 KB. È il documento del proprietario: ogni riga tolta è sua, A/B. Il guadagno
+è piccolo (~2 000 token) e va detto. Poi, se il proprietario incolla ancora il messaggio di `AVVIO-CHAT.md` (26 224 byte, comando
+nella §12 del compendio), lo stesso taglio anche lì; se non lo incolla più, resta com'è e si dice.

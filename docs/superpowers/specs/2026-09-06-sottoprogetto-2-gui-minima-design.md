@@ -6,7 +6,7 @@ volta, in chat, ciascuna col controllo esplicito sui cinque criteri di `anthropi
 stella polare) — sono scritte qui sotto; le **§1, §2 e §6a** sono **riscritte** il 2026-09-09 sulla base della stella polare,
 come la sua §3 prescriveva, col richiamo datato in testa a ciascuna. Chi riprende ha un disegno intero da tradurre in un
 **piano in due parti** — la prima fino allo spike compreso — **dopo** che il proprietario lo ha riletto in questa forma.
-⏳ **La rilettura del proprietario è da fare:** si dà in chat, non si deduce, e la §10 dice con quale domanda si apre.
+✅ **Riletto dal proprietario il 2026-09-09**, in chat, voce per voce: B alla domanda minima della §10, poi le sei voci sue, tutte A (decisioni 41–47 della stella polare); il prossimo passo lo dice la §6 del compendio.
 
 ⚠️ **RICHIAMO DEL 2026-09-09, sedicesima ripresa della stella polare:** questo file è nato come **consegna** del brainstorming
 del 2026-09-06, fermato a metà per scelta del proprietario, poi **allargato** il 2026-09-07 alla forma di tutta la GUI — la
@@ -583,7 +583,7 @@ non si deduce da una chiusura. La **domanda minima** con cui la sessione nuova a
 disegni per intero: *«i due disegni sono riletti?»* — **A**, sì: si scrive la parte 1 del piano (punti 5–7 qui sotto); **B**,
 no: si presentano una per volta, in forma A/B col consiglio scritto, le voci che sono del proprietario — le righe 5, 6, 11 e 13
 della §9, e le decisioni di questa sessione qui sotto che tocca a lui tenere o ribaltare: i nomi (9), la §1 per rimando (2) —
-e **poi** si scrive il piano nella stessa sessione, se il contesto regge. ✅ **Alla chiusura il proprietario ha risposto A** (decisione 40 della stella polare): la rilettura in una sessione nuova.
+e **poi** si scrive il piano nella stessa sessione, se il contesto regge. ✅ **Alla chiusura il proprietario ha risposto A** (decisione 40 della stella polare): la rilettura in una sessione nuova. ✅ **RILETTURA FATTA il 2026-09-09, nella sessione nuova:** B alla domanda minima; poi le sei voci una per volta, in forma piena (esiste, arriva, regge, i cinque criteri, verificato/dedotto/assunto), tutte **A** — la riga 5 della §9 (decisione 41), la 6 (42), l'11 (43), la 13 in due metà, X-1 e X-3 (44 e 45), i nomi (46), la §1 per rimando (47); ogni risposta scritta nei due disegni e, per X-1 e X-3, nell'audit, un commit l'una. Si passa ai punti 5–7 qui sotto.
 
 #### Lo stato alla chiusura, e il comando che lo rifà
 
@@ -591,6 +591,7 @@ e **poi** si scrive il piano nella stessa sessione, se il contesto regge. ✅ **
 |---|---|
 | Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb` dopo `git fetch --all --prune`. Nessuno stash, nessuna operazione a metà |
 | I commit di questa sessione | `git log --oneline a539f2a..HEAD` — i due disegni scritti sul posto, i due archivi, `riferimenti.md`, il puntatore della §6 del compendio; poi la chiusura, se separata |
+| I commit della rilettura, 2026-09-09 | `git log --oneline bbf95fb..HEAD` — la correzione della riga «codice di prodotto» qui sotto, poi le decisioni 41–47, un commit l'una |
 | Codice di prodotto | **non toccato**: `git diff --stat 664265a..HEAD -- crates/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` non rende nulla; di `scripts/` solo `check-docs.sh` (il tetto del compendio, taglio 3) e della spec del sotto-progetto 1 solo la §8.2 (decisione 19): `git diff --stat 664265a..HEAD -- scripts/ docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` ⚠️ **RICHIAMO DEL 2026-09-09, alla ripresa per la rilettura del proprietario:** la prima metà di questa cella diceva il falso. Rilanciato, il comando rende **tre** file di `docs/adr/` — 0006, 0019 e 0022, tredici righe aggiunte ciascuno — che sono i **rimandi datati del 2026-09-08** della passata sui diagrammi (decisioni 17 e 18 della stella polare; commit `f6055b0` e `64892df`), non codice: `crates/`, `Cargo.lock`, `Cargo.toml` e `rust-toolchain.toml` non rendono nulla. La tabella dello stato della stella polare, che lancia il comando **senza** `docs/adr/`, era già giusta. Trovato rilanciando la riga alla ripresa, com'è la regola |
 | Cancello | `bash scripts/check-docs.sh` → `OK`; `bash scripts/gate.sh` → **`GATE GREEN`, rilanciato all'apertura e alla chiusura** — nessun file che il cancello compili è cambiato fra le due corse. Si rilanciano, non si citano |
 | Fine-riga | i due disegni e i due archivi **LF** nell'indice e nell'albero; il compendio e `riferimenti.md` LF nell'indice e **CRLF** nell'albero, con CR = righe: `git ls-files --eol docs/COMPENDIO.md docs/riferimenti.md docs/archivio/consegna-brainstorming-direzione-gui.md docs/archivio/consegna-brainstorming-sottoprogetto-2.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md`, e `tr -cd '\r' < docs/COMPENDIO.md \| wc -c` contro `wc -l < docs/COMPENDIO.md` |
@@ -603,7 +604,7 @@ e **poi** si scrive il piano nella stessa sessione, se il contesto regge. ✅ **
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
 | 1 | commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md` dice *«senza co-autore»*; una direttiva di sistema chiede il contrario e la divergenza è **portata al proprietario**, come in ogni sessione di questo repository. Costo se sbagliato: un `--amend` |
-| 2 | la §1 riscritta **per rimando** alla §3 della stella polare, senza ricopiare i nove pezzi né il «non costruisce» | la §6 della stella polare (decisione 38): il 2 rimanda e non ricopia, gotcha #68; la §3 diceva *«la tabella qui sopra al posto degli otto pezzi»*, e «al posto» si è letto come casa unica. Costo: chi legge il perimetro del 2 apre due file. Ribaltare costa un incolla |
+| 2 | la §1 riscritta **per rimando** alla §3 della stella polare, senza ricopiare i nove pezzi né il «non costruisce» | la §6 della stella polare (decisione 38): il 2 rimanda e non ricopia, gotcha #68; la §3 diceva *«la tabella qui sopra al posto degli otto pezzi»*, e «al posto» si è letto come casa unica. Costo: chi legge il perimetro del 2 apre due file. Ribaltare costa un incolla. ✅ **Tenuta dal proprietario il 2026-09-09: decisione 47 della stella polare** |
 | 3 | la §6a riscritta tenendo le **regole** che le tabelle della §1 della stella polare citano come fonte («§6a del 2») e rimandando per ciò che ogni modulo mostra | senza le regole qui, tre righe della stella polare citerebbero una fonte sparita. Costo: la §6a si legge insieme alla §1 della stella polare |
 | 4 | la §2 riscritta con le righe Q3 e Q4 e una riga «le otto mosse» che rimanda alla §4 della stella polare | la §3 della stella polare prescriveva «idem»: richiamo e riscrittura; le mosse hanno una casa sola. Costo: nessuno |
 | 5 | i richiami datati sulla §4 (le tre varianti, i nomi fissati) e sulla §5 (`SaveLayout`, `Steps`, il nome del modulo) **scritti ora** | la §3 della stella polare li prescriveva dal 2026-09-08 e la §4 non li portava — misurato: `grep -c 'Layout'` sulle righe della §4 rendeva **0** prima di oggi; la §5 li aveva solo nella riga `Hello`. Costo: nessuno |
@@ -612,7 +613,7 @@ e **poi** si scrive il piano nella stessa sessione, se il contesto regge. ✅ **
 | 8 | in questo file escono lo stato, il «fatto», le «sezioni che mancano» e il «prossimo passo» superato dal 2026-09-07; restano le risposte del proprietario, i fatti del codice, le decisioni del coordinatore del 2026-09-06 e i vicoli ciechi | stessa regola: il vivo porta ciò che è vero adesso. Costo: nessuno, l'archivio ha tutto |
 | 9 | i **nomi inglesi** fissati nella §1: la settima porta `custody` (`Custody`, `keep`, `retrieve`, `CustodyKey::Layout`), il registro `registry`, i messaggi della §4 confermati e la lista dei passi `Steps` | le sezioni li lasciavano «al disegno scritto» (voce 16 della §9); `custody` è la parola dei disegni stessi, i verbi corti come le altre porte. Costo se sbagliato: un rinomina prima che esista codice ✅ **Tenuta dal proprietario il 2026-09-09: decisione 46 della stella polare** |
 | 10 | nessuna riga nuova in `README.md`, `roadmap.md`, `tracciabilita.md` e nella §12 del compendio | compito del piano, decisione 9 del coordinatore della stella polare e §6. Costo: fino al piano, i due disegni li trova solo chi parte dalla §6 del compendio |
-| 11 | la rilettura del proprietario **non è data per fatta**: la riga «⏳» in testa ai due disegni, e la domanda minima qui sopra | il sì è condizionato e si dà in chat. Costo: nessuno |
+| 11 | la rilettura del proprietario **non è data per fatta**: la riga «⏳» in testa ai due disegni, e la domanda minima qui sopra | il sì è condizionato e si dà in chat. Costo: nessuno. ✅ **Fatta il 2026-09-09**, le righe «⏳» chiuse |
 
 #### Il compito della sessione successiva: la rilettura del proprietario, poi il piano in due parti
 
@@ -626,7 +627,7 @@ In ordine, e ogni riga è eseguibile:
    il resto a 75–150 (i vicoli ciechi della stella polare dicono dove).
 3. Il proprietario **rilegge** i due disegni sotto la sua accettazione condizionata — la domanda minima in testa a questa
    sezione. Le voci per lui: le righe 5, 6, 11 e 13 della §9 e le decisioni 2 e 9 di questa sessione; se non dice altro, il
-   piano scrive i consigli.
+   piano scrive i consigli. ✅ **Fatto il 2026-09-09:** tutte e sei decise A, coi consigli (decisioni 41–47).
 4. Prima di scrivere il piano, la regola di `CLAUDE.md` su `superpowers:writing-plans`: le voci aperte **si sanno prima**. Dove
    stanno: la §9 di questo file; le registrate della stella polare; le voci senza numero AUD
    dell'[audit](../../audit-2026-08-27.md) — X-1 e X-3 pesano sul 2, voce 13 della §9; le tabelle delle voci aperte dei
@@ -644,7 +645,7 @@ In ordine, e ogni riga è eseguibile:
    guardare.
 7. L'esecuzione in una sessione **nuova**, un subagente fresco per compito, revisione fra uno e l'altro
    (`superpowers:subagent-driven-development`): la regola del proprietario. Le due domande A/B per la CI — la metà Windows
-   (X-1) e `npm audit` (X-3), voce 13 della §9 — si pongono al proprietario **quando si scrive il piano**.
+   (X-1) e `npm audit` (X-3), voce 13 della §9 — si pongono al proprietario **quando si scrive il piano**. ✅ **Già poste e decise A il 2026-09-09** (decisioni 44 e 45): il piano le esegue.
 8. Dopo la misura: la **parte 2** — i pezzi 2–9 della §3 della stella polare, con ciò che dipende dal guscio deciso coi numeri
    (chi decodifica, `gui/shell/` se vince Tauri) — scritta con lo stesso pre-controllo ed eseguita allo stesso modo; le righe
    nella §12 del compendio, in `README.md`, nella roadmap (il titolo della riga 2) e in tracciabilità entrano con essa (§6 della

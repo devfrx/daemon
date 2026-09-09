@@ -800,6 +800,15 @@ L'elenco numerato qui sotto resta com'era, come verbale.
    polare è cresciuta di ~900 con le righe delle decisioni e dello stato (decisione 45 del coordinatore: il punto 1 del
    prossimo passo, la misura datata e il metodo, esce qui sotto e resta una riga coi comandi). Qui sotto, com'erano, il
    paragrafo di «Da sapere subito» dopo il taglio 5, il paragrafo della domanda su `AVVIO-CHAT.md` e il punto 1.
+6. La **§7 del 2** riposta al proprietario parola per parola dal blocco *«La proposta per la sezione 5»* della stella
+   polare, con la verifica che il codice è intatto da `664265a`; lette prima le §1–§6a della consegna del 2, le sue sezioni
+   che mancano, le §2–§3 della stella polare e le sue sezioni che mancano. **Senza risposta:** il proprietario ha chiesto la
+   chiusura con `session-handoff` («continuiamo nella prossima sessione»).
+7. Chiusura: la stella polare (stato in una riga, «Da sapere subito», il prossimo passo con l'ordine della sessione nuova e
+   le letture che bastano, il richiamo sotto il blocco della §7, quattro vicoli ciechi), questa cronaca; `check-docs.sh` OK
+   e il cancello rilanciato e letto dal log (`GATE GREEN`); scratchpad pulito; la memoria dell'agente aggiornata; nessun
+   codice toccato. I commit della ripresa: `b0901e4` (taglio 4), `33b9b78` (taglio 5), `fa84516` (la chiusura del mandato),
+   e il commit di questa chiusura.
 
 ### Il paragrafo di «Da sapere subito» com'era alla chiusura della dodicesima ripresa
 

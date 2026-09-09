@@ -31,7 +31,9 @@ decisioni aperte, come si riprende — **e la 6**, dove vive la stella polare; p
 del 2 in due parti. Nessun codice toccato. ✅ **Il mandato del proprietario (decisione 26) — sfoltire la lettura d'apertura — è ESEGUITO il 2026-09-09:** cinque
 tagli, tutti A (decisioni 27–31) — questo file, la testa dell'audit, il riquadro delle voci aperte della §6 del compendio,
 il puntatore della §6, `CLAUDE.md` — e `AVVIO-CHAT.md` resta com'è perché il proprietario non lo incolla più (decisione
-32). La **§7 del 2 è presentata in forma A/B e senza risposta**: si riprende da lì. La cronaca ripresa per ripresa sta in archivio (il richiamo in testa).
+32). ⛔ **La §7 del 2 è stata RIPOSTA in forma A/B alla chiusura della tredicesima ripresa, chiesta dal proprietario con
+`session-handoff`, e resta SENZA risposta**: si riprende da lì, dal blocco *«La proposta per la sezione 5»* del prossimo
+passo. La cronaca ripresa per ripresa sta in archivio (il richiamo in testa).
 
 ## ⛔ Da sapere subito
 
@@ -42,7 +44,9 @@ spec del sotto-progetto 1 (la lettera E, su delega), una riga di `CLAUDE.md` (de
 compendio, e l'archivio della cronaca.
 
 ⛔ **Il prossimo passo è la §7 del 2**, dalla domanda A/B lasciata aperta: il come, coi comandi, sta in «Prossimo passo,
-eseguibile».
+eseguibile». ⛔ **Alla chiusura della tredicesima ripresa (2026-09-09) la domanda è stata RIPOSTA al proprietario parola per
+parola, con la verifica che il codice è intatto da `664265a`, e resta SENZA risposta:** il proprietario ha chiesto la chiusura
+con `session-handoff` («continuiamo nella prossima sessione»).
 
 ✅ **Il mandato (decisione 26) è ESEGUITO alla tredicesima ripresa, il 2026-09-09: cinque tagli, tutti A (decisioni 27–31),
 e `AVVIO-CHAT.md` resta com'è (decisione 32, B: non è più incollato).** I tagli 4 e 5 di oggi: il puntatore «Il prossimo
@@ -52,8 +56,9 @@ che stanno in `docs/archivio/lettura-di-apertura-storico.md`, ogni regola col su
 piccolo, e va detto:** la lettura d'apertura, coi comandi del punto 1, è passata da 335 806 a 334 300 byte e da 108 738 a
 108 137 token `cl100k` — il compendio e `CLAUDE.md` hanno perso ~1 500 token, questo file ne ha guadagnati ~900 con le righe
 delle decisioni e dello stato: il prezzo della regola «ogni decisione ha una riga». Il grosso l'hanno fatto i tre tagli della
-dodicesima ripresa (da 551 293 a 324 341 byte); il dopo lo rifà il comando. `check-docs.sh` OK e `GATE GREEN` all'apertura.
-Nessun codice toccato. I paragrafi che stavano qui — sulla dodicesima ripresa, dopo il taglio 4, dopo il taglio 5 — sono in
+dodicesima ripresa (da 551 293 a 324 341 byte); il dopo lo rifà il comando. `check-docs.sh` OK e `GATE GREEN` all'apertura;
+alla chiusura `check-docs.sh` OK e `GATE GREEN` rilanciato e letto dal log. Nessun codice toccato, nessuno script
+toccato. I paragrafi che stavano qui — sulla dodicesima ripresa, dopo il taglio 4, dopo il taglio 5 — sono in
 archivio.
 
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
@@ -1040,6 +1045,18 @@ dopo la misura.
   righe (41,8 KB), com'era scritto: lì 40. E `git ls-files --eol` mostra un file nuovo solo dopo `git add`.
 - **dodicesima ripresa:** un blocco `#### ` che riporta una domanda A/B si scrive come citazione (`> `), così il testo resta
   parola per parola e non si confonde col vivo; il blocco della §7 è nella stessa forma.
+- **tredicesima ripresa:** `sed` in questa Git Bash toglie i CR in lettura — `sed -n '5p' file | cat -A` non mostra `^M` su un
+  file CRLF — quindi un `sed -i` riscriverebbe un file CRLF in LF, la trappola dei fine-riga di `CLAUDE.md`. Ogni taglio è stato
+  uno script Python nello scratchpad che legge in binario, sostituisce per **ancore uniche** con `assert`, riscrive coi fine-riga
+  del file; poi `tr -cd '\r' < file | wc -c` contro `wc -l < file` e `git ls-files --eol`.
+- **tredicesima ripresa:** togliere una riga di tabella con una sostituzione a span lascia una riga vuota che **spezza la tabella
+  in due**, e `check-docs.sh` non lo vede. Il controllo, che deve non stampare nulla:
+  `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <file>`.
+- **tredicesima ripresa:** una stima scritta prima della misura ha sbagliato di tre volte — `CLAUDE.md`: «~2 000 token», misurati
+  753 — e ogni riga di decisione aggiunta a questo file costa quanto un piccolo taglio: i tagli 4 e 5 hanno reso ~600 token
+  netti. La misura si fa **prima** di porre la domanda, e la divergenza si dice.
+- **tredicesima ripresa:** `python -` con un `print` di testo fuori da cp1252 fallisce **dopo** aver scritto il file, e l'errore
+  sembra un fallimento dello script: `sys.stdout.reconfigure(encoding='utf-8')` in testa, come il primo vicolo di questa lista.
 
 ## Prossimo passo, eseguibile
 
@@ -1050,8 +1067,14 @@ passo» della §6 riscritto; `CLAUDE.md` sfoltito dei sette verbali — e `AVVIO
 lettura d'apertura si rimisura coi comandi del punto 1; la consegna del 2 resta com'è.
 
 ✅ **Le domande 4 e 5, e quella su `AVVIO-CHAT.md`, hanno avuto risposta alla tredicesima ripresa (decisioni 30, 31 e 32)**:
-i testi com'erano in archivio, i blocchi delle proposte nella cronaca. ⏭️ **L'ordine da qui:** il punto 2, la §7, dal blocco
-*«La proposta per la sezione 5»* qui sotto.
+i testi com'erano in archivio, i blocchi delle proposte nella cronaca. ⛔ **Alla chiusura della tredicesima ripresa (2026-09-09), chiesta dal proprietario con `session-handoff`, la domanda sulla §7 è
+stata RIPOSTA parola per parola e resta SENZA risposta.** ⏭️ **L'ordine della sessione nuova:** la risposta A o B al blocco *«La
+proposta per la sezione 5»* qui sotto; poi la §7 scritta nella consegna del 2 sotto «Le sezioni approvate del disegno», nella
+forma delle §3–§6a (Pezzo · Forma · La prova), e la riga 7 di «Le sezioni che mancano» della consegna col richiamo;
+`check-docs.sh`, commit, push; poi il punto 3 (la §8), il 4 (§9, §10 e la sezione 6), il 5. **Le letture che bastano:** le parti
+di stato di questo file (fino alla tabella delle decisioni, e da «Prossimo passo, eseguibile» in giù), poi la §3 qui sopra e
+«La GUI dentro»; della consegna del 2 le §3–§6a e la tabella «Le sezioni che mancano» (`grep -n '^## \|^### '` dà le righe);
+il merito restante di questo file quando la §8 lo chiede.
 
 ⏭️ **L'ordine eseguibile:**
 
@@ -1087,6 +1110,10 @@ i testi com'erano in archivio, i blocchi delle proposte nella cronaca. ⏭️ **
 il messaggio resta com'è e non è più lettura d'apertura; il paragrafo della domanda, com'era, sta nella cronaca in archivio.
 
 #### La proposta per la sezione 5 — §7, il core finto · presentata il 2026-09-09, undicesima ripresa, SENZA risposta
+
+✅ **Richiamo del 2026-09-09, tredicesima ripresa:** riposta al proprietario com'è, parola per parola, dopo la verifica che il
+codice è intatto da `664265a` (`git diff --stat 664265a..HEAD` su `crates/`, `scripts/`, `spikes/`: solo il tetto di
+`check-docs.sh`); senza risposta alla chiusura, chiesta con `session-handoff`.
 
 **A parole.** Un programma piccolo in `gui/fake-core/` che finge di essere il core, così la GUI si costruisce e si prova prima
 che il daemon vero faccia tutto e prima che esista un modello. Parla sul filo vero con lo schema vero. Già approvato (§1 e la

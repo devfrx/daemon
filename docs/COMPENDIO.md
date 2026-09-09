@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-09**, col puntatore della §6 riscritto per la **sezione 4** della stella polare della GUI — lo spike di accettazione di `dockview`, otto mosse, la mossa 8 decisa dal proprietario — **scritta**, e **sfoltito** della cronaca delle riprese, che vive nella stella polare e, parola per parola, in [`archivio/stato-storico.md`](archivio/stato-storico.md), e alla chiusura per il **mandato del proprietario** sulla lettura d'apertura (decisione 26 della stella polare); poi, lo stesso giorno, il paragrafo dell'audit della §6 riscritto per il **taglio 2** del mandato, e il riquadro delle voci aperte ridotto agli **indici** per il **taglio 3**, e — alla tredicesima ripresa dello stesso giorno — il puntatore «Il prossimo passo» riscritto allo **stato di oggi** per il **taglio 4**, e il suo stato del mandato aggiornato alla **chiusura del mandato** (cinque tagli, `AVVIO-CHAT.md` com'è), e alla quattordicesima ripresa il punto 1 del prossimo passo passato alla **§9** del 2 con le §7 e §8 scritte, e alla chiusura le §9, §10 e la sezione 6 decise su delega e da scrivere, e alla quindicesima ripresa **scritte**, col prossimo passo passato al punto 2 — i due disegni sul posto; l'ultimo contenuto di **merito** resta la sezione 4. Manutenzione: §13.
+**Aggiornato il 2026-09-09**, col puntatore della §6 riscritto per la **sezione 4** della stella polare della GUI — lo spike di accettazione di `dockview`, otto mosse, la mossa 8 decisa dal proprietario — **scritta**, e **sfoltito** della cronaca delle riprese, che vive nella stella polare e, parola per parola, in [`archivio/stato-storico.md`](archivio/stato-storico.md), e alla chiusura per il **mandato del proprietario** sulla lettura d'apertura (decisione 26 della stella polare); poi, lo stesso giorno, il paragrafo dell'audit della §6 riscritto per il **taglio 2** del mandato, e il riquadro delle voci aperte ridotto agli **indici** per il **taglio 3**, e — alla tredicesima ripresa dello stesso giorno — il puntatore «Il prossimo passo» riscritto allo **stato di oggi** per il **taglio 4**, e il suo stato del mandato aggiornato alla **chiusura del mandato** (cinque tagli, `AVVIO-CHAT.md` com'è), e alla quattordicesima ripresa il punto 1 del prossimo passo passato alla **§9** del 2 con le §7 e §8 scritte, e alla chiusura le §9, §10 e la sezione 6 decise su delega e da scrivere, e alla quindicesima ripresa **scritte**, col prossimo passo passato al punto 2 — i due disegni sul posto, e alla sedicesima ripresa per i **due disegni scritti sul posto** — la stella polare e il disegno del 2 — con le consegne in archivio e le fonti in `riferimenti.md`; l'ultimo contenuto di **merito** resta la sezione 4. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -655,6 +655,7 @@ stato di oggi: è l'unico posto dove vive il prossimo passo, e più è corto men
 | il **riconoscimento gesti** — ADR-0038 e ADR-0039, SP-7 misurato, la sonda S3 nel cancello | 2026-09-04 | [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) e [piano](superpowers/plans/2026-09-03-riconoscimento-gesti.md); l'esito di SP-7 in `spikes/RISULTATI.md` |
 | la **knowledge base** — brainstorming, disegno riletto dal proprietario, piano dei documenti eseguito: i rimandi in testa a ADR-0008, 0009, 0010 e 0038 e la riga 13 della roadmap. Il verdetto: nessuna sesta proprietà, ma un **vincolo d'ordine** — il **13** prima del 3 | 2026-09-05 | [disegno](superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge **per intero**, e [piano](superpowers/plans/2026-09-04-knowledge-base-documenti.md); la consegna in [`archivio/consegna-brainstorming-knowledge-base.md`](archivio/consegna-brainstorming-knowledge-base.md) |
 | le **sezioni 1–4 della stella polare della GUI** — catalogo dei moduli, viste e disposizione con la **settima porta** del kernel, la fetta del 2, lo spike di accettazione di `dockview` — e la **passata sui diagrammi** (decisione 16), con la decisione 18 scritta in `CLAUDE.md` | 2026-09-09 | [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md), «Le sezioni approvate del disegno» e la tabella delle decisioni; la consegna dell'avvio del 2 in [`archivio/consegna-avvio-brainstorming-sottoprogetto-2.md`](archivio/consegna-avvio-brainstorming-sottoprogetto-2.md) |
+| i **due disegni della GUI, scritti sul posto** — la [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md), sezioni 1–4 e 6, e il [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), §1–§10, con le §1, §2 e §6a riscritte; le due consegne in archivio parola per parola, le fonti in `riferimenti.md` | 2026-09-09 | la **§10 del disegno del 2**, «Come si riprende»; gli archivi [`consegna-brainstorming-direzione-gui.md`](archivio/consegna-brainstorming-direzione-gui.md) e [`consegna-brainstorming-sottoprogetto-2.md`](archivio/consegna-brainstorming-sottoprogetto-2.md) |
 
 ✅ **Il mandato del proprietario del 2026-09-09 — sfoltire la lettura d'apertura (decisione 26 della stella polare) — è
 ESEGUITO alla tredicesima ripresa:** cinque tagli, tutti A — la stella polare, la testa dell'audit, il riquadro delle voci
@@ -662,16 +663,17 @@ aperte di questa §6, questo puntatore, `CLAUDE.md` — e `AVVIO-CHAT.md` resta 
 più (decisione 32). La misura la rifanno i comandi nel prossimo passo della stella polare; il metodo — misurare prima, ogni
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
 
-⏭️ **IL PROSSIMO PASSO: IL SOTTO-PROGETTO 2, E PRIMA LA SUA STELLA POLARE.** Si riprende da
-[`specs/2026-09-07-direzione-gui-design.md`](superpowers/specs/2026-09-07-direzione-gui-design.md), da leggere **per intero**,
-poi dalla consegna del 2, [`specs/2026-09-06-sottoprogetto-2-gui-minima-design.md`](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md),
-coi richiami datati. L'ordine, coi comandi, sta in «Prossimo passo, eseguibile» della stella polare:
+⏭️ **IL PROSSIMO PASSO: IL PIANO DEL SOTTO-PROGETTO 2, IN DUE PARTI — DOPO LA RILETTURA DEL PROPRIETARIO.** I due disegni sono
+**scritti sul posto il 2026-09-09** (decisione 39 della stella polare): la
+[stella polare della GUI](superpowers/specs/2026-09-07-direzione-gui-design.md) — viste, moduli, disposizione, il protocollo
+core ↔ GUI — e il [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), le cui §1–§10 sono approvate.
+Si riprende dalla **§10 del disegno del 2**, «Come si riprende», che dà l'ordine coi comandi; i due disegni si leggono **per intero**:
 
-1. ✅ le **§7–§10 del 2** — il core finto; le prove e il cancello; le decisioni aperte col chiusore; come si riprende — e la
-   **sezione 6 della stella polare**, dove vive: tutte **scritte il 2026-09-09** (decisioni 33–38 della stella polare, le ultime tre su delega);
-2. ⏭️ **i due disegni scritti sul posto, in una sessione nuova (decisione 39 della stella polare)** — la stella polare come disegno della direzione della GUI, la consegna del 2 come disegno
-   del 2 con le §1 e §6a riscritte — le due consegne archiviate parola per parola; poi il piano del 2 in **due parti**, la prima
-   fino allo spike compreso; poi l'esecuzione, subagent-driven, in sessioni nuove;
+1. ⏳ la **rilettura del proprietario** dei due disegni in questa forma, in chat — il sì è condizionato e non si deduce; la
+   domanda minima con cui si apre sta nella §10;
+2. `superpowers:writing-plans` col piano del 2 in **due parti**, la prima fino allo spike compreso — guscio più accettazione di
+   `dockview` — la seconda scritta dopo la misura; il pre-controllo delle quattro domande di `CLAUDE.md` nella sessione che
+   scrive il piano; l'esecuzione, subagent-driven, in sessioni nuove;
 3. ADR-0029 si chiude con M1–M5 all'inizio del 2 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario
    che sbarra il **13**, non il 2 (voce 3 della rilettura del disegno della knowledge base); poi il 13, poi il 3 — decisione 16.
 

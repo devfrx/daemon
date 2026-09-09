@@ -1,100 +1,65 @@
-# La direzione della GUI — la stella polare: la consegna del brainstorming del 2026-09-07
+# La direzione della GUI — la stella polare: il disegno
 
-⚠️ **QUESTO FILE È LA CONSEGNA della sessione del 2026-09-07**, che ha ripreso il brainstorming del
-sotto-progetto 2 dalla [consegna del 2026-09-06](2026-09-06-sottoprogetto-2-gui-minima-design.md) e,
-per scelta del proprietario, lo ha **allargato alla forma di tutta la GUI**: non le due schermate del
-2, ma la stella polare — Home, Lavoro, Compatta, il nucleo a pagina intera — di cui il 2 costruisce la
-cornice più la propria fetta. Il proprietario ha fermato la sessione dopo il quarto wireframe, prima
-delle sezioni scritte. La sessione che riprende legge questo file **per intero**, poi la consegna del 2,
-conferma le approvazioni ancora sospese, chiude le sezioni che mancano una per volta, e scrive **sul
-posto** i due disegni: questo file come *disegno della direzione della GUI*, l'altro come *disegno del
-2*. Il testo di questa consegna va allora **parola per parola** in
-`docs/archivio/consegna-brainstorming-direzione-gui.md`, coi soli link riscritti per la cartella — è il
-viaggio della knowledge base (`07ab6dc` → `6a7967a`) e del 2 (`ae40fa0` → `664265a`).
+✅ **QUESTO DISEGNO È COMPLETO DAL 2026-09-09.** Le sezioni **1–4 e 6** sono **approvate** dal proprietario, una per volta, in
+chat fra il 2026-09-07 e il 2026-09-09 — le decisioni 14, 15 e 38 delegate al coordinatore con «decidi secondo la skill» —
+sotto l'**accettazione condizionata** la cui regola sta qui sotto; la sezione **5** — core finto, prove e cancello, decisioni
+aperte, come si riprende — vive nel [disegno del 2](2026-09-06-sottoprogetto-2-gui-minima-design.md) come **§7–§10**, e lì sta la
+consegna della sessione che ha scritto i due disegni (decisione 37). Chi riprende ha un disegno intero: il prossimo passo lo
+dice la §6 del [compendio](../../COMPENDIO.md), in un posto solo. ⏳ **La rilettura del proprietario in questa forma è da fare** —
+è il passo che viene prima del piano, si dà in chat e non si deduce; la domanda con cui si apre sta nella §10 del disegno del 2.
 
-⚠️ **Non è una spec e non è ancora il disegno.** Il prossimo passo sta nella §6 del
-[compendio](../../COMPENDIO.md), in un posto solo.
+⚠️ **RICHIAMO DEL 2026-09-09, sedicesima ripresa:** questo file è nato come **consegna** del brainstorming del 2026-09-07, allargato
+per scelta del proprietario dalle due schermate del 2 alla forma di tutta la GUI, ed è cresciuto in quindici riprese fino alla
+chiusura del 2026-09-09; il proprietario ha scelto che i due disegni li scrivesse la sessione **successiva** (decisione 39).
+Riscritto **sul posto**, allo stesso percorso, perché il puntatore della §6 del compendio non cambiasse casa, come fu per i
+disegni dei [gesti](2026-09-03-riconoscimento-gesti-design.md) e della [knowledge base](2026-09-04-knowledge-base-design.md). Il
+merito delle sezioni approvate, delle tre sequenze, del modello della GUI e delle due tabelle delle decisioni **non è stato
+toccato**; la consegna com'era sta **parola per parola**, intera, in coda a
+[`archivio/consegna-brainstorming-direzione-gui.md`](../../archivio/consegna-brainstorming-direzione-gui.md), nel file che già
+teneva la cronaca delle riprese; ciò che la riscrittura ha **misurato** in più sta nella §10 del disegno del 2.
 
-✅ **RICHIAMO DEL 2026-09-09, dodicesima ripresa — il mandato del proprietario (decisione 26), primo taglio, approvato A:**
-la cronaca delle undici riprese — «Stato in una riga», «Da sapere subito», la tabella dello stato e «Fatto in questa
-sessione» com'erano, e il «Prossimo passo» con le proposte già chiuse — è **archiviata parola per parola**, coi soli link
-riscritti, in [`../../archivio/consegna-brainstorming-direzione-gui.md`](../../archivio/consegna-brainstorming-direzione-gui.md);
-qui resta ciò che è vero adesso. Quando il disegno sarà scritto sul posto, il resto di questa consegna va nello **stesso**
-file, in coda.
+⛔ **Non è una spec e non disegna le capacità.** Colloca i **moduli**, le **viste**, la **disposizione**, le **regole** e il
+**protocollo core ↔ GUI** — è la stella polare di tutta la GUI, di cui il 2 costruisce la cornice più la propria fetta (§3, che
+è la casa del perimetro del 2). Ogni sotto-progetto **disegna i propri moduli quando arriva** — il 3 la Chat e i Passi delle
+run, il 6 il nucleo, il 10 Compatta, il 12 la mano — e, quando **costruisce** un modulo, mette un **richiamo datato** nella riga
+di quel modulo nella §1: la regola di [design/10](../../design/10-modello-dei-dati-durevoli.md), un'entità costruita passa con
+richiamo datato. Il disegno del 2 **rimanda qui per la forma** e non ricopia (§6). Gli ADR restano l'autorità — 0027 e 0030 per
+lo stack, 0033 per la GPU della GUI, 0038 per il registro delle funzioni, 0022 per l'archivio della disposizione — e ciò che
+questo disegno vi aggiunge è **scritto nelle sezioni**, col richiamo datato dove tocca un documento approvato.
 
-## Stato in una riga
+⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che rispetti la skill»
+alla strada, e poi A o B a ogni domanda. Se scrivendo il piano una decisione viola un criterio di
+`anthropic-skills:decision-principles`, l'accettazione decade: ci si ferma e lo si dice.
 
-Stella polare intera nelle sezioni: le **1–4 e la 6** sono chiuse e scritte qui sotto — il catalogo dei moduli, viste e
-disposizione con la **settima porta**, la fetta del 2 ritagliata, lo spike di accettazione di `dockview` con otto mosse, dove
-vive la stella polare — e la passata sui diagrammi (decisione 16) è chiusa; la 5 vive nella consegna del 2 come **§7–§10**,
-tutte **scritte** il 2026-09-09 (decisioni 33–37). ⛔ **Il prossimo passo è il punto 5:** i due disegni scritti **sul posto** —
-questo file come disegno della direzione della GUI, la consegna del 2 come disegno del 2, con le §1 e §6a del 2 riscritte sulla
-base di questo file — le due consegne archiviate parola per parola, poi il piano del 2 in due parti — in una sessione nuova (decisione 39). Nessun codice toccato.
-✅ Il mandato del proprietario (decisione 26) — sfoltire la lettura d'apertura — è **eseguito** il 2026-09-09: cinque tagli,
-tutti A (decisioni 27–31), e `AVVIO-CHAT.md` resta com'è (decisione 32). La cronaca ripresa per ripresa sta in archivio (il
-richiamo in testa).
+⚠️ **La modularità è decisa a condizione di una prova.** Il proprietario ha accettato i pannelli agganciabili di `dockview`
+dicendo «deve davvero battere la 3», la tela libera. La prova è nello spike del guscio (§4): se provandola non dà il «Jarvis»,
+si passa alla tela libera **prima** di scrivere la SPA.
 
-## ⛔ Da sapere subito
+📌 **Metodo.** Ogni affermazione porta la sua specie — **verificata** (letta nel sorgente o in un documento del repository, con
+la data), **dedotta**, o **assunta** — e ogni sezione le separa nel proprio «Controllo sui cinque criteri». Il codice non è
+cambiato da quando le sezioni lo hanno letto: `git diff --stat 664265a..HEAD -- crates/ Cargo.lock Cargo.toml rust-toolchain.toml`
+non rende nulla, rilanciato il 2026-09-09 alla scrittura. I comandi stanno accanto alle affermazioni e **si rilanciano**, non si
+citano.
 
-**Niente è a metà nel repository.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato, **nessun
-codice toccato** in tutta la direzione della GUI: solo documenti — questo file, i tre wireframe SVG nella cartella accanto,
-i richiami datati e la §7 nella consegna del 2, i diagrammi di `docs/design/` coi rimandi negli ADR della passata, tre righe della
-spec del sotto-progetto 1 (la lettera E, su delega), una riga di `CLAUDE.md` (decisione 18), il puntatore della §6 del
-compendio, e l'archivio della cronaca.
+## Lo stato alla scrittura del disegno — 2026-09-09, coi comandi che lo rifanno
 
-✅ **Alla quindicesima ripresa (2026-09-09) le §9 e §10 del 2 e la §6 di questo file sono SCRITTE**, dai tre blocchi delle
-proposte decise su delega alla chiusura della quattordicesima (decisioni 36–38: A, A, A): la §9 e la §10 nella consegna del 2,
-sotto «Le sezioni approvate del disegno», nella forma delle §3–§8; la §6 qui sotto, dopo la §4. Le versioni degli attrezzi web
-sono state **rimisurate** al registro npm prima di scriverle, col comando della §9, con lo stesso esito della proposta. I tre
-blocchi com'erano, e i paragrafi di stato, stanno nella cronaca in archivio. ⛔ **Il prossimo passo è il punto 5 di «Prossimo
-passo, eseguibile»: i due disegni scritti sul posto** — un lavoro grande, su due file che si leggono **per intero** perché il
-disegno li riscrive. ✅ **Alla chiusura il proprietario ha risposto A (decisione 39): si scrivono in una sessione nuova**, che apre
-col punto 5 senza domande pendenti. ✅ Lo stesso giorno, alla quattordicesima, il proprietario aveva risposto A alla §7 (decisione 33) e
-delegato la §8 e l'archivio che non si apre (decisioni 34 e 35, A e A): scritte nella consegna del 2 nella forma delle §3–§6a;
-i fatti del codice riletti prima della domanda (`gui/` non esiste, `exclude = ["spikes"]`, nessun `impl Ipc for` fuori dai
-commenti, `Executor::spawn` con vita `'a`, `RefCell` fra attività in `executor_determinism.rs`). Il paragrafo com'era è in
-archivio.
-
-✅ **Il mandato (decisione 26) è ESEGUITO alla tredicesima ripresa, il 2026-09-09: cinque tagli, tutti A (decisioni 27–31),
-e `AVVIO-CHAT.md` resta com'è (decisione 32, B: non è più incollato).** I tagli 4 e 5 di oggi: il puntatore «Il prossimo
-passo» della §6 del compendio riscritto allo stato di oggi — da 7 195 a 4 231 byte, il comando nella tabella dello stato —
-col testo com'era in `docs/archivio/stato-storico.md`; `CLAUDE.md` sfoltito dei sette verbali — da 15 892 a 14 412 byte —
-che stanno in `docs/archivio/lettura-di-apertura-storico.md`, ogni regola col suo perché. ⚠️ **Il guadagno di oggi è
-piccolo, e va detto:** la lettura d'apertura, coi comandi del punto 1, è passata da 335 806 a 334 300 byte e da 108 738 a
-108 137 token `cl100k` — il compendio e `CLAUDE.md` hanno perso ~1 500 token, questo file ne ha guadagnati ~900 con le righe
-delle decisioni e dello stato: il prezzo della regola «ogni decisione ha una riga». Il grosso l'hanno fatto i tre tagli della
-dodicesima ripresa (da 551 293 a 324 341 byte); il dopo lo rifà il comando. `check-docs.sh` OK e `GATE GREEN` all'apertura;
-alla chiusura `check-docs.sh` OK e `GATE GREEN` rilanciato e letto dal log. Nessun codice toccato, nessuno script
-toccato. I paragrafi che stavano qui — sulla dodicesima ripresa, dopo il taglio 4, dopo il taglio 5 — sono in
-archivio.
-
-⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
-rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
-decisione viola un criterio di `anthropic-skills:decision-principles`, l'accettazione decade: ci si
-ferma e lo si dice.
-
-⚠️ **La modularità è decisa a condizione di una prova.** Il proprietario ha accettato i pannelli
-agganciabili di `dockview` dicendo «deve davvero battere la 3», la tela libera. La prova è nello spike
-del guscio: se provandola non dà il «Jarvis», si passa alla tela libera **prima** di scrivere la SPA.
-
-⚠️ **Le §1 e §6a del 2 restano approvate ma portano un richiamo datato**: si riscrivono col disegno,
-sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2 e dentro le due sezioni.
-
-## Stato del repo alla chiusura, coi comandi che lo rifanno
+⚠️ Questo file tiene la propria tabella dello stato e **rimanda alla §6 del compendio** per il prossimo passo; la consegna della
+sessione che ha scritto i due disegni — con «Come si riprende» — è la **§10 del disegno del 2** (decisione 37). Ogni riga è stata
+rilanciata coi comandi il 2026-09-09, non ricordata.
 
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit della direzione della GUI | `git log --oneline 664265a..HEAD` | dal 2026-09-07 a oggi: la consegna, le riprese e le loro chiusure — quanti e quali lo dice il comando; la cronaca è in archivio |
+| i commit della direzione della GUI | `git log --oneline 664265a..HEAD` | dal 2026-09-07 a oggi: la consegna, le quindici riprese e le loro chiusure, poi i due disegni scritti sul posto — quanti e quali lo dice il comando; la cronaca è in archivio |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla, tranne la spec del sotto-progetto 1 — tre righe e un richiamo nella §8.2 (decisione 19, su delega) — e `scripts/check-docs.sh`: il tetto del compendio sceso col taglio 3 e i suoi commenti; è cancello, non codice |
 | cancello | `bash scripts/gate.sh` | `GATE GREEN` — si rilancia all'apertura e alla chiusura, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
-| fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/archivio/consegna-brainstorming-direzione-gui.md docs/archivio/lettura-di-apertura-storico.md docs/archivio/stato-storico.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg docs/design/10-modello-dei-dati-durevoli.md` | il compendio e `stato-storico.md` `i/lf w/crlf`, gli altri `i/lf w/lf` — su questa macchina: un clone nuovo con `core.autocrlf=true` li mostra `w/crlf`, e non è una divergenza |
+| fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/riferimenti.md docs/archivio/consegna-brainstorming-direzione-gui.md docs/archivio/consegna-brainstorming-sottoprogetto-2.md docs/archivio/stato-storico.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg` | il compendio, `riferimenti.md` e `stato-storico.md` `i/lf w/crlf`, gli altri `i/lf w/lf` — su questa macchina: un clone nuovo con `core.autocrlf=true` li mostra `w/crlf`, e non è una divergenza |
 | i wireframe esistono | `ls docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/` | `compatta-e-grafo.svg  home.svg  lavoro.svg` |
-| dove vive ogni diagramma | `grep -rlE '^\s*(flowchart\|stateDiagram\|erDiagram\|sequenceDiagram)' docs` | i file di `docs/design/`, la roadmap, le due spec del kernel, questo file (le tre sequenze); i tre wireframe SVG li dà la riga sopra |
-| il puntatore della §6 | `awk '/^### Il prossimo passo/{s=1} s&&/^### Le voci ancora aperte/{s=0} s{b+=length($0)+1} END{print b}' docs/COMPENDIO.md` | poche righe — lo stato di oggi, il mandato, il prossimo passo vivo — più il blocco del comando dei finding chiusi; cresce solo se cambia il prossimo passo |
-| margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo; scende con lo sfoltimento della §6 (gotcha #100), nello stesso commit |
-| la lettura d'apertura | i comandi del punto 1 del prossimo passo | si rimisura prima di ogni taglio, non si cita |
+| dove vive ogni diagramma | `grep -rlE '^\s*(flowchart\|stateDiagram\|erDiagram\|sequenceDiagram)' docs` | i file di `docs/design/`, la roadmap, le due spec del kernel, questo file (le tre sequenze), e gli archivi che tengono le consegne parola per parola; i tre wireframe SVG li dà la riga sopra |
+| l'archivio è il testo della consegna | `diff <(git show a539f2a:docs/superpowers/specs/2026-09-07-direzione-gui-design.md) <(awk '/^# La direzione della GUI/{s=1} s' docs/archivio/consegna-brainstorming-direzione-gui.md)` | **solo** righe che contengono `](` — i link riscritti per la cartella |
+| il puntatore della §6 | `awk '/^### Il prossimo passo/{s=1} s&&/^### Le voci ancora aperte/{s=0} s{b+=length($0)+1} END{print b}' docs/COMPENDIO.md` | poche righe — lo stato di oggi e il prossimo passo vivo — più il blocco del comando dei finding chiusi; cresce solo se cambia il prossimo passo |
+| margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo |
 
 La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, non questa riga.
 
@@ -165,47 +130,14 @@ E le tre cose del repo che hanno **deciso la forma**, verificate coi comandi:
 
 ## Lo stato dell'arte verificato, e il comando
 
-Fonte primaria: il registro npm interrogato il 2026-09-07 col comando sotto; la documentazione ufficiale
-di `dockview` letta lo stesso giorno alle pagine nominate. ⚠️ **Casa unica provvisoria**: quando il
-disegno sarà scritto queste righe passano in [`riferimenti.md`](../../riferimenti.md), e qui resta il
-rimando — è la regola di `CLAUDE.md` alla chiusura di una voce con una fonte.
-
-```
-python - <<'EOF'
-import json, urllib.request, urllib.parse
-def npm(p):
-    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
-    v = d["dist-tags"]["latest"]; vv = d["versions"][v]
-    return v, d["time"][v][:10], vv.get("license"), (vv.get("peerDependencies") or {}).get("vue", "-")
-def dl(p):
-    return json.load(urllib.request.urlopen("https://api.npmjs.org/downloads/point/last-week/" + urllib.parse.quote(p, safe="@")))["downloads"]
-for p in ["dockview", "dockview-core", "dockview-vue", "splitpanes", "gridstack", "grid-layout-plus", "interactjs", "sigma", "graphology", "d3-force", "cytoscape", "@vue-flow/core", "force-graph", "three", "pixi.js", "markdown-it", "marked", "shiki", "codemirror", "dompurify"]:
-    print(p, *npm(p), dl(p))
-EOF
-```
-
-| Pacchetto | Versione | Pubblicata | Licenza | Vue richiesto | Download/settimana | Per che cosa |
-|---|---|---|---|---|---|---|
-| `dockview-core` | 8.2.0 | 2026-08-19 | MIT | — | 303 488 | **scelto**: il motore dei moduli, usato diretto |
-| `dockview` | 8.2.0 | 2026-08-19 | MIT | — | 215 513 | lo stesso, col pacchetto ombrello |
-| `dockview-vue` | 8.2.0 | 2026-08-19 | MIT | ^3.4.0 | 6 105 | l'adattatore Vue: **non scelto**, usato da pochi |
-| `splitpanes` | 4.1.2 | 2026-05-26 | MIT | ^3.2.0 | 144 877 | solo pannelli divisi: non basta |
-| `gridstack` | 13.2.0 | 2026-08-20 | MIT | — | 499 310 | la griglia a tessere, strada 1, scartata |
-| `grid-layout-plus` | 1.1.1 | 2025-10-13 | MIT | ^3.0.0 | 77 895 | idem, versione Vue |
-| `interactjs` | 1.10.28 | 2026-08-01 | MIT | — | 591 557 | la tela libera, strada 3, **di riserva** |
-| `sigma` | 3.0.3 | 2026-04-30 | MIT | — | 240 975 | grafo su WebGL: candidato per il 6, non scelto qui |
-| `graphology` | 0.26.0 | 2025-01-26 | MIT | — | 1 405 123 | la struttura del grafo sotto `sigma` |
-| `d3-force` | 3.0.0 | 2021-06-05 | ISC | — | 16 164 124 | la fisica della rete viva: candidato, non scelto qui |
-| `cytoscape` | 3.34.2 | 2026-08-25 | MIT | — | 14 670 550 | grafo: candidato per il 6 |
-| `@vue-flow/core` | 1.48.2 | 2026-01-28 | MIT | ^3.3.0 | 476 176 | grafo a nodi Vue: candidato per il 6 |
-| `force-graph` | 1.51.4 | 2026-04-16 | MIT | — | 595 590 | grafo a forze su canvas: candidato |
-| `three` | 0.185.1 | 2026-07-01 | MIT | — | 14 025 392 | il viewer 3D, ADR-0030 |
-| `pixi.js` | 8.20.1 | 2026-08-26 | MIT | — | 920 303 | la rete viva su WebGL: candidato, non scelto qui |
-| `markdown-it` | 15.0.1 | 2026-08-27 | MIT | — | 27 048 598 | il renderer di markdown: decisione aperta della §9 del 2 |
-| `marked` | 18.0.11 | 2026-08-24 | MIT | — | 66 978 414 | idem |
-| `shiki` | 4.4.3 | 2026-08-10 | MIT | — | 21 210 699 | colore del codice nei blocchi |
-| `codemirror` | 6.0.2 | 2025-06-19 | MIT | — | 7 109 920 | l'editor, ADR-0030 |
-| `dompurify` | 3.4.15 | 2026-09-06 | MPL-2.0 OR Apache-2.0 | — | 45 528 659 | **non serve** se il testo non fidato si rende come testo e mai come HTML, §6a del 2 |
+✅ **RICHIAMO DEL 2026-09-09, alla scrittura del disegno:** il comando e la tabella delle venti librerie — versione, data,
+licenza, Vue richiesto, download della settimana, per che cosa — misurate al registro npm il 2026-09-07, sono passati in
+[`riferimenti.md`](../../riferimenti.md), sezione *«La direzione della GUI e il sotto-progetto 2 — le fonti dei due disegni»*,
+la casa unica delle fonti, come questa consegna prevedeva («casa unica provvisoria»). Le scelte che ne discendono restano
+nelle decisioni: `dockview-core` diretto (domanda 6, decisione 2 del coordinatore), `interactjs` di riserva, i candidati del
+grafo per il 6 (registrata), `markdown-it` e gli attrezzi web nella §9 del 2. ⚠️ **Le versioni si riverificano il giorno dello
+spike e il giorno del piano**, col comando che sta lì. Qui restano i fatti di `dockview` 8.x letti alla fonte, che le §2 e §4
+citano «qui sopra».
 
 **`dockview` 8.x, letto su dockview.dev il 2026-09-07** — pagine `docs/overview/licence`,
 `blog/dockview-enterprise`, `docs/core/groups/floatingGroups`, `docs/core/groups/maximizedGroups`,
@@ -679,7 +611,7 @@ Quindi: una **settima porta** (decisione 15), o il giornale piegato.
 | # | Pezzo | Forma | La prova |
 |---|---|---|---|
 | 1 | cos'è «la disposizione» per il core | un pacchetto solo, **opaco**: byte che il core conserva e restituisce, mai apre. Se `dockview` cambia formato, il core non cambia | gli si danno byte che non sono JSON: tornano identici |
-| 2 | **la settima porta** (decisione 15) | una famiglia nuova in `kernel::ports`, nome inglese nel disegno scritto: **due operazioni** — tenere dei byte sotto una chiave, ridarli — e **una chiave sola** oggi, un enum chiuso con la variante della disposizione. Non nomina file né percorsi (I3). ⛔ **Non è configurazione del kernel:** un valore su cui il kernel *decide* è consegnato (ADR-0034); qui il kernel *custodisce* ciò che la GUI gli affida e non lo legge mai per decidere — sta scritto nel doc della porta. La riga nella tabella di `ports/mod.rs` e nella §3.1 della spec: **sei → sette**, con richiamo datato, compito del piano | la finta in `crates/kernel/tests/ports_are_implementable.rs`; la suite di conformità sulle due implementazioni coi bugiardi, come `journal_contract` |
+| 2 | **la settima porta** (decisione 15) | una famiglia nuova in `kernel::ports`, nome inglese nel disegno scritto (✅ **RICHIAMO DEL 2026-09-09, alla scrittura del disegno:** `custody`, con `keep` e `retrieve` e la chiave `CustodyKey::Layout` — la tabella dei nomi della §1 del disegno del 2): **due operazioni** — tenere dei byte sotto una chiave, ridarli — e **una chiave sola** oggi, un enum chiuso con la variante della disposizione. Non nomina file né percorsi (I3). ⛔ **Non è configurazione del kernel:** un valore su cui il kernel *decide* è consegnato (ADR-0034); qui il kernel *custodisce* ciò che la GUI gli affida e non lo legge mai per decidere — sta scritto nel doc della porta. La riga nella tabella di `ports/mod.rs` e nella §3.1 della spec: **sei → sette**, con richiamo datato, compito del piano | la finta in `crates/kernel/tests/ports_are_implementable.rs`; la suite di conformità sulle due implementazioni coi bugiardi, come `journal_contract` |
 | 3 | l'implementazione vera | un modulo nuovo di `platform`: `redb` (ADR-0032) sul `FileBackend` che il giornale già usa — è `pub`, con `open(path)` — un file suo, una tabella, una chiave. **Nessuna dipendenza nuova.** È l'archivio «configurazione» di ADR-0022: non cifrato, nel backup | apri, scrivi, riapri, rileggi; la scrittura è atomica per costruzione di `redb` |
 | 4 | la finta del simulatore | in memoria, in `simulator`, come `MemoryJournal`; la DST la sostituisce come le altre | la campagna del 2 (§5) gira con questa porta nel mondo |
 | 5 | i due messaggi | `Layout` (core → GUI) e `SaveLayout` (GUI → core), nell'enum unico della §4 del 2, nomi provvisori; `Layout` porta il pacchetto o «niente». Il core lo manda all'accoglienza dopo `Accepted`, insieme a `Degradation` e `Policy`, e **di nuovo dopo ogni `SaveLayout`**, con ciò che tiene dopo la scrittura — la regola della §6.1.4, «rimanda il pezzo che è cambiato». Così una scrittura fallita **si vede senza una variante sua**: la GUI riceve il vecchio (decisione 13 del coordinatore) | le fixture, come le altre varianti; una sonda: `SaveLayout` su un archivio che rifiuta la scrittura → `Layout` col vecchio ✅ **RICHIAMO DEL 2026-09-09, quattordicesima ripresa (decisione 35, delegata: A):** `Layout` porta il pacchetto, «niente», **o «non disponibile»** — l'archivio che all'avvio non si apre non ferma il core (ADR-0019), e ogni `SaveLayout` riceve lo stesso; nessuna operazione nuova nella porta, la lettura fallita si traduce; la sonda nella §8 del 2 |
@@ -884,6 +816,13 @@ diventata la decisione 25 del proprietario.
 
 ### §6 — Dove vive la stella polare · approvata il 2026-09-09 (delegata, «decidi secondo la skill»: A, decisione 38)
 
+✅ **RICHIAMO DEL 2026-09-09, sedicesima ripresa: SCRITTO SUL POSTO.** La testa di questo file è quella che questa sezione
+prescrive; la consegna com'era sta in coda a
+[`archivio/consegna-brainstorming-direzione-gui.md`](../../archivio/consegna-brainstorming-direzione-gui.md), intera, come
+istantanea; la consegna della sessione è la §10 del [disegno del 2](2026-09-06-sottoprogetto-2-gui-minima-design.md); le righe
+nella §12 del compendio e in «Dove va cosa» di `README.md` restano compito del piano. Le righe della tabella qui sotto restano
+com'erano approvate.
+
 ⚠️ La sezione **5** — core finto, prove e cancello, decisioni aperte, come si riprende — non è una sezione di questo file: vive
 nella consegna del 2 come **§7–§10**, riga 5 della tabella «Le sezioni che mancano» qui sotto, tutte scritte il 2026-09-09.
 
@@ -912,21 +851,20 @@ un file, nessun secondo. **Dedotto:** niente. **Assunto:** niente.
 
 **Decisioni del coordinatore in questa sezione:** nessuna nuova; la 6 e la 9 della tabella omonima erano già prese.
 
-## Le sezioni che mancano — proposte del coordinatore, non decisioni
+## Le sezioni, e dove vive ciascuna
 
-| § | Che cosa | La proposta da cui partire |
+Le proposte da cui ogni sezione è partita, coi richiami di quando fu chiusa, stanno nella consegna com'era, in archivio. Qui la
+mappa.
+
+| Sezione | Che cosa | Dove vive |
 |---|---|---|
-| 1 | **il catalogo dei moduli**: tipi, numero del sotto-progetto, messaggi IPC che consumano | una tabella per tipo: Chat (2, 3 · `Token`, e col 3 i messaggi della run), Stato (2 · `Degradation`, `Policy`, `Accepted`, `Verdict`), Permessi (2 · `PermissionRequired`, `Approve`), Passi (2, 3 · un messaggio nuovo con la lista dei passi), Attività (3, 4, 13), Ambito (5), Diff (5), Anteprima (3), Terminale (5), Sensori (4), Costi (3), Knowledge base e Nucleo a pagina intera (6), Asset 3D (7), Voce e gesti (8, 12), Backup (11), Checkpoint (5), Modelli locali (9), Impostazioni (2, il cambio di policy è già una funzione del registro). La regola: un modulo il cui sotto-progetto non è chiuso mostra a parole chi lo riempie. ⚠️ **Allargata alla ripresa del 2026-09-07, decisione 10:** per ogni modulo anche **cosa mostra** e **quali comandi ha**, riga per riga con la **fonte** — G, ADR, riga di tracciabilità — e il sotto-progetto che costruisce la riga; e il «dove» dentro il modulo quando conta: contesto della run, modalità di esecuzione e «+ allegati» nella barra della chat, per run ✅ **RICHIAMO DEL 2026-09-07, seconda ripresa:** la sezione è **CHIUSA**: cinque tabelle piene — Chat, Stato, Permessi, Passi, Attività — e la tabella corta degli altri tredici moduli, nella §1 delle sezioni approvate qui sopra (decisione 12) |
-| 2 | **viste e disposizione**: i layout come JSON, l'archivio minimo nel core, i due messaggi | `Layout` dal core all'accoglienza, dopo `Accepted`; `SaveLayout` dalla GUI; l'archivio in `platform` con una voce, nella forma dell'archivio «configurazione, guide, profili» di ADR-0022, consegnato al daemon e non letto dal kernel (ADR-0034); ⚠️ da decidere lì: se «salva disposizione» sia una **funzione del registro** con la propria tripla (ADR-0038 dice che la manipolazione della GUI non passa dal registro; il salvataggio durevole è un'altra cosa) o una scrittura di configurazione fuori dal registro; le tre viste di default come JSON committati in `gui/` ✅ **RICHIAMO DEL 2026-09-08, terza ripresa: la sezione è CHIUSA** — la §2 delle sezioni approvate qui sopra, con le decisioni 14 e 15 delegate. ⛔ La forma proposta in questa riga, *«consegnato al daemon e non letto dal kernel»*, **non reggeva** contro la §5 del 2 e la §3.1 della spec: `SaveLayout` arriva dentro il kernel e nessuna delle sei porte tiene un pacchetto; serve una **settima porta**, e la §2 dice perché e cosa costa |
-| 3 | **la fetta del 2 ritagliata**: che cosa costruisce adesso, e come si riscrivono §1 e §6a | §1 del 2 guadagna: il motore dei moduli (`dockview-core`, dipendenza nuova, in due passi), le tre viste con Compatta come segnaposto, il modulo Passi col suo messaggio, l'archivio della disposizione coi due messaggi; §6a: «le due schermate» diventano «Home e Lavoro nella cornice», la finestra di permesso resta; il pezzo 6 della tabella di §1 cambia forma. Tutto con richiamo datato, non riscrittura silenziosa ✅ **RICHIAMO DEL 2026-09-08, terza ripresa: la sezione è CHIUSA** — la §3 delle sezioni approvate qui sopra, A, con la tabella *«Cosa è già studiato, e dove»* |
-| 4 | **lo spike di accettazione** di `dockview`, dentro lo spike del guscio | in `spikes/gui-shell/`, sul frontend minimo di §2 del 2: una Home finta con `dockview-core` — nucleo bloccato, quattro tessere, una libera, una a pagina intera, presa grande — e la giudica il **proprietario provandola**, come per la mano in SP-7; il criterio scritto **prima** in `spikes/gui-shell/PROTOCOLLO.md`; se non dà il «Jarvis», si passa a `interactjs` prima di scrivere la SPA. In più M4 misura P3 con `dockview` acceso ✅ **RICHIAMO DEL 2026-09-08, decima ripresa: presentata e approvata A, NON scritta** — la proposta parola per parola sta nel prossimo passo, blocco «La proposta per la sezione 4»; la scrittura è della sessione nuova, con la risposta sulla mossa 8. ✅ **RICHIAMO DEL 2026-09-09, undicesima ripresa: SCRITTA** — la §4 delle sezioni approvate qui sopra, otto mosse (la mossa 8 decisa A, decisione 25) e la riga Q4 |
-| 5 | le sezioni che già mancavano al 2: **core finto, prove e cancello, decisioni aperte, come si riprende** | le proposte stanno nella consegna del 2, tabella «Le sezioni che mancano»; Passi aggiunge al core finto l'invio della lista dei passi; le prove aggiungono la sonda sul giro «salva disposizione, riavvia, ritrova» ✅ **RICHIAMO DEL 2026-09-09, quattordicesima ripresa: la §7 è SCRITTA** nella consegna del 2 (decisione 33, A), e la §8 lo stesso giorno (decisioni 34 e 35, delegate: A e A); la §9 e la §10 **decise** alla chiusura (decisioni 36 e 37, delegate: A e A) e **da scrivere** dai blocchi del prossimo passo ✅ **RICHIAMO DEL 2026-09-09, quindicesima ripresa: la §9 e la §10 sono SCRITTE** nella consegna del 2, sotto «Le sezioni approvate del disegno» |
-| 6 | **dove vive la stella polare**, e come il disegno del 2 la rimanda | questo file diventa `2026-09-07-direzione-gui-design.md` come disegno, ⛔ **non è una spec e non disegna le capacità**: colloca i moduli, le viste e le regole, e ogni sotto-progetto disegna i propri moduli quando arriva; il disegno del 2 rimanda qui per la forma e non la ricopia; una riga nella §12 del compendio e in «Dove va cosa» di `README.md` è un **compito del piano**, come fu per la knowledge base ✅ **RICHIAMO DEL 2026-09-09, chiusura della quattordicesima ripresa: DECISA A su delega (decisione 38) e NON scritta** — la proposta parola per parola nel prossimo passo, blocco «La proposta per la sezione 6» ✅ **RICHIAMO DEL 2026-09-09, quindicesima ripresa: SCRITTA** — la §6 delle sezioni approvate qui sopra; il blocco com'era nella cronaca in archivio |
-
-Poi: i due disegni scritti **sul posto**, con la revisione del disegno (segnaposto, coerenza, ambiguità,
-perimetro), la rilettura del proprietario, e `superpowers:writing-plans` col piano del 2 in **due
-parti**: la prima fino allo spike compreso — guscio più accettazione di `dockview` — la seconda scritta
-dopo la misura.
+| 1 | il catalogo dei moduli: cinque tabelle piene e una corta (decisione 12) | qui sopra |
+| 2 | viste e disposizione, con la settima porta (decisioni 14 e 15) | qui sopra |
+| 3 | la fetta del 2 ritagliata: i nove pezzi, le sezioni del 2 che cambiano, il «non costruisce» | qui sopra — ed è la casa del perimetro del 2 |
+| 4 | lo spike di accettazione di `dockview`, otto mosse (decisioni 24 e 25) | qui sopra |
+| 5 | il core finto, le prove e il cancello, le decisioni aperte col chiusore, come si riprende | le **§7–§10 del disegno del 2** (decisioni 33–37) |
+| 6 | dove vive la stella polare (decisione 38) | qui sopra |
+| — | il modello della GUI e le tre sequenze del protocollo core ↔ GUI (decisioni 21–23) | «Il modello della GUI» e «La GUI dentro», sopra le sezioni |
 
 ## Decisioni prese dal coordinatore, col perché — il proprietario può ribaltarle
 
@@ -1020,7 +958,7 @@ dopo la misura.
 | 🔶 **nata alla tredicesima ripresa, 2026-09-09** — se all'apertura la stella polare si legga **per intero**, com'è scritto in testa e nel puntatore della §6 del compendio, o solo le parti di stato («Stato in una riga», «Da sapere subito», la tabella dello stato, «Prossimo passo, eseguibile», «Come tornare operativi») col merito letto prima di scrivere; la tredicesima ripresa ha letto solo le parti di stato per il taglio 4, e lo dichiara | il **proprietario**, dentro il mandato (decisione 26): è una riga di lettura obbligatoria, e la stella polare pesa quanto dicono `wc -c` e lo snippet `tiktoken` |
 | 🔶 **nata alla tredicesima ripresa, 2026-09-09** — un richiamo datato in testa ad `AVVIO-CHAT.md` che dica che il messaggio non è più incollato (decisione 32): oggi lo dicono la §12 del compendio e questa tabella, il file no | il **proprietario**: è il documento d'ingresso, e B era «resta com'è» |
 
-## Vicoli ciechi di questa sessione
+## Vicoli ciechi e trappole, per chi scrive il piano
 
 - leggere dockview.dev da Python su console Windows: `print` di una pagina con caratteri fuori da cp1252
   solleva `UnicodeEncodeError` **dopo** che la pagina è stata scaricata, e l'errore si legge come «pagina
@@ -1113,72 +1051,18 @@ dopo la misura.
   netti. La misura si fa **prima** di porre la domanda, e la divergenza si dice.
 - **tredicesima ripresa:** `python -` con un `print` di testo fuori da cp1252 fallisce **dopo** aver scritto il file, e l'errore
   sembra un fallimento dello script: `sys.stdout.reconfigure(encoding='utf-8')` in testa, come il primo vicolo di questa lista.
+- **sedicesima ripresa, la scrittura dei disegni:** la tabella delle decisioni del proprietario di questo file, letta col tool
+  Bash a 65 righe, **trabocca** (33 KB, salvata su file): 30 righe per chiamata. E un cancello lanciato in background in una
+  sessione che poi si chiude non lascia verdetto: si rilancia, e si legge `GATE GREEN` dal log.
+- **sedicesima ripresa:** il repo può muoversi **mentre** si legge — un'altra sessione ha scritto le §9 e §10 del 2 e la §6 di
+  questo file fra la lettura d'apertura e la ripresa: `git fetch` e `git log` **prima** di scrivere, non solo all'apertura, e il
+  «prossimo passo» del documento si rilegge contro `HEAD` di adesso.
 
-## Prossimo passo, eseguibile
+## Il prossimo passo
 
-✅ **Il mandato (decisione 26) è ESEGUITO il 2026-09-09, tredicesima ripresa:** cinque tagli, tutti A (decisioni 27–31) — questo
-file **sfoltito**, la cronaca in [`../../archivio/consegna-brainstorming-direzione-gui.md`](../../archivio/consegna-brainstorming-direzione-gui.md); la lettura dell'audit
-ristretta a due pezzi; il riquadro delle voci aperte della §6 del compendio ridotto agli indici; il puntatore «Il prossimo
-passo» della §6 riscritto; `CLAUDE.md` sfoltito dei sette verbali — e `AVVIO-CHAT.md` resta com'è (decisione 32, B). La
-lettura d'apertura si rimisura coi comandi del punto 1; la consegna del 2 resta com'è.
-
-✅ **Le domande 4 e 5, e quella su `AVVIO-CHAT.md`, hanno avuto risposta alla tredicesima ripresa (decisioni 30, 31 e 32)**;
-✅ **alla quattordicesima la §7 (A, decisione 33) e la §8 (delegata, decisioni 34 e 35: A e A) sono state scritte** nella
-consegna del 2; ✅ **alla quindicesima, lo stesso giorno, le §9 e §10 del 2 e la §6 di questo file sono SCRITTE** dai tre
-blocchi decisi su delega alla chiusura della quattordicesima (decisioni 36–38: A, A, A) — le righe 9 e 10 di «Le sezioni che
-mancano» della consegna del 2 e le righe 5 e 6 di questo file portano il richiamo; i blocchi com'erano e i paragrafi di stato
-stanno nella cronaca in archivio. ⏭️ **L'ordine della sessione nuova: il punto 5** — i due disegni scritti sul posto, con le
-due consegne archiviate parola per parola; poi il piano del 2 in due parti. **Le letture che bastano:** per scrivere i due
-disegni sul posto **non c'è scorciatoia** — questo file e la consegna del 2 si leggono **per intero**, perché il disegno li
-riscrive; per il solo orientamento bastano le parti di stato di questo file (fino alla tabella delle decisioni, e da «Prossimo
-passo, eseguibile» in giù).
-
-⏭️ **L'ordine eseguibile:**
-
-1. ✅ **Il mandato (decisione 26) è eseguito** — cinque tagli e la risposta su `AVVIO-CHAT.md`, decisioni 27–32; la misura
-   datata dell'undicesima ripresa e il metodo, com'erano, stanno nella cronaca in archivio. La lettura d'apertura si
-   rimisura, non si cita — byte: `wc -c CLAUDE.md docs/COMPENDIO.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md
-   docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` e `sed -n '263,281p;324,333p' docs/audit-2026-08-27.md | wc -c`
-   (le righe dei due pezzi le dà `grep -n 'NON hanno un numero AUD\|La disciplina, in cinque passi' docs/audit-2026-08-27.md`);
-   token: lo snippet `tiktoken` di `CLAUDE.md`, esteso ai cinque pezzi; per blocco:
-   `awk '/^## /{if(h!="")printf "%7d  %s\n", b, h; h=$0; b=0} {b+=length($0)+1} END{printf "%7d  %s\n", b, h}' <file>`.
-   Il metodo che ha retto — misurare prima, ogni taglio in A/B, niente si cancella, i puntatori in una casa sola,
-   `check-docs.sh` e i fine-riga rimisurati dopo ogni file — vale per ogni sfoltimento futuro.
-2. ✅ **La §7 del 2 è scritta il 2026-09-09** (A, decisione 33): nella consegna del 2, sotto «Le sezioni approvate del disegno»,
-   nella forma delle §3–§6a (Pezzo · Forma · La prova), con la riga 7 di «Le sezioni che mancano» della consegna col richiamo;
-   il blocco della proposta com'era sta nella cronaca in archivio.
-3. ✅ **La §8 del 2 è scritta il 2026-09-09** (delegata, decisione 34): il passo `gate-gui.sh` nel cancello unico, la CI con
-   Node da `gui/package.json`, `.gitignore`, la tabella artefatto → controllo; e la registrata della nona ripresa chiusa con la
-   decisione 35 — A, il core parte e `Layout` dice «non disponibile» — col richiamo datato sulla riga 5 della §2. Il punto
-   com'era è nella cronaca in archivio.
-4. ✅ **La §9, la §10 e la sezione 6 sono SCRITTE il 2026-09-09, quindicesima ripresa** (decise su delega alla chiusura della
-   quattordicesima, decisioni 36–38: A, A, A): la §9 e la §10 nella consegna del 2, sotto «Le sezioni approvate del disegno»,
-   nella forma delle §3–§8, coi consigli e le misure al registro npm rifatte quel giorno col comando della §9; la §6 in questo
-   file, dopo la §4. I tre blocchi delle proposte com'erano, con le decisioni 51–57 del coordinatore, e il punto com'era stanno
-   nella cronaca in archivio.
-5. ⏭️ **I due disegni scritti sul posto:** questo file come *disegno della direzione della GUI* e la consegna del 2 come *disegno
-   del 2* — le §1 e §6a del 2 riscritte sulla base di questo file, coi richiami datati (i richiami in testa ai due file dicono
-   come); la revisione del disegno (segnaposto, coerenza, ambiguità, perimetro); la rilettura del proprietario; le due consegne
-   archiviate parola per parola — questa in coda a `docs/archivio/consegna-brainstorming-direzione-gui.md`, quella del 2 in
-   `docs/archivio/consegna-brainstorming-sottoprogetto-2.md`, coi soli link riscritti; la §10 del 2 scritta come consegna di
-   quella sessione; le righe nella §12 del compendio e in «Dove va cosa» di `README.md` restano compito del piano (§6). Poi
-   `superpowers:writing-plans` col piano del 2 in **due parti**, la prima fino allo spike compreso.
-
-✅ **La domanda su `AVVIO-CHAT.md` è chiusa B alla tredicesima ripresa (decisione 32):** il proprietario non lo incolla più,
-il messaggio resta com'è e non è più lettura d'apertura; il paragrafo della domanda, com'era, sta nella cronaca in archivio.
-
-I tre blocchi «La proposta per la §9», «La proposta per la §10» e «La proposta per la sezione 6» — decisi A su delega alla
-chiusura della quattordicesima ripresa e **scritti alla quindicesima**, lo stesso giorno — stanno **parola per parola** nella
-cronaca in archivio; il comando della misura npm vive nella §9 del 2.
-
-Le skill della sessione: `anthropic-skills:decision-principles`, `anthropic-skills:session-resume` su questo file,
-`anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, `superpowers:brainstorming` — percorso
-architetturale — e `anthropic-skills:design-docs`, che governa i diagrammi.
-
-## Come tornare operativi
-
-```bash
-git fetch --all --prune && git status -sb && git log --oneline -3
-bash scripts/check-docs.sh
-bash scripts/gate.sh
-```
+⛔ **Lo dice la §6 del [compendio](../../COMPENDIO.md), in un posto solo.** La consegna della sessione che ha scritto i due disegni
+sul posto — lo stato coi comandi, il compito della sessione successiva, ciò che i disegni consegnano a chi scrive il piano, la
+Definizione di «fatto» della parte 1 — è la **§10 del [disegno del 2](2026-09-06-sottoprogetto-2-gui-minima-design.md)**, «Come si
+riprende» (decisione 37): una sola, e da lì parte il piano. Le skill della sessione che scrive il piano:
+`anthropic-skills:decision-principles`, `anthropic-skills:session-resume` sulla §10 del 2, `anthropic-skills:dev-discipline`,
+`anthropic-skills:dev-communication`, `superpowers:writing-plans`; `anthropic-skills:design-docs` governa i diagrammi.

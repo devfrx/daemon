@@ -1,44 +1,108 @@
-# Sotto-progetto 2 — la GUI minima: il disegno
+# Archivio — la consegna del brainstorming sul sotto-progetto 2, dal 2026-09-06 al 2026-09-09
 
-✅ **QUESTO DISEGNO È COMPLETO DAL 2026-09-09.** Le dieci sezioni — **§1–§6a** approvate dal proprietario il 2026-09-06, una per
-volta, in chat, ciascuna col controllo esplicito sui cinque criteri di `anthropic-skills:decision-principles`; **§7** decisa A il
-2026-09-09; **§8, §9 e §10** delegate al coordinatore con «decidi secondo la skill» lo stesso giorno (decisioni 33–37 della
-stella polare) — sono scritte qui sotto; le **§1, §2 e §6a** sono **riscritte** il 2026-09-09 sulla base della stella polare,
-come la sua §3 prescriveva, col richiamo datato in testa a ciascuna. Chi riprende ha un disegno intero da tradurre in un
-**piano in due parti** — la prima fino allo spike compreso — **dopo** che il proprietario lo ha riletto in questa forma.
-⏳ **La rilettura del proprietario è da fare:** si dà in chat, non si deduce, e la §10 dice con quale domanda si apre.
+⛔ **Non è una lettura obbligatoria.** È il **verbale** della consegna con cui il brainstorming del sotto-progetto 2 si è
+fermato a metà il **2026-09-06**, poi allargato alla stella polare della GUI il 2026-09-07 e completato sezione per sezione
+fino al 2026-09-09, tenuto **parola per parola** com'era a `a539f2a`. Spostato qui il 2026-09-09, quando il disegno è stato
+scritto **sul posto** — al percorso che la consegna occupava — con la regola di `CLAUDE.md`: *un documento vivo porta ciò che
+è vero adesso, e un verbale va in archivio*. È il viaggio che la consegna stessa prevedeva in testa, e il precedente è
+[quella della knowledge base](consegna-brainstorming-knowledge-base.md); la consegna dell'**avvio**, da cui questo
+brainstorming è partito, sta in [`consegna-avvio-brainstorming-sottoprogetto-2.md`](consegna-avvio-brainstorming-sottoprogetto-2.md).
 
-⚠️ **RICHIAMO DEL 2026-09-09, sedicesima ripresa della stella polare:** questo file è nato come **consegna** del brainstorming
-del 2026-09-06, fermato a metà per scelta del proprietario, poi **allargato** il 2026-09-07 alla forma di tutta la GUI — la
-[stella polare](2026-09-07-direzione-gui-design.md), che si legge **prima** di questo file — e completato sezione per sezione
-fino al 2026-09-09; il proprietario ha scelto che i due disegni li scrivesse la sessione **successiva** (decisione 39 della
-stella polare). Riscritto **sul posto**, allo stesso percorso, perché il puntatore della §6 del [compendio](../../COMPENDIO.md)
-non cambiasse casa, come fu per i disegni dei [gesti](2026-09-03-riconoscimento-gesti-design.md) e della
-[knowledge base](2026-09-04-knowledge-base-design.md). Il merito delle sezioni non riscritte **non è stato toccato**; la
-consegna com'era sta **parola per parola** in
-[`archivio/consegna-brainstorming-sottoprogetto-2.md`](../../archivio/consegna-brainstorming-sottoprogetto-2.md), e quella
-dell'avvio in
-[`archivio/consegna-avvio-brainstorming-sottoprogetto-2.md`](../../archivio/consegna-avvio-brainstorming-sottoprogetto-2.md);
-ciò che la riscrittura ha **misurato** in più sta nella §10.
+⚠️ **Ciò che è scritto qui era vero il giorno in cui fu scritto.** Il disegno vivo è
+[`../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md`](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md);
+il prossimo passo sta nella §6 di [`../COMPENDIO.md`](../COMPENDIO.md), in un posto solo.
 
-⚠️ **Non è una spec.** Come i disegni dei Traguardi 4, 5 e 6, dei gesti e della knowledge base, fissa il **perimetro**, le
-**forme** che gli ADR e la [spec del sotto-progetto 1](2026-08-06-sottoprogetto-1-kernel.md) descrivono a parole, e per ogni
-artefatto **il controllo che lo esercita** (§8). La spec resta l'autorità — la §6.1 per il canale IPC, la §2.3 e la §3.1 per
-le porte, la §5 per l'arbitro — e ciò che questo disegno vi aggiunge lo **dichiara** come richiamo datato, compito del piano:
-la settima porta, sei → sette famiglie. ⛔ **La forma della GUI non è qui:** viste, moduli, disposizione e le tre sequenze del
-protocollo core ↔ GUI vivono nella stella polare, di cui il 2 costruisce la cornice più la propria fetta — la sua §3 è la casa
-del perimetro del 2 — e questo disegno **rimanda e non ricopia** (§6 della stella polare).
+⚠️ **Una sola cosa è cambiata rispetto al testo consegnato:** i percorsi relativi dei collegamenti, riscritti per questa
+cartella perché `check-docs.sh` li verifica. Nessuna parola è stata toccata; lo prova `diff` fra questo file, dalla riga sotto
+la recinzione in giù, e la consegna a `a539f2a`:
+`diff <(git show a539f2a:docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) <(tail -n +22 docs/archivio/consegna-brainstorming-sottoprogetto-2.md)`
+— solo righe che contengono `](`.
+---
 
-⚠️ **Le sezioni sono approvate A CONDIZIONE.** Il proprietario ha accettato ciascuna con la formula «se rispetta
-decision-principles, sì». La condizione resta viva: se scrivendo il piano una sezione viola un criterio — una scorciatoia, una
-duplicazione, una dipendenza che non è più vera — l'accettazione decade, ci si ferma e lo si dice. Le decisioni delegate al
-coordinatore — il contatore (§3), il limite di giri (§5), la §8, la §9, la §10 e quelle della sessione che ha scritto i disegni
-(§10) — sono prese col perché, e il proprietario può ribaltarle.
+# Sotto-progetto 2 — la GUI minima: la consegna del brainstorming, fermato a metà
 
-📌 **Metodo.** Ogni affermazione porta la sua specie — **verificata** (letta nel sorgente o in un documento del repository, con
-la data), **dedotta**, o **assunta** — e ogni sezione le separa. Il codice non è cambiato da quando le sezioni lo hanno letto:
-`git diff --stat 664265a..HEAD -- crates/ Cargo.lock Cargo.toml rust-toolchain.toml` non rende nulla, rilanciato il 2026-09-09.
-I comandi stanno accanto alle affermazioni e **si rilanciano**, non si citano.
+⚠️ **QUESTO FILE È LA CONSEGNA della sessione del 2026-09-06 che ha fatto il brainstorming del
+sotto-progetto 2 e si è fermata a metà per scelta del proprietario:** le undici domande hanno
+risposta, la strada è scelta, le sezioni **§1–§6a** del disegno sono approvate in chat una per volta,
+ciascuna col controllo esplicito sui cinque criteri di `anthropic-skills:decision-principles` e con
+verificato, dedotto e assunto separati. La sessione che riprende legge questo file **per intero**,
+mostra i **wireframe**, chiude le sezioni che mancano (§6b–§10), poi scrive il disegno **sul posto** —
+riscrivendo questo file — e sposta questo testo **parola per parola** in
+`docs/archivio/consegna-brainstorming-sottoprogetto-2.md`, coi soli link riscritti per la cartella.
+Il testo della consegna dell'avvio, da cui questo brainstorming è partito, sta già in
+[`../../archivio/consegna-avvio-brainstorming-sottoprogetto-2.md`](../archivio/consegna-avvio-brainstorming-sottoprogetto-2.md),
+parola per parola. È il viaggio della consegna della knowledge base (`07ab6dc` → `6a7967a`).
+
+⚠️ **Non è una spec e non è ancora il disegno.** Il prossimo passo sta nella §6 del
+[compendio](../COMPENDIO.md), in un posto solo.
+
+⚠️ **RICHIAMO DEL 2026-09-07 — il brainstorming è proseguito e si è ALLARGATO, per scelta del
+proprietario, alla forma di tutta la GUI.** La consegna di quella sessione è
+[`2026-09-07-direzione-gui-design.md`](../superpowers/specs/2026-09-07-direzione-gui-design.md), la **stella polare**, e si
+legge **prima** di questo file. Le decisioni prese lì che **ritagliano il 2**, in una riga ciascuna: il 2
+costruisce la **cornice** — le viste Home, Lavoro e Compatta, i moduli mobili con `dockview-core`, la Home
+col nucleo che a parole dice «niente ancora» — più la sua fetta di oggi; il modulo **Passi** nasce col 2,
+con un messaggio IPC per la lista dei passi; l'**archivio della disposizione** — una voce sola, due
+messaggi — nasce col 2; la chat **non** sta nella Home di default. I wireframe di Home e Lavoro
+sostituiscono la proposta della §6b qui sotto. ⛔ **Le §1 e §6a restano approvate com'erano**, e si
+riscrivono col disegno sulla base della stella polare, non prima: ciascuna porta il proprio richiamo.
+Il «Prossimo passo» di questo file è **superato** da quello della stella polare.
+
+## Stato in una riga
+
+Brainstorming del 2 a metà, poi allargato alla stella polare il 2026-09-07: undici risposte più la
+strada, le sezioni §1–§6a approvate coi richiami datati, nessun codice toccato; mancano le sezioni
+scritte della stella polare e le §7–§10 di questo file, poi i due disegni scritti e il piano. ✅ **Richiamo del 2026-09-09:** le **§7 e §8** sono scritte (decisioni 33–35
+della stella polare); le §9 e §10 sono **decise** su delega (36 e 37) e si scrivono nella sessione nuova. ✅ **Richiamo della quindicesima ripresa, lo stesso giorno:** le §9 e §10 sono **scritte** — tutte le sezioni §1–§10 sono approvate; mancano i due disegni scritti sul posto, punto 5 del prossimo passo della stella polare.
+
+## ⛔ Da sapere subito
+
+**Niente è a metà nel repository.** Albero pulito, nessuno stash, nessuna operazione git a metà,
+tutto pushato, **nessun codice toccato**: questa sessione ha prodotto solo documenti — il punto
+fermo `cc9b506` e questa chiusura. Il ledger `.superpowers/sdd/` è git-ignorato e vive su quella
+macchina: toglierlo è un comando del proprietario.
+
+⚠️ **Le sezioni sono approvate A CONDIZIONE.** Il proprietario ha accettato ciascuna con la
+formula «se rispetta decision-principles, sì». La condizione resta viva: se scrivendo il disegno o
+il piano una sezione viola un criterio — una scorciatoia, una duplicazione, una dipendenza che non è
+più vera — l'accettazione decade, ci si ferma e lo si dice.
+
+⚠️ **Due decisioni tecniche le ha delegate al coordinatore** («decidi secondo la skill»): il
+contatore degli identificativi e il limite di giri in produzione. Sono prese, col perché, nelle §3 e
+§5; il proprietario può ribaltarle.
+
+## Stato del repo alla chiusura, coi comandi che lo rifanno
+
+| | Comando | Atteso |
+|---|---|---|
+| ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
+| i commit di questa sessione | `git log --oneline ae40fa0..HEAD` | il punto fermo `cc9b506` e questa chiusura |
+| codice e spec non toccati | `git diff --stat ae40fa0..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato all'apertura su `ae40fa0` e prima del commit di questa chiusura. Si rilancia, non si cita |
+| documenti | `bash scripts/check-docs.sh` | `OK` |
+| fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/archivio/consegna-avvio-brainstorming-sottoprogetto-2.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` | il compendio `i/lf w/crlf`, gli altri due `i/lf w/lf` |
+| l'archivio è il testo originale | `diff <(git show ae40fa0:docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) <(tail -n +17 docs/archivio/consegna-avvio-brainstorming-sottoprogetto-2.md)` | solo righe che contengono `](` |
+| margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo |
+
+La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, non questa riga.
+⚠️ Un `awk` sulle righe `test result` del log del cancello **conta due volte** i bersagli che il
+passo 7 rilancia con `--nocapture`: non è la quaterna.
+
+## Fatto in questa sessione
+
+1. Ripresa sulla consegna dell'avvio con `anthropic-skills:session-resume`: ogni riga rilanciata
+   coi comandi, **nessuna divergenza**; `GATE GREEN` e `check-docs.sh` `OK` all'apertura.
+2. Le **undici domande** del brainstorming poste una alla volta in forma A/B col consiglio, tutte
+   risposte; più le tre che il lavoro ha aperto (7-bis, 8-bis, 11) e le quattro decisioni
+   strutturali (Linux, trasporto, contatore, limite di giri). Tabella sotto.
+3. Lo **stato dell'arte** delle librerie verificato alle fonti primarie — il registro npm,
+   crates.io, docs.rs, la licenza di PrimeVue su GitHub — col comando che lo rifà. Tabelle sotto.
+4. La **strada** scelta fra tre: core vero più un finto a parte.
+5. Le sezioni **§1–§6a** del disegno presentate e approvate una alla volta, ciascuna col controllo
+   sui cinque criteri. Sotto, il loro merito **com'è stato approvato**.
+6. Un **punto fermo** committato a metà sessione (`cc9b506`), perché si lavora da più macchine e
+   ciò che non è in un file tracciato non esiste.
+7. Questo file riscritto; il testo dell'avvio in archivio; il puntatore della §6 mosso.
 
 ## Le risposte del proprietario, una per domanda
 
@@ -65,20 +129,55 @@ I comandi stanno accanto alle affermazioni e **si rilanciano**, non si citano.
 
 ## Lo stato dell'arte verificato, e il comando
 
-✅ **RICHIAMO DEL 2026-09-09, alla scrittura del disegno:** il comando e le due tabelle — le primitive Vue, `vue-i18n`, Vue; i
-gusci, `three`, `vite`, `pinia`, `vitest`, Playwright, `interprocess`, `tokio` — misurate al registro npm, su crates.io, docs.rs e
-GitHub il 2026-09-06, sono passati in [`riferimenti.md`](../../riferimenti.md), sezione *«La direzione della GUI e il
-sotto-progetto 2 — le fonti dei due disegni»*, la casa unica delle fonti, come questa consegna prevedeva (decisione 6 del
-coordinatore, qui sotto). Ciò che ha deciso 7-bis resta scritto lì coi due numeri: la logica di Ark UI è agnostica dal
-framework, cosa che ADR-0030 apprezza, ma il suo pacchetto Vue è usato molto meno di Reka UI; per una libreria di primitive, che
-è un adattatore Vue in ogni caso, pesa di più chi la tiene viva. ⚠️ **Le versioni si riverificano il giorno dello spike e il
-giorno del piano**, col comando che sta lì; gli attrezzi web del 2026-09-09 stanno nella §9, col loro comando.
+Fonte primaria: il registro npm e crates.io, interrogati il 2026-09-06; la licenza di PrimeVue letta
+in `LICENSE.md` su GitHub; `nonblocking()` di `interprocess` letto su docs.rs. ⚠️ **Casa unica
+provvisoria**: quando il disegno sarà scritto queste righe passano in
+[`riferimenti.md`](../riferimenti.md), e qui resta il rimando — è la regola di `CLAUDE.md` alla
+chiusura di una voce con una fonte.
 
-## Ciò che il codice diceva il 2026-09-06, letto per decidere — e non è cambiato
+```
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+def npm(p):
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    v = d["dist-tags"]["latest"]; return v, d["time"][v][:10], d["versions"][v].get("license"), d["versions"][v].get("peerDependencies", {}).get("vue")
+def downloads(p):
+    return json.load(urllib.request.urlopen("https://api.npmjs.org/downloads/point/last-week/" + urllib.parse.quote(p, safe="@")))["downloads"]
+for p in ["reka-ui", "@ark-ui/vue", "primevue", "vuetify", "@headlessui/vue", "vue-i18n", "vue", "electron", "@tauri-apps/cli", "@tauri-apps/api", "three", "vite", "pinia", "vitest", "@playwright/test"]:
+    print(p, *npm(p), downloads(p))
+for c in ["tauri", "interprocess", "tokio"]:
+    req = urllib.request.Request(f"https://crates.io/api/v1/crates/{c}", headers={"User-Agent": "harness (contatto nel repo)"})
+    d = json.load(urllib.request.urlopen(req))["crate"]; print(c, d["max_stable_version"], d["updated_at"][:10])
+EOF
+```
 
-✅ **Riletto il 2026-09-09, alla scrittura del disegno:** il codice non è cambiato — `git diff --stat 664265a..HEAD -- crates/`
-non rende nulla — quindi ogni riga qui sotto vale ancora; le letture successive delle riprese della stella polare (le tre
-sequenze, la §7) hanno **aggiunto** fatti, non cambiato questi.
+| Pacchetto | Versione | Pubblicata | Licenza | Vue richiesto | Download/settimana (23–29 ago) |
+|---|---|---|---|---|---|
+| `reka-ui` | 2.10.4 | 2026-08-25 | MIT | ≥ 3.4.0 | 1 819 411 |
+| `@ark-ui/vue` | 5.39.1 | 2026-08-28 | MIT | ≥ 3.5.0 | 26 395 |
+| `primevue` | 5.0.1 | 2026-08-13 | MIT | — | 812 258 |
+| `vuetify` | 4.2.0 | 2026-09-02 | MIT | ^3.5 | 1 040 959 |
+| `@headlessui/vue` | 1.7.23 | **2024-09-09** | MIT | ^3.2 | non misurato: fermo da due anni, escluso |
+| `vue-i18n` | 11.4.10 | 2026-08-25 | MIT | ^3.0 | non misurato |
+| `vue` | 3.5.42 | 2026-08-27 | MIT | — | non misurato |
+
+| Pacchetto o crate | Versione | Pubblicata | Nota |
+|---|---|---|---|
+| `electron` | 44.2.0 | 2026-09-04 | ADR-0029 ne citava la 43.3.0 del 2026-08-06 |
+| `tauri` (crate) · `@tauri-apps/cli` · `@tauri-apps/api` | 2.11.5 · 2.11.4 · 2.11.1 | 2026-07-01 · 2026-06-28 · 2026-06-17 | la stessa 2.11.5 dell'ADR: **fermo** |
+| `three` | 0.185.1 | 2026-07-01 | la scena dello spike |
+| `vite` | 8.2.2 | 2026-08-20 | |
+| `pinia` | 4.0.3 | 2026-08-12 | ADR-0030 ne citava la 4.0.2 |
+| `vitest` | 5.0.0 | 2026-09-03 | ⚠️ major di **tre giorni**: «novità non è maturità», si valuta la 4 al piano |
+| `@playwright/test` | 1.63.0 | 2026-09-04 | Apache-2.0 |
+| `interprocess` (crate) | 2.4.4 | 2026-09-03 | lo spike usava la 2.4, ADR-0027 cita la 2.4.3; ha `ListenerOptions::nonblocking()` |
+| `tokio` (crate) | 1.53.1 | 2026-07-20 | scartato: secondo runtime |
+
+Ciò che ha deciso 7-bis: la logica di Ark UI è agnostica dal framework, cosa che ADR-0030 apprezza,
+ma il suo pacchetto Vue è usato molto meno di Reka UI — i due numeri stanno nella tabella; per una
+libreria di primitive, che è un adattatore Vue in ogni caso, pesa di più chi la tiene viva.
+
+## Ciò che il codice dice oggi, letto per decidere
 
 - `IpcMessage` in `crates/kernel/src/wire/ipc.rs` ha **due** varianti, `Request(GrantRequest)` e `Verdict(Verdict)`, con `encode`/`decode` e il controllo dei byte consumati; `GrantRequest` porta `reserved_vram`, `compute_class`, `preemption`.
 - `crates/daemon/src/main.rs` **non nomina `Ipc`**: `run_the_graph` apre `FileJournal`, costruisce l'arbitro con le due quote permanenti, crea l'`Executor` e lo fa girare **senza attività**; `EXECUTOR_TURN_LIMIT` è `100_000`, e il suo doc dice che la garanzia è la **terminazione**.
@@ -97,84 +196,73 @@ sequenze, la §7) hanno **aggiunto** fatti, non cambiato questi.
 
 ## Le sezioni approvate del disegno — il merito com'è stato approvato
 
-### §1 — Il perimetro del 2 · approvata il 2026-09-06; riscritta il 2026-09-09 alla scrittura del disegno, sulla base della stella polare
+### §1 — Il perimetro del 2 · approvata il 2026-09-06
 
-✅ **RICHIAMO DEL 2026-09-09, sedicesima ripresa della stella polare.** Approvata il 2026-09-06 con otto pezzi, e riscritta qui
-sulla base della [stella polare](2026-09-07-direzione-gui-design.md) come la sua §3 prescrive («richiamo datato, riscritta col
-disegno»); il testo com'era approvato sta parola per parola in archivio. ⛔ **Il perimetro non si ricopia** (§6 della stella
-polare, gotcha #68): la sua casa è la **§3 della stella polare** — i **nove pezzi** del 2 in ordine, con dove vive ciascuno e da
-dove viene; le sezioni di questo disegno che cambiano, e come; ciò che il 2 **non** costruisce, e chi lo fa dopo. Qui restano le
-cose che sono del 2 e non della stella polare: decisione 2 del coordinatore di questa sessione (§10), ribaltabile.
+⚠️ **RICHIAMO DEL 2026-09-07:** la stella polare aggiunge al perimetro — con richiamo, non con
+riscrittura — il motore dei moduli (`dockview-core`, dipendenza nuova, in due passi), le tre viste con
+Compatta come segnaposto, il modulo Passi col suo messaggio, e l'archivio della disposizione coi due
+messaggi; il pezzo 6 cambia forma. La riscrittura è del disegno: sezione 3 della tabella *«Le sezioni che
+mancano»* di [`2026-09-07-direzione-gui-design.md`](../superpowers/specs/2026-09-07-direzione-gui-design.md).
 
-| Che cosa | Dove sta |
-|---|---|
-| i nove pezzi, in ordine: lo spike M1–M5 più l'accettazione di `dockview`; il filo; lo schema che cresce di tre varianti; il registro delle funzioni; la settima porta; il daemon che ascolta; la SPA con la cornice; il core finto; il passo del cancello | la tabella della §3 della stella polare; il piano resta in **due parti**, la prima fino al pezzo 1 compreso |
-| ciò che il 2 non costruisce, e chi lo fa dopo | «Cosa il 2 NON costruisce» nella §3 della stella polare, che allarga l'elenco approvato qui il 2026-09-06: casella di scrittura, rete verso OpenRouter, segreti, run e passo → il 3; il nucleo, la ricerca e la casella nella barra → il 6; viewer 3D → il pilastro degli asset 3D; cornice nativa, menu, pacchetto, avvio automatico → dopo M1–M5 e il 10; la mano come puntatore → il 12; registro delle guide, trigger, proiezione → il 13; Compatta vera → il 10; il kit UI → alla seconda occorrenza |
-| l'ordine di costruzione dentro il 2 | lo spike prima di tutto (risposta 3), poi il filo, lo schema, il registro, la settima porta, il daemon, la SPA, il finto, il cancello: i consumatori dopo ciò che consumano — 🔶 dedotto per i pezzi 2–9, come nella §3 della stella polare; lo fissa il piano |
-| i debiti del 2 come intero | le varianti `Token` senza produttore di prodotto fino al 3 (§4); la Chat che lo dice a parole (§6a); i moduli non costruiti che dicono chi li riempie, con **un** componente segnaposto (decisione 17 del coordinatore della stella polare) |
+Costruisce, in quest'ordine:
 
-**I nomi inglesi che le sezioni lasciavano «al disegno scritto»** — fissati qui, decisione 9 del coordinatore di questa sessione
-(§10), ribaltabili dal proprietario prima che esista codice:
-
-| Cosa | Nome | Perché così |
+| # | Pezzo | Dove vive |
 |---|---|---|
-| la settima porta (§2 della stella polare) | famiglia `custody` in `kernel::ports`, tratto `Custody`, operazioni `keep(key, bytes)` e `retrieve(key)`, chiave `CustodyKey` con la sola variante `Layout` | la parola che i disegni usano da soli — «custodia della disposizione» nelle tre sequenze; verbi corti come le altre porte (`accept`, `send`, `receive`); non `config` né `settings`, perché la porta **non è configurazione** (§2 della stella polare) |
-| il registro delle funzioni (§5) | modulo `registry` di `kernel` | il nome di ADR-0038, «il registro delle funzioni del programma»; i tipi dentro li fissa il piano sulle righe della §5 |
-| i messaggi (§4) | quelli della tabella della §4, da provvisori a **fissati**; la lista dei passi è `Steps` | erano già inglesi e nessuno confligge con `crates/kernel/src/wire/ipc.rs`, che oggi ha `Request` e `Verdict`; `Steps` è il nome del modulo che la consuma |
+| 1 | lo spike M1–M5 sui due gusci, e la chiusura di ADR-0029 con le misure | `spikes/gui-shell/`, fuori dal workspace come gli altri spike; poi l'ADR |
+| 2 | il filo vero: il trasporto della porta `ipc` in `platform`, la stretta di mano col timbro di build, `ClientId` dal contatore, la suite di conformità sulle tre implementazioni | `crates/platform/src/ipc.rs`, banchi in `crates/kernel/tests/` e `crates/platform/tests/` |
+| 3 | lo schema che cresce, con le fixture per il lato GUI | `crates/kernel/src/wire/ipc.rs`, `crates/kernel/tests/ipc_wire.rs` |
+| 4 | il registro delle funzioni di ADR-0038, col click come primo invocatore e il cambio di policy come prima funzione | un modulo nuovo di `kernel`, nome inglese nel disegno scritto |
+| 5 | il daemon che ascolta: accetta la GUI, manda ciò che sa, esegue il cambio di policy dal registro | `crates/daemon/src/main.rs` |
+| 6 | la SPA in `gui/`: Vue 3, `pinia`, Reka UI, `vue-i18n` in italiano, token in un posto solo; due schermate e lo stato «core non in esecuzione» | `gui/` |
+| 7 | il core finto: Rust, fuori dal workspace, schema vero e filo vero, manda a tempo; **il manifesto di radice aggiunge `gui` a `exclude`**, perché `gui/fake-core/` porta un `Cargo.toml` | `gui/fake-core/` |
+| 8 | il passo del cancello per `gui/` | `scripts/gate-gui.sh`, e una riga in `scripts/gate.sh` |
 
-**Ciò che la §1 non fa:** non ripete la tabella dei nove pezzi né l'elenco del «non costruisce» — chi scrive il piano legge la
-§3 della stella polare, come la §10 già dice.
+Non costruisce, e chi lo fa dopo: casella di scrittura, rete verso OpenRouter, segreti, run e passo
+→ il 3; pannello della mappa → il 6; viewer 3D → il pilastro degli asset 3D (quale sotto-progetto lo
+dice la roadmap, non questa riga); cornice, menu nativi, pacchetto, avvio automatico → dopo M1–M5 e
+il 10; la mano come puntatore → il 12; registro delle guide, trigger, proiezione → il 13; il kit UI
+→ alla seconda occorrenza di un componente.
 
-Controllo sui cinque criteri, il 2026-09-09: **verificato** — la §3 della stella polare letta per intero,
-`crates/kernel/src/wire/ipc.rs` (due varianti), `crates/kernel/src/ports/mod.rs` (sei famiglie, i nomi), `ls crates/kernel/src/`;
-**coerenza** — un perimetro in una casa sola, i nomi nella forma delle porte esistenti; **debito** — i nomi sono ribaltabili e la
-riga lo dice; **stato dell'arte** — non c'entra; **proporzione** — una tabella di rimandi e una di nomi, niente ricopiato.
-🔶 **Dedotto:** l'ordine dei pezzi 2–9. **Assunto:** niente.
+Debiti dichiarati: le varianti «token» senza produttore di produzione fino al 3; la casa provvisoria
+delle misure. 🔶 Dedotto: l'ordine dei pezzi 3–8 (daemon e SPA consumano lo schema).
 
-### §2 — Il guscio: lo spike M1–M5, l'accettazione di `dockview` e la chiusura di ADR-0029 · approvata il 2026-09-06; riscritta il 2026-09-09 alla scrittura del disegno
+### §2 — Il guscio: lo spike M1–M5 e la chiusura di ADR-0029 · approvata il 2026-09-06
 
-✅ **RICHIAMO DEL 2026-09-09, sedicesima ripresa della stella polare.** Approvata il 2026-09-06 con le sole M1–M5, Q1 e Q2;
-l'undicesima ripresa (decisioni 24 e 25 del proprietario) le ha aggiunto lo **spike di accettazione di `dockview`** col richiamo
-datato, e la §3 della stella polare prescrive la riscrittura col disegno. Il testo com'era in archivio. ⛔ **Le otto mosse, il
-protocollo e come si decide non si ricopiano:** la casa è la **§4 della [stella polare](2026-09-07-direzione-gui-design.md)**.
+⚠️ **RICHIAMO DEL 2026-09-09, undicesima ripresa della stella polare (decisioni 24 e 25):** lo spike del guscio ospita anche lo
+**spike di accettazione di `dockview`** — la §4 di
+[`2026-09-07-direzione-gui-design.md`](../superpowers/specs/2026-09-07-direzione-gui-design.md). Il frontend minimo porta `dockview-core`; la vista
+chat e la scena `three` vivono **dentro due tessere** di una Home finta, così M4 si misura con `dockview` acceso; il protocollo di
+`spikes/gui-shell/PROTOCOLLO.md` porta anche le **otto mosse** che il proprietario giudica provandole, l'ottava con la mano di
+SP-7 come puntatore; nascono due righe qualitative per guscio, come Q1 e Q2 — **Q3**, la finestra staccata si apre dentro il
+guscio; **Q4**, nella webview basta `dndStrategy: 'auto'` o serve `'pointer'` — e i loro esiti entrano in ADR-0029 come fatti.
+La riscrittura è del disegno.
 
-Una prova a perdere in `spikes/gui-shell/`, con **un solo** frontend minimo — Vue 3 con `vite` e `dockview-core`: una **Home
-finta** con il nucleo bloccato, le tessere e la presa grande, e **dentro due tessere** la vista chat che rende markdown token
-per token e la scena `three` (decisione 31 del coordinatore della stella polare) — costruito su **due** gusci, `electron/` e
-`tauri/`. Il flusso lo manda l'emettitore di `spikes/gui-ipc/` com'è, JSON a righe. Il guscio legge il canale locale (Electron
-con `net` di Node, Tauri con `interprocess`) e passa alla webview: il salto webview di M4 è vero. La mossa 8 — la pinza di SP-7
-come puntatore — si prova **nel browser**, i gusci non servono.
+Una prova a perdere in `spikes/gui-shell/`, con **un solo** frontend minimo (Vue 3 con `vite`: una
+vista chat che rende markdown token per token, e una scena `three`) costruito su **due** gusci,
+`electron/` e `tauri/`. Il flusso lo manda l'emettitore di `spikes/gui-ipc/` com'è, JSON a righe. Il
+guscio legge il canale locale (Electron con `net` di Node, Tauri con `interprocess`) e passa alla
+webview: il salto webview di M4 è vero.
 
 | # | Misura | Come, e la trappola |
 |---|---|---|
 | M1 | RAM a riposo e sotto streaming | RSS dell'**intero albero di processi**: WebView2 tira su processi fuori dal PID di Tauri; contare il solo processo principale falsa il confronto |
 | M2 | pacchetto installato | si costruisce l'installatore di ciascuno e si misura la cartella installata |
 | M3 | fps della scena e API grafica **ottenuta davvero** | fps medi e minimi su 30 secondi; l'API la dichiara il browser (`WebGL2` o `WebGPU`, col renderer). Su Linux **non ora** (decisione C) |
-| M4 | P3 con rendering vero | CPU dell'albero di processi sotto i 2000 messaggi col markdown reso davvero, **con `dockview` acceso e la chat in una tessera**; soglia di P3; la CPU con la chat **nascosta** dietro un'altra tessera si riporta **senza soglia** (§4 della stella polare). ⚠️ Misurato con JSON e non `bincode`: limite dichiarato |
+| M4 | P3 con rendering vero | CPU dell'albero di processi sotto i 2000 messaggi col markdown reso davvero; soglia di P3. ⚠️ Misurato con JSON e non `bincode`: limite dichiarato |
 | M5 | VRAM a riposo e sotto carico 3D | per processo: su Windows coi contatori `GPU Process Memory`, perché `nvidia-smi` in WDDM spesso non la dà per processo |
 | Q1 | chi decodifica `bincode` lato GUI | riga qualitativa: Electron → Node con `bincode-ts`; Tauri → il guscio Rust col decodificatore del kernel |
 | Q2 | le webview in uso | versione di WebView2 sulla macchina; lo stato di WebGPU su WebKitGTK **alle fonti primarie quel giorno** — è la lettura che sostituisce la misura Linux |
-| Q3 | la finestra staccata si apre **dentro il guscio** | riga qualitativa per guscio: la mossa 4, dal comando (`addPopoutGroup`), apre una finestra nuova legata con `window.opener`; chiusa, la tessera torna. Un no in un guscio è un fatto per ADR-0029, non un no a `dockview` |
-| Q4 | nella webview basta `dndStrategy: 'auto'` o serve `'pointer'` | riga qualitativa per guscio: la doc di `dockview` consiglia `'pointer'` dove il drag HTML5 è inaffidabile e nomina le webview incorporate; la mano vuole `'pointer'` comunque (mossa 8) |
-| le otto mosse | il giudizio del proprietario provandole, con le sue parole | la §4 della stella polare: criteri congelati **prima** in `spikes/gui-shell/PROTOCOLLO.md`, la mossa 7 come due JSON uguali; un no nell'insieme → la stessa Home con `interactjs`, stesse mosse, stesso protocollo, **prima** della SPA |
 
-Il protocollo si congela prima di misurare in `spikes/gui-shell/PROTOCOLLO.md`, come SP-7, con M1–M5, Q1–Q4 e le otto mosse;
-l'esito va in una sezione nuova di `spikes/RISULTATI.md`, il numero dopo l'ultimo dell'elenco; i lockfile dello spike, npm e
-Cargo, **si committano** (decisione 49 del coordinatore della stella polare); le cartelle di build entrano in `.gitignore` (§8).
-Le versioni si riverificano il giorno dello spike. Cosa produce: i numeri di M1–M5 e le righe Q1–Q4 entrano in ADR-0029, la
-«Decision» si riempie, lo stato passa ad `Accepted` con l'**innesco Linux scritto**; la riga del guscio nella §4 del compendio
-si chiude; l'esito di `dockview` — resta, o la tela libera — è scritto. **Ciò che dipende dal guscio** — cornice nativa, menu,
-pacchetto, chi decodifica, dove va la crate Rust del guscio se vince Tauri (§9, voce 4) — resta una sezione del disegno
-**dichiarata aperta**: il piano ha due parti, e la seconda si scrive quando la prima ha misurato.
+Il protocollo si congela prima di misurare in `spikes/gui-shell/PROTOCOLLO.md`, come SP-7; l'esito
+va in `spikes/RISULTATI.md`. Le versioni si riverificano il giorno dello spike. Cosa produce: i
+numeri entrano in ADR-0029, la «Decision» si riempie, lo stato passa ad `Accepted` con l'**innesco
+Linux scritto**; la riga del guscio nella §4 del compendio si chiude. **Ciò che dipende dal guscio**
+— cornice, menu, pacchetto, chi decodifica, dove va la crate Rust del guscio se vince Tauri — resta
+una sezione del disegno **dichiarata aperta**: il piano ha due parti, e la seconda si scrive quando
+la prima ha misurato.
 
-🔶 Dedotto: che WebView2 stia fuori dal PID di Tauri e che `nvidia-smi` in WDDM non dia la VRAM per processo (il protocollo lo
-neutralizza); che `net` di Node parli con una named pipe di Windows; i dedotti dello spike di accettazione stanno nella §4 della
-stella polare.
-
-Controllo sui cinque criteri, il 2026-09-09: **verificato** — la §4 della stella polare e le decisioni 24, 25, 30–34;
-**coerenza** — un solo frontend e un solo protocollo per le due prove, come SP-7; **debito** — la seconda parte del piano
-dichiarata aperta; **stato dell'arte** — le versioni al giorno dello spike; **proporzione** — due righe Q e una riga di rimando,
-niente ricopiato.
+🔶 Dedotto: che WebView2 stia fuori dal PID di Tauri e che `nvidia-smi` in WDDM non dia la VRAM per
+processo (il protocollo lo neutralizza); che `net` di Node parli con una named pipe di Windows.
 
 ### §3 — Il filo · approvata il 2026-09-06, a condizione
 
@@ -204,12 +292,6 @@ un passo (il doc vieta solo la nota senza intento).
 
 ### §4 — Lo schema: come cresce `IpcMessage` · approvata il 2026-09-06, poi allargata di due varianti
 
-✅ **RICHIAMO DEL 2026-09-09, alla scrittura del disegno:** tre varianti in più — `Layout`, `SaveLayout`, `Steps` — dalla §2 e
-dalla §3 della [stella polare](2026-09-07-direzione-gui-design.md), che dal 2026-09-08 prescrivevano questo richiamo e che la
-sezione non portava (misurato scrivendo: decisione 5 del coordinatore di questa sessione, §10); e i nomi da provvisori a
-**fissati** — quelli della tabella, e `Steps` per la lista dei passi (tabella dei nomi della §1, decisione 9). Il piano li scrive
-così in `crates/kernel/src/wire/ipc.rs`.
-
 Resta **un solo enum** per le due direzioni (I4); ogni variante dichiara nel doc chi la manda. Nomi
 **provvisori**, in inglese:
 
@@ -224,14 +306,11 @@ Resta **un solo enum** per le due direzioni (I4); ogni variante dichiara nel doc
 | `PermissionRequired` | core | la tripla da concedere, a parole di tutti i giorni nella GUI | ⚠️ **aggiunta dopo l'approvazione**, leggendo ADR-0016 e ADR-0038 insieme: il click non può eseguire senza il permesso della tripla |
 | `Approve` | GUI | la tripla concessa dall'utente nella finestra di conferma. ⚠️ **RICHIAMO DEL 2026-09-08, nona ripresa della stella polare (decisione 21): porta anche la funzione e l'argomento dell'invocazione che sblocca** — `permission::grant` scrive una nota e vuole un passo già aperto, e il core apre il passo A solo quando l'invocazione arriva; così `Approve` basta, e la GUI non rimanda `Invoke` | idem |
 | `Token` | core | un pezzo di testo del flusso e la sua **provenienza**, fidata o non fidata: il testo di un modello è **non fidato** (ADR-0014) e la GUI lo marca (G13). Sul filo un enum a due valori gemello di `Trust`, per non appendere derive `bincode` a un tipo del giornale | G4, risposta 1: nel 2 lo produce solo il core finto |
-| `Layout` | core | il pacchetto opaco della disposizione, «niente», o «non disponibile» (decisione 35): all'accoglienza dopo `Policy`, e di nuovo dopo ogni `SaveLayout` con ciò che il core tiene dopo la scrittura | ✅ **aggiunta il 2026-09-09**: §2 della stella polare, righe 1 e 5 |
-| `SaveLayout` | GUI | il pacchetto opaco — `toJSON()` di `dockview` e la vista attiva — da solo quando la disposizione si ferma e alla chiusura della finestra; fuori dal registro, nessuna tripla (decisione 14) | ✅ **aggiunta il 2026-09-09**: §2 della stella polare, righe 5 e 7 |
-| `Steps` | core | la lista dei passi dal giornale: nel 2 le invocazioni del registro con intento ed esito; all'accoglienza e dopo ogni invocazione | ✅ **aggiunta il 2026-09-09**: domanda 8 e §3 (pezzo 6) della stella polare; il modulo Passi |
 | `Request`, `Verdict` | GUI, core | come oggi | il 3D non è nel 2: il daemon risponde, nessuna GUI del 2 le manda |
 
 **Il core decide quando emettere** (§6.1.4): all'accoglienza manda `Degradation` e `Policy` una
 volta; poi rimanda il pezzo che è cambiato. Nessun invio periodico nel 2, tranne i `Token` del core
-finto. ✅ **RICHIAMO DEL 2026-09-09:** all'accoglienza anche `Layout` e `Steps`, nell'ordine della sequenza 1 della stella polare; `Layout` di nuovo dopo ogni `SaveLayout`, `Steps` dopo ogni invocazione — la stessa regola, «il core manda il pezzo che è cambiato».
+finto.
 
 | Pezzo | Forma |
 |---|---|
@@ -248,7 +327,7 @@ Il registro (ADR-0038), nella forma minima che il primo invocatore richiede:
 
 | Pezzo | Forma | La prova |
 |---|---|---|
-| dove | un modulo nuovo di `kernel`, nome inglese nel disegno scritto (✅ **RICHIAMO DEL 2026-09-09, alla scrittura del disegno:** `registry`, tabella dei nomi della §1); meccanismo nel kernel, contenuto fuori (ADR-0009) | compila in `no_std` |
+| dove | un modulo nuovo di `kernel`, nome inglese nel disegno scritto; meccanismo nel kernel, contenuto fuori (ADR-0009) | compila in `no_std` |
 | una funzione registrata | nome (`&'static str`, come `Permission`), la **tripla** di ADR-0016 che la protegge, la sua `EffectClass`. Oggi una sola: il cambio di policy VRAM, tripla «registro × arbitro × scrittura», classe `Idempotent` come il Task 9 ha argomentato | un nome non registrato → rifiutato, nessun record |
 | `invoke` | nome, invocatore, argomento; `is_granted` sulla tripla; se no → `PermissionRequired`; se sì → l'effetto | due sonde, una per direzione: tripla non concessa → `set_policy` mai chiamato; concessa → l'effetto c'è |
 | il giornale | **un'invocazione è un passo suo**: `intent` sul passo A (classe della funzione), poi una **nota** col dettaglio strutturato — funzione, invocatore, argomento — sul precedente di `PermissionDetail`, poi l'effetto, che è il passo B di `set_policy` com'è, poi `outcome` su A. Specie nuova `Invocation`, con la **sua fixture congelata in più**, come fu per `Permission`: i byte vecchi non si toccano. ⚠️ **RICHIAMO DEL 2026-09-08, nona ripresa della stella polare (decisione 21):** dopo un `Approve` la nota `Permission` di `grant` si posa **su A**, fra la nota `Invocation` e l'effetto — il permesso sul passo che sblocca, come `run_the_ring` posa il verdetto sul passo che giudica | frozen bytes: quattro record diventano cinque, i quattro vecchi identici al byte; una sonda legge il dettaglio dopo `replay`. ⚠️ **RICHIAMO DEL 2026-09-08, nona ripresa:** i record congelati sono **sei** (`ls crates/kernel/tests/frozen/`), non quattro — la sesta ripresa lo trovò per la tabella Passi della stella polare — quindi con `Invocation` diventano **sette**, e i sei vecchi restano identici al byte |
@@ -266,7 +345,6 @@ Il daemon che ascolta:
 | l'attività | un'attività **del kernel** — così la DST la muove con `DyingGui` — che il daemon lancia sull'esecutore coi porti veri: a ogni giro `accept`, poi `receive` per ogni client, poi dispaccia, poi dorme un **tick** consegnato via `Parameters` (ADR-0034), perché il reattore non ha prontezza I/O | una campagna DST breve: la morte della GUI in un punto scelto dal seme non lascia mai una concessione appesa; un crash del giornale a metà invocazione lascia il passo A in dubbio con la sua classe |
 | `Hello` | il primo messaggio deve essere `Hello`; timbro uguale → `Accepted` con la protezione dell'archivio (valore che `platform` conosce, consegnato), poi `Degradation` da `degradation_now` e `Policy` dall'arbitro; diverso → `StaleBuild`, chiusura. ⚠️ **RICHIAMO DEL 2026-09-08, nona ripresa (decisione 22):** «chiusura» si legge *il core non ascolta più quel client* — la porta non ha una chiusura, la GUI esce da sola (§6.1.2) e il core vede `Disconnected`; e dopo `Policy` il core manda anche `Layout` e la lista dei passi (§2 e §3 della stella polare) | una sonda per direzione |
 | `Invoke` / `Approve` | al registro; dopo `set_policy` rimanda `Policy` | il giro completo su `FakeGui` |
-| `SaveLayout`, e `Steps` | alla settima porta: `keep` sotto la chiave `Layout`, poi `retrieve` e `Layout` con ciò che tiene — il vecchio se la scrittura è fallita, «non disponibile» se l'archivio non si apre (§2 della stella polare, decisioni 13 e 35); dopo ogni invocazione rimanda anche `Steps` da `replay` ✅ **RICHIAMO DEL 2026-09-09, alla scrittura del disegno**, dalla §3 della stella polare (pezzo 6) | la sonda «salva, riavvia, ritrova» e le sonde della settima porta, nella tabella della §8 |
 | `Request` | `admit` → `Verdict`. ⛔ **`promote` non si chiama**: il 2 non costruisce il primo ciclo di orchestrazione, quindi il chiusore di `E50`/`E51`/`E100` non cambia; una richiesta `Queued` resta in coda. Nessuna GUI del 2 manda `Request`: l'innesco è il pilastro 3D | dichiarato, non pinzato (gotcha #73) |
 | `Disconnected` | `ClientGrants::on_disconnect(client, arbiter, now)`; il client esce dalla tabella | già provato in `client.rs`; una sonda sul cablaggio |
 | il limite di giri | **deciso dal coordinatore su delega, A**: `u64::MAX` in produzione, sul precedente di `FOR_EVER`, richiamo datato sul doc di `EXECUTOR_TURN_LIMIT`; i banchi tengono i loro limiti finiti. Perché non B (contare solo i giri senza attesa): toglierebbe ai test la garanzia che un'attività che dorme su scadenze future per sempre finisca, e servirebbero due limiti | `daemon` guadagna una sonda: il grafo con la GUI resta vivo oltre centomila giri |
@@ -276,41 +354,30 @@ Debiti dichiarati: il permesso che sopravvive al riavvio (chiusore il 3); `promo
 (chiusore invariato); nessuno spegnimento pulito e nessuna guardia contro un'attività che gira a
 vuoto in produzione (chiusore il 10, un watchdog dell'OS).
 
-### §6a — La GUI: struttura, strati, regole · approvata il 2026-09-06, a condizione; riscritta il 2026-09-09 alla scrittura del disegno, sulla base della stella polare
+### §6a — La GUI: struttura, strati, regole · approvata il 2026-09-06, a condizione
 
-✅ **RICHIAMO DEL 2026-09-09, sedicesima ripresa della stella polare.** Approvata il 2026-09-06 per «due schermate»; il richiamo
-del 2026-09-07 diceva che la riscrittura era del disegno, sulla base della [stella polare](2026-09-07-direzione-gui-design.md),
-e la sua §3 dice come: «le due schermate» diventano **Home e Lavoro nella cornice** di `dockview-core`; `panels/` ospita i
-**tipi di modulo** e le **tre viste** come JSON; il ponte manda **quattro** messaggi; il pannello di stato è il **modulo
-Stato**; la vista chat è una **scheda di Lavoro**, non in Home (domanda 7); la finestra di permesso resta; G20 include muovere i
-pannelli da tastiera. Il testo com'era in archivio. ⛔ **Che cosa mostra ogni modulo, quali comandi ha, le tre viste, la
-disposizione e le tre sequenze non si ricopiano:** la casa è la stella polare — la §1 (il catalogo), la §2 (viste e
-disposizione), «Il modello della GUI» e «La GUI dentro». Qui stanno la struttura della SPA e le **regole** che quelle tabelle
-citano come fonte («§6a del 2»), che restano com'erano approvate (decisione 3 del coordinatore di questa sessione, §10).
+⚠️ **RICHIAMO DEL 2026-09-07:** «le due schermate» diventano **Home e Lavoro dentro la cornice** di
+`dockview-core`; `panels/` ospita i moduli e le tre viste come JSON; la finestra di conferma del permesso
+resta; la vista chat non sta nella Home di default (domanda 7 della stella polare). La riscrittura è del
+disegno, sulla base di [`2026-09-07-direzione-gui-design.md`](../superpowers/specs/2026-09-07-direzione-gui-design.md).
 
 | Pezzo | Forma |
 |---|---|
-| dove e con che cosa | `gui/` alla radice, fuori dal workspace Cargo; toolchain web propria: Node con la versione in `gui/package.json` (§8), `vite`, Vue 3, `pinia`, Reka UI, `vue-i18n`, TypeScript, **e `dockview-core` usato diretto** (decisione 6 del proprietario e 2 del coordinatore della stella polare); le versioni misurate stanno in [`riferimenti.md`](../../riferimenti.md) e si rimisurano al piano. Il `package-lock.json` si committa: nel cancello gira `npm ci`, gemello di `--locked`, e manifesto e lockfile viaggiano insieme |
-| **il ponte** | la SPA **non tocca mai un socket**. Parla con un oggetto ponte piccolo e tipizzato — riceve messaggi già decodificati, ne manda **quattro**: `Hello`, `Invoke`, `Approve`, `SaveLayout`. Ogni guscio lo implementa a modo suo (Electron nel preload, Tauri con eventi e `invoke`): è la cucitura che rende la SPA **indipendente dal guscio**, e che permette di svilupparla e provarla nel browser con un **ponte finto** che rilegge le fixture, prima che il guscio esista. Chi decodifica sta sotto il ponte, e lo decide la misura (Q1) |
-| gli strati, una cartella ciascuno | `transport/` (il ponte e la sua finta) → `schema/` (i tipi TypeScript dei messaggi e le fixture: per ogni variante i byte **e** il valore atteso in JSON, generati dallo stesso comando del kernel) → `stores/` (`pinia`: connessione, stato del core, flusso, la disposizione corrente; **solo presentazione**, I1) → `components/` → `panels/` (i **tipi di modulo** registrati — uno per riga della §1 della stella polare, con **un** componente segnaposto per quelli non costruiti, decisione 17 — e le **tre viste** Home, Lavoro e Compatta come JSON di `dockview`, decisione 11) → `tokens/` (colori, spazi, caratteri: **un file solo** di variabili CSS) → `locales/it.json` |
-| **la cornice** | la barra delle viste, la ricerca (dice chi la riempie, il 6), il chip del core, la fascia che compare solo se il core manca o il timbro è sbagliato, la striscia sempre visibile con **solo ciò che è vivo** nel 2 — degrado, permessi — e il cassetto «+ moduli» con tutti i tipi col numero (decisione 16 della stella polare); sopra `dockview-core`, col ponte fra Vue e i pannelli scritto da noi (decisione 2). La disposizione: `Layout` all'accoglienza si applica; «niente» o «non disponibile» fanno usare le tre viste committate; `SaveLayout` da solo quando la disposizione si ferma e alla chiusura della finestra (decisione 12); un pannello che punta a un tipo o a una run sparita lo dice a parole e si chiude (riga 8 della §2 della stella polare) |
-| i quattro stati della connessione | **core non in esecuzione** → una fascia che lo dice e un pulsante «riprova», il resto spento (ADR-0019); **timbro sbagliato** → la GUI lo dichiara e non procede; **collegata** → i moduli vivi; **nessuna run** → la Chat lo dice a parole invece di restare vuota: col daemon vero non arriva nessun token fino al 3 |
-| il modulo Stato | ciò che mostra è la tabella Stato della §1 della stella polare — i due campi del degrado, la policy col budget allocato su totale, la riga «protetto quanto il tuo account» presa dal valore in `Accepted`; la regola che quella tabella cita da qui: **una riga di evento** per l'ultimo `Verdict`, che compare **solo quando ne arriva uno** — niente riquadro vuoto, la resa si prova con le fixture. Stato mostra, non comanda |
-| il cambio di policy | nel modulo **Impostazioni** (§1 della stella polare, tabella corta): un controllo a due stati, OpenRouter con VRAM libera oppure locale → `Invoke`; `PermissionRequired` → **finestra di conferma** con la tripla a parole → sì → `Approve`, che porta anche l'invocazione: la GUI **non rimanda** `Invoke` (decisione 21 della stella polare) |
-| il modulo Chat | una scheda di **Lavoro**, un esemplare per run, non nella Home di default (domanda 7); ciò che mostra è la tabella Chat della §1 della stella polare; le regole che quella tabella cita da qui: rende il flusso di `Token` come markdown con blocchi di codice (G4), col renderer della §9; ogni pezzo porta la **provenienza visibile** (G13); il testo non fidato si rende come **testo e codice, mai come HTML**, e nessun link si apre da solo (ADR-0014 in interfaccia) |
-| i moduli Passi e Permessi | Passi mostra `Steps` — nel 2 le invocazioni del registro; Permessi la tripla del registro e la finestra di conferma; ciò che mostrano è nelle tabelle della §1 della stella polare |
-| accessibilità (G20) | tastiera ovunque, dai primitivi di Reka UI; focus visibile; contrasto AA dai token; la regione del flusso annunciata allo screen reader con moderazione; la finestra di conferma con la trappola di focus; **spostare la tessera attiva nelle quattro direzioni** con scorciatoie nostre sopra `moveTo` (mossa 6 della §4 della stella polare) |
-| testi (G21) | ogni scritta in `locales/it.json`, italiano solo; la regola di lint `no-raw-text` nel cancello (§9, voce 3) |
+| dove e con che cosa | `gui/` alla radice, fuori dal workspace Cargo; toolchain web propria: Node LTS con la versione appuntata nel progetto, `vite` 8.2.2, Vue 3.5.42, `pinia` 4.0.3, Reka UI 2.10.4, `vue-i18n` 11.4.10, TypeScript. Il `package-lock.json` si committa: nel cancello gira `npm ci`, gemello di `--locked`, e manifesto e lockfile viaggiano insieme |
+| **il ponte** | la SPA **non tocca mai un socket**. Parla con un oggetto ponte piccolo e tipizzato — riceve messaggi già decodificati, ne manda tre: `Hello`, `Invoke`, `Approve`. Ogni guscio lo implementa a modo suo (Electron nel preload, Tauri con eventi e `invoke`): è la cucitura che rende la SPA **indipendente dal guscio**, e che permette di svilupparla e provarla nel browser con un **ponte finto** che rilegge le fixture, prima che il guscio esista. Chi decodifica sta sotto il ponte, e lo decide la misura |
+| gli strati, una cartella ciascuno | `transport/` (il ponte e la sua finta) → `schema/` (i tipi TypeScript dei messaggi e le fixture: per ogni variante i byte **e** il valore atteso in JSON, generati dallo stesso comando del kernel) → `stores/` (`pinia`: connessione, stato del core, flusso; **solo presentazione**, I1) → `components/` → `panels/` (le due schermate) → `tokens/` (colori, spazi, caratteri: **un file solo** di variabili CSS) → `locales/it.json` |
+| i quattro stati della connessione | **core non in esecuzione** → una fascia che lo dice e un pulsante «riprova», il resto spento (ADR-0019); **timbro sbagliato** → la GUI lo dichiara e non procede; **collegata** → pannello di stato vivo; **nessuna run** → la vista chat lo dice a parole invece di restare vuota: col daemon vero non arriva nessun token fino al 3 |
+| il pannello di stato | degrado (due campi oggi), policy attiva con budget allocato su totale, la riga «protetto quanto il tuo account» presa dal valore in `Accepted`, e **una riga di evento** per l'ultimo `Verdict`, che compare **solo quando ne arriva uno**: niente riquadro vuoto, la resa si prova con le fixture |
+| il cambio di policy | un controllo a due stati, OpenRouter con VRAM libera oppure locale → `Invoke`; `PermissionRequired` → **finestra di conferma** con la tripla a parole → sì → `Approve` → la GUI rimanda `Invoke`. ⚠️ **RICHIAMO DEL 2026-09-08, nona ripresa (decisione 21):** `Approve` porta anche l'invocazione, e la GUI **non rimanda** `Invoke` — vedi la riga «il permesso» della §5 |
+| la vista chat | rende il flusso di `Token` come markdown con blocchi di codice (G4); ogni pezzo porta la **provenienza visibile** (G13); il testo non fidato si rende come **testo e codice, mai come HTML**, e nessun link si apre da solo (ADR-0014 in interfaccia) |
+| accessibilità (G20) | tastiera ovunque, dai primitivi di Reka UI; focus visibile; contrasto AA dai token; la regione del flusso annunciata allo screen reader con moderazione; la finestra di conferma con la trappola di focus |
+| testi (G21 rimandato) | ogni scritta in `locales/it.json`, italiano solo; **un controllo** che vada rosso su una scritta lasciata nel codice, se esiste una regola di lint matura (si verifica al piano) |
 | la regola del kit | un componente si estrae dai pannelli alla **seconda** occorrenza; nel 2 nessun kit |
 
-Debiti dichiarati: la Chat senza produttore vero fino al 3, e lo dice a parole; la parte del ponte che dipende dal guscio,
-aperta per nome (parte 2 del piano); i moduli non costruiti come un segnaposto solo. 🔶 Dedotto: la forma esatta del ponte nei
-due gusci; che le tre viste JSON si carichino con `fromJSON` di `dockview` — lo prova la mossa 7 dello spike.
-
-Controllo sui cinque criteri, il 2026-09-09: **verificato** — la §3 della stella polare («Le sezioni del 2 che cambiano»), la
-§1 e la §2, «Il modello della GUI», le decisioni 2, 11, 12, 16, 17 e 21; **coerenza** — le regole restano dove le tabelle della
-stella polare le citano, il resto rimanda; **debito** — scritto sopra; **stato dell'arte** — le versioni in `riferimenti.md`,
-rimisurate al piano; **proporzione** — undici righe di struttura e regole, niente catalogo ricopiato.
+Debiti dichiarati: la vista chat senza produttore vero fino al 3, e lo dice a parole; due
+dipendenze nuove non scelte qui — un renderer di markdown, gli attrezzi di prova — tue, in §9; la
+parte del ponte che dipende dal guscio, aperta per nome. 🔶 Dedotto: la forma esatta del ponte nei
+due gusci.
 
 ### §7 — Il core finto · approvata il 2026-09-09 (A, decisione 33 della stella polare)
 
@@ -487,7 +554,7 @@ una riga, un passo di CI, tre righe di ignore; niente matrice, niente cache, nie
 
 Una tabella: ogni voce aperta, chi la chiude, e un consiglio scritto — così il piano procede anche se il proprietario non
 dice altro. Il precedente è «Le voci che questo disegno apre per il proprietario» del
-[disegno della knowledge base](2026-09-04-knowledge-base-design.md). Le voci vengono dalla riga 9 di «Le sezioni che
+[disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md). Le voci vengono dalla riga 9 di «Le sezioni che
 mancano» qui sotto, dai debiti dichiarati delle §3–§8, dalle registrate della stella polare che dicono «il disegno del 2»,
 e dalla §8. Delegata dal proprietario alla chiusura della quattordicesima ripresa della stella polare e **scritta alla
 quindicesima**, lo stesso giorno: **A**, coi consigli dentro, verificati alla fonte; B era lasciare gli attrezzi web aperti
@@ -565,107 +632,23 @@ manutenzione, non la qualità; che `axe-core` si chiami sul DOM di `jsdom` senza
 
 **Decisioni del coordinatore in questa sezione**, nella tabella omonima della stella polare: 51–57.
 
-### §10 — Come si riprende · approvata il 2026-09-09 (delegata, «decidi secondo la skill»: A, decisione 37 della stella polare) — scritta alla chiusura della sedicesima ripresa, 2026-09-09, coi comandi
+### §10 — Come si riprende · approvata il 2026-09-09 (delegata, «decidi secondo la skill»: A, decisione 37 della stella polare)
 
-⚠️ **È il documento di consegna della sessione che ha scritto i due disegni sul posto**, e sta qui e non in un file a parte
-perché il repo ha già la sua convenzione: lo stato vive in file **tracciati**, e chi riprende legge i due disegni per intero.
-**Una sola** «Come si riprende» (decisione 37): la [stella polare](2026-09-07-direzione-gui-design.md) tiene la propria tabella
-dello stato e rimanda alla §6 del compendio. Ogni riga è stata **rilanciata coi comandi** prima di essere scritta, non
-ricordata. Le quattro parti che la §10 approvata prescriveva stanno qui nell'ordine: lo stato, il compito della sessione
-successiva, ciò che i disegni consegnano al piano, la Definizione di «fatto» della parte 1.
+Quando il disegno del 2 sarà scritto sul posto (punto 5 del prossimo passo della stella polare), chiude con una sezione
+«Come si riprende», nella forma dei disegni dei [gesti](../superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) e della
+[knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md): è il documento di consegna della sessione che scrive i due disegni, e
+sta nel disegno del 2 perché da lì parte il piano. **Una sola** — A, decisione 37; B era una in ciascuno dei due file: la
+stella polare tiene la propria tabella dello stato e rimanda alla §6 del compendio, in un posto solo (gotcha #68). Questa
+sezione dice che cosa conterrà, così chi la scrive non decide da capo.
 
-⛔ **DA SAPERE SUBITO: niente è a metà.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato, **nessun
-codice toccato**: questa sessione ha prodotto solo documenti — i due disegni, i due archivi, una sezione di `riferimenti.md`, il
-puntatore della §6 del compendio.
-
-⚠️ **La sessione si è chiusa PRIMA della rilettura del proprietario.** Il sì del proprietario è condizionato e si dà in chat,
-non si deduce da una chiusura. La **domanda minima** con cui la sessione nuova apre, dopo la lettura obbligatoria e i due
-disegni per intero: *«i due disegni sono riletti?»* — **A**, sì: si scrive la parte 1 del piano (punti 5–7 qui sotto); **B**,
-no: si presentano una per volta, in forma A/B col consiglio scritto, le voci che sono del proprietario — le righe 5, 6, 11 e 13
-della §9, e le decisioni di questa sessione qui sotto che tocca a lui tenere o ribaltare: i nomi (9), la §1 per rimando (2) —
-e **poi** si scrive il piano nella stessa sessione, se il contesto regge.
-
-#### Lo stato alla chiusura, e il comando che lo rifà
-
-| | Stato alla chiusura, e il comando che lo rifà |
-|---|---|
-| Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb` dopo `git fetch --all --prune`. Nessuno stash, nessuna operazione a metà |
-| I commit di questa sessione | `git log --oneline a539f2a..HEAD` — i due disegni scritti sul posto, i due archivi, `riferimenti.md`, il puntatore della §6 del compendio; poi la chiusura, se separata |
-| Codice di prodotto | **non toccato**: `git diff --stat 664265a..HEAD -- crates/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` non rende nulla; di `scripts/` solo `check-docs.sh` (il tetto del compendio, taglio 3) e della spec del sotto-progetto 1 solo la §8.2 (decisione 19): `git diff --stat 664265a..HEAD -- scripts/ docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` |
-| Cancello | `bash scripts/check-docs.sh` → `OK`; `bash scripts/gate.sh` → **`GATE GREEN`, rilanciato all'apertura e alla chiusura** — nessun file che il cancello compili è cambiato fra le due corse. Si rilanciano, non si citano |
-| Fine-riga | i due disegni e i due archivi **LF** nell'indice e nell'albero; il compendio e `riferimenti.md` LF nell'indice e **CRLF** nell'albero, con CR = righe: `git ls-files --eol docs/COMPENDIO.md docs/riferimenti.md docs/archivio/consegna-brainstorming-direzione-gui.md docs/archivio/consegna-brainstorming-sottoprogetto-2.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md`, e `tr -cd '\r' < docs/COMPENDIO.md \| wc -c` contro `wc -l < docs/COMPENDIO.md` |
-| Gli archivi sono il testo delle consegne | `diff <(git show a539f2a:docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) <(tail -n +22 docs/archivio/consegna-brainstorming-sottoprogetto-2.md)` e `diff <(git show a539f2a:docs/superpowers/specs/2026-09-07-direzione-gui-design.md) <(awk '/^# La direzione della GUI/{s=1} s' docs/archivio/consegna-brainstorming-direzione-gui.md)` — **solo** righe che contengono `](`, i link riscritti per la cartella |
-| File temporanei | nessuno nel repository: gli script e i frammenti di questa sessione stanno nello scratchpad, fuori dall'albero, come `CLAUDE.md` prescrive |
-| Debito lasciato | **nessuno non dichiarato**: le voci aperte sono nella §9 col loro chiusore; le decisioni di questa sessione qui sotto, ribaltabili; le righe nella §12 del compendio e in `README.md` sono compito del piano (§6 della stella polare) |
-
-#### Le decisioni prese dal coordinatore in questa sessione, col perché — il proprietario può ribaltarle
-
-| | Decisione | Perché, e che cosa costa se è sbagliata |
+| Parte | Che cosa porta | Da dove viene la forma |
 |---|---|---|
-| 1 | commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md` dice *«senza co-autore»*; una direttiva di sistema chiede il contrario e la divergenza è **portata al proprietario**, come in ogni sessione di questo repository. Costo se sbagliato: un `--amend` |
-| 2 | la §1 riscritta **per rimando** alla §3 della stella polare, senza ricopiare i nove pezzi né il «non costruisce» | la §6 della stella polare (decisione 38): il 2 rimanda e non ricopia, gotcha #68; la §3 diceva *«la tabella qui sopra al posto degli otto pezzi»*, e «al posto» si è letto come casa unica. Costo: chi legge il perimetro del 2 apre due file. Ribaltare costa un incolla |
-| 3 | la §6a riscritta tenendo le **regole** che le tabelle della §1 della stella polare citano come fonte («§6a del 2») e rimandando per ciò che ogni modulo mostra | senza le regole qui, tre righe della stella polare citerebbero una fonte sparita. Costo: la §6a si legge insieme alla §1 della stella polare |
-| 4 | la §2 riscritta con le righe Q3 e Q4 e una riga «le otto mosse» che rimanda alla §4 della stella polare | la §3 della stella polare prescriveva «idem»: richiamo e riscrittura; le mosse hanno una casa sola. Costo: nessuno |
-| 5 | i richiami datati sulla §4 (le tre varianti, i nomi fissati) e sulla §5 (`SaveLayout`, `Steps`, il nome del modulo) **scritti ora** | la §3 della stella polare li prescriveva dal 2026-09-08 e la §4 non li portava — misurato: `grep -c 'Layout'` sulle righe della §4 rendeva **0** prima di oggi; la §5 li aveva solo nella riga `Hello`. Costo: nessuno |
-| 6 | le misure npm e crates.io delle due consegne passate in `riferimenti.md`, in una sezione datata coi comandi; nei disegni il rimando | lo prevedevano le consegne stesse («casa unica provvisoria», decisione 6 del coordinatore del 2026-09-06) e `CLAUDE.md`. La tabella dei fatti di `dockview` 8.x resta nella stella polare perché le sue §2 e §4 la citano «qui sopra». Costo: chi vuole una versione apre `riferimenti.md`, e comunque la rimisura |
-| 7 | nella stella polare restano vive le due tabelle delle decisioni, le registrate e i vicoli ciechi; escono la cronaca, le «sezioni che mancano» (tutte chiuse) e il «prossimo passo» (la §6 del compendio); il file **intero** com'era va in coda all'archivio come istantanea | le sezioni citano le decisioni per numero; un'istantanea intera è ciò che la decisione 37 del coordinatore della stella polare aveva già scelto. Costo: l'archivio cresce del file intero, e non è lettura obbligatoria |
-| 8 | in questo file escono lo stato, il «fatto», le «sezioni che mancano» e il «prossimo passo» superato dal 2026-09-07; restano le risposte del proprietario, i fatti del codice, le decisioni del coordinatore del 2026-09-06 e i vicoli ciechi | stessa regola: il vivo porta ciò che è vero adesso. Costo: nessuno, l'archivio ha tutto |
-| 9 | i **nomi inglesi** fissati nella §1: la settima porta `custody` (`Custody`, `keep`, `retrieve`, `CustodyKey::Layout`), il registro `registry`, i messaggi della §4 confermati e la lista dei passi `Steps` | le sezioni li lasciavano «al disegno scritto» (voce 16 della §9); `custody` è la parola dei disegni stessi, i verbi corti come le altre porte. Costo se sbagliato: un rinomina prima che esista codice |
-| 10 | nessuna riga nuova in `README.md`, `roadmap.md`, `tracciabilita.md` e nella §12 del compendio | compito del piano, decisione 9 del coordinatore della stella polare e §6. Costo: fino al piano, i due disegni li trova solo chi parte dalla §6 del compendio |
-| 11 | la rilettura del proprietario **non è data per fatta**: la riga «⏳» in testa ai due disegni, e la domanda minima qui sopra | il sì è condizionato e si dà in chat. Costo: nessuno |
+| 1 | la tabella dello stato alla chiusura coi comandi che lo rifanno — ramo, i commit della sessione, codice non toccato, cancello, fine-riga, file temporanei, debito lasciato | la tabella «Stato alla chiusura, e il comando che lo rifà» del disegno della knowledge base |
+| 2 | il compito della sessione successiva, in ordine e con ogni riga eseguibile — fetch, la lettura obbligatoria, le voci aperte da sapere prima (la colonna «Chi la chiude» di `porta-di-qualita.md`, le voci senza numero AUD, la §9), `superpowers:writing-plans` per il piano del 2 in **due parti**, la prima fino allo spike compreso; il pre-controllo delle quattro domande di `CLAUDE.md` nella sessione che scrive il piano; l'esecuzione in una sessione nuova, subagent-driven | `CLAUDE.md`, e il modo scelto dal proprietario |
+| 3 | ciò che il disegno consegna a chi scrive il piano: i pezzi della §3 della stella polare, la tabella artefatto → controllo della §8, le trappole, le fonti — npm e crates.io con le date — che entrano in `riferimenti.md` | le §3–§9 qui sopra e la §3 della stella polare |
+| 4 | la **Definizione di «fatto» della parte 1 del piano**, che il piano copia da lì — la bozza qui sotto | la §5.5 del disegno della knowledge base, da cui la forma della tabella |
 
-#### Il compito della sessione successiva: la rilettura del proprietario, poi il piano in due parti
-
-In ordine, e ogni riga è eseguibile:
-
-1. `git fetch --all --prune`, poi `git status -sb` e `git log --oneline -3`: si parte da `main`, e la testa deve essere il
-   commit di questa chiusura o uno successivo.
-2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero, a blocchi, e i due pezzi dell'audit del 2026-08-27 — poi
-   la **stella polare per intero** e **questo file per intero**. Gli archivi **non** sono lettura obbligatoria. ⚠️ Col tool Bash
-   le tabelle lunghe traboccano: la tabella delle decisioni del proprietario della stella polare a **30** righe per chiamata,
-   il resto a 75–150 (i vicoli ciechi della stella polare dicono dove).
-3. Il proprietario **rilegge** i due disegni sotto la sua accettazione condizionata — la domanda minima in testa a questa
-   sezione. Le voci per lui: le righe 5, 6, 11 e 13 della §9 e le decisioni 2 e 9 di questa sessione; se non dice altro, il
-   piano scrive i consigli.
-4. Prima di scrivere il piano, la regola di `CLAUDE.md` su `superpowers:writing-plans`: le voci aperte **si sanno prima**. Dove
-   stanno: la §9 di questo file; le registrate della stella polare; le voci senza numero AUD
-   dell'[audit](../../audit-2026-08-27.md) — X-1 e X-3 pesano sul 2, voce 13 della §9; le tabelle delle voci aperte dei
-   Traguardi 5 e 6 di [`porta-di-qualita.md`](../../porta-di-qualita.md), coi due `awk` della §6 del compendio. ⚠️ Quali
-   abbiano come chiusore **questo piano** o *«il proprietario, prima»* lo decide chi lo scrive leggendo la colonna «Chi la
-   chiude», non questa riga: qui sbarra solo AUD-004, e sbarra il **13**, non il 2.
-5. `superpowers:writing-plans`: la **parte 1** in `docs/superpowers/plans/<data>-sottoprogetto-2-parte-1-spike-del-guscio.md` —
-   il pezzo 1 della §3 della stella polare: `spikes/gui-shell/`, il protocollo congelato al primo commit di codice con M1–M5,
-   Q1–Q4 e le otto mosse, i due gusci, la Home finta con `dockview-core`, la mossa 8 col worker e il relay di SP-7, l'esito in
-   `spikes/RISULTATI.md`, ADR-0029 chiuso, `.gitignore` e i lockfile — con la Definizione di «fatto» qui sotto **copiata da
-   qui**. In testa: modalità subagent-driven, errata, pre-controllo — la forma dei piani precedenti, `ls docs/superpowers/plans/`.
-   ⚠️ Le versioni di ogni attrezzo si rimisurano quel giorno coi comandi di `riferimenti.md` e della §9.
-6. Il pre-controllo delle quattro domande di `CLAUDE.md` su ciascun compito, **nella sessione che scrive il piano**; ogni
-   compito si legge contro il codice di **adesso**, e le sezioni «Vicoli ciechi e trappole» dei due disegni dicono dove
-   guardare.
-7. L'esecuzione in una sessione **nuova**, un subagente fresco per compito, revisione fra uno e l'altro
-   (`superpowers:subagent-driven-development`): la regola del proprietario. Le due domande A/B per la CI — la metà Windows
-   (X-1) e `npm audit` (X-3), voce 13 della §9 — si pongono al proprietario **quando si scrive il piano**.
-8. Dopo la misura: la **parte 2** — i pezzi 2–9 della §3 della stella polare, con ciò che dipende dal guscio deciso coi numeri
-   (chi decodifica, `gui/shell/` se vince Tauri) — scritta con lo stesso pre-controllo ed eseguita allo stesso modo; le righe
-   nella §12 del compendio, in `README.md`, nella roadmap (il titolo della riga 2) e in tracciabilità entrano con essa (§6 della
-   stella polare; voce 15 della §9).
-9. A piano eseguito: la §6 del compendio porta il passo successivo — il **13**, poi il 3 (decisione 16 del proprietario, voce 3
-   della rilettura del disegno della knowledge base) — e i richiami datati nella §1 della stella polare per i moduli che il 2
-   ha costruito.
-
-#### Ciò che i due disegni consegnano a chi scriverà il piano
-
-📌 È suo e non un puntatore: i **nove pezzi** del 2 in ordine, con dove vive ciascuno — la §3 della stella polare; la **forma**
-di ciascuno — le §3–§7 qui (il filo, lo schema, il registro e il daemon, la GUI, il core finto) e le §2 e §4 della stella polare
-(la settima porta, lo spike); la tabella **artefatto → controllo** della §8, da cui i compiti si tagliano; i **nomi** fissati
-nella §1; le decisioni aperte col chiusore e i **consigli** della §9, che il piano scrive se il proprietario non dice altro;
-l'**ordine dei messaggi** nelle tre sequenze della stella polare, e chi apre il passo; le **fonti** con le date in
-`riferimenti.md`, da rimisurare; le **trappole** — le sezioni «Vicoli ciechi e trappole» dei due disegni; e la Definizione di
-«fatto» qui sotto.
-
-#### La Definizione di «fatto» della parte 1 del piano
-
-Il piano la copia da qui, e la parte 2 ne scrive la propria dopo la misura.
+La bozza della Definizione di «fatto» della parte 1:
 
 | # | Condizione | Chi la verifica |
 |---|---|---|
@@ -677,23 +660,31 @@ Il piano la copia da qui, e la parte 2 ne scrive la propria dopo la misura.
 | 6 | fine-riga rimisurati per ogni file toccato | chi esegue |
 | 7 | la parte 2 del piano scritta **dopo** la misura, con lo stesso pre-controllo | la sessione che la scrive |
 
-#### Ciò che questa riscrittura ha misurato, e che non era scritto da nessuna parte
+**I tre controlli (decisione 18).** *Esiste:* le sezioni «Come si riprende» dei disegni dei gesti e della knowledge base, lette
+il 2026-09-09; la Definizione di «fatto» del piano dei documenti della knowledge base (§5.5 di quel disegno), da cui la forma
+della tabella; la §8 qui sopra. *Arriva:* la parte 2 del piano, dopo la misura. *Regge crescendo:* la sezione si riscrive a ogni
+chiusura come diario, nello stesso file.
 
-| # | Misura | Che cosa cambia |
+**Ciò che la §10 non fa:** non è ancora la consegna — si scrive alla chiusura della sessione che scrive i due disegni, coi
+comandi rilanciati quel giorno, non ricordati.
+
+**Controllo sui cinque criteri.** Verificato: i due precedenti, letti. Coerenza: stessa forma. Debito: nessuno. Stato
+dell'arte: non c'entra. Proporzione: una sezione, una tabella. **Dedotto:** niente. **Assunto:** niente.
+
+## Le sezioni che mancano — proposte del coordinatore, non decisioni
+
+| § | Che cosa | La proposta da cui partire |
 |---|---|---|
-| 1 | la §4 non portava il richiamo datato per le tre varianti che la §3 della stella polare prescriveva dal 2026-09-08 (`grep -c Layout` sulle righe della §4: 0); la §5 lo aveva solo nella riga `Hello` | chiusa oggi: decisione 5 qui sopra |
-| 2 | il codice non è cambiato da `664265a` (2026-09-06), il comando nella tabella dello stato: ogni «verificato nel codice» delle sedici riprese vale ancora | nessuna riga da rileggere |
-| 3 | la tabella delle decisioni del proprietario della stella polare, letta col tool Bash a 65 righe, **trabocca** (33 KB): si legge a 30 | una trappola in più nei vicoli ciechi della stella polare |
-| 4 | i nomi che tre sezioni lasciavano «al disegno scritto» non erano raccolti da nessuna parte come compito: la tabella dei nomi nella §1 li raccoglie | decisione 9 |
+| 6b | la **forma** delle due schermate, coi wireframe a bassa fedeltà mostrati in chat | **schermata 1**: la vista chat a sinistra, larga; il pannello di stato a destra, stretto, con degrado, policy col controllo a due stati, budget, riga G16, e la riga di evento del verdetto sotto quando c'è; in alto la fascia dello stato di connessione, visibile solo se il core manca o il timbro è sbagliato. **Schermata 2**: la finestra di conferma del permesso, sopra la 1, con la tripla a parole («la GUI vuole cambiare la policy della memoria grafica»), due pulsanti, focus nel pulsante che rifiuta. Il proprietario ha chiesto di vederli **nella sessione nuova** |
+| 7 | il core finto in `gui/fake-core/` | un binario Rust fuori dal workspace che dipende da `kernel` e `platform` per percorso; ascolta sullo stesso nome del daemon; accetta `Hello` e risponde `Accepted`, poi manda `Degradation` e `Policy`; poi **token a tempo** come lo spike (2000 in dieci secondi, testo non fidato), e su comando da riga di comando un `Verdict` o un cambio di `Degradation` per provare la riga di evento; risponde a `Invoke` come il daemon farebbe, con `PermissionRequired` la prima volta. Il suo `Cargo.lock` **si committa**, perché lo usa il cancello: è un attrezzo, non uno spike ✅ **RICHIAMO DEL 2026-09-09, quattordicesima ripresa della stella polare (decisione 33): la sezione è SCRITTA** — la §7 delle sezioni approvate qui sopra, **A**: l'attività vera del kernel su porte in memoria, più il rubinetto; questa riga era la forma B |
+| 8 | le prove e il cancello | `scripts/gate-gui.sh`: `npm ci`, `npm run build`, `npm test`, chiamato da una riga `run` in `gate.sh`; la CI guadagna `actions/setup-node` con la versione appuntata; `.gitignore` guadagna `/gui/node_modules/`, `/gui/dist/`, `/gui/fake-core/target/`; per ogni artefatto il controllo che lo esercita, nella forma dei disegni precedenti: la tabella si compone dalle colonne «prova» delle §3–§6a, più le prove del core finto (una sonda che lo fa girare contro `FakeGui`? no: contro il trasporto vero, da un thread) e della SPA (unit sulle fixture, componenti con verifica di accessibilità, capo a capo **dopo il guscio**, con la prova del ponte in Node o in Rust secondo il vincitore) ✅ **RICHIAMO DEL 2026-09-09, quattordicesima ripresa della stella polare (decisioni 34 e 35, delegate: A e A): la sezione è SCRITTA** — la §8 delle sezioni approvate qui sopra; il passo del cancello, la CI, `.gitignore` e la tabella artefatto → controllo com'erano proposti qui, più la decisione sull'archivio che non si apre |
+| 9 | le decisioni aperte del proprietario, col chiusore | il renderer di markdown; gli attrezzi di prova della GUI (`vitest` 5.0.0 di tre giorni contro la 4, `@playwright/test`, uno strumento di verifica dell'accessibilità); la regola di lint per le scritte; dove va la crate Rust del guscio se vince Tauri; la prontezza I/O del reattore (probabilmente il 3); l'allocatore dentro la porta `journal` (registrato); il confine di sessione dei permessi (il 3); il watchdog e lo spegnimento (il 10); AUD-004 in parallelo al 2; il ledger `.superpowers/sdd/` ✅ **RICHIAMO DEL 2026-09-09, chiusura della quattordicesima ripresa della stella polare: DECISA A su delega (decisione 36) e NON scritta** — la proposta parola per parola nel prossimo passo della stella polare, blocco «La proposta per la §9», coi consigli verificati alla fonte quel giorno. ✅ **RICHIAMO DEL 2026-09-09, quindicesima ripresa della stella polare: SCRITTA** — la §9 delle sezioni approvate qui sopra, con le misure rifatte quel giorno; il blocco com'era nella cronaca in archivio della stella polare |
+| 10 | come si riprende | la sezione di consegna del disegno, sul precedente dei disegni dei gesti e della knowledge base ✅ **RICHIAMO DEL 2026-09-09: DECISA A su delega (decisione 37) e NON scritta** — una sola «Come si riprende», in questo file quando sarà il disegno; il blocco «La proposta per la §10» nel prossimo passo della stella polare. ✅ **RICHIAMO DEL 2026-09-09, quindicesima ripresa della stella polare: SCRITTA** — la §10 delle sezioni approvate qui sopra |
 
-**I tre controlli (decisione 18).** *Esiste:* le sezioni «Come si riprende» dei disegni dei
-[gesti](2026-09-03-riconoscimento-gesti-design.md) e della [knowledge base](2026-09-04-knowledge-base-design.md), da cui la
-forma; la §10 approvata, che diceva le quattro parti. *Arriva:* la parte 2 del piano, che riscrive questa sezione come diario.
-*Regge crescendo:* ogni chiusura riscrive lo stato e le righe fatte, nello stesso file.
-
-**Controllo sui cinque criteri.** Verificato coi comandi il 2026-09-09 ciò che sta nella tabella dello stato. Coerenza: stessa
-forma dei due precedenti. Debito: nessuno non dichiarato. Stato dell'arte: le versioni si rimisurano al piano. Proporzione: una
-sezione, quattro parti. **Dedotto:** niente. **Assunto:** niente.
+Poi: il disegno scritto **sul posto** — la sessione che lo scrive può essere quella stessa o la
+successiva, come il proprietario preferisce — con la revisione del disegno (segnaposto, coerenza,
+ambiguità, perimetro), la rilettura del proprietario, e `superpowers:writing-plans` col piano in
+**due parti**: la prima fino allo spike compreso, la seconda scritta dopo la misura.
 
 ## Decisioni prese dal coordinatore, col perché — il proprietario può ribaltarle
 
@@ -708,16 +699,42 @@ sezione, quattro parti. **Dedotto:** niente. **Assunto:** niente.
 | 7 | commit **senza** `Co-Authored-By` | `CLAUDE.md` dice «senza co-autore»; la direttiva di sistema chiede il contrario e la divergenza è portata al proprietario, come in ogni sessione di questo repository |
 | 8 | i wireframe con lo strumento inline della chat, non col server del visual companion | stesso scopo — mostrare invece di descrivere — senza un server da avviare. Il proprietario li vedrà nella sessione nuova |
 
-## Vicoli ciechi e trappole, per chi scrive il piano
+## Vicoli ciechi di questa sessione
 
 - cercare lo stato di ADR-0029 con `grep -nE '^(Status|Stato)'`: la riga è una voce di elenco, `- **Status:** Proposed`; lo dice meglio `check-docs.sh`, che lo segnala fra gli ADR in attesa.
 - leggere i metodi del `Reactor` filtrando via le righe `///`: il doc è così fitto che restano due righe e `wait_until` sparisce; si usa `grep -nE '^\s*fn '`.
 - la condizione di ribaltamento di ADR-0029 **non è misurabile senza un Linux vero**: la scelta C la sostituisce con una lettura alle fonti e un innesco scritto.
 - contare la quaterna dei test con un `awk` sul log del cancello: conta due volte i bersagli del passo 7.
-- **sedicesima ripresa della stella polare, la scrittura dei disegni:** le sostituzioni sui due disegni, sui due archivi, su
-  `riferimenti.md` (CRLF) e sul compendio (CRLF) in **un solo** script Python nello scratchpad, coi frammenti nuovi scritti a parte
-  col tool `Write` e letti dallo script, tutti gli agganci asseriti prima di scrivere e i fine-riga di ciascun file conservati;
-  la riscrittura dei link applicata **solo** al testo mosso, saltando i bersagli con una barra rovescia — il `](\s*)` nei vicoli
-  ciechi della stella polare è un esempio in un code span, non un link — e `grep -n '\](\s*)'` sugli archivi prima del commit.
-- **sedicesima ripresa:** la §4 diceva «nomi provvisori» e tre sezioni lasciavano un nome «al disegno scritto» senza che nessun
-  elenco li raccogliesse: prima di riscrivere, `grep -n 'nome inglese nel disegno scritto\|provvisori' <i due file>`.
+
+## Prossimo passo, eseguibile
+
+⚠️ **RICHIAMO DEL 2026-09-07: questo elenco è SUPERATO.** Il passo vivo sta nella sezione omonima di
+[`2026-09-07-direzione-gui-design.md`](../superpowers/specs/2026-09-07-direzione-gui-design.md), e il puntatore nella §6 del
+compendio. L'elenco resta com'era, come verbale di ciò che la sessione del 2026-09-06 lasciava.
+
+1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di
+   questa chiusura o uno successivo.
+2. La lettura obbligatoria di `CLAUDE.md`: il compendio per intero, a blocchi, e la testa dell'audit
+   del 2026-08-27.
+3. **Questo file, per intero.** Poi le skill: `anthropic-skills:decision-principles`,
+   `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`,
+   `anthropic-skills:dev-communication`, e `superpowers:brainstorming` — percorso architetturale,
+   si riprende dalla **§6b**.
+4. Rilanciare i comandi della tabella dello stato; rileggere le righe **dedotte** delle sezioni
+   approvate contro il codice di adesso, prima di costruirci sopra.
+5. Al proprietario i **wireframe** delle due schermate, disegnati in chat; poi la §6b da approvare;
+   poi le §7–§10, una per volta, ciascuna col controllo esplicito sui cinque criteri e con
+   verificato, dedotto e assunto separati, chiedendo il sì dopo ogni sezione.
+6. Alla chiusura: riscrivere questo file sul posto — come disegno se lo scrive lo stesso giorno, o
+   come consegna delle sezioni approvate — spostare questo testo parola per parola in
+   `docs/archivio/consegna-brainstorming-sottoprogetto-2.md` coi link riscritti, muovere il
+   puntatore della §6 del compendio, `bash scripts/check-docs.sh`, `bash scripts/gate.sh`, commit,
+   push.
+
+## Come tornare operativi
+
+```bash
+git fetch --all --prune && git status -sb && git log --oneline -3
+bash scripts/check-docs.sh
+bash scripts/gate.sh
+```

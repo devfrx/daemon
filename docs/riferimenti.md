@@ -2347,6 +2347,112 @@ il disegno lo dichiara **dedotto** (§6.3). Lo spike SP-7 lo usa così.
 su questa macchina `py -0` elenca 3.14, 3.13 e 3.10, quindi lo spike gira su **`py -3.10`** —
 pre-controllo P-4 del [piano](superpowers/plans/2026-09-03-riconoscimento-gesti.md).
 
+## La direzione della GUI e il sotto-progetto 2 — le fonti dei due disegni, dal 2026-09-06 al 2026-09-09
+
+Le misure sullo stato dell'arte che hanno deciso i due disegni — la
+[stella polare della GUI](superpowers/specs/2026-09-07-direzione-gui-design.md) e il
+[disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) — stavano nelle due consegne come «casa
+unica provvisoria» e sono passate qui il **2026-09-09**, alla scrittura dei disegni, come le consegne prevedevano; nei disegni
+resta il rimando. Fonte primaria: il registro npm, crates.io, docs.rs, la licenza di PrimeVue su GitHub, e dockview.dev alle
+pagine nominate nella stella polare — `docs/overview/licence`, `blog/dockview-enterprise`, `docs/core/groups/floatingGroups`,
+`docs/core/groups/maximizedGroups`, `docs/core/groups/popoutGroups`, `docs/core/state/save`, `docs/core/locked`,
+`docs/advanced/accessibility`, `docs/advanced/keyboard`, `docs/core/panels/move`, `docs/core/panels/tabs`,
+`docs/core/dnd/thirdParty` il 2026-09-07, `docs/core/dnd/overview` e `docs/core/dnd/strategy` il 2026-09-08 — i cui fatti
+stanno nella tabella «`dockview` 8.x» della stella polare, perché le sue §2 e §4 la citano. **Nessuna misura di prestazione in
+questa sezione:** sono versioni, date, licenze e download, e ciò che ne discende sta nelle decisioni dei due disegni.
+⚠️ **Le versioni si riverificano il giorno dello spike e il giorno del piano**, col comando: qui c'è ciò che era vero alla data
+scritta. ⚠️ Il sito dockview.dev risponde 403 a `urllib` senza uno `User-Agent` da browser, e su console Windows un `print` di
+testo fuori da cp1252 fallisce dopo il download: i vicoli ciechi della stella polare dicono come.
+
+### Il 2026-09-06 — le librerie del 2: primitive Vue, gusci, trasporto (consegna del 2, domande 7-bis, Linux e trasporto)
+
+```
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+def npm(p):
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    v = d["dist-tags"]["latest"]; return v, d["time"][v][:10], d["versions"][v].get("license"), d["versions"][v].get("peerDependencies", {}).get("vue")
+def downloads(p):
+    return json.load(urllib.request.urlopen("https://api.npmjs.org/downloads/point/last-week/" + urllib.parse.quote(p, safe="@")))["downloads"]
+for p in ["reka-ui", "@ark-ui/vue", "primevue", "vuetify", "@headlessui/vue", "vue-i18n", "vue", "electron", "@tauri-apps/cli", "@tauri-apps/api", "three", "vite", "pinia", "vitest", "@playwright/test"]:
+    print(p, *npm(p), downloads(p))
+for c in ["tauri", "interprocess", "tokio"]:
+    req = urllib.request.Request(f"https://crates.io/api/v1/crates/{c}", headers={"User-Agent": "harness (contatto nel repo)"})
+    d = json.load(urllib.request.urlopen(req))["crate"]; print(c, d["max_stable_version"], d["updated_at"][:10])
+EOF
+```
+
+| Pacchetto | Versione | Pubblicata | Licenza | Vue richiesto | Download/settimana (23–29 ago) |
+|---|---|---|---|---|---|
+| `reka-ui` | 2.10.4 | 2026-08-25 | MIT | ≥ 3.4.0 | 1 819 411 |
+| `@ark-ui/vue` | 5.39.1 | 2026-08-28 | MIT | ≥ 3.5.0 | 26 395 |
+| `primevue` | 5.0.1 | 2026-08-13 | MIT | — | 812 258 |
+| `vuetify` | 4.2.0 | 2026-09-02 | MIT | ^3.5 | 1 040 959 |
+| `@headlessui/vue` | 1.7.23 | **2024-09-09** | MIT | ^3.2 | non misurato: fermo da due anni, escluso |
+| `vue-i18n` | 11.4.10 | 2026-08-25 | MIT | ^3.0 | non misurato |
+| `vue` | 3.5.42 | 2026-08-27 | MIT | — | non misurato |
+
+| Pacchetto o crate | Versione | Pubblicata | Nota |
+|---|---|---|---|
+| `electron` | 44.2.0 | 2026-09-04 | ADR-0029 ne citava la 43.3.0 del 2026-08-06 |
+| `tauri` (crate) · `@tauri-apps/cli` · `@tauri-apps/api` | 2.11.5 · 2.11.4 · 2.11.1 | 2026-07-01 · 2026-06-28 · 2026-06-17 | la stessa 2.11.5 dell'ADR: **fermo** |
+| `three` | 0.185.1 | 2026-07-01 | la scena dello spike |
+| `vite` | 8.2.2 | 2026-08-20 | |
+| `pinia` | 4.0.3 | 2026-08-12 | ADR-0030 ne citava la 4.0.2 |
+| `vitest` | 5.0.0 | 2026-09-03 | ⚠️ major di **tre giorni**: «novità non è maturità», si valuta la 4 al piano |
+| `@playwright/test` | 1.63.0 | 2026-09-04 | Apache-2.0 |
+| `interprocess` (crate) | 2.4.4 | 2026-09-03 | lo spike usava la 2.4, ADR-0027 cita la 2.4.3; ha `ListenerOptions::nonblocking()` |
+| `tokio` (crate) | 1.53.1 | 2026-07-20 | scartato: secondo runtime |
+
+Ciò che ha deciso 7-bis: la logica di Ark UI è agnostica dal framework, cosa che ADR-0030 apprezza,
+ma il suo pacchetto Vue è usato molto meno di Reka UI — i due numeri stanno nella tabella; per una
+libreria di primitive, che è un adattatore Vue in ogni caso, pesa di più chi la tiene viva.
+
+### Il 2026-09-07 — il motore dei moduli e i candidati (stella polare, domanda 6)
+
+```
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+def npm(p):
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    v = d["dist-tags"]["latest"]; vv = d["versions"][v]
+    return v, d["time"][v][:10], vv.get("license"), (vv.get("peerDependencies") or {}).get("vue", "-")
+def dl(p):
+    return json.load(urllib.request.urlopen("https://api.npmjs.org/downloads/point/last-week/" + urllib.parse.quote(p, safe="@")))["downloads"]
+for p in ["dockview", "dockview-core", "dockview-vue", "splitpanes", "gridstack", "grid-layout-plus", "interactjs", "sigma", "graphology", "d3-force", "cytoscape", "@vue-flow/core", "force-graph", "three", "pixi.js", "markdown-it", "marked", "shiki", "codemirror", "dompurify"]:
+    print(p, *npm(p), dl(p))
+EOF
+```
+
+| Pacchetto | Versione | Pubblicata | Licenza | Vue richiesto | Download/settimana | Per che cosa |
+|---|---|---|---|---|---|---|
+| `dockview-core` | 8.2.0 | 2026-08-19 | MIT | — | 303 488 | **scelto**: il motore dei moduli, usato diretto |
+| `dockview` | 8.2.0 | 2026-08-19 | MIT | — | 215 513 | lo stesso, col pacchetto ombrello |
+| `dockview-vue` | 8.2.0 | 2026-08-19 | MIT | ^3.4.0 | 6 105 | l'adattatore Vue: **non scelto**, usato da pochi |
+| `splitpanes` | 4.1.2 | 2026-05-26 | MIT | ^3.2.0 | 144 877 | solo pannelli divisi: non basta |
+| `gridstack` | 13.2.0 | 2026-08-20 | MIT | — | 499 310 | la griglia a tessere, strada 1, scartata |
+| `grid-layout-plus` | 1.1.1 | 2025-10-13 | MIT | ^3.0.0 | 77 895 | idem, versione Vue |
+| `interactjs` | 1.10.28 | 2026-08-01 | MIT | — | 591 557 | la tela libera, strada 3, **di riserva** |
+| `sigma` | 3.0.3 | 2026-04-30 | MIT | — | 240 975 | grafo su WebGL: candidato per il 6, non scelto qui |
+| `graphology` | 0.26.0 | 2025-01-26 | MIT | — | 1 405 123 | la struttura del grafo sotto `sigma` |
+| `d3-force` | 3.0.0 | 2021-06-05 | ISC | — | 16 164 124 | la fisica della rete viva: candidato, non scelto qui |
+| `cytoscape` | 3.34.2 | 2026-08-25 | MIT | — | 14 670 550 | grafo: candidato per il 6 |
+| `@vue-flow/core` | 1.48.2 | 2026-01-28 | MIT | ^3.3.0 | 476 176 | grafo a nodi Vue: candidato per il 6 |
+| `force-graph` | 1.51.4 | 2026-04-16 | MIT | — | 595 590 | grafo a forze su canvas: candidato |
+| `three` | 0.185.1 | 2026-07-01 | MIT | — | 14 025 392 | il viewer 3D, ADR-0030 |
+| `pixi.js` | 8.20.1 | 2026-08-26 | MIT | — | 920 303 | la rete viva su WebGL: candidato, non scelto qui |
+| `markdown-it` | 15.0.1 | 2026-08-27 | MIT | — | 27 048 598 | il renderer di markdown: decisione aperta della §9 del 2 |
+| `marked` | 18.0.11 | 2026-08-24 | MIT | — | 66 978 414 | idem |
+| `shiki` | 4.4.3 | 2026-08-10 | MIT | — | 21 210 699 | colore del codice nei blocchi |
+| `codemirror` | 6.0.2 | 2025-06-19 | MIT | — | 7 109 920 | l'editor, ADR-0030 |
+| `dompurify` | 3.4.15 | 2026-09-06 | MPL-2.0 OR Apache-2.0 | — | 45 528 659 | **non serve** se il testo non fidato si rende come testo e mai come HTML, §6a del 2 |
+
+### Il 2026-09-09 — gli attrezzi web della §9 del disegno del 2
+
+⚠️ Il comando e le versioni del 2026-09-09 — misurate **due volte** lo stesso giorno, alla proposta e alla scrittura, con lo
+stesso esito — stanno nella **§9 del disegno del 2**, casa unica insieme ai consigli che ne discendono (decisioni 51–57 del
+coordinatore della stella polare); qui il rimando, per non aprire una seconda casa.
+
 ---
 
 ## Cosa NON abbiamo adottato, e perché

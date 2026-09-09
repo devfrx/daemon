@@ -4,8 +4,9 @@
 > un subagente fresco per compito con revisione fra uno e l'altro. È la modalità scelta dal
 > proprietario (punto 7 della §10 del [disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md),
 > decisione 48 della stella polare). I passi usano le caselle (`- [ ]`) per il tracciamento.
-> ⛔ **Il pre-controllo di ogni compito è fatto nella sessione che ha scritto il piano, il
-> 2026-09-09, contro il repository a `5ad4634`; l'esecuzione va in una sessione NUOVA.**
+> ⛔ **Il pre-controllo di ogni compito è fatto nelle sessioni che hanno scritto il piano, il
+> 2026-09-09 — i compiti 1–5 contro il repository a `5ad4634`, i compiti 6–8 contro `b50e8b8`;
+> l'esecuzione va in una sessione NUOVA.**
 
 **Obiettivo.** Eseguire il **pezzo 1** della §3 della [stella polare della GUI](../specs/2026-09-07-direzione-gui-design.md):
 lo spike **SP-8** in `spikes/gui-shell/` — la Home finta con `dockview-core` costruita su **due** gusci,
@@ -130,11 +131,12 @@ echo $(( $(grep -oE '^ceiling=[0-9]+' scripts/check-docs.sh | cut -d= -f2) - $(w
 
 ## ▶️ A che punto è QUESTO PIANO — casa unica, e si aggiorna scrivendo
 
-⚠️ **IL PIANO È SCRITTO A METÀ IL 2026-09-09** — la sessione si è chiusa per contesto saturo dopo il
-compito 5: i compiti **6, 7 e 8** e la sezione «Dopo il compito 8» **mancano**, e li scrive la sessione
-nuova dalla sezione *«Come si riprende»* in coda a questo file. ⛔ **Non si esegue finché non è completo.**
-Il pre-controllo delle quattro domande sui compiti 1–5 sta nella sezione *«Il pre-controllo del piano»*
-qui sotto, fatto nella sessione che ha scritto il piano; quello dei compiti 6–8 si fa scrivendoli.
+⚠️ **IL PIANO È SCRITTO IN DUE SESSIONI IL 2026-09-09, E NON È ANCORA RILETTO** — la prima si è chiusa per
+contesto saturo dopo il compito 5; la seconda ha scritto i compiti **6, 7 e 8** e «Dopo il compito 8», ed è stata
+chiusa dal proprietario **prima** della revisione del piano intero e dei tre spostamenti di stato: li fa la sessione
+nuova dalla sezione *«Come si riprende»* in coda a questo file. ⛔ **Non si esegue finché la revisione non è fatta.**
+Il pre-controllo delle quattro domande sta nella sezione *«Il pre-controllo del piano»* qui sotto: P-1…P-18 sui
+compiti 1–5, P-19…P-25 sui compiti 6–8.
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
@@ -146,7 +148,7 @@ qui sotto, fatto nella sessione che ha scritto il piano; quello dei compiti 6–
 | **6** | le misure M1–M5 e Q1–Q2 sui due gusci installati, con gli script; la sezione SP-8 di `spikes/RISULTATI.md` coi numeri e le righe del proprietario dichiarate ⏳ | uno | ⬜ |
 | **7** | col **proprietario**: le otto mosse nel browser, Q3 e Q4 nei due gusci, la CPU con la chat nascosta e la VRAM a pagina intera, la domanda A/B sul guscio; l'esito completo, la riga SP-8 chiusa | uno | ⬜ |
 | **7-bis** | **solo su un no** all'insieme delle mosse: la stessa Home con `interactjs` — il perimetro è qui (D12), il compito si scrive nella sessione che riceve il no, col pre-controllo | — | ⬜ non necessario finché il compito 7 non lo dice |
-| **8** | la chiusura: ADR-0029 `Accepted` con la decisione del proprietario, i totali degli ADR, il compendio (§4, §5, §6, §8, l'intestazione), `README.md`, `HANDOFF.md`, `roadmap.md`, i richiami nei due disegni, le fonti in `riferimenti.md`; la Definizione di «fatto» coi comandi | uno | ⬜ |
+| **8** | la chiusura: ADR-0029 `Accepted` con la decisione del proprietario, i totali degli ADR, il compendio (§4, §5, §6, §8, l'intestazione), `README.md`, `HANDOFF.md`, `roadmap.md`, l'audit e `GUI-REQUISITI.md` (P-19), i richiami nei due disegni, le fonti in `riferimenti.md`; la Definizione di «fatto» coi comandi; le due app disinstallate | uno | ⬜ |
 
 ⛔ **QUALE compito venga dopo NON è scritto qui:** vive nella §6 del
 [`COMPENDIO.md`](../../COMPENDIO.md), in un posto solo. Ciò che resta qui è la **posizione** del
@@ -370,6 +372,61 @@ rende nulla; ADR-0029 è `Proposed` con `_(da prendere)_` alla riga 66. L'unica 
 **riusata** è lo spike `spikes/gui-ipc/` — l'emettitore, la libreria col nome della pipe e la forma del
 messaggio — e `spikes/gesti/` per la mossa 8.
 
+### P-19 — Le case della decisione aperta sono TREDICI, non le cinque della mappa scritta a metà
+
+Il 2026-09-09, seconda sessione, contro `b50e8b8`:
+`grep -rn 'Proposed\|Tauri o Electron\|Tauri contro Electron\|guscio: aperto\|tranne il guscio' docs/*.md CLAUDE.md docs/design/*.md spikes/*.md | grep -v archivio`
+rende `docs/COMPENDIO.md` 104, 160, 454; `docs/HANDOFF.md` 155–156, 208–210, 1001, 1052, 1262; `docs/README.md` 168;
+`docs/roadmap.md` 23–26 e 289; `docs/audit-2026-08-27.md` 29 (un verbale datato di come l'audit fu condotto, che resta)
+e 351 (una regola al presente, che riceve il richiamo); `spikes/GUI-REQUISITI.md` 63–64; niente in `docs/design/` né in
+`tracciabilita.md`. La traccia del compito 8 ne nominava cinque. Il compito 8 le chiude **tutte** e rilancia il `grep`
+prima e dopo (D22). Domanda **2** — la sonda che mancava.
+
+### P-20 — Le righe `⏭️` del compendio sono TRE, non due
+
+`grep -n '⏭️' docs/COMPENDIO.md` il 2026-09-09 rende **667** (il puntatore), **675** (il punto 2) e **735** — un code span
+nella tabella delle voci aperte, *«ogni riga che porta `⏭️` deve nominare la §6»*. La traccia del compito 8 attendeva
+*«due righe come oggi»*: un'attesa mai contata, la specie delle nove voci d'errata dei piani precedenti. Il compito 8
+misura il conteggio nel Passo 1 e pretende che **non cambi** (D24); lo spostamento di stato (c) di «Come si riprende» non
+aggiunge un marcatore. Domanda **1** — la sonda sbagliata.
+
+### P-21 — L'installazione silenziosa NSIS: le cartelle e l'avvio dopo `/S` sono DEDOTTI
+
+Dedotto, non letto alla fonte: `electron-builder` con `perMachine: false` installa in `%LOCALAPPDATA%\Programs\<productName>`
+e `tauri build` per utente in `%LOCALAPPDATA%\<productName>`; e che nessuno dei due **avvii** l'app dopo un `/S`. Il compito 6
+**legge** le cartelle con `Get-ChildItem` e le scrive nell'esito, e chiude con `Stop-Process` un'app che fosse partita
+(D19): l'artefatto non dipende dalla deduzione. Se una cartella non c'è dove si attende, è una voce d'errata col percorso
+letto. Domanda **3** — l'artefatto sbagliato che compila.
+
+### P-22 — Il margine del compendio alla seconda sessione: `10395`
+
+Il richiamo della prima chiusura nel punto 2 della §6 ha consumato 453 byte dei `10848` di P-17; il richiamo di questa
+chiusura è della stessa taglia. Il compito 8 lo rimisura (vincolo 11) e l'intestazione corta (D16) libera più di quanto
+le righe nuove consumano. Il comando è quello del vincolo 11.
+
+### P-23 — `check-docs.sh` esclude i piani dal controllo dei link e legge `spikes/*.md`
+
+Letto nello script: la riga 33 esclude `./docs/superpowers/plans/*` dal `find`, e il filtro `git check-ignore` toglie
+solo ciò che git ignora. Quindi i link dentro **questo** piano — anche nei modelli delle sezioni — sono liberi, e i link che
+i compiti 6 e 8 **scrivono** in `spikes/RISULTATI.md`, in ADR-0029 e in `riferimenti.md` devono risolvere dalla cartella
+del file: `gui-shell/PROTOCOLLO.md` da `spikes/`, `../../spikes/…` da `docs/adr/`, `../spikes/RISULTATI.md` e
+`superpowers/plans/…` da `docs/`. Domanda **2**.
+
+### P-24 — Come `check-docs.sh` conta gli ADR, e che cosa stampa per i `Proposed`
+
+Letto nello script il 2026-09-09: gli `Accepted` si contano con `^- \*\*Status:\*\* Accepted` (riga 287), quindi la riga
+dell'ADR deve essere **esattamente** `- **Status:** Accepted`; i `Proposed` con `Status:\*\* Proposed` (riga 305), e sotto
+`== ADR still in Proposed ==` lo script stampa `  (none)` quando non ce n'è; la guardia dei conteggi (righe 288–301) legge
+**sei** file — `HANDOFF.md`, `roadmap.md`, `README.md`, `COMPENDIO.md`, `AVVIO-CHAT.md`, `CLAUDE.md` — togliendo i code span,
+e il totale **39** vive anche in `AVVIO-CHAT.md` 163 e `CLAUDE.md` 8, dove non cambia. Domanda **2**.
+
+### P-25 — La radice dell'albero per `tree.ps1 -AttachPid` sull'app installata
+
+Per Electron la radice è il **processo principale**, il primo partito — `Get-Process sp8-electron | Sort-Object StartTime | Select-Object -First 1`
+— dedotto da come Electron avvia gpu, renderer e utility come figli del principale, e coerente con `Get-Tree` del compito
+4, che ricostruisce l'albero dal genitore; per Tauri il processo è uno, e i `msedgewebview2.exe` sono figli. Se
+`Get-Tree` non prendesse i figli — `procs` fermo a 1 — è la stessa voce d'errata di P-9. Domanda **3**.
+
 ---
 ## Le decisioni prese da questo piano
 
@@ -396,10 +453,19 @@ smentisce — è ciò per cui esiste l'errata.
 | **D16** | l'intestazione del compendio (riga 21) si **riscrive corta** al compito 8 e il testo com'era va in `docs/archivio/stato-storico.md` come blocco datato, parola per parola | P-17; la regola di `CLAUDE.md` sui verbali che non restano nel documento corretto, e il mandato del 2026-09-09 (decisione 26) |
 | **D17** | la sezione SP-8 di `RISULTATI.md` nasce al compito 6 con M1–M5 e Q1–Q2 **piene** e le righe che aspettano il proprietario — le otto mosse, Q3, Q4, la CPU con la chat nascosta, la VRAM a pagina intera — scritte **⏳ al compito 7** con quelle parole; nessuno slot `<…>` si committa mai | la regola del compito 8 dei gesti («la sezione non si committa con uno slot vuoto») e lo stato «⏳» che i disegni già usano per ciò che aspetta lui |
 | **D18** | ogni compito **rimisura** la baseline — cancello, `check-docs.sh`, margine — e non cita quella scritta qui | gotcha #31 |
+| **D19** | le due app si **installano** (NSIS, `/S`) e si misurano dalla cartella installata; restano installate dal compito 6 al compito 8, che le disinstalla dopo la corsa della condizione 4 della Definizione di «fatto» | ADR-0029 chiede M2 sulla cartella installata, e M1, M4 e M5 sull'eseguibile installato sono ciò che l'utente avrà; disinstallare al compito 8 lascia al revisore del 7 la possibilità di rilanciare. Costo: due app sulla macchina del proprietario per due compiti |
+| **D20** | `tree.ps1 -Seconds 60 -EmitterAt 32`: trentadue secondi di riposo perché la finestra dei 30 s di M3 sia piena **prima** del flusso, e il titolo a riposo si legge dal CSV | il protocollo vuole M3 «alla taglia della Home» a riposo; il `last title` copre il flusso, e la traccia della prima chiusura (`-Seconds 45 -EmitterAt 15`) avrebbe dato un M3 solo sotto flusso. Costo: quattro minuti di corse invece di tre |
+| **D21** | i CSV di `tree.ps1` in `$HOME/sp8-measure/`, fuori dal repository **e** fuori dallo scratchpad di sessione; si cancellano al compito 8 | il compito 7 può essere un'altra sessione e il compito 8 può volerli rileggere; lo scratchpad muore con la sessione. Costo: una cartella da ricordarsi di togliere, e il compito 8 lo fa |
+| **D22** | il compito 8 chiude la decisione in **tutte** le case che il `grep` del suo Passo 1 rende — tredici il 2026-09-09 (P-19), non le cinque della mappa scritta a metà — e il `grep` sta nel compito, così le case nuove non sfuggono | «un rimedio si chiude su TUTTE le case della frase», decisione dell'audit del 2026-08-27; la mappa dei file è aggiornata di conseguenza. Costo: sette sostituzioni in più |
+| **D23** | le fonti di Q2 e le versioni del giorno dello spike in `riferimenti.md` come **sezione nuova** `##` prima di «Cosa NON abbiamo adottato», non come `###` in coda al file né dentro la sezione dei due disegni | in coda cadrebbe sotto «Avvertenza sulla stabilità delle fonti»; dentro la sezione dei disegni ne falsificherebbe il titolo datato *«dal 2026-09-06 al 2026-09-09»*. Costo: una sezione in più in un file che ne ha già molte |
+| **D24** | il conteggio delle righe `⏭️` del compendio si **misura** nel Passo 1 del compito 8 e si pretende invariato, invece di attendersene «due» | la traccia diceva due e il `grep` ne rende tre (P-20): un'attesa contata non invecchia, una ricordata sì |
+| **D25** | nei compiti 6, 7 e 8 nessuno slot dentro una cella di tabella porta una barra verticale — «<il guscio scelto>», «<resta oppure esce>», non «<Electron \| Tauri>» — e i comandi con `\|` stanno nei blocchi di codice, non nelle celle | una barra in uno slot spezza la tabella e `check-docs.sh` non lo vede (vicolo cieco della tredicesima ripresa della stella polare); una `\|` in una cella copiata dentro un'espressione regolare cambia il comando. Costo: nessuno |
 
 **La baseline di partenza, misurata il 2026-09-09 su `5ad4634` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
 il comando del vincolo 11 → `10848` · `git status -sb` → `## main...origin/main`, pulito.
+**E alla seconda sessione, su `b50e8b8`, lo stesso giorno:** `GATE GREEN` · `OK — no inconsistencies.` · il margine
+`10395` (P-22) · albero pulito.
 
 ---
 
@@ -408,7 +474,7 @@ il comando del vincolo 11 → `10848` · `git status -sb` → `## main...origin/
 | File | Chi lo tocca | Fine-riga il 2026-09-09 | Responsabilità |
 |---|---|---|---|
 | `spikes/gui-shell/PROTOCOLLO.md` | compito 1, **creato** | LF | i criteri congelati: M1–M5, Q1–Q4, le otto mosse |
-| `docs/roadmap.md` | compiti 1, 7, 8; la sessione che scrive il piano | **CRLF** | la riga SP-8 nella tabella degli spike; la riga di questo piano nella tabella dei piani; la riga «Ultimo aggiornamento» a ogni tocco |
+| `docs/roadmap.md` | compiti 1, 7, 8; la sessione che scrive il piano | **CRLF** | la riga SP-8 nella tabella degli spike; la riga di questo piano nella tabella dei piani; la riga «Ultimo aggiornamento» a ogni tocco; al compito 8 lo «Stato in una riga» e la riga delle decisioni da prendere (P-19) |
 | `spikes/gui-shell/app/package.json` · `vite.config.ts` · `index.html` · `popout.html` · `src/main.ts` · `src/style.css` · `src/vue-bridge.ts` · `src/home.ts` · `src/tiles/Tile.vue` | compito 2, **creati**; `main.ts` e `home.ts` **modificati** dal compito 3 | LF | la Home finta: Vite, Vue 3, `dockview-core`, le mosse 1–7 |
 | `spikes/gui-shell/app/package-lock.json` | compito 2, **creato** da `npm install` | LF (come `npm` lo scrive; si misura) | il lockfile, committato |
 | `spikes/gui-shell/app/src/bridge.ts` · `src/stats.ts` · `src/hand.ts` · `src/tiles/Chat.vue` · `src/tiles/Scene.vue` · `src/tiles/Hand.vue` | compito 3, **creati** | LF | il ponte, il titolo con le misure, la mano, le tre tessere vive |
@@ -421,11 +487,13 @@ il comando del vincolo 11 → `10848` · `git status -sb` → `## main...origin/
 | `docs/COMPENDIO.md` | compito 8 | **CRLF** | la riga 160 (i totali), la riga del guscio in §4, il richiamo sulla voce 0029 di §5, la riga in «Chiuso» e il puntatore di §6, la riga SP-8 in §8, l'intestazione (D16) |
 | `docs/archivio/stato-storico.md` | compito 8 | **CRLF** | l'intestazione del compendio com'era (D16) |
 | `docs/README.md` | compito 8 | **CRLF** | la riga 0029 dell'indice degli ADR |
-| `docs/HANDOFF.md` | compito 8 | **CRLF** | «38 ADR in stato `Accepted`» → 39 (P-11) |
-| `docs/riferimenti.md` | compito 8 | **CRLF** | le versioni del giorno dello spike e le fonti di Q2 |
+| `docs/HANDOFF.md` | compito 8 | **CRLF** | le cinque case della decisione aperta (P-19), fra cui «38 ADR in stato `Accepted`» → 39 (P-11); un gotcha nuovo, se c'è |
+| `docs/riferimenti.md` | compito 8 | **CRLF** | la sezione SP-8: le versioni del giorno dello spike e le fonti di Q2 (D23) |
+| `docs/audit-2026-08-27.md` | compito 8 | **CRLF** | il richiamo sulla riga delle decisioni deliberate, «ADR-0029 fermo a `Proposed`» (P-19) |
+| `spikes/GUI-REQUISITI.md` | compito 8 | **CRLF** | il richiamo sulla riga del guscio «ancora aperta» (P-19) |
 | `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` | compito 8; la sessione che scrive il piano | LF | i richiami datati in §2 e §10 |
 | `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` | compito 8 | LF | i richiami datati in §4 e nella tabella dello stato (P-16) |
-| `docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md` | ogni compito | LF | la tabella della posizione, l'errata, «Come si riprende» |
+| `docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md` | ogni compito; le sessioni che lo scrivono | LF | la tabella della posizione, l'errata, «Come si riprende»; al compito 7-bis, su un no |
 | `spikes/gui-ipc/` · `spikes/gesti/` | **nessuno**: si usano com'erano | — | l'emettitore; il worker, il relay e la pagina della mano |
 
 ---
@@ -2239,175 +2307,900 @@ perché guarda i grafi di `kernel` e `simulator`; `git status` dopo l'`add` con 
 - [ ] `GATE GREEN`, `check-docs.sh` → `OK`, fine-riga rimisurati, commit pushato, posizione aggiornata
 
 ---
-## Compiti 6, 7 e 8 — ⛔ NON ANCORA SCRITTI
+## Compito 6: le misure M1–M5 e Q1–Q2 sui due gusci installati, e la sezione SP-8 di `spikes/RISULTATI.md`
 
-La sessione del 2026-09-09 si è chiusa qui per contesto saturo. Ciò che i tre compiti devono contenere
-è scritto per esteso nella sezione *«Come si riprende»* qui sotto, con le decisioni già prese: la sessione
-nuova li scrive **nella stessa forma dei compiti 1–5** — Files, Interfaces, passi con le caselle, i comandi
-con l'atteso, il criterio di chiusura — poi la sezione *«Dopo il compito 8»*, e infine la revisione del
-piano intero (copertura dei disegni, nessun segnaposto, nomi coerenti fra i compiti).
+**Files:**
+- Modify: `spikes/RISULTATI.md` (**CRLF**) — la sezione **SP-8**, inserita **prima** della riga `## SP-7 — …`, e la riga 3 della data; questo piano (LF) — la posizione, e l'errata se una misura smentisce P-9, P-21 o D19
+- Read: `spikes/gui-shell/PROTOCOLLO.md` — le tabelle M1–M5 e Q1–Q4, «La macchina», «Registrazione»; la sezione SP-7 di [`spikes/RISULTATI.md`](../../../spikes/RISULTATI.md) per la forma; `spikes/gui-shell/measure/tree.ps1` e `size.ps1` (compito 4); P-9, P-13, P-21, D7, D9, D17, D19, D20, D21; la §2 del disegno del 2
+
+**Interfaces:**
+- Consumes: gli installatori dei compiti 4 e 5 — `spikes/gui-shell/electron/out/sp8-electron Setup 0.0.0.exe` e `spikes/gui-shell/tauri/src-tauri/target/release/bundle/nsis/sp8-tauri_0.0.0_x64-setup.exe`; `tree.ps1` coi parametri `-Exe`, `-Seconds`, `-EmitterAt`, `-Emitter`, `-Csv` e le righe `rest: …`, `stream: …`, `last title: …`; `size.ps1 -Path`; il titolo della finestra nella forma del compito 3; l'emettitore `spikes/gui-ipc/target/release/core.exe`
+- Produces: la sezione **SP-8** con M1–M5, Q1 e Q2 **piene** e le righe che aspettano il proprietario scritte `⏳ al compito 7, col proprietario` (D17); le due app **installate**, che il compito 7 usa e il compito 8 disinstalla (D19); i CSV in `$HOME/sp8-measure/`, **fuori** dal repository (D21)
+
+⛔ **Ogni numero esce da un comando e va nell'esito testuale**; un criterio non superato resta scritto non superato — il
+metro è congelato dal compito 2. M1, M2, M3 e M5 «si riportano» senza soglia; la sola soglia è **P3** su M4, il picco sotto il
+25 % di un core (protocollo). ⚠️ Le voci del proprietario **non si riempiono qui** e non si lasciano vuote: si scrivono con le
+parole di D17, e il compito 7 le consuma.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+ls "spikes/gui-shell/electron/out/sp8-electron Setup 0.0.0.exe" spikes/gui-shell/tauri/src-tauri/target/release/bundle/nsis/*-setup.exe spikes/gui-ipc/target/release/core.exe
+grep -n '^## SP-' spikes/RISULTATI.md
+sed -n '3p' spikes/RISULTATI.md
+git ls-files --eol spikes/RISULTATI.md
+printf 'RISULTATI CR='; tr -cd '\r' < spikes/RISULTATI.md | wc -c; printf '   righe='; wc -l < spikes/RISULTATI.md
+powershell -NoProfile -Command "Get-Process sp8-electron,sp8-tauri,electron -ErrorAction SilentlyContinue | Select-Object -ExpandProperty ProcessName -Unique"
+```
+
+Atteso: i tre eseguibili esistono — altrimenti `(cd spikes/gui-shell/electron && npm run dist)`,
+`(cd spikes/gui-shell/tauri && npm run build)`, `(cd spikes/gui-ipc && cargo build --release)`; l'ultima sezione di
+`RISULTATI.md` è `SP-7` e **nessuna** `SP-8` (domanda 4); la riga 3 è
+`Data di esecuzione: **2026-08-06** per SP-5 e SP-6; **SP-7** porta la propria data nella sua sezione`; `i/lf w/crlf`;
+CR = righe; **nessun** processo dei gusci in corsa — un'istanza aperta da prima terrebbe la pipe dell'emettitore o
+entrerebbe nei conteggi di un altro albero.
+
+- [ ] **Passo 2: le versioni del giorno, e la macchina (vincoli 8 e 16)**
+
+```bash
+node --version; npm --version; cargo --version; rustc --version
+(cd spikes/gui-shell/app && npm ls --depth=0 2>&1 | tail -9)
+(cd spikes/gui-shell/electron && npm ls --depth=0 2>&1 | tail -4)
+(cd spikes/gui-shell/tauri && npm ls --depth=0 2>&1 | tail -3)
+grep -A1 -E '^name = "(tauri|wry|interprocess)"$' spikes/gui-shell/tauri/src-tauri/Cargo.lock
+grep -A1 -E '^name = "interprocess"$' spikes/gui-ipc/Cargo.lock
+powershell -NoProfile -Command "(Get-ItemProperty 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}').pv"
+powershell -NoProfile -Command "(Get-CimInstance Win32_Processor).Name; (Get-CimInstance Win32_VideoController | Select-Object -ExpandProperty Name)"
+```
+
+E le ultime versioni al registro npm e a crates.io, **quel giorno** — il comando di `riferimenti.md` ristretto ai pacchetti
+di P-8:
+
+```bash
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+def npm(p):
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    v = d["dist-tags"]["latest"]
+    return v, d["time"][v][:10]
+def crate(c):
+    req = urllib.request.Request("https://crates.io/api/v1/crates/" + c, headers={"User-Agent": "harness (contatto nel repo)"})
+    d = json.load(urllib.request.urlopen(req))["crate"]
+    return d["max_stable_version"], d["updated_at"][:10]
+for p in ["dockview-core", "vue", "vite", "@vitejs/plugin-vue", "three", "markdown-it", "electron", "electron-builder", "@tauri-apps/cli", "@tauri-apps/api"]:
+    print("npm", p, *npm(p))
+for c in ["tauri", "tauri-build", "wry", "interprocess"]:
+    print("crates.io", c, *crate(c))
+EOF
+```
+
+Atteso: le versioni **installate** — `npm ls` e i due `Cargo.lock` — sono quelle appuntate in P-8 (`dockview-core` 8.2.0,
+`vue` 3.5.42, `vite` 8.2.2, `three` 0.185.1, `markdown-it` 15.0.1, `electron` 44.3.0, `electron-builder` 26.15.3,
+`@tauri-apps/cli` 2.11.4, `@tauri-apps/api` 2.11.1, `tauri` 2.11.5, `interprocess` 2.4.4); le ultime al registro **possono**
+essere più nuove: si scrivono nell'esito, non si prendono (vincolo 8). WebView2 il 2026-09-09 era `152.0.4191.66` (P-9), e si
+scrive quello **letto**.
+
+- [ ] **Passo 3: l'installazione silenziosa di entrambi, e M2**
+
+I due installatori NSIS sono **per utente** (D9) e accettano `/S`; la cartella la sceglie l'installatore e si **legge**
+(D19, P-21 — dedotto: `%LOCALAPPDATA%\Programs\sp8-electron` per `electron-builder` con `perMachine: false`, e
+`%LOCALAPPDATA%\sp8-tauri` per `tauri build`):
+
+```bash
+ROOT=$(cygpath -w "$PWD")
+TAURI_SETUP=$(cygpath -w "$(ls spikes/gui-shell/tauri/src-tauri/target/release/bundle/nsis/*-setup.exe | head -1)")
+powershell -NoProfile -Command "Start-Process -Wait -FilePath '$ROOT\spikes\gui-shell\electron\out\sp8-electron Setup 0.0.0.exe' -ArgumentList '/S'"
+powershell -NoProfile -Command "Start-Process -Wait -FilePath '$TAURI_SETUP' -ArgumentList '/S'"
+powershell -NoProfile -Command "Get-ChildItem \$env:LOCALAPPDATA\Programs -Directory -Filter 'sp8-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName; Get-ChildItem \$env:LOCALAPPDATA -Directory -Filter 'sp8-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName"
+powershell -NoProfile -Command "Get-Process sp8-electron,sp8-tauri -ErrorAction SilentlyContinue | Stop-Process -Force"
+```
+
+Atteso: **due** cartelle, una per guscio, con dentro `sp8-electron.exe` e `sp8-tauri.exe`; se un installatore avviasse l'app
+dopo `/S` (P-21, dedotto che non lo faccia), lo `Stop-Process` la chiude. Le due cartelle, in forma Windows, vanno nelle due
+variabili qui sotto **e nell'esito**, riga M2. Poi M2, quattro misure:
+
+```bash
+EL_DIR='<la cartella di Electron letta sopra, ad esempio C:\Users\zagor\AppData\Local\Programs\sp8-electron>'
+TA_DIR='<la cartella di Tauri letta sopra, ad esempio C:\Users\zagor\AppData\Local\sp8-tauri>'
+for p in "$EL_DIR" "$TA_DIR" "$ROOT\spikes\gui-shell\electron\out\sp8-electron Setup 0.0.0.exe" "$TAURI_SETUP"; do powershell -NoProfile -ExecutionPolicy Bypass -File spikes/gui-shell/measure/size.ps1 -Path "$p"; done
+```
+
+Atteso: quattro righe testuali — `<cartella>: <n> files, <n> bytes, <n> MB` per le cartelle, `<file>: <n> bytes, <n> MB` per
+gli installatori — nell'esito così come sono. Dedotto e da guardare: la cartella di Electron porta `sp8-electron.exe`,
+`resources/app.asar`, i `.pak` e le DLL di Chromium; quella di Tauri il solo `sp8-tauri.exe` e poco altro — è la ragione per
+cui M2 «discrimina» (ADR-0029); se non fosse così è una divergenza da scrivere, non da spiegare.
+
+- [ ] **Passo 4: M1, M4 e M5 con `tree.ps1`, due corse per guscio (D7, D20)**
+
+`-Seconds 60 -EmitterAt 32`: trentadue secondi di **riposo**, così la finestra dei 30 s di M3 è piena **prima** del flusso;
+poi ventotto secondi di **flusso**, che coprono la riconnessione alla pipe (ogni due secondi, D8), i dieci secondi dei 2000
+messaggi e la coda (P-13). Due corse per guscio, perché una corsa sola è un punto in una nuvola (O1 di SP-7). I CSV vanno in
+`$HOME/sp8-measure/` (D21):
+
+```bash
+mkdir -p "$HOME/sp8-measure"; CSV=$(cygpath -w "$HOME/sp8-measure")
+EM="$ROOT\spikes\gui-ipc\target\release\core.exe"
+for i in 1 2; do powershell -NoProfile -ExecutionPolicy Bypass -File spikes/gui-shell/measure/tree.ps1 -Exe "$EL_DIR\sp8-electron.exe" -Seconds 60 -EmitterAt 32 -Emitter "$EM" -Csv "$CSV\electron-$i.csv" | tail -4; done
+for i in 1 2; do powershell -NoProfile -ExecutionPolicy Bypass -File spikes/gui-shell/measure/tree.ps1 -Exe "$TA_DIR\sp8-tauri.exe" -Seconds 60 -EmitterAt 32 -Emitter "$EM" -Csv "$CSV\tauri-$i.csv" | tail -4; done
+for f in electron-1 electron-2 tauri-1 tauri-2; do printf '%s rest title: ' "$f"; powershell -NoProfile -Command "Import-Csv '$CSV\\$f.csv' | Where-Object phase -eq rest | Select-Object -Last 1 -ExpandProperty title"; done
+for f in electron-1 electron-2 tauri-1 tauri-2; do printf '%s procs: ' "$f"; powershell -NoProfile -Command "Import-Csv '$CSV\\$f.csv' | Measure-Object procs -Minimum -Maximum | Select-Object Minimum,Maximum | Format-Table -HideTableHeaders"; done
+```
+
+Atteso, per corsa: `shell started: pid <n>`, `emitter started at ~32 s`, la riga `rest: samples <n> | rss_mb mean <n> max <n> | cpu_pct mean <n> max <n> | vram_mb max <n>`,
+la stessa per `stream:`, e `last title: SP-8 | fps=<n> min=<n> api=<API> scene=<w>x<h> | msgs=2000 lost=0 holes=0 p2max=<ms>ms p2mean=<ms>ms | src=electron dnd=auto | ua=Chrome/<…>`
+(`src=tauri` per Tauri). Le letture: **M1** = `rss_mb mean` e `max` di `rest` (a riposo) e di `stream` (sotto flusso); **M4** =
+`cpu_pct max` di `stream`, il picco che P3 giudica, e `mean`; la CPU di `rest` è la sola scena che gira, e va nell'esito
+come lettura di M4 (O2); **M5** a riposo = `vram_mb max` di `rest`; **M3 a riposo** = `fps=`, `min=`, `api=`, `scene=` del
+titolo dell'ultima riga `rest` del CSV, **M3 sotto flusso** = gli stessi campi di `last title:`; **P1 e P2** = `msgs=`,
+`lost=`, `holes=`, `p2max=`, `p2mean=`; i **processi** dell'albero, minimo e massimo, per corsa.
+
+⛔ **Le divergenze si scrivono, non si aggiustano.** Se per Tauri `procs` resta **1** per tutta la corsa, i processi di
+WebView2 stanno **fuori** dall'albero (P-9): la voce d'errata porta `Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe'" | Select-Object ProcessId,ParentProcessId`
+letto con l'app aperta, e M1, M4 e M5 di Tauri si dichiarano **parziali** finché l'albero non li prende. Se `vram_mb` resta
+`0` con la scena in moto, l'indiziato è il filtro sulle istanze (P-9): la voce d'errata porta
+`Get-Counter -ListSet 'GPU Process Memory' | Select-Object -ExpandProperty PathsWithInstances | Select-Object -First 5`.
+Se `msgs` è sotto 2000 o `holes` sopra zero, è una misura di P1 e si registra. Se `api=` rende `WebGL2:…` su questa
+macchina, è una misura di M3 e si registra (P-6).
+
+- [ ] **Passo 5: Q1 dall'architettura, Q2 dal registro e alle fonti**
+
+**Q1** si legge, non si misura (protocollo): con Electron chi decodifica `bincode` è il **processo principale Node** —
+`spikes/gui-shell/electron/main.js` legge la pipe, e lo dice il commento in testa; con `bincode-ts` (M-11 di ADR-0037) — e con
+Tauri è il **guscio Rust** — `spikes/gui-shell/tauri/src-tauri/src/main.rs`, il commento in testa — col decodificatore del
+kernel, cioè una terza compilazione delle crate (decisione 57 della stella polare).
+
+**Q2**: WebView2 dal valore `pv` del Passo 2; il Chromium di Electron dal segmento `ua=` del titolo (`Chrome/<…>`), che deve
+coincidere con `process.versions.chrome` del preload; e lo stato di WebGPU su **WebKitGTK** letto **quel giorno** alle fonti
+primarie — è la lettura che sostituisce la misura Linux (decisione C del disegno del 2). Tre pagine, con `WebFetch`:
+
+| Pagina | Che cosa si cerca |
+|---|---|
+| `https://github.com/gpuweb/gpuweb/wiki/Implementation-Status` | la riga di WebKit su Linux / GTK: rilasciato, dietro flag, o assente |
+| `https://webkitgtk.org/news.html` | l'ultima versione stabile e se le sue note nominano WebGPU |
+| `https://v2.tauri.app/reference/webview-versions/` | la riga su Linux: quale WebKitGTK usa `wry` |
+
+Per ciascuna: l'URL, la data della lettura, la frase letta **breve e fra virgolette**. Vanno nell'esito qui, e al compito 8
+in `riferimenti.md` (sezione SP-8) e in ADR-0029.
+
+- [ ] **Passo 6: `spikes/RISULTATI.md`, CRLF — la sezione SP-8 e la riga della data**
+
+Con `replace_unique.py`, due sostituzioni:
+
+| Trova | Sostituisci con |
+|---|---|
+| la riga `## SP-7 — Riconoscimento gesti: MediaPipe su CPU, e il giro worker → core → GUI — eseguito il 2026-09-04`, **intera, presa dal file** | la sezione qui sotto, una riga vuota, e la stessa riga |
+| `Data di esecuzione: **2026-08-06** per SP-5 e SP-6; **SP-7** porta la propria data nella sua sezione` | `Data di esecuzione: **2026-08-06** per SP-5 e SP-6; **SP-7** e **SP-8** portano la propria data nella loro sezione` |
+
+La sezione, nella forma di SP-7. ⛔ **Le celle fra `<…>` sono slot di misura** e si riempiono **tutte** in questo compito
+dall'output dei Passi 2–5; le righe con `⏳ al compito 7, col proprietario` restano **così** (D17): sono le sole che il
+compito 7 riempie. Dentro una cella di tabella nessuno slot porta una barra verticale (D25). I link sono relativi a
+`spikes/`, perché `check-docs.sh` legge questo file (P-23).
+
+```markdown
+## SP-8 — Il guscio della GUI, e l'accettazione di `dockview` — misure il <data>; ⏳ il giudizio del proprietario al compito 7
+
+Criteri e soglie: [`gui-shell/PROTOCOLLO.md`](gui-shell/PROTOCOLLO.md), congelato il <la data del commit del compito 2>
+al primo commit di codice dello spike, **prima** della misura. Codice in `gui-shell/`: la Home finta in `app/`, i due
+gusci in `electron/` e `tauri/`, gli script di misura in `measure/`; i campioni grezzi (CSV) fuori dal repository. Le
+due app sono state **installate** dagli installatori NSIS per utente e misurate da lì, col flusso dell'emettitore di
+`gui-ipc/` com'è — righe JSON, `"lorem ipsum dolor sit amet"` su ogni riga, quindi markdown senza blocchi di codice.
+⏳ **Le otto mosse, Q3, Q4, la CPU con la chat nascosta e la VRAM a pagina intera aspettano il proprietario: compito 7 del piano.**
+
+**La macchina:** CPU `<Win32_Processor>`, GPU `<Win32_VideoController>`, WebView2 `<pv>`, il Chromium di Electron `<Chrome/…, da ua=>`.
+
+| Misura | Criterio | Electron — corsa 1; corsa 2 | Tauri — corsa 1; corsa 2 |
+|---|---|---|---|
+| M1 — RAM a riposo, media / picco (MB) | si riporta | <n> / <n>; <n> / <n> | <n> / <n>; <n> / <n> |
+| M1 — RAM sotto flusso, media / picco (MB) | si riporta | <n> / <n>; <n> / <n> | <n> / <n>; <n> / <n> |
+| M2 — cartella installata (file, MB) e installatore (MB) | si riporta | `<cartella>`: <n> file, <n> MB; installatore <n> MB | `<cartella>`: <n> file, <n> MB; installatore <n> MB |
+| M3 — fps medi / minimi sugli ultimi 30 s **a riposo**, l'API ottenuta, la taglia della tessera | si riporta, su Windows | <n> / <n>, `api=<…>`, `scene=<w>x<h>`; <n> / <n> | <n> / <n>, `api=<…>`, `scene=<w>x<h>`; <n> / <n> |
+| M3 — lo stesso **sotto flusso** (gli ultimi 30 s della corsa) | si riporta | <n> / <n>; <n> / <n> | <n> / <n>; <n> / <n> |
+| M4 — CPU dell'albero sotto i 2000 messaggi, picco / media (% di un core) | **picco < 25 %** (P3) | <n> / <n>; <n> / <n> — <✅ `passa` oppure ⚠️ `parziale` oppure ❌ `non passa`> | <n> / <n>; <n> / <n> — <esito> |
+| M4 — CPU a riposo, la sola scena che gira, picco / media | senza soglia, per leggere M4 | <n> / <n>; <n> / <n> | <n> / <n>; <n> / <n> |
+| M4 — CPU con la chat **nascosta** | senza soglia | ⏳ al compito 7, col proprietario | ⏳ al compito 7, col proprietario |
+| M5 — VRAM a riposo, picco (MB) | si riporta | <n>; <n> | <n>; <n> |
+| M5 — VRAM con la scena **a pagina intera** | si riporta | ⏳ al compito 7, col proprietario | ⏳ al compito 7, col proprietario |
+| P1, P2 dal titolo — `msgs= lost= holes=`, `p2max= p2mean=` | si riporta | <…>; <…> | <…>; <…> |
+| processi nell'albero, minimo / massimo per corsa | si riporta | <n> / <n>; <n> / <n> | <n> / <n>; <n> / <n> |
+| Q1 — chi decodifica `bincode` lato GUI | letto dall'architettura, non misurato | il processo principale Node — `electron/main.js` — con `bincode-ts` (M-11 di ADR-0037) | il guscio Rust — `tauri/src-tauri/src/main.rs` — col decodificatore del kernel |
+| Q2 — le webview in uso | letto | il Chromium impacchettato: `<Chrome/…>` | WebView2 `<pv>` dal registro; **WebKitGTK**, alle fonti il <data>: <lo stato di WebGPU, in una riga, con l'URL> |
+| Q3 — la finestra staccata si apre dentro il guscio | ⏳ al compito 7, col proprietario | ⏳ | ⏳ |
+| Q4 — `dndStrategy` che basta nella webview | ⏳ al compito 7, col proprietario | ⏳ | ⏳ |
+
+**Le otto mosse — il giudizio del proprietario, con le sue parole:** ⏳ al compito 7, col proprietario.
+
+**La decisione sul guscio, del proprietario:** ⏳ al compito 7, col proprietario.
+
+### SP-8 · Osservazioni registrate — non criteri
+
+| # | Osservazione |
+|---|---|
+| O1 | <quanto ballano M1, M4 e M5 fra le due corse di ciascun guscio, e se una corsa sola avrebbe cambiato la lettura — O1 di SP-7> |
+| O2 | <la CPU a riposo con la sola scena, e quanto pesa sul picco di M4: la scena sta nel frontend di entrambi i gusci, quindi il confronto regge, ma la soglia P3 la paga; e ciò che dice il limite dichiarato «JSON e non `bincode`»> |
+| O3 | <M3 sotto flusso contro M3 a riposo, per guscio> |
+| O4 | <i processi dell'albero per guscio, e se quelli di WebView2 stavano dentro l'albero di Tauri — la trappola di M1> |
+| O5 | <ciò che ha sorpreso, oppure «niente»> |
+
+### SP-8 · Versioni degli strumenti
+
+| Strumento | Comando | Output |
+|---|---|---|
+| Node, npm | `node --version; npm --version` | `<…>` |
+| Rust | `rustc --version; cargo --version` | `<…>` |
+| i pacchetti npm installati | `npm ls --depth=0` in `gui-shell/app/`, `gui-shell/electron/`, `gui-shell/tauri/` | `<…>` — le versioni appuntate dal piano (P-8) |
+| le crate del guscio Tauri e dell'emettitore | `grep -A1` sui nomi `tauri`, `wry`, `interprocess` nei due `Cargo.lock` | `<…>` |
+| le ultime al registro npm e a crates.io, quel giorno | il comando del compito 6 del piano | `<…>` — <uguali alle appuntate, oppure quali sono più nuove e non prese> |
+| WebView2 | il valore `pv` della chiave del protocollo | `<…>` |
+| CPU, GPU | `Get-CimInstance Win32_Processor`, `Win32_VideoController` | `<…>` |
+
+### SP-8 · Evidenze
+
+| Misura | Comando | Output osservato | Divergenza dall'attesa |
+|---|---|---|---|
+| M1, M4, M5 — Electron, corse 1 e 2 | `tree.ps1 -Exe <sp8-electron.exe installato> -Seconds 60 -EmitterAt 32 -Emitter <core.exe> -Csv <fuori dal repository>` | le righe `rest:`, `stream:` e `last title:` di ciascuna corsa, testuali | <…> |
+| M1, M4, M5 — Tauri, corse 1 e 2 | lo stesso con `sp8-tauri.exe` | le stesse tre righe per corsa | <…> |
+| M2 | `size.ps1 -Path` sulle due cartelle installate e sui due installatori | le quattro righe, testuali | <…> |
+| M3 a riposo | il titolo dell'ultima riga `rest` del CSV, letto con `Import-Csv` (il comando nel compito 6 del piano) | testuale, per corsa | <…> |
+| Q2, WebKitGTK | le tre pagine lette il <data>: l'*Implementation Status* del wiki di `gpuweb/gpuweb`, le news di `webkitgtk.org`, *Webview Versions* di Tauri | <la frase letta in ciascuna, breve, fra virgolette> | <…> |
+```
+
+- [ ] **Passo 7: le prove, il commit, il push**
+
+```bash
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c '<[^ ]'
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -n '⏳' | cut -c1-60
+grep -n '^## SP-\|^### SP-8' spikes/RISULTATI.md
+awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' spikes/RISULTATI.md
+printf 'RISULTATI CR='; tr -cd '\r' < spikes/RISULTATI.md | wc -c; printf '   righe='; wc -l < spikes/RISULTATI.md; git ls-files --eol spikes/RISULTATI.md
+bash scripts/check-docs.sh; bash scripts/gate.sh
+git status --porcelain
+```
+
+Atteso: `0` — nessuno slot `<…>` nella sezione, e l'oracolo è **delimitato** alla sezione (E13 dei gesti); «picco < 25 %» non
+conta, perché dopo `<` c'è uno spazio; le righe con `⏳` sono **otto** — l'intestazione, il capoverso d'apertura, M4
+nascosta, M5 a pagina intera, Q3, Q4, le mosse, la decisione — e il compito 7 le consuma tutte; `## SP-8` **prima** di
+`## SP-7`, con le tre sottosezioni `### SP-8 ·`; l'`awk` delle tabelle spezzate non stampa nulla; CR = righe e
+`i/lf w/crlf`; `OK` — il controllo dei link legge `spikes/RISULTATI.md`, e i due link della sezione sono relativi a `spikes/`
+— e `GATE GREEN`; `git status` che nomina `spikes/RISULTATI.md` e questo piano, **non** i CSV.
+
+```bash
+git add spikes/RISULTATI.md docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md
+git commit -m "guscio(compito 6): SP-8 misurato sui due gusci installati — M1, M4 e M5 con due corse per guscio dall'albero di processi, M2 sulle cartelle installate e sugli installatori, M3 con l'API ottenuta a riposo e sotto flusso, Q1 dall'architettura, Q2 dal registro e alle fonti; la sezione SP-8 in RISULTATI.md con le righe del proprietario dichiarate in attesa del compito 7"
+git push
+```
+
+#### Criterio di chiusura del compito 6
+
+- [ ] la sezione SP-8 esiste prima di SP-7, con le tre sottosezioni; nessuno slot `<…>`; le otto righe ⏳ con le parole di D17
+- [ ] due corse per guscio, i CSV in `$HOME/sp8-measure/` e fuori dal repository; le due app restano installate per il compito 7; le divergenze da P-9, P-21 e D19, se ci sono, nell'errata
+- [ ] `GATE GREEN`, `check-docs.sh` → `OK`, fine-riga rimisurati, commit pushato, posizione aggiornata
 
 ---
 
-## Come si riprende — scritto alla chiusura della sessione del 2026-09-09, coi comandi
+## Compito 7: col proprietario — le otto mosse, Q3 e Q4, le due misure che vogliono un click, la domanda sul guscio
 
-⛔ **DA SAPERE SUBITO.** Niente è a metà **nel repository**: albero pulito, nessuno stash, nessuna
-operazione git in corso, nessun codice toccato. A metà è **questo file**: il piano è scritto fino al
-compito 5 compreso, con tutto il pre-controllo, le decisioni e la mappa dei file; i compiti 6, 7 e 8 non
-esistono ancora. Lo scratchpad della sessione è stato ripulito: **tutto ciò che vale sta qui e nel
-commit**. Il proprietario ha chiuso con «continuiamo nella prossima sessione, troppo contesto saturo».
+⛔ **Non si dispaccia a un subagente** (regola 7 di «Come si esegue»): lo esegue il coordinatore col proprietario allo
+schermo, come il compito 8 dei gesti; ciò che ne esce lo rilegge un revisore in **sola lettura** (E14 dei gesti: era
+l'unico artefatto che nessuno aveva riletto). Il proprietario dice sì o no a ogni mossa **con le sue parole**, e le parole
+vanno nell'esito così come sono, non riassunte; la lettera sul guscio è sua (D15).
 
-### Lo stato alla chiusura, e il comando che lo rifà
+**Files:**
+- Modify: `spikes/RISULTATI.md` (**CRLF**) — le otto righe `⏳` del compito 6, una per volta, e l'intestazione della sezione; `docs/roadmap.md` (**CRLF**) — la riga SP-8 della tabella degli spike e la riga «Ultimo aggiornamento» (P-15); questo piano (LF) — la posizione, e l'errata se la mossa 8 smentisce P-3 o P-6; **solo** col ripiego di P-3, `spikes/gesti/relay/src/main.rs` e un richiamo datato nel protocollo
+- Read: `spikes/gui-shell/PROTOCOLLO.md` — «Le otto mosse», «La mossa 8, come si fa», «Come si decide»; la sezione SP-8 di [`spikes/RISULTATI.md`](../../../spikes/RISULTATI.md); [ADR-0029](../../adr/0029-guscio-della-gui.md) — «Il confronto», «Perché la bilancia pende», «Come si chiude» — per la domanda A/B; il compito 8 del [piano dei gesti](2026-09-03-riconoscimento-gesti.md) per la forma delle parole del proprietario
+
+**Interfaces:**
+- Consumes: la Home nel browser (`npm run dev` in `app/`); il relay e il worker di SP-7; le due app installate dal compito 6, con le cartelle scritte nella riga M2 dell'esito; `tree.ps1 -AttachPid` (compito 4); l'emettitore
+- Produces: la sezione SP-8 **completa**; la lettera e le parole del proprietario sul guscio e l'esito di `dockview`, che il compito 8 scrive in ADR-0029, nel compendio e nei disegni; su un **no all'insieme** delle mosse, il compito **7-bis** (D12), scritto in questa sessione prima del compito 8
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c '⏳'
+grep -n 'M2 — cartella installata' spikes/RISULTATI.md | cut -c1-200
+ls spikes/gesti/.venv/Scripts/python.exe spikes/gesti/hand_landmarker.task spikes/gesti/relay/target/release/sp7-relay.exe
+powershell -NoProfile -Command "Get-PnpDevice -Class Camera -Status OK | Select-Object -ExpandProperty FriendlyName"
+git ls-files --eol spikes/RISULTATI.md docs/roadmap.md
+for f in spikes/RISULTATI.md docs/roadmap.md; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; printf '   righe='; wc -l < "$f"; done
+```
+
+Atteso: `8`; la riga M2 con le **due cartelle** installate, che diventano `EL_DIR` e `TA_DIR` qui sotto; i tre file di SP-7
+(il relay si ricompila con `(cd spikes/gesti/relay && cargo build --release)`); una telecamera; `i/lf w/crlf` su entrambi;
+CR = righe. Poi le variabili che i passi usano:
+
+```bash
+ROOT=$(cygpath -w "$PWD")
+EM="$ROOT\spikes\gui-ipc\target\release\core.exe"
+CSV=$(cygpath -w "$HOME/sp8-measure")
+EL_DIR='<la cartella di Electron, dalla riga M2>'
+TA_DIR='<la cartella di Tauri, dalla riga M2>'
+ls "$(cygpath "$EL_DIR")/sp8-electron.exe" "$(cygpath "$TA_DIR")/sp8-tauri.exe"
+```
+
+- [ ] **Passo 2: il relay di SP-7 e la Home nel browser**
+
+Due comandi, ciascuno in un **terminale suo** che resta aperto (o col tool Bash in background, con percorsi assoluti —
+il cwd del tool persiste fra le chiamate, vicolo cieco della stella polare):
+
+```bash
+cd spikes/gesti/relay && cargo run --release -- ../.venv/Scripts/python ../s2_worker.py ../hand_landmarker.task
+```
+
+```bash
+cd spikes/gui-shell/app && npm run dev
+```
+
+Il proprietario apre `http://localhost:5173`, preme **«azzera»** (la disposizione di default), e legge nel titolo della
+scheda `src=browser` e nella tessera Mano `relay connected`. ⚠️ Se la tessera Mano dice `relay not reachable` col relay in
+ascolto, il proxy di `vite` non passa l'SSE: è P-3 — voce d'errata, e il ripiego è **una riga** nel relay,
+`Access-Control-Allow-Origin: *` sulla risposta di `/stream`, con `hand.ts` che apre `http://127.0.0.1:7878/stream` invece
+di `/stream`; tocca `spikes/gesti/` (vincolo 17) e si dichiara nel protocollo con richiamo datato, come E11 dei gesti.
+
+- [ ] **Passo 3: le mosse 1–7, una per volta, con le sue parole**
+
+Sotto `dnd: auto` (il default del menu). Per ciascuna il proprietario dice **sì o no con le sue parole**; una mossa che passa
+solo con un accorgimento è «parziale» (protocollo). Le righe della barra si copiano **testuali**.
+
+| # | Come si prova nella Home | Passa se (protocollo), e che cosa scrive la barra |
+|---|---|---|
+| 1 | trascinare Stato, poi Chat, dalla presa grande sopra Nucleo e sopra Striscia | i due restano dove sono. ⚠️ Se una tessera si lascia **agganciare** sopra il nucleo, si scrive: è un «parziale» da giudicare col proprietario, e il rimedio — `'no-drop-target'` al posto di `true` in `lock()` di `home.ts` — è una voce d'errata sul compito 2, non un ritocco silenzioso |
+| 2 | il comando ⧉ (o il tasto `F`) su Stato: galleggia; trascinarla dalla presa: scatta alla griglia di 24 px; poi trascinarla dentro la griglia | si sgancia, si muove, torna, senza perdersi — `move 2: stato floats` |
+| 3 | ⤢ (o `M`) su Scena 3D, poi di nuovo | un gesto per andare, uno per tornare, la disposizione sotto resta — `move 3: scene full page`, `move 3: scene back` |
+| 4 | ↗ (o `P`) su Costi: si apre una finestra nuova del browser; chiuderla | chiusa, la tessera torna — `move 4 / Q3: popout OPENED for costi`. Nel browser prova `dockview`; **dentro i gusci** è Q3, al Passo 5 |
+| 5 | afferrare la presa grande — la linguetta alta 40 px col titolo — col mouse; col tocco **solo** se lo schermo è touch, altrimenti «tocco: non misurato» | si afferra senza mirare a una linguetta sottile |
+| 6 | `Ctrl+Alt+←`, `→`, `↑`, `↓` sulla tessera attiva | la tessera si sposta nelle quattro direzioni — `move 6: <id> -> group <…>` oppure `move 6: <id> splits <lato>` |
+| 7 | «salva (mossa 7)», poi «ricarica» | `move 7: EQUAL, <n> bytes before and after the reload` — oppure `move 7: DIFFERENT at byte <n> (<n> vs <n> bytes)`: una misura, non un giudizio (decisione 32), copiata testuale |
+
+- [ ] **Passo 4: la mossa 8, la mano di SP-7 come puntatore**
+
+1. dal menu della barra si sceglie `dnd: pointer` — la barra scrive `Q4: dndStrategy = pointer`, e la scelta sopravvive a
+   una ricarica (`localStorage`);
+2. la mano davanti alla telecamera: lo scheletro a 21 punti si disegna sopra tutta la pagina, specchiato come in
+   `page.html` di SP-7; la **pinza** — pollice e indice a meno di 40 px del fotogramma, o il pugno, che vale come pinza
+   (O7 di SP-7) — sulla presa grande di una tessera: la barra scrive `move 8: pointerdown at <x>,<y> on div.bigtab`; con la
+   pinza chiusa la mano si muove e la tessera **segue** — si sgancia, galleggia, si sposta — e all'apertura la barra scrive
+   `move 8: pointerup …` e la tessera si riaggancia dove sta;
+3. il sì o no **tecnico** lo dicono quelle righe e la tessera: `pointerdown … on div.bigtab` con la tessera che **non** segue
+   è il no tecnico che P-6 prevede — `dockview` non segue il puntatore sintetico — e si **scrive**, non si aggira; il
+   proprietario dice come si sente **con le sue parole, senza soglia**; il ritardo che si sente è quello di SP-7 — cattura →
+   disegno, mediana 114 ms — della pipeline e non di `dockview`.
+
+Poi `Ctrl-C` nei due terminali: il relay e il worker si chiudono, e la pagina di `vite` non serve più.
+
+- [ ] **Passo 5: Q3 e Q4 nei due gusci installati, lanciati a mano, senza emettitore**
+
+Per ciascun guscio, nell'ordine Electron poi Tauri:
+
+```bash
+powershell -NoProfile -Command "Start-Process -FilePath '$EL_DIR\sp8-electron.exe'"
+```
+
+1. **Q4**: `dnd: auto` dal menu; la mossa 2 col mouse — ⧉ su Stato, poi trascinarla dalla presa dentro la griglia. Se il
+   trascinamento funziona, Q4 = `'auto'` basta; se non parte, `dnd: pointer` e di nuovo: Q4 = serve `'pointer'`. Si scrive
+   quale, per guscio;
+2. **Q3**: il comando ↗ su Costi: la barra scrive `move 4 / Q3: popout OPENED for costi` oppure `REFUSED`, e l'occhio dice se
+   la finestra nuova è comparsa **dentro il guscio** — una finestra figlia dell'app, non il browser di sistema; chiusa, la
+   tessera torna. Un no in un guscio è un fatto per ADR-0029, non un no a `dockview` (protocollo);
+3. si chiude l'app dalla sua finestra.
+
+Poi lo stesso con `Start-Process -FilePath '$TA_DIR\sp8-tauri.exe'`. Il `localStorage` della webview di ciascun guscio è
+suo: la strategia scelta nel browser non c'entra.
+
+- [ ] **Passo 6: M4 con la chat nascosta, e M5 con la scena a pagina intera — per guscio (D7, `-AttachPid`)**
+
+Per ciascun guscio, lanciato a mano come al Passo 5 e con la disposizione di default («azzera» se serve):
+
+1. il proprietario trascina **Scena 3D** dentro il gruppo della **Chat**, come seconda linguetta, e attiva Scena: la chat è
+   nascosta dietro;
+2. il coordinatore prende il PID di radice e lancia `tree.ps1` **agganciato** — con `-AttachPid` lo script non lancia e non
+   ferma nulla (compito 4) — con l'emettitore a tre secondi:
+
+```bash
+PID=$(powershell -NoProfile -Command "(Get-Process sp8-electron | Sort-Object StartTime | Select-Object -First 1).Id")
+powershell -NoProfile -ExecutionPolicy Bypass -File spikes/gui-shell/measure/tree.ps1 -AttachPid $PID -Seconds 25 -EmitterAt 3 -Emitter "$EM" -Csv "$CSV\electron-hidden.csv" | tail -4
+```
+
+   Per Tauri `PID=$(powershell -NoProfile -Command "(Get-Process sp8-tauri).Id")`, e i CSV `tauri-hidden.csv`. La radice di
+   Electron è il processo principale, il primo partito (P-25); la lettura è `cpu_pct max` e `mean` della riga `stream:`, **senza
+   soglia**, e `last title:` deve dire `msgs=2000 lost=0 holes=0` — il guscio ha riletto la pipe con la chat nascosta;
+3. **M5 a pagina intera**: il proprietario preme ⤢ su Scena 3D; il coordinatore:
+
+```bash
+powershell -NoProfile -ExecutionPolicy Bypass -File spikes/gui-shell/measure/tree.ps1 -AttachPid $PID -Seconds 12 -Csv "$CSV\electron-fullpage.csv" | tail -3
+```
+
+   la lettura è `vram_mb max` della riga `rest:` (nessun emettitore: tutta la corsa è `rest`); poi ⤢ di nuovo, e l'app si
+   chiude dalla finestra. Lo stesso per Tauri, `tauri-fullpage.csv`.
+
+- [ ] **Passo 7: la domanda A/B sul guscio (D15), e il verdetto su `dockview`**
+
+Il coordinatore mette davanti al proprietario **una tabella a due colonne**, Electron e Tauri, una riga per M1–M5 e Q1–Q4
+coi numeri della sezione SP-8 (entrambe le corse) e con le righe di questo compito, **a parole semplici**, e sotto il
+consiglio in **una riga**, derivato dall'asimmetria dei costi scritta in ADR-0029 — un costo di capacità si paga più spesso
+di un costo di packaging — **letta contro i numeri**: se M3 dà la stessa API su entrambi, M4 passa su entrambi e Q3 e Q4 sono
+uguali, decide l'asimmetria e il consiglio è **A**; se Tauri cade su M4, su Q3 o mostra un'altra API, **A** a maggior
+ragione; se è Electron a cadere dove Tauri passa, il consiglio è **B**, e dice perché. La domanda: **«A — Electron; B —
+Tauri: quale guscio?»** La lettera e le sue parole vanno nell'esito, e il compito 8 le scrive in ADR-0029.
+
+Il verdetto su `dockview` lo dà il protocollo, «Come si decide»: tutte e otto passano → **resta**; una mossa passata con un
+accorgimento → resta, «parziale» scritto; un **no all'insieme** → la tela libera: il compito **7-bis** (D12) si scrive in
+questa sessione, col proprio pre-controllo, **prima** del compito 8, e la posizione lo dice. Un no tecnico sulla sola mossa 8
+si scrive, e se basti a far cadere `dockview` lo dice il proprietario, sull'insieme.
+
+- [ ] **Passo 8: `spikes/RISULTATI.md`, CRLF — le otto righe ⏳, una per volta**
+
+Con `replace_unique.py`, ogni *Trova* è la riga **intera, presa dal file** (le celle `⏳ al compito 7, col proprietario` da
+sole non sono uniche); nessuno slot resta, e nessuna cella porta una barra verticale in uno slot (D25):
+
+| Trova | Sostituisci con |
+|---|---|
+| l'intestazione `## SP-8 — … — misure il <data>; ⏳ il giudizio del proprietario al compito 7` | `## SP-8 — Il guscio della GUI, e l'accettazione di \`dockview\` — misure il <data>, giudizio del proprietario il <data>` |
+| le **due righe** del capoverso d'apertura che portano `⏳ **Le otto mosse, Q3, Q4, la CPU con la chat nascosta e la VRAM a pagina intera aspettano il proprietario:` e `compito 7 del piano.**` | `Le otto mosse, Q3, Q4, la CPU con la chat nascosta e la VRAM a pagina intera: **col proprietario il <data>**, qui sotto.` |
+| la riga `\| M4 — CPU con la chat **nascosta** \| senza soglia \| ⏳ … \| ⏳ … \|` | `\| M4 — CPU con la chat **nascosta**, picco / media (% di un core) \| senza soglia \| <n> / <n> \| <n> / <n> \|` |
+| la riga `\| M5 — VRAM con la scena **a pagina intera** \| si riporta \| ⏳ … \| ⏳ … \|` | `\| M5 — VRAM con la scena **a pagina intera**, picco (MB) \| si riporta \| <n> \| <n> \|` |
+| la riga `\| Q3 — la finestra staccata si apre dentro il guscio \| ⏳ … \| ⏳ \| ⏳ \|` | `\| Q3 — la finestra staccata si apre dentro il guscio \| per guscio, dal comando ↗ \| <OPENED oppure REFUSED, e se la finestra è comparsa dentro il guscio> \| <lo stesso> \|` |
+| la riga `\| Q4 — \`dndStrategy\` che basta nella webview \| ⏳ … \| ⏳ \| ⏳ \|` | `\| Q4 — \`dndStrategy\` che basta nella webview \| per guscio, la mossa 2 col mouse \| <\`'auto'\` basta, oppure serve \`'pointer'\`> \| <lo stesso> \|` |
+| `**Le otto mosse — il giudizio del proprietario, con le sue parole:** ⏳ al compito 7, col proprietario.` | il blocco delle mosse qui sotto |
+| `**La decisione sul guscio, del proprietario:** ⏳ al compito 7, col proprietario.` | `**La decisione sul guscio, del proprietario, il <data>: <A — Electron, oppure B — Tauri>.** La tabella a due colonne che ha avuto davanti è quella qui sopra, M1–M5 e Q1–Q4; il consiglio del coordinatore era <A oppure B>, derivato dall'asimmetria dei costi di ADR-0029 letta contro i numeri. Le sue parole: «<…>».` |
+
+Il blocco delle mosse:
+
+```markdown
+**Le otto mosse — il giudizio del proprietario, con le sue parole**, nel browser il <data>: `dndStrategy` `auto` per le mosse 1–7 e `pointer` per la 8.
+
+| # | La mossa | Esito | La barra, testuale | Le sue parole |
+|---|---|---|---|---|
+| 1 | il nucleo e la striscia non si spostano | <✅ `passa` oppure ⚠️ `parziale` oppure ❌ `non passa`> | — | «<…>» |
+| 2 | sgancia, galleggia, riaggancia | <esito> | `<move 2: …>` | «<…>» |
+| 3 | pagina intera e ritorno | <esito> | `<move 3: …>` | «<…>» |
+| 4 | in un'altra finestra, dal comando | <esito> | `<move 4 / Q3: …>` | «<…>» |
+| 5 | la presa grande col mouse; col tocco <misurato, oppure non misurato perché lo schermo non è touch> | <esito> | — | «<…>» |
+| 6 | con la tastiera, `Ctrl+Alt+frecce` | <esito> | `<move 6: …>` | «<…>» |
+| 7 | salva, ricarica, ritrova — una misura | <esito> | `<move 7: EQUAL …, oppure DIFFERENT …>` | «<…>» |
+| 8 | la pinza afferra la presa grande e la tessera segue — il sì o no **tecnico** | <esito> | `<move 8: pointerdown … on div.bigtab>` e ciò che la tessera ha fatto | «<…>», senza soglia |
+
+**`dockview`:** <resta — otto su otto; oppure resta, con le mosse parziali dette; oppure esce — un no all'insieme, la tela libera con `interactjs`, il compito 7-bis del piano>.
+```
+
+- [ ] **Passo 9: `roadmap.md`, CRLF — la riga SP-8 e la riga della data**
+
+Con `replace_unique.py`: la riga `| SP-8 | …`, **intera, presa dal file**, con `⬜` in coda → la stessa riga con
+`✅ **chiuso il <data>**: il guscio è **<il guscio scelto>**, deciso dal proprietario con M1–M5 e Q1–Q4 in mano; \`dockview\` <resta oppure esce> dopo le otto mosse, <tutte passate, oppure con le parziali dette>; M4 <passa oppure non passa> la soglia P3 <su entrambi, oppure su quale>. Le cifre in [RISULTATI.md](../spikes/RISULTATI.md), sezione SP-8`
+al posto di `⬜` — **senza cifre**, che stanno in `RISULTATI.md`; e la riga 6, **intera, presa dal file** →
+`Ultimo aggiornamento: **<data>**, con la riga **SP-8** chiusa nella tabella degli spike — il compito 7 del [piano della parte 1 del sotto-progetto 2](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md); ADR-0029 si chiude col compito 8.`
+
+- [ ] **Passo 10: le prove, il commit, il push**
+
+```bash
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c '⏳'
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c '<[^ ]'
+grep -c 'con le sue parole' spikes/RISULTATI.md
+grep -c '^| SP-8 |' docs/roadmap.md; grep '^| SP-8 |' docs/roadmap.md | grep -c 'chiuso il'
+awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' spikes/RISULTATI.md docs/roadmap.md
+for f in spikes/RISULTATI.md docs/roadmap.md; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; printf '   righe='; wc -l < "$f"; done; git ls-files --eol spikes/RISULTATI.md docs/roadmap.md
+git diff --name-only 5ad4634..HEAD -- spikes/gesti/
+bash scripts/check-docs.sh; bash scripts/gate.sh
+git status --porcelain
+```
+
+Atteso: `0` e `0`; `con le sue parole` almeno **2** (SP-7 ne porta una); `1` e `1`; nessuna tabella spezzata; CR = righe,
+`i/lf w/crlf`; `spikes/gesti/` intatto — o, col solo ripiego di P-3, `spikes/gesti/relay/src/main.rs` con la voce d'errata e
+il richiamo nel protocollo; `OK`, `GATE GREEN`; `git status` che nomina `spikes/RISULTATI.md`, `docs/roadmap.md` e questo
+piano — il compito 7-bis, se c'è, è testo di questo piano.
+
+```bash
+git add spikes/RISULTATI.md docs/roadmap.md docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md
+git commit -m "guscio(compito 7): SP-8 col proprietario — le otto mosse giudicate con le sue parole (<esito>), la mossa 8 con la mano di SP-7 (<sì o no tecnico>), Q3 e Q4 nei due gusci installati, la CPU con la chat nascosta e la VRAM a pagina intera; la decisione sul guscio: <A, Electron, oppure B, Tauri>; dockview <resta oppure esce>; la riga SP-8 chiusa in roadmap"
+git push
+```
+
+#### Criterio di chiusura del compito 7
+
+- [ ] nessuna riga ⏳ né slot nella sezione SP-8; le parole del proprietario per ogni mossa e sul guscio; la mossa 7 come `EQUAL` o `DIFFERENT` testuale; la lettera sul guscio
+- [ ] Q3 e Q4 per guscio; M4 con la chat nascosta e M5 a pagina intera per guscio; la riga SP-8 chiusa in roadmap senza cifre
+- [ ] su un no all'insieme: il compito **7-bis** scritto in questa sessione (D12), col pre-controllo, prima del compito 8 — e la posizione lo dice
+- [ ] `GATE GREEN`, `check-docs.sh` → `OK`, fine-riga rimisurati, commit pushato, posizione aggiornata; il revisore in sola lettura ha riletto l'esito e i comandi accanto ai numeri
+
+---
+
+## Compito 8: la chiusura — ADR-0029 `Accepted`, i documenti di stato in ogni casa, la Definizione di «fatto»
+
+**Files:**
+- Modify (**CRLF**, tutti con `replace_unique.py`): `docs/adr/0029-guscio-della-gui.md` · `docs/COMPENDIO.md` · `docs/archivio/stato-storico.md` · `docs/README.md` · `docs/HANDOFF.md` · `docs/roadmap.md` · `docs/riferimenti.md` · `docs/audit-2026-08-27.md` · `spikes/GUI-REQUISITI.md`
+- Modify (LF): i due disegni — `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md`, `docs/superpowers/specs/2026-09-07-direzione-gui-design.md`; questo piano — la posizione, «Come si riprende»
+- Read: la sezione SP-8 di [`spikes/RISULTATI.md`](../../../spikes/RISULTATI.md) — i numeri e le parole; [ADR-0029](../../adr/0029-guscio-della-gui.md) per intero, **e i suoi fratelli** [0027](../../adr/0027-stack-della-gui.md), [0030](../../adr/0030-framework-dell-interfaccia.md), [0033](../../adr/0033-gpu-della-gui-quota-di-presentazione.md) (gotcha #59: la *Decision* non deve contraddirli — 0027 «nessun tipo condiviso», 0030 le librerie agnostiche, 0033 la quota di presentazione che M5 misura); la §10 del disegno del 2 — la Definizione di «fatto»; P-11, P-16, P-17, P-19, P-20, P-22, P-23, D14, D15, D16, D22, D23, D24
+
+**Interfaces:**
+- Consumes: la lettera e le parole del proprietario, l'esito di `dockview`, i numeri di M1–M5 e le righe Q1–Q4 dal compito 7; le due app installate (D19)
+- Produces: ADR-0029 `Accepted`; i documenti di stato allineati in **tutte** le case (D22); la Definizione di «fatto» rilanciata coi comandi; le due app disinstallate e i CSV cancellati
+
+⛔ **Un rimedio si chiude su TUTTE le case della frase, non su quella dove lo si è trovato** (audit, «Le decisioni prese
+rimediando»): il Passo 1 le elenca col `grep`, e ogni casa che il `grep` rende quel giorno **in più** rispetto a quelle
+nominate qui entra nel compito, con un richiamo datato della stessa forma. ⚠️ Nelle sostituzioni, `<data>` è la data del
+compito, `<il guscio scelto>` è la lettera del proprietario scritta per esteso — `Electron` o `Tauri` — e nessuno slot dentro
+una cella di tabella porta una barra verticale (D25).
+
+- [ ] **Passo 1: le misure prima — le case, i conteggi, la corsa dello spike**
+
+```bash
+grep -rn 'Proposed' docs/*.md CLAUDE.md docs/design/*.md spikes/*.md | grep -v '/archivio/' | cut -c1-120
+grep -rn 'Tauri o Electron\|Tauri contro Electron\|guscio: aperto\|tranne il guscio' docs/*.md CLAUDE.md spikes/*.md | grep -v '/archivio/' | cut -c1-120
+grep -n '38 ADR in stato' docs/HANDOFF.md docs/COMPENDIO.md
+grep -c '⏭️' docs/COMPENDIO.md
+grep -c '<[^ ]' docs/adr/0029-guscio-della-gui.md
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c '⏳\|<[^ ]'
+echo $(( $(grep -oE '^ceiling=[0-9]+' scripts/check-docs.sh | cut -d= -f2) - $(wc -c < docs/COMPENDIO.md) ))
+git ls-files --eol docs/adr/0029-guscio-della-gui.md docs/COMPENDIO.md docs/archivio/stato-storico.md docs/README.md docs/HANDOFF.md docs/roadmap.md docs/riferimenti.md docs/audit-2026-08-27.md spikes/GUI-REQUISITI.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+for f in docs/adr/0029-guscio-della-gui.md docs/COMPENDIO.md docs/archivio/stato-storico.md docs/README.md docs/HANDOFF.md docs/roadmap.md docs/riferimenti.md docs/audit-2026-08-27.md spikes/GUI-REQUISITI.md; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; printf '   righe='; wc -l < "$f"; done
+```
+
+Atteso, misurato il 2026-09-09 — i numeri di riga si ritrovano con la **frase**, non col numero (gotcha #70): le case della
+decisione aperta sono **tredici** (P-19): `docs/COMPENDIO.md` 104, 160, 454; `docs/HANDOFF.md` 155–156, 208–210, 1001,
+1052, 1262; `docs/README.md` 168; `docs/roadmap.md` 23–26 e 289, più la riga SP-8 che il compito 7 ha già chiuso;
+`docs/audit-2026-08-27.md` 351 (la 29 è un verbale datato di come l'audit fu condotto, e resta); `spikes/GUI-REQUISITI.md`
+63–64; le due righe «38 ADR in stato» sono `COMPENDIO.md` 160 e `HANDOFF.md` 1052; le righe con `⏭️` sono **tre** (P-20 —
+il puntatore, il punto 2, e un code span nella tabella delle voci aperte) e il conteggio **non cambia** con questo compito;
+gli slot `<` dell'ADR sono **zero** prima, e restano zero dopo; la sezione SP-8 è senza `⏳` né slot; il margine è
+positivo; `i/lf w/crlf` sui nove, `w/lf` sui due disegni; CR = righe.
+
+Poi la **corsa dello spike** per la condizione 4 della Definizione di «fatto», **prima** di toccare i documenti — così
+`git status` giudica lo spike e non questo compito:
+
+```bash
+ROOT=$(cygpath -w "$PWD")
+(cd spikes/gui-shell/electron && npm run sync 2>&1 | tail -1)
+powershell -NoProfile -ExecutionPolicy Bypass -File spikes/gui-shell/measure/tree.ps1 -Exe "$ROOT\spikes\gui-shell\electron\node_modules\electron\dist\electron.exe" -ArgumentList . -WorkingDirectory "$ROOT\spikes\gui-shell\electron" -Seconds 6 | tail -2
+powershell -NoProfile -ExecutionPolicy Bypass -File spikes/gui-shell/measure/tree.ps1 -Exe "$ROOT\spikes\gui-shell\tauri\src-tauri\target\release\sp8-tauri.exe" -Seconds 6 | tail -2
+git status --porcelain
+git ls-files spikes/gui-shell | grep -c 'lock'
+grep -c '/spikes/gui-shell/' .gitignore
+```
+
+Atteso: le due corse partono e si fermano da sole; `git status --porcelain` **vuoto**; `4` lockfile (`app/package-lock.json`,
+`electron/package-lock.json`, `tauri/package-lock.json`, `tauri/src-tauri/Cargo.lock`); `8` righe di `.gitignore` per lo spike
+(due del compito 2, tre del 4, tre del 5).
+
+- [ ] **Passo 2: ADR-0029, CRLF — otto sostituzioni, append-only (vincolo 10)**
+
+| Trova | Sostituisci con |
+|---|---|
+| `> sostengono, e forzarla su un argomento sarebbe contro il metodo di questo repository.` | la stessa riga, poi a capo `> ✅ **RICHIAMO DEL <data>:** chiusa con **SP-8** — la *Decision* qui sotto; l'avviso resta com'era, perché è la storia di questa decisione.` |
+| `- **Status:** Proposed` | `- **Status:** Accepted` — **esattamente così**: `check-docs.sh` conta `^- \*\*Status:\*\* Accepted` (P-24) |
+| `_(da prendere)_` | il blocco della decisione qui sotto |
+| `**argomenti, non misure**, ed è per questo che l'ADR resta \`Proposed\`.` | la stessa riga più ` ✅ **RICHIAMO DEL <data>:** le misure sono arrivate — SP-8, la *Decision* qui sopra — e lo stato è \`Accepted\`; la raccomandazione <ha retto, oppure è stata ribaltata dai numeri: quali>.` |
+| `### Come si chiude` | la stessa riga, una riga vuota, poi `✅ **Eseguito il <data>: SP-8**, coi criteri congelati prima in [\`spikes/gui-shell/PROTOCOLLO.md\`](../../spikes/gui-shell/PROTOCOLLO.md) — e con **quattro** righe qualitative, Q1–Q4, non le due della §2 del disegno del 2 com'era approvata il 2026-09-06: Q3 e Q4 nascono dalla §4 della stella polare.` |
+| `principale a favore di Electron cade e la decisione si ribalta.` | la stessa riga più ` ⚠️ **RICHIAMO DEL <data>:** non misurato — Linux non c'è (decisione C del disegno del 2); è l'**innesco** scritto nella *Decision*.` |
+| `    è \`Proposed\`, e \`check-docs.sh\` lo segnala a ogni audit finché non si chiude.` | la stessa riga più ` ✅ **Chiusa il <data>**: non per inerzia, con SP-8.` |
+| `    un discriminante nuovo per questo ADR, la misura **M5** qui sopra.` | la stessa riga, una riga vuota, poi il blocco `Negative (accettate)` qui sotto |
+
+Il blocco della decisione — i numeri **come nell'esito**, entrambe le corse, e le parole testuali:
+
+```markdown
+✅ **DECISA il <data> dal proprietario, con SP-8 in mano — <il guscio scelto>.** I criteri, congelati **prima** della
+misura, in [`spikes/gui-shell/PROTOCOLLO.md`](../../spikes/gui-shell/PROTOCOLLO.md); l'esito intero, con le evidenze e
+le osservazioni, in [`spikes/RISULTATI.md`](../../spikes/RISULTATI.md), sezione SP-8; la macchina è quella di ADR-0002,
+la data la dice la sezione. Le sue parole: «<le parole del proprietario, testuali>».
+
+| # | Misura, o riga | Electron | Tauri |
+|---|---|---|---|
+| M1 | RAM a riposo e sotto flusso — media / picco in MB, due corse | riposo <n> / <n>; <n> / <n> — flusso <n> / <n>; <n> / <n> | riposo <n> / <n>; <n> / <n> — flusso <n> / <n>; <n> / <n> |
+| M2 | cartella installata e installatore, MB | <n> (<n> file); installatore <n> | <n> (<n> file); installatore <n> |
+| M3 | fps medi / minimi su 30 s a riposo, e l'**API ottenuta** — **Windows** | <n> / <n>, `<api>` | <n> / <n>, `<api>` |
+| M4 | P3 con rendering vero — picco / media in % di un core, due corse; la soglia è il picco **< 25 %** | <n> / <n>; <n> / <n> — <passa, parziale, oppure non passa>; con la chat nascosta <n> / <n> | <n> / <n>; <n> / <n> — <esito>; con la chat nascosta <n> / <n> |
+| M5 | VRAM in MB — a riposo, due corse; con la scena a pagina intera | <n>; <n> — a pagina intera <n> | <n>; <n> — a pagina intera <n> |
+| Q1 | chi decodifica `bincode` lato GUI | il processo principale Node, `bincode-ts` (M-11 di ADR-0037) | il guscio Rust, col decodificatore del kernel — una terza compilazione delle crate (decisione 57 della stella polare) |
+| Q2 | le webview | il Chromium impacchettato, `<Chrome/…>` | WebView2 `<pv>`; **WebKitGTK**: <lo stato di WebGPU letto il <data> — le fonti in `riferimenti.md`, sezione SP-8> |
+| Q3 | la finestra staccata si apre **dentro** il guscio, dal comando | <sì, oppure no> | <sì, oppure no> |
+| Q4 | `dndStrategy` che basta nella webview | <`'auto'`, oppure `'pointer'`> | <`'auto'`, oppure `'pointer'`> |
+
+**L'innesco Linux, scritto.** La metà Linux di M3 e M5 **non è misurata** (decisione C del disegno del 2): al primo
+Linux vero si rimisurano M3 e M5 su quel sistema, con lo stesso protocollo; se M3 mostra la stessa API grafica su
+entrambe le piattaforme con Tauri, questa decisione si **riapre con un ADR nuovo** che la superi (`Superseded by`),
+non con una conversazione.
+
+**`dockview`:** <resta — le otto mosse passano, le parole del proprietario in `spikes/RISULTATI.md`; oppure resta, con le mosse parziali dette lì; oppure esce — un no all'insieme, la tela libera con `interactjs`, il compito 7-bis del piano>.
+```
+
+Il blocco `Negative (accettate)` — **si scrive il solo elenco del vincitore**:
+
+```markdown
+- **Negative (accettate)** — per **<il guscio scelto>**, il guscio scelto:
+```
+
+Se **Electron**:
+
+```markdown
+  - un **terzo runtime**, Node, accanto a Rust e Python: il processo principale ha accesso pieno all'OS, e il ponte del
+    preload è l'unica porta fra la pagina e il guscio — va tenuta stretta, e la webview carica solo contenuto locale
+    nostro, come il punto comune qui sopra già impone.
+  - Chromium **impacchettato**: la taglia di M2, e gli aggiornamenti del motore a carico nostro, a ogni release.
+  - la metà Linux **non misurata**: l'innesco qui sopra; con Electron l'API grafica su Linux dipende da un flag che
+    passiamo noi, e resta da provare.
+  - chi decodifica `bincode` è Node (Q1): `bincode-ts`, fermo alla 1.0.0 del 2025-07-17 (ADR-0037), è la dipendenza che il
+    canale `ipc` paga.
+```
+
+Se **Tauri**:
+
+```markdown
+  - il rischio di **capacità** su Linux **non misurato**: WebKitGTK e WebGPU, l'innesco qui sopra.
+  - la webview del sistema fuori dal nostro controllo: versione e flag sono dell'utente, e su Windows M3 e M5 valgono per
+    **questo** WebView2 (Q2), non per quello che l'utente avrà.
+  - nessuna familiarità del proprietario, che si somma a Rust da imparare per il core.
+  - chi decodifica `bincode` è il guscio Rust (Q1): una terza compilazione delle crate del kernel in `gui/shell/`
+    (decisione 57 della stella polare), e il ponte alla webview passa dagli eventi di Tauri.
+```
+
+- [ ] **Passo 3: il compendio, CRLF — §4, §5, §6, §8, l'intestazione (D16, P-17)**
+
+| Trova | Sostituisci con |
+|---|---|
+| `Sono **39 ADR**, di cui **38 ADR in stato Accepted** e uno \`Proposed\` (0029).` | `Sono **39 ADR**, e **39 ADR in stato Accepted** — l'ultimo, 0029, chiuso il <data> con SP-8.` (P-11: la guardia dei conteggi legge 39 e 39) |
+| `\| gui — **guscio** \| ⚠️ **APERTO**: Tauri o Electron \| ADR-0029, \`Proposed\` — **non blocca nulla** \|` | `\| gui — **guscio** \| **<il guscio scelto>** — deciso dal proprietario il <data> con SP-8: M1–M5 e Q1–Q4 su Windows, l'innesco Linux nell'ADR \| ADR-0029 \|` |
+| `e non tocca la GUI.` (la fine della voce 0029 di §5, unica) | `e non tocca la GUI. ✅ **RICHIAMO DEL <data>: CHIUSA — <il guscio scelto>**, deciso dal proprietario con M1–M5 e Q1–Q4 misurate da SP-8 su Windows, coi criteri congelati prima; l'innesco Linux nell'ADR; \`dockview\` <resta oppure esce> dopo le otto mosse. Il testo sopra resta com'era.` |
+| `⏭️ **IL PROSSIMO PASSO: IL PIANO DEL SOTTO-PROGETTO 2, IN DUE PARTI — LA RILETTURA DEL PROPRIETARIO È FATTA IL 2026-09-09.** I due disegni sono` | `⏭️ **IL PROSSIMO PASSO: LA PARTE 2 DEL PIANO DEL SOTTO-PROGETTO 2 — LA PARTE 1, SP-8, È ESEGUITA IL <data>.** I due disegni sono` |
+| la riga della tabella «Chiuso» che comincia con `\| la **rilettura del proprietario**`, **intera, presa dal file** | la stessa riga, poi a capo `\| la **parte 1 del piano del 2** — SP-8: il guscio **<il guscio scelto>** deciso dal proprietario, ADR-0029 \`Accepted\`, \`dockview\` <resta oppure esce> dopo le otto mosse \| <data> \| il [piano](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md), «A che punto è» e l'errata; la sezione SP-8 di \`spikes/RISULTATI.md\`; ADR-0029 \|` |
+| il **punto 2** del prossimo passo — dalla riga `2. ⏭️ **la prossima sessione — decisione 48 del 2026-09-09:**` fino alla riga del richiamo `✅ **RICHIAMO DEL 2026-09-09, alla chiusura della sessione che l'ha completato:**` compresa, **quattro righe prese dal file** | `2. ✅ **la parte 1 del piano del 2, eseguita il <data>** — [piano](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md): SP-8, ADR-0029 chiuso, \`dockview\` <resta oppure esce>; ⏭️ **la parte 2**: i pezzi 2–9 della §3 della stella polare, scritta **ora** coi numeri in mano — chi decodifica (Q1), \`gui/shell/\` se Tauri (decisione 57), la CI su Windows e \`cargo audit\` più \`npm audit\` (D13 del piano) — con lo stesso pre-controllo, in una sessione nuova; le righe nella §12 di questo file, in \`README.md\`, nella roadmap e in tracciabilità entrano con essa (D14 del piano);` — le quattro righe com'erano vanno nel blocco d'archivio qui sotto |
+| `3. ADR-0029 si chiude con M1–M5 all'inizio del 2 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario` | `3. ✅ ADR-0029 **chiuso il <data>** con SP-8 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario` |
+| la riga di §8 che comincia con `\| ❌ **rifare gli spike SP-5, SP-6 e SP-7**`, **intera, presa dal file** | `\| ❌ **rifare gli spike SP-5, SP-6, SP-7 e SP-8** \| esiti, versioni e comandi in \`spikes/RISULTATI.md\` — coi **seed** per SP-5 e SP-6, che SP-7 e SP-8 non hanno; per SP-7 e SP-8 i protocolli congelati in \`spikes/gesti/PROTOCOLLO.md\` e \`spikes/gui-shell/PROTOCOLLO.md\` \|` |
+| `L'unica aperta è **M5** (senza trattino), e richiede una GUI \|` | `L'unica aperta era **M5** (senza trattino) ✅ **misurata da SP-8 il <data>** su Windows; la metà Linux è l'innesco scritto in ADR-0029 \|` |
+| l'intestazione — la riga 21, da `**Aggiornato il` a `Manutenzione: §13.`, **intera, presa dal file** | `**Aggiornato il <data>**, con la **parte 1 del piano del 2 eseguita** — SP-8, ADR-0029 chiuso, il guscio **<il guscio scelto>** — e il puntatore della §6 alla parte 2; l'ultimo contenuto di merito è la voce 0029 della §5. Il testo com'era, con le sedici riprese, è in [\`archivio/stato-storico.md\`](archivio/stato-storico.md). Manutenzione: §13.` |
+
+L'**archivio** (`docs/archivio/stato-storico.md`, CRLF): con `replace_unique.py`, *Trova* l'**ultima riga del file**,
+presa con `tail -1` e verificata unica con `grep -c`; *Sostituisci* con la stessa riga, una riga vuota, e il blocco:
+
+```markdown
+## L'intestazione del compendio e il punto 2 del suo prossimo passo, com'erano — archiviati il <data>
+
+⚠️ **Vero il giorno in cui fu scritto.** Usciti dalla testa e dalla §6 del compendio alla chiusura della parte 1 del piano
+del sotto-progetto 2 (compito 8, decisione D16 del piano), parola per parola; i link riscritti per questa cartella.
+
+### L'intestazione, riga 21
+
+<la riga com'era>
+
+### Il punto 2 del prossimo passo, coi suoi richiami
+
+<le quattro righe com'erano>
+```
+
+I link del **solo** testo mosso si riscrivono per `archivio/`: `(archivio/stato-storico.md)` → `(stato-storico.md)`,
+`(superpowers/plans/…)` → `(../superpowers/plans/…)`, `(superpowers/specs/…)` → `(../superpowers/specs/…)`; poi
+`grep -n '\](\s*)' docs/archivio/stato-storico.md` non deve stampare nulla (vicolo cieco della dodicesima ripresa).
+Dopo ogni tocco al compendio: `check-docs.sh` e il margine. ⛔ **Se il tetto va rosso si toglie prosa dalla §6, non si alza
+il tetto** (vincolo 11): l'intestazione corta libera più di quanto le righe nuove consumano (P-17, P-22).
+
+- [ ] **Passo 4: `README.md`, `HANDOFF.md`, `roadmap.md`, l'audit, `GUI-REQUISITI.md` — CRLF, le altre case (P-19)**
+
+| File | Trova | Sostituisci con |
+|---|---|---|
+| `docs/README.md` | `\| [0029](adr/0029-guscio-della-gui.md) \| Guscio della GUI: Tauri o Electron \| ⚠️ **Proposed** \|` | `\| [0029](adr/0029-guscio-della-gui.md) \| Guscio della GUI: <il guscio scelto>, deciso con SP-8 \| Accepted \|` |
+| `docs/HANDOFF.md` | le **due righe** `> ✅ **Nessuna voce aperta resta nella spec.** L'unica decisione ancora \`Proposed\` del` e `> progetto è **ADR-0029**, il guscio della GUI, che non tocca il sotto-progetto 1.` | le stesse due righe, poi a capo `> ✅ **RICHIAMO DEL <data>:** anche ADR-0029 è \`Accepted\` — <il guscio scelto>, con SP-8.` |
+| `docs/HANDOFF.md` | `([ADR-0029](adr/0029-guscio-della-gui.md), \`Proposed\`) e non blocca nulla.` | la stessa riga più ` ✅ **RICHIAMO DEL <data>:** chiuso — **<il guscio scelto>**, SP-8; lo stack è deciso per intero.` |
+| `docs/HANDOFF.md` | `\| **0029** \| ⚠️ **guscio: aperto** — Tauri o Electron \| **niente**: sono argomenti, non misure. È il motivo per cui è \`Proposed\` \|` | `\| **0029** \| ⚠️ **guscio: aperto** — Tauri o Electron ✅ **chiuso il <data>: <il guscio scelto>** \| **niente**: sono argomenti, non misure. È il motivo per cui era \`Proposed\`; poi **SP-8**, M1–M5 e Q1–Q4 \|` |
+| `docs/HANDOFF.md` | `38 ADR in stato \`Accepted\`` | `39 ADR in stato \`Accepted\`` (P-11: nello **stesso** commit dello `Accepted` nell'ADR, o il cancello va rosso) |
+| `docs/HANDOFF.md` | `\| ⚠️ **Guscio: Tauri o Electron** \| ADR-0029 \`Proposed\`, misure **M1–M5** \| no \|` | `\| ~~Guscio: Tauri o Electron~~ \| ✅ **ADR-0029: <il guscio scelto>**, chiuso il <data> con SP-8 — M1–M5 e Q1–Q4 \| — \|` |
+| `docs/roadmap.md` | le **quattro righe** dello «Stato in una riga», da `> Spec del kernel **completa e approvata** (§0–§10, 39 ADR). Stack deciso **tranne il` a `> \`Proposed\`) e **non blocca nulla**.`, prese dal file | `> Spec del kernel **completa e approvata** (§0–§10, 39 ADR). Stack deciso **per intero**: core in **Rust**,` a capo `> interfaccia web in **Vue 3**, worker ML in **Python**, guscio **<il guscio scelto>** —` a capo `> [ADR-0029](adr/0029-guscio-della-gui.md), \`Accepted\` il <data> con **SP-8**.` |
+| `docs/roadmap.md` | `\| ⚠️ **Guscio della GUI: Tauri o Electron** \| **ADR-0029, \`Proposed\`.** Si chiude con **cinque** misure M1–M5 all'inizio del sotto-progetto 2 \| non blocca il sotto-progetto 1 \|` | `\| ~~Guscio della GUI: Tauri o Electron~~ \| ✅ **[ADR-0029](adr/0029-guscio-della-gui.md): <il guscio scelto>**, chiuso il <data> con **SP-8** — M1–M5 e Q1–Q4 su Windows, l'innesco Linux nell'ADR \| non bloccava il sotto-progetto 1 \|` |
+| `docs/roadmap.md` | nella riga di **questo piano** nella tabella dei piani, la cella di stato `✅ **scritto il 2026-09-09**, in due sessioni — la prima fino al compito 5, la seconda i compiti 6–8 e la revisione; ⏳ **da eseguire in una sessione nuova**, un subagente fresco per compito \|` | `✅ **scritto il 2026-09-09, eseguito il <data>** — \`GATE GREEN\` a ogni compito; SP-8 nella tabella degli spike, ADR-0029 chiuso: **<il guscio scelto>** \|` |
+| `docs/roadmap.md` | la riga 6, `Ultimo aggiornamento: …`, **intera, presa dal file** | `Ultimo aggiornamento: **<data>**, con ADR-0029 chiuso — lo «Stato in una riga», la riga delle decisioni da prendere, e la riga del [piano della parte 1 del sotto-progetto 2](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) nella tabella dei piani, eseguito: il suo compito 8.` |
+| `docs/audit-2026-08-27.md` | `[ADR-0029](adr/0029-guscio-della-gui.md) fermo a \`Proposed\`, i due \`#[ignore]\`, il` | `[ADR-0029](adr/0029-guscio-della-gui.md) fermo a \`Proposed\` (✅ chiuso il <data> con SP-8), i due \`#[ignore]\`, il` |
+| `spikes/GUI-REQUISITI.md` | `ancora aperta**: [ADR-0029](../docs/adr/0029-guscio-della-gui.md), \`Proposed\`. Il` | `ancora aperta**: [ADR-0029](../docs/adr/0029-guscio-della-gui.md), \`Proposed\` — ✅ **chiusa il <data> con SP-8: <il guscio scelto>**. Il` |
+
+- [ ] **Passo 5: i due disegni, LF — i richiami datati (P-16)**
+
+| File | Trova | Sostituisci con |
+|---|---|---|
+| il disegno del 2, §2 | `protocollo e come si decide non si ricopiano:** la casa è la **§4 della [stella polare](2026-09-07-direzione-gui-design.md)**.` | la stessa riga, una riga vuota, poi `✅ **RICHIAMO DEL <data>, alla chiusura della parte 1 del piano:** SP-8 eseguito — M1–M5 e Q1–Q4 in ADR-0029, chiuso **<il guscio scelto>**; le otto mosse in \`spikes/RISULTATI.md\`, \`dockview\` <resta oppure esce>; la parte 2 del piano si scrive ora, coi numeri.` |
+| il disegno del 2, §10 | `l'esecuzione in una sessione nuova, un subagente fresco per compito (decisione 48).` | la stessa più ` ✅ **PARTE 1 ESEGUITA il <data>:** il verbale nel piano — «A che punto è», l'errata, «Come si riprende»; la parte 2 si scrive ora, dalla §6 del compendio.` |
+| la stella polare, §4 | la riga `### §4 — Lo spike di accettazione di \`dockview\` · approvata il 2026-09-08 (A, decisione 24); la mossa 8 il 2026-09-09 (A, decisione 25)`, intera | la stessa riga, una riga vuota, poi `✅ **RICHIAMO DEL <data>, alla chiusura della parte 1 del piano del 2:** le otto mosse provate dal proprietario — <quante passano, quali parziali, il sì o no tecnico della mossa 8>; \`dockview\` <resta oppure esce>; le parole in \`spikes/RISULTATI.md\`, sezione SP-8; il guscio **<il guscio scelto>**, ADR-0029. Le mosse qui sotto restano com'erano approvate.` |
+| la stella polare, la tabella dello stato | `è cancello, non codice \|` (la cella «Atteso» della riga «codice e spec non toccati», unica) | `è cancello, non codice ✅ **RICHIAMO DEL <data>:** e \`spikes/gui-shell/\`, \`.gitignore\`, \`spikes/RISULTATI.md\`, \`spikes/GUI-REQUISITI.md\` per SP-8 — la parte 1 del piano del 2; \`crates/\` intatto \|` |
+
+- [ ] **Passo 6: `riferimenti.md`, CRLF — le versioni del giorno dello spike e le fonti di Q2 (D23)**
+
+Con `replace_unique.py`: *Trova* la riga `## Cosa NON abbiamo adottato, e perché` (unica); *Sostituisci* con la sezione qui
+sotto, poi `---`, una riga vuota, e la stessa riga. Le tre fonti sono quelle lette al Passo 5 del compito 6, coi loro URL
+e la data di lettura; nessun codice `F` — i codici di questo file sono per sezione, e questa ne fa a meno. La sezione
+ha dentro una recinzione a tre accenti per il comando: qui è mostrata dentro una recinzione a **quattro**.
+
+````markdown
+## SP-8 — il guscio della GUI: le versioni del giorno dello spike, e le fonti su WebKitGTK (Q2) — <data>
+
+Il compito 6 del [piano della parte 1 del sotto-progetto 2](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md)
+ha rilanciato il comando qui sotto il <data>; le versioni **installate** stanno nei lockfile di `spikes/gui-shell/` e nella
+sezione SP-8 di [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md); i numeri di M1–M5 e le righe Q1–Q4 in
+[ADR-0029](adr/0029-guscio-della-gui.md), casa unica. Le ultime al registro quel giorno: <l'uscita del comando, una riga per pacchetto>.
+
+```
+<il comando del Passo 2 del compito 6, testuale>
+```
+
+**Le fonti di Q2 — lo stato di WebGPU su WebKitGTK, la lettura che sostituisce la misura Linux (decisione C del disegno del 2):**
+
+| Fonte | Letta il | Che cosa dice | Conseguenza |
+|---|---|---|---|
+| [WebGPU Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation-Status) | <data> | «<la riga su WebKit / Linux, breve>» | Q2 di ADR-0029; da rileggere al primo Linux vero, con l'innesco scritto lì |
+| [WebKitGTK — news](https://webkitgtk.org/news.html) | <data> | «<l'ultima versione stabile, e ciò che dice di WebGPU, oppure che non lo nomina>» | idem |
+| [Tauri — Webview Versions](https://v2.tauri.app/reference/webview-versions/) | <data> | «<la riga su Linux>» | idem; la stessa pagina è già la prima fonte di ADR-0029, letta il 2026-08-06 |
+````
+
+- [ ] **Passo 7: un gotcha nuovo, se c'è — `HANDOFF.md`, CRLF**
+
+```bash
+awk '/^## I gotcha/{s=1; next} s&&/^## /{s=0} s&&/^\| [0-9]+ \|/{c++} END{print c}' docs/HANDOFF.md
+awk '/^## ⚠️ L.errata di questo piano/{s=1} s&&/^## Il pre-controllo/{s=0} s&&/^\| \*\*E[0-9]+\*\* \|/' docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md | cut -c1-120
+```
+
+Se l'errata di questo piano porta un fatto che **nessun documento diceva** e che ha fatto sbagliare un passo — il criterio
+della tabella dei gotcha — è un gotcha nuovo: una riga nella sezione «I gotcha» di `HANDOFF.md` col numero successivo a
+quello che il primo comando rende, nella forma delle righe vicine, e **niente** nel compendio (§13, casa unica). Altrimenti
+niente, e il rapporto del compito lo dice.
+
+- [ ] **Passo 8: la Definizione di «fatto» della parte 1, copiata dalla §10 del disegno del 2, condizione per condizione coi comandi**
+
+| # | Condizione (§10 del disegno del 2) | Chi la verifica, e come |
+|---|---|---|
+| 1 | il protocollo dello spike congelato in `spikes/gui-shell/PROTOCOLLO.md` **al primo commit di codice**, con M1–M5, Q1–Q4 e le otto mosse | `git log` sul protocollo e su `app/`: la prima riga tocca il **solo** protocollo (compito 1) e viene prima di ogni riga di `app/`; le cinque righe M, le quattro Q e le otto mosse contate — il blocco 1 qui sotto |
+| 2 | i numeri di M1–M5 e le righe Q1–Q4 in ADR-0029, lo stato ad `Accepted` con l'innesco Linux scritto; la riga del guscio nella §4 del compendio chiusa | `check-docs.sh` senza ADR in `Proposed`; la riga `Status`, la parola «innesco Linux», le nove righe della tabella, la riga del guscio nel compendio senza `APERTO` — il blocco 2 |
+| 3 | le otto mosse giudicate dal proprietario con le sue parole in `spikes/RISULTATI.md`, la mossa 7 come due JSON uguali; l'esito di `dockview` scritto — resta, o la tela libera | sulla sezione SP-8 delimitata con l'`awk`: le parole, le otto righe delle mosse, la riga `move 7`, la riga `dockview`, nessuno slot — il blocco 3 |
+| 4 | `.gitignore` con le cartelle di build dello spike; i lockfile dello spike committati | la corsa dello spike del Passo 1: `git status --porcelain` vuoto, `4` lockfile, `8` righe |
+| 5 | **nessun codice di prodotto toccato** dalla parte 1 | il `git diff --stat` dei vincoli 1 e 2 — il blocco 5 |
+| 6 | fine-riga rimisurati per ogni file toccato | il ciclo dei CR del Passo 9, contro la mappa dei file; `0` sui file LF; `git ls-files --eol` invariato |
+| 7 | la parte 2 del piano scritta **dopo** la misura, con lo stesso pre-controllo | non è di questo piano: il puntatore della §6 lo dice — il blocco 7; e la sezione «Dopo il compito 8» |
+
+I comandi, per condizione, con l'esito atteso accanto:
+
+```bash
+# 1
+git log --format='%h %ad %s' --date=short --reverse -- spikes/gui-shell/PROTOCOLLO.md spikes/gui-shell/app | head -3
+grep -c '^| \*\*M[1-5]\*\* |' spikes/gui-shell/PROTOCOLLO.md      # 5
+grep -c '^| \*\*Q[1-4]\*\* |' spikes/gui-shell/PROTOCOLLO.md      # 4
+grep -c '^| [1-8] |' spikes/gui-shell/PROTOCOLLO.md               # 8
+# 2
+bash scripts/check-docs.sh | grep -A2 'ADR still in Proposed'    # the heading alone: no file listed
+grep -c '^- \*\*Status:\*\* Accepted' docs/adr/0029-guscio-della-gui.md   # 1
+grep -c 'innesco Linux' docs/adr/0029-guscio-della-gui.md                  # at least 1
+grep -c '^| M[1-5] |\|^| Q[1-4] |' docs/adr/0029-guscio-della-gui.md      # 9
+grep -n 'gui — \*\*guscio\*\*' docs/COMPENDIO.md                            # the row, without APERTO
+# 3
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c 'con le sue parole'            # at least 1
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c '^| [1-8] |'                    # 8
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c 'move 7: EQUAL\|move 7: DIFFERENT'   # 1
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c '^\*\*`dockview`:\*\*'          # 1
+awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c '⏳\|<[^ ]'                       # 0
+# 5
+git diff --stat 5ad4634..HEAD -- crates/ scripts/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md   # nothing
+# 7
+grep -c 'la parte 2' docs/COMPENDIO.md                             # at least 1
+```
+
+- [ ] **Passo 9: l'ambiente ripulito, le prove, il commit, il push**
+
+Le due app installate si **disinstallano** (D19) — i nomi dei disinstallatori si **leggono** — e i CSV si cancellano:
+
+```bash
+EL_DIR='<la cartella di Electron, dalla riga M2 dell'esito>'
+TA_DIR='<la cartella di Tauri, dalla riga M2>'
+powershell -NoProfile -Command "Get-ChildItem '$EL_DIR','$TA_DIR' -Filter '*nstall*.exe' | Select-Object -ExpandProperty FullName"
+powershell -NoProfile -Command "Start-Process -Wait -FilePath '<il disinstallatore di Electron letto sopra>' -ArgumentList '/S'"
+powershell -NoProfile -Command "Start-Process -Wait -FilePath '<il disinstallatore di Tauri letto sopra>' -ArgumentList '/S'"
+powershell -NoProfile -Command "Get-ChildItem \$env:LOCALAPPDATA\Programs,\$env:LOCALAPPDATA -Directory -Filter 'sp8-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName"
+rm -r "$HOME/sp8-measure"
+```
+
+Atteso: due disinstallatori — dedotto `Uninstall sp8-electron.exe` e `uninstall.exe`; dopo, nessuna cartella `sp8-*` (una
+cartella vuota lasciata da NSIS si scrive nel rapporto e si toglie con `Remove-Item`); gli installatori restano in `out/` e in
+`bundle/nsis/`, ignorati e rifacibili — è ciò che rende rifacibili i numeri dell'ADR.
+
+```bash
+bash scripts/check-docs.sh; bash scripts/gate.sh
+echo $(( $(grep -oE '^ceiling=[0-9]+' scripts/check-docs.sh | cut -d= -f2) - $(wc -c < docs/COMPENDIO.md) ))
+for f in docs/adr/0029-guscio-della-gui.md docs/COMPENDIO.md docs/archivio/stato-storico.md docs/README.md docs/HANDOFF.md docs/roadmap.md docs/riferimenti.md docs/audit-2026-08-27.md spikes/GUI-REQUISITI.md; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; printf '   righe='; wc -l < "$f"; done
+for f in docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+git ls-files --eol docs/adr/0029-guscio-della-gui.md docs/COMPENDIO.md docs/archivio/stato-storico.md docs/README.md docs/HANDOFF.md docs/roadmap.md docs/riferimenti.md docs/audit-2026-08-27.md spikes/GUI-REQUISITI.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+grep -c '⏭️' docs/COMPENDIO.md
+grep -c '<[^ ]' docs/adr/0029-guscio-della-gui.md
+grep -n '\](\s*)' docs/archivio/stato-storico.md docs/riferimenti.md
+for f in docs/COMPENDIO.md docs/HANDOFF.md docs/roadmap.md docs/README.md docs/riferimenti.md docs/adr/0029-guscio-della-gui.md; do awk -v F="$f" 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print F": "NR} {prev=$0}' "$f"; done
+grep -rn 'Proposed' docs/*.md CLAUDE.md docs/design/*.md spikes/*.md | grep -v '/archivio/' | grep -v 'RICHIAMO\|chius\|era `Proposed`\|verbale\|fu \|Come è stato condotto' | cut -c1-120
+git status --porcelain
+```
+
+Atteso: `OK` — la guardia dei conteggi legge 39 e 39 nei sei file (P-11) e nessun ADR in `Proposed`; `GATE GREEN`; margine
+positivo; CR = righe sui nove, `0` sui tre LF; `ls-files --eol` invariato; il conteggio di `⏭️` **uguale** a quello del
+Passo 1; `0` slot nell'ADR; nessun link vuoto; nessuna tabella spezzata; il `grep` di `Proposed` che rende **solo** righe con
+un richiamo datato, o la riga 29 dell'audit (il verbale di come fu condotto); `git status` che nomina i **dodici** file di
+questo compito.
+
+```bash
+git add docs/adr/0029-guscio-della-gui.md docs/COMPENDIO.md docs/archivio/stato-storico.md docs/README.md docs/HANDOFF.md docs/roadmap.md docs/riferimenti.md docs/audit-2026-08-27.md spikes/GUI-REQUISITI.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md
+git commit -m "guscio(compito 8): la chiusura della parte 1 — ADR-0029 Accepted con la decisione del proprietario (<il guscio scelto>), la tabella M1–M5 e Q1–Q4, l'innesco Linux e Negative (accettate); i totali a 39; il compendio (§4, §5, §6, §8, l'intestazione riscritta corta e archiviata); README, HANDOFF, roadmap, l'audit e GUI-REQUISITI in ogni casa; i richiami nei due disegni; le versioni del giorno e le fonti di Q2 in riferimenti.md; la Definizione di «fatto» rilanciata coi comandi; le due app disinstallate"
+git push
+```
+
+#### Criterio di chiusura del compito 8
+
+- [ ] le sette condizioni della Definizione di «fatto» verificate **coi comandi** del Passo 8, ed elencate nel rapporto con l'output
+- [ ] ADR-0029 `Accepted`, riletto dal revisore contro 0027, 0030 e 0033 (gotcha #59) e non solo contro l'esito; `check-docs.sh` senza ADR in `Proposed`
+- [ ] nessuna casa della decisione aperta è rimasta senza richiamo: il `grep` del Passo 1 rilanciato al Passo 9
+- [ ] il compendio sotto il tetto, l'intestazione corta col testo com'era in archivio, il puntatore della §6 alla parte 2 in un posto solo
+- [ ] le due app disinstallate, i CSV cancellati; `GATE GREEN`, `check-docs.sh` → `OK`, fine-riga rimisurati, commit pushato, posizione del piano a otto ✅ — o nove, col 7-bis
+
+---
+
+## Dopo il compito 8
+
+⛔ **Che cosa venga dopo NON è scritto qui:** è uno stato, e la sua casa unica è la §6 del
+[compendio](../../COMPENDIO.md), che il compito 8 scrive: la **parte 2** del piano del 2 — i pezzi 2–9 della §3 della
+stella polare — scritta **dopo** la misura, coi numeri in mano e con lo stesso pre-controllo (punto 8 della §10 del
+disegno del 2). Le voci che questo piano sa e non chiude stanno nella sezione omonima, e per nessuna il chiusore è questo
+piano; il compito 7-bis esiste solo su un no all'insieme delle mosse (D12); la metà Linux di M3 e M5 è l'innesco scritto
+in ADR-0029; X-1 e X-3 sono compiti della parte 2 (D13).
+
+## Come si riprende — il diario di questo piano, coi comandi
+
+### La seconda chiusura — 2026-09-09: i compiti 6–8 SCRITTI, la revisione e gli spostamenti di stato NO
+
+⛔ **DA SAPERE SUBITO.** Niente è a metà **nel repository**: albero pulito, nessuno stash, nessuna operazione git in
+corso, nessun codice toccato. A metà è ancora **questo file**, ma meno della prima volta: i compiti **6, 7 e 8** sono
+scritti per intero nella forma dei compiti 1–5 — ogni *Trova* rilanciato col `grep` il 2026-09-09 contro `b50e8b8`, ogni
+attesa contata — il pre-controllo P-19…P-25 e le decisioni D19–D25 stanno nelle loro tabelle, la mappa dei file è
+aggiornata, «Dopo il compito 8» è scritto. ⛔ **Mancano, e li fa la sessione nuova PRIMA di eseguire:** la **revisione del
+piano intero** (punto 4 qui sotto) e i **tre spostamenti di stato** (punto 5). Il proprietario ha chiuso con *«fermati, si
+continua nella prossima sessione»*. Lo scratchpad è ripulito: tutto ciò che vale sta qui e nel commit.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | Ramo | `main`, allineato a `origin`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto |
-| I commit di questa sessione | `git log --oneline 5ad4634..HEAD` — **uno**: questo piano a metà e il richiamo nel punto 2 del puntatore della §6 del compendio |
+| I commit delle due sessioni del piano | `git log --oneline 5ad4634..HEAD` — **due**: `b50e8b8`, il piano a metà; poi questo, coi compiti 6–8 |
 | Codice, cancello, CI, spike | **non toccati**: `git diff --stat 5ad4634..HEAD -- crates/ scripts/ .github/ spikes/ Cargo.lock Cargo.toml rust-toolchain.toml` non rende nulla |
-| Documenti toccati | `git diff --stat 5ad4634..HEAD -- docs/` → solo questo piano (nuovo) e `docs/COMPENDIO.md` (il richiamo di poche righe nel punto 2 del prossimo passo della §6) |
-| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura (baseline, log letto) e alla chiusura, prima del commit; `bash scripts/check-docs.sh` → `OK`. Si rilanciano, non si citano |
-| Fine-riga | questo piano **LF** (`tr -cd '\r' < docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md \| wc -c` → `0`); il compendio CRLF con CR = righe; `git ls-files --eol docs/COMPENDIO.md` → `i/lf w/crlf` |
-| Margine del compendio | il comando del vincolo 11: era `10848` prima del richiamo, e il richiamo ne consuma poche centinaia |
-| Debito lasciato | **dichiarato**: i tre compiti mancanti, la sezione «Dopo», la revisione finale del piano, e i tre spostamenti di stato che si fanno **a piano completo** (qui sotto) |
+| Documenti toccati da questa sessione | `git diff --stat b50e8b8..HEAD -- docs/` → questo piano, e `docs/COMPENDIO.md` per il richiamo nel punto 2 del prossimo passo della §6, riscritto allo stato di questa chiusura |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura (baseline, letto dal log) e alla chiusura, prima del commit; `bash scripts/check-docs.sh` → `OK`. Si rilanciano, non si citano |
+| Fine-riga | questo piano **LF** — `tr -cd '\r' < docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md \| wc -c` → `0`; il compendio CRLF con CR = righe, `git ls-files --eol docs/COMPENDIO.md` → `i/lf w/crlf` |
+| Margine del compendio | il comando del vincolo 11: `10395` all'apertura di questa sessione — il richiamo della prima chiusura aveva consumato 453 dei `10848` — e il richiamo riscritto è della stessa taglia (P-22) |
+| Debito lasciato | **dichiarato**: la revisione finale e i tre spostamenti di stato, qui sotto; le righe **dedotte** e non provate — P-3, P-6, P-7 della prima sessione, P-21 e P-25 di questa — restano candidate all'errata, non voci |
 
 ### Che cosa la sessione nuova fa, nell'ordine
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura o uno dopo.
-2. La lettura obbligatoria di `CLAUDE.md` — il compendio per intero a blocchi, i due pezzi dell'audit — poi
-   la **stella polare** (almeno «Il modello della GUI», le §2, §3, §4, le decisioni, i vicoli ciechi) e il
-   **disegno del 2** (almeno le §2, §8, §9, §10, i vicoli ciechi), poi **questo piano per intero** — è
-   grande: si misurano prima i byte per blocco con l'`awk` dei vicoli ciechi della stella polare, e col
-   tool Bash si legge a blocchi sotto i 30 000 caratteri.
-3. Si scrivono i **compiti 6, 7 e 8** e «Dopo il compito 8» dalle tracce qui sotto, nella forma dei
-   compiti 1–5; ogni *Trova* si rilancia col `grep` prima di dettarlo, ogni attesa si conta (nove voci
-   d'errata su nove dei piani precedenti erano attese mai contate).
-4. La revisione del piano intero con gli occhi freschi (`superpowers:writing-plans`, *Self-Review*): ogni
-   riga della §4 della stella polare e della §2 e §10 del 2 ha un compito; nessun segnaposto; i nomi fra
-   i compiti coincidono (`tiles`, `wire`, `stats`, `tree.ps1` e i suoi parametri, gli `id` dei pannelli,
-   `sp8-electron`, `sp8-tauri`, `SP-8`).
-5. I tre spostamenti di stato, **a piano completo**: la riga di questo piano nella tabella dei piani di
-   `roadmap.md` (*«scritto il 2026-09-09, completato il <data>»*, forma della riga dei gesti — D14) con la
-   riga «Ultimo aggiornamento» riallineata (P-15); un richiamo datato nella §10 del disegno del 2, dopo il
-   capoverso che finisce con *«nessuna domanda resta pendente.»* (*«✅ PIANO DELLA PARTE 1 SCRITTO il <data>…»*);
-   il punto 2 del puntatore della §6 del compendio: il richiamo «A METÀ» diventa «✅ scritto il <data>;
-   l'esecuzione in una sessione nuova». La testa di questo file e la tabella della posizione perdono
-   l'avviso «A METÀ».
-6. `bash scripts/check-docs.sh`, `bash scripts/gate.sh`, i CR rimisurati, **un** commit, push; la memoria
-   dell'agente aggiornata; poi `session-handoff`. L'**esecuzione** — compito 1 con un subagente fresco —
-   è di un'altra sessione ancora (decisione 48).
+2. La lettura obbligatoria di `CLAUDE.md` — il compendio a blocchi di 200 righe, i due pezzi dell'audit — poi la **stella
+   polare** («Il modello della GUI», le §2, §3, §4, le decisioni del coordinatore, le registrate, i vicoli ciechi; la tabella
+   dello stato e delle decisioni, righe 44–143, a **50** righe per chiamata: a 100 trabocca) e il **disegno del 2** (la
+   testa, le §1, §2, §6a, §8, §9, §10, i vicoli ciechi), poi **questo piano per intero**, a 200 righe per chiamata — regge
+   su tutti i blocchi il 2026-09-09.
+3. Il pre-controllo dei compiti 6–8 si **rilegge** contro il codice di adesso — le quattro domande di `CLAUDE.md` e le tre
+   righe in più: è fatto il 2026-09-09 contro `b50e8b8`, ma un piano è un'ipotesi, e il repo può muoversi fra due sessioni.
+4. La **revisione del piano intero** (`superpowers:writing-plans`, *Self-Review*), che questa sessione **non** ha fatto:
+   (a) copertura — ogni riga della §4 della stella polare e delle §2 e §10 del 2 ha un compito; (b) nessun segnaposto —
+   `grep -n 'TBD\|TODO\|da scrivere' docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md` non
+   rende nulla, e ogni `<…>` che resta è uno slot di **misura** dei compiti 6–8 o dei loro modelli; (c) i nomi coincidono fra
+   i compiti — `tiles`, `wire`, `stats`, `startTitle`, `subscribe`, `tree.ps1` e i suoi parametri (`-Exe`, `-ArgumentList`,
+   `-WorkingDirectory`, `-AttachPid`, `-Seconds`, `-IntervalMs`, `-Emitter`, `-EmitterAt`, `-Csv`, `-KeepRunning`), le righe
+   `rest:`, `stream:`, `last title:`, gli `id` dei pannelli (`nucleus`, `strip`, `stato`, `permessi`, `attivita`, `costi`,
+   `chat`, `scene`, `hand`, `passi`), `sp8-electron`, `sp8-tauri`, `SP-8`, la forma del titolo del compito 3 e i campi che
+   i compiti 6 e 7 ne leggono; (d) i *Trova* dei compiti 6–8 rilanciati col `grep` (lo sono stati il 2026-09-09: P-19 e
+   P-20 dicono dove). Ciò che la revisione corregge si corregge **nel compito**, non nell'errata: il piano non è eseguito.
+5. I **tre spostamenti di stato**, a piano completo — ⛔ **coi testi fissati qui**, perché il compito 8 li usa come *Trova*:
+   (a) `docs/roadmap.md` (CRLF): la riga di questo piano nella tabella dei piani, **dopo** la riga che comincia con
+   `| [Knowledge base — i documenti]`, e la riga 6 riallineata (P-15). La riga nuova:
+   `| [Sotto-progetto 2 · parte 1 — lo spike del guscio](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) | SP-8 in \`spikes/gui-shell/\`: il protocollo congelato con M1–M5, Q1–Q4 e le otto mosse; la Home finta con \`dockview-core\`; i due gusci, Electron e Tauri, con gli installatori; le misure e il giudizio del proprietario; ADR-0029 chiuso. **Nessun codice di prodotto** | ✅ **scritto il 2026-09-09**, in due sessioni — la prima fino al compito 5, la seconda i compiti 6–8 e la revisione; ⏳ **da eseguire in una sessione nuova**, un subagente fresco per compito |`
+   e la riga 6: `Ultimo aggiornamento: **<data>**, con la riga del [piano della parte 1 del sotto-progetto 2](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) nella tabella dei piani — scritto, da eseguire in una sessione nuova.`
+   (b) il disegno del 2 (LF), §10: alla riga che finisce con `poi esegue i punti 5–7; nessuna domanda resta pendente.` (unica)
+   si appende ` ✅ **PIANO DELLA PARTE 1 SCRITTO il 2026-09-09**, in tre sessioni — la prima fino al compito 5, la seconda i compiti 6–8, la terza la revisione — in [\`../plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md\`](../plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md); l'esecuzione in una sessione nuova, un subagente fresco per compito (decisione 48).`
+   (c) il compendio (CRLF), il punto 2 del prossimo passo della §6: la riga del richiamo di questa chiusura — che comincia
+   con `⏳ **RICHIAMO DEL 2026-09-09, alla chiusura della seconda sessione del piano:**` — diventa
+   `✅ **RICHIAMO DEL 2026-09-09, alla chiusura della sessione che l'ha completato:** il piano della parte 1 è **scritto per intero** — pre-controllo, decisioni, compiti 1–8, riletto — in [\`superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md\`](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md); l'esecuzione va in una sessione **nuova**, un subagente fresco per compito, dal compito 1, come dice la sua sezione «Come si riprende»;`
+   — **senza** `⏭️`, così le righe col marcatore restano tre (P-20). La testa di questo file e il capoverso della posizione
+   perdono l'avviso «a metà».
+6. `bash scripts/check-docs.sh`, `bash scripts/gate.sh`, i CR rimisurati, **un** commit, push; la memoria dell'agente; poi
+   `session-handoff`. L'**esecuzione** — compito 1 con un subagente fresco — è di un'altra sessione ancora (decisione 48).
 
-### Le tracce dei tre compiti mancanti — le decisioni sono già prese, qui
+### La prima chiusura — 2026-09-09, il piano a metà: le sue decisioni e le sue trappole
 
-**Compito 6 — le misure M1–M5 e Q1–Q2 sui due gusci installati; la sezione SP-8 di `spikes/RISULTATI.md`.**
-Files: `spikes/RISULTATI.md` (CRLF) e questo piano. Passi: (1) le misure prima — gli installatori esistono
-(`ls spikes/gui-shell/electron/out/*.exe spikes/gui-shell/tauri/src-tauri/target/release/bundle/nsis/*.exe`),
-altrimenti `npm run dist` / `npm run build`; il comando delle versioni di `riferimenti.md` rilanciato quel
-giorno e le versioni scritte nell'esito (vincolo 8). (2) l'installazione silenziosa di entrambi — NSIS accetta
-`/S`: `"…/sp8-electron Setup 0.0.0.exe" /S` installa in `%LOCALAPPDATA%\Programs\sp8-electron\`; l'installatore
-di Tauri in `…\bundle\nsis\sp8-tauri_0.0.0_x64-setup.exe /S`, per utente, la cartella si **legge** con
-`Get-ChildItem $env:LOCALAPPDATA` e va nell'esito; **M2** con `measure/size.ps1 -Path` sulla cartella e
-sull'installatore di ciascuno. (3) **M1, M4, M5** con `tree.ps1` sull'eseguibile installato di ciascuno —
-`-Seconds 45 -EmitterAt 15 -Emitter <core.exe> -Csv <fuori dal repo>` — **due corse per guscio** (O1 di
-SP-7: una corsa sola è un punto in una nuvola), e si riportano entrambe; la fase `rest` dà M1 a riposo e M5
-a riposo, la fase `stream` dà M1 sotto flusso e M4 (picco e media, la soglia è il picco < 25 %); **M3** dalla
-riga `last title:` — `fps=`, `min=`, `api=`, `scene=` — che dopo 45 s copre la finestra dei 30 s. (4) **Q1**
-scritta dall'architettura (i commenti in testa a `main.js` e `main.rs` lo dicono); **Q2**: il WebView2 dal
-registro (il comando è nel protocollo), il Chromium di Electron da `ua=` del titolo, e lo **stato di WebGPU
-su WebKitGTK letto alle fonti quel giorno** — la pagina *Implementation Status* del wiki di `gpuweb/gpuweb`
-e le note di rilascio su `webkitgtk.org` — con URL e data: è la lettura che sostituisce la misura Linux
-(decisione C). (5) la sezione **SP-8** in `RISULTATI.md`, inserita **prima** della riga `## SP-7 — …` con
-`replace_unique.py` (Trova: quella riga intera, presa dal file; Sostituisci: la sezione, una riga vuota, la
-stessa riga), nella forma di SP-7: la tabella per misura con esito e numeri di **entrambi** i gusci, le
-righe Q1 e Q2, e le righe che aspettano il proprietario — le otto mosse, Q3, Q4, la CPU con la chat
-nascosta, la VRAM a pagina intera — scritte *«⏳ al compito 7, col proprietario»* (D17); poi «Osservazioni
-registrate», «Versioni degli strumenti» (node, npm, cargo, le versioni del giorno, WebView2, la CPU, la GPU),
-«Evidenze» con comando e output testuale; la riga della data in testa al file: Trova
-`Data di esecuzione: **2026-08-06** per SP-5 e SP-6; **SP-7** porta la propria data nella sua sezione`,
-Sostituisci con `… **SP-7** e **SP-8** portano la propria data nella loro sezione`. Oracolo, delimitato alla
-sezione (E13 dei gesti): `awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md | grep -c '<[^ ]'`
-→ `0`. (6) CR = righe, `check-docs.sh`, `gate.sh`, commit `guscio(compito 6): …`, push.
-
-**Compito 7 — col proprietario: le otto mosse, Q3 e Q4, le due misure che vogliono un click, la domanda sul
-guscio.** ⛔ **Non si dispaccia**: lo esegue il coordinatore col proprietario allo schermo (regola 7 di «Come
-si esegue»); un revisore in sola lettura rilegge l'esito dopo. Files: `spikes/RISULTATI.md` (CRLF, le righe
-⏳ riempite una per una con `replace_unique.py`), `docs/roadmap.md` (CRLF: la riga SP-8 → `✅ **chiuso il
-<data>**: …` senza cifre, e la riga «Ultimo aggiornamento»), questo piano. Passi: (1) il relay di SP-7 in
-ascolto — `(cd spikes/gesti/relay && cargo run --release -- ../.venv/Scripts/python ../s2_worker.py ../hand_landmarker.task)`
-— e `npm run dev` in `app/`; il proprietario apre `http://localhost:5173`. (2) le mosse 1–7 con mouse e
-tastiera, **le sue parole per ciascuna** nell'esito; la mossa 7 è la riga `move 7: EQUAL …` o `DIFFERENT …`
-della barra dopo «salva» e «ricarica», copiata testuale. (3) la mossa 8: `dnd: pointer` dal menu, la pinza
-sulla presa grande; il sì o no **tecnico** lo dicono le righe `move 8: pointerdown … on div.bigtab` della
-barra e se la tessera si è mossa; le parole del proprietario a parte, senza soglia. (4) **Q3 e Q4** in
-ciascun guscio installato, lanciato a mano (senza emettitore): la mossa 2 col mouse sotto `auto` → Q4; il
-comando ↗ → Q3, con la riga `move 4 / Q3: popout OPENED|REFUSED` e se la finestra è comparsa **dentro** il
-guscio. (5) **M4 con la chat nascosta**: il proprietario trascina Scena 3D nel gruppo della Chat e attiva
-Scena; il coordinatore prende il PID (`Get-Process sp8-electron` / `sp8-tauri`) e lancia
-`tree.ps1 -AttachPid <pid> -Seconds 25 -EmitterAt 3 -Emitter <core.exe>` — con `-AttachPid` lo script non
-lancia né ferma nulla; **M5 a pagina intera**: la scena massimizzata (⤢), `tree.ps1 -AttachPid <pid> -Seconds 12`.
-(6) **la domanda A/B sul guscio** (D15), coi numeri di M1–M5 e Q1–Q4 in una tabella a due colonne e il
-consiglio derivato dall'asimmetria dei costi scritta in ADR-0029 — A: Electron, B: Tauri — a parole semplici;
-la lettera e le parole del proprietario vanno nell'esito e nell'ADR. (7) l'esito completato, la roadmap,
-commit `guscio(compito 7): …`, push. Su un **no all'insieme** delle mosse, il compito **7-bis** (D12) si
-scrive nella sessione che riceve il no, prima del compito 8.
-
-**Compito 8 — la chiusura.** Files (CRLF salvo i disegni e questo piano): `docs/adr/0029-guscio-della-gui.md`,
-`docs/COMPENDIO.md`, `docs/archivio/stato-storico.md`, `docs/README.md`, `docs/HANDOFF.md`, `docs/roadmap.md`,
-`docs/riferimenti.md`, i due disegni (LF), questo piano. Passi: (1) la **Definizione di «fatto»** copiata dalla
-§10 del 2, condizione per condizione coi comandi — 1: `git log --format='%h %ad %s' --date=short -- spikes/gui-shell/PROTOCOLLO.md spikes/gui-shell/app`
-mostra il protocollo **prima** del primo codice; 2: `check-docs.sh` non elenca più ADR in `Proposed`, e la
-riga del guscio nella §4 del compendio è chiusa; 3: `grep -c 'giudizio del proprietario\|con le sue parole' spikes/RISULTATI.md`
-sulla sezione SP-8 delimitata con l'`awk`, la mossa 7 come due JSON uguali, l'esito di `dockview` scritto;
-4: `git status --porcelain` vuoto dopo una corsa dello spike, i lockfile in `git ls-files spikes/gui-shell | grep -c lock`
-→ quattro; 5: `git diff --stat 5ad4634..HEAD -- crates/ scripts/ Cargo.lock` vuoto; 6: i CR rimisurati sui
-file della mappa; 7: la parte 2 **non** è scritta qui — lo dice il puntatore. (2) **ADR-0029** con
-`replace_unique.py`: nel blockquote in testa, dopo la riga *«forzarla su un argomento sarebbe contro il metodo
-di questo repository.»*, la riga `> ✅ **RICHIAMO DEL <data>:** chiusa con **SP-8** — la Decision qui sotto; l'avviso resta com'era, perché è la storia di questa decisione.`;
-`- **Status:** Proposed` → `- **Status:** Accepted`; `_(da prendere)_` → il blocco della decisione:
-*«✅ **DECISA il <data> dal proprietario, con SP-8 in mano — <Electron | Tauri>.**»*, il rimando al protocollo
-e alla sezione SP-8, la **tabella** con una riga per M1–M5 e Q1–Q4 e le due colonne Electron/Tauri (i numeri
-di entrambe le corse, come nell'esito), le parole del proprietario, l'**innesco Linux** (*la metà Linux di M3
-e M5 non è misurata; al primo Linux vero si rimisurano; se M3 mostra la stessa API con Tauri la decisione si
-riapre con un ADR nuovo che superi questo, `Superseded by`, non con una conversazione*), e l'esito di
-`dockview`; sotto `### Come si chiude` la riga `✅ **Eseguito il <data>: SP-8**, coi criteri congelati prima in spikes/gui-shell/PROTOCOLLO.md`;
-in `## Consequences` il punto `- **Negative (accettate):**` per il guscio scelto — Electron: un terzo runtime,
-Chromium impacchettato e la taglia di M2, la superficie del processo principale Node, gli aggiornamenti a
-carico nostro; Tauri: il rischio di capacità su Linux **non misurato**, la webview del sistema fuori dal
-nostro controllo (versione e flag), nessuna familiarità del proprietario — si scrive il solo elenco del
-vincitore. (3) **il compendio**: la riga 160 — `di cui **38 ADR in stato Accepted** e uno \`Proposed\` (0029)`
-→ `**39 ADR in stato Accepted** — l'ultimo, 0029, chiuso il <data> con SP-8` (P-11, nello stesso commit);
-la riga del guscio in §4 (`| gui — **guscio** | ⚠️ **APERTO**: Tauri o Electron | ADR-0029, \`Proposed\` — **non blocca nulla** |`
-→ `| gui — **guscio** | **<Electron|Tauri>** — deciso il <data> con SP-8 | ADR-0029 |`); la voce **0029**
-della §5 (`grep -n '^\*\*0029'`) riceve in coda ` ✅ **RICHIAMO DEL <data>:** CHIUSA — **<guscio>**, con M1–M5 e Q1–Q4 misurate da SP-8 su Windows; l'innesco Linux nell'ADR; \`dockview\` <resta|esce>. Il testo sopra resta com'era.`;
-nella §6 una riga in «Chiuso» (*la parte 1 del piano del 2 — SP-8, ADR-0029 chiuso, `dockview` <esito> | <data> | il piano e la sezione SP-8*),
-il punto 2 del prossimo passo → `✅ parte 1 eseguita il <data>` e `⏭️ **la parte 2**: i pezzi 2–9 della §3 della stella polare, scritta ora coi numeri (Q1: chi decodifica; \`gui/shell/\` se Tauri), stesso pre-controllo`,
-il punto 3 → `✅ chiuso il <data>`; la riga di §8 `rifare gli spike SP-5, SP-6 e SP-7` → `… SP-7 e SP-8`, e
-`per SP-7 il protocollo congelato in \`spikes/gesti/PROTOCOLLO.md\`` → `per SP-7 e SP-8 i protocolli congelati in \`spikes/gesti/PROTOCOLLO.md\` e \`spikes/gui-shell/PROTOCOLLO.md\``;
-l'intestazione (riga 21, da `**Aggiornato il` a `Manutenzione: §13.`) **riscritta corta** — *«**Aggiornato il
-<data>**, con la **parte 1 del piano del 2 eseguita** — SP-8, ADR-0029 chiuso — e il puntatore della §6 alla
-parte 2; l'ultimo contenuto di merito è la voce 0029 della §5. Manutenzione: §13.»* — e il testo com'era
-appeso a `docs/archivio/stato-storico.md` come blocco datato, parola per parola (D16); `grep -n '⏭️' docs/COMPENDIO.md`
-deve rendere **due** righe come oggi. (4) `README.md` riga dell'indice:
-`| [0029](adr/0029-guscio-della-gui.md) | Guscio della GUI: Tauri o Electron | ⚠️ **Proposed** |` →
-`| [0029](adr/0029-guscio-della-gui.md) | Guscio della GUI: <Electron|Tauri> | Accepted |`; `HANDOFF.md`:
-`38 ADR in stato \`Accepted\`` → `39 ADR in stato \`Accepted\`` (`grep -n '38 ADR in stato' docs/HANDOFF.md`
-→ una riga, la 1052 il 2026-09-09). (5) `roadmap.md`: la riga di questo piano nella tabella dei piani →
-`✅ **scritto il 2026-09-09, eseguito il <data>** — \`GATE GREEN\` a ogni compito; SP-8 nella tabella degli spike, ADR-0029 chiuso`,
-e «Ultimo aggiornamento». (6) i **disegni**: nel disegno del 2, sotto l'intestazione della §2 e il suo
-richiamo, `✅ **RICHIAMO DEL <data>, alla chiusura della parte 1 del piano:** SP-8 eseguito — M1–M5 e Q1–Q4 in ADR-0029, chiuso **<guscio>**; le otto mosse in \`spikes/RISULTATI.md\`, \`dockview\` <resta|esce>; la parte 2 del piano si scrive ora, coi numeri.`
-e nella §10, dopo il richiamo «PIANO … SCRITTO», `✅ **PARTE 1 ESEGUITA il <data>:** il verbale nel piano, «A che punto è» e «Come si riprende».`;
-nella stella polare, sotto l'intestazione della §4, lo stesso richiamo con l'esito delle otto mosse, e nella
-riga *«codice e spec non toccati»* della tabella dello stato (riga 54 il 2026-09-09) la cella «Atteso» riceve
-` ✅ **RICHIAMO DEL <data>:** e \`spikes/gui-shell/\`, \`.gitignore\`, \`spikes/RISULTATI.md\` per SP-8 — la parte 1 del piano del 2; \`crates/\` intatto`
-(P-16). (7) `riferimenti.md`: una sottosezione nuova **in coda al file** (CRLF), `### Il <data> — SP-8: le versioni del giorno dello spike, e le fonti su WebKitGTK (Q2)`,
-col comando delle versioni e le righe F con URL e data delle pagine lette per Q2. (8) `check-docs.sh` (i
-totali degli ADR!), `gate.sh`, il margine, i CR su ogni file CRLF toccato, `git ls-files --eol` invariato,
-commit `guscio(compito 8): …`, push.
-
-**«Dopo il compito 8».** Che cosa venga dopo non è scritto nel piano: la §6 del compendio porta la **parte 2**,
-scritta dopo la misura con lo stesso pre-controllo; le voci che il piano sa e non chiude stanno nella sezione
-omonima; il compito 7-bis esiste solo su un no.
-
-### Le decisioni prese scrivendo, col perché — già nella tabella D1–D18, e tre da sapere in più
+La prima sessione si è chiusa per contesto saturo dopo il compito 5 e ha committato il piano a metà (`b50e8b8`), col
+richiamo nel punto 2 della §6 del compendio. Le sue **tracce** dei compiti 6–8 sono **assorbite** nei compiti e tolte da
+qui, perché una seconda casa diverge (gotcha #68): il testo com'era in
+`git show b50e8b8:docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md`. Le sue tre decisioni, e i
+suoi vicoli ciechi, restano:
 
 | | Decisione | Perché |
 |---|---|---|
@@ -2415,10 +3208,18 @@ omonima; il compito 7-bis esiste solo su un no.
 | b | i tre spostamenti di stato «piano scritto» (roadmap, §10 del 2, §6 del compendio) **non** sono fatti: si fanno a piano completo | uno stato «scritto» su un piano a metà mentirebbe; il richiamo «A METÀ» nella §6 basta a farlo trovare |
 | c | nessuna riga nuova in `riferimenti.md` per le verifiche di oggi | sono verifiche di **API** (le firme di `dockview-core`, i sorgenti di `three`, la crate `interprocess`, lo schema di Tauri), non misure di stato dell'arte; stanno nel pre-controllo (P-1…P-9) con la data. Se il proprietario le vuole anche lì, è una riga del compito 8 |
 
-### Vicoli ciechi e trappole di questa sessione, per chi la riprende
-
 - la testa del piano dei gesti letta col tool Bash a 190 righe **trabocca** (35 KB): si legge 1–83, 84–137, 138–186; questo piano è più grande — misurare i byte per blocco prima.
 - `dockview-core` 8.2.0 non spedisce CSS (P-1): un `import` del foglio di stile sarebbe stato il primo rosso; verificato aprendo il tarball del registro in memoria con `tarfile`, che è il metodo che regge anche per le firme `.d.ts`.
 - i file dei permessi di Tauri su GitHub (`crates/tauri/permissions/…`) rendono 404 dal ramo `dev`: il permesso `core:default` resta dedotto (P-7); la pagina docs.rs di `GenericNamespaced` è 404, il **sorgente della crate** da `static.crates.io` risponde e dice `\\.\pipe\` (P-5); `cdn.jsdelivr.net` serve i sorgenti di `three` per file (P-6).
 - il piano si scrive in **frammenti** col tool `Write` (uno per sezione, sotto i 25 KB) e si unisce con `cat`: un `Write` solo non regge; i frammenti restano nello scratchpad e **muoiono con la sessione** — un punto fermo si committa prima che il contesto sia saturo, non dopo.
 - la §10 del 2 chiede al piano di **copiare** la Definizione di «fatto»: il compito 8 la copia per intero, non la rimanda.
+
+### Vicoli ciechi e trappole della seconda sessione
+
+- `bash scripts/gate.sh > "$TMPDIR/gate.log"` dal tool Bash: `$TMPDIR` è **vuoto** in questa Git Bash, la redirezione va in `/gate.log` e fallisce con *Permission denied* — il cancello non gira. Il percorso dello scratchpad si scrive per esteso, assoluto.
+- le righe `⏭️` del compendio sono **tre**, non due: la terza è un code span nella tabella delle voci aperte (riga 735 il 2026-09-09). L'attesa «due» delle tracce era **non contata**: ora P-20 e D24.
+- la tabella dello stato e delle decisioni della stella polare (righe 44–143) letta col tool Bash a **100** righe trabocca (43,8 KB, salvata su file e persa): 50 righe, o 30 sulla sola tabella delle decisioni, com'era già scritto nei suoi vicoli ciechi.
+- questo piano letto a 200 righe per chiamata regge su tutti i blocchi, tredici chiamate in parallelo.
+- i frammenti dei compiti scritti col tool `Write` nello scratchpad, sotto i 25 KB l'uno, e uniti con uno script Python che li legge — non con un `Write` solo. Una recinzione a tre accenti che contiene un'altra recinzione a tre accenti si chiude prima del tempo: la esterna va a **quattro** (compito 8, Passo 6).
+- un comando con una barra verticale dentro una cella di tabella è una trappola doppia — `\|` per la tabella, che l'esecutore copierebbe dentro un'espressione regolare: i comandi con `|` stanno nei blocchi di codice, non nelle celle (compito 8, Passo 8, riscritto).
+- il proprietario ha chiuso la sessione mentre si scriveva la sezione «Dopo il compito 8»: la chiusura è costata più della scrittura, perché il piano riferisce P-19…P-25 e D19–D25 e senza le tabelle i riferimenti sarebbero rimasti appesi. La lezione è quella della prima chiusura: il punto fermo si committa **prima**.

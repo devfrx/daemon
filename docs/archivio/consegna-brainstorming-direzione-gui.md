@@ -1048,3 +1048,43 @@ quattordicesima ripresa (2026-09-09) il proprietario ha risposto A alla §7** (d
 nella consegna del 2 sotto «Le sezioni approvate del disegno», nella forma delle §3–§6a, con la riga 7 di «Le sezioni che
 mancano» della consegna col richiamo; il blocco della proposta com'era è nella cronaca in archivio. ⏭️ **L'ordine da qui:** il
 punto 3 (la §8), poi il 4 (§9, §10 e la sezione 6), poi il 5.
+
+### La chiusura della quattordicesima ripresa, lo stesso giorno — §9, §10 e sezione 6 decise su delega, non scritte
+
+Dopo il commit della §8 (`f79fc84`), la §9, la §10 e la sezione 6 presentate in chat a parole, coi cinque criteri e con
+verificato, dedotto e assunto separati, e tre domande A/B (i consigli: A, A, A). Letti prima: le sezioni «Come si riprende» dei
+disegni dei gesti e della knowledge base, le voci aperte e la Definizione di «fatto» del disegno della knowledge base, le righe
+dei due disegni in «Dove va cosa» di `README.md`; alla fonte: il registro npm per diciassette pacchetti (versioni, date, licenze,
+download), la pagina della regola `no-raw-text`, e le opzioni di `markdown-it` lette **dentro il pacchetto** scaricato dal
+registro, perché il sito e i sorgenti su GitHub non hanno risposto (quattro tentativi, pagine vuote o 404). Il proprietario ha
+risposto «decidi secondo la skill e fai session handoff prima di eseguire tutto, si continua in un'altra sessione»: decisioni
+36, 37 e 38, A, A e A, **non scritte** — le proposte parola per parola nel prossimo passo di questo file, coi fatti letti alle
+fonti e le decisioni 51–57 del coordinatore col perché. Fatto alla chiusura: le righe 9 e 10 di «Le sezioni che mancano» della
+consegna del 2 e le righe 5 e 6 di questo file col richiamo; lo stato e il prossimo passo di questo file; il puntatore della §6
+del compendio; `check-docs.sh` OK e `GATE GREEN` rilanciato e letto dal log; la memoria dell'agente aggiornata; lo scratchpad
+pulito. Nessun codice toccato. I testi com'erano stanno qui sotto.
+
+### Il punto 4 del prossimo passo com'era — §9, §10 e sezione 6 da presentare, chiuse A/A/A su delega
+
+4. La **§9** — le decisioni aperte col chiusore: quelle della riga 9 della consegna del 2, più le registrate di questo file che
+   dicono «il disegno del 2», più il commento falso di `crates/platform/src/journal.rs` (piano del 2). Poi la **§10**, come si
+   riprende, sul precedente dei disegni dei gesti e della knowledge base. Poi la **sezione 6** di questo file, dove vive la stella
+   polare. Ciascuna A/B coi tre controlli della decisione 18.
+
+### I paragrafi di stato com'erano dopo la §8, prima della chiusura (frammenti)
+
+**Manca il resto della sezione 5** — le §9–§10 del 2: decisioni aperte, come si riprende; le §7 e §8, il core finto e le
+prove col cancello, sono **scritte** il 2026-09-09 (decisioni 33–35) — **e la 6**, dove vive la stella polare;
+
+✅ **Le §7 e §8 del 2 sono scritte alla quattordicesima ripresa (2026-09-09, decisioni 33–35; la §8 delegata con «decidi
+secondo la skill»)**: si riprende dalla **§9**, punto 4 del prossimo passo.
+
+⛔ **Il prossimo passo è la §9 del 2** — le decisioni aperte col chiusore — dal punto 4 di «Prossimo passo, eseguibile»; poi
+la §10 e la sezione 6. ✅ **Alla quattordicesima ripresa (2026-09-09) il proprietario ha risposto A alla §7** (decisione 33) **e
+ha delegato la §8 e l'archivio che non si apre** («decidi secondo la skill»: decisioni 34 e 35, A e A): le §7 e §8 sono scritte
+nella consegna del 2, sotto «Le sezioni approvate del disegno», nella forma delle §3–§6a;
+
+✅ **Alla quattordicesima ripresa (2026-09-09) la §7 ha avuto risposta A (decisione 33) e la §8 è stata delegata con
+«decidi secondo la skill» (decisioni 34 e 35: A e A); entrambe sono scritte** nella consegna del 2 sotto «Le sezioni approvate
+del disegno», nella forma delle §3–§6a, con le righe 7 e 8 di «Le sezioni che mancano» della consegna col richiamo; i blocchi
+delle proposte com'erano sono nella cronaca in archivio. ⏭️ **L'ordine da qui:** il punto 4 (§9, §10 e la sezione 6), poi il 5.

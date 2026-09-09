@@ -675,6 +675,7 @@ Si riprende dalla **§10 del disegno del 2**, «Come si riprende», che dà l'or
 2. ⏭️ **la prossima sessione — decisione 48 del 2026-09-09:** `superpowers:writing-plans` col piano del 2 in **due parti**, la prima fino allo spike compreso — guscio più accettazione di
    `dockview` — la seconda scritta dopo la misura; il pre-controllo delle quattro domande di `CLAUDE.md` nella sessione che
    scrive il piano; l'esecuzione, subagent-driven, in sessioni nuove;
+   ⏳ **RICHIAMO DEL 2026-09-09, alla chiusura della sessione del piano:** il piano della parte 1 è **scritto A METÀ** — pre-controllo, decisioni e compiti 1–5 — in [`superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md`](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md); la sessione **nuova** lo **completa** — compiti 6, 7, 8 — dalla sua sezione «Come si riprende», **prima** di eseguirlo;
 3. ADR-0029 si chiude con M1–M5 all'inizio del 2 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario
    che sbarra il **13**, non il 2 (voce 3 della rilettura del disegno della knowledge base); poi il 13, poi il 3 — decisione 16.
 

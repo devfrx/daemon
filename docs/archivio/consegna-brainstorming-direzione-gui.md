@@ -732,3 +732,35 @@ L'elenco numerato qui sotto resta com'era, come verbale.
    quello del 2 in `docs/archivio/consegna-brainstorming-sottoprogetto-2.md`, parola per parola coi link
    riscritti; il puntatore della §6 del compendio mosso; `bash scripts/check-docs.sh`,
    `bash scripts/gate.sh`, commit, push.
+
+## La dodicesima ripresa, 2026-09-09 — la cronaca, scritta alla chiusura
+
+⚠️ **Dal taglio 1 in poi la cronaca di ogni ripresa si scrive qui**, non nel documento vivo (decisione 27 del proprietario,
+36 del coordinatore). Ciò che è vero adesso sta nella stella polare.
+
+1. Ripresa con `anthropic-skills:decision-principles` e `anthropic-skills:session-resume`, più `dev-discipline` e
+   `dev-communication`: `git fetch`, stato riletto coi comandi, nessuna divergenza dalla consegna dell'undicesima ripresa;
+   `check-docs.sh` OK e `GATE GREEN` all'apertura. La lettura obbligatoria letta a blocchi in parallelo (quattordici chiamate).
+2. Il mandato (decisione 26) come primo passo: la lettura d'apertura **rimisurata** coi comandi del prossimo passo — 551 293
+   byte e 179 219 token `cl100k` sui cinque file — e il peso per blocco; l'ordine proposto: stella polare, audit, compendio,
+   `CLAUDE.md`, la consegna del 2 com'è.
+3. **Taglio 1, A (decisione 27):** «Stato in una riga», «Da sapere subito», la tabella dello stato e «Fatto in questa
+   sessione» com'erano, e il «Prossimo passo» intero, in questo file coi link riscritti; nel vivo lo stato in poche righe, i
+   tre paragrafi vivi, la tabella coi comandi (più la riga dei diagrammi), il solo prossimo passo vivo. Commit `95c9857`.
+4. **Taglio 2, A (decisione 28):** la lettura dell'audit ristretta alla tabella delle voci senza numero AUD e alla disciplina
+   in cinque passi (4 806 byte contro 82 907); le tre case dell'istruzione riscritte col richiamo datato e i testi vecchi in
+   `docs/archivio/lettura-di-apertura-storico.md`; la cella «R1 — APERTA» dell'audit e la sua testa corrette. Commit `b5414a7`.
+5. **Taglio 3, A (decisione 29):** ogni voce del riquadro «Le voci ancora aperte» della §6 censita una per una contro le
+   tabelle uniche del registro (T5: 34 righe, 5 chiuse; T6: 29), la tabella dell'audit e la tabella del 2026-08-10 — 32
+   righe in chat, due orfane (la regola di rimisura del Task 9; i pesi a mano di `AVVIO-CHAT.md`) — e il racconto in
+   `docs/archivio/stato-storico.md` col richiamo nella sua testa e nel registro; nella §6 gli indici coi due comandi `awk`,
+   la tabella com'era più le due righe, il ritratto pieno; il tetto di `check-docs.sh` da 188 416 a 111 616. Il cancello ha
+   colto due link doppiati e uno vuoto prima del commit. Commit `0b20318`.
+6. Rimisurato dopo i tre tagli: 324 341 byte e 105 267 token `cl100k` (il comando: lo snippet `tiktoken` di `CLAUDE.md`
+   esteso ai cinque file, l'audit ridotto ai due pezzi). La memoria dell'agente sui blocchi di lettura aggiornata.
+7. La **domanda 4** — riscrivere il puntatore «Il prossimo passo» della §6 allo stato di oggi — posta in A/B col consiglio A
+   e lasciata **senza risposta**: il proprietario ha chiesto la chiusura con `session-handoff` («appena concludi»).
+8. Chiusura: la stella polare (stato in una riga, «Da sapere subito», la tabella dello stato, le decisioni 27–29 del
+   proprietario e 36–42 del coordinatore, due registrate, i vicoli ciechi, il prossimo passo col blocco della domanda 4 e
+   l'abbozzo della domanda 5), questa cronaca, il richiamo nel puntatore della §6 del compendio; `check-docs.sh` OK e il
+   cancello rilanciato; scratchpad pulito; nessun codice toccato.

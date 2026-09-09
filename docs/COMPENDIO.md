@@ -679,7 +679,7 @@ sessione» — e il testo che stava in questo puntatore è in [`archivio/stato-s
 (gotcha #100: il margine del tetto lo dà il comando nella tabella dello stato della stella polare). ⛔ **PRIMA DI OGNI ALTRA COSA, IL MANDATO DEL PROPRIETARIO DEL 2026-09-09 (decisione 26 della stella polare): la
 sessione nuova SFOLTISCE la lettura d'apertura** — che occupa **~350 000 token** appena la sessione comincia — misurandola coi
 comandi che stanno nel prossimo passo della stella polare e proponendo ogni taglio in A/B: questo compendio (la §6 e le sue voci
-aperte, **voce per voce** col proprietario), la stella polare (la cronaca in archivio), la testa dell'audit e `CLAUDE.md`. ⏭️ **Poi
+aperte, **voce per voce** col proprietario), la stella polare (la cronaca in archivio), la testa dell'audit e `CLAUDE.md`. ✅ **RICHIAMO DEL 2026-09-09, dodicesima ripresa: TRE tagli eseguiti, tutti A** — la stella polare, la testa dell'audit, il riquadro delle voci aperte di questa §6 — e restano **questo puntatore**, la cui domanda A/B è posta nella stella polare e **senza risposta**, e `CLAUDE.md`; la lettura d'apertura si rimisura coi comandi, non si cita. ⏭️ **Poi
 si riparte dalla sezione 5** della stella polare, dalla domanda A/B sulla **§7 del 2 — il core finto — posta e senza risposta** —
 la 5 sono le §7–§10 del 2: core finto, prove e cancello, decisioni aperte, come si riprende; la 6, dove
 vive la stella polare — poi i due disegni scritti sul posto e il piano del 2 in **due parti**, la prima fino allo spike compreso; poi

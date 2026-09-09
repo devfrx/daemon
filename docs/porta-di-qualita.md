@@ -4818,6 +4818,13 @@ Traguardo 5 **vivono** in **sei riquadri** di questo file, più l'errata in test
 della §6 del [compendio](COMPENDIO.md): questa tabella li **indicizza**, non li sostituisce —
 il registro è append-only per costruzione.
 
+⛔ **RICHIAMO DEL 2026-09-09 — il taglio 3 del mandato del proprietario (decisione 26 della stella polare
+della GUI):** i riquadri della §6 del [compendio](COMPENDIO.md) che questa sezione nomina — compreso il punto ④
+del riquadro *«ciò che il Task 12 lascia al Task 13»* — vivono da quel giorno in
+[`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola; nella §6 restano gli indici, la
+tabella del 2026-08-10 e due voci che vivevano solo nel racconto. Le case *«§6 del compendio»* della colonna
+«Dove è dichiarata» qui sotto si leggono così.
+
 ⛔ **RICHIAMO DEL 2026-08-25 — questa riga diceva *«VIVEVANO … alle righe `249 · 594 · 604 ·
 853 · 887 · 918`»*, e le due cose erano sbagliate insieme.** Il passato: i sei riquadri erano
 intatti — `git diff --stat` su questo file dava **`+103`, `−0`** — quindi la tabella si era

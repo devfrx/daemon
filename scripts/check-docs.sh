@@ -331,14 +331,19 @@ echo "== compendium size ceiling =="
 #
 # ⛔ RECALL OF 2026-09-03 -- THE CEILING CAME DOWN A SECOND TIME, by the same rule. Closing
 # sub-project 1, the story of milestone 6 left §6 word for word for docs/archivio/stato-storico.md
-# and the compendium measured 168998 bytes: measured + ~11%, aligned to a whole KiB, gives the
-# number below. The 11% is what the closure's single pass over the status documents has to fit in.
+# and the compendium measured 168998 bytes: measured + ~11%, aligned to a whole KiB, gave
+# 188416. The 11% is what the closure's single pass over the status documents has to fit in.
 #
-# ⚠️ STILL OPEN, DECLARED AND NOT DONE: consolidating the OPEN entries of §6. That is an
-# owner decision, to be brought one entry at a time -- §6 says so itself.
+# ✅ DONE ON 2026-09-09 -- it was STILL OPEN, DECLARED AND NOT DONE until then: consolidating the
+# OPEN entries of §6, an owner decision brought one entry at a time. The owner's mandate (decision
+# 26 of the GUI north star) checked every open entry against the indexes that already exist and
+# archived its story word for word into docs/archivio/stato-storico.md, keeping the indexes in §6.
+#
+# ⛔ RECALL OF 2026-09-09 -- THE CEILING CAME DOWN A THIRD TIME, by the same rule: after that cut the
+# compendium measured 100546 bytes; measured + ~11%, aligned up to a whole KiB, gives the number below.
 #
 # Non-vacuity: a missing file is a FAILURE, not a silent pass -- gotcha #26.
-ceiling=188416
+ceiling=111616
 if [ ! -f "$compendium" ]; then
   report "$compendium is missing: the size ceiling would be vacuous"
 else

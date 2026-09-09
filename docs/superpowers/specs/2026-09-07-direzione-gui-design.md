@@ -29,8 +29,8 @@ disposizione con la **settima porta**, la fetta del 2 ritagliata, lo spike di ac
 la passata sui diagrammi (decisione 16) è chiusa. **Mancano la sezione 5** — le §7–§10 del 2: core finto, prove e cancello,
 decisioni aperte, come si riprende — **e la 6**, dove vive la stella polare; poi i due disegni scritti sul posto e il piano
 del 2 in due parti. Nessun codice toccato. ⛔ **In corso il mandato del proprietario (decisione 26): sfoltire la lettura
-d'apertura**, un documento per volta e in A/B — questo file è il primo, fatto il 2026-09-09; restano la testa dell'audit,
-il compendio (le voci aperte della §6, voce per voce) e `CLAUDE.md`. La **§7 del 2 è presentata in forma A/B e senza
+d'apertura**, un documento per volta e in A/B — fatti il 2026-09-09 questo file, la testa dell'audit e il riquadro delle
+voci aperte della §6 del compendio (censite una per una); restano il puntatore della §6 e `CLAUDE.md`. La **§7 del 2 è presentata in forma A/B e senza
 risposta**: si riprende da lì, a mandato eseguito. La cronaca ripresa per ripresa sta in archivio (il richiamo in testa).
 
 ## ⛔ Da sapere subito
@@ -997,10 +997,12 @@ dopo la misura.
 
 ## Prossimo passo, eseguibile
 
-✅ **Stato del mandato al 2026-09-09, dodicesima ripresa:** questo file è **sfoltito** (A, il primo taglio) — la cronaca è in
-[`../../archivio/consegna-brainstorming-direzione-gui.md`](../../archivio/consegna-brainstorming-direzione-gui.md). Restano,
-nell'ordine proposto dal coordinatore: la testa dell'audit (una riga di `CLAUDE.md`, del proprietario), il compendio (le voci
-aperte della §6, **voce per voce**), `CLAUDE.md`; la consegna del 2 resta com'è. Il punto 1 qui sotto resta com'era scritto
+✅ **Stato del mandato al 2026-09-09, dodicesima ripresa — tre tagli fatti, tutti A:** questo file **sfoltito**, la cronaca in
+[`../../archivio/consegna-brainstorming-direzione-gui.md`](../../archivio/consegna-brainstorming-direzione-gui.md); la lettura
+dell'audit ristretta a due pezzi (`CLAUDE.md`, §6 del compendio, `AVVIO-CHAT.md`, coi testi vecchi in
+`docs/archivio/lettura-di-apertura-storico.md`); il riquadro delle voci aperte della §6 ridotto agli indici, ogni voce censita
+**una per una**, il racconto in `docs/archivio/stato-storico.md`, il tetto di `check-docs.sh` sceso. Restano il puntatore
+«Il prossimo passo» della §6 e `CLAUDE.md`; la consegna del 2 resta com'è. Il punto 1 qui sotto resta com'era scritto
 alla chiusura dell'undicesima ripresa: è la misura datata e il metodo, e si rimisura prima di ogni taglio.
 
 ⏭️ **L'ordine eseguibile:**

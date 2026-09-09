@@ -672,7 +672,7 @@ Si riprende dalla **§10 del disegno del 2**, «Come si riprende», che dà l'or
 
 1. ✅ la **rilettura del proprietario** dei due disegni in questa forma, in chat — il sì è condizionato e non si deduce; la
    domanda minima con cui si apre sta nella §10 — **fatta il 2026-09-09**, voce per voce: le sei voci sue tutte A, decisioni 41–47 della stella polare;
-2. `superpowers:writing-plans` col piano del 2 in **due parti**, la prima fino allo spike compreso — guscio più accettazione di
+2. ⏭️ **la prossima sessione — decisione 48 del 2026-09-09:** `superpowers:writing-plans` col piano del 2 in **due parti**, la prima fino allo spike compreso — guscio più accettazione di
    `dockview` — la seconda scritta dopo la misura; il pre-controllo delle quattro domande di `CLAUDE.md` nella sessione che
    scrive il piano; l'esecuzione, subagent-driven, in sessioni nuove;
 3. ADR-0029 si chiude con M1–M5 all'inizio del 2 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario

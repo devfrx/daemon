@@ -9,15 +9,14 @@ Il compendio contiene **tutte** le decisioni del progetto — le 39 ADR, le sei
 invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
 compressa a poche righe.
 
-⛔ **E la testa di [`docs/audit-2026-08-27.md`](docs/audit-2026-08-27.md) — tutto ciò che
-sta PRIMA della sezione «Dettaglio».** ⚠️ **RICHIAMO DEL 2026-08-28: queste righe dicevano
-*«Quel rapporto È APERTO ED È IL COMPITO DI OGGI, non una consultazione»*, e i suoi finding
-sono chiusi.** Resta lettura d'apertura come **verbale e delega** — la sua sezione *«Come si
-concludono quelli aperti»* è **il metodo con cui qui si rimedia**, e la colonna *«Stato»*
-della sua tabella è la **casa unica** di che cosa resta, insieme alla tabella delle **voci
-senza numero AUD**, che sono le sole ancora aperte e in gran parte del proprietario.
-⛔ **Il «Dettaglio» dopo quella tabella NON si legge intero: se ne apre UNA scheda per
-volta, quella del finding su cui si lavora.**
+⛔ **E di [`docs/audit-2026-08-27.md`](docs/audit-2026-08-27.md) SOLO DUE PEZZI: la tabella
+*«Le voci aperte che NON hanno un numero AUD»* — le sole ancora aperte, in gran parte del
+proprietario — e *«La disciplina, in cinque passi»*, il metodo con cui qui si rimedia.** I 73
+finding sono **tutti chiusi** — quanti, lo dice il comando in fondo alla §6 del compendio — e il
+«Dettaglio» **NON si legge intero**: se ne apre **UNA** scheda per volta, quella del finding su cui
+si lavora. ✅ **RICHIAMO DEL 2026-09-09, decisione 26:** qui stava *«tutta la testa, fino a
+«Dettaglio»»*, in gran parte le due tabelle dei finding chiusi; il testo com'era è in
+[`docs/archivio/lettura-di-apertura-storico.md`](docs/archivio/lettura-di-apertura-storico.md).
 
 ⚠️ **Quanto costa questa lettura NON è scritto qui, ed è una decisione.** Ogni volta che
 un peso o un conto di token è stato scritto su questa riga è invecchiato: ha detto

@@ -165,26 +165,15 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
      cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),
      le trappole di check-docs.sh (§10), i vincoli sul primo commit (§11).
-  3. docs/audit-2026-08-27.md — ⛔ SOLO FINO ALLA TABELLA DEI 73 FINDING,
-     cioè tutto cio' che sta PRIMA della sezione «Dettaglio».
-     ⚠️ RICHIAMO DEL 2026-09-01: qui stava «54 KB», e sono 81 — la testa è
-     cresciuta a ogni rimedio, perché è lì che vive la tabella dei rimedi.
-     TOLTO e non riallineato: un peso misurato lo dà il comando, che non
-     marcisce — awk '/^## Dettaglio/{exit} {b+=length($0)+1} END{print b}'
-     docs/audit-2026-08-27.md
-     ⚠️ I suoi finding sono CHIUSI dal 2026-08-28 — questa riga diceva «È IL
-     COMPITO DI OGGI, non un verbale». Si legge come VERBALE e DELEGA: il
-     metodo con cui qui si rimedia, e le voci senza numero AUD, che sono le
-     sole ancora aperte.
-     Contiene: come è stato condotto, la copertura, la baseline, le SETTE
-     radici, lo stato dei rimedi, la sezione «Come si concludono quelli
-     aperti» — che è LA DELEGA, con la disciplina in cinque passi, le due
-     trappole del repository e l'ordine consigliato — e la tabella dei 73
-     con la colonna «Stato», che è la loro CASA UNICA.
-     ⛔ IL «Dettaglio» DOPO QUELLA TABELLA NON SI LEGGE INTERO: sono 73
-     schede da ~20 righe, 204 KB, e se ne apre UNA per volta, quella del
-     finding su cui stai lavorando. Si legge a FINDING, come un piano si
-     legge a compiti.
+  3. docs/audit-2026-08-27.md — ⛔ SOLO DUE PEZZI: la tabella «Le voci aperte
+     che NON hanno un numero AUD» (le sole ancora aperte, in gran parte del
+     proprietario) e «La disciplina, in cinque passi» (il metodo con cui qui
+     si rimedia). I 73 finding sono TUTTI CHIUSI dal 2026-08-28 — quanti, lo
+     dice il comando in fondo alla §6 del compendio — e il «Dettaglio» si
+     apre UNA scheda per volta, quella del finding su cui stai lavorando.
+     ✅ RICHIAMO DEL 2026-09-09, decisione 26: qui stava «SOLO FINO ALLA
+     TABELLA DEI 73 FINDING», cioè tutta la testa; il testo com'era, coi
+     richiami del 2026-09-01, è in docs/archivio/lettura-di-apertura-storico.md.
      ⚠️ docs/audit-2026-08-11.md — 32 KB — NON si apre più: è chiuso otto
      decisioni su otto, e ciò che insegnava è dentro il compendio.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,

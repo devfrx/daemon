@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-09**, col puntatore della §6 riscritto per la **sezione 4** della stella polare della GUI — lo spike di accettazione di `dockview`, otto mosse, la mossa 8 decisa dal proprietario — **scritta**, e **sfoltito** della cronaca delle riprese, che vive nella stella polare e, parola per parola, in [`archivio/stato-storico.md`](archivio/stato-storico.md), e alla chiusura per il **mandato del proprietario** sulla lettura d'apertura (decisione 26 della stella polare); l'ultimo contenuto di **merito** è quel puntatore. Manutenzione: §13.
+**Aggiornato il 2026-09-09**, col puntatore della §6 riscritto per la **sezione 4** della stella polare della GUI — lo spike di accettazione di `dockview`, otto mosse, la mossa 8 decisa dal proprietario — **scritta**, e **sfoltito** della cronaca delle riprese, che vive nella stella polare e, parola per parola, in [`archivio/stato-storico.md`](archivio/stato-storico.md), e alla chiusura per il **mandato del proprietario** sulla lettura d'apertura (decisione 26 della stella polare); poi, lo stesso giorno, il paragrafo dell'audit della §6 riscritto per il **taglio 2** del mandato — l'ultimo contenuto di **merito** è quello. Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -621,20 +621,13 @@ i verbali in [`archivio/`](archivio/). ⚠️ **I numeri si rifanno col comando*
 [`riferimenti.md`](riferimenti.md), e non si rileggono qui.
 
 ✅ **IL SECONDO AUDIT COMPLETO — 2026-08-27 — HA I SUOI FINDING TUTTI CHIUSI DAL 2026-08-28**,
-[`audit-2026-08-27.md`](audit-2026-08-27.md), col rosso o la misura riprodotti **prima** del
-rimedio ogni volta che il finding tocca codice o cancello. ⚠️ **Nessun numeratore qui, nemmeno
-adesso che sarebbe comodo:** lo dice la colonna «Stato» di quel rapporto, che ne è la **casa
-unica**, e il comando sta in fondo a questa sezione — gotcha #68, che è la radice **R3**
-dell'audit stesso. Diciotto revisori in parallelo, ognuno smentito da un secondo; **98 finding
-proposti, 25 scartati, 73 finali** in **sette radici**.
-⛔ **MA IL RAPPORTO NON È FINITO, e la differenza va detta invece che arrotondata:** restano le
-**voci senza numero AUD**, la cui tabella in quel file è la casa unica, e la maggior parte sono
-**decisioni del proprietario**. ⛔ **RICHIAMO DEL 2026-08-28: questo blocco diceva *«ED È IL
-COMPITO DI OGGI»* e *«la specie del lavoro è RIMEDIO — niente brainstorming, niente plan
-mode»*.** Entrambe erano vere e non lo sono più: il rapporto resta lettura d'apertura come
-**verbale e delega** — il metodo con cui qui si rimedia — e il prossimo passo **riparte proprio
-dal brainstorming**. ⛔ **Si legge fino alla tabella dei 73, mai il «Dettaglio» intero:** sono 73
-schede, e se ne apre **una** per volta, come un piano si legge a compiti.
+[`audit-2026-08-27.md`](audit-2026-08-27.md): quanti, lo dice la colonna «Stato» di quel rapporto,
+che ne è la **casa unica**, col comando in fondo a questa sezione (gotcha #68). ⛔ **Restano le voci
+senza numero AUD**, la cui tabella in quel file è la casa unica, in gran parte **decisioni del
+proprietario**. ✅ **RICHIAMO DEL 2026-09-09, decisione 26 della stella polare:** all'apertura si
+leggono **solo** quella tabella e *«La disciplina, in cinque passi»*; i 73 e il «Dettaglio» si aprono
+**una** scheda per volta. Il paragrafo com'era, col richiamo del 2026-08-28, è in
+[`archivio/stato-storico.md`](archivio/stato-storico.md).
 
 ⚠️ **I RACCONTI DEI SINGOLI FINDING NON VIVONO PIÙ QUI, dal 2026-08-28.** Questa §6 ne portava
 uno per **AUD-013** mentre due paragrafi più sopra dichiarava che *«la colonna Stato di quel

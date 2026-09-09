@@ -904,3 +904,103 @@ sostituiti dai comandi; se no, resta com'è, lo si dice qui, e il mandato si chi
    d'iniziativa; i puntatori restano in una casa sola (gotcha #68); `bash scripts/check-docs.sh` dopo ogni file e i fine-riga
    rimisurati (`git ls-files --eol`: questo file e la consegna del 2 `w/lf`, il compendio e l'archivio `w/crlf`); la memoria
    dell'agente sui blocchi di lettura si aggiorna quando le taglie cambiano.
+
+## La quattordicesima ripresa, 2026-09-09 — la cronaca, scritta man mano
+
+Aperta con `/anthropic-skills:decision-principles /anthropic-skills:session-resume`, senza il messaggio di `AVVIO-CHAT.md`
+(decisione 32). Ripresa coi comandi: `git fetch --all --prune` e `git status -sb` (`## main...origin/main`, niente sotto),
+nessuno stash, nessuna operazione a metà; `check-docs.sh` OK e `GATE GREEN` all'apertura, letto dal log; la tabella dello stato
+di questo file rilanciata riga per riga, nessuna divergenza — `git diff --stat 664265a..HEAD` sul codice dà la spec del
+sotto-progetto 1 e `scripts/check-docs.sh`, com'è scritto; i fatti del codice su cui poggia la proposta riletti **prima** della
+domanda: `gui/` non esiste, `exclude = ["spikes"]` nel manifesto di radice, nessun `impl Ipc for` fuori dai commenti in `crates/`,
+`Executor::spawn` prende future con vita `'a`, `executor_determinism.rs` fa girare più attività su una `RefCell`,
+`gui_death_campaign.rs` sta in `crates/simulator/tests/`. La lettura d'apertura com'è scritta in `CLAUDE.md` — il compendio
+intero, i due pezzi dell'audit — più le parti di stato di questo file, «La GUI dentro», la §3, e la consegna del 2 intera; i
+blocchi misurati prima con l'`awk` per byte, due chiamate traboccate (la memoria dell'agente ne porta la taglia).
+
+La domanda sulla §7 riposta al proprietario a parole semplici, A/B col consiglio A; la risposta: **A**. Fatto nello stesso
+commit: la §7 scritta nella consegna del 2 sotto «Le sezioni approvate del disegno», nella forma delle §3–§6a (Pezzo · Forma ·
+La prova), coi tre controlli della decisione 18 e il controllo sui cinque criteri riletti nel codice; la riga 7 di «Le sezioni che
+mancano» della consegna e la riga 5 di questo file col richiamo; la decisione 33 nella tabella; «Stato in una riga», «Da sapere
+subito» e il prossimo passo di questo file allo stato di oggi — si riprende dalla **§8**; il punto 1 del puntatore della §6 del
+compendio e la sua intestazione. Trovato scrivendo, e registrato come dedotto nella §7: `build_the_arbiter` e `reserve` vivono in
+`crates/daemon/src/main.rs`, un binario, quindi il finto non può importarli — dove spostarli lo decide il piano. Nessun codice
+toccato. I testi com'erano stanno qui sotto.
+
+### Il paragrafo di «Da sapere subito» com'era alla chiusura della tredicesima ripresa
+
+⛔ **Il prossimo passo è la §7 del 2**, dalla domanda A/B lasciata aperta: il come, coi comandi, sta in «Prossimo passo,
+eseguibile». ⛔ **Alla chiusura della tredicesima ripresa (2026-09-09) la domanda è stata RIPOSTA al proprietario parola per
+parola, con la verifica che il codice è intatto da `664265a`, e resta SENZA risposta:** il proprietario ha chiesto la chiusura
+con `session-handoff` («continuiamo nella prossima sessione»).
+
+### Le due frasi di «Stato in una riga» com'erano alla chiusura della tredicesima ripresa (frammenti)
+
+**Mancano la sezione 5** — le §7–§10 del 2: core finto, prove e cancello,
+decisioni aperte, come si riprende — **e la 6**
+
+⛔ **La §7 del 2 è stata RIPOSTA in forma A/B alla chiusura della tredicesima ripresa, chiesta dal proprietario con
+`session-handoff`, e resta SENZA risposta**: si riprende da lì, dal blocco *«La proposta per la sezione 5»* del prossimo
+passo.
+
+### Il paragrafo del prossimo passo com'era, e il suo punto 2
+
+⛔ **Alla chiusura della tredicesima ripresa (2026-09-09), chiesta dal proprietario con `session-handoff`, la domanda sulla §7 è
+stata RIPOSTA parola per parola e resta SENZA risposta.** ⏭️ **L'ordine della sessione nuova:** la risposta A o B al blocco *«La
+proposta per la sezione 5»* qui sotto; poi la §7 scritta nella consegna del 2 sotto «Le sezioni approvate del disegno», nella
+forma delle §3–§6a (Pezzo · Forma · La prova), e la riga 7 di «Le sezioni che mancano» della consegna col richiamo;
+`check-docs.sh`, commit, push; poi il punto 3 (la §8), il 4 (§9, §10 e la sezione 6), il 5.
+
+2. Al proprietario, **la domanda A/B sulla §7**, dal blocco *«La proposta per la sezione 5 — §7, il core finto»* qui sotto,
+   parola per parola; consiglio **A**. Se A o B: scrivere la §7 nella consegna del 2, sotto «Le sezioni approvate del disegno»,
+   nella forma delle §3–§6a (Pezzo · Forma · La prova), la riga 7 di «Le sezioni che mancano» della consegna col richiamo;
+   `check-docs.sh`, commit, push.
+
+### La proposta per la sezione 5 com'era — posta all'undicesima ripresa, riposta alla tredicesima, chiusa A alla quattordicesima
+
+#### La proposta per la sezione 5 — §7, il core finto · presentata il 2026-09-09, undicesima ripresa, SENZA risposta
+
+✅ **Richiamo del 2026-09-09, tredicesima ripresa:** riposta al proprietario com'è, parola per parola, dopo la verifica che il
+codice è intatto da `664265a` (`git diff --stat 664265a..HEAD` su `crates/`, `scripts/`, `spikes/`: solo il tetto di
+`check-docs.sh`); senza risposta alla chiusura, chiesta con `session-handoff`.
+
+**A parole.** Un programma piccolo in `gui/fake-core/` che finge di essere il core, così la GUI si costruisce e si prova prima
+che il daemon vero faccia tutto e prima che esista un modello. Parla sul filo vero con lo schema vero. Già approvato (§1 e la
+riga 7 della consegna del 2, la §3 di questo file): fuori dal workspace Cargo (`gui` in `exclude`), il suo `Cargo.lock`
+committato perché lo usa il cancello, token a tempo come lo spike (2000 in dieci secondi, testo non fidato, markdown), `Invoke`
+→ `PermissionRequired` la prima volta, `Layout`/`SaveLayout` e la lista dei passi.
+
+**La domanda: quanto è finto?**
+
+> **A — riusa.** Il finto fa girare l'attività **vera** del kernel che ascolta la GUI — quella che il daemon farà girare, e che
+> il 2 costruisce come attività del kernel perché la DST la muova con `DyingGui` (§5 del 2) — su porte in memoria: il giornale
+> del simulatore, la finta del simulatore per la settima porta, un arbitro vero, e il trasporto vero di `platform`. Finto è solo
+> un **rubinetto**: un'attività che manda i token a tempo e, su un comando di una parola da stdin, un `Verdict` o un record di
+> routing degradato nel giornale in memoria. Tutto il resto — `Hello`/`Accepted`/`StaleBuild`, `Degradation`, `Policy`,
+> `Layout`/`SaveLayout`, `Invoke`/`PermissionRequired`/`Approve`, la lista dei passi — è il codice vero.
+> **B — imita.** Un copione a sé che parla lo schema e il filo e scrive a mano ogni risposta del daemon (la riga 7 della consegna
+> del 2 com'è scritta).
+> Consiglio: **A** — il modo del repo è la logica vera su porte sostituite, cioè il simulatore; B è una seconda copia del
+> dispaccio, e il giorno che il daemon cambia il finto diverge senza che nulla diventi rosso.
+
+**Il costo di A, dichiarato:** il finto dipende anche da `simulator` per percorso; l'attività del kernel deve potersi costruire da
+fuori, cosa che la campagna DST della §5 già pretende; il rubinetto condivide il trasporto con l'attività attraverso una `RefCell`,
+il modo dell'esecutore; la disposizione vive finché il finto non riparte — la persistenza vera è del daemon, provata dalla sonda
+della §8.
+
+**I tre controlli (decisione 18).** *Esiste:* l'emettitore di `spikes/gui-ipc/src/bin/core.rs` — righe JSON, tre canali,
+sopravvive alla GUI che muore e accetta una riconnessione; `IpcMessage` con due varianti e otto sonde di andata e ritorno e di
+rifiuto in `crates/kernel/tests/ipc_wire.rs`; `FakeGui` in `crates/kernel/tests/ports_are_implementable.rs` e `DyingGui` in
+`crates/simulator/src/ipc.rs`; il dispaccio di `gui_death_campaign.rs` scritto **dentro il banco** (`accept`/`receive`/`send` in
+riga), quindi nessuna attività «servi la GUI» esiste ancora nel kernel: la costruisce il pezzo 6 della §3; nessun trasporto in
+`platform`; `gui/` non esiste; il manifesto di radice esclude solo `spikes`. *Arriva:* col 3 il core vero produce i token e il
+rubinetto perde quel compito, ma resta per ogni modulo il cui produttore arriva dopo; col 12 il gesto come invocatore, stessa
+attività. *Regge crescendo:* una variante nuova è un ramo del `match` nell'attività vera, e con A il finto la segue gratis; con
+B è una risposta in più scritta a mano.
+
+**Controllo sui cinque criteri.** Verificato il 2026-09-09: i file sopra, letti. 🔶 **Dedotto:** che un'attività e un rubinetto
+possano condividere la porta con una `RefCell` — `Executor::spawn` prende future con vita `'a`, e la campagna dell'arbitro fa
+già girare più attività su stato condiviso; che il valore di `Accepted` sia consegnato al finto come al daemon. **Assunto:**
+niente. Debito scritto: il rubinetto è codice finto fuori dal prodotto; il suo «degrada» è un meccanismo vero con una causa finta.
+
+> La §7 così? **A:** riusa — l'attività vera su porte in memoria, più il rubinetto. **B:** imita — un copione a sé. Consiglio: **A**.

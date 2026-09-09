@@ -31,7 +31,8 @@ Il «Prossimo passo» di questo file è **superato** da quello della stella pola
 
 Brainstorming del 2 a metà, poi allargato alla stella polare il 2026-09-07: undici risposte più la
 strada, le sezioni §1–§6a approvate coi richiami datati, nessun codice toccato; mancano le sezioni
-scritte della stella polare e le §7–§10 di questo file, poi i due disegni scritti e il piano.
+scritte della stella polare e le §7–§10 di questo file, poi i due disegni scritti e il piano. ✅ **Richiamo del 2026-09-09:** la **§7** è scritta (decisione 33 della
+stella polare, A); mancano le §8–§10.
 
 ## ⛔ Da sapere subito
 
@@ -357,12 +358,81 @@ dipendenze nuove non scelte qui — un renderer di markdown, gli attrezzi di pro
 parte del ponte che dipende dal guscio, aperta per nome. 🔶 Dedotto: la forma esatta del ponte nei
 due gusci.
 
+### §7 — Il core finto · approvata il 2026-09-09 (A, decisione 33 della stella polare)
+
+Un programma piccolo in `gui/fake-core/` che finge di essere il core, così la GUI si costruisce e si prova
+prima che il daemon vero faccia tutto e prima che esista un modello. Parla sul **filo vero** con lo
+**schema vero**. Deciso dal proprietario, **A — riusa**: il finto non riscrive il dispaccio, fa girare
+l'**attività vera** del kernel che ascolta la GUI (§5, «l'attività») su porte in memoria; finto è soltanto
+un **rubinetto**, che produce ciò che nel 2 nessun pezzo vero produce ancora. La riga 7 di «Le sezioni che
+mancano» qui sotto era la forma B, e porta il richiamo. Già approvato prima di questa sezione, e qui solo
+richiamato: fuori dal workspace Cargo (pezzo 7 della §1), il `Cargo.lock` committato, i token a tempo come
+lo spike, `Invoke` → `PermissionRequired` la prima volta, `Layout`/`SaveLayout` e la lista dei passi (§3
+della stella polare, pezzo 8).
+
+| Pezzo | Forma | La prova che lo esercita |
+|---|---|---|
+| dove, e come si costruisce | un binario Rust in `gui/fake-core/` col proprio `Cargo.toml`, **fuori dal workspace** — il manifesto di radice aggiunge `gui` a `exclude` — che dipende **per percorso** da `kernel`, `platform` e `simulator`; il suo `Cargo.lock` **si committa**, perché lo usa il cancello: è un attrezzo, non uno spike | il passo del cancello della §8: `cargo test --locked --manifest-path gui/fake-core/Cargo.toml`, verde |
+| l'attività vera | la **stessa** attività del kernel che il daemon lancia sull'esecutore (§5, «l'attività»), costruita **da fuori** con le porte e i parametri consegnati (ADR-0034) — ciò che la campagna DST della §5 pretende già — e fatta girare da `Executor` col limite di giri del daemon; nel finto **non vive nessun ramo del dispaccio** | una sonda **da fuori la crate**, come `ports_are_implementable.rs`: l'attività costruita sulle porte in memoria fa il giro `Hello` → `Accepted` → `Degradation` → `Policy` → `Layout` → la lista dei passi, nell'ordine della sequenza 1 della stella polare |
+| le porte in memoria | il giornale è `MemoryJournal` del simulatore; la settima porta è la finta del simulatore (pezzo 5 della §3 della stella polare); l'arbitro è **vero**, con le due quote permanenti di ADR-0033 e la policy di default, costruito **come lo costruisce il daemon** — oggi `build_the_arbiter` in `crates/daemon/src/main.rs`, vedi il dedotto; il reattore è `SystemReactor` di `platform`, come nel daemon, perché i token vanno a tempo di orologio e la GUI è un processo vero | nessuna propria: sono implementazioni già provate dalle suite di conformità; il finto le cabla, e lo prova la sonda del pezzo sopra |
+| il trasporto vero | quello di `platform` (§3), sullo **stesso nome** del daemon, così la GUI non sa con chi parla; il timbro di build è quello delle fixture (§4), calcolato dallo stesso codice | la sonda del core finto contro il trasporto vero, **da un thread** (§8): un pari finto sul thread manda `Hello` col timbro giusto e riceve la fila della sequenza 1; col timbro sbagliato riceve `StaleBuild` e poi più niente |
+| il rubinetto | l'unica parte finta: una **seconda attività** sullo stesso esecutore, che condivide con la prima il trasporto e la tabella dei client accolti attraverso una `RefCell`, come le attività dei banchi (`executor_determinism.rs`). Fa due cose. Manda `Token` a tempo, come lo spike — 2000 in dieci secondi, testo **non fidato**, markdown con blocchi di codice — con la cadenza consegnata alla costruzione. E legge **una parola da stdin**: `degrade` scrive nel giornale in memoria un passo di comodo con una nota `Detail::Routing` degradata — la stessa che `degradation_now` rilegge — e il resto lo fa il codice vero, che manda `Degradation`; `verdict` chiede all'arbitro vero un'ammissione con una richiesta di comodo e manda alla GUI il `Verdict` che ne esce. Niente altro: una parola nuova si aggiunge quando un modulo la chiede | una sonda per parola, con la cadenza rapida: `degrade` → `degradation_now` sul giornale in memoria risponde `routing_degraded` e il pari riceve `Degradation`; `verdict` → il pari riceve un `Verdict`; e la sonda dei token: il pari li conta e legge la provenienza non fidata su ognuno |
+| la disposizione | `SaveLayout` va nella finta in memoria della settima porta e `Layout` torna, come nella sequenza 2; **vive finché il finto non riparte** — la persistenza vera è del daemon, provata dalla sonda «salva, riavvia, ritrova» della §8 | il giro salva → ritrova sul pari, dentro la sonda dell'attività; il riavvio no, dichiarato |
+| la lista dei passi | quella vera: `replay` sul giornale in memoria, che porta le invocazioni fatte dalla GUI in questa corsa del finto — il modulo Passi mostra passi veri, non un elenco scritto a mano | la sonda dell'invocazione: un `Invoke` dal pari, poi la lista che torna porta l'invocazione |
+
+**Perché A e non B** (B: un copione a sé che parla lo schema e il filo e scrive a mano ogni risposta del
+daemon, la riga 7 com'era). I tre controlli della decisione 18, riletti nel codice il 2026-09-09. *Esiste:*
+l'emettitore di `spikes/gui-ipc/src/bin/core.rs` — righe JSON, sopravvive alla GUI che muore; `IpcMessage`
+con due varianti e le sonde di `crates/kernel/tests/ipc_wire.rs`; `FakeGui` in `ports_are_implementable.rs`
+e `DyingGui` nel simulatore; il dispaccio di `gui_death_campaign.rs` scritto **dentro il banco**, quindi
+nessuna attività «servi la GUI» esiste ancora nel kernel: la costruisce il pezzo 6 della §3 della stella
+polare; nessun trasporto in `platform`; `gui/` non esiste; il manifesto di radice esclude solo `spikes`.
+*Arriva:* col 3 il core vero produce i token e il rubinetto perde quel compito, ma resta per ogni modulo il
+cui produttore arriva dopo; col 12 il gesto entra come invocatore nella stessa attività. *Regge crescendo:*
+una variante nuova è un ramo del `match` nell'attività vera, e con A il finto la segue gratis; con B è una
+risposta in più scritta a mano. Il modo del repo è la logica vera su porte sostituite — è il simulatore
+(ADR-0021, §3.1 della spec) — e B sarebbe una **seconda copia del dispaccio**: il giorno che il daemon cambia,
+il finto diverge senza che nulla diventi rosso.
+
+**Il costo di A, dichiarato:** il finto dipende anche da `simulator` per percorso; l'attività del kernel deve
+potersi costruire da fuori con porte e parametri consegnati — un vincolo che la campagna DST della §5 impone
+già, quindi il 2 lo paga una volta sola; il rubinetto condivide trasporto e tabella dei client con l'attività
+attraverso una `RefCell`; la disposizione vive finché il finto non riparte.
+
+**Ciò che la §7 non fa:** non persiste nulla oltre la corsa — disposizione, permessi concessi, passi: tutto
+nel giornale in memoria; non parla con un modello; non prova il daemon, la cui sonda è quella della §5; e
+**non convive col daemon**: uno solo in ascolto per volta, e chi lo avvia lo sa — che cosa faccia il sistema
+operativo con due in ascolto sullo stesso nome non è del finto: dichiarato, non pinzato.
+
+Debiti dichiarati: il rubinetto è codice finto fuori dal prodotto, e il suo «degrada» è un meccanismo vero
+con una causa finta; i `Token` senza produttore di prodotto fino al 3 (già in §4); perché il `degrade` arrivi
+alla GUI, l'attività vera deve **accorgersi** che `degradation_now` è cambiato e mandare `Degradation` — è
+la riga «rimanda il pezzo che è cambiato» della §5, e il finto è il primo che la esercita: *come* se ne
+accorga, a ogni giro o dopo ogni scrittura, lo fissa il piano del 2 con la sonda della §8, con richiamo alla
+§5 se serve. 🔶 **Dedotto**, da confermare da chi costruisce: che un'attività e il rubinetto possano
+condividere il trasporto attraverso una `RefCell` — `Executor::spawn` prende future con vita `'a`, e
+`executor_determinism.rs` fa già girare più attività su stato condiviso in una `RefCell`, letto il
+2026-09-09; che il valore di `Accepted`, la protezione dell'archivio, sia consegnato al finto come al daemon;
+la forma esatta di ciò che sta nella `RefCell`; che la costruzione dell'arbitro con le due quote e i
+parametri — oggi `build_the_arbiter`, `reserve` e i letterali in `crates/daemon/src/main.rs`, un **binario**,
+che il finto non può importare — diventi raggiungibile dal finto **senza copiarla**: dove spostarla lo decide
+il piano, e l'attività non ha il problema perché vive nel kernel (pezzo 6 della §3 della stella polare).
+**Assunto:** niente.
+
+Controllo sui cinque criteri, il 2026-09-09: **verificato** nel codice — `gui/` non esiste,
+`exclude = ["spikes"]` nel manifesto di radice, nessun `impl Ipc for` fuori dai commenti in `crates/`,
+nessuna attività che serva la GUI nel kernel, `MemoryJournal` e `DyingGui` nel simulatore, `SystemReactor`
+in `platform`, `degradation_now` che rilegge `Detail::Routing`, `build_the_arbiter` in un binario;
+**coerenza** — la logica vera su porte sostituite è il modo del repo, e niente si scrive a mano di ciò che il
+daemon già sa fare; **debito** — scritto sopra; **stato dell'arte** — nessuna versione scelta qui;
+**proporzione** — un rubinetto con due parole e i token, e una parola nuova solo quando un modulo la chiede.
+
 ## Le sezioni che mancano — proposte del coordinatore, non decisioni
 
 | § | Che cosa | La proposta da cui partire |
 |---|---|---|
 | 6b | la **forma** delle due schermate, coi wireframe a bassa fedeltà mostrati in chat | **schermata 1**: la vista chat a sinistra, larga; il pannello di stato a destra, stretto, con degrado, policy col controllo a due stati, budget, riga G16, e la riga di evento del verdetto sotto quando c'è; in alto la fascia dello stato di connessione, visibile solo se il core manca o il timbro è sbagliato. **Schermata 2**: la finestra di conferma del permesso, sopra la 1, con la tripla a parole («la GUI vuole cambiare la policy della memoria grafica»), due pulsanti, focus nel pulsante che rifiuta. Il proprietario ha chiesto di vederli **nella sessione nuova** |
-| 7 | il core finto in `gui/fake-core/` | un binario Rust fuori dal workspace che dipende da `kernel` e `platform` per percorso; ascolta sullo stesso nome del daemon; accetta `Hello` e risponde `Accepted`, poi manda `Degradation` e `Policy`; poi **token a tempo** come lo spike (2000 in dieci secondi, testo non fidato), e su comando da riga di comando un `Verdict` o un cambio di `Degradation` per provare la riga di evento; risponde a `Invoke` come il daemon farebbe, con `PermissionRequired` la prima volta. Il suo `Cargo.lock` **si committa**, perché lo usa il cancello: è un attrezzo, non uno spike |
+| 7 | il core finto in `gui/fake-core/` | un binario Rust fuori dal workspace che dipende da `kernel` e `platform` per percorso; ascolta sullo stesso nome del daemon; accetta `Hello` e risponde `Accepted`, poi manda `Degradation` e `Policy`; poi **token a tempo** come lo spike (2000 in dieci secondi, testo non fidato), e su comando da riga di comando un `Verdict` o un cambio di `Degradation` per provare la riga di evento; risponde a `Invoke` come il daemon farebbe, con `PermissionRequired` la prima volta. Il suo `Cargo.lock` **si committa**, perché lo usa il cancello: è un attrezzo, non uno spike ✅ **RICHIAMO DEL 2026-09-09, quattordicesima ripresa della stella polare (decisione 33): la sezione è SCRITTA** — la §7 delle sezioni approvate qui sopra, **A**: l'attività vera del kernel su porte in memoria, più il rubinetto; questa riga era la forma B |
 | 8 | le prove e il cancello | `scripts/gate-gui.sh`: `npm ci`, `npm run build`, `npm test`, chiamato da una riga `run` in `gate.sh`; la CI guadagna `actions/setup-node` con la versione appuntata; `.gitignore` guadagna `/gui/node_modules/`, `/gui/dist/`, `/gui/fake-core/target/`; per ogni artefatto il controllo che lo esercita, nella forma dei disegni precedenti: la tabella si compone dalle colonne «prova» delle §3–§6a, più le prove del core finto (una sonda che lo fa girare contro `FakeGui`? no: contro il trasporto vero, da un thread) e della SPA (unit sulle fixture, componenti con verifica di accessibilità, capo a capo **dopo il guscio**, con la prova del ponte in Node o in Rust secondo il vincitore) |
 | 9 | le decisioni aperte del proprietario, col chiusore | il renderer di markdown; gli attrezzi di prova della GUI (`vitest` 5.0.0 di tre giorni contro la 4, `@playwright/test`, uno strumento di verifica dell'accessibilità); la regola di lint per le scritte; dove va la crate Rust del guscio se vince Tauri; la prontezza I/O del reattore (probabilmente il 3); l'allocatore dentro la porta `journal` (registrato); il confine di sessione dei permessi (il 3); il watchdog e lo spegnimento (il 10); AUD-004 in parallelo al 2; il ledger `.superpowers/sdd/` |
 | 10 | come si riprende | la sezione di consegna del disegno, sul precedente dei disegni dei gesti e della knowledge base |

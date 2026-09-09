@@ -1004,3 +1004,47 @@ già girare più attività su stato condiviso; che il valore di `Accepted` sia c
 niente. Debito scritto: il rubinetto è codice finto fuori dal prodotto; il suo «degrada» è un meccanismo vero con una causa finta.
 
 > La §7 così? **A:** riusa — l'attività vera su porte in memoria, più il rubinetto. **B:** imita — un copione a sé. Consiglio: **A**.
+
+### Seguito della quattordicesima ripresa, lo stesso giorno — la §8
+
+Dopo il commit della §7 (`8fd8431`), la §8 presentata in chat a parole e con lo schema, coi cinque criteri e con verificato,
+dedotto e assunto separati, e due domande A/B: il cancello unico col passo web dentro contro una CI web a parte (consiglio A), e
+l'archivio della disposizione che non si apre all'avvio — la registrata della nona ripresa — parte e dichiara contro fermarsi
+(consiglio A). Letti prima: `scripts/gate.sh`, la CI, `.gitignore`, «Cosa la porta NON controlla» e la sezione della sonda S3
+in `porta-di-qualita.md`, le tabelle «artefatto → controllo» dei disegni dei gesti e della knowledge base, la §2 e la §4 di
+questo file; alla fonte, la pagina di `actions/setup-node` (legge la versione da `package.json`, consiglia `v7`) e quella di
+npm (`engine-strict`, default falso; se `npm ci` la onori non lo dice). Il proprietario ha risposto con la formula della
+delega, «decidi secondo la skill»: decisioni 34 e 35, A e A, coi perché nella §8 e nelle decisioni 46–50 del coordinatore.
+Fatto nello stesso commit: la §8 scritta nella consegna del 2; la riga 8 di «Le sezioni che mancano» della consegna e la riga
+5 di questo file col richiamo; il richiamo datato sulla riga 5 della §2; la registrata chiusa; le tabelle delle decisioni; lo
+stato e il prossimo passo di questo file — si riprende dalla §9; il puntatore della §6 del compendio. Nessun codice toccato.
+I testi com'erano stanno qui sotto.
+
+### Il punto 3 del prossimo passo com'era — la §8 proposta, chiusa A alla quattordicesima
+
+3. La **§8** — prove e cancello: `scripts/gate-gui.sh` (il core finto con `cargo test --locked --manifest-path`, poi `npm ci`,
+   `npm run build`, `npm test`) da una riga `run` di `gate.sh`; la CI con `actions/setup-node` appuntato; `.gitignore` per `gui/`
+   e per le cartelle di build dello spike; la tabella artefatto → controllo dalle colonne «prova» delle §3–§6a più la sonda
+   del core finto contro il trasporto vero da un thread, le prove della SPA sulle fixture, la sonda «salva, riavvia, ritrova»,
+   la suite di conformità della settima porta, la campagna DST del 2 (§5), le otto mosse dello spike. Poi, come domanda a sé,
+   la registrata della nona ripresa: **l'archivio della disposizione che non si apre all'avvio** — A: il core parte e lo
+   dichiara con un terzo stato di `Layout`, «non disponibile», e ogni `SaveLayout` riceve lo stesso (richiamo datato sulla riga
+   5 della §2 di questo file, che oggi dice «il pacchetto o niente»); B: il core si ferma come per il giornale (`StartupError`).
+   Consiglio A, ADR-0019: si dichiara prima, non si fallisce dopo, e un archivio cosmetico non ferma il core.
+
+### I paragrafi di stato com'erano dopo la §7, prima della §8 (frammenti)
+
+**Manca il resto della sezione 5** — le §8–§10 del 2: prove e cancello, decisioni aperte, come si riprende; la §7, il core
+finto, è **scritta** il 2026-09-09 (decisione 33, A) — **e la 6**
+
+✅ **La §7 del 2 ha avuto risposta A alla quattordicesima ripresa (2026-09-09, decisione 33) ed è scritta nella consegna
+del 2**: si riprende dalla **§8**, punto 3 del prossimo passo.
+
+⛔ **Il prossimo passo è la §8 del 2** — prove e cancello — dal punto 3 di «Prossimo passo, eseguibile». ✅ **Alla
+quattordicesima ripresa (2026-09-09) il proprietario ha risposto A alla §7** (decisione 33): la §7 è scritta nella consegna del
+2, sotto «Le sezioni approvate del disegno», nella forma delle §3–§6a;
+
+✅ **Alla quattordicesima ripresa (2026-09-09) la domanda sulla §7 ha avuto risposta A (decisione 33), e la §7 è scritta**
+nella consegna del 2 sotto «Le sezioni approvate del disegno», nella forma delle §3–§6a, con la riga 7 di «Le sezioni che
+mancano» della consegna col richiamo; il blocco della proposta com'era è nella cronaca in archivio. ⏭️ **L'ordine da qui:** il
+punto 3 (la §8), poi il 4 (§9, §10 e la sezione 6), poi il 5.

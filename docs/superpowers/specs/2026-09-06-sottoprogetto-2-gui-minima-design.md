@@ -31,8 +31,8 @@ Il «Prossimo passo» di questo file è **superato** da quello della stella pola
 
 Brainstorming del 2 a metà, poi allargato alla stella polare il 2026-09-07: undici risposte più la
 strada, le sezioni §1–§6a approvate coi richiami datati, nessun codice toccato; mancano le sezioni
-scritte della stella polare e le §7–§10 di questo file, poi i due disegni scritti e il piano. ✅ **Richiamo del 2026-09-09:** la **§7** è scritta (decisione 33 della
-stella polare, A); mancano le §8–§10.
+scritte della stella polare e le §7–§10 di questo file, poi i due disegni scritti e il piano. ✅ **Richiamo del 2026-09-09:** le **§7 e §8** sono scritte (decisioni 33–35
+della stella polare); mancano le §9–§10.
 
 ## ⛔ Da sapere subito
 
@@ -427,13 +427,115 @@ in `platform`, `degradation_now` che rilegge `Detail::Routing`, `build_the_arbit
 daemon già sa fare; **debito** — scritto sopra; **stato dell'arte** — nessuna versione scelta qui;
 **proporzione** — un rubinetto con due parole e i token, e una parola nuova solo quando un modulo la chiede.
 
+### §8 — Le prove e il cancello · approvata il 2026-09-09 (delegata, «decidi secondo la skill»: A, decisione 34 della stella polare; l'archivio che non si apre: A, decisione 35)
+
+Il 2 costruisce pezzi in due mondi, Rust e web, e il cancello di oggi — `bash scripts/gate.sh`, sei passi più il
+settimo che stampa il tempo delle campagne — compila e prova solo il workspace Rust. Questa sezione dice tre cose:
+quale prova esercita **ogni** pezzo nuovo, una riga per artefatto, presa dalle colonne «prova» delle sezioni
+approvate; come il cancello impara il mondo web — un passo nuovo, `scripts/gate-gui.sh`, chiamato da `gate.sh` con
+la stessa riga `run` degli altri, così il cancello resta **uno** (risposta 6, vincolo globale 7); e come la CI
+installa Node e che cosa git ignora. Il proprietario ha delegato la sezione e la domanda sull'archivio che non si
+apre con «decidi secondo la skill»: le decisioni sono qui, col perché, e restano ribaltabili.
+
+**Il cancello, pezzo per pezzo.**
+
+| Pezzo | Forma | La prova |
+|---|---|---|
+| `scripts/gate-gui.sh` | `cd` alla radice come `gate.sh`; in ordine: `cargo test --locked --manifest-path gui/fake-core/Cargo.toml`, poi dentro `gui/`: `npm ci`, `npm run build`, `npm test`; si ferma al primo rosso | nelle due direzioni, a mano al piano come per le campagne: un test della SPA reso rosso → `GATE RED`; l'etichetta del passo compare nell'uscita del cancello |
+| la riga in `gate.sh` | `run "gui: fake core and SPA" bash scripts/gate-gui.sh`, dopo «attributes of the constrained crates» e prima di «documentation consistency»; etichetta in inglese come le altre | la riga sopra |
+| il core finto nel cancello | il suo `Cargo.lock` è committato, quindi `--locked` regge; le sonde vivono in `gui/fake-core/src/main.rs` come nel daemon (decisione 48 del coordinatore). Costo: il finto ricompila `kernel`, `platform` e `simulator` nel proprio `target/`, tempo dichiarato e misurato al piano | il primo passo dello script |
+| la versione di Node | in `gui/package.json`, campo `engines.node`, **casa unica**; `gui/.npmrc` con `engine-strict=true`, così un Node sbagliato fa rosso a `npm ci` con la ragione scritta — il gemello del vincolo 4 di §11 del compendio: il prerequisito dell'ambiente si dichiara, o la porta è rossa per il motivo sbagliato (decisione 46) | al piano, nelle due direzioni: con un Node fuori intervallo `npm ci` deve fermarsi |
+| la CI | `.github/workflows/quality-gate.yml` guadagna, prima di `bash scripts/gate.sh`, un passo `actions/setup-node` con `node-version-file: gui/package.json`; la versione dell'azione si legge alla fonte il giorno del piano (letta il 2026-09-09: la pagina consiglia `v7`); `checkout` resta com'è. Niente cache npm oggi: una riga, `cache: npm`, che si aggiunge quando la CI misura che serve (decisione 47) | il cancello gira in CI com'è |
+| `.gitignore` | `/gui/node_modules/`, `/gui/dist/`, `/gui/fake-core/target/`; per `spikes/gui-shell/`: `node_modules/`, `dist/` e le cartelle di build dei due gusci, coi nomi al piano quando esistono. I lockfile **si committano**: `gui/package-lock.json`, `gui/fake-core/Cargo.lock`, e quelli dello spike, npm e Cargo (§4 della stella polare; decisione 49) | dopo `bash scripts/gate.sh`, `git status --porcelain` vuoto |
+| la campagna DST del 2 nel settimo passo | una riga `cargo test --locked -p simulator --test <nome> -- --nocapture` nello stesso commit del banco: il settimo passo nomina i bersagli **uno per uno**, e una campagna assente è silenziosa — scattato due volte, lo dice il commento di `gate.sh` | nelle due direzioni: `grep -c 'DST <nome>'` sull'uscita del cancello, zero senza la riga e più di zero con |
+
+**Il prodotto del 2, e il controllo che esercita ciascun artefatto.** La forma dei disegni dei gesti e della
+knowledge base; le righe vengono dalle colonne «prova» delle §3–§7 e delle §2–§4 della stella polare, e qui stanno
+in un posto solo perché il piano le tagli per compito.
+
+| Artefatto | Il controllo che lo esercita | Specie |
+|---|---|---|
+| il trasporto `ipc` in `platform` (§3) | la suite di conformità `crates/kernel/tests/ipc_contract.rs`, inclusa con `include!` da `crates/platform/tests/ipc_contract_real.rs`, su `FakeGui`, `DyingGui` e il trasporto vero con un pari su un thread; un bugiardo per promessa, nelle due direzioni; nessuno collegato → `None` | cancello, `cargo test --locked --workspace` |
+| il contatore condiviso (§3) | la sonda del riavvio: riaperto il giornale, il primo numero sta sopra l'ultimo scritto; due `accept` danno numeri diversi e crescenti | cancello |
+| la stretta di mano (§3, decisione 22) | una sonda per direzione: timbro giusto → `Accepted`; timbro sbagliato → `StaleBuild`, il client non è più ascoltato, e quando la GUI esce il core vede `Disconnected` | cancello |
+| lo schema (§4, più `Layout`, `SaveLayout` e la lista dei passi) | le fixture committate in `gui/`, ricodificate da `crates/kernel/tests/ipc_wire.rs`: schema cambiato senza rigenerare → rosso; il timbro cambia coi byte; `decode` verifica i byte consumati | cancello |
+| il registro (§5) | nome non registrato → rifiutato, nessun record; tripla non concessa → `PermissionRequired` e `set_policy` mai chiamato; concessa → l'effetto; `Approve` con l'invocazione → il giro completo su `FakeGui` (decisione 21); i byte congelati: un record in più per `Invocation`, i vecchi identici al byte — quanti lo dice `ls crates/kernel/tests/frozen/`; una sonda legge il dettaglio dopo `replay` | cancello, `frozen_bytes.rs` |
+| l'attività del daemon (§5) | la **campagna DST del 2** in `crates/simulator/tests/`: la morte della GUI in un punto scelto dal seme non lascia concessioni appese; un crash del giornale a metà invocazione lascia il passo A in dubbio con la sua classe; e la riga nel settimo passo, tabella sopra | cancello, due volte per costruzione |
+| il limite di giri e `Disconnected` (§5) | `daemon`: il grafo con la GUI resta vivo oltre centomila giri; la GUI che muore con una concessione ordinaria → `on_disconnect`, già provato in `client.rs`, più una sonda sul cablaggio | cancello |
+| la settima porta (§2 della stella polare) | la finta in `ports_are_implementable.rs`; la suite di conformità sulle due implementazioni coi bugiardi, come `journal_contract`; `redb` in `platform`: apri, scrivi, riapri, rileggi; byte che non sono JSON tornano identici; `SaveLayout` su un archivio che rifiuta la scrittura → `Layout` col vecchio; archivio vuoto → «niente»; **archivio che non si apre → il core parte e `Layout` dice «non disponibile»**, e ogni `SaveLayout` riceve lo stesso (decisione 35, sotto) | cancello |
+| «salva, riavvia, ritrova» | sul daemon vero con l'archivio su un file temporaneo, come le sonde di `crates/daemon/src/main.rs`: `SaveLayout`, il grafo si ferma e riparte, `Hello`, `Layout` col pacchetto — la sequenza 2 della stella polare | cancello |
+| il core finto (§7) | le sonde in `gui/fake-core/src/main.rs`: il giro della sequenza 1 su porte in memoria; il trasporto vero da un thread, timbro giusto e sbagliato; una sonda per parola del rubinetto; i `Token` contati, con la provenienza non fidata su ognuno | `gate-gui.sh`, primo passo |
+| la SPA, `schema/` (§6a, risposta 10) | unit sulle fixture: ogni variante decodificata dai byte e confrontata col valore atteso in JSON; una variante senza fixture → rosso | `npm test` |
+| la SPA, `stores/`, componenti e pannelli (§6a; §2 e §3 della stella polare) | unit col ponte finto che rilegge le fixture: i quattro stati della connessione; il modulo Stato coi due campi del degrado, la policy col budget, la riga G16 dal valore in `Accepted`, la riga di evento solo quando arriva un `Verdict`; la finestra di conferma con la trappola di focus; la vista chat che rende testo e codice, mai HTML, con la provenienza su ogni pezzo; la cornice: le tre viste JSON si caricano, un pacchetto con un tipo sparito lo dice a parole e si chiude (riga 8 della §2 della stella polare), un modulo non costruito dice chi lo riempie; la verifica d'accessibilità sui componenti, con l'attrezzo scelto in §9 | `npm test` |
+| le scritte, `locales/it.json` (G21) | un controllo che vada rosso su una scritta lasciata nel codice, **se** al piano esiste una regola di lint matura (§6a); altrimenti revisione, e lo si dice | `npm test`, o revisione dichiarata |
+| la build della SPA | `npm run build` verde: il compilatore TypeScript è il livello 1 del mondo web, come `rustc` per il kernel; `npm ci` è il gemello di `--locked`: manifesto e lockfile divergenti → rosso | `gate-gui.sh` |
+| capo a capo: la SPA nel guscio col core finto | **dopo lo spike**, parte 2 del piano: la prova del ponte in Node o in Rust secondo il vincitore, e le prove capo a capo con l'attrezzo scelto in §9 | fuori dal cancello di oggi, dichiarato |
+| lo spike del guscio con l'accettazione di `dockview` (§2; §4 della stella polare) | i criteri congelati in `spikes/gui-shell/PROTOCOLLO.md` al primo commit di codice; le otto mosse giudicate dal proprietario con le sue parole in `spikes/RISULTATI.md`, la mossa 7 come due JSON uguali; M1–M5 e Q1–Q4 in ADR-0029; fuori dal cancello, `spikes` in `exclude` | criterio scritto prima |
+| le dipendenze nuove: `interprocess` in `platform`; `dockview-core`, Vue, `pinia`, Reka UI, `vue-i18n` e gli attrezzi di §9 in `gui/` | Rust: in due passi, `--locked` su ogni `cargo` del cancello, `gate-deps.sh` sui grafi di `kernel` e `simulator`, che il finto non tocca — dipende da loro, non il contrario; web: `npm ci` sul `package-lock.json` committato | cancello |
+| il registro della porta, `docs/porta-di-qualita.md` | una sezione nuova per il passo web e le sonde del 2, sul precedente della sonda S3; **nessuna riga di catalogo**: la §7.4 è spec, vincolo globale 7, quindi le sonde si registrano e non si prendono | revisione, compito del piano |
+| i documenti: la §3.1 della spec e `ports/mod.rs` sei → sette, la roadmap, `README.md`, la §12 del compendio, tracciabilità, i richiami datati | `check-docs.sh`: link, tetto, conteggi ADR; le cifre in prosa nominate nella §3 della stella polare si toccano nel piano, col `grep` sulla frase; il resto è revisione | livello 2 sui link, revisione sul resto |
+| il codice fuori dal perimetro | `git diff --stat` a fine piano tocca solo ciò che le tabelle nominano; `ports/mod.rs` e la spec solo coi richiami datati | comando |
+
+**L'archivio che non si apre — decisione 35, delegata: A.** All'avvio il core apre l'archivio della disposizione
+dalla settima porta. Se non si apre — file rotto, permessi — il core **parte lo stesso** e lo dichiara: `Layout`
+porta un terzo stato, «non disponibile», oltre al pacchetto e a «niente»; la GUI usa le tre viste di default e
+ogni `SaveLayout` riceve `Layout` «non disponibile», così il salvataggio fallito si vede senza una variante sua,
+come per la scrittura fallita (decisione 13 del coordinatore). Il richiamo datato sta sulla riga 5 della §2 della
+stella polare. *Esiste:* il daemon si ferma con `StartupError` quando il giornale non si apre, e la sonda
+`a_journal_that_cannot_be_opened_stops_the_start_up` lo prova; `Degradation` ha due campi e `degradation_now` li
+ricava dal giornale; la riga 5 della §2 dice «il pacchetto o niente», e le due operazioni della porta possono già
+fallire (riga 5: la scrittura rifiutata). *Arriva:* col 10 lo spegnimento pulito e il watchdog; nessun altro
+pacchetto all'orizzonte (§2 della stella polare). *Regge crescendo:* un terzo stato è una variante in più dell'enum
+di `Layout`, additiva; un archivio mai aperto fallisce entrambe le operazioni, e l'attività traduce la lettura
+fallita in «non disponibile»: **nessuna operazione nuova nella porta**. Perché non un campo di `Degradation`
+(decisione 50): `Degradation` è una proiezione del giornale (ADR-0019, `degradation_now`), e un archivio cosmetico
+che non si apre non merita un record per sempre (ADR-0018); il messaggio che porta la disposizione dice da sé il
+proprio stato, «il core manda il pezzo che cambia». Scartata B, fermarsi come per il giornale: la disposizione non
+è stato autorevole (I1), e ADR-0019 dice che si dichiara prima, non si fallisce dopo. La sonda: archivio che non si
+apre → il grafo parte, `Layout` «non disponibile», `SaveLayout` → `Layout` «non disponibile».
+
+**Perché un cancello unico e non una CI web a parte — decisione 34, delegata: A.** B era un lavoro di CI a parte
+che gira solo quando cambia `gui/`: più veloce, ma due verdetti, e un cambio al kernel che rompe le fixture non
+farebbe girare le prove della SPA che le leggono; e `CLAUDE.md` dice che la porta si lancia con **un comando solo**.
+Costo di A: il passo web gira anche per un commit di sola documentazione, come già i passi Rust.
+
+**Ciò che la §8 non fa:** la CI resta solo Linux (X-1 dell'audit, del proprietario) — e ora pesa di più, perché
+il trasporto in `platform` è OS-specifico e la CI prova solo la metà Unix: la metà Windows la prova il cancello
+sulla macchina del proprietario; la prova capo a capo nel guscio, parte 2; il lint delle scritte, se immaturo; la
+scansione degli avvisi di sicurezza (X-3, del proprietario), che con npm ha un secondo mondo; il tempo del cancello
+col passo web, che si misura al piano e si scrive nel commento di `gate.sh` con la data, come per il settimo passo.
+
+**Decisioni del coordinatore in questa sezione**, nella tabella omonima della stella polare: 46, la versione di
+Node in `package.json` con `engine-strict`; 47, niente cache npm; 48, le sonde del finto in `main.rs` e la
+ricompilazione dichiarata; 49, i lockfile dello spike committati, npm e Cargo, contro `/spikes/rust/Cargo.lock`
+ignorato — i numeri dello spike entrano in ADR-0029, e un lockfile ignorato basta a uno spike che si rifà con un
+seme; 50, il terzo stato in `Layout` e non in `Degradation`.
+
+Debiti dichiarati: la metà Windows del filo senza CI; il capo a capo dopo lo spike; il lint delle scritte forse
+assente; la doppia compilazione delle tre crate nel finto; `porta-di-qualita.md` che riceve le sonde senza righe di
+catalogo. 🔶 **Dedotto**, da confermare al piano: che `npm ci` onori `engine-strict` — la pagina di npm letta il
+2026-09-09 descrive l'opzione per l'installazione e non nomina `ci`: si prova nelle due direzioni; che le prove
+della SPA girino senza browser in CI, con l'ambiente scelto in §9; che `--manifest-path` compili nel `target/` del
+finto e non riusi quello del workspace. **Assunto:** niente.
+
+Controllo sui cinque criteri, il 2026-09-09: **verificato** — `scripts/gate.sh` (la riga `run`, `--locked` su
+ogni `cargo`, il settimo passo coi bersagli per nome e la lezione scritta), `.github/workflows/quality-gate.yml`
+(`ubuntu-latest`, `rustup show`, nessun Node), `.gitignore` (i `target/`, i `Cargo.lock` degli spike, `node_modules`
+e `dist` di `spikes/ts/`), «Cosa la porta NON controlla» e la sezione della sonda S3 in `porta-di-qualita.md`,
+`journal_contract.rs` e `reactor_contract.rs` in `crates/kernel/tests/`, le sonde del daemon in `main.rs`, la pagina
+di `actions/setup-node` (legge `package.json`, consiglia `v7`) e quella di npm (`engine-strict`, default falso);
+**coerenza** — stessa riga `run`, `npm ci` gemello di `--locked`, sonde nel binario come nel daemon, campagna per
+nome, protocollo congelato come SP-7, sonde registrate e non prese come S3; **debito** — scritto sopra; **stato
+dell'arte** — versioni di Node, dell'azione e degli attrezzi al piano, alla fonte; **proporzione** — uno script,
+una riga, un passo di CI, tre righe di ignore; niente matrice, niente cache, niente secondo workflow.
+
 ## Le sezioni che mancano — proposte del coordinatore, non decisioni
 
 | § | Che cosa | La proposta da cui partire |
 |---|---|---|
 | 6b | la **forma** delle due schermate, coi wireframe a bassa fedeltà mostrati in chat | **schermata 1**: la vista chat a sinistra, larga; il pannello di stato a destra, stretto, con degrado, policy col controllo a due stati, budget, riga G16, e la riga di evento del verdetto sotto quando c'è; in alto la fascia dello stato di connessione, visibile solo se il core manca o il timbro è sbagliato. **Schermata 2**: la finestra di conferma del permesso, sopra la 1, con la tripla a parole («la GUI vuole cambiare la policy della memoria grafica»), due pulsanti, focus nel pulsante che rifiuta. Il proprietario ha chiesto di vederli **nella sessione nuova** |
 | 7 | il core finto in `gui/fake-core/` | un binario Rust fuori dal workspace che dipende da `kernel` e `platform` per percorso; ascolta sullo stesso nome del daemon; accetta `Hello` e risponde `Accepted`, poi manda `Degradation` e `Policy`; poi **token a tempo** come lo spike (2000 in dieci secondi, testo non fidato), e su comando da riga di comando un `Verdict` o un cambio di `Degradation` per provare la riga di evento; risponde a `Invoke` come il daemon farebbe, con `PermissionRequired` la prima volta. Il suo `Cargo.lock` **si committa**, perché lo usa il cancello: è un attrezzo, non uno spike ✅ **RICHIAMO DEL 2026-09-09, quattordicesima ripresa della stella polare (decisione 33): la sezione è SCRITTA** — la §7 delle sezioni approvate qui sopra, **A**: l'attività vera del kernel su porte in memoria, più il rubinetto; questa riga era la forma B |
-| 8 | le prove e il cancello | `scripts/gate-gui.sh`: `npm ci`, `npm run build`, `npm test`, chiamato da una riga `run` in `gate.sh`; la CI guadagna `actions/setup-node` con la versione appuntata; `.gitignore` guadagna `/gui/node_modules/`, `/gui/dist/`, `/gui/fake-core/target/`; per ogni artefatto il controllo che lo esercita, nella forma dei disegni precedenti: la tabella si compone dalle colonne «prova» delle §3–§6a, più le prove del core finto (una sonda che lo fa girare contro `FakeGui`? no: contro il trasporto vero, da un thread) e della SPA (unit sulle fixture, componenti con verifica di accessibilità, capo a capo **dopo il guscio**, con la prova del ponte in Node o in Rust secondo il vincitore) |
+| 8 | le prove e il cancello | `scripts/gate-gui.sh`: `npm ci`, `npm run build`, `npm test`, chiamato da una riga `run` in `gate.sh`; la CI guadagna `actions/setup-node` con la versione appuntata; `.gitignore` guadagna `/gui/node_modules/`, `/gui/dist/`, `/gui/fake-core/target/`; per ogni artefatto il controllo che lo esercita, nella forma dei disegni precedenti: la tabella si compone dalle colonne «prova» delle §3–§6a, più le prove del core finto (una sonda che lo fa girare contro `FakeGui`? no: contro il trasporto vero, da un thread) e della SPA (unit sulle fixture, componenti con verifica di accessibilità, capo a capo **dopo il guscio**, con la prova del ponte in Node o in Rust secondo il vincitore) ✅ **RICHIAMO DEL 2026-09-09, quattordicesima ripresa della stella polare (decisioni 34 e 35, delegate: A e A): la sezione è SCRITTA** — la §8 delle sezioni approvate qui sopra; il passo del cancello, la CI, `.gitignore` e la tabella artefatto → controllo com'erano proposti qui, più la decisione sull'archivio che non si apre |
 | 9 | le decisioni aperte del proprietario, col chiusore | il renderer di markdown; gli attrezzi di prova della GUI (`vitest` 5.0.0 di tre giorni contro la 4, `@playwright/test`, uno strumento di verifica dell'accessibilità); la regola di lint per le scritte; dove va la crate Rust del guscio se vince Tauri; la prontezza I/O del reattore (probabilmente il 3); l'allocatore dentro la porta `journal` (registrato); il confine di sessione dei permessi (il 3); il watchdog e lo spegnimento (il 10); AUD-004 in parallelo al 2; il ledger `.superpowers/sdd/` |
 | 10 | come si riprende | la sezione di consegna del disegno, sul precedente dei disegni dei gesti e della knowledge base |
 

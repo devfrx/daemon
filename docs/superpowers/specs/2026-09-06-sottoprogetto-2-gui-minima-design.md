@@ -508,7 +508,7 @@ stesso esito; il piano lo rilancia e scrive le versioni del **suo** giorno, non 
 | 8 | il watchdog e lo spegnimento pulito (§5) | il **10** | nessuna azione nel 2: si uccide il processo, ADR-0007 |
 | 9 | come il daemon rilegge la policy all'avvio (decisione 17 del proprietario; registrata alla quarta ripresa della stella polare) | **questa sezione**, poi il piano | il dettaglio tipizzato scritto da `set_policy` sul passo B (decisione 56); un record congelato in più |
 | 10 | il commento falso in `crates/platform/src/journal.rs` (registrata all'ottava ripresa della stella polare) | il piano del 2, il primo compito che tocca il file | si corregge lì, decisione 18 del proprietario |
-| 11 | AUD-004 — l'ADR del proprietario sulle skill | il **proprietario**, in parallelo al 2, prima del brainstorming del 13 | com'era deciso il 2026-09-04: non sbarra il 2 |
+| 11 | AUD-004 — l'ADR del proprietario sulle skill | il **proprietario**, in parallelo al 2, prima del brainstorming del 13 | com'era deciso il 2026-09-04: non sbarra il 2 ✅ **Confermato A dal proprietario il 2026-09-09, alla rilettura dei disegni: decisione 43 della stella polare** |
 | 12 | il ledger `.superpowers/sdd/` sull'altra macchina | il proprietario, un comando | si lascia: è ignorato da git e non raggiunge nessuno; si toglie quando il piano del 2 apre il suo |
 | 13 | la metà Windows della CI, X-1, e la scansione degli avvisi, X-3, con `npm audit` come secondo mondo (§8) | il **proprietario**: passi di CI, vincolo globale 7 | pesano di più col trasporto OS-specifico: si portano come domanda A/B **quando si scrive il piano**; consiglio sì a entrambi |
 | 14 | la cache npm in CI (§8) | il piano, quando misura | no, decisione 47 |

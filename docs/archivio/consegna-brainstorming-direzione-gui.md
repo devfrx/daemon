@@ -1296,3 +1296,10 @@ un file, nessun secondo. **Dedotto:** niente. **Assunto:** niente.
 
 > La stella polare come disegno? **A:** file suo, come ora; il 2 rimanda. **B:** fusa nel disegno del 2 come sua parte
 > iniziale. Consiglio: **A**. ✅ **Delegata al coordinatore, «decidi secondo la skill»: A** (decisione 38).
+
+### La chiusura della quindicesima ripresa — il proprietario ha risposto A: i due disegni in una sessione nuova (decisione 39)
+
+Dopo il commit `c27584e`, la domanda A/B posta alla fine della ripresa — A: fermarsi e scrivere i due disegni sul posto in una
+sessione nuova; B: continuare in questa — ha avuto **A**. Fatto alla chiusura: la riga 39 della tabella delle decisioni, la frase
+in «Da sapere subito» e in «Stato in una riga», il puntatore della §6 del compendio; `check-docs.sh` OK e `GATE GREEN` rilanciato
+e letto dal log; commit e push; scratchpad pulito. Nessun codice toccato.

@@ -29,7 +29,7 @@ disposizione con la **settima porta**, la fetta del 2 ritagliata, lo spike di ac
 vive la stella polare — e la passata sui diagrammi (decisione 16) è chiusa; la 5 vive nella consegna del 2 come **§7–§10**,
 tutte **scritte** il 2026-09-09 (decisioni 33–37). ⛔ **Il prossimo passo è il punto 5:** i due disegni scritti **sul posto** —
 questo file come disegno della direzione della GUI, la consegna del 2 come disegno del 2, con le §1 e §6a del 2 riscritte sulla
-base di questo file — le due consegne archiviate parola per parola, poi il piano del 2 in due parti. Nessun codice toccato.
+base di questo file — le due consegne archiviate parola per parola, poi il piano del 2 in due parti — in una sessione nuova (decisione 39). Nessun codice toccato.
 ✅ Il mandato del proprietario (decisione 26) — sfoltire la lettura d'apertura — è **eseguito** il 2026-09-09: cinque tagli,
 tutti A (decisioni 27–31), e `AVVIO-CHAT.md` resta com'è (decisione 32). La cronaca ripresa per ripresa sta in archivio (il
 richiamo in testa).
@@ -48,7 +48,8 @@ sotto «Le sezioni approvate del disegno», nella forma delle §3–§8; la §6 
 sono state **rimisurate** al registro npm prima di scriverle, col comando della §9, con lo stesso esito della proposta. I tre
 blocchi com'erano, e i paragrafi di stato, stanno nella cronaca in archivio. ⛔ **Il prossimo passo è il punto 5 di «Prossimo
 passo, eseguibile»: i due disegni scritti sul posto** — un lavoro grande, su due file che si leggono **per intero** perché il
-disegno li riscrive. ✅ Lo stesso giorno, alla quattordicesima, il proprietario aveva risposto A alla §7 (decisione 33) e
+disegno li riscrive. ✅ **Alla chiusura il proprietario ha risposto A (decisione 39): si scrivono in una sessione nuova**, che apre
+col punto 5 senza domande pendenti. ✅ Lo stesso giorno, alla quattordicesima, il proprietario aveva risposto A alla §7 (decisione 33) e
 delegato la §8 e l'archivio che non si apre (decisioni 34 e 35, A e A): scritte nella consegna del 2 nella forma delle §3–§6a;
 i fatti del codice riletti prima della domanda (`gui/` non esiste, `exclude = ["spikes"]`, nessun `impl Ipc for` fuori dai
 commenti, `Executor::spawn` con vita `'a`, `RefCell` fra attività in `executor_determinism.rs`). Il paragrafo com'era è in
@@ -140,6 +141,7 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 | 36 | **alla chiusura della quattordicesima ripresa, 2026-09-09** — la §9 del 2, le decisioni aperte col chiusore, presentata in chat: A, coi consigli scritti dentro, verificati alla fonte quel giorno; B, gli attrezzi web restano aperti fino al piano | **delegata al coordinatore, «decidi secondo la skill»: A.** Gli attrezzi sono misurati al registro npm il 2026-09-09 e il piano li rimisura comunque; lasciarli aperti sposterebbe la stessa verifica di un giro. ⛔ **NON scritta**: il proprietario ha chiuso con `session-handoff` prima dell'esecuzione; la proposta parola per parola nel prossimo passo, blocco «La proposta per la §9». ✅ **SCRITTA alla quindicesima ripresa, lo stesso giorno**, nella consegna del 2 |
 | 37 | **alla chiusura** — la §10 del 2, «come si riprende», quando i due disegni si scrivono insieme: A, una sola sezione, nel disegno del 2, e la stella polare tiene la sua tabella dello stato; B, una in ciascuno dei due file | **delegata: A.** Una casa sola (gotcha #68): la consegna della sessione che scrive i due disegni va nel disegno del 2, da cui parte il piano; questo file rimanda alla §6 del compendio. ⛔ **NON scritta**: blocco «La proposta per la §10» nel prossimo passo. ✅ **SCRITTA alla quindicesima ripresa, lo stesso giorno**, nella consegna del 2 |
 | 38 | **alla chiusura** — la sezione 6 di questo file, dove vive la stella polare: A, file suo al percorso di oggi, come disegno, e il 2 rimanda; B, fusa nel disegno del 2 come sua parte iniziale | **delegata: A.** Il file è già grande e lo toccheranno il 3, il 6, il 10 e il 12 con richiami datati; fuso nel 2, ogni sotto-progetto riscriverebbe il disegno di un altro. ⛔ **NON scritta**: blocco «La proposta per la sezione 6» nel prossimo passo. ✅ **SCRITTA alla quindicesima ripresa, lo stesso giorno** — la §6 delle sezioni approvate |
+| 39 | **alla chiusura della quindicesima ripresa, 2026-09-09** — i due disegni scritti sul posto (punto 5 del prossimo passo): A, in una sessione nuova, come il proprietario vuole dal 2026-09-02 per ogni disegno; B, in questa sessione, di seguito alla §6 | **A.** La sessione nuova apre con la lettura obbligatoria, legge questo file e la consegna del 2 **per intero**, e scrive i due disegni sul posto; nessuna domanda resta pendente |
 
 ## Ciò che il repo diceva già, letto per decidere
 

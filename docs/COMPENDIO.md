@@ -669,7 +669,7 @@ coi richiami datati. L'ordine, coi comandi, sta in «Prossimo passo, eseguibile�
 
 1. ✅ le **§7–§10 del 2** — il core finto; le prove e il cancello; le decisioni aperte col chiusore; come si riprende — e la
    **sezione 6 della stella polare**, dove vive: tutte **scritte il 2026-09-09** (decisioni 33–38 della stella polare, le ultime tre su delega);
-2. ⏭️ **i due disegni scritti sul posto** — la stella polare come disegno della direzione della GUI, la consegna del 2 come disegno
+2. ⏭️ **i due disegni scritti sul posto, in una sessione nuova (decisione 39 della stella polare)** — la stella polare come disegno della direzione della GUI, la consegna del 2 come disegno
    del 2 con le §1 e §6a riscritte — le due consegne archiviate parola per parola; poi il piano del 2 in **due parti**, la prima
    fino allo spike compreso; poi l'esecuzione, subagent-driven, in sessioni nuove;
 3. ADR-0029 si chiude con M1–M5 all'inizio del 2 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario

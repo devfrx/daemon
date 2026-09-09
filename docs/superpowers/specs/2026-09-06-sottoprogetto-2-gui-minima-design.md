@@ -206,6 +206,15 @@ delle misure. 🔶 Dedotto: l'ordine dei pezzi 3–8 (daemon e SPA consumano lo 
 
 ### §2 — Il guscio: lo spike M1–M5 e la chiusura di ADR-0029 · approvata il 2026-09-06
 
+⚠️ **RICHIAMO DEL 2026-09-09, undicesima ripresa della stella polare (decisioni 24 e 25):** lo spike del guscio ospita anche lo
+**spike di accettazione di `dockview`** — la §4 di
+[`2026-09-07-direzione-gui-design.md`](2026-09-07-direzione-gui-design.md). Il frontend minimo porta `dockview-core`; la vista
+chat e la scena `three` vivono **dentro due tessere** di una Home finta, così M4 si misura con `dockview` acceso; il protocollo di
+`spikes/gui-shell/PROTOCOLLO.md` porta anche le **otto mosse** che il proprietario giudica provandole, l'ottava con la mano di
+SP-7 come puntatore; nascono due righe qualitative per guscio, come Q1 e Q2 — **Q3**, la finestra staccata si apre dentro il
+guscio; **Q4**, nella webview basta `dndStrategy: 'auto'` o serve `'pointer'` — e i loro esiti entrano in ADR-0029 come fatti.
+La riscrittura è del disegno.
+
 Una prova a perdere in `spikes/gui-shell/`, con **un solo** frontend minimo (Vue 3 con `vite`: una
 vista chat che rende markdown token per token, e una scena `three`) costruito su **due** gusci,
 `electron/` e `tauri/`. Il flusso lo manda l'emettitore di `spikes/gui-ipc/` com'è, JSON a righe. Il

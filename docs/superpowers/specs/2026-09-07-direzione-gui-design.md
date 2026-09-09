@@ -30,7 +30,7 @@ tabella Passi (A). ✅ **La settima ripresa, lo stesso giorno, ha SCRITTO design
 **chiusa**; la domanda sulla lettera **E** della §8.2 della spec è **posta e senza risposta** — si riprende da lì, poi dalla
 **sezione 3**, i disegni nuovi, col materiale già letto. ✅ **L'ottava ripresa, lo stesso giorno, ha DECISO la lettera E su
 delega — A, il numero è 12 — e l'ha scritta nella spec; poi ha SCRITTO design/10, il primo disegno della sezione 3 (A su
-delega, decisione 20)**: si riprende dal secondo disegno, «la GUI dentro». ✅ **La nona ripresa, lo stesso giorno, ha SCRITTO il secondo disegno su delega (decisioni 21–23):** le tre sequenze come `sequenceDiagram` in questo file, sotto «Il modello della GUI», e due correzioni alla consegna del 2 (§3, §4, §5, §6a) col richiamo datato; **la sezione 3 e la passata sui diagrammi sono CHIUSE**, si riprende dalle sezioni 4–6. ✅ **La decima ripresa, lo stesso giorno, ha PRESENTATO la sezione 4** — lo spike di accettazione di `dockview`, sette mosse giudicate dal proprietario più le misure — **approvata A (decisione 24) e NON scritta**: si scrive nella sessione nuova dal blocco «La proposta per la sezione 4» del prossimo passo; la domanda del proprietario sulla telecamera ha aperto una **mossa 8**, la mano di SP-7 come puntatore, proposta in forma A/B e **senza risposta**.
+delega, decisione 20)**: si riprende dal secondo disegno, «la GUI dentro». ✅ **La nona ripresa, lo stesso giorno, ha SCRITTO il secondo disegno su delega (decisioni 21–23):** le tre sequenze come `sequenceDiagram` in questo file, sotto «Il modello della GUI», e due correzioni alla consegna del 2 (§3, §4, §5, §6a) col richiamo datato; **la sezione 3 e la passata sui diagrammi sono CHIUSE**, si riprende dalle sezioni 4–6. ✅ **La decima ripresa, lo stesso giorno, ha PRESENTATO la sezione 4** — lo spike di accettazione di `dockview`, sette mosse giudicate dal proprietario più le misure — **approvata A (decisione 24) e NON scritta**: si scrive nella sessione nuova dal blocco «La proposta per la sezione 4» del prossimo passo; la domanda del proprietario sulla telecamera ha aperto una **mossa 8**, la mano di SP-7 come puntatore, proposta in forma A/B e **senza risposta**. ✅ **L'undicesima ripresa, il 2026-09-09, ha DECISO la mossa 8 — A, dal proprietario (decisione 25) — e ha SCRITTO la §4** con otto mosse e la riga Q4, col richiamo datato nella §2 del 2; il puntatore della §6 del compendio è sfoltito della cronaca delle riprese, archiviata: si riprende dalla **sezione 5**, poi dalla 6.
 
 ## ⛔ Da sapere subito
 
@@ -120,6 +120,15 @@ dal proprietario con `session-handoff` («la si scrive nella prossima sessione, 
 `check-docs.sh` OK e `GATE GREEN` alla chiusura; la consegna è questo file; nessun codice toccato. **Si riprende dalla risposta sulla
 mossa 8, poi si scrive la §4, poi le sezioni 5 e 6.**
 
+✅ **L'undicesima ripresa, il 2026-09-09, ha SCRITTO la §4.** Ripresa con `session-resume`: stato riletto coi comandi, nessuna
+divergenza, `check-docs.sh` OK e `GATE GREEN` all'apertura. La mossa 8 — la mano di SP-7 come puntatore — decisa **A** dal
+proprietario (decisione 25): la §4 sta nelle sezioni approvate con **otto mosse** e la riga **Q4**, col limite di `'pointer'`
+sulla mossa 4 dichiarato (decisione 34), il richiamo datato nella §2 del 2 e la riga 4 di «Le sezioni che mancano» che vi
+rimanda; le tabelle della proposta sono uscite dal prossimo passo (decisione 22). Il puntatore della §6 del compendio è
+**sfoltito** della cronaca delle riprese — archiviata parola per parola in `docs/archivio/stato-storico.md`, con l'intestazione —
+e dice lo stato di adesso (decisione 35). ⏭️ **Si riprende dalla sezione 5** — core finto, prove e cancello, decisioni aperte,
+come si riprende: le §7–§10 del 2 — poi dalla 6; il come sta nel prossimo passo. Nessun codice toccato.
+
 ⚠️ **Le approvazioni sono A CONDIZIONE**, con la stessa formula del 2: il proprietario ha risposto «A che
 rispetti la skill» alla strada, e poi A o B a ogni domanda. Se scrivendo il disegno o il piano una
 decisione viola un criterio di `anthropic-skills:decision-principles`, l'accettazione decade: ci si
@@ -150,13 +159,13 @@ sulla base di questa stella polare. Il richiamo sta in testa alla consegna del 2
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec, design/10 e la sua chiusura; la nona ripresa: «la GUI dentro», le tre sequenze coi richiami alla consegna del 2, e la sua chiusura; la decima ripresa: la sezione 4 presentata e approvata, non scritta — la sua chiusura |
+| i commit di questa sessione | `git log --oneline 664265a..HEAD` | i commit del 2026-09-07: la consegna, il punto fermo della prima ripresa, le tabelle e le decisioni della seconda, la sua chiusura, e la terza ripresa del 2026-09-08: la §2, la §3 con la sua chiusura; la quarta ripresa dello stesso giorno: l'apertura della passata sui diagrammi, la sua chiusura; la quinta ripresa: la sezione 1 scritta, design/07 con ADR-0019, la sua chiusura; la sesta ripresa: design/03 e la sua chiusura; la settima ripresa: design/08 e la sua chiusura; l'ottava ripresa: la lettera E nella spec, design/10 e la sua chiusura; la nona ripresa: «la GUI dentro», le tre sequenze coi richiami alla consegna del 2, e la sua chiusura; la decima ripresa: la sezione 4 presentata e approvata, non scritta — la sua chiusura; l'undicesima ripresa del 2026-09-09: la mossa 8 decisa A e la §4 scritta, il richiamo nella §2 del 2, il puntatore della §6 del compendio sfoltito e la cronaca archiviata |
 | codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla, tranne la spec del sotto-progetto 1: tre righe e un richiamo nella §8.2, l'ottava ripresa su delega (decisione 19) |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta, e all'apertura e alla chiusura dell'ottava, e all'apertura e alla chiusura della nona e della decima; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` — rilanciato su `664265a` prima di scrivere i documenti della consegna, e di nuovo alla chiusura della seconda ripresa del 2026-09-07 e della quarta ripresa del 2026-09-08, e all'apertura e alla chiusura della quinta, e all'apertura e alla chiusura dell'ottava, e all'apertura e alla chiusura della nona e della decima, e all'apertura dell'undicesima; `check-docs.sh` a ogni commit. Si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
 | fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg docs/design/10-modello-dei-dati-durevoli.md` | il compendio `i/lf w/crlf`, gli altri `i/lf w/lf` — su questa macchina: un clone nuovo con `core.autocrlf=true` li mostra `w/crlf`, e non è una divergenza |
 | i wireframe esistono | `ls docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/` | `compatta-e-grafo.svg  home.svg  lavoro.svg` |
-| margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo. ⚠️ **Decima ripresa, 2026-09-08:** sceso sotto i **tremila byte** prima di questa chiusura, e ogni chiusura ne mangia qualche centinaio: alla prossima, **prima** di aggiungere una riga, la cronaca delle riprese esce dal puntatore della §6 — vive già qui, in «Da sapere subito» e nel «Fatto» — e nel compendio resta lo stato di adesso (gotcha #100) |
+| margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo. ⚠️ **Decima ripresa, 2026-09-08:** sceso sotto i **tremila byte** prima di questa chiusura, e ogni chiusura ne mangia qualche centinaio: alla prossima, **prima** di aggiungere una riga, la cronaca delle riprese esce dal puntatore della §6 — vive già qui, in «Da sapere subito» e nel «Fatto» — e nel compendio resta lo stato di adesso (gotcha #100). ✅ **Undicesima ripresa, 2026-09-09: FATTO** — misurato all'apertura, col comando di questa riga, **1694 byte** di margine; la cronaca è uscita dal puntatore e dall'intestazione, archiviata in `docs/archivio/stato-storico.md`, e il margine lo dà il comando |
 
 La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, non questa riga.
 
@@ -322,6 +331,16 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
     sezioni che mancano, i vicoli ciechi, il prossimo passo col blocco della sezione 4 parola per parola — il puntatore della §6 del
     compendio e la sua intestazione; `check-docs.sh` OK e `GATE GREEN` alla chiusura; fine-riga conservati (LF qui, CRLF del
     compendio); la memoria dell'agente aggiornata; scratchpad pulito; nessun codice toccato.
+35. **All'undicesima ripresa, il 2026-09-09:** ripresa con `session-resume` — stato riletto coi comandi, nessuna divergenza
+    (`spikes/gui-shell/` e `gui/` non esistono; il solo diff della spec del sotto-progetto 1 è la lettera E dell'ottava ripresa),
+    `check-docs.sh` OK e `GATE GREEN` all'apertura; i pezzi che la mossa 8 nomina verificati con `ls` — `s2_worker.py`, `relay/` con
+    `page.html`, `PROTOCOLLO.md` in `spikes/gesti/`; O7 e i 114 ms in `spikes/RISULTATI.md` — e la riga «qualunque puntatore» del
+    disegno dei gesti, §4.1. La domanda A/B sulla mossa 8 posta al proprietario a parole di tutti i giorni: **A** (decisione 25). La
+    **§4** scritta nelle sezioni approvate con otto mosse e la riga Q4, dal blocco della decima ripresa, più il limite di `'pointer'`
+    sulla mossa 4 (decisione 34); il richiamo datato nella §2 del 2; la riga 4 di «Le sezioni che mancano» rimanda alla §4; le
+    tabelle del blocco tolte dal prossimo passo (decisione 22); il puntatore della §6 del compendio e la sua intestazione riscritti
+    allo stato di adesso e sfoltiti della cronaca delle riprese, archiviata parola per parola (decisione 35); fine-riga conservati e
+    rimisurati; `check-docs.sh` OK, commit e push.
 
 ## Le decisioni del proprietario, una per domanda
 
@@ -352,6 +371,7 @@ La baseline dei test la dà `cargo test --workspace --no-fail-fast --locked`, no
 | 22 | **alla nona ripresa** — secondo buco: la §3 e la §5 del 2 dicono che col timbro sbagliato il core manda `StaleBuild` **e chiude**, e la spec §6.1.2 che «la GUI non parte e lo dichiara»; il tratto `Ipc` ha `accept`, `send`, `receive` e **nessuna chiusura** (`grep -nE '^\s*fn ' crates/kernel/src/ports/ipc.rs`). A: nessuna operazione nuova — il core segna il client come rifiutato e non lo ascolta più, la GUI esce da sola e il core vede `Disconnected`; B: la porta guadagna una quarta operazione | **delegata: A.** **Esiste** — la morte della GUI è già letta solo come `Err(Disconnected)` (`gui_death_campaign.rs`), e la §6.1.2 mette l'uscita dalla parte della GUI; **arriva** — col 2 il trasporto vero di `platform`, che vede sparire il client quando la GUI esce; **regge crescendo** — la GUI è 0..1 e sacrificabile (ADR-0004), un client rifiutato che resta è uno solo e costa un `receive` a giro. Costo: richiamo datato su §3 («la stretta di mano») e §5 (`Hello`) della consegna del 2. Scartata B: tratto, finte, suite di conformità e la §3.1 della spec per un caso che la GUI chiude da sé |
 | 23 | **alla nona ripresa** — dove vivono le tre sequenze: A in questo file, sotto «Il modello della GUI»; B un file nuovo in `docs/design/` | **delegata: A**, come la settima ripresa aveva giudicato. **Esiste** — le due spec del kernel portano già blocchi mermaid (`grep -rlE '^\s*(flowchart|stateDiagram|erDiagram|sequenceDiagram)' docs/superpowers/specs`), e design/01 disegna la GUI come una scatola sola; **arriva** — il disegno del 2 rimanda qui per la forma (sezione 6 delle sezioni che mancano); **regge crescendo** — le sequenze restano tre anche col 3 e col 12: un invocatore nuovo rifà la 3, un messaggio nuovo segue «il core manda il pezzo che cambia». Scartata B: `docs/design/` è la struttura del kernel, e un file per il protocollo della GUI ne disegnerebbe l'interno, che ADR-0001 tiene fuori dai diagrammi del kernel |
 | 24 | **alla decima ripresa, 2026-09-08** — la sezione 4: lo spike di accettazione di `dockview` dentro lo spike del guscio — sette mosse giudicate dal proprietario provandole, il protocollo congelato prima in `spikes/gui-shell/PROTOCOLLO.md`, le misure (la mossa 7 come confronto di JSON, M4 con `dockview` acceso, Q3 per il popout), la riserva `interactjs` costruita solo su un no, chat e scena dello spike dentro due tessere | **A**, con la domanda *«ma si fa anche la prova con la telecamera per spostarle con mediapipe?»* — la risposta è la **mossa 8** con la riga Q4, proposta nel prossimo passo, in attesa della sua A/B (consiglio A). ⛔ La sezione **non è scritta**: il proprietario ha chiuso la sessione con `session-handoff` («la si scrive nella prossima sessione»); la proposta sta parola per parola nel prossimo passo |
+| 25 | **all'undicesima ripresa, 2026-09-09** — la mossa 8 e la riga Q4 nella sezione 4: A, otto mosse; B, sette, la mano tutta al 12 | **A.** La §4 è scritta con otto mosse e la riga Q4; la forma è quella della decisione 33 del coordinatore — il worker e il relay di SP-7 com'è, la pinza tradotta in eventi del puntatore, `dockview` in `dndStrategy: 'pointer'`, provata nel browser — col limite di `'pointer'` dichiarato: la mossa 4 dal comando (decisione 34). Scartata B: il 2 costruisce già pannelli che si muovono con qualunque puntatore (disegno dei gesti, §4.1), e provarlo solo col 12 sarebbe scoprirlo dopo la SPA |
 
 ## Ciò che il repo diceva già, letto per decidere
 
@@ -1007,6 +1027,91 @@ il perimetro cresciuto è **scritto**, non nascosto, e le cifre in prosa da tocc
 qui, `dockview-core` si riverifica allo spike; un componente segnaposto e non diciotto, nessun ADR per un tratto a due
 operazioni.
 
+### §4 — Lo spike di accettazione di `dockview` · approvata il 2026-09-08 (A, decisione 24); la mossa 8 il 2026-09-09 (A, decisione 25)
+
+Prima della GUI vera si fa una **Home finta** con `dockview-core`, dentro l'app di prova che lo spike del guscio (§2 del 2) già
+prevede, in `spikes/gui-shell/`. La giudica il **proprietario provandola** — con mouse, tastiera e **la mano** — come per la mano
+in SP-7: prima che la provi, le mosse si scrivono una riga l'una e si **congelano** in `spikes/gui-shell/PROTOCOLLO.md` al primo
+commit di codice (la regola di `spikes/PROTOCOLLO.md`); il proprietario dice sì o no a ogni mossa **con le sue parole**, e le parole
+vanno in `spikes/RISULTATI.md`. Se nell'insieme «non dà il Jarvis», `dockview` esce e la stessa Home finta si rifà con la tela
+libera, `interactjs`, **prima** della SPA (decisione 6 del proprietario, 30 del coordinatore). Il flusso della chat e la scena 3D
+dello spike stanno **dentro due tessere** (decisione 31): così la CPU di M4 si misura con `dockview` acceso, e la finestra staccata
+si prova dentro i due gusci, che è dove può fallire. Fonti: la §2 del 2; la decisione 6; G20; il disegno dei gesti, §4.1; la
+tabella «`dockview` 8.x» qui sopra, letta alla fonte il 2026-09-07 e il 2026-09-08; SP-7 in `spikes/gesti/` e in
+`spikes/RISULTATI.md`.
+
+**Le otto mosse.** Ognuna serve a una vista già approvata; l'ottava l'ha chiesta il proprietario (decisione 25).
+
+| # | La mossa | Chi ne ha bisogno | Passa se | Cosa dà `dockview` 8.2 |
+|---|---|---|---|---|
+| 1 | il nucleo al centro e la striscia in basso non si spostano; le tessere intorno sì | Home; la striscia come gruppo bloccato, oggi solo dedotta (decisione 4 del coordinatore) | trascinando qualsiasi cosa, i due restano dove sono | gruppi bloccati, anche senza intestazione |
+| 2 | una tessera si sgancia, galleggia sopra le altre, si riaggancia | Lavoro, «stacca» (riga 20 della Chat) | si sgancia, si muove, torna, senza perdersi | gruppi galleggianti, col gancio `transformFloatingGroupDrag` per lo scatto a griglia |
+| 3 | una tessera a pagina intera e ritorno | la regola unica dei moduli (domande 2 e 3) | un gesto per andare, uno per tornare, la disposizione sotto resta | massimizza e ripristina |
+| 4 | una tessera in un'altra finestra | Lavoro, «in un'altra finestra»; Compatta candidata, decide il 10 | la finestra si apre **dentro il guscio** (riga Q3); chiusa, la tessera torna. Si fa **dal comando**, non trascinando fra due finestre (decisione 34) | popout: `addPopoutGroup` apre una finestra nuova del browser su `popout.html`, legata con `window.opener` — dipende dal guscio |
+| 5 | la presa grande, disegnata da noi, si afferra col mouse e col tocco | il 12, la mano come puntatore; G20 | si afferra senza mirare a una linguetta sottile | intestazione e linguetta personalizzate; tocco e penna |
+| 6 | spostare una tessera con la tastiera | G20; la navigazione spaziale di `dockview` è a pagamento | una scorciatoia nostra sposta la tessera attiva nelle quattro direzioni | `moveTo` |
+| 7 | salva, ricarica, ritrova | l'assunto dichiarato nella §2 di questo file | i due JSON, prima e dopo, sono **uguali**: una misura, non un giudizio (decisione 32) | `toJSON`, `fromJSON`, l'evento `onDidLayoutChange` per il salvataggio da solo |
+| 8 | la pinza afferra la presa grande e la tessera segue la mano | il 2, che costruisce pannelli mossi da **qualunque puntatore** (disegno dei gesti, §4.1); il 12, che porterà i punti dal core | la tessera segue la pinza, si sgancia e si riaggancia: un sì o un no **tecnico**; come si sente lo dice il proprietario, con le sue parole, **senza soglia** | `dndStrategy: 'pointer'`: ogni trascinamento va a eventi del puntatore, che uno script può creare; il default `'auto'` usa per il mouse il drag nativo HTML5, che uno script **non** può avviare |
+
+**La mossa 8, come si fa.** Il worker `s2_worker.py` e il relay di `spikes/gesti/` **com'è**, righe JSON in SSE; la Home finta
+disegna la mano dai 21 punti — come `page.html` di SP-7 — e traduce la pinza in eventi del puntatore: `pointerdown` alla
+chiusura, `pointermove`, `pointerup` all'apertura, con `dockview` in `'pointer'`; si prova **nel browser**, i gusci non servono. La
+pinza è il segnaposto e un pugno vale come pinza (O7 di SP-7): il vocabolario dei gesti resta della capacità. Costo: un client SSE,
+il disegno della mano che `page.html` ha già, la traduzione pinza → puntatore; telecamera, ambiente Python e modello stanno già in
+`spikes/gesti/`. ⚠️ **Il limite di `'pointer'`, letto il 2026-09-08:** si perdono il trascinamento **fra due finestre** e
+l'immagine nativa del trascinamento. Quindi la mossa 4 si fa dal comando — `addPopoutGroup` — e non trascinando una tessera da una
+finestra all'altra, e il protocollo lo dice **prima** (decisione 34 del coordinatore): senza, un no alla mossa 4 sotto `'pointer'`
+sarebbe un no per una ragione che non è di `dockview`.
+
+**Le misure, oltre al giudizio.** La mossa 7 è un confronto fra due JSON. M4 tiene la sua soglia — P3 sotto un quarto di core —
+ora con `dockview` acceso e la chat che scorre in una tessera. La CPU con la chat **nascosta** dietro un'altra tessera si riporta
+**senza soglia**, perché nessuna fonte ne fissa una («nessuna soglia inventata», SP-7). Due righe qualitative nuove, **per
+guscio** come Q1 e Q2: **Q3**, la finestra staccata si apre dentro il guscio; **Q4**, nella webview basta `dndStrategy: 'auto'`
+o serve `'pointer'` — la doc di `dockview` consiglia `'pointer'` dove l'HTML5 è inaffidabile e nomina le webview incorporate,
+quindi il dato serve ai gusci prima ancora che alla mano. Il ritardo che si sente nella mossa 8 è quello misurato in SP-7 —
+cattura → disegno, mediana 114 ms — della pipeline e non di `dockview`: il protocollo lo dice prima.
+
+**Come si decide.** Tutte e otto passano: `dockview` resta. Una mossa che passa solo con un trucco è «parziale», la regola di
+`spikes/PROTOCOLLO.md`. Un no nell'insieme: si rifà la stessa Home con `interactjs`, stesse mosse, stesso protocollo, così le due
+si confrontano davvero. Un no sulla sola mossa 4 in un guscio non è un no a `dockview`: è un fatto per ADR-0029, come Q1. Un no
+tecnico sulla mossa 8 — `dockview` non segue il puntatore finto — si sa prima della SPA e su quel punto la tela libera vince;
+se basti a far cadere `dockview` lo dice il proprietario, sull'insieme.
+
+**Cosa non prova.** La forma di Compatta, del 10. Colori e forme, del design system. I moduli veri. Il filo vero: il flusso viene
+dall'emettitore di `spikes/gui-ipc/`, righe JSON, come la §2 del 2 già dice. Della mano: **non** prova il worker sotto il core,
+il porto `process`, il timbro — li paga il 12 (ADR-0039) — né il riconoscimento di un gesto discreto, che SP-7 lascia alla
+capacità (F3).
+
+**Cosa cambia altrove.** La §2 del 2 riceve un richiamo datato: il frontend minimo porta `dockview-core`, chat e scena sono due
+tessere, nascono Q3 e Q4, il protocollo porta le otto mosse. Il protocollo si congela al primo commit di codice. Il lockfile npm
+dello spike si committa, come `requirements.lock` di SP-7. Le cartelle di build dello spike entrano in `.gitignore`, compito del
+piano. L'esito va in una sezione nuova di `spikes/RISULTATI.md`, il numero dopo l'ultimo dell'elenco; Q3 e Q4 entrano in
+ADR-0029 come fatti, accanto a Q1 e Q2. In `spikes/gesti/` non cambia nulla: worker e relay si usano com'erano.
+
+**I tre controlli (decisione 18).** *Esiste già:* la §2 del 2 approvata con M1–M5, Q1 e Q2; il precedente di SP-7 — criteri
+prima, congelati, giudizio del proprietario con le sue parole — in `spikes/gesti/PROTOCOLLO.md` e in `spikes/RISULTATI.md`, col
+worker, il relay e `page.html` al loro posto il 2026-09-09 (`ls spikes/gesti/ spikes/gesti/relay/`); P3 misurato «stretto» senza
+rendering vero in `spikes/GUI-REQUISITI.md`; la decisione 6 con la riserva `interactjs`; G20; la riga «qualunque puntatore» del
+disegno dei gesti, §4.1; le funzioni di `dockview` lette il 2026-09-07 e, il 2026-09-08 alla fonte, le pagine su popout,
+salvataggio e strategia di trascinamento. `spikes/gui-shell/` e `gui/` non esistono. *Arriva:* il 3 con tante chat a schede, il 6
+col nucleo a pagina intera, il 10 con Compatta, il 12 con la mano sulla presa grande — e col 12 cambia solo **da dove arrivano i
+punti**, dal core invece che dal relay; lo spike prova le mosse che useranno, non decide per loro. *Regge crescendo:* prova
+meccanismi, non moduli — un modulo nuovo è un tipo di pannello in più, nessuna mossa in più; ogni vista di questo file è fatta di
+queste otto; un no cambia motore prima della SPA, e la riserva riceve le stesse mosse.
+
+**Controllo sui cinque criteri.** Verificato coi comandi e alle fonti ciò che sta nelle tabelle. 🔶 **Dedotto**, da confermare
+allo spike: che chat e scena dentro due tessere non cambino il confronto fra i gusci, perché il frontend è lo stesso su entrambi;
+che i pannelli nascosti costino meno CPU («render modes», letto e non misurato: per questo senza soglia); che la macchina di
+sviluppo abbia uno schermo touch — altrimenti la mossa 5 si giudica col mouse e il tocco resta «non misurato» fino al 12; che la
+pressione lunga di circa 250 ms richiesta al tocco si eviti dichiarando il puntatore come mouse, o tenendo la pinza ferma un
+attimo; che il relay parli con la pagina di `vite` come parlava con `page.html`. **Assunto:** niente. Coerente con SP-7
+(protocollo, giudizio, lockfile) e con la §2 del 2 (righe M e Q). Il debito è scritto sopra. Nessuna dipendenza scelta qui:
+`dockview-core` è della decisione 6, e le versioni si riverificano il giorno dello spike. Otto mosse e una Home finta, non due:
+la tela libera solo su un no.
+
+**Decisioni del coordinatore in questa sezione:** 30, 31, 32 e 34 della tabella omonima; la 33 — la forma della mossa 8 — è
+diventata la decisione 25 del proprietario.
+
 ## Le sezioni che mancano — proposte del coordinatore, non decisioni
 
 | § | Che cosa | La proposta da cui partire |
@@ -1014,7 +1119,7 @@ operazioni.
 | 1 | **il catalogo dei moduli**: tipi, numero del sotto-progetto, messaggi IPC che consumano | una tabella per tipo: Chat (2, 3 · `Token`, e col 3 i messaggi della run), Stato (2 · `Degradation`, `Policy`, `Accepted`, `Verdict`), Permessi (2 · `PermissionRequired`, `Approve`), Passi (2, 3 · un messaggio nuovo con la lista dei passi), Attività (3, 4, 13), Ambito (5), Diff (5), Anteprima (3), Terminale (5), Sensori (4), Costi (3), Knowledge base e Nucleo a pagina intera (6), Asset 3D (7), Voce e gesti (8, 12), Backup (11), Checkpoint (5), Modelli locali (9), Impostazioni (2, il cambio di policy è già una funzione del registro). La regola: un modulo il cui sotto-progetto non è chiuso mostra a parole chi lo riempie. ⚠️ **Allargata alla ripresa del 2026-09-07, decisione 10:** per ogni modulo anche **cosa mostra** e **quali comandi ha**, riga per riga con la **fonte** — G, ADR, riga di tracciabilità — e il sotto-progetto che costruisce la riga; e il «dove» dentro il modulo quando conta: contesto della run, modalità di esecuzione e «+ allegati» nella barra della chat, per run ✅ **RICHIAMO DEL 2026-09-07, seconda ripresa:** la sezione è **CHIUSA**: cinque tabelle piene — Chat, Stato, Permessi, Passi, Attività — e la tabella corta degli altri tredici moduli, nella §1 delle sezioni approvate qui sopra (decisione 12) |
 | 2 | **viste e disposizione**: i layout come JSON, l'archivio minimo nel core, i due messaggi | `Layout` dal core all'accoglienza, dopo `Accepted`; `SaveLayout` dalla GUI; l'archivio in `platform` con una voce, nella forma dell'archivio «configurazione, guide, profili» di ADR-0022, consegnato al daemon e non letto dal kernel (ADR-0034); ⚠️ da decidere lì: se «salva disposizione» sia una **funzione del registro** con la propria tripla (ADR-0038 dice che la manipolazione della GUI non passa dal registro; il salvataggio durevole è un'altra cosa) o una scrittura di configurazione fuori dal registro; le tre viste di default come JSON committati in `gui/` ✅ **RICHIAMO DEL 2026-09-08, terza ripresa: la sezione è CHIUSA** — la §2 delle sezioni approvate qui sopra, con le decisioni 14 e 15 delegate. ⛔ La forma proposta in questa riga, *«consegnato al daemon e non letto dal kernel»*, **non reggeva** contro la §5 del 2 e la §3.1 della spec: `SaveLayout` arriva dentro il kernel e nessuna delle sei porte tiene un pacchetto; serve una **settima porta**, e la §2 dice perché e cosa costa |
 | 3 | **la fetta del 2 ritagliata**: che cosa costruisce adesso, e come si riscrivono §1 e §6a | §1 del 2 guadagna: il motore dei moduli (`dockview-core`, dipendenza nuova, in due passi), le tre viste con Compatta come segnaposto, il modulo Passi col suo messaggio, l'archivio della disposizione coi due messaggi; §6a: «le due schermate» diventano «Home e Lavoro nella cornice», la finestra di permesso resta; il pezzo 6 della tabella di §1 cambia forma. Tutto con richiamo datato, non riscrittura silenziosa ✅ **RICHIAMO DEL 2026-09-08, terza ripresa: la sezione è CHIUSA** — la §3 delle sezioni approvate qui sopra, A, con la tabella *«Cosa è già studiato, e dove»* |
-| 4 | **lo spike di accettazione** di `dockview`, dentro lo spike del guscio | in `spikes/gui-shell/`, sul frontend minimo di §2 del 2: una Home finta con `dockview-core` — nucleo bloccato, quattro tessere, una libera, una a pagina intera, presa grande — e la giudica il **proprietario provandola**, come per la mano in SP-7; il criterio scritto **prima** in `spikes/gui-shell/PROTOCOLLO.md`; se non dà il «Jarvis», si passa a `interactjs` prima di scrivere la SPA. In più M4 misura P3 con `dockview` acceso ✅ **RICHIAMO DEL 2026-09-08, decima ripresa: presentata e approvata A, NON scritta** — la proposta parola per parola sta nel prossimo passo, blocco «La proposta per la sezione 4»; la scrittura è della sessione nuova, con la risposta sulla mossa 8 |
+| 4 | **lo spike di accettazione** di `dockview`, dentro lo spike del guscio | in `spikes/gui-shell/`, sul frontend minimo di §2 del 2: una Home finta con `dockview-core` — nucleo bloccato, quattro tessere, una libera, una a pagina intera, presa grande — e la giudica il **proprietario provandola**, come per la mano in SP-7; il criterio scritto **prima** in `spikes/gui-shell/PROTOCOLLO.md`; se non dà il «Jarvis», si passa a `interactjs` prima di scrivere la SPA. In più M4 misura P3 con `dockview` acceso ✅ **RICHIAMO DEL 2026-09-08, decima ripresa: presentata e approvata A, NON scritta** — la proposta parola per parola sta nel prossimo passo, blocco «La proposta per la sezione 4»; la scrittura è della sessione nuova, con la risposta sulla mossa 8. ✅ **RICHIAMO DEL 2026-09-09, undicesima ripresa: SCRITTA** — la §4 delle sezioni approvate qui sopra, otto mosse (la mossa 8 decisa A, decisione 25) e la riga Q4 |
 | 5 | le sezioni che già mancavano al 2: **core finto, prove e cancello, decisioni aperte, come si riprende** | le proposte stanno nella consegna del 2, tabella «Le sezioni che mancano»; Passi aggiunge al core finto l'invio della lista dei passi; le prove aggiungono la sonda sul giro «salva disposizione, riavvia, ritrova» |
 | 6 | **dove vive la stella polare**, e come il disegno del 2 la rimanda | questo file diventa `2026-09-07-direzione-gui-design.md` come disegno, ⛔ **non è una spec e non disegna le capacità**: colloca i moduli, le viste e le regole, e ogni sotto-progetto disegna i propri moduli quando arriva; il disegno del 2 rimanda qui per la forma e non la ricopia; una riga nella §12 del compendio e in «Dove va cosa» di `README.md` è un **compito del piano**, come fu per la knowledge base |
 
@@ -1059,7 +1164,9 @@ dopo la misura.
 | 30 | **sezione 4, decima ripresa** — il proprietario giudica `dockview` **da solo** contro le sette mosse; la tela libera (`interactjs`) si costruisce **solo** su un no, con le stesse mosse e lo stesso protocollo | la decisione 6 dice «se non dà il Jarvis si passa alla tela libera», non «si confrontano entrambe»; costruirle insieme paga una strada già scartata sul merito. Costo: se è sbagliata, un secondo giro di spike |
 | 31 | **sezione 4** — la chat che scorre e la scena 3D dello spike del guscio (§2 del 2) vivono **dentro** la Home finta come due tessere: un frontend solo | M4 è «P3 col rendering vero» e la GUI vera ha `dockview`; il popout si prova solo dentro i gusci. Costo: se `dockview` cade, M4 si rimisura sulla Home con `interactjs`; il confronto fra i gusci resta equo perché il frontend è lo stesso su entrambi |
 | 32 | **sezione 4** — la mossa 7 (salva, ricarica, ritrova) è una **misura**, due JSON uguali, non un giudizio; la CPU coi pannelli nascosti si **riporta senza soglia** | dove si può misurare si misura; «nessuna soglia inventata» è la regola di SP-7. Costo: nessuno |
-| 33 | **sezione 4, la mossa 8** — la forma proposta e **non decisa**: il worker e il relay di SP-7 com'è, la Home finta traduce la pinza in eventi del puntatore, `dockview` in `dndStrategy: 'pointer'`, si prova nel browser; e la riga Q4 per guscio (`'auto'` basta, o serve `'pointer'`) | il disegno dei gesti §4.1 fa del «qualunque puntatore» un compito del 2, e `'pointer'` è l'unica via che uno script può guidare — il drag nativo HTML5 non si avvia da script. Costo: `'pointer'` perde il trascinamento fra finestre e l'immagine nativa; il ritardo che si sente è quello di SP-7 (cattura → disegno, mediana 114 ms), della pipeline e non di `dockview`. È del proprietario: A/B nel prossimo passo |
+| 33 | **sezione 4, la mossa 8** — la forma proposta e **non decisa**: il worker e il relay di SP-7 com'è, la Home finta traduce la pinza in eventi del puntatore, `dockview` in `dndStrategy: 'pointer'`, si prova nel browser; e la riga Q4 per guscio (`'auto'` basta, o serve `'pointer'`) | il disegno dei gesti §4.1 fa del «qualunque puntatore» un compito del 2, e `'pointer'` è l'unica via che uno script può guidare — il drag nativo HTML5 non si avvia da script. Costo: `'pointer'` perde il trascinamento fra finestre e l'immagine nativa; il ritardo che si sente è quello di SP-7 (cattura → disegno, mediana 114 ms), della pipeline e non di `dockview`. È del proprietario: A/B nel prossimo passo. ✅ **Decisa A il 2026-09-09** (decisione 25 del proprietario): la mossa 8 e la riga Q4 stanno nella §4 |
+| 34 | **§4, undicesima ripresa** — con `dndStrategy: 'pointer'` la mossa 4 si fa dal comando (`addPopoutGroup`) e non trascinando una tessera fra due finestre, e il protocollo lo dice prima | la doc letta il 2026-09-08 dice che `'pointer'` perde il trascinamento fra finestre: senza questa riga un no alla mossa 4 sotto `'pointer'` sarebbe un no per una ragione che non è di `dockview`. Costo: la mossa 4 prova il popout, non il trascinamento fra finestre — se il proprietario vuole anche quello, è una mossa in più sotto `'auto'` |
+| 35 | **undicesima ripresa** — la cronaca delle riprese esce dal puntatore della §6 del compendio e dalla sua intestazione, archiviata parola per parola in `docs/archivio/stato-storico.md` coi link riscritti; nel compendio resta lo stato di adesso | lo prescriveva la tabella dello stato della decima ripresa, e il margine misurato all'apertura (riga «margine del compendio») non reggeva un'altra chiusura (gotcha #100); la cronaca vive qui, in «Da sapere subito» e nel «Fatto». Costo: chi legge la §6 non vede più ripresa per ripresa, e apre questo file |
 
 ## Registrate, non prese — del proprietario
 
@@ -1292,99 +1399,33 @@ chiuso la sessione con `session-handoff` («la si scrive nella prossima sessione
 ⚠️ **Il margine del compendio è piccolo** (il comando nella tabella dello stato): alla prossima chiusura la cronaca delle riprese
 esce dal puntatore della §6 e resta qui, **prima** di aggiungere una riga.
 
-#### La proposta per la sezione 4 — presentata e approvata (A) il 2026-09-08, decima ripresa, NON scritta
+✅ **All'undicesima ripresa, il 2026-09-09: i punti 1 e 2 sono ESEGUITI, e il margine anche.** La mossa 8 decisa **A** dal
+proprietario (decisione 25); la §4 scritta nelle sezioni approvate con otto mosse e la riga Q4, più il limite di `'pointer'` sulla
+mossa 4 (decisione 34); il richiamo datato nella §2 del 2; la riga 4 di «Le sezioni che mancano» rimanda alla §4; le tabelle del
+blocco qui sotto sono uscite (decisione 22). La cronaca delle riprese è uscita dal puntatore della §6 del compendio e dalla sua
+intestazione, archiviata parola per parola in `docs/archivio/stato-storico.md` (decisione 35). ⏭️ **Si riprende dal punto 3: la
+sezione 5** — core finto, prove e cancello, decisioni aperte, come si riprende, cioè le §7–§10 del 2, dalle proposte della tabella
+«Le sezioni che mancano» della consegna del 2, con la lista dei passi nel core finto e, nelle prove, «salva, riavvia, ritrova» e le
+otto mosse dello spike — poi la **sezione 6**, dove vive la stella polare; ciascuna A/B coi tre controlli della decisione 18; poi il
+punto 4.
 
-**A parole.** Prima della GUI vera si fa una Home finta con `dockview`, dentro l'app di prova che lo spike del guscio (§2 del 2) già
-prevede. Il proprietario la prova con mouse e tastiera. Prima che la provi, si scrivono sette mosse, una riga l'una, e si congelano in
-`spikes/gui-shell/PROTOCOLLO.md` al primo commit di codice (la regola di `spikes/PROTOCOLLO.md`). Il proprietario dice sì o no a ogni
-mossa, con le sue parole, e le parole vanno in `spikes/RISULTATI.md`, come per la mano in SP-7. Se nell'insieme «non dà il Jarvis»,
-`dockview` esce e la stessa Home finta si rifà con la tela libera, `interactjs`, prima della SPA. Il flusso della chat e la scena 3D
-dello spike stanno dentro due tessere: così la CPU di M4 si misura con `dockview` acceso, e la finestra staccata si prova dentro i
-due gusci, che è dove può fallire.
+#### La proposta per la sezione 4 — presentata e approvata (A) il 2026-09-08, decima ripresa; SCRITTA il 2026-09-09
 
-**Le sette mosse.** Ognuna serve a una vista già approvata.
-
-| # | La mossa | Chi ne ha bisogno | Passa se | Cosa dà `dockview` 8.2 |
-|---|---|---|---|---|
-| 1 | il nucleo al centro e la striscia in basso non si spostano; le tessere intorno sì | Home; la striscia come gruppo bloccato, oggi solo dedotta (decisione 4 del coordinatore) | trascinando qualsiasi cosa, i due restano dove sono | gruppi bloccati, anche senza intestazione |
-| 2 | una tessera si sgancia, galleggia sopra le altre, si riaggancia | Lavoro, «stacca» (riga 20 della Chat) | si sgancia, si muove, torna, senza perdersi | gruppi galleggianti, col gancio `transformFloatingGroupDrag` per lo scatto a griglia |
-| 3 | una tessera a pagina intera e ritorno | la regola unica dei moduli (domande 2 e 3) | un gesto per andare, uno per tornare, la disposizione sotto resta | massimizza e ripristina |
-| 4 | una tessera in un'altra finestra | Lavoro, «in un'altra finestra»; Compatta candidata, decide il 10 | la finestra si apre **dentro il guscio** (riga Q3); chiusa, la tessera torna | popout: `addPopoutGroup` apre una finestra nuova del browser su `popout.html`, legata con `window.opener` — dipende dal guscio |
-| 5 | la presa grande, disegnata da noi, si afferra col mouse e col tocco | il 12, la mano come puntatore; G20 | si afferra senza mirare a una linguetta sottile | intestazione e linguetta personalizzate; tocco e penna |
-| 6 | spostare una tessera con la tastiera | G20; la navigazione spaziale di `dockview` è a pagamento | una scorciatoia nostra sposta la tessera attiva nelle quattro direzioni | `moveTo` |
-| 7 | salva, ricarica, ritrova | l'assunto dichiarato nella §2 di questo file | i due JSON, prima e dopo, sono **uguali**: una misura, non un giudizio | `toJSON`, `fromJSON`, l'evento `onDidLayoutChange` per il salvataggio da solo |
-
-**Le misure, oltre al giudizio.** La mossa 7 è un confronto fra due JSON. M4 tiene la sua soglia — P3 sotto un quarto di core — ora
-con `dockview` acceso e la chat che scorre in una tessera. La CPU con la chat nascosta dietro un'altra tessera si riporta **senza
-soglia**, perché nessuna fonte ne fissa una («nessuna soglia inventata», SP-7). Q3, la finestra staccata, è una riga per guscio, come
-Q1 e Q2.
-
-**Come si decide.** Tutte e sette passano: `dockview` resta. Una mossa che passa solo con un trucco è «parziale», la regola di
-`spikes/PROTOCOLLO.md`. Un no nell'insieme: si rifà la stessa Home con `interactjs`, stesse mosse, stesso protocollo, così le due si
-confrontano davvero. Un no sulla sola mossa 4 in un guscio non è un no a `dockview`: è un fatto per ADR-0029, come Q1.
-
-**Cosa non prova.** La forma di Compatta, del 10. Colori e forme, del design system. I moduli veri. Il filo vero: il flusso viene
-dall'emettitore di `spikes/gui-ipc/`, righe JSON, come la §2 del 2 già dice. E la mano: nella sezione approvata con sette mosse la
-mano e il pinch restano del 12 — la mossa 8 qui sotto, se approvata, cambia questa riga.
-
-**Cosa cambia altrove.** La §2 del 2 riceve un richiamo datato: il frontend minimo porta `dockview-core`, chat e scena sono due
-tessere, nasce Q3. Il protocollo si congela al primo commit di codice. Il lockfile npm dello spike si committa, come
-`requirements.lock` di SP-7. Le cartelle di build dello spike entrano in `.gitignore`, compito del piano. L'esito va in una sezione
-nuova di `spikes/RISULTATI.md`, il numero dopo l'ultimo dell'elenco.
-
-**I tre controlli (decisione 18).** *Esiste già:* la §2 del 2 approvata con M1–M5, Q1 e Q2; il precedente di SP-7 — criteri prima,
-congelati, giudizio del proprietario con le sue parole — in `spikes/gesti/PROTOCOLLO.md` e in `spikes/RISULTATI.md`; P3 misurato
-«stretto» senza rendering vero in `spikes/GUI-REQUISITI.md`; la decisione 6 con la riserva `interactjs`; G20; le funzioni di `dockview`
-lette il 2026-09-07 e, il 2026-09-08 alla fonte, le pagine su popout e salvataggio (tabella «`dockview` 8.x»). `spikes/gui-shell/` e
-`gui/` non esistono. *Arriva:* il 3 con tante chat a schede, il 6 col nucleo a pagina intera, il 10 con Compatta, il 12 con la mano
-sulla presa grande; lo spike prova le mosse che useranno, non decide per loro. *Regge crescendo:* prova meccanismi, non moduli — un
-modulo nuovo è un tipo di pannello in più, nessuna mossa in più; ogni vista di questo file è fatta di queste sette; un no cambia motore
-prima della SPA, e la riserva riceve le stesse mosse.
-
-**Controllo sui cinque criteri.** Verificato coi comandi e alle fonti ciò che sta nella tabella. 🔶 **Dedotto**, da confermare allo
-spike: che chat e scena dentro due tessere non cambino il confronto fra i gusci, perché il frontend è lo stesso su entrambi; che i
-pannelli nascosti costino meno CPU («render modes», letto e non misurato: per questo senza soglia); che la macchina di sviluppo abbia
-uno schermo touch — altrimenti la mossa 5 si giudica col mouse e il tocco resta «non misurato» fino al 12. **Assunto:** niente.
-Coerente con SP-7 (protocollo, giudizio, lockfile) e con la §2 del 2 (righe M e Q). Il debito è scritto sopra. Le versioni si
-riverificano il giorno dello spike. Sette mosse e una Home finta, non due: la tela libera solo su un no.
-
-**Decisioni del coordinatore in questa sezione:** 30, 31 e 32 della tabella omonima — giudicare `dockview` da solo; chat e scena
-dentro la Home finta; la mossa 7 come misura.
-
-**La domanda posta, e la risposta: A.**
+✅ **RICHIAMO DEL 2026-09-09, undicesima ripresa: la sezione è SCRITTA** — la §4 delle sezioni approvate qui sopra, con otto mosse
+e la riga Q4. ⛔ **Le tabelle e la prosa che stavano qui sono TOLTE** (decisione 22 del coordinatore): il merito vive nella §4, e
+una seconda casa diverge (gotcha #68). Restano, come verbale, le due domande poste e le risposte.
 
 > La sezione 4 va bene così? **A:** sì — si scrive nella stella polare, col richiamo nella §2 del 2, e si passa alla sezione 5.
 > **B:** cambia qualcosa. Consiglio: **A**.
 
-Il proprietario: *«A, ma si fa anche la prova con la telecamera per spostarle con mediapipe?»*. Da lì la proposta qui sotto.
-
-**La mossa 8 — proposta in forma A/B il 2026-09-08, decima ripresa, SENZA RISPOSTA.**
-
-Sì, si può, costa poco, ed è compito del 2 e non del 12: il disegno dei gesti, §4.1, dice che il 2 costruisce pannelli che si muovono
-con **qualunque puntatore**, e la mano è un puntatore in più. Letto alla fonte il 2026-09-08 (dockview.dev, «Drag and drop strategy»):
-con `dndStrategy: 'pointer'` ogni trascinamento va a eventi del puntatore, che uno script può creare; il default `'auto'` usa il drag
-nativo HTML5 per il mouse, che uno script **non** può avviare; `'pointer'` è consigliato dove l'HTML5 è inaffidabile, e la doc nomina
-le webview incorporate — quindi il dato serve anche ai gusci. Costo di `'pointer'`: niente trascinamento fra due finestre e niente
-immagine di trascinamento nativa.
-
-| # | La mossa | Come | Passa se |
-|---|---|---|---|
-| 8 | la pinza afferra la presa grande e la tessera segue la mano | il worker `s2_worker.py` e il relay di `spikes/gesti/` **com'è**, righe JSON in SSE; la Home finta disegna la mano dai 21 punti (come `page.html` di SP-7) e traduce la pinza in eventi del puntatore — `pointerdown` alla chiusura, `pointermove`, `pointerup` all'apertura — con `dockview` in `'pointer'`; si prova nel browser, i gusci non servono | la tessera segue la pinza, si sgancia e si riaggancia: un sì o un no tecnico. Come si sente lo dice il proprietario, con le sue parole, **senza soglia** |
-
-E una riga **Q4**, per guscio: se dentro la webview basta `'auto'` o serve `'pointer'`.
-
-*Cosa prova e cosa no:* prova che `dockview` si lascia guidare da un puntatore che non è il mouse; non prova il worker sotto il core, il
-porto `process`, il timbro — li paga il 12 (ADR-0039); il vocabolario dei gesti resta della capacità: la pinza è il segnaposto, e un
-pugno vale come pinza (O7 di SP-7). Il ritardo che si sente è quello misurato in SP-7 — cattura → disegno, mediana 114 ms — della
-pipeline e non di `dockview`: il protocollo lo dice prima. *Costo:* un client SSE, il disegno della mano che `page.html` ha già, la
-traduzione pinza → puntatore; telecamera, ambiente Python e modello stanno già in `spikes/gesti/`. *Verificato:* la strategia
-`'pointer'` e i suoi limiti; i pezzi di SP-7. 🔶 *Dedotto:* che la pressione lunga di circa 250 ms richiesta al tocco si eviti dichiarando
-il puntatore come mouse, o tenendo la pinza ferma un attimo; che il relay parli con la pagina di `vite` come parlava con `page.html`.
-*Assunto:* niente. *Regge crescendo:* col 12 cambia solo da dove arrivano i punti, dal core invece che dal relay; se `dockview` non segue
-il puntatore finto, lo si sa prima della SPA, e la tela libera vince su questo punto.
+Il proprietario, il 2026-09-08: *«A, ma si fa anche la prova con la telecamera per spostarle con mediapipe?»* (decisione 24). Da lì
+la **mossa 8** — la pinza dal worker e dal relay di SP-7 com'è, tradotta in eventi del puntatore, `dockview` in
+`dndStrategy: 'pointer'`, provata nel browser — e la riga **Q4**:
 
 > Aggiungere la mossa 8 e la riga Q4 alla sezione 4? **A:** sì, così: la sezione si scrive con otto mosse. **B:** no, la mano resta
 > tutta al 12: la sezione si scrive con sette mosse. Consiglio: **A**.
+
+Il proprietario, il 2026-09-09: **A** (decisione 25).
 
 Poi la **sezione 3**, i disegni nuovi, ciascuno A/B coi tre controlli della decisione 18, a parole e col diagramma reso dal
 sorgente identico (decisione 21). ⛔ **Il materiale è già letto, e sta qui perché non si rilegga da capo** — si riverifica

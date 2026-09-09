@@ -583,7 +583,7 @@ non si deduce da una chiusura. La **domanda minima** con cui la sessione nuova a
 disegni per intero: *«i due disegni sono riletti?»* — **A**, sì: si scrive la parte 1 del piano (punti 5–7 qui sotto); **B**,
 no: si presentano una per volta, in forma A/B col consiglio scritto, le voci che sono del proprietario — le righe 5, 6, 11 e 13
 della §9, e le decisioni di questa sessione qui sotto che tocca a lui tenere o ribaltare: i nomi (9), la §1 per rimando (2) —
-e **poi** si scrive il piano nella stessa sessione, se il contesto regge.
+e **poi** si scrive il piano nella stessa sessione, se il contesto regge. ✅ **Alla chiusura il proprietario ha risposto A** (decisione 40 della stella polare): la rilettura in una sessione nuova.
 
 #### Lo stato alla chiusura, e il comando che lo rifà
 

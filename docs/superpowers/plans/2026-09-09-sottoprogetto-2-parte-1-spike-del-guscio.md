@@ -3165,6 +3165,101 @@ in ADR-0029; X-1 e X-3 sono compiti della parte 2 (D13).
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La settima chiusura — 2026-09-10: il compito 7 ESEGUITO col proprietario allo schermo — `dockview` resta, il guscio è Electron, E14 scritta — si riprende dal compito 8
+
+⛔ **DA SAPERE SUBITO.** Niente è a metà nel repository: albero pulito, nessuno stash, nessuna operazione git in corso, nessun
+server acceso (il relay di SP-7 e Vite spenti, verificato sulle porte 7878 e 5173), nessun processo dei gusci vivo, nessun codice
+di prodotto toccato. ⚠️ **Le due app SONO ANCORA INSTALLATE** (D19) — `%LOCALAPPDATA%\Programs\sp8-electron`,
+`%LOCALAPPDATA%\sp8-tauri`, più `%LOCALAPPDATA%\sp8-electron-updater` — e le disinstalla il **compito 8**; in
+`$HOME/sp8-measure/` (D21) ci sono ora **dieci** CSV — i quattro del compito 6 più `electron-hidden`, `electron-fullpage`,
+`tauri-hidden`, `tauri-fullpage`, `electron-covered`, `electron-front` — e, copiati lì alla chiusura perché lo scratchpad muore con
+la sessione, tre file di prova (`console-browser-mosse-2026-09-10.txt`, la console del browser del proprietario; `q3-cdp-2026-09-10.txt`;
+`o1-coperta-2026-09-10.txt`) e tre attrezzi (`cdp-popout.mjs`, `cover.ps1`, `front.ps1`): il compito 8 cancella la cartella intera,
+**dopo** la propria revisione. Il proprietario ha chiuso con `session-handoff` («appena finisce», cioè dopo la revisione del 7) a
+compito 7 chiuso e revisionato. Tre cose in cima: (1) **la decisione sul guscio è presa: A, Electron**, sua («A»), scritta in
+`RISULTATI.md` con la tabella che ha avuto davanti; il compito 8 la porta in ADR-0029 con le sue parole; (2) **Q3 è `REFUSED` in
+entrambi i gusci**, per cause diverse e lette (O7, E14): per Electron il limite è l'origine `file://` — rimedio **dedotto**, servire
+la build da http(s), parte 2 — e per Tauri `window.open` nullo; ⚠️ i modelli del compito 8 che nominano Q3 e Q4 vanno riletti
+contro questo esito **prima** di dettarli; (3) **M4 non passa su nessuno dei due nemmeno con la chat nascosta** (146,8 % Electron,
+138,1 % Tauri): è la scena `three` senza tetto di fps, un fatto per la SPA (tetto di fps o rendering a richiesta) da dire in
+ADR-0029 accanto a P3; O1 è misurato **in parte** (coperta e a riposo ~2 % col titolo congelato; sotto flusso gli stessi picchi della
+corsa in primo piano). Il commit `5dc9c6f` porta ancora il trailer `Co-Authored-By` (quarta chiusura). ⚠️ **Questa sessione è stata
+aperta da un workspace scratch dell'app desktop, non dal repo**: ha funzionato, coi percorsi assoluti, ma la prossima si apre **nella
+cartella del repo** (`C:\Users\zagor\Desktop\harness`), o `CLAUDE.md` e la memoria del progetto non si caricano da soli e lo
+scratchpad supera MAX_PATH (le trappole qui sotto).
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto |
+| I commit di questa sessione | `git log --oneline e4d96eb..HEAD` — **due** più questo: `61abe86` (compito 7: la sezione SP-8 completa, la riga SP-8 in roadmap, la posizione 7 ✅, E14, i richiami in P-3 e P-6), `a22fde3` (la correzione della revisione: la riga 4 delle mosse), poi la chiusura |
+| Codice di prodotto, cancello, CI, gli spike | **non toccati**: `git diff --stat 5ad4634..HEAD -- crates/ scripts/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml spikes/gesti/ spikes/gui-ipc/` non rende nulla; e in questa sessione nemmeno `spikes/gui-shell/`: `git diff --stat e4d96eb..HEAD -- spikes/gui-shell/` non rende nulla |
+| La posizione e l'errata | i compiti **1–7** a `✅ 2026-09-10`; l'errata **E1–E14**: E14 dal compito 7 (sotto `file://` dockview 8.2.0 rifiuta la finestra a parte; P-4 smentito in parte), senza rimedio in questo piano — `grep -c '^\| \*\*E[0-9]*\*\* \|' <piano>` → `14`; P-3 e P-6 portano il richiamo «Misurato il 2026-09-10» — `grep -c '^✅ \*\*Misurato il 2026-09-10, compito 7:\*\*' <piano>` → `2` |
+| L'esito | la sezione **SP-8** di `spikes/RISULTATI.md` è **completa**: `awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md \| grep -c '⏳'` → `0`, e `grep -c '<[^ ]'` sulla stessa sezione → `0`; O1 col richiamo misurato, O6 e O7 nuove, cinque righe nuove nelle Evidenze |
+| Roadmap | la riga SP-8 chiusa, senza cifre: `grep '^| SP-8 |' docs/roadmap.md \| grep -c 'chiuso il'` → `1`; la riga 6 datata al compito 7 |
+| Le app installate, i CSV e le prove | `Get-ChildItem $env:LOCALAPPDATA\Programs -Directory -Filter 'sp8-*'` e `Get-ChildItem $env:LOCALAPPDATA -Directory -Filter 'sp8-*'` → le tre cartelle; `ls "$HOME/sp8-measure"` → dieci CSV, tre file di prova, tre attrezzi |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` prima di **ogni** commit (log datati nello scratchpad, letti dal revisore contro `git log -1 --format=%ci`) e alla chiusura; `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | il piano **LF** (`tr -cd '\r' < <file> \| wc -c` → `0`); roadmap, compendio e `spikes/RISULTATI.md` CRLF con CR = righe (`RISULTATI` a 448 dopo il compito 7, roadmap a 338) |
+| Margine del compendio | il comando del vincolo 11: `9948` prima del richiamo di questa chiusura; le righe `⏭️` restano **tre** |
+| Il registro di esecuzione | `.superpowers/sdd/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio/progress.md` su **questa** macchina, ignorato da git, con le righe della sessione 4 e del compito 7, `task-7-review-dispatch.md` e `task-7-review-report.md` (il revisore in sola lettura) |
+
+#### Le decisioni prese eseguendo, nell'ordine (seguono le ventitré della sesta chiusura)
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 24 | la sessione è proseguita dal workspace scratch, su scelta del proprietario («partiamo»), con `cd` in testa a ogni comando e la memoria del progetto letta a mano | riaprire costava a lui; nel repo non cambia nulla | nessuno nel repo; un'ora di trappole (MAX_PATH, cwd) |
+| 25 | le mosse 1–7 proposte in una tabella sola; il proprietario le ha fatte nel suo ordine e ha risposto incollando la console e con un «si a tutto» a cinque domande: le parole sono registrate **così**, una risposta per cinque righe, dichiarato nella riga 1 | il protocollo vuole le sue parole, non una parafrasi; fargliele ripetere una per una a fine giornata non avrebbe reso parole più vere | una cella che un lettore prende per un riassunto: è dichiarata |
+| 26 | la mossa 7 ufficiale sulla disposizione di default (dopo «azzera»); il `DIFFERENT` del primo caricamento — una disposizione salvata con una finestra a parte, pop-up bloccato dal browser al ricaricamento — è **O6**, un fatto, non il verdetto | il protocollo non fissa la disposizione; il blocco dei pop-up è del browser e nei gusci non si presenta | nessuno: entrambi i risultati sono scritti |
+| 27 | Q3 `REFUSED` in entrambi: la **causa** letta dalla console del renderer con la porta di debug e uno script CDP di sola lettura, e scritta (O7, E14); le corse di misura senza porta | la decisione A/B dipende da Q3, e «rifiutata» senza causa avrebbe pesato uguale un limite del guscio (Tauri) e un limite dello spike (Electron, `file://`) | quindici minuti; il rifiuto è lo stesso con e senza porta |
+| 28 | E14 senza rimedio in questo piano: servire la build da http(s) è dedotto e si misura nel guscio della SPA (parte 2) | vincolo 2 e vincolo 17 (nessun codice nuovo nella parte 1); il compito 7 misura, non corregge | un fatto in ADR-0029 che dice «oggi no» dove domani sarà «sì con un server locale»: dichiarato |
+| 29 | O1 misurato con un Blocco note massimizzato come copertura e una corsa in primo piano di confronto; esito «in parte», scritto così | era il passo 3 della sesta chiusura; una prova parziale dichiarata vale più di una deduzione | nessuno: il verdetto P3 non cambia |
+| 30 | le due corse di Electron di M4/M5 fatte con relay e Vite ancora accesi, **non rifatte**; dichiarato nelle Evidenze | il campionatore legge la CPU del solo albero, su 28 processori logici; rifarle costava due gesti al proprietario | qualche punto di asimmetria fra i gusci, dichiarata |
+| 31 | la riga M5 «pagina intera» scritta `0 / n` con l'etichetta «dedicata / condivisa» | coerente con la riga M5 a riposo e con E10; un numero solo avrebbe nascosto quale contatore | nessuno |
+| 32 | la copia scratchpad di `replace_unique.py` ha una funzione `long()` che aggiunge `\\?\` ai percorsi; il testo dell'aiutante nel piano non cambia | lo scratchpad di questa sessione supera MAX_PATH e Python non apriva i file; è un attrezzo, non un artefatto | nessuno |
+| 33 | il consiglio sul guscio: **A**, per la regola del Passo 7 letta contro i numeri (pari dove conta; Q4 col trucco e Q2 su Linux contro Tauri; Q3 rifiutata in entrambi); il proprietario: «A» | D15 e ADR-0029 | nessuno: è sua |
+| 34 | i gusci chiusi dal coordinatore con `Stop-Process` quando il proprietario non li ha chiusi dalla finestra | le corse successive volevano processi puliti | nessuno |
+
+#### Che cosa il revisore ha trovato, e dove è finito
+
+| Compito | Rilievo | Dove |
+|---|---|---|
+| 7 | **Approvato con rilievi** — revisore `sonnet` in sola lettura, `task-7-review-report.md`, ~24 min e ~250k token: le sonde del Passo 10 tutte attese, `GATE GREEN` e check-docs `OK` rifatti con un log datato (`gate-review-task7-1913.log`), i numeri di M4, M5 e O1 **riconciliati cifra per cifra** coi sei CSV nuovi, le sequenze di `cpu_pct` comprese, le quattro caselle del criterio di chiusura soddisfatte | — |
+| 7 | **Important**: la riga della barra della mossa 4 citava `move 4 / Q3: popout OPENED for stato`, che non sta in nessun file di prova — sta solo nelle parole del proprietario in chat | corretto in `a22fde3`: la colonna della barra cita solo `for permessi`, verificata nel file della console; la finestra su Stato resta nelle sue parole, con la nota che l'ha riferita in chat; le sue frasi in chat sono ora appese in coda a `console-browser-mosse-2026-09-10.txt` (scratchpad e `$HOME/sp8-measure/`), che è la fonte scritta |
+| 7 | **Minor**: quattro aggiunte di prosa oltre le tre eccezioni dichiarate al modello del Passo 8 — l'intestazione delle mosse col browser e l'URL, la nota sulla risposta unica nella riga 1, la spiegazione del pallino e dei bottoni nella riga 8, la lettura dei numeri nella riga della decisione — tutte esatte nel merito | **accettato, non tolto** (decisione del coordinatore): ognuna porta un fatto che il compito 8 userà, nessuna una cifra nuova; il gotcha #76 vale per la prosa che non dice nulla |
+| 7 | dichiarato non verificabile dal revisore: le citazioni del proprietario che non stavano in un file (venivano dalla chat) | chiuso con l'appendice delle sue frasi al file della console |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **una sessione aperta da un workspace scratch** dell'app desktop: il cwd del tool Bash **si azzera** dopo ogni chiamata (`cd "C:/Users/zagor/Desktop/harness" &&` in testa a tutto, `git -C` per i comandi singoli); `CLAUDE.md` e la memoria del progetto non si caricano da soli; lo **scratchpad supera MAX_PATH** (~246 caratteri): Git Bash lo regge, **Python e PowerShell no** — `FileNotFoundError` su un file che c'è, e `python <script>` non apre nemmeno lo script (`python - < script`). Il prefisso `\\?\` funziona solo **dentro** Python (`"\\\\?\\" + os.path.abspath(p)`): passato da Bash come argomento arriva storpiato in `\?\`, anche con `MSYS_NO_PATHCONV=1`.
+- **`| O1 |` e `| O5 |` esistono anche in SP-7**: un *Trova* preso col `grep` sul file intero non è unico; si estrae dentro la sezione con l'`awk` di SP-8 e si verifica `righe=1`.
+- **un blocco lungo con backtick passato a Bash come argomento** («unexpected EOF while looking for matching backtick») non esegue nulla: i testi lunghi si scrivono con `Write` in un file e si appendono con `cat >>`; gli script Python con `Write` e `python - < file`.
+- **E12 colpisce anche dentro `powershell -Command`** (`Import-Csv "…\\$f"` → «accesso negato» a una cartella): la barra `/` prima della variabile.
+- **la console del renderer di un guscio installato si legge senza DevTools**: Electron con `--remote-debugging-port=<porta>`, Tauri con `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=<porta>` nell'ambiente; `cdp-popout.mjs` (in `$HOME/sp8-measure/`) è il modello — `Runtime.enable`, `Log.enable`, click e tasto via `Input.dispatch*`, la barra via `Runtime.evaluate`; il `process.exit` col WebSocket aperto stampa un'asserzione di libuv, innocua. Le corse di misura si fanno **senza** porta.
+- **una finestra si porta davanti da Bash** con `(New-Object -ComObject WScript.Shell).AppActivate(<pid>)` in PowerShell; per coprirla apposta, un secondo PowerShell nascosto che apre `notepad` massimizzato (`cover.ps1`); la finestra dell'app di chat copre il guscio mentre il proprietario scrive «fatto»: si riporta davanti **prima** di ogni corsa.
+- **il proprietario a fine giornata risponde «si a tutto» e incolla la console**: si accetta, si salva l'incollato in un file e si conta col `grep`; una tabella lunga in un messaggio gli è sfuggita («che tabella?»): si ripete, corta.
+- **i server avviati in background dal tool Bash** (relay, Vite) si fermano dai PID in ascolto (`Get-NetTCPConnection -LocalPort 7878,5173 -State Listen`) uccidendo l'albero; il task in background chiude con exit 127, atteso.
+- **il blocco dei pop-up del browser** rompe il ripristino di una disposizione con una finestra a parte al ricaricamento (nessun gesto dell'utente): la mossa 7 si misura su una disposizione senza finestre a parte, o si scrive che è il browser (O6).
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura o uno dopo.
+2. La lettura obbligatoria di `CLAUDE.md`; di questo piano la testa, i vincoli, la posizione, «Come si esegue», l'**errata E1–E14**,
+   il pre-controllo, le decisioni, la mappa dei file, questo diario; il **compito 8 per intero** solo al dispaccio, estratto per
+   intestazione (`awk '/^## Compito 8:/{f=1} /^## L.intestazione del compendio/{exit} f' <piano>`).
+3. **Prima del compito 8**, il suo pre-controllo contro i file di adesso: il `grep` delle tredici case di P-19 rilanciato (il compendio
+   e la roadmap sono cambiati oggi); le righe `⏭️` del compendio (`3`); il margine del compendio (vincolo 11) e l'intestazione corta
+   (D16); l'`awk` delle tabelle spezzate come baseline (rilievo 12 della terza chiusura); ⚠️ i modelli di ADR-0029 e dei richiami che
+   nominano **Q3 e Q4** riletti contro l'esito vero — Q3 `REFUSED` in **entrambi** con le cause (O7, E14), Q4 `auto` per Electron e
+   `pointer` per Tauri, M4 sopra soglia su entrambi anche con la chat nascosta, O1 misurato in parte — e la decisione **A, Electron**
+   con le parole del proprietario («A»); `grep -c '<[^ ]'` sui modelli prima di dettarli (E13); nessuna variabile dopo `\\` (E12); la
+   sonda della Definizione di «fatto» delimitata (rilievo 3 della terza chiusura). Poi `superpowers:subagent-driven-development` come
+   per i compiti 1–6: un implementatore `sonnet` fresco col dispaccio in un file, il revisore che rilancia ogni comando e rilegge
+   ADR-0029 **contro 0027, 0030 e 0033** (gotcha #59); la disinstallazione delle app e la cancellazione di `$HOME/sp8-measure/`
+   **dopo** la revisione del compito 8, che può volerne rileggere i CSV e le prove.
+4. Il compito 8 porta a `HANDOFF.md` i gotcha di questo diario e delle chiusure quarta, quinta e sesta; alla §2 della stella polare il
+   richiamo su `dockview` (CSS, E2) e sul contratto di `gui-ipc` (decisione 10); alla §4 quello di E1; e chiude il puntatore della §6
+   del compendio.
+5. Alla chiusura di ogni sessione: questo diario, la memoria dell'agente, `session-handoff`.
+
 ### La sesta chiusura — 2026-09-10: il rimedio di E9/E10 ESEGUITO e il compito 6 ESEGUITO e revisionato, l'errata E11–E13 scritta — si riprende dal compito 7, col proprietario allo schermo
 
 ⛔ **DA SAPERE SUBITO.** Niente è a metà nel repository: albero pulito, nessuno stash, nessuna operazione git in corso, nessun

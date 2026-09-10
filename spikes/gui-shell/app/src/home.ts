@@ -241,6 +241,7 @@ function onKey(e: KeyboardEvent): void {
 export function buildHome(dock: HTMLElement, bar: HTMLElement): DockviewApi {
   api = createDockview(dock, {
     theme: themeAbyss,
+    defaultTabComponent: 'bigtab',
     dndStrategy: currentDnd(),
     floatingGroupBounds: 'boundedWithinViewport',
     popoutUrl: 'popout.html',

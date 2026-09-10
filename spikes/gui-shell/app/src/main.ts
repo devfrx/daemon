@@ -1,3 +1,4 @@
+import 'dockview/dist/styles/dockview.css';
 import './style.css';
 import { buildHome, log } from './home';
 

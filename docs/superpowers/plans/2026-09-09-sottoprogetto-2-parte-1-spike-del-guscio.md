@@ -136,7 +136,7 @@ echo $(( $(grep -oE '^ceiling=[0-9]+' scripts/check-docs.sh | cut -d= -f2) - $(w
 contesto saturo dopo il compito 5; la seconda ha scritto i compiti **6, 7 e 8** e «Dopo il compito 8»; la terza ha fatto la
 revisione del piano intero — copertura dei disegni, segnaposto, nomi fra i compiti, ogni *Trova* rilanciato — coi rimedi
 scritti **nei compiti** (la tabella nella sezione *«Come si riprende»*, terza chiusura) e i tre spostamenti di stato.
-✅ **In esecuzione dal 2026-09-10: i compiti 1 e 2 sono CHIUSI** — cinque commit, l'errata E1–E5 — e ⛔ **si riprende dal compito 3 in una sessione NUOVA**, un subagente fresco per compito («Come si riprende», la quarta chiusura). Il pre-controllo delle quattro
+✅ **In esecuzione dal 2026-09-10: i compiti 1–5 sono CHIUSI** — otto commit di compito in due sessioni, l'errata E1–E10 (E9 ed E10 scritte alla quinta chiusura, col rimedio da eseguire) — e ⛔ **si riprende dal commit d'errata E9/E10 e poi dal compito 6, in una sessione NUOVA**, un subagente fresco per compito («Come si riprende», la quinta chiusura). Il pre-controllo delle quattro
 domande sta nella sezione *«Il pre-controllo del piano»* qui sotto: P-1…P-18 sui compiti 1–5, P-19…P-25 sui compiti 6–8.
 
 | # | Compito | Commit | Stato |
@@ -196,6 +196,8 @@ non ha potuto misurare senza eseguire — il permesso `core:default` di Tauri (P
 | **E6** | **P-9, e il compito 4, Passo 1 — l'emettitore di `spikes/gui-ipc` NON risolve `interprocess` 2.4.4 «quel giorno»: un `Cargo.lock` ignorato da git non è un `Cargo.lock` assente.** Su questa macchina il lockfile della build del 2026-08-06 esiste su disco e `cargo build --release` lo rispetta: risolve **2.4.3** (`grep -A1 'name = "interprocess"' spikes/gui-ipc/Cargo.lock`, 2026-09-10). Misurato dall'implementatore del compito 4. Nessun rimedio: i due capi della pipe usano lo stesso nome `\\.\pipe\gui-ipc-spike` in entrambe le versioni, il guscio Tauri risolve la 2.4.4 col proprio lockfile nuovo, e l'esito del compito 6 scrive la versione **letta**, non quella attesa (gotcha #57: una previsione citata come misura) |
 | **E7** | **Compito 4, Passo 5 — `npm install` NON scarica più il binario di Electron: `electron@44.3.0` non ha uno script `postinstall`** (il `package.json` del pacchetto porta solo `bin`), e il suo `index.js` lo scarica **alla prima `require('electron')`** (`downloadElectron()` quando manca `path.txt`). Misurato il 2026-09-10 dall'implementatore del compito 4: `npm install` in 15 s senza `dist/`; `node -e "require('electron')"` → `Downloading Electron binary...` e `dist/electron.exe` (246 070 272 byte). **Correzione:** il primo comando del Passo 5 guadagna `node -e "require('electron')"` fra `npm install` e `npm run sync`; nessun file dettato cambia |
 | **E8** | **Compito 4, Passo 5 — `npm run dist` è ROSSO due volte sul testo dettato, con lo stesso `EBUSY: resource busy or locked, open '…\out\win-unpacked\sp8-electron.exe'` in `editWindowsResources` (`app-builder-lib/src/util/resEdit.ts:50`, da `WinPackager.signAndEditResources`), subito dopo la riga `updating asar integrity executable resource`, che scrive lo stesso eseguibile.** Misurato il 2026-09-10 dall'implementatore del compito 4: nessun processo nostro tiene il file, un'apertura esclusiva riesce un istante dopo il fallimento, la protezione in tempo reale di Defender è attiva — un lock transitorio sul PE appena scritto, non un difetto dei file dettati; il secondo tentativo identico esclude il ripiego «riprova». **Correzione (decisione del coordinatore):** in `electron/package.json` la riga `"win": { "target": "nsis" },` diventa `"win": { "target": "nsis", "signAndEditExecutable": false },` — `electron-builder` 26.15.3 salta la riscrittura delle risorse e la firma (`app-builder-lib/out/winPackager.js`, riga 240: «executable resource editing and code signing skipped»), che nessuna misura di SP-8 legge. **Costo:** l'eseguibile tiene l'icona e le stringhe di versione di Electron (Task Manager lo descrive «Electron»; `Get-Process sp8-electron` e `tree.ps1` leggono il nome del file, non la descrizione). **L'alternativa che le tiene** — un'esclusione di Defender su `spikes/gui-shell/electron/out/` — è un'impostazione di sicurezza della macchina: **del proprietario, registrata e non presa** |
+| **E9** | **Vincolo 16, la riga «La macchina» del protocollo congelato, e P-9 — «la GPU è quella di ADR-0002» era una PREVISIONE, e la misura la smentisce:** `Get-CimInstance Win32_VideoController` il 2026-09-10 rende `Intel(R) UHD Graphics` e `NVIDIA GeForce RTX 4060 Laptop GPU` — la macchina delle misure è il portatile con l'`i7-14700HX`, non quella della RTX 5080 di ADR-0002 (il proprietario lavora da più macchine); e il guscio ottiene WebGPU sull'**integrata** (`api=WebGPU:intel/gen-12lp`, misurato dal revisore del compito 3 nel browser e dalla corsa di prova del compito 4). Trovata dal revisore del compito 4 (`vram_mb max = 0`), verificata dal coordinatore. **Correzione:** l'esito del compito 6 scrive le GPU **lette** e l'adattatore di `api=`; la riga «La macchina» del protocollo riceve il richiamo datato (vincolo 7: il metro non cambia, cambia la macchina dichiarata); il confronto fra i gusci **regge** — stessa macchina, stesso adattatore — mentre i numeri assoluti di M3 e M5 **non sono** quelli della RTX 5080, e ADR-0029 al compito 8 lo dice (gotcha #57: una previsione citata come misura). Costo se sbagliato: nessuno, è una lettura |
+| **E10** | **Compito 4 (`tree.ps1`) e la riga M5 del protocollo congelato — `Dedicated Usage` è ZERO per costruzione su una GPU integrata, e su questa macchina la webview ci gira (E9): M5 misurava nulla.** Misurato il 2026-09-10 dal revisore del compito 4 in due corse (`vram_mb max 0` a riposo e sotto flusso, col contatore e il filtro `^pid_(\d+)_` che funzionano: 48 istanze, altri processi fino a 7,6 GB) e dal coordinatore (`Get-Counter`: su questa macchina i valori sopra zero sono `Shared Usage`). Il compito 6 dava per indiziato il filtro (P-9): non era lui. **Correzione (decisione del coordinatore, modifica al metro dichiarata):** `tree.ps1` legge **entrambi** i contatori — `Dedicated Usage` e `Shared Usage` — sui PID dell'albero e riporta due colonne, `vram_mb` (dedicata, com'era) e `vram_shared_mb`; la riga M5 del protocollo riceve il richiamo datato; l'esito del compito 6 riporta **entrambe** le letture nella riga M5. **Costo:** M5 su questa macchina è la memoria condivisa dell'integrata, un **proxy** della VRAM dedicata della macchina di ADR-0002; il confronto fra i gusci regge (stessa GPU per entrambi). **Registrato per il proprietario, e non preso:** forzare i due gusci sulla RTX 4060 con la preferenza grafica di Windows («prestazioni elevate», impostazione di sistema) e/o rimisurare sulla macchina con la RTX 5080 — entrambe rendono `Dedicated Usage` significativo e non escludono questa correzione |
 
 ---
 
@@ -3156,6 +3158,93 @@ piano; il compito 7-bis esiste solo su un no all'insieme delle mosse (D12); la m
 in ADR-0029; X-1 e X-3 sono compiti della parte 2 (D13).
 
 ## Come si riprende — il diario di questo piano, coi comandi
+
+### La quinta chiusura — 2026-09-10: i compiti 3, 4 e 5 ESEGUITI, l'errata E6–E10 scritta, il rimedio di E9/E10 pronto e NON eseguito — si riprende dal commit d'errata E9/E10, poi dal compito 6
+
+⛔ **DA SAPERE SUBITO.** Niente è a metà nel repository: albero pulito, nessuno stash, nessuna operazione git in corso,
+nessun server acceso, nessun processo dei gusci vivo, nessun codice di prodotto toccato, **le due app NON sono installate**
+(le installa il compito 6). Il proprietario ha chiuso con `session-handoff` («appena siamo pronti al task 6 lo faremo nella
+prossima sessione») a compito 5 chiuso. Tre cose in cima, sue: (1) ⏳ **la decisione su M5** — la macchina delle misure è
+un portatile con due GPU e i gusci vanno sull'integrata, dove `Dedicated Usage` è zero (E9, E10): **A**, consigliata e
+già scritta come rimedio di E10 — `tree.ps1` legge anche `Shared Usage` e riporta due colonne, due richiami datati nel
+protocollo — oppure **B**, sua: la preferenza grafica di Windows «prestazioni elevate» per `sp8-electron.exe` e
+`sp8-tauri.exe`, o le misure sulla macchina con la RTX 5080; A e B non si escludono, e l'esito scrive comunque le GPU
+lette; (2) il commit `5dc9c6f` porta ancora il trailer `Co-Authored-By` (quarta chiusura); (3) **P3 non passerà per
+nessuno dei due gusci** con la scena `three` a ~200 fps nella Home (`cpu_pct max` 184 % Electron, 213 % Tauri sotto
+flusso, ~90 % a riposo con la sola scena): non è un difetto, è ciò che O2 e la CPU con la chat nascosta del compito 7
+esistono per leggere — da sapere **prima** di leggere l'esito.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto |
+| I commit di questa sessione | `git log --oneline 33911fa..HEAD` — **tre** più questo: `62429bc` (compito 3), `8fc9696` (compito 4, col giro di correzione E8 dentro), `d5eb0b8` (compito 5), poi la chiusura |
+| Codice di prodotto, cancello, CI, gli spike vecchi | **non toccati**: `git diff --stat 5ad4634..HEAD -- crates/ scripts/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml spikes/gesti/ spikes/gui-ipc/` non rende nulla |
+| La posizione e l'errata | i compiti **1–5** a `✅ 2026-09-10`; l'errata **E1–E10**: E6–E8 dal compito 4, **E9 ed E10 scritte a questa chiusura col rimedio NON eseguito** — `grep -c '^| \*\*E[0-9]*\*\* |' <piano>` → `10` |
+| Gli artefatti sul disco, ignorati da git, **su questa macchina** | `spikes/gui-shell/electron/out/sp8-electron Setup 0.0.0.exe` (111 565 262 byte) e `out/win-unpacked/`; `spikes/gui-shell/tauri/src-tauri/target/release/sp8-tauri.exe` e `bundle/nsis/sp8-tauri_0.0.0_x64-setup.exe` (2 162 513 byte); `spikes/gui-ipc/target/release/core.exe`; i `node_modules/` dei tre progetti. Su un'altra macchina si rifanno coi comandi del Passo 1 del compito 6 (più `node -e "require('electron')"` dopo `npm install`, E7) |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` prima di **ogni** commit (log datati nello scratchpad, letti dai revisori contro `git log -1 --format=%ci`) e alla chiusura; `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | i file dell'app, dei gusci, degli script, il protocollo e il piano **LF** (`tr -cd '\r' < <file> \| wc -c` → `0`); `.gitignore` (55 righe), roadmap, compendio e `spikes/RISULTATI.md` CRLF con CR = righe |
+| Margine del compendio | il comando del vincolo 11: `10232` prima del richiamo di questa chiusura; le righe `⏭️` restano **tre** |
+| Il registro di esecuzione | `.superpowers/sdd/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio/progress.md` su **questa** macchina, ignorato da git, coi brief, i dispacci, i rapporti e i pacchetti dei compiti 1–5, e i dispacci **pronti**: `task-6pre-dispatch.md` (il rimedio di E9/E10: sei sostituzioni in `tree.ps1`, due richiami nel protocollo, una corsa di prova), `e9e10-rows.txt`, `task-6-brief.md`. Su un'altra macchina non ci sono, e **questo diario più le voci E9/E10 bastano** a riscriverli |
+
+#### Le decisioni prese eseguendo, nell'ordine (seguono le nove della quarta chiusura)
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 10 | compito 3: le chiavi italiane di `Wire` (`canale`, `emesso_micros`, `carico`, `Token`/`Stato`/`Metriche`) **restano**, contro il rilievo Important «plan-mandated» del revisore | sono le chiavi JSON dell'emettitore di `spikes/gui-ipc`, uno spike riusato com'è e fuori mappa; chi deserializza nomina le chiavi del produttore; uno strato di traduzione in uno spike è YAGNI; `Wire` muore con lo spike | sette identificatori italiani in un file che non sale nel prodotto |
+| 11 | compito 3: il ⚠️ del revisore sugli fps (`fps=1 min=0`) **non è una lacuna**: il pannello del browser tiene la pagina `hidden` e sospende `requestAnimationFrame`; gli fps si provano nel guscio vero | prova isolata del revisore (0 callback in 3 s); i cubi si muovono fra due screenshot | nessuno: la corsa del compito 4 li ha misurati (197–212) |
+| 12 | **E6**: `interprocess` 2.4.3 nell'emettitore (lockfile di agosto su disco) resta; l'esito scrive la versione letta | ignorato ≠ assente; i due capi usano lo stesso nome della pipe | nessuno |
+| 13 | **E7**: `node -e "require('electron')"` dopo `npm install` (Electron 44 senza `postinstall`) | misurato: `npm install` in 15 s senza `dist/` | nessuno |
+| 14 | **E8**: `"signAndEditExecutable": false` in `electron/package.json` contro l'`EBUSY` di `editWindowsResources` (Defender) | l'opzione salta il passo che fallisce (winPackager.js:240); nessuna misura legge le risorse dell'eseguibile; due corse identiche escludono «riprova»; l'esclusione di Defender è un'impostazione di sicurezza, del proprietario | un eseguibile descritto «Electron» in Task Manager |
+| 15 | **E9, E10**: le voci scritte a questa chiusura; il rimedio — A — pronto nel dispaccio e **non eseguito**, perché il proprietario ha chiuso senza scegliere fra A e B e la prossima sessione parte da lì | «una divergenza è una voce d'errata prima di essere un rimedio»; una modifica al metro del protocollo congelato si dichiara (vincolo 7), e il proprietario può ancora aggiungere B | una rimisura del compito 6 |
+| 16 | i giri di correzione e i compiti sono implementatori **freschi** `sonnet` col rapporto come memoria (`SendMessage` assente, confermato con `ToolSearch`); un subagente in pausa su un comando in background **riparte da solo** | misurato due volte sul compito 5 (`tauri build`, il cancello) | nessuno |
+
+#### Che cosa i revisori hanno trovato, e dove è finito
+
+| Compito | Rilievo | Dove |
+|---|---|---|
+| 3 | Important plan-mandated: le chiavi italiane di `Wire` | decisione 10; **da portare al compito 8** nel richiamo alla §2 della stella polare (il contratto dell'emettitore è quello di `gui-ipc`) |
+| 3 | ⚠️ fps non misurabili nel pannello del browser | decisione 11; misurati al compito 4 |
+| 3 | Minor: `three` 0.185.1 senza `.d.ts` e nessun controllo dei tipi (P-8) | registro SDD, revisione finale |
+| 3 | Minor: `p2mean` leggermente **negativo** col generatore locale (`Date.now()` in ms troncati contro `emesso_micros` sub-ms) | **da dire nell'esito del compito 6** accanto a P2: con l'emettitore vero il ritardo è positivo (5–10 ms medi misurati), con un errore di troncamento fino a 1 ms |
+| 4 | Important: `vram_mb max = 0` in due corse — WebGPU sull'integrata | E9, E10 |
+| 4 | il primo implementatore `BLOCKED` su `npm run dist` (`EBUSY`) | E8, giro di correzione 1, commit `8fc9696` |
+| 5 | Approvato senza rilievi: sette file byte-identici al brief, tre corse di prova coerenti (`msgs=2000 lost=0 holes=0 src=tauri`, fps 188–215), `procs=7` costante — WebView2 dentro l'albero di Tauri —, titolo nativo dinamico visto nello screenshot e nel processo nello stesso istante, `gen/schemas` con `core:window:allow-set-title`; le tre note dell'implementatore (icone iOS/Android, avviso autocrlf, `attached to pid`) verificate innocue |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- **un subagente con un comando lungo in background si mette in pausa** e la notifica arriva come «finished» con un testo del tipo «waiting for the notification»: **riparte da solo** alla fine del comando — non ridispacciare; un'attesa in background sul log (`until grep -q '^exit=' <log>; do sleep 10; done`) sveglia il coordinatore.
+- **`SendMessage` non esiste** (ToolSearch lo conferma): il giro di correzione è un implementatore fresco che legge il rapporto, appeso allo stesso file.
+- **`electron@44.3.0` non scarica il binario con `npm install`** (nessun `postinstall`): `node -e "require('electron')"` prima di lanciare `electron.exe` (E7).
+- **`electron-builder` 26.15.3 va in `EBUSY` sull'eseguibile appena scritto** quando riscrive le risorse dopo l'integrità asar (Defender): `signAndEditExecutable: false` (E8); l'esclusione di Defender è del proprietario.
+- **per guardare una finestra nativa** da un revisore: PowerShell `Add-Type -AssemblyName System.Windows.Forms,System.Drawing` e `CopyFromScreen` su `PrimaryScreen.Bounds`, PNG nello scratchpad, poi lo strumento Read; il titolo nello screenshot deve coincidere con `last title:` di `tree.ps1`.
+- **il pannello del browser tiene la pagina `document.hidden=true`**: `requestAnimationFrame` sospeso, fps 0/1 — gli fps si misurano nei gusci.
+- **questa macchina è un portatile con due GPU** (Intel UHD + RTX 4060 Laptop) e WebGPU va sull'integrata: `Dedicated Usage` è 0 per costruzione, i valori stanno in `Shared Usage` (E9, E10). `Win32_VideoController` prima di scrivere «la GPU» in un protocollo.
+- **`cpu_pct max` sotto flusso è ~200 % di un core per entrambi i gusci**: la scena a ~200 fps domina; P3 si legge contro O2 e la chat nascosta, non contro il picco nudo.
+- **`tauri icon` genera anche iOS e Android** (52 file): dentro `icons/*` della mappa, si committano. **`tauri build` dura ~6 minuti** la prima volta: in background con il log su file, e si aspetta la notifica.
+- **in Tauri il titolo porta `ua=Chrome/152.0.0.0,Edg/152.0.0.0`** (WebView2 maschera la versione): Q2 si legge dal valore `pv` del registro, come il protocollo dice.
+- **`interprocess` 2.4.3 nell'emettitore**: il `Cargo.lock` ignorato esiste su disco (E6); il guscio Tauri ha la 2.4.4 e `wry` 0.55.1 (non la 0.57.0 del registro: la tira `tauri` 2.11.5).
+- **il pacchetto di revisione con un lockfile pesa ~150 KB** e `sonnet` lo regge se il dispaccio dice «scorrilo, non giudicarlo riga per riga».
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura o uno dopo.
+2. La lettura obbligatoria di `CLAUDE.md`; di questo piano la testa, i vincoli, la posizione, «Come si esegue», l'**errata E1–E10**,
+   il pre-controllo, le decisioni, la mappa dei file, questo diario; il compito 6 per intero solo al dispaccio, estratto per intestazione.
+3. **La decisione su M5 col proprietario, A/B** (in cima a questo diario). Con A, o senza risposta: **il commit d'errata E9/E10** —
+   su questa macchina col dispaccio pronto `task-6pre-dispatch.md` (implementatore `sonnet`, poi una revisione ristretta che rilancia la
+   corsa di prova e legge `vram_shared_mb max` sopra zero); altrove lo si riscrive dalle voci E9 ed E10: sei sostituzioni in
+   `tree.ps1` (il commento, l'inizializzazione `$vramShared = 0`, il blocco del contatore con i due `Get-Counter` e i due filtri
+   sul `Path`, la riga del campione `vram_shared_mb`, il `Format-Table`, la sintesi con `{7}`), il richiamo E9 sotto «La macchina» e
+   il richiamo E10 sotto la tabella M1–M5 del protocollo, messaggio `guscio(compito 6, errata E9 ed E10): …`. Con B: il proprietario
+   imposta la preferenza grafica **prima** delle misure, e A resta consigliata comunque (le due colonne dicono quale GPU ha pagato).
+4. **Il compito 6**, col pre-controllo rifatto contro il codice di adesso (`task-6-brief.md` è già estratto per intestazione): i tre
+   eseguibili esistono su questa macchina; l'esito scrive le GPU lette e l'adattatore di `api=` (E9), entrambe le colonne di M5 (E10),
+   la nota su `p2mean` (decisione della revisione del 3), la versione di `interprocess` letta nei due lockfile (E6); l'`awk` di P-9 sul
+   filtro delle istanze **non è più l'indiziato** di un `vram_mb` a zero. Poi il compito 7 col proprietario, poi l'8 — che porta a
+   `HANDOFF.md` i gotcha di questo diario e della quarta chiusura, alla §2 della stella polare il richiamo su `dockview` (CSS) e sul
+   contratto di `gui-ipc` (decisione 10), alla §4 quello di E1.
+5. Alla chiusura di ogni sessione: questo diario, la memoria dell'agente, `session-handoff`.
+
 
 ### La quarta chiusura — 2026-09-10: i compiti 1 e 2 ESEGUITI, il compito 3 pre-controllato — si riprende dal compito 3
 

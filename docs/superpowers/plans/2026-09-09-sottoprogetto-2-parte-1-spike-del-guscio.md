@@ -136,7 +136,7 @@ echo $(( $(grep -oE '^ceiling=[0-9]+' scripts/check-docs.sh | cut -d= -f2) - $(w
 contesto saturo dopo il compito 5; la seconda ha scritto i compiti **6, 7 e 8** e «Dopo il compito 8»; la terza ha fatto la
 revisione del piano intero — copertura dei disegni, segnaposto, nomi fra i compiti, ogni *Trova* rilanciato — coi rimedi
 scritti **nei compiti** (la tabella nella sezione *«Come si riprende»*, terza chiusura) e i tre spostamenti di stato.
-✅ **In esecuzione dal 2026-09-10: i compiti 1–5 sono CHIUSI** — nove commit di compito in tre sessioni, l'errata E1–E10 (E9 ed E10 scritte alla quinta chiusura, il rimedio **eseguito** il 2026-09-10 come commit d'errata a sé: la via A, scelta su delega del proprietario ai criteri di `decision-principles`; la via B resta sua, registrata) — e ⛔ **si riprende dal compito 6**, un subagente fresco per compito («Come si riprende», la quinta chiusura). Il pre-controllo delle quattro
+✅ **In esecuzione dal 2026-09-10: i compiti 1–6 sono CHIUSI** — dieci commit di compito in tre sessioni, l'errata E1–E13 (E11 dal compito 6, E12 ed E13 alla sesta chiusura: la cadenza del campionatore, il comando `\\$f`, i segnaposto nelle celle «Comando» — nessuna con un rimedio al codice; il rimedio di E9/E10 eseguito il 2026-09-10 come commit d'errata a sé, la via A su delega del proprietario) — e ⛔ **si riprende dal compito 7, col proprietario allo schermo, in una sessione NUOVA**: lo esegue il coordinatore, non un subagente (regola 7 di «Come si esegue»; «Come si riprende», la sesta chiusura). Il pre-controllo delle quattro
 domande sta nella sezione *«Il pre-controllo del piano»* qui sotto: P-1…P-18 sui compiti 1–5, P-19…P-25 sui compiti 6–8.
 
 | # | Compito | Commit | Stato |
@@ -199,6 +199,8 @@ non ha potuto misurare senza eseguire — il permesso `core:default` di Tauri (P
 | **E9** | **Vincolo 16, la riga «La macchina» del protocollo congelato, e P-9 — «la GPU è quella di ADR-0002» era una PREVISIONE, e la misura la smentisce:** `Get-CimInstance Win32_VideoController` il 2026-09-10 rende `Intel(R) UHD Graphics` e `NVIDIA GeForce RTX 4060 Laptop GPU` — la macchina delle misure è il portatile con l'`i7-14700HX`, non quella della RTX 5080 di ADR-0002 (il proprietario lavora da più macchine); e il guscio ottiene WebGPU sull'**integrata** (`api=WebGPU:intel/gen-12lp`, misurato dal revisore del compito 3 nel browser e dalla corsa di prova del compito 4). Trovata dal revisore del compito 4 (`vram_mb max = 0`), verificata dal coordinatore. **Correzione:** l'esito del compito 6 scrive le GPU **lette** e l'adattatore di `api=`; la riga «La macchina» del protocollo riceve il richiamo datato (vincolo 7: il metro non cambia, cambia la macchina dichiarata); il confronto fra i gusci **regge** — stessa macchina, stesso adattatore — mentre i numeri assoluti di M3 e M5 **non sono** quelli della RTX 5080, e ADR-0029 al compito 8 lo dice (gotcha #57: una previsione citata come misura). Costo se sbagliato: nessuno, è una lettura |
 | **E10** | **Compito 4 (`tree.ps1`) e la riga M5 del protocollo congelato — `Dedicated Usage` è ZERO per costruzione su una GPU integrata, e su questa macchina la webview ci gira (E9): M5 misurava nulla.** Misurato il 2026-09-10 dal revisore del compito 4 in due corse (`vram_mb max 0` a riposo e sotto flusso, col contatore e il filtro `^pid_(\d+)_` che funzionano: 48 istanze, altri processi fino a 7,6 GB) e dal coordinatore (`Get-Counter`: su questa macchina i valori sopra zero sono `Shared Usage`). Il compito 6 dava per indiziato il filtro (P-9): non era lui. **Correzione (decisione del coordinatore, modifica al metro dichiarata):** `tree.ps1` legge **entrambi** i contatori — `Dedicated Usage` e `Shared Usage` — sui PID dell'albero e riporta due colonne, `vram_mb` (dedicata, com'era) e `vram_shared_mb`; la riga M5 del protocollo riceve il richiamo datato; l'esito del compito 6 riporta **entrambe** le letture nella riga M5. **Costo:** M5 su questa macchina è la memoria condivisa dell'integrata, un **proxy** della VRAM dedicata della macchina di ADR-0002; il confronto fra i gusci regge (stessa GPU per entrambi). **Registrato per il proprietario, e non preso:** forzare i due gusci sulla RTX 4060 con la preferenza grafica di Windows («prestazioni elevate», impostazione di sistema) e/o rimisurare sulla macchina con la RTX 5080 — entrambe rendono `Dedicated Usage` significativo e non escludono questa correzione |
 | **E11** | **D7 e il compito 4 (`tree.ps1`) — «campiona ogni 250 ms» è una cadenza DICHIARATA, e la misura dice circa 2 s per campione:** nelle corse di prova dei compiti 4 e 5 (`-Seconds 30 -EmitterAt 8`) e in quella del commit d'errata E9/E10 (`5b5a883`) le righe di sintesi dicono `rest: samples 3` in 8 s e `stream: samples 12` o `13` in 22 s — un giro del ciclo paga `Get-CimInstance Win32_Process` per l'albero e `Get-Counter` per la VRAM, e `-IntervalMs 250` è solo l'attesa **fra** due giri. Trovata dal coordinatore il 2026-09-10 rileggendo le righe `samples` dei rapporti prima del compito 6; non dipende da E10 (le corse dei compiti 4 e 5, con un contatore solo, davano gli stessi conteggi). **Nessun rimedio allo script (decisione del coordinatore):** il confronto fra i gusci regge perché lo script è lo stesso per entrambi; le medie e i picchi di M1 e M4 poggiano su circa quindici campioni per fase in una corsa da 60 s, e l'esito lo dichiara — le righe `rest:` e `stream:` copiate intere nelle Evidenze portano `samples`, e O5 lo dice; il verdetto di P3 non dipende dalla cadenza, perché il picco misurato nelle corse di prova (184–235 % di un core) è più di sette volte la soglia. **Costo:** un picco più breve di due secondi può cadere fra due campioni, per entrambi i gusci allo stesso modo |
+| **E12** | **Compito 6, Passo 4 — il comando dei titoli a riposo e dei `procs`, `Import-Csv '$CSV\\$f.csv'`, NON espande `$f` nel tool Bash di questa macchina:** i due backslash arrivano alla shell come uno solo seguito da `$f`, che per bash è un dollaro letterale, e PowerShell cerca un file `…\$f.csv` che non esiste. Misurato dall'implementatore del compito 6 il 2026-09-10 («file non trovato» sui quattro CSV che c'erano). **Correzione:** `"$CSV/$f.csv"` — la barra come secondo separatore, che Windows e .NET accettano — nei due `for` dei titoli e dei `procs`; il comando delle corse non ne soffriva, perché lì la variabile `$i` segue testo letterale e non un backslash. La regola vale per ogni comando futuro di questo piano: **mai una variabile subito dopo `\\`** dentro un argomento a PowerShell; o la barra, o il percorso intero in una variabile sola |
+| **E13** | **Compito 6, Passi 6 e 7 — il modello della sezione SP-8 contraddice la propria sonda:** le celle «Comando» delle Evidenze portano `<sp8-electron.exe installato>`, `<core.exe>` e `<fuori dal repository>` come segnaposto descrittivi, e la sonda del Passo 7 (`grep -c '<[^ ]'` → `0`) li conta come slot non riempiti. Trovato dall'implementatore del compito 6 il 2026-09-10 alla prima sonda sulla sezione compilata. **Correzione, accettata dal coordinatore:** le celle «Comando» portano il comando **letterale** coi percorsi risolti (la cartella installata, `core.exe` del repository, la cartella dei CSV). I modelli dei compiti 7 e 8 si leggono con la stessa regola prima di dettarli: nessun `<…>` descrittivo in una cella di un file che la sonda misura, nemmeno dentro un comando — un segnaposto è uno slot per il `grep`, qualunque cosa voglia dire per chi legge |
 
 ---
 
@@ -3159,6 +3161,93 @@ piano; il compito 7-bis esiste solo su un no all'insieme delle mosse (D12); la m
 in ADR-0029; X-1 e X-3 sono compiti della parte 2 (D13).
 
 ## Come si riprende — il diario di questo piano, coi comandi
+
+### La sesta chiusura — 2026-09-10: il rimedio di E9/E10 ESEGUITO e il compito 6 ESEGUITO e revisionato, l'errata E11–E13 scritta — si riprende dal compito 7, col proprietario allo schermo
+
+⛔ **DA SAPERE SUBITO.** Niente è a metà nel repository: albero pulito, nessuno stash, nessuna operazione git in corso, nessun
+server acceso, nessun processo dei gusci vivo, nessun codice di prodotto toccato. ⚠️ **Le due app SONO INSTALLATE** (D19) —
+`%LOCALAPPDATA%\Programs\sp8-electron` e `%LOCALAPPDATA%\sp8-tauri`, più `%LOCALAPPDATA%\sp8-electron-updater`, la cache
+dell'auto-updater di `electron-builder`, non chiesta e registrata nell'evidenza M2 — e le disinstalla il **compito 8**; i quattro
+CSV delle corse stanno in `$HOME/sp8-measure/` (D21). Il proprietario ha chiuso con `session-handoff` («chiudi con
+session-handoff ora») a compito 6 chiuso e revisionato, dopo aver scelto di **non** fare il compito 7 in questa sessione. Tre cose
+in cima: (1) **P3 non passa** per nessuno dei due gusci in nessuna delle quattro corse — `cpu_pct max` sotto flusso fra 196,8 % e
+225,3 % di un core contro la soglia del 25 % — ed è scritto `❌ non passa` nell'esito, da leggere contro **O2** (la scena `three` a
+~200 fps domina, ~90–110 % a riposo) e contro la CPU con la chat **nascosta** del compito 7, che esiste per questo — ⚠️ **ma una terza corsa di Electron, del revisore,
+ha dato 17,4 %** perché il renderer stava a ~0 % dai 20 s in poi col titolo ancora a ~235 fps (finestra coperta o in secondo piano:
+**dedotto**, si misura al compito 7): il richiamo in **O1** dell'esito, e la trappola qui sotto; (2) la
+**taglia della tessera 3D di Electron** (`scene=` nel titolo) **balla** fra corse e fasi — 446×318, 215×318, 99×318 — mentre in
+Tauri è fissa (100×349), a finestra fissa in entrambi: registrata in **O3**, causa **non misurata**; il revisore, nella sua corsa, ha letto `scene=99x318` stabile fra riposo e flusso, e nello screenshot della corsa Tauri la console dell'emettitore copriva la finestra del guscio, quindi la disposizione dei pannelli non è stata vista — da tenere
+davanti al compito 7 (M3 di Electron confronta fps a taglie diverse) e all'8 (ADR-0029 legge M3); (3) la decisione su **M5** è
+**presa**: la via A — `tree.ps1` legge anche `Shared Usage` — su delega del proprietario («decidi in base a
+`decision-principles`»), la via B (la preferenza grafica di Windows, o la macchina con la RTX 5080) resta sua e registrata nel
+richiamo E10 del protocollo; il commit `5dc9c6f` porta ancora il trailer `Co-Authored-By` (quarta chiusura).
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto |
+| I commit di questa sessione | `git log --oneline 939ef5d..HEAD` — **due** più questo: `5b5a883` (il commit d'errata E9/E10: `tree.ps1` con `vram_shared_mb`, due richiami nel protocollo congelato, la posizione), `063d45d` (compito 6: la sezione SP-8 in `spikes/RISULTATI.md`, la riga E11, la posizione), poi la chiusura |
+| Codice di prodotto, cancello, CI, gli spike vecchi | **non toccati**: `git diff --stat 5ad4634..HEAD -- crates/ scripts/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml spikes/gesti/ spikes/gui-ipc/` non rende nulla |
+| La posizione e l'errata | i compiti **1–6** a `✅ 2026-09-10`; l'errata **E1–E13**: E11 (la cadenza del campionatore) dal compito 6, **E12 ed E13 scritte a questa chiusura** (il comando `\\$f`, i segnaposto nelle celle «Comando») — `grep -c '^\| \*\*E[0-9]*\*\* \|' <piano>` → `13`; nessuna delle tre ha un rimedio al codice |
+| L'esito | la sezione **SP-8** di `spikes/RISULTATI.md`, prima di SP-7, con tre sottosezioni: M1–M5, P1–P2, i processi, Q1 e Q2 **piene**; `awk '/^## SP-8 /{s=1;next} s&&/^## /{s=0} s' spikes/RISULTATI.md \| grep -c '⏳'` → `7` (più l'intestazione: otto righe che il compito 7 consuma); `grep -c '<[^ ]'` sulla stessa sezione → `0` |
+| Le app installate e i CSV | `Get-ChildItem $env:LOCALAPPDATA\Programs -Directory -Filter 'sp8-*'` e `Get-ChildItem $env:LOCALAPPDATA -Directory -Filter 'sp8-*'` → le cartelle della riga M2; `ls "$HOME/sp8-measure"` → `electron-1.csv`, `electron-2.csv`, `tauri-1.csv`, `tauri-2.csv`, più i due CSV del revisore (`review-*.csv`) nello scratchpad, che muore con la sessione |
+| Gli artefatti sul disco, ignorati da git | quelli della quinta chiusura, invariati: i due installatori, `sp8-tauri.exe`, `core.exe`, i tre `node_modules/` |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` prima di **ogni** commit (log datati nello scratchpad, letti dai revisori contro `git log -1 --format=%ci`) e alla chiusura; `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | i file dell'app, dei gusci, degli script, il protocollo e il piano **LF** (`tr -cd '\r' < <file> \| wc -c` → `0`); `.gitignore`, roadmap, compendio e `spikes/RISULTATI.md` CRLF con CR = righe (`RISULTATI` a 428 dopo il compito 6) |
+| Margine del compendio | il comando del vincolo 11: `10137` prima del richiamo di questa chiusura; le righe `⏭️` restano **tre** |
+| Il registro di esecuzione | `.superpowers/sdd/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio/progress.md` su **questa** macchina, ignorato da git, coi dispacci e i rapporti di E9/E10 (`task-6pre-dispatch-s3.md`, `task-6pre-report.md`, `task-6pre-review-report.md`) e del compito 6 (`task-6-dispatch.md`, `task-6-report.md`, `task-6-review-report.md`), le righe d'errata dettate (`e11-row.txt`, `e12e13-rows.txt`). Su un'altra macchina non ci sono, e **questo diario più l'errata bastano** |
+
+#### Le decisioni prese eseguendo, nell'ordine (seguono le sedici della quinta chiusura)
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 17 | **M5: la via A**, su delega del proprietario ai cinque criteri; B registrata, non presa | A è misurata (i valori stanno in `Shared Usage`), coerente col rimedio già scritto in E10, dichiara il proxy nel protocollo e nell'ADR, ed è il minimo che fa misurare qualcosa; B è un'impostazione di sistema — vietata all'agente — e il suo effetto è dedotto | una rimisura del compito 6, se il proprietario volesse la dedicata |
+| 18 | un dispaccio scritto nella sessione precedente si **riscrive** (`task-6pre-dispatch-s3.md`), non si adatta a mano | HEAD, lo scratchpad (vuoto alla ripresa) e una sezione già eseguita dal commit di chiusura erano stantii; le quattro domande si ripassano sul testo nuovo | nessuno |
+| 19 | la sonda `grep -c … → 8` del dispaccio era **sbagliata** (7 righe, 9 occorrenze): corretta nel dispaccio di revisione, nessuna errata | il file riproduce T1–T6 alla lettera; l'implementatore ha registrato la divergenza invece di forzare il file, ed è il comportamento giusto | nessuno |
+| 20 | **E11**: nessun rimedio al campionatore di `tree.ps1` (~2 s per campione, non 250 ms) | lo script è lo stesso per i due gusci, il confronto regge; ~15 campioni per fase a 60 s; P3 non cambia verdetto (sette volte la soglia); O5 lo dichiara | un picco più breve di due secondi sfugge, per entrambi allo stesso modo |
+| 21 | **E12**: `/` come secondo separatore prima di una variabile nei comandi a PowerShell | `"$VAR\\$altra"` nel tool Bash non espande la seconda variabile; Windows e .NET accettano la barra | nessuno |
+| 22 | **E13**: le celle «Comando» delle Evidenze portano il comando **letterale** | il modello contraddiceva la propria sonda «zero slot»; i modelli dei compiti 7 e 8 si passano al `grep` prima di dettarli | nessuno |
+| 23 | il compito 7 **non** in questa sessione: scelta del proprietario («chiudi con session-handoff ora») | il 7 vuole lui allo schermo per ~40 minuti, con la telecamera | nessuno |
+
+#### Che cosa i revisori hanno trovato, e dove è finito
+
+| Compito | Rilievo | Dove |
+|---|---|---|
+| E9/E10 | Approvato con rilievi — Minor: `vram_shared_mb max` balla di **centinaia** di MB fra due corse dello stesso `sp8-tauri.exe` (618/600 riposo/flusso in una, 86/121 nell'altra); il commit riproduce T1–T6, R1–R2 e P1 alla lettera (diff automatico) | punto 1 del dispaccio del 6 (si scrivono entrambe le corse, non si sceglie); O1 dell'esito |
+| 6 | Approvato con rilievi — **Important**: una terza corsa di Electron del revisore ha dato `cpu_pct max 17,4 %` sotto flusso con `fps=235`, `msgs=2000`, `p2mean=0.44ms`: P3 passerebbe. Letta nel CSV dal coordinatore: `procs` 4 costante, CPU a ~0 % dagli ultimi 20 s del riposo fino alla fine — la stessa forma che sta dentro la corsa 2 ufficiale (25 s a ~0 % a riposo, la media 22,5 %). Quattro Minor: la sonda `^-[^-]` → 2 del dispaccio di revisione era sbagliata (1: la riga SP-7 ricompare ed è contesto per git), il conto grezzo delle barre dà falsi positivi sulle `\|` scappate, la cella M3 a riposo porta un solo `scene=` per guscio (il modello dettato), O2 diceva «già sopra il 25 %» per otto valori quando uno (22,5 %) è sotto | il richiamo datato in **O1** dell'esito e la frase di O2 corretta, in questo commit di chiusura e ri-rivisti in sola lettura; l'ipotesi — Chromium strozza il renderer di una finestra coperta e il titolo non lo rivela — è **dedotta** e si misura al compito 7; i Minor 1–3 nel registro, il 4 corretto |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **il renderer di Electron va a ~0 % di CPU quando la finestra è coperta o in secondo piano, e il titolo continua a dire ~235 fps**: letto nei CSV (la corsa del revisore dai 20 s alla fine; la corsa 2 ufficiale nei primi 25 s di riposo), `procs` 4 costante; Tauri mai. Dedotto, non misurato. Le corse si fanno con la finestra del guscio in primo piano e nulla sopra — la console dell'emettitore compare sopra: si sposta o si minimizza prima — e una corsa a finestra coperta si fa **apposta** al compito 7 per misurarlo.
+- **un dispaccio della sessione precedente è stantio alla ripresa**: HEAD, il percorso dello scratchpad (quello vecchio è **vuoto**: `replace_unique.py` si ricrea dal piano con `sed -n '43,78p'`), una sezione già eseguita dal commit di chiusura. Si riscrive e si ripassano le quattro domande.
+- **`grep -c` conta le RIGHE con almeno un'occorrenza, non le occorrenze**: un'attesa numerica di un dispaccio si misura sul testo `new` prima di dettarla.
+- ⛔ **nel tool Bash `"$VAR\\$altra"` NON espande la seconda variabile** (E12): la barra `/` prima di una variabile, o il percorso intero in una variabile sola.
+- **`Get-Process … -ErrorAction SilentlyContinue` senza corrispondenze rende `exit=1`** con output vuoto: è «nessun processo»; non si incatena con `&&`.
+- **un segnaposto descrittivo in una cella «Comando» è uno slot per la sonda** (E13): il modello di una sezione si passa a `grep -c '<[^ ]'` prima di dettarlo.
+- **`Shared Usage` balla di centinaia di MB fra corse** dello stesso eseguibile, e **il campionatore va a ~2 s per campione** (E11): due corse per guscio e O1/O5 esistono per questo.
+- **`python -c` con un percorso `/c/Users/...` fallisce** (Python su Windows vuole `C:\…`), e `'\'` dentro una stringa Python è un apice escapato: gli script di patch si scrivono in un file, con `os.path.join` e stringhe raw.
+- **`electron-builder` crea anche `%LOCALAPPDATA%\sp8-electron-updater`** all'installazione: il compito 8 la toglie con le app.
+- **`AskUserQuestion` a due opzioni con «Recommended»**: il proprietario ha risposto «decidi in base a decision-principles» (M5) e «chiudi con session-handoff ora» — la delega chiude la voce, non si ridomanda.
+- **i costi**: l'implementatore `sonnet` di E9/E10 ~10 min e ~130k token, il suo revisore ~9 min e ~130k; l'implementatore del compito 6 ~35 min e ~285k (quattro corse da 60 s, due installazioni, tre pagine web); il revisore del 6 ~17 min e ~200k (due corse da 60 s, uno screenshot, tre pagine).
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura o uno dopo.
+2. La lettura obbligatoria di `CLAUDE.md`; di questo piano la testa, i vincoli, la posizione, «Come si esegue», l'**errata E1–E13**,
+   il pre-controllo, le decisioni, la mappa dei file, questo diario; il **compito 7 per intero** al momento di eseguirlo — e lo esegue
+   il **coordinatore** col proprietario allo schermo, **non** un subagente (regola 7 di «Come si esegue»); ciò che ne esce lo rilegge
+   un revisore in sola lettura.
+3. **Prima del compito 7**, il suo pre-controllo contro il codice di adesso: i prerequisiti (`ls spikes/gesti/.venv/Scripts/python.exe spikes/gesti/hand_landmarker.task spikes/gesti/relay/target/release/sp7-relay.exe`,
+   una telecamera con `Get-PnpDevice -Class Camera -Status OK`, le due app installate, i quattro CSV); ogni comando del compito con
+   `\\$variabile` si corregge come dice E12; il modello delle righe che il 7 riempie si passa a `grep -c '<[^ ]'` come dice E13; la
+   taglia `scene=` di Electron si guarda nella finestra prima di fidarsi degli fps di M3; le sette righe `⏳` più l'intestazione si
+   consumano tutte, con le parole del proprietario così come sono. **E la misura dell'ipotesi di O1**, prima della CPU con la chat
+   nascosta: una corsa breve di Electron con la finestra **coperta apposta** da un'altra (`tree.ps1 -Seconds 30 -EmitterAt 8`) contro
+   una in primo piano — se la CPU cade a ~0 % e il titolo dice ancora ~235 fps, il richiamo in O1 passa da dedotto a **misurato**, e
+   il proprietario legge P3 sapendo che per Electron «finestra dietro» vuol dire «renderer fermo», non «costo basso».
+4. Poi il **compito 8** — che porta a `HANDOFF.md` i gotcha di questo diario e delle chiusure quarta e quinta, alla §2 della stella
+   polare il richiamo su `dockview` (CSS, E2) e sul contratto di `gui-ipc` (decisione 10), alla §4 quello di E1; disinstalla le due app
+   e `sp8-electron-updater`, cancella `$HOME/sp8-measure/`.
+5. Alla chiusura di ogni sessione: questo diario, la memoria dell'agente, `session-handoff`.
 
 ### La quinta chiusura — 2026-09-10: i compiti 3, 4 e 5 ESEGUITI, l'errata E6–E10 scritta, il rimedio di E9/E10 pronto e NON eseguito — si riprende dal commit d'errata E9/E10, poi dal compito 6
 

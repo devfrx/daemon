@@ -140,7 +140,10 @@ export function moveActive(dir: 'left' | 'right' | 'up' | 'down'): void {
   }
 }
 
-/** Move 7: save is a string; the comparison after a reload is a string equality -- a measure, not a judgement. */
+/** Move 7: save is dockview's own JSON. After a reload the page compares the CANONICAL form (object keys
+ * sorted) and names the first diverging path, and reports the raw string equality beside it -- a measure,
+ * not a judgement. Measured on 2026-09-10 with dockview-core 8.2.0: `panels` comes back in another key
+ * order after `fromJSON`, and a floating group grows by 2 px per round trip (errata E4 of the plan). */
 export function saveLayout(): void {
   const json = JSON.stringify(api.toJSON());
   localStorage.setItem(LAYOUT_KEY, json);
@@ -151,6 +154,38 @@ function firstDifference(a: string, b: string): number {
   const n = Math.min(a.length, b.length);
   for (let i = 0; i < n; i += 1) if (a[i] !== b[i]) return i;
   return n;
+}
+
+/** Sorts object keys recursively: key order is not layout. */
+function canonical(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value && typeof value === 'object') {
+    const source = value as Record<string, unknown>;
+    return Object.fromEntries(Object.keys(source).sort().map((k) => [k, canonical(source[k])]));
+  }
+  return value;
+}
+
+/** The first path where two canonical values differ, with both values -- or undefined when they are equal. */
+function firstDivergence(a: unknown, b: unknown, path = '$'): string | undefined {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return `${path}.length: ${a.length} -> ${b.length}`;
+    for (let i = 0; i < a.length; i += 1) {
+      const d = firstDivergence(a[i], b[i], `${path}[${i}]`);
+      if (d) return d;
+    }
+    return undefined;
+  }
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
+    const left = a as Record<string, unknown>;
+    const right = b as Record<string, unknown>;
+    for (const k of [...new Set([...Object.keys(left), ...Object.keys(right)])].sort()) {
+      const d = firstDivergence(left[k], right[k], `${path}.${k}`);
+      if (d) return d;
+    }
+    return undefined;
+  }
+  return a === b ? undefined : `${path}: ${JSON.stringify(a)} -> ${JSON.stringify(b)}`;
 }
 
 /** Move 1: the nucleus and the strip do not move, and take nothing dropped on them. */
@@ -256,13 +291,16 @@ export function buildHome(dock: HTMLElement, bar: HTMLElement): DockviewApi {
   api.layout(dock.clientWidth, dock.clientHeight);
   const saved = localStorage.getItem(LAYOUT_KEY);
   if (saved) {
-    api.fromJSON(JSON.parse(saved));
-    const again = JSON.stringify(api.toJSON());
-    log(
+    const before = JSON.parse(saved);
+    api.fromJSON(before);
+    const after = api.toJSON();
+    const again = JSON.stringify(after);
+    const divergence = firstDivergence(canonical(before), canonical(after));
+    const raw =
       again === saved
-        ? `move 7: EQUAL, ${saved.length} bytes before and after the reload`
-        : `move 7: DIFFERENT at byte ${firstDifference(saved, again)} (${saved.length} vs ${again.length} bytes)`,
-    );
+        ? `raw EQUAL, ${saved.length} bytes`
+        : `raw DIFFERENT at byte ${firstDifference(saved, again)} (${saved.length} vs ${again.length} bytes)`;
+    log(`move 7: ${divergence ? `canonical DIFFERENT at ${divergence}` : 'canonical EQUAL'}; ${raw}`);
   } else {
     defaultLayout();
   }

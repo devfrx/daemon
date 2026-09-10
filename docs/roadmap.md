@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-09-10**, con la riga **SP-8** chiusa nella tabella degli spike — il compito 7 del [piano della parte 1 del sotto-progetto 2](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md); ADR-0029 si chiude col compito 8.
+Ultimo aggiornamento: **2026-09-10**, con ADR-0029 chiuso — lo «Stato in una riga», la riga delle decisioni da prendere, e la riga del [piano della parte 1 del sotto-progetto 2](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) nella tabella dei piani, eseguito: il suo compito 8.
 ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
 passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
 resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
@@ -20,10 +20,9 @@ con `git log -1 --format=%ad --date=short -- docs/roadmap.md` è una **riga di c
 
 ## Stato in una riga
 
-> Spec del kernel **completa e approvata** (§0–§10, 39 ADR). Stack deciso **tranne il
-> guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**, worker ML in
-> **Python**; Tauri contro Electron resta aperto ([ADR-0029](adr/0029-guscio-della-gui.md),
-> `Proposed`) e **non blocca nulla**.
+> Spec del kernel **completa e approvata** (§0–§10, 39 ADR). Stack deciso **per intero**: core in **Rust**,
+> interfaccia web in **Vue 3**, worker ML in **Python**, guscio **Electron** —
+> [ADR-0029](adr/0029-guscio-della-gui.md), `Accepted` il 2026-09-10 con **SP-8**.
 >
 > **Sotto-progetto 1: §0–§8 approvate**, e la riapertura su sette voci è **tutta chiusa**.
 > ⛔ **Quali traguardi siano eseguiti, con che data e con quanti compiti, lo dice la TABELLA DEI
@@ -228,7 +227,7 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 | [Sotto-progetto 1 · chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) | la chiusura contro la §0.7: l'audit delle condizioni, `tracciabilita.md` riletta, l'archivio del Traguardo 6, il passaggio unico | ✅ **eseguito il 2026-09-03** |
 | [Riconoscimento gesti](superpowers/plans/2026-09-03-riconoscimento-gesti.md) | i due ADR — il registro delle funzioni del programma, la telecamera come sorgente di percezione — i tre richiami datati, la riga 12 «Gesti», le righe di tracciabilità, le fonti, la sonda S3, lo spike **SP-7** | ✅ **scritto il 2026-09-03, eseguito il 2026-09-04** — `GATE GREEN` a ogni compito; SP-7 nella tabella degli spike, la sonda S3 nel cancello |
 | [Knowledge base — i documenti](superpowers/plans/2026-09-04-knowledge-base-documenti.md) | i rimandi datati in testa a ADR-0008, ADR-0009, ADR-0010 e ADR-0038 e nella riga di ADR-0039; la riga 13 «Registro delle guide, trigger e proiezione», le celle 3 e 6 e «Perché quest'ordine»; le sei righe di tracciabilità; la decisione 7 dei gesti chiusa in tutte le sue case; il disegno negli indici. **Nessun codice** | ✅ **scritto il 2026-09-04, eseguito il 2026-09-05** — `GATE GREEN` a ogni compito; nessun file di `crates/` toccato |
-| [Sotto-progetto 2 · parte 1 — lo spike del guscio](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) | SP-8 in `spikes/gui-shell/`: il protocollo congelato con M1–M5, Q1–Q4 e le otto mosse; la Home finta con `dockview-core`; i due gusci, Electron e Tauri, con gli installatori; le misure e il giudizio del proprietario; ADR-0029 chiuso. **Nessun codice di prodotto** | ✅ **scritto il 2026-09-09 e riletto il 2026-09-10**, in tre sessioni — la prima fino al compito 5, la seconda i compiti 6–8, la terza la revisione; ⏳ **da eseguire in una sessione nuova**, un subagente fresco per compito |
+| [Sotto-progetto 2 · parte 1 — lo spike del guscio](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) | SP-8 in `spikes/gui-shell/`: il protocollo congelato con M1–M5, Q1–Q4 e le otto mosse; la Home finta con `dockview-core`; i due gusci, Electron e Tauri, con gli installatori; le misure e il giudizio del proprietario; ADR-0029 chiuso. **Nessun codice di prodotto** | ✅ **scritto il 2026-09-09, riletto il 2026-09-10, eseguito il 2026-09-10** — `GATE GREEN` a ogni compito; SP-8 nella tabella degli spike, ADR-0029 chiuso: **Electron** |
 
 ⛔ **Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano.** Scriverne
 uno per codice che non esiste ancora significa inventare. I sei traguardi sono elencati nel
@@ -288,7 +287,7 @@ guardia che lo verifica — gotcha **#38**.
 | ~~Interfaccia web o toolkit nativo~~ | ✅ **ADR-0027: interfaccia web** (G7) | — |
 | ~~Ecosistema dei worker ML~~ | ✅ **ADR-0028: Python** | — |
 | ~~Framework dell'interfaccia~~ | ✅ **ADR-0030: Vue 3** | — |
-| ⚠️ **Guscio della GUI: Tauri o Electron** | **ADR-0029, `Proposed`.** Si chiude con **cinque** misure M1–M5 all'inizio del sotto-progetto 2 | non blocca il sotto-progetto 1 |
+| ~~Guscio della GUI: Tauri o Electron~~ | ✅ **[ADR-0029](adr/0029-guscio-della-gui.md): Electron**, chiuso il 2026-09-10 con **SP-8** — M1–M5 e Q1–Q4 su Windows, l'innesco Linux nell'ADR | non bloccava il sotto-progetto 1 |
 | ~~La GPU usata dalla GUI non è arbitrata~~ | ✅ **[ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)**, nella §5 della spec del sotto-progetto 1 | I2 è ora verificato su **tutte e tre** le classi di processo |
 | ~~Motore di persistenza~~ | ✅ **[ADR-0032](adr/0032-motore-di-persistenza.md): `redb` 4.1.0** con `StorageBackend` scritto da noi | il requisito 4 di §10.6 è stato misurato: solo `redb` lo espone |
 | ~~Serializzatore dello schema IPC~~ | ✅ **`bincode` 2.0.1**, misura M-1 nella §6 — prime voci della lista di [ADR-0031](adr/0031-dipendenze-del-kernel-parte-del-confine.md), che smette di essere vuota | il criterio non era «`no_std`» ma **il grafo transitivo** |

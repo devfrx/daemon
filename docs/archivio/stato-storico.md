@@ -2348,3 +2348,19 @@ dichiarate lì. ⚠️ **La cernita è stata provata in due direzioni**, coi com
 ogni voce che il blocco chiamava aperta ha un'altra casa, e ciò che è partito è stato ripassato
 con marcatori diversi. 📌 **Perché adesso:** il Traguardo 6 è chiuso, e il tetto scende nello
 stesso commit — un tetto che resta alto dopo uno sfoltimento è il permesso di ricrescere.
+
+## L'intestazione del compendio e il punto 2 del suo prossimo passo, com'erano — archiviati il 2026-09-10
+
+⚠️ **Vero il giorno in cui fu scritto.** Usciti dalla testa e dalla §6 del compendio alla chiusura della parte 1 del piano
+del sotto-progetto 2 (compito 8, decisione D16 del piano), parola per parola; i link riscritti per questa cartella.
+
+### L'intestazione, riga 21
+
+**Aggiornato il 2026-09-09**, col puntatore della §6 riscritto per la **sezione 4** della stella polare della GUI — lo spike di accettazione di `dockview`, otto mosse, la mossa 8 decisa dal proprietario — **scritta**, e **sfoltito** della cronaca delle riprese, che vive nella stella polare e, parola per parola, in [`archivio/stato-storico.md`](stato-storico.md), e alla chiusura per il **mandato del proprietario** sulla lettura d'apertura (decisione 26 della stella polare); poi, lo stesso giorno, il paragrafo dell'audit della §6 riscritto per il **taglio 2** del mandato, e il riquadro delle voci aperte ridotto agli **indici** per il **taglio 3**, e — alla tredicesima ripresa dello stesso giorno — il puntatore «Il prossimo passo» riscritto allo **stato di oggi** per il **taglio 4**, e il suo stato del mandato aggiornato alla **chiusura del mandato** (cinque tagli, `AVVIO-CHAT.md` com'è), e alla quattordicesima ripresa il punto 1 del prossimo passo passato alla **§9** del 2 con le §7 e §8 scritte, e alla chiusura le §9, §10 e la sezione 6 decise su delega e da scrivere, e alla quindicesima ripresa **scritte**, col prossimo passo passato al punto 2 — i due disegni sul posto, e alla sedicesima ripresa per i **due disegni scritti sul posto** — la stella polare e il disegno del 2 — con le consegne in archivio e le fonti in `riferimenti.md`; e alla rilettura del proprietario dello stesso giorno il punto 1 del prossimo passo è chiuso, sei voci sue tutte A (decisioni 41–47 della stella polare); l'ultimo contenuto di **merito** resta la sezione 4. Manutenzione: §13.
+
+### Il punto 2 del prossimo passo, coi suoi richiami
+
+2. ⏭️ **la prossima sessione — decisione 48 del 2026-09-09:** `superpowers:writing-plans` col piano del 2 in **due parti**, la prima fino allo spike compreso — guscio più accettazione di
+   `dockview` — la seconda scritta dopo la misura; il pre-controllo delle quattro domande di `CLAUDE.md` nella sessione che
+   scrive il piano; l'esecuzione, subagent-driven, in sessioni nuove;
+   ✅ **RICHIAMO DEL 2026-09-10, alla chiusura della sessione che l'ha completato:** il piano della parte 1 è **scritto per intero** — pre-controllo, decisioni, compiti 1–8, riletto — in [`superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md`](../superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md); l'esecuzione è **in corso** dal 2026-09-10 — i compiti **1–6** chiusi in tre sessioni, dieci commit di compito, l'errata E1–E13; **SP-8 è misurato** sui due gusci installati, e la sezione SP-8 di `spikes/RISULTATI.md` porta M1–M5, Q1 e Q2 con le righe del proprietario in attesa — il **compito 7** è chiuso il 2026-09-10 col proprietario allo schermo — `dockview` resta (otto su otto), il guscio è **Electron** (A, sua), Q3 rifiutata in entrambi i gusci con le cause lette, M4 sopra soglia su entrambi anche con la chat nascosta — e riprende dal **compito 8**, la chiusura, in una sessione **nuova**, come dice la sua sezione «Come si riprende», la settima chiusura;

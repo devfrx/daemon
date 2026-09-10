@@ -2455,6 +2455,47 @@ coordinatore della stella polare); qui il rimando, per non aprire una seconda ca
 
 ---
 
+## SP-8 — il guscio della GUI: le versioni del giorno dello spike, e le fonti su WebKitGTK (Q2) — 2026-09-10
+
+Il compito 6 del [piano della parte 1 del sotto-progetto 2](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md)
+ha rilanciato il comando qui sotto il 2026-09-10; le versioni **installate** stanno nei lockfile di `spikes/gui-shell/` e nella
+sezione SP-8 di [`../spikes/RISULTATI.md`](../spikes/RISULTATI.md); i numeri di M1–M5 e le righe Q1–Q4 in
+[ADR-0029](adr/0029-guscio-della-gui.md), casa unica. Le ultime al registro quel giorno — npm: `dockview-core` 8.3.0
+(2026-09-09, più nuova, non presa), `vue` 3.5.42 (2026-08-27), `vite` 8.3.0 (2026-09-10, più nuova, non presa),
+`@vitejs/plugin-vue` 6.0.8 (2026-07-14), `three` 0.186.0 (2026-09-08, più nuova, non presa), `markdown-it` 15.0.1 (2026-08-27),
+`electron` 44.3.0 (2026-09-08), `electron-builder` 26.15.3 (2026-06-09), `@tauri-apps/cli` 2.11.4 (2026-06-28),
+`@tauri-apps/api` 2.11.1 (2026-06-17); crates.io: `tauri` 2.11.5 (2026-07-01), `tauri-build` 2.6.3 (2026-06-30), `wry` 0.57.0
+(2026-09-08, più nuova della 0.55.1 installata, che la tira `tauri`), `interprocess` 2.4.4 (2026-09-03). Le appuntate restano:
+una major nuova non si prende, una minor solo se l'appuntata non si installa (vincolo 8 del piano).
+
+```
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+def npm(p):
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    v = d["dist-tags"]["latest"]
+    return v, d["time"][v][:10]
+def crate(c):
+    req = urllib.request.Request("https://crates.io/api/v1/crates/" + c, headers={"User-Agent": "harness (contatto nel repo)"})
+    d = json.load(urllib.request.urlopen(req))["crate"]
+    return d["max_stable_version"], d["updated_at"][:10]
+for p in ["dockview-core", "vue", "vite", "@vitejs/plugin-vue", "three", "markdown-it", "electron", "electron-builder", "@tauri-apps/cli", "@tauri-apps/api"]:
+    print("npm", p, *npm(p))
+for c in ["tauri", "tauri-build", "wry", "interprocess"]:
+    print("crates.io", c, *crate(c))
+EOF
+```
+
+**Le fonti di Q2 — lo stato di WebGPU su WebKitGTK, la lettura che sostituisce la misura Linux (decisione C del disegno del 2):**
+
+| Fonte | Letta il | Che cosa dice | Conseguenza |
+|---|---|---|---|
+| [WebGPU Implementation Status](https://github.com/gpuweb/gpuweb/wiki/Implementation-Status) | 2026-09-10 | «la tabella Safari/WebKit ha tre colonne — macOS, iOS/iPadOS, visionOS — e nessuna riga Linux/GTK; la parola "GTK" non compare nella pagina» | Q2 di ADR-0029; da rileggere al primo Linux vero, con l'innesco scritto lì |
+| [WebKitGTK — news](https://webkitgtk.org/news.html) | 2026-09-10 | «ultima stabile "WebKitGTK 2.52.6 released!", del 19 agosto 2026; "WebGPU" non compare in alcun titolo di release» | idem |
+| [Tauri — Webview Versions](https://v2.tauri.app/reference/webview-versions/) | 2026-09-10 | «nessuna versione WebKitGTK unica per Linux: "The diverse nature of the Linux ecosystem means it is very hard to compile accurate information about WebKitGTK on the various distros"» | idem; la stessa pagina è già la prima fonte di ADR-0029, letta il 2026-08-06 |
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

@@ -51,7 +51,7 @@ rilanciata coi comandi il 2026-09-09, non ricordata.
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
 | i commit della direzione della GUI | `git log --oneline 664265a..HEAD` | dal 2026-09-07 a oggi: la consegna, le quindici riprese e le loro chiusure, poi i due disegni scritti sul posto — quanti e quali lo dice il comando; la cronaca è in archivio |
-| codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla, tranne la spec del sotto-progetto 1 — tre righe e un richiamo nella §8.2 (decisione 19, su delega) — e `scripts/check-docs.sh`: il tetto del compendio sceso col taglio 3 e i suoi commenti; è cancello, non codice |
+| codice e spec non toccati | `git diff --stat 664265a..HEAD -- crates/ scripts/ spikes/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | nulla, tranne la spec del sotto-progetto 1 — tre righe e un richiamo nella §8.2 (decisione 19, su delega) — e `scripts/check-docs.sh`: il tetto del compendio sceso col taglio 3 e i suoi commenti; è cancello, non codice ✅ **RICHIAMO DEL 2026-09-10:** e `spikes/gui-shell/`, `.gitignore`, `spikes/RISULTATI.md`, `spikes/GUI-REQUISITI.md` per SP-8 — la parte 1 del piano del 2; `crates/` intatto |
 | cancello | `bash scripts/gate.sh` | `GATE GREEN` — si rilancia all'apertura e alla chiusura, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
 | fine-riga | `git ls-files --eol docs/COMPENDIO.md docs/riferimenti.md docs/archivio/consegna-brainstorming-direzione-gui.md docs/archivio/consegna-brainstorming-sottoprogetto-2.md docs/archivio/stato-storico.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-07-direzione-gui-wireframes/*.svg` | il compendio, `riferimenti.md` e `stato-storico.md` `i/lf w/crlf`, gli altri `i/lf w/lf` — su questa macchina: un clone nuovo con `core.autocrlf=true` li mostra `w/crlf`, e non è una divergenza |
@@ -663,6 +663,8 @@ costruisce: il pacchetto opaco; i default in `gui/`; il salvataggio automatico; 
 tabella `redb`. **Assunto:** che `dockview.toJSON()` si rimetta com'era — lo misura lo spike di accettazione (sezione 4),
 prima della SPA.
 
+✅ **RICHIAMO DEL 2026-09-10, alla chiusura della parte 1 del piano del 2 — MISURATO dalla mossa 7 di SP-8:** `toJSON()` dopo `fromJSON()` **non** si rimette com'era al byte — riordina le chiavi di `panels`, allarga di 2 px un gruppo galleggiante a ogni ripristino, impone i minimi di 100 px per pannello su un viewport stretto — ed è **uguale** sul JSON canonico, chiavi ordinate: `move 7: canonical EQUAL; raw DIFFERENT` (E4 del piano; la riga 7 delle mosse e O6 in `spikes/RISULTATI.md`). Per il core non cambia nulla, il pacchetto resta opaco (pezzo 1); chi confronta due disposizioni — la GUI, per il «si ferma» del pezzo 7 — confronta il canonico, non i byte.
+
 Controllo sui cinque criteri: fonti lette il 2026-09-08 — `crates/platform/src/lib.rs` e `journal.rs` (`FileBackend`),
 `crates/daemon/src/main.rs`, `crates/kernel/src/ports/{mod,filesystem,journal}.rs`, `parameters.rs`, la §3.1 della
 spec, ADR-0009, 0018, 0022, 0034, 0035, 0038, il disegno della knowledge base, tracciabilità — e verificato, dedotto e
@@ -739,6 +741,8 @@ qui, `dockview-core` si riverifica allo spike; un componente segnaposto e non di
 operazioni.
 
 ### §4 — Lo spike di accettazione di `dockview` · approvata il 2026-09-08 (A, decisione 24); la mossa 8 il 2026-09-09 (A, decisione 25)
+
+✅ **RICHIAMO DEL 2026-09-10, alla chiusura della parte 1 del piano del 2:** le otto mosse provate dal proprietario — **otto su otto** passano, nessuna parziale, la mossa 8 col sì tecnico e le sue parole sulla mappatura della mano e sui comandi accanto al titolo; `dockview` **resta**; le parole in `spikes/RISULTATI.md`, sezione SP-8; il guscio **Electron**, ADR-0029. Il protocollo congelato ricopia le otto celle «Passa se» e la mossa 7 vi aggiunge come si scrive l'esito — la pagina confronta i due JSON e scrive «EQUAL» o «DIFFERENT al byte n» (E1 del piano) — e dal 2026-09-10 il confronto è sul JSON **canonico**, chiavi ordinate, col grezzo stampato accanto: `toJSON` dopo `fromJSON` riordina `panels`, allarga di 2 px un gruppo galleggiante a ogni giro e impone i minimi su un viewport stretto (E4 del piano, richiamo nel protocollo). Le mosse qui sotto restano com'erano approvate.
 
 Prima della GUI vera si fa una **Home finta** con `dockview-core`, dentro l'app di prova che lo spike del guscio (§2 del 2) già
 prevede, in `spikes/gui-shell/`. La giudica il **proprietario provandola** — con mouse, tastiera e **la mano** — come per la mano

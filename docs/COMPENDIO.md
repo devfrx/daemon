@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-09**, col puntatore della §6 riscritto per la **sezione 4** della stella polare della GUI — lo spike di accettazione di `dockview`, otto mosse, la mossa 8 decisa dal proprietario — **scritta**, e **sfoltito** della cronaca delle riprese, che vive nella stella polare e, parola per parola, in [`archivio/stato-storico.md`](archivio/stato-storico.md), e alla chiusura per il **mandato del proprietario** sulla lettura d'apertura (decisione 26 della stella polare); poi, lo stesso giorno, il paragrafo dell'audit della §6 riscritto per il **taglio 2** del mandato, e il riquadro delle voci aperte ridotto agli **indici** per il **taglio 3**, e — alla tredicesima ripresa dello stesso giorno — il puntatore «Il prossimo passo» riscritto allo **stato di oggi** per il **taglio 4**, e il suo stato del mandato aggiornato alla **chiusura del mandato** (cinque tagli, `AVVIO-CHAT.md` com'è), e alla quattordicesima ripresa il punto 1 del prossimo passo passato alla **§9** del 2 con le §7 e §8 scritte, e alla chiusura le §9, §10 e la sezione 6 decise su delega e da scrivere, e alla quindicesima ripresa **scritte**, col prossimo passo passato al punto 2 — i due disegni sul posto, e alla sedicesima ripresa per i **due disegni scritti sul posto** — la stella polare e il disegno del 2 — con le consegne in archivio e le fonti in `riferimenti.md`; e alla rilettura del proprietario dello stesso giorno il punto 1 del prossimo passo è chiuso, sei voci sue tutte A (decisioni 41–47 della stella polare); l'ultimo contenuto di **merito** resta la sezione 4. Manutenzione: §13.
+**Aggiornato il 2026-09-10**, con la **parte 1 del piano del 2 eseguita** — SP-8, ADR-0029 chiuso, il guscio **Electron** — e il puntatore della §6 alla parte 2; l'ultimo contenuto di merito è la voce 0029 della §5. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -101,7 +101,7 @@ dell'unico archivio irriproducibile**.
 | core | **Rust** | ADR-0026, sostenuto da SP-5 e SP-6 misurati |
 | gui — forma | **interfaccia web**, non toolkit nativo | ADR-0027, deciso da G7 |
 | gui — framework | **Vue 3**, come SPA | ADR-0030 |
-| gui — **guscio** | ⚠️ **APERTO**: Tauri o Electron | ADR-0029, `Proposed` — **non blocca nulla** |
+| gui — **guscio** | **Electron** — deciso dal proprietario il 2026-09-10 con SP-8: M1–M5 e Q1–Q4 su Windows, l'innesco Linux nell'ADR | ADR-0029 |
 | worker ML | **Python** | ADR-0028 |
 | persistenza | **`redb` 4.1.0**, con `StorageBackend` scritto da noi | ADR-0032 |
 | dipendenze del kernel | **allow-list sul grafo transitivo**, due grafi con rimedi opposti | ADR-0031 · §7.3.1 |
@@ -157,7 +157,7 @@ Solo **due delle cinque** — `kernel` e `simulator` — sono vincolate da ADR-0
 
 ## 5. Le decisioni, una per ADR
 
-Sono **39 ADR**, di cui **38 ADR in stato Accepted** e uno `Proposed` (0029).
+Sono **39 ADR**, e **39 ADR in stato Accepted** — l'ultimo, 0029, chiuso il 2026-09-10 con SP-8.
 Ordine numerico. Il *perché*, le alternative scartate e i costi accettati stanno nel
 file di ciascuno: `docs/adr/`.
 
@@ -458,7 +458,7 @@ dimensione del pacchetto · fps del viewer 3D e API grafica reale **su Windows e
 Linux** · P3 con rendering vero · **M5**, VRAM a riposo e sotto carico 3D (aggiunta da
 ADR-0033). Se M3 mostra la stessa API grafica su entrambe le piattaforme con Tauri, la
 decisione si **ribalta**. ✅ **Non blocca il sotto-progetto 1**, che è interamente Rust
-e non tocca la GUI.
+e non tocca la GUI. ✅ **RICHIAMO DEL 2026-09-10: CHIUSA — Electron**, deciso dal proprietario con M1–M5 e Q1–Q4 misurate da SP-8 su Windows, coi criteri congelati prima; l'innesco Linux nell'ADR; `dockview` resta dopo le otto mosse. Il testo sopra resta com'era.
 
 **0030 — L'interfaccia si scrive in Vue 3, come SPA.** Ha deciso la **competenza del
 proprietario**, criterio **legittimo qui** perché nessuna invariante vincola la scelta
@@ -657,6 +657,7 @@ stato di oggi: è l'unico posto dove vive il prossimo passo, e più è corto men
 | le **sezioni 1–4 della stella polare della GUI** — catalogo dei moduli, viste e disposizione con la **settima porta** del kernel, la fetta del 2, lo spike di accettazione di `dockview` — e la **passata sui diagrammi** (decisione 16), con la decisione 18 scritta in `CLAUDE.md` | 2026-09-09 | [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md), «Le sezioni approvate del disegno» e la tabella delle decisioni; la consegna dell'avvio del 2 in [`archivio/consegna-avvio-brainstorming-sottoprogetto-2.md`](archivio/consegna-avvio-brainstorming-sottoprogetto-2.md) |
 | i **due disegni della GUI, scritti sul posto** — la [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md), sezioni 1–4 e 6, e il [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), §1–§10, con le §1, §2 e §6a riscritte; le due consegne in archivio parola per parola, le fonti in `riferimenti.md` | 2026-09-09 | la **§10 del disegno del 2**, «Come si riprende»; gli archivi [`consegna-brainstorming-direzione-gui.md`](archivio/consegna-brainstorming-direzione-gui.md) e [`consegna-brainstorming-sottoprogetto-2.md`](archivio/consegna-brainstorming-sottoprogetto-2.md) |
 | la **rilettura del proprietario** dei due disegni — B alla domanda minima, poi le sei voci sue una per volta, tutte A: decisioni 41–47 | 2026-09-09 | la tabella delle decisioni della [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md); la §10 del [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md); X-1 e X-3 nell'[audit](audit-2026-08-27.md) |
+| la **parte 1 del piano del 2** — SP-8: il guscio **Electron** deciso dal proprietario, ADR-0029 `Accepted`, `dockview` resta dopo le otto mosse | 2026-09-10 | il [piano](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md), «A che punto è» e l'errata; la sezione SP-8 di `spikes/RISULTATI.md`; ADR-0029 |
 
 ✅ **Il mandato del proprietario del 2026-09-09 — sfoltire la lettura d'apertura (decisione 26 della stella polare) — è
 ESEGUITO alla tredicesima ripresa:** cinque tagli, tutti A — la stella polare, la testa dell'audit, il riquadro delle voci
@@ -664,7 +665,7 @@ aperte di questa §6, questo puntatore, `CLAUDE.md` — e `AVVIO-CHAT.md` resta 
 più (decisione 32). La misura la rifanno i comandi nel prossimo passo della stella polare; il metodo — misurare prima, ogni
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
 
-⏭️ **IL PROSSIMO PASSO: IL PIANO DEL SOTTO-PROGETTO 2, IN DUE PARTI — LA RILETTURA DEL PROPRIETARIO È FATTA IL 2026-09-09.** I due disegni sono
+⏭️ **IL PROSSIMO PASSO: LA PARTE 2 DEL PIANO DEL SOTTO-PROGETTO 2 — LA PARTE 1, SP-8, È ESEGUITA IL 2026-09-10.** I due disegni sono
 **scritti sul posto il 2026-09-09** (decisione 39 della stella polare): la
 [stella polare della GUI](superpowers/specs/2026-09-07-direzione-gui-design.md) — viste, moduli, disposizione, il protocollo
 core ↔ GUI — e il [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), le cui §1–§10 sono approvate.
@@ -672,11 +673,8 @@ Si riprende dalla **§10 del disegno del 2**, «Come si riprende», che dà l'or
 
 1. ✅ la **rilettura del proprietario** dei due disegni in questa forma, in chat — il sì è condizionato e non si deduce; la
    domanda minima con cui si apre sta nella §10 — **fatta il 2026-09-09**, voce per voce: le sei voci sue tutte A, decisioni 41–47 della stella polare;
-2. ⏭️ **la prossima sessione — decisione 48 del 2026-09-09:** `superpowers:writing-plans` col piano del 2 in **due parti**, la prima fino allo spike compreso — guscio più accettazione di
-   `dockview` — la seconda scritta dopo la misura; il pre-controllo delle quattro domande di `CLAUDE.md` nella sessione che
-   scrive il piano; l'esecuzione, subagent-driven, in sessioni nuove;
-   ✅ **RICHIAMO DEL 2026-09-10, alla chiusura della sessione che l'ha completato:** il piano della parte 1 è **scritto per intero** — pre-controllo, decisioni, compiti 1–8, riletto — in [`superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md`](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md); l'esecuzione è **in corso** dal 2026-09-10 — i compiti **1–6** chiusi in tre sessioni, dieci commit di compito, l'errata E1–E13; **SP-8 è misurato** sui due gusci installati, e la sezione SP-8 di `spikes/RISULTATI.md` porta M1–M5, Q1 e Q2 con le righe del proprietario in attesa — il **compito 7** è chiuso il 2026-09-10 col proprietario allo schermo — `dockview` resta (otto su otto), il guscio è **Electron** (A, sua), Q3 rifiutata in entrambi i gusci con le cause lette, M4 sopra soglia su entrambi anche con la chat nascosta — e riprende dal **compito 8**, la chiusura, in una sessione **nuova**, come dice la sua sezione «Come si riprende», la settima chiusura;
-3. ADR-0029 si chiude con M1–M5 all'inizio del 2 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario
+2. ✅ **la parte 1 del piano del 2, eseguita il 2026-09-10** — [piano](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md): SP-8, ADR-0029 chiuso, `dockview` resta; ⏭️ **la parte 2**: i pezzi 2–9 della §3 della stella polare, scritta **ora** coi numeri in mano — chi decodifica (Q1: il processo principale Node con `bincode-ts`), il guscio Electron che serve la build da un'origine http(s) per la finestra a parte (Q3, dedotto), la CI su Windows e `cargo audit` più `npm audit` (D13 del piano) — con lo stesso pre-controllo, in una sessione nuova; le righe nella §12 di questo file, in `README.md`, nella roadmap e in tracciabilità entrano con essa (D14 del piano);
+3. ✅ ADR-0029 **chiuso il 2026-09-10** con SP-8 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario
    che sbarra il **13**, non il 2 (voce 3 della rilettura del disegno della knowledge base); poi il 13, poi il 3 — decisione 16.
 
 ⚠️ La cronaca ripresa per ripresa non sta qui: vive nella stella polare e, parola per parola, negli archivi. Il margine del
@@ -790,8 +788,8 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 | ❌ **ri-derivare l'architettura** | è nei 39 ADR, ciascuno con alternative scartate e motivo |
 | ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
-| ❌ **rifare gli spike SP-5, SP-6 e SP-7** | esiti, versioni e comandi in `spikes/RISULTATI.md` — coi **seed** per SP-5 e SP-6, che SP-7 non ha; per SP-7 il protocollo congelato in `spikes/gesti/PROTOCOLLO.md` |
-| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta è **M5** (senza trattino), e richiede una GUI |
+| ❌ **rifare gli spike SP-5, SP-6, SP-7 e SP-8** | esiti, versioni e comandi in `spikes/RISULTATI.md` — coi **seed** per SP-5 e SP-6, che SP-7 e SP-8 non hanno; per SP-7 e SP-8 i protocolli congelati in `spikes/gesti/PROTOCOLLO.md` e `spikes/gui-shell/PROTOCOLLO.md` |
+| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta era **M5** (senza trattino) ✅ **misurata da SP-8 il 2026-09-10** su Windows; la metà Linux è l'innesco scritto in ADR-0029 |
 | ❌ **riaprire le due decisioni della §7.3** | prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
 | ❌ **riaprire la copertura della §8** | la §8 è **spec**, e il vincolo globale 1 del piano della chiusura vieta di toccarla: le righe si leggono, non si ri-giudicano. ⚠️ **RICHIAMO DEL 2026-09-03: il sotto-progetto 1 l'ha riaperta una volta**, e per decisione del **proprietario** — la via **A**, voce `E10` dell'errata del [piano della chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) — col vincolo **sospeso** per il solo compito 3bis e per le sole §8.3 e §8.4. Riaprirla di nuovo richiede la stessa decisione |
 | ❌ **riaprire F3, F6, F5, F1a, F2, F7** | chiuse, con i limiti dichiarati |

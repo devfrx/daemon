@@ -61,7 +61,7 @@ sono rumore che il prossimo lettore dovrà filtrare a mano.
 | Rust | toolkit nativo del linguaggio | binario singolo | sì | da scrivere | ❌ scartata: non regge G7 |
 
 **Il guscio che ospita la webview — Tauri o Electron — è una decisione separata e
-ancora aperta**: [ADR-0029](../docs/adr/0029-guscio-della-gui.md), `Proposed`. Il
+ancora aperta**: [ADR-0029](../docs/adr/0029-guscio-della-gui.md), `Proposed` — ✅ **chiusa il 2026-09-10 con SP-8: Electron**. Il
 framework è **Vue 3**, [ADR-0030](../docs/adr/0030-framework-dell-interfaccia.md).
 
 ## Criteri di passaggio del prototipo IPC

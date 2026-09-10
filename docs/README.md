@@ -165,7 +165,7 @@ sotto-progetto**, nello stesso passaggio.
 | [0026](adr/0026-linguaggio-del-core.md) | Linguaggio del core: Rust | Accepted |
 | [0027](adr/0027-stack-della-gui.md) | La GUI è un'interfaccia web, non un toolkit nativo | Accepted |
 | [0028](adr/0028-ecosistema-dei-worker-ml.md) | Ecosistema dei worker ML: Python, ratificato | Accepted |
-| [0029](adr/0029-guscio-della-gui.md) | Guscio della GUI: Tauri o Electron | ⚠️ **Proposed** |
+| [0029](adr/0029-guscio-della-gui.md) | Guscio della GUI: Electron, deciso con SP-8 | Accepted |
 | [0030](adr/0030-framework-dell-interfaccia.md) | Framework dell'interfaccia: Vue 3 | Accepted |
 | [0031](adr/0031-dipendenze-del-kernel-parte-del-confine.md) | Le dipendenze del kernel sono parte del confine I3 | Accepted |
 | [0032](adr/0032-motore-di-persistenza.md) | Motore di persistenza: `redb`, con backend nostro | Accepted |

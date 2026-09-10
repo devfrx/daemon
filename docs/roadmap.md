@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-09-05**, col **piano dei documenti della knowledge base eseguito** nella tabella dei piani; la riga **13** e le celle 3 e 6 erano arrivate col suo compito 3, dalla §5.1 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md).
+Ultimo aggiornamento: **2026-09-10**, con la riga del [piano della parte 1 del sotto-progetto 2](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) nella tabella dei piani — scritto e riletto, da eseguire in una sessione nuova.
 ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
 passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
 resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
@@ -227,6 +227,7 @@ Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-
 | [Sotto-progetto 1 · chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) | la chiusura contro la §0.7: l'audit delle condizioni, `tracciabilita.md` riletta, l'archivio del Traguardo 6, il passaggio unico | ✅ **eseguito il 2026-09-03** |
 | [Riconoscimento gesti](superpowers/plans/2026-09-03-riconoscimento-gesti.md) | i due ADR — il registro delle funzioni del programma, la telecamera come sorgente di percezione — i tre richiami datati, la riga 12 «Gesti», le righe di tracciabilità, le fonti, la sonda S3, lo spike **SP-7** | ✅ **scritto il 2026-09-03, eseguito il 2026-09-04** — `GATE GREEN` a ogni compito; SP-7 nella tabella degli spike, la sonda S3 nel cancello |
 | [Knowledge base — i documenti](superpowers/plans/2026-09-04-knowledge-base-documenti.md) | i rimandi datati in testa a ADR-0008, ADR-0009, ADR-0010 e ADR-0038 e nella riga di ADR-0039; la riga 13 «Registro delle guide, trigger e proiezione», le celle 3 e 6 e «Perché quest'ordine»; le sei righe di tracciabilità; la decisione 7 dei gesti chiusa in tutte le sue case; il disegno negli indici. **Nessun codice** | ✅ **scritto il 2026-09-04, eseguito il 2026-09-05** — `GATE GREEN` a ogni compito; nessun file di `crates/` toccato |
+| [Sotto-progetto 2 · parte 1 — lo spike del guscio](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) | SP-8 in `spikes/gui-shell/`: il protocollo congelato con M1–M5, Q1–Q4 e le otto mosse; la Home finta con `dockview-core`; i due gusci, Electron e Tauri, con gli installatori; le misure e il giudizio del proprietario; ADR-0029 chiuso. **Nessun codice di prodotto** | ✅ **scritto il 2026-09-09 e riletto il 2026-09-10**, in tre sessioni — la prima fino al compito 5, la seconda i compiti 6–8, la terza la revisione; ⏳ **da eseguire in una sessione nuova**, un subagente fresco per compito |
 
 ⛔ **Il sotto-progetto 1 si esegue a traguardi, e ciascuno ha il proprio piano.** Scriverne
 uno per codice che non esiste ancora significa inventare. I sei traguardi sono elencati nel

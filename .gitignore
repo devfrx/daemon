@@ -31,6 +31,8 @@ Desktop.ini
 /spikes/gesti/relay/Cargo.lock
 /spikes/gesti/*.task
 /spikes/gesti/*.csv
+/spikes/gui-shell/app/node_modules/
+/spikes/gui-shell/app/dist/
 /spikes/ts/node_modules/
 /spikes/ts/dist/
 /spikes/**/wip/

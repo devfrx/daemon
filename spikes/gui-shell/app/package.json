@@ -1,0 +1,22 @@
+{
+  "name": "sp8-home",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.11.1",
+    "dockview-core": "8.2.0",
+    "markdown-it": "15.0.1",
+    "three": "0.185.1",
+    "vue": "3.5.42"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.8",
+    "vite": "8.2.2"
+  }
+}

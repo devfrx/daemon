@@ -62,7 +62,7 @@ Le otto mosse, Q3, Q4, la CPU con la chat nascosta e la VRAM a pagina intera: **
 | 1 | il nucleo e la striscia non si spostano | ✅ `passa` | — | «si a tutto» — una risposta sola alle cinque domande sulle mosse 1, 2, 4, 5 e sul sì tecnico della 8 |
 | 2 | sgancia, galleggia, riaggancia | ✅ `passa` | `move 2: hand floats` (provata sulla tessera Mano) | «si a tutto» |
 | 3 | pagina intera e ritorno | ✅ `passa` | `move 3: hand full page`, `move 3: hand back`; poi `move 3: passi back` | «e sembra funzionare tutto» |
-| 4 | in un'altra finestra, dal comando | ✅ `passa` | `move 4 / Q3: popout OPENED for permessi`; poi `move 4 / Q3: popout OPENED for stato` | «si a tutto»; «move 4 / Q3: popout OPENED for stato da browser» |
+| 4 | in un'altra finestra, dal comando | ✅ `passa` | `move 4 / Q3: popout OPENED for permessi` | «si a tutto»; «move 4 / Q3: popout OPENED for stato da browser» — la seconda finestra, su Stato, l'ha riferita lui in chat e non sta nel file della console |
 | 5 | la presa grande col mouse; col tocco non misurato perché lo schermo non è touch | ✅ `passa` | — | «si a tutto» |
 | 6 | con la tastiera, `Ctrl+Alt+frecce` | ✅ `passa` | `move 6: passi -> group 9`, `move 6: passi -> group 12`, `move 6: passi -> group 9`, `move 6: passi -> group 7`, `move 6: passi -> group 9`, `move 6: passi -> group 12` | «ctrl alt frecce e h», «e sembra funzionare tutto» |
 | 7 | salva, ricarica, ritrova — una misura | ✅ `passa` sul canonico | `move 7: canonical EQUAL; raw DIFFERENT at byte 1798 (3052 vs 3052 bytes)` — dopo «azzera», «salva (mossa 7)», «ricarica»; il grezzo differisce solo per l'ordine delle chiavi (richiamo E4 del protocollo); il caso di una disposizione salvata con una finestra a parte è in O6 | «salva e reload:» |

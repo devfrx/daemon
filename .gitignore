@@ -36,6 +36,9 @@ Desktop.ini
 /spikes/gui-shell/electron/node_modules/
 /spikes/gui-shell/electron/dist/
 /spikes/gui-shell/electron/out/
+/spikes/gui-shell/tauri/node_modules/
+/spikes/gui-shell/tauri/src-tauri/target/
+/spikes/gui-shell/tauri/src-tauri/gen/
 /spikes/ts/node_modules/
 /spikes/ts/dist/
 /spikes/**/wip/

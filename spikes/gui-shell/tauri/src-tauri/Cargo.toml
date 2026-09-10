@@ -1,0 +1,13 @@
+[package]
+name = "sp8-tauri"
+version = "0.0.0"
+edition = "2024"
+publish = false
+description = "SP-8: the Tauri shell of the fake Home"
+
+[build-dependencies]
+tauri-build = { version = "2.6.3", features = [] }
+
+[dependencies]
+tauri = { version = "2.11.5", features = [] }
+interprocess = "2.4.4"

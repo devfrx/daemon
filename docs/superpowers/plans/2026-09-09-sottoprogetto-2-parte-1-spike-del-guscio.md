@@ -145,7 +145,7 @@ domande sta nella sezione *«Il pre-controllo del piano»* qui sotto: P-1…P-18
 | **2** | la Home finta in `spikes/gui-shell/app/`: Vite, Vue 3, `dockview-core` — il nucleo e la striscia bloccati, le tessere, la presa grande, i comandi delle mosse 1–7, salva/ricarica/confronta; `.gitignore` e il lockfile | uno | ✅ 2026-09-10 |
 | **3** | le tre tessere vive: la chat che rende markdown token per token dal ponte, la scena `three` con fps e API nel titolo, la mano di SP-7 tradotta in eventi del puntatore (mossa 8) | uno | ✅ 2026-09-10 |
 | **4** | il guscio **Electron**, che legge la pipe con `net` e la passa alla webview; `electron-builder`; lo script di misura dell'albero di processi; `.gitignore` e il lockfile | uno | ✅ 2026-09-10 |
-| **5** | il guscio **Tauri**, che legge la pipe con `interprocess` e la emette come evento; le icone; `tauri build`; `.gitignore`, `Cargo.lock` e il lockfile | uno | ⬜ |
+| **5** | il guscio **Tauri**, che legge la pipe con `interprocess` e la emette come evento; le icone; `tauri build`; `.gitignore`, `Cargo.lock` e il lockfile | uno | ✅ 2026-09-10 |
 | **6** | le misure M1–M5 e Q1–Q2 sui due gusci installati, con gli script; la sezione SP-8 di `spikes/RISULTATI.md` coi numeri e le righe del proprietario dichiarate ⏳ | uno | ⬜ |
 | **7** | col **proprietario**: le otto mosse nel browser, Q3 e Q4 nei due gusci, la CPU con la chat nascosta e la VRAM a pagina intera, la domanda A/B sul guscio; l'esito completo, la riga SP-8 chiusa | uno | ⬜ |
 | **7-bis** | **solo su un no** all'insieme delle mosse: la stessa Home con `interactjs` — il perimetro è qui (D12), il compito si scrive nella sessione che riceve il no, col pre-controllo | — | ⬜ non necessario finché il compito 7 non lo dice |

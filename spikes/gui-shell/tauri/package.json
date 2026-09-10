@@ -1,0 +1,14 @@
+{
+  "name": "sp8-tauri",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "icon": "tauri icon icon.png --output src-tauri/icons",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4"
+  }
+}

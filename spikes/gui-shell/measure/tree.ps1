@@ -10,7 +10,9 @@ Usage:
 The tree is rebuilt at every sample from Win32_Process.ParentProcessId, because WebView2 lives OUTSIDE the
 Tauri PID (M1). RSS is the sum of WorkingSet64. CPU is the delta of the summed TotalProcessorTime over the
 interval, as a percentage of ONE core: P3 is "< 25% of one core". VRAM is the sum of
-'\GPU Process Memory(*)\Dedicated Usage' over the tree's PIDs, read once per second (the counter is slow).
+'\GPU Process Memory(*)\Dedicated Usage' over the tree's PIDs, read once per second (the counter is slow);
+on a machine whose webview runs on an INTEGRATED GPU, Dedicated Usage is 0 by construction and Shared Usage
+is the footprint, so both counters are read and reported (errata E10 of the plan, 2026-09-10).
 The emitter, if given, is started at -EmitterAt seconds: before it the samples are the REST, after it the
 STREAM (the shells retry the pipe every two seconds, then 2000 messages take ten seconds, then the emitter
 exits: the STREAM phase includes that wait and that tail, and the peak is what P3 judges). At the end the
@@ -65,6 +67,7 @@ $rows = @()
 $prevCpu = $null
 $prevT = $t0
 $vram = 0
+$vramShared = 0
 $lastVram = $t0.AddSeconds(-10)
 Start-Sleep -Milliseconds 500
 
@@ -82,10 +85,12 @@ while ((Get-Date) -lt $end) {
   $pct = 0
   if ($null -ne $prevCpu) { $pct = ($cpu - $prevCpu) / ($now - $prevT).TotalMilliseconds * 100 }
   if (($now - $lastVram).TotalMilliseconds -ge 1000) {
-    $samples = (Get-Counter '\GPU Process Memory(*)\Dedicated Usage' -ErrorAction SilentlyContinue).CounterSamples
+    $samples = (Get-Counter '\GPU Process Memory(*)\Dedicated Usage', '\GPU Process Memory(*)\Shared Usage' -ErrorAction SilentlyContinue).CounterSamples
     $mine = $samples | Where-Object { ($_.InstanceName -match '^pid_(\d+)_') -and ($pids -contains [int]$Matches[1]) }
-    $vram = ($mine | Measure-Object CookedValue -Sum).Sum
+    $vram = ($mine | Where-Object { $_.Path -match 'dedicated usage' } | Measure-Object CookedValue -Sum).Sum
     if ($null -eq $vram) { $vram = 0 }
+    $vramShared = ($mine | Where-Object { $_.Path -match 'shared usage' } | Measure-Object CookedValue -Sum).Sum
+    if ($null -eq $vramShared) { $vramShared = 0 }
     $lastVram = $now
   }
   $title = ($ps | Where-Object { $_.MainWindowTitle } | Select-Object -First 1).MainWindowTitle
@@ -96,6 +101,7 @@ while ((Get-Date) -lt $end) {
     rss_mb = [math]::Round($rss / 1MB, 1)
     cpu_pct = [math]::Round($pct, 1)
     vram_mb = [math]::Round($vram / 1MB, 1)
+    vram_shared_mb = [math]::Round($vramShared / 1MB, 1)
     title = $title
   }
   $prevCpu = $cpu
@@ -103,14 +109,14 @@ while ((Get-Date) -lt $end) {
   Start-Sleep -Milliseconds $IntervalMs
 }
 
-$rows | Format-Table t_s, phase, procs, rss_mb, cpu_pct, vram_mb -AutoSize | Out-String -Width 200 | Write-Output
+$rows | Format-Table t_s, phase, procs, rss_mb, cpu_pct, vram_mb, vram_shared_mb -AutoSize | Out-String -Width 200 | Write-Output
 foreach ($phase in @("rest", "stream")) {
   $r = @($rows | Where-Object { $_.phase -eq $phase })
   if ($r.Count -eq 0) { continue }
-  Write-Output ("{0}: samples {1} | rss_mb mean {2} max {3} | cpu_pct mean {4} max {5} | vram_mb max {6}" -f $phase, $r.Count,
+  Write-Output ("{0}: samples {1} | rss_mb mean {2} max {3} | cpu_pct mean {4} max {5} | vram_mb max {6} | vram_shared_mb max {7}" -f $phase, $r.Count,
     [math]::Round(($r.rss_mb | Measure-Object -Average).Average, 1), ($r.rss_mb | Measure-Object -Maximum).Maximum,
     [math]::Round(($r.cpu_pct | Measure-Object -Average).Average, 1), ($r.cpu_pct | Measure-Object -Maximum).Maximum,
-    ($r.vram_mb | Measure-Object -Maximum).Maximum)
+    ($r.vram_mb | Measure-Object -Maximum).Maximum, ($r.vram_shared_mb | Measure-Object -Maximum).Maximum)
 }
 Write-Output ("last title: {0}" -f $rows[-1].title)
 if ($Csv -ne "") { $rows | Export-Csv -NoTypeInformation -Path $Csv }

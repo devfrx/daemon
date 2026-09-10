@@ -136,7 +136,7 @@ echo $(( $(grep -oE '^ceiling=[0-9]+' scripts/check-docs.sh | cut -d= -f2) - $(w
 contesto saturo dopo il compito 5; la seconda ha scritto i compiti **6, 7 e 8** e «Dopo il compito 8»; la terza ha fatto la
 revisione del piano intero — copertura dei disegni, segnaposto, nomi fra i compiti, ogni *Trova* rilanciato — coi rimedi
 scritti **nei compiti** (la tabella nella sezione *«Come si riprende»*, terza chiusura) e i tre spostamenti di stato.
-✅ **In esecuzione dal 2026-09-10: i compiti 1–5 sono CHIUSI** — otto commit di compito in due sessioni, l'errata E1–E10 (E9 ed E10 scritte alla quinta chiusura, col rimedio da eseguire) — e ⛔ **si riprende dal commit d'errata E9/E10 e poi dal compito 6, in una sessione NUOVA**, un subagente fresco per compito («Come si riprende», la quinta chiusura). Il pre-controllo delle quattro
+✅ **In esecuzione dal 2026-09-10: i compiti 1–5 sono CHIUSI** — nove commit di compito in tre sessioni, l'errata E1–E10 (E9 ed E10 scritte alla quinta chiusura, il rimedio **eseguito** il 2026-09-10 come commit d'errata a sé: la via A, scelta su delega del proprietario ai criteri di `decision-principles`; la via B resta sua, registrata) — e ⛔ **si riprende dal compito 6**, un subagente fresco per compito («Come si riprende», la quinta chiusura). Il pre-controllo delle quattro
 domande sta nella sezione *«Il pre-controllo del piano»* qui sotto: P-1…P-18 sui compiti 1–5, P-19…P-25 sui compiti 6–8.
 
 | # | Compito | Commit | Stato |

@@ -136,7 +136,7 @@ echo $(( $(grep -oE '^ceiling=[0-9]+' scripts/check-docs.sh | cut -d= -f2) - $(w
 contesto saturo dopo il compito 5; la seconda ha scritto i compiti **6, 7 e 8** e «Dopo il compito 8»; la terza ha fatto la
 revisione del piano intero — copertura dei disegni, segnaposto, nomi fra i compiti, ogni *Trova* rilanciato — coi rimedi
 scritti **nei compiti** (la tabella nella sezione *«Come si riprende»*, terza chiusura) e i tre spostamenti di stato.
-⛔ **Si esegue in una sessione NUOVA, dal compito 1**, un subagente fresco per compito. Il pre-controllo delle quattro
+✅ **In esecuzione dal 2026-09-10: i compiti 1 e 2 sono CHIUSI** — cinque commit, l'errata E1–E5 — e ⛔ **si riprende dal compito 3 in una sessione NUOVA**, un subagente fresco per compito («Come si riprende», la quarta chiusura). Il pre-controllo delle quattro
 domande sta nella sezione *«Il pre-controllo del piano»* qui sotto: P-1…P-18 sui compiti 1–5, P-19…P-25 sui compiti 6–8.
 
 | # | Compito | Commit | Stato |
@@ -192,6 +192,7 @@ non ha potuto misurare senza eseguire — il permesso `core:default` di Tauri (P
 | **E2** | **Compito 2, Passo 2 — `dockview-core` 8.2.0 non spedisce il foglio di stile e NON lo inietta da sé: P-1 lo deduceva dall'unica `createElement("style")` del bundle, che è un'altra cosa.** Misurato il 2026-09-10 dal revisore del compito 2 nel browser: senza le regole strutturali i gruppi si impilano nel flusso del documento, il gruppo galleggiante della mossa 2 finisce fuori dal viewport, la pagina scorre. Il foglio `dist/styles/dockview.css` lo spediscono `dockview` 8.2.0 e `dockview-vue` 8.2.0 (`npm pack <pacchetto> --dry-run`, 2026-09-10); `dockview` 8.2.0 ha come sola dipendenza `dockview-core ^8.2.0`, nessuna peer, e 583 byte di JS che riesportano il core. **Correzione:** `"dockview": "8.2.0"` fra le dipendenze di `app/package.json` e `import 'dockview/dist/styles/dockview.css';` come prima riga di `src/main.ts`; l'API resta quella di `dockview-core` e il ponte resta nostro (decisione 2 del coordinatore della stella polare): il pacchetto in più porta solo il CSS. Il compito 8 lo dice nel richiamo alla §2 della stella polare |
 | **E3** | **Compito 2, Passo 2 — `createTabComponent` da solo non basta: `dockview` lo chiama solo per un pannello con `tabComponent`, o con `defaultTabComponent` nelle opzioni.** Letto nel bundle installato (`main.esm.mjs`: `name = componentName ?? options.defaultTabComponent`) e misurato nel browser dal revisore del compito 2: zero elementi `.bigtab`, ogni tessera con la linguetta di default, la mossa 5 assente. P-2 aveva letto le firme, non il percorso che le invoca (domanda 3: l'artefatto sbagliato che compila). **Correzione:** `defaultTabComponent: 'bigtab',` fra le opzioni di `createDockview` in `src/home.ts`, subito dopo `theme: themeAbyss,`; `createTabComponent` resta com'è |
 | **E4** | **Compito 2, Passo 2 — la mossa 7 scrive `DIFFERENT` sul testo dettato, per tre comportamenti di `dockview` 8.2.0 misurati nel browser il 2026-09-10** (il revisore del compito 2 a 1024×768, il coordinatore a 1920×1080): l'ordine delle chiavi di `panels` cambia dopo `fromJSON` (stesso contenuto, stessa lunghezza); un gruppo galleggiante cresce di 2 px per ogni ripristino (`dv-resize-container`, bordo di 1 px in `content-box`); su un viewport stretto il ripristino impone i minimi di 100 px per pannello e ridistribuisce le colonne (341 → 400 a 1024 px, identiche a 1920 px). **Correzione:** in `src/home.ts` il confronto si fa sul JSON canonico (chiavi ordinate) e scrive il primo percorso divergente coi due valori, e la pagina scrive anche il confronto grezzo al byte; il protocollo, congelato dal commit del compito 2, riceve il richiamo datato sotto la tabella delle mosse (vincolo 7): il metro cambia, dichiarato. I 2 px del galleggiante restano nell'esito come fatto per il giudizio del proprietario al compito 7, non come accorgimento; le prove si fanno alla taglia dello schermo del proprietario |
+| **E5** | **Compito 3, Passo 4 — `main.ts` «riscritto per intero»: il testo dettato non porta la prima riga `import 'dockview/dist/styles/dockview.css';`, arrivata con E2 il 2026-09-10, e riscriverlo alla lettera toglierebbe il foglio di stile** (riga 5 del pre-controllo di `CLAUDE.md`: un compito scritto prima si legge contro il codice di adesso). Trovata dal coordinatore al pre-controllo del compito 3, il 2026-09-10, confrontando il `main.ts` dettato col file di `c8a5ac8`. **Correzione:** il `main.ts` del compito 3 tiene quella riga come **prima riga**, e per il resto è il testo dettato; la sonda `head -1 spikes/gui-shell/app/src/main.ts` dopo il compito 3 la rende |
 
 ---
 
@@ -3152,6 +3153,77 @@ piano; il compito 7-bis esiste solo su un no all'insieme delle mosse (D12); la m
 in ADR-0029; X-1 e X-3 sono compiti della parte 2 (D13).
 
 ## Come si riprende — il diario di questo piano, coi comandi
+
+### La quarta chiusura — 2026-09-10: i compiti 1 e 2 ESEGUITI, il compito 3 pre-controllato — si riprende dal compito 3
+
+⛔ **DA SAPERE SUBITO.** Niente è a metà nel repository: albero pulito, nessuno stash, nessuna operazione git in corso,
+nessun server acceso (la porta 5173 è libera), nessun codice di prodotto toccato. Il proprietario ha chiuso con
+`session-handoff` («dopo questa task») mentre il compito 3 era **pre-controllato e non dispacciato**: si riprende da lì.
+Due cose in cima, sue: (1) il commit `5dc9c6f` porta un trailer `Co-Authored-By` contro `CLAUDE.md` («senza co-autore») —
+toglierlo vuole `git commit --amend` e un push forzato di `main`, che nessuna sessione fa da sola; (2) la sua domanda alla
+chiusura — *questa UI è la base di quella finale?* — ha la risposta nella testa di questo piano e nella §3 della stella
+polare: **no**. È lo spike **SP-8** in `spikes/gui-shell/`, fuori dal workspace: misura il guscio (M1–M5, Q1–Q4) e fa
+giudicare `dockview` (le otto mosse). La SPA del sotto-progetto 2 nasce nella **parte 2**, in `gui/`, con lo stack della
+§2 del disegno del 2; dello spike sopravvivono le misure, i verdetti, il protocollo e l'errata, non il codice.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto |
+| I commit di questa sessione | `git log --oneline 07b984c..HEAD` — **cinque** più questo: `9d869a7` (compito 1), `5dc9c6f` (E1), `01694e3` (compito 2), `ce84042` (E2 ed E3), `c8a5ac8` (E4), poi la chiusura |
+| Codice di prodotto, cancello, CI, gli spike vecchi | **non toccati**: `git diff --stat 5ad4634..HEAD -- crates/ scripts/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml spikes/gesti/ spikes/gui-ipc/` non rende nulla |
+| La posizione e l'errata | i compiti **1** e **2** a `✅ 2026-09-10` nella tabella della posizione; l'errata **E1–E5**, tutte del 2026-09-10 |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` prima di **ogni** commit (i log nello scratchpad portano la data, e il revisore la legge contro `git log -1 --format=%ci`) e alla chiusura; `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | i file dell'app, il protocollo e il piano **LF**: `tr -cd '\r' < <file> \| wc -c` → `0`; `.gitignore`, roadmap e compendio CRLF con CR = righe |
+| Margine del compendio | il comando del vincolo 11: `10362` prima del richiamo di questa chiusura; le righe `⏭️` restano **tre** |
+| Il registro di esecuzione | `.superpowers/sdd/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio/progress.md` su **questa** macchina, ignorato da git, coi brief, i dispacci, i rapporti e i pacchetti di revisione dei compiti 1–2; su un'altra macchina non c'è, e **questo diario basta** |
+
+#### Le decisioni prese eseguendo, nell'ordine
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 1 | si esegue su `main`, commit e push a ogni compito, senza co-autore, nessun worktree | `CLAUDE.md`, vincolo 13 | nessuno |
+| 2 | la scansione preliminare dei compiti 2–8 è la revisione della terza sessione; il pre-controllo si rifà a ogni dispaccio contro il codice di adesso | questo diario vieta di leggere i compiti tutti insieme | un difetto scoperto al dispaccio diventa errata |
+| 3 | **E1**: la clausola «EQUAL / DIFFERENT» della mossa 7 resta nel protocollo; la frase che apre la tabella delle mosse lo dice; la §4 della stella polare riceve il richiamo al compito 8 | il protocollo non era ancora congelato; la §4 è la casa del perché | un richiamo da anticipare |
+| 4 | il trailer in `5dc9c6f` **resta** finché il proprietario non decide | un push forzato di `main` è irreversibile e verso l'esterno | un trailer in un commit di documenti |
+| 5 | **E2**: `dockview` 8.2.0 entra **solo per il CSS** (`import 'dockview/dist/styles/dockview.css'`); l'API resta `dockview-core`, il ponte resta nostro | `dockview-core` non spedisce CSS; `dockview` ha 583 byte di JS, il foglio, e nessun'altra dipendenza | il richiamo alla §2 della stella polare al compito 8 |
+| 6 | **E3**: `defaultTabComponent: 'bigtab'` nelle opzioni di `createDockview` | senza, `createTabComponent` non è mai chiamato e la presa grande non esiste | nessuno |
+| 7 | **E4**, modifica al metro dichiarata: la mossa 7 si misura sul JSON **canonico** e scrive anche il grezzo; richiamo datato nel protocollo congelato | tre comportamenti di `dockview` misurati: l'ordine delle chiavi di `panels`, +2 px per gruppo galleggiante a ogni ripristino, i minimi sui viewport stretti | il proprietario può rifiutare il canonico: il grezzo resta stampato |
+| 8 | **E5**: il `main.ts` del compito 3 tiene la prima riga dell'import del CSS | riga 5 del pre-controllo: il testo dettato è di prima di E2 | nessuno |
+| 9 | i modelli: implementatori e revisori `sonnet`, mai `haiku`; il revisore dei compiti con codice apre il browser | i turni contano più del prezzo, e le regole del repository sono fitte | il costo per compito |
+
+#### Che cosa i revisori hanno trovato, e dove è finito
+
+| Compito | Rilievo | Dove |
+|---|---|---|
+| 1 | il cancello **non** era stato rilanciato dopo le modifiche: il rapporto citava il log di apertura del coordinatore (09:24) per un commit delle 09:37 | giro 1: due corse fresche, il rapporto corretto; da allora ogni dispaccio pretende un log **nuovo** con la data |
+| 1 | la mossa 7 del protocollo non era «parola per parola» la §4 | E1 |
+| 2 | `createTabComponent` mai invocato; `dockview-core` senza CSS; la mossa 7 `DIFFERENT` | E3, E2, E4 — verificati nel browser dal ri-revisore, due giri |
+| 2 | minor rimandato: `canonical()` prima di `firstDivergence()` è ridondante in `home.ts` | alla revisione finale del ramo |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- **un subagente cita un log vecchio come prova**: il dispaccio dà il nome di un log **nuovo**, e il revisore ne legge la data con `ls -la --time-style=full-iso` contro `git log -1 --format=%ci`; un `GATE GREEN` senza data non è una prova.
+- **il promemoria di attribuzione dell'harness chiede un `Co-Authored-By`**, e un subagente lo ha preferito a `CLAUDE.md`: ogni dispaccio dice esplicitamente che `CLAUDE.md` prevale.
+- **`task-brief` legge `Task N`, non `Compito N`**, e le righe del piano scivolano a ogni riga d'errata: il brief si estrae **per intestazione** — `awk '/^## Compito 3:/{f=1} /^## Compito 4:/{exit} f' <piano>` — mai per numero di riga.
+- **`git status --porcelain` accorpa una cartella non tracciata**: le attese sui file nuovi si leggono con `-uall`.
+- **il browser dell'automazione**: `left_click_drag` non muove il DnD di `dockview` sotto nessuna strategia, `Ctrl+Alt+frecce` è intercettato, `window.open` naviga la scheda stessa — le mosse 2, 4 e 6 si giudicano con la mano del proprietario al compito 7. Il viewport predefinito è 1024×768: le misure di layout si fanno a **1920×1080** (`resize_window`), o i minimi di `dockview` falsano il ripristino.
+- **una scheda già aperta può essere agganciata a un'anteprima locale** e rifiutare `navigate`: `tabs_create`, poi il `tabId` su ogni azione; il server di Vite si avvia in background su percorso assoluto e si **ferma** (`Get-NetTCPConnection -LocalPort 5173 -State Listen`), o il prossimo `npm run dev` va sulla 5174.
+- **il subagente non si riprende** (`SendMessage` assente in questo harness): i giri di correzione sono implementatori freschi che leggono il rapporto precedente; il rapporto, appeso, è la memoria.
+- **`dockview` 8.2.0, misurato**: niente CSS in `dockview-core` (l'unica `createElement("style")` non è un'iniezione); `createTabComponent` scatta solo con `defaultTabComponent` o `tabComponent`; `toJSON` dopo `fromJSON` riordina `panels`, allarga di 2 px un gruppo galleggiante a ogni giro, impone i minimi (100 px per pannello) su un viewport stretto; `dockview` 8.3.0 e `three` 0.186.0 sono al registro, le appuntate restano (vincolo 8).
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura o uno dopo.
+2. La lettura obbligatoria di `CLAUDE.md`; di questo piano la testa, i vincoli, la posizione, «Come si esegue», l'**errata E1–E5**,
+   il pre-controllo, le decisioni, la mappa dei file, questo diario; il **compito 3** per intero solo al dispaccio, estratto per intestazione.
+3. Il pre-controllo del compito 3 è **fatto** (E5; le sonde del Passo 1 rilanciate il 2026-09-10 danno l'atteso; `Messaggio` di
+   `spikes/gui-ipc` ha i quattro campi di `Wire`; `three` 0.185.1 espone `./webgpu`): si rifanno le sonde, poi si dispaccia con lo
+   schema dei compiti 1–2 — brief e dispaccio in file, niente lettura d'apertura, log del cancello nuovo, commit senza trailer; il
+   revisore apre `npm run dev` a 1920×1080 e legge il titolo (dodici campi `chiave=`), la chat con la provenienza, la scena
+   (`api=WebGPU:…` o `WebGL2:…` è una misura), la tessera Mano («relay not reachable»); la mossa 8 è del compito 7.
+4. Poi i compiti 4, 5, 6 (le misure), 7 (col proprietario), 8 (la chiusura, che porta a `HANDOFF.md` i gotcha di questo diario,
+   alla §2 della stella polare il richiamo su `dockview` come sorgente del CSS, alla §4 quello di E1).
+5. Alla chiusura di ogni sessione: questo diario, la memoria dell'agente, `session-handoff`.
 
 ### La terza chiusura — 2026-09-10: la revisione del piano intero FATTA, i tre spostamenti di stato FATTI — si ESEGUE
 

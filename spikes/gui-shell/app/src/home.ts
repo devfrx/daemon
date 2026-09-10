@@ -11,14 +11,17 @@ import {
 } from 'dockview-core';
 import { VueContent } from './vue-bridge';
 import Tile from './tiles/Tile.vue';
+import Chat from './tiles/Chat.vue';
+import Scene from './tiles/Scene.vue';
+import Hand from './tiles/Hand.vue';
 
 /** The panel types of the fake Home. Task 3 replaces `chat`, `scene` and `hand` with live tiles;
  * the names stay, so a layout saved before task 3 still restores after it. */
 export const tiles: Record<string, () => VueContent> = {
   tile: () => new VueContent(Tile),
-  chat: () => new VueContent(Tile),
-  scene: () => new VueContent(Tile),
-  hand: () => new VueContent(Tile),
+  chat: () => new VueContent(Chat),
+  scene: () => new VueContent(Scene),
+  hand: () => new VueContent(Hand),
 };
 
 const GRID = 24; // move 2: a floating group snaps to this grid, through dockview's hook

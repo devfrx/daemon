@@ -143,7 +143,7 @@ domande sta nella sezione *«Il pre-controllo del piano»* qui sotto: P-1…P-18
 |---|---|---|---|
 | **1** | il protocollo di SP-8, congelato — M1–M5, Q1–Q4, le otto mosse — e la riga SP-8 nella tabella degli spike di `roadmap.md` | uno, **solo documenti** | ✅ 2026-09-10 |
 | **2** | la Home finta in `spikes/gui-shell/app/`: Vite, Vue 3, `dockview-core` — il nucleo e la striscia bloccati, le tessere, la presa grande, i comandi delle mosse 1–7, salva/ricarica/confronta; `.gitignore` e il lockfile | uno | ✅ 2026-09-10 |
-| **3** | le tre tessere vive: la chat che rende markdown token per token dal ponte, la scena `three` con fps e API nel titolo, la mano di SP-7 tradotta in eventi del puntatore (mossa 8) | uno | ⬜ |
+| **3** | le tre tessere vive: la chat che rende markdown token per token dal ponte, la scena `three` con fps e API nel titolo, la mano di SP-7 tradotta in eventi del puntatore (mossa 8) | uno | ✅ 2026-09-10 |
 | **4** | il guscio **Electron**, che legge la pipe con `net` e la passa alla webview; `electron-builder`; lo script di misura dell'albero di processi; `.gitignore` e il lockfile | uno | ⬜ |
 | **5** | il guscio **Tauri**, che legge la pipe con `interprocess` e la emette come evento; le icone; `tauri build`; `.gitignore`, `Cargo.lock` e il lockfile | uno | ⬜ |
 | **6** | le misure M1–M5 e Q1–Q2 sui due gusci installati, con gli script; la sezione SP-8 di `spikes/RISULTATI.md` coi numeri e le righe del proprietario dichiarate ⏳ | uno | ⬜ |

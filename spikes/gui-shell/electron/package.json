@@ -1,0 +1,25 @@
+{
+  "name": "sp8-electron",
+  "private": true,
+  "version": "0.0.0",
+  "description": "SP-8: the Electron shell of the fake Home",
+  "author": "harness",
+  "main": "main.js",
+  "scripts": {
+    "sync": "node -e \"require('node:fs').cpSync('../app/dist', 'dist', { recursive: true, force: true })\"",
+    "start": "npm run sync && electron .",
+    "dist": "npm run sync && electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "44.3.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "harness.sp8.electron",
+    "productName": "sp8-electron",
+    "directories": { "output": "out" },
+    "files": ["main.js", "preload.js", "dist/**"],
+    "win": { "target": "nsis", "signAndEditExecutable": false },
+    "nsis": { "oneClick": true, "perMachine": false, "allowToChangeInstallationDirectory": false }
+  }
+}

@@ -33,6 +33,9 @@ Desktop.ini
 /spikes/gesti/*.csv
 /spikes/gui-shell/app/node_modules/
 /spikes/gui-shell/app/dist/
+/spikes/gui-shell/electron/node_modules/
+/spikes/gui-shell/electron/dist/
+/spikes/gui-shell/electron/out/
 /spikes/ts/node_modules/
 /spikes/ts/dist/
 /spikes/**/wip/

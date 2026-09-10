@@ -55,7 +55,7 @@ e lo script di misura lo legge da fuori.
 
 ## Le otto mosse — il giudizio del proprietario, provandole
 
-Ricopiate dalla §4 della stella polare, che ne è la casa del **perché**; qui sono ciò che si congela.
+Ricopiate dalla §4 della stella polare, che ne è la casa del **perché** — la mossa 7 aggiunge solo come la pagina scrive l'esito del confronto, precisato il 2026-09-10 prima del congelamento (errata E1 del piano); qui sono ciò che si congela.
 Il proprietario dice **sì o no a ogni mossa con le sue parole**, e le parole vanno nell'esito. Le mosse
 1–8 si provano **nel browser** (`npm run dev`, `http://localhost:5173`); le mosse 2 e 4 si riprovano nei
 due gusci per Q4 e Q3. La mossa 8 vuole il relay di SP-7 in ascolto e la telecamera.

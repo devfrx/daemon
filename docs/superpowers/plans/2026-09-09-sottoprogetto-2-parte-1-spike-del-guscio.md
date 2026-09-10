@@ -188,7 +188,7 @@ non ha potuto misurare senza eseguire — il permesso `core:default` di Tauri (P
 
 | # | Voce |
 |---|---|
-| — | *(vuota alla scrittura del piano, 2026-09-09)* |
+| **E1** | **Compito 1, Passo 2 — la mossa 7 del protocollo NON è «parola per parola» la §4 della stella polare, contro D3.** La cella «Passa se» della mossa 7 nel testo dettato porta la clausola *«la pagina li confronta e scrive «EQUAL» o «DIFFERENT al byte n»»*, che la tabella delle otto mosse della §4 della stella polare (`docs/superpowers/specs/2026-09-07-direzione-gui-design.md`) non ha; le altre sette celle sono identiche. Trovata il 2026-09-10 dall'implementatore del compito 1 confrontando le otto celle, confermata dal revisore. **Decisione del coordinatore:** la clausola **resta** — è la forma con cui la pagina riporta la misura della decisione 32, e i compiti 2 e 7 la usano; il protocollo, non ancora congelato (vincolo 7), lo dice nella frase che apre la tabella delle mosse; la §4 della stella polare riceve il richiamo datato al **compito 8**, coi richiami in §4 che la mappa dei file già prevede. D3 si legge «parola per parola per sette celle su otto, e la mossa 7 aggiunge come si scrive l'esito». Costo se sbagliato: un richiamo in §4 da anticipare, se il proprietario lo vuole subito |
 
 ---
 

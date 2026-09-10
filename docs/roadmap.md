@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-09-10**, con la riga **SP-8** nella tabella degli spike — il compito 1 del [piano della parte 1 del sotto-progetto 2](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md); la riga del piano nella tabella dei piani era arrivata il 2026-09-10, alla rilettura.
+Ultimo aggiornamento: **2026-09-10**, con la riga **SP-8** chiusa nella tabella degli spike — il compito 7 del [piano della parte 1 del sotto-progetto 2](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md); ADR-0029 si chiude col compito 8.
 ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
 passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
 resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
@@ -210,7 +210,7 @@ Costo accettato in ADR-0001: arriva più tardi che in un'architettura con barice
 | SP-3 | budget della proiezione per modello | taratura §5 | ⬜ |
 | SP-4 | provider con annullamento senza addebito | ordine di preferenza §3 | ⬜ |
 | SP-7 | MediaPipe su CPU regge 30 Hz su questa macchina? quanto costa il giro worker → core → GUI a 30 Hz? | il sotto-progetto **12**: le tre ipotesi della §6.4 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md), coi criteri scritti prima in [spikes/gesti/PROTOCOLLO.md](../spikes/gesti/PROTOCOLLO.md) | ✅ **chiuso il 2026-09-04**: **S1 `non passa`** — il tracciatore a due mani sta sul budget dei 30 Hz senza margine, e il criterio cade su due corse indipendenti; **S2 `passa`** sul proprio criterio, che però misura un salto su `localhost` mentre il costo vero sta a monte. Le cifre in [RISULTATI.md](../spikes/RISULTATI.md), sezione SP-7 |
-| SP-8 | il guscio della GUI — Tauri o Electron — con M1–M5 e Q1–Q4 di ADR-0029 sullo stesso frontend, e l'accettazione di `dockview` in otto mosse giudicate dal proprietario | [ADR-0029](adr/0029-guscio-della-gui.md); la SPA del sotto-progetto **2** — §2 del [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), §4 della [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md) — coi criteri scritti prima in [spikes/gui-shell/PROTOCOLLO.md](../spikes/gui-shell/PROTOCOLLO.md) | ⬜ |
+| SP-8 | il guscio della GUI — Tauri o Electron — con M1–M5 e Q1–Q4 di ADR-0029 sullo stesso frontend, e l'accettazione di `dockview` in otto mosse giudicate dal proprietario | [ADR-0029](adr/0029-guscio-della-gui.md); la SPA del sotto-progetto **2** — §2 del [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), §4 della [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md) — coi criteri scritti prima in [spikes/gui-shell/PROTOCOLLO.md](../spikes/gui-shell/PROTOCOLLO.md) | ✅ **chiuso il 2026-09-10**: il guscio è **Electron**, deciso dal proprietario con M1–M5 e Q1–Q4 in mano; `dockview` resta dopo le otto mosse, tutte passate; M4 non passa la soglia P3 su entrambi. Le cifre in [RISULTATI.md](../spikes/RISULTATI.md), sezione SP-8 |
 
 Protocolli e soglie decisionali: [spec §9](superpowers/specs/2026-08-06-kernel-design.md).
 

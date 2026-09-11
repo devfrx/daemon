@@ -1402,7 +1402,7 @@ piano **non è ancora finito** — i compiti **3–16 non esistono**. La session
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; nessuno stash |
-| I commit di questa sessione | `git log --oneline 42b50d8..HEAD` — **uno**, `02aa514`, solo questo file |
+| I commit di questa sessione | `git log --oneline 42b50d8..HEAD` — li elenca lui, e sono tutti di documenti: il piano fino al compito 2, questa chiusura, e la riga del piano nella tabella dei piani di `roadmap.md` (la convenzione di D14 della parte 1: la scrive la sessione che scrive il piano). ⛔ Le righe nella §12 del compendio, in `README.md` e in tracciabilità **non** sono qui: sono il **compito 16** |
 | Codice di prodotto | **non toccato**, col comando in «Da sapere subito» |
 | Quanto è scritto | `grep -c '^## Compito' <questo file>` → **2**; la tabella della posizione ne elenca **sedici** |
 | L'errata | ⚠️ **la sonda si legge DENTRO la sezione**, o conta anche le voci d'errata di altri piani citate fra le voci aperte — misurato, un `grep -c` nudo rende **2**, che sono `E50/E51/E100` del Traguardo 5 ed `E12` del Traguardo 6: `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0**, nasce vuota e non resterà vuota |

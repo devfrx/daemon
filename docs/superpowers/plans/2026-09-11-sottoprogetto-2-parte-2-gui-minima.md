@@ -5005,6 +5005,96 @@ Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit �
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La terza chiusura — 2026-09-11: il piano è SCRITTO FINO AL COMPITO 6 di sedici; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO.** Niente è a metà: albero pulito, nessuno stash, nessuna operazione git in corso, nessun
+server acceso, **nessun codice di prodotto toccato** — `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/
+Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla, e `git diff --name-only 68831c7..HEAD`
+rende **un solo file**, questo piano. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la tabella della posizione è tutta ⬜,
+l'errata è **vuota**, i compiti **7–16 non esistono**. La sessione nuova **scrive**, non esegue.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline 68831c7..HEAD` — li elenca lui, e sono tutti di documenti |
+| Codice di prodotto | **non toccato**, coi due comandi in «Da sapere subito» |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>`; la tabella della posizione ne elenca **sedici** |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0**; nasce vuota e non resterà vuota |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` e `grep -c '^| \*\*D[0-9]' <questo file>` |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, **una volta all'apertura e una prima di ciascun commit**; i log datati nello scratchpad (`gate-2026-09-11-sessione3-*.log`); `bash scripts/check-docs.sh` → `OK` prima di ogni commit |
+| Fine-riga | questo piano è **LF** nell'indice e nell'albero: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ L'avviso di `git commit` — *«LF will be replaced by CRLF»* — è **innocuo**, rimisurato dopo ogni commit e invariato tutte e tre le volte |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Margine del compendio | **invariato**: questa sessione non ha toccato il compendio |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto; nello scratchpad restano i log del cancello e gli script d'inserimento |
+| Debito lasciato | **nessuno non dichiarato**: i dieci compiti che mancano sono la tabella della posizione; le voci aperte stanno nella sezione omonima; le decisioni sono ribaltabili e ciascuna porta il costo |
+
+#### Le decisioni prese scrivendo, oltre a quelle della tabella
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 11 | il compito 5 **riusa** `platform::journal::OpenError` invece di spostarlo o duplicarlo (**D14**) | spostarlo renderebbe false due righe di doc **del kernel** che ne citano il percorso come precedente di forma; duplicarlo darebbe due tipi da tenere in passo | un percorso che si legge male finché non arriva un terzo archivio |
+| 12 | la suite della settima porta prende la forma del **giornale** e non quella della suite `ipc` del compito 2 (**D15**), e la testa del file scrive **perché** le due convivono | la §2 della stella polare dice *«come `journal_contract`»*, e la ragione regge alla lettura: `ipc` usa una macro perché ogni crate porta la propria fabbrica, `custody` non ha un pari | un revisore che «uniforma» le due |
+| 13 | il limite di **P-29** si **dichiara e si MISURA** invece di aggiungere una seconda chiave o di scrivere un bugiardo che non muore | un limite dichiarato e non misurato è un'ipotesi, e AUD-019 fu chiuso misurando che il bugiardo passava | il compito 5 cresce di un passo |
+| 14 | **P-35 si corregge TOGLIENDO il numerale**, non riallineandolo | un numerale in prosa che conta un artefatto è già marcito una volta e marcirà di nuovo alla prima variante | un comando in più nel criterio di chiusura |
+| 15 | una correzione a un compito **scritto e non eseguito** va **NEL compito**, non nell'errata — ⛔ **terza volta**: P-23, P-25, P-35 | un'errata è per ciò che un compito **eseguito** ha smentito; qui il piano è ancora in scrittura, e correggere costa due righe mentre scoprirlo eseguendo costa un compito rifatto | niente |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **Un numerale in prosa che conta un artefatto del piano STESSO non ha nessuna guardia, e si trova solo
+  CONTANDO.** *«le undici varianti»* ha attraversato **due sessioni** e **otto case**, e nella stessa pagina il
+  criterio di chiusura ne pretendeva quattordici di fixture: nessuno dei due lettori ha mai confrontato le due
+  cifre, perché rileggere non è contare. 📌 **Chi scrive un compito che ne consuma un altro rilancia l'`awk` sul
+  blocco di codice dettato**, invece di credere alla frase che lo introduce.
+- ⛔ **Il difetto di un compito si vede preparando quello DOPO, e la quinta domanda girata all'indietro ha pagato
+  DUE volte in questa sessione sola** — P-25 (il compito 2) scrivendo il 5, P-35 (il compito 3) preparando il 7.
+  Si chiede sempre: *«i compiti PRIMA del mio lasciano false delle righe nei file, o nei conteggi, che io tocco?»*
+- ⛔ **Un commento che DICHIARA DI ESSERE UN COMANDO è la forma peggiore di cifra stantia** — P-24, il doc di
+  `crates/platform/src/lib.rs`: dice *«the list is not written here as a fixed set … it comes from `grep …`»*, e
+  quel `grep` **enumera sette nomi di tratto**. Chi legge si fida perché vede un comando. **Si rilancia.**
+- ⛔ **E la cura sbagliata si misura anche lei.** La prima idea per P-24 era aprire il regex: misurato,
+  `^impl [A-Za-z_]+ for ` cattura anche `StorageBackend for FileBackend` e `Default for SequentialRng`, che porte
+  non sono. Rumore scambiato per copertura, l'errore opposto e altrettanto silenzioso.
+- ⛔ **Uno script che inserisce nel piano deve avere la guardia FUORI dal testo che CITA ciò che corregge.** La
+  guardia *««undici» non deve più comparire»* è scattata su sé stessa, perché la voce P-35 cita la parola per
+  correggerla. ✅ La scrittura atomica ha retto — `os.replace` su un temporaneo, gotcha **#82** — e il file non è
+  stato toccato.
+- ⛔ **Un heredoc di Bash MANGIA I BACKSLASH, anche corto:** patchare uno script Python con `<<'PY'` ha
+  trasformato `text.index("\n", …)` in un a-capo vero, due volte. Uno script si scrive con **Write**, e se va
+  patchato si riscrive intero — non si patcha da heredoc.
+
+#### La lista di lettura della sessione nuova — a compito, non tutto
+
+⛔ **Resta quella della prima chiusura, con queste correzioni misurate scrivendo i compiti 5 e 6:**
+
+| Compito | Che cosa si legge |
+|---|---|
+| **3**, **4**, **5**, **6** | ✅ **SCRITTI.** Si leggono solo se si esegue |
+| **7**, **8** — l'attività e il daemon | ⚠️ **CORRETTA:** oltre a quanto la prima chiusura scrive — §5 del 2 **per intero**, le **tre sequenze** di «La GUI dentro», `crates/daemon/src/main.rs` per intero — servono **`crates/kernel/src/executor.rs`** (la forma di un'attività: `spawn`, il `Future`, `TaskState`, e `Parameters` che porta il limite di giri) e le **tre firme** di `crates/kernel/src/ports/ipc.rs` (`accept` rende un `Option` e **non** ha canale d'errore; `send` e `receive` rendono `Result`), più il blocco *Interfaces* del compito 3 per i nomi dei gemelli. ⛔ **E il compito 6 produce ciò che il 7 consuma:** `Registry::invoke` prende l'**effetto come chiusura** (D16), quindi è il **7** che nomina `Arbiter::set_policy` e registra la funzione vera |
+| **9** — la campagna DST | invariata |
+| gli altri | come la prima chiusura li ha scritti |
+
+⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — questo file e il compendio — e la **testa di
+questo piano**: vincoli globali, posizione, errata, le voci **P**, le decisioni **D**, le voci aperte. ⛔ **Il peso
+non si scrive qui:** lo dà lo snippet `tiktoken` di `CLAUDE.md`, e cresce a ogni compito scritto.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la
+   testa è `70155f8` o un commit dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — non i compiti già scritti, se non per
+   i nomi che il compito nuovo consuma: il blocco *Interfaces* di ciascuno li porta.
+3. `superpowers:writing-plans`: scrivere i compiti **7, 8, 9 …** nell'ordine della tabella della posizione,
+   ciascuno col proprio **pre-controllo delle quattro domande** contro il codice di **adesso**, più la quinta
+   girata all'indietro. Ogni difetto trovato è una voce **P** in coda, e la decisione che ne discende una riga **D**.
+4. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
+   `bash scripts/check-docs.sh` → `OK`, `bash scripts/gate.sh` → `GATE GREEN`, e il commit — **senza co-autore**.
+5. Quando i sedici compiti ci sono: la **revisione del piano intero** — copertura dei disegni, segnaposto,
+   coerenza dei nomi fra i blocchi *Interfaces*, ⛔ **e ogni CONTEGGIO rilanciato col comando, non riletto**
+   (P-35); poi l'esecuzione in una sessione **nuova**, un subagente fresco per compito.
+6. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
+---
+
 ### La seconda chiusura — 2026-09-11: il piano è SCRITTO FINO AL COMPITO 4 di sedici; nessun compito è eseguito
 
 ⛔ **QUESTA INTESTAZIONE DICEVA *«FINO AL COMPITO 3 di sedici, e il pre-controllo del 4 è FATTO»*, ed è

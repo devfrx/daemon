@@ -527,6 +527,151 @@ adesso e non con una voce d'errata**, e la differenza è che il compito 2 **non 
 che un compito eseguito ha smentito, e qui il piano è ancora in scrittura — correggere costa due righe, scoprirlo
 eseguendo costa un compito rifatto.
 
+### P-24 — Il `grep` di `platform/src/lib.rs` è un ELENCO CHIUSO travestito da comando, e non potrà MAI trovare `Custody`
+
+**Domanda 6 — ciò che ti smentisce sta in un COMMENTO**, e qui il commento **dichiara di essere un comando**, che è
+la forma peggiore: chi legge si fida e non ricontrolla. Il doc di modulo di `crates/platform/src/lib.rs`, riletto
+il 2026-09-11, dice *«the list is not written here as a fixed set, because milestone 6 adds to it; it comes from
+`grep -rEn "^impl (Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/`, which answered
+those three on 2026-08-28»*.
+
+⛔ **Il regex enumera SETTE nomi di tratto, e `Custody` non è uno di essi.** Quindi la frase *«non è un elenco
+fisso»* è falsa: l'elenco **è** il regex. Rilanciato il 2026-09-11 rende tre righe — `Journal`, `Reactor`, `Rng` —
+e dopo il compito 5 ne renderà ancora tre mentre le implementazioni sono quattro: il comando non sbaglia il
+conteggio, **non vede proprio il file**.
+
+⚠️ **E la cura NON è aprire il regex**, che è la prima cosa che viene in mente. Misurato il 2026-09-11:
+`grep -rEn "^impl [A-Za-z_]+ for " crates/platform/src/` rende cinque righe, e due non sono porte del kernel —
+`impl StorageBackend for FileBackend` e `impl Default for SequentialRng`. Un regex aperto scambia il rumore per
+copertura, che è l'errore opposto e altrettanto silenzioso. La cura è **aggiungere `Custody` all'enumerazione e
+dire che è un'enumerazione**: chi aggiunge la porta è l'unico che può saperlo, esattamente come per la §1.0 nel
+compendio (gotcha #40).
+
+⛔ **E c'è una TERZA falsità nella stessa frase, che è una scadenza in prosa — gotcha #77.** *«because milestone 6
+adds to it»*: il Traguardo 6 è **chiuso il 2026-09-02** e non ha aggiunto nulla — `ls crates/platform/src/` rende
+`journal.rs`, `lib.rs`, `reactor.rs`, `rng.rs`. La ragione per cui l'elenco sarebbe dovuto crescere è scaduta senza
+che nulla diventasse rosso, ed è la gemella di **P-16**, due file più in là.
+
+✅ **Esaminata e NON toccata:** la riga `process` della tabella di `crates/kernel/src/ports/mod.rs` dice ancora
+*«milestone 6»* ed è falsa per lo stesso motivo — ma è un'**altra frase**, di un'altra famiglia, e il suo chiusore
+è il sotto-progetto **12**, il primo worker vero. Toccarla qui allargherebbe il perimetro che il vincolo 1
+delimita. Scritto perché il prossimo censimento la ritrovi e sappia che è stata **vista**, come la riga 1527 in
+**P-22**.
+
+**Conseguenza per il compito 5:** `crates/platform/src/lib.rs` entra nella lista *Files* per **due** cose — la riga
+di modulo e il **richiamo datato** sulla frase — e il richiamo dice le tre cose insieme: `Custody` nel regex,
+l'enumerazione dichiarata tale, la scadenza sostituita da un fatto.
+
+### P-25 — Il compito 2 lascia FALSA la prosa di `platform/src/lib.rs`, in un file che GIÀ modifica
+
+**Riga 5 girata all'indietro** — *«i compiti PRIMA del mio lasciano false delle righe nei file che io apro?»*, la
+trappola che la seconda chiusura ha scritto dopo **P-23**. È la stessa specie un compito più in là, e questa volta
+il file è **già nella lista** del compito che lo rompe: il Passo 9 del compito 2 aggiunge `pub mod ipc;` e **non
+tocca il doc di modulo sopra**, che da quel momento dice *«Today they are `Journal` …, `Reactor` … and `Rng` …»*
+mentre sono quattro.
+
+⚠️ **E per `Ipc` il regex FUNZIONA** — `Ipc` è fra i sette nomi — quindi dopo il compito 2 il comando risponde
+quattro e la prosa accanto dice tre: le due metà della stessa frase si contraddicono, che è la radice **R1**
+dell'audit nella sua forma più piccola.
+
+⛔ **Corretto nel compito 2 e non con una voce d'errata**, per la stessa ragione di **P-23**: il compito 2 **non è
+eseguito**. Un'errata è per ciò che un compito eseguito ha smentito.
+
+**Conseguenza:** la lista *Files* e il Passo 9 del compito 2 crescono di un **richiamo datato** sulla frase.
+⚠️ **Il compito 5 NON lo rifà**: quando arriva, la frase nomina già `Ipc`, e il richiamo del 5 si aggiunge
+**sotto** quello del 2 senza cancellarlo — due richiami datati nello stesso capoverso, la forma che
+`crates/kernel/src/ports/mod.rs` porta già dal 2026-08-28.
+
+### P-26 — `OpenError` si RIUSA, e il suo percorso è citato da DUE doc del kernel come precedente di forma
+
+**Domanda 3 — l'artefatto è sbagliato, e compila.** La §2 della stella polare dice che l'implementazione vera è
+*«`redb` sul `FileBackend` che il giornale già usa — è `pub`, con `open(path)`»*, e **tace sull'errore di
+apertura**. Scrivere un `custody::OpenError` gemello compilerebbe benissimo e sarebbe una seconda definizione delle
+stesse tre varianti.
+
+Misurato il 2026-09-11 con `grep -rn "OpenError" crates/ --include=*.rs`, tolto il file che lo definisce: le case
+fuori da `crates/platform/src/journal.rs` sono cinque, e **due sono doc del KERNEL** che ne citano il percorso per
+esteso — `crates/kernel/src/framing.rs` e `crates/kernel/src/permission.rs`, la seconda con *«The shape is
+`platform::journal::OpenError`'s, which composes `io::Error`»*. Le altre tre sono `crates/daemon/src/main.rs`
+(`StartupError::Journal(OpenError)`), `crates/platform/tests/file_journal.rs` e un commento in
+`journal_contract_real.rs`.
+
+⛔ **Quindi SPOSTARLO in `platform::OpenError` renderebbe false due righe del kernel**, in due file che questo
+compito non apre — la radice **R1** commessa per fare ordine. E **duplicarlo** darebbe due tipi da tenere in passo,
+di cui il primo che diverge mente in silenzio.
+
+⚠️ **E la funzione `engine` di `journal.rs` è PRIVATA**, misurato: `fn engine(error: impl Into<redb::Error>) ->
+OpenError`. La custodia le serve la stessa conversione, quindi o sale a `pub(crate)` — una parola — o si riscrive.
+**Conseguenza: D14.**
+
+### P-27 — DENTRO QUESTO PIANO ci sono già DUE forme di suite di conformità, e vanno tenute distinte
+
+**Riga 5 — il contratto cresce sotto il piano**, e qui cresce sotto il piano **stesso**. La §2 della stella polare
+dice *«la suite di conformità sulle due implementazioni coi bugiardi, **come `journal_contract`**»*, e
+`journal_contract.rs` è una **funzione** — `pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F)` —
+più un `#[test]` per la finta in memoria, il tutto raggiunto con `include!`. Ma il **compito 2** ha scelto un'altra
+forma per `ipc`: `include!` **più una `macro_rules!`** che genera i `#[test]`, e il suo Passo 9 scrive che il banco
+del kernel *«riporta zero test — è voluto»*.
+
+⚠️ **Non è un'incoerenza da sanare, e la causa è scritta nel compito 2:** la suite di `ipc` dichiara *«what is
+deliberately absent: every promise that needs a real peer writing bytes»*, quindi le sue promesse non girano contro
+una fabbrica sola e ogni crate porta la propria. `Custody` **non ha un pari**: una fabbrica basta, e `kernel` può
+costruire `simulator::custody::MemoryCustody` da sé perché `simulator` è già una sua **dev-dependency** —
+verificato il 2026-09-11 in `crates/kernel/Cargo.toml`, dove il ciclo `kernel -> (dev) -> simulator -> kernel` è
+dichiarato e *«run once rather than assumed»*.
+
+**Conseguenza: D15**, e la testa di `custody_contract.rs` scrive perché le forme sono due, così che un revisore non
+le «uniformi».
+
+### P-28 — Delle sette prove che la riga della §8 elenca per la settima porta, TRE non sono di questo compito
+
+**Domanda 2 — la sonda manca**, nella sua direzione meno ovvia: qui il rischio è **costruirne troppe**. La riga
+*«la settima porta»* della tabella degli artefatti della §8 del 2 ne elenca sette in una cella sola, e il taglio per
+artefatto (**D1**) le distribuisce:
+
+| La prova, come la §8 la scrive | Compito |
+|---|---|
+| la finta in `ports_are_implementable.rs` | **4** — già scritto |
+| la suite di conformità sulle due implementazioni coi bugiardi | **5** |
+| `redb` in `platform`: apri, scrivi, riapri, rileggi | **5** |
+| byte che non sono JSON tornano identici | **5** |
+| archivio vuoto → «niente» | **5** |
+| `SaveLayout` su un archivio che rifiuta la scrittura → `Layout` col vecchio | **7**, l'attività che dispaccia |
+| archivio che non si apre → il core parte e `Layout` dice «non disponibile» (decisione 35) | **8**, il daemon che cabla |
+
+⛔ **Le ultime due non si POSSONO scrivere al 5, e non è una scelta:** parlano di `SaveLayout` e di `Layout`, che
+sono **messaggi** — varianti dello schema del compito 3 — e di un core che parte, che è il daemon. Al compito 5 il
+dispaccio non esiste. Scritto qui perché un censimento della §8 contro il compito 5 le trovi assenti e sappia che è
+voluto, invece di aggiungerle dove non possono vivere.
+
+### P-29 — Con UNA chiave sola la suite NON può cogliere un'implementazione CIECA ALLA CHIAVE: si dichiara e si MISURA
+
+**Domanda 1 — la sonda è vacua.** È la lezione di `StepBlindJournal` (finding **AUD-019**) applicata alla porta
+nuova, e questa volta cade dall'altra parte. Il giornale la chiuse mettendo un **passante** in archivio: su un
+archivio con un passo solo, *«il record di questo passo»* e *«il primo record che c'è»* sono lo stesso record,
+quindi il cercare non era mai messo alla prova. ⛔ **Qui il passante NON È COSTRUIBILE:** `CustodyKey` ha **una
+variante**, e su un archivio con una chiave sola *«il pacchetto di questa chiave»* e *«l'unico pacchetto che c'è»*
+sono lo stesso pacchetto — **per costruzione, non per come è scritto il banco**.
+
+⛔ **Quindi un `FileCustody` il cui `retrieve` ignorasse la chiave passerebbe la suite intera.** Le tre vie,
+esaminate:
+
+| Via | Perché cade |
+|---|---|
+| una **seconda variante** di `CustodyKey` per il banco | una variante senza chiamante, che è ciò che il doc di `CustodyError` del compito 4 rifiuta con le sue stesse parole. E nessun controllo la coglierebbe: sarebbe **codice**, non un documento |
+| scrivere il **bugiardo cieco** e pretendere che sia colto | passerebbe. Un bugiardo che non muore è un verde che non prova nulla — la definizione di sonda vacua |
+| **dichiarare il limite e MISURARLO** | è ciò che il repository fa già: la testa di `journal_contract.rs` ha la sezione *«what is deliberately absent»*, e AUD-019 fu chiuso **misurando** che il bugiardo passava, non ragionandoci |
+
+**Conseguenza:** la terza via. La testa di `custody_contract.rs` porta il limite col proprio **innesco** — la
+**seconda chiave**, chiunque la aggiunga — e il compito 5 porta un **passo di misura**: si scrive la mutazione
+cieca, si lancia la suite, si **osserva che passa**, si revoca. ⚠️ **La misura è metà del valore:** un limite
+dichiarato e non misurato è un'ipotesi, e questo repository ha già pagato per la differenza — gotcha **#57**.
+
+⚠️ **E la finta del simulatore NON è cieca alla chiave**, benché nulla lo pretenda: tiene `Vec<(CustodyKey,
+Vec<u8>)>` come `MemoryJournal` tiene `Vec<Entry>`, mentre un `Option<Vec<u8>>` lo sarebbe **per costruzione**. È
+un argomento, non un rosso, ed è etichettato come tale — la stessa forma di `EntryKind::Note` in
+`crates/simulator/src/journal.rs`.
+
 ---
 
 ## Le decisioni prese da questo piano
@@ -549,6 +694,8 @@ smentisce — è ciò per cui esiste l'errata.
 | **D11** | ⛔ **un tipo del kernel raggiunge il filo TALE E QUALE solo se è CHIUSO** — un newtype su un numero o un enum senza dati, che non può guadagnare campi; **ogni tipo con CAMPI porta un gemello** in `kernel::wire::ipc`, e la conversione è il posto dove un campo nuovo del giornale si ferma | la regola distingue i **due precedenti opposti** del repo invece di sceglierne uno: `Mib` porta entrambe le lingue perché è un numero con un nome e non può crescere; `Trust` vuole il gemello perché il disegno lo dice. ⛔ **E per due dei quattro non è una scelta** (P-19): `Permission` porta `&'static str`, che non nasce da byte in arrivo — l'argomento che `GrantRequest` scrive contro `ResourceProfile`, ADR-0014 — e `VramPolicy` contiene le policy stesse. ⚠️ **Il beneficio è il compilatore:** ADR-0036 vuole che il giornale **evolva**, I4 rinuncia al versionamento sul filo, e senza gemelli un campo aggiunto al giornale cambierebbe i byte del filo **in silenzio**. ⚠️ **Costo:** dieci tipi nuovi in `wire::ipc` e una conversione per variante. ⚖️ **Portata al proprietario in A/B il 2026-09-11 e delegata** — *«scegli secondo decision-principles»* |
 | **D12** | le **fixture nascono al compito 3**, che crea `gui/schema/fixtures/` con **soli dati** — nessun `package.json`, nessun `Cargo.toml` | la §4 e la §8 del 2 le vogliono in `gui/`, che però nasce al **compito 10** (P-18). Le tre vie: spostare il compito 3 dopo il 10 romperebbe il taglio per artefatto (D1) e lascerebbe lo schema senza controllo per sette compiti; farle nascere in `crates/kernel/tests/` e copiarle contraddirebbe il disegno e creerebbe **due case**; crearle dove il disegno dice è il minimo. ✅ **Verificato che non ci siano effetti collaterali:** `gui/` non è ignorata, e senza manifesti `cargo` non la vede. ⚠️ **Costo:** il compito 10 trova la cartella già lì e ci costruisce intorno, invece di crearla vuota |
 | **D13** | ⛔ **la suite di conformità della settima porta nasce al compito 5, non al 4**: il 4 porta il tratto, la finta di `ports_are_implementable.rs` e i tre richiami; il 5 porta le due implementazioni **e** la suite che le confronta | una suite di conformità confronta **due** implementazioni, e `crates/kernel/src/ports/mod.rs` lo scrive di sé; al compito 4 ce ne sono **zero** (P-20). Le due vie scartate: farla nascere al 4 **col tempo futuro** è ciò che `journal_contract.rs` fece davvero e che ha richiesto un richiamo datato — *«a tense is a status claim like any other»*, gotcha #31, lezione già pagata; farla nascere al 4 su una finta minima la renderebbe **vacua**, che è la prima domanda del pre-controllo. ⚠️ **Il compito 4 resta provato da solo**, che è ciò che D1 chiede: la finta prova il tratto **da fuori dalla crate** — la terza domanda di `CLAUDE.md` in persona. ⚠️ **Costo:** il compito 5 cresce di un artefatto, e la riga 4 della tabella della posizione perde le parole «la suite di conformità» |
+| **D14** | ⛔ **`FileCustody::open` rende `platform::journal::OpenError`, il tipo che c'è**, e `crates/platform/src/journal.rs` entra nella lista *Files* del compito 5 per **una parola**: `engine` passa da privata a `pub(crate)` | le tre varianti — `File(io::Error)`, `AlreadyOpen`, `Engine(redb::Error)` — sono esattamente quelle che *aprire un archivio `redb` su un `FileBackend`* può produrre, e la custodia apre la stessa cosa. Le due vie scartate (**P-26**): **spostarlo** in `platform::OpenError` renderebbe false due righe di doc **del kernel** che ne citano il percorso come precedente di forma — la radice **R1** commessa per fare ordine; **duplicarlo** darebbe due tipi da tenere in passo, e il primo che diverge mente in silenzio. ⚠️ **Costo dichiarato:** il percorso si legge male — un errore della custodia raggiunto attraverso il modulo `journal` — e per questo il doc di `FileCustody::open` lo spiega dove chi lo incontra lo cerca. Se un **terzo** archivio arriverà, allora il tipo sale di un livello e i due doc del kernel si correggono nello stesso commit |
+| **D15** | ⛔ **la suite della settima porta prende la forma del GIORNALE** — una funzione `assert_custody_contract` più `include!` — **e non quella della suite `ipc` del compito 2**, che è `include!` più una `macro_rules!` | la §2 della stella polare dice *«come `journal_contract`»*, e la ragione regge alla lettura: la suite di `ipc` genera i `#[test]` con una macro perché **ogni crate porta la propria fabbrica** — le sue promesse vere vogliono un pari che scrive byte, e una finta non ne ha uno. `Custody` non ha un pari: una fabbrica basta, e `kernel` costruisce `simulator::custody::MemoryCustody` da sé perché `simulator` è già sua **dev-dependency** (**P-27**). ⚠️ **Costo dichiarato:** due forme di suite convivono in questo piano e un revisore può leggerlo come un'incoerenza; per questo la testa di `custody_contract.rs` scrive **perché** sono due, invece di lasciarlo dedurre |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -888,7 +1035,7 @@ git push
 - Create: `crates/platform/src/ipc.rs` (**LF**)
 - Create: `crates/kernel/tests/ipc_contract.rs` (**LF**) — la suite, `include!`-abile
 - Create: `crates/platform/tests/ipc_contract_real.rs` (**LF**)
-- Modify: `crates/platform/src/lib.rs` (**CRLF**) — una riga di modulo
+- Modify: `crates/platform/src/lib.rs` (**CRLF**) — una riga di modulo, ⛔ **più il richiamo datato che P-25 impone**: il doc di modulo dice *«Today they are `Journal`, `Reactor` and `Rng`»* e da questo compito sono quattro
 - Modify: `crates/platform/Cargo.toml` (**CRLF**) — `interprocess`, con la giustificazione accanto
 - Modify: `Cargo.lock` (**CRLF**) — **nello stesso commit** del manifesto (vincolo 6)
 - Modify: `crates/kernel/src/ports/mod.rs` (**`i/lf w/crlf`**) — ⛔ **due richiami datati, P-23**: la riga della tabella `ipc` (*«Real implementation arrives in»* → non più il Traguardo 6, ma questo compito) e la frase *«The other FOUR … have NO CALLER AT ALL»*, che scende a **tre**
@@ -1525,6 +1672,16 @@ In `crates/platform/src/lib.rs` (**CRLF**), accanto agli altri moduli — l'ordi
 
 ```
 pub mod ipc;
+```
+
+⛔ **E il doc di modulo sopra, che questo compito rende falso — P-25.** Il richiamo si aggiunge in coda al doc, **senza riscrivere la frase**:
+
+```rust
+//! ⚠️ DATED RECALL, 2026-09-11 -- "Today they are `Journal`, `Reactor` and `Rng`" IS FALSE FROM THIS TASK:
+//! `ipc::LocalSocketIpc` is the fourth. The `grep` above DOES find it -- `Ipc` is one of the names it
+//! enumerates -- so the two halves of that sentence now contradict each other, which is why the prose is
+//! dated here rather than left to be believed. The count is deliberately NOT rewritten into the sentence:
+//! the command answers it, and a figure inside prose is gotcha #31.
 ```
 
 ```bash
@@ -2650,6 +2807,1082 @@ git push
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/gate-deps.sh` **verde**: la lista di ADR-0031 **non è cresciuta** (il modulo non ha dipendenze)
 - [ ] i fine-riga rimisurati, `git ls-files --eol` invariato sui tre file toccati — `ports_are_implementable.rs` ancora `i/crlf`
 - [ ] la riga **4** della tabella della posizione a ✅ con la data
+
+---
+
+## Compito 5: le due implementazioni della settima porta — `redb` in `platform`, la finta in `simulator`, e la suite che le confronta
+
+**Files:**
+- Create: `crates/simulator/src/custody.rs` (**LF**) — `MemoryCustody`
+- Create: `crates/kernel/tests/custody_contract.rs` (**LF**) — le cinque promesse, i cinque bugiardi, il limite dichiarato di **P-29**
+- Create: `crates/platform/src/custody.rs` (**LF**) — `FileCustody`, la tabella, `open(path)`
+- Create: `crates/platform/tests/custody_contract_real.rs` (**LF**) — l'`include!` e la fabbrica su file
+- Create: `crates/platform/tests/file_custody.rs` (**LF**) — ciò che **solo** l'implementazione vera promette
+- Modify: `crates/simulator/src/lib.rs` (**`i/lf w/crlf`**) — `pub mod custody;`
+- Modify: `crates/platform/src/lib.rs` (**`i/lf w/crlf`**) — la riga di modulo **e il richiamo datato di P-24**, sotto quello che il compito 2 ha già scritto
+- Modify: `crates/platform/src/journal.rs` (**`i/lf w/crlf`**) — ⛔ **una parola**: `engine` da privata a `pub(crate)`, con la riga che dice chi la chiama adesso (**D14**)
+- Read: la **§2 della stella polare**, pezzi 1, 3, 4 e 6, e la riga della settima porta della tabella degli artefatti della **§8 del 2**; `crates/platform/src/journal.rs` **per intero** — `FileBackend`, `OpenError`, `with_backend`, la ragione per cui la tabella si crea a ogni apertura; la **testa** di `crates/kernel/tests/journal_contract.rs` e i suoi `assert_caught_on` / `message_the_suite_fails_with` / `panic_message`; `crates/platform/tests/journal_contract_real.rs` **per intero**; `crates/platform/tests/file_journal.rs` per `private_dir_for_line` e le due direzioni del lucchetto
+
+**Interfaces:**
+- Consumes, dal **compito 4**: `kernel::ports::custody::{Custody, CustodyKey, CustodyError}`, con
+  `keep(&mut self, CustodyKey, &[u8]) -> Result<(), CustodyError>` e
+  `retrieve(&self, CustodyKey) -> Result<Option<Vec<u8>>, CustodyError>`; `CustodyKey::Layout`;
+  `CustodyError::Unavailable`. Tutti e tre derivano `Debug + Clone + Copy + PartialEq + Eq`
+- Consumes, da `platform`: `platform::journal::{FileBackend, OpenError}` — `FileBackend::open(&Path)` è già `pub`,
+  e `OpenError` si **riusa** al suo percorso (**D14**)
+- Produces, e i compiti **8**, **9** e **11** li usano con questi nomi esatti:
+  - `platform::custody::FileCustody`, con `FileCustody::open(path: &Path) -> Result<FileCustody, platform::journal::OpenError>`
+  - `simulator::custody::MemoryCustody`, con `MemoryCustody::new() -> MemoryCustody` — ⚠️ **`const fn`, e nessun `impl Default`**, come `MemoryJournal`
+  - `assert_custody_contract<C: Custody, F: Fn() -> C>(build: F)` in `crates/kernel/tests/custody_contract.rs`, raggiunta con `include!`
+
+⛔ **NESSUN `with_backend` SU `FileCustody`, e non è una dimenticanza.** Il giornale ne ha uno perché è lì che il
+Traguardo 4 inietta il guasto di livello 2, e `crates/platform/tests/engine_crash_consistency.rs` lo chiama. Per la
+custodia nessuno lo chiamerebbe: il confine `FileBackend` è **già** provato sostituibile da fuori dalla crate dal
+banco del giornale, e ciò che la DST sostituisce qui è la **porta intera** — la finta del simulatore, §2 pezzo 4
+della stella polare. Un secondo punto d'ingresso senza chiamante è lo strato speculativo che il criterio 5 rifiuta.
+✅ Se una campagna lo chiederà, arriva **con** il suo chiamante.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+for f in crates/simulator/src/custody.rs crates/kernel/tests/custody_contract.rs crates/platform/src/custody.rs crates/platform/tests/custody_contract_real.rs crates/platform/tests/file_custody.rs; do printf '%-52s ' "$f"; test -e "$f" && echo ESISTE || echo no; done
+ls crates/kernel/src/ports/custody.rs
+grep -rEn "^impl (Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/
+grep -n 'fn engine' crates/platform/src/journal.rs
+grep -c '^#\[test\]' crates/kernel/tests/journal_contract.rs
+grep -rn 'daemon-file-journal-\|daemon-journal-contract-' crates/platform/tests/
+git ls-files --eol crates/platform/src/lib.rs crates/simulator/src/lib.rs crates/platform/src/journal.rs
+```
+
+Atteso: i **cinque** file **non esistono**; `crates/kernel/src/ports/custody.rs` **esiste** (compito 4);
+il `grep` chiuso rende le implementazioni di oggi — ⛔ **quante, non si scrive qui: il compito 2 ne ha aggiunta una
+e il numero dipende da quali compiti sono passati**; `fn engine` è **privata**; i due prefissi di directory in uso
+sono `daemon-file-journal-` e `daemon-journal-contract-`, e i due nuovi devono essere **diversi da entrambi**;
+i tre file da modificare sono `i/lf w/crlf`.
+
+- [ ] **Passo 2: la suite, e il rosso che deve dare**
+
+`crates/kernel/tests/custody_contract.rs`, **LF**. ⛔ **Commenti normali e non `//!`**: il file si espande con
+`include!` in posizione di item, e un attributo interno lì non è ammesso.
+
+```rust
+// THE CONFORMANCE SUITE OF THE `custody` PORT (§2 of the GUI north star). It is worth what the
+// two implementations answering the SAME questions is worth: the in-memory double that the DST
+// campaign runs against, and `redb` under `platform`.
+//
+// ⛔ REGULAR COMMENTS AND NOT `//!`, BECAUSE THIS FILE IS `include!`d.
+// `crates/platform/tests/custody_contract_real.rs` expands it IN ITEM POSITION, and an inner
+// attribute -- which is what `//!` desugars to -- is not permitted there. Same mechanism as
+// `journal_contract.rs`, and for the same reason: two copies of the assertions would drift, and
+// THE FIRST ONE TO DRIFT WOULD PRINT `ok` WHILE COMPARING NOTHING.
+//
+// ⛔ A FUNCTION AND NOT A `macro_rules!`, WHICH IS THE OTHER SHAPE IN THIS VERY MILESTONE, so the
+// difference is written down rather than left to look like an inconsistency somebody should
+// tidy. `ipc_contract.rs` generates its `#[test]`s from a macro because EACH CRATE HANDS ITS OWN
+// FACTORY: its real promises need a peer writing bytes, which a fake has not got. `custody` has
+// no peer -- one factory is enough, and `kernel` builds `simulator::custody::MemoryCustody`
+// itself, because `simulator` is already one of its dev-dependencies. Shape borrowed from
+// `journal_contract.rs`, which the north star names by name.
+//
+// ⛔ WHAT THIS SUITE CANNOT HOLD, AND IT IS MEASURED RATHER THAN SUSPECTED: AN IMPLEMENTATION
+// THAT IGNORES THE KEY. `CustodyKey` has ONE variant, so on an archive holding one key "the
+// package under THIS key" and "the only package there is" ARE THE SAME PACKAGE -- by
+// construction, not by how this bench is written. A `retrieve` that never looked at its argument
+// would pass every promise below. The journal closed the twin defect (finding AUD-019) by
+// putting a BYSTANDER in the archive; here a bystander IS NOT BUILDABLE.
+// ⚠️ MEASURED, not reasoned: task 5 wrote the key-blind mutation, ran this suite against it and
+// WATCHED IT PASS, then revoked it -- the record is in that task's commit.
+// ⛔ THE TRIGGER IS THE SECOND KEY: whoever adds a variant to `CustodyKey` adds a bystander here
+// in the same commit, and this paragraph goes. A second variant added without it would leave the
+// port's central promise unheld and nothing would go red. Written here because nobody would
+// rediscover it.
+//
+// ⚠️ WHAT IS DELIBERATELY ABSENT, the other half: SURVIVING A REOPENING. It is a promise of the
+// REAL implementation alone -- the in-memory double cannot make it and is CORRECT not to, and
+// asserting it here would turn a correct implementation red (gotcha #44). It lives in
+// `crates/platform/tests/file_custody.rs`.
+
+use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
+
+/// ⛔ ONE MESSAGE PER PROMISE, AND NOT ONE SHARED -- the rule `journal_contract.rs` states and
+/// `reactor_contract.rs` learned the hard way: with a shared message a liar caught by promise 1
+/// would be indistinguishable from one caught by promise 4, in exactly the place built to tell
+/// them apart. They share `custody contract violated: ` and diverge immediately after, because
+/// the negative tests match with `contains`.
+pub const KEPT_COMES_BACK_MESSAGE: &str =
+    "custody contract violated: what `keep` wrote must come back from `retrieve` byte for byte";
+
+/// Promise 1 of §2 of the north star, in one line: the package is OPAQUE.
+pub const OPAQUE_MESSAGE: &str =
+    "custody contract violated: bytes that are not text must be kept and handed back untouched";
+
+pub const NOTHING_KEPT_MESSAGE: &str =
+    "custody contract violated: a key with nothing under it answers Ok(None), never an error";
+
+pub const REPLACES_MESSAGE: &str =
+    "custody contract violated: a second `keep` under one key must REPLACE what was there";
+
+/// The gotcha #30 family: a bench that only looks at `Ok`/`Err` does not see the WRONG ANSWER.
+pub const EMPTY_IS_NOT_ABSENT_MESSAGE: &str =
+    "custody contract violated: an empty package is KEPT, and must not come back as nothing";
+
+/// Every promise the `custody` port makes, checked against ONE implementation.
+///
+/// It takes a FACTORY and not a custody because several blocks need one that has never been
+/// written to, and `keep` has no undo.
+///
+/// ⛔ THE ORDER OF THE BLOCKS IS PART OF THE SUITE, because it stops at the FIRST promise an
+/// implementation breaks. Every liar below therefore has to survive every promise ahead of its
+/// own and die on that one -- which is the property each negative test measures by reading the
+/// panic payload instead of settling for `is_err()`.
+pub fn assert_custody_contract<C: Custody, F: Fn() -> C>(build: F) {
+    // ── 1. What `keep` writes, `retrieve` hands back byte for byte ────────────────────────
+    {
+        let mut custody = build();
+        let written: &[u8] = br#"{"grid":{"root":{"type":"branch"}},"activeView":"home"}"#;
+
+        custody
+            .keep(CustodyKey::Layout, written)
+            .expect(KEPT_COMES_BACK_MESSAGE);
+
+        let read = custody
+            .retrieve(CustodyKey::Layout)
+            .expect(KEPT_COMES_BACK_MESSAGE);
+
+        assert_eq!(read.as_deref(), Some(written), "{}", KEPT_COMES_BACK_MESSAGE);
+    }
+
+    // ── 2. Bytes that are not text survive unchanged ──────────────────────────────────────
+    // ⛔ THIS IS PIECE 1 OF §2 OF THE NORTH STAR MADE EXECUTABLE: "the day `dockview` changes
+    // format, the core does not change". An implementation that parsed, validated or
+    // canonicalised the package would satisfy promise 1 -- the payload there IS valid JSON and
+    // valid UTF-8 -- and die here. That is why the two blocks are not one.
+    //
+    // ⚠️ THE PAYLOAD IS CHOSEN, NOT RANDOM: `0xff` and `0x80` are not valid UTF-8 in any
+    // position, `0x00` is what a C string stops at, and the `{` in the middle is there so that
+    // something looking for JSON finds a plausible start and then fails.
+    {
+        let mut custody = build();
+        let written: &[u8] = &[0xff, 0x00, 0x1b, b'{', 0xfe, b'\n', 0x80, 0x7f];
+
+        custody
+            .keep(CustodyKey::Layout, written)
+            .expect(OPAQUE_MESSAGE);
+
+        let read = custody.retrieve(CustodyKey::Layout).expect(OPAQUE_MESSAGE);
+
+        assert_eq!(read.as_deref(), Some(written), "{}", OPAQUE_MESSAGE);
+    }
+
+    // ── 3. A key with nothing under it answers Ok(None) ───────────────────────────────────
+    // ⛔ `Ok(None)` AND NOT AN ERROR, and the port's doc argues why: this is the FIRST RUN, the
+    // ordinary case, and folding it into an error would make the commonest path look like a
+    // failure. The assertion is on the WHOLE `Result`, so an implementation answering
+    // `Err(Unavailable)` dies here instead of being quietly unwrapped away.
+    {
+        let custody = build();
+        assert_eq!(
+            custody.retrieve(CustodyKey::Layout),
+            Ok(None),
+            "{}",
+            NOTHING_KEPT_MESSAGE
+        );
+    }
+
+    // ── 4. A second `keep` REPLACES ───────────────────────────────────────────────────────
+    // ⛔ AND THE TWO PAYLOADS DIFFER IN LENGTH AS WELL AS IN CONTENT, deliberately: an
+    // implementation that APPENDED and handed back the concatenation would be caught by the
+    // content alone, but one that kept the longer of the two would not -- so the replacement is
+    // the SHORTER one. The same care promise 1 of `journal_contract.rs` takes with its bystander.
+    {
+        let mut custody = build();
+        let first: &[u8] = b"the layout as it was when the window opened";
+        let second: &[u8] = b"and as it is now";
+
+        custody.keep(CustodyKey::Layout, first).expect(REPLACES_MESSAGE);
+        custody
+            .keep(CustodyKey::Layout, second)
+            .expect(REPLACES_MESSAGE);
+
+        let read = custody.retrieve(CustodyKey::Layout).expect(REPLACES_MESSAGE);
+
+        assert_eq!(read.as_deref(), Some(second), "{}", REPLACES_MESSAGE);
+    }
+
+    // ── 5. An empty package is kept, and is NOT "nothing" ─────────────────────────────────
+    // ⛔ THE DISTINCTION THAT AN `Option` INVITES YOU TO LOSE. An implementation holding
+    // `Option<Vec<u8>>` and treating an empty slice as "no package" satisfies promises 1 to 4 --
+    // none of them ever keeps an empty one -- and makes "kept, and empty" indistinguishable from
+    // "never kept". That is the same family as gotcha #30, and the same sentence ADR-0018 spends
+    // on pruned payloads: an absence and an emptiness must not look alike.
+    //
+    // ⚠️ AND IT IS NOT A HYPOTHETICAL SHAPE: it is the FIRST shape an in-memory double takes if
+    // nobody says otherwise, which is why the liar for it is written below.
+    {
+        let mut custody = build();
+
+        custody
+            .keep(CustodyKey::Layout, b"")
+            .expect(EMPTY_IS_NOT_ABSENT_MESSAGE);
+
+        let read = custody
+            .retrieve(CustodyKey::Layout)
+            .expect(EMPTY_IS_NOT_ABSENT_MESSAGE);
+
+        assert_eq!(
+            read.as_deref(),
+            Some(&b""[..]),
+            "{}",
+            EMPTY_IS_NOT_ABSENT_MESSAGE
+        );
+    }
+}
+
+#[test]
+fn the_in_memory_custody_honours_the_contract() {
+    assert_custody_contract(simulator::custody::MemoryCustody::new);
+}
+```
+
+```bash
+cargo test --locked -p kernel --test custody_contract 2>&1 | tail -12
+```
+
+Atteso: **rosso di compilazione**, `E0433` o `E0432` su `simulator::custody` — il modulo non esiste ancora.
+⛔ **Questo rosso è il passo, non un intoppo:** è la sola prova che il banco stia davvero cercando la finta e non
+un'altra cosa.
+
+- [ ] **Passo 3: la finta del simulatore, e il verde**
+
+`crates/simulator/src/custody.rs`, **LF**:
+
+```rust
+//! The in-memory `custody` (§2 of the GUI north star). One of the two implementations the
+//! conformance suite runs against; the other is `redb` under `platform`.
+//!
+//! ⛔ THERE IS NO FALLING DOUBLE HERE, unlike `journal.rs`. Failing at an operation chosen by
+//! the seed is fault injection, and nothing asks for it on this port yet: the campaign of
+//! milestone 2 of the sub-project substitutes the WORKING one. The day a campaign wants a
+//! falling custody it wraps this type, exactly as `CrashingJournal` wraps `MemoryJournal`, and
+//! for the same reason -- one archive, not two truths to hold in step.
+
+use alloc::vec::Vec;
+
+use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
+
+/// Keeps the packages in memory, one per key.
+///
+/// ⛔ A `Vec` OF PAIRS AND NOT AN `Option`, AND WITH ONE KEY THAT LOOKS LIKE CEREMONY. It is not.
+/// An `Option<Vec<u8>>` would be BLIND TO THE KEY BY CONSTRUCTION -- `retrieve` would have
+/// nothing to compare -- and the conformance suite CANNOT CATCH THAT with one variant, which is
+/// measured and written in that file's head. So the shape is the guard: this type looks the key
+/// up, and keeps on looking it up when a second one arrives.
+///
+/// ⚠️ AND NOT A `HashMap`, which is the rule of this crate rather than a preference:
+/// `RandomState` is seeded per process and the iteration order is not reproducible in a
+/// deterministic world -- gotcha #12. `MemoryJournal` keeps a `Vec` for the same reason.
+pub struct MemoryCustody {
+    packages: Vec<(CustodyKey, Vec<u8>)>,
+}
+
+// ⛔ NO `impl Default`, AND ITS ABSENCE IS THE DECISION -- the same one, for the same reason, as
+// `MemoryJournal`, `SystemReactor` and `VirtualReactor`: nothing calls it, and this repository
+// removes such items rather than keeping them for symmetry. `cargo clippy` asks for one
+// (`new_without_default`); the warning is ACCEPTED and NOT silenced, because §7.4.3 gives clippy
+// no voice in the gate and an `#[allow]` would hide the next occurrence too. The argument is
+// written out once, in `crates/platform/src/reactor.rs`.
+impl MemoryCustody {
+    pub const fn new() -> Self {
+        MemoryCustody {
+            packages: Vec::new(),
+        }
+    }
+}
+
+impl Custody for MemoryCustody {
+    fn keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        // ⛔ REPLACE IN PLACE AND NOT PUSH. Pushing would make `retrieve` depend on whether it
+        // reads the first match or the last, which is the defect `AppendingCustody` wears in the
+        // suite -- and the port's doc says `keep` replaces "whatever was there".
+        match self.packages.iter_mut().find(|(kept, _)| *kept == key) {
+            Some((_, package)) => {
+                package.clear();
+                package.extend_from_slice(bytes);
+            }
+            None => self.packages.push((key, bytes.to_vec())),
+        }
+        Ok(())
+    }
+
+    fn retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        Ok(self
+            .packages
+            .iter()
+            .find(|(kept, _)| *kept == key)
+            .map(|(_, package)| package.clone()))
+    }
+}
+```
+
+In `crates/simulator/src/lib.rs` (**`i/lf w/crlf`**), i moduli sono in ordine alfabetico — `custody` va **prima**
+di `ipc`:
+
+```
+pub mod custody;
+```
+
+```bash
+cargo test --locked -p kernel --test custody_contract 2>&1 | tail -8
+```
+
+Atteso: **verde**, un test — `the_in_memory_custody_honours_the_contract`.
+
+- [ ] **Passo 4: i cinque bugiardi, e i cinque rossi**
+
+In coda a `crates/kernel/tests/custody_contract.rs`. ⛔ **Gli aiutanti sono gli stessi di
+`journal_contract.rs`, riscritti per questo tratto e non importati:** un banco d'integrazione è una crate a sé e
+non può usare gli item di un altro.
+
+```rust
+// ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3): a suite never seen to fail is not a suite. The
+// five below break the port's promises ONE EACH, and demand that the suite notices each -- and
+// notices it ON THE RIGHT PROMISE, which is what reading the payload buys over `is_err()`.
+//
+// ⚠️ AND EACH IS BROKEN IN A DIFFERENT WAY (gotcha #45): the write dropped, the bytes
+// canonicalised, an absence reported as a failure, a replacement turned into an append, and an
+// empty package filed as no package. Two liars broken the same way prove one thing twice and
+// leave the other promise unguarded.
+//
+// ⛔ AND THE ONE THAT IS NOT HERE: a custody BLIND TO THE KEY. It would pass, and the head of
+// this file says why and records the measurement. Writing it and asserting it is caught would be
+// a green that proves nothing.
+
+#[test]
+fn a_custody_that_writes_nothing_is_caught() {
+    assert_caught_on(SilentCustody::new, KEPT_COMES_BACK_MESSAGE, "promise 1");
+}
+
+#[test]
+fn a_custody_that_canonicalises_the_bytes_is_caught() {
+    assert_caught_on(TextCustody::new, OPAQUE_MESSAGE, "promise 2");
+}
+
+#[test]
+fn a_custody_that_errors_instead_of_answering_nothing_is_caught() {
+    assert_caught_on(
+        ErrorInsteadOfNothingCustody::new,
+        NOTHING_KEPT_MESSAGE,
+        "promise 3",
+    );
+}
+
+#[test]
+fn a_custody_that_appends_instead_of_replacing_is_caught() {
+    assert_caught_on(AppendingCustody::new, REPLACES_MESSAGE, "promise 4");
+}
+
+#[test]
+fn a_custody_that_files_an_empty_package_as_no_package_is_caught() {
+    assert_caught_on(
+        EmptyIsAbsentCustody::new,
+        EMPTY_IS_NOT_ABSENT_MESSAGE,
+        "promise 5",
+    );
+}
+
+#[test]
+fn no_promise_message_is_a_substring_of_another() {
+    // ⛔ THE CONSTRAINT THAT MAKES `contains` SAFE. If one message were a substring of another, a
+    // liar caught on the WRONG promise would still satisfy the test that names the right one --
+    // the suite would keep printing `ok` while pointing at the wrong place. It is a property of
+    // the SET, so every message added has to be checked against ALL the others, which is exactly
+    // the check nobody repeats by eye.
+    let messages = [
+        ("KEPT_COMES_BACK", KEPT_COMES_BACK_MESSAGE),
+        ("OPAQUE", OPAQUE_MESSAGE),
+        ("NOTHING_KEPT", NOTHING_KEPT_MESSAGE),
+        ("REPLACES", REPLACES_MESSAGE),
+        ("EMPTY_IS_NOT_ABSENT", EMPTY_IS_NOT_ABSENT_MESSAGE),
+    ];
+
+    for (name, message) in messages {
+        for (other_name, other) in messages {
+            if name == other_name {
+                continue;
+            }
+            assert!(
+                !other.contains(message),
+                "{name} is a substring of {other_name}: a liar caught on {other_name} would \
+                 satisfy the test that names {name}"
+            );
+        }
+    }
+
+    // The other direction, the one that gets forgotten (§7.1.1 rule 3): a bench where every
+    // message were distinct BY BEING EMPTY would pass the loop above without saying anything.
+    for (name, message) in messages {
+        assert!(!message.is_empty(), "{name} is empty");
+    }
+}
+
+fn assert_caught_on<C, F>(build: F, expected: &str, promise: &str)
+where
+    C: Custody,
+    F: Fn() -> C + std::panic::RefUnwindSafe,
+{
+    let message = message_the_suite_fails_with(build).unwrap_or_else(|| {
+        panic!("THE SUITE IS VACUOUS ON {promise}: a custody that breaks it passed the suite")
+    });
+    assert!(
+        message.contains(expected),
+        "the suite did fire, but NOT on {promise} — so {promise} is still unproven.\n\
+         expected to contain: {expected}\n\
+         actual payload: {message}"
+    );
+}
+
+/// Runs the suite and returns the message it failed with, or `None` if it passed.
+///
+/// ⚠️ The panic hook is silenced for the duration of the call: the panic is EXPECTED, and its
+/// backtrace in the test output would train the reader to ignore backtraces. Restored
+/// immediately. ⛔ DECLARED LIMIT, the same one `journal_contract.rs` declares: the hook is
+/// PROCESS-WIDE and libtest runs tests on parallel threads, so a panic raised in another test
+/// landing inside this window is reported with no stdout section. The failure is never hidden,
+/// only its message, and the window is microseconds wide.
+fn message_the_suite_fails_with<C, F>(build: F) -> Option<String>
+where
+    C: Custody,
+    F: Fn() -> C + std::panic::RefUnwindSafe,
+{
+    let previous = std::panic::take_hook();
+    std::panic::set_hook(Box::new(|_| {}));
+    let outcome = std::panic::catch_unwind(|| assert_custody_contract(&build));
+    std::panic::set_hook(previous);
+
+    match outcome {
+        Ok(()) => None,
+        Err(payload) => Some(panic_message(payload.as_ref())),
+    }
+}
+
+/// The text of a panic, dug out of the payload. `assert!`/`assert_eq!` with a format argument
+/// panic with a `String`; a `panic!("literal")` carries a `&str` instead, and both are handled so
+/// that this helper cannot report nothing for a message that is right there.
+fn panic_message(payload: &(dyn std::any::Any + Send)) -> String {
+    if let Some(text) = payload.downcast_ref::<String>() {
+        text.clone()
+    } else if let Some(text) = payload.downcast_ref::<&str>() {
+        (*text).to_string()
+    } else {
+        String::from("<panic payload that is neither String nor &str>")
+    }
+}
+
+/// Answers `Ok(())` and keeps nothing. Caught by promise 1.
+struct SilentCustody;
+
+impl SilentCustody {
+    fn new() -> Self {
+        SilentCustody
+    }
+}
+
+impl Custody for SilentCustody {
+    fn keep(&mut self, _key: CustodyKey, _bytes: &[u8]) -> Result<(), CustodyError> {
+        Ok(())
+    }
+    fn retrieve(&self, _key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        Ok(None)
+    }
+}
+
+/// Keeps only what is valid text and drops the rest. ⛔ THIS IS THE SHAPE AN IMPLEMENTATION
+/// TAKES THE DAY SOMEBODY DECIDES THE PACKAGE "IS JSON ANYWAY": it survives promise 1, whose
+/// payload is valid UTF-8, and dies on promise 2. Caught by promise 2.
+struct TextCustody {
+    kept: Option<Vec<u8>>,
+}
+
+impl TextCustody {
+    fn new() -> Self {
+        TextCustody { kept: None }
+    }
+}
+
+impl Custody for TextCustody {
+    fn keep(&mut self, _key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        self.kept = Some(String::from_utf8_lossy(bytes).into_owned().into_bytes());
+        Ok(())
+    }
+    fn retrieve(&self, _key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        Ok(self.kept.clone())
+    }
+}
+
+/// Keeps correctly, and reports an absence as a failure. Caught by promise 3.
+struct ErrorInsteadOfNothingCustody {
+    kept: Option<Vec<u8>>,
+}
+
+impl ErrorInsteadOfNothingCustody {
+    fn new() -> Self {
+        ErrorInsteadOfNothingCustody { kept: None }
+    }
+}
+
+impl Custody for ErrorInsteadOfNothingCustody {
+    fn keep(&mut self, _key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        self.kept = Some(bytes.to_vec());
+        Ok(())
+    }
+    fn retrieve(&self, _key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        match &self.kept {
+            Some(package) => Ok(Some(package.clone())),
+            None => Err(CustodyError::Unavailable),
+        }
+    }
+}
+
+/// Piles the packages up and hands back the FIRST. ⛔ It sails through promises 1, 2 and 3,
+/// which never keep twice, and the concatenating variant of the same defect would too. Caught by
+/// promise 4.
+struct AppendingCustody {
+    kept: Vec<Vec<u8>>,
+}
+
+impl AppendingCustody {
+    fn new() -> Self {
+        AppendingCustody { kept: Vec::new() }
+    }
+}
+
+impl Custody for AppendingCustody {
+    fn keep(&mut self, _key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        self.kept.push(bytes.to_vec());
+        Ok(())
+    }
+    fn retrieve(&self, _key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        Ok(self.kept.first().cloned())
+    }
+}
+
+/// Files an empty package as no package. ⛔ THE SHAPE AN `Option` INVITES, and the reason
+/// promise 5 exists: it answers every other promise correctly. Caught by promise 5.
+struct EmptyIsAbsentCustody {
+    kept: Option<Vec<u8>>,
+}
+
+impl EmptyIsAbsentCustody {
+    fn new() -> Self {
+        EmptyIsAbsentCustody { kept: None }
+    }
+}
+
+impl Custody for EmptyIsAbsentCustody {
+    fn keep(&mut self, _key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        self.kept = if bytes.is_empty() {
+            None
+        } else {
+            Some(bytes.to_vec())
+        };
+        Ok(())
+    }
+    fn retrieve(&self, _key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        Ok(self.kept.clone())
+    }
+}
+```
+
+```bash
+cargo test --locked -p kernel --test custody_contract 2>&1 | tail -14
+```
+
+Atteso: **tutti verdi**, e il conteggio lo dà `grep -c '^#\[test\]' crates/kernel/tests/custody_contract.rs`.
+⛔ **Se uno dei cinque dicesse `THE SUITE IS VACUOUS ON promise N`, la promessa N è vacua e si corregge la
+PROMESSA, non il bugiardo**; se dicesse `fired, but NOT on promise N`, l'ordine dei blocchi è sbagliato e il
+bugiardo muore prima.
+
+- [ ] **Passo 5: l'implementazione vera, e il banco che la include**
+
+Prima, in `crates/platform/src/journal.rs` (**`i/lf w/crlf`**), **una parola** — **D14**:
+
+```rust
+/// Every `redb` error type converts into `redb::Error`, so the five that `open` can meet are
+/// folded into one variant here instead of five.
+///
+/// ⚠️ `pub(crate)` SINCE 2026-09-11, AND THE SECOND CALLER IS `crate::custody`: the seventh port
+/// opens a `redb` archive of its own on the same `FileBackend`, so it meets the same five errors
+/// and folds them the same way. The alternative was a twin `OpenError` under `custody`, and the
+/// reason it was refused is written there, beside `FileCustody::open`.
+pub(crate) fn engine(error: impl Into<redb::Error>) -> OpenError {
+```
+
+Poi `crates/platform/src/custody.rs`, **LF**:
+
+```rust
+//! The real `custody` (§2 of the GUI north star): a `redb` archive OF ITS OWN, on the
+//! `FileBackend` the journal already uses.
+//!
+//! ⛔ ITS OWN FILE AND ITS OWN TABLE, NOT A SECOND TABLE IN THE JOURNAL'S. ADR-0022 separates
+//! archives BY NATURE and gives each its own policy: the journal is encrypted, pruned and in the
+//! backup; this is the "configuration" archive -- NOT encrypted, in the backup, permanent. Two
+//! natures in one file would be one policy for both, and the retention milestone would owe this
+//! package an exception written just for it. That is decision 15 of the north star in full.
+//!
+//! ⚠️ AND IT IS THE SAME `FileBackend`, WHICH IS NOT A CONTRADICTION: the backend is the boundary
+//! at which level-2 faults are injected (ADR-0032 requirement 4), and sharing the TYPE is what
+//! would make this archive injectable the day a campaign asks. What is not shared is the FILE.
+//!
+//! ⛔ NO DEPENDENCY IS ADDED, and it is measured rather than assumed: `redb` is already in this
+//! crate's manifest for the journal, and `scripts/gate-deps.sh` measures the graphs of `kernel`
+//! and `simulator`, neither of which sees it.
+//!
+//! ⛔ WHAT BOTH IMPLEMENTATIONS PROMISE IS NOT WRITTEN HERE: it is in
+//! `crates/kernel/tests/custody_contract.rs`, reached by `include!` from
+//! `crates/platform/tests/custody_contract_real.rs`. What only THIS one promises -- surviving a
+//! reopening, and refusing a second custody on an open file -- is in
+//! `crates/platform/tests/file_custody.rs`.
+
+use std::path::Path;
+
+use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
+use redb::{Database, ReadableDatabase, ReadableTable, TableDefinition};
+
+use crate::journal::{FileBackend, OpenError, engine};
+
+/// The one table: one package per key.
+///
+/// ⚠️ `u8` AND NOT `&str`, and the reason is the port's rather than this file's: `CustodyKey` is
+/// a CLOSED ENUM precisely so that the archive has no namespace, and a string key here would put
+/// the namespace back where nobody would see it. `u8` is a `redb` `Key` -- read in
+/// `redb-4.1.0/src/types.rs`, `le_impl!(u8)`, which gives both `Value` and `Key` with a NUMERIC
+/// comparison -- so nothing about the ordering can surprise us.
+const PACKAGES: TableDefinition<u8, &[u8]> = TableDefinition::new("custody-packages");
+
+/// The byte `CustodyKey::Layout` is stored under.
+const KEY_LAYOUT: u8 = 0;
+
+/// ⛔ A `match` AND NOT `key as u8`, AND THE DIFFERENCE IS THE COMPILER. A cast would give a
+/// SECOND variant its byte BY POSITION, so reordering the enum would silently repoint every
+/// package already on the disk -- a migration nobody asked for, arriving in silence. A `match`
+/// makes a new variant an `E0004` right here, which is where that decision belongs.
+fn byte_of(key: CustodyKey) -> u8 {
+    match key {
+        CustodyKey::Layout => KEY_LAYOUT,
+    }
+}
+
+/// The `custody` port against a real file.
+///
+/// ⛔ NO `with_backend`, UNLIKE `FileJournal`, AND THE ABSENCE IS THE DECISION. The journal has
+/// one because milestone 4 injects level-2 faults through it and
+/// `crates/platform/tests/engine_crash_consistency.rs` really calls it. Here nobody would: the
+/// `FileBackend` boundary is ALREADY proven substitutable from outside the crate by the
+/// journal's bench, and what the simulation substitutes on this port is the WHOLE PORT -- piece
+/// 4 of §2 of the north star. A second entry point with no caller is the speculative layer this
+/// repository refuses. It arrives WITH its caller, or not at all.
+pub struct FileCustody {
+    database: Database,
+}
+
+impl FileCustody {
+    /// Opens the archive at `path`, creating it if it is not there.
+    ///
+    /// ⛔ IT ANSWERS `platform::journal::OpenError`, AND THE ODD PATH IS DELIBERATE -- written
+    /// here because whoever reads the signature is exactly who would ask. That type's three
+    /// variants -- a file that would not open, a file another handle already holds, an engine
+    /// that refused it -- are exactly what OPENING A `redb` ARCHIVE ON A `FileBackend` can
+    /// produce, and this opens the same thing. The two alternatives were examined on 2026-09-11:
+    /// MOVING it up to `platform::OpenError` would falsify two doc paragraphs IN THE KERNEL --
+    /// `crates/kernel/src/framing.rs` and `crates/kernel/src/permission.rs` both name
+    /// `platform::journal::OpenError` as the shape they follow -- and DUPLICATING it would leave
+    /// two types to hold in step, the first to drift lying in silence. If a THIRD archive ever
+    /// arrives, the type moves up and those two kernel paragraphs are corrected in the same
+    /// commit; until then it stays where its callers can find it.
+    ///
+    /// ⚠️ THE LOCK COMES WITH `FileBackend` AND IS NOT RE-ARGUED HERE: a second custody on an
+    /// open file is refused, which `crates/platform/tests/file_custody.rs` holds in BOTH
+    /// directions.
+    pub fn open(path: &Path) -> Result<Self, OpenError> {
+        let backend = FileBackend::open(path)?;
+        let database = Database::builder()
+            .create_with_backend(backend)
+            .map_err(engine)?;
+
+        // ⛔ THE TABLE IS CREATED HERE, ON EVERY OPEN, so that every later READ finds it. A
+        // `redb` table springs into existence when a WRITE transaction opens it; a read
+        // transaction on a fresh file would answer `TableDoesNotExist`, and `retrieve` would have
+        // to launder that into `Unavailable` -- reporting a broken archive where the truth is a
+        // FIRST RUN, which is exactly the confusion promise 3 exists to forbid. The journal does
+        // the same, for the same reason. ⚠️ DECLARED COST: opening always commits, so `open`
+        // writes to the disk even when nothing is ever kept.
+        let transaction = database.begin_write().map_err(engine)?;
+        transaction.open_table(PACKAGES).map_err(engine)?;
+        transaction.commit().map_err(engine)?;
+
+        Ok(FileCustody { database })
+    }
+}
+
+impl Custody for FileCustody {
+    fn keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        // ⛔ ONE VARIANT FOR EVERY FAILURE, AND IT IS THE PORT'S DECISION AND NOT A SHORTCUT:
+        // `CustodyError` has one variant because the caller reads the reason FROM WHICH
+        // OPERATION FAILED, and the argument is written out on the type. Nothing is lost here
+        // that the caller could use.
+        let transaction = self
+            .database
+            .begin_write()
+            .map_err(|_| CustodyError::Unavailable)?;
+        {
+            let mut table = transaction
+                .open_table(PACKAGES)
+                .map_err(|_| CustodyError::Unavailable)?;
+            table
+                .insert(byte_of(key), bytes)
+                .map_err(|_| CustodyError::Unavailable)?;
+        }
+        // ⛔ THE HANDLE IS DROPPED BEFORE THE COMMIT, which the block above is for: `redb`
+        // refuses to commit with a table handle still live, and the journal's
+        // `abandon_without_commit` carries the twin of this note about `TableAlreadyOpen`.
+        transaction
+            .commit()
+            .map_err(|_| CustodyError::Unavailable)?;
+        Ok(())
+    }
+
+    fn retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        let transaction = self
+            .database
+            .begin_read()
+            .map_err(|_| CustodyError::Unavailable)?;
+        let table = transaction
+            .open_table(PACKAGES)
+            .map_err(|_| CustodyError::Unavailable)?;
+
+        // ⛔ `Ok(None)` FOR A KEY WITH NOTHING UNDER IT, never an error -- promise 3. And the
+        // bytes are copied out: the `AccessGuard` borrows the transaction, which dies here.
+        Ok(table
+            .get(byte_of(key))
+            .map_err(|_| CustodyError::Unavailable)?
+            .map(|found| found.value().to_vec()))
+    }
+}
+```
+
+E `crates/platform/tests/custody_contract_real.rs`, **LF**:
+
+```rust
+// THE SAME CONFORMANCE SUITE, RUN AGAINST THE REAL CUSTODY (§2 of the GUI north star).
+//
+// ⛔ THE ASSERTIONS ARE NOT REPEATED HERE, and that is the whole point of this file being short.
+// They live in ONE place -- `crates/kernel/tests/custody_contract.rs` -- and are reached from
+// here textually, because two copies would drift and THE FIRST ONE TO DRIFT WOULD LIE IN
+// SILENCE. `include!` is the mechanism because an integration test is A CRATE OF ITS OWN: it
+// cannot `use` the items of another test target. The path is relative to this file's directory,
+// which is why it climbs out of `crates/platform/tests/`.
+//
+// ⛔ AND THIS FILE HAS NO `use` OF ITS OWN, which is the mechanism's constraint and not a
+// preference: the included file brings `use kernel::ports::custody::{Custody, CustodyError,
+// CustodyKey}` along with it, and naming any of those three again here is `E0252`. Everything
+// below is spelt out in full for that reason -- `journal_contract_real.rs` has no imports for
+// the same one.
+//
+// ⚠️ DECLARED COST, accepted rather than unnoticed: `include!` brings the included file's
+// `#[test]` functions with it, so the suite's tests RUN A SECOND TIME inside this binary. None
+// of them touches the disk, so it costs a few milliseconds and it buys the single copy of the
+// assertions. ⚠️ HOW MANY IS NOT WRITTEN HERE, and that is deliberate: a figure inside a
+// sentence that stays true is gotcha #31, and `grep -c '^#\[test\]'` on the two files answers it
+// whenever it is asked. Only `the_real_custody_honours_the_contract` below reaches a file at
+// all, which is what makes a red in this binary readable.
+
+include!("../../kernel/tests/custody_contract.rs");
+
+#[test]
+fn the_real_custody_honours_the_contract() {
+    // ⛔ A FILE OF ITS OWN FOR EVERY CALL OF THE FACTORY. The suite takes a factory precisely
+    // because several promises need an archive that has never been written to -- promise 3 asks
+    // for `Ok(None)`, promise 5 asks about an EMPTY package -- so a factory handing back the same
+    // archive twice would let promise 1's bytes be found by promise 3, and the suite would go red
+    // ON THE BENCH instead of on the implementation.
+    //
+    // ⛔ AND `FileBackend` TAKES AN EXCLUSIVE LOCK. A factory reusing one path would be one
+    // refactor away from `OpenError::AlreadyOpen`, which is a failure of the bench wearing the
+    // mask of a failure of the port.
+    //
+    // ⛔ A NAME THAT HAS NEVER EXISTED RATHER THAN A DELETION -- gotcha #52 avoided instead of met
+    // again. `remove_file` before each open FAILS SILENTLY on Windows while the file is still
+    // open, so the factory would reopen the OLD DATA with nothing saying so.
+    //
+    // ⚠️ `AtomicU64` AND NOT A PLAIN COUNTER: `assert_custody_contract` takes `F: Fn() -> C` and
+    // not `FnMut`, so the closure cannot mutate what it captures.
+    let dir = private_dir_for_line(line!());
+    let calls = std::sync::atomic::AtomicU64::new(0);
+
+    assert_custody_contract(|| {
+        let nth = calls.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let path = dir.join(format!("custody-{nth}.redb"));
+        platform::custody::FileCustody::open(&path).expect("open")
+    });
+}
+
+/// A directory of this test's own, emptied on entry -- the same mechanism
+/// `crates/platform/tests/file_journal.rs` uses, and for the same reason.
+///
+/// ⛔ ONE DIRECTORY PER CALL SITE, AND THE LINE NUMBER IS WHAT MAKES IT ONE. `cargo test` runs the
+/// test BINARIES in parallel and libtest runs the tests inside one binary on parallel threads, so
+/// a directory emptied on entry is only safe if nothing else can be inside it. Two call sites
+/// cannot share a line number, so the directories are distinct BY CONSTRUCTION.
+///
+/// ⛔ AND THE PREFIX IS UNIQUE TO THIS FILE, which is the half a line number alone does not cover:
+/// line 40 of this file and line 40 of `file_journal.rs`, `journal_contract_real.rs` or
+/// `file_custody.rs` would name the SAME directory, and those binaries run at the same time. The
+/// four prefixes in use are `daemon-file-journal-`, `daemon-journal-contract-`,
+/// `daemon-custody-contract-` and `daemon-file-custody-`.
+fn private_dir_for_line(line: u32) -> std::path::PathBuf {
+    let dir = std::env::temp_dir().join(format!("daemon-custody-contract-{line}"));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).expect("create the test directory");
+    dir
+}
+```
+
+In `crates/platform/src/lib.rs` (**`i/lf w/crlf`**), accanto agli altri moduli:
+
+```
+pub mod custody;
+```
+
+```bash
+cargo test --locked -p platform --test custody_contract_real 2>&1 | tail -14
+```
+
+Atteso: **tutti verdi**, e sono quelli della suite **più uno** — il conteggio lo dà
+`grep -c '^#\[test\]'` sui due file, non questa riga.
+
+- [ ] **Passo 6: ciò che SOLO la vera promette**
+
+`crates/platform/tests/file_custody.rs`, **LF**:
+
+```rust
+// WHAT ONLY THE REAL CUSTODY PROMISES: that a package survives the process, and that two
+// handles on one file are refused. Neither is askable of the in-memory double, which is CORRECT
+// not to make them -- asserting them in the conformance suite would turn a correct
+// implementation red (gotcha #44).
+//
+// ⛔ WHAT IS NOT HERE, AND IT WAS EXAMINED RATHER THAN FORGOTTEN: a probe on the file's
+// permission bits. `file_journal.rs` has one because ADR-0023 promises the JOURNAL is "protected
+// as much as your system account is", and 0644 would be less. This archive is the
+// "configuration" one of ADR-0022 -- NOT encrypted, in the backup -- so no ADR promises anything
+// about its mode, and a probe without a source is a probe nobody can read. It gets 0600 anyway,
+// because `FileBackend::open` sets it for every archive, and THAT is already held by
+// `the_journal_file_is_not_world_readable`. Written down so the next census finds this absence
+// explained instead of missing.
+
+use std::path::Path;
+
+use kernel::ports::custody::{Custody, CustodyKey};
+use platform::custody::FileCustody;
+use platform::journal::OpenError;
+
+/// A directory of this test's own, emptied on entry. Same mechanism and same reasoning as
+/// `file_journal.rs`; ⛔ the PREFIX differs from every other bench's, because a line number alone
+/// does not keep two files apart.
+fn private_dir_for_line(line: u32) -> std::path::PathBuf {
+    let dir = std::env::temp_dir().join(format!("daemon-file-custody-{line}"));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).expect("create the test directory");
+    dir
+}
+
+fn archive_in(dir: &Path) -> std::path::PathBuf {
+    dir.join("custody.redb")
+}
+
+#[test]
+fn what_was_kept_survives_reopening_the_file() {
+    // §2 of the north star, piece 3: "apri, scrivi, riapri, rileggi". It is the promise the
+    // whole port exists for -- the layout has to outlive the window that drew it.
+    //
+    // ⛔ AND THE BYTES ARE NOT TEXT, on purpose: this way the probe holds the OPACITY across a
+    // reopening too, which is the one place a format-aware implementation would still be free to
+    // "tidy" the package -- on the way in, or on the way back out.
+    let dir = private_dir_for_line(line!());
+    let path = archive_in(&dir);
+    let written: &[u8] = &[0xff, b'{', 0x00, 0x9c, b'}'];
+
+    {
+        let mut custody = FileCustody::open(&path).expect("open");
+        custody
+            .keep(CustodyKey::Layout, written)
+            .expect("keep must succeed");
+    }
+
+    let reopened = FileCustody::open(&path).expect("reopen");
+    assert_eq!(
+        reopened.retrieve(CustodyKey::Layout),
+        Ok(Some(written.to_vec())),
+        "a package kept before the handle was dropped must be there after it is opened again"
+    );
+}
+
+#[test]
+fn a_second_custody_on_an_open_file_is_refused() {
+    // ⛔ THE LOCK IS NOT AN EXTRA: two writers on one archive is the corruption the refusal
+    // exists to prevent, and `redb`'s own backend takes one, so a replacement that did not would
+    // drop a guarantee IN SILENCE.
+    let dir = private_dir_for_line(line!());
+    let path = archive_in(&dir);
+
+    let _first = FileCustody::open(&path).expect("the first open must succeed");
+
+    match FileCustody::open(&path) {
+        Err(OpenError::AlreadyOpen) => {}
+        Err(other) => panic!("refused, but for the wrong reason: {other:?}"),
+        Ok(_) => panic!("a second custody on an open file must be refused"),
+    }
+}
+
+#[test]
+fn a_second_custody_on_a_closed_file_is_not_refused() {
+    // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3). Without it, an `open` that refused ALWAYS
+    // would satisfy the test above -- and the port would be unusable for the reason it exists,
+    // which is being reopened at every start-up.
+    let dir = private_dir_for_line(line!());
+    let path = archive_in(&dir);
+
+    {
+        let _first = FileCustody::open(&path).expect("the first open must succeed");
+    }
+
+    FileCustody::open(&path).expect("a custody on a closed file must open");
+}
+```
+
+```bash
+cargo test --locked -p platform --test file_custody 2>&1 | tail -8
+```
+
+Atteso: **tre verdi**.
+
+- [ ] **Passo 7: ⛔ LA MISURA DEL LIMITE — la mutazione cieca alla chiave PASSA**
+
+**P-29 in persona, e questo passo è la metà senza la quale il limite è un'ipotesi.** Si applica **una** mutazione,
+si lancia, si legge l'esito, si **revoca**.
+
+In `crates/platform/src/custody.rs`, `byte_of` diventa cieca:
+
+```rust
+fn byte_of(_key: CustodyKey) -> u8 {
+    KEY_LAYOUT
+}
+```
+
+⚠️ **Non è una mutazione osservabile con una chiave sola** — è precisamente il punto. La mutazione che si vuole
+provare è quella su `retrieve`, che **ignora l'argomento**:
+
+```rust
+    fn retrieve(&self, _key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        // MUTATION, TO BE REVOKED: the key is never consulted; the first package in the table
+        // comes back whatever was asked for.
+        let transaction = self
+            .database
+            .begin_read()
+            .map_err(|_| CustodyError::Unavailable)?;
+        let table = transaction
+            .open_table(PACKAGES)
+            .map_err(|_| CustodyError::Unavailable)?;
+        let mut rows = table.iter().map_err(|_| CustodyError::Unavailable)?;
+        match rows.next() {
+            Some(Ok((_, value))) => Ok(Some(value.value().to_vec())),
+            Some(Err(_)) => Err(CustodyError::Unavailable),
+            None => Ok(None),
+        }
+    }
+```
+
+```bash
+cargo test --locked -p platform --test custody_contract_real 2>&1 | tail -8
+git diff --stat
+git checkout -- crates/platform/src/custody.rs
+git diff --stat
+```
+
+⛔ **Atteso: TUTTI VERDI.** È il risultato che il passo cerca — la suite **non** coglie la cecità alla chiave — e
+va scritto **nel messaggio del commit** con le parole della corsa, non riassunto. Se invece uscisse **rosso**, il
+limite di **P-29** è più stretto di come è scritto e la testa di `custody_contract.rs` va **corretta**: sarebbe una
+voce d'errata, non un sollievo.
+⚠️ Il secondo `git diff --stat` deve essere **vuoto**: la mutazione non si committa.
+
+- [ ] **Passo 8: il richiamo datato di P-24 su `platform/src/lib.rs`**
+
+Nel doc di modulo di `crates/platform/src/lib.rs` (**`i/lf w/crlf`**), **sotto** il richiamo che il compito 2 ha già
+scritto e senza cancellarlo:
+
+```rust
+//! ⛔ DATED RECALL, 2026-09-11 -- THE SENTENCE ABOVE CALLED ITSELF "not a fixed set" AND IT WAS
+//! ONE. The `grep` it hands over ENUMERATES SEVEN TRAIT NAMES, so it can never answer with a
+//! family added later: `Custody` -- the seventh port, §2 of the GUI north star -- was invisible
+//! to it the moment `custody::FileCustody` existed. Measured, not reasoned. ⛔ AND THE CURE IS
+//! NOT AN OPEN REGEX, which was measured too: `^impl [A-Za-z_]+ for ` catches `StorageBackend for
+//! FileBackend` and `Default for SequentialRng`, neither of which is a port -- noise mistaken for
+//! coverage, the opposite error and just as silent. So the list IS an enumeration, it is now said
+//! to be one, and WHOEVER ADDS A PORT ADDS ITS NAME HERE, because nobody else can know.
+//! ⚠️ AND THE THIRD FALSEHOOD IN THE SAME SENTENCE WAS A DEADLINE IN PROSE (gotcha #77):
+//! "because milestone 6 adds to it". Milestone 6 CLOSED on 2026-09-02 and added nothing. It is
+//! replaced by a fact instead of by another deadline.
+//!
+//! ⛔ The list comes from
+//! `grep -rEn "^impl (Custody|Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/`,
+//! WHICH IS AN ENUMERATION OF THE PORT TRAITS AND NOT A DISCOVERY.
+```
+
+⚠️ **Non si riscrive la frase originale**: si lascia dov'è e la si smentisce sotto, con la data — la regola dei
+richiami di `CLAUDE.md`, e la stessa forma che `ports/mod.rs` porta dal 2026-08-28.
+
+```bash
+grep -rEn "^impl (Custody|Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/
+```
+
+Atteso: **una riga in più** del Passo 1, `impl Custody for FileCustody`.
+
+- [ ] **Passo 9: i fine-riga, il cancello, il commit**
+
+```bash
+for f in crates/simulator/src/custody.rs crates/kernel/tests/custody_contract.rs crates/platform/src/custody.rs crates/platform/tests/custody_contract_real.rs crates/platform/tests/file_custody.rs crates/platform/src/lib.rs crates/simulator/src/lib.rs crates/platform/src/journal.rs; do printf '%-52s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+git ls-files --eol crates/platform/src/lib.rs crates/simulator/src/lib.rs crates/platform/src/journal.rs
+bash scripts/gate.sh 2>&1 | tail -3
+bash scripts/gate-deps.sh 2>&1 | tail -3
+bash scripts/check-docs.sh 2>&1 | tail -3
+```
+
+Atteso: i **cinque file nuovi** a `CR=0`; i **tre modificati** `i/lf w/crlf` come al Passo 1 e col loro numero di
+CR **invariato**; `GATE GREEN`; la lista di ADR-0031 **non cresciuta**; `OK — no inconsistencies.`
+
+Poi la riga **5** della tabella della posizione a ✅ con la data, e il commit — **senza co-autore**:
+
+```bash
+git add crates/simulator/src/custody.rs crates/simulator/src/lib.rs crates/kernel/tests/custody_contract.rs crates/platform/src/custody.rs crates/platform/src/lib.rs crates/platform/src/journal.rs crates/platform/tests/custody_contract_real.rs crates/platform/tests/file_custody.rs docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+```
+
+⛔ **Nel messaggio del commit va la misura del Passo 7 con le parole della corsa**, perché è l'unico posto in cui
+un lettore futuro può verificare che il limite di **P-29** fu misurato e non supposto.
+
+#### Criterio di chiusura del compito 5
+
+- [ ] `cargo test --locked -p kernel --test custody_contract` → tutti passati
+- [ ] `cargo test --locked -p platform --test custody_contract_real` → tutti passati, **uno in più** del banco del kernel
+- [ ] `cargo test --locked -p platform --test file_custody` → **tre** passati
+- [ ] ⛔ i **cinque bugiardi** verdi, e **nessuno** ha detto `THE SUITE IS VACUOUS` né `fired, but NOT on promise N`
+- [ ] ⛔ il **Passo 7 eseguito**: la mutazione cieca alla chiave provata, **passata**, revocata, `git diff --stat` **vuoto**, e l'esito **nel messaggio del commit**
+- [ ] `grep -c 'DATED RECALL, 2026-09-11' crates/platform/src/lib.rs` → **almeno 1**, e il richiamo del compito 2 è **ancora lì**
+- [ ] `grep -rEn "^impl (Custody|Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/` → include `impl Custody for FileCustody`
+- [ ] `grep -c 'pub(crate) fn engine' crates/platform/src/journal.rs` → **1**, e nessun altro tocco a quel file: `git diff --stat -- crates/platform/src/journal.rs` mostra **una sola** regione
+- [ ] ⛔ **nessun `with_backend` su `FileCustody`**: `grep -c 'with_backend' crates/platform/src/custody.rs` → **0**
+- [ ] `git diff --name-only -- docs/superpowers/specs/` **vuoto**: questo compito non tocca nessuna spec
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/gate-deps.sh` verde, la lista **non cresciuta**; `bash scripts/gate-attributes.sh` verde
+- [ ] i fine-riga rimisurati: i cinque nuovi a zero CR, i tre modificati invariati in `git ls-files --eol`
+- [ ] la riga **5** della tabella della posizione a ✅ con la data
 
 ---
 

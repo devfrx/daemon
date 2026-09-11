@@ -1388,3 +1388,106 @@ git push
 - [ ] la riga **2** della tabella della posizione a ✅ con la data
 
 ---
+
+## Come si riprende — il diario di questo piano, coi comandi
+
+### La prima chiusura — 2026-09-11: il piano è SCRITTO FINO AL COMPITO 2 di sedici; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO.** Niente è a metà: albero pulito, nessuno stash, nessuna operazione git in corso,
+nessun server acceso, **nessun codice di prodotto toccato** — `git diff --stat 42b50d8..HEAD -- crates/
+scripts/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla. ⛔ **E
+L'ESECUZIONE NON È COMINCIATA:** la tabella della posizione è tutta ⬜, l'errata è **vuota**, e questo
+piano **non è ancora finito** — i compiti **3–16 non esistono**. La sessione nuova **scrive**, non esegue.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; nessuno stash |
+| I commit di questa sessione | `git log --oneline 42b50d8..HEAD` — **uno**, `02aa514`, solo questo file |
+| Codice di prodotto | **non toccato**, col comando in «Da sapere subito» |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>` → **2**; la tabella della posizione ne elenca **sedici** |
+| L'errata | ⚠️ **la sonda si legge DENTRO la sezione**, o conta anche le voci d'errata di altri piani citate fra le voci aperte — misurato, un `grep -c` nudo rende **2**, che sono `E50/E51/E100` del Traguardo 5 ed `E12` del Traguardo 6: `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0**, nasce vuota e non resterà vuota |
+| Il pre-controllo | `grep -c '^### P-' <questo file>` → **15**; le decisioni, `grep -c '^| \*\*D[0-9]' ` → **10** |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, rilanciato all'apertura e alla chiusura (log datati nello scratchpad: `gate-2026-09-11-apertura.log`, `gate-2026-09-11-piano-parte2-a.log`, `gate-2026-09-11-chiusura-piano.log`); `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | questo piano è **LF** nell'indice e nell'albero: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0` |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Margine del compendio | il comando del vincolo 11 → `11030`, **invariato**: questa sessione non ha toccato il compendio |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto; gli script e i frammenti stanno nello scratchpad, fuori dall'albero |
+| Debito lasciato | **nessuno non dichiarato**: i quattordici compiti che mancano sono la tabella della posizione; le voci aperte stanno nella sezione omonima; le dieci decisioni sono ribaltabili e ciascuna porta il costo |
+
+#### Le decisioni prese scrivendo, oltre alle dieci della tabella
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 1 | commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md` dice *«senza co-autore»*; una direttiva di sistema chiede il contrario e la divergenza è **portata al proprietario**, come in ogni sessione di questo repository | un `--amend` |
+| 2 | il piano resta **uno solo** per tutta la parte 2, e non si spezza in due (Rust e web) | domanda A/B al proprietario, risposta **A**: è ciò che la §3 della stella polare dice (*«il piano resta in due parti … non cambia»*), e il Traguardo 5 ebbe tredici compiti in un piano solo. ⚠️ La `superpowers:writing-plans` suggerisce di spezzare quando la spec copre sottosistemi indipendenti: la divergenza è stata **detta** e la decisione è del proprietario | un piano da spezzare a metà scrittura |
+| 3 | il pre-controllo si fa **scrivendo ogni compito**, non tutto in testa | i difetti che ha trovato sono usciti dal **codice dettato**: P-15 è nato correggendo P-13, cioè scrivendo il trasporto vero. Un pre-controllo fatto solo sui disegni non li avrebbe visti | nessuno: le voci P si aggiungono in coda |
+| 4 | i compiti portano **codice vero**, non descrizioni | è la regola «niente segnaposto» di `superpowers:writing-plans`, e qui ha pagato subito: la doppia incorniciatura di P-15 si vede solo scrivendo le righe | il piano è lungo |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **Inserire una riga in una tabella con una sostituzione che ancora il testo DOPO di essa lascia una
+  riga vuota che SPEZZA la tabella in due, e `check-docs.sh` non lo vede.** Successo **due volte** in
+  questa sessione, sulle stesse decisioni D7–D9 e D10. Il controllo si lancia **dopo ogni** scrittura su
+  un file con tabelle, non alla fine:
+  `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <file>`.
+- ⛔ **`$TMPDIR` non è impostata nel tool Bash di questa macchina:** `bash scripts/gate.sh > "$TMPDIR/x.log"`
+  fallisce con *«/x.log: Permission denied»* e il cancello esce **rosso per il motivo sbagliato**. Il
+  percorso dello scratchpad si scrive per esteso.
+- **Lo scratchpad di una sessione aperta NELLA cartella del repo è corto** (~130 caratteri) e
+  `python - < percorso.py` funziona; `python percorso.py` pure. È la quinta sessione di fila che lo
+  conferma.
+- **I `Write` lunghi vanno nello scratchpad e si appendono col `cat`**, non con un heredoc: un heredoc di
+  qualche KB con tabelle lunghe rompe Bash (vicolo cieco della seconda ripresa della stella polare). Un
+  heredoc **corto** con uno script Python dentro regge, ed è quello che questa sessione ha usato per le
+  sostituzioni.
+- ⛔ **Il tetto di 30 000 caratteri del tool Bash va per TABELLA, non per file:** la stella polare a 150
+  righe trabocca su 920–1081 (le tabelle delle decisioni del coordinatore e delle registrate) — lì **20–60**
+  righe; il resto regge a 150. Quando trabocca, l'uscita finisce su file e la chiamata è persa. I tetti
+  che hanno funzionato oggi: compendio **200** righe, i due disegni a blocchi calcolati col comando
+  `awk 'BEGIN{b=0;s=1} {b+=length($0)+1; if(b>18000){print s"-"NR; b=0; s=NR+1}} END{print s"-"NR}' <file>`.
+- ⛔ **Il sorgente di una dipendenza è leggibile, e batte il ricordo:**
+  `ls -d ~/.cargo/registry/src/*/interprocess-2.4.4` rende la cartella, e da lì l'API non bloccante si
+  **legge** invece di dedurla. È così che P-13 e l'API di `interprocess` sono passate da 🔶 *dedotto* a
+  ✅ *verificato*. Vale per ogni crate già scaricata.
+
+#### La lista di lettura della sessione nuova — a compito, non tutto
+
+⛔ **I due disegni NON si rileggono per intero a ogni sessione**, e questa è una correzione alla riga del
+punto 3 dell'ottava chiusura della parte 1 (*«coi due disegni letti per intero»*): misurato il 2026-09-11
+con lo snippet `tiktoken` di `CLAUDE.md`, la stella polare pesa **57 388** token e il disegno del 2
+**32 687** — novantamila token per scrivere un compito che ne tocca una sezione. Si legge **per compito**:
+
+| Compito | Che cosa si legge |
+|---|---|
+| **3** — lo schema | §4 del 2 (le varianti e le tre righe delle fixture); «La GUI dentro», sequenza 1; `crates/kernel/src/wire/ipc.rs` e `crates/kernel/tests/ipc_wire.rs` **per intero** |
+| **4, 5** — la settima porta | §2 della stella polare **per intero**; §8 del 2, la riga della settima porta; `crates/kernel/src/ports/mod.rs`, `journal.rs`, `crates/platform/src/journal.rs` |
+| **6** — il registro | §5 del 2, la prima tabella; ADR-0038; `crates/kernel/src/permission.rs`, `record.rs`, `crates/kernel/tests/frozen_bytes.rs` |
+| **7, 8** — l'attività e il daemon | §5 del 2 **per intero**; le **tre sequenze** di «La GUI dentro»; `crates/daemon/src/main.rs` per intero |
+| **9** — la campagna DST | §8 del 2, la riga dell'attività; `crates/simulator/tests/gui_death_campaign.rs`; il settimo passo di `scripts/gate.sh` |
+| **10, 12, 13** — la SPA | §6a del 2; §1 della stella polare (il catalogo: le cinque tabelle piene per i moduli del 2, la corta per i segnaposto); «Il modello della GUI»; §9 del 2 per gli attrezzi |
+| **11** — il core finto | §7 del 2 **per intero** |
+| **14, 15** — il cancello e la CI | §8 del 2 **per intero**; `scripts/gate.sh`, `.github/workflows/quality-gate.yml`, `.gitignore`; la tabella delle voci senza numero AUD dell'audit per X-1 e X-3 |
+| **16** — la chiusura | §12 del compendio, `README.md`, `roadmap.md`, `tracciabilita.md`, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — le case che D14 della parte 1 nomina |
+
+⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — questo file e il compendio, **37 270**
+token misurati oggi — e la testa di **questo** piano: vincoli globali, posizione, errata, P-1…P-15, le
+dieci decisioni, le voci aperte. **24 533** token oggi, e cresce a ogni compito scritto.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`:
+   la testa è il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** (non i compiti già scritti, se
+   non per i nomi che il compito nuovo consuma — il blocco *Interfaces* di ciascuno li porta).
+3. `superpowers:writing-plans`: scrivere i compiti **3, 4, 5, 6 …** nell'ordine della tabella della
+   posizione, ciascuno col proprio **pre-controllo delle quattro domande** contro il codice di **adesso**,
+   e la lista di lettura qui sopra per sapere che cosa aprire. Ogni difetto trovato diventa una voce **P**
+   in coda al pre-controllo, e la decisione che ne discende una riga **D**.
+4. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
+   `bash scripts/check-docs.sh` → `OK`, e il commit — **senza co-autore**.
+5. Quando i sedici compiti ci sono: la **revisione del piano intero** — copertura dei disegni, segnaposto,
+   coerenza dei nomi fra i blocchi *Interfaces*, ogni *Trova* rilanciato — come la parte 1 fece nella terza
+   sessione; poi l'esecuzione in una sessione **nuova**, un subagente fresco per compito.
+6. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
+---

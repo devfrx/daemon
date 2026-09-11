@@ -2655,29 +2655,36 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
-### La seconda chiusura — 2026-09-11: il piano è SCRITTO FINO AL COMPITO 3 di sedici, e il pre-controllo del 4 è FATTO
+### La seconda chiusura — 2026-09-11: il piano è SCRITTO FINO AL COMPITO 4 di sedici; nessun compito è eseguito
+
+⛔ **QUESTA INTESTAZIONE DICEVA *«FINO AL COMPITO 3 di sedici, e il pre-controllo del 4 è FATTO»*, ed è
+CORRETTA e non cancellata — gotcha #31, un'intestazione è ciò che si legge.** Il verbale fu scritto in `e9e2371`
+chiudendo la sessione dopo il compito 3; il **proprietario ha chiesto di proseguire** — *«scrivi il compito 4 in
+questa, poi fai session-handoff»* — e il compito 4 è stato scritto in `13cef58`. È lo stesso precedente che
+`crates/kernel/src/ports/ipc.rs` porta dal 2026-08-31: il capoverso sotto resta un verbale e vale com'è scritto,
+l'intestazione no. **Le cifre delle righe qui sotto sono quelle di ADESSO**, rimisurate coi comandi alla chiusura
+vera.
 
 ⛔ **DA SAPERE SUBITO.** Niente è a metà: albero pulito, nessuno stash, nessuna operazione git in corso, nessun
 server acceso, **nessun codice di prodotto toccato** — `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/
-Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la
-tabella della posizione è tutta ⬜, l'errata è **vuota**, i compiti **4–16 non esistono**. ✅ **MA IL PRE-CONTROLLO
-DEL COMPITO 4 È GIÀ FATTO E REGISTRATO** — P-20, P-21, P-22 e **D13** — quindi chi scrive il 4 parte da lì e non
-ripaga quella lettura.
+Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla, e `git diff --name-only 1330aca..HEAD`
+rende **un solo file**, questo piano. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la tabella della posizione è tutta ⬜,
+l'errata è **vuota**, i compiti **5–16 non esistono**. La sessione nuova **scrive**, non esegue.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
-| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; nessuno stash |
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
 | I commit di questa sessione | `git log --oneline 1330aca..HEAD` — li elenca lui, e sono tutti di documenti |
-| Codice di prodotto | **non toccato**, col comando in «Da sapere subito» |
-| Quanto è scritto | `grep -c '^## Compito' <questo file>` → **3**; la tabella della posizione ne elenca **sedici** |
+| Codice di prodotto | **non toccato**, coi due comandi in «Da sapere subito» |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>` → **4**; la tabella della posizione ne elenca **sedici** |
 | L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0**; nasce vuota e non resterà vuota |
-| Il pre-controllo | `grep -c '^### P-' <questo file>` → **22**; le decisioni, `grep -c '^| \*\*D[0-9]' <questo file>` → **13** |
-| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, all'apertura, prima del commit del compito 3 e alla chiusura (log datati nello scratchpad: `gate-2026-09-11-ripresa-apertura.log`, `gate-2026-09-11-compito3-scritto.log`, `gate-2026-09-11-ripresa-chiusura.log`); `bash scripts/check-docs.sh` → `OK` |
-| Fine-riga | questo piano è **LF** nell'indice e nell'albero: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ **`git commit` stampa un avviso** *«LF will be replaced by CRLF the next time Git touches it»*: **innocuo**, rimisurato subito dopo il commit e invariato |
+| Il pre-controllo | `grep -c '^### P-' <questo file>` → **23**; le decisioni, `grep -c '^| \*\*D[0-9]' <questo file>` → **13** |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, quattro volte: all'apertura, prima di ciascuno dei tre commit (log datati nello scratchpad: `gate-2026-09-11-ripresa-apertura.log`, `-compito3-scritto.log`, `-ripresa-chiusura.log`, `-compito4-scritto.log`); `bash scripts/check-docs.sh` → `OK` prima di ogni commit |
+| Fine-riga | questo piano è **LF** nell'indice e nell'albero: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ **`git commit` stampa un avviso** *«LF will be replaced by CRLF the next time Git touches it»*: **innocuo**, rimisurato dopo ogni commit e invariato tutte e tre le volte |
 | Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
-| Margine del compendio | il comando del vincolo 11 → **invariato**: questa sessione non ha toccato il compendio |
-| File temporanei | nessuno nel repository — `git status --porcelain` vuoto |
-| Debito lasciato | **nessuno non dichiarato**: i tredici compiti che mancano sono la tabella della posizione; il pre-controllo del **4** è fatto e sta in P-20…P-22 |
+| Margine del compendio | **invariato**: questa sessione non ha toccato il compendio |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto; nello scratchpad restano **solo** i quattro log del cancello, gli attrezzi cancellati |
+| Debito lasciato | **nessuno non dichiarato**: i dodici compiti che mancano sono la tabella della posizione; le voci aperte stanno nella sezione omonima; le tredici decisioni sono ribaltabili e ciascuna porta il costo |
 
 #### Le decisioni prese scrivendo, oltre alle tredici della tabella
 
@@ -2685,59 +2692,66 @@ ripaga quella lettura.
 |---|---|---|---|
 | 5 | la regola dei gemelli (**D11**) è stata **portata al proprietario in A/B** e non presa da sola | tocca un contratto osservabile — il protocollo core ↔ GUI — e il repo dava **due precedenti opposti** (`Mib` contro `Trust`): `anthropic-skills:dev-communication` dice di fermarsi | una domanda in più |
 | 6 | il proprietario ha **delegato** — *«scegli secondo decision-principles»* — e la risposta è una **regola**, non un'opzione | scegliere «sempre A» o «sempre B» avrebbe reso arbitrario uno dei due precedenti; la regola dice **quale** proprietà li separa (un tipo chiuso contro un tipo con campi), e resta vera per il prossimo tipo | una riga D da riscrivere |
-| 7 | il pre-controllo del **compito 4** è stato fatto e **registrato** invece di scrivere il compito con meno margine | `anthropic-skills:session-resume` dice *«se la ricostruzione sta consumando il budget del lavoro, fermati e dichiaralo»*: il pre-controllo era già pagato e sarebbe andato perso | nessuno: le voci P si aggiungono in coda |
+| 7 | il pre-controllo del **compito 4** è stato fatto e **registrato** prima di scriverlo | il verbale fu scritto per chiudere; il proprietario ha chiesto di proseguire, e il compito 4 è partito **dal pre-controllo già pagato** invece di rileggere gli stessi file | nessuno: le voci P si aggiungono in coda |
 | 8 | il **vincolo globale 1** riceve un richiamo datato invece di essere riscritto | è un vincolo approvato, e qui vale la stessa regola degli ADR: si corregge col richiamo, non in silenzio | nessuno |
+| 9 | **P-23 si corregge nel compito 2, non nel 4** dove è stata trovata | il compito 2 è quello che dà a `ipc` il chiamante, cioè la **causa**; correggere nel 4 avrebbe messo il rimedio dove si è visto il **sintomo** — è la terza riga della disciplina dell'audit. ⚠️ E si corregge **adesso** e non con una voce d'errata, perché il compito 2 **non è eseguito**: un'errata è per ciò che un compito eseguito ha smentito | due righe da spostare |
+| 10 | due voci del pre-controllo dicono di **NON toccare** una riga | *«all six are named in this milestone»* parla del **Traguardo 1** ed è un fatto datato; la riga 1527 della spec resta vera con sette famiglie. Senza quelle due righe scritte, il prossimo censimento le «corregge» per zelo — ed è metà del valore di un censimento | due correzioni sbagliate |
 
 #### Le trappole di questa sessione — istruzioni, non aneddoti
 
 - ⛔ **Una sonda inventata per verificare un documento può essere sbagliata LEI.** Verificando la prima chiusura,
   `awk '… /^\| *[0-9]+ *\|/ …'` sulla tabella della posizione ha reso **0** e sembrava una divergenza: la tabella
-  scrive `| **1** |`, con gli asterischi. **Il documento diceva il vero.** Prima di dichiarare una divergenza si
-  prova la sonda su una riga che si è **letta**.
-- ⛔ **Il sorgente di una dipendenza batte il ricordo, e questa volta ha deciso una voce:** `EncodeError` di
-  `bincode` 2.0.1 è stato **letto** in `~/.cargo/registry/src/*/bincode-2.0.1/src/error.rs` invece di ricordato, ed
-  è ciò che ha reso P-17 un fatto invece di un sospetto. `ls -d ~/.cargo/registry/src/*/<crate>-<versione>`.
+  scrive `| **1** |`, con gli asterischi. **Il documento diceva il vero.** Una sonda che non rende nulla si prova
+  su una riga che si è **letta**, prima di dichiarare che il documento mente — e vale doppio quando le altre nove
+  tornano tutte verdi, perché è lì che una divergenza isolata sembra un ritrovamento.
+- ⛔ **Un difetto del compito N si scopre scrivendo il compito N+2**, ed è P-23: il compito 2 lascia false tre
+  righe in due file **che non tocca**, e quei due file li apre il **4**. 📌 **Quindi la quarta domanda del
+  pre-controllo va girata all'indietro:** non solo *«ciò che il mio compito produce esiste già?»*, ma *«i compiti
+  PRIMA del mio lasciano false delle righe nei file che io apro?»*.
 - ⛔ **Un commento può VIETARE ciò che il compito deve fare, per un'altra ragione** — P-21, `ports/mod.rs:79`
   vieta di scrivere «sette famiglie». Chi legge una guardia in un commento si chiede **contro che cosa** è scritta
-  prima di obbedirle o di ignorarla: qui i due «sette» sono cose diverse.
-- ⛔ **Una frase censita si legge INTERA, e il censimento non finisce alla prima casa.** P-22: «le famiglie restano
-  sei» vive in **quattro** posti della spec, di cui **tre** da toccare e **uno** che resta vero — e quel quarto è
-  scritto nella voce apposta perché il prossimo censimento non lo tocchi per zelo.
-- **Gli inserimenti in un file con tabelle si fanno con Python (`newline=""`) e si verificano subito** col
-  controllo delle tabelle spezzate: ha retto per tre inserimenti in un colpo, ma la trappola della prima chiusura
-  resta viva.
-- **`$TMPDIR` non è impostata**, confermato: il percorso dello scratchpad si scrive per esteso anche per i log del
-  cancello.
+  prima di obbedirle o di ignorarla: qui i due «sette» sono cose diverse, e la guardia va riscritta **coi numeri
+  nuovi**, non cancellata.
+- ⛔ **Una frase censita si legge INTERA, e il censimento non finisce alla prima casa.** P-22: «le famiglie
+  restano sei» vive in **quattro** posti della spec, di cui **tre** da toccare e **uno** che resta vero.
+- ⛔ **Il sorgente di una dipendenza batte il ricordo, e questa volta ha deciso una voce:** `EncodeError` di
+  `bincode` 2.0.1 è stato **letto** in `~/.cargo/registry/src/*/bincode-2.0.1/src/error.rs`, ed è ciò che ha reso
+  P-17 un fatto invece di un sospetto.
+- **Gli inserimenti in un file con tabelle si fanno con Python (`newline=""`)** e si verificano **subito** col
+  controllo delle tabelle spezzate: ha retto per tre passate, ma la trappola della prima chiusura resta viva.
+- **`$TMPDIR` non è impostata**, confermato: il percorso dello scratchpad si scrive per esteso anche per i log.
 
 #### La lista di lettura della sessione nuova — a compito, non tutto
 
-⛔ **Resta quella della prima chiusura, con una riga CORRETTA e una AGGIUNTA**, misurate scrivendo il compito 3:
+⛔ **Resta quella della prima chiusura, con queste correzioni misurate scrivendo i compiti 3 e 4:**
 
 | Compito | Che cosa si legge |
 |---|---|
-| **4, 5** — la settima porta | ⚠️ **CORRETTA:** oltre alla §2 della stella polare per intero e alla riga della settima porta della §8 del 2, si leggono `crates/kernel/src/ports/mod.rs` **per intero** (91 righe: la tabella, le cifre in prosa e la guardia di P-21) e la **testa** di `crates/kernel/tests/journal_contract.rs` — le prime 32 righe, che sono la forma di una suite `include!`-abile e il precedente del tempo futuro. ⛔ `crates/platform/src/journal.rs` **non serve al 4**: serve al **5**, che porta `redb`. Le righe **209**, **575** e **906** della spec del sotto-progetto 1 si aprono **una per volta**, col `grep` sulla frase |
-| **3** — lo schema | ✅ **SCRITTO.** Si legge solo se si esegue |
-
-Le altre righe restano come la prima chiusura le ha scritte.
+| **3**, **4** | ✅ **SCRITTI.** Si leggono solo se si esegue |
+| **5** — le due implementazioni della settima porta **e la suite** | ⚠️ **CORRETTA:** `crates/platform/src/journal.rs` **per intero** (632 righe: `FileBackend`, `open(path)`, la forma del modulo `redb`) — **al 4 non serviva, al 5 sì**; la **testa** di `crates/kernel/tests/journal_contract.rs` (32 righe: la forma di una suite `include!`-abile, e il precedente del tempo futuro corretto con un richiamo) e `crates/platform/tests/journal_contract_real.rs` **per intero** (è corto, ed è il modello dell'`include!`); il pezzo 3 della §2 della stella polare; la riga della settima porta della §8 del 2, per le cinque sonde che la suite deve tenere |
+| **6** — il registro | invariata: §5 del 2, la prima tabella; ADR-0038; `crates/kernel/src/permission.rs`, `record.rs`, `crates/kernel/tests/frozen_bytes.rs`. ⚠️ **Più `Triple`, `Access` e `Call` del compito 3**, che sono i gemelli sul filo di ciò che il registro decide |
+| **7, 8** — l'attività e il daemon | invariata, **più le undici varianti del compito 3**: il blocco *Interfaces* del 3 le porta coi nomi esatti, e la §5 del 2 va letta **contro quelli** |
+| gli altri | come la prima chiusura li ha scritti |
 
 ⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — questo file e il compendio — e la **testa di
-questo piano**: vincoli globali, posizione, errata, P-1…P-22, le tredici decisioni, le voci aperte. ⛔ **Il peso
+questo piano**: vincoli globali, posizione, errata, P-1…P-23, le tredici decisioni, le voci aperte. ⛔ **Il peso
 non si scrive qui:** lo dà lo snippet `tiktoken` di `CLAUDE.md`, e cresce a ogni compito scritto.
 
 #### Che cosa la sessione nuova fa, nell'ordine
 
 1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la
-   testa è il commit di questa chiusura o uno dopo.
-2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — e **P-20, P-21 e P-22 per prime**, che
-   sono il pre-controllo del compito che scriverà.
-3. `superpowers:writing-plans`: scrivere i compiti **4, 5, 6 …** nell'ordine della tabella della posizione. ⛔ **Il
-   4 parte già con tre voci P e D13 in mano**, quindi il suo pre-controllo si **completa** invece di cominciare:
-   restano le quattro domande sugli artefatti che le tre voci non coprono — la finta in
-   `ports_are_implementable.rs` e i richiami alle cifre in prosa.
+   testa è `13cef58` o un commit dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — non i compiti già scritti, se non per
+   i nomi che il compito nuovo consuma: il blocco *Interfaces* di ciascuno li porta.
+3. `superpowers:writing-plans`: scrivere i compiti **5, 6, 7 …** nell'ordine della tabella della posizione,
+   ciascuno col proprio **pre-controllo delle quattro domande** contro il codice di **adesso**, più la quinta
+   girata all'indietro (la seconda trappola qui sopra). Ogni difetto trovato è una voce **P** in coda, e la
+   decisione che ne discende una riga **D**.
 4. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
    `bash scripts/check-docs.sh` → `OK`, `bash scripts/gate.sh` → `GATE GREEN`, e il commit — **senza co-autore**.
-5. Quando i sedici compiti ci sono: la **revisione del piano intero**, come la prima chiusura descrive; poi
-   l'esecuzione in una sessione **nuova**, un subagente fresco per compito.
+5. Quando i sedici compiti ci sono: la **revisione del piano intero** — copertura dei disegni, segnaposto,
+   coerenza dei nomi fra i blocchi *Interfaces*, ogni *Trova* rilanciato — come la parte 1 fece nella terza
+   sessione; poi l'esecuzione in una sessione **nuova**, un subagente fresco per compito.
 6. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
 
 ---

@@ -127,10 +127,10 @@ Valgono per ogni compito, senza che il compito li ripeta.
 | # | Compito | Commit | Stato |
 |---|---|---|---|
 | **1** | il **contatore condiviso**: un tipo nuovo di `kernel`, seminato dal giornale con `replay`, consegnato a chi ne ha bisogno; i richiami datati in `ports/journal.rs` e `ports/ipc.rs` | uno | ⬜ |
-| **2** | il **trasporto `ipc`** in `platform` su `interprocess`, e la **suite di conformità** `ipc_contract.rs` inclusa da `platform` coi bugiardi | uno | ⬜ |
+| **2** | il **trasporto `ipc`** in `platform` su `interprocess`, e la **suite di conformità** `ipc_contract.rs` inclusa da `platform` coi bugiardi; ⛔ **più i tre richiami che `ipc` rende falsi** — richiamo del 2026-09-11, **P-23** | uno | ⬜ |
 | **3** | lo **schema che cresce**: le varianti nuove di `IpcMessage`, le **fixture** e il **timbro di build**, `ipc_wire.rs` | uno | ⬜ |
-| **4** | la **settima porta**: il tratto `Custody` in `kernel::ports`, la finta di `ports_are_implementable.rs`, la suite di conformità; i richiami alla §2.3 e alla §3.1 della spec e alle cifre in prosa di `ports/mod.rs` | uno | ⬜ |
-| **5** | le **due implementazioni** della settima porta: `redb` in `platform`, la finta in `simulator` | uno | ⬜ |
+| **4** | la **settima porta**: il tratto `Custody` in `kernel::ports`, la finta di `ports_are_implementable.rs`; i richiami alle cifre in prosa di `ports/mod.rs` con la guardia di `rng` (P-21) e i **tre** nella spec — la riga dell'anello 3, la §2.3 e la §3.1 (P-22). ⛔ **La suite di conformità è al 5 — richiamo del 2026-09-11, D13** | uno | ⬜ |
+| **5** | le **due implementazioni** della settima porta: `redb` in `platform`, la finta in `simulator`, **e la suite di conformità che le confronta** — arrivata qui dalla riga 4 col richiamo del 2026-09-11 (**D13**): una suite ne vuole due, e al 4 ce n'erano zero | uno | ⬜ |
 | **6** | il **registro delle funzioni** `kernel::registry`: la funzione registrata, `invoke`, il dettaglio `Invocation` col suo record congelato | uno | ⬜ |
 | **7** | l'**attività del kernel che ascolta**: il dispaccio, il ramo `Request` **non servito** (D5), il limite di giri, `Disconnected` | uno | ⬜ |
 | **8** | il **daemon**: il cablaggio dell'attività, il percorso dell'archivio come argomento, la **rilettura della policy all'avvio** col dettaglio tipizzato, «salva, riavvia, ritrova» | uno | ⬜ |
@@ -503,6 +503,32 @@ chiude su TUTTE le case della frase, non su quella dove l'hai trovata»*.
 
 ---
 
+### P-23 — Il compito 2 dà a `ipc` un'implementazione vera e lascia TRE righe false, in due file che non tocca
+
+**Riga 5 — il contratto cresce sotto il piano**, e questa volta sotto il piano **stesso**: il difetto è del
+compito **2**, e si vede solo scrivendo il **4**, perché è il 4 che apre quei due file. Misurato il 2026-09-11:
+la lista *Files* del compito 2 non nomina né `crates/kernel/src/ports/mod.rs` né
+`crates/kernel/tests/ports_are_implementable.rs`, e `grep -n 'ports_are_implementable\|FIVE fakes'` dentro il
+compito 2 non rende **nulla**. Ma il compito 2 crea `platform::ipc::LocalSocketIpc`, e da quel momento:
+
+| Dove | Che cosa dice | Dopo il compito 2 |
+|---|---|---|
+| `crates/kernel/tests/ports_are_implementable.rs:1` | *«One fake per port declared **WITHOUT an implementation**»* | **falsa per `ipc`**: una ce l'ha |
+| `crates/kernel/src/ports/mod.rs:22-25` | *«The other FOUR — `filesystem`, `network`, `process` and `ipc` — have **NO CALLER AT ALL**»* | **falsa per `ipc`**, e il conteggio scende a **tre** |
+| `crates/kernel/src/ports/mod.rs:18`, la tabella | riga `ipc`, colonna *«Real implementation arrives in»* → *«milestone 6»* | **falsa**: arriva col **sotto-progetto 2**, compito 2 |
+
+⛔ **E non è un dettaglio di prosa: è la tabella che `ports/mod.rs` dichiara essere IL DISEGNO** — *«THE TABLE IS
+THE DESIGN, NOT AN INVENTORY OF FILES»* — e la frase delle quattro senza chiamante è l'argomento con cui il banco
+delle finte esiste. Lasciarle false toglie il significato a entrambe.
+
+**Conseguenza: la lista *Files* e i passi del compito 2 crescono di due file e di tre richiami datati**, scritti
+nel compito 2 col richiamo che dice **perché** sono arrivati lì da un pre-controllo successivo. ⚠️ **Corretto
+adesso e non con una voce d'errata**, e la differenza è che il compito 2 **non è eseguito**: un'errata è per ciò
+che un compito eseguito ha smentito, e qui il piano è ancora in scrittura — correggere costa due righe, scoprirlo
+eseguendo costa un compito rifatto.
+
+---
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -865,7 +891,15 @@ git push
 - Modify: `crates/platform/src/lib.rs` (**CRLF**) — una riga di modulo
 - Modify: `crates/platform/Cargo.toml` (**CRLF**) — `interprocess`, con la giustificazione accanto
 - Modify: `Cargo.lock` (**CRLF**) — **nello stesso commit** del manifesto (vincolo 6)
+- Modify: `crates/kernel/src/ports/mod.rs` (**`i/lf w/crlf`**) — ⛔ **due richiami datati, P-23**: la riga della tabella `ipc` (*«Real implementation arrives in»* → non più il Traguardo 6, ma questo compito) e la frase *«The other FOUR … have NO CALLER AT ALL»*, che scende a **tre**
+- Modify: `crates/kernel/tests/ports_are_implementable.rs` (⛔ **`i/crlf w/crlf`**, P-3) — il richiamo sulla riga 1, *«One fake per port declared WITHOUT an implementation»*, falsa per `ipc` da questo compito
 - Read: la §3 del disegno del 2 per intero; `crates/kernel/src/ports/ipc.rs`; `crates/kernel/src/framing.rs`; `crates/kernel/tests/journal_contract.rs` e `crates/platform/tests/journal_contract_real.rs` **per la forma**
+
+⛔ **I TRE RICHIAMI SONO ARRIVATI QUI DAL PRE-CONTROLLO DEL COMPITO 4, il 2026-09-11 — P-23.** Questo compito
+dà a `ipc` la sua prima implementazione vera, e da quel momento tre frasi in due file diventano false: la
+tabella che `ports/mod.rs` dichiara essere **il disegno**, la frase con cui il banco delle finte giustifica la
+propria esistenza, e la riga che manda il lettore al Traguardo 6. ⚠️ **Si correggono QUI e non al compito 4**,
+che è dove sono state trovate: il rimedio sta dove nasce la causa, non dove si è visto il sintomo.
 
 **Interfaces:**
 - Consumes: `kernel::ports::ipc::{Ipc, ClientId, IpcError}`; `kernel::numbering::Progressive` dal compito 1
@@ -2253,6 +2287,369 @@ git push
 - [ ] `crates/kernel/tests/frozen/` **invariato**: `ls crates/kernel/tests/frozen/*.cbor | wc -l` → **6**, e `git diff --stat crates/kernel/tests/frozen/` vuoto
 - [ ] i fine-riga rimisurati, `git ls-files --eol` invariato sui due file toccati
 - [ ] la riga **3** della tabella della posizione a ✅ con la data
+
+---
+
+## Compito 4: la settima porta — il tratto `Custody`, la finta che lo prova da fuori, e i richiami in quattro case
+
+**Files:**
+- Create: `crates/kernel/src/ports/custody.rs` (**LF**) — il tratto, `CustodyKey`, `CustodyError`
+- Modify: `crates/kernel/src/ports/mod.rs` (**`i/lf w/crlf`**) — `pub mod custody;`, la riga nella tabella, le **cifre in prosa** e la guardia di **P-21**
+- Modify: `crates/kernel/tests/ports_are_implementable.rs` (⛔ **`i/crlf w/crlf`** — vedi il vincolo 4 e **P-3**) — la finta e il suo banco
+- Modify: `docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` (**CRLF**) — **tre** richiami: la riga 209, la §2.3 e la §3.1 (**P-22**)
+- Read: la **§2 della stella polare** per intero; la riga della settima porta della tabella degli artefatti della §8 del 2; `crates/kernel/src/ports/mod.rs` **per intero** (91 righe); `crates/kernel/src/ports/journal.rs` per la forma del tratto e di `JournalError`; le righe **209**, **575** e **906** della spec, **una per volta**, col `grep` sulla frase
+
+**Interfaces:**
+- Consumes: nulla di nuovo — il modulo non ha dipendenze
+- Produces, e i compiti 5, 7, 8 e 11 li usano con questi nomi esatti:
+  - `kernel::ports::custody::Custody` — il tratto
+  - `Custody::keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError>`
+  - `Custody::retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError>`
+  - `kernel::ports::custody::CustodyKey` — `Debug + Clone + Copy + PartialEq + Eq`, oggi una variante: `CustodyKey::Layout`
+  - `kernel::ports::custody::CustodyError` — `Debug + Clone + Copy + PartialEq + Eq`, oggi una variante: `CustodyError::Unavailable`
+
+⛔ **LA SUITE DI CONFORMITÀ NON È DI QUESTO COMPITO — D13.** La riga 4 della tabella della posizione diceva *«la
+suite di conformità»* e il **richiamo di D13 la sposta al compito 5**, che porta le due implementazioni: una suite
+ne confronta **due**, e qui ce ne sono **zero** (**P-20**). Ciò che questo compito prova è un'altra cosa, ed è la
+**terza domanda** del pre-controllo di `CLAUDE.md` in persona: che il tratto sia implementabile **da fuori dalla
+crate**.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+ls crates/kernel/src/ports/custody.rs 2>&1
+ls crates/kernel/src/ports/ | tr '\n' ' '
+grep -niE "SIX|FIVE|SEVEN" crates/kernel/src/ports/mod.rs
+grep -c '^struct \|^impl .* for ' crates/kernel/tests/ports_are_implementable.rs
+grep -n 'Le famiglie di porte restano sei\|### 2.3 I/O\|### 3.1 Cosa sostituisce' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+git ls-files --eol crates/kernel/src/ports/mod.rs crates/kernel/tests/ports_are_implementable.rs docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+```
+
+Atteso: `custody.rs` **non esiste**; **sei** file più `mod.rs`; le cifre in prosa alle righe **1, 7, 22, 29, 32,
+37, 43, 77, 79** (P-5 e P-21 le hanno misurate il 2026-09-11: si **rimisurano**, e se una riga si è mossa vale il
+*Dove*, mai il numero — gotcha #70); le tre righe della spec a **209**, **575**, **906**;
+⛔ `ports_are_implementable.rs` **`i/crlf w/crlf`**, unico fra i sorgenti, e gli altri due `i/lf w/crlf`.
+
+- [ ] **Passo 2: il tratto, nuovo**
+
+`crates/kernel/src/ports/custody.rs`, **LF**:
+
+```rust
+//! The SEVENTH family of ports: keeping bytes the kernel never opens.
+//!
+//! ⛔ WHY A PORT AND NOT THE JOURNAL, IN ONE PARAGRAPH, because whoever reads this file is
+//! exactly who would ask. The journal keeps "the small part" for ever (ADR-0018): permissions,
+//! policy, approved guides -- SMALL DECISIONS. A panel layout is written dozens of times a day
+//! and would sit there for ever, encrypted and in the backup, and the retention milestone would
+//! owe it an exception written just for it. ADR-0022 had already decided that "configuration"
+//! is an archive of its own; THIS PORT IS THAT ARCHIVE, in its smallest form. The full argument
+//! is decision 15 of the GUI north star.
+//!
+//! ⛔ AND IT IS NOT CONFIGURATION OF THE KERNEL, WHICH IS THE OTHER THING IT LOOKS LIKE. A value
+//! the kernel DECIDES with is handed to it (ADR-0034, and its negative perimeter says the kernel
+//! is not a configuration system). Here the kernel CUSTODIES what the gui entrusts to it and
+//! never reads it to decide anything -- it cannot, because the package is opaque. If a future
+//! caller wants to READ what is kept here in order to decide, that is ADR-0034's question and
+//! not this port's.
+//!
+//! ⛔ NO PATH AND NO FILE NAME IS NAMEABLE HERE (I3). The key is a closed enum; where the bytes
+//! land is `platform`'s business, and the simulator substitutes the whole thing.
+//!
+//! ⚠️ ONE KEY TODAY, AND THAT IS NOT A SYSTEM WAITING TO HAPPEN. Checked before deciding
+//! whether others would need this: approved guides, permissions and the VRAM policy are all
+//! PROJECTIONS OF THE JOURNAL (ADR-0009), so the layout is the only PACKAGE in sight. Two
+//! operations and one key are not a configuration system -- no format, no schema, no
+//! validation, no hot reload.
+
+use alloc::vec::Vec;
+
+/// What is being kept. ⛔ A CLOSED ENUM AND NOT A STRING: a string key is a namespace, and a
+/// namespace is the configuration system this port is deliberately not. A second thing to keep
+/// is a VARIANT, added deliberately, which is the same shape ADR-0031 asks of a dependency.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CustodyKey {
+    /// The gui's layout: `toJSON()` of `dockview` plus the active view, as ONE opaque package.
+    Layout,
+}
+
+/// What can go wrong. ⛔ ONE VARIANT, AND THE REASON IS THE RULE THIS REPOSITORY USES
+/// EVERYWHERE: no caller, no variant. Distinguishing "the archive would not open" from "the
+/// write was refused" would be two variants with ONE producer between them today, and the
+/// caller does not need the distinction to be in the type -- IT READS IT FROM WHICH OPERATION
+/// FAILED. `keep` fails and `retrieve` answers: the write was refused, and the activity sends
+/// back the old package. Both fail: the archive is unavailable, and the activity says so
+/// (decision 35 of the milestone-2 design). Written here so the consumer does not rediscover it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CustodyError {
+    /// The archive could not be reached -- it would not open, or the write did not land.
+    Unavailable,
+}
+
+/// Keeping bytes under a key, and handing them back.
+///
+/// ⛔ TWO OPERATIONS AND NO DELETE. Nothing in the design asks to forget a layout: replacing it
+/// is `keep` with other bytes, and "restore the default view" is presentation -- the gui drops
+/// the saved entry (§2 of the north star, "examined and without a source today"). A third
+/// operation with no caller would be the speculative layer criterion 5 refuses.
+pub trait Custody {
+    /// Keeps these bytes under this key, replacing whatever was there.
+    ///
+    /// ⛔ THE BYTES ARE OPAQUE AND STAY THAT WAY. No implementation may parse, validate or
+    /// canonicalise them: the day `dockview` changes format, the core does not change. The
+    /// probe that holds it is "bytes that are not JSON come back identical", and it lives with
+    /// the implementations (task 5).
+    fn keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError>;
+
+    /// Hands back what is kept under this key, or `None` if nothing is.
+    ///
+    /// ⛔ `Ok(None)` AND NOT AN ERROR, AND IT IS A DELIBERATE DIVERGENCE FROM `Journal`, WHOSE
+    /// `read_back` ANSWERS `Err(JournalError::Missing)`. The two are not the same question. A
+    /// step the journal has no record of is a FAULT -- someone asked about a step that should be
+    /// there. A key with nothing under it is the FIRST RUN, the ordinary case, and folding it
+    /// into an error would make the commonest path look like a failure and push every caller to
+    /// match an error variant to find out that everything is fine. ⚠️ AND IT IS WHAT THE DESIGN
+    /// ALREADY ASKS FOR: `Layout` carries "the package, NOTHING, or unavailable", three states,
+    /// and `Ok(None)` is the middle one arriving as a value rather than as a failure.
+    fn retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError>;
+}
+```
+
+- [ ] **Passo 3: la riga di modulo**
+
+In `crates/kernel/src/ports/mod.rs`, la lista dei `pub mod` è in **ordine alfabetico** — misurato al Passo 1:
+`filesystem`, `ipc`, `journal`, `network`, `process`, `reactor`. `custody` va **prima** di `filesystem`:
+
+```rust
+pub mod custody;
+
+pub mod filesystem;
+```
+
+- [ ] **Passo 4: la finta che lo prova DA FUORI DALLA CRATE**
+
+⛔ **È l'artefatto che questo compito produce davvero**, e la terza domanda del pre-controllo dice perché: *«un
+tratto che nessuno implementa non è un tratto provato implementabile»*. Il banco stesso registra che su `process`
+questa prova **trovò un difetto reale** — un valore di ritorno non costruibile fuori da `kernel`. In
+`crates/kernel/tests/ports_are_implementable.rs`, ⛔ **con Python `newline=""`, e il file è CRLF anche
+nell'INDICE (P-3)**: si rimisura con `git ls-files --eol`, non solo con `tr -cd '\r'`.
+
+Accanto alle altre finte, con la sua intestazione a righe di `=` come le altre sezioni del file:
+
+```rust
+// ============================================================================================
+// THE `custody` FAKE
+// ============================================================================================
+
+/// ⛔ A `Vec` OF PAIRS AND NOT A MAP, for the reason `crate::arbiter` writes down: `HashMap`
+/// lives in `std`, and a bench that reaches for one teaches the wrong reflex about the crate it
+/// is testing. With one key today the lookup is a scan of length one.
+#[derive(Default)]
+struct InMemoryCustody {
+    kept: Vec<(CustodyKey, Vec<u8>)>,
+    refuse: bool,
+}
+
+impl Custody for InMemoryCustody {
+    fn keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        if self.refuse {
+            return Err(CustodyError::Unavailable);
+        }
+        self.kept.retain(|(kept, _)| *kept != key);
+        self.kept.push((key, bytes.to_vec()));
+        Ok(())
+    }
+
+    fn retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        if self.refuse {
+            return Err(CustodyError::Unavailable);
+        }
+        Ok(self
+            .kept
+            .iter()
+            .find(|(kept, _)| *kept == key)
+            .map(|(_, bytes)| bytes.clone()))
+    }
+}
+```
+
+E il banco, con **entrambe le direzioni**, che è la forma che ogni finta di questo file già usa
+(*«And refusable, same rule 3 as above»*):
+
+```rust
+#[test]
+fn the_custody_port_can_be_implemented_and_called() {
+    let mut custody = InMemoryCustody::default();
+
+    // Nothing kept yet -- and that is a VALUE, not a failure: the first run.
+    assert_eq!(custody.retrieve(CustodyKey::Layout), Ok(None));
+
+    // ⛔ BYTES THAT ARE NOT JSON, on purpose: the package is opaque, and a fake that only ever
+    // sees well-formed JSON would let a parsing implementation through. The real probe of this
+    // property lives with the implementations (task 5); here it keeps the FAKE honest.
+    let package = vec![0x00, 0xFF, 0x7B, 0x00];
+    custody
+        .keep(CustodyKey::Layout, &package)
+        .expect("the fake kept it");
+    assert_eq!(custody.retrieve(CustodyKey::Layout), Ok(Some(package)));
+
+    // Replacing, not appending.
+    custody
+        .keep(CustodyKey::Layout, b"second")
+        .expect("the fake kept it");
+    assert_eq!(
+        custody.retrieve(CustodyKey::Layout),
+        Ok(Some(b"second".to_vec()))
+    );
+
+    // And refusable, same rule 3 as above -- BOTH operations, because the consumer reads the
+    // difference between "write refused" and "unavailable" from WHICH ONE fails.
+    custody.refuse = true;
+    assert_eq!(
+        custody.keep(CustodyKey::Layout, b"third"),
+        Err(CustodyError::Unavailable)
+    );
+    assert_eq!(
+        custody.retrieve(CustodyKey::Layout),
+        Err(CustodyError::Unavailable)
+    );
+}
+```
+
+⚠️ **L'`use` in testa al file cresce:** `use kernel::ports::custody::{Custody, CustodyError, CustodyKey};`, nello
+stile dei `use` già presenti. E la riga 1 del modulo — *«One fake per port declared WITHOUT an implementation»* —
+riceve il proprio richiamo **nel compito 2** (**P-23**), non qui.
+
+- [ ] **Passo 5: le cifre in prosa di `ports/mod.rs`, e la guardia di P-21**
+
+⛔ **Le righe si ritrovano col `grep` sulla FRASE, mai col numero** (gotcha #70), e ogni riga che il censimento
+rende si legge **intera**. Cinque tocchi, e il quinto è quello che nessuno si aspetta:
+
+| | La frase | Diventa |
+|---|---|---|
+| 1 | *«The SIX families of ports (§2.3)»* | **SEVEN**, col richiamo datato accanto |
+| 2 | *«all six are named in this milestone»* | resta **six**: parla del **Traguardo 1**, che ne nominò sei — è un fatto datato, non un conteggio di oggi. ⛔ **Non si tocca**, ed è scritto qui perché il prossimo censimento non lo corregga per zelo |
+| 3 | *«this module declares SIX submodules, one per row»* | **SEVEN** |
+| 4 | *«The other FOUR … have NO CALLER AT ALL»* | ⛔ **non si tocca QUI:** è **P-23**, e la corregge il compito **2**, che è quello che dà a `ipc` il chiamante. Toccarla qui sarebbe correggere il sintomo nel file sbagliato |
+| 5 | *«FIVE fakes, because `process` needs two of them»* | **SIX fakes**. ⚠️ La riga sotto porta già un **richiamo datato del 2026-08-28** (AUD-054): si **legge prima**, e il richiamo nuovo si aggiunge **senza cancellarlo** |
+| 6 | ⛔ *«the simulator substitutes SEVEN things while §2.3 enumerates SIX … so that nobody "fixes" the discrepancy … **or by writing "seven families" in the line above**»* | **EIGHT contro SEVEN** — ed è **P-21** |
+
+Il richiamo del sesto, che è il delicato — il *Trova* si prende **dal file**:
+
+```rust
+//! ✅ DATED RECALL, 2026-09-11 -- THE NUMBERS MOVED AND THE WARNING STANDS, WHICH IS THE WHOLE
+//! POINT OF DATING IT RATHER THAN REWRITING IT. A SEVENTH FAMILY ARRIVED -- `custody`, the
+//! layout the gui entrusts to the core (decision 15 of the GUI north star) -- so the simulator
+//! now substitutes EIGHT things while §2.3 enumerates SEVEN. ⛔ THE DISCREPANCY DID NOT CLOSE,
+//! IT MOVED: `rng` is still declared in §2.2 and still lives in `crate::rng`, and moving it
+//! under this module is still the wrong fix.
+//! ⛔ AND "seven families" IS NOW WRITTEN IN THE LINE ABOVE -- BY THIS RECALL, AND IT IS NOT THE
+//! THING THE SENTENCE FORBIDS. The forbidden seven was the one that COUNTS `rng` as a family of
+//! I/O; today's seven counts a real family and leaves `rng` exactly where it was. A reader who
+//! sees the two sentences side by side should read this one: the warning is about WHAT IS
+//! COUNTED, not about the digit.
+```
+
+- [ ] **Passo 6: i tre richiami nella spec — P-22**
+
+⛔ **Tutti e tre nello stesso commit**, che è la quinta riga della disciplina dell'audit: *«un rimedio si chiude
+su TUTTE le case della frase»*. Il file è **CRLF**: `replace_unique.py`, e si rimisura dopo.
+
+(a) La riga **209**, il riquadro dell'anello 3. Il *Trova* è la riga intera presa dal file; si **aggiunge** in
+coda al riquadro, senza toccare ciò che c'è:
+
+```markdown
+> ⛔ **RICHIAMO DEL 2026-09-11 — le famiglie sono SETTE, e il merito di questo riquadro RESTA VERO.** La frase
+> d'apertura è al presente e in assoluto, e dal sotto-progetto 2 è falsa alla lettera: `custody` è la settima
+> (§2.3, e decisione 15 della stella polare della GUI). ✅ **Ciò che il riquadro afferma non cambia:** l'anello 3
+> non ne aggiunge una, ed è ancora la ragione per cui quella voce costò una sezione invece di una riscrittura. Si
+> data invece di riscriverla perché è l'argomento di una voce chiusa, non un conteggio.
+```
+
+(b) La **§2.3**, riga della tabella. Si aggiunge in coda alla tabella delle famiglie:
+
+```markdown
+| `custody` — **tenere i byte che la GUI affida al core, e ridarli** | dichiarata qui il 2026-09-11, progettata nella §2 della [stella polare della GUI](2026-09-07-direzione-gui-design.md) |
+```
+
+più, **sotto** la tabella, il richiamo:
+
+```markdown
+> ⛔ **RICHIAMO DEL 2026-09-11 — la tabella passa da SEI a SETTE famiglie**, ed è la prima volta dal 2026-08-07
+> (§2.3.1). La settima è `custody`: due operazioni, `keep` e `retrieve`, e **una chiave sola**, un enum chiuso.
+> Il perché — e perché non il giornale — è la decisione 15 della stella polare della GUI, riassunta nel doc di
+> `crates/kernel/src/ports/custody.rs`. ⚠️ **Il costo, dichiarato lì e qui:** la §3.1 dichiara di sostituire
+> *«esattamente le porte della §2.3»*, quindi cresce con questa; e la campagna **C1** verifica da oggi un mondo
+> più largo — **detto** invece che scoperto, che è gotcha #17 nella direzione giusta.
+```
+
+(c) La **§3.1**: la riga nella tabella, dopo `ipc` e prima di `rng`:
+
+```markdown
+| `custody` | `redb` su un file suo, una tabella, una chiave (ADR-0022, l'archivio «configurazione») | in memoria, come `MemoryJournal` |
+```
+
+e la **nota di lettura** in fondo alla §3.1 — ⛔ **la gemella della guardia di `ports/mod.rs`, e va coi numeri
+nuovi**. Il *Trova* è il capoverso che comincia con `📌 Nota di lettura`, preso dal file:
+
+```markdown
+> 📌 Nota di lettura, senza conseguenze: `rng` è dichiarata in **§2.2**, non in §2.3. La
+> frase qui sopra resta vera in ciò che afferma — non esistono altri punti in cui il mondo
+> tocchi il kernel — ma l'elenco è di **otto** porte e la §2.3 ne enumera **sette**.
+> ⛔ **RICHIAMO DEL 2026-09-11:** i due numeri erano **sette** e **sei**; sono cresciuti insieme con `custody`, e
+> lo scarto resta **uno** ed è sempre `rng`. La stessa avvertenza, coi numeri di oggi, sta in
+> `crates/kernel/src/ports/mod.rs`, che è l'altra casa di questa discrepanza — e le due si toccano **insieme**,
+> o la prima che resta indietro mente in silenzio.
+```
+
+- [ ] **Passo 7: le due direzioni, misurate**
+
+Una per volta, compilata, eseguita, e **revocata** con `git diff` a zero:
+
+| | La mutazione | Atteso |
+|---|---|---|
+| **C1** | in `InMemoryCustody::keep`, togli la riga `self.kept.retain(...)` | `the_custody_port_can_be_implemented_and_called` **rosso** sulla sostituzione: `Some(b"second")` atteso, trovato il pacchetto vecchio — la sonda del rimpiazzo non è decorativa |
+| **C2** | in `retrieve`, sostituisci il ramo `refuse` con `Ok(None)` | **rosso** sull'ultima asserzione: `Err(Unavailable)` atteso, `Ok(None)` trovato. ⛔ **È la direzione che decide**, perché senza di essa una porta che confonde «niente» con «non disponibile» passerebbe — ed è esattamente la distinzione che la decisione 35 compra |
+| **C3** | in `custody.rs`, cambia `retrieve` in `-> Result<Vec<u8>, CustodyError>` | **il banco non compila**, `E0308`: è la prova che la firma è esercitata davvero e non solo dichiarata |
+
+```bash
+cargo test --locked -p kernel --test ports_are_implementable 2>&1 | tail -5
+git diff --stat
+```
+
+Atteso dopo ogni revoca: il banco **verde**, e `git diff --stat` **vuoto**.
+
+- [ ] **Passo 8: i fine-riga, il cancello, il commit**
+
+```bash
+for f in crates/kernel/src/ports/mod.rs crates/kernel/tests/ports_are_implementable.rs docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; printf '   righe='; wc -l < "$f"; done
+git ls-files --eol crates/kernel/src/ports/mod.rs crates/kernel/tests/ports_are_implementable.rs docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+tr -cd '\r' < crates/kernel/src/ports/custody.rs | wc -c
+git diff --name-only -- docs/superpowers/specs/2026-08-06-kernel-design.md
+bash scripts/gate.sh 2>&1 | tail -3
+bash scripts/check-docs.sh 2>&1 | tail -2
+```
+
+Atteso: per i tre CRLF `CR` **uguale** alle righe; `git ls-files --eol` **invariato** — in particolare
+`ports_are_implementable.rs` ancora **`i/crlf w/crlf`**; **zero** CR in `custody.rs`; ⛔ **l'altra spec NON
+toccata**, il comando non rende nulla (vincolo 1); `GATE GREEN`; `OK`.
+
+```bash
+git add crates/kernel/src/ports/custody.rs crates/kernel/src/ports/mod.rs crates/kernel/tests/ports_are_implementable.rs docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+git commit -m "gui(compito 4): la settima porta -- il tratto Custody con keep e retrieve e la chiave Layout, la finta InMemoryCustody che lo prova da fuori dalla crate nelle due direzioni; le cifre in prosa di ports/mod.rs da sei a sette con la guardia di rng riscritta coi numeri nuovi (P-21), e i tre richiami nella spec: la riga dell'anello 3, la 2.3 e la 3.1 con la sua nota di lettura (P-22)"
+git push
+```
+
+#### Criterio di chiusura del compito 4
+
+- [ ] `cargo test --locked -p kernel --test ports_are_implementable` → tutti passati, **uno in più** del Passo 1
+- [ ] `grep -c 'DATED RECALL, 2026-09-11' crates/kernel/src/ports/mod.rs` → **almeno 1**, e la guardia di `rng` porta i numeri **otto/sette**
+- [ ] `grep -c 'RICHIAMO DEL 2026-09-11' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` → **3**
+- [ ] ⛔ `grep -c 'NO CALLER AT ALL' crates/kernel/src/ports/mod.rs` → **invariato**: quella riga è del compito **2** (P-23)
+- [ ] `git diff --name-only -- docs/superpowers/specs/2026-08-06-kernel-design.md` **vuoto** (vincolo 1)
+- [ ] le tre mutazioni C1, C2, C3 provate **una per volta** e revocate, con `git diff --stat` vuoto
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/gate-deps.sh` **verde**: la lista di ADR-0031 **non è cresciuta** (il modulo non ha dipendenze)
+- [ ] i fine-riga rimisurati, `git ls-files --eol` invariato sui tre file toccati — `ports_are_implementable.rs` ancora `i/crlf`
+- [ ] la riga **4** della tabella della posizione a ✅ con la data
 
 ---
 

@@ -101,7 +101,7 @@ Valgono per ogni compito, senza che il compito li ripeta.
 
 | # | Vincolo | Da |
 |---|---|---|
-| 1 | **le due spec si toccano SOLO coi richiami datati che i compiti nominano**: la §2.3 e la §3.1 della spec del sotto-progetto 1 passano da sei a sette famiglie (compito 4). Nessun'altra riga: `git diff --name-only 42b50d8..HEAD -- docs/superpowers/specs/2026-08-06-kernel-design.md` resta vuoto a ogni compito | §3 della stella polare, decisione 15; `CLAUDE.md` |
+| 1 | **le due spec si toccano SOLO coi richiami datati che i compiti nominano**: la §2.3 e la §3.1 della spec del sotto-progetto 1 passano da sei a sette famiglie (compito 4). Nessun'altra riga: `git diff --name-only 42b50d8..HEAD -- docs/superpowers/specs/2026-08-06-kernel-design.md` resta vuoto a ogni compito ⛔ **RICHIAMO DEL 2026-09-11, dal pre-controllo del compito 4 (P-22): i posti sono TRE, non due.** Oltre alla §2.3 (riga 575) e alla §3.1 (riga 906), la riga **209** apre con *«Le famiglie di porte restano sei»* al presente e in assoluto, e dal compito 4 è falsa alla lettera benché il suo merito — l'anello 3 non ne aggiunge — resti vero. Si toccano **tutte e tre nello stesso commit** (quinta riga della disciplina dell'audit). ✅ **E la riga 1527 NON si tocca:** *«nessuna delle famiglie di porte della §2.3 fornisce la capacità dell'hardware»* resta vera, perché `custody` custodisce byte e non interroga la GPU — scritto qui perché il prossimo censimento non la corregga per zelo. | §3 della stella polare, decisione 15; `CLAUDE.md` |
 | 2 | **codice in inglese, documenti in italiano**: Rust, TypeScript, Vue, JavaScript, shell, YAML e i loro commenti in inglese; i verbali, i richiami e questo piano in italiano; un riferimento al codice dentro un documento porta il **nome esatto del sorgente** | §1.0 della spec; gotcha #40 |
 | 3 | **nessuna cifra nuova in prosa**: date e comandi; una cifra che sostiene una decisione porta accanto il **comando** e la **data** e vive in **una** casa | `CLAUDE.md` |
 | 4 | **i fine-riga si conservano per file** e si rimisurano dopo ogni scrittura: la mappa dei file dice CRLF o LF **oggi**; `git ls-files --eol` prima e dopo, **invariato**; i file nuovi nascono **LF**; un CRLF si tocca con `replace_unique.py` o con Python `newline=""`, **mai** con `sed -i` (che in questa Git Bash toglie i CR). ⛔ **`crates/kernel/tests/ports_are_implementable.rs` è CRLF anche NELL'INDICE** — unico fra i sorgenti (P-3): chi lo tocca lo rimisura con `git ls-files --eol`, non solo con `tr -cd '\r'` | `CLAUDE.md`; P-3 |
@@ -442,6 +442,67 @@ costruzione.
 
 ---
 
+### P-20 — La suite di conformità della settima porta NON può nascere al compito 4: le vuole due, e al 4 ce n'è zero
+
+**Domanda 2 — la sonda manca, e non si vede leggendo.** La riga 4 della tabella della posizione dà al compito 4
+*«il tratto `Custody`, la finta di `ports_are_implementable.rs`, la suite di conformità»*, e la riga 5 dà al 5 le
+**due implementazioni**. ⛔ **Una suite di conformità confronta due implementazioni**, e lo scrive
+`crates/kernel/src/ports/mod.rs` di sé: la finta di `ports_are_implementable.rs` *«buys that the signatures compile
+FROM OUTSIDE THE CRATE and can be called; it does not buy that they are the right signatures, and IT IS NOT THE
+CONFORMANCE SUITE, WHICH NEEDS TWO IMPLEMENTATIONS TO COMPARE»*. Al compito 4 le implementazioni sono **zero**: la
+suite girerebbe su nulla, o su una finta minima che non pretende di essere conforme.
+
+✅ **Letto il precedente invece di dedurlo**, il 2026-09-11: `crates/kernel/tests/journal_contract.rs` è
+`include!`-ata da `crates/platform/tests/journal_contract_real.rs:32` ed esercita l'implementazione **vera**. E la
+sua testa registra che il file **è nato prima** di essere incluso, col tempo futuro — *«this file WILL BE
+`include!`d … task 9 of this milestone»* — e ha poi richiesto un **richiamo datato** per correggerlo: *«A tense is
+a status claim like any other (gotcha #31)»*. È una lezione già pagata una volta.
+
+**Conseguenza: D13.** ⚠️ **E il compito 4 resta un artefatto provato da solo**, che è ciò che D1 chiede: la finta
+in `ports_are_implementable.rs` prova che il tratto è implementabile **da fuori dalla crate**, cioè la **terza**
+domanda del pre-controllo di `CLAUDE.md` in persona.
+
+### P-21 — `ports/mod.rs` porta una GUARDIA CONTRO chi scrive «sette famiglie», ed è per un'altra ragione
+
+**Domanda 6 — ciò che ti smentisce sta in un COMMENTO**, la quarta volta in questo pre-controllo, e questa è la
+più insidiosa perché **vieta letteralmente ciò che il compito deve fare**. `crates/kernel/src/ports/mod.rs:76-79`,
+riletto il 2026-09-11:
+
+> `rng` IS DECLARED IN §2.2 AND LIVES IN `crate::rng`, NOT HERE … the simulator substitutes SEVEN things while
+> §2.3 enumerates SIX, and §3.1 says so in those words. Repeated here so that nobody "fixes" the discrepancy by
+> moving `rng` under this module, **or by writing "seven families" in the line above**.
+
+⛔ **Chi esegue il compito 4 legge quella riga e ha due modi di sbagliare**: fermarsi credendo di violare una
+guardia, oppure ignorarla — e allora la guardia smette di valere anche per il caso che esiste per cogliere.
+**Non sono lo stesso «sette»:** quello vietato conterebbe `rng`, che non è una famiglia di I/O; quello del compito
+4 conta una famiglia **vera**, `custody`. ⚠️ **E la discrepanza non sparisce, si SPOSTA:** dopo il compito 4 il
+simulatore sostituisce **otto** cose mentre le famiglie sono **sette**, quindi la riga va riscritta **coi numeri
+nuovi**, non cancellata — cancellarla rimetterebbe in piedi il «fix» che essa impedisce.
+
+**Conseguenza per il compito 4:** il richiamo datato su quel capoverso dice le tre cose insieme — `rng` resta
+fuori, il sette di oggi è un'altra cosa da quello vietato, e i numeri diventano otto contro sette. **Nessuna D:**
+è un rimedio, non una scelta.
+
+### P-22 — La frase «le famiglie restano sei» vive in TRE posti della spec, e il vincolo 1 ne nomina due
+
+**Riga 5 — il contratto cresce sotto il piano**, applicata al vincolo globale. Il vincolo 1 dice *«la §2.3 e la
+§3.1 della spec del sotto-progetto 1 passano da sei a sette famiglie (compito 4). **Nessun'altra riga**»*.
+Censite le occorrenze il 2026-09-11 in `docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md`, col `grep`
+sulla frase e leggendo **intera** ogni riga che il censimento rende (gotcha #70):
+
+| Riga | Che cosa dice | Dopo il compito 4 |
+|---|---|---|
+| **575**, §2.3 | *«I/O — le famiglie di porte»*, la sezione che le enumera | **da toccare**, come il vincolo 1 dice |
+| **906**, §3.1 | *«Cosa sostituisce»* — le sei enumerate e le sette sostituite | **da toccare**, come il vincolo 1 dice |
+| **209** | *«✅ **Le famiglie di porte restano sei.** L'anello 3 **non** ne aggiunge una»* | ⛔ **DA TOCCARE, e il vincolo 1 non la nomina.** Il **merito** resta vero — l'anello 3 non ne aggiunge — ma la frase d'apertura è al **presente e in assoluto**, e dal compito 4 è falsa alla lettera. È la radice **R1** dell'audit: *«una correzione attraversa il documento in cui nasce, non gli altri»* |
+| **1527** | *«nessuna delle famiglie di porte della §2.3 fornisce la capacità dell'hardware»* | ✅ **resta vera**: `custody` custodisce byte, non interroga la GPU. **Non si tocca**, e sta scritto qui perché chi censisce la ritrovi e non la tocchi due volte |
+
+**Conseguenza:** il vincolo globale 1 riceve il proprio **richiamo datato** — tre posti, non due — e il compito 4
+li tocca tutti e tre **nello stesso commit**, che è la quinta riga della disciplina dell'audit: *«un rimedio si
+chiude su TUTTE le case della frase, non su quella dove l'hai trovata»*.
+
+---
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -461,6 +522,7 @@ smentisce — è ciò per cui esiste l'errata.
 | **D10** | ⛔ **il trasporto NON incornicia**: `send` scrive i byte **verbatim**, `receive` rende **la cornice intera** — busta compresa — e `take_frame` serve solo a trovare il confine fra due messaggi | `IpcMessage::encode` incornicia già e `decode` sbuccia (P-15), quindi un messaggio consegnato a `send` è **già auto-delimitato**: una seconda busta sarebbe quattro byte con due significati e due sbucciature al pari TypeScript. ⚠️ **Ed è la convenzione che le due finte hanno già**, verbatim. **Costo:** chi chiama `send` deve consegnare una cornice intera — il doc del trasporto lo scrive, la porta no (e non si tocca: il suo doc dice «bytes», che resta vero) |
 | **D11** | ⛔ **un tipo del kernel raggiunge il filo TALE E QUALE solo se è CHIUSO** — un newtype su un numero o un enum senza dati, che non può guadagnare campi; **ogni tipo con CAMPI porta un gemello** in `kernel::wire::ipc`, e la conversione è il posto dove un campo nuovo del giornale si ferma | la regola distingue i **due precedenti opposti** del repo invece di sceglierne uno: `Mib` porta entrambe le lingue perché è un numero con un nome e non può crescere; `Trust` vuole il gemello perché il disegno lo dice. ⛔ **E per due dei quattro non è una scelta** (P-19): `Permission` porta `&'static str`, che non nasce da byte in arrivo — l'argomento che `GrantRequest` scrive contro `ResourceProfile`, ADR-0014 — e `VramPolicy` contiene le policy stesse. ⚠️ **Il beneficio è il compilatore:** ADR-0036 vuole che il giornale **evolva**, I4 rinuncia al versionamento sul filo, e senza gemelli un campo aggiunto al giornale cambierebbe i byte del filo **in silenzio**. ⚠️ **Costo:** dieci tipi nuovi in `wire::ipc` e una conversione per variante. ⚖️ **Portata al proprietario in A/B il 2026-09-11 e delegata** — *«scegli secondo decision-principles»* |
 | **D12** | le **fixture nascono al compito 3**, che crea `gui/schema/fixtures/` con **soli dati** — nessun `package.json`, nessun `Cargo.toml` | la §4 e la §8 del 2 le vogliono in `gui/`, che però nasce al **compito 10** (P-18). Le tre vie: spostare il compito 3 dopo il 10 romperebbe il taglio per artefatto (D1) e lascerebbe lo schema senza controllo per sette compiti; farle nascere in `crates/kernel/tests/` e copiarle contraddirebbe il disegno e creerebbe **due case**; crearle dove il disegno dice è il minimo. ✅ **Verificato che non ci siano effetti collaterali:** `gui/` non è ignorata, e senza manifesti `cargo` non la vede. ⚠️ **Costo:** il compito 10 trova la cartella già lì e ci costruisce intorno, invece di crearla vuota |
+| **D13** | ⛔ **la suite di conformità della settima porta nasce al compito 5, non al 4**: il 4 porta il tratto, la finta di `ports_are_implementable.rs` e i tre richiami; il 5 porta le due implementazioni **e** la suite che le confronta | una suite di conformità confronta **due** implementazioni, e `crates/kernel/src/ports/mod.rs` lo scrive di sé; al compito 4 ce ne sono **zero** (P-20). Le due vie scartate: farla nascere al 4 **col tempo futuro** è ciò che `journal_contract.rs` fece davvero e che ha richiesto un richiamo datato — *«a tense is a status claim like any other»*, gotcha #31, lezione già pagata; farla nascere al 4 su una finta minima la renderebbe **vacua**, che è la prima domanda del pre-controllo. ⚠️ **Il compito 4 resta provato da solo**, che è ciò che D1 chiede: la finta prova il tratto **da fuori dalla crate** — la terza domanda di `CLAUDE.md` in persona. ⚠️ **Costo:** il compito 5 cresce di un artefatto, e la riga 4 della tabella della posizione perde le parole «la suite di conformità» |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -2195,6 +2257,93 @@ git push
 ---
 
 ## Come si riprende — il diario di questo piano, coi comandi
+
+### La seconda chiusura — 2026-09-11: il piano è SCRITTO FINO AL COMPITO 3 di sedici, e il pre-controllo del 4 è FATTO
+
+⛔ **DA SAPERE SUBITO.** Niente è a metà: albero pulito, nessuno stash, nessuna operazione git in corso, nessun
+server acceso, **nessun codice di prodotto toccato** — `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/
+Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la
+tabella della posizione è tutta ⬜, l'errata è **vuota**, i compiti **4–16 non esistono**. ✅ **MA IL PRE-CONTROLLO
+DEL COMPITO 4 È GIÀ FATTO E REGISTRATO** — P-20, P-21, P-22 e **D13** — quindi chi scrive il 4 parte da lì e non
+ripaga quella lettura.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; nessuno stash |
+| I commit di questa sessione | `git log --oneline 1330aca..HEAD` — li elenca lui, e sono tutti di documenti |
+| Codice di prodotto | **non toccato**, col comando in «Da sapere subito» |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>` → **3**; la tabella della posizione ne elenca **sedici** |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0**; nasce vuota e non resterà vuota |
+| Il pre-controllo | `grep -c '^### P-' <questo file>` → **22**; le decisioni, `grep -c '^| \*\*D[0-9]' <questo file>` → **13** |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, all'apertura, prima del commit del compito 3 e alla chiusura (log datati nello scratchpad: `gate-2026-09-11-ripresa-apertura.log`, `gate-2026-09-11-compito3-scritto.log`, `gate-2026-09-11-ripresa-chiusura.log`); `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | questo piano è **LF** nell'indice e nell'albero: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ **`git commit` stampa un avviso** *«LF will be replaced by CRLF the next time Git touches it»*: **innocuo**, rimisurato subito dopo il commit e invariato |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Margine del compendio | il comando del vincolo 11 → **invariato**: questa sessione non ha toccato il compendio |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto |
+| Debito lasciato | **nessuno non dichiarato**: i tredici compiti che mancano sono la tabella della posizione; il pre-controllo del **4** è fatto e sta in P-20…P-22 |
+
+#### Le decisioni prese scrivendo, oltre alle tredici della tabella
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 5 | la regola dei gemelli (**D11**) è stata **portata al proprietario in A/B** e non presa da sola | tocca un contratto osservabile — il protocollo core ↔ GUI — e il repo dava **due precedenti opposti** (`Mib` contro `Trust`): `anthropic-skills:dev-communication` dice di fermarsi | una domanda in più |
+| 6 | il proprietario ha **delegato** — *«scegli secondo decision-principles»* — e la risposta è una **regola**, non un'opzione | scegliere «sempre A» o «sempre B» avrebbe reso arbitrario uno dei due precedenti; la regola dice **quale** proprietà li separa (un tipo chiuso contro un tipo con campi), e resta vera per il prossimo tipo | una riga D da riscrivere |
+| 7 | il pre-controllo del **compito 4** è stato fatto e **registrato** invece di scrivere il compito con meno margine | `anthropic-skills:session-resume` dice *«se la ricostruzione sta consumando il budget del lavoro, fermati e dichiaralo»*: il pre-controllo era già pagato e sarebbe andato perso | nessuno: le voci P si aggiungono in coda |
+| 8 | il **vincolo globale 1** riceve un richiamo datato invece di essere riscritto | è un vincolo approvato, e qui vale la stessa regola degli ADR: si corregge col richiamo, non in silenzio | nessuno |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **Una sonda inventata per verificare un documento può essere sbagliata LEI.** Verificando la prima chiusura,
+  `awk '… /^\| *[0-9]+ *\|/ …'` sulla tabella della posizione ha reso **0** e sembrava una divergenza: la tabella
+  scrive `| **1** |`, con gli asterischi. **Il documento diceva il vero.** Prima di dichiarare una divergenza si
+  prova la sonda su una riga che si è **letta**.
+- ⛔ **Il sorgente di una dipendenza batte il ricordo, e questa volta ha deciso una voce:** `EncodeError` di
+  `bincode` 2.0.1 è stato **letto** in `~/.cargo/registry/src/*/bincode-2.0.1/src/error.rs` invece di ricordato, ed
+  è ciò che ha reso P-17 un fatto invece di un sospetto. `ls -d ~/.cargo/registry/src/*/<crate>-<versione>`.
+- ⛔ **Un commento può VIETARE ciò che il compito deve fare, per un'altra ragione** — P-21, `ports/mod.rs:79`
+  vieta di scrivere «sette famiglie». Chi legge una guardia in un commento si chiede **contro che cosa** è scritta
+  prima di obbedirle o di ignorarla: qui i due «sette» sono cose diverse.
+- ⛔ **Una frase censita si legge INTERA, e il censimento non finisce alla prima casa.** P-22: «le famiglie restano
+  sei» vive in **quattro** posti della spec, di cui **tre** da toccare e **uno** che resta vero — e quel quarto è
+  scritto nella voce apposta perché il prossimo censimento non lo tocchi per zelo.
+- **Gli inserimenti in un file con tabelle si fanno con Python (`newline=""`) e si verificano subito** col
+  controllo delle tabelle spezzate: ha retto per tre inserimenti in un colpo, ma la trappola della prima chiusura
+  resta viva.
+- **`$TMPDIR` non è impostata**, confermato: il percorso dello scratchpad si scrive per esteso anche per i log del
+  cancello.
+
+#### La lista di lettura della sessione nuova — a compito, non tutto
+
+⛔ **Resta quella della prima chiusura, con una riga CORRETTA e una AGGIUNTA**, misurate scrivendo il compito 3:
+
+| Compito | Che cosa si legge |
+|---|---|
+| **4, 5** — la settima porta | ⚠️ **CORRETTA:** oltre alla §2 della stella polare per intero e alla riga della settima porta della §8 del 2, si leggono `crates/kernel/src/ports/mod.rs` **per intero** (91 righe: la tabella, le cifre in prosa e la guardia di P-21) e la **testa** di `crates/kernel/tests/journal_contract.rs` — le prime 32 righe, che sono la forma di una suite `include!`-abile e il precedente del tempo futuro. ⛔ `crates/platform/src/journal.rs` **non serve al 4**: serve al **5**, che porta `redb`. Le righe **209**, **575** e **906** della spec del sotto-progetto 1 si aprono **una per volta**, col `grep` sulla frase |
+| **3** — lo schema | ✅ **SCRITTO.** Si legge solo se si esegue |
+
+Le altre righe restano come la prima chiusura le ha scritte.
+
+⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — questo file e il compendio — e la **testa di
+questo piano**: vincoli globali, posizione, errata, P-1…P-22, le tredici decisioni, le voci aperte. ⛔ **Il peso
+non si scrive qui:** lo dà lo snippet `tiktoken` di `CLAUDE.md`, e cresce a ogni compito scritto.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la
+   testa è il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — e **P-20, P-21 e P-22 per prime**, che
+   sono il pre-controllo del compito che scriverà.
+3. `superpowers:writing-plans`: scrivere i compiti **4, 5, 6 …** nell'ordine della tabella della posizione. ⛔ **Il
+   4 parte già con tre voci P e D13 in mano**, quindi il suo pre-controllo si **completa** invece di cominciare:
+   restano le quattro domande sugli artefatti che le tre voci non coprono — la finta in
+   `ports_are_implementable.rs` e i richiami alle cifre in prosa.
+4. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
+   `bash scripts/check-docs.sh` → `OK`, `bash scripts/gate.sh` → `GATE GREEN`, e il commit — **senza co-autore**.
+5. Quando i sedici compiti ci sono: la **revisione del piano intero**, come la prima chiusura descrive; poi
+   l'esecuzione in una sessione **nuova**, un subagente fresco per compito.
+6. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
+---
 
 ### La prima chiusura — 2026-09-11: il piano è SCRITTO FINO AL COMPITO 2 di sedici; nessun compito è eseguito
 

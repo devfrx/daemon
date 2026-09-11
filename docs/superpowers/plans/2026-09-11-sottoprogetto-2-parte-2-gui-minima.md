@@ -132,8 +132,8 @@ Valgono per ogni compito, senza che il compito li ripeta.
 | **4** | la **settima porta**: il tratto `Custody` in `kernel::ports`, la finta di `ports_are_implementable.rs`; i richiami alle cifre in prosa di `ports/mod.rs` con la guardia di `rng` (P-21) e i **tre** nella spec — la riga dell'anello 3, la §2.3 e la §3.1 (P-22). ⛔ **La suite di conformità è al 5 — richiamo del 2026-09-11, D13** | uno | ⬜ |
 | **5** | le **due implementazioni** della settima porta: `redb` in `platform`, la finta in `simulator`, **e la suite di conformità che le confronta** — arrivata qui dalla riga 4 col richiamo del 2026-09-11 (**D13**): una suite ne vuole due, e al 4 ce n'erano zero | uno | ⬜ |
 | **6** | il **registro delle funzioni** `kernel::registry`: la funzione registrata, `invoke`, il dettaglio `Invocation` col suo record congelato | uno | ⬜ |
-| **7** | l'**attività del kernel che ascolta**: il dispaccio, il ramo `Request` **non servito** (D5), il limite di giri, `Disconnected` | uno | ⬜ |
-| **8** | il **daemon**: il cablaggio dell'attività, il percorso dell'archivio come argomento, la **rilettura della policy all'avvio** col dettaglio tipizzato, «salva, riavvia, ritrova» | uno | ⬜ |
+| **7** | l'**attività del kernel che serve la GUI** — `kernel::serving`: il dispaccio, il ramo `Request` **non servito** (D5), `Disconnected`, il tick in `Parameters`. ⛔ **Il limite di giri è al 8 — richiamo del 2026-09-11, D21** | uno | ⬜ |
+| **8** | il **daemon**: il cablaggio dell'attività, il percorso dell'archivio come argomento, la **rilettura della policy all'avvio** col dettaglio tipizzato, «salva, riavvia, ritrova», **e il limite di giri** — arrivato qui dalla riga 7 col richiamo del 2026-09-11 (**D21**): la sua sonda vuole il grafo con la GUI | uno | ⬜ |
 | **9** | la **campagna DST del 2** in `simulator`, e la sua riga nel settimo passo del cancello | uno | ⬜ |
 | **10** | **`gui/` nasce**: Vite, Vue 3, TypeScript, `engines.node` e `.npmrc`; `schema/` coi tipi e le fixture, `transport/` col ponte e la sua finta | uno | ⬜ |
 | **11** | il **core finto** `gui/fake-core/`: l'attività vera su porte in memoria, il rubinetto, le sonde | uno | ⬜ |
@@ -795,6 +795,175 @@ la **prosa che li conta**.
 
 ---
 
+### P-36 — «il dispaccio» NON può chiamarsi `dispatch`: `kernel::gateway::dispatch` esiste già
+
+La riga 7 della tabella della posizione chiama questo compito *«il dispaccio»*, ed è la parola giusta in
+italiano. In inglese non è libera:
+
+```bash
+grep -rnE '\b(fn|struct|enum|mod) (dispatch|session|serve|serving|listen)' crates/ --include='*.rs'
+```
+
+Il 2026-09-11 rende `pub fn dispatch` in `crates/kernel/src/gateway/mod.rs`, che è il **gateway
+d'inferenza**: dispaccia un token conforme al provider. Un secondo `dispatch` nel kernel, che significa
+un'altra cosa, è parola per parola l'ambiguità che **D8** ha rifiutato per `counter`.
+
+⛔ **E `session` è peggio, non meglio:** `crates/kernel/src/permission.rs` apre dichiarando *«NOTHING HERE
+IS SCOPED TO A SESSION … there is no session in the kernel»*, e la voce aperta 7 della §9 del 2 assegna
+**al 3** il confine di sessione dei permessi. Un `kernel::session` di oggi renderebbe falsa quella riga e
+occuperebbe il nome che il 3 vuole.
+
+✅ **Libero e misurato:** `serving` compare **in un solo commento** di `ports/process.rs`, mai come
+identificatore. Da qui **D19**.
+
+### P-37 — il tick in `Parameters` rompe ogni chiamante, e NOVE sono `compile_fail` col proprio `.stderr`
+
+La §5 del 2 dice che l'attività *«dorme un **tick** consegnato via `Parameters` (ADR-0034)»*. Il campo
+nuovo è un atto dovuto; il suo **prezzo** non era scritto da nessuna parte, e si misura:
+
+```bash
+grep -rc 'Parameters::new' crates/ --include='*.rs' | grep -v ':0'
+ls crates/kernel/tests/compile_fail/*.rs | while read f; do grep -q 'Parameters::new' "$f" && printf '%s %s\n' "$f" "$(test -e "${f%.rs}.stderr" && echo stderr || echo -)"; done
+```
+
+Il 2026-09-11: i siti sono **cinquantasette** in **ventitré** file, e **nove** di quei file sono casi
+`compile_fail`, ciascuno col proprio `.stderr`. ⛔ **È la metà che un piano dimentica:** un caso
+`compile_fail` che passa tre argomenti a una funzione che ne vuole quattro guadagna un `error[E0061]` che
+**non è l'errore che quel caso esiste per cogliere**, e il suo `.stderr` diventa rosso per la ragione
+sbagliata. Il vincolo **10** di §11 e il gotcha **#25** dicono che quei file si **leggono**, non si
+rigenerano in blocco.
+
+✅ **E la cura non è ovvia in una direzione sola:** aggiornare la chiamata **sulla stessa riga** lascia
+il `.stderr` identico; aggiungere un argomento a una chiamata **su più righe** sposta ogni numero di riga
+che il `.stderr` cita. Quale dei nove sia quale si misura **file per file**, non si assume — è il passo 3
+del compito.
+
+### P-38 — `PolicyReport.allocatable` porta il numero OPPOSTO al suo nome, e i due addendi non esistono nel kernel
+
+Il compito 3 detta `pub struct PolicyReport { policy, allocatable: Mib, total: Mib }`. La riga **2** della
+tabella *Stato* della stella polare dice che cosa ci va: *«la policy VRAM attiva e il budget **allocato**
+sul totale; il totale è il budget **allocabile**: tutto meno la quota audio e la quota di presentazione»*.
+
+⛔ **Due difetti in una struttura di tre campi.**
+
+| | Il difetto | Misurato |
+|---|---|---|
+| 1 | il campo si chiama `allocatable` e il disegno gli mette dentro il budget **allocato** — il nome dice il contrario del contenuto, e sul filo un nome sbagliato non ha nessuna guardia | la riga 2 della tabella *Stato*, contro il blocco dettato dal compito 3 |
+| 2 | l'altro campo dovrebbe essere `totale meno le due quote`, e **il kernel non ha i due addendi**: `AUDIO_QUOTA` e `PRESENTATION_QUOTA` sono letterali di `crates/daemon/src/main.rs`, e il doc di `Parameters::total_vram` **argomenta di non consegnarli** — *«two fields no kernel decision reads would be dead surface inside the kernel»* | `grep -n 'AUDIO_QUOTA\|PRESENTATION_QUOTA' crates/daemon/src/main.rs` e il doc di `total_vram` |
+
+⚠️ **E il disegno lo marca DEDOTTO di suo:** l'ultima colonna della riga 2 dice *«verificato; le due quote
+sottratte visibili: **dedotto**»*. Non è una decisione approvata da contraddire: è un dedotto che questo
+piano deve chiudere. Da qui **D20**.
+
+### P-39 — `StepSummary.outcome` è `Option<bool>`, e `Some(false)` non ha nessun produttore
+
+Il compito 3 detta `pub outcome: Option<bool>`, col doc *«`None` while the step is still in doubt»*. Letto
+contro il giornale che il compito 6 scrive:
+
+```bash
+grep -nE '    pub fn (intent|outcome|note)\(' crates/kernel/src/record.rs
+```
+
+`RecordV1::outcome(effect, trust, payload, reason)` **non porta un esito booleano**: un esito scritto dice
+che il passo si è chiuso, e non esiste un esito «chiuso male». E dentro `Registry::invoke` (compito 6) un
+effetto che fallisce torna col `?` **prima** che `outcome` sia scritto, quindi lascia il passo con intento e
+senza esito — cioè **in dubbio**, cioè `None`. ⛔ **Gli stati producibili sono due, non tre**, e il terzo
+sarebbe superficie morta in un tipo **sul filo**, dove una variante non si ritira mai (ADR-0036, regola 4).
+
+✅ **Corretto nel compito 3 e non con una voce d'errata**, come P-23, P-25 e P-35: il compito 3 **non è
+eseguito**. Il campo diventa `pub done: bool`, e il doc scrive che `false` significa *in dubbio* nel senso di
+ADR-0007 — il vocabolario che il kernel ha davvero.
+
+### P-40 — il limite di giri è del compito 8, non di questo
+
+La riga 7 della tabella della posizione elenca *«il limite di giri»*. `EXECUTOR_TURN_LIMIT` vive in
+`crates/daemon/src/main.rs`, che è il file del compito **8**, e la §5 del 2 detta per esso una sonda precisa:
+*«`daemon` guadagna una sonda: il grafo con la GUI resta vivo oltre centomila giri»*. ⛔ **Quella sonda
+richiede il grafo con la GUI**, cioè il cablaggio, cioè il compito 8: al 7 nulla lancia l'attività in
+produzione, quindi il cambio sarebbe **inerte** e la sua sonda **non scrivibile**.
+
+✅ **È l'argomento di D13 alla lettera**, che spostò la suite di conformità dal 4 al 5 perché una suite ne
+vuole due implementazioni e al 4 ce n'erano zero. Stessa forma, stesso rimedio: la riga 7 perde le parole
+«il limite di giri», la riga 8 le guadagna, col richiamo datato. Da qui **D21**.
+
+### P-41 — `Protection` «consegnato» sarebbe un parametro con un solo valore possibile
+
+La §5 del 2 dice che `Accepted` porta *«la protezione dell'archivio (valore che `platform` conosce,
+consegnato)»*. Letto contro il compito 3, che detta il tipo:
+
+```bash
+grep -n 'pub enum Protection' -A 4 crates/kernel/src/wire/ipc.rs
+```
+
+`Protection` ha **una** variante, `AsSystemAccount`. Un parametro consegnato che può assumere un valore solo
+non è un parametro: è superficie morta dentro `Parameters`, che il doc di `total_vram` rifiuta con quelle
+parole esatte, e la friction di §2.8.5 — *«adding a parameter breaks every caller»* — si pagherebbe
+**cinquantasette volte** per un valore che non può variare.
+
+✅ **La forma del repo è «dichiarato, non pinzato»** (gotcha #73): l'attività manda
+`Protection::AsSystemAccount` e il doc scrive **l'innesco** — il giorno che `Protection` guadagna una seconda
+variante, il valore diventa consegnato e questo doc va con esso. Da qui **D22**. ⚠️ **Divergenza dal
+disegno, dichiarata e non silenziosa:** la §5 riceve il proprio richiamo datato al passo 7 del compito.
+
+### P-42 — come l'attività si accorga che il degrado è cambiato: il disegno DELEGA al piano, e la sonda del §7 esclude una delle due vie
+
+La §7 del 2 lascia questo esplicitamente aperto, nei debiti dichiarati: *«perché il `degrade` arrivi alla
+GUI, l'attività vera deve **accorgersi** che `degradation_now` è cambiato e mandare `Degradation` — è la riga
+«rimanda il pezzo che è cambiato» della §5, e il finto è il primo che la esercita: **come** se ne accorga, a
+ogni giro o dopo ogni scrittura, lo fissa il piano del 2 con la sonda della §8»*.
+
+⛔ **Le due vie non sono equivalenti, e a scegliere è il rubinetto del core finto.** La parola `degrade`
+scrive nel giornale in memoria **dalla seconda attività** — il rubinetto — e non attraverso il dispaccio
+(§7, la riga del rubinetto). Una rilevazione *«dopo ogni scrittura mia»* non vedrebbe mai quella scrittura, e
+la sonda che la §7 pretende — *«`degrade` → il pari riceve `Degradation`»* — sarebbe **rossa per
+costruzione**.
+
+✅ **Quindi: a ogni giro**, e solo quando c'è almeno un client accolto, confrontando col valore che quel
+client ha già ricevuto. ⚠️ **Il costo è quello che `degradation_now` dichiara di sé** — rilegge tutto il
+giornale — e il **chiusore è già scritto e non si inventa qui**: è lo stesso checkpoint che `Journal::replay`
+nomina, nella voce aperta *«`replay()` carica TUTTO in memoria»* della §6 del compendio. Da qui **D23**.
+
+---
+
+### P-43 — `Registry::invoke` NON ha una via per l'`Approve`, e il suo stesso controllo la chiude
+
+È la quinta domanda girata all'indietro, e ha pagato una terza volta: il compito **6** è scritto, e ciò che
+detta rende il compito 7 **non scrivibile** su una delle due strade della sequenza 3.
+
+`Registry::invoke` (compito 6) apre così:
+
+```rust
+        if !permission::is_granted(journal, &function.permission)
+            .map_err(InvokeError::Permission)?
+        {
+            return Err(InvokeError::PermissionRequired(function.permission));
+        }
+```
+
+⛔ **Sulla via dell'`Approve` quel controllo risponde ancora NO.** La decisione **21** della stella polare
+dice che dopo un `Approve` il core *«apre il passo A, scrive `Invocation`, poi `Permission` con `grant`, poi
+l'effetto, poi l'esito»*: il permesso si posa **dentro** il passo A, perché `permission::grant` scrive una
+**nota** e vuole un passo già aperto — è il suo doc, ed è la ragione per cui la decisione 21 esiste. Ma
+`invoke` chiede `is_granted` **prima** di aprire il passo, quindi al secondo giro risponde di nuovo
+`PermissionRequired` e il giro non si chiude mai.
+
+⛔ **E le tre vie che NON si prendono, ciascuna col suo difetto misurato contro il codice:**
+
+| | La via | Perché cade |
+|---|---|---|
+| 1 | far scrivere il `grant` alla **chiusura dell'effetto**, che gira già nello slot giusto — fra la nota e l'esito | il controllo `is_granted` scatta **prima**, quindi l'effetto non viene mai raggiunto |
+| 2 | `grant` su un passo **a parte**, prima di `invoke` | contraddice la decisione 21 alla lettera, e `grant` vuole comunque un passo aperto: ne servirebbe uno di comodo, cioè un passo che non è un'interazione col mondo — ADR-0007 |
+| 3 | il dispaccio scrive **da sé** la fila intento → nota → grant → effetto → esito | è una **seconda copia** della sequenza che `invoke` possiede, e il giorno che le due divergono nulla diventa rosso. È ciò che il §7 del 2 rifiuta per il core finto, con le stesse parole |
+
+✅ **La cura è nel compito 6, non in un'errata** — il compito 6 **non è eseguito**, come P-23, P-25, P-35 e
+P-39: `invoke` guadagna un argomento `approval`, e l'enum `Approval` dice quale delle due strade è. Con
+`Approval::JustGiven` il registro **non chiede** e scrive il `grant` su A, fra la nota `Invocation` e
+l'effetto — cioè la decisione 21 tenuta **dentro il meccanismo** che possiede l'ordine, invece che nel
+chiamante. ⚠️ **Un enum e non un `bool`**, che è la lezione già pagata da `Access` e da `Operation::is_write`
+nel compito 3.
+
+---
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -820,6 +989,12 @@ smentisce — è ciò per cui esiste l'errata.
 | **D16** | ⛔ **`Registry::invoke` prende l'EFFETTO COME CHIUSURA**, e `kernel::registry` non nomina `Arbiter` né `VramPolicy`: la funzione vera — il cambio di policy — la registra il **dispaccio**, compito 7 | la regola **1** di ADR-0038 dice che il kernel dà il meccanismo e che *«il contenuto — quali funzioni esistano — lo portano le capacità e la GUI»* (**P-31**). Un registro che chiamasse `set_policy` dovrebbe **importare** l'arbitro, e il secondo invocatore — il gesto, col 12 — dovrebbe aggiungere il proprio effetto lì dentro: è la *«logica solo per gesti»* che l'ADR rifiuta, al rovescio. ⚠️ **Così la regola 1 sale al LIVELLO 1:** l'assenza di quell'`use` è la prova, e il criterio di chiusura la misura col `grep`. ⚠️ **Costo dichiarato:** la chiusura riceve il **giornale** — `set_policy` lo vuole, e prestarlo due volte non è esprimibile — quindi l'effetto potrebbe scrivere qualunque cosa; `invoke` non può sorvegliarlo e lo **dice** invece di fingere |
 | **D17** | ⛔ **l'invocatore raggiunge il record come `u8`, non come enum**, e il codice lo assegna un `match` esaustivo in `Invoker::code` | un enum lì sarebbe la **quarta** enum `index_only` **sul filo**, ed è esattamente l'argomento che `PermissionDetail` scrive per esteso per rifiutarla: *«whose variant indices `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index on the wire never retires»*. Quel tipo se la cavò con un `bool` perché aveva **due** valori; qui ne arrivano **quattro** — click, gesto, voce, agente — e un `bool` non serve. ⛔ **E il `match` è `Operation::is_write` alla lettera:** `as u8` numererebbe una variante **per posizione**, e riordinare l'enum ripunterebbe in silenzio ogni record già scritto. ⚠️ **Costo dichiarato:** un `u8` torna indietro senza `from_code`, perché nessuno **decide** sull'invocatore oggi; il primo consumatore che vi si dirama lo scrive con la sua sonda (**P-32**) |
 | **D18** | ⛔ **l'argomento dell'invocazione viaggia nel `payload` del record, non nel dettaglio strutturato**, sotto `Trust::Untrusted` | è il precedente di `VerdictDetail` parola per parola — *«THE DETAIL TEXT IS NOT HERE: it is untrusted by inheritance (ADR-0014) and travels in the record's `payload`, under the `trust` label that exists to say so»*. E c'è anche la metà meccanica: **ogni** `*Detail::new` del giornale prende `&'static str` per chiudere la strada del testo calcolato a runtime, e l'argomento è precisamente quel testo (**P-30**). ⚠️ **Costo dichiarato:** la §5 del 2 dice *«funzione, invocatore, argomento»* e il terzo sta **accanto** al dettaglio invece che dentro; la cella riceve il proprio richiamo datato al compito 6 |
+| **D19** | ⛔ **il modulo dell'attività si chiama `serving`, e il suo item `serve`** — non `dispatch`, non `session` | `kernel::gateway::dispatch` esiste già e significa un'altra cosa — dispacciare un token conforme al provider — e un secondo `dispatch` nel kernel è l'ambiguità che **D8** rifiutò per `counter`; `session` è occupato al contrario, perché `crates/kernel/src/permission.rs` dichiara *«there is no session in the kernel»* e la voce aperta 7 della §9 del 2 assegna **al 3** il confine di sessione. `serving` è misurato libero (**P-36**). ⚠️ **Costo dichiarato:** i disegni dicono *«il dispaccio»* in italiano e il codice dice `serving`, quindi ogni richiamo datato nomina il sorgente **per esteso** — vincolo 2 |
+| **D20** | ⛔ **`PolicyReport` porta `allocated` e `total`, e NON sottrae le due quote**: `Arbiter::allocated()` e `Parameters::total_vram()`, i due numeri che il kernel ha davvero | il campo si chiamava `allocatable` e il disegno gli metteva dentro il budget **allocato** (**P-38**): il nome va corretto comunque. Sottrarre le due quote chiede due addendi che il kernel **non ha** e che il doc di `Parameters::total_vram` argomenta di non consegnare; e ⛔ **sottrarle sarebbe anche sbagliato nel merito**, perché le due quote sono **concessioni con un titolare** (ADR-0033) e non sottrazioni — nasconderle dal numeratore è *«la sottrazione non è un'esenzione»*, gotcha **#4**, commesso allo strato che l'utente guarda. ⚠️ **Costo dichiarato:** la riga 2 della tabella *Stato* della stella polare dice *«tutto meno la quota audio e la quota di presentazione»*, e la sua stessa ultima colonna la marca **dedotto**; riceve un richiamo datato al passo 7. Se il proprietario vorrà il denominatore netto, i due addendi diventano parametri consegnati e questa riga si riapre con quella misura |
+| **D21** | ⛔ **il limite di giri passa al compito 8**, e la riga 7 della tabella della posizione perde quelle parole | `EXECUTOR_TURN_LIMIT` vive nel file del compito 8, e la sonda che la §5 del 2 detta per esso — *«il grafo con la GUI resta vivo oltre centomila giri»* — **richiede il grafo con la GUI**, che nasce al cablaggio (**P-40**). Al 7 il cambio sarebbe inerte e la sua sonda non scrivibile: è l'argomento di **D13** alla lettera. ⚠️ **Costo:** due righe della tabella della posizione si riscrivono col richiamo datato, come fece D13 |
+| **D22** | ⛔ **`Protection::AsSystemAccount` è mandato dall'attività e NON consegnato**, col proprio innesco scritto accanto | un parametro che può assumere **un** valore solo non è un parametro: è la superficie morta che il doc di `Parameters::total_vram` rifiuta con quelle parole, e la friction di §2.8.5 si pagherebbe su ogni chiamante per un valore che non può variare (**P-41**). È la forma *«dichiarato, non pinzato»* del gotcha #73. ⚠️ **Costo dichiarato:** è una divergenza dalla §5 del 2, che dice *«consegnato»*; riceve il richiamo datato al passo 7, e l'innesco è la **seconda variante** di `Protection` |
+| **D23** | ⛔ **il degrado si rilegge a OGNI GIRO**, e solo con almeno un client accolto, e si manda solo quando **differisce** da quello già ricevuto | la §7 del 2 lascia la scelta al piano fra *«a ogni giro»* e *«dopo ogni scrittura»*, e la seconda è **falsificata dalla sonda che la stessa sezione pretende**: il `degrade` del rubinetto scrive dalla **seconda attività**, quindi una rilevazione legata alle scritture del dispaccio non la vedrebbe mai (**P-42**). ⚠️ **Costo dichiarato, e il chiusore esiste già:** `degradation_now` rilegge tutto il giornale — il costo che quella funzione dichiara di sé — e il rimedio è il **checkpoint** che `Journal::replay` nomina, nella voce aperta omonima della §6 del compendio. Non si inventa qui |
+| **D24** | ⛔ **`Registry::invoke` prende un argomento `approval`, e con `Approval::JustGiven` scrive lui il `grant` su A** — correzione **nel compito 6**, non nell'errata | senza di esso la via dell'`Approve` **non esiste**: il controllo `is_granted` risponde no una seconda volta e il giro non si chiude mai (**P-43**). La decisione 21 della stella polare vuole il permesso **dentro** il passo A, fra la nota `Invocation` e l'effetto, perché `permission::grant` scrive una **nota** e vuole un passo già aperto. ⛔ **L'ordine sta nel meccanismo che lo possiede**, non nel chiamante: un dispaccio che scrivesse la fila da sé sarebbe la seconda copia che il §7 del 2 rifiuta con le stesse parole. ⚠️ **Un enum e non un `bool`**, che è la lezione di `Operation::is_write` e di `Access`. ⚠️ **Costo dichiarato:** la firma di `invoke` cresce di un argomento, il blocco *Interfaces* del compito 6 lo dice, e il registro guadagna `held` — che ha un chiamante dal giorno in cui è scritto |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -1963,10 +2138,18 @@ pub enum PolicyName {
 }
 
 /// The policy with what the gui shows beside it (G15/G16).
+///
+/// ⛔ `allocated` IS WHAT THE BOOKS SPEAK FOR, THE TWO PERMANENT QUOTAS INCLUDED, and that
+/// is a decision rather than an oversight (D20). ADR-0033 holds those two as GRANTS WITH A
+/// HOLDER and not as subtractions -- "the subtraction is not an exemption", gotcha #4 -- so
+/// hiding them from this number would commit at the layer the user looks at the very mistake
+/// the arbiter was built to avoid. `total` is the machine, delivered through
+/// `Parameters::total_vram`; the kernel does not hold the audio and presentation quotas, and
+/// deliberately does not -- the doc of that accessor argues it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
 pub struct PolicyReport {
     pub policy: PolicyName,
-    pub allocatable: Mib,
+    pub allocated: Mib,
     pub total: Mib,
 }
 
@@ -2047,12 +2230,18 @@ pub enum LayoutState {
 /// ⛔ A SUMMARY AND NOT THE RECORD. The journal's records must EVOLVE (ADR-0036) and this wire
 /// renounces versioning (I4): sending the record itself would tie the two, and a field added
 /// to a durable record would change these bytes with nothing going red.
+///
+/// ⛔ `done` IS A `bool` AND NOT AN `Option<bool>`, AND IT IS THE JOURNAL'S OWN VOCABULARY
+/// (P-39). `RecordV1::outcome` carries no success flag: an outcome written says the step
+/// CLOSED, and there is no "closed badly". A step whose effect failed returns before the
+/// outcome is written and stays IN DOUBT (ADR-0007), which is `false` here. A third state
+/// would be a variant on the wire with no producer, and an index on the wire never retires.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 pub struct StepSummary {
     pub step: u64,
     pub function: String,
-    /// `None` while the step is still in doubt -- ADR-0007's intent written and no outcome yet.
-    pub outcome: Option<bool>,
+    /// `false` while the step is still in doubt -- ADR-0007's intent written and no outcome yet.
+    pub done: bool,
 }
 ```
 
@@ -2129,7 +2318,7 @@ pub fn stamp_set() -> Vec<IpcMessage> {
         }),
         IpcMessage::Policy(PolicyReport {
             policy: PolicyName::Remote,
-            allocatable: Mib::new(12288),
+            allocated: Mib::new(12288),
             total: Mib::new(16384),
         }),
         IpcMessage::Invoke(Call {
@@ -2161,7 +2350,7 @@ pub fn stamp_set() -> Vec<IpcMessage> {
         IpcMessage::Steps(alloc::vec![StepSummary {
             step: 42,
             function: String::from("arbiter.set_policy"),
-            outcome: Some(true),
+            done: true,
         }]),
         IpcMessage::Request(GrantRequest {
             reserved_vram: Mib::new(2048),
@@ -4033,7 +4222,8 @@ un lettore futuro può verificare che il limite di **P-29** fu misurato e non su
 - Consumes: `kernel::permission::{self, Permission, PermissionError, Operation}`; `kernel::ports::ipc::ClientId`; `kernel::ports::journal::{Journal, JournalError, StepId}`; `kernel::record::{EffectClass, Record, RecordV1, Trust}`
 - Consumes, dal compito 3 e **solo per leggerli**: `kernel::wire::ipc::{Call, Triple, Access}` — ⛔ **il registro NON li nomina**: li traduce il dispaccio, compito 7
 - Produces, e i compiti **7**, **8** e **11** li usano con questi nomi esatti:
-  - `kernel::registry::Registry`, con `Registry::new() -> Registry` (**`const fn`**), `Registry::register(&mut self, Function)` e `Registry::invoke(...)`
+  - `kernel::registry::Registry`, con `Registry::new() -> Registry` (**`const fn`**), `Registry::register(&mut self, Function)`, `Registry::held(&self, name: &str) -> Option<Function>` e `Registry::invoke(journal, step, name, invoker, argument, approval, effect)`
+  - `kernel::registry::Approval` — `Checked` e `JustGiven`. ⛔ **Arrivato col richiamo del 2026-09-11 (P-43, D24):** senza di esso la via dell'`Approve` non esiste, perché il controllo `is_granted` risponde no una seconda volta
   - `kernel::registry::Function` — `{ name: &'static str, permission: Permission, effect: EffectClass }`, `Copy`
   - `kernel::registry::Invoker` — oggi una variante, `Invoker::Gui(ClientId)`, con `Invoker::code(self) -> u8`
   - `kernel::registry::InvokeError` — `NotRegistered`, `PermissionRequired(Permission)`, `Permission(PermissionError)`, `Journal(JournalError)`
@@ -4411,6 +4601,27 @@ pub struct Function {
     pub effect: EffectClass,
 }
 
+/// Whether the registry must ASK about the permission, or has just been told.
+///
+/// ⛔ AN ENUM AND NOT A `bool`, which is the lesson `crate::permission::Operation::is_write`
+/// already recorded and `crate::wire::ipc::Access` repeats: a `bool` folds every future third
+/// case into one of the two, in silence.
+///
+/// ⛔ AND IT EXISTS BECAUSE THE APPROVAL PATH IS OTHERWISE UNREACHABLE (P-43).
+/// `permission::grant` writes a NOTE and wants a step somebody else opened -- its own doc --
+/// so decision 21 of the north star puts the grant INSIDE step A, between the invocation note
+/// and the effect. The check in `invoke` runs BEFORE step A is opened, so on the second pass
+/// it would answer "not granted" again and the round would never close. The order belongs to
+/// the mechanism that owns it, not to the caller.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Approval {
+    /// The invocation arrived on its own: the registry asks `is_granted` and refuses if not.
+    Checked,
+    /// The user has just approved the triple. The registry does not ask, and writes the grant
+    /// on step A, between the invocation note and the effect.
+    JustGiven,
+}
+
 /// What can go wrong invoking.
 ///
 /// ⛔ `NotRegistered` AND `PermissionRequired` ARE NOT THE SAME REFUSAL, and folding them would
@@ -4479,17 +4690,31 @@ impl Registry {
         }
     }
 
+    /// The function held under this name, if the registry holds one.
+    ///
+    /// ⛔ IT EXISTS FOR THE APPROVAL PATH AND HAS A CALLER FROM THE DAY IT IS WRITTEN:
+    /// `crate::serving` compares the triple a peer sends back against the triple THE REGISTRY
+    /// holds, rather than trusting the strings that came in (ADR-0014, and the doc of
+    /// `crate::wire::ipc::Triple` asks that consumer for it by name).
+    pub fn held(&self, name: &str) -> Option<Function> {
+        self.functions.iter().find(|held| held.name == name).copied()
+    }
+
     /// Invokes the function named `name`, if it is registered and its triple is granted.
     ///
     /// The order is the one §5 of the milestone-2 design fixes, and each line is load-bearing:
     ///
     /// 1. the name is looked up — not registered, nothing is written;
-    /// 2. the triple is asked of the journal — not granted, nothing is written and the effect is
-    ///    NOT run, which is the probe `a_triple_that_is_not_granted_never_reaches_the_effect`;
+    /// 2. with `Approval::Checked`, the triple is asked of the journal — not granted, nothing
+    ///    is written and the effect is NOT run, which is the probe
+    ///    `a_triple_that_is_not_granted_never_reaches_the_effect`;
     /// 3. `intent` on step A, carrying the FUNCTION'S class;
     /// 4. a `note` on step A with the structured detail — who invoked what;
-    /// 5. the EFFECT, which opens and closes its own step B if it has one;
-    /// 6. `outcome` on step A.
+    /// 5. with `Approval::JustGiven`, the GRANT on step A — decision 21 of the north star puts
+    ///    the permission on the step it UNLOCKS, and `permission::grant` wants a step already
+    ///    open;
+    /// 6. the EFFECT, which opens and closes its own step B if it has one;
+    /// 7. `outcome` on step A.
     ///
     /// ⛔ THE NOTE COMES AFTER THE INTENT AND BEFORE THE EFFECT, and `Journal::note` enforces half
     /// of that by refusing a note on a step with no intent. The other half — before the effect —
@@ -4512,18 +4737,20 @@ impl Registry {
         name: &str,
         invoker: Invoker,
         argument: &[u8],
+        approval: Approval,
         effect: E,
     ) -> Result<T, InvokeError>
     where
         J: Journal,
         E: FnOnce(&mut J) -> Result<T, JournalError>,
     {
-        let Some(function) = self.functions.iter().find(|held| held.name == name).copied() else {
+        let Some(function) = self.held(name) else {
             return Err(InvokeError::NotRegistered);
         };
 
-        if !permission::is_granted(journal, &function.permission)
-            .map_err(InvokeError::Permission)?
+        if approval == Approval::Checked
+            && !permission::is_granted(journal, &function.permission)
+                .map_err(InvokeError::Permission)?
         {
             return Err(InvokeError::PermissionRequired(function.permission));
         }
@@ -4534,6 +4761,15 @@ impl Registry {
         journal
             .note(step, &noted(function, invoker, argument))
             .map_err(InvokeError::Journal)?;
+
+        // ⛔ THE GRANT GOES ON STEP A, BETWEEN THE INVOCATION NOTE AND THE EFFECT -- decision 21
+        // of the north star, held here rather than by the caller. The permission settles on the
+        // step it UNLOCKS, exactly as `sensor::run_the_ring` settles a verdict on the step it
+        // judges.
+        if approval == Approval::JustGiven {
+            permission::grant(journal, step, &function.permission)
+                .map_err(InvokeError::Journal)?;
+        }
 
         let produced = effect(journal).map_err(InvokeError::Journal)?;
 
@@ -4608,7 +4844,7 @@ use kernel::permission::{self, Operation, Permission};
 use kernel::ports::ipc::ClientId;
 use kernel::ports::journal::{Journal, JournalError, StepId};
 use kernel::record::{Detail, EffectClass, Record, RecordKind};
-use kernel::registry::{Function, InvokeError, Invoker, Registry};
+use kernel::registry::{Approval, Function, InvokeError, Invoker, Registry};
 use simulator::journal::MemoryJournal;
 
 const GUARDED: Permission = Permission {
@@ -4645,6 +4881,7 @@ fn a_name_that_is_not_registered_is_refused_and_writes_nothing() {
         "set-polizy",
         Invoker::Gui(ClientId::new(1)),
         b"local",
+        Approval::Checked,
         |_| -> Result<(), JournalError> { panic!("the effect must not run") },
     );
 
@@ -4668,6 +4905,7 @@ fn a_triple_that_is_not_granted_never_reaches_the_effect() {
         "set-policy",
         Invoker::Gui(ClientId::new(1)),
         b"local",
+        Approval::Checked,
         |_| -> Result<(), JournalError> { panic!("the effect must not run without the triple") },
     );
 
@@ -4701,6 +4939,7 @@ fn a_granted_triple_reaches_the_effect_and_the_step_closes() {
             "set-policy",
             Invoker::Gui(ClientId::new(7)),
             b"local",
+            Approval::Checked,
             |journal| {
                 // The effect writes its OWN step B, which is what `set_policy` really does.
                 journal.intent(StepId::new(3), &a_bare_intent())?;
@@ -4737,6 +4976,7 @@ fn the_note_carries_the_registered_name_the_invoker_and_the_argument() {
             "set-policy",
             Invoker::Gui(ClientId::new(7)),
             b"local",
+            Approval::Checked,
             |_| -> Result<(), JournalError> { Ok(()) },
         )
         .expect("a granted invocation must run");
@@ -4761,6 +5001,62 @@ fn the_note_carries_the_registered_name_the_invoker_and_the_argument() {
     assert_eq!(function, "set-policy");
     assert_eq!(invoker, 0, "the gui's code, from `Invoker::code`");
     assert_eq!(payload, b"local".to_vec(), "the argument travels in the payload");
+}
+
+#[test]
+fn an_approval_just_given_skips_the_question_and_writes_the_grant_on_step_a() {
+    // ⛔ THE OTHER ROAD OF SEQUENCE 3, AND `a_triple_that_is_not_granted_never_reaches_the_effect`
+    // IS ITS MIRROR: the SAME journal, with the SAME ungranted triple, and the only difference
+    // is the word `JustGiven`. Without this probe `Approval` would be an enum whose second
+    // variant nothing ever takes -- and the round the gui really walks would be held only by
+    // another task's bench.
+    let mut journal = MemoryJournal::new();
+    let registry = a_registry();
+
+    let produced = registry
+        .invoke(
+            &mut journal,
+            StepId::new(2),
+            "set-policy",
+            Invoker::Gui(ClientId::new(1)),
+            b"local",
+            Approval::JustGiven,
+            |_| -> Result<(), JournalError> { Ok(()) },
+        )
+        .expect("an approval just given must not be asked about");
+
+    assert_eq!(produced, ());
+
+    let kinds: Vec<RecordKind> = journal
+        .replay()
+        .expect("replay")
+        .iter()
+        .map(|(_, bytes)| match Record::decode(bytes).expect("every record must decode") {
+            Record::V1(body) => body.kind(),
+        })
+        .collect();
+    // ⛔ THE ORDER IS THE ASSERTION: the grant sits BETWEEN the invocation note and the
+    // outcome, which is decision 21 of the north star. A grant written before the intent would
+    // be a note on a step nobody opened, which `Journal::note` refuses outright; one written
+    // after the effect would leave the effect running on a permission not yet recorded.
+    assert_eq!(
+        kinds,
+        vec![
+            RecordKind::Intent,
+            RecordKind::Invocation,
+            RecordKind::Permission,
+            RecordKind::Outcome,
+        ],
+        "the grant goes on step A, between the note and the outcome"
+    );
+
+    // ⛔ AND THE SECOND DIRECTION, without which the probe above would pass over a registry
+    // that simply stopped checking: the triple is now REALLY granted, so a later `Checked`
+    // invocation goes through where the mirror probe refuses it.
+    assert!(
+        permission::is_granted(&journal, &GUARDED).expect("is_granted answers"),
+        "the grant that was written must be the one `is_granted` reads back"
+    );
 }
 
 #[test]
@@ -4790,6 +5086,7 @@ fn registering_the_same_name_twice_replaces_rather_than_piling_up() {
             "set-policy",
             Invoker::Gui(ClientId::new(1)),
             b"",
+            Approval::Checked,
             |_| -> Result<(), JournalError> { Ok(()) },
         )
         .expect("the second registration must be the one that answers");
@@ -5000,6 +5297,1722 @@ Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit �
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `gate-deps.sh` verde, la lista **non cresciuta**; `gate-attributes.sh` verde
 - [ ] i fine-riga rimisurati: i due nuovi a zero CR, i sette modificati invariati
 - [ ] la riga **6** della tabella della posizione a ✅ con la data
+
+---
+
+## Compito 7: l'attività che serve la GUI — `kernel::serving`, il dispaccio, e il ramo `Request` non servito
+
+**Files:**
+- Create: `crates/kernel/src/serving.rs` — **LF**
+- Create: `crates/kernel/tests/serving.rs` — **LF**
+- Modify: `crates/kernel/src/lib.rs` — la riga `pub mod serving;`
+- Modify: `crates/kernel/src/parameters.rs` — il campo `gui_tick`
+- Modify: `crates/kernel/src/executor.rs` — `nap`, la sospensione pubblica
+- Modify: `crates/kernel/src/registry.rs` — **dal compito 6**, `Approval` e `Registry::held` (**P-43**)
+- Modify: `crates/kernel/src/wire/ipc.rs` — **dal compito 3**, `allocated` e `done` (**P-38**, **P-39**)
+- Modify: i **ventitré** file che chiamano `Parameters::new`, i nove `.stderr` che si muovono compresi
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` — **tre** richiami datati nella §5
+- Modify: **questo piano**, le righe **7** e **8** della tabella della posizione (**D21**)
+- Read: la **§5 del 2** per intero; le **tre sequenze** di *«La GUI dentro»* della stella polare; la riga **2** della tabella *Stato* della stella polare; `crates/kernel/src/executor.rs` per intero (`spawn`, `Sleep`, `TaskState`, il giro di `run`); le **tre firme** di `crates/kernel/src/ports/ipc.rs` con i loro doc; `crates/kernel/src/client.rs`; `crates/kernel/src/degradation.rs`; `crates/kernel/src/permission.rs` (`Operation`, `Permission`, `grant`); `crates/kernel/src/arbiter/policy.rs`; il blocco *Interfaces* dei compiti **1**, **2**, **3**, **4**, **5** e **6** per i nomi esatti
+
+**Interfaces:**
+- Consumes, dal **compito 1**: `kernel::numbering::Progressive`, con `take(&mut self) -> u64`
+- Consumes, dal **compito 3**: `kernel::wire::ipc::{IpcMessage, BuildStamp, build_stamp, Protection, DegradationReport, PolicyReport, PolicyName, Triple, Access, Call, LayoutState, StepSummary}`
+- Consumes, dal **compito 4**: `kernel::ports::custody::{Custody, CustodyKey, CustodyError}`
+- Consumes, dal **compito 6**: `kernel::registry::{Registry, Function, Invoker, InvokeError}`, e i due pezzi che questo compito gli **aggiunge** al passo 4
+- Consumes, da oggi: `kernel::arbiter::{Arbiter, MakeRoom, VramPolicy, RemotePolicy, LocalPolicy}`; `kernel::client::ClientGrants`; `kernel::degradation::degradation_now`; `kernel::executor::Sleep`; `kernel::permission::{Operation, Permission}`; `kernel::ports::{ipc::{Ipc, ClientId, IpcError}, journal::{Journal, StepId}, reactor::Reactor}`; `kernel::record::{Detail, EffectClass, Record, RecordKind}`; `kernel::time::{Millis, Monotonic}`
+- Produces, e i compiti **8**, **9** e **11** li usano con questi nomi esatti:
+  - `kernel::serving::Core<I: Ipc, J: Journal, C: Custody>`, con `Core::new(ipc: I, journal: J, custody: C, arbiter: Arbiter, steps: Progressive, parameters: Parameters) -> Core<I, J, C>`
+  - `Core::journal(&mut self) -> &mut J` · `Core::arbiter(&mut self) -> &mut Arbiter` · `Core::attending(&self) -> Vec<ClientId>`
+  - `kernel::serving::serve<'a, I, J, C, R>(core: &'a RefCell<Core<I, J, C>>, clock: &'a R, sleep: &'a Sleep)` — un `async fn` che **non finisce mai**
+  - `kernel::serving::POLICY_FUNCTION: Function` — la **sola** funzione registrata nel 2
+  - `kernel::executor::nap(sleep: &Sleep, deadline: Monotonic)` — un `async fn`
+  - `kernel::parameters::Parameters::new(executor_turn_limit, total_vram, arbiter_id, gui_tick)` e `Parameters::gui_tick(self) -> Millis`
+
+⛔ **`serve` NON FINISCE, e questo decide come si scrive ogni banco.** L'attività è un `loop` senza uscita: in
+produzione il limite di giri è `u64::MAX` (compito **8**, **D21**), nei banchi è finito, quindi
+`Executor::run()` rende **`Err(RunError::TurnLimitReached)`** e non `Ok(())`. ⚠️ **Non è un rosso e non si
+aggira:** ciò che le sonde guardano è **il pari**, cioè i messaggi che sono arrivati, non il valore di `run`.
+Un'attività che si fermasse da sola sarebbe un core che smette di servire.
+
+⛔ **E `Core` NON espone il trasporto oggi.** `Core::ipc` non nasce qui: il suo chiamante è il **rubinetto**
+del core finto, compito **11**, e *«un elemento d'API senza chiamante in questo repository si cancella»* —
+`crates/kernel/src/boundary.rs`. I tre accessori che nascono hanno un chiamante in **questo** banco.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+ls crates/kernel/src/serving.rs crates/kernel/tests/serving.rs 2>&1
+grep -rnE '\b(fn|struct|enum|mod) (dispatch|session|serve|serving|listen)' crates/ --include='*.rs'
+grep -rc 'Parameters::new' crates/ --include='*.rs' | grep -v ':0'
+ls crates/kernel/tests/compile_fail/*.rs | while read f; do grep -q 'Parameters::new' "$f" && printf '%s\n' "$f"; done
+grep -n 'pub const fn new' crates/kernel/src/parameters.rs
+grep -nE '^(pub )?(struct|fn) (Yield|Suspended)|pub async fn' crates/kernel/src/executor.rs
+grep -n 'pub fn policy\|pub fn allocated\|pub fn set_policy' crates/kernel/src/arbiter/mod.rs
+git ls-files --eol crates/kernel/src/lib.rs crates/kernel/src/parameters.rs crates/kernel/src/executor.rs crates/kernel/src/registry.rs crates/kernel/src/wire/ipc.rs docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+```
+
+Atteso: i due file **non esistono**; l'unico `dispatch` è `pub fn dispatch` di `gateway/mod.rs` (**P-36**);
+i siti di `Parameters::new` sono **cinquantasette** in **ventitré** file e **nove** di quei file stanno in
+`compile_fail/` (**P-37**); `Parameters::new` prende **tre** argomenti; in `executor.rs` **nessun** `async fn`
+e nessun `Yield`; `policy()` rende `&VramPolicy`, `allocated()` rende `Mib`, `set_policy` prende
+`(policy, step, journal)`; `registry.rs` e gli altri `i/lf w/crlf`, tranne i due file nuovi che nascono **LF**.
+⚠️ **Se una cifra è diversa vale il comando, non questa riga**, ed è una voce d'errata prima di essere un
+rimedio.
+
+- [ ] **Passo 2: il tick nei parametri, e i cinquantasette siti**
+
+In `crates/kernel/src/parameters.rs` (**`i/lf w/crlf`**, quindi `replace_unique.py`), l'import in testa:
+
+*Trova* `use crate::arbiter::{ArbiterId, Mib};`
+*Sostituisci con*:
+
+```rust
+use crate::arbiter::{ArbiterId, Mib};
+use crate::time::Millis;
+```
+
+Il campo, in coda alla struttura:
+
+*Trova* la riga `    arbiter_id: ArbiterId,` **intera, presa dal file**, e *Sostituisci con*:
+
+```rust
+    arbiter_id: ArbiterId,
+    gui_tick: Millis,
+```
+
+Il costruttore — *Trova* le righe da `    pub const fn new(executor_turn_limit: u64, total_vram: Mib, arbiter_id: ArbiterId) -> Self {` fino al `    }` che lo chiude, **prese dal file**, e *Sostituisci con*:
+
+```rust
+    pub const fn new(
+        executor_turn_limit: u64,
+        total_vram: Mib,
+        arbiter_id: ArbiterId,
+        gui_tick: Millis,
+    ) -> Self {
+        Parameters {
+            executor_turn_limit,
+            total_vram,
+            arbiter_id,
+            gui_tick,
+        }
+    }
+```
+
+E l'accessore, in coda all'`impl`, **prima** della graffa che lo chiude:
+
+```rust
+    /// How long the activity that serves the gui sleeps between two turns.
+    ///
+    /// ⛔ IT IS DELIVERED AND NOT CHOSEN HERE, and the reason is the one §2.8 gives for every
+    /// other field: the kernel's reactor has no I/O readiness, so the serving activity POLLS --
+    /// `accept`, then one `receive` per client -- and how often it does so is a trade between how
+    /// fast the gui feels and what the machine spends on an idle core. That trade is not the
+    /// kernel's to settle, and a constant here would appear in no list and could not be made to
+    /// vary in a campaign (gotcha #28).
+    ///
+    /// ⚠️ AND IT IS WHAT BOUNDS THE COST OF `crate::degradation::degradation_now`, which the
+    /// serving activity re-reads once per turn while a gui is attending (D23 of the milestone 2
+    /// part 2 plan). That function declares its own cost -- the whole journal is replayed to
+    /// answer one question -- and this value is the only dial over it until the checkpoint
+    /// `Journal::replay` names arrives.
+    pub const fn gui_tick(self) -> Millis {
+        self.gui_tick
+    }
+```
+
+⛔ **Poi i siti, e sono cinquantasette in ventitré file.** Ognuno guadagna un quarto argomento. ⚠️ **Il
+valore NON è lo stesso ovunque, e scriverne uno solo sarebbe un default travestito:** ogni banco sceglie il
+proprio, come già fa per `TOTAL_VRAM`, e accanto alla costante va la ragione — è la forma che
+`executor_determinism.rs` usa parola per parola (*«A LITERAL OF THIS BENCH, and it is inert here on
+purpose»*). Per i banchi in cui il tick **non fa nulla** basta `Millis::new(0)` con quella frase; per i due
+banchi di questo compito e per la campagna del compito 9 il valore è quello che la sonda esercita.
+
+```bash
+grep -rn 'Parameters::new' crates/ --include='*.rs' | grep -v compile_fail
+```
+
+⚠️ **`crates/kernel/src/arbiter/mod.rs` ha un sito nei propri banchi interni** e va trattato come gli altri.
+
+- [ ] **Passo 3: i nove `compile_fail`, uno per uno, e i loro `.stderr`**
+
+⛔ **Questo passo è il motivo per cui P-37 esiste, e NON si fa in blocco.** Il vincolo **10** di §11 e il
+gotcha **#25** dicono che un `.stderr` si **legge**: una rigenerazione di massa disarma l'oracolo.
+
+Per ciascuno dei nove: si aggiunge il quarto argomento **sulla stessa riga** se la chiamata sta su una riga,
+e si **rimisura** se il `.stderr` è cambiato.
+
+```bash
+for f in $(ls crates/kernel/tests/compile_fail/*.rs); do grep -q 'Parameters::new' "$f" || continue; printf '=== %s\n' "$f"; grep -n 'Parameters::new' "$f"; done
+```
+
+Poi, **una volta sola dopo aver toccato tutti e nove**:
+
+```bash
+cargo test --locked -p kernel --test compile_fail 2>&1 | tail -40
+git diff --stat -- crates/kernel/tests/compile_fail/
+```
+
+⛔ **La lettura che conta, e le due direzioni:**
+
+| Esito | Che cosa significa, e che cosa si fa |
+|---|---|
+| `git diff` non nomina **nessun** `.stderr` | ✅ il caso continua a cogliere **il proprio** errore, e la chiamata non ha spostato righe. Niente da fare |
+| `git diff` nomina un `.stderr` **e** il diff sono soli **numeri di riga** | ✅ la chiamata ha aggiunto una riga sopra l'errore atteso. Si accetta il nuovo `.stderr` **dopo averlo letto**, e si scrive nel commit **quale** file e di quante righe |
+| `git diff` nomina un `.stderr` e vi compare **`E0061`** | ⛔ **ROSSO VERO:** quella chiamata non è stata aggiornata. `E0061` è *«this function takes 4 arguments but 3 arguments were supplied»*, che **non è l'errore che quel caso esiste per cogliere** — si corregge la chiamata, non il `.stderr` |
+| `git diff` nomina un `.stderr` e l'errore atteso è **sparito** | ⛔ **ROSSO VERO, e il peggiore:** il caso ha smesso di provare ciò per cui esiste. È una voce d'errata, non un aggiornamento |
+
+- [ ] **Passo 4: le correzioni ai compiti 3 e 6 che il pre-controllo impone**
+
+⛔ **Vanno NEI compiti, non nell'errata** — i compiti 3 e 6 sono **scritti e non eseguiti**, ed è la terza
+volta che questo piano lo fa (decisione 15 della terza chiusura). Chi esegue trova i compiti già corretti;
+questo passo esiste perché il **commit** lo dichiari.
+
+**Nel compito 3** — `crates/kernel/src/wire/ipc.rs`:
+
+| Cosa | Da | A | Perché |
+|---|---|---|---|
+| il campo di `PolicyReport` | `pub allocatable: Mib` | `pub allocated: Mib` | **P-38**, **D20**: il nome diceva il contrario del contenuto |
+| il campo di `StepSummary` | `pub outcome: Option<bool>` | `pub done: bool` | **P-39**: `Some(false)` non ha produttore, e una variante sul filo non si ritira mai |
+
+I due doc che li accompagnano si riscrivono così:
+
+```rust
+/// The policy with what the gui shows beside it (G15/G16).
+///
+/// ⛔ `allocated` IS WHAT THE BOOKS SPEAK FOR, THE TWO PERMANENT QUOTAS INCLUDED, and that is a
+/// decision and not an oversight (D20 of the milestone 2 part 2 plan). ADR-0033 holds those two
+/// as GRANTS WITH A HOLDER rather than as subtractions -- "the subtraction is not an exemption",
+/// gotcha #4 -- so hiding them from this number would commit at the display layer the very
+/// mistake the arbiter was built to avoid. `total` is the machine, delivered through
+/// `Parameters::total_vram`; the kernel does not hold the two quotas and deliberately does not
+/// (the doc of that accessor argues it).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub struct PolicyReport {
+    pub policy: PolicyName,
+    pub allocated: Mib,
+    pub total: Mib,
+}
+```
+
+```rust
+/// One line of the step list: in milestone 2 these are registry invocations.
+///
+/// ⛔ A SUMMARY AND NOT THE RECORD. The journal's records must EVOLVE (ADR-0036) and this wire
+/// renounces versioning (I4): sending the record itself would tie the two, and a field added to a
+/// durable record would change these bytes with nothing going red.
+///
+/// ⛔ `done` IS A `bool` AND NOT AN `Option<bool>`, AND IT IS THE JOURNAL'S OWN VOCABULARY.
+/// `RecordV1::outcome` carries no success flag: an outcome written says the step CLOSED, and
+/// there is no "closed badly". A step whose effect failed returns before the outcome is written
+/// and stays IN DOUBT (ADR-0007), which is `false` here. A third state would be a variant on the
+/// wire with no producer, and an index on the wire never retires.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub struct StepSummary {
+    pub step: u64,
+    pub function: String,
+    /// `false` while the step is still in doubt -- ADR-0007's intent written and no outcome yet.
+    pub done: bool,
+}
+```
+
+⚠️ **E il `stamp_set()` del compito 3 va riletto**, perché costruisce un `PolicyReport` e uno `StepSummary`
+coi nomi vecchi: i due letterali prendono i nomi nuovi, e ⛔ **il valore di `done` resta quello che era**, o
+i byte del timbro cambierebbero per un motivo che non è un cambio di schema.
+
+**Nel compito 6** — `crates/kernel/src/registry.rs`, ed è la cura di **P-43**. Sopra `impl Registry`:
+
+```rust
+/// Whether the registry must ASK about the permission, or has just been told.
+///
+/// ⛔ AN ENUM AND NOT A `bool`, which is the lesson `crate::permission::Operation::is_write`
+/// already recorded and `crate::wire::ipc::Access` repeats: a `bool` folds every future third
+/// case into one of the two, in silence.
+///
+/// ⛔ AND IT EXISTS BECAUSE THE APPROVAL PATH IS OTHERWISE UNREACHABLE. `permission::grant`
+/// writes a NOTE and wants a step somebody else opened -- its own doc -- so decision 21 of the
+/// north star puts the grant INSIDE step A, between the invocation note and the effect. The check
+/// below runs BEFORE step A is opened, so on the second pass it would answer "not granted" again
+/// and the round would never close. The order belongs to the mechanism that owns it, not to the
+/// caller.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Approval {
+    /// The invocation arrived on its own: the registry asks `is_granted` and refuses if not.
+    Checked,
+    /// The user has just approved the triple. The registry does not ask, and writes the grant on
+    /// step A, between the invocation note and the effect.
+    JustGiven,
+}
+```
+
+`invoke` guadagna l'argomento, e le due righe che cambiano nel corpo:
+
+*Trova* le righe da `        if !permission::is_granted(journal, &function.permission)` fino a `        }`, **intere, prese dal file**, e *Sostituisci con*:
+
+```rust
+        if approval == Approval::Checked
+            && !permission::is_granted(journal, &function.permission)
+                .map_err(InvokeError::Permission)?
+        {
+            return Err(InvokeError::PermissionRequired(function.permission));
+        }
+```
+
+e, **subito dopo** la `.note(step, &noted(function, invoker, argument))` col suo `?`:
+
+```rust
+        // ⛔ THE GRANT GOES ON STEP A, BETWEEN THE INVOCATION NOTE AND THE EFFECT -- decision 21
+        // of the north star, held here rather than by the caller. The permission settles on the
+        // step it UNLOCKS, exactly as `sensor::run_the_ring` settles a verdict on the step it
+        // judges.
+        if approval == Approval::JustGiven {
+            permission::grant(journal, step, &function.permission).map_err(InvokeError::Journal)?;
+        }
+```
+
+⚠️ **La firma prende `approval: Approval` fra `argument` e `effect`**, e il blocco *Interfaces* del compito 6
+lo dice. E il registro guadagna il suo **unico** accessore di lettura, che ha un chiamante da oggi:
+
+```rust
+    /// The function held under this name, if the registry holds one.
+    ///
+    /// ⛔ IT EXISTS FOR THE APPROVAL PATH AND HAS A CALLER FROM THE DAY IT IS WRITTEN:
+    /// `crate::serving` compares the triple a peer sends back against the triple THE REGISTRY
+    /// holds, rather than trusting the strings that came in (ADR-0014, and the doc of
+    /// `crate::wire::ipc::Triple` asks that consumer for it by name).
+    pub fn held(&self, name: &str) -> Option<Function> {
+        self.functions.iter().find(|held| held.name == name).copied()
+    }
+```
+
+⚠️ **E `invoke` usa `held` invece di ripetere la ricerca**, o sarebbero due copie della stessa riga.
+
+✅ **Il compito 6 è già corretto NEL PIANO — le sue cinque chiamate a `invoke` portano `Approval::Checked`,
+e una sonda nuova, `an_approval_just_given_skips_the_question_and_writes_the_grant_on_step_a`, tiene la
+seconda variante.** ⛔ **Senza quella sonda il compito 6 consegnerebbe un artefatto provato solo dal banco
+di un ALTRO compito**, che è ciò che **D1** vieta: ogni compito finisce con un artefatto provato da sé. La
+sua specchio è `a_triple_that_is_not_granted_never_reaches_the_effect` — stesso giornale, stessa tripla non
+concessa, e l'unica differenza è la parola.
+
+- [ ] **Passo 5: la sospensione pubblica, in `executor.rs`**
+
+⛔ **Oggi ogni banco si riscrive il proprio `Yield`**, e dal compito 11 servirebbe anche **fuori dal
+workspace**, al rubinetto del core finto. In coda a `crates/kernel/src/executor.rs` (**`i/lf w/crlf`**):
+
+```rust
+/// Suspends the calling activity until `deadline`, and hands control back to the executor.
+///
+/// ⛔ IT IS THE ONLY WAY AN ACTIVITY OF THE KERNEL MAY SUSPEND (§2.4.1): the request is written
+/// into the one `Sleep` cell and the activity then returns `Pending` exactly once, which is what
+/// turns a written request into an actual suspension. Writing to the cell WITHOUT returning
+/// `Pending` leaves the request to be read by whoever is polled next -- finding K-1 of the
+/// 2026-08-11 audit, and the clearing in `poll_one_turn` is what contains it.
+///
+/// ⛔ IT IS PUBLIC BECAUSE ACTIVITIES ARE WRITTEN OUTSIDE THIS CRATE TOO. `gui/fake-core` runs
+/// `crate::serving::serve` beside a tap of its own (§7 of the milestone 2 design), and every
+/// bench since milestone 2 has been carrying a private copy of this two-line future.
+///
+/// ⚠️ A DEADLINE ALREADY REACHED BEHAVES AS A YIELD, and that is `Sleep::until`'s rule rather than
+/// a second one: the executor promotes the activity and polls it again without touching the clock.
+pub async fn nap(sleep: &Sleep, deadline: Monotonic) {
+    sleep.until(deadline);
+    Suspended(false).await;
+}
+
+/// The one-shot `Pending`. ⚠️ PRIVATE: what callers need is `nap`, and a bare yield with no
+/// deadline would be a second way to suspend -- §2.4.1 allows exactly one.
+struct Suspended(bool);
+
+impl Future for Suspended {
+    type Output = ();
+
+    fn poll(mut self: Pin<&mut Self>, _context: &mut Context<'_>) -> Poll<()> {
+        if self.0 {
+            Poll::Ready(())
+        } else {
+            self.0 = true;
+            Poll::Pending
+        }
+    }
+}
+```
+
+⚠️ **Nessun import nuovo:** `Future`, `Pin`, `Context` e `Poll` sono già in testa al file — si **rilegge** e
+non si assume.
+
+- [ ] **Passo 6: il banco che fallisce, da FUORI la crate**
+
+`crates/kernel/tests/serving.rs`, **LF**, nuovo. ⛔ **È la terza domanda del pre-controllo in persona:**
+l'attività si prova costruibile **da fuori dalla crate**, che è precisamente ciò che il core finto dovrà
+fare al compito 11 (§7 del 2). Un banco dentro `src/` non lo direbbe.
+
+```rust
+//! The activity that serves the gui, driven FROM OUTSIDE THE CRATE against an in-memory wire.
+//!
+//! ⛔ WHAT THIS BENCH IS FOR, AND IT IS NOT ONLY THE DISPATCH: it is the first caller to build
+//! `serving::serve` from outside, which is what `gui/fake-core` must do at task 11 (§7 of the
+//! milestone 2 design). A signature that could only be assembled inside `kernel` would not be
+//! found out any other way.
+//!
+//! ⛔ `Err(RunError::TurnLimitReached)` IS THE EXPECTED ANSWER OF EVERY ROUND. `serve` is a loop
+//! with no exit -- a core that stopped serving would be the defect -- so the run ends when the
+//! turns run out. What the probes read is THE WIRE and THE BOOKS, never the value of `run`.
+//!
+//! ⚠️ AND THE CLOCK IS SHARED THROUGH `SharedClock` rather than handed out twice, which is the
+//! shape `crates/simulator/tests/arbiter_campaign.rs` already uses: `VirtualReactor` HOLDS the
+//! instant, so two of them would drift and the activity would read an origin the executor had
+//! long left. ⛔ THIS IS THE THIRD COPY OF THAT WRAPPER IN THE REPOSITORY -- declared rather than
+//! discovered (gotcha #49). Where it should live is REGISTERED AND NOT TAKEN: the fourth caller
+//! is task 9's campaign, and moving it into `simulator` is that task's call, with its measure.
+
+use core::cell::{Cell, RefCell};
+
+use kernel::arbiter::{
+    Admission, Arbiter, ArbiterId, ComputeClass, MakeRoom, Mib, Preemption, RemotePolicy,
+    ResourceProfile, VramPolicy,
+};
+use kernel::executor::{nap, Executor, RunError, Sleep};
+use kernel::numbering::Progressive;
+use kernel::parameters::Parameters;
+use kernel::ports::custody::{Custody, CustodyKey};
+use kernel::ports::ipc::{ClientId, Ipc, IpcError};
+use kernel::ports::journal::{Journal, StepId};
+use kernel::ports::reactor::Reactor;
+use kernel::record::{EffectClass, Record, RecordKind, RecordV1, RoutingDetail, Trust};
+use kernel::serving::{serve, Core, POLICY_FUNCTION};
+use kernel::time::{Millis, Monotonic, WallTime};
+use kernel::wire::ipc::{
+    build_stamp, stamp_set, Access, BuildStamp, Call, GrantRequest, IpcMessage, LayoutState,
+    PolicyName, Protection, Triple,
+};
+use simulator::custody::MemoryCustody;
+use simulator::journal::MemoryJournal;
+use simulator::reactor::VirtualReactor;
+use simulator::rng::SeededRng;
+
+/// ⚠️ A LITERAL OF THIS BENCH. Nothing here admits anything through the dispatch -- `Request` is
+/// not served (D5) -- but `Parameters` carries every delivered value positionally, and §2.8.2
+/// rule 2 forbids the kernel to name a default.
+const TOTAL: Mib = Mib::new(8_192);
+
+/// The tick this bench delivers. ⛔ IT IS NOT ZERO, AND THAT IS THE POINT: a zero tick makes `nap`
+/// behave as a yield (`Sleep::until`'s own rule), and no round would ever move the virtual clock
+/// or reach `Reactor::wait_until`.
+const TICK: Millis = Millis::new(50);
+
+/// Enough turns for the longest round here, with room to spare. ⛔ FIXED AND VERSIONED WITH THIS
+/// FILE (constraint 7 of §11), never drawn from the clock or from the environment.
+const TURNS: u64 = 64;
+
+const GUI: ClientId = ClientId::new(1);
+const OTHER: ClientId = ClientId::new(2);
+
+/// The gui side of the wire, and the only thing the probes read.
+struct Wire {
+    waiting: Vec<ClientId>,
+    up: Vec<(ClientId, Vec<u8>)>,
+    down: Vec<(ClientId, Vec<u8>)>,
+    gone: Vec<ClientId>,
+}
+
+impl Wire {
+    const fn new() -> Self {
+        Wire {
+            waiting: Vec::new(),
+            up: Vec::new(),
+            down: Vec::new(),
+            gone: Vec::new(),
+        }
+    }
+
+    /// The gui connects, and then says these things in this order.
+    fn arrives(&mut self, client: ClientId, said: &[IpcMessage]) {
+        self.waiting.push(client);
+        for message in said {
+            self.up
+                .push((client, message.encode().expect("the bench frames what it sends")));
+        }
+    }
+
+    /// This client is dead: every `send` and `receive` on it answers `Disconnected`.
+    fn dead(&mut self, client: ClientId) {
+        self.gone.push(client);
+    }
+
+    /// Everything the core has said to this client, in order, decoded and taken off the wire.
+    fn heard(&mut self, client: ClientId) -> Vec<IpcMessage> {
+        let mut out = Vec::new();
+        let mut kept = Vec::new();
+        for (id, bytes) in self.down.drain(..) {
+            if id == client {
+                out.push(IpcMessage::decode(&bytes).expect("the core frames what it sends"));
+            } else {
+                kept.push((id, bytes));
+            }
+        }
+        self.down = kept;
+        out
+    }
+}
+
+/// The `ipc` port over that wire.
+struct FakeIpc<'a> {
+    wire: &'a RefCell<Wire>,
+}
+
+impl Ipc for FakeIpc<'_> {
+    /// ⚠️ IT DOES NOT CONSULT `gone`, deliberately: a listener hands over whoever connected, and
+    /// whether that peer is still alive is what the FIRST `receive` finds out. A fake that refused
+    /// to accept a dead client would hide the very path `on_disconnect` exists for.
+    fn accept(&mut self) -> Option<ClientId> {
+        let mut wire = self.wire.borrow_mut();
+        if wire.waiting.is_empty() {
+            None
+        } else {
+            Some(wire.waiting.remove(0))
+        }
+    }
+
+    fn send(&mut self, client: ClientId, message: &[u8]) -> Result<(), IpcError> {
+        let mut wire = self.wire.borrow_mut();
+        if wire.gone.contains(&client) {
+            return Err(IpcError::Disconnected);
+        }
+        wire.down.push((client, Vec::from(message)));
+        Ok(())
+    }
+
+    fn receive(&mut self, client: ClientId) -> Result<Option<Vec<u8>>, IpcError> {
+        let mut wire = self.wire.borrow_mut();
+        if wire.gone.contains(&client) {
+            return Err(IpcError::Disconnected);
+        }
+        let at = wire.up.iter().position(|(id, _)| *id == client);
+        Ok(at.map(|index| wire.up.remove(index).1))
+    }
+}
+
+/// One clock for the executor AND for the activity. ⚠️ See the note at the top of this file.
+struct SharedClock<'a> {
+    inner: &'a RefCell<VirtualReactor>,
+}
+
+impl Reactor for SharedClock<'_> {
+    fn now(&self) -> Monotonic {
+        self.inner.borrow().now()
+    }
+
+    fn wall_time(&self) -> WallTime {
+        self.inner.borrow().wall_time()
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        self.inner.borrow_mut().wait_until(deadline)
+    }
+}
+
+type BenchCore<'b> = Core<FakeIpc<'b>, MemoryJournal, MemoryCustody>;
+
+struct Bench {
+    wire: RefCell<Wire>,
+    clock: RefCell<VirtualReactor>,
+}
+
+impl Bench {
+    fn new() -> Self {
+        Bench {
+            wire: RefCell::new(Wire::new()),
+            clock: RefCell::new(VirtualReactor::new()),
+        }
+    }
+
+    /// One round with the serving activity alone.
+    fn round<'b>(
+        &'b self,
+        before: impl FnOnce(&mut BenchCore<'b>),
+        after: impl FnOnce(&mut BenchCore<'b>),
+    ) {
+        self.round_with_tap(before, false, after);
+    }
+
+    /// One round, optionally with a SECOND activity on the same cell.
+    ///
+    /// ⚠️ THE DECLARATION ORDER IS LOAD-BEARING and swapping two lines does not compile: the
+    /// executor borrows `sleep`, `core` and `clock` for its whole life, and locals drop in reverse
+    /// order of declaration.
+    fn round_with_tap<'b>(
+        &'b self,
+        before: impl FnOnce(&mut BenchCore<'b>),
+        tapped: bool,
+        after: impl FnOnce(&mut BenchCore<'b>),
+    ) {
+        let parameters = Parameters::new(TURNS, TOTAL, ArbiterId::new(1), TICK);
+        let mut built = Core::new(
+            FakeIpc { wire: &self.wire },
+            MemoryJournal::new(),
+            MemoryCustody::new(),
+            Arbiter::new(parameters, VramPolicy::Remote(RemotePolicy)),
+            Progressive::starting_at(1),
+            parameters,
+        );
+        before(&mut built);
+
+        let core = RefCell::new(built);
+        let clock = SharedClock { inner: &self.clock };
+        let sleep = Sleep::new();
+        let tapped_once = Cell::new(false);
+        let mut executor = Executor::new(
+            SeededRng::new(1),
+            SharedClock { inner: &self.clock },
+            parameters,
+            &sleep,
+        );
+        executor.spawn(serve(&core, &clock, &sleep));
+        if tapped {
+            executor.spawn(degrade_once(&core, &clock, &sleep, &tapped_once));
+        }
+
+        assert_eq!(
+            executor.run(),
+            Err(RunError::TurnLimitReached),
+            "`serve` is a loop with no exit: the run ends when the turns run out"
+        );
+        drop(executor);
+        if tapped {
+            // ⛔ THE NON-VACUITY OF THE TAPPED ROUND. Without it, a tap that never woke up would
+            // make `a_degradation_written_by_a_second_activity_reaches_the_gui` prove nothing at
+            // all -- it would just be the welcome, arriving as usual.
+            assert!(tapped_once.get(), "the second activity must have run");
+        }
+        after(&mut core.into_inner());
+    }
+
+    fn heard(&self, client: ClientId) -> Vec<IpcMessage> {
+        self.wire.borrow_mut().heard(client)
+    }
+}
+
+/// A SECOND activity on the same cell: it sleeps one tick, then writes a degraded routing into the
+/// core's journal.
+///
+/// ⛔ IT IS THE TAP OF `gui/fake-core` IN MINIATURE (§7 of the milestone 2 design, the `degrade`
+/// word): the write reaches the journal WITHOUT passing through the dispatch, which is the whole
+/// reason D23 re-reads the degradation every turn instead of after its own writes.
+async fn degrade_once<'b>(
+    core: &RefCell<BenchCore<'b>>,
+    clock: &SharedClock<'_>,
+    sleep: &Sleep,
+    ran: &Cell<bool>,
+) {
+    nap(sleep, clock.now().saturating_add(Millis::new(120))).await;
+    let record = Record::V1(RecordV1::routing(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        "a degraded routing, written by somebody who is not the dispatch",
+        RoutingDetail::new("a-model", 2, true),
+    ))
+    .encode();
+    // ⚠️ ONE STATEMENT, SO THE BORROW DIES WITH IT. Holding it across a suspension is what the
+    // whole shape of `serve` forbids, and this activity plays by the same rule.
+    core.borrow_mut()
+        .journal()
+        .intent(StepId::new(900), &record)
+        .expect("the memory journal writes");
+    ran.set(true);
+}
+
+/// A stamp that is NOT this build's.
+///
+/// ⛔ IT CANNOT BE MINTED, and that is the whole value of `BuildStamp`: its doc refuses a public
+/// constructor, because "a stamp anyone can mint from any number is a stamp that proves nothing".
+/// So it is TAKEN from the canonical set, whose `Hello` carries a fixed literal. ⚠️ AND THE
+/// ASSERTION IS NOT DECORATION: the day that literal ever coincided with a real stamp, this probe
+/// would be testing the ACCEPTING path while claiming to test the refusing one.
+fn a_stamp_that_is_not_ours() -> BuildStamp {
+    let Some(IpcMessage::Hello(stamp)) = stamp_set().into_iter().next() else {
+        panic!("the canonical set opens with `Hello`")
+    };
+    assert_ne!(
+        stamp,
+        build_stamp(),
+        "the canonical `Hello` must not carry this build's own stamp"
+    );
+    stamp
+}
+
+/// The call the gui sends to change the policy, with the argument the one function reads.
+fn switch_to_local() -> Call {
+    Call {
+        function: String::from(POLICY_FUNCTION.name),
+        argument: String::from("local"),
+    }
+}
+
+/// The triple of the one function, as the core itself would put it on the wire.
+fn the_triple() -> Triple {
+    Triple {
+        tool: String::from(POLICY_FUNCTION.permission.tool),
+        resource: String::from(POLICY_FUNCTION.permission.resource),
+        operation: Access::Write,
+    }
+}
+```
+
+⛔ **E le sonde, che sono tante perché ciascuna coglie ciò che le altre non colgono.** ⚠️ **Quante siano lo
+dice il comando e non questa riga** — è **P-35**, e scrivendo questo compito l'ho sbagliato una volta:
+
+```bash
+grep -c '^fn [a-z_]*() {$' crates/kernel/tests/serving.rs
+```
+
+```rust
+#[test]
+fn the_welcome_is_the_five_messages_of_sequence_one() {
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
+
+    bench.round(|_| {}, |_| {});
+
+    let heard = bench.heard(GUI);
+    // ⛔ THE ORDER IS THE ASSERTION AND NOT A BONUS: sequence 1 of the north star fixes it, and a
+    // gui told the policy before it was admitted would be drawing a core it is not attached to.
+    assert!(
+        matches!(heard.first(), Some(IpcMessage::Accepted(Protection::AsSystemAccount))),
+        "the welcome opens with `Accepted`: {heard:?}"
+    );
+    assert!(
+        matches!(heard.get(1), Some(IpcMessage::Degradation(_))),
+        "then the degradation: {heard:?}"
+    );
+    assert!(
+        matches!(
+            heard.get(2),
+            Some(IpcMessage::Policy(report))
+                if report.policy == PolicyName::Remote
+                    && report.total == TOTAL
+                    && report.allocated == Mib::ZERO
+        ),
+        "then the policy: the default of ADR-0006, the delivered total, empty books: {heard:?}"
+    );
+    assert!(
+        matches!(heard.get(3), Some(IpcMessage::Layout(LayoutState::Nothing))),
+        "then the layout, and an archive that opened and holds nothing is `Nothing`: {heard:?}"
+    );
+    assert!(
+        matches!(heard.get(4), Some(IpcMessage::Steps(steps)) if steps.is_empty()),
+        "then the step list, empty on a fresh journal: {heard:?}"
+    );
+    // ⛔ THE SECOND DIRECTION, and without it the five above pass over a core that never stops
+    // talking: §6.1.4 says the core sends only what CHANGES, and nothing changed after the welcome.
+    assert_eq!(
+        heard.len(),
+        5,
+        "after the welcome the core sends only what changed: {heard:?}"
+    );
+}
+
+#[test]
+fn a_stale_stamp_gets_the_expected_one_and_then_the_core_stops_listening() {
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(
+        GUI,
+        // ⛔ THE SECOND MESSAGE IS THE PROBE. "The core closes" is not an operation of the port
+        // (decision 22): what it does is STOP LISTENING, and only a message sent AFTER the refusal
+        // tells that apart from "it answered and then had nothing more to say".
+        &[
+            IpcMessage::Hello(a_stamp_that_is_not_ours()),
+            IpcMessage::Invoke(switch_to_local()),
+        ],
+    );
+
+    bench.round(
+        |_| {},
+        |core| {
+            assert!(
+                core.journal().replay().expect("the memory journal replays").is_empty(),
+                "a refused gui writes nothing, and its later words are not read"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    assert_eq!(
+        heard,
+        vec![IpcMessage::StaleBuild(build_stamp())],
+        "a stale gui is told the EXPECTED stamp, and then nothing at all: {heard:?}"
+    );
+}
+
+#[test]
+fn a_request_reaches_neither_the_arbiter_nor_the_journal() {
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(
+        GUI,
+        &[
+            IpcMessage::Hello(build_stamp()),
+            IpcMessage::Request(GrantRequest {
+                reserved_vram: Mib::new(1_024),
+                compute_class: ComputeClass::Batch,
+                preemption: Preemption::Never,
+            }),
+        ],
+    );
+
+    bench.round(
+        |_| {},
+        |core| {
+            // ⛔ THE DIRECTION THAT DECIDES, AND IT IS NOT "no `Verdict` came back". D5 says the
+            // branch builds NO `ResourceProfile` at all, so what has to be shown is that no value
+            // of the peer reached the arbiter: the books are untouched, and untouched means zero
+            // because this bench reserves nothing of its own.
+            assert_eq!(
+                core.arbiter().allocated(),
+                Mib::ZERO,
+                "an unserved request must not reach the arbiter's books"
+            );
+            assert!(
+                core.journal().replay().expect("the memory journal replays").is_empty(),
+                "and it must not open a step either"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    assert_eq!(heard.len(), 5, "the welcome, and not one word more: {heard:?}");
+}
+
+#[test]
+fn an_invoke_without_the_permission_asks_for_the_triple_and_writes_nothing() {
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(
+        GUI,
+        &[
+            IpcMessage::Hello(build_stamp()),
+            IpcMessage::Invoke(switch_to_local()),
+        ],
+    );
+
+    bench.round(
+        |_| {},
+        |core| {
+            assert_eq!(
+                core.arbiter().policy().name(),
+                "remote",
+                "a refused invocation must not run the effect"
+            );
+            assert!(
+                core.journal().replay().expect("the memory journal replays").is_empty(),
+                "the registry refuses BEFORE it opens step A: nothing is written"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    assert_eq!(
+        heard.get(5),
+        Some(&IpcMessage::PermissionRequired(the_triple())),
+        "the gui is asked for the triple the REGISTRY holds: {heard:?}"
+    );
+}
+
+#[test]
+fn an_approve_whose_triple_does_not_match_the_registry_is_refused() {
+    let bench = Bench::new();
+    let mut lie = the_triple();
+    // ⛔ THE STRINGS CAME BACK FROM THE PEER AND ARE UNTRUSTED (ADR-0014), which is what the doc of
+    // `wire::ipc::Triple` asks this consumer for by name. A core that believed them would write a
+    // permission for a triple nobody was ever asked about.
+    lie.resource = String::from("everything");
+
+    bench.wire.borrow_mut().arrives(
+        GUI,
+        &[
+            IpcMessage::Hello(build_stamp()),
+            IpcMessage::Approve { triple: lie, call: switch_to_local() },
+        ],
+    );
+
+    bench.round(
+        |_| {},
+        |core| {
+            assert_eq!(
+                core.arbiter().policy().name(),
+                "remote",
+                "a triple that does not match must not unlock the effect"
+            );
+            assert!(
+                core.journal().replay().expect("the memory journal replays").is_empty(),
+                "and it must not write a permission either"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    assert_eq!(heard.len(), 5, "the welcome, and nothing else: {heard:?}");
+}
+
+#[test]
+fn an_approve_changes_the_policy_and_the_gui_is_told() {
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(
+        GUI,
+        &[
+            IpcMessage::Hello(build_stamp()),
+            IpcMessage::Approve { triple: the_triple(), call: switch_to_local() },
+        ],
+    );
+
+    bench.round(
+        |_| {},
+        |core| {
+            assert_eq!(
+                core.arbiter().policy().name(),
+                "local",
+                "the whole point of the round: the effect really ran"
+            );
+            let kinds: Vec<RecordKind> = core
+                .journal()
+                .replay()
+                .expect("the memory journal replays")
+                .iter()
+                .map(|(_, bytes)| match Record::decode(bytes).expect("this build wrote these") {
+                    Record::V1(body) => body.kind(),
+                })
+                .collect();
+            // ⛔ THE ORDER OF DECISION 21, READ BACK OUT OF THE ARCHIVE: step A's intent, the
+            // invocation note, the permission note, then step B's own intent and outcome, then A's
+            // outcome. A round that wrote the permission FIRST would be putting a note on a step
+            // nobody had opened, which is what `permission::grant`'s doc forbids.
+            assert_eq!(
+                kinds,
+                vec![
+                    RecordKind::Intent,
+                    RecordKind::Invocation,
+                    RecordKind::Permission,
+                    RecordKind::Intent,
+                    RecordKind::Outcome,
+                    RecordKind::Outcome,
+                ],
+                "the journal must read as decision 21 dictates"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    assert!(
+        matches!(heard.get(5), Some(IpcMessage::Policy(report)) if report.policy == PolicyName::Local),
+        "the gui is told the NEW policy: {heard:?}"
+    );
+    assert!(
+        matches!(heard.get(6), Some(IpcMessage::Steps(steps)) if steps.len() == 1 && steps[0].done),
+        "and the step list, with the invocation closed: {heard:?}"
+    );
+}
+
+#[test]
+fn a_client_that_dies_gives_its_grant_back() {
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
+    // ⚠️ IT CONNECTS AND SAYS NOTHING, AND IT IS ALREADY DEAD. That is not a contrived case: it is
+    // `ClientGrants::on_disconnect`'s own words -- "a gui may die before it ever asked, it may die
+    // before it was ever accepted".
+    bench.wire.borrow_mut().arrives(OTHER, &[]);
+    bench.wire.borrow_mut().dead(OTHER);
+
+    bench.round(
+        |core| {
+            // ⛔ THE GRANT IS PUT IN BY HAND, AND THE REASON IS D5 ITSELF: nothing in the dispatch
+            // of milestone 2 issues one, because `Request` is not served. The wiring still has to
+            // be right -- ADR-0033 says the core notices FROM THE IPC DISCONNECTION and
+            // reconciles -- and this is the only way to hold it until the 3D pillar brings the
+            // writer.
+            let profile = ResourceProfile {
+                name: "a-client-of-the-bench",
+                reserved_vram: Mib::new(1_024),
+                compute_class: ComputeClass::Batch,
+                preemption: Preemption::Never,
+            };
+            let Admission::Granted(grant) =
+                core.arbiter()
+                    .admit(&profile, Millis::new(1_000_000), Monotonic::ORIGIN)
+            else {
+                panic!("this bench's machine is big enough for one grant")
+            };
+            core.grants().register(OTHER, grant);
+            assert_eq!(
+                core.arbiter().allocated(),
+                Mib::new(1_024),
+                "the books hold it before the round, or the round proves nothing"
+            );
+        },
+        |core| {
+            assert_eq!(
+                core.arbiter().allocated(),
+                Mib::ZERO,
+                "the grant of a client that died must come back to the books"
+            );
+            assert!(
+                !core.attending().contains(&OTHER),
+                "and the client leaves the table"
+            );
+        },
+    );
+
+    // ⛔ THE OTHER DIRECTION, AND IT IS THE ONE A SWEEPING RECONCILIATION WOULD BREAK: the client
+    // that did NOT die is still served. Without it, an `on_disconnect` that gave back every pair
+    // it holds would pass the assertion above -- it is `gui_death_campaign.rs`'s standing witness,
+    // in miniature.
+    let heard = bench.heard(GUI);
+    assert_eq!(heard.len(), 5, "the living gui got its whole welcome: {heard:?}");
+}
+
+#[test]
+fn save_layout_comes_back_with_what_the_port_holds() {
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(
+        GUI,
+        &[
+            IpcMessage::Hello(build_stamp()),
+            IpcMessage::SaveLayout(vec![7, 7, 7]),
+        ],
+    );
+
+    bench.round(
+        |_| {},
+        |core| {
+            assert_eq!(
+                core.custody().retrieve(CustodyKey::Layout),
+                Ok(Some(vec![7, 7, 7])),
+                "the package really reached the seventh port"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    // ⛔ DECISION 13: the core sends back WHAT IT HOLDS after every write, never an error variant,
+    // so a failed write comes back as the OLD package and the gui sees it by comparing.
+    assert_eq!(
+        heard.get(5),
+        Some(&IpcMessage::Layout(LayoutState::Package(vec![7, 7, 7]))),
+        "and what comes back is what the port holds: {heard:?}"
+    );
+}
+
+#[test]
+fn an_unchanged_degradation_is_not_resent() {
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
+
+    bench.round(|_| {}, |_| {});
+
+    let heard = bench.heard(GUI);
+    // ⛔ THE FIRST DIRECTION OF D23: one `Degradation`, in the welcome, and the sweep of every one
+    // of the turns that follow sends nothing, because nothing changed. Without this the probe
+    // below would pass over a core that shouts the same state on every tick.
+    assert_eq!(
+        heard
+            .iter()
+            .filter(|message| matches!(message, IpcMessage::Degradation(_)))
+            .count(),
+        1,
+        "an unchanged degradation is not resent: {heard:?}"
+    );
+}
+
+#[test]
+fn a_degradation_written_by_a_second_activity_reaches_the_gui() {
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
+
+    bench.round_with_tap(|_| {}, true, |_| {});
+
+    let heard = bench.heard(GUI);
+    // ⛔ THE SECOND DIRECTION OF D23, AND IT IS THE ONE THAT DECIDES THE RULE. The degraded routing
+    // is written by ANOTHER ACTIVITY -- which is exactly the `degrade` word of `gui/fake-core`'s
+    // tap (§7) -- so a core that only re-read the degradation after ITS OWN writes would never see
+    // it, and this count would stay at one.
+    let reports: Vec<bool> = heard
+        .iter()
+        .filter_map(|message| match message {
+            IpcMessage::Degradation(report) => Some(report.routing_degraded),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        reports,
+        vec![false, true],
+        "the welcome says clean, and the sweep then says degraded: {heard:?}"
+    );
+}
+```
+
+⛔ **E che cosa questo file NON prova, detto invece che lasciato dedurre.** La disciplina del prestito —
+*«nessun `borrow` attraversa una sospensione»* — **non ha una sonda propria**, e non ne avrà una: è tenuta
+da `a_degradation_written_by_a_second_activity_reaches_the_gui`, dove un prestito trattenuto da `serve`
+attraverso il suo `.await` farebbe **`already borrowed`** nel `borrow_mut` del rubinetto. ⚠️ **Una seconda
+sonda sarebbe la stessa corsa una seconda volta** (gotcha #49), e il modo in cui questa la tiene è scritto
+qui perché non venga «aggiunto» domani.
+
+Il rosso atteso del passo:
+
+```bash
+cargo test --locked -p kernel --test serving 2>&1 | tail -20
+```
+
+Atteso: `error[E0432]: unresolved import`, su `kernel::serving`.
+
+- [ ] **Passo 7: il modulo `serving`**
+
+`crates/kernel/src/serving.rs`, **LF**, nuovo.
+
+```rust
+//! The activity that serves the gui over the `ipc` port (§5 of the milestone 2 design).
+//!
+//! ⛔ IT LIVES IN `kernel` AND NOT IN `daemon`, and that is what makes it checkable at all. A
+//! dispatch inside a binary is reachable by no integration test -- `daemon`'s own unit module
+//! writes out why -- the DST moves THIS one with `simulator::ipc::DyingGui`, and `gui/fake-core`
+//! runs THIS one on in-memory ports instead of writing a second dispatch of its own (§7). A second
+//! copy is green on the day the two drift apart.
+//!
+//! ⛔ NAMED `serving` AND NOT `dispatch`: `crate::gateway::dispatch` already exists and means
+//! another thing -- handing a conforming token to a provider. Two `dispatch`es in one kernel is
+//! the ambiguity `crate::numbering` refused for `counter`. And not `session` either:
+//! `crate::permission` opens by declaring that there is no session in the kernel, and the
+//! permission session boundary belongs to a later sub-project.
+//!
+//! # One borrow per turn, and never across a suspension
+//!
+//! ⛔ THE WHOLE CORE SITS BEHIND ONE `RefCell` THE CALLER OWNS, which the tap of `gui/fake-core`
+//! shares (§7). That is sound here and it is NOT sound by luck: the executor polls ONE activity at
+//! a time and nothing inside a poll can reach the executor (§2.4.1), so two activities cannot be
+//! inside the cell at once -- PROVIDED no borrow is held across an `.await`. Every borrow in this
+//! file is taken and dropped inside one block, and the tapped round of `tests/serving.rs` is what
+//! holds it: a borrow that survived the `.await` panics there.
+//!
+//! # What it does NOT do, and each one has its closer
+//!
+//! - ⛔ IT DOES NOT SERVE `IpcMessage::Request` -- D5 of the milestone 2 part 2 plan, argued on the
+//!   branch itself. Nothing here builds a `ResourceProfile`, so no value the peer chose reaches the
+//!   arbiter at all.
+//! - ⚠️ NOTHING HERE EVER CALLS `ClientGrants::register`, which follows from the line above: with
+//!   no request served, no grant is ever issued to a client. The register and `on_disconnect` are
+//!   wired anyway, because ADR-0033 says the core notices a dead gui FROM THE IPC DISCONNECTION and
+//!   reconciles; the writer arrives with the 3D pillar, and `tests/serving.rs` holds the wiring
+//!   meanwhile by putting a grant in by hand.
+//! - ⚠️ IT NEVER STOPS. In production the turn limit is `u64::MAX` (task 8); under a finite limit
+//!   the run ends as `RunError::TurnLimitReached`, which is the expected answer and not a failure.
+
+use alloc::string::String;
+use alloc::vec::Vec;
+use core::cell::RefCell;
+
+use crate::arbiter::{Arbiter, LocalPolicy, MakeRoom, RemotePolicy, VramPolicy};
+use crate::client::ClientGrants;
+use crate::degradation::degradation_now;
+use crate::executor::{nap, Sleep};
+use crate::numbering::Progressive;
+use crate::parameters::Parameters;
+use crate::permission::{Operation, Permission};
+use crate::ports::custody::{Custody, CustodyError, CustodyKey};
+use crate::ports::ipc::{ClientId, Ipc, IpcError};
+use crate::ports::journal::{Journal, StepId};
+use crate::ports::reactor::Reactor;
+use crate::record::{Detail, EffectClass, Record, RecordKind};
+use crate::registry::{Approval, Function, InvokeError, Invoker, Registry};
+use crate::time::Monotonic;
+use crate::wire::ipc::{
+    build_stamp, Access, BuildStamp, Call, DegradationReport, IpcMessage, LayoutState, PolicyName,
+    PolicyReport, Protection, StepSummary, Triple,
+};
+
+/// The ONE function the registry holds in milestone 2: the VRAM policy change.
+///
+/// ⛔ IT IS REGISTERED HERE AND NOT IN `crate::registry` -- D16, which is rule 1 of ADR-0038: the
+/// kernel gives the MECHANISM, and WHICH functions exist is brought by whoever uses them. A
+/// registry that named `Arbiter::set_policy` would have to import the arbiter, and the second
+/// invoker -- the gesture, with sub-project 12 -- would have to add its effect in there too, which
+/// is the "logic for gestures only" that ADR refuses, inside out.
+///
+/// ⚠️ `Idempotent` AND NOT `Unrepeatable`: setting the policy twice to the same value leaves the
+/// same world, which is the argument written beside `Arbiter::set_policy` itself.
+pub const POLICY_FUNCTION: Function = Function {
+    name: "vram-policy",
+    permission: Permission {
+        tool: "registry",
+        resource: "arbiter",
+        operation: Operation::Write,
+    },
+    effect: EffectClass::Idempotent,
+};
+
+/// Where a known client has got to.
+enum Stage {
+    /// Connected, and it has not introduced itself. Only `Hello` is answered.
+    Greeting,
+    /// The stamp matched. From here the core sends the piece that CHANGES, and the gui does not
+    /// pull (§6.1.4).
+    Attending {
+        /// The last degradation this client was told about -- D23: the sweep sends only on change.
+        told: DegradationReport,
+    },
+}
+
+struct Client {
+    id: ClientId,
+    stage: Stage,
+}
+
+/// Whether the client the turn is looking at stays on the table.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Outcome {
+    Keep,
+    Forget,
+}
+
+/// Everything the serving activity owns, in one place so that one cell holds it all.
+pub struct Core<I: Ipc, J: Journal, C: Custody> {
+    ipc: I,
+    journal: J,
+    custody: C,
+    arbiter: Arbiter,
+    registry: Registry,
+    grants: ClientGrants,
+    steps: Progressive,
+    clients: Vec<Client>,
+    parameters: Parameters,
+}
+
+impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
+    /// ⛔ THE REGISTRY IS BUILT AND FILLED HERE, with the one function of milestone 2: D16.
+    /// A caller cannot forget to register it, and a caller cannot register a second one either --
+    /// which is deliberate: the invokers grow (the gesture, the voice), the FUNCTIONS of milestone
+    /// 2 do not.
+    pub fn new(
+        ipc: I,
+        journal: J,
+        custody: C,
+        arbiter: Arbiter,
+        steps: Progressive,
+        parameters: Parameters,
+    ) -> Self {
+        let mut registry = Registry::new();
+        registry.register(POLICY_FUNCTION);
+        Core {
+            ipc,
+            journal,
+            custody,
+            arbiter,
+            registry,
+            grants: ClientGrants::new(),
+            steps,
+            clients: Vec::new(),
+            parameters,
+        }
+    }
+
+    /// The journal, for whoever shares this cell.
+    pub fn journal(&mut self) -> &mut J {
+        &mut self.journal
+    }
+
+    /// The arbiter, for whoever shares this cell.
+    pub fn arbiter(&mut self) -> &mut Arbiter {
+        &mut self.arbiter
+    }
+
+    /// The seventh port, to read what it holds.
+    ///
+    /// ⚠️ `&C` AND NOT `&mut C`: `keep` belongs to the dispatch, and a caller that could write the
+    /// layout from outside would be a second writer of a value the gui believes the core owns.
+    pub fn custody(&self) -> &C {
+        &self.custody
+    }
+
+    /// The register of who holds what.
+    ///
+    /// ⚠️ ITS ONLY CALLER TODAY IS A BENCH, and that is stated rather than hidden: milestone 2
+    /// issues no grant to a client (D5), so `register` has no production writer yet. Removing it
+    /// would leave `on_disconnect`'s wiring held by nothing at all.
+    pub fn grants(&mut self) -> &mut ClientGrants {
+        &mut self.grants
+    }
+
+    /// Who has finished the handshake. ⚠️ A client still in `Greeting`, and a client that has been
+    /// refused or has died, is not here.
+    pub fn attending(&self) -> Vec<ClientId> {
+        self.clients
+            .iter()
+            .filter(|client| matches!(client.stage, Stage::Attending { .. }))
+            .map(|client| client.id)
+            .collect()
+    }
+}
+```
+
+⛔ **Poi il giro, e il dispaccio.** Ancora in `crates/kernel/src/serving.rs`:
+
+```rust
+/// The activity: one turn, then a nap of the delivered tick, for ever.
+///
+/// ⛔ IT POLLS, AND THAT IS NOT A CHOICE: the `reactor` port has no I/O readiness, which §5 of the
+/// milestone 2 design states as the reason for the tick. What IS a choice is the tick's value, and
+/// it is delivered (ADR-0034) rather than picked here.
+pub async fn serve<'a, I, J, C, R>(core: &'a RefCell<Core<I, J, C>>, clock: &'a R, sleep: &'a Sleep)
+where
+    I: Ipc,
+    J: Journal,
+    C: Custody,
+    R: Reactor,
+{
+    loop {
+        // ⛔ ONE BLOCK, AND THE BORROW DIES WITH IT. See the head of this file: the `.await` below
+        // must never be reached with the cell borrowed.
+        let tick = {
+            let core = &mut *core.borrow_mut();
+            let now = clock.now();
+            core.take_connections();
+            core.answer_everyone(now);
+            core.sweep_degradation(now);
+            core.parameters.gui_tick()
+        };
+        nap(sleep, clock.now().saturating_add(tick)).await;
+    }
+}
+
+impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
+    /// Everybody the listener has ready, added in the greeting stage.
+    fn take_connections(&mut self) {
+        while let Some(id) = self.ipc.accept() {
+            self.clients.push(Client { id, stage: Stage::Greeting });
+        }
+    }
+
+    /// One `receive` per known client, and the dispatch of whatever came back.
+    fn answer_everyone(&mut self, now: Monotonic) {
+        let mut index = 0;
+        while index < self.clients.len() {
+            let id = self.clients[index].id;
+            let outcome = match self.ipc.receive(id) {
+                // ⛔ ONE MESSAGE PER CLIENT PER TURN, AND IT IS A CHOICE: draining a client dry
+                // would let one peer hold the turn for as long as it keeps talking, and every
+                // other client -- and the degradation sweep -- would wait behind it.
+                Ok(None) => Outcome::Keep,
+                Ok(Some(bytes)) => self.answer(index, &bytes),
+                // ⛔ THE ONE SIGNAL THERE IS. `Ipc` has no disconnection event, so an `Err` on
+                // `send` or `receive` is what ADR-0033 calls "the core notices from the ipc
+                // disconnection" -- `gui_death_campaign.rs` reads it in exactly this place.
+                Err(IpcError::Disconnected) => Outcome::Forget,
+                // ⚠️ A PEER THAT TALKS NONSENSE IS STILL THERE, which is `IpcError`'s own words:
+                // folding this into `Disconnected` would tear down a live gui over one bad frame.
+                Err(IpcError::MalformedMessage) => Outcome::Keep,
+            };
+            match outcome {
+                Outcome::Keep => index += 1,
+                Outcome::Forget => self.forget(index, now),
+            }
+        }
+    }
+
+    /// One message, dispatched.
+    fn answer(&mut self, index: usize, bytes: &[u8]) -> Outcome {
+        let Ok(message) = IpcMessage::decode(bytes) else {
+            // ⚠️ SAME READING AS `MalformedMessage` ABOVE: bytes that will not decode are a bad
+            // frame, not a dead peer.
+            return Outcome::Keep;
+        };
+        let id = self.clients[index].id;
+        match message {
+            IpcMessage::Hello(stamp) => self.greet(index, stamp),
+            IpcMessage::Invoke(call) => self.run(id, call, Approval::Checked),
+            IpcMessage::Approve { triple, call } => self.approve(id, triple, call),
+            IpcMessage::SaveLayout(package) => self.keep_layout(id, &package),
+            // ⛔ NOT SERVED, AND IT IS D5. Serving it would force the core to name a compute lane
+            // and a preemption for a consumer that does not exist: `ComputeClass::Batch` is
+            // documented "3D render, indexing, background runs" and ADR-0033 describes a VIEWER,
+            // and no line anywhere says which is right -- choosing one would be a deduction
+            // presented as a design. Refusing it with `Verdict::Refused` would LIE about that
+            // type, which means "bigger than the whole machine". Not serving it asserts nothing
+            // false, is the shape this repository already uses (`promote` has no caller either --
+            // "declared, not pinned", gotcha #73), and takes the privilege away at the root: NO
+            // VALUE OF THE PEER REACHES THE ARBITER, because nothing here builds a
+            // `ResourceProfile` at all. ⚠️ Entry 27 of milestone 6's open items keeps its trigger
+            // intact, and its closer is still the 3D pillar.
+            IpcMessage::Request(_) => Outcome::Keep,
+            // ⚠️ CORE -> GUI VARIANTS ARRIVING UPWARD. The schema is ONE enum for both directions
+            // (I4 renounces versioning, so there is no per-direction type), which makes these
+            // expressible and perfectly decodable -- so they are not `MalformedMessage`, and they
+            // are IGNORED rather than answered. Tearing the client down for one is the move
+            // `IpcError`'s own doc argues against: the gui is sacrificial, and a live one must not
+            // be lost over a stray frame.
+            IpcMessage::Accepted(_)
+            | IpcMessage::StaleBuild(_)
+            | IpcMessage::Degradation(_)
+            | IpcMessage::Policy(_)
+            | IpcMessage::PermissionRequired(_)
+            | IpcMessage::Token { .. }
+            | IpcMessage::Layout(_)
+            | IpcMessage::Steps(_)
+            | IpcMessage::Verdict(_) => Outcome::Keep,
+        }
+    }
+
+    /// The handshake of §6.1.2, and the welcome of sequence 1.
+    fn greet(&mut self, index: usize, stamp: BuildStamp) -> Outcome {
+        let id = self.clients[index].id;
+        if stamp != build_stamp() {
+            // ⛔ "THE CORE CLOSES" IS NOT AN OPERATION OF THE PORT (decision 22). What the core
+            // does is STOP LISTENING, so this client leaves the table: the gui does not start, says
+            // so (§6.1.2), exits by itself, and there is nobody left here to see it go.
+            let _ = self.tell(id, &IpcMessage::StaleBuild(build_stamp()));
+            return Outcome::Forget;
+        }
+
+        let told = match self.degradation() {
+            Some(report) => report,
+            // ⛔ AN UNKNOWN DEGRADATION IS NOT SENT AS "NOTHING IS DEGRADED", which is the silent
+            // degradation ADR-0019 forbids and the argument `DegradationError` spells out. The wire
+            // has no third state for it: the gui is simply not told, and the sweep will tell it as
+            // soon as the journal reads again. ⚠️ REGISTERED AND NOT TAKEN: whether `Degradation`
+            // should gain an "unknown" the way `LayoutState` gained `Unavailable` (decision 35) is
+            // the owner's, and it is a variant on a wire that never retires one.
+            None => return Outcome::Keep,
+        };
+
+        // The welcome, in the order sequence 1 of the north star fixes.
+        for message in [
+            IpcMessage::Accepted(Protection::AsSystemAccount),
+            IpcMessage::Degradation(told),
+            IpcMessage::Policy(self.policy_report()),
+            IpcMessage::Layout(self.layout()),
+        ] {
+            if self.tell(id, &message) == Outcome::Forget {
+                return Outcome::Forget;
+            }
+        }
+        if let Some(steps) = self.step_list() {
+            if self.tell(id, &IpcMessage::Steps(steps)) == Outcome::Forget {
+                return Outcome::Forget;
+            }
+        }
+
+        self.clients[index].stage = Stage::Attending { told };
+        Outcome::Keep
+    }
+}
+```
+
+⛔ **E le operazioni, una per riga della §5.** Ancora nello stesso `impl`:
+
+```rust
+impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
+    /// An invocation, on either of the two roads of sequence 3.
+    fn run(&mut self, id: ClientId, call: Call, approval: Approval) -> Outcome {
+        let Some(policy) = policy_named(&call.argument) else {
+            // ⚠️ AN ARGUMENT THAT NAMES NO POLICY IS REFUSED WITHOUT WRITING ANYTHING, exactly as
+            // an unregistered name is: it is text the peer chose, and untrusted content informs,
+            // it never authorises (ADR-0014).
+            return Outcome::Keep;
+        };
+
+        // ⛔ DESTRUCTURED AND NOT REACHED THROUGH THE ACCESSORS, and it is forced rather than
+        // tidy: the effect closure needs `&mut arbiter` while `invoke` is holding `&registry` and
+        // `&mut journal`. Three methods on `&mut self` cannot be alive at once; three field
+        // bindings can.
+        let Core { registry, journal, arbiter, steps, .. } = self;
+        // ⚠️ BOTH NUMBERS ARE TAKEN UP FRONT, and a refused invocation therefore burns two. That is
+        // not a defect: ADR-0036 retires INDICES and never reuses them, and says nothing of the
+        // sort about step numbers, which are a progressive and not a schema.
+        let step_a = StepId::new(steps.take());
+        let step_b = StepId::new(steps.take());
+        let outcome = registry.invoke(
+            journal,
+            step_a,
+            &call.function,
+            Invoker::Gui(id),
+            call.argument.as_bytes(),
+            approval,
+            |journal| arbiter.set_policy(policy, step_b, journal),
+        );
+
+        match outcome {
+            Ok(()) => {
+                // ⚠️ TWO STATEMENTS AND NOT ONE, deliberately: `self.tell(…, self.policy_report())`
+                // asks the compiler for a two-phase borrow, which works and is the kind of line a
+                // later edit turns into `E0502` for no reason anybody can see.
+                let report = self.policy_report();
+                if self.tell(id, &IpcMessage::Policy(report)) == Outcome::Forget {
+                    return Outcome::Forget;
+                }
+                match self.step_list() {
+                    Some(steps) => self.tell(id, &IpcMessage::Steps(steps)),
+                    None => Outcome::Keep,
+                }
+            }
+            Err(InvokeError::PermissionRequired(permission)) => {
+                self.tell(id, &IpcMessage::PermissionRequired(triple_of(permission)))
+            }
+            // ⚠️ THE OTHER THREE SAY NOTHING, and each for its own reason. `NotRegistered` is a
+            // name the peer chose and is refused in silence, like the argument above. `Permission`
+            // and `Journal` are the archive failing to answer or to write: there is no variant on
+            // this wire that says "the core could not read its own journal", and inventing one
+            // here would be a schema decision taken in a dispatch. ⛔ REGISTERED AND NOT TAKEN,
+            // with its closer: the first module that has to show a core in trouble -- the Status
+            // tile of sub-project 6.
+            Err(InvokeError::NotRegistered)
+            | Err(InvokeError::Permission(_))
+            | Err(InvokeError::Journal(_)) => Outcome::Keep,
+        }
+    }
+
+    /// The approval road: the triple comes back from the peer, and it is COMPARED, never believed.
+    fn approve(&mut self, id: ClientId, triple: Triple, call: Call) -> Outcome {
+        // ⛔ WHAT DECIDES IS THE TRIPLE THE REGISTRY HOLDS, and this is the consumer the doc of
+        // `crate::wire::ipc::Triple` names: the strings that came back are untrusted (ADR-0014), so
+        // a core that converted them into a `Permission` would be granting a permission for a
+        // triple nobody was ever asked about. It cannot even be done by accident -- `Permission`
+        // wants `&'static str` and a `String` off the wire is not one.
+        let Some(function) = self.registry.held(&call.function) else {
+            return Outcome::Keep;
+        };
+        if triple != triple_of(function.permission) {
+            return Outcome::Keep;
+        }
+        self.run(id, call, Approval::JustGiven)
+    }
+
+    /// `SaveLayout`, and what comes back is what the port HOLDS (decision 13).
+    fn keep_layout(&mut self, id: ClientId, package: &[u8]) -> Outcome {
+        // ⛔ THE WRITE'S ERROR IS NOT SENT ON. Decision 13 says the core answers with what it holds
+        // after every write, so a failed write comes back as the OLD package and the gui sees it by
+        // comparing -- no error variant, and no gui that believes a save stuck when it did not.
+        let _ = self.custody.keep(CustodyKey::Layout, package);
+        let state = self.layout();
+        self.tell(id, &IpcMessage::Layout(state))
+    }
+
+    /// D23: every turn, only while somebody is attending, and only when it CHANGED.
+    fn sweep_degradation(&mut self, now: Monotonic) {
+        if self.attending().is_empty() {
+            // ⛔ A BOUND AND NOT AN OPTIMISATION: `degradation_now` re-reads the whole journal, and
+            // with no gui attending there is nobody to tell. The cost is the one that function
+            // declares of itself, and its remedy is the checkpoint `Journal::replay` names.
+            return;
+        }
+        let Some(state) = self.degradation() else {
+            return;
+        };
+
+        let mut index = 0;
+        while index < self.clients.len() {
+            let stale = matches!(self.clients[index].stage, Stage::Attending { told } if told != state);
+            if !stale {
+                index += 1;
+                continue;
+            }
+            let id = self.clients[index].id;
+            match self.tell(id, &IpcMessage::Degradation(state)) {
+                Outcome::Keep => {
+                    self.clients[index].stage = Stage::Attending { told: state };
+                    index += 1;
+                }
+                Outcome::Forget => self.forget(index, now),
+            }
+        }
+    }
+
+    /// A client leaves the table, and every grant it held goes back to the arbiter.
+    ///
+    /// ⚠️ THE `Result` OF `on_disconnect` IS DROPPED, and it is said rather than hidden: the only
+    /// `Err` it can give is `ReleaseError::UnknownGrant`, which means a grant of ANOTHER arbiter --
+    /// this core builds one, so it is unreachable here -- and `ClientGrants` keeps the pairs it has
+    /// not released, so a later caller with the right arbiter loses none of them.
+    fn forget(&mut self, index: usize, now: Monotonic) {
+        let client = self.clients.remove(index);
+        let _ = self.grants.on_disconnect(client.id, &mut self.arbiter, now);
+    }
+
+    /// One message out, and what a failure on the way means.
+    fn tell(&mut self, id: ClientId, message: &IpcMessage) -> Outcome {
+        // ⚠️ A MESSAGE THAT WILL NOT ENCODE BECOMES AN EMPTY BODY rather than an error, which is
+        // `IpcMessage::encode`'s own containment argument; what can still arrive here is a
+        // `WireError` from the ENVELOPE. Nothing is sent, and nothing is said about it: there is no
+        // variant that means "the core could not speak", and the gui asks for nothing (§6.1.4).
+        let Ok(bytes) = message.encode() else {
+            return Outcome::Keep;
+        };
+        match self.ipc.send(id, &bytes) {
+            Ok(()) => Outcome::Keep,
+            Err(IpcError::Disconnected) => Outcome::Forget,
+            // ⚠️ UNREACHABLE ON THIS OPERATION and written rather than guessed at: the port's own
+            // doc says `MalformedMessage` belongs to `receive`, because the bytes handed to `send`
+            // were produced by the kernel's schema and a malformed one there is a defect of the
+            // kernel, not a failure of the port.
+            Err(IpcError::MalformedMessage) => Outcome::Keep,
+        }
+    }
+
+    /// The degradation, or `None` when the archive cannot say.
+    fn degradation(&self) -> Option<DegradationReport> {
+        degradation_now(&self.arbiter, &self.journal)
+            .ok()
+            .map(|state| DegradationReport {
+                vram_exhausted: state.vram_exhausted,
+                routing_degraded: state.routing_degraded,
+            })
+    }
+
+    /// The policy with the two numbers the kernel actually holds -- D20.
+    fn policy_report(&self) -> PolicyReport {
+        PolicyReport {
+            // ⛔ AN EXHAUSTIVE `match` AND NOT A STRING COMPARISON ON `name()`: a third policy must
+            // stop the compiler here, not arrive on the wire as one of these two.
+            policy: match self.arbiter.policy() {
+                VramPolicy::Remote(_) => PolicyName::Remote,
+                VramPolicy::Local(_) => PolicyName::Local,
+            },
+            allocated: self.arbiter.allocated(),
+            total: self.parameters.total_vram(),
+        }
+    }
+
+    /// What the seventh port holds under the layout key, in its three states (decision 35).
+    fn layout(&self) -> LayoutState {
+        match self.custody.retrieve(CustodyKey::Layout) {
+            Ok(Some(package)) => LayoutState::Package(package),
+            Ok(None) => LayoutState::Nothing,
+            Err(CustodyError::Unavailable) => LayoutState::Unavailable,
+        }
+    }
+
+    /// The step list: in milestone 2 these are the registry's invocations.
+    ///
+    /// ⛔ `None` WHEN THE ARCHIVE CANNOT BE READ, and never a short list. An incomplete list read
+    /// as complete is the same silent partial truth `is_granted` and `degradation_now` both refuse
+    /// in their own words, arrived at here by the one road nobody guards: a record this build
+    /// cannot decode, skipped, would take a step out of the list the gui shows.
+    fn step_list(&self) -> Option<Vec<StepSummary>> {
+        let entries = self.journal.replay().ok()?;
+        let mut list: Vec<StepSummary> = Vec::new();
+        for (step, bytes) in entries {
+            let Ok(Record::V1(body)) = Record::decode(&bytes) else {
+                return None;
+            };
+            match body.kind() {
+                RecordKind::Invocation => {
+                    if let Some(Detail::Invocation(detail)) = body.detail() {
+                        list.push(StepSummary {
+                            step: step.get(),
+                            function: String::from(detail.function()),
+                            done: false,
+                        });
+                    }
+                }
+                // ⚠️ THE OUTCOME OF STEP A, WHICH IS THE STEP THE INVOCATION NOTE SITS ON. Step B's
+                // outcome names a step no line of this list carries, so it finds nothing and
+                // changes nothing -- which is right, and is why the search is by step and not a
+                // count.
+                RecordKind::Outcome => {
+                    if let Some(line) = list.iter_mut().find(|line| line.step == step.get()) {
+                        line.done = true;
+                    }
+                }
+                _ => {}
+            }
+        }
+        Some(list)
+    }
+}
+
+/// The triple of a permission, on the wire.
+///
+/// ⛔ AN EXHAUSTIVE `match` AND NOT `Operation::is_write()`, and that is the lesson this repository
+/// has already paid for: `is_write` folds EVERY other variant into `false`, so a third operation
+/// would cross the wire as a read. The doc of `crate::wire::ipc::Access` records the measurement.
+fn triple_of(permission: Permission) -> Triple {
+    Triple {
+        tool: String::from(permission.tool),
+        resource: String::from(permission.resource),
+        operation: match permission.operation {
+            Operation::Read => Access::Read,
+            Operation::Write => Access::Write,
+        },
+    }
+}
+
+/// The policy an untrusted argument names, if it names one.
+///
+/// ⛔ THE NAMES ARE THE POLICIES' OWN, read through `MakeRoom::name`, and not two literals here:
+/// two houses for one pair of strings is what lets them drift, and the gui shows the same words
+/// (G15). ⚠️ AND THERE IS NO EXHAUSTIVE `match` ON THE WAY IN -- the input is a `String` the peer
+/// chose -- so the closed set lives in this one function and everything else is `None`.
+fn policy_named(argument: &str) -> Option<VramPolicy> {
+    let remote = VramPolicy::Remote(RemotePolicy);
+    let local = VramPolicy::Local(LocalPolicy);
+    if argument == remote.name() {
+        Some(remote)
+    } else if argument == local.name() {
+        Some(local)
+    } else {
+        None
+    }
+}
+```
+
+E in `crates/kernel/src/lib.rs` (**`i/lf w/crlf`**), accanto agli altri moduli — l'ordine è **di arrivo**:
+
+```
+pub mod serving;
+```
+
+```bash
+cargo test --locked -p kernel --test serving 2>&1 | tail -20
+bash scripts/gate-deps.sh
+```
+
+Atteso: **tutte** le sonde verdi — quante siano lo dice il comando del passo 6, non questa riga (**P-35**) —
+e la lista delle dipendenze **non cresciuta**: `serving` non aggiunge nessuna crate.
+
+- [ ] **Passo 8: i richiami datati**
+
+⛔ **Quattro case, e si toccano nello stesso commit** (quinta riga della disciplina dell'audit). Nella §5 del
+[disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) — **`i/lf w/crlf`**, quindi
+`replace_unique.py` — tre celle della tabella «Il daemon che ascolta»:
+
+| Riga | Che cosa il richiamo dice |
+|---|---|
+| `Hello` | ⛔ **RICHIAMO DEL \<data\>, compito 7 del piano della parte 2 (D22):** la protezione **non è consegnata**. `Protection` ha una variante sola, e un parametro che può assumere un valore solo è superficie morta dentro `Parameters` — il doc di `total_vram` lo argomenta — pagata su ogni chiamante. L'attività manda `Protection::AsSystemAccount` e scrive l'**innesco** accanto: il giorno che `Protection` guadagna una seconda variante, il valore diventa consegnato |
+| `Request` | ⛔ **RICHIAMO DEL \<data\>, compito 7 (D5):** questa riga dice *«`admit` → `Verdict`»*, e il ramo **non chiama `admit`**. Le tre vie sono state esaminate contro il codice (P-1, P-11, P-12) e il perimetro negativo vive sul ramo stesso, in `crates/kernel/src/serving.rs`; la riga 27 delle voci aperte del Traguardo 6 resta aperta **col suo innesco intatto** |
+| il **limite di giri** | ⛔ **RICHIAMO DEL \<data\> (D21):** la riga resta vera e **cambia compito**: `EXECUTOR_TURN_LIMIT` vive in `crates/daemon/src/main.rs`, e la sonda che questa cella detta — *«il grafo con la GUI resta vivo oltre centomila giri»* — vuole il grafo con la GUI, cioè il cablaggio. È il compito **8** |
+
+E la riga **2** della tabella *Stato* della [stella polare](../specs/2026-09-07-direzione-gui-design.md):
+
+> ⛔ **RICHIAMO DEL \<data\>, compito 7 del piano della parte 2 (D20):** `Policy` porta **`allocated`** —
+> quanto i libri dell'arbitro impegnano, **le due quote permanenti comprese** — e **`total`**, la macchina
+> consegnata. Il denominatore *«tutto meno la quota audio e la quota di presentazione»*, che l'ultima colonna
+> di questa riga marca già **dedotto**, **non si costruisce**: il kernel non ha i due addendi e il doc di
+> `Parameters::total_vram` argomenta di non consegnarli; e sottrarle nasconderebbe due concessioni **con un
+> titolare** (ADR-0033), che è *«la sottrazione non è un'esenzione»*, gotcha **#4**, commesso allo strato che
+> l'utente guarda. Se il proprietario vorrà il denominatore netto, i due addendi diventano parametri
+> consegnati.
+
+⚠️ **`\<data\>` è la data del giorno in cui il compito si esegue**, non una data scritta oggi: un testo
+fissato adesso per una sessione futura invecchia.
+
+✅ **Nella tabella della posizione di QUESTO piano il richiamo di D21 è GIÀ SCRITTO**, alla scrittura del
+compito e non all'esecuzione — è ciò che D13 fece con la riga 4: le righe **7** e **8** portano il richiamo
+del 2026-09-11, e chi esegue non deve toccarle se non per la spunta finale.
+
+- [ ] **Passo 9: il cancello, la posizione, il commit**
+
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`; `gate-deps.sh` verde e la lista **non cresciuta**;
+  `gate-attributes.sh` verde
+- [ ] `bash scripts/check-docs.sh` → `OK`
+- [ ] i fine-riga: i due file nuovi a **zero** CR, e `git ls-files --eol` **invariato** su tutti i modificati
+- [ ] `git diff --stat -- crates/kernel/tests/compile_fail/` riletto, e ciò che è cambiato **nominato nel
+  commit** — quale `.stderr`, e perché
+- [ ] la riga **7** della tabella della posizione a ✅ con la data
+- [ ] commit `gui(compito 7, sotto-progetto 2 parte 2): …`, **senza co-autore**, e push
 
 ---
 

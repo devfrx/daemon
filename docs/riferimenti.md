@@ -2315,6 +2315,39 @@ valori di oggi li dà il comando qui sopra:
 prezzava la lettura su `25148` token per quattrocento righe, che dà **1,02 caratteri per
 token** — impossibile per qualunque testo.
 
+### La lista di lettura di una chiusura — 2026-09-11: come si prezza, e il verbale
+
+⛔ **Lo stesso metodo, applicato a una LISTA DI LETTURA invece che al compendio.** Una chiusura
+detta alla sessione successiva che cosa leggere; quella lista si eredita e non si riprezza, e
+cresce insieme al piano. Il comando conta **i pezzi**, non i file, perché è a pezzi che si taglia:
+
+```bash
+python -c "import tiktoken,io; e=tiktoken.get_encoding('cl100k_base'); pl=io.open('docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md',encoding='utf-8').read().split(chr(10)); seg=lambda a,b: len(e.encode(chr(10).join(pl[a-1:b]))); print([seg(*r) for r in [(1,100),(101,180),(181,213),(214,452),(453,493),(494,522),(523,539)]])"
+```
+
+⚠️ **Ai tre limiti della misura qui sopra se ne aggiunge un quarto: i numeri di riga si muovono**
+a ogni modifica del piano. Prima di rilanciare il comando si rifanno i confini con
+`grep -n '^#\{1,4\} '` sul piano, e si sostituiscono.
+
+📌 **Il verbale del 2026-09-11** — la lista di lettura della sessione che scrive la **parte 2**
+del sotto-progetto 2, prima e dopo:
+
+| | prima | dopo |
+|---|---|---|
+| `CLAUDE.md` + `docs/COMPENDIO.md` — la lettura obbligatoria | 37 270 | 37 270 |
+| il **piano della parte 1** | 54 741 | 9 288 |
+| il disegno del 2, per intero | 32 687 | 32 687 |
+| la stella polare, per intero | 57 388 | 57 388 |
+| **totale** | **182 086** | **136 633** |
+
+⚠️ **Dei 54 741 del piano, 24 650 erano il diario delle chiusure 1–7** — archiviato lo stesso
+giorno in [`archivio/diario-spike-guscio-storico.md`](archivio/diario-spike-guscio-storico.md) —
+e **6 794** il pre-controllo P-1…P-25 dei compiti di uno spike eseguito. ⛔ **I due disegni NON
+sono stati toccati:** sono la materia prima del piano della parte 2, e leggerli è **lavoro, non
+spreco** — il taglio è solo dove si rileggeva cronaca. Gotcha **#119**.
+
+⚠️ **E una parte del taglio si ripaga: l'ottava chiusura CRESCE**, da **4 764** a **5 145**, perché il richiamo che spiega il taglio sta dentro di lei. È il prezzo giusto — *«niente si cancella»* — e va **misurato dopo**, non previsto: la prima stima di questa tabella diceva **8 907** per il piano, e la misura ha detto **9 288**.
+
 ---
 
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)

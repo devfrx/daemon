@@ -362,6 +362,86 @@ svista da correggere qui: il compito 2 lo scrive nel doc del **trasporto**, che 
 
 ---
 
+### P-16 — L'innesco della revoca `core -> gui` SCADE OGGI e non va onorato: il doc nomina il guscio, il meccanismo vuole un destinatario
+
+**Domanda 6 — ciò che ti smentisce sta in un COMMENTO**, la terza volta in questo pre-controllo. Il doc del modulo
+`crates/kernel/src/wire/ipc.rs` dichiara la revoca `core -> gui` una **non-costruzione dichiarata** e le scrive
+l'innesco: *«ITS TRIGGER IS THE SAME SHELL … a revocation needs an ADDRESSEE, and until milestone 2 of the
+subproject there is nobody to tell»*. ⛔ **Il guscio è arrivato** — ADR-0029 `Accepted` il 2026-09-10, Electron —
+quindi letto alla lettera l'innesco è **questo piano**, e la §4 del 2 non elenca nessuna variante di revoca fra le
+tredici: sarebbe un buco di copertura.
+
+**Non lo è, e la ragione è nel piano stesso:** **D5** non serve `Request`, quindi nel 2 **nessuna concessione
+ordinaria esiste**, e il destinatario che la frase chiede continua a non esserci. L'innesco scritto è **più largo
+del meccanismo**: nomina il guscio, mentre ciò che serve è il **consumatore 3D** — lo stesso chiusore che la riga
+27 del Traguardo 6 porta già in `porta-di-qualita.md`, il **7**.
+
+⚠️ **È gotcha #77 una seconda volta nello stesso file:** una scadenza scritta in prosa, per cui nulla può andare
+rosso. Il doc della porta `crates/kernel/src/ports/ipc.rs` ne ha già corretta una identica il 2026-08-31 — *«A
+DEADLINE WRITTEN IN PROSE (gotcha #77), and this is the run in which it falls due»* — e questa è la gemella, nel
+file accanto.
+
+**Conseguenza per questo piano:** nessuna variante nuova; il **richiamo datato** del compito 3, passo 9 (a). E
+`ports/ipc.rs` **non si tocca**: il suo richiamo dice già che l'innesco vive «accanto allo schema, UNA casa».
+
+### P-17 — Il doc di `IpcMessage::encode` argomenta su un GRAFO che questo compito allarga
+
+`crates/kernel/src/wire/ipc.rs`, doc di `encode`: un'encodifica fallita diventa un **corpo vuoto** invece di un
+errore, e l'argomento è letto *«contro il grafo di QUESTO tipo invece che copiato»* — grafo che il doc enumera:
+*«`Mib(u64)`, `ComputeClass`, `Preemption`, `Millis(u64)` e varianti unit»*. ⛔ **Le undici varianti del compito 3
+ci mettono dentro `String` e `Vec<u8>`**, quindi l'enumerazione smette di descrivere il tipo.
+
+✅ **Riletto alla fonte il 2026-09-11**, in `bincode` 2.0.1, `src/error.rs` — la crate è già scaricata,
+`ls -d ~/.cargo/registry/src/*/bincode-2.0.1`. Le varianti di `EncodeError` raggiungibili **senza `std`** sono
+quattro: `UnexpectedEnd`, `RefCellAlreadyBorrowed`, `Other(&'static str)` e `OtherString(String)` dietro `alloc`;
+le altre sono dietro `#[cfg(feature = "std")]` o `serde`. **Nessuna è producibile** da un `Encode` **derivato**
+sopra `String` e `Vec<u8>` che scrive in un `Vec` che cresce: le ultime due nascono solo da un'implementazione
+**scritta a mano**, che qui non esiste.
+
+**Quindi la relazione regge e l'enumerazione no** — ed è la distinzione che questo repository usa altrove: *«la
+relazione sopravvive a una variante aggiunta; un elenco no»*, scritta nel doc stesso a proposito di
+`#[non_exhaustive]`. **Conseguenza:** il **richiamo datato** del compito 3, passo 9 (b), **più una sonda** —
+`a_string_in_the_schema_still_cannot_stop_the_encoder` — perché fin qui era **dedotto leggendo**, e una lettura
+non è una misura.
+
+### P-18 — Le fixture vanno in `gui/`, che nasce al compito 10
+
+La §4 del 2 e la riga «lo schema» della tabella degli artefatti della §8 dicono entrambe che le fixture si
+committano **in `gui/`**. ⛔ **`gui/` non esiste**, misurato il 2026-09-11 (`ls gui` → niente), e a crearla è il
+**compito 10**, sette compiti dopo. Un compito che scrive in una cartella che nascerà è la specie di dipendenza
+all'indietro che il taglio per artefatto (D1) esiste per evitare.
+
+✅ **Verificato che non ci siano effetti collaterali:** `git check-ignore -v gui/schema/fixtures/x.bin` non rende
+nulla — `gui/` **non è ignorata** oggi, quindi i file si committano; e la cartella che il compito 3 crea porta
+**solo dati**, nessun `Cargo.toml` e nessun `package.json`, quindi `cargo` non la vede e il manifesto di radice
+non va toccato. **Conseguenza: D12.**
+
+### P-19 — Le varianti nuove portano tipi del kernel che NON parlano `bincode`: il disegno dice a parole ciò che il codice non lascia fare
+
+**Domanda 3 — l'artefatto è sbagliato, e non compilerebbe.** La §4 del 2 dice che `Degradation` porta *«i due
+campi di oggi»*, `Policy` *«quale policy VRAM è attiva»*, `PermissionRequired` *«la tripla»*. Misurati i quattro
+tipi il 2026-09-11:
+
+| Tipo | Derive di oggi | Sul filo? |
+|---|---|---|
+| `degradation::Degradation` (`degradation.rs:23`) | `Debug, Clone, Copy, PartialEq, Eq` | **no**: nessun `bincode` |
+| `permission::Permission` (`permission.rs:112`) e `Operation` (`:46`) | idem | **no**, e non potrebbe: `tool` e `resource` sono `&'static str` |
+| `arbiter::policy::VramPolicy` (`policy.rs:63`) | **nessuno** | **no**, e non potrebbe: le varianti contengono le policy stesse |
+| `record::Trust` (`record.rs:162`) | `… Encode, Decode` + `#[cbor(index_only)]` — **minicbor**, non `bincode` | il disegno ordina già un **gemello** |
+
+⚠️ **E il repository porta un precedente che sembra dire il contrario:** `Mib` ha **entrambe** le lingue sullo
+stesso derive — `Encode, Decode, bincode::Encode, bincode::Decode` con `#[cbor(array)]`,
+`crates/kernel/src/arbiter/resource.rs:50-61` — ed è già sul filo dentro `GrantRequest`. Due precedenti opposti,
+e il disegno ne copre **uno su quattro**.
+
+⛔ **Portato al proprietario in A/B il 2026-09-11, che ha delegato — *«scegli secondo decision-principles»*.** La
+scelta e la regola che distingue i due precedenti sono **D11**. ⚠️ **E non è una preferenza: per `Permission` e
+`VramPolicy` il gemello è FORZATO**, il primo dall'argomento che questo stesso file scrive contro
+`ResourceProfile` (`&'static str` da byte in arrivo, ADR-0014), il secondo perché non è serializzabile per
+costruzione.
+
+---
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -379,6 +459,8 @@ smentisce — è ciò per cui esiste l'errata.
 | **D8** | il modulo si chiama **`numbering`** e non `counter` | in questo repository «counter» significa già **contro-sonda**: `crates/platform/tests/counter_probes.rs` si apre con *«The counter-probes of §7.1.1 rule 3»* e `platform::counter_probe_std_compiles` porta la stessa parola. Un `kernel::counter` numerico accanto a quelle è la specie di ambiguità che questo repo paga altrove. ⚠️ **Costo:** il doc di `ClientId` dice «the counter», e il richiamo del compito 1 nomina il tipo per esteso |
 | **D9** | ⛔ **il trasporto riceve un TETTO consegnato** — `LocalSocketIpc::bound(name, numbers, max_body)` — e una lunghezza dichiarata sopra il tetto è `MalformedMessage` **col client che resta**; il flusso diventa **avvelenato** e ogni `receive` successivo dice lo stesso | è l'unico produttore possibile di quella variante (P-14), e senza di esso la riga `receive` della §3 del 2 prometterebbe qualcosa che nessuna sonda può tenere. Consegnato e non inventato (ADR-0034), come il contatore. ⚠️ **E toglie un buffer senza fondo** da un componente che parla con l'OS: un pari che dichiara quattro gibibyte verrebbe accumulato per sempre. ⚠️ **Costo dichiarato:** un flusso avvelenato non si riprende — un flusso con prefisso di lunghezza **non si risincronizza**, e fingere di poterlo fare sarebbe la pezza; chi vuole riprendersi chiude e riapre il collegamento, che è ciò che la GUI fa già quando il core manca (§6a, «riprova»). ⛔ **Chi sceglie il numero non è questo piano:** lo consegnano il daemon (compito 8) e il core finto (compito 11), e il compito 8 dice da dove |
 | **D10** | ⛔ **il trasporto NON incornicia**: `send` scrive i byte **verbatim**, `receive` rende **la cornice intera** — busta compresa — e `take_frame` serve solo a trovare il confine fra due messaggi | `IpcMessage::encode` incornicia già e `decode` sbuccia (P-15), quindi un messaggio consegnato a `send` è **già auto-delimitato**: una seconda busta sarebbe quattro byte con due significati e due sbucciature al pari TypeScript. ⚠️ **Ed è la convenzione che le due finte hanno già**, verbatim. **Costo:** chi chiama `send` deve consegnare una cornice intera — il doc del trasporto lo scrive, la porta no (e non si tocca: il suo doc dice «bytes», che resta vero) |
+| **D11** | ⛔ **un tipo del kernel raggiunge il filo TALE E QUALE solo se è CHIUSO** — un newtype su un numero o un enum senza dati, che non può guadagnare campi; **ogni tipo con CAMPI porta un gemello** in `kernel::wire::ipc`, e la conversione è il posto dove un campo nuovo del giornale si ferma | la regola distingue i **due precedenti opposti** del repo invece di sceglierne uno: `Mib` porta entrambe le lingue perché è un numero con un nome e non può crescere; `Trust` vuole il gemello perché il disegno lo dice. ⛔ **E per due dei quattro non è una scelta** (P-19): `Permission` porta `&'static str`, che non nasce da byte in arrivo — l'argomento che `GrantRequest` scrive contro `ResourceProfile`, ADR-0014 — e `VramPolicy` contiene le policy stesse. ⚠️ **Il beneficio è il compilatore:** ADR-0036 vuole che il giornale **evolva**, I4 rinuncia al versionamento sul filo, e senza gemelli un campo aggiunto al giornale cambierebbe i byte del filo **in silenzio**. ⚠️ **Costo:** dieci tipi nuovi in `wire::ipc` e una conversione per variante. ⚖️ **Portata al proprietario in A/B il 2026-09-11 e delegata** — *«scegli secondo decision-principles»* |
+| **D12** | le **fixture nascono al compito 3**, che crea `gui/schema/fixtures/` con **soli dati** — nessun `package.json`, nessun `Cargo.toml` | la §4 e la §8 del 2 le vogliono in `gui/`, che però nasce al **compito 10** (P-18). Le tre vie: spostare il compito 3 dopo il 10 romperebbe il taglio per artefatto (D1) e lascerebbe lo schema senza controllo per sette compiti; farle nascere in `crates/kernel/tests/` e copiarle contraddirebbe il disegno e creerebbe **due case**; crearle dove il disegno dice è il minimo. ✅ **Verificato che non ci siano effetti collaterali:** `gui/` non è ignorata, e senza manifesti `cargo` non la vede. ⚠️ **Costo:** il compito 10 trova la cartella già lì e ci costruisce intorno, invece di crearla vuota |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -1386,6 +1468,729 @@ git push
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`, con `Cargo.lock` committato **insieme** al manifesto
 - [ ] i fine-riga rimisurati e `git ls-files --eol` invariato
 - [ ] la riga **2** della tabella della posizione a ✅ con la data
+
+---
+
+## Compito 3: lo schema che cresce — le undici varianti, i gemelli del filo, le fixture e il timbro di build
+
+**Files:**
+- Modify: `crates/kernel/src/wire/ipc.rs` (**`i/lf w/crlf`**) — i gemelli, le undici varianti, l'insieme canonico, il timbro; i due richiami datati di **P-16** e **P-17**
+- Modify: `crates/kernel/tests/ipc_wire.rs` (**`i/lf w/crlf`**) — il controllo delle fixture, il generatore dichiarato, le sonde del timbro e del grafo
+- Create: `gui/schema/fixtures/*.bin` — un file per variante, **rigenerabili**
+- Create: `gui/schema/fixtures/ipc_v1.map` (**LF**) — la mappa `indice → nome → valore`, e il timbro
+- Read: la §4 del [disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), le due tabelle; la riga «lo schema» della tabella degli artefatti della §8; la **sequenza 1** di «La GUI dentro» nella [stella polare](../specs/2026-09-07-direzione-gui-design.md); `crates/kernel/src/wire/ipc.rs` e `crates/kernel/tests/ipc_wire.rs` **per intero**
+
+**Interfaces:**
+- Consumes: `kernel::arbiter::{ComputeClass, Mib, Preemption}`; `kernel::framing::{self, LENGTH_WIDTH, WireError}`; `kernel::time::Millis`
+- Produces, e i compiti 7, 8, 10, 11, 12 e 13 li usano con questi nomi esatti:
+  - `kernel::wire::ipc::BuildStamp` — `BuildStamp(u64)`, con `BuildStamp::get(&self) -> u64`
+  - `kernel::wire::ipc::{Protection, DegradationReport, PolicyReport, PolicyName, Triple, Access, Call, Provenance, LayoutState, StepSummary}`
+  - le undici varianti nuove di `kernel::wire::ipc::IpcMessage`
+  - `kernel::wire::ipc::stamp_set() -> alloc::vec::Vec<IpcMessage>` — l'insieme canonico
+  - `kernel::wire::ipc::build_stamp() -> BuildStamp`
+  - le fixture in `gui/schema/fixtures/`, che il compito 10 legge da `gui/src/schema/`
+
+⛔ **I nomi delle VARIANTI sono fissati dal disegno** (§4, decisione 9) e non si ritoccano. I nomi dei **tipi
+trasportati** li decide questo compito, e la convenzione è quella di `GrantRequest`: il tipo dice **cosa porta**,
+non di chi è gemello — nessun suffisso meccanico, perché il modulo si chiama già `wire::ipc`.
+
+### La regola dei gemelli — D11, e non è una preferenza
+
+⛔ **Un tipo del kernel raggiunge il filo TALE E QUALE solo se è CHIUSO** — un newtype su un numero o un enum
+senza dati, che non può guadagnare campi. `Mib`, `ComputeClass` e `Preemption` sono già così e **non si toccano**:
+portano entrambe le lingue (`crates/kernel/src/arbiter/resource.rs:50-61`, minicbor e `bincode::Encode` sullo
+stesso derive). **Ogni tipo con CAMPI porta un gemello** in questo modulo, e la conversione è il posto dove un
+campo nuovo del giornale si ferma e va tradotto **a mano**, col compilatore che lo dice.
+
+⛔ **E per due dei quattro non è nemmeno una scelta, il che è la prova che la regola non è arbitraria:**
+
+| Tipo del kernel | Perché il gemello | Misurato |
+|---|---|---|
+| `permission::Permission` | porta `tool: &'static str` e `resource: &'static str`, che **non nascono da byte in arrivo** — è parola per parola l'argomento che il doc di `GrantRequest` scrive contro `ResourceProfile`: testo **scelto dalla GUI**, cioè contenuto non fidato (ADR-0014), dentro un tipo con cui il core **decide** | `crates/kernel/src/permission.rs:113-117`, il 2026-09-11 |
+| `arbiter::policy::VramPolicy` | le sue due varianti **contengono le policy stesse** (`Remote(RemotePolicy)`, `Local(LocalPolicy)`): non è serializzabile per costruzione, e nessun derive la renderebbe tale | `crates/kernel/src/arbiter/policy.rs:63-66` |
+| `degradation::Degradation` | due `bool` oggi, ma ADR-0019 dichiara la **lista degli eventi aperta** col rimando del 2026-09-08 — la telecamera arriva con ADR-0039 — e la §4 del 2 dice *«i due campi **di oggi**»*: cresce per costruzione | `crates/kernel/src/degradation.rs:23-27` |
+| `record::Trust` | già deciso dal disegno: *«Sul filo un enum a due valori gemello di `Trust`, per non appendere derive `bincode` a un tipo del giornale»* | §4 del 2 |
+
+⚠️ **Costo dichiarato:** undici varianti portano dieci tipi nuovi in `wire::ipc`, e ogni compito che le riempie
+scrive una conversione. **Il beneficio è il compilatore:** ADR-0036 vuole che il giornale **evolva**, I4 rinuncia
+al versionamento sul filo, e senza i gemelli un campo aggiunto al giornale cambierebbe i byte del filo **in
+silenzio** — con una GUI vecchia che legge byte diversi e nessun rosso da nessuna parte.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+grep -c 'Request(GrantRequest)\|Verdict(Verdict)' crates/kernel/src/wire/ipc.rs
+grep -n 'pub enum IpcMessage' -A 8 crates/kernel/src/wire/ipc.rs
+ls gui 2>&1
+ls crates/kernel/tests/frozen/*.cbor | wc -l
+git ls-files --eol crates/kernel/src/wire/ipc.rs crates/kernel/tests/ipc_wire.rs
+grep -c '#\[test\]' crates/kernel/tests/ipc_wire.rs
+```
+
+Atteso: `IpcMessage` ha **due** varianti, `Request` e `Verdict`; `gui` **non esiste**; **sei** `.cbor` congelati
+(P-4, e questo compito non li tocca); i due file `i/lf w/crlf`; **sette** `#[test]` in `ipc_wire.rs`.
+
+- [ ] **Passo 2: i gemelli e le undici varianti**
+
+In `crates/kernel/src/wire/ipc.rs`, **sopra** `impl IpcMessage`, con Python `newline=""` (il file è `w/crlf`).
+Ogni tipo porta gli stessi derive dei due che ci sono già — `Debug, Clone, PartialEq, Eq, Encode, Decode` — e
+`Copy` **solo** dove tutti i campi sono `Copy`, che è la differenza fra quelli che portano `String` e gli altri:
+
+```rust
+/// The identity of a build, §6.1.2. ⛔ IT IS NOT A CONTRACT, IT IS AN IDENTITY: one accepted
+/// value, and a gui carrying a different one does not start and says so. I4 renounces
+/// versioning, and this is the mechanism that stands in its place.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub struct BuildStamp(u64);
+
+impl BuildStamp {
+    /// ⛔ THE CONSTRUCTOR IS `crate::wire::ipc::build_stamp` AND NOT A `new` HERE, and that is
+    /// the point: a stamp anyone can mint from any number is a stamp that proves nothing. The
+    /// only value that exists is the one the canonical set produces.
+    pub const fn get(&self) -> u64 {
+        self.0
+    }
+}
+
+/// What the core knows about the journal's protection, as a VALUE and not as fixed text in
+/// the gui (G16, ADR-0023).
+///
+/// ⛔ ONE VARIANT AND NOT A `bool`, AND THE REASON IS ADR-0023 ITSELF: "encrypted at rest"
+/// here means PROTECTED AS MUCH AS YOUR SYSTEM ACCOUNT, and that sentence has to reach the
+/// interface -- a false sense of security is worse than none. A `bool` would let the gui
+/// write its own sentence beside it; an enum makes the sentence the core's, and a second
+/// level of protection a VARIANT rather than a silent change of meaning.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub enum Protection {
+    /// The keys are the OS's, reached through the platform module. ADR-0023.
+    AsSystemAccount,
+}
+
+/// The degradation, on the wire. Twin of `crate::degradation::Degradation` -- D11.
+///
+/// ⚠️ THE TWO FIELDS ARE TODAY'S. ADR-0019 declares the event list OPEN (dated recall of
+/// 2026-09-08), so a field added there must STOP HERE and be translated by hand.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub struct DegradationReport {
+    pub vram_exhausted: bool,
+    pub routing_degraded: bool,
+}
+
+/// Which VRAM policy is active, with the budget. Twin of `crate::arbiter::policy::VramPolicy`
+/// -- and here the twin is FORCED: that enum carries the policies themselves.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub enum PolicyName {
+    /// ADR-0006's default: OpenRouter, VRAM free.
+    Remote,
+    Local,
+}
+
+/// The policy with what the gui shows beside it (G15/G16).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub struct PolicyReport {
+    pub policy: PolicyName,
+    pub allocatable: Mib,
+    pub total: Mib,
+}
+
+/// The permission triple of ADR-0016, on the wire. Twin of `crate::permission::Permission`
+/// -- and FORCED, for `GrantRequest`'s own reason: that type carries `&'static str`.
+///
+/// ⛔ `String` AND NOT `&'static str`, WHICH IS THE WHOLE OF THIS TYPE. A `&'static str`
+/// cannot be produced from arriving bytes without leaking, and what would leak is text CHOSEN
+/// BY THE PEER -- untrusted content (ADR-0014) inside a type a permission decision reads.
+/// ⚠️ AND THE DIRECTION MATTERS: the core sends this DOWN (`PermissionRequired`) and receives
+/// it back UP (`Approve`). The returning one is untrusted, so whoever consumes it matches it
+/// against the triple IT asked for rather than trusting the strings -- written here so the
+/// consumer does not rediscover it. The probe is born with that consumer, task 7.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub struct Triple {
+    pub tool: String,
+    pub resource: String,
+    pub operation: Access,
+}
+
+/// The operation of the triple. Twin of `crate::permission::Operation` -- D11.
+///
+/// ⛔ AN ENUM AND NOT A `bool`, AND THE KERNEL ALREADY PAID FOR THIS LESSON: the doc of
+/// `Operation::is_write` records that `matches!` folds EVERY other variant into `false`, so a
+/// third operation would reach the DURABLE record as a read -- measured on 2026-09-01 with
+/// `Execute` added. On the wire the same fold would make a third operation arrive as a read.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub enum Access {
+    Read,
+    Write,
+}
+
+/// Which registry function, and with what argument. ADR-0038.
+///
+/// ⛔ NAMED `Call` AND NOT `Invocation`, and that is deliberate: task 6 brings
+/// `crate::record::Invocation`, the DURABLE detail, and two types one letter apart in the two
+/// worlds this plan keeps separate is the ambiguity D8 refused for `counter`.
+///
+/// ⚠️ THE ARGUMENT IS A `String` AND IT IS UNTRUSTED. Nothing here validates that `function`
+/// names a registered function: the registry does, by REFUSING (task 6). A schema that could
+/// only express registered names would be a second registry, kept aligned by hand.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub struct Call {
+    pub function: String,
+    pub argument: String,
+}
+
+/// Where a piece of text came from. Twin of `crate::record::Trust` -- and the twin the design
+/// asked for by name, "so as not to hang `bincode` derives on a journal type".
+///
+/// ⛔ A MODEL'S TEXT IS UNTRUSTED (ADR-0014) and the gui marks it (G13). The label is
+/// HEREDITARY: summarising or concatenating untrusted text leaves it untrusted.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub enum Provenance {
+    Trusted,
+    Untrusted,
+}
+
+/// What the seventh port holds under the layout key -- and its three states, decision 35.
+///
+/// ⛔ `Unavailable` IS NOT `Nothing`, AND CONFLATING THEM WOULD BE THE SILENT DEGRADATION
+/// ADR-0019 FORBIDS. "Nothing" is an archive that opened and is empty -- a first run.
+/// "Unavailable" is an archive that would not open at all, and the core starts anyway and
+/// SAYS SO. A gui told "nothing" would offer to save; one told "unavailable" knows the save
+/// will not stick.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub enum LayoutState {
+    /// The opaque package: `toJSON()` of `dockview` plus the active view.
+    Package(Vec<u8>),
+    /// The archive opened and holds nothing under the key.
+    Nothing,
+    /// The archive would not open. The core started anyway (decision 35).
+    Unavailable,
+}
+
+/// One line of the step list: in milestone 2 these are registry invocations.
+///
+/// ⛔ A SUMMARY AND NOT THE RECORD. The journal's records must EVOLVE (ADR-0036) and this wire
+/// renounces versioning (I4): sending the record itself would tie the two, and a field added
+/// to a durable record would change these bytes with nothing going red.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub struct StepSummary {
+    pub step: u64,
+    pub function: String,
+    /// `None` while the step is still in doubt -- ADR-0007's intent written and no outcome yet.
+    pub outcome: Option<bool>,
+}
+```
+
+E l'enum, che **sostituisce** quello di oggi conservando le due varianti in coda, con la direzione nel doc di
+ciascuna come il modulo già prescrive:
+
+```rust
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub enum IpcMessage {
+    /// gui -> core. The handshake, §6.1.2.
+    Hello(BuildStamp),
+    /// core -> gui. The stamp matched.
+    Accepted(Protection),
+    /// core -> gui. The stamp did not match; this carries the EXPECTED one, and the core
+    /// stops listening to that client -- the port has no close (decision 22).
+    StaleBuild(BuildStamp),
+    /// core -> gui.
+    Degradation(DegradationReport),
+    /// core -> gui.
+    Policy(PolicyReport),
+    /// gui -> core.
+    Invoke(Call),
+    /// core -> gui. The triple the user must grant, before the invocation can run.
+    PermissionRequired(Triple),
+    /// gui -> core. ⛔ IT CARRIES THE CALL TOO, decision 21: `permission::grant` writes a NOTE
+    /// and wants a step already open, and the core opens that step only when the invocation
+    /// arrives. So `Approve` is enough, and the gui does not resend `Invoke`.
+    Approve { triple: Triple, call: Call },
+    /// core -> gui. In milestone 2 only the fake core produces these.
+    Token { text: String, provenance: Provenance },
+    /// core -> gui. At the welcome after `Policy`, and again after every `SaveLayout`.
+    Layout(LayoutState),
+    /// gui -> core. The opaque package, when the layout settles and when the window closes.
+    SaveLayout(Vec<u8>),
+    /// core -> gui. At the welcome, and after every invocation.
+    Steps(Vec<StepSummary>),
+    /// gui -> core. ⚠️ NO GUI OF MILESTONE 2 SENDS THIS -- D5, and the 3D is not in the 2.
+    Request(GrantRequest),
+    /// core -> gui.
+    Verdict(Verdict),
+}
+```
+
+⚠️ **`String` e `Vec` vogliono l'import:** in testa al file `use alloc::string::String;` accanto a
+`use alloc::vec::Vec;`, che c'è già. La crate è `no_std` + `alloc`, quindi `String` **non** è nel preludio.
+
+- [ ] **Passo 3: l'insieme canonico e il timbro, nello stesso posto**
+
+⛔ **Una funzione sola produce l'insieme, e da lì lo usano ENTRAMBI** — il generatore delle fixture e il timbro.
+Due elenchi sarebbero due posti da tenere allineati per una proprietà sola, e il primo che smette mente in
+silenzio: è l'argomento che `record_v1.map` scrive di sé. In coda a `crates/kernel/src/wire/ipc.rs`:
+
+```rust
+/// The canonical set: ONE message per variant, in a fixed order.
+///
+/// ⛔ ONE FUNCTION AND NOT TWO LISTS. The fixtures are generated from this and the stamp is
+/// computed from this, so THEY CANNOT DRIFT APART: a variant added here changes both, and a
+/// variant added to `IpcMessage` and forgotten here is caught by
+/// `every_variant_is_in_the_canonical_set` below. Two lists would be two places to keep
+/// aligned for one property, and the first one to stop being updated lies in silence -- the
+/// argument `crates/kernel/tests/frozen/record_v1.map` makes about itself.
+///
+/// ⚠️ THE VALUES ARE ARBITRARY BUT NOT RANDOM: each one is chosen so that no two encodings
+/// are equal and no field is left at its type's default, because a fixture full of zeroes
+/// cannot tell a field that is written from one that is skipped.
+pub fn stamp_set() -> Vec<IpcMessage> {
+    alloc::vec![
+        IpcMessage::Hello(BuildStamp(0x0123_4567_89AB_CDEF)),
+        IpcMessage::Accepted(Protection::AsSystemAccount),
+        IpcMessage::StaleBuild(BuildStamp(0xFEDC_BA98_7654_3210)),
+        IpcMessage::Degradation(DegradationReport {
+            vram_exhausted: true,
+            routing_degraded: false,
+        }),
+        IpcMessage::Policy(PolicyReport {
+            policy: PolicyName::Remote,
+            allocatable: Mib::new(12288),
+            total: Mib::new(16384),
+        }),
+        IpcMessage::Invoke(Call {
+            function: String::from("arbiter.set_policy"),
+            argument: String::from("local"),
+        }),
+        IpcMessage::PermissionRequired(Triple {
+            tool: String::from("arbiter"),
+            resource: String::from("policy"),
+            operation: Access::Write,
+        }),
+        IpcMessage::Approve {
+            triple: Triple {
+                tool: String::from("arbiter"),
+                resource: String::from("policy"),
+                operation: Access::Write,
+            },
+            call: Call {
+                function: String::from("arbiter.set_policy"),
+                argument: String::from("local"),
+            },
+        },
+        IpcMessage::Token {
+            text: String::from("ciao"),
+            provenance: Provenance::Untrusted,
+        },
+        IpcMessage::Layout(LayoutState::Package(alloc::vec![0x7B, 0x7D])),
+        IpcMessage::SaveLayout(alloc::vec![0x5B, 0x5D]),
+        IpcMessage::Steps(alloc::vec![StepSummary {
+            step: 42,
+            function: String::from("arbiter.set_policy"),
+            outcome: Some(true),
+        }]),
+        IpcMessage::Request(GrantRequest {
+            reserved_vram: Mib::new(2048),
+            compute_class: ComputeClass::Interactive,
+            preemption: Preemption::After(Millis::new(500)),
+        }),
+        IpcMessage::Verdict(Verdict::Refused {
+            asked: Mib::new(4096),
+            ceiling: Mib::new(1024),
+        }),
+    ]
+}
+
+/// The build stamp: FNV-1a over the encoding of the canonical set.
+///
+/// ⛔ WRITTEN BY HAND AND NOT A DEPENDENCY, and the two reasons are different. ADR-0031 makes
+/// adding a crate to the kernel's list a deliberate act, and this is SIX LINES. And it is an
+/// IDENTITY, not a defence: nothing here resists a peer that wants to forge a stamp, because a
+/// peer that can forge one is already inside the process boundary. ⚠️ THE DAY THIS IS ASKED TO
+/// BE A DEFENCE IT IS THE WRONG FUNCTION, and the note is here rather than in the design
+/// because this is where someone would reach for it. ⛔ AND IT IS NOT ADR-0018's FINGERPRINT
+/// for pruned payloads, which remains a registered decision of the owner
+/// (`crate::ports::journal`, the doc of `prune`).
+///
+/// ⚠️ THE LENGTH GOES IN TOO, not just the bytes: without it two adjacent messages could be
+/// re-split differently and hash the same.
+pub fn build_stamp() -> BuildStamp {
+    let mut hash: u64 = 0xCBF2_9CE4_8422_2325;
+    for message in stamp_set() {
+        let bytes = message.encode().unwrap_or_default();
+        for byte in (bytes.len() as u64).to_be_bytes().iter().chain(bytes.iter()) {
+            hash ^= *byte as u64;
+            hash = hash.wrapping_mul(0x0000_0100_0000_01B3);
+        }
+    }
+    BuildStamp(hash)
+}
+```
+
+⚠️ **`Mib::new` e `Millis::new` sono `const fn` pubbliche** — `crates/kernel/tests/ipc_wire.rs` le usa già così,
+quindi non serve nient'altro. E `alloc::vec!` si scrive per esteso perché la crate è `no_std`.
+
+- [ ] **Passo 4: il banco che fallisce — la compilazione prima**
+
+```bash
+cargo build --locked -p kernel 2>&1 | tail -20
+```
+
+Atteso al primo colpo: **rosso**, con `cannot find type` sui gemelli finché il Passo 2 non è scritto per intero;
+poi **verde** a zero avvisi. ⛔ **Se è verde PRIMA del Passo 2, il compito è già eseguito** — quarta domanda del
+pre-controllo: ci si ferma e si riporta.
+
+- [ ] **Passo 5: le sonde nuove in `ipc_wire.rs`**
+
+In coda a `crates/kernel/tests/ipc_wire.rs`, con Python `newline=""` (il file è `w/crlf`). ⛔ **Le sette sonde
+che ci sono già NON si toccano**: reggono, e la prima direzione del compito è che restino verdi.
+
+```rust
+#[test]
+fn every_variant_is_in_the_canonical_set() {
+    // ⛔ THE GUARD THAT MAKES THE OTHER PROBES WORTH SOMETHING. A variant added to
+    // `IpcMessage` and forgotten in `stamp_set` would leave the fixtures short, the stamp
+    // unchanged, and every probe in this file GREEN -- the schema would have grown and
+    // nothing would say so. The `match` is exhaustive on purpose: adding a variant makes THIS
+    // a compile error, which is level 1 rather than a test at level 2.
+    let mut seen = [false; 14];
+    for message in stamp_set() {
+        let slot = match message {
+            IpcMessage::Hello(_) => 0,
+            IpcMessage::Accepted(_) => 1,
+            IpcMessage::StaleBuild(_) => 2,
+            IpcMessage::Degradation(_) => 3,
+            IpcMessage::Policy(_) => 4,
+            IpcMessage::Invoke(_) => 5,
+            IpcMessage::PermissionRequired(_) => 6,
+            IpcMessage::Approve { .. } => 7,
+            IpcMessage::Token { .. } => 8,
+            IpcMessage::Layout(_) => 9,
+            IpcMessage::SaveLayout(_) => 10,
+            IpcMessage::Steps(_) => 11,
+            IpcMessage::Request(_) => 12,
+            IpcMessage::Verdict(_) => 13,
+        };
+        assert!(!seen[slot], "slot {slot} appears twice in the canonical set");
+        seen[slot] = true;
+    }
+    let missing: Vec<usize> = (0..14).filter(|i| !seen[*i]).collect();
+    assert!(missing.is_empty(), "variants missing from stamp_set: {missing:?}");
+}
+
+#[test]
+fn every_message_of_the_canonical_set_survives_the_round_trip() {
+    // ⚠️ ONE LOOP THAT COLLECTS RATHER THAN FOURTEEN ASSERTS IN A ROW -- gotcha #14 from the
+    // other side. A row of asserts stops at the first red and hides the other thirteen; a
+    // loop that stops does the same. This one records every failure and reports them together,
+    // so one red tells the whole story.
+    let mut broken = Vec::new();
+    for message in stamp_set() {
+        let bytes = match message.encode() {
+            Ok(bytes) => bytes,
+            Err(_) => {
+                broken.push(alloc_fmt(&message, "encode failed"));
+                continue;
+            }
+        };
+        match IpcMessage::decode(&bytes) {
+            Ok(back) if back == message => {}
+            Ok(_) => broken.push(alloc_fmt(&message, "decoded to a different value")),
+            Err(error) => broken.push(alloc_fmt(&message, &format!("{error:?}"))),
+        }
+    }
+    assert!(broken.is_empty(), "round trip failed for:\n{}", broken.join("\n"));
+}
+
+fn alloc_fmt(message: &IpcMessage, why: &str) -> String {
+    format!("  {message:?} -- {why}")
+}
+
+#[test]
+fn a_string_in_the_schema_still_cannot_stop_the_encoder() {
+    // ⛔ THIS IS P-17 MEASURED RATHER THAN DEDUCED. The doc of `IpcMessage::encode` argues that
+    // a failed encoding cannot happen by reading THIS TYPE'S GRAPH, and until today that graph
+    // was `Mib(u64)`, `ComputeClass`, `Preemption`, `Millis(u64)` and unit variants. The
+    // variants added today put `String` and `Vec<u8>` in it, so the argument is RE-READ rather
+    // than inherited: of the four `EncodeError` variants reachable without `std`
+    // (`UnexpectedEnd`, `RefCellAlreadyBorrowed`, `Other`, `OtherString`) none is producible by
+    // a derived `Encode` over `String` and `Vec<u8>` into a growing `Vec`. Read in
+    // bincode 2.0.1's `src/error.rs` on 2026-09-11.
+    //
+    // ⚠️ AND THE INPUT IS THE AWKWARD ONE, not a convenient short string: multi-byte UTF-8, an
+    // empty string, and an empty byte vector in the same message.
+    let message = IpcMessage::Token {
+        text: String::from("caffè ☕ \u{0}\u{7F}"),
+        provenance: Provenance::Untrusted,
+    };
+    let bytes = message.encode().expect("a String does not stop the encoder");
+    assert_ne!(bytes.len(), LENGTH_WIDTH, "an empty body would mean the encoder stopped");
+    assert_eq!(IpcMessage::decode(&bytes), Ok(message));
+
+    let empty = IpcMessage::Layout(LayoutState::Package(Vec::new()));
+    let bytes = empty.encode().expect("an empty Vec does not stop the encoder");
+    assert_eq!(IpcMessage::decode(&bytes), Ok(empty));
+}
+
+#[test]
+fn the_stamp_changes_when_the_schema_changes() {
+    // ⛔ THE SECOND DIRECTION, AND WITHOUT IT THE STAMP PROVES NOTHING. That `build_stamp()`
+    // returns the same value twice is what a constant would also do. What must hold is that a
+    // DIFFERENT set gives a DIFFERENT stamp -- computed here over a set with one message
+    // altered, using the same function the real one uses.
+    assert_eq!(build_stamp(), build_stamp(), "the stamp is stable within a build");
+
+    let mut altered = stamp_set();
+    altered[0] = IpcMessage::Hello(BuildStamp(0));
+    assert_ne!(
+        fnv_over(&altered),
+        build_stamp().get(),
+        "a changed message must change the stamp"
+    );
+
+    let shortened: Vec<IpcMessage> = stamp_set().into_iter().skip(1).collect();
+    assert_ne!(
+        fnv_over(&shortened),
+        build_stamp().get(),
+        "a missing message must change the stamp"
+    );
+}
+
+/// The same arithmetic as `build_stamp`, over a set the probe chooses. ⚠️ WRITTEN OUT RATHER
+/// THAN CALLING `build_stamp`, which takes no argument: an oracle that calls the thing it
+/// checks would be vacuous.
+fn fnv_over(messages: &[IpcMessage]) -> u64 {
+    let mut hash: u64 = 0xCBF2_9CE4_8422_2325;
+    for message in messages {
+        let bytes = message.encode().expect("encode");
+        for byte in (bytes.len() as u64).to_be_bytes().iter().chain(bytes.iter()) {
+            hash ^= *byte as u64;
+            hash = hash.wrapping_mul(0x0000_0100_0000_01B3);
+        }
+    }
+    hash
+}
+```
+
+⚠️ **Gli import in testa al file crescono:** `use kernel::wire::ipc::{build_stamp, stamp_set, Access, BuildStamp,
+Call, DegradationReport, GrantRequest, IpcMessage, LayoutState, PolicyName, PolicyReport, Protection, Provenance,
+StepSummary, Triple, Verdict};`. ⛔ **Un test di integrazione compila con `std`**, quindi `String`, `Vec` e
+`format!` sono nel preludio qui, al contrario di `src/`.
+
+- [ ] **Passo 6: il generatore dichiarato, e le fixture**
+
+⛔ **È un comando DICHIARATO e non un rimedio nascosto:** le fixture **si rigenerano** quando lo schema cambia, al
+contrario dei byte congelati di ADR-0036, che non si rigenerano mai. Il generatore vive accanto al controllo,
+ignorato dal cancello, in coda a `crates/kernel/tests/ipc_wire.rs`:
+
+```rust
+#[test]
+#[ignore = "generator, not a check: run it on purpose when the schema changes -- see the map"]
+fn regenerate_the_fixtures() {
+    // ⛔ THE ONLY WRITER OF `gui/schema/fixtures/`, and it writes the map in the same pass, so
+    // bytes and map cannot drift. `#[ignore]` with a reason, as `scripts/gate.sh` requires of
+    // every ignored test: the gate must not rewrite artefacts it is checking.
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../gui/schema/fixtures");
+    std::fs::create_dir_all(&root).expect("create the fixtures directory");
+    let mut map = String::from(
+        "# The map of the ipc fixtures -- \u{a7}4 of the milestone-2 design.\n\
+         # REGENERATED, not frozen: when the schema changes, run\n\
+         #   cargo test --locked -p kernel --test ipc_wire -- --ignored regenerate_the_fixtures\n\
+         # and commit what changes. The frozen bytes of ADR-0036 are the OPPOSITE artefact and\n\
+         # live in crates/kernel/tests/frozen/.\n\
+         # Produced by regenerate_the_fixtures in ../../../crates/kernel/tests/ipc_wire.rs.\n\n",
+    );
+    for (index, message) in stamp_set().into_iter().enumerate() {
+        let name = variant_name(&message);
+        let bytes = message.encode().expect("encode");
+        std::fs::write(root.join(format!("{index:02}-{name}.bin")), &bytes).expect("write");
+        map.push_str(&format!(
+            "{index:02} {name} {len} bytes\n    {message:?}\n",
+            len = bytes.len()
+        ));
+    }
+    map.push_str(&format!("\nstamp {:#018x}\n", build_stamp().get()));
+    std::fs::write(root.join("ipc_v1.map"), map).expect("write the map");
+}
+
+/// The name a fixture file carries. ⚠️ AN EXHAUSTIVE `match` AND NOT `{:?}` TRUNCATED: a
+/// variant added must make this a compile error, the same reason `Operation::is_write` gives.
+fn variant_name(message: &IpcMessage) -> &'static str {
+    match message {
+        IpcMessage::Hello(_) => "hello",
+        IpcMessage::Accepted(_) => "accepted",
+        IpcMessage::StaleBuild(_) => "stale-build",
+        IpcMessage::Degradation(_) => "degradation",
+        IpcMessage::Policy(_) => "policy",
+        IpcMessage::Invoke(_) => "invoke",
+        IpcMessage::PermissionRequired(_) => "permission-required",
+        IpcMessage::Approve { .. } => "approve",
+        IpcMessage::Token { .. } => "token",
+        IpcMessage::Layout(_) => "layout",
+        IpcMessage::SaveLayout(_) => "save-layout",
+        IpcMessage::Steps(_) => "steps",
+        IpcMessage::Request(_) => "request",
+        IpcMessage::Verdict(_) => "verdict",
+    }
+}
+```
+
+Poi si lancia, una volta:
+
+```bash
+cargo test --locked -p kernel --test ipc_wire -- --ignored regenerate_the_fixtures
+ls gui/schema/fixtures/
+cat gui/schema/fixtures/ipc_v1.map | tail -3
+tr -cd '\r' < gui/schema/fixtures/ipc_v1.map | wc -c
+```
+
+Atteso: **quattordici** `.bin` più `ipc_v1.map`; la mappa finisce con la riga `stamp 0x…`; **zero** CR nella mappa
+(nasce LF, vincolo 4).
+
+- [ ] **Passo 7: il controllo che dice «rigenera»**
+
+⛔ **È il rovescio dei byte congelati, e il messaggio di rosso è la differenza:** lì il rosso dice *«hai cambiato
+formato»*, qui dice *«rigenera»*. In coda a `ipc_wire.rs`:
+
+```rust
+#[test]
+fn the_committed_fixtures_match_the_schema() {
+    // ⛔ THE CHECK THE GATE RUNS. A schema changed without regenerating is RED here, and the
+    // message says what to do rather than leaving the reader to work it out -- because the
+    // right answer is to regenerate, which is exactly the wrong answer for `frozen_bytes.rs`.
+    //
+    // ⚠️ READ AT RUN TIME AND NOT `include_bytes!`, and the difference from `frozen_bytes.rs`
+    // is the artefact, not an oversight: a frozen record is an ORACLE that must enter the
+    // binary, while these are regenerable and a MISSING one has to be a red rather than a
+    // compile error the generator itself could not fix.
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../gui/schema/fixtures");
+    let mut wrong = Vec::new();
+    for (index, message) in stamp_set().into_iter().enumerate() {
+        let name = variant_name(&message);
+        let path = root.join(format!("{index:02}-{name}.bin"));
+        let expected = message.encode().expect("encode");
+        match std::fs::read(&path) {
+            Ok(found) if found == expected => {}
+            Ok(_) => wrong.push(format!("  {index:02}-{name}.bin: different bytes")),
+            Err(error) => wrong.push(format!("  {index:02}-{name}.bin: {error}")),
+        }
+    }
+    let extra: Vec<String> = std::fs::read_dir(&root)
+        .expect("read the fixtures directory")
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.file_name().to_string_lossy().into_owned())
+        .filter(|name| name.ends_with(".bin"))
+        .filter(|name| {
+            !stamp_set()
+                .iter()
+                .enumerate()
+                .any(|(i, m)| *name == format!("{i:02}-{}.bin", variant_name(m)))
+        })
+        .collect();
+    assert!(
+        wrong.is_empty() && extra.is_empty(),
+        "the committed fixtures do not match the schema. REGENERATE them:\n  \
+         cargo test --locked -p kernel --test ipc_wire -- --ignored regenerate_the_fixtures\n\
+         mismatched:\n{}\nleft over:\n  {}",
+        wrong.join("\n"),
+        extra.join("\n  ")
+    );
+}
+```
+
+⚠️ **La seconda metà è il file di TROPPO**, e senza di essa una variante tolta lascerebbe la sua fixture in
+`gui/` per sempre, letta da nessuno e committata da tutti.
+
+- [ ] **Passo 8: le due direzioni, misurate**
+
+⛔ **Un controllo si prova in due direzioni**, e la seconda è quella che si dimentica. Una per volta, compilata,
+eseguita, e **revocata** con `git diff` a zero:
+
+| | La mutazione | Atteso |
+|---|---|---|
+| **G6** | in `stamp_set`, `Access::Write` → `Access::Read` nella `PermissionRequired` | `the_committed_fixtures_match_the_schema` **rosso**, col nome `06-permission-required.bin` e la riga «REGENERATE them» |
+| **G7** | togli la riga `IpcMessage::Steps(...)` da `stamp_set` | `every_variant_is_in_the_canonical_set` **rosso** con `variants missing from stamp_set: [11]`, e il controllo delle fixture rosso su «left over» |
+| **G8** | in `build_stamp`, togli `(bytes.len() as u64).to_be_bytes().iter().chain(...)` e lascia `bytes.iter()` | `the_stamp_changes_when_the_schema_changes` resta **verde** — ⚠️ **e questo è il limite dichiarato della sonda**, non un difetto da correggere qui: la lunghezza difende contro due messaggi ri-tagliati, che l'insieme canonico non contiene. Si **registra** in coda alla voce, non si inventa un caso per farlo scattare |
+
+```bash
+cargo test --locked -p kernel --test ipc_wire 2>&1 | tail -5
+git diff --stat
+```
+
+Atteso dopo ogni revoca: **dodici passati**, e `git diff --stat` **vuoto**.
+
+- [ ] **Passo 9: i due richiami datati — P-16 e P-17**
+
+(a) In `crates/kernel/src/wire/ipc.rs`, **sotto** il capoverso del modulo che comincia con
+`//! ⛔ AND THE REVOCATION core -> gui IS A DECLARED NON-CONSTRUCTION` — il *Trova* si prende dal file, non da
+qui:
+
+```rust
+//! ✅ DATED RECALL, 2026-09-11 -- THE TRIGGER WRITTEN ABOVE FELL DUE TODAY AND IS NOT HONOURED,
+//! WHICH IS THE OPPOSITE OF WHAT "the same shell" READS LIKE. The shell arrived (ADR-0029,
+//! Electron, 2026-09-10) and the revocation is STILL not built, because the sentence names the
+//! shell while the mechanism needs an ADDRESSEE: milestone 2 does not serve `Request` at all
+//! (decision D5 of its plan, argued against this file's own doc of `GrantRequest`), so NO
+//! ORDINARY GRANT EXISTS to revoke and there is nobody to tell. ⛔ THE TRIGGER IS THEREFORE
+//! THE 3D CONSUMER, subproject 7 -- the same closer row 27 of milestone 6 carries in
+//! docs/porta-di-qualita.md. ⚠️ CORRECTED RATHER THAN DELETED: the paragraph above is the only
+//! place that says what the revocation IS, and it is gotcha #77 again -- a deadline written in
+//! prose, which nothing can go red for.
+//!
+//! ✅ AND THE OTHER HALF DID ARRIVE: the BUILD STAMP of §6.1.2 exists as of today,
+//! `crate::wire::ipc::build_stamp` over `stamp_set`. "Until it exists, NOTHING REFUSES A STALE
+//! GUI" above is now false, and the handshake that uses it is task 7 of the same plan.
+```
+
+(b) In `crates/kernel/src/wire/ipc.rs`, in coda al doc di `IpcMessage::encode`:
+
+```rust
+    /// ⚠️ DATED RECALL, 2026-09-11 -- THE GRAPH READ ABOVE IS NO LONGER THIS TYPE'S GRAPH, AND
+    /// THE ARGUMENT IS RE-READ RATHER THAN INHERITED. Eleven variants arrived, and they put
+    /// `String` and `Vec<u8>` into it. Re-read in bincode 2.0.1's `src/error.rs` the same day:
+    /// the variants reachable without `std` are `UnexpectedEnd` (a writer out of room),
+    /// `RefCellAlreadyBorrowed`, `Other(&'static str)` and `OtherString(String)` behind
+    /// `alloc` -- and the last two are produced only by a HAND-WRITTEN `Encode`, which nothing
+    /// here has. The relation holds; the enumeration did not, which is why it is dated instead
+    /// of left standing. ⛔ AND IT IS NOW MEASURED RATHER THAN ARGUED:
+    /// `a_string_in_the_schema_still_cannot_stop_the_encoder` in
+    /// `crates/kernel/tests/ipc_wire.rs` is the probe, and it feeds the awkward string rather
+    /// than a convenient one.
+```
+
+⛔ **Anche `crates/kernel/src/ports/ipc.rs` porta la frase *«milestone 6 brings … the BUILD STAMP»* col proprio
+richiamo del 2026-08-31 che ne corregge il *quando*.** Quel file **non si tocca qui**: il suo richiamo dice
+già che l'innesco *«vive accanto allo schema in `crate::wire::ipc` — UNA casa, così i due non divergono»*, e (a)
+è quella casa. ⚠️ **Toccarlo sarebbe ricreare la seconda casa che quel richiamo ha tolto** — gotcha #68.
+
+- [ ] **Passo 10: i fine-riga, il cancello, il commit**
+
+```bash
+for f in crates/kernel/src/wire/ipc.rs crates/kernel/tests/ipc_wire.rs; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; printf '   righe='; wc -l < "$f"; done
+git ls-files --eol crates/kernel/src/wire/ipc.rs crates/kernel/tests/ipc_wire.rs
+tr -cd '\r' < gui/schema/fixtures/ipc_v1.map | wc -c
+bash scripts/gate.sh 2>&1 | tail -3
+bash scripts/check-docs.sh 2>&1 | tail -2
+git status --porcelain | head -20
+```
+
+Atteso: per i due file `CR` **uguale** alle righe e `i/lf w/crlf` **invariato**; **zero** CR nella mappa;
+`GATE GREEN`; `OK`; in `git status` i due sorgenti e i quindici file di `gui/schema/fixtures/`, **niente altro**.
+
+```bash
+git add crates/kernel/src/wire/ipc.rs crates/kernel/tests/ipc_wire.rs gui/schema/fixtures docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+git commit -m "gui(compito 3): lo schema che cresce -- le undici varianti di IpcMessage coi gemelli del filo (D11), l'insieme canonico e il timbro di build, le quattordici fixture rigenerabili in gui/schema/fixtures e il controllo che dice rigenera; i richiami datati su P-16 (l'innesco della revoca e' il 7) e P-17 (il grafo di encode riletto)"
+git push
+```
+
+#### Criterio di chiusura del compito 3
+
+- [ ] `cargo test --locked -p kernel --test ipc_wire` → **dodici passati**, uno ignorato
+- [ ] `ls gui/schema/fixtures/*.bin | wc -l` → **14**; `grep -c '^stamp 0x' gui/schema/fixtures/ipc_v1.map` → **1**
+- [ ] `grep -c 'DATED RECALL, 2026-09-11' crates/kernel/src/wire/ipc.rs` → **2**
+- [ ] `grep -c 'BUILD STAMP' crates/kernel/src/ports/ipc.rs` → **invariato rispetto al Passo 1**: quel file non si tocca
+- [ ] le tre mutazioni G6, G7, G8 provate **una per volta** e revocate, con `git diff --stat` vuoto
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/gate-deps.sh` **verde**: la lista di ADR-0031 **non è cresciuta** (il timbro è scritto a mano)
+- [ ] `crates/kernel/tests/frozen/` **invariato**: `ls crates/kernel/tests/frozen/*.cbor | wc -l` → **6**, e `git diff --stat crates/kernel/tests/frozen/` vuoto
+- [ ] i fine-riga rimisurati, `git ls-files --eol` invariato sui due file toccati
+- [ ] la riga **3** della tabella della posizione a ✅ con la data
 
 ---
 

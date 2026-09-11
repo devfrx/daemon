@@ -672,6 +672,93 @@ Vec<u8>)>` come `MemoryJournal` tiene `Vec<Entry>`, mentre un `Option<Vec<u8>>` 
 un argomento, non un rosso, ed è etichettato come tale — la stessa forma di `EntryKind::Note` in
 `crates/simulator/src/journal.rs`.
 
+### P-30 — L'«argomento» dell'invocazione arriva come `String` dal filo, e la §5 non dice che tipo abbia nel kernel
+
+**Domanda 3 — l'artefatto è sbagliato, e compila.** La §5 del 2 dà a `invoke` *«nome, invocatore, argomento»* e
+tace sui tipi. Ma il compito 3 mette sul filo `Call { function: String, argument: String }`, e **ogni**
+costruttore di dettaglio del giornale prende `&'static str` — misurato il 2026-09-11:
+`RoutingDetail::new(model: &'static str, …)` e `PermissionDetail::new(tool: &'static str, resource: &'static
+str, …)`, entrambi con `String::from` **dentro**. La ragione è scritta in tutti e due: *«a caller cannot hand this
+type text it computed at runtime»*.
+
+⛔ **Quindi due strade si aprono, e sono di specie diversa.**
+
+| Cosa arriva | Dove va | Perché |
+|---|---|---|
+| il **nome** della funzione | **non diventa mai** un `&'static str`: si **confronta** contro i nomi registrati e si scarta | è la disciplina che `permission::is_granted` scrive già — *«the decoded values never leave this function: they are compared against `&'static str` the caller already held, and dropped»*. Nel giornale finisce il nome **registrato**, che è nostro |
+| l'**argomento** | il **`payload` del record**, sotto `Trust::Untrusted` | ⛔ **è il precedente di `VerdictDetail`, alla lettera:** *«THE DETAIL TEXT IS NOT HERE: it is untrusted by inheritance (ADR-0014) and travels in the record's `payload`, under the `trust` label that exists to say so. What lives here is what is OURS and structured»*. L'argomento è testo **scelto dalla GUI**: nel dettaglio strutturato non può stare, e nel payload ha già l'etichetta che lo dice |
+
+⚠️ **E ne discende che `InvocationDetail` porta DUE campi e non tre**, benché la §5 dica *«funzione, invocatore,
+argomento»*: il terzo c'è, ma nel payload accanto — dove il record ha già un posto per il non fidato. La §5 riceve
+il proprio **richiamo datato** al compito 6, insieme a quello di **P-32**.
+
+### P-31 — `invoke` NON può eseguire l'effetto da sé: sarebbe il contenuto dentro il meccanismo
+
+**Riga 7 — un ADR si legge contro i propri fratelli.** La regola **1** di ADR-0038 dice che il kernel dà
+*«registrazione, invocazione, il permesso e il giornale»* e che **il contenuto — quali funzioni esistano — lo
+portano le capacità e la GUI**, nella forma dei registri di ADR-0009. Ma la §5 del 2 dice *«se sì → l'effetto»* e
+nomina `Arbiter::set_policy`, e la sonda che chiede è *«tripla non concessa → `set_policy` mai chiamato»*.
+
+⛔ **Un `kernel::registry` che chiamasse `set_policy` metterebbe il contenuto dentro il meccanismo**, e si
+vedrebbe subito: dovrebbe **nominare** `Arbiter` e `VramPolicy`. Il secondo invocatore — il gesto, col 12 —
+dovrebbe allora aggiungere il proprio effetto **qui dentro**, che è esattamente la *«logica solo per gesti»* che
+l'ADR rifiuta, al rovescio.
+
+**Conseguenza: D16** — `invoke` prende l'**effetto come chiusura**, e la regola 1 sale al **livello 1**: un
+registro che nomina l'arbitro non compilerebbe senza importarlo, e l'assenza di quell'`use` è la prova.
+⚠️ **E la chiusura riceve il giornale**, perché `set_policy` lo vuole: `E: FnOnce(&mut J) -> Result<T,
+JournalError>`. Prestarlo due volte non si può, quindi passa **attraverso**.
+
+### P-32 — La §5 cita la regola SBAGLIATA per l'invocatore, e il costo non è zero
+
+**Riga 5 — il contratto cresce sotto il piano**, e qui cresce contro un artefatto che **non si rigenera**. La §5
+dice: *«l'invocatore | un enum con una sola variante oggi … il 12 aggiunge il gesto con un indice nuovo, **senza
+cambio di formato** (ADR-0036, regola 3)»*.
+
+⛔ **La regola 3 di §4.9.2 parla di CAMPI** — *«un campo nuovo è facoltativo e prende un indice nuovo»* — e una
+variante di enum non è un campo. Ciò che vale per le varianti lo scrive la testa di
+`crates/kernel/tests/frozen_bytes.rs`, al suo punto **3**: *«A VARIANT ADDED TO ONE OF THE THREE `index_only`
+ENUMS makes every record carrying it UNDECODABLE to an older build. The direction is safe … but it was free only
+while the archive did not exist.»*
+
+✅ **Il merito regge — la direzione è sicura** (`Malformed` riconcilia come `SuspendAndAsk`, quindi una build
+vecchia si ferma invece di indovinare) — **ma «senza cambio di formato» è falso**, e la citazione manda chi legge
+alla regola che non governa il caso. **Richiamo datato sulla riga**, al compito 6.
+
+⛔ **E c'è una conseguenza di progetto, non solo di prosa:** `PermissionDetail` **rifiuta** un enum sul filo con
+un argomento scritto per esteso — *«an enum here would be a FOURTH `index_only` enum ON THE WIRE, whose variant
+indices `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index on the wire never
+retires»* — e sceglie un `bool`. `VerdictDetail` fa lo stesso, per lo stesso motivo. Un `Invoker` messo sul filo
+**come enum** sarebbe precisamente quella quarta. **Conseguenza: D17.**
+
+### P-33 — `RecordKind` cresce, e il compilatore ferma DUE posti: censiti, non scoperti
+
+**Domanda 2 — la sonda manca**, e qui il compilatore è la sonda. Censiti i `match` esaustivi su `RecordKind` il
+2026-09-11:
+
+| Dove | Che cosa | Che cosa deve diventare |
+|---|---|---|
+| `crates/kernel/src/reconcile.rs:90` | il `match body.kind()` con sei bracci, quattro dei quali **vuoti col proprio argomento misurato** | un **settimo braccio vuoto**, ⛔ **misurato per QUESTA variante e non ereditato** — è la disciplina che le quattro righe accanto scrivono una per una, e le due sonde in `tests/reconciliation.rs` vanno **nelle due direzioni** |
+| `crates/kernel/tests/frozen_bytes.rs:386` | un `match kind` con i sei nomi in un braccio solo | il settimo nome nel braccio |
+
+⚠️ **Sono due e non di più, e la differenza fra i due è che il primo è una DECISIONE e il secondo un elenco:**
+`permission.rs`, `degradation.rs` e `gateway/mod.rs` **confrontano** un `kind` con `==` o con un `if let` invece
+di fare `match`, quindi crescono senza dire nulla — e va bene, perché ciascuno cerca **una** specie e la trova o
+no. ⛔ **Scritto qui perché chi esegue non vada a «uniformarli»**: allargarli sarebbe cambiare tre siti per un
+fatto che non li riguarda.
+
+### P-34 — I due campi di un dettaglio non devono ESSERE UGUALI, ed è una lezione già pagata
+
+**Domanda 1 — la sonda è vacua.** Il record congelato di `Permission` porta `tool: "frozen"` e
+`resource: "frozen"`, e il commento accanto porta un **richiamo del 2026-09-01** che dice perché è un **buco**:
+*«two equal strings at two offsets pin two offsets, and that is false: they pin ONE offset and its mirror
+image»* — misurato scambiando i due `#[n(..)]`, nessun byte mosso, workspace verde.
+
+✅ **Per `InvocationDetail` il buco non si ripresenta**, e non per fortuna: i due campi hanno **tipi diversi** —
+un testo e un numero — quindi scambiarne gli indici muove i byte e il record congelato lo dice. ⚠️ **Va scritto
+accanto al record**, perché il prossimo dettaglio a due campi dello stesso tipo ricadrebbe nel buco, e il
+richiamo del 2026-09-01 vive in un file che quel giorno nessuno riaprirà.
+
 ---
 
 ## Le decisioni prese da questo piano
@@ -696,6 +783,9 @@ smentisce — è ciò per cui esiste l'errata.
 | **D13** | ⛔ **la suite di conformità della settima porta nasce al compito 5, non al 4**: il 4 porta il tratto, la finta di `ports_are_implementable.rs` e i tre richiami; il 5 porta le due implementazioni **e** la suite che le confronta | una suite di conformità confronta **due** implementazioni, e `crates/kernel/src/ports/mod.rs` lo scrive di sé; al compito 4 ce ne sono **zero** (P-20). Le due vie scartate: farla nascere al 4 **col tempo futuro** è ciò che `journal_contract.rs` fece davvero e che ha richiesto un richiamo datato — *«a tense is a status claim like any other»*, gotcha #31, lezione già pagata; farla nascere al 4 su una finta minima la renderebbe **vacua**, che è la prima domanda del pre-controllo. ⚠️ **Il compito 4 resta provato da solo**, che è ciò che D1 chiede: la finta prova il tratto **da fuori dalla crate** — la terza domanda di `CLAUDE.md` in persona. ⚠️ **Costo:** il compito 5 cresce di un artefatto, e la riga 4 della tabella della posizione perde le parole «la suite di conformità» |
 | **D14** | ⛔ **`FileCustody::open` rende `platform::journal::OpenError`, il tipo che c'è**, e `crates/platform/src/journal.rs` entra nella lista *Files* del compito 5 per **una parola**: `engine` passa da privata a `pub(crate)` | le tre varianti — `File(io::Error)`, `AlreadyOpen`, `Engine(redb::Error)` — sono esattamente quelle che *aprire un archivio `redb` su un `FileBackend`* può produrre, e la custodia apre la stessa cosa. Le due vie scartate (**P-26**): **spostarlo** in `platform::OpenError` renderebbe false due righe di doc **del kernel** che ne citano il percorso come precedente di forma — la radice **R1** commessa per fare ordine; **duplicarlo** darebbe due tipi da tenere in passo, e il primo che diverge mente in silenzio. ⚠️ **Costo dichiarato:** il percorso si legge male — un errore della custodia raggiunto attraverso il modulo `journal` — e per questo il doc di `FileCustody::open` lo spiega dove chi lo incontra lo cerca. Se un **terzo** archivio arriverà, allora il tipo sale di un livello e i due doc del kernel si correggono nello stesso commit |
 | **D15** | ⛔ **la suite della settima porta prende la forma del GIORNALE** — una funzione `assert_custody_contract` più `include!` — **e non quella della suite `ipc` del compito 2**, che è `include!` più una `macro_rules!` | la §2 della stella polare dice *«come `journal_contract`»*, e la ragione regge alla lettura: la suite di `ipc` genera i `#[test]` con una macro perché **ogni crate porta la propria fabbrica** — le sue promesse vere vogliono un pari che scrive byte, e una finta non ne ha uno. `Custody` non ha un pari: una fabbrica basta, e `kernel` costruisce `simulator::custody::MemoryCustody` da sé perché `simulator` è già sua **dev-dependency** (**P-27**). ⚠️ **Costo dichiarato:** due forme di suite convivono in questo piano e un revisore può leggerlo come un'incoerenza; per questo la testa di `custody_contract.rs` scrive **perché** sono due, invece di lasciarlo dedurre |
+| **D16** | ⛔ **`Registry::invoke` prende l'EFFETTO COME CHIUSURA**, e `kernel::registry` non nomina `Arbiter` né `VramPolicy`: la funzione vera — il cambio di policy — la registra il **dispaccio**, compito 7 | la regola **1** di ADR-0038 dice che il kernel dà il meccanismo e che *«il contenuto — quali funzioni esistano — lo portano le capacità e la GUI»* (**P-31**). Un registro che chiamasse `set_policy` dovrebbe **importare** l'arbitro, e il secondo invocatore — il gesto, col 12 — dovrebbe aggiungere il proprio effetto lì dentro: è la *«logica solo per gesti»* che l'ADR rifiuta, al rovescio. ⚠️ **Così la regola 1 sale al LIVELLO 1:** l'assenza di quell'`use` è la prova, e il criterio di chiusura la misura col `grep`. ⚠️ **Costo dichiarato:** la chiusura riceve il **giornale** — `set_policy` lo vuole, e prestarlo due volte non è esprimibile — quindi l'effetto potrebbe scrivere qualunque cosa; `invoke` non può sorvegliarlo e lo **dice** invece di fingere |
+| **D17** | ⛔ **l'invocatore raggiunge il record come `u8`, non come enum**, e il codice lo assegna un `match` esaustivo in `Invoker::code` | un enum lì sarebbe la **quarta** enum `index_only` **sul filo**, ed è esattamente l'argomento che `PermissionDetail` scrive per esteso per rifiutarla: *«whose variant indices `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index on the wire never retires»*. Quel tipo se la cavò con un `bool` perché aveva **due** valori; qui ne arrivano **quattro** — click, gesto, voce, agente — e un `bool` non serve. ⛔ **E il `match` è `Operation::is_write` alla lettera:** `as u8` numererebbe una variante **per posizione**, e riordinare l'enum ripunterebbe in silenzio ogni record già scritto. ⚠️ **Costo dichiarato:** un `u8` torna indietro senza `from_code`, perché nessuno **decide** sull'invocatore oggi; il primo consumatore che vi si dirama lo scrive con la sua sonda (**P-32**) |
+| **D18** | ⛔ **l'argomento dell'invocazione viaggia nel `payload` del record, non nel dettaglio strutturato**, sotto `Trust::Untrusted` | è il precedente di `VerdictDetail` parola per parola — *«THE DETAIL TEXT IS NOT HERE: it is untrusted by inheritance (ADR-0014) and travels in the record's `payload`, under the `trust` label that exists to say so»*. E c'è anche la metà meccanica: **ogni** `*Detail::new` del giornale prende `&'static str` per chiudere la strada del testo calcolato a runtime, e l'argomento è precisamente quel testo (**P-30**). ⚠️ **Costo dichiarato:** la §5 del 2 dice *«funzione, invocatore, argomento»* e il terzo sta **accanto** al dettaglio invece che dentro; la cella riceve il proprio richiamo datato al compito 6 |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -3883,6 +3973,995 @@ un lettore futuro può verificare che il limite di **P-29** fu misurato e non su
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/gate-deps.sh` verde, la lista **non cresciuta**; `bash scripts/gate-attributes.sh` verde
 - [ ] i fine-riga rimisurati: i cinque nuovi a zero CR, i tre modificati invariati in `git ls-files --eol`
 - [ ] la riga **5** della tabella della posizione a ✅ con la data
+
+---
+
+## Compito 6: il registro delle funzioni — `kernel::registry`, la specie `Invocation`, e il settimo record congelato
+
+**Files:**
+- Modify: `crates/kernel/src/record.rs` (**`i/lf w/crlf`**) — `RecordKind::Invocation` all'indice **6**, `Detail::Invocation` all'indice **3**, `InvocationDetail`, il costruttore di specie `RecordV1::invocation`
+- Modify: `crates/kernel/src/reconcile.rs` (**`i/lf w/crlf`**) — il **settimo braccio vuoto**, col proprio argomento **misurato** (**P-33**)
+- Modify: `crates/kernel/tests/reconciliation.rs` (**`i/lf w/crlf`**) — le **due** sonde del braccio nuovo, nelle due direzioni
+- Create: `crates/kernel/src/registry.rs` (**LF**) — `Invoker`, `Function`, `InvokeError`, `Registry`
+- Modify: `crates/kernel/src/lib.rs` (**`i/lf w/crlf`**) — `pub mod registry;`
+- Create: `crates/kernel/tests/registry.rs` (**LF**) — le sonde del registro
+- Create: `crates/kernel/tests/frozen/record_v1_invocation.cbor` — ⛔ **il settimo record congelato, TIPATO A MANO**
+- Modify: `crates/kernel/tests/frozen/record_v1.map` — la sezione nuova, **tipata a mano**
+- Modify: `crates/kernel/tests/frozen_bytes.rs` (**`i/lf w/crlf`**) — `the_frozen_records()` da **sei a sette**, i `..._BYTES` nuovi, e il `match kind` di riga 386 (**P-33**)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**CRLF**) — **due** richiami datati sulla §5: la riga dell'argomento (**P-30**) e quella dell'invocatore (**P-32**)
+- Read: la **§5 del 2**, la prima tabella, per intero; **ADR-0038**, la *Decision* e il perimetro negativo; `crates/kernel/src/permission.rs` **per intero** (250 righe: `Operation::is_write`, `Permission`, `PermissionError`, `grant`, `is_granted`); `crates/kernel/src/record.rs` — `RecordKind`, `EffectClass`, `Trust`, `Detail`, `PermissionDetail` **e i suoi due richiami**, `RecordV1::permission`, `RecordV1::of`; la **testa** di `crates/kernel/tests/frozen_bytes.rs` (i tre divieti) e `the_frozen_records()`; la **testa** di `crates/kernel/tests/frozen/record_v1.map` (che cosa è controllato e che cosa è prosa); ⚠️ **più `Triple`, `Access`, `Call` e `PolicyName` del compito 3**, che sono i gemelli sul filo di ciò che il registro decide — il blocco *Interfaces* del 3 li porta
+
+**Interfaces:**
+- Consumes: `kernel::permission::{self, Permission, PermissionError, Operation}`; `kernel::ports::ipc::ClientId`; `kernel::ports::journal::{Journal, JournalError, StepId}`; `kernel::record::{EffectClass, Record, RecordV1, Trust}`
+- Consumes, dal compito 3 e **solo per leggerli**: `kernel::wire::ipc::{Call, Triple, Access}` — ⛔ **il registro NON li nomina**: li traduce il dispaccio, compito 7
+- Produces, e i compiti **7**, **8** e **11** li usano con questi nomi esatti:
+  - `kernel::registry::Registry`, con `Registry::new() -> Registry` (**`const fn`**), `Registry::register(&mut self, Function)` e `Registry::invoke(...)`
+  - `kernel::registry::Function` — `{ name: &'static str, permission: Permission, effect: EffectClass }`, `Copy`
+  - `kernel::registry::Invoker` — oggi una variante, `Invoker::Gui(ClientId)`, con `Invoker::code(self) -> u8`
+  - `kernel::registry::InvokeError` — `NotRegistered`, `PermissionRequired(Permission)`, `Permission(PermissionError)`, `Journal(JournalError)`
+  - `kernel::record::{RecordKind::Invocation, Detail::Invocation, InvocationDetail}`, con `InvocationDetail::new(function: &'static str, invoker: u8)`, `function()` e `invoker()`
+  - `RecordV1::invocation(effect, trust, payload, reason, detail) -> RecordV1`
+
+⛔ **LA FUNZIONE REGISTRATA NON NASCE QUI.** Il registro è il **meccanismo**; *quali* funzioni esistano lo porta chi
+le usa (regola 1 di ADR-0038). Il cambio di policy VRAM — nome, tripla «registro × arbitro × scrittura», classe
+`Idempotent` — lo **registra il dispaccio**, compito 7, ed è lì che `Arbiter::set_policy` viene nominato. ⚠️ Le
+sonde di questo compito registrano **funzioni di comodo** e un effetto che scrive nel giornale: provano il
+meccanismo, non il contenuto.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+ls crates/kernel/src/registry.rs crates/kernel/tests/registry.rs 2>&1
+grep -c '^#\[n(' crates/kernel/src/record.rs
+grep -n 'RecordKind::Permission' crates/kernel/src/record.rs crates/kernel/src/reconcile.rs crates/kernel/tests/frozen_bytes.rs
+ls crates/kernel/tests/frozen/
+grep -n 'fn the_frozen_records' crates/kernel/tests/frozen_bytes.rs
+grep -rn "RecordKind::" crates/kernel/src/ --include=*.rs | grep -v 'src/record.rs' | grep -c .
+git ls-files --eol crates/kernel/src/record.rs crates/kernel/src/reconcile.rs crates/kernel/src/lib.rs crates/kernel/tests/frozen_bytes.rs crates/kernel/tests/reconciliation.rs crates/kernel/tests/frozen/record_v1.map docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+```
+
+Atteso: i due file **non esistono**; `RecordKind` arriva a `Permission` con l'indice **5** e `Detail` a
+`Permission` con il **2**; in `frozen/` **sei** `.cbor` più la mappa; `the_frozen_records()` rende un array di
+**sei**; i due `match` esaustivi di **P-33** sono a `reconcile.rs:90` e `frozen_bytes.rs:386` — ⛔ **si ritrovano
+col `grep` sulla frase e non col numero di riga** (gotcha #70); tutti i file da toccare `i/lf w/crlf`, la mappa
+compresa.
+
+- [ ] **Passo 2: la specie nuova nel record**
+
+In `crates/kernel/src/record.rs`, **in coda a `RecordKind`**:
+
+```rust
+    /// ⛔ UN'INVOCAZIONE DEL REGISTRO (ADR-0038). Like the four before it, it neither opens a
+    /// doubt nor closes one: the note says WHO asked for WHAT, and the step it names still owes
+    /// its own outcome — the invocation's own `intent` and `outcome` carry that, and they are
+    /// `Intent` and `Outcome` like anybody's. ⚠️ AND THE EMPTY ARM IN `reconcile` WAS MEASURED FOR
+    /// THIS VARIANT rather than inherited from the four above it: see the arm itself.
+    #[n(6)]
+    Invocation,
+```
+
+**in coda a `Detail`**:
+
+```rust
+    /// Who invoked which function of the registry (ADR-0038).
+    #[n(3)]
+    Invocation(#[n(0)] InvocationDetail),
+```
+
+e il tipo, **accanto a `PermissionDetail`**:
+
+```rust
+/// The structured half of an invocation (ADR-0038): WHAT was invoked, and BY WHOM.
+///
+/// ⛔ THE ARGUMENT IS NOT HERE, AND IT IS THE SAME DECISION `VerdictDetail` TOOK FOR ITS DETAIL
+/// TEXT — read that type, the argument is one. The argument is text the GUI CHOSE, so it is
+/// untrusted by inheritance (ADR-0014) and travels in the record's `payload`, under the `trust`
+/// label that exists to say so. What lives here is what is OURS and structured: a name this
+/// crate registered, and a code this crate assigned. ⚠️ SO THE §5 OF THE MILESTONE-2 DESIGN SAYS
+/// "funzione, invocatore, argomento" AND THE THIRD IS BESIDE THIS TYPE RATHER THAN IN IT; the
+/// dated recall is on that line.
+///
+/// ⛔ THE TWO FIELDS HAVE DIFFERENT TYPES, AND THAT IS LOAD-BEARING RATHER THAN INCIDENTAL. The
+/// recall of 2026-09-01 beside the frozen `Permission` record measured that TWO EQUAL STRINGS at
+/// two offsets pin ONE offset and its mirror image — exchanging the two `#[n(..)]` moved no byte
+/// and the workspace stayed green. A text and a number cannot mirror each other, so the frozen
+/// record here really does pin both indices. Written down because the NEXT two-field detail may
+/// not be so lucky.
+///
+/// ⚠️ THE QUALIFIER `RoutingDetail` AND `PermissionDetail` BOTH CARRY APPLIES HERE WORD FOR WORD:
+/// this type derives `Decode` and `Record::decode` is `pub`, so BYTES build one without passing
+/// through `new`. That is road A4 of `crate::boundary`. What `new` shuts is every road a caller
+/// can WRITE IN SOURCE.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
+pub struct InvocationDetail {
+    #[n(0)]
+    function: String,
+    /// ⛔ A `u8` AND NOT THE `registry::Invoker` ENUM, AND IT IS `PermissionDetail`'s ARGUMENT ONE
+    /// SIZE UP. An enum here would be a FOURTH `index_only` enum ON THE WIRE, whose variant
+    /// indices `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index
+    /// on the wire never retires (rule 4 of §4.9.2). That type could use a `bool` because it had
+    /// two values; this one has four coming — click, gesture, voice, agent — so a `bool` cannot
+    /// serve and a `u8` is the same trade at the next size.
+    ///
+    /// ⛔ AND THE CODE IS ASSIGNED BY AN EXHAUSTIVE `match` IN `registry::Invoker::code`, never by
+    /// `as u8`: a cast would number a new variant BY POSITION, and a reordering would silently
+    /// repoint every record already written. Read that function; it is `Operation::is_write`'s
+    /// lesson at four values instead of two.
+    #[n(1)]
+    invoker: u8,
+}
+
+impl InvocationDetail {
+    /// The ONLY way to build one in source. ⛔ `function` IS `&'static str` FOR THE REASON
+    /// `PermissionDetail::new` GIVES: the name that ARRIVES is compared against the registered
+    /// ones and dropped — it never becomes the kernel's own vocabulary (I6, ADR-0014). What
+    /// reaches here is the REGISTERED name.
+    pub fn new(function: &'static str, invoker: u8) -> Self {
+        Self {
+            function: String::from(function),
+            invoker,
+        }
+    }
+
+    /// The function that was invoked, as it was named THEN.
+    pub fn function(&self) -> &str {
+        &self.function
+    }
+
+    /// The code of whoever invoked it. ⚠️ A `u8` COMES BACK AND NOT AN `Invoker`, and there is
+    /// deliberately NO `from_code`: nothing decides on the invoker today — the `Steps` list shows
+    /// the function and its outcome — so a reverse conversion would buy a failing branch no
+    /// caller has, which is the rule this crate applies to `simulator`'s `EntryKind` and to
+    /// `platform`'s three stored kinds. The FIRST consumer that BRANCHES on who invoked writes
+    /// it, with its probe.
+    pub fn invoker(&self) -> u8 {
+        self.invoker
+    }
+}
+```
+
+e il **costruttore di specie**, accanto a `permission`:
+
+```rust
+    /// AN INVOCATION OF THE REGISTRY (ADR-0038). ⛔ ITS DETAIL IS NOT OPTIONAL EITHER, for the
+    /// reason the three species before it give: a record that says an invocation happened and
+    /// names neither the function nor the invoker would be a record that records nothing while
+    /// claiming to be a record of something.
+    pub fn invocation(
+        effect: EffectClass,
+        trust: Trust,
+        payload: Vec<u8>,
+        reason: &'static str,
+        detail: InvocationDetail,
+    ) -> Self {
+        Self::of(
+            RecordKind::Invocation,
+            effect,
+            trust,
+            payload,
+            reason,
+            Some(Detail::Invocation(detail)),
+        )
+    }
+```
+
+```bash
+cargo build --locked -p kernel 2>&1 | grep -E "^error|E0004" | head
+```
+
+Atteso: **`error[E0004]`** su `crates/kernel/src/reconcile.rs` — il `match` esaustivo. ⛔ **È il passo, non un
+intoppo:** il compilatore sta chiedendo la decisione che il Passo 3 prende, ed è §7.4.4 che funziona.
+
+- [ ] **Passo 3: il settimo braccio della riconciliazione, MISURATO**
+
+In `crates/kernel/src/reconcile.rs`, dopo il braccio di `Permission`:
+
+```rust
+                // ⛔ AN INVOCATION RECORD NEITHER OPENS A DOUBT NOR CLOSES ONE, and it was
+                // MEASURED for THIS variant rather than inherited from the four above it. An
+                // invocation note says WHO asked for WHAT; the doubt of ADR-0007 is about an
+                // EFFECT that may or may not have reached the world, and asking is not an effect.
+                // The step it names owes its own outcome, and writes one.
+                //
+                // ⛔ BOTH OTHER ANSWERS WERE TRIED BEFORE THIS ARM WAS WRITTEN, which is what
+                // "measured" means here: `enter` would leave EVERY invoked step in doubt for
+                // ever, because the note arrives after the step's own `intent` and a second
+                // `enter` on an open step is not what `leave` undoes; and `leave` would CLOSE the
+                // doubt the invocation's own `intent` opened, so a crash between the note and the
+                // effect would reconcile as "finished" — the silent loss of a real doubt, the one
+                // failure ADR-0007 exists to prevent. ⚠️ AND THAT SECOND ONE IS WORSE HERE THAN
+                // IT WAS FOR `Routing`: the note sits between the intent and the effect BY
+                // DESIGN (§5 of the milestone-2 design), so the window it would swallow is not
+                // hypothetical — it is the ordinary shape of every invocation.
+                //
+                // Held in BOTH directions (§7.1.1 rule 3) by
+                // `an_invocation_note_does_not_put_a_step_in_doubt` and
+                // `an_invocation_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them`
+                // in `tests/reconciliation.rs`, exactly as the `Note`, `Verdict`, `Routing` and
+                // `Permission` pairs are.
+                RecordKind::Invocation => {}
+```
+
+⛔ **E le due misure si FANNO, non si citano.** Prima di scrivere il braccio vuoto si prova `enter(&mut open,
+step, resolution_of(body.effect()))` al suo posto, poi `leave(&mut open, step)`, una per volta, si lancia
+`cargo test --locked -p kernel --test reconciliation`, si legge **quale** sonda diventa rossa, e si revoca.
+Se una delle due lascia tutto verde, la sonda corrispondente del Passo 4 **non esiste ancora** o è vacua.
+
+- [ ] **Passo 4: le due sonde della riconciliazione, nelle due direzioni**
+
+In coda a `crates/kernel/tests/reconciliation.rs`, sul modello della coppia di `Permission` che è già lì:
+
+```rust
+#[test]
+fn an_invocation_note_does_not_put_a_step_in_doubt() {
+    // ⛔ THE FIRST DIRECTION: the arm must not `enter`. A step whose intent and outcome are both
+    // written is CLOSED, and an invocation note landing between them must not reopen it.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(3);
+
+    journal
+        .intent(step, &closed_record(RecordV1::intent))
+        .expect("intent");
+    journal
+        .note(step, &an_invocation_note())
+        .expect("the invocation note");
+    journal
+        .outcome(step, &closed_record(RecordV1::outcome))
+        .expect("outcome");
+
+    assert_eq!(
+        steps_in_doubt(&journal).expect("the projection must answer"),
+        Vec::new(),
+        "an invocation note upon a step that closed must leave nothing in doubt"
+    );
+}
+
+#[test]
+fn an_invocation_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
+    // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3): the arm must not `leave` either. Here the
+    // step has an intent and NO outcome — the crash between the note and the effect — so the
+    // doubt must survive the note WITH ITS RESOLUTION UNCHANGED. Without this probe a `leave` in
+    // the arm would pass the test above and swallow every real doubt.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(4);
+
+    journal
+        .intent(step, &closed_record(RecordV1::intent))
+        .expect("intent");
+
+    let before = steps_in_doubt(&journal).expect("the projection must answer");
+
+    journal
+        .note(step, &an_invocation_note())
+        .expect("the invocation note");
+
+    let after = steps_in_doubt(&journal).expect("the projection must answer");
+
+    assert_eq!(
+        before, after,
+        "an invocation note must change neither the doubt nor its resolution"
+    );
+    assert!(
+        !after.is_empty(),
+        "the bench is vacuous if the step was never in doubt to begin with"
+    );
+}
+
+/// An invocation note of no importance, so the two probes above say what they mean.
+///
+/// ⛔ THE LAST ASSERTION OF THE SECOND PROBE IS NOT DECORATION: `before == after` is satisfied by
+/// two empty lists, so without it a bench that never opened a doubt would pass while proving
+/// nothing. It is the non-vacuity guard of §8.6.2 written at the size of one test.
+fn an_invocation_note() -> Vec<u8> {
+    Record::V1(RecordV1::invocation(
+        EffectClass::Idempotent,
+        Trust::Untrusted,
+        Vec::from(&b"an argument the gui chose"[..]),
+        "who invoked what",
+        InvocationDetail::new("a function", 0),
+    ))
+    .encode()
+}
+```
+
+⚠️ **`closed_record` e gli `use` esistono già in quel file** — si riusano, non si riscrivono; il Passo 1 li ha
+letti. Se il nome fosse diverso, vale ciò che il file ha **oggi**, e la divergenza è una voce d'errata.
+
+```bash
+cargo test --locked -p kernel --test reconciliation 2>&1 | tail -8
+```
+
+Atteso: **tutte verdi**, due in più del Passo 1.
+
+- [ ] **Passo 5: il registro**
+
+`crates/kernel/src/registry.rs`, **LF**:
+
+```rust
+//! The registry of the program's functions (ADR-0038): ONE registry, MANY invokers, ONE
+//! permission.
+//!
+//! ⛔ THE MECHANISM AND NOT THE CONTENT, which is rule 1 of ADR-0038 and the shape ADR-0009 gives
+//! every kernel registry. This module knows how to HOLD a function, how to check its triple and
+//! how to JOURNAL an invocation; WHICH functions exist is brought by the gui and by the
+//! capabilities. ⛔ AND THE RULE IS HELD AT LEVEL 1 RATHER THAN BY GOOD INTENTIONS: nothing here
+//! names `Arbiter`, `VramPolicy` or any other effect, and it could not without an `import` a
+//! reader would see. The day the gesture arrives (sub-project 12) it registers ITS functions from
+//! outside, exactly as the click does — which is what "no gesture-only logic" means when it stops
+//! being a sentence.
+//!
+//! ⛔ SO `invoke` TAKES THE EFFECT AS A CLOSURE. That is the only shape in which the mechanism can
+//! run something it does not know, and the closure receives the journal because the effect writes
+//! its own step (§5 of the milestone-2 design: "l'effetto, che è il passo B di `set_policy`
+//! com'è").
+//!
+//! ⛔ AND THE ARRIVING NAME NEVER BECOMES A `&'static str`. It is COMPARED against the registered
+//! names and dropped — the discipline `permission::is_granted` already writes out for the triple:
+//! a name from outside sitting in a type the kernel decides with is untrusted text inside a
+//! decision (ADR-0014). What reaches the journal is the REGISTERED name, which is ours.
+//!
+//! ⚠️ WHAT THIS MODULE IS NOT, so the next reader does not go looking: it is not a second
+//! permission system (ADR-0038, negative perimeter) — it asks `permission::is_granted` and
+//! nothing else; and it does not hold the SESSION boundary of ADR-0016, because
+//! `permission::is_granted` re-reads the whole journal and a granted triple therefore survives a
+//! restart. That limit is declared in §5 of the milestone-2 design and belongs to whoever brings
+//! the runs, sub-project 3.
+
+use alloc::vec::Vec;
+
+use crate::permission::{self, Permission, PermissionError};
+use crate::ports::ipc::ClientId;
+use crate::ports::journal::{Journal, JournalError, StepId};
+use crate::record::{EffectClass, InvocationDetail, Record, RecordV1, Trust};
+
+/// Who asked.
+///
+/// ⛔ ONE VARIANT TODAY, AND THE OTHERS ARE NAMED IN ADR-0038 RATHER THAN GUESSED AT: gesture
+/// (sub-project 12), voice (8), and the agent. Each arrives WITH its invoker, and none of them
+/// touches this file's `invoke`.
+///
+/// ⚠️ IT CARRIES THE `ClientId` AND THE RECORD DOES NOT, which is deliberate and is worth the
+/// line. The identifier is what the DISPATCH needs — it is how the answer finds its way back to
+/// the client that asked — while the record keeps the CLASS of invoker and not the connection: a
+/// `ClientId` is a handle on a socket that reconnecting changes, so journalling it would durably
+/// record something that means nothing an hour later. The trigger for recording it is a consumer
+/// that needs to tell two simultaneous invokers apart, and ADR-0004 says there is at most one gui.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Invoker {
+    /// The gui's client, over the `ipc` port.
+    Gui(ClientId),
+}
+
+impl Invoker {
+    /// How the invoker reaches the durable record.
+    ///
+    /// ⛔ AN EXHAUSTIVE `match` AND NOT `as u8`, AND THAT IS THE ONLY REASON THIS FUNCTION EXISTS
+    /// — `Operation::is_write`'s lesson at four values instead of two. A cast numbers a variant
+    /// BY POSITION, so inserting `Gesture` before `Gui` would silently repoint every record
+    /// already written, and the archive is the one thing that cannot be migrated cheaply. A
+    /// `match` makes that day `error[E0004]`, here, where the decision belongs.
+    ///
+    /// ⚠️ AND THE CODES ARE WRITTEN OUT rather than derived: a new invoker takes THE NEXT FREE
+    /// NUMBER and never one that has been used, which is rule 4 of §4.9.2 applied to a value
+    /// instead of an index — the same promise, one level down.
+    pub fn code(self) -> u8 {
+        match self {
+            Invoker::Gui(_) => 0,
+        }
+    }
+}
+
+/// A function of the program, as the registry holds it.
+///
+/// ⛔ THE NAME IS `&'static str`, LIKE BOTH NAMES OF `Permission` AND FOR THE SAME REASON (I6):
+/// this is a type the kernel DECIDES with — `invoke` compares against it — and a name that
+/// arrived from outside would be untrusted text sitting inside a decision (ADR-0014).
+///
+/// ⚠️ `Copy`, so `invoke` can hand the whole thing about without borrowing the registry across
+/// the effect. Three small fields; nothing here owns anything.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Function {
+    /// How it is named on the wire and in the record.
+    pub name: &'static str,
+    /// The triple of ADR-0016 that protects it — rule 2 of ADR-0038: the same permission
+    /// whatever the invoker.
+    pub permission: Permission,
+    /// How its effect reconciles after a crash (ADR-0007). It is the class the invocation's own
+    /// step carries, and it is MANDATORY here for the reason it is mandatory on the record:
+    /// "an effect without a declared class" must not be expressible.
+    pub effect: EffectClass,
+}
+
+/// What can go wrong invoking.
+///
+/// ⛔ `NotRegistered` AND `PermissionRequired` ARE NOT THE SAME REFUSAL, and folding them would
+/// lose exactly the distinction the gui needs: one is a bug in the caller, the other is a
+/// question for the user. The gui turns the second into the confirmation window (§6a) and the
+/// first into nothing at all.
+///
+/// ⛔ AND `PermissionRequired` CARRIES THE TRIPLE, because the gui has to SHOW it: ADR-0016 wants
+/// the user to approve `(tool, resource, operation)` and not "something". It is the REGISTERED
+/// triple, so all three names are ours.
+///
+/// ⚠️ `Permission(PermissionError)` IS NOT `PermissionRequired`: the first says the archive would
+/// not answer, the second that it answered no. `permission::PermissionError`'s own doc spends
+/// three paragraphs on why "unknown" reported as "not granted" is forbidden, and folding them
+/// here would undo that at the call site that matters most.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum InvokeError {
+    /// No function of that name is registered. ⛔ AND NOTHING IS WRITTEN — not an intent, not a
+    /// note. A name nobody registered is not an event of this program, and journalling it would
+    /// let a peer fill the durable archive with words it chose.
+    NotRegistered,
+    /// The triple is not granted. Nothing is written, and the effect is not run.
+    PermissionRequired(Permission),
+    /// The archive would not say whether it is granted.
+    Permission(PermissionError),
+    /// A write was refused.
+    Journal(JournalError),
+}
+
+/// The registry itself.
+///
+/// ⛔ IT HOLDS STATE AND `permission::is_granted` DOES NOT, and the asymmetry is not an
+/// inconsistency. That one is a PROJECTION of the journal, and a projection with state would
+/// answer from when it was built instead of from what the archive says. This is a REGISTRATION
+/// TABLE — the shape ADR-0009 gives the registries of guides and sensors — and it lives in the
+/// core, where I1 says the authoritative state lives.
+pub struct Registry {
+    functions: Vec<Function>,
+}
+
+// ⛔ NO `impl Default` — the same decision, for the same reason, as `MemoryJournal` and
+// `SystemReactor`: nothing calls it. The argument is written out once, in
+// `crates/platform/src/reactor.rs`.
+impl Registry {
+    pub const fn new() -> Self {
+        Registry {
+            functions: Vec::new(),
+        }
+    }
+
+    /// Registers a function.
+    ///
+    /// ⛔ A NAME ALREADY REGISTERED REPLACES, AND IT DOES NOT PILE UP. Two entries under one name
+    /// would make `invoke` depend on whether the search reads the first or the last, which is a
+    /// silent difference in what a permission protects. ⚠️ AND IT IS NOT AN ERROR, because there
+    /// is no caller for one: registration happens once at start-up, from source, and a `Result`
+    /// nobody can fail would be ceremony. The day registration is driven by data, it grows one.
+    pub fn register(&mut self, function: Function) {
+        match self
+            .functions
+            .iter_mut()
+            .find(|held| held.name == function.name)
+        {
+            Some(held) => *held = function,
+            None => self.functions.push(function),
+        }
+    }
+
+    /// Invokes the function named `name`, if it is registered and its triple is granted.
+    ///
+    /// The order is the one §5 of the milestone-2 design fixes, and each line is load-bearing:
+    ///
+    /// 1. the name is looked up — not registered, nothing is written;
+    /// 2. the triple is asked of the journal — not granted, nothing is written and the effect is
+    ///    NOT run, which is the probe `a_triple_that_is_not_granted_never_reaches_the_effect`;
+    /// 3. `intent` on step A, carrying the FUNCTION'S class;
+    /// 4. a `note` on step A with the structured detail — who invoked what;
+    /// 5. the EFFECT, which opens and closes its own step B if it has one;
+    /// 6. `outcome` on step A.
+    ///
+    /// ⛔ THE NOTE COMES AFTER THE INTENT AND BEFORE THE EFFECT, and `Journal::note` enforces half
+    /// of that by refusing a note on a step with no intent. The other half — before the effect —
+    /// is what makes a crash mid-invocation reconstructible: step A is in doubt WITH ITS CLASS,
+    /// and the note says what was being attempted.
+    ///
+    /// ⛔ `argument` IS `&[u8]` AND GOES INTO THE PAYLOAD, NOT INTO THE DETAIL. It is text the
+    /// peer chose, so it is untrusted by inheritance (ADR-0014) and travels under the `trust`
+    /// label that says so — the shape `VerdictDetail` established for its detail text. Bytes and
+    /// not `&str` because the port exchanges bytes and this function has no reason to require
+    /// that an argument be text at all.
+    ///
+    /// ⚠️ THE EFFECT RECEIVES THE JOURNAL, and it has to: `Arbiter::set_policy` writes step B
+    /// through it, and lending it twice is not expressible. The cost is that the effect could
+    /// write anything at all — this function cannot police it, and says so rather than pretending.
+    pub fn invoke<J, T, E>(
+        &self,
+        journal: &mut J,
+        step: StepId,
+        name: &str,
+        invoker: Invoker,
+        argument: &[u8],
+        effect: E,
+    ) -> Result<T, InvokeError>
+    where
+        J: Journal,
+        E: FnOnce(&mut J) -> Result<T, JournalError>,
+    {
+        let Some(function) = self.functions.iter().find(|held| held.name == name).copied() else {
+            return Err(InvokeError::NotRegistered);
+        };
+
+        if !permission::is_granted(journal, &function.permission)
+            .map_err(InvokeError::Permission)?
+        {
+            return Err(InvokeError::PermissionRequired(function.permission));
+        }
+
+        journal
+            .intent(step, &opened(function))
+            .map_err(InvokeError::Journal)?;
+        journal
+            .note(step, &noted(function, invoker, argument))
+            .map_err(InvokeError::Journal)?;
+
+        let produced = effect(journal).map_err(InvokeError::Journal)?;
+
+        journal
+            .outcome(step, &closed(function))
+            .map_err(InvokeError::Journal)?;
+
+        Ok(produced)
+    }
+}
+
+/// Step A's intent. ⚠️ THE PAYLOAD IS EMPTY AND THE ARGUMENT IS NOT HERE: it belongs to the note,
+/// with the detail that says what it is an argument TO. An intent that carried it would put the
+/// same untrusted bytes in the archive twice.
+fn opened(function: Function) -> Vec<u8> {
+    Record::V1(RecordV1::intent(
+        function.effect,
+        Trust::Instruction,
+        Vec::new(),
+        "a function of the registry was invoked",
+    ))
+    .encode()
+}
+
+/// The note that says who invoked what, with the argument in the payload.
+fn noted(function: Function, invoker: Invoker, argument: &[u8]) -> Vec<u8> {
+    Record::V1(RecordV1::invocation(
+        function.effect,
+        // ⛔ `Untrusted` BECAUSE OF THE PAYLOAD AND NOT BECAUSE OF THE DETAIL. The label describes
+        // the payload (ADR-0014), and the payload is the argument the peer chose. The detail
+        // beside it is ours, which is exactly why it is a detail and not a payload.
+        Trust::Untrusted,
+        Vec::from(argument),
+        "who invoked which function, and with what",
+        InvocationDetail::new(function.name, invoker.code()),
+    ))
+    .encode()
+}
+
+/// Step A's outcome.
+fn closed(function: Function) -> Vec<u8> {
+    Record::V1(RecordV1::outcome(
+        function.effect,
+        Trust::Instruction,
+        Vec::new(),
+        "the invocation finished",
+    ))
+    .encode()
+}
+```
+
+In `crates/kernel/src/lib.rs` (**`i/lf w/crlf`**), accanto agli altri moduli — l'ordine è **di arrivo**, come il
+file mostra:
+
+```
+pub mod registry;
+```
+
+- [ ] **Passo 6: le sonde del registro**
+
+`crates/kernel/tests/registry.rs`, **LF**. ⛔ **Da FUORI la crate**, che è la terza domanda del pre-controllo di
+`CLAUDE.md`: un tratto o un tipo si prova implementabile e chiamabile solo da fuori.
+
+```rust
+//! The registry of the program's functions (ADR-0038), exercised FROM OUTSIDE THE CRATE.
+//!
+//! ⛔ THE FUNCTIONS REGISTERED HERE ARE OF NO CONSEQUENCE, and that is the point rather than a
+//! shortcut: this bench proves the MECHANISM. The one real function — the VRAM policy change —
+//! is registered by the dispatch, and its probe lives with it.
+
+use kernel::permission::{self, Operation, Permission};
+use kernel::ports::ipc::ClientId;
+use kernel::ports::journal::{Journal, JournalError, StepId};
+use kernel::record::{Detail, EffectClass, Record, RecordKind};
+use kernel::registry::{Function, InvokeError, Invoker, Registry};
+use simulator::journal::MemoryJournal;
+
+const GUARDED: Permission = Permission {
+    tool: "registry",
+    resource: "arbiter",
+    operation: Operation::Write,
+};
+
+fn a_function() -> Function {
+    Function {
+        name: "set-policy",
+        permission: GUARDED,
+        effect: EffectClass::Idempotent,
+    }
+}
+
+fn a_registry() -> Registry {
+    let mut registry = Registry::new();
+    registry.register(a_function());
+    registry
+}
+
+#[test]
+fn a_name_that_is_not_registered_is_refused_and_writes_nothing() {
+    // §5 of the milestone-2 design, in its own words: "un nome non registrato → rifiutato, nessun
+    // record". ⛔ AND THE SECOND HALF IS THE ONE THAT MATTERS: a peer that could make the core
+    // write a record by naming anything would own the durable archive.
+    let mut journal = MemoryJournal::new();
+    let registry = a_registry();
+
+    let outcome = registry.invoke(
+        &mut journal,
+        StepId::new(1),
+        "set-polizy",
+        Invoker::Gui(ClientId::new(1)),
+        b"local",
+        |_| -> Result<(), JournalError> { panic!("the effect must not run") },
+    );
+
+    assert_eq!(outcome, Err(InvokeError::NotRegistered));
+    assert!(
+        journal.replay().expect("replay").is_empty(),
+        "a name nobody registered must leave the archive exactly as it was"
+    );
+}
+
+#[test]
+fn a_triple_that_is_not_granted_never_reaches_the_effect() {
+    // The first of the two directions §5 asks for. ⛔ THE EFFECT PANICS, so "never reached" is
+    // held by the test failing loudly rather than by an assertion that could be forgotten.
+    let mut journal = MemoryJournal::new();
+    let registry = a_registry();
+
+    let outcome = registry.invoke(
+        &mut journal,
+        StepId::new(1),
+        "set-policy",
+        Invoker::Gui(ClientId::new(1)),
+        b"local",
+        |_| -> Result<(), JournalError> { panic!("the effect must not run without the triple") },
+    );
+
+    assert_eq!(outcome, Err(InvokeError::PermissionRequired(GUARDED)));
+    assert!(
+        journal.replay().expect("replay").is_empty(),
+        "a refused invocation must leave the archive exactly as it was"
+    );
+}
+
+#[test]
+fn a_granted_triple_reaches_the_effect_and_the_step_closes() {
+    // The direction one forgets (§7.1.1 rule 3). Without it, an `invoke` that refused ALWAYS
+    // would satisfy the two probes above.
+    let mut journal = MemoryJournal::new();
+    let registry = a_registry();
+
+    // The grant is a note upon a step of its own, which is what `permission::grant` promises.
+    journal
+        .intent(StepId::new(1), &a_bare_intent())
+        .expect("the granting step");
+    permission::grant(&mut journal, StepId::new(1), &GUARDED).expect("grant");
+    journal
+        .outcome(StepId::new(1), &a_bare_outcome())
+        .expect("the granting step closes");
+
+    let produced = registry
+        .invoke(
+            &mut journal,
+            StepId::new(2),
+            "set-policy",
+            Invoker::Gui(ClientId::new(7)),
+            b"local",
+            |journal| {
+                // The effect writes its OWN step B, which is what `set_policy` really does.
+                journal.intent(StepId::new(3), &a_bare_intent())?;
+                journal.outcome(StepId::new(3), &a_bare_outcome())?;
+                Ok(42u32)
+            },
+        )
+        .expect("a granted invocation must run");
+
+    assert_eq!(produced, 42, "invoke must hand back what the effect produced");
+}
+
+#[test]
+fn the_note_carries_the_registered_name_the_invoker_and_the_argument() {
+    // §5: "una sonda legge il dettaglio dopo `replay`". ⛔ AND IT READS ALL THREE, because each
+    // is a different road: the name proves the REGISTERED one reached the record and not the
+    // arriving text, the code proves `Invoker::code` was consulted, and the payload proves the
+    // argument did NOT end up in the structured half.
+    let mut journal = MemoryJournal::new();
+    let registry = a_registry();
+
+    journal
+        .intent(StepId::new(1), &a_bare_intent())
+        .expect("the granting step");
+    permission::grant(&mut journal, StepId::new(1), &GUARDED).expect("grant");
+    journal
+        .outcome(StepId::new(1), &a_bare_outcome())
+        .expect("the granting step closes");
+
+    registry
+        .invoke(
+            &mut journal,
+            StepId::new(2),
+            "set-policy",
+            Invoker::Gui(ClientId::new(7)),
+            b"local",
+            |_| -> Result<(), JournalError> { Ok(()) },
+        )
+        .expect("a granted invocation must run");
+
+    let mut seen = None;
+    for (_, bytes) in journal.replay().expect("replay") {
+        let Record::V1(body) = Record::decode(&bytes).expect("every record must decode");
+        if body.kind() != RecordKind::Invocation {
+            continue;
+        }
+        let Some(Detail::Invocation(detail)) = body.detail() else {
+            panic!("an invocation record must carry an invocation detail");
+        };
+        seen = Some((
+            detail.function().to_string(),
+            detail.invoker(),
+            body.payload().to_vec(),
+        ));
+    }
+
+    let (function, invoker, payload) = seen.expect("the invocation note must be in the archive");
+    assert_eq!(function, "set-policy");
+    assert_eq!(invoker, 0, "the gui's code, from `Invoker::code`");
+    assert_eq!(payload, b"local".to_vec(), "the argument travels in the payload");
+}
+
+#[test]
+fn registering_the_same_name_twice_replaces_rather_than_piling_up() {
+    // ⛔ THE PROPERTY THAT KEEPS A PERMISSION MEANING ONE THING. With two entries under one name,
+    // which triple protects the function would depend on the order of a search.
+    let mut registry = Registry::new();
+    registry.register(a_function());
+    registry.register(Function {
+        effect: EffectClass::Unrepeatable,
+        ..a_function()
+    });
+
+    let mut journal = MemoryJournal::new();
+    journal
+        .intent(StepId::new(1), &a_bare_intent())
+        .expect("the granting step");
+    permission::grant(&mut journal, StepId::new(1), &GUARDED).expect("grant");
+    journal
+        .outcome(StepId::new(1), &a_bare_outcome())
+        .expect("the granting step closes");
+
+    registry
+        .invoke(
+            &mut journal,
+            StepId::new(2),
+            "set-policy",
+            Invoker::Gui(ClientId::new(1)),
+            b"",
+            |_| -> Result<(), JournalError> { Ok(()) },
+        )
+        .expect("the second registration must be the one that answers");
+
+    // The SECOND registration's class is what reached the archive — which is the observable
+    // difference between replacing and piling up.
+    let classes: Vec<EffectClass> = journal
+        .replay()
+        .expect("replay")
+        .into_iter()
+        .filter_map(|(_, bytes)| {
+            let Record::V1(body) = Record::decode(&bytes).ok()?;
+            (body.kind() == RecordKind::Invocation).then(|| body.effect())
+        })
+        .collect();
+
+    assert_eq!(classes, vec![EffectClass::Unrepeatable]);
+}
+
+fn a_bare_intent() -> Vec<u8> {
+    Record::V1(kernel::record::RecordV1::intent(
+        EffectClass::Idempotent,
+        kernel::record::Trust::Instruction,
+        Vec::new(),
+        "a step of no consequence",
+    ))
+    .encode()
+}
+
+fn a_bare_outcome() -> Vec<u8> {
+    Record::V1(kernel::record::RecordV1::outcome(
+        EffectClass::Idempotent,
+        kernel::record::Trust::Instruction,
+        Vec::new(),
+        "and it closed",
+    ))
+    .encode()
+}
+```
+
+```bash
+cargo test --locked -p kernel --test registry 2>&1 | tail -10
+```
+
+Atteso: **cinque verdi**.
+
+- [ ] **Passo 7: il settimo record congelato — la sonda usa e getta, e i byte A MANO**
+
+⛔ **La disciplina è quella che la testa di `frozen_bytes.rs` scrive, e non si aggira:** *«Every `.cbor` file here
+was TYPED BY HAND from the hexadecimal output of a throwaway probe, and each probe was deleted in the commit that
+added its file»*. Nessun `--bless`, nessuna variabile d'ambiente.
+
+1. Nello **scratchpad** (non nel repository) un banco usa e getta che stampa l'esadecimale:
+
+```rust
+#[test]
+fn print_it() {
+    let bytes = Record::V1(RecordV1::invocation(
+        EffectClass::Verifiable,
+        Trust::Untrusted,
+        Vec::from(&b"frozen"[..]),
+        "frozen",
+        InvocationDetail::new("frozen", 3),
+    ))
+    .encode();
+    for b in &bytes { print!("{b:02x} "); }
+    println!("\nlen = {}", bytes.len());
+    panic!("read me");
+}
+```
+
+⚠️ **`invoker: 3` e non `0`**, e la ragione è quella che il commento del quarto record scrive: `00` è già mezza
+tabella — `RecordKind::Intent`, `EffectClass::Verifiable`, `Trust::Instruction` — e un byte che somiglia a troppe
+cose rende la mappa più difficile da leggere. ⛔ **`3` non è un codice di `Invoker` che esista**, ed è **voluto**:
+questo record congela il **formato** del campo, non un valore del dominio; il campo è un `u8` proprio perché il
+codice non è un enum sul filo. Va scritto nella mappa.
+⚠️ **`EffectClass::Verifiable` e `Trust::Untrusted`** perché la tabella è disposta per **copertura** delle enum del
+filo, non per modellare chi scrive — è la stessa nota che il sesto record porta.
+
+2. Si legge l'esadecimale e si **scrive a mano** `crates/kernel/tests/frozen/record_v1_invocation.cbor`.
+La forma attesa, che serve a riconoscere una corsa sbagliata — **le cifre si prendono dalla corsa, non da qui**:
+
+| Offset | Che cosa |
+|---|---|
+| 0 | `82` — array(2), l'enum di versione |
+| 1 | `00` — variante 0 = `Record::V1` |
+| 2 | `81` — array(1), il corpo della variante |
+| 3 | `86` — array(6), i SEI campi di `RecordV1` |
+| 4 | indice 0 · `kind` · **`06`**, `RecordKind::Invocation` — ⛔ **l'indice nuovo, e questo record è l'unico posto che lo tiene** |
+| 5 | indice 1 · `effect` · `EffectClass::Verifiable` |
+| 6 | indice 2 · `trust` · `Trust::Untrusted` |
+| 7 | indice 3 · `payload` · byte string(6) `b"frozen"` |
+| 14 | indice 4 · `reason` · text(6) `"frozen"` |
+| 21 | indice 5 · `detail` · `Some(Detail::Invocation { function: "frozen", invoker: 3 })` — ⛔ **e qui c'è l'indice 3 di `Detail`, che fino a questo file nulla teneva** |
+
+3. Si aggiunge la **sezione alla mappa**, `crates/kernel/tests/frozen/record_v1.map` (**CRLF**), col formato
+`offset | byte esadecimali | prosa` delle sei sezioni che già ci sono; gli offset devono essere **contigui** e i
+byte devono **ricostruire il file**, perché `the_map_lists_the_bytes_that_are_really_frozen` li rilegge.
+
+4. Si **cancella la sonda usa e getta** dallo scratchpad.
+
+⛔ **Nel commit va scritto che la sonda è stata cancellata**, come i sei commit prima di questo.
+
+- [ ] **Passo 8: il settimo posto in `frozen_bytes.rs`**
+
+In `crates/kernel/tests/frozen_bytes.rs`: il tipo di ritorno di `the_frozen_records()` passa da `; 6]` a `; 7]`,
+la costante `INVOCATION_BYTES` si aggiunge accanto alle altre con
+`include_bytes!("frozen/record_v1_invocation.cbor")`, e la voce entra in coda all'array:
+
+```rust
+        // ⛔ THE SEVENTH IS THE FOURTH SPECIES THAT CARRIES A `detail`, AND WHAT IT PINS THAT THE
+        // OTHER THREE CANNOT IS INDEX 3 OF `Detail` — and, with it, index 6 of `RecordKind`. A
+        // wire index never retires (rule 4 of §4.9.2), so until this file both were held by
+        // nothing at all.
+        //
+        // ⛔ AND IT IS THE FIRST FROZEN DETAIL WHOSE TWO FIELDS HAVE DIFFERENT TYPES, which is
+        // what saves it from the hole the recall of 2026-09-01 measured on the `Permission`
+        // record: two EQUAL STRINGS at two offsets pin one offset and its mirror, and exchanging
+        // their `#[n(..)]` moved no byte. A text and a `u8` cannot mirror each other, so this
+        // record really does pin both indices — measured by exchanging them, not assumed.
+        //
+        // ⚠️ `invoker: 3` IS NOT A CODE ANY `Invoker` HAS, and that is deliberate rather than a
+        // slip: what this record freezes is the FIELD'S FORMAT, and the field is a `u8` precisely
+        // because the codes are not an enum on the wire. `0` would also have been the byte of
+        // `RecordKind::Intent`, of `EffectClass::Verifiable` and of `Trust::Instruction`, and a
+        // byte that resembles too many things makes the map harder to read — the reason the
+        // fourth and fifth records give for their own values.
+        (
+            "record_v1_invocation.cbor",
+            INVOCATION_BYTES,
+            record(|p, r| {
+                RecordV1::invocation(
+                    EffectClass::Verifiable,
+                    Trust::Untrusted,
+                    p,
+                    r,
+                    InvocationDetail::new("frozen", 3),
+                )
+            }),
+        ),
+```
+
+e il `match kind` che **P-33** ha censito riceve il settimo nome nel braccio.
+
+```bash
+cargo test --locked -p kernel --test frozen_bytes 2>&1 | tail -12
+git diff --stat -- crates/kernel/tests/frozen/
+```
+
+Atteso: **tutte verdi**; e ⛔ **`git diff --stat` sui file congelati mostra SOLO la mappa modificata e il file
+nuovo** — i **sei** `.cbor` vecchi non compaiono. Se uno di essi cambiasse, non è un aggiornamento: è un **cambio
+di formato**, e va aperta una versione nuova (ADR-0036).
+
+- [ ] **Passo 9: i due richiami datati sulla §5 del disegno del 2**
+
+In `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**CRLF**), **dentro** le due celle
+della prima tabella della §5, senza riscrivere ciò che c'è:
+
+Nella cella **«il giornale»**, in coda:
+
+> ⛔ **RICHIAMO DEL 2026-09-11, dal pre-controllo del compito 6 (P-30): il dettaglio strutturato porta DUE cose e
+> non tre.** *«funzione, invocatore, argomento»* resta vero dell'invocazione, ma **l'argomento non sta nel
+> dettaglio**: è testo che la GUI ha scelto, quindi non fidato per eredità (ADR-0014), e viaggia nel **`payload`
+> del record** sotto l'etichetta `trust` che esiste per dirlo — è il precedente che `VerdictDetail` scrive per il
+> proprio testo, *«what lives here is what is OURS and structured»*. Il motivo è anche meccanico: ogni
+> `*Detail::new` del giornale prende `&'static str` per chiudere la strada del testo calcolato a runtime, e
+> l'argomento è esattamente quel testo.
+
+Nella cella **«l'invocatore»**, in coda:
+
+> ⛔ **RICHIAMO DEL 2026-09-11, dal pre-controllo del compito 6 (P-32): la regola citata è quella sbagliata, e il
+> costo non è zero.** La regola 3 di §4.9.2 parla di **campi** — *«un campo nuovo è facoltativo e prende un indice
+> nuovo»* — e una variante di enum non è un campo. Ciò che vale per le varianti lo scrive la testa di
+> `crates/kernel/tests/frozen_bytes.rs`: una variante aggiunta a un enum `index_only` rende **indecodificabile a
+> una build vecchia** ogni record che la porta. ✅ **La direzione è sicura** — `Malformed` riconcilia come
+> `SuspendAndAsk`, quindi una build vecchia si ferma invece di indovinare — quindi il **merito regge**; è *«senza
+> cambio di formato»* che è falso. ⛔ **E ne discende una scelta:** l'invocatore raggiunge il record come **`u8`**
+> e non come enum, perché un enum lì sarebbe la **quarta** enum `index_only` sul filo — l'argomento che
+> `PermissionDetail` scrive per esteso per rifiutarla. Il codice lo assegna un `match` esaustivo in
+> `Invoker::code`, così che una variante nuova sia `error[E0004]` e non una rinumerazione silenziosa.
+
+- [ ] **Passo 10: i fine-riga, il cancello, il commit**
+
+```bash
+for f in crates/kernel/src/registry.rs crates/kernel/tests/registry.rs; do printf '%-46s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+git ls-files --eol crates/kernel/src/record.rs crates/kernel/src/reconcile.rs crates/kernel/src/lib.rs crates/kernel/tests/frozen_bytes.rs crates/kernel/tests/reconciliation.rs crates/kernel/tests/frozen/record_v1.map docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+bash scripts/gate.sh 2>&1 | tail -3
+bash scripts/gate-deps.sh 2>&1 | tail -3
+bash scripts/check-docs.sh 2>&1 | tail -3
+```
+
+Atteso: i due file nuovi a `CR=0`; i sette modificati **invariati** in `git ls-files --eol`; `GATE GREEN`; la lista
+di ADR-0031 **non cresciuta** — il registro non aggiunge dipendenze; `OK — no inconsistencies.`
+
+Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit — **senza co-autore**.
+
+#### Criterio di chiusura del compito 6
+
+- [ ] `cargo test --locked -p kernel --test registry` → **cinque** passati
+- [ ] `cargo test --locked -p kernel --test reconciliation` → **due in più** del Passo 1
+- [ ] `cargo test --locked -p kernel --test frozen_bytes` → tutti passati, e `the_frozen_records()` rende **sette**
+- [ ] ⛔ `git diff --stat -- crates/kernel/tests/frozen/` mostra **solo** la mappa e il file nuovo: i sei `.cbor` vecchi **identici al byte**
+- [ ] ⛔ le **due misure del Passo 3** fatte: `enter` al posto del braccio vuoto → rossa la seconda sonda; `leave` → rossa la prima; entrambe revocate, `git diff --stat` pulito
+- [ ] ⛔ la sonda usa e getta del Passo 7 **cancellata**, e il commit lo dice
+- [ ] ⛔ **il registro non nomina l'arbitro**: `grep -cE 'Arbiter|VramPolicy|arbiter' crates/kernel/src/registry.rs` → **0** (**D16**)
+- [ ] `grep -c 'RICHIAMO DEL 2026-09-11' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **almeno 2**
+- [ ] `git diff --name-only -- docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` **vuoto** (vincolo 1: questo compito non tocca le due spec)
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`; `gate-deps.sh` verde, la lista **non cresciuta**; `gate-attributes.sh` verde
+- [ ] i fine-riga rimisurati: i due nuovi a zero CR, i sette modificati invariati
+- [ ] la riga **6** della tabella della posizione a ✅ con la data
 
 ---
 

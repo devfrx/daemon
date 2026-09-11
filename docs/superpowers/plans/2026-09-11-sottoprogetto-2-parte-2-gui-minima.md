@@ -388,7 +388,7 @@ file accanto.
 
 `crates/kernel/src/wire/ipc.rs`, doc di `encode`: un'encodifica fallita diventa un **corpo vuoto** invece di un
 errore, e l'argomento è letto *«contro il grafo di QUESTO tipo invece che copiato»* — grafo che il doc enumera:
-*«`Mib(u64)`, `ComputeClass`, `Preemption`, `Millis(u64)` e varianti unit»*. ⛔ **Le undici varianti del compito 3
+*«`Mib(u64)`, `ComputeClass`, `Preemption`, `Millis(u64)` e varianti unit»*. ⛔ **Le varianti nuove del compito 3
 ci mettono dentro `String` e `Vec<u8>`**, quindi l'enumerazione smette di descrivere il tipo.
 
 ✅ **Riletto alla fonte il 2026-09-11**, in `bincode` 2.0.1, `src/error.rs` — la crate è già scaricata,
@@ -758,6 +758,40 @@ image»* — misurato scambiando i due `#[n(..)]`, nessun byte mosso, workspace 
 un testo e un numero — quindi scambiarne gli indici muove i byte e il record congelato lo dice. ⚠️ **Va scritto
 accanto al record**, perché il prossimo dettaglio a due campi dello stesso tipo ricadrebbe nel buco, e il
 richiamo del 2026-09-01 vive in un file che quel giorno nessuno riaprirà.
+
+### P-35 — «le undici varianti» è FALSO contro l'enum che il compito 3 detta, e vive in otto case dentro questo file
+
+**Riga 5 — il contratto cresce sotto il piano**, e qui il piano smentisce **sé stesso in due punti dello stesso
+compito**. Trovato preparando il compito 7, che consuma quelle varianti per nome.
+
+Misurato il 2026-09-11, contando invece di rileggere:
+
+| Che cosa | Il comando | Risposta |
+|---|---|---|
+| le varianti che `IpcMessage` ha **oggi** | `grep -n "pub enum IpcMessage" -A 40 crates/kernel/src/wire/ipc.rs` | **due**, `Request` e `Verdict` — è **P-10**, e regge |
+| i bracci dell'enum che il **compito 3 detta** | il blocco `pub enum IpcMessage` del Passo 2, contati | **quattordici** |
+| quindi le varianti **nuove** | quattordici meno due | ⛔ **dodici, non undici** |
+
+⛔ **E il compito 3 si contraddice da solo:** il suo criterio di chiusura pretende
+`ls gui/schema/fixtures/*.bin | wc -l` → **14**, cioè **una fixture per variante, tutte e quattordici** — che è
+giusto, e che è aritmeticamente incompatibile con *«le undici varianti nuove»* scritte quattro righe sopra. Le due
+cifre non sono mai state confrontate perché vivono in due punti diversi dello stesso compito: la radice **R1**
+dell'audit, dentro un compito solo.
+
+⚠️ **Da dove viene l'errore, perché non si ripeta:** l'intestazione della §4 del disegno del 2 dice *«approvata il
+2026-09-06, **poi allargata di due varianti**»*. Il conteggio fu scritto a dieci, l'allargamento ne portò due, e
+qualcuno sommò **uno**. Nessun controllo poteva accorgersene: è una cifra in prosa.
+
+⛔ **LA CURA NON È RIALLINEARE A «DODICI».** È la regola di `CLAUDE.md` — *«un numero misurato non si scrive: si
+scrive il COMANDO che lo produce»* — e il gotcha **#68**: un numerale in prosa che descrive un artefatto è già
+marcito una volta e marcirà di nuovo alla prima variante che si aggiunge o si toglie. Il numerale si **toglie**
+dalle otto case (`grep -c undici` le conta), e dove il conteggio deve essere verificabile lo dice un **comando**,
+nel criterio di chiusura del compito 3, accanto a quello delle fixture che già c'è.
+
+⛔ **Corretto nel compito 3 e non con una voce d'errata**, come **P-23** e **P-25**: il compito 3 **non è
+eseguito**. ✅ **E l'enum stesso NON si tocca:** i suoi quattordici bracci sono quelli che la §4 del 2 e la §2
+della stella polare dettano, nomi compresi (decisione 9), e nessuno di essi è in discussione. Ciò che era falso è
+la **prosa che li conta**.
 
 ---
 
@@ -1814,10 +1848,10 @@ git push
 
 ---
 
-## Compito 3: lo schema che cresce — le undici varianti, i gemelli del filo, le fixture e il timbro di build
+## Compito 3: lo schema che cresce — le varianti nuove, i gemelli del filo, le fixture e il timbro di build
 
 **Files:**
-- Modify: `crates/kernel/src/wire/ipc.rs` (**`i/lf w/crlf`**) — i gemelli, le undici varianti, l'insieme canonico, il timbro; i due richiami datati di **P-16** e **P-17**
+- Modify: `crates/kernel/src/wire/ipc.rs` (**`i/lf w/crlf`**) — i gemelli, le varianti nuove, l'insieme canonico, il timbro; i due richiami datati di **P-16** e **P-17**
 - Modify: `crates/kernel/tests/ipc_wire.rs` (**`i/lf w/crlf`**) — il controllo delle fixture, il generatore dichiarato, le sonde del timbro e del grafo
 - Create: `gui/schema/fixtures/*.bin` — un file per variante, **rigenerabili**
 - Create: `gui/schema/fixtures/ipc_v1.map` (**LF**) — la mappa `indice → nome → valore`, e il timbro
@@ -1828,7 +1862,7 @@ git push
 - Produces, e i compiti 7, 8, 10, 11, 12 e 13 li usano con questi nomi esatti:
   - `kernel::wire::ipc::BuildStamp` — `BuildStamp(u64)`, con `BuildStamp::get(&self) -> u64`
   - `kernel::wire::ipc::{Protection, DegradationReport, PolicyReport, PolicyName, Triple, Access, Call, Provenance, LayoutState, StepSummary}`
-  - le undici varianti nuove di `kernel::wire::ipc::IpcMessage`
+  - le **varianti nuove** di `kernel::wire::ipc::IpcMessage` — ⛔ **quante siano lo dice il comando del criterio di chiusura, non questa riga: un numerale in prosa qui è già stato falso una volta (P-35)**
   - `kernel::wire::ipc::stamp_set() -> alloc::vec::Vec<IpcMessage>` — l'insieme canonico
   - `kernel::wire::ipc::build_stamp() -> BuildStamp`
   - le fixture in `gui/schema/fixtures/`, che il compito 10 legge da `gui/src/schema/`
@@ -1854,7 +1888,7 @@ campo nuovo del giornale si ferma e va tradotto **a mano**, col compilatore che 
 | `degradation::Degradation` | due `bool` oggi, ma ADR-0019 dichiara la **lista degli eventi aperta** col rimando del 2026-09-08 — la telecamera arriva con ADR-0039 — e la §4 del 2 dice *«i due campi **di oggi**»*: cresce per costruzione | `crates/kernel/src/degradation.rs:23-27` |
 | `record::Trust` | già deciso dal disegno: *«Sul filo un enum a due valori gemello di `Trust`, per non appendere derive `bincode` a un tipo del giornale»* | §4 del 2 |
 
-⚠️ **Costo dichiarato:** undici varianti portano dieci tipi nuovi in `wire::ipc`, e ogni compito che le riempie
+⚠️ **Costo dichiarato:** le varianti nuove portano dieci tipi nuovi in `wire::ipc`, e ogni compito che le riempie
 scrive una conversione. **Il beneficio è il compilatore:** ADR-0036 vuole che il giornale **evolva**, I4 rinuncia
 al versionamento sul filo, e senza i gemelli un campo aggiunto al giornale cambierebbe i byte del filo **in
 silenzio** — con una GUI vecchia che legge byte diversi e nessun rosso da nessuna parte.
@@ -1873,7 +1907,7 @@ grep -c '#\[test\]' crates/kernel/tests/ipc_wire.rs
 Atteso: `IpcMessage` ha **due** varianti, `Request` e `Verdict`; `gui` **non esiste**; **sei** `.cbor` congelati
 (P-4, e questo compito non li tocca); i due file `i/lf w/crlf`; **sette** `#[test]` in `ipc_wire.rs`.
 
-- [ ] **Passo 2: i gemelli e le undici varianti**
+- [ ] **Passo 2: i gemelli e le varianti nuove**
 
 In `crates/kernel/src/wire/ipc.rs`, **sopra** `impl IpcMessage`, con Python `newline=""` (il file è `w/crlf`).
 Ogni tipo porta gli stessi derive dei due che ci sono già — `Debug, Clone, PartialEq, Eq, Encode, Decode` — e
@@ -2519,13 +2553,17 @@ Atteso: per i due file `CR` **uguale** alle righe e `i/lf w/crlf` **invariato**;
 
 ```bash
 git add crates/kernel/src/wire/ipc.rs crates/kernel/tests/ipc_wire.rs gui/schema/fixtures docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
-git commit -m "gui(compito 3): lo schema che cresce -- le undici varianti di IpcMessage coi gemelli del filo (D11), l'insieme canonico e il timbro di build, le quattordici fixture rigenerabili in gui/schema/fixtures e il controllo che dice rigenera; i richiami datati su P-16 (l'innesco della revoca e' il 7) e P-17 (il grafo di encode riletto)"
+git commit -m "gui(compito 3): lo schema che cresce -- le varianti nuove di IpcMessage coi gemelli del filo (D11), l'insieme canonico e il timbro di build, le quattordici fixture rigenerabili in gui/schema/fixtures e il controllo che dice rigenera; i richiami datati su P-16 (l'innesco della revoca e' il 7) e P-17 (il grafo di encode riletto)"
 git push
 ```
 
 #### Criterio di chiusura del compito 3
 
 - [ ] `cargo test --locked -p kernel --test ipc_wire` → **dodici passati**, uno ignorato
+- [ ] ⛔ **le varianti si CONTANO, non si rileggono — P-35:**
+  `awk '/^pub enum IpcMessage/{s=1} s&&/^}/{exit} s&&/^    [A-Z]/{c++} END{print c}' crates/kernel/src/wire/ipc.rs`
+  → **14**; lo stesso `awk` sull'uscita di `git show 42b50d8:crates/kernel/src/wire/ipc.rs` → **2**. Le nuove
+  sono la **differenza fra i due**, e nessun numerale in prosa la ripete
 - [ ] `ls gui/schema/fixtures/*.bin | wc -l` → **14**; `grep -c '^stamp 0x' gui/schema/fixtures/ipc_v1.map` → **1**
 - [ ] `grep -c 'DATED RECALL, 2026-09-11' crates/kernel/src/wire/ipc.rs` → **2**
 - [ ] `grep -c 'BUILD STAMP' crates/kernel/src/ports/ipc.rs` → **invariato rispetto al Passo 1**: quel file non si tocca
@@ -5042,7 +5080,7 @@ l'errata è **vuota**, i compiti **5–16 non esistono**. La sessione nuova **sc
 | **3**, **4** | ✅ **SCRITTI.** Si leggono solo se si esegue |
 | **5** — le due implementazioni della settima porta **e la suite** | ⚠️ **CORRETTA:** `crates/platform/src/journal.rs` **per intero** (632 righe: `FileBackend`, `open(path)`, la forma del modulo `redb`) — **al 4 non serviva, al 5 sì**; la **testa** di `crates/kernel/tests/journal_contract.rs` (32 righe: la forma di una suite `include!`-abile, e il precedente del tempo futuro corretto con un richiamo) e `crates/platform/tests/journal_contract_real.rs` **per intero** (è corto, ed è il modello dell'`include!`); il pezzo 3 della §2 della stella polare; la riga della settima porta della §8 del 2, per le cinque sonde che la suite deve tenere |
 | **6** — il registro | invariata: §5 del 2, la prima tabella; ADR-0038; `crates/kernel/src/permission.rs`, `record.rs`, `crates/kernel/tests/frozen_bytes.rs`. ⚠️ **Più `Triple`, `Access` e `Call` del compito 3**, che sono i gemelli sul filo di ciò che il registro decide |
-| **7, 8** — l'attività e il daemon | invariata, **più le undici varianti del compito 3**: il blocco *Interfaces* del 3 le porta coi nomi esatti, e la §5 del 2 va letta **contro quelli** |
+| **7, 8** — l'attività e il daemon | invariata, **più le varianti nuove del compito 3**: il blocco *Interfaces* del 3 le porta coi nomi esatti, e la §5 del 2 va letta **contro quelli** |
 | gli altri | come la prima chiusura li ha scritti |
 
 ⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — questo file e il compendio — e la **testa di

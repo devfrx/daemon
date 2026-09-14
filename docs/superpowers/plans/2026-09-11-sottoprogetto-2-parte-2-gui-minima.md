@@ -133,15 +133,16 @@ Valgono per ogni compito, senza che il compito li ripeta.
 | **5** | le **due implementazioni** della settima porta: `redb` in `platform`, la finta in `simulator`, **e la suite di conformità che le confronta** — arrivata qui dalla riga 4 col richiamo del 2026-09-11 (**D13**): una suite ne vuole due, e al 4 ce n'erano zero | uno | ⬜ |
 | **6** | il **registro delle funzioni** `kernel::registry`: la funzione registrata, `invoke`, il dettaglio `Invocation` col suo record congelato | uno | ⬜ |
 | **7** | l'**attività del kernel che serve la GUI** — `kernel::serving`: il dispaccio, il ramo `Request` **non servito** (D5), `Disconnected`, il tick in `Parameters`. ⛔ **Il limite di giri è al 8 — richiamo del 2026-09-11, D21** | uno | ⬜ |
-| **8** | il **daemon**: il cablaggio dell'attività, il percorso dell'archivio come argomento, la **rilettura della policy all'avvio** col dettaglio tipizzato, «salva, riavvia, ritrova», **e il limite di giri** — arrivato qui dalla riga 7 col richiamo del 2026-09-11 (**D21**): la sua sonda vuole il grafo con la GUI | uno | ⬜ |
-| **9** | la **campagna DST del 2** in `simulator`, e la sua riga nel settimo passo del cancello | uno | ⬜ |
-| **10** | **`gui/` nasce**: Vite, Vue 3, TypeScript, `engines.node` e `.npmrc`; `schema/` coi tipi e le fixture, `transport/` col ponte e la sua finta | uno | ⬜ |
-| **11** | il **core finto** `gui/fake-core/`: l'attività vera su porte in memoria, il rubinetto, le sonde | uno | ⬜ |
-| **12** | la **SPA, la cornice**: `dockview`, la barra delle viste, la fascia, la striscia, il cassetto, le tre viste come JSON, `stores/`, `tokens/`, `locales/it.json` | uno | ⬜ |
-| **13** | la **SPA, i moduli**: Stato, Permessi con la finestra di conferma, Chat col markdown e la provenienza, Passi, il segnaposto; l'accessibilità e le scorciatoie sopra `moveTo` | uno | ⬜ |
-| **14** | il **passo del cancello**: `scripts/gate-gui.sh`, la riga in `gate.sh`, `.gitignore`, `actions/setup-node` nella CI | uno | ⬜ |
-| **15** | **X-1 e X-3**: la matrice Windows nella CI, `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh` | uno | ⬜ |
-| **16** | la **chiusura**: i documenti in ogni casa — la §12 del compendio, `README.md`, la roadmap, tracciabilità, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — e la Definizione di «fatto» della parte 2, coi comandi | uno | ⬜ |
+| **8** | la **specie `Policy` del giornale**, e la **policy riletta dal giornale**: `RecordKind::Policy` all'indice 7, `Detail::Policy` all'indice 4, `PolicyDetail`, l'**ottavo** record congelato, e la proiezione `kernel::arbiter::policy_now`. ⛔ **Arrivata qui DIVIDENDO la vecchia riga 8 — richiamo del 2026-09-14, D25**: la rilettura tocca il **formato durevole** e il cablaggio no, e un revisore può bocciare l'una approvando l'altro. ⚠️ **E NON è una nota con un dettaglio**, che non è pronunciabile — **P-44**, **D26** | uno | ⬜ |
+| **9** | il **daemon**: il cablaggio dell'attività, il percorso dell'archivio come argomento, l'`unwrap_or` sul default di ADR-0006 — ⛔ **la specie e la proiezione sono al compito 8, richiamo del 2026-09-14, D25** — «salva, riavvia, ritrova», **e il limite di giri** — arrivato qui dalla riga 7 col richiamo del 2026-09-11 (**D21**): la sua sonda vuole il grafo con la GUI. ⚠️ **Il default resta un letterale del daemon**, che è ciò che **D27** compra | uno | ⬜ |
+| **10** | la **campagna DST del 2** in `simulator`, e la sua riga nel settimo passo del cancello | uno | ⬜ |
+| **11** | **`gui/` nasce**: Vite, Vue 3, TypeScript, `engines.node` e `.npmrc`; `schema/` coi tipi e le fixture, `transport/` col ponte e la sua finta | uno | ⬜ |
+| **12** | il **core finto** `gui/fake-core/`: l'attività vera su porte in memoria, il rubinetto, le sonde | uno | ⬜ |
+| **13** | la **SPA, la cornice**: `dockview`, la barra delle viste, la fascia, la striscia, il cassetto, le tre viste come JSON, `stores/`, `tokens/`, `locales/it.json` | uno | ⬜ |
+| **14** | la **SPA, i moduli**: Stato, Permessi con la finestra di conferma, Chat col markdown e la provenienza, Passi, il segnaposto; l'accessibilità e le scorciatoie sopra `moveTo` | uno | ⬜ |
+| **15** | il **passo del cancello**: `scripts/gate-gui.sh`, la riga in `gate.sh`, `.gitignore`, `actions/setup-node` nella CI | uno | ⬜ |
+| **16** | **X-1 e X-3**: la matrice Windows nella CI, `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh` | uno | ⬜ |
+| **17** | la **chiusura**: i documenti in ogni casa — la §12 del compendio, `README.md`, la roadmap, tracciabilità, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — e la Definizione di «fatto» della parte 2, coi comandi | uno | ⬜ |
 
 ⛔ **QUALE compito venga dopo NON è scritto qui:** vive nella §6 del
 [`COMPENDIO.md`](../../COMPENDIO.md), in un posto solo. Ciò che resta qui è la **posizione** del piano —
@@ -271,7 +272,7 @@ nuovo si aggiunge senza cancellare il vecchio.
 
 ### P-6 — Il margine del compendio è `11030` byte
 
-Misurato il 2026-09-11 col comando del vincolo 11. Il compito 16 lo consuma: il compendio riceve le
+Misurato il 2026-09-11 col comando del vincolo 11. Il compito 17 lo consuma: il compendio riceve le
 righe della §12 e il puntatore della §6. Si rimisura **prima e dopo**.
 
 ### P-7 — `check-docs.sh` esclude i piani dal controllo dei link, e legge `spikes/*.md`
@@ -285,7 +286,7 @@ rotto in un documento di `docs/` o in `spikes/*.md` sì.
 `grep -n '^run ' scripts/gate.sh` il 2026-09-11: `39` workspace build · `40` example and compile-fail
 tests · `41` no-OS gate · `42` allow-list on the two graphs · `43` attributes of the constrained crates ·
 `44` documentation consistency · `84` DST campaigns. La §8 del 2 vuole la riga nuova **fra la 43 e la
-44**; `cargo audit` di X-3 è un'altra riga, e il compito 15 dice dove.
+44**; `cargo audit` di X-3 è un'altra riga, e il compito 16 dice dove.
 
 ### P-9 — Lo stato di `.gitignore` e della CI, oggi
 
@@ -293,7 +294,7 @@ tests · `41` no-OS gate · `42` allow-list on the two graphs · `43` attributes
 **non** nomina `gui/`. La CI (`.github/workflows/quality-gate.yml`) ha un lavoro solo, `gate`, su
 `ubuntu-latest`, con `actions/checkout@v4`, `rustup show` e `bash scripts/gate.sh`: **nessun Node**,
 nessuna matrice. Il commento sopra `rustup show` spiega perché il vincolo 4 di §11 non vuole un passo in
-più — il compito 15 lo **legge prima** di aggiungere la matrice.
+più — il compito 16 lo **legge prima** di aggiungere la matrice.
 
 ### P-10 — Niente di ciò che il piano detta esiste già
 
@@ -404,11 +405,11 @@ relazione sopravvive a una variante aggiunta; un elenco no»*, scritta nel doc s
 `a_string_in_the_schema_still_cannot_stop_the_encoder` — perché fin qui era **dedotto leggendo**, e una lettura
 non è una misura.
 
-### P-18 — Le fixture vanno in `gui/`, che nasce al compito 10
+### P-18 — Le fixture vanno in `gui/`, che nasce al compito 11
 
 La §4 del 2 e la riga «lo schema» della tabella degli artefatti della §8 dicono entrambe che le fixture si
 committano **in `gui/`**. ⛔ **`gui/` non esiste**, misurato il 2026-09-11 (`ls gui` → niente), e a crearla è il
-**compito 10**, sette compiti dopo. Un compito che scrive in una cartella che nascerà è la specie di dipendenza
+**compito 11**, otto compiti dopo. Un compito che scrive in una cartella che nascerà è la specie di dipendenza
 all'indietro che il taglio per artefatto (D1) esiste per evitare.
 
 ✅ **Verificato che non ci siano effetti collaterali:** `git check-ignore -v gui/schema/fixtures/x.bin` non rende
@@ -637,7 +638,7 @@ artefatto (**D1**) le distribuisce:
 | byte che non sono JSON tornano identici | **5** |
 | archivio vuoto → «niente» | **5** |
 | `SaveLayout` su un archivio che rifiuta la scrittura → `Layout` col vecchio | **7**, l'attività che dispaccia |
-| archivio che non si apre → il core parte e `Layout` dice «non disponibile» (decisione 35) | **8**, il daemon che cabla |
+| archivio che non si apre → il core parte e `Layout` dice «non disponibile» (decisione 35) | **9**, il daemon che cabla |
 
 ⛔ **Le ultime due non si POSSONO scrivere al 5, e non è una scelta:** parlano di `SaveLayout` e di `Layout`, che
 sono **messaggi** — varianti dello schema del compito 3 — e di un core che parte, che è il daemon. Al compito 5 il
@@ -874,17 +875,17 @@ sarebbe superficie morta in un tipo **sul filo**, dove una variante non si ritir
 eseguito**. Il campo diventa `pub done: bool`, e il doc scrive che `false` significa *in dubbio* nel senso di
 ADR-0007 — il vocabolario che il kernel ha davvero.
 
-### P-40 — il limite di giri è del compito 8, non di questo
+### P-40 — il limite di giri è del compito 9, non di questo
 
 La riga 7 della tabella della posizione elenca *«il limite di giri»*. `EXECUTOR_TURN_LIMIT` vive in
-`crates/daemon/src/main.rs`, che è il file del compito **8**, e la §5 del 2 detta per esso una sonda precisa:
+`crates/daemon/src/main.rs`, che è il file del compito **9**, e la §5 del 2 detta per esso una sonda precisa:
 *«`daemon` guadagna una sonda: il grafo con la GUI resta vivo oltre centomila giri»*. ⛔ **Quella sonda
-richiede il grafo con la GUI**, cioè il cablaggio, cioè il compito 8: al 7 nulla lancia l'attività in
+richiede il grafo con la GUI**, cioè il cablaggio, cioè il compito 9: al 7 nulla lancia l'attività in
 produzione, quindi il cambio sarebbe **inerte** e la sua sonda **non scrivibile**.
 
 ✅ **È l'argomento di D13 alla lettera**, che spostò la suite di conformità dal 4 al 5 perché una suite ne
 vuole due implementazioni e al 4 ce n'erano zero. Stessa forma, stesso rimedio: la riga 7 perde le parole
-«il limite di giri», la riga 8 le guadagna, col richiamo datato. Da qui **D21**.
+«il limite di giri», la riga 9 le guadagna — era la 8 fino alla divisione di **D25**, col richiamo datato. Da qui **D21**.
 
 ### P-41 — `Protection` «consegnato» sarebbe un parametro con un solo valore possibile
 
@@ -964,6 +965,162 @@ nel compito 3.
 
 ---
 
+---
+
+### P-44 — «una NOTA con un dettaglio tipizzato» non è costruibile, e una sonda asserisce il contrario
+
+**Domanda 3 — l'artefatto è sbagliato, e non compilerebbe**, più **la riga 6** — ciò che ti smentisce sta in un
+**commento**, e qui anche in una **sonda**. La decisione **56** della stella polare detta la forma della rilettura
+della policy: *«`Arbiter::set_policy` scrive sul passo B una **nota** con un **dettaglio tipizzato** della policy,
+variante nuova di `Detail`, additiva (ADR-0036, regola 3), coi suoi byte congelati in più»*.
+
+⛔ **La metà «nota» non è pronunciabile.** Misurato il 2026-09-14 in `crates/kernel/src/record.rs`:
+
+```bash
+grep -nE '    pub fn (intent|outcome|note|verdict|routing|permission)\(' crates/kernel/src/record.rs
+```
+
+| Costruttore | Che cosa passa a `RecordV1::of` |
+|---|---|
+| `note(effect, trust, payload, reason)` | `RecordKind::Note` e `detail: None` — ⛔ **non prende un dettaglio** |
+| `verdict`, `routing`, `permission` | la **propria** `RecordKind` e `Some(Detail::…)`, col dettaglio **obbligatorio** |
+
+E il doc di `RecordV1` scrive perché, in negativo: *«Here the wrong pair is not refused, it is UNPRONOUNCEABLE:
+`kind` is not a parameter of anything»*, e accanto a `routing`: *«a `kind: Routing` beside some other `Detail` is
+not refused, it is unpronounceable»*. ⛔ **Quindi una nota con un dettaglio non è una cosa che si scrive male: è una
+cosa che non si scrive.** La forma del repository è una **specie**: `RecordKind` propria, variante di `Detail`
+propria, **costruttore** proprio, e — per il divieto 3 in testa a `crates/kernel/tests/frozen_bytes.rs` — il
+**proprio record congelato**.
+
+⛔ **E c'è una sonda che asserisce ESATTAMENTE il contrario di ciò che la decisione 56 chiede.**
+`crates/kernel/tests/arbiter_policy.rs`, dentro `a_transition_names_the_policy_it_moves_to`:
+
+```rust
+        // ⚠️ AND `detail` IS `None` ON BOTH, for the reason the note's is: a policy transition
+        // declares no structured species. Turned to `Some(..)`, the whole workspace stayed
+        // green — 41 targets, 298 passed, identical to the baseline. Errata `E79`.
+        assert_eq!(record.detail(), None);
+```
+
+⚠️ **La decisione 56 ne nomina due da rileggere — *«la sonda `E115` ② e la campagna dell'arbitro»* — e NON questa.**
+È la specie di buco che la quinta riga della disciplina dell'audit copre: *un rimedio si chiude su tutte le case
+della frase*. Le due sonde della transizione asseriscono **entrambe** `entries.len() == 2`.
+
+✅ **Il merito della decisione 56 regge, ed è la sua ragione a dirlo.** La rilettura deve essere strutturata e non
+cercare una stringa nel `reason`, e il precedente del repository è `permission::is_granted`, che rilegge il
+giornale **filtrando per `RecordKind::Permission` e leggendo `Detail::Permission`**, mai il `reason`:
+
+```bash
+sed -n '226,246p' crates/kernel/src/permission.rs
+```
+
+**Conseguenza: D26**, la specie `Policy`, e il compito 8 la porta col suo lettore. ⚠️ **Non è una riapertura della
+decisione 56:** è la sua unica forma costruibile, e i due richiami datati — sulla decisione 56 e sulla riga 9 della
+§9 del 2 — lo dicono con la data.
+
+### P-45 — i `match` esaustivi su `RecordKind` sono QUATTRO e non due: il compito 6, così com'è scritto, NON COMPILA
+
+⛔ **La quinta domanda girata all'indietro, e ha pagato una quarta volta.** **P-33** censì i `match` esaustivi su
+`RecordKind` e concluse *«Sono due e non di più»*, nominando `reconcile.rs` e `frozen_bytes.rs`; il compito **6**
+ha preso quella lista per buona e la sua lista *Files* nomina quei due file soli. Ricensito il 2026-09-14 col
+comando invece che rileggendo P-33:
+
+```bash
+grep -rn 'RecordKind::Permission' crates/ --include='*.rs' | grep -v 'src/record.rs'
+```
+
+| Dove | Che cosa | Colto da P-33? |
+|---|---|---|
+| `crates/kernel/src/reconcile.rs:197` | il `match body.kind()` di `steps_in_doubt`, sei bracci | ✅ sì |
+| `crates/kernel/tests/frozen_bytes.rs:392` | il `match kind` che accompagna l'array dei sei | ✅ sì |
+| `crates/kernel/tests/record_shape.rs:165` | ⛔ **`let of = \|kind\| match kind { … }`, esaustivo**, che costruisce una specie per variante — **più** un array di sei alla riga 240 che il compilatore **non** sorveglia | ⛔ **NO** |
+| `crates/simulator/tests/dst_campaign.rs:452` | ⛔ un `match` esaustivo dell'oracolo indipendente, il cui braccio `Permission` è un **`panic!`** e non un braccio vuoto | ⛔ **NO** |
+
+⛔ **E i due omessi non sono due righe di prosa: fermano il compilatore.** `record_shape.rs` lo **dichiara di sé** —
+*«AND THE `match` IS A GROWTH GUARD RATHER THAN A CHORE: it is exhaustive, so a species added to `RecordKind` makes
+THIS probe red»* — e la sua metà a mano lo dichiara due volte: *«the `match` goes red on a new species, this ARRAY
+does not»*, che è la ragione per cui `Verdict`, `Routing` e `Permission` furono aggiunti all'array **a mano**, uno
+per volta, ciascuno col proprio richiamo.
+
+⛔ **`dst_campaign.rs` è di specie diversa dagli altri tre, e va letto prima di toccarlo.** Il suo braccio non è
+vuoto per decisione scritta: *«writing the empty arm `reconcile` writes would make this oracle agree with the
+implementation BY CONSTRUCTION on a case it has never seen»* (errata `E50`), e *«THE DAY THE SCENARIO GROWS A
+PERMISSION, THE RED IS A DECISION BEING ASKED FOR and not a defect being reported»*. Un braccio nuovo lì è un
+`panic!` con la stessa forma, **non** un braccio vuoto copiato dal vicino.
+
+✅ **Corretto nel compito 6 e in P-33, non con una voce d'errata** — come P-23, P-25, P-35, P-39 e P-43: il compito
+**6 non è eseguito**. Un'errata è per ciò che un compito eseguito ha smentito; qui costa due righe di lista *Files*,
+e scoprirlo eseguendo costa un compito rifatto su un `cargo test` che non compila.
+
+⚠️ **E vale per il compito 8 identico**, che aggiunge la **ottava** variante: i quattro siti sono quattro anche per
+lui, e la lista *Files* del compito 8 li nomina tutti e quattro. 📌 **La lezione, oltre al caso:** un censimento che
+conclude *«sono due e non di più»* è un **elenco in prosa** — la cosa che questo repository toglie invece di
+riallineare (gotcha #68). Il comando resta, il numerale no.
+
+### P-46 — il compito 8 rende ROSSO il banco del compito 7, e la cura è nel compito 8
+
+⛔ **La gemella in avanti della quinta domanda** — *«il compito che scrivo rende impossibile qualcosa che un compito
+già scritto detta?»* — che la quarta chiusura ha scritto fra le trappole. Il banco del compito 7,
+`crates/kernel/tests/serving.rs`, asserisce la **sequenza esatta** dei record dopo un `Approve`:
+
+```rust
+            assert_eq!(
+                kinds,
+                vec![
+                    RecordKind::Intent,
+                    RecordKind::Invocation,
+                    RecordKind::Permission,
+                    RecordKind::Intent,
+                    RecordKind::Outcome,
+                    RecordKind::Outcome,
+                ],
+                "the journal must read as decision 21 dictates"
+            );
+```
+
+⛔ **Con `set_policy` che scrive la nota della specie `Policy` sul passo B, quella sequenza ne conta SETTE**, e
+`Policy` entra all'indice **4**, fra l'intento del passo B e il suo esito.
+
+⚠️ **E non è un difetto del compito 7**, che è **giusto quando viene eseguito**: al compito 7 `set_policy` scrive
+due record, e il banco li conta bene. Diventa falso il giorno del compito 8. ⛔ **Quindi la cura NON è correggere il
+compito 7** — sarebbe un'attesa scritta contro un codice che non esiste ancora, cioè una previsione citata come
+misura (gotcha **#57**) — **e nemmeno una scadenza in prosa** dentro il banco del 7, che è gotcha **#77**. La cura è
+che `crates/kernel/tests/serving.rs` entri nella lista *Files* del **compito 8**, con un passo che lo aggiorna e il
+suo richiamo datato: **chi cambia il comportamento ripara ciò che il cambiamento rompe**.
+
+### P-47 — il disegno del 2 è LF e TRE posti lo dichiarano CRLF: l'unica etichetta falsa su ventitré
+
+**Riga 5 girata all'indietro**, e questa volta contro il **vincolo globale 4**, che è il vincolo il cui costo è
+*«`git diff` dichiara seicento righe cambiate che nessuno ha toccato»* — successo tre volte. Le liste *Files* di
+questo piano marcano il fine-riga di ogni file che toccano; misurate **tutte** il 2026-09-14, invece di rileggerle:
+
+```bash
+grep -oE '`[a-zA-Z0-9_./-]+\.(rs|md|toml|sh|map|yml)` \(\*\*(CRLF|`i/lf w/crlf`)\*\*\)' <questo file> \
+  | sed 's/ (\*\*.*//' | tr -d '`' | sort -u \
+  | while read f; do [ -e "$f" ] && printf '%-72s %s\n' "$f" "$(git ls-files --eol "$f" | awk '{print $1, $2}')"; done
+```
+
+| Etichette verificate | Esito |
+|---|---|
+| ventidue file — i sorgenti di `kernel`, `platform` e `simulator`, la mappa dei congelati, `platform/Cargo.toml`, la **spec** del sotto-progetto 1 | ✅ **`i/lf w/crlf`**, come dichiarato |
+| `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` | ⛔ **`i/lf w/lf`** — `tr -cd '\r' \| wc -c` rende **0** |
+
+⛔ **Una sola etichetta falsa su ventitré, e sta nel file che TRE compiti aprono** — il 6 nella lista *Files* e nel
+suo passo dei richiami, il 7 nel passo delle quattro case. ⚠️ **E il compito 7 la riporta anche nell'ATTESA del suo
+Passo 1** — *«gli altri `i/lf w/crlf`»* — quindi chi esegue misura, vede `w/lf`, e si trova davanti a una
+divergenza che il piano gli dice di trattare come voce d'errata: un rosso per il motivo sbagliato, che è
+esattamente ciò che il vincolo 4 di §11 esiste per evitare.
+
+✅ **La distinzione che rende il caso non ovvio, e che va scritta perché il prossimo censimento non «uniformi»:**
+`docs/COMPENDIO.md` è **CRLF** — `tr -cd '\r' < docs/COMPENDIO.md \| wc -c` rende il numero delle sue righe — e la
+**spec** del sotto-progetto 1 pure. ⛔ **Non esiste una convenzione «i documenti sono CRLF»:** c'è **un file per
+volta da non cambiare**, che è la lettera del vincolo 4, e i due disegni della GUI sono nati LF perché sono stati
+scritti sul posto il 2026-09-09 da una sessione che scriveva file nuovi.
+
+✅ **Corretto nei compiti 6 e 7 e non con una voce d'errata** — come P-23, P-25, P-35, P-39, P-43 e P-45: nessuno
+dei due è eseguito. ⚠️ **La stella polare NON ha l'etichetta sbagliata** perché nessun compito prima del 8 la
+apre; il compito 8 la marca **LF**, misurata.
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -971,7 +1128,7 @@ smentisce — è ciò per cui esiste l'errata.
 
 | | Decisione | Perché |
 |---|---|---|
-| **D1** | i compiti sono **sedici**, tagliati per **artefatto** sulla tabella *«Il prodotto del 2, e il controllo che esercita ciascun artefatto»* della §8 del 2, e ogni compito finisce con un artefatto provato da solo | la §8 dice di sé che le righe stanno «in un posto solo perché il piano le tagli per compito»; il precedente sono i tredici compiti del Traguardo 5 in un piano solo |
+| **D1** | i compiti sono tagliati per **artefatto** sulla tabella *«Il prodotto del 2, e il controllo che esercita ciascun artefatto»* della §8 del 2, e ogni compito finisce con un artefatto provato da solo — ⛔ **quanti siano lo dice la tabella della posizione, non questa riga: RICHIAMO DEL 2026-09-14 (D25)** — qui stava *«sedici»*, ed è un numerale in prosa che conta un artefatto, cioè la cosa che questo repository **toglie** invece di riallineare (gotcha #68, P-35) | la §8 dice di sé che le righe stanno «in un posto solo perché il piano le tagli per compito»; il precedente sono i tredici compiti del Traguardo 5 in un piano solo |
 | **D2** | `dockview-core` e `dockview` si appuntano a **8.3.1**, non alla **8.2.0** con cui SP-8 ha misurato le otto mosse | la v8 è additiva e ogni novità è opt-in, letto alla fonte il 2026-09-07 (tabella della §4 della stella polare); appuntare una versione che il registro non serve più come `latest` è debito al primo `npm install`. ⚠️ **Costo dichiarato:** l'evidenza delle otto mosse è sulla 8.2.0, e il compito 12 lo scrive accanto al primo uso; se un comportamento delle mosse cambia, è una voce d'errata |
 | **D3** | `markdown-it` si appunta a **15.0.2**, uscita **il giorno stesso** | è una patch sulla 15.0.1 che la §9 del 2 aveva letto **dentro il pacchetto** (preset `default` con `html: false`, `BAD_PROTO_RE`); ⛔ **il compito 13 rilegge quelle tre proprietà dentro il `.tgz` della 15.0.2 prima di usarla**, perché una patch che tocca `validateLink` cambierebbe la ragione della decisione 51 |
 | **D4** | `vitest` resta **4.1.11**, il tag `V4`, e non la 5.0.0 | la decisione 52 disse «sei giorni»; oggi sono otto, e otto giorni non sono maturità. ⛔ **La misura si rifà al compito 10**, e se il piano si scrivesse fra un mese la risposta cambierebbe: la regola è «novità non è maturità», non «mai la major» |
@@ -979,10 +1136,10 @@ smentisce — è ciò per cui esiste l'errata.
 | **D6** | `redb` resta alla **4.1.0** del `Cargo.lock`, benché il registro serva la 4.2.0 | ADR-0032 nomina la 4.1.0 e il lockfile è un **ingresso** del cancello (vincolo 6): alzarla è un atto deliberato che non serve a nessun passo di questo piano. Il compito 5 usa il `FileBackend` che `platform` già ha |
 | **D7** | la **seminatura** del contatore vive in `kernel::numbering::seeded_from`, non in `daemon` | la §7 del 2 costruisce l'attività del kernel **da fuori**, in `gui/fake-core`, che non può importare un binario — è il dedotto che quella sezione scrive di `build_the_arbiter`. Una seminatura in `daemon/src/main.rs` sarebbe **copiata** dal finto, e una copia del cablaggio è verde il giorno che le due divergono. ⚠️ **Costo:** `kernel` guadagna una funzione libera che legge il giornale con `replay`; **nessuna** operazione nuova nella porta |
 | **D8** | il modulo si chiama **`numbering`** e non `counter` | in questo repository «counter» significa già **contro-sonda**: `crates/platform/tests/counter_probes.rs` si apre con *«The counter-probes of §7.1.1 rule 3»* e `platform::counter_probe_std_compiles` porta la stessa parola. Un `kernel::counter` numerico accanto a quelle è la specie di ambiguità che questo repo paga altrove. ⚠️ **Costo:** il doc di `ClientId` dice «the counter», e il richiamo del compito 1 nomina il tipo per esteso |
-| **D9** | ⛔ **il trasporto riceve un TETTO consegnato** — `LocalSocketIpc::bound(name, numbers, max_body)` — e una lunghezza dichiarata sopra il tetto è `MalformedMessage` **col client che resta**; il flusso diventa **avvelenato** e ogni `receive` successivo dice lo stesso | è l'unico produttore possibile di quella variante (P-14), e senza di esso la riga `receive` della §3 del 2 prometterebbe qualcosa che nessuna sonda può tenere. Consegnato e non inventato (ADR-0034), come il contatore. ⚠️ **E toglie un buffer senza fondo** da un componente che parla con l'OS: un pari che dichiara quattro gibibyte verrebbe accumulato per sempre. ⚠️ **Costo dichiarato:** un flusso avvelenato non si riprende — un flusso con prefisso di lunghezza **non si risincronizza**, e fingere di poterlo fare sarebbe la pezza; chi vuole riprendersi chiude e riapre il collegamento, che è ciò che la GUI fa già quando il core manca (§6a, «riprova»). ⛔ **Chi sceglie il numero non è questo piano:** lo consegnano il daemon (compito 8) e il core finto (compito 11), e il compito 8 dice da dove |
+| **D9** | ⛔ **il trasporto riceve un TETTO consegnato** — `LocalSocketIpc::bound(name, numbers, max_body)` — e una lunghezza dichiarata sopra il tetto è `MalformedMessage` **col client che resta**; il flusso diventa **avvelenato** e ogni `receive` successivo dice lo stesso | è l'unico produttore possibile di quella variante (P-14), e senza di esso la riga `receive` della §3 del 2 prometterebbe qualcosa che nessuna sonda può tenere. Consegnato e non inventato (ADR-0034), come il contatore. ⚠️ **E toglie un buffer senza fondo** da un componente che parla con l'OS: un pari che dichiara quattro gibibyte verrebbe accumulato per sempre. ⚠️ **Costo dichiarato:** un flusso avvelenato non si riprende — un flusso con prefisso di lunghezza **non si risincronizza**, e fingere di poterlo fare sarebbe la pezza; chi vuole riprendersi chiude e riapre il collegamento, che è ciò che la GUI fa già quando il core manca (§6a, «riprova»). ⛔ **Chi sceglie il numero non è questo piano:** lo consegnano il daemon (compito 9) e il core finto (compito 12), e il compito 9 dice da dove |
 | **D10** | ⛔ **il trasporto NON incornicia**: `send` scrive i byte **verbatim**, `receive` rende **la cornice intera** — busta compresa — e `take_frame` serve solo a trovare il confine fra due messaggi | `IpcMessage::encode` incornicia già e `decode` sbuccia (P-15), quindi un messaggio consegnato a `send` è **già auto-delimitato**: una seconda busta sarebbe quattro byte con due significati e due sbucciature al pari TypeScript. ⚠️ **Ed è la convenzione che le due finte hanno già**, verbatim. **Costo:** chi chiama `send` deve consegnare una cornice intera — il doc del trasporto lo scrive, la porta no (e non si tocca: il suo doc dice «bytes», che resta vero) |
 | **D11** | ⛔ **un tipo del kernel raggiunge il filo TALE E QUALE solo se è CHIUSO** — un newtype su un numero o un enum senza dati, che non può guadagnare campi; **ogni tipo con CAMPI porta un gemello** in `kernel::wire::ipc`, e la conversione è il posto dove un campo nuovo del giornale si ferma | la regola distingue i **due precedenti opposti** del repo invece di sceglierne uno: `Mib` porta entrambe le lingue perché è un numero con un nome e non può crescere; `Trust` vuole il gemello perché il disegno lo dice. ⛔ **E per due dei quattro non è una scelta** (P-19): `Permission` porta `&'static str`, che non nasce da byte in arrivo — l'argomento che `GrantRequest` scrive contro `ResourceProfile`, ADR-0014 — e `VramPolicy` contiene le policy stesse. ⚠️ **Il beneficio è il compilatore:** ADR-0036 vuole che il giornale **evolva**, I4 rinuncia al versionamento sul filo, e senza gemelli un campo aggiunto al giornale cambierebbe i byte del filo **in silenzio**. ⚠️ **Costo:** dieci tipi nuovi in `wire::ipc` e una conversione per variante. ⚖️ **Portata al proprietario in A/B il 2026-09-11 e delegata** — *«scegli secondo decision-principles»* |
-| **D12** | le **fixture nascono al compito 3**, che crea `gui/schema/fixtures/` con **soli dati** — nessun `package.json`, nessun `Cargo.toml` | la §4 e la §8 del 2 le vogliono in `gui/`, che però nasce al **compito 10** (P-18). Le tre vie: spostare il compito 3 dopo il 10 romperebbe il taglio per artefatto (D1) e lascerebbe lo schema senza controllo per sette compiti; farle nascere in `crates/kernel/tests/` e copiarle contraddirebbe il disegno e creerebbe **due case**; crearle dove il disegno dice è il minimo. ✅ **Verificato che non ci siano effetti collaterali:** `gui/` non è ignorata, e senza manifesti `cargo` non la vede. ⚠️ **Costo:** il compito 10 trova la cartella già lì e ci costruisce intorno, invece di crearla vuota |
+| **D12** | le **fixture nascono al compito 3**, che crea `gui/schema/fixtures/` con **soli dati** — nessun `package.json`, nessun `Cargo.toml` | la §4 e la §8 del 2 le vogliono in `gui/`, che però nasce al **compito 11** (P-18). Le tre vie: spostare il compito 3 dopo il 10 romperebbe il taglio per artefatto (D1) e lascerebbe lo schema senza controllo per sette compiti; farle nascere in `crates/kernel/tests/` e copiarle contraddirebbe il disegno e creerebbe **due case**; crearle dove il disegno dice è il minimo. ✅ **Verificato che non ci siano effetti collaterali:** `gui/` non è ignorata, e senza manifesti `cargo` non la vede. ⚠️ **Costo:** il compito 11 trova la cartella già lì e ci costruisce intorno, invece di crearla vuota |
 | **D13** | ⛔ **la suite di conformità della settima porta nasce al compito 5, non al 4**: il 4 porta il tratto, la finta di `ports_are_implementable.rs` e i tre richiami; il 5 porta le due implementazioni **e** la suite che le confronta | una suite di conformità confronta **due** implementazioni, e `crates/kernel/src/ports/mod.rs` lo scrive di sé; al compito 4 ce ne sono **zero** (P-20). Le due vie scartate: farla nascere al 4 **col tempo futuro** è ciò che `journal_contract.rs` fece davvero e che ha richiesto un richiamo datato — *«a tense is a status claim like any other»*, gotcha #31, lezione già pagata; farla nascere al 4 su una finta minima la renderebbe **vacua**, che è la prima domanda del pre-controllo. ⚠️ **Il compito 4 resta provato da solo**, che è ciò che D1 chiede: la finta prova il tratto **da fuori dalla crate** — la terza domanda di `CLAUDE.md` in persona. ⚠️ **Costo:** il compito 5 cresce di un artefatto, e la riga 4 della tabella della posizione perde le parole «la suite di conformità» |
 | **D14** | ⛔ **`FileCustody::open` rende `platform::journal::OpenError`, il tipo che c'è**, e `crates/platform/src/journal.rs` entra nella lista *Files* del compito 5 per **una parola**: `engine` passa da privata a `pub(crate)` | le tre varianti — `File(io::Error)`, `AlreadyOpen`, `Engine(redb::Error)` — sono esattamente quelle che *aprire un archivio `redb` su un `FileBackend`* può produrre, e la custodia apre la stessa cosa. Le due vie scartate (**P-26**): **spostarlo** in `platform::OpenError` renderebbe false due righe di doc **del kernel** che ne citano il percorso come precedente di forma — la radice **R1** commessa per fare ordine; **duplicarlo** darebbe due tipi da tenere in passo, e il primo che diverge mente in silenzio. ⚠️ **Costo dichiarato:** il percorso si legge male — un errore della custodia raggiunto attraverso il modulo `journal` — e per questo il doc di `FileCustody::open` lo spiega dove chi lo incontra lo cerca. Se un **terzo** archivio arriverà, allora il tipo sale di un livello e i due doc del kernel si correggono nello stesso commit |
 | **D15** | ⛔ **la suite della settima porta prende la forma del GIORNALE** — una funzione `assert_custody_contract` più `include!` — **e non quella della suite `ipc` del compito 2**, che è `include!` più una `macro_rules!` | la §2 della stella polare dice *«come `journal_contract`»*, e la ragione regge alla lettura: la suite di `ipc` genera i `#[test]` con una macro perché **ogni crate porta la propria fabbrica** — le sue promesse vere vogliono un pari che scrive byte, e una finta non ne ha uno. `Custody` non ha un pari: una fabbrica basta, e `kernel` costruisce `simulator::custody::MemoryCustody` da sé perché `simulator` è già sua **dev-dependency** (**P-27**). ⚠️ **Costo dichiarato:** due forme di suite convivono in questo piano e un revisore può leggerlo come un'incoerenza; per questo la testa di `custody_contract.rs` scrive **perché** sono due, invece di lasciarlo dedurre |
@@ -991,10 +1148,13 @@ smentisce — è ciò per cui esiste l'errata.
 | **D18** | ⛔ **l'argomento dell'invocazione viaggia nel `payload` del record, non nel dettaglio strutturato**, sotto `Trust::Untrusted` | è il precedente di `VerdictDetail` parola per parola — *«THE DETAIL TEXT IS NOT HERE: it is untrusted by inheritance (ADR-0014) and travels in the record's `payload`, under the `trust` label that exists to say so»*. E c'è anche la metà meccanica: **ogni** `*Detail::new` del giornale prende `&'static str` per chiudere la strada del testo calcolato a runtime, e l'argomento è precisamente quel testo (**P-30**). ⚠️ **Costo dichiarato:** la §5 del 2 dice *«funzione, invocatore, argomento»* e il terzo sta **accanto** al dettaglio invece che dentro; la cella riceve il proprio richiamo datato al compito 6 |
 | **D19** | ⛔ **il modulo dell'attività si chiama `serving`, e il suo item `serve`** — non `dispatch`, non `session` | `kernel::gateway::dispatch` esiste già e significa un'altra cosa — dispacciare un token conforme al provider — e un secondo `dispatch` nel kernel è l'ambiguità che **D8** rifiutò per `counter`; `session` è occupato al contrario, perché `crates/kernel/src/permission.rs` dichiara *«there is no session in the kernel»* e la voce aperta 7 della §9 del 2 assegna **al 3** il confine di sessione. `serving` è misurato libero (**P-36**). ⚠️ **Costo dichiarato:** i disegni dicono *«il dispaccio»* in italiano e il codice dice `serving`, quindi ogni richiamo datato nomina il sorgente **per esteso** — vincolo 2 |
 | **D20** | ⛔ **`PolicyReport` porta `allocated` e `total`, e NON sottrae le due quote**: `Arbiter::allocated()` e `Parameters::total_vram()`, i due numeri che il kernel ha davvero | il campo si chiamava `allocatable` e il disegno gli metteva dentro il budget **allocato** (**P-38**): il nome va corretto comunque. Sottrarre le due quote chiede due addendi che il kernel **non ha** e che il doc di `Parameters::total_vram` argomenta di non consegnare; e ⛔ **sottrarle sarebbe anche sbagliato nel merito**, perché le due quote sono **concessioni con un titolare** (ADR-0033) e non sottrazioni — nasconderle dal numeratore è *«la sottrazione non è un'esenzione»*, gotcha **#4**, commesso allo strato che l'utente guarda. ⚠️ **Costo dichiarato:** la riga 2 della tabella *Stato* della stella polare dice *«tutto meno la quota audio e la quota di presentazione»*, e la sua stessa ultima colonna la marca **dedotto**; riceve un richiamo datato al passo 7. Se il proprietario vorrà il denominatore netto, i due addendi diventano parametri consegnati e questa riga si riapre con quella misura |
-| **D21** | ⛔ **il limite di giri passa al compito 8**, e la riga 7 della tabella della posizione perde quelle parole | `EXECUTOR_TURN_LIMIT` vive nel file del compito 8, e la sonda che la §5 del 2 detta per esso — *«il grafo con la GUI resta vivo oltre centomila giri»* — **richiede il grafo con la GUI**, che nasce al cablaggio (**P-40**). Al 7 il cambio sarebbe inerte e la sua sonda non scrivibile: è l'argomento di **D13** alla lettera. ⚠️ **Costo:** due righe della tabella della posizione si riscrivono col richiamo datato, come fece D13 |
+| **D21** | ⛔ **il limite di giri passa al compito 9**, e la riga 7 della tabella della posizione perde quelle parole | `EXECUTOR_TURN_LIMIT` vive nel file del compito 9, e la sonda che la §5 del 2 detta per esso — *«il grafo con la GUI resta vivo oltre centomila giri»* — **richiede il grafo con la GUI**, che nasce al cablaggio (**P-40**). Al 7 il cambio sarebbe inerte e la sua sonda non scrivibile: è l'argomento di **D13** alla lettera. ⚠️ **Costo:** due righe della tabella della posizione si riscrivono col richiamo datato, come fece D13 |
 | **D22** | ⛔ **`Protection::AsSystemAccount` è mandato dall'attività e NON consegnato**, col proprio innesco scritto accanto | un parametro che può assumere **un** valore solo non è un parametro: è la superficie morta che il doc di `Parameters::total_vram` rifiuta con quelle parole, e la friction di §2.8.5 si pagherebbe su ogni chiamante per un valore che non può variare (**P-41**). È la forma *«dichiarato, non pinzato»* del gotcha #73. ⚠️ **Costo dichiarato:** è una divergenza dalla §5 del 2, che dice *«consegnato»*; riceve il richiamo datato al passo 7, e l'innesco è la **seconda variante** di `Protection` |
 | **D23** | ⛔ **il degrado si rilegge a OGNI GIRO**, e solo con almeno un client accolto, e si manda solo quando **differisce** da quello già ricevuto | la §7 del 2 lascia la scelta al piano fra *«a ogni giro»* e *«dopo ogni scrittura»*, e la seconda è **falsificata dalla sonda che la stessa sezione pretende**: il `degrade` del rubinetto scrive dalla **seconda attività**, quindi una rilevazione legata alle scritture del dispaccio non la vedrebbe mai (**P-42**). ⚠️ **Costo dichiarato, e il chiusore esiste già:** `degradation_now` rilegge tutto il giornale — il costo che quella funzione dichiara di sé — e il rimedio è il **checkpoint** che `Journal::replay` nomina, nella voce aperta omonima della §6 del compendio. Non si inventa qui |
 | **D24** | ⛔ **`Registry::invoke` prende un argomento `approval`, e con `Approval::JustGiven` scrive lui il `grant` su A** — correzione **nel compito 6**, non nell'errata | senza di esso la via dell'`Approve` **non esiste**: il controllo `is_granted` risponde no una seconda volta e il giro non si chiude mai (**P-43**). La decisione 21 della stella polare vuole il permesso **dentro** il passo A, fra la nota `Invocation` e l'effetto, perché `permission::grant` scrive una **nota** e vuole un passo già aperto. ⛔ **L'ordine sta nel meccanismo che lo possiede**, non nel chiamante: un dispaccio che scrivesse la fila da sé sarebbe la seconda copia che il §7 del 2 rifiuta con le stesse parole. ⚠️ **Un enum e non un `bool`**, che è la lezione di `Operation::is_write` e di `Access`. ⚠️ **Costo dichiarato:** la firma di `invoke` cresce di un argomento, il blocco *Interfaces* del compito 6 lo dice, e il registro guadagna `held` — che ha un chiamante dal giorno in cui è scritto |
+| **D25** | ⛔ **il compito 8 si SPEZZA in due**: il **8** porta la specie `Policy` del giornale e la proiezione che la rilegge, in `kernel`; il **9** porta il cablaggio del daemon. I compiti scritti dal 9 al 16 scalano di uno, e **D1 perde il numerale** | ⛔ **Portato al proprietario in A/B il 2026-09-14: B.** I due pezzi hanno **due profili di rischio**: il primo tocca il **formato durevole** — una `RecordKind` nuova, un `Detail` nuovo, l'ottavo record congelato, due sonde con la loro mutazione misurata accanto — il secondo tocca il cablaggio di produzione. È il criterio di **D1** in persona (*«tagliati per artefatto, ognuno finisce con un artefatto provato da solo»*) e la regola di `superpowers:writing-plans`: *si spezza dove un revisore può bocciare un compito e approvare il vicino*. È la stessa forma di **D13** e **D21**, che spostarono lavoro fra compiti perché non era provabile dov'era; qui il lavoro non si sposta, si **divide**. ⚠️ **Costo dichiarato:** la tabella della posizione cresce di una riga e ogni riferimento a un numero di compito **dopo il 8** in questo file si sposta di uno — corretti nello stesso commit, quinta riga della disciplina dell'audit. ⛔ **E il numerale «sedici» di D1 si TOGLIE e non si riallinea a diciassette:** è una cifra in prosa che conta un artefatto, e la sua casa unica è la tabella della posizione (gotcha #68, P-35 ricaduto due volte) |
+| **D26** | ⛔ **la transizione di policy diventa una SPECIE — `RecordKind::Policy`, `Detail::Policy`, `PolicyDetail`, `RecordV1::policy` — e NON una nota con un dettaglio**, che non è pronunciabile (**P-44**); `PolicyDetail` porta **un `bool`**, `local`, e **nessun testo** | la forma della specie è forzata dal codice: ogni dettaglio del repository viaggia con la propria `RecordKind` e il proprio costruttore, e `note` passa `detail: None`. ⛔ **Il `bool` invece è una scelta, e ha due precedenti scritti:** `VerdictDetail::passed` e `PermissionDetail::write` sono `bool` per un tipo del kernel che è un **enum chiuso a due**, con l'argomento scritto per esteso — *«an enum here would be a FOURTH `index_only` enum ON THE WIRE, whose variant indices `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index on the wire never retires»*. `VramPolicy` è chiusa a due da **ADR-0006**, e una terza policy è un ADR nuovo. ⚠️ **E il `bool` toglie una BOCCA DI TESTO:** un `PolicyDetail` col **nome** della policy porterebbe una `String` in un `Detail`, che è `E94` — e obbligherebbe alla firma sigillata di `PermissionDetail`. Con un solo `bool` il tipo segue `VerdictDetail`, che **non è sigillato** e dichiara perché: *«it carries a `bool` and a `u64`, so no runtime TEXT can enter through it»*. ⛔ **E il nome NON si duplica:** il `reason` del record porta già `MakeRoom::name()`, che esiste per questo; metterlo anche nel dettaglio sarebbe la seconda casa di gotcha **#68**. ⚠️ **Costo dichiarato:** il giorno che una terza policy esiste, il campo **si ritira** in favore di un indice facoltativo nuovo — regola 3 di §4.9.2 — ed è il costo che i due precedenti hanno già accettato; la conversione `VramPolicy → bool` è un **`match` esaustivo** in `Arbiter`, quindi quel giorno il compilatore lo dice |
+| **D27** | ⛔ **`policy_now` rende `Option<VramPolicy>`, e il kernel NON nomina un default**: `None` significa *nessuna transizione nel giornale*, e a scegliere che cosa farne è chi compone | ADR-0034 vieta al kernel di leggere un parametro che non gli è stato consegnato, e il rimando del 2026-09-08 in testa ad **ADR-0006** divide i due fatti con quelle parole: *«il profilo dà il **default** … e la policy **corrente** è la **proiezione del giornale**»*. Un `policy_now` che rendesse `Remote` su archivio vuoto metterebbe il **default** dentro la proiezione, cioè due fatti in un valore solo, e il daemon non potrebbe più distinguere *«nessuno ha mai cambiato»* da *«qualcuno l'ha riportata a remota»*. ⚠️ **Il default resta dov'è:** `VramPolicy::Remote(RemotePolicy)` è già un letterale di `crates/daemon/src/main.rs`, col commento che lo lega ad ADR-0006, e il compito **9** lo tiene lì. ⚠️ **Costo dichiarato:** il chiamante scrive un `unwrap_or`, che è una riga in più nel posto dove la decisione vive davvero |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -1011,14 +1171,14 @@ righe che lo **toccano** sono segnate.
 | Voce | Dove vive | Chi la chiude |
 |---|---|---|
 | ⚠️ **riga 27 del Traguardo 6** — l'altra metà di ADR-0005, `compute_class` e `preemption` non controllati | [`porta-di-qualita.md`](../../porta-di-qualita.md), e il doc di `GrantRequest` | **il 7**, il pilastro 3D — e questo piano **non** la innesca: **D5** |
-| ⚠️ **riga 24 del Traguardo 6** — `reconcile::Resolution` non è decisa da nessun `match` | idem | il primo consumatore; il compito 9 la **asserisce** in una campagna, non la decide con un `match`: resta aperta |
+| ⚠️ **riga 24 del Traguardo 6** — `reconcile::Resolution` non è decisa da nessun `match` | idem | il primo consumatore; il compito 10 la **asserisce** in una campagna, non la decide con un `match`: resta aperta |
 | **E50 / E51 / E100** — `promote` senza chiamante | righe 24 e 25 del Traguardo 5 | chi costruirà il primo ciclo di orchestrazione; la §5 del 2 lo dichiara già |
 | **E12** del Traguardo 6 — i due lati della grazia di una revoca | riga 10 del Traguardo 6 | il compito che darà alla revoca un chiamante: **non** questo piano (`grep -rn revoke crates/*/src` rende solo un commento e un banco) |
 | il **confine di sessione** dei permessi: `is_granted` rilegge tutto il giornale | voce 7 della §9 del 2 | il **3**, con le run |
 | la **prontezza I/O** del reattore, e l'**allocatore** nella porta `journal` | voci 5 e 6 della §9 del 2 | il proprietario, confermate A il 2026-09-09 (decisioni 41 e 42): restano com'è |
 | il **watchdog** e lo spegnimento pulito | voce 8 della §9 del 2 | il **10** |
 | **AUD-004**, l'ADR del proprietario sulle skill | l'audit; voce 11 della §9 del 2 | il proprietario, in parallelo; sbarra il **13**, non il 2 |
-| **X-2** e **X-4** dell'audit | la tabella delle voci senza numero AUD | il **proprietario**; X-1 e X-3 sono il compito 15 |
+| **X-2** e **X-4** dell'audit | la tabella delle voci senza numero AUD | il **proprietario**; X-1 e X-3 sono il compito 16 |
 | la **metà Linux** di M3 e M5 | ADR-0029, come innesco scritto | il primo Linux vero |
 | le tre voci del Traguardo 6 che aspettano il primo worker vero — 9, 26, 27 | la tabella del Traguardo 6 | il **12** |
 | le **registrate** della stella polare — l'ambito come progetto, «Automazione OS», il grafo del 6, Compatta, i due passi per invocazione | la tabella «Registrate, non prese» | il 3, il 6, il 10, il proprietario |
@@ -1037,7 +1197,7 @@ righe che lo **toccano** sono segnate.
 
 **Interfaces:**
 - Consumes: `kernel::ports::journal::{Journal, JournalError, StepId}` e `StepId::get()`; `simulator::journal::MemoryJournal` nel banco (`simulator` è già una **dev-dependency** di `kernel`, con la sua giustificazione nel manifesto)
-- Produces, e i compiti 2, 7, 8 e 11 li usano con questi nomi esatti:
+- Produces, e i compiti 2, 7, 9 e 12 li usano con questi nomi esatti:
   - `kernel::numbering::Progressive` — `Debug + Clone + Copy + PartialEq + Eq`
   - `Progressive::starting_at(first: u64) -> Progressive` (`const fn`)
   - `Progressive::take(&mut self) -> u64`
@@ -1349,7 +1509,7 @@ che è dove sono state trovate: il rimedio sta dove nasce la causa, non dove si 
 
 **Interfaces:**
 - Consumes: `kernel::ports::ipc::{Ipc, ClientId, IpcError}`; `kernel::numbering::Progressive` dal compito 1
-- Produces, e i compiti 7, 8 e 11 li usano con questi nomi esatti:
+- Produces, e i compiti 7, 9 e 12 li usano con questi nomi esatti:
   - `kernel::framing::declared_len(bytes: &[u8]) -> Option<usize>`
   - `kernel::framing::take_frame(bytes: &[u8]) -> Option<(&[u8], usize)>`
   - `platform::ipc::LocalSocketIpc`
@@ -2034,13 +2194,13 @@ git push
 
 **Interfaces:**
 - Consumes: `kernel::arbiter::{ComputeClass, Mib, Preemption}`; `kernel::framing::{self, LENGTH_WIDTH, WireError}`; `kernel::time::Millis`
-- Produces, e i compiti 7, 8, 10, 11, 12 e 13 li usano con questi nomi esatti:
+- Produces, e i compiti 7, 9, 11, 12, 13 e 14 li usano con questi nomi esatti:
   - `kernel::wire::ipc::BuildStamp` — `BuildStamp(u64)`, con `BuildStamp::get(&self) -> u64`
   - `kernel::wire::ipc::{Protection, DegradationReport, PolicyReport, PolicyName, Triple, Access, Call, Provenance, LayoutState, StepSummary}`
   - le **varianti nuove** di `kernel::wire::ipc::IpcMessage` — ⛔ **quante siano lo dice il comando del criterio di chiusura, non questa riga: un numerale in prosa qui è già stato falso una volta (P-35)**
   - `kernel::wire::ipc::stamp_set() -> alloc::vec::Vec<IpcMessage>` — l'insieme canonico
   - `kernel::wire::ipc::build_stamp() -> BuildStamp`
-  - le fixture in `gui/schema/fixtures/`, che il compito 10 legge da `gui/src/schema/`
+  - le fixture in `gui/schema/fixtures/`, che il compito 11 legge da `gui/src/schema/`
 
 ⛔ **I nomi delle VARIANTI sono fissati dal disegno** (§4, decisione 9) e non si ritoccano. I nomi dei **tipi
 trasportati** li decide questo compito, e la convenzione è quella di `GrantRequest`: il tipo dice **cosa porta**,
@@ -2775,7 +2935,7 @@ git push
 
 **Interfaces:**
 - Consumes: nulla di nuovo — il modulo non ha dipendenze
-- Produces, e i compiti 5, 7, 8 e 11 li usano con questi nomi esatti:
+- Produces, e i compiti 5, 7, 9 e 12 li usano con questi nomi esatti:
   - `kernel::ports::custody::Custody` — il tratto
   - `Custody::keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError>`
   - `Custody::retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError>`
@@ -3147,7 +3307,7 @@ git push
   `CustodyError::Unavailable`. Tutti e tre derivano `Debug + Clone + Copy + PartialEq + Eq`
 - Consumes, da `platform`: `platform::journal::{FileBackend, OpenError}` — `FileBackend::open(&Path)` è già `pub`,
   e `OpenError` si **riusa** al suo percorso (**D14**)
-- Produces, e i compiti **8**, **9** e **11** li usano con questi nomi esatti:
+- Produces, e i compiti **9**, **10** e **12** li usano con questi nomi esatti:
   - `platform::custody::FileCustody`, con `FileCustody::open(path: &Path) -> Result<FileCustody, platform::journal::OpenError>`
   - `simulator::custody::MemoryCustody`, con `MemoryCustody::new() -> MemoryCustody` — ⚠️ **`const fn`, e nessun `impl Default`**, come `MemoryJournal`
   - `assert_custody_contract<C: Custody, F: Fn() -> C>(build: F)` in `crates/kernel/tests/custody_contract.rs`, raggiunta con `include!`
@@ -4215,13 +4375,13 @@ un lettore futuro può verificare che il limite di **P-29** fu misurato e non su
 - Create: `crates/kernel/tests/frozen/record_v1_invocation.cbor` — ⛔ **il settimo record congelato, TIPATO A MANO**
 - Modify: `crates/kernel/tests/frozen/record_v1.map` — la sezione nuova, **tipata a mano**
 - Modify: `crates/kernel/tests/frozen_bytes.rs` (**`i/lf w/crlf`**) — `the_frozen_records()` da **sei a sette**, i `..._BYTES` nuovi, e il `match kind` di riga 386 (**P-33**)
-- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**CRLF**) — **due** richiami datati sulla §5: la riga dell'argomento (**P-30**) e quella dell'invocatore (**P-32**)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**, e ⚠️ **NON CRLF** — richiamo del 2026-09-14, **P-47**) — **due** richiami datati sulla §5: la riga dell'argomento (**P-30**) e quella dell'invocatore (**P-32**)
 - Read: la **§5 del 2**, la prima tabella, per intero; **ADR-0038**, la *Decision* e il perimetro negativo; `crates/kernel/src/permission.rs` **per intero** (250 righe: `Operation::is_write`, `Permission`, `PermissionError`, `grant`, `is_granted`); `crates/kernel/src/record.rs` — `RecordKind`, `EffectClass`, `Trust`, `Detail`, `PermissionDetail` **e i suoi due richiami**, `RecordV1::permission`, `RecordV1::of`; la **testa** di `crates/kernel/tests/frozen_bytes.rs` (i tre divieti) e `the_frozen_records()`; la **testa** di `crates/kernel/tests/frozen/record_v1.map` (che cosa è controllato e che cosa è prosa); ⚠️ **più `Triple`, `Access`, `Call` e `PolicyName` del compito 3**, che sono i gemelli sul filo di ciò che il registro decide — il blocco *Interfaces* del 3 li porta
 
 **Interfaces:**
 - Consumes: `kernel::permission::{self, Permission, PermissionError, Operation}`; `kernel::ports::ipc::ClientId`; `kernel::ports::journal::{Journal, JournalError, StepId}`; `kernel::record::{EffectClass, Record, RecordV1, Trust}`
 - Consumes, dal compito 3 e **solo per leggerli**: `kernel::wire::ipc::{Call, Triple, Access}` — ⛔ **il registro NON li nomina**: li traduce il dispaccio, compito 7
-- Produces, e i compiti **7**, **8** e **11** li usano con questi nomi esatti:
+- Produces, e i compiti **7**, **9** e **12** li usano con questi nomi esatti:
   - `kernel::registry::Registry`, con `Registry::new() -> Registry` (**`const fn`**), `Registry::register(&mut self, Function)`, `Registry::held(&self, name: &str) -> Option<Function>` e `Registry::invoke(journal, step, name, invoker, argument, approval, effect)`
   - `kernel::registry::Approval` — `Checked` e `JustGiven`. ⛔ **Arrivato col richiamo del 2026-09-11 (P-43, D24):** senza di esso la via dell'`Approve` non esiste, perché il controllo `is_granted` risponde no una seconda volta
   - `kernel::registry::Function` — `{ name: &'static str, permission: Permission, effect: EffectClass }`, `Copy`
@@ -5242,7 +5402,7 @@ di formato**, e va aperta una versione nuova (ADR-0036).
 
 - [ ] **Passo 9: i due richiami datati sulla §5 del disegno del 2**
 
-In `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**CRLF**), **dentro** le due celle
+In `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF** — richiamo del 2026-09-14, **P-47**), **dentro** le due celle
 della prima tabella della §5, senza riscrivere ciò che c'è:
 
 Nella cella **«il giornale»**, in coda:
@@ -5311,8 +5471,8 @@ Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit �
 - Modify: `crates/kernel/src/registry.rs` — **dal compito 6**, `Approval` e `Registry::held` (**P-43**)
 - Modify: `crates/kernel/src/wire/ipc.rs` — **dal compito 3**, `allocated` e `done` (**P-38**, **P-39**)
 - Modify: i **ventitré** file che chiamano `Parameters::new`, i nove `.stderr` che si muovono compresi
-- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` — **tre** richiami datati nella §5
-- Modify: **questo piano**, le righe **7** e **8** della tabella della posizione (**D21**)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF** — **P-47**) — **tre** richiami datati nella §5
+- Modify: **questo piano**, le righe **7** e **9** della tabella della posizione (**D21**) — ⚠️ **era la riga 8 prima della divisione di D25**
 - Read: la **§5 del 2** per intero; le **tre sequenze** di *«La GUI dentro»* della stella polare; la riga **2** della tabella *Stato* della stella polare; `crates/kernel/src/executor.rs` per intero (`spawn`, `Sleep`, `TaskState`, il giro di `run`); le **tre firme** di `crates/kernel/src/ports/ipc.rs` con i loro doc; `crates/kernel/src/client.rs`; `crates/kernel/src/degradation.rs`; `crates/kernel/src/permission.rs` (`Operation`, `Permission`, `grant`); `crates/kernel/src/arbiter/policy.rs`; il blocco *Interfaces* dei compiti **1**, **2**, **3**, **4**, **5** e **6** per i nomi esatti
 
 **Interfaces:**
@@ -5321,7 +5481,7 @@ Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit �
 - Consumes, dal **compito 4**: `kernel::ports::custody::{Custody, CustodyKey, CustodyError}`
 - Consumes, dal **compito 6**: `kernel::registry::{Registry, Function, Invoker, InvokeError}`, e i due pezzi che questo compito gli **aggiunge** al passo 4
 - Consumes, da oggi: `kernel::arbiter::{Arbiter, MakeRoom, VramPolicy, RemotePolicy, LocalPolicy}`; `kernel::client::ClientGrants`; `kernel::degradation::degradation_now`; `kernel::executor::Sleep`; `kernel::permission::{Operation, Permission}`; `kernel::ports::{ipc::{Ipc, ClientId, IpcError}, journal::{Journal, StepId}, reactor::Reactor}`; `kernel::record::{Detail, EffectClass, Record, RecordKind}`; `kernel::time::{Millis, Monotonic}`
-- Produces, e i compiti **8**, **9** e **11** li usano con questi nomi esatti:
+- Produces, e i compiti **9**, **10** e **12** li usano con questi nomi esatti:
   - `kernel::serving::Core<I: Ipc, J: Journal, C: Custody>`, con `Core::new(ipc: I, journal: J, custody: C, arbiter: Arbiter, steps: Progressive, parameters: Parameters) -> Core<I, J, C>`
   - `Core::journal(&mut self) -> &mut J` · `Core::arbiter(&mut self) -> &mut Arbiter` · `Core::attending(&self) -> Vec<ClientId>`
   - `kernel::serving::serve<'a, I, J, C, R>(core: &'a RefCell<Core<I, J, C>>, clock: &'a R, sleep: &'a Sleep)` — un `async fn` che **non finisce mai**
@@ -5330,13 +5490,13 @@ Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit �
   - `kernel::parameters::Parameters::new(executor_turn_limit, total_vram, arbiter_id, gui_tick)` e `Parameters::gui_tick(self) -> Millis`
 
 ⛔ **`serve` NON FINISCE, e questo decide come si scrive ogni banco.** L'attività è un `loop` senza uscita: in
-produzione il limite di giri è `u64::MAX` (compito **8**, **D21**), nei banchi è finito, quindi
+produzione il limite di giri è `u64::MAX` (compito **9**, **D21**), nei banchi è finito, quindi
 `Executor::run()` rende **`Err(RunError::TurnLimitReached)`** e non `Ok(())`. ⚠️ **Non è un rosso e non si
 aggira:** ciò che le sonde guardano è **il pari**, cioè i messaggi che sono arrivati, non il valore di `run`.
 Un'attività che si fermasse da sola sarebbe un core che smette di servire.
 
 ⛔ **E `Core` NON espone il trasporto oggi.** `Core::ipc` non nasce qui: il suo chiamante è il **rubinetto**
-del core finto, compito **11**, e *«un elemento d'API senza chiamante in questo repository si cancella»* —
+del core finto, compito **12**, e *«un elemento d'API senza chiamante in questo repository si cancella»* —
 `crates/kernel/src/boundary.rs`. I tre accessori che nascono hanno un chiamante in **questo** banco.
 
 - [ ] **Passo 1: le misure prima**
@@ -5356,7 +5516,8 @@ Atteso: i due file **non esistono**; l'unico `dispatch` è `pub fn dispatch` di 
 i siti di `Parameters::new` sono **cinquantasette** in **ventitré** file e **nove** di quei file stanno in
 `compile_fail/` (**P-37**); `Parameters::new` prende **tre** argomenti; in `executor.rs` **nessun** `async fn`
 e nessun `Yield`; `policy()` rende `&VramPolicy`, `allocated()` rende `Mib`, `set_policy` prende
-`(policy, step, journal)`; `registry.rs` e gli altri `i/lf w/crlf`, tranne i due file nuovi che nascono **LF**.
+`(policy, step, journal)`; `registry.rs` e gli altri `i/lf w/crlf`, tranne i due file nuovi che nascono **LF** e ⚠️ **il disegno del 2,
+che è `i/lf w/lf`** (richiamo del 2026-09-14, **P-47**).
 ⚠️ **Se una cifra è diversa vale il comando, non questa riga**, ed è una voce d'errata prima di essere un
 rimedio.
 
@@ -5426,7 +5587,7 @@ valore NON è lo stesso ovunque, e scriverne uno solo sarebbe un default travest
 proprio, come già fa per `TOTAL_VRAM`, e accanto alla costante va la ragione — è la forma che
 `executor_determinism.rs` usa parola per parola (*«A LITERAL OF THIS BENCH, and it is inert here on
 purpose»*). Per i banchi in cui il tick **non fa nulla** basta `Millis::new(0)` con quella frase; per i due
-banchi di questo compito e per la campagna del compito 9 il valore è quello che la sonda esercita.
+banchi di questo compito e per la campagna del compito 10 il valore è quello che la sonda esercita.
 
 ```bash
 grep -rn 'Parameters::new' crates/ --include='*.rs' | grep -v compile_fail
@@ -5596,7 +5757,7 @@ concessa, e l'unica differenza è la parola.
 
 - [ ] **Passo 5: la sospensione pubblica, in `executor.rs`**
 
-⛔ **Oggi ogni banco si riscrive il proprio `Yield`**, e dal compito 11 servirebbe anche **fuori dal
+⛔ **Oggi ogni banco si riscrive il proprio `Yield`**, e dal compito 12 servirebbe anche **fuori dal
 workspace**, al rubinetto del core finto. In coda a `crates/kernel/src/executor.rs` (**`i/lf w/crlf`**):
 
 ```rust
@@ -5644,7 +5805,7 @@ non si assume.
 
 `crates/kernel/tests/serving.rs`, **LF**, nuovo. ⛔ **È la terza domanda del pre-controllo in persona:**
 l'attività si prova costruibile **da fuori dalla crate**, che è precisamente ciò che il core finto dovrà
-fare al compito 11 (§7 del 2). Un banco dentro `src/` non lo direbbe.
+fare al compito 12 (§7 del 2). Un banco dentro `src/` non lo direbbe.
 
 ```rust
 //! The activity that serves the gui, driven FROM OUTSIDE THE CRATE against an in-memory wire.
@@ -6976,14 +7137,14 @@ e la lista delle dipendenze **non cresciuta**: `serving` non aggiunge nessuna cr
 - [ ] **Passo 8: i richiami datati**
 
 ⛔ **Quattro case, e si toccano nello stesso commit** (quinta riga della disciplina dell'audit). Nella §5 del
-[disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) — **`i/lf w/crlf`**, quindi
-`replace_unique.py` — tre celle della tabella «Il daemon che ascolta»:
+[disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) — ⚠️ **`i/lf w/lf`**, non
+`w/crlf` (richiamo del 2026-09-14, **P-47**) — tre celle della tabella «Il daemon che ascolta»:
 
 | Riga | Che cosa il richiamo dice |
 |---|---|
 | `Hello` | ⛔ **RICHIAMO DEL \<data\>, compito 7 del piano della parte 2 (D22):** la protezione **non è consegnata**. `Protection` ha una variante sola, e un parametro che può assumere un valore solo è superficie morta dentro `Parameters` — il doc di `total_vram` lo argomenta — pagata su ogni chiamante. L'attività manda `Protection::AsSystemAccount` e scrive l'**innesco** accanto: il giorno che `Protection` guadagna una seconda variante, il valore diventa consegnato |
 | `Request` | ⛔ **RICHIAMO DEL \<data\>, compito 7 (D5):** questa riga dice *«`admit` → `Verdict`»*, e il ramo **non chiama `admit`**. Le tre vie sono state esaminate contro il codice (P-1, P-11, P-12) e il perimetro negativo vive sul ramo stesso, in `crates/kernel/src/serving.rs`; la riga 27 delle voci aperte del Traguardo 6 resta aperta **col suo innesco intatto** |
-| il **limite di giri** | ⛔ **RICHIAMO DEL \<data\> (D21):** la riga resta vera e **cambia compito**: `EXECUTOR_TURN_LIMIT` vive in `crates/daemon/src/main.rs`, e la sonda che questa cella detta — *«il grafo con la GUI resta vivo oltre centomila giri»* — vuole il grafo con la GUI, cioè il cablaggio. È il compito **8** |
+| il **limite di giri** | ⛔ **RICHIAMO DEL \<data\> (D21):** la riga resta vera e **cambia compito**: `EXECUTOR_TURN_LIMIT` vive in `crates/daemon/src/main.rs`, e la sonda che questa cella detta — *«il grafo con la GUI resta vivo oltre centomila giri»* — vuole il grafo con la GUI, cioè il cablaggio. È il compito **9** |
 
 E la riga **2** della tabella *Stato* della [stella polare](../specs/2026-09-07-direzione-gui-design.md):
 
@@ -7013,6 +7174,905 @@ del 2026-09-11, e chi esegue non deve toccarle se non per la spunta finale.
   commit** — quale `.stderr`, e perché
 - [ ] la riga **7** della tabella della posizione a ✅ con la data
 - [ ] commit `gui(compito 7, sotto-progetto 2 parte 2): …`, **senza co-autore**, e push
+
+---
+
+## Compito 8: la specie `Policy` del giornale, e la policy riletta dal giornale
+
+**Files:**
+- Modify: `crates/kernel/src/record.rs` (**`i/lf w/crlf`**) — `RecordKind::Policy` all'indice **7**, `Detail::Policy` all'indice **4**, `PolicyDetail`, il costruttore di specie `RecordV1::policy`
+- Modify: `crates/kernel/src/arbiter/mod.rs` (**`i/lf w/crlf`**) — la nota della specie dentro `set_policy`, l'aiutante `policy_note`, la proiezione `policy_now`, l'errore `PolicyError`
+- Modify: `crates/kernel/src/reconcile.rs` (**`i/lf w/crlf`**) — l'**ottavo braccio vuoto**, col proprio argomento **misurato**, e il **richiamo datato** al capoverso che dice come scrive `set_policy`
+- Modify: `crates/kernel/tests/reconciliation.rs` (**`i/lf w/crlf`**) — le **due** sonde del braccio nuovo, nelle due direzioni
+- Modify: `crates/kernel/tests/arbiter_policy.rs` (**`i/lf w/crlf`**) — i **due richiami datati** sulle sonde della transizione (**P-44**) e le **quattro** sonde di `policy_now`
+- Modify: `crates/kernel/tests/record_shape.rs` (**`i/lf w/crlf`**) — ⛔ **il `match` esaustivo E l'array a mano** (**P-45**)
+- Modify: `crates/simulator/tests/dst_campaign.rs` (**`i/lf w/crlf`**) — ⛔ **il braccio `panic!` dell'oracolo indipendente** (**P-45**)
+- Modify: `crates/kernel/tests/frozen_bytes.rs` (**`i/lf w/crlf`**) — `the_frozen_records()` da **sette a otto**, `POLICY_BYTES`, e il `match kind`
+- Create: `crates/kernel/tests/frozen/record_v1_policy.cbor` — ⛔ **l'ottavo record congelato, TIPATO A MANO**
+- Modify: `crates/kernel/tests/frozen/record_v1.map` (**`i/lf w/crlf`**) — la sezione nuova, **tipata a mano**
+- Modify: `crates/kernel/tests/serving.rs` (**LF, dal compito 7**) — la sequenza dei record da sei a sette (**P-46**)
+- Modify: `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` (**LF**) — il richiamo datato sulla **decisione 56**
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**) — il richiamo datato sulla riga **9** della §9
+- Modify: **questo piano** — la tabella della posizione e **D1** (**D25**)
+- Read: il **rimando del 2026-09-08 in testa ad ADR-0006** (il profilo dà il default, il giornale il corrente); `crates/kernel/src/record.rs` — `RecordKind`, `EffectClass`, `Trust`, `Detail`, `VerdictDetail` **e il suo capoverso sul non essere sigillato**, `PermissionDetail` **e i suoi due richiami**, `RecordV1::of`; `crates/kernel/src/permission.rs` da `is_granted` in giù (**il precedente della proiezione**); `crates/kernel/src/degradation.rs` — `DegradationError` e il capoverso *«THE LAST ROUTING AND NOT ANY ROUTING»*; `crates/kernel/src/arbiter/mod.rs` — `set_policy`, `transition_record` e il modulo `#[cfg(test)]` in fondo; `crates/kernel/src/arbiter/policy.rs` per intero; la **testa** di `crates/kernel/tests/frozen_bytes.rs` (i tre divieti) e `the_frozen_records()`; la **testa** di `crates/kernel/tests/frozen/record_v1.map`; ⚠️ **e il blocco *Interfaces* del compito 6**, perché `RecordKind::Invocation` e `Detail::Invocation` occupano gli indici **subito prima** di quelli di questo compito
+
+**Interfaces:**
+- Consumes, dal **compito 6**: `kernel::record::{RecordKind::Invocation, Detail::Invocation}` — ⛔ **solo per gli INDICI**: questo compito prende i due successivi
+- Consumes, da oggi: `kernel::ports::journal::{Journal, JournalError, StepId}`; `kernel::record::{Detail, EffectClass, Record, RecordError, RecordKind, RecordV1, Trust}`; `kernel::arbiter::policy::{LocalPolicy, RemotePolicy, VramPolicy, MakeRoom}`
+- Produces, e il compito **9** li usa con questi nomi esatti:
+  - `kernel::record::RecordKind::Policy` — indice **7**
+  - `kernel::record::Detail::Policy` — indice **4**
+  - `kernel::record::PolicyDetail` — `{ pub local: bool }`, `Debug + Clone + Copy + PartialEq + Eq`, ⚠️ **campo pubblico e nessun costruttore**, come `VerdictDetail`
+  - `kernel::record::RecordV1::policy(effect, trust, payload, reason, detail) -> RecordV1`
+  - `kernel::arbiter::policy_now<J: Journal>(journal: &J) -> Result<Option<VramPolicy>, PolicyError>`
+  - `kernel::arbiter::PolicyError` — `Journal(JournalError)` e `Record(RecordError)`, `Debug + Clone + Copy + PartialEq + Eq`
+
+⛔ **`policy_now` rende un `Option` e il kernel NON nomina un default — D27.** `None` significa *nessuna transizione
+nel giornale*, non *remota*: il default è di chi compone, ed è già un letterale del daemon. Il compito 9 scrive
+l'`unwrap_or`.
+
+⛔ **E questo compito NON tocca il daemon.** Il cablaggio, il percorso dell'archivio, il limite di giri e
+«salva, riavvia, ritrova» sono il compito **9** — **D25**. Qui si costruisce ciò che quel compito legge, e lo si
+prova **dentro `kernel`**, che è ciò che **D1** chiede a ogni compito.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+grep -nE '^\s+#\[n\([0-9]+\)\]' -A 1 crates/kernel/src/record.rs | grep -A 1 -E 'n\([4-7]\)' | head -20
+grep -n 'pub enum RecordKind' -A 40 crates/kernel/src/record.rs | grep -E '#\[n\(|^[0-9]+-\s+[A-Z]'
+grep -n 'pub enum Detail' -A 24 crates/kernel/src/record.rs | grep -E '#\[n\(|^[0-9]+-\s+[A-Z]'
+grep -n 'pub fn detail' -A 3 crates/kernel/src/record.rs
+grep -rn 'RecordKind::Permission' crates/ --include='*.rs' | grep -v 'src/record.rs'
+grep -n 'fn transition_record' -A 14 crates/kernel/src/arbiter/mod.rs
+grep -c '^#\[test\]' crates/kernel/tests/arbiter_policy.rs
+ls crates/kernel/tests/frozen/
+git ls-files --eol crates/kernel/src/record.rs crates/kernel/src/arbiter/mod.rs crates/kernel/src/reconcile.rs crates/kernel/tests/arbiter_policy.rs crates/kernel/tests/reconciliation.rs crates/kernel/tests/record_shape.rs crates/kernel/tests/frozen_bytes.rs crates/kernel/tests/frozen/record_v1.map crates/kernel/tests/serving.rs crates/simulator/tests/dst_campaign.rs
+```
+
+Atteso, **dopo il compito 6**: `RecordKind` arriva a `Invocation` con l'indice **6** e `Detail` a `Invocation` con
+l'indice **3**, quindi i due liberi sono **7** e **4**; `detail()` rende `Option<&Detail>`; i `match` esaustivi su
+`RecordKind` fuori da `record.rs` sono **QUATTRO** — `reconcile.rs`, `frozen_bytes.rs`, `record_shape.rs`,
+`dst_campaign.rs` (**P-45**); `transition_record` prende una `fn` di specie e il nome della policy e rende
+`Vec<u8>`; `ls frozen/` rende **sette** `.cbor` più la mappa; `serving.rs` è **LF** e tutti gli altri
+`i/lf w/crlf`.
+⚠️ **Se una cifra è diversa vale il comando, non questa riga**, ed è una voce d'errata prima di essere un rimedio.
+⛔ **E i quattro `match` si ricontano col comando** — il censimento di P-33 li diede **due**, ed erano quattro.
+
+- [ ] **Passo 2: la specie `Policy` nel record**
+
+In `crates/kernel/src/record.rs` (**`i/lf w/crlf`**, quindi `replace_unique.py`).
+
+**(a)** La variante di `RecordKind`, *Trova* la riga `    Invocation,` **intera, presa dal file** (è l'ultima, dal
+compito 6) e *Sostituisci con*:
+
+```rust
+    Invocation,
+    /// A VRAM POLICY TRANSITION, upon the step that performed it (§5.4, ADR-0006).
+    ///
+    /// ⛔ IT IS A SPECIES AND NOT A NOTE CARRYING A DETAIL, and that is not a preference: `note`
+    /// passes `detail: None` and names `RecordKind::Note`, so "a note with a typed detail" is not
+    /// something one writes badly — it is something one cannot write. The design said it in those
+    /// words (decision 56 of the gui north star) and the recall beside that decision carries the
+    /// correction with its date.
+    ///
+    /// ⚠️ WHAT IT BUYS OVER THE `reason`, which already carries the policy's name: `reason` is
+    /// free prose any writer fills, and a projection that matched on it would be reading a
+    /// human-readable field as though it were a contract. The shape used here is
+    /// `permission::is_granted`'s, word for word — filter by `kind`, read the STRUCTURED half.
+    #[n(7)]
+    Policy,
+```
+
+**(b)** La variante di `Detail`, *Trova* la riga `    Invocation(#[n(0)] InvocationDetail),` **intera** e
+*Sostituisci con*:
+
+```rust
+    Invocation(#[n(0)] InvocationDetail),
+    #[n(4)]
+    Policy(#[n(0)] PolicyDetail),
+```
+
+**(c)** Il tipo, **in coda** ai dettagli, dopo `InvocationDetail` e il suo `impl`:
+
+```rust
+/// WHICH VRAM POLICY IS IN FORCE after a transition (§5.4, ADR-0006).
+///
+/// ⛔ A `bool` AND NOT `VramPolicy` ITSELF, and it is the decision `VerdictDetail::passed` and
+/// `PermissionDetail::write` both took — read either, the argument is one. In one line: an enum
+/// here would be a FOURTH `index_only` enum ON THE WIRE, whose variant indices
+/// `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index on the wire
+/// never retires (rule 4 of §4.9.2). ⚠️ AND `VramPolicy` IS NOT SERIALISABLE ANYWAY: its variants
+/// carry the policy objects themselves, so no derive would make one.
+///
+/// ⚠️ SO THE TWO POLICIES OF ADR-0006 ARE THE WHOLE OF WHAT THIS FIELD CAN SAY. A third one is a
+/// new ADR, and on that day this field RETIRES in favour of a new optional index — rule 3 of
+/// §4.9.2 doing its job. ⛔ AND THE COMPILER WILL SAY SO: the conversion in `crate::arbiter` is an
+/// exhaustive `match` on `VramPolicy` and not a `matches!`, so a third variant stops the build
+/// instead of silently encoding as `false`.
+///
+/// ⛔ THE POLICY'S NAME IS NOT HERE, AND THAT IS NOT AN OMISSION: the record's `reason` already
+/// carries `MakeRoom::name()`, which exists for exactly that, and a second house for one fact is
+/// gotcha #68. What lives here is the half a projection reads; what lives in `reason` is the half
+/// a human reads.
+///
+/// ⚠️ NOT SEALED, AND THAT IS MEASURED RATHER THAN AN OVERSIGHT — the same sentence
+/// `VerdictDetail` carries: it holds ONE `bool`, so no runtime TEXT can enter through it, and the
+/// `E94` signature that `RoutingDetail` and `PermissionDetail` owe is owed by a type with a mouth.
+/// This one has none.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
+pub struct PolicyDetail {
+    /// `false` is the REMOTE policy, the default of ADR-0006; `true` is the local one.
+    #[n(0)]
+    pub local: bool,
+}
+```
+
+**(d)** Il costruttore di specie, in coda all'`impl RecordV1`, **dopo** `invocation` e **prima** di `fn of`:
+
+```rust
+    /// A VRAM POLICY TRANSITION (§5.4, ADR-0006). ⛔ ITS DETAIL IS NOT OPTIONAL EITHER, for the
+    /// reason `verdict`, `routing` and `permission` give: a species that declares a structured
+    /// half is not constructible without it. Here that pairing is the whole point — a transition
+    /// record without its detail says which policy it moved to only in PROSE, and prose is what
+    /// `crate::arbiter::policy_now` exists not to read.
+    pub fn policy(
+        effect: EffectClass,
+        trust: Trust,
+        payload: Vec<u8>,
+        reason: &'static str,
+        detail: PolicyDetail,
+    ) -> Self {
+        Self::of(
+            RecordKind::Policy,
+            effect,
+            trust,
+            payload,
+            reason,
+            Some(Detail::Policy(detail)),
+        )
+    }
+```
+
+```bash
+cargo build --locked -p kernel 2>&1 | tail -30
+```
+
+⛔ **Atteso: ROSSO, e sono i quattro `match` esaustivi di P-45** — `reconcile.rs` compila nella crate, gli altri
+tre sono banchi. ⚠️ **Il rosso è il censimento**: se ne compaiono **meno di quattro** (contando `cargo build` più
+il `cargo test` del passo 8) il censimento di P-45 è sbagliato, ed è una voce d'errata.
+
+- [ ] **Passo 3: l'ottavo braccio della riconciliazione, MISURATO**
+
+⛔ **Il braccio vuoto si MISURA per QUESTA variante e non si eredita da `Note`**, che è la disciplina che i quattro
+bracci accanto scrivono uno per uno. Le altre due risposte si provano **una alla volta**, ciascuna compilata ed
+eseguita a sé e poi **revocata**.
+
+In `crates/kernel/src/reconcile.rs`, *Trova* la riga `                RecordKind::Invocation => {}` **intera**
+(dal compito 6) e *Sostituisci con*:
+
+```rust
+                RecordKind::Invocation => {}
+                // ⛔ A POLICY TRANSITION RECORD NEITHER OPENS A DOUBT NOR CLOSES ONE, and the
+                // empty arm was MEASURED for this variant rather than inherited. The step that
+                // carries it ALREADY owns its own intent and its own outcome — `Arbiter::set_policy`
+                // writes all three — so the doubt of that step is fully described without this
+                // record. Both other answers were tried one at a time, each reverted from a
+                // byte-exact copy:
+                //
+                // - `enter` makes the step RE-ENTER the doubt with this record's own class, so a
+                //   transition whose outcome had already closed it comes back open for ever —
+                //   `steps_in_doubt` answered `[InDoubt { step: StepId(1), .. }]` on a transition
+                //   that completed.
+                // - `leave` closes the doubt BEFORE the outcome is durable, so a crash between
+                //   this note and the outcome leaves a step that executed nothing looking closed —
+                //   the silent loss ADR-0007 exists to prevent.
+                //
+                // ⚠️ SO THE `effect` FIELD OF THIS RECORD IS NEVER READ EITHER, and `policy_note`
+                // fills it with `Idempotent` — the class of the transition itself, with the reason
+                // written on that call.
+                //
+                // Held in BOTH directions (§7.1.1 rule 3) by
+                // `a_policy_record_does_not_put_a_step_in_doubt` and
+                // `a_policy_record_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them`
+                // in `tests/reconciliation.rs`.
+                RecordKind::Policy => {}
+```
+
+⛔ **E il capoverso in testa a `steps_in_doubt` diventa falso**: dice che `set_policy` *«writes through `intent`
+and `outcome` records whose `kind` matches each»*, e da oggi ne scrive **tre**. *Trova* quella frase **intera,
+presa dal file**, e *Sostituisci con* la stessa più il richiamo datato:
+
+```rust
+/// `Arbiter::set_policy`, since milestone 5 task 9, writes through
+/// `intent` and `outcome` records whose `kind` matches each.
+/// ⛔ RECALL OF <data> — IT WRITES THREE NOW, NOT TWO. Between the intent and the outcome it
+/// writes, through `Journal::note`, a record whose `kind` is `RecordKind::Policy` — the species
+/// `crate::arbiter::policy_now` reads back, and the shape `permission::grant` already had, which
+/// writes through `note` a record whose `kind` is `RecordKind::Permission`. The agreement is
+/// still held by that writer's own probe, which now asserts THREE kinds in order.
+```
+
+⚠️ **Il testo vecchio resta**: gli ADR e i doc di questo repository sono append-only nella forma, e una frase
+corretta **sotto sé stessa** è il finding `A-2`. ⛔ **`<data>` si sostituisce con la data del commit** —
+`git log -1 --format=%ad --date=short` **dopo** averlo fatto, mai la data di chi rilegge (lezione `E66`, `E112`).
+
+- [ ] **Passo 4: le due sonde della riconciliazione, nelle due direzioni**
+
+In `crates/kernel/tests/reconciliation.rs` (**`i/lf w/crlf`**), in coda, sulla forma **esatta** delle due coppie
+che ci sono già per `Note` e per `Verdict` — si **rileggono** prima di scrivere queste:
+
+```rust
+/// ⛔ THE FIRST DIRECTION: a policy record ALONE does not open a doubt. Without this, an arm that
+/// called `enter` would be caught by nothing — the transition's own intent already opens the step,
+/// so on a COMPLETE transition the two mistakes cancel out and the archive reads right by accident.
+/// That is why this probe writes the record BY ITSELF.
+#[test]
+fn a_policy_record_does_not_put_a_step_in_doubt() {
+    let mut journal = MemoryJournal::new();
+
+    journal
+        .note(
+            StepId::new(1),
+            &Record::V1(RecordV1::policy(
+                EffectClass::Idempotent,
+                Trust::Instruction,
+                Vec::new(),
+                "local",
+                PolicyDetail { local: true },
+            ))
+            .encode(),
+        )
+        .expect("the memory journal accepts");
+
+    assert_eq!(
+        reconcile::steps_in_doubt(&journal).expect("the archive reads back"),
+        Vec::new(),
+        "a policy record is not an intent: it opens no doubt of its own"
+    );
+}
+
+/// ⛔ THE OTHER DIRECTION (§7.1.1 rule 3), AND IT IS THE HALF THAT GETS FORGOTTEN: an arm that
+/// called `leave` would take an OPEN step out of the doubt, and the probe above would stay green
+/// because it never opens one. The resolution is asserted too, because `enter` REPLACES it — a
+/// step declared `Unrepeatable` coming back `Idempotent` is the silent downgrade the `Note` arm
+/// measured.
+#[test]
+fn a_policy_record_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+
+    journal
+        .intent(
+            step,
+            &Record::V1(RecordV1::intent(
+                EffectClass::Unrepeatable,
+                Trust::Instruction,
+                Vec::new(),
+                "the step this record sits upon",
+            ))
+            .encode(),
+        )
+        .expect("the memory journal accepts");
+
+    let before = reconcile::steps_in_doubt(&journal).expect("the archive reads back");
+
+    journal
+        .note(
+            step,
+            &Record::V1(RecordV1::policy(
+                EffectClass::Idempotent,
+                Trust::Instruction,
+                Vec::new(),
+                "local",
+                PolicyDetail { local: true },
+            ))
+            .encode(),
+        )
+        .expect("the memory journal accepts");
+
+    assert_eq!(
+        reconcile::steps_in_doubt(&journal).expect("the archive reads back"),
+        before,
+        "the policy record neither closes the doubt nor changes its resolution"
+    );
+    assert_eq!(
+        before.len(),
+        1,
+        "and the comparison is not between two empty vectors, which would prove nothing"
+    );
+}
+```
+
+⛔ **L'ultima asserzione NON è decorazione:** senza di essa `before == after` è vera anche fra due vettori vuoti,
+cioè la sonda vacua della **prima domanda** del pre-controllo.
+
+```bash
+cargo test --locked -p kernel --test reconciliation 2>&1 | tail -12
+```
+
+- [ ] **Passo 5: la nota della specie dentro `set_policy`, e i due richiami alle sonde della transizione**
+
+In `crates/kernel/src/arbiter/mod.rs` (**`i/lf w/crlf`**).
+
+**(a)** Il corpo di `set_policy` — *Trova* le tre righe dal `journal.intent(step, …)` al `)` che chiude
+`journal.outcome`, **intere, prese dal file**, e *Sostituisci con*:
+
+```rust
+        journal.intent(step, &transition_record(RecordV1::intent, policy.name()))?;
+        self.policy = policy;
+        // ⛔ THE NOTE GOES AFTER THE SWAP AND BEFORE THE OUTCOME, and the order is the decision.
+        // After the swap, because a record of this species says what IS in force, and one written
+        // before it would name a policy this process had not applied. Before the outcome, because
+        // the outcome is what closes the step: a reader that finds the note finds a step whose
+        // doubt is still describable.
+        //
+        // ⚠️ IT WRITES THROUGH `Journal::note` AND CARRIES ITS OWN `kind`, which is
+        // `permission::grant`'s shape word for word — that one writes through `note` a record
+        // whose `kind` is `RecordKind::Permission`. The two truths are held by this writer's own
+        // probe, as `crate::reconcile` says each writer's must be.
+        journal.note(step, &policy_note(&self.policy))?;
+        journal.outcome(
+            step,
+            &transition_record(RecordV1::outcome, self.policy.name()),
+        )
+```
+
+**(b)** L'aiutante, **accanto** a `transition_record` in fondo al file:
+
+```rust
+/// The durable, STRUCTURED half of a policy transition — the species `policy_now` reads back.
+///
+/// ⛔ AN EXHAUSTIVE `match` AND NOT `matches!(policy, VramPolicy::Local(_))`, and that is the whole
+/// of what the `bool` of `PolicyDetail` costs: the day ADR-0006 grows a third policy this function
+/// stops compiling and the author lands on the field beside it. A `matches!` would encode the
+/// third one as `false` — as REMOTE — in silence, which is a wrong answer written durably.
+///
+/// ⚠️ THE PAYLOAD IS EMPTY AND THE LABEL IS `Trust::Instruction`, for the reason `transition_record`
+/// gives: no external byte reaches this record. ⚠️ AND `EffectClass::Idempotent` IS THE CLASS OF THE
+/// TRANSITION ITSELF — setting the policy twice to the same value leaves the same world — though
+/// `crate::reconcile` never reads the field of this species, which is written there.
+///
+/// ⚠️ AND `reason` CARRIES THE NAME, as the intent and the outcome do: the human half stays where
+/// it was, and this function adds the machine half beside it rather than moving it.
+fn policy_note(policy: &VramPolicy) -> Vec<u8> {
+    let local = match policy {
+        VramPolicy::Remote(_) => false,
+        VramPolicy::Local(_) => true,
+    };
+    Record::V1(RecordV1::policy(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        policy.name(),
+        PolicyDetail { local },
+    ))
+    .encode()
+}
+```
+
+**(c)** ⛔ **I due richiami datati sulle sonde della transizione — P-44.** In
+`crates/kernel/tests/arbiter_policy.rs`, `a_policy_transition_writes_its_intent_before_its_outcome`: *Trova*
+`    assert_eq!(entries.len(), 2, "an intent AND an outcome");` e *Sostituisci con*:
+
+```rust
+    // ⛔ RECALL OF <data> — IT WAS `2`, "an intent AND an outcome". `Arbiter::set_policy` writes a
+    // THIRD record between them since the `Policy` species arrived: the structured half
+    // `crate::arbiter::policy_now` reads back, which the `reason` could only say in prose.
+    assert_eq!(entries.len(), 3, "an intent, the policy note, AND an outcome");
+```
+
+e *Trova* la riga `        vec![RecordKind::Intent, RecordKind::Outcome]` — ⚠️ **è UNA riga sola**, misurata
+al 2026-09-14 a `crates/kernel/tests/arbiter_policy.rs:354` — e *Sostituisci con*:
+
+```rust
+        vec![
+            RecordKind::Intent,
+            RecordKind::Policy,
+            RecordKind::Outcome
+        ]
+```
+
+⚠️ **Le tre asserzioni sotto — `reason`, `trust`, `payload` — restano `all(..)` e restano VERE per tutti e tre**,
+perché `policy_note` scrive lo stesso nome, la stessa etichetta e lo stesso payload vuoto. ⛔ **È ciò che le rende
+ancora oracoli e non si tocca:** le righe **8** e **9** della campagna delle mutazioni dicono che una mutazione su
+`trust` o su `payload` è colta **qui e in nessun altro posto**.
+
+Poi `a_transition_names_the_policy_it_moves_to`: *Trova* `    assert_eq!(entries.len(), 2);` e il blocco del
+`for`, **interi**, e *Sostituisci con*:
+
+```rust
+    assert_eq!(entries.len(), 3);
+    for (_, bytes) in &entries {
+        let Record::V1(record) = Record::decode(bytes).expect("our own bytes");
+        assert_eq!(record.reason(), "remote");
+        // ⛔ RECALL OF <data> — THIS ASSERTED `None` ON BOTH, saying "a policy transition declares
+        // no structured species". It declares one now, and the sentence is REWRITTEN rather than
+        // annotated beside itself (finding `A-2`). What the measurement behind it bought is KEPT
+        // and made sharper: `E79` found that turning the detail of the intent or the outcome to
+        // `Some(..)` left the whole workspace green, so the two that still carry `None` are still
+        // held here — and the third is now REQUIRED to carry the right one.
+        match record.kind() {
+            RecordKind::Policy => assert_eq!(
+                record.detail(),
+                Some(&Detail::Policy(PolicyDetail { local: false })),
+                "the note carries the policy it moved TO, structured"
+            ),
+            _ => assert_eq!(
+                record.detail(),
+                None,
+                "the intent and the outcome declare no structured species: `E79`"
+            ),
+        }
+    }
+```
+
+⚠️ **E gli `use` in testa al banco crescono.** Misurato il 2026-09-14, `crates/kernel/tests/arbiter_policy.rs`
+importa `kernel::record::{Record, RecordKind, RecordV1, Trust}`: servono anche **`Detail`**, **`EffectClass`** e
+**`PolicyDetail`** — qui e al Passo 7. ⚠️ E `crates/kernel/tests/reconciliation.rs` importa già da
+`kernel::record` su più righe: vi si aggiunge **`PolicyDetail`**. ⛔ **Un `use` di troppo è un `unused import`,
+che in questo repository non si spegne con un `#[allow]`** (gotcha #13): si aggiunge ciò che serve, e `cargo test`
+lo dice.
+
+```bash
+cargo test --locked -p kernel --test arbiter_policy 2>&1 | tail -20
+```
+
+⚠️ **Atteso: verdi.** ⛔ **E la seconda direzione del richiamo, MISURATA e non dedotta:** si porta `local` a `true`
+dentro `policy_note`, si rilancia, si **osserva il rosso** su `a_transition_names_the_policy_it_moves_to`, e si
+**revoca**. Senza, l'asserzione nuova è tenuta da nulla — gotcha **#14**.
+
+- [ ] **Passo 6: `policy_now`, la proiezione**
+
+In `crates/kernel/src/arbiter/mod.rs`, **accanto** a `set_policy`. ⛔ **È una funzione LIBERA che prende la porta**,
+come `reconcile::steps_in_doubt`, `permission::is_granted` e `degradation::degradation_now`: una struttura che
+tenesse il giornale darebbe **stato** alla proiezione (I1, I5), e la risposta dipenderebbe da quando è stata
+costruita invece che da ciò che l'archivio dice **adesso**.
+
+```rust
+/// Why the current policy could not be answered.
+///
+/// ⚖️ THE SHAPE IS THE ONE `permission::PermissionError` AND `degradation::DegradationError` ALREADY
+/// HAVE, and it is reused rather than re-argued: same two causes, same refusal to fold a failure
+/// into a real answer.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PolicyError {
+    /// The journal would not hand its records back.
+    Journal(JournalError),
+    /// A record in the journal could not be read as a record this build understands. ⛔ IT ALSO
+    /// COVERS A `Policy` RECORD WHOSE `detail` IS NOT A POLICY, which is unpronounceable in source
+    /// — `RecordV1::policy` takes its detail by value — and reachable from BYTES. Such a record
+    /// names no policy, so the only honest answer is that this build cannot read it.
+    Record(RecordError),
+}
+
+/// WHICH VRAM POLICY THE ARCHIVE SAYS IS IN FORCE, by re-reading the journal (ADR-0006).
+///
+/// ⛔ AN `Option`, AND `None` IS NOT "REMOTE" — D27. `None` means NO TRANSITION HAS EVER BEEN
+/// WRITTEN, and the default is not the kernel's to name: ADR-0034 forbids it to read a parameter it
+/// was not handed, and the recall at the head of ADR-0006 splits the two facts in those words —
+/// "the profile gives the DEFAULT, and the CURRENT policy is the projection of the journal".
+/// Answering `Remote` here would fold the two into one value, and the composition root could no
+/// longer tell "nobody ever changed it" from "somebody put it back".
+///
+/// ⛔ THE LAST TRANSITION AND NOT ANY TRANSITION, which is `degradation_now`'s rule verbatim: a
+/// policy that was set and then set back is not the state NOW. So the assignment is an assignment
+/// and never a `break` on the first hit, and "last" is `replay`'s WRITE ORDER, which the port owes
+/// — it promises to re-read "EVERYTHING, in write order", and that order "IS PART OF THE PROMISE".
+///
+/// ⛔ A RECORD THIS BUILD CANNOT READ STOPS THE ANSWER, and it does NOT skip to the next one.
+/// Skipping would mean answering `None` — "nobody ever changed it" — while a transition may be
+/// sitting in the very bytes that would not decode, and the caller would start on the default.
+/// It is `is_granted`'s refusal, for a reason of the same species.
+///
+/// ⚠️ IT DOES NOT ASK WHETHER THE STEP COMPLETED, and that is declared rather than hidden: a
+/// transition whose outcome never became durable leaves its step IN DOUBT, and the doubt is
+/// `reconcile::steps_in_doubt`'s to report — this function answers what the archive says, and the
+/// class of that step is `Idempotent`, so re-applying it is safe by ADR-0007's own table.
+///
+/// ⚠️ AND THE COST OF ANSWERING BY RE-READING IS THE COST `Journal::replay` DECLARES: the whole
+/// journal is loaded to answer one question. The remedy is the same checkpoint that operation
+/// names, and it is closed by the first consumer that measures a large journal — not invented here.
+pub fn policy_now<J: Journal>(journal: &J) -> Result<Option<VramPolicy>, PolicyError> {
+    let mut current = None;
+
+    for (_, bytes) in journal.replay().map_err(PolicyError::Journal)? {
+        let Record::V1(body) = Record::decode(&bytes).map_err(PolicyError::Record)?;
+
+        // ⚠️ EVERY OTHER SPECIES IS SKIPPED AND THAT IS ORDINARY, not a hole: a journal holding a
+        // transition holds at least the INTENT of the step it was written upon, so the mixed
+        // journal is the only journal this function ever sees.
+        if body.kind() != RecordKind::Policy {
+            continue;
+        }
+
+        let Some(Detail::Policy(detail)) = body.detail() else {
+            return Err(PolicyError::Record(RecordError::Malformed));
+        };
+
+        current = Some(if detail.local {
+            VramPolicy::Local(LocalPolicy)
+        } else {
+            VramPolicy::Remote(RemotePolicy)
+        });
+    }
+
+    Ok(current)
+}
+```
+
+⚠️ **Gli `use` in testa al file crescono** di `crate::record::{Detail, RecordError}` e di `RecordKind` se non c'è
+già: `cargo build` lo dice.
+
+- [ ] **Passo 7: le quattro sonde di `policy_now`, e la direzione che si dimentica**
+
+In `crates/kernel/tests/arbiter_policy.rs`, in coda. ⛔ **Sono quattro perché le strade sono quattro**, e una sola
+lascerebbe scoperta quella che non prende.
+
+```rust
+/// ⛔ ARCHIVIO SENZA TRANSIZIONI → `None`, AND IT IS THE DIRECTION D27 EXISTS FOR: a `policy_now`
+/// that answered `Remote` here would be naming the default inside the projection, which is the one
+/// thing ADR-0034 forbids the kernel. It is asserted FIRST because it is the state every archive
+/// starts in.
+#[test]
+fn an_archive_with_no_transition_names_no_policy() {
+    let mut journal = MemoryJournal::new();
+
+    journal
+        .intent(
+            StepId::new(1),
+            &Record::V1(RecordV1::intent(
+                EffectClass::Idempotent,
+                Trust::Instruction,
+                Vec::new(),
+                "a step that is not a transition",
+            ))
+            .encode(),
+        )
+        .expect("the memory journal accepts");
+
+    assert_eq!(
+        arbiter::policy_now(&journal).expect("the archive reads back"),
+        None,
+        "no transition was written, and the default is not the kernel's to name"
+    );
+    // ⛔ AND THE ARCHIVE IS NOT EMPTY, which is what makes this probe about the FILTER rather than
+    // about an empty loop: a `policy_now` that answered `None` because it never looked would pass
+    // on an empty journal and fail here.
+    assert_eq!(journal.replay().expect("the archive reads back").len(), 1);
+}
+
+/// ⛔ THE TRANSITION IS READ BACK, THROUGH THE REAL WRITER. It calls `set_policy` and not a
+/// hand-built record, which is what makes the pair `policy_note`/`policy_now` one artefact: a probe
+/// that wrote its own record would be a second copy of the format, green on the day the two drift.
+#[test]
+fn the_policy_the_archive_names_is_the_one_the_transition_moved_to() {
+    let mut journal = MemoryJournal::new();
+    let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
+
+    arbiter
+        .set_policy(VramPolicy::Local(LocalPolicy), StepId::new(1), &mut journal)
+        .expect("the journal accepts");
+
+    assert_eq!(
+        arbiter::policy_now(&journal)
+            .expect("the archive reads back")
+            .map(|policy| policy.name()),
+        Some("local"),
+        "the archive names the policy the transition moved to"
+    );
+}
+
+/// ⛔ THE OTHER DIRECTION OF THE SAME RULE, and without it a `policy_now` that hard-coded `Local`
+/// would stay green — the lesson `a_transition_names_the_policy_it_moves_to` already paid for. Two
+/// directions kill every constant.
+#[test]
+fn a_transition_back_to_remote_is_read_back_as_remote() {
+    let mut journal = MemoryJournal::new();
+    let mut arbiter = arbiter(4_096, VramPolicy::Local(LocalPolicy));
+
+    arbiter
+        .set_policy(
+            VramPolicy::Remote(RemotePolicy),
+            StepId::new(1),
+            &mut journal,
+        )
+        .expect("the journal accepts");
+
+    assert_eq!(
+        arbiter::policy_now(&journal)
+            .expect("the archive reads back")
+            .map(|policy| policy.name()),
+        Some("remote"),
+    );
+}
+
+/// ⛔ THE LAST TRANSITION AND NOT THE FIRST, AND IT IS THE DIRECTION THAT GETS FORGOTTEN: with only
+/// the three probes above, a `policy_now` that `break`s on the first `Policy` record it meets is
+/// green on every one of them, because each writes exactly one transition. ✅ MEASURED rather than
+/// feared: with `current = Some(..)` replaced by an early `return`, this probe alone goes red.
+#[test]
+fn the_archive_names_the_last_transition_and_not_the_first() {
+    let mut journal = MemoryJournal::new();
+    let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
+
+    arbiter
+        .set_policy(VramPolicy::Local(LocalPolicy), StepId::new(1), &mut journal)
+        .expect("the journal accepts");
+    arbiter
+        .set_policy(
+            VramPolicy::Remote(RemotePolicy),
+            StepId::new(2),
+            &mut journal,
+        )
+        .expect("the journal accepts");
+
+    assert_eq!(
+        arbiter::policy_now(&journal)
+            .expect("the archive reads back")
+            .map(|policy| policy.name()),
+        Some("remote"),
+        "a policy set and then set back is not the state NOW"
+    );
+}
+```
+
+```bash
+cargo test --locked -p kernel --test arbiter_policy 2>&1 | tail -20
+```
+
+⛔ **E la mutazione della quarta sonda si ESEGUE, non si cita:** si sostituisce l'assegnazione con un `return`
+anticipato, si lancia, si osserva **rossa solo quella**, si revoca. È la differenza fra un limite dichiarato e uno
+misurato — gotcha **#57**.
+
+- [ ] **Passo 8: i due `match` che P-33 non aveva censito — P-45**
+
+⛔ **Si leggono PRIMA di toccarli**, perché i due non vogliono la stessa cosa.
+
+**(a)** `crates/kernel/tests/record_shape.rs` (**`i/lf w/crlf`**) — **due** metà, e la seconda il compilatore non la
+sorveglia. Nel `match` di `let of = |kind| …`, in coda, il braccio nuovo:
+
+```rust
+        RecordKind::Policy => RecordV1::policy(
+            EffectClass::Idempotent,
+            Trust::Instruction,
+            Vec::new(),
+            "why this step exists",
+            PolicyDetail { local: true },
+        ),
+```
+
+e — ⛔ **A MANO, perché l'array NON va rosso** — la variante in coda all'array del `for kind in [ … ]`, col proprio
+commento, sulla forma dei tre richiami che ci sono già:
+
+```rust
+        RecordKind::Policy,
+```
+
+⚠️ **La testa di quel `for` porta già tre note** — `Verdict`, `Routing` e `Permission` aggiunti a mano, ciascuna
+con la frase *«the `match` goes red on a new species, this ARRAY does not»*. Se ne aggiunge una **quarta** con la
+data, senza cancellare le altre. ⛔ **E il blocco a coppie sotto resta a TRE:** lo dice il commento accanto, ed è
+la ragione scritta — quella proprietà vive in `frozen_bytes.rs`, e asserirla anche qui sarebbe una seconda casa
+(§7.4.4).
+
+**(b)** `crates/simulator/tests/dst_campaign.rs` (**`i/lf w/crlf`**) — ⛔ **un `panic!` e NON un braccio vuoto.**
+È un **oracolo indipendente** che controlla `reconcile`, e il suo errata `E50` scrive perché: *«writing the empty
+arm `reconcile` writes would make this oracle agree with the implementation BY CONSTRUCTION on a case it has never
+seen»*. Accanto al braccio `RecordKind::Permission`:
+
+```rust
+            // ⛔ UNREACHABLE IN THIS SCENARIO TOO, AND `panic!` RATHER THAN THE EMPTY ARM FOR THE
+            // REASON ITS THREE SIBLINGS GIVE — read them, the argument is one. Nothing here changes
+            // the VRAM policy, so no policy record can enter this trace.
+            //
+            // ⚠️ THE DAY THE SCENARIO GROWS A TRANSITION, THE RED IS A DECISION BEING ASKED FOR and
+            // not a defect being reported — same as its siblings.
+            RecordKind::Policy => panic!(
+                "step {step} carries a policy record: this scenario has grown a VRAM policy \
+                 transition, and this oracle must decide what one does to a doubt before it can \
+                 stay independent"
+            ),
+```
+
+```bash
+cargo test --locked -p kernel --test record_shape 2>&1 | tail -12
+cargo build --locked --workspace --tests 2>&1 | tail -20
+```
+
+Atteso: `record_shape` verde, e la build dei banchi **senza** errori di `match` non esaustivo. ⛔ **Se resta un
+quinto sito** che il censimento non aveva, è una voce d'errata **e** una correzione a P-45.
+
+- [ ] **Passo 9: l'ottavo record congelato — la sonda usa e getta, e i byte A MANO**
+
+⛔ **La disciplina è quella della testa di `frozen_bytes.rs`, e non si aggira:** nessun `--bless`, nessuna
+variabile d'ambiente, la sonda vive nello **scratchpad** e muore nello stesso commit.
+
+1. Nello scratchpad, il banco usa e getta:
+
+```rust
+#[test]
+fn print_it() {
+    let bytes = Record::V1(RecordV1::policy(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::from(&b"frozen"[..]),
+        "frozen",
+        PolicyDetail { local: true },
+    ))
+    .encode();
+    for b in &bytes { print!("{b:02x} "); }
+    println!("\nlen = {}", bytes.len());
+    panic!("read me");
+}
+```
+
+⚠️ **`EffectClass::Idempotent` e `Trust::Instruction` sono i valori che lo SCRITTORE VERO usa**, e qui la scelta è
+diversa da quella dei record prima: la copertura delle tre enum del filo è **già chiusa** dai sette record che
+precedono — lo tengono i due `for` di `frozen_bytes.rs` — quindi questo record è libero di pinzare la coppia reale,
+che rende la mappa riconoscibile accanto al codice che la produce.
+⚠️ **`local: true` e non `false`:** `false` è la lettura che un archivio **senza** questo record già dà attraverso
+`None`, quindi congelare `true` pinza la metà che porta informazione; e `f5` non somiglia a nessun indice di
+variante di questa tabella, mentre `f4` è già il `passed: false` del quarto record.
+
+2. Si legge l'esadecimale e si **scrive a mano** `crates/kernel/tests/frozen/record_v1_policy.cbor`. La forma
+attesa, che serve solo a riconoscere una corsa sbagliata — ⛔ **le cifre si prendono dalla corsa, non da qui**:
+
+| Offset | Che cosa |
+|---|---|
+| 0 | `82` — array(2), l'enum di versione |
+| 1 | `00` — variante 0 = `Record::V1` |
+| 2 | `81` — array(1), il corpo della variante |
+| 3 | `86` — array(6), i SEI campi di `RecordV1` |
+| 4 | indice 0 · `kind` · **`07`**, `RecordKind::Policy` — ⛔ **l'indice nuovo, e questo record è l'unico posto che lo tiene** |
+| 5 | indice 1 · `effect` · `EffectClass::Idempotent` |
+| 6 | indice 2 · `trust` · `Trust::Instruction` |
+| 7 | indice 3 · `payload` · byte string(6) `b"frozen"` |
+| 14 | indice 4 · `reason` · text(6) `"frozen"` |
+| 21 | indice 5 · `detail` · `Some(Detail::Policy { local: true })` — ⛔ **e qui c'è l'indice 4 di `Detail`, che fino a questo file nulla teneva** |
+
+3. Si aggiunge la **sezione alla mappa**, `crates/kernel/tests/frozen/record_v1.map`, col formato
+`offset | byte esadecimali | prosa` delle sette sezioni che ci sono già; gli offset devono essere **contigui** e i
+byte devono **ricostruire il file**, perché `the_map_lists_the_bytes_that_are_really_frozen` li rilegge.
+⚠️ **La testa della mappa elenca le date in cui ogni file è nato** — *«the first three on 2026-08-10, the verdict on
+2026-08-31, …»*: si **aggiunge** la data di oggi, non si riscrive la riga.
+
+4. Si **cancella la sonda usa e getta** dallo scratchpad, e il commit lo dice.
+
+- [ ] **Passo 10: l'ottavo posto in `frozen_bytes.rs`**
+
+Il tipo di ritorno di `the_frozen_records()` passa da `; 7]` a `; 8]`, `POLICY_BYTES` si aggiunge accanto alle
+altre con `include_bytes!("frozen/record_v1_policy.cbor")`, e la voce entra **in coda** all'array:
+
+```rust
+        // ⛔ THE EIGHTH IS THE FIFTH SPECIES THAT CARRIES A `detail`, AND WHAT IT PINS THAT THE
+        // OTHER FOUR CANNOT IS INDEX 4 OF `Detail` — and, with it, index 7 of `RecordKind`. A wire
+        // index never retires (rule 4 of §4.9.2), so until this file both were held by nothing.
+        //
+        // ⛔ ITS DETAIL HAS ONE FIELD, so it cannot pin a PAIR of offsets the way the seventh does
+        // — and it does not need to: one field has no sibling to mirror, which is the hole the
+        // recall of 2026-09-01 measured on the `Permission` record. Said out loud so that nobody
+        // "completes" this record with a second field it has no use for.
+        //
+        // ⚠️ `local: true` AND `Idempotent`/`Instruction` ARE THE WRITER'S OWN VALUES, and that is
+        // a departure from the four records before it, which were laid out for COVERAGE of the
+        // wire enums. The coverage is already closed by those — the two loops below say so — so
+        // this record is free to freeze the pair `Arbiter::set_policy` really writes.
+        (
+            "record_v1_policy.cbor",
+            POLICY_BYTES,
+            record(|p, r| {
+                RecordV1::policy(
+                    EffectClass::Idempotent,
+                    Trust::Instruction,
+                    p,
+                    r,
+                    PolicyDetail { local: true },
+                )
+            }),
+        ),
+```
+
+e il `match kind` riceve l'ottavo nome nel braccio, **più** il nome nell'array sopra di esso — ⛔ **sono due metà,
+e solo la prima va rossa** (è la stessa asimmetria di `record_shape.rs`, e il commento accanto la dichiara).
+
+```bash
+cargo test --locked -p kernel --test frozen_bytes 2>&1 | tail -12
+git diff --stat -- crates/kernel/tests/frozen/
+```
+
+Atteso: **tutte verdi**; e ⛔ **`git diff --stat` mostra SOLO la mappa modificata e il file nuovo** — i **sette**
+`.cbor` vecchi non compaiono. Se uno cambiasse non è un aggiornamento: è un **cambio di formato**, e va aperta una
+versione nuova (ADR-0036).
+
+- [ ] **Passo 11: il banco del compito 7 — P-46**
+
+⛔ **Chi cambia il comportamento ripara ciò che il cambiamento rompe.** In `crates/kernel/tests/serving.rs`
+(**LF**, nato col compito 7), *Trova* il blocco `vec![ … ]` delle **sei** `RecordKind`, **intero, preso dal file**,
+e *Sostituisci con*:
+
+```rust
+                vec![
+                    RecordKind::Intent,
+                    RecordKind::Invocation,
+                    RecordKind::Permission,
+                    RecordKind::Intent,
+                    RecordKind::Policy,
+                    RecordKind::Outcome,
+                    RecordKind::Outcome,
+                ],
+```
+
+e il commento sopra riceve il richiamo:
+
+```rust
+            // ⛔ RECALL OF <data> — THE SEQUENCE WAS SIX. `Arbiter::set_policy` now writes the
+            // `Policy` species between step B's intent and its outcome, so the effect's own step
+            // reads as three records instead of two. The order of decision 21 is UNCHANGED: what
+            // this probe holds is still step A's intent, the invocation note, the permission note,
+            // then step B, then A's outcome.
+```
+
+```bash
+cargo test --locked -p kernel --test serving 2>&1 | tail -12
+```
+
+- [ ] **Passo 12: i due richiami datati nei disegni**
+
+**(a)** `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` (**LF**), la riga **56** della tabella
+*«Decisioni prese dal coordinatore»*. In coda alla cella, **senza toccare il testo che c'è**:
+
+```
+✅ **RICHIAMO DEL <data>, dal pre-controllo del compito 8 (P-44): «una NOTA con un dettaglio» non è costruibile, ed è una SPECIE.** `RecordV1::note` passa `detail: None` e nomina `RecordKind::Note`; ogni dettaglio del repository viaggia con la **propria** `RecordKind` e il proprio costruttore, e il doc di `RecordV1` scrive che la coppia sbagliata *«is not refused, it is UNPRONOUNCEABLE»*. La forma decisa: `RecordKind::Policy`, `Detail::Policy`, `PolicyDetail` e `RecordV1::policy`, scritta con `Journal::note` — che è la forma di `permission::grant`. ⛔ **E la decisione nominava due sonde da rileggere, ma le sonde erano TRE:** `a_transition_names_the_policy_it_moves_to` asserisce `detail() == None` su entrambi i record, con la mutazione `E79` misurata accanto. **Il merito non cambia**, e la ragione che lo sostiene è `permission::is_granted`, che rilegge il giornale filtrando per `kind` e leggendo il dettaglio, mai il `reason`.
+```
+
+**(b)** `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**), la riga **9** della §9.
+In coda alla cella:
+
+```
+✅ **RICHIAMO DEL <data>, compito 8 del piano:** la forma è una **specie** e non una nota — `RecordKind::Policy` all'indice 7, `Detail::Policy` all'indice 4, `PolicyDetail { local: bool }` — e la rilettura è `kernel::arbiter::policy_now`, che rende un **`Option`**: `None` è *nessuna transizione*, e il default resta un letterale del daemon (ADR-0034, e il rimando in testa ad ADR-0006). Il perché in P-44, D26 e D27 del piano.
+```
+
+⚠️ **I due disegni sono LF nell'albero di lavoro**, misurato al Passo 1: si toccano con `replace_unique.py` come
+gli altri, e `git ls-files --eol` si rilancia dopo.
+
+- [ ] **Passo 13: i fine-riga, il cancello, la posizione, il commit**
+
+```bash
+git ls-files --eol crates/kernel/src/record.rs crates/kernel/src/arbiter/mod.rs crates/kernel/src/reconcile.rs crates/kernel/tests/arbiter_policy.rs crates/kernel/tests/reconciliation.rs crates/kernel/tests/record_shape.rs crates/kernel/tests/frozen_bytes.rs crates/kernel/tests/frozen/record_v1.map crates/kernel/tests/serving.rs crates/simulator/tests/dst_campaign.rs docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+bash scripts/gate-deps.sh
+bash scripts/gate-attributes.sh
+bash scripts/gate.sh
+bash scripts/check-docs.sh
+git status --porcelain
+```
+
+⛔ **I fine-riga devono essere IDENTICI a quelli del Passo 1**, file per file: uno strumento che riscrive un
+sorgente ne normalizza i fine-riga senza dirlo, e `git diff` dichiara righe cambiate che nessuno ha toccato —
+successo **tre volte**.
+⛔ **`gate-deps.sh` verde** è la prova che la lista di `kernel` **non è cresciuta**: questo compito non aggiunge
+nessuna dipendenza, e un rosso lì significherebbe che qualcosa è entrato di rimbalzo (vincolo globale 9).
+
+Poi la riga **8** della tabella della posizione di questo piano passa a ✅ col suo commit, e il commit:
+
+```
+gui(compito 8): la specie Policy del giornale e la policy riletta -- l'ottavo record congelato, policy_now, e i due match che P-33 non aveva censito
+```
+
+⛔ **Senza co-autore**, e si pusha.
+
+**Criterio di chiusura, coi comandi:**
+
+```bash
+ls crates/kernel/tests/frozen/*.cbor | wc -l
+grep -c '^#\[test\]' crates/kernel/tests/arbiter_policy.rs
+grep -rn 'RecordKind::Policy' crates/ --include='*.rs' | grep -v 'src/record.rs' | wc -l
+grep -rn 'policy_now' crates/ --include='*.rs'
+```
+
+Atteso: **otto** `.cbor`; le sonde di `arbiter_policy.rs` cresciute di **quattro** rispetto al Passo 1; i siti di
+`RecordKind::Policy` fuori da `record.rs` sono **almeno quattro**, i `match` di P-45 più il filtro di `policy_now`;
+`policy_now` ha **il suo banco** come chiamante e **nessun altro** — il chiamante di produzione nasce col compito
+**9**, ed è per questo che i due compiti sono due.
 
 ---
 

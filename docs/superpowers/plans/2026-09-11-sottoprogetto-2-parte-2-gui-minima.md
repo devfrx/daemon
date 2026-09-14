@@ -1359,6 +1359,193 @@ Per questo l'aiutante del banco mette nel nome **anche il pid**, come fa già `i
 `SOCKET_NAME`, e ogni sonda passa il proprio. ⚠️ **E il nome resta un letterale del daemon** (**D31**): ciò che
 diventa un argomento è **dove il grafo lo riceve**, non dove il valore di produzione è scelto.
 
+---
+
+### P-56 — il blocco *Interfaces* del compito 7 nomina TRE accessori e il codice che detta ne ha CINQUE: mancano `custody` e `grants`, ed è `grants` che questa campagna richiede
+
+⛔ **La quinta domanda girata all'indietro, e ha pagato una quinta volta.** Il blocco *Interfaces* del compito 7
+apre dicendo *«Produces, e i compiti **9**, **10** e **12** li usano con questi nomi esatti»*, quindi è il
+contratto su cui questo compito si appoggia. Ricensito il 2026-09-14 **contando** invece di rileggere, sul Passo 7
+del compito 7:
+
+```bash
+awk '/^- \[ \] \*\*Passo 7: il modulo `serving`/{s=1} s&&/^- \[ \] \*\*Passo 8/{exit} s' <questo file> \
+  | grep -nE '^\s*pub (fn|const fn) '
+```
+
+| L'accessore | Nel blocco *Interfaces*? |
+|---|---|
+| `Core::journal(&mut self) -> &mut J` | ✅ sì |
+| `Core::arbiter(&mut self) -> &mut Arbiter` | ✅ sì |
+| `Core::attending(&self) -> Vec<ClientId>` | ✅ sì |
+| `Core::custody(&self) -> &C` | ⛔ **no** |
+| `Core::grants(&mut self) -> &mut ClientGrants` | ⛔ **no** |
+
+⛔ **E l'omesso non è un accessore qualunque: è quello senza il quale la metà «morte della GUI» di questa campagna
+non è scrivibile.** Il doc che il compito 7 gli scrive accanto **nomina questo chiamante** — *«ITS ONLY CALLER
+TODAY IS A BENCH … milestone 2 issues no grant to a client (D5), so `register` has no production writer yet»* — e
+il doc di modulo di `serving.rs` lo dice una seconda volta: *«`tests/serving.rs` holds the wiring meanwhile by
+putting a grant in by hand»*. La frase esiste, l'accessore esiste, e il **contratto** che i compiti 9, 10 e 12
+leggono non li porta.
+
+⚠️ **E la riga di prosa sotto il blocco è falsa con essi:** *«I tre accessori che nascono hanno un chiamante in
+questo banco»* — sono cinque, e uno dei cinque ha il proprio chiamante **qui**, non là. 📌 **È **P-35** una terza
+volta:** un numerale in prosa che conta un artefatto, mentre la casa unica è il codice e il comando che lo conta.
+
+✅ **Corretto nel compito 7 e non con una voce d'errata** — come P-23, P-25, P-35, P-39, P-43, P-45 e P-47: il
+compito 7 **non è eseguito**. Un'errata è per ciò che un compito eseguito ha smentito; qui costa due righe, e
+scoprirlo eseguendo costa una campagna riscritta contro un `Core` che non si lascia interrogare.
+
+### P-57 — `DyingGui` dice UNA cosa sola e il dispaccio la lascia cadere: la prima metà della campagna, scritta com'è, confronterebbe INSIEMI VUOTI
+
+⛔ **Domanda 1 — la sonda è vacua**, ed è la lezione di **AUD-019** applicata all'attività. La §5 del 2 dice
+*«un'attività **del kernel** — così la DST la muove con `DyingGui`»*, e la riga è stata scritta il **2026-09-06**,
+cioè **prima di D5**. Misurato il 2026-09-14 contro il codice che i compiti 7 e la finta portano:
+
+```bash
+grep -n 'fn receive' -A 20 crates/simulator/src/ipc.rs | grep -n 'IpcMessage::'
+awk '/^- \[ \] \*\*Passo 7: il modulo `serving`/{s=1} s&&/^- \[ \] \*\*Passo 8/{exit} s' <questo file> \
+  | grep -n 'IpcMessage::Request'
+```
+
+`DyingGui::receive` rende **un** messaggio e sempre lo stesso — `IpcMessage::Request(self.request.clone())` — e
+il dispaccio del compito 7 lo incontra così: `IpcMessage::Request(_) => Outcome::Keep`, col capoverso di **D5**
+accanto che dice perché non lo serve.
+
+⛔ **La catena, e ogni anello è misurato:** `Request` non è servito → nessun `ResourceProfile` è costruito →
+`ClientGrants::register` **non ha nessuno scrittore di produzione**, e il doc di modulo di `serving.rs` lo
+dichiara di sé → un client che muore sotto questa attività **non tiene niente**. Quindi *«la somma torna alla
+baseline»* sarebbe verde **perché non si è mai mossa**: è `M2` del commit 9a applicato a una campagna, ed è
+esattamente il difetto contro cui `gui_death_campaign.rs` mette due testimoni nella propria baseline.
+
+⚠️ **E il client non diventa nemmeno `Attending`**, perché `DyingGui` non pronuncia `Hello`: resta in `Greeting`
+per tutta la corsa, quindi l'attività non gli manda mai niente e le sue **operazioni sono i soli `receive`**, uno
+per giro. È il premio che il punto di morte richiede, e va **contato** (gotcha #17).
+
+**Conseguenza: D33** — la concessione si mette a **mano** attraverso `Core::grants` (**P-56**). ⚠️ **È la prima
+delle tre ragioni** per cui `DyingGui` non è lo strumento: le altre due sono **P-58** e **P-60**.
+
+### P-58 — `DyingGui` non può pronunciare né `Hello` né `Approve`: la SECONDA proprietà della §5 non è raggiungibile con essa
+
+⛔ **Domanda 3 — l'artefatto è sbagliato, e non compilerebbe**, più la **riga 5**: il contratto è cresciuto sotto
+il disegno. La colonna *«la prova»* della riga *«l'attività»* della §5 chiede **due** cose, e la seconda è *«un
+crash del giornale a metà invocazione lascia il passo A in dubbio con la sua classe»*. Un'invocazione comincia da
+un messaggio sul filo, e `DyingGui` ne ha **uno** — quello che **P-57** misura.
+
+⛔ **E la strada dell'`Invoke` non basta nemmeno con un filo che sappia pronunciarlo:** `Registry::invoke` apre
+con `is_granted` **prima** di aprire il passo (**P-43**), quindi un `Invoke` su una tripla mai concessa rende
+`PermissionRequired` **senza scrivere nulla** — zero scritture, zero dubbio, e il punto di caduta estratto su un
+intervallo vuoto, che `CrashingJournal::from_seed` rifiuta con un `debug_assert!` scritto apposta.
+
+✅ **La strada che scrive è l'`Approve`**, e la sequenza gliela dà la decisione **21** della stella polare: passo A
+aperto, nota `Invocation`, nota `Permission` con `grant`, l'effetto sul passo B, l'esito su A. ⚠️ **Quante
+scritture siano NON si scrive qui**: la conta `CrashingJournal::without_crash()` in una corsa senza caduta, che è
+`C7a` di `dst_campaign.rs` in persona, ed è un passo di questo compito.
+
+**Conseguenza: D32** — il filo se lo scrive la campagna, e la §5 riceve il proprio **richiamo datato**. ⚠️ **È la
+seconda delle tre ragioni per cui `DyingGui` non si usa**; la terza è **P-60**, ed è quella che chiude la via.
+
+### P-59 — il quarto `SharedClock`: il daemon RIFIUTA PER ISCRITTO di dipendere da `simulator`, quindi una casa in `simulator` ne servirebbe tre su quattro
+
+⛔ **La decisione che **D29** e la testa del banco del compito 7 hanno entrambe REGISTRATO per questo compito, e
+qui si prende con la misura in mano.** Censite le case il 2026-09-14:
+
+```bash
+grep -rn 'struct SharedClock' crates/ --include='*.rs'
+grep -n 'simulator' crates/daemon/Cargo.toml
+```
+
+| Casa | Che cosa avvolge | Può importare da `simulator`? |
+|---|---|---|
+| `crates/simulator/tests/arbiter_campaign.rs` | `VirtualReactor` | ✅ sì — `simulator` è la sua crate |
+| `crates/kernel/tests/serving.rs` (compito 7) | `VirtualReactor` | ✅ sì — `simulator` è dev-dependency di `kernel` |
+| questa campagna (compito 10) | `VirtualReactor` | ✅ sì |
+| `crates/daemon/src/main.rs` (compito 9) | `SystemReactor` | ⛔ **no**, e non per una svista: `crates/daemon/Cargo.toml` porta il commento *«Does NOT depend on `simulator`. The daemon is the PRODUCTION wiring: it mounts `platform`»*, con il rimando alla §1.2 corretta il 2026-08-08 |
+
+⛔ **Quindi la casa in `simulator` non è «tre chiamanti invece di uno»: è tre su quattro, e il quarto è quello che
+gira in PRODUZIONE.** Farla salire lascerebbe il daemon a scrivere comunque la propria copia, e questa volta senza
+il commento che oggi dichiara che è una forma ripetuta — cioè una duplicazione **meno** visibile di quella di
+adesso.
+
+⚠️ **E la quarta casa non è nemmeno lo stesso tipo:** avvolge un `SystemReactor`, non un `VirtualReactor`. Una
+casa comune vorrebbe un avvolgente **generico** su `R: Reactor`, cioè un elemento d'API nuovo di `simulator` il
+cui unico beneficio è risparmiare dodici righe in tre banchi — lo strato speculativo che il quinto criterio di
+`anthropic-skills:decision-principles` chiama *sfoggio*, e che `crates/kernel/src/boundary.rs` cancella quando il
+chiamante non c'è.
+
+**Conseguenza: D34** — **resta locale**, e la testa di questa campagna lo **dichiara** invece di lasciarlo
+scoprire (gotcha #49). ⚠️ **L'innesco, perché la decisione non marcisca:** il giorno che una quinta casa nasce
+**dentro `simulator` o in una crate che può importarlo**, e avvolge lo stesso reattore, la misura si rifà.
+
+### P-60 — una finta SPOSTATA dentro `Core` non è più interrogabile, e `ClientGrants` non sa contare senza rilasciare: l'oracolo della prima metà è la SOMMA e non il registro
+
+⛔ **Domanda 3 — l'artefatto è sbagliato, e NON compilerebbe**, ed è la ragione che chiude la via che **P-57** e
+**P-58** avevano solo incrinata. `Core::new` prende la porta **per valore**, e il blocco *Interfaces* del compito
+7 lo dichiara: *«⛔ E `Core` NON espone il trasporto oggi … il suo chiamante è il rubinetto del core finto,
+compito 12»*. ⛔ **Quindi una finta consegnata al core non è più raggiungibile dalla campagna**: `has_died`,
+`dies_at`, `operations_done` — tutto ciò che `DyingGui` offre per essere interrogata — diventa irraggiungibile
+nell'istante in cui la si cabla.
+
+⛔ **E l'oracolo di ripiego non c'è.** Censito `ClientGrants` il 2026-09-14:
+
+```bash
+grep -nE '^\s*pub (fn|const fn|struct)' crates/kernel/src/client.rs
+```
+
+Rende **tre** elementi pubblici — `new`, `register`, `on_disconnect` — e **nessun modo di contare senza
+rilasciare**. ⛔ **E `on_disconnect` non è nemmeno chiamabile da qui:** vuole `&mut Arbiter` mentre `grants()`
+tiene già `&mut Core`, cioè **due prestiti mutabili dello stesso valore**. Il compito 7 scioglie la stessa
+stretta **destrutturando** — *«tre metodi su `&mut self` non possono essere vivi insieme; tre legami di campo
+sì»*, il capoverso di `fn run` — ma i campi di `Core` sono **privati alla crate**, e la destrutturazione è
+possibile dentro `kernel` e non da una campagna.
+
+✅ **Le due vie scartate, ciascuna col suo difetto:**
+
+| La via | Perché cade |
+|---|---|
+| aggiungere a `Core` un `into_parts` o un `ipc()` | è un elemento d'API il cui unico chiamante è questa campagna, e `crates/kernel/src/boundary.rs` lo cancella; `Core::ipc` per giunta **è già assegnato al compito 12**, con un altro chiamante e un altro significato |
+| aggiungere a `ClientGrants` un `held` che conta | stessa obiezione, su un tipo del kernel, e per un oracolo che si può avere senza |
+
+✅ **La via che si prende, e non chiede niente a `kernel`:** il **filo vive fuori dal core** dietro un `RefCell`
+che la campagna possiede, e la porta ne tiene un prestito — la forma del banco del compito 7, terza scrittura. Da
+lì la campagna legge **la morte dichiarata dalla porta** e **che cosa la GUI aveva sentito**; e l'oracolo della
+proprietà è `Arbiter::allocated()`, che `Core::arbiter` rende con **un** prestito solo.
+
+📌 **E la somma non è un ripiego: è più forte del registro, perché coglie DUE mutazioni con UNA asserzione.** Una
+riconciliazione che non fa niente lascia la somma **sopra** la baseline; una che rilascia ogni coppia che tiene
+invece di quelle del morto prende la concessione del **secondo client** e la lascia **sotto**. È la ragione per
+cui la baseline non è zero, e i due testimoni sono quelli che `gui_death_campaign.rs` argomenta uno per uno.
+
+**Conseguenza: D32** e **D33**.
+
+### P-61 — `Resolution` non porta `Ord`, quindi non entra in un `BTreeSet`: lo spazio dei mondi si conta su un enum LOCALE
+
+⛔ **Domanda 3 — l'artefatto è sbagliato, e NON compilerebbe**, ed è la trappola che questo repository ha già
+documentato una volta. Ogni campagna conta i propri mondi con un `BTreeSet`, che pretende `Ord` su ciò che vi
+entra. Misurato il 2026-09-14:
+
+```bash
+grep -n 'pub enum Resolution' -B 2 crates/kernel/src/reconcile.rs
+grep -n 'pub struct InDoubt' -B 2 -A 6 crates/kernel/src/reconcile.rs
+```
+
+`Resolution` deriva `Debug, Clone, Copy, PartialEq, Eq` — **né `Ord` né `PartialOrd`** — e `InDoubt` porta
+`step: StepId` e `resolution: Resolution`, con `StepId` che ha `get()` e **nemmeno lui** un `Ord`.
+
+⛔ **E la cura NON è aggiungere il derive.** `gui_death_campaign.rs` ha incontrato la stessa cosa su `Verdict` e
+la scrive per esteso: *«`Verdict` derives neither `Ord` nor `PartialOrd`, a `BTreeSet` wants both, and adding a
+derive to a shipped type for the convenience of a bench is the trade `ports::process` refused when `Grant` was
+asked for a `Debug`»*. Un derive aggiunto a un tipo **spedito** per comodità di un banco allarga il contratto
+pubblico del kernel per una ragione che non è del kernel.
+
+✅ **La cura è il precedente:** un enum **locale** alla campagna — `Doubt` — con `Ord`, e un `From<Resolution>`
+che è un `match` esaustivo. ⚠️ **E quel `match` è l'UNICO della campagna, dichiarato nel compito perché non
+venga letto come la decisione che la riga 24 del Traguardo 6 tiene aperta:** è una conversione per poter
+**contare**, non una scelta di riconciliazione. ✅ **E cresce col tipo:** una variante nuova di `Resolution` rende
+rossa la campagna al compilatore, che è la stessa guardia che `record_shape.rs` dichiara di sé.
+
+**Conseguenza:** nessuna `D` — è un rimedio, non una scelta, e il precedente era già scritto.
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -1369,7 +1556,7 @@ smentisce — è ciò per cui esiste l'errata.
 | **D1** | i compiti sono tagliati per **artefatto** sulla tabella *«Il prodotto del 2, e il controllo che esercita ciascun artefatto»* della §8 del 2, e ogni compito finisce con un artefatto provato da solo — ⛔ **quanti siano lo dice la tabella della posizione, non questa riga: RICHIAMO DEL 2026-09-14 (D25)** — qui stava *«sedici»*, ed è un numerale in prosa che conta un artefatto, cioè la cosa che questo repository **toglie** invece di riallineare (gotcha #68, P-35) | la §8 dice di sé che le righe stanno «in un posto solo perché il piano le tagli per compito»; il precedente sono i tredici compiti del Traguardo 5 in un piano solo |
 | **D2** | `dockview-core` e `dockview` si appuntano a **8.3.1**, non alla **8.2.0** con cui SP-8 ha misurato le otto mosse | la v8 è additiva e ogni novità è opt-in, letto alla fonte il 2026-09-07 (tabella della §4 della stella polare); appuntare una versione che il registro non serve più come `latest` è debito al primo `npm install`. ⚠️ **Costo dichiarato:** l'evidenza delle otto mosse è sulla 8.2.0, e il compito 12 lo scrive accanto al primo uso; se un comportamento delle mosse cambia, è una voce d'errata |
 | **D3** | `markdown-it` si appunta a **15.0.2**, uscita **il giorno stesso** | è una patch sulla 15.0.1 che la §9 del 2 aveva letto **dentro il pacchetto** (preset `default` con `html: false`, `BAD_PROTO_RE`); ⛔ **il compito 13 rilegge quelle tre proprietà dentro il `.tgz` della 15.0.2 prima di usarla**, perché una patch che tocca `validateLink` cambierebbe la ragione della decisione 51 |
-| **D4** | `vitest` resta **4.1.11**, il tag `V4`, e non la 5.0.0 | la decisione 52 disse «sei giorni»; oggi sono otto, e otto giorni non sono maturità. ⛔ **La misura si rifà al compito 10**, e se il piano si scrivesse fra un mese la risposta cambierebbe: la regola è «novità non è maturità», non «mai la major» |
+| **D4** | `vitest` resta **4.1.11**, il tag `V4`, e non la 5.0.0 | la decisione 52 disse «sei giorni»; oggi sono otto, e otto giorni non sono maturità. ⛔ **La misura si rifà al compito 10**, e se il piano si scrivesse fra un mese la risposta cambierebbe: la regola è «novità non è maturità», non «mai la major». ✅ **RIMISURATA IL 2026-09-14, scrivendo il compito 10, e la risposta NON cambia:** `npm view vitest version dist-tags` rende ancora `latest: 5.0.0` e `V4: 4.1.11`, e `npm view vitest time --json` data la 5.0.0 al **2026-09-03** — il divario è cresciuto, non la maturità. ⚠️ **Il numero di giorni non si riscrive in questa riga**, si rifà coi due comandi: chi installa è il compito **11**, e li rilancia quel giorno |
 | **D5** | ⛔ **il ramo `Request` del dispaccio NON costruisce nessun `ResourceProfile`**: non chiama `admit`, non risponde, e il doc del ramo scrive perché. La riga `Request` della §5 del 2 riceve un **richiamo datato** al compito 7. La riga 27 delle voci aperte del Traguardo 6 resta aperta **col suo innesco intatto**, e il chiusore resta il **7**, il pilastro 3D | le tre vie sono state esaminate contro il codice (P-1, P-11, P-12). **Servirla** obbliga il core a nominare corsia e prelazionabilità per un consumatore che non esiste — `ComputeClass::Batch` è documentata *«3D render, indexing, background runs»* e ADR-0033 descrive un **viewer**: nessuna riga dice quale sia giusta, e sceglierne una è una deduzione presentata come disegno. **Rifiutarla** con `Verdict::Refused` mente sul significato del tipo (P-12). **Non servirla** non afferma nulla di falso, è la forma che il repo usa già — `promote` non si chiama, quattro porte su sei non hanno chiamanti, *«dichiarato, non pinzato»*, gotcha #73 — e toglie alla radice il privilegio non controllato, perché nessun valore del pari raggiunge l'arbitro. ⚠️ **Costo dichiarato:** la §5 del 2 si restringe, e la GUI del 2 vede un `Verdict` solo dal rubinetto del core finto (P-11) |
 | **D6** | `redb` resta alla **4.1.0** del `Cargo.lock`, benché il registro serva la 4.2.0 | ADR-0032 nomina la 4.1.0 e il lockfile è un **ingresso** del cancello (vincolo 6): alzarla è un atto deliberato che non serve a nessun passo di questo piano. Il compito 5 usa il `FileBackend` che `platform` già ha |
 | **D7** | la **seminatura** del contatore vive in `kernel::numbering::seeded_from`, non in `daemon` | la §7 del 2 costruisce l'attività del kernel **da fuori**, in `gui/fake-core`, che non può importare un binario — è il dedotto che quella sezione scrive di `build_the_arbiter`. Una seminatura in `daemon/src/main.rs` sarebbe **copiata** dal finto, e una copia del cablaggio è verde il giorno che le due divergono. ⚠️ **Costo:** `kernel` guadagna una funzione libera che legge il giornale con `replay`; **nessuna** operazione nuova nella porta |
@@ -1397,7 +1584,9 @@ smentisce — è ciò per cui esiste l'errata.
 | **D29** | ⛔ **il daemon scrive il PROPRIO `SharedClock` e non costruisce due `SystemReactor`** | `Executor::new` prende il reattore **per valore** e `serve` ne vuole un **prestito**, quindi uno dei due deve essere una copia leggera; e `SystemReactor` **porta un'origine** ancorata a `Instant::now()` nel proprio costruttore, quindi due istanze sono **due orologi** che rispondono valori diversi per lo stesso istante (**P-49**). Le scadenze che `serve` calcola non sarebbero più confrontabili con quelle su cui l'esecutore aspetta: è `E25` — due verità indipendenti sullo stesso fatto — allo strato che decide quando un'attività si sveglia. ✅ **La forma si legge invece di inventarla:** è quella del banco del compito 7 e di `crates/simulator/tests/arbiter_campaign.rs`, un tipo che tiene `&SystemReactor` e inoltra le due operazioni del tratto. ⚠️ **Costo dichiarato:** è il **terzo** esemplare della stessa forma nel repository, e le tre case non possono importarsi a vicenda — un `tests/` è una crate a sé e un binario non esporta nulla. ⛔ **Se salga in `simulator` NON si decide qui:** la quinta chiusura l'ha assegnata al **10**, il primo che può misurarne il bisogno con una campagna in mano, e anticiparlo sarebbe uno strato speculativo |
 | **D30** | ⛔ **l'archivio della disposizione che non si apre diventa una CUSTODIA DEL DAEMON che risponde `Unavailable`** — un `enum` della radice di composizione che implementa `Custody`, delega quando è aperto e rifiuta quando non lo è | la decisione **35** vuole che il core parta lo stesso, ma `FileCustody::open` rende un `Result` e `Core::new` vuole una `Custody` **per valore** (**P-50**): fra le due non c'è spazio, e la cosa che manca è un valore. ✅ **La metà che serve esiste già, misurata nel compito 7:** `Err(CustodyError::Unavailable)` è **già** tradotto in `LayoutState::Unavailable`, quindi la decisione 35 si ottiene **senza una riga nuova nell'attività** e senza operazioni nuove nella porta — che è ciò che la §8 del 2 aveva previsto con quelle parole. Le due vie scartate: far rendere a `FileCustody::open` sempre una custodia **cambia un compito già scritto** e butta via il nome del fallimento che `OpenError` porta; una **seconda variante** di `CustodyError` darebbe alla porta un termine per uno stato che è della radice di composizione, ed è la variante senza chiamante che il doc di `CustodyError` rifiuta. ⚠️ **Costo dichiarato:** il daemon guadagna un tipo, e la sua sonda deve provare **entrambi** i rami — aperto delega, chiuso rifiuta — perché un avvolgente che delegasse sempre passerebbe la sonda del percorso buono |
 | **D31** | ⛔ **il nome del canale e il tetto del corpo sono DUE letterali del daemon**, sulla stessa frontiera di `JOURNAL_PATH`, e il **nome** entra nel criterio di chiusura perché il suo secondo lettore non esiste ancora | **D9** ha lasciato il tetto a chi compone e nessuno dei due disegni nomina né l'uno né l'altro (**P-53**). Sono due letterali per la ragione che il doc di `JOURNAL_PATH` scrive già — *«the value has to be chosen somewhere until the parameter store arrives, and a literal in `daemon` is visible and can be varied»* — cioè il confine di ADR-0034 e del vincolo 11 di §11, non una scorciatoia. ⛔ **Ma non sono la stessa specie, e per questo non condividono una riga:** il **nome** è un fatto di **protocollo**, che il **guscio** dovrà conoscere, e un fatto di protocollo che vive in una casa sola e non è nominato da nessun indice marcisce in silenzio; il **tetto** è locale al core e il core finto ne sceglie uno suo al 12. ⛔ **E il guscio NON è un compito di questo piano** (**P-53**): il 12 lega un nome suo, il 13 e il 14 portano una SPA che non tocca socket, e il capo a capo nel guscio la §8 lo mette *«fuori dal cancello di oggi»*. ⚠️ **Costo dichiarato:** il nome è un letterale che **nessun controllo accoppia** al suo secondo lettore, e resta così finché il guscio non esiste — dichiarato qui, chiuso là |
-
+| **D32** | ⛔ **la campagna del 2 NON usa `simulator::ipc::DyingGui`**, benché la §5 lo nomini: il filo se lo **scrive**, e lo tiene **fuori** dal core dietro un `RefCell`, com'è nel banco del compito 7. I guasti restano due — la morte sulla porta e la caduta del giornale — e il secondo resta `CrashingJournal` | la riga della §5 è del **2026-09-06**, cioè **prima di D5**, e le ragioni misurate sono **tre**, ciascuna sufficiente. **(1)** `DyingGui` dice un messaggio solo, `IpcMessage::Request`, che il dispaccio lascia cadere: nessuna concessione è rilasciata, e la proprietà confronterebbe **insiemi vuoti** (**P-57**). **(2)** Non può pronunciare né `Hello` né `Approve`, quindi la **seconda** proprietà della §5 non sarebbe raggiungibile (**P-58**). **(3)** ⛔ **E questa chiude la via:** verrebbe **spostata dentro `Core`**, che non espone il trasporto, quindi la campagna non potrebbe più interrogarla — e `ClientGrants` non offre nessun modo di **contare senza rilasciare**, né `on_disconnect` è chiamabile da fuori, perché `grants()` e `arbiter()` sono due prestiti mutabili dello stesso `&mut Core` (**P-60**). ✅ **Scartate le due vie che «aggiustano» `kernel`:** un `Core::into_parts` e un `ClientGrants::held` sarebbero elementi d'API il cui unico chiamante è una campagna, che `crates/kernel/src/boundary.rs` cancella — e `Core::ipc` è **già assegnato** al compito 12 con un altro significato. ⚠️ **Costo dichiarato:** è la **terza** scrittura della stessa forma di filo — il banco del 7, il daemon del 9, questa — e le tre case non possono importarsi; la testa della campagna lo **dichiara** invece di lasciarlo scoprire (gotcha #49), e la §5 riceve il proprio richiamo datato |
+| **D33** | ⛔ **la concessione della GUI si mette a MANO attraverso `Core::grants`, e la baseline NON è zero** — la quota di presentazione del core, che nessun registro tiene, più un **secondo client** registrato che non muore | senza di essa la prima metà confronterebbe **insiemi vuoti**: il 2 non rilascia nessuna concessione a un client (**D5**), quindi un client che muore sotto l'attività non tiene niente e *«la somma torna alla baseline»* è verde perché non si è mai mossa (**P-57**) — `M2` del commit 9a applicato a una campagna, e la lezione che il Traguardo 4 ha imparato **tre** volte. ✅ **Non è un'invenzione di questa campagna:** il doc di `Core::grants` nomina questo chiamante e il doc di modulo di `serving.rs` lo ripete — *«`tests/serving.rs` holds the wiring meanwhile by putting a grant in by hand»* — e i **due testimoni** della baseline sono quelli che `gui_death_campaign.rs` argomenta uno per uno, col secondo scelto perché è **quello che una mutazione può raggiungere**. ⛔ **E la baseline non-zero compra DUE direzioni con UNA asserzione, che è ciò per cui l'oracolo è la SOMMA e non il registro** (**P-60**): una riconciliazione che non fa niente lascia la somma **sopra**, una che rilascia ogni coppia che tiene la lascia **sotto**. ⚠️ **Costo dichiarato:** la campagna prepara uno stato che nessun percorso di produzione produce oggi, e lo **dice** nella propria testa; il giorno che il pilastro 3D rilascia concessioni davvero, la preparazione a mano si toglie e il percorso vero la sostituisce |
+| **D34** | ⛔ **il `SharedClock` resta LOCALE alla campagna e non sale in `simulator`** — è il quarto esemplare, ed è dichiarato nella testa del file invece che scoperto | ⛔ **È la decisione che D29 e la testa del banco del compito 7 avevano REGISTRATO per il 10, e si prende con la misura.** Delle quattro case, la quarta è `crates/daemon/src/main.rs`, e `crates/daemon/Cargo.toml` **rifiuta per iscritto** di dipendere da `simulator` — *«Does NOT depend on `simulator`. The daemon is the PRODUCTION wiring»* — quindi una casa comune ne servirebbe **tre su quattro**, e la quarta riscriverebbe la propria copia **senza** il commento che oggi la dichiara ripetuta: una duplicazione meno visibile di quella di adesso (**P-59**). ⚠️ **E non è nemmeno lo stesso tipo:** tre avvolgono un `VirtualReactor`, la quarta un `SystemReactor`, quindi la casa comune vorrebbe un avvolgente **generico** — dodici righe risparmiate in tre banchi contro un elemento d'API nuovo, che è *sfoggio* per il quinto criterio di `anthropic-skills:decision-principles`. ⚠️ **Costo dichiarato, e l'innesco che impedisce alla decisione di marcire:** il repository porta quattro copie della stessa forma; il giorno che ne nasce una **quinta dentro `simulator` o in una crate che può importarlo**, e avvolge lo stesso reattore, la misura si rifà |
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
 il comando del vincolo 11 → `11030` · `git status -sb` → `## main...origin/main`, pulito.
@@ -5726,7 +5915,7 @@ Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit �
 - Consumes, da oggi: `kernel::arbiter::{Arbiter, MakeRoom, VramPolicy, RemotePolicy, LocalPolicy}`; `kernel::client::ClientGrants`; `kernel::degradation::degradation_now`; `kernel::executor::Sleep`; `kernel::permission::{Operation, Permission}`; `kernel::ports::{ipc::{Ipc, ClientId, IpcError}, journal::{Journal, StepId}, reactor::Reactor}`; `kernel::record::{Detail, EffectClass, Record, RecordKind}`; `kernel::time::{Millis, Monotonic}`
 - Produces, e i compiti **9**, **10** e **12** li usano con questi nomi esatti:
   - `kernel::serving::Core<I: Ipc, J: Journal, C: Custody>`, con `Core::new(ipc: I, journal: J, custody: C, arbiter: Arbiter, steps: Progressive, parameters: Parameters) -> Core<I, J, C>`
-  - `Core::journal(&mut self) -> &mut J` · `Core::arbiter(&mut self) -> &mut Arbiter` · `Core::attending(&self) -> Vec<ClientId>`
+  - `Core::journal(&mut self) -> &mut J` · `Core::arbiter(&mut self) -> &mut Arbiter` · `Core::custody(&self) -> &C` · `Core::grants(&mut self) -> &mut ClientGrants` · `Core::attending(&self) -> Vec<ClientId>` — ⛔ **RICHIAMO DEL 2026-09-14, dal pre-controllo del compito 10 (P-56): erano TRE, e gli accessori che il Passo 7 detta sono CINQUE.** `custody` e `grants` mancavano, e `grants` è precisamente quello che la campagna del **10** richiede — il doc che il Passo 7 gli scrive accanto nomina quel chiamante con le proprie parole, e il doc di modulo di `serving.rs` lo ripete
   - `kernel::serving::serve<'a, I, J, C, R>(core: &'a RefCell<Core<I, J, C>>, clock: &'a R, sleep: &'a Sleep)` — un `async fn` che **non finisce mai**
   - `kernel::serving::POLICY_FUNCTION: Function` — la **sola** funzione registrata nel 2
   - `kernel::executor::nap(sleep: &Sleep, deadline: Monotonic)` — un `async fn`
@@ -5740,7 +5929,7 @@ Un'attività che si fermasse da sola sarebbe un core che smette di servire.
 
 ⛔ **E `Core` NON espone il trasporto oggi.** `Core::ipc` non nasce qui: il suo chiamante è il **rubinetto**
 del core finto, compito **12**, e *«un elemento d'API senza chiamante in questo repository si cancella»* —
-`crates/kernel/src/boundary.rs`. I tre accessori che nascono hanno un chiamante in **questo** banco.
+`crates/kernel/src/boundary.rs`. Gli accessori che nascono hanno **tutti** un chiamante — in **questo** banco oppure nella campagna del **10**, che è il chiamante che il doc di `grants` nomina. ⚠️ **QUALI siano lo dice il Passo 7 e non questa riga** — P-35, e **P-56** è la sua ricaduta: un numerale in prosa che conta un artefatto è già marcito una volta qui dentro.
 
 - [ ] **Passo 1: le misure prima**
 
@@ -9176,6 +9365,837 @@ dichiara, non una svista: se ne comparisse un secondo dentro `mod tests`, quella
 essere il **guscio**, che questo piano **non costruisce** — il 12 lega un nome suo, il 13 e il 14 portano una SPA
 che non tocca socket (**P-53**, **D31**). Nessun controllo accoppia i due capi finché il secondo non esiste, ed è
 una voce aperta dichiarata e non un compito da nominare.
+
+---
+
+## Compito 10: la campagna DST del 2 — l'attività sotto due guasti, e la riga nel settimo passo
+
+- Read: la **§5 del 2**, la riga *«l'attività»* e la sua colonna *«la prova»*; le righe *«l'attività del daemon
+  (§5)»* e *«la campagna DST del 2 nel settimo passo»* della **§8 del 2**;
+  `crates/simulator/tests/gui_death_campaign.rs` **per intero** — è il modello della prima metà, e la sua testa
+  porta la ragione per cui una baseline a zero non prova nulla; la **testa** di
+  `crates/simulator/tests/dst_campaign.rs` fino a `SHORT_CAMPAIGN_SEEDS` — è il modello della seconda; il doc di
+  `simulator::journal::CrashingJournal`, coi tre divieti del suo `from_seed` (seme **derivato**, conteggio
+  **contato**, conteggio **diverso da zero**); `crates/kernel/src/client.rs` **per intero** (sono tre elementi
+  pubblici: `new`, `register`, `on_disconnect`); `crates/kernel/src/reconcile.rs` — `Resolution`, `InDoubt`,
+  `steps_in_doubt`; il **settimo passo** di `scripts/gate.sh` **col commento sopra**; e i blocchi *Interfaces* dei
+  compiti **1**, **3**, **4**, **6**, **7** e **9** — ⛔ **il 7 e il 9 ENTRAMBI**, perché questa campagna è il
+  **terzo** posto in cui lo stesso cablaggio viene scritto e i primi due non si possono importare (un `tests/` è
+  una crate a sé, un binario non esporta nulla)
+
+**Interfaces:**
+- Consumes, dal **compito 1**: `kernel::numbering::Progressive`, con `Progressive::starting_at(u64)`
+- Consumes, dal **compito 3**: `kernel::wire::ipc::{IpcMessage, build_stamp, Access, Call, Triple}`
+- Consumes, dal **compito 4**: `kernel::ports::custody::Custody`
+- Consumes, dal **compito 6**: `kernel::registry::Function` — attraverso `POLICY_FUNCTION`, per la tripla e il nome
+- Consumes, dal **compito 7**: `kernel::serving::{Core, serve, POLICY_FUNCTION}`, con
+  `Core::new(ipc, journal, custody, arbiter, steps, parameters)`, `Core::journal`, `Core::arbiter`,
+  ⛔ **`Core::grants`** — l'accessore che questa campagna richiede, aggiunto al blocco *Interfaces* del 7 col
+  richiamo del 2026-09-14 (**P-56**) — `Core::attending`, e
+  `kernel::parameters::Parameters::new(executor_turn_limit, total_vram, arbiter_id, gui_tick)`
+- Consumes, da oggi: `kernel::arbiter::{Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption,
+  RemotePolicy, ResourceProfile, VramPolicy}`; `kernel::executor::{Executor, RunError, Sleep}`;
+  `kernel::ports::ipc::{ClientId, Ipc, IpcError}`; `kernel::ports::journal::Journal`;
+  `kernel::ports::reactor::Reactor`; `kernel::reconcile::{Resolution, steps_in_doubt}`;
+  `kernel::time::{Millis, Monotonic, WallTime}`; `simulator::custody::MemoryCustody`;
+  `simulator::journal::CrashingJournal`; `simulator::reactor::VirtualReactor`; `simulator::rng::SeededRng`
+- Produces: ⛔ **nulla che un altro compito importi** — un `tests/` è una crate a sé. L'unico artefatto che un
+  altro file nomina è **la riga nel settimo passo di `scripts/gate.sh`**
+
+⛔ **QUESTO COMPITO NON TOCCA `kernel`, `platform` NÉ `daemon`.** Tutto ciò che muove esiste dai compiti 1–9: se
+un nome manca, è una voce d'errata del compito che doveva portarlo, **non** una riga nuova aggiunta qui.
+
+⛔ **E `simulator::ipc::DyingGui` NON SI USA, benché la §5 lo nomini.** La riga del disegno è del **2026-09-06**,
+cioè prima di **D5**, e le ragioni sono **tre**, ciascuna misurata (**P-57**, **P-58**, **P-60**): dice una cosa
+sola, `IpcMessage::Request`, che il dispaccio lascia cadere; non può pronunciare né `Hello` né `Approve`, quindi
+la seconda metà non sarebbe raggiungibile; e **verrebbe spostata dentro `Core`**, che non espone il trasporto —
+la campagna non potrebbe più interrogarla. ✅ **La forma che funziona esiste già ed è del compito 7:** il filo
+vive **fuori** dal core dietro un `RefCell`, e la porta ne tiene un prestito. È il **terzo** posto in cui quella
+forma viene scritta, e i primi due non si possono importare.
+
+- [ ] **Passo 1: le misure prima, e i DUE premi da CONTARE e non indovinare**
+
+```bash
+ls crates/simulator/tests/serving_campaign.rs 2>&1
+ls crates/simulator/tests/
+grep -n 'run "DST campaigns' -A 7 scripts/gate.sh
+grep -rn 'struct SharedClock' crates/ --include='*.rs'
+grep -n 'simulator' crates/daemon/Cargo.toml
+grep -nE '^\s*pub (fn|const fn|struct)' crates/kernel/src/client.rs
+grep -n 'pub enum Resolution' -A 10 crates/kernel/src/reconcile.rs
+git ls-files --eol scripts/gate.sh docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+```
+
+Atteso: `serving_campaign.rs` **non esiste**; il settimo passo elenca **cinque** bersagli, uno per riga; gli
+`SharedClock` nel repository sono **tre** dopo i compiti 7 e 9 (**P-59**); `crates/daemon/Cargo.toml` **non**
+dipende da `simulator` e porta il commento che dice perché; ⛔ **`ClientGrants` ha TRE elementi pubblici** —
+`new`, `register`, `on_disconnect` — e **nessun modo di contare senza rilasciare** (**P-60**); `Resolution` ha
+**tre** varianti; `gate.sh` è `i/lf w/crlf`, il disegno del 2 è `i/lf w/lf` (**P-47**).
+⚠️ **Se una cifra è diversa vale il comando, non questa riga**, ed è una voce d'errata prima di essere un rimedio.
+
+⛔ **E POI I DUE PREMI, senza i quali entrambe le metà sono silenziose** — gotcha **#17**, e il doc di
+`CrashingJournal::from_seed` lo scrive per esteso: *un punto estratto oltre l'ultimo non scatta mai, e una
+campagna il cui guasto non arriva è verde per non aver fatto niente*.
+
+| Il premio | Che cosa deve essere contato | In quale corsa si conta |
+|---|---|---|
+| **quante operazioni** l'attività compie sulla porta di un client accolto | i `send` e i `receive` che `serve` fa su quel client prima che i giri finiscano | una corsa **senza morte**, leggendo il contatore che il filo tiene — il filo vive fuori dal core, quindi la campagna lo legge (Passo 5) |
+| **quante scritture** un'invocazione approvata compie sul giornale | ciò che `Registry::invoke` più `Arbiter::set_policy` scrivono in una corsa **senza** caduta | `CrashingJournal::without_crash()` e `writes_done()`, che è `C7a` di `dst_campaign.rs` in persona (Passo 5) |
+
+⛔ **Nessuno dei due numeri è deciso da questo documento.** Il Passo 5 li misura, chi esegue **scrive il numero
+misurato** nella costante, e se diverge da ciò che questo compito prevede è una **voce d'errata** — è il gotcha
+**#57**, *una decisione presa prima che esistesse ciò di cui parla è una previsione*.
+
+- [ ] **Passo 2: il file, la testa, e le costanti**
+
+`crates/simulator/tests/serving_campaign.rs`, **LF**, nuovo.
+
+```rust
+//! The milestone 2 campaign: `kernel::serving::serve` under two faults -- a gui that dies on the
+//! port, and an archive that falls in the middle of an invocation.
+//!
+//! ⛔ WHY NOT `simulator::ipc::DyingGui`, WHICH §5 OF THE DESIGN NAMES. Three reasons, each
+//! measured on 2026-09-14 while this task was written. It says exactly ONE thing --
+//! `IpcMessage::Request` -- and the dispatch drops it on the floor (D5), so no grant is ever
+//! issued and the property would compare empty sets. It can pronounce neither `Hello` nor
+//! `Approve`, so the second fault is out of reach with it. And it would be MOVED INTO `Core`,
+//! which does not expose its transport, so nothing could read it afterwards.
+//!
+//! ⛔ SO THE WIRE LIVES OUTSIDE THE CORE, behind a `RefCell` the campaign owns, and the port holds
+//! a borrow of it. That is the shape of `crates/kernel/tests/serving.rs`, and this is the THIRD
+//! place it is written: a `tests/` is a crate of its own and a binary exports nothing, so the
+//! first two cannot be imported.
+//!
+//! ⛔ AND THE FIRST HALF WOULD BE VACUOUS WITHOUT A GRANT PUT IN BY HAND. Milestone 2 issues NO
+//! grant to a client -- `serving.rs` says so of itself -- so a gui that dies here holds nothing,
+//! and "the sum came back to the baseline" is green because it never moved. The grant goes in
+//! through `Core::grants`, which is the caller that accessor's own doc names.
+//!
+//! ⛔ AND THE BASELINE IS NOT ZERO, WHICH BUYS BOTH DIRECTIONS AT ONCE. Two holders are in the
+//! books before the gui dies: the core's own presentation quota (ADR-0033), which no register ever
+//! holds, and a SECOND client that is registered and does not die. A reconciliation that did
+//! nothing leaves the sum ABOVE the baseline; one that released every pair it holds instead of the
+//! dead client's takes the second client's and leaves it BELOW. One assertion, two mutations.
+//!
+//! ⚠️ AND THAT IS WHY THE SUM IS THE ORACLE RATHER THAN THE REGISTER: `ClientGrants` exposes
+//! `new`, `register` and `on_disconnect` and NOTHING THAT COUNTS WITHOUT RELEASING -- measured --
+//! and `grants()` and `arbiter()` are two mutable borrows of the same `&mut Core`, so a campaign
+//! outside the crate cannot call `on_disconnect` at all.
+//!
+//! ⚠️ WHAT THIS CAMPAIGN DOES NOT HOLD, said rather than left to be assumed:
+//!
+//! - it does NOT re-prove `ClientGrants`. `gui_death_campaign.rs` holds property 3 of §5.7 against
+//!   the register directly; what is under test HERE is the ACTIVITY -- that `serve` reads the
+//!   death from the port and reconciles, at a turn the seed chooses.
+//! - it does NOT reach `Reactor::wait_until` on a real clock: the clock is virtual, so a wait is
+//!   an assignment. The wall-clock half is the daemon's, and its own probe declares it.
+//! - it does NOT sweep a gui that dies AFTER its window. That road is
+//!   `crates/kernel/tests/client_grants.rs::a_disconnect_after_the_window_reports_already_collected`.
+//!
+//! ⛔ THE CLOCK IS SHARED THROUGH A LOCAL `SharedClock`, AND THAT IS A DECISION -- D34, not a copy
+//! nobody noticed (gotcha #49). It is the fourth of that wrapper here, and it stays local:
+//! `crates/daemon/Cargo.toml` refuses IN WRITING to depend on `simulator`, so a home there would
+//! serve three of the four and leave the production one writing its own anyway.
+```
+
+Poi gli `use` e le costanti. ⛔ **I due numeri contati NON sono qui:** il Passo 5 li misura.
+
+```rust
+use core::cell::RefCell;
+use std::collections::BTreeSet;
+
+use kernel::arbiter::{
+    Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption, RemotePolicy,
+    ResourceProfile, VramPolicy,
+};
+use kernel::executor::{Executor, RunError, Sleep};
+use kernel::numbering::Progressive;
+use kernel::parameters::Parameters;
+use kernel::ports::ipc::{ClientId, Ipc, IpcError};
+use kernel::ports::reactor::Reactor;
+use kernel::reconcile::{steps_in_doubt, Resolution};
+// ⚠️ `below` LIVES ON THE EXTENSION TRAIT, not on `SeededRng`: `kernel::rng::RngExt`
+// carries it and the trait has to be in scope. Its own doc explains why an inherent
+// `fn below` on a concrete type would shadow it at the call site.
+use kernel::rng::RngExt;
+use kernel::serving::{serve, Core, POLICY_FUNCTION};
+use kernel::time::{Millis, Monotonic, WallTime};
+use kernel::wire::ipc::{build_stamp, Access, Call, IpcMessage, Triple};
+use simulator::custody::MemoryCustody;
+use simulator::journal::{CrashingJournal, MemoryJournal};
+use simulator::reactor::VirtualReactor;
+use simulator::rng::SeededRng;
+
+/// The whole machine.
+const TOTAL: Mib = Mib::new(8_192);
+
+/// The core's own presentation quota (ADR-0033). ⛔ IT IS NEVER REGISTERED in `ClientGrants`, so no
+/// disconnection can reach it whatever the reconciliation does.
+const CORE_QUOTA: Mib = Mib::new(1_024);
+
+/// What a second, still-connected client holds. ⛔ IT IS REGISTERED, and it is the witness a
+/// mutation can reach: an over-eager reconciliation takes this one and the sum falls BELOW the
+/// baseline.
+const STANDING_QUOTA: Mib = Mib::new(1_024);
+
+/// What the dying gui holds when it goes. ⛔ PUT IN BY HAND -- see the head of this file.
+const GUI_QUOTA: Mib = Mib::new(2_048);
+
+/// What the books hold before the gui dies, and what they must hold again after it is gone.
+const BASELINE: Mib = Mib::new(CORE_QUOTA.get() + STANDING_QUOTA.get());
+
+/// The window the standing grants declare -- long enough that nothing here ever collects them.
+const FOREVER: Millis = Millis::new(1_000_000);
+
+/// The window the gui's own grant declares.
+const GUI_WINDOW: Millis = Millis::new(5_000);
+
+const GUI: ClientId = ClientId::new(1);
+const STANDING: ClientId = ClientId::new(2);
+
+/// The tick this campaign delivers. ⛔ IT IS NOT ZERO, AND THAT IS THE POINT: a zero tick makes
+/// `nap` behave as a yield (`Sleep::until`'s own rule), and no turn would move the virtual clock.
+/// It is `TICK` of `crates/kernel/tests/serving.rs`, and the same value for the same reason.
+const TICK: Millis = Millis::new(50);
+
+/// Enough turns for the longest round here, with room to spare. ⛔ FIXED AND VERSIONED WITH THIS
+/// FILE (constraint 7 of §11), never drawn from the clock or from an environment variable.
+const TURNS: u64 = 64;
+
+/// How many seeds the SHORT campaign sweeps. ⛔ FIXED AND VERSIONED, for `TURNS`' reason. It is the
+/// figure the two campaigns beside this one already use.
+const SHORT_CAMPAIGN_SEEDS: u64 = 2_000;
+```
+
+- [ ] **Passo 3: il filo che muore, tenuto FUORI dal core**
+
+⛔ **La forma è quella del banco del compito 7, e il punto di morte è quello di `DyingGui`:** si riusa la
+**disciplina**, non il tipo — seme **derivato** da quello dell'esecutore, conteggio **contato** e non indovinato,
+conteggio **diverso da zero**. I tre divieti si citano nel doc, con il file che li possiede.
+
+```rust
+/// Everything the gui side holds, and the only thing the probes read. ⛔ IT LIVES OUTSIDE `Core`,
+/// which is what makes it readable after the run at all.
+struct Wire {
+    waiting: Vec<ClientId>,
+    /// What each client will say, in order.
+    up: Vec<(ClientId, Vec<u8>)>,
+    /// What the core said to each client, in order.
+    down: Vec<(ClientId, Vec<u8>)>,
+    /// The client that will die, and where.
+    dying: Option<ClientId>,
+    dies_at: u64,
+    /// ⛔ `send` AND `receive` ONLY, AND `accept` IS OUT -- `DyingGui`'s own rule and its reason:
+    /// the count the death point is drawn against has to count things that CAN report the death,
+    /// and `accept` answers `Option<ClientId>` with no error channel.
+    operations: u64,
+    /// Whether the port ever answered `Disconnected`. ⛔ THE NON-VACUITY ORACLE of the first half.
+    death_reported: bool,
+}
+
+impl Wire {
+    fn new() -> Self {
+        Wire {
+            waiting: Vec::new(),
+            up: Vec::new(),
+            down: Vec::new(),
+            dying: None,
+            dies_at: u64::MAX,
+            operations: 0,
+            death_reported: false,
+        }
+    }
+
+    /// The gui connects and then says these things in this order.
+    fn arrives(&mut self, client: ClientId, said: &[IpcMessage]) {
+        self.waiting.push(client);
+        for message in said {
+            self.up.push((
+                client,
+                message.encode().expect("the campaign frames what it sends"),
+            ));
+        }
+    }
+
+    /// ⛔ THE DEATH POINT, AND THE THREE RULES ARE `CrashingJournal::from_seed`'s, cited rather
+    /// than reinvented: the seed must be DERIVED from the campaign's (or the campaign explores a
+    /// diagonal of the space instead of the space), `operations` must be COUNTED in a run where
+    /// nothing dies, and it must not be ZERO.
+    fn dies(&mut self, client: ClientId, at: u64) {
+        self.dying = Some(client);
+        self.dies_at = at;
+    }
+
+    /// Whether this operation may proceed, MARKING the death when it may not.
+    fn may_operate(&mut self, client: ClientId) -> bool {
+        if self.dying != Some(client) {
+            return true;
+        }
+        if self.operations >= self.dies_at {
+            self.death_reported = true;
+            return false;
+        }
+        self.operations += 1;
+        true
+    }
+
+    /// Everything the core has said to this client, decoded and taken off the wire.
+    fn heard(&mut self, client: ClientId) -> Vec<IpcMessage> {
+        let mut out = Vec::new();
+        let mut kept = Vec::new();
+        for (id, bytes) in self.down.drain(..) {
+            if id == client {
+                out.push(IpcMessage::decode(&bytes).expect("the core frames what it sends"));
+            } else {
+                kept.push((id, bytes));
+            }
+        }
+        self.down = kept;
+        out
+    }
+}
+
+/// The `ipc` port over that wire.
+struct FakeIpc<'a> {
+    wire: &'a RefCell<Wire>,
+}
+
+impl Ipc for FakeIpc<'_> {
+    /// ⚠️ IT DOES NOT CONSULT THE DEATH, deliberately: a listener hands over whoever connected, and
+    /// whether that peer is still alive is what the FIRST `receive` finds out. A fake that refused
+    /// to accept a dying client would hide the very path the reconciliation exists for.
+    fn accept(&mut self) -> Option<ClientId> {
+        let mut wire = self.wire.borrow_mut();
+        if wire.waiting.is_empty() {
+            None
+        } else {
+            Some(wire.waiting.remove(0))
+        }
+    }
+
+    fn send(&mut self, client: ClientId, message: &[u8]) -> Result<(), IpcError> {
+        let mut wire = self.wire.borrow_mut();
+        if !wire.may_operate(client) {
+            return Err(IpcError::Disconnected);
+        }
+        wire.down.push((client, Vec::from(message)));
+        Ok(())
+    }
+
+    fn receive(&mut self, client: ClientId) -> Result<Option<Vec<u8>>, IpcError> {
+        let mut wire = self.wire.borrow_mut();
+        if !wire.may_operate(client) {
+            return Err(IpcError::Disconnected);
+        }
+        let at = wire.up.iter().position(|(id, _)| *id == client);
+        // ⚠️ `Ok(None)` IS NOT THE DEATH: an idle client and a dead one must not give the same
+        // answer, or the core could not poll this port.
+        Ok(at.map(|index| wire.up.remove(index).1))
+    }
+}
+
+/// One clock for the executor AND for the activity -- see the head of this file for why it is
+/// local. `VirtualReactor` HOLDS the instant, so two of them would drift.
+struct SharedClock<'a> {
+    inner: &'a RefCell<VirtualReactor>,
+}
+
+impl Reactor for SharedClock<'_> {
+    fn now(&self) -> Monotonic {
+        self.inner.borrow().now()
+    }
+
+    fn wall_time(&self) -> WallTime {
+        self.inner.borrow().wall_time()
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        self.inner.borrow_mut().wait_until(deadline)
+    }
+}
+
+/// The seed the death point is drawn from. ⛔ DERIVED, and a DIFFERENT mixing from the one the
+/// executor is seeded with: two draws from the same number move together, and the campaign would
+/// explore a DIAGONAL of the space instead of the space (decision D2 of the milestone 4 plan).
+fn death_seed(seed: u64) -> u64 {
+    seed.wrapping_mul(0xBF58_476D_1CE4_E5B9)
+}
+
+/// The seed the crash point is drawn from -- a third mixing, for the same reason.
+fn crash_seed(seed: u64) -> u64 {
+    seed.wrapping_mul(0x94D0_49BB_1331_11EB)
+}
+
+/// A standing grant: one of the holders the books carry before the gui dies.
+///
+/// ⚠️ `Admission` has no `Debug`, so the `let ... else` is not a style: `expect` does not exist on
+/// it. It is `gui_death_campaign.rs`'s helper, and the same reason.
+fn standing_grant(
+    arbiter: &mut Arbiter,
+    name: &'static str,
+    reserved: Mib,
+    window: Millis,
+) -> Grant {
+    let profile = ResourceProfile {
+        name,
+        reserved_vram: reserved,
+        compute_class: ComputeClass::Realtime,
+        preemption: Preemption::Never,
+    };
+    let Admission::Granted(grant) = arbiter.admit(&profile, window, Monotonic::ORIGIN) else {
+        panic!("the quota {name} of {reserved:?} fits an empty machine of {TOTAL:?}");
+    };
+    grant
+}
+
+/// The approval the gui sends to change the policy.
+///
+/// ⛔ BUILT FROM `POLICY_FUNCTION` AND NOT WRITTEN OUT: the approval road COMPARES what comes back
+/// against the triple the registry holds, so a literal here would be testing the literal.
+///
+/// ⛔ AND IT IS `Approve` AND NOT `Invoke`: `Registry::invoke` asks `is_granted` BEFORE opening the
+/// step, so an `Invoke` on a triple nobody granted answers `PermissionRequired` having written
+/// NOTHING -- zero writes, zero doubt, and a crash point drawn on an empty range, which
+/// `CrashingJournal::from_seed` refuses with a `debug_assert!` written for it.
+fn the_approval() -> IpcMessage {
+    IpcMessage::Approve {
+        triple: Triple {
+            tool: String::from(POLICY_FUNCTION.permission.tool),
+            resource: String::from(POLICY_FUNCTION.permission.resource),
+            operation: Access::Write,
+        },
+        call: Call {
+            function: String::from(POLICY_FUNCTION.name),
+            argument: String::from("local"),
+        },
+    }
+}
+```
+
+- [ ] **Passo 4: le due corse, e che cosa ciascuna osserva**
+
+⛔ **La somma è l'oracolo della prima, il dubbio quello della seconda, e nessuna delle due legge il valore di
+`run()`:** `serve` è un `loop` senza uscita, quindi `Err(RunError::TurnLimitReached)` torna a **qualunque**
+limite ed è l'atteso, non un rosso (**P-52**, misurato scrivendo il compito 9).
+
+```rust
+/// What one run of the first half observed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+struct Died {
+    /// Where the wire was TOLD to die. ⚠️ NOT AN ORACLE: it feeds the world count and the
+    /// diagnostic of the assertion below.
+    dies_at: u64,
+    /// How many messages the gui had heard before it went -- this is what makes the worlds
+    /// distinct, and it is a fact about the ACTIVITY rather than about the fake.
+    heard: usize,
+    /// What the books held once the activity had stopped.
+    allocated: u64,
+}
+
+fn one_death(seed: u64) -> Died {
+    let parameters = Parameters::new(TURNS, TOTAL, ArbiterId::new(1), TICK);
+    let mut arbiter = Arbiter::new(parameters, VramPolicy::Remote(RemotePolicy));
+
+    // ⛔ THE THREE HOLDERS, AND THE CORE'S OWN IS NEVER REGISTERED -- ADR-0033.
+    let _core_quota = standing_grant(&mut arbiter, "core-presentation", CORE_QUOTA, FOREVER);
+    let standing = standing_grant(&mut arbiter, "gui-standing", STANDING_QUOTA, FOREVER);
+    let for_the_gui = standing_grant(&mut arbiter, "gui-request", GUI_QUOTA, GUI_WINDOW);
+
+    let wire = RefCell::new(Wire::new());
+    {
+        let mut open = wire.borrow_mut();
+        open.arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
+        open.arrives(STANDING, &[IpcMessage::Hello(build_stamp())]);
+        open.dies(GUI, SeededRng::new(death_seed(seed)).below(OPERATIONS));
+    }
+    let dies_at = wire.borrow().dies_at;
+
+    let mut built = Core::new(
+        FakeIpc { wire: &wire },
+        MemoryJournal::new(),
+        MemoryCustody::new(),
+        arbiter,
+        Progressive::starting_at(1),
+        parameters,
+    );
+    // ⛔ BY HAND, AND THE HEAD OF THIS FILE SAYS WHY. `Core::grants`' own doc names this caller.
+    built.grants().register(STANDING, standing);
+    built.grants().register(GUI, for_the_gui);
+
+    let clock = RefCell::new(VirtualReactor::new());
+    let core = RefCell::new(built);
+    let shared = SharedClock { inner: &clock };
+    let sleep = Sleep::new();
+    let mut executor = Executor::new(
+        SeededRng::new(seed),
+        SharedClock { inner: &clock },
+        parameters,
+        &sleep,
+    );
+    executor.spawn(serve(&core, &shared, &sleep));
+    assert_eq!(
+        executor.run(),
+        Err(RunError::TurnLimitReached),
+        "seed {seed}: `serve` is a loop with no exit"
+    );
+    drop(executor);
+    let mut core = core.into_inner();
+
+    // ⛔ ORACLE ONE -- THE INJECTION FIRED -- ASSERTED PER SEED, which is stronger than any total
+    // taken afterwards and is where the red of a "the wire never dies" mutation comes from.
+    assert!(
+        wire.borrow().death_reported,
+        "seed {seed}: the wire was told to die at operation {dies_at} of {OPERATIONS} and the port \
+         never answered `Disconnected`, so this run injected nothing"
+    );
+
+    // ⛔ AND THE CLIENT IS OFF THE TABLE. `attending` is the only thing `Core` shows of its own
+    // bookkeeping, and it says the activity really let go rather than merely stopped talking.
+    let attending = core.attending();
+    assert!(
+        !attending.contains(&GUI),
+        "seed {seed}: the gui is gone from the port and still on the core's table: {attending:?}"
+    );
+    assert!(
+        attending.contains(&STANDING),
+        "seed {seed}: the client that did not die was dropped with the other one: {attending:?}"
+    );
+
+    // ⛔ THE PROPERTY, AND IT CATCHES BOTH MUTATIONS AT ONCE: a reconciliation that did nothing
+    // leaves the sum ABOVE the baseline, one that released every pair it holds leaves it BELOW.
+    let allocated = core.arbiter().allocated();
+    assert_eq!(
+        allocated, BASELINE,
+        "seed {seed}: after the gui died the sum is {allocated:?} and the baseline was {BASELINE:?}"
+    );
+
+    Died {
+        dies_at,
+        heard: wire.borrow_mut().heard(GUI).len(),
+        allocated: allocated.get(),
+    }
+}
+
+/// What one run of the second half observed.
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct Crashed {
+    falls_at: u64,
+    /// Whether the fall really happened -- read from the journal the core still holds.
+    fell: bool,
+    /// The steps the archive leaves in doubt, with their resolution, in order.
+    in_doubt: Vec<(u64, Doubt)>,
+}
+
+/// `Resolution`, flattened so that a world can be counted.
+///
+/// ⚠️ A LOCAL ENUM AND NOT `Resolution` ITSELF, and it is not duplication for its own sake:
+/// `Resolution` derives neither `Ord` nor `PartialOrd` -- measured on 2026-09-14 -- a `BTreeSet`
+/// wants both, and adding a derive to a shipped type for the convenience of a bench is the trade
+/// `ports::process` refused when `Grant` was asked for a `Debug`. It is the shape
+/// `gui_death_campaign.rs` uses for `Verdict`, and the same reason.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum Doubt {
+    AskTheWorld,
+    RunAgain,
+    SuspendAndAsk,
+}
+
+impl From<Resolution> for Doubt {
+    fn from(resolution: Resolution) -> Self {
+        match resolution {
+            Resolution::AskTheWorld => Doubt::AskTheWorld,
+            Resolution::RunAgain => Doubt::RunAgain,
+            Resolution::SuspendAndAsk => Doubt::SuspendAndAsk,
+        }
+    }
+}
+
+fn one_crash(seed: u64) -> Crashed {
+    let parameters = Parameters::new(TURNS, TOTAL, ArbiterId::new(1), TICK);
+    let arbiter = Arbiter::new(parameters, VramPolicy::Remote(RemotePolicy));
+    let journal = CrashingJournal::from_seed(crash_seed(seed), WRITES_PER_APPROVAL);
+    let falls_at = journal.falls_at();
+
+    let wire = RefCell::new(Wire::new());
+    wire.borrow_mut()
+        .arrives(GUI, &[IpcMessage::Hello(build_stamp()), the_approval()]);
+
+    let built = Core::new(
+        FakeIpc { wire: &wire },
+        journal,
+        MemoryCustody::new(),
+        arbiter,
+        Progressive::starting_at(1),
+        parameters,
+    );
+
+    let clock = RefCell::new(VirtualReactor::new());
+    let core = RefCell::new(built);
+    let shared = SharedClock { inner: &clock };
+    let sleep = Sleep::new();
+    let mut executor = Executor::new(
+        SeededRng::new(seed),
+        SharedClock { inner: &clock },
+        parameters,
+        &sleep,
+    );
+    executor.spawn(serve(&core, &shared, &sleep));
+    assert_eq!(
+        executor.run(),
+        Err(RunError::TurnLimitReached),
+        "seed {seed}: `serve` is a loop with no exit"
+    );
+    drop(executor);
+    let mut core = core.into_inner();
+
+    // ⛔ THE ARCHIVE IS READ THROUGH THE JOURNAL THE CORE STILL HOLDS, and `Core` hands it back by
+    // `&mut`. ⚠️ THAT `CrashingJournal::replay` IS NOT BLOCKED BY THE FALL is VERIFIED in step 1,
+    // not assumed: `may_write` governs writes, and reading is another thing.
+    let fell = core.journal().has_fallen();
+    let in_doubt = steps_in_doubt(core.journal())
+        .expect("the crashed archive still replays")
+        .into_iter()
+        .map(|step| (step.step.get(), Doubt::from(step.resolution)))
+        .collect();
+
+    Crashed { falls_at, fell, in_doubt }
+}
+```
+
+⛔ **`steps_in_doubt` prende `&J` e `Core::journal` rende `&mut J`**, quindi la chiamata compila per
+riborrowing. ✅ **E `InDoubt` ha due campi pubblici — `step: StepId` e `resolution: Resolution` — misurati il
+2026-09-14** con `grep -n 'pub struct InDoubt' -A 6 crates/kernel/src/reconcile.rs`: `StepId` porta `get()`,
+`Resolution` **non porta `Ord`**, e da lì l'enum locale `Doubt`.
+
+- [ ] **Passo 5: i due premi, contati — e senza di loro le due metà sono silenziose**
+
+⛔ **Si scrivono PRIMA delle due sonde di proprietà**, e sono `C7a` per questa campagna.
+
+```rust
+/// How many operations the activity performs on a client it has welcomed.
+///
+/// ⛔ IT IS THE PREMISE THE DEATH POINT IS DRAWN AGAINST, and it is HELD rather than trusted by
+/// `the_activity_operates_on_a_welcomed_client_at_least_this_many_times`. A point drawn past the
+/// last operation never fires, and a campaign whose fault never arrives is green for having done
+/// nothing (gotcha #17).
+///
+/// ⛔ HOW ONE REMEDIES A RED HERE: RE-MEASURE AND RE-CHOOSE. Editing this until the bar goes green
+/// is gotcha #25. What invalidates it: a change to `TURNS`, to the welcome of sequence 1, or to
+/// what the activity sends per turn.
+const OPERATIONS: u64 = 8;
+
+/// How many writes an approved invocation performs when nothing falls.
+///
+/// ⛔ COUNTED IN A RUN WITHOUT A CRASH, which is `CrashingJournal::from_seed`'s own instruction: a
+/// count taken from a run that already crashed stops at the crash and would draw every later point
+/// out of reach. Held by `an_approval_without_a_crash_writes_this_many_records`.
+///
+/// ⛔ AND IT IS THE APPROVAL ROAD, not the plain invocation: `Approve` writes the permission note
+/// on step A as well (decision 21 of the north star).
+const WRITES_PER_APPROVAL: u64 = 7;
+```
+
+⛔ **I due valori qui sopra sono PREVISIONI di questo documento finché le due sonde non li misurano, e chi esegue
+scrive il numero MISURATO al loro posto invece di far quadrare la sonda** — gotcha **#57**. Le due sonde si
+scrivono per esteso sul cablaggio dei Passi 3 e 4: ⚠️ **una sonda col corpo vuoto è un segnaposto**, e il punto 5
+della revisione del piano intero la cerca.
+
+| La sonda | Che cosa monta | Che cosa asserisce |
+|---|---|---|
+| `the_activity_operates_on_a_welcomed_client_at_least_this_many_times` | il cablaggio di `one_death` **senza** `Wire::dies` | `wire.operations >= OPERATIONS`, col messaggio che dice *«la coda di quell'intervallo non può scattare»* |
+| `an_approval_without_a_crash_writes_this_many_records` | il cablaggio di `one_crash` con `CrashingJournal::without_crash()` | `writes_done() == WRITES_PER_APPROVAL`, **e** `steps_in_doubt` **vuoto** — la seconda direzione: un dubbio senza caduta vorrebbe dire che è rotta la disciplina write-ahead, e ogni seme sotto starebbe misurando quella |
+
+- [ ] **Passo 6: le due proprietà, e i due spazi dei mondi**
+
+```rust
+/// ⛔ PROPERTY ONE: the activity reads the death from the port and reconciles. Asserted per seed
+/// inside `one_death`; what is left here is the NON-VACUITY of the sweep.
+#[test]
+fn a_gui_that_dies_under_the_activity_gives_its_grant_back() {
+    let started = std::time::Instant::now();
+    let mut distinct = BTreeSet::new();
+    for seed in 0..SHORT_CAMPAIGN_SEEDS {
+        distinct.insert(one_death(seed));
+    }
+    let elapsed = started.elapsed();
+
+    assert!(
+        distinct.len() > 1,
+        "every seed produced the SAME world: the two mixings are moving together, so this \
+         campaign is one run repeated {SHORT_CAMPAIGN_SEEDS} times"
+    );
+    assert_eq!(
+        distinct.len(),
+        EXPECTED_DEATH_WORLDS,
+        "the campaign saw {} of the {EXPECTED_DEATH_WORLDS} worlds this scenario can produce -- \
+         either the scenario changed shape or {SHORT_CAMPAIGN_SEEDS} seeds no longer reach the end \
+         of the space, and BOTH numbers must be re-measured rather than this one edited",
+        distinct.len()
+    );
+    println!(
+        "DST serving, gui death: {} distinct worlds over {SHORT_CAMPAIGN_SEEDS} seeds, {elapsed:?}",
+        distinct.len()
+    );
+}
+
+/// ⛔ PROPERTY TWO: an approval whose archive falls leaves the step in doubt WITH ITS CLASS.
+///
+/// ⛔ AND THE NON-VACUITY IS TWO CLAIMS AND NOT ONE: that every fall actually fired, and that at
+/// least one seed really left a step in doubt -- a crash on the FIRST write writes nothing at all,
+/// and a sweep that only ever fell there would compare EMPTY SETS, which is the lesson milestone 4
+/// learned three times, each time after closing the previous one.
+#[test]
+fn an_approval_that_crashes_leaves_the_step_in_doubt_with_its_class() {
+    let started = std::time::Instant::now();
+    let mut distinct = BTreeSet::new();
+    let mut left_something_in_doubt = 0u64;
+
+    for seed in 0..SHORT_CAMPAIGN_SEEDS {
+        let observed = one_crash(seed);
+        assert!(
+            observed.fell,
+            "seed {seed}: the archive was told to fall at write {} of {WRITES_PER_APPROVAL} and \
+             never did, so this run injected nothing",
+            observed.falls_at
+        );
+        // ⛔ THE CLASS, AND THIS IS ROW 24 OF MILESTONE 6 BEING ASSERTED RATHER THAN DECIDED: the
+        // open item says `Resolution` is settled by no `match`, and this campaign adds none -- it
+        // asserts the value the declared class produces. ⚠️ AND THE EXPECTED VALUE IS READ FROM
+        // `POLICY_FUNCTION.effect` rather than written out, or the probe would pin the literal.
+        for (step, resolution) in &observed.in_doubt {
+            assert_eq!(
+                *resolution,
+                the_doubt_the_one_function_resolves_to(),
+                "seed {seed}: step {step} is in doubt as {resolution:?}, which is not what the \
+                 class this road declares resolves to"
+            );
+        }
+        if !observed.in_doubt.is_empty() {
+            left_something_in_doubt += 1;
+        }
+        distinct.insert(observed);
+    }
+    let elapsed = started.elapsed();
+
+    assert!(
+        left_something_in_doubt > 0,
+        "on no seed did the archive leave a step in doubt: every one of the \
+         {SHORT_CAMPAIGN_SEEDS} falls landed on the very first write, so nothing was ever opened \
+         and every doubt set compared was empty"
+    );
+    assert_eq!(
+        distinct.len(),
+        EXPECTED_CRASH_WORLDS,
+        "the campaign saw {} of the {EXPECTED_CRASH_WORLDS} worlds this scenario can produce -- \
+         re-measure BOTH numbers rather than editing this one",
+        distinct.len()
+    );
+    println!(
+        "DST serving, journal crash: {left_something_in_doubt} of {SHORT_CAMPAIGN_SEEDS} seeds \
+         left a step in doubt, {} distinct worlds, {elapsed:?}",
+        distinct.len()
+    );
+}
+```
+
+⛔ **`the_doubt_the_one_function_resolves_to()` si scrive leggendo `POLICY_FUNCTION.effect` e la tabella di
+`reconcile`**, non copiando una variante: `grep -n 'fn resolution_of' -A 8 crates/kernel/src/reconcile.rs` dice
+la corrispondenza, e se `resolution_of` **non è pubblica** l'aiutante la riscrive in **una riga** con un `match`
+sul campo — ⚠️ **ed è l'unico `match` che questa campagna contiene**, dichiarato qui perché non venga letto come
+la decisione che la riga 24 del Traguardo 6 tiene aperta.
+
+⛔ **`EXPECTED_DEATH_WORLDS` e `EXPECTED_CRASH_WORLDS` si MISURANO, non si prevedono.** Si scrive la costante a
+un valore qualsiasi, si lancia, si legge il numero dal messaggio del rosso, e **quello** si scrive — con la data
+accanto e la riga che dice che cosa la invalida, nella forma di `EXPECTED_WORLDS` di `gui_death_campaign.rs`.
+⚠️ **E la riga `distinct.len() > 1` viene PRIMA e non dopo:** senza di essa un `EXPECTED_*` pari a **uno**
+sarebbe verde su una campagna che è una corsa ripetuta duemila volte.
+
+- [ ] **Passo 7: la riga nel settimo passo, nelle DUE direzioni**
+
+In `scripts/gate.sh` (**`i/lf w/crlf`**, quindi `replace_unique.py`).
+
+*Trova* la riga `  cargo test --locked -p simulator --test gui_death_campaign -- --nocapture &&` **intera, presa
+dal file**, e *Sostituisci con*:
+
+```sh
+  cargo test --locked -p simulator --test gui_death_campaign -- --nocapture &&
+  cargo test --locked -p simulator --test serving_campaign -- --nocapture &&
+```
+
+⛔ **E la prova è nelle due direzioni, come la riga della §8 del 2 detta:**
+
+```bash
+bash scripts/gate.sh 2>&1 | tee "$SCRATCH/gate-serving-campaign.log" | grep -c 'DST serving'
+```
+
+Atteso: **due** — una riga per proprietà. Poi si **toglie** la riga da `gate.sh`, si rilancia, e il conteggio
+deve essere **zero**: senza la seconda direzione il verde non prova che il passo esegua davvero ciò che dichiara.
+⛔ **Poi si rimette**, e `git diff scripts/gate.sh` deve mostrare **una sola** riga aggiunta.
+⚠️ **Il commento sopra il settimo passo spiega perché una campagna assente è silenziosa — scattato due volte: si
+legge prima di toccarlo, non dopo.**
+
+- [ ] **Passo 8: il richiamo datato nella §5 del disegno del 2**
+
+Nella **§5** (`i/lf w/lf`, quindi Python con `newline=""`), in coda alla colonna *«la prova»* della riga
+*«l'attività»*:
+
+> ⛔ **RICHIAMO DEL \<data\>, compito 10 del piano della parte 2 (D32): `DyingGui` NON è lo strumento, e le
+> ragioni sono tre, misurate.** Dice una cosa sola, `IpcMessage::Request`, che il dispaccio lascia cadere
+> (**D5**); non può pronunciare né `Hello` né `Approve`, quindi il crash del giornale a metà invocazione non
+> sarebbe raggiungibile; e verrebbe **spostata dentro `Core`**, che non espone il trasporto, quindi la campagna
+> non potrebbe interrogarla. Il filo vive **fuori** dal core dietro un `RefCell`, com'è nel banco del compito 7.
+> ⚠️ **E la concessione si mette a MANO** attraverso `Core::grants`: il 2 non ne rilascia nessuna a un client
+> (**D5**), quindi senza di essa la somma tornerebbe a una baseline da cui non si è mai mossa.
+
+⚠️ **La riga della §8 del 2 — *«la morte della GUI … un crash del giornale a metà invocazione»* — NON si tocca:**
+le due proprietà restano quelle, ed è vera alla lettera. Scritto qui perché il prossimo censimento la ritrovi e
+sappia che è stata **vista**.
+
+- [ ] **Passo 9: la posizione, il cancello, il commit**
+
+```bash
+tr -cd '\r' < crates/simulator/tests/serving_campaign.rs | wc -c
+git ls-files --eol scripts/gate.sh docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+bash scripts/gate-deps.sh
+bash scripts/gate.sh
+bash scripts/check-docs.sh
+git status --porcelain
+```
+
+⛔ **Il file nuovo nasce LF** (zero `\r`); **i fine-riga degli altri due devono essere IDENTICI** a quelli del
+Passo 1. ⛔ **`gate-deps.sh` verde**: questa campagna vive in `crates/simulator/tests/`, che è una crate a sé e
+**non** il grafo spedito di `simulator` — un rosso lì significherebbe che una dipendenza è entrata nel grafo
+vincolato (vincolo globale 9).
+
+Poi la riga **10** della tabella della posizione passa a ✅ col suo commit, e il commit:
+
+```
+gui(compito 10): la campagna DST del 2 -- l'attivita' sotto due guasti, e la riga nel settimo passo
+```
+
+⛔ **Senza co-autore**, e si pusha.
+
+**Criterio di chiusura, coi comandi:**
+
+```bash
+grep -c '#\[test\]' crates/simulator/tests/serving_campaign.rs
+grep -n 'const OPERATIONS\|const WRITES_PER_APPROVAL\|const EXPECTED_DEATH_WORLDS\|const EXPECTED_CRASH_WORLDS' crates/simulator/tests/serving_campaign.rs
+grep -c 'DyingGui' crates/simulator/tests/serving_campaign.rs
+grep -c 'serving_campaign' scripts/gate.sh
+bash scripts/gate.sh 2>&1 | grep -c 'DST serving'
+grep -rn 'struct SharedClock' crates/ --include='*.rs' | wc -l
+```
+
+Atteso: le sonde sono **quattro** — i due premi e le due proprietà; le quattro costanti ci sono e **nessuna porta
+il valore previsto da questo documento** se la misura ha detto altro; ⛔ **`DyingGui` compare ZERO volte come
+CHIAMATA** — ⚠️ **il comando ovvio è quello sbagliato**, perché la testa del file la **nomina** per dire perché
+non si usa: si conta `grep -cE 'DyingGui::' ` e non `grep -c DyingGui`, ed è la lezione di
+`gui_death_campaign.rs` sul proprio `has_died`; `gate.sh` la nomina **una** volta; il cancello stampa **due**
+righe `DST serving`; gli `SharedClock` nel repository sono **quattro**, ed è **D34** dichiarata e non scoperta.
+
+📌 **E ciò che questo compito NON chiude, detto invece che sottinteso:** la riga **24** del Traguardo 6 —
+`reconcile::Resolution` non è decisa da nessun `match` — resta **aperta**. Questa campagna la **asserisce**, il
+che è un'altra cosa: il chiusore è il primo consumatore che vi si dirami, e non è il 2.
 
 ---
 

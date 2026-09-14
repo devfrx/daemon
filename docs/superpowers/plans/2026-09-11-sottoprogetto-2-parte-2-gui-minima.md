@@ -10230,12 +10230,12 @@ l'errata è **vuota**, i compiti **11–17 non esistono**. La sessione nuova **s
 | Quanto è scritto | `grep -c '^## Compito' <questo file>`; la tabella della posizione ne elenca diciassette — `awk '/^\| # \| Compito \| Commit \| Stato \|/{s=1} s&&/^\| \*\*[0-9]+\*\* \|/{c++} s&&/^$/{print c; exit}' <questo file>` |
 | L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0**; nasce vuota e non resterà vuota |
 | Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` e `grep -c '^\| \*\*D[0-9]' <questo file>` |
-| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, una volta all'apertura e **due** prima del commit — il secondo perché fra il primo e il commit sono entrate due correzioni di merito; i log datati nello scratchpad (`gate-2026-09-14-sessione7-apertura.log`, `-compito10.log`, `-finale.log`); `bash scripts/check-docs.sh` → `OK` |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e **prima di ogni commit**, rilanciato ogni volta che fra un verde e il commit è entrata una correzione — qui è successo due volte, su `Ord` e su `RngExt`. ⚠️ **Quante corse siano non si scrive qui:** i log datati stanno nello scratchpad come `gate-2026-09-14-sessione7-*.log`, e `ls` li conta. `bash scripts/check-docs.sh` → `OK` |
 | Fine-riga | questo piano è **LF** nell'indice e nell'albero: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ L'avviso di `git commit` — *«LF will be replaced by CRLF»* — è **innocuo** |
 | Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
 | Margine del compendio | **invariato**: questa sessione non ha toccato il compendio |
 | Documenti fuori dal piano | ⛔ **nessuno toccato, ed è voluto:** le righe di `COMPENDIO.md`, `README.md`, roadmap, tracciabilità e `HANDOFF.md` entrano col compito della **chiusura** — **D14**, e quel compito è il **17** |
-| File temporanei | nessuno nel repository — `git status --porcelain` vuoto; nello scratchpad restano i log del cancello e i tre pezzi di testo del compito 10 |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto. ⚠️ **Lo scratchpad è della sessione e NON sopravvive:** i log del cancello, i pezzi di testo del compito 10 e lo script che li ha inseriti restano lì e la sessione nuova **non li vede**. Nulla di ciò che serve a riprendere vive fuori da questo file |
 | Debito lasciato | **nessuno non dichiarato**: i sette compiti che mancano sono la tabella della posizione; le voci aperte stanno nella sezione omonima, **invariata** — il compito 10 non ne ha aperte di nuove e ne ha **chiusa una registrata**, il `SharedClock` di **D29** |
 
 #### Le decisioni prese scrivendo, oltre a quelle della tabella

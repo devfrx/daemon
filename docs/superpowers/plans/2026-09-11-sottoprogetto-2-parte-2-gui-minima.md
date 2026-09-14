@@ -12509,6 +12509,140 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### L'ottava chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 12 di diciassette; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO: il compito 3 È CAMBIATO, e chi lo esegue non lo legge dalla memoria di una chiusura
+precedente.** Il generatore scrive ora, **nello stesso passaggio**, il `.bin`, un **`.json` col valore atteso** e
+la `ipc_v1.map` — **P-62**, **D35**, col richiamo del 2026-09-14 dentro il compito. Il controllo
+`the_committed_fixtures_match_the_schema` verifica **entrambi** i file e li conta fra i «left over»; le attese di
+**G6** e **G7** sono cambiate di conseguenza, e il criterio di chiusura ha due righe nuove. ⚠️ **La causa era che
+la §4 del disegno e la §6a/§8 si contraddicevano**, e il compito aveva implementato solo la prima metà.
+
+⛔ **E DUE RIGHE DI DOCUMENTO SONO ANCORA QUELLE VECCHIE, perché i compiti che le correggono non sono
+eseguiti.** Non sono errori: sono richiami che **aspettano il loro compito**.
+
+| La riga | Chi la corregge |
+|---|---|
+| la §5 del disegno del 2 nomina ancora `DyingGui` come strumento della campagna | il **Passo 8 del compito 10** (dalla settima chiusura, invariata) |
+| la §7 del disegno del 2 dice *«renderlo raggiungibile dal finto **senza copiarla**»* | il compito **12**, richiamo di **D41** |
+
+⚠️ **E UNA COSA CHE NON È DEL PIANO MA DELLA MACCHINA:** prima che qualcuno **esegua** il compito 11, il Node va
+aggiornato. `jsdom` 30.0.1 pretende `^22.22.2 || ^24.15.0 || >=26.0.0`, questa macchina aveva **`v24.9.0`** il
+2026-09-14, e con `engine-strict` il primo `npm ci` esce **`EXIT=1`** con `EBADENGINE` — comportamento voluto
+(**P-64**, **P-65**), non un guasto. `node --version` lo rifà.
+
+⛔ **Per il resto niente è a metà:** albero pulito, nessuno stash, nessuna operazione git in corso, nessun
+server acceso, **nessun codice di prodotto toccato** — `git diff --stat 42b50d8..HEAD -- crates/ scripts/
+.github/ Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla, e `git diff --name-only
+d4efe1e..HEAD` rende **un solo file**, questo piano. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la tabella della
+posizione è tutta ⬜, l'errata è **vuota**, i compiti **13–17 non esistono**. La sessione nuova **scrive**.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline d4efe1e..HEAD`, e sono **tutti di soli documenti** — lo dice `git diff --name-only d4efe1e..HEAD`, che rende **questo file** e nient'altro |
+| Codice di prodotto | **non toccato**, col comando in «Da sapere subito» |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>`; la tabella della posizione ne elenca diciassette — `awk '/^\| # \| Compito \| Commit \| Stato \|/{s=1} s&&/^\| \*\*[0-9]+\*\* \|/{c++} s&&/^$/{print c; exit}' <questo file>` |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0** |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` e `grep -c '^\| \*\*D[0-9]' <questo file>` |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e **prima di ogni commit**; `bash scripts/check-docs.sh` → `OK`. I log datati stanno nello scratchpad come `gate-2026-09-14-sessione8-*.log`, e `ls` li conta |
+| Fine-riga | questo piano è **LF**: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ L'avviso di `git commit` — *«LF will be replaced by CRLF»* — è **innocuo** |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Segnaposto | ⛔ **uno solo, DICHIARATO**: la versione di `interprocess` nel manifesto del finto (compito 12), perché il compito 2 non è eseguito e quella riga non esiste ancora — col `grep` accanto che la risolve, sulla forma che il compito 9 usa già. `grep -n '<the version' <questo file>` lo trova. ⚠️ **Nessuna sonda col corpo vuoto:** l'ultima passata li ha scritti tutti |
+| Margine del compendio | **invariato**: questa sessione non ha toccato il compendio |
+| Documenti fuori dal piano | ⛔ **nessuno toccato, ed è voluto** — **D14**, e quel compito è il **17** |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto. ⚠️ **Lo scratchpad NON sopravvive:** i log del cancello e i quattro script di misura di questa sessione restano lì, e la sessione nuova non li vede. **Ogni misura che serve è dentro le voci `P`, col comando che la rifà** |
+| Debito lasciato | **nessuno non dichiarato**: i cinque compiti che mancano sono la tabella della posizione; le voci aperte stanno nella sezione omonima, che ha **una riga nuova** — la decodifica vera dei byte `bincode`, col **guscio** come chiusore (**D36**) |
+
+#### Le decisioni prese scrivendo, oltre a quelle della tabella
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 31 | le fixture portano **anche il JSON**, scritto a mano da un `match` esaustivo (**D35**) | il consumatore è in TypeScript e un `Debug` di Rust da lì non è confrontabile; un JSON soddisfa **tutte e tre** le righe del disegno, e uno scrittore solo impedisce a byte e valore atteso di divergere | il compito 11 scopre al proprio Passo 10 che non ha un oracolo, e lo inventa a mano — cioè la seconda definizione dello schema che ADR-0037 rifiuta |
+| 32 | l'oracolo della SPA è il **JSON**, non i byte; la decodifica vera passa al **guscio** (**D36**) | scelta **B** del proprietario: `bincode-ts` 1.0.0 non si carica da nessuno dei due punti d'ingresso (M-11) ed è fermo dal 2025-07-17; e per Q1 chi decodifica è il guscio, che non è un compito di questo piano | si tiene in casa un pacchetto di terzi rattoppato da noi, che nessuno aggiorna, per una prova che il cancello fa già dall'altro capo |
+| 33 | il compito 11 installa **solo ciò che usa**, ma `engines.node` si scrive **intero** (**D37**, **D40**) | è la regola che P-2 si è già data su `@playwright/test`; e il prerequisito dell'ambiente non è un fatto di un compito, quindi riscriverlo a ogni installazione lo farebbe marcire | otto pacchetti senza consumatore nel lockfile, oppure un `engines.node` che cambia tre volte e nessuno sa quale valga |
+| 34 | il core finto **riscrive** la costruzione dell'arbitro (**D41**) | scelta **A** del proprietario: nessuna casa condivisa regge — ADR-0034 e il vincolo 11 per il kernel, il vincolo 1 per una sesta crate, il rifiuto scritto del daemon verso `simulator` | `daemon` smette di essere solo la radice di composizione, e un attrezzo si tira dentro il cablaggio di produzione per due costanti |
+| 35 | `stdin` su un **thread suo**, sondato con `try_recv` (**D42**) | l'esecutore è a una decisione per volta: una lettura bloccante lo pianta, e il finto **sembra morto** invece di fallire | il compito che esegue lo scopre con un `cargo test` che non torna — il modo peggiore in cui un cancello si rompe |
+| 36 | il nome del canale si confronta **con un comando** fra daemon e finto (**D45**) | da questo compito il letterale vive in due case e nessuna guardia le accoppia; una riga di catalogo sarebbe una decisione del proprietario (vincolo globale 7) | cambiato il nome nel daemon, la GUI si collega **al programma sbagliato senza un errore**, perché il timbro di build è lo stesso |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **LA SETTIMA DOMANDA DEL PRE-CONTROLLO — *«un ADR si legge anche contro i propri FRATELLI»* — VALE IDENTICA
+  FRA LE SEZIONI DI UN DISEGNO.** La §4 diceva *«una mappa `indice → nome → valore`»* senza il formato, la §6a e
+  la §8 dicevano *«il valore atteso in JSON»*, e nessuna nominava le altre. 📌 **Il sintomo che la rivela è che
+  il CONSUMATORE non sa leggere ciò che il produttore scrive:** quando un compito produce un artefatto per un
+  consumatore in un'altra lingua, si cercano col `grep` **tutte** le righe del disegno che lo nominano e si
+  mettono a confronto fra loro. ✅ **E la cura giusta è spesso quella che soddisfa tutte le righe**, non quella
+  che ne sceglie una.
+- ⛔ **UNA LIBRERIA CHE IL DISEGNO DÀ PER SCONTATA PUÒ ESSERE ROTTA COME SPEDITA, E LA MISURA PUÒ ESSERE GIÀ
+  NOSTRA.** `bincode-ts` non si carica su Node, ed è scritto in `riferimenti.md` dal 2026-08-31. 📌 **Prima di
+  scrivere un compito che installa qualcosa, si cerca quel nome in `riferimenti.md`.**
+- ⛔ **`$?` DOPO UNA PIPE NON È L'USCITA DEL COMANDO CHE TI INTERESSA.** La prima stesura della sonda su
+  `engine-strict` faceva `npm ci … | tail -12; echo "exit=$?"`, leggeva l'uscita di `tail` e rendeva **0** anche
+  sul caso che fallisce — con la riga d'errore stampata sopra che sembrava la prova. 📌 **Si redirige su file e
+  si legge `$?` subito**, oppure `PIPESTATUS`.
+- ⛔ **UNA RIGA DI `.gitignore` APPARTIENE AL COMPITO CHE CREA CIÒ CHE IGNORA**, non a quello che raccoglie le
+  righe di `.gitignore`. Raggrupparle per **file** invece che per **artefatto** le metteva quattro compiti troppo
+  tardi, e il commit intermedio sarebbe stato ineseguibile.
+- ⛔ **UN DEBITO DI DISEGNO PUÒ ESSERE GIÀ CHIUSO DA UN ALTRO COMPITO, E VA DETTO O SI PAGA DUE VOLTE.** La §7
+  lasciava al piano *«come l'attività si accorga che la degradazione è cambiata»*; il compito 7 l'aveva già
+  fissato, sonda compresa. Senza **P-70**, chi esegue il 12 lo avrebbe implementato nel finto — cioè il ramo di
+  dispaccio che la §7 vieta.
+- ⛔ **UNA CITAZIONE FRA VIRGOLETTE DI UN'ALTRA VOCE DEL PIANO SI RILEGGE COL `grep` PRIMA DI SCRIVERLA.**
+  Scrivendo **P-74** avevo citato l'innesco di **D34** con parole più lunghe delle sue, prese da una voce
+  vicina; il `grep` sulla frase ha reso il testo vero, che è più corto e **decide diversamente**. 📌 **Una
+  citazione ricordata è un'affermazione non verificata**, e in questo repository le citazioni portano il peso
+  delle decisioni.
+- ⚠️ **QUANDO SI SOSTITUISCE UN'ANCORA CORTA CON UN BLOCCO LUNGO, L'ANCORA VA RIMESSA NEL NUOVO TESTO.**
+  Inserendo il compito 11 ho usato come ancora l'intestazione `## Come si riprende` e non l'ho riscritta: il
+  diario è rimasto senza titolo finché il controllo delle intestazioni non l'ha mostrato. 📌 **Dopo ogni
+  inserimento lungo si rilancia `grep -n '^## ' <file> | tail`**, che costa un comando.
+
+#### ⛔ Che cosa aspetta ora il compito 13, e non è un difetto
+
+| | Che cosa | Perché è del 13 |
+|---|---|---|
+| le **versioni** di `dockview`, `pinia`, `reka-ui`, `vue-i18n`, `markdown-it`, `jsdom`, `@vue/test-utils` | **D40** le lascia ai compiti che le consumano, e il vincolo globale **8** dice che chi installa **rilancia** il comando e scrive quelle del suo giorno | è il primo compito che ne installa |
+| **`markdown-it` 15.0.2** | **D3** chiede di rileggere **dentro il `.tgz`** le tre proprietà che sostengono la decisione 51 | il renderer nasce col 13/14 |
+| la **seconda direzione** del ponte | il compito 11 ha creato la finta; che un **pannello si veda** non lo prova un `npm run build` verde | la regola 5 della testa del piano: per i compiti **13** e **14** il revisore apre la SPA nel browser e **guarda** |
+
+#### La lista di lettura della sessione nuova
+
+| Compito | Che cosa si legge |
+|---|---|
+| **3**–**12** | ✅ **SCRITTI.** Si leggono solo se si esegue — ⚠️ **il 3 come sta ADESSO** (**D35**) |
+| **13**, **14** — la SPA | §6a del 2; §1 della stella polare (il catalogo: le tabelle piene per i moduli del 2, la corta per i segnaposto); §2 (viste e disposizione); «Il modello della GUI»; §9 del 2 per gli attrezzi — **più** il blocco *Interfaces* del compito **11** per i nomi esatti di `schema/` e `transport/` |
+| **15**, **16** — il cancello e la CI | §8 del 2 **per intero**; `scripts/gate.sh` — ⚠️ **col settimo passo come il compito 10 lo lascia** — `.github/workflows/quality-gate.yml`, `.gitignore` ⚠️ **come i compiti 11 e 12 lo lasciano** (**D38**); la tabella delle voci senza numero AUD dell'audit per X-1 e X-3 |
+| **17** — la chiusura | §12 del compendio, `README.md`, `roadmap.md`, `tracciabilita.md`, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — le case che **D14** nomina |
+
+⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — quel file e il compendio — e la **testa di
+questo piano**: vincoli globali, posizione, errata, le voci **P**, le decisioni **D**, le voci aperte.
+⛔ **Il peso non si scrive qui:** lo dà lo snippet `tiktoken` di `CLAUDE.md`, e cresce a ogni compito scritto.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la
+   testa è il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — non i compiti già scritti, se non per
+   i nomi che il compito nuovo consuma: il blocco *Interfaces* di ciascuno li porta.
+3. `superpowers:writing-plans`: scrivere i compiti **13, 14, 15 …** nell'ordine della tabella della posizione,
+   ciascuno col proprio **pre-controllo delle quattro domande** contro il codice di **adesso**, più la quinta
+   girata all'indietro e la sua gemella in avanti; ⛔ **ogni voce `P` su cui il compito si appoggia si RIMISURA
+   col suo comando**; ⛔ **ogni NUMERO DI COMPITO si ricensisce contro la tabella della posizione**; ⛔ **ogni
+   blocco *Interfaces* si RICENSISCE contro il codice che il suo Passo detta**; ⛔ **e ogni CITAZIONE di un'altra
+   voce si rilegge col `grep`** (trappola nuova di questa sessione). Ogni difetto trovato è una voce **P** in
+   coda, e la decisione che ne discende una riga **D**.
+4. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
+   `grep -n '^## ' <file> | tail` per le intestazioni, `bash scripts/check-docs.sh` → `OK`,
+   `bash scripts/gate.sh` → `GATE GREEN`, e il commit — **senza co-autore**.
+5. Quando i **diciassette** compiti ci sono: la **revisione del piano intero** — copertura dei disegni,
+   segnaposto (⛔ **una sonda col corpo vuoto è un segnaposto**), coerenza dei nomi fra i blocchi *Interfaces*, e
+   ogni **CONTEGGIO rilanciato col comando, non riletto** (P-35, ricaduto tre volte); poi l'esecuzione in una
+   sessione **nuova**, un subagente fresco per compito.
+6. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
+---
+
 ### La settima chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 10 di diciassette; nessun compito è eseguito
 
 ⛔ **DA SAPERE SUBITO: il compito 10 ha corretto il blocco *Interfaces* del compito 7, che è il CONTRATTO su cui i

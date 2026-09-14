@@ -14573,6 +14573,153 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La nona chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 13 di diciassette; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO: il blocco *Interfaces* del compito 11 È CAMBIATO, e chi esegue non lo legge dalla memoria di
+una chiusura precedente.** Diceva `interface Fixture { file: string; kind: string; value: unknown }`; il suo **Passo
+9** detta `{ file: string; message: IpcMessage }`, e il Passo 12 gli dà ragione. **P-75**, corretta nel compito
+perché il compito 11 non è eseguito. ⚠️ **E il compito 3 resta quello che l'ottava chiusura ha descritto** — il
+generatore scrive `.bin`, `.json` e `ipc_v1.map` nello stesso passaggio (**D35**).
+
+⛔ **E DUE NUMERI DI COMPITO SONO CAMBIATI.** Non sono ritocchi: sono ciò che un compito scritto prima dice di sé.
+
+| Che cosa si è spostato | Dove | Perché |
+|---|---|---|
+| il **segnaposto** | dal 14 al **13** | **D47**, **P-77**: `dockview` chiede alla fabbrica un componente **per nome**, quindi senza di esso la cornice si monta e non mostra nulla, con `npm run build` **verde** |
+| **Impostazioni**, col cambio di policy VRAM | entra nel **14** | **P-85**: la riga 14 non la nominava, e senza di essa nella SPA del 2 **nessuno manda mai un `Invoke`** — il registro di ADR-0038 resterebbe senza il suo primo invocatore |
+| la rilettura di `markdown-it` dentro il `.tgz` | dal 13 al **14** | **P-81**: **D3** nominava il 13, e contro la tabella della posizione il renderer è al 14; **D40** mette il pacchetto col compito che lo consuma |
+
+⛔ **E TRE RIGHE DI DOCUMENTO SONO ANCORA QUELLE VECCHIE, perché i compiti che le correggono non sono eseguiti.**
+Non sono errori: sono richiami che **aspettano il loro compito**.
+
+| La riga | Chi la corregge |
+|---|---|
+| la §5 del disegno del 2 nomina ancora `DyingGui` come strumento della campagna | il **Passo 8 del compito 10** (dalla settima chiusura, invariata) |
+| la §7 del disegno del 2 dice *«renderlo raggiungibile dal finto **senza copiarla**»* | il compito **12**, richiamo di **D41** |
+| la §9 del 2, voce 2, dichiara **dedotto** *«che le prove della SPA girino senza browser»* | il compito **13**, che lo **misura** al proprio Passo 3 e scrive il richiamo se l'esito diverge |
+
+⚠️ **E UNA COSA CHE NON È DEL PIANO MA DELLA MACCHINA, invariata:** prima che qualcuno **esegua** il compito 11 il
+Node va aggiornato. `jsdom` 30.0.1 pretende `^22.22.2 || ^24.15.0 || >=26.0.0`, questa macchina ha **`v24.9.0`** —
+`node --version` lo rifà — e con `engine-strict` il primo `npm ci` esce **`EXIT=1`** con `EBADENGINE`: comportamento
+voluto (**P-64**, **P-65**), non un guasto.
+
+⛔ **Per il resto niente è a metà:** albero pulito, nessuno stash, nessuna operazione git in corso, nessun server
+acceso, **nessun codice di prodotto toccato** — `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/
+Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la
+tabella della posizione è tutta ⬜, l'errata è **vuota**, i compiti **14–17 non esistono**. La sessione nuova
+**scrive**.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline d648462..HEAD`, e sono **tutti di soli documenti** — lo dice `git diff --name-only d648462..HEAD`, che rende **questo file** e nient'altro |
+| Codice di prodotto | **non toccato**, col comando in «Da sapere subito» |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>`; la tabella della posizione ne elenca diciassette — `awk '/^\| # \| Compito \| Commit \| Stato \|/{s=1} s&&/^\| \*\*[0-9]+\*\* \|/{c++} s&&/^$/{print c; exit}' <questo file>` |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0** |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` e `grep -c '^\| \*\*D[0-9]' <questo file>` — ⛔ **e il secondo è un comando FRAGILE: vedi le trappole** |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e **prima di ogni commit**; `bash scripts/check-docs.sh` → `OK`. ⚠️ **I log NON sopravvivono:** stavano nello scratchpad come `gate-2026-09-14-sessione9-*.log` e sono stati ripuliti alla chiusura, come `CLAUDE.md` prescrive. Ciò che resta è il **comando** |
+| Fine-riga | questo piano è **LF**: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0` |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Segnaposto | ⛔ **uno solo, DICHIARATO**: la versione di `interprocess` nel manifesto del finto (compito 12), col `grep` accanto che la risolve — `grep -n '<the version' <questo file>` lo trova. ⚠️ **Nessuna sonda col corpo vuoto e nessun `node -e` con l'ellissi DENTRO UN COMPITO** — e il comando si ferma al diario, perché la trappola qui sotto **nomina** quella forma per insegnarla: `awk '/^## Come si riprende/{exit} /node -e "…"/{c++} END{print c+0}' <questo file>` → **0** |
+| Margine del compendio | **invariato**: questa sessione non ha toccato il compendio |
+| Documenti fuori dal piano | ⛔ **nessuno toccato, ed è voluto** — **D14**, e quel compito è il **17** |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto. ⚠️ **Lo scratchpad NON sopravvive:** i log del cancello e gli script di questa sessione restano lì. **Ogni misura che serve è dentro le voci `P`, col comando che la rifà** |
+| Debito lasciato | **nessuno non dichiarato**: i quattro compiti che mancano sono la tabella della posizione; le voci aperte stanno nella sezione omonima, **invariata** — nessuna voce nuova, perché ciò che il 13 ha trovato è diventato una `D` e non un'apertura |
+
+#### Le decisioni prese scrivendo, oltre a quelle della tabella
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 37 | il segnaposto al **13** (**D47**) | `dockview` chiede un componente per nome, e le tre prove che la §8 chiede alla cornice — le viste che si caricano, un tipo sparito, un modulo non costruito — **vogliono tutte e tre un componente** | il compito 13 finisce verde su una cornice che non mostra nulla, e il difetto lo trova il revisore nel browser: il passo più caro del piano |
+| 38 | le tre viste **generate** e committate, non scritte a mano (Passo 13 del compito 13) | la forma serializzata è di `dockview`, non nostra, e **E4** ha misurato che `toJSON` dopo `fromJSON` non torna uguale al byte: un JSON indovinato sarebbe accettato e corretto in silenzio. Il precedente è `regenerate_the_fixtures` | si scrive uno schema inventato, e la cornice sembra funzionare finché non lo si salva |
+| 39 | le sonde che vogliono uno stato che le fixture non portano parlano allo **store**, non alla finta (**D46**) | `stamp_set()` è un messaggio per variante — è ciò che il timbro misura — e il doc della finta argomenta contro l'inventare | due sonde della §2 non si scrivono, o la finta perde la proprietà per cui vale la pena averla |
+| 40 | i quattro stati della connessione si **derivano**, e la fascia non ha soglia (**D48**) | *«core non in esecuzione»* non può essere un messaggio, e la GUI fa la stessa cosa in entrambi i casi che non sa distinguere: **«riprova»** | un `isConnected` nel `Bridge`, che ogni guscio deve implementare per un fatto che nel browser non significa niente |
+| 41 | dallo spike sale il **merito**, non il codice (**D49**) | il vincolo 9 della §11 del compendio vale qui identico: uno spike è una prova, fuori dal workspace | si importa da `spikes/`, e il primo `cargo`/`npm` che li tocca scopre che sono fuori dal workspace per decisione |
+| 42 | la striscia **dentro** la griglia, barra, fascia e cassetto **fuori** (**D50**) | lo spike ha già scelto e il proprietario l'ha provato; e ne discende la regola vera: **ciò che sta nella griglia entra nel JSON della disposizione** | la fascia diventa un pannello, e la disposizione salvata cambia a ogni disconnessione |
+| 43 | una **rete** nostra sulle scritte fino al 15 (**D51**) | fra il 13 e il 15 nessun controllo guarderebbe le scritte, e chi rivede cercherebbe una sonda che non esiste | la catena `eslint` anticipata al 13, e la sua configurazione in due case |
+| 44 | il timbro letto da `ipc_v1.map` (**D52**) | è l'unico posto in cui l'ha scritto il **kernel**; lo specchio TypeScript è a mano, quindi un timbro calcolato qui sarebbe d'accordo solo con sé stesso | la stretta di mano diventa una formalità, e il rosso arriva dal guscio: il solo posto che questo piano non costruisce |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UN BLOCCO *Interfaces* PUÒ CONTRADDIRE IL PROPRIO PASSO, E LA CAUSA È LA PARAFRASI DEL DISEGNO.** Il
+  `Fixture` del compito 11 portava `kind` e `value`, che sono le parole con cui la **§8 del 2** descrive la riga
+  della SPA; il suo Passo 9 detta `message`. 📌 **Il sintomo che lo rivela: i nomi del blocco vengono da una FRASE
+  invece che dal codice.** Una parafrasi del disegno non è una firma, e il rosso sarebbe arrivato al primo
+  `npm run build` del compito che li consuma.
+- ⛔ **UNA RIGA DI TABELLA CHE COMINCIA COME UNA RIGA DI DECISIONE FALSIFICA IL COMANDO CHE LE CONTA.** Scrivendo
+  **P-81** ho messo `| **D3** | …` in una tabella di **reperti**, e `grep -c '^| \*\*D[0-9]'` è passato da
+  cinquantuno a cinquantadue — misurato contro `HEAD`, non notato rileggendo. 📌 **Dopo ogni scrittura si rilancia
+  il comando che conta, e si confronta col valore di `HEAD`**: `git show HEAD:<file> | grep -c …`. La cura è
+  scrivere `| la decisione **D3** |`, non ritoccare il comando.
+- ⛔ **UN'INSERZIONE IN CODA A UNA TABELLA LA SPEZZA SE L'ANCORA COMINCIA CON UNA RIGA VUOTA.** La riga `D52` è
+  entrata con una riga vuota davanti, e il controllo delle tabelle spezzate l'ha colta subito. 📌 **È la ragione
+  per cui quel controllo si rilancia dopo OGNI scrittura**, non a fine sessione.
+- ⛔ **UNA FINTA CHE RIGIOCA ARTEFATTI È UN ORACOLO SULLE FORME, NON UN GENERATORE DI CASI.** Dove i casi sono più
+  delle forme — tre stati di `Layout`, una fixture — il caso si costruisce e il **tipo** lo tiene onesto. Allargare
+  la finta avrebbe tolto la proprietà scritta nel suo doc.
+- ⛔ **IL CODICE DI UNO SPIKE PUÒ ESSERE IL PRECEDENTE MISURATO DEL COMPITO CHE STAI SCRIVENDO.** La sesta domanda
+  del pre-controllo dice che *«ciò che ti smentisce può stare in un BANCO DI PROVA»*; qui non smentiva, **anticipava**
+  — il ponte Vue↔pannelli, le opzioni di `createDockview`, il gruppo bloccato in **due** righe, il confronto
+  canonico. 📌 **Prima di scrivere un compito, si cerca se uno spike ha già fatto quella cosa**, e ciò che sale si
+  decide riga per riga.
+- ⛔ **L'AUTO-REVISIONE DELLA SKILL TROVA COSE CHE IL PRE-CONTROLLO NON TROVA, e non si salta.** Il pre-controllo
+  guarda il **piano contro il repository**; l'auto-revisione guarda il **compito contro sé stesso**. Ha trovato tre
+  difetti miei: il blocco *Interfaces* incoerente coi propri Passi, due `node -e "…"` che erano segnaposto in un
+  criterio di chiusura, e la metà mancante della riga 8 della §2 — *«lo dice a parole **e si chiude**»*, di cui
+  avevo scritto solo la prima metà.
+- ⛔ **UN HEREDOC CON `awk`, VIRGOLETTE E BACKSLASH ROMPE BASH**, ed è già in memoria: lo script si scrive con
+  `Write` e si lancia con `python <file>`. Ricaduto una volta in questa sessione.
+
+#### ⛔ Che cosa aspetta ora il compito 14, e non è un difetto
+
+| | Che cosa | Perché è del 14 |
+|---|---|---|
+| **`markdown-it` 15.0.2**, e la rilettura delle tre proprietà **dentro il `.tgz`** | **D3** col richiamo di **P-81**: il pacchetto entra col compito che lo consuma, e il consumatore è la Chat | è il primo compito che lo installa |
+| **`axe-core` 4.13.0** e la verifica d'accessibilità | decisione 54: chiamato diretto sul DOM montato da `@vue/test-utils`, che il **13** ha già installato | l'accessibilità è nella riga 14 della posizione |
+| ⛔ **il contrasto AA dei token** | i valori del `tokens.css` del 13 sono **segnaposto dichiarati**, e a provarli è `axe-core`. Un valore che fallisce è una modifica a **quel** file | nasce col controllo che lo misura |
+| `stores/stream.ts` | **D40**: nasce col suo consumatore, la Chat | idem |
+| `moveActive` sopra `moveTo`, e le scorciatoie | **D49**: sale dallo spike, dov'è già scritto con la geometria e il ripiego che divide il gruppo | la riga 14 della posizione |
+| **Impostazioni** col cambio di policy | **P-85** | idem |
+
+#### La lista di lettura della sessione nuova
+
+| Compito | Che cosa si legge |
+|---|---|
+| **3**–**13** | ✅ **SCRITTI.** Si leggono solo se si esegue — ⚠️ **il 3 e l'11 come stanno ADESSO** (**D35**, **P-75**) |
+| **14** — i moduli | §6a del 2; §1 della stella polare — le **cinque tabelle piene** (Chat, Stato, Permessi, Passi, Attività) **e la riga Impostazioni** della corta; §9 del 2 per gli attrezzi; il blocco *Interfaces* dei compiti **11** e **13** per i nomi esatti di `stores/`, `panels/` e `registry`; ⛔ **e `spikes/gui-shell/app/src/home.ts` per `moveActive`, più `spikes/gui-shell/app/src/tiles/Chat.vue`**, che rende già markdown token per token |
+| **15**, **16** — il cancello e la CI | §8 del 2 **per intero**; `scripts/gate.sh` — ⚠️ **col settimo passo come il compito 10 lo lascia** — `.github/workflows/quality-gate.yml`, `.gitignore` ⚠️ **come i compiti 11, 12 e 13 lo lasciano** (**D38**); la tabella delle voci senza numero AUD dell'audit per X-1 e X-3 |
+| **17** — la chiusura | §12 del compendio, `README.md`, `roadmap.md`, `tracciabilita.md`, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — le case che **D14** nomina |
+
+⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — quel file e il compendio — e la **testa di questo
+piano**: vincoli globali, posizione, errata, le voci **P**, le decisioni **D**, le voci aperte. ⛔ **Il peso non si
+scrive qui:** lo dà lo snippet `tiktoken` di `CLAUDE.md`, e cresce a ogni compito scritto.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la
+   testa è il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — non i compiti già scritti, se non per i
+   nomi che il compito nuovo consuma: il blocco *Interfaces* di ciascuno li porta.
+3. `superpowers:writing-plans`: scrivere i compiti **14, 15, 16, 17** nell'ordine della tabella della posizione,
+   ciascuno col proprio **pre-controllo delle quattro domande** contro il codice di **adesso**, più la quinta girata
+   all'indietro e la sua gemella in avanti; ⛔ **ogni voce `P` su cui il compito si appoggia si RIMISURA col suo
+   comando**; ⛔ **ogni NUMERO DI COMPITO si ricensisce contro la tabella della posizione**; ⛔ **ogni blocco
+   *Interfaces* si RICENSISCE contro il codice che il suo Passo detta** — non contro la frase del disegno da cui i
+   nomi sembrano venire (trappola nuova); ⛔ **ogni CITAZIONE di un'altra voce si rilegge col `grep`**; ⛔ **e si
+   cerca se uno SPIKE ha già fatto quella cosa** (trappola nuova). Ogni difetto trovato è una voce **P** in coda, e
+   la decisione che ne discende una riga **D**.
+4. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
+   `grep -n '^## ' <file> | tail` per le intestazioni, ⛔ **i due comandi che contano `P` e `D` confrontati col
+   valore di `HEAD`** (trappola nuova), `bash scripts/check-docs.sh` → `OK`, `bash scripts/gate.sh` →
+   `GATE GREEN`, e il commit — **senza co-autore**.
+5. ⛔ **E l'auto-revisione della skill dopo OGNI compito scritto**, non a fine piano: copertura della sezione di
+   disegno, segnaposto (⛔ **una sonda col corpo vuoto e un `node -e "…"` sono segnaposto**), coerenza dei tipi fra
+   il blocco *Interfaces* e i Passi. Ha trovato tre difetti su tre compiti scritti in questa sessione.
+6. Quando i **diciassette** compiti ci sono: la **revisione del piano intero** — copertura dei disegni,
+   segnaposto, coerenza dei nomi fra i blocchi *Interfaces*, e ogni **CONTEGGIO rilanciato col comando, non
+   riletto** (P-35, ricaduto tre volte); poi l'esecuzione in una sessione **nuova**, un subagente fresco per compito.
+7. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
 ### L'ottava chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 12 di diciassette; nessun compito è eseguito
 
 ⛔ **DA SAPERE SUBITO: il compito 3 È CAMBIATO, e chi lo esegue non lo legge dalla memoria di una chiusura

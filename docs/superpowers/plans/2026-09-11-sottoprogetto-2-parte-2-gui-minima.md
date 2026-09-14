@@ -9181,6 +9181,128 @@ una voce aperta dichiarata e non un compito da nominare.
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La sesta chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 9 di diciassette; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO: il difetto che le chiusure quarta e quinta portavano avanti NON È PIÙ IN ATTESA — è
+ENTRATO NEL PIANO, e nel codice è ancora lì.** `EXECUTOR_TURN_LIMIT` è **ancora** `100_000` —
+`grep -n 'const EXECUTOR_TURN_LIMIT' crates/daemon/src/main.rs` — perché **nessun compito è eseguito**; ciò che
+è cambiato è che il compito 9 lo affronta, col suo pre-controllo (**P-48**) e la sua decisione (**D28**). ⚠️ **E
+il pre-controllo ha trovato una METÀ che nessuna delle due chiusure nominava:** le sonde che si piantano sono
+**due** e non una, e la terza conseguenza non è una sonda ma una **riga di doc** — `run_the_production_graph`
+dichiara di esistere *«so that a test can call it»*, e da quel compito nessuna prova può più chiamarla.
+
+⛔ **Per il resto niente è a metà:** albero pulito, nessuno stash, nessuna operazione git in corso, nessun server
+acceso, **nessun codice di prodotto toccato** — `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/
+Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla, e `git diff --name-only 7a2e626..HEAD`
+rende **un solo file**, questo piano. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la tabella della posizione è tutta ⬜,
+l'errata è **vuota**, i compiti **10–17 non esistono**. La sessione nuova **scrive**, non esegue.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline 7a2e626..HEAD` — ne elenca **uno**, di soli documenti |
+| Codice di prodotto | **non toccato**, coi due comandi in «Da sapere subito» |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>`; la tabella della posizione ne elenca diciassette — `awk '/^\| # \| Compito \| Commit \| Stato \|/{s=1} s&&/^\| \*\*[0-9]+\*\* \|/{c++} s&&/^$/{print c; exit}' <questo file>` |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0**; nasce vuota e non resterà vuota |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` e `grep -c '^\| \*\*D[0-9]' <questo file>` |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, una volta all'apertura e **due** prima del commit — il secondo perché fra il primo e il commit sono entrate le correzioni di prosa; i log datati nello scratchpad (`gate-2026-09-14-sessione6-apertura.log`, `-compito9.log`, `-finale.log`); `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | questo piano è **LF** nell'indice e nell'albero: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ L'avviso di `git commit` — *«LF will be replaced by CRLF»* — è **innocuo**, rimisurato dopo il commit e invariato |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Margine del compendio | **invariato**: questa sessione non ha toccato il compendio |
+| Documenti fuori dal piano | ⛔ **nessuno toccato, ed è voluto:** le righe di `COMPENDIO.md`, `README.md`, roadmap, tracciabilità e `HANDOFF.md` entrano col compito della **chiusura** — **D14**, e quel compito è il **17** |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto; nello scratchpad restano i tre log del cancello e i cinque pezzi di testo del compito 9 |
+| Debito lasciato | **nessuno non dichiarato**: gli otto compiti che mancano sono la tabella della posizione; le voci aperte stanno nella sezione omonima, **cresciuta di una riga** — il secondo capo di `SOCKET_NAME` |
+
+#### Le decisioni prese scrivendo, oltre a quelle della tabella
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 23 | le sonde del daemon che arrivano a `run()` passano per `run_the_graph` con limite **finito** e tick **nullo**, e `run_the_production_graph` prende un **residuo dichiarato** (**D28**) | tre misure che da sole non decidono: con `u64::MAX` si **piantano** (P-48); col tick di produzione costerebbero tick × giri sul reattore vero (P-51); col solo limite sarebbero **vacue**, perché un `loop` senza uscita rende `TurnLimitReached` a qualunque valore (P-52) | il cablaggio che `main` esegue resta scoperto, e a chiuderlo sarà chi porterà il grafo sotto un processo figlio |
+| 24 | il daemon scrive il **proprio** `SharedClock` invece di due `SystemReactor` (**D29**) | le due firme non combaciano — l'esecutore lo vuole per valore, `serve` per prestito — e `SystemReactor` **porta un'origine**: due istanze sono due orologi, cioè `E25` allo strato che sveglia le attività | è il terzo esemplare della stessa forma; se salga in `simulator` lo decide il **10** |
+| 25 | l'archivio della disposizione che non si apre diventa una **custodia del daemon** che risponde `Unavailable` (**D30**) | fra `FileCustody::open` che rende un `Result` e `Core::new` che vuole un valore manca un valore, e a saperlo è solo la radice di composizione; la traduzione in `LayoutState::Unavailable` **esiste già** nel compito 7, quindi la decisione 35 esce senza una riga nell'attività | un avvolgente che delegasse sempre passerebbe la sonda del percorso buono: servono **due** direzioni |
+| 26 | il nome del canale e il tetto del corpo sono **due** letterali del daemon, e il nome entra nel criterio di chiusura (**D31**) | **D9** aveva lasciato il tetto a chi compone e nessun disegno nomina né l'uno né l'altro (P-53); non condividono una riga perché il nome è **protocollo** e il tetto è locale | il nome resta un capo solo finché il guscio non esiste, ed è la voce aperta nuova |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **IL COORDINATORE SBAGLIA COME UN COMPITO, e va ricensito con lo stesso comando.** Ho scritto, in cinque
+  posti, che il secondo capo di `SOCKET_NAME` è *«il guscio del compito 13»*. **È falso:** censita la tabella
+  della posizione, il **12** lega un nome suo, il **13** e il **14** portano una SPA che *«non tocca mai un
+  socket»*, e il guscio **non è un compito di questo piano**. 📌 **Un numero di compito scritto a memoria si
+  ricensisce contro la TABELLA**, esattamente come si ricensisce una voce `P`. Corretto **prima del commit**, e
+  la voce aperta che ne discende è nella sezione omonima.
+- ⛔ **UNA SONDA CHE UN DISEGNO DETTA PUÒ ESSERE GIUSTA NEL MERITO E IMPRATICABILE NEL COSTO, e il costo non sta
+  nel disegno: sta nel REATTORE che il banco monta.** Il banco del compito 7 monta `VirtualReactor`, dove
+  avanzare è un'assegnazione; il daemon monta `SystemReactor`, dove `wait_until` è un `sleep` **vero**. La stessa
+  sonda costa zero di là e tick × giri di qua. 📌 **Prima di prezzare una sonda si guarda quale FINTA la esegue**,
+  non quante righe ha.
+- ⛔ **DUE FIRME CHE NON COMBACIANO HANNO SEMPRE UNA VIA CHE COMPILA, E PUÒ ESSERE QUELLA SBAGLIATA.**
+  `Executor::new` vuole il reattore per valore e `serve` per prestito: costruirne **due** compila benissimo, e
+  `SystemReactor` porta un'origine, quindi i due rispondono valori diversi per lo stesso istante. 📌 **Un tipo che
+  si duplica si apre e si guarda se ha STATO**, prima di duplicarlo.
+- ⛔ **UN `loop` SENZA USCITA RENDE LO STESSO ERRORE A QUALUNQUE LIMITE, quindi una sonda che legge solo l'esito
+  non prova niente.** Ciò che rende non vacua una sonda su un'attività infinita è un **pari** — l'unica cosa che
+  quell'attività produce verso l'esterno — più la **baseline** che mostra il verde sparire. 📌 **Su un'attività
+  che non finisce, l'oracolo non è il valore di ritorno.**
+- ⛔ **UNA COSTANTE CONDIVISA FRA PRODUZIONE E BANCHI FA SCONTRARE LE SONDE FRA LORO, e il rosso cade nella
+  casella di un'ALTRA sonda.** Un nome di socket è valido per tutta la macchina, non per una cartella, e
+  `cargo test` gira in parallelo per default: due sonde sullo stesso nome producono `StartupError::Ipc`, che è la
+  variante che la sonda del *secondo core* esiste per provare. 📌 **Ciò che un banco deve poter variare diventa
+  un ARGOMENTO**, e il letterale resta dove la decisione vive — è il precedente che il percorso del giornale ha
+  già in questo stesso file.
+- ⚠️ **UN PEZZO SCRITTO IN UN FILE SI RILEGGE CONTRO IL SORGENTE PRIMA DI INSERIRLO, non contro sé stesso.** Due
+  correzioni sono nate così — `Reactor::wait_until` prende `&mut self` e non `&self`, e i due `SharedClock` che
+  esistono tengono un `RefCell` — e nessuna delle due si vedeva rileggendo il testo che avevo appena scritto.
+- ⚠️ **`grep -A 40` su un tratto NE TAGLIA LE OPERAZIONI.** Il tratto `Reactor` sembrava averne due; sono **tre**,
+  e la terza sta oltre la finestra. 📌 **Per contare gli item di un tratto si usa un'ancora di RIGA** —
+  `grep -nE '^\s*fn '` — non una finestra di contesto.
+
+#### ⛔ Che cosa aspetta ora il compito 10, e non è un difetto
+
+⚠️ **Non è la specie del riquadro delle chiusure quarta e quinta:** quello era un difetto del codice, questo è
+una **scelta che il 10 deve prendere**, e che questa sessione non poteva prendere per lui.
+
+| | Che cosa | Perché è del 10 |
+|---|---|---|
+| il **terzo `SharedClock`** | oggi nel repository ne esiste **uno** — `grep -rn 'struct SharedClock' crates/ --include='*.rs'`, misurato il 2026-09-14 — e col 7 e col 9 diventano tre, in tre case che non possono importarsi | se salga in `simulator` lo decide il **10**, il primo che può misurarne il bisogno con una campagna in mano (**D29**) |
+| la versione di **`vitest`** | **D4** la lascia a `4.1.11` e scrive *«la misura si rifà al compito 10»* | il tempo passa, e *«novità non è maturità»* è una regola, non una data |
+
+#### La lista di lettura della sessione nuova
+
+| Compito | Che cosa si legge |
+|---|---|
+| **3**–**9** | ✅ **SCRITTI.** Si leggono solo se si esegue |
+| **10** — la campagna DST | ⚠️ **è la riga «10» della quinta chiusura, che vale tutta**, **più** il blocco *Interfaces* del compito **9** — il cablaggio che la campagna rifà su porte finte — e la riga del `SharedClock` del riquadro qui sopra. ⛔ **E il banco del 7 e il cablaggio del 9 si leggono ENTRAMBI**: la campagna è il terzo posto in cui la stessa forma viene scritta, e i primi due non si possono importare |
+| **11** — `gui/` nasce | invariata: la §9 del 2 per le versioni, **D2**, **D3**, **D4** — e **D4 si RIMISURA**, che è la riga del riquadro qui sopra |
+| **12** — il core finto | ⚠️ **invariata dalla quinta chiusura** — `Core` non espone il trasporto, ed è il 12 ad aggiungere `Core::ipc` — **più** il tetto `MAX_BODY` del compito 9, perché il finto ne sceglie uno **suo** (**D9**, **D31**) |
+| gli altri | come la prima chiusura li ha scritti, coi numeri scalati di uno da 9 in su |
+
+⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — questo file e il compendio — e la **testa di
+questo piano**: vincoli globali, posizione, errata, le voci **P**, le decisioni **D**, le voci aperte.
+⛔ **Il peso non si scrive qui:** lo dà lo snippet `tiktoken` di `CLAUDE.md`, e cresce a ogni compito scritto.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la
+   testa è `28b9e07` o un commit dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — non i compiti già scritti, se non per
+   i nomi che il compito nuovo consuma: il blocco *Interfaces* di ciascuno li porta.
+3. `superpowers:writing-plans`: scrivere i compiti **10, 11, 12 …** nell'ordine della tabella della posizione,
+   ciascuno col proprio **pre-controllo delle quattro domande** contro il codice di **adesso**, più la quinta
+   girata all'indietro e la sua gemella in avanti; ⛔ **ogni voce `P` su cui il compito si appoggia si RIMISURA
+   col suo comando** (trappola della quinta chiusura, e questa sessione l'ha applicata a P-37 e P-40); ⛔ **e ogni
+   NUMERO DI COMPITO si ricensisce contro la tabella della posizione** (trappola nuova). Ogni difetto trovato è
+   una voce **P** in coda, e la decisione che ne discende una riga **D**.
+4. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
+   `bash scripts/check-docs.sh` → `OK`, `bash scripts/gate.sh` → `GATE GREEN`, e il commit — **senza co-autore**.
+   ⚠️ **Il cancello si rilancia se fra il primo verde e il commit è entrata anche solo della prosa.**
+5. Quando i **diciassette** compiti ci sono: la **revisione del piano intero** — copertura dei disegni,
+   segnaposto (⛔ **una sonda col corpo vuoto è un segnaposto**), coerenza dei nomi fra i blocchi *Interfaces*, e
+   ogni **CONTEGGIO rilanciato col comando, non riletto** (P-35, ricaduto due volte); poi l'esecuzione in una
+   sessione **nuova**, un subagente fresco per compito.
+6. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
+---
+
 ### La quinta chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 8 di diciassette; nessun compito è eseguito
 
 ⛔ **DA SAPERE SUBITO, E LA PRIMA COSA NON È LO STATO: LA NUMERAZIONE DEI COMPITI È CAMBIATA.** Il compito **8**

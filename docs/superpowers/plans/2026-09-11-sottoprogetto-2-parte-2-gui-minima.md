@@ -159,8 +159,12 @@ la tabella qui sopra, che chi esegue aggiorna nel commit del compito — e **com
    aggiustamento silenzioso.
 4. Il cancello gira **prima** di ogni commit; il commit dice ciò che il compito ha fatto.
 5. Il revisore **rilancia ogni comando** accanto a un'affermazione misurabile e li elenca; per i compiti
-   12 e 13 apre la SPA nel browser contro il ponte finto e **guarda**, perché un `npm run build` verde
-   non prova che un pannello si veda.
+   **13 e 14** apre la SPA nel browser contro il ponte finto e **guarda**, perché un `npm run build` verde
+   non prova che un pannello si veda. ⛔ **RICHIAMO DEL 2026-09-14, scrivendo il compito 11:** qui stava
+   *«12 e 13»*, numeri di prima che **D25** dividesse la vecchia riga 8; contro la tabella della posizione il
+   **12** è il core finto, che è Rust e non ha browser, e la SPA è ai **13** e **14**. È la trappola che la
+   settima chiusura aveva già scritto — *«ogni numero di compito si ricensisce contro la tabella della
+   posizione»* — trovata qui alla prima passata che la applica.
 6. Una seconda ondata di **sola prosa** la fa il coordinatore a mano, senza ri-revisione; se tocca un
    fatto o un comando, si ri-rivede. Dopo due ondate di prosa si chiude (gotcha #76).
 7. ⛔ **Le scritture in parallelo non si fanno**: un compito per volta, sequenziale. Il parallelismo di
@@ -1546,6 +1550,194 @@ rossa la campagna al compilatore, che è la stessa guardia che `record_shape.rs`
 
 **Conseguenza:** nessuna `D` — è un rimedio, non una scelta, e il precedente era già scritto.
 
+### P-62 — Il valore atteso delle fixture: la §4 dice «mappa», la §6a e la §8 dicono **JSON**, e il compito 3 ha scritto solo la prima metà
+
+⛔ **Domanda 3 — l'artefatto è sbagliato, e compila.** Il Passo 6 del compito 3 scrive per ogni variante un
+`.bin` e una riga di `ipc_v1.map` col valore reso da `{message:?}`, cioè il `Debug` di Rust. Compila, gira, e
+produce un artefatto che **il consumatore non sa leggere**: la prova che lo esercita dall'altro capo è in
+TypeScript, e un `Debug` di Rust non è confrontabile da lì senza scriverne un analizzatore — che sarebbe una
+**seconda definizione dello schema**, cioè ciò che ADR-0037 rifiuta per iscritto.
+
+⛔ **E la radice è che i FRATELLI del disegno si contraddicono**, cioè la settima domanda del pre-controllo di
+`CLAUDE.md` girata su due sezioni di un disegno invece che su due ADR. Misurato il 2026-09-14:
+
+```bash
+grep -n 'mappa .indice' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+grep -cn 'valore atteso in JSON' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+```
+
+La §4 dice *«una mappa `indice → nome → valore`»* e **non nomina il formato**; la §6a e la §8 dicono, ciascuna
+una volta, *«il valore atteso in JSON, generati dallo stesso comando del kernel»*. Nessuna delle tre nomina le
+altre, ed è esattamente la forma del gotcha **#59**.
+
+✅ **E la cura le soddisfa TUTTE E TRE**, perché un JSON *è* una mappa `indice → nome → valore`: il generatore
+scrive, **nello stesso passaggio**, il `.bin`, un `.json` col valore atteso, e la `ipc_v1.map` che resta ciò
+che è — il foglio che un umano legge, con l'intestazione della rigenerazione e il timbro. **Uno scrittore solo,
+quindi niente deriva**, che è la ragione per cui il Passo 6 esiste.
+
+⛔ **E il JSON si scrive A MANO, senza dipendenza nuova**, con un `match` esaustivo come `variant_name`: è la
+stessa scelta che la §4 ha già fatto per l'impronta del timbro — *«poche righe, nessuna dipendenza nuova»* — e
+l'esaustività **è il meccanismo, non la fatica**: una variante nuova diventa un errore di compilazione invece
+di una fixture che manca in silenzio.
+
+**Conseguenza: D35**, e il **richiamo del 2026-09-14 dentro il compito 3**, che non è eseguito — il precedente
+è **P-56**, corretto nel proprio compito e non con una voce d'errata.
+
+### P-63 — Il lettore che la §8 presuppone NON SI CARICA, e la misura che lo dice è già nostra
+
+⛔ **Domanda 3, nella forma più cara: l'artefatto è impossibile, e te ne accorgi solo scrivendone
+l'implementazione dall'altro capo.** La §8 chiede che la prova della SPA decodifichi **i byte** delle fixture.
+L'unico lettore TypeScript del formato è `bincode-ts` 1.0.0, e **non si carica da nessuno dei suoi due punti
+d'ingresso**. Non è una deduzione: è già misurato in casa, dentro M-11.
+
+```bash
+grep -n 'non si carica da .nessuno. dei due punti' docs/riferimenti.md
+```
+
+La causa, per esteso in quella riga: il pacchetto dichiara `"type": "module"` e spedisce il build **CJS con
+estensione `.js`**; il build **ESM** importa `"./utils"` **senza estensione** e `"."`, cioè una directory. Sono
+tre violazioni della risoluzione ESM, non un capriccio di versione, e il registro lo dà **fermo alla 1.0.0 del
+2025-07-17** — il comando che lo rifà sta nella riga di `riferimenti.md` accanto.
+
+⚠️ **E chi decodifica DAVVERO non è la SPA.** Q1 di SP-8 mette il decodificatore nel **processo principale
+Node** del guscio; la §6a dice che *«la SPA non tocca mai un socket»* e *«riceve messaggi già decodificati»*.
+Il guscio **non è un compito di questo piano** — la tabella della posizione non lo nomina, e la §8 mette il
+capo a capo *«fuori dal cancello di oggi»*. Quindi la §8 chiedeva alla SPA una prova su un meccanismo che nella
+SPA non esiste.
+
+✅ **Portata al proprietario in A/B il 2026-09-14, e decisa: B.** A era una copia nostra corretta di
+`bincode-ts` dentro `gui/`; B è che la prova della SPA confronti col **JSON** di P-62, perché che i byte siano
+giusti lo prova già `ipc_wire.rs` **nel cancello** e una GUI disallineata la rifiuta il **timbro di build**.
+
+**Conseguenza: D36**, e una riga nuova nelle voci aperte — la decodifica vera dei byte ha come chiusore il
+**guscio**, accanto al secondo capo di `SOCKET_NAME` (**D31**).
+
+### P-64 — `npm ci` onora `engine-strict`, ed esce NON ZERO: il dedotto della §8 è misurato
+
+⛔ **Domanda 2 — la sonda manca, e non si vede leggendo.** La §8 dichiara `engine-strict` fra i propri
+🔶 **dedotti**: *«che `npm ci` onori `engine-strict` — la pagina di npm … non nomina `ci`: si prova nelle due
+direzioni»*. Il compito 11 ci appoggia sopra il **prerequisito dell'ambiente** (decisione 46), quindi la
+regola *«si rimisura ciò che il compito dà per misurato»* lo rende un dovere del pre-controllo.
+
+✅ **Misurato il 2026-09-14, su `node v24.9.0` e `npm 11.6.0`, in TRE direzioni.** Lo script vive **qui** e non
+nello scratchpad, perché lo scratchpad non sopravvive alla sessione:
+
+```bash
+mkdir -p /tmp/engine-probe && cd /tmp/engine-probe && rm -f package.json .npmrc package-lock.json
+printf '{"name":"probe","version":"0.0.0","private":true,"engines":{"node":">=24.0.0 <25.0.0"}}\n' > package.json
+printf 'engine-strict=true\n' > .npmrc
+npm install --package-lock-only --no-audit --no-fund > /dev/null 2>&1
+npm ci --no-audit --no-fund > /dev/null 2>&1; echo "1) engines ok, strict on   -> EXIT=$?"
+printf '{"name":"probe","version":"0.0.0","private":true,"engines":{"node":">=99.0.0"}}\n' > package.json
+npm ci --no-audit --no-fund > out.txt 2>&1;    echo "2) engines ko, strict on   -> EXIT=$?"; grep -m1 EBADENGINE out.txt
+rm .npmrc
+npm ci --no-audit --no-fund > out.txt 2>&1;    echo "3) engines ko, strict OFF  -> EXIT=$?"; grep -m1 EBADENGINE out.txt
+```
+
+| Direzione | Esito misurato |
+|---|---|
+| engines soddisfatti, `engine-strict` acceso | **`EXIT=0`** |
+| engines impossibili, `engine-strict` acceso | **`EXIT=1`**, e `npm error code EBADENGINE` |
+| engines impossibili, `.npmrc` **tolto** | **`EXIT=0`**, e solo `npm warn EBADENGINE` |
+
+⛔ **La terza riga è la metà che si dimentica, ed è quella che prova la CAUSA:** senza `.npmrc` il guasto non è
+un guasto, quindi il rosso viene da `engine-strict` e non da `npm ci` — un controllo si prova in due direzioni,
+e qui ne servivano tre.
+
+⚠️ **E la prima stesura di questa sonda era CIECA:** leggeva `$?` dopo una pipe in `tail`, quindi misurava
+l'uscita di `tail` e rendeva `EXIT=0` **anche** sul caso che fallisce. La riga d'errore c'era e sarebbe stata
+letta come prova. 📌 **Un `$?` dopo una pipe non è l'uscita del comando che ti interessa**, ed è la stessa
+specie dell'oracolo cieco del gotcha **#51**.
+
+**Conseguenza:** nessuna `D` — il dedotto si chiude verde, e la §8 resta com'è; il compito 11 porta la sonda.
+
+### P-65 — Il Node di questa macchina NON soddisfa `jsdom`, e con `engine-strict` il compito 11 nasce rosso
+
+⛔ **Domanda 3, misurata al registro e non dedotta.** `engines.node` di `gui/package.json` è **casa unica**
+(decisione 46) e il suo valore non è una preferenza: è l'**intersezione** di ciò che le versioni appuntate da
+**P-2** dichiarano. Misurato il 2026-09-14:
+
+```bash
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+P = {"vue":"3.5.42","vite":"8.3.0","pinia":"4.0.3","reka-ui":"2.10.4","vue-i18n":"11.4.10",
+     "dockview-core":"8.3.1","dockview":"8.3.1","typescript":"7.0.2","vue-tsc":"3.3.11",
+     "markdown-it":"15.0.2","vitest":"4.1.11","@vue/test-utils":"2.5.0","jsdom":"30.0.1",
+     "axe-core":"4.13.0","eslint":"10.10.0","eslint-plugin-vue":"10.11.0",
+     "@intlify/eslint-plugin-vue-i18n":"4.5.1"}
+for p, v in P.items():
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@") + "/" + v))
+    print(f"{p}@{v}  engines={d.get('engines')}")
+EOF
+node --version
+```
+
+⛔ **`jsdom` 30.0.1 è il più stretto su OGNI ramo, quindi l'intersezione è la sua riga tale e quale** —
+`^22.22.2 || ^24.15.0 || >=26.0.0`: sul ramo 22 batte `eslint` (`^22.13.0`) e `vite` (`>=22.12.0`); sul ramo 24
+batte `eslint` e `vitest` (`>=24`); sopra, è l'unico che parla. ⚠️ **E questa macchina ha `v24.9.0`**, che
+**non** sta in `^24.15.0`: con `engine-strict=true` il primo `npm ci` del compito 11 esce **`EXIT=1`** con
+`EBADENGINE`, per P-64.
+
+✅ **Non è un difetto del piano: è il prerequisito dell'ambiente che si dichiara invece di scoprirlo**, cioè
+esattamente ciò che il vincolo 4 della §11 del compendio compra per `rustup target add`. La LTS del giorno lo
+soddisfa — `python -c "import json,urllib.request; d=json.load(urllib.request.urlopen('https://nodejs.org/dist/index.json')); print(next(x['version'] for x in d if x['lts']))"`
+rendeva `v24.21.0` il 2026-09-14 — e chi esegue **rimisura** e aggiorna Node prima del Passo 1.
+
+**Conseguenza: D37.**
+
+### P-66 — `node_modules/` nasce al compito 11 e `.gitignore` lo copre solo al 15: il commit dell'11 non può chiudere pulito
+
+⛔ **Domanda 5 girata IN AVANTI — un compito scritto prima si legge contro ciò che i compiti vicini fanno
+ADESSO, non contro il taglio originale.** La tabella della posizione mette `.gitignore` al compito **15**, con
+il passo del cancello; ma è il compito **11** che lancia `npm install` e `npm run build`, cioè quello che fa
+**nascere** `gui/node_modules/` e `gui/dist/`. Misurato il 2026-09-14:
+
+```bash
+grep -c '^/gui/' .gitignore
+git ls-files --eol .gitignore
+```
+
+**Zero** righe `/gui/`, e il file è `i/lf w/crlf`. Senza quelle due righe il compito 11 finisce con un
+`git status` che elenca l'albero di `node_modules`, e il vincolo globale 13 — *«si committa e si pusha a ogni
+compito»* — diventa ineseguibile, oppure eseguibile **sbagliato**.
+
+✅ **La cura è spostare le due righe che servono all'11, non tutto il resto:** `/gui/node_modules/` e
+`/gui/dist/` nascono col compito 11; `/gui/fake-core/target/` resta al **12**, che è quando quella cartella
+esiste. ⛔ **E `.gitignore` è CRLF nell'albero:** si tocca con Python `newline=""`, mai con `sed -i` — vincolo
+globale 4.
+
+📌 **La forma generale, che vale oltre il caso:** una riga di `.gitignore` appartiene al compito che **crea**
+ciò che ignora, non al compito che raccoglie le righe di `.gitignore`. Raggrupparle per file invece che per
+artefatto è la stessa specie di taglio che **D25** ha già disfatto sul compito 8.
+
+**Conseguenza: D38.**
+
+### P-67 — `@vitejs/plugin-vue` non è in P-2, e senza di esso Vue e Vite non si parlano
+
+⛔ **Domanda 2 — manca un pezzo, e non si vede leggendo:** P-2 appunta `vue` e `vite`, e i due **non bastano**.
+Un componente a file singolo non si compila senza il plugin, quindi il compito 11 installerebbe un `vite` che
+non sa leggere un `.vue` e se ne accorgerebbe al primo `npm run build`. Misurato il 2026-09-14:
+
+```bash
+python -c "
+import json, urllib.request, urllib.parse
+p='@vitejs/plugin-vue'
+d=json.load(urllib.request.urlopen('https://registry.npmjs.org/'+urllib.parse.quote(p, safe='@')))
+v=d['dist-tags']['latest']; m=d['versions'][v]
+print(p, v, d['time'][v][:10], m.get('license'), m.get('engines'), m.get('peerDependencies'))"
+```
+
+`6.0.9`, del **2026-09-14** — cioè del giorno stesso, come fu per `markdown-it` in **D3** — licenza MIT,
+`engines` `^20.19.0 || >=22.12.0`, e i **pari** che dichiara coprono ciò che appuntiamo: `vue` `^3.2.25` e
+`vite` `^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0`, quindi la `8.3.0` di P-2 rientra. ⚠️ **Non è una major nuova**
+rispetto a nulla che avessimo appuntato, quindi il vincolo globale 8 non la rifiuta; ed è `engines` più largo
+di `jsdom`, quindi **non tocca D37**.
+
+⚠️ **E chi esegue rimisura**, perché una release dello stesso giorno è la meno stagionata che esista: la
+guardia non è una lettura ma `npm run build` verde al Passo che lo lancia.
+
+**Conseguenza: D39.**
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -1587,6 +1779,12 @@ smentisce — è ciò per cui esiste l'errata.
 | **D32** | ⛔ **la campagna del 2 NON usa `simulator::ipc::DyingGui`**, benché la §5 lo nomini: il filo se lo **scrive**, e lo tiene **fuori** dal core dietro un `RefCell`, com'è nel banco del compito 7. I guasti restano due — la morte sulla porta e la caduta del giornale — e il secondo resta `CrashingJournal` | la riga della §5 è del **2026-09-06**, cioè **prima di D5**, e le ragioni misurate sono **tre**, ciascuna sufficiente. **(1)** `DyingGui` dice un messaggio solo, `IpcMessage::Request`, che il dispaccio lascia cadere: nessuna concessione è rilasciata, e la proprietà confronterebbe **insiemi vuoti** (**P-57**). **(2)** Non può pronunciare né `Hello` né `Approve`, quindi la **seconda** proprietà della §5 non sarebbe raggiungibile (**P-58**). **(3)** ⛔ **E questa chiude la via:** verrebbe **spostata dentro `Core`**, che non espone il trasporto, quindi la campagna non potrebbe più interrogarla — e `ClientGrants` non offre nessun modo di **contare senza rilasciare**, né `on_disconnect` è chiamabile da fuori, perché `grants()` e `arbiter()` sono due prestiti mutabili dello stesso `&mut Core` (**P-60**). ✅ **Scartate le due vie che «aggiustano» `kernel`:** un `Core::into_parts` e un `ClientGrants::held` sarebbero elementi d'API il cui unico chiamante è una campagna, che `crates/kernel/src/boundary.rs` cancella — e `Core::ipc` è **già assegnato** al compito 12 con un altro significato. ⚠️ **Costo dichiarato:** è la **terza** scrittura della stessa forma di filo — il banco del 7, il daemon del 9, questa — e le tre case non possono importarsi; la testa della campagna lo **dichiara** invece di lasciarlo scoprire (gotcha #49), e la §5 riceve il proprio richiamo datato |
 | **D33** | ⛔ **la concessione della GUI si mette a MANO attraverso `Core::grants`, e la baseline NON è zero** — la quota di presentazione del core, che nessun registro tiene, più un **secondo client** registrato che non muore | senza di essa la prima metà confronterebbe **insiemi vuoti**: il 2 non rilascia nessuna concessione a un client (**D5**), quindi un client che muore sotto l'attività non tiene niente e *«la somma torna alla baseline»* è verde perché non si è mai mossa (**P-57**) — `M2` del commit 9a applicato a una campagna, e la lezione che il Traguardo 4 ha imparato **tre** volte. ✅ **Non è un'invenzione di questa campagna:** il doc di `Core::grants` nomina questo chiamante e il doc di modulo di `serving.rs` lo ripete — *«`tests/serving.rs` holds the wiring meanwhile by putting a grant in by hand»* — e i **due testimoni** della baseline sono quelli che `gui_death_campaign.rs` argomenta uno per uno, col secondo scelto perché è **quello che una mutazione può raggiungere**. ⛔ **E la baseline non-zero compra DUE direzioni con UNA asserzione, che è ciò per cui l'oracolo è la SOMMA e non il registro** (**P-60**): una riconciliazione che non fa niente lascia la somma **sopra**, una che rilascia ogni coppia che tiene la lascia **sotto**. ⚠️ **Costo dichiarato:** la campagna prepara uno stato che nessun percorso di produzione produce oggi, e lo **dice** nella propria testa; il giorno che il pilastro 3D rilascia concessioni davvero, la preparazione a mano si toglie e il percorso vero la sostituisce |
 | **D34** | ⛔ **il `SharedClock` resta LOCALE alla campagna e non sale in `simulator`** — è il quarto esemplare, ed è dichiarato nella testa del file invece che scoperto | ⛔ **È la decisione che D29 e la testa del banco del compito 7 avevano REGISTRATO per il 10, e si prende con la misura.** Delle quattro case, la quarta è `crates/daemon/src/main.rs`, e `crates/daemon/Cargo.toml` **rifiuta per iscritto** di dipendere da `simulator` — *«Does NOT depend on `simulator`. The daemon is the PRODUCTION wiring»* — quindi una casa comune ne servirebbe **tre su quattro**, e la quarta riscriverebbe la propria copia **senza** il commento che oggi la dichiara ripetuta: una duplicazione meno visibile di quella di adesso (**P-59**). ⚠️ **E non è nemmeno lo stesso tipo:** tre avvolgono un `VirtualReactor`, la quarta un `SystemReactor`, quindi la casa comune vorrebbe un avvolgente **generico** — dodici righe risparmiate in tre banchi contro un elemento d'API nuovo, che è *sfoggio* per il quinto criterio di `anthropic-skills:decision-principles`. ⚠️ **Costo dichiarato, e l'innesco che impedisce alla decisione di marcire:** il repository porta quattro copie della stessa forma; il giorno che ne nasce una **quinta dentro `simulator` o in una crate che può importarlo**, e avvolge lo stesso reattore, la misura si rifà |
+| **D35** | ⛔ **il generatore delle fixture scrive anche un `.json` per variante, a mano e senza dipendenza nuova** — `.bin`, `.json` e `ipc_v1.map` escono dallo **stesso passaggio** del compito 3, e la mappa resta il foglio che legge un umano | **P-62**: la §4 chiedeva *«una mappa `indice → nome → valore`»* senza dire il formato, la §6a e la §8 chiedono *«il valore atteso in JSON»*, e il compito 3 aveva scritto il `Debug` di Rust — che dal capo TypeScript **non è confrontabile**. Un JSON soddisfa tutte e tre le righe, e uno scrittore solo è ciò che impedisce ai byte e al valore atteso di divergere. ⛔ **A mano con un `match` esaustivo, non con `serde_json`:** è la stessa scelta che la §4 ha già fatto per l'impronta del timbro (*«poche righe, nessuna dipendenza nuova»*), e l'esaustività trasforma una variante nuova in un **errore di compilazione** invece che in una fixture mancante. ⚠️ **Costo dichiarato:** il generatore guadagna un `match` che cresce con l'enum, ed è il compilatore a ricordarlo |
+| **D36** | ⛔ **la prova dello schema della SPA confronta i tipi TypeScript col `.json`, NON decodifica i byte** — e la decodifica vera diventa una voce aperta col **guscio** come chiusore | ✅ **Decisione del proprietario, 2026-09-14, A/B, scelta B.** **P-63**: `bincode-ts` 1.0.0 non si carica da nessuno dei due punti d'ingresso (M-11, misurato) ed è fermo dal 2025-07-17; A era tenerne in casa una copia rattoppata da noi. ⚠️ **E non si perde una garanzia:** che i byte siano giusti lo prova `ipc_wire.rs` **dentro il cancello**, e una GUI disallineata la rifiuta il **timbro di build** — mentre la SPA, per Q1 e per la §6a, *«riceve messaggi già decodificati»* e **non decodifica nulla a tempo d'esecuzione**. ⚠️ **Che cosa NON coglie, detto invece che taciuto:** un cambio di sola **disposizione sul filo** che lasci il JSON identico; lo coglie il timbro, non questa prova |
+| **D37** | **`engines.node` di `gui/package.json` è la riga di `jsdom` 30.0.1 tale e quale** — `^22.22.2 \|\| ^24.15.0 \|\| >=26.0.0` — e non un numero scelto | **P-65**: è l'**intersezione misurata** di ciò che le versioni di **P-2** dichiarano, e `jsdom` è il più stretto su ogni ramo. Scriverlo a mano più largo lascerebbe passare un Node su cui `jsdom` non gira; più stretto rifiuterebbe un Node buono. ⛔ **Chi esegue RIMISURA col comando di P-65 e riscrive il valore del suo giorno** (vincolo globale 8): se una versione appuntata cambia, cambia l'intersezione |
+| **D38** | **le due righe `/gui/node_modules/` e `/gui/dist/` di `.gitignore` entrano col compito 11**, non col 15; `/gui/fake-core/target/` resta al 12 | **P-66**: una riga di `.gitignore` appartiene al compito che **crea** ciò che ignora. Raggruppate al 15, il commit del compito 11 elencherebbe l'albero di `node_modules` e il vincolo globale 13 diventerebbe ineseguibile. ⚠️ **La §8 del 2 non è smentita nel merito** — le tre righe restano quelle che nomina — è il **taglio per compito** che cambia, ed è il piano a tagliare (**D1**) |
+| **D39** | **`@vitejs/plugin-vue` si appunta a 6.0.9**, e la voce entra in P-2 dal 2026-09-14 | **P-67**: senza il plugin `vite` non legge un `.vue`, e P-2 non lo aveva. I pari che dichiara coprono le versioni appuntate, e il suo `engines` è più largo di quello di `jsdom`, quindi **D37** non cambia. ⚠️ **Costo dichiarato:** è una release del **giorno stesso**, come `markdown-it` in **D3**; la guardia non è una lettura ma `npm run build` verde |
+| **D40** | ⛔ **il compito 11 installa SOLO ciò che usa** — `vue`, `@vitejs/plugin-vue`, `vite`, `typescript`, `vue-tsc`, `vitest` — e non tutto P-2 | è la regola che **P-2 si è già data** su `@playwright/test`: *«installarli senza una prova che li usi sarebbe una dipendenza senza consumatore»*. `pinia`, `reka-ui`, `vue-i18n`, `dockview`, `markdown-it`, `jsdom`, `@vue/test-utils`, `axe-core` e la catena `eslint` arrivano coi compiti **13**, **14** e **15**, che li consumano. ⚠️ **`engines.node` fa ECCEZIONE e si scrive intero al compito 11** (**D37**): è il prerequisito dell'ambiente di `gui/`, non un fatto di un compito, e riscriverlo a ogni installazione lo farebbe marcire |
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
 il comando del vincolo 11 → `11030` · `git status -sb` → `## main...origin/main`, pulito.
@@ -1614,6 +1812,7 @@ righe che lo **toccano** sono segnate.
 | le tre voci del Traguardo 6 che aspettano il primo worker vero — 9, 26, 27 | la tabella del Traguardo 6 | il **12** |
 | le **registrate** della stella polare — l'ambito come progetto, «Automazione OS», il grafo del 6, Compatta, i due passi per invocazione | la tabella «Registrate, non prese» | il 3, il 6, il 10, il proprietario |
 | ⛔ **il secondo capo di `SOCKET_NAME`** — il daemon lega il nome al compito 9, e in questo piano **nessuno vi si collega**: il core finto ne lega uno suo, la SPA non tocca socket | **P-53**, **D31**, e il doc della costante in `crates/daemon/src/main.rs` | il **guscio**, che la §8 del 2 mette *«fuori dal cancello di oggi»*; il giorno che esiste, l'accoppiamento è una sonda |
+| ⛔ **la decodifica VERA dei byte `bincode` dal capo TypeScript** — in questo piano **nessuno decodifica**: la SPA confronta i propri tipi col `.json` delle fixture (**D36**), e i byte li prova `ipc_wire.rs` nel cancello. ⚠️ **E il lettore che servirebbe è rotto come spedito** — `bincode-ts` 1.0.0 non si carica da nessuno dei due punti d'ingresso, misurato in M-11 | **P-63**, **D36**, e la riga di `bincode-ts` in [`riferimenti.md`](../../riferimenti.md) | il **guscio**, dove la decodifica vive davvero (Q1 di SP-8: il processo principale Node); il giorno che esiste, la copia corretta di `bincode-ts` o un lettore mantenuto è una **sua** decisione, non di questo piano. ⚠️ **Stesso chiusore del secondo capo di `SOCKET_NAME`, e non è un caso:** entrambe aspettano l'unico pezzo che la §8 del 2 mette *«fuori dal cancello di oggi»* |
 
 ---
 
@@ -2617,10 +2816,18 @@ git push
 
 ## Compito 3: lo schema che cresce — le varianti nuove, i gemelli del filo, le fixture e il timbro di build
 
+⛔ **RICHIAMO DEL 2026-09-14, dal pre-controllo del compito 11 — P-62 e D35: il generatore scrive anche un
+`.json` per variante.** Questo compito produceva i byte e una mappa col valore reso da `{message:?}`, cioè il
+`Debug` di Rust: la §4 del disegno chiede *«una mappa `indice → nome → valore`»* senza dire il formato, ma la
+§6a e la §8 chiedono *«il valore atteso in JSON»*, e il **consumatore** — la prova dello schema della SPA, in
+TypeScript — un `Debug` di Rust non sa leggerlo. ⚠️ **Corretto QUI e non in errata perché questo compito non è
+eseguito**, come fu per **P-56**. I Passi toccati sono il **6** e il **7**, e il criterio di chiusura.
+
 **Files:**
 - Modify: `crates/kernel/src/wire/ipc.rs` (**`i/lf w/crlf`**) — i gemelli, le varianti nuove, l'insieme canonico, il timbro; i due richiami datati di **P-16** e **P-17**
 - Modify: `crates/kernel/tests/ipc_wire.rs` (**`i/lf w/crlf`**) — il controllo delle fixture, il generatore dichiarato, le sonde del timbro e del grafo
 - Create: `gui/schema/fixtures/*.bin` — un file per variante, **rigenerabili**
+- Create: `gui/schema/fixtures/*.json` (**LF**) — il **valore atteso** di ogni variante, dallo stesso passaggio dei byte — **D35**
 - Create: `gui/schema/fixtures/ipc_v1.map` (**LF**) — la mappa `indice → nome → valore`, e il timbro
 - Read: la §4 del [disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), le due tabelle; la riga «lo schema» della tabella degli artefatti della §8; la **sequenza 1** di «La GUI dentro» nella [stella polare](../specs/2026-09-07-direzione-gui-design.md); `crates/kernel/src/wire/ipc.rs` e `crates/kernel/tests/ipc_wire.rs` **per intero**
 
@@ -2632,7 +2839,11 @@ git push
   - le **varianti nuove** di `kernel::wire::ipc::IpcMessage` — ⛔ **quante siano lo dice il comando del criterio di chiusura, non questa riga: un numerale in prosa qui è già stato falso una volta (P-35)**
   - `kernel::wire::ipc::stamp_set() -> alloc::vec::Vec<IpcMessage>` — l'insieme canonico
   - `kernel::wire::ipc::build_stamp() -> BuildStamp`
-  - le fixture in `gui/schema/fixtures/`, che il compito 11 legge da `gui/src/schema/`
+  - le fixture in `gui/schema/fixtures/`, che il compito 11 legge da `gui/src/schema/`: per ogni variante
+    **`NN-nome.bin`** (i byte) **e `NN-nome.json`** (il valore atteso), più `ipc_v1.map` col timbro — **D35**
+  - ⛔ **le due regole del JSON, che il compito 11 rispecchia nei propri tipi e NON traduce:** ogni `u64` è una
+    **stringa decimale** (`BuildStamp` supera `Number.MAX_SAFE_INTEGER` per costruzione), e i nomi dei campi sono
+    quelli di Rust **tali e quali**, in `snake_case`
 
 ⛔ **I nomi delle VARIANTI sono fissati dal disegno** (§4, decisione 9) e non si ritoccano. I nomi dei **tipi
 trasportati** li decide questo compito, e la convenzione è quella di `GrantRequest`: il tipo dice **cosa porta**,
@@ -3159,6 +3370,14 @@ fn regenerate_the_fixtures() {
         let name = variant_name(&message);
         let bytes = message.encode().expect("encode");
         std::fs::write(root.join(format!("{index:02}-{name}.bin")), &bytes).expect("write");
+        // ⛔ THE EXPECTED VALUE LEAVES THE SAME PASS AS THE BYTES, and that is the whole point:
+        // two writers would let a fixture's bytes and its expected value drift apart, and the
+        // drift would be invisible because each half would still be internally consistent.
+        std::fs::write(
+            root.join(format!("{index:02}-{name}.json")),
+            format!("{}\n", variant_json(&message)),
+        )
+        .expect("write the expected value");
         map.push_str(&format!(
             "{index:02} {name} {len} bytes\n    {message:?}\n",
             len = bytes.len()
@@ -3188,6 +3407,164 @@ fn variant_name(message: &IpcMessage) -> &'static str {
         IpcMessage::Verdict(_) => "verdict",
     }
 }
+
+/// The value a fixture carries, as JSON, for the milestone-2 SPA to compare its own types
+/// against. ⛔ HAND-WRITTEN AND NOT A DEPENDENCY, for `build_stamp`'s two reasons plus one of
+/// its own: `serde_json` would want `Serialize` derives on SHIPPED wire types, or a mirror of
+/// them here -- and a mirror is the second definition of the schema that ADR-0037 refuses.
+///
+/// ⛔ TWO RULES, NEITHER COSMETIC.
+///   1. EVERY `u64` IS A DECIMAL STRING. `BuildStamp` is FNV-1a over the whole set and passes
+///      `Number.MAX_SAFE_INTEGER` as a matter of course; as a JSON number the reader would
+///      round it, and the fixture would compare equal to a value it does not hold.
+///   2. FIELD NAMES ARE RUST'S, verbatim and `snake_case`. Renaming them to the web's taste
+///      would be a translation table, which is a second definition that drifts in silence --
+///      the very failure these fixtures exist to prevent.
+///
+/// ⚠️ THE `match` IS EXHAUSTIVE for the reason `variant_name` gives: a variant added must be a
+/// compile error here, not a fixture that quietly never appears.
+fn variant_json(message: &IpcMessage) -> String {
+    match message {
+        IpcMessage::Hello(stamp) => format!(r#"{{"kind":"Hello","value":"{}"}}"#, stamp.get()),
+        IpcMessage::Accepted(protection) => format!(
+            r#"{{"kind":"Accepted","value":"{}"}}"#,
+            match protection {
+                Protection::AsSystemAccount => "AsSystemAccount",
+            }
+        ),
+        IpcMessage::StaleBuild(stamp) => {
+            format!(r#"{{"kind":"StaleBuild","value":"{}"}}"#, stamp.get())
+        }
+        IpcMessage::Degradation(report) => format!(
+            r#"{{"kind":"Degradation","value":{{"vram_exhausted":{},"routing_degraded":{}}}}}"#,
+            report.vram_exhausted, report.routing_degraded
+        ),
+        IpcMessage::Policy(report) => format!(
+            r#"{{"kind":"Policy","value":{{"policy":"{}","allocated":"{}","total":"{}"}}}}"#,
+            match report.policy {
+                PolicyName::Remote => "Remote",
+                PolicyName::Local => "Local",
+            },
+            report.allocated.get(),
+            report.total.get()
+        ),
+        IpcMessage::Invoke(call) => format!(r#"{{"kind":"Invoke","value":{}}}"#, json_call(call)),
+        IpcMessage::PermissionRequired(triple) => format!(
+            r#"{{"kind":"PermissionRequired","value":{}}}"#,
+            json_triple(triple)
+        ),
+        IpcMessage::Approve { triple, call } => format!(
+            r#"{{"kind":"Approve","triple":{},"call":{}}}"#,
+            json_triple(triple),
+            json_call(call)
+        ),
+        IpcMessage::Token { text, provenance } => format!(
+            r#"{{"kind":"Token","text":{},"provenance":"{}"}}"#,
+            json_text(text),
+            match provenance {
+                Provenance::Trusted => "Trusted",
+                Provenance::Untrusted => "Untrusted",
+            }
+        ),
+        IpcMessage::Layout(state) => format!(
+            r#"{{"kind":"Layout","value":{}}}"#,
+            match state {
+                LayoutState::Package(bytes) =>
+                    format!(r#"{{"state":"Package","bytes":{}}}"#, json_bytes(bytes)),
+                LayoutState::Nothing => String::from(r#"{"state":"Nothing"}"#),
+                LayoutState::Unavailable => String::from(r#"{"state":"Unavailable"}"#),
+            }
+        ),
+        IpcMessage::SaveLayout(bytes) => {
+            format!(r#"{{"kind":"SaveLayout","value":{}}}"#, json_bytes(bytes))
+        }
+        IpcMessage::Steps(steps) => format!(
+            r#"{{"kind":"Steps","value":[{}]}}"#,
+            steps
+                .iter()
+                .map(|summary| format!(
+                    r#"{{"step":"{}","function":{},"done":{}}}"#,
+                    summary.step,
+                    json_text(&summary.function),
+                    summary.done
+                ))
+                .collect::<Vec<String>>()
+                .join(",")
+        ),
+        IpcMessage::Request(request) => format!(
+            r#"{{"kind":"Request","value":{{"reserved_vram":"{}","compute_class":"{}","preemption":{}}}}}"#,
+            request.reserved_vram.get(),
+            match request.compute_class {
+                ComputeClass::Realtime => "Realtime",
+                ComputeClass::Interactive => "Interactive",
+                ComputeClass::Batch => "Batch",
+            },
+            match request.preemption {
+                Preemption::Never => String::from(r#"{"kind":"Never"}"#),
+                Preemption::After(grace) =>
+                    format!(r#"{{"kind":"After","grace_ms":"{}"}}"#, grace.get()),
+            }
+        ),
+        IpcMessage::Verdict(verdict) => format!(
+            r#"{{"kind":"Verdict","value":{}}}"#,
+            match verdict {
+                Verdict::Granted => String::from(r#"{"verdict":"Granted"}"#),
+                Verdict::Queued => String::from(r#"{"verdict":"Queued"}"#),
+                Verdict::Refused { asked, ceiling } => format!(
+                    r#"{{"verdict":"Refused","asked":"{}","ceiling":"{}"}}"#,
+                    asked.get(),
+                    ceiling.get()
+                ),
+            }
+        ),
+    }
+}
+
+/// A JSON string, escaped. ⚠️ THE TEXT IN THE CANONICAL SET IS OURS, but an escaper that is
+/// only correct for today's literals is a trap laid for the first variant that carries a quote.
+fn json_text(text: &str) -> String {
+    let mut out = String::from("\"");
+    for character in text.chars() {
+        match character {
+            '"' => out.push_str("\\\""),
+            '\\' => out.push_str("\\\\"),
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            other if (other as u32) < 0x20 => out.push_str(&format!("\\u{:04x}", other as u32)),
+            other => out.push(other),
+        }
+    }
+    out.push('"');
+    out
+}
+
+/// Bytes as an array of numbers. ⚠️ NOT base64 and NOT hex: a byte is 0..=255, which a JSON
+/// number holds exactly, so the reading side needs no decoder and cannot decode it wrongly.
+fn json_bytes(bytes: &[u8]) -> String {
+    let numbers: Vec<String> = bytes.iter().map(|byte| byte.to_string()).collect();
+    format!("[{}]", numbers.join(","))
+}
+
+fn json_triple(triple: &Triple) -> String {
+    format!(
+        r#"{{"tool":{},"resource":{},"operation":"{}"}}"#,
+        json_text(&triple.tool),
+        json_text(&triple.resource),
+        match triple.operation {
+            Access::Read => "Read",
+            Access::Write => "Write",
+        }
+    )
+}
+
+fn json_call(call: &Call) -> String {
+    format!(
+        r#"{{"function":{},"argument":{}}}"#,
+        json_text(&call.function),
+        json_text(&call.argument)
+    )
+}
 ```
 
 Poi si lancia, una volta:
@@ -3195,12 +3572,27 @@ Poi si lancia, una volta:
 ```bash
 cargo test --locked -p kernel --test ipc_wire -- --ignored regenerate_the_fixtures
 ls gui/schema/fixtures/
+ls gui/schema/fixtures/*.bin | wc -l; ls gui/schema/fixtures/*.json | wc -l
 cat gui/schema/fixtures/ipc_v1.map | tail -3
-tr -cd '\r' < gui/schema/fixtures/ipc_v1.map | wc -c
+tr -cd '\r' < gui/schema/fixtures/*.json gui/schema/fixtures/ipc_v1.map | wc -c
+python -c "import json,glob,sys; [json.load(open(p)) for p in sorted(glob.glob('gui/schema/fixtures/*.json'))]; print('every fixture is valid JSON')"
+cat gui/schema/fixtures/00-hello.json
 ```
 
-Atteso: **quattordici** `.bin` più `ipc_v1.map`; la mappa finisce con la riga `stamp 0x…`; **zero** CR nella mappa
-(nasce LF, vincolo 4).
+Atteso: tanti `.bin` quanti `.json`, **uno per variante** — e quanti siano lo dice il primo comando qui sopra,
+non questa riga (**P-35**) — più `ipc_v1.map`; la mappa finisce con la riga `stamp 0x…`; **zero** CR (nascono
+LF, vincolo 4); `every fixture is valid JSON`; e `00-hello.json` porta il timbro come **stringa** e non come
+numero.
+
+⛔ **L'ultima riga NON è pignoleria, ed è il motivo per cui c'è un comando che la guarda:** `build_stamp` è
+FNV-1a a 64 bit, quindi supera `Number.MAX_SAFE_INTEGER` quasi sempre. Scritto come numero JSON, il lettore
+della SPA lo **arrotonderebbe** e poi confronterebbe due valori arrotondati allo stesso modo — verde, e falso.
+📌 **Un oracolo che perde precisione su entrambi i lati non è un oracolo**, ed è la stessa forma del contatore
+che parte da un valore che il soggetto non ha prodotto (gotcha **#51**).
+
+⛔ **E il `python -c` prova la METÀ che il compilatore non prova:** `variant_json` è scritto a mano, quindi
+*compila* anche quando emette JSON rotto. Senza questa riga il primo a scoprirlo sarebbe il compito 11, in un
+altro commit.
 
 - [ ] **Passo 7: il controllo che dice «rigenera»**
 
@@ -3229,17 +3621,27 @@ fn the_committed_fixtures_match_the_schema() {
             Ok(_) => wrong.push(format!("  {index:02}-{name}.bin: different bytes")),
             Err(error) => wrong.push(format!("  {index:02}-{name}.bin: {error}")),
         }
+        // ⛔ THE EXPECTED VALUE IS CHECKED TOO, and not because it could rot on its own -- it
+        // cannot, one pass writes both. It is checked because a set regenerated by an OLDER
+        // build and then committed leaves bytes and value agreeing with EACH OTHER and
+        // disagreeing with the schema; only comparing both against today's `stamp_set` sees it.
+        let expected_json = format!("{}\n", variant_json(&message));
+        match std::fs::read_to_string(root.join(format!("{index:02}-{name}.json"))) {
+            Ok(found) if found == expected_json => {}
+            Ok(_) => wrong.push(format!("  {index:02}-{name}.json: different value")),
+            Err(error) => wrong.push(format!("  {index:02}-{name}.json: {error}")),
+        }
     }
     let extra: Vec<String> = std::fs::read_dir(&root)
         .expect("read the fixtures directory")
         .filter_map(|entry| entry.ok())
         .map(|entry| entry.file_name().to_string_lossy().into_owned())
-        .filter(|name| name.ends_with(".bin"))
+        .filter(|name| name.ends_with(".bin") || name.ends_with(".json"))
         .filter(|name| {
-            !stamp_set()
-                .iter()
-                .enumerate()
-                .any(|(i, m)| *name == format!("{i:02}-{}.bin", variant_name(m)))
+            !stamp_set().iter().enumerate().any(|(i, m)| {
+                *name == format!("{i:02}-{}.bin", variant_name(m))
+                    || *name == format!("{i:02}-{}.json", variant_name(m))
+            })
         })
         .collect();
     assert!(
@@ -3263,8 +3665,8 @@ eseguita, e **revocata** con `git diff` a zero:
 
 | | La mutazione | Atteso |
 |---|---|---|
-| **G6** | in `stamp_set`, `Access::Write` → `Access::Read` nella `PermissionRequired` | `the_committed_fixtures_match_the_schema` **rosso**, col nome `06-permission-required.bin` e la riga «REGENERATE them» |
-| **G7** | togli la riga `IpcMessage::Steps(...)` da `stamp_set` | `every_variant_is_in_the_canonical_set` **rosso** con `variants missing from stamp_set: [11]`, e il controllo delle fixture rosso su «left over» |
+| **G6** | in `stamp_set`, `Access::Write` → `Access::Read` nella `PermissionRequired` | `the_committed_fixtures_match_the_schema` **rosso**, e con **due** righe e non una — `06-permission-required.bin: different bytes` **e** `06-permission-required.json: different value` — più la riga «REGENERATE them». ⚠️ **Che siano due è la prova che il controllo del valore atteso non è decorativo** (richiamo del 2026-09-14, **D35**) |
+| **G7** | togli la riga `IpcMessage::Steps(...)` da `stamp_set` | `every_variant_is_in_the_canonical_set` **rosso** con `variants missing from stamp_set: [11]`, e il controllo delle fixture rosso su «left over» con **entrambi** i file della variante tolta, `.bin` e `.json` |
 | **G8** | in `build_stamp`, togli `(bytes.len() as u64).to_be_bytes().iter().chain(...)` e lascia `bytes.iter()` | `the_stamp_changes_when_the_schema_changes` resta **verde** — ⚠️ **e questo è il limite dichiarato della sonda**, non un difetto da correggere qui: la lunghezza difende contro due messaggi ri-tagliati, che l'insieme canonico non contiene. Si **registra** in coda alla voce, non si inventa un caso per farlo scattare |
 
 ```bash
@@ -3330,11 +3732,13 @@ git status --porcelain | head -20
 ```
 
 Atteso: per i due file `CR` **uguale** alle righe e `i/lf w/crlf` **invariato**; **zero** CR nella mappa;
-`GATE GREEN`; `OK`; in `git status` i due sorgenti e i quindici file di `gui/schema/fixtures/`, **niente altro**.
+`GATE GREEN`; `OK`; in `git status` i due sorgenti e i file di `gui/schema/fixtures/` — **quanti siano lo dice
+`ls gui/schema/fixtures | wc -l`, non questa riga** (richiamo del 2026-09-14: diceva *«i quindici file»*, e col
+`.json` di **D35** il numerale si è falsificato da sé; gotcha **#68**) — **niente altro**.
 
 ```bash
 git add crates/kernel/src/wire/ipc.rs crates/kernel/tests/ipc_wire.rs gui/schema/fixtures docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
-git commit -m "gui(compito 3): lo schema che cresce -- le varianti nuove di IpcMessage coi gemelli del filo (D11), l'insieme canonico e il timbro di build, le quattordici fixture rigenerabili in gui/schema/fixtures e il controllo che dice rigenera; i richiami datati su P-16 (l'innesco della revoca e' il 7) e P-17 (il grafo di encode riletto)"
+git commit -m "gui(compito 3): lo schema che cresce -- le varianti nuove di IpcMessage coi gemelli del filo (D11), l'insieme canonico e il timbro di build, le fixture rigenerabili in gui/schema/fixtures coi byte E il valore atteso in JSON dallo stesso passaggio (D35) e il controllo che dice rigenera; i richiami datati su P-16 (l'innesco della revoca e' il 7) e P-17 (il grafo di encode riletto)"
 git push
 ```
 
@@ -3345,7 +3749,8 @@ git push
   `awk '/^pub enum IpcMessage/{s=1} s&&/^}/{exit} s&&/^    [A-Z]/{c++} END{print c}' crates/kernel/src/wire/ipc.rs`
   → **14**; lo stesso `awk` sull'uscita di `git show 42b50d8:crates/kernel/src/wire/ipc.rs` → **2**. Le nuove
   sono la **differenza fra i due**, e nessun numerale in prosa la ripete
-- [ ] `ls gui/schema/fixtures/*.bin | wc -l` → **14**; `grep -c '^stamp 0x' gui/schema/fixtures/ipc_v1.map` → **1**
+- [ ] `ls gui/schema/fixtures/*.bin | wc -l` → **14**; `ls gui/schema/fixtures/*.json | wc -l` → **lo stesso numero**, e i due comandi si confrontano fra loro invece di confrontarsi con questa riga; `grep -c '^stamp 0x' gui/schema/fixtures/ipc_v1.map` → **1**
+- [ ] ogni fixture è JSON valido, e il timbro è una **stringa**: `python -c "import json,glob; [json.load(open(p)) for p in glob.glob('gui/schema/fixtures/*.json')]; print('ok')"` → `ok`; `python -c "import json; print(type(json.load(open('gui/schema/fixtures/00-hello.json'))['value']).__name__)"` → `str` — **D35**
 - [ ] `grep -c 'DATED RECALL, 2026-09-11' crates/kernel/src/wire/ipc.rs` → **2**
 - [ ] `grep -c 'BUILD STAMP' crates/kernel/src/ports/ipc.rs` → **invariato rispetto al Passo 1**: quel file non si tocca
 - [ ] le tre mutazioni G6, G7, G8 provate **una per volta** e revocate, con `git diff --stat` vuoto
@@ -10196,6 +10601,922 @@ righe `DST serving`; gli `SharedClock` nel repository sono **quattro**, ed è **
 📌 **E ciò che questo compito NON chiude, detto invece che sottinteso:** la riga **24** del Traguardo 6 —
 `reconcile::Resolution` non è decisa da nessun `match` — resta **aperta**. Questa campagna la **asserisce**, il
 che è un'altra cosa: il chiusore è il primo consumatore che vi si dirami, e non è il 2.
+
+---
+
+## Compito 11: `gui/` nasce — il manifesto e il prerequisito, i tipi dello schema, il ponte e la sua finta
+
+**Files:**
+- Create: `gui/package.json` (**LF**) — `engines.node` (**D37**), i comandi, le dipendenze di **D40**
+- Create: `gui/.npmrc` (**LF**) — `engine-strict=true`, l'unica riga
+- Create: `gui/package-lock.json` (**LF**) — **si committa**, vincolo globale 7
+- Create: `gui/tsconfig.json`, `gui/vite.config.ts`, `gui/index.html`, `gui/src/main.ts`, `gui/src/App.vue` (**LF**)
+- Create: `gui/src/schema/messages.ts` (**LF**) — i tipi TypeScript del filo
+- Create: `gui/src/schema/parse.ts` (**LF**) — il lettore a tempo d'esecuzione, e l'elenco delle specie
+- Create: `gui/src/schema/fixtures.ts` (**LF**) — il caricatore delle fixture del compito 3
+- Create: `gui/src/schema/schema.test.ts` (**LF**) — la sonda dello schema
+- Create: `gui/src/transport/bridge.ts` (**LF**) — il ponte, e le quattro che la GUI manda
+- Create: `gui/src/transport/fakeBridge.ts`, `gui/src/transport/fakeBridge.test.ts` (**LF**)
+- Modify: `.gitignore` (**`i/lf w/crlf`**) — due righe, **D38**
+- Read: la §6a del [disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), righe «dove e con che cosa», «il ponte» e «gli strati»; la riga *«la SPA, `schema/`»* e la riga *«la versione di Node»* della §8; **P-2**, **P-62**…**P-67**; **D2**, **D3**, **D4**, **D35**…**D40**
+- ⛔ **NON si legge**: la §1 e la §2 della stella polare, che sono dei compiti **13** e **14**. Questo compito non disegna niente che si veda
+
+**Interfaces:**
+- Consumes: le fixture del compito **3** in `gui/schema/fixtures/` — `NN-nome.bin` e `NN-nome.json`, più `ipc_v1.map`; **D35** ne fissa le due regole (ogni `u64` è una **stringa decimale**, i nomi dei campi sono quelli di Rust in `snake_case`)
+- Produces, e i compiti 12, 13 e 14 li usano con questi nomi esatti:
+  - `gui/src/schema/messages.ts` — `IpcMessage` e i tipi che trasporta: `U64`, `Protection`, `PolicyName`, `Access`, `Provenance`, `ComputeClass`, `DegradationReport`, `PolicyReport`, `Triple`, `Call`, `StepSummary`, `LayoutState`, `Preemption`, `GrantRequest`, `Verdict`
+  - `gui/src/schema/parse.ts` — `parseIpcMessage(raw: unknown): IpcMessage`, `MESSAGE_KINDS: readonly IpcMessage["kind"][]`, `SchemaError`
+  - `gui/src/schema/fixtures.ts` — `loadFixtures(): Fixture[]` e `interface Fixture { file: string; kind: string; value: unknown }`
+  - `gui/src/transport/bridge.ts` — `interface Bridge { send(message: OutboundMessage): void; listen(listener: Listener): () => void }`, `type OutboundMessage`, `type Listener`
+  - `gui/src/transport/fakeBridge.ts` — `createFakeBridge(): FakeBridge`, con `sent`, `deliver(kind)`, `deliverAll()`
+- ⛔ **Che cosa questo compito NON produce, detto perché nessuno lo cerchi:** nessun `store`, nessun pannello, nessuna scritta in `locales/`, **nessun decodificatore di byte** (**D36**), e nessun `gate-gui.sh` — il cancello impara il mondo web al compito **15**
+
+⛔ **Il ponte è la cucitura, e il suo valore è ciò che NON attraversa.** La §6a dice che la SPA *«non tocca mai
+un socket»* e *«riceve messaggi già decodificati»*: chi decodifica sta **sotto** il ponte, e per Q1 di SP-8 è il
+processo principale Node del guscio. Per questo `Bridge` è un'interfaccia di **due** metodi e non un client:
+tutto ciò che il guscio sa fare — socket, timbro, decodifica — resta dal suo lato, e la SPA si sviluppa e si
+prova **nel browser** contro la finta prima che il guscio esista.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+ls gui 2>&1
+ls gui/schema/fixtures/*.bin 2>/dev/null | wc -l
+ls gui/schema/fixtures/*.json 2>/dev/null | wc -l
+grep -c '^/gui/' .gitignore
+git ls-files --eol .gitignore
+node --version; npm --version
+```
+
+Atteso: `gui/` esiste e contiene **solo** `schema/fixtures/` — il compito 3 l'ha creata; tanti `.json` quanti
+`.bin`, e **zero** è un rosso che dice *«il compito 3 non è eseguito»*, non un permesso a proseguire; **zero**
+righe `/gui/` in `.gitignore`, che è `i/lf w/crlf`.
+
+⛔ **Se `gui/package.json` esiste già, il compito è eseguito** — quarta domanda del pre-controllo: ci si ferma e
+si riporta invece di sovrascrivere.
+
+- [ ] **Passo 2: il prerequisito dell'ambiente — Node, rimisurato**
+
+⛔ **Prima di scrivere una riga**, perché è ciò che decide se il Passo 4 può anche solo partire. Si rilancia il
+comando di **P-65**, e da lì esce il valore di `engines.node`:
+
+```bash
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+P = {"vue":"3.5.42","vite":"8.3.0","pinia":"4.0.3","reka-ui":"2.10.4","vue-i18n":"11.4.10",
+     "dockview-core":"8.3.1","dockview":"8.3.1","typescript":"7.0.2","vue-tsc":"3.3.11",
+     "markdown-it":"15.0.2","vitest":"4.1.11","@vue/test-utils":"2.5.0","jsdom":"30.0.1",
+     "axe-core":"4.13.0","eslint":"10.10.0","eslint-plugin-vue":"10.11.0",
+     "@intlify/eslint-plugin-vue-i18n":"4.5.1","@vitejs/plugin-vue":"6.0.9"}
+for p, v in P.items():
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@") + "/" + v))
+    print(f"{p}@{v}  engines={d.get('engines')}")
+EOF
+node --version
+```
+
+Atteso il 2026-09-14: `jsdom` 30.0.1 è il **più stretto su ogni ramo**, quindi `engines.node` è la sua riga
+tale e quale, `^22.22.2 || ^24.15.0 || >=26.0.0`. ⛔ **Se il Node della macchina non la soddisfa, si aggiorna
+Node PRIMA di proseguire** — il Passo 4 uscirebbe `EXIT=1` con `EBADENGINE`, che è il comportamento voluto
+(**P-64**) e non un guasto da aggirare togliendo `.npmrc`.
+
+⚠️ **Se l'intersezione di oggi è diversa da quella scritta qui, vince quella di oggi** — vincolo globale 8 — e
+la divergenza è una voce d'errata prima di essere un valore nuovo.
+
+- [ ] **Passo 3: il manifesto, `.npmrc` e le due righe di `.gitignore`**
+
+`gui/package.json`, **LF**, nuovo. ⛔ **Versioni esatte e non intervalli**: `npm ci` è il gemello di `--locked`
+(§8), e un intervallo rimanda al lockfile una decisione che il vincolo globale 8 vuole **nel manifesto**.
+
+```json
+{
+  "name": "harness-gui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "vue": "3.5.42"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.9",
+    "typescript": "7.0.2",
+    "vite": "8.3.0",
+    "vitest": "4.1.11",
+    "vue-tsc": "3.3.11"
+  }
+}
+```
+
+`gui/.npmrc`, **LF**, una riga sola:
+
+```
+engine-strict=true
+```
+
+⛔ **`engines` senza `.npmrc` è un AVVISO, non un cancello** — misurato in **P-64**, terza direzione: senza
+questo file `npm ci` esce **0** su un Node fuori intervallo. Le due righe sono un meccanismo solo e si scrivono
+insieme.
+
+E in `.gitignore` — **CRLF nell'albero**, quindi Python `newline=""` e **mai** `sed -i` (vincolo globale 4),
+in coda al blocco *«Build artefacts of the product»*:
+
+```
+# Build artefacts of the gui -- the lockfile is committed, the tree it installs is not
+/gui/node_modules/
+/gui/dist/
+```
+
+⚠️ **`/gui/fake-core/target/` NON entra qui:** è del compito 12, che è quando quella cartella esiste (**D38**).
+
+```bash
+python - <<'EOF'
+from pathlib import Path
+p = Path(".gitignore")
+text = p.read_text(encoding="utf-8", newline="")
+anchor = "# Build artefacts of the spikes"
+addition = (
+    "# Build artefacts of the gui -- the lockfile is committed, the tree it installs is not\r\n"
+    "/gui/node_modules/\r\n"
+    "/gui/dist/\r\n"
+    "\r\n"
+)
+assert anchor in text, "anchor not found"
+assert "/gui/node_modules/" not in text, "already there -- the task is executed"
+p.write_text(text.replace(anchor, addition + anchor, 1), encoding="utf-8", newline="")
+EOF
+git ls-files --eol .gitignore
+git diff --stat .gitignore
+```
+
+Atteso: `i/lf w/crlf` **invariato**, e il diff dice **tre righe aggiunte** più la vuota — non seicento. ⛔ **Se
+il diff è grande, i fine-riga sono stati normalizzati**: si revoca e si rifà, gotcha dei fine-riga misti.
+
+- [ ] **Passo 4: l'installazione, e `engine-strict` nelle due direzioni**
+
+```bash
+cd gui && npm install --no-audit --no-fund; echo "EXIT=$?"; cd ..
+ls gui/package-lock.json
+cd gui && npm ci --no-audit --no-fund > /dev/null 2>&1; echo "npm ci con Node buono -> EXIT=$?"; cd ..
+```
+
+Atteso: installazione verde, `package-lock.json` creato, `npm ci` **`EXIT=0`**.
+
+⛔ **E la direzione che non si dimentica** — che il cancello del Node **morda**. Si rende impossibile
+l'intervallo, si misura, **si revoca**:
+
+```bash
+cd gui
+python -c "import json,pathlib; p=pathlib.Path('package.json'); d=json.loads(p.read_text()); d['engines']['node']='>=99.0.0'; p.write_text(json.dumps(d,indent=2)+chr(10))"
+npm ci --no-audit --no-fund > /tmp/ebadengine.txt 2>&1; echo "Node impossibile -> EXIT=$?"
+grep -m1 'EBADENGINE' /tmp/ebadengine.txt
+git checkout -- package.json
+npm ci --no-audit --no-fund > /dev/null 2>&1; echo "revocato -> EXIT=$?"
+git diff --stat package.json
+cd ..
+```
+
+Atteso: **`EXIT=1`** con `npm error code EBADENGINE`; poi, revocato, **`EXIT=0`** e `git diff` **vuoto**.
+⚠️ **`git checkout --` funziona solo se il manifesto è già in `git add`**: se non lo è, si rimette a mano il
+valore del Passo 2 e lo si verifica col `git diff`. ⛔ **La revoca si verifica col diff, non a memoria** — è la
+lezione della voce `E26` del piano del Traguardo 5.
+
+- [ ] **Passo 5: la spina dorsale — TypeScript, Vite, e il punto di innesto**
+
+⛔ **Qui non nasce interfaccia**, e non è pigrizia: la cornice e i moduli sono i compiti **13** e **14**. Ciò
+che nasce è la **catena di compilazione**, e la prova che funzioni è che un `.vue` attraversi `vue-tsc` e
+`vite build` senza che nessuno la aiuti.
+
+`gui/tsconfig.json`, **LF**:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts"]
+}
+```
+
+⛔ **`strict` e `noUncheckedIndexedAccess` non sono gusto:** il Passo 8 legge dati che arrivano da fuori, e
+senza il secondo un `array[i]` avrebbe il tipo dell'elemento anche quando l'elemento non c'è — cioè il livello 1
+direbbe di sì proprio dove serve che dica di no. ⚠️ **`typescript` è la 7.0.2 e chi esegue non dà per scontata
+una sola di queste opzioni:** la guardia è il Passo 6, e un'opzione rifiutata è una **voce d'errata** col
+`tsconfig.json` corretto — **non** uno `skipLibCheck` in più messo lì per far passare la cosa.
+
+`gui/vite.config.ts`, **LF**:
+
+```ts
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vitest/config";
+
+// ⛔ THE VITE ROOT IS `gui/` AND NOT `gui/src/`, because the fixtures the kernel generates live
+// in `gui/schema/fixtures/` -- outside `src/` and inside the root, which is what lets
+// `import.meta.glob` reach them in the browser as well as under the probes.
+export default defineConfig({
+  plugins: [vue()],
+  test: {
+    // ⚠️ `node` AND NOT `jsdom`: nothing in this task touches a DOM. `jsdom` arrives with the
+    // components, in the task that has something to render -- a dependency without a consumer
+    // is the trade P-2 already refused for `@playwright/test`.
+    environment: "node",
+    include: ["src/**/*.test.ts"],
+  },
+});
+```
+
+`gui/index.html`, **LF**:
+
+```html
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Harness</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
+```
+
+⚠️ **`lang="it"` è una scelta e non un default:** G21 dice italiano solo, e uno screen reader sceglie da qui la
+voce con cui legge.
+
+`gui/src/main.ts` e `gui/src/App.vue`, **LF**:
+
+```ts
+import { createApp } from "vue";
+
+import App from "./App.vue";
+
+createApp(App).mount("#app");
+```
+
+```vue
+<script setup lang="ts">
+// ⛔ THE FRAME AND THE MODULES ARE TASKS 13 AND 14. What this component exists to prove is that
+// a single-file component crosses `vue-tsc` and `vite build` at all -- the web world's level 1.
+// Anything drawn here would have to be deleted by the task that draws the real one.
+import { MESSAGE_KINDS } from "./schema/parse";
+</script>
+
+<template>
+  <main>
+    <p>{{ MESSAGE_KINDS.length }}</p>
+  </main>
+</template>
+```
+
+⛔ **E quel `MESSAGE_KINDS` nel modello non è riempitivo:** è l'unica riga che fa attraversare a `vite build` il
+grafo `App.vue → parse.ts → messages.ts → fixtures.ts`, cioè che prova che la **build vera** risolve le fixture
+e non solo le sonde. Senza, il Passo 6 sarebbe verde su un albero che non contiene niente di questo compito.
+
+- [ ] **Passo 6: `npm run build` verde — il livello 1 del mondo web**
+
+⛔ **Si lancia DOPO il Passo 9**, quando `parse.ts` e `fixtures.ts` esistono: il modello di `App.vue` li
+importa, quindi prima di allora il rosso direbbe *«manca il file»* e non direbbe niente sulla catena. ⚠️ **Sta
+scritto qui e non là** perché è di questo passo che è la configurazione; chi esegue segna la casella quando il
+comando gira.
+
+```bash
+cd gui && npm run build; echo "EXIT=$?"; cd ..
+ls gui/dist/index.html
+git status --porcelain gui | head
+```
+
+Atteso: **`EXIT=0`**; `dist/index.html` esiste; e in `git status` **nessuna** riga di `gui/dist/` o
+`gui/node_modules/` — che è la seconda direzione della prova di **D38**: le due righe di `.gitignore` mordono.
+
+- [ ] **Passo 7: i tipi del filo, `gui/src/schema/messages.ts`**
+
+⛔ **Sono lo SPECCHIO dei tipi di `crates/kernel/src/wire/ipc.rs`, non un modello di presentazione**, e le due
+regole di **D35** sono la ragione per cui si assomigliano così tanto: ogni `u64` è una **stringa**, e i nomi dei
+campi restano quelli di Rust. Un `camelCase` qui sarebbe una tabella di traduzione, cioè una seconda definizione
+che deriva in silenzio.
+
+```ts
+/**
+ * ⛔ EVERY `u64` CROSSES AS A DECIMAL STRING, and this alias is where that is said once.
+ * `BuildStamp` is FNV-1a over the whole canonical set, so it passes `Number.MAX_SAFE_INTEGER`
+ * as a matter of course: as a JSON number the reader would round it and then compare two
+ * equally rounded values, which is green and false. Arithmetic on one of these goes through
+ * `BigInt`, never through `Number`.
+ */
+export type U64 = string;
+
+export type Protection = "AsSystemAccount";
+export type PolicyName = "Remote" | "Local";
+export type Access = "Read" | "Write";
+export type Provenance = "Trusted" | "Untrusted";
+export type ComputeClass = "Realtime" | "Interactive" | "Batch";
+
+export interface DegradationReport {
+  vram_exhausted: boolean;
+  routing_degraded: boolean;
+}
+
+export interface PolicyReport {
+  policy: PolicyName;
+  allocated: U64;
+  total: U64;
+}
+
+export interface Triple {
+  tool: string;
+  resource: string;
+  operation: Access;
+}
+
+export interface Call {
+  function: string;
+  argument: string;
+}
+
+export interface StepSummary {
+  step: U64;
+  function: string;
+  done: boolean;
+}
+
+export type LayoutState =
+  | { state: "Package"; bytes: number[] }
+  | { state: "Nothing" }
+  | { state: "Unavailable" };
+
+export type Preemption = { kind: "Never" } | { kind: "After"; grace_ms: U64 };
+
+export interface GrantRequest {
+  reserved_vram: U64;
+  compute_class: ComputeClass;
+  preemption: Preemption;
+}
+
+export type Verdict =
+  | { verdict: "Granted" }
+  | { verdict: "Queued" }
+  | { verdict: "Refused"; asked: U64; ceiling: U64 };
+
+/**
+ * One message on the `ipc` wire, mirroring `kernel::wire::ipc::IpcMessage`.
+ *
+ * ⛔ ONE UNION FOR BOTH DIRECTIONS, as I4 has it on the Rust side. Which four the gui may send
+ * is not a second list: `OutboundMessage` in `../transport/bridge` derives them from this one.
+ */
+export type IpcMessage =
+  | { kind: "Hello"; value: U64 }
+  | { kind: "Accepted"; value: Protection }
+  | { kind: "StaleBuild"; value: U64 }
+  | { kind: "Degradation"; value: DegradationReport }
+  | { kind: "Policy"; value: PolicyReport }
+  | { kind: "Invoke"; value: Call }
+  | { kind: "PermissionRequired"; value: Triple }
+  | { kind: "Approve"; triple: Triple; call: Call }
+  | { kind: "Token"; text: string; provenance: Provenance }
+  | { kind: "Layout"; value: LayoutState }
+  | { kind: "SaveLayout"; value: number[] }
+  | { kind: "Steps"; value: StepSummary[] }
+  | { kind: "Request"; value: GrantRequest }
+  | { kind: "Verdict"; value: Verdict };
+```
+
+- [ ] **Passo 8: il lettore a tempo d'esecuzione, `gui/src/schema/parse.ts`**
+
+⛔ **UN TIPO TYPESCRIPT NON ESISTE A TEMPO D'ESECUZIONE, ed è il punto di tutto questo passo.** Scrivere
+`const message: IpcMessage = JSON.parse(text)` non prova **niente**: il tipo è cancellato, e la sonda del
+Passo 10 sarebbe verde su qualunque JSON. Serve un lettore che **rifiuti**, e un elenco delle specie che esista
+davvero quando il programma gira.
+
+```ts
+import type {
+  Access, Call, ComputeClass, DegradationReport, GrantRequest, IpcMessage, LayoutState,
+  PolicyName, PolicyReport, Preemption, Protection, Provenance, StepSummary, Triple, U64, Verdict,
+} from "./messages";
+
+/**
+ * What a malformed message raises. ⚠️ AN ERROR AND NOT A `null`: a caller that forgets to check
+ * a `null` carries on with a hole, while one that forgets a `catch` stops loudly.
+ */
+export class SchemaError extends Error {}
+
+function fail(where: string, raw: unknown): never {
+  throw new SchemaError(`${where}: unexpected ${JSON.stringify(raw)}`);
+}
+
+function object(raw: unknown, where: string): Record<string, unknown> {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) fail(where, raw);
+  return raw as Record<string, unknown>;
+}
+
+function text(raw: unknown, where: string): string {
+  if (typeof raw !== "string") fail(where, raw);
+  return raw;
+}
+
+function flag(raw: unknown, where: string): boolean {
+  if (typeof raw !== "boolean") fail(where, raw);
+  return raw;
+}
+
+/**
+ * ⛔ A `u64` IS A STRING OF DIGITS AND IS CHECKED AS ONE. Accepting a number here would let
+ * exactly the rounding D35 exists to prevent back in through the reader.
+ */
+function u64(raw: unknown, where: string): U64 {
+  if (typeof raw !== "string" || !/^[0-9]+$/.test(raw)) fail(where, raw);
+  return raw;
+}
+
+function among<T extends string>(raw: unknown, allowed: readonly T[], where: string): T {
+  const value = text(raw, where);
+  if (!allowed.includes(value as T)) fail(where, raw);
+  return value as T;
+}
+
+function bytes(raw: unknown, where: string): number[] {
+  if (!Array.isArray(raw)) fail(where, raw);
+  return raw.map((byte, index) => {
+    if (typeof byte !== "number" || !Number.isInteger(byte) || byte < 0 || byte > 255) {
+      fail(`${where}[${index}]`, byte);
+    }
+    return byte;
+  });
+}
+
+function triple(raw: unknown, where: string): Triple {
+  const value = object(raw, where);
+  return {
+    tool: text(value.tool, `${where}.tool`),
+    resource: text(value.resource, `${where}.resource`),
+    operation: among<Access>(value.operation, ["Read", "Write"], `${where}.operation`),
+  };
+}
+
+function call(raw: unknown, where: string): Call {
+  const value = object(raw, where);
+  return {
+    function: text(value.function, `${where}.function`),
+    argument: text(value.argument, `${where}.argument`),
+  };
+}
+
+function layoutState(raw: unknown, where: string): LayoutState {
+  const value = object(raw, where);
+  const state = among(value.state, ["Package", "Nothing", "Unavailable"] as const, `${where}.state`);
+  if (state === "Package") return { state, bytes: bytes(value.bytes, `${where}.bytes`) };
+  return { state };
+}
+
+function preemption(raw: unknown, where: string): Preemption {
+  const value = object(raw, where);
+  const kind = among(value.kind, ["Never", "After"] as const, `${where}.kind`);
+  if (kind === "After") return { kind, grace_ms: u64(value.grace_ms, `${where}.grace_ms`) };
+  return { kind };
+}
+
+function grantRequest(raw: unknown, where: string): GrantRequest {
+  const value = object(raw, where);
+  return {
+    reserved_vram: u64(value.reserved_vram, `${where}.reserved_vram`),
+    compute_class: among<ComputeClass>(
+      value.compute_class,
+      ["Realtime", "Interactive", "Batch"],
+      `${where}.compute_class`,
+    ),
+    preemption: preemption(value.preemption, `${where}.preemption`),
+  };
+}
+
+function verdict(raw: unknown, where: string): Verdict {
+  const value = object(raw, where);
+  const which = among(value.verdict, ["Granted", "Queued", "Refused"] as const, `${where}.verdict`);
+  if (which === "Refused") {
+    return {
+      verdict: which,
+      asked: u64(value.asked, `${where}.asked`),
+      ceiling: u64(value.ceiling, `${where}.ceiling`),
+    };
+  }
+  return { verdict: which };
+}
+
+type Parser<K extends IpcMessage["kind"]> =
+  (raw: Record<string, unknown>) => Extract<IpcMessage, { kind: K }>;
+
+/**
+ * ⛔ A MAPPED TYPE AND NOT A `switch`, and it buys BOTH directions with one declaration.
+ * Forward: a variant added to `IpcMessage` and forgotten here is a COMPILE error -- level 1,
+ * not a probe. Backward: `Object.keys` gives the list of kinds AT RUN TIME, which a TypeScript
+ * union cannot be asked for because it is erased, and the fixture probe needs exactly that list.
+ */
+const PARSERS: { [K in IpcMessage["kind"]]: Parser<K> } = {
+  Hello: (raw) => ({ kind: "Hello", value: u64(raw.value, "Hello.value") }),
+  Accepted: (raw) => ({
+    kind: "Accepted",
+    value: among<Protection>(raw.value, ["AsSystemAccount"], "Accepted.value"),
+  }),
+  StaleBuild: (raw) => ({ kind: "StaleBuild", value: u64(raw.value, "StaleBuild.value") }),
+  Degradation: (raw) => {
+    const value = object(raw.value, "Degradation.value");
+    const report: DegradationReport = {
+      vram_exhausted: flag(value.vram_exhausted, "Degradation.value.vram_exhausted"),
+      routing_degraded: flag(value.routing_degraded, "Degradation.value.routing_degraded"),
+    };
+    return { kind: "Degradation", value: report };
+  },
+  Policy: (raw) => {
+    const value = object(raw.value, "Policy.value");
+    const report: PolicyReport = {
+      policy: among<PolicyName>(value.policy, ["Remote", "Local"], "Policy.value.policy"),
+      allocated: u64(value.allocated, "Policy.value.allocated"),
+      total: u64(value.total, "Policy.value.total"),
+    };
+    return { kind: "Policy", value: report };
+  },
+  Invoke: (raw) => ({ kind: "Invoke", value: call(raw.value, "Invoke.value") }),
+  PermissionRequired: (raw) => ({
+    kind: "PermissionRequired",
+    value: triple(raw.value, "PermissionRequired.value"),
+  }),
+  Approve: (raw) => ({
+    kind: "Approve",
+    triple: triple(raw.triple, "Approve.triple"),
+    call: call(raw.call, "Approve.call"),
+  }),
+  Token: (raw) => ({
+    kind: "Token",
+    text: text(raw.text, "Token.text"),
+    provenance: among<Provenance>(raw.provenance, ["Trusted", "Untrusted"], "Token.provenance"),
+  }),
+  Layout: (raw) => ({ kind: "Layout", value: layoutState(raw.value, "Layout.value") }),
+  SaveLayout: (raw) => ({ kind: "SaveLayout", value: bytes(raw.value, "SaveLayout.value") }),
+  Steps: (raw) => {
+    if (!Array.isArray(raw.value)) fail("Steps.value", raw.value);
+    const summaries: StepSummary[] = raw.value.map((entry, index) => {
+      const value = object(entry, `Steps.value[${index}]`);
+      return {
+        step: u64(value.step, `Steps.value[${index}].step`),
+        function: text(value.function, `Steps.value[${index}].function`),
+        done: flag(value.done, `Steps.value[${index}].done`),
+      };
+    });
+    return { kind: "Steps", value: summaries };
+  },
+  Request: (raw) => ({ kind: "Request", value: grantRequest(raw.value, "Request.value") }),
+  Verdict: (raw) => ({ kind: "Verdict", value: verdict(raw.value, "Verdict.value") }),
+};
+
+/** Every kind the union declares, AT RUN TIME. See the note on `PARSERS`. */
+export const MESSAGE_KINDS: readonly IpcMessage["kind"][] =
+  Object.keys(PARSERS) as IpcMessage["kind"][];
+
+export function parseIpcMessage(raw: unknown): IpcMessage {
+  const value = object(raw, "message");
+  const kind = text(value.kind, "message.kind");
+  if (!Object.prototype.hasOwnProperty.call(PARSERS, kind)) fail("message.kind", kind);
+  const parse = PARSERS[kind as IpcMessage["kind"]] as Parser<IpcMessage["kind"]>;
+  return parse(value);
+}
+```
+
+- [ ] **Passo 9: il caricatore delle fixture, `gui/src/schema/fixtures.ts`**
+
+```ts
+import type { IpcMessage } from "./messages";
+import { parseIpcMessage } from "./parse";
+
+export interface Fixture {
+  /** The file name the kernel's generator produced, e.g. `00-hello.json`. */
+  file: string;
+  message: IpcMessage;
+}
+
+/**
+ * ⛔ `import.meta.glob` AND NOT `fs`, and it is a requirement rather than a taste: the fake
+ * bridge must run IN THE BROWSER (§6a of the milestone-2 design), where there is no `fs`. Vite
+ * inlines these at build time and vitest resolves them the same way, so the probes and the
+ * browser read THE SAME files -- one loader, not two that can disagree.
+ *
+ * ⚠️ THE PATH REACHES OUTSIDE `src/` on purpose: `gui/schema/fixtures/` is written by
+ * `regenerate_the_fixtures` in `crates/kernel/tests/ipc_wire.rs`, and nothing under `gui/src/`
+ * may write there.
+ */
+const FILES = import.meta.glob<unknown>("../../schema/fixtures/*.json", {
+  eager: true,
+  import: "default",
+});
+
+export function loadFixtures(): Fixture[] {
+  return Object.entries(FILES)
+    .map(([path, value]) => ({
+      file: path.slice(path.lastIndexOf("/") + 1),
+      message: parseIpcMessage(value),
+    }))
+    .sort((left, right) => left.file.localeCompare(right.file));
+}
+```
+
+⚠️ **`loadFixtures` PARSA, quindi fallisce forte:** una fixture che lo schema non riconosce fa cadere il
+caricatore invece di consegnare un oggetto storto al ponte finto. È la stessa scelta di `SchemaError`.
+
+- [ ] **Passo 10: la sonda dello schema, `gui/src/schema/schema.test.ts`**
+
+⛔ **DICHIARATO INVECE CHE NASCOSTO: qui il rosso-prima classico NON è disponibile, e il perché conta.** In
+`test-driven-development` la sonda precede l'implementazione; ma ciò che questa sonda esamina — le fixture — lo
+produce il compito **3**, e i tipi che confronta sono il Passo 7. Una sonda scritta prima sarebbe rossa per
+*«manca il modulo»*, che è un rosso che non parla del difetto. ✅ **La non-vacuità si compra al Passo 13**, con
+le mutazioni una per volta, ed è l'unica forma che qui prova qualcosa.
+
+⚠️ **Il solo rosso vero disponibile ora si misura prima di scrivere il file**, e vale la riga che costa:
+
+```bash
+cd gui && npm test; echo "EXIT=$?"; cd ..
+```
+
+Atteso: **nessun file di sonda**, quindi `vitest` non ha niente da fare. ⛔ **Che quel `EXIT` sia 0 o 1 lo dice
+il comando, non questa riga** — e se è **0**, allora `npm test` verde **non significa niente** finché una sonda
+non esiste: è la stessa forma del verde per insiemi vuoti che il Traguardo 4 ha imparato tre volte, e il
+Passo 14 la richiude confrontando il numero di sonde con zero.
+
+`gui/src/schema/schema.test.ts`, **LF**:
+
+```ts
+import { describe, expect, it } from "vitest";
+
+import { loadFixtures } from "./fixtures";
+import { MESSAGE_KINDS, SchemaError, parseIpcMessage } from "./parse";
+
+describe("the committed fixtures and the TypeScript types", () => {
+  it("parses every fixture the kernel generated", () => {
+    // ⛔ `loadFixtures` PARSES, so this call IS the assertion: a field renamed on the Rust side,
+    // a variant added, a `u64` written as a number -- each makes `SchemaError` come out of here
+    // with the path of the field that disagreed.
+    const fixtures = loadFixtures();
+    expect(fixtures.length).toBeGreaterThan(0);
+  });
+
+  it("has a fixture for every kind the union declares, and no fixture for any other", () => {
+    // ⛔ BOTH DIRECTIONS IN ONE ASSERTION, and it is why `MESSAGE_KINDS` exists at run time.
+    // Left to right: a variant the kernel added and nobody generated is MISSING here. Right to
+    // left: a variant the kernel REMOVED leaves its file behind and shows up as EXTRA.
+    const fromFixtures = new Set(loadFixtures().map((fixture) => fixture.message.kind));
+    expect([...fromFixtures].sort()).toEqual([...MESSAGE_KINDS].sort());
+  });
+
+  it("carries the build stamp as a string, because it does not fit a JSON number", () => {
+    const hello = loadFixtures().find((fixture) => fixture.message.kind === "Hello");
+    expect(hello).toBeDefined();
+    // ⛔ THE ORACLE IS THE ROUND TRIP THROUGH `BigInt`, not `typeof`. A stamp read as a number
+    // would already have been rounded by `JSON.parse` before anything here could look at it,
+    // and the rounded value compares equal to itself -- green and false (D35).
+    const value = (hello?.message as { kind: "Hello"; value: string }).value;
+    expect(BigInt(value).toString()).toBe(value);
+  });
+
+  it("refuses a message whose kind it does not know", () => {
+    expect(() => parseIpcMessage({ kind: "Whatever" })).toThrow(SchemaError);
+  });
+
+  it("refuses a u64 written as a number", () => {
+    expect(() => parseIpcMessage({ kind: "Hello", value: 4096 })).toThrow(SchemaError);
+  });
+});
+```
+
+⚠️ **Le ultime due sonde sono le contro-sonde del lettore**, e senza di esse `parseIpcMessage` potrebbe
+accettare tutto e le prime tre resterebbero verdi.
+
+```bash
+cd gui && npm test; echo "EXIT=$?"; cd ..
+```
+
+Atteso: **`EXIT=0`**, e nell'uscita il numero di sonde passate.
+
+- [ ] **Passo 11: il ponte, `gui/src/transport/bridge.ts`**
+
+```ts
+import type { IpcMessage } from "../schema/messages";
+
+/**
+ * The four the gui sends (§6a of the milestone-2 design), stated ONCE.
+ *
+ * ⛔ DERIVED FROM `IpcMessage` AND NOT RETYPED: a variant renamed on the wire becomes a compile
+ * error here, where a second hand-written list would simply stop matching and say nothing.
+ */
+export type OutboundMessage = Extract<
+  IpcMessage,
+  { kind: "Hello" | "Invoke" | "Approve" | "SaveLayout" }
+>;
+
+export type Listener = (message: IpcMessage) => void;
+
+/**
+ * The seam between the SPA and whatever shell it runs in.
+ *
+ * ⛔ THE SPA NEVER TOUCHES A SOCKET (§6a), and this interface is where that is enforced rather
+ * than asked for: there is no connect, no address, no frame, no build stamp to check. Who
+ * decodes lives UNDER this seam -- for Q1 of SP-8, the shell's Node main process -- and that is
+ * what lets the SPA be developed and probed in a browser against `createFakeBridge` before any
+ * shell exists.
+ *
+ * ⚠️ `listen` RETURNS ITS OWN UNSUBSCRIBE, rather than offering a `remove`: a listener that can
+ * only be removed by handing back the same function reference is a leak waiting for the first
+ * component that registers an inline arrow.
+ */
+export interface Bridge {
+  send(message: OutboundMessage): void;
+  listen(listener: Listener): () => void;
+}
+```
+
+- [ ] **Passo 12: la finta, `gui/src/transport/fakeBridge.ts`**
+
+```ts
+import type { IpcMessage } from "../schema/messages";
+import { loadFixtures } from "../schema/fixtures";
+
+import type { Bridge, Listener, OutboundMessage } from "./bridge";
+
+export interface FakeBridge extends Bridge {
+  /** What the SPA has sent, in order. ⚠️ The observable the probes assert on. */
+  readonly sent: readonly OutboundMessage[];
+  /** Delivers the fixture of that kind. Throws if the kernel never generated one. */
+  deliver(kind: IpcMessage["kind"]): void;
+  /** Delivers every fixture, in file order -- which is the canonical set's order. */
+  deliverAll(): void;
+}
+
+/**
+ * ⛔ IT REPLAYS THE FIXTURES AND INVENTS NOTHING, which is the whole reason it is worth having.
+ * A fake that made up its own messages would let the SPA be built against a shape the core
+ * never sends, and the divergence would surface in the shell -- that is, in the one place this
+ * plan does not build.
+ */
+export function createFakeBridge(): FakeBridge {
+  const fixtures = loadFixtures();
+  const sent: OutboundMessage[] = [];
+  const listeners = new Set<Listener>();
+
+  const emit = (message: IpcMessage): void => {
+    for (const listener of [...listeners]) listener(message);
+  };
+
+  return {
+    sent,
+    send(message) {
+      sent.push(message);
+    },
+    listen(listener) {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    deliver(kind) {
+      const fixture = fixtures.find((candidate) => candidate.message.kind === kind);
+      if (fixture === undefined) throw new Error(`no fixture for ${kind}`);
+      emit(fixture.message);
+    },
+    deliverAll() {
+      for (const fixture of fixtures) emit(fixture.message);
+    },
+  };
+}
+```
+
+⚠️ **`[...listeners]` e non `listeners` nel ciclo:** un ascoltatore che si cancella mentre riceve modificherebbe
+l'insieme durante l'iterazione. Costa una copia e toglie una classe di difetti che comparirebbe solo col
+terzo componente.
+
+- [ ] **Passo 13: la sonda del ponte, e le due direzioni misurate**
+
+`gui/src/transport/fakeBridge.test.ts`, **LF**:
+
+```ts
+import { describe, expect, it } from "vitest";
+
+import { MESSAGE_KINDS } from "../schema/parse";
+
+import { createFakeBridge } from "./fakeBridge";
+
+describe("the fake bridge", () => {
+  it("delivers a fixture to whoever is listening", () => {
+    const bridge = createFakeBridge();
+    const heard: string[] = [];
+    bridge.listen((message) => heard.push(message.kind));
+    bridge.deliver("Policy");
+    expect(heard).toEqual(["Policy"]);
+  });
+
+  it("delivers every kind, so the SPA can be built against all of them", () => {
+    const bridge = createFakeBridge();
+    const heard = new Set<string>();
+    bridge.listen((message) => heard.add(message.kind));
+    bridge.deliverAll();
+    expect([...heard].sort()).toEqual([...MESSAGE_KINDS].sort());
+  });
+
+  it("stops delivering to a listener that unsubscribed", () => {
+    const bridge = createFakeBridge();
+    const heard: string[] = [];
+    const stop = bridge.listen((message) => heard.push(message.kind));
+    bridge.deliver("Policy");
+    stop();
+    bridge.deliver("Policy");
+    // ⛔ THE SECOND DELIVERY IS THE POINT: without it the probe would be green on a `listen`
+    // that never removes anything, because a listener that keeps hearing still heard once.
+    expect(heard).toEqual(["Policy"]);
+  });
+
+  it("records what the SPA sends, and nothing else", () => {
+    const bridge = createFakeBridge();
+    bridge.send({ kind: "Hello", value: "1" });
+    bridge.deliver("Accepted");
+    expect(bridge.sent).toEqual([{ kind: "Hello", value: "1" }]);
+  });
+});
+```
+
+⛔ **E ora le mutazioni, UNA PER VOLTA, ciascuna compilata, eseguita e REVOCATA**, con `git diff` a zero alla
+fine — la forma che la disciplina dell'audit chiede al quarto passo:
+
+| | La mutazione | Atteso |
+|---|---|---|
+| **G1** | in `parse.ts`, `u64` accetta anche un `number` (togli il ramo `typeof raw !== "string"`) | `refuses a u64 written as a number` **rosso** |
+| **G2** | in `parse.ts`, `parseIpcMessage` non controlla più che `kind` sia in `PARSERS` | `refuses a message whose kind it does not know` **rosso** |
+| **G3** | togli **un** file `.json` da `gui/schema/fixtures/` | `has a fixture for every kind…` **rosso**, e il messaggio nomina la specie mancante ⚠️ **poi si RIPRISTINA col generatore**, non a mano |
+| **G4** | in un `.json`, rinomina `vram_exhausted` in `vramExhausted` | `parses every fixture…` **rosso** con `SchemaError`, e il percorso del campo nel messaggio — cioè la prova che la regola dei nomi di **D35** morde |
+| **G5** | in `fakeBridge.ts`, `listen` rende `() => {}` invece di cancellare | `stops delivering to a listener that unsubscribed` **rosso** |
+
+```bash
+cd gui && npm test; echo "EXIT=$?"; cd ..
+git status --porcelain gui/schema/fixtures
+git diff --stat gui
+```
+
+Atteso a mutazioni revocate: **`EXIT=0`**, `git status` **vuoto** su `gui/schema/fixtures`, `git diff` **vuoto**
+su `gui`. ⛔ **La revoca si verifica col diff, non a memoria.**
+
+- [ ] **Passo 14: il cancello, e il commit**
+
+```bash
+cd gui && npm run build && npm test; echo "EXIT=$?"; cd ..
+grep -rc "it(" gui/src/schema/schema.test.ts gui/src/transport/fakeBridge.test.ts
+bash scripts/gate.sh 2>&1 | tail -3
+bash scripts/check-docs.sh 2>&1 | tail -3
+git ls-files --eol .gitignore
+tr -cd '\r' < gui/package.json | wc -c
+git status --porcelain
+```
+
+Atteso: `EXIT=0`; le due sonde con **più di zero** `it(` ciascuna — che è la chiusura del rosso vacuo del
+Passo 10; `GATE GREEN`; `OK`; `.gitignore` ancora `i/lf w/crlf`; **zero** CR nei file nuovi, che nascono LF; e
+in `git status` **solo** ciò che questo compito nomina, **niente** `node_modules` né `dist`.
+
+⚠️ **Il cancello non conosce ancora `gui/`** — lo impara al compito **15** — quindi qui `gate.sh` prova che il
+mondo Rust è **intatto**, non che la SPA funzioni: quella la provano `npm run build` e `npm test`, a mano.
+
+```bash
+git add gui .gitignore docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+git commit -m "gui(compito 11): gui/ nasce -- Vite, Vue 3 e TypeScript con engines.node preso dall'intersezione misurata (D37) e .npmrc engine-strict provato nelle due direzioni (P-64), i tipi del filo in src/schema con il lettore a tempo d'esecuzione e l'elenco delle specie, il ponte e la sua finta che rilegge le fixture; le due righe di .gitignore col compito che le crea (D38)"
+git push
+```
+
+**Criterio di chiusura del compito 11** — ogni riga è un comando, non una lettura:
+
+- [ ] `cd gui && npm run build; echo $?` → **0**, e `gui/dist/index.html` esiste
+- [ ] `cd gui && npm test; echo $?` → **0**
+- [ ] le fixture e le specie combaciano nelle **due** direzioni: è la sonda `has a fixture for every kind the union declares, and no fixture for any other`, e `ls gui/schema/fixtures/*.json | wc -l` confrontato con l'uscita di `npm test` — **nessuno dei due numeri si scrive qui**
+- [ ] `engine-strict` morde: con `engines.node` reso impossibile, `npm ci` esce **1** con `EBADENGINE`; revocato, esce **0** e `git diff` è vuoto (**P-64**)
+- [ ] `grep -c '^/gui/' .gitignore` → **2**, e `git ls-files --eol .gitignore` → `i/lf w/crlf` **invariato**
+- [ ] `git status --porcelain` **vuoto** dopo il commit — cioè `node_modules/` e `dist/` sono davvero ignorati (**D38**)
+- [ ] `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK`
+- [ ] le cinque mutazioni del Passo 13 sono state eseguite **una per volta** e revocate, e `git diff gui` è vuoto
+- [ ] ⛔ **nessun byte è stato decodificato in TypeScript** — `grep -rn "bincode" gui/ --include=*.ts --include=*.json | grep -v package-lock` non rende nulla (**D36**)
+
+---
+
 
 ---
 

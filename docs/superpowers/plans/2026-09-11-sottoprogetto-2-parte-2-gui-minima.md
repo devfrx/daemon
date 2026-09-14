@@ -138,8 +138,8 @@ Valgono per ogni compito, senza che il compito li ripeta.
 | **10** | la **campagna DST del 2** in `simulator`, e la sua riga nel settimo passo del cancello | uno | ⬜ |
 | **11** | **`gui/` nasce**: Vite, Vue 3, TypeScript, `engines.node` e `.npmrc`; `schema/` coi tipi e le fixture, `transport/` col ponte e la sua finta | uno | ⬜ |
 | **12** | il **core finto** `gui/fake-core/`: l'attività vera su porte in memoria, il rubinetto, le sonde | uno | ⬜ |
-| **13** | la **SPA, la cornice**: `dockview`, la barra delle viste, la fascia, la striscia, il cassetto, le tre viste come JSON, `stores/`, `tokens/`, `locales/it.json` | uno | ⬜ |
-| **14** | la **SPA, i moduli**: Stato, Permessi con la finestra di conferma, Chat col markdown e la provenienza, Passi, il segnaposto; l'accessibilità e le scorciatoie sopra `moveTo` | uno | ⬜ |
+| **13** | la **SPA, la cornice**: `dockview`, la barra delle viste, la fascia, la striscia, il cassetto, `panels/` col registro dei tipi e le **tre viste come JSON**, `stores/`, `tokens/`, `locales/it.json`. ⛔ **E il SEGNAPOSTO, arrivato qui dalla riga 14 col richiamo del 2026-09-14 (D47)**: `dockview` chiede alla fabbrica un componente **per nome**, quindi senza di esso la cornice si monta e non mostra nulla — con `npm run build` verde | uno | ⬜ |
+| **14** | la **SPA, i moduli**: Stato, Permessi con la finestra di conferma, Chat col markdown e la provenienza, Passi, **e Impostazioni col cambio di policy VRAM — richiamo del 2026-09-14, P-85**, senza il quale nella SPA del 2 nessuno manda mai un `Invoke` e il registro di ADR-0038 resta senza il suo primo invocatore; l'accessibilità e le scorciatoie sopra `moveTo`. ⛔ **Il segnaposto è passato al 13 — richiamo del 2026-09-14, D47**: qui restano i moduli **veri**, e il segnaposto non è un modulo ma il pezzo della cornice che dice *«questo tipo non c'è ancora»* | uno | ⬜ |
 | **15** | il **passo del cancello**: `scripts/gate-gui.sh`, la riga in `gate.sh`, `.gitignore`, `actions/setup-node` nella CI | uno | ⬜ |
 | **16** | **X-1 e X-3**: la matrice Windows nella CI, `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh` | uno | ⬜ |
 | **17** | la **chiusura**: i documenti in ogni casa — la §12 del compendio, `README.md`, la roadmap, tracciabilità, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — e la Definizione di «fatto» della parte 2, coi comandi | uno | ⬜ |
@@ -1938,6 +1938,316 @@ riapre una misura già fatta.
 **Conseguenza:** nessuna `D` — la decisione è **D34**, confermata; i richiami datati vanno dentro **D34** e
 nella tabella di **P-59**.
 
+### P-75 — Il blocco *Interfaces* del compito 11 dice `{ file, kind, value }` e il suo Passo 9 detta `{ file, message }`: il compito 13 non compilerebbe
+
+⛔ **La trappola che l'ottava chiusura ha scritto — *«ogni blocco *Interfaces* si RICENSISCE contro il codice che
+il suo Passo detta»* — colta alla prima passata che la applica**, e su una riga che tre compiti leggono per i nomi
+esatti.
+
+Misurato il 2026-09-14, leggendo le due righe una contro l'altra invece di fidarsi della prima:
+
+| Dove | Che cosa dice |
+|---|---|
+| il blocco *Interfaces* del compito 11 | `interface Fixture { file: string; kind: string; value: unknown }` |
+| il **Passo 9** dello stesso compito, che è il codice dettato | `interface Fixture { file: string; message: IpcMessage }` |
+| il **Passo 12** dello stesso compito, che la consuma | `fixture.message.kind` e `emit(fixture.message)` |
+
+⛔ **Due campi su tre sono diversi, e il Passo 12 dà ragione al Passo 9.** Il blocco *Interfaces* è ciò che un
+implementatore fresco legge — lo dice la skill: *«A task's implementer sees only their own task; this block is how
+they learn the names and types neighboring tasks use»* — quindi un compito 13 scritto contro di esso userebbe
+`fixture.value` e `fixture.kind`, e `vue-tsc` lo **rifiuterebbe**. ⚠️ **E non lo rifiuterebbe subito:** il rosso
+arriverebbe al Passo che lancia `npm run build`, cioè dopo che il testo è stato scritto.
+
+📌 **Da dove viene, perché non si ripeta:** `kind` e `value` sono i nomi che la **§8 del 2** usa a parole per la
+riga della SPA — *«ogni variante decodificata dai byte e confrontata col valore atteso in JSON»* — e il blocco
+*Interfaces* fu scritto guardando la frase invece del codice del proprio Passo. **Una parafrasi del disegno non è
+una firma.**
+
+⛔ **Corretto nel compito 11 e non con una voce d'errata**, come **P-35**, **P-56** e **P-62**: il compito 11 **non
+è eseguito**. Il blocco *Interfaces* prende la forma del Passo 9, e il Passo 9 non si tocca.
+
+**Conseguenza:** nessuna `D` — è una correzione, non una scelta.
+
+### P-76 — La finta del compito 11 «non inventa nulla», e le fixture portano UNO dei tre stati di `Layout`: due sonde del 13 non sono raggiungibili con essa
+
+⛔ **Domanda 2 — la sonda manca, e non si vede leggendo:** il compito 13 deve provare che *«archivio vuoto →
+`Layout` «niente» → la GUI usa i default»* (riga 6 della §2 della stella polare) e che *«archivio che non si apre →
+`Layout` dice «non disponibile»»* (decisione 35, riga della §8 del 2). Misurato il 2026-09-14 contro il testo
+dettato dei compiti 3 e 11:
+
+| Che cosa | Il comando | Risposta |
+|---|---|---|
+| le varianti di `LayoutState` | il blocco `pub enum LayoutState` del Passo 2 del compito 3 | **tre**: `Package`, `Nothing`, `Unavailable` |
+| quale stato entra nell'insieme canonico | `grep -n 'IpcMessage::Layout' <questo file>` | **uno**, `Package(vec![0x7B, 0x7D])` |
+| che cosa consegna la finta | il Passo 12 del compito 11 | *«Delivers the fixture of that kind»* — quindi `Package`, e nient'altro |
+
+⛔ **E la finta NON si allarga**, perché il suo doc argomenta contro esattamente questo: *«IT REPLAYS THE FIXTURES
+AND INVENTS NOTHING … A fake that made up its own messages would let the SPA be built against a shape the core
+never sends»*. Aggiungerle un `emit(message)` toglierebbe la proprietà per cui vale la pena averla, e
+`stamp_set()` non può portare tre `Layout` perché è **un messaggio per variante** — è ciò che il timbro di build
+misura.
+
+✅ **La via che non costa niente a nessuno dei due compiti: lo store è una funzione dei messaggi, e la sonda gli
+consegna un `IpcMessage` tipizzato.** La SPA resta costruita solo su forme che il core manda, e a garantirlo è il
+**sistema di tipi** invece della provenienza del dato: `LayoutState` ha tre varianti e non una in più, quindi una
+sonda che ne costruisce una non può inventare una forma che il core non abbia. La finta resta per i cammini che le
+fixture coprono davvero — ed è lì che serve, perché quelle sono i byte veri.
+
+📌 **La forma generale:** una finta che rigioca artefatti è un oracolo sulle **forme**, non un generatore di
+**casi**. Dove i casi sono più delle forme, il caso si costruisce e il tipo lo tiene onesto.
+
+**Conseguenza: D46.**
+
+### P-77 — Le tre viste JSON nominano tipi di modulo, e il SEGNAPOSTO è al compito 14: la cornice del 13 non avrebbe niente da montare
+
+⛔ **Domanda 5 girata IN AVANTI, e domanda 3 insieme: l'artefatto è sbagliato e compila.** La tabella della
+posizione dà al **13** *«le tre viste come JSON»* e al **14** *«il segnaposto»*. Misurato il 2026-09-14 sul codice
+dello spike, che è l'unico posto dove `dockview` è già stato montato davvero:
+
+```bash
+grep -n 'createComponent\|const tiles' spikes/gui-shell/app/src/home.ts
+```
+
+`createComponent: ({ name }) => (tiles[name] ?? tiles.tile)()` — `dockview` chiede alla fabbrica **un componente
+per nome**, e la fabbrica dello spike ha una tessera di ripiego perché altrimenti non avrebbe che cosa rendere.
+
+⛔ **Quindi al 13 la cornice si monta e non mostra nulla, e il `npm run build` è verde:** è precisamente il difetto
+che compila. E la riga della §8 del 2 che prova questo artefatto pretende **tre cose che al 13 non sarebbero
+raggiungibili**: *«le tre viste JSON si caricano, un pacchetto con un tipo sparito lo dice a parole e si chiude
+(riga 8 della §2 della stella polare), un modulo non costruito dice chi lo riempie»*. Tutte e tre vogliono un
+componente.
+
+✅ **E il segnaposto è UNO, non tredici** — decisione 17 della stella polare, *«un componente segnaposto, con nome
+e numero, per ogni modulo non costruito, non diciotto»* — quindi spostarlo non porta peso al 13: porta la sola cosa
+che rende la cornice **osservabile**. ⚠️ **Il taglio giusto è per artefatto, non per parola:** il 14 costruisce i
+moduli **veri** (Stato, Permessi, Chat, Passi), e il segnaposto non è un modulo — è il pezzo della cornice che dice
+*«questo tipo non c'è ancora»*, ed è anche il pezzo che risponde alla riga 8 della §2.
+
+📌 **È lo stesso taglio che D38 ha già rifatto su `.gitignore`:** una riga appartiene al compito che **crea** ciò
+di cui parla, non al compito che raccoglie le righe della sua specie.
+
+**Conseguenza: D47**, e il richiamo datato nelle righe 13 e 14 della tabella della posizione.
+
+### P-78 — I quattro stati della connessione non sono quattro messaggi, e il `Bridge` del compito 11 non ne esprime nessuno
+
+⛔ **Domanda 3 — l'artefatto è sbagliato, e si vede solo scrivendone l'uso da fuori.** La §6a del 2 pretende
+**quattro stati**: *«core non in esecuzione»*, *«timbro sbagliato»*, *«collegata»*, *«nessuna run»*. Misurato il
+2026-09-14 contro il contratto del compito 11 e l'enum del compito 3:
+
+| Stato della §6a | C'è un messaggio? |
+|---|---|
+| timbro sbagliato | **sì**, `StaleBuild(BuildStamp)` |
+| collegata | **sì**, per implicazione: `Accepted(Protection)` |
+| nessuna run | **no**: è l'assenza di `Token`, e nel 2 il produttore è il solo core finto |
+| core non in esecuzione | ⛔ **no, e non può esserci**: il core che non gira non manda niente |
+
+E il contratto del ponte è `interface Bridge { send(message: OutboundMessage): void; listen(listener: Listener): () => void }` — **due membri**, nessuno dei quali dice «non collegata».
+
+⛔ **La cura NON è un terzo membro nel `Bridge`.** Il ponte è la cucitura che rende la SPA indipendente dal guscio,
+e il compito 11 scrive per esteso perché è di due metodi: *«tutto ciò che il guscio sa fare — socket, timbro,
+decodifica — resta dal suo lato»*. Un `isConnected` costringerebbe **ogni** guscio a implementarlo, e nel browser
+contro la finta non significherebbe niente.
+
+✅ **Lo stato si DERIVA, ed è già tutto osservabile:** la SPA manda `Hello` e finché non arriva `Accepted` **non è
+collegata** — è lo stesso fatto, visto dal lato giusto. ⛔ **E senza soglia:** un timeout che distingua *«il core
+non gira»* da *«il core è lento»* sarebbe un numero che nessuna fonte ha misurato, e la regola di SP-7 è *«nessuna
+soglia inventata»*. La fascia dice *«il core non ha risposto»* e porta **«riprova»**, che rimanda `Hello` — cioè
+l'unica cosa che la GUI può fare, e che vale identica nei due casi che non sa distinguere.
+
+⚠️ **`nessuna run` non è uno stato della connessione ma del contenuto**, e la §6a lo dice già: *«la Chat lo dice a
+parole invece di restare vuota»*. Sta nel modulo Chat, compito **14**; la cornice non lo conosce.
+
+**Conseguenza: D48.**
+
+### P-79 — La cornice ha un PRECEDENTE MISURATO nello spike, e la lista di lettura del compito 13 non lo nominava
+
+⛔ **Sesta domanda del pre-controllo di `CLAUDE.md` in persona — *«ciò che ti smentisce può stare in un BANCO DI
+PROVA»* — e qui non smentisce: ANTICIPA.** La lista di lettura dell'ottava chiusura manda il 13 alla §6a, alla §1 e
+alla §2 della stella polare, a «Il modello della GUI», alla §9 e al blocco *Interfaces* del compito 11. **Non
+nomina `spikes/gui-shell/app/src/`**, dove le otto mosse che il proprietario ha approvato girano davvero.
+
+Misurato il 2026-09-14:
+
+```bash
+wc -l spikes/gui-shell/app/src/*.ts
+grep -n 'export class VueContent\|export function moveActive\|function lock\|function canonical\|createDockview(' spikes/gui-shell/app/src/home.ts spikes/gui-shell/app/src/vue-bridge.ts
+```
+
+| Che cosa lo spike ha già | Perché conta per il 13 |
+|---|---|
+| `VueContent` in `vue-bridge.ts` | **è** il ponte fra Vue e i pannelli che la decisione 2 della stella polare dice *«lo scriviamo noi»*, e ha già la forma che non perde memoria: una `createApp` per pannello, `unmount` su `dispose` |
+| le opzioni di `createDockview` | `theme`, `defaultTabComponent`, `dndStrategy`, `floatingGroupBounds`, `popoutUrl`, `transformFloatingGroupDrag`, `createComponent`, `createTabComponent` — **tutte** esercitate dalle otto mosse |
+| `lock(id)` | `group.locked = true` **e** `group.header.hidden = true`: è la mossa 1, il nucleo e la striscia che non si spostano. Due righe, e la seconda si dimentica |
+| `canonical()` e `firstDivergence()` | **E4 della parte 1**: `toJSON` dopo `fromJSON` è uguale solo **canonico**. Chi confronta due disposizioni per sapere se «si è fermata» confronta il canonico, o salva a ogni giro |
+| `moveActive(dir)` | la mossa 6 sopra `moveTo`, con la geometria e il ripiego che divide il gruppo — ⚠️ ed è del compito **14**, non del 13 |
+| `BigTab` | la mossa 5, e la riga che un `click` su un comando **non** deve avviare un trascinamento (`stopPropagation` su `pointerdown` e `mousedown`) |
+
+⛔ **Ciò che sale e ciò che resta si decide riga per riga, non «riusando lo spike».** È il vincolo 9 della §11 del
+compendio, scritto per `spikes/rust/`, e vale identico qui: uno spike è una **prova**, fuori dal workspace, e il
+suo codice non è un modulo da importare. ⚠️ **E due pezzi NON salgono**, perché sono dello spike e non del
+prodotto: il selettore `dnd:` della barra (serviva a misurare Q4) e `localStorage` come casa della disposizione
+(nel 2 la casa è la settima porta, I1).
+
+**Conseguenza: D49**, e la riga di lettura nel compito.
+
+### P-80 — `dockview-core` non spedisce il foglio di stile: il compito 13 installa DUE pacchetti, e il richiamo è già scritto
+
+⛔ **Trappola dell'ottava chiusura applicata — *«prima di scrivere un compito che installa qualcosa, si cerca quel
+nome in `riferimenti.md`»*** — e qui il reperto sta anche nell'errata della parte 1. Misurato il 2026-09-14:
+
+```bash
+grep -n 'dockview' docs/riferimenti.md
+grep -n 'dockview' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+grep -n 'dockview' spikes/gui-shell/app/src/main.ts
+```
+
+**E2 della parte 1**, misurato dal revisore nel browser il 2026-09-10: `dockview-core` 8.2.0 **non spedisce**
+`dist/styles/dockview.css` e non lo inietta da sé; senza le regole strutturali i gruppi si impilano nel flusso del
+documento e il gruppo galleggiante finisce fuori dal viewport. Il foglio lo spedisce il pacchetto ombrello
+`dockview`, che ha come sola dipendenza `dockview-core` e poche centinaia di byte di JS che lo riesportano. ✅ **Il
+richiamo è già nella §2 del disegno del 2** (decisione 37 della settima chiusura della parte 1), e `main.ts` dello
+spike porta `import 'dockview/dist/styles/dockview.css';` come **prima riga**.
+
+✅ **Non è una `D`: è un fatto da leggere.** Ma va scritto nel compito, perché il difetto che evita è muto —
+`npm run build` resta verde con un solo pacchetto, e il rosso lo vedrebbe solo il revisore che **guarda**, cioè il
+passo più caro del piano. ⚠️ **E l'API resta `dockview-core`:** il pacchetto in più entra per il CSS, non per
+l'interfaccia, e nessun `import` lo prende per altro.
+
+**Conseguenza:** nessuna `D`; il fatto entra nel compito col comando che lo rifà.
+
+### P-81 — **D3** manda al compito 13 la rilettura di `markdown-it`, e contro la tabella della posizione il renderer è al 14
+
+⛔ **La trappola che la settima chiusura ha scritto — *«ogni numero di compito si ricensisce contro la tabella
+della posizione»* — ricaduta, e questa è la seconda volta.** Misurato il 2026-09-14:
+
+| Dove | Che cosa dice |
+|---|---|
+| la decisione **D3** | *«il compito **13** rilegge quelle tre proprietà dentro il `.tgz` della 15.0.2 prima di usarla»* |
+| la tabella «Che cosa aspetta ora il compito 13» dell'ottava chiusura | *«il renderer nasce col **13/14**»* — già incerta |
+| la riga **13** della tabella della posizione | la cornice: `dockview`, la barra, la fascia, la striscia, il cassetto, le tre viste, `stores/`, `tokens/`, `locales/it.json` — **nessun markdown** |
+| la riga **14** | *«Chat col **markdown** e la provenienza»* |
+
+⛔ **Quindi il 13 rileggerebbe dentro un pacchetto che non installa**, e **D40** gli dà ragione: elenca
+`markdown-it` fra ciò che *«arriva coi compiti 13, 14 e 15, che li consumano»* — e il consumatore è la Chat.
+Installarlo al 13 sarebbe la dipendenza senza consumatore che **P-2** ha già rifiutato per `@playwright/test`.
+
+✅ **La cura è un richiamo datato dentro D3**, non una riga in più: la rilettura va dove il pacchetto entra, cioè al
+**14**. ⚠️ **E la sostanza di D3 non cambia**: le tre proprietà si rileggono **dentro il `.tgz`** prima dell'uso,
+perché una patch che tocca `validateLink` cambierebbe la ragione della decisione 51.
+
+📌 **Da dove viene:** **D3** è del 2026-09-11, scritta quando la riga 8 della posizione non era ancora divisa da
+**D25** e i numeri dei compiti alti non erano fissati. Un numero di compito dentro una decisione **invecchia col
+taglio**, e la tabella della posizione è la sua casa unica.
+
+**Conseguenza:** richiamo datato in **D3**; nessuna `D` nuova.
+
+### P-82 — La striscia è DENTRO `dockview`, barra, fascia e cassetto sono FUORI: *«sopra `dockview-core`»* della §6a si legge in due modi
+
+⛔ **Settima domanda del pre-controllo, nella forma che l'ottava chiusura ha generalizzato — *«vale identica fra le
+SEZIONI di un disegno»*.** Tre righe approvate, e nessuna nomina le altre:
+
+| Dove | Che cosa dice | Come si legge |
+|---|---|---|
+| §6a del 2, riga «la cornice» | *«la barra delle viste … la striscia sempre visibile … e il cassetto «+ moduli» …; **sopra `dockview-core`**»* | «costruito sopra la libreria», oppure «disegnato sopra la griglia» |
+| §4 della stella polare, mossa 1 | *«il nucleo al centro e **la striscia in basso** non si spostano»*; *«Home; la striscia come **gruppo bloccato**, oggi solo dedotta (decisione 4)»* | la striscia **è** un gruppo di `dockview` |
+| «Il modello della GUI», riga Home | *«**sopra** la barra con le viste … **sotto** la striscia sempre visibile e il cassetto»* | qui «sopra» e «sotto» sono **posizioni**, non strati |
+
+✅ **Misurato dallo spike, che ha già scelto e che il proprietario ha approvato provandolo:** `index.html` porta
+`<div id="bar">` **accanto** a `<div id="dock">`, e `home.ts` chiama `lock('strip')` su un pannello aggiunto al
+dock con `minimumHeight` e `maximumHeight` uguali. Quindi la **barra è fuori** dalla griglia e la **striscia è
+dentro**, bloccata — e non è un'incoerenza: sono due cose diverse. La barra è **cornice della finestra**, una sola
+in ogni vista; la striscia è **un riassunto che vive nella griglia**, e la mossa 1 ha provato che lì non si sposta.
+
+⛔ **E la conseguenza è una regola, non un dettaglio: ciò che sta nella griglia entra nel JSON della disposizione,
+ciò che sta fuori no.** Quindi la striscia è in **tutte e tre** le viste, bloccata; e la fascia, che *«compare solo
+se il core manca o il timbro è sbagliato»*, **non** può stare nella griglia — un pannello che appare e sparisce
+cambierebbe la disposizione salvata a ogni disconnessione.
+
+**Conseguenza: D50.**
+
+### P-83 — `locales/it.json` nasce al 13 e la regola di lint entra al 15: fra i due nulla la fa rispettare
+
+⛔ **Domanda 2, e la risposta onesta è «niente»:** la riga delle scritte della §8 del 2 chiede *«un controllo che
+vada rosso su una scritta lasciata nel codice»*, e la decisione 55 lo dà — `@intlify/eslint-plugin-vue-i18n`,
+regola `no-raw-text`, `npm run lint` in `gate-gui.sh`. Misurato il 2026-09-14 contro la tabella della posizione:
+`gate-gui.sh` e la catena `eslint` sono il compito **15**, e **D40** li elenca fra ciò che arriva «coi compiti 13,
+14 e 15».
+
+⛔ **Quindi i compiti 13 e 14 scrivono ogni scritta e nessun controllo le guarda**, e chi rivede il 13 cercherebbe
+una sonda che non esiste.
+
+✅ **La cura più piccola che risolve alla radice, e non è la catena `eslint` anticipata:** il compito 13 porta una
+**sonda propria** che legge i file dei componenti e va rossa su una scritta nel modello, e il compito 15 la
+**sostituisce** con la regola vera. ⚠️ **E una sonda scritta noi su testo grezzo non è un lint:** non capisce le
+eccezioni (un'icona, un codice) né la sintassi di Vue. Va dichiarata per ciò che è — una **rete** fino al 15 — o
+diventa la pezza che chi viene dopo disfa credendo di togliere un controllo.
+
+⛔ **L'alternativa scartata, e il perché:** anticipare `eslint`, `eslint-plugin-vue` e il plugin `i18n` al 13
+significherebbe scrivere al 13 anche la configurazione che il 15 deve scrivere comunque per il cancello — due case
+per una regola sola, che è ciò che il gotcha **#68** conta. La sonda nostra muore al 15 e non lascia niente.
+
+**Conseguenza: D51.**
+
+### P-84 — `Hello` porta il timbro di build, e NESSUN compito lo consegna alla SPA
+
+⛔ **Domanda 2 — manca un pezzo, e non si vede leggendo: si vede scrivendo la prima riga della cornice.** La
+sequenza 1 della stella polare comincia con `G->>C: Hello (il timbro di build)`, e il compito 3 detta
+`Hello(BuildStamp)`. Misurato il 2026-09-14 su ciò che i compiti 3 e 11 producono:
+
+| Dove il timbro potrebbe stare | Che cosa c'è davvero |
+|---|---|
+| `gui/src/schema/messages.ts` (compito 11) | i **tipi**, e `U64 = string`. Nessun valore |
+| `loadFixtures()` (compito 11) | globa i soli `*.json`, e `ipc_v1.map` **non** è fra essi |
+| la fixture `00-hello.json` | ⛔ **il valore ARBITRARIO dell'insieme canonico** — `BuildStamp(0x0123_4567_89AB_CDEF)`, scelto perché nessuna codifica sia uguale a un'altra: **non** è il timbro |
+| `interface Bridge` (compito 11) | `send` e `listen`. Nessun membro che lo porti |
+| `ipc_v1.map` (compito 3) | ✅ **l'ultima riga**, `stamp 0x…` con `{:#018x}` — scritta da `regenerate_the_fixtures` nello stesso passaggio dei byte |
+
+⛔ **Quindi la SPA non ha da mandare un `Hello` vero, e il difetto sarebbe MUTO fino al guscio:** contro la finta
+un `Hello` con qualunque numero sembra funzionare, perché la finta non controlla niente; il rosso arriverebbe dal
+core, cioè nel solo posto che questo piano **non** costruisce.
+
+✅ **La casa giusta è `ipc_v1.map`, e non è un ripiego: è l'unico posto in cui il timbro lo ha scritto il KERNEL.**
+Il timbro è un'impronta dello schema, e lo specchio TypeScript dei tipi è **scritto a mano**: leggerlo dal file che
+il generatore produce è ciò che rende la stretta di mano un controllo vero invece di una formalità — se il kernel
+rigenera con uno schema nuovo e la SPA non si ricostruisce, i due timbri **divergono** e il core rifiuta, che è
+esattamente ciò per cui I4 ha un timbro.
+
+⚠️ **E c'è una conversione, che è il posto dove si sbaglia in silenzio:** la mappa scrive **esadecimale**
+(`0x` più sedici cifre), `U64` è una **stringa decimale** (**D35**), e il valore supera
+`Number.MAX_SAFE_INTEGER` per costruzione — quindi si passa da `BigInt`, mai da `Number`, come il doc di `U64`
+prescrive già.
+
+**Conseguenza: D52.**
+
+### P-85 — La riga 14 della posizione non nomina IMPOSTAZIONI, e con essa la SPA del 2 non manda mai un `Invoke`
+
+⛔ **Domanda 2 — manca un pezzo, e a coglierlo è il censimento dei tipi di modulo del compito 13**, non una
+rilettura. La riga **14** elenca *«Stato, Permessi con la finestra di conferma, Chat col markdown e la provenienza,
+Passi»*. Misurato il 2026-09-14 contro i disegni:
+
+| Dove | Che cosa dice |
+|---|---|
+| §6a del 2, riga «il cambio di policy» | *«nel modulo **Impostazioni** … un controllo a due stati, OpenRouter con VRAM libera oppure locale → `Invoke`»* |
+| §1 della stella polare, tabella corta | *«Impostazioni │ **2**, poi 3 e 10 │ nel 2 il cambio di policy VRAM, funzione del registro con la sua tripla»* |
+| §3 della stella polare, pezzo 4 | il registro delle funzioni, *«col **click** e il cambio di policy»* |
+
+⛔ **E la conseguenza non è un modulo in meno: è che il registro di ADR-0038 resta SENZA IL SUO PRIMO
+INVOCATORE.** L'ADR dice *«nessun codice nasce con l'ADR: il registro lo costruisce il primo invocatore, il click
+del sotto-progetto 2»* — e quel click **è** il controllo delle Impostazioni. Senza di esso, nella SPA del 2
+nessuno manda `Invoke`, nessuno riceve `PermissionRequired`, e la finestra di conferma del 14 non ha chi la apra:
+resterebbe provata solo da una fixture, mai da un giro.
+
+✅ **È piccolo:** un controllo a due stati e un `Invoke`. ⚠️ **E non è del 13:** il 13 è la cornice, e
+`settings` entra nel suo registro come tipo con `who: 2` come tutti gli altri — è il **14** che lo costruisce, con
+gli altri moduli del 2.
+
+⚠️ **Da dove viene:** la riga 14 fu scritta elencando i moduli con una **tabella piena** nella §1 — Stato,
+Permessi, Chat, Passi — e Impostazioni ha la riga **corta**. 📌 **La forma generale: un elenco ricavato da una
+tabella non copre ciò che sta in un'altra tabella dello stesso catalogo.**
+
+**Conseguenza:** richiamo datato nella riga 14 della tabella della posizione; nessuna `D` — i due disegni lo
+dicevano già.
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -1947,7 +2257,7 @@ smentisce — è ciò per cui esiste l'errata.
 |---|---|---|
 | **D1** | i compiti sono tagliati per **artefatto** sulla tabella *«Il prodotto del 2, e il controllo che esercita ciascun artefatto»* della §8 del 2, e ogni compito finisce con un artefatto provato da solo — ⛔ **quanti siano lo dice la tabella della posizione, non questa riga: RICHIAMO DEL 2026-09-14 (D25)** — qui stava *«sedici»*, ed è un numerale in prosa che conta un artefatto, cioè la cosa che questo repository **toglie** invece di riallineare (gotcha #68, P-35) | la §8 dice di sé che le righe stanno «in un posto solo perché il piano le tagli per compito»; il precedente sono i tredici compiti del Traguardo 5 in un piano solo |
 | **D2** | `dockview-core` e `dockview` si appuntano a **8.3.1**, non alla **8.2.0** con cui SP-8 ha misurato le otto mosse | la v8 è additiva e ogni novità è opt-in, letto alla fonte il 2026-09-07 (tabella della §4 della stella polare); appuntare una versione che il registro non serve più come `latest` è debito al primo `npm install`. ⚠️ **Costo dichiarato:** l'evidenza delle otto mosse è sulla 8.2.0, e il compito 12 lo scrive accanto al primo uso; se un comportamento delle mosse cambia, è una voce d'errata |
-| **D3** | `markdown-it` si appunta a **15.0.2**, uscita **il giorno stesso** | è una patch sulla 15.0.1 che la §9 del 2 aveva letto **dentro il pacchetto** (preset `default` con `html: false`, `BAD_PROTO_RE`); ⛔ **il compito 13 rilegge quelle tre proprietà dentro il `.tgz` della 15.0.2 prima di usarla**, perché una patch che tocca `validateLink` cambierebbe la ragione della decisione 51 |
+| **D3** | `markdown-it` si appunta a **15.0.2**, uscita **il giorno stesso** | è una patch sulla 15.0.1 che la §9 del 2 aveva letto **dentro il pacchetto** (preset `default` con `html: false`, `BAD_PROTO_RE`); ⛔ **il compito 13 rilegge quelle tre proprietà dentro il `.tgz` della 15.0.2 prima di usarla**, perché una patch che tocca `validateLink` cambierebbe la ragione della decisione 51. ✅ **RICHIAMO DEL 2026-09-14, dal pre-controllo del compito 13 — P-81: la rilettura è del compito 14, non del 13.** Questa riga fu scritta prima che **D25** dividesse la riga 8 della posizione; contro quella tabella il 13 è la **cornice** e la Chat col markdown è il **14**, e **D40** mette `markdown-it` fra ciò che arriva col compito che lo consuma. ⚠️ **La sostanza non cambia:** le tre proprietà si rileggono **dentro il `.tgz`** prima dell'uso |
 | **D4** | `vitest` resta **4.1.11**, il tag `V4`, e non la 5.0.0 | la decisione 52 disse «sei giorni»; oggi sono otto, e otto giorni non sono maturità. ⛔ **La misura si rifà al compito 10**, e se il piano si scrivesse fra un mese la risposta cambierebbe: la regola è «novità non è maturità», non «mai la major». ✅ **RIMISURATA IL 2026-09-14, scrivendo il compito 10, e la risposta NON cambia:** `npm view vitest version dist-tags` rende ancora `latest: 5.0.0` e `V4: 4.1.11`, e `npm view vitest time --json` data la 5.0.0 al **2026-09-03** — il divario è cresciuto, non la maturità. ⚠️ **Il numero di giorni non si riscrive in questa riga**, si rifà coi due comandi: chi installa è il compito **11**, e li rilancia quel giorno |
 | **D5** | ⛔ **il ramo `Request` del dispaccio NON costruisce nessun `ResourceProfile`**: non chiama `admit`, non risponde, e il doc del ramo scrive perché. La riga `Request` della §5 del 2 riceve un **richiamo datato** al compito 7. La riga 27 delle voci aperte del Traguardo 6 resta aperta **col suo innesco intatto**, e il chiusore resta il **7**, il pilastro 3D | le tre vie sono state esaminate contro il codice (P-1, P-11, P-12). **Servirla** obbliga il core a nominare corsia e prelazionabilità per un consumatore che non esiste — `ComputeClass::Batch` è documentata *«3D render, indexing, background runs»* e ADR-0033 descrive un **viewer**: nessuna riga dice quale sia giusta, e sceglierne una è una deduzione presentata come disegno. **Rifiutarla** con `Verdict::Refused` mente sul significato del tipo (P-12). **Non servirla** non afferma nulla di falso, è la forma che il repo usa già — `promote` non si chiama, quattro porte su sei non hanno chiamanti, *«dichiarato, non pinzato»*, gotcha #73 — e toglie alla radice il privilegio non controllato, perché nessun valore del pari raggiunge l'arbitro. ⚠️ **Costo dichiarato:** la §5 del 2 si restringe, e la GUI del 2 vede un `Verdict` solo dal rubinetto del core finto (P-11) |
 | **D6** | `redb` resta alla **4.1.0** del `Cargo.lock`, benché il registro serva la 4.2.0 | ADR-0032 nomina la 4.1.0 e il lockfile è un **ingresso** del cancello (vincolo 6): alzarla è un atto deliberato che non serve a nessun passo di questo piano. Il compito 5 usa il `FileBackend` che `platform` già ha |
@@ -1990,6 +2300,14 @@ smentisce — è ciò per cui esiste l'errata.
 | **D43** | **il rubinetto prende in prestito la STESSA `RefCell<Core>` di `serve`**, e ciò che nasce al 12 è il solo `Core::ipc` | **P-71**: il blocco *Interfaces* del compito 7 fissa già la forma — `serve(core: &RefCell<Core<I, J, C>>, …)` — quindi il dedotto della §7 era chiuso dal **contratto**, non da un meccanismo da inventare; e il compito 7 scrive per esteso che il chiamante di `Core::ipc` è questo rubinetto. ⛔ **La regola che ne discende è una riga del compito, non un'accortezza:** nessuno tiene un `borrow_mut` **attraverso un `await`**, perché due prestiti mutabili vivi insieme sono un panico che compare solo quando le due attività si interlacciano — cioè non nella sonda più corta |
 | **D44** | **la radice aggiunge `gui` a `exclude`, con la PROPRIA ragione accanto** e non appoggiandosi a quella degli `spikes` | **P-72**, misurato nelle due direzioni: senza la riga, `cargo` sulla crate annidata esce **101** con *«current package believes it's in a workspace when it's not»*, quindi il primo comando del cancello web non partirebbe e il rosso parlerebbe del **manifesto di radice** invece che del finto. ⚠️ **La ragione degli `spikes` è il `clippy.toml` annidato e NON vale qui:** `gui/fake-core` è escluso perché ha una toolchain e un lockfile propri ed è un **attrezzo**, non perché porti una configurazione che sfuggirebbe |
 | **D45** | **il core finto lega lo STESSO nome di canale del daemon**, come proprio letterale, e i due si confrontano **con un comando** nel criterio di chiusura del compito 12 | **P-73**: la §7 vuole che *«la GUI non sa con chi parla»*, quindi il valore dev'essere identico; e il finto non può importarlo (**P-68**), quindi il letterale si ripete. ⛔ **Due letterali che devono restare uguali e che nessuno confronta è la definizione di ciò che marcisce in silenzio**, e qui il guasto sarebbe muto: cambiato il nome nel daemon, la GUI si collegherebbe **al programma sbagliato senza errore**, perché il timbro di build è lo stesso. ⚠️ **Niente riga di catalogo** — sarebbe una decisione del proprietario, vincolo globale 7 — quindi il confronto vive nel criterio di chiusura, e ciascuno dei due letterali porta accanto la riga che **nomina l'altro** |
+| **D46** | **una sonda che vuole uno stato che le fixture non portano consegna allo STORE un `IpcMessage` tipizzato**, e la finta del compito 11 **non cresce** | **P-76**: `stamp_set()` è **un messaggio per variante** — è ciò che il timbro misura — quindi `LayoutState` arriva in un solo stato su tre, e le due sonde della §2 («niente» → i default) e della decisione 35 («non disponibile») non sono raggiungibili con `deliver`. ⛔ **Un `emit(message)` nella finta toglierebbe la proprietà per cui vale la pena averla**, che il suo stesso doc argomenta: *«IT REPLAYS THE FIXTURES AND INVENTS NOTHING»*. ✅ **A tenere onesta la sonda è il sistema di tipi:** lo store è una funzione dei messaggi, `LayoutState` ha tre varianti e non una in più, quindi una sonda non può costruire una forma che il core non manda. La finta resta per i cammini che le fixture coprono, ed è lì che porta i **byte veri** |
+| **D47** | ⛔ **il SEGNAPOSTO arriva al compito 13**, e il 14 tiene i moduli veri | **P-77**: `dockview` chiede alla fabbrica un componente **per nome** (`createComponent` nello spike), quindi senza di esso la cornice del 13 si monta e non mostra nulla — con `npm run build` **verde**, cioè il difetto che compila. E le tre prove che la §8 del 2 chiede a questo artefatto — le viste che si caricano, un tipo sparito che lo dice a parole, un modulo non costruito che dice chi lo riempie — **vogliono tutte e tre un componente**. ⚠️ **Non porta peso:** la decisione 17 della stella polare ne vuole **uno**, non tredici. È il taglio di **D38** rifatto: una riga appartiene al compito che **crea** ciò di cui parla |
+| **D48** | **i quattro stati della connessione si DERIVANO dai messaggi, il `Bridge` resta a due membri, e la fascia NON ha soglia** | **P-78**: *«core non in esecuzione»* non può essere un messaggio, e un `isConnected` nel ponte costringerebbe ogni guscio a implementarlo per un fatto che nel browser contro la finta non significa niente — contro la ragione scritta nel compito 11, *«tutto ciò che il guscio sa fare resta dal suo lato»*. La SPA manda `Hello` e finché non arriva `Accepted` **non è collegata**: lo stesso fatto, visto dal lato giusto. ⛔ **Nessun timeout:** distinguere «non gira» da «è lento» sarebbe un numero che nessuna fonte ha misurato («nessuna soglia inventata», SP-7), e la GUI farebbe la stessa cosa nei due casi — **«riprova»**, che rimanda `Hello`. ⚠️ *«nessuna run»* non è uno stato della connessione: è del modulo Chat, compito 14 |
+| **D49** | ⛔ **dallo spike sale il MERITO di quattro pezzi, riscritti nel prodotto, e NON sale il codice**; due pezzi restano allo spike per nome | **P-79**: il vincolo 9 della §11 del compendio — *«riga per riga, cosa sale da `spikes/` e cosa resta»* — vale qui identico, e uno spike è una **prova** fuori dal workspace, non un modulo da importare. **Salgono** (riscritti, coi nomi del prodotto): il ponte `VueContent`, una `createApp` per pannello con `unmount` su `dispose`; le opzioni di `createDockview` che le otto mosse hanno esercitato; `lock` in **due** righe, `locked` **e** `header.hidden` — la seconda si dimentica; il confronto **canonico**, perché E4 della parte 1 ha misurato che il grezzo non torna uguale. **Restano allo spike:** il selettore `dnd:` della barra, che serviva a misurare Q4, e `localStorage` come casa della disposizione — nel 2 la casa è la **settima porta** (I1). ⚠️ **`moveActive` è del compito 14**, con l'accessibilità |
+| **D50** | **la striscia è un gruppo BLOCCATO dentro la griglia, in tutte e tre le viste; barra, fascia e cassetto stanno FUORI** | **P-82**: *«sopra `dockview-core`»* della §6a si legge in due modi, e a scegliere non è una lettura ma lo spike che il proprietario ha provato — `<div id="bar">` accanto a `<div id="dock">`, e `lock('strip')` su un pannello della griglia (mossa 1). ⛔ **La regola che ne discende, e che è il vero acquisto: ciò che sta nella griglia entra nel JSON della disposizione, ciò che sta fuori no.** Quindi la fascia, che *«compare solo se il core manca o il timbro è sbagliato»*, **non può** stare nella griglia: un pannello che appare e sparisce cambierebbe la disposizione salvata a ogni disconnessione |
+| **D51** | **le scritte le guarda una sonda NOSTRA fino al compito 15**, che la sostituisce con `no-raw-text` | **P-83**: la catena `eslint` e `gate-gui.sh` sono il **15** (tabella della posizione, **D40**), quindi fra il 13 e il 15 la riga delle scritte della §8 non avrebbe nessun controllo e chi rivede cercherebbe una sonda che non esiste. ⚠️ **È una RETE, non un lint, e va dichiarata per ciò che è:** legge testo grezzo, non conosce le eccezioni né la sintassi di Vue. ⛔ **Anticipare `eslint` al 13 costerebbe di più:** la configurazione che il 15 scrive comunque per il cancello vivrebbe in due case (gotcha #68), mentre la sonda nostra **muore al 15** e non lascia niente |
+| **D52** | **il timbro che la SPA manda in `Hello` si legge dall'ultima riga di `ipc_v1.map`**, in `gui/src/schema/stamp.ts`, e passa da `BigInt` | **P-84**: nessun compito lo consegnava — la fixture `00-hello` porta il valore **arbitrario** dell'insieme canonico, non il timbro, e il `Bridge` non ha un membro che lo trasporti. ✅ **È l'unico posto in cui il timbro l'ha scritto il KERNEL**, e questo rende la stretta di mano un controllo vero: lo specchio TypeScript dei tipi è scritto a mano, quindi se il kernel rigenera con uno schema nuovo e la SPA non si ricostruisce i due timbri **divergono** e il core rifiuta — cioè ciò per cui I4 ha un timbro. ⚠️ **La conversione è il posto dove si sbaglia in silenzio:** la mappa scrive esadecimale, `U64` è decimale (**D35**), e il valore supera `Number.MAX_SAFE_INTEGER` per costruzione. ⛔ **Il file vive in `gui/src/schema/`, che è del compito 11, e nasce QUI perché qui nasce il suo unico chiamante** — la stessa regola di **D40** |
+
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
 il comando del vincolo 11 → `11030` · `git status -sb` → `## main...origin/main`, pulito.
@@ -12506,6 +12824,1752 @@ git push
 - [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -cE '^\s*fn [a-z_]+\(\) \{\}$' gui/fake-core/src/main.rs` → **0**
 
 ---
+
+## Compito 13: la SPA, la cornice — `dockview`, le tre viste, gli store, i token e le scritte
+
+⛔ **QUI NASCE CIÒ CHE SI VEDE, e per la prima volta in questo piano il verde di un comando NON basta.** La regola
+5 della testa vale da qui: il revisore **apre la SPA nel browser e guarda**, perché un `npm run build` verde non
+prova che un pannello si veda.
+
+**Files:**
+- Modify: `gui/package.json` (**LF**, dal compito 11) — le dipendenze che **questo** compito consuma (**D40**)
+- Modify: `gui/package-lock.json` (**LF**) — **nello stesso commit** del manifesto, vincolo globale 7
+- Modify: `gui/vite.config.ts` (**LF**) — l'ambiente delle sonde passa a `jsdom`, e il perché
+- Modify: `gui/src/main.ts` (**LF**) — il CSS di `dockview`, i token, `pinia`, `vue-i18n`, il ponte
+- Modify: `gui/src/App.vue` (**LF**) — ⛔ **riscritto**: il componente del compito 11 esisteva per far attraversare la catena di compilazione a un `.vue`, e lo dice di sé
+- Create: `gui/src/schema/stamp.ts` (**LF**) — il timbro letto da `ipc_v1.map` (**D52**)
+- Create: `gui/src/tokens/tokens.css` (**LF**) — **un file solo** di variabili CSS (§6a)
+- Create: `gui/src/locales/it.json`, `gui/src/i18n.ts` (**LF**) — ogni scritta qui, italiano solo (G21)
+- Create: `gui/src/stores/connection.ts`, `gui/src/stores/core.ts`, `gui/src/stores/layout.ts` (**LF**)
+- Create: `gui/src/stores/stores.test.ts` (**LF**)
+- Create: `gui/src/frame/VueContent.ts`, `gui/src/frame/BigTab.ts`, `gui/src/frame/dock.ts` (**LF**) — **D49**
+- Create: `gui/src/frame/Frame.vue`, `gui/src/frame/ViewBar.vue`, `gui/src/frame/Band.vue`, `gui/src/frame/Drawer.vue` (**LF**)
+- Create: `gui/src/panels/registry.ts`, `gui/src/panels/Placeholder.vue`, `gui/src/panels/Strip.vue` (**LF**) — **D47**, **D50**
+- Create: `gui/src/panels/views/home.json`, `work.json`, `compact.json` (**LF**) — **generati, non scritti a mano**
+- Create: `gui/src/panels/views/index.ts`, `gui/src/panels/views/views.test.ts` (**LF**)
+- Create: `gui/src/frame/frame.test.ts`, `gui/src/locales/copy.test.ts` (**LF**) — **D51**
+- Read: la **§6a del 2 per intero**; la §1 della stella polare — le **cinque tabelle piene** per i nomi dei moduli e la **corta** per i tredici che nel 2 restano segnaposto; la **§2 della stella polare** per la disposizione, in particolare le righe **1**, **5**, **6**, **7** e **8**; «Il modello della GUI» per Home, Lavoro, Compatta e la striscia; la **§4 della stella polare** per le otto mosse e ciò che `dockview` dà; il blocco *Interfaces* del compito **11** — ⛔ **come sta ADESSO, P-75 l'ha corretto** — e i suoi Passi **7** e **11** per i tipi e il ponte
+- Read: ⛔ **`spikes/gui-shell/app/src/vue-bridge.ts` e `spikes/gui-shell/app/src/home.ts`, per intero** — **D49**: è la cornice che il proprietario ha **provato**, e ciò che sale da lì sale **riga per riga**, riscritto, non importato
+- ⛔ **NON si legge**: la §5, la §7 e la §8 del 2 — il registro, il core finto e il cancello sono i compiti 6, 12 e 15
+
+**Interfaces:**
+- Consumes, dal **compito 11**: `gui/src/schema/messages.ts` — `IpcMessage`, `U64`, `Protection`, `PolicyName`, `Access`, `Provenance`, `DegradationReport`, `PolicyReport`, `Triple`, `Call`, `StepSummary`, `LayoutState`; `gui/src/schema/parse.ts` — `parseIpcMessage`, `MESSAGE_KINDS`, `SchemaError`; `gui/src/transport/bridge.ts` — `Bridge`, `OutboundMessage`, `Listener`; `gui/src/transport/fakeBridge.ts` — `createFakeBridge`, `FakeBridge`
+- Consumes, dal **compito 3**: `gui/schema/fixtures/ipc_v1.map`, di cui legge **la sola ultima riga** (**D52**)
+- Produces, e il compito **14** li usa con questi nomi esatti:
+  - `gui/src/stores/connection.ts` — `useConnection()`, con `phase: "waiting" | "connected" | "stale"`, `protection: Protection | null`, `expected: U64 | null`, `attach(bridge: Bridge): void`, `hello(): void`, `retry(): void`, `receive(message: IpcMessage): void`
+  - `gui/src/stores/core.ts` — `useCore()`, con `degradation: DegradationReport | null`, `policy: PolicyReport | null`, `steps: StepSummary[]`, `pending: Triple | null`, `lastVerdict: Verdict | null`, `receive(message: IpcMessage): void`, `settled(): void`
+  - `gui/src/stores/layout.ts` — `useLayout()`, con `state: LayoutState`, `view: ViewName`, `attach(bridge: Bridge): void`, `receive(message: IpcMessage): void`, `settle(pack: LayoutPack): void`; e, fuori dallo store, `pack_(pack: LayoutPack): Uint8Array`, `unpack(state: LayoutState): LayoutPack | null`, `type ViewName = "home" | "work" | "compact"`, `interface LayoutPack { view: ViewName; layout: SerializedDockview }`
+  - `gui/src/panels/registry.ts` — `PANEL_TYPES: readonly PanelType[]`, `interface PanelType { name: string; module: string; who: number }`, `componentFor(name: string): () => IContentRenderer`, `register(name: string, component: Component): void`, `isModule(name: string): boolean`, `placeholderParams(name: string): Record<string, unknown>`
+  - `gui/src/panels/views/index.ts` — `VIEWS: Readonly<Record<ViewName, SerializedDockview>>`
+  - `gui/src/frame/VueContent.ts` — `class VueContent implements IContentRenderer`, costruita con un `Component` di Vue
+  - `gui/src/frame/dock.ts` — `createDock(host: HTMLElement): DockviewApi`, `apply(api: DockviewApi, view: string, pack: LayoutPack | null): void`, `canonical(value: unknown): unknown`
+  - ⛔ **E il blocco qui sopra è stato RICENSITO contro il codice che i Passi dettano, non parafrasato dai disegni** — **P-75** applicata a sé stessa: `createDock` **non** prende un `Bridge`, perché lo store ce l'ha già; `PanelType` **non** ha un campo `built`, e il suo `who` è un **numero**
+  - `gui/src/i18n.ts` — `i18n`, e la chiave di ogni scritta in `gui/src/locales/it.json`
+- ⛔ **Che cosa questo compito NON produce, detto perché nessuno lo cerchi:** nessun modulo **vero** — Stato, Permessi, Chat e Passi sono il **14** —, nessuno `stores/stream.ts` (nasce col suo consumatore, la Chat, come **D40** prescrive), nessuna finestra di conferma, nessun `markdown-it` (**P-81**), nessuna scorciatoia `moveTo` e nessun `axe-core`: accessibilità e tastiera sono il **14**
+
+⛔ **PERCHÉ LA CORNICE E I MODULI SONO DUE COMPITI, e non è una divisione per comodità:** un revisore può bocciare
+la cornice approvando i moduli, e viceversa. La cornice ha un oracolo suo — le tre viste si caricano, un tipo che
+non c'è lo dice a parole — che non nomina nessun modulo; i moduli hanno il loro, che non nomina `dockview`.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+ls gui/src/stores gui/src/panels gui/src/frame gui/src/tokens gui/src/locales 2>&1
+ls gui/src/schema gui/src/transport
+ls gui/schema/fixtures/*.json | wc -l
+tail -1 gui/schema/fixtures/ipc_v1.map
+grep -n '"dockview\|"pinia"\|"reka-ui"\|"vue-i18n"\|"jsdom"\|@vue/test-utils' gui/package.json
+grep -n 'environment' gui/vite.config.ts
+grep -c '^/gui/' .gitignore
+git ls-files --eol gui/package.json gui/vite.config.ts gui/src/main.ts gui/src/App.vue
+node --version
+```
+
+Atteso: le cinque cartelle **non esistono**; `gui/src/schema/` e `gui/src/transport/` ci sono, dal compito 11;
+tanti `.json` quante le varianti — **il comando del criterio di chiusura del compito 3 lo dice, non una cifra
+qui**; l'ultima riga della mappa comincia con `stamp 0x`; **nessuna** delle cinque dipendenze nel manifesto;
+`environment: "node"`; **due** righe `/gui/` in `.gitignore`, dal compito 11 (**D38**); tutto **LF**.
+
+⛔ **Se `gui/src/stores/` esiste già, il compito è eseguito** — quarta domanda del pre-controllo: ci si ferma e si
+riporta invece di sovrascrivere. ⚠️ **Se `gui/src/schema/` non esiste, il compito 11 non è eseguito**, e questo
+compito non parte: è una voce d'errata prima di essere un rimedio.
+
+- [ ] **Passo 2: le dipendenze, e il lockfile nello stesso commit**
+
+⛔ **Si rimisura prima di scrivere** — vincolo globale 8: le versioni qui sono del **2026-09-11** (**P-2**,
+**D39**), e chi installa scrive nel proprio commit quelle del suo giorno.
+
+```bash
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+P = ["dockview-core", "dockview", "pinia", "reka-ui", "vue-i18n", "jsdom", "@vue/test-utils"]
+for p in P:
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    v = d["dist-tags"]["latest"]
+    m = d["versions"][v]
+    print(f"{p:18} latest={v:10} {d['time'][v][:10]}  license={m.get('license')}  engines={m.get('engines')}")
+EOF
+```
+
+⛔ **Una major nuova non si prende** («novità non è maturità»); una minor o patch solo se l'appuntata non si
+installa, con voce d'errata. ⚠️ **E se l'`engines` di una di esse è più stretto di quello di `jsdom`**, che è
+`engines.node` per **D37**, la riga di `engines.node` cambia e il cambiamento è una voce d'errata: è **casa unica**
+(decisione 46), non una riga per pacchetto.
+
+In `gui/package.json`, le `dependencies` guadagnano:
+
+```json
+    "dockview-core": "8.3.1",
+    "dockview": "8.3.1",
+    "pinia": "4.0.3",
+    "reka-ui": "2.10.4",
+    "vue-i18n": "11.4.10"
+```
+
+e le `devDependencies`:
+
+```json
+    "jsdom": "30.0.1",
+    "@vue/test-utils": "2.5.0"
+```
+
+⛔ **DUE pacchetti di `dockview` e non uno, e la ragione è misurata — P-80.** `dockview-core` **non spedisce** il
+foglio di stile e non lo inietta da sé: senza le regole strutturali i gruppi si impilano nel flusso del documento e
+un gruppo galleggiante finisce fuori dal viewport (**E2 della parte 1**, misurato nel browser il 2026-09-10; il
+richiamo è nella §2 del disegno del 2). Il pacchetto ombrello entra per il **solo** `dist/styles/dockview.css`:
+l'API resta `dockview-core`, e nessun `import` prende `dockview` per altro. Il comando che lo rifà:
+
+```bash
+npm pack dockview --dry-run 2>&1 | grep -c 'dist/styles/dockview.css'
+npm pack dockview-core --dry-run 2>&1 | grep -c 'dist/styles/dockview.css'
+```
+
+Atteso: **più di zero** per il primo, **zero** per il secondo.
+
+⚠️ **`reka-ui` entra QUI e non al 14**, benché la finestra di conferma sia del 14: il **cassetto** è il primo
+componente che vuole una trappola di focus e la tastiera, e due modi di fare la stessa cosa nella stessa SPA sono
+esattamente ciò che il criterio di coerenza rifiuta. Il 14 lo **riusa**, non lo introduce.
+
+Poi, **fuori dal cancello** e prima del commit:
+
+```bash
+cd gui && npm install --no-audit --no-fund; echo "EXIT=$?"; cd ..
+git status --porcelain gui/package.json gui/package-lock.json
+```
+
+⛔ **`npm install` e non `npm ci`:** è il gemello del `cargo build` **senza** `--locked` del vincolo globale 6 — il
+lockfile è un **ingresso** del cancello, quindi si rinfresca fuori e si committa **insieme** al manifesto.
+
+- [ ] **Passo 3: l'ambiente delle sonde, e la domanda che si misura invece di dedurla**
+
+In `gui/vite.config.ts` il blocco `test` diventa:
+
+```ts
+  test: {
+    // ⛔ `jsdom` FROM THIS TASK ON: task 11 ran on `node` because nothing it built touched a DOM,
+    // and said so. The frame mounts components, so it needs one.
+    environment: "jsdom",
+    include: ["src/**/*.test.ts"],
+  },
+```
+
+⛔ **E poi si misura la cosa che la §9 del 2 dichiara DEDOTTA — *«che le prove della SPA girino senza browser»* —
+invece di scoprirla al primo rosso.** `dockview` misura gli elementi per disporre i gruppi, e `jsdom` non fa
+layout: `getBoundingClientRect` rende zeri. Si scrive una sonda usa-e-getta e si legge l'esito:
+
+```bash
+cat > /tmp/dockview-in-jsdom.test.ts <<'EOF'
+import { describe, expect, it } from "vitest";
+import { createDockview } from "dockview-core";
+
+describe("dockview under jsdom", () => {
+  it("mounts and takes a panel", () => {
+    const host = document.createElement("div");
+    document.body.append(host);
+    const api = createDockview(host, { createComponent: () => ({ element: document.createElement("div"), init() {} }) });
+    api.layout(1200, 800);
+    api.addPanel({ id: "one", component: "any" });
+    expect(api.panels.map((p) => p.id)).toEqual(["one"]);
+  });
+});
+EOF
+cp /tmp/dockview-in-jsdom.test.ts gui/src/frame-probe.test.ts
+cd gui && npx vitest run src/frame-probe.test.ts; echo "EXIT=$?"; cd ..
+rm gui/src/frame-probe.test.ts
+```
+
+| Esito | Che cosa fa questo compito |
+|---|---|
+| **`EXIT=0`** | le sonde del Passo 16 girano sotto `jsdom` come scritte |
+| **`EXIT` non zero** | ⛔ **non si aggira e non si finge:** la sonda del Passo 16 si **restringe** a ciò che non vuole layout — il registro, la forma delle tre viste, gli store — e la parte che vuole una griglia disposta passa al **revisore nel browser**, che la regola 5 della testa già prescrive per questo compito. Si scrive una **voce d'errata** con l'esito vero, e la riga «🔶 Dedotto» della §9 del 2 riceve il suo richiamo datato |
+
+📌 **Perché si misura adesso e non al Passo 16:** è la differenza fra scrivere una sonda e riscriverla. E l'esito è
+un **fatto sull'ambiente**, non sul codice: vale anche per il compito 14.
+
+- [ ] **Passo 4: i token, un file solo**
+
+`gui/src/tokens/tokens.css`, **LF**. ⛔ **Un file e non una cartella** (§6a), e **nessun kit**: un componente si
+estrae alla **seconda** occorrenza, e nel 2 non c'è.
+
+```css
+/* The design tokens of the whole SPA: colours, spacing, type. ONE file (§6a of the milestone-2
+   design), because a kit is extracted at the SECOND occurrence and milestone 2 has none.
+
+   ⚠️ THESE ARE PLACEHOLDER VALUES, and saying so is the point: the design system is decided in
+   three moments with their own proof, and this is not one of them. What is real here is the
+   SHAPE -- every colour and every measure a component uses comes from a variable, so the day a
+   palette arrives it lands in one file instead of in forty templates.
+
+   ⛔ `dockview` keeps its own theme (`themeAbyss`, the one the eight moves were judged on). These
+   tokens dress what WE draw: the bar, the band, the drawer, the strip, the placeholder.
+
+   ⚠️ G20 WANTS AA CONTRAST AND THESE VALUES ARE NOT YET PROVED TO HAVE IT: the check is
+   `axe-core` on the mounted components, and it arrives with the accessibility of task 14. A
+   value that fails it is a change to THIS file, not to forty templates -- which is the whole
+   reason the shape comes before the palette. */
+:root {
+  --ink: #e6e9ef;
+  --ink-dim: #9aa3b2;
+  --surface: #171a21;
+  --surface-raised: #1f242d;
+  --line: #2b313c;
+  --accent: #6ea8fe;
+  --warn: #f0b429;
+  --stop: #e5534b;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+
+  --radius: 6px;
+  --font: system-ui, "Segoe UI", sans-serif;
+  --font-size: 14px;
+  --line-height: 1.45;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+}
+
+/* G20: focus must be VISIBLE, and a default outline removed for looks is the commonest way an
+   interface stops being keyboard-usable. Nothing in this file removes one. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+```
+
+- [ ] **Passo 5: le scritte, e l'italiano dichiarato**
+
+`gui/src/locales/it.json`, **LF**. ⛔ **Ogni scritta della cornice sta qui** (G21), e le chiavi sono in **inglese**
+come ogni identificatore (§1.0 della spec): la chiave è codice, il valore è il documento.
+
+```json
+{
+  "app": {
+    "title": "Harness"
+  },
+  "views": {
+    "home": "Home",
+    "work": "Lavoro",
+    "compact": "Compatta"
+  },
+  "bar": {
+    "views": "Viste",
+    "search": "Cerca",
+    "searchHint": "la ricerca sugli artefatti arriva col sotto-progetto 6",
+    "core": "Core",
+    "coreWaiting": "in attesa",
+    "coreConnected": "collegato",
+    "coreStale": "timbro diverso"
+  },
+  "band": {
+    "waiting": "Il core non ha risposto.",
+    "stale": "Il core parla una versione diversa del protocollo. La finestra non procede.",
+    "retry": "Riprova",
+    "expected": "Timbro atteso: {stamp}"
+  },
+  "strip": {
+    "degradation": "Degrado",
+    "vram": "VRAM esaurita",
+    "routing": "Instradamento degradato",
+    "none": "nessuno",
+    "permissions": "Permessi",
+    "pending": "una richiesta in attesa",
+    "quiet": "nessuna richiesta"
+  },
+  "drawer": {
+    "open": "+ moduli",
+    "title": "I moduli",
+    "close": "Chiudi",
+    "built": "c'è nel sotto-progetto 2",
+    "who": "arriva col sotto-progetto {number}"
+  },
+  "placeholder": {
+    "who": "arriva col sotto-progetto {number}",
+    "missing": "Questo tipo di modulo non esiste più.",
+    "closeMissing": "Chiudi il pannello"
+  }
+}
+```
+
+`gui/src/i18n.ts`, **LF**:
+
+```ts
+import { createI18n } from "vue-i18n";
+
+import it from "./locales/it.json";
+
+/**
+ * ⛔ ITALIAN ONLY, AND THAT IS A DECISION (G21): one locale, no fallback chain, no language
+ * picker. What this buys today is not translation -- it is that every string has a KEY, so the
+ * day a second locale is wanted nothing has to be hunted for in templates.
+ *
+ * ⚠️ `legacy: false` because the SPA is composition API throughout; the legacy mode would put
+ * `$t` on every component instance and make the probes depend on a global.
+ */
+export const i18n = createI18n({
+  legacy: false,
+  locale: "it",
+  fallbackLocale: "it",
+  messages: { it },
+});
+```
+
+- [ ] **Passo 6: il timbro, letto dove il kernel l'ha scritto**
+
+`gui/src/schema/stamp.ts`, **LF** — **D52**.
+
+```ts
+import MAP from "../../schema/fixtures/ipc_v1.map?raw";
+
+import type { U64 } from "./messages";
+
+const STAMP = /^stamp 0x([0-9a-fA-F]{16})$/m;
+
+/**
+ * The build stamp the SPA presents in `Hello` (§6.1.2 of the kernel spec).
+ *
+ * ⛔ READ FROM `ipc_v1.map`, WHICH THE KERNEL WROTE, and not from the `hello` fixture: that
+ * fixture carries the CANONICAL SET's arbitrary value, chosen so that no two encodings are
+ * equal, and it is not the stamp. This file is the only place on this side of the wire where
+ * the stamp has an honest source -- the TypeScript mirror of the types is hand-written, so a
+ * stamp computed here would agree with itself and with nothing else.
+ *
+ * ⚠️ AND THAT IS WHAT MAKES THE HANDSHAKE A REAL CHECK: regenerate the schema without
+ * rebuilding the SPA and the two stamps diverge, so the core answers `StaleBuild`. That is what
+ * I4 bought by renouncing versioning.
+ *
+ * ⛔ `BigInt` AND NOT `Number`: the stamp is FNV-1a over the whole set and passes
+ * `Number.MAX_SAFE_INTEGER` as a matter of course -- the doc of `U64` says it once for everyone.
+ */
+export function buildStamp(): U64 {
+  const found = STAMP.exec(MAP);
+  const digits = found?.[1];
+  if (digits === undefined) {
+    throw new Error("ipc_v1.map carries no `stamp 0x…` line: regenerate the fixtures");
+  }
+  return BigInt(`0x${digits}`).toString(10);
+}
+```
+
+⚠️ **`?raw` e non un `import` di JSON:** `ipc_v1.map` è un foglio che legge un umano, non un dato strutturato, e
+`vite` lo consegna come stringa sia alla build sia alle sonde — la stessa proprietà per cui il compito 11 usa
+`import.meta.glob` invece di `fs`.
+
+⛔ **E l'espressione regolare àncora la riga con `^` e `$` in modalità multilinea**, non cerca `stamp` dovunque: la
+mappa porta anche i valori `Debug` dei messaggi, e uno di essi può contenere la parola.
+
+- [ ] **Passo 7: lo store della connessione — quattro stati, e nessuna soglia**
+
+`gui/src/stores/connection.ts`, **LF** — **D48**.
+
+```ts
+import { defineStore } from "pinia";
+import { ref } from "vue";
+
+import type { IpcMessage, Protection, U64 } from "../schema/messages";
+import { buildStamp } from "../schema/stamp";
+import type { Bridge } from "../transport/bridge";
+
+export type Phase = "waiting" | "connected" | "stale";
+
+/**
+ * ⛔ THE CONNECTION IS DERIVED, NOT DELIVERED (D48). "The core is not running" cannot be a
+ * message -- a core that is not running sends nothing -- and the `Bridge` deliberately has no
+ * `isConnected`: everything the shell knows how to do stays on its side of the seam. The SPA
+ * sends `Hello` and is NOT connected until `Accepted` arrives. Same fact, seen from the side
+ * that can see it.
+ *
+ * ⛔ AND THERE IS NO TIMEOUT. Telling "not running" from "slow to answer" would take a number
+ * nobody has measured ("no invented threshold", SP-7), and the gui does the same thing in both
+ * cases: offer `retry`, which resends `Hello`.
+ */
+export const useConnection = defineStore("connection", () => {
+  const phase = ref<Phase>("waiting");
+  const protection = ref<Protection | null>(null);
+  const expected = ref<U64 | null>(null);
+  let wire: Bridge | null = null;
+
+  function attach(bridge: Bridge): void {
+    wire = bridge;
+  }
+
+  function hello(): void {
+    phase.value = "waiting";
+    protection.value = null;
+    expected.value = null;
+    wire?.send({ kind: "Hello", value: buildStamp() });
+  }
+
+  /** ⚠️ The same thing as `hello`, under the name the band's button carries. Two names for one
+   * act is worth it here: the template says what the user does, the wiring says what happens. */
+  function retry(): void {
+    hello();
+  }
+
+  function receive(message: IpcMessage): void {
+    if (message.kind === "Accepted") {
+      phase.value = "connected";
+      protection.value = message.value;
+    } else if (message.kind === "StaleBuild") {
+      // ⛔ `StaleBuild` CARRIES THE EXPECTED STAMP, and the core stops listening to this client:
+      // decision 22, and the port has no close. The gui declares it and does not proceed.
+      phase.value = "stale";
+      expected.value = message.value;
+    }
+  }
+
+  return { phase, protection, expected, attach, hello, retry, receive };
+});
+```
+
+- [ ] **Passo 8: lo store dello stato del core**
+
+`gui/src/stores/core.ts`, **LF**.
+
+```ts
+import { defineStore } from "pinia";
+import { ref } from "vue";
+
+import type {
+  DegradationReport,
+  IpcMessage,
+  PolicyReport,
+  StepSummary,
+  Triple,
+  Verdict,
+} from "../schema/messages";
+
+/**
+ * What the core has told us about itself. ⛔ PRESENTATION ONLY (I1): nothing here is authoritative
+ * and nothing here is persisted -- every field is the last thing the core said, and after a
+ * restart the core says it again at the welcome (sequence 1).
+ *
+ * ⚠️ THE FIELDS START AT `null` AND NOT AT A MADE-UP DEFAULT: "we have not been told" and "the
+ * core says no degradation" are different, and a component that cannot tell them apart shows a
+ * green light to a user who is not connected.
+ */
+export const useCore = defineStore("core", () => {
+  const degradation = ref<DegradationReport | null>(null);
+  const policy = ref<PolicyReport | null>(null);
+  const steps = ref<StepSummary[]>([]);
+  const pending = ref<Triple | null>(null);
+  const lastVerdict = ref<Verdict | null>(null);
+
+  function receive(message: IpcMessage): void {
+    switch (message.kind) {
+      case "Degradation":
+        degradation.value = message.value;
+        break;
+      case "Policy":
+        policy.value = message.value;
+        break;
+      case "Steps":
+        // ⛔ REPLACED AND NOT APPENDED: §6.1.4 has the core send the piece that CHANGED, and the
+        // step list is sent whole -- at the welcome and after every invocation. Appending would
+        // double every step across a reconnection.
+        steps.value = message.value;
+        break;
+      case "PermissionRequired":
+        pending.value = message.value;
+        break;
+      case "Verdict":
+        lastVerdict.value = message.value;
+        break;
+      default:
+        break;
+    }
+  }
+
+  /** Task 14's confirmation window clears it after `Approve`; the frame only counts it. */
+  function settled(): void {
+    pending.value = null;
+  }
+
+  return { degradation, policy, steps, pending, lastVerdict, receive, settled };
+});
+```
+
+- [ ] **Passo 9: lo store della disposizione, e il pacchetto opaco**
+
+`gui/src/stores/layout.ts`, **LF**.
+
+```ts
+import type { SerializedDockview } from "dockview-core";
+import { defineStore } from "pinia";
+import { ref } from "vue";
+
+import type { IpcMessage, LayoutState } from "../schema/messages";
+import type { Bridge } from "../transport/bridge";
+
+export type ViewName = "home" | "work" | "compact";
+
+export interface LayoutPack {
+  view: ViewName;
+  layout: SerializedDockview;
+}
+
+const VIEWS: readonly ViewName[] = ["home", "work", "compact"];
+
+function isViewName(value: unknown): value is ViewName {
+  return typeof value === "string" && (VIEWS as readonly string[]).includes(value);
+}
+
+/**
+ * ⛔ THE PACKAGE IS OPAQUE TO THE CORE AND STRUCTURED ONLY HERE (row 1 of §2 of the north star):
+ * the core keeps bytes and hands them back, and if `dockview` changes format the core does not
+ * change. So the shape below is the gui's business alone, and the wire carries `number[]`.
+ *
+ * ⛔ AND WHAT COMES BACK IS NOT TRUSTED TO BE OURS: an archive can hold a package written by an
+ * older build. `unpack` returns `null` on anything it does not recognise, and the caller falls
+ * back to the committed views -- the same shape as row 8 of §2, where a panel pointing at a type
+ * that is gone says so and closes.
+ */
+export const useLayout = defineStore("layout", () => {
+  const state = ref<LayoutState>({ state: "Nothing" });
+  const view = ref<ViewName>("home");
+  let wire: Bridge | null = null;
+
+  function attach(bridge: Bridge): void {
+    wire = bridge;
+  }
+
+  function receive(message: IpcMessage): void {
+    if (message.kind !== "Layout") return;
+    state.value = message.value;
+    const pack = unpack(message.value);
+    if (pack !== null) view.value = pack.view;
+  }
+
+  /** ⛔ AUTOMATIC, NOT A BUTTON (decision 12): when the layout settles, and when the window
+   * closes. The cadence is the gui's -- it is presentation, not a kernel decision. */
+  function settle(pack: LayoutPack): void {
+    wire?.send({ kind: "SaveLayout", value: [...pack_(pack)] });
+  }
+
+  return { state, view, attach, receive, settle };
+});
+
+/** The package as bytes: UTF-8 of the JSON. ⚠️ Exported for the probes, which must be able to
+ * build one without a store and a bridge. */
+export function pack_(pack: LayoutPack): Uint8Array {
+  return new TextEncoder().encode(JSON.stringify(pack));
+}
+
+export function unpack(state: LayoutState): LayoutPack | null {
+  if (state.state !== "Package") return null;
+  try {
+    const value: unknown = JSON.parse(new TextDecoder().decode(Uint8Array.from(state.bytes)));
+    if (typeof value !== "object" || value === null) return null;
+    const candidate = value as { view?: unknown; layout?: unknown };
+    if (!isViewName(candidate.view)) return null;
+    if (typeof candidate.layout !== "object" || candidate.layout === null) return null;
+    return { view: candidate.view, layout: candidate.layout as SerializedDockview };
+  } catch {
+    // ⛔ A PACKAGE THAT DOES NOT PARSE IS NOT AN ERROR TO SHOW: it is an old build's layout, and
+    // the answer is the committed views. Row 8 of §2 asks the gui to cope, not to complain.
+    return null;
+  }
+}
+```
+
+⚠️ **`pack_` col trattino basso in coda e non `pack`:** `pack` è già il nome del parametro in `settle`, e due cose
+con lo stesso nome nello stesso file sono la specie di ambiguità che **D8** ha rifiutato per `counter`.
+
+- [ ] **Passo 10: la sonda degli store, e i tre stati di `Layout`**
+
+`gui/src/stores/stores.test.ts`, **LF**. ⛔ **Qui si vede perché D46 esiste:** due dei tre casi di `Layout` non
+sono raggiungibili dalla finta, e la sonda consegna allo store un messaggio **tipizzato**.
+
+```ts
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
+
+import type { IpcMessage } from "../schema/messages";
+import { createFakeBridge } from "../transport/fakeBridge";
+
+import { useConnection } from "./connection";
+import { useCore } from "./core";
+import { pack_, unpack, useLayout } from "./layout";
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+});
+
+describe("the connection", () => {
+  it("starts waiting and sends Hello with the stamp from the map", () => {
+    const bridge = createFakeBridge();
+    const connection = useConnection();
+    connection.attach(bridge);
+    connection.hello();
+    expect(connection.phase).toBe("waiting");
+    expect(bridge.sent).toHaveLength(1);
+    const sent = bridge.sent[0];
+    expect(sent?.kind).toBe("Hello");
+    // ⛔ THE ORACLE IS NOT "a string": it is a DECIMAL string that round-trips through BigInt.
+    // "0x…" or a rounded Number would both be truthy and both wrong.
+    expect(sent?.kind === "Hello" && /^[0-9]+$/.test(sent.value)).toBe(true);
+  });
+
+  it("becomes connected on Accepted, and stale on StaleBuild", () => {
+    const connection = useConnection();
+    connection.receive({ kind: "Accepted", value: "AsSystemAccount" });
+    expect(connection.phase).toBe("connected");
+    expect(connection.protection).toBe("AsSystemAccount");
+    connection.receive({ kind: "StaleBuild", value: "81985529216486895" });
+    expect(connection.phase).toBe("stale");
+    expect(connection.expected).toBe("81985529216486895");
+  });
+
+  it("goes back to waiting on retry, and sends Hello again", () => {
+    const bridge = createFakeBridge();
+    const connection = useConnection();
+    connection.attach(bridge);
+    connection.receive({ kind: "Accepted", value: "AsSystemAccount" });
+    connection.retry();
+    expect(connection.phase).toBe("waiting");
+    expect(connection.protection).toBeNull();
+    expect(bridge.sent.map((m) => m.kind)).toEqual(["Hello"]);
+  });
+});
+
+describe("the core state", () => {
+  it("takes every fixture the kernel generated without throwing", () => {
+    const bridge = createFakeBridge();
+    const core = useCore();
+    const connection = useConnection();
+    bridge.listen((message) => {
+      core.receive(message);
+      connection.receive(message);
+    });
+    bridge.deliverAll();
+    // ⛔ NOT A VACUOUS "it did not throw": the three fields the strip reads must be POPULATED,
+    // because `deliverAll` carries a Degradation, a Policy and a Steps.
+    expect(core.degradation).not.toBeNull();
+    expect(core.policy).not.toBeNull();
+    expect(core.steps.length).toBeGreaterThan(0);
+  });
+
+  it("replaces the step list instead of appending it", () => {
+    const core = useCore();
+    const one: IpcMessage = { kind: "Steps", value: [{ step: "1", function: "a", done: true }] };
+    core.receive(one);
+    core.receive(one);
+    expect(core.steps).toHaveLength(1);
+  });
+});
+
+describe("the layout", () => {
+  it("takes a Package and reads the view out of it", () => {
+    const layout = useLayout();
+    const bytes = [...pack_({ view: "work", layout: {} as never })];
+    layout.receive({ kind: "Layout", value: { state: "Package", bytes } });
+    expect(layout.state.state).toBe("Package");
+    expect(layout.view).toBe("work");
+  });
+
+  it("keeps the default view on Nothing and on Unavailable", () => {
+    // ⛔ THE TWO CASES THE FIXTURES CANNOT REACH (D46): `stamp_set` carries ONE message per
+    // variant, so `deliver("Layout")` only ever delivers `Package`. The type system is what
+    // keeps this honest -- `LayoutState` has three variants and not one more.
+    for (const value of [{ state: "Nothing" }, { state: "Unavailable" }] as const) {
+      setActivePinia(createPinia());
+      const layout = useLayout();
+      layout.receive({ kind: "Layout", value });
+      expect(layout.state.state).toBe(value.state);
+      expect(layout.view).toBe("home");
+    }
+  });
+
+  it("refuses a package it cannot read, instead of half-applying it", () => {
+    expect(unpack({ state: "Package", bytes: [0x7b, 0x7d] })).toBeNull();
+    expect(unpack({ state: "Package", bytes: [0x00, 0x01] })).toBeNull();
+    expect(unpack({ state: "Nothing" })).toBeNull();
+  });
+
+  it("sends SaveLayout as bytes when the layout settles", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    layout.settle({ view: "home", layout: {} as never });
+    const sent = bridge.sent[0];
+    expect(sent?.kind).toBe("SaveLayout");
+    expect(sent?.kind === "SaveLayout" && sent.value.length).toBeGreaterThan(0);
+  });
+});
+```
+
+- [ ] **Passo 11: il ponte fra Vue e i pannelli, e la presa grande**
+
+⛔ **Sale il MERITO di due pezzi dello spike, riscritto — D49.** Non si importa niente da `spikes/`: uno spike è una
+prova, fuori dal workspace.
+
+`gui/src/frame/VueContent.ts`, **LF**:
+
+```ts
+import type { GroupPanelPartInitParameters, IContentRenderer } from "dockview-core";
+import type { App, Component } from "vue";
+import { createApp } from "vue";
+
+import { i18n } from "../i18n";
+
+/**
+ * Mounts one Vue component as the content of one `dockview` panel -- the bridge between Vue and
+ * the panels that decision 2 of the north star says we write ourselves, rather than taking
+ * `dockview-vue` (ADR-0030 prefers framework-agnostic libraries, and the adapter has few users).
+ *
+ * ⛔ ONE VUE APP PER PANEL, AND `unmount` ON `dispose`: a panel `dockview` throws away must
+ * unmount its app or every closed tile leaks a reactive tree. Measured shape from SP-8's
+ * `spikes/gui-shell/app/src/vue-bridge.ts`, which the owner exercised across the eight moves.
+ *
+ * ⚠️ THE APP GETS `i18n` AND NOT PINIA: pinia is installed on the ROOT app and its stores are
+ * global to the page, so a panel reaches them through `useCore()` without a plugin. `i18n` is
+ * per-app, so it has to be handed over here or every panel renders raw keys.
+ */
+export class VueContent implements IContentRenderer {
+  readonly element = document.createElement("div");
+  private app?: App;
+
+  constructor(private readonly component: Component) {
+    this.element.className = "panel";
+  }
+
+  init(parameters: GroupPanelPartInitParameters): void {
+    this.app = createApp(this.component, {
+      title: parameters.title,
+      api: parameters.api,
+      containerApi: parameters.containerApi,
+      params: parameters.params,
+    });
+    this.app.use(i18n);
+    this.app.mount(this.element);
+  }
+
+  dispose(): void {
+    this.app?.unmount();
+    this.app = undefined;
+  }
+}
+```
+
+`gui/src/frame/BigTab.ts`, **LF**:
+
+```ts
+import type { ITabRenderer, TabPartInitParameters } from "dockview-core";
+
+/**
+ * The big grab handle (move 5): the tab element is what `dockview` drags, so a big tab is a big
+ * grab -- which is what makes a pointer that is a HAND able to take it (move 8, ADR-0039).
+ *
+ * ⛔ A CLICK ON A COMMAND MUST NOT START A DRAG, and stopping `click` alone is not enough:
+ * `dockview` begins the drag on `pointerdown`/`mousedown`, so both are stopped here. Measured in
+ * SP-8; without it, every press of a command drags the tile a few pixels first.
+ */
+export class BigTab implements ITabRenderer {
+  readonly element = document.createElement("div");
+
+  init(parameters: TabPartInitParameters): void {
+    this.element.className = "bigtab";
+    const title = document.createElement("span");
+    title.className = "bigtab-title";
+    title.textContent = parameters.title ?? parameters.api.id;
+    this.element.append(title);
+  }
+}
+```
+
+⚠️ **Nessun comando nella linguetta, a differenza dello spike**, e non è una dimenticanza: lo spike ci metteva
+«stacca», «pagina intera» e «finestra a parte» per **provare le mosse 2, 3 e 4**. Nel prodotto quei comandi
+appartengono al menu del modulo, che il **14** disegna con l'accessibilità; la presa qui porta il **titolo**, che è
+ciò che la mossa 5 ha giudicato. ⛔ **La riga sul `pointerdown` resta scritta** perché è la trappola, e il 14 la
+trova già detta invece di ripagarla.
+
+- [ ] **Passo 12: il registro dei tipi e il segnaposto**
+
+⛔ **Il segnaposto è QUI e non al 14 — D47:** `dockview` chiede alla fabbrica un componente **per nome**, quindi
+senza di esso la cornice si monta e non mostra nulla, con `npm run build` verde.
+
+`gui/src/panels/Placeholder.vue`, **LF**:
+
+```vue
+<script setup lang="ts">
+// ⛔ ONE PLACEHOLDER AND NOT EIGHTEEN (decision 17 of the north star): every module the milestone
+// does not build says, in words, WHO fills it -- which is the rule §1 of the north star states
+// for the whole catalogue.
+import type { DockviewPanelApi } from "dockview-core";
+
+// `api` arrives from `VueContent`, which hands `dockview`'s init parameters to the app.
+defineProps<{ api?: DockviewPanelApi; params?: { module?: string; who?: number; missing?: boolean } }>();
+</script>
+
+<template>
+  <section class="placeholder">
+    <template v-if="params?.missing">
+      <p>{{ $t("placeholder.missing") }}</p>
+      <!-- ⛔ ROW 8 OF §2 SAYS "SAYS SO **AND CLOSES**", AND BOTH HALVES MATTER: closing at once
+           would take the words away before anyone read them, and only saying them would leave a
+           dead tile in every layout saved from here on. So the panel says it and offers the
+           close it is going to do. -->
+      <button type="button" @click="api?.close()">{{ $t("placeholder.closeMissing") }}</button>
+    </template>
+    <p v-else-if="params?.who !== undefined">{{ $t("placeholder.who", { number: params.who }) }}</p>
+  </section>
+</template>
+
+<style scoped>
+.placeholder {
+  color: var(--ink-dim);
+  padding: var(--space-4);
+}
+</style>
+```
+
+`gui/src/panels/Strip.vue`, **LF** — ⛔ **è un pannello di `dockview`, bloccato, e sta in tutte e tre le viste
+(D50)**: ciò che sta nella griglia entra nel JSON della disposizione.
+
+```vue
+<script setup lang="ts">
+import { useCore } from "../stores/core";
+
+// ⚠️ ONLY WHAT IS ALIVE IN MILESTONE 2 (decision 16 of the north star): degradation and
+// permissions. Seven "arrives with N" in a thin strip is noise, and the drawer is where "who
+// fills what" belongs.
+const core = useCore();
+</script>
+
+<template>
+  <div class="strip">
+    <span>
+      {{ $t("strip.degradation") }}:
+      <template v-if="core.degradation === null">—</template>
+      <template v-else-if="core.degradation.vram_exhausted || core.degradation.routing_degraded">
+        <span v-if="core.degradation.vram_exhausted" class="warn">{{ $t("strip.vram") }}</span>
+        <span v-if="core.degradation.routing_degraded" class="warn">{{ $t("strip.routing") }}</span>
+      </template>
+      <template v-else>{{ $t("strip.none") }}</template>
+    </span>
+    <span>
+      {{ $t("strip.permissions") }}:
+      {{ core.pending === null ? $t("strip.quiet") : $t("strip.pending") }}
+    </span>
+  </div>
+</template>
+
+<style scoped>
+.strip {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  height: 100%;
+  padding: 0 var(--space-3);
+  color: var(--ink-dim);
+}
+.warn {
+  color: var(--warn);
+  margin-left: var(--space-1);
+}
+</style>
+```
+
+`gui/src/panels/registry.ts`, **LF**:
+
+```ts
+import type { IContentRenderer } from "dockview-core";
+import type { Component } from "vue";
+
+import { VueContent } from "../frame/VueContent";
+
+import Placeholder from "./Placeholder.vue";
+import Strip from "./Strip.vue";
+
+export interface PanelType {
+  /** The name a view's JSON carries, and the name `dockview` asks the factory for. */
+  name: string;
+  /** The key in `locales/it.json` under `modules`. */
+  module: string;
+  /** The sub-project that fills it -- §1 of the north star, "Chi". */
+  who: number;
+}
+
+/**
+ * The eighteen module types of §1 of the north star: five with a full table, thirteen with a
+ * short one. ⛔ THE LIST IS THE CATALOGUE'S, NOT THIS FILE'S: a module type is added when §1
+ * gains a row, and `who` is that row's "Chi".
+ *
+ * ⚠️ `strip` IS NOT HERE, and that is the distinction D50 draws: the strip is a panel of the
+ * grid, so it is registered as a component, but it is not a MODULE -- it does not appear in the
+ * drawer and no view lets the user close it.
+ */
+export const PANEL_TYPES: readonly PanelType[] = [
+  { name: "chat", module: "chat", who: 3 },
+  { name: "status", module: "status", who: 2 },
+  { name: "permissions", module: "permissions", who: 2 },
+  { name: "steps", module: "steps", who: 2 },
+  { name: "activity", module: "activity", who: 3 },
+  { name: "settings", module: "settings", who: 2 },
+  { name: "scope", module: "scope", who: 5 },
+  { name: "diff", module: "diff", who: 5 },
+  { name: "preview", module: "preview", who: 3 },
+  { name: "terminal", module: "terminal", who: 5 },
+  { name: "sensors", module: "sensors", who: 4 },
+  { name: "costs", module: "costs", who: 3 },
+  { name: "knowledge", module: "knowledge", who: 6 },
+  { name: "assets3d", module: "assets3d", who: 7 },
+  { name: "voice", module: "voice", who: 8 },
+  { name: "backup", module: "backup", who: 11 },
+  { name: "checkpoint", module: "checkpoint", who: 5 },
+  { name: "models", module: "models", who: 9 },
+];
+
+const BUILT = new Map<string, Component>([["strip", Strip]]);
+
+/** Task 14 plugs the real modules in here. ⛔ ONE SEAM AND NOT EIGHTEEN IMPORTS in this file:
+ * a module that is built must not make this file change shape, only its map gain a row. */
+export function register(name: string, component: Component): void {
+  BUILT.set(name, component);
+}
+
+export function isModule(name: string): boolean {
+  return PANEL_TYPES.some((type) => type.name === name);
+}
+
+/**
+ * What `dockview` gets for a name. Three cases, and they are NOT the same thing:
+ *
+ * - a built module -> its component;
+ * - a module type that milestone 2 does not build -> the placeholder, saying who fills it;
+ * - ⛔ a name that is NOT A MODULE TYPE AT ALL -> the placeholder saying the type is gone. This
+ *   is row 8 of §2 of the north star -- a saved package can point at a type a later build
+ *   removed -- and conflating it with the case above would tell the user to wait for a
+ *   sub-project that will never fill it.
+ */
+export function componentFor(name: string): () => IContentRenderer {
+  const built = BUILT.get(name);
+  if (built !== undefined) return () => new VueContent(built);
+  return () => new VueContent(Placeholder);
+}
+
+/** The params a panel of `name` carries when nobody built it -- read by `Placeholder`. */
+export function placeholderParams(name: string): Record<string, unknown> {
+  const type = PANEL_TYPES.find((candidate) => candidate.name === name);
+  return type === undefined ? { missing: true } : { module: type.module, who: type.who };
+}
+```
+
+⛔ **`componentFor` NON decide da sola i `params`**, e `placeholderParams` esiste per questo: i parametri di un
+pannello li porta il **JSON della vista** o `addPanel`, e `dockview` li consegna a `init`. Una fabbrica che li
+inventasse renderebbe il caso «tipo sparito» invisibile a chi legge il JSON.
+
+⚠️ **E le diciotto chiavi `modules.*` entrano in `locales/it.json`** nello stesso passo — una riga per `module`,
+col nome del modulo in italiano come lo scrive la §1 della stella polare.
+
+- [ ] **Passo 13: le tre viste, GENERATE e committate**
+
+⛔ **Non si scrivono a mano, e il perché è una regola di questo repository: «Mai inventare».** La forma serializzata
+di `dockview` è sua, non nostra, e un JSON indovinato sarebbe accettato in silenzio e corretto al caricamento —
+**E4 della parte 1** ha misurato che `toJSON` dopo `fromJSON` **non** torna uguale al byte. Quindi il **contenuto**
+lo detta questo passo e la **forma** la produce `dockview`, esattamente come `regenerate_the_fixtures` fa per i
+byte del filo.
+
+Prima si verifica l'API che il generatore usa per essere saltato, invece di darla per buona:
+
+```bash
+cd gui && node -e "const v=require('vitest'); console.log(typeof v.it.skipIf, typeof v.it.runIf)"; cd ..
+```
+
+Atteso: **`function function`**. ⛔ **Se non lo è**, la guardia diventa un `if (…) return;` in testa al corpo, e si
+scrive una **voce d'errata** con l'esito vero — non si lascia un generatore che gira nel cancello.
+
+`gui/src/panels/views/generate-views.test.ts`, **LF**:
+
+```ts
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+import { createDockview, type DockviewApi } from "dockview-core";
+import { it } from "vitest";
+
+import { componentFor, placeholderParams } from "../registry";
+
+/**
+ * ⛔ THE ONLY WRITER OF `src/panels/views/*.json`, and it is SKIPPED by default -- the twin of
+ * `regenerate_the_fixtures` in `crates/kernel/tests/ipc_wire.rs`, and for the same reason: a
+ * gate must not rewrite the artefacts it is checking.
+ *
+ *   REGENERATE_VIEWS=1 npx vitest run src/panels/views/generate-views.test.ts
+ *
+ * ⛔ AND THE JSON IS GENERATED RATHER THAN HAND-WRITTEN because the serialised shape is
+ * `dockview`'s, not ours: a guessed file would be accepted and silently corrected on load (E4 of
+ * the part-1 plan measured that `toJSON` after `fromJSON` differs raw). What this file dictates
+ * is the CONTENT -- which panels, where, which are locked.
+ */
+const OUT = join(dirname(fileURLToPath(import.meta.url)));
+
+function dock(): DockviewApi {
+  const host = document.createElement("div");
+  document.body.append(host);
+  const api = createDockview(host, {
+    createComponent: ({ name }) => componentFor(name)(),
+  });
+  api.layout(1600, 1000);
+  return api;
+}
+
+function lock(api: DockviewApi, id: string): void {
+  const group = api.getPanel(id)?.group;
+  if (group === undefined) throw new Error(`no panel ${id}`);
+  // ⛔ TWO LINES AND NOT ONE: `locked` stops the drag, `header.hidden` takes away the tab that
+  // would let it be closed. Measured in SP-8 (move 1); the second is the one that is forgotten.
+  group.locked = true;
+  group.header.hidden = true;
+}
+
+function tile(api: DockviewApi, id: string, where?: Parameters<DockviewApi["addPanel"]>[0]["position"]): void {
+  api.addPanel({ id, component: id, title: id, params: placeholderParams(id), position: where });
+}
+
+function write(name: string, api: DockviewApi): void {
+  mkdirSync(OUT, { recursive: true });
+  writeFileSync(join(OUT, `${name}.json`), `${JSON.stringify(api.toJSON(), null, 2)}\n`, "utf8");
+}
+
+it.skipIf(process.env.REGENERATE_VIEWS !== "1")("regenerates the three committed views", () => {
+  // Home: the nucleus in the middle, locked; the strip at the bottom, locked; the tiles around.
+  // The chat is NOT here -- it is a tab of Lavoro (question 7 of the north star).
+  const home = dock();
+  tile(home, "knowledge");
+  home.addPanel({ id: "strip", component: "strip", title: "strip", position: { referencePanel: "knowledge", direction: "below" }, minimumHeight: 56, maximumHeight: 56 });
+  tile(home, "status", { referencePanel: "knowledge", direction: "left" });
+  tile(home, "permissions", { referencePanel: "status", direction: "below" });
+  tile(home, "settings", { referencePanel: "permissions", direction: "below" });
+  tile(home, "activity", { referencePanel: "knowledge", direction: "right" });
+  tile(home, "costs", { referencePanel: "activity", direction: "below" });
+  lock(home, "knowledge");
+  lock(home, "strip");
+  write("home", home);
+
+  // Lavoro: Attività and Ambito on the left, the chat in the middle, Diff/Anteprima/Terminale on
+  // the right, Passi and Sensori at the bottom -- "Il modello della GUI", row Lavoro.
+  const work = dock();
+  tile(work, "chat");
+  work.addPanel({ id: "strip", component: "strip", title: "strip", position: { referencePanel: "chat", direction: "below" }, minimumHeight: 56, maximumHeight: 56 });
+  tile(work, "activity", { referencePanel: "chat", direction: "left" });
+  tile(work, "scope", { referencePanel: "activity", direction: "below" });
+  tile(work, "diff", { referencePanel: "chat", direction: "right" });
+  tile(work, "preview", { referencePanel: "diff", direction: "below" });
+  tile(work, "terminal", { referencePanel: "preview", direction: "below" });
+  tile(work, "steps", { referencePanel: "chat", direction: "below" });
+  tile(work, "sensors", { referencePanel: "steps", direction: "right" });
+  lock(work, "strip");
+  write("work", work);
+
+  // ⚠️ Compatta IS A PLACEHOLDER AND SAYS SO: its real shape -- a popout or a shrunk window --
+  // is registered, not taken, and its closer is sub-project 10.
+  const compact = dock();
+  tile(compact, "knowledge");
+  compact.addPanel({ id: "strip", component: "strip", title: "strip", position: { referencePanel: "knowledge", direction: "below" }, minimumHeight: 56, maximumHeight: 56 });
+  lock(compact, "knowledge");
+  lock(compact, "strip");
+  write("compact", compact);
+});
+```
+
+Poi si genera e si legge che cosa è uscito:
+
+```bash
+cd gui && REGENERATE_VIEWS=1 npx vitest run src/panels/views/generate-views.test.ts; echo "EXIT=$?"; cd ..
+ls -l gui/src/panels/views/*.json
+tr -cd '\r' < gui/src/panels/views/home.json | wc -c
+```
+
+Atteso: **`EXIT=0`**, tre file, **zero** CR. ⛔ **Se `EXIT` non è zero perché `dockview` non regge `jsdom`** (il
+Passo 3 lo ha già misurato), il generatore si lancia **nel browser** da una pagina usa-e-getta di `npm run dev` e i
+tre JSON si salvano a mano: è una voce d'errata col comando vero, non un JSON scritto a mano.
+
+`gui/src/panels/views/index.ts`, **LF**:
+
+```ts
+import type { SerializedDockview } from "dockview-core";
+
+import type { ViewName } from "../../stores/layout";
+
+import compact from "./compact.json";
+import home from "./home.json";
+import work from "./work.json";
+
+/**
+ * The three views that ship with the app (decision 11 of the north star): they stay in `gui/`
+ * and are NOT copied into the archive at first run -- copied, an update that improves a view
+ * would never reach anyone who had not touched it.
+ *
+ * ⛔ THE ANNOTATION IS THE CHECK. `resolveJsonModule` widens a `.json` to its literal shape, and
+ * assigning it to `SerializedDockview` makes `vue-tsc` compare the committed file against
+ * `dockview`'s own type -- the web world's level 1, on a file nobody writes by hand.
+ */
+export const VIEWS: Readonly<Record<ViewName, SerializedDockview>> = {
+  home: home as SerializedDockview,
+  work: work as SerializedDockview,
+  compact: compact as SerializedDockview,
+};
+```
+
+- [ ] **Passo 14: il dock**
+
+`gui/src/frame/dock.ts`, **LF** — ⛔ **le opzioni sono quelle che le otto mosse hanno esercitato (D49)**, e ognuna
+porta accanto la mossa che la giustifica.
+
+```ts
+import { createDockview, themeAbyss, type DockviewApi, type SerializedDockview } from "dockview-core";
+
+import { componentFor, placeholderParams } from "../panels/registry";
+import { unpack, useLayout, type LayoutPack } from "../stores/layout";
+import { VIEWS } from "../panels/views";
+
+import { BigTab } from "./BigTab";
+
+const GRID = 24;
+
+/** Sorts object keys recursively: key order is not layout. */
+export function canonical(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value !== null && typeof value === "object") {
+    const source = value as Record<string, unknown>;
+    return Object.fromEntries(Object.keys(source).sort().map((k) => [k, canonical(source[k])]));
+  }
+  return value;
+}
+
+/**
+ * ⛔ MEASURED ON 2026-09-10 BY SP-8 (E4 of the part-1 plan): `toJSON()` after `fromJSON()` is
+ * equal only in CANONICAL form -- `panels` comes back in another key order, a floating group
+ * grows by 2 px per round trip, and minimum sizes are imposed on a narrow viewport. So "has the
+ * layout settled?" is answered on the canonical form. Comparing the raw strings would save on
+ * every idle tick, which is the behaviour decision 12 exists to avoid.
+ */
+function same(a: SerializedDockview, b: SerializedDockview): boolean {
+  return JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
+}
+
+export function createDock(host: HTMLElement): DockviewApi {
+  const layout = useLayout();
+  const api = createDockview(host, {
+    // The theme the eight moves were judged on. Our own tokens dress what WE draw -- the bar,
+    // the band, the drawer, the strip, the placeholder -- and the design system is decided in
+    // its own three moments, none of which is this task.
+    theme: themeAbyss,
+    defaultTabComponent: "bigtab",
+    // Q4 of SP-8: the doc recommends `pointer` where HTML5 drag is unreliable and names embedded
+    // webviews; and ADR-0039's hand needs it, because a script cannot start a native HTML5 drag.
+    // ⚠️ It costs drag BETWEEN WINDOWS and the native drag image (decision 34) -- neither is a
+    // milestone-2 feature.
+    dndStrategy: "pointer",
+    floatingGroupBounds: "boundedWithinViewport",
+    transformFloatingGroupDrag: ({ proposed }) => ({
+      left: Math.round(proposed.left / GRID) * GRID,
+      top: Math.round(proposed.top / GRID) * GRID,
+    }),
+    createComponent: ({ name }) => componentFor(name)(),
+    createTabComponent: () => new BigTab(),
+  });
+
+  api.layout(host.clientWidth, host.clientHeight);
+  apply(api, layout.view, unpack(layout.state));
+
+  let last = api.toJSON();
+  api.onDidLayoutChange(() => {
+    const now = api.toJSON();
+    if (same(last, now)) return;
+    last = now;
+    layout.settle({ view: layout.view, layout: now });
+  });
+
+  window.addEventListener("beforeunload", () => {
+    // Decision 12: and when the window closes.
+    layout.settle({ view: layout.view, layout: api.toJSON() });
+  });
+
+  window.addEventListener("resize", () => api.layout(host.clientWidth, host.clientHeight));
+  return api;
+}
+
+/**
+ * ⛔ A SAVED VIEW WINS OVER THE DEFAULT, AND A PACKAGE WE CANNOT READ LOSES TO IT: row 6 of §2
+ * of the north star, and row 8 -- the gui copes rather than complains.
+ */
+export function apply(api: DockviewApi, view: string, pack: LayoutPack | null): void {
+  const shipped = VIEWS[view as keyof typeof VIEWS] ?? VIEWS.home;
+  api.fromJSON(pack?.layout ?? shipped);
+  for (const panel of api.panels) {
+    if (Object.keys(panel.params ?? {}).length === 0) {
+      panel.api.updateParameters(placeholderParams(panel.id));
+    }
+  }
+}
+```
+
+⛔ **Il giro dei parametri dopo `fromJSON` non è una pezza:** un pacchetto salvato porta i `params` di **allora**,
+e un tipo tolto da una build successiva li porta ancora. Rimetterli dal registro è ciò che rende la riga 8 della §2
+vera **anche su un pacchetto vecchio**, non solo su una vista committata.
+
+- [ ] **Passo 15: la cornice — la barra, la fascia, il cassetto**
+
+⛔ **Questi tre stanno FUORI dalla griglia, la striscia dentro — D50.** La regola che ne discende è la ragione per
+cui la fascia non può essere un pannello: **ciò che sta nella griglia entra nel JSON della disposizione**, e un
+pannello che compare e sparisce a ogni disconnessione cambierebbe la disposizione salvata.
+
+Prima si verificano i nomi dei primitivi, invece di ricordarli:
+
+```bash
+cd gui && node -e "const r=require('reka-ui'); for (const n of ['DialogRoot','DialogTrigger','DialogPortal','DialogOverlay','DialogContent','DialogTitle','DialogClose']) console.log(n, typeof r[n])"; cd ..
+```
+
+Atteso: **`object` o `function` per tutti e sette**. ⛔ **Se un nome non c'è, si legge l'elenco vero**
+(`node -e "console.log(Object.keys(require('reka-ui')).filter(k=>k.startsWith('Dialog')).join(' '))"`) e si scrive
+una **voce d'errata** coi nomi giusti: non si ripiega su un `<div>` con la tastiera scritta a mano, perché G20
+vuole i primitivi e il 14 ne riuserà gli stessi.
+
+`gui/src/frame/ViewBar.vue`, **LF**:
+
+```vue
+<script setup lang="ts">
+import { useConnection } from "../stores/connection";
+import { useLayout, type ViewName } from "../stores/layout";
+
+import Drawer from "./Drawer.vue";
+
+const connection = useConnection();
+const layout = useLayout();
+const views: ViewName[] = ["home", "work", "compact"];
+const emit = defineEmits<{ (event: "switch", view: ViewName): void }>();
+</script>
+
+<template>
+  <header class="bar">
+    <nav :aria-label="$t('bar.views')">
+      <button
+        v-for="name in views"
+        :key="name"
+        type="button"
+        :aria-current="layout.view === name ? 'page' : undefined"
+        @click="emit('switch', name)"
+      >
+        {{ $t(`views.${name}`) }}
+      </button>
+    </nav>
+
+    <!-- ⚠️ DISABLED AND SAYING WHO FILLS IT, not hidden: decision 16 of the north star wants the
+         search box to say who fills it, and a control that is simply absent teaches nothing. -->
+    <input class="search" type="search" disabled :placeholder="$t('bar.searchHint')" :aria-label="$t('bar.search')" />
+
+    <span class="chip" :data-phase="connection.phase">
+      {{ $t("bar.core") }}:
+      {{
+        connection.phase === "connected"
+          ? $t("bar.coreConnected")
+          : connection.phase === "stale"
+            ? $t("bar.coreStale")
+            : $t("bar.coreWaiting")
+      }}
+    </span>
+
+    <Drawer />
+  </header>
+</template>
+
+<style scoped>
+.bar {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-raised);
+  border-bottom: 1px solid var(--line);
+}
+.search {
+  flex: 1;
+  max-width: 320px;
+}
+.chip[data-phase="connected"] {
+  color: var(--accent);
+}
+.chip[data-phase="stale"] {
+  color: var(--stop);
+}
+</style>
+```
+
+`gui/src/frame/Band.vue`, **LF**:
+
+```vue
+<script setup lang="ts">
+import { useConnection } from "../stores/connection";
+
+// ⛔ THE BAND APPEARS ONLY WHEN THE CORE IS MISSING OR THE STAMP IS WRONG (§6a), and it is NOT a
+// panel (D50): a panel that came and went would rewrite the saved layout on every disconnection.
+// ⛔ AND THERE IS NO THRESHOLD (D48): "not running" and "slow" are one state here, because the
+// gui does the same thing in both -- offer `retry`.
+const connection = useConnection();
+</script>
+
+<template>
+  <div v-if="connection.phase !== 'connected'" class="band" role="status">
+    <span v-if="connection.phase === 'stale'">
+      {{ $t("band.stale") }}
+      <template v-if="connection.expected !== null">
+        {{ $t("band.expected", { stamp: connection.expected }) }}
+      </template>
+    </span>
+    <template v-else>
+      <span>{{ $t("band.waiting") }}</span>
+      <button type="button" @click="connection.retry()">{{ $t("band.retry") }}</button>
+    </template>
+  </div>
+</template>
+
+<style scoped>
+.band {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-raised);
+  border-bottom: 1px solid var(--warn);
+  color: var(--warn);
+}
+</style>
+```
+
+`gui/src/frame/Drawer.vue`, **LF**:
+
+```vue
+<script setup lang="ts">
+import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from "reka-ui";
+
+import { PANEL_TYPES } from "../panels/registry";
+
+// ⛔ THE DRAWER IS WHERE "WHO FILLS WHAT" LIVES (decision 16 of the north star): every type with
+// its number, so the strip can stay thin. ⚠️ It is also the first component that wants a focus
+// trap and the keyboard, which is why `reka-ui` enters with THIS task and not with task 14 --
+// two ways of doing the same thing in one SPA is what the consistency criterion refuses.
+</script>
+
+<template>
+  <DialogRoot>
+    <DialogTrigger class="drawer-open">{{ $t("drawer.open") }}</DialogTrigger>
+    <DialogPortal>
+      <DialogOverlay class="drawer-overlay" />
+      <DialogContent class="drawer">
+        <DialogTitle>{{ $t("drawer.title") }}</DialogTitle>
+        <ul>
+          <li v-for="type in PANEL_TYPES" :key="type.name">
+            <span>{{ $t(`modules.${type.module}`) }}</span>
+            <span class="who">{{ $t("drawer.who", { number: type.who }) }}</span>
+          </li>
+        </ul>
+        <DialogClose>{{ $t("drawer.close") }}</DialogClose>
+      </DialogContent>
+    </DialogPortal>
+  </DialogRoot>
+</template>
+
+<style scoped>
+.drawer {
+  position: fixed;
+  inset: auto 0 0 0;
+  max-height: 60vh;
+  overflow: auto;
+  padding: var(--space-4);
+  background: var(--surface-raised);
+  border-top: 1px solid var(--line);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.who {
+  color: var(--ink-dim);
+  margin-left: var(--space-2);
+}
+</style>
+```
+
+`gui/src/frame/Frame.vue`, **LF**:
+
+```vue
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
+
+import { apply, createDock } from "./dock";
+import { unpack, useLayout, type ViewName } from "../stores/layout";
+
+import Band from "./Band.vue";
+import ViewBar from "./ViewBar.vue";
+
+const host = ref<HTMLElement | null>(null);
+const layout = useLayout();
+let api: ReturnType<typeof createDock> | null = null;
+
+onMounted(() => {
+  if (host.value !== null) api = createDock(host.value);
+});
+
+function switchTo(view: ViewName): void {
+  layout.view = view;
+  // ⛔ A VIEW CHANGE IS A LAYOUT CHANGE, and it goes through the same path: `apply` prefers the
+  // saved package and falls back to the shipped view, so switching to a view the owner has saved
+  // shows THEIR version and not ours (row 6 of §2).
+  if (api !== null) apply(api, view, unpack(layout.state));
+}
+</script>
+
+<template>
+  <div class="frame">
+    <ViewBar @switch="switchTo" />
+    <Band />
+    <div ref="host" class="dock"></div>
+  </div>
+</template>
+
+<style scoped>
+.frame {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.dock {
+  flex: 1;
+  min-height: 0;
+}
+</style>
+```
+
+- [ ] **Passo 16: il cablaggio**
+
+`gui/src/App.vue`, **LF** — ⛔ **riscritto**: il componente del compito 11 dichiara di sé che esiste per far
+attraversare la catena di compilazione a un `.vue`, e che *«anything drawn here would have to be deleted by the
+task that draws the real one»*.
+
+```vue
+<script setup lang="ts">
+import Frame from "./frame/Frame.vue";
+</script>
+
+<template>
+  <Frame />
+</template>
+```
+
+`gui/src/main.ts`, **LF**:
+
+```ts
+// ⛔ FIRST LINE, AND MEASURED: `dockview-core` does not ship the stylesheet and does not inject
+// one (E2 of the part-1 plan, measured in the browser on 2026-09-10). Without it the groups
+// stack in the document flow and a floating group leaves the viewport.
+import "dockview/dist/styles/dockview.css";
+import "./tokens/tokens.css";
+
+import { createPinia } from "pinia";
+import { createApp } from "vue";
+
+import App from "./App.vue";
+import { i18n } from "./i18n";
+import { useConnection } from "./stores/connection";
+import { useCore } from "./stores/core";
+import { useLayout } from "./stores/layout";
+import { createFakeBridge } from "./transport/fakeBridge";
+import type { Bridge } from "./transport/bridge";
+
+/**
+ * ⛔ THE FAKE BRIDGE IS WHAT MILESTONE 2's SPA RUNS AGAINST IN A BROWSER, and it is not a
+ * shortcut: §6a says the SPA is developed and probed against a fake that replays the fixtures
+ * BEFORE the shell exists, and the shell is outside this plan (§8 of the milestone-2 design).
+ * The day a shell exists it hands one in on `window`, and this line is all that changes.
+ */
+declare global {
+  interface Window {
+    harnessBridge?: Bridge;
+  }
+}
+
+const bridge: Bridge = window.harnessBridge ?? createFakeBridge();
+
+const app = createApp(App);
+app.use(createPinia());
+app.use(i18n);
+app.mount("#app");
+
+const connection = useConnection();
+const core = useCore();
+const layout = useLayout();
+connection.attach(bridge);
+layout.attach(bridge);
+bridge.listen((message) => {
+  connection.receive(message);
+  core.receive(message);
+  layout.receive(message);
+});
+connection.hello();
+```
+
+⚠️ **Gli store si prendono DOPO `app.use(createPinia())`**, non prima: `defineStore` chiamato senza una pinia
+attiva solleva, e il rosso parlerebbe di pinia invece che dell'ordine.
+
+- [ ] **Passo 17: la sonda della cornice**
+
+`gui/src/frame/frame.test.ts`, **LF**. ⛔ **Le tre proprietà che la riga della §8 chiede a questo artefatto**, e
+nessuna è «non solleva».
+
+```ts
+import { mount } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
+
+import { i18n } from "../i18n";
+import { PANEL_TYPES, componentFor, isModule, placeholderParams } from "../panels/registry";
+import { VIEWS } from "../panels/views";
+import Placeholder from "../panels/Placeholder.vue";
+import { useConnection } from "../stores/connection";
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+});
+
+/** Every `component` a committed view names must be something the registry can build. ⛔ NO DOM
+ * NEEDED, and that is deliberate: this is the property that actually protects the frame, and it
+ * must hold whether or not `dockview` runs under jsdom. */
+describe("the three committed views", () => {
+  it("name only components the registry knows", () => {
+    for (const [name, view] of Object.entries(VIEWS)) {
+      const panels = Object.values(view.panels ?? {});
+      expect(panels.length, `${name} has no panels`).toBeGreaterThan(0);
+      for (const panel of panels) {
+        const component = panel.contentComponent ?? panel.id;
+        expect(isModule(component) || component === "strip", `${name}: ${component}`).toBe(true);
+      }
+    }
+  });
+
+  it("each carry the strip", () => {
+    for (const [name, view] of Object.entries(VIEWS)) {
+      expect(Object.keys(view.panels ?? {}), name).toContain("strip");
+    }
+  });
+});
+
+describe("the registry", () => {
+  it("gives a placeholder that says who fills an unbuilt module", () => {
+    const type = PANEL_TYPES[0];
+    expect(type).toBeDefined();
+    const wrapper = mount(Placeholder, {
+      global: { plugins: [i18n] },
+      props: { params: placeholderParams(type!.name) },
+    });
+    expect(wrapper.text()).toContain(String(type!.who));
+  });
+
+  it("says a type that is GONE is gone, does not promise a sub-project, and closes", async () => {
+    // ⛔ ROW 8 OF §2 OF THE NORTH STAR, and the two cases are NOT the same: a saved package can
+    // point at a type a later build removed, and telling the user to wait for a sub-project that
+    // will never fill it would be worse than saying nothing.
+    const params = placeholderParams("a-type-that-never-existed");
+    expect(params).toEqual({ missing: true });
+    let closed = false;
+    const wrapper = mount(Placeholder, {
+      global: { plugins: [i18n] },
+      props: { params, api: { close: () => { closed = true; } } as never },
+    });
+    expect(wrapper.text()).toContain(i18n.global.t("placeholder.missing"));
+    // ⛔ THE SECOND HALF OF ROW 8: it says so AND it closes. A probe that only read the words
+    // would be green on a tile that never goes away.
+    await wrapper.get("button").trigger("click");
+    expect(closed).toBe(true);
+  });
+
+  it("builds something for every module type, and for the strip", () => {
+    for (const type of [...PANEL_TYPES.map((t) => t.name), "strip"]) {
+      expect(typeof componentFor(type), type).toBe("function");
+    }
+  });
+});
+
+describe("the band", () => {
+  it("is there while waiting, and gone once connected", async () => {
+    const Band = (await import("./Band.vue")).default;
+    const connection = useConnection();
+    const wrapper = mount(Band, { global: { plugins: [i18n] } });
+    expect(wrapper.text()).toContain(i18n.global.t("band.waiting"));
+    connection.receive({ kind: "Accepted", value: "AsSystemAccount" });
+    await wrapper.vm.$nextTick();
+    // ⛔ THE SECOND DIRECTION, and it is the one that is forgotten: a band that never goes away
+    // would pass the first assertion and be a permanent warning over a working app.
+    expect(wrapper.text()).toBe("");
+  });
+});
+```
+
+⚠️ **Se il Passo 3 ha misurato che `dockview` NON regge `jsdom`**, questo file resta com'è — nessuna delle sue
+sonde monta una griglia — e ciò che manca passa al revisore nel browser, con la voce d'errata che lo dice.
+
+- [ ] **Passo 18: la rete sulle scritte, fino al compito 15**
+
+`gui/src/locales/copy.test.ts`, **LF** — **D51**.
+
+```ts
+import { readFileSync, readdirSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+import { describe, expect, it } from "vitest";
+
+import it_ from "./it.json";
+
+const SRC = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+/**
+ * ⛔ A NET, NOT A LINT, AND IT DIES AT TASK 15. The real rule is `no-raw-text` of
+ * `@intlify/eslint-plugin-vue-i18n` (decision 55), and it enters the gate with
+ * `scripts/gate-gui.sh` -- which is task 15. Between this task and that one, nothing would watch
+ * the strings that G21 requires, and whoever reviews would look for a probe that does not exist.
+ *
+ * ⚠️ AND IT IS WORTH SAYING WHAT IT CANNOT DO: it reads raw text, so it knows nothing of Vue's
+ * syntax and nothing of the exceptions a lint rule declares. Task 15 REPLACES it.
+ */
+function templates(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+    entry.isDirectory() ? templates(join(dir, entry.name))
+    : entry.name.endsWith(".vue") ? [join(dir, entry.name)]
+    : []
+  );
+}
+
+describe("the strings", () => {
+  it("are all keys: no bare words between tags in a template", () => {
+    const offenders: string[] = [];
+    for (const file of templates(SRC)) {
+      const body = readFileSync(file, "utf8");
+      const template = /<template>([\s\S]*)<\/template>/.exec(body)?.[1] ?? "";
+      for (const text of template.matchAll(/>([^<>{}]*[A-Za-zÀ-ÿ]{2,}[^<>{}]*)</g)) {
+        offenders.push(`${file}: ${text[1]?.trim()}`);
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it("has a name for every module type", async () => {
+    const { PANEL_TYPES } = await import("../panels/registry");
+    const modules = (it_ as { modules?: Record<string, string> }).modules ?? {};
+    for (const type of PANEL_TYPES) expect(Object.keys(modules), type.module).toContain(type.module);
+  });
+});
+```
+
+⛔ **La sonda si prova nelle DUE direzioni prima del commit**, come ogni controllo di questo repository:
+
+```bash
+cd gui
+npx vitest run src/locales/copy.test.ts; echo "verde atteso: EXIT=$?"
+python - <<'EOF'
+import io
+p = "src/frame/Band.vue"
+b = io.open(p, encoding="utf-8", newline="").read()
+io.open(p, "w", encoding="utf-8", newline="").write(b.replace("<div v-if=", "<div>riprova piu tardi</div>\n  <div v-if=", 1))
+EOF
+npx vitest run src/locales/copy.test.ts; echo "rosso atteso: EXIT=$?"
+git checkout -- src/frame/Band.vue
+cd ..
+```
+
+Atteso: **`EXIT=0`** la prima volta, **diverso da zero** la seconda, e `git diff` **vuoto** alla fine.
+
+- [ ] **Passo 19: il mondo web verde, il cancello, e il commit**
+
+```bash
+cd gui && npm ci --no-audit --no-fund && npm run build && npm test; echo "EXIT=$?"; cd ..
+git status --porcelain
+bash scripts/check-docs.sh
+bash scripts/gate.sh
+```
+
+⚠️ **`gate.sh` NON prova ancora `gui/`** — il passo web è il compito **15** — quindi il suo verde qui dice solo che
+il workspace Rust è intatto. Il mondo web lo dicono i tre comandi dentro `gui/`.
+
+```bash
+git add gui .gitignore
+git commit -m "gui(compito 13): la cornice della SPA -- dockview, le tre viste generate, gli store, i token e le scritte"
+git push
+```
+
+⛔ **Senza co-autore**, vincolo globale 13.
+
+**Criterio di chiusura del compito 13**
+
+- [ ] `ls gui/src/stores gui/src/panels gui/src/frame gui/src/tokens gui/src/locales` → tutte e cinque esistono
+- [ ] `ls gui/src/panels/views/*.json | wc -l` → **3**, e `tr -cd '\r' < gui/src/panels/views/*.json | wc -c` → **0**
+- [ ] `cd gui && npm run build; echo $?` → **0**, e `npm test; echo $?` → **0**
+- [ ] ⛔ **il timbro NON è quello della fixture** (**D52**), coi due numeri stampati uno accanto all'altro:
+
+  ```bash
+  cd gui && node --input-type=module -e "
+  import { readFileSync } from 'node:fs';
+  const map = readFileSync('schema/fixtures/ipc_v1.map', 'utf8');
+  const found = /^stamp 0x([0-9a-fA-F]{16})$/m.exec(map);
+  const stamp = BigInt('0x' + found[1]).toString(10);
+  const hello = JSON.parse(readFileSync('schema/fixtures/00-hello.json', 'utf8')).value;
+  console.log('stamp', stamp, '| fixture', hello, '| diversi:', stamp !== hello);
+  "; cd ..
+  ```
+
+  Atteso: **`diversi: true`**. ⛔ **Se fossero uguali il timbro verrebbe dal posto sbagliato**, e la stretta di mano sarebbe una formalità
+- [ ] ⛔ **i due pacchetti di `dockview`:** `grep -c '"dockview"' gui/package.json` → **1** e `grep -c '"dockview-core"' gui/package.json` → **1**; `grep -c "dockview/dist/styles/dockview.css" gui/src/main.ts` → **1** (**P-80**)
+- [ ] `grep -c 'from "dockview"' gui/src/**/*.ts` → **0**: l'API è quella di `dockview-core`, il pacchetto ombrello entra solo per il CSS
+- [ ] ⛔ **il segnaposto c'è ed è UNO:** `ls gui/src/panels/*.vue` rende `Placeholder.vue` e `Strip.vue`, e nient'altro (**D47**, decisione 17)
+- [ ] ⛔ **la striscia è in tutte e tre le viste:** `grep -c '"strip"' gui/src/panels/views/home.json gui/src/panels/views/work.json gui/src/panels/views/compact.json` → **più di zero** per ciascuna (**D50**)
+- [ ] ⛔ **il registro elenca i tipi della §1, e il conteggio si RIFÀ col comando invece di rileggerlo:**
+
+  ```bash
+  grep -c '^  { name: "' gui/src/panels/registry.ts
+  grep -n '^#### ' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+  awk '/^\| \*\*Modulo\*\*|^\| Modulo \|/{s=1; next} s && /^\| \*\*/{c++} s && /^$/{print c; exit}' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+  ```
+
+  Atteso: le righe di `PANEL_TYPES` sono **le tabelle piene più le righe di quella corta**. ⚠️ **Il secondo comando elenca anche intestazioni che non sono moduli:** si legge l'elenco e si contano le tabelle piene, non si prende il numero grezzo
+- [ ] ⛔ **le due direzioni della sonda delle scritte** eseguite come al Passo 18, e `git diff` **vuoto** alla fine
+- [ ] ⛔ **la sonda della fascia prova la SECONDA direzione**: la fascia sparisce dopo `Accepted`
+- [ ] ⛔ **i tre stati di `Layout` sono tutti esercitati:** `grep -c '"Nothing"\|"Unavailable"\|"Package"' gui/src/stores/stores.test.ts` → **più di due**
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
+- [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -cE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src/**/*.test.ts` → **0**
+- [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA** — regola 5 della testa: `cd gui && npm run dev`, e con la finta collegata si vedono la barra con le tre viste, la fascia «il core non ha risposto», la striscia in basso, il cassetto coi diciotto tipi, e le tessere che dicono chi le riempie
 
 ## Come si riprende — il diario di questo piano, coi comandi
 

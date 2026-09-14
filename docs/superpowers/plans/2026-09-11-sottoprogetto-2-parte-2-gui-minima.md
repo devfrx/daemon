@@ -10201,6 +10201,123 @@ che è un'altra cosa: il chiusore è il primo consumatore che vi si dirami, e no
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La settima chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 10 di diciassette; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO: il compito 10 ha corretto il blocco *Interfaces* del compito 7, che è il CONTRATTO su cui i
+compiti 9, 10 e 12 si appoggiano.** Nominava **tre** accessori di `Core` e il codice che il suo Passo 7 detta ne
+ha **cinque**: mancavano `custody` e `grants`, e `grants` è quello senza il quale la campagna non è scrivibile —
+**P-56**, corretto **nel compito 7** col richiamo del 2026-09-14 e non con una voce d'errata, perché il 7 non è
+eseguito. ⚠️ **Chi scrive il 12 lo rilegga da lì e non dalla memoria di una chiusura precedente.**
+
+⛔ **E la §5 del disegno del 2 nomina uno strumento che NON si può usare.** *«Così la DST la muove con
+`DyingGui`»* è del 2026-09-06, cioè prima di **D5**, e le ragioni misurate sono **tre** (**P-57**, **P-58**,
+**P-60**): quella finta dice un messaggio solo che il dispaccio lascia cadere, non pronuncia né `Hello` né
+`Approve`, e verrebbe **spostata dentro `Core`**, che non espone il trasporto. Il richiamo alla §5 lo scrive il
+**Passo 8 del compito 10**, quindi la riga del disegno è ancora quella vecchia **finché quel compito non è
+eseguito**.
+
+⛔ **Per il resto niente è a metà:** albero pulito, nessuno stash, nessuna operazione git in corso, nessun server
+acceso, **nessun codice di prodotto toccato** — `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/
+Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla, e `git diff --name-only cbf9b07..HEAD`
+rende **un solo file**, questo piano. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la tabella della posizione è tutta ⬜,
+l'errata è **vuota**, i compiti **11–17 non esistono**. La sessione nuova **scrive**, non esegue.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline cbf9b07..HEAD` — ne elenca **due**, di soli documenti |
+| Codice di prodotto | **non toccato**, coi due comandi in «Da sapere subito» |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>`; la tabella della posizione ne elenca diciassette — `awk '/^\| # \| Compito \| Commit \| Stato \|/{s=1} s&&/^\| \*\*[0-9]+\*\* \|/{c++} s&&/^$/{print c; exit}' <questo file>` |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0**; nasce vuota e non resterà vuota |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` e `grep -c '^\| \*\*D[0-9]' <questo file>` |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, una volta all'apertura e **due** prima del commit — il secondo perché fra il primo e il commit sono entrate due correzioni di merito; i log datati nello scratchpad (`gate-2026-09-14-sessione7-apertura.log`, `-compito10.log`, `-finale.log`); `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | questo piano è **LF** nell'indice e nell'albero: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ L'avviso di `git commit` — *«LF will be replaced by CRLF»* — è **innocuo** |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Margine del compendio | **invariato**: questa sessione non ha toccato il compendio |
+| Documenti fuori dal piano | ⛔ **nessuno toccato, ed è voluto:** le righe di `COMPENDIO.md`, `README.md`, roadmap, tracciabilità e `HANDOFF.md` entrano col compito della **chiusura** — **D14**, e quel compito è il **17** |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto; nello scratchpad restano i log del cancello e i tre pezzi di testo del compito 10 |
+| Debito lasciato | **nessuno non dichiarato**: i sette compiti che mancano sono la tabella della posizione; le voci aperte stanno nella sezione omonima, **invariata** — il compito 10 non ne ha aperte di nuove e ne ha **chiusa una registrata**, il `SharedClock` di **D29** |
+
+#### Le decisioni prese scrivendo, oltre a quelle della tabella
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 27 | la campagna **non usa `DyingGui`** e si scrive il proprio filo, tenuto **fuori** dal core dietro un `RefCell` (**D32**) | tre misure indipendenti, e ciascuna basta: quella finta dice solo `Request`, che **D5** non serve; non pronuncia né `Hello` né `Approve`; e consegnata a `Core` non è più interrogabile, perché il trasporto non è esposto | la campagna gira e non prova niente — il verde per insiemi vuoti che il Traguardo 4 ha imparato **tre** volte |
+| 28 | l'oracolo della prima metà è la **somma dell'arbitro**, non il registro (**D33**) | `ClientGrants` espone tre elementi e **nessuno che conti senza rilasciare**, e `on_disconnect` non è chiamabile da fuori: `grants()` e `arbiter()` sono due prestiti mutabili dello stesso `&mut Core`. ⚠️ **E la somma è più forte:** con la baseline non a zero coglie **due** mutazioni con **una** asserzione | servirebbe un elemento d'API nuovo in `kernel` il cui unico chiamante è una campagna, che `boundary.rs` cancella |
+| 29 | il `SharedClock` **resta locale** e non sale in `simulator` (**D34**) | ⛔ **è la registrata di D29, presa con la misura:** `crates/daemon/Cargo.toml` rifiuta **per iscritto** di dipendere da `simulator`, quindi una casa comune servirebbe **tre case su quattro** e la quarta — quella di **produzione** — riscriverebbe comunque la propria copia, senza il commento che oggi la dichiara ripetuta | quattro copie della stessa forma restano quattro; l'innesco è scritto, una quinta casa **dentro `simulator`** riapre la misura |
+| 30 | **`vitest` resta 4.1.11**, rimisurato (richiamo dentro **D4**) | `npm view vitest version dist-tags` rende ancora `latest: 5.0.0` e `V4: 4.1.11`, e `npm view vitest time --json` data la 5.0.0 al 2026-09-03: il divario è cresciuto, non la maturità. ⚠️ **Il numero di giorni non è scritto nella riga che lo giudica**, ci sono i due comandi | il compito **11** installa una major di undici giorni, e una regressione dell'attrezzo si legge come una regressione della SPA |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UN BLOCCO *Interfaces* È UN CONTRATTO, E SI RICENSISCE COL COMANDO CONTRO IL CODICE CHE IL SUO COMPITO
+  DETTA.** Quello del 7 dice di sé *«i compiti 9, 10 e 12 li usano con questi nomi esatti»*, e ne nominava tre su
+  cinque. 📌 **Il censimento non si fa rileggendo il blocco: si fa contando i `pub fn` del Passo che li scrive**, e
+  la riga di prosa sotto («i tre accessori») era falsa insieme a esso — **P-35** una terza volta.
+- ⛔ **UNA FINTA CONSEGNATA PER VALORE SMETTE DI ESSERE UN OSSERVABILE, e questo decide l'ORACOLO prima ancora
+  della sonda.** `Core` prende la porta per valore e non la espone: tutto ciò che la finta offre per essere
+  interrogata sparisce nell'istante in cui la si cabla. 📌 **Prima di scegliere una finta si guarda se, dopo il
+  cablaggio, qualcuno può ancora PARLARLE** — e se no, il filo va tenuto **fuori**, dietro un `RefCell`.
+- ⛔ **UNA BASELINE NON-ZERO COMPRA DUE DIREZIONI CON UNA ASSERZIONE, ed è il motivo per cui si sceglie, non una
+  precauzione.** Con due titolari nei libri, una riconciliazione che non fa niente lascia la somma **sopra** e una
+  che rilascia tutto la lascia **sotto**: la stessa riga coglie le due mutazioni opposte.
+- ⛔ **UN TIPO SPEDITO PUÒ NON AVERE `Ord`, E UN `BTreeSet` È COME OGNI CAMPAGNA CONTA I PROPRI MONDI.**
+  `Resolution` deriva `Debug, Clone, Copy, PartialEq, Eq` e basta. 📌 **La cura non è il derive:** si appiattisce in
+  un enum **locale** con un `From` esaustivo — il precedente di `Answer` in `gui_death_campaign.rs` — perché
+  allargare un tipo del kernel per comodità di un banco è il baratto che `ports::process` ha già rifiutato.
+- ⚠️ **UN AIUTANTE DI UNA CRATE PUÒ VIVERE SU UN TRATTO DI ESTENSIONE.** `below` non sta su `SeededRng`: sta su
+  `kernel::rng::RngExt`, che va **in scope**. 📌 **Un metodo che «si è sempre chiamato così» si cerca col `grep`
+  prima di scriverlo**, perché dove vive decide un `use`.
+- ⚠️ **LA STRADA CHE SCRIVE NON È QUELLA OVVIA.** Per far cadere il giornale *a metà invocazione* serve un
+  `Approve` e non un `Invoke`: `Registry::invoke` chiede il permesso **prima** di aprire il passo, quindi un
+  `Invoke` non concesso scrive **zero** record — e un punto di caduta estratto su un intervallo vuoto è ciò che
+  `CrashingJournal::from_seed` rifiuta con un `debug_assert!`.
+
+#### ⛔ Che cosa aspetta ora il compito 11, e non è un difetto
+
+| | Che cosa | Perché è dell'11 |
+|---|---|---|
+| le **versioni** della §9 del 2 | **P-2** le ha appuntate il 2026-09-11 e il vincolo globale **8** dice che chi installa **rilancia** il comando e scrive nel proprio commit quelle del suo giorno | è il compito che crea `gui/` e lancia `npm install`: le date di oggi non sono le sue |
+| **`vitest`** | la decisione 30 qui sopra lo lascia a `4.1.11` coi due comandi accanto | la regola è «novità non è maturità», non una data: si rifà il giorno dell'installazione |
+
+#### La lista di lettura della sessione nuova
+
+| Compito | Che cosa si legge |
+|---|---|
+| **3**–**10** | ✅ **SCRITTI.** Si leggono solo se si esegue |
+| **11** — `gui/` nasce | invariata: la §9 del 2 per le versioni, **D2**, **D3**, **D4** — e ⛔ **le versioni si RIMISURANO tutte**, non solo `vitest`: è il vincolo globale 8, e il riquadro qui sopra |
+| **12** — il core finto | ⚠️ **la §7 del 2 per intero**, **più** il blocco *Interfaces* del compito 7 **come sta adesso** — `Core` non espone il trasporto ed è il 12 ad aggiungere `Core::ipc`; ⛔ **e gli accessori sono CINQUE**, non tre (**P-56**) — **più** il tetto `MAX_BODY` del compito 9, perché il finto ne sceglie uno **suo** (**D9**, **D31**) |
+| **13**, **14** — la SPA | §6a del 2; §1 della stella polare (il catalogo: le tabelle piene per i moduli del 2, la corta per i segnaposto); «Il modello della GUI»; §9 del 2 per gli attrezzi |
+| **15**, **16** — il cancello e la CI | §8 del 2 **per intero**; `scripts/gate.sh` — ⚠️ **col settimo passo come il compito 10 lo lascia** — `.github/workflows/quality-gate.yml`, `.gitignore`; la tabella delle voci senza numero AUD dell'audit per X-1 e X-3 |
+| **17** — la chiusura | §12 del compendio, `README.md`, `roadmap.md`, `tracciabilita.md`, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — le case che **D14** nomina |
+
+⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — questo file e il compendio — e la **testa di
+questo piano**: vincoli globali, posizione, errata, le voci **P**, le decisioni **D**, le voci aperte.
+⛔ **Il peso non si scrive qui:** lo dà lo snippet `tiktoken` di `CLAUDE.md`, e cresce a ogni compito scritto.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la
+   testa è il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — non i compiti già scritti, se non per
+   i nomi che il compito nuovo consuma: il blocco *Interfaces* di ciascuno li porta.
+3. `superpowers:writing-plans`: scrivere i compiti **11, 12, 13 …** nell'ordine della tabella della posizione,
+   ciascuno col proprio **pre-controllo delle quattro domande** contro il codice di **adesso**, più la quinta
+   girata all'indietro e la sua gemella in avanti; ⛔ **ogni voce `P` su cui il compito si appoggia si RIMISURA
+   col suo comando**; ⛔ **ogni NUMERO DI COMPITO si ricensisce contro la tabella della posizione**; ⛔ **e ogni
+   blocco *Interfaces* su cui il compito si appoggia si RICENSISCE contro il codice che il suo Passo detta**
+   (trappola nuova di questa sessione). Ogni difetto trovato è una voce **P** in coda, e la decisione che ne
+   discende una riga **D**.
+4. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
+   `bash scripts/check-docs.sh` → `OK`, `bash scripts/gate.sh` → `GATE GREEN`, e il commit — **senza co-autore**.
+   ⚠️ **Il cancello si rilancia se fra il primo verde e il commit è entrata anche solo della prosa.**
+5. Quando i **diciassette** compiti ci sono: la **revisione del piano intero** — copertura dei disegni,
+   segnaposto (⛔ **una sonda col corpo vuoto è un segnaposto**), coerenza dei nomi fra i blocchi *Interfaces*, e
+   ogni **CONTEGGIO rilanciato col comando, non riletto** (P-35, ricaduto tre volte); poi l'esecuzione in una
+   sessione **nuova**, un subagente fresco per compito.
+6. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
+---
+
 ### La sesta chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 9 di diciassette; nessun compito è eseguito
 
 ⛔ **DA SAPERE SUBITO: il difetto che le chiusure quarta e quinta portavano avanti NON È PIÙ IN ATTESA — è

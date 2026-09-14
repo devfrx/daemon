@@ -8078,6 +8078,119 @@ Atteso: **otto** `.cbor`; le sonde di `arbiter_policy.rs` cresciute di **quattro
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La quinta chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 8 di diciassette; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO, E LA PRIMA COSA NON È LO STATO: LA NUMERAZIONE DEI COMPITI È CAMBIATA.** Il compito **8**
+era *«il daemon»* e adesso è *«la specie `Policy` del giornale»*; **il daemon è il 9**, e i compiti da 9 a 16
+sono diventati **da 10 a 17** — **D25**, portata al proprietario in A/B il 2026-09-14 e decisa **B**. ⚠️ **Quindi
+la lista di lettura della quarta chiusura, qui sotto, è FALSA alla riga «8 — il daemon»**, e lo stesso vale per il
+suo riquadro *«Il difetto che ASPETTA il compito 8»*, che ora aspetta il **9**. La lista corretta è in questa voce.
+
+⛔ **Per il resto niente è a metà:** albero pulito, nessuno stash, nessuna operazione git in corso, nessun server
+acceso, **nessun codice di prodotto toccato** — `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/
+Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla, e `git diff --name-only 91d1623..HEAD`
+rende **un solo file**, questo piano. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la tabella della posizione è tutta ⬜,
+l'errata è **vuota**, i compiti **9–17 non esistono**. La sessione nuova **scrive**, non esegue.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline 91d1623..HEAD` — ne elenca **uno**, di soli documenti |
+| Codice di prodotto | **non toccato**, coi due comandi in «Da sapere subito» |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>`; ⛔ **la tabella della posizione ne elenca DICIASSETTE, non più sedici** — `awk '/^\| # \| Compito \| Commit \| Stato \|/{s=1} s&&/^\| \*\*[0-9]+\*\* \|/{c++} s&&/^$/{print c; exit}' <questo file>` |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0**; nasce vuota e non resterà vuota |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` e `grep -c '^\| \*\*D[0-9]' <questo file>` |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, una volta all'apertura e una prima del commit; i log datati nello scratchpad (`gate-2026-09-14-apertura.log`, `gate-2026-09-14-compito8-finale.log`); `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | questo piano è **LF** nell'indice e nell'albero: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ L'avviso di `git commit` — *«LF will be replaced by CRLF»* — è **innocuo**, rimisurato dopo il commit e invariato |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Margine del compendio | **invariato**: questa sessione non ha toccato il compendio |
+| Documenti fuori dal piano | ⛔ **nessuno toccato, ed è voluto:** le righe di `COMPENDIO.md`, `README.md`, roadmap, tracciabilità e `HANDOFF.md` entrano col compito della **chiusura** — **D14**, e quel compito è ora il **17** |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto; nello scratchpad restano i log del cancello, i quattro pezzi di testo del compito 8 e i tre script d'inserimento |
+| Debito lasciato | **nessuno non dichiarato**: i nove compiti che mancano sono la tabella della posizione; le voci aperte stanno nella sezione omonima; le decisioni sono ribaltabili e ciascuna porta il costo |
+
+#### Le decisioni prese scrivendo, oltre a quelle della tabella
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 20 | il compito 8 si **divide** in due (**D25**) — la specie del giornale al 8, il cablaggio al 9 | i due pezzi hanno due profili di rischio, e la regola di `superpowers:writing-plans` è *si spezza dove un revisore può bocciare un compito e approvare il vicino*. ⚠️ **Portata al proprietario in A/B: B** | si riuniscono, e ventinove riferimenti numerici tornano indietro |
+| 21 | la transizione di policy è una **specie**, e `PolicyDetail` porta **un `bool`** (**D26**) | *«una nota con un dettaglio»* non è pronunciabile; e il `bool` ha due precedenti scritti — `VerdictDetail::passed` e `PermissionDetail::write` — che rifiutano un enum sul filo con l'argomento per esteso. ⚠️ Toglie anche una **bocca di testo**, quindi il tipo non va sigillato | un campo che si ritira il giorno di una terza policy, che è la regola 3 di §4.9.2 che fa il suo lavoro |
+| 22 | `policy_now` rende un **`Option`** (**D27**) | il default è di chi compone: ADR-0034 vieta al kernel di leggere ciò che non gli è consegnato, e il rimando in testa ad ADR-0006 divide *«il profilo dà il default»* da *«il giornale dà il corrente»* | un `unwrap_or` in meno nel daemon, e due fatti fusi in un valore solo |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UNA VOCE `P` È UNA MISURA DATATA, NON UN FATTO: un compito che vi si appoggia ne EREDITA L'ERRORE.** **P-33**
+  censì i `match` esaustivi su `RecordKind` e concluse *«sono due e non di più»*; sono **quattro**, e il compito 6 —
+  scritto fidandosi di quella riga — **non compilava**. 📌 **Il comando di una voce P si RILANCIA** quando un
+  compito nuovo vi si appoggia, esattamente come si rilancia quello di un disegno. È la quinta domanda del
+  pre-controllo applicata alle **proprie** voci.
+- ⛔ **Un DISEGNO può dettare una forma che il codice non lascia costruire, e non si vede leggendo il disegno: si
+  vede leggendo i COSTRUTTORI.** La decisione 56 diceva *«una nota con un dettaglio tipizzato»*; `RecordV1::note`
+  passa `detail: None`, e il doc di `RecordV1` scrive che la coppia sbagliata *«non è rifiutata, è
+  impronunciabile»*. 📌 **Una decisione di disegno si prezza aprendo i costruttori del tipo che nomina**, non la
+  sezione che la contiene.
+- ⛔ **Una SONDA può asserire l'esatto contrario di ciò che una decisione chiede, e la decisione può non nominarla.**
+  La 56 elencava due cose da rileggere — *«la sonda `E115` ② e la campagna dell'arbitro»* — e **non**
+  `a_transition_names_the_policy_it_moves_to`, che asserisce `detail() == None` con la mutazione `E79` misurata
+  accanto. 📌 **L'elenco che una decisione fa di ciò che tocca è un'IPOTESI**: si ricensisce col `grep` sul nome
+  della funzione che cambia.
+- ⛔ **Le etichette dei fine-riga nelle liste *Files* si verificano TUTTE, con un comando solo.** Su ventitré, una
+  era falsa — il disegno del 2 è `i/lf w/lf` e tre posti lo davano CRLF (**P-47**) — e non c'è una convenzione
+  *«i documenti sono CRLF»* da cui dedurla: `COMPENDIO.md` lo è, i due disegni della GUI no.
+- ⛔ **La gemella in avanti ha pagato una seconda volta:** il compito 8 rende **rosso il banco del compito 7**
+  (**P-46**). 📌 **E la cura NON è correggere il compito già scritto**, che è giusto quando viene eseguito: il file
+  entra nella lista *Files* del compito che rompe il comportamento.
+- ⛔ **Spezzare un compito muove OGNI riferimento numerico del file, e si trovano col `grep`, non rileggendo.**
+  Ventinove posti in questo piano — liste *Produces*, celle di decisione, intestazioni di voci `P`, la riga «le
+  righe 7 e 8 della tabella». 📌 **Il diario NON si corregge:** le voci passate sono verbali datati, e la
+  correzione vive nella voce **nuova** — è ciò che la quarta chiusura fece con la terza.
+- ⚠️ **Uno script Python che STAMPA emoji sulla console di Windows muore con `UnicodeEncodeError` DOPO aver scritto
+  il file.** L'`exit code` è 1 e il lavoro è **fatto**. 📌 **Si controlla il FILE, non l'uscita dello script** — e
+  meglio ancora non si stampano le righe che si sono appena scritte.
+
+#### ⛔ Il difetto che aspetta ora il compito 9, non il 8
+
+⚠️ **È lo stesso riquadro della quarta chiusura, e cambia solo il numero:** `EXECUTOR_TURN_LIMIT` portato a
+`u64::MAX` fa sì che `Executor::run()` non torni, e **due sonde di `crates/daemon/src/main.rs` SI PIANTANO** invece
+di diventare rosse — una si chiama `the_production_graph_assembles_and_the_executor_runs_to_completion`. ✅
+**Rimisurato il 2026-09-14** e ancora vero: `EXECUTOR_TURN_LIMIT` è `100_000`, i chiamanti di
+`run_the_production_graph` sono **tre** (righe 490, 509, 532) e quelli di `run_the_graph` coi propri `Parameters`
+**due** (689, 712). ⛔ **Le cifre si rilanciano**, il `grep` è nel riquadro della quarta chiusura.
+
+#### La lista di lettura della sessione nuova — CORRETTA, coi numeri nuovi
+
+| Compito | Che cosa si legge |
+|---|---|
+| **3**–**8** | ✅ **SCRITTI.** Si leggono solo se si esegue |
+| **9** — il daemon | ⚠️ **è la riga «8 — il daemon» della quarta chiusura, che vale TUTTA** — `crates/daemon/src/main.rs` per intero, la §5 del 2, la sequenza 2 della stella polare, il rimando in testa ad ADR-0006, `Arbiter::set_policy` — **più** il blocco *Interfaces* del compito **8** per `policy_now`, `PolicyError`, `RecordKind::Policy` e `PolicyDetail`, e la riga **D27** per l'`unwrap_or` sul default. ⛔ **E `Core::new` vuole una `Custody`:** se `FileCustody::open` fallisce il core **parte lo stesso** e `Layout` dice «non disponibile» (decisione 35, riga «la settima porta» della §8 del 2) — quale forma prenda lo decide il pre-controllo del 9, e **nessun compito la porta ancora** |
+| **10** — la campagna DST | ⚠️ **era la riga «9»**: invariata, **più** il blocco *Interfaces* del 7. E il banco del 7 porta un `SharedClock`; ⛔ **misurato il 2026-09-14, oggi ne esiste UNO SOLO nel repository** — `crates/simulator/tests/arbiter_campaign.rs:180` — quindi col 7 sono due e col 9 tre: se spostarlo in `simulator` è una scelta del **10** |
+| **12** — il core finto | ⚠️ **era la riga «11»**: invariata — `Core` non espone il trasporto, ed è il 12 ad aggiungere `Core::ipc` |
+| gli altri | come la prima chiusura li ha scritti, ⛔ **coi numeri scalati di uno da 9 in su** |
+
+⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — questo file e il compendio — e la **testa di
+questo piano**: vincoli globali, posizione, errata, le voci **P**, le decisioni **D**, le voci aperte.
+⛔ **Il peso non si scrive qui:** lo dà lo snippet `tiktoken` di `CLAUDE.md`, e cresce a ogni compito scritto.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la
+   testa è `a991091` o un commit dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — non i compiti già scritti, se non per i
+   nomi che il compito nuovo consuma: il blocco *Interfaces* di ciascuno li porta.
+3. `superpowers:writing-plans`: scrivere i compiti **9, 10, 11 …** nell'ordine della tabella della posizione,
+   ciascuno col proprio **pre-controllo delle quattro domande** contro il codice di **adesso**, più la quinta
+   girata all'indietro e la sua gemella in avanti — ⛔ **e la trappola nuova di questa sessione: ogni voce `P` su
+   cui il compito si appoggia si RIMISURA col suo comando.** Ogni difetto trovato è una voce **P** in coda, e la
+   decisione che ne discende una riga **D**.
+4. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
+   `bash scripts/check-docs.sh` → `OK`, `bash scripts/gate.sh` → `GATE GREEN`, e il commit — **senza co-autore**.
+5. Quando i **diciassette** compiti ci sono: la **revisione del piano intero** — copertura dei disegni, segnaposto
+   (⛔ **una sonda col corpo vuoto è un segnaposto**), coerenza dei nomi fra i blocchi *Interfaces*, e ogni
+   **CONTEGGIO rilanciato col comando, non riletto** (P-35, ricaduto due volte); poi l'esecuzione in una sessione
+   **nuova**, un subagente fresco per compito.
+6. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
+---
+
 ### La quarta chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 7 di sedici; nessun compito è eseguito
 
 ⛔ **DA SAPERE SUBITO.** Niente è a metà: albero pulito, nessuno stash, nessuna operazione git in corso, nessun

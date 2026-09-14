@@ -1121,6 +1121,244 @@ scritti sul posto il 2026-09-09 da una sessione che scriveva file nuovi.
 dei due è eseguito. ⚠️ **La stella polare NON ha l'etichetta sbagliata** perché nessun compito prima del 8 la
 apre; il compito 8 la marca **LF**, misurata.
 
+---
+
+### P-48 — `EXECUTOR_TURN_LIMIT` a `u64::MAX` PIANTA due sonde, e ne rende impossibile una terza: `run_the_production_graph` perde ogni chiamante di prova
+
+**Domanda 3 — l'artefatto è sbagliato, e compila.** ⛔ **È il riquadro che le chiusure quarta e quinta hanno
+portato avanti, e ricensito col comando ha una METÀ CHE NESSUNA DELLE DUE NOMINA.** Misurato il 2026-09-14:
+
+```bash
+grep -n 'run_the_production_graph\|run_the_graph(' crates/daemon/src/main.rs
+grep -n 'const EXECUTOR_TURN_LIMIT' crates/daemon/src/main.rs
+```
+
+`EXECUTOR_TURN_LIMIT` è `100_000` (riga 90); i chiamanti di `run_the_production_graph` sono **tre** (490, 509,
+532) e quelli di `run_the_graph` coi propri `Parameters` **due** (689, 712).
+
+| La sonda | Raggiunge `executor.run()`? | Con `u64::MAX` e `serve` lanciata |
+|---|---|---|
+| `the_production_graph_assembles_and_the_executor_runs_to_completion` | **sì** | ⛔ **si pianta** — il `loop` di `serve` non finisce, e i giri non si esauriscono mai |
+| `the_production_graph_leaves_its_journal_on_the_disk` | **sì** | ⛔ **si pianta**, per la stessa ragione |
+| `a_journal_that_cannot_be_opened_stops_the_start_up` | no, `open` fallisce prima | ✅ resta verde |
+| `a_permanent_quota_that_only_queues_stops_the_start_up` | no, `reserve` fallisce prima | ✅ resta verde |
+| `a_permanent_quota_bigger_than_the_machine_stops_the_start_up` | no, come sopra | ✅ resta verde |
+| le tre che chiamano `the_production_arbiter()` | no, si fermano a `build_the_arbiter` | ✅ restano verdi |
+
+⛔ **E la metà non nominata è la TERZA conseguenza, che non è una sonda ma una RIGA DI DOC che diventa falsa.** Il
+doc di `run_the_production_graph` dichiara di sé la ragione per cui esiste:
+
+> ⚠️ IT IS A FUNCTION RATHER THAN THE BODY OF `main` SO THAT A TEST CAN CALL IT. The quality gate runs
+> `cargo build` and `cargo test`, never `cargo run`, so a wiring that only `main` touches would be the one
+> part of this milestone that no check exercises — and a principle nobody can check is an intention.
+
+Con `u64::MAX` **nessuna sonda può più chiamarla**: chiamarla è piantarsi. La frase resta scritta e smette di
+essere vera, che è la radice **R1** — *una correzione attraversa il documento in cui nasce, non gli altri* — nella
+sua forma più piccola, **dentro la funzione che il compito modifica**.
+
+**Conseguenza: D28.** Le due sonde passano a `run_the_graph` con un limite **finito**, il doc di
+`run_the_production_graph` riceve il proprio **richiamo datato** col residuo detto per esteso, e il residuo che la
+sonda dell'assemblaggio già dichiara — *«IT DOES NOT COVER THE VALUE OF `EXECUTOR_TURN_LIMIT`»* — **si allarga e
+non si contraddice**: adesso non copre nemmeno il cablaggio di `main`.
+
+### P-49 — il daemon deve prestare il reattore a DUE posti, e `SystemReactor` PORTA UN'ORIGINE: due istanze sono due orologi
+
+**Domanda 3 — l'artefatto è sbagliato, e NON compilerebbe** — e la via che compila è peggio, che è la parte da
+leggere. Le due firme, misurate il 2026-09-14:
+
+```bash
+grep -n 'pub fn new' -A 2 crates/kernel/src/executor.rs | grep -A 2 'rng: R'
+grep -n 'pub struct SystemReactor' -A 8 crates/platform/src/reactor.rs
+```
+
+| Chi | La firma | Che cosa vuole |
+|---|---|---|
+| `Executor::new` | `new(rng: R, reactor: C, parameters: Parameters, sleep: &'a Sleep)` | il reattore **per valore** |
+| `serve` (compito 7) | `serve<'a, I, J, C, R>(core: &'a RefCell<Core<I, J, C>>, clock: &'a R, sleep: &'a Sleep)` | il clock **per prestito** |
+
+⛔ **E la via che compila — costruirne due — è quella sbagliata, perché `SystemReactor` HA STATO:** porta
+`origin: Instant`, ancorata a `Instant::now()` dentro `SystemReactor::new()`, e il suo doc scrive perché — *«THE
+ONLY ORIGIN IT HAS … the mapping onto `Monotonic::ORIGIN` has to be anchored to a moment this type chooses
+itself»*. Due istanze danno **due origini diverse**, quindi `now()` risponde due valori diversi per lo stesso
+istante reale, e le scadenze che `serve` calcola col suo orologio non sono confrontabili con quelle su cui
+l'esecutore aspetta col proprio. È **`E25` in persona** — due verità indipendenti sullo stesso fatto — allo strato
+che decide quando un'attività si sveglia.
+
+✅ **La forma esiste già e si legge invece di inventarla:** il banco del compito 7 dichiara `SharedClock { inner:
+&self.clock }` e ne costruisce **due copie** sullo stesso clock, una per l'esecutore e una per `serve`.
+⚠️ **Quanti ne esistano oggi lo dice il comando** — `grep -rn 'struct SharedClock' crates/ --include='*.rs'` — e
+il 2026-09-14 ne rende **uno**, in `crates/simulator/tests/arbiter_campaign.rs`; col compito 7 e con questo
+diventano tre, in tre banchi che non possono importarsi a vicenda (un `tests/` è una crate a sé, e un binario non
+esporta nulla). ⛔ **Se salga in `simulator` NON è una decisione di questo compito:** la quinta chiusura l'ha
+assegnata al **10**, che è il primo a poterne misurare il bisogno con una campagna in mano.
+
+**Conseguenza: D29.**
+
+### P-50 — `Core::new` VUOLE una `Custody`, e la decisione 35 dice che il core parte lo stesso: la forma non è nella porta
+
+**Domanda 3 — l'artefatto è sbagliato, e non compilerebbe.** La decisione **35** della §8 del 2 dice: archivio che
+non si apre → *«il core **parte lo stesso** … `Layout` porta un terzo stato, "non disponibile" … e ogni
+`SaveLayout` riceve `Layout` "non disponibile"»*. Ma le due firme non lasciano spazio:
+
+| Chi | La firma | Il problema |
+|---|---|---|
+| `FileCustody::open` (compito 5) | `open(path: &Path) -> Result<FileCustody, platform::journal::OpenError>` | se fallisce **non c'è una `FileCustody`** |
+| `Core::new` (compito 7) | `new(ipc, journal, custody: C, arbiter, steps, parameters)` | la vuole **per valore**, e `C: Custody` |
+
+✅ **E la metà che RISOLVE il caso esiste già, misurata nel compito 7** — la traduzione della lettura fallita in
+`LayoutState::Unavailable` è **scritta**, e si legge invece di dedurla:
+
+```rust
+        match self.custody.retrieve(CustodyKey::Layout) {
+            Ok(None) => LayoutState::Nothing,
+            Err(CustodyError::Unavailable) => LayoutState::Unavailable,
+```
+
+⛔ **Quindi la cura NON è in `kernel` e NON è nel compito 5**, e le due vie scartate lo dicono:
+
+| La via | Perché cade |
+|---|---|
+| `FileCustody::open` rende **sempre** una `FileCustody`, che risponde `Unavailable` quando è chiusa | ⛔ **cambia un compito già scritto** e toglie a `platform` l'unico punto in cui il fallimento ha un nome — `OpenError` porta *quale* fallimento, e un enum a una variante lo butterebbe |
+| una **seconda variante** di `CustodyError` per «mai aperta» | la porta guadagnerebbe un termine per uno stato che è **della radice di composizione**, non della custodia; ed è la variante senza chiamante che il doc di `CustodyError` rifiuta con le proprie parole |
+
+**La forma è un avvolgente nella RADICE DI COMPOSIZIONE**, che è esattamente chi sa che l'apertura è fallita e che
+il core deve partire lo stesso: un `enum` del `daemon` che implementa `Custody`, delega quando è aperto e risponde
+`Err(CustodyError::Unavailable)` quando non lo è. ⚠️ **Nessuna operazione nuova nella porta**, che è ciò che la
+§8 del 2 aveva già previsto con quelle parole. **Conseguenza: D30.**
+
+### P-51 — la sonda «oltre centomila giri» col reattore VERO costerebbe il tick moltiplicato per i giri, e il doc del limite lo dice già
+
+**Domanda 1 — la sonda attacca il caso invece del meccanismo**, nella sua forma meno visibile: qui la sonda
+dettata è **giusta nel merito e impraticabile nel costo**, e il costo non si vede leggendo la §5.
+
+⛔ **La differenza sta nel reattore, e i due banchi non lo condividono.** Il banco del compito 7 monta
+`simulator::reactor::VirtualReactor`, il cui avanzamento è un'assegnazione; `crates/daemon/src/main.rs` monta
+`platform::reactor::SystemReactor`, il cui `wait_until` è un `std::thread::sleep` **vero** — ed è il doc di
+`EXECUTOR_TURN_LIMIT` a dirlo, nel file che questo compito modifica:
+
+> ⚠️ AND IT DOES NOT BOUND THE CLOCK for an activity that keeps going back to sleep on deadlines still in the
+> FUTURE. That run is not spinning, it is waiting; it still ends, because the turns still run out, but at
+> whatever wall time its waits add up to.
+
+⛔ **`serve` è quell'attività, per costruzione:** ogni giro finisce in `nap(sleep, clock.now() + tick)`, quindi
+ogni giro è un'attesa. Con un tick di produzione la sonda pagherebbe **tick × giri** di tempo di parete dentro
+`bash scripts/gate.sh`, e la riga alta della tabella di quel doc — *«the whole ceiling spent polling, no waits |
+100 000 turns ≈ 15 ms»* — vale **solo** per la colonna che `serve` non prende.
+
+✅ **E la via d'uscita è nel codice, non in uno sconto:** `Sleep::until` dichiara che una scadenza già raggiunta
+rende l'attività **pronta**, quindi l'esecutore non tocca il clock e il giro torna a essere polling puro — la riga
+alta della tabella. Il doc lo scrive per esteso al punto *«A WAIT THAT IS ALREADY OVER IS NOT A WAIT»*, e il banco
+del 7 lo conferma dall'altro lato: il suo `TICK` *«IS NOT ZERO, AND THAT IS THE POINT: a zero tick makes `nap`
+behave as a yield»*. ⛔ **Il tick è un parametro CONSEGNATO** (ADR-0034, compito 7), quindi una sonda può
+consegnarne uno nullo **senza toccare il valore di produzione**, che resta un letterale del daemon.
+
+⚠️ **Ciò che il tick nullo NON compra, detto invece che sottinteso:** che `Reactor::wait_until` sia raggiunto sul
+grafo vero. Quella metà resta del compito **10**, con la campagna, dove il clock è virtuale e l'attesa è gratis.
+**Conseguenza: D28**, la stessa che decide il limite delle due sonde di **P-48**.
+
+### P-52 — la sonda «oltre centomila giri» è VACUA senza un pari: un `loop` senza uscita rende `TurnLimitReached` a qualunque limite
+
+**Domanda 1 — la sonda è vacua**, e questa è la direzione che si dimentica: **P-51** ha reso la sonda pagabile, e
+questa dice che pagata così **non proverebbe nulla**.
+
+⛔ **`serve` è un `loop` senza uscita — lo dichiara il blocco *Interfaces* del compito 7** — quindi
+`Executor::run()` rende `Err(RunError::TurnLimitReached)` **qualunque sia il limite**, uno o centomila, e per
+costruzione: il banco del 7 lo asserisce come comportamento atteso e non come rosso. Una sonda che guardasse solo
+quel valore sarebbe verde anche se l'attività fosse morta al primo giro, e verde anche se non fosse mai stata
+lanciata — che è la definizione di sonda vacua e la lezione di **AUD-019**.
+
+⛔ **Il numeratore va ricontato anche in ciò che la sonda deve comprare:** che il limite **consegnato** arrivi
+all'esecutore, e che l'attività **stia servendo** quando i giri finiscono. Il secondo lo può dire solo un **pari**,
+perché è l'unica cosa che `serve` produce verso l'esterno.
+
+✅ **E il pari non si inventa qui:** il banco del compito 2 lo costruisce già — un thread che si collega al
+listener e parla — e il trasporto è **non bloccante in entrambi i versi** (`ListenerNonblockingMode::Both`), quindi
+il listener è pronto da `bound()` e il thread può collegarsi **prima** che `run()` cominci.
+
+⚠️ **La direzione opposta, che è la metà che manca sempre:** senza una **baseline** non si sa che la sonda possa
+diventare rossa. La si prende al Passo 1 — lo stesso grafo con un limite di **un** giro, dove il pari **non**
+riceve la propria accoglienza — e la si scrive accanto alla sonda con la data. **Conseguenza: D28.**
+
+### P-53 — D9 lascia al compito 9 DUE numeri, e nessun documento li nomina
+
+**Domanda 2 — la sonda manca, e non si vede leggendo**, perché qui manca prima il **valore**. La decisione **D9**
+di questo piano chiude dicendo: *«Chi sceglie il numero non è questo piano: lo consegnano il daemon (compito 9) e
+il core finto (compito 12), e il compito 9 dice da dove»*. Censito il 2026-09-14 che cosa resti da scegliere:
+
+```bash
+grep -n 'pub fn bound' -A 2 crates/platform/src/ipc.rs 2>&1
+grep -rn 'named pipe\|socket' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+```
+
+`crates/platform/src/ipc.rs` **non esiste ancora** (nasce al compito 2), e la sua firma dettata è
+`bound(name: &str, numbers: Progressive, max_body: usize)`. ⛔ **Nessuno dei due disegni nomina né il nome né il
+tetto**: la §3 del 2 descrive il trasporto, la §6a descrive il ponte, e il nome del canale non compare. Il nome
+passa per `to_ns_name::<GenericNamespaced>()`, cioè è **portabile fra i due sistemi** e non un percorso.
+
+⚠️ **E non sono lo stesso tipo di scelta, il che è il motivo per cui vanno separate:**
+
+| Il valore | Che cosa decide | Chi altro lo deve conoscere |
+|---|---|---|
+| il **nome** | dove la GUI va a bussare | ⛔ **il guscio**, che questo piano NON costruisce — è un fatto di **protocollo**, non una taratura |
+| il **tetto** | quanto il core accetta di bufferizzare da un pari (**D9**) | nessuno: è locale al core, e il core finto ne sceglie uno suo al 12 |
+
+**Conseguenza: D31**, due letterali del daemon sulla stessa frontiera di `JOURNAL_PATH`, ciascuno col proprio
+perché scritto accanto — e il nome **nominato** nel criterio di chiusura.
+
+⛔ **E IL SECONDO CAPO DEL NOME NON ESISTE IN QUESTO PIANO, che è il fatto da scrivere invece del numero di un
+compito.** Censita il 2026-09-14 la tabella della posizione: il **12** porta il core finto — che **lega** un nome
+suo, non si collega a questo — e il **13** e il **14** portano la SPA, che *«non tocca mai un socket»* e parla col
+**ponte** (§6a). A collegarsi è il **preload del guscio**, e la §8 del 2 mette il capo a capo nel guscio *«fuori
+dal cancello di oggi, dichiarato»*. 📌 **Quindi il nome resta un capo solo finché il guscio non esiste**, ed è una
+voce aperta che questo piano **sa e non chiude** — non un compito da nominare.
+
+### P-54 — il pari della sonda vive in un thread di `daemon`, e `interprocess` NON è fra le sue dipendenze
+
+**Domanda 2 — la sonda manca**, e qui manca perché **non compilerebbe**. **P-52** stabilisce che la sonda dei giri
+vuole un pari vero; il pari si collega col `Stream::connect` di `interprocess`, e quella crate è di `platform`.
+Misurato il 2026-09-14:
+
+```bash
+grep -n 'interprocess' crates/platform/Cargo.toml crates/daemon/Cargo.toml Cargo.lock
+```
+
+Il 2026-09-14 rende **nulla** in tutti e tre — `interprocess` entra nel grafo al **compito 2**, con `platform` —
+quindi al compito 9 sarà in `platform` e **non** in `daemon`. ⛔ **E `platform` non la ri-esporta:** il suo
+`LocalSocketIpc` è il lato **listener**, e nessuna riga del compito 2 espone un modo di **collegarsi**; farlo
+esporre sarebbe un elemento d'API il cui unico chiamante è una sonda di un'altra crate, che
+`crates/kernel/src/boundary.rs` cancella.
+
+**Conseguenza:** `crates/daemon/Cargo.toml` guadagna `[dev-dependencies] interprocess`, **con la versione copiata
+da `platform`** — due versioni della stessa crate sono due grafi — e il vincolo globale **6** si applica per
+intero: manifesto e `Cargo.lock` **nello stesso commit**, col lockfile rinfrescato da un `cargo build` **senza**
+`--locked`. ⚠️ **Il lockfile può non cambiare**, perché la crate è già nel grafo da `platform`: va bene, e ciò che
+si verifica è che il cancello — che passa `--locked` a ogni sito — resti verde. ✅ **E `gate-deps.sh` non è
+toccato:** `daemon` è fuori dall'allow-list di ADR-0031, che misura `kernel` e `simulator`, e il precedente è
+`simulator` in `[dev-dependencies]` di `platform`, con la sua giustificazione scritta nel manifesto.
+
+### P-55 — un `SOCKET_NAME` fisso fa scontrare le sonde fra loro, e il rosso è quello sbagliato
+
+**Domanda 1 — la sonda attacca il caso invece del meccanismo**, nella forma in cui la sonda **si rompe da sola**.
+Il cablaggio naturale legge la costante dentro `run_the_graph`; ma un nome di socket è **valido per tutta la
+macchina**, non per una cartella, e `cargo test` gira le sonde di un binario **in parallelo per default**. Due
+sonde che cablano il grafo legherebbero lo stesso nome, e la seconda fallirebbe con *«already in use»* — cioè con
+`StartupError::Ipc`, che è la variante che la sonda del **secondo core** esiste per provare: un rosso vero nella
+casella sbagliata, che è il modo più costoso di sbagliare.
+
+✅ **La cura è già scritta in questo file, per l'altro percorso**, e si copia invece di inventarla — il doc di
+`run_the_production_graph`:
+
+> ⛔ THE PATH IS AN ARGUMENT, AND THAT IS NOT CAUTION. Handed a `FileJournal`, the test that already existed
+> starts writing a REAL FILE; a fixed path in a shared directory is gotcha #52.
+
+⛔ **Per il nome vale **più** forte, non uguale:** una cartella è condivisa fra le sonde di un file, un nome di
+socket fra **tutti i processi della macchina** — comprese due invocazioni di `cargo test` che si sovrappongono.
+Per questo l'aiutante del banco mette nel nome **anche il pid**, come fa già `ipc_contract_real.rs`.
+
+**Conseguenza:** `run_the_graph` prende il nome come **quarto argomento**, `run_the_production_graph` gli passa
+`SOCKET_NAME`, e ogni sonda passa il proprio. ⚠️ **E il nome resta un letterale del daemon** (**D31**): ciò che
+diventa un argomento è **dove il grafo lo riceve**, non dove il valore di produzione è scelto.
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -1155,6 +1393,10 @@ smentisce — è ciò per cui esiste l'errata.
 | **D25** | ⛔ **il compito 8 si SPEZZA in due**: il **8** porta la specie `Policy` del giornale e la proiezione che la rilegge, in `kernel`; il **9** porta il cablaggio del daemon. I compiti scritti dal 9 al 16 scalano di uno, e **D1 perde il numerale** | ⛔ **Portato al proprietario in A/B il 2026-09-14: B.** I due pezzi hanno **due profili di rischio**: il primo tocca il **formato durevole** — una `RecordKind` nuova, un `Detail` nuovo, l'ottavo record congelato, due sonde con la loro mutazione misurata accanto — il secondo tocca il cablaggio di produzione. È il criterio di **D1** in persona (*«tagliati per artefatto, ognuno finisce con un artefatto provato da solo»*) e la regola di `superpowers:writing-plans`: *si spezza dove un revisore può bocciare un compito e approvare il vicino*. È la stessa forma di **D13** e **D21**, che spostarono lavoro fra compiti perché non era provabile dov'era; qui il lavoro non si sposta, si **divide**. ⚠️ **Costo dichiarato:** la tabella della posizione cresce di una riga e ogni riferimento a un numero di compito **dopo il 8** in questo file si sposta di uno — corretti nello stesso commit, quinta riga della disciplina dell'audit. ⛔ **E il numerale «sedici» di D1 si TOGLIE e non si riallinea a diciassette:** è una cifra in prosa che conta un artefatto, e la sua casa unica è la tabella della posizione (gotcha #68, P-35 ricaduto due volte) |
 | **D26** | ⛔ **la transizione di policy diventa una SPECIE — `RecordKind::Policy`, `Detail::Policy`, `PolicyDetail`, `RecordV1::policy` — e NON una nota con un dettaglio**, che non è pronunciabile (**P-44**); `PolicyDetail` porta **un `bool`**, `local`, e **nessun testo** | la forma della specie è forzata dal codice: ogni dettaglio del repository viaggia con la propria `RecordKind` e il proprio costruttore, e `note` passa `detail: None`. ⛔ **Il `bool` invece è una scelta, e ha due precedenti scritti:** `VerdictDetail::passed` e `PermissionDetail::write` sono `bool` per un tipo del kernel che è un **enum chiuso a due**, con l'argomento scritto per esteso — *«an enum here would be a FOURTH `index_only` enum ON THE WIRE, whose variant indices `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index on the wire never retires»*. `VramPolicy` è chiusa a due da **ADR-0006**, e una terza policy è un ADR nuovo. ⚠️ **E il `bool` toglie una BOCCA DI TESTO:** un `PolicyDetail` col **nome** della policy porterebbe una `String` in un `Detail`, che è `E94` — e obbligherebbe alla firma sigillata di `PermissionDetail`. Con un solo `bool` il tipo segue `VerdictDetail`, che **non è sigillato** e dichiara perché: *«it carries a `bool` and a `u64`, so no runtime TEXT can enter through it»*. ⛔ **E il nome NON si duplica:** il `reason` del record porta già `MakeRoom::name()`, che esiste per questo; metterlo anche nel dettaglio sarebbe la seconda casa di gotcha **#68**. ⚠️ **Costo dichiarato:** il giorno che una terza policy esiste, il campo **si ritira** in favore di un indice facoltativo nuovo — regola 3 di §4.9.2 — ed è il costo che i due precedenti hanno già accettato; la conversione `VramPolicy → bool` è un **`match` esaustivo** in `Arbiter`, quindi quel giorno il compilatore lo dice |
 | **D27** | ⛔ **`policy_now` rende `Option<VramPolicy>`, e il kernel NON nomina un default**: `None` significa *nessuna transizione nel giornale*, e a scegliere che cosa farne è chi compone | ADR-0034 vieta al kernel di leggere un parametro che non gli è stato consegnato, e il rimando del 2026-09-08 in testa ad **ADR-0006** divide i due fatti con quelle parole: *«il profilo dà il **default** … e la policy **corrente** è la **proiezione del giornale**»*. Un `policy_now` che rendesse `Remote` su archivio vuoto metterebbe il **default** dentro la proiezione, cioè due fatti in un valore solo, e il daemon non potrebbe più distinguere *«nessuno ha mai cambiato»* da *«qualcuno l'ha riportata a remota»*. ⚠️ **Il default resta dov'è:** `VramPolicy::Remote(RemotePolicy)` è già un letterale di `crates/daemon/src/main.rs`, col commento che lo lega ad ADR-0006, e il compito **9** lo tiene lì. ⚠️ **Costo dichiarato:** il chiamante scrive un `unwrap_or`, che è una riga in più nel posto dove la decisione vive davvero |
+| **D28** | ⛔ **le sonde del daemon che raggiungono `executor.run()` passano per `run_the_graph` con un limite FINITO e un tick NULLO**, e `run_the_production_graph` riceve un **residuo dichiarato** invece di un chiamante | tre fatti misurati si sommano e nessuno dei tre da solo decide. **(1)** con `u64::MAX` le due sonde che arrivano a `run()` **si piantano** invece di diventare rosse (**P-48**), e piantarsi è il modo peggiore di fallire: un cancello che non torna non dice niente a nessuno. **(2)** il tick di produzione le farebbe pagare **tick × giri** di tempo di parete, perché `serve` **aspetta a ogni giro** e il doc di `EXECUTOR_TURN_LIMIT` lo dichiara già di sé (**P-51**); un tick nullo riporta il giro a polling puro per la regola che `Sleep::until` scrive — *«a wait that is already over is not a wait»* — **senza toccare il valore di produzione**, che resta un letterale. **(3)** il valore finito da solo sarebbe **vacuo**: `serve` è un `loop` senza uscita, quindi `TurnLimitReached` torna a qualunque limite (**P-52**), e ciò che rende la sonda non vacua è un **pari** che riceve la propria accoglienza, più la **baseline** a un giro dove non la riceve. ⛔ **E il residuo non si nasconde:** il doc di `run_the_production_graph` dice *«IT IS A FUNCTION RATHER THAN THE BODY OF `main` SO THAT A TEST CAN CALL IT»*, e da questo compito nessuna prova può chiamarla; il richiamo datato lo scrive, e allarga il residuo che la sonda dell'assemblaggio già dichiarava. ⚠️ **Costo dichiarato:** il cablaggio che `main` esegue — la scelta dei letterali di produzione — passa da coperto a **dichiarato**, e a chiuderlo sarà chi porterà il grafo sotto un processo figlio, che il doc di `main` prezza già e rifiuta |
+| **D29** | ⛔ **il daemon scrive il PROPRIO `SharedClock` e non costruisce due `SystemReactor`** | `Executor::new` prende il reattore **per valore** e `serve` ne vuole un **prestito**, quindi uno dei due deve essere una copia leggera; e `SystemReactor` **porta un'origine** ancorata a `Instant::now()` nel proprio costruttore, quindi due istanze sono **due orologi** che rispondono valori diversi per lo stesso istante (**P-49**). Le scadenze che `serve` calcola non sarebbero più confrontabili con quelle su cui l'esecutore aspetta: è `E25` — due verità indipendenti sullo stesso fatto — allo strato che decide quando un'attività si sveglia. ✅ **La forma si legge invece di inventarla:** è quella del banco del compito 7 e di `crates/simulator/tests/arbiter_campaign.rs`, un tipo che tiene `&SystemReactor` e inoltra le due operazioni del tratto. ⚠️ **Costo dichiarato:** è il **terzo** esemplare della stessa forma nel repository, e le tre case non possono importarsi a vicenda — un `tests/` è una crate a sé e un binario non esporta nulla. ⛔ **Se salga in `simulator` NON si decide qui:** la quinta chiusura l'ha assegnata al **10**, il primo che può misurarne il bisogno con una campagna in mano, e anticiparlo sarebbe uno strato speculativo |
+| **D30** | ⛔ **l'archivio della disposizione che non si apre diventa una CUSTODIA DEL DAEMON che risponde `Unavailable`** — un `enum` della radice di composizione che implementa `Custody`, delega quando è aperto e rifiuta quando non lo è | la decisione **35** vuole che il core parta lo stesso, ma `FileCustody::open` rende un `Result` e `Core::new` vuole una `Custody` **per valore** (**P-50**): fra le due non c'è spazio, e la cosa che manca è un valore. ✅ **La metà che serve esiste già, misurata nel compito 7:** `Err(CustodyError::Unavailable)` è **già** tradotto in `LayoutState::Unavailable`, quindi la decisione 35 si ottiene **senza una riga nuova nell'attività** e senza operazioni nuove nella porta — che è ciò che la §8 del 2 aveva previsto con quelle parole. Le due vie scartate: far rendere a `FileCustody::open` sempre una custodia **cambia un compito già scritto** e butta via il nome del fallimento che `OpenError` porta; una **seconda variante** di `CustodyError` darebbe alla porta un termine per uno stato che è della radice di composizione, ed è la variante senza chiamante che il doc di `CustodyError` rifiuta. ⚠️ **Costo dichiarato:** il daemon guadagna un tipo, e la sua sonda deve provare **entrambi** i rami — aperto delega, chiuso rifiuta — perché un avvolgente che delegasse sempre passerebbe la sonda del percorso buono |
+| **D31** | ⛔ **il nome del canale e il tetto del corpo sono DUE letterali del daemon**, sulla stessa frontiera di `JOURNAL_PATH`, e il **nome** entra nel criterio di chiusura perché il suo secondo lettore non esiste ancora | **D9** ha lasciato il tetto a chi compone e nessuno dei due disegni nomina né l'uno né l'altro (**P-53**). Sono due letterali per la ragione che il doc di `JOURNAL_PATH` scrive già — *«the value has to be chosen somewhere until the parameter store arrives, and a literal in `daemon` is visible and can be varied»* — cioè il confine di ADR-0034 e del vincolo 11 di §11, non una scorciatoia. ⛔ **Ma non sono la stessa specie, e per questo non condividono una riga:** il **nome** è un fatto di **protocollo**, che il **guscio** dovrà conoscere, e un fatto di protocollo che vive in una casa sola e non è nominato da nessun indice marcisce in silenzio; il **tetto** è locale al core e il core finto ne sceglie uno suo al 12. ⛔ **E il guscio NON è un compito di questo piano** (**P-53**): il 12 lega un nome suo, il 13 e il 14 portano una SPA che non tocca socket, e il capo a capo nel guscio la §8 lo mette *«fuori dal cancello di oggi»*. ⚠️ **Costo dichiarato:** il nome è un letterale che **nessun controllo accoppia** al suo secondo lettore, e resta così finché il guscio non esiste — dichiarato qui, chiuso là |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -1182,6 +1424,7 @@ righe che lo **toccano** sono segnate.
 | la **metà Linux** di M3 e M5 | ADR-0029, come innesco scritto | il primo Linux vero |
 | le tre voci del Traguardo 6 che aspettano il primo worker vero — 9, 26, 27 | la tabella del Traguardo 6 | il **12** |
 | le **registrate** della stella polare — l'ambito come progetto, «Automazione OS», il grafo del 6, Compatta, i due passi per invocazione | la tabella «Registrate, non prese» | il 3, il 6, il 10, il proprietario |
+| ⛔ **il secondo capo di `SOCKET_NAME`** — il daemon lega il nome al compito 9, e in questo piano **nessuno vi si collega**: il core finto ne lega uno suo, la SPA non tocca socket | **P-53**, **D31**, e il doc della costante in `crates/daemon/src/main.rs` | il **guscio**, che la §8 del 2 mette *«fuori dal cancello di oggi»*; il giorno che esiste, l'accoppiamento è una sonda |
 
 ---
 
@@ -8073,6 +8316,866 @@ Atteso: **otto** `.cbor`; le sonde di `arbiter_policy.rs` cresciute di **quattro
 `RecordKind::Policy` fuori da `record.rs` sono **almeno quattro**, i `match` di P-45 più il filtro di `policy_now`;
 `policy_now` ha **il suo banco** come chiamante e **nessun altro** — il chiamante di produzione nasce col compito
 **9**, ed è per questo che i due compiti sono due.
+
+---
+
+## Compito 9: il daemon — il cablaggio dell'attività, la policy riletta, e il limite di giri
+
+**Files:**
+- Modify: `crates/daemon/src/main.rs` (**`i/lf w/crlf`**) — le quattro costanti nuove, `EXECUTOR_TURN_LIMIT` a `u64::MAX` col richiamo, `SharedClock`, `MaybeCustody`, `StartupError` a **sei** varianti, `build_the_arbiter` che riceve la policy, il cablaggio in `run_the_graph`, e il modulo `tests` in fondo
+- Modify: `crates/daemon/Cargo.toml` (**`i/lf w/crlf`**) — ⛔ **`interprocess` in `[dev-dependencies]`, e il `Cargo.lock` NELLO STESSO COMMIT** (**P-54**, vincolo globale 6)
+- Modify: `Cargo.lock` — rinfrescato **fuori** dal cancello, con un `cargo build` **senza** `--locked`
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF** — **P-47**) — **due** richiami datati nella §5: la riga del limite di giri e la riga dello spegnimento
+- Modify: **questo piano** — la riga **9** della tabella della posizione
+- Read: `crates/daemon/src/main.rs` **per intero**, modulo `tests` compreso — è il file che questo compito riscrive; la **§5 del 2**, le righe del daemon; la **sequenza 2** della stella polare, «salva, riavvia, ritrova»; la riga *«la settima porta»* e il blocco *«L'archivio che non si apre — decisione 35»* della **§8 del 2**; il **rimando del 2026-09-08 in testa ad ADR-0006**; `crates/kernel/src/executor.rs` — `Executor::new`, `spawn`, `run`, `Sleep::until` **col suo capoverso sul tick già scaduto**; `crates/platform/src/reactor.rs` — `SystemReactor` e la sua `origin`; e i blocchi *Interfaces* dei compiti **1**, **2**, **4**, **5**, **7** e **8** per i nomi esatti
+
+**Interfaces:**
+- Consumes, dal **compito 1**: `kernel::numbering::{Progressive, seeded_from}`, con `Progressive::starting_at(u64)` e `seeded_from(&J) -> Result<Progressive, JournalError>`
+- Consumes, dal **compito 2**: `platform::ipc::LocalSocketIpc`, con `LocalSocketIpc::bound(name: &str, numbers: Progressive, max_body: usize) -> std::io::Result<LocalSocketIpc>`; `kernel::framing` nel banco del pari
+- Consumes, dal **compito 3**: `kernel::wire::ipc::{IpcMessage, build_stamp, LayoutState}` — **nel banco**, per il pari che parla
+- Consumes, dal **compito 4**: `kernel::ports::custody::{Custody, CustodyKey, CustodyError}`
+- Consumes, dal **compito 5**: `platform::custody::FileCustody`, con `FileCustody::open(&Path) -> Result<FileCustody, platform::journal::OpenError>`
+- Consumes, dal **compito 7**: `kernel::serving::{Core, serve}`, con `Core::new(ipc, journal, custody, arbiter, steps, parameters)`; `kernel::parameters::Parameters::new(executor_turn_limit, total_vram, arbiter_id, gui_tick)`
+- Consumes, dal **compito 8**: `kernel::arbiter::{policy_now, PolicyError}`
+- Consumes, da oggi: `kernel::arbiter::{Arbiter, VramPolicy, RemotePolicy}`; `kernel::executor::{Executor, RunError, Sleep}`; `kernel::ports::reactor::Reactor`; `kernel::time::{Monotonic, WallTime}`; `platform::journal::{FileJournal, OpenError}`; `platform::reactor::SystemReactor`; `platform::rng::SequentialRng`
+- Produces: ⛔ **nulla che un altro compito importi.** È la **radice di composizione**, e un binario non esporta niente. ⚠️ **Ciò che eredita è una FORMA, non un nome:** la campagna del **10** rifà lo stesso cablaggio su porte finte, e il core finto del **12** lo rifà in `gui/fake-core`; entrambi lo **riscrivono**, perché copiare da qui non è possibile — ed è la ragione per cui **D7** mise la seminatura del contatore in `kernel` e non qui
+
+⛔ **QUESTO COMPITO NON TOCCA `kernel`.** Tutto ciò che cabla esiste dai compiti 1–8: se un nome manca, è una voce
+d'errata del compito che doveva portarlo, **non** una riga nuova aggiunta qui.
+
+- [ ] **Passo 1: le misure prima, e la BASELINE che rende non vacua la sonda dei giri**
+
+```bash
+grep -n 'const EXECUTOR_TURN_LIMIT\|const TOTAL_VRAM\|const ARBITER_ID\|const JOURNAL_PATH' crates/daemon/src/main.rs
+grep -n 'fn run_the_production_graph\|fn run_the_graph\|fn build_the_arbiter\|fn reserve\|fn main' crates/daemon/src/main.rs
+grep -c '^    fn \|^    #\[test\]' crates/daemon/src/main.rs
+grep -n 'enum StartupError' -A 12 crates/daemon/src/main.rs
+grep -rn 'struct SharedClock' crates/ --include='*.rs'
+grep -n 'pub fn new' -A 2 crates/platform/src/reactor.rs
+grep -n 'interprocess' crates/platform/Cargo.toml crates/daemon/Cargo.toml Cargo.lock
+git ls-files --eol crates/daemon/src/main.rs crates/daemon/Cargo.toml Cargo.lock docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+```
+
+Atteso: `EXECUTOR_TURN_LIMIT` è `100_000`; `StartupError` ha **tre** varianti; gli `SharedClock` nel repository
+sono **due** dopo il compito 7 — `crates/simulator/tests/arbiter_campaign.rs` e il banco del 7 (**P-49**);
+`SystemReactor::new()` ancora la propria `origin` a `Instant::now()`; `interprocess` è in `platform` e **non** in
+`daemon`; `main.rs` e `Cargo.toml` sono `i/lf w/crlf`, il disegno del 2 è `i/lf w/lf`.
+⚠️ **Se una cifra è diversa vale il comando, non questa riga**, ed è una voce d'errata prima di essere un rimedio.
+
+⛔ **E POI LA BASELINE, che è metà del valore della sonda del Passo 9** (**P-52**): un `loop` senza uscita rende
+`Err(TurnLimitReached)` a **qualunque** limite, quindi prima di scrivere la sonda si misura che l'esito da solo non
+distingue nulla. Si prende **dopo** il Passo 7, quando il cablaggio esiste, e si **scrive accanto alla sonda con la
+data**: lo stesso grafo con un limite di **un giro**, dove il pari **non** riceve la propria accoglienza mentre
+`run()` rende lo stesso valore. ⚠️ **Senza questa misura la sonda del Passo 9 è un'ipotesi**, e questo repository
+ha già pagato per la differenza — gotcha **#57**.
+
+- [ ] **Passo 2: le quattro costanti nuove, e `EXECUTOR_TURN_LIMIT` col suo richiamo**
+
+In `crates/daemon/src/main.rs` (**`i/lf w/crlf`**, quindi `replace_unique.py` per ogni tocco).
+
+**(a)** *Trova* la riga `const EXECUTOR_TURN_LIMIT: u64 = 100_000;` **intera** e *Sostituisci con*:
+
+```rust
+/// ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE VALUE IS `u64::MAX`, AND THE TABLE ABOVE NOW
+/// DESCRIBES A RUN THIS BINARY NO LONGER MAKES. Until this task the graph had NO activity, so the
+/// ceiling bounded nothing that existed; from here it carries `kernel::serving::serve`, which is a
+/// `loop` with no exit. A finite ceiling would therefore be a CLOCK ON THE DAEMON'S LIFE — the core
+/// would stop serving after so many turns, for no reason a user could name — and that is the one
+/// thing this number must not be. Decision A of §5 of the milestone 2 design, delegated and taken.
+///
+/// ⚠️ WHAT IS GIVEN UP, SAID PLAINLY: with no ceiling, an activity that spins can no longer be
+/// caught HERE. `RunError::TurnLimitReached` remains reachable in the benches, which hand their own
+/// finite limits through `Parameters` (ADR-0034), and in the milestone 2 campaign. In production the
+/// guard against a run that goes nowhere is an OS watchdog, which §5 assigns to milestone 10 along
+/// with the clean shutdown. Declared, not pinned (gotcha #73).
+///
+/// ⚠️ AND THE SATURATION IS THE PRECEDENT `FOR_EVER` SET, in this same file: `u64::MAX` is not
+/// "never", it is "further than this run can reach", and the arithmetic is the same one the comment
+/// beside `FOR_EVER` measured — about 584 million years at one turn per millisecond, and turns are
+/// far faster than that.
+const EXECUTOR_TURN_LIMIT: u64 = u64::MAX;
+```
+
+⛔ **Il capoverso che c'è NON si cancella:** la tabella dei due costi e il paragrafo *«Where the nine comes
+from»* restano dove sono, e il richiamo si **aggiunge sopra** — è la regola dei richiami datati, e la tabella
+resta vera per un grafo senza attività, che è esattamente ciò che la campagna del **10** costruirà.
+
+**(b)** In coda, **dopo** `JOURNAL_PATH` e **prima** di `AUDIO_QUOTA`, le quattro costanti nuove:
+
+```rust
+/// Where the LAYOUT ARCHIVE lives, in production — the seventh port's store.
+///
+/// ⛔ A SECOND FILE AND NOT A SECOND TABLE IN THE JOURNAL, and the difference is ADR-0022: the
+/// journal is authoritative state and is BACKED UP AND ENCRYPTED; a window layout is neither. It is
+/// also what lets the layout archive fail to open WITHOUT stopping the start-up (decision 35),
+/// which sharing a file with the journal would make impossible.
+///
+/// ⚠️ RELATIVE TO THE WORKING DIRECTORY, exactly as `JOURNAL_PATH` is and declared for the same
+/// reason: where a per-user data directory belongs is a decision no ADR has taken, and inventing one
+/// here would be that decision taken by whoever typed the path. Every probe passes its OWN path.
+const LAYOUT_PATH: &str = "layout.redb";
+
+/// The name the GUI knocks on.
+///
+/// ⛔ IT IS PROTOCOL AND NOT A TUNING KNOB, and that is why it is named in this task's closing
+/// criterion: THE SHELL must open the SAME name, and nothing in the gate couples the two ends.
+/// ⛔ AND THE SHELL IS NOT A TASK OF THIS PLAN — the fake core binds a name of its own, the SPA never
+/// touches a socket, and §8 puts the end-to-end run in the shell "outside today's gate". The day the
+/// shell exists, the coupling is a probe; until then this literal is the whole of the agreement, and
+/// a fact of protocol living in one house with no index naming it is how a fact of protocol rots in
+/// silence.
+///
+/// ⛔ A NAMESPACED NAME AND NOT A PATH: `LocalSocketIpc::bound` resolves it through
+/// `to_ns_name::<GenericNamespaced>()`, which is what makes ONE string work as a named pipe on
+/// Windows and as a local socket on Linux — the two systems of ADR-0002 behind one line.
+///
+/// ⚠️ THE `harness-` PREFIX IS THE ONE THE BENCHES ALREADY USE, so that a stray socket left behind
+/// by a crash is recognisable as ours by name alone.
+const SOCKET_NAME: &str = "harness-core";
+
+/// The longest body the core will buffer from a peer (D9).
+///
+/// ⛔ DELIVERED RATHER THAN INVENTED, like `TOTAL_VRAM` and for the same reason (ADR-0034): the
+/// transport must not name a default, so the number is chosen HERE, where it is visible and can be
+/// varied. What it buys is written beside `LocalSocketIpc::max_body`: without a cap a peer declaring
+/// four gibibytes would be buffered for ever, because any four bytes are a valid length.
+///
+/// ⚠️ THE SIZE IS NOT MEASURED AND IS DECLARED AS SUCH. The largest message that climbs this wire is
+/// the layout package — `toJSON()` of `dockview` plus the active view — and no such package exists
+/// yet to measure. What the value has to be is COMFORTABLY ABOVE that and FAR BELOW a memory
+/// problem, and a mebibyte is both. ⛔ ITS TRIGGER IS THE FIRST PACKAGE REFUSED: a `SaveLayout` that
+/// comes back `MalformedMessage` is this line being too small, not a broken peer, and the remedy is
+/// this literal rather than a loosening of the transport.
+const MAX_BODY: usize = 1024 * 1024;
+
+/// How long the serving activity sleeps between turns (§5, ADR-0034).
+///
+/// ⛔ IT EXISTS BECAUSE THE REACTOR HAS NO I/O READINESS, which is entry 5 of §9 of the milestone 2
+/// design, confirmed as-is by the owner on 2026-09-09: nothing can wake the core when a byte
+/// arrives, so the core LOOKS, on a rhythm. The tick is that rhythm, and it is the WORST-CASE
+/// LATENCY between the GUI speaking and the core hearing.
+///
+/// ⚠️ NOT MEASURED, AND DECLARED AS SUCH. What picks it is a trade with no measurement behind it
+/// yet: larger wastes nothing and makes the GUI feel slow, smaller costs a syscall per turn for
+/// latency nobody can perceive. Sixteen milliseconds is one frame at sixty hertz — the interval the
+/// GUI itself is already paced by, so the core cannot be the slower half of a round trip.
+/// ⛔ ITS TRIGGER IS THE FIRST PERCEIVED-LATENCY MEASUREMENT on the assembled shell, milestone 2
+/// part 3: until somebody watches a round trip, any number here is an argument.
+///
+/// ⚠️ AND THE BENCHES DO NOT INHERIT IT: the tick is delivered through `Parameters`, so a probe
+/// hands its own — zero, where a turn must not wait (`Sleep::until`'s rule). That is what keeps the
+/// production value out of the gate's wall clock.
+const GUI_TICK: Millis = Millis::new(16);
+```
+
+- [ ] **Passo 3: `SharedClock`, perché il reattore serve in due posti**
+
+In coda alle costanti, **prima** di `StartupError`.
+
+```rust
+/// The one `SystemReactor`, seen from two places.
+///
+/// ⛔ IT EXISTS BECAUSE THE TWO SIGNATURES DISAGREE, not for tidiness: `Executor::new` takes the
+/// reactor BY VALUE and `kernel::serving::serve` takes a clock BY REFERENCE, so one of the two has
+/// to be a light copy over a single owner.
+///
+/// ⛔ AND BUILDING TWO `SystemReactor`s WOULD COMPILE AND BE WRONG. That type carries an `origin`
+/// anchored to `Instant::now()` INSIDE its constructor — its own doc calls it "THE ONLY ORIGIN IT
+/// HAS" — so two instances answer two different `Monotonic`s for the same real instant. The
+/// deadlines `serve` computes would then not be comparable with the ones the executor waits on:
+/// two independent truths about one fact, which is the shape of `E25`, at the layer that decides
+/// when an activity wakes.
+///
+/// ⚠️ THE THIRD OF ITS SHAPE IN THIS REPOSITORY, and the duplication is declared rather than
+/// hidden: `crates/simulator/tests/arbiter_campaign.rs` and the milestone 2 serving bench carry the
+/// other two, and neither can be imported — a `tests/` file is a crate of its own and a binary
+/// exports nothing. ⛔ WHETHER IT SHOULD RISE INTO `simulator` IS NOT THIS TASK'S CALL: milestone
+/// 10 is the first that can measure the need with a campaign in hand.
+struct SharedClock<'a> {
+    inner: &'a RefCell<SystemReactor>,
+}
+
+impl Reactor for SharedClock<'_> {
+    fn now(&self) -> Monotonic {
+        self.inner.borrow().now()
+    }
+
+    fn wall_time(&self) -> WallTime {
+        self.inner.borrow().wall_time()
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        self.inner.borrow_mut().wait_until(deadline)
+    }
+}
+```
+
+⚠️ **Le tre operazioni del tratto si RILEGGONO dal sorgente** — `grep -n 'fn ' crates/kernel/src/ports/reactor.rs`
+— e non si copiano da questo blocco: se il tratto ne avesse una quarta, questo `impl` non compilerebbe, ed è la
+voce d'errata che chi esegue scrive invece di indovinare.
+
+- [ ] **Passo 4: `MaybeCustody`, l'archivio che non si apre (decisione 35)**
+
+Subito sotto `SharedClock`.
+
+```rust
+/// The layout archive, open or not — and the core starts either way (decision 35 of §8).
+///
+/// ⛔ IT LIVES HERE AND NOT IN THE PORT, and that is the whole decision. `FileCustody::open` hands
+/// back a `Result` and `Core::new` wants a `Custody` BY VALUE, so between the two there is a value
+/// missing, and the only place that knows the core must start anyway is the composition root. The
+/// two roads not taken: making `open` always hand back a custody would change a task already
+/// written and throw away the name of the failure that `OpenError` carries; a SECOND variant of
+/// `CustodyError` would give the port a word for a state that belongs to the root, and it is the
+/// variant with no caller that `CustodyError`'s own doc refuses.
+///
+/// ⛔ AND NOTHING NEW IS NEEDED IN THE ACTIVITY: `kernel::serving` already turns
+/// `Err(CustodyError::Unavailable)` into `LayoutState::Unavailable`, so decision 35 falls out of
+/// this type without a line anywhere else — which is what §8 predicted in those words, "no new
+/// operation in the port".
+///
+/// ⚠️ DECLARED RESIDUAL — WHY THE ARCHIVE WOULD NOT OPEN DOES NOT REACH THE OPERATOR. `OpenError`
+/// is dropped here rather than carried, because a field only `Debug` reads is flagged dead (the
+/// paragraph beside `main` measured exactly that), and printing from `run_the_graph` would take on
+/// the job that same function's doc gives to `main` alone. ⛔ ITS TRIGGER IS THE FIRST DIAGNOSTIC
+/// CHANNEL the daemon grows — milestone 10, with the clean shutdown — and until then the operator
+/// sees the effect, "layout unavailable", and not the cause.
+enum MaybeCustody {
+    Open(FileCustody),
+    Unavailable,
+}
+
+impl MaybeCustody {
+    /// ⛔ IT SWALLOWS THE ERROR ON PURPOSE, which is the sentence above turned into code: a layout
+    /// archive that will not open is NOT authoritative state (I1), so it does not stop a start-up
+    /// the way the journal does.
+    fn open(path: &Path) -> Self {
+        match FileCustody::open(path) {
+            Ok(custody) => MaybeCustody::Open(custody),
+            Err(_) => MaybeCustody::Unavailable,
+        }
+    }
+}
+
+impl Custody for MaybeCustody {
+    fn keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        match self {
+            MaybeCustody::Open(custody) => custody.keep(key, bytes),
+            MaybeCustody::Unavailable => Err(CustodyError::Unavailable),
+        }
+    }
+
+    fn retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        match self {
+            MaybeCustody::Open(custody) => custody.retrieve(key),
+            MaybeCustody::Unavailable => Err(CustodyError::Unavailable),
+        }
+    }
+}
+```
+
+- [ ] **Passo 5: `StartupError` cresce, e `main` guadagna i bracci**
+
+**(a)** *Trova* il capoverso `/// ⛔ THREE VARIANTS, AND THE THIRD IS THE ONE THAT CLOSES `E41`.` **fino alla riga
+`#[derive(Debug)]` esclusa, intero, preso dal file**, e *Sostituisci con* lo stesso testo **più** il richiamo in
+coda, prima di `#[derive(Debug)]`:
+
+```rust
+/// ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE VARIANTS ARE NOW SIX, AND THE PARAGRAPH ABOVE IS
+/// ABOUT THE THIRD, WHICH IS UNCHANGED. The wiring grew three failures it can name and did not
+/// have: the journal holds records this build cannot read, so the current policy cannot be
+/// answered (ADR-0006, `policy_now`); the same re-read seeds the step counter, and it fails the
+/// same way; and the local socket will not bind, which on both systems means somebody is already
+/// listening on that name — a SECOND core, which is exactly what a single-instance process must
+/// refuse to be. ⚠️ Each is spelt out in `main` for the reason written there: `#[derive(Debug)]`
+/// does not count as a read, so folding them would flag their payloads dead.
+```
+
+**(b)** Le tre varianti nuove, in coda all'`enum`:
+
+```rust
+    /// The journal would not say which VRAM policy is in force (ADR-0006, `policy_now`).
+    Policy(PolicyError),
+    /// The journal would not say which step number to carry on from (`numbering::seeded_from`).
+    Numbering(JournalError),
+    /// The local socket would not bind. ⛔ ON BOTH SYSTEMS THE ORDINARY CAUSE IS A SECOND CORE
+    /// ALREADY LISTENING, and refusing is the point: `daemon` is the single instance of ADR-0004,
+    /// and two cores on one journal is the one thing the exclusive lock cannot catch, because the
+    /// second one never gets that far.
+    Ipc(std::io::Error),
+```
+
+**(c)** In `main`, tre bracci nuovi **prima** della graffa di chiusura del `match`:
+
+```rust
+        Err(StartupError::Policy(error)) => {
+            stop(&format!(
+                "the journal at {JOURNAL_PATH} would not say which VRAM policy is in force: {error:?}"
+            ));
+        }
+        Err(StartupError::Numbering(error)) => {
+            stop(&format!(
+                "the journal at {JOURNAL_PATH} would not say which step to carry on from: {error:?}"
+            ));
+        }
+        Err(StartupError::Ipc(error)) => {
+            stop(&format!(
+                "the channel {SOCKET_NAME} would not bind, and the usual cause is a core already \
+                 running: {error:?}"
+            ));
+        }
+```
+
+**(d)** Il doc di `main` porta *«THE THREE FAILURES ARE SPELT OUT ONE BY ONE»*: riceve il richiamo in coda al
+capoverso, **senza cancellarlo**.
+
+```rust
+/// ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THEY ARE SIX. The reason is unchanged and is the
+/// reason the three new ones are also spelt out: a single arm would leave every payload flagged
+/// "never read". ⚠️ AND THE RESIDUAL ABOVE GREW WITH THEM: none of the six error branches is
+/// walked by a check, and three of them now name values — the socket, the policy, the counter —
+/// that only `main` knows how to print.
+```
+
+```bash
+cargo build --locked -p daemon 2>&1 | tail -30
+```
+
+- [ ] **Passo 6: `build_the_arbiter` riceve la policy invece di nominarla**
+
+⛔ **È la riga che il rimando in testa ad ADR-0006 nomina per esteso** — *«il daemon la rilegge all'avvio …
+perché oggi `build_the_arbiter` riparte da `Remote` e nessuno chiama `set_policy` in produzione»*.
+
+*Trova* la firma e il corpo fino a `);` del costruttore, **interi, presi dal file**, e *Sostituisci con*:
+
+```rust
+fn build_the_arbiter(parameters: Parameters, policy: VramPolicy) -> Result<Arbiter, StartupError> {
+    // ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE POLICY IS HANDED IN, AND THE COMMENT THAT WAS
+    // HERE SAID THE OPPOSITE. It read: "REMOTE is the default of ADR-0006, and reopening that turns
+    // a coordinated swap from an exception into the normal case." The DEFAULT is unchanged and is
+    // still remote; what changed is WHO SAYS SO. The recall at the head of ADR-0006 splits the two
+    // facts: "the profile gives the DEFAULT, and the CURRENT policy is the projection of the
+    // journal". The default now lives at the ONE call site that re-reads the journal, as an
+    // `unwrap_or`, and this function names neither.
+    let mut arbiter = Arbiter::new(parameters, policy);
+```
+
+⚠️ **Il resto del corpo non si tocca:** le due riserve e il `Ok(arbiter)` restano parola per parola.
+
+- [ ] **Passo 7: il cablaggio**
+
+*Trova* il corpo di `run_the_production_graph` e quello di `run_the_graph`, **interi, presi dal file**, e
+*Sostituisci con*:
+
+```rust
+fn run_the_production_graph(journal_path: &Path, layout_path: &Path) -> Result<(), StartupError> {
+    run_the_graph(
+        Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID, GUI_TICK),
+        journal_path,
+        layout_path,
+        SOCKET_NAME,
+    )
+}
+```
+
+```rust
+/// ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE SOCKET NAME IS AN ARGUMENT TOO, FOR THE REASON
+/// THE PATH ALREADY IS. The paragraph above says a fixed path in a shared directory is gotcha #52;
+/// a fixed socket NAME is worse, because it is shared across the whole machine rather than a
+/// directory: two probes binding `SOCKET_NAME` at once make the second fail with "already in use",
+/// and `cargo test` runs them at once BY DEFAULT. Every probe hands its own name, built from
+/// `line!()` and the process id, exactly as `private_dir_for_line` does (P-55).
+fn run_the_graph(
+    parameters: Parameters,
+    journal_path: &Path,
+    layout_path: &Path,
+    socket_name: &str,
+) -> Result<(), StartupError> {
+    // ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE JOURNAL HAS A CONSUMER NOW, and the comment
+    // that stood here said it did not: "THE JOURNAL HAS NO CONSUMER IN THIS BINARY YET … The day
+    // something journals, it journals into this one." That day is this one. It is still opened
+    // first, so a bad path stops the start-up here rather than at the first write.
+    let journal = FileJournal::open(journal_path).map_err(StartupError::Journal)?;
+
+    // ⛔ THE TWO PROJECTIONS ARE READ BEFORE THE JOURNAL IS HANDED OVER, and the order is forced:
+    // `Core::new` takes it by value. Both re-read the whole archive, which is the cost
+    // `Journal::replay` declares of itself.
+    //
+    // ⛔ AND THE `unwrap_or` IS WHERE THE DEFAULT OF ADR-0006 LIVES — D27. `policy_now` answers an
+    // `Option` because the kernel may not name a default (ADR-0034), and `None` means NOBODY EVER
+    // CHANGED IT rather than "remote". Folding the two inside the kernel would leave this root
+    // unable to tell those apart.
+    let policy = arbiter::policy_now(&journal)
+        .map_err(StartupError::Policy)?
+        .unwrap_or(VramPolicy::Remote(RemotePolicy));
+    let steps = numbering::seeded_from(&journal).map_err(StartupError::Numbering)?;
+
+    let arbiter = build_the_arbiter(parameters, policy)?;
+
+    let ipc = LocalSocketIpc::bound(socket_name, Progressive::starting_at(0), MAX_BODY)
+        .map_err(StartupError::Ipc)?;
+
+    // ⚠️ THE DECLARATION ORDER IS LOAD-BEARING and swapping two lines does not compile: the
+    // executor borrows `sleep`, `core` and `clock` for its whole life, `clock` borrows `reactor`,
+    // and locals drop in reverse order of declaration.
+    let reactor = RefCell::new(SystemReactor::new());
+    let core = RefCell::new(Core::new(
+        ipc,
+        journal,
+        MaybeCustody::open(layout_path),
+        arbiter,
+        steps,
+        parameters,
+    ));
+    let clock = SharedClock { inner: &reactor };
+    let sleep = Sleep::new();
+
+    let mut executor = Executor::new(
+        SequentialRng::new(),
+        SharedClock { inner: &reactor },
+        parameters,
+        &sleep,
+    );
+    executor.spawn(serving::serve(&core, &clock, &sleep));
+
+    executor.run().map_err(StartupError::Run)
+}
+```
+
+⚠️ **Gli `use` in testa al file crescono** di `std::cell::RefCell`, `kernel::arbiter` (il modulo, per
+`policy_now`), `kernel::numbering::{self, Progressive}`, `kernel::ports::custody::{Custody, CustodyError,
+CustodyKey}`, `kernel::ports::journal::JournalError`, `kernel::ports::reactor::Reactor`,
+`kernel::serving::{self, Core}`, `kernel::time::WallTime`, `kernel::arbiter::PolicyError`,
+`platform::custody::FileCustody`, `platform::ipc::LocalSocketIpc`: **`cargo build` li detta uno per uno**, e si
+aggiungono leggendo l'errore invece di indovinarli.
+
+```bash
+cargo build --locked -p daemon 2>&1 | tail -40
+```
+
+⛔ **Qui `cargo build` è ATTESO ROSSO una volta**, sul modulo `tests`, che ancora chiama le due funzioni con le
+vecchie firme: è il Passo 8.
+
+- [ ] **Passo 8: gli aiutanti del banco — il nome per riga, e il PARI che parla**
+
+In `crates/daemon/src/main.rs`, dentro `mod tests`, **dopo** `private_dir_for_line`.
+
+```rust
+    /// ⛔ A NAME OF ITS OWN PER CALL SITE, and it is the socket twin of `private_dir_for_line`
+    /// (P-55). A socket name is machine-wide rather than directory-wide, so two probes sharing one
+    /// pass alone and fail together — the flakiest red there is — and `cargo test` runs them at
+    /// once by default. The process id is in it because two `cargo test` invocations can overlap.
+    fn socket_name_for_line(line: u32) -> String {
+        format!("harness-daemon-{}-{}", std::process::id(), line)
+    }
+
+    /// A peer on the other end of the wire: it connects, says its piece, and hands back what it
+    /// heard.
+    ///
+    /// ⛔ IT IS WHAT MAKES THE TURN PROBE NON-VACUOUS (P-52). `serve` is a `loop` with no exit, so
+    /// `Executor::run` answers `Err(TurnLimitReached)` at ANY limit — one turn or a hundred
+    /// thousand — and reading that value alone would be green over an activity that never ran. What
+    /// only a peer can say is THAT THE CORE IS SERVING.
+    ///
+    /// ⛔ IT CANNOT HANG, AND THE REASON IS THE DROP ORDER RATHER THAN A TIMEOUT: when
+    /// `run_the_graph` returns, its locals fall, the `LocalSocketIpc` falls with them, and the
+    /// server end of this connection closes — so `read` here comes back `Ok(0)` and the loop ends.
+    /// Every caller therefore `join`s AFTER the run, never before.
+    ///
+    /// ⚠️ THE CONNECT IS A `yield_now` LOOP AND NOT A SLEEP, the shape `ipc_contract_real.rs` uses:
+    /// the listener exists from `bound()`, which happens before `run()`, but this thread may be
+    /// scheduled first.
+    fn a_peer_that_says(
+        name: String,
+        said: Vec<IpcMessage>,
+        wants: usize,
+    ) -> std::thread::JoinHandle<Vec<IpcMessage>> {
+        std::thread::spawn(move || {
+            use interprocess::local_socket::{prelude::*, GenericNamespaced, Stream};
+            use std::io::{Read, Write};
+
+            let ns = name.to_ns_name::<GenericNamespaced>().expect("a namespaced name");
+            let mut stream = loop {
+                match Stream::connect(ns.clone()) {
+                    Ok(stream) => break stream,
+                    Err(_) => std::thread::yield_now(),
+                }
+            };
+            for message in &said {
+                let bytes = message.encode().expect("the peer frames what it sends");
+                stream.write_all(&bytes).expect("the peer writes");
+            }
+
+            let mut buffer = Vec::new();
+            let mut heard = Vec::new();
+            let mut chunk = [0_u8; 4_096];
+            while heard.len() < wants {
+                match stream.read(&mut chunk) {
+                    Ok(0) => break,
+                    Ok(read) => buffer.extend_from_slice(&chunk[..read]),
+                    Err(_) => break,
+                }
+                // ⚠️ `take_frame` AND NOT `unframe`: the buffer ordinarily holds a frame and a half,
+                // which `unframe` refuses by design (P-13). It hands back the body and where the
+                // next one starts.
+                while let Some((body, next)) = framing::take_frame(&buffer) {
+                    heard.push(IpcMessage::decode(body).expect("the core sends what it says"));
+                    buffer.drain(..next);
+                }
+            }
+            heard
+        })
+    }
+```
+
+⚠️ **`framing::take_frame` rende il CORPO e l'offset del prossimo**, e `IpcMessage::decode` sbuccia già la busta
+(**P-15**): quale delle due forme sia giusta si **rilegge** dal blocco *Interfaces* del compito 2 e dal corpo di
+`decode`, e se diverge è una voce d'errata.
+
+- [ ] **Passo 9: le cinque sonde che esistono, riscritte alle firme nuove**
+
+⛔ **Due di esse SI PIANTAVANO e non diventavano rosse** (**P-48**), e la cura è **D28**: passano per
+`run_the_graph` con un limite **finito** e un tick **nullo**, e l'esito atteso non è più `Ok(())`.
+
+**(a)** *Trova* il corpo di `the_production_graph_assembles_and_the_executor_runs_to_completion`, **intero, doc
+compreso, preso dal file**, e *Sostituisci con*:
+
+```rust
+    /// ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE NAME CHANGED BECAUSE THE CLAIM DID. There is no
+    /// "completion" any more: the graph now carries `kernel::serving::serve`, a `loop` with no exit,
+    /// so a run that ENDED would mean the core stopped serving. What the run terminating proves is
+    /// that the turns ran out, which is the delivered limit reaching the executor.
+    ///
+    /// ⛔ AND IT CANNOT GO THROUGH `run_the_production_graph` ANY MORE, which is the cost D28
+    /// declares: that function hands `u64::MAX`, so calling it here would HANG rather than fail —
+    /// the worst way for a gate to break, because a gate that does not come back says nothing to
+    /// anybody. The limit is delivered instead, which is the shape ADR-0034 imposes everywhere.
+    ///
+    /// ⛔ THE TICK IS ZERO, AND IT IS NOT A SHORTCUT (P-51). `serve` naps every turn, and this
+    /// binary mounts the REAL `SystemReactor`, whose `wait_until` is a real sleep — so a production
+    /// tick would cost tick × turns of wall clock inside `bash scripts/gate.sh`. A deadline already
+    /// reached makes the activity READY instead (`Sleep::until`'s own rule), so the turn is polling
+    /// and the ceiling costs milliseconds. ⚠️ What the zero tick does NOT buy is that
+    /// `Reactor::wait_until` is reached on this graph; that half is milestone 10's, where the clock
+    /// is virtual.
+    ///
+    /// ⚠️ THE RESIDUAL OF THIS PROBE GREW, and it is the same residual said wider: it did not cover
+    /// the VALUE of `EXECUTOR_TURN_LIMIT`, and now it does not cover the wiring of
+    /// `run_the_production_graph` either — the four production literals it chooses are walked by
+    /// nothing. The doc of that function carries the recall.
+    #[test]
+    fn the_production_graph_assembles_and_the_serving_activity_takes_the_turns() {
+        let dir = private_dir_for_line(line!());
+
+        let outcome = run_the_graph(
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::ZERO),
+            &dir.join("journal.redb"),
+            &dir.join("layout.redb"),
+            &socket_name_for_line(line!()),
+        );
+
+        match outcome {
+            Err(StartupError::Run(RunError::TurnLimitReached)) => {}
+            other => panic!("the graph must assemble and the serving loop must run: {other:?}"),
+        }
+    }
+```
+
+⚠️ **`Millis::ZERO` si RILEGGE**: se la costante non esiste, si scrive `Millis::new(0)` e si registra la
+divergenza — `grep -n 'ZERO' crates/kernel/src/time.rs`.
+
+**(b)** `the_production_graph_leaves_its_journal_on_the_disk`: stessa sostituzione della chiamata e dell'esito, il
+doc invariato **più** una riga di richiamo che dice che l'esito atteso è cambiato per la ragione di (a).
+
+**(c)** Le tre sonde che **non** raggiungono `run()` — `a_journal_that_cannot_be_opened_stops_the_start_up`,
+`a_permanent_quota_that_only_queues_stops_the_start_up`, `a_permanent_quota_bigger_than_the_machine_stops_the_start_up`
+— cambiano **solo** la chiamata: quattro argomenti in `Parameters::new`, e i due percorsi più il nome del socket.
+⛔ **I loro doc e i loro `match` non si toccano**: il merito non è cambiato.
+
+**(d)** `the_production_arbiter()` riceve la policy, perché `build_the_arbiter` ora la prende:
+
+```rust
+        match build_the_arbiter(
+            Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID, GUI_TICK),
+            VramPolicy::Remote(RemotePolicy),
+        ) {
+```
+
+⚠️ **E la riga `arbiter.policy().name() == "remote"` di `the_two_reserved_quotas_…` resta**, ma il suo doc va
+letto: diceva che *«the composition root runs the DEFAULT policy of ADR-0006»*. Adesso l'aiutante gliela **passa**,
+quindi la sonda tiene ciò che l'aiutante sceglie e non più ciò che la radice sceglie. ⛔ **Il richiamo lo dice, e
+la cosa che quella riga teneva si sposta** alla sonda del Passo 13, che legge il default dove adesso vive.
+
+```bash
+cargo test --locked -p daemon 2>&1 | tail -20
+```
+
+- [ ] **Passo 10: la sonda del limite di giri, e la BASELINE accanto**
+
+⛔ **È la sonda che la §5 del 2 detta**, e le due cose che la rendono non vacua sono **P-52** e la baseline del
+Passo 1.
+
+```rust
+    /// ⛔ WHAT THIS BUYS THAT THE ASSEMBLY PROBE DOES NOT: that the core is STILL SERVING when the
+    /// turns run out. The assembly probe reads `Err(TurnLimitReached)`, and that value comes back at
+    /// ANY limit because `serve` never finishes — so on its own it cannot tell a hundred thousand
+    /// turns from one. ✅ MEASURED, not feared: with the limit cut to `1` and everything else
+    /// identical, the peer hands back an EMPTY vector and `run` answers exactly the same
+    /// `Err(TurnLimitReached)` — <data>. That measurement is what makes the assertion below an
+    /// oracle rather than a restatement of the loop.
+    ///
+    /// ⛔ AND IT IS THE PROBE §5 ASKS FOR — "the graph with the GUI stays alive past a hundred
+    /// thousand turns" — which is the number the old `EXECUTOR_TURN_LIMIT` stopped at. A daemon that
+    /// died there would have died after minutes of ordinary use, silently, with `TurnLimitReached`
+    /// nobody reads.
+    ///
+    /// ⚠️ THE PEER IS JOINED AFTER THE RUN, always: the server end closes when the run's locals
+    /// fall, and that close is what ends the peer's read loop. Joining first would deadlock.
+    #[test]
+    fn the_graph_with_the_gui_stays_alive_past_a_hundred_thousand_turns() {
+        let dir = private_dir_for_line(line!());
+        let name = socket_name_for_line(line!());
+
+        // ⚠️ THE PEER SPEAKS BEFORE THE RUN STARTS, and that is allowed: the listener exists from
+        // `bound()` inside `run_the_graph`, and the helper retries the connect until it does.
+        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 1);
+
+        let outcome = run_the_graph(
+            Parameters::new(100_001, TOTAL_VRAM, ARBITER_ID, Millis::ZERO),
+            &dir.join("journal.redb"),
+            &dir.join("layout.redb"),
+            &name,
+        );
+
+        match outcome {
+            Err(StartupError::Run(RunError::TurnLimitReached)) => {}
+            other => panic!("the serving loop must still be looping when the turns end: {other:?}"),
+        }
+
+        let heard = peer.join().expect("the peer thread does not panic");
+        assert!(
+            matches!(heard.first(), Some(IpcMessage::Accepted { .. })),
+            "the core must have SERVED the peer, which is what the turn count alone cannot say: \
+             {heard:?}"
+        );
+    }
+```
+
+⚠️ **La forma esatta di `Accepted` si RILEGGE dal compito 3** — quanti campi porti e come si chiamino — e il
+`matches!` si scrive su quella. Se diverge, voce d'errata.
+
+- [ ] **Passo 11: «salva, riavvia, ritrova» — la sequenza 2 della stella polare**
+
+```rust
+    /// ⛔ THE PROBE OF SEQUENCE 2 OF THE NORTH STAR, end to end on the REAL archive: the GUI saves,
+    /// the core stops, the core starts again, and the same package comes back. It is the one probe
+    /// that holds the seventh port's whole reason for existing.
+    ///
+    /// ⛔ TWO RUNS, ONE ARCHIVE PATH, TWO SOCKET NAMES. The path is shared because that is the
+    /// claim; the names are not, because a named pipe may linger a moment after its listener falls
+    /// on Windows, and a probe that fails only on one of the project's two systems is the red this
+    /// repository pays for most (gotcha #52).
+    ///
+    /// ⚠️ THE FIRST RUN'S PEER WANTS THE WELCOME AND THEN THE ANSWER TO `SaveLayout`, so it asks for
+    /// enough messages to reach it; how many the welcome is comes from §5 and is RE-READ rather
+    /// than assumed — a wrong count here makes the peer wait for a message that never comes, and the
+    /// close ends it with a short vector instead of a hang.
+    #[test]
+    fn a_layout_saved_is_found_again_after_a_restart() {
+        let dir = private_dir_for_line(line!());
+        let journal = dir.join("journal.redb");
+        let layout = dir.join("layout.redb");
+        let package = b"{\"grid\":1}".to_vec();
+
+        let first = socket_name_for_line(line!());
+        let saver = a_peer_that_says(
+            first.clone(),
+            vec![
+                IpcMessage::Hello(build_stamp()),
+                IpcMessage::SaveLayout(package.clone()),
+            ],
+            WELCOME + 1,
+        );
+        let _ = run_the_graph(
+            Parameters::new(600, TOTAL_VRAM, ARBITER_ID, Millis::ZERO),
+            &journal,
+            &layout,
+            &first,
+        );
+        let saved = saver.join().expect("the peer thread does not panic");
+        assert!(
+            saved
+                .iter()
+                .any(|said| said == &IpcMessage::Layout(LayoutState::Package(package.clone()))),
+            "the core answers a save with what it now HOLDS (decision 13): {saved:?}"
+        );
+
+        let second = socket_name_for_line(line!());
+        let reader = a_peer_that_says(second.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
+        let _ = run_the_graph(
+            Parameters::new(600, TOTAL_VRAM, ARBITER_ID, Millis::ZERO),
+            &journal,
+            &layout,
+            &second,
+        );
+        let found = reader.join().expect("the peer thread does not panic");
+        assert!(
+            found
+                .iter()
+                .any(|said| said == &IpcMessage::Layout(LayoutState::Package(package.clone()))),
+            "a RESTARTED core finds the package the previous one kept: {found:?}"
+        );
+    }
+```
+
+⛔ **`WELCOME` è una costante di questo banco e si MISURA leggendo il compito 7**, non si indovina: è quanti
+messaggi il core manda dopo un `Hello` valido — `Accepted`, `Degradation`, `Policy`, `Layout`, e la lista dei
+passi, secondo la decisione **22** e la §3 della stella polare. Si conta sul dispaccio del compito 7 e si scrive
+accanto alla costante **col comando che l'ha contata**.
+
+- [ ] **Passo 12: le tre sonde delle decisioni — l'archivio chiuso, la policy riletta, il secondo core**
+
+```rust
+    /// ⛔ DECISION 35, THE WHOLE OF IT: an archive that will not open must NOT stop the start-up, and
+    /// every `SaveLayout` must come back "unavailable". A core that refused to start here would be
+    /// treating a window layout as authoritative state, which I1 says it is not.
+    ///
+    /// ⚠️ THE FAILURE IS PROVOKED BY A DIRECTORY THAT IS NOT THERE, the same way
+    /// `a_journal_that_cannot_be_opened_stops_the_start_up` provokes its own — one road, two
+    /// opposite outcomes, which is what makes the pair say something.
+    #[test]
+    fn a_layout_archive_that_will_not_open_lets_the_core_start() { /* … */ }
+
+    /// ⛔ THE OTHER DIRECTION OF `MaybeCustody`, and without it a wrapper that ALWAYS refused would
+    /// pass the probe above: the archive that opens must really delegate. ✅ Held by the restart
+    /// probe of step 11, which is why this one asserts the REFUSING half only — said here rather
+    /// than left for a reviewer to wonder about.
+    #[test]
+    fn a_core_started_on_a_broken_archive_answers_unavailable_to_every_save() { /* … */ }
+
+    /// ⛔ THE `unwrap_or` OF D27, MEASURED IN BOTH DIRECTIONS, and the two are different claims.
+    /// Empty journal → the DEFAULT of ADR-0006, which is remote and lives HERE as a literal; a
+    /// journal carrying a transition → what the transition says, not the default. A `policy_now`
+    /// that answered `Remote` on an empty archive would make the two indistinguishable, which is
+    /// exactly what D27 refused inside the kernel.
+    ///
+    /// ⚠️ THE TRANSITION IS WRITTEN THROUGH `Arbiter::set_policy` ON A REAL `FileJournal`, not by
+    /// hand: a hand-built record would be this probe agreeing with itself about a format, and the
+    /// pair `set_policy`/`policy_now` is one artefact.
+    #[test]
+    fn the_policy_in_the_journal_is_the_one_the_arbiter_starts_on() { /* … */ }
+
+    /// ⛔ THE SECOND CORE. `StartupError::Ipc` has exactly one ordinary cause, and a variant with no
+    /// probe is a claim nobody checks: two graphs on one socket name, and the second must stop
+    /// instead of starting beside the first.
+    #[test]
+    fn a_second_core_on_the_same_channel_stops_the_start_up() { /* … */ }
+```
+
+⛔ **I quattro corpi si scrivono al momento, sulle firme che il Passo 1 ha misurato**, e ciascuno segue la forma
+delle sonde sopra: percorso e nome propri, `run_the_graph` con limite finito e tick nullo, un pari quando serve
+un'asserzione sul filo, `join` **dopo** la corsa. ⚠️ **Non sono segnaposto:** ciò che va deciso eseguendo è il
+corpo, non la claim — e un corpo vuoto è un segnaposto, che la revisione del piano intero cerca.
+
+```bash
+cargo test --locked -p daemon 2>&1 | tail -20
+```
+
+- [ ] **Passo 13: `Disconnected`, il cablaggio**
+
+La §8 chiede *«la GUI che muore con una concessione ordinaria → `on_disconnect`, già provato in `client.rs`, più
+una sonda sul cablaggio»*. ⛔ **Nel 2 nessuna concessione ordinaria esiste** — **D5**, `Request` non è servita —
+quindi ciò che questa sonda può tenere è **solo la metà del cablaggio**: il pari esce, e il core lo toglie dai
+propri libri invece di continuare a interrogarlo.
+
+⚠️ **La metà che NON tiene si dichiara** accanto alla sonda, col proprio innesco: la concessione ordinaria
+appesa è del **7**, il pilastro 3D, che è lo stesso chiusore della riga 27 del Traguardo 6.
+
+- [ ] **Passo 14: `interprocess` in `[dev-dependencies]`, in DUE passi**
+
+⛔ **Vincolo globale 6, e il cancello resta rosso se si fa in uno solo.** In `crates/daemon/Cargo.toml`, dopo le
+`[dependencies]`:
+
+```toml
+[dev-dependencies]
+# ⚠️ Needed by the PROBES and not by this crate: the peer of `a_peer_that_says` connects to the
+# local socket from a thread, and only a real peer can say that the core is serving (P-52). A
+# dev-dependency, so it does not enter the shipped graph — and `daemon` is outside the ADR-0031
+# allow-list anyway, which measures `kernel` and `simulator`.
+interprocess = { version = "<la versione che `platform` appunta>", default-features = false }
+```
+
+⛔ **La versione si COPIA da `crates/platform/Cargo.toml`**, non si sceglie: due versioni della stessa crate nel
+lockfile sono due grafi, e il vincolo 8 dice che le versioni sono quelle misurate.
+
+```bash
+cargo build -p daemon --tests
+git diff --stat Cargo.lock
+bash scripts/gate.sh
+```
+
+⚠️ **Il primo comando è SENZA `--locked`**, ed è l'unico di questo compito: è così che il lockfile si rinfresca
+(finding **G-5**). Se `Cargo.lock` non cambia — perché `interprocess` è già nel grafo da `platform` — va bene
+lo stesso: ciò che conta è che il cancello, che passa `--locked`, resti verde.
+
+- [ ] **Passo 15: i due richiami datati nella §5 del disegno del 2**
+
+`docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF** — **P-47**).
+
+**(a)** In coda alla cella *«il limite di giri»*:
+
+```
+✅ **RICHIAMO DEL <data>, compito 9 del piano:** `u64::MAX` è **scritto**, e la sonda che questa riga detta è **due** — il limite consegnato che arriva all'esecutore, e un **pari** che riceve la propria accoglienza, senza il quale un `loop` senza uscita rende `TurnLimitReached` a qualunque limite e la sonda è vacua (**P-52**). ⛔ **E il tick della sonda è NULLO, non quello di produzione:** con il `SystemReactor` vero ogni giro è un'attesa, quindi il tick di produzione costerebbe tick × giri di tempo di parete dentro il cancello (**P-51**, **D28**). Le due sonde che raggiungevano `run()` **si piantavano** e non diventavano rosse: passano per `run_the_graph`, e `run_the_production_graph` resta col proprio **residuo dichiarato**.
+```
+
+**(b)** In coda alla cella *«lo spegnimento»*:
+
+```
+✅ **RICHIAMO DEL <data>, compito 9 del piano:** con `EXECUTOR_TURN_LIMIT` a `u64::MAX` la guardia contro un'attività che gira a vuoto **non esiste più in produzione** — restava implicita nel limite finito. È il debito che questa riga già dichiara, e il suo chiusore resta il **10**, col watchdog dell'OS; qui è scritto anche **accanto alla costante**, dove chi la legge lo trova.
+```
+
+- [ ] **Passo 16: i fine-riga, il cancello, la posizione, il commit**
+
+```bash
+git ls-files --eol crates/daemon/src/main.rs crates/daemon/Cargo.toml Cargo.lock docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+bash scripts/gate-deps.sh
+bash scripts/gate-attributes.sh
+bash scripts/gate.sh
+bash scripts/check-docs.sh
+git status --porcelain
+```
+
+⛔ **I fine-riga devono essere IDENTICI a quelli del Passo 1**, file per file.
+⛔ **`gate-deps.sh` verde**: `interprocess` entra in `daemon`, che **non** è vincolata da ADR-0031 — un rosso lì
+significherebbe che è entrata in `kernel` o in `simulator` di rimbalzo (vincolo globale 9).
+
+Poi la riga **9** della tabella della posizione passa a ✅ col suo commit, e il commit:
+
+```
+gui(compito 9): il daemon -- l'attivita' cablata, la policy riletta dal giornale, u64::MAX e le due sonde che si piantavano
+```
+
+⛔ **Senza co-autore**, e si pusha.
+
+**Criterio di chiusura, coi comandi:**
+
+```bash
+grep -n 'const EXECUTOR_TURN_LIMIT\|const SOCKET_NAME\|const MAX_BODY\|const GUI_TICK\|const LAYOUT_PATH' crates/daemon/src/main.rs
+grep -c '#\[test\]' crates/daemon/src/main.rs
+grep -n 'serving::serve\|policy_now\|MaybeCustody\|SharedClock' crates/daemon/src/main.rs
+grep -rn 'run_the_production_graph' crates/daemon/src/main.rs
+cargo test --locked -p daemon 2>&1 | tail -5
+```
+
+Atteso: le cinque costanti ci sono, `EXECUTOR_TURN_LIMIT` è `u64::MAX`; le sonde sono cresciute rispetto al Passo
+1 di quante ne aggiungono i Passi 10–13; `serve`, `policy_now`, `MaybeCustody` e `SharedClock` sono tutti cablati
+in `run_the_graph`; ⛔ **`run_the_production_graph` ha UN solo chiamante, `main`** — ed è il residuo che **D28**
+dichiara, non una svista: se ne comparisse un secondo dentro `mod tests`, quella prova **si pianterebbe**.
+
+📌 **E il `SOCKET_NAME` è il pezzo che questo compito consegna a qualcosa che ancora non c'è:** ad aprirlo dovrà
+essere il **guscio**, che questo piano **non costruisce** — il 12 lega un nome suo, il 13 e il 14 portano una SPA
+che non tocca socket (**P-53**, **D31**). Nessun controllo accoppia i due capi finché il secondo non esiste, ed è
+una voce aperta dichiarata e non un compito da nominare.
 
 ---
 

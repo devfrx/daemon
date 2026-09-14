@@ -1738,6 +1738,206 @@ guardia non è una lettura ma `npm run build` verde al Passo che lo lancia.
 
 **Conseguenza: D39.**
 
+### P-68 — La costruzione dell'arbitro non ha una casa condivisa, e la §7 chiedeva di trovargliene una
+
+⛔ **La §7 lo lascia scritto come 🔶 dedotto da chiudere:** *«che la costruzione dell'arbitro con le due
+quote e i parametri — oggi `build_the_arbiter`, `reserve` e i letterali in `crates/daemon/src/main.rs`, un
+binario, che il finto non può importare — diventi raggiungibile dal finto **senza copiarla**: dove spostarla lo
+decide il piano»*. Misurato il 2026-09-14:
+
+```bash
+grep -n 'fn build_the_arbiter\|fn reserve\|const AUDIO_QUOTA\|const PRESENTATION_QUOTA\|const TOTAL_VRAM' crates/daemon/src/main.rs
+ls crates/daemon/src/lib.rs 2>&1
+grep -n 'simulator' crates/daemon/Cargo.toml
+```
+
+`build_the_arbiter` e `reserve` sono funzioni **private di un binario**; non c'è `lib.rs`; e il manifesto del
+daemon **rifiuta per iscritto** di dipendere da `simulator`, che al finto serve.
+
+⛔ **E nessuna delle case possibili regge**, il che è il vero esito di questa voce:
+
+| La casa | Perché cade |
+|---|---|
+| `kernel` | i valori sono **default**, e il vincolo 11 di §11 li vuole *«letterali in `daemon`»*; ADR-0034 dice che il kernel **non nomina** un default. Metterceli è la violazione, non la cura |
+| una **sesta crate** | il vincolo 1 di §11 fissa le crate a **cinque** |
+| `platform` o `simulator` | `platform` è il confine dell'OS e una quota VRAM non è OS; da `simulator` il daemon si rifiuta di dipendere |
+| un `lib.rs` in `daemon` | il finto si tirerebbe dentro il cablaggio di **produzione**, e il daemon smetterebbe di essere solo la radice di composizione |
+
+✅ **Portata al proprietario in A/B il 2026-09-14, e decisa: A — il finto RISCRIVE.** ⚠️ **E non è una novità
+del 12:** il blocco *Interfaces* del compito **9** lo dice già — *«la campagna del 10 rifà lo stesso cablaggio
+su porte finte, e il core finto del 12 lo rifà in `gui/fake-core`; entrambi lo riscrivono, perché copiare da qui
+non è possibile»* — quindi ciò che questa voce aggiunge non è la scelta ma il **costo scritto** e il **richiamo
+alla §7**, che diceva il contrario.
+
+**Conseguenza: D41**, e il richiamo datato nella §7 del disegno del 2.
+
+### P-69 — Il rubinetto leggerebbe `stdin` DENTRO l'esecutore, e lo pianterebbe: la GUI si fermerebbe
+
+⛔ **Domanda 3 — l'artefatto è sbagliato e compila benissimo.** La §7 dice che il rubinetto *«legge una parola
+da stdin»*. Un `stdin().read_line()` dentro un'attività **blocca l'intero esecutore**, che è a una decisione
+per volta. Misurato il 2026-09-14:
+
+```bash
+sed -n '18,28p' crates/kernel/src/executor.rs
+grep -n 'pub fn run' -A 12 crates/kernel/src/executor.rs
+```
+
+Il doc di modulo lo dichiara — *«One decision at a time»*, *«with one decision at a time THAT LOCK DOES NOT
+EXIST»* — e `run` è un `while` che sonda un'attività per giro. ⛔ **Quindi l'effetto sarebbe esattamente il
+contrario di ciò per cui il finto esiste:** finché nessuno digita, `serve` non gira, la GUI non riceve niente e
+il core finto **sembra** morto.
+
+✅ **E la cura è scritta nello stesso doc**, quindi non è un'invenzione: *«le operazioni pesanti-ma-sistemiche
+vivono dietro le porte di `platform`, che possono usare thread proprie»*. `stdin` si legge su un **thread
+suo**, che spedisce le parole su un `std::sync::mpsc::Receiver`; il rubinetto lo **sonda senza bloccare** con
+`try_recv` a ogni giro. ⚠️ **Il thread è nel finto e non in `platform`:** `platform` è codice di prodotto e una
+console interattiva non è un meccanismo del prodotto.
+
+⛔ **E la sonda che lo tiene è nelle DUE direzioni:** con una parola in coda il giro la consuma; **senza**
+nessuna parola il giro passa lo stesso e i `Token` continuano ad arrivare — è la seconda che coglie il
+blocco, e sarebbe quella dimenticata.
+
+**Conseguenza: D42.**
+
+### P-70 — Il debito che la §7 lasciava al piano è GIÀ CHIUSO dal compito 7, e il 12 lo esercita soltanto
+
+⛔ **Domanda 4, girata su un DEBITO DI DISEGNO invece che su un compito.** La §7 lascia aperto: *«perché il
+`degrade` arrivi alla GUI, l'attività vera deve accorgersi che `degradation_now` è cambiato e mandare
+`Degradation` … come se ne accorga, a ogni giro o dopo ogni scrittura, lo fissa il piano del 2 con la sonda
+della §8»*. **Lo ha già fissato il compito 7.** Misurato il 2026-09-14 sul piano:
+
+```bash
+grep -n 'an_unchanged_degradation_is_not_resent\|il pezzo che è cambiato' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+```
+
+Il compito 7 rilegge `degradation_now` a ogni giro entro il tetto che il suo doc dichiara, manda `Degradation`
+**solo quando cambia**, e porta la sonda `an_unchanged_degradation_is_not_resent` che tiene la metà negativa.
+
+📌 **Perché questa voce esiste anche se non c'è niente da correggere:** senza di essa chi esegue il 12 legge la
+§7, trova un debito aperto col proprio nome sopra, e **lo implementa una seconda volta** dentro il finto — cioè
+il ramo del dispaccio che la §7 vieta in modo esplicito (*«nel finto non vive nessun ramo del dispaccio»*).
+⚠️ **Un debito chiuso da un altro compito va detto, o si paga due volte.**
+
+**Conseguenza:** nessuna `D` — il 12 **esercita** e non costruisce, e la sonda del `degrade` è una prova
+dell'attività vera, non del finto.
+
+### P-71 — Anche il dedotto sulla `RefCell` è già chiuso, ma DAL CONTRATTO: il rubinetto non ne monta una propria
+
+⛔ **La §7 lo dà per dedotto:** *«che un'attività e il rubinetto possano condividere il trasporto attraverso
+una `RefCell`»*, e aggiunge *«la forma esatta di ciò che sta nella `RefCell`»*. Il blocco *Interfaces* del
+compito 7 la fissa già, ed è **`Core` intero**, non il trasporto:
+
+```bash
+grep -n 'pub async fn serve\|fn serve<' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | head -3
+```
+
+`serve<'a, I, J, C, R>(core: &'a RefCell<Core<I, J, C>>, …)`. ⛔ **Quindi il rubinetto NON monta una seconda
+`RefCell`: prende in prestito la STESSA**, e ciò che gli serve sono due accessori — `Core::attending()`, che
+esiste dal 7, e **`Core::ipc()`, che nasce qui**, come il compito 7 scrive per esteso (*«il suo chiamante è il
+rubinetto del core finto, compito 12»*).
+
+⚠️ **E la regola del prestito diventa una riga del compito, non un'accortezza:** né `serve` né il rubinetto
+tengono un `borrow_mut` **attraverso un `await`**. Due `borrow_mut` vivi insieme sono un panico a tempo
+d'esecuzione, e sarebbe un panico che compare solo quando le due attività si interlacciano — cioè raramente, e
+non nella sonda più corta.
+
+**Conseguenza: D43.**
+
+### P-72 — Una crate annidata né membro né esclusa NON si compila: misurato, nelle due direzioni
+
+⛔ **La §7 dice *«il manifesto di radice aggiunge `gui` a `exclude`»* e non dice che cosa succede senza.**
+Misurato il 2026-09-14 su un workspace usa-e-getta fuori dal repository, perché provarlo dentro avrebbe
+sporcato l'albero:
+
+```bash
+cd "$(mktemp -d)" && mkdir -p crates/member/src gui/fake-core/src
+printf '[workspace]\nresolver = "3"\nmembers = ["crates/member"]\n' > Cargo.toml
+printf '[package]\nname = "member"\nversion = "0.0.0"\nedition = "2024"\npublish = false\n' > crates/member/Cargo.toml
+printf 'pub fn nothing() {}\n' > crates/member/src/lib.rs
+printf '[package]\nname = "fake-core"\nversion = "0.0.0"\nedition = "2024"\npublish = false\n' > gui/fake-core/Cargo.toml
+printf 'fn main() {}\n' > gui/fake-core/src/main.rs
+cargo metadata --no-deps --format-version 1 --manifest-path gui/fake-core/Cargo.toml > /dev/null; echo "senza exclude -> EXIT=$?"
+printf '[workspace]\nresolver = "3"\nmembers = ["crates/member"]\nexclude = ["gui"]\n' > Cargo.toml
+cargo metadata --no-deps --format-version 1 --manifest-path gui/fake-core/Cargo.toml > /dev/null; echo "con exclude    -> EXIT=$?"
+```
+
+| Direzione | Esito misurato |
+|---|---|
+| **senza** `exclude` | **`EXIT=101`**, con `error: current package believes it's in a workspace when it's not:` e i due percorsi |
+| **con** `exclude = ["gui"]` | **`EXIT=0`** |
+
+✅ **Quindi la riga di `exclude` non è igiene: è ciò senza cui il primo comando del cancello web non parte**, e
+il rosso non parlerebbe del finto ma del manifesto di radice. ⚠️ **E il commento accanto a `exclude` oggi
+spiega gli `spikes` con una ragione che NON vale per `gui`** — il `clippy.toml` annidato — quindi la riga nuova
+porta **la propria** ragione invece di appoggiarsi a quella.
+
+**Conseguenza: D44.**
+
+### P-73 — Da questo compito il nome del canale vive in DUE case, e **D31** dice che ne ha una sola
+
+⛔ **Domanda 5 girata in avanti, sui FRATELLI di una decisione.** **D31** scrive di sé che il nome del canale
+è *«un fatto di protocollo … che vive in una casa sola e non è nominato da nessun indice»*, e ne dichiara il
+costo *«finché il guscio non esiste»*. Ma la §7 pretende che il finto parli *«sullo **stesso nome** del daemon,
+così la GUI non sa con chi parla»* — e il finto **non può importare** quel letterale (**P-68**). Misurato il
+2026-09-14 sul piano:
+
+```bash
+grep -n 'const SOCKET_NAME' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+grep -n 'vive in una casa sola' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+```
+
+Il compito 9 detta `const SOCKET_NAME: &str = "harness-core";` in `crates/daemon/src/main.rs`; da questo
+compito la stessa stringa esiste anche in `gui/fake-core/src/main.rs`, **e nulla le accoppia**. ⛔ **Due
+letterali uguali che devono restare uguali e che nessun controllo confronta sono la definizione di ciò che
+marcisce in silenzio** — e stavolta non è un debito lontano: il giorno che qualcuno cambia il nome nel daemon,
+il finto continua a legare il vecchio e la GUI si collega **al programma sbagliato senza un errore**, perché il
+timbro di build è identico.
+
+✅ **La cura costa un comando e sta nel criterio di chiusura di questo compito:** i due letterali si estraggono
+e si confrontano fra loro, e ciascuno porta accanto la riga che nomina l'altro.
+
+```bash
+diff <(grep -o 'const SOCKET_NAME: &str = ".*"' crates/daemon/src/main.rs) \
+     <(grep -o 'const SOCKET_NAME: &str = ".*"' gui/fake-core/src/main.rs)
+```
+
+⚠️ **Non diventa una guardia del cancello**, e il perché è il vincolo globale 7: una riga di catalogo nuova è
+una decisione del proprietario. Resta un **criterio di chiusura** del compito, e **D31** riceve il richiamo che
+dice quante case ci sono adesso.
+
+**Conseguenza: D45**, e il richiamo datato dentro **D31**.
+
+### P-74 — `SharedClock` diventa la QUINTA copia, e l'innesco di **D34** NON scatta: il perché va scritto, o il prossimo censimento sbaglia
+
+⛔ **Domanda 5 in avanti, su un INNESCO invece che su un contratto.** Il finto ha lo stesso problema di firma
+del daemon — `Executor::new` prende il reattore **per valore**, `serve` lo vuole **per prestito** — quindi
+monta anche lui un `SharedClock` su `&RefCell<T>`. **D34** però scrive *«quattro copie della stessa forma
+restano quattro»*, e la tabella di **P-59** ne elenca quattro.
+
+```bash
+grep -rn 'struct SharedClock' crates/ --include='*.rs'
+grep -n 'simulator' gui/fake-core/Cargo.toml
+```
+
+✅ **E l'innesco, letto alla lettera, NON scatta.** D34 lo formula così, e le parole sono queste: *«una quinta
+casa **dentro `simulator`** riapre la misura»*. `gui/fake-core` non è dentro `simulator`: è un binario fuori dal
+workspace che vi **dipende**. ⚠️ **Ma la dipendenza è la sostanza che quell'innesco cercava** — D34 cadde
+perché il daemon *non può* importare `simulator`, e il finto **può** — quindi l'innesco va riletto nel merito
+invece che a memoria, o la prossima passata lo dichiara scattato.
+
+⛔ **Riletto nel merito, la risposta resta, e a tenerla è il REATTORE.** I tre banchi avvolgono
+`VirtualReactor`; il daemon e il finto avvolgono **`SystemReactor`**. Una casa in `simulator` servirebbe i tre
+banchi e il finto solo se fosse **generica** sul reattore — che è esattamente il costo che D34 ha già prezzato
+come *sfoggio*, *«dodici righe risparmiate … contro un elemento d'API nuovo»*, e con una casa in più il conto
+non cambia specie.
+
+📌 **Quindi ciò che cambia è il CENSIMENTO, non la decisione:** le case sono **cinque**, e due su cinque
+avvolgono `SystemReactor`. ⚠️ **Senza questa riga la prossima passata riconta quattro**, ne trova cinque, e
+riapre una misura già fatta.
+
+**Conseguenza:** nessuna `D` — la decisione è **D34**, confermata; i richiami datati vanno dentro **D34** e
+nella tabella di **P-59**.
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -1775,7 +1975,7 @@ smentisce — è ciò per cui esiste l'errata.
 | **D28** | ⛔ **le sonde del daemon che raggiungono `executor.run()` passano per `run_the_graph` con un limite FINITO e un tick NULLO**, e `run_the_production_graph` riceve un **residuo dichiarato** invece di un chiamante | tre fatti misurati si sommano e nessuno dei tre da solo decide. **(1)** con `u64::MAX` le due sonde che arrivano a `run()` **si piantano** invece di diventare rosse (**P-48**), e piantarsi è il modo peggiore di fallire: un cancello che non torna non dice niente a nessuno. **(2)** il tick di produzione le farebbe pagare **tick × giri** di tempo di parete, perché `serve` **aspetta a ogni giro** e il doc di `EXECUTOR_TURN_LIMIT` lo dichiara già di sé (**P-51**); un tick nullo riporta il giro a polling puro per la regola che `Sleep::until` scrive — *«a wait that is already over is not a wait»* — **senza toccare il valore di produzione**, che resta un letterale. **(3)** il valore finito da solo sarebbe **vacuo**: `serve` è un `loop` senza uscita, quindi `TurnLimitReached` torna a qualunque limite (**P-52**), e ciò che rende la sonda non vacua è un **pari** che riceve la propria accoglienza, più la **baseline** a un giro dove non la riceve. ⛔ **E il residuo non si nasconde:** il doc di `run_the_production_graph` dice *«IT IS A FUNCTION RATHER THAN THE BODY OF `main` SO THAT A TEST CAN CALL IT»*, e da questo compito nessuna prova può chiamarla; il richiamo datato lo scrive, e allarga il residuo che la sonda dell'assemblaggio già dichiarava. ⚠️ **Costo dichiarato:** il cablaggio che `main` esegue — la scelta dei letterali di produzione — passa da coperto a **dichiarato**, e a chiuderlo sarà chi porterà il grafo sotto un processo figlio, che il doc di `main` prezza già e rifiuta |
 | **D29** | ⛔ **il daemon scrive il PROPRIO `SharedClock` e non costruisce due `SystemReactor`** | `Executor::new` prende il reattore **per valore** e `serve` ne vuole un **prestito**, quindi uno dei due deve essere una copia leggera; e `SystemReactor` **porta un'origine** ancorata a `Instant::now()` nel proprio costruttore, quindi due istanze sono **due orologi** che rispondono valori diversi per lo stesso istante (**P-49**). Le scadenze che `serve` calcola non sarebbero più confrontabili con quelle su cui l'esecutore aspetta: è `E25` — due verità indipendenti sullo stesso fatto — allo strato che decide quando un'attività si sveglia. ✅ **La forma si legge invece di inventarla:** è quella del banco del compito 7 e di `crates/simulator/tests/arbiter_campaign.rs`, un tipo che tiene `&SystemReactor` e inoltra le due operazioni del tratto. ⚠️ **Costo dichiarato:** è il **terzo** esemplare della stessa forma nel repository, e le tre case non possono importarsi a vicenda — un `tests/` è una crate a sé e un binario non esporta nulla. ⛔ **Se salga in `simulator` NON si decide qui:** la quinta chiusura l'ha assegnata al **10**, il primo che può misurarne il bisogno con una campagna in mano, e anticiparlo sarebbe uno strato speculativo |
 | **D30** | ⛔ **l'archivio della disposizione che non si apre diventa una CUSTODIA DEL DAEMON che risponde `Unavailable`** — un `enum` della radice di composizione che implementa `Custody`, delega quando è aperto e rifiuta quando non lo è | la decisione **35** vuole che il core parta lo stesso, ma `FileCustody::open` rende un `Result` e `Core::new` vuole una `Custody` **per valore** (**P-50**): fra le due non c'è spazio, e la cosa che manca è un valore. ✅ **La metà che serve esiste già, misurata nel compito 7:** `Err(CustodyError::Unavailable)` è **già** tradotto in `LayoutState::Unavailable`, quindi la decisione 35 si ottiene **senza una riga nuova nell'attività** e senza operazioni nuove nella porta — che è ciò che la §8 del 2 aveva previsto con quelle parole. Le due vie scartate: far rendere a `FileCustody::open` sempre una custodia **cambia un compito già scritto** e butta via il nome del fallimento che `OpenError` porta; una **seconda variante** di `CustodyError` darebbe alla porta un termine per uno stato che è della radice di composizione, ed è la variante senza chiamante che il doc di `CustodyError` rifiuta. ⚠️ **Costo dichiarato:** il daemon guadagna un tipo, e la sua sonda deve provare **entrambi** i rami — aperto delega, chiuso rifiuta — perché un avvolgente che delegasse sempre passerebbe la sonda del percorso buono |
-| **D31** | ⛔ **il nome del canale e il tetto del corpo sono DUE letterali del daemon**, sulla stessa frontiera di `JOURNAL_PATH`, e il **nome** entra nel criterio di chiusura perché il suo secondo lettore non esiste ancora | **D9** ha lasciato il tetto a chi compone e nessuno dei due disegni nomina né l'uno né l'altro (**P-53**). Sono due letterali per la ragione che il doc di `JOURNAL_PATH` scrive già — *«the value has to be chosen somewhere until the parameter store arrives, and a literal in `daemon` is visible and can be varied»* — cioè il confine di ADR-0034 e del vincolo 11 di §11, non una scorciatoia. ⛔ **Ma non sono la stessa specie, e per questo non condividono una riga:** il **nome** è un fatto di **protocollo**, che il **guscio** dovrà conoscere, e un fatto di protocollo che vive in una casa sola e non è nominato da nessun indice marcisce in silenzio; il **tetto** è locale al core e il core finto ne sceglie uno suo al 12. ⛔ **E il guscio NON è un compito di questo piano** (**P-53**): il 12 lega un nome suo, il 13 e il 14 portano una SPA che non tocca socket, e il capo a capo nel guscio la §8 lo mette *«fuori dal cancello di oggi»*. ⚠️ **Costo dichiarato:** il nome è un letterale che **nessun controllo accoppia** al suo secondo lettore, e resta così finché il guscio non esiste — dichiarato qui, chiuso là |
+| **D31** | ⛔ **il nome del canale e il tetto del corpo sono DUE letterali del daemon**, sulla stessa frontiera di `JOURNAL_PATH`, e il **nome** entra nel criterio di chiusura perché il suo secondo lettore non esiste ancora | **D9** ha lasciato il tetto a chi compone e nessuno dei due disegni nomina né l'uno né l'altro (**P-53**). Sono due letterali per la ragione che il doc di `JOURNAL_PATH` scrive già — *«the value has to be chosen somewhere until the parameter store arrives, and a literal in `daemon` is visible and can be varied»* — cioè il confine di ADR-0034 e del vincolo 11 di §11, non una scorciatoia. ⛔ **Ma non sono la stessa specie, e per questo non condividono una riga:** il **nome** è un fatto di **protocollo**, che il **guscio** dovrà conoscere, e un fatto di protocollo che vive in una casa sola e non è nominato da nessun indice marcisce in silenzio; il **tetto** è locale al core e il core finto ne sceglie uno suo al 12. ⛔ **E il guscio NON è un compito di questo piano** (**P-53**): il 12 lega un nome suo, il 13 e il 14 portano una SPA che non tocca socket, e il capo a capo nel guscio la §8 lo mette *«fuori dal cancello di oggi»*. ⚠️ **Costo dichiarato:** il nome è un letterale che **nessun controllo accoppia** al suo secondo lettore, e resta così finché il guscio non esiste — dichiarato qui, chiuso là. ⛔ **RICHIAMO DEL 2026-09-14, dal pre-controllo del compito 12 (P-73): le case sono DUE da quel compito, non una.** La §7 pretende che il core finto leghi lo **stesso** nome del daemon, e non può importarlo (**P-68**): il secondo lettore che «non esisteva ancora» è nato prima del guscio. Il confronto fra i due letterali è un **criterio di chiusura** del compito 12 (**D45**), non una riga di catalogo — vincolo globale 7 |
 | **D32** | ⛔ **la campagna del 2 NON usa `simulator::ipc::DyingGui`**, benché la §5 lo nomini: il filo se lo **scrive**, e lo tiene **fuori** dal core dietro un `RefCell`, com'è nel banco del compito 7. I guasti restano due — la morte sulla porta e la caduta del giornale — e il secondo resta `CrashingJournal` | la riga della §5 è del **2026-09-06**, cioè **prima di D5**, e le ragioni misurate sono **tre**, ciascuna sufficiente. **(1)** `DyingGui` dice un messaggio solo, `IpcMessage::Request`, che il dispaccio lascia cadere: nessuna concessione è rilasciata, e la proprietà confronterebbe **insiemi vuoti** (**P-57**). **(2)** Non può pronunciare né `Hello` né `Approve`, quindi la **seconda** proprietà della §5 non sarebbe raggiungibile (**P-58**). **(3)** ⛔ **E questa chiude la via:** verrebbe **spostata dentro `Core`**, che non espone il trasporto, quindi la campagna non potrebbe più interrogarla — e `ClientGrants` non offre nessun modo di **contare senza rilasciare**, né `on_disconnect` è chiamabile da fuori, perché `grants()` e `arbiter()` sono due prestiti mutabili dello stesso `&mut Core` (**P-60**). ✅ **Scartate le due vie che «aggiustano» `kernel`:** un `Core::into_parts` e un `ClientGrants::held` sarebbero elementi d'API il cui unico chiamante è una campagna, che `crates/kernel/src/boundary.rs` cancella — e `Core::ipc` è **già assegnato** al compito 12 con un altro significato. ⚠️ **Costo dichiarato:** è la **terza** scrittura della stessa forma di filo — il banco del 7, il daemon del 9, questa — e le tre case non possono importarsi; la testa della campagna lo **dichiara** invece di lasciarlo scoprire (gotcha #49), e la §5 riceve il proprio richiamo datato |
 | **D33** | ⛔ **la concessione della GUI si mette a MANO attraverso `Core::grants`, e la baseline NON è zero** — la quota di presentazione del core, che nessun registro tiene, più un **secondo client** registrato che non muore | senza di essa la prima metà confronterebbe **insiemi vuoti**: il 2 non rilascia nessuna concessione a un client (**D5**), quindi un client che muore sotto l'attività non tiene niente e *«la somma torna alla baseline»* è verde perché non si è mai mossa (**P-57**) — `M2` del commit 9a applicato a una campagna, e la lezione che il Traguardo 4 ha imparato **tre** volte. ✅ **Non è un'invenzione di questa campagna:** il doc di `Core::grants` nomina questo chiamante e il doc di modulo di `serving.rs` lo ripete — *«`tests/serving.rs` holds the wiring meanwhile by putting a grant in by hand»* — e i **due testimoni** della baseline sono quelli che `gui_death_campaign.rs` argomenta uno per uno, col secondo scelto perché è **quello che una mutazione può raggiungere**. ⛔ **E la baseline non-zero compra DUE direzioni con UNA asserzione, che è ciò per cui l'oracolo è la SOMMA e non il registro** (**P-60**): una riconciliazione che non fa niente lascia la somma **sopra**, una che rilascia ogni coppia che tiene la lascia **sotto**. ⚠️ **Costo dichiarato:** la campagna prepara uno stato che nessun percorso di produzione produce oggi, e lo **dice** nella propria testa; il giorno che il pilastro 3D rilascia concessioni davvero, la preparazione a mano si toglie e il percorso vero la sostituisce |
 | **D34** | ⛔ **il `SharedClock` resta LOCALE alla campagna e non sale in `simulator`** — è il quarto esemplare, ed è dichiarato nella testa del file invece che scoperto | ⛔ **È la decisione che D29 e la testa del banco del compito 7 avevano REGISTRATO per il 10, e si prende con la misura.** Delle quattro case, la quarta è `crates/daemon/src/main.rs`, e `crates/daemon/Cargo.toml` **rifiuta per iscritto** di dipendere da `simulator` — *«Does NOT depend on `simulator`. The daemon is the PRODUCTION wiring»* — quindi una casa comune ne servirebbe **tre su quattro**, e la quarta riscriverebbe la propria copia **senza** il commento che oggi la dichiara ripetuta: una duplicazione meno visibile di quella di adesso (**P-59**). ⚠️ **E non è nemmeno lo stesso tipo:** tre avvolgono un `VirtualReactor`, la quarta un `SystemReactor`, quindi la casa comune vorrebbe un avvolgente **generico** — dodici righe risparmiate in tre banchi contro un elemento d'API nuovo, che è *sfoggio* per il quinto criterio di `anthropic-skills:decision-principles`. ⚠️ **Costo dichiarato, e l'innesco che impedisce alla decisione di marcire:** il repository porta quattro copie della stessa forma; il giorno che ne nasce una **quinta dentro `simulator` o in una crate che può importarlo**, e avvolge lo stesso reattore, la misura si rifà |
@@ -1785,6 +1985,11 @@ smentisce — è ciò per cui esiste l'errata.
 | **D38** | **le due righe `/gui/node_modules/` e `/gui/dist/` di `.gitignore` entrano col compito 11**, non col 15; `/gui/fake-core/target/` resta al 12 | **P-66**: una riga di `.gitignore` appartiene al compito che **crea** ciò che ignora. Raggruppate al 15, il commit del compito 11 elencherebbe l'albero di `node_modules` e il vincolo globale 13 diventerebbe ineseguibile. ⚠️ **La §8 del 2 non è smentita nel merito** — le tre righe restano quelle che nomina — è il **taglio per compito** che cambia, ed è il piano a tagliare (**D1**) |
 | **D39** | **`@vitejs/plugin-vue` si appunta a 6.0.9**, e la voce entra in P-2 dal 2026-09-14 | **P-67**: senza il plugin `vite` non legge un `.vue`, e P-2 non lo aveva. I pari che dichiara coprono le versioni appuntate, e il suo `engines` è più largo di quello di `jsdom`, quindi **D37** non cambia. ⚠️ **Costo dichiarato:** è una release del **giorno stesso**, come `markdown-it` in **D3**; la guardia non è una lettura ma `npm run build` verde |
 | **D40** | ⛔ **il compito 11 installa SOLO ciò che usa** — `vue`, `@vitejs/plugin-vue`, `vite`, `typescript`, `vue-tsc`, `vitest` — e non tutto P-2 | è la regola che **P-2 si è già data** su `@playwright/test`: *«installarli senza una prova che li usi sarebbe una dipendenza senza consumatore»*. `pinia`, `reka-ui`, `vue-i18n`, `dockview`, `markdown-it`, `jsdom`, `@vue/test-utils`, `axe-core` e la catena `eslint` arrivano coi compiti **13**, **14** e **15**, che li consumano. ⚠️ **`engines.node` fa ECCEZIONE e si scrive intero al compito 11** (**D37**): è il prerequisito dell'ambiente di `gui/`, non un fatto di un compito, e riscriverlo a ogni installazione lo farebbe marcire |
+| **D41** | ⛔ **il core finto RISCRIVE la costruzione dell'arbitro** coi propri letterali, e non la importa da nessuna parte | ✅ **Decisione del proprietario, 2026-09-14, A/B, scelta A.** **P-68**: nessuna casa condivisa regge — `kernel` la rifiuta per ADR-0034 e per il vincolo 11 di §11 (*«i default sono letterali in `daemon`»*), una sesta crate per il vincolo 1, `platform` perché una quota VRAM non è OS, `simulator` perché il daemon si rifiuta di dipenderne, e un `lib.rs` in `daemon` tirerebbe il cablaggio di **produzione** dentro un attrezzo. ⚠️ **Costo dichiarato, e scritto in tutti e tre i posti:** la regola *«prima l'audio, poi la presentazione»* vive in **tre** composizioni — `crates/daemon/src/main.rs`, la campagna del **10**, `gui/fake-core` — e ciascuna porta accanto la riga che **nomina le altre due**, perché una duplicazione dichiarata si ritrova e una taciuta no. ⛔ **E il disegno riceve il richiamo datato**, perché la §7 diceva *«senza copiarla»* |
+| **D42** | ⛔ **`stdin` si legge su un THREAD suo, e il rubinetto lo sonda con `try_recv`** — mai una lettura bloccante dentro un'attività | **P-69**: l'esecutore è a **una decisione per volta**, e una lettura bloccante lo pianta: finché nessuno digita, `serve` non gira e il finto **sembra morto** — cioè il contrario esatto di ciò che deve dimostrare. La via è quella che il doc dell'esecutore dichiara già per le operazioni sistemiche, *«thread proprie»*. ⚠️ **Il thread vive nel finto e non in `platform`:** una console interattiva non è un meccanismo di prodotto. ⚠️ **Costo dichiarato:** una parola digitata si vede al giro **successivo** e non all'istante — impercettibile alla cadenza dei token, e dichiarato invece che scoperto |
+| **D43** | **il rubinetto prende in prestito la STESSA `RefCell<Core>` di `serve`**, e ciò che nasce al 12 è il solo `Core::ipc` | **P-71**: il blocco *Interfaces* del compito 7 fissa già la forma — `serve(core: &RefCell<Core<I, J, C>>, …)` — quindi il dedotto della §7 era chiuso dal **contratto**, non da un meccanismo da inventare; e il compito 7 scrive per esteso che il chiamante di `Core::ipc` è questo rubinetto. ⛔ **La regola che ne discende è una riga del compito, non un'accortezza:** nessuno tiene un `borrow_mut` **attraverso un `await`**, perché due prestiti mutabili vivi insieme sono un panico che compare solo quando le due attività si interlacciano — cioè non nella sonda più corta |
+| **D44** | **la radice aggiunge `gui` a `exclude`, con la PROPRIA ragione accanto** e non appoggiandosi a quella degli `spikes` | **P-72**, misurato nelle due direzioni: senza la riga, `cargo` sulla crate annidata esce **101** con *«current package believes it's in a workspace when it's not»*, quindi il primo comando del cancello web non partirebbe e il rosso parlerebbe del **manifesto di radice** invece che del finto. ⚠️ **La ragione degli `spikes` è il `clippy.toml` annidato e NON vale qui:** `gui/fake-core` è escluso perché ha una toolchain e un lockfile propri ed è un **attrezzo**, non perché porti una configurazione che sfuggirebbe |
+| **D45** | **il core finto lega lo STESSO nome di canale del daemon**, come proprio letterale, e i due si confrontano **con un comando** nel criterio di chiusura del compito 12 | **P-73**: la §7 vuole che *«la GUI non sa con chi parla»*, quindi il valore dev'essere identico; e il finto non può importarlo (**P-68**), quindi il letterale si ripete. ⛔ **Due letterali che devono restare uguali e che nessuno confronta è la definizione di ciò che marcisce in silenzio**, e qui il guasto sarebbe muto: cambiato il nome nel daemon, la GUI si collegherebbe **al programma sbagliato senza errore**, perché il timbro di build è lo stesso. ⚠️ **Niente riga di catalogo** — sarebbe una decisione del proprietario, vincolo globale 7 — quindi il confronto vive nel criterio di chiusura, e ciascuno dei due letterali porta accanto la riga che **nomina l'altro** |
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
 il comando del vincolo 11 → `11030` · `git status -sb` → `## main...origin/main`, pulito.
@@ -11520,6 +11725,788 @@ git push
 
 ---
 
+## Compito 12: il core finto — l'attività vera su porte in memoria, il rubinetto, e le sonde
+
+**Files:**
+- Modify: `Cargo.toml` di radice (**`i/lf w/crlf`**) — `exclude` guadagna `gui`, con la **propria** ragione (**D44**)
+- Modify: `.gitignore` (**`i/lf w/crlf`**) — una riga, `/gui/fake-core/target/` (**D38**)
+- Modify: `crates/kernel/src/serving.rs` (**LF**, dal compito 7) — ⛔ **un solo elemento nuovo**: `Core::ipc`
+- Create: `gui/fake-core/Cargo.toml` (**LF**) — fuori dal workspace, dipendenze **per percorso**
+- Create: `gui/fake-core/Cargo.lock` (**LF**) — **si committa**, vincolo globale 7, e ⛔ **nello stesso commit del manifesto**
+  quando `interprocess` entra fra le `[dev-dependencies]` (vincolo globale 6, finding **G-5**)
+- Create: `gui/fake-core/src/main.rs` (**LF**) — il cablaggio, il rubinetto, e le sonde in fondo (decisione 48)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**`i/lf w/lf`**) — **un** richiamo datato nella §7 (**D41**)
+- Read: la **§7 del 2 per intero**; la riga *«il core finto nel cancello»* e quella *«il core finto (§7)»* della **§8**; il blocco *Interfaces* dei compiti **1**, **2**, **3**, **5** e **7** **come stanno adesso** — ⛔ **gli accessori di `Core` sono CINQUE** (**P-56**) — e `MAX_BODY` e `SOCKET_NAME` dal compito **9** (**D9**, **D31**, **D45**); `crates/daemon/src/main.rs` **per intero**, che è la forma da riscrivere
+- ⛔ **NON si legge**: la §6a, la §1 e la §2 della stella polare. Qui non nasce niente che si veda
+
+**Interfaces:**
+- Consumes, dal **compito 1**: `kernel::numbering::Progressive::starting_at`
+- Consumes, dal **compito 2**: `platform::ipc::LocalSocketIpc::bound(name, numbers, max_body)`
+- Consumes, dal **compito 3**: `kernel::wire::ipc::{IpcMessage, Provenance}`
+- Consumes, dal **compito 5**: `simulator::custody::MemoryCustody::new()`
+- Consumes, dal **compito 7**: `kernel::serving::{Core, serve}`, `Core::new(ipc, journal, custody, arbiter, steps, parameters)`, i cinque accessori, `kernel::executor::nap`, `Parameters::new(executor_turn_limit, total_vram, arbiter_id, gui_tick)`
+- Consumes, da oggi: `kernel::arbiter::{Arbiter, ArbiterId, ComputeClass, Mib, Preemption, ResourceProfile, RemotePolicy, VramPolicy, Admission, Grant}`; `kernel::executor::{Executor, Sleep}`; `kernel::ports::journal::{Journal, StepId}`; `kernel::record::{Detail, EffectClass, Record, RecordV1, RoutingDetail, Trust}`; `kernel::time::{Millis, Monotonic}`; `platform::reactor::SystemReactor`; `platform::rng::SequentialRng`; `simulator::journal::MemoryJournal::new()`
+- Produces:
+  - `kernel::serving::Core::ipc(&mut self) -> &mut I` — ⛔ **il SESTO accessore, e il suo unico chiamante è il rubinetto di questo compito**, che è la ragione per cui il compito 7 non lo fa nascere
+  - ⛔ **e nient'altro che un compito importi:** `gui/fake-core` è un **binario fuori dal workspace**. Ciò che il 13 e il 14 ne ricevono non è un nome ma un **programma da lanciare**
+
+⛔ **CHE COSA È FINTO QUI, in una riga: soltanto il RUBINETTO.** Il dispaccio è l'attività vera del kernel
+(compito 7), il giornale e la settima porta sono le finte già provate dalle suite di conformità, l'arbitro è
+**vero** e il trasporto è quello di `platform`. ⚠️ **Nel finto non vive nessun ramo del dispaccio**, e chi ne
+scrive uno ha sbagliato compito: il giorno che il daemon cambia, questo programma deve seguirlo **gratis**.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+ls gui/fake-core 2>&1
+grep -n 'exclude' Cargo.toml
+grep -n 'pub fn ipc' crates/kernel/src/serving.rs
+grep -nE '^\s*pub fn (journal|arbiter|custody|grants|attending|ipc)' crates/kernel/src/serving.rs
+grep -n 'const SOCKET_NAME\|const MAX_BODY\|fn build_the_arbiter\|fn reserve\|const AUDIO_QUOTA\|const PRESENTATION_QUOTA\|const TOTAL_VRAM\|const ARBITER_ID' crates/daemon/src/main.rs
+grep -c '^/gui/' .gitignore
+git ls-files --eol Cargo.toml .gitignore crates/kernel/src/serving.rs docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+```
+
+Atteso: `gui/fake-core` **non esiste**; `exclude = ["spikes"]`, **senza** `gui`; **nessun** `pub fn ipc` in
+`serving.rs` e **cinque** accessori (**P-56**); le costanti del daemon ci sono; **due** righe `/gui/` in
+`.gitignore`, dal compito 11; `Cargo.toml`, `.gitignore` `i/lf w/crlf`, `serving.rs` **LF**, il disegno del 2
+`i/lf w/lf`.
+
+⛔ **Se `Core::ipc` esiste già, il compito è eseguito.** ⚠️ **Se gli accessori non sono cinque, il compito 7 è
+cambiato**: è una voce d'errata prima di essere un rimedio.
+
+- [ ] **Passo 2: la radice esclude `gui`, e il rosso prima**
+
+⛔ **Prima si riproduce il rosso**, perché senza di esso non si sa se la riga serva:
+
+```bash
+mkdir -p gui/fake-core/src
+printf '[package]\nname = "fake-core"\nversion = "0.0.0"\nedition = "2024"\npublish = false\n' > gui/fake-core/Cargo.toml
+printf 'fn main() {}\n' > gui/fake-core/src/main.rs
+cargo metadata --no-deps --format-version 1 --manifest-path gui/fake-core/Cargo.toml > /dev/null; echo "EXIT=$?"
+```
+
+Atteso: **`EXIT=101`** con `error: current package believes it's in a workspace when it's not:` — è
+**P-72**, rifatto sul repository vero invece che sul workspace usa-e-getta.
+
+Poi, in `Cargo.toml` di radice (**CRLF**, quindi Python `newline=""`), `exclude` diventa:
+
+```toml
+# `gui` is NOT a member either, and NOT for the reason above: `gui/fake-core` is a TOOL with a
+# toolchain and a lockfile of its own, built by `scripts/gate-gui.sh` through `--manifest-path`,
+# and `gui/` also holds a node project that cargo has no business walking into.
+exclude = ["spikes", "gui"]
+```
+
+```bash
+cargo metadata --no-deps --format-version 1 --manifest-path gui/fake-core/Cargo.toml > /dev/null; echo "EXIT=$?"
+git ls-files --eol Cargo.toml
+git diff --stat Cargo.toml
+```
+
+Atteso: **`EXIT=0`**; `i/lf w/crlf` **invariato**; il diff dice **poche righe**, non l'intero file.
+
+E in `.gitignore` (**CRLF**), sotto le due righe del compito 11:
+
+```
+/gui/fake-core/target/
+```
+
+- [ ] **Passo 3: `Core::ipc`, il sesto accessore**
+
+In `crates/kernel/src/serving.rs` (**LF**), accanto agli altri cinque:
+
+```rust
+    /// The transport, for the ONE caller that has to speak outside the dispatch.
+    ///
+    /// ⛔ ITS ONLY CALLER IS THE FAUCET OF `gui/fake-core`, and that is why it was not born with
+    /// the other five: an API element without a caller in this repository is deleted
+    /// (`crate::boundary`). The faucet produces what nothing real produces yet -- tokens, and the
+    /// two words it reads from a console -- and it must reach the attending clients to do it.
+    ///
+    /// ⚠️ NOT A DOOR INTO THE DISPATCH. Nothing that branches on an INCOMING message may use
+    /// this: the dispatch is `serve`, in one place, and a second one in the fake core is exactly
+    /// what §7 of the milestone-2 design forbids.
+    pub fn ipc(&mut self) -> &mut I {
+        &mut self.ipc
+    }
+```
+
+```bash
+cargo build --locked -p kernel 2>&1 | tail -5
+bash scripts/gate-deps.sh 2>&1 | tail -2
+```
+
+Atteso: verde a zero avvisi; il grafo del kernel **invariato**.
+
+- [ ] **Passo 4: il manifesto del finto**
+
+`gui/fake-core/Cargo.toml`, **LF**. ⛔ **Non eredita da `workspace.package`**: è fuori dal workspace, quindi
+`edition` e `version` sono scritti per esteso.
+
+```toml
+[package]
+name = "fake-core"
+edition = "2024"
+version = "0.0.0"
+publish = false
+
+# ⛔ A TOOL, NOT A SPIKE, and that is why the lockfile is committed: `scripts/gate-gui.sh` runs
+# `cargo test --locked --manifest-path gui/fake-core/Cargo.toml`, and `--locked` needs a lockfile
+# somebody approved. A spike's lockfile is ignored because a spike is redone from a seed.
+[dependencies]
+kernel = { path = "../../crates/kernel" }
+platform = { path = "../../crates/platform" }
+# ⛔ DEPENDS ON `simulator`, unlike the daemon -- and the asymmetry is the point. The daemon is
+# the PRODUCTION wiring and mounts `platform`; this is a TOOL that mounts the in-memory ports so
+# that nothing it does survives the run (§7: "non persiste nulla oltre la corsa").
+simulator = { path = "../../crates/simulator" }
+
+# ⛔ THE PROBES NEED A PEER, and a peer speaks the transport directly. The version is the one
+# `crates/platform/Cargo.toml` pins -- READ WITH `grep`, never from memory -- because two versions
+# of a transport at the two ends of one socket is a bug nobody would look for.
+# ⚠️ Manifest and `Cargo.lock` in the SAME commit: the gate passes `--locked` (finding G-5).
+[dev-dependencies]
+interprocess = { version = "<the version `platform` pins>", default-features = false }
+```
+
+```bash
+grep -n 'interprocess' crates/platform/Cargo.toml
+```
+
+⛔ **La versione si COPIA da lì e non si sceglie**, e il comando sta accanto per questo. ⚠️ **`<la versione>` è
+un segnaposto DELIBERATO e l'unico di questo compito:** il compito **2** non è eseguito quando questo si
+scrive, quindi la riga non esiste ancora — chi esegue lancia il `grep` e mette il numero che trova.
+
+```bash
+cd gui/fake-core && cargo build 2>&1 | tail -5; cd ../..
+ls gui/fake-core/Cargo.lock
+git status --porcelain gui | head
+```
+
+Atteso: compila; il lockfile esiste; in `git status` **nessuna** riga di `gui/fake-core/target/`.
+⚠️ **`cargo build` SENZA `--locked`** qui, perché il lockfile nasce adesso — è il vincolo globale 6 nella sua
+metà web.
+
+- [ ] **Passo 5: le costanti, l'arbitro riscritto, e l'orologio condiviso**
+
+In testa a `gui/fake-core/src/main.rs`, **LF**:
+
+```rust
+//! The fake core: the REAL serving activity on in-memory ports, plus a faucet.
+//!
+//! ⛔ WHAT IS FAKE HERE IS ONLY THE FAUCET. The dispatch is `kernel::serving::serve`, the journal
+//! and the custody are the in-memory fakes the conformance suites already hold, the ARBITER IS
+//! REAL, and the transport is `platform`'s. Nothing in this file branches on an incoming message:
+//! the day the daemon changes, this programme must follow it FOR FREE, and a second dispatch here
+//! is what §7 of the milestone-2 design forbids in so many words.
+//!
+//! ⚠️ IT DOES NOT LIVE ALONGSIDE THE DAEMON: one listener at a time on `SOCKET_NAME`, and whoever
+//! starts it knows. What the operating system does with two is not this tool's business.
+
+use std::cell::RefCell;
+use std::sync::mpsc::{self, Receiver, TryRecvError};
+use std::thread;
+
+use kernel::arbiter::{
+    Admission, Arbiter, ArbiterId, ComputeClass, Mib, Preemption, RemotePolicy, ResourceProfile,
+    VramPolicy,
+};
+use kernel::executor::{Executor, Sleep, nap};
+use kernel::numbering::Progressive;
+use kernel::parameters::Parameters;
+use kernel::ports::journal::{Journal, StepId};
+use kernel::ports::reactor::Reactor;
+use kernel::record::{EffectClass, Record, RecordV1, RoutingDetail, Trust};
+use kernel::serving::{Core, serve};
+use kernel::time::{Millis, Monotonic, WallTime};
+use kernel::wire::ipc::{IpcMessage, Provenance, Verdict, build_stamp};
+use platform::ipc::LocalSocketIpc;
+use platform::reactor::SystemReactor;
+use platform::rng::SequentialRng;
+use simulator::custody::MemoryCustody;
+use simulator::journal::MemoryJournal;
+
+/// ⛔ THE SAME NAME THE DAEMON BINDS, AND IT IS A COPY. `crates/daemon/src/main.rs` holds the
+/// other one; a binary exports nothing, so it cannot be imported (P-68). ⚠️ NOTHING COUPLES THE
+/// TWO: they are compared by a command in this task's closing criteria (D45). If they drift, the
+/// gui connects to the WRONG PROGRAMME WITHOUT AN ERROR, because the build stamp is the same.
+const SOCKET_NAME: &str = "harness-core";
+
+/// This tool's own cap (D9). ⚠️ It need NOT equal the daemon's: the cap is local to a core, and
+/// D31 says so. Only the NAME has to match.
+const MAX_BODY: usize = 1024 * 1024;
+
+const TOTAL_VRAM: Mib = Mib::new(16_384);
+const AUDIO_QUOTA: Mib = Mib::new(1_024);
+const PRESENTATION_QUOTA: Mib = Mib::new(768);
+const ARBITER_ID: ArbiterId = ArbiterId::new(0);
+const FOR_EVER: Millis = Millis::new(u64::MAX);
+
+/// The turn cadence, and the token cadence, which are ONE number and not two.
+///
+/// ⛔ ONE CONSTANT DELIBERATELY: `serve` naps a tick per turn and the faucet naps between tokens,
+/// and a second constant with the same value would be two numbers nobody compares — P-73 in
+/// miniature. §7 asks for "2000 in ten seconds", which is this. ⚠️ The probes hand ZERO instead,
+/// through `run_the_graph`, because the reactor here is real.
+const GUI_TICK: Millis = Millis::new(5);
+
+/// ⛔ REWRITTEN AND NOT SHARED -- D41, decided by the owner on 2026-09-14. `build_the_arbiter` and
+/// `reserve` are private functions of a BINARY and cannot be imported, and no shared home
+/// survives (P-68): the kernel may not name a default (ADR-0034, constraint 11 of §11), the crates
+/// are fixed at five (constraint 1), a VRAM quota is not an OS concern, and a `lib.rs` in `daemon`
+/// would drag the PRODUCTION wiring into a tool.
+///
+/// ⚠️ THE SAME SHAPE LIVES IN THREE PLACES, AND EACH ONE SAYS SO: here,
+/// `crates/daemon/src/main.rs`, and the milestone-2 DST campaign. ⛔ AUDIO FIRST, and it is not
+/// arbitrary: both profiles sit in one lane, and the daemon's own comment argues it.
+const AUDIO_RESERVATION: ResourceProfile = ResourceProfile {
+    name: "audio-reserved",
+    reserved_vram: AUDIO_QUOTA,
+    compute_class: ComputeClass::Realtime,
+    preemption: Preemption::Never,
+};
+
+const PRESENTATION_RESERVATION: ResourceProfile = ResourceProfile {
+    name: "presentation-reserved",
+    reserved_vram: PRESENTATION_QUOTA,
+    compute_class: ComputeClass::Realtime,
+    preemption: Preemption::Never,
+};
+
+fn build_the_arbiter(parameters: Parameters) -> Arbiter {
+    // ⛔ `Remote` IS THE DEFAULT OF ADR-0006, and the journal starts EMPTY here, so there is no
+    // written transition for the projection of task 8 to re-read. The daemon's re-reading is
+    // proven by the daemon's own probe; repeating it here would prove nothing.
+    let mut arbiter = Arbiter::new(parameters, VramPolicy::Remote(RemotePolicy));
+    for profile in [&AUDIO_RESERVATION, &PRESENTATION_RESERVATION] {
+        match arbiter.admit(profile, FOR_EVER, Monotonic::ORIGIN) {
+            Admission::Granted(_) => {}
+            // ⚠️ A PANIC AND NOT A `StartupError`: this is a TOOL, and an impossible quota here is
+            // a defect in this file rather than an operator's misconfiguration.
+            Admission::Queued(_) | Admission::Refused { .. } => {
+                panic!("the fake core could not reserve {}", profile.name)
+            }
+        }
+    }
+    arbiter
+}
+
+/// The reactor, shared between the executor -- which takes it BY VALUE -- and `serve`, which wants
+/// a BORROW.
+///
+/// ⛔ THE FIFTH COPY OF THIS SHAPE, AND IT STAYS LOCAL: D34, re-read on 2026-09-14 (P-74). The
+/// other four are `crates/simulator/tests/arbiter_campaign.rs`, `crates/kernel/tests/serving.rs`,
+/// the milestone-2 campaign and `crates/daemon/src/main.rs`. A common home would have to be
+/// GENERIC over the reactor, because three of the five wrap `VirtualReactor` and two -- the daemon
+/// and this one -- wrap `SystemReactor`.
+struct SharedClock<'a, R: Reactor>(&'a RefCell<R>);
+
+impl<R: Reactor> Reactor for SharedClock<'_, R> {
+    fn now(&self) -> Monotonic {
+        self.0.borrow().now()
+    }
+
+    fn wall_time(&self) -> WallTime {
+        self.0.borrow().wall_time()
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        self.0.borrow_mut().wait_until(deadline)
+    }
+}
+```
+
+- [ ] **Passo 6: il rubinetto, e le due parole**
+
+⛔ **Il rubinetto prende in prestito la STESSA `RefCell<Core>` di `serve` — D43** — e la regola che ne discende
+è una riga, non un'accortezza: **nessun `borrow_mut` attraversa un `await`**.
+
+```rust
+/// The text the faucet streams. ⚠️ MARKDOWN WITH A CODE BLOCK, because that is what G4 asks the
+/// chat to render, and a stream of plain words would let the renderer be built against something
+/// the real one never sends.
+const SCRIPT: &[&str] = &[
+    "Ecco un esempio.\n\n```rust\nfn main() {\n",
+    "    println!(\"ciao\");\n}\n```\n\n",
+    "E una riga normale dopo il blocco. ",
+];
+
+/// ⛔ EVERY TOKEN IS `Untrusted`, AND IT IS NOT A PRECAUTION: ADR-0014 makes a model's output
+/// untrusted, the gui marks it (G13), and a faucet that sent `Trusted` text would let the whole
+/// provenance path be built and never exercised.
+async fn the_faucet<I, J, C, R>(
+    core: &RefCell<Core<I, J, C>>,
+    clock: &R,
+    sleep: &Sleep,
+    // ⛔ DELIVERED AND NOT READ FROM THE CONSTANT (ADR-0034), and here it is not ceremony: the
+    // probes mount the REAL `SystemReactor`, so a production cadence would cost cadence × turns of
+    // wall clock inside the gate. The probes hand zero, which makes the nap's deadline already
+    // reached and the turn polling — the same cure D28 gave task 9.
+    cadence: Millis,
+    words: Receiver<String>,
+) where
+    I: kernel::ports::ipc::Ipc,
+    J: Journal,
+    C: kernel::ports::custody::Custody,
+    R: Reactor,
+{
+    let mut piece = 0usize;
+    let mut step = 1_000_000u64;
+    loop {
+        // ⛔ `try_recv` AND NEVER A BLOCKING READ -- D42. A blocking read inside a task stops the
+        // WHOLE executor, because it runs one decision at a time: `serve` would not run, and the
+        // fake core would look dead to the gui.
+        match words.try_recv() {
+            Ok(word) => {
+                let mut held = core.borrow_mut();
+                match word.trim() {
+                    "degrade" => {
+                        step += 1;
+                        note_a_degraded_routing(held.journal(), StepId::new(step));
+                        // ⛔ AND NOTHING ELSE. Telling the gui is the REAL code's job: `serve`
+                        // re-reads `degradation_now` and sends `Degradation` only when it changed
+                        // (task 7, and its probe `an_unchanged_degradation_is_not_resent`). §7 left
+                        // "how it notices" to this plan; task 7 had already fixed it -- P-70.
+                    }
+                    "verdict" => {
+                        let asked = ResourceProfile {
+                            name: "faucet-probe",
+                            reserved_vram: Mib::new(4_096),
+                            compute_class: ComputeClass::Interactive,
+                            preemption: Preemption::After(Millis::new(500)),
+                        };
+                        let now = clock.now();
+                        let answer = held.arbiter().admit(&asked, FOR_EVER, now);
+                        let verdict = match answer {
+                            Admission::Granted(_) => Verdict::Granted,
+                            Admission::Queued(_) => Verdict::Queued,
+                            Admission::Refused { asked, ceiling } => {
+                                Verdict::Refused { asked, ceiling }
+                            }
+                        };
+                        tell_everyone(&mut held, IpcMessage::Verdict(verdict));
+                    }
+                    other => eprintln!("the faucet knows `degrade` and `verdict`, not `{other}`"),
+                }
+            }
+            Err(TryRecvError::Empty) => {}
+            // ⚠️ THE CONSOLE THREAD IS GONE -- stdin closed. The faucet keeps streaming: a fake
+            // core started without a terminal is a perfectly good fake core.
+            Err(TryRecvError::Disconnected) => {}
+        }
+
+        {
+            let mut held = core.borrow_mut();
+            let text = SCRIPT[piece % SCRIPT.len()];
+            piece += 1;
+            tell_everyone(
+                &mut held,
+                IpcMessage::Token {
+                    text: text.to_string(),
+                    provenance: Provenance::Untrusted,
+                },
+            );
+        }
+        // ⛔ THE BORROW IS DROPPED BEFORE THIS LINE, and that is the rule D43 states: two live
+        // `borrow_mut` are a panic that only appears when the two tasks interleave -- that is, not
+        // in the shortest probe.
+        let deadline = clock.now().saturating_add(cadence);
+        nap(sleep, deadline).await;
+    }
+}
+
+fn tell_everyone<I, J, C>(core: &mut Core<I, J, C>, message: IpcMessage)
+where
+    I: kernel::ports::ipc::Ipc,
+    J: Journal,
+    C: kernel::ports::custody::Custody,
+{
+    for client in core.attending() {
+        // ⚠️ A SEND THAT FAILS IS NOT AN ERROR HERE: the gui is allowed to die at any instant
+        // (ADR-0004), and `serve` is the one that reconciles. The faucet just keeps talking.
+        let _ = core.ipc().send(client, &message.encode().expect("encode"));
+    }
+}
+
+fn note_a_degraded_routing<J: Journal>(journal: &mut J, step: StepId) {
+    // ⚠️ AN INTENT FIRST, because a note without one is what the port's doc forbids (ADR-0007).
+    let intent = Record::V1(RecordV1::intent(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        "the faucet opened a step so that a routing note has one",
+    ))
+    .encode();
+    journal.intent(step, &intent).expect("the intent");
+    let note = Record::V1(RecordV1::routing(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        "the faucet declared a degraded routing; the REAL code is what reports it",
+        RoutingDetail::new("fake-core", 1, true),
+    ))
+    .encode();
+    journal.note(step, &note).expect("the note");
+}
+```
+
+⚠️ **`message.encode()` e `Ipc::send` prendono BYTE:** la codifica vive in `kernel` (ADR-0036, ADR-0037), e la
+porta scambia byte. Se la firma di `send` che il compito 2 detta è diversa, vale il codice, e la divergenza è
+una voce d'errata.
+
+- [ ] **Passo 7: la console su un thread suo, e `main`**
+
+```rust
+/// ⛔ A THREAD OF ITS OWN -- D42, P-69. The executor runs ONE DECISION AT A TIME, so a blocking
+/// read inside a task freezes it. The executor's own module doc names this way out for systemic
+/// operations: "threads of their own". ⚠️ THE THREAD LIVES HERE AND NOT IN `platform`: an
+/// interactive console is not a mechanism of the product.
+fn spawn_the_console() -> Receiver<String> {
+    let (sender, receiver) = mpsc::channel();
+    thread::spawn(move || {
+        let mut line = String::new();
+        while std::io::stdin().read_line(&mut line).unwrap_or(0) > 0 {
+            // ⚠️ A SEND THAT FAILS MEANS THE CORE IS GONE: stop, rather than spin on a dead channel.
+            if sender.send(line.trim().to_string()).is_err() {
+                return;
+            }
+            line.clear();
+        }
+    });
+    receiver
+}
+
+/// The whole graph, with everything a probe has to vary handed in.
+///
+/// ⛔ SPLIT FROM `main` FOR THE REASON THE DAEMON SPLITS ITS OWN: the gate runs `build` and `test`
+/// and never `run`, so a wiring that lived inside `main` would be covered by nothing. ⚠️ AND THE
+/// THREE ARGUMENTS ARE THE THREE THINGS A PROBE MUST CHANGE: the NAME, because a socket name is
+/// machine-wide and `cargo test` runs in parallel; the TURN LIMIT, because `serve` never ends; and
+/// the CADENCE, because the reactor here is real.
+fn run_the_graph(name: &str, turns: u64, cadence: Millis, words: Receiver<String>) {
+    let parameters = Parameters::new(turns, TOTAL_VRAM, ARBITER_ID, cadence);
+    let ipc = LocalSocketIpc::bound(name, Progressive::starting_at(0), MAX_BODY)
+        .expect("bind the channel -- is a core already listening on it?");
+    let core = RefCell::new(Core::new(
+        ipc,
+        MemoryJournal::new(),
+        MemoryCustody::new(),
+        build_the_arbiter(parameters),
+        Progressive::starting_at(1),
+        parameters,
+    ));
+    let reactor = RefCell::new(SystemReactor::new());
+    let sleep = Sleep::new();
+
+    let mut executor = Executor::new(
+        SequentialRng::new(),
+        SharedClock(&reactor),
+        parameters,
+        &sleep,
+    );
+    executor.spawn(serve(&core, &SharedClock(&reactor), &sleep));
+    executor.spawn(the_faucet(&core, &SharedClock(&reactor), &sleep, cadence, words));
+    // ⛔ `serve` NEVER ENDS, so this only returns when the turns run out. In `main` the limit is
+    // `u64::MAX`, that is never in practice: the programme is stopped with Ctrl-C, as §7 says —
+    // no clean shutdown in this milestone (ADR-0007). ⚠️ THE VALUE OF `run` IS NOT AN ORACLE, and
+    // no probe reads it: what a probe reads is the PEER.
+    let _ = executor.run();
+}
+
+fn main() {
+    println!("fake core listening on {SOCKET_NAME}; words: degrade, verdict");
+    run_the_graph(SOCKET_NAME, u64::MAX, GUI_TICK, spawn_the_console());
+}
+```
+
+⚠️ **`GUI_TICK` e `TOKEN_CADENCE` sono lo stesso numero e passano per lo stesso argomento**, quindi il finto
+ne tiene **uno**: `TOKEN_CADENCE` si toglie, e chi scrive lo verifica con `grep -c TOKEN_CADENCE
+gui/fake-core/src/main.rs` → **0**. ⛔ **Due costanti uguali che nessuno confronta sono la stessa trappola di
+P-73, in piccolo.**
+
+- [ ] **Passo 8: le sonde, in fondo a `main.rs`**
+
+⛔ **Nel binario e non in `tests/`, decisione 48 della §8**, come le sonde del daemon. Ciascuna monta il
+**trasporto vero** con un pari su un thread, che è ciò che la §8 pretende.
+
+```rust
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ⛔ EACH PROBE BINDS A NAME OF ITS OWN. A socket name is valid for the whole machine and
+    // `cargo test` runs in parallel by default: two probes on `SOCKET_NAME` make the second fail
+    // with "already in use", which is a red in the wrong probe's box. The lesson is task 9's.
+    fn a_name_for(what: &str) -> String {
+        format!("fake-core-probe-{what}")
+    }
+
+    /// A stamp that is NOT ours. ⛔ `BuildStamp` HAS NO PUBLIC CONSTRUCTOR, and that is deliberate
+    /// (task 3: "a stamp anyone can mint from any number is a stamp that proves nothing"), so the
+    /// wrong one is taken from where one already exists — the `StaleBuild` of the canonical set,
+    /// which holds a value chosen precisely for not being the real one.
+    ///
+    /// ⚠️ IF TASK 7 ALREADY EXPOSES SUCH A HELPER when this is written, it is REUSED and not
+    /// copied: two ways to obtain the same wrong stamp is one too many.
+    fn a_stamp_that_is_not_ours() -> kernel::wire::ipc::BuildStamp {
+        kernel::wire::ipc::stamp_set()
+            .into_iter()
+            .find_map(|message| match message {
+                IpcMessage::StaleBuild(stamp) => Some(stamp),
+                _ => None,
+            })
+            .expect("the canonical set holds a StaleBuild")
+    }
+
+    /// The peer, in the shape task 9 gives it and for its reasons.
+    ///
+    /// ⛔ IT CANNOT HANG, AND THE REASON IS THE DROP ORDER RATHER THAN A TIMEOUT: when
+    /// `run_the_graph` returns, its locals fall, the `LocalSocketIpc` with them, and the server end
+    /// closes — so `read` comes back `Ok(0)` and the loop ends. ⛔ EVERY CALLER THEREFORE `join`s
+    /// AFTER THE RUN, NEVER BEFORE.
+    ///
+    /// ⚠️ THE CONNECT IS A `yield_now` LOOP AND NOT A SLEEP: the listener exists from `bound()`,
+    /// which happens inside the run, so this thread may be scheduled first.
+    fn a_peer_that_says(
+        name: String,
+        said: Vec<IpcMessage>,
+        wants: usize,
+    ) -> std::thread::JoinHandle<Vec<IpcMessage>> {
+        std::thread::spawn(move || {
+            use interprocess::local_socket::{GenericNamespaced, Stream, prelude::*};
+            use std::io::{Read, Write};
+
+            let ns = name.to_ns_name::<GenericNamespaced>().expect("a namespaced name");
+            let mut stream = loop {
+                match Stream::connect(ns.clone()) {
+                    Ok(stream) => break stream,
+                    Err(_) => std::thread::yield_now(),
+                }
+            };
+            for message in &said {
+                let bytes = message.encode().expect("the peer frames what it sends");
+                stream.write_all(&bytes).expect("the peer writes");
+            }
+
+            let mut buffer = Vec::new();
+            let mut heard = Vec::new();
+            let mut chunk = [0_u8; 4_096];
+            while heard.len() < wants {
+                match stream.read(&mut chunk) {
+                    Ok(0) => break,
+                    Ok(read) => buffer.extend_from_slice(&chunk[..read]),
+                    Err(_) => break,
+                }
+                while let Some((body, next)) = kernel::framing::take_frame(&buffer) {
+                    heard.push(IpcMessage::decode(body).expect("the core sends what it says"));
+                    buffer.drain(..next);
+                }
+            }
+            heard
+        })
+    }
+
+    /// The words a probe "types", queued before the run.
+    ///
+    /// ⛔ THE SENDER IS DROPPED, so `try_recv` answers `Disconnected` once they are consumed —
+    /// which is the harsher of the two empty cases and the one the last probe leans on.
+    fn typed(words: &[&str]) -> Receiver<String> {
+        let (sender, receiver) = mpsc::channel();
+        for word in words {
+            sender.send((*word).to_string()).expect("the probe types");
+        }
+        receiver
+    }
+
+    #[test]
+    fn the_welcome_gives_the_sequence_one() {
+        let name = a_name_for("welcome");
+        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 5);
+        run_the_graph(&name, 4_000, Millis::new(0), typed(&[]));
+        let heard = peer.join().expect("the peer thread");
+        let kinds: Vec<&str> = heard
+            .iter()
+            .map(|message| match message {
+                IpcMessage::Accepted(_) => "Accepted",
+                IpcMessage::Degradation(_) => "Degradation",
+                IpcMessage::Policy(_) => "Policy",
+                IpcMessage::Layout(_) => "Layout",
+                IpcMessage::Steps(_) => "Steps",
+                other => panic!("the welcome sent something else: {other:?}"),
+            })
+            .collect();
+        assert_eq!(
+            kinds,
+            ["Accepted", "Degradation", "Policy", "Layout", "Steps"],
+            "sequence 1, in order: {heard:?}"
+        );
+    }
+
+    #[test]
+    fn a_stale_stamp_is_refused_and_then_silence() {
+        let name = a_name_for("stale");
+        // ⛔ THE SECOND MESSAGE IS THE PROBE, as task 7 argues: "the core closes" is not an
+        // operation of the port (decision 22), so only a message sent AFTER the refusal tells
+        // "it stopped listening" apart from "it had nothing more to say".
+        let peer = a_peer_that_says(
+            name.clone(),
+            vec![
+                IpcMessage::Hello(a_stamp_that_is_not_ours()),
+                IpcMessage::Invoke(kernel::wire::ipc::Call {
+                    function: "set-policy".to_string(),
+                    argument: "local".to_string(),
+                }),
+            ],
+            2,
+        );
+        run_the_graph(&name, 4_000, Millis::new(0), typed(&[]));
+        let heard = peer.join().expect("the peer thread");
+        assert_eq!(
+            heard,
+            vec![IpcMessage::StaleBuild(build_stamp())],
+            "a stale gui is told the EXPECTED stamp, and then nothing at all: {heard:?}"
+        );
+    }
+
+    #[test]
+    fn degrade_makes_the_real_code_report_it() {
+        let name = a_name_for("degrade");
+        // ⛔ THE ORACLE IS THE SECOND `Degradation`, not the first: the welcome always sends one.
+        // What the word buys is a SECOND one, which task 7's code sends only because the value
+        // CHANGED — so this probe exercises the real rule rather than a branch of the faucet.
+        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 8);
+        run_the_graph(&name, 8_000, Millis::new(0), typed(&["degrade"]));
+        let heard = peer.join().expect("the peer thread");
+        let degraded: Vec<&IpcMessage> = heard
+            .iter()
+            .filter(|message| {
+                matches!(message, IpcMessage::Degradation(report) if report.routing_degraded)
+            })
+            .collect();
+        assert!(
+            !degraded.is_empty(),
+            "the word `degrade` reaches the gui through the REAL code: {heard:?}"
+        );
+    }
+
+    #[test]
+    fn verdict_reaches_the_peer() {
+        let name = a_name_for("verdict");
+        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 8);
+        run_the_graph(&name, 8_000, Millis::new(0), typed(&["verdict"]));
+        let heard = peer.join().expect("the peer thread");
+        assert!(
+            heard.iter().any(|message| matches!(message, IpcMessage::Verdict(_))),
+            "the word `verdict` asks the REAL arbiter and the answer reaches the gui: {heard:?}"
+        );
+    }
+
+    #[test]
+    fn the_tokens_arrive_untrusted() {
+        let name = a_name_for("tokens");
+        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 12);
+        run_the_graph(&name, 8_000, Millis::new(0), typed(&[]));
+        let heard = peer.join().expect("the peer thread");
+        let tokens: Vec<&IpcMessage> = heard
+            .iter()
+            .filter(|message| matches!(message, IpcMessage::Token { .. }))
+            .collect();
+        assert!(!tokens.is_empty(), "the faucet streams: {heard:?}");
+        // ⛔ EVERY ONE, not "at least one": ADR-0014 makes the label hereditary, and a faucet that
+        // marked only the first would be exactly the silent hole G13 exists to close.
+        assert!(
+            tokens.iter().all(|message| {
+                matches!(message, IpcMessage::Token { provenance, .. } if *provenance == Provenance::Untrusted)
+            }),
+            "every token is untrusted: {tokens:?}"
+        );
+    }
+
+    #[test]
+    fn the_faucet_keeps_streaming_with_no_word_waiting() {
+        // ⛔ THE HALF THAT GETS FORGOTTEN, and the one that catches P-69. With NO word queued the
+        // turn must pass anyway: if the faucet read `stdin` blockingly — or called `recv` instead
+        // of `try_recv` — nothing would arrive at all, and every probe above would hang rather
+        // than fail. ⚠️ THE CHANNEL IS DROPPED here, so `try_recv` answers `Disconnected`, which
+        // is the harsher of the two empty cases.
+        let name = a_name_for("nowords");
+        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 8);
+        run_the_graph(&name, 8_000, Millis::new(0), typed(&[]));
+        let heard = peer.join().expect("the peer thread");
+        assert!(
+            heard.iter().any(|message| matches!(message, IpcMessage::Token { .. })),
+            "with nothing typed the faucet still streams: {heard:?}"
+        );
+    }
+}
+```
+
+⛔ **`interprocess` va in `[dev-dependencies]` di `gui/fake-core`, in DUE passi** — manifesto e
+`gui/fake-core/Cargo.lock` **nello stesso commit**, vincolo globale 6 — con la **stessa versione** che
+`crates/platform/Cargo.toml` appunta, riletta col `grep` e non a memoria. È la stessa voce che il compito 9
+aggiunge al daemon (**P-54**).
+
+⚠️ **Le sonde variano TRE cose e non una** — il nome, il limite di giri e ciò che è stato digitato — e le tre
+stanno negli argomenti di `run_the_graph`, non in costanti: il nome perché un socket è di tutta la macchina e
+`cargo test` gira in parallelo (lezione del compito 9), il limite perché `serve` non finisce, la cadenza perché
+il reattore qui è vero.
+
+- [ ] **Passo 9: le due direzioni, misurate**
+
+| | La mutazione | Atteso |
+|---|---|---|
+| **G1** | `try_recv` → `recv` (bloccante) nel rubinetto | `the_faucet_keeps_streaming_with_no_word_waiting` **rosso**, e si pianta invece di fallire — ⚠️ **il rosso è un timeout, e va detto**: `cargo test` non torna |
+| **G2** | togli `PRESENTATION_RESERVATION` da `build_the_arbiter` | la sonda dell'accoglienza **rossa** sul `Policy`, perché `allocated` scende |
+| **G3** | `Provenance::Untrusted` → `Trusted` | `the_tokens_arrive_untrusted` **rosso** |
+| **G4** | nel finto, `SOCKET_NAME` a `"harness-core-2"` | ⛔ **nessuna sonda rossa**, e **il criterio di chiusura sì** — è la prova che il `diff` di **D45** serve, e che nessun banco lo copre |
+| **G5** | togli `exclude = ["spikes", "gui"]` → `["spikes"]` | `cargo test --manifest-path gui/fake-core/Cargo.toml` **101**, `current package believes it's in a workspace when it's not` |
+
+⛔ **G4 è la mutazione più istruttiva del compito:** dice che una delle cose che questo compito produce **non
+ha una sonda e non può averne una**, e che la difesa è un comando in un criterio di chiusura. Dichiararlo è
+ciò che impedisce di crederlo coperto.
+
+- [ ] **Passo 10: il cancello, e il commit**
+
+```bash
+cd gui/fake-core && cargo test --locked 2>&1 | tail -5; cd ../..
+bash scripts/gate.sh 2>&1 | tail -3
+bash scripts/check-docs.sh 2>&1 | tail -3
+diff <(grep -o 'const SOCKET_NAME: &str = ".*"' crates/daemon/src/main.rs) \
+     <(grep -o 'const SOCKET_NAME: &str = ".*"' gui/fake-core/src/main.rs); echo "diff EXIT=$?"
+git ls-files --eol Cargo.toml .gitignore
+tr -cd '\r' < gui/fake-core/src/main.rs | wc -c
+git status --porcelain
+```
+
+Atteso: le sonde del finto verdi; `GATE GREEN`; `OK`; il `diff` **`EXIT=0`**; i due file di radice ancora
+`i/lf w/crlf`; **zero** CR nel sorgente nuovo; in `git status` niente `target/`.
+
+⚠️ **`scripts/gate.sh` non conosce ancora il finto** — lo impara al compito **15** — quindi il primo comando
+si lancia a mano.
+
+```bash
+git add Cargo.toml .gitignore crates/kernel/src/serving.rs gui/fake-core docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+git commit -m "gui(compito 12): il core finto -- l'attivita' vera del kernel su porte in memoria, l'arbitro riscritto col costo dichiarato (D41), il rubinetto con stdin su un thread suo (D42) sulla stessa RefCell di serve (D43), Core::ipc col suo unico chiamante, gui escluso dalla radice con la propria ragione (D44), e il nome del canale confrontato col daemon da un comando (D45)"
+git push
+```
+
+**Criterio di chiusura del compito 12:**
+
+- [ ] `cd gui/fake-core && cargo test --locked; echo $?` → **0**
+- [ ] ⛔ **nessun ramo di dispaccio nel finto:** `grep -cE 'IpcMessage::(Hello|Invoke|Approve|SaveLayout) *(\(|=>)' gui/fake-core/src/main.rs` → **0** — il finto **manda** messaggi, non li interpreta
+- [ ] `grep -c 'struct SharedClock' gui/fake-core/src/main.rs` → **1**, e `grep -rc 'struct SharedClock' crates/ --include='*.rs'` conta le altre: **cinque in tutto** (**P-74**)
+- [ ] il nome del canale combacia: il `diff` del Passo 10 esce **0** (**D45**)
+- [ ] `grep -c 'exclude = \["spikes", "gui"\]' Cargo.toml` → **1**, e `cargo metadata --no-deps --manifest-path gui/fake-core/Cargo.toml > /dev/null; echo $?` → **0**
+- [ ] `grep -c '^/gui/' .gitignore` → **3**
+- [ ] `grep -c 'pub fn ipc' crates/kernel/src/serving.rs` → **1**, e `bash scripts/gate-deps.sh` verde
+- [ ] la §7 del disegno porta il richiamo datato di **D41**: `grep -c 'RICHIAMO DEL 2026-09-14' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **più di zero**
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
+- [ ] le cinque mutazioni del Passo 9 eseguite **una per volta** e revocate, `git diff` vuoto
+- [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -cE '^\s*fn [a-z_]+\(\) \{\}$' gui/fake-core/src/main.rs` → **0**
+
+---
+
 ## Come si riprende — il diario di questo piano, coi comandi
 
 ### La settima chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 10 di diciassette; nessun compito è eseguito
@@ -11565,7 +12552,7 @@ l'errata è **vuota**, i compiti **11–17 non esistono**. La sessione nuova **s
 |---|---|---|---|
 | 27 | la campagna **non usa `DyingGui`** e si scrive il proprio filo, tenuto **fuori** dal core dietro un `RefCell` (**D32**) | tre misure indipendenti, e ciascuna basta: quella finta dice solo `Request`, che **D5** non serve; non pronuncia né `Hello` né `Approve`; e consegnata a `Core` non è più interrogabile, perché il trasporto non è esposto | la campagna gira e non prova niente — il verde per insiemi vuoti che il Traguardo 4 ha imparato **tre** volte |
 | 28 | l'oracolo della prima metà è la **somma dell'arbitro**, non il registro (**D33**) | `ClientGrants` espone tre elementi e **nessuno che conti senza rilasciare**, e `on_disconnect` non è chiamabile da fuori: `grants()` e `arbiter()` sono due prestiti mutabili dello stesso `&mut Core`. ⚠️ **E la somma è più forte:** con la baseline non a zero coglie **due** mutazioni con **una** asserzione | servirebbe un elemento d'API nuovo in `kernel` il cui unico chiamante è una campagna, che `boundary.rs` cancella |
-| 29 | il `SharedClock` **resta locale** e non sale in `simulator` (**D34**) | ⛔ **è la registrata di D29, presa con la misura:** `crates/daemon/Cargo.toml` rifiuta **per iscritto** di dipendere da `simulator`, quindi una casa comune servirebbe **tre case su quattro** e la quarta — quella di **produzione** — riscriverebbe comunque la propria copia, senza il commento che oggi la dichiara ripetuta | quattro copie della stessa forma restano quattro; l'innesco è scritto, una quinta casa **dentro `simulator`** riapre la misura |
+| 29 | il `SharedClock` **resta locale** e non sale in `simulator` (**D34**) | ⛔ **è la registrata di D29, presa con la misura:** `crates/daemon/Cargo.toml` rifiuta **per iscritto** di dipendere da `simulator`, quindi una casa comune servirebbe **tre case su quattro** e la quarta — quella di **produzione** — riscriverebbe comunque la propria copia, senza il commento che oggi la dichiara ripetuta | quattro copie della stessa forma restano quattro; l'innesco è scritto, una quinta casa **dentro `simulator`** riapre la misura. ⛔ **RICHIAMO DEL 2026-09-14, dal pre-controllo del compito 12 (P-74): le case sono CINQUE.** `gui/fake-core` monta la stessa forma; non è *dentro* `simulator`, quindi l'innesco alla lettera non scatta, ma vi **dipende** — cioè ha la proprietà per la cui assenza il daemon cadde — e per questo l'innesco è stato **riletto nel merito** invece che a memoria. A tenere la decisione è il **reattore**: i tre banchi avvolgono `VirtualReactor`, il daemon e il finto `SystemReactor`, quindi una casa comune dovrebbe essere **generica**, che è il costo già prezzato qui sopra. **La decisione resta; cambia il censimento** |
 | 30 | **`vitest` resta 4.1.11**, rimisurato (richiamo dentro **D4**) | `npm view vitest version dist-tags` rende ancora `latest: 5.0.0` e `V4: 4.1.11`, e `npm view vitest time --json` data la 5.0.0 al 2026-09-03: il divario è cresciuto, non la maturità. ⚠️ **Il numero di giorni non è scritto nella riga che lo giudica**, ci sono i due comandi | il compito **11** installa una major di undici giorni, e una regressione dell'attrezzo si legge come una regressione della SPA |
 
 #### Le trappole di questa sessione — istruzioni, non aneddoti

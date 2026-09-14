@@ -10225,7 +10225,7 @@ l'errata è **vuota**, i compiti **11–17 non esistono**. La sessione nuova **s
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
-| I commit di questa sessione | `git log --oneline cbf9b07..HEAD` — ne elenca **due**, di soli documenti |
+| I commit di questa sessione | `git log --oneline cbf9b07..HEAD`, e **sono tutti di soli documenti** — lo dice `git diff --name-only cbf9b07..HEAD`, che rende **questo file** e nient'altro. ⛔ **Quanti siano NON è scritto qui:** la cella lo ha detto e si è falsificata da sé al commit successivo, che è la terza ricaduta di gotcha **#68** in questa sezione — il comando non marcisce, un numerale sì |
 | Codice di prodotto | **non toccato**, coi due comandi in «Da sapere subito» |
 | Quanto è scritto | `grep -c '^## Compito' <questo file>`; la tabella della posizione ne elenca diciassette — `awk '/^\| # \| Compito \| Commit \| Stato \|/{s=1} s&&/^\| \*\*[0-9]+\*\* \|/{c++} s&&/^$/{print c; exit}' <questo file>` |
 | L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0**; nasce vuota e non resterà vuota |

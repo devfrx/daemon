@@ -140,7 +140,7 @@ Valgono per ogni compito, senza che il compito li ripeta.
 | **12** | il **core finto** `gui/fake-core/`: l'attività vera su porte in memoria, il rubinetto, le sonde | uno | ⬜ |
 | **13** | la **SPA, la cornice**: `dockview`, la barra delle viste, la fascia, la striscia, il cassetto, `panels/` col registro dei tipi e le **tre viste come JSON**, `stores/`, `tokens/`, `locales/it.json`. ⛔ **E il SEGNAPOSTO, arrivato qui dalla riga 14 col richiamo del 2026-09-14 (D47)**: `dockview` chiede alla fabbrica un componente **per nome**, quindi senza di esso la cornice si monta e non mostra nulla — con `npm run build` verde | uno | ⬜ |
 | **14** | la **SPA, i moduli**: Stato, Permessi con la finestra di conferma, Chat col markdown e la provenienza, Passi, **e Impostazioni col cambio di policy VRAM — richiamo del 2026-09-14, P-85**, senza il quale nella SPA del 2 nessuno manda mai un `Invoke` e il registro di ADR-0038 resta senza il suo primo invocatore; l'accessibilità e le scorciatoie sopra `moveTo`. ⛔ **Il segnaposto è passato al 13 — richiamo del 2026-09-14, D47**: qui restano i moduli **veri**, e il segnaposto non è un modulo ma il pezzo della cornice che dice *«questo tipo non c'è ancora»* | uno | ⬜ |
-| **15** | il **passo del cancello**: `scripts/gate-gui.sh`, la riga in `gate.sh`, `.gitignore`, `actions/setup-node` nella CI | uno | ⬜ |
+| **15** | il **passo del cancello**: `scripts/gate-gui.sh`, la riga in `gate.sh`, `actions/setup-node` nella CI, e la **catena `eslint`** con la configurazione di `gui/`. ⛔ **RICHIAMO DEL 2026-09-15, dal pre-controllo del compito 15 (P-102): `.gitignore` NON è di questo compito** — le otto righe di `spikes/gui-shell/` ci sono dal commit `8fc9696` della parte 1 e i quattro lockfile dello spike sono tracciati; le due righe di `gui/` sono del compito 11 (**D38**) e `/gui/fake-core/target/` del 12. Al 15 non ne resta nessuna — **D67** | uno | ⬜ |
 | **16** | **X-1 e X-3**: la matrice Windows nella CI, `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh` | uno | ⬜ |
 | **17** | la **chiusura**: i documenti in ogni casa — la §12 del compendio, `README.md`, la roadmap, tracciabilità, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — e la Definizione di «fatto» della parte 2, coi comandi | uno | ⬜ |
 
@@ -2553,6 +2553,232 @@ Ciò che resta al revisore nel browser è che i rettangoli veri siano quelli che
 
 **Conseguenza:** nessuna `D`; la forma della sonda `keys.test.ts` nel compito 14.
 
+### P-98 — `no-raw-text` è `warn` nel preset, quindi `npm run lint` esce **0** con una scritta grezza nel template: la rete del 13 andrebbe sostituita da un controllo VACUO
+
+⛔ **Domanda 1 — la sonda è sbagliata, e nel modo peggiore: sostituisce un rosso vero con un verde che non sa
+diventare rosso.** **D51** dice che la rete `copy.test.ts` del compito 13 *«muore al 15, sostituita da
+`no-raw-text`»*. Misurato il 2026-09-15, installando la catena nello scratchpad e leggendo i file spediti:
+
+```bash
+mkdir -p /tmp/eslint-probe && cd /tmp/eslint-probe && npm init -y > /dev/null 2>&1
+npm install eslint@10.10.0 eslint-plugin-vue@10.11.0 @intlify/eslint-plugin-vue-i18n@4.5.1 --no-audit --no-fund > /dev/null 2>&1
+grep -n "no-raw-text" node_modules/@intlify/eslint-plugin-vue-i18n/dist/configs/flat/recommended.js
+```
+
+→ `'@intlify/vue-i18n/no-raw-text': 'warn'`. ⛔ **E `eslint` esce ZERO sui soli avvisi**, misurato su un componente
+col testo grezzo nel template e un nome di file multi-parola (perché il nome a una parola è un `error` a sé, **P-99**,
+e maschererebbe la misura):
+
+| Che cosa | Uscita |
+|---|---|
+| `npx eslint src/ChatPanel.vue` con `raw text 'riprova piu tardi' is used` fra gli avvisi | **`EXIT=0`** |
+| lo stesso file con `--max-warnings 0` | `EXIT=1` |
+
+⛔ **Quindi la rete del 13 va rosso e la sua sostituta no**, e il compito 15 così com'è nominato consegnerebbe un
+cancello che **non guarda più le scritte** pur sembrando che lo faccia. ✅ **La cura non è `--max-warnings 0`** —
+la ragione sta in **P-100** — ma portare la regola a `error` nel nostro blocco: **D65**.
+
+**Conseguenza: D65.**
+
+### P-99 — `vue/multi-word-component-names` è un `error` anche in `flat/essential`, e **undici** dei dodici `.vue` che questo piano scrive sono a una parola: il 15 farebbe ROSSO il codice dei compiti 13 e 14
+
+⛔ **Domanda 5 girata in avanti, e il difetto è di specie 3: l'artefatto è sbagliato e non se ne accorge nessuno
+finché non gira.** Il preset di `eslint-plugin-vue` porta la regola a **`error`**, non ad avviso, e la porta **in
+tutti e tre i livelli** — misurato il 2026-09-15:
+
+```bash
+cd /tmp/eslint-probe && node -e "
+const vue = require('eslint-plugin-vue');
+for (const n of ['flat/essential','flat/strongly-recommended','flat/recommended']) {
+  const r = {}; for (const b of vue.configs[n]) Object.assign(r, b.rules || {});
+  const c = { error: 0, warn: 0 };
+  for (const l of Object.values(r)) c[Array.isArray(l) ? l[0] : l]++;
+  console.log(n.padEnd(28), 'error=' + c.error, 'warn=' + c.warn, '| multi-word:', r['vue/multi-word-component-names']);
+}"
+```
+
+→ `flat/essential error=85 warn=0 | multi-word: error`, e lo stesso `error` negli altri due.
+
+⛔ **E il censimento dei nomi, col comando, contro il piano di ADESSO:**
+
+```bash
+grep -oE 'gui/src/[A-Za-z/]*/[A-Za-z]+\.vue' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | sort -u
+```
+
+→ `Confirm` · `Band` · `Drawer` · `Frame` · `ViewBar` · `Chat` · `Permissions` · `Placeholder` · `Settings` ·
+`Status` · `Steps` · `Strip`. ⚠️ **Uno solo passa, e NON si deduce dal nome: si misura.** Provati uno accanto
+all'altro, `Status.vue` rende `Component name "Status" should always be multi-word` e `ViewBar.vue` **non rende
+nulla** — quindi gli scoperti sono **undici**, non dodici.
+
+⛔ **Rinominarli non è la cura, ed è il punto:** il nome del file di un pannello **è** il `module` del registro
+`PANEL_TYPES` (compito 13) ed **è** la chiave `modules.*` della locale (compito 14). Un rinomino per compiacere un
+lint muoverebbe due case che non hanno niente a che vedere col lint, e il vincolo globale 1 tiene le due spec ferme.
+
+**Conseguenza: D64.**
+
+### P-100 — `flat/recommended` porta **trentatré** regole di avviso quasi tutte di FORMATTAZIONE, e `gate.sh` vieta in testa un rosso che significhi «stile discutibile»: il preset è `essential`
+
+⛔ **Domanda 1, e la cura ovvia sarebbe stata quella sbagliata.** Letta la riga 8 di `scripts/gate.sh`, che è del
+repository e non di questo piano: *«A red from this gate always means "invariant violated", never "questionable
+style"»* — la §7.4.3 del compendio in persona. Misurato il 2026-09-15 che cosa sono i trentatré avvisi:
+
+```bash
+cd /tmp/eslint-probe && node -e "
+const vue = require('eslint-plugin-vue');
+const r = {}; for (const b of vue.configs['flat/recommended']) Object.assign(r, b.rules || {});
+console.log(Object.entries(r).filter(([, l]) => (Array.isArray(l) ? l[0] : l) === 'warn').map(([n]) => n).join('\n'));"
+```
+
+→ `vue/html-indent`, `vue/html-quotes`, `vue/max-attributes-per-line`, `vue/first-attribute-linebreak`,
+`vue/multiline-html-element-content-newline`, `vue/html-self-closing`, `vue/no-multi-spaces`, `vue/attributes-order`,
+`vue/block-order`… — **formattazione**, riga per riga.
+
+⛔ **Quindi `--max-warnings 0` è la cura sbagliata**, e sembra quella giusta: promuoverebbe a bloccanti proprio
+quelle trentatré, cioè renderebbe il cancello rosso per lo stile che la sua testa vieta. ✅ **`flat/essential` porta
+**ottantacinque** regole e **zero** avvisi** (comando di **P-99**): ogni riga che il passo stampa è un `error`, e
+ogni `error` ferma il cancello. È la forma che la regola di `gate.sh` chiede, e costa **meno** configurazione, non
+di più.
+
+**Conseguenza: D63.**
+
+### P-101 — i `.ts` non li guarda NESSUNA configurazione, e la differenza fra nominare una cartella e nominare un file è un avviso che conta
+
+⛔ **Domanda 2 — la sonda manca, e qui manca al contrario: si rischia di installare un analizzatore che non serve.**
+Misurato il 2026-09-15 con le due configurazioni piatte e un `.ts` con sintassi TypeScript vera
+(`export const a: number = 1;`):
+
+| Come si lancia | Uscita |
+|---|---|
+| `npx eslint src/probe.ts` — **file per nome** | `warning  File ignored because no matching configuration was supplied`, `EXIT=0` |
+| `npx eslint src` — **cartella**, con lo stesso `.ts` dentro | il `.ts` **non compare affatto** |
+
+⛔ **Due cose, e nessuna delle due si deduce.** La prima: **nessun `@typescript-eslint/parser` serve** — è un peer
+**opzionale** di `eslint-plugin-vue` (`peerDependenciesMeta` dice `{"optional":true}`, misurato) e la catena si
+installa senza, così la dipendenza nuova resta **una in meno**; i `.ts` li guarda `vue-tsc` al `npm run build`, che
+è il livello 1 del mondo web (§8). La seconda: lo script `lint` **nomina la cartella `src`**, perché con un elenco di
+file l'avviso *«File ignored»* è un avviso vero, che un `--max-warnings` futuro conterebbe — e sarebbe un rosso per
+il motivo sbagliato. ⚠️ **Scritto qui perché nessuno lo «migliori» in un elenco di file.**
+
+⚠️ **E i peer NON opzionali li ha tirati dentro npm da sé** — `vue-eslint-parser` 10.4.1, `jsonc-eslint-parser`
+3.3.0, `yaml-eslint-parser` 2.1.0, misurati nel `node_modules` dello scratchpad: vivono nel `package-lock.json` e
+`npm ci` li rimette identici, quindi il manifesto non li nomina e il vincolo globale 8 regge sul lockfile, come per
+il `Cargo.lock`.
+
+⚠️ **E i `.json` sotto `src` li PARSA ma non li giudica:** `flat/base` di `@intlify` monta
+`jsonc-eslint-parser` su `**/*.json`, quindi `locales/it.json` e le tre viste di `panels/views/` entrano nel
+giro — ma **nessuna** regola scatta su di loro, e nemmeno una virgola in coda fa rosso: misurato il
+2026-09-15, un `{ "a": 1, }` in `panels/views/` lascia `EXIT=0`. ⛔ **Quindi il lint NON valida i JSON**, e
+chi cercasse lì una rete la cercherebbe dove non c'è: le tre viste le prova la sonda della cornice del
+compito 13.
+
+**Conseguenza:** nessuna `D`; la forma dello script `lint` nel Passo 4.
+
+### P-102 — le righe di `.gitignore` per `spikes/gui-shell/` e i lockfile dello spike ESISTONO GIÀ dalla parte 1: due dei quattro pezzi che la chiusura assegna al 15 sono eseguiti
+
+⛔ **Quarta domanda del pre-controllo — *ciò che detta di produrre esiste già?* — e per la prima volta in questo
+piano la risposta è sì.** La §8 del 2 assegna al cancello *«per `spikes/gui-shell/`: `node_modules/`, `dist/` e le
+cartelle di build dei due gusci, coi nomi al piano quando esistono»* e, con la decisione 49, i lockfile dello spike
+committati. Misurato il 2026-09-15:
+
+```bash
+grep -n 'gui-shell' .gitignore
+git log --oneline -1 -S'gui-shell/electron/out' -- .gitignore
+git ls-files 'spikes/gui-shell/**package-lock.json' 'spikes/gui-shell/**Cargo.lock'
+```
+
+→ otto righe già in `.gitignore`, righe 34–41, messe da **`8fc9696`**, cioè dal **compito 4 della parte 1**; e
+quattro lockfile già tracciati — `app`, `electron`, `tauri` e `tauri/src-tauri/Cargo.lock`.
+
+✅ **Non è un difetto della §8: è il piano della parte 1 che ha fatto la sua parte**, e la §8 lo prevedeva
+(*«coi nomi al piano quando esistono»*). ⛔ **Ma il compito 15 non deve toccarli**, o riscriverebbe righe esistenti
+e il suo diff direbbe il falso. Ciò che resta al 15 di `.gitignore` è **niente**: le due righe di `gui/` sono del
+compito 11 (**D38**) e `/gui/fake-core/target/` del 12.
+
+**Conseguenza: D67.**
+
+### P-103 — `package-manager-cache` di `setup-node` v7 vale `true` per difetto, e la decisione 47 regge solo PER ACCIDENTE
+
+⛔ **Domanda 5 in avanti, sulla CI.** La decisione 47 della stella polare dice *«niente cache npm oggi: una riga,
+`cache: npm`, che si aggiunge quando la CI misura che serve»*, cioè **omettere** basta. Letta la fonte primaria il
+2026-09-15 — `action.yml` della v7.0.0, non un articolo:
+
+```bash
+python -c "
+import urllib.request
+req = urllib.request.Request('https://raw.githubusercontent.com/actions/setup-node/v7.0.0/action.yml', headers={'User-Agent':'harness-plan'})
+print(urllib.request.urlopen(req).read().decode('utf-8'))" | grep -A 3 'package-manager-cache:'
+```
+
+→ `default: true`, con la descrizione: *«caching is enabled when either `devEngines.packageManager` or the
+top-level `packageManager` field in package.json specifies npm as the package manager»*.
+
+⚠️ **Il `gui/package.json` del compito 11 non porta NESSUNO dei due campi**, quindi oggi la cache **non** si accende
+e la decisione 47 è rispettata — ma è rispettata da un campo **assente**, non da una riga che dice cosa vogliamo.
+⛔ **E il giorno che qualcuno aggiungesse `packageManager` al manifesto, la cache si accenderebbe da sola e cercherebbe
+il lockfile alla RADICE del repository**, dove non c'è: il nostro è `gui/package-lock.json`. La CI andrebbe rossa per
+un motivo che nessuno ha scelto.
+
+✅ **Una riga, `package-manager-cache: false`, con la ragione accanto**, e la decisione 47 smette di essere un
+accidente. ⚠️ **Non è la stessa riga che la decisione 47 rimanda** (`cache: npm`): quella **accende**, questa
+**dichiara spento**.
+
+**Conseguenza: D66.**
+
+### P-104 — la terza deduzione della §9 è MISURATA, e non serviva aspettare il core finto
+
+⛔ **Domanda 1 — un'evidenza scritta prima della misura è un'ipotesi.** La §9 del 2 dichiara 🔶 **dedotto**
+*«che `--manifest-path` compili nel `target/` del finto e non riusi quello del workspace»*. Si misura **oggi**, su
+due crate che stanno già fuori dal workspace, senza aspettare il compito 12 — e senza compilare niente:
+
+```bash
+for m in spikes/rust/Cargo.toml spikes/gui-ipc/Cargo.toml; do
+  cargo metadata --manifest-path "$m" --no-deps --format-version 1 \
+  | python -c "import json,sys; d=json.load(sys.stdin); print(d['target_directory'])"
+done
+cargo metadata --no-deps --format-version 1 | python -c "import json,sys; print(json.load(sys.stdin)['target_directory'])"
+```
+
+Misurato il 2026-09-15: `…\spikes\rust\target`, `…\spikes\gui-ipc\target`, e `…\harness\target` per il workspace —
+**tre cartelle distinte**. ✅ La deduzione è **confermata**: il costo della doppia compilazione che la §8 dichiara è
+reale, e `/gui/fake-core/target/` in `.gitignore` (compito 12) è la riga giusta.
+
+⚠️ **E la riga della §9 resta com'è**: il richiamo che la porta da «dedotto» a «misurato» lo scrive il **17**, con le
+altre case — qui si registra la misura, non si riscrive un disegno che un altro compito tocca.
+
+**Conseguenza:** nessuna `D`; una riga nel criterio di chiusura del 15.
+
+### P-105 — la rete `copy.test.ts` ha DUE sonde e `no-raw-text` ne sostituisce UNA: la seconda guarda una chiave COSTRUITA, e nessun lint la vede
+
+⛔ **Domanda 2 — la sonda manca, e mancherebbe per sottrazione: uccidendo il file si perde un controllo che nessuno
+si accorge di aver perso.** Il Passo 18 del compito 13 scrive in `gui/src/locales/copy.test.ts` **due** `it`:
+
+| | La sonda | Chi la sostituisce al 15 |
+|---|---|---|
+| 1 | *«are all keys: no bare words between tags in a template»* | ✅ `@intlify/vue-i18n/no-raw-text`, portata a `error` (**D65**) |
+| 2 | *«has a name for every module type»* — ogni `module` di `PANEL_TYPES` ha una voce sotto `modules` in `it.json` | ⛔ **nessuno** |
+
+⛔ **E il perché è misurato, non argomentato:** la SPA costruisce quella chiave, non la scrive. Due posti, col
+comando che li trova — `` i18n.global.t(`modules.${parameters.api.id}`) `` in `BigTab.ts` e
+`` $t(`modules.${type.module}`) `` nel cassetto:
+
+```bash
+grep -n 'modules\.\${' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+```
+
+E `no-missing-keys` **non vede una chiave costruita**, misurato il 2026-09-15 con le due direzioni nello stesso file:
+
+```
+<div>{{ t(`modules.${id}`) }}</div>     -> niente
+<div>{{ t("modules.inventato") }}</div> -> error  'modules.inventato' does not exist in localization message resources
+```
+
+✅ **Quindi il 15 uccide la PRIMA sonda e lascia viva la seconda**, nel file dov'è, col commento riscritto: non è più
+*«una rete fino al compito 15»* ma il controllo delle diciotto chiavi costruite, che non ha e non avrà un lint.
+⚠️ **Il file NON si rinomina:** `gui/src/frame/keys.test.ts` esiste già dal compito 14 e due `keys.test.ts` in due
+cartelle sono esattamente la specie di confusione che questo repository paga a rileggere.
+
+**Conseguenza: D65.**
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -2622,6 +2848,12 @@ smentisce — è ciò per cui esiste l'errata.
 | **D60** | ⛔ **la finestra di conferma sta nella CORNICE (`components/Confirm.vue`, montata da `Frame.vue`) e non in un pannello; il modulo Permessi mostra, la cornice chiede** | **P-93**: è modale con la trappola di focus (G20) e compare e sparisce; per la regola di **D50** un pannello che va e viene riscriverebbe la disposizione salvata a ogni permesso. I primitivi sono quelli del cassetto — `Dialog*` di Reka, già verificati per nome — più `DialogDescription`, misurato nello stesso elenco. ⚠️ **Il «no» non manda niente:** il core non tiene niente in sospeso (§5 del 2), quindi rifiutare è locale; Escape e il clic fuori sono un «no». **Costo dichiarato:** la finestra è una funzione dei due store e non ha stato suo, quindi una sonda deve preparare **entrambi** per aprirla |
 | **D61** | ⛔ **lo store del flusso congela un blocco a 4000 caratteri e tiene 20 blocchi — i numeri con cui M4 è stata misurata in SP-8 — e chiude un blocco anche quando la provenienza cambia** | **P-94**: nel 2 il flusso non finisce mai (il rubinetto gira su `SCRIPT` per sempre) e il filo non ha un confine di messaggio, che è del 3; un testo che cresce senza fine si renderebbe intero a ogni token. I due numeri **non sono inventati**: la tessera dello spike li aveva, e M4 — P3 col rendering vero — è stata misurata su quella tessera. La regola sulla provenienza è nuova, perché lo spike aveva una provenienza sola: un pezzo porta **una** etichetta, vera per intero (G13). ⚠️ **Costo dichiarato:** un messaggio lungo del modello si spezza in blocchi a un confine arbitrario; il confine vero arriva con la run |
 | **D62** | ⛔ **il controllo a due stati di Impostazioni è un gruppo di radio NATIVI, e Reka UI entra dove l'HTML non ha un primitivo — la finestra, la trappola di focus — non dove ce l'ha** | la §6a dice *«tastiera ovunque, dai primitivi di Reka UI»*, e Reka esporta `RadioGroupRoot`, `RadioGroupItem`, `RadioGroupIndicator` (misurato il 2026-09-15, **P-93**); ma un `<input type="radio">` ha tastiera, ruolo e stato dal browser, e un primitivo sopra non aggiungerebbe niente che una sonda possa provare — è il quinto criterio, *«chi lo userà, oggi?»*. ⛔ **E il controllo mostra la policy del CORE, non l'ultimo click** (I1): `v-model` su un radio nativo rimette il controllo sul modello a ogni aggiornamento, e la riga *«richiesta inviata»* dice perché non si è mosso. ⚠️ **Costo dichiarato:** due modi di fare la tastiera nella SPA — nativo dove esiste, Reka dove no — e la regola sta scritta nel componente; se il proprietario vuole Reka anche qui, è una riga di `D` in più e nessuna sonda cambia |
+| **D63** | ⛔ **il preset di `eslint-plugin-vue` è `flat/essential`, NON `flat/recommended`, e `--max-warnings 0` non si usa** | **P-100**: `flat/recommended` porta **trentatré** regole di avviso quasi tutte di formattazione — `html-indent`, `html-quotes`, `max-attributes-per-line` — e la riga 8 di `scripts/gate.sh` vieta in testa un rosso che significhi *«questionable style»* (§7.4.3). `--max-warnings 0` sembra la cura e **è il contrario**: promuove a bloccanti proprio quelle. `flat/essential` porta **ottantacinque** regole e **zero** avvisi, misurato: ogni riga stampata è un `error` e ferma il cancello. ⚠️ **Costo dichiarato:** le regole di stile non le guarda nessuno, e la formattazione dei `.vue` resta questione di revisione — che è dove la §7.4.3 la vuole |
+| **D64** | ⛔ **`vue/multi-word-component-names` si spegne, con la ragione scritta nella configurazione** | **P-99**: la regola è `error` in tutti e tre i livelli del preset e **undici** dei dodici `.vue` di questo piano sono a una parola — solo `ViewBar` passa, misurato. ⛔ **E il rinomino non è la cura:** il nome del file di un pannello **è** il `module` di `PANEL_TYPES` (compito 13) ed **è** la chiave `modules.*` della locale (compito 14); rinominare per compiacere un lint muoverebbe due case che col lint non c'entrano. ⚠️ **Costo dichiarato:** un componente nuovo può chiamarsi `Item.vue` e scontrarsi con un componente HTML, che è ciò che la regola difende; qui lo difende il registro, che i nomi li ha già tutti |
+| **D65** | ⛔ **tre regole salgono a `error` nel nostro blocco — `@intlify/vue-i18n/no-raw-text`, `@intlify/vue-i18n/no-missing-keys`, `vue/no-v-html` — e `Chat.vue` ha la sua eccezione come blocco `files`; la PRIMA sonda di `copy.test.ts` muore, la SECONDA resta** | **P-98**: `no-raw-text` è `warn` nel preset e `eslint` esce **0** sui soli avvisi, quindi la rete del 13 sarebbe sostituita da un controllo **vacuo**. **P-105**: quella rete ha **due** sonde e il lint ne copre una — la seconda guarda le diciotto chiavi `modules.*`, che la SPA **costruisce**, e `no-missing-keys` è cieco a una chiave costruita (misurato nelle due direzioni nello stesso file). **P-96**: `vue/no-v-html` non è in `essential`, quindi si accende a mano, e l'eccezione delle due righe di `Chat.vue` — HTML **nostro**, prodotto da testo già escapato (**D54**) — vive in **un** blocco `files` invece che sparsa in due commenti, così si rivede in un posto solo. ⚠️ **`@intlify/vue-i18n/no-v-html` NON serve accenderlo**: sullo stesso `Chat.vue` non scatta, misurato |
+| **D66** | **la CI scrive `package-manager-cache: false` per esteso**, con la ragione accanto | **P-103**: l'ingresso vale `true` per difetto nella v7.0.0, e la cache si accende solo se il manifesto dichiara `packageManager` — che il nostro non dichiara. La decisione 47 della stella polare regge quindi **per un campo assente**, non per una scelta scritta; e il giorno che qualcuno aggiungesse quel campo, la CI cercherebbe il lockfile alla **radice**, dove non c'è, e andrebbe rossa per un motivo che nessuno ha scelto. ⚠️ **Non è la riga che la decisione 47 rimanda** — `cache: npm` **accende**, questa **dichiara spento** — quindi la 47 non è ribaltata: è resa esplicita |
+| **D67** | ⛔ **il compito 15 NON tocca `.gitignore` e NON tocca i lockfile dello spike**, e il suo criterio di chiusura lo **asserisce** invece di fidarsene | **P-102**: le otto righe di `spikes/gui-shell/` sono in `.gitignore` dal commit **`8fc9696`** della parte 1, e i quattro lockfile dello spike sono tracciati — la decisione 49 è **eseguita**. Le due righe di `gui/` sono del compito 11 (**D38**) e `/gui/fake-core/target/` del 12, quindi al 15 di `.gitignore` non resta **niente**. ⛔ **Riscriverle sarebbe un diff che dice il falso**, ed è la quarta domanda del pre-controllo che lo coglie. ⚠️ **Nessun richiamo alla §8:** la sua riga diceva già *«coi nomi al piano quando esistono»*, quindi non è falsificata — è il **taglio per compito** che la assolve, e il taglio è del piano (**D1**) |
+
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -17004,6 +17236,656 @@ git push
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
 - [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -cE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src/**/*.test.ts` → **0**
 - [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA, con i dati** — regola 5 della testa: `cd gui && npm run dev`; nella console del browser `harnessFake.deliverAll()`; poi si vedono la fascia che **sparisce** (è arrivato `Accepted`), il chip «collegato», Stato coi due campi, la policy col budget e la riga «protetto quanto il tuo account di sistema», la riga dell'ultimo verdetto **rifiutata**, Permessi con la richiesta in attesa della fixture, Passi col passo 42 chiuso, la Chat col `ciao` non fidato; in Impostazioni si sceglie **Locale** → la scritta «richiesta inviata» compare e il controllo **resta** su OpenRouter (è il core che decide); `harnessFake.deliver("PermissionRequired")` → la finestra si apre col focus dentro, il tabulatore **non esce**, «Consenti» la chiude, e `harnessFake.sent` porta un `Approve` con `vram-policy` e `local`; con `Ctrl+Alt+→` la tessera attiva si sposta nel gruppo accanto, e su un bordo si divide; i due comandi della linguetta staccano e portano a pagina intera; un link nella Chat mostra l'indirizzo accanto e **non apre nulla**
+
+## Compito 15: il passo web del cancello — `scripts/gate-gui.sh`, la catena `eslint`, e la riga in `gate.sh`
+
+**Files:**
+- Create: `scripts/gate-gui.sh` (**LF**) — il passo web, `set -euo pipefail`, si ferma al primo rosso
+- Create: `gui/eslint.config.js` (**LF**) — il preset `flat/essential` (**D63**), le quattro regole nostre (**D64**, **D65**), l'eccezione di `Chat.vue`
+- Modify: `gui/package.json` (**LF**) — le tre dipendenze della catena e il comando `lint`
+- Modify: `gui/package-lock.json` (**LF**) — rinfrescato **fuori** dal cancello, vincolo globale 6
+- Modify: `gui/src/locales/copy.test.ts` (**LF**) — muore la **prima** sonda, resta la **seconda** (**P-105**, **D65**)
+- Modify: `scripts/gate.sh` (**LF**) — una riga `run`, fra «attributes» e «documentation consistency»
+- Modify: `.github/workflows/quality-gate.yml` (**LF**) — un passo `actions/setup-node` prima di `gate.sh` (**D66**)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**) — un richiamo datato sulla riga dei dedotti della §8 (**P-104**)
+- ⛔ **NON si modifica `.gitignore`**, e non è una dimenticanza: **P-102**, **D67**
+- Read: la §8 del [disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) **per intero**; `scripts/gate.sh` **come il compito 10 lo lascia**; `.github/workflows/quality-gate.yml`; la voce 3 della §9 del 2 e la **decisione 55** della [stella polare](../specs/2026-09-07-direzione-gui-design.md); **P-2**, **P-96**, **P-98**…**P-105**; **D40**, **D51**, **D63**…**D67**
+- ⛔ **NON si legge**: la §1 e la §2 della stella polare — questo compito non disegna niente che si veda; e i compiti 13 e 14, se non per i nomi dei file che il lint guarda
+
+**Interfaces:**
+- Consumes: `gui/package.json` col comando `test` e `build` (compito **11**); `gui/src/locales/copy.test.ts` e `gui/src/panels/registry.ts` (compito **13**); `gui/src/panels/Chat.vue` e le diciotto chiavi `modules.*` di `gui/src/locales/it.json` (compito **14**); `gui/fake-core/Cargo.toml` col proprio `Cargo.lock` (compito **12**); il settimo passo di `scripts/gate.sh` **come il compito 10 lo lascia**
+- Produces, e i compiti 16 e 17 li usano con questi nomi esatti:
+  - `scripts/gate-gui.sh` — un passo, nessun argomento; `cd` alla radice; esce **0** verde, **diverso da zero** al primo rosso. ⛔ **Il compito 16 gli aggiunge `npm audit` in coda**, quindi il file nasce con la forma che regge una riga in più
+  - la riga `run "gui: fake core and SPA" bash scripts/gate-gui.sh` in `scripts/gate.sh`, **fra** «attributes of the constrained crates» e «documentation consistency»
+  - `gui/eslint.config.js` — l'unica casa delle regole; il compito 16 **non** la tocca
+  - il comando `lint` in `gui/package.json`: `eslint src`
+- ⛔ **Che cosa questo compito NON produce, detto perché nessuno lo cerchi:** nessuna riga di catalogo in `docs/porta-di-qualita.md` — la §7.4 è spec, vincolo globale 7, e le sonde si **registrano** al compito **17**; nessuna matrice Windows e nessun `cargo audit`, che sono il **16**; nessuna cache npm (**D66**); nessuna prova capo a capo nel guscio, che la §8 mette *«fuori dal cancello di oggi»*
+
+⛔ **Il cancello resta UNO, ed è la decisione 34 in persona.** Non nasce un secondo lavoro di CI che gira solo
+quando cambia `gui/`: `CLAUDE.md` dice che la porta si lancia con **un comando solo**, e un cambio al kernel che
+rompe le fixture **deve** far girare le prove della SPA che le leggono. Il costo, dichiarato dalla §8: il passo
+web gira anche per un commit di sola documentazione, come già i passi Rust.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+ls scripts/gate-gui.sh gui/eslint.config.js 2>&1
+grep -c 'gate-gui' scripts/gate.sh
+grep -c 'setup-node' .github/workflows/quality-gate.yml
+grep -n 'gui-shell' .gitignore | wc -l
+git ls-files 'spikes/gui-shell/**package-lock.json' 'spikes/gui-shell/**Cargo.lock' | wc -l
+grep -c '"lint"' gui/package.json
+ls gui/src/locales/copy.test.ts gui/src/panels/Chat.vue gui/fake-core/Cargo.toml 2>&1
+git ls-files --eol scripts/gate.sh .github/workflows/quality-gate.yml gui/package.json
+node --version
+```
+
+Atteso: i due file **non esistono**; **zero** per `gate-gui`, `setup-node` e `"lint"`; **otto** righe `gui-shell`
+in `.gitignore` e **quattro** lockfile dello spike tracciati — sono di `8fc9696`, **P-102**, e questo compito non
+li tocca; i tre file dei compiti 12, 13 e 14 **esistono**; `scripts/gate.sh` e il flusso di lavoro **LF**.
+
+⛔ **Se `scripts/gate-gui.sh` esiste già, il compito è eseguito** — quarta domanda del pre-controllo: ci si ferma
+e si riporta. ⚠️ **Se `gui/src/panels/Chat.vue` non esiste, il compito 14 non è eseguito**, e questo compito non
+parte: l'eccezione del Passo 3 nominerebbe un file che non c'è, e il lint non ha modo di dirlo.
+
+- [ ] **Passo 2: le tre dipendenze della catena, rimisurate**
+
+⛔ **Si rimisura prima di scrivere** — vincolo globale 8. Le versioni qui sono di **P-2**, del 2026-09-11,
+rilette il 2026-09-15 scrivendo questo compito: `eslint` **10.10.0**, `eslint-plugin-vue` **10.11.0**,
+`@intlify/eslint-plugin-vue-i18n` **4.5.1**.
+
+```bash
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+for p, v in {"eslint": "10.10.0", "eslint-plugin-vue": "10.11.0",
+             "@intlify/eslint-plugin-vue-i18n": "4.5.1"}.items():
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    m = d["versions"][v]
+    print(f"{p:34} latest={d['dist-tags']['latest']:10} pinned={v:9} {d['time'][v][:10]} "
+          f"license={m.get('license')} engines={m.get('engines')}")
+EOF
+```
+
+⛔ **Una major nuova non si prende** («novità non è maturità»); una minor o patch solo se l'appuntata non si
+installa, con voce d'errata.
+
+⚠️ **E la riga `engines.node` NON cambia**, ma va guardata: `eslint` 10.10.0 dichiara
+`engines.node` `^20.19.0 || ^22.13.0 || >=24` — misurato il 2026-09-15 nel `node_modules` dello scratchpad — che è
+**più largo** di quello di **D37**, `^22.22.2 || ^24.15.0 || >=26.0.0`. Se una delle tre fosse più **stretta**, la
+riga di `engines.node` cambierebbe ed è **casa unica** (decisione 46), non una riga per pacchetto.
+
+In `gui/package.json` le `devDependencies` guadagnano:
+
+```json
+    "@intlify/eslint-plugin-vue-i18n": "4.5.1",
+    "eslint": "10.10.0",
+    "eslint-plugin-vue": "10.11.0"
+```
+
+e gli `scripts` guadagnano — ⛔ **la cartella, non un elenco di file**, e il perché è **P-101**:
+
+```json
+    "lint": "eslint src"
+```
+
+⚠️ **Nessun `@typescript-eslint/parser`, e non è una dimenticanza:** è un peer **opzionale** di
+`eslint-plugin-vue` (`peerDependenciesMeta` dice `{"optional":true}`, misurato il 2026-09-15) e i `.ts` questa
+catena **non li guarda affatto** — li guarda `vue-tsc` dentro `npm run build`, che è il livello 1 del mondo web
+(§8). Una dipendenza in meno, e **P-101** è la misura.
+
+Poi, **fuori dal cancello** e prima del commit:
+
+```bash
+cd gui && npm install --no-audit --no-fund; echo "EXIT=$?"; cd ..
+git status --porcelain gui/package.json gui/package-lock.json
+```
+
+⛔ **`npm install` e non `npm ci`:** il lockfile è un **ingresso** del cancello, quindi si rinfresca fuori e si
+committa **insieme** al manifesto — vincolo globale 6, e il gemello del `cargo build` senza `--locked`.
+
+⚠️ **npm tira dentro da sé i peer NON opzionali** — `vue-eslint-parser`, `jsonc-eslint-parser`,
+`yaml-eslint-parser` — che finiscono nel `package-lock.json` e **non** nel manifesto. `npm ci` li rimette
+identici, quindi il vincolo globale 8 regge sul lockfile, com'è per il `Cargo.lock`. Il comando che lo mostra:
+
+```bash
+cd gui && node -e "
+for (const p of ['vue-eslint-parser', 'jsonc-eslint-parser', 'yaml-eslint-parser'])
+  console.log(p, require('./node_modules/' + p + '/package.json').version);
+"; cd ..
+```
+
+- [ ] **Passo 3: `gui/eslint.config.js` — il preset che NON stampa avvisi, e le quattro regole nostre**
+
+`gui/eslint.config.js`, **LF**, nuovo. ⛔ **Estensione `.js` e non `.mjs`:** `gui/package.json` porta
+`"type": "module"` dal compito 11, quindi un `.js` **è** un modulo ES, ed `eslint` lo trova per nome senza
+`--config` — misurato il 2026-09-15 in un pacchetto `"type": "module"`, nelle due direzioni.
+
+```js
+import i18n from "@intlify/eslint-plugin-vue-i18n";
+import vue from "eslint-plugin-vue";
+
+/**
+ * ⛔ `flat/essential` AND NOT `flat/recommended`, AND `--max-warnings 0` IS NOT USED.
+ *
+ * `flat/recommended` carries 33 warn-level rules that are almost all FORMATTING -- `html-indent`,
+ * `html-quotes`, `max-attributes-per-line` -- and line 8 of `scripts/gate.sh` forbids, at the top of
+ * the gate, a red that means "questionable style" (§7.4.3 of the compendium). `--max-warnings 0`
+ * looks like the cure and is the opposite: it would promote exactly those to blocking.
+ * `flat/essential` carries 85 rules and ZERO warnings, so every line this step prints is an `error`
+ * and every `error` stops the gate. The command that re-measures both numbers lives in P-100.
+ */
+export default [
+  ...vue.configs["flat/essential"],
+  ...i18n.configs["flat/base"],
+  {
+    name: "harness/settings",
+    settings: { "vue-i18n": { localeDir: "./src/locales/*.json" } },
+  },
+  {
+    name: "harness/rules",
+    rules: {
+      /**
+       * ⛔ OFF, AND RENAMING IS NOT THE CURE. The file name of a panel IS the `module` of the
+       * `PANEL_TYPES` registry (task 13) and IS the `modules.*` key of the locale (task 14).
+       * Renaming to please a lint would move two houses that have nothing to do with the lint.
+       * Eleven of the twelve `.vue` files here are single-word; only `ViewBar` passes (P-99).
+       */
+      "vue/multi-word-component-names": "off",
+      /**
+       * ⛔ NOT IN `essential`, SO IT IS TURNED ON BY HAND. ADR-0016 cares about what the GUI is
+       * made to render; the one legitimate `v-html` is Chat's, and it has its own block below.
+       */
+      "vue/no-v-html": "error",
+      /**
+       * ⛔ `error` AND NOT THE PRESET'S `warn`, OR THIS CONTROL CANNOT GO RED. Measured: with the
+       * preset's level, `eslint` exits 0 on a template full of raw text (P-98). This rule is what
+       * replaces the FIRST probe of `src/locales/copy.test.ts`; the second one survives, because it
+       * watches keys the SPA BUILDS and no lint can see those (P-105).
+       */
+      "@intlify/vue-i18n/no-raw-text": "error",
+      /**
+       * ⛔ The other half: a key written in a template and missing from `it.json`. Blind to a built
+       * key -- measured, both directions in one file (P-105).
+       */
+      "@intlify/vue-i18n/no-missing-keys": "error",
+    },
+  },
+  {
+    /**
+     * ⛔ THE ONE EXCEPTION, IN ONE PLACE. `Chat.vue` renders HTML WE produced, from text
+     * `renderMarkdown` has already escaped, with links as visible text and images never as `<img>`
+     * (D54). Scoped to the file rather than scattered across two `eslint-disable` comments, so a
+     * reviewer finds every exception by reading this file.
+     */
+    name: "harness/chat-renders-our-own-html",
+    files: ["src/panels/Chat.vue"],
+    rules: { "vue/no-v-html": "off" },
+  },
+];
+```
+
+- [ ] **Passo 4: il lint nelle QUATTRO direzioni, prima di metterlo nel cancello**
+
+⛔ **Un controllo si prova in due direzioni, e qui le direzioni sono quattro perché le regole sono quattro.**
+Ciascuna mutazione si fa **una alla volta**, si misura, e **si revoca** prima della successiva.
+
+```bash
+cd gui
+echo "== verde =="; npx eslint src; echo "EXIT=$?"
+```
+
+Atteso: **nessuna riga** e `EXIT=0`. ⛔ **Se stampa avvisi, il preset è quello sbagliato**: si rilegge **D63**.
+
+```bash
+echo "== 1) testo grezzo in un template =="
+cp src/frame/Band.vue /tmp/Band.bak
+python - <<'EOF'
+import io
+p = "src/frame/Band.vue"
+b = io.open(p, encoding="utf-8", newline="").read()
+io.open(p, "w", encoding="utf-8", newline="").write(b.replace("<template>", "<template>\n  <div>riprova piu tardi</div>", 1))
+EOF
+npx eslint src; echo "EXIT=$?"
+cp /tmp/Band.bak src/frame/Band.vue
+
+echo "== 2) una chiave che non sta in it.json =="
+cp src/panels/Status.vue /tmp/Status.bak
+python - <<'EOF'
+import io
+p = "src/panels/Status.vue"
+b = io.open(p, encoding="utf-8", newline="").read()
+io.open(p, "w", encoding="utf-8", newline="").write(b.replace("<template>", '<template>\n  <div>{{ $t("modules.inventato") }}</div>', 1))
+EOF
+npx eslint src; echo "EXIT=$?"
+cp /tmp/Status.bak src/panels/Status.vue
+
+echo "== 3) v-html in un pannello che NON e' Chat.vue =="
+python - <<'EOF'
+import io
+p = "src/panels/Status.vue"
+b = io.open(p, encoding="utf-8", newline="").read()
+io.open(p, "w", encoding="utf-8", newline="").write(b.replace("<template>", '<template>\n  <div v-html="\'<p>a</p>\'" />', 1))
+EOF
+npx eslint src; echo "EXIT=$?"
+cp /tmp/Status.bak src/panels/Status.vue
+
+echo "== 4) e la CONTRO-prova dell'eccezione: Chat.vue com'e', senza toccarlo =="
+npx eslint src/panels/Chat.vue; echo "EXIT=$?"
+cd ..
+git diff --stat gui/src
+```
+
+Atteso, misurato il 2026-09-15 su una riproduzione della stessa configurazione:
+
+| | La mutazione | L'uscita |
+|---|---|---|
+| 1 | testo grezzo nel template | `error  raw text 'riprova piu tardi' is used  @intlify/vue-i18n/no-raw-text`, `EXIT=1` |
+| 2 | `$t("modules.inventato")` | `error  'modules.inventato' does not exist in localization message resources`, `EXIT=1` |
+| 3 | `v-html` fuori da `Chat.vue` | `error  'v-html' directive can lead to XSS attack  vue/no-v-html`, `EXIT=1` |
+| 4 | `Chat.vue` **non toccato** | ⚠️ **avviso `File ignored because no matching configuration was supplied`? NO** — il file è `.vue` e la configurazione lo copre: atteso `EXIT=0` senza righe, che è la contro-prova dell'eccezione |
+
+⛔ **E `git diff --stat gui/src` deve essere VUOTO alla fine.** Se non lo è, una mutazione è sopravvissuta: si
+revoca prima di proseguire.
+
+⚠️ **La quarta non è un di più:** senza di essa il blocco `files` sarebbe indistinguibile da un `no-v-html`
+spento per tutti, che è la mutazione che la 3 esiste per cogliere.
+
+- [ ] **Passo 5: la prima sonda di `copy.test.ts` muore, la seconda resta**
+
+⛔ **NON si cancella il file, e questo passo è tutto qui — P-105.** `no-raw-text` sostituisce la **prima** sonda
+e **non** la seconda: la seconda guarda che ogni `module` di `PANEL_TYPES` abbia la sua voce sotto `modules` in
+`it.json`, e quelle chiavi la SPA le **costruisce** — `` i18n.global.t(`modules.${parameters.api.id}`) `` in
+`BigTab.ts`, `` $t(`modules.${type.module}`) `` nel cassetto. Un lint non vede una chiave costruita, misurato.
+
+In `gui/src/locales/copy.test.ts` si toglie il primo `it(...)` **con la funzione `templates` che serviva solo a
+lui**, si tolgono gli `import` che restano senza consumatore, e il commento in testa si riscrive: non è più una
+rete a termine, è il controllo che nessun lint può fare. Il file diventa:
+
+```ts
+import { describe, expect, it } from "vitest";
+
+import it_ from "./it.json";
+
+/**
+ * ⛔ WHAT NO LINT CAN DO, AND THAT IS WHY THIS FILE OUTLIVED THE NET.
+ *
+ * Task 13 wrote two probes here and called the file a net until task 15. Task 15 replaced the
+ * first one -- bare words in a template -- with `@intlify/vue-i18n/no-raw-text` at `error`
+ * (D65). It could NOT replace this one: the SPA BUILDS these keys, `modules.${type.module}` in
+ * the drawer and `modules.${parameters.api.id}` in `BigTab.ts`, and `no-missing-keys` is blind
+ * to a built key -- measured on 2026-09-15, both directions in one file (P-105).
+ *
+ * ⚠️ NOT RENAMED: `src/frame/keys.test.ts` already exists (task 14), and two files of that name
+ * in two folders is exactly the confusion this repository pays for when re-reading.
+ */
+describe("the strings", () => {
+  it("has a name for every module type", async () => {
+    const { PANEL_TYPES } = await import("../panels/registry");
+    const modules = (it_ as { modules?: Record<string, string> }).modules ?? {};
+    for (const type of PANEL_TYPES) expect(Object.keys(modules), type.module).toContain(type.module);
+  });
+});
+```
+
+⛔ **E la sonda che resta si prova nelle due direzioni**, perché toglierle una vicina è il momento in cui una
+sonda diventa vacua senza che nessuno guardi:
+
+```bash
+cd gui
+npx vitest run src/locales/copy.test.ts; echo "verde atteso: EXIT=$?"
+python - <<'EOF'
+import io, json
+p = "src/locales/it.json"
+d = json.load(io.open(p, encoding="utf-8"))
+first = sorted(d["modules"])[0]
+del d["modules"][first]
+io.open(p, "w", encoding="utf-8", newline="").write(json.dumps(d, ensure_ascii=False, indent=2) + "\n")
+print("tolta la chiave", first)
+EOF
+npx vitest run src/locales/copy.test.ts; echo "rosso atteso: EXIT=$?"
+cd .. && git checkout -- gui/src/locales/it.json
+git diff --stat gui/src/locales
+```
+
+Atteso: **`EXIT=0`**, poi **diverso da zero** col nome della chiave tolta nel messaggio, e `git diff` **vuoto**.
+
+- [ ] **Passo 6: `scripts/gate-gui.sh` — il passo web**
+
+`scripts/gate-gui.sh`, **LF**, nuovo, eseguibile.
+
+```bash
+#!/usr/bin/env bash
+# The web step of the quality gate -- §8 of the sub-project 2 design.
+#
+# ⛔ ONE GATE, NOT TWO, and that is decision 34 in person. There is no separate CI job that runs
+# only when `gui/` changes: `CLAUDE.md` says the gate is launched with ONE command, and a kernel
+# change that breaks the fixtures MUST run the SPA probes that read them. The declared cost: this
+# step runs for a documentation-only commit too, exactly as the Rust steps already do.
+#
+# ⛔ `set -e` HERE AND NOT THE FAILURE COUNTER OF `gate.sh`: §8 says this step "stops at the first
+# red". The steps below are a chain -- `npm run build` on a tree `npm ci` failed to install would
+# fail for the wrong reason -- so the first red is the only one worth reading.
+set -euo pipefail
+cd "$(dirname "$0")/.." || exit 1
+
+# ⛔ `--locked` FOR THE SAME REASON AS EVERY OTHER CARGO CALL OF THE GATE: the fake core's
+# `Cargo.lock` is committed (§8, global constraint 7), so it is an INPUT here and not a side effect.
+# ⚠️ AND THE FAKE CORE COMPILES IN ITS OWN `target/`, measured on 2026-09-15 with `cargo metadata`
+# (P-104): it is outside the workspace, so it rebuilds `kernel`, `platform` and `simulator` rather
+# than reusing `<root>/target`. That is the declared cost of §8, not a misconfiguration.
+echo "-------- gui: fake core"
+cargo test --locked --manifest-path gui/fake-core/Cargo.toml
+
+cd gui
+# `npm ci` is the twin of `--locked`: a manifest and a lockfile that disagree are a red, and
+# `engine-strict=true` in `.npmrc` makes a wrong Node a red HERE, with the reason printed.
+echo "-------- gui: install"
+npm ci --no-audit --no-fund
+# `vue-tsc` inside `build` is the level 1 of the web world, the way `rustc` is for the kernel.
+echo "-------- gui: build"
+npm run build
+echo "-------- gui: probes"
+npm test
+# ⛔ LINT LAST, AND THE ORDER IS §8's, NOT OURS. §8 fixed "npm ci, npm run build, npm test"; this
+# step appends rather than reordering an approved section. And the probes carry more meaning than
+# the lint, so they must not sit behind it.
+echo "-------- gui: lint"
+npm run lint
+```
+
+⛔ **`cd gui` senza tornare indietro è deliberato:** lo script finisce lì, e ogni riga dopo il `cd` è dentro
+`gui/`. Il compito **16** aggiunge `npm audit` **in coda**, cioè dentro `gui/`, ed è la forma che regge.
+
+```bash
+chmod +x scripts/gate-gui.sh
+git ls-files --eol scripts/gate-gui.sh 2>/dev/null; tr -cd '\r' < scripts/gate-gui.sh | wc -c
+```
+
+Atteso: **zero** CR — il file nasce **LF**, vincolo globale 4.
+
+- [ ] **Passo 7: il passo web nelle due direzioni, PRIMA di metterlo nel cancello**
+
+⛔ **§8 lo chiede per nome:** *«nelle due direzioni, a mano al piano come per le campagne: un test della SPA reso
+rosso → `GATE RED`»*. Qui si prova lo **script**, non ancora la riga del cancello: il verde, poi un rosso per
+ciascuno dei due mondi che lo script attraversa.
+
+```bash
+echo "== verde =="
+bash scripts/gate-gui.sh; echo "EXIT=$?"
+
+echo "== rosso dal mondo WEB: una sonda della SPA =="
+cp gui/src/locales/copy.test.ts /tmp/copy.bak
+python - <<'EOF'
+import io
+p = "gui/src/locales/copy.test.ts"
+b = io.open(p, encoding="utf-8", newline="").read()
+io.open(p, "w", encoding="utf-8", newline="").write(b.replace("toContain(type.module)", 'toContain("non-esiste")', 1))
+EOF
+bash scripts/gate-gui.sh; echo "EXIT=$?"
+cp /tmp/copy.bak gui/src/locales/copy.test.ts
+
+echo "== rosso dal mondo RUST: una sonda del core finto =="
+python - <<'EOF'
+import io, re
+p = "gui/fake-core/src/main.rs"
+b = io.open(p, encoding="utf-8", newline="").read()
+m = re.search(r"assert_eq!\(", b)
+assert m, "nessun assert_eq! nel finto -- si sceglie un'altra asserzione e si scrive quale"
+io.open(p, "w", encoding="utf-8", newline="").write(b[:m.start()] + "assert_eq!(1, 2); " + b[m.start():])
+EOF
+bash scripts/gate-gui.sh; echo "EXIT=$?"
+git checkout -- gui/fake-core/src/main.rs
+
+echo "== e il verde torna =="
+bash scripts/gate-gui.sh; echo "EXIT=$?"
+git status --porcelain
+```
+
+Atteso: `EXIT=0`, poi **diverso da zero** due volte, poi `EXIT=0`, e `git status --porcelain` **vuoto**.
+
+⛔ **Le due direzioni sono due perché i mondi sono due**, ed è la lezione che il settimo passo di `gate.sh` ha già
+pagato: un passo che si ferma al primo rosso può fermarsi **sempre nello stesso punto** e lasciare muto tutto ciò
+che viene dopo. Il rosso dal mondo Rust prova il primo comando; quello dal mondo web prova che la catena dopo
+il `cd` arriva davvero in fondo.
+
+⚠️ **E il rosso dal mondo Rust è scritto con `git checkout --` e non con una copia**, perché il file è di un'altra
+crate e un `.bak` dimenticato dentro `gui/fake-core/` finirebbe nel commit.
+
+- [ ] **Passo 8: la riga `run` in `scripts/gate.sh`**
+
+⛔ **Il posto è fissato dalla §8 — dopo «attributes of the constrained crates» e prima di «documentation
+consistency»** — e non è arbitrario: il passo web dipende dal codice Rust che i passi sopra hanno appena provato,
+e il controllo dei documenti resta l'ultimo, come oggi.
+
+⚠️ **L'etichetta è in inglese come le altre** (vincolo globale 2), e **l'allineamento della colonna dei comandi si
+misura invece di contarlo a occhio**: in `gate.sh` i comandi cominciano tutti alla stessa colonna.
+
+```bash
+grep -n 'run "' scripts/gate.sh | head
+awk '/^run "/{i = index($0, "\"" ); s = $0; sub(/^run "[^"]*" */, "", s); print index($0, s)": "$0}' scripts/gate.sh
+```
+
+L'inserimento, **per ancora unica** e conservando i fine-riga:
+
+```bash
+python - <<'EOF'
+import io
+p = "scripts/gate.sh"
+text = io.open(p, encoding="utf-8", newline="").read()
+anchor = 'run "documentation consistency"'
+line = 'run "gui: fake core and SPA"              bash scripts/gate-gui.sh\n'
+assert text.count(anchor) == 1, "ancora non unica: %d" % text.count(anchor)
+assert "gate-gui" not in text, "gia' inserita -- il compito e' eseguito"
+io.open(p, "w", encoding="utf-8", newline="").write(text.replace(anchor, line + anchor, 1))
+EOF
+tr -cd '\r' < scripts/gate.sh | wc -c
+git diff --stat scripts/gate.sh
+sed -n '/^run "/,/^$/p' scripts/gate.sh
+```
+
+Atteso: **zero** CR; il diff dice **una riga aggiunta** e non seicento — ⛔ **se è grande, i fine-riga sono stati
+normalizzati:** si revoca e si rifà (vincolo globale 4); e i comandi restano incolonnati.
+
+⚠️ **Se il numero di spazi non allinea**, si corregge **il numero di spazi**, non l'etichetta: l'etichetta è quella
+che la §8 nomina e il compito 16 la cerca per nome.
+
+- [ ] **Passo 9: `actions/setup-node` nella CI**
+
+In `.github/workflows/quality-gate.yml`, **prima** di `- run: bash scripts/gate.sh`:
+
+```yaml
+      # Node for the web step of the gate. `node-version-file` reads `engines.node` from the
+      # manifest, so the version lives in ONE house (decision 46): re-read at the action's own docs
+      # on 2026-09-15, whose example uses an OR range exactly like ours, and the file is resolved
+      # relative to the repository root.
+      #
+      # ⛔ `package-manager-cache: false` IS WRITTEN OUT, and that is the point of the line. The
+      # input defaults to `true` in v7.0.0 and switches caching on only when the manifest declares
+      # `packageManager` or `devEngines.packageManager` -- ours declares neither, so decision 47
+      # ("no npm cache today") would hold BY ACCIDENT. The day somebody adds that field the action
+      # would look for the lockfile at the REPOSITORY ROOT, where ours is not -- ours is
+      # `gui/package-lock.json` -- and CI would go red for a reason nobody chose. This line is not
+      # the one decision 47 defers: `cache: npm` would switch caching ON, this one declares it off.
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: gui/package.json
+          package-manager-cache: false
+```
+
+⛔ **Il blocco si scrive PRIMA in un file dello scratchpad, poi lo si appende**, e non si passa come argomento a
+una shell: porta apici, cancelletti e due punti, e passarlo inline è il modo in cui si perde un carattere senza
+accorgersene. Con l'editor si scrive il blocco qui sopra, **così com'è**, in `/tmp/setup-node.yml` — **LF**, e
+l'ultima riga termina con un a capo — e poi:
+
+```bash
+tr -cd '\r' < /tmp/setup-node.yml | wc -c
+python - <<'EOF'
+import io
+p = ".github/workflows/quality-gate.yml"
+text = io.open(p, encoding="utf-8", newline="").read()
+anchor = "      - run: bash scripts/gate.sh"
+assert text.count(anchor) == 1, "ancora non unica"
+assert "setup-node" not in text, "gia' inserito -- il compito e' eseguito"
+block = io.open("/tmp/setup-node.yml", encoding="utf-8", newline="").read()
+assert block.endswith("\n") and "\r" not in block, "il blocco deve essere LF e finire con un a capo"
+io.open(p, "w", encoding="utf-8", newline="").write(text.replace(anchor, block + anchor, 1))
+EOF
+tr -cd '\r' < .github/workflows/quality-gate.yml | wc -c
+git diff .github/workflows/quality-gate.yml
+```
+
+Atteso: **zero** CR prima e dopo, e il diff dice le sole righe del blocco.
+
+⛔ **`actions/checkout` NON si tocca, e la divergenza si DICHIARA invece di correggerla in silenzio.** Misurato il
+2026-09-15 alla fonte, `actions/checkout` ha pubblicato la **v7.0.1** il 2026-07-20 e il flusso di lavoro usa la
+**v4**; la §8 dice *«`checkout` resta com'è»*, quindi resta — la coerenza col disegno approvato viene prima, e
+aggiornare un'azione è una decisione che non appartiene a questo compito. **Registrata, non presa.** Il comando:
+
+```bash
+python -c "
+import json, urllib.request
+for r in ['actions/setup-node', 'actions/checkout']:
+    req = urllib.request.Request('https://api.github.com/repos/' + r + '/releases/latest', headers={'User-Agent': 'harness-plan'})
+    d = json.load(urllib.request.urlopen(req))
+    print(r, d['tag_name'], d['published_at'][:10])"
+```
+
+- [ ] **Passo 10: il tempo del cancello col passo web, misurato e datato**
+
+⛔ **La §8 lo chiede, sotto *«Ciò che la §8 non fa»*:** *«il tempo del cancello col passo web, che si misura al
+piano e si scrive nel commento di `gate.sh` con la data»*. È la stessa disciplina del settimo passo, che porta il
+proprio tempo con la data e lo **rimisura** invece di riallinearlo a memoria.
+
+```bash
+time bash scripts/gate-gui.sh > /dev/null 2>&1
+time bash scripts/gate.sh > /dev/null 2>&1
+```
+
+Poi il commento **sopra** la riga `run` appena inserita, con i due numeri **del proprio giorno** e non quelli di
+questa riga — che non ne porta, deliberatamente:
+
+```bash
+# ⚠️ THE COST OF THIS STEP, MEASURED AND DATED. `gate-gui.sh` rebuilds `kernel`, `platform` and
+# `simulator` in the fake core's own `target/` -- measured with `cargo metadata` on 2026-09-15: a
+# crate outside the workspace gets its own target directory -- and then runs `npm ci`, the
+# TypeScript build, the probes and the lint. The figure below is an ORDER OF MAGNITUDE, not a
+# constant, and nothing asserts on it: what the gate collects is the printed line, for a reader to
+# compare against the run before.
+#   <data>: `gate-gui.sh` alone <tempo>, the whole gate <tempo> (was <tempo> without this step).
+```
+
+⛔ **`<data>` e i tre `<tempo>` NON sono segnaposto:** sono i valori del giorno dell'esecuzione, e questo passo
+dice di sostituirli. Il terzo — il cancello **senza** il passo web — è il tempo che l'esecutore ha misurato
+**prima** di inserire la riga: si prende al Passo 1 e non si ricostruisce dopo.
+
+⚠️ **Il commento va in inglese** (vincolo globale 2), come tutto `gate.sh`.
+
+- [ ] **Passo 11: il richiamo datato sulla riga dei dedotti della §8**
+
+⛔ **La §8 del 2 dichiara 🔶 dedotte tre cose, e a questo punto sono tutte e tre MISURATE — da tre compiti
+diversi.** Il richiamo si scrive **qui** perché questo è il compito che mette `--manifest-path` nel cancello, cioè
+quello che rende la terza visibile; e nomina dove sono state misurate le altre due invece di prendersene il merito.
+
+```bash
+grep -n 'manifest-path. compili nel' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+git ls-files --eol docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+```
+
+Atteso: **una** riga, e **`i/lf w/lf`** — il disegno del 2 è LF (**P-47**), quindi Python con `newline=""`.
+
+Il testo che si appende **dopo** *«e non riusi quello del workspace.»*, prima di **Assunto:**:
+
+> ✅ **RICHIAMO DEL \<data\>, dal compito 15 del piano della parte 2: le tre deduzioni sono MISURATE, da tre compiti
+> diversi.** `engine-strict` onorato da `npm ci`: **P-64**, nelle tre direzioni, compito 11. Le prove della SPA
+> senza browser: il Passo 3 del compito 13, che ha misurato anche che cosa `jsdom` **non** fa. Il `target/` del
+> finto: **P-104**, `cargo metadata` su due crate già fuori dal workspace il 2026-09-15 — tre cartelle distinte —
+> quindi la doppia compilazione che questa §8 dichiara come costo è **reale**.
+
+⛔ **`<data>` è la data del giorno dell'esecuzione**, e questo passo dice di sostituirla: non è un segnaposto.
+
+⛔ **Il richiamo si scrive PRIMA in `/tmp/richiamo-8.md`**, come il blocco YAML del Passo 9 e per la stessa ragione:
+porta apici, asterischi e trattini bassi. **LF**, su una riga sola, senza il `>` della citazione qui sopra — è un
+capoverso, non un blocco citato. Poi:
+
+```bash
+tr -cd '\r' < /tmp/richiamo-8.md | wc -c
+python - <<'EOF'
+import io
+p = "docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md"
+text = io.open(p, encoding="utf-8", newline="").read()
+anchor = "finto e non riusi quello del workspace. **Assunto:** niente."
+assert text.count(anchor) == 1, "ancora non unica: %d" % text.count(anchor)
+recall = io.open("/tmp/richiamo-8.md", encoding="utf-8", newline="").read().strip()
+assert "\r" not in recall and "<data>" not in recall, "LF, e la data va sostituita prima"
+assert recall not in text, "gia' scritto -- il passo e' eseguito"
+io.open(p, "w", encoding="utf-8", newline="").write(
+    text.replace(anchor, "finto e non riusi quello del workspace. " + recall + " **Assunto:** niente.", 1))
+EOF
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c
+bash scripts/check-docs.sh
+```
+
+Atteso: **zero** CR le due volte, e `OK`. ⚠️ **L'`assert` sul `<data>` è deliberato:** è l'unico modo perché il
+segnaposto non sopravviva al commit, e il Passo 12 lo ricontrolla col `grep`.
+
+- [ ] **Passo 12: il cancello, e il commit**
+
+```bash
+bash scripts/gate.sh 2>&1 | tee /tmp/gate-15.log | tail -3
+grep -c 'gui: fake core and SPA' /tmp/gate-15.log
+bash scripts/check-docs.sh
+git status --porcelain
+git diff --stat -- .gitignore
+```
+
+Atteso: `GATE GREEN`; l'etichetta del passo compare **più di zero** volte nell'uscita — è la seconda metà della
+prova della §8, *«l'etichetta del passo compare nell'uscita del cancello»*; `check-docs.sh` → `OK`; e ⛔ **il diff
+di `.gitignore` VUOTO**, che è **D67** reso una asserzione invece di una promessa.
+
+```bash
+git add scripts/gate-gui.sh scripts/gate.sh gui/eslint.config.js gui/package.json gui/package-lock.json \
+        gui/src/locales/copy.test.ts .github/workflows/quality-gate.yml \
+        docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+git commit -m "gui(compito 15): il passo web del cancello -- gate-gui.sh, la catena eslint col preset essential, e setup-node in CI"
+git push
+```
+
+⛔ **Senza co-autore**, vincolo globale 13.
+
+**Criterio di chiusura del compito 15**
+
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`, e `bash scripts/gate.sh 2>&1 | grep -c 'gui: fake core and SPA'` → **più di zero**
+- [ ] ⛔ **il passo web va rosso dai DUE mondi**, eseguito come al Passo 7, con `git status --porcelain` **vuoto** alla fine
+- [ ] ⛔ **le quattro direzioni del lint** eseguite come al Passo 4, e `git diff --stat gui/src` **vuoto** alla fine
+- [ ] ⛔ **il preset NON stampa avvisi:** `cd gui && npx eslint src` su un albero pulito rende **zero righe** e `EXIT=0`. ⚠️ Se stampa avvisi, è `flat/recommended` invece di `flat/essential` — **D63**
+- [ ] ⛔ **l'eccezione di `Chat.vue` è SCOPED e lo si prova:** `cd gui && npx eslint src/panels/Chat.vue; echo $?` → **0**, e la mutazione 3 del Passo 4 — lo stesso `v-html` in un altro pannello — → **diverso da zero**
+- [ ] ⛔ **la seconda sonda di `copy.test.ts` è VIVA e va rossa:** eseguite le due direzioni del Passo 5, e
+
+  ```bash
+  grep -c '^  it(' gui/src/locales/copy.test.ts
+  grep -c 'templates(' gui/src/locales/copy.test.ts
+  ```
+
+  → **uno** e **zero**: una sonda sola, e la funzione che serviva solo alla prima se n'è andata con lei (**P-105**)
+- [ ] ⛔ **nessuna regola è rimasta ad avviso nel nostro blocco:**
+
+  ```bash
+  cd gui && node --input-type=module -e "
+  const c = (await import('./eslint.config.js')).default;
+  const ours = c.filter((b) => String(b.name).startsWith('harness/'));
+  for (const b of ours) console.log(b.name, JSON.stringify(b.rules ?? {}));
+  "; cd ..
+  ```
+
+  Atteso: nessun `\"warn\"` in nessuna delle righe stampate
+- [ ] ⛔ **`.gitignore` NON è stato toccato** — `git diff --stat -- .gitignore` vuoto, e `grep -c 'gui-shell' .gitignore` **invariato** rispetto al Passo 1 (**P-102**, **D67**)
+- [ ] ⛔ **la CI dichiara la cache spenta:** `grep -c 'package-manager-cache: false' .github/workflows/quality-gate.yml` → **1**, e `grep -c 'cache: npm' …` → **0** (**D66**)
+- [ ] `grep -c 'node-version-file: gui/package.json' .github/workflows/quality-gate.yml` → **1**, e `grep -c 'engines' gui/package.json` → **1**: la versione di Node resta in **una** casa (decisione 46)
+- [ ] ⛔ **il tempo del cancello è scritto e datato**, e i tre `<tempo>` del Passo 10 sono numeri veri: `grep -c '<tempo>\|<data>' scripts/gate.sh` → **0**
+- [ ] ⛔ **il richiamo alla §8 è scritto e la data è vera:** `grep -c '<data>' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **0**, e `grep -c 'RICHIAMO DEL' …` → **più di zero**
+- [ ] `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
+- [ ] ⛔ **i fine-riga sono invariati:** `git ls-files --eol scripts/gate.sh .github/workflows/quality-gate.yml gui/package.json docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` uguale al Passo 1, e `tr -cd '\r' < scripts/gate-gui.sh | wc -c` → **0**
+- [ ] ⛔ **nessuna dipendenza Rust nuova:** `bash scripts/gate-deps.sh` verde, e `git diff --stat -- Cargo.lock Cargo.toml crates/` **vuoto** — questo compito non tocca il workspace
 
 ## Come si riprende — il diario di questo piano, coi comandi
 

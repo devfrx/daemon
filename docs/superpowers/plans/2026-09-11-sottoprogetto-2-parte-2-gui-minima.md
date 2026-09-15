@@ -131,7 +131,7 @@ viene ora è la **revisione del piano intero** — l'undicesima chiusura del dia
 | # | Compito | Commit | Stato |
 |---|---|---|---|
 | **1** | il **contatore condiviso**: un tipo nuovo di `kernel`, seminato dal giornale con `replay`, consegnato a chi ne ha bisogno; i richiami datati in `ports/journal.rs` e `ports/ipc.rs` | uno | ⬜ |
-| **2** | il **trasporto `ipc`** in `platform` su `interprocess`, e la **suite di conformità** `ipc_contract.rs` inclusa da `platform` coi bugiardi; ⛔ **più i tre richiami che `ipc` rende falsi** — richiamo del 2026-09-11, **P-23** | uno | ⬜ |
+| **2** | il **trasporto `ipc`** in `platform` su `interprocess`, e la **suite di conformità** `tests/contract/ipc.rs` inclusa da `platform` (⚠️ **sul solo trasporto vero e senza bugiardi — D82, 2026-09-15**; qui stava «`ipc_contract.rs` … coi bugiardi»); ⛔ **più i tre richiami che `ipc` rende falsi** — richiamo del 2026-09-11, **P-23** — e i cinque nel disegno (**D88**). ⛔ **Il trasporto legge su un thread per client — D78, 2026-09-15** | uno | ⬜ |
 | **3** | lo **schema che cresce**: le varianti nuove di `IpcMessage`, le **fixture** e il **timbro di build**, `ipc_wire.rs` | uno | ⬜ |
 | **4** | la **settima porta**: il tratto `Custody` in `kernel::ports`, la finta di `ports_are_implementable.rs`; i richiami alle cifre in prosa di `ports/mod.rs` con la guardia di `rng` (P-21) e i **tre** nella spec — la riga dell'anello 3, la §2.3 e la §3.1 (P-22). ⛔ **La suite di conformità è al 5 — richiamo del 2026-09-11, D13** | uno | ⬜ |
 | **5** | le **due implementazioni** della settima porta: `redb` in `platform`, la finta in `simulator`, **e la suite di conformità che le confronta** — arrivata qui dalla riga 4 col richiamo del 2026-09-11 (**D13**): una suite ne vuole due, e al 4 ce n'erano zero | uno | ⬜ |
@@ -3194,7 +3194,7 @@ righe che lo **toccano** sono segnate.
 
 **Interfaces:**
 - Consumes: `kernel::ports::journal::{Journal, JournalError, StepId}` e `StepId::get()`; `simulator::journal::MemoryJournal` nel banco (`simulator` è già una **dev-dependency** di `kernel`, con la sua giustificazione nel manifesto)
-- Produces, e i compiti 2, 7, 9 e 12 li usano con questi nomi esatti:
+- Produces, e i compiti 2, 7, 9, 10 e 12 li usano con questi nomi esatti:
   - `kernel::numbering::Progressive` — `Debug + Clone + Copy + PartialEq + Eq`
   - `Progressive::starting_at(first: u64) -> Progressive` (`const fn`)
   - `Progressive::take(&mut self) -> u64`
@@ -3279,7 +3279,7 @@ fn a_reopened_journal_never_hands_back_a_number_it_already_holds() {
     }
 
     let mut after_restart = seeded_from(&journal).expect("replay");
-    let written: alloc_vec_of_steps = journal
+    let written: Vec<u64> = journal
         .replay()
         .expect("replay")
         .iter()
@@ -3293,15 +3293,14 @@ fn a_reopened_journal_never_hands_back_a_number_it_already_holds() {
         );
     }
 }
-
-#[allow(non_camel_case_types)]
-type alloc_vec_of_steps = std::vec::Vec<u64>;
 ```
 
-⚠️ **L'alias in coda esiste per una ragione:** un banco di integrazione è una crate a sé e **ha** `std`;
-il `Vec` di `alloc` che `kernel` usa non si nomina da qui senza un `extern crate alloc`. L'alias dice
-che è una scelta e non una distrazione. ⛔ **Se l'implementatore preferisce `Vec<u64>` nudo, va bene
-uguale**: è un banco, non il kernel — ma allora si toglie anche l'alias, e non si lasciano tutti e due.
+⚠️ **`Vec<u64>` nudo, e nessun alias:** un banco di integrazione è una crate a sé e **ha** `std`, e il `Vec`
+del preludio è lo stesso tipo di quello di `alloc` — quattordici banchi di `kernel` lo nominano nudo e nessuno
+scrive `extern crate alloc`. ✅ **RICHIAMO DEL 2026-09-15, revisione del piano intero (R1-4):** qui stavano un
+alias `alloc_vec_of_steps` con un `#[allow(non_camel_case_types)]` e un capoverso che lo giustificava — un
+`#[allow]` **nuovo**, che il vincolo globale 15 vieta e che `gate-attributes.sh` non avrebbe visto (legge i soli
+`lib.rs`), con una ragione che non reggeva.
 
 - [ ] **Passo 3: il rosso, e che sia quello giusto**
 
@@ -3423,27 +3422,29 @@ Atteso: `test result: ok. 4 passed; 0 failed`.
 scrivono con `replace_unique.py`, che conserva i CRLF.
 
 **(a)** In `crates/kernel/src/ports/journal.rs`, in coda al richiamo del 2026-08-21 sul doc di `StepId`
-— la riga che finisce con *«WHEN the allocator arrives is the owner's: registered, not taken.»*. Si
-aggiunge **dopo** di essa, nello stesso blocco di doc:
+— la riga che finisce con *«allocator arrives is the owner's: registered, not taken.»* (⚠️ la frase va a
+capo dopo «WHEN the»: l'ancora è la **seconda** riga, unica nel file — R1-1). Si aggiunge **dopo** di essa,
+nello stesso blocco di doc:
 
 ```
-/// ⚠️ DATED RECALL, 2026-09-11 -- THE COUNTER EXISTS NOW, AND THE ALLOCATOR STILL DOES NOT.
+/// ⚠️ DATED RECALL, <data> -- THE COUNTER EXISTS NOW, AND THE ALLOCATOR STILL DOES NOT.
 /// `crate::numbering::Progressive` is the core's one progressive counter and
 /// `crate::numbering::seeded_from` seeds it above every step this journal already holds; what
 /// mints identities today is the `ipc` transport, for `ClientId`. THE PORT IS UNCHANGED: no
-/// operation here allocates, and whether one should is open item 6 of §9 of the milestone-2
+/// operation here allocates, and whether one should is open item 6 of §9 of the sub-project 2
 /// design, confirmed A by the owner on 2026-09-09 -- it stays out until a second consumer asks.
 /// The sentence above is therefore still exact, and this line says which half moved.
 ```
 
 **(b)** In `crates/kernel/src/ports/ipc.rs`, in coda al blocco di richiami sul doc di `ClientId` — dopo
-la riga *«two independent counters that look identical, diverging with nothing to report it.»*:
+la riga che finisce con *«with nothing to report it.»* (⚠️ la frase va a capo dopo «diverging»: l'ancora è
+l'ultima riga del blocco dei richiami, unica nel file — R1-2):
 
 ```
-/// ⚠️ DATED RECALL, 2026-09-11 -- THE COUNTER IT GUARDS NOW EXISTS, AND THIS PORT IS STILL NOT
+/// ⚠️ DATED RECALL, <data> -- THE COUNTER IT GUARDS NOW EXISTS, AND THIS PORT IS STILL NOT
 /// IMPLEMENTED HERE. It is `crate::numbering::Progressive`, seeded by
 /// `crate::numbering::seeded_from` above every step in the journal. "Whoever implements this
-/// port draws from THAT counter rather than starting a private one of its own" is no longer a
+/// port in milestone 6 draws from THAT counter rather than starting a private one of its own" is no longer a
 /// promise about a type that does not exist: the type is one line away, and a private `u64`
 /// inside the transport is now a visible choice rather than the only road.
 ```
@@ -3475,7 +3476,7 @@ git push
 #### Criterio di chiusura del compito 1
 
 - [ ] `cargo test --locked -p kernel --test numbering` → **4 passati**
-- [ ] `grep -c 'DATED RECALL, 2026-09-11' crates/kernel/src/ports/journal.rs crates/kernel/src/ports/ipc.rs` → **1** per file
+- [ ] `grep -c 'DATED RECALL, <data>' crates/kernel/src/ports/journal.rs crates/kernel/src/ports/ipc.rs` → **1** per file, con la data del giorno scritta al posto di `<data>` (D75), e `grep -c '<data>'` sugli stessi due file → **0**
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/gate-deps.sh` dentro di esso **verde**: la lista di ADR-0031 **non è cresciuta** (il modulo non ha dipendenze)
 - [ ] i fine-riga rimisurati, `git ls-files --eol` invariato sui tre file toccati
 - [ ] la riga **1** della tabella della posizione a ✅ con la data
@@ -3487,15 +3488,16 @@ git push
 
 **Files:**
 - Modify: `crates/kernel/src/framing.rs` (**CRLF**) — `declared_len` e `take_frame`, **accanto** a `unframe`
-- Modify: `crates/kernel/tests/framing.rs` — le sonde del lettore di flusso, nelle due direzioni
+- Modify: `crates/kernel/tests/framing.rs` (**`i/lf w/crlf`**) — le sonde del lettore di flusso, nelle due direzioni
 - Create: `crates/platform/src/ipc.rs` (**LF**)
-- Create: `crates/kernel/tests/ipc_contract.rs` (**LF**) — la suite, `include!`-abile
+- Create: `crates/kernel/tests/contract/ipc.rs` (**LF**) — la suite, `include!`-abile; ⛔ **sotto `tests/contract/`, che cargo non scopre da sé: NON è un bersaglio di prova di `kernel` — D82, 2026-09-15**
 - Create: `crates/platform/tests/ipc_contract_real.rs` (**LF**)
 - Modify: `crates/platform/src/lib.rs` (**CRLF**) — una riga di modulo, ⛔ **più il richiamo datato che P-25 impone**: il doc di modulo dice *«Today they are `Journal`, `Reactor` and `Rng`»* e da questo compito sono quattro
 - Modify: `crates/platform/Cargo.toml` (**CRLF**) — `interprocess`, con la giustificazione accanto
-- Modify: `Cargo.lock` (**CRLF**) — **nello stesso commit** del manifesto (vincolo 6)
+- Modify: `Cargo.lock` (**`i/lf w/crlf` oggi — e `i/lf w/lf` dopo `cargo build`, che riscrive il lockfile in LF: misurato alla revisione del piano intero, R1-12; l'indice non cambia**) — **nello stesso commit** del manifesto (vincolo 6)
 - Modify: `crates/kernel/src/ports/mod.rs` (**`i/lf w/crlf`**) — ⛔ **due richiami datati, P-23**: la riga della tabella `ipc` (*«Real implementation arrives in»* → non più il Traguardo 6, ma questo compito) e la frase *«The other FOUR … have NO CALLER AT ALL»*, che scende a **tre**
 - Modify: `crates/kernel/tests/ports_are_implementable.rs` (⛔ **`i/crlf w/crlf`**, P-3) — il richiamo sulla riga 1, *«One fake per port declared WITHOUT an implementation»*, falsa per `ipc` da questo compito
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**) — quattro richiami datati nella §3 (`send`: D10, D78; `receive`: D9, D10, D78; la riga «la suite di conformità»: D82; il capoverso 🔶 dedotto: D78) e uno nella §8 (la riga «il trasporto `ipc` in `platform`»: D82) — **D88**, Passo 9-ter
 - Read: la §3 del disegno del 2 per intero; `crates/kernel/src/ports/ipc.rs`; `crates/kernel/src/framing.rs`; `crates/kernel/tests/journal_contract.rs` e `crates/platform/tests/journal_contract_real.rs` **per la forma**
 
 ⛔ **I TRE RICHIAMI SONO ARRIVATI QUI DAL PRE-CONTROLLO DEL COMPITO 4, il 2026-09-11 — P-23.** Questo compito
@@ -3506,14 +3508,14 @@ che è dove sono state trovate: il rimedio sta dove nasce la causa, non dove si 
 
 **Interfaces:**
 - Consumes: `kernel::ports::ipc::{Ipc, ClientId, IpcError}`; `kernel::numbering::Progressive` dal compito 1
-- Produces, e i compiti 7, 9 e 12 li usano con questi nomi esatti:
+- Produces, e i compiti 9 e 12 li usano con questi nomi esatti (⚠️ il 7 non consuma nulla di qui — il suo banco monta una finta, R1-11 — e `declared_len` ha un chiamante solo, il trasporto stesso):
   - `kernel::framing::declared_len(bytes: &[u8]) -> Option<usize>`
   - `kernel::framing::take_frame(bytes: &[u8]) -> Option<(&[u8], usize)>`
   - `platform::ipc::LocalSocketIpc`
   - `LocalSocketIpc::bound(name: &str, numbers: Progressive, max_body: usize) -> std::io::Result<LocalSocketIpc>`
   - `impl kernel::ports::ipc::Ipc for LocalSocketIpc`
 
-⛔ **`ipc_contract.rs` è la casa UNICA delle asserzioni**, come `journal_contract.rs`: `platform` lo
+⛔ **`tests/contract/ipc.rs` è la casa UNICA delle asserzioni**, come `journal_contract.rs`: `platform` lo
 espande con `include!`, quindi **commenti normali e non `//!`** (un attributo interno non è ammesso in
 posizione di item — è scritto in testa a `journal_contract.rs`).
 
@@ -3538,9 +3540,18 @@ le varianti del modo non bloccante»):
 | Cosa | Dove | Che cosa dice |
 |---|---|---|
 | `ListenerOptions::nonblocking(mode)` | `listener/options.rs:91` | costruttore, prima di `create_sync()` |
-| `ListenerNonblockingMode` | `listener/trait.rs:67` | quattro varianti: `Neither`, `Accept`, `Stream`, `Both` — **`Both`** è quella che serve |
+| `ListenerNonblockingMode` | `listener/trait.rs:67` | quattro varianti: `Neither`, `Accept`, `Stream`, `Both` — **`Accept`** è quella che serve: listener non bloccante, flussi **bloccanti** (⚠️ qui stava `Both`, corretto il 2026-09-15 per **D78**) |
 | `Listener::accept()` | `listener/trait.rs:36` | `io::Result<Self::Stream>`; in modo `Accept` o `Both` rende **`ErrorKind::WouldBlock`** se nessuno sta collegandosi |
-| `Stream::set_nonblocking(bool)` | `stream/trait.rs:44` | il flusso da solo |
+| `Stream::set_nonblocking(bool)` | `stream/trait.rs:44` | il flusso da solo — ⛔ **non si chiama** (D78) |
+
+✅ **RICHIAMO DEL 2026-09-15, dalla revisione del piano intero (R1-7, D78): la tabella resta vera riga per riga, ma LEGGERLA NON BASTAVA.**
+Il modello di questo compito, eseguito da fuori su Windows 11, ha reso **quattro sonde rosse su nove**: `receive`
+rispondeva `Disconnected` a un pari **vivo**. Con `PIPE_NOWAIT` una `read` che non trova dati fallisce con
+`ERROR_NO_DATA` (232), che `std` classifica `BrokenPipe`, e `interprocess::os::windows::misc::downgrade_eof`
+traduce ogni `BrokenPipe` in `Ok(0)`: pari muto e pari sparito sono **indistinguibili**. `accept` non bloccante
+invece risponde `WouldBlock`, misurato. La forma è **D78** — `ListenerNonblockingMode::Accept`, flussi bloccanti,
+un thread lettore per client su un `try_clone` del flusso, un canale `mpsc` che `receive` svuota senza bloccare —
+ed è il *«primo test rosso del piano»* che il 🔶 dedotto della §3 aspettava: il Passo 9-ter lo scrive nel disegno.
 
 ⛔ **E una trappola di Windows, letta nello stesso doc di `accept`**, che nessuno dei due disegni
 riporta: *«neglecting to call this periodically may result in new clients being unable to connect»* —
@@ -3694,12 +3705,13 @@ resta rosso.
 
 - [ ] **Passo 5: la suite di conformità**
 
-`crates/kernel/tests/ipc_contract.rs`, **LF**, nuovo. ⛔ **Commenti normali, non `//!`.**
+`crates/kernel/tests/contract/ipc.rs`, **LF**, nuovo — ⛔ **nella cartella `contract/` sotto `tests/`, che cargo non scopre: non è un bersaglio di `kernel` (D82)**. ⛔ **Commenti normali, non `//!`.**
 
 ```rust
-// THE CONFORMANCE SUITE OF THE `ipc` PORT (§3 of the milestone-2 design). It runs against every
-// implementation of the port, and what it is worth is that the fakes and the real transport
-// answer the SAME contract.
+// THE CONFORMANCE SUITE OF THE `ipc` PORT (§3 of the sub-project 2 design). ⛔ IT IS EXPANDED AGAINST
+// THE REAL TRANSPORT ONLY (D82): every promise worth holding here needs a peer that writes bytes,
+// and the two fakes of this port pass bytes verbatim and frame nothing -- expanded on them the
+// suite would be comparing itself. No liar either: one expansion has nothing to disagree with.
 //
 // ⛔ REGULAR COMMENTS AND NOT `//!`, BECAUSE THIS FILE IS `include!`d.
 // `crates/platform/tests/ipc_contract_real.rs` expands it IN ITEM POSITION, and an inner
@@ -3712,6 +3724,10 @@ resta rosso.
 // against a fake that has no stream, and asserting them here would be a suite comparing itself.
 // They live in `crates/platform/tests/ipc_contract_real.rs` beside the `include!`, which is
 // where `journal_contract_real.rs` puts its own.
+//
+// ⛔ THIS FILE IS NOT A TEST TARGET. It lives under `tests/contract/`, which cargo does not
+// auto-discover, so `kernel` neither compiles it alone nor warns about an unused macro (D82) --
+// `journal_contract.rs` next door IS a target only because it also holds a test of its own.
 
 /// What every implementation must answer. The macro takes a constructor so each crate hands
 /// over its own.
@@ -3781,7 +3797,7 @@ fn build() -> LocalSocketIpc {
         .expect("the listener binds")
 }
 
-include!("../../kernel/tests/ipc_contract.rs");
+include!("../../kernel/tests/contract/ipc.rs");
 
 ipc_contract_suite!(build);
 
@@ -3916,8 +3932,12 @@ fn a_body_over_the_cap_is_malformed_and_the_client_stays() {
 fn a_peer_that_goes_away_is_disconnected_and_leaves_the_table() {
     let name = socket_name_for_line(line!());
     let mut ipc = LocalSocketIpc::bound(&name, Progressive::starting_at(0), CAP).expect("binds");
-    let peer = a_peer_that_writes(name, Vec::new(), 0);
+    let peer = a_peer_that_writes(name, Vec::new(), 200);
     let client = accept_one(&mut ipc);
+    // ⛔ THE BASELINE FIRST: alive and silent is `Ok(None)`, NOT gone. Without this line the
+    // assertion below would be green on a transport that cannot tell the two apart -- which is
+    // exactly what a nonblocking read did on Windows (D78).
+    assert_eq!(ipc.receive(client), Ok(None), "a live peer that has written nothing is not gone");
     peer.join().expect("the peer ends");
 
     let seen = loop {
@@ -3931,6 +3951,33 @@ fn a_peer_that_goes_away_is_disconnected_and_leaves_the_table() {
         ipc.receive(client),
         Err(IpcError::Disconnected),
         "and it STAYS gone: the client left the table, it was not merely reported once"
+    );
+}
+
+#[test]
+fn a_send_to_a_peer_that_left_is_disconnected_and_drops_the_client() {
+    // ⛔ THE SECOND DIRECTION OF THE `send` ROW OF §3: a peer seen leaving THROUGH A WRITE, not
+    // through a read. The write is blocking (D78), so a write after the peer's death fails instead
+    // of pretending; the loop is bounded because the death can take a moment to reach the pipe.
+    let name = socket_name_for_line(line!());
+    let mut ipc = LocalSocketIpc::bound(&name, Progressive::starting_at(0), CAP).expect("binds");
+    let peer = a_peer_that_writes(name, Vec::new(), 0);
+    let client = accept_one(&mut ipc);
+    peer.join().expect("the peer ends");
+
+    let frame = framing::frame(b"anyone there").expect("frame");
+    let started = std::time::Instant::now();
+    let seen = loop {
+        match ipc.send(client, &frame) {
+            Ok(()) if started.elapsed() < std::time::Duration::from_secs(2) => std::thread::yield_now(),
+            other => break other,
+        }
+    };
+    assert_eq!(seen, Err(IpcError::Disconnected), "a write to a peer that left is `Disconnected`");
+    assert_eq!(
+        ipc.receive(client),
+        Err(IpcError::Disconnected),
+        "and the client LEFT THE TABLE on that write"
     );
 }
 ```
@@ -3950,11 +3997,19 @@ Atteso: **non compila** — `E0432: unresolved import platform::ipc`.
 ```rust
 //! The `ipc` port over a local socket: one named pipe on Windows, one unix socket on Linux.
 //!
-//! ⛔ BOTH THE LISTENER AND THE STREAMS ARE NONBLOCKING, and that is `ListenerNonblockingMode::Both`
-//! rather than two calls. Read in `interprocess` 2.4.4 on 2026-09-11: `accept` answers
-//! `ErrorKind::WouldBlock` when nobody is connecting, and a stream in that mode answers the same
-//! when there is nothing to read. The core's activity asks every turn and must block on neither
-//! (§3 and §5 of the milestone-2 design).
+//! ⛔ THE LISTENER IS NONBLOCKING, THE STREAMS ARE NOT, AND EVERY CLIENT GETS A READER THREAD (D78).
+//! `accept` answers `ErrorKind::WouldBlock` when nobody is connecting -- read in `interprocess`
+//! 2.4.4 and measured -- so the core's activity can ask every turn (§3 and §5 of the sub-project 2
+//! design). A NONBLOCKING READ was the first design of this file, and it is unusable on Windows:
+//! MEASURED on 2026-09-15 with the bench next door, four probes red. With `PIPE_NOWAIT` a read that
+//! finds nothing fails with `ERROR_NO_DATA`, which `std` classifies as `BrokenPipe`, and
+//! `interprocess::os::windows::misc::downgrade_eof` turns every `BrokenPipe` into `Ok(0)`: a live
+//! peer that is silent and a peer that is gone answer the SAME thing. So the stream stays
+//! blocking; on `accept` a `try_clone` of it goes to a thread that reads until end of stream and
+//! pushes every chunk into an `std::sync::mpsc` channel, and `receive` drains that channel without
+//! blocking. End of stream is REAL there: the blocking read answers `Ok(0)` only when the peer is
+//! gone, the thread ends, the channel closes, and a closed channel with nothing whole left is
+//! `Disconnected`.
 //!
 //! ⛔ WINDOWS TRAP, READ IN THE DOC OF `Listener::accept` AND NOT DEDUCED: "neglecting to call
 //! this periodically may result in new clients being unable to connect" -- a peer that connects
@@ -3975,28 +4030,62 @@ Atteso: **non compila** — `E0432: unresolved import platform::ipc`.
 //! message ends and the next begins, which is the one thing a byte stream does not carry and the
 //! two `Vec<Vec<u8>>` fakes of this port get for free.
 //!
+//! ⛔ `send` IS BLOCKING, AND THAT IS A DECLARED LIMIT RATHER THAN AN OVERSIGHT: a gui that stops
+//! reading fills the pipe, and the next `send` stalls the core's activity until it reads again.
+//! In sub-project 2 the gui is 0..1 and reads every message it is sent (§6a); whether a per-client
+//! outgoing queue is worth its state is a MEASUREMENT for sub-project 3, not a guess here. What a
+//! stall does NOT do is corrupt the stream: `write_all` writes the whole frame or fails, and a
+//! failure drops the client -- a length-prefixed stream cannot be resynchronised (D9).
+//!
 //! ⛔ A `Vec` AND NOT A `HashMap` for the client table, the reckoning gotcha #12 records for the
-//! kernel: the table holds ONE client in milestone 2 (the gui is 0..1, ADR-0004), and a map
+//! kernel: the table holds ONE client in sub-project 2 (the gui is 0..1, ADR-0004), and a map
 //! would buy nothing while introducing an iteration order.
 
-use std::io::{ErrorKind, Read, Write};
+use std::io::{Read, Write};
+use std::sync::mpsc::{self, Receiver, Sender, TryRecvError};
+use std::thread;
 
 use interprocess::local_socket::{
     prelude::*, GenericNamespaced, Listener, ListenerNonblockingMode, ListenerOptions, Stream,
 };
+use interprocess::TryClone;
 use kernel::framing;
 use kernel::numbering::Progressive;
 use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 
+/// How much a reader thread asks the stream for at a time. NOT a cap: bodies are bounded by the
+/// delivered `max_body`, and a frame longer than this simply arrives in several chunks.
+const CHUNK: usize = 4096;
+
 /// One connected peer, and what has arrived from it so far.
 struct Connected {
     id: ClientId,
+    /// The stream this end WRITES to. Its reading clone lives on the reader thread.
     stream: Stream,
+    /// What the reader thread has read so far, chunk by chunk. When the thread ends the channel
+    /// closes, and that closing is how the peer's death reaches `receive`.
+    from_peer: Receiver<Vec<u8>>,
     /// Bytes received and not yet formed into a whole frame.
     pending: Vec<u8>,
     /// Set once a declared length exceeded the cap. ⛔ IT IS NOT CLEARED: a length-prefixed
     /// stream cannot be resynchronised, so every later `receive` answers the same thing.
     poisoned: bool,
+}
+
+/// Reads `stream` until end of stream or error and hands every chunk to `into`. It ends -- and
+/// closes the channel by dropping `into` -- when the peer is gone, or when nobody listens any more.
+fn read_until_the_end(mut stream: Stream, into: Sender<Vec<u8>>) {
+    let mut chunk = [0_u8; CHUNK];
+    loop {
+        match stream.read(&mut chunk) {
+            Ok(0) | Err(_) => break,
+            Ok(read) => {
+                if into.send(chunk[..read].to_vec()).is_err() {
+                    break;
+                }
+            }
+        }
+    }
 }
 
 /// The real `ipc` transport.
@@ -4020,7 +4109,8 @@ impl LocalSocketIpc {
         let ns = name.to_ns_name::<GenericNamespaced>()?;
         let listener = ListenerOptions::new()
             .name(ns)
-            .nonblocking(ListenerNonblockingMode::Both)
+            // ⛔ `Accept` AND NOT `Both`: the streams stay BLOCKING (D78, module doc).
+            .nonblocking(ListenerNonblockingMode::Accept)
             .create_sync()?;
         Ok(LocalSocketIpc {
             listener,
@@ -4034,6 +4124,8 @@ impl LocalSocketIpc {
         self.clients.iter().position(|held| held.id == client)
     }
 
+    /// Removes the client from the table. The reader thread is not told: it ends by itself when
+    /// the peer's end closes -- which, for a client dropped here, is the case already.
     fn drop_client(&mut self, at: usize) {
         self.clients.remove(at);
     }
@@ -4043,10 +4135,18 @@ impl Ipc for LocalSocketIpc {
     fn accept(&mut self) -> Option<ClientId> {
         match self.listener.accept() {
             Ok(stream) => {
+                // ⚠️ THE CLONE IS TAKEN BEFORE THE ID IS MINTED: a stream that cannot be cloned is
+                // a client that never was, and the counter must not move for it.
+                let Ok(reading) = stream.try_clone() else {
+                    return None;
+                };
                 let id = ClientId::new(self.numbers.take());
+                let (into, from_peer) = mpsc::channel();
+                thread::spawn(move || read_until_the_end(reading, into));
                 self.clients.push(Connected {
                     id,
                     stream,
+                    from_peer,
                     pending: Vec::new(),
                     poisoned: false,
                 });
@@ -4061,14 +4161,9 @@ impl Ipc for LocalSocketIpc {
         let Some(at) = self.position_of(client) else {
             return Err(IpcError::Disconnected);
         };
-        // ⛔ VERBATIM: the message already carries its envelope (see the module doc).
+        // ⛔ VERBATIM, and BLOCKING (module doc): the message already carries its envelope.
         match self.clients[at].stream.write_all(message) {
             Ok(()) => Ok(()),
-            Err(error) if error.kind() == ErrorKind::WouldBlock => {
-                // The pipe is full. Nothing the caller can act on is lost: §6.1.4 has the core
-                // send the changed piece again, and the port has no "try again".
-                Ok(())
-            }
             Err(_) => {
                 self.drop_client(at);
                 Err(IpcError::Disconnected)
@@ -4084,19 +4179,15 @@ impl Ipc for LocalSocketIpc {
             return Err(IpcError::MalformedMessage);
         }
 
-        let mut chunk = [0_u8; 4096];
+        // Drain what the reader thread pushed since the last turn -- WITHOUT blocking.
+        let mut ended = false;
         loop {
-            match self.clients[at].stream.read(&mut chunk) {
-                Ok(0) => {
-                    // End of stream: the peer is gone, and it LEAVES THE TABLE.
-                    self.drop_client(at);
-                    return Err(IpcError::Disconnected);
-                }
-                Ok(read) => self.clients[at].pending.extend_from_slice(&chunk[..read]),
-                Err(error) if error.kind() == ErrorKind::WouldBlock => break,
-                Err(_) => {
-                    self.drop_client(at);
-                    return Err(IpcError::Disconnected);
+            match self.clients[at].from_peer.try_recv() {
+                Ok(chunk) => self.clients[at].pending.extend_from_slice(&chunk),
+                Err(TryRecvError::Empty) => break,
+                Err(TryRecvError::Disconnected) => {
+                    ended = true;
+                    break;
                 }
             }
         }
@@ -4110,31 +4201,38 @@ impl Ipc for LocalSocketIpc {
             }
         }
 
-        let Some((_, consumed)) = framing::take_frame(&self.clients[at].pending) else {
-            return Ok(None);
-        };
-        // ⛔ THE WHOLE FRAME, ENVELOPE INCLUDED, and not the body: `IpcMessage::decode` unframes
-        // what it is given. Handing back the body would make every caller re-frame it.
-        let whole = self.clients[at].pending[..consumed].to_vec();
-        self.clients[at].pending.drain(..consumed);
-        Ok(Some(whole))
+        if let Some((_, consumed)) = framing::take_frame(&self.clients[at].pending) {
+            // ⛔ THE WHOLE FRAME, ENVELOPE INCLUDED, and not the body: `IpcMessage::decode`
+            // unframes what it is given. Handing back the body would make every caller re-frame it.
+            let whole = self.clients[at].pending[..consumed].to_vec();
+            self.clients[at].pending.drain(..consumed);
+            return Ok(Some(whole));
+        }
+        if ended {
+            // ⛔ ORDER MATTERS: a peer that wrote a whole frame and left is heard FIRST, above,
+            // and reported gone only when nothing whole is left. Then it LEAVES THE TABLE.
+            self.drop_client(at);
+            return Err(IpcError::Disconnected);
+        }
+        Ok(None)
     }
 }
 ```
 
 - [ ] **Passo 9: il modulo nella crate, e il verde**
 
-In `crates/platform/src/lib.rs` (**CRLF**), accanto agli altri moduli — l'ordine è di arrivo:
+In `crates/platform/src/lib.rs` (**CRLF**), **dopo `pub mod rng;`** — l'ordine è di arrivo (l'ancora, unica, è quella riga):
 
 ```
 pub mod ipc;
 ```
 
-⛔ **E il doc di modulo sopra, che questo compito rende falso — P-25.** Il richiamo si aggiunge in coda al doc, **senza riscrivere la frase**:
+⛔ **E il doc di modulo sopra, che questo compito rende falso — P-25.** Il richiamo si aggiunge **sotto il capoverso «⛔ RECALL OF 2026-08-28, FINDING AUD-022»** — quello che data la frase — con una riga `//!` vuota prima, e **senza riscrivere la frase** (R1-14: il *Trova* è l'ultima riga di quel capoverso, presa dal file col `grep -n -A6 'FINDING AUD-022'`):
 
 ```rust
-//! ⚠️ DATED RECALL, 2026-09-11 -- "Today they are `Journal`, `Reactor` and `Rng`" IS FALSE FROM THIS TASK:
-//! `ipc::LocalSocketIpc` is the fourth. The `grep` above DOES find it -- `Ipc` is one of the names it
+//!
+//! ⚠️ DATED RECALL, <data> -- THE OPENING SENTENCE, the one that lists `Journal`, `Reactor` and `Rng`, IS
+//! FALSE FROM THIS TASK: `ipc::LocalSocketIpc` is the fourth. The `grep` above DOES find it -- `Ipc` is one of the names it
 //! enumerates -- so the two halves of that sentence now contradict each other, which is why the prose is
 //! dated here rather than left to be believed. The count is deliberately NOT rewritten into the sentence:
 //! the command answers it, and a figure inside prose is gotcha #31.
@@ -4145,37 +4243,95 @@ cargo test --locked -p platform --test ipc_contract_real 2>&1 | tail -12
 cargo test --locked -p kernel --test framing 2>&1 | tail -6
 ```
 
-Atteso: **nove** test verdi nel banco di `platform` (le tre della suite più le sei proprie); il banco
-`framing` del kernel verde con le quattro sonde nuove. ⚠️ `crates/kernel/tests/ipc_contract.rs` **non è
-un banco a sé**: definisce una macro e nessun `#[test]`, quindi `cargo test -p kernel` lo compila e
-riporta zero test — è voluto, e vale la pena scriverlo nel commit perché sembra un errore.
+Atteso: **dieci** test verdi nel banco di `platform` (le tre della suite più le sette proprie); il banco
+`framing` del kernel verde con le quattro sonde nuove. ⚠️ `crates/kernel/tests/contract/ipc.rs` **non è un
+bersaglio** di `kernel`: sta sotto `tests/contract/`, quindi `cargo test -p kernel` non lo compila e non
+avvisa di una macro inutilizzata (D82 — l'avviso `unused macro definition` c'era, misurato alla revisione
+del piano intero, R1-13, e il vincolo globale 15 vieta l'`#[allow]` che l'avrebbe zittito).
+
+- [ ] **Passo 9-bis: i tre richiami di P-23, nei due file di `ports`** — ⛔ **arrivati qui dalla revisione del piano intero (R1-8): il blocco *Files* li prometteva e nessun Passo li scriveva**
+
+Tutti e tre con `replace_unique.py`. I *Trova* sono righe **prese dal file** (`grep -n` prima), non ricopiate da qui.
+
+**(1)** `crates/kernel/src/ports/mod.rs` (`i/lf w/crlf`): la riga della tabella del disegno che comincia con `//! | \`ipc\`` — `grep -n '^//! | \`ipc\`' crates/kernel/src/ports/mod.rs` → **una** riga, con la cella `milestone 6`. *Sostituisci con* la stessa riga in cui la cella diventa:
+
+```
+milestone 6 (the port) · sub-project 2, task 2 (`platform::ipc::LocalSocketIpc`, the real transport)
+```
+
+**(2)** stesso file: la riga che finisce con *«have NO CALLER AT ALL and are here for the reason above.»* (`grep -c -F` → 1). *Sostituisci con* la riga stessa, seguita da:
+
+```
+//! ⚠️ DATED RECALL, <data>, sub-project 2 task 2: `ipc` HAS ITS REAL IMPLEMENTATION NOW --
+//! `platform::ipc::LocalSocketIpc` -- and its first caller arrives with task 7 (`kernel::serving`),
+//! so the FOUR above are THREE from there on. The figure in the sentence is dated here and NOT
+//! realigned (gotcha #31): the command that counts is `grep -rnE "^ *impl Ipc for" crates/`.
+```
+
+**(3)** `crates/kernel/tests/ports_are_implementable.rs` (⛔ **`i/crlf w/crlf`, CRLF anche nell'indice — P-3**): la riga **1**, *«//! One fake per port declared WITHOUT an implementation, and calls that exercise them»* (`head -1`). *Sostituisci con* la riga stessa, seguita da:
+
+```
+//! ⚠️ DATED RECALL, <data>, sub-project 2 task 2: `ipc` HAS an implementation now --
+//! `platform::ipc::LocalSocketIpc` -- so "WITHOUT an implementation" is no longer true of every
+//! fake here. The fakes stay, because a bench of `kernel` cannot open a socket, and the line
+//! above is dated rather than rewritten.
+```
+
+```bash
+grep -c 'DATED RECALL, <data>' crates/kernel/src/ports/mod.rs crates/kernel/tests/ports_are_implementable.rs
+git ls-files --eol crates/kernel/src/ports/mod.rs crates/kernel/tests/ports_are_implementable.rs
+```
+
+Atteso (con la data scritta): **2** e **1**; `i/lf w/crlf` e `i/crlf w/crlf`, invariati.
+
+- [ ] **Passo 9-ter: i cinque richiami nel disegno del 2 — D88**
+
+`docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` è **LF**: Python con `newline=""`, ancora unica asserita, temporaneo e `os.replace` (la forma del Passo 3 del compito 11). ⛔ **Ogni ancora è la riga intera presa dal file col `grep`**, mai ricopiata da qui, e ogni richiamo si **appende in coda alla cella** che lo riceve, su **una** riga.
+
+| Dove (`grep -n -F` sulla frase → una riga) | Che cosa si appende, in coda alla cella |
+|---|---|
+| §3, riga `\| \`send\` \|` — la cella *«incornicia con `kernel::framing::frame` e scrive; …»* | `✅ **RICHIAMO DEL <data>, compito 2 del piano della parte 2 (D10, D78):** il trasporto **non** incornicia — \`IpcMessage::encode\` incornicia già e \`send\` scrive verbatim, **bloccante**, sul flusso` |
+| §3, riga `\| \`receive\` \|` — la cella *«lettura non bloccante nel buffer; …»* | `✅ **RICHIAMO DEL <data>, compito 2 (D9, D10, D78):** rende la **cornice intera**, busta compresa (\`decode\` la sbuccia); \`MalformedMessage\` nasce dal **tetto consegnato** e avvelena il flusso; e la lettura non è non bloccante — un thread lettore per client spinge i byte in un canale, che \`receive\` svuota senza bloccare` — e la **terza** cella della stessa riga, *«un bugiardo per promessa, sulle tre implementazioni»*, riceve ` ⚠️ **D82:** sul solo trasporto vero, senza bugiardi` |
+| §3, riga `\| la suite di conformità \|` | `✅ **RICHIAMO DEL <data>, compito 2 (D82):** vive in \`crates/kernel/tests/contract/ipc.rs\` (non un bersaglio di \`kernel\`), gira sul **solo trasporto vero** e senza bugiardi — ogni sua promessa vuole un pari che scrive byte` |
+| §3, il capoverso che comincia con `🔶 Dedotto: che anche i **flussi** di \`interprocess\` leggano senza bloccare` — l'ancora è la **prima** riga del capoverso, e il richiamo si appende in coda all'**ultima** (*«un passo (il doc vieta solo la nota senza intento).»*) | `✅ **RICHIAMO DEL <data>, compito 2 (D78):** la prima deduzione è **falsificata al primo test rosso**, come previsto — su Windows un flusso non bloccante rende \`Ok(0)\` a pari vivo — e i flussi restano bloccanti, letti da un thread per client; la seconda (la nota dopo l'esito) resta dedotta, e la prova il compito 6` |
+| §8, riga `\| il trasporto \`ipc\` in \`platform\` (§3) \|` | `✅ **RICHIAMO DEL <data>, compito 2 (D82):** la suite è \`crates/kernel/tests/contract/ipc.rs\`, sul solo trasporto vero — dieci sonde, senza bugiardi` |
+
+```bash
+grep -c 'RICHIAMO DEL <data>, compito 2' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c
+```
+
+Atteso (con la data scritta): **5**; niente; **0**.
 
 - [ ] **Passo 10: i fine-riga, il cancello, il commit**
 
 ```bash
-for f in crates/kernel/src/framing.rs crates/kernel/tests/framing.rs crates/platform/src/lib.rs crates/platform/Cargo.toml Cargo.lock; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; printf '   righe='; wc -l < "$f"; done
-git ls-files --eol crates/kernel/src/framing.rs crates/kernel/tests/framing.rs crates/platform/src/lib.rs crates/platform/Cargo.toml Cargo.lock
+for f in crates/kernel/src/framing.rs crates/kernel/tests/framing.rs crates/platform/src/lib.rs crates/platform/Cargo.toml Cargo.lock crates/kernel/src/ports/mod.rs crates/kernel/tests/ports_are_implementable.rs; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; printf '   righe='; wc -l < "$f"; done
+git ls-files --eol crates/kernel/src/framing.rs crates/kernel/tests/framing.rs crates/platform/src/lib.rs crates/platform/Cargo.toml Cargo.lock crates/kernel/src/ports/mod.rs crates/kernel/tests/ports_are_implementable.rs docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 bash scripts/gate.sh 2>&1 | tail -3
 ```
 
-Atteso: CR uguale alle righe sui CRLF e `git ls-files --eol` **invariato**; `GATE GREEN` — ⛔ e
+Atteso: CR uguale alle righe sui CRLF (`ports_are_implementable.rs` resta `i/crlf w/crlf`), il disegno `i/lf w/lf` a CR zero, e `git ls-files --eol` **invariato tranne `Cargo.lock`**, che `cargo build` riscrive in **LF** — `i/lf w/lf`, CR = 0, misurato alla revisione del piano intero (R1-12); l'indice era già LF e il diff porta solo le righe di `interprocess`; `GATE GREEN` — ⛔ e
 `gate-deps.sh` verde dentro di esso: `interprocess` entra in `platform`, che ADR-0031 **non** vincola,
 quindi la lista non cresce. Se diventasse rosso è una voce d'errata, e **non** si aggiunge una riga
 alla lista.
 
 ```bash
-git add crates/kernel/src/framing.rs crates/kernel/tests/framing.rs crates/kernel/tests/ipc_contract.rs crates/platform/src/ipc.rs crates/platform/src/lib.rs crates/platform/tests/ipc_contract_real.rs crates/platform/Cargo.toml Cargo.lock docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
-git commit -m "gui(compito 2): il lettore di flusso take_frame accanto a unframe, e il trasporto ipc in platform su interprocess 2.4.4 non bloccante; la suite di conformita ipc_contract.rs inclusa da platform, col pari su un thread"
+git add crates/kernel/src/framing.rs crates/kernel/tests/framing.rs crates/kernel/tests/contract/ipc.rs crates/platform/src/ipc.rs crates/platform/src/lib.rs crates/platform/tests/ipc_contract_real.rs crates/platform/Cargo.toml Cargo.lock crates/kernel/src/ports/mod.rs crates/kernel/tests/ports_are_implementable.rs docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+git commit -m "gui(compito 2): il lettore di flusso take_frame accanto a unframe, e il trasporto ipc in platform su interprocess 2.4.4 -- listener non bloccante, flussi bloccanti e un thread lettore per client (D78); la suite di conformita in tests/contract/ipc.rs inclusa da platform sul solo trasporto vero (D82); i tre richiami di P-23 e i cinque nel disegno"
 git push
 ```
 
 #### Criterio di chiusura del compito 2
 
-- [ ] `cargo test --locked -p platform --test ipc_contract_real` → **nove** passati, e `receive` rende **la cornice intera** (D10), non il corpo
+- [ ] `cargo test --locked -p platform --test ipc_contract_real` → **dieci** passati, e `receive` rende **la cornice intera** (D10), non il corpo
+- [ ] `grep -c 'DATED RECALL, <data>' crates/kernel/src/ports/mod.rs` → **2**, `… crates/kernel/tests/ports_are_implementable.rs` → **1**, `grep -c 'RICHIAMO DEL <data>, compito 2' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **5** — tutti con la data del giorno scritta (D75) — e `grep -c '<data>'` sui quattro file toccati → **0**
+- [ ] `ls crates/kernel/tests/contract/ipc.rs` esiste e `cargo test --locked -p kernel 2>&1 | grep -c 'unused macro'` → **0** (D82)
 - [ ] `cargo test --locked -p kernel --test framing` → verde, e `a_frame_with_a_tail_is_refused` **ancora presente e verde**: la seconda direzione
 - [ ] `grep -rnE "^ *impl Ipc for" crates/ --include='*.rs'` → **tre**: le due finte e `LocalSocketIpc`
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`, con `Cargo.lock` committato **insieme** al manifesto
-- [ ] i fine-riga rimisurati e `git ls-files --eol` invariato
+- [ ] i fine-riga rimisurati e `git ls-files --eol` invariato — tranne `Cargo.lock`, `i/lf w/lf` (R1-12)
 - [ ] la riga **2** della tabella della posizione a ✅ con la data
 
 ---

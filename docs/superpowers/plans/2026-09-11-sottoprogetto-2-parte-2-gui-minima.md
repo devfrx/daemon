@@ -6785,7 +6785,7 @@ un lettore futuro può verificare che il limite di **P-29** fu misurato e non su
 - Modify: `crates/kernel/src/lib.rs` (**`i/lf w/crlf`**) — `pub mod registry;`
 - Create: `crates/kernel/tests/registry.rs` (**LF**) — le sonde del registro
 - Create: `crates/kernel/tests/frozen/record_v1_invocation.cbor` — ⛔ **il settimo record congelato, TIPATO A MANO**
-- Modify: `crates/kernel/tests/frozen/record_v1.map` — la sezione nuova, **tipata a mano**
+- Modify: `crates/kernel/tests/frozen/record_v1.map` (**`i/lf w/crlf`**) — la sezione nuova, **tipata a mano**
 - Modify: `crates/kernel/tests/frozen_bytes.rs` (**`i/lf w/crlf`**) — `the_frozen_records()` da **sei a sette**, i `..._BYTES` nuovi, il `match kind` di riga 386 (**P-33**), ⛔ **più l'`use`, l'array a mano del `for kind in […]` e il `match detail`** — entrati il 2026-09-15 alla revisione del piano intero, R2-13
 - Modify: `crates/kernel/tests/record_shape.rs` (**`i/lf w/crlf`**) — ⛔ **il `match` esaustivo E l'array a mano** (**P-45**; entrato qui il 2026-09-15 alla revisione del piano intero, R2-12: la lista nominava i due siti di P-33 soli)
 - Modify: `crates/simulator/tests/dst_campaign.rs` (**`i/lf w/crlf`**) — ⛔ **il braccio `panic!` dell'oracolo indipendente** (**P-45**; R2-12)
@@ -7990,13 +7990,13 @@ Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit �
 **Files:**
 - Create: `crates/kernel/src/serving.rs` — **LF**
 - Create: `crates/kernel/tests/serving.rs` — **LF**
-- Modify: `crates/kernel/src/lib.rs` — la riga `pub mod serving;`
-- Modify: `crates/kernel/src/parameters.rs` — il campo `gui_tick`
-- Modify: `crates/kernel/src/executor.rs` — `nap`, la sospensione pubblica
-- Modify: `crates/kernel/src/registry.rs` — **dal compito 6**, `Approval` e `Registry::held` (**P-43**)
-- Modify: `crates/kernel/src/wire/ipc.rs` — **dal compito 3**, `allocated` e `done` (**P-38**, **P-39**)
-- Modify: i **ventitré** file che chiamano `Parameters::new`, i nove `.stderr` che si muovono compresi
-- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF** — **P-47**) — **tre** richiami datati nella §5
+- Modify: `crates/kernel/src/lib.rs` (**`i/lf w/crlf`**) — la riga `pub mod serving;`
+- Modify: `crates/kernel/src/parameters.rs` (**`i/lf w/crlf`**) — il campo `gui_tick`
+- Modify: `crates/kernel/src/executor.rs` (**`i/lf w/crlf`**) — `nap`, la sospensione pubblica
+- ⛔ **Né `crates/kernel/src/registry.rs` né `crates/kernel/src/wire/ipc.rs`** — qui stavano due «Modify» (*«dal compito 6, `Approval` e `Registry::held`»*, *«dal compito 3, `allocated` e `done`»*), e il testo dei compiti 3 e 6 li porta **già**: il 7 non li tocca, e il Passo 4 è il verbale (R3-4, 2026-09-15)
+- Modify: i **ventuno** file con le **cinquanta** chiamate a `Parameters::new` — delle cinquantasette righe del censimento, **sette** sono commenti in sei file e non si toccano (R3-5, misurato il 2026-09-15) — e il **solo** `.stderr` che si muove, `crates/kernel/tests/compile_fail/parameters_have_no_default.stderr`
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF** — **P-47**) — **cinque** richiami datati: tre celle della §5, la riga `Request, Verdict` della §4 (D5, **D88**) e il dedotto della §7 sulla protezione (D22, **D88**)
+- Modify: `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` (**LF**) — il richiamo datato sulla riga 2 della tabella *Stato* (D20) e sul 🔶 dedotto in fondo alle tre sequenze di *«La GUI dentro»* (R3-12, R3-17)
 - Modify: **questo piano**, le righe **7** e **9** della tabella della posizione (**D21**) — ⚠️ **era la riga 8 prima della divisione di D25**
 - Read: la **§5 del 2** per intero; le **tre sequenze** di *«La GUI dentro»* della stella polare; la riga **2** della tabella *Stato* della stella polare; `crates/kernel/src/executor.rs` per intero (`spawn`, `Sleep`, `TaskState`, il giro di `run`); le **tre firme** di `crates/kernel/src/ports/ipc.rs` con i loro doc; `crates/kernel/src/client.rs`; `crates/kernel/src/degradation.rs`; `crates/kernel/src/permission.rs` (`Operation`, `Permission`, `grant`); `crates/kernel/src/arbiter/policy.rs`; il blocco *Interfaces* dei compiti **1**, **2**, **3**, **4**, **5** e **6** per i nomi esatti
 
@@ -8004,7 +8004,7 @@ Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit �
 - Consumes, dal **compito 1**: `kernel::numbering::Progressive`, con `take(&mut self) -> u64`
 - Consumes, dal **compito 3**: `kernel::wire::ipc::{IpcMessage, BuildStamp, build_stamp, Protection, DegradationReport, PolicyReport, PolicyName, Triple, Access, Call, LayoutState, StepSummary}`
 - Consumes, dal **compito 4**: `kernel::ports::custody::{Custody, CustodyKey, CustodyError}`
-- Consumes, dal **compito 6**: `kernel::registry::{Registry, Function, Invoker, InvokeError}`, e i due pezzi che questo compito gli **aggiunge** al passo 4
+- Consumes, dal **compito 6**: `kernel::registry::{Registry, Function, Invoker, InvokeError, Approval}` e `Registry::held` — i due pezzi che il pre-controllo di questo compito ha fatto scrivere **nel 6** (P-43): il Passo 4 ne è il verbale, non li aggiunge (R3-4)
 - Consumes, da oggi: `kernel::arbiter::{Arbiter, MakeRoom, VramPolicy, RemotePolicy, LocalPolicy}`; `kernel::client::ClientGrants`; `kernel::degradation::degradation_now`; `kernel::executor::Sleep`; `kernel::permission::{Operation, Permission}`; `kernel::ports::{ipc::{Ipc, ClientId, IpcError}, journal::{Journal, StepId}, reactor::Reactor}`; `kernel::record::{Detail, EffectClass, Record, RecordKind}`; `kernel::time::{Millis, Monotonic}`
 - Produces, e i compiti **9**, **10** e **12** li usano con questi nomi esatti:
   - `kernel::serving::Core<I: Ipc, J: Journal, C: Custody>`, con `Core::new(ipc: I, journal: J, custody: C, arbiter: Arbiter, steps: Progressive, parameters: Parameters) -> Core<I, J, C>`
@@ -8028,25 +8028,32 @@ del core finto, compito **12**, e *«un elemento d'API senza chiamante in questo
 
 ```bash
 ls crates/kernel/src/serving.rs crates/kernel/tests/serving.rs 2>&1
-grep -rnE '\b(fn|struct|enum|mod) (dispatch|session|serve|serving|listen)' crates/ --include='*.rs'
+grep -rnE '\b(fn|struct|enum|mod) (dispatch|session|serve|serving|listen)\b' crates/ --include='*.rs'
 grep -rc 'Parameters::new' crates/ --include='*.rs' | grep -v ':0'
+grep -rn 'Parameters::new' crates/ --include='*.rs' | grep -cE ':[0-9]+:\s*//'
+grep -l 'Parameters::new' crates/kernel/tests/compile_fail/*.stderr
 ls crates/kernel/tests/compile_fail/*.rs | while read f; do grep -q 'Parameters::new' "$f" && printf '%s\n' "$f"; done
 grep -n 'pub const fn new' crates/kernel/src/parameters.rs
 grep -nE '^(pub )?(struct|fn) (Yield|Suspended)|pub async fn' crates/kernel/src/executor.rs
-grep -n 'pub fn policy\|pub fn allocated\|pub fn set_policy' crates/kernel/src/arbiter/mod.rs
-git ls-files --eol crates/kernel/src/lib.rs crates/kernel/src/parameters.rs crates/kernel/src/executor.rs crates/kernel/src/registry.rs crates/kernel/src/wire/ipc.rs docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+grep -n 'pub \(const \)\?fn policy\|pub fn allocated\|pub fn set_policy' crates/kernel/src/arbiter/mod.rs
+git ls-files --eol crates/kernel/src/lib.rs crates/kernel/src/parameters.rs crates/kernel/src/executor.rs docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md
 ```
 
-Atteso: i due file **non esistono**; l'unico `dispatch` è `pub fn dispatch` di `gateway/mod.rs` (**P-36**);
-i siti di `Parameters::new` sono **cinquantasette** in **ventitré** file e **nove** di quei file stanno in
-`compile_fail/` (**P-37**); `Parameters::new` prende **tre** argomenti; in `executor.rs` **nessun** `async fn`
-e nessun `Yield`; `policy()` rende `&VramPolicy`, `allocated()` rende `Mib`, `set_policy` prende
-`(policy, step, journal)`; `registry.rs` e gli altri `i/lf w/crlf`, tranne i due file nuovi che nascono **LF** e ⚠️ **il disegno del 2,
-che è `i/lf w/lf`** (richiamo del 2026-09-14, **P-47**).
+Atteso: i due file **non esistono**; l'unico `dispatch` è `pub fn dispatch` di `gateway/mod.rs` (**P-36**) — ⚠️ con
+l'alternanza **chiusa da `\b`**: senza, il comando prendeva anche tre aiutanti di banco `dispatch_*` (R3-1);
+le righe con `Parameters::new` sono **cinquantasette** in **ventitré** file, di cui **sette** righe di commento in
+sei file — le **chiamate** sono cinquanta in ventuno file — e **nove** di quei file stanno in `compile_fail/`, **due**
+dei quali lo nominano solo in commento; il solo `.stderr` che lo cita è `parameters_have_no_default.stderr` (**P-37**,
+R3-5); `Parameters::new` prende **tre** argomenti; in `executor.rs` **nessun** `async fn` e nessun `Yield`;
+`policy()` rende `&VramPolicy` — ⚠️ è `pub const fn`, e il pattern senza `\(const \)\?` non la mostrava (R3-2) —
+`allocated()` rende `Mib`, `set_policy` prende `(policy, step, journal)`; `lib.rs`, `parameters.rs` ed `executor.rs`
+`i/lf w/crlf`, i **due disegni** `i/lf w/lf` (richiamo del 2026-09-14, **P-47**), e i due file nuovi nascono **LF**
+(⚠️ qui stava «`registry.rs` e gli altri `i/lf w/crlf`»: il 7 non tocca `registry.rs`, che il 6 crea **LF** — R3-3,
+R3-4).
 ⚠️ **Se una cifra è diversa vale il comando, non questa riga**, ed è una voce d'errata prima di essere un
 rimedio.
 
-- [ ] **Passo 2: il tick nei parametri, e i cinquantasette siti**
+- [ ] **Passo 2: il tick nei parametri, e le cinquanta chiamate**
 
 In `crates/kernel/src/parameters.rs` (**`i/lf w/crlf`**, quindi `replace_unique.py`), l'import in testa:
 
@@ -8098,7 +8105,7 @@ E l'accessore, in coda all'`impl`, **prima** della graffa che lo chiude:
     /// vary in a campaign (gotcha #28).
     ///
     /// ⚠️ AND IT IS WHAT BOUNDS THE COST OF `crate::degradation::degradation_now`, which the
-    /// serving activity re-reads once per turn while a gui is attending (D23 of the milestone 2
+    /// serving activity re-reads once per turn while a gui is attending (D23 of the sub-project 2
     /// part 2 plan). That function declares its own cost -- the whole journal is replayed to
     /// answer one question -- and this value is the only dial over it until the checkpoint
     /// `Journal::replay` names arrives.
@@ -8107,7 +8114,8 @@ E l'accessore, in coda all'`impl`, **prima** della graffa che lo chiude:
     }
 ```
 
-⛔ **Poi i siti, e sono cinquantasette in ventitré file.** Ognuno guadagna un quarto argomento. ⚠️ **Il
+⛔ **Poi le chiamate: cinquanta, in ventuno file** — le altre sette righe del censimento sono commenti, in sei file,
+e non si toccano (R3-5). Ognuna guadagna un quarto argomento. ⚠️ **Il
 valore NON è lo stesso ovunque, e scriverne uno solo sarebbe un default travestito:** ogni banco sceglie il
 proprio, come già fa per `TOTAL_VRAM`, e accanto alla costante va la ragione — è la forma che
 `executor_determinism.rs` usa parola per parola (*«A LITERAL OF THIS BENCH, and it is inert here on
@@ -8125,14 +8133,16 @@ grep -rn 'Parameters::new' crates/ --include='*.rs' | grep -v compile_fail
 ⛔ **Questo passo è il motivo per cui P-37 esiste, e NON si fa in blocco.** Il vincolo **10** di §11 e il
 gotcha **#25** dicono che un `.stderr` si **legge**: una rigenerazione di massa disarma l'oracolo.
 
-Per ciascuno dei nove: si aggiunge il quarto argomento **sulla stessa riga** se la chiamata sta su una riga,
-e si **rimisura** se il `.stderr` è cambiato.
+Dei nove, **sette** portano una chiamata e **due** — `parameters_have_no_default.rs` e `trust_has_no_default.rs` —
+nominano `Parameters::new` **solo in commento**, e non si toccano. Le sette chiamate stanno **su una riga**, e i file lo
+dichiarano (*«THE `Parameters::new` CALL ABOVE RUNS LONG ON PURPOSE»*): il quarto argomento entra sulla stessa riga, e
+**nessun numero di riga si muove** per esse (R3-5). Poi si **rimisura** se un `.stderr` è cambiato.
 
 ```bash
 for f in $(ls crates/kernel/tests/compile_fail/*.rs); do grep -q 'Parameters::new' "$f" || continue; printf '=== %s\n' "$f"; grep -n 'Parameters::new' "$f"; done
 ```
 
-Poi, **una volta sola dopo aver toccato tutti e nove**:
+Poi, **una volta sola dopo aver toccato tutte e sette**:
 
 ```bash
 cargo test --locked -p kernel --test compile_fail 2>&1 | tail -40
@@ -8147,27 +8157,30 @@ git diff --stat -- crates/kernel/tests/compile_fail/
 | `git diff` nomina un `.stderr` **e** il diff sono soli **numeri di riga** | ✅ la chiamata ha aggiunto una riga sopra l'errore atteso. Si accetta il nuovo `.stderr` **dopo averlo letto**, e si scrive nel commit **quale** file e di quante righe |
 | `git diff` nomina un `.stderr` e vi compare **`E0061`** | ⛔ **ROSSO VERO:** quella chiamata non è stata aggiornata. `E0061` è *«this function takes 4 arguments but 3 arguments were supplied»*, che **non è l'errore che quel caso esiste per cogliere** — si corregge la chiamata, non il `.stderr` |
 | `git diff` nomina un `.stderr` e l'errore atteso è **sparito** | ⛔ **ROSSO VERO, e il peggiore:** il caso ha smesso di provare ciò per cui esiste. È una voce d'errata, non un aggiornamento |
+| `git diff` nomina **`parameters_have_no_default.stderr`**, e il diff è la **firma** di `new` che rustc cita | ✅ **ATTESO, e non è nessuna delle quattro righe sopra** (R3-5): la nota di rustc cita la firma di `Parameters::new` **verbatim**, sotto `--> src/parameters.rs` e senza numero di riga, e il Passo 2 la porta su cinque righe. Il file `.rs` lo predice — *«THE ORACLE NEXT DOOR WILL GO `mismatch` THE DAY A SECOND PARAMETER IS ADDED»*. Si rigenera **per la via che quel file detta**: si cancella lo `.stderr` stantio, si rilancia, `diff -u` del vecchio contro quello in `wip/`, si sposta a mano — **mai** `TRYBUILD=overwrite` (gotcha #25); il nuovo `.stderr` si **legge**, e il commit lo nomina |
 
 - [ ] **Passo 4: le correzioni ai compiti 3 e 6 che il pre-controllo impone**
 
-⛔ **Vanno NEI compiti, non nell'errata** — i compiti 3 e 6 sono **scritti e non eseguiti**, ed è la terza
-volta che questo piano lo fa (decisione 15 della terza chiusura). Chi esegue trova i compiti già corretti;
-questo passo esiste perché il **commit** lo dichiari.
+⛔ **VERBALE, NON LAVORO: qui non si tocca nulla** (R3-4, 2026-09-15). Le correzioni sono **nei compiti**, non
+nell'errata — i compiti 3 e 6 sono **scritti e non eseguiti**, ed è la terza volta che questo piano lo fa (decisione 15
+della terza chiusura). Chi esegue trova i compiti già corretti e **non riapre** `wire/ipc.rs` né `registry.rs`; questo
+passo esiste perché il **commit** lo dichiari. ⚠️ Nessun *Trova* qui: il testo sotto è ciò che i compiti 3 e 6 **già
+dettano**, riportato perché si legga in un posto solo.
 
-**Nel compito 3** — `crates/kernel/src/wire/ipc.rs`:
+**Nel compito 3** — `crates/kernel/src/wire/ipc.rs`, che il 3 detta già così:
 
 | Cosa | Da | A | Perché |
 |---|---|---|---|
 | il campo di `PolicyReport` | `pub allocatable: Mib` | `pub allocated: Mib` | **P-38**, **D20**: il nome diceva il contrario del contenuto |
 | il campo di `StepSummary` | `pub outcome: Option<bool>` | `pub done: bool` | **P-39**: `Some(false)` non ha produttore, e una variante sul filo non si ritira mai |
 
-I due doc che li accompagnano si riscrivono così:
+I due doc che li accompagnano, come il 3 li porta:
 
 ```rust
 /// The policy with what the gui shows beside it (G15/G16).
 ///
 /// ⛔ `allocated` IS WHAT THE BOOKS SPEAK FOR, THE TWO PERMANENT QUOTAS INCLUDED, and that is a
-/// decision and not an oversight (D20 of the milestone 2 part 2 plan). ADR-0033 holds those two
+/// decision and not an oversight (D20 of the sub-project 2 part 2 plan). ADR-0033 holds those two
 /// as GRANTS WITH A HOLDER rather than as subtractions -- "the subtraction is not an exemption",
 /// gotcha #4 -- so hiding them from this number would commit at the display layer the very
 /// mistake the arbiter was built to avoid. `total` is the machine, delivered through
@@ -8182,7 +8195,7 @@ pub struct PolicyReport {
 ```
 
 ```rust
-/// One line of the step list: in milestone 2 these are registry invocations.
+/// One line of the step list: in sub-project 2 these are registry invocations.
 ///
 /// ⛔ A SUMMARY AND NOT THE RECORD. The journal's records must EVOLVE (ADR-0036) and this wire
 /// renounces versioning (I4): sending the record itself would tie the two, and a field added to a
@@ -8202,11 +8215,11 @@ pub struct StepSummary {
 }
 ```
 
-⚠️ **E il `stamp_set()` del compito 3 va riletto**, perché costruisce un `PolicyReport` e uno `StepSummary`
-coi nomi vecchi: i due letterali prendono i nomi nuovi, e ⛔ **il valore di `done` resta quello che era**, o
-i byte del timbro cambierebbero per un motivo che non è un cambio di schema.
+⚠️ **E il `stamp_set()` del compito 3 porta GIÀ i nomi nuovi** — misurato alla revisione del piano intero: zero
+`allocatable` e zero `outcome: Option<bool>` nel testo del 3 (R3-4). ⛔ **Il valore di `done` è quello che era**, o i
+byte del timbro cambierebbero per un motivo che non è un cambio di schema.
 
-**Nel compito 6** — `crates/kernel/src/registry.rs`, ed è la cura di **P-43**. Sopra `impl Registry`:
+**Nel compito 6** — `crates/kernel/src/registry.rs`, ed è la cura di **P-43** — il 6 detta già, sopra `impl Registry`:
 
 ```rust
 /// Whether the registry must ASK about the permission, or has just been told.
@@ -8231,9 +8244,8 @@ pub enum Approval {
 }
 ```
 
-`invoke` guadagna l'argomento, e le due righe che cambiano nel corpo:
-
-*Trova* le righe da `        if !permission::is_granted(journal, &function.permission)` fino a `        }`, **intere, prese dal file**, e *Sostituisci con*:
+`invoke` ha l'argomento, e nel corpo il controllo dice (⚠️ qui stava un *Trova* su `if !permission::is_granted(…)`, una
+riga che il file del 6 non ha mai avuto — R3-4):
 
 ```rust
         if approval == Approval::Checked
@@ -8244,7 +8256,7 @@ pub enum Approval {
         }
 ```
 
-e, **subito dopo** la `.note(step, &noted(function, invoker, argument))` col suo `?`:
+e, subito dopo la `.note(step, &noted(function, invoker, argument))` col suo `?`, la concessione:
 
 ```rust
         // ⛔ THE GRANT GOES ON STEP A, BETWEEN THE INVOCATION NOTE AND THE EFFECT -- decision 21
@@ -8257,7 +8269,7 @@ e, **subito dopo** la `.note(step, &noted(function, invoker, argument))` col suo
 ```
 
 ⚠️ **La firma prende `approval: Approval` fra `argument` e `effect`**, e il blocco *Interfaces* del compito 6
-lo dice. E il registro guadagna il suo **unico** accessore di lettura, che ha un chiamante da oggi:
+lo dice. E il registro ha il suo **unico** accessore di lettura, che ha un chiamante da oggi:
 
 ```rust
     /// The function held under this name, if the registry holds one.
@@ -8295,8 +8307,8 @@ workspace**, al rubinetto del core finto. In coda a `crates/kernel/src/executor.
 /// 2026-08-11 audit, and the clearing in `poll_one_turn` is what contains it.
 ///
 /// ⛔ IT IS PUBLIC BECAUSE ACTIVITIES ARE WRITTEN OUTSIDE THIS CRATE TOO. `gui/fake-core` runs
-/// `crate::serving::serve` beside a tap of its own (§7 of the milestone 2 design), and every
-/// bench since milestone 2 has been carrying a private copy of this two-line future.
+/// `crate::serving::serve` beside a tap of its own (§7 of the sub-project 2 design), and every
+/// bench since milestone 2 of sub-project 1 has been carrying a private copy of this two-line future.
 ///
 /// ⚠️ A DEADLINE ALREADY REACHED BEHAVES AS A YIELD, and that is `Sleep::until`'s rule rather than
 /// a second one: the executor promotes the activity and polls it again without touching the clock.
@@ -8336,8 +8348,8 @@ fare al compito 12 (§7 del 2). Un banco dentro `src/` non lo direbbe.
 //! The activity that serves the gui, driven FROM OUTSIDE THE CRATE against an in-memory wire.
 //!
 //! ⛔ WHAT THIS BENCH IS FOR, AND IT IS NOT ONLY THE DISPATCH: it is the first caller to build
-//! `serving::serve` from outside, which is what `gui/fake-core` must do at task 11 (§7 of the
-//! milestone 2 design). A signature that could only be assembled inside `kernel` would not be
+//! `serving::serve` from outside, which is what `gui/fake-core` must do at task 12 (§7 of the
+//! sub-project 2 design). A signature that could only be assembled inside `kernel` would not be
 //! found out any other way.
 //!
 //! ⛔ `Err(RunError::TurnLimitReached)` IS THE EXPECTED ANSWER OF EVERY ROUND. `serve` is a loop
@@ -8347,9 +8359,11 @@ fare al compito 12 (§7 del 2). Un banco dentro `src/` non lo direbbe.
 //! ⚠️ AND THE CLOCK IS SHARED THROUGH `SharedClock` rather than handed out twice, which is the
 //! shape `crates/simulator/tests/arbiter_campaign.rs` already uses: `VirtualReactor` HOLDS the
 //! instant, so two of them would drift and the activity would read an origin the executor had
-//! long left. ⛔ THIS IS THE THIRD COPY OF THAT WRAPPER IN THE REPOSITORY -- declared rather than
-//! discovered (gotcha #49). Where it should live is REGISTERED AND NOT TAKEN: the fourth caller
-//! is task 9's campaign, and moving it into `simulator` is that task's call, with its measure.
+//! long left. ⛔ THIS IS THE SECOND COPY OF THAT WRAPPER IN THE REPOSITORY -- declared rather than
+//! discovered (gotcha #49): the third and fourth arrive with tasks 9 and 10 (D29, D34), the fifth
+//! with task 12 (P-74). Where it should live is DECIDED, by D34: it stays local, because the
+//! daemon refuses to depend on `simulator` and a common home would serve three callers out of
+//! four (P-59).
 
 use core::cell::{Cell, RefCell};
 
@@ -8360,7 +8374,7 @@ use kernel::arbiter::{
 use kernel::executor::{nap, Executor, RunError, Sleep};
 use kernel::numbering::Progressive;
 use kernel::parameters::Parameters;
-use kernel::ports::custody::{Custody, CustodyKey};
+use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
 use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 use kernel::ports::journal::{Journal, StepId};
 use kernel::ports::reactor::Reactor;
@@ -8497,7 +8511,42 @@ impl Reactor for SharedClock<'_> {
     }
 }
 
-type BenchCore<'b> = Core<FakeIpc<'b>, MemoryJournal, MemoryCustody>;
+/// The seventh port of this bench: `MemoryCustody` underneath, plus a tap that makes `keep` refuse.
+///
+/// ⛔ IT EXISTS FOR ONE PROBE, `save_layout_that_the_port_refuses_comes_back_with_the_old_package`:
+/// decision 13 says a failed write comes back as the OLD package, and `MemoryCustody` does not know
+/// how to fail. The tap is a `Cell` so that the `before` closure can arm it through `&C`, which is
+/// all `Core::custody` hands out. Measured at the plan review (R9a-9, 2026-09-15): without it the
+/// second direction of decision 13 was a sentence in a comment and not a probe.
+struct BenchCustody {
+    inner: MemoryCustody,
+    keeps_left: Cell<u32>,
+}
+
+impl BenchCustody {
+    fn new() -> Self {
+        BenchCustody {
+            inner: MemoryCustody::new(),
+            keeps_left: Cell::new(u32::MAX),
+        }
+    }
+}
+
+impl Custody for BenchCustody {
+    fn keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        if self.keeps_left.get() == 0 {
+            return Err(CustodyError::Unavailable);
+        }
+        self.keeps_left.set(self.keeps_left.get() - 1);
+        self.inner.keep(key, bytes)
+    }
+
+    fn retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        self.inner.retrieve(key)
+    }
+}
+
+type BenchCore<'b> = Core<FakeIpc<'b>, MemoryJournal, BenchCustody>;
 
 struct Bench {
     wire: RefCell<Wire>,
@@ -8536,7 +8585,7 @@ impl Bench {
         let mut built = Core::new(
             FakeIpc { wire: &self.wire },
             MemoryJournal::new(),
-            MemoryCustody::new(),
+            BenchCustody::new(),
             Arbiter::new(parameters, VramPolicy::Remote(RemotePolicy)),
             Progressive::starting_at(1),
             parameters,
@@ -8581,7 +8630,7 @@ impl Bench {
 /// A SECOND activity on the same cell: it sleeps one tick, then writes a degraded routing into the
 /// core's journal.
 ///
-/// ⛔ IT IS THE TAP OF `gui/fake-core` IN MINIATURE (§7 of the milestone 2 design, the `degrade`
+/// ⛔ IT IS THE TAP OF `gui/fake-core` IN MINIATURE (§7 of the sub-project 2 design, the `degrade`
 /// word): the write reaches the journal WITHOUT passing through the dispatch, which is the whole
 /// reason D23 re-reads the degradation every turn instead of after its own writes.
 async fn degrade_once<'b>(
@@ -8901,15 +8950,15 @@ fn a_client_that_dies_gives_its_grant_back() {
     let bench = Bench::new();
     bench.wire.borrow_mut().arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
     // ⚠️ IT CONNECTS AND SAYS NOTHING, AND IT IS ALREADY DEAD. That is not a contrived case: it is
-    // `ClientGrants::on_disconnect`'s own words -- "a gui may die before it ever asked, it may die
-    // before it was ever accepted".
+    // `ClientGrants::on_disconnect`'s own words -- "A gui may die before it ever asked — it may die
+    // before it was ever accepted —".
     bench.wire.borrow_mut().arrives(OTHER, &[]);
     bench.wire.borrow_mut().dead(OTHER);
 
     bench.round(
         |core| {
             // ⛔ THE GRANT IS PUT IN BY HAND, AND THE REASON IS D5 ITSELF: nothing in the dispatch
-            // of milestone 2 issues one, because `Request` is not served. The wiring still has to
+            // of sub-project 2 issues one, because `Request` is not served. The wiring still has to
             // be right -- ADR-0033 says the core notices FROM THE IPC DISCONNECTION and
             // reconciles -- and this is the only way to hold it until the 3D pillar brings the
             // writer.
@@ -8977,11 +9026,105 @@ fn save_layout_comes_back_with_what_the_port_holds() {
 
     let heard = bench.heard(GUI);
     // ⛔ DECISION 13: the core sends back WHAT IT HOLDS after every write, never an error variant,
-    // so a failed write comes back as the OLD package and the gui sees it by comparing.
+    // so a failed write comes back as the OLD package and the gui sees it by comparing. The
+    // failed write is `save_layout_that_the_port_refuses_comes_back_with_the_old_package`.
     assert_eq!(
         heard.get(5),
         Some(&IpcMessage::Layout(LayoutState::Package(vec![7, 7, 7]))),
         "and what comes back is what the port holds: {heard:?}"
+    );
+}
+
+#[test]
+fn save_layout_that_the_port_refuses_comes_back_with_the_old_package() {
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(
+        GUI,
+        &[
+            IpcMessage::Hello(build_stamp()),
+            IpcMessage::SaveLayout(vec![7, 7, 7]),
+            IpcMessage::SaveLayout(vec![9, 9, 9]),
+        ],
+    );
+
+    bench.round(
+        // ⛔ THE SECOND DIRECTION OF DECISION 13: one `keep` is allowed, the second is refused.
+        |core| core.custody().keeps_left.set(1),
+        |core| {
+            assert_eq!(
+                core.custody().retrieve(CustodyKey::Layout),
+                Ok(Some(vec![7, 7, 7])),
+                "the refused write must not have reached the port"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    // The core answers with what it HOLDS, both times: no error variant, and the second answer is
+    // the OLD package, which is how the gui learns that the save did not stick.
+    assert_eq!(
+        heard.get(5),
+        Some(&IpcMessage::Layout(LayoutState::Package(vec![7, 7, 7]))),
+        "the first save comes back as itself: {heard:?}"
+    );
+    assert_eq!(
+        heard.get(6),
+        Some(&IpcMessage::Layout(LayoutState::Package(vec![7, 7, 7]))),
+        "the refused save comes back as the OLD package: {heard:?}"
+    );
+    assert_eq!(heard.len(), 7, "and nothing else is said about it: {heard:?}");
+}
+
+#[test]
+fn a_word_the_dispatch_does_not_know_is_refused_without_a_word() {
+    // ⛔ THE THREE SILENT ROADS OF THE DISPATCH, WHICH NO OTHER PROBE HERE WALKS (R3-13 of the plan
+    // review, 2026-09-15): an argument that names no policy, a function nobody registered, and
+    // bytes that are no frame at all. Each is refused WITHOUT A WORD AND WITHOUT A RECORD --
+    // untrusted content informs, it never authorises (ADR-0014) -- and the client is KEPT: a bad
+    // frame is not a dead peer. Without this probe a `policy_named` that fell back to
+    // `Some(remote)` for any unknown text would pass every other probe in this file.
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(
+        GUI,
+        &[
+            IpcMessage::Hello(build_stamp()),
+            IpcMessage::Invoke(Call {
+                function: String::from(POLICY_FUNCTION.name),
+                argument: String::from("gpu"),
+            }),
+            IpcMessage::Invoke(Call {
+                function: String::from("frobnicate"),
+                argument: String::from("local"),
+            }),
+        ],
+    );
+    // Three bytes that are no frame at all, pushed past `arrives` because `arrives` frames.
+    bench.wire.borrow_mut().up.push((GUI, vec![0xff, 0xff, 0xff]));
+
+    bench.round(
+        |_| {},
+        |core| {
+            assert_eq!(
+                core.arbiter().policy().name(),
+                "remote",
+                "a word the dispatch does not know must not move the policy"
+            );
+            assert!(
+                core.journal().replay().expect("the memory journal replays").is_empty(),
+                "and none of the three writes a record"
+            );
+            assert!(
+                core.attending().contains(&GUI),
+                "and the client that said them is still at the table"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    assert_eq!(
+        heard.len(),
+        5,
+        "the welcome, and not one word about any of the three: {heard:?}"
     );
 }
 
@@ -9038,7 +9181,10 @@ fn a_degradation_written_by_a_second_activity_reaches_the_gui() {
 da `a_degradation_written_by_a_second_activity_reaches_the_gui`, dove un prestito trattenuto da `serve`
 attraverso il suo `.await` farebbe **`already borrowed`** nel `borrow_mut` del rubinetto. ⚠️ **Una seconda
 sonda sarebbe la stessa corsa una seconda volta** (gotcha #49), e il modo in cui questa la tiene è scritto
-qui perché non venga «aggiunto» domani.
+qui perché non venga «aggiunto» domani. ⚠️ **E il terzo stato, `LayoutState::Unavailable`** — il braccio
+`Err(CustodyError::Unavailable)` di `layout()` — **non ha una sonda qui**: `BenchCustody` rifiuta `keep`, non
+`retrieve`. Lo esercita il compito **9** con `MaybeCustody`, e la promessa della porta su una scrittura rifiutata —
+che cosa resta custodito — è della suite del compito **5** (R3-14).
 
 Il rosso atteso del passo:
 
@@ -9053,12 +9199,13 @@ Atteso: `error[E0432]: unresolved import`, su `kernel::serving`.
 `crates/kernel/src/serving.rs`, **LF**, nuovo.
 
 ```rust
-//! The activity that serves the gui over the `ipc` port (§5 of the milestone 2 design).
+//! The activity that serves the gui over the `ipc` port (§5 of the sub-project 2 design).
 //!
 //! ⛔ IT LIVES IN `kernel` AND NOT IN `daemon`, and that is what makes it checkable at all. A
 //! dispatch inside a binary is reachable by no integration test -- `daemon`'s own unit module
-//! writes out why -- the DST moves THIS one with `simulator::ipc::DyingGui`, and `gui/fake-core`
-//! runs THIS one on in-memory ports instead of writing a second dispatch of its own (§7). A second
+//! writes out why -- the DST of task 10 drives THIS one over a wire of its own, held outside the
+//! core behind a `RefCell` (D32), and `gui/fake-core` runs THIS one on in-memory ports instead of
+//! writing a second dispatch of its own (§7). A second
 //! copy is green on the day the two drift apart.
 //!
 //! ⛔ NAMED `serving` AND NOT `dispatch`: `crate::gateway::dispatch` already exists and means
@@ -9078,7 +9225,7 @@ Atteso: `error[E0432]: unresolved import`, su `kernel::serving`.
 //!
 //! # What it does NOT do, and each one has its closer
 //!
-//! - ⛔ IT DOES NOT SERVE `IpcMessage::Request` -- D5 of the milestone 2 part 2 plan, argued on the
+//! - ⛔ IT DOES NOT SERVE `IpcMessage::Request` -- D5 of the sub-project 2 part 2 plan, argued on the
 //!   branch itself. Nothing here builds a `ResourceProfile`, so no value the peer chose reaches the
 //!   arbiter at all.
 //! - ⚠️ NOTHING HERE EVER CALLS `ClientGrants::register`, which follows from the line above: with
@@ -9086,7 +9233,7 @@ Atteso: `error[E0432]: unresolved import`, su `kernel::serving`.
 //!   wired anyway, because ADR-0033 says the core notices a dead gui FROM THE IPC DISCONNECTION and
 //!   reconciles; the writer arrives with the 3D pillar, and `tests/serving.rs` holds the wiring
 //!   meanwhile by putting a grant in by hand.
-//! - ⚠️ IT NEVER STOPS. In production the turn limit is `u64::MAX` (task 8); under a finite limit
+//! - ⚠️ IT NEVER STOPS. In production the turn limit is `u64::MAX` (task 9); under a finite limit
 //!   the run ends as `RunError::TurnLimitReached`, which is the expected answer and not a failure.
 
 use alloc::string::String;
@@ -9112,7 +9259,7 @@ use crate::wire::ipc::{
     PolicyReport, Protection, StepSummary, Triple,
 };
 
-/// The ONE function the registry holds in milestone 2: the VRAM policy change.
+/// The ONE function the registry holds in sub-project 2: the VRAM policy change.
 ///
 /// ⛔ IT IS REGISTERED HERE AND NOT IN `crate::registry` -- D16, which is rule 1 of ADR-0038: the
 /// kernel gives the MECHANISM, and WHICH functions exist is brought by whoever uses them. A
@@ -9170,9 +9317,9 @@ pub struct Core<I: Ipc, J: Journal, C: Custody> {
 }
 
 impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
-    /// ⛔ THE REGISTRY IS BUILT AND FILLED HERE, with the one function of milestone 2: D16.
+    /// ⛔ THE REGISTRY IS BUILT AND FILLED HERE, with the one function of sub-project 2: D16.
     /// A caller cannot forget to register it, and a caller cannot register a second one either --
-    /// which is deliberate: the invokers grow (the gesture, the voice), the FUNCTIONS of milestone
+    /// which is deliberate: the invokers grow (the gesture, the voice), the FUNCTIONS of sub-project
     /// 2 do not.
     pub fn new(
         ipc: I,
@@ -9217,7 +9364,7 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
 
     /// The register of who holds what.
     ///
-    /// ⚠️ ITS ONLY CALLER TODAY IS A BENCH, and that is stated rather than hidden: milestone 2
+    /// ⚠️ ITS ONLY CALLER TODAY IS A BENCH, and that is stated rather than hidden: sub-project 2
     /// issues no grant to a client (D5), so `register` has no production writer yet. Removing it
     /// would leave `on_disconnect`'s wiring held by nothing at all.
     pub fn grants(&mut self) -> &mut ClientGrants {
@@ -9242,7 +9389,7 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
 /// The activity: one turn, then a nap of the delivered tick, for ever.
 ///
 /// ⛔ IT POLLS, AND THAT IS NOT A CHOICE: the `reactor` port has no I/O readiness, which §5 of the
-/// milestone 2 design states as the reason for the tick. What IS a choice is the tick's value, and
+/// sub-project 2 design states as the reason for the tick. What IS a choice is the tick's value, and
 /// it is delivered (ADR-0034) rather than picked here.
 pub async fn serve<'a, I, J, C, R>(core: &'a RefCell<Core<I, J, C>>, clock: &'a R, sleep: &'a Sleep)
 where
@@ -9571,7 +9718,7 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
         }
     }
 
-    /// The step list: in milestone 2 these are the registry's invocations.
+    /// The step list: in sub-project 2 these are the registry's invocations.
     ///
     /// ⛔ `None` WHEN THE ARCHIVE CANNOT BE READ, and never a short list. An incomplete list read
     /// as complete is the same silent partial truth `is_granted` and `degradation_now` both refuse
@@ -9661,15 +9808,19 @@ e la lista delle dipendenze **non cresciuta**: `serving` non aggiunge nessuna cr
 
 - [ ] **Passo 8: i richiami datati**
 
-⛔ **Quattro case, e si toccano nello stesso commit** (quinta riga della disciplina dell'audit). Nella §5 del
+⛔ **Due file, e tutti i richiami si toccano nello stesso commit** (quinta riga della disciplina dell'audit). Nel
 [disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) — ⚠️ **`i/lf w/lf`**, non
-`w/crlf` (richiamo del 2026-09-14, **P-47**) — tre celle della tabella «Il daemon che ascolta»:
+`w/crlf` (richiamo del 2026-09-14, **P-47**) — tre celle della tabella «Il daemon che ascolta» della §5, poi la riga
+`Request, Verdict` della §4 e il dedotto della §7 (**D88**: i richiami che una `D` rende dovuti li scrive il compito che
+la esegue):
 
 | Riga | Che cosa il richiamo dice |
 |---|---|
-| `Hello` | ⛔ **RICHIAMO DEL \<data\>, compito 7 del piano della parte 2 (D22):** la protezione **non è consegnata**. `Protection` ha una variante sola, e un parametro che può assumere un valore solo è superficie morta dentro `Parameters` — il doc di `total_vram` lo argomenta — pagata su ogni chiamante. L'attività manda `Protection::AsSystemAccount` e scrive l'**innesco** accanto: il giorno che `Protection` guadagna una seconda variante, il valore diventa consegnato |
+| `Hello` | ⛔ **RICHIAMO DEL \<data\>, compito 7 del piano della parte 2 (D22):** la protezione **non è consegnata**. `Protection` ha una variante sola, e un parametro che può assumere un valore solo è superficie morta dentro `Parameters` — il doc di `total_vram` lo argomenta — pagata su ogni chiamante. L'attività manda `Protection::AsSystemAccount` e scrive l'**innesco** accanto: il giorno che `Protection` guadagna una seconda variante, il valore diventa consegnato. ⚠️ **E il client rifiutato esce SUBITO dalla tabella** (R3-12): il core lo dimentica nello stesso giro in cui gli manda `StaleBuild`, quindi il suo `Disconnected` non arriva a nessuno — e non serve, perché non tiene nulla. La sequenza 1 dice *«non lo ascolta più»*, e questo è il come |
 | `Request` | ⛔ **RICHIAMO DEL \<data\>, compito 7 (D5):** questa riga dice *«`admit` → `Verdict`»*, e il ramo **non chiama `admit`**. Le tre vie sono state esaminate contro il codice (P-1, P-11, P-12) e il perimetro negativo vive sul ramo stesso, in `crates/kernel/src/serving.rs`; la riga 27 delle voci aperte del Traguardo 6 resta aperta **col suo innesco intatto** |
-| il **limite di giri** | ⛔ **RICHIAMO DEL \<data\> (D21):** la riga resta vera e **cambia compito**: `EXECUTOR_TURN_LIMIT` vive in `crates/daemon/src/main.rs`, e la sonda che questa cella detta — *«il grafo con la GUI resta vivo oltre centomila giri»* — vuole il grafo con la GUI, cioè il cablaggio. È il compito **9** |
+| il **limite di giri** | ⛔ **RICHIAMO DEL \<data\>, compito 7 (D21):** la riga resta vera e **cambia compito**: `EXECUTOR_TURN_LIMIT` vive in `crates/daemon/src/main.rs`, e la sonda che questa cella detta — *«il grafo con la GUI resta vivo oltre centomila giri»* — vuole il grafo con la GUI, cioè il cablaggio. È il compito **9** |
+| `Request`, `Verdict` — la riga della **§4**; l'ancora è la riga intera che comincia con `\| \`Request\`, \`Verdict\` \|` | ⛔ **RICHIAMO DEL \<data\>, compito 7 (D5):** *«il daemon risponde»* è falso nel 2 — il ramo `Request` **non è servito** e nessun `Verdict` parte; la risposta *«strada»* del proprietario più sotto si lascia com'è, perché è una risposta e non una riga di disegno (R9a-10) |
+| il dedotto della **§7**; l'ancora è la riga intera che contiene `sia consegnato al finto come al daemon` | ⛔ **RICHIAMO DEL \<data\>, compito 7 (D22):** `Protection` ha una variante sola e **non è consegnata** a nessuno dei due, né al daemon né al finto: il valore lo manda l'attività, con l'innesco scritto accanto (R3-18) |
 
 E la riga **2** della tabella *Stato* della [stella polare](../specs/2026-09-07-direzione-gui-design.md):
 
@@ -9682,18 +9833,28 @@ E la riga **2** della tabella *Stato* della [stella polare](../specs/2026-09-07-
 > l'utente guarda. Se il proprietario vorrà il denominatore netto, i due addendi diventano parametri
 > consegnati.
 
+E il 🔶 dedotto in fondo alle tre sequenze di *«La GUI dentro»* della stessa stella polare — l'ancora è la riga intera
+che contiene `e che il client rifiutato resti nella tabella fino al \`Disconnected\``, e il richiamo si appende in coda a
+quella riga:
+
+> ⛔ **RICHIAMO DEL \<data\>, compito 7 (R3-12):** il client rifiutato **non** resta nella tabella: il core lo dimentica
+> nello stesso giro in cui gli manda `StaleBuild`, il suo `Disconnected` non arriva a nessuno, e non serve — non tiene
+> nulla.
+
 ⚠️ **`\<data\>` è la data del giorno in cui il compito si esegue**, non una data scritta oggi: un testo
 fissato adesso per una sessione futura invecchia.
 
 ✅ **Nella tabella della posizione di QUESTO piano il richiamo di D21 è GIÀ SCRITTO**, alla scrittura del
-compito e non all'esecuzione — è ciò che D13 fece con la riga 4: le righe **7** e **8** portano il richiamo
-del 2026-09-11, e chi esegue non deve toccarle se non per la spunta finale.
+compito e non all'esecuzione — è ciò che D13 fece con la riga 4: le righe **7** e **9** portano il richiamo
+del 2026-09-11 (⚠️ qui stava «7 e 8», il numero di prima di D25 — R3-6), e chi esegue non deve toccarle se non per la
+spunta finale.
 
 - [ ] **Passo 9: il cancello, la posizione, il commit**
 
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `gate-deps.sh` verde e la lista **non cresciuta**;
   `gate-attributes.sh` verde
 - [ ] `bash scripts/check-docs.sh` → `OK`
+- [ ] i richiami: `grep -c 'RICHIAMO DEL <data>, compito 7' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **5** e sulla stella polare → **2** (con la data scritta — D75), e `grep -c '<data>'` sui due disegni → **0**
 - [ ] i fine-riga: i due file nuovi a **zero** CR, e `git ls-files --eol` **invariato** su tutti i modificati
 - [ ] `git diff --stat -- crates/kernel/tests/compile_fail/` riletto, e ciò che è cambiato **nominato nel
   commit** — quale `.stderr`, e perché

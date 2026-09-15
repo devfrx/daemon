@@ -3,7 +3,7 @@
 Fonte: 9 rapporti su 11 (R1 parziale: compiti 1–2; R3 parziale: compito 7; R5 completo: 11–12; R2, R4, R7, R9a, R9b, R10 completi).
 Mancano: compito 13 (R6), compiti 15–17 (R8), compito 3 (R1), compito 8 (R3) — perimetri da rivedere ancora.
 Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stati rimisurati anche da lui.
-**Stato al 2026-09-15 (sessione 13, dopo la dodicesima chiusura):** testa, compiti 1, 2, 4, 5 e 6 applicati (✅); tutto il resto ⬜.
+**Stato al 2026-09-15 (sessione 13, dopo la dodicesima chiusura):** testa, compiti 1, 2, 4, 5, 6 e 7 applicati (✅); tutto il resto ⬜.
 
 ## Le decisioni nuove (righe D da scrivere)
 
@@ -91,28 +91,30 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - R2-6 (D75) `<data>` ✅
 - D76 «sub-project 2 design» nei sei commenti dettati del 6 (cinque più uno maiuscolo) — non era in questa lista: applicata per coerenza col compito 5 (patch_c45.py) ✅
 - Attrezzo: `patch_c6.py` accanto a questo file, modello per i compiti 7–17 (fetta del compito, ancore asserite, scrittura atomica)
+- R10-16 etichetta eol di `crates/kernel/tests/frozen/record_v1.map` in Files — la riga R10-16 nomina anche il 6 e la lista del 6 non la portava: applicata con `patch_c7.py` ✅
 
 ### Compito 7
-- R3-1 alternanza chiusa con `\b` / Atteso 4 righe ⬜
-- R3-2 pattern `pub \(const \)\?fn policy` ⬜
-- R3-3 Atteso `registry.rs` `i/lf w/lf` ⬜
-- R3-4 togliere le due «Modify» (registry.rs, wire/ipc.rs); Passo 4 → verbale «già applicato nei compiti 3 e 6» ⬜
-- R3-5 compile_fail: sette chiamate su una riga; `parameters_have_no_default.stderr` va `mismatch` (atteso), rigenerato per la via del file (mai `TRYBUILD=overwrite`), letto; Passo 2 «cinquanta chiamate in ventuno file» ⬜
-- R3-6 «le righe 7 e 9» ⬜
-- R3-7 «(task 9)» ⬜
-- R3-8 «task 12»; «task 10's campaign, D34 took it» ⬜
-- R3-9 doc: DST del 10 su un filo proprio dietro `RefCell` (D32) ⬜
-- R3-10 «THE SECOND COPY … third and fourth with 9 and 10, fifth with 12» ⬜
-- R3-11 citazione di client.rs con le lineette ⬜
-- R3-12 richiamo D22 e 🔶 dedotto: il rifiutato esce subito dalla tabella ⬜
-- R3-13 undicesima sonda `a_word_the_dispatch_does_not_know_is_refused_without_a_word` ⬜
-- R3-14 riga «NON prova» che nomina il 5 e il 9 ⬜
-- R3-17 Files: stella polare (LF) riga 2 Stato (D20) ⬜
-- R3-18 (D88) richiamo D22 in §7 dedotto ⬜
-- R9a-9 custodia che rifiuta `keep` nel banco + sonda `Layout(Package(primo))` ⬜
-- R9a-10 (D88) richiamo D5 sulla riga `Request, Verdict` della §4 ⬜
-- R10-16 etichette eol (lib.rs, parameters.rs, executor.rs) ⬜
-- D76 «sub-project 2» nei commenti ⬜ · D75 `<data>` ⬜
+- R3-1 alternanza chiusa con `\b` / Atteso 4 righe ✅
+- R3-2 pattern `pub \(const \)\?fn policy` ✅
+- R3-3 Atteso `registry.rs` `i/lf w/lf` — assorbito da R3-4: `registry.rs` esce dal comando `git ls-files --eol` del Passo 1, e l'Atteso lo dice ✅
+- R3-4 togliere le due «Modify» (registry.rs, wire/ipc.rs); Passo 4 → verbale «già applicato nei compiti 3 e 6» ✅
+- R3-5 compile_fail: sette chiamate su una riga; `parameters_have_no_default.stderr` va `mismatch` (atteso), rigenerato per la via del file (mai `TRYBUILD=overwrite`), letto; Passo 2 «cinquanta chiamate in ventuno file» ✅
+- R3-6 «le righe 7 e 9» ✅
+- R3-7 «(task 9)» ✅
+- R3-8 «task 12»; «task 10's campaign, D34 took it» ✅
+- R3-9 doc: DST del 10 su un filo proprio dietro `RefCell` (D32) ✅
+- R3-10 «THE SECOND COPY … third and fourth with 9 and 10, fifth with 12» ✅
+- R3-11 citazione di client.rs con le lineette ✅
+- R3-12 richiamo D22 e 🔶 dedotto: il rifiutato esce subito dalla tabella ✅
+- R3-13 undicesima sonda `a_word_the_dispatch_does_not_know_is_refused_without_a_word` ✅
+- R3-14 riga «NON prova» che nomina il 5 e il 9 ✅
+- R3-17 Files: stella polare (LF) riga 2 Stato (D20) ✅
+- R3-18 (D88) richiamo D22 in §7 dedotto ✅
+- R9a-9 custodia che rifiuta `keep` nel banco + sonda `Layout(Package(primo))` ✅
+- R9a-10 (D88) richiamo D5 sulla riga `Request, Verdict` della §4 ✅
+- R10-16 etichette eol (lib.rs, parameters.rs, executor.rs) ✅
+- D76 «sub-project 2» nei commenti (quattordici posti; «milestone 2 of sub-project 1» e «milestone 6» restano, perché sono Traguardi del SP1) ✅ · D75 `<data>`: il Passo 8 lo portava già; la cella D21 riceve «compito 7» e il Passo 9 il criterio sui richiami ✅
+- Attrezzo: `patch_c7.py` accanto a questo file
 
 ### Compito 8 — NON RIVISTO IN PROFONDITÀ (R3 caduto): resta da fare
 - R10-12 (D77) E nude nella prosa ⬜ · D75/D76 ⬜

@@ -2248,6 +2248,311 @@ tabella non copre ciò che sta in un'altra tabella dello stesso catalogo.**
 **Conseguenza:** richiamo datato nella riga 14 della tabella della posizione; nessuna `D` — i due disegni lo
 dicevano già.
 
+### P-86 — `axe-core` sotto `jsdom` mette `color-contrast` fra gli INCOMPLETI, mai fra le violazioni: il contrasto AA dei token non lo prova, e un token del 13 lo fallisce
+
+⛔ **Domanda 1 — la sonda è vacua, e non si vede leggendo: si vede facendola girare.** La nona chiusura scriveva
+*«il contrasto AA dei token: i valori del `tokens.css` del 13 sono segnaposto dichiarati, e a provarli è
+`axe-core`»*, e il file stesso lo ripete in testa. Misurato il 2026-09-15 con `axe-core` 4.13.0 e `jsdom` 30.0.1 su
+Node `v24.9.0`, in una cartella usa-e-getta, coi globali messi **prima** dell'`import` — com'è sotto `vitest` con
+`environment: "jsdom"`:
+
+```bash
+mkdir -p /tmp/axe-probe && cd /tmp/axe-probe && printf '{"name":"axe-probe","version":"0.0.0","private":true,"type":"module"}\n' > package.json
+npm install axe-core@4.13.0 jsdom@30.0.1 --no-audit --no-fund > /dev/null 2>&1
+cat > probe.mjs <<'EOF'
+import { JSDOM } from "jsdom";
+const dom = new JSDOM(`<!doctype html><html lang="it"><body><main>
+<button id="b">ok</button><img src="x.png">
+<p style="color:#777777;background:#888888">basso contrasto</p><button id="nolabel"></button>
+</main></body></html>`);
+globalThis.window = dom.window; globalThis.document = dom.window.document;
+for (const k of ["Node","NodeList","HTMLElement","Element","getComputedStyle","DOMParser","MutationObserver"]) globalThis[k] = dom.window[k];
+const axe = (await import("axe-core")).default;
+const results = await axe.run(dom.window.document.body);
+console.log("violations:", results.violations.map(v => v.id + "(" + v.nodes.length + ")").join(", "));
+console.log("incomplete:", results.incomplete.map(v => v.id + "(" + v.nodes.length + ")").join(", "));
+EOF
+node probe.mjs
+```
+
+| Che cosa | Esito misurato |
+|---|---|
+| un bottone senza nome, un'immagine senza `alt` | **`violations: button-name(1), image-alt(1)`** — la sonda morde |
+| un paragrafo grigio su grigio, 1,2:1 | **`incomplete: color-contrast(1)`** — non una violazione: `jsdom` non fa layout, e `axe` non sa che sfondo c'è sotto |
+| i globali messi **dopo** l'`import` | `axe` solleva *«Required "window" or "document" globals not defined»*: sotto `vitest` l'ambiente li mette prima, e la prima stesura di questa sonda sbagliava proprio lì |
+
+⛔ **Quindi una sonda `axe` sarebbe VERDE su qualunque palette**, e il verde non direbbe niente del contrasto. La cura
+non è un adattatore: è una sonda **nostra** che legge `tokens.css` e calcola il rapporto WCAG su ogni colore di testo
+sopra ogni superficie — poche righe, deterministiche, senza DOM; `axe` resta per nomi, ruoli, etichette e `alt`, dove
+ha morso.
+
+✅ **E la sonda nostra, lanciata a mano sui valori del 13, trova un rosso:** `--stop` `#e5534b` su `--surface-raised`
+`#1f242d` dà **4,21** — sotto 4,5 — ed è la coppia che il 13 disegna (`.chip[data-phase="stale"]` sulla barra). Le
+altre nove coppie passano, la peggiore è la stessa `--stop` su `--surface`, 4,70. Il comando che lo rifà, e il valore
+più vicino che passa su entrambe le superfici:
+
+```bash
+python - <<'EOF'
+def lum(h):
+    h=h.lstrip('#'); r,g,b=[int(h[i:i+2],16)/255 for i in (0,2,4)]
+    f=lambda c: c/12.92 if c<=0.03928 else ((c+0.055)/1.055)**2.4
+    return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b)
+def ratio(a,b):
+    la,lb=lum(a),lum(b); hi,lo=max(la,lb),min(la,lb); return (hi+0.05)/(lo+0.05)
+T={"ink":"#e6e9ef","ink-dim":"#9aa3b2","surface":"#171a21","surface-raised":"#1f242d","accent":"#6ea8fe","warn":"#f0b429","stop":"#e5534b"}
+for fg in ["ink","ink-dim","accent","warn","stop"]:
+    for bg in ["surface","surface-raised"]:
+        print(fg, "on", bg, round(ratio(T[fg],T[bg]),2))
+for c in ["#e5534b","#ec5f57","#f0665e"]: print(c, round(ratio(c,"#171a21"),2), round(ratio(c,"#1f242d"),2))
+EOF
+```
+
+`#ec5f57` → **5,26** e **4,70**. ⚠️ **Il 13 non è sbagliato per questo:** il suo `tokens.css` dice di sé che i valori
+sono segnaposto e che *«a value that fails is a change to THIS file»* — è la prova che mancava, e la prova arriva col
+compito che la scrive.
+
+**Conseguenza: D53**, il valore nuovo di `--stop` nel compito 14, e il paragrafo in testa a `tokens.css` corretto lì.
+
+### P-87 — «nessun link si apre da solo» copre `<a>`, e la regola `image` di `markdown-it` rende `<img src>`: un'immagine si apre da sola, ed è un canale d'uscita per un testo non fidato
+
+⛔ **Domanda 3 — l'artefatto è sbagliato e compila: si vede scrivendo la regola del renderer da fuori.** La §6a e la
+decisione 51 dicono che i link si rendono *«senza navigare da soli, con una regola del renderer nostra»*, e non
+nominano le immagini. Misurato il 2026-09-15 dentro la 15.0.2 installata in `/tmp/axe-probe`:
+
+```bash
+cd /tmp/axe-probe && npm install markdown-it@15.0.2 --no-audit --no-fund > /dev/null 2>&1
+grep -n 'default_rules.image = ' node_modules/markdown-it/dist/markdown-it.mjs
+grep -n 'BAD_PROTO_RE = \|GOOD_DATA_RE = ' node_modules/markdown-it/dist/markdown-it.mjs
+```
+
+La regola `image` di default rende un `<img>` col `src` del testo, e `GOOD_DATA_RE` lascia passare anche le immagini
+`data:`. ⛔ **Un `<img src>` lo scarica il browser senza che nessuno clicchi:** un modello che scrive
+`![](https://host/x?dati)` fa raggiungere alla GUI un indirizzo scelto da lui, coi dati che vuole nel percorso — che è
+precisamente il canale per cui ADR-0016 mette i canary di esfiltrazione, portato nella GUI. E `html: false` non lo
+ferma: non è HTML del modello, è markdown che il **renderer** trasforma in HTML.
+
+✅ **La cura sono DUE regole nostre, non una:** il link diventa uno `<span>` che **mostra** l'indirizzo e non ha
+`href` — niente da seguire, e l'indirizzo visibile invece che nascosto dietro il testo; l'immagine diventa **testo**,
+l'alt e l'indirizzo, e mai `<img>`. Entrambe stanno in `components/markdown.ts`, con la sonda che prova l'assenza di
+`<a` e di `<img` nell'uscita.
+
+**Conseguenza: D54.**
+
+### P-88 — Il nome della funzione e le due parole dell'argomento sono TRE letterali in due lingue, e nulla li accoppia: un rinomino in Rust e l'`Invoke` della SPA viene rifiutato SENZA UN MESSAGGIO
+
+⛔ **Domanda 5 girata in avanti, sulla specie di D45.** Il compito 7 detta `POLICY_FUNCTION` con `name: "vram-policy"`,
+e il dispaccio confronta l'argomento con `MakeRoom::name()` — `"remote"` e `"local"` nel codice di **oggi**. La SPA
+deve mandare esattamente quelle stringhe, e le fixture non aiutano: portano `arbiter.set_policy` e `local`, il valore
+**arbitrario** dell'insieme canonico. Misurato il 2026-09-15:
+
+```bash
+grep -n 'name: "vram-policy"' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | head -2
+grep -n '"remote"\|"local"' crates/kernel/src/arbiter/policy.rs
+grep -n 'function: String::from("arbiter.set_policy")' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | head -1
+```
+
+⛔ **E il guasto sarebbe MUTO, più che per il nome del canale:** la §5 del 2 dice che *«una funzione non registrata è
+rifiutata senza scrivere nulla»* — nessun messaggio torna alla GUI, quindi il click farebbe **niente**, senza rosso,
+senza riga di giornale, e il revisore nel browser vedrebbe un controllo che non risponde.
+
+✅ **La cura è quella di D45, per la stessa specie:** i tre letterali vivono in **un** file TypeScript
+(`gui/src/panels/functions.ts`) che nomina i due sorgenti Rust, e il criterio di chiusura del 14 li confronta con un
+comando — `grep -o` sui due lati, `diff` vuoto. ⚠️ **Non una riga di catalogo** (vincolo globale 7), e nessun tocco a
+`policy.rs` per un commento: il confronto lo copre.
+
+**Conseguenza: D55.**
+
+### P-89 — La riga 1 della tabella Passi promette per il 2 cinque campi, e `StepSummary` ne porta tre: la §4 del 2 e il compito 3 dicono «intento ed esito», la stella polare non ha ricevuto il richiamo
+
+⛔ **Settima domanda del pre-controllo — due sezioni approvate che si contraddicono senza nominarsi.** Misurato il
+2026-09-15:
+
+| Dove | Che cosa dice |
+|---|---|
+| §1 della stella polare, tabella Passi, riga 1 | *«nel 2 le invocazioni del registro — **funzione, invocatore, argomento, classe dell'effetto, esito**»*, chi: **2** |
+| §4 del 2, riga `Steps` (richiamo del 2026-09-09) | *«la lista dei passi dal giornale: nel 2 le invocazioni del registro **con intento ed esito**»* |
+| il compito 3, `pub struct StepSummary` | `step: u64`, `function: String`, `done: bool` — *«A SUMMARY AND NOT THE RECORD»*, per I4 e ADR-0036 |
+| il compito 7, `step_list` | legge il dettaglio `Invocation` per la funzione, e l'`Outcome` per `done` |
+
+```bash
+grep -n 'pub struct StepSummary' -A 5 docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | head -8
+grep -n 'funzione, invocatore, argomento, classe' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+grep -n 'con intento ed esito' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+```
+
+Il filo ha seguito la §4, che è la più recente; la riga della stella polare è del 2026-09-07 e nessun compito le ha
+scritto il richiamo. ⛔ **E i due campi non sono equivalenti nel merito:** nel 2 l'invocatore è **uno** (la GUI) e la
+classe dell'effetto è **una** (`Idempotent`, l'unica funzione) — mostrarli sarebbe scrivere due costanti; l'argomento
+invece è informativo (`local`, `remote`) ma viaggia nel **payload** sotto `Trust::Untrusted` (D18), e metterlo nel
+riassunto vorrebbe una provenienza sul filo come per `Token`.
+
+⚖️ **Due vie, e la scelta è del proprietario alla prossima rilettura; il piano procede con A, ribaltabile:**
+
+| | La via | Che cosa costa |
+|---|---|---|
+| **A** | il 14 mostra i tre campi e scrive il **richiamo datato** sulla riga 1 della tabella Passi; l'argomento arriverà quando il riassunto crescerà, col timbro | una riga del modulo che dice a parole che cosa manca; il proprietario vede `vram-policy · chiuso` senza `local` |
+| **B** | `StepSummary` cresce di `argument: String` con la sua provenienza, nel compito 3 — non eseguito — e con esso le fixture, il timbro, lo specchio TypeScript dell'11 e `step_list` del 7 | quattro compiti scritti da toccare, e un testo non fidato in più su ogni riga della lista |
+
+**Conseguenza: D56.**
+
+### P-90 — Il revisore del 14 deve GUARDARE con dei dati, e nel browser la finta del 13 non consegna niente: `createFakeBridge` rigioca solo su richiesta, e nessuno glielo chiede
+
+⛔ **Domanda 2 — la sonda manca, e qui la sonda è l'occhio del revisore.** La regola 5 della testa manda il revisore
+dei compiti 13 e 14 nel browser. Misurato il 2026-09-15 sul testo del 13: `main.ts` costruisce `createFakeBridge()`,
+chiama `connection.hello()` e **non chiama mai** `deliver` né `deliverAll` — coerente col suo criterio di chiusura,
+che vuole vedere la fascia *«il core non ha risposto»*. Quindi con il 13 com'è, il revisore del 14 vedrebbe cinque
+moduli che dicono *«il core non l'ha ancora detto»* e nient'altro.
+
+```bash
+grep -n 'deliver' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | awk -F: '$1>12828 && $1<14574' | head -3
+```
+
+**Nessuna riga** nel testo dettato del 13: le tre righe della sonda degli store sono di `stores.test.ts`.
+
+⛔ **Scartata la via che sembra più pulita — la finta che risponde da sé all'`Hello`:** falsificherebbe il criterio del
+13 (la fascia sparirebbe), e soprattutto farebbe **decidere** la finta, che il suo doc rifiuta: *«IT REPLAYS THE
+FIXTURES AND INVENTS NOTHING»* — decidere *quando* rispondere è già inventare un core.
+
+✅ **La cura è una riga:** quando nessun guscio consegna un ponte, `main.ts` mette la finta su `window.harnessFake`, e
+il revisore digita `harnessFake.deliverAll()` — o un tipo per volta. Muore da sé il giorno del guscio: un ponte vero
+non è una finta e non ha niente da esporre.
+
+**Conseguenza: D57.**
+
+### P-91 — Il 13 consegna al 14 TRE comandi del menu del modulo, e il terzo — «finestra a parte» — vuole `popoutUrl` e un'origine http(s), che sono del guscio
+
+⛔ **Domanda 5 in avanti, contro P-53.** Il Passo 11 del 13 scrive che i comandi *«stacca»*, *«pagina intera»* e
+*«finestra a parte»* dello spike *«appartengono al menu del modulo, che il 14 disegna con l'accessibilità»*. Misurato
+il 2026-09-15 nei `.d.ts` di `dockview-core` 8.3.1 e nel testo del 13:
+
+```bash
+grep -n 'addPopoutGroup(item' /tmp/axe-probe/node_modules/dockview-core/dist/cjs/api/component.api.d.ts
+grep -n 'popoutUrl' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | awk -F: '$1>12828 && $1<14574'
+```
+
+`addPopoutGroup` vuole `DockviewPopoutGroupOptions` con `popoutUrl`; il `createDock` del 13 **non** ne imposta uno
+(lo spike sì, `popout.html`); e la finestra staccata si apre *«dentro il guscio»* (mossa 4), dove SP-8 l'ha misurata
+**rifiutata in entrambi i gusci** com'erano — Q3 — perché la pagina va servita da un'origine http(s): un fatto del
+guscio, che **P-53** mette fuori da questo piano.
+
+✅ **Quindi il menu porta DUE comandi**, coi nomi dalla locale e raggiungibili da tastiera, e il terzo entra nelle voci
+aperte col guscio come chiusore — accanto al secondo capo di `SOCKET_NAME` e alla decodifica vera, che aspettano lo
+stesso pezzo. La riga 20 della tabella Chat resta vera a metà, e lo dice: *«in un pannello libero»* è del 14,
+*«o in un'altra finestra»* del guscio.
+
+**Conseguenza: D58**, e una riga nelle voci aperte di questo piano.
+
+### P-92 — `Approve` deve portare il `Call` che l'ha provocato (decisione 21), e nessuno store del 13 tiene l'ultimo `Invoke` mandato: `core.pending` porta solo la tripla
+
+⛔ **Domanda 2 — manca un pezzo, e si vede scrivendo il «sì» della finestra.** La sequenza 3 della stella polare:
+`G->>C: Approve (la tripla, con la funzione e il suo argomento)`, e il compito 3 detta `Approve { triple, call }`.
+Misurato il 2026-09-15 sul blocco *Interfaces* del 13: `useCore()` porta `pending: Triple | null` e `settled()`;
+`useConnection()` e `useLayout()` non portano nulla dell'invocazione; nessuno store ricorda il `Call` in volo.
+
+```bash
+grep -n 'pending: Triple | null\|inFlight' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | awk -F: '$1>12828 && $1<14574' | head -3
+```
+
+✅ **La cura è uno store nuovo, `stores/invoke.ts`** — non un campo in più in `core.ts`, che il 13 ha scritto come
+*«ciò che il core ci ha detto di sé»* e un `Call` in volo è ciò che **noi** abbiamo detto: mescolare le due direzioni
+in uno store è il modo in cui si confonde chi decide. Il «sì» accoppia `core.pending` col `Call` in volo, e senza
+entrambi **non manda niente** — un `PermissionRequired` che non segue un `Invoke` nostro è una forma che il core non
+produce.
+
+**Conseguenza: D59.**
+
+### P-93 — La finestra di conferma è modale e va e viene: non può essere un pannello della griglia, e il modulo Permessi non è la finestra
+
+⛔ **Domanda 3 sulla forma, con la regola di D50 in mano.** La §6a mette la finestra fra le regole del *«cambio di
+policy»* e l'accessibilità le chiede la **trappola di focus** (G20); la tabella Permessi dice *«nel 2 la finestra con
+la trappola di focus»* (riga 9) e la tabella Chat *«finestra nel 2, in riga dal 3»* (riga 3). Una finestra modale
+intrappola il focus su **tutta** la pagina, e compare e sparisce a ogni permesso: per la regola di **D50** — ciò che
+sta nella griglia entra nel JSON della disposizione — non può essere un pannello, o ogni permesso riscriverebbe la
+disposizione salvata.
+
+✅ **Quindi la finestra sta nella cornice**, come la fascia, montata da `Frame.vue`; il modulo Permessi **mostra** la
+richiesta in attesa e le triple concesse, la cornice **chiede**. I primitivi sono quelli del cassetto — `Dialog*` di
+Reka, verificati per nome dal 13 — più `DialogDescription`, che sta nello stesso elenco:
+
+```bash
+cd /tmp/axe-probe && npm install reka-ui@2.10.4 vue@3.5.42 --no-audit --no-fund > /dev/null 2>&1 && node -e "const r=require('reka-ui'); console.log(Object.keys(r).filter(k=>/^Dialog|^RadioGroup/.test(k)).join(' '))"
+```
+
+`DialogClose DialogContent DialogDescription DialogOverlay DialogPortal DialogRoot DialogTitle DialogTrigger
+RadioGroupIndicator RadioGroupItem RadioGroupRoot`, misurato il 2026-09-15.
+
+**Conseguenza: D60.**
+
+### P-94 — Il flusso non finisce mai nel 2, e il compito 13 non fissa dove un messaggio si chiude: i numeri dello spike sono quelli con cui M4 è stata misurata, non soglie inventate
+
+⛔ **Domanda 2, nella forma di P3.** Il rubinetto del compito 12 gira su `SCRIPT` **per sempre** (Passo 6: `loop`,
+`piece % SCRIPT.len()`), e sul filo del 2 non esiste un confine di messaggio — la run è del 3. Un testo che cresce
+senza fine si renderebbe intero a ogni token, che è esattamente il costo che M4 misura. Lo spike ha risolto con due
+numeri — congela a **4000** caratteri, tiene **20** blocchi — e **M4 è stata misurata con quella tessera** (SP-8, la
+chat che scorre dentro `dockview`), quindi sono i valori dietro cui sta una misura.
+
+```bash
+grep -n 'FREEZE_AT\|KEEP' spikes/gui-shell/app/src/tiles/Chat.vue
+grep -n 'M4' spikes/RISULTATI.md | head -3
+```
+
+✅ **Quindi lo store del flusso li porta con quella provenienza scritta accanto**, e con una regola in più che lo spike
+non aveva perché aveva una provenienza sola: un blocco ha **una** provenienza, e un token con provenienza diversa
+chiude il blocco aperto — altrimenti un pezzo porterebbe un'etichetta vera solo a metà (G13).
+
+**Conseguenza: D61.**
+
+### P-95 — Il titolo della linguetta nel 13 è l'ID inglese del pannello: le tre viste scrivono `title: id`, e `BigTab` lo mostra tale e quale
+
+⛔ **Domanda 5 girata all'indietro, su G21.** Il generatore del 13 detta `api.addPanel({ id, component: id, title: id, … })`
+e `BigTab` detta `title.textContent = parameters.title ?? parameters.api.id`: il revisore del 13 vedrebbe linguette
+intitolate `status`, `permissions`, `knowledge`. Misurato il 2026-09-15 sul testo del 13:
+
+```bash
+grep -n 'title: id\|title.textContent = parameters.title' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | awk -F: '$1>12828 && $1<14574'
+```
+
+⛔ **La rete sulle scritte non lo vede**, per costruzione: legge i `<template>` dei `.vue`, e qui la scritta nasce da
+un JSON e passa per un `.ts`. Ed è G21 alla lettera: ogni scritta in `locales/it.json`, italiano solo.
+
+✅ **Corretto nel compito 13 e non con una voce d'errata**, come **P-75**: il 13 non è eseguito. `BigTab` mostra il nome
+del modulo dalla locale quando l'ID è un tipo di modulo — `isModule` e `i18n.global.t` esistono già nel 13 — e il
+titolo dato negli altri casi; il JSON resta com'è, perché il suo `title` non è più ciò che si vede.
+
+**Conseguenza:** nessuna `D` — è una correzione; il 14 riscrive comunque `BigTab` per i comandi e la conserva.
+
+### P-96 — La Chat rende con `v-html`, e la regola `vue/no-v-html` è nel preset raccomandato che il 15 accende: il 15 deve scrivere l'eccezione, o la Chat nasce col cancello giallo
+
+⛔ **Domanda 5 in avanti, sul compito 15.** L'HTML che la Chat inserisce è **nostro** — `renderMarkdown` lo produce da
+testo che ha già escapato — ma un lint non lo sa. Misurato il 2026-09-15 in `eslint-plugin-vue` 10.11.0:
+
+```bash
+cd /tmp/axe-probe && npm install eslint-plugin-vue@10.11.0 --no-audit --no-fund > /dev/null 2>&1 && grep -n 'no-v-html' node_modules/eslint-plugin-vue/dist/configs/flat/vue3-recommended.js
+```
+
+`"vue/no-v-html": "warn"` nel preset `vue3-recommended`. ⚠️ **Un avviso, non un errore:** il cancello non diventa
+rosso, ma un cancello che stampa un avviso a ogni corsa insegna a ignorarlo — la lezione della §7.4.3 del compendio.
+
+✅ **Il 15 scrive l'eccezione per le due righe di `Chat.vue`, con la ragione**, e la Chat lo dice già nel commento
+accanto al `v-html`. Il 14 non tocca `eslint`: non c'è ancora (**D40**, **D51**).
+
+**Conseguenza:** nessuna `D`; una riga in «Che cosa aspetta ora il compito 15» della chiusura.
+
+### P-97 — `moveActive` legge la geometria con `getBoundingClientRect`, e sotto `jsdom` ogni rettangolo è zero: la sonda si scrive con rettangoli NOSTRI, o prova il ramo sbagliato
+
+⛔ **Domanda 1 — la sonda sarebbe vacua, e nel modo più subdolo: verde sul ramo che non voleva provare.** Il Passo 3 del
+13 ha misurato che `jsdom` non fa layout. Con ogni rettangolo a zero, la condizione «oltre» — `r.right <= from.left + 1`
+— è **vera per ogni gruppo in ogni direzione**, quindi una sonda con un `dockview` vero sotto `jsdom` vedrebbe sempre
+«spostato nel primo gruppo libero» e mai «nessun vicino, si divide», e non saprebbe mai se il vicino scelto è il più
+**vicino**.
+
+✅ **La cura non è un `dockview` finto: sono quattro membri finti con rettangoli veri** — `activePanel`, `groups`,
+`element.getBoundingClientRect`, `api.moveTo` — con cui la sonda prova la geometria per intero: il gruppo più vicino
+vince su uno più lontano, un gruppo bloccato più vicino non conta (mossa 1), e senza vicini si divide dal lato giusto.
+Ciò che resta al revisore nel browser è che i rettangoli veri siano quelli che l'occhio vede.
+
+**Conseguenza:** nessuna `D`; la forma della sonda `keys.test.ts` nel compito 14.
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -2307,6 +2612,16 @@ smentisce — è ciò per cui esiste l'errata.
 | **D50** | **la striscia è un gruppo BLOCCATO dentro la griglia, in tutte e tre le viste; barra, fascia e cassetto stanno FUORI** | **P-82**: *«sopra `dockview-core`»* della §6a si legge in due modi, e a scegliere non è una lettura ma lo spike che il proprietario ha provato — `<div id="bar">` accanto a `<div id="dock">`, e `lock('strip')` su un pannello della griglia (mossa 1). ⛔ **La regola che ne discende, e che è il vero acquisto: ciò che sta nella griglia entra nel JSON della disposizione, ciò che sta fuori no.** Quindi la fascia, che *«compare solo se il core manca o il timbro è sbagliato»*, **non può** stare nella griglia: un pannello che appare e sparisce cambierebbe la disposizione salvata a ogni disconnessione |
 | **D51** | **le scritte le guarda una sonda NOSTRA fino al compito 15**, che la sostituisce con `no-raw-text` | **P-83**: la catena `eslint` e `gate-gui.sh` sono il **15** (tabella della posizione, **D40**), quindi fra il 13 e il 15 la riga delle scritte della §8 non avrebbe nessun controllo e chi rivede cercherebbe una sonda che non esiste. ⚠️ **È una RETE, non un lint, e va dichiarata per ciò che è:** legge testo grezzo, non conosce le eccezioni né la sintassi di Vue. ⛔ **Anticipare `eslint` al 13 costerebbe di più:** la configurazione che il 15 scrive comunque per il cancello vivrebbe in due case (gotcha #68), mentre la sonda nostra **muore al 15** e non lascia niente |
 | **D52** | **il timbro che la SPA manda in `Hello` si legge dall'ultima riga di `ipc_v1.map`**, in `gui/src/schema/stamp.ts`, e passa da `BigInt` | **P-84**: nessun compito lo consegnava — la fixture `00-hello` porta il valore **arbitrario** dell'insieme canonico, non il timbro, e il `Bridge` non ha un membro che lo trasporti. ✅ **È l'unico posto in cui il timbro l'ha scritto il KERNEL**, e questo rende la stretta di mano un controllo vero: lo specchio TypeScript dei tipi è scritto a mano, quindi se il kernel rigenera con uno schema nuovo e la SPA non si ricostruisce i due timbri **divergono** e il core rifiuta — cioè ciò per cui I4 ha un timbro. ⚠️ **La conversione è il posto dove si sbaglia in silenzio:** la mappa scrive esadecimale, `U64` è decimale (**D35**), e il valore supera `Number.MAX_SAFE_INTEGER` per costruzione. ⛔ **Il file vive in `gui/src/schema/`, che è del compito 11, e nasce QUI perché qui nasce il suo unico chiamante** — la stessa regola di **D40** |
+| **D53** | ⛔ **il contrasto AA lo prova una sonda NOSTRA sui token — `gui/src/tokens/contrast.test.ts`, ogni colore di testo sopra ogni superficie — e `axe-core` resta per nomi, ruoli, etichette e `alt`, con `color-contrast` DISABILITATA in un posto solo e con la ragione accanto**; `--stop` passa a `#ec5f57` | **P-86**: sotto `jsdom` `axe` mette `color-contrast` fra gli **incompleti** ogni volta — non c'è layout da cui leggere lo sfondo — quindi una sonda `axe` sarebbe verde su qualunque palette; e la sonda nostra, lanciata a mano, ha trovato `--stop` su `--surface-raised` a **4,21**, la coppia del chip «timbro diverso». ⛔ **Ogni coppia e non una lista a mano delle coppie usate:** una lista marcirebbe al primo template che disegna un colore su una superficie nuova, e il senso dei token è che ogni testo può posarsi su ogni superficie. ⚠️ **Costo dichiarato:** la sonda conosce i token per **nome** (`ink`, `ink-dim`, `accent`, `warn`, `stop`, e `surface*`): un token di testo nuovo va aggiunto alla lista, e la prima sonda della suite pretende che ogni nome esista |
+| **D54** | ⛔ **il renderer porta DUE regole nostre: un link è uno `<span>` che mostra l'indirizzo e non ha `href`; un'immagine è testo — alt e indirizzo — e mai `<img>`**; preset `default` con `html: false` e `linkify: false` **scritti**, non affidati al default | **P-87**: la regola `image` di `markdown-it` rende `<img src>`, e il browser lo scarica senza che nessuno clicchi — un testo non fidato che fa raggiungere alla GUI un indirizzo scelto da lui, il canale per cui ADR-0016 ha i canary. La decisione 51 copriva i link *«senza navigare da soli»* e non nominava le immagini; è la sua ragione, estesa. ⚠️ **Costo dichiarato:** un modello che manda un'immagine legittima la vede come testo; il giorno che un'immagine dovrà mostrarsi, passerà da un artefatto della knowledge base (ADR-0014 in interfaccia), non da un `<img>` sul testo del flusso |
+| **D55** | ⛔ **i tre letterali della funzione registrata — `vram-policy`, `remote`, `local` — vivono in UN file TypeScript, `gui/src/panels/functions.ts`, che nomina i due sorgenti Rust, e il criterio di chiusura del 14 li confronta con un comando** | **P-88**: sono letterali in due lingue che nulla accoppia, come il nome del canale (**D45**), e qui il guasto sarebbe **muto** — una funzione non registrata è rifiutata *«senza scrivere nulla»*, quindi il click farebbe niente senza rosso. Le fixture non aiutano: portano il valore arbitrario dell'insieme canonico. ⚠️ **Non una riga di catalogo** (vincolo globale 7), e nessun commento aggiunto a `policy.rs` per questo: il `diff` del criterio copre entrambi i lati. **Costo dichiarato:** chi rinomina in Rust lo scopre al criterio di chiusura del primo compito che lo rilancia, non al cancello |
+| **D56** | ⛔ **il modulo Passi mostra i TRE campi che il filo porta — numero del passo, funzione, chiuso o in dubbio — e il compito 14 scrive il richiamo datato sulla riga 1 della tabella Passi della stella polare** | ⚖️ **A/B da portare al proprietario alla prossima rilettura; il piano procede con A, ribaltabile.** **P-89**: la riga 1 promette cinque campi, la §4 del 2 (più recente) dice *«con intento ed esito»* e `StepSummary` del compito 3 la segue; nel 2 l'invocatore e la classe dell'effetto sono **costanti** — un invocatore, una funzione — e l'argomento viaggia nel payload non fidato (**D18**), quindi metterlo nel riassunto vorrebbe una provenienza sul filo come `Token`. B — allargare `StepSummary` — tocca quattro compiti scritti (3, 7, 11 e le fixture) per mostrare `local` accanto a `vram-policy`. ⚠️ **Costo dichiarato di A:** la lista del 2 non dice **quale** policy un'invocazione ha chiesto; se il proprietario lo vuole, è B, e il richiamo lo dice |
+| **D57** | ⛔ **quando nessun guscio consegna un ponte, `main.ts` mette la finta su `window.harnessFake`, e il revisore consegna le fixture dalla console** — `harnessFake.deliverAll()`, o un tipo per volta | **P-90**: la finta rigioca solo su richiesta e nessuno gliela fa, quindi il revisore del 14 vedrebbe cinque moduli vuoti. ⛔ **Scartata la finta che risponde da sé all'`Hello`:** falsificherebbe il criterio del 13 (la fascia sparirebbe) e farebbe **decidere** la finta, che il suo doc rifiuta — decidere *quando* rispondere è inventare un core. ⚠️ **Costo dichiarato:** una proprietà su `window` nel codice di prodotto, che muore da sé il giorno del guscio — un ponte vero non è una finta e non ha niente da esporre — e che il criterio di chiusura nomina nel giro del revisore |
+| **D58** | ⛔ **il menu del modulo porta DUE comandi — «stacca» e «pagina intera» — come bottoni nella linguetta, col nome dalla locale; «finestra a parte» aspetta il guscio**, ed è una voce aperta di questo piano | **P-91**: `addPopoutGroup` vuole `popoutUrl` e una pagina servita da un'origine http(s), e Q3 di SP-8 l'ha misurata rifiutata in entrambi i gusci com'erano — un fatto del guscio, fuori da questo piano (**P-53**). ⚠️ **Bottoni nella linguetta e non un menu a tendina:** due comandi non sono un menu, e un `DropdownMenu` sarebbe un primitivo in più per una cosa che due `<button>` con `aria-label` fanno già da tastiera (G20). **Costo dichiarato:** la riga 20 della tabella Chat resta vera a metà — *«in un pannello libero»* sì, *«o in un'altra finestra»* col guscio — e lo dice la voce aperta |
+| **D59** | ⛔ **il `Call` in volo vive in uno store NUOVO, `stores/invoke.ts`, e il «sì» della finestra accoppia `core.pending` con esso: senza entrambi non manda niente** | **P-92**: `Approve` porta la tripla **e** l'invocazione (decisione 21 della stella polare, compito 3), e nessuno store del 13 ricorda l'ultimo `Invoke`. ⛔ **Non un campo in `core.ts`:** quello store è *«ciò che il core ci ha detto di sé»*, e un `Call` in volo è ciò che **noi** abbiamo detto — mescolare le due direzioni in uno store è il modo in cui si confonde chi decide. Un `PermissionRequired` che non segue un `Invoke` nostro è una forma che il core non produce, e la finestra non ci si apre. ⚠️ **Costo dichiarato:** `approved` è presentazione (I1) e si svuota a ogni riavvio — la lista vera è un messaggio dedotto della riga 1 di Permessi, del 3 |
+| **D60** | ⛔ **la finestra di conferma sta nella CORNICE (`components/Confirm.vue`, montata da `Frame.vue`) e non in un pannello; il modulo Permessi mostra, la cornice chiede** | **P-93**: è modale con la trappola di focus (G20) e compare e sparisce; per la regola di **D50** un pannello che va e viene riscriverebbe la disposizione salvata a ogni permesso. I primitivi sono quelli del cassetto — `Dialog*` di Reka, già verificati per nome — più `DialogDescription`, misurato nello stesso elenco. ⚠️ **Il «no» non manda niente:** il core non tiene niente in sospeso (§5 del 2), quindi rifiutare è locale; Escape e il clic fuori sono un «no». **Costo dichiarato:** la finestra è una funzione dei due store e non ha stato suo, quindi una sonda deve preparare **entrambi** per aprirla |
+| **D61** | ⛔ **lo store del flusso congela un blocco a 4000 caratteri e tiene 20 blocchi — i numeri con cui M4 è stata misurata in SP-8 — e chiude un blocco anche quando la provenienza cambia** | **P-94**: nel 2 il flusso non finisce mai (il rubinetto gira su `SCRIPT` per sempre) e il filo non ha un confine di messaggio, che è del 3; un testo che cresce senza fine si renderebbe intero a ogni token. I due numeri **non sono inventati**: la tessera dello spike li aveva, e M4 — P3 col rendering vero — è stata misurata su quella tessera. La regola sulla provenienza è nuova, perché lo spike aveva una provenienza sola: un pezzo porta **una** etichetta, vera per intero (G13). ⚠️ **Costo dichiarato:** un messaggio lungo del modello si spezza in blocchi a un confine arbitrario; il confine vero arriva con la run |
+| **D62** | ⛔ **il controllo a due stati di Impostazioni è un gruppo di radio NATIVI, e Reka UI entra dove l'HTML non ha un primitivo — la finestra, la trappola di focus — non dove ce l'ha** | la §6a dice *«tastiera ovunque, dai primitivi di Reka UI»*, e Reka esporta `RadioGroupRoot`, `RadioGroupItem`, `RadioGroupIndicator` (misurato il 2026-09-15, **P-93**); ma un `<input type="radio">` ha tastiera, ruolo e stato dal browser, e un primitivo sopra non aggiungerebbe niente che una sonda possa provare — è il quinto criterio, *«chi lo userà, oggi?»*. ⛔ **E il controllo mostra la policy del CORE, non l'ultimo click** (I1): `v-model` su un radio nativo rimette il controllo sul modello a ogni aggiornamento, e la riga *«richiesta inviata»* dice perché non si è mosso. ⚠️ **Costo dichiarato:** due modi di fare la tastiera nella SPA — nativo dove esiste, Reka dove no — e la regola sta scritta nel componente; se il proprietario vuole Reka anche qui, è una riga di `D` in più e nessuna sonda cambia |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -2336,6 +2651,7 @@ righe che lo **toccano** sono segnate.
 | le **registrate** della stella polare — l'ambito come progetto, «Automazione OS», il grafo del 6, Compatta, i due passi per invocazione | la tabella «Registrate, non prese» | il 3, il 6, il 10, il proprietario |
 | ⛔ **il secondo capo di `SOCKET_NAME`** — il daemon lega il nome al compito 9, e in questo piano **nessuno vi si collega**: il core finto ne lega uno suo, la SPA non tocca socket | **P-53**, **D31**, e il doc della costante in `crates/daemon/src/main.rs` | il **guscio**, che la §8 del 2 mette *«fuori dal cancello di oggi»*; il giorno che esiste, l'accoppiamento è una sonda |
 | ⛔ **la decodifica VERA dei byte `bincode` dal capo TypeScript** — in questo piano **nessuno decodifica**: la SPA confronta i propri tipi col `.json` delle fixture (**D36**), e i byte li prova `ipc_wire.rs` nel cancello. ⚠️ **E il lettore che servirebbe è rotto come spedito** — `bincode-ts` 1.0.0 non si carica da nessuno dei due punti d'ingresso, misurato in M-11 | **P-63**, **D36**, e la riga di `bincode-ts` in [`riferimenti.md`](../../riferimenti.md) | il **guscio**, dove la decodifica vive davvero (Q1 di SP-8: il processo principale Node); il giorno che esiste, la copia corretta di `bincode-ts` o un lettore mantenuto è una **sua** decisione, non di questo piano. ⚠️ **Stesso chiusore del secondo capo di `SOCKET_NAME`, e non è un caso:** entrambe aspettano l'unico pezzo che la §8 del 2 mette *«fuori dal cancello di oggi»* |
+| ⛔ **il terzo comando del menu del modulo, «finestra a parte»** — `addPopoutGroup` vuole `popoutUrl` e una pagina servita da un'origine http(s), e Q3 di SP-8 l'ha misurata rifiutata in entrambi i gusci com'erano; il 14 porta «stacca» e «pagina intera» | **P-91**, **D58**; la riga 20 della tabella Chat della stella polare, vera a metà | il **guscio**, come il secondo capo di `SOCKET_NAME` e la decodifica vera: le tre voci aspettano lo stesso pezzo, che la §8 del 2 mette *«fuori dal cancello di oggi»* |
 
 ---
 
@@ -13590,6 +13906,9 @@ export class VueContent implements IContentRenderer {
 ```ts
 import type { ITabRenderer, TabPartInitParameters } from "dockview-core";
 
+import { i18n } from "../i18n";
+import { isModule } from "../panels/registry";
+
 /**
  * The big grab handle (move 5): the tab element is what `dockview` drags, so a big tab is a big
  * grab -- which is what makes a pointer that is a HAND able to take it (move 8, ADR-0039).
@@ -13605,11 +13924,22 @@ export class BigTab implements ITabRenderer {
     this.element.className = "bigtab";
     const title = document.createElement("span");
     title.className = "bigtab-title";
-    title.textContent = parameters.title ?? parameters.api.id;
+    // ⛔ THE MODULE'S ITALIAN NAME AND NOT THE PANEL'S ID (G21): the views carry `title: id`, and
+    // an id is code. A panel that is not a module type keeps the title it was given. Richiamo del
+    // 2026-09-15, P-95.
+    title.textContent = isModule(parameters.api.id)
+      ? i18n.global.t(`modules.${parameters.api.id}`)
+      : (parameters.title ?? parameters.api.id);
     this.element.append(title);
   }
 }
 ```
+
+✅ **RICHIAMO DEL 2026-09-15, dal pre-controllo del compito 14 (P-95):** il titolo della linguetta era
+`parameters.title ?? parameters.api.id`, e le tre viste scrivono `title: id` — il revisore avrebbe visto `status`,
+`permissions`, `knowledge`, contro G21. Corretto qui perché il compito non è eseguito (il precedente è **P-75**): il
+nome viene dalla locale quando l'ID è un tipo di modulo. Il JSON resta com'è, perché il suo `title` non è più ciò che
+si vede.
 
 ⚠️ **Nessun comando nella linguetta, a differenza dello spike**, e non è una dimenticanza: lo spike ci metteva
 «stacca», «pagina intera» e «finestra a parte» per **provare le mosse 2, 3 e 4**. Nel prodotto quei comandi
@@ -14570,6 +14900,2110 @@ git push
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
 - [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -cE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src/**/*.test.ts` → **0**
 - [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA** — regola 5 della testa: `cd gui && npm run dev`, e con la finta collegata si vedono la barra con le tre viste, la fascia «il core non ha risposto», la striscia in basso, il cassetto coi diciotto tipi, e le tessere che dicono chi le riempie
+
+## Compito 14: la SPA, i moduli — Stato, Permessi, Chat, Passi e Impostazioni, la finestra di conferma, la tastiera e l'accessibilità
+
+⛔ **QUI LA CORNICE SI RIEMPIE, e il primo `Invoke` della storia del registro parte da un click.** La regola 5 della
+testa vale come per il 13: il revisore **apre la SPA nel browser e guarda** — e in questo compito guarda con dei
+**dati**, perché la finta li consegna solo a chi glieli chiede (**P-90**, **D57**).
+
+⛔ **E il verde di `axe-core` da solo NON prova il contrasto:** sotto `jsdom` la regola `color-contrast` finisce fra gli
+**incompleti** ogni volta, misurato il 2026-09-15 (**P-86**). Il contrasto AA lo prova una sonda **nostra** sui token, e
+un valore che fallisce è una modifica a `tokens.css` — com'era scritto nel file stesso dal compito 13.
+
+**Files:**
+- Modify: `gui/package.json` (**LF**) — `markdown-it` e `axe-core`, i due che **questo** compito consuma (**D40**)
+- Modify: `gui/package-lock.json` (**LF**) — **nello stesso commit** del manifesto, vincolo globale 7
+- Modify: `gui/src/tokens/tokens.css` (**LF**) — `--stop`, l'unico token che l'AA boccia (**P-86**)
+- Modify: `gui/src/locales/it.json` (**LF**) — le scritte dei cinque moduli, della finestra, del menu e della tastiera
+- Modify: `gui/src/frame/BigTab.ts` (**LF**) — i **due** comandi del menu del modulo, con le loro etichette (**P-91**, **D58**)
+- Modify: `gui/src/frame/Frame.vue` (**LF**) — la finestra di conferma e la tastiera
+- Modify: `gui/src/main.ts` (**LF**) — i moduli registrati, gli store nuovi in ascolto, la finta esposta al revisore (**D57**)
+- Create: `gui/src/panels/functions.ts` (**LF**) — i tre letterali della funzione registrata (**P-88**, **D55**)
+- Create: `gui/src/stores/stream.ts`, `gui/src/stores/invoke.ts` (**LF**) — **D40**, **D59**, **D61**
+- Create: `gui/src/components/markdown.ts`, `gui/src/components/Confirm.vue` (**LF**) — **D54**, **D60**
+- Create: `gui/src/panels/Status.vue`, `Permissions.vue`, `Steps.vue`, `Settings.vue`, `Chat.vue`, `gui/src/panels/modules.ts` (**LF**)
+- Create: `gui/src/frame/moveActive.ts` (**LF**) — **D49**, il quarto pezzo che sale dallo spike
+- Create: `gui/src/tokens/contrast.test.ts`, `gui/src/stores/stream.test.ts`, `gui/src/stores/invoke.test.ts`, `gui/src/components/markdown.test.ts`, `gui/src/panels/modules.test.ts`, `gui/src/panels/chat.test.ts`, `gui/src/frame/keys.test.ts`, `gui/src/frame/bigtab.test.ts`, `gui/src/a11y.test.ts` (**LF**)
+- Read: la **§6a del 2 per intero** — le righe «il modulo Stato», «il cambio di policy», «il modulo Chat», «i moduli Passi e Permessi», «accessibilità», «testi»; la §1 della stella polare — le tabelle **Chat**, **Stato**, **Permessi** e **Passi** per intero, e la riga **Impostazioni** della corta; la **sequenza 3** di *«La GUI dentro»*; la §9 del 2, righe **1**, **2** e **3**; i blocchi *Interfaces* dei compiti **11** e **13** per i nomi esatti — ⛔ **come stanno ADESSO**; il **Passo 6 del compito 12** per il testo che il rubinetto manda
+- Read: ⛔ **`spikes/gui-shell/app/src/home.ts` (`moveActive`, `onKey`, `BigTab`) e `spikes/gui-shell/app/src/tiles/Chat.vue`, per intero** — **D49**: sale il merito, riscritto; non si importa niente da `spikes/`
+- ⛔ **NON si legge**: la §5, la §7 e la §8 del 2 — il registro, il core finto e il cancello sono i compiti 6, 12 e 15
+
+**Interfaces:**
+- Consumes, dal **compito 11**: `gui/src/schema/messages.ts` — `IpcMessage`, `Call`, `Triple`, `Provenance`, `StepSummary`, `Verdict`, `PolicyReport`, `DegradationReport`, `Protection`; `gui/src/transport/bridge.ts` — `Bridge`; `gui/src/transport/fakeBridge.ts` — `createFakeBridge`, `FakeBridge` coi suoi `sent`, `deliver(kind)`, `deliverAll()`
+- Consumes, dal **compito 13**: `useConnection`, `useCore` (con `pending` e `settled()`), `useLayout`; `register`, `isModule`, `PANEL_TYPES` di `gui/src/panels/registry.ts`; `i18n`; `VueContent`, `BigTab`, `Frame.vue`, `createDock`
+- Consumes, dal **compito 7**, **per NOME e non per import** — è Rust: `kernel::serving::POLICY_FUNCTION` — `name: "vram-policy"`, tripla `registry × arbiter × Write`, classe `Idempotent`; e dal codice di **oggi**, `crates/kernel/src/arbiter/policy.rs`: `MakeRoom::name()` rende **`"remote"`** e **`"local"`**, che sono gli argomenti che il dispaccio accetta
+- Produces, e i compiti **15** e **16** li trovano con questi nomi esatti:
+  - `gui/src/panels/functions.ts` — `VRAM_POLICY` con `name` e `argument.remote`, `argument.local`; `type PolicyArgument`
+  - `gui/src/stores/stream.ts` — `useStream()`, con `blocks: Block[]`, `current: Block | null`, `receive(message: IpcMessage): void`; fuori dallo store `interface Block { text: string; provenance: Provenance }`, `FREEZE_AT`, `KEEP`
+  - `gui/src/stores/invoke.ts` — `useInvoke()`, con `inFlight: Call | null`, `approved: Triple[]`, `attach(bridge: Bridge): void`, `send(call: Call): void`, `approve(): boolean`, `refuse(): void`, `receive(message: IpcMessage): void`
+  - `gui/src/components/markdown.ts` — `renderMarkdown(text: string): string`
+  - `gui/src/components/Confirm.vue` — la finestra, senza props: legge i due store
+  - `gui/src/panels/modules.ts` — `MODULES: Readonly<Record<string, Component>>`, `registerModules(): void`
+  - `gui/src/frame/moveActive.ts` — `type Direction = "left" | "right" | "up" | "down"`, `type Moved = "moved" | "split" | "none"`, `moveActive(api: DockviewApi, direction: Direction): Moved`, `directionOf(event: KeyboardEvent): Direction | null`
+  - ⛔ **E il blocco qui sopra è stato RICENSITO contro il codice che i Passi dettano** — la trappola della nona chiusura: `approve()` rende un `boolean` perché il Passo 6 lo detta così, non «`void`» come la frase della §6a farebbe supporre; `Confirm.vue` non ha props perché il Passo 10 gli fa leggere gli store
+- ⛔ **Che cosa questo compito NON produce, detto perché nessuno lo cerchi:** nessuna casella di scrittura nella Chat (riga 10 della tabella Chat, il **3**); nessuna lista delle triple **dal core** (riga 1 di Permessi: il messaggio è dedotto e del 3); nessun `«finestra a parte»` nel menu — vuole il guscio (**P-91**); nessun `gate-gui.sh` né `eslint`, che sono il **15**; **nessuna modifica a `registry.ts`**: il 13 ha lasciato `register` come cucitura, e questo compito la usa
+
+⛔ **PERCHÉ IL MENU DEL MODULO STA QUI E NON NEL 13:** il 13 l'ha detto di sé — *«nel prodotto quei comandi appartengono al
+menu del modulo, che il 14 disegna con l'accessibilità»* — e un comando nella linguetta è **tastiera** (G20) prima che
+mouse: raggiungibile col tabulatore, con un nome che lo screen reader legge. Due comandi e non tre, **P-91**.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+ls gui/src/panels gui/src/stores gui/src/frame gui/src/components 2>&1
+ls gui/src/panels/*.vue
+grep -n '"markdown-it"\|"axe-core"' gui/package.json
+grep -n '^  --stop' gui/src/tokens/tokens.css
+grep -n 'harnessFake\|registerModules' gui/src/main.ts
+grep -n 'name: "' crates/kernel/src/serving.rs
+grep -n '"remote"\|"local"' crates/kernel/src/arbiter/policy.rs
+git ls-files --eol gui/package.json gui/src/tokens/tokens.css gui/src/locales/it.json gui/src/frame/BigTab.ts gui/src/frame/Frame.vue gui/src/main.ts docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+node --version
+```
+
+Atteso: `gui/src/components/` **non esiste**, le altre tre ci sono dal 13; `ls gui/src/panels/*.vue` rende **solo**
+`Placeholder.vue` e `Strip.vue`; **nessuno** dei due pacchetti nel manifesto; `--stop: #e5534b;`; **niente** in
+`main.ts`; `name: "vram-policy"` in `serving.rs`; una riga con `"remote"` e una con `"local"` in `policy.rs`; tutto
+**LF**, la stella polare compresa.
+
+⛔ **Se `gui/src/panels/Status.vue` esiste già, il compito è eseguito** — quarta domanda del pre-controllo: ci si ferma
+e si riporta. ⚠️ **Se `gui/src/panels/registry.ts` non esiste, il compito 13 non è eseguito**, e questo compito non
+parte.
+
+- [ ] **Passo 2: le due dipendenze, e le tre proprietà rilette DENTRO il pacchetto**
+
+⛔ **Si rimisura prima di scrivere** — vincolo globale 8. Le versioni qui sono del 2026-09-11 (**P-2**), rimisurate il
+2026-09-15 scrivendo questo compito: `markdown-it` **15.0.2** del 2026-09-11, MIT, senza `engines`; `axe-core`
+**4.13.0** del 2026-08-05, MPL-2.0, `engines.node >= 4`. Nessuna delle due stringe `engines.node` di **D37**.
+
+```bash
+python - <<'EOF'
+import json, urllib.request, urllib.parse
+for p, v in {"markdown-it": "15.0.2", "axe-core": "4.13.0"}.items():
+    d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
+    m = d["versions"][v]
+    print(f"{p:12} latest={d['dist-tags']['latest']:8} pinned={v} {d['time'][v][:10]} license={m.get('license')} engines={m.get('engines')} types={m.get('types') or m.get('exports', {}).get('.', {}).get('import', {}).get('types')}")
+EOF
+```
+
+⛔ **Una major nuova non si prende**; una minor o patch solo se l'appuntata non si installa, con voce d'errata.
+
+In `gui/package.json` le `dependencies` guadagnano `"markdown-it": "15.0.2"` e le `devDependencies` guadagnano
+`"axe-core": "4.13.0"`. ⚠️ **Nessun `@types/markdown-it`:** la 15 spedisce i propri tipi — `dist/markdown-it.d.mts`
+sotto `exports["."].import.types`, misurato il 2026-09-15 — e `axe-core` spedisce `axe.d.ts`.
+
+Poi, **fuori dal cancello** e prima del commit:
+
+```bash
+cd gui && npm install --no-audit --no-fund; echo "EXIT=$?"; cd ..
+git status --porcelain gui/package.json gui/package-lock.json
+```
+
+⛔ **E ADESSO le tre proprietà di `markdown-it`, DENTRO il pacchetto installato — D3 col richiamo di P-81.** La
+decisione 51 della stella polare poggia su di esse, e una patch che toccasse `validateLink` cambierebbe la ragione
+della decisione. Misurato il 2026-09-15 sulla 15.0.2: il preset `default` ha `html: false` e `linkify: false`;
+`BAD_PROTO_RE = /^(vbscript|javascript|file|data):/` e `GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/`;
+`validateLink` li usa così com'erano nella 15.0.1.
+
+```bash
+grep -n 'html: false\|linkify: false' gui/node_modules/markdown-it/dist/markdown-it.mjs | head -4
+grep -n 'BAD_PROTO_RE = \|GOOD_DATA_RE = \|return BAD_PROTO_RE.test' gui/node_modules/markdown-it/dist/markdown-it.mjs
+grep -n 'default_rules.image = ' gui/node_modules/markdown-it/dist/markdown-it.mjs
+```
+
+Atteso: le prime due coppie sono del preset `default` (il blocco `var config = { default: {` sta poche righe sopra);
+le due espressioni regolari **identiche** a quelle scritte qui; e **una** riga per `default_rules.image`, che è la
+regola che il Passo 7 **sostituisce** (**P-87**). ⛔ **Se una delle tre proprietà è diversa**, ci si ferma: è una voce
+d'errata e la decisione 51 si rilegge, non si aggira.
+
+- [ ] **Passo 3: il token che l'AA boccia, e la sonda che lo tiene — D53**
+
+⛔ **Misurato il 2026-09-15 sui valori del compito 13 (P-86):** `--stop` `#e5534b` su `--surface-raised` `#1f242d`
+dà **4,21**, sotto il 4,5 di AA — ed è esattamente la coppia che il 13 disegna, il chip «timbro diverso» sulla barra.
+Tutte le altre coppie passano. Il valore più vicino che passa su **entrambe** le superfici è `#ec5f57` (5,26 e 4,70).
+
+In `gui/src/tokens/tokens.css` la riga `--stop: #e5534b;` diventa:
+
+```css
+  /* ⛔ #e5534b measured 4.21 on --surface-raised on 2026-09-15 (task 14, P-86): below AA. This is
+     the smallest change that passes on both surfaces, and `contrast.test.ts` is what keeps it. */
+  --stop: #ec5f57;
+```
+
+⚠️ **E il paragrafo in testa al file che dice *«the check is `axe-core` … it arrives with the accessibility of task
+14»* riceve la correzione**, perché da oggi è falso a metà: `axe-core` sotto `jsdom` **non decide** il contrasto.
+Le tre righe che cominciano con `⚠️ G20 WANTS AA CONTRAST` diventano:
+
+```css
+   ⚠️ G20 WANTS AA CONTRAST, and the check is `contrast.test.ts` in this folder: `axe-core` under
+   jsdom files `color-contrast` as INCOMPLETE every time (there is no layout to read a background
+   from -- measured on 2026-09-15, task 14), so a green from axe proves nothing about it. A value
+   that fails is a change to THIS file, not to forty templates -- which is the whole reason the
+   shape comes before the palette. */
+```
+
+`gui/src/tokens/contrast.test.ts`, **LF**:
+
+```ts
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+import { describe, expect, it } from "vitest";
+
+const css = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "tokens.css"), "utf8");
+
+/** Every `--name: #rrggbb;` of the file. ⛔ READ FROM THE FILE AND NOT RETYPED: a probe that carried
+ * its own copy of the palette would go on passing after someone edits the real one. */
+const tokens: Record<string, string> = Object.fromEntries(
+  [...css.matchAll(/--([a-z-]+):\s*(#[0-9a-fA-F]{6});/g)].map((found) => [found[1] ?? "", found[2] ?? ""]),
+);
+
+/** WCAG 2.1 relative luminance, and the contrast ratio built on it. */
+function luminance(hex: string): number {
+  const channel = (index: number): number => {
+    const value = Number.parseInt(hex.slice(index, index + 2), 16) / 255;
+    return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
+}
+
+export function contrast(foreground: string, background: string): number {
+  const [high, low] = [luminance(foreground), luminance(background)].sort((a, b) => b - a) as [number, number];
+  return (high + 0.05) / (low + 0.05);
+}
+
+/** The tokens that colour TEXT, and the tokens that are drawn UNDER text. ⛔ EVERY PAIR AND NOT A
+ * HAND-KEPT LIST OF "the pairs the components use": a list would rot the day a template drew a
+ * colour on a surface it never had before, and the whole point of tokens is that any text colour
+ * may land on any surface. `--line` is a border and is not here. */
+const TEXT = ["ink", "ink-dim", "accent", "warn", "stop"];
+const SURFACES = Object.keys(tokens).filter((name) => name.startsWith("surface"));
+
+describe("the tokens", () => {
+  it("name every colour this probe reasons about", () => {
+    for (const name of TEXT) expect(tokens[name], name).toMatch(/^#[0-9a-fA-F]{6}$/);
+    expect(SURFACES.length).toBeGreaterThan(0);
+  });
+
+  it("read AA (4.5:1) for every text colour on every surface", () => {
+    const failing: string[] = [];
+    for (const text of TEXT) {
+      for (const surface of SURFACES) {
+        const ratio = contrast(tokens[text] ?? "#000000", tokens[surface] ?? "#000000");
+        if (ratio < 4.5) failing.push(`${text} on ${surface}: ${ratio.toFixed(2)}`);
+      }
+    }
+    expect(failing).toEqual([]);
+  });
+});
+```
+
+⛔ **Le due direzioni, prima del commit:** verde col valore nuovo, **rosso** col vecchio — così si sa che la sonda
+morde e non che il valore è passato per caso.
+
+```bash
+cd gui
+npx vitest run src/tokens/contrast.test.ts; echo "verde atteso: EXIT=$?"
+python - <<'EOF'
+import io
+p = "src/tokens/tokens.css"
+b = io.open(p, encoding="utf-8", newline="").read()
+assert b.count("--stop: #ec5f57;") == 1
+io.open(p, "w", encoding="utf-8", newline="").write(b.replace("--stop: #ec5f57;", "--stop: #e5534b;"))
+EOF
+npx vitest run src/tokens/contrast.test.ts; echo "rosso atteso: EXIT=$?"
+git checkout -- src/tokens/tokens.css
+cd ..
+```
+
+⚠️ **`git checkout` rimette il file com'era nell'INDICE**, cioè senza la modifica di questo passo se non è ancora
+stata aggiunta: si rilancia il primo script di questo passo dopo il rosso, o si fa il `git add` prima della mutazione.
+Atteso alla fine: `--stop: #ec5f57;` nel file, e la sonda **verde**.
+
+- [ ] **Passo 4: le scritte dei moduli**
+
+`gui/src/locales/it.json`, **LF**: le chiavi qui sotto entrano **accanto** a quelle del 13, allo stesso livello di
+`bar`, `band`, `strip`, `drawer`, `placeholder` e `modules`. ⛔ **Ogni scritta dei cinque moduli, della finestra e del
+menu sta qui** (G21); le chiavi in inglese, i valori in italiano.
+
+```json
+  "menu": {
+    "float": "Stacca la tessera in un pannello libero",
+    "page": "A pagina intera, o ritorno"
+  },
+  "status": {
+    "degradation": "Degrado",
+    "vram": "VRAM esaurita",
+    "routing": "Instradamento degradato",
+    "yes": "sì",
+    "no": "no",
+    "policy": "Policy VRAM",
+    "policyName": {
+      "Remote": "OpenRouter, VRAM libera",
+      "Local": "locale"
+    },
+    "budget": "{allocated} MiB allocati su {total}",
+    "protection": "Giornale",
+    "protectionValue": {
+      "AsSystemAccount": "protetto quanto il tuo account di sistema"
+    },
+    "unknown": "il core non l'ha ancora detto",
+    "verdict": {
+      "Granted": "Ultima richiesta di VRAM: concessa",
+      "Queued": "Ultima richiesta di VRAM: in coda",
+      "Refused": "Ultima richiesta di VRAM: rifiutata"
+    },
+    "refusedDetail": "chiesti {asked} MiB, tetto {ceiling}"
+  },
+  "permissions": {
+    "pendingTitle": "Richiesta in attesa",
+    "none": "nessuna",
+    "approvedTitle": "Concesse in questa sessione",
+    "noneApproved": "nessuna",
+    "triple": "strumento {tool}, risorsa {resource}, {operation}",
+    "operation": {
+      "Read": "lettura",
+      "Write": "scrittura"
+    },
+    "duration": "Un permesso vale per quella tripla e per quella sessione; il confine di sessione lo costruisce il sotto-progetto 3."
+  },
+  "steps": {
+    "none": "Nessun passo ancora.",
+    "row": "passo {step}: {function}",
+    "done": "chiuso",
+    "inDoubt": "in dubbio",
+    "who": "Nel sotto-progetto 2 i passi sono le invocazioni del registro; i passi delle run arrivano col 3."
+  },
+  "settings": {
+    "policy": "Policy VRAM",
+    "remote": "OpenRouter, VRAM libera",
+    "local": "Locale",
+    "inFlight": "Richiesta inviata: in attesa del core.",
+    "who": "Le altre preferenze arrivano coi sotto-progetti 3 e 10."
+  },
+  "chat": {
+    "noRun": "Nessuna run: col daemon vero non arriva nessun token fino al sotto-progetto 3.",
+    "untrusted": "non fidato (un modello): reso come testo e codice, mai come HTML",
+    "trusted": "fidato"
+  },
+  "confirm": {
+    "title": "Serve un permesso",
+    "call": "Per: {function} con {argument}",
+    "scope": "Vale per questa tripla e per questa sessione.",
+    "yes": "Consenti",
+    "no": "Rifiuta"
+  }
+```
+
+⚠️ **`status.protectionValue.AsSystemAccount` è la scritta di G16 come VALORE e non come scritta fissa:** il valore
+viene da `Accepted`, e la chiave lo traduce; un secondo valore di `Protection` sarà una chiave in più, e la sonda del
+Passo 13 legge il testo dal valore che il core ha mandato.
+
+- [ ] **Passo 5: i tre letterali della funzione registrata**
+
+`gui/src/panels/functions.ts`, **LF** — **D55**:
+
+```ts
+/**
+ * The registry's ONE function in milestone 2, as the SPA names it on the wire.
+ *
+ * ⛔ THREE LITERALS IN TWO LANGUAGES, AND NOTHING COUPLES THEM (P-88): the name lives in
+ * `crates/kernel/src/serving.rs` (`POLICY_FUNCTION`), and the two arguments are what
+ * `MakeRoom::name` answers in `crates/kernel/src/arbiter/policy.rs`. A rename over there and
+ * this `Invoke` is refused WITHOUT A MESSAGE -- a function the registry does not hold is refused
+ * and nothing is written (§5 of the milestone-2 design) -- so the fault would be mute. The
+ * closing criterion of task 14 compares the literals with a command, as D45 does for the socket
+ * name.
+ *
+ * ⚠️ THE FIXTURES SAY `arbiter.set_policy`, AND THAT IS NOT THIS: the canonical set carries an
+ * ARBITRARY value, chosen so that no two encodings are equal. What the core actually holds is
+ * what is written here.
+ */
+export const VRAM_POLICY = {
+  name: "vram-policy",
+  argument: { remote: "remote", local: "local" },
+} as const;
+
+export type PolicyArgument = (typeof VRAM_POLICY.argument)[keyof typeof VRAM_POLICY.argument];
+```
+- [ ] **Passo 6: i due store — il flusso e l'invocazione in volo**
+
+`gui/src/stores/stream.ts`, **LF** — **D40** (nasce col suo consumatore, la Chat) e **D61**:
+
+```ts
+import { defineStore } from "pinia";
+import { ref } from "vue";
+
+import type { IpcMessage, Provenance } from "../schema/messages";
+
+/** One rendered piece of the stream, and the provenance it carries (G13). */
+export interface Block {
+  text: string;
+  provenance: Provenance;
+}
+
+/**
+ * ⛔ THE NUMBERS M4 WAS MEASURED WITH (D61): SP-8's chat tile froze the streamed text at this many
+ * characters and kept this many frozen blocks, and P3 under real rendering was measured on THAT
+ * tile -- so these are the values a measure sits behind, not thresholds invented here. The
+ * message boundary itself arrives with sub-project 3: in milestone 2 the fake core's faucet never
+ * ends a message, and a text that only grows would render the whole stream on every token.
+ */
+export const FREEZE_AT = 4000;
+export const KEEP = 20;
+
+export const useStream = defineStore("stream", () => {
+  const blocks = ref<Block[]>([]);
+  const current = ref<Block | null>(null);
+
+  function freeze(): void {
+    if (current.value === null) return;
+    blocks.value.push(current.value);
+    if (blocks.value.length > KEEP) blocks.value.shift();
+    current.value = null;
+  }
+
+  function receive(message: IpcMessage): void {
+    if (message.kind !== "Token") return;
+    // ⛔ A BLOCK HAS ONE PROVENANCE (G13): a token whose provenance differs from the open block's
+    // closes it first, so no rendered piece ever carries a label that is true of only part of it.
+    if (current.value !== null && current.value.provenance !== message.provenance) freeze();
+    if (current.value === null) current.value = { text: "", provenance: message.provenance };
+    // ⚠️ CONCATENATED VERBATIM, no separator: the faucet's pieces carry their own spaces and
+    // newlines (task 12, step 6), and a token is a piece of text, not a word.
+    current.value.text += message.text;
+    if (current.value.text.length >= FREEZE_AT) freeze();
+  }
+
+  return { blocks, current, receive };
+});
+```
+
+`gui/src/stores/invoke.ts`, **LF** — **D59**:
+
+```ts
+import { defineStore } from "pinia";
+import { ref } from "vue";
+
+import type { Call, IpcMessage, Triple } from "../schema/messages";
+import type { Bridge } from "../transport/bridge";
+
+import { useCore } from "./core";
+
+/**
+ * The invocation in flight, and what this window approved.
+ *
+ * ⛔ `Approve` MUST CARRY THE CALL (decision 21 of the north star): the core opens step A only when
+ * the invocation arrives WITH the permission, and the gui does not resend `Invoke`. Nothing in the
+ * stores of task 13 keeps the last `Invoke` sent -- `core.pending` holds the triple the core asked
+ * for -- so this is where the call waits (P-92).
+ *
+ * ⚠️ `approved` IS PRESENTATION (I1): it lists what THIS window said yes to, in this session, and
+ * after a restart it is empty. The core's own list is a message that row 1 of the Permessi table
+ * marks as deduced and gives to sub-project 3.
+ */
+export const useInvoke = defineStore("invoke", () => {
+  const core = useCore();
+  const inFlight = ref<Call | null>(null);
+  const approved = ref<Triple[]>([]);
+  let wire: Bridge | null = null;
+
+  function attach(bridge: Bridge): void {
+    wire = bridge;
+  }
+
+  /** The click: one `Invoke`, and the call is remembered. */
+  function send(call: Call): void {
+    inFlight.value = call;
+    wire?.send({ kind: "Invoke", value: call });
+  }
+
+  /**
+   * The "yes" of the confirmation window. ⛔ PAIRS THE TRIPLE THE CORE ASKED FOR WITH THE CALL IN
+   * FLIGHT, and there is nothing to approve without both: a `PermissionRequired` that follows no
+   * `Invoke` of ours is a shape the core never produces -- the registry only ever answers one.
+   * Returns whether an `Approve` went out.
+   */
+  function approve(): boolean {
+    const triple = core.pending;
+    const call = inFlight.value;
+    if (triple === null || call === null) return false;
+    wire?.send({ kind: "Approve", triple, call });
+    approved.value.push(triple);
+    inFlight.value = null;
+    core.settled();
+    return true;
+  }
+
+  /** The "no": NOTHING IS SENT. The core keeps nothing pending -- the registry answered
+   * `PermissionRequired` and forgot (§5 of the milestone-2 design) -- so refusing is local. */
+  function refuse(): void {
+    inFlight.value = null;
+    core.settled();
+  }
+
+  /** `Policy` is the piece that changes after an invocation landed (§6.1.4): whatever was in
+   * flight has arrived, with or without a window in between. At the welcome nothing is in flight
+   * and this is a no-op. */
+  function receive(message: IpcMessage): void {
+    if (message.kind === "Policy") inFlight.value = null;
+  }
+
+  return { inFlight, approved, attach, send, approve, refuse, receive };
+});
+```
+
+⚠️ **`useCore()` in testa allo store e non dentro le funzioni:** pinia compone gli store così, e una chiamata dentro
+`approve` sarebbe la stessa cosa con una riga in più per funzione.
+
+`gui/src/stores/stream.test.ts`, **LF**:
+
+```ts
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
+
+import { createFakeBridge } from "../transport/fakeBridge";
+
+import { FREEZE_AT, KEEP, useStream } from "./stream";
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+});
+
+describe("the stream", () => {
+  it("takes the Token fixture the kernel generated, with its provenance", () => {
+    const bridge = createFakeBridge();
+    const stream = useStream();
+    bridge.listen((message) => stream.receive(message));
+    bridge.deliver("Token");
+    expect(stream.current?.text).toBe("ciao");
+    expect(stream.current?.provenance).toBe("Untrusted");
+    expect(stream.blocks).toHaveLength(0);
+  });
+
+  it("concatenates verbatim and freezes at the threshold M4 was measured with", () => {
+    const stream = useStream();
+    const piece = "x".repeat(FREEZE_AT / 4);
+    for (let n = 0; n < 4; n += 1) stream.receive({ kind: "Token", text: piece, provenance: "Untrusted" });
+    // ⛔ THE SECOND DIRECTION IS IN THE COUNTS: one frozen block of exactly FREEZE_AT, and nothing
+    // open -- a store that never froze would have a current of 4 * FREEZE_AT and no blocks.
+    expect(stream.blocks).toHaveLength(1);
+    expect(stream.blocks[0]?.text).toHaveLength(FREEZE_AT);
+    expect(stream.current).toBeNull();
+  });
+
+  it("closes a block when the provenance changes, so every piece carries one label", () => {
+    const stream = useStream();
+    stream.receive({ kind: "Token", text: "a", provenance: "Untrusted" });
+    stream.receive({ kind: "Token", text: "b", provenance: "Trusted" });
+    expect(stream.blocks.map((block) => [block.text, block.provenance])).toEqual([["a", "Untrusted"]]);
+    expect(stream.current).toEqual({ text: "b", provenance: "Trusted" });
+  });
+
+  it("keeps the last KEEP frozen blocks and drops the oldest", () => {
+    const stream = useStream();
+    for (let n = 0; n < KEEP + 3; n += 1) {
+      stream.receive({ kind: "Token", text: `${n}:` + "y".repeat(FREEZE_AT), provenance: "Untrusted" });
+    }
+    expect(stream.blocks).toHaveLength(KEEP);
+    expect(stream.blocks[0]?.text.startsWith("3:")).toBe(true);
+  });
+
+  it("ignores every other kind", () => {
+    const stream = useStream();
+    stream.receive({ kind: "Accepted", value: "AsSystemAccount" });
+    expect(stream.current).toBeNull();
+    expect(stream.blocks).toHaveLength(0);
+  });
+});
+```
+
+`gui/src/stores/invoke.test.ts`, **LF**:
+
+```ts
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
+
+import type { Call, Triple } from "../schema/messages";
+import { createFakeBridge } from "../transport/fakeBridge";
+
+import { useCore } from "./core";
+import { useInvoke } from "./invoke";
+
+const CALL: Call = { function: "vram-policy", argument: "local" };
+const TRIPLE: Triple = { tool: "registry", resource: "arbiter", operation: "Write" };
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+});
+
+describe("the invocation", () => {
+  it("sends Invoke and keeps the call in flight", () => {
+    const bridge = createFakeBridge();
+    const invoke = useInvoke();
+    invoke.attach(bridge);
+    invoke.send(CALL);
+    expect(bridge.sent).toEqual([{ kind: "Invoke", value: CALL }]);
+    expect(invoke.inFlight).toEqual(CALL);
+  });
+
+  it("approves only with a triple asked AND a call in flight, and Approve carries both", () => {
+    const bridge = createFakeBridge();
+    const invoke = useInvoke();
+    const core = useCore();
+    invoke.attach(bridge);
+    // ⛔ THE TWO NEGATIVE HALVES FIRST: neither alone sends anything.
+    expect(invoke.approve()).toBe(false);
+    core.receive({ kind: "PermissionRequired", value: TRIPLE });
+    expect(invoke.approve()).toBe(false);
+    expect(bridge.sent).toEqual([]);
+    core.settled();
+    invoke.send(CALL);
+    expect(invoke.approve()).toBe(false);
+    core.receive({ kind: "PermissionRequired", value: TRIPLE });
+    expect(invoke.approve()).toBe(true);
+    expect(bridge.sent.at(-1)).toEqual({ kind: "Approve", triple: TRIPLE, call: CALL });
+    expect(core.pending).toBeNull();
+    expect(invoke.inFlight).toBeNull();
+    expect(invoke.approved).toEqual([TRIPLE]);
+  });
+
+  it("refuses locally: nothing is sent, and nothing stays pending", () => {
+    const bridge = createFakeBridge();
+    const invoke = useInvoke();
+    const core = useCore();
+    invoke.attach(bridge);
+    invoke.send(CALL);
+    core.receive({ kind: "PermissionRequired", value: TRIPLE });
+    invoke.refuse();
+    expect(bridge.sent.map((message) => message.kind)).toEqual(["Invoke"]);
+    expect(core.pending).toBeNull();
+    expect(invoke.inFlight).toBeNull();
+    expect(invoke.approved).toEqual([]);
+  });
+
+  it("takes Policy as the call having landed", () => {
+    const bridge = createFakeBridge();
+    const invoke = useInvoke();
+    invoke.attach(bridge);
+    invoke.send(CALL);
+    bridge.listen((message) => invoke.receive(message));
+    bridge.deliver("Policy");
+    expect(invoke.inFlight).toBeNull();
+  });
+});
+```
+
+- [ ] **Passo 7: il renderer, e le due regole nostre**
+
+`gui/src/components/markdown.ts`, **LF** — **D54**:
+
+```ts
+import MarkdownIt from "markdown-it";
+
+/**
+ * The renderer of the chat (decision 51 of the north star; §9 row 1 of the milestone-2 design).
+ *
+ * ⛔ PRESET `default` WITH `html: false` AND `linkify: false` WRITTEN OUT, not relied on -- read
+ * INSIDE the 15.0.2 package on 2026-09-15 (task 14, step 2): raw HTML in the text is escaped,
+ * nothing becomes a link on its own, and `validateLink` refuses `vbscript:`, `javascript:`,
+ * `file:` and `data:` (images apart). The text of a model is untrusted (ADR-0014) and is rendered
+ * as TEXT AND CODE, NEVER AS HTML.
+ *
+ * ⛔ AND TWO RULES OF OURS, because "no link opens by itself" (§6a) is not what the defaults do:
+ * - a link becomes a `<span>` that SHOWS its target (`data-href`, drawn by the stylesheet) and has
+ *   no `href`: nothing to follow, and the address is visible instead of hidden behind the text;
+ * - an image becomes text -- the alt and the address -- and NEVER `<img>`: an `<img src>` is
+ *   fetched by the browser with nobody clicking, which would let an untrusted text make the gui
+ *   reach a URL of its choosing (P-87). ADR-0016's exfiltration canary exists for that channel.
+ */
+const md = new MarkdownIt("default", { html: false, linkify: false });
+
+md.renderer.rules.link_open = (tokens, index) => {
+  const href = tokens[index]?.attrGet("href") ?? "";
+  return `<span class="link" data-href="${md.utils.escapeHtml(href)}">`;
+};
+
+md.renderer.rules.link_close = () => "</span>";
+
+md.renderer.rules.image = (tokens, index) => {
+  const token = tokens[index];
+  const alt = md.utils.escapeHtml(token?.content ?? "");
+  const src = md.utils.escapeHtml(token?.attrGet("src") ?? "");
+  return `<span class="image">[${alt}] ${src}</span>`;
+};
+
+export function renderMarkdown(text: string): string {
+  return md.render(text);
+}
+```
+
+`gui/src/components/markdown.test.ts`, **LF**:
+
+```ts
+import { describe, expect, it } from "vitest";
+
+import { renderMarkdown } from "./markdown";
+
+describe("the renderer", () => {
+  it("renders markdown and a fenced code block", () => {
+    const html = renderMarkdown("Ecco **un** esempio.\n\n```rust\nfn main() {}\n```\n");
+    expect(html).toContain("<strong>un</strong>");
+    expect(html).toContain('<pre><code class="language-rust">');
+  });
+
+  it("never renders HTML the model wrote: it is escaped", () => {
+    const html = renderMarkdown('<script>alert(1)</script> <img src="x" onerror="alert(1)">');
+    expect(html).not.toContain("<script");
+    expect(html).not.toContain("<img");
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("renders a link as text that shows its target, with nothing to follow", () => {
+    const html = renderMarkdown("vedi [qui](https://example.com/x)");
+    expect(html).not.toContain("<a");
+    expect(html).not.toContain("href=");
+    expect(html).toContain('data-href="https://example.com/x"');
+    expect(html).toContain("qui");
+  });
+
+  it("renders an image as text and never fetches it", () => {
+    const html = renderMarkdown("![una foto](https://example.com/i.png)");
+    expect(html).not.toContain("<img");
+    expect(html).toContain("[una foto] https://example.com/i.png");
+  });
+
+  it("drops a javascript: target the way validateLink does", () => {
+    const html = renderMarkdown("[x](javascript:alert(1))");
+    expect(html).not.toContain("data-href=\"javascript");
+  });
+});
+```
+
+⚠️ **`import MarkdownIt from "markdown-it"` e `import axe from "axe-core"` (Passo 14) sono import di default su
+pacchetti che espongono `export =` o un ESM col default:** con `moduleResolution: "bundler"` (compito 11)
+`allowSyntheticDefaultImports` è acceso per costruzione, quindi `vue-tsc` li accetta. ⛔ **Se `npm run build`
+li rifiuta**, è una voce d'errata con l'errore intero, non un `// @ts-ignore`.
+
+- [ ] **Passo 8: i quattro moduli che mostrano — Stato, Permessi, Passi, Impostazioni**
+
+⛔ **Ogni modulo LEGGE gli store e non tiene stato suo** (I1, G1): ciò che mostra è l'ultima cosa che il core ha
+detto, e `null` si mostra come *«il core non l'ha ancora detto»* — mai come un valore di comodo.
+
+`gui/src/panels/Status.vue`, **LF**:
+
+```vue
+<script setup lang="ts">
+import { useConnection } from "../stores/connection";
+import { useCore } from "../stores/core";
+
+// The Stato table of §1 of the north star, rows 1-4 -- what milestone 2 builds. Stato SHOWS and
+// does not command: the policy change is a registry function and lives in Impostazioni.
+const connection = useConnection();
+const core = useCore();
+</script>
+
+<template>
+  <section class="status">
+    <dl>
+      <dt>{{ $t("status.degradation") }}</dt>
+      <dd v-if="core.degradation === null">{{ $t("status.unknown") }}</dd>
+      <dd v-else>
+        <span :data-flag="core.degradation.vram_exhausted">{{ $t("status.vram") }}: {{ core.degradation.vram_exhausted ? $t("status.yes") : $t("status.no") }}</span>
+        <span :data-flag="core.degradation.routing_degraded">{{ $t("status.routing") }}: {{ core.degradation.routing_degraded ? $t("status.yes") : $t("status.no") }}</span>
+      </dd>
+      <dt>{{ $t("status.policy") }}</dt>
+      <dd v-if="core.policy === null">{{ $t("status.unknown") }}</dd>
+      <dd v-else>{{ $t(`status.policyName.${core.policy.policy}`) }} — {{ $t("status.budget", { allocated: core.policy.allocated, total: core.policy.total }) }}</dd>
+      <dt>{{ $t("status.protection") }}</dt>
+      <!-- G16 AS A VALUE: the text comes from what `Accepted` carried, through a key, never as a
+           fixed string in the gui (ADR-0023). -->
+      <dd v-if="connection.protection === null">{{ $t("status.unknown") }}</dd>
+      <dd v-else>{{ $t(`status.protectionValue.${connection.protection}`) }}</dd>
+    </dl>
+    <!-- ONE EVENT ROW FOR THE LAST Verdict, AND ONLY WHEN ONE HAS ARRIVED (§6a): no empty box. -->
+    <p v-if="core.lastVerdict !== null" class="event" role="status">
+      {{ $t(`status.verdict.${core.lastVerdict.verdict}`) }}
+      <template v-if="core.lastVerdict.verdict === 'Refused'">{{ $t("status.refusedDetail", { asked: core.lastVerdict.asked, ceiling: core.lastVerdict.ceiling }) }}</template>
+    </p>
+  </section>
+</template>
+
+<style scoped>
+.status {
+  padding: var(--space-3);
+}
+dt {
+  color: var(--ink-dim);
+  margin-top: var(--space-2);
+}
+dd {
+  margin: 0;
+  display: flex;
+  gap: var(--space-3);
+}
+[data-flag="true"] {
+  color: var(--warn);
+}
+.event {
+  margin-top: var(--space-3);
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-2);
+}
+</style>
+```
+
+⚠️ **I due numeri del budget si mostrano come stringhe:** sono `U64` (**D35**), e `12288` MiB non ha bisogno di
+aritmetica; il giorno che servirà una percentuale, passa da `BigInt` come il doc di `U64` prescrive.
+
+`gui/src/panels/Permissions.vue`, **LF**:
+
+```vue
+<script setup lang="ts">
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
+
+// The Permessi table of §1 of the north star, rows 1-3, 7-9 -- what milestone 2 builds: the
+// request in flight, the triples THIS session approved, and the rule on duration. The window that
+// answers is the frame's (`components/Confirm.vue`, D60), not this panel's.
+const core = useCore();
+const invoke = useInvoke();
+</script>
+
+<template>
+  <section class="permissions">
+    <h3>{{ $t("permissions.pendingTitle") }}</h3>
+    <p v-if="core.pending === null">{{ $t("permissions.none") }}</p>
+    <p v-else class="pending">{{ $t("permissions.triple", { tool: core.pending.tool, resource: core.pending.resource, operation: $t(`permissions.operation.${core.pending.operation}`) }) }}</p>
+    <h3>{{ $t("permissions.approvedTitle") }}</h3>
+    <p v-if="invoke.approved.length === 0">{{ $t("permissions.noneApproved") }}</p>
+    <ul v-else>
+      <li v-for="(triple, index) in invoke.approved" :key="index">{{ $t("permissions.triple", { tool: triple.tool, resource: triple.resource, operation: $t(`permissions.operation.${triple.operation}`) }) }}</li>
+    </ul>
+    <p class="rule">{{ $t("permissions.duration") }}</p>
+  </section>
+</template>
+
+<style scoped>
+.permissions {
+  padding: var(--space-3);
+}
+h3 {
+  font-size: inherit;
+  color: var(--ink-dim);
+  margin: var(--space-2) 0 var(--space-1);
+}
+.pending {
+  color: var(--warn);
+}
+.rule {
+  color: var(--ink-dim);
+  margin-top: var(--space-3);
+}
+</style>
+```
+
+`gui/src/panels/Steps.vue`, **LF**:
+
+```vue
+<script setup lang="ts">
+import { useCore } from "../stores/core";
+
+// The Passi table of §1 of the north star, rows 1-3 and 14: a PROJECTION of the journal, re-read
+// from the core (`Steps` replaces, it never appends -- task 13's store). ⛔ THREE FIELDS AND NOT
+// FIVE (P-89, D56): the wire's `StepSummary` carries the step, the function and whether it closed;
+// in milestone 2 the invoker and the effect class are constants -- one invoker, one function -- and
+// the argument is untrusted payload the summary does not carry. The row says so in words.
+const core = useCore();
+</script>
+
+<template>
+  <section class="steps">
+    <p v-if="core.steps.length === 0">{{ $t("steps.none") }}</p>
+    <ol v-else>
+      <li v-for="step in core.steps" :key="step.step" :data-done="step.done">
+        {{ $t("steps.row", { step: step.step, function: step.function }) }}
+        <span class="outcome">{{ step.done ? $t("steps.done") : $t("steps.inDoubt") }}</span>
+      </li>
+    </ol>
+    <p class="who">{{ $t("steps.who") }}</p>
+  </section>
+</template>
+
+<style scoped>
+.steps {
+  padding: var(--space-3);
+}
+.outcome {
+  color: var(--ink-dim);
+  margin-left: var(--space-2);
+}
+[data-done="false"] .outcome {
+  color: var(--warn);
+}
+.who {
+  color: var(--ink-dim);
+  margin-top: var(--space-3);
+}
+</style>
+```
+
+`gui/src/panels/Settings.vue`, **LF** — **D62**:
+
+```vue
+<script setup lang="ts">
+import { computed } from "vue";
+
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
+
+import { VRAM_POLICY, type PolicyArgument } from "./functions";
+
+// The Impostazioni row of the short table of §1: in milestone 2 the VRAM policy change, a registry
+// function with its triple (ADR-0038). This is the FIRST INVOKER of the registry -- the click.
+const core = useCore();
+const invoke = useInvoke();
+
+const current = computed<PolicyArgument | null>(() =>
+  core.policy === null ? null
+  : core.policy.policy === "Local" ? VRAM_POLICY.argument.local
+  : VRAM_POLICY.argument.remote,
+);
+
+// ⛔ THE CONTROL SHOWS THE CORE'S POLICY, NOT THE LAST CLICK (I1): a click sends `Invoke`, and the
+// radio moves when `Policy` comes back -- after the confirmation window, if the triple is not yet
+// granted. Meanwhile the panel says a call is in flight, so nobody is left wondering. `v-model`
+// on a native radio snaps the control back to the model on every update, which is exactly that.
+const choice = computed<PolicyArgument | null>({
+  get: () => current.value,
+  set: (argument) => {
+    if (argument === null || argument === current.value) return;
+    invoke.send({ function: VRAM_POLICY.name, argument });
+  },
+});
+</script>
+
+<template>
+  <section class="settings">
+    <!-- A NATIVE RADIO GROUP AND NOT A LIBRARY PRIMITIVE (D62): the browser gives it the keyboard
+         and the roles; Reka UI is for what HTML has no primitive for -- the focus trap of the
+         window. Disabled while the core has not said which policy is active: "the rest off" (§6a). -->
+    <fieldset :disabled="core.policy === null">
+      <legend>{{ $t("settings.policy") }}</legend>
+      <label><input v-model="choice" type="radio" name="vram-policy" :value="VRAM_POLICY.argument.remote" /> {{ $t("settings.remote") }}</label>
+      <label><input v-model="choice" type="radio" name="vram-policy" :value="VRAM_POLICY.argument.local" /> {{ $t("settings.local") }}</label>
+    </fieldset>
+    <p v-if="invoke.inFlight !== null" role="status">{{ $t("settings.inFlight") }}</p>
+    <p class="who">{{ $t("settings.who") }}</p>
+  </section>
+</template>
+
+<style scoped>
+.settings {
+  padding: var(--space-3);
+}
+fieldset {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+label {
+  display: block;
+  padding: var(--space-1) 0;
+}
+.who {
+  color: var(--ink-dim);
+  margin-top: var(--space-3);
+}
+</style>
+```
+
+- [ ] **Passo 9: la Chat**
+
+`gui/src/panels/Chat.vue`, **LF** — il merito del `tiles/Chat.vue` dello spike, riscritto sugli store (**D49**):
+
+```vue
+<script setup lang="ts">
+import { computed, onUnmounted, ref, watch } from "vue";
+
+import { renderMarkdown } from "../components/markdown";
+import { useStream, type Block } from "../stores/stream";
+
+// The Chat table of §1 of the north star, rows 1, 2 and 24 -- what milestone 2 builds: the stream
+// as markdown with code blocks (G4), the provenance on every piece (G13), and the words that say
+// there is no run. The writing box is row 10, sub-project 3.
+const stream = useStream();
+const empty = computed(() => stream.blocks.length === 0 && stream.current === null);
+
+// Frozen blocks are rendered once, when the list changes (a freeze every FREEZE_AT characters).
+const frozen = computed(() => stream.blocks.map((block) => ({ ...block, html: renderMarkdown(block.text) })));
+
+// ⛔ ONE RENDER PER ANIMATION FRAME AT MOST for the block being streamed, as SP-8's tile did and as
+// M4 was measured: rendering markdown on every token pays the parser per token. Where there is no
+// animation frame -- a probe without a visual jsdom -- the render is immediate: the probe sees the
+// text, the browser sees the throttle.
+const currentHtml = ref("");
+let frame = 0;
+watch(
+  () => stream.current?.text,
+  (text) => {
+    const render = (): void => {
+      frame = 0;
+      currentHtml.value = text === undefined ? "" : renderMarkdown(text);
+    };
+    if (typeof requestAnimationFrame !== "function") {
+      render();
+    } else if (frame === 0) {
+      frame = requestAnimationFrame(render);
+    }
+  },
+);
+onUnmounted(() => {
+  if (frame !== 0 && typeof cancelAnimationFrame === "function") cancelAnimationFrame(frame);
+});
+
+function label(block: Block): string {
+  return block.provenance === "Untrusted" ? "chat.untrusted" : "chat.trusted";
+}
+</script>
+
+<template>
+  <section class="chat">
+    <p v-if="empty" class="empty">{{ $t("chat.noRun") }}</p>
+    <!-- aria-live ON THE FROZEN BLOCKS AND NOT ON THE STREAM (§6a: announced "with moderation"):
+         a live region over the streaming block would read every token; a block is announced once,
+         when it closes. -->
+    <div aria-live="polite">
+      <article v-for="(block, index) in frozen" :key="index" class="block" :data-provenance="block.provenance">
+        <p class="provenance">{{ $t(label(block)) }}</p>
+        <!-- v-html OF OUR OWN OUTPUT: `renderMarkdown` escapes the model's text (html: false), so
+             what lands here is HTML the renderer wrote, never HTML the model wrote. Task 15's lint
+             (`vue/no-v-html`, a warning in the recommended set) gets these two lines as its
+             declared exception, with this reason. -->
+        <div class="body" v-html="block.html"></div>
+      </article>
+    </div>
+    <article v-if="stream.current !== null" class="block streaming" :data-provenance="stream.current.provenance">
+      <p class="provenance">{{ $t(label(stream.current)) }}</p>
+      <div class="body" v-html="currentHtml"></div>
+    </article>
+  </section>
+</template>
+
+<style scoped>
+.chat {
+  padding: var(--space-3);
+  overflow: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+.empty,
+.provenance {
+  color: var(--ink-dim);
+}
+.block {
+  margin-bottom: var(--space-3);
+}
+.block[data-provenance="Untrusted"] {
+  border-left: 3px solid var(--warn);
+  padding-left: var(--space-2);
+}
+/* The renderer's two spans (D54): a link shows where it would have gone, an image says what it was. */
+.body :deep(.link) {
+  text-decoration: underline dotted;
+}
+.body :deep(.link)::after {
+  content: " (" attr(data-href) ")";
+  color: var(--ink-dim);
+}
+.body :deep(.image) {
+  color: var(--ink-dim);
+}
+</style>
+```
+
+⚠️ **`:deep()` sulle due classi del renderer:** l'HTML che `v-html` inserisce non porta l'attributo dello stile
+scoped, e senza `:deep` le due regole non lo raggiungerebbero — la sonda del Passo 13 non lo vede (è CSS), lo vede
+il revisore nel browser: un link sottolineato con l'indirizzo accanto.
+- [ ] **Passo 10: la finestra di conferma, nella cornice**
+
+⛔ **La finestra sta nella CORNICE e non in un pannello — D60:** è modale, intrappola il focus su tutta la pagina (G20)
+e compare e sparisce; la regola di **D50** dice che ciò che sta nella griglia entra nel JSON della disposizione, e una
+finestra che va e viene lo riscriverebbe a ogni permesso. Il modulo Permessi **mostra** la richiesta; la cornice la
+**chiede**. I primitivi sono quelli che il 13 ha già verificato per nome per il cassetto — si **riusano**, con
+`DialogDescription` in più, che esiste nello stesso elenco (misurato il 2026-09-15, Passo 1 del pre-controllo).
+
+`gui/src/components/Confirm.vue`, **LF**:
+
+```vue
+<script setup lang="ts">
+import { DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from "reka-ui";
+import { computed } from "vue";
+
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
+
+const core = useCore();
+const invoke = useInvoke();
+
+// ⛔ OPEN ONLY WHEN THE CORE ASKED AND A CALL OF OURS IS IN FLIGHT (D59): a `PermissionRequired`
+// following no `Invoke` is a shape the core never produces -- the registry only ever answers one
+// -- and a window that opened on it would offer a "yes" with nothing to send. The Permessi panel
+// shows such a request; this window does not ask about it.
+const open = computed(() => core.pending !== null && invoke.inFlight !== null);
+
+// Escape and the overlay are the "no" (ADR-0016: nothing is granted by silence).
+function onOpenChange(value: boolean): void {
+  if (!value) invoke.refuse();
+}
+</script>
+
+<template>
+  <DialogRoot :open="open" @update:open="onOpenChange">
+    <DialogPortal>
+      <DialogOverlay class="confirm-overlay" />
+      <DialogContent class="confirm">
+        <DialogTitle>{{ $t("confirm.title") }}</DialogTitle>
+        <!-- THE TRIPLE IN EVERYDAY WORDS (sequence 3 of the north star, G20): tool, resource,
+             operation -- what the core asked, not what the click meant. -->
+        <DialogDescription v-if="core.pending !== null">
+          {{ $t("permissions.triple", { tool: core.pending.tool, resource: core.pending.resource, operation: $t(`permissions.operation.${core.pending.operation}`) }) }}
+        </DialogDescription>
+        <p v-if="invoke.inFlight !== null">{{ $t("confirm.call", { function: invoke.inFlight.function, argument: invoke.inFlight.argument }) }}</p>
+        <p class="scope">{{ $t("confirm.scope") }}</p>
+        <div class="actions">
+          <button type="button" @click="invoke.refuse()">{{ $t("confirm.no") }}</button>
+          <button type="button" class="primary" @click="invoke.approve()">{{ $t("confirm.yes") }}</button>
+        </div>
+      </DialogContent>
+    </DialogPortal>
+  </DialogRoot>
+</template>
+
+<style scoped>
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 50%);
+}
+.confirm {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 320px;
+  padding: var(--space-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.scope {
+  color: var(--ink-dim);
+}
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+.primary {
+  color: var(--accent);
+}
+</style>
+```
+
+⚠️ **`:open` controllato e `@update:open` per il «no»:** la finestra è una **funzione dei due store**, non ha uno
+stato suo (I1 anche per la presentazione); chiuderla con Escape o cliccando fuori è un rifiuto, e la GUI non manda
+niente — il core non tiene niente in sospeso.
+
+`gui/src/frame/Frame.vue`, **LF** — **modificato**: la finestra dopo la fascia, e la tastiera del Passo 11.
+
+```vue
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from "vue";
+
+import Confirm from "../components/Confirm.vue";
+import { unpack, useLayout, type ViewName } from "../stores/layout";
+
+import Band from "./Band.vue";
+import ViewBar from "./ViewBar.vue";
+import { apply, createDock } from "./dock";
+import { directionOf, moveActive } from "./moveActive";
+
+const host = ref<HTMLElement | null>(null);
+const layout = useLayout();
+let api: ReturnType<typeof createDock> | null = null;
+
+// G20, move 6 of SP-8: the active tile moves in the four directions from the keyboard. The
+// mapping and the geometry live in `moveActive.ts`; this is only the wire.
+function onKey(event: KeyboardEvent): void {
+  const direction = directionOf(event);
+  if (direction === null || api === null) return;
+  event.preventDefault();
+  moveActive(api, direction);
+}
+
+onMounted(() => {
+  if (host.value !== null) api = createDock(host.value);
+  window.addEventListener("keydown", onKey);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", onKey);
+});
+
+function switchTo(view: ViewName): void {
+  layout.view = view;
+  // ⛔ A VIEW CHANGE IS A LAYOUT CHANGE, and it goes through the same path: `apply` prefers the
+  // saved package and falls back to the shipped view, so switching to a view the owner has saved
+  // shows THEIR version and not ours (row 6 of §2).
+  if (api !== null) apply(api, view, unpack(layout.state));
+}
+</script>
+
+<template>
+  <div class="frame">
+    <ViewBar @switch="switchTo" />
+    <Band />
+    <Confirm />
+    <div ref="host" class="dock"></div>
+  </div>
+</template>
+
+<style scoped>
+.frame {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.dock {
+  flex: 1;
+  min-height: 0;
+}
+</style>
+```
+
+- [ ] **Passo 11: la tastiera, e i due comandi della linguetta**
+
+`gui/src/frame/moveActive.ts`, **LF** — il merito di `moveActive` e di `onKey` dello spike, riscritto (**D49**):
+
+```ts
+import type { DockviewApi, Position } from "dockview-core";
+
+export type Direction = "left" | "right" | "up" | "down";
+export type Moved = "moved" | "split" | "none";
+
+/**
+ * Move 6 of SP-8: the active tile goes into the nearest group in that direction; with no
+ * neighbour there, it splits its own group on that side.
+ *
+ * ⛔ GEOMETRY, NOT `dockview`'S NAVIGATION API: it is what a keyboard user SEES, and the library's
+ * spatial navigation is a paid feature (§4 of the north star). Locked groups -- the nucleus, the
+ * strip -- are never a target: move 1.
+ *
+ * ⚠️ UNDER jsdom EVERY RECT IS ZERO (task 13, step 3), so in a jsdom probe every other group
+ * counts as "beyond" in every direction: the probe of `keys.test.ts` hands rectangles of its own
+ * instead, and the browser is where the reviewer sees the real thing (rule 5 of the head).
+ */
+export function moveActive(api: DockviewApi, direction: Direction): Moved {
+  const panel = api.activePanel;
+  if (panel === undefined) return "none";
+  const from = panel.group.element.getBoundingClientRect();
+  const beyond = (rect: DOMRect): boolean =>
+    direction === "left" ? rect.right <= from.left + 1
+    : direction === "right" ? rect.left >= from.right - 1
+    : direction === "up" ? rect.bottom <= from.top + 1
+    : rect.top >= from.bottom - 1;
+  const gap = (rect: DOMRect): number =>
+    direction === "left" ? from.left - rect.right
+    : direction === "right" ? rect.left - from.right
+    : direction === "up" ? from.top - rect.bottom
+    : rect.top - from.bottom;
+  const target = api.groups
+    .filter((group) => group !== panel.group && !group.locked)
+    .map((group) => ({ group, rect: group.element.getBoundingClientRect() }))
+    .filter(({ rect }) => beyond(rect))
+    .sort((a, b) => gap(a.rect) - gap(b.rect))[0];
+  if (target !== undefined) {
+    panel.api.moveTo({ group: target.group, position: "center" });
+    return "moved";
+  }
+  const side: Position = direction === "up" ? "top" : direction === "down" ? "bottom" : direction;
+  panel.api.moveTo({ group: panel.group, position: side });
+  return "split";
+}
+
+/** Ctrl+Alt+Arrow, and nothing while typing in a field. */
+export function directionOf(event: KeyboardEvent): Direction | null {
+  if (!event.ctrlKey || !event.altKey) return null;
+  const tag = (event.target as HTMLElement | null)?.tagName;
+  if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return null;
+  switch (event.key) {
+    case "ArrowLeft":
+      return "left";
+    case "ArrowRight":
+      return "right";
+    case "ArrowUp":
+      return "up";
+    case "ArrowDown":
+      return "down";
+    default:
+      return null;
+  }
+}
+```
+
+`gui/src/frame/BigTab.ts`, **LF** — **riscritto**: il titolo dal nome del modulo (com'è già nel 13 dal richiamo di
+**P-95**) e i **due** comandi (**P-91**, **D58**):
+
+```ts
+import type { ITabRenderer, TabPartInitParameters } from "dockview-core";
+
+import { i18n } from "../i18n";
+import { isModule } from "../panels/registry";
+
+/**
+ * The big grab handle (move 5): the tab element is what `dockview` drags, so a big tab is a big
+ * grab -- which is what makes a pointer that is a HAND able to take it (move 8, ADR-0039).
+ *
+ * ⛔ A CLICK ON A COMMAND MUST NOT START A DRAG, and stopping `click` alone is not enough:
+ * `dockview` begins the drag on `pointerdown`/`mousedown`, so both are stopped here. Measured in
+ * SP-8; without it, every press of a command drags the tile a few pixels first.
+ *
+ * ⛔ TWO COMMANDS AND NOT THREE (D58): "float" and "full page" are the library's; "in a separate
+ * window" needs `popoutUrl` and a page served from an http(s) origin, which is the shell's (Q3 of
+ * SP-8, P-91), and the shell is outside this plan. Each command is a `<button>` with a name from
+ * the locale: reachable with the tab key, read by a screen reader (G20).
+ */
+export class BigTab implements ITabRenderer {
+  readonly element = document.createElement("div");
+
+  init(parameters: TabPartInitParameters): void {
+    this.element.className = "bigtab";
+    const title = document.createElement("span");
+    title.className = "bigtab-title";
+    // ⛔ THE MODULE'S ITALIAN NAME AND NOT THE PANEL'S ID (G21, P-95): the views carry `title: id`,
+    // and an id is code. A panel that is not a module type keeps the title it was given.
+    title.textContent = isModule(parameters.api.id)
+      ? i18n.global.t(`modules.${parameters.api.id}`)
+      : (parameters.title ?? parameters.api.id);
+    this.element.append(title);
+
+    const command = (glyph: string, key: "float" | "page", run: () => void): void => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = glyph;
+      const name = i18n.global.t(`menu.${key}`);
+      button.setAttribute("aria-label", name);
+      button.title = name;
+      button.addEventListener("pointerdown", (event) => event.stopPropagation());
+      button.addEventListener("mousedown", (event) => event.stopPropagation());
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        run();
+      });
+      this.element.append(button);
+    };
+    command("⧉", "float", () => {
+      const panel = parameters.containerApi.getPanel(parameters.api.id);
+      if (panel !== undefined) parameters.containerApi.addFloatingGroup(panel, { x: 60, y: 60, width: 460, height: 320 });
+    });
+    command("⤢", "page", () => {
+      if (parameters.api.isMaximized()) parameters.api.exitMaximized();
+      else parameters.api.maximize();
+    });
+  }
+}
+```
+
+⚠️ **I nomi dell'API sono letti nei `.d.ts` di `dockview-core` 8.3.1 il 2026-09-15**, non ricordati dallo spike sulla
+8.2.0: `DockviewApi.getPanel(id): IDockviewPanel | undefined`, `addFloatingGroup(item, options?: FloatingGroupOptions)`
+con `x`, `y`, `width`, `height` facoltativi, e `maximize()`, `isMaximized()`, `exitMaximized()` su `DockviewPanelApi`.
+Il comando che lo rifà, dopo il Passo 2:
+
+```bash
+grep -n 'getPanel(id: string): IDockviewPanel\|addFloatingGroup(item' gui/node_modules/dockview-core/dist/cjs/api/component.api.d.ts
+grep -n 'maximize(): void\|isMaximized(): boolean\|exitMaximized(): void' gui/node_modules/dockview-core/dist/cjs/api/dockviewPanelApi.d.ts | head -3
+grep -n 'interface FloatingGroupOptions' -A 4 gui/node_modules/dockview-core/dist/cjs/dockview/dockviewComponent.d.ts
+```
+
+Atteso: ogni nome trovato. ⛔ **Un nome che manca è una voce d'errata**, non un `as never`.
+
+E in `gui/src/tokens/tokens.css` — è l'unico foglio che veste ciò che disegniamo noi — entrano, in coda, le regole
+della linguetta che lo spike aveva in `style.css` e che il 13 non ha portato perché non aveva comandi:
+
+```css
+
+/* The big grab handle (move 5) and its two commands (task 14). */
+.bigtab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 40px;
+  padding: 0 var(--space-3);
+  font-weight: 600;
+  cursor: grab;
+  user-select: none;
+}
+.bigtab-title {
+  flex: 1;
+}
+.bigtab button {
+  font: inherit;
+  width: 26px;
+  height: 26px;
+  background: var(--surface-raised);
+  color: inherit;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+```
+
+⚠️ **Se il 13 aveva già messo `.bigtab` in `tokens.css`** — il suo Passo 4 non lo detta, ma un esecutore potrebbe averlo
+fatto per vedere la linguetta — si aggiunge solo ciò che manca: `grep -n '^\.bigtab' gui/src/tokens/tokens.css` prima
+di scrivere.
+
+- [ ] **Passo 12: i moduli registrati, e la finta esposta al revisore**
+
+`gui/src/panels/modules.ts`, **LF**:
+
+```ts
+import type { Component } from "vue";
+
+import Chat from "./Chat.vue";
+import Permissions from "./Permissions.vue";
+import Settings from "./Settings.vue";
+import Status from "./Status.vue";
+import Steps from "./Steps.vue";
+import { register } from "./registry";
+
+/**
+ * The modules milestone 2 builds, by the name the views and the drawer use. ⛔ THE ONE PLACE THAT
+ * PLUGS A BUILT MODULE INTO THE REGISTRY: task 13 left `register` as the seam so that
+ * `registry.ts` would not change shape when a module is built -- a built module adds a row HERE.
+ */
+export const MODULES: Readonly<Record<string, Component>> = {
+  chat: Chat,
+  status: Status,
+  permissions: Permissions,
+  steps: Steps,
+  settings: Settings,
+};
+
+export function registerModules(): void {
+  for (const [name, component] of Object.entries(MODULES)) register(name, component);
+}
+```
+
+`gui/src/main.ts`, **LF** — **riscritto**:
+
+```ts
+// ⛔ FIRST LINE, AND MEASURED: `dockview-core` does not ship the stylesheet and does not inject
+// one (E2 of the part-1 plan, measured in the browser on 2026-09-10). Without it the groups
+// stack in the document flow and a floating group leaves the viewport.
+import "dockview/dist/styles/dockview.css";
+import "./tokens/tokens.css";
+
+import { createPinia } from "pinia";
+import { createApp } from "vue";
+
+import App from "./App.vue";
+import { i18n } from "./i18n";
+import { registerModules } from "./panels/modules";
+import { useConnection } from "./stores/connection";
+import { useCore } from "./stores/core";
+import { useInvoke } from "./stores/invoke";
+import { useLayout } from "./stores/layout";
+import { useStream } from "./stores/stream";
+import type { Bridge } from "./transport/bridge";
+import { createFakeBridge, type FakeBridge } from "./transport/fakeBridge";
+
+/**
+ * ⛔ THE FAKE BRIDGE IS WHAT MILESTONE 2's SPA RUNS AGAINST IN A BROWSER, and it is not a
+ * shortcut: §6a says the SPA is developed and probed against a fake that replays the fixtures
+ * BEFORE the shell exists, and the shell is outside this plan (§8 of the milestone-2 design).
+ * The day a shell exists it hands one in on `window`, and this line is all that changes.
+ *
+ * ⚠️ AND THE FAKE IS EXPOSED TO WHOEVER IS LOOKING (D57): it replays only on request, so in a
+ * browser nothing arrives until someone asks -- `harnessFake.deliverAll()` in the console, or one
+ * kind at a time. It is a review affordance by construction: a shell's bridge is not a fake and
+ * has nothing to expose.
+ */
+declare global {
+  interface Window {
+    harnessBridge?: Bridge;
+    harnessFake?: FakeBridge;
+  }
+}
+
+function fakeForTheReviewer(): FakeBridge {
+  const fake = createFakeBridge();
+  window.harnessFake = fake;
+  return fake;
+}
+
+const bridge: Bridge = window.harnessBridge ?? fakeForTheReviewer();
+
+// ⛔ BEFORE THE DOCK MOUNTS: `createDock` asks the registry for a component per panel of the view,
+// and a module registered after that would be a placeholder until the next `fromJSON`.
+registerModules();
+
+const app = createApp(App);
+app.use(createPinia());
+app.use(i18n);
+app.mount("#app");
+
+const connection = useConnection();
+const core = useCore();
+const layout = useLayout();
+const invoke = useInvoke();
+const stream = useStream();
+connection.attach(bridge);
+layout.attach(bridge);
+invoke.attach(bridge);
+bridge.listen((message) => {
+  connection.receive(message);
+  core.receive(message);
+  layout.receive(message);
+  invoke.receive(message);
+  stream.receive(message);
+});
+connection.hello();
+```
+
+⚠️ **Gli store si prendono DOPO `app.use(createPinia())`**, non prima — com'era nel 13; e `registerModules()` sta
+**prima** di `app.mount`, per la ragione scritta accanto.
+
+- [ ] **Passo 13: le sonde dei moduli, della Chat, della tastiera e della linguetta**
+
+`gui/src/panels/modules.test.ts`, **LF**. ⛔ **Ogni sonda prova le DUE direzioni:** ciò che si vede quando il dato c'è,
+e ciò che **non** si vede quando manca.
+
+```ts
+import { mount } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
+import { nextTick } from "vue";
+
+import Confirm from "../components/Confirm.vue";
+import { i18n } from "../i18n";
+import type { Triple } from "../schema/messages";
+import { useConnection } from "../stores/connection";
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
+import { createFakeBridge } from "../transport/fakeBridge";
+
+import { VRAM_POLICY } from "./functions";
+import { MODULES, registerModules } from "./modules";
+import { PANEL_TYPES, componentFor } from "./registry";
+import Permissions from "./Permissions.vue";
+import Settings from "./Settings.vue";
+import Status from "./Status.vue";
+import Steps from "./Steps.vue";
+
+/** The triple the `PermissionRequired` fixture carries -- the canonical set's ARBITRARY value
+ * (task 3), not the registry's real triple: the fake replays fixtures and invents nothing. */
+const TRIPLE_OF_THE_FIXTURE: Triple = { tool: "arbiter", resource: "policy", operation: "Write" };
+const t = i18n.global.t;
+
+function wire() {
+  const bridge = createFakeBridge();
+  const connection = useConnection();
+  const core = useCore();
+  const invoke = useInvoke();
+  invoke.attach(bridge);
+  bridge.listen((message) => {
+    connection.receive(message);
+    core.receive(message);
+    invoke.receive(message);
+  });
+  return { bridge, connection, core, invoke };
+}
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+});
+
+describe("the registry, with the modules plugged in", () => {
+  it("builds the five real modules and leaves the other types to the placeholder", () => {
+    registerModules();
+    for (const name of Object.keys(MODULES)) expect(typeof componentFor(name), name).toBe("function");
+    // ⛔ THE SECOND DIRECTION: a module type nobody built is still a placeholder, not a crash and
+    // not a real module -- otherwise plugging five in would have to be checked in the browser.
+    const unbuilt = PANEL_TYPES.filter((type) => !(type.name in MODULES));
+    expect(unbuilt.length).toBeGreaterThan(0);
+    for (const type of unbuilt) expect(typeof componentFor(type.name), type.name).toBe("function");
+  });
+});
+
+describe("Stato", () => {
+  it("says the core has not spoken, and shows no event row, before anything arrives", () => {
+    wire();
+    const wrapper = mount(Status, { global: { plugins: [i18n] } });
+    expect(wrapper.text()).toContain(t("status.unknown"));
+    expect(wrapper.find(".event").exists()).toBe(false);
+  });
+
+  it("shows the two degradation flags, the policy with its budget, and G16 from the value in Accepted", async () => {
+    const { bridge } = wire();
+    const wrapper = mount(Status, { global: { plugins: [i18n] } });
+    bridge.deliver("Accepted");
+    bridge.deliver("Degradation");
+    bridge.deliver("Policy");
+    await nextTick();
+    const text = wrapper.text();
+    expect(text).toContain(`${t("status.vram")}: ${t("status.yes")}`);
+    expect(text).toContain(`${t("status.routing")}: ${t("status.no")}`);
+    expect(text).toContain(t("status.policyName.Remote"));
+    expect(text).toContain(t("status.budget", { allocated: "12288", total: "16384" }));
+    expect(text).toContain(t("status.protectionValue.AsSystemAccount"));
+    expect(text).not.toContain(t("status.unknown"));
+  });
+
+  it("shows one event row only once a Verdict has arrived, with Refused told apart", async () => {
+    const { bridge } = wire();
+    const wrapper = mount(Status, { global: { plugins: [i18n] } });
+    bridge.deliver("Verdict");
+    await nextTick();
+    const event = wrapper.find(".event");
+    expect(event.exists()).toBe(true);
+    expect(event.text()).toContain(t("status.verdict.Refused"));
+    expect(event.text()).toContain(t("status.refusedDetail", { asked: "4096", ceiling: "1024" }));
+  });
+});
+
+describe("Permessi", () => {
+  it("shows the pending triple in words, and the approved list after a yes", async () => {
+    const { bridge, invoke } = wire();
+    const wrapper = mount(Permissions, { global: { plugins: [i18n] } });
+    expect(wrapper.text()).toContain(t("permissions.none"));
+    invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
+    bridge.deliver("PermissionRequired");
+    await nextTick();
+    const words = t("permissions.triple", { tool: "arbiter", resource: "policy", operation: t("permissions.operation.Write") });
+    expect(wrapper.find(".pending").text()).toBe(words);
+    expect(invoke.approve()).toBe(true);
+    await nextTick();
+    expect(wrapper.find(".pending").exists()).toBe(false);
+    expect(wrapper.find("ul").text()).toContain(words);
+  });
+});
+
+describe("Passi", () => {
+  it("lists the steps the core sent, closed or in doubt", async () => {
+    const { bridge, core } = wire();
+    const wrapper = mount(Steps, { global: { plugins: [i18n] } });
+    expect(wrapper.text()).toContain(t("steps.none"));
+    bridge.deliver("Steps");
+    await nextTick();
+    expect(wrapper.text()).toContain(t("steps.row", { step: "42", function: "arbiter.set_policy" }));
+    expect(wrapper.text()).toContain(t("steps.done"));
+    // ⛔ THE HALF THE FIXTURE CANNOT REACH (D46): a step in doubt is a typed message to the store.
+    core.receive({ kind: "Steps", value: [{ step: "43", function: "vram-policy", done: false }] });
+    await nextTick();
+    expect(wrapper.text()).toContain(t("steps.inDoubt"));
+    expect(wrapper.text()).not.toContain(t("steps.done"));
+  });
+});
+
+describe("Impostazioni", () => {
+  it("is off until the core has said which policy is active", () => {
+    wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    expect(wrapper.get("fieldset").attributes("disabled")).toBeDefined();
+  });
+
+  it("sends Invoke with the registry's literals on a change, and nothing on the current value", async () => {
+    const { bridge, invoke } = wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    bridge.deliver("Policy");
+    await nextTick();
+    const [remote, local] = wrapper.findAll("input[type=radio]");
+    expect((remote?.element as HTMLInputElement).checked).toBe(true);
+    await remote?.setValue(true);
+    expect(bridge.sent).toEqual([]);
+    await local?.setValue(true);
+    expect(bridge.sent).toEqual([{ kind: "Invoke", value: { function: "vram-policy", argument: "local" } }]);
+    expect(invoke.inFlight).not.toBeNull();
+    expect(wrapper.text()).toContain(t("settings.inFlight"));
+  });
+});
+
+describe("the confirmation window", () => {
+  it("opens only when the core asked AND a call is in flight, and Approve carries the call", async () => {
+    const { bridge, core, invoke } = wire();
+    const wrapper = mount(Confirm, { global: { plugins: [i18n] }, attachTo: document.body });
+    bridge.deliver("PermissionRequired");
+    await nextTick();
+    // ⛔ THE SECOND DIRECTION FIRST: a request that follows no Invoke of ours opens nothing.
+    expect(document.querySelector(".confirm")).toBeNull();
+    core.settled();
+    invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
+    bridge.deliver("PermissionRequired");
+    await nextTick();
+    await nextTick();
+    const dialog = document.querySelector(".confirm");
+    expect(dialog).not.toBeNull();
+    expect(dialog?.textContent).toContain(t("permissions.operation.Write"));
+    // G20: the focus is INSIDE the window once it is open.
+    expect(dialog?.contains(document.activeElement)).toBe(true);
+    const yes = [...document.querySelectorAll(".confirm button")].find((b) => b.textContent?.trim() === t("confirm.yes"));
+    expect(yes).toBeDefined();
+    (yes as HTMLButtonElement).click();
+    await nextTick();
+    expect(bridge.sent.at(-1)).toEqual({ kind: "Approve", triple: TRIPLE_OF_THE_FIXTURE, call: { function: "vram-policy", argument: "local" } });
+    expect(core.pending).toBeNull();
+    expect(document.querySelector(".confirm")).toBeNull();
+    wrapper.unmount();
+  });
+
+  it("sends nothing on a no, and closes", async () => {
+    const { bridge, core, invoke } = wire();
+    const wrapper = mount(Confirm, { global: { plugins: [i18n] }, attachTo: document.body });
+    invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
+    bridge.deliver("PermissionRequired");
+    await nextTick();
+    await nextTick();
+    const no = [...document.querySelectorAll(".confirm button")].find((b) => b.textContent?.trim() === t("confirm.no"));
+    (no as HTMLButtonElement).click();
+    await nextTick();
+    expect(bridge.sent.map((message) => message.kind)).toEqual(["Invoke"]);
+    expect(core.pending).toBeNull();
+    expect(document.querySelector(".confirm")).toBeNull();
+    wrapper.unmount();
+  });
+});
+```
+
+⚠️ **La tripla che le sonde confrontano è quella della FIXTURE, non quella vera del registro:** la finta rigioca
+la fixture, e la fixture porta il valore **arbitrario** dell'insieme canonico (`arbiter`, `policy`); la tripla vera
+(`registry`, `arbiter`) la vede solo chi parla col core, cioè il revisore col core finto — e il giorno del guscio.
+
+⛔ **La riga sul focus è la sola che dipende da `jsdom`, e si misura invece di darla per buona:** Reka mette il
+focus dentro il contenuto all'apertura, ma sotto `jsdom` il rilevamento dei «tabbable» può non trovare nulla e
+posare il focus sul contenitore — che sta comunque **dentro** `.confirm`, quindi l'asserzione regge. ⚠️ **Se
+`document.activeElement` resta fuori**, la riga si toglie con una **voce d'errata** che dice l'esito, e la trappola
+di focus passa al revisore nel browser: tabulatore avanti e indietro dentro la finestra, senza uscirne.
+
+`gui/src/panels/chat.test.ts`, **LF**:
+
+```ts
+import { mount } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
+import { nextTick } from "vue";
+
+import { i18n } from "../i18n";
+import { FREEZE_AT, useStream } from "../stores/stream";
+import { createFakeBridge } from "../transport/fakeBridge";
+
+import Chat from "./Chat.vue";
+
+const t = i18n.global.t;
+
+/** One animation frame where there is one, nothing where there is none: the component renders
+ * the streaming block on the frame, and immediately without one. */
+async function frame(): Promise<void> {
+  await new Promise<void>((resolve) => {
+    if (typeof requestAnimationFrame === "function") requestAnimationFrame(() => resolve());
+    else resolve();
+  });
+  await nextTick();
+}
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+});
+
+describe("the Chat", () => {
+  it("says in words that there is no run, before any token", () => {
+    const wrapper = mount(Chat, { global: { plugins: [i18n] } });
+    expect(wrapper.text()).toContain(t("chat.noRun"));
+    expect(wrapper.findAll("article")).toHaveLength(0);
+  });
+
+  it("renders the kernel's Token fixture as markdown, with its provenance on the piece", async () => {
+    const bridge = createFakeBridge();
+    const stream = useStream();
+    bridge.listen((message) => stream.receive(message));
+    const wrapper = mount(Chat, { global: { plugins: [i18n] } });
+    bridge.deliver("Token");
+    await frame();
+    expect(wrapper.text()).not.toContain(t("chat.noRun"));
+    const streaming = wrapper.get("article.streaming");
+    expect(streaming.attributes("data-provenance")).toBe("Untrusted");
+    expect(streaming.text()).toContain(t("chat.untrusted"));
+    expect(streaming.find(".body").html()).toContain("<p>ciao</p>");
+  });
+
+  it("renders text and code, never the model's HTML, and no link that can be followed", async () => {
+    const stream = useStream();
+    const wrapper = mount(Chat, { global: { plugins: [i18n] } });
+    stream.receive({ kind: "Token", text: "```rust\nfn main() {}\n```\n<b>x</b> [q](https://e.com)", provenance: "Untrusted" });
+    await frame();
+    const body = wrapper.get("article.streaming .body").html();
+    expect(body).toContain('<code class="language-rust">');
+    expect(body).toContain("&lt;b&gt;x&lt;/b&gt;");
+    expect(body).not.toContain("<a");
+    expect(body).toContain('data-href="https://e.com"');
+  });
+
+  it("freezes a block at the threshold and keeps its provenance label, as SP-8's tile did", async () => {
+    const stream = useStream();
+    const wrapper = mount(Chat, { global: { plugins: [i18n] } });
+    stream.receive({ kind: "Token", text: "a".repeat(FREEZE_AT), provenance: "Untrusted" });
+    await frame();
+    expect(wrapper.findAll("article.block:not(.streaming)")).toHaveLength(1);
+    expect(wrapper.find("article.streaming").exists()).toBe(false);
+    expect(wrapper.get("[aria-live=polite] article").attributes("data-provenance")).toBe("Untrusted");
+  });
+});
+```
+
+`gui/src/frame/keys.test.ts`, **LF** — la geometria si prova con rettangoli **nostri**, perché `jsdom` non ne ha:
+
+```ts
+import type { DockviewApi } from "dockview-core";
+import { describe, expect, it } from "vitest";
+
+import { directionOf, moveActive } from "./moveActive";
+
+/** A group as `moveActive` sees it: a rectangle, a lock, an element. */
+function group(rect: { left: number; top: number; width: number; height: number }, locked = false) {
+  const full = { ...rect, right: rect.left + rect.width, bottom: rect.top + rect.height } as DOMRect;
+  return { locked, element: { getBoundingClientRect: () => full } };
+}
+
+/** The four members `moveActive` touches, and the `moveTo` it calls -- recorded. */
+function dock(active: ReturnType<typeof group>, others: ReturnType<typeof group>[]) {
+  const moves: unknown[] = [];
+  const panel = { group: active, api: { moveTo: (options: unknown) => moves.push(options) } };
+  const api = { activePanel: panel, groups: [active, ...others] } as unknown as DockviewApi;
+  return { api, moves };
+}
+
+describe("moveActive", () => {
+  it("moves into the NEAREST unlocked group in that direction", () => {
+    const active = group({ left: 400, top: 0, width: 200, height: 200 });
+    const near = group({ left: 700, top: 0, width: 200, height: 200 });
+    const far = group({ left: 1000, top: 0, width: 200, height: 200 });
+    const lockedNearer = group({ left: 620, top: 0, width: 60, height: 200 }, true);
+    const { api, moves } = dock(active, [far, near, lockedNearer]);
+    expect(moveActive(api, "right")).toBe("moved");
+    expect(moves).toEqual([{ group: near, position: "center" }]);
+  });
+
+  it("splits its own group on that side when nothing lies there", () => {
+    const active = group({ left: 400, top: 0, width: 200, height: 200 });
+    const left = group({ left: 0, top: 0, width: 200, height: 200 });
+    const { api, moves } = dock(active, [left]);
+    expect(moveActive(api, "down")).toBe("split");
+    expect(moves).toEqual([{ group: active, position: "bottom" }]);
+  });
+
+  it("does nothing without an active tile", () => {
+    const api = { activePanel: undefined, groups: [] } as unknown as DockviewApi;
+    expect(moveActive(api, "left")).toBe("none");
+  });
+});
+
+describe("directionOf", () => {
+  it("maps Ctrl+Alt+Arrow, and nothing else", () => {
+    expect(directionOf(new KeyboardEvent("keydown", { key: "ArrowLeft", ctrlKey: true, altKey: true }))).toBe("left");
+    expect(directionOf(new KeyboardEvent("keydown", { key: "ArrowDown", ctrlKey: true, altKey: true }))).toBe("down");
+    expect(directionOf(new KeyboardEvent("keydown", { key: "ArrowLeft", ctrlKey: true }))).toBeNull();
+    expect(directionOf(new KeyboardEvent("keydown", { key: "a", ctrlKey: true, altKey: true }))).toBeNull();
+  });
+
+  it("stays out of a field being typed in", () => {
+    const input = document.createElement("input");
+    document.body.append(input);
+    const event = new KeyboardEvent("keydown", { key: "ArrowUp", ctrlKey: true, altKey: true, bubbles: true });
+    input.dispatchEvent(event);
+    expect(directionOf(event)).toBeNull();
+    input.remove();
+  });
+});
+```
+
+`gui/src/frame/bigtab.test.ts`, **LF**:
+
+```ts
+import type { TabPartInitParameters } from "dockview-core";
+import { describe, expect, it } from "vitest";
+
+import { i18n } from "../i18n";
+
+import { BigTab } from "./BigTab";
+
+const t = i18n.global.t;
+
+function parameters(id: string, title?: string) {
+  const calls: string[] = [];
+  const api = {
+    id,
+    isMaximized: () => false,
+    maximize: () => calls.push("maximize"),
+    exitMaximized: () => calls.push("exit"),
+  };
+  const containerApi = {
+    getPanel: (wanted: string) => (wanted === id ? { id } : undefined),
+    addFloatingGroup: () => calls.push("float"),
+  };
+  return { calls, init: { api, containerApi, title, params: {} } as unknown as TabPartInitParameters };
+}
+
+describe("the big tab", () => {
+  it("shows a module's Italian name, and a plain panel's own title", () => {
+    const status = new BigTab();
+    status.init(parameters("status").init);
+    expect(status.element.querySelector(".bigtab-title")?.textContent).toBe(t("modules.status"));
+    const other = new BigTab();
+    other.init(parameters("not-a-module", "Titolo dato").init);
+    expect(other.element.querySelector(".bigtab-title")?.textContent).toBe("Titolo dato");
+  });
+
+  it("carries two named commands that run, and do not start a drag", () => {
+    const { calls, init } = parameters("status");
+    const tab = new BigTab();
+    tab.init(init);
+    const buttons = [...tab.element.querySelectorAll("button")];
+    expect(buttons.map((b) => b.getAttribute("aria-label"))).toEqual([t("menu.float"), t("menu.page")]);
+    let reachedTheTab = 0;
+    tab.element.addEventListener("pointerdown", () => { reachedTheTab += 1; });
+    buttons[0]?.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+    // ⛔ THE SECOND DIRECTION: the same event on the title DOES reach the tab -- so the count below
+    // is zero because of `stopPropagation`, not because nothing bubbles.
+    tab.element.querySelector(".bigtab-title")?.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+    expect(reachedTheTab).toBe(1);
+    buttons[0]?.click();
+    buttons[1]?.click();
+    expect(calls).toEqual(["float", "maximize"]);
+  });
+});
+```
+- [ ] **Passo 14: l'accessibilità, con `axe-core` sui componenti montati — nelle due direzioni**
+
+`gui/src/a11y.test.ts`, **LF** — decisione 54 della stella polare: `axe-core` chiamato **diretto** sul DOM che
+`@vue/test-utils` monta, con un aiutante di poche righe e nessun adattatore.
+
+```ts
+import { mount } from "@vue/test-utils";
+import axe from "axe-core";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
+import { nextTick, type Component } from "vue";
+
+import Confirm from "./components/Confirm.vue";
+import Band from "./frame/Band.vue";
+import ViewBar from "./frame/ViewBar.vue";
+import { i18n } from "./i18n";
+import Chat from "./panels/Chat.vue";
+import { VRAM_POLICY } from "./panels/functions";
+import Permissions from "./panels/Permissions.vue";
+import Placeholder from "./panels/Placeholder.vue";
+import Settings from "./panels/Settings.vue";
+import Status from "./panels/Status.vue";
+import Steps from "./panels/Steps.vue";
+import Strip from "./panels/Strip.vue";
+import { useConnection } from "./stores/connection";
+import { useCore } from "./stores/core";
+import { useInvoke } from "./stores/invoke";
+import { useStream } from "./stores/stream";
+import { createFakeBridge } from "./transport/fakeBridge";
+
+/**
+ * Every violation axe finds under a node, as `rule: targets`, and nothing else.
+ *
+ * ⛔ `color-contrast` IS DISABLED HERE AND NOT IGNORED: under jsdom axe files it under
+ * `incomplete` every time -- there is no layout to read a background from (measured on
+ * 2026-09-15, P-86) -- so a green from this rule would prove nothing about contrast.
+ * `tokens/contrast.test.ts` is what proves AA, on every text colour over every surface.
+ */
+async function violations(node: Element): Promise<string[]> {
+  const results = await axe.run(node, { rules: { "color-contrast": { enabled: false } } });
+  return results.violations.map((violation) => `${violation.id}: ${violation.nodes.map((n) => n.target.join(" ")).join(", ")}`);
+}
+
+/** Fills the stores the way a welcome does, so every component has something to draw. */
+function welcome(): void {
+  const bridge = createFakeBridge();
+  const connection = useConnection();
+  const core = useCore();
+  const stream = useStream();
+  bridge.listen((message) => {
+    connection.receive(message);
+    core.receive(message);
+    stream.receive(message);
+  });
+  bridge.deliverAll();
+}
+
+async function mounted(component: Component): Promise<{ element: Element; unmount: () => void }> {
+  const wrapper = mount(component, { global: { plugins: [i18n] }, attachTo: document.body });
+  await nextTick();
+  // One frame, where there is one: the Chat renders the streaming block on the animation frame.
+  await new Promise<void>((resolve) => {
+    if (typeof requestAnimationFrame === "function") requestAnimationFrame(() => resolve());
+    else resolve();
+  });
+  await nextTick();
+  return { element: wrapper.element, unmount: () => wrapper.unmount() };
+}
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+  document.body.innerHTML = "";
+});
+
+describe("the probe itself", () => {
+  it("catches a button with no name -- so a green below is a finding, not a silence", async () => {
+    const host = document.createElement("div");
+    host.innerHTML = "<button></button>";
+    document.body.append(host);
+    expect(await violations(host)).toEqual(expect.arrayContaining([expect.stringMatching(/^button-name/)]));
+  });
+});
+
+describe("the SPA, with the welcome delivered", () => {
+  const modules: [string, Component][] = [
+    ["Stato", Status],
+    ["Permessi", Permissions],
+    ["Passi", Steps],
+    ["Impostazioni", Settings],
+    ["Chat", Chat],
+    ["la striscia", Strip],
+    ["la barra", ViewBar],
+  ];
+
+  for (const [name, component] of modules) {
+    it(`${name} has no violation`, async () => {
+      welcome();
+      const { element, unmount } = await mounted(component);
+      expect(await violations(element)).toEqual([]);
+      unmount();
+    });
+  }
+
+  it("the band, while waiting, has no violation", async () => {
+    const { element, unmount } = await mounted(Band);
+    expect(await violations(element)).toEqual([]);
+    unmount();
+  });
+
+  it("the placeholder, in both of its states, has no violation", async () => {
+    for (const params of [{ module: "costs", who: 3 }, { missing: true }]) {
+      const wrapper = mount(Placeholder, { global: { plugins: [i18n] }, attachTo: document.body, props: { params } });
+      await nextTick();
+      expect(await violations(wrapper.element)).toEqual([]);
+      wrapper.unmount();
+    }
+  });
+
+  it("the confirmation window, open, has no violation", async () => {
+    welcome();
+    const core = useCore();
+    const invoke = useInvoke();
+    core.settled();
+    invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
+    core.receive({ kind: "PermissionRequired", value: { tool: "registry", resource: "arbiter", operation: "Write" } });
+    const { unmount } = await mounted(Confirm);
+    const dialog = document.querySelector(".confirm");
+    expect(dialog).not.toBeNull();
+    // The portal renders into `body`, so the whole document is the node under probe.
+    expect(await violations(document.body)).toEqual([]);
+    unmount();
+  });
+});
+```
+
+⚠️ **`welcome()` consegna anche `PermissionRequired`**, quindi `Permessi` monta con una richiesta in attesa e la
+striscia la conta; per la finestra si azzera prima con `settled()` e si rimette il caso vero, con un `Invoke` in volo.
+⚠️ **Il rumore di `HTMLCanvasElement.getContext` non è un rosso:** `axe` tenta il canvas per i colori e `jsdom` non lo
+ha senza il pacchetto `canvas` — misurato il 2026-09-15; si ignora, e non si installa `canvas` per farlo tacere.
+
+⛔ **Se un componente porta una violazione, si corregge il componente**, non la lista delle regole: il solo
+disabilitato è `color-contrast`, per la ragione scritta nell'aiutante.
+
+- [ ] **Passo 15: il richiamo datato sulle righe di Passi della stella polare**
+
+⛔ **P-89, D56:** la riga 1 della tabella *Passi* della §1 promette per il 2 *«funzione, invocatore, argomento, classe
+dell'effetto, esito»*, e il filo porta **numero del passo, funzione, esito** — la §4 del 2, riscritta il 2026-09-09,
+dice *«con intento ed esito»*, e il compito 3 l'ha seguita. Il richiamo va **dove la riga vive**, e lo scrive questo
+compito perché è quello che la rende visibile. Il file è **LF** (Passo 1); si tocca con Python, mai con `sed -i`.
+
+```bash
+python - <<'EOF'
+import io
+p = "docs/superpowers/specs/2026-09-07-direzione-gui-design.md"
+b = io.open(p, encoding="utf-8", newline="").read()
+anchor = "| 1 | la lista dei passi, dal core: nel 2 le invocazioni del registro — funzione, invocatore, argomento, classe dell'effetto, esito; dal 3 i passi delle run | domanda 8 · decisione 5 del coordinatore · §5 del 2 · ADR-0038 · righe «Replay dei trace» e «Osservabilità e tracing locale» | 2, 3 | verificato |"
+assert b.count(anchor) == 1, "the row is not where P-89 read it: re-read it before writing"
+recall = (" ✅ **RICHIAMO DEL <data>, dal compito 14 del piano della parte 2 (P-89, D56):** sul filo la lista porta "
+          "**numero del passo, funzione, esito** — `StepSummary` del compito 3, un riassunto e non il record (I4, ADR-0036), "
+          "come la §4 del 2 dice dal 2026-09-09 (*«con intento ed esito»*). Nel 2 l'invocatore e la classe dell'effetto sono "
+          "**costanti** — un solo invocatore, una sola funzione — e l'argomento è payload non fidato che il riassunto non porta: "
+          "il modulo mostra i tre e dice a parole che il resto arriva quando il riassunto crescerà, col timbro |")
+io.open(p, "w", encoding="utf-8", newline="").write(b.replace(anchor, anchor[:-2] + recall, 1))
+EOF
+grep -c 'RICHIAMO DEL <data>, dal compito 14' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+tr -cd '\r' < docs/superpowers/specs/2026-09-07-direzione-gui-design.md | wc -c
+```
+
+⚠️ **`<data>` si sostituisce con la data del giorno in cui il compito si esegue**, e `anchor[:-2]` toglie lo spazio e
+la barra finale della cella per riscriverli in coda al richiamo: la riga resta una riga, e il controllo delle tabelle
+spezzate (nona chiusura) lo conferma. Atteso: **1** e **0**.
+
+⛔ **Solo la riga 1 riceve il richiamo, benché la riga 2 dica *«con la classe dell'effetto»* e la riga 3 *«il dettaglio
+del passo secondo la specie»*:** la riga 2 parla di ciò che la lista **mostra** di un passo in dubbio, e il modulo lo
+mostra (`in dubbio`); la riga 3 è il dettaglio, che il riassunto non porta per **la stessa** ragione della riga 1 e che
+il richiamo della riga 1 copre nominando il riassunto. Tre richiami per un fatto solo sarebbero tre case (gotcha #68).
+
+- [ ] **Passo 16: il mondo web verde, il cancello, e il commit**
+
+```bash
+cd gui && npm ci --no-audit --no-fund && npm run build && npm test; echo "EXIT=$?"; cd ..
+git status --porcelain
+bash scripts/check-docs.sh
+bash scripts/gate.sh
+```
+
+⚠️ **`gate.sh` NON prova ancora `gui/`** — il passo web è il compito **15** — quindi il suo verde qui dice solo che il
+workspace Rust è intatto. Il mondo web lo dicono i tre comandi dentro `gui/`. ⚠️ **E la rete sulle scritte del 13
+(`copy.test.ts`) gira dentro `npm test` anche sui cinque moduli nuovi:** un rosso lì è una scritta fuori da
+`it.json`, e si sposta la scritta, non la sonda.
+
+```bash
+git add gui docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+git commit -m "gui(compito 14): i moduli della SPA -- Stato, Permessi, Chat, Passi e Impostazioni, la finestra di conferma, la tastiera e l'accessibilita"
+git push
+```
+
+⛔ **Senza co-autore**, vincolo globale 13.
+
+**Criterio di chiusura del compito 14**
+
+- [ ] `ls gui/src/panels/*.vue` → `Chat.vue`, `Permissions.vue`, `Placeholder.vue`, `Settings.vue`, `Status.vue`, `Steps.vue`, `Strip.vue`, e nient'altro
+- [ ] `cd gui && npm run build; echo $?` → **0**, e `npm test; echo $?` → **0**
+- [ ] ⛔ **i tre letterali della funzione coincidono con Rust, col comando e non a occhio (P-88, D55):**
+
+  ```bash
+  diff <(grep -o 'name: "[a-z-]*"' crates/kernel/src/serving.rs | head -1) <(grep -o 'name: "[a-z-]*"' gui/src/panels/functions.ts)
+  diff <(grep -o '"remote"\|"local"' crates/kernel/src/arbiter/policy.rs | sort -u) <(grep -o '"remote"\|"local"' gui/src/panels/functions.ts | sort -u)
+  ```
+
+  Atteso: **nessuna riga** da entrambi i `diff`
+- [ ] ⛔ **il contrasto nelle DUE direzioni** eseguito come al Passo 3, e `--stop: #ec5f57;` nel file alla fine
+- [ ] ⛔ **`color-contrast` è disabilitata in UN posto e con la ragione accanto:** `grep -c '"color-contrast": { enabled: false }' gui/src/a11y.test.ts` → **1**, e `grep -rc 'color-contrast' gui/src --include='*.ts' --include='*.vue' | grep -v ':0'` rende **solo** quel file
+- [ ] ⛔ **nessun `<a` e nessun `<img` esce dal renderer:** `grep -c 'not.toContain("<a")\|not.toContain("<img")' gui/src/components/markdown.test.ts` → **3** o più (**D54**)
+- [ ] ⛔ **il segnaposto è ancora UNO e il registro non ha cambiato forma:** `git diff --stat 42b50d8..HEAD -- gui/src/panels/registry.ts` rende **solo** il commit del 13 — cioè `git log --oneline -- gui/src/panels/registry.ts | wc -l` → **1**
+- [ ] ⛔ **le tre viste NON sono cambiate:** `git diff --quiet HEAD~1 -- gui/src/panels/views/ && echo unchanged` → `unchanged` — i moduli veri entrano dal registro, non dal JSON
+- [ ] ⛔ **il richiamo è nella stella polare, una volta, e il file resta LF e con le tabelle intere:** i tre comandi del Passo 15, più `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` → **niente**
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
+- [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -cE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src/**/*.test.ts` → **0**
+- [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA, con i dati** — regola 5 della testa: `cd gui && npm run dev`; nella console del browser `harnessFake.deliverAll()`; poi si vedono la fascia che **sparisce** (è arrivato `Accepted`), il chip «collegato», Stato coi due campi, la policy col budget e la riga «protetto quanto il tuo account di sistema», la riga dell'ultimo verdetto **rifiutata**, Permessi con la richiesta in attesa della fixture, Passi col passo 42 chiuso, la Chat col `ciao` non fidato; in Impostazioni si sceglie **Locale** → la scritta «richiesta inviata» compare e il controllo **resta** su OpenRouter (è il core che decide); `harnessFake.deliver("PermissionRequired")` → la finestra si apre col focus dentro, il tabulatore **non esce**, «Consenti» la chiude, e `harnessFake.sent` porta un `Approve` con `vram-policy` e `local`; con `Ctrl+Alt+→` la tessera attiva si sposta nel gruppo accanto, e su un bordo si divide; i due comandi della linguetta staccano e portano a pagina intera; un link nella Chat mostra l'indirizzo accanto e **non apre nulla**
 
 ## Come si riprende — il diario di questo piano, coi comandi
 

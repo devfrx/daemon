@@ -121,8 +121,12 @@ Valgono per ogni compito, senza che il compito li ripeta.
 
 ## ▶️ A che punto è QUESTO PIANO — casa unica, e si aggiorna scrivendo
 
-⏳ **IL PIANO È IN SCRITTURA dal 2026-09-11.** Il pre-controllo delle quattro domande sta nella sezione
-*«Il pre-controllo del piano»* qui sotto. ⛔ **Nessun compito è ancora eseguito.**
+✅ **IL PIANO È SCRITTO, dal 2026-09-15**, e a dirlo non è questa riga ma i due comandi, che ora
+**coincidono**: `grep -c '^## Compito' <questo file>` e le righe `| **N** |` della tabella qui sotto.
+⛔ **RICHIAMO DEL 2026-09-15: qui stava *«IL PIANO È IN SCRITTURA dal 2026-09-11»*.**
+Il pre-controllo delle quattro domande sta nella sezione *«Il pre-controllo del piano»* qui sotto, e ha
+trovato un difetto reale in **tutti** i compiti. ⛔ **Nessun compito è ancora eseguito**, e il passo che
+viene ora è la **revisione del piano intero** — l'undicesima chiusura del diario, in fondo, dice come.
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
@@ -18795,6 +18799,134 @@ git push
 - [ ] ⛔ **la tabella della posizione è tutta ✅**, e ogni riga porta il proprio commit: `awk '/^\| \*\*[0-9]+\*\* \|/{print}' <questo file> | grep -c '⬜'` → **zero**
 
 ## Come si riprende — il diario di questo piano, coi comandi
+
+### L'undicesima chiusura — 2026-09-15, seconda sessione del giorno: il piano è SCRITTO PER INTERO, diciassette su diciassette; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO, e la prima riga non è del piano ma della MACCHINA:** questa sessione ha **installato
+`cargo-audit` 0.22.2** in `~/.cargo/bin` per misurarlo (**P-106**, **P-107**), e ci resta. Non è una dipendenza del
+progetto — non entra in nessun manifesto — ma è il prerequisito che il compito **16** dichiara, quindi su questa
+macchina c'è già e su un'altra no. ⚠️ **E il Node è ancora `v24.9.0`**, invariato: prima che qualcuno **esegua** il
+compito 11 va aggiornato, perché `jsdom` 30.0.1 pretende `^22.22.2 || ^24.15.0 || >=26.0.0` (**P-64**, **P-65**).
+
+✅ **E UNA DECISIONE CHE ASPETTAVA IL PROPRIETARIO È PRESA: D56 — A, i tre campi.** Portata in A/B all'apertura
+invece che alla rilettura, perché B avrebbe riaperto quattro compiti già scritti. Il piano procedeva già con A,
+quindi **nessun compito è cambiato** e il Passo 15 del compito 14 resta com'è; il richiamo datato è nella riga
+`D56`. ⛔ **Resta aperta la sola «finestra a parte»**, col guscio come chiusore (**P-91**, **D58**).
+
+⛔ **E UN DOCUMENTO FUORI DAL PIANO È STATO CORRETTO, fuori da ogni compito, perché diceva il falso ADESSO.** La
+riga del piano della parte 2 in `roadmap.md` diceva *«sedici compiti, i primi due scritti»*: erano **diciassette**
+righe di posizione e **sedici** compiti scritti, falsa in entrambe le metà. ⛔ **Non riallineata a «diciassette»:
+TOLTA** — viveva in due case, e la casa unica è la tabella della posizione (**P-113**, commit `850137c`).
+
+⛔ **E TRE RIGHE DI DOCUMENTO SONO ANCORA QUELLE VECCHIE**, perché i compiti che le correggono non sono eseguiti.
+Non sono errori: sono richiami che **aspettano il loro compito**. ⚠️ **La quarta riga della decima chiusura è
+uscita**, perché il Passo 15 del compito 14 la copre e il compito 14 è scritto.
+
+| La riga | Chi la corregge |
+|---|---|
+| la §5 del disegno del 2 nomina ancora `DyingGui` come strumento della campagna | il **Passo 8 del compito 10** |
+| la §7 del disegno del 2 dice *«renderlo raggiungibile dal finto **senza copiarla**»* | il compito **12**, richiamo di **D41** |
+| la frase dei 🔶 **dedotti** della §8 del 2 — tre deduzioni, e tutte e tre sono misurate | il **Passo 11 del compito 15**, che scrive un richiamo solo e nomina dove sono state misurate le altre due |
+
+⛔ **Per il resto niente è a metà:** albero pulito, nessuno stash, nessuna operazione git in corso, nessun server
+acceso, **nessun codice di prodotto toccato**. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la tabella della posizione è
+tutta ⬜ e l'errata è **vuota**. ✅ **Ma il piano non è più in scrittura: è SCRITTO.** La sessione nuova **rivede**.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline 83afc58..HEAD` — e ⛔ **NON sono tutti di questo file:** `git diff --name-only 83afc58..HEAD` nomina **anche** `docs/roadmap.md`, ed è la correzione di **P-113** |
+| Codice di prodotto | **non toccato**: `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>` e le righe della posizione — ⛔ **i due numeri devono COINCIDERE adesso**, e non coincidevano in nessuna chiusura precedente |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0** |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` e `grep -c '^\| \*\*D[0-9]' <questo file>` — confrontati col valore di `HEAD` dopo **ogni** scrittura |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e **prima di ogni commit**; `bash scripts/check-docs.sh` → `OK`. ⚠️ **I log NON sopravvivono**: stavano nello scratchpad come `gate-2026-09-15-sessione11-*.log`. Ciò che resta è il **comando** |
+| Fine-riga | questo piano è **LF**: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ `git diff` stampa *«LF will be replaced by CRLF»*: non è una divergenza |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** — ⛔ **e questa sessione ne ha prodotta una, vedi le trappole** |
+| Segnaposto | ⛔ **uno solo, DICHIARATO**: la versione di `interprocess` nel manifesto del finto (compito 12) — `grep -n '<the version' <questo file>`. ⚠️ **`<data>` e `<tempo>` nei compiti 15, 16 e 17 NON sono segnaposto:** sono i valori del giorno dell'esecuzione, e ogni passo dice di sostituirli; i criteri di chiusura li cercano col `grep` e pretendono **zero** |
+| Margine del compendio | **invariato, `11030` byte**, rimisurato il 2026-09-15 (**P-115**): questa sessione non ha toccato il compendio, e il **17** è l'unico compito che lo tocca |
+| Documenti fuori dal piano | ⛔ **uno solo: `roadmap.md`**, e col suo perché (**P-113**). Le altre case sono il **17** |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto. ⚠️ **Lo scratchpad NON sopravvive**, e nemmeno `/tmp/eslint-probe`, `/tmp/gui-audit-probe` e `/tmp/npm-audit-probe`: **ogni misura che serve è dentro le voci `P`, col comando che la rifà** |
+| Debito lasciato | **nessuno non dichiarato**: l'errata è vuota, la voce aperta «finestra a parte» resta col guscio come chiusore, e le tre righe di documento qui sopra aspettano il loro compito |
+
+#### Le decisioni prese scrivendo, oltre a quelle della tabella
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 55 | il preset del lint è `flat/essential` e `--max-warnings 0` **non** si usa (**D63**) | `flat/recommended` porta trentatré avvisi quasi tutti di formattazione, e la riga 8 di `gate.sh` vieta un rosso che significhi «stile discutibile» | la formattazione dei `.vue` resta questione di revisione |
+| 56 | `vue/multi-word-component-names` si spegne (**D64**) | undici dei dodici `.vue` sono a una parola, e il nome del file **è** il `module` del registro e la chiave della locale | un componente nuovo può scontrarsi con un elemento HTML |
+| 57 | tre regole salgono a `error` e `Chat.vue` ha un blocco `files` suo (**D65**) | `no-raw-text` ad avviso lascia `eslint` a **zero**: la rete del 13 sarebbe sostituita da un controllo vacuo | un'eccezione in più da rivedere, in un posto solo |
+| 58 | la **seconda** sonda di `copy.test.ts` sopravvive al 15 (**D65**, **P-105**) | le diciotto chiavi `modules.*` la SPA le **costruisce**, e `no-missing-keys` è cieco a una chiave costruita — misurato | un file che sembra una rete a termine e non lo è più: il commento lo dice |
+| 59 | la CI scrive `package-manager-cache: false` per esteso (**D66**) | l'ingresso vale `true` per difetto e la decisione 47 reggeva per un campo **assente** | una riga in più in un file che nessuno rilegge |
+| 60 | il 15 **non** tocca `.gitignore` (**D67**) | le otto righe di `spikes/gui-shell/` e i quattro lockfile sono di `8fc9696`, dalla parte 1 | niente: il criterio di chiusura lo asserisce |
+| 61 | `cargo audit` è un **prerequisito dell'ambiente**, dichiarato e non avvolto (**D68**) | è la specie del bersaglio di `rustup`, vincolo 4 di §11, e il repository lo cura dichiarando | la prima corsa su una macchina pulita esce `no such command`, e la cura è nel commento |
+| 62 | niente `-n` su `cargo audit` (**D69**) | `-n` dà lo stesso verdetto in un decimo del tempo **e** rende il controllo cieco a ciò che è stato pubblicato dopo: il guasto esatto di X-3 | il passo vuole la rete e può fare rosso senza un commit |
+| 63 | in CI `cargo audit` si **compila**, niente azione di terzi (**D70**) | ~3 minuti per job, ma i minuti sono gratis — repository **pubblico**, misurato — ed è la premessa della decisione 44 | la parete della CI cresce; B è registrata e non presa |
+| 64 | `npm audit` senza `--audit-level` (**D71**) | misurato: **369** pacchetti, **0** vulnerabilità, ~6 s — il rumore da tarare è zero, e una soglia sarebbe una scorciatoia già pronta | un avviso basso su una dipendenza di sviluppo ferma il cancello |
+| 65 | la §12 prende quattro righe e il ⏭️ della §6 si **riscrive** (**D72**) | è la lezione del taglio 4: un puntatore corto invecchia meno di una catena di ✅ | il racconto della parte 2 vive nella riga della tabella dei chiusi, non nel puntatore |
+| 66 | `porta-di-qualita.md` prende **una** sezione per tutta la parte 2 (**D73**) | dieci sezioni sarebbero dieci posti da tenere allineati — gotcha #68 | una sezione lunga invece di dieci corte |
+| 67 | la Definizione di «fatto» vive nel **piano** ed è fatta di **comandi** (**D74**) | chi rivede l'ha già aperto, e un comando invecchia col codice invece che contro | nessuno: si riesegue |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UN NUMERO `D` È UNICO DENTRO IL SUO PIANO, NON FRA I PIANI.** La lista di lettura del compito 17 diceva *«le
+  case che **D14** nomina»*: in **questo** piano `D14` è `FileCustody::open`, e le case le nomina il `D14` del piano
+  della **parte 1**. 📌 **Il lettore atterra su una decisione CHE ESISTE, che è peggio di un numero inesistente:**
+  chi cita una `D` di un altro piano ne scrive anche il **nome del piano** (**P-112**).
+- ⛔ **UNA RIGA DI TABELLA CHE COMINCIA CON `| **D<cifra>**` FALSIFICA IL COMANDO CHE CONTA LE DECISIONI — e questa
+  sessione l'ha commessa**, scrivendo il Passo 10 del compito 17: il conteggio è salito di **quattro** con tre righe
+  nuove. 📌 **La trappola era già scritta nella nona chiusura, e non è bastato saperla:** a coglierla è stato il
+  **confronto col valore di `HEAD` dopo la scrittura**, non la memoria. La cura è una parola davanti —
+  `| la voce **D56** — …` — e il confronto si rifà.
+- ⛔ **UN INSERIMENTO PER ANCORE PUÒ LASCIARE UNA RIGA VUOTA DENTRO UNA TABELLA, e il diff non te lo dice.**
+  Inserendo le righe `D` del compito 16 l'ancora `"\n\n**La baseline"` ha prodotto `D67`, riga vuota, `D68`. 📌 **A
+  coglierla è il controllo delle tabelle spezzate, che va lanciato DOPO OGNI scrittura** — e la forma giusta è
+  `"\n" + righe + "\n" + ANCORA_SENZA_I_DUE_A_CAPO`, non `"\n" + righe + ANCORA`.
+- ⛔ **`eslint` NON GUARDA I `.ts` CON LE SOLE CONFIGURAZIONI DI VUE, e la differenza fra nominare una CARTELLA e
+  nominare un FILE è un avviso che conta.** Un file per nome rende *«File ignored because no matching configuration
+  was supplied»*; una cartella lo salta in silenzio. 📌 **Quindi niente `@typescript-eslint/parser`** — è un peer
+  **opzionale**, misurato — **e lo script `lint` nomina la cartella**.
+- ⛔ **UNA REGOLA AD AVVISO NON FERMA NIENTE, E SEMBRA UN CONTROLLO.** `no-raw-text` è `warn` nel preset ed `eslint`
+  esce **0** sui soli avvisi. 📌 **Prima di sostituire una sonda con una regola di lint, si misura il LIVELLO della
+  regola e l'USCITA del comando** — non la presenza della regola nel preset.
+- ⛔ **E LA CURA OVVIA PUÒ ESSERE QUELLA SBAGLIATA:** `--max-warnings 0` fa rosso il testo grezzo **e** trentatré
+  regole di formattazione, cioè rende il cancello rosso per lo stile che la sua testa vieta. 📌 **Prima di alzare una
+  soglia globale, si guarda CHE COSA STA SOTTO quella soglia**, col comando che elenca le regole.
+- ⛔ **UNA SONDA CHE MUORE PUÒ AVERE UNA SECONDA METÀ CHE NESSUNO SOSTITUISCE.** `copy.test.ts` aveva **due** `it`, e
+  il lint ne copre uno. 📌 **Prima di cancellare un file di sonde, si contano le sonde dentro**, non il file.
+- ⛔ **LE DUE DIREZIONI DI UN CONTROLLO POSSONO ESSERE GIÀ NEL REPOSITORY.** `cargo audit` verde e
+  `cargo audit --deny unmaintained` rosso sono lo **stesso** avviso sullo **stesso** lockfile: niente da mutare,
+  niente da revocare, `git diff` vuoto per costruzione. 📌 **Prima di inventare un caso malato, si guarda se ce n'è
+  già uno addomesticato.**
+- ⛔ **UNA PREMESSA DI UNA DECISIONE PASSATA SI RIMISURA PRIMA DI APPOGGIARVISI.** La decisione 44 poggia su
+  *«minuti gratis, repo pubblico»*: rimisurato dall'API il 2026-09-15, `visibility: public` — e la stessa premessa
+  ha deciso **D70**. 📌 **E il remote si chiama `devfrx/daemon`, non `harness`:** il nome della cartella non è il
+  nome del repository, e chi scrive un comando sull'API lo scopre con un 404.
+- ⛔ **UN DOCUMENTO DI STATO CHE DICE IL FALSO SI CORREGGE SUBITO, anche se «è del compito 17».** La riga della
+  roadmap era falsa da giorni. 📌 **La cura non è riallinearla: è TOGLIERE la cifra che vive in due case**, e il
+  compito che l'avrebbe toccata riceve la voce `P` che glielo dice.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la
+   testa è il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano**: vincoli globali, posizione, errata, le
+   voci **P**, le decisioni **D**, le voci aperte.
+3. ⏭️ **LA REVISIONE DEL PIANO INTERO**, che è il punto 6 della decima chiusura e ora tocca: copertura dei due
+   disegni sezione per sezione; segnaposto; coerenza dei **nomi e dei tipi** fra i blocchi *Interfaces* e i Passi
+   che li producono; ⛔ **ogni CONTEGGIO rilanciato col comando, non riletto**; ⛔ **ogni voce `P` su cui un compito
+   si appoggia rimisurata**; ⛔ **ogni numero di compito ricensito contro la tabella della posizione**. ⚠️ **La
+   revisione si parallelizza** — è lettura, non scrittura — e ogni revisore va istruito a **rilanciare** ogni
+   comando accanto a un'affermazione misurabile e a **elencarli**.
+4. Ogni rilievo confermato è una voce **P** in coda o una voce d'**errata**; ogni decisione che ne discende una
+   riga **D**. ⚠️ **Dopo due ondate di sola prosa si chiude** (gotcha #76).
+5. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
+   `grep -n '^## ' <file> | tail`, ⛔ **i due comandi che contano `P` e `D` confrontati col valore di `HEAD`**,
+   `bash scripts/check-docs.sh` → `OK`, `bash scripts/gate.sh` → `GATE GREEN`, e il commit — **senza co-autore**.
+6. ⏭️ **Poi l'esecuzione, in una sessione NUOVA**: `superpowers:subagent-driven-development`, un subagente fresco
+   per compito, con revisione fra uno e l'altro. ⛔ **Prima di eseguire il compito 11 si aggiorna Node**, e su una
+   macchina che non l'ha si installa `cargo-audit` (compito 16).
+7. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
 
 ### La decima chiusura — 2026-09-15: il piano è SCRITTO FINO AL COMPITO 14 di diciassette; nessun compito è eseguito
 

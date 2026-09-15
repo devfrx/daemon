@@ -3,7 +3,7 @@
 Fonte: 9 rapporti su 11 (R1 parziale: compiti 1–2; R3 parziale: compito 7; R5 completo: 11–12; R2, R4, R7, R9a, R9b, R10 completi).
 Mancano: compito 13 (R6), compiti 15–17 (R8), compito 3 (R1), compito 8 (R3) — perimetri da rivedere ancora.
 Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stati rimisurati anche da lui.
-**Stato al 2026-09-15, dodicesima chiusura:** testa, compiti 1, 2, 4 e 5 applicati (✅); tutto il resto ⬜.
+**Stato al 2026-09-15 (sessione 13, dopo la dodicesima chiusura):** testa, compiti 1, 2, 4, 5 e 6 applicati (✅); tutto il resto ⬜.
 
 ## Le decisioni nuove (righe D da scrivere)
 
@@ -77,18 +77,20 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - R9a-6/R9b-1 (D14 allargata): il commento falso di `journal.rs` riga 63 riscritto al vero nello stesso tocco; criterio «due regioni»; voce 10 della §9 ✅ `<data>` ✅
 
 ### Compito 6
-- R2-12 Files + Passo: `record_shape.rs` (braccio + array), `dst_campaign.rs` (braccio `panic!`); P-33 richiamo ⬜
-- R2-13 Passo 8: `InvocationDetail` nell'`use` di `frozen_bytes.rs`, braccio `Detail::Invocation(_) => {}`, voce nell'array `for kind in […]` ⬜
-- R2-14 `record(RecordV1::intent, EffectClass::Idempotent)` / `outcome`; `InvocationDetail` nell'`use` di `reconciliation.rs` ⬜
-- R2-15 `an_invocation_note()` con `EffectClass::Unrepeatable`; seconda nota dopo l'`outcome`; criterio: `enter` → rosse entrambe, `leave` → rossa la seconda ⬜
-- R2-16 «sei» test del registro ⬜
-- R2-17 criterio D16: `grep -c 'use crate::arbiter\|crate::arbiter::'` → 0 ⬜
-- R2-18 Passo 1: `grep -c '^\s*#\[n('` → 29; indici con `-B1` ⬜
-- R2-19 Passo 1: `grep -rn 'match .*kind\b'` → 4, `match detail` → 1 ⬜
-- R2-20 Atteso eol: sei crlf + disegno lf ⬜
-- R2-21 consumatori «7 e 10 (14 per nome)»; `Operation` del banco ⬜
-- R2-22 Passo 1: baseline reconciliation 18 ⬜
-- R2-6 (D75) `<data>` ⬜
+- R2-12 Files + Passo 8-bis: `record_shape.rs` (braccio + array + la quarta nota), `dst_campaign.rs` (braccio `panic!`); richiamo in P-33 **e in P-45** (il cui ✅ era una promessa) ✅
+- R2-13 Passo 8: `InvocationDetail` nell'`use` di `frozen_bytes.rs`, braccio `Detail::Invocation(_) => {}`, voce nell'array `for kind in […]` ✅
+- R2-14 `record(RecordV1::intent, EffectClass::Idempotent)` / `outcome`; `InvocationDetail` nell'`use` di `reconciliation.rs` ✅
+- R2-15 `an_invocation_note()` con `EffectClass::Unrepeatable`; seconda nota dopo l'`outcome`; criterio: `enter` → rosse entrambe, `leave` → rossa la seconda ✅
+- R2-16 «sei» test del registro ✅
+- R2-17 criterio D16: `grep -c 'use crate::arbiter\|crate::arbiter::'` → 0 ✅
+- R2-18 Passo 1: `grep -c '^\s*#\[n('` → 29; indici con `-B1` ✅
+- R2-19 Passo 1: `grep -rn 'match .*kind\b'` → 4, `match detail` → 1 ✅
+- R2-20 Atteso eol: sei crlf + disegno lf ✅
+- R2-21 consumatori «7 e 10 (14 per nome)»; `Operation` del banco ✅
+- R2-22 Passo 1: baseline reconciliation 18 ✅
+- R2-6 (D75) `<data>` ✅
+- D76 «sub-project 2 design» nei sei commenti dettati del 6 (cinque più uno maiuscolo) — non era in questa lista: applicata per coerenza col compito 5 (patch_c45.py) ✅
+- Attrezzo: `patch_c6.py` accanto a questo file, modello per i compiti 7–17 (fetta del compito, ancore asserite, scrittura atomica)
 
 ### Compito 7
 - R3-1 alternanza chiusa con `\b` / Atteso 4 righe ⬜

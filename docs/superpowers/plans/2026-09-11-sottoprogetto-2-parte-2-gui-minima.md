@@ -759,6 +759,14 @@ di fare `match`, quindi crescono senza dire nulla — e va bene, perché ciascun
 no. ⛔ **Scritto qui perché chi esegue non vada a «uniformarli»**: allargarli sarebbe cambiare tre siti per un
 fatto che non li riguarda.
 
+⛔ **RICHIAMO DEL 2026-09-15: «due e non di più» è FALSO — i `match` esaustivi su `RecordKind` sono QUATTRO.** Il
+2026-09-14 **P-45** li ha ricensiti col comando — `record_shape.rs` (la chiusura `let of = |kind| match kind`, più
+l'array a mano) e `dst_campaign.rs` (l'oracolo indipendente, a braccio `panic!`) — e ha dichiarato la correzione
+*«nel compito 6 e in P-33»*; ⛔ **ma né il compito 6 né questa voce erano stati toccati**, misurato alla revisione del
+piano intero (R2-12: `grep -n 'record_shape\|dst_campaign'` sul compito 6 rendeva nulla). Corretti il 2026-09-15: il
+compito 6 li nomina in *Files* e li tocca al Passo 8-bis. Il capoverso sopra resta com'era, con la sua data. Il comando
+che non invecchia: `grep -rn 'match .*kind\b' crates/ --include=*.rs`.
+
 ### P-34 — I due campi di un dettaglio non devono ESSERE UGUALI, ed è una lezione già pagata
 
 **Domanda 1 — la sonda è vacua.** Il record congelato di `Permission` porta `tool: "frozen"` e
@@ -1062,6 +1070,11 @@ PERMISSION, THE RED IS A DECISION BEING ASKED FOR and not a defect being reporte
 ✅ **Corretto nel compito 6 e in P-33, non con una voce d'errata** — come P-23, P-25, P-35, P-39 e P-43: il compito
 **6 non è eseguito**. Un'errata è per ciò che un compito eseguito ha smentito; qui costa due righe di lista *Files*,
 e scoprirlo eseguendo costa un compito rifatto su un `cargo test` che non compila.
+
+⛔ **RICHIAMO DEL 2026-09-15: il ✅ qui sopra era una PROMESSA, non un fatto.** Alla revisione del piano intero il
+compito 6 non nominava ancora né `record_shape.rs` né `dst_campaign.rs`, e P-33 diceva ancora *«due e non di più»*
+(R2-12). Corretti il 2026-09-15 — *Files* e il Passo 8-bis del compito 6, il richiamo in P-33. La riga sopra resta
+com'era.
 
 ⚠️ **E vale per il compito 8 identico**, che aggiunge la **ottava** variante: i quattro siti sono quattro anche per
 lui, e la lista *Files* del compito 8 li nomina tutti e quattro. 📌 **La lezione, oltre al caso:** un censimento che
@@ -6773,14 +6786,16 @@ un lettore futuro può verificare che il limite di **P-29** fu misurato e non su
 - Create: `crates/kernel/tests/registry.rs` (**LF**) — le sonde del registro
 - Create: `crates/kernel/tests/frozen/record_v1_invocation.cbor` — ⛔ **il settimo record congelato, TIPATO A MANO**
 - Modify: `crates/kernel/tests/frozen/record_v1.map` — la sezione nuova, **tipata a mano**
-- Modify: `crates/kernel/tests/frozen_bytes.rs` (**`i/lf w/crlf`**) — `the_frozen_records()` da **sei a sette**, i `..._BYTES` nuovi, e il `match kind` di riga 386 (**P-33**)
+- Modify: `crates/kernel/tests/frozen_bytes.rs` (**`i/lf w/crlf`**) — `the_frozen_records()` da **sei a sette**, i `..._BYTES` nuovi, il `match kind` di riga 386 (**P-33**), ⛔ **più l'`use`, l'array a mano del `for kind in […]` e il `match detail`** — entrati il 2026-09-15 alla revisione del piano intero, R2-13
+- Modify: `crates/kernel/tests/record_shape.rs` (**`i/lf w/crlf`**) — ⛔ **il `match` esaustivo E l'array a mano** (**P-45**; entrato qui il 2026-09-15 alla revisione del piano intero, R2-12: la lista nominava i due siti di P-33 soli)
+- Modify: `crates/simulator/tests/dst_campaign.rs` (**`i/lf w/crlf`**) — ⛔ **il braccio `panic!` dell'oracolo indipendente** (**P-45**; R2-12)
 - Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**, e ⚠️ **NON CRLF** — richiamo del 2026-09-14, **P-47**) — **due** richiami datati sulla §5: la riga dell'argomento (**P-30**) e quella dell'invocatore (**P-32**)
 - Read: la **§5 del 2**, la prima tabella, per intero; **ADR-0038**, la *Decision* e il perimetro negativo; `crates/kernel/src/permission.rs` **per intero** (250 righe: `Operation::is_write`, `Permission`, `PermissionError`, `grant`, `is_granted`); `crates/kernel/src/record.rs` — `RecordKind`, `EffectClass`, `Trust`, `Detail`, `PermissionDetail` **e i suoi due richiami**, `RecordV1::permission`, `RecordV1::of`; la **testa** di `crates/kernel/tests/frozen_bytes.rs` (i tre divieti) e `the_frozen_records()`; la **testa** di `crates/kernel/tests/frozen/record_v1.map` (che cosa è controllato e che cosa è prosa); ⚠️ **più `Triple`, `Access`, `Call` e `PolicyName` del compito 3**, che sono i gemelli sul filo di ciò che il registro decide — il blocco *Interfaces* del 3 li porta
 
 **Interfaces:**
-- Consumes: `kernel::permission::{self, Permission, PermissionError, Operation}`; `kernel::ports::ipc::ClientId`; `kernel::ports::journal::{Journal, JournalError, StepId}`; `kernel::record::{EffectClass, Record, RecordV1, Trust}`
+- Consumes: `kernel::permission::{self, Permission, PermissionError}` (⚠️ `Operation` lo consuma **solo il banco**, per la tripla di comodo — R2-21); `kernel::ports::ipc::ClientId`; `kernel::ports::journal::{Journal, JournalError, StepId}`; `kernel::record::{EffectClass, Record, RecordV1, Trust}`
 - Consumes, dal compito 3 e **solo per leggerli**: `kernel::wire::ipc::{Call, Triple, Access}` — ⛔ **il registro NON li nomina**: li traduce il dispaccio, compito 7
-- Produces, e i compiti **7**, **9** e **12** li usano con questi nomi esatti:
+- Produces, e i compiti **7** e **10** — e il **14**, per nome — li usano con questi nomi esatti (⚠️ qui stava «7, 9 e 12»: il 9 e il 12 non ne nominano nessuno, misurato alla revisione del piano intero, R2-21):
   - `kernel::registry::Registry`, con `Registry::new() -> Registry` (**`const fn`**), `Registry::register(&mut self, Function)`, `Registry::held(&self, name: &str) -> Option<Function>` e `Registry::invoke(journal, step, name, invoker, argument, approval, effect)`
   - `kernel::registry::Approval` — `Checked` e `JustGiven`. ⛔ **Arrivato col richiamo del 2026-09-11 (P-43, D24):** senza di esso la via dell'`Approve` non esiste, perché il controllo `is_granted` risponde no una seconda volta
   - `kernel::registry::Function` — `{ name: &'static str, permission: Permission, effect: EffectClass }`, `Copy`
@@ -6799,19 +6814,29 @@ meccanismo, non il contenuto.
 
 ```bash
 ls crates/kernel/src/registry.rs crates/kernel/tests/registry.rs 2>&1
-grep -c '^#\[n(' crates/kernel/src/record.rs
-grep -n 'RecordKind::Permission' crates/kernel/src/record.rs crates/kernel/src/reconcile.rs crates/kernel/tests/frozen_bytes.rs
+grep -c '^\s*#\[n(' crates/kernel/src/record.rs
+grep -n -B1 '^    Permission,' crates/kernel/src/record.rs
+grep -n -B1 'Permission(#\[n(0)\] PermissionDetail)' crates/kernel/src/record.rs
+grep -n 'RecordKind::Permission' crates/kernel/src/record.rs crates/kernel/src/reconcile.rs crates/kernel/tests/frozen_bytes.rs crates/kernel/tests/record_shape.rs crates/simulator/tests/dst_campaign.rs
 ls crates/kernel/tests/frozen/
 grep -n 'fn the_frozen_records' crates/kernel/tests/frozen_bytes.rs
-grep -rn "RecordKind::" crates/kernel/src/ --include=*.rs | grep -v 'src/record.rs' | grep -c .
-git ls-files --eol crates/kernel/src/record.rs crates/kernel/src/reconcile.rs crates/kernel/src/lib.rs crates/kernel/tests/frozen_bytes.rs crates/kernel/tests/reconciliation.rs crates/kernel/tests/frozen/record_v1.map docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+grep -rn 'match .*kind\b' crates/ --include=*.rs
+grep -rn 'match detail' crates/ --include=*.rs
+grep -n '^fn record\|^use kernel::record' crates/kernel/tests/reconciliation.rs
+cargo test --locked -p kernel --test reconciliation 2>&1 | tail -1
+git ls-files --eol crates/kernel/src/record.rs crates/kernel/src/reconcile.rs crates/kernel/src/lib.rs crates/kernel/tests/frozen_bytes.rs crates/kernel/tests/reconciliation.rs crates/kernel/tests/record_shape.rs crates/simulator/tests/dst_campaign.rs crates/kernel/tests/frozen/record_v1.map docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 ```
 
-Atteso: i due file **non esistono**; `RecordKind` arriva a `Permission` con l'indice **5** e `Detail` a
-`Permission` con il **2**; in `frozen/` **sei** `.cbor` più la mappa; `the_frozen_records()` rende un array di
-**sei**; i due `match` esaustivi di **P-33** sono a `reconcile.rs:90` e `frozen_bytes.rs:386` — ⛔ **si ritrovano
-col `grep` sulla frase e non col numero di riga** (gotcha #70); tutti i file da toccare `i/lf w/crlf`, la mappa
-compresa.
+Atteso: i due file **non esistono**; il `grep -c` degli indici → **29** (⚠️ la forma `'^#\[n('` senza `\s*` rendeva
+**0**, perché gli attributi sono indentati — R2-18); i due `grep -B1` mostrano `#[n(5)]` sopra `Permission,` di
+`RecordKind` e `#[n(2)]` sopra la variante `Permission` di `Detail`; in `frozen/` **sei** `.cbor` più la mappa;
+`the_frozen_records()` rende un array di **sei**; ⛔ **i `match` esaustivi su `RecordKind` sono QUATTRO e non i due di
+P-33** — `reconcile.rs` (`match body.kind()`), `frozen_bytes.rs` (`match kind`), `record_shape.rs` (la chiusura
+`let of = |kind| match kind`) e `dst_campaign.rs` (il `match kind` dell'oracolo), **P-45** — più il `match detail` di
+`frozen_bytes.rs`, e ⛔ **si ritrovano col `grep` sulla frase e non col numero di riga** (gotcha #70); in
+`reconciliation.rs` l'aiutante è `record(species, effect)` e l'`use kernel::record::{…}` **non** porta
+`InvocationDetail` (R2-14); il banco della riconciliazione → **18 passed** (la baseline del criterio di chiusura,
+R2-22); gli **otto** file di `crates/` `i/lf w/crlf`, la mappa compresa, e il disegno `i/lf w/lf` (R2-20).
 
 - [ ] **Passo 2: la specie nuova nel record**
 
@@ -6844,7 +6869,7 @@ e il tipo, **accanto a `PermissionDetail`**:
 /// TEXT — read that type, the argument is one. The argument is text the GUI CHOSE, so it is
 /// untrusted by inheritance (ADR-0014) and travels in the record's `payload`, under the `trust`
 /// label that exists to say so. What lives here is what is OURS and structured: a name this
-/// crate registered, and a code this crate assigned. ⚠️ SO THE §5 OF THE MILESTONE-2 DESIGN SAYS
+/// crate registered, and a code this crate assigned. ⚠️ SO THE §5 OF THE SUB-PROJECT 2 DESIGN SAYS
 /// "funzione, invocatore, argomento" AND THE THIRD IS BESIDE THIS TYPE RATHER THAN IN IT; the
 /// dated recall is on that line.
 ///
@@ -6959,7 +6984,7 @@ In `crates/kernel/src/reconcile.rs`, dopo il braccio di `Permission`:
                 // effect would reconcile as "finished" — the silent loss of a real doubt, the one
                 // failure ADR-0007 exists to prevent. ⚠️ AND THAT SECOND ONE IS WORSE HERE THAN
                 // IT WAS FOR `Routing`: the note sits between the intent and the effect BY
-                // DESIGN (§5 of the milestone-2 design), so the window it would swallow is not
+                // DESIGN (§5 of the sub-project 2 design), so the window it would swallow is not
                 // hypothetical — it is the ordinary shape of every invocation.
                 //
                 // Held in BOTH directions (§7.1.1 rule 3) by
@@ -6972,8 +6997,10 @@ In `crates/kernel/src/reconcile.rs`, dopo il braccio di `Permission`:
 
 ⛔ **E le due misure si FANNO, non si citano.** Prima di scrivere il braccio vuoto si prova `enter(&mut open,
 step, resolution_of(body.effect()))` al suo posto, poi `leave(&mut open, step)`, una per volta, si lancia
-`cargo test --locked -p kernel --test reconciliation`, si legge **quale** sonda diventa rossa, e si revoca.
-Se una delle due lascia tutto verde, la sonda corrispondente del Passo 4 **non esiste ancora** o è vacua.
+`cargo test --locked -p kernel --test reconciliation`, si legge **quale** sonda diventa rossa — `enter` deve arrossare
+**entrambe**, `leave` la **seconda** (misurato alla revisione del piano intero, R2-15: con la nota a `Idempotent` e
+senza la nota dopo l'`outcome`, `enter` lasciava **tutto verde**) — e si revoca. Se una delle due lascia tutto verde,
+la sonda corrispondente del Passo 4 **non esiste ancora** o è vacua.
 
 - [ ] **Passo 4: le due sonde della riconciliazione, nelle due direzioni**
 
@@ -6988,14 +7015,21 @@ fn an_invocation_note_does_not_put_a_step_in_doubt() {
     let step = StepId::new(3);
 
     journal
-        .intent(step, &closed_record(RecordV1::intent))
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
         .expect("intent");
     journal
         .note(step, &an_invocation_note())
         .expect("the invocation note");
     journal
-        .outcome(step, &closed_record(RecordV1::outcome))
+        .outcome(step, &record(RecordV1::outcome, EffectClass::Idempotent))
         .expect("outcome");
+    // ⛔ AND A NOTE AFTER THE OUTCOME, which is the case that separates "does not open" from
+    // "does not reopen": without it an `enter` in the arm is undone by the `leave` of the
+    // outcome, and this probe stays green under the mutation it exists to catch (measured at
+    // the plan review, 2026-09-15). The `Permission` pair above does the same, for the same reason.
+    journal
+        .note(step, &an_invocation_note())
+        .expect("the invocation note after the outcome");
 
     assert_eq!(
         steps_in_doubt(&journal).expect("the projection must answer"),
@@ -7014,7 +7048,7 @@ fn an_invocation_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_th
     let step = StepId::new(4);
 
     journal
-        .intent(step, &closed_record(RecordV1::intent))
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
         .expect("intent");
 
     let before = steps_in_doubt(&journal).expect("the projection must answer");
@@ -7037,12 +7071,21 @@ fn an_invocation_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_th
 
 /// An invocation note of no importance, so the two probes above say what they mean.
 ///
+/// ⛔ THE CLASS IS `Unrepeatable` ON PURPOSE, AND IT IS WHAT KEEPS THE SECOND PROBE NON-VACUOUS:
+/// it DIFFERS from the `Idempotent` every step here declares, so an `enter` in the arm re-enters
+/// the step with a resolution it did NOT have and the vector moves. With `Idempotent` -- measured
+/// at the plan review, 2026-09-15 -- the `enter` mutation re-entered the step with the SAME
+/// `RunAgain` and `before == after` held: the mutation survived. It is the lesson `a_note()` and
+/// `a_permission()` already write out, in a third dress. ⚠️ In the REAL registry the note carries
+/// the function's own class (`noted` in `registry.rs`); this bench chooses the class that makes
+/// the probe bite, exactly as `a_note()` does.
+///
 /// ⛔ THE LAST ASSERTION OF THE SECOND PROBE IS NOT DECORATION: `before == after` is satisfied by
 /// two empty lists, so without it a bench that never opened a doubt would pass while proving
 /// nothing. It is the non-vacuity guard of §8.6.2 written at the size of one test.
 fn an_invocation_note() -> Vec<u8> {
     Record::V1(RecordV1::invocation(
-        EffectClass::Idempotent,
+        EffectClass::Unrepeatable,
         Trust::Untrusted,
         Vec::from(&b"an argument the gui chose"[..]),
         "who invoked what",
@@ -7052,14 +7095,16 @@ fn an_invocation_note() -> Vec<u8> {
 }
 ```
 
-⚠️ **`closed_record` e gli `use` esistono già in quel file** — si riusano, non si riscrivono; il Passo 1 li ha
-letti. Se il nome fosse diverso, vale ciò che il file ha **oggi**, e la divergenza è una voce d'errata.
+⚠️ **L'aiutante del file è `record(species, effect)` e si riusa, non si riscrive** — qui stava «`closed_record`», un nome
+che il file non ha mai avuto: misurato alla revisione del piano intero (R2-14), tre `E0425` sul testo dettato. ⛔ **E
+l'`use kernel::record::{…}` in testa al file si allarga con `InvocationDetail`**, che oggi non porta (senza: un
+`E0433`). Se il file di oggi differisse ancora, vale ciò che il file ha **oggi**, e la divergenza è una voce d'errata.
 
 ```bash
 cargo test --locked -p kernel --test reconciliation 2>&1 | tail -8
 ```
 
-Atteso: **tutte verdi**, due in più del Passo 1.
+Atteso: **20 passed** — i **18** del Passo 1 più le due sonde nuove (R2-22).
 
 - [ ] **Passo 5: il registro**
 
@@ -7080,7 +7125,7 @@ Atteso: **tutte verdi**, due in più del Passo 1.
 //!
 //! ⛔ SO `invoke` TAKES THE EFFECT AS A CLOSURE. That is the only shape in which the mechanism can
 //! run something it does not know, and the closure receives the journal because the effect writes
-//! its own step (§5 of the milestone-2 design: "l'effetto, che è il passo B di `set_policy`
+//! its own step (§5 of the sub-project 2 design: "l'effetto, che è il passo B di `set_policy`
 //! com'è").
 //!
 //! ⛔ AND THE ARRIVING NAME NEVER BECOMES A `&'static str`. It is COMPARED against the registered
@@ -7092,7 +7137,7 @@ Atteso: **tutte verdi**, due in più del Passo 1.
 //! permission system (ADR-0038, negative perimeter) — it asks `permission::is_granted` and
 //! nothing else; and it does not hold the SESSION boundary of ADR-0016, because
 //! `permission::is_granted` re-reads the whole journal and a granted triple therefore survives a
-//! restart. That limit is declared in §5 of the milestone-2 design and belongs to whoever brings
+//! restart. That limit is declared in §5 of the sub-project 2 design and belongs to whoever brings
 //! the runs, sub-project 3.
 
 use alloc::vec::Vec;
@@ -7261,7 +7306,7 @@ impl Registry {
 
     /// Invokes the function named `name`, if it is registered and its triple is granted.
     ///
-    /// The order is the one §5 of the milestone-2 design fixes, and each line is load-bearing:
+    /// The order is the one §5 of the sub-project 2 design fixes, and each line is load-bearing:
     ///
     /// 1. the name is looked up — not registered, nothing is written;
     /// 2. with `Approval::Checked`, the triple is asked of the journal — not granted, nothing
@@ -7428,7 +7473,7 @@ fn a_registry() -> Registry {
 
 #[test]
 fn a_name_that_is_not_registered_is_refused_and_writes_nothing() {
-    // §5 of the milestone-2 design, in its own words: "un nome non registrato → rifiutato, nessun
+    // §5 of the sub-project 2 design, in its own words: "un nome non registrato → rifiutato, nessun
     // record". ⛔ AND THE SECOND HALF IS THE ONE THAT MATTERS: a peer that could make the core
     // write a record by naming anything would own the durable archive.
     let mut journal = MemoryJournal::new();
@@ -7690,7 +7735,7 @@ fn a_bare_outcome() -> Vec<u8> {
 cargo test --locked -p kernel --test registry 2>&1 | tail -10
 ```
 
-Atteso: **cinque verdi**.
+Atteso: **sei verdi** (⚠️ qui stava «cinque»: i `#[test]` del file dettato sono sei, contati alla revisione del piano intero, R2-16).
 
 - [ ] **Passo 7: il settimo record congelato — la sonda usa e getta, e i byte A MANO**
 
@@ -7751,9 +7796,10 @@ byte devono **ricostruire il file**, perché `the_map_lists_the_bytes_that_are_r
 
 - [ ] **Passo 8: il settimo posto in `frozen_bytes.rs`**
 
-In `crates/kernel/tests/frozen_bytes.rs`: il tipo di ritorno di `the_frozen_records()` passa da `; 6]` a `; 7]`,
-la costante `INVOCATION_BYTES` si aggiunge accanto alle altre con
-`include_bytes!("frozen/record_v1_invocation.cbor")`, e la voce entra in coda all'array:
+In `crates/kernel/tests/frozen_bytes.rs`: ⛔ **prima l'`use`** — `InvocationDetail` entra nell'`use kernel::record::{…}`
+in testa al file, che oggi non lo porta (senza: `error[E0433]`, misurato alla revisione del piano intero, R2-13); poi
+il tipo di ritorno di `the_frozen_records()` passa da `; 6]` a `; 7]`, la costante `INVOCATION_BYTES` si aggiunge
+accanto alle altre con `include_bytes!("frozen/record_v1_invocation.cbor")`, e la voce entra in coda all'array:
 
 ```rust
         // ⛔ THE SEVENTH IS THE FOURTH SPECIES THAT CARRIES A `detail`, AND WHAT IT PINS THAT THE
@@ -7788,7 +7834,12 @@ la costante `INVOCATION_BYTES` si aggiunge accanto alle altre con
         ),
 ```
 
-e il `match kind` che **P-33** ha censito riceve il settimo nome nel braccio.
+e il `match kind` che **P-33** ha censito riceve il settimo nome nel braccio. ⛔ **E nello stesso test due posti che
+P-33 non censì (R2-13), dentro `every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record`:** l'array **a mano**
+`for kind in [ … ]` sopra quel `match` riceve `RecordKind::Invocation,` in coda — è la metà che il compilatore **non**
+sorveglia, e senza di essa il settimo pin non viene controllato (limite dichiarato del file); e il `match detail`
+esaustivo più sotto — `Detail::Verdict(_) => {}` · `Routing` · `Permission` — riceve il braccio
+`Detail::Invocation(_) => {}`, senza il quale il banco è `error[E0004]`. Con i tre pezzi, misurato: **7 passed**.
 
 ```bash
 cargo test --locked -p kernel --test frozen_bytes 2>&1 | tail -12
@@ -7799,6 +7850,80 @@ Atteso: **tutte verdi**; e ⛔ **`git diff --stat` sui file congelati mostra SOL
 nuovo** — i **sei** `.cbor` vecchi non compaiono. Se uno di essi cambiasse, non è un aggiornamento: è un **cambio
 di formato**, e va aperta una versione nuova (ADR-0036).
 
+- [ ] **Passo 8-bis: gli altri due `match` esaustivi — `record_shape.rs` e `dst_campaign.rs` (P-45)**
+
+⛔ **Entrato il 2026-09-15 alla revisione del piano intero (R2-12): P-45 dichiarava questi due siti «corretti nel
+compito 6», e il compito non li nominava.** Misurato col `record.rs` del Passo 2 in un banco a parte:
+`cargo test --locked -p kernel --test record_shape` → `error[E0004]: RecordKind::Invocation not covered` sulla chiusura
+`let of = |kind| match kind`, e `cargo test --locked -p simulator --test dst_campaign --no-run` →
+`error[E0004]: &RecordKind::Invocation not covered` sull'oracolo — cioè il passo *example and compile-fail tests* del
+cancello **rosso** al Passo 10. ⛔ **Si leggono PRIMA di toccarli, perché i due non vogliono la stessa cosa** — è la
+forma che il compito 8 ripete per l'ottava variante.
+
+**(a)** `crates/kernel/tests/record_shape.rs` (**`i/lf w/crlf`**) — **due** metà, e la seconda il compilatore non la
+sorveglia. Nel `match` di `let of = |kind| …`, dopo il braccio `RecordKind::Permission`, il braccio nuovo:
+
+```rust
+        // ⚠️ THE SEVENTH SPECIES, AND THE GUARD ABOVE PUT IT HERE AGAIN: `RecordKind::Invocation`
+        // made this closure `error[E0004]` on the day it arrived (sub-project 2, task 6). Its
+        // detail is not optional either, and `InvocationDetail::new` takes a `&'static str` and
+        // a `u8` -- read the type, the `u8` is a decision.
+        RecordKind::Invocation => RecordV1::invocation(
+            EffectClass::Idempotent,
+            Trust::Instruction,
+            Vec::new(),
+            "why this step exists",
+            InvocationDetail::new("a function", 0),
+        ),
+```
+
+e — ⛔ **A MANO, perché l'array NON va rosso** — la variante in coda all'array del `for kind in [ … ]` che segue:
+
+```rust
+        RecordKind::Invocation,
+```
+
+⚠️ **La testa di quel `for` porta già tre note** — `Verdict`, `Routing` e `Permission` aggiunti a mano, ciascuna con
+la frase *«the `match` goes red on a new species, this ARRAY does not»*. Se ne aggiunge una **quarta** in coda alle
+tre, senza cancellare le altre:
+
+```rust
+    // ⚠️ AND `Invocation` JOINED IT ON <data> FOR THE SAME REASON THE THREE BEFORE IT DID (sub-project 2,
+    // task 6): the `match` goes red on a new species, this ARRAY does not.
+```
+
+⛔ **E il blocco a coppie sotto resta a TRE:** lo dice il commento accanto —
+quella proprietà vive in `frozen_bytes.rs`, e asserirla anche qui sarebbe una seconda casa (§7.4.4). ⚠️ L'`use
+kernel::record::{…}` in testa al file riceve `InvocationDetail`.
+
+**(b)** `crates/simulator/tests/dst_campaign.rs` (**`i/lf w/crlf`**) — ⛔ **un `panic!` e NON un braccio vuoto.** È un
+**oracolo indipendente** che controlla `reconcile`, e la voce `E50` del piano del Traguardo 6 scrive perché: *«writing
+the empty arm `reconcile` writes would make this oracle agree with the implementation BY CONSTRUCTION on a case it has
+never seen»*. Dopo il braccio `RecordKind::Permission`:
+
+```rust
+            // ⛔ UNREACHABLE IN THIS SCENARIO TOO, AND `panic!` RATHER THAN THE EMPTY ARM FOR THE
+            // REASON ITS THREE SIBLINGS GIVE -- read them, the argument is one. Nothing here invokes
+            // a function of the registry, so no invocation record can enter this trace
+            // (sub-project 2, task 6).
+            //
+            // ⚠️ THE DAY THE SCENARIO GROWS AN INVOCATION, THE RED IS A DECISION BEING ASKED FOR
+            // and not a defect being reported -- same as its siblings.
+            RecordKind::Invocation => panic!(
+                "step {step} carries an invocation record: this scenario has grown a registry \
+                 invocation, and this oracle must decide what one does to a doubt before it can \
+                 stay independent"
+            ),
+```
+
+```bash
+cargo test --locked -p kernel --test record_shape 2>&1 | tail -12
+cargo build --locked --workspace --tests 2>&1 | tail -20
+```
+
+Atteso: `record_shape` verde, e la build dei banchi **senza** errori di `match` non esaustivo. ⛔ **Se resta un
+quinto sito** che il censimento non aveva, è una voce d'errata **e** una correzione a P-45.
+
 - [ ] **Passo 9: i due richiami datati sulla §5 del disegno del 2**
 
 In `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF** — richiamo del 2026-09-14, **P-47**), **dentro** le due celle
@@ -7806,7 +7931,7 @@ della prima tabella della §5, senza riscrivere ciò che c'è:
 
 Nella cella **«il giornale»**, in coda:
 
-> ⛔ **RICHIAMO DEL 2026-09-11, dal pre-controllo del compito 6 (P-30): il dettaglio strutturato porta DUE cose e
+> ⛔ **RICHIAMO DEL <data>, dal pre-controllo del compito 6 del 2026-09-11 (P-30): il dettaglio strutturato porta DUE cose e
 > non tre.** *«funzione, invocatore, argomento»* resta vero dell'invocazione, ma **l'argomento non sta nel
 > dettaglio**: è testo che la GUI ha scelto, quindi non fidato per eredità (ADR-0014), e viaggia nel **`payload`
 > del record** sotto l'etichetta `trust` che esiste per dirlo — è il precedente che `VerdictDetail` scrive per il
@@ -7816,7 +7941,7 @@ Nella cella **«il giornale»**, in coda:
 
 Nella cella **«l'invocatore»**, in coda:
 
-> ⛔ **RICHIAMO DEL 2026-09-11, dal pre-controllo del compito 6 (P-32): la regola citata è quella sbagliata, e il
+> ⛔ **RICHIAMO DEL <data>, dal pre-controllo del compito 6 del 2026-09-11 (P-32): la regola citata è quella sbagliata, e il
 > costo non è zero.** La regola 3 di §4.9.2 parla di **campi** — *«un campo nuovo è facoltativo e prende un indice
 > nuovo»* — e una variante di enum non è un campo. Ciò che vale per le varianti lo scrive la testa di
 > `crates/kernel/tests/frozen_bytes.rs`: una variante aggiunta a un enum `index_only` rende **indecodificabile a
@@ -7831,30 +7956,31 @@ Nella cella **«l'invocatore»**, in coda:
 
 ```bash
 for f in crates/kernel/src/registry.rs crates/kernel/tests/registry.rs; do printf '%-46s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
-git ls-files --eol crates/kernel/src/record.rs crates/kernel/src/reconcile.rs crates/kernel/src/lib.rs crates/kernel/tests/frozen_bytes.rs crates/kernel/tests/reconciliation.rs crates/kernel/tests/frozen/record_v1.map docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+git ls-files --eol crates/kernel/src/record.rs crates/kernel/src/reconcile.rs crates/kernel/src/lib.rs crates/kernel/tests/frozen_bytes.rs crates/kernel/tests/reconciliation.rs crates/kernel/tests/record_shape.rs crates/simulator/tests/dst_campaign.rs crates/kernel/tests/frozen/record_v1.map docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 bash scripts/gate.sh 2>&1 | tail -3
 bash scripts/gate-deps.sh 2>&1 | tail -3
 bash scripts/check-docs.sh 2>&1 | tail -3
 ```
 
-Atteso: i due file nuovi a `CR=0`; i sette modificati **invariati** in `git ls-files --eol`; `GATE GREEN`; la lista
+Atteso: i due file nuovi a `CR=0`; i **nove** modificati **invariati** in `git ls-files --eol`; `GATE GREEN`; la lista
 di ADR-0031 **non cresciuta** — il registro non aggiunge dipendenze; `OK — no inconsistencies.`
 
 Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit — **senza co-autore**.
 
 #### Criterio di chiusura del compito 6
 
-- [ ] `cargo test --locked -p kernel --test registry` → **cinque** passati
-- [ ] `cargo test --locked -p kernel --test reconciliation` → **due in più** del Passo 1
+- [ ] `cargo test --locked -p kernel --test registry` → **sei** passati (R2-16)
+- [ ] `cargo test --locked -p kernel --test reconciliation` → **20 passed**, i 18 del Passo 1 più due (R2-22)
 - [ ] `cargo test --locked -p kernel --test frozen_bytes` → tutti passati, e `the_frozen_records()` rende **sette**
+- [ ] ⛔ **i quattro siti di P-45 toccati**: `cargo test --locked -p kernel --test record_shape` verde, `cargo build --locked --workspace --tests` senza `E0004`; `grep -c 'RecordKind::Invocation' crates/kernel/tests/record_shape.rs` → **3** (il commento, il braccio, la voce dell'array) e `grep -c 'RecordKind::Invocation' crates/simulator/tests/dst_campaign.rs` → **1** (R2-12)
 - [ ] ⛔ `git diff --stat -- crates/kernel/tests/frozen/` mostra **solo** la mappa e il file nuovo: i sei `.cbor` vecchi **identici al byte**
-- [ ] ⛔ le **due misure del Passo 3** fatte: `enter` al posto del braccio vuoto → rossa la seconda sonda; `leave` → rossa la prima; entrambe revocate, `git diff --stat` pulito
+- [ ] ⛔ le **due misure del Passo 3** fatte: `enter` al posto del braccio vuoto → rosse **entrambe** le sonde; `leave` → rossa la **seconda** (R2-15; qui stava «`enter` → la seconda, `leave` → la prima», falso in entrambe le metà sul testo dettato); entrambe revocate, `git diff --stat` pulito
 - [ ] ⛔ la sonda usa e getta del Passo 7 **cancellata**, e il commit lo dice
-- [ ] ⛔ **il registro non nomina l'arbitro**: `grep -cE 'Arbiter|VramPolicy|arbiter' crates/kernel/src/registry.rs` → **0** (**D16**)
-- [ ] `grep -c 'RICHIAMO DEL 2026-09-11' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **almeno 2**
+- [ ] ⛔ **il registro non IMPORTA l'arbitro**: `grep -c 'use crate::arbiter\|crate::arbiter::' crates/kernel/src/registry.rs` → **0** (**D16**) — provato dove rende 1: `grep -c 'use crate::arbiter' crates/kernel/src/degradation.rs` → **1**. ⚠️ Qui stava un `grep` sulle **parole** `Arbiter|VramPolicy|arbiter`, che sul file dettato rende **2**: il doc del modulo le *nomina* proprio per dire che non le importa (R2-17)
+- [ ] `grep -c 'RICHIAMO DEL <data>, dal pre-controllo del compito 6' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **2** (con la data scritta — D75), e `grep -c '<data>'` sullo stesso file → **0**
 - [ ] `git diff --name-only -- docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` **vuoto** (vincolo 1: questo compito non tocca le due spec)
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `gate-deps.sh` verde, la lista **non cresciuta**; `gate-attributes.sh` verde
-- [ ] i fine-riga rimisurati: i due nuovi a zero CR, i sette modificati invariati
+- [ ] i fine-riga rimisurati: i due nuovi a zero CR, i nove modificati invariati
 - [ ] la riga **6** della tabella della posizione a ✅ con la data
 
 ---

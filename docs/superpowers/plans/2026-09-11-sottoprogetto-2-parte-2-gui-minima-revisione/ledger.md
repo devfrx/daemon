@@ -3,7 +3,7 @@
 Fonte: 9 rapporti su 11 (R1 parziale: compiti 1–2; R3 parziale: compito 7; R5 completo: 11–12; R2, R4, R7, R9a, R9b, R10 completi).
 Mancano: compito 13 (R6), compiti 15–17 (R8), compito 3 (R1), compito 8 (R3) — perimetri da rivedere ancora.
 Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stati rimisurati anche da lui.
-**Stato al 2026-09-15 (sessione 13, dopo la dodicesima chiusura):** testa, compiti 1, 2, 4, 5, 6, 7, 8 (le sole correzioni note) e 9 applicati (✅); tutto il resto ⬜.
+**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜.
 
 ## Le decisioni nuove (righe D da scrivere)
 
@@ -146,16 +146,17 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - Attrezzo: `patch_c89.py` accanto a questo file (compiti 8 e 9); ⚠️ trappola: il blocco spostato (Passo 14 → 7-bis) si sposta PRIMA di inserire un nuovo «Passo 14», o l'ancora `Passo 15` porta via anche quello — scattato una volta, senza scrivere
 
 ### Compito 10
-- R4-19/R10-18 blocco Files (4 righe) ⬜
-- R4-20 sonda-premio: `open.dies(GUI, u64::MAX)` gemello di `without_crash` ⬜
-- R4-21 Passo 1 + `grep fn replay -A2` ⬜
-- R4-22 «i due `match` della campagna» (anche in P-61) ⬜
-- R4-23/R10-11 Consumes: via `Journal`/`Custody` non importati; + `RngExt`, `MemoryJournal` ⬜
-- R4-24 `SCRATCH=` definito o via `tee` ⬜
-- R4-25/R9a-14 richiamo §5 su UNA riga, ancora = riga intera `| l'attività | …` ⬜
-- R4-26 «quattro righe: la struct e i suoi tre metodi» (anche P-60) ⬜
-- R4-27 Passo 7: rimisurare i costi del settimo passo e riscrivere la riga con `<data>` ⬜
-- D76 ⬜
+- R4-19/R10-18 blocco Files (4 righe) ✅
+- R4-20 sonda-premio: `Wire::watched_for_ever(client)` (= `dies(client, u64::MAX)`), gemello di `without_crash`, dettato nel Passo 3 e usato nella tabella del Passo 5 ✅
+- R4-21 Passo 1 + `grep fn replay -A2` ✅
+- R4-22 «i due `match` della campagna» (anche in P-61) ✅
+- R4-23/R10-11 Consumes: via `Journal`/`Custody` non importati; + `RngExt`, `MemoryJournal` ✅
+- R4-24 via il `tee` su `$SCRATCH` (il log lo tiene chi esegue nello scratchpad) ✅
+- R4-25/R9a-14 richiamo §5 su UNA riga, ancora = riga intera `| l'attività | …` ✅
+- R4-26 «quattro righe: la struct e i suoi tre metodi» (anche P-60) ✅
+- R4-27 Passo 7: rimisurare i costi del settimo passo e riscrivere la riga con `<data>` ✅
+- D76 ✅
+- Attrezzo: `patch_c10.py` accanto a questo file
 
 ### Compito 11
 - R5-1 (D79) `typescript` 5.9.3; Passo 5 frase; script del Passo 2 ⬜

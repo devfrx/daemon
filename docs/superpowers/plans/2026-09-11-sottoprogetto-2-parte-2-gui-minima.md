@@ -130,6 +130,9 @@ viene ora è la **revisione del piano intero** — l'undicesima chiusura del dia
 ✅ **RICHIAMO DEL 2026-09-15, terza sessione del giorno: la revisione è FATTA per nove perimetri su undici e le correzioni sono
 applicate ai compiti 1–5** — la **dodicesima chiusura** dice dove si riprende, e il registro in
 [`…-revisione/ledger.md`](2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/ledger.md) è la casa unica di ciò che resta.
+✅ **RICHIAMO DEL 2026-09-15, quarta sessione del giorno: le correzioni sono applicate ai compiti 1–10** — l'8 nelle sole due
+correzioni note — e la **tredicesima chiusura** dice dove si riprende: i compiti 11–17, poi la revisione in profondità di
+3, 8, 13, 15, 16, 17, poi le P nuove.
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
@@ -1563,7 +1566,7 @@ asked for a `Debug`»*. Un derive aggiunto a un tipo **spedito** per comodità d
 pubblico del kernel per una ragione che non è del kernel.
 
 ✅ **La cura è il precedente:** un enum **locale** alla campagna — `Doubt` — con `Ord`, e un `From<Resolution>`
-che è un `match` esaustivo. ⚠️ **E quel `match` è l'UNICO della campagna, dichiarato nel compito perché non
+che è un `match` esaustivo. ⚠️ **E quel `match` è uno dei DUE della campagna — l'altro è l'aiutante `the_doubt_the_one_function_resolves_to()` del Passo 6, e ciascuno dei due compiti diceva «l'unico» del proprio; entrambi convertono per contare, nessuno decide (R4-22, 2026-09-15) — dichiarato nel compito perché non
 venga letto come la decisione che la riga 24 del Traguardo 6 tiene aperta:** è una conversione per poter
 **contare**, non una scelta di riconciliazione. ✅ **E cresce col tipo:** una variante nuova di `Resolution` rende
 rossa la campagna al compilatore, che è la stessa guardia che `record_shape.rs` dichiara di sé.
@@ -11867,6 +11870,11 @@ una voce aperta dichiarata e non un compito da nominare.
 
 ## Compito 10: la campagna DST del 2 — l'attività sotto due guasti, e la riga nel settimo passo
 
+**Files:**
+- Create: `crates/simulator/tests/serving_campaign.rs` (**LF**) — la campagna, le due proprietà, i due spazi dei mondi
+- Modify: `scripts/gate.sh` (**`i/lf w/crlf`**) — la riga `serving_campaign` nel settimo passo, con `replace_unique.py`, **e la riga dei costi rimisurata** (R4-27)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**`i/lf w/lf`**) — il richiamo datato nella §5, riga *«l'attività»* (**D32**)
+- Modify: **questo piano** — la riga **10** della tabella della posizione
 - Read: la **§5 del 2**, la riga *«l'attività»* e la sua colonna *«la prova»*; le righe *«l'attività del daemon
   (§5)»* e *«la campagna DST del 2 nel settimo passo»* della **§8 del 2**;
   `crates/simulator/tests/gui_death_campaign.rs` **per intero** — è il modello della prima metà, e la sua testa
@@ -11883,7 +11891,7 @@ una voce aperta dichiarata e non un compito da nominare.
 **Interfaces:**
 - Consumes, dal **compito 1**: `kernel::numbering::Progressive`, con `Progressive::starting_at(u64)`
 - Consumes, dal **compito 3**: `kernel::wire::ipc::{IpcMessage, build_stamp, Access, Call, Triple}`
-- Consumes, dal **compito 4**: `kernel::ports::custody::Custody`
+- Consumes, dal **compito 4**: nulla per nome — `MemoryCustody::new()` è inerente e `Core::new` prende il tipo, quindi il tratto `Custody` **non si importa** (R4-23; qui stava `kernel::ports::custody::Custody`)
 - Consumes, dal **compito 6**: `kernel::registry::Function` — attraverso `POLICY_FUNCTION`, per la tripla e il nome
 - Consumes, dal **compito 7**: `kernel::serving::{Core, serve, POLICY_FUNCTION}`, con
   `Core::new(ipc, journal, custody, arbiter, steps, parameters)`, `Core::journal`, `Core::arbiter`,
@@ -11892,10 +11900,9 @@ una voce aperta dichiarata e non un compito da nominare.
   `kernel::parameters::Parameters::new(executor_turn_limit, total_vram, arbiter_id, gui_tick)`
 - Consumes, da oggi: `kernel::arbiter::{Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption,
   RemotePolicy, ResourceProfile, VramPolicy}`; `kernel::executor::{Executor, RunError, Sleep}`;
-  `kernel::ports::ipc::{ClientId, Ipc, IpcError}`; `kernel::ports::journal::Journal`;
-  `kernel::ports::reactor::Reactor`; `kernel::reconcile::{Resolution, steps_in_doubt}`;
-  `kernel::time::{Millis, Monotonic, WallTime}`; `simulator::custody::MemoryCustody`;
-  `simulator::journal::CrashingJournal`; `simulator::reactor::VirtualReactor`; `simulator::rng::SeededRng`
+  `kernel::ports::ipc::{ClientId, Ipc, IpcError}`; `kernel::ports::reactor::Reactor`; `kernel::reconcile::{Resolution, steps_in_doubt}`;
+  `kernel::rng::RngExt` (per `below`); `kernel::time::{Millis, Monotonic, WallTime}`; `simulator::custody::MemoryCustody`;
+  `simulator::journal::{CrashingJournal, MemoryJournal}`; `simulator::reactor::VirtualReactor`; `simulator::rng::SeededRng` — ⚠️ riletti dagli `use` del Passo 2 (R4-23, R10-11): `kernel::ports::journal::Journal` **non** si importa, nessun metodo del tratto è chiamato
 - Produces: ⛔ **nulla che un altro compito importi** — un `tests/` è una crate a sé. L'unico artefatto che un
   altro file nomina è **la riga nel settimo passo di `scripts/gate.sh`**
 
@@ -11920,14 +11927,17 @@ grep -rn 'struct SharedClock' crates/ --include='*.rs'
 grep -n 'simulator' crates/daemon/Cargo.toml
 grep -nE '^\s*pub (fn|const fn|struct)' crates/kernel/src/client.rs
 grep -n 'pub enum Resolution' -A 10 crates/kernel/src/reconcile.rs
+grep -n 'fn replay' -A 2 crates/simulator/src/journal.rs
 git ls-files --eol scripts/gate.sh docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 ```
 
 Atteso: `serving_campaign.rs` **non esiste**; il settimo passo elenca **cinque** bersagli, uno per riga; gli
 `SharedClock` nel repository sono **tre** dopo i compiti 7 e 9 (**P-59**); `crates/daemon/Cargo.toml` **non**
-dipende da `simulator` e porta il commento che dice perché; ⛔ **`ClientGrants` ha TRE elementi pubblici** —
-`new`, `register`, `on_disconnect` — e **nessun modo di contare senza rilasciare** (**P-60**); `Resolution` ha
-**tre** varianti; `gate.sh` è `i/lf w/crlf`, il disegno del 2 è `i/lf w/lf` (**P-47**).
+dipende da `simulator` e porta il commento che dice perché; ⛔ **`ClientGrants` ha TRE metodi pubblici** — il
+`grep` rende **quattro** righe, la `struct` e i suoi tre metodi `new`, `register`, `on_disconnect` (R4-26) — e **nessun
+modo di contare senza rilasciare** (**P-60**); `Resolution` ha **tre** varianti; il `replay` di `CrashingJournal` — il
+**secondo** `fn replay` del file — delega a `self.inner.replay()` senza passare da `may_write`, che è la verifica che il
+Passo 4 cita (R4-21); `gate.sh` è `i/lf w/crlf`, il disegno del 2 è `i/lf w/lf` (**P-47**).
 ⚠️ **Se una cifra è diversa vale il comando, non questa riga**, ed è una voce d'errata prima di essere un rimedio.
 
 ⛔ **E POI I DUE PREMI, senza i quali entrambe le metà sono silenziose** — gotcha **#17**, e il doc di
@@ -11948,7 +11958,7 @@ misurato** nella costante, e se diverge da ciò che questo compito prevede è un
 `crates/simulator/tests/serving_campaign.rs`, **LF**, nuovo.
 
 ```rust
-//! The milestone 2 campaign: `kernel::serving::serve` under two faults -- a gui that dies on the
+//! The sub-project 2 campaign: `kernel::serving::serve` under two faults -- a gui that dies on the
 //! port, and an archive that falls in the middle of an invocation.
 //!
 //! ⛔ WHY NOT `simulator::ipc::DyingGui`, WHICH §5 OF THE DESIGN NAMES. Three reasons, each
@@ -11963,7 +11973,7 @@ misurato** nella costante, e se diverge da ciò che questo compito prevede è un
 //! place it is written: a `tests/` is a crate of its own and a binary exports nothing, so the
 //! first two cannot be imported.
 //!
-//! ⛔ AND THE FIRST HALF WOULD BE VACUOUS WITHOUT A GRANT PUT IN BY HAND. Milestone 2 issues NO
+//! ⛔ AND THE FIRST HALF WOULD BE VACUOUS WITHOUT A GRANT PUT IN BY HAND. Sub-project 2 issues NO
 //! grant to a client -- `serving.rs` says so of itself -- so a gui that dies here holds nothing,
 //! and "the sum came back to the baseline" is green because it never moved. The grant goes in
 //! through `Core::grants`, which is the caller that accessor's own doc names.
@@ -12121,6 +12131,14 @@ impl Wire {
     fn dies(&mut self, client: ClientId, at: u64) {
         self.dying = Some(client);
         self.dies_at = at;
+    }
+
+    /// The twin of `CrashingJournal::without_crash()`: the client is WATCHED and never dies, so
+    /// that `operations` counts. ⛔ IT EXISTS FOR THE PRIZE PROBE: `may_operate` counts only the
+    /// client it watches, and a run with no watched client counts nothing at all -- measured at the
+    /// plan review (R4-20), where the prize probe as first written asserted `0 >= OPERATIONS`.
+    fn watched_for_ever(&mut self, client: ClientId) {
+        self.dies(client, u64::MAX);
     }
 
     /// Whether this operation may proceed, MARKING the death when it may not.
@@ -12499,7 +12517,7 @@ della revisione del piano intero la cerca.
 
 | La sonda | Che cosa monta | Che cosa asserisce |
 |---|---|---|
-| `the_activity_operates_on_a_welcomed_client_at_least_this_many_times` | il cablaggio di `one_death` **senza** `Wire::dies` | `wire.operations >= OPERATIONS`, col messaggio che dice *«la coda di quell'intervallo non può scattare»* |
+| `the_activity_operates_on_a_welcomed_client_at_least_this_many_times` | il cablaggio di `one_death` con `open.watched_for_ever(GUI)` al posto di `open.dies(GUI, …)` — il gemello di `CrashingJournal::without_crash()` (R4-20: **senza** un client sorvegliato `may_operate` non conta nulla, e la sonda com'era scritta asseriva `0 >= OPERATIONS`) | `wire.operations >= OPERATIONS`, col messaggio che dice *«la coda di quell'intervallo non può scattare»* |
 | `an_approval_without_a_crash_writes_this_many_records` | il cablaggio di `one_crash` con `CrashingJournal::without_crash()` | `writes_done() == WRITES_PER_APPROVAL`, **e** `steps_in_doubt` **vuoto** — la seconda direzione: un dubbio senza caduta vorrebbe dire che è rotta la disciplina write-ahead, e ogni seme sotto starebbe misurando quella |
 
 - [ ] **Passo 6: le due proprietà, e i due spazi dei mondi**
@@ -12598,8 +12616,9 @@ fn an_approval_that_crashes_leaves_the_step_in_doubt_with_its_class() {
 ⛔ **`the_doubt_the_one_function_resolves_to()` si scrive leggendo `POLICY_FUNCTION.effect` e la tabella di
 `reconcile`**, non copiando una variante: `grep -n 'fn resolution_of' -A 8 crates/kernel/src/reconcile.rs` dice
 la corrispondenza, e se `resolution_of` **non è pubblica** l'aiutante la riscrive in **una riga** con un `match`
-sul campo — ⚠️ **ed è l'unico `match` che questa campagna contiene**, dichiarato qui perché non venga letto come
-la decisione che la riga 24 del Traguardo 6 tiene aperta.
+sul campo — ⚠️ **ed è uno dei DUE `match` della campagna, con `From<Resolution> for Doubt` del Passo 4: entrambi
+convertono per contare, nessuno decide** (R4-22; qui stava «l'unico», e P-61 diceva «l'unico» dell'altro), dichiarato
+qui perché nessuno dei due venga letto come la decisione che la riga 24 del Traguardo 6 tiene aperta.
 
 ⛔ **`EXPECTED_DEATH_WORLDS` e `EXPECTED_CRASH_WORLDS` si MISURANO, non si prevedono.** Si scrive la costante a
 un valore qualsiasi, si lancia, si legge il numero dal messaggio del rosso, e **quello** si scrive — con la data
@@ -12622,27 +12641,40 @@ dal file**, e *Sostituisci con*:
 ⛔ **E la prova è nelle due direzioni, come la riga della §8 del 2 detta:**
 
 ```bash
-bash scripts/gate.sh 2>&1 | tee "$SCRATCH/gate-serving-campaign.log" | grep -c 'DST serving'
+bash scripts/gate.sh 2>&1 | grep -c 'DST serving'
 ```
 
 Atteso: **due** — una riga per proprietà. Poi si **toglie** la riga da `gate.sh`, si rilancia, e il conteggio
 deve essere **zero**: senza la seconda direzione il verde non prova che il passo esegua davvero ciò che dichiara.
-⛔ **Poi si rimette**, e `git diff scripts/gate.sh` deve mostrare **una sola** riga aggiunta.
+⛔ **Poi si rimette**, e `git diff scripts/gate.sh` deve mostrare **una sola** riga aggiunta. ⚠️ Qui stava un `tee`
+su `$SCRATCH`, che nessuna riga definiva (R4-24): il log del cancello lo tiene chi esegue nello scratchpad, come per
+ogni corsa.
+
+⛔ **E la riga dei costi sopra il settimo passo si RIMISURA (R4-27):** quel commento dice *«THE FIGURE IS RE-MEASURED
+WHENEVER THIS LIST CHANGES AND NEVER REALIGNED FROM MEMORY»*, e questo compito cambia la lista — lasciarlo com'è lo
+rende falso per la sua stessa regola (gotcha #31). Si lancia `cargo test --locked -p simulator --test <bersaglio> 2>&1 | grep 'finished in'`
+per ciascuno dei **sei** bersagli del settimo passo, **due volte** (la seconda è quella che conta, a cache calda, come
+la misura del 2026-09-02); poi *Trova* le **tre** righe da `# ⚠️ TWO COSTS, both declared. The short campaigns run twice: RE-MEASURED on 2026-09-02,`
+fino a `engine_crash_consistency 0.41s.`, **intere, prese dal file**, e *Sostituisci con* la stessa forma coi sei tempi,
+`serving_campaign` compreso, e la data — `RE-MEASURED on <data>` — con `replace_unique.py` (file CRLF). Le cifre
+vecchie restano nella storia di git, non nel commento; il capoverso sotto, sull'ordine di grandezza, resta com'è.
 ⚠️ **Il commento sopra il settimo passo spiega perché una campagna assente è silenziosa — scattato due volte: si
 legge prima di toccarlo, non dopo.**
 
 - [ ] **Passo 8: il richiamo datato nella §5 del disegno del 2**
 
-Nella **§5** (`i/lf w/lf`, quindi Python con `newline=""`), in coda alla colonna *«la prova»* della riga
-*«l'attività»*:
+Nella **§5** (`i/lf w/lf`, quindi Python con `newline=""`), in coda alla cella *«la prova»* della riga *«l'attività»*.
+⛔ **L'ancora è la riga INTERA, presa dal file:** quella che comincia con `| l'attività |` — `grep -c -F` → **1**;
+⚠️ la coda della cella, *«lascia il passo A in dubbio con la sua classe»*, compare **due** volte nel file (§5 e §8) e
+non è un'ancora (R9a-14). Il richiamo si appende **su una riga**, prima dell'ultimo `|` della riga, come fa il Passo 15
+del 9 — un blockquote di sette righe dentro una cella spezzerebbe la tabella (R4-25):
 
-> ⛔ **RICHIAMO DEL \<data\>, compito 10 del piano della parte 2 (D32): `DyingGui` NON è lo strumento, e le
-> ragioni sono tre, misurate.** Dice una cosa sola, `IpcMessage::Request`, che il dispaccio lascia cadere
-> (**D5**); non può pronunciare né `Hello` né `Approve`, quindi il crash del giornale a metà invocazione non
-> sarebbe raggiungibile; e verrebbe **spostata dentro `Core`**, che non espone il trasporto, quindi la campagna
-> non potrebbe interrogarla. Il filo vive **fuori** dal core dietro un `RefCell`, com'è nel banco del compito 7.
-> ⚠️ **E la concessione si mette a MANO** attraverso `Core::grants`: il 2 non ne rilascia nessuna a un client
-> (**D5**), quindi senza di essa la somma tornerebbe a una baseline da cui non si è mai mossa.
+```
+⛔ **RICHIAMO DEL <data>, compito 10 del piano della parte 2 (D32): `DyingGui` NON è lo strumento, e le ragioni sono tre, misurate.** Dice una cosa sola, `IpcMessage::Request`, che il dispaccio lascia cadere (**D5**); non può pronunciare né `Hello` né `Approve`, quindi il crash del giornale a metà invocazione non sarebbe raggiungibile; e verrebbe **spostata dentro `Core`**, che non espone il trasporto, quindi la campagna non potrebbe interrogarla. Il filo vive **fuori** dal core dietro un `RefCell`, com'è nel banco del compito 7. ⚠️ **E la concessione si mette a MANO** attraverso `Core::grants`: il 2 non ne rilascia nessuna a un client (**D5**), quindi senza di essa la somma tornerebbe a una baseline da cui non si è mai mossa.
+```
+
+Con Python (`newline=""`, temporaneo e `os.replace`): `assert text.count(anchor) == 1`, poi la riga ricomposta come
+`anchor.rstrip().removesuffix("|").rstrip() + " " + richiamo + " |"`.
 
 ⚠️ **La riga della §8 del 2 — *«la morte della GUI … un crash del giornale a metà invocazione»* — NON si tocca:**
 le due proprietà restano quelle, ed è vera alla lettera. Scritto qui perché il prossimo censimento la ritrovi e
@@ -19541,6 +19573,105 @@ git push
 - [ ] ⛔ **la tabella della posizione è tutta ✅**, e ogni riga porta il proprio commit: `awk '/^\| \*\*[0-9]+\*\* \|/{print}' <questo file> | grep -c '⬜'` → **zero**
 
 ## Come si riprende — il diario di questo piano, coi comandi
+
+### La tredicesima chiusura — 2026-09-15, quarta sessione del giorno: le correzioni della revisione sono applicate ai compiti 1–10; restano 11–17, la revisione in profondità di 3, 8, 13, 15, 16, 17 e le P nuove; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO, tre cose.** **(1)** `ledger.md` nella cartella della revisione resta la **casa unica** di ciò
+che resta: ✅ la testa e i compiti **1–10** (l'8 nelle sole due correzioni note, D77: la sua revisione in profondità
+è ancora da fare), ⬜ tutto il resto. Accanto ci sono `patch_c6.py`, `patch_c7.py`, `patch_c89.py` e `patch_c10.py`:
+uno script per ondata, **fetta del compito, TUTTE le ancore asserite prima di scrivere, scrittura atomica** — il
+modello per i compiti 11–17. **(2)** ⛔ **Il piano NON si ripristina con `git checkout --`**: con `core.autocrlf=true`
+il checkout lo riscrive **CRLF** nell'albero (`i/lf w/crlf`), e ogni script di patch — che asserisce `"\r\n" not in raw`
+— si ferma **senza scrivere**. La ricetta che regge è sotto, nelle trappole. **(3)** Sulla macchina restano
+`cargo-audit` 0.22.2 e Node `v24.9.0`, invariati; `python` è 3.13.7.
+
+✅ **Che cosa è stato fatto.** Quattro ondate, ciascuna col cancello verde prima del commit: `a265af8` (compito 6),
+`cb5c378` (compito 7), `1893c29` (compiti 8 e 9) e questo commit (compito 10, più questa chiusura). Ogni rilievo
+bloccante è stato **rimisurato dal coordinatore col proprio comando** prima del rimedio (decisione 71): i quattro
+`match` esaustivi su `RecordKind`, i ventinove attributi indentati, il censimento di `Parameters::new`, `unframe` su
+tre byte, `FILE_FLAG_FIRST_PIPE_INSTANCE` letto nel sorgente di `interprocess` 2.4.4, `E50`/`E66`/`E112` ritrovati
+nel piano del Traguardo 6. Le decisioni **D75–D88** sono applicate dove i compiti le dovevano. ⚠️ **Tre cose che il
+registro NON elencava e sono entrate**, ciascuna con la propria riga di registro: l'etichetta eol di `record_v1.map`
+nel 6 (R10-16 la nominava, la lista del 6 no); le costanti `WELCOME` e `WITH_A_PEER` del banco del 9, che il piano
+usava e nessun passo definiva; il richiamo in **P-45**, il cui ✅ *«corretto nel compito 6»* era una promessa.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main` dopo il push di questa chiusura: `git fetch --all --prune`, `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline fb5b576..HEAD` → quattro (tre ondate più questa chiusura) |
+| Codice di prodotto | **non toccato**: `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` → **116** (invariato: le P della revisione sono da scrivere); `grep -c '^[|] \*\*D[0-9]' <questo file>` → **88**; nessuna `D` nuova in questa sessione |
+| Quanto è corretto | `ledger.md`: ✅ la testa e i compiti 1–10; `grep -c ' ⬜' ledger.md` dice quante righe restano |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0** |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` prima di ogni commit (baseline all'apertura alle 13:47, poi una corsa per ondata; i log nello scratchpad, che non sopravvive); `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | questo piano è **LF**: `git ls-files --eol <questo file>` → `i/lf w/lf`, `tr -cd '\r' < <questo file> [|] wc -c` → `0`; `ledger.md` e i `patch_*.py` LF |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Segnaposto | **uno solo, dichiarato**: la versione di `interprocess` nel manifesto del finto (compito 12) — `awk '/^## Come si riprende/{exit} /<the version/{c++} END{print c+0}' <questo file>` → **1**; i corpi `/* … */` del compito 9 sono dettati: `awk '/^## Come si riprende/{exit} /\{ \/\* … \*\/ \}/{c++} END{print c+0}' <questo file>` → **0** |
+| Margine del compendio | **invariato**: questa sessione non ha toccato il compendio né la roadmap |
+| Documenti fuori dal piano | `ledger.md` e i quattro `patch_c*.py` nella cartella della revisione, più `patch_closure13.py` |
+| File temporanei | nessuno nel repository; lo scratchpad porta i log del cancello e `plan_head.md` (la copia LF di `HEAD` per ripartire), e **non sopravvive** |
+| Debito lasciato | **dichiarato per intero in `ledger.md`**: le correzioni dei compiti 11–17 (le righe R5 per 11 e 12, R7 per 14, le R9a/R9b/R10 per 13, 15, 16, 17), la revisione in profondità di 3, 8, 13, 15, 16, 17, le P-117… |
+
+#### Le decisioni prese scrivendo, oltre a quelle del registro
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 72 | una decisione `D` globale (D76) si applica anche dove il registro non la elencava (il 6), e il registro riceve la riga | la coerenza fra compiti vale più della lista: il 5 l'aveva ricevuta, il 6 no per svista del censimento | una riga di registro in più per ondata |
+| 73 | un compito «non rivisto in profondità» (l'8) riceve le **sole** correzioni note e resta ⬜ per la profondità | applicare due righe non è rivedere; fingerlo farebbe sparire il debito dal registro | nessuno, se il registro lo dice |
+| 74 | una sonda dettata ex novo dalla revisione (le due del 7, l'undicesima del 7, le quattro del 12 del 9) porta nel commento il rilievo che l'ha generata e la data | il prossimo censimento deve sapere da dove viene, come per i richiami datati | una riga di commento per sonda |
+| 75 | il numero liberato da uno spostamento (Passo 14 → 7-bis nel 9) si riusa per il passo nuovo (la misura del processore, D84) invece di un «15-bis» | i passi restano numerati senza buchi, e il 14 è dove la misura ha senso — prima dei richiami e del cancello | nessuno, se il registro nomina lo spostamento |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **`git checkout -- <piano>` LO RISCRIVE CRLF** (`core.autocrlf=true`), e lo script si ferma sull'`assert`. 📌 La
+  ricetta: `git show HEAD:<piano> > <scratchpad>/plan_head.md`, poi Python che legge quel file con `newline=""`,
+  fa `.replace("\r\n", "\n")` e riscrive il piano (temporaneo e `os.replace`); `git ls-files --eol` → `i/lf w/lf` e
+  `git status --porcelain` vuoto prima di rilanciare la patch.
+- ⛔ **PYTHON SU WINDOWS NON RISOLVE `/tmp` DI GIT BASH**: un file scritto da bash in `/tmp/` non esiste per
+  `io.open("/tmp/…")`. 📌 Ciò che Python deve leggere va nello scratchpad, col percorso Windows.
+- ⛔ **UN BLOCCO SI SPOSTA PRIMA DI INSERIRE UN PASSO CHE NE RIUSA IL NUMERO**: l'ancora «fino a `Passo 15`» del
+  blocco da spostare ha portato via anche il «Passo 14» nuovo, inserito prima. Scattato una volta, visto ai
+  controlli mirati (l'elenco dei passi), rifatto da `HEAD`. 📌 Nello script, gli spostamenti stanno **prima** delle
+  sostituzioni.
+- ⛔ **UN'ANCORA CHE DIFFERISCE PER UN CARATTERE FERMA TUTTO SENZA SCRIVERE**, ed è il comportamento voluto:
+  `--include=*.rs` contro `--include='*.rs'`, `--` contro `—`. 📌 `grep -n <frase> <piano> [|] cat -A` mostra i
+  byte; e poiché `scoped()` asserisce **tutte** le ancore prima di scrivere, un fallimento lascia `git status`
+  pulito — si controlla lo stesso.
+- ⛔ **`\\<data\\>` DENTRO UNA STRINGA BASH DIVENTA `\<`, CHE PER `grep` È UN CONFINE DI PAROLA**: il conteggio
+  dei richiami rendeva 0 su righe che c'erano. 📌 Si conta con `grep -c -F`.
+- ⚠️ **UN CONTEGGIO DI RIGHE `⬜` DEL REGISTRO È UN'ANCORA**: `assert seg.count(" ⬜") == N` per la fetta del compito,
+  contato prima con `grep`, così una riga dimenticata dal registro (come l'eol di `record_v1.map`) si vede al
+  momento di spuntare e non dopo.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è
+   il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** (vincoli, posizione, errata, la tabella D fino a
+   D88, le voci aperte), poi [`…-revisione/ledger.md`](2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/ledger.md)
+   **per intero**: è la mappa. Di ogni rapporto si legge **la riga** del rilievo che si sta applicando
+   (`grep -n '^| R5-4 ' R5-report.md`), non il rapporto; le righe lunghe si tagliano con `cut -c1-1500` e si
+   riprendono da `-c1500-`.
+3. ⏭️ **LE CORREZIONI DEI COMPITI 11–17, nell'ordine della posizione**: uno script di patch per ondata sul modello di
+   `patch_c89.py` (fetta del compito, ancore asserite, spostamenti prima delle sostituzioni, scrittura atomica),
+   `check_after_write.sh` dopo ogni scrittura, il cancello e un commit per ondata di uno o due compiti; ogni riga del
+   registro passa a ✅ nello stesso commit. ⚠️ Le decisioni sono **prese** (D75–D88): dove il registro dice «vedi
+   rapporto» si esegue il rimedio proposto, e dove il rimedio contraddice una D vince la D. ⚠️ Per l'11 e il 12 le
+   righe R5-1…R5-22, R5-28 e R5-35 sono già state lette in questa sessione e i loro rimedi sono nel registro: si
+   parte da lì, rileggendo il compito **intero** prima di scrivere le ancore.
+4. Poi **la revisione in profondità dei compiti 3, 8, 13, 15, 16, 17** — col metodo di `constraints.md`, o rilanciando
+   `R6-prompt.md` e `R8-prompt.md` più due mandati piccoli per il 3 e l'8 quando il limite lo permette — e le correzioni
+   che ne escono, nello stesso modo.
+5. Poi le voci **P-117…** in coda alla sezione del pre-controllo: **una per rilievo «fatto» confermato**, raggruppate per
+   compito, col comando che l'ha misurato; i rilievi di sola prosa restano nel registro. I conteggi `P` e `D` si
+   confrontano col valore di `HEAD` dopo **ogni** scrittura.
+6. ⛔ **Dopo ogni scrittura su questo file**: `check_after_write.sh` (tabelle spezzate, `tr -cd '\r'` a zero, i conteggi
+   contro `HEAD`, `check-docs.sh` → `OK`), `bash scripts/gate.sh` → `GATE GREEN`, e il commit — **senza co-autore**.
+7. ⏭️ **Poi l'esecuzione, in una sessione NUOVA**: `superpowers:subagent-driven-development`, un subagente fresco per
+   compito, con revisione fra uno e l'altro. ⛔ **Prima di eseguire il compito 11 si aggiorna Node** (P-64, P-65), e su
+   una macchina che non l'ha si installa `cargo-audit` (compito 16). Alla chiusura del piano la cartella della revisione
+   si **archivia** (decisione 69).
+8. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
 
 ### La dodicesima chiusura — 2026-09-15, terza sessione del giorno: la REVISIONE DEL PIANO INTERO è fatta per nove perimetri su undici, e le correzioni sono applicate ai compiti 1–5; nessun compito è eseguito
 

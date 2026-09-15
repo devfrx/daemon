@@ -240,7 +240,7 @@ che quel comando non elenca. `latest`, data, licenza:
 | `vue-i18n` | 11.4.10 · 2026-08-25 · MIT | — | **11.4.10** |
 | `dockview-core` | 8.3.1 · 2026-09-10 · MIT | **8.2.0** in SP-8 | **8.3.1** — D2 |
 | `dockview` | 8.3.1 · 2026-09-10 · MIT | 8.2.0 (solo per il CSS, E2 della parte 1) | **8.3.1** — D2 |
-| `typescript` | 7.0.2 · 2026-07-08 · Apache-2.0 | — | **7.0.2** |
+| `typescript` | 7.0.2 · 2026-07-08 · Apache-2.0 | — | **5.9.3** — ⛔ **RICHIAMO DEL 2026-09-15, D79 (R5-1): qui stava «7.0.2»**, la major nuova: `vue-tsc` 3.3.11 risolve `typescript/lib/tsc`, che la 7 non esporta — misurato; si appunta l'ultima 5.x |
 | `vue-tsc` | 3.3.11 · 2026-08-21 · MIT | 3.3.11 | **3.3.11** |
 | `markdown-it` | 15.0.2 · **2026-09-11** · MIT | 15.0.1 | **15.0.2** — D3 |
 | `vitest` | 5.0.0 · 2026-09-03; tag `V4` → 4.1.11 · 2026-08-18 | 4.1.11 (decisione 52) | **4.1.11** — D4 |
@@ -12742,12 +12742,13 @@ che è un'altra cosa: il chiusore è il primo consumatore che vi si dirami, e no
 - Create: `gui/src/transport/bridge.ts` (**LF**) — il ponte, e le quattro che la GUI manda
 - Create: `gui/src/transport/fakeBridge.ts`, `gui/src/transport/fakeBridge.test.ts` (**LF**)
 - Modify: `.gitignore` (**`i/lf w/crlf`**) — due righe, **D38**
-- Read: la §6a del [disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), righe «dove e con che cosa», «il ponte» e «gli strati»; la riga *«la SPA, `schema/`»* e la riga *«la versione di Node»* della §8; **P-2**, **P-62**…**P-67**; **D2**, **D3**, **D4**, **D35**…**D40**
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**) — ⛔ **due richiami datati, D88**, arrivati qui dalla revisione del piano intero (R5-15, R9a-7): la riga *«la SPA, `schema/`»* della §8 e la frase *«la SPA parla `bincode`»* del richiamo del 2026-09-10 nella §2, che **D36** rende false senza che il disegno lo dica
+- Read: la §6a del [disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), righe «dove e con che cosa», «il ponte» e «gli strati»; la riga *«la SPA, `schema/`»* e la riga *«la versione di Node»* della §8; **P-2**, **P-62**…**P-67**; **D2**, **D3**, **D4**, **D35**…**D40**, **D79**, **D88**
 - ⛔ **NON si legge**: la §1 e la §2 della stella polare, che sono dei compiti **13** e **14**. Questo compito non disegna niente che si veda
 
 **Interfaces:**
 - Consumes: le fixture del compito **3** in `gui/schema/fixtures/` — `NN-nome.bin` e `NN-nome.json`, più `ipc_v1.map`; **D35** ne fissa le due regole (ogni `u64` è una **stringa decimale**, i nomi dei campi sono quelli di Rust in `snake_case`)
-- Produces, e i compiti 12, 13 e 14 li usano con questi nomi esatti:
+- Produces, e i compiti 13 e 14 li usano con questi nomi esatti — ⚠️ non il 12, che è Rust e non consuma nulla da `gui/src` (R5-13; qui stava «12, 13 e 14», un numero di prima di D25):
   - `gui/src/schema/messages.ts` — `IpcMessage` e i tipi che trasporta: `U64`, `Protection`, `PolicyName`, `Access`, `Provenance`, `ComputeClass`, `DegradationReport`, `PolicyReport`, `Triple`, `Call`, `StepSummary`, `LayoutState`, `Preemption`, `GrantRequest`, `Verdict`
   - `gui/src/schema/parse.ts` — `parseIpcMessage(raw: unknown): IpcMessage`, `MESSAGE_KINDS: readonly IpcMessage["kind"][]`, `SchemaError`
   - `gui/src/schema/fixtures.ts` — `loadFixtures(): Fixture[]` e `interface Fixture { file: string; message: IpcMessage }`
@@ -12788,7 +12789,7 @@ comando di **P-65**, e da lì esce il valore di `engines.node`:
 python - <<'EOF'
 import json, urllib.request, urllib.parse
 P = {"vue":"3.5.42","vite":"8.3.0","pinia":"4.0.3","reka-ui":"2.10.4","vue-i18n":"11.4.10",
-     "dockview-core":"8.3.1","dockview":"8.3.1","typescript":"7.0.2","vue-tsc":"3.3.11",
+     "dockview-core":"8.3.1","dockview":"8.3.1","typescript":"5.9.3","vue-tsc":"3.3.11",
      "markdown-it":"15.0.2","vitest":"4.1.11","@vue/test-utils":"2.5.0","jsdom":"30.0.1",
      "axe-core":"4.13.0","eslint":"10.10.0","eslint-plugin-vue":"10.11.0",
      "@intlify/eslint-plugin-vue-i18n":"4.5.1","@vitejs/plugin-vue":"6.0.9"}
@@ -12800,12 +12801,27 @@ node --version
 ```
 
 Atteso il 2026-09-14: `jsdom` 30.0.1 è il **più stretto su ogni ramo**, quindi `engines.node` è la sua riga
-tale e quale, `^22.22.2 || ^24.15.0 || >=26.0.0`. ⛔ **Se il Node della macchina non la soddisfa, si aggiorna
+tale e quale, `^22.22.2 || ^24.15.0 || >=26.0.0`. ✅ **Rimisurato il 2026-09-15 alla revisione del piano intero, con
+`typescript` 5.9.3 (D79) e `@vitejs/plugin-vue` nel dizionario: invariato** (R5-1, R5-28) — `typescript` dichiara
+`>=14.17`, più largo di tutto. ⛔ **Se il Node della macchina non la soddisfa, si aggiorna
 Node PRIMA di proseguire** — il Passo 4 uscirebbe `EXIT=1` con `EBADENGINE`, che è il comportamento voluto
 (**P-64**) e non un guasto da aggirare togliendo `.npmrc`.
 
 ⚠️ **Se l'intersezione di oggi è diversa da quella scritta qui, vince quella di oggi** — vincolo globale 8 — e
 la divergenza è una voce d'errata prima di essere un valore nuovo.
+
+⛔ **E il registro si interroga sulle versioni, non solo su `engines` — vincolo globale 8 (R5-18):** lo script sopra
+stampa `engines` delle versioni **appuntate** e non dice se il registro ne pubblica di nuove, che è ciò che il comando della
+§9 del 2 misura. Per le sei del manifesto:
+
+```bash
+for p in vue vite @vitejs/plugin-vue typescript vue-tsc vitest; do npm view "$p" version dist-tags; done
+```
+
+La regola di lettura è il vincolo globale 8, non una scelta di chi esegue: una **major** nuova sotto `latest` **non si
+prende** («novità non è maturità» — `typescript` con **D79** e `vitest` con **D4** sono già i due casi, e restano appuntate);
+una minor o patch nuova **solo se l'appuntata non si installa**, con voce d'errata; e quelle del giorno entrano nel commit
+del Passo 14 col manifesto.
 
 - [ ] **Passo 3: il manifesto, `.npmrc` e le due righe di `.gitignore`**
 
@@ -12831,13 +12847,18 @@ la divergenza è una voce d'errata prima di essere un valore nuovo.
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "6.0.9",
-    "typescript": "7.0.2",
+    "typescript": "5.9.3",
     "vite": "8.3.0",
     "vitest": "4.1.11",
     "vue-tsc": "3.3.11"
   }
 }
 ```
+
+⛔ **`typescript` è la 5.9.3 e non la 7.0.2 di P-2 — D79, misurato alla revisione del piano intero (R5-1):** `vue-tsc`
+3.3.11 risolve `typescript/lib/tsc`, che la 7 **non esporta** (`ERR_PACKAGE_PATH_NOT_EXPORTED`), quindi `npm run build` esce
+**1** prima ancora di `vite build`; con la 5.9.3 — l'ultima 5.x — build e sonde verdi. È la major nuova che il vincolo
+globale 8 dice di non prendere finché il pari che la guida non la sa guidare.
 
 `gui/.npmrc`, **LF**, una riga sola:
 
@@ -12897,6 +12918,7 @@ Atteso: installazione verde, `package-lock.json` creato, `npm ci` **`EXIT=0`**.
 l'intervallo, si misura, **si revoca**:
 
 ```bash
+git add gui .gitignore
 cd gui
 python -c "import json,pathlib; p=pathlib.Path('package.json'); d=json.loads(p.read_text()); d['engines']['node']='>=99.0.0'; p.write_text(json.dumps(d,indent=2)+chr(10))"
 npm ci --no-audit --no-fund > /tmp/ebadengine.txt 2>&1; echo "Node impossibile -> EXIT=$?"
@@ -12908,8 +12930,12 @@ cd ..
 ```
 
 Atteso: **`EXIT=1`** con `npm error code EBADENGINE`; poi, revocato, **`EXIT=0`** e `git diff` **vuoto**.
-⚠️ **`git checkout --` funziona solo se il manifesto è già in `git add`**: se non lo è, si rimette a mano il
-valore del Passo 2 e lo si verifica col `git diff`. ⛔ **La revoca si verifica col diff, non a memoria** — è la
+⛔ **Il `git add gui .gitignore` in testa NON anticipa il commit: è ciò che rende `git diff` un oracolo** — arrivato qui
+dalla revisione del piano intero (R5-11) e **misurato il 2026-09-15** in un repository di prova (`git add -N`, mutazione,
+revoca, `git diff --stat`, poi `git checkout --`): su un file **non tracciato** `git diff` non vede nulla, e *«vuoto»* sarebbe
+vero anche a mutazione **non** revocata; con `git add -N` (*intent-to-add*) il diff mostra il file **intero** anche a revoca
+fatta, e `git checkout --` lo **svuota**. Messo in scena davvero, `git checkout --` ripristina dall'indice e il diff a zero
+dice ciò che deve. ⛔ **La revoca si verifica col diff, non a memoria** — è la
 lezione della voce `E26` del piano del Traguardo 5.
 
 - [ ] **Passo 5: la spina dorsale — TypeScript, Vite, e il punto di innesto**
@@ -12943,7 +12969,7 @@ che nasce è la **catena di compilazione**, e la prova che funzioni è che un `.
 
 ⛔ **`strict` e `noUncheckedIndexedAccess` non sono gusto:** il Passo 8 legge dati che arrivano da fuori, e
 senza il secondo un `array[i]` avrebbe il tipo dell'elemento anche quando l'elemento non c'è — cioè il livello 1
-direbbe di sì proprio dove serve che dica di no. ⚠️ **`typescript` è la 7.0.2 e chi esegue non dà per scontata
+direbbe di sì proprio dove serve che dica di no. ⚠️ **`typescript` è la 5.9.3 (D79) e chi esegue non dà comunque per scontata
 una sola di queste opzioni:** la guardia è il Passo 6, e un'opzione rifiutata è una **voce d'errata** col
 `tsconfig.json` corretto — **non** uno `skipLibCheck` in più messo lì per far passare la cosa.
 
@@ -13338,7 +13364,7 @@ export interface Fixture {
 
 /**
  * ⛔ `import.meta.glob` AND NOT `fs`, and it is a requirement rather than a taste: the fake
- * bridge must run IN THE BROWSER (§6a of the milestone-2 design), where there is no `fs`. Vite
+ * bridge must run IN THE BROWSER (§6a of the sub-project 2 design), where there is no `fs`. Vite
  * inlines these at build time and vitest resolves them the same way, so the probes and the
  * browser read THE SAME files -- one loader, not two that can disagree.
  *
@@ -13443,7 +13469,7 @@ Atteso: **`EXIT=0`**, e nell'uscita il numero di sonde passate.
 import type { IpcMessage } from "../schema/messages";
 
 /**
- * The four the gui sends (§6a of the milestone-2 design), stated ONCE.
+ * The four the gui sends (§6a of the sub-project 2 design), stated ONCE.
  *
  * ⛔ DERIVED FROM `IpcMessage` AND NOT RETYPED: a variant renamed on the wire becomes a compile
  * error here, where a second hand-written list would simply stop matching and say nothing.
@@ -13583,7 +13609,15 @@ describe("the fake bridge", () => {
 ```
 
 ⛔ **E ora le mutazioni, UNA PER VOLTA, ciascuna compilata, eseguita e REVOCATA**, con `git diff` a zero alla
-fine — la forma che la disciplina dell'audit chiede al quarto passo:
+fine — la forma che la disciplina dell'audit chiede al quarto passo. ⛔ **Prima, i file nuovi in scena** (R5-11, la ragione
+al Passo 4: un file non tracciato non ha diff), e `node_modules/` e `dist/` restano fuori per le due righe di **D38**:
+
+```bash
+git add gui
+git status --porcelain gui | grep -c -e node_modules -e 'dist/'
+```
+
+Atteso: **0** — la seconda direzione di **D38**, provata una volta di più. Poi le mutazioni:
 
 | | La mutazione | Atteso |
 |---|---|---|
@@ -13601,6 +13635,26 @@ git diff --stat gui
 
 Atteso a mutazioni revocate: **`EXIT=0`**, `git status` **vuoto** su `gui/schema/fixtures`, `git diff` **vuoto**
 su `gui`. ⛔ **La revoca si verifica col diff, non a memoria.**
+
+- [ ] **Passo 13-bis: i due richiami nel disegno del 2 — D88**
+
+`docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` è **LF**: Python con `newline=""`, ancora unica
+asserita, temporaneo e `os.replace` (la forma del Passo 3). ⛔ **Ogni ancora è la riga intera presa dal file col `grep`**, mai
+ricopiata da qui, e il richiamo si **appende in coda**, su **una** riga — la forma del Passo 9-ter del compito 2. Arrivato
+qui dalla revisione del piano intero (R5-15, R9a-7): **D36** rende false due righe del disegno e nessun compito le toccava.
+
+| Dove (`grep -n -F` sulla frase → una riga) | Che cosa si appende, in coda |
+|---|---|
+| §8, la riga `\| la SPA, \`schema/\` (§6a, risposta 10) \|` — in coda alla **seconda** cella, prima di `\| \`npm test\` \|` | `✅ **RICHIAMO DEL <data>, compito 11 del piano della parte 2 (D36, P-63):** la sonda **non decodifica i byte** — \`bincode-ts\` 1.0.0 non si carica (M-11) e chi decodifica è il processo principale Node del guscio (Q1 di SP-8), che non è un compito del piano; confronta i tipi TypeScript col \`.json\` di P-62, e che i byte siano giusti lo prova \`ipc_wire.rs\` nel cancello. Decisione del proprietario del 2026-09-14, B` |
+| §2, il richiamo del 2026-09-10 — la riga che **contiene** `la SPA parla \`bincode\` sull'\`ipc\` del kernel` (`grep -c -F` → **1**) e finisce con `(decisione 10 della quinta chiusura del piano).`; il richiamo si appende in coda a quella riga | `✅ **RICHIAMO DEL <data>, compito 11 del piano della parte 2 (D36):** sull'\`ipc\` parla \`bincode\` il **guscio**, non la SPA, che riceve messaggi già decodificati (§6a) e prova lo schema sul \`.json\` delle fixture — P-63` |
+
+```bash
+grep -c 'RICHIAMO DEL <data>, compito 11' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c
+```
+
+Atteso (con la data scritta): **2**; niente; **0**.
 
 - [ ] **Passo 14: il cancello, e il commit**
 
@@ -13622,8 +13676,8 @@ in `git status` **solo** ciò che questo compito nomina, **niente** `node_module
 mondo Rust è **intatto**, non che la SPA funzioni: quella la provano `npm run build` e `npm test`, a mano.
 
 ```bash
-git add gui .gitignore docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
-git commit -m "gui(compito 11): gui/ nasce -- Vite, Vue 3 e TypeScript con engines.node preso dall'intersezione misurata (D37) e .npmrc engine-strict provato nelle due direzioni (P-64), i tipi del filo in src/schema con il lettore a tempo d'esecuzione e l'elenco delle specie, il ponte e la sua finta che rilegge le fixture; le due righe di .gitignore col compito che le crea (D38)"
+git add gui .gitignore docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+git commit -m "gui(compito 11): gui/ nasce -- Vite, Vue 3 e TypeScript con engines.node preso dall'intersezione misurata (D37) e .npmrc engine-strict provato nelle due direzioni (P-64), i tipi del filo in src/schema con il lettore a tempo d'esecuzione e l'elenco delle specie, il ponte e la sua finta che rilegge le fixture; le due righe di .gitignore col compito che le crea (D38); i due richiami di D36 nel disegno del 2 (D88)"
 git push
 ```
 
@@ -13636,7 +13690,8 @@ git push
 - [ ] `grep -c '^/gui/' .gitignore` → **2**, e `git ls-files --eol .gitignore` → `i/lf w/crlf` **invariato**
 - [ ] `git status --porcelain` **vuoto** dopo il commit — cioè `node_modules/` e `dist/` sono davvero ignorati (**D38**)
 - [ ] `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK`
-- [ ] le cinque mutazioni del Passo 13 sono state eseguite **una per volta** e revocate, e `git diff gui` è vuoto
+- [ ] le cinque mutazioni del Passo 13 sono state eseguite **una per volta** e revocate, e `git diff gui` è vuoto — **dopo** il `git add gui` del Passo 13, senza il quale un file nuovo non ha diff (R5-11)
+- [ ] `grep -c 'RICHIAMO DEL <data>, compito 11' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **2** — i due richiami di **D36** (**D88**), e il disegno resta `i/lf w/lf` a CR zero
 - [ ] ⛔ **nessun byte è stato decodificato in TypeScript** — `grep -rn "bincode" gui/ --include=*.ts --include=*.json | grep -v package-lock` non rende nulla (**D36**)
 
 ---

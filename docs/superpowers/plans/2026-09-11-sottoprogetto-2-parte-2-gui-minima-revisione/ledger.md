@@ -3,7 +3,7 @@
 Fonte: 9 rapporti su 11 (R1 parziale: compiti 1–2; R3 parziale: compito 7; R5 completo: 11–12; R2, R4, R7, R9a, R9b, R10 completi).
 Mancano: compito 13 (R6), compiti 15–17 (R8), compito 3 (R1), compito 8 (R3) — perimetri da rivedere ancora.
 Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stati rimisurati anche da lui.
-**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜.
+**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compito 11 applicato (✅), con una riga R5-11 nuova sul 12.
 
 ## Le decisioni nuove (righe D da scrivere)
 
@@ -159,15 +159,18 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - Attrezzo: `patch_c10.py` accanto a questo file
 
 ### Compito 11
-- R5-1 (D79) `typescript` 5.9.3; Passo 5 frase; script del Passo 2 ⬜
-- R5-9 = R10-7 ⬜
-- R5-11 `git add -N gui` prima delle mutazioni (anche 12) ⬜
-- R5-13 «i compiti 13 e 14» ⬜
-- R5-15 (D88) richiamo D36 nella §8 e nella §2 del 2 (Files) ⬜
-- R5-18 Passo 2: `npm view … version dist-tags` e la regola ⬜
-- R5-28 nota: aggiornare Node prima — già nel Passo 2 (verificare che sia nel compito) ⬜
+- R5-1 (D79) `typescript` 5.9.3 nel Passo 3 con la ragione accanto, nel dizionario del Passo 2 e nella frase del Passo 5; **P-2 riceve il richiamo** (D79 lo prometteva e nessuna riga della testa lo portava); l'Atteso del Passo 2 rimisurato il 2026-09-15 con la 5.9.3 e `@vitejs/plugin-vue` nel dizionario: `jsdom` resta il più stretto su ogni ramo ✅
+- R5-9 = R10-7 — già applicata nell'ondata 1 (testa), qui solo verificata: `grep -c 'interface Fixture { file: string; message: IpcMessage }'` → 1 ✅
+- R5-11 ⚠️ **NON `git add -N`: `git add gui .gitignore` (Passo 4) e `git add gui` (Passo 13)** — misurato il 2026-09-15 in un repository di prova: con *intent-to-add* `git diff --stat` mostra il file intero anche a revoca fatta (mai «vuoto») e `git checkout --` lo **svuota**; messo in scena, il diff a zero e il ripristino dall'indice reggono. Il Passo 4 lo spiega, il criterio lo nomina; **il 12 resta da fare** nella stessa forma (riga aggiunta sotto) ✅
+- R5-13 «i compiti 13 e 14», col perché (il 12 è Rust) ✅
+- R5-15 (D88) Files + **Passo 13-bis** con la tabella delle due ancore (§8 la riga `la SPA, schema/`; §2 la frase `la SPA parla bincode` del richiamo del 2026-09-10, `grep -c -F` → 1), il `git add` del Passo 14, il messaggio di commit e il criterio `grep -c` → 2 ✅
+- R5-18 Passo 2: il `for … npm view … version dist-tags` sulle sei del manifesto e la regola di lettura del vincolo 8 (major no; minor/patch solo se l'appuntata non si installa, con errata) ✅
+- R5-28 verificato: «si aggiorna Node PRIMA di proseguire» è nel Passo 2 — nulla da fare ✅
+- D76 «sub-project 2 design» nei due commenti dettati (`fixtures.ts`, `bridge.ts`) — non era in questa lista: applicata per coerenza coi compiti 5–10 ✅ · D79 e D88 nella lista *Read* ✅
+- Attrezzo: `patch_c11.py` accanto a questo file (tocca anche P-2 e questo registro)
 
 ### Compito 12
+- R5-11 `git add gui/fake-core` prima delle mutazioni del Passo 9 — **in scena, non `-N`**: la misura è nella riga R5-11 del compito 11 ⬜
 - R5-2/R3-16 `let clock = SharedClock(&reactor);` prima dell'esecutore; riga «load-bearing» ⬜
 - R5-3 `decode(&buffer[..next])` ⬜
 - R5-4 la parola dopo l'accoglienza (pari che tiene il `Sender`, manda a `heard.len() >= 5`); `degrade` sulla seconda `Degradation` ⬜

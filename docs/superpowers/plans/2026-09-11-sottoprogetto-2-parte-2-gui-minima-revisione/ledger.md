@@ -3,7 +3,7 @@
 Fonte: 9 rapporti su 11 (R1 parziale: compiti 1–2; R3 parziale: compito 7; R5 completo: 11–12; R2, R4, R7, R9a, R9b, R10 completi).
 Mancano: compito 13 (R6), compiti 15–17 (R8), compito 3 (R1), compito 8 (R3) — perimetri da rivedere ancora.
 Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stati rimisurati anche da lui.
-**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compiti 11 e 12 applicati (✅).
+**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compiti 11 e 12 applicati (✅). **Sessione 15 (2026-09-15):** compito 13 applicato (✅) — con **D89** nuova (il dock segue lo store), R7-7 applicata al 15, e la cascata sul `Frame.vue` del 14 registrata come riga del 14.
 
 ## Le decisioni nuove (righe D da scrivere)
 
@@ -23,6 +23,7 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 | D86 | la riga 2 della roadmap cambia TITOLO al 17 sul perimetro della §3 della stella (debito dichiarato della §3) | R9b-3 ✔ |
 | D87 | il 14 scrive un richiamo `<data>` per OGNI modulo costruito nelle tabelle della §1 della stella (regola della §6: chi costruisce un modulo mette il richiamo nella sua riga) e nella riga Impostazioni della corta; il 17 scrive i ✅ sui 🔶 dedotti della stella confermati dal piano | R9a-13, R9b-4, R9b-13 |
 | D88 | i richiami che le decisioni D del piano rendono dovuti nei DUE disegni si scrivono dal compito che esegue la decisione: §3 (D9, D10, D78, D82) dal 2; §4 riga `Request, Verdict` (D5) dal 7; §8 «decodificata dai byte» e §2 «la SPA parla bincode» (D36) dall'11; §7 righe «la disposizione», «la lista dei passi», «senza copiarla», dedotto `Accepted` (D41, D22, P-70) dal 12; §8 «Ciò che la §8 non fa» (X-1/X-3) dal 16; §8 «le scritte» (D63/D65) dal 15; decisioni 6, 45, 47, 51, 52, 55 del coordinatore della stella (D2, D71, D66, D3, D4, D63–D65) dal compito che le esegue; D2 e D4 riallineate (13 e 11) | R9a-3, R9a-7, R9a-8, R9a-10, R9a-11, R9a-12, R9b-8, R9b-9, R9b-10, R3-18, R5-15, R5-16 |
+| D89 | il dock SEGUE lo store: `createDock` osserva `view` e `arrivals` di `useLayout` e mostra la vista da sé (`show()` azzera la baseline del `settle`); lo store conta gli **arrivi** che non sono l'eco del proprio `SaveLayout` (decisione 13: il core risponde con ciò che tiene — i byte si confrontano con quelli mandati); `Frame.switchTo` è `layout.view = view`. Trovato scrivendo D80: il `Layout` dell'accoglienza arrivava **dopo** l'unico `apply` e non veniva mai mostrato; e il `settle` dopo uno `switchTo` copiava la vista spedita nell'archivio (decisione 11) | coordinatore, ondata del 13 (R6 caduto) |
 
 ## Per compito — rilievi, rimedio deciso, stato (⬜ da applicare · ✅ applicato)
 
@@ -193,10 +194,21 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - ⚠️ **Non compilato:** il modulo delle sonde è riscritto sul modello letto, non eseguito (il compito 2 e il 7 non esistono ancora nel repo): chi esegue il 12 lo compila per primo e ogni rosso è una voce d'errata, come dice «Come si esegue» — il revisore R5 aveva compilato la forma vecchia
 - Attrezzo: `patch_c12.py` accanto a questo file (tocca anche P-63 e questo registro)
 
-### Compito 13 — NON RIVISTO IN PROFONDITÀ (R6 caduto): resta da fare
-- R9b-11 (D80) LayoutPack per vista ⬜ · R9b-12 (D81) ⬜ · R10-9 Files `generate-views.test.ts` ⬜ · R10-10 Produces: `BigTab`, `buildStamp`, `Phase` ⬜ · R7-7 (chiavi `modules.*` sono del 13: correggere il 15) ⬜ · D75 `2026-09-15` → `<data>` ⬜
+### Compito 13 — NON RIVISTO IN PROFONDITÀ (R6 caduto): le righe note sono applicate, la revisione in profondità resta da fare
+- R9b-11 (D80) `LayoutPack { view; layouts: Partial<Record<ViewName, SerializedDockview>> }`; `settle(layout)` **fonde** la vista aperta nel pacchetto tenuto (`saved`); `apply(api, view: ViewName, pack)` legge `pack?.layouts[view] ?? VIEWS[view]`; `unpack` legge le sole tre viste e rifiuta la forma vecchia `{view, layout}`; Interfaces riscritto; la sonda del merge in `stores.test.ts` e la sonda D80 in `frame.test.ts` (salvata sotto `home` → `view = "work"` mostra la spedita di Lavoro → `view = "home"` la salvata, e **zero** `SaveLayout`), con l'oracolo sugli **id dei pannelli** e non sul JSON canonico (E4: la taglia del viewport cambia le misure) ✅
+- R9b-12 (D81) `beforeunload` salva solo se `!same(last, now)` e sposta `last`; il doc di `createDock` dichiara che il pannello attivo **è** disposizione (misurato sulla 8.2.0 dello spike, R9b-12; se la 8.3.1 differisce è errata); sonda nelle due direzioni in `frame.test.ts` — chiusa intatta → 0; chiusa dopo il `close()` di un pannello → 1, e l'evento bufferizzato non la ripete ✅
+- ⛔ **C13-1 (coordinatore, scrivendo D80 — R6 caduto): il `Layout` dell'accoglienza non veniva MAI mostrato.** `createDock` chiamava `apply` una volta, in `onMounted`, cioè **prima** del `Hello` di `main.ts`; `layout.receive` aggiornava `state` e `view` e nessuno riapplicava. Compilava e passava le sonde. Rimedio, **D89**: il dock **segue lo store** — `watch([view, arrivals])` in `createDock`, `show()` che azzera la baseline; lo store conta gli arrivi che **non** sono l'eco del proprio `SaveLayout` (decisione 13: il core risponde con ciò che tiene; i byte si confrontano con quelli mandati); `Frame.switchTo` diventa `layout.view = view`; la sonda dell'eco in `stores.test.ts`; la sonda D80 di `frame.test.ts` parte da un pacchetto ricevuto **dopo** `createDock` ✅
+- R10-9 Files: `views.test.ts` (che nessun passo dettava) → `generate-views.test.ts`, col perché ✅
+- R10-10 Produces: `BigTab` (consumato e riscritto dal 14), `buildStamp` (D52), `type Phase`; la riga «ricensito» porta la data della seconda ricensione ✅
+- R7-7 applicata **al 15** (la riga del 15, in questa ondata): «(compito **13**, Passo 12 — qui stava «14»)» ✅
+- D75: la sola data dettata nel codice del 13 era «Richiamo del 2026-09-15, P-95» nel commento di `BigTab.ts` — tolta: in un file che nasce non c'è nulla da richiamare, resta il puntatore «P-95 of the part-2 plan, found at the pre-check of task 14»; le altre date del 13 sono fatti (P-2, E2, E4) e restano ✅
+- D76 «sub-project 2» negli otto punti dei commenti dettati (`tokens.css` ×2, `Placeholder.vue`, `Strip.vue`, `registry.ts`, `dock.ts`, `main.ts` ×2) — non era in questa lista: applicata per coerenza coi compiti 5–12 ✅
+- ⚠️ Il capoverso sotto il Passo 17 diceva «nessuna delle sue sonde monta una griglia»: ora `describe("the dock")` la monta e lo dice di sé — se il Passo 3 misura rosso, è quel `describe` a passare al revisore nel browser; due criteri di chiusura nuovi (D80/D89 e D81) ✅
+- ⚠️ **Non compilato:** `layout.ts`, `dock.ts`, `Frame.vue` e le sonde sono riscritti sul modello letto (il compito 11 non esiste nel repo, e `dockview` sotto `jsdom` lo misura il Passo 3): chi esegue il 13 li compila per primi, e ogni rosso è una voce d'errata — come il modulo delle sonde del 12
+- Attrezzo: `patch_c13.py` accanto a questo file (tocca anche la tabella D, la posizione, la riga del 15 e questo registro)
 
 ### Compito 14
+- ⚠️ **cascata di D80/D89 dal 13 corretto (decisione 78):** il `Frame.vue` ridettato al Passo 10 si ridiffa contro il 13 di adesso — via `apply` e `unpack`, `switchTo` è `layout.view = view`; `api` resta, perché `moveActive` lo usa ⬜
 - R7-1 `String(…attrGet(…) ?? "")` ×2 + riga sul tipo ⬜
 - R7-2 render legge `stream.current?.text` al fotogramma; sonda con due `Token` prima di `await frame()` ⬜
 - R7-3 criterio: dopo `deliverAll()` un `deliver("Accepted")` e la frase su `StaleBuild` ⬜
@@ -216,7 +228,7 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - D75/D76 ⬜
 
 ### Compito 15 — NON RIVISTO IN PROFONDITÀ (R8 caduto): resta da fare
-- R10-1 eol: `gate.sh` e il flusso sono `i/lf w/crlf` (Files, Passo 1, Passo 8/9 CRLF) ⬜ · R7-7 «(compito 13, Passo 12)» ⬜ · R7-11 «tredici .vue, dodici a una parola» (anche P-99) ⬜ · R9a-12 (D88) richiamo «le scritte» §8 ⬜ · R9a-15 P-104 «§8» e «lo scrive il 15» ⬜ · R5-17 numero del tempo del finto ⬜
+- R10-1 eol: `gate.sh` e il flusso sono `i/lf w/crlf` (Files, Passo 1, Passo 8/9 CRLF) ⬜ · R7-7 «(compito 13, Passo 12)» ✅ (applicata nell'ondata del 13) · R7-11 «tredici .vue, dodici a una parola» (anche P-99) ⬜ · R9a-12 (D88) richiamo «le scritte» §8 ⬜ · R9a-15 P-104 «§8» e «lo scrive il 15» ⬜ · R5-17 numero del tempo del finto ⬜
 
 ### Compito 16 — NON RIVISTO IN PROFONDITÀ (R8 caduto): resta da fare
 - R10-2 eol: `gate.sh`, flusso, audit `i/lf w/crlf`; solo `gate-gui.sh` LF; blocco CRLF; `cp` con fine-riga del file ⬜ · R9a-11 (D88) richiamo «Ciò che la §8 non fa» ⬜ · D83 `cargo audit --file gui/fake-core/Cargo.lock` ⬜

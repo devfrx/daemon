@@ -151,7 +151,7 @@ poi le P nuove. ⚠️ Il modulo delle sonde del 12 è riscritto e **non compila
 | **10** | la **campagna DST del 2** in `simulator`, e la sua riga nel settimo passo del cancello | uno | ⬜ |
 | **11** | **`gui/` nasce**: Vite, Vue 3, TypeScript, `engines.node` e `.npmrc`; `schema/` coi tipi e le fixture, `transport/` col ponte e la sua finta | uno | ⬜ |
 | **12** | il **core finto** `gui/fake-core/`: l'attività vera su porte in memoria, il rubinetto, le sonde | uno | ⬜ |
-| **13** | la **SPA, la cornice**: `dockview`, la barra delle viste, la fascia, la striscia, il cassetto, `panels/` col registro dei tipi e le **tre viste come JSON**, `stores/`, `tokens/`, `locales/it.json`. ⛔ **E il SEGNAPOSTO, arrivato qui dalla riga 14 col richiamo del 2026-09-14 (D47)**: `dockview` chiede alla fabbrica un componente **per nome**, quindi senza di esso la cornice si monta e non mostra nulla — con `npm run build` verde | uno | ⬜ |
+| **13** | la **SPA, la cornice**: `dockview`, la barra delle viste, la fascia, la striscia, il cassetto, `panels/` col registro dei tipi e le **tre viste come JSON**, `stores/`, `tokens/`, `locales/it.json`. ⛔ **E il SEGNAPOSTO, arrivato qui dalla riga 14 col richiamo del 2026-09-14 (D47)**: `dockview` chiede alla fabbrica un componente **per nome**, quindi senza di esso la cornice si monta e non mostra nulla — con `npm run build` verde. ⛔ **La disposizione salvata è PER VISTA, e il dock SEGUE lo store — D80, D89, 2026-09-15**: qui il `Layout` dell'accoglienza non veniva mai mostrato | uno | ⬜ |
 | **14** | la **SPA, i moduli**: Stato, Permessi con la finestra di conferma, Chat col markdown e la provenienza, Passi, **e Impostazioni col cambio di policy VRAM — richiamo del 2026-09-14, P-85**, senza il quale nella SPA del 2 nessuno manda mai un `Invoke` e il registro di ADR-0038 resta senza il suo primo invocatore; l'accessibilità e le scorciatoie sopra `moveTo`. ⛔ **Il segnaposto è passato al 13 — richiamo del 2026-09-14, D47**: qui restano i moduli **veri**, e il segnaposto non è un modulo ma il pezzo della cornice che dice *«questo tipo non c'è ancora»* | uno | ⬜ |
 | **15** | il **passo del cancello**: `scripts/gate-gui.sh`, la riga in `gate.sh`, `actions/setup-node` nella CI, e la **catena `eslint`** con la configurazione di `gui/`. ⛔ **RICHIAMO DEL 2026-09-15, dal pre-controllo del compito 15 (P-102): `.gitignore` NON è di questo compito** — le otto righe di `spikes/gui-shell/` ci sono dal commit `8fc9696` della parte 1 e i quattro lockfile dello spike sono tracciati; le due righe di `gui/` sono del compito 11 (**D38**) e `/gui/fake-core/target/` del 12. Al 15 non ne resta nessuna — **D67** | uno | ⬜ |
 | **16** | **X-1 e X-3**: la matrice Windows nella CI, `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh` | uno | ⬜ |
@@ -3173,6 +3173,7 @@ smentisce — è ciò per cui esiste l'errata.
 | **D86** | **la riga 2 della roadmap cambia TITOLO al 17**, sul perimetro della §3 della stella (non più *«GUI minima (shell, chat, stato)»*), oltre allo stato | R9b-3: è un debito **dichiarato** dalla §3 della stella (*«aggiornarlo è un compito del piano»*), e `grep -c -F 'GUI minima (shell' <piano>` rendeva zero |
 | **D87** | **il 14 scrive un richiamo `<data>` per OGNI modulo che costruisce** nelle tabelle della §1 della stella polare — Stato, Permessi, Passi, Chat (le righe costruite), e la riga Impostazioni della tabella corta — col nome del sorgente; **il 17 scrive i ✅ sui 🔶 dedotti della stella** che il piano conferma (l'ordine dei pezzi, la SPA contro il ponte finto prima del daemon, i passi all'accoglienza e dopo ogni invocazione, il pacchetto opaco, i default in `gui/`) e la precisazione sul client rifiutato | R9a-13, R9b-4, R9b-13: la §6 della stella dice *«quando costruisce un modulo, mette un richiamo datato nella riga di quel modulo nella §1»* e il §10 del disegno del 2 lo ripete al punto 9; il 14 ne scriveva uno solo (D56) |
 | **D88** | ⛔ **ogni richiamo che una decisione `D` di questo piano rende dovuto nei due disegni si scrive dal compito che ESEGUE quella decisione**, non si lascia al 17: §3 del 2 (D9, D10, D78, D82) dal **2**; §4 riga `Request, Verdict` (D5) dal **7**; §8 *«decodificata dai byte»* e §2 *«la SPA parla `bincode`»* (D36) dall'**11**; §7 righe *«la disposizione»*, *«la lista dei passi»*, *«senza copiarla»*, il dedotto su `Accepted` (P-70, D41, D22) dal **12**; §8 *«le scritte»* (D63, D65) dal **15**; §8 *«Ciò che la §8 non fa»* (X-1, X-3) dal **16**; le decisioni 6, 45, 47, 51, 52, 55 del coordinatore della stella (D2, D71, D66, D3, D4, D63–D65) dal compito che le esegue | R9a-3, R9a-7, R9a-8, R9a-10, R9a-11, R9a-12, R9b-9, R3-18, R5-15, R5-16: quattordici contraddizioni **dichiarate in una `D`** e **mute nel disegno** — il precedente giusto è il compito 8, che scrive il richiamo della decisione 56 dove vive |
+| **D89** | ⛔ **il dock SEGUE lo store**: `createDock` osserva `view` e `arrivals` di `useLayout` — la barra scrive `layout.view` e basta; un pacchetto che il core manda **dopo** che il dock è su viene mostrato; l'**eco** del proprio `SaveLayout` (decisione 13: il core risponde con ciò che tiene) non conta come arrivo, perché lo store confronta i byte con quelli che ha mandato; e mostrare una vista **azzera la baseline** del `settle`, così guardare una vista non la salva | revisione del piano intero, 2026-09-15, scrivendo D80 (coordinatore; R6 caduto): il 13 dettava `apply` una volta sola in `createDock`, cioè **prima** del `Hello` di `main.ts` — e `layout.receive` del `Layout` dell'accoglienza aggiornava lo store senza che nulla lo mostrasse: la disposizione salvata **non compariva mai** all'avvio; e col `switchTo` che rilanciava `apply` da `Frame.vue`, il `settle` che seguiva copiava la vista spedita nell'archivio, contro la decisione 11 del coordinatore della stella. Compilava e passava tutte le sonde del 13 |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -14741,7 +14742,7 @@ prova che un pannello si veda.
 - Create: `gui/src/frame/Frame.vue`, `gui/src/frame/ViewBar.vue`, `gui/src/frame/Band.vue`, `gui/src/frame/Drawer.vue` (**LF**)
 - Create: `gui/src/panels/registry.ts`, `gui/src/panels/Placeholder.vue`, `gui/src/panels/Strip.vue` (**LF**) — **D47**, **D50**
 - Create: `gui/src/panels/views/home.json`, `work.json`, `compact.json` (**LF**) — **generati, non scritti a mano**
-- Create: `gui/src/panels/views/index.ts`, `gui/src/panels/views/views.test.ts` (**LF**)
+- Create: `gui/src/panels/views/index.ts`, `gui/src/panels/views/generate-views.test.ts` (**LF**) — il generatore delle tre viste, **saltato** senza `REGENERATE_VIEWS=1` (R10-9). ⚠️ Qui stava `views.test.ts`, che **nessun passo detta**: la sonda sulle tre viste vive in `frame.test.ts` (Passo 17)
 - Create: `gui/src/frame/frame.test.ts`, `gui/src/locales/copy.test.ts` (**LF**) — **D51**
 - Read: la **§6a del 2 per intero**; la §1 della stella polare — le **cinque tabelle piene** per i nomi dei moduli e la **corta** per i tredici che nel 2 restano segnaposto; la **§2 della stella polare** per la disposizione, in particolare le righe **1**, **5**, **6**, **7** e **8**; «Il modello della GUI» per Home, Lavoro, Compatta e la striscia; la **§4 della stella polare** per le otto mosse e ciò che `dockview` dà; il blocco *Interfaces* del compito **11** — ⛔ **come sta ADESSO, P-75 l'ha corretto** — e i suoi Passi **7** e **11** per i tipi e il ponte
 - Read: ⛔ **`spikes/gui-shell/app/src/vue-bridge.ts` e `spikes/gui-shell/app/src/home.ts`, per intero** — **D49**: è la cornice che il proprietario ha **provato**, e ciò che sale da lì sale **riga per riga**, riscritto, non importato
@@ -14751,14 +14752,16 @@ prova che un pannello si veda.
 - Consumes, dal **compito 11**: `gui/src/schema/messages.ts` — `IpcMessage`, `U64`, `Protection`, `PolicyName`, `Access`, `Provenance`, `DegradationReport`, `PolicyReport`, `Triple`, `Call`, `StepSummary`, `LayoutState`; `gui/src/schema/parse.ts` — `parseIpcMessage`, `MESSAGE_KINDS`, `SchemaError`; `gui/src/transport/bridge.ts` — `Bridge`, `OutboundMessage`, `Listener`; `gui/src/transport/fakeBridge.ts` — `createFakeBridge`, `FakeBridge`
 - Consumes, dal **compito 3**: `gui/schema/fixtures/ipc_v1.map`, di cui legge **la sola ultima riga** (**D52**)
 - Produces, e il compito **14** li usa con questi nomi esatti:
-  - `gui/src/stores/connection.ts` — `useConnection()`, con `phase: "waiting" | "connected" | "stale"`, `protection: Protection | null`, `expected: U64 | null`, `attach(bridge: Bridge): void`, `hello(): void`, `retry(): void`, `receive(message: IpcMessage): void`
+  - `gui/src/stores/connection.ts` — `useConnection()`, con `phase: "waiting" | "connected" | "stale"`, `protection: Protection | null`, `expected: U64 | null`, `attach(bridge: Bridge): void`, `hello(): void`, `retry(): void`, `receive(message: IpcMessage): void`; e, fuori dallo store, `type Phase = "waiting" | "connected" | "stale"` (R10-10)
   - `gui/src/stores/core.ts` — `useCore()`, con `degradation: DegradationReport | null`, `policy: PolicyReport | null`, `steps: StepSummary[]`, `pending: Triple | null`, `lastVerdict: Verdict | null`, `receive(message: IpcMessage): void`, `settled(): void`
-  - `gui/src/stores/layout.ts` — `useLayout()`, con `state: LayoutState`, `view: ViewName`, `attach(bridge: Bridge): void`, `receive(message: IpcMessage): void`, `settle(pack: LayoutPack): void`; e, fuori dallo store, `pack_(pack: LayoutPack): Uint8Array`, `unpack(state: LayoutState): LayoutPack | null`, `type ViewName = "home" | "work" | "compact"`, `interface LayoutPack { view: ViewName; layout: SerializedDockview }`
+  - `gui/src/stores/layout.ts` — `useLayout()`, con `state: LayoutState`, `view: ViewName`, `attach(bridge: Bridge): void`, `receive(message: IpcMessage): void`, `saved: LayoutPack | null`, `arrivals: number`, `settle(layout: SerializedDockview): void` — ⛔ **fonde** la vista aperta nel pacchetto tenuto (**D80**; qui stava `settle(pack: LayoutPack)`), e `arrivals` conta i pacchetti che non sono l'eco del proprio `SaveLayout` (**D89**); e, fuori dallo store, `pack_(pack: LayoutPack): Uint8Array`, `unpack(state: LayoutState): LayoutPack | null`, `type ViewName = "home" | "work" | "compact"`, `interface LayoutPack { view: ViewName; layouts: Partial<Record<ViewName, SerializedDockview>> }` — ⛔ **una disposizione PER VISTA, D80**: qui stava `layout: SerializedDockview`, una sola per tutte le viste
   - `gui/src/panels/registry.ts` — `PANEL_TYPES: readonly PanelType[]`, `interface PanelType { name: string; module: string; who: number }`, `componentFor(name: string): () => IContentRenderer`, `register(name: string, component: Component): void`, `isModule(name: string): boolean`, `placeholderParams(name: string): Record<string, unknown>`
   - `gui/src/panels/views/index.ts` — `VIEWS: Readonly<Record<ViewName, SerializedDockview>>`
   - `gui/src/frame/VueContent.ts` — `class VueContent implements IContentRenderer`, costruita con un `Component` di Vue
-  - `gui/src/frame/dock.ts` — `createDock(host: HTMLElement): DockviewApi`, `apply(api: DockviewApi, view: string, pack: LayoutPack | null): void`, `canonical(value: unknown): unknown`
-  - ⛔ **E il blocco qui sopra è stato RICENSITO contro il codice che i Passi dettano, non parafrasato dai disegni** — **P-75** applicata a sé stessa: `createDock` **non** prende un `Bridge`, perché lo store ce l'ha già; `PanelType` **non** ha un campo `built`, e il suo `who` è un **numero**
+  - `gui/src/frame/BigTab.ts` — `class BigTab implements ITabRenderer` — ⛔ **il 14 lo consuma E lo riscrive** (R10-10)
+  - `gui/src/schema/stamp.ts` — `buildStamp(): U64` (**D52**, R10-10)
+  - `gui/src/frame/dock.ts` — `createDock(host: HTMLElement): DockviewApi`, `apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null): void` — legge `pack?.layouts[view] ?? VIEWS[view]` (**D80**; qui stava `view: string`), `canonical(value: unknown): unknown`. ⛔ **E il dock SEGUE lo store (D89):** `createDock` osserva `view` e `arrivals` di `useLayout` e mostra la vista da sé — la barra scrive `layout.view` e basta, e un pacchetto che il core manda **dopo** che il dock è su (l'accoglienza; o il pacchetto **vecchio** dopo una scrittura non riuscita, decisione 13) viene mostrato invece di restare nello store
+  - ⛔ **E il blocco qui sopra è stato RICENSITO contro il codice che i Passi dettano, non parafrasato dai disegni** — **P-75** applicata a sé stessa: `createDock` **non** prende un `Bridge`, perché lo store ce l'ha già; `PanelType` **non** ha un campo `built`, e il suo `who` è un **numero**. ✅ **Ricensito di nuovo il 2026-09-15, alla revisione del piano intero (R10-10):** mancavano tre `export` che i Passi dettano — `BigTab`, `buildStamp`, `Phase` — e il 14 consuma il primo; le righe di `layout.ts` e `dock.ts` sono riscritte con **D80** e **D89**
   - `gui/src/i18n.ts` — `i18n`, e la chiave di ogni scritta in `gui/src/locales/it.json`
 - ⛔ **Che cosa questo compito NON produce, detto perché nessuno lo cerchi:** nessun modulo **vero** — Stato, Permessi, Chat e Passi sono il **14** —, nessuno `stores/stream.ts` (nasce col suo consumatore, la Chat, come **D40** prescrive), nessuna finestra di conferma, nessun `markdown-it` (**P-81**), nessuna scorciatoia `moveTo` e nessun `axe-core`: accessibilità e tastiera sono il **14**
 
@@ -14907,8 +14910,8 @@ un **fatto sull'ambiente**, non sul codice: vale anche per il compito 14.
 estrae alla **seconda** occorrenza, e nel 2 non c'è.
 
 ```css
-/* The design tokens of the whole SPA: colours, spacing, type. ONE file (§6a of the milestone-2
-   design), because a kit is extracted at the SECOND occurrence and milestone 2 has none.
+/* The design tokens of the whole SPA: colours, spacing, type. ONE file (§6a of the sub-project 2
+   design), because a kit is extracted at the SECOND occurrence and sub-project 2 has none.
 
    ⚠️ THESE ARE PLACEHOLDER VALUES, and saying so is the point: the design system is decided in
    three moments with their own proof, and this is not one of them. What is real here is the
@@ -15232,9 +15235,19 @@ import type { Bridge } from "../transport/bridge";
 
 export type ViewName = "home" | "work" | "compact";
 
+/**
+ * ⛔ ONE LAYOUT PER VIEW, AND THE PACKAGE CARRIES THEM ALL (D80). Row 1 of §2 of the north star
+ * makes the layout "which view is open, FOR EVERY VIEW where the panels are", and row 6 has a
+ * saved view win over the default BY NAME. A package with a single `layout` put Home's layout
+ * under the Lavoro tab and lost Home at the next settle -- and it compiled and passed every probe.
+ *
+ * `layouts` IS PARTIAL ON PURPOSE: a view the owner never touched has NO entry and falls back to
+ * the shipped one, which is what keeps decision 11 true -- the shipped views stay in `gui/`, and
+ * an update that improves one still reaches whoever has not touched it.
+ */
 export interface LayoutPack {
   view: ViewName;
-  layout: SerializedDockview;
+  layouts: Partial<Record<ViewName, SerializedDockview>>;
 }
 
 const VIEWS: readonly ViewName[] = ["home", "work", "compact"];
@@ -15243,10 +15256,14 @@ function isViewName(value: unknown): value is ViewName {
   return typeof value === "string" && (VIEWS as readonly string[]).includes(value);
 }
 
+function sameBytes(a: readonly number[], b: readonly number[]): boolean {
+  return a.length === b.length && a.every((byte, index) => byte === b[index]);
+}
+
 /**
  * ⛔ THE PACKAGE IS OPAQUE TO THE CORE AND STRUCTURED ONLY HERE (row 1 of §2 of the north star):
  * the core keeps bytes and hands them back, and if `dockview` changes format the core does not
- * change. So the shape below is the gui's business alone, and the wire carries `number[]`.
+ * change. So the shape above is the gui's business alone, and the wire carries `number[]`.
  *
  * ⛔ AND WHAT COMES BACK IS NOT TRUSTED TO BE OURS: an archive can hold a package written by an
  * older build. `unpack` returns `null` on anything it does not recognise, and the caller falls
@@ -15256,7 +15273,14 @@ function isViewName(value: unknown): value is ViewName {
 export const useLayout = defineStore("layout", () => {
   const state = ref<LayoutState>({ state: "Nothing" });
   const view = ref<ViewName>("home");
+  /** The package we hold: the last one the core sent, or our own last save while its echo is in
+   * flight. What `apply` reads. */
+  const saved = ref<LayoutPack | null>(null);
+  /** ⛔ HOW MANY PACKAGES ARRIVED THAT ARE NOT THE ECHO OF OUR OWN SAVE (D89): the dock watches
+   * it and shows what arrived. A counter and not an event, because the dock is a Vue watcher. */
+  const arrivals = ref(0);
   let wire: Bridge | null = null;
+  let sent: readonly number[] | null = null;
 
   function attach(bridge: Bridge): void {
     wire = bridge;
@@ -15265,17 +15289,33 @@ export const useLayout = defineStore("layout", () => {
   function receive(message: IpcMessage): void {
     if (message.kind !== "Layout") return;
     state.value = message.value;
-    const pack = unpack(message.value);
-    if (pack !== null) view.value = pack.view;
+    // ⛔ THE CORE ANSWERS EVERY `SaveLayout` WITH WHAT IT HOLDS (decision 13, task 7), so a package
+    // equal to the bytes we last sent is our own save coming back: nothing new, nothing to show.
+    // Anything else -- the welcome, the OLD package after a write that did not stick, a package
+    // another build wrote -- replaces what we hold, and the dock shows it (D89).
+    if (message.value.state === "Package" && sent !== null && sameBytes(message.value.bytes, sent)) return;
+    saved.value = unpack(message.value);
+    if (saved.value !== null) view.value = saved.value.view;
+    arrivals.value += 1;
   }
 
   /** ⛔ AUTOMATIC, NOT A BUTTON (decision 12): when the layout settles, and when the window
-   * closes. The cadence is the gui's -- it is presentation, not a kernel decision. */
-  function settle(pack: LayoutPack): void {
-    wire?.send({ kind: "SaveLayout", value: [...pack_(pack)] });
+   * closes. The cadence is the gui's -- it is presentation, not a kernel decision.
+   *
+   * ⛔ AND IT MERGES (D80): the open view's entry is replaced and the other views keep theirs. A
+   * `settle` that replaced the whole package lost every view but the open one. */
+  function settle(layout: SerializedDockview): void {
+    const pack: LayoutPack = {
+      view: view.value,
+      layouts: { ...(saved.value?.layouts ?? {}), [view.value]: layout },
+    };
+    saved.value = pack;
+    const bytes = [...pack_(pack)];
+    sent = bytes;
+    wire?.send({ kind: "SaveLayout", value: bytes });
   }
 
-  return { state, view, attach, receive, settle };
+  return { state, view, saved, arrivals, attach, receive, settle };
 });
 
 /** The package as bytes: UTF-8 of the JSON. ⚠️ Exported for the probes, which must be able to
@@ -15289,10 +15329,18 @@ export function unpack(state: LayoutState): LayoutPack | null {
   try {
     const value: unknown = JSON.parse(new TextDecoder().decode(Uint8Array.from(state.bytes)));
     if (typeof value !== "object" || value === null) return null;
-    const candidate = value as { view?: unknown; layout?: unknown };
+    const candidate = value as { view?: unknown; layouts?: unknown };
     if (!isViewName(candidate.view)) return null;
-    if (typeof candidate.layout !== "object" || candidate.layout === null) return null;
-    return { view: candidate.view, layout: candidate.layout as SerializedDockview };
+    if (typeof candidate.layouts !== "object" || candidate.layouts === null) return null;
+    const held = candidate.layouts as Record<string, unknown>;
+    const layouts: LayoutPack["layouts"] = {};
+    // ⛔ ONLY THE THREE VIEWS THIS BUILD KNOWS ARE READ (decision 11): an entry under another
+    // name is another build's, and is neither shown nor kept -- row 8 of §2, for views.
+    for (const name of VIEWS) {
+      const layout = held[name];
+      if (typeof layout === "object" && layout !== null) layouts[name] = layout as SerializedDockview;
+    }
+    return { view: candidate.view, layouts };
   } catch {
     // ⛔ A PACKAGE THAT DOES NOT PARSE IS NOT AN ERROR TO SHOW: it is an old build's layout, and
     // the answer is the committed views. Row 8 of §2 asks the gui to cope, not to complain.
@@ -15301,7 +15349,7 @@ export function unpack(state: LayoutState): LayoutPack | null {
 }
 ```
 
-⚠️ **`pack_` col trattino basso in coda e non `pack`:** `pack` è già il nome del parametro in `settle`, e due cose
+⚠️ **`pack_` col trattino basso in coda e non `pack`:** `pack` è già il nome del pacchetto che `settle` costruisce, e due cose
 con lo stesso nome nello stesso file sono la specie di ambiguità che **D8** ha rifiutato per `counter`.
 
 - [ ] **Passo 10: la sonda degli store, e i tre stati di `Layout`**
@@ -15390,7 +15438,7 @@ describe("the core state", () => {
 describe("the layout", () => {
   it("takes a Package and reads the view out of it", () => {
     const layout = useLayout();
-    const bytes = [...pack_({ view: "work", layout: {} as never })];
+    const bytes = [...pack_({ view: "work", layouts: {} })];
     layout.receive({ kind: "Layout", value: { state: "Package", bytes } });
     expect(layout.state.state).toBe("Package");
     expect(layout.view).toBe("work");
@@ -15413,16 +15461,55 @@ describe("the layout", () => {
     expect(unpack({ state: "Package", bytes: [0x7b, 0x7d] })).toBeNull();
     expect(unpack({ state: "Package", bytes: [0x00, 0x01] })).toBeNull();
     expect(unpack({ state: "Nothing" })).toBeNull();
+    // ⛔ THE SHAPE BEFORE D80 -- one `layout` for every view -- is an old build's package now,
+    // and is refused like any other: the committed views win over a package nobody can read.
+    const before = [...new TextEncoder().encode('{"view":"home","layout":{}}')];
+    expect(unpack({ state: "Package", bytes: before })).toBeNull();
   });
 
   it("sends SaveLayout as bytes when the layout settles", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
-    layout.settle({ view: "home", layout: {} as never });
+    layout.settle({} as never);
     const sent = bridge.sent[0];
     expect(sent?.kind).toBe("SaveLayout");
     expect(sent?.kind === "SaveLayout" && sent.value.length).toBeGreaterThan(0);
+  });
+
+  it("merges the open view into the package it holds, and keeps the other views (D80)", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const home = { marker: "home, as the owner left it" } as never;
+    layout.receive({ kind: "Layout", value: { state: "Package", bytes: [...pack_({ view: "home", layouts: { home } })] } });
+    layout.view = "work";
+    const work = { marker: "work, just settled" } as never;
+    layout.settle(work);
+    const sent = bridge.sent[0];
+    // ⛔ NOT "something was sent": the package must carry BOTH views and name the open one. A
+    // `settle` that replaced the package would pass the probe above and lose Home here.
+    const pack = sent?.kind === "SaveLayout" ? unpack({ state: "Package", bytes: sent.value }) : null;
+    expect(pack).toEqual({ view: "work", layouts: { home, work } });
+  });
+
+  it("does not count its own save coming back, and does count any other package (D89)", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    layout.settle({ marker: "mine" } as never);
+    const sent = bridge.sent[0];
+    const echo = sent?.kind === "SaveLayout" ? sent.value : [];
+    expect(echo.length).toBeGreaterThan(0);
+    layout.receive({ kind: "Layout", value: { state: "Package", bytes: echo } });
+    // ⛔ THE ECHO OF DECISION 13: what the core holds is what we sent. Nothing arrived.
+    expect(layout.arrivals).toBe(0);
+    // A different package -- the welcome, or the OLD one after a write that did not stick -- did.
+    const theirs = { marker: "theirs" } as never;
+    layout.receive({ kind: "Layout", value: { state: "Package", bytes: [...pack_({ view: "compact", layouts: { compact: theirs } })] } });
+    expect(layout.arrivals).toBe(1);
+    expect(layout.view).toBe("compact");
+    expect(layout.saved).toEqual({ view: "compact", layouts: { compact: theirs } });
   });
 });
 ```
@@ -15504,8 +15591,8 @@ export class BigTab implements ITabRenderer {
     const title = document.createElement("span");
     title.className = "bigtab-title";
     // ⛔ THE MODULE'S ITALIAN NAME AND NOT THE PANEL'S ID (G21): the views carry `title: id`, and
-    // an id is code. A panel that is not a module type keeps the title it was given. Richiamo del
-    // 2026-09-15, P-95.
+    // an id is code. A panel that is not a module type keeps the title it was given (P-95 of the
+    // part-2 plan, found at the pre-check of task 14).
     title.textContent = isModule(parameters.api.id)
       ? i18n.global.t(`modules.${parameters.api.id}`)
       : (parameters.title ?? parameters.api.id);
@@ -15535,7 +15622,7 @@ senza di esso la cornice si monta e non mostra nulla, con `npm run build` verde.
 
 ```vue
 <script setup lang="ts">
-// ⛔ ONE PLACEHOLDER AND NOT EIGHTEEN (decision 17 of the north star): every module the milestone
+// ⛔ ONE PLACEHOLDER AND NOT EIGHTEEN (decision 17 of the north star): every module the sub-project
 // does not build says, in words, WHO fills it -- which is the rule §1 of the north star states
 // for the whole catalogue.
 import type { DockviewPanelApi } from "dockview-core";
@@ -15573,7 +15660,7 @@ defineProps<{ api?: DockviewPanelApi; params?: { module?: string; who?: number; 
 <script setup lang="ts">
 import { useCore } from "../stores/core";
 
-// ⚠️ ONLY WHAT IS ALIVE IN MILESTONE 2 (decision 16 of the north star): degradation and
+// ⚠️ ONLY WHAT IS ALIVE IN SUB-PROJECT 2 (decision 16 of the north star): degradation and
 // permissions. Seven "arrives with N" in a thin strip is noise, and the drawer is where "who
 // fills what" belongs.
 const core = useCore();
@@ -15679,7 +15766,7 @@ export function isModule(name: string): boolean {
  * What `dockview` gets for a name. Three cases, and they are NOT the same thing:
  *
  * - a built module -> its component;
- * - a module type that milestone 2 does not build -> the placeholder, saying who fills it;
+ * - a module type that sub-project 2 does not build -> the placeholder, saying who fills it;
  * - ⛔ a name that is NOT A MODULE TYPE AT ALL -> the placeholder saying the type is gone. This
  *   is row 8 of §2 of the north star -- a saved package can point at a type a later build
  *   removed -- and conflating it with the case above would tell the user to wait for a
@@ -15863,9 +15950,10 @@ porta accanto la mossa che la giustifica.
 
 ```ts
 import { createDockview, themeAbyss, type DockviewApi, type SerializedDockview } from "dockview-core";
+import { watch } from "vue";
 
 import { componentFor, placeholderParams } from "../panels/registry";
-import { unpack, useLayout, type LayoutPack } from "../stores/layout";
+import { useLayout, type LayoutPack, type ViewName } from "../stores/layout";
 import { VIEWS } from "../panels/views";
 
 import { BigTab } from "./BigTab";
@@ -15893,6 +15981,23 @@ function same(a: SerializedDockview, b: SerializedDockview): boolean {
   return JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
 }
 
+/**
+ * ⛔ THE DOCK FOLLOWS THE STORE (D89), in the two ways the store changes under it: the bar writes
+ * `layout.view`, and the core sends a package that is NOT the echo of our own save -- the welcome
+ * after `Hello`, or the OLD package after a write that did not stick (decision 13). Both are shown
+ * here and nowhere else: `Frame.vue` does not call `apply`, and a `Layout` that arrives after the
+ * dock is up is not left in the store. Before D89 it was: `apply` ran once, before `Hello`, and
+ * the saved layout never appeared at start-up -- it compiled and passed every probe.
+ *
+ * ⛔ SHOWING RESETS THE BASELINE: the buffered `onDidLayoutChange` that follows a `fromJSON`
+ * compares equal and does not settle, so LOOKING at a view is not SAVING it -- decision 11, the
+ * shipped views stay in `gui/` until the owner changes one.
+ *
+ * ⚠️ THE ACTIVE PANEL IS LAYOUT (D81): `activeGroup` is in `toJSON()`, and `dockview` fires
+ * `onDidLayoutChange` on `onDidActiveChange` too (measured on the 8.2.0 in SP-8's `node_modules`,
+ * R9b-12; if 8.3.1 differs, this line is an errata). So a click that changes the active panel
+ * settles, and that is accepted: which panel is active is part of where things are.
+ */
 export function createDock(host: HTMLElement): DockviewApi {
   const layout = useLayout();
   const api = createDockview(host, {
@@ -15904,7 +16009,7 @@ export function createDock(host: HTMLElement): DockviewApi {
     // Q4 of SP-8: the doc recommends `pointer` where HTML5 drag is unreliable and names embedded
     // webviews; and ADR-0039's hand needs it, because a script cannot start a native HTML5 drag.
     // ⚠️ It costs drag BETWEEN WINDOWS and the native drag image (decision 34) -- neither is a
-    // milestone-2 feature.
+    // sub-project 2 feature.
     dndStrategy: "pointer",
     floatingGroupBounds: "boundedWithinViewport",
     transformFloatingGroupDrag: ({ proposed }) => ({
@@ -15916,19 +16021,31 @@ export function createDock(host: HTMLElement): DockviewApi {
   });
 
   api.layout(host.clientWidth, host.clientHeight);
-  apply(api, layout.view, unpack(layout.state));
 
-  let last = api.toJSON();
+  function show(view: ViewName): SerializedDockview {
+    apply(api, view, layout.saved);
+    return api.toJSON();
+  }
+
+  let last = show(layout.view);
+  watch([() => layout.view, () => layout.arrivals], () => {
+    last = show(layout.view);
+  });
+
   api.onDidLayoutChange(() => {
     const now = api.toJSON();
     if (same(last, now)) return;
     last = now;
-    layout.settle({ view: layout.view, layout: now });
+    layout.settle(now);
   });
 
   window.addEventListener("beforeunload", () => {
-    // Decision 12: and when the window closes.
-    layout.settle({ view: layout.view, layout: api.toJSON() });
+    // Decision 12: and when the window closes. ⛔ ONLY IF SOMETHING CHANGED SINCE THE LAST SETTLE
+    // (D81): before, an untouched gui copied the shipped Home into the archive at its first close.
+    const now = api.toJSON();
+    if (same(last, now)) return;
+    last = now;
+    layout.settle(now);
   });
 
   window.addEventListener("resize", () => api.layout(host.clientWidth, host.clientHeight));
@@ -15936,12 +16053,13 @@ export function createDock(host: HTMLElement): DockviewApi {
 }
 
 /**
- * ⛔ A SAVED VIEW WINS OVER THE DEFAULT, AND A PACKAGE WE CANNOT READ LOSES TO IT: row 6 of §2
- * of the north star, and row 8 -- the gui copes rather than complains.
+ * ⛔ A SAVED VIEW WINS OVER THE DEFAULT BY NAME, AND A PACKAGE WE CANNOT READ LOSES TO IT: rows 6
+ * and 8 of §2 of the north star -- the gui copes rather than complains. ⛔ BY NAME (D80): the
+ * package holds one layout PER VIEW, and a view it does not hold falls back to the shipped one.
+ * Before D80 the one saved layout was applied under every tab.
  */
-export function apply(api: DockviewApi, view: string, pack: LayoutPack | null): void {
-  const shipped = VIEWS[view as keyof typeof VIEWS] ?? VIEWS.home;
-  api.fromJSON(pack?.layout ?? shipped);
+export function apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null): void {
+  api.fromJSON(pack?.layouts[view] ?? VIEWS[view]);
   for (const panel of api.panels) {
     if (Object.keys(panel.params ?? {}).length === 0) {
       panel.api.updateParameters(placeholderParams(panel.id));
@@ -16139,26 +16257,24 @@ import { PANEL_TYPES } from "../panels/registry";
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 
-import { apply, createDock } from "./dock";
-import { unpack, useLayout, type ViewName } from "../stores/layout";
+import { createDock } from "./dock";
+import { useLayout, type ViewName } from "../stores/layout";
 
 import Band from "./Band.vue";
 import ViewBar from "./ViewBar.vue";
 
 const host = ref<HTMLElement | null>(null);
 const layout = useLayout();
-let api: ReturnType<typeof createDock> | null = null;
 
 onMounted(() => {
-  if (host.value !== null) api = createDock(host.value);
+  if (host.value !== null) createDock(host.value);
 });
 
 function switchTo(view: ViewName): void {
+  // ⛔ ONE LINE, AND THE DOCK FOLLOWS (D89): the open view lives in the store and `createDock`
+  // watches it, so the bar, the keyboard of task 14 and a package from the core all take the same
+  // path -- and none of them saves a view for merely showing it (decision 11).
   layout.view = view;
-  // ⛔ A VIEW CHANGE IS A LAYOUT CHANGE, and it goes through the same path: `apply` prefers the
-  // saved package and falls back to the shipped view, so switching to a view the owner has saved
-  // shows THEIR version and not ours (row 6 of §2).
-  if (api !== null) apply(api, view, unpack(layout.state));
 }
 </script>
 
@@ -16220,9 +16336,9 @@ import { createFakeBridge } from "./transport/fakeBridge";
 import type { Bridge } from "./transport/bridge";
 
 /**
- * ⛔ THE FAKE BRIDGE IS WHAT MILESTONE 2's SPA RUNS AGAINST IN A BROWSER, and it is not a
+ * ⛔ THE FAKE BRIDGE IS WHAT SUB-PROJECT 2's SPA RUNS AGAINST IN A BROWSER, and it is not a
  * shortcut: §6a says the SPA is developed and probed against a fake that replays the fixtures
- * BEFORE the shell exists, and the shell is outside this plan (§8 of the milestone-2 design).
+ * BEFORE the shell exists, and the shell is outside this plan (§8 of the sub-project 2 design).
  * The day a shell exists it hands one in on `window`, and this line is all that changes.
  */
 declare global {
@@ -16261,14 +16377,21 @@ nessuna è «non solleva».
 
 ```ts
 import { mount } from "@vue/test-utils";
+import { createDockview, type DockviewApi, type SerializedDockview } from "dockview-core";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
+import { nextTick } from "vue";
 
 import { i18n } from "../i18n";
 import { PANEL_TYPES, componentFor, isModule, placeholderParams } from "../panels/registry";
 import { VIEWS } from "../panels/views";
 import Placeholder from "../panels/Placeholder.vue";
+import type { IpcMessage } from "../schema/messages";
 import { useConnection } from "../stores/connection";
+import { pack_, useLayout, type LayoutPack } from "../stores/layout";
+import { createFakeBridge, type FakeBridge } from "../transport/fakeBridge";
+
+import { createDock } from "./dock";
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -16332,6 +16455,94 @@ describe("the registry", () => {
   });
 });
 
+function host(): HTMLElement {
+  const element = document.createElement("div");
+  document.body.append(element);
+  return element;
+}
+
+/** A grid of the size the views were generated at (Passo 13). */
+function grid(): DockviewApi {
+  const api = createDockview(host(), { createComponent: ({ name }) => componentFor(name)() });
+  api.layout(1600, 1000);
+  return api;
+}
+
+/** A layout the owner could have saved under Home: ONE panel, which no shipped view has. */
+function ownersHome(): SerializedDockview {
+  const api = grid();
+  api.addPanel({ id: "status", component: "status", title: "status", params: placeholderParams("status") });
+  return api.toJSON();
+}
+
+function packageFromTheCore(pack: LayoutPack): IpcMessage {
+  return { kind: "Layout", value: { state: "Package", bytes: [...pack_(pack)] } };
+}
+
+/** The ids on the grid, sorted: the oracle of WHICH view is showing, blind to sizes (E4). */
+function showing(api: DockviewApi): string[] {
+  return api.panels.map((panel) => panel.id).sort();
+}
+
+function saves(bridge: FakeBridge): number {
+  return bridge.sent.filter((message) => message.kind === "SaveLayout").length;
+}
+
+/** Lets Vue's watchers and `dockview`'s buffered `onDidLayoutChange` run. */
+async function flush(): Promise<void> {
+  await nextTick();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+/** ⛔ THESE MOUNT A GRID, and say so: if Passo 3 measured that `dockview` does not run under
+ * jsdom, this `describe` is what moves to the reviewer in the browser (the table of Passo 3), and
+ * the rest of the file stays. */
+describe("the dock", () => {
+  it("shows a saved view under its own name, the shipped one under another, and saves neither (D80, D89)", async () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const home = ownersHome();
+    const api = createDock(host());
+    api.layout(1600, 1000);
+    // ⛔ THE PACKAGE ARRIVES AFTER THE DOCK IS UP, as the welcome does in `main.ts` (D89): before,
+    // it updated the store and nothing showed it.
+    layout.receive(packageFromTheCore({ view: "home", layouts: { home } }));
+    await flush();
+    expect(showing(api)).toEqual(["status"]);
+    layout.view = "work";
+    await flush();
+    // ⛔ THE SHIPPED LAVORO, NOT HOME'S LAYOUT UNDER THE LAVORO TAB: row 6 of §2 of the north star
+    // has a saved view win over the default BY NAME, and Lavoro was never saved.
+    expect(showing(api)).toEqual(Object.keys(VIEWS.work.panels ?? {}).sort());
+    layout.view = "home";
+    await flush();
+    expect(showing(api)).toEqual(["status"]);
+    // ⛔ AND NOTHING WAS SAVED: showing a view is not changing it, and the shipped Lavoro must not
+    // reach the archive for having been looked at (decision 11).
+    expect(saves(bridge)).toBe(0);
+  });
+
+  it("saves nothing when the window closes untouched, and once when it closes changed (D81)", async () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const api = createDock(host());
+    await flush();
+    window.dispatchEvent(new Event("beforeunload"));
+    // ⛔ THE FIRST DIRECTION: an untouched gui closing must not copy the shipped Home into the
+    // archive (decision 11) -- before D81 it did, at every first close.
+    expect(saves(bridge)).toBe(0);
+    api.getPanel("costs")?.api.close();
+    window.dispatchEvent(new Event("beforeunload"));
+    expect(saves(bridge)).toBe(1);
+    await flush();
+    // ⛔ AND THE BUFFERED `onDidLayoutChange` THAT FOLLOWS DOES NOT SAVE IT AGAIN: the baseline
+    // moved with the save.
+    expect(saves(bridge)).toBe(1);
+  });
+});
+
 describe("the band", () => {
   it("is there while waiting, and gone once connected", async () => {
     const Band = (await import("./Band.vue")).default;
@@ -16347,8 +16558,11 @@ describe("the band", () => {
 });
 ```
 
-⚠️ **Se il Passo 3 ha misurato che `dockview` NON regge `jsdom`**, questo file resta com'è — nessuna delle sue
-sonde monta una griglia — e ciò che manca passa al revisore nel browser, con la voce d'errata che lo dice.
+⚠️ **Se il Passo 3 ha misurato che `dockview` NON regge `jsdom`**, il solo `describe("the dock")` — l'unico che monta
+una griglia, e lo dice di sé — passa al revisore nel browser, con la voce d'errata che lo dice; il resto del file resta
+com'è. ⛔ Qui stava *«nessuna delle sue sonde monta una griglia»*, vero fino a **D80**, **D81** e **D89** (revisione del
+piano intero, 2026-09-15): le tre proprietà nuove — una vista salvata vince **per nome**, la chiusura non copia una vista
+mai toccata nell'archivio, il dock mostra un pacchetto arrivato **dopo** — non si provano senza una griglia.
 
 - [ ] **Passo 18: la rete sulle scritte, fino al compito 15**
 
@@ -16476,6 +16690,8 @@ git push
 - [ ] ⛔ **le due direzioni della sonda delle scritte** eseguite come al Passo 18, e `git diff` **vuoto** alla fine
 - [ ] ⛔ **la sonda della fascia prova la SECONDA direzione**: la fascia sparisce dopo `Accepted`
 - [ ] ⛔ **i tre stati di `Layout` sono tutti esercitati:** `grep -c '"Nothing"\|"Unavailable"\|"Package"' gui/src/stores/stores.test.ts` → **più di due**
+- [ ] ⛔ **la disposizione è PER VISTA e il dock SEGUE lo store (D80, D89):** `grep -c 'layouts: Partial<Record<ViewName, SerializedDockview>>' gui/src/stores/layout.ts` → **1**; `grep -c 'watch(\[' gui/src/frame/dock.ts` → **1**; `grep -c 'apply(' gui/src/frame/Frame.vue` → **0**; le due sonde di `describe("the dock")` in `frame.test.ts` e le due nuove di `describe("the layout")` in `stores.test.ts` sono verdi — le prime due **se il Passo 3 ha misurato verde**, altrimenti stanno nella sua voce d'errata, col revisore nel browser
+- [ ] ⛔ **`beforeunload` non copia una vista mai toccata nell'archivio (D81):** la sonda `saves nothing when the window closes untouched` è verde in **entrambe** le metà — zero prima, uno dopo un `close()`, e ancora uno dopo l'evento bufferizzato
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
 - [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -cE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src/**/*.test.ts` → **0**
 - [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA** — regola 5 della testa: `cd gui && npm run dev`, e con la finta collegata si vedono la barra con le tre viste, la fascia «il core non ha risposto», la striscia in basso, il cassetto coi diciotto tipi, e le tessere che dicono chi le riempie
@@ -18600,7 +18816,7 @@ git push
 - ⛔ **NON si legge**: la §1 e la §2 della stella polare — questo compito non disegna niente che si veda; e i compiti 13 e 14, se non per i nomi dei file che il lint guarda
 
 **Interfaces:**
-- Consumes: `gui/package.json` col comando `test` e `build` (compito **11**); `gui/src/locales/copy.test.ts` e `gui/src/panels/registry.ts` (compito **13**); `gui/src/panels/Chat.vue` e le diciotto chiavi `modules.*` di `gui/src/locales/it.json` (compito **14**); `gui/fake-core/Cargo.toml` col proprio `Cargo.lock` (compito **12**); il settimo passo di `scripts/gate.sh` **come il compito 10 lo lascia**
+- Consumes: `gui/package.json` col comando `test` e `build` (compito **11**); `gui/src/locales/copy.test.ts` e `gui/src/panels/registry.ts` (compito **13**); `gui/src/panels/Chat.vue` e le diciotto chiavi `modules.*` di `gui/src/locales/it.json` (compito **13**, Passo 12 — ⚠️ qui stava «14», R7-7); `gui/fake-core/Cargo.toml` col proprio `Cargo.lock` (compito **12**); il settimo passo di `scripts/gate.sh` **come il compito 10 lo lascia**
 - Produces, e i compiti 16 e 17 li usano con questi nomi esatti:
   - `scripts/gate-gui.sh` — un passo, nessun argomento; `cd` alla radice; esce **0** verde, **diverso da zero** al primo rosso. ⛔ **Il compito 16 gli aggiunge `npm audit` in coda**, quindi il file nasce con la forma che regge una riga in più
   - la riga `run "gui: fake core and SPA" bash scripts/gate-gui.sh` in `scripts/gate.sh`, **fra** «attributes of the constrained crates» e «documentation consistency»

@@ -3,7 +3,7 @@
 Fonte: 9 rapporti su 11 (R1 parziale: compiti 1–2; R3 parziale: compito 7; R5 completo: 11–12; R2, R4, R7, R9a, R9b, R10 completi).
 Mancano: compito 13 (R6), compiti 15–17 (R8), compito 3 (R1), compito 8 (R3) — perimetri da rivedere ancora.
 Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stati rimisurati anche da lui.
-**Stato al 2026-09-15 (sessione 13, dopo la dodicesima chiusura):** testa, compiti 1, 2, 4, 5, 6 e 7 applicati (✅); tutto il resto ⬜.
+**Stato al 2026-09-15 (sessione 13, dopo la dodicesima chiusura):** testa, compiti 1, 2, 4, 5, 6, 7, 8 (le sole correzioni note) e 9 applicati (✅); tutto il resto ⬜.
 
 ## Le decisioni nuove (righe D da scrivere)
 
@@ -117,32 +117,33 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - Attrezzo: `patch_c7.py` accanto a questo file
 
 ### Compito 8 — NON RIVISTO IN PROFONDITÀ (R3 caduto): resta da fare
-- R10-12 (D77) E nude nella prosa ⬜ · D75/D76 ⬜
+- R10-12 (D77) E nude nella prosa: `E66` ed `E112` (lezione delle date) ed `E50` (l'oracolo) col nome del piano del Traguardo 6 ✅ · D75/D76: nulla da fare — i richiami dettati dell'8 portano già `<data>`, e «milestone 5 task 9» è il Traguardo 5 del SP1 ✅ (la revisione in profondità resta da fare)
 
 ### Compito 9
-- R4-1 Passo 7: la chiamata di `main` a due argomenti; «rosso su main e su tests» ⬜
-- R4-2 Passo 8: `decode(&buffer[..next])`, via il capoverso del dubbio ⬜
-- R4-3 Passo 14 → 7-bis (dev-dependency prima del pari) ⬜
-- R4-4 `Millis::new(0)` ×5, via la copertura ⬜
-- R4-5 richiamo sul doc di `run_the_production_graph` (SO THAT A TEST CAN CALL IT) ⬜
-- R4-6 `connect` con scadenza di parete (5 s) e panico che nomina la riga; budget largo ⬜
-- R4-7 baseline a limite 0 ⬜
-- R4-8/R9a-2 i quattro corpi `/* … */` dettati; criterio `grep -c` → 0 ⬜
-- R4-9 Passo 13 `Disconnected`: coperto dal 7 e dal 10, dichiarato; criterio «Passi 10–12»; richiamo §8 ⬜
-- R4-10 «Passo 12», «le quattro sonde delle tre decisioni» ⬜
-- R4-11 doc di `SOCKET_NAME`: il finto lega lo STESSO nome (D45) ⬜
-- R4-12 «task 10 of this plan … keeps it local (D34)»; «the milestone 2 campaign» → «the sub-project 2 campaign (task 10)» ⬜
-- R4-13 «the assembled shell, which this plan does not build (P-53)» ⬜
-- R4-14 (D76) ⬜
-- R4-15 segnaposto → `interprocess = "2.4.4"` ⬜
-- R4-16 `Cargo.lock` → `i/lf w/lf` ⬜
-- R4-17 «The doc of `run_the_production_graph` says…» ⬜
-- R4-18 «in coda alla cella La prova» ⬜
-- R3-15 = R4-4 ⬜
-- R9a-10 richiamo §8 riga «il limite di giri e Disconnected» ⬜
-- R5-3 = R4-2 ⬜
-- D84 misura CPU a riposo (Passo nuovo + criterio) ⬜
-- R10-16 etichetta eol `Cargo.lock` ⬜
+- R4-1 Passo 7: la chiamata di `main` a due argomenti; «rosso su main e su tests» ✅
+- R4-2 Passo 8: `decode(&buffer[..next])`, via il capoverso del dubbio ✅
+- R4-3 Passo 14 → 7-bis (dev-dependency prima del pari); il numero 14 libero è preso dalla misura del processore (D84) ✅
+- R4-4 `Millis::new(0)` ×5, via la copertura ✅
+- R4-5 richiamo sul doc di `run_the_production_graph` (SO THAT A TEST CAN CALL IT) ✅
+- R4-6 `connect` con scadenza di parete (5 s) e panico che nomina la riga; budget largo `WITH_A_PEER` per ogni sonda con un pari (Passi 10, 11, 12) ✅
+- R4-7 baseline a limite 0 e **senza pari** (a zero giri un pari non fa in tempo a collegarsi, R4-6) ✅
+- R4-8/R9a-2 i quattro corpi `/* … */` dettati (con `WELCOME` e `WITH_A_PEER`, che nessun passo definiva; il secondo core con `FILE_FLAG_FIRST_PIPE_INSTANCE` letto nel sorgente di `interprocess`) ✅
+- R4-9 Passo 13 `Disconnected`: coperto dal 7 e dal 10, dichiarato; criterio «Passi 10–12»; richiamo §8 ✅
+- R4-10 «Passo 12», «le quattro sonde delle tre decisioni» ✅
+- R4-11 doc di `SOCKET_NAME`: il finto lega lo STESSO nome (D45) ✅
+- R4-12 «task 10 of this plan … keeps it local (D34)»; «the milestone 2 campaign» → «the sub-project 2 campaign (task 10)» ✅
+- R4-13 «the assembled shell, which this plan does not build (P-53)» ✅
+- R4-14 (D76) ✅
+- R4-15 segnaposto → `interprocess = "2.4.4"` — era già applicato nell'ondata 1 (testa), qui solo verificato ✅
+- R4-16 `Cargo.lock` → `i/lf w/lf` ✅
+- R4-17 «The doc of `run_the_production_graph` says…» ✅
+- R4-18 «in coda alla cella La prova» ✅
+- R3-15 = R4-4 ✅
+- R9a-10 richiamo §8 riga «il limite di giri e Disconnected» ✅
+- R5-3 = R4-2 ✅
+- D84 misura CPU a riposo (Passo nuovo + criterio) ✅
+- R10-16 etichetta eol `Cargo.lock` ✅
+- Attrezzo: `patch_c89.py` accanto a questo file (compiti 8 e 9); ⚠️ trappola: il blocco spostato (Passo 14 → 7-bis) si sposta PRIMA di inserire un nuovo «Passo 14», o l'ancora `Passo 15` porta via anche quello — scattato una volta, senza scrivere
 
 ### Compito 10
 - R4-19/R10-18 blocco Files (4 righe) ⬜

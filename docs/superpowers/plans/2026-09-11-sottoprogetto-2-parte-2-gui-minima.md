@@ -10081,7 +10081,7 @@ presa dal file**, e *Sostituisci con* la stessa più il richiamo datato:
 
 ⚠️ **Il testo vecchio resta**: gli ADR e i doc di questo repository sono append-only nella forma, e una frase
 corretta **sotto sé stessa** è il finding `A-2`. ⛔ **`<data>` si sostituisce con la data del commit** —
-`git log -1 --format=%ad --date=short` **dopo** averlo fatto, mai la data di chi rilegge (lezione `E66`, `E112`).
+`git log -1 --format=%ad --date=short` **dopo** averlo fatto, mai la data di chi rilegge (lezione `E66` ed `E112` del piano del Traguardo 6 — D77).
 
 - [ ] **Passo 4: le due sonde della riconciliazione, nelle due direzioni**
 
@@ -10542,7 +10542,7 @@ la ragione scritta — quella proprietà vive in `frozen_bytes.rs`, e asserirla 
 (§7.4.4).
 
 **(b)** `crates/simulator/tests/dst_campaign.rs` (**`i/lf w/crlf`**) — ⛔ **un `panic!` e NON un braccio vuoto.**
-È un **oracolo indipendente** che controlla `reconcile`, e il suo errata `E50` scrive perché: *«writing the empty
+È un **oracolo indipendente** che controlla `reconcile`, e la voce `E50` del piano del Traguardo 6 scrive perché: *«writing the empty
 arm `reconcile` writes would make this oracle agree with the implementation BY CONSTRUCTION on a case it has never
 seen»*. Accanto al braccio `RecordKind::Permission`:
 
@@ -10765,22 +10765,22 @@ Atteso: **otto** `.cbor`; le sonde di `arbiter_policy.rs` cresciute di **quattro
 ## Compito 9: il daemon — il cablaggio dell'attività, la policy riletta, e il limite di giri
 
 **Files:**
-- Modify: `crates/daemon/src/main.rs` (**`i/lf w/crlf`**) — le quattro costanti nuove, `EXECUTOR_TURN_LIMIT` a `u64::MAX` col richiamo, `SharedClock`, `MaybeCustody`, `StartupError` a **sei** varianti, `build_the_arbiter` che riceve la policy, il cablaggio in `run_the_graph`, e il modulo `tests` in fondo
+- Modify: `crates/daemon/src/main.rs` (**`i/lf w/crlf`**) — le quattro costanti nuove, `EXECUTOR_TURN_LIMIT` a `u64::MAX` col richiamo, `SharedClock`, `MaybeCustody`, `StartupError` a **sei** varianti, `build_the_arbiter` che riceve la policy, il cablaggio in `run_the_graph`, e il modulo `tests` in fondo — le due costanti del banco e le quattro sonde del Passo 12 **dettate** (R4-8, 2026-09-15)
 - Modify: `crates/daemon/Cargo.toml` (**`i/lf w/crlf`**) — ⛔ **`interprocess` in `[dev-dependencies]`, e il `Cargo.lock` NELLO STESSO COMMIT** (**P-54**, vincolo globale 6)
-- Modify: `Cargo.lock` — rinfrescato **fuori** dal cancello, con un `cargo build` **senza** `--locked`
-- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF** — **P-47**) — **due** richiami datati nella §5: la riga del limite di giri e la riga dello spegnimento
+- Modify: `Cargo.lock` (**`i/lf w/crlf`** oggi; ⛔ **`i/lf w/lf` dopo cargo**, che lo riscrive in LF — R4-16, R10-16) — rinfrescato **fuori** dal cancello, con un `cargo build` **senza** `--locked`, al Passo **7-bis**
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF** — **P-47**) — **tre** richiami datati: nella §5 la riga del limite di giri e la riga dello spegnimento, e nella §8 la riga *«il limite di giri e `Disconnected`»* (D5, R4-9, **D88**)
 - Modify: **questo piano** — la riga **9** della tabella della posizione
 - Read: `crates/daemon/src/main.rs` **per intero**, modulo `tests` compreso — è il file che questo compito riscrive; la **§5 del 2**, le righe del daemon; la **sequenza 2** della stella polare, «salva, riavvia, ritrova»; la riga *«la settima porta»* e il blocco *«L'archivio che non si apre — decisione 35»* della **§8 del 2**; il **rimando del 2026-09-08 in testa ad ADR-0006**; `crates/kernel/src/executor.rs` — `Executor::new`, `spawn`, `run`, `Sleep::until` **col suo capoverso sul tick già scaduto**; `crates/platform/src/reactor.rs` — `SystemReactor` e la sua `origin`; e i blocchi *Interfaces* dei compiti **1**, **2**, **4**, **5**, **7** e **8** per i nomi esatti
 
 **Interfaces:**
 - Consumes, dal **compito 1**: `kernel::numbering::{Progressive, seeded_from}`, con `Progressive::starting_at(u64)` e `seeded_from(&J) -> Result<Progressive, JournalError>`
 - Consumes, dal **compito 2**: `platform::ipc::LocalSocketIpc`, con `LocalSocketIpc::bound(name: &str, numbers: Progressive, max_body: usize) -> std::io::Result<LocalSocketIpc>`; `kernel::framing` nel banco del pari
-- Consumes, dal **compito 3**: `kernel::wire::ipc::{IpcMessage, build_stamp, LayoutState}` — **nel banco**, per il pari che parla
+- Consumes, dal **compito 3**: `kernel::wire::ipc::{IpcMessage, build_stamp, LayoutState, PolicyName}` — **nel banco**, per il pari che parla e per le sonde del Passo 12
 - Consumes, dal **compito 4**: `kernel::ports::custody::{Custody, CustodyKey, CustodyError}`
 - Consumes, dal **compito 5**: `platform::custody::FileCustody`, con `FileCustody::open(&Path) -> Result<FileCustody, platform::journal::OpenError>`
 - Consumes, dal **compito 7**: `kernel::serving::{Core, serve}`, con `Core::new(ipc, journal, custody, arbiter, steps, parameters)`; `kernel::parameters::Parameters::new(executor_turn_limit, total_vram, arbiter_id, gui_tick)`
 - Consumes, dal **compito 8**: `kernel::arbiter::{policy_now, PolicyError}`
-- Consumes, da oggi: `kernel::arbiter::{Arbiter, VramPolicy, RemotePolicy}`; `kernel::executor::{Executor, RunError, Sleep}`; `kernel::ports::reactor::Reactor`; `kernel::time::{Monotonic, WallTime}`; `platform::journal::{FileJournal, OpenError}`; `platform::reactor::SystemReactor`; `platform::rng::SequentialRng`
+- Consumes, da oggi: `kernel::arbiter::{Arbiter, VramPolicy, RemotePolicy, LocalPolicy}`; `kernel::executor::{Executor, RunError, Sleep}`; `kernel::ports::reactor::Reactor`; `kernel::ports::journal::StepId` (nel banco, Passo 12); `kernel::time::{Monotonic, WallTime}`; `platform::journal::{FileJournal, OpenError}`; `platform::reactor::SystemReactor`; `platform::rng::SequentialRng`
 - Produces: ⛔ **nulla che un altro compito importi.** È la **radice di composizione**, e un binario non esporta niente. ⚠️ **Ciò che eredita è una FORMA, non un nome:** la campagna del **10** rifà lo stesso cablaggio su porte finte, e il core finto del **12** lo rifà in `gui/fake-core`; entrambi lo **riscrivono**, perché copiare da qui non è possibile — ed è la ragione per cui **D7** mise la seminatura del contatore in `kernel` e non qui
 
 ⛔ **QUESTO COMPITO NON TOCCA `kernel`.** Tutto ciò che cabla esiste dai compiti 1–8: se un nome manca, è una voce
@@ -10802,14 +10802,18 @@ git ls-files --eol crates/daemon/src/main.rs crates/daemon/Cargo.toml Cargo.lock
 Atteso: `EXECUTOR_TURN_LIMIT` è `100_000`; `StartupError` ha **tre** varianti; gli `SharedClock` nel repository
 sono **due** dopo il compito 7 — `crates/simulator/tests/arbiter_campaign.rs` e il banco del 7 (**P-49**);
 `SystemReactor::new()` ancora la propria `origin` a `Instant::now()`; `interprocess` è in `platform` e **non** in
-`daemon`; `main.rs` e `Cargo.toml` sono `i/lf w/crlf`, il disegno del 2 è `i/lf w/lf`.
+`daemon`; `main.rs`, `Cargo.toml` e `Cargo.lock` sono `i/lf w/crlf`, il disegno del 2 è `i/lf w/lf`.
 ⚠️ **Se una cifra è diversa vale il comando, non questa riga**, ed è una voce d'errata prima di essere un rimedio.
 
 ⛔ **E POI LA BASELINE, che è metà del valore della sonda del Passo 9** (**P-52**): un `loop` senza uscita rende
 `Err(TurnLimitReached)` a **qualunque** limite, quindi prima di scrivere la sonda si misura che l'esito da solo non
 distingue nulla. Si prende **dopo** il Passo 7, quando il cablaggio esiste, e si **scrive accanto alla sonda con la
-data**: lo stesso grafo con un limite di **un giro**, dove il pari **non** riceve la propria accoglienza mentre
-`run()` rende lo stesso valore. ⚠️ **Senza questa misura la sonda del Passo 9 è un'ipotesi**, e questo repository
+data**: lo stesso grafo con un limite di **zero** giri e **senza pari** — `run()` rende lo stesso
+`Err(TurnLimitReached)` senza un solo giro di servizio, perché l'esecutore rifiuta prima del primo `poll`
+(`turns = 1 > 0`, in `crates/kernel/src/executor.rs`), deterministico. ⚠️ Qui stava *«un giro, dove il pari non
+riceve la propria accoglienza»*: a un giro l'esito è una **gara** col thread del pari, che può essersi collegato e
+aver detto `Hello` prima del `poll` (R4-7); e a zero giri un pari non farebbe in tempo a collegarsi (R4-6), quindi la
+baseline si prende senza. ⚠️ **Senza questa misura la sonda del Passo 9 è un'ipotesi**, e questo repository
 ha già pagato per la differenza — gotcha **#57**.
 
 - [ ] **Passo 2: le quattro costanti nuove, e `EXECUTOR_TURN_LIMIT` col suo richiamo**
@@ -10819,17 +10823,17 @@ In `crates/daemon/src/main.rs` (**`i/lf w/crlf`**, quindi `replace_unique.py` pe
 **(a)** *Trova* la riga `const EXECUTOR_TURN_LIMIT: u64 = 100_000;` **intera** e *Sostituisci con*:
 
 ```rust
-/// ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE VALUE IS `u64::MAX`, AND THE TABLE ABOVE NOW
+/// ⛔ RECALL OF <data>, SUB-PROJECT 2, TASK 9 — THE VALUE IS `u64::MAX`, AND THE TABLE ABOVE NOW
 /// DESCRIBES A RUN THIS BINARY NO LONGER MAKES. Until this task the graph had NO activity, so the
 /// ceiling bounded nothing that existed; from here it carries `kernel::serving::serve`, which is a
 /// `loop` with no exit. A finite ceiling would therefore be a CLOCK ON THE DAEMON'S LIFE — the core
 /// would stop serving after so many turns, for no reason a user could name — and that is the one
-/// thing this number must not be. Decision A of §5 of the milestone 2 design, delegated and taken.
+/// thing this number must not be. Decision A of §5 of the sub-project 2 design, delegated and taken.
 ///
 /// ⚠️ WHAT IS GIVEN UP, SAID PLAINLY: with no ceiling, an activity that spins can no longer be
 /// caught HERE. `RunError::TurnLimitReached` remains reachable in the benches, which hand their own
-/// finite limits through `Parameters` (ADR-0034), and in the milestone 2 campaign. In production the
-/// guard against a run that goes nowhere is an OS watchdog, which §5 assigns to milestone 10 along
+/// finite limits through `Parameters` (ADR-0034), and in the sub-project 2 campaign (task 10). In production the
+/// guard against a run that goes nowhere is an OS watchdog, which §5 assigns to sub-project 10 along
 /// with the clean shutdown. Declared, not pinned (gotcha #73).
 ///
 /// ⚠️ AND THE SATURATION IS THE PRECEDENT `FOR_EVER` SET, in this same file: `u64::MAX` is not
@@ -10862,8 +10866,9 @@ const LAYOUT_PATH: &str = "layout.redb";
 ///
 /// ⛔ IT IS PROTOCOL AND NOT A TUNING KNOB, and that is why it is named in this task's closing
 /// criterion: THE SHELL must open the SAME name, and nothing in the gate couples the two ends.
-/// ⛔ AND THE SHELL IS NOT A TASK OF THIS PLAN — the fake core binds a name of its own, the SPA never
-/// touches a socket, and §8 puts the end-to-end run in the shell "outside today's gate". The day the
+/// ⛔ AND THE SHELL IS NOT A TASK OF THIS PLAN — the fake core binds THE SAME NAME, as a copy
+/// (`gui/fake-core/src/main.rs`, task 12, whose closing criterion compares the two literals — D45),
+/// the SPA never touches a socket, and §8 puts the end-to-end run in the shell "outside today's gate". The day the
 /// shell exists, the coupling is a probe; until then this literal is the whole of the agreement, and
 /// a fact of protocol living in one house with no index naming it is how a fact of protocol rots in
 /// silence.
@@ -10893,7 +10898,7 @@ const MAX_BODY: usize = 1024 * 1024;
 
 /// How long the serving activity sleeps between turns (§5, ADR-0034).
 ///
-/// ⛔ IT EXISTS BECAUSE THE REACTOR HAS NO I/O READINESS, which is entry 5 of §9 of the milestone 2
+/// ⛔ IT EXISTS BECAUSE THE REACTOR HAS NO I/O READINESS, which is entry 5 of §9 of the sub-project 2
 /// design, confirmed as-is by the owner on 2026-09-09: nothing can wake the core when a byte
 /// arrives, so the core LOOKS, on a rhythm. The tick is that rhythm, and it is the WORST-CASE
 /// LATENCY between the GUI speaking and the core hearing.
@@ -10902,8 +10907,8 @@ const MAX_BODY: usize = 1024 * 1024;
 /// yet: larger wastes nothing and makes the GUI feel slow, smaller costs a syscall per turn for
 /// latency nobody can perceive. Sixteen milliseconds is one frame at sixty hertz — the interval the
 /// GUI itself is already paced by, so the core cannot be the slower half of a round trip.
-/// ⛔ ITS TRIGGER IS THE FIRST PERCEIVED-LATENCY MEASUREMENT on the assembled shell, milestone 2
-/// part 3: until somebody watches a round trip, any number here is an argument.
+/// ⛔ ITS TRIGGER IS THE FIRST PERCEIVED-LATENCY MEASUREMENT on the assembled shell, which this
+/// plan does not build (P-53): until somebody watches a round trip, any number here is an argument.
 ///
 /// ⚠️ AND THE BENCHES DO NOT INHERIT IT: the tick is delivered through `Parameters`, so a probe
 /// hands its own — zero, where a turn must not wait (`Sleep::until`'s rule). That is what keeps the
@@ -10930,10 +10935,12 @@ In coda alle costanti, **prima** di `StartupError`.
 /// when an activity wakes.
 ///
 /// ⚠️ THE THIRD OF ITS SHAPE IN THIS REPOSITORY, and the duplication is declared rather than
-/// hidden: `crates/simulator/tests/arbiter_campaign.rs` and the milestone 2 serving bench carry the
-/// other two, and neither can be imported — a `tests/` file is a crate of its own and a binary
-/// exports nothing. ⛔ WHETHER IT SHOULD RISE INTO `simulator` IS NOT THIS TASK'S CALL: milestone
-/// 10 is the first that can measure the need with a campaign in hand.
+/// hidden: `crates/simulator/tests/arbiter_campaign.rs` and the sub-project 2 serving bench (task 7)
+/// carry the other two, and neither can be imported — a `tests/` file is a crate of its own and a
+/// binary exports nothing. ⛔ WHETHER IT SHOULD RISE INTO `simulator` IS DECIDED, AND THE ANSWER IS
+/// NO: D34 keeps it local — this crate refuses to depend on `simulator` (its manifest says so), so a
+/// common home would serve three callers out of four (P-59). Task 10 of this plan,
+/// `crates/simulator/tests/serving_campaign.rs`, carries the fourth copy and says the same.
 struct SharedClock<'a> {
     inner: &'a RefCell<SystemReactor>,
 }
@@ -10981,7 +10988,7 @@ Subito sotto `SharedClock`.
 /// is dropped here rather than carried, because a field only `Debug` reads is flagged dead (the
 /// paragraph beside `main` measured exactly that), and printing from `run_the_graph` would take on
 /// the job that same function's doc gives to `main` alone. ⛔ ITS TRIGGER IS THE FIRST DIAGNOSTIC
-/// CHANNEL the daemon grows — milestone 10, with the clean shutdown — and until then the operator
+/// CHANNEL the daemon grows — sub-project 10, with the clean shutdown — and until then the operator
 /// sees the effect, "layout unavailable", and not the cause.
 enum MaybeCustody {
     Open(FileCustody),
@@ -11024,7 +11031,7 @@ impl Custody for MaybeCustody {
 coda, prima di `#[derive(Debug)]`:
 
 ```rust
-/// ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE VARIANTS ARE NOW SIX, AND THE PARAGRAPH ABOVE IS
+/// ⛔ RECALL OF <data>, SUB-PROJECT 2, TASK 9 — THE VARIANTS ARE NOW SIX, AND THE PARAGRAPH ABOVE IS
 /// ABOUT THE THIRD, WHICH IS UNCHANGED. The wiring grew three failures it can name and did not
 /// have: the journal holds records this build cannot read, so the current policy cannot be
 /// answered (ADR-0006, `policy_now`); the same re-read seeds the step counter, and it fails the
@@ -11073,7 +11080,7 @@ coda, prima di `#[derive(Debug)]`:
 capoverso, **senza cancellarlo**.
 
 ```rust
-/// ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THEY ARE SIX. The reason is unchanged and is the
+/// ⛔ RECALL OF <data>, SUB-PROJECT 2, TASK 9 — THEY ARE SIX. The reason is unchanged and is the
 /// reason the three new ones are also spelt out: a single arm would leave every payload flagged
 /// "never read". ⚠️ AND THE RESIDUAL ABOVE GREW WITH THEM: none of the six error branches is
 /// walked by a check, and three of them now name values — the socket, the policy, the counter —
@@ -11093,7 +11100,7 @@ perché oggi `build_the_arbiter` riparte da `Remote` e nessuno chiama `set_polic
 
 ```rust
 fn build_the_arbiter(parameters: Parameters, policy: VramPolicy) -> Result<Arbiter, StartupError> {
-    // ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE POLICY IS HANDED IN, AND THE COMMENT THAT WAS
+    // ⛔ RECALL OF <data>, SUB-PROJECT 2, TASK 9 — THE POLICY IS HANDED IN, AND THE COMMENT THAT WAS
     // HERE SAID THE OPPOSITE. It read: "REMOTE is the default of ADR-0006, and reopening that turns
     // a coordinated swap from an exception into the normal case." The DEFAULT is unchanged and is
     // still remote; what changed is WHO SAYS SO. The recall at the head of ADR-0006 splits the two
@@ -11121,20 +11128,45 @@ fn run_the_production_graph(journal_path: &Path, layout_path: &Path) -> Result<(
 }
 ```
 
+⛔ **E la chiamata di `main`, che nessun passo toccava (R4-1):** *Trova* la riga
+`    match run_the_production_graph(Path::new(JOURNAL_PATH)) {` **intera** (unica: `grep -c -F` → 1) e *Sostituisci con*:
+
 ```rust
-/// ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE SOCKET NAME IS AN ARGUMENT TOO, FOR THE REASON
-/// THE PATH ALREADY IS. The paragraph above says a fixed path in a shared directory is gotcha #52;
+    match run_the_production_graph(Path::new(JOURNAL_PATH), Path::new(LAYOUT_PATH)) {
+```
+
+⛔ **E il doc di `run_the_production_graph` riceve il proprio richiamo (R4-5, D28, P-48)** — senza, direbbe ancora
+*«SO THAT A TEST CAN CALL IT»* mentre il criterio di chiusura impone che **nessun** banco la chiami. *Trova* la riga
+`/// what to print and what to exit with, and nothing else.` **intera** (unica: `grep -c -F` → 1) e *Sostituisci con*:
+
+```rust
+/// what to print and what to exit with, and nothing else.
+///
+/// ⛔ RECALL OF <data>, SUB-PROJECT 2, TASK 9 — NO TEST CALLS IT ANY MORE, AND THE PARAGRAPH
+/// ABOVE IS DATED. It hands `u64::MAX`, so a probe calling it would HANG rather than fail (D28);
+/// every probe goes through `run_the_graph` with a limit of its own. What this function chooses —
+/// the four production literals and the socket name — is walked by nothing: declared, not
+/// covered. The sentence below about "the test that already existed" describes that day, not this.
+```
+
+```rust
+/// ⛔ RECALL OF <data>, SUB-PROJECT 2, TASK 9 — THE SOCKET NAME IS AN ARGUMENT TOO, FOR THE REASON
+/// THE PATH ALREADY IS. The doc of `run_the_production_graph` says a fixed path in a shared directory is gotcha #52;
 /// a fixed socket NAME is worse, because it is shared across the whole machine rather than a
 /// directory: two probes binding `SOCKET_NAME` at once make the second fail with "already in use",
 /// and `cargo test` runs them at once BY DEFAULT. Every probe hands its own name, built from
 /// `line!()` and the process id, exactly as `private_dir_for_line` does (P-55).
+///
+/// ⚠️ NO PROBE HERE WATCHES A CLIENT DIE: this binary exposes no `Core`, so the wiring of
+/// `ClientGrants::on_disconnect` is held by the bench of task 7 and by the campaign of task 10, on
+/// `Core::attending` (R4-9). In sub-project 2 no ordinary grant exists to give back (D5).
 fn run_the_graph(
     parameters: Parameters,
     journal_path: &Path,
     layout_path: &Path,
     socket_name: &str,
 ) -> Result<(), StartupError> {
-    // ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE JOURNAL HAS A CONSUMER NOW, and the comment
+    // ⛔ RECALL OF <data>, SUB-PROJECT 2, TASK 9 — THE JOURNAL HAS A CONSUMER NOW, and the comment
     // that stood here said it did not: "THE JOURNAL HAS NO CONSUMER IN THIS BINARY YET … The day
     // something journals, it journals into this one." That day is this one. It is still opened
     // first, so a bad path stops the start-up here rather than at the first write.
@@ -11197,7 +11229,41 @@ cargo build --locked -p daemon 2>&1 | tail -40
 ```
 
 ⛔ **Qui `cargo build` è ATTESO ROSSO una volta**, sul modulo `tests`, che ancora chiama le due funzioni con le
-vecchie firme: è il Passo 8.
+vecchie firme (e su `main`, se il punto qui sopra è saltato — R4-1): è il Passo 8. ⚠️ Il modulo `tests` non entra in
+un `cargo build` senza `--tests`, quindi il Passo 7-bis rinfresca il lockfile prima che i banchi compilino.
+
+- [ ] **Passo 7-bis: `interprocess` in `[dev-dependencies]`, in DUE passi — PRIMA del pari (R4-3)**
+
+⛔ **Era il Passo 14, dopo le sonde che lo usano: i `cargo test` dei Passi 9–12 erano rossi per `E0432 unresolved
+import interprocess` (R4-3). Sta qui, prima del pari del Passo 8.**
+
+⛔ **Vincolo globale 6, e il cancello resta rosso se si fa in uno solo.** In `crates/daemon/Cargo.toml`, dopo le
+`[dependencies]`:
+
+```toml
+[dev-dependencies]
+# ⚠️ Needed by the PROBES and not by this crate: the peer of `a_peer_that_says` connects to the
+# local socket from a thread, and only a real peer can say that the core is serving (P-52). A
+# dev-dependency, so it does not enter the shipped graph — and `daemon` is outside the ADR-0031
+# allow-list anyway, which measures `kernel` and `simulator`.
+interprocess = "2.4.4"
+```
+
+⛔ **La versione si COPIA da `crates/platform/Cargo.toml`**, non si sceglie: due versioni della stessa crate nel
+lockfile sono due grafi, e il vincolo 8 dice che le versioni sono quelle misurate.
+
+```bash
+cargo build -p daemon
+git diff --stat Cargo.lock
+git ls-files --eol Cargo.lock
+```
+
+⚠️ **Il primo comando è SENZA `--locked` e senza `--tests`**, ed è l'unico di questo compito senza `--locked`: è così
+che il lockfile si rinfresca (finding **G-5**), e una dev-dependency entra nel lockfile anche senza compilare i banchi —
+che qui non compilano ancora. Se `Cargo.lock` non cambia — perché `interprocess` è già nel grafo da `platform` — va
+bene lo stesso: ciò che conta è che il cancello, che passa `--locked`, resti verde al Passo 16. ⛔ **Dopo cargo
+`Cargo.lock` è `i/lf w/lf`**: cargo riscrive in LF (R4-16, misurato alla revisione del piano intero con `cargo
+1.95.0`), l'indice resta `i/lf`, e questo è ciò che il vincolo 4 difende.
 
 - [ ] **Passo 8: gli aiutanti del banco — il nome per riga, e il PARI che parla**
 
@@ -11211,6 +11277,21 @@ In `crates/daemon/src/main.rs`, dentro `mod tests`, **dopo** `private_dir_for_li
     fn socket_name_for_line(line: u32) -> String {
         format!("harness-daemon-{}-{}", std::process::id(), line)
     }
+
+    /// How many messages the core sends after a valid `Hello` -- the welcome of sequence 1.
+    ///
+    /// ⛔ MEASURED ON THE DISPATCH OF TASK 7, `greet` in `crates/kernel/src/serving.rs`:
+    /// `Accepted`, `Degradation`, `Policy`, `Layout`, `Steps`. The bench of that task pins the same
+    /// number in `the_welcome_is_the_five_messages_of_sequence_one`, so the day the welcome grows,
+    /// that probe goes red before this constant does.
+    const WELCOME: usize = 5;
+
+    /// The turn budget of every probe that has a PEER. ⛔ IT IS WALL CLOCK IN DISGUISE (R4-6): the
+    /// listener lives only inside `run_the_graph`, and the peer connects from a thread the OS
+    /// schedules when it likes, so a short run can end before the peer ever knocks. A hundred
+    /// thousand turns at a zero tick is a fraction of a second of polling, and it is the same
+    /// number the turn probe delivers. Probes WITHOUT a peer keep their own small budgets.
+    const WITH_A_PEER: u64 = 100_001;
 
     /// A peer on the other end of the wire: it connects, says its piece, and hands back what it
     /// heard.
@@ -11227,7 +11308,10 @@ In `crates/daemon/src/main.rs`, dentro `mod tests`, **dopo** `private_dir_for_li
     ///
     /// ⚠️ THE CONNECT IS A `yield_now` LOOP AND NOT A SLEEP, the shape `ipc_contract_real.rs` uses:
     /// the listener exists from `bound()`, which happens before `run()`, but this thread may be
-    /// scheduled first.
+    /// scheduled first. ⛔ AND THE LOOP HAS A WALL-CLOCK DEADLINE (R4-6): the listener lives only
+    /// inside `run_the_graph`, so if the run ends before this thread connects, `connect` fails FOR
+    /// EVER and a bare loop would hang the gate -- the worst red there is. Five seconds is not a
+    /// tuning: it is an order of magnitude above any scheduling delay, and the panic names this line.
     fn a_peer_that_says(
         name: String,
         said: Vec<IpcMessage>,
@@ -11238,10 +11322,18 @@ In `crates/daemon/src/main.rs`, dentro `mod tests`, **dopo** `private_dir_for_li
             use std::io::{Read, Write};
 
             let ns = name.to_ns_name::<GenericNamespaced>().expect("a namespaced name");
+            let started = std::time::Instant::now();
             let mut stream = loop {
                 match Stream::connect(ns.clone()) {
                     Ok(stream) => break stream,
-                    Err(_) => std::thread::yield_now(),
+                    Err(error) => {
+                        assert!(
+                            started.elapsed() < std::time::Duration::from_secs(5),
+                            "the peer could not connect within five seconds ({error:?}): the run \
+                             ended before this thread got to the listener (R4-6)"
+                        );
+                        std::thread::yield_now();
+                    }
                 }
             };
             for message in &said {
@@ -11259,10 +11351,14 @@ In `crates/daemon/src/main.rs`, dentro `mod tests`, **dopo** `private_dir_for_li
                     Err(_) => break,
                 }
                 // ⚠️ `take_frame` AND NOT `unframe`: the buffer ordinarily holds a frame and a half,
-                // which `unframe` refuses by design (P-13). It hands back the body and where the
-                // next one starts.
-                while let Some((body, next)) = framing::take_frame(&buffer) {
-                    heard.push(IpcMessage::decode(body).expect("the core sends what it says"));
+                // which `unframe` refuses by design (P-13). It hands back where the next frame starts,
+                // and `IpcMessage::decode` is given the WHOLE frame, envelope included, because
+                // `decode` unframes what it is given (task 2's bench says so in those words). Measured
+                // at the plan review (R4-2): `decode(body)` answered `Err` on every message.
+                while let Some((_, next)) = framing::take_frame(&buffer) {
+                    heard.push(
+                        IpcMessage::decode(&buffer[..next]).expect("the core sends what it says"),
+                    );
                     buffer.drain(..next);
                 }
             }
@@ -11271,9 +11367,10 @@ In `crates/daemon/src/main.rs`, dentro `mod tests`, **dopo** `private_dir_for_li
     }
 ```
 
-⚠️ **`framing::take_frame` rende il CORPO e l'offset del prossimo**, e `IpcMessage::decode` sbuccia già la busta
-(**P-15**): quale delle due forme sia giusta si **rilegge** dal blocco *Interfaces* del compito 2 e dal corpo di
-`decode`, e se diverge è una voce d'errata.
+✅ **Misurato alla revisione del piano intero (R4-2, R5-3): `take_frame` rende il corpo e l'offset del prossimo, e
+`IpcMessage::decode` sbuccia la busta (**P-15**) — quindi a `decode` va la cornice INTERA, `&buffer[..next]`, e non il
+corpo.** Qui stava *«quale delle due forme sia giusta si rilegge»*, e la forma vecchia, `decode(body)`, panicava al
+primo messaggio in tutte le sonde con un pari.
 
 - [ ] **Passo 9: le cinque sonde che esistono, riscritte alle firme nuove**
 
@@ -11284,7 +11381,7 @@ In `crates/daemon/src/main.rs`, dentro `mod tests`, **dopo** `private_dir_for_li
 compreso, preso dal file**, e *Sostituisci con*:
 
 ```rust
-    /// ⛔ RECALL OF <data>, MILESTONE 2 TASK 9 — THE NAME CHANGED BECAUSE THE CLAIM DID. There is no
+    /// ⛔ RECALL OF <data>, SUB-PROJECT 2, TASK 9 — THE NAME CHANGED BECAUSE THE CLAIM DID. There is no
     /// "completion" any more: the graph now carries `kernel::serving::serve`, a `loop` with no exit,
     /// so a run that ENDED would mean the core stopped serving. What the run terminating proves is
     /// that the turns ran out, which is the delivered limit reaching the executor.
@@ -11299,8 +11396,8 @@ compreso, preso dal file**, e *Sostituisci con*:
     /// tick would cost tick × turns of wall clock inside `bash scripts/gate.sh`. A deadline already
     /// reached makes the activity READY instead (`Sleep::until`'s own rule), so the turn is polling
     /// and the ceiling costs milliseconds. ⚠️ What the zero tick does NOT buy is that
-    /// `Reactor::wait_until` is reached on this graph; that half is milestone 10's, where the clock
-    /// is virtual.
+    /// `Reactor::wait_until` is reached on this graph; that half is the sub-project 2 campaign's
+    /// (task 10), where the clock is virtual.
     ///
     /// ⚠️ THE RESIDUAL OF THIS PROBE GREW, and it is the same residual said wider: it did not cover
     /// the VALUE of `EXECUTOR_TURN_LIMIT`, and now it does not cover the wiring of
@@ -11311,7 +11408,7 @@ compreso, preso dal file**, e *Sostituisci con*:
         let dir = private_dir_for_line(line!());
 
         let outcome = run_the_graph(
-            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::ZERO),
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &dir.join("layout.redb"),
             &socket_name_for_line(line!()),
@@ -11324,8 +11421,9 @@ compreso, preso dal file**, e *Sostituisci con*:
     }
 ```
 
-⚠️ **`Millis::ZERO` si RILEGGE**: se la costante non esiste, si scrive `Millis::new(0)` e si registra la
-divergenza — `grep -n 'ZERO' crates/kernel/src/time.rs`.
+⚠️ **`Millis::new(0)`, e non una costante `ZERO`**: `Millis::ZERO` non esiste — `grep -n 'ZERO'
+crates/kernel/src/time.rs` rende nulla, e `crates/platform/src/reactor.rs` ne registra la rimozione come elemento senza
+chiamante — misurato alla revisione del piano intero (R4-4, R3-15). Qui stava una condizionale su un fatto misurabile.
 
 **(b)** `the_production_graph_leaves_its_journal_on_the_disk`: stessa sostituzione della chiamata e dell'esito, il
 doc invariato **più** una riga di richiamo che dice che l'esito atteso è cambiato per la ragione di (a).
@@ -11347,7 +11445,8 @@ doc invariato **più** una riga di richiamo che dice che l'esito atteso è cambi
 ⚠️ **E la riga `arbiter.policy().name() == "remote"` di `the_two_reserved_quotas_…` resta**, ma il suo doc va
 letto: diceva che *«the composition root runs the DEFAULT policy of ADR-0006»*. Adesso l'aiutante gliela **passa**,
 quindi la sonda tiene ciò che l'aiutante sceglie e non più ciò che la radice sceglie. ⛔ **Il richiamo lo dice, e
-la cosa che quella riga teneva si sposta** alla sonda del Passo 13, che legge il default dove adesso vive.
+la cosa che quella riga teneva si sposta** alla sonda del Passo 12, `the_policy_in_the_journal_is_the_one_the_arbiter_starts_on`,
+che legge il default dove adesso vive (⚠️ qui stava «Passo 13», che è `Disconnected` — R4-10).
 
 ```bash
 cargo test --locked -p daemon 2>&1 | tail -20
@@ -11362,9 +11461,10 @@ Passo 1.
     /// ⛔ WHAT THIS BUYS THAT THE ASSEMBLY PROBE DOES NOT: that the core is STILL SERVING when the
     /// turns run out. The assembly probe reads `Err(TurnLimitReached)`, and that value comes back at
     /// ANY limit because `serve` never finishes — so on its own it cannot tell a hundred thousand
-    /// turns from one. ✅ MEASURED, not feared: with the limit cut to `1` and everything else
-    /// identical, the peer hands back an EMPTY vector and `run` answers exactly the same
-    /// `Err(TurnLimitReached)` — <data>. That measurement is what makes the assertion below an
+    /// turns from none. ✅ MEASURED, not feared: with the limit cut to `0` and no peer at all, `run`
+    /// answers exactly the same `Err(TurnLimitReached)` without one turn of serving — the executor
+    /// refuses before the first poll (R4-7) — <data>. What separates the two runs is what the PEER
+    /// heard, never the value of `run`, and that measurement is what makes the assertion below an
     /// oracle rather than a restatement of the loop.
     ///
     /// ⛔ AND IT IS THE PROBE §5 ASKS FOR — "the graph with the GUI stays alive past a hundred
@@ -11384,7 +11484,7 @@ Passo 1.
         let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 1);
 
         let outcome = run_the_graph(
-            Parameters::new(100_001, TOTAL_VRAM, ARBITER_ID, Millis::ZERO),
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &dir.join("layout.redb"),
             &name,
@@ -11440,7 +11540,7 @@ Passo 1.
             WELCOME + 1,
         );
         let _ = run_the_graph(
-            Parameters::new(600, TOTAL_VRAM, ARBITER_ID, Millis::ZERO),
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &journal,
             &layout,
             &first,
@@ -11456,7 +11556,7 @@ Passo 1.
         let second = socket_name_for_line(line!());
         let reader = a_peer_that_says(second.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
         let _ = run_the_graph(
-            Parameters::new(600, TOTAL_VRAM, ARBITER_ID, Millis::ZERO),
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &journal,
             &layout,
             &second,
@@ -11471,12 +11571,13 @@ Passo 1.
     }
 ```
 
-⛔ **`WELCOME` è una costante di questo banco e si MISURA leggendo il compito 7**, non si indovina: è quanti
-messaggi il core manda dopo un `Hello` valido — `Accepted`, `Degradation`, `Policy`, `Layout`, e la lista dei
-passi, secondo la decisione **22** e la §3 della stella polare. Si conta sul dispaccio del compito 7 e si scrive
-accanto alla costante **col comando che l'ha contata**.
+⛔ **`WELCOME` è la costante del Passo 8, e il suo valore si RILEGGE sul dispaccio del compito 7** — `greet` in
+`crates/kernel/src/serving.rs`: `Accepted`, `Degradation`, `Policy`, `Layout` e la lista dei passi, secondo la
+decisione **22** e la §3 della stella polare — e sul banco del 7, che lo appunta in
+`the_welcome_is_the_five_messages_of_sequence_one`. Se diverge, voce d'errata. ⚠️ Qui stava *«si scrive accanto
+alla costante col comando che l'ha contata»*, e nessun passo la dettava (2026-09-15).
 
-- [ ] **Passo 12: le tre sonde delle decisioni — l'archivio chiuso, la policy riletta, il secondo core**
+- [ ] **Passo 12: le quattro sonde delle tre decisioni — l'archivio chiuso, la policy riletta, il secondo core**
 
 ```rust
     /// ⛔ DECISION 35, THE WHOLE OF IT: an archive that will not open must NOT stop the start-up, and
@@ -11487,14 +11588,69 @@ accanto alla costante **col comando che l'ha contata**.
     /// `a_journal_that_cannot_be_opened_stops_the_start_up` provokes its own — one road, two
     /// opposite outcomes, which is what makes the pair say something.
     #[test]
-    fn a_layout_archive_that_will_not_open_lets_the_core_start() { /* … */ }
+    fn a_layout_archive_that_will_not_open_lets_the_core_start() {
+        let dir = private_dir_for_line(line!());
+        let name = socket_name_for_line(line!());
+        // A directory that is not there: `FileCustody::open` fails, and `MaybeCustody` swallows it.
+        let broken = dir.join("not-there").join("layout.redb");
+
+        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
+        let outcome = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &dir.join("journal.redb"),
+            &broken,
+            &name,
+        );
+
+        match outcome {
+            Err(StartupError::Run(RunError::TurnLimitReached)) => {}
+            other => panic!("a layout archive that will not open must not stop the start-up: {other:?}"),
+        }
+        let heard = peer.join().expect("the peer thread does not panic");
+        assert!(
+            heard.contains(&IpcMessage::Layout(LayoutState::Unavailable)),
+            "the welcome must say the layout is UNAVAILABLE, not `Nothing`: {heard:?}"
+        );
+    }
 
     /// ⛔ THE OTHER DIRECTION OF `MaybeCustody`, and without it a wrapper that ALWAYS refused would
     /// pass the probe above: the archive that opens must really delegate. ✅ Held by the restart
-    /// probe of step 11, which is why this one asserts the REFUSING half only — said here rather
+    /// probe of step 11, which is why this one asserts the REFUSING half only -- said here rather
     /// than left for a reviewer to wonder about.
     #[test]
-    fn a_core_started_on_a_broken_archive_answers_unavailable_to_every_save() { /* … */ }
+    fn a_core_started_on_a_broken_archive_answers_unavailable_to_every_save() {
+        let dir = private_dir_for_line(line!());
+        let name = socket_name_for_line(line!());
+        let broken = dir.join("not-there").join("layout.redb");
+
+        let peer = a_peer_that_says(
+            name.clone(),
+            vec![
+                IpcMessage::Hello(build_stamp()),
+                IpcMessage::SaveLayout(b"{\"grid\":1}".to_vec()),
+            ],
+            WELCOME + 1,
+        );
+        let _ = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &dir.join("journal.redb"),
+            &broken,
+            &name,
+        );
+
+        let heard = peer.join().expect("the peer thread does not panic");
+        assert_eq!(
+            heard.get(WELCOME),
+            Some(&IpcMessage::Layout(LayoutState::Unavailable)),
+            "the answer to a save on a broken archive is UNAVAILABLE, never a package: {heard:?}"
+        );
+        assert!(
+            !heard
+                .iter()
+                .any(|said| matches!(said, IpcMessage::Layout(LayoutState::Package(_)))),
+            "and no package ever comes back: {heard:?}"
+        );
+    }
 
     /// ⛔ THE `unwrap_or` OF D27, MEASURED IN BOTH DIRECTIONS, and the two are different claims.
     /// Empty journal → the DEFAULT of ADR-0006, which is remote and lives HERE as a literal; a
@@ -11506,75 +11662,158 @@ accanto alla costante **col comando che l'ha contata**.
     /// hand: a hand-built record would be this probe agreeing with itself about a format, and the
     /// pair `set_policy`/`policy_now` is one artefact.
     #[test]
-    fn the_policy_in_the_journal_is_the_one_the_arbiter_starts_on() { /* … */ }
+    fn the_policy_in_the_journal_is_the_one_the_arbiter_starts_on() {
+        let dir = private_dir_for_line(line!());
+        let journal = dir.join("journal.redb");
+        let layout = dir.join("layout.redb");
+
+        // ⛔ THE FIRST DIRECTION: an EMPTY journal, and the welcome names the default of ADR-0006.
+        let first = socket_name_for_line(line!());
+        let peer = a_peer_that_says(first.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
+        let _ = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &journal,
+            &layout,
+            &first,
+        );
+        let heard = peer.join().expect("the peer thread does not panic");
+        assert!(
+            heard.iter().any(|said| matches!(
+                said,
+                IpcMessage::Policy(report) if report.policy == PolicyName::Remote
+            )),
+            "an empty journal starts on the default, which is remote: {heard:?}"
+        );
+
+        // ⛔ THE SECOND DIRECTION: a transition WRITTEN THROUGH `set_policy` on the real archive,
+        // between the two runs, and the next start names it. The arbiter here is a bare one: what
+        // is under test is the pair `set_policy`/`policy_now` on the archive, not the two quotas.
+        {
+            let mut archive = FileJournal::open(&journal).expect("the journal opens between runs");
+            let mut arbiter = Arbiter::new(
+                Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+                VramPolicy::Remote(RemotePolicy),
+            );
+            arbiter
+                .set_policy(VramPolicy::Local(LocalPolicy), StepId::new(1_000), &mut archive)
+                .expect("the transition is written");
+        }
+
+        let second = socket_name_for_line(line!());
+        let peer = a_peer_that_says(second.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
+        let _ = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &journal,
+            &layout,
+            &second,
+        );
+        let heard = peer.join().expect("the peer thread does not panic");
+        assert!(
+            heard.iter().any(|said| matches!(
+                said,
+                IpcMessage::Policy(report) if report.policy == PolicyName::Local
+            )),
+            "a restarted core starts on the policy the journal holds, not on the default: {heard:?}"
+        );
+    }
 
     /// ⛔ THE SECOND CORE. `StartupError::Ipc` has exactly one ordinary cause, and a variant with no
     /// probe is a claim nobody checks: two graphs on one socket name, and the second must stop
     /// instead of starting beside the first.
+    ///
+    /// ⚠️ NO THREAD AND NO RACE (R4-8): the first core is reduced to the one thing that matters, a
+    /// listener bound to the name and held for the whole probe. On Windows `interprocess` creates
+    /// the first instance with `FILE_FLAG_FIRST_PIPE_INSTANCE`, so a second `bound` on the name is
+    /// refused; on Linux the second bind is `EADDRINUSE`. Read in the crate's source, not assumed.
     #[test]
-    fn a_second_core_on_the_same_channel_stops_the_start_up() { /* … */ }
+    fn a_second_core_on_the_same_channel_stops_the_start_up() {
+        let dir = private_dir_for_line(line!());
+        let name = socket_name_for_line(line!());
+        let _first = LocalSocketIpc::bound(&name, Progressive::starting_at(0), MAX_BODY)
+            .expect("the first listener binds");
+
+        let outcome = run_the_graph(
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &dir.join("journal.redb"),
+            &dir.join("layout.redb"),
+            &name,
+        );
+
+        match outcome {
+            Err(StartupError::Ipc(_)) => {}
+            other => panic!("a second core on the same channel must stop at the bind: {other:?}"),
+        }
+    }
 ```
 
-⛔ **I quattro corpi si scrivono al momento, sulle firme che il Passo 1 ha misurato**, e ciascuno segue la forma
-delle sonde sopra: percorso e nome propri, `run_the_graph` con limite finito e tick nullo, un pari quando serve
-un'asserzione sul filo, `join` **dopo** la corsa. ⚠️ **Non sono segnaposto:** ciò che va deciso eseguendo è il
-corpo, non la claim — e un corpo vuoto è un segnaposto, che la revisione del piano intero cerca.
+✅ **I quattro corpi sono DETTATI dal 2026-09-15 (R4-8, R9a-2): erano `/* … */`, cioè la specie «`…` dentro un blocco
+di codice» che la revisione del piano intero cerca, per definizione.** Ciascuno segue la forma delle sonde sopra:
+percorso e nome propri, `run_the_graph` con limite finito e tick nullo, un pari quando serve un'asserzione sul filo,
+`join` **dopo** la corsa; il secondo core si prova **senza** thread e senza gara, tenendo per mano un
+`LocalSocketIpc::bound`. ⚠️ Gli `use` del modulo `tests` crescono di `LocalPolicy`, `StepId` e `PolicyName`, e
+`cargo build` li detta uno per uno.
 
 ```bash
 cargo test --locked -p daemon 2>&1 | tail -20
 ```
 
-- [ ] **Passo 13: `Disconnected`, il cablaggio**
+- [ ] **Passo 13: `Disconnected` — coperto dal banco del 7 e dalla campagna del 10, e detto (R4-9)**
 
 La §8 chiede *«la GUI che muore con una concessione ordinaria → `on_disconnect`, già provato in `client.rs`, più
-una sonda sul cablaggio»*. ⛔ **Nel 2 nessuna concessione ordinaria esiste** — **D5**, `Request` non è servita —
-quindi ciò che questa sonda può tenere è **solo la metà del cablaggio**: il pari esce, e il core lo toglie dai
-propri libri invece di continuare a interrogarlo.
+una sonda sul cablaggio»*. ⛔ **Nel daemon quella sonda NON si scrive, e il perché è misurato (R4-9):** nel 2 nessuna
+concessione ordinaria esiste — **D5**, `Request` non è servita — e da fuori del binario **non c'è oracolo**:
+`run_the_graph` rende `Result<(), StartupError>`, `Core` resta dentro, e «tolto dai libri» non è osservabile. Chi lo
+osserva è il banco del **7** (`a_client_that_dies_gives_its_grant_back`, su `Core::attending`) e la campagna del
+**10** (`!attending.contains(&GUI)`). Qui stava *«ciò che questa sonda può tenere è solo la metà del cablaggio»* —
+senza nome, corpo né asserzione: un passo che non dettava nulla. Ciò che resta è la riga di doc sopra
+`run_the_graph`, dettata al Passo 7.
 
-⚠️ **La metà che NON tiene si dichiara** accanto alla sonda, col proprio innesco: la concessione ordinaria
-appesa è del **7**, il pilastro 3D, che è lo stesso chiusore della riga 27 del Traguardo 6.
+⚠️ **La metà che NON tiene nessuno si dichiara** nel richiamo del Passo 15 (c), col proprio innesco: la concessione
+ordinaria appesa è del pilastro **3D**, che è lo stesso chiusore della riga 27 del Traguardo 6.
 
-- [ ] **Passo 14: `interprocess` in `[dev-dependencies]`, in DUE passi**
+- [ ] **Passo 14: il processore a riposo, MISURATO — decisione 41 del proprietario (D84)**
 
-⛔ **Vincolo globale 6, e il cancello resta rosso se si fa in uno solo.** In `crates/daemon/Cargo.toml`, dopo le
-`[dependencies]`:
+⛔ **È una promessa al proprietario che nessun compito manteneva** (R9a-5, R9b-7): *«il piano misura il processore a
+riposo senza soglia»*. Si misura **qui**, col grafo di produzione — il tick vero di `GUI_TICK`, nessun client — per
+sessanta secondi, e il numero **non ha soglia**: si registra, non si giudica. ⚠️ **Il binario scrive `journal.redb` e
+`layout.redb` nella cartella corrente**, e nessuna riga di `.gitignore` li copre: si lancia da una cartella **fuori dal
+repository**, mai dalla radice. Su Windows, che è dove il proprietario lavora (ADR-0002), da PowerShell nella radice:
 
-```toml
-[dev-dependencies]
-# ⚠️ Needed by the PROBES and not by this crate: the peer of `a_peer_that_says` connects to the
-# local socket from a thread, and only a real peer can say that the core is serving (P-52). A
-# dev-dependency, so it does not enter the shipped graph — and `daemon` is outside the ADR-0031
-# allow-list anyway, which measures `kernel` and `simulator`.
-interprocess = "2.4.4"
+```powershell
+cargo build --locked -p daemon
+$where = New-Item -ItemType Directory -Force "$env:TEMP\harness-cpu-at-rest"
+$p = Start-Process -PassThru -WorkingDirectory $where -FilePath (Resolve-Path .\target\debug\daemon.exe)
+Start-Sleep -Seconds 3
+$a = $p.TotalProcessorTime.TotalSeconds; Start-Sleep -Seconds 60; $p.Refresh(); $b = $p.TotalProcessorTime.TotalSeconds
+'{0:N2} % of one core at rest over 60 s, GUI_TICK 16 ms, {1}' -f (($b - $a) / 60 * 100), (Get-Date -Format yyyy-MM-dd)
+Stop-Process $p; Remove-Item -Recurse -Force $where
 ```
 
-⛔ **La versione si COPIA da `crates/platform/Cargo.toml`**, non si sceglie: due versioni della stessa crate nel
-lockfile sono due grafi, e il vincolo 8 dice che le versioni sono quelle misurate.
+Atteso: **un numero**, senza soglia, che si scrive **nel messaggio di commit** di questo compito con la data e il
+comando, e che il compito **17** porta in `riferimenti.md` (D84). ⚠️ Su Linux si legge `ps -o %cpu= -p <pid>`; il
+numero che vale è quello preso sulla macchina del proprietario.
 
-```bash
-cargo build -p daemon --tests
-git diff --stat Cargo.lock
-bash scripts/gate.sh
-```
-
-⚠️ **Il primo comando è SENZA `--locked`**, ed è l'unico di questo compito: è così che il lockfile si rinfresca
-(finding **G-5**). Se `Cargo.lock` non cambia — perché `interprocess` è già nel grafo da `platform` — va bene
-lo stesso: ciò che conta è che il cancello, che passa `--locked`, resti verde.
-
-- [ ] **Passo 15: i due richiami datati nella §5 del disegno del 2**
+- [ ] **Passo 15: i richiami datati nel disegno del 2 — due nella §5, uno nella §8**
 
 `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF** — **P-47**).
 
-**(a)** In coda alla cella *«il limite di giri»*:
+**(a)** In coda alla cella *«La prova»* della riga *«il limite di giri»*, su una riga (R4-18):
 
 ```
 ✅ **RICHIAMO DEL <data>, compito 9 del piano:** `u64::MAX` è **scritto**, e la sonda che questa riga detta è **due** — il limite consegnato che arriva all'esecutore, e un **pari** che riceve la propria accoglienza, senza il quale un `loop` senza uscita rende `TurnLimitReached` a qualunque limite e la sonda è vacua (**P-52**). ⛔ **E il tick della sonda è NULLO, non quello di produzione:** con il `SystemReactor` vero ogni giro è un'attesa, quindi il tick di produzione costerebbe tick × giri di tempo di parete dentro il cancello (**P-51**, **D28**). Le due sonde che raggiungevano `run()` **si piantavano** e non diventavano rosse: passano per `run_the_graph`, e `run_the_production_graph` resta col proprio **residuo dichiarato**.
 ```
 
-**(b)** In coda alla cella *«lo spegnimento»*:
+**(b)** In coda alla cella *«La prova»* della riga *«lo spegnimento»*, su una riga:
 
 ```
 ✅ **RICHIAMO DEL <data>, compito 9 del piano:** con `EXECUTOR_TURN_LIMIT` a `u64::MAX` la guardia contro un'attività che gira a vuoto **non esiste più in produzione** — restava implicita nel limite finito. È il debito che questa riga già dichiara, e il suo chiusore resta il **10**, col watchdog dell'OS; qui è scritto anche **accanto alla costante**, dove chi la legge lo trova.
+```
+
+**(c)** Nella **§8**, in coda alla cella *«La prova»* della riga *«il limite di giri e `Disconnected` (§5)»* — l'ancora
+è la riga intera che comincia con `| il limite di giri e \`Disconnected\` (§5) |` — su una riga (R4-9, R9a-10, **D88**):
+
+```
+✅ **RICHIAMO DEL <data>, compito 9 del piano (D5, R4-9):** la metà *«la GUI che muore con una concessione ordinaria → `on_disconnect`»* **non è provata nel daemon**, e non può esserlo: nel 2 nessuna concessione ordinaria esiste (D5), e da fuori del binario `Core` non si osserva. Il cablaggio lo tengono il banco del compito 7 (`Core::attending`) e la campagna del 10. La concessione ordinaria appesa resta del pilastro 3D, con l'innesco della riga 27 del Traguardo 6.
 ```
 
 - [ ] **Passo 16: i fine-riga, il cancello, la posizione, il commit**
@@ -11588,7 +11827,9 @@ bash scripts/check-docs.sh
 git status --porcelain
 ```
 
-⛔ **I fine-riga devono essere IDENTICI a quelli del Passo 1**, file per file.
+⛔ **I fine-riga devono essere IDENTICI a quelli del Passo 1**, file per file — **tranne `Cargo.lock`**, che cargo
+riscrive in **LF** al Passo 7-bis (`i/lf w/lf`; R4-16, misurato alla revisione del piano intero con `cargo 1.95.0`):
+l'indice non cambia, ed è l'indice che il vincolo 4 difende.
 ⛔ **`gate-deps.sh` verde**: `interprocess` entra in `daemon`, che **non** è vincolata da ADR-0031 — un rosso lì
 significherebbe che è entrata in `kernel` o in `simulator` di rimbalzo (vincolo globale 9).
 
@@ -11611,13 +11852,15 @@ cargo test --locked -p daemon 2>&1 | tail -5
 ```
 
 Atteso: le cinque costanti ci sono, `EXECUTOR_TURN_LIMIT` è `u64::MAX`; le sonde sono cresciute rispetto al Passo
-1 di quante ne aggiungono i Passi 10–13; `serve`, `policy_now`, `MaybeCustody` e `SharedClock` sono tutti cablati
+1 di quante ne aggiungono i Passi 10–12 (R4-9); `serve`, `policy_now`, `MaybeCustody` e `SharedClock` sono tutti cablati
 in `run_the_graph`; ⛔ **`run_the_production_graph` ha UN solo chiamante, `main`** — ed è il residuo che **D28**
-dichiara, non una svista: se ne comparisse un secondo dentro `mod tests`, quella prova **si pianterebbe**.
+dichiara, non una svista: se ne comparisse un secondo dentro `mod tests`, quella prova **si pianterebbe**; e il
+**numero del Passo 14** sta nel messaggio di commit, con la data e senza soglia (D84).
 
 📌 **E il `SOCKET_NAME` è il pezzo che questo compito consegna a qualcosa che ancora non c'è:** ad aprirlo dovrà
-essere il **guscio**, che questo piano **non costruisce** — il 12 lega un nome suo, il 13 e il 14 portano una SPA
-che non tocca socket (**P-53**, **D31**). Nessun controllo accoppia i due capi finché il secondo non esiste, ed è
+essere il **guscio**, che questo piano **non costruisce** — il 12 lega lo **stesso** nome come copia, e il suo criterio di
+chiusura confronta i due letterali (**D45**; qui stava «un nome suo», R4-11); il 13 e il 14 portano una SPA che non
+tocca socket (**P-53**, **D31**). Nessun controllo accoppia i due capi finché il secondo non esiste, ed è
 una voce aperta dichiarata e non un compito da nominare.
 
 ---

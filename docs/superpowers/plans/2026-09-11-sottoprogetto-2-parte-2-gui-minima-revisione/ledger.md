@@ -3,7 +3,7 @@
 Fonte: 9 rapporti su 11 (R1 parziale: compiti 1–2; R3 parziale: compito 7; R5 completo: 11–12; R2, R4, R7, R9a, R9b, R10 completi).
 Mancano: compito 13 (R6), compiti 15–17 (R8), compito 3 (R1), compito 8 (R3) — perimetri da rivedere ancora.
 Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stati rimisurati anche da lui.
-**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compito 11 applicato (✅), con una riga R5-11 nuova sul 12.
+**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compiti 11 e 12 applicati (✅).
 
 ## Le decisioni nuove (righe D da scrivere)
 
@@ -170,25 +170,28 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - Attrezzo: `patch_c11.py` accanto a questo file (tocca anche P-2 e questo registro)
 
 ### Compito 12
-- R5-11 `git add gui/fake-core` prima delle mutazioni del Passo 9 — **in scena, non `-N`**: la misura è nella riga R5-11 del compito 11 ⬜
-- R5-2/R3-16 `let clock = SharedClock(&reactor);` prima dell'esecutore; riga «load-bearing» ⬜
-- R5-3 `decode(&buffer[..next])` ⬜
-- R5-4 la parola dopo l'accoglienza (pari che tiene il `Sender`, manda a `heard.len() >= 5`); `degrade` sulla seconda `Degradation` ⬜
-- R5-5 criterio sulla metà non-test + direzione opposta ⬜
-- R5-6 canale tenuto vivo nella sonda negativa; commento; G1 atteso «timeout» ⬜
-- R5-7 accoglienza: asserire `report.allocated == Mib::new(1_024 + 768)` e `total` ⬜
-- R5-8/R9a-1 Passo nuovo: richiamo D41 in §7 (ancora «senza copiarla: dove spostarla lo decide il piano»), criterio `grep -c 'D41'` ⬜
-- R5-10 (D83) `cp Cargo.lock`; criterio versioni comuni ⬜
-- R5-12 `build_stamp` dentro `mod tests` ⬜
-- R5-14 Consumes riscritto dal codice ⬜
-- R5-16 (D88) richiami §7 «la disposizione»/«la lista dei passi» → provate nel 7 ⬜
-- R5-17 `time` a freddo e a caldo; il numero al 15 nel commento di `gate-gui.sh` ⬜
-- R5-19 due `python -` con `newline=""` e `assert` per `Cargo.toml` e `.gitignore` ⬜
-- R5-20 `grep -rl … | wc -l` → 4 ⬜
-- R5-21 P-63 comando `grep -n 'non si carica da'` ⬜
-- R5-22 «under the root's rust-toolchain.toml» ⬜
-- R3-18 (D88) richiamo D22 in §7 ⬜
-- D76 ⬜
+- R5-11 `git add Cargo.toml .gitignore crates/kernel/src/serving.rs gui/fake-core` in testa al Passo 9, **in scena e non `-N`** (la misura nella riga R5-11 del compito 11), col `grep -c target/` → 0 come seconda direzione di D38; il criterio delle mutazioni lo nomina ✅
+- R5-2/R3-16 `let clock = SharedClock(&reactor);` prima dell'esecutore, `serve(&core, &clock, …)` e `the_faucet(&core, &clock, …)`, il commento «LOAD-BEARING» con E0716/E0597 (misurato dal revisore col modello compilato) ✅
+- R5-3 `IpcMessage::decode(&buffer[..next])` nel pari, col commento del 9 (rimisurato: `decode` comincia con `framing::unframe`) ✅
+- R5-4 il pari legge fino a un **predicato** (`type Until = fn(&[IpcMessage]) -> bool`) e digita la parola **dopo** l'accoglienza tenendo lui il `Sender` (`then_types: Option<(Sender<String>, &'static str)>`, a `heard.len() >= WELCOME`); `degrade` asserisce `[false, true]` sulle due `Degradation`; `verdict` idem ✅
+- R5-5 criterio sulla metà non-test con l'`awk` fino a `#[cfg(test)]` → 0, e la direzione opposta sul file intero → più di zero ✅
+- R5-6 `a_keyboard()` rende anche il `Sender`; la sonda negativa lo tiene vivo (`drop(hand)` dopo la corsa) e il commento dice che `Disconnected` è il caso **facile**; G1 resta «timeout» e dice perché morde ✅
+- R5-7 accoglienza: `report.allocated == Mib::new(1_024 + 768)` e `report.total == TOTAL_VRAM` (`PolicyReport` è `Copy`); G2 dice che sono queste righe a coglierlo ✅
+- R5-8/R9a-1 **Passo 9-bis** con la tabella delle ancore: il richiamo D41+P-68 (e D22, R3-18) in coda all'ultima riga del capoverso 🔶 dedotto (`grep -c -F` → 1 misurato oggi sulla riga 375); criterio `grep -c 'RICHIAMO DEL <data>, compito 12'` → 3; Files riscritto; via la data fissa `2026-09-14` (D75) ✅
+- R5-10 (D83) `cp Cargo.lock gui/fake-core/Cargo.lock` prima del primo `cargo build`, il perché (rimisurato: la radice appunta `redb = "4.1.0"` con un caret, il lockfile 4.1.0), lo script del Passo 10 che confronta le crate comuni → `[]`, e il criterio ✅
+- R5-12 `use kernel::wire::ipc::build_stamp;` dentro `mod tests`, tolto dall'`use` di testa (usato solo dalle sonde: verificato sul modello) ✅
+- R5-14 Consumes riscritto dagli `use` del Passo 5: `take_frame` dal 2; `build_stamp`, `stamp_set`, `BuildStamp`, `Call` dal 3; da oggi anche `Parameters`, `Reactor`, `WallTime`, `Verdict`; via `Grant` e `Detail` ✅
+- R5-16 (D88) i due richiami sulle righe «la disposizione» e «la lista dei passi» della §7 nel Passo 9-bis → provate nel kernel dal compito 7 ✅
+- R5-17 `cargo clean` + due `time (… cargo test --locked)` nel Passo 10, e l'Atteso che manda la cifra al 15 con la data ✅
+- R5-19 due `python - <<'EOF'` con `newline=""` e `assert` per `Cargo.toml` e `.gitignore`, `git ls-files --eol` e `git diff --stat` dopo ✅
+- R5-20 `grep -rl … | wc -l` → 4, e il finto → 1 ✅
+- R5-21 P-63: `grep -n 'non si carica da' docs/riferimenti.md` (rimisurato: la forma vecchia → 0 righe, la nuova → 1) ✅
+- R5-22 «a TOOL with a lockfile of its own, under the root's `rust-toolchain.toml`» nel commento dettato e nello script (rimisurato: `rustup show active-toolchain` da una sottocartella → «overridden by … rust-toolchain.toml») ✅
+- R3-18 (D88) D22 dentro il richiamo del capoverso 🔶 (la forma «o nel richiamo D41 del 12» che il rilievo ammetteva) ✅
+- D76 «sub-project 2 design» ×2, «the sub-project 2 DST campaign (task 10)», «the sub-project 2 campaign (task 10)», «in this sub-project (ADR-0007)» ✅
+- **Coerenza col 9 corretto** (decisione 72, non era nel registro): il pari del 12 è dichiarato «nella forma del 9» ma copiato **prima** di R4-6 e R4-7 — entrano la scadenza di parete di 5 s sul `connect` e il budget `WITH_A_PEER` (100_001) al posto di 4 000/8 000, con `WELCOME` = 5 riletto sul 7; la sonda dell'accoglienza mappa i **primi cinque** (`take(WELCOME)`), perché una `read` può portare anche il primo `Token` ✅
+- ⚠️ **Non compilato:** il modulo delle sonde è riscritto sul modello letto, non eseguito (il compito 2 e il 7 non esistono ancora nel repo): chi esegue il 12 lo compila per primo e ogni rosso è una voce d'errata, come dice «Come si esegue» — il revisore R5 aveva compilato la forma vecchia
+- Attrezzo: `patch_c12.py` accanto a questo file (tocca anche P-63 e questo registro)
 
 ### Compito 13 — NON RIVISTO IN PROFONDITÀ (R6 caduto): resta da fare
 - R9b-11 (D80) LayoutPack per vista ⬜ · R9b-12 (D81) ⬜ · R10-9 Files `generate-views.test.ts` ⬜ · R10-10 Produces: `BigTab`, `buildStamp`, `Phase` ⬜ · R7-7 (chiavi `modules.*` sono del 13: correggere il 15) ⬜ · D75 `2026-09-15` → `<data>` ⬜

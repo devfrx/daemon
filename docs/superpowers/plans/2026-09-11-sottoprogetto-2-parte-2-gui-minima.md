@@ -1614,8 +1614,10 @@ L'unico lettore TypeScript del formato è `bincode-ts` 1.0.0, e **non si carica 
 d'ingresso**. Non è una deduzione: è già misurato in casa, dentro M-11.
 
 ```bash
-grep -n 'non si carica da .nessuno. dei due punti' docs/riferimenti.md
+grep -n 'non si carica da' docs/riferimenti.md
 ```
+
+(⚠️ qui stava `.nessuno.`, che non copre il **nessuno** in grassetto della riga — R5-21, 2026-09-15: il comando rendeva zero righe.)
 
 La causa, per esteso in quella riga: il pacchetto dichiara `"type": "module"` e spedisce il build **CJS con
 estensione `.js`**; il build **ESM** importa `"./utils"` **senza estensione** e `"."`, cioè una directory. Sono
@@ -13709,17 +13711,17 @@ git push
 - Create: `gui/fake-core/Cargo.lock` (**LF**) — **si committa**, vincolo globale 7, e ⛔ **nello stesso commit del manifesto**
   quando `interprocess` entra fra le `[dev-dependencies]` (vincolo globale 6, finding **G-5**)
 - Create: `gui/fake-core/src/main.rs` (**LF**) — il cablaggio, il rubinetto, e le sonde in fondo (decisione 48)
-- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**`i/lf w/lf`**) — **un** richiamo datato nella §7 (**D41**)
-- Read: la **§7 del 2 per intero**; la riga *«il core finto nel cancello»* e quella *«il core finto (§7)»* della **§8**; il blocco *Interfaces* dei compiti **1**, **2**, **3**, **5** e **7** **come stanno adesso** — ⛔ **gli accessori di `Core` sono CINQUE** (**P-56**) — e `MAX_BODY` e `SOCKET_NAME` dal compito **9** (**D9**, **D31**, **D45**); `crates/daemon/src/main.rs` **per intero**, che è la forma da riscrivere
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**`i/lf w/lf`**) — ⛔ **tre richiami datati nella §7, D88** (R5-8, R9a-1, R5-16, R3-18): il capoverso 🔶 dedotto (**D41** e **P-68** sull'arbitro riscritto, **D22** sul valore di `Accepted`) e le righe *«la disposizione»* e *«la lista dei passi»*, provate nel kernel dal compito 7
+- Read: la **§7 del 2 per intero**; la riga *«il core finto nel cancello»* e quella *«il core finto (§7)»* della **§8**; il blocco *Interfaces* dei compiti **1**, **2**, **3**, **5** e **7** **come stanno adesso** — ⛔ **gli accessori di `Core` sono CINQUE** (**P-56**) — e `MAX_BODY` e `SOCKET_NAME` dal compito **9** (**D9**, **D31**, **D45**); `crates/daemon/src/main.rs` **per intero**, che è la forma da riscrivere — e **D83** (il lockfile seminato dalla radice), **D88**
 - ⛔ **NON si legge**: la §6a, la §1 e la §2 della stella polare. Qui non nasce niente che si veda
 
 **Interfaces:**
 - Consumes, dal **compito 1**: `kernel::numbering::Progressive::starting_at`
-- Consumes, dal **compito 2**: `platform::ipc::LocalSocketIpc::bound(name, numbers, max_body)`
-- Consumes, dal **compito 3**: `kernel::wire::ipc::{IpcMessage, Provenance}`
+- Consumes, dal **compito 2**: `platform::ipc::LocalSocketIpc::bound(name, numbers, max_body)`, e `kernel::framing::take_frame` nel pari delle sonde
+- Consumes, dal **compito 3**: `kernel::wire::ipc::{IpcMessage, Provenance}`; nelle sonde anche `build_stamp`, `stamp_set`, `BuildStamp` e `Call`
 - Consumes, dal **compito 5**: `simulator::custody::MemoryCustody::new()`
 - Consumes, dal **compito 7**: `kernel::serving::{Core, serve}`, `Core::new(ipc, journal, custody, arbiter, steps, parameters)`, i cinque accessori, `kernel::executor::nap`, `Parameters::new(executor_turn_limit, total_vram, arbiter_id, gui_tick)`
-- Consumes, da oggi: `kernel::arbiter::{Arbiter, ArbiterId, ComputeClass, Mib, Preemption, ResourceProfile, RemotePolicy, VramPolicy, Admission, Grant}`; `kernel::executor::{Executor, Sleep}`; `kernel::ports::journal::{Journal, StepId}`; `kernel::record::{Detail, EffectClass, Record, RecordV1, RoutingDetail, Trust}`; `kernel::time::{Millis, Monotonic}`; `platform::reactor::SystemReactor`; `platform::rng::SequentialRng`; `simulator::journal::MemoryJournal::new()`
+- Consumes, da oggi: `kernel::arbiter::{Admission, Arbiter, ArbiterId, ComputeClass, Mib, Preemption, RemotePolicy, ResourceProfile, VramPolicy}`; `kernel::executor::{Executor, Sleep}`; `kernel::parameters::Parameters`; `kernel::ports::journal::{Journal, StepId}`; `kernel::ports::reactor::Reactor`; `kernel::record::{EffectClass, Record, RecordV1, RoutingDetail, Trust}`; `kernel::time::{Millis, Monotonic, WallTime}`; `kernel::wire::ipc::Verdict`; `platform::reactor::SystemReactor`; `platform::rng::SequentialRng`; `simulator::journal::MemoryJournal::new()` — ⚠️ riletti dagli `use` del Passo 5 (R5-14): `Grant` e `Detail` **non** si importano, e qui stavano
 - Produces:
   - `kernel::serving::Core::ipc(&mut self) -> &mut I` — ⛔ **il SESTO accessore, e il suo unico chiamante è il rubinetto di questo compito**, che è la ragione per cui il compito 7 non lo fa nascere
   - ⛔ **e nient'altro che un compito importi:** `gui/fake-core` è un **binario fuori dal workspace**. Ciò che il 13 e il 14 ne ricevono non è un nome ma un **programma da lanciare**
@@ -13763,13 +13765,32 @@ cargo metadata --no-deps --format-version 1 --manifest-path gui/fake-core/Cargo.
 Atteso: **`EXIT=101`** con `error: current package believes it's in a workspace when it's not:` — è
 **P-72**, rifatto sul repository vero invece che sul workspace usa-e-getta.
 
-Poi, in `Cargo.toml` di radice (**CRLF**, quindi Python `newline=""`), `exclude` diventa:
+Poi, in `Cargo.toml` di radice (**CRLF**, quindi Python `newline=""` — e il comando sta qui sotto, R5-19), `exclude` diventa:
 
 ```toml
 # `gui` is NOT a member either, and NOT for the reason above: `gui/fake-core` is a TOOL with a
-# toolchain and a lockfile of its own, built by `scripts/gate-gui.sh` through `--manifest-path`,
+# lockfile of its own, under the root's `rust-toolchain.toml` (rustup walks up: measured, R5-22),
+# built by `scripts/gate-gui.sh` through `--manifest-path`,
 # and `gui/` also holds a node project that cargo has no business walking into.
 exclude = ["spikes", "gui"]
+```
+
+```bash
+python - <<'EOF'
+from pathlib import Path
+p = Path("Cargo.toml")
+text = p.read_text(encoding="utf-8", newline="")
+anchor = 'exclude = ["spikes"]\r\n'
+assert text.count(anchor) == 1, "anchor not unique -- the task is executed, or the root changed"
+new = (
+    "# `gui` is NOT a member either, and NOT for the reason above: `gui/fake-core` is a TOOL with a\r\n"
+    "# lockfile of its own, under the root's `rust-toolchain.toml` (rustup walks up: measured, R5-22),\r\n"
+    "# built by `scripts/gate-gui.sh` through `--manifest-path`,\r\n"
+    "# and `gui/` also holds a node project that cargo has no business walking into.\r\n"
+    'exclude = ["spikes", "gui"]\r\n'
+)
+p.write_text(text.replace(anchor, new, 1), encoding="utf-8", newline="")
+EOF
 ```
 
 ```bash
@@ -13786,6 +13807,23 @@ E in `.gitignore` (**CRLF**), sotto le due righe del compito 11:
 /gui/fake-core/target/
 ```
 
+```bash
+python - <<'EOF'
+from pathlib import Path
+p = Path(".gitignore")
+text = p.read_text(encoding="utf-8", newline="")
+anchor = "/gui/dist/\r\n"
+assert text.count(anchor) == 1, "the two lines of task 11 are not there, or the task is executed"
+assert "/gui/fake-core/target/" not in text, "already there -- the task is executed"
+p.write_text(text.replace(anchor, anchor + "/gui/fake-core/target/\r\n", 1), encoding="utf-8", newline="")
+EOF
+git ls-files --eol .gitignore
+git diff --stat .gitignore
+```
+
+Atteso: `i/lf w/crlf` **invariato**, e il diff dice **una riga aggiunta** — non seicento (R5-19: i due file CRLF si toccano
+con lo script e non a mano, la forma del Passo 3 del compito 11; senza il comando il `sed -i` è a un passo, vincolo globale 4).
+
 - [ ] **Passo 3: `Core::ipc`, il sesto accessore**
 
 In `crates/kernel/src/serving.rs` (**LF**), accanto agli altri cinque:
@@ -13800,7 +13838,7 @@ In `crates/kernel/src/serving.rs` (**LF**), accanto agli altri cinque:
     ///
     /// ⚠️ NOT A DOOR INTO THE DISPATCH. Nothing that branches on an INCOMING message may use
     /// this: the dispatch is `serve`, in one place, and a second one in the fake core is exactly
-    /// what §7 of the milestone-2 design forbids.
+    /// what §7 of the sub-project 2 design forbids.
     pub fn ipc(&mut self) -> &mut I {
         &mut self.ipc
     }
@@ -13853,6 +13891,7 @@ un segnaposto DELIBERATO e l'unico di questo compito:** il compito **2** non è 
 scrive, quindi la riga non esiste ancora — chi esegue lancia il `grep` e mette il numero che trova.
 
 ```bash
+cp Cargo.lock gui/fake-core/Cargo.lock
 cd gui/fake-core && cargo build 2>&1 | tail -5; cd ../..
 ls gui/fake-core/Cargo.lock
 git status --porcelain gui | head
@@ -13861,6 +13900,13 @@ git status --porcelain gui | head
 Atteso: compila; il lockfile esiste; in `git status` **nessuna** riga di `gui/fake-core/target/`.
 ⚠️ **`cargo build` SENZA `--locked`** qui, perché il lockfile nasce adesso — è il vincolo globale 6 nella sua
 metà web.
+
+⛔ **E il lockfile si SEMINA dalla radice prima del primo `cargo build` — D83, misurato alla revisione del piano intero
+(R5-10):** una risoluzione da zero prende `redb` **4.3.0** mentre la radice appunta la 4.1.0 con un caret
+(`crates/platform/Cargo.toml`, *«written by READING the source of 4.1.0»*), e il finto monterebbe una versione della porta
+che il prodotto non ha. Con la copia, `cargo build` pota le voci inutili e **conserva** le versioni che soddisfano; il
+Passo 10 confronta le crate comuni dei due lockfile, e `cargo audit --file gui/fake-core/Cargo.lock` entra in
+`gate-gui.sh` al compito **16**.
 
 - [ ] **Passo 5: le costanti, l'arbitro riscritto, e l'orologio condiviso**
 
@@ -13873,7 +13919,7 @@ In testa a `gui/fake-core/src/main.rs`, **LF**:
 //! and the custody are the in-memory fakes the conformance suites already hold, the ARBITER IS
 //! REAL, and the transport is `platform`'s. Nothing in this file branches on an incoming message:
 //! the day the daemon changes, this programme must follow it FOR FREE, and a second dispatch here
-//! is what §7 of the milestone-2 design forbids in so many words.
+//! is what §7 of the sub-project 2 design forbids in so many words.
 //!
 //! ⚠️ IT DOES NOT LIVE ALONGSIDE THE DAEMON: one listener at a time on `SOCKET_NAME`, and whoever
 //! starts it knows. What the operating system does with two is not this tool's business.
@@ -13894,7 +13940,7 @@ use kernel::ports::reactor::Reactor;
 use kernel::record::{EffectClass, Record, RecordV1, RoutingDetail, Trust};
 use kernel::serving::{Core, serve};
 use kernel::time::{Millis, Monotonic, WallTime};
-use kernel::wire::ipc::{IpcMessage, Provenance, Verdict, build_stamp};
+use kernel::wire::ipc::{IpcMessage, Provenance, Verdict};
 use platform::ipc::LocalSocketIpc;
 use platform::reactor::SystemReactor;
 use platform::rng::SequentialRng;
@@ -13932,7 +13978,7 @@ const GUI_TICK: Millis = Millis::new(5);
 /// would drag the PRODUCTION wiring into a tool.
 ///
 /// ⚠️ THE SAME SHAPE LIVES IN THREE PLACES, AND EACH ONE SAYS SO: here,
-/// `crates/daemon/src/main.rs`, and the milestone-2 DST campaign. ⛔ AUDIO FIRST, and it is not
+/// `crates/daemon/src/main.rs`, and the sub-project 2 DST campaign (task 10). ⛔ AUDIO FIRST, and it is not
 /// arbitrary: both profiles sit in one lane, and the daemon's own comment argues it.
 const AUDIO_RESERVATION: ResourceProfile = ResourceProfile {
     name: "audio-reserved",
@@ -13971,7 +14017,7 @@ fn build_the_arbiter(parameters: Parameters) -> Arbiter {
 ///
 /// ⛔ THE FIFTH COPY OF THIS SHAPE, AND IT STAYS LOCAL: D34, re-read on 2026-09-14 (P-74). The
 /// other four are `crates/simulator/tests/arbiter_campaign.rs`, `crates/kernel/tests/serving.rs`,
-/// the milestone-2 campaign and `crates/daemon/src/main.rs`. A common home would have to be
+/// the sub-project 2 campaign (task 10) and `crates/daemon/src/main.rs`. A common home would have to be
 /// GENERIC over the reactor, because three of the five wrap `VirtualReactor` and two -- the daemon
 /// and this one -- wrap `SystemReactor`.
 struct SharedClock<'a, R: Reactor>(&'a RefCell<R>);
@@ -14171,6 +14217,12 @@ fn run_the_graph(name: &str, turns: u64, cadence: Millis, words: Receiver<String
         parameters,
     ));
     let reactor = RefCell::new(SystemReactor::new());
+    // ⚠️ THE DECLARATION ORDER IS LOAD-BEARING, as the daemon says of its own (task 9): `serve` and
+    // the faucet BORROW `clock` for the executor's whole life and locals drop in reverse order, so
+    // `clock` is declared BEFORE the executor. Measured at the plan review (R5-2, R3-16): a temporary
+    // `&SharedClock(&reactor)` inside `spawn` dies at the end of its statement (E0716), and a `let`
+    // AFTER the executor does not live long enough (E0597).
+    let clock = SharedClock(&reactor);
     let sleep = Sleep::new();
 
     let mut executor = Executor::new(
@@ -14179,11 +14231,11 @@ fn run_the_graph(name: &str, turns: u64, cadence: Millis, words: Receiver<String
         parameters,
         &sleep,
     );
-    executor.spawn(serve(&core, &SharedClock(&reactor), &sleep));
-    executor.spawn(the_faucet(&core, &SharedClock(&reactor), &sleep, cadence, words));
+    executor.spawn(serve(&core, &clock, &sleep));
+    executor.spawn(the_faucet(&core, &clock, &sleep, cadence, words));
     // ⛔ `serve` NEVER ENDS, so this only returns when the turns run out. In `main` the limit is
     // `u64::MAX`, that is never in practice: the programme is stopped with Ctrl-C, as §7 says —
-    // no clean shutdown in this milestone (ADR-0007). ⚠️ THE VALUE OF `run` IS NOT AN ORACLE, and
+    // no clean shutdown in this sub-project (ADR-0007). ⚠️ THE VALUE OF `run` IS NOT AN ORACLE, and
     // no probe reads it: what a probe reads is the PEER.
     let _ = executor.run();
 }
@@ -14209,12 +14261,34 @@ P-73, in piccolo.**
 mod tests {
     use super::*;
 
+    // ⛔ ONLY THE PROBES MINT THE STAMP (R5-12): imported here and not at the top of the file,
+    // where `cargo build` would report it unused -- `cargo test` compiles the test target alone
+    // and would never show the warning.
+    use kernel::wire::ipc::build_stamp;
+
     // ⛔ EACH PROBE BINDS A NAME OF ITS OWN. A socket name is valid for the whole machine and
     // `cargo test` runs in parallel by default: two probes on `SOCKET_NAME` make the second fail
     // with "already in use", which is a red in the wrong probe's box. The lesson is task 9's.
     fn a_name_for(what: &str) -> String {
         format!("fake-core-probe-{what}")
     }
+
+    /// How many messages the core sends after a valid `Hello` -- the welcome of sequence 1.
+    ///
+    /// ⛔ MEASURED ON THE DISPATCH OF TASK 7, `greet` in `crates/kernel/src/serving.rs`, and pinned
+    /// by task 9's `WELCOME` with the same reading: the day the welcome grows, task 7's own probe
+    /// goes red before this constant does.
+    const WELCOME: usize = 5;
+
+    /// The turn budget of every probe here -- and every one of them has a peer.
+    ///
+    /// ⛔ IT IS WALL CLOCK IN DISGUISE, task 9's lesson (R4-6, R4-7): the listener lives only
+    /// inside `run_the_graph`, and the peer connects from a thread the OS schedules when it likes,
+    /// so a short run can end before the peer ever knocks. A hundred thousand turns at a zero tick
+    /// is a fraction of a second of polling. Realigned at the plan review, 2026-09-15: the first
+    /// draft copied task 9's peer BEFORE that task was corrected, with budgets of four and eight
+    /// thousand turns.
+    const WITH_A_PEER: u64 = 100_001;
 
     /// A stamp that is NOT ours. ⛔ `BuildStamp` HAS NO PUBLIC CONSTRUCTOR, and that is deliberate
     /// (task 3: "a stamp anyone can mint from any number is a stamp that proves nothing"), so the
@@ -14233,6 +14307,25 @@ mod tests {
             .expect("the canonical set holds a StaleBuild")
     }
 
+    /// The keyboard of a probe: the words the faucet reads, and the hand that types them.
+    ///
+    /// ⛔ THE SENDING END IS HANDED BACK, NEVER DROPPED HERE (R5-4, R5-6, 2026-09-15): a word is
+    /// typed by the PEER once the welcome has arrived -- typed before the run it would be spent on
+    /// the faucet's first turn, when `attending()` is still empty, and reach nobody -- and the last
+    /// probe keeps the hand alive across the run, so that `try_recv` answers `Empty`: the one case
+    /// in which a blocking `recv` would wait for ever.
+    fn a_keyboard() -> (mpsc::Sender<String>, Receiver<String>) {
+        mpsc::channel()
+    }
+
+    /// What a probe waits for before it stops reading.
+    ///
+    /// ⛔ A PREDICATE AND NOT A COUNT (R5-4): the faucet streams a token per turn, so a fixed
+    /// number of messages fills up with tokens before the one the probe is after has been sent.
+    /// The loop still ends when the server closes -- `read` answers `Ok(0)` -- so a predicate that
+    /// is never satisfied makes the probe FAIL on what it heard, not hang.
+    type Until = fn(&[IpcMessage]) -> bool;
+
     /// The peer, in the shape task 9 gives it and for its reasons.
     ///
     /// ⛔ IT CANNOT HANG, AND THE REASON IS THE DROP ORDER RATHER THAN A TIMEOUT: when
@@ -14241,21 +14334,37 @@ mod tests {
     /// AFTER THE RUN, NEVER BEFORE.
     ///
     /// ⚠️ THE CONNECT IS A `yield_now` LOOP AND NOT A SLEEP: the listener exists from `bound()`,
-    /// which happens inside the run, so this thread may be scheduled first.
+    /// which happens inside the run, so this thread may be scheduled first. ⛔ AND THE LOOP HAS A
+    /// WALL-CLOCK DEADLINE (task 9, R4-6): if the run ends before this thread connects, `connect`
+    /// fails FOR EVER and a bare loop would hang the gate -- the worst red there is. Five seconds
+    /// is an order of magnitude above any scheduling delay, and the panic names this line.
+    ///
+    /// ⚠️ `then_types` IS THE HAND ON THE KEYBOARD (R5-4): once the welcome is in, the peer types
+    /// that one word and lets the hand go. Before the welcome nobody is attending, and a word
+    /// typed then is spent on nobody.
     fn a_peer_that_says(
         name: String,
         said: Vec<IpcMessage>,
-        wants: usize,
+        until: Until,
+        mut then_types: Option<(mpsc::Sender<String>, &'static str)>,
     ) -> std::thread::JoinHandle<Vec<IpcMessage>> {
         std::thread::spawn(move || {
             use interprocess::local_socket::{GenericNamespaced, Stream, prelude::*};
             use std::io::{Read, Write};
 
             let ns = name.to_ns_name::<GenericNamespaced>().expect("a namespaced name");
+            let started = std::time::Instant::now();
             let mut stream = loop {
                 match Stream::connect(ns.clone()) {
                     Ok(stream) => break stream,
-                    Err(_) => std::thread::yield_now(),
+                    Err(error) => {
+                        assert!(
+                            started.elapsed() < std::time::Duration::from_secs(5),
+                            "the peer could not connect within five seconds ({error:?}): the run \
+                             ended before this thread got to the listener (task 9, R4-6)"
+                        );
+                        std::thread::yield_now();
+                    }
                 }
             };
             for message in &said {
@@ -14266,41 +14375,50 @@ mod tests {
             let mut buffer = Vec::new();
             let mut heard = Vec::new();
             let mut chunk = [0_u8; 4_096];
-            while heard.len() < wants {
+            while !until(&heard) {
                 match stream.read(&mut chunk) {
                     Ok(0) => break,
                     Ok(read) => buffer.extend_from_slice(&chunk[..read]),
                     Err(_) => break,
                 }
-                while let Some((body, next)) = kernel::framing::take_frame(&buffer) {
-                    heard.push(IpcMessage::decode(body).expect("the core sends what it says"));
+                // ⚠️ `take_frame` AND NOT `unframe`: the buffer ordinarily holds a frame and a half,
+                // which `unframe` refuses by design (P-13). It hands back where the next frame starts,
+                // and `IpcMessage::decode` is given the WHOLE frame, envelope included, because
+                // `decode` unframes what it is given. Measured at the plan review (R5-3, R4-2):
+                // `decode(body)` answered `Err` on every message, in all six probes.
+                while let Some((_, next)) = kernel::framing::take_frame(&buffer) {
+                    heard.push(
+                        IpcMessage::decode(&buffer[..next]).expect("the core sends what it says"),
+                    );
                     buffer.drain(..next);
+                }
+                if heard.len() >= WELCOME {
+                    if let Some((hand, word)) = then_types.take() {
+                        hand.send(word.to_string()).expect("the peer types");
+                    }
                 }
             }
             heard
         })
     }
 
-    /// The words a probe "types", queued before the run.
-    ///
-    /// ⛔ THE SENDER IS DROPPED, so `try_recv` answers `Disconnected` once they are consumed —
-    /// which is the harsher of the two empty cases and the one the last probe leans on.
-    fn typed(words: &[&str]) -> Receiver<String> {
-        let (sender, receiver) = mpsc::channel();
-        for word in words {
-            sender.send((*word).to_string()).expect("the probe types");
-        }
-        receiver
-    }
-
     #[test]
     fn the_welcome_gives_the_sequence_one() {
         let name = a_name_for("welcome");
-        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 5);
-        run_the_graph(&name, 4_000, Millis::new(0), typed(&[]));
+        let (_hand, words) = a_keyboard();
+        let peer = a_peer_that_says(
+            name.clone(),
+            vec![IpcMessage::Hello(build_stamp())],
+            |heard| heard.len() >= WELCOME,
+            None,
+        );
+        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = peer.join().expect("the peer thread");
+        // ⚠️ THE FIRST FIVE: one `read` may carry the welcome AND the first token, and the frames
+        // are drained together.
         let kinds: Vec<&str> = heard
             .iter()
+            .take(WELCOME)
             .map(|message| match message {
                 IpcMessage::Accepted(_) => "Accepted",
                 IpcMessage::Degradation(_) => "Degradation",
@@ -14315,14 +14433,29 @@ mod tests {
             ["Accepted", "Degradation", "Policy", "Layout", "Steps"],
             "sequence 1, in order: {heard:?}"
         );
+        // ⛔ AND THE NUMBERS OF THE `Policy`, not only its place (R5-7, 2026-09-15): without these
+        // two lines the mutation G2 -- the presentation quota gone from `build_the_arbiter` -- stays
+        // green, because the welcome still has five messages in the right order. The literals are
+        // this file's own, which is what D41 buys.
+        let report = heard
+            .iter()
+            .find_map(|message| match message {
+                IpcMessage::Policy(report) => Some(*report),
+                _ => None,
+            })
+            .expect("the welcome carries a Policy");
+        assert_eq!(report.allocated, Mib::new(1_024 + 768), "the two permanent quotas: {report:?}");
+        assert_eq!(report.total, TOTAL_VRAM, "the machine, delivered: {report:?}");
     }
 
     #[test]
     fn a_stale_stamp_is_refused_and_then_silence() {
         let name = a_name_for("stale");
+        let (_hand, words) = a_keyboard();
         // ⛔ THE SECOND MESSAGE IS THE PROBE, as task 7 argues: "the core closes" is not an
         // operation of the port (decision 22), so only a message sent AFTER the refusal tells
-        // "it stopped listening" apart from "it had nothing more to say".
+        // "it stopped listening" apart from "it had nothing more to say". The peer asks for two
+        // and gets one: the loop ends on `Ok(0)`, when the run is over.
         let peer = a_peer_that_says(
             name.clone(),
             vec![
@@ -14332,9 +14465,10 @@ mod tests {
                     argument: "local".to_string(),
                 }),
             ],
-            2,
+            |heard| heard.len() >= 2,
+            None,
         );
-        run_the_graph(&name, 4_000, Millis::new(0), typed(&[]));
+        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = peer.join().expect("the peer thread");
         assert_eq!(
             heard,
@@ -14346,29 +14480,54 @@ mod tests {
     #[test]
     fn degrade_makes_the_real_code_report_it() {
         let name = a_name_for("degrade");
+        let (hand, words) = a_keyboard();
+        // ⛔ THE WORD IS TYPED BY THE PEER AFTER THE WELCOME (R5-4, 2026-09-15): typed before the
+        // run it would be consumed on the faucet's first turn, when `attending()` is still empty,
+        // and the welcome's own `Degradation` would already carry it -- green for the wrong reason.
         // ⛔ THE ORACLE IS THE SECOND `Degradation`, not the first: the welcome always sends one.
         // What the word buys is a SECOND one, which task 7's code sends only because the value
         // CHANGED — so this probe exercises the real rule rather than a branch of the faucet.
-        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 8);
-        run_the_graph(&name, 8_000, Millis::new(0), typed(&["degrade"]));
+        let peer = a_peer_that_says(
+            name.clone(),
+            vec![IpcMessage::Hello(build_stamp())],
+            |heard| {
+                heard
+                    .iter()
+                    .filter(|message| matches!(message, IpcMessage::Degradation(_)))
+                    .count()
+                    >= 2
+            },
+            Some((hand, "degrade")),
+        );
+        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = peer.join().expect("the peer thread");
-        let degraded: Vec<&IpcMessage> = heard
+        let degraded: Vec<bool> = heard
             .iter()
-            .filter(|message| {
-                matches!(message, IpcMessage::Degradation(report) if report.routing_degraded)
+            .filter_map(|message| match message {
+                IpcMessage::Degradation(report) => Some(report.routing_degraded),
+                _ => None,
             })
             .collect();
-        assert!(
-            !degraded.is_empty(),
-            "the word `degrade` reaches the gui through the REAL code: {heard:?}"
+        assert_eq!(
+            degraded,
+            [false, true],
+            "the welcome's Degradation is clean, and the word buys a SECOND one from the REAL code: {heard:?}"
         );
     }
 
     #[test]
     fn verdict_reaches_the_peer() {
         let name = a_name_for("verdict");
-        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 8);
-        run_the_graph(&name, 8_000, Millis::new(0), typed(&["verdict"]));
+        let (hand, words) = a_keyboard();
+        // ⛔ TYPED AFTER THE WELCOME, for the reason `degrade` states (R5-4): a `Verdict` sent to an
+        // empty `attending()` reaches nobody, and the word is spent.
+        let peer = a_peer_that_says(
+            name.clone(),
+            vec![IpcMessage::Hello(build_stamp())],
+            |heard| heard.iter().any(|message| matches!(message, IpcMessage::Verdict(_))),
+            Some((hand, "verdict")),
+        );
+        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = peer.join().expect("the peer thread");
         assert!(
             heard.iter().any(|message| matches!(message, IpcMessage::Verdict(_))),
@@ -14379,8 +14538,20 @@ mod tests {
     #[test]
     fn the_tokens_arrive_untrusted() {
         let name = a_name_for("tokens");
-        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 12);
-        run_the_graph(&name, 8_000, Millis::new(0), typed(&[]));
+        let (_hand, words) = a_keyboard();
+        let peer = a_peer_that_says(
+            name.clone(),
+            vec![IpcMessage::Hello(build_stamp())],
+            |heard| {
+                heard
+                    .iter()
+                    .filter(|message| matches!(message, IpcMessage::Token { .. }))
+                    .count()
+                    >= 3
+            },
+            None,
+        );
+        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = peer.join().expect("the peer thread");
         let tokens: Vec<&IpcMessage> = heard
             .iter()
@@ -14402,11 +14573,20 @@ mod tests {
         // ⛔ THE HALF THAT GETS FORGOTTEN, and the one that catches P-69. With NO word queued the
         // turn must pass anyway: if the faucet read `stdin` blockingly — or called `recv` instead
         // of `try_recv` — nothing would arrive at all, and every probe above would hang rather
-        // than fail. ⚠️ THE CHANNEL IS DROPPED here, so `try_recv` answers `Disconnected`, which
-        // is the harsher of the two empty cases.
+        // than fail. ⚠️ THE HAND STAYS ON THE KEYBOARD ACROSS THE RUN (R5-6, 2026-09-15), so
+        // `try_recv` answers `Empty`: that is the case in which `recv` would wait for ever. A
+        // dropped sender is the EASY case -- `recv` returns `Err` at once, std's doc says so -- and
+        // with it the mutation G1 would stay green. Measured at the plan review.
         let name = a_name_for("nowords");
-        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 8);
-        run_the_graph(&name, 8_000, Millis::new(0), typed(&[]));
+        let (hand, words) = a_keyboard();
+        let peer = a_peer_that_says(
+            name.clone(),
+            vec![IpcMessage::Hello(build_stamp())],
+            |heard| heard.iter().any(|message| matches!(message, IpcMessage::Token { .. })),
+            None,
+        );
+        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
+        drop(hand);
         let heard = peer.join().expect("the peer thread");
         assert!(
             heard.iter().any(|message| matches!(message, IpcMessage::Token { .. })),
@@ -14415,6 +14595,14 @@ mod tests {
     }
 }
 ```
+
+✅ **Riscritte alla revisione del piano intero, 2026-09-15:** `build_stamp` importato dentro `mod tests` (R5-12); a `decode`
+va la cornice **intera** (R5-3, come il 9); il pari legge fino a un **predicato** e non a un conteggio, e **digita la parola
+dopo l'accoglienza** tenendo lui la mano sulla tastiera (R5-4) — `degrade` asserisce la **seconda** `Degradation`,
+`[false, true]`; la sonda dell'accoglienza legge anche i **numeri** del `Policy` (R5-7); la sonda negativa tiene vivo il
+mittente, così `try_recv` risponde `Empty` e non `Disconnected` (R5-6); e il pari è **riallineato al 9 corretto** —
+scadenza di parete sul `connect` (R4-6) e budget `WITH_A_PEER` (R4-7) — perché la prima stesura lo aveva copiato prima
+di quelle correzioni.
 
 ⛔ **`interprocess` va in `[dev-dependencies]` di `gui/fake-core`, in DUE passi** — manifesto e
 `gui/fake-core/Cargo.lock` **nello stesso commit**, vincolo globale 6 — con la **stessa versione** che
@@ -14428,10 +14616,21 @@ il reattore qui è vero.
 
 - [ ] **Passo 9: le due direzioni, misurate**
 
+⛔ **Prima, in scena ciò che è nuovo** — R5-11, la misura al Passo 4 del compito 11: un file non tracciato non ha diff, e
+`git add -N` non basta (il diff resta pieno e `git checkout --` svuota il file):
+
+```bash
+git add Cargo.toml .gitignore crates/kernel/src/serving.rs gui/fake-core
+git status --porcelain gui/fake-core | grep -c 'target/'
+```
+
+Atteso: **0** — `/gui/fake-core/target/` morde (**D38**). Poi le mutazioni, **una per volta**, ciascuna compilata,
+eseguita e revocata con `git checkout --` sul file toccato, `git diff` a zero alla fine:
+
 | | La mutazione | Atteso |
 |---|---|---|
-| **G1** | `try_recv` → `recv` (bloccante) nel rubinetto | `the_faucet_keeps_streaming_with_no_word_waiting` **rosso**, e si pianta invece di fallire — ⚠️ **il rosso è un timeout, e va detto**: `cargo test` non torna |
-| **G2** | togli `PRESENTATION_RESERVATION` da `build_the_arbiter` | la sonda dell'accoglienza **rossa** sul `Policy`, perché `allocated` scende |
+| **G1** | `try_recv` → `recv` (bloccante) nel rubinetto | `the_faucet_keeps_streaming_with_no_word_waiting` **rosso**, e si pianta invece di fallire — ⚠️ **il rosso è un timeout, e va detto**: `cargo test` non torna. ⛔ Morde perché la sonda **tiene vivo il mittente** (R5-6): con un mittente caduto `recv` renderebbe `Err` subito e la mutazione resterebbe verde |
+| **G2** | togli `PRESENTATION_RESERVATION` da `build_the_arbiter` | la sonda dell'accoglienza **rossa** sul `Policy`, perché `allocated` scende — ⚠️ a coglierlo sono le due righe dei **numeri** (R5-7): l'ordine delle cinque specie resterebbe verde |
 | **G3** | `Provenance::Untrusted` → `Trusted` | `the_tokens_arrive_untrusted` **rosso** |
 | **G4** | nel finto, `SOCKET_NAME` a `"harness-core-2"` | ⛔ **nessuna sonda rossa**, e **il criterio di chiusura sì** — è la prova che il `diff` di **D45** serve, e che nessun banco lo copre |
 | **G5** | togli `exclude = ["spikes", "gui"]` → `["spikes"]` | `cargo test --manifest-path gui/fake-core/Cargo.toml` **101**, `current package believes it's in a workspace when it's not` |
@@ -14440,10 +14639,44 @@ il reattore qui è vero.
 ha una sonda e non può averne una**, e che la difesa è un comando in un criterio di chiusura. Dichiararlo è
 ciò che impedisce di crederlo coperto.
 
+- [ ] **Passo 9-bis: i tre richiami nel disegno del 2 — D88**
+
+`docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` è **LF**: Python con `newline=""`, ancora unica
+asserita, temporaneo e `os.replace` (la forma del Passo 3 del compito 11). ⛔ **Ogni ancora è la riga intera presa dal file
+col `grep`**, mai ricopiata da qui, e il richiamo si **appende in coda**, su **una** riga — nelle celle come fa il Passo 8
+del compito 10 (`riga.rstrip().removesuffix("|").rstrip() + " " + richiamo + " |"`). Arrivato qui dalla revisione del piano
+intero (R5-8, R9a-1: il blocco *Files* prometteva il richiamo di **D41** e nessun Passo lo scriveva, e il criterio cercava
+una data fissa; R5-16 e R3-18: due righe e un dedotto della §7 che il piano ha spostato o deciso senza dirlo nel disegno).
+
+| Dove (`grep -n -F` sulla frase → una riga) | Che cosa si appende, in coda |
+|---|---|
+| §7, il capoverso 🔶 dedotto — l'ancora è la sua **ultima** riga, `il piano, e l'attività non ha il problema perché vive nel kernel (pezzo 6 della §3 della stella polare).` (`grep -c -F` → **1**); il richiamo si appende in coda a quella riga | `✅ **RICHIAMO DEL <data>, compito 12 del piano della parte 2 (D41, P-68):** la costruzione dell'arbitro **non si sposta** — nessuna casa condivisa regge: il kernel non nomina un default (ADR-0034), le crate restano cinque, una quota VRAM non è dell'OS, e un \`lib.rs\` nel daemon porterebbe il cablaggio di produzione in un attrezzo — quindi il finto la **riscrive** coi propri letterali, e le tre case (\`crates/daemon/src/main.rs\`, la campagna del compito 10, \`gui/fake-core/src/main.rs\`) si nominano a vicenda; decisione del proprietario del 2026-09-14. ⚠️ **E il valore di \`Accepted\` NON è consegnato** a nessuno dei due (**D22**): \`Protection\` ha una variante sola` |
+| §7, la riga `\| la disposizione \|` — in coda alla **terza** cella, prima dell'ultimo `\|` | `✅ **RICHIAMO DEL <data>, compito 12 del piano della parte 2 (D88, R5-16):** il giro salva → ritrova è provato **nel kernel** dal compito 7 (\`crates/kernel/tests/serving.rs\`), non nel finto, le cui sonde non mandano \`SaveLayout\`` |
+| §7, la riga `\| la lista dei passi \|` — in coda alla **terza** cella, prima dell'ultimo `\|` | `✅ **RICHIAMO DEL <data>, compito 12 del piano della parte 2 (D88, R5-16):** la sonda dell'invocazione vive **nel kernel**, compito 7 (\`crates/kernel/tests/serving.rs\`): l'unico \`Invoke\` del finto è quello del pari stantio, atteso ignorato` |
+
+```bash
+grep -c 'RICHIAMO DEL <data>, compito 12' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c
+```
+
+Atteso (con la data scritta): **3**; niente; **0**.
+
 - [ ] **Passo 10: il cancello, e il commit**
 
 ```bash
 cd gui/fake-core && cargo test --locked 2>&1 | tail -5; cd ../..
+cargo clean --manifest-path gui/fake-core/Cargo.toml
+time (cd gui/fake-core && cargo test --locked > /dev/null 2>&1)
+time (cd gui/fake-core && cargo test --locked > /dev/null 2>&1)
+python - <<'EOF'
+import io, re
+def versions(path):
+    text = io.open(path, encoding="utf-8", newline="").read().replace("\r\n", "\n")
+    return dict(re.findall(r'name = "([^"]+)"\nversion = "([^"]+)"', text))
+root, fake = versions("Cargo.lock"), versions("gui/fake-core/Cargo.lock")
+print(sorted((name, root[name], fake[name]) for name in root.keys() & fake.keys() if root[name] != fake[name]))
+EOF
 bash scripts/gate.sh 2>&1 | tail -3
 bash scripts/check-docs.sh 2>&1 | tail -3
 diff <(grep -o 'const SOCKET_NAME: &str = ".*"' crates/daemon/src/main.rs) \
@@ -14454,7 +14687,9 @@ git status --porcelain
 ```
 
 Atteso: le sonde del finto verdi; `GATE GREEN`; `OK`; il `diff` **`EXIT=0`**; i due file di radice ancora
-`i/lf w/crlf`; **zero** CR nel sorgente nuovo; in `git status` niente `target/`.
+`i/lf w/crlf`; **zero** CR nel sorgente nuovo; in `git status` niente `target/`. ⚠️ **E due tempi, a freddo e a caldo** (R5-17), che il compito **15** scrive con la data nel commento di `gate-gui.sh` — la
+riga *«il core finto nel cancello»* della §8 li vuole *«dichiarati e misurati al piano»*, e la cifra non si scrive qui
+(vincolo globale 3); e lo script stampa **`[]`**: nessuna crate comune ai due lockfile cambia versione (**D83**).
 
 ⚠️ **`scripts/gate.sh` non conosce ancora il finto** — lo impara al compito **15** — quindi il primo comando
 si lancia a mano.
@@ -14468,15 +14703,16 @@ git push
 **Criterio di chiusura del compito 12:**
 
 - [ ] `cd gui/fake-core && cargo test --locked; echo $?` → **0**
-- [ ] ⛔ **nessun ramo di dispaccio nel finto:** `grep -cE 'IpcMessage::(Hello|Invoke|Approve|SaveLayout) *(\(|=>)' gui/fake-core/src/main.rs` → **0** — il finto **manda** messaggi, non li interpreta
-- [ ] `grep -c 'struct SharedClock' gui/fake-core/src/main.rs` → **1**, e `grep -rc 'struct SharedClock' crates/ --include='*.rs'` conta le altre: **cinque in tutto** (**P-74**)
+- [ ] ⛔ **nessun ramo di dispaccio nel finto:** `awk '/#\[cfg\(test\)\]/{exit} {print}' gui/fake-core/src/main.rs | grep -cE 'IpcMessage::(Hello|Invoke|Approve|SaveLayout) *(\(|=>)'` → **0** — la metà **senza** le sonde, perché le sonde ne mandano (R5-5: sul file intero il conteggio è **più di zero**, ed è la direzione opposta che prova che il comando morde dove deve); il finto **manda** messaggi, non li interpreta
+- [ ] `grep -c 'struct SharedClock' gui/fake-core/src/main.rs` → **1**, e `grep -rl 'struct SharedClock' crates/ --include='*.rs' | wc -l` → **4**: cinque in tutto (**P-74**; R5-20: qui stava un `grep -rc`, che stampa un conteggio per file e nessuna somma)
 - [ ] il nome del canale combacia: il `diff` del Passo 10 esce **0** (**D45**)
 - [ ] `grep -c 'exclude = \["spikes", "gui"\]' Cargo.toml` → **1**, e `cargo metadata --no-deps --manifest-path gui/fake-core/Cargo.toml > /dev/null; echo $?` → **0**
 - [ ] `grep -c '^/gui/' .gitignore` → **3**
 - [ ] `grep -c 'pub fn ipc' crates/kernel/src/serving.rs` → **1**, e `bash scripts/gate-deps.sh` verde
-- [ ] la §7 del disegno porta il richiamo datato di **D41**: `grep -c 'RICHIAMO DEL 2026-09-14' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **più di zero**
+- [ ] la §7 del disegno porta i **tre** richiami datati (**D88**): `grep -c 'RICHIAMO DEL <data>, compito 12' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **3**, e il disegno resta `i/lf w/lf` a CR zero — ⚠️ qui stava `grep -c 'RICHIAMO DEL 2026-09-14'`, una data di scrittura che a compito eseguito sarebbe rimasta rossa (D75; R5-8, R9a-1)
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
-- [ ] le cinque mutazioni del Passo 9 eseguite **una per volta** e revocate, `git diff` vuoto
+- [ ] le cinque mutazioni del Passo 9 eseguite **una per volta** e revocate, `git diff` vuoto — **dopo** il `git add` del Passo 9, senza il quale un file nuovo non ha diff (R5-11)
+- [ ] le crate comuni dei due lockfile hanno la **stessa versione**: lo script del Passo 10 stampa `[]` (**D83**)
 - [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -cE '^\s*fn [a-z_]+\(\) \{\}$' gui/fake-core/src/main.rs` → **0**
 
 ---

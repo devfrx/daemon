@@ -127,6 +127,9 @@ Valgono per ogni compito, senza che il compito li ripeta.
 Il pre-controllo delle quattro domande sta nella sezione *«Il pre-controllo del piano»* qui sotto, e ha
 trovato un difetto reale in **tutti** i compiti. ⛔ **Nessun compito è ancora eseguito**, e il passo che
 viene ora è la **revisione del piano intero** — l'undicesima chiusura del diario, in fondo, dice come.
+✅ **RICHIAMO DEL 2026-09-15, terza sessione del giorno: la revisione è FATTA per nove perimetri su undici e le correzioni sono
+applicate ai compiti 1–5** — la **dodicesima chiusura** dice dove si riprende, e il registro in
+[`…-revisione/ledger.md`](2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/ledger.md) è la casa unica di ciò che resta.
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
@@ -5294,7 +5297,7 @@ git push
 
 **Interfaces:**
 - Consumes: nulla di nuovo — il modulo non ha dipendenze
-- Produces, e i compiti 5, 7, 9 e 12 li usano con questi nomi esatti:
+- Produces, e i compiti 5, 7, 9, 10 e 12 li usano con questi nomi esatti:
   - `kernel::ports::custody::Custody` — il tratto
   - `Custody::keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError>`
   - `Custody::retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError>`
@@ -5314,11 +5317,13 @@ ls crates/kernel/src/ports/custody.rs 2>&1
 ls crates/kernel/src/ports/ | tr '\n' ' '
 grep -niE "SIX|FIVE|SEVEN" crates/kernel/src/ports/mod.rs
 grep -c '^struct \|^impl .* for ' crates/kernel/tests/ports_are_implementable.rs
+cargo test --locked -p kernel --test ports_are_implementable 2>&1 | tail -1
 grep -n 'Le famiglie di porte restano sei\|### 2.3 I/O\|### 3.1 Cosa sostituisce' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
 git ls-files --eol crates/kernel/src/ports/mod.rs crates/kernel/tests/ports_are_implementable.rs docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
 ```
 
-Atteso: `custody.rs` **non esiste**; **sei** file più `mod.rs`; le cifre in prosa alle righe **1, 7, 22, 29, 32,
+Atteso: `custody.rs` **non esiste**; **sei** file più `mod.rs`; il `grep -c` sul banco delle finte → **11** e il banco
+→ **14 passed** (la baseline del criterio di chiusura, R2-4); le cifre in prosa alle righe **1, 7, 22, 29, 32,
 37, 43, 77, 79** (P-5 e P-21 le hanno misurate il 2026-09-11: si **rimisurano**, e se una riga si è mossa vale il
 *Dove*, mai il numero — gotcha #70); le tre righe della spec a **209**, **575**, **906**;
 ⛔ `ports_are_implementable.rs` **`i/crlf w/crlf`**, unico fra i sorgenti, e gli altri due `i/lf w/crlf`.
@@ -5371,7 +5376,7 @@ pub enum CustodyKey {
 /// caller does not need the distinction to be in the type -- IT READS IT FROM WHICH OPERATION
 /// FAILED. `keep` fails and `retrieve` answers: the write was refused, and the activity sends
 /// back the old package. Both fail: the archive is unavailable, and the activity says so
-/// (decision 35 of the milestone-2 design). Written here so the consumer does not rediscover it.
+/// (decision 35 of the sub-project 2 design). Written here so the consumer does not rediscover it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CustodyError {
     /// The archive could not be reached -- it would not open, or the write did not land.
@@ -5515,7 +5520,9 @@ riceve il proprio richiamo **nel compito 2** (**P-23**), non qui.
 - [ ] **Passo 5: le cifre in prosa di `ports/mod.rs`, e la guardia di P-21**
 
 ⛔ **Le righe si ritrovano col `grep` sulla FRASE, mai col numero** (gotcha #70), e ogni riga che il censimento
-rende si legge **intera**. Cinque tocchi, e il quinto è quello che nessuno si aspetta:
+rende si legge **intera**. Nove righe in tabella — le nove del censimento del Passo 1 (R2-3) — di cui quattro si
+toccano, una riceve un richiamo sotto (la 43, col tocco 5), e quattro si lasciano stare **con la ragione scritta**; il
+quinto tocco è quello che nessuno si aspetta:
 
 | | La frase | Diventa |
 |---|---|---|
@@ -5523,13 +5530,16 @@ rende si legge **intera**. Cinque tocchi, e il quinto è quello che nessuno si a
 | 2 | *«all six are named in this milestone»* | resta **six**: parla del **Traguardo 1**, che ne nominò sei — è un fatto datato, non un conteggio di oggi. ⛔ **Non si tocca**, ed è scritto qui perché il prossimo censimento non lo corregga per zelo |
 | 3 | *«this module declares SIX submodules, one per row»* | **SEVEN** |
 | 4 | *«The other FOUR … have NO CALLER AT ALL»* | ⛔ **non si tocca QUI:** è **P-23**, e la corregge il compito **2**, che è quello che dà a `ipc` il chiamante. Toccarla qui sarebbe correggere il sintomo nel file sbagliato |
-| 5 | *«FIVE fakes, because `process` needs two of them»* | **SIX fakes**. ⚠️ La riga sotto porta già un **richiamo datato del 2026-08-28** (AUD-054): si **legge prima**, e il richiamo nuovo si aggiunge **senza cancellarlo** |
+| 5 | *«— FIVE fakes, because»* — ⚠️ la frase va a capo dopo «because»: il *Trova* è la sola riga **37**, unica nel file (R2-2) | **SIX fakes**. ⚠️ La riga **43** porta già un **richiamo datato del 2026-08-28** (AUD-054) che dice *«The FIVE is still TRUE OF THAT FILE»* e diventa **falso** con questo tocco: si **legge prima**, non si cancella, e riceve **sotto** la riga nuova ``//! ⚠️ DATED RECALL, <data>, sub-project 2 task 4: SIX from here on -- `custody` has a fake of its own; the FIVE above is dated, not realigned (gotcha #31).`` (R2-3) |
 | 6 | ⛔ *«the simulator substitutes SEVEN things while §2.3 enumerates SIX … so that nobody "fixes" the discrepancy … **or by writing "seven families" in the line above**»* | **EIGHT contro SEVEN** — ed è **P-21** |
+| 7 | riga **29**, *«only place the sixth family could be named at all»* | resta: parla del **meccanismo** — un `pub mod` che nomina un file — e non conta le famiglie di oggi. ⛔ **Non si tocca** (R2-3) |
+| 8 | riga **32**, *«Remove it and a seventh family …»* | resta: con `custody` la frase diventa **vera alla lettera** — la settima famiglia è arrivata proprio così — non falsa. ⛔ **Non si tocca**, ed è scritto qui perché il prossimo censimento non la «aggiorni» (R2-3) |
+| 9 | riga **43**, il richiamo di AUD-054: *«The FIVE is still TRUE OF THAT FILE»* | ⛔ **diventa FALSO col tocco 5**, che dice come: il richiamo nuovo si appende **sotto**, senza cancellare quello del 2026-08-28 (R2-3) |
 
 Il richiamo del sesto, che è il delicato — il *Trova* si prende **dal file**:
 
 ```rust
-//! ✅ DATED RECALL, 2026-09-11 -- THE NUMBERS MOVED AND THE WARNING STANDS, WHICH IS THE WHOLE
+//! ✅ DATED RECALL, <data> -- THE NUMBERS MOVED AND THE WARNING STANDS, WHICH IS THE WHOLE
 //! POINT OF DATING IT RATHER THAN REWRITING IT. A SEVENTH FAMILY ARRIVED -- `custody`, the
 //! layout the gui entrusts to the core (decision 15 of the GUI north star) -- so the simulator
 //! now substitutes EIGHT things while §2.3 enumerates SEVEN. ⛔ THE DISCREPANCY DID NOT CLOSE,
@@ -5547,11 +5557,13 @@ Il richiamo del sesto, che è il delicato — il *Trova* si prende **dal file**:
 ⛔ **Tutti e tre nello stesso commit**, che è la quinta riga della disciplina dell'audit: *«un rimedio si chiude
 su TUTTE le case della frase»*. Il file è **CRLF**: `replace_unique.py`, e si rimisura dopo.
 
-(a) La riga **209**, il riquadro dell'anello 3. Il *Trova* è la riga intera presa dal file; si **aggiunge** in
-coda al riquadro, senza toccare ciò che c'è:
+(a) Il riquadro dell'anello 3, che la riga **209** apre. ⛔ **Il *Trova* NON è la riga 209: è l'ULTIMA riga del
+riquadro, `> come \`process\` in §2.3.1.`, unica nel file (R2-1)** — la 209 finisce a metà frase (*«ed è la»*), e un
+richiamo inserito dopo di essa spezzerebbe la frase e il riquadro. Si **aggiunge** dopo l'ultima riga, senza toccare
+ciò che c'è:
 
 ```markdown
-> ⛔ **RICHIAMO DEL 2026-09-11 — le famiglie sono SETTE, e il merito di questo riquadro RESTA VERO.** La frase
+> ⛔ **RICHIAMO DEL <data> — le famiglie sono SETTE, e il merito di questo riquadro RESTA VERO.** La frase
 > d'apertura è al presente e in assoluto, e dal sotto-progetto 2 è falsa alla lettera: `custody` è la settima
 > (§2.3, e decisione 15 della stella polare della GUI). ✅ **Ciò che il riquadro afferma non cambia:** l'anello 3
 > non ne aggiunge una, ed è ancora la ragione per cui quella voce costò una sezione invece di una riscrittura. Si
@@ -5561,13 +5573,13 @@ coda al riquadro, senza toccare ciò che c'è:
 (b) La **§2.3**, riga della tabella. Si aggiunge in coda alla tabella delle famiglie:
 
 ```markdown
-| `custody` — **tenere i byte che la GUI affida al core, e ridarli** | dichiarata qui il 2026-09-11, progettata nella §2 della [stella polare della GUI](2026-09-07-direzione-gui-design.md) |
+| `custody` — **tenere i byte che la GUI affida al core, e ridarli** | dichiarata qui il <data>, progettata nella §2 della [stella polare della GUI](2026-09-07-direzione-gui-design.md) |
 ```
 
 più, **sotto** la tabella, il richiamo:
 
 ```markdown
-> ⛔ **RICHIAMO DEL 2026-09-11 — la tabella passa da SEI a SETTE famiglie**, ed è la prima volta dal 2026-08-07
+> ⛔ **RICHIAMO DEL <data> — la tabella passa da SEI a SETTE famiglie**, ed è la prima volta dal 2026-08-07
 > (§2.3.1). La settima è `custody`: due operazioni, `keep` e `retrieve`, e **una chiave sola**, un enum chiuso.
 > Il perché — e perché non il giornale — è la decisione 15 della stella polare della GUI, riassunta nel doc di
 > `crates/kernel/src/ports/custody.rs`. ⚠️ **Il costo, dichiarato lì e qui:** la §3.1 dichiara di sostituire
@@ -5588,7 +5600,7 @@ nuovi**. Il *Trova* è il capoverso che comincia con `📌 Nota di lettura`, pre
 > 📌 Nota di lettura, senza conseguenze: `rng` è dichiarata in **§2.2**, non in §2.3. La
 > frase qui sopra resta vera in ciò che afferma — non esistono altri punti in cui il mondo
 > tocchi il kernel — ma l'elenco è di **otto** porte e la §2.3 ne enumera **sette**.
-> ⛔ **RICHIAMO DEL 2026-09-11:** i due numeri erano **sette** e **sei**; sono cresciuti insieme con `custody`, e
+> ⛔ **RICHIAMO DEL <data>:** i due numeri erano **sette** e **sei**; sono cresciuti insieme con `custody`, e
 > lo scarto resta **uno** ed è sempre `rng`. La stessa avvertenza, coi numeri di oggi, sta in
 > `crates/kernel/src/ports/mod.rs`, che è l'altra casa di questa discrepanza — e le due si toccano **insieme**,
 > o la prima che resta indietro mente in silenzio.
@@ -5602,7 +5614,7 @@ Una per volta, compilata, eseguita, e **revocata** con `git diff` a zero:
 |---|---|---|
 | **C1** | in `InMemoryCustody::keep`, togli la riga `self.kept.retain(...)` | `the_custody_port_can_be_implemented_and_called` **rosso** sulla sostituzione: `Some(b"second")` atteso, trovato il pacchetto vecchio — la sonda del rimpiazzo non è decorativa |
 | **C2** | in `retrieve`, sostituisci il ramo `refuse` con `Ok(None)` | **rosso** sull'ultima asserzione: `Err(Unavailable)` atteso, `Ok(None)` trovato. ⛔ **È la direzione che decide**, perché senza di essa una porta che confonde «niente» con «non disponibile» passerebbe — ed è esattamente la distinzione che la decisione 35 compra |
-| **C3** | in `custody.rs`, cambia `retrieve` in `-> Result<Vec<u8>, CustodyError>` | **il banco non compila**, `E0308`: è la prova che la firma è esercitata davvero e non solo dichiarata |
+| **C3** | in `custody.rs`, cambia `retrieve` in `-> Result<Vec<u8>, CustodyError>` | **il banco non compila** — `E0053` sull'`impl` (il metodo ha un tipo incompatibile col tratto) più tre `E0308` sulle asserzioni, misurato alla revisione del piano intero (R2-5): è la prova che la firma è esercitata davvero e non solo dichiarata |
 
 ```bash
 cargo test --locked -p kernel --test ports_are_implementable 2>&1 | tail -5
@@ -5635,8 +5647,8 @@ git push
 #### Criterio di chiusura del compito 4
 
 - [ ] `cargo test --locked -p kernel --test ports_are_implementable` → tutti passati, **uno in più** del Passo 1
-- [ ] `grep -c 'DATED RECALL, 2026-09-11' crates/kernel/src/ports/mod.rs` → **almeno 1**, e la guardia di `rng` porta i numeri **otto/sette**
-- [ ] `grep -c 'RICHIAMO DEL 2026-09-11' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` → **3**
+- [ ] `grep -c 'DATED RECALL, <data>' crates/kernel/src/ports/mod.rs` → **almeno 2** (la guardia di `rng` e la riga sotto AUD-054, con la data scritta — D75), e `grep -c '<data>' crates/kernel/src/ports/mod.rs` → **0**, e la guardia di `rng` porta i numeri **otto/sette**
+- [ ] `grep -c 'RICHIAMO DEL <data>' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` → **3** (con la data scritta), e `grep -c '<data>'` sullo stesso file → **0**
 - [ ] ⛔ `grep -c 'NO CALLER AT ALL' crates/kernel/src/ports/mod.rs` → **invariato**: quella riga è del compito **2** (P-23)
 - [ ] `git diff --name-only -- docs/superpowers/specs/2026-08-06-kernel-design.md` **vuoto** (vincolo 1)
 - [ ] le tre mutazioni C1, C2, C3 provate **una per volta** e revocate, con `git diff --stat` vuoto
@@ -5656,7 +5668,8 @@ git push
 - Create: `crates/platform/tests/file_custody.rs` (**LF**) — ciò che **solo** l'implementazione vera promette
 - Modify: `crates/simulator/src/lib.rs` (**`i/lf w/crlf`**) — `pub mod custody;`
 - Modify: `crates/platform/src/lib.rs` (**`i/lf w/crlf`**) — la riga di modulo **e il richiamo datato di P-24**, sotto quello che il compito 2 ha già scritto
-- Modify: `crates/platform/src/journal.rs` (**`i/lf w/crlf`**) — ⛔ **una parola**: `engine` da privata a `pub(crate)`, con la riga che dice chi la chiama adesso (**D14**)
+- Modify: `crates/platform/src/journal.rs` (**`i/lf w/crlf`**) — ⛔ **due regioni**: `engine` da privata a `pub(crate)`, con il capoverso di doc che dice chi la chiama adesso (**D14**), **e** il commento falso della `TableDefinition` riscritto al vero — la voce che la stella polare registrava con chiusore *«il primo compito che tocca questo file»*, ed è questo (R9a-6, R9b-1)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**) — la voce 10 della §9 chiusa (**D88**)
 - Read: la **§2 della stella polare**, pezzi 1, 3, 4 e 6, e la riga della settima porta della tabella degli artefatti della **§8 del 2**; `crates/platform/src/journal.rs` **per intero** — `FileBackend`, `OpenError`, `with_backend`, la ragione per cui la tabella si crea a ogni apertura; la **testa** di `crates/kernel/tests/journal_contract.rs` e i suoi `assert_caught_on` / `message_the_suite_fails_with` / `panic_message`; `crates/platform/tests/journal_contract_real.rs` **per intero**; `crates/platform/tests/file_journal.rs` per `private_dir_for_line` e le due direzioni del lucchetto
 
 **Interfaces:**
@@ -5898,7 +5911,7 @@ un'altra cosa.
 //!
 //! ⛔ THERE IS NO FALLING DOUBLE HERE, unlike `journal.rs`. Failing at an operation chosen by
 //! the seed is fault injection, and nothing asks for it on this port yet: the campaign of
-//! milestone 2 of the sub-project substitutes the WORKING one. The day a campaign wants a
+//! sub-project 2 substitutes the WORKING one. The day a campaign wants a
 //! falling custody it wraps this type, exactly as `CrashingJournal` wraps `MemoryJournal`, and
 //! for the same reason -- one archive, not two truths to hold in step.
 
@@ -6246,12 +6259,34 @@ Prima, in `crates/platform/src/journal.rs` (**`i/lf w/crlf`**), **una parola** �
 /// Every `redb` error type converts into `redb::Error`, so the five that `open` can meet are
 /// folded into one variant here instead of five.
 ///
-/// ⚠️ `pub(crate)` SINCE 2026-09-11, AND THE SECOND CALLER IS `crate::custody`: the seventh port
+/// ⚠️ `pub(crate)` SINCE <data>, AND THE SECOND CALLER IS `crate::custody`: the seventh port
 /// opens a `redb` archive of its own on the same `FileBackend`, so it meets the same five errors
 /// and folds them the same way. The alternative was a twin `OpenError` under `custody`, and the
 /// reason it was refused is written there, beside `FileCustody::open`.
 pub(crate) fn engine(error: impl Into<redb::Error>) -> OpenError {
 ```
+
+⛔ **E nello stesso file una SECONDA regione, arrivata dalla revisione del piano intero (R9a-6, R9b-1):** il commento
+della `TableDefinition` dice che `boundary.rs` scrive byte che non sono un `Record`, ed è **falso** — `Untrusted::promote`
+scrive un `Record::V1` normale, e byte grezzi li scrivono solo i banchi. La stella polare lo registrava con chiusore *«il
+piano del 2, nel primo compito che tocca `crates/platform/src/journal.rs`»*, e il primo è questo. *Trova* (una riga, unica:
+`grep -c -F` → 1):
+
+```
+/// port exchanges BYTES, and `boundary.rs` writes some that are not a `Record` at all), so the
+```
+
+*Sostituisci con*:
+
+```
+/// port exchanges BYTES -- and, DATED RECALL <data>, sub-project 2 task 5: the bytes that are NOT
+/// a `Record` are written ONLY by benches; `boundary.rs` writes an ordinary `Record::V1` through
+/// `Untrusted::promote`, item 10 of §9 of the sub-project 2 design), so the
+```
+
+E la voce **10** della §9 del disegno del 2 (LF: Python `newline=""`, temporaneo e `os.replace`): l'ancora è la riga
+intera che comincia con `| 10 | il commento falso in` (`grep -n -F` → una riga), e in coda alla sua ultima cella si
+appende ` ✅ **chiusa il <data>, compito 5 del piano della parte 2**`.
 
 Poi `crates/platform/src/custody.rs`, **LF**:
 
@@ -6282,7 +6317,10 @@ Poi `crates/platform/src/custody.rs`, **LF**:
 use std::path::Path;
 
 use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
-use redb::{Database, ReadableDatabase, ReadableTable, TableDefinition};
+// `ReadableTable` is NOT imported: in redb 4.1.0 `ReadOnlyTable::get` is inherent, so the import
+// would be an unused-import warning at every build. The mutation of step 7 imports it where it
+// needs `iter`, which IS the trait's (measured at the plan review, 2026-09-15).
+use redb::{Database, ReadableDatabase, TableDefinition};
 
 use crate::journal::{FileBackend, OpenError, engine};
 
@@ -6628,6 +6666,7 @@ provare è quella su `retrieve`, che **ignora l'argomento**:
         let table = transaction
             .open_table(PACKAGES)
             .map_err(|_| CustodyError::Unavailable)?;
+        use redb::ReadableTable; // `iter` is the trait's; the shipped file does not import it
         let mut rows = table.iter().map_err(|_| CustodyError::Unavailable)?;
         match rows.next() {
             Some(Ok((_, value))) => Ok(Some(value.value().to_vec())),
@@ -6656,7 +6695,7 @@ Nel doc di modulo di `crates/platform/src/lib.rs` (**`i/lf w/crlf`**), **sotto**
 scritto e senza cancellarlo:
 
 ```rust
-//! ⛔ DATED RECALL, 2026-09-11 -- THE SENTENCE ABOVE CALLED ITSELF "not a fixed set" AND IT WAS
+//! ⛔ DATED RECALL, <data> -- THE SENTENCE ABOVE CALLED ITSELF "not written here as a fixed set" AND IT WAS
 //! ONE. The `grep` it hands over ENUMERATES SEVEN TRAIT NAMES, so it can never answer with a
 //! family added later: `Custody` -- the seventh port, §2 of the GUI north star -- was invisible
 //! to it the moment `custody::FileCustody` existed. Measured, not reasoned. ⛔ AND THE CURE IS
@@ -6698,7 +6737,7 @@ CR **invariato**; `GATE GREEN`; la lista di ADR-0031 **non cresciuta**; `OK — 
 Poi la riga **5** della tabella della posizione a ✅ con la data, e il commit — **senza co-autore**:
 
 ```bash
-git add crates/simulator/src/custody.rs crates/simulator/src/lib.rs crates/kernel/tests/custody_contract.rs crates/platform/src/custody.rs crates/platform/src/lib.rs crates/platform/src/journal.rs crates/platform/tests/custody_contract_real.rs crates/platform/tests/file_custody.rs docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+git add crates/simulator/src/custody.rs crates/simulator/src/lib.rs crates/kernel/tests/custody_contract.rs crates/platform/src/custody.rs crates/platform/src/lib.rs crates/platform/src/journal.rs crates/platform/tests/custody_contract_real.rs crates/platform/tests/file_custody.rs docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
 ```
 
 ⛔ **Nel messaggio del commit va la misura del Passo 7 con le parole della corsa**, perché è l'unico posto in cui
@@ -6711,10 +6750,11 @@ un lettore futuro può verificare che il limite di **P-29** fu misurato e non su
 - [ ] `cargo test --locked -p platform --test file_custody` → **tre** passati
 - [ ] ⛔ i **cinque bugiardi** verdi, e **nessuno** ha detto `THE SUITE IS VACUOUS` né `fired, but NOT on promise N`
 - [ ] ⛔ il **Passo 7 eseguito**: la mutazione cieca alla chiave provata, **passata**, revocata, `git diff --stat` **vuoto**, e l'esito **nel messaggio del commit**
-- [ ] `grep -c 'DATED RECALL, 2026-09-11' crates/platform/src/lib.rs` → **almeno 1**, e il richiamo del compito 2 è **ancora lì**
+- [ ] `grep -c 'DATED RECALL, <data>' crates/platform/src/lib.rs` → **1** (con la data di oggi) e `grep -c 'DATED RECALL' crates/platform/src/lib.rs` → **2**: il richiamo del compito 2 è **ancora lì**
 - [ ] `grep -rEn "^impl (Custody|Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/` → include `impl Custody for FileCustody`
-- [ ] `grep -c 'pub(crate) fn engine' crates/platform/src/journal.rs` → **1**, e nessun altro tocco a quel file: `git diff --stat -- crates/platform/src/journal.rs` mostra **una sola** regione
-- [ ] ⛔ **nessun `with_backend` su `FileCustody`**: `grep -c 'with_backend' crates/platform/src/custody.rs` → **0**
+- [ ] `grep -c 'pub(crate) fn engine' crates/platform/src/journal.rs` → **1**, `grep -c 'DATED RECALL <data>' crates/platform/src/journal.rs` → **1** (con la data scritta), e nessun altro tocco a quel file: `git diff -U0 -- crates/platform/src/journal.rs | grep -c '^@@'` → **2** regioni, `engine` e il commento della `TableDefinition` (R9a-6)
+- [ ] `grep -c 'chiusa il <data>, compito 5' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **1** (con la data scritta), e `grep -c '<data>'` sui due file → **0**
+- [ ] ⛔ **nessun `with_backend` su `FileCustody`**: `grep -c 'fn with_backend' crates/platform/src/custody.rs` → **0** — provato dove rende 1: `grep -c 'fn with_backend' crates/platform/src/journal.rs` → **1** (R2-8: il file dettato nomina `with_backend` nel doc e in `create_with_backend`, e il `grep` nudo rendeva **2** sul file stesso)
 - [ ] `git diff --name-only -- docs/superpowers/specs/` **vuoto**: questo compito non tocca nessuna spec
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/gate-deps.sh` verde, la lista **non cresciuta**; `bash scripts/gate-attributes.sh` verde
 - [ ] i fine-riga rimisurati: i cinque nuovi a zero CR, i tre modificati invariati in `git ls-files --eol`
@@ -18971,6 +19011,112 @@ git push
 - [ ] ⛔ **la tabella della posizione è tutta ✅**, e ogni riga porta il proprio commit: `awk '/^\| \*\*[0-9]+\*\* \|/{print}' <questo file> | grep -c '⬜'` → **zero**
 
 ## Come si riprende — il diario di questo piano, coi comandi
+
+### La dodicesima chiusura — 2026-09-15, terza sessione del giorno: la REVISIONE DEL PIANO INTERO è fatta per nove perimetri su undici, e le correzioni sono applicate ai compiti 1–5; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO, quattro cose.** **(1)** I rapporti dei revisori, il registro delle correzioni e gli attrezzi
+vivono in [`2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`](2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/),
+tracciata da questo commit: `ledger.md` è la **casa unica** di ciò che resta da applicare, compito per compito, con
+lo stato ⬜/✅ di ogni rilievo; i nove `R*-report.md` sono l'evidenza (ogni rilievo porta il comando e la resa);
+`constraints.md` e `R*-prompt.md` i mandati; `patch_*.py` gli script già applicati, **modello** per i prossimi;
+`check_after_write.sh` il controllo post-scrittura. ⚠️ `R10-report.md` ha fine-riga misti (629 CR su ~700 righe),
+scritto così dal revisore: è un verbale, si lascia. **(2)** ⛔ **Le correzioni ai compiti 6–17 NON sono applicate**, e le
+voci **P** nuove (P-117…) **non sono scritte**: l'errata resta vuota, `grep -c '^### P-'` rende ancora **116**. **(3)** ⛔
+**Sei compiti NON hanno avuto la revisione in profondità** — il 3 (R1 caduto a metà), l'8 (R3 caduto a metà), il 13 (R6
+mai partito), il 15, 16 e 17 (R8 mai partito): cinque subagenti su undici sono morti per il **limite di sessione
+dell'API** (HTTP 429) dopo ~30 minuti; quei compiti sono coperti **solo di traverso** da R9a, R9b, R10 e R7. **(4)** Sulla
+macchina restano `cargo-audit` 0.22.2 e Node `v24.9.0` (invariati dall'undicesima chiusura).
+
+✅ **Che cosa è stato fatto.** Undici revisori in sola lettura dispacciati in parallelo (otto fette sui diciassette
+compiti, due sulla copertura dei due disegni, uno sulla coerenza fra i compiti), ciascuno con l'ordine di **rilanciare
+ogni comando** e di scrivere il rapporto **a pezzi** — ed è ciò che ha salvato tre dei cinque caduti. I nove rapporti
+portano **circa centoquaranta rilievi confermati**, contati dalle loro tabelle (`grep -c '| CONFERMATO |'` su ciascuno),
+fra cui misure fatte **eseguendo il modello del piano**: il trasporto `ipc` del compito 2 rende `Ok(0)` a pari vivo su
+Windows (quattro sonde rosse su nove), `typescript` 7.0.2 rompe `vue-tsc` (`ERR_PACKAGE_PATH_NOT_EXPORTED`), il
+compito 6 non compila in quattro posti, il renderer del 14 non compila (`TS2345`). Il coordinatore ha rimisurato i
+bloccanti prima di decidere. Tre ondate di correzioni, ciascuna col cancello verde prima del commit: `265631b` (la testa:
+numeri stantii di prima di D25, il contratto dell'11, le **quattordici decisioni D75–D88**, la roadmap), `6d298c7` (compiti
+1 e 2: il trasporto riscritto su un thread lettore per client — **D78** — la suite in `tests/contract/ipc.rs` — **D82** —
+i tre richiami di P-23 e i cinque nel disegno — **D88**), e questo commit (compiti 4 e 5: il *Trova* della spec spostato
+sull'ultima riga del riquadro, la tabella dei tocchi a nove righe, il commento falso di `journal.rs` corretto nel primo
+compito che lo tocca, `<data>` nei richiami — **D75**).
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main` dopo il push di questa chiusura: `git fetch --all --prune`, `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline baf3cde..HEAD` → quattro (tre ondate più questa chiusura) |
+| Codice di prodotto | **non toccato**: `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/ Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` → **116** (invariato: le P della revisione sono da scrivere); `grep -c '^[|] \*\*D[0-9]' <questo file>` → **88** (74 + D75–D88) |
+| Quanto è corretto | `ledger.md`: le righe ✅ dei compiti 1, 2, 4, 5 e della testa; tutto il resto ⬜ |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0** |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` prima di ogni commit (quattro log nello scratchpad, che non sopravvive; resta il comando); `bash scripts/check-docs.sh` → `OK` con la cartella della revisione in posto |
+| Fine-riga | questo piano è **LF**: `git ls-files --eol <questo file>` → `i/lf w/lf`, `tr -cd '\r' < <questo file> \| wc -c` → `0`; `docs/roadmap.md` resta `i/lf w/crlf` (toccata con `replace_unique.py`) |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Segnaposto | ⛔ **uno solo, DICHIARATO**: la versione di `interprocess` nel manifesto del finto (compito 12) — `awk '/^## Come si riprende/{exit} /<the version/{c++} END{print c+0}' <questo file>` → **1** (il secondo, nel compito 9, è stato tolto: R4-15). `<data>` e `<tempo>` non sono segnaposto (D75) |
+| Margine del compendio | **invariato, `11030` byte**: questa sessione non ha toccato il compendio |
+| Documenti fuori dal piano | `docs/roadmap.md` (la riga del piano: «scritto il 2026-09-15, in revisione», R10-19) e la cartella della revisione, nuova |
+| File temporanei | nessuno nel repository; lo scratchpad porta `replace_unique.py`, le sonde dei revisori (`probe-R*/`) e i log del cancello, e **non sopravvive** |
+| Debito lasciato | **dichiarato per intero in `ledger.md`**: le correzioni dei compiti 6–17, le P-117…, la revisione in profondità di 3, 8, 13, 15, 16, 17 |
+
+#### Le decisioni prese scrivendo, oltre a quelle della tabella (le quattordici della tabella sono D75–D88)
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 68 | la revisione del piano intero si fa con **undici revisori paralleli in sola lettura**, mandati in file, rapporto scritto a pezzi | è lettura, non scrittura; un revisore solo su 1,2 MB si pianta; tre rapporti su cinque caduti sono sopravvissuti perché scritti a pezzi | ~400k token per revisore; due perimetri sono rimasti scoperti |
+| 69 | i rapporti e il registro **entrano nel repository**, in una cartella accanto al piano | lo scratchpad non sopravvive e il proprietario lavora da più macchine; i piani sono fuori dal controllo dei link (P-7), quindi `check-docs.sh` resta verde — provato | 756 KB in più nel repository; una cartella che invecchia se nessuno la archivia alla chiusura del piano |
+| 70 | le correzioni si applicano **a ondate**, una o due compiti per commit, col cancello prima di ciascuno | un commit per ondata è un punto fermo che regge a una sessione che muore a metà — e questa è morta a metà | quattro cancelli da tre minuti l'uno |
+| 71 | ogni rilievo **bloccante** è rimisurato dal coordinatore prima di decidere il rimedio; i «prosa» si applicano sulla parola del revisore | ciò che torna da un subagente è una dichiarazione, e su 140 rilievi solo i bloccanti pagano la rimisura | un rilievo di prosa falso applicato — nessuno trovato finora |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UN SUBAGENTE MUORE COL LIMITE DI SESSIONE DELL'API, e non c'è preavviso.** Cinque su undici, HTTP 429 dopo ~30
+  minuti. 📌 **L'ordine di scrivere il rapporto A PEZZI ha salvato tre rapporti su cinque**: senza, sarebbe stato zero.
+  Un rapporto parziale dice **fin dove** è arrivato (*«le righe del compito 3 seguono»*), e quel confine va nel registro.
+- ⛔ **`assert count == 1` SUL PIANO INTERO scatta su un'ancora che ogni compito ripete** (`- [ ] **Passo 10: i fine-riga,
+  il cancello, il commit**`). 📌 **Le ancore si cercano dentro la fetta del compito** (`t.index("\n## Compito N:")`,
+  `t.index("\n## Compito N+1:")`) e si asseriscono lì. È scattato due volte in una sessione, e nessuna ha scritto un byte:
+  l'`assert` prima della scrittura atomica è ciò per cui esiste.
+- ⛔ **UN `use` DI TRE RIGHE NELLO SCRIPT PUÒ FINIRE PRIMA DELLA DEFINIZIONE CHE USA**: `NameError` dopo la modifica
+  dell'ancora. 📌 Dopo ogni modifica a uno script di patch si rilancia **sapendo che non scrive niente finché tutti gli
+  `assert` passano** — e si controlla `git status` dopo un errore, non si presume.
+- ⛔ **`try_clone` BATTE `split`** per dare il flusso a un thread lettore: `interprocess::TryClone` è un tratto pubblico
+  del crate, mentre le due metà di `split()` sono tipi associati del tratto `Stream`, la cui via di esportazione non è
+  scritta da nessuna parte nel sorgente. 📌 Prima di scrivere codice su una crate esterna, il nome si cerca nel sorgente
+  installato (`~/.cargo/registry/src/*/`), e ciò che non si trova non si detta.
+- ⛔ **UN REVISORE PUÒ RIPORTARE UN RILIEVO CON UN `grep` CHE NON TORNA** perché ha letto il rapporto di un altro
+  compito: R7-3 nomina `case "StaleBuild"` che nel 13 non è scritto così. 📌 Il coordinatore rimisura i bloccanti **col
+  proprio comando**, non rilanciando quello del revisore.
+- ⛔ **IL LIMITE DI SESSIONE COLPISCE ANCHE IL COORDINATORE**: il proprietario ha chiuso per contesto. 📌 Le correzioni
+  di questa specie si fanno **una ondata per sessione** se serve, con il registro come casa dello stato — non si aspetta
+  di aver finito per scrivere il diario.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è
+   il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** (vincoli, posizione, errata, la tabella D
+   **fino a D88**, le voci aperte), poi
+   [`…-revisione/ledger.md`](2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/ledger.md) **per intero**: è la
+   mappa. Di ogni rapporto si legge **la riga** del rilievo che si sta applicando (`grep -n '^| R4-20' R4-report.md`), non
+   il rapporto.
+3. ⏭️ **LE CORREZIONI DEI COMPITI 6–17, nell'ordine della posizione**, uno script di patch per compito sul modello di
+   `patch_c45.py` (fetta del compito, ancore asserite, scrittura atomica), `check_after_write.sh` dopo ogni scrittura, il
+   cancello e un commit per ondata di uno o due compiti; ogni riga del registro passa a ✅ nello stesso commit. ⚠️ Le
+   decisioni sono **prese** (D75–D88): dove il registro dice «vedi rapporto» si esegue il rimedio proposto, e dove il
+   rimedio proposto contraddice una D vince la D.
+4. Poi **la revisione in profondità dei compiti 3, 8, 13, 15, 16, 17** — col metodo di `constraints.md`, o rilanciando
+   `R6-prompt.md` e `R8-prompt.md` più due mandati piccoli per il 3 e l'8 quando il limite lo permette — e le correzioni
+   che ne escono, nello stesso modo.
+5. Poi le voci **P-117…** in coda alla sezione del pre-controllo: **una per rilievo «fatto» confermato**, raggruppate per
+   compito, col comando che l'ha misurato; i rilievi di sola prosa restano nel registro. I conteggi `P` e `D` si
+   confrontano col valore di `HEAD` dopo **ogni** scrittura.
+6. ⛔ **Dopo ogni scrittura su questo file**: `check_after_write.sh` (tabelle spezzate, `tr -cd '\r'` a zero, i conteggi
+   contro `HEAD`, `check-docs.sh` → `OK`), `bash scripts/gate.sh` → `GATE GREEN`, e il commit — **senza co-autore**.
+7. ⏭️ **Poi l'esecuzione, in una sessione NUOVA**: `superpowers:subagent-driven-development`, un subagente fresco per
+   compito, con revisione fra uno e l'altro. ⛔ **Prima di eseguire il compito 11 si aggiorna Node** (P-64, P-65), e su
+   una macchina che non l'ha si installa `cargo-audit` (compito 16). Alla chiusura del piano la cartella della revisione
+   si **archivia** (decisione 69).
+8. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
 
 ### L'undicesima chiusura — 2026-09-15, seconda sessione del giorno: il piano è SCRITTO PER INTERO, diciassette su diciassette; nessun compito è eseguito
 

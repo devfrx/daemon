@@ -17007,6 +17007,153 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La decima chiusura — 2026-09-15: il piano è SCRITTO FINO AL COMPITO 14 di diciassette; nessun compito è eseguito
+
+⛔ **DA SAPERE SUBITO: il `BigTab` del compito 13 È CAMBIATO, e chi esegue il 13 non lo legge dalla memoria della nona
+chiusura.** Il titolo della linguetta era `parameters.title ?? parameters.api.id`, e le tre viste scrivono `title: id`:
+il revisore avrebbe visto `status`, `permissions`, `knowledge`. Ora il nome viene dalla locale quando l'ID è un tipo di
+modulo — **P-95**, corretto nel compito perché non è eseguito, come P-75.
+
+⚖️ **E UNA DECISIONE ASPETTA IL PROPRIETARIO, in A/B, e il piano procede con A:** **D56** — il modulo Passi mostra i
+**tre** campi che il filo porta (numero, funzione, esito) e il 14 scrive il richiamo sulla riga 1 della tabella Passi;
+B allargherebbe `StepSummary` in quattro compiti scritti per mostrare anche l'argomento. Si porta alla prossima
+rilettura, non si deduce (**P-89**).
+
+⛔ **E QUATTRO RIGHE DI DOCUMENTO SONO ANCORA QUELLE VECCHIE, perché i compiti che le correggono non sono eseguiti.**
+Non sono errori: sono richiami che **aspettano il loro compito**.
+
+| La riga | Chi la corregge |
+|---|---|
+| la §5 del disegno del 2 nomina ancora `DyingGui` come strumento della campagna | il **Passo 8 del compito 10** (dalla settima chiusura, invariata) |
+| la §7 del disegno del 2 dice *«renderlo raggiungibile dal finto **senza copiarla**»* | il compito **12**, richiamo di **D41** |
+| la §9 del 2, voce 2, dichiara **dedotto** *«che le prove della SPA girino senza browser»* | il compito **13**, che lo **misura** al proprio Passo 3 |
+| la riga 1 della tabella **Passi** della stella polare promette per il 2 cinque campi, e il filo ne porta tre | il **Passo 15 del compito 14**, con l'ancora e il testo già scritti (**P-89**, **D56**) |
+
+⚠️ **E UNA COSA CHE NON È DEL PIANO MA DELLA MACCHINA, invariata:** prima che qualcuno **esegua** il compito 11 il Node va
+aggiornato — `node --version` rende ancora **`v24.9.0`**, e `jsdom` 30.0.1 pretende `^22.22.2 || ^24.15.0 || >=26.0.0`
+(**P-64**, **P-65**); la LTS del 2026-09-15 era `v24.21.0`.
+
+⛔ **Per il resto niente è a metà:** albero pulito, nessuno stash, nessuna operazione git in corso, nessun server
+acceso, **nessun codice di prodotto toccato** — `git diff --stat 42b50d8..HEAD -- crates/ scripts/ .github/
+Cargo.lock Cargo.toml rust-toolchain.toml gui/ spikes/` non rende nulla. ⛔ **L'ESECUZIONE NON È COMINCIATA:** la
+tabella della posizione è tutta ⬜, l'errata è **vuota**, i compiti **15–17 non esistono**. La sessione nuova
+**scrive**.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, poi `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline 42ce779..HEAD`, e sono **tutti di soli documenti** — lo dice `git diff --name-only 42ce779..HEAD`, che rende **questo file** e nient'altro |
+| Codice di prodotto | **non toccato**, col comando in «Da sapere subito» |
+| Quanto è scritto | `grep -c '^## Compito' <questo file>`; la tabella della posizione ne elenca diciassette — `awk '/^\| # \| Compito \| Commit \| Stato \|/{s=1} s&&/^\| \*\*[0-9]+\*\* \|/{c++} s&&/^$/{print c; exit}' <questo file>` |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **0** |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` e `grep -c '^\| \*\*D[0-9]' <questo file>` — confrontati col valore di `HEAD` dopo **ogni** scrittura (nona chiusura) |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e **prima di ogni commit**; `bash scripts/check-docs.sh` → `OK`. ⚠️ **I log NON sopravvivono:** stavano nello scratchpad come `gate-2026-09-15-sessione10-*.log` e si ripuliscono alla chiusura. Ciò che resta è il **comando** |
+| Fine-riga | questo piano è **LF**: `git ls-files --eol <questo file>` → `i/lf w/lf`, e `tr -cd '\r' < <questo file> \| wc -c` → `0`. ⚠️ `git diff` stampa *«LF will be replaced by CRLF»*: non è una divergenza (undicesima ripresa della stella polare) |
+| Tabelle spezzate | `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' <questo file>` → **niente** |
+| Segnaposto | ⛔ **uno solo, DICHIARATO**: la versione di `interprocess` nel manifesto del finto (compito 12) — `grep -n '<the version' <questo file>`. ⚠️ **`<data>` nel Passo 15 del compito 14 NON è un segnaposto:** è la data del giorno dell'esecuzione, e il passo dice di sostituirla. `awk '/^## Come si riprende/{exit} /node -e "…"/{c++} END{print c+0}' <questo file>` → **0**; `grep -cE '^\s*(it\|describe)\([^)]*\(\) => \{\}\)' <questo file>` → **0** |
+| Margine del compendio | **invariato**: questa sessione non ha toccato il compendio |
+| Documenti fuori dal piano | ⛔ **nessuno toccato, ed è voluto** — il richiamo sulla stella polare lo scrive il 14 **eseguendo** (Passo 15), non questa sessione; le altre case sono il **17** |
+| File temporanei | nessuno nel repository — `git status --porcelain` vuoto. ⚠️ **Lo scratchpad NON sopravvive:** `/tmp/axe-probe` (i pacchetti installati per misurare) e i quattro pezzi del compito 14 restano lì. **Ogni misura che serve è dentro le voci `P`, col comando che la rifà** |
+| Debito lasciato | **nessuno non dichiarato**: i tre compiti che mancano sono la tabella della posizione; una voce aperta **nuova** — «finestra a parte», col guscio come chiusore (**P-91**, **D58**); e **D56** in A/B per il proprietario |
+
+#### Le decisioni prese scrivendo, oltre a quelle della tabella
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 45 | il contrasto AA lo prova una sonda nostra sui token, e `axe` resta per nomi e ruoli (**D53**); `--stop` passa a `#ec5f57` | sotto `jsdom` `axe` mette `color-contrast` fra gli **incompleti** — misurato, non letto — e la sonda nostra ha trovato subito la coppia del chip a **4,21** | una palette che passa `axe` e fallisce l'AA; oppure, se la lista dei token di testo marcisce, un colore nuovo non provato |
+| 46 | il renderer rende i link come testo con l'indirizzo visibile e le immagini **mai** come `<img>` (**D54**) | la regola `image` di default fa scaricare al browser un indirizzo scelto dal modello: il canale dei canary di ADR-0016, dentro la GUI | un modello che manda un'immagine legittima la vede come testo; se un giorno serve, passa da un artefatto |
+| 47 | i tre letterali della funzione in **un** file TypeScript, confrontati con Rust da un comando del criterio (**D55**) | la specie di **D45**, e qui il guasto è **muto**: una funzione non registrata è rifiutata senza scrivere nulla | un rinomino in Rust che si scopre al primo criterio di chiusura rilanciato, non al cancello |
+| 48 | Passi mostra i tre campi del filo e scrive il richiamo sulla riga 1 della stella polare (**D56**, A; ⚖️ B per il proprietario) | la §4 del 2 è più recente della tabella e il compito 3 l'ha seguita; invocatore e classe sono costanti nel 2, l'argomento è payload non fidato | la lista non dice quale policy un'invocazione ha chiesto; se il proprietario lo vuole, è B in quattro compiti |
+| 49 | la finta esposta su `window.harnessFake` quando nessun guscio consegna un ponte (**D57**) | il revisore del 14 deve guardare **con dati**, e la finta non consegna niente da sé; farla rispondere all'`Hello` la farebbe **decidere** | una proprietà su `window` che muore col guscio |
+| 50 | due comandi nella linguetta, il terzo aspetta il guscio (**D58**) | `addPopoutGroup` vuole `popoutUrl` e un'origine http(s): Q3, del guscio, fuori da questo piano (**P-53**) | la riga 20 della tabella Chat vera a metà, e lo dice la voce aperta |
+| 51 | il `Call` in volo in uno store **nuovo**, e la finestra si apre solo con tripla **e** chiamata (**D59**) | `core.ts` è ciò che il core ci ha detto; un `Invoke` in volo è ciò che noi abbiamo detto; un `PermissionRequired` senza `Invoke` nostro non esiste | una sonda deve preparare due store per aprire la finestra |
+| 52 | la finestra di conferma nella **cornice**, non in un pannello (**D60**) | modale con trappola di focus, va e viene: per **D50** un pannello riscriverebbe la disposizione a ogni permesso | nessuno: la fascia è già fuori dalla griglia per la stessa ragione |
+| 53 | lo store del flusso porta i due numeri dello spike — con cui **M4 è stata misurata** — e chiude un blocco al cambio di provenienza (**D61**) | il flusso non finisce mai nel 2 e il filo non ha un confine di messaggio; un blocco con due provenienze porterebbe un'etichetta vera a metà | un messaggio lungo spezzato a un confine arbitrario, finché la run non arriva |
+| 54 | radio **nativi** per il controllo a due stati; Reka dove l'HTML non ha un primitivo (**D62**) | un primitivo sopra un `<input type="radio">` non aggiunge nulla che una sonda provi; e `v-model` rimette il controllo sul valore del **core** a ogni aggiornamento (I1) | due modi di fare la tastiera nella SPA, con la regola scritta nel componente |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UNA SONDA CHE NON PUÒ DECIDERE È VERDE, E LO DICE IN UN CAMPO CHE NESSUNO LEGGE.** `axe.run` rende `violations`,
+  `incomplete`, `passes`, `inapplicable`: sotto `jsdom` il contrasto sta in `incomplete`, e una sonda che guarda solo
+  `violations` è verde su qualunque palette. 📌 **Prima di fidarsi del verde di uno strumento, si legge che cosa ha
+  messo fra gli «incompleti»** — e la seconda direzione si fa con un caso che DEVE fallire (il grigio su grigio).
+- ⛔ **I GLOBALI DI `jsdom` VANNO MESSI PRIMA DELL'`import` DI `axe`.** La prima sonda a mano ha misurato un errore mio
+  (*«Required "window" or "document" globals not defined»*), non il fatto: sotto `vitest` l'ambiente li mette prima, e
+  la sonda a mano deve fare lo stesso — `await import()` dopo i globali.
+- ⛔ **UN PACCHETTO INSTALLATO NELLO SCRATCHPAD È UNA MISURA, E COSTA VENTI SECONDI.** I nomi dell'API di `dockview-core`
+  8.3.1, i preset di `markdown-it` 15.0.2, gli export di Reka, il livello di `vue/no-v-html`: tutti letti nei file
+  spediti, non ricordati dallo spike sulla 8.2.0. 📌 **E `eslint-plugin-vue` 10 tiene le configurazioni in `dist/`,
+  non in `lib/`:** un `grep` sul percorso vecchio rende «nessun file» e sembra «la regola non c'è».
+- ⛔ **«NESSUN LINK SI APRE DA SOLO» NON COPRE LE IMMAGINI, e si vede leggendo le REGOLE di default del renderer, non le
+  sue opzioni.** `html: false` ferma l'HTML del modello; non ferma l'HTML che il renderer **produce** dal markdown.
+- ⛔ **I NUMERI DI UNO SPIKE POSSONO ESSERE MISURATI.** `FREEZE_AT` e `KEEP` sembravano soglie inventate; M4 è stata
+  misurata con quella tessera. 📌 **Prima di chiamare un numero «inventato», si cerca che cosa è stato misurato con
+  esso** — e se c'è una misura dietro, si scrive la provenienza accanto.
+- ⛔ **UNA RIGA DI CATALOGO PUÒ CONTRADDIRE LA §4 PIÙ RECENTE, E IL FILO SEGUE UNA DELLE DUE.** La riga 1 di Passi
+  (2026-09-07) e la §4 del 2 (2026-09-09) dicono due cose; il compito 3 ha seguito la seconda e nessuno ha scritto il
+  richiamo alla prima. 📌 **Prima di scrivere un modulo, `grep` sulla sua tabella E sulla §4 del 2**, e la riga che
+  perde riceve il richiamo dal compito che la rende visibile.
+- ⛔ **`deliverAll()` CONSEGNA ANCHE CIÒ CHE LA SONDA NON VUOLE.** `PermissionRequired` è nell'insieme canonico, quindi
+  dopo `deliverAll` c'è sempre una richiesta in attesa: la sonda della finestra la azzera prima di preparare il caso
+  vero. E **la tripla della fixture non è quella del registro**: `arbiter`/`policy` contro `registry`/`arbiter`.
+- ⛔ **UN CRITERIO «IL REVISORE GUARDA» VUOLE UN MODO DI CONSEGNARE I DATI, o il revisore guarda il vuoto.** La finta
+  del 13 non consegna niente nel browser; il criterio del 14 dice **quale comando** digitare nella console.
+- ⛔ **UN COMPITO OLTRE LE ~1500 RIGHE NON STA IN UNA SCRITTURA SOLA:** il tetto dei token d'uscita l'ha tagliato a metà
+  Passo 15. Si scrive per pezzi in file dello scratchpad (`c14-a.md` … `c14-d.md`, le voci `P`, le righe `D`) e uno
+  script Python li concatena e li inserisce **per ancore uniche**, con gli `assert` — ed è anche il modo per correggere
+  il 13 **prima** di inserire il 14, così le ancore del 13 restano uniche.
+- ⛔ **IL TOOL `Edit` SUL PIANO FUNZIONA E NON PORTA CR** — misurato con `tr -cd '\r'` dopo: su un file LF va bene; su
+  un file CRLF resta la regola di `CLAUDE.md`, Python con `newline=""`.
+
+#### ⛔ Che cosa aspetta ora il compito 15, e non è un difetto
+
+| | Che cosa | Perché è del 15 |
+|---|---|---|
+| ⛔ **l'eccezione a `vue/no-v-html` per le due righe di `Chat.vue`**, con la ragione | **P-96**: la regola è `"warn"` nel preset `vue3-recommended` di `eslint-plugin-vue` 10.11.0 (misurato), e un cancello che avvisa a ogni corsa insegna a ignorarlo; l'HTML è nostro, prodotto da testo già escapato | la catena `eslint` nasce al 15 (**D40**, **D51**) |
+| la **rete** `copy.test.ts` del 13 che **muore**, sostituita da `no-raw-text` | **D51**; ⚠️ le scritte dei `.ts` — `BigTab` — restano fuori da entrambe: dalla locale per disciplina, e il 15 lo dichiara | idem |
+| `scripts/gate-gui.sh` con `npm run lint`, la riga `run` in `gate.sh`, `actions/setup-node` in CI, le righe di `.gitignore` per `spikes/gui-shell/` | la §8 del 2, riga per riga; ⚠️ `.gitignore` **come i compiti 11, 12 e 13 lo lasciano** (**D38**) | la riga 15 della posizione |
+| il **tempo del cancello** col passo web, misurato e scritto nel commento di `gate.sh` con la data | la §8 del 2, «Ciò che la §8 non fa» | idem |
+| ⚠️ **D56 in A/B al proprietario**, e la voce aperta «finestra a parte» | non sono del 15: si portano alla prossima rilettura, e il **17** registra l'esito | — |
+
+#### La lista di lettura della sessione nuova
+
+| Compito | Che cosa si legge |
+|---|---|
+| **3**–**14** | ✅ **SCRITTI.** Si leggono solo se si esegue — ⚠️ **il 3, l'11 e il 13 come stanno ADESSO** (**D35**, **P-75**, **P-95**) |
+| **15**, **16** — il cancello e la CI | §8 del 2 **per intero**; `scripts/gate.sh` — ⚠️ **col settimo passo come il compito 10 lo lascia** — `.github/workflows/quality-gate.yml`, `.gitignore` ⚠️ **come i compiti 11, 12 e 13 lo lasciano** (**D38**); la tabella delle voci senza numero AUD dell'audit per X-1 e X-3; **P-96** e **D51**; il Passo 18 del 13 (la rete) e il Passo 2 dell'11 (`engines`); la decisione 45 della stella polare — *«il «non mantenuto» resta un warning»* — per `cargo audit` e `npm audit` |
+| **17** — la chiusura | §12 del compendio, `README.md`, `roadmap.md`, `tracciabilita.md`, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — le case che **D14** nomina; **e l'esito di D56** e della voce «finestra a parte» |
+
+⚠️ **Resta obbligatoria la lettura d'apertura di `CLAUDE.md`** — quel file e il compendio — e la **testa di questo
+piano**: vincoli globali, posizione, errata, le voci **P**, le decisioni **D**, le voci aperte. ⛔ **Il peso non si
+scrive qui:** lo dà lo snippet `tiktoken` di `CLAUDE.md`, e cresce a ogni compito scritto.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la
+   testa è il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — non i compiti già scritti, se non per i
+   nomi che il compito nuovo consuma: il blocco *Interfaces* di ciascuno li porta.
+3. `superpowers:writing-plans`: scrivere i compiti **15, 16, 17** nell'ordine della tabella della posizione,
+   ciascuno col proprio **pre-controllo delle quattro domande** contro il codice di **adesso**, più la quinta girata
+   all'indietro e la sua gemella in avanti; ⛔ **ogni voce `P` su cui il compito si appoggia si RIMISURA col suo
+   comando**; ⛔ **ogni NUMERO DI COMPITO si ricensisce contro la tabella della posizione**; ⛔ **ogni blocco
+   *Interfaces* si RICENSISCE contro il codice che il suo Passo detta**; ⛔ **ogni CITAZIONE di un'altra voce si rilegge
+   col `grep`**; ⛔ **si cerca se uno SPIKE ha già fatto quella cosa**; ⛔ **e ogni strumento si INSTALLA nello
+   scratchpad e si legge nei file spediti** (trappola nuova). Ogni difetto trovato è una voce **P** in coda, e la
+   decisione che ne discende una riga **D**.
+4. ⛔ **Dopo ogni scrittura su questo file**: il controllo delle tabelle spezzate, `tr -cd '\r'` a zero,
+   `grep -n '^## ' <file> | tail` per le intestazioni, ⛔ **i due comandi che contano `P` e `D` confrontati col
+   valore di `HEAD`**, `bash scripts/check-docs.sh` → `OK`, `bash scripts/gate.sh` → `GATE GREEN`, e il commit —
+   **senza co-autore**. ⚠️ **Un compito lungo si scrive a pezzi nello scratchpad e si inserisce con uno script**
+   (trappola nuova).
+5. ⛔ **E l'auto-revisione della skill dopo OGNI compito scritto**, non a fine piano: copertura della sezione di
+   disegno, segnaposto, coerenza dei tipi fra il blocco *Interfaces* e i Passi, **le importazioni doppie** (trovata una
+   in questa sessione).
+6. Quando i **diciassette** compiti ci sono: la **revisione del piano intero** — copertura dei disegni, segnaposto,
+   coerenza dei nomi fra i blocchi *Interfaces*, e ogni **CONTEGGIO rilanciato col comando, non riletto**; poi
+   l'esecuzione in una sessione **nuova**, un subagente fresco per compito.
+7. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
 ### La nona chiusura — 2026-09-14: il piano è SCRITTO FINO AL COMPITO 13 di diciassette; nessun compito è eseguito
 
 ⛔ **DA SAPERE SUBITO: il blocco *Interfaces* del compito 11 È CAMBIATO, e chi esegue non lo legge dalla memoria di

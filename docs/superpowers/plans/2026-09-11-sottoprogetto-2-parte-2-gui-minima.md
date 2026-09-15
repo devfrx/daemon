@@ -2934,6 +2934,120 @@ guardare.
 
 **Conseguenza:** nessuna `D`; il Passo 4 e il criterio di chiusura.
 
+### P-112 — «le case che **D14** nomina» rimanda al **D14 della PARTE 1**, non di questo piano: un numero `D` è unico dentro il suo piano, non fra i piani
+
+⛔ **Domanda 7 — una citazione si rilegge col `grep`, e questa porta nel posto sbagliato.** La lista di lettura del
+compito 17, scritta nella decima chiusura, dice *«le case che **D14** nomina»*. Misurato il 2026-09-15:
+
+```bash
+sed -n "$(grep -n '^| \*\*D14\*\*' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | cut -d: -f1)p" \
+    docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md | cut -c1-120
+sed -n "$(grep -n '^| \*\*D14\*\*' docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md | cut -d: -f1)p" \
+    docs/superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md | cut -c1-120
+```
+
+| Dove | Che cosa dice `D14` |
+|---|---|
+| **questo** piano | `FileCustody::open` rende `platform::journal::OpenError` — niente a che vedere con le case dei documenti |
+| il piano della **parte 1** | *«nessuna riga per i due disegni e per questo piano nella §12 del compendio e nella tabella «Specifiche» di `README.md` nella parte 1: entrano con la **parte 2**»* |
+
+✅ **La citazione non è sbagliata nel merito** — le case le nomina davvero un `D14`, ma quello della **parte 1** — ed
+è **questo** compito che deve onorarle. ⛔ **La lezione è generale e vale per ogni compito che cita una `D`:** i
+numeri `D` e `P` sono unici **dentro** il loro piano; fra due piani della stessa parte si scontrano in silenzio, e
+chi segue la citazione atterra su un'altra decisione **che esiste**, il che è peggio di un numero inesistente.
+⚠️ **Il diario non si corregge** — le voci passate sono verbali datati — quindi il rimedio è qui e nella lista
+*Read* di questo compito, che nomina il piano oltre al numero.
+
+**Conseguenza:** nessuna `D`; la lista *Read* del compito porta il **piano** accanto al numero.
+
+### P-113 — la riga della roadmap diceva «sedici compiti, i primi due scritti», falsa in ENTRAMBE le metà: corretta il 2026-09-15, fuori dai compiti
+
+⛔ **Quarta domanda al contrario — ciò che il compito dovrebbe produrre era già lì, e diceva il falso.** Misurato il
+2026-09-15, prima di scrivere questo compito:
+
+```bash
+F=docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+awk '/^\| # \| Compito \| Commit \| Stato \|/{s=1} s&&/^\| \*\*[0-9]+\*\* \|/{c++} s&&/^$/{print c; exit}' "$F"
+grep -c '^## Compito' "$F"
+grep -n 'in scrittura dal 2026-09-11' docs/roadmap.md
+```
+
+→ **17** righe di posizione e **16** compiti scritti, contro *«sedici compiti, i primi due scritti»*. I compiti si
+erano spostati scrivendo — **D21** ha portato il limite di giri dal 7 al 9, **D25** ha diviso la vecchia riga 8,
+**D47** ha spostato il segnaposto dal 14 al 13 — e la cifra della roadmap era rimasta a quel giorno.
+
+✅ **Corretta subito e non rimandata al compito**, perché un documento di stato disallineato *«mente con
+autorevolezza»*: commit `850137c`. ⛔ **E non riallineata a «diciassette»:** la cifra è **tolta**, perché vive in
+**due** case e la regola di `CLAUDE.md` dice di toglierla, non di ricorreggerla — la casa unica è la tabella della
+posizione, e a contarla è il comando.
+
+⚠️ **Quindi questo compito NON scrive quella cifra.** Alla riga del piano gli resta una cosa sola: portarla da
+*«nessuno eseguito»* a **«eseguito»**, con la data.
+
+**Conseguenza: D74.**
+
+### P-114 — tutte e sette le case sono CRLF nell'albero di lavoro, e i due disegni no: due regole diverse nello stesso compito
+
+⛔ **Domanda 1, e qui il difetto sarebbe un diff da migliaia di righe.** Misurato il 2026-09-15:
+
+```bash
+git ls-files --eol docs/COMPENDIO.md docs/README.md docs/roadmap.md docs/tracciabilita.md \
+    docs/porta-di-qualita.md docs/riferimenti.md docs/HANDOFF.md \
+    docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md \
+    docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+```
+
+→ le **sette case** sono `i/lf w/crlf`; i **due disegni** sono `i/lf w/lf` (**P-47**). ⛔ **Quindi in questo compito
+convivono due regole**, ed è il compito con più file di tutto il piano: ogni scrittura usa Python con
+`newline=""`, **mai** `sed -i` — che in questa Git Bash toglie i CR — e ogni file si **rimisura** dopo con
+`git ls-files --eol` invece che con `tr -cd '\r'` da solo, perché l'indice e l'albero possono divergere (**P-3**).
+
+⚠️ **`docs/porta-di-qualita.md` e `docs/HANDOFF.md` sono i due file più grandi che questo compito tocca** — il
+comando che li pesa è `find docs -name '*.md' | xargs wc -c | sort -n` — quindi sono anche quelli dove una
+normalizzazione passerebbe più facilmente inosservata in un diff.
+
+**Conseguenza:** nessuna `D`; il Passo 1 e il criterio di chiusura.
+
+### P-115 — il margine del compendio è ancora `11030`, e questo è l'unico compito che tocca il compendio
+
+⛔ **Rimisurato il 2026-09-15** col comando del vincolo globale 11: il tetto vive **accanto al controllo**, in
+`scripts/check-docs.sh`, e vale `111616`; il compendio misura `100586`; il margine è **`11030`** — identico a
+**P-6**, perché nessun compito scritto finora l'ha toccato.
+
+```bash
+grep -n '^ceiling=' scripts/check-docs.sh
+wc -c docs/COMPENDIO.md
+```
+
+⛔ **E il margine NON è un obiettivo:** la §13 del compendio lo dice — *«è un tetto, non un obiettivo, e il verde
+NON è un segnale di margine»*; il 2026-09-01 era verde a **ventun** byte dal rosso. Questo compito aggiunge righe
+alla §12 e **riscrive** il puntatore della §6: si rimisura **prima e dopo**, e ⛔ **se va rosso si toglie prosa
+dalla §6, non si alza il tetto** (gotcha #100).
+
+**Conseguenza: D72.**
+
+### P-116 — `README.md` non nomina NESSUNO dei due disegni né dei due piani del 2, ed è voluto: le righe le deve questo compito
+
+⛔ **Quarta domanda, e la risposta è «no, e per decisione».** Misurato il 2026-09-15:
+
+```bash
+grep -c 'sottoprogetto-2\|direzione-gui\|gui-minima' docs/README.md
+```
+
+→ **zero**. È esattamente ciò che il **D14 del piano della parte 1** ha deciso: *«entrano con la parte 2»*
+(**P-112**). Quindi al compito 17 spettano righe **nuove**, non ritocchi:
+
+| Casa | Che cosa deve entrare |
+|---|---|
+| tabella **«Specifiche»** di `README.md` | i **due disegni** — la stella polare della GUI e il disegno del 2 — nella forma delle righe che ci sono: *«⛔ Non è una spec: …»* |
+| **§12** del compendio | i due disegni **e** i due piani, quattro righe, nella forma *«Se ti serve… / Apri»* |
+| tabella dei **piani** di `roadmap.md` | le due righe **esistono già**: quella della parte 1 è a *«eseguito»*, quella della parte 2 la porta a *«eseguito»* questo compito (**P-113**) |
+
+⚠️ **E la §5 del compendio NON cresce:** questo piano non apre nessun ADR (vincolo globale 10), quindi il
+controllo *«una voce in §5 per ogni file in `docs/adr/`»* non ha niente da pretendere.
+
+**Conseguenza: D72.**
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -3012,6 +3126,9 @@ smentisce — è ciò per cui esiste l'errata.
 | **D69** | ⛔ **niente `-n` / `--no-fetch`, e il perché si scrive ACCANTO alla riga** | **P-108**: `-n` dà lo **stesso** verdetto in **~1,3 s** invece di ~10, quindi qualcuno lo aggiungerà come ottimizzazione — e renderebbe il controllo **cieco a ciò che è stato pubblicato dopo l'ultima corsa con la rete**, cioè al caso esatto per cui X-3 esiste (*«restò invisibile sette mesi»*). ⚠️ **Costo dichiarato, ed è quello che la decisione 45 dichiarava già:** il passo vuole la **rete**, ~9 dei ~10 secondi sono la sua, e può fare rosso **senza un commit** perché il mondo ha pubblicato un avviso |
 | **D70** | **in CI `cargo audit` si installa con `cargo install --locked`, un passo per job, e NON si aggiunge un'azione di terzi** | **P-109**: nessuna delle due immagini lo porta e la matrice ne vuole due, cioè ~6 minuti di parete. ✅ **I minuti sono gratis, misurato e non ricordato** — il repository è `visibility: public`, letto dall'API il 2026-09-15 — ed è la **stessa premessa** su cui la decisione 44 ha scelto la matrice. ⛔ **La via B — un'azione di terzi che scarica il binario — costerebbe secondi invece di minuti e un TERZO in più nel percorso di fiducia della CI**, che gira col gettone del repository: è la specie di cosa che ADR-0031 vuole *«deliberata e rivedibile»*, non presa di corsa. ⚠️ **B è registrata, non presa:** se la parete diventasse un problema **misurato**, è del proprietario |
 | **D71** | **`npm audit` gira SENZA `--audit-level`: ogni vulnerabilità fa rosso** | **P-110**: la decisione 45 nomina `--audit-level` come la manopola che fissa la gravità, e misurato il rumore da tarare è **zero** — **369** pacchetti, **0** vulnerabilità, **~6 s** sull'insieme vero del 2. Un livello scelto oggi sarebbe una manopola che nessuno ha tarato **e una scorciatoia già pronta** per il primo avviso scomodo. La forma senza manopola è la stessa di `gate.sh`: un rosso significa sempre qualcosa, mai «stile discutibile». ⚠️ **Costo dichiarato:** un avviso **basso** su una dipendenza di **sviluppo** ferma il cancello; quando succederà, la via è aggiornare o dichiarare l'eccezione con la data, non abbassare la soglia in silenzio |
+| **D72** | **la §12 del compendio riceve QUATTRO righe — i due disegni e i due piani — e il puntatore della §6 si RISCRIVE invece di crescere** | **P-116**: le righe mancano per decisione (**D14 della parte 1**), quindi entrano qui. ⛔ **Ma il puntatore della §6 non si allunga con l'elenco di ciò che si è chiuso:** è la lezione del **taglio 4** del mandato del proprietario, che quel puntatore l'ha trovato *«una catena di ✅ su cose chiuse, col racconto di ciascuna»* e l'ha ridotto allo **stato di oggi** — *«più è corto meno invecchia»*. Il racconto della parte 2 va nella tabella **«Chiuso, con la data e il posto del verbale»**, una riga, e il ⏭️ passa al **sotto-progetto 13**. ⚠️ **Costo dichiarato, e misurato:** il margine è **`11030`** byte (**P-115**), quindi c'è spazio — ma è un **tetto, non un obiettivo**, e se va rosso si toglie prosa dalla §6 |
+| **D73** | **`porta-di-qualita.md` riceve UNA sezione sola per tutta la parte 2 — il passo web e le sonde — sul precedente della sonda S3, e NESSUNA riga di catalogo** | la §8 del 2 lo chiede così, e il vincolo globale 7 lo impone: la §7.4 è **spec**, quindi una sonda si **registra** e non si prende. La forma esiste già e si copia: la sezione *«⛔ LA SONDA S3 DEL RICONOSCIMENTO GESTI — 2026-09-04»*, con il titolo datato, il rimando al piano e al disegno, la frase che dice perché non c'è riga di catalogo, e la **tabella delle mutazioni con l'esito misurato**. ⛔ **Una sezione e non una per compito:** dieci sezioni per un sotto-progetto sarebbero dieci posti da tenere allineati, ed è la specie di cosa che il gotcha #68 punisce |
+| **D74** | **la Definizione di «fatto» della parte 2 vive nel PIANO, subito prima del diario, ed è fatta di COMANDI** | la parte 1 la mise nella §7 del disegno della chiusura, ma quello era un sotto-progetto che chiudeva; qui il verbale di ciò che la parte 2 ha prodotto appartiene al piano che l'ha prodotta, e chi rivede l'ha già aperto. ⛔ **Comandi e non affermazioni:** ogni riga della definizione è un comando con la sua uscita attesa, così invecchia con il codice invece che contro di esso — è la regola di `CLAUDE.md` sui numeri misurati, applicata a un criterio di chiusura. ⚠️ **E la riga della roadmap NON porta più il conteggio dei compiti** (**P-113**): resta da portarla a *«eseguito»* con la data, e basta |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -18415,6 +18532,267 @@ git push
   - [ ] nel job Windows il passo `rustup show` stampa il canale e il bersaglio di `rust-toolchain.toml`: è **la** metà che la decisione 44 chiedeva di provare e che nessun comando locale può dire
   - [ ] nel job Windows `bash scripts/gate.sh` **parte** — Git Bash c'è sull'immagine — e arriva a `GATE GREEN`
   - [ ] ⚠️ **se il job Windows è rosso, NON si toglie dalla matrice:** è la prima volta che quel codice viene provato là, ed è il motivo per cui X-1 esisteva. Il rosso è una voce d'errata col suo rimedio
+
+## Compito 17: la chiusura — i documenti in ogni casa, e la Definizione di «fatto» della parte 2
+
+**Files:**
+- Modify: `docs/COMPENDIO.md` (**CRLF**) — quattro righe in **§12**, il puntatore di **§6** riscritto (**D72**)
+- Modify: `docs/README.md` (**CRLF**) — due righe nella tabella «Specifiche» (**P-116**)
+- Modify: `docs/roadmap.md` (**CRLF**) — la riga **2** dei sotto-progetti, e la riga del piano della parte 2 a «eseguito» (**P-113**)
+- Modify: `docs/tracciabilita.md` (**CRLF**) — dove vivono ora i pezzi della GUI che la parte 2 ha costruito
+- Modify: `docs/porta-di-qualita.md` (**CRLF**) — **una** sezione nuova, sul precedente di S3 (**D73**)
+- Modify: `docs/riferimenti.md` (**CRLF**) — le misure e le fonti di questa parte, coi comandi e le date
+- Modify: `docs/HANDOFF.md` (**CRLF**) — i gotcha nuovi, nella loro **unica** casa
+- Modify: `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md` (**LF**) — la Definizione di «fatto» (**D74**)
+- ⛔ **NON si tocca nessun ADR:** questo piano non ne apre (vincolo globale 10), e la §5 del compendio non cresce
+- ⛔ **NON si tocca il codice:** questo compito è documenti, e il criterio di chiusura lo **asserisce**
+- Read: la **§12** e la **§13** del [compendio](../../COMPENDIO.md); la sezione *«⛔ LA SONDA S3 DEL RICONOSCIMENTO GESTI»* di [`porta-di-qualita.md`](../../porta-di-qualita.md), che è il **modello**; il riquadro in testa a [`tracciabilita.md`](../../tracciabilita.md); **D14 del piano della PARTE 1** — ⛔ **non di questo, dove `D14` è un'altra cosa** (**P-112**); **P-112**…**P-116**; **D72**, **D73**, **D74**
+- ⛔ **NON si legge**: il «Dettaglio» dell'audit, né i compiti 1–16 per intero — di ciascuno serve il **criterio di chiusura**, che è ciò che la Definizione di «fatto» riassume
+
+**Interfaces:**
+- Consumes: tutto ciò che i compiti 1–16 hanno prodotto, e i loro **criteri di chiusura**; le righe **X-1** e **X-3** chiuse dal compito **16**
+- Produces: nessun artefatto di codice. ⛔ **Produce l'unica cosa che una sessione nuova legge per sapere dov'è:** il puntatore della **§6** e la riga della roadmap
+- ⛔ **Che cosa questo compito NON produce:** nessuna riga di catalogo in `porta-di-qualita.md` (**D73**, vincolo globale 7), nessun ADR, nessuna cifra in prosa che non porti accanto il proprio comando (vincolo globale 3)
+
+⛔ **Questo è il compito in cui si sbaglia per ZELO, ed è scritto perché non succeda.** Le tentazioni misurate in
+questo repository, una per riga: riallineare una cifra invece di **toglierla** (gotcha #68); ricopiare in un secondo
+documento ciò che ha già una casa; allungare il puntatore della §6 con l'elenco di ciò che si è chiuso (il **taglio
+4**); correggere una riga che il compito non ha reso falsa. ⛔ **La regola, in una frase: si tocca ciò che questo
+piano ha reso falso, e nient'altro.**
+
+- [ ] **Passo 1: le misure prima — la baseline di ogni casa**
+
+```bash
+git ls-files --eol docs/COMPENDIO.md docs/README.md docs/roadmap.md docs/tracciabilita.md \
+    docs/porta-di-qualita.md docs/riferimenti.md docs/HANDOFF.md \
+    docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+grep -n '^ceiling=' scripts/check-docs.sh; wc -c docs/COMPENDIO.md
+awk '/^## I gotcha/{s=1; next} s&&/^## /{s=0} s&&/^\| [0-9]+ \|/{c++} END{print "gotcha: "c}' docs/HANDOFF.md
+grep -c 'sottoprogetto-2\|direzione-gui\|gui-minima' docs/README.md
+grep -c 'LA SONDA S3' docs/porta-di-qualita.md
+grep -n 'in scrittura dal 2026-09-11\|^| 2 | GUI minima' docs/roadmap.md
+bash scripts/gate.sh 2>&1 | tail -2
+```
+
+Atteso: le sette case `i/lf w/crlf` e il piano `i/lf w/lf` (**P-114**); il tetto e il peso del compendio, da cui il
+**margine** (**P-115**); il numero dei gotcha, che è la baseline del Passo 8; **zero** per i nomi del 2 in `README.md`
+(**P-116**); **uno** per la sezione S3, che è il modello; le due righe della roadmap; `GATE GREEN`.
+
+⛔ **Se `grep -c 'sottoprogetto-2…' docs/README.md` NON è zero, questo compito è già in parte eseguito:** ci si ferma
+e si riporta invece di aggiungere righe doppie.
+
+⚠️ **E si rileggono i sedici criteri di chiusura**, uno per compito, perché il Passo 9 li riassume e un riassunto
+scritto a memoria è il modo in cui una consegna sembra più completa di quanto sia:
+
+```bash
+grep -n '^\*\*Criterio di chiusura' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+```
+
+- [ ] **Passo 2: la §12 del compendio — quattro righe, e il margine rimisurato**
+
+⛔ **Quattro righe nella forma che la §12 ha già** — *«Se ti serve… / Apri»* — e non una di più: i due **disegni** e
+i due **piani**. ⚠️ **Ogni riga dice anche COME si legge quel file**, perché è ciò per cui la §12 esiste: *«a
+compiti, mai intero»* per i piani, *«non è una spec»* per i disegni.
+
+| Se ti serve… | Apri |
+|---|---|
+| ⛔ **la direzione della GUI** — le viste, i moduli, la disposizione, il protocollo core ↔ GUI, e la tabella delle decisioni col loro chiusore | `specs/2026-09-07-direzione-gui-design.md` — ⚠️ **non è una spec**: è la stella polare, e si legge **per intero** da chi riprende il fronte GUI |
+| ⛔ **il perimetro della GUI minima** — che cosa il 2 costruisce e che cosa no, il filo, lo schema, il registro, il core finto, le prove e il cancello, le decisioni aperte col chiusore | `specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` — ⚠️ **non è una spec**; la **§10** dice come si riprende |
+| come si è **eseguita la parte 1** — SP-8, i due gusci misurati, ADR-0029 chiuso | `plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md` — ⚠️ **a compiti, mai intero** |
+| ⛔ **come si è ESEGUITA la parte 2** — il filo, la settima porta, il registro, il daemon, la SPA, il cancello web, X-1 e X-3; con l'errata in testa, la tabella della posizione e la **Definizione di «fatto»** | `plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md` — ⚠️ **a compiti, mai intero** |
+
+⛔ **I quattro percorsi si scrivono come li scrive la §12 oggi** — si guarda una riga vicina e si copia la forma del
+collegamento, invece di inventarla. E ⛔ **il margine si rimisura subito dopo**:
+
+```bash
+wc -c docs/COMPENDIO.md; grep -n '^ceiling=' scripts/check-docs.sh
+bash scripts/check-docs.sh
+git ls-files --eol docs/COMPENDIO.md
+```
+
+- [ ] **Passo 3: la §6 del compendio — il puntatore RISCRITTO, non allungato**
+
+⛔ **Due tocchi, e il secondo è il solo che una sessione nuova legge.**
+
+**Uno.** Nella tabella *«Chiuso, con la data e il posto del verbale»*, **una** riga:
+
+| Che cosa | Quando | Dove |
+|---|---|---|
+| il **sotto-progetto 2**, la GUI minima — il filo in `platform`, lo schema, il registro delle funzioni, la settima porta `custody`, il daemon che ascolta, la SPA con `dockview` e il core finto, il passo web del cancello, **X-1** e **X-3** | \<data\> | la **Definizione di «fatto»** del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), coi comandi |
+
+**Due.** Il blocco ⏭️ si **riscrive**, e ciò che c'era diventa la riga qui sopra. ⛔ **Non si allunga con il racconto
+di ciò che si è chiuso:** è esattamente ciò che il **taglio 4** del mandato del proprietario ha tolto, e la sua
+ragione — *«più è corto meno invecchia»* — vale identica oggi.
+
+> ⏭️ **IL PROSSIMO PASSO: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la
+> **decisione 16** mette **prima** del 3. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative:
+> è una sua decisione e non del piano. Il perimetro sta nel
+> [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte
+> legge **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.
+
+⛔ **`<data>` è la data del giorno dell'esecuzione**, e questo passo dice di sostituirla.
+
+⚠️ **E si rilegge il testo del ⏭️ vecchio prima di cancellarlo:** se porta una riga che **non** è stata chiusa dalla
+parte 2, quella riga **resta** — cancellare una voce aperta è il modo in cui smette di esserlo senza che nessuno
+l'abbia chiusa.
+
+- [ ] **Passo 4: `README.md` — due righe nella tabella «Specifiche»**
+
+⛔ **Due righe, nella forma delle otto che ci sono**, e il comando che le mostra prima di scriverle:
+
+```bash
+sed -n '/^## Specifiche/,/^## Decomposizione/p' docs/README.md | cut -c1-140
+```
+
+- la **stella polare della GUI**, sotto-progetto *«la direzione della GUI»*, stato *«⛔ Non è una spec: viste, moduli, disposizione, il protocollo core ↔ GUI, le decisioni col loro chiusore»*
+- il **disegno del 2**, sotto-progetto *«GUI minima»*, stato *«⛔ Non è una spec: perimetro, filo, schema, registro, core finto, prove e cancello; la §10 dice come si riprende»* più il richiamo che la parte 2 è **eseguita**, con la data
+
+⚠️ **La tabella «Dove va cosa» NON si tocca** se questo piano non ha reso falsa nessuna delle sue righe: si
+**verifica** invece di supporlo —
+
+```bash
+sed -n '/^## Dove va cosa/,/^## Regole/p' docs/README.md | cut -c1-140
+```
+
+— e se una riga è falsa, si corregge **quella**, col richiamo datato.
+
+- [ ] **Passo 5: `roadmap.md` — la riga 2 e la riga del piano**
+
+```bash
+grep -n '^| 2 | GUI minima' docs/roadmap.md
+grep -n 'in scrittura dal 2026-09-11' docs/roadmap.md
+```
+
+- la riga **2** della tabella dei sotto-progetti passa da ⬜ a ✅ con la data
+- la riga del **piano della parte 2** passa da *«in scrittura … nessuno eseguito»* a **«eseguito il \<data\>»**, `GATE GREEN` a ogni compito
+
+⛔ **Non si rimette il conteggio dei compiti** — **P-113**: è stato tolto il 2026-09-15 (commit `850137c`) perché
+viveva in due case, e la casa unica è la tabella della posizione del piano. ⚠️ **E la riga *«Ultimo
+aggiornamento»* in testa al file porta la data di OGGI**, perché è l'intestazione che nessuno rilegge (gotcha #31).
+
+- [ ] **Passo 6: `tracciabilita.md` — dove vivono ora i pezzi della GUI**
+
+⛔ **Si legge PRIMA il riquadro in testa**, che dice a che cosa questo file risponde: *«dove vive»*, **non** *«di
+quale meccanismo ha bisogno»* — la crepa da cui sono uscite le sette voci.
+
+```bash
+sed -n '1,20p' docs/tracciabilita.md
+grep -n '^## 2\. Conversazione\|^## 8\. Sistema' docs/tracciabilita.md
+```
+
+Si aggiornano **solo** le righe che la parte 2 ha reso vere o false: la chat, lo stato del sistema, i permessi, la
+lista dei passi, le impostazioni — ciascuna con `gui/src/panels/<nome>.vue` e la porta o il messaggio che la
+alimenta. ⚠️ **Il file non si riscrive da zero** (§8 del compendio, *«Cosa NON rifare»*): si **aggiorna**.
+
+- [ ] **Passo 7: `porta-di-qualita.md` — UNA sezione, sul precedente di S3**
+
+⛔ **Si copia la FORMA della sezione S3**, che è il modello, e si legge prima:
+
+```bash
+sed -n "$(grep -n 'LA SONDA S3' docs/porta-di-qualita.md | cut -d: -f1),\$p" docs/porta-di-qualita.md
+```
+
+La sezione nuova, in coda al file, con il titolo datato: **«⛔ IL PASSO WEB E LE SONDE DELLA PARTE 2 — \<data\>»**.
+Dentro, nell'ordine di S3:
+
+1. che cosa è entrato nel cancello — `scripts/gate-gui.sh`, la riga `run` in `gate.sh`, `cargo audit` e `npm audit` — coi **percorsi esatti**
+2. ⛔ la frase che dice **perché non c'è riga di catalogo**: la §7.4 è spec, vincolo globale 7, quindi le sonde si **registrano** e non si prendono — *«stesso trattamento di PL-1, di K-1/B-1 e di S3, stessa ragione (gotcha #36)»*
+3. la **tabella delle mutazioni con l'esito misurato**: le quattro direzioni del lint (compito 15, Passo 4), le due del passo web (compito 15, Passo 7), le due di `cargo audit` e le due di `npm audit` (compito 16, Passi 3 e 4) — ⛔ **con l'uscita vera di quel giorno, non con quella scritta qui**
+4. ⛔ la riga di *«Cosa la porta NON controlla»*: la metà **Windows** che solo la corsa può dire (**P-111**), la prova **capo a capo** nel guscio che la §8 mette *«fuori dal cancello di oggi»*, e il fatto che il lint **non valida i JSON** (**P-101**)
+
+- [ ] **Passo 8: `riferimenti.md` e `HANDOFF.md` — le misure, le fonti, i gotcha**
+
+⛔ **`riferimenti.md` prende ciò che ha una FONTE o una MISURA**, col comando e la data, e niente altro: le versioni
+di **P-2** rimisurate dai compiti che le hanno installate; il comportamento di `no-raw-text` e del preset
+(**P-98**, **P-100**); `package-manager-cache` di `setup-node` v7 (**P-103**); `cargo audit` sul nostro lockfile e
+`--deny unmaintained` (**P-107**); `npm audit` sull'insieme del 2 (**P-110**); `--manifest-path` e i tre
+`target_directory` (**P-104**).
+
+⛔ **`HANDOFF.md` prende i gotcha NUOVI, e la sua sezione è la LORO UNICA CASA** — la §9 del compendio vi **rimanda**
+e ⛔ **non si ricopia niente là** (gotcha #68, che è stato commesso proprio lì). I candidati vengono dalle
+*«trappole»* delle chiusure del diario e dalle voci `P`, e ciascuno entra **una volta sola**:
+
+```bash
+awk '/^## I gotcha/{s=1; next} s&&/^## /{s=0} s&&/^\| [0-9]+ \|/{c++} END{print c}' docs/HANDOFF.md
+```
+
+⚠️ **Il numero prima e dopo si confronta**, e la differenza è quanti se ne sono aggiunti — ⛔ **non si scrive quel
+numero in nessun documento:** il comando qui sopra è la §9 del compendio in persona.
+
+- [ ] **Passo 9: la Definizione di «fatto» della parte 2 — comandi, non affermazioni**
+
+⛔ **Va nel PIANO**, subito prima della sezione *«Come si riprende»* (**D74**), come sezione `##`. ⛔ **Ogni riga è un
+comando con la sua uscita attesa**, così invecchia col codice invece che contro di esso. Le righe vengono dai
+**sedici criteri di chiusura**, riletti al Passo 1, e non dalla memoria. Almeno:
+
+```bash
+bash scripts/gate.sh 2>&1 | tail -2                              # GATE GREEN
+bash scripts/gate.sh 2>&1 | grep -c 'gui: fake core and SPA'     # > 0
+bash scripts/gate.sh 2>&1 | grep -c 'dependency advisories'      # > 0
+bash scripts/check-docs.sh 2>&1 | tail -1                        # OK
+bash scripts/gate-deps.sh                                        # verde: la lista di ADR-0031 non e' cresciuta
+bash scripts/gate-attributes.sh                                  # verde: nessun #[allow] nuovo, nessun unsafe
+ls crates/kernel/tests/frozen/ | wc -l                           # i record congelati, otto
+grep -c 'pub trait Custody' crates/kernel/src/ports/custody.rs   # 1: la settima porta esiste
+cd gui && npm ci --no-audit --no-fund && npm run build && npm test && npm run lint; echo $?; cd ..
+git status --porcelain                                           # vuoto
+```
+
+⚠️ **Le uscite attese si scrivono col valore VERO del giorno**, e dove il valore è un conteggio si scrive il
+**comando**, mai la cifra da sola (vincolo globale 3).
+
+- [ ] **Passo 10: le due voci che aspettavano il proprietario**
+
+| Voce | Che cosa fa questo compito |
+|---|---|
+| la voce **D56** — i tre campi di Passi | ✅ **DECISA dal proprietario il 2026-09-15: A**, e il richiamo è già nella riga `D56`. Qui si **registra l'esito** dov'è dovuto: il richiamo sulla riga 1 della tabella *Passi* della stella polare l'ha già scritto il **Passo 15 del compito 14**, quindi ⛔ **non si riscrive** — si **verifica** che ci sia, col `grep` |
+| la **«finestra a parte»** — il terzo comando del menu | ⛔ **resta APERTA**, e il suo chiusore è il **guscio** (**P-91**, **D58**): si verifica che sia ancora nella tabella *«Le voci aperte che questo piano SA, e non chiude»*, e **non** la si chiude per zelo |
+
+```bash
+grep -c 'RICHIAMO DEL' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+grep -c 'finestra a parte' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+```
+
+- [ ] **Passo 11: il cancello, il margine, e il commit**
+
+```bash
+bash scripts/check-docs.sh
+bash scripts/gate.sh 2>&1 | tail -2
+wc -c docs/COMPENDIO.md; grep -n '^ceiling=' scripts/check-docs.sh
+git ls-files --eol docs/COMPENDIO.md docs/README.md docs/roadmap.md docs/tracciabilita.md \
+    docs/porta-di-qualita.md docs/riferimenti.md docs/HANDOFF.md \
+    docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+git diff --stat
+git status --porcelain
+```
+
+Atteso: `OK`, `GATE GREEN`, il margine **positivo**, i fine-riga **identici** al Passo 1, e il `git diff --stat` che
+nomina **solo** gli otto file di questo compito — ⛔ **se ne nomina altri, lo zelo ha vinto:** si revoca ciò che
+questo piano non ha reso falso.
+
+```bash
+git add docs/
+git commit -m "gui(compito 17): la chiusura della parte 2 -- i documenti in ogni casa, e la Definizione di «fatto» coi comandi"
+git push
+```
+
+⛔ **Senza co-autore**, vincolo globale 13.
+
+**Criterio di chiusura del compito 17**
+
+- [ ] `bash scripts/check-docs.sh` → `OK`, e `bash scripts/gate.sh` → `GATE GREEN`
+- [ ] ⛔ **il compendio è sotto il tetto, col margine misurato DOPO:** `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` — e ⛔ **se fosse rosso si toglie prosa dalla §6, non si alza il tetto** (**P-115**, gotcha #100)
+- [ ] ⛔ **i fine-riga di tutti e otto i file sono INVARIATI** rispetto al Passo 1: `git ls-files --eol` dà le sette case `i/lf w/crlf` e il piano `i/lf w/lf` (**P-114**)
+- [ ] ⛔ **il `git diff --stat` nomina SOLO gli otto file**, e nessun file di codice: `git diff --stat HEAD~1 -- crates/ gui/ scripts/ .github/` **vuoto**
+- [ ] `grep -c 'sottoprogetto-2\|direzione-gui\|gui-minima' docs/README.md` → **più di zero**, dove il Passo 1 dava **zero** (**P-116**)
+- [ ] ⛔ **la §12 ha quattro righe nuove e la §5 NESSUNA:** `git diff HEAD~1 -- docs/COMPENDIO.md | grep -c '^+|'` è più di tre, e `grep -c '^\*\*00' docs/COMPENDIO.md` è **invariato** rispetto al Passo 1 — nessun ADR nasce qui (vincolo globale 10)
+- [ ] ⛔ **il ⏭️ della §6 nomina il sotto-progetto 13 e AUD-004**, e **non** è una catena di ✅: `awk '/⏭️/{print}' docs/COMPENDIO.md` rende una riga sola, e `grep -c '<data>' docs/COMPENDIO.md` → **zero**
+- [ ] ⛔ **il conteggio dei compiti NON è tornato nella roadmap:** `grep -cE 'sedici|diciassette|[0-9]+ compiti' docs/roadmap.md` → **zero** sulla riga del piano della parte 2 (**P-113**)
+- [ ] ⛔ **`porta-di-qualita.md` ha UNA sezione nuova e NESSUNA riga di catalogo:** `grep -c 'PARTE 2' docs/porta-di-qualita.md` → **1**, e il numero di righe della §7.4 è **invariato** rispetto al Passo 1 (**D73**, vincolo globale 7)
+- [ ] ⛔ **i gotcha stanno in UNA casa:** il comando della §9 del compendio dà un numero **maggiore** di quello del Passo 1, e `git diff HEAD~1 -- docs/COMPENDIO.md | grep -c 'gotcha'` **non** mostra gotcha ricopiati nel compendio (gotcha #68)
+- [ ] ⛔ **la Definizione di «fatto» è fatta di COMANDI:** ogni riga della sezione nuova del piano è eseguibile, e **è stata eseguita** — non si scrive un'uscita attesa che non si è vista
+- [ ] ⛔ **D56 è registrata e la «finestra a parte» è ancora APERTA:** i due `grep` del Passo 10, e la voce nella tabella *«Le voci aperte che questo piano SA, e non chiude»* c'è ancora
+- [ ] ⛔ **la tabella della posizione è tutta ✅**, e ogni riga porta il proprio commit: `awk '/^\| \*\*[0-9]+\*\* \|/{print}' <questo file> | grep -c '⬜'` → **zero**
 
 ## Come si riprende — il diario di questo piano, coi comandi
 

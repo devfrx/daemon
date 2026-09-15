@@ -3171,7 +3171,7 @@ smentisce — è ciò per cui esiste l'errata.
 | **D84** | **il processore a riposo del daemon si MISURA al compito 9** — il grafo di produzione col tick vero, sessanta secondi, il comando e il numero **senza soglia** — e il **17** lo porta in `riferimenti.md` con comando e data | R9a-5, R9b-7: è la decisione **41** del proprietario (*«e il piano misura il processore a riposo senza soglia»*), e `grep -in 'riposo\|cpu' <piano>` rendeva zero: una promessa al proprietario che nessun compito manteneva né dichiarava |
 | **D85** | **`docs/design/10-modello-dei-dati-durevoli.md` si aggiorna al 17**: `INVOCATION_DETAIL` passa dal secondo `erDiagram` al primo col richiamo datato — la regola scritta nel file, decisione 20 del proprietario — e `POLICY_DETAIL` (specie 4 di `Detail`) entra | R9b-2: il 6 costruisce `InvocationDetail` e l'8 `PolicyDetail`, e `grep -n 'design/10\|10-modello' <piano>` rendeva zero; `docs/design/` ha fine-riga misti, quindi `git ls-files --eol` prima |
 | **D86** | **la riga 2 della roadmap cambia TITOLO al 17**, sul perimetro della §3 della stella (non più *«GUI minima (shell, chat, stato)»*), oltre allo stato | R9b-3: è un debito **dichiarato** dalla §3 della stella (*«aggiornarlo è un compito del piano»*), e `grep -c -F 'GUI minima (shell' <piano>` rendeva zero |
-| **D87** | **il 14 scrive un richiamo `<data>` per OGNI modulo che costruisce** nelle tabelle della §1 della stella polare — Stato, Permessi, Passi, Chat (le righe costruite), e la riga Impostazioni della tabella corta — col nome del sorgente; **il 17 scrive i ✅ sui 🔶 dedotti della stella** che il piano conferma (l'ordine dei pezzi, la SPA contro il ponte finto prima del daemon, i passi all'accoglienza e dopo ogni invocazione, il pacchetto opaco, i default in `gui/`) e la precisazione sul client rifiutato | R9a-13, R9b-4, R9b-13: la §6 della stella dice *«quando costruisce un modulo, mette un richiamo datato nella riga di quel modulo nella §1»* e il §10 del disegno del 2 lo ripete al punto 9; il 14 ne scriveva uno solo (D56) |
+| **D87** | **il 14 scrive un richiamo `<data>` per OGNI modulo che costruisce** nelle tabelle della §1 della stella polare — Stato, Permessi, Passi, Chat (le righe costruite), e la riga Impostazioni della tabella corta — col nome del sorgente — ⚠️ **applicata all'ondata 11 come UN richiamo per modulo**, sul capoverso *«Costruito dal **2**»* sotto l'intestazione (la «riga di quel modulo» della §6) e non su ogni riga costruita: le righe tengono la colonna «chi», e un richiamo di riga sta dove la riga diverge (D56, R7-14); **il 17 scrive i ✅ sui 🔶 dedotti della stella** che il piano conferma (l'ordine dei pezzi, la SPA contro il ponte finto prima del daemon, i passi all'accoglienza e dopo ogni invocazione, il pacchetto opaco, i default in `gui/`) e la precisazione sul client rifiutato | R9a-13, R9b-4, R9b-13: la §6 della stella dice *«quando costruisce un modulo, mette un richiamo datato nella riga di quel modulo nella §1»* e il §10 del disegno del 2 lo ripete al punto 9; il 14 ne scriveva uno solo (D56) |
 | **D88** | ⛔ **ogni richiamo che una decisione `D` di questo piano rende dovuto nei due disegni si scrive dal compito che ESEGUE quella decisione**, non si lascia al 17: §3 del 2 (D9, D10, D78, D82) dal **2**; §4 riga `Request, Verdict` (D5) dal **7**; §8 *«decodificata dai byte»* e §2 *«la SPA parla `bincode`»* (D36) dall'**11**; §7 righe *«la disposizione»*, *«la lista dei passi»*, *«senza copiarla»*, il dedotto su `Accepted` (P-70, D41, D22) dal **12**; §8 *«le scritte»* (D63, D65) dal **15**; §8 *«Ciò che la §8 non fa»* (X-1, X-3) dal **16**; le decisioni 6, 45, 47, 51, 52, 55 del coordinatore della stella (D2, D71, D66, D3, D4, D63–D65) dal compito che le esegue | R9a-3, R9a-7, R9a-8, R9a-10, R9a-11, R9a-12, R9b-9, R3-18, R5-15, R5-16: quattordici contraddizioni **dichiarate in una `D`** e **mute nel disegno** — il precedente giusto è il compito 8, che scrive il richiamo della decisione 56 dove vive |
 | **D89** | ⛔ **il dock SEGUE lo store**: `createDock` osserva `view` e `arrivals` di `useLayout` — la barra scrive `layout.view` e basta; un pacchetto che il core manda **dopo** che il dock è su viene mostrato; l'**eco** del proprio `SaveLayout` (decisione 13: il core risponde con ciò che tiene) non conta come arrivo, perché lo store confronta i byte con quelli che ha mandato; e mostrare una vista **azzera la baseline** del `settle`, così guardare una vista non la salva | revisione del piano intero, 2026-09-15, scrivendo D80 (coordinatore; R6 caduto): il 13 dettava `apply` una volta sola in `createDock`, cioè **prima** del `Hello` di `main.ts` — e `layout.receive` del `Layout` dell'accoglienza aggiornava lo store senza che nulla lo mostrasse: la disposizione salvata **non compariva mai** all'avvio; e col `switchTo` che rilanciava `apply` da `Frame.vue`, il `settle` che seguiva copiava la vista spedita nell'archivio, contro la decisione 11 del coordinatore della stella. Compilava e passava tutte le sonde del 13 |
 
@@ -16693,7 +16693,7 @@ git push
 - [ ] ⛔ **la disposizione è PER VISTA e il dock SEGUE lo store (D80, D89):** `grep -c 'layouts: Partial<Record<ViewName, SerializedDockview>>' gui/src/stores/layout.ts` → **1**; `grep -c 'watch(\[' gui/src/frame/dock.ts` → **1**; `grep -c 'apply(' gui/src/frame/Frame.vue` → **0**; le due sonde di `describe("the dock")` in `frame.test.ts` e le due nuove di `describe("the layout")` in `stores.test.ts` sono verdi — le prime due **se il Passo 3 ha misurato verde**, altrimenti stanno nella sua voce d'errata, col revisore nel browser
 - [ ] ⛔ **`beforeunload` non copia una vista mai toccata nell'archivio (D81):** la sonda `saves nothing when the window closes untouched` è verde in **entrambe** le metà — zero prima, uno dopo un `close()`, e ancora uno dopo l'evento bufferizzato
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
-- [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -cE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src/**/*.test.ts` → **0**
+- [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -rcE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src --include='*.test.ts' | grep -v ':0$'` → **niente** — R7-6, misurato: senza `globstar` il `**` non scende di un livello (`gui/src/a11y.test.ts` sfuggiva) e con più file `grep -c` stampa `file:conteggio`, mai uno «0» nudo; provato una volta anche su un file con un corpo vuoto, che **deve** comparire
 - [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA** — regola 5 della testa: `cd gui && npm run dev`, e con la finta collegata si vedono la barra con le tre viste, la fascia «il core non ha risposto», la striscia in basso, il cassetto coi diciotto tipi, e le tessere che dicono chi le riempie
 
 ## Compito 14: la SPA, i moduli — Stato, Permessi, Chat, Passi e Impostazioni, la finestra di conferma, la tastiera e l'accessibilità
@@ -16709,11 +16709,12 @@ un valore che fallisce è una modifica a `tokens.css` — com'era scritto nel fi
 **Files:**
 - Modify: `gui/package.json` (**LF**) — `markdown-it` e `axe-core`, i due che **questo** compito consuma (**D40**)
 - Modify: `gui/package-lock.json` (**LF**) — **nello stesso commit** del manifesto, vincolo globale 7
-- Modify: `gui/src/tokens/tokens.css` (**LF**) — `--stop`, l'unico token che l'AA boccia (**P-86**)
+- Modify: `gui/src/tokens/tokens.css` (**LF**) — `--stop`, l'unico token che l'AA boccia (**P-86**), il capoverso in testa (Passo 3) e le regole della linguetta in coda (Passo 11) — R7-9
 - Modify: `gui/src/locales/it.json` (**LF**) — le scritte dei cinque moduli, della finestra, del menu e della tastiera
 - Modify: `gui/src/frame/BigTab.ts` (**LF**) — i **due** comandi del menu del modulo, con le loro etichette (**P-91**, **D58**)
 - Modify: `gui/src/frame/Frame.vue` (**LF**) — la finestra di conferma e la tastiera
 - Modify: `gui/src/main.ts` (**LF**) — i moduli registrati, gli store nuovi in ascolto, la finta esposta al revisore (**D57**)
+- Modify: `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` (**LF**) — i richiami datati della §1 e delle registrate: la riga 1 di Passi (**D56**), le righe 3 di Permessi e 12 di Passi (R7-14), uno per modulo costruito (**D87**), la riga delle scorciatoie (R9b-5) — Passo 15 (R10-8: mancava dalla lista mentre il Passo 15 e il commit la toccavano)
 - Create: `gui/src/panels/functions.ts` (**LF**) — i tre letterali della funzione registrata (**P-88**, **D55**)
 - Create: `gui/src/stores/stream.ts`, `gui/src/stores/invoke.ts` (**LF**) — **D40**, **D59**, **D61**
 - Create: `gui/src/components/markdown.ts`, `gui/src/components/Confirm.vue` (**LF**) — **D54**, **D60**
@@ -16778,15 +16779,16 @@ import json, urllib.request, urllib.parse
 for p, v in {"markdown-it": "15.0.2", "axe-core": "4.13.0"}.items():
     d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
     m = d["versions"][v]
-    print(f"{p:12} latest={d['dist-tags']['latest']:8} pinned={v} {d['time'][v][:10]} license={m.get('license')} engines={m.get('engines')} types={m.get('types') or m.get('exports', {}).get('.', {}).get('import', {}).get('types')}")
+    print(f"{p:12} latest={d['dist-tags']['latest']:8} pinned={v} {d['time'][v][:10]} license={m.get('license')} engines={m.get('engines')} types={m.get('types') or m.get('typings') or m.get('exports', {}).get('.', {}).get('import', {}).get('types')}")
 EOF
 ```
 
 ⛔ **Una major nuova non si prende**; una minor o patch solo se l'appuntata non si installa, con voce d'errata.
 
 In `gui/package.json` le `dependencies` guadagnano `"markdown-it": "15.0.2"` e le `devDependencies` guadagnano
-`"axe-core": "4.13.0"`. ⚠️ **Nessun `@types/markdown-it`:** la 15 spedisce i propri tipi — `dist/markdown-it.d.mts`
-sotto `exports["."].import.types`, misurato il 2026-09-15 — e `axe-core` spedisce `axe.d.ts`.
+`"axe-core": "4.13.0"`. ⚠️ **Nessun `@types/markdown-it`:** la 15 spedisce i propri tipi — `types` di primo livello `./dist/markdown-it.d.cts`, e
+`./dist/markdown-it.d.mts` sotto `exports["."].import.types`, misurato il 2026-09-15 (R7-13: lo script stampa il primo, perché
+`types` di primo livello vince) — e `axe-core` li dichiara in `typings: axe.d.ts`, che lo script legge come seconda scelta.
 
 Poi, **fuori dal cancello** e prima del commit:
 
@@ -16828,7 +16830,9 @@ In `gui/src/tokens/tokens.css` la riga `--stop: #e5534b;` diventa:
 
 ⚠️ **E il paragrafo in testa al file che dice *«the check is `axe-core` … it arrives with the accessibility of task
 14»* riceve la correzione**, perché da oggi è falso a metà: `axe-core` sotto `jsdom` **non decide** il contrasto.
-Le tre righe che cominciano con `⚠️ G20 WANTS AA CONTRAST` diventano:
+Le **quattro** righe, da `⚠️ G20 WANTS AA CONTRAST` fino a `reason the shape comes before the palette. */` comprese —
+`grep -c -F 'reason the shape comes before the palette. */' gui/src/tokens/tokens.css` → **1** prima di scrivere (R7-5: qui
+stava «tre», e la quarta sarebbe rimasta orfana fuori dal commento, davanti a `:root`) — diventano:
 
 ```css
    ⚠️ G20 WANTS AA CONTRAST, and the check is `contrast.test.ts` in this folder: `axe-core` under
@@ -16901,6 +16905,7 @@ morde e non che il valore è passato per caso.
 ```bash
 cd gui
 npx vitest run src/tokens/contrast.test.ts; echo "verde atteso: EXIT=$?"
+git add src/tokens/tokens.css
 python - <<'EOF'
 import io
 p = "src/tokens/tokens.css"
@@ -16913,8 +16918,9 @@ git checkout -- src/tokens/tokens.css
 cd ..
 ```
 
-⚠️ **`git checkout` rimette il file com'era nell'INDICE**, cioè senza la modifica di questo passo se non è ancora
-stata aggiunta: si rilancia il primo script di questo passo dopo il rosso, o si fa il `git add` prima della mutazione.
+⚠️ **`git checkout` rimette il file com'era nell'INDICE**, ed è per questo che il `git add` sta **prima** della mutazione
+(R7-8, la forma di R5-11): senza, il `checkout` riporterebbe il file al 13 — e «si rilancia il primo script» non reggeva,
+perché il solo script di questo passo è la mutazione **inversa**, che dopo il `checkout` fallirebbe sul proprio `assert`.
 Atteso alla fine: `--stop: #ec5f57;` nel file, e la sonda **verde**.
 
 - [ ] **Passo 4: le scritte dei moduli**
@@ -17002,13 +17008,13 @@ Passo 13 legge il testo dal valore che il core ha mandato.
 
 ```ts
 /**
- * The registry's ONE function in milestone 2, as the SPA names it on the wire.
+ * The registry's ONE function in sub-project 2, as the SPA names it on the wire.
  *
  * ⛔ THREE LITERALS IN TWO LANGUAGES, AND NOTHING COUPLES THEM (P-88): the name lives in
  * `crates/kernel/src/serving.rs` (`POLICY_FUNCTION`), and the two arguments are what
  * `MakeRoom::name` answers in `crates/kernel/src/arbiter/policy.rs`. A rename over there and
  * this `Invoke` is refused WITHOUT A MESSAGE -- a function the registry does not hold is refused
- * and nothing is written (§5 of the milestone-2 design) -- so the fault would be mute. The
+ * and nothing is written (§5 of the sub-project 2 design) -- so the fault would be mute. The
  * closing criterion of task 14 compares the literals with a command, as D45 does for the socket
  * name.
  *
@@ -17043,7 +17049,7 @@ export interface Block {
  * ⛔ THE NUMBERS M4 WAS MEASURED WITH (D61): SP-8's chat tile froze the streamed text at this many
  * characters and kept this many frozen blocks, and P3 under real rendering was measured on THAT
  * tile -- so these are the values a measure sits behind, not thresholds invented here. The
- * message boundary itself arrives with sub-project 3: in milestone 2 the fake core's faucet never
+ * message boundary itself arrives with sub-project 3: in sub-project 2 the fake core's faucet never
  * ends a message, and a text that only grows would render the whole stream on every token.
  */
 export const FREEZE_AT = 4000;
@@ -17133,7 +17139,7 @@ export const useInvoke = defineStore("invoke", () => {
   }
 
   /** The "no": NOTHING IS SENT. The core keeps nothing pending -- the registry answered
-   * `PermissionRequired` and forgot (§5 of the milestone-2 design) -- so refusing is local. */
+   * `PermissionRequired` and forgot (§5 of the sub-project 2 design) -- so refusing is local. */
   function refuse(): void {
     inFlight.value = null;
     core.settled();
@@ -17299,7 +17305,7 @@ describe("the invocation", () => {
 import MarkdownIt from "markdown-it";
 
 /**
- * The renderer of the chat (decision 51 of the north star; §9 row 1 of the milestone-2 design).
+ * The renderer of the chat (decision 51 of the north star; §9 row 1 of the sub-project 2 design).
  *
  * ⛔ PRESET `default` WITH `html: false` AND `linkify: false` WRITTEN OUT, not relied on -- read
  * INSIDE the 15.0.2 package on 2026-09-15 (task 14, step 2): raw HTML in the text is escaped,
@@ -17317,7 +17323,8 @@ import MarkdownIt from "markdown-it";
 const md = new MarkdownIt("default", { html: false, linkify: false });
 
 md.renderer.rules.link_open = (tokens, index) => {
-  const href = tokens[index]?.attrGet("href") ?? "";
+  // `attrGet` is typed `string | number | null` in the shipped `.d.mts` (R7-1): `String` narrows it.
+  const href = String(tokens[index]?.attrGet("href") ?? "");
   return `<span class="link" data-href="${md.utils.escapeHtml(href)}">`;
 };
 
@@ -17326,7 +17333,7 @@ md.renderer.rules.link_close = () => "</span>";
 md.renderer.rules.image = (tokens, index) => {
   const token = tokens[index];
   const alt = md.utils.escapeHtml(token?.content ?? "");
-  const src = md.utils.escapeHtml(token?.attrGet("src") ?? "");
+  const src = md.utils.escapeHtml(String(token?.attrGet("src") ?? ""));
   return `<span class="image">[${alt}] ${src}</span>`;
 };
 
@@ -17394,7 +17401,7 @@ detto, e `null` si mostra come *«il core non l'ha ancora detto»* — mai come 
 import { useConnection } from "../stores/connection";
 import { useCore } from "../stores/core";
 
-// The Stato table of §1 of the north star, rows 1-4 -- what milestone 2 builds. Stato SHOWS and
+// The Stato table of §1 of the north star, rows 1-4 -- what sub-project 2 builds. Stato SHOWS and
 // does not command: the policy change is a registry function and lives in Impostazioni.
 const connection = useConnection();
 const core = useCore();
@@ -17460,7 +17467,7 @@ aritmetica; il giorno che servirà una percentuale, passa da `BigInt` come il do
 import { useCore } from "../stores/core";
 import { useInvoke } from "../stores/invoke";
 
-// The Permessi table of §1 of the north star, rows 1-3, 7-9 -- what milestone 2 builds: the
+// The Permessi table of §1 of the north star, rows 1-3, 7-9 -- what sub-project 2 builds: the
 // request in flight, the triples THIS session approved, and the rule on duration. The window that
 // answers is the frame's (`components/Confirm.vue`, D60), not this panel's.
 const core = useCore();
@@ -17509,7 +17516,7 @@ import { useCore } from "../stores/core";
 // The Passi table of §1 of the north star, rows 1-3 and 14: a PROJECTION of the journal, re-read
 // from the core (`Steps` replaces, it never appends -- task 13's store). ⛔ THREE FIELDS AND NOT
 // FIVE (P-89, D56): the wire's `StepSummary` carries the step, the function and whether it closed;
-// in milestone 2 the invoker and the effect class are constants -- one invoker, one function -- and
+// in sub-project 2 the invoker and the effect class are constants -- one invoker, one function -- and
 // the argument is untrusted payload the summary does not carry. The row says so in words.
 const core = useCore();
 </script>
@@ -17556,7 +17563,7 @@ import { useInvoke } from "../stores/invoke";
 
 import { VRAM_POLICY, type PolicyArgument } from "./functions";
 
-// The Impostazioni row of the short table of §1: in milestone 2 the VRAM policy change, a registry
+// The Impostazioni row of the short table of §1: in sub-project 2 the VRAM policy change, a registry
 // function with its triple (ADR-0038). This is the FIRST INVOKER of the registry -- the click.
 const core = useCore();
 const invoke = useInvoke();
@@ -17625,7 +17632,7 @@ import { computed, onUnmounted, ref, watch } from "vue";
 import { renderMarkdown } from "../components/markdown";
 import { useStream, type Block } from "../stores/stream";
 
-// The Chat table of §1 of the north star, rows 1, 2 and 24 -- what milestone 2 builds: the stream
+// The Chat table of §1 of the north star, rows 1, 2 and 24 -- what sub-project 2 builds: the stream
 // as markdown with code blocks (G4), the provenance on every piece (G13), and the words that say
 // there is no run. The writing box is row 10, sub-project 3.
 const stream = useStream();
@@ -17642,9 +17649,13 @@ const currentHtml = ref("");
 let frame = 0;
 watch(
   () => stream.current?.text,
-  (text) => {
+  () => {
+    // ⛔ THE TEXT IS READ WHEN THE FRAME RUNS, not captured when the frame was scheduled (R7-2):
+    // the tokens that land in the same frame would otherwise render the first and hold the rest
+    // until the next token. SP-8's tile read the current text, and that is the merit that rises.
     const render = (): void => {
       frame = 0;
+      const text = stream.current?.text;
       currentHtml.value = text === undefined ? "" : renderMarkdown(text);
     };
     if (typeof requestAnimationFrame !== "function") {
@@ -17812,18 +17823,20 @@ function onOpenChange(value: boolean): void {
 stato suo (I1 anche per la presentazione); chiuderla con Escape o cliccando fuori è un rifiuto, e la GUI non manda
 niente — il core non tiene niente in sospeso.
 
-`gui/src/frame/Frame.vue`, **LF** — **modificato**: la finestra dopo la fascia, e la tastiera del Passo 11.
+`gui/src/frame/Frame.vue`, **LF** — **modificato**: la finestra dopo la fascia, e la tastiera del Passo 11. ⛔ **Ridiffato
+contro il 13 di adesso (decisione 78; D80, D89):** `switchTo` è una riga e il dock segue lo store — niente `apply` né
+`unpack`; `api` resta, perché `moveActive` lo usa.
 
 ```vue
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 
 import Confirm from "../components/Confirm.vue";
-import { unpack, useLayout, type ViewName } from "../stores/layout";
+import { useLayout, type ViewName } from "../stores/layout";
 
 import Band from "./Band.vue";
 import ViewBar from "./ViewBar.vue";
-import { apply, createDock } from "./dock";
+import { createDock } from "./dock";
 import { directionOf, moveActive } from "./moveActive";
 
 const host = ref<HTMLElement | null>(null);
@@ -17849,11 +17862,10 @@ onUnmounted(() => {
 });
 
 function switchTo(view: ViewName): void {
+  // ⛔ ONE LINE, AND THE DOCK FOLLOWS (D89, task 13): the open view lives in the store and
+  // `createDock` watches it, so the bar, the keyboard above and a package from the core all take
+  // the same path -- and none of them saves a view for merely showing it (decision 11).
   layout.view = view;
-  // ⛔ A VIEW CHANGE IS A LAYOUT CHANGE, and it goes through the same path: `apply` prefers the
-  // saved package and falls back to the shipped view, so switching to a view the owner has saved
-  // shows THEIR version and not ours (row 6 of §2).
-  if (api !== null) apply(api, view, unpack(layout.state));
 }
 </script>
 
@@ -18075,7 +18087,7 @@ import Steps from "./Steps.vue";
 import { register } from "./registry";
 
 /**
- * The modules milestone 2 builds, by the name the views and the drawer use. ⛔ THE ONE PLACE THAT
+ * The modules sub-project 2 builds, by the name the views and the drawer use. ⛔ THE ONE PLACE THAT
  * PLUGS A BUILT MODULE INTO THE REGISTRY: task 13 left `register` as the seam so that
  * `registry.ts` would not change shape when a module is built -- a built module adds a row HERE.
  */
@@ -18116,9 +18128,9 @@ import type { Bridge } from "./transport/bridge";
 import { createFakeBridge, type FakeBridge } from "./transport/fakeBridge";
 
 /**
- * ⛔ THE FAKE BRIDGE IS WHAT MILESTONE 2's SPA RUNS AGAINST IN A BROWSER, and it is not a
+ * ⛔ THE FAKE BRIDGE IS WHAT SUB-PROJECT 2's SPA RUNS AGAINST IN A BROWSER, and it is not a
  * shortcut: §6a says the SPA is developed and probed against a fake that replays the fixtures
- * BEFORE the shell exists, and the shell is outside this plan (§8 of the milestone-2 design).
+ * BEFORE the shell exists, and the shell is outside this plan (§8 of the sub-project 2 design).
  * The day a shell exists it hands one in on `window`, and this line is all that changes.
  *
  * ⚠️ AND THE FAKE IS EXPOSED TO WHOEVER IS LOOKING (D57): it replays only on request, so in a
@@ -18192,7 +18204,7 @@ import { createFakeBridge } from "../transport/fakeBridge";
 
 import { VRAM_POLICY } from "./functions";
 import { MODULES, registerModules } from "./modules";
-import { PANEL_TYPES, componentFor } from "./registry";
+import { PANEL_TYPES, componentFor, placeholderParams } from "./registry";
 import Permissions from "./Permissions.vue";
 import Settings from "./Settings.vue";
 import Status from "./Status.vue";
@@ -18224,12 +18236,22 @@ beforeEach(() => {
 describe("the registry, with the modules plugged in", () => {
   it("builds the five real modules and leaves the other types to the placeholder", () => {
     registerModules();
-    for (const name of Object.keys(MODULES)) expect(typeof componentFor(name), name).toBe("function");
-    // ⛔ THE SECOND DIRECTION: a module type nobody built is still a placeholder, not a crash and
-    // not a real module -- otherwise plugging five in would have to be checked in the browser.
+    // ⛔ WHAT TELLS A BUILT MODULE FROM A PLACEHOLDER IS WHAT IT DRAWS (R7-10): `componentFor`
+    // answers a function in both cases, so the renderer is mounted and read. A placeholder says
+    // who fills it; a real module never does.
+    const drawn = (name: string): string => {
+      const renderer = componentFor(name)();
+      renderer.init({ api: { id: name }, containerApi: {}, params: placeholderParams(name), title: name } as never);
+      const html = renderer.element.innerHTML;
+      renderer.dispose?.();
+      return html;
+    };
+    for (const name of Object.keys(MODULES)) expect(drawn(name), name).not.toContain("placeholder");
+    // ⛔ THE SECOND DIRECTION: a module type nobody built is still the placeholder, saying who
+    // fills it -- otherwise plugging five in would have to be checked in the browser.
     const unbuilt = PANEL_TYPES.filter((type) => !(type.name in MODULES));
     expect(unbuilt.length).toBeGreaterThan(0);
-    for (const type of unbuilt) expect(typeof componentFor(type.name), type.name).toBe("function");
+    for (const type of unbuilt) expect(drawn(type.name), type.name).toContain('class="placeholder"');
   });
 });
 
@@ -18443,6 +18465,17 @@ describe("the Chat", () => {
     expect(body).toContain("&lt;b&gt;x&lt;/b&gt;");
     expect(body).not.toContain("<a");
     expect(body).toContain('data-href="https://e.com"');
+  });
+
+  it("renders the text as it stands when the frame runs, not the first token of the frame", async () => {
+    const stream = useStream();
+    const wrapper = mount(Chat, { global: { plugins: [i18n] } });
+    stream.receive({ kind: "Token", text: "primo ", provenance: "Untrusted" });
+    stream.receive({ kind: "Token", text: "secondo", provenance: "Untrusted" });
+    await frame();
+    // ⛔ BOTH, in one frame (R7-2): a render that captured the text at scheduling time showed
+    // "primo" alone until the next token arrived -- and no probe delivered two in one frame.
+    expect(wrapper.get("article.streaming .body").html()).toContain("<p>primo secondo</p>");
   });
 
   it("freezes a block at the threshold and keeps its provenance label, as SP-8's tile did", async () => {
@@ -18722,39 +18755,119 @@ ha senza il pacchetto `canvas` — misurato il 2026-09-15; si ignora, e non si i
 ⛔ **Se un componente porta una violazione, si corregge il componente**, non la lista delle regole: il solo
 disabilitato è `color-contrast`, per la ragione scritta nell'aiutante.
 
-- [ ] **Passo 15: il richiamo datato sulle righe di Passi della stella polare**
+- [ ] **Passo 15: i richiami datati nella stella polare — la riga 1 di Passi (D56), le righe 3 di Permessi e 12 di Passi (R7-14), uno per modulo costruito (D87), e la riga delle registrate (R9b-5)**
 
 ⛔ **P-89, D56:** la riga 1 della tabella *Passi* della §1 promette per il 2 *«funzione, invocatore, argomento, classe
 dell'effetto, esito»*, e il filo porta **numero del passo, funzione, esito** — la §4 del 2, riscritta il 2026-09-09,
 dice *«con intento ed esito»*, e il compito 3 l'ha seguita. Il richiamo va **dove la riga vive**, e lo scrive questo
-compito perché è quello che la rende visibile. Il file è **LF** (Passo 1); si tocca con Python, mai con `sed -i`.
+compito perché è quello che la rende visibile.
+
+⛔ **E non è l'unico richiamo che questo compito deve alla stella — arrivati dalla revisione del piano intero (R7-14,
+R9b-4, R9a-13, R9b-5; D87):** la riga **3 di Permessi** promette per il 2 *«la classe dell'effetto, chi la invoca»* e la
+riga **12 di Passi** *«comando: il replay»*, e nel 2 sono **costanti** — un invocatore, una funzione, una classe — e il
+replay è la lista ordinata con l'esito, così com'è; la regola della §6 della stella — *«quando **costruisce** un modulo,
+mette un richiamo datato nella riga di quel modulo nella §1»* — vuole un richiamo per **ciascuno** dei cinque moduli
+costruiti, col nome del sorgente, e la «riga di quel modulo» è il capoverso *«Costruito dal **2**»* sotto
+l'intestazione per le quattro tabelle piene e la riga *Impostazioni* per la corta; e la riga *«le scorciatoie da
+tastiera … sopra `moveTo`»* delle **Registrate, non prese** ha chiusore *«il piano del 2, con G20»*, cioè questo
+compito, e riceve il suo «✅ chiusa» come le righe già chiuse della stessa tabella.
+
+⛔ **Le ancore si prendono DAL FILE, non da questo piano** (E6 del piano dei gesti; R7-26): lo script trova ogni riga per
+**sezione e inizio di riga** — o, per un capoverso, per la frase che contiene — pretende che sia **una**, e appende il
+richiamo **in coda**: una riga di tabella resta una riga, un capoverso resta un capoverso. Il file è **LF** (Passo 1);
+si tocca con Python, mai con `sed -i`. ⚠️ **`<data>` si sostituisce con la data del giorno in cui il compito si esegue,
+nello script E nei `grep` qui sotto** — altrimenti i `grep` rendono 0 (R7-26).
 
 ```bash
 python - <<'EOF'
-import io
+import io, os, re, sys
+sys.stdout.reconfigure(encoding="utf-8")
 p = "docs/superpowers/specs/2026-09-07-direzione-gui-design.md"
 b = io.open(p, encoding="utf-8", newline="").read()
-anchor = "| 1 | la lista dei passi, dal core: nel 2 le invocazioni del registro — funzione, invocatore, argomento, classe dell'effetto, esito; dal 3 i passi delle run | domanda 8 · decisione 5 del coordinatore · §5 del 2 · ADR-0038 · righe «Replay dei trace» e «Osservabilità e tracing locale» | 2, 3 | verificato |"
-assert b.count(anchor) == 1, "the row is not where P-89 read it: re-read it before writing"
-recall = (" ✅ **RICHIAMO DEL <data>, dal compito 14 del piano della parte 2 (P-89, D56):** sul filo la lista porta "
-          "**numero del passo, funzione, esito** — `StepSummary` del compito 3, un riassunto e non il record (I4, ADR-0036), "
-          "come la §4 del 2 dice dal 2026-09-09 (*«con intento ed esito»*). Nel 2 l'invocatore e la classe dell'effetto sono "
-          "**costanti** — un solo invocatore, una sola funzione — e l'argomento è payload non fidato che il riassunto non porta: "
-          "il modulo mostra i tre e dice a parole che il resto arriva quando il riassunto crescerà, col timbro |")
-io.open(p, "w", encoding="utf-8", newline="").write(b.replace(anchor, anchor[:-2] + recall, 1))
+assert "\r\n" not in b, "the north star is LF: something rewrote it"
+lines = b.split("\n")
+DATE = "<data>"
+
+
+def section(heading):
+    """The line indexes under the ONE heading that starts with `heading`, up to the next heading of
+    the same or a higher level."""
+    starts = [i for i, line in enumerate(lines) if line.startswith(heading)]
+    assert len(starts) == 1, f"{heading!r}: {len(starts)} headings"
+    level = len(lines[starts[0]].split(" ")[0])
+    end = next((i for i in range(starts[0] + 1, len(lines)) if re.match(r"^#{1,%d} " % level, lines[i])), len(lines))
+    return range(starts[0], end)
+
+
+def one(heading, predicate):
+    hits = [i for i in section(heading) if predicate(lines[i])]
+    assert len(hits) == 1, f"{heading!r}: {len(hits)} lines match"
+    return hits[0]
+
+
+def row(heading, prefix, recall):
+    """Appends `recall` inside the LAST cell of the one row of `heading` that starts with `prefix`."""
+    i = one(heading, lambda line: line.startswith(prefix))
+    assert lines[i].endswith(" |"), lines[i][-60:]
+    lines[i] = lines[i][:-2] + " " + recall + " |"
+
+
+def paragraph(heading, needle, recall):
+    """Appends `recall` to the END of the one paragraph of `heading` that contains `needle`."""
+    i = one(heading, lambda line: needle in line)
+    while i + 1 < len(lines) and lines[i + 1] != "":
+        i += 1
+    lines[i] = lines[i] + " " + recall
+
+
+RECALL = f"✅ **RICHIAMO DEL {DATE}, dal compito 14 del piano della parte 2"
+BUILT = f"✅ **Costruito dal compito 14 del piano della parte 2, {DATE}:"
+LESS = "le righe con «2» nella colonna «chi»; dove il 2 porta meno di quanto una riga promette, la riga lo dice col proprio richiamo"
+
+row("#### Passi", "| 1 |", RECALL + " (P-89, D56):** sul filo la lista porta **numero del passo, funzione, esito** — "
+    "`StepSummary` del compito 3, un riassunto e non il record (I4, ADR-0036), come la §4 del 2 dice dal 2026-09-09 "
+    "(*«con intento ed esito»*). Nel 2 l'invocatore e la classe dell'effetto sono **costanti** — un solo invocatore, una "
+    "sola funzione — e l'argomento è payload non fidato che il riassunto non porta: il modulo mostra i tre e dice a "
+    "parole che il resto arriva quando il riassunto crescerà, col timbro")
+row("#### Permessi", "| 3 |", RECALL + " (R7-14):** nel 2 la classe dell'effetto e chi invoca sono **costanti** — una "
+    "funzione sola, `Idempotent`, e l'invocatore è il click di questa finestra — e il filo non li porta "
+    "(`PermissionRequired(Triple)`, compito 3): il modulo mostra la tripla a parole e la finestra la chiamata in volo, e "
+    "i due arrivano col messaggio che crescerà. Il livello di confinamento resta dedotto, com'era")
+row("#### Passi", "| 12 |", RECALL + " (R7-14):** nel 2 «il replay» è la lista ordinata dei passi con l'esito, che il "
+    "modulo mostra così com'è; un comando che scorra una run arriva col 3, con le run")
+paragraph("#### Chat", "Costruito dal **2**", BUILT + " `gui/src/panels/Chat.vue`** sul flusso del core finto "
+          "(`gui/fake-core/`, compito 12), con `gui/src/components/markdown.ts` — " + LESS)
+paragraph("#### Stato", "Costruito dal **2**", BUILT + " `gui/src/panels/Status.vue`** — " + LESS)
+paragraph("#### Permessi", "Costruito dal", BUILT + " `gui/src/panels/Permissions.vue`**, e la finestra di conferma in "
+          "`gui/src/components/Confirm.vue` — " + LESS + " (riga 3)")
+paragraph("#### Passi", "Costruito dal **2**", BUILT + " `gui/src/panels/Steps.vue`** — " + LESS + " (righe 1 e 12)")
+row("#### Gli altri tredici moduli", "| **Impostazioni** |", BUILT + " `gui/src/panels/Settings.vue`** — nel 2 il solo "
+    "cambio di policy VRAM (P-85), il primo invocatore del registro di ADR-0038")
+row("## Registrate, non prese", "| le scorciatoie da tastiera per spostare un pannello", "— ✅ **chiusa il " + DATE +
+    ", compito 14 del piano della parte 2**: `gui/src/frame/moveActive.ts`, `Ctrl+Alt+freccia` sopra `moveTo`, "
+    "con la sonda `keys.test.ts`")
+
+out = "\n".join(lines)
+assert out.count("\n") == b.count("\n"), "a line was added or lost: every recall goes IN a line"
+tmp = p + ".tmp"
+io.open(tmp, "w", encoding="utf-8", newline="").write(out)
+os.replace(tmp, p)
+print("ok: nine recalls in", p)
 EOF
 grep -c 'RICHIAMO DEL <data>, dal compito 14' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+grep -c 'Costruito dal compito 14 del piano della parte 2, <data>' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+grep -c 'chiusa il <data>, compito 14 del piano della parte 2' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
 tr -cd '\r' < docs/superpowers/specs/2026-09-07-direzione-gui-design.md | wc -c
+awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
 ```
 
-⚠️ **`<data>` si sostituisce con la data del giorno in cui il compito si esegue**, e `anchor[:-2]` toglie lo spazio e
-la barra finale della cella per riscriverli in coda al richiamo: la riga resta una riga, e il controllo delle tabelle
-spezzate (nona chiusura) lo conferma. Atteso: **1** e **0**.
+Atteso (con la data scritta al posto di `<data>`, **anche nei `grep`**): **3**, **5**, **1**, **0**, e niente.
 
-⛔ **Solo la riga 1 riceve il richiamo, benché la riga 2 dica *«con la classe dell'effetto»* e la riga 3 *«il dettaglio
-del passo secondo la specie»*:** la riga 2 parla di ciò che la lista **mostra** di un passo in dubbio, e il modulo lo
-mostra (`in dubbio`); la riga 3 è il dettaglio, che il riassunto non porta per **la stessa** ragione della riga 1 e che
-il richiamo della riga 1 copre nominando il riassunto. Tre richiami per un fatto solo sarebbero tre case (gotcha #68).
+⛔ **Delle righe di Passi ricevono il richiamo la 1 e la 12, benché la riga 2 dica *«con la classe dell'effetto»* e la
+riga 3 *«il dettaglio del passo secondo la specie»*:** la riga 2 parla di ciò che la lista **mostra** di un passo in
+dubbio, e il modulo lo mostra (`in dubbio`); la riga 3 è il dettaglio, che il riassunto non porta per **la stessa**
+ragione della riga 1 e che il richiamo della riga 1 copre nominando il riassunto. Un richiamo per **fatto**, non per
+riga che lo sfiora (gotcha #68).
 
 - [ ] **Passo 16: il mondo web verde, il cancello, e il commit**
 
@@ -18793,12 +18906,12 @@ git push
 - [ ] ⛔ **il contrasto nelle DUE direzioni** eseguito come al Passo 3, e `--stop: #ec5f57;` nel file alla fine
 - [ ] ⛔ **`color-contrast` è disabilitata in UN posto e con la ragione accanto:** `grep -c '"color-contrast": { enabled: false }' gui/src/a11y.test.ts` → **1**, e `grep -rc 'color-contrast' gui/src --include='*.ts' --include='*.vue' | grep -v ':0'` rende **solo** quel file
 - [ ] ⛔ **nessun `<a` e nessun `<img` esce dal renderer:** `grep -c 'not.toContain("<a")\|not.toContain("<img")' gui/src/components/markdown.test.ts` → **3** o più (**D54**)
-- [ ] ⛔ **il segnaposto è ancora UNO e il registro non ha cambiato forma:** `git diff --stat 42b50d8..HEAD -- gui/src/panels/registry.ts` rende **solo** il commit del 13 — cioè `git log --oneline -- gui/src/panels/registry.ts | wc -l` → **1**
+- [ ] ⛔ **il segnaposto è ancora UNO e il registro non ha cambiato forma:** `git log --oneline -- gui/src/panels/registry.ts | wc -l` → **1**, il solo commit del 13 (R7-12: un `diff --stat` stampa file e righe, mai commit)
 - [ ] ⛔ **le tre viste NON sono cambiate:** `git diff --quiet HEAD~1 -- gui/src/panels/views/ && echo unchanged` → `unchanged` — i moduli veri entrano dal registro, non dal JSON
-- [ ] ⛔ **il richiamo è nella stella polare, una volta, e il file resta LF e con le tabelle intere:** i tre comandi del Passo 15, più `awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` → **niente**
+- [ ] ⛔ **i richiami sono nella stella polare — tre di riga, cinque di modulo, uno sulle registrate — e il file resta LF e con le tabelle intere:** i cinque comandi del Passo 15, **con la data al posto di `<data>`** (R7-26) → **3**, **5**, **1**, **0**, e niente
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
-- [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -cE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src/**/*.test.ts` → **0**
-- [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA, con i dati** — regola 5 della testa: `cd gui && npm run dev`; nella console del browser `harnessFake.deliverAll()`; poi si vedono la fascia che **sparisce** (è arrivato `Accepted`), il chip «collegato», Stato coi due campi, la policy col budget e la riga «protetto quanto il tuo account di sistema», la riga dell'ultimo verdetto **rifiutata**, Permessi con la richiesta in attesa della fixture, Passi col passo 42 chiuso, la Chat col `ciao` non fidato; in Impostazioni si sceglie **Locale** → la scritta «richiesta inviata» compare e il controllo **resta** su OpenRouter (è il core che decide); `harnessFake.deliver("PermissionRequired")` → la finestra si apre col focus dentro, il tabulatore **non esce**, «Consenti» la chiude, e `harnessFake.sent` porta un `Approve` con `vram-policy` e `local`; con `Ctrl+Alt+→` la tessera attiva si sposta nel gruppo accanto, e su un bordo si divide; i due comandi della linguetta staccano e portano a pagina intera; un link nella Chat mostra l'indirizzo accanto e **non apre nulla**
+- [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -rcE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src --include='*.test.ts' | grep -v ':0$'` → **niente** — R7-6, misurato: senza `globstar` il `**` non scende di un livello (`gui/src/a11y.test.ts` sfuggiva) e con più file `grep -c` stampa `file:conteggio`, mai uno «0» nudo; provato una volta anche su un file con un corpo vuoto, che **deve** comparire
+- [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA, con i dati** — regola 5 della testa: `cd gui && npm run dev`; nella console del browser `harnessFake.deliverAll()` — ⚠️ che porta **anche `StaleBuild`**, per costruzione dell'insieme canonico (R7-3) — e subito dopo `harnessFake.deliver("Accepted")`, che rimette `connected`; poi si vedono la fascia che **sparisce** (è arrivato `Accepted`), il chip «collegato», Stato coi due campi, la policy col budget e la riga «protetto quanto il tuo account di sistema», la riga dell'ultimo verdetto **rifiutata**, Permessi con la richiesta in attesa della fixture, Passi col passo 42 chiuso, la Chat col `ciao` non fidato; in Impostazioni si sceglie **Locale** → la scritta «richiesta inviata» compare, il controllo **resta** su OpenRouter (è il core che decide) **e la finestra si apre al click** — `deliverAll` ha già lasciato la richiesta della fixture in `core.pending`, e la finestra apre su richiesta **più** chiamata in volo (R7-4; qui stava un secondo `deliver("PermissionRequired")`, che non cambiava nulla di visibile) — col focus dentro, il tabulatore **non esce**, «Consenti» la chiude, e `harnessFake.sent` porta un `Approve` con `vram-policy` e `local`; con `Ctrl+Alt+→` la tessera attiva si sposta nel gruppo accanto, e su un bordo si divide; i due comandi della linguetta staccano e portano a pagina intera; un link nella Chat mostra l'indirizzo accanto e **non apre nulla**
 
 ## Compito 15: il passo web del cancello — `scripts/gate-gui.sh`, la catena `eslint`, e la riga in `gate.sh`
 

@@ -3,7 +3,7 @@
 Fonte: 9 rapporti su 11 (R1 parziale: compiti 1–2; R3 parziale: compito 7; R5 completo: 11–12; R2, R4, R7, R9a, R9b, R10 completi).
 Mancano: compito 13 (R6), compiti 15–17 (R8), compito 3 (R1), compito 8 (R3) — perimetri da rivedere ancora.
 Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stati rimisurati anche da lui.
-**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compiti 11 e 12 applicati (✅). **Sessione 15 (2026-09-15):** compito 13 applicato (✅) — con **D89** nuova (il dock segue lo store), R7-7 applicata al 15, e la cascata sul `Frame.vue` del 14 registrata come riga del 14.
+**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compiti 11 e 12 applicati (✅). **Sessione 15 (2026-09-15):** compito 13 applicato (✅) — con **D89** nuova (il dock segue lo store), R7-7 applicata al 15, e la cascata sul `Frame.vue` del 14 registrata come riga del 14. **Sessione 15, ondata 11 (2026-09-15):** compito 14 applicato (✅) — resta all'8 la sua metà di R9b-5.
 
 ## Le decisioni nuove (righe D da scrivere)
 
@@ -118,6 +118,7 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - Attrezzo: `patch_c7.py` accanto a questo file
 
 ### Compito 8 — NON RIVISTO IN PROFONDITÀ (R3 caduto): resta da fare
+- R9b-5, la metà dell'8: il Passo 12(a) scrive «✅ **chiusa il <data>, compito 8 del piano della parte 2**» in coda alla cella «Chiusore» della riga *«la forma con cui la transizione di policy si rilegge»* delle registrate della stella (la forma del Passo 15 del 14: ancora presa dal file) — con la revisione in profondità dell'8 ⬜
 - R10-12 (D77) E nude nella prosa: `E66` ed `E112` (lezione delle date) ed `E50` (l'oracolo) col nome del piano del Traguardo 6 ✅ · D75/D76: nulla da fare — i richiami dettati dell'8 portano già `<data>`, e «milestone 5 task 9» è il Traguardo 5 del SP1 ✅ (la revisione in profondità resta da fare)
 
 ### Compito 9
@@ -206,26 +207,30 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - ⚠️ Il capoverso sotto il Passo 17 diceva «nessuna delle sue sonde monta una griglia»: ora `describe("the dock")` la monta e lo dice di sé — se il Passo 3 misura rosso, è quel `describe` a passare al revisore nel browser; due criteri di chiusura nuovi (D80/D89 e D81) ✅
 - ⚠️ **Non compilato:** `layout.ts`, `dock.ts`, `Frame.vue` e le sonde sono riscritti sul modello letto (il compito 11 non esiste nel repo, e `dockview` sotto `jsdom` lo misura il Passo 3): chi esegue il 13 li compila per primi, e ogni rosso è una voce d'errata — come il modulo delle sonde del 12
 - Attrezzo: `patch_c13.py` accanto a questo file (tocca anche la tabella D, la posizione, la riga del 15 e questo registro)
+- R7-6 vale anche qui (stesso criterio `gui/src/**/*.test.ts`): applicata dall'ondata del 14 (`patch_c14.py`) ✅
 
 ### Compito 14
-- ⚠️ **cascata di D80/D89 dal 13 corretto (decisione 78):** il `Frame.vue` ridettato al Passo 10 si ridiffa contro il 13 di adesso — via `apply` e `unpack`, `switchTo` è `layout.view = view`; `api` resta, perché `moveActive` lo usa ⬜
-- R7-1 `String(…attrGet(…) ?? "")` ×2 + riga sul tipo ⬜
-- R7-2 render legge `stream.current?.text` al fotogramma; sonda con due `Token` prima di `await frame()` ⬜
-- R7-3 criterio: dopo `deliverAll()` un `deliver("Accepted")` e la frase su `StaleBuild` ⬜
-- R7-4 criterio: la finestra si apre al click (pending dalla fixture) ⬜
-- R7-5 «le QUATTRO righe … fino a `reason the shape comes before the palette. */`» + `grep -c -F` ⬜
-- R7-6 `grep -rcE … --include='*.test.ts' | grep -v ':0$'` → niente ⬜
-- R7-8 «si rifà a mano la modifica, o `git add` prima» ⬜
-- R7-9 Files: `--stop`, capoverso, regole della linguetta ⬜
-- R7-10 seconda direzione di `modules.test.ts` (placeholderParams) o commento ⬜
-- R7-12 `git log … | wc -l` → 1 solo ⬜
-- R7-13 script `types or typings`; prosa `.d.cts`/`.d.mts` ⬜
-- R7-14 richiamo del Passo 15 esteso alla riga 3 di Permessi e alla riga 12 di Passi (costanti nel 2) ⬜
-- R7-26 «anche nel grep» con la data ⬜
-- R10-8 Files: stella polare (LF) ⬜
-- R9b-4/R9a-13 (D87) richiami per modulo costruito nella §1 della stella ⬜
-- R9b-5 «✅ chiusa» sulle due registrate (scorciatoie da tastiera; forma della transizione — quest'ultima dal 8) ⬜
-- D75/D76 ⬜
+- ⚠️ **cascata di D80/D89 dal 13 corretto (decisione 78):** il `Frame.vue` ridettato al Passo 10 ridiffato contro il 13 di adesso — via `apply` e `unpack`, `switchTo` è `layout.view = view` col commento di D89; `api` resta, perché `moveActive` lo usa; la riga di prosa lo dice ✅
+- R7-1 `String(…attrGet(…) ?? "")` ×2 e la riga sul tipo (`string | number | null` nel `.d.mts` spedito) ✅
+- R7-2 `render` legge `stream.current?.text` al fotogramma; sonda «renders the text as it stands when the frame runs» con due `Token` prima di `await frame()` e `<p>primo secondo</p>` ✅
+- R7-3 criterio: `deliverAll` porta anche `StaleBuild`, per costruzione — un `deliver("Accepted")` subito dopo ✅
+- R7-4 criterio: la finestra si apre **al click** (la richiesta della fixture è già in `core.pending`), via il secondo `deliver("PermissionRequired")` ✅
+- R7-5 «le **quattro** righe … fino a `reason the shape comes before the palette. */`» col `grep -c -F` → 1 prima di scrivere ✅
+- R7-6 `grep -rcE … gui/src --include='*.test.ts' | grep -v ':0$'` → niente, col perché misurato — **anche nel 13**, che aveva lo stesso criterio ✅
+- R7-8 `git add src/tokens/tokens.css` **prima** della mutazione (la forma di R5-11) e il capoverso riscritto: «si rilancia il primo script» non reggeva ✅
+- R7-9 Files: `--stop`, il capoverso in testa, le regole della linguetta in coda ✅
+- R7-10 `modules.test.ts`: `drawn(name)` monta il renderer e legge l'HTML — un costruito non contiene «placeholder», un non costruito porta `class="placeholder"`; `placeholderParams` nell'import ✅
+- R7-12 criterio: il solo `git log … | wc -l` → 1 ✅
+- R7-13 script `types or typings or exports`; prosa `.d.cts` di primo livello e `.d.mts` sotto `exports`, `typings` di `axe-core` ✅
+- R7-14 richiami sulla riga 3 di Permessi e sulla riga 12 di Passi (costanti nel 2), nel Passo 15 riscritto ✅
+- R7-26 «anche nei `grep`, con la data» nel Passo 15 e nel criterio ✅
+- R10-8 Files: la stella polare (LF) con l'elenco dei richiami ✅
+- R9b-4/R9a-13 (D87) un richiamo per modulo costruito — Chat, Stato, Permessi, Passi sul capoverso «Costruito dal **2**», Impostazioni sulla riga della corta — col nome del sorgente; la riga D87 del piano dice che la forma è questa e perché ✅
+- R9b-5 la metà del 14: «✅ chiusa il <data>, compito 14 del piano della parte 2» sulla riga delle scorciatoie nelle registrate, nel Passo 15; **la metà dell'8** (la forma della transizione) è una riga sotto l'8 ✅
+- ⚠️ **Passo 15 riscritto intero (decisione 77):** nove richiami, ancore prese DAL FILE per sezione e inizio di riga (`section`/`one`/`row`/`paragraph`), `assert` sul numero di righe invariato; i cinque comandi e l'Atteso 3/5/1/0/niente ✅
+- D75: nulla da fare — le date dettate nel 14 sono misure (P-86, la 15.0.2) e `<data>` sta già nel Passo 15 ✅ · D76 «sub-project 2» nei tredici punti dei commenti dettati, con `assert` che nessun `milestone` sopravviva nel 14 ✅
+- ⚠️ **Non compilato:** `Frame.vue`, `Chat.vue`, `markdown.ts` e le sonde toccate sono riscritti sul modello letto; chi esegue il 14 li compila per primi, ogni rosso è errata — come il 12 e il 13
+- Attrezzo: `patch_c14.py` accanto a questo file (tocca anche il criterio del 13, la riga D87 e questo registro)
 
 ### Compito 15 — NON RIVISTO IN PROFONDITÀ (R8 caduto): resta da fare
 - R10-1 eol: `gate.sh` e il flusso sono `i/lf w/crlf` (Files, Passo 1, Passo 8/9 CRLF) ⬜ · R7-7 «(compito 13, Passo 12)» ✅ (applicata nell'ondata del 13) · R7-11 «tredici .vue, dodici a una parola» (anche P-99) ⬜ · R9a-12 (D88) richiamo «le scritte» §8 ⬜ · R9a-15 P-104 «§8» e «lo scrive il 15» ⬜ · R5-17 numero del tempo del finto ⬜

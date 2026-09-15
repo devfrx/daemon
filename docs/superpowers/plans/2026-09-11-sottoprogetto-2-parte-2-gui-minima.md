@@ -2779,6 +2779,161 @@ cartelle sono esattamente la specie di confusione che questo repository paga a r
 
 **Conseguenza: D65.**
 
+### P-106 — `cargo audit` NON è installato su questa macchina, e installarlo costa quasi tre minuti: è un prerequisito dell'ambiente, come il bersaglio di `rustup`
+
+⛔ **Domanda 2 — la sonda manca, e mancherebbe in silenzio nel posto peggiore: sulla macchina di chi lancia il
+cancello.** La decisione 45 della stella polare mette `cargo audit` dentro `gate.sh`. Misurato il 2026-09-15, prima
+di scrivere una riga:
+
+```bash
+cargo audit --version 2>&1 | head -1
+```
+
+→ `error: no such command: audit`. ⛔ **Quindi la riga nuova di `gate.sh`, sulla macchina di oggi, farebbe rosso il
+cancello con un messaggio che non dice cosa fare.** È esattamente il vincolo 4 di §11 del compendio — *«è un
+prerequisito dell'ambiente, o la porta è rossa per il motivo sbagliato»* — e la cura è la stessa: **si dichiara**.
+
+```bash
+time cargo install cargo-audit --locked --version 0.22.2
+```
+
+Misurato: **2m 53s** su questa macchina, e `cargo-audit-audit 0.22.2` dopo. ⚠️ **Il numero invecchia e non sostiene
+nessuna decisione da solo** — sta qui perché è l'ingresso di **P-109**, dove la decisione c'è.
+
+**Conseguenza: D68.**
+
+### P-107 — l'avviso «non mantenuto» di `bincode` è un *allowed warning* e l'uscita è **0**, e le DUE direzioni si provano sul NOSTRO lockfile senza mutare niente
+
+⛔ **Domanda 1 — un'evidenza scritta prima della misura è un'ipotesi.** La decisione 45 dice, **letto** il
+2026-09-09 nel file di configurazione d'esempio, che un avviso «non mantenuto» è un warning per difetto. Misurato il
+2026-09-15, sul `Cargo.lock` vero e senza nessun file di configurazione:
+
+```bash
+cargo audit
+```
+
+```
+    Loaded 1246 security advisories (from ~/.cargo/advisory-db)
+    Scanning Cargo.lock for vulnerabilities (41 crate dependencies)
+Crate:     bincode      Version: 2.0.1
+Warning:   unmaintained
+ID:        RUSTSEC-2025-0141
+warning: 1 allowed warning found
+```
+
+→ **`EXIT=0`**. ✅ **La decisione del proprietario del 2026-08-31 — *«`bincode` 2.0.1 RESTA»*, §4 del compendio — non
+va difesa con nessuna configurazione:** il comportamento per difetto è già quello. **Nessun `audit.toml`**, che
+sarebbe una casa in più da tenere allineata.
+
+✅ **E la seconda direzione non vuole una vulnerabilità finta, che è la parte bella:** lo stesso avviso, negato,
+rende rosso lo stesso comando sullo stesso lockfile — niente da mutare, niente da revocare.
+
+```bash
+cargo audit --deny unmaintained
+```
+
+→ `error: 1 denied warning found!`, **`EXIT=1`**. ⛔ **È la contro-sonda del passo**, e vive nel criterio di
+chiusura del compito.
+
+**Conseguenza:** nessuna `D`; il Passo 3 e il criterio di chiusura.
+
+### P-108 — `-n` toglie nove secondi su dieci e rende il controllo VACUO nel tempo: è la mutazione che X-3 esiste per impedire
+
+⛔ **Domanda 1, e la trappola è che la mutazione sembra un'ottimizzazione.** `cargo audit` porta `-n`,
+`--no-fetch`. Misurato il 2026-09-15, sullo stesso lockfile:
+
+| Comando | Verdetto | Tempo |
+|---|---|---|
+| `cargo audit` | `1 allowed warning`, `EXIT=0` | **~10 s** |
+| `cargo audit -n` | `1 allowed warning`, `EXIT=0` | **~1,3 s** |
+
+⛔ **Stesso verdetto, un decimo del tempo, e per questo qualcuno lo aggiungerà.** Ma `-n` **non aggiorna** la base
+degli avvisi, quindi il controllo smette di trovare ciò che è stato pubblicato **dopo** l'ultima corsa che ha
+scaricato — cioè diventa cieco esattamente al caso per cui X-3 esiste: l'avviso di `bincode` *«restò invisibile
+sette mesi»*, e non perché nessuno guardasse, ma perché nessuno **aggiornava**.
+
+⚠️ **Il costo, dichiarato:** il passo vuole la **rete**, e ~9 dei ~10 secondi sono la sua. E può fare rosso **senza
+un commit**, perché il mondo ha pubblicato un avviso — che è ciò che la decisione 45 dichiara già, e qui ha il suo
+numero.
+
+**Conseguenza: D69.**
+
+### P-109 — la CI non ha `cargo audit`, e la matrice ne vuole DUE installazioni: i minuti sono gratis, il percorso di fiducia no
+
+⛔ **Domanda 5 in avanti, e le due metà di questo compito si scontrano fra loro.** La decisione 44 mette una
+**matrice** — Linux e Windows — e la 45 mette `cargo audit` **dentro `gate.sh`**, quindi l'attrezzo serve su
+**entrambi** i runner, e nessuna delle due immagini lo porta. Costo misurato: **2m 53s** a installazione
+(**P-106**), cioè quasi sei minuti di parete che oggi non ci sono, per un controllo che poi dura dieci secondi.
+
+⚖️ **Due vie, e la scelta è fra tempo e fiducia:**
+
+| | La via | Che cosa costa |
+|---|---|---|
+| **A** | un passo `cargo install cargo-audit --locked --version 0.22.2` per job | ~3 minuti per job. ⚠️ **Ma i minuti sono gratis, ed è misurato, non ricordato:** il repository è **pubblico** — `visibility: public` dall'API di GitHub il 2026-09-15 — che è la stessa premessa su cui la decisione 44 ha scelto la matrice |
+| **B** | un'azione di terzi che scarica il binario già compilato | secondi invece di minuti, **e un terzo in più nel percorso di fiducia della CI**, che gira col gettone del repository. ADR-0003 tiene il codice di terzi fuori dal processo per una ragione imparentata, e ADR-0031 vuole che aggiungere una voce sia *«un atto deliberato e rivedibile»* |
+
+✅ **Si prende A**, perché la premessa della 44 — *«minuti gratis»* — vale identica qui, e perché A non aggiunge
+nessuna fiducia nuova: le azioni restano `actions/checkout` e `actions/setup-node`, che già ci sono. ⚠️ **B è
+registrata e non presa:** se un giorno la parete della CI diventasse un problema misurato, è una decisione del
+proprietario, non un'ottimizzazione da prendere di corsa.
+
+**Conseguenza: D70.**
+
+### P-110 — `npm audit` sull'insieme VERO del 2: trecentosessantanove pacchetti, **zero** vulnerabilità, sei secondi — e per questo `--audit-level` non si usa
+
+⛔ **La decisione 45 rimanda esplicitamente al piano *«la durata e il rumore di `npm audit` sulle dipendenze di
+sviluppo»*, e qui si misura invece di stimarla.** Installato nello scratchpad l'insieme intero che i compiti 11, 13,
+14 e 15 mettono in `gui/package.json` — `vue`, `dockview`, `dockview-core`, `pinia`, `reka-ui`, `vue-i18n`,
+`markdown-it`, e in sviluppo `vite`, `typescript`, `vue-tsc`, `vitest`, `jsdom`, `@vue/test-utils`, `axe-core` e la
+catena `eslint` — il 2026-09-15:
+
+```
+added 369 packages
+found 0 vulnerabilities          EXIT=0        ~6 s
+```
+
+⛔ **E la seconda direzione, su un albero costruito apposta** perché l'albero vero è pulito e un verde da solo non
+prova nulla:
+
+```bash
+mkdir -p /tmp/npm-audit-probe && cd /tmp/npm-audit-probe
+printf '{"name":"p","version":"1.0.0","private":true,"dependencies":{"minimist":"0.0.8"}}\n' > package.json
+npm install --no-audit --no-fund > /dev/null 2>&1
+npm audit; echo "EXIT=$?"
+```
+
+→ `1 critical severity vulnerability`, **`EXIT=1`**.
+
+✅ **Quindi NIENTE `--audit-level`.** La decisione 45 lo nomina come la manopola che fissa la gravità che fa rosso;
+misurato, il rumore da tarare è **zero**, e un livello scelto oggi sarebbe una manopola che nessuno ha tarato e che
+il primo avviso moderato renderebbe una scorciatoia già pronta. Il difetto di `npm audit` — **ogni** vulnerabilità
+fa rosso — è la stessa forma del *«un rosso significa sempre invariante violata»* di `gate.sh`.
+
+**Conseguenza: D71.**
+
+### P-111 — della matrice Windows, metà si misura ADESSO e metà solo GUARDANDO la corsa: il compito lo dice invece di dedurlo
+
+⛔ **Domanda 2 — la sonda manca, e la tentazione è di scrivere un criterio di chiusura che nessuno può eseguire.**
+La decisione 44 chiede *«da provare al piano, nelle due direzioni: che il runner Windows onori
+`rust-toolchain.toml` e che Git Bash vi lanci `gate.sh`»*. Misurato il 2026-09-15 che cosa è alla portata di oggi:
+
+| Che cosa | Dove si misura | Stato |
+|---|---|---|
+| `gate.sh` gira in Git Bash su Windows | **qui**, questa macchina | ✅ `GATE GREEN` a ogni compito di questa sessione |
+| `cargo audit` gira su Windows | **qui** | ✅ **P-107**, sulla stessa macchina |
+| il runner `windows-latest` onora `rust-toolchain.toml` | ⛔ **solo in CI** | ⬜ nessuno lo può dire da qui |
+| i due job non si nascondono a vicenda | ⛔ **solo in CI** | ⬜ e dipende da `fail-fast` |
+
+⛔ **Quindi il criterio di chiusura del 16 manda a GUARDARE la corsa**, con l'indirizzo e che cosa cercarci, invece
+di asserire un verde che nessun comando locale può produrre — la stessa forma della regola 5 della testa, che per i
+compiti 13 e 14 manda il revisore nel browser.
+
+⚠️ **E `fail-fast: false` non è un dettaglio:** per difetto GitHub **annulla** gli altri job della matrice al primo
+rosso, quindi un rosso su Linux nasconderebbe lo stato di Windows — cioè proprio la metà che X-1 esiste per
+guardare.
+
+**Conseguenza:** nessuna `D`; il Passo 4 e il criterio di chiusura.
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -2853,7 +3008,10 @@ smentisce — è ciò per cui esiste l'errata.
 | **D65** | ⛔ **tre regole salgono a `error` nel nostro blocco — `@intlify/vue-i18n/no-raw-text`, `@intlify/vue-i18n/no-missing-keys`, `vue/no-v-html` — e `Chat.vue` ha la sua eccezione come blocco `files`; la PRIMA sonda di `copy.test.ts` muore, la SECONDA resta** | **P-98**: `no-raw-text` è `warn` nel preset e `eslint` esce **0** sui soli avvisi, quindi la rete del 13 sarebbe sostituita da un controllo **vacuo**. **P-105**: quella rete ha **due** sonde e il lint ne copre una — la seconda guarda le diciotto chiavi `modules.*`, che la SPA **costruisce**, e `no-missing-keys` è cieco a una chiave costruita (misurato nelle due direzioni nello stesso file). **P-96**: `vue/no-v-html` non è in `essential`, quindi si accende a mano, e l'eccezione delle due righe di `Chat.vue` — HTML **nostro**, prodotto da testo già escapato (**D54**) — vive in **un** blocco `files` invece che sparsa in due commenti, così si rivede in un posto solo. ⚠️ **`@intlify/vue-i18n/no-v-html` NON serve accenderlo**: sullo stesso `Chat.vue` non scatta, misurato |
 | **D66** | **la CI scrive `package-manager-cache: false` per esteso**, con la ragione accanto | **P-103**: l'ingresso vale `true` per difetto nella v7.0.0, e la cache si accende solo se il manifesto dichiara `packageManager` — che il nostro non dichiara. La decisione 47 della stella polare regge quindi **per un campo assente**, non per una scelta scritta; e il giorno che qualcuno aggiungesse quel campo, la CI cercherebbe il lockfile alla **radice**, dove non c'è, e andrebbe rossa per un motivo che nessuno ha scelto. ⚠️ **Non è la riga che la decisione 47 rimanda** — `cache: npm` **accende**, questa **dichiara spento** — quindi la 47 non è ribaltata: è resa esplicita |
 | **D67** | ⛔ **il compito 15 NON tocca `.gitignore` e NON tocca i lockfile dello spike**, e il suo criterio di chiusura lo **asserisce** invece di fidarsene | **P-102**: le otto righe di `spikes/gui-shell/` sono in `.gitignore` dal commit **`8fc9696`** della parte 1, e i quattro lockfile dello spike sono tracciati — la decisione 49 è **eseguita**. Le due righe di `gui/` sono del compito 11 (**D38**) e `/gui/fake-core/target/` del 12, quindi al 15 di `.gitignore` non resta **niente**. ⛔ **Riscriverle sarebbe un diff che dice il falso**, ed è la quarta domanda del pre-controllo che lo coglie. ⚠️ **Nessun richiamo alla §8:** la sua riga diceva già *«coi nomi al piano quando esistono»*, quindi non è falsificata — è il **taglio per compito** che la assolve, e il taglio è del piano (**D1**) |
-
+| **D68** | **`cargo audit` è un PREREQUISITO dell'ambiente, dichiarato nel commento di `gate.sh`, e nessuna guardia lo avvolge nello script** | **P-106**: non è installato su questa macchina e installarlo costa **2m 53s**, misurato. È la stessa specie del bersaglio `x86_64-unknown-none` — vincolo 4 di §11, *«un prerequisito dell'ambiente, o la porta è rossa per il motivo sbagliato»* — e il repository lo cura **dichiarando**, non avvolgendo. ⚠️ **Costo dichiarato:** la prima corsa dopo questo compito, su una macchina che non l'ha, esce `error: no such command: audit`, che nomina il colpevole ma non la cura: la cura sta nel commento accanto alla riga, dove chi legge il rosso va a guardare, e il compito **17** la porta in `porta-di-qualita.md` |
+| **D69** | ⛔ **niente `-n` / `--no-fetch`, e il perché si scrive ACCANTO alla riga** | **P-108**: `-n` dà lo **stesso** verdetto in **~1,3 s** invece di ~10, quindi qualcuno lo aggiungerà come ottimizzazione — e renderebbe il controllo **cieco a ciò che è stato pubblicato dopo l'ultima corsa con la rete**, cioè al caso esatto per cui X-3 esiste (*«restò invisibile sette mesi»*). ⚠️ **Costo dichiarato, ed è quello che la decisione 45 dichiarava già:** il passo vuole la **rete**, ~9 dei ~10 secondi sono la sua, e può fare rosso **senza un commit** perché il mondo ha pubblicato un avviso |
+| **D70** | **in CI `cargo audit` si installa con `cargo install --locked`, un passo per job, e NON si aggiunge un'azione di terzi** | **P-109**: nessuna delle due immagini lo porta e la matrice ne vuole due, cioè ~6 minuti di parete. ✅ **I minuti sono gratis, misurato e non ricordato** — il repository è `visibility: public`, letto dall'API il 2026-09-15 — ed è la **stessa premessa** su cui la decisione 44 ha scelto la matrice. ⛔ **La via B — un'azione di terzi che scarica il binario — costerebbe secondi invece di minuti e un TERZO in più nel percorso di fiducia della CI**, che gira col gettone del repository: è la specie di cosa che ADR-0031 vuole *«deliberata e rivedibile»*, non presa di corsa. ⚠️ **B è registrata, non presa:** se la parete diventasse un problema **misurato**, è del proprietario |
+| **D71** | **`npm audit` gira SENZA `--audit-level`: ogni vulnerabilità fa rosso** | **P-110**: la decisione 45 nomina `--audit-level` come la manopola che fissa la gravità, e misurato il rumore da tarare è **zero** — **369** pacchetti, **0** vulnerabilità, **~6 s** sull'insieme vero del 2. Un livello scelto oggi sarebbe una manopola che nessuno ha tarato **e una scorciatoia già pronta** per il primo avviso scomodo. La forma senza manopola è la stessa di `gate.sh`: un rosso significa sempre qualcosa, mai «stile discutibile». ⚠️ **Costo dichiarato:** un avviso **basso** su una dipendenza di **sviluppo** ferma il cancello; quando succederà, la via è aggiornare o dichiarare l'eccezione con la data, non abbassare la soglia in silenzio |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -17886,6 +18044,377 @@ git push
 - [ ] `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
 - [ ] ⛔ **i fine-riga sono invariati:** `git ls-files --eol scripts/gate.sh .github/workflows/quality-gate.yml gui/package.json docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` uguale al Passo 1, e `tr -cd '\r' < scripts/gate-gui.sh | wc -c` → **0**
 - [ ] ⛔ **nessuna dipendenza Rust nuova:** `bash scripts/gate-deps.sh` verde, e `git diff --stat -- Cargo.lock Cargo.toml crates/` **vuoto** — questo compito non tocca il workspace
+
+## Compito 16: X-1 e X-3 — la matrice Windows nella CI, `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh`
+
+**Files:**
+- Modify: `scripts/gate.sh` (**LF**) — una riga `run`, accanto a quella delle dipendenze, col commento del prerequisito (**D68**, **D69**)
+- Modify: `scripts/gate-gui.sh` (**LF**) — `npm audit` **in coda**, dentro `gui/` (**D71**)
+- Modify: `.github/workflows/quality-gate.yml` (**LF**) — la matrice a due sistemi con `fail-fast: false`, e il passo che installa `cargo audit` (**D70**)
+- Modify: `docs/audit-2026-08-27.md` (**LF**) — i richiami datati che chiudono **X-1** e **X-3**
+- ⛔ **NON si tocca `Cargo.toml`, `Cargo.lock`, né nessuna crate:** `cargo audit` è un attrezzo, non una dipendenza — non entra in nessun manifesto e **non** riguarda ADR-0031
+- Read: la tabella *«Le voci aperte che NON hanno un numero AUD»* di [`audit-2026-08-27.md`](../../audit-2026-08-27.md), righe **X-1** e **X-3**; le **decisioni 44 e 45** della [stella polare](../specs/2026-09-07-direzione-gui-design.md), **per intero**, che sono il mandato di questo compito; `scripts/gate.sh`, `scripts/gate-gui.sh` e `.github/workflows/quality-gate.yml` **come il compito 15 li lascia**; **P-106**…**P-111**; **D68**…**D71**
+- ⛔ **NON si legge**: il «Dettaglio» dell'audit, che si apre una scheda per volta e qui non serve — X-1 e X-3 **non hanno** un numero AUD e vivono nella sola tabella
+
+**Interfaces:**
+- Consumes: la riga `run "gui: fake core and SPA"` e `scripts/gate-gui.sh` (compito **15**); il passo `actions/setup-node` e il flusso di lavoro **come il 15 lo lascia** (compito **15**); `gui/package-lock.json` coi pacchetti dei compiti 11, 13, 14 e 15
+- Produces, e il compito 17 li usa con questi nomi esatti:
+  - la riga `run "dependency advisories"` in `scripts/gate.sh`
+  - `npm audit` come **ultima** riga di `scripts/gate-gui.sh`
+  - `strategy.matrix.os` nel flusso di lavoro, con `ubuntu-latest` e `windows-latest`
+  - le righe **X-1** e **X-3** dell'audit **chiuse**, col richiamo datato — il **17** non le riapre, le cita
+- ⛔ **Che cosa questo compito NON produce:** nessun `audit.toml` (**P-107**: il comportamento per difetto è già quello deciso), nessun `--audit-level` (**D71**), nessun `cargo deny` — la decisione 45 lo esclude per nome, perché la lista di ADR-0031 la fa già `gate-deps.sh` — e nessuna riga di catalogo in `docs/porta-di-qualita.md`, che è il **17**
+
+⛔ **Le due voci sono UN compito e non due, e la ragione è che si scontrano.** X-1 vuole una **matrice**; X-3 vuole
+un attrezzo che **nessuna delle due immagini porta**. Separarle darebbe a chi esegue la seconda un flusso di lavoro
+già raddoppiato e una installazione da pagare due volte, scoperta dopo. Il pre-controllo le ha viste insieme
+(**P-109**), e insieme si scrivono.
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+grep -c 'cargo audit' scripts/gate.sh
+grep -c 'npm audit' scripts/gate-gui.sh
+grep -c 'matrix' .github/workflows/quality-gate.yml
+grep -c 'gate-gui' scripts/gate.sh
+grep -c 'setup-node' .github/workflows/quality-gate.yml
+cargo audit --version 2>&1 | head -1
+git ls-files --eol scripts/gate.sh scripts/gate-gui.sh .github/workflows/quality-gate.yml docs/audit-2026-08-27.md
+awk -F'|' '/^\| \*\*X-1\*\*|^\| \*\*X-3\*\*/{print substr($0, 1, 90)}' docs/audit-2026-08-27.md
+```
+
+Atteso: **zero** per `cargo audit`, `npm audit` e `matrix`; **uno** per `gate-gui` e `setup-node`, ⛔ **e se sono
+zero il compito 15 non è eseguito** e questo compito non parte; le due righe dell'audit ci sono; tutti **LF**.
+
+⚠️ **`cargo audit --version` può dire `error: no such command: audit`, ed è normale** — **P-106**: è il
+prerequisito che questo compito dichiara. Si installa **adesso**, prima di proseguire, perché i Passi 3 e 7 lo
+lanciano:
+
+```bash
+time cargo install cargo-audit --locked --version 0.22.2
+cargo audit --version
+```
+
+⛔ **Si rimisura la versione prima di appuntarla** — vincolo globale 8; **0.22.2** è di **P-2** e della decisione 45,
+riletta il 2026-09-15:
+
+```bash
+python -c "
+import json, urllib.request
+req = urllib.request.Request('https://crates.io/api/v1/crates/cargo-audit', headers={'User-Agent': 'harness-plan'})
+d = json.load(urllib.request.urlopen(req))
+print('cargo-audit max_stable:', d['crate']['max_stable_version'], '| aggiornata', d['crate']['updated_at'][:10])"
+```
+
+- [ ] **Passo 2: la riga in `scripts/gate.sh`, col commento che porta il prerequisito**
+
+⛔ **Il posto è accanto a «allow-list on the two graphs», e la ragione è che parlano dello stesso oggetto:**
+`gate-deps.sh` misura **quali** crate ci sono, `cargo audit` misura **come stanno** — ed è la frase con cui X-3
+descrive il buco. Un lettore che trova un rosso sulle dipendenze le trova vicine.
+
+Il commento e la riga, **in inglese** (vincolo globale 2):
+
+```bash
+# ⛔ WHAT `gate-deps.sh` ABOVE CANNOT SEE. That step measures WHICH crates are in the two graphs
+# against the ADR-0031 allow-list; it never measures HOW THEY ARE. That is the whole of X-3 of the
+# 2026-08-27 audit: `bincode`/RUSTSEC-2025-0141 stayed invisible for seven months, and not because
+# nobody was looking -- because nothing was fetching.
+#
+# ⛔ `cargo audit` IS A PREREQUISITE OF THE ENVIRONMENT, like the `x86_64-unknown-none` target of
+# constraint 4 of §11. If this line goes red with `error: no such command: audit`, the cure is:
+#     cargo install cargo-audit --locked --version 0.22.2
+#
+# ⛔ NO `-n` / `--no-fetch`, AND THAT IS THE POINT OF THIS COMMENT. Measured on 2026-09-15 on this
+# lockfile: `-n` gives the SAME verdict in ~1.3s instead of ~10s, so somebody will add it as an
+# optimisation -- and it would make the check blind to whatever was published AFTER the last run
+# that fetched, which is the exact failure X-3 exists to prevent.
+#
+# ⚠️ TWO COSTS, DECLARED. This step wants the NETWORK, and about nine of its ten seconds are that.
+# And it can go red WITHOUT A COMMIT, because the world published an advisory -- which is the point
+# rather than the price.
+#
+# ⚠️ `bincode`'s "unmaintained" stays a WARNING and does not stop the gate, with NO configuration
+# file: measured on 2026-09-15, `cargo audit` on this lockfile prints `1 allowed warning found` and
+# exits 0. That is the owner's 2026-08-31 decision ("bincode 2.0.1 stays") holding by itself. The
+# counter-probe is `cargo audit --deny unmaintained`, which turns that same warning red.
+run "dependency advisories"               cargo audit
+```
+
+L'inserimento, **per ancora unica** e conservando i fine-riga — il commento si scrive **prima** in un file dello
+scratchpad, `/tmp/audit-comment.sh`, **LF**, e poi:
+
+```bash
+tr -cd '\r' < /tmp/audit-comment.sh | wc -c
+python - <<'EOF'
+import io
+p = "scripts/gate.sh"
+text = io.open(p, encoding="utf-8", newline="").read()
+anchor = 'run "attributes of the constrained crates"'
+block = io.open("/tmp/audit-comment.sh", encoding="utf-8", newline="").read()
+assert text.count(anchor) == 1, "ancora non unica"
+assert "cargo audit" not in text, "gia' inserita -- il compito e' eseguito"
+assert block.endswith("\n") and "\r" not in block, "il blocco deve essere LF e finire con un a capo"
+io.open(p, "w", encoding="utf-8", newline="").write(text.replace(anchor, block + "\n" + anchor, 1))
+EOF
+tr -cd '\r' < scripts/gate.sh | wc -c
+git diff --stat scripts/gate.sh
+grep -n 'run "' scripts/gate.sh
+```
+
+⚠️ **L'ancora è la riga DOPO il posto d'inserimento, e le due candidate sono state contate**, il 2026-09-15:
+`grep -c 'run "attributes of the constrained crates"' scripts/gate.sh` → **1**, quindi è unica; mentre
+`gate-deps.sh` compare **tre** volte nel file — due nel commento lungo in testa e una nella propria riga `run` —
+e un'ancora che vive anche in un commento è quella che, il giorno che il commento cambia, si sposta senza dirlo.
+⛔ **Se il `grep` finale non mostra `dependency advisories` fra «allow-list» e «attributes», l'inserimento è finito
+nel posto sbagliato**: si revoca e si rifà.
+
+- [ ] **Passo 3: le due direzioni di `cargo audit`, sul nostro lockfile e senza mutare niente**
+
+⛔ **Questa è la parte bella del controllo, e va eseguita invece che letta:** lo stesso comando, sullo stesso
+lockfile, dà verde e rosso a seconda di come tratta l'avviso che **abbiamo già**. Niente vulnerabilità finta,
+niente da revocare, `git diff` vuoto per costruzione.
+
+```bash
+echo "== verde: l'avviso e' AMMESSO =="
+cargo audit; echo "EXIT=$?"
+echo "== rosso: lo stesso avviso, NEGATO =="
+cargo audit --deny unmaintained; echo "EXIT=$?"
+git status --porcelain
+```
+
+Atteso, misurato il 2026-09-15: la prima rende `warning: 1 allowed warning found` e **`EXIT=0`**; la seconda
+`error: 1 denied warning found!` e **`EXIT=1`**; e `git status --porcelain` **vuoto**, perché nessuno dei due
+scrive.
+
+⚠️ **Se la prima uscisse ROSSA**, non si abbassa niente: significa che il mondo ha pubblicato un avviso **nuovo**
+su una delle nostre crate, ed è il caso per cui questo passo esiste. Si legge l'avviso, e la via è aggiornare o
+dichiarare l'eccezione **con la data** — una voce d'errata prima di essere un rimedio.
+
+- [ ] **Passo 4: `npm audit` in coda a `scripts/gate-gui.sh`**
+
+⛔ **In coda, dentro `gui/`**, dov'è il `cd` del compito 15 — ed è la forma che quel compito ha scritto apposta per
+reggere questa riga.
+
+```bash
+# ⛔ THE SECOND WORLD OF X-3. `npm ci` above installs what the lockfile pins; this asks the registry
+# how those pins ARE. Same shape as `cargo audit` in `gate.sh`, same network cost, and the same
+# property: it can go red without a commit.
+#
+# ⛔ NO `--audit-level`, AND THAT IS A DECISION. Measured on 2026-09-15 on the whole dependency set
+# of sub-project 2 -- 369 packages -- `npm audit` found 0 vulnerabilities in about six seconds, so
+# the noise to tune is ZERO and a threshold picked today would be a knob nobody calibrated, sitting
+# ready as a shortcut for the first inconvenient advisory. When one arrives the way out is to
+# upgrade, or to declare the exception WITH ITS DATE -- not to lower the bar quietly.
+echo "-------- gui: advisories"
+npm audit
+```
+
+E le due direzioni, la seconda su un albero costruito apposta perché il nostro è pulito:
+
+```bash
+echo "== verde =="
+bash scripts/gate-gui.sh; echo "EXIT=$?"
+
+echo "== rosso: un albero con una vulnerabilita' NOTA, fuori dal repository =="
+mkdir -p /tmp/npm-audit-probe && cd /tmp/npm-audit-probe
+printf '{"name":"p","version":"1.0.0","private":true,"dependencies":{"minimist":"0.0.8"}}\n' > package.json
+npm install --no-audit --no-fund > /dev/null 2>&1
+npm audit; echo "EXIT=$?"
+cd - > /dev/null
+git status --porcelain
+```
+
+Atteso: `EXIT=0` per il passo web; `1 critical severity vulnerability` e **`EXIT=1`** per l'albero malato; e
+`git status --porcelain` **vuoto** — ⛔ **la seconda direzione si fa FUORI dal repository di proposito**, perché
+sporcare `gui/package.json` con una dipendenza vulnerabile e poi revocarla è il genere di mutazione che sopravvive
+a un commit distratto.
+
+- [ ] **Passo 5: la matrice e l'installazione nel flusso di lavoro**
+
+Il flusso di lavoro, **come il compito 15 lo lascia**, guadagna tre cose: la matrice, `runs-on` che la legge, e il
+passo che installa l'attrezzo. Si scrive il file **intero** in `/tmp/quality-gate.yml`, **LF**, e lo si copia — è
+più corto di un inserimento per ancore, e il diff lo mostra tutto:
+
+```yaml
+name: quality gate
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  gate:
+    # ⛔ TWO OPERATING SYSTEMS, AND THAT IS X-1 OF THE 2026-08-27 AUDIT. ADR-0002 says "we develop
+    # and test on Windows", and until this commit CI ran on Linux alone -- while `platform` is the
+    # crate that actually touches the OS, and since sub-project 2 the `ipc` transport there has two
+    # halves. The owner decided A on 2026-09-09 (decision 44 of the GUI north star): a matrix, the
+    # SAME gate on both.
+    strategy:
+      # ⛔ `fail-fast: false` IS NOT A DETAIL. By default GitHub CANCELS the other jobs of a matrix
+      # at the first red, so a red on Linux would hide the state of Windows -- which is exactly the
+      # half X-1 exists to look at.
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      # rust-toolchain.toml declares version and target: rustup installs them by itself,
+      # and that is why constraint 4 of §11 does not require a step here.
+      - run: rustup show
+      # ⛔ X-3: NEITHER IMAGE SHIPS `cargo audit`, AND THIS BUILDS IT FROM SOURCE -- about three
+      # minutes per job, measured on 2026-09-15. That cost is accepted rather than avoided with a
+      # third-party action that downloads a prebuilt binary: minutes are free here (the repository
+      # is public, read from the GitHub API on 2026-09-15 -- the same premise decision 44 used for
+      # the matrix), and a third party in CI's trust path runs with the repository token. The other
+      # way is REGISTERED AND NOT TAKEN: if wall time ever becomes a MEASURED problem, it is the
+      # owner's decision.
+      - run: cargo install cargo-audit --locked --version 0.22.2
+      # Node for the web step of the gate. `node-version-file` reads `engines.node` from the
+      # manifest, so the version lives in ONE house (decision 46): re-read at the action's own docs
+      # on 2026-09-15, whose example uses an OR range exactly like ours, and the file is resolved
+      # relative to the repository root.
+      #
+      # ⛔ `package-manager-cache: false` IS WRITTEN OUT, and that is the point of the line. The
+      # input defaults to `true` in v7.0.0 and switches caching on only when the manifest declares
+      # `packageManager` or `devEngines.packageManager` -- ours declares neither, so decision 47
+      # ("no npm cache today") would hold BY ACCIDENT. The day somebody adds that field the action
+      # would look for the lockfile at the REPOSITORY ROOT, where ours is not -- ours is
+      # `gui/package-lock.json` -- and CI would go red for a reason nobody chose. This line is not
+      # the one decision 47 defers: `cache: npm` would switch caching ON, this one declares it off.
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: gui/package.json
+          package-manager-cache: false
+      - run: bash scripts/gate.sh
+```
+
+⛔ **Il blocco `setup-node` dev'essere IDENTICO a quello che il compito 15 ha scritto**, e non si riscrive a
+memoria: si confronta.
+
+```bash
+tr -cd '\r' < /tmp/quality-gate.yml | wc -c
+diff <(git show HEAD:.github/workflows/quality-gate.yml | grep -A 4 'setup-node@') \
+     <(grep -A 4 'setup-node@' /tmp/quality-gate.yml) && echo "il blocco setup-node e' INVARIATO"
+cp /tmp/quality-gate.yml .github/workflows/quality-gate.yml
+tr -cd '\r' < .github/workflows/quality-gate.yml | wc -c
+git diff .github/workflows/quality-gate.yml
+```
+
+Atteso: **zero** CR le due volte, il `diff` **vuoto** con la riga *«il blocco setup-node e' INVARIATO»*, e il diff
+di git che mostra **solo** la matrice, `runs-on` e il passo di `cargo install`.
+
+⛔ **`actions/checkout` resta alla `v4`**, come il compito 15 l'ha lasciata e come la §8 dice; la divergenza con la
+`v7.0.1` pubblicata il 2026-07-20 è **registrata e non presa**, e il comando che la rimisura sta nel Passo 9 del
+compito 15.
+
+- [ ] **Passo 6: X-1 e X-3 si chiudono, coi richiami datati**
+
+⛔ **Una voce aperta si chiude nella sua CASA UNICA**, che per X-1 e X-3 è la tabella *«Le voci aperte che NON hanno
+un numero AUD»* di `docs/audit-2026-08-27.md` — la §6 del compendio ci **rimanda** e non la ricopia, quindi nessun
+altro documento cambia (gotcha #68). Le due righe dicono già *«l'esecuzione è un compito del piano del
+sotto-progetto 2, e la voce resta aperta finché il passo non esiste»*: adesso esiste.
+
+```bash
+git ls-files --eol docs/audit-2026-08-27.md
+grep -n 'la voce resta aperta finché il passo non esiste' docs/audit-2026-08-27.md
+grep -n 'la voce resta aperta finché i passi non esistono' docs/audit-2026-08-27.md
+```
+
+⛔ **Il file dell'audit È CRLF nell'albero di lavoro — `i/lf w/crlf`, misurato il 2026-09-15** — quindi si tocca
+con Python `newline=""` e **mai** con `sed -i`, che in questa Git Bash toglie i CR e farebbe dire a `git diff`
+millesettecento righe che nessuno ha cambiato (vincolo globale 4). ⚠️ **I due richiami si infilano DENTRO una riga
+esistente, non a capo**, quindi non portano fine-riga propri: è il motivo per cui lo `assert` qui sotto pretende un
+testo senza `\r`. I due richiami, in coda alla rispettiva cella:
+
+> **X-1** — ✅ **CHIUSA IL \<data\>, dal compito 16 del piano della parte 2:** il flusso di lavoro porta
+> `strategy.matrix.os` con `ubuntu-latest` e `windows-latest` e `fail-fast: false`, così un rosso su un sistema non
+> nasconde l'altro. ⛔ **La metà che non si misura da terra è dichiarata:** che il runner Windows onori
+> `rust-toolchain.toml` lo dice **la corsa**, non un comando locale — **P-111**, e il criterio di chiusura del 16
+> manda a guardarla.
+
+> **X-3** — ✅ **CHIUSA IL \<data\>, dal compito 16 del piano della parte 2:** `cargo audit` in `gate.sh` accanto a
+> `gate-deps.sh` e `npm audit` in coda a `gate-gui.sh`, **senza** `-n` e **senza** `--audit-level` (**D69**,
+> **D71**). L'avviso «non mantenuto» di `bincode` resta un **warning** senza nessuna configurazione — misurato il
+> 2026-09-15, `1 allowed warning found`, uscita **0** — quindi la decisione del proprietario del 2026-08-31 regge
+> da sé, e la contro-sonda è `cargo audit --deny unmaintained`. ⚠️ **`cargo audit` è un prerequisito
+> dell'ambiente** (**D68**), come il bersaglio di `rustup`.
+
+⛔ **`<data>` è la data del giorno dell'esecuzione**, e questo passo dice di sostituirla: non è un segnaposto. I due
+testi si scrivono **prima** in `/tmp/x1.md` e `/tmp/x2.md`, su una riga sola ciascuno e **senza** il `>`, poi:
+
+```bash
+python - <<'EOF'
+import io
+p = "docs/audit-2026-08-27.md"
+text = io.open(p, encoding="utf-8", newline="").read()
+pairs = [("la voce resta aperta finché il passo non esiste", "/tmp/x1.md"),
+         ("la voce resta aperta finché i passi non esistono", "/tmp/x2.md")]
+for anchor, src in pairs:
+    add = io.open(src, encoding="utf-8", newline="").read().strip()
+    assert text.count(anchor) == 1, "ancora non unica: %s" % anchor
+    assert "\r" not in add and "<data>" not in add, "LF, e la data va sostituita prima"
+    assert add not in text, "gia' scritto -- il passo e' eseguito"
+    text = text.replace(anchor, anchor + " " + add, 1)
+io.open(p, "w", encoding="utf-8", newline="").write(text)
+EOF
+git ls-files --eol docs/audit-2026-08-27.md
+git diff --stat docs/audit-2026-08-27.md
+bash scripts/check-docs.sh
+```
+
+Atteso: i fine-riga **invariati** rispetto al Passo 1, il diff dice **due** righe cambiate — ⛔ **se ne dice
+centinaia, i fine-riga sono stati normalizzati:** si revoca e si rifà — e `check-docs.sh` → `OK`.
+
+- [ ] **Passo 7: il cancello, e il commit**
+
+```bash
+time bash scripts/gate.sh 2>&1 | tee /tmp/gate-16.log | tail -3
+grep -c 'dependency advisories' /tmp/gate-16.log
+grep -c 'gui: advisories' /tmp/gate-16.log
+bash scripts/check-docs.sh
+git status --porcelain
+```
+
+Atteso: `GATE GREEN`, le due etichette **più di zero** volte ciascuna, `OK`, e niente da committare oltre ai file
+che questo compito nomina. ⚠️ **Il tempo del cancello è cresciuto**: se il commento del Passo 10 del compito 15
+porta un numero, questo compito lo **rimisura e lo data** accanto al vecchio invece di riallinearlo — è la regola
+del settimo passo, che porta il proprio tempo con la data.
+
+```bash
+git add scripts/gate.sh scripts/gate-gui.sh .github/workflows/quality-gate.yml docs/audit-2026-08-27.md
+git commit -m "gui(compito 16): X-1 e X-3 -- la matrice Windows nella CI, cargo audit in gate.sh, npm audit in gate-gui.sh"
+git push
+```
+
+⛔ **Senza co-autore**, vincolo globale 13.
+
+**Criterio di chiusura del compito 16**
+
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`, e nell'uscita compaiono **`dependency advisories`** e **`gui: advisories`**, una volta ciascuna
+- [ ] ⛔ **le due direzioni di `cargo audit`** eseguite come al Passo 3: `cargo audit` → `EXIT=0` con `1 allowed warning found`; `cargo audit --deny unmaintained` → `EXIT=1` con `1 denied warning found!`
+- [ ] ⛔ **le due direzioni di `npm audit`** eseguite come al Passo 4, la seconda **fuori** dal repository, e `git status --porcelain` **vuoto** alla fine
+- [ ] ⛔ **niente `-n` e niente `--audit-level`**, e lo si prova col comando invece di rileggerlo:
+
+  ```bash
+  grep -cE 'cargo audit ((-n|--no-fetch)\b|.*--no-fetch)' scripts/gate.sh
+  grep -c 'audit-level' scripts/gate-gui.sh
+  ```
+
+  → **zero** ed **zero** (**D69**, **D71**)
+- [ ] ⛔ **`npm audit` è l'ULTIMA riga di `gate-gui.sh`**, dentro `gui/`: `tail -3 scripts/gate-gui.sh` lo mostra, e sopra c'è `npm run lint` del compito 15
+- [ ] ⛔ **la riga di `cargo audit` sta FRA «allow-list» e «attributes»:** `grep -n 'run "' scripts/gate.sh` le mostra in quest'ordine — workspace build, tests, no-OS, allow-list, **dependency advisories**, attributes, gui, documentation
+- [ ] ⛔ **nessuna crate e nessun manifesto toccati:** `git diff --stat HEAD~1 -- crates/ Cargo.toml Cargo.lock` **vuoto** — `cargo audit` è un attrezzo, non una dipendenza
+- [ ] ⛔ **il blocco `setup-node` è IDENTICO a quello del compito 15**, col `diff` del Passo 5 **vuoto**
+- [ ] `grep -c 'fail-fast: false' .github/workflows/quality-gate.yml` → **1**, e `grep -c 'windows-latest' …` → **1** (**P-111**)
+- [ ] ⛔ **X-1 e X-3 sono chiuse nella loro casa unica**, e nessun altro documento le ricopia: `grep -c 'CHIUSA IL' docs/audit-2026-08-27.md` → **più di uno**, `grep -c '<data>' docs/audit-2026-08-27.md` → **zero**, e `grep -rc 'X-1' docs/COMPENDIO.md` **invariato** rispetto al Passo 1 (gotcha #68)
+- [ ] `bash scripts/check-docs.sh` → `OK`; i fine-riga di tutti e quattro i file **invariati** rispetto al Passo 1
+- [ ] ⛔ **E POI SI GUARDA LA CORSA, perché metà di X-1 non si misura da terra** — **P-111**. Aperta la pagina delle azioni del repository sul commit appena spinto:
+  - [ ] ci sono **due** job, uno per sistema, e **nessuno dei due è «cancelled»** — è `fail-fast: false` che si vede
+  - [ ] nel job Windows il passo `rustup show` stampa il canale e il bersaglio di `rust-toolchain.toml`: è **la** metà che la decisione 44 chiedeva di provare e che nessun comando locale può dire
+  - [ ] nel job Windows `bash scripts/gate.sh` **parte** — Git Bash c'è sull'immagine — e arriva a `GATE GREEN`
+  - [ ] ⚠️ **se il job Windows è rosso, NON si toglie dalla matrice:** è la prima volta che quel codice viene provato là, ed è il motivo per cui X-1 esisteva. Il rosso è una voce d'errata col suo rimedio
 
 ## Come si riprende — il diario di questo piano, coi comandi
 

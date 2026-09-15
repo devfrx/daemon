@@ -3,7 +3,7 @@
 Fonte: 9 rapporti su 11 (R1 parziale: compiti 1–2; R3 parziale: compito 7; R5 completo: 11–12; R2, R4, R7, R9a, R9b, R10 completi).
 Mancano: compito 13 (R6), compiti 15–17 (R8), compito 3 (R1), compito 8 (R3) — perimetri da rivedere ancora.
 Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stati rimisurati anche da lui.
-**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compiti 11 e 12 applicati (✅). **Sessione 15 (2026-09-15):** compito 13 applicato (✅) — con **D89** nuova (il dock segue lo store), R7-7 applicata al 15, e la cascata sul `Frame.vue` del 14 registrata come riga del 14. **Sessione 15, ondata 11 (2026-09-15):** compito 14 applicato (✅) — resta all'8 la sua metà di R9b-5.
+**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compiti 11 e 12 applicati (✅). **Sessione 15 (2026-09-15):** compito 13 applicato (✅) — con **D89** nuova (il dock segue lo store), R7-7 applicata al 15, e la cascata sul `Frame.vue` del 14 registrata come riga del 14. **Sessione 15, ondata 11 (2026-09-15):** compito 14 applicato (✅) — resta all'8 la sua metà di R9b-5. **Ondata 12 (2026-09-15):** compiti 15, 16 e 17 applicati (✅) in una ondata sola.
 
 ## Le decisioni nuove (righe D da scrivere)
 
@@ -232,13 +232,31 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - ⚠️ **Non compilato:** `Frame.vue`, `Chat.vue`, `markdown.ts` e le sonde toccate sono riscritti sul modello letto; chi esegue il 14 li compila per primi, ogni rosso è errata — come il 12 e il 13
 - Attrezzo: `patch_c14.py` accanto a questo file (tocca anche il criterio del 13, la riga D87 e questo registro)
 
-### Compito 15 — NON RIVISTO IN PROFONDITÀ (R8 caduto): resta da fare
-- R10-1 eol: `gate.sh` e il flusso sono `i/lf w/crlf` (Files, Passo 1, Passo 8/9 CRLF) ⬜ · R7-7 «(compito 13, Passo 12)» ✅ (applicata nell'ondata del 13) · R7-11 «tredici .vue, dodici a una parola» (anche P-99) ⬜ · R9a-12 (D88) richiamo «le scritte» §8 ⬜ · R9a-15 P-104 «§8» e «lo scrive il 15» ⬜ · R5-17 numero del tempo del finto ⬜
+### Compito 15 — NON RIVISTO IN PROFONDITÀ (R8 caduto): le righe note sono applicate, la revisione in profondità resta da fare
+- R10-1 `gate.sh` e il flusso sono `i/lf w/crlf` (rimisurato oggi: CR 97 = righe 97, 16 = 16): Files, Passo 1, Passo 8 (la riga `run` entra CRLF, Atteso CR = righe, `git ls-files --eol`), Passo 9 (il blocco `setup-node` convertito, Atteso CR = righe), Passo 10 (anche il commento entra CRLF) ✅
+- R7-7 «(compito 13, Passo 12)» ✅ (applicata nell'ondata del 13)
+- R7-11 il commento di `eslint.config.js` senza cifra («every `.vue` file here but `ViewBar`»), e il richiamo su P-99 col comando che conta (tredici, dodici a una parola; anche P-99 fuori dal 15) ✅
+- R9a-12 (D88) il secondo richiamo del Passo 11, sulla riga «le scritte» della §8 (trovata per prefisso, in coda alla cella); Files, il titolo del passo e il criterio (`grep -c 'compito 15 del piano della parte 2'` → 2) ✅
+- R9a-15 P-104: «§8» nel titolo e nella prima riga, «lo scrive il 15, Passo 11» nell'ultimo capoverso, col richiamo ✅
+- R5-17 i due tempi del finto (`<data>`, `<tempo>` ×2) nel commento di `gate-gui.sh` (Passo 6), rimisurati al Passo 10 con `cargo clean` e due `time`, e il criterio `grep -c '<tempo>\|<data>'` su entrambi gli script ✅
+- Attrezzo: `patch_c151617.py` accanto a questo file
 
-### Compito 16 — NON RIVISTO IN PROFONDITÀ (R8 caduto): resta da fare
-- R10-2 eol: `gate.sh`, flusso, audit `i/lf w/crlf`; solo `gate-gui.sh` LF; blocco CRLF; `cp` con fine-riga del file ⬜ · R9a-11 (D88) richiamo «Ciò che la §8 non fa» ⬜ · D83 `cargo audit --file gui/fake-core/Cargo.lock` ⬜
+### Compito 16 — NON RIVISTO IN PROFONDITÀ (R8 caduto): le righe note sono applicate, la revisione in profondità resta da fare
+- R10-2 `gate.sh`, il flusso e l'audit sono `i/lf w/crlf` (rimisurato oggi), solo `gate-gui.sh` LF: Files, Passo 1 (Atteso), Passo 2 (blocco e riga vuota convertiti a CRLF, Atteso CR = righe), Passo 5 (il flusso scritto coi fine-riga del file da Python, via il `cp`), criterio ✅
+- R9a-11 (D88) il richiamo in coda al capoverso «Ciò che la §8 non fa» del disegno del 2, in un sotto-passo del Passo 6 (ancora per frase contenuta, fine del capoverso), Files, `git add`, criterio (`grep -c 'compito 16 del piano della parte 2'` → 1) ✅
+- D83 `cargo audit --file gui/fake-core/Cargo.lock` in `gate-gui.sh` subito dopo il `cargo test` del finto, prima del `cd gui` (Passo 4), le due direzioni anche sul lockfile del finto (Passo 3), Interfaces, Passo 1 (`grep -c 'cargo audit' scripts/gate-gui.sh`), criterio ✅
+- Attrezzo: `patch_c151617.py`
 
-### Compito 17 — NON RIVISTO IN PROFONDITÀ (R8 caduto): resta da fare
-- R9b-15 criterio roadmap: comando ancorato alla riga e depurato delle citazioni ⬜ · R9b-14 Passo 10: `grep -c 'dal compito 14 del piano della parte 2 (P-89, D56)'` → 1 ⬜ · R9b-3 (D86) titolo roadmap ⬜ · R9b-6 stella: riga «codice e spec non toccati» + «Il prossimo passo» ⬜ · R9b-13 (D87) ✅ sui 🔶 dedotti ⬜ · R9b-2 (D85) design/10 ⬜ · R9a-16 Definizione di fatto: `git diff --name-only 42b50d8..HEAD` contro le liste Files; `docs/adr/` vuoto ⬜ · D84 CPU in riferimenti.md ⬜
+### Compito 17 — NON RIVISTO IN PROFONDITÀ (R8 caduto): le righe note sono applicate, la revisione in profondità resta da fare
+- R9b-15 criterio della roadmap: `grep -F 'parte-2-gui-minima.md' | sed 's/«[^»]*»//g' | grep -cE …` → 0, col perché ✅
+- R9b-14 Passo 10: `grep -c 'dal compito 14 del piano della parte 2 (P-89, D56)'` → 1, col perché ✅
+- R9b-3 (D86) Passo 5: la riga 2 della roadmap cambia titolo sul perimetro della §3; criterio `grep -c 'GUI minima (shell, chat, stato)'` → 0; il Passo 1 e il Passo 5 cercano la riga del piano per nome del file (R10-19 l'aveva già cambiata: «in scrittura dal 2026-09-11» non c'è più) ✅
+- R9b-6 Passo 8-bis: la riga «codice e spec non toccati» della tabella dello stato e «Il prossimo passo» della stella, coi richiami ✅
+- R9b-13 (D87, seconda metà) Passo 8-bis: i tre capoversi 🔶 confermati (sequenze → 7 con la precisazione `Stage`; §2 → 5, 7, 13; §3 → il piano, 11–13, 9, 7), ancore per frase contenuta contate oggi (una ciascuna); gli altri 🔶 restano, perché parlano di altri sotto-progetti ✅
+- R9b-2 (D85) Passo 8-ter: `design/10` (rimisurato oggi `i/lf w/lf`, CR 0) — le due entità nel primo `erDiagram` coi campi letti da `record.rs`, via dal secondo, il richiamo sulla riga della tabella, `check-docs.sh`; quattro comandi nel criterio ✅
+- R9a-16 Definizione di «fatto»: `git diff --name-only 42b50d8..HEAD -- …` contro l'unione delle liste Files, e `git diff --stat 42b50d8..HEAD -- docs/adr/` vuoto ✅
+- D84 Passo 8: il processore a riposo (compito 9, Passo 14) in `riferimenti.md` con comando, sessanta secondi, numero senza soglia e data; anche i due tempi del finto (R5-17) ✅
+- Files: la stella e `design/10`; le due liste `git ls-files --eol` (Passo 1 e 11) e l'Atteso; «otto file» → «i file della lista *Files*» (tre posti) ✅
+- Attrezzo: `patch_c151617.py`
 
 ## Voci P nuove (P-117…): una per rilievo «fatto» confermato, raggruppate per compito; i «prosa» stanno nella tabella della dodicesima chiusura

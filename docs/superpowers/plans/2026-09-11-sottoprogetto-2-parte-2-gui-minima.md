@@ -3301,8 +3301,9 @@ d'uno conta per il primo.
 
 ⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
 rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
-12 è stato rivisto da **R3** (2026-09-15), **R5** (2026-09-15), **R9a** (2026-09-15), **R10** (2026-09-15). Ogni rilievo
-sta nella sezione «Rilievi» del proprio rapporto, in
+12 è stato rivisto da **R3** (2026-09-15), **R5** (2026-09-15), **R9a** (2026-09-15), **R10** (2026-09-15) — e il suo
+modulo di sonde è stato **compilato** da **R13** il 2026-09-16, che sul 12 non ha trovato **nulla**, quindi il numero
+qui sotto non si muove. Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
 `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
 «Compito 12» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
 comando, non questa riga —
@@ -3336,17 +3337,20 @@ prefisso.
 
 ⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
 rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
-14 è stato rivisto da **R7** (2026-09-15), **R10** (2026-09-15). Ogni rilievo sta nella sezione «Rilievi» del proprio
-rapporto, in `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato
+14 è stato rivisto da **R7** (2026-09-15), **R10** (2026-09-15) — e i suoi moduli riscritti sono stati **compilati** da
+**R13** il 2026-09-16, un revisore solo su Opus 5. Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato
 nella sezione «Compito 14» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li
 conta il comando, non questa riga —
 
 ```bash
-cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?14\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| (R[0-9]+[ab]?-[0-9]+ \| (Compito )?14\b|R13-[0-9]+ \|)' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
 ```
 
-→ **7** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 14; una riga che ne nomina più
-d'uno conta per il primo.
+→ **10** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 14; una riga che ne nomina più
+d'uno conta per il primo; ⚠️ **le celle di R13 portano il numero in grassetto** (`**14**`) e l'alternanza nuda non
+le vedeva — il comando le prende **per prefisso**, come fa quello di P-129 con R6, perché R13 è tutto sui compiti
+12 e 14 e sul 12 non ha trovato nulla. Era **7** prima di R13.
 
 ### P-131 — Compito 15, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
 
@@ -18114,7 +18118,8 @@ describe("the renderer", () => {
   it("renders a link as text that shows its target, with nothing to follow", () => {
     const html = renderMarkdown("vedi [qui](https://example.com/x)");
     expect(html).not.toContain("<a");
-    expect(html).not.toContain("href=");
+    // the SPACE is load-bearing: `data-href=` contains `href=` (R13-1).
+    expect(html).not.toContain(" href=");
     expect(html).toContain('data-href="https://example.com/x"');
     expect(html).toContain("qui");
   });
@@ -18131,6 +18136,15 @@ describe("the renderer", () => {
   });
 });
 ```
+
+⛔ **Lo spazio in `" href="` è PORTANTE, e non si toglie: `data-href=` contiene `href=`.** Senza di esso le due
+asserzioni dello **stesso** `it` si contraddicono — `not.toContain("href=")` e `toContain('data-href="…"')` non
+possono essere vere insieme — e quell'`it` è rosso **qualunque cosa faccia `renderMarkdown`**: un oracolo che non
+può mai diventare verde, cioè il contrario di ciò per cui esiste. ✅ **Misurato il 2026-09-16 (R13, e rifatto dal
+coordinatore nelle due direzioni sul modello compilato):** col testo di prima
+`npx vitest run src/components/markdown.test.ts` rende un rosso che dice `not to contain 'href='` sul reso
+`<p>vedi <span class="link" data-href="https://example.com/x">qui</span></p>`; con lo spazio, **5/5 verdi**. Lo
+spazio c'è perché `<a href=` lo porta e `data-href=` porta un **trattino**.
 
 ⚠️ **`import MarkdownIt from "markdown-it"` e `import axe from "axe-core"` (Passo 14) sono import di default su
 pacchetti che espongono `export =` o un ESM col default:** con `moduleResolution: "bundler"` (compito 11)
@@ -19117,6 +19131,9 @@ describe("the confirmation window", () => {
     const yes = [...document.querySelectorAll(".confirm button")].find((b) => b.textContent?.trim() === t("confirm.yes"));
     expect(yes).toBeDefined();
     (yes as HTMLButtonElement).click();
+    // reka-ui unmounts DialogContent through its own dismissable layer: THREE ticks, measured (R13-2).
+    await nextTick();
+    await nextTick();
     await nextTick();
     expect(bridge.sent.at(-1)).toEqual({ kind: "Approve", triple: TRIPLE_OF_THE_FIXTURE, call: { function: "vram-policy", argument: "local" } });
     expect(core.pending).toBeNull();
@@ -19133,6 +19150,9 @@ describe("the confirmation window", () => {
     await nextTick();
     const no = [...document.querySelectorAll(".confirm button")].find((b) => b.textContent?.trim() === t("confirm.no"));
     (no as HTMLButtonElement).click();
+    // reka-ui unmounts DialogContent through its own dismissable layer: THREE ticks, measured (R13-3).
+    await nextTick();
+    await nextTick();
     await nextTick();
     expect(bridge.sent.map((message) => message.kind)).toEqual(["Invoke"]);
     expect(core.pending).toBeNull();
@@ -19141,6 +19161,15 @@ describe("the confirmation window", () => {
   });
 });
 ```
+
+⛔ **I TRE `await nextTick()` dopo ciascun click sono MISURATI, e non sono uno:** `reka-ui` 2.10.4 smonta
+`DialogContent` attraverso il proprio strato *dismissable*, che costa due giri in più. ✅ **Misurato il 2026-09-16
+(R13, con una sonda usa-e-getta, e rifatto dal coordinatore nelle due direzioni sul modello compilato):** dopo
+**uno** e dopo **due** `nextTick` il nodo `.confirm` è ancora nel DOM con `data-state="closed"`, al **terzo** è via.
+Con un solo `nextTick` i due `it` sono rossi con `AssertionError: expected <div data-v-…> to be null`. ⚠️ **E il
+rosso si leggerebbe come «la finestra non si chiude», mentre la logica è giusta:** `core.pending` è già `null` e
+l'`Approve` è già partito — le due righe sopra lo asseriscono e passano — è la **sonda** a essere sotto-attesa,
+non il modulo a sbagliare.
 
 ⚠️ **La tripla che le sonde confrontano è quella della FIXTURE, non quella vera del registro:** la finta rigioca
 la fixture, e la fixture porta il valore **arbitrario** dell'insieme canonico (`arbiter`, `policy`); la tripla vera

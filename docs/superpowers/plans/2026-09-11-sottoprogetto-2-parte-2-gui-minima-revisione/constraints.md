@@ -1,5 +1,19 @@
 # Vincoli per i revisori del piano della parte 2 del sotto-progetto 2 — 2026-09-15
 
+## ⛔ RICHIAMO DEL 2026-09-16 — la ripresa della revisione: le righe qui sotto VINCONO sul resto del file
+
+Questo file è del 2026-09-15 e resta valido **tranne** ciò che questa tabella corregge.
+
+| Era, il 2026-09-15 | Oggi, 2026-09-16 |
+|---|---|
+| scratchpad `…\70220bef-5dc3-4d57-a0cd-7088a6828df6\scratchpad` | `C:\Users\zagor\AppData\Local\Temp\claude\C--Users-zagor-Desktop-harness\4fa001a2-dff2-4d38-9775-1dfa17966e6f\scratchpad` — in Git Bash `/c/Users/zagor/AppData/Local/Temp/claude/C--Users-zagor-Desktop-harness/4fa001a2-dff2-4d38-9775-1dfa17966e6f/scratchpad`. `review/skeleton.md` e `review/p-titles.md` sono lì, **rigenerati oggi dal piano corretto**; crea tu `review/probe-RN/` |
+| `HEAD` = `baf3cde`; D = 74; il piano di 20 129 righe | `HEAD` = `b3422bf` (`git rev-parse --short HEAD`); `grep -c '^| \*\*D[0-9]' <piano>` → **89**; `wc -l <piano>` dà le righe di oggi. P resta **116**, i compiti **17**, l'errata **vuota**, nessun compito eseguito, `gui/` non esiste, il codice di prodotto identico a `42b50d8` (il comando della §2 resta vuoto) |
+| il piano com'era prima della revisione | ⛔ **le correzioni della revisione (R1–R10) sono APPLICATE ai compiti 1–17** — il registro `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/ledger.md` elenca per compito ogni rilievo applicato (✅). Leggi la sezione del TUO compito nel registro (`awk '/^### Compito 13/{f=1} /^### Compito 14/{exit} f' ledger.md`): quelle righe sono già nel piano — le **verifichi** come tutto il resto, perché sono state scritte senza revisione; se reggono non le riproponi; se non reggono è un rilievo nuovo, con «era la riga R… del registro» nella cella «Che cosa dice il piano» |
+| i moduli dettati si leggono | ⛔ **tre compiti portano moduli RISCRITTI dalla revisione e MAI COMPILATI**: il modulo delle sonde del 12 (`gui/fake-core/src/main.rs`, `mod tests`); `layout.ts`, `dock.ts`, `Frame.vue`, `stores.test.ts`, `frame.test.ts` del 13; `Frame.vue`, `Chat.vue`, `markdown.ts`, `modules.test.ts`, `chat.test.ts` del 14. Chi li ha nel perimetro li **compila** nella propria cartella di prova (il tuo `RN-prompt.md` dice come); un rosso è un rilievo `fatto`, `sì` — non un'errata, perché nessun compito è eseguito |
+| «Tutte le prove vivono in `<scratchpad>/review/probe-RN/`» | invariato. ⚠️ Lo scratchpad della sessione precedente esiste ancora su disco, in **sola lettura**: `/c/Users/zagor/AppData/Local/Temp/claude/C--Users-zagor-Desktop-harness/70220bef-5dc3-4d57-a0cd-7088a6828df6/scratchpad/review/` — `probe-R5/gui-ts5/` è un modello dell'11 **installato** (`typescript` 5.9.3, D79) coi suoi `node_modules`; `probe-R8/c15.md`, `c16.md`, `c17.md` e `probe-R6/P-*.md` sono estratti **vecchi**, di prima delle correzioni: **non usarli**, estrai dal piano di oggi. Il lockfile di quel modello è copiato in `<scratchpad>/review/model11-lock/` (`package.json`, `package-lock.json`): `npm ci` con esso monta gli stessi pacchetti dalla cache in secondi |
+| `cargo`, `node`, `cargo-audit` | invariati: 1.95.0, v24.9.0, 0.22.2 (`rustfmt` 1.9.0 c'è) |
+| il rapporto in `<scratchpad>/review/RN-report.md` | invariato, **a pezzi**, un compito alla volta — con la data **2026-09-16** nel titolo |
+
 Questo file è la tua **unica** lettura preliminare, oltre al tuo `RN-prompt.md`. Il coordinatore ha già fatto la
 lettura d'apertura del repository (`CLAUDE.md`, `docs/COMPENDIO.md`): **NON rifarla** — non aprire `CLAUDE.md`,
 `docs/COMPENDIO.md`, `docs/HANDOFF.md` né `docs/audit-2026-08-27.md` «per farti un'idea». Ciò che ti serve è qui,

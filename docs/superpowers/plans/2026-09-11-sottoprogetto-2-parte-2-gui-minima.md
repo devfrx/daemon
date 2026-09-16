@@ -2596,6 +2596,12 @@ accanto al `v-html`. Il 14 non tocca `eslint`: non c'è ancora (**D40**, **D51**
 «spostato nel primo gruppo libero» e mai «nessun vicino, si divide», e non saprebbe mai se il vicino scelto è il più
 **vicino**.
 
+⛔ **RICHIAMO DEL 2026-09-16, dalla revisione in profondità del compito 13 (R6-8): la premessa *«Il Passo 3 del 13 ha
+misurato che `jsdom` non fa layout»* attribuiva al Passo 3 un esito che quel passo non produceva** — la sua sonda
+moriva prima, su `ReferenceError: ResizeObserver is not defined`, perché `jsdom` 30.0.1 non implementa quell'API; con
+la finta di `gui/src/jsdom-setup.ts` la griglia si monta. Il merito resta vero e misurato: sotto `jsdom`
+`getBoundingClientRect` rende zeri, e la sonda di `moveActive` si scrive coi rettangoli nostri come questa voce detta.
+
 ✅ **La cura non è un `dockview` finto: sono quattro membri finti con rettangoli veri** — `activePanel`, `groups`,
 `element.getBoundingClientRect`, `api.moveTo` — con cui la sonda prova la geometria per intero: il gruppo più vicino
 vince su uno più lontano, un gruppo bloccato più vicino non conta (mossa 1), e senza vicini si divide dal lato giusto.
@@ -3196,6 +3202,7 @@ smentisce — è ciò per cui esiste l'errata.
 | **D87** | **il 14 scrive un richiamo `<data>` per OGNI modulo che costruisce** nelle tabelle della §1 della stella polare — Stato, Permessi, Passi, Chat (le righe costruite), e la riga Impostazioni della tabella corta — col nome del sorgente — ⚠️ **applicata all'ondata 11 come UN richiamo per modulo**, sul capoverso *«Costruito dal **2**»* sotto l'intestazione (la «riga di quel modulo» della §6) e non su ogni riga costruita: le righe tengono la colonna «chi», e un richiamo di riga sta dove la riga diverge (D56, R7-14); **il 17 scrive i ✅ sui 🔶 dedotti della stella** che il piano conferma (l'ordine dei pezzi, la SPA contro il ponte finto prima del daemon, i passi all'accoglienza e dopo ogni invocazione, il pacchetto opaco, i default in `gui/`) e la precisazione sul client rifiutato | R9a-13, R9b-4, R9b-13: la §6 della stella dice *«quando costruisce un modulo, mette un richiamo datato nella riga di quel modulo nella §1»* e il §10 del disegno del 2 lo ripete al punto 9; il 14 ne scriveva uno solo (D56) |
 | **D88** | ⛔ **ogni richiamo che una decisione `D` di questo piano rende dovuto nei due disegni si scrive dal compito che ESEGUE quella decisione**, non si lascia al 17: §3 del 2 (D9, D10, D78, D82) dal **2**; §4 riga `Request, Verdict` (D5) dal **7**; §8 *«decodificata dai byte»* e §2 *«la SPA parla `bincode`»* (D36) dall'**11**; §7 righe *«la disposizione»*, *«la lista dei passi»*, *«senza copiarla»*, il dedotto su `Accepted` (P-70, D41, D22) dal **12**; §8 *«le scritte»* (D63, D65) dal **15**; §8 *«Ciò che la §8 non fa»* (X-1, X-3) dal **16**; le decisioni 6, 45, 47, 51, 52, 55 del coordinatore della stella (D2, D71, D66, D3, D4, D63–D65) dal compito che le esegue | R9a-3, R9a-7, R9a-8, R9a-10, R9a-11, R9a-12, R9b-9, R3-18, R5-15, R5-16: quattordici contraddizioni **dichiarate in una `D`** e **mute nel disegno** — il precedente giusto è il compito 8, che scrive il richiamo della decisione 56 dove vive |
 | **D89** | ⛔ **il dock SEGUE lo store**: `createDock` osserva `view` e `arrivals` di `useLayout` — la barra scrive `layout.view` e basta; un pacchetto che il core manda **dopo** che il dock è su viene mostrato; l'**eco** del proprio `SaveLayout` (decisione 13: il core risponde con ciò che tiene) non conta come arrivo, perché lo store confronta i byte con quelli che ha mandato; e mostrare una vista **azzera la baseline** del `settle`, così guardare una vista non la salva | revisione del piano intero, 2026-09-15, scrivendo D80 (coordinatore; R6 caduto): il 13 dettava `apply` una volta sola in `createDock`, cioè **prima** del `Hello` di `main.ts` — e `layout.receive` del `Layout` dell'accoglienza aggiornava lo store senza che nulla lo mostrasse: la disposizione salvata **non compariva mai** all'avvio; e col `switchTo` che rilanciava `apply` da `Frame.vue`, il `settle` che seguiva copiava la vista spedita nell'archivio, contro la decisione 11 del coordinatore della stella. Compilava e passava tutte le sonde del 13 |
+| **D90** | ⛔ **il timbro entra nella SPA da `define` di `vite.config.ts`, che legge l'ultima riga di `ipc_v1.map` in Node; il browser non chiede mai un `.map`**, e `stamp.ts` dichiara la costante (`declare const __BUILD_STAMP__`) invece di importare la mappa | **R6-3**, misurato nel browser e sul modello compilato il 2026-09-16: il server di sviluppo di `vite` 8.3.0 tratta ogni URL che finisce in `.map` come una richiesta di source map e serve il file statico come `application/json` — `npm run dev` pagina bianca, `vite build` e `vitest` verdi, cioè un difetto **muto nel cancello**. Le vie scartate: rinominare la mappa spezza la forma che `record_v1.map` del giornale ha già e tocca il compito 3 in tredici punti; un secondo file col solo timbro scritto dal generatore sarebbe una seconda casa del timbro (gotcha #68) e riaprirebbe il 3, rivisto in profondità da R11; un `fetch` a tempo d'esecuzione renderebbe `buildStamp` asincrona e non gira sotto `vitest`; un middleware di sviluppo che serva il `.map?raw` come modulo sarebbe una seconda implementazione di `?raw`, accoppiata al formato degli URL di `vite`. `define` è la via documentata di `vite` per una costante di build, e vale in tutti e tre i mondi: sostituita nel bundle, iniettata come globale in sviluppo (`/@vite/env`) e sotto `vitest` — misurato. ⚠️ **Costo dichiarato:** la lettura vive nella configurazione e non in `stamp.ts`, e in sviluppo il server va riavviato quando la mappa cambia — che accade solo quando cambia lo schema del kernel, e allora la SPA si ricostruisce comunque; che il timbro arrivi nei tre mondi lo misura il criterio di chiusura del 13 |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -3226,6 +3233,7 @@ righe che lo **toccano** sono segnate.
 | ⛔ **il secondo capo di `SOCKET_NAME`** — il daemon lega il nome al compito 9, e in questo piano **nessuno vi si collega**: il core finto ne lega uno suo, la SPA non tocca socket | **P-53**, **D31**, e il doc della costante in `crates/daemon/src/main.rs` | il **guscio**, che la §8 del 2 mette *«fuori dal cancello di oggi»*; il giorno che esiste, l'accoppiamento è una sonda |
 | ⛔ **la decodifica VERA dei byte `bincode` dal capo TypeScript** — in questo piano **nessuno decodifica**: la SPA confronta i propri tipi col `.json` delle fixture (**D36**), e i byte li prova `ipc_wire.rs` nel cancello. ⚠️ **E il lettore che servirebbe è rotto come spedito** — `bincode-ts` 1.0.0 non si carica da nessuno dei due punti d'ingresso, misurato in M-11 | **P-63**, **D36**, e la riga di `bincode-ts` in [`riferimenti.md`](../../riferimenti.md) | il **guscio**, dove la decodifica vive davvero (Q1 di SP-8: il processo principale Node); il giorno che esiste, la copia corretta di `bincode-ts` o un lettore mantenuto è una **sua** decisione, non di questo piano. ⚠️ **Stesso chiusore del secondo capo di `SOCKET_NAME`, e non è un caso:** entrambe aspettano l'unico pezzo che la §8 del 2 mette *«fuori dal cancello di oggi»* |
 | ⛔ **il terzo comando del menu del modulo, «finestra a parte»** — `addPopoutGroup` vuole `popoutUrl` e una pagina servita da un'origine http(s), e Q3 di SP-8 l'ha misurata rifiutata in entrambi i gusci com'erano; il 14 porta «stacca» e «pagina intera» | **P-91**, **D58**; la riga 20 della tabella Chat della stella polare, vera a metà | il **guscio**, come il secondo capo di `SOCKET_NAME` e la decodifica vera: le tre voci aspettano lo stesso pezzo, che la §8 del 2 mette *«fuori dal cancello di oggi»* |
+| ⛔ **«il resto spento»** della riga *i quattro stati della connessione* della §6a del 2 — *core non in esecuzione → una fascia che lo dice e un pulsante «riprova», il resto spento* — **nessun passo del 13 o del 14 spegne nulla**: nel 2 i moduli senza dati mostrano lo stato vuoto (`—`, «nessuna richiesta») e la griglia resta manovrabile, perché la disposizione è presentazione (I1) e non dipende dal core; **P-78** e **D48** discutono i quattro stati e non nominano questa metà (tabella di copertura di R6, 2026-09-16) | la riga della §6a, e la tabella di copertura di `R6-report.md` | il **proprietario**, in A/B alla prossima rilettura: **(A)** «spento» è lo stato vuoto di oggi, e la riga della §6a riceve il richiamo datato dal 14, che costruisce i moduli; **(B)** «spento» è una disabilitazione della griglia (`inert`) finché `Accepted` non arriva — un passo nuovo nel 13. Il consiglio del coordinatore è **A**: una griglia bloccata terrebbe ferma la disposizione, che il core non decide |
 
 ---
 
@@ -14922,10 +14930,12 @@ prova che un pannello si veda.
 **Files:**
 - Modify: `gui/package.json` (**LF**, dal compito 11) — le dipendenze che **questo** compito consuma (**D40**)
 - Modify: `gui/package-lock.json` (**LF**) — **nello stesso commit** del manifesto, vincolo globale 7
-- Modify: `gui/vite.config.ts` (**LF**) — l'ambiente delle sonde passa a `jsdom`, e il perché
+- Modify: `gui/vite.config.ts` (**LF**) — l'ambiente delle sonde passa a `jsdom`, e il perché; la finta di `ResizeObserver` in `setupFiles` (R6-8) e il timbro letto dalla mappa e consegnato con `define` (R6-3, **D90**)
+- Modify: `gui/tsconfig.json` (**LF**, dal compito 11) — `"types": ["vite/client", "node"]`, perché questo è il primo compito che importa da `node:` (R6-1)
 - Modify: `gui/src/main.ts` (**LF**) — il CSS di `dockview`, i token, `pinia`, `vue-i18n`, il ponte
 - Modify: `gui/src/App.vue` (**LF**) — ⛔ **riscritto**: il componente del compito 11 esisteva per far attraversare la catena di compilazione a un `.vue`, e lo dice di sé
-- Create: `gui/src/schema/stamp.ts` (**LF**) — il timbro letto da `ipc_v1.map` (**D52**)
+- Create: `gui/src/schema/stamp.ts` (**LF**) — il timbro che `vite.config.ts` legge da `ipc_v1.map` e consegna con `define` (**D52**, **D90**)
+- Create: `gui/src/jsdom-setup.ts` (**LF**) — la finta di `ResizeObserver`, che `jsdom` 30.0.1 non ha e `dockview-core` vuole (R6-8)
 - Create: `gui/src/tokens/tokens.css` (**LF**) — **un file solo** di variabili CSS (§6a)
 - Create: `gui/src/locales/it.json`, `gui/src/i18n.ts` (**LF**) — ogni scritta qui, italiano solo (G21)
 - Create: `gui/src/stores/connection.ts`, `gui/src/stores/core.ts`, `gui/src/stores/layout.ts` (**LF**)
@@ -14942,12 +14952,12 @@ prova che un pannello si veda.
 
 **Interfaces:**
 - Consumes, dal **compito 11**: `gui/src/schema/messages.ts` — `IpcMessage`, `U64`, `Protection`, `PolicyName`, `Access`, `Provenance`, `DegradationReport`, `PolicyReport`, `Triple`, `Call`, `StepSummary`, `LayoutState`; `gui/src/schema/parse.ts` — `parseIpcMessage`, `MESSAGE_KINDS`, `SchemaError`; `gui/src/transport/bridge.ts` — `Bridge`, `OutboundMessage`, `Listener`; `gui/src/transport/fakeBridge.ts` — `createFakeBridge`, `FakeBridge`
-- Consumes, dal **compito 3**: `gui/schema/fixtures/ipc_v1.map`, di cui legge **la sola ultima riga** (**D52**)
+- Consumes, dal **compito 3**: `gui/schema/fixtures/ipc_v1.map`, di cui `vite.config.ts` legge **la sola ultima riga** in Node (**D52**, **D90**): nessun modulo della SPA importa la mappa
 - Produces, e il compito **14** li usa con questi nomi esatti:
   - `gui/src/stores/connection.ts` — `useConnection()`, con `phase: "waiting" | "connected" | "stale"`, `protection: Protection | null`, `expected: U64 | null`, `attach(bridge: Bridge): void`, `hello(): void`, `retry(): void`, `receive(message: IpcMessage): void`; e, fuori dallo store, `type Phase = "waiting" | "connected" | "stale"` (R10-10)
   - `gui/src/stores/core.ts` — `useCore()`, con `degradation: DegradationReport | null`, `policy: PolicyReport | null`, `steps: StepSummary[]`, `pending: Triple | null`, `lastVerdict: Verdict | null`, `receive(message: IpcMessage): void`, `settled(): void`
   - `gui/src/stores/layout.ts` — `useLayout()`, con `state: LayoutState`, `view: ViewName`, `attach(bridge: Bridge): void`, `receive(message: IpcMessage): void`, `saved: LayoutPack | null`, `arrivals: number`, `settle(layout: SerializedDockview): void` — ⛔ **fonde** la vista aperta nel pacchetto tenuto (**D80**; qui stava `settle(pack: LayoutPack)`), e `arrivals` conta i pacchetti che non sono l'eco del proprio `SaveLayout` (**D89**); e, fuori dallo store, `pack_(pack: LayoutPack): Uint8Array`, `unpack(state: LayoutState): LayoutPack | null`, `type ViewName = "home" | "work" | "compact"`, `interface LayoutPack { view: ViewName; layouts: Partial<Record<ViewName, SerializedDockview>> }` — ⛔ **una disposizione PER VISTA, D80**: qui stava `layout: SerializedDockview`, una sola per tutte le viste
-  - `gui/src/panels/registry.ts` — `PANEL_TYPES: readonly PanelType[]`, `interface PanelType { name: string; module: string; who: number }`, `componentFor(name: string): () => IContentRenderer`, `register(name: string, component: Component): void`, `isModule(name: string): boolean`, `placeholderParams(name: string): Record<string, unknown>`
+  - `gui/src/panels/registry.ts` — `PANEL_TYPES: readonly PanelType[]`, `interface PanelType { name: string; module: string; who: number }`, `componentFor(name: string): () => IContentRenderer`, `register(name: string, component: Component): void`, `isModule(name: string): boolean`, `isBuilt(name: string): boolean` (R6-17), `placeholderParams(name: string): Record<string, unknown>`
   - `gui/src/panels/views/index.ts` — `VIEWS: Readonly<Record<ViewName, SerializedDockview>>`
   - `gui/src/frame/VueContent.ts` — `class VueContent implements IContentRenderer`, costruita con un `Component` di Vue
   - `gui/src/frame/BigTab.ts` — `class BigTab implements ITabRenderer` — ⛔ **il 14 lo consuma E lo riscrive** (R10-10)
@@ -14978,7 +14988,7 @@ node --version
 Atteso: le cinque cartelle **non esistono**; `gui/src/schema/` e `gui/src/transport/` ci sono, dal compito 11;
 tanti `.json` quante le varianti — **il comando del criterio di chiusura del compito 3 lo dice, non una cifra
 qui**; l'ultima riga della mappa comincia con `stamp 0x`; **nessuna** delle cinque dipendenze nel manifesto;
-`environment: "node"`; **due** righe `/gui/` in `.gitignore`, dal compito 11 (**D38**); tutto **LF**.
+`environment: "node"`; **tre** righe `/gui/` in `.gitignore` — due dal compito 11 e `/gui/fake-core/target/` dal 12 (**D38**; ⚠️ qui stava «due», ricopiato dal Passo 1 del 12 senza contare ciò che il 12 aggiunge — R6-12); tutto **LF**.
 
 ⛔ **Se `gui/src/stores/` esiste già, il compito è eseguito** — quarta domanda del pre-controllo: ci si ferma e si
 riporta invece di sovrascrivere. ⚠️ **Se `gui/src/schema/` non esiste, il compito 11 non è eseguito**, e questo
@@ -15019,9 +15029,33 @@ In `gui/package.json`, le `dependencies` guadagnano:
 e le `devDependencies`:
 
 ```json
+    "@types/node": "24.13.5",
     "jsdom": "30.0.1",
     "@vue/test-utils": "2.5.0"
 ```
+
+⛔ **`@types/node` entra QUI, e con esso la riga `types` di `gui/tsconfig.json` — R6-1, misurato il 2026-09-16 sul
+modello compilato:** questo è il **primo** compito del piano che importa da `node:` — `copy.test.ts` e
+`generate-views.test.ts`, sei righe; l'11 e il 12 nessuna — e il `tsconfig.json` dell'11 dichiara
+`"types": ["vite/client"]`, che **spegne** l'inclusione automatica dei `@types/*`. Senza, `npm run build` esce **2** con
+otto errori `TS2307`/`TS2591` (*«Cannot find module 'node:fs'»*, *«Cannot find name 'process'»*). ⚠️ **La major segue
+quella di Node** (P-64: v24), quindi la versione si misura con `npm view @types/node@24 version | tail -1` e non con
+`latest`, che oggi indica la 22. In `gui/tsconfig.json`, che è **LF**, la riga `"types": ["vite/client"],` diventa
+`"types": ["vite/client", "node"],` — con Python, così il file resta com'è nel resto:
+
+```bash
+python - <<'EOF'
+import io
+p = "gui/tsconfig.json"
+b = io.open(p, encoding="utf-8", newline="").read()
+old = '"types": ["vite/client"],'
+assert b.count(old) == 1, b.count(old)
+io.open(p, "w", encoding="utf-8", newline="").write(b.replace(old, '"types": ["vite/client", "node"],'))
+EOF
+grep -c '"types": \["vite/client", "node"\]' gui/tsconfig.json
+```
+
+Atteso: **1**. ⚠️ Il compito **14** aggiunge altre tre righe `node:` (`contrast.test.ts`) e trova la casa già pronta.
 
 ⛔ **DUE pacchetti di `dockview` e non uno, e la ragione è misurata — P-80.** `dockview-core` **non spedisce** il
 foglio di stile e non lo inietta da sé: senza le regole strutturali i gruppi si impilano nel flusso del documento e
@@ -15060,12 +15094,40 @@ In `gui/vite.config.ts` il blocco `test` diventa:
     // and said so. The frame mounts components, so it needs one.
     environment: "jsdom",
     include: ["src/**/*.test.ts"],
+    // ⛔ `jsdom` 30.0.1 has no `ResizeObserver`, and `dockview-core` wants one the moment a grid is
+    // created: the fake in this file is what lets a probe mount a grid at all (R6-8).
+    setupFiles: ["src/jsdom-setup.ts"],
   },
 ```
 
+e nasce `gui/src/jsdom-setup.ts`, **LF**:
+
+```ts
+// ⛔ `jsdom` 30.0.1 DOES NOT IMPLEMENT `ResizeObserver`, and `dockview-core` calls it the moment
+// a grid is created (`watchElementResize`): without this, every probe that mounts a grid dies on
+// `ReferenceError: ResizeObserver is not defined` before any layout question is asked --
+// measured on 2026-09-16 (R6-8 of the in-depth review of task 13). Mounted by `test.setupFiles`.
+//
+// ⚠️ THIS FAKES AN ABSENT API, NOT LAYOUT: it observes nothing, and `getBoundingClientRect` still
+// answers zeros under jsdom, which is why the geometry of `moveActive` is probed with rectangles
+// of our own (P-97). The day jsdom ships a `ResizeObserver`, `??=` leaves it alone.
+globalThis.ResizeObserver ??= class {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+};
+```
+
 ⛔ **E poi si misura la cosa che la §9 del 2 dichiara DEDOTTA — *«che le prove della SPA girino senza browser»* —
-invece di scoprirla al primo rosso.** `dockview` misura gli elementi per disporre i gruppi, e `jsdom` non fa
-layout: `getBoundingClientRect` rende zeri. Si scrive una sonda usa-e-getta e si legge l'esito:
+invece di scoprirla al primo rosso.** ⛔ **RICHIAMO DEL 2026-09-16, dalla revisione in profondità di questo compito
+(R6-8, misurato sul modello compilato):** questo passo diceva *«`dockview` misura gli elementi per disporre i gruppi, e
+`jsdom` non fa layout: `getBoundingClientRect` rende zeri»*, e la sonda qui sotto **muore prima** di qualunque domanda sul
+layout — `ReferenceError: ResizeObserver is not defined`, da `watchElementResize` di `dockview-core` — perché `jsdom`
+30.0.1 non implementa quell'API. Con la finta di `jsdom-setup.ts` montata da `setupFiles` la stessa sonda è **verde**, e
+con essa ogni sonda di questo compito che monta una griglia — comprese le tre di `describe("the dock")`, che la tabella
+com'era avrebbe mandato al revisore a mano per una causa che una riga di configurazione toglie. Il fatto sul layout
+resta vero (i rettangoli sono zeri: **P-97**), ma non è ciò che questa sonda misura. Si scrive la sonda usa-e-getta e si
+legge l'esito **con** la finta montata:
 
 ```bash
 cat > /tmp/dockview-in-jsdom.test.ts <<'EOF'
@@ -15090,11 +15152,12 @@ rm gui/src/frame-probe.test.ts
 
 | Esito | Che cosa fa questo compito |
 |---|---|
-| **`EXIT=0`** | le sonde del Passo 16 girano sotto `jsdom` come scritte |
-| **`EXIT` non zero** | ⛔ **non si aggira e non si finge:** la sonda del Passo 16 si **restringe** a ciò che non vuole layout — il registro, la forma delle tre viste, gli store — e la parte che vuole una griglia disposta passa al **revisore nel browser**, che la regola 5 della testa già prescrive per questo compito. Si scrive una **voce d'errata** con l'esito vero, e la riga «🔶 Dedotto» della §9 del 2 riceve il suo richiamo datato |
+| **`EXIT=0`** | le sonde del Passo 17 girano sotto `jsdom` come scritte — è l'esito misurato il 2026-09-16 con la finta montata |
+| **`EXIT` non zero con `ResizeObserver is not defined`** | la finta **non è montata**: `grep -c 'setupFiles' gui/vite.config.ts` → **1** e `ls gui/src/jsdom-setup.ts`, poi si rimisura |
+| **`EXIT` non zero che RESTA con la finta** | ⛔ **non si aggira e non si finge:** la sonda del Passo 17 si **restringe** a ciò che non vuole layout — il registro, la forma delle tre viste, gli store — e la parte che vuole una griglia disposta passa al **revisore nel browser**, che la regola 5 della testa già prescrive per questo compito. Si scrive una **voce d'errata** con l'esito vero, e la riga «🔶 Dedotto» della §9 del 2 riceve il suo richiamo datato |
 
-📌 **Perché si misura adesso e non al Passo 16:** è la differenza fra scrivere una sonda e riscriverla. E l'esito è
-un **fatto sull'ambiente**, non sul codice: vale anche per il compito 14.
+📌 **Perché si misura adesso e non al Passo 17:** è la differenza fra scrivere una sonda e riscriverla. E l'esito è
+un **fatto sull'ambiente**, non sul codice: vale anche per il generatore del Passo 13 e per il compito 14.
 
 - [ ] **Passo 4: i token, un file solo**
 
@@ -15113,10 +15176,11 @@ estrae alla **seconda** occorrenza, e nel 2 non c'è.
    ⛔ `dockview` keeps its own theme (`themeAbyss`, the one the eight moves were judged on). These
    tokens dress what WE draw: the bar, the band, the drawer, the strip, the placeholder.
 
-   ⚠️ G20 WANTS AA CONTRAST AND THESE VALUES ARE NOT YET PROVED TO HAVE IT: the check is
-   `axe-core` on the mounted components, and it arrives with the accessibility of task 14. A
-   value that fails it is a change to THIS file, not to forty templates -- which is the whole
-   reason the shape comes before the palette. */
+   ⚠️ G20 WANTS AA CONTRAST, and the check is `contrast.test.ts` in this folder: `axe-core` under
+   jsdom files `color-contrast` as INCOMPLETE every time (there is no layout to read a background
+   from -- measured on 2026-09-15, task 14), so a green from axe proves nothing about it. A value
+   that fails is a change to THIS file, not to forty templates -- which is the whole reason the
+   shape comes before the palette. */
 :root {
   --ink: #e6e9ef;
   --ink-dim: #9aa3b2;
@@ -15161,6 +15225,11 @@ body {
 }
 ```
 
+⚠️ **Il capoverso su G20 è già nella forma di D53 — R6-11, 2026-09-16:** diceva che il contrasto lo prova `axe-core`
+sui componenti montati, e **D53** e **P-86** dello stesso piano dicono l'opposto con la misura (sotto `jsdom` `axe`
+mette `color-contrast` fra gli *incompleti*); il 14 lo riscriveva, e ora lo **verifica** — il commit del 13 non dice il
+falso nemmeno per un compito. La sonda `contrast.test.ts` che il capoverso nomina nasce col 14 (D53), come dice.
+
 - [ ] **Passo 5: le scritte, e l'italiano dichiarato**
 
 `gui/src/locales/it.json`, **LF**. ⛔ **Ogni scritta della cornice sta qui** (G21), e le chiavi sono in **inglese**
@@ -15175,6 +15244,26 @@ come ogni identificatore (§1.0 della spec): la chiave è codice, il valore è i
     "home": "Home",
     "work": "Lavoro",
     "compact": "Compatta"
+  },
+  "modules": {
+    "chat": "Chat",
+    "status": "Stato",
+    "permissions": "Permessi",
+    "steps": "Passi",
+    "activity": "Attività",
+    "settings": "Impostazioni",
+    "scope": "Ambito",
+    "diff": "Diff",
+    "preview": "Anteprima",
+    "terminal": "Terminale",
+    "sensors": "Sensori",
+    "costs": "Costi",
+    "knowledge": "Knowledge base",
+    "assets3d": "Asset 3D",
+    "voice": "Voce e gesti",
+    "backup": "Backup",
+    "checkpoint": "Checkpoint",
+    "models": "Modelli locali"
   },
   "bar": {
     "views": "Viste",
@@ -15208,12 +15297,20 @@ come ogni identificatore (§1.0 della spec): la chiave è codice, il valore è i
     "who": "arriva col sotto-progetto {number}"
   },
   "placeholder": {
+    "nucleus": "niente ancora",
     "who": "arriva col sotto-progetto {number}",
     "missing": "Questo tipo di modulo non esiste più.",
     "closeMissing": "Chiudi il pannello"
   }
 }
 ```
+
+⛔ **Le diciotto chiavi `modules.*` stanno QUI, per esteso — R6-4, misurato il 2026-09-16 nel browser:** il Passo 12
+diceva che *«entrano nello stesso passo»* e nessun passo le scriveva; la sonda `has a name for every module type` era
+rossa e ogni linguetta e ogni riga del cassetto rendevano la **chiave inglese** (`modules.status`, `modules.chat`, …)
+— cioè l'inglese che **P-95** esiste per togliere, con un prefisso in più. I nomi sono quelli della §1 della stella
+polare: le cinque tabelle piene e la colonna «Modulo» della corta, dove la riga *«Knowledge base e Nucleo a pagina
+intera»* dà **Knowledge base**. E `placeholder.nucleus` è la frase del nucleo (R6-14, Passo 12).
 
 `gui/src/i18n.ts`, **LF**:
 
@@ -15238,49 +15335,98 @@ export const i18n = createI18n({
 });
 ```
 
-- [ ] **Passo 6: il timbro, letto dove il kernel l'ha scritto**
+- [ ] **Passo 6: il timbro, letto dove il kernel l'ha scritto — dalla configurazione, non dal browser**
 
-`gui/src/schema/stamp.ts`, **LF** — **D52**.
+⛔ **RICHIAMO DEL 2026-09-16, dalla revisione in profondità di questo compito (R6-3, misurato sul modello compilato e nel
+browser): questo passo dettava `import MAP from "../../schema/fixtures/ipc_v1.map?raw"` in `stamp.ts`, e con esso
+`npm run dev` rende una PAGINA BIANCA.** Il server di sviluppo di `vite` 8.3.0 tratta ogni URL che finisce in `.map` come
+una richiesta di source map e, non trovandone una nel grafo dei moduli, serve il file **statico** come `application/json`,
+saltando la trasformazione di `?raw`: il browser rifiuta il modulo (*«Failed to load module script: … MIME type of
+"application/json"»*). Provato sulla stessa identica copia rinominata `.txt` e `.mapx` → `text/javascript`. ⛔ **Il difetto
+è MUTO nel cancello:** `vite build` inlinea la mappa ed è verde, e le sonde sotto `vitest` sono verdi — lo uccideva solo il
+criterio che chiede al revisore di **guardare**. La cura non rinomina la mappa (è `.map` come `record_v1.map` del giornale,
+e il compito 3 la scrive così) e non aggiunge un secondo file col timbro: **la legge la configurazione, in Node, e consegna
+il timbro alla SPA come costante** con `define` — **D90**. Il browser non chiede mai un `.map`.
+
+In `gui/vite.config.ts`, in testa, prima di `import vue from "@vitejs/plugin-vue";`:
 
 ```ts
-import MAP from "../../schema/fixtures/ipc_v1.map?raw";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
+```
+
+fra il commento sulla radice di `vite` e `export default defineConfig({`:
+
+```ts
+/**
+ * ⛔ THE BUILD STAMP IS READ HERE, IN NODE, AND HANDED TO THE SPA AS A CONSTANT (D52, D90): the
+ * last line of `ipc_v1.map`, which the KERNEL wrote. Not a `?raw` import from the browser: the
+ * dev server of `vite` 8.3.0 treats every URL that ends in `.map` as a source-map request and
+ * serves the file statically as `application/json`, skipping the transform -- `npm run dev`
+ * showed a blank page while `vite build` and the probes stayed green (R6-3, measured on
+ * 2026-09-16). Read once, when the config loads: the map changes only when the kernel's schema
+ * does, and then the SPA is rebuilt anyway.
+ *
+ * ⛔ THE REGEXP ANCHORS THE LINE with `^` and `$` in multiline mode: the map also carries the
+ * `Debug` of every message, and one of them may contain the word.
+ */
+const MAP = readFileSync(fileURLToPath(new URL("./schema/fixtures/ipc_v1.map", import.meta.url)), "utf8");
+const DIGITS = /^stamp 0x([0-9a-fA-F]{16})$/m.exec(MAP)?.[1];
+if (DIGITS === undefined) {
+  throw new Error("ipc_v1.map carries no `stamp 0x…` line: regenerate the fixtures");
+}
+
+```
+
+e dentro `defineConfig({ … })`, fra `plugins: [vue()],` e `test: {`:
+
+```ts
+  define: {
+    // ⛔ `BigInt` AND NOT `Number`: the stamp is FNV-1a over the whole set and passes
+    // `Number.MAX_SAFE_INTEGER` as a matter of course -- the doc of `U64` says it once for everyone.
+    __BUILD_STAMP__: JSON.stringify(BigInt(`0x${DIGITS}`).toString(10)),
+  },
+```
+
+`gui/src/schema/stamp.ts`, **LF** — **D52**:
+
+```ts
 import type { U64 } from "./messages";
 
-const STAMP = /^stamp 0x([0-9a-fA-F]{16})$/m;
+/** Handed in by `define` in `vite.config.ts`, which reads the last line of `ipc_v1.map` in Node. */
+declare const __BUILD_STAMP__: string;
 
 /**
  * The build stamp the SPA presents in `Hello` (§6.1.2 of the kernel spec).
  *
  * ⛔ READ FROM `ipc_v1.map`, WHICH THE KERNEL WROTE, and not from the `hello` fixture: that
  * fixture carries the CANONICAL SET's arbitrary value, chosen so that no two encodings are
- * equal, and it is not the stamp. This file is the only place on this side of the wire where
- * the stamp has an honest source -- the TypeScript mirror of the types is hand-written, so a
- * stamp computed here would agree with itself and with nothing else.
+ * equal, and it is not the stamp. The map is the only place on this side of the wire where the
+ * stamp has an honest source -- the TypeScript mirror of the types is hand-written, so a stamp
+ * computed here would agree with itself and with nothing else.
  *
  * ⚠️ AND THAT IS WHAT MAKES THE HANDSHAKE A REAL CHECK: regenerate the schema without
  * rebuilding the SPA and the two stamps diverge, so the core answers `StaleBuild`. That is what
  * I4 bought by renouncing versioning.
  *
- * ⛔ `BigInt` AND NOT `Number`: the stamp is FNV-1a over the whole set and passes
- * `Number.MAX_SAFE_INTEGER` as a matter of course -- the doc of `U64` says it once for everyone.
+ * ⛔ THE READING HAPPENS IN `vite.config.ts` AND NOT HERE (D90): the browser must never ask the
+ * dev server for a `.map` URL -- it would get a source map's `application/json` instead of a
+ * module (R6-3). What arrives here is the decimal string, already through `BigInt`.
  */
 export function buildStamp(): U64 {
-  const found = STAMP.exec(MAP);
-  const digits = found?.[1];
-  if (digits === undefined) {
-    throw new Error("ipc_v1.map carries no `stamp 0x…` line: regenerate the fixtures");
-  }
-  return BigInt(`0x${digits}`).toString(10);
+  return __BUILD_STAMP__;
 }
 ```
 
-⚠️ **`?raw` e non un `import` di JSON:** `ipc_v1.map` è un foglio che legge un umano, non un dato strutturato, e
-`vite` lo consegna come stringa sia alla build sia alle sonde — la stessa proprietà per cui il compito 11 usa
-`import.meta.glob` invece di `fs`.
+⚠️ **In sviluppo `define` NON riscrive il sorgente: `vite` inietta la costante come globale dal modulo `/@vite/env`**, quindi
+un `curl` sul modulo trasformato non la mostra e non è un oracolo (misurato il 2026-09-16); alla build è sostituita nel
+bundle, e sotto `vitest` è un globale — è per questo che `stamp.ts` la **dichiara** con `declare const` invece di importare
+qualcosa. Che la mappa arrivi davvero, in tutti e tre i mondi, lo misura il criterio di chiusura.
 
 ⛔ **E l'espressione regolare àncora la riga con `^` e `$` in modalità multilinea**, non cerca `stamp` dovunque: la
-mappa porta anche i valori `Debug` dei messaggi, e uno di essi può contenere la parola.
+mappa porta anche i valori `Debug` dei messaggi, e uno di essi può contenere la parola. Sta in `vite.config.ts`, dove la
+mappa si legge, e il criterio di chiusura la rilancia sulla mappa vera.
 
 - [ ] **Passo 7: lo store della connessione — quattro stati, e nessuna soglia**
 
@@ -15428,8 +15574,8 @@ import type { Bridge } from "../transport/bridge";
 export type ViewName = "home" | "work" | "compact";
 
 /**
- * ⛔ ONE LAYOUT PER VIEW, AND THE PACKAGE CARRIES THEM ALL (D80). Row 1 of §2 of the north star
- * makes the layout "which view is open, FOR EVERY VIEW where the panels are", and row 6 has a
+ * ⛔ ONE LAYOUT PER VIEW, AND THE PACKAGE CARRIES THEM ALL (D80). The opening paragraph of §2 of the
+ * north star makes the layout "which view is open, FOR EVERY VIEW where the panels are", and row 6 has a
  * saved view win over the default BY NAME. A package with a single `layout` put Home's layout
  * under the Lavoro tab and lost Home at the next settle -- and it compiled and passed every probe.
  *
@@ -15771,9 +15917,12 @@ import { isModule } from "../panels/registry";
  * The big grab handle (move 5): the tab element is what `dockview` drags, so a big tab is a big
  * grab -- which is what makes a pointer that is a HAND able to take it (move 8, ADR-0039).
  *
- * ⛔ A CLICK ON A COMMAND MUST NOT START A DRAG, and stopping `click` alone is not enough:
- * `dockview` begins the drag on `pointerdown`/`mousedown`, so both are stopped here. Measured in
- * SP-8; without it, every press of a command drags the tile a few pixels first.
+ * ⛔ THE DAY THIS TAB CARRIES A COMMAND, A CLICK ON IT MUST NOT START A DRAG, and stopping `click`
+ * alone is not enough: `dockview` begins the drag on `pointerdown`/`mousedown`, so both must be
+ * stopped ON THE BUTTON -- measured in SP-8 (`spikes/gui-shell/app/src/home.ts`); without it, every
+ * press of a command drags the tile a few pixels first. This tab carries NO command (the module's
+ * commands are the menu of task 14), so nothing is stopped here yet: the trap is written so that
+ * task 14 finds it instead of paying it again.
  */
 export class BigTab implements ITabRenderer {
   readonly element = document.createElement("div");
@@ -15803,7 +15952,9 @@ si vede.
 «stacca», «pagina intera» e «finestra a parte» per **provare le mosse 2, 3 e 4**. Nel prodotto quei comandi
 appartengono al menu del modulo, che il **14** disegna con l'accessibilità; la presa qui porta il **titolo**, che è
 ciò che la mossa 5 ha giudicato. ⛔ **La riga sul `pointerdown` resta scritta** perché è la trappola, e il 14 la
-trova già detta invece di ripagarla.
+trova già detta invece di ripagarla. ⚠️ **E dice di sé che qui non ferma nulla (R6-10, 2026-09-16):** diceva *«so both are
+stopped here»*, e il file non registra nessun ascoltatore — un commento nel sorgente che afferma un meccanismo assente
+è la specie di X-4 dell'audit, nel codice invece che in un verbale.
 
 - [ ] **Passo 12: il registro dei tipi e il segnaposto**
 
@@ -15821,6 +15972,12 @@ import type { DockviewPanelApi } from "dockview-core";
 
 // `api` arrives from `VueContent`, which hands `dockview`'s init parameters to the app.
 defineProps<{ api?: DockviewPanelApi; params?: { module?: string; who?: number; missing?: boolean } }>();
+
+// ⛔ THE NUCLEUS SAYS «NIENTE ANCORA» AND THE OTHER TILES SAY WHO FILLS THEM (row Home of "Il
+// modello della GUI", and row 7 of §3 of the north star): the centre of Home is the knowledge
+// base's graph, and until sub-project 6 it says so in its own words, not with a tile's phrase
+// (R6-14, 2026-09-16). It still says who fills it, because the drawer does too.
+const NUCLEUS = "knowledge";
 </script>
 
 <template>
@@ -15833,7 +15990,10 @@ defineProps<{ api?: DockviewPanelApi; params?: { module?: string; who?: number; 
            close it is going to do. -->
       <button type="button" @click="api?.close()">{{ $t("placeholder.closeMissing") }}</button>
     </template>
-    <p v-else-if="params?.who !== undefined">{{ $t("placeholder.who", { number: params.who }) }}</p>
+    <template v-else-if="params?.who !== undefined">
+      <p v-if="params.module === NUCLEUS">{{ $t("placeholder.nucleus") }}</p>
+      <p>{{ $t("placeholder.who", { number: params.who }) }}</p>
+    </template>
   </section>
 </template>
 
@@ -15954,6 +16114,13 @@ export function isModule(name: string): boolean {
   return PANEL_TYPES.some((type) => type.name === name);
 }
 
+/** ⛔ WHAT THE REGISTRY CAN BUILD -- the strip, and the modules task 14 plugs in. `apply` in
+ * `dock.ts` asks it before putting placeholder params back on a panel (R6-17): the strip is a
+ * piece of the frame that lives in the grid (D50), carries no `params`, and is not a module type. */
+export function isBuilt(name: string): boolean {
+  return BUILT.has(name);
+}
+
 /**
  * What `dockview` gets for a name. Three cases, and they are NOT the same thing:
  *
@@ -15981,8 +16148,9 @@ export function placeholderParams(name: string): Record<string, unknown> {
 pannello li porta il **JSON della vista** o `addPanel`, e `dockview` li consegna a `init`. Una fabbrica che li
 inventasse renderebbe il caso «tipo sparito» invisibile a chi legge il JSON.
 
-⚠️ **E le diciotto chiavi `modules.*` entrano in `locales/it.json`** nello stesso passo — una riga per `module`,
-col nome del modulo in italiano come lo scrive la §1 della stella polare.
+⚠️ **Le diciotto chiavi `modules.*` — una per `module`, col nome italiano della §1 della stella polare — stanno in
+`locales/it.json` dal Passo 5, dettate per esteso.** ⛔ **RICHIAMO DEL 2026-09-16 (R6-4):** qui stava *«entrano … nello
+stesso passo»*, e nessun passo le scriveva — nel browser ogni linguetta rendeva `modules.status`, `modules.chat`, ….
 
 - [ ] **Passo 13: le tre viste, GENERATE e committate**
 
@@ -15995,11 +16163,14 @@ byte del filo.
 Prima si verifica l'API che il generatore usa per essere saltato, invece di darla per buona:
 
 ```bash
-cd gui && node -e "const v=require('vitest'); console.log(typeof v.it.skipIf, typeof v.it.runIf)"; cd ..
+cd gui && node --input-type=module -e "import * as v from 'vitest'; console.log(typeof v.it.skipIf, typeof v.it.runIf)"; cd ..
 ```
 
 Atteso: **`function function`**. ⛔ **Se non lo è**, la guardia diventa un `if (…) return;` in testa al corpo, e si
-scrive una **voce d'errata** con l'esito vero — non si lascia un generatore che gira nel cancello.
+scrive una **voce d'errata** con l'esito vero — non si lascia un generatore che gira nel cancello. ⚠️ **In forma ESM
+(R6-5, misurato il 2026-09-16):** `vitest` è ESM-only e un `require('vitest')` esce con *«Vitest cannot be imported in a
+CommonJS module using require()»* — avrebbe mandato sul ramo «non c'è» per una ragione che non è la sua, a riscrivere
+una guardia che funziona; è la forma che il criterio di chiusura usa già per il timbro.
 
 `gui/src/panels/views/generate-views.test.ts`, **LF**:
 
@@ -16009,7 +16180,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { createDockview, type DockviewApi } from "dockview-core";
-import { it } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeAll, it } from "vitest";
 
 import { componentFor, placeholderParams } from "../registry";
 
@@ -16026,6 +16198,14 @@ import { componentFor, placeholderParams } from "../registry";
  * is the CONTENT -- which panels, where, which are locked.
  */
 const OUT = join(dirname(fileURLToPath(import.meta.url)));
+
+// ⛔ A PINIA MUST BE ACTIVE BEFORE A GRID IS BUILT (R6-2, measured on 2026-09-16): `Strip.vue`
+// calls `useCore()` at setup, and `VueContent` mounts every panel as an app of its own WITHOUT
+// pinia -- the root app installs it, and this file has no root app. Without this line the
+// generator dies on `getActivePinia()`.
+beforeAll(() => {
+  setActivePinia(createPinia());
+});
 
 function dock(): DockviewApi {
   const host = document.createElement("div");
@@ -16102,11 +16282,15 @@ Poi si genera e si legge che cosa è uscito:
 cd gui && REGENERATE_VIEWS=1 npx vitest run src/panels/views/generate-views.test.ts; echo "EXIT=$?"; cd ..
 ls -l gui/src/panels/views/*.json
 tr -cd '\r' < gui/src/panels/views/home.json | wc -c
+cat gui/src/panels/views/*.json | grep -c '"missing"'
 ```
 
-Atteso: **`EXIT=0`**, tre file, **zero** CR. ⛔ **Se `EXIT` non è zero perché `dockview` non regge `jsdom`** (il
-Passo 3 lo ha già misurato), il generatore si lancia **nel browser** da una pagina usa-e-getta di `npm run dev` e i
-tre JSON si salvano a mano: è una voce d'errata col comando vero, non un JSON scritto a mano.
+Atteso: **`EXIT=0`**, tre file, **zero** CR, e **0** sull'ultimo — la striscia esce senza `params` e nessuna vista
+committata porta un «tipo sparito» (R6-17). ⛔ **Se `EXIT` non è zero perché `dockview` non regge `jsdom`** (il
+Passo 3 lo ha già misurato: con la finta di `ResizeObserver` regge — R6-8; e senza una pinia attiva il generatore muore
+su `getActivePinia()` — R6-2, per questo il `beforeAll`), il generatore si lancia **nel browser** da una pagina
+usa-e-getta di `npm run dev` e i tre JSON si salvano a mano: è una voce d'errata col comando vero, non un JSON scritto
+a mano.
 
 `gui/src/panels/views/index.ts`, **LF**:
 
@@ -16124,9 +16308,13 @@ import work from "./work.json";
  * and are NOT copied into the archive at first run -- copied, an update that improves a view
  * would never reach anyone who had not touched it.
  *
- * ⛔ THE ANNOTATION IS THE CHECK. `resolveJsonModule` widens a `.json` to its literal shape, and
- * assigning it to `SerializedDockview` makes `vue-tsc` compare the committed file against
- * `dockview`'s own type -- the web world's level 1, on a file nobody writes by hand.
+ * ⚠️ THE `as` IS AN ASSERTION, NOT THE CHECK, AND IT IS LOAD-BEARING: `resolveJsonModule` widens a
+ * `.json` to its literal shape, and that shape is NOT assignable to `SerializedDockview` -- measured
+ * on 2026-09-16 (R6-9): with the three generated views and the `as` removed, `vue-tsc` answers three
+ * `TS2322`. What the assertion catches is a GROSS mismatch (`TS2352` when a field changes type or
+ * goes missing), not a field-by-field comparison: `panels` removed outright, or an unknown key,
+ * passes. The check that the committed files are views the frame can build is the first probe of
+ * `frame.test.ts` -- every `component` known to the registry, and no view without panels.
  */
 export const VIEWS: Readonly<Record<ViewName, SerializedDockview>> = {
   home: home as SerializedDockview,
@@ -16144,7 +16332,7 @@ porta accanto la mossa che la giustifica.
 import { createDockview, themeAbyss, type DockviewApi, type SerializedDockview } from "dockview-core";
 import { watch } from "vue";
 
-import { componentFor, placeholderParams } from "../panels/registry";
+import { componentFor, isBuilt, placeholderParams } from "../panels/registry";
 import { useLayout, type LayoutPack, type ViewName } from "../stores/layout";
 import { VIEWS } from "../panels/views";
 
@@ -16253,7 +16441,11 @@ export function createDock(host: HTMLElement): DockviewApi {
 export function apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null): void {
   api.fromJSON(pack?.layouts[view] ?? VIEWS[view]);
   for (const panel of api.panels) {
-    if (Object.keys(panel.params ?? {}).length === 0) {
+    // ⛔ ONLY WHAT NOBODY BUILT (R6-17): the strip is a piece of the frame, carries no `params`, and
+    // is not a module type -- without this line it got `{ missing: true }` at every `apply`, and
+    // that value entered the saved package at the first `settle`. Unseen, because `Strip.vue`
+    // ignores its params.
+    if (!isBuilt(panel.id) && Object.keys(panel.params ?? {}).length === 0) {
       panel.api.updateParameters(placeholderParams(panel.id));
     }
   }
@@ -16262,7 +16454,11 @@ export function apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null)
 
 ⛔ **Il giro dei parametri dopo `fromJSON` non è una pezza:** un pacchetto salvato porta i `params` di **allora**,
 e un tipo tolto da una build successiva li porta ancora. Rimetterli dal registro è ciò che rende la riga 8 della §2
-vera **anche su un pacchetto vecchio**, non solo su una vista committata.
+vera **anche su un pacchetto vecchio**, non solo su una vista committata. ⚠️ **E solo a ciò che nessuno ha costruito —
+R6-17, misurato il 2026-09-16:** la striscia è un pezzo della cornice che vive nella griglia (**D50**), non ha `params`
+e non è un tipo di modulo, quindi senza `isBuilt` riceveva `{ missing: true }` a ogni `apply`, e quel valore entrava
+nel pacchetto salvato al primo `settle` — invisibile, perché `Strip.vue` ignora i `params`. La terza sonda di
+`describe("the dock")` (Passo 17) lo tiene, e la mutazione che toglie il filtro la rende rossa da sola.
 
 - [ ] **Passo 15: la cornice — la barra, la fascia, il cassetto**
 
@@ -16408,7 +16604,7 @@ import { PANEL_TYPES } from "../panels/registry";
 
 <template>
   <DialogRoot>
-    <DialogTrigger class="drawer-open">{{ $t("drawer.open") }}</DialogTrigger>
+    <DialogTrigger>{{ $t("drawer.open") }}</DialogTrigger>
     <DialogPortal>
       <DialogOverlay class="drawer-overlay" />
       <DialogContent class="drawer">
@@ -16426,9 +16622,19 @@ import { PANEL_TYPES } from "../panels/registry";
 </template>
 
 <style scoped>
+/* ⛔ THE OVERLAY IS A VEIL, AND `reka-ui` DRESSES NOTHING: without these rules it was a `div` in
+   normal flow with no background (R6-16, seen in the browser on 2026-09-16). Both sit above
+   `dockview`, whose floating groups are at 99. */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 0.45);
+  z-index: 100;
+}
 .drawer {
   position: fixed;
   inset: auto 0 0 0;
+  z-index: 101;
   max-height: 60vh;
   overflow: auto;
   padding: var(--space-4);
@@ -16442,6 +16648,11 @@ import { PANEL_TYPES } from "../panels/registry";
 }
 </style>
 ```
+
+⚠️ **Il velo e i due `z-index` — R6-16, visto nel browser il 2026-09-16:** `reka-ui` non porta stile proprio, quindi
+`DialogOverlay` era un `div` nel flusso normale senza sfondo (`position: static`), e il cassetto poteva finire sotto un
+gruppo galleggiante di `dockview`, che mette i suoi a **99**; la classe `drawer-open` sul bottone non aveva nessuna
+regola ed è tolta. Il design system resta segnaposto: qui c'è la **forma**, non la palette.
 
 `gui/src/frame/Frame.vue`, **LF**:
 
@@ -16622,6 +16833,16 @@ describe("the registry", () => {
     expect(wrapper.text()).toContain(String(type!.who));
   });
 
+  it("says «niente ancora» on the nucleus, and still who fills it (R6-14)", () => {
+    // ⛔ ROW HOME OF "IL MODELLO DELLA GUI": the nucleus has a phrase of its own, the other tiles
+    // say who fills them. A placeholder that treated the centre of Home like any tile passed every
+    // probe and read "arriva col sotto-progetto 6" in the browser.
+    const params = placeholderParams("knowledge");
+    const wrapper = mount(Placeholder, { global: { plugins: [i18n] }, props: { params } });
+    expect(wrapper.text()).toContain(i18n.global.t("placeholder.nucleus"));
+    expect(wrapper.text()).toContain(String(params.who));
+  });
+
   it("says a type that is GONE is gone, does not promise a sub-project, and closes", async () => {
     // ⛔ ROW 8 OF §2 OF THE NORTH STAR, and the two cases are NOT the same: a saved package can
     // point at a type a later build removed, and telling the user to wait for a sub-project that
@@ -16733,6 +16954,19 @@ describe("the dock", () => {
     // moved with the save.
     expect(saves(bridge)).toBe(1);
   });
+
+  it("leaves the strip's params alone: only what nobody built gets them from the registry (R6-17)", async () => {
+    const bridge = createFakeBridge();
+    useLayout().attach(bridge);
+    const api = createDock(host());
+    await flush();
+    // ⛔ THE STRIP CARRIES NO PARAMS AND MUST NOT GET `{ missing: true }`: before R6-17 it did, at
+    // every `apply`, and the value entered the package at the first settle -- unseen, because
+    // `Strip.vue` ignores its params.
+    expect(api.getPanel("strip")?.params ?? {}).toEqual({});
+    // And a module type nobody built still carries its own, from the registry.
+    expect(api.getPanel("knowledge")?.params).toEqual(placeholderParams("knowledge"));
+  });
 });
 
 describe("the band", () => {
@@ -16814,6 +17048,7 @@ describe("the strings", () => {
 ```bash
 cd gui
 npx vitest run src/locales/copy.test.ts; echo "verde atteso: EXIT=$?"
+git add src/frame/Band.vue
 python - <<'EOF'
 import io
 p = "src/frame/Band.vue"
@@ -16825,7 +17060,12 @@ git checkout -- src/frame/Band.vue
 cd ..
 ```
 
-Atteso: **`EXIT=0`** la prima volta, **diverso da zero** la seconda, e `git diff` **vuoto** alla fine.
+Atteso: **`EXIT=0`** la prima volta, **diverso da zero** la seconda, e `git diff` **vuoto** alla fine. ⛔ **Il `git add`
+prima della mutazione non è un vezzo — R6-6, misurato il 2026-09-16 in un repo di prova:** a questo passo `Band.vue` è
+**non tracciato** (il `git add gui` è al Passo 19), e su un file non tracciato `git checkout --` esce **1** con
+*«pathspec … did not match any file(s) known to git»*, la mutazione **resta** e `git diff` è vuoto lo stesso: l'Atteso
+passava vacuo su un file rotto. In scena, `checkout --` rimette la copia dell'indice — la forma di R5-11 e del Passo 3
+del 14, non un salvataggio a mano.
 
 - [ ] **Passo 19: il mondo web verde, il cancello, e il commit**
 
@@ -16866,8 +17106,9 @@ git push
   ```
 
   Atteso: **`diversi: true`**. ⛔ **Se fossero uguali il timbro verrebbe dal posto sbagliato**, e la stretta di mano sarebbe una formalità
+- [ ] ⛔ **il timbro raggiunge la SPA in tutti e tre i mondi (D90)** — con `STAMP` il numero decimale che il comando qui sopra stampa: alla build, `cat gui/dist/assets/*.js | grep -c "$STAMP"` → **1** e `cat gui/dist/assets/*.js | grep -c 'stamp 0x'` → **0** (la mappa non è nel bundle); sotto `vitest`, la sonda `sends Hello with the stamp from the map` è verde; in sviluppo, con `npm run dev` su (la porta è quella che stampa), `curl -s "http://localhost:5173/@vite/env" | grep -c "$STAMP"` → **1** e `curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5173/` → `200` — è il controllo che `npm run build` non fa (R6-3)
 - [ ] ⛔ **i due pacchetti di `dockview`:** `grep -c '"dockview"' gui/package.json` → **1** e `grep -c '"dockview-core"' gui/package.json` → **1**; `grep -c "dockview/dist/styles/dockview.css" gui/src/main.ts` → **1** (**P-80**)
-- [ ] `grep -c 'from "dockview"' gui/src/**/*.ts` → **0**: l'API è quella di `dockview-core`, il pacchetto ombrello entra solo per il CSS
+- [ ] `grep -rc 'from "dockview"' gui/src --include='*.ts' --include='*.vue' | grep -v ':0$'` → **niente**: l'API è quella di `dockview-core`, il pacchetto ombrello entra solo per il CSS (R6-13: la forma di R7-6, due righe sotto — senza `globstar` il `**` non scende di un livello e `src/main.ts` sfuggiva, e con più file `grep -c` stampa `file:conteggio`, mai uno «0»)
 - [ ] ⛔ **il segnaposto c'è ed è UNO:** `ls gui/src/panels/*.vue` rende `Placeholder.vue` e `Strip.vue`, e nient'altro (**D47**, decisione 17)
 - [ ] ⛔ **la striscia è in tutte e tre le viste:** `grep -c '"strip"' gui/src/panels/views/home.json gui/src/panels/views/work.json gui/src/panels/views/compact.json` → **più di zero** per ciascuna (**D50**)
 - [ ] ⛔ **il registro elenca i tipi della §1, e il conteggio si RIFÀ col comando invece di rileggerlo:**
@@ -16882,11 +17123,11 @@ git push
 - [ ] ⛔ **le due direzioni della sonda delle scritte** eseguite come al Passo 18, e `git diff` **vuoto** alla fine
 - [ ] ⛔ **la sonda della fascia prova la SECONDA direzione**: la fascia sparisce dopo `Accepted`
 - [ ] ⛔ **i tre stati di `Layout` sono tutti esercitati:** `grep -c '"Nothing"\|"Unavailable"\|"Package"' gui/src/stores/stores.test.ts` → **più di due**
-- [ ] ⛔ **la disposizione è PER VISTA e il dock SEGUE lo store (D80, D89):** `grep -c 'layouts: Partial<Record<ViewName, SerializedDockview>>' gui/src/stores/layout.ts` → **1**; `grep -c 'watch(\[' gui/src/frame/dock.ts` → **1**; `grep -c 'apply(' gui/src/frame/Frame.vue` → **0**; le due sonde di `describe("the dock")` in `frame.test.ts` e le due nuove di `describe("the layout")` in `stores.test.ts` sono verdi — le prime due **se il Passo 3 ha misurato verde**, altrimenti stanno nella sua voce d'errata, col revisore nel browser
+- [ ] ⛔ **la disposizione è PER VISTA e il dock SEGUE lo store (D80, D89):** `grep -c 'layouts: Partial<Record<ViewName, SerializedDockview>>' gui/src/stores/layout.ts` → **1**; `grep -c 'watch(\[' gui/src/frame/dock.ts` → **1**; `grep -c 'apply(' gui/src/frame/Frame.vue` → **0**; le tre sonde di `describe("the dock")` in `frame.test.ts` (la terza è R6-17) e le due nuove di `describe("the layout")` in `stores.test.ts` sono verdi — le prime due **se il Passo 3 ha misurato verde**, altrimenti stanno nella sua voce d'errata, col revisore nel browser
 - [ ] ⛔ **`beforeunload` non copia una vista mai toccata nell'archivio (D81):** la sonda `saves nothing when the window closes untouched` è verde in **entrambe** le metà — zero prima, uno dopo un `close()`, e ancora uno dopo l'evento bufferizzato
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
 - [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -rcE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src --include='*.test.ts' | grep -v ':0$'` → **niente** — R7-6, misurato: senza `globstar` il `**` non scende di un livello (`gui/src/a11y.test.ts` sfuggiva) e con più file `grep -c` stampa `file:conteggio`, mai uno «0» nudo; provato una volta anche su un file con un corpo vuoto, che **deve** comparire
-- [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA** — regola 5 della testa: `cd gui && npm run dev`, e con la finta collegata si vedono la barra con le tre viste, la fascia «il core non ha risposto», la striscia in basso, il cassetto coi diciotto tipi, e le tessere che dicono chi le riempie
+- [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA** — regola 5 della testa: `cd gui && npm run dev`, e con la finta collegata si vedono la barra con le tre viste, la fascia «il core non ha risposto», la striscia in basso, il cassetto coi diciotto tipi, e le tessere che dicono chi le riempie — **coi nomi italiani sulle linguette e nel cassetto** (R6-4), il **nucleo** al centro di Home che dice «niente ancora» (R6-14), e il cassetto aperto con un **velo** scuro sopra la griglia (R6-16). ⚠️ **La pagina bianca di R6-3 si vedeva solo qui:** `npm run build` non la coglie
 
 ## Compito 14: la SPA, i moduli — Stato, Permessi, Chat, Passi e Impostazioni, la finestra di conferma, la tastiera e l'accessibilità
 
@@ -16901,7 +17142,7 @@ un valore che fallisce è una modifica a `tokens.css` — com'era scritto nel fi
 **Files:**
 - Modify: `gui/package.json` (**LF**) — `markdown-it` e `axe-core`, i due che **questo** compito consuma (**D40**)
 - Modify: `gui/package-lock.json` (**LF**) — **nello stesso commit** del manifesto, vincolo globale 7
-- Modify: `gui/src/tokens/tokens.css` (**LF**) — `--stop`, l'unico token che l'AA boccia (**P-86**), il capoverso in testa (Passo 3) e le regole della linguetta in coda (Passo 11) — R7-9
+- Modify: `gui/src/tokens/tokens.css` (**LF**) — `--stop`, l'unico token che l'AA boccia (**P-86**), e le regole della linguetta in coda (Passo 11) — R7-9 (⚠️ qui stava anche «il capoverso in testa (Passo 3)»: dal 2026-09-16 lo scrive il **13** nella forma di D53, R6-11, e il Passo 3 lo verifica)
 - Modify: `gui/src/locales/it.json` (**LF**) — le scritte dei cinque moduli, della finestra, del menu e della tastiera
 - Modify: `gui/src/frame/BigTab.ts` (**LF**) — i **due** comandi del menu del modulo, con le loro etichette (**P-91**, **D58**)
 - Modify: `gui/src/frame/Frame.vue` (**LF**) — la finestra di conferma e la tastiera
@@ -17020,19 +17261,12 @@ In `gui/src/tokens/tokens.css` la riga `--stop: #e5534b;` diventa:
   --stop: #ec5f57;
 ```
 
-⚠️ **E il paragrafo in testa al file che dice *«the check is `axe-core` … it arrives with the accessibility of task
-14»* riceve la correzione**, perché da oggi è falso a metà: `axe-core` sotto `jsdom` **non decide** il contrasto.
-Le **quattro** righe, da `⚠️ G20 WANTS AA CONTRAST` fino a `reason the shape comes before the palette. */` comprese —
-`grep -c -F 'reason the shape comes before the palette. */' gui/src/tokens/tokens.css` → **1** prima di scrivere (R7-5: qui
-stava «tre», e la quarta sarebbe rimasta orfana fuori dal commento, davanti a `:root`) — diventano:
-
-```css
-   ⚠️ G20 WANTS AA CONTRAST, and the check is `contrast.test.ts` in this folder: `axe-core` under
-   jsdom files `color-contrast` as INCOMPLETE every time (there is no layout to read a background
-   from -- measured on 2026-09-15, task 14), so a green from axe proves nothing about it. A value
-   that fails is a change to THIS file, not to forty templates -- which is the whole reason the
-   shape comes before the palette. */
-```
+✅ **Il capoverso in testa al file è già nella forma di D53 — lo scrive il compito 13 (R6-11, 2026-09-16), e qui si
+verifica invece di riscriverlo:** `grep -c -F 'INCOMPLETE every time' gui/src/tokens/tokens.css` → **1**, e
+`grep -c 'on the mounted components' gui/src/tokens/tokens.css` → **0**. ⚠️ Qui stava la riscrittura delle
+**quattro** righe da `⚠️ G20 WANTS AA CONTRAST` a `reason the shape comes before the palette. */` (R7-5), che nel commit del
+13 dicevano che il contrasto lo prova `axe-core`; il testo che questo passo dettava è ora quello del Passo 4 del 13, parola
+per parola, e `contrast.test.ts` — che quel capoverso nomina — nasce qui sotto.
 
 `gui/src/tokens/contrast.test.ts`, **LF**:
 
@@ -19121,7 +19355,7 @@ git push
 - ⛔ **NON si legge**: la §1 e la §2 della stella polare — questo compito non disegna niente che si veda; e i compiti 13 e 14, se non per i nomi dei file che il lint guarda
 
 **Interfaces:**
-- Consumes: `gui/package.json` col comando `test` e `build` (compito **11**); `gui/src/locales/copy.test.ts` e `gui/src/panels/registry.ts` (compito **13**); `gui/src/panels/Chat.vue` e le diciotto chiavi `modules.*` di `gui/src/locales/it.json` (compito **13**, Passo 12 — ⚠️ qui stava «14», R7-7); `gui/fake-core/Cargo.toml` col proprio `Cargo.lock` (compito **12**); il settimo passo di `scripts/gate.sh` **come il compito 10 lo lascia**
+- Consumes: `gui/package.json` col comando `test` e `build` (compito **11**); `gui/src/locales/copy.test.ts` e `gui/src/panels/registry.ts` (compito **13**); `gui/src/panels/Chat.vue` e le diciotto chiavi `modules.*` di `gui/src/locales/it.json` (compito **13**, Passo 5 — ⚠️ qui stava «14», R7-7, e poi «Passo 12»: le chiavi sono dettate per esteso al Passo 5 dal 2026-09-16, R6-4); `gui/fake-core/Cargo.toml` col proprio `Cargo.lock` (compito **12**); il settimo passo di `scripts/gate.sh` **come il compito 10 lo lascia**
 - Produces, e i compiti 16 e 17 li usano con questi nomi esatti:
   - `scripts/gate-gui.sh` — un passo, nessun argomento; `cd` alla radice; esce **0** verde, **diverso da zero** al primo rosso. ⛔ **Il compito 16 gli aggiunge `npm audit` in coda**, quindi il file nasce con la forma che regge una riga in più
   - la riga `run "gui: fake core and SPA" bash scripts/gate-gui.sh` in `scripts/gate.sh`, **fra** «attributes of the constrained crates» e «documentation consistency»

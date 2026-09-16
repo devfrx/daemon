@@ -261,4 +261,4 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - Files: la stella e `design/10`; le due liste `git ls-files --eol` (Passo 1 e 11) e l'Atteso; «otto file» → «i file della lista *Files*» (tre posti) ✅
 - Attrezzo: `patch_c151617.py`
 
-## Voci P nuove (P-117…): una per rilievo «fatto» confermato, raggruppate per compito; i «prosa» stanno nella tabella della dodicesima chiusura
+## Voci P nuove (P-117…): una per rilievo «fatto» confermato, raggruppate per compito; i «prosa» stanno nella tabella della dodicesima chiusura. ⚠️ **RICHIAMO DEL 2026-09-16, decisione 94 della diciassettesima chiusura del piano:** la forma — una P per rilievo, o una per compito che rimanda al rapporto e a questo registro — è del **proprietario, in A/B**, prima che una P nuova si scriva; i rilievi «fatto» confermati si contano col `grep -cE` scritto in quella chiusura (centotrenta il 2026-09-16, R6 e R8 mancanti), non con un `awk` per colonna, che sbaglia sulle celle con una barra escapata

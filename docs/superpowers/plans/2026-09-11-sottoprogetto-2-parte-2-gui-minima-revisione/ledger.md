@@ -3,7 +3,7 @@
 Fonte: 9 rapporti su 11 (R1 parziale: compiti 1–2; R3 parziale: compito 7; R5 completo: 11–12; R2, R4, R7, R9a, R9b, R10 completi).
 Mancano: compito 13 (R6), compiti 15–17 (R8), compito 3 (R1), compito 8 (R3) — perimetri da rivedere ancora.
 Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stati rimisurati anche da lui.
-**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compiti 11 e 12 applicati (✅). **Sessione 15 (2026-09-15):** compito 13 applicato (✅) — con **D89** nuova (il dock segue lo store), R7-7 applicata al 15, e la cascata sul `Frame.vue` del 14 registrata come riga del 14. **Sessione 15, ondata 11 (2026-09-15):** compito 14 applicato (✅) — resta all'8 la sua metà di R9b-5. **Ondata 12 (2026-09-15):** compiti 15, 16 e 17 applicati (✅) in una ondata sola.
+**Stato al 2026-09-15 (sessione 13, tredicesima chiusura):** testa e compiti 1–10 applicati (✅) — l'8 nelle sole due correzioni note, la sua revisione in profondità resta da fare; tutto il resto ⬜. **Sessione 14 (2026-09-15):** compiti 11 e 12 applicati (✅). **Sessione 15 (2026-09-15):** compito 13 applicato (✅) — con **D89** nuova (il dock segue lo store), R7-7 applicata al 15, e la cascata sul `Frame.vue` del 14 registrata come riga del 14. **Sessione 15, ondata 11 (2026-09-15):** compito 14 applicato (✅) — resta all'8 la sua metà di R9b-5. **Ondata 12 (2026-09-15):** compiti 15, 16 e 17 applicati (✅) in una ondata sola. **Ondata 13 (2026-09-15):** le tre righe note del 3 applicate (✅); resta ⬜ la sola metà dell'8 di R9b-5, con la sua revisione in profondità.
 
 ## Le decisioni nuove (righe D da scrivere)
 
@@ -59,8 +59,8 @@ Ogni rilievo qui è stato riletto dal coordinatore; quelli marcati ✔ sono stat
 - R9a-3 (D88) richiami §3: `send` (D10), `receive` (D9+D10), 🔶 dedotto (D78) ✅
 - R10-16 etichette eol mancanti in Files (framing.rs) ✅
 
-### Compito 3 — NON RIVISTO IN PROFONDITÀ (R1 caduto): resta da fare
-- R10-16 etichette eol ⬜ · D75 `<data>` ⬜ · D76 «sub-project 2» ⬜
+### Compito 3 — NON RIVISTO IN PROFONDITÀ (R1 caduto): le righe note sono applicate, la revisione in profondità resta da fare
+- R10-16 l'etichetta della sola voce che ne mancava (`*.bin`: binari, niente fine-riga) ✅ · D75 `<data>` nei due `DATED RECALL` di `wire/ipc.rs` e nel criterio ✅ · D76 «sub-project 2» nei sei punti dei commenti dettati; i due «milestone 6» restano, perché sono il Traguardo 6 del SP1 ✅ · Attrezzo: `patch_c3.py`
 
 ### Compito 4
 - R2-1 Trova della spec: ultima riga del riquadro `> come \`process\` in §2.3.1.` ✅

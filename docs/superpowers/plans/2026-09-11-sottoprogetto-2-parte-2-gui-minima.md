@@ -3111,6 +3111,287 @@ controllo *«una voce in §5 per ogni file in `docs/adr/`»* non ha niente da pr
 
 **Conseguenza: D72.**
 
+### P-117 — Compito 1, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+1 è stato rivisto da **R1** (2026-09-15). Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 1» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?1\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **3** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 1; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-118 — Compito 2, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+2 è stato rivisto da **R1** (2026-09-15), **R9a** (2026-09-15). Ogni rilievo sta nella sezione «Rilievi» del proprio
+rapporto, in `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato
+nella sezione «Compito 2» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li
+conta il comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?2\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **8** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 2; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-119 — Compito 3, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+3 è stato rivisto da nessun revisore di superficie — e **in profondità** da **R11** il 2026-09-16, un revisore solo su
+Opus 5. Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 3» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?3\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **12** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 3; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-120 — Compito 4, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+4 è stato rivisto da **R2** (2026-09-15). Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 4» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?4\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **5** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 4; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-121 — Compito 5, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+5 è stato rivisto da **R2** (2026-09-15), **R9b** (2026-09-15). Ogni rilievo sta nella sezione «Rilievi» del proprio
+rapporto, in `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato
+nella sezione «Compito 5» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li
+conta il comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?5\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **3** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 5; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-122 — Compito 6, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+6 è stato rivisto da **R2** (2026-09-15), **R9b** (2026-09-15). Ogni rilievo sta nella sezione «Rilievi» del proprio
+rapporto, in `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato
+nella sezione «Compito 6» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li
+conta il comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?6\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **10** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 6; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-123 — Compito 7, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+7 è stato rivisto da **R3** (2026-09-15). Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 7» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?7\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **9** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 7; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-124 — Compito 8, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+8 è stato rivisto da nessun revisore di superficie — e **in profondità** da **R12** il 2026-09-16, un revisore solo su
+Opus 5. Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 8» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?8\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **12** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 8; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-125 — Compito 9, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+9 è stato rivisto da **R3** (2026-09-15), **R4** (2026-09-15), **R9a** (2026-09-15), **R9b** (2026-09-15). Ogni rilievo
+sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 9» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?9\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **16** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 9; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-126 — Compito 10, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+10 è stato rivisto da **R4** (2026-09-15), **R9a** (2026-09-15). Ogni rilievo sta nella sezione «Rilievi» del proprio
+rapporto, in `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato
+nella sezione «Compito 10» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li
+conta il comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?10\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **6** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 10; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-127 — Compito 11, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+11 è stato rivisto da **R5** (2026-09-15), **R10** (2026-09-15). Ogni rilievo sta nella sezione «Rilievi» del proprio
+rapporto, in `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato
+nella sezione «Compito 11» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li
+conta il comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?11\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **4** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 11; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-128 — Compito 12, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+12 è stato rivisto da **R3** (2026-09-15), **R5** (2026-09-15), **R9a** (2026-09-15), **R10** (2026-09-15). Ogni rilievo
+sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 12» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?12\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **13** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 12; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-129 — Compito 13, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+13 è stato rivisto da **R9b** (2026-09-15), **R10** (2026-09-15) — e **in profondità** da **R6** il 2026-09-16, un
+revisore solo su Opus 5. Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 13» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| (R[0-9]+[ab]?-[0-9]+ \| (Compito )?13\b|R6-[0-9]+ \|)' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **20** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 13; una riga che ne nomina più
+d'uno conta per il primo; le celle di R6 non portano il numero, perché R6 è tutto sul 13, e il comando le prende per
+prefisso.
+
+### P-130 — Compito 14, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+14 è stato rivisto da **R7** (2026-09-15), **R10** (2026-09-15). Ogni rilievo sta nella sezione «Rilievi» del proprio
+rapporto, in `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato
+nella sezione «Compito 14» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li
+conta il comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?14\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **7** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 14; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-131 — Compito 15, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+15 è stato rivisto da **R7** (2026-09-15), **R10** (2026-09-15) — e **in profondità** da **R8** il 2026-09-16, un
+revisore solo su Opus 5. Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 15» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?15\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **12** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 15; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-132 — Compito 16, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+16 è stato rivisto da **R10** (2026-09-15) — e **in profondità** da **R8** il 2026-09-16, un revisore solo su Opus 5.
+Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 16» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?16\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **8** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 16; una riga che ne nomina più
+d'uno conta per il primo.
+
+### P-133 — Compito 17, rivisto: i rilievi «fatto» confermati stanno nel rapporto e nel registro, e li conta un comando
+
+⛔ **Decisione 94 della diciassettesima chiusura, scelta B dal proprietario il 2026-09-16: una P per compito rivisto, che
+rimanda invece di copiare** — i rilievi vivono già in due case committate, e una terza sarebbe il gotcha #68. Il compito
+17 è stato rivisto da **R9b** (2026-09-15) — e **in profondità** da **R8** il 2026-09-16, un revisore solo su Opus 5.
+Ogni rilievo sta nella sezione «Rilievi» del proprio rapporto, in
+`docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/`, e il rimedio applicato nella sezione
+«Compito 17» di `ledger.md` accanto, con l'attrezzo che l'ha scritto. Nessun rilievo è ricopiato qui: li conta il
+comando, non questa riga —
+
+```bash
+cat docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima-revisione/R*-report.md | grep -E '^\| R[0-9]+[ab]?-[0-9]+ \| (Compito )?17\b' | grep -cE '\| *CONFERMATO[^|]*\| *fatto *\|'
+```
+
+→ **9** il 2026-09-16: le righe «CONFERMATO · fatto» il cui primo compito nominato è il 17; una riga che ne nomina più
+d'uno conta per il primo.
+
 ## Le decisioni prese da questo piano
 
 ⛔ **Sono decisioni del piano, non dei disegni, e chi esegue può ribaltarle** portando la misura che le
@@ -3239,7 +3520,7 @@ righe che lo **toccano** sono segnate.
 | ⛔ **il secondo capo di `SOCKET_NAME`** — il daemon lega il nome al compito 9, e in questo piano **nessuno vi si collega**: il core finto ne lega uno suo, la SPA non tocca socket | **P-53**, **D31**, e il doc della costante in `crates/daemon/src/main.rs` | il **guscio**, che la §8 del 2 mette *«fuori dal cancello di oggi»*; il giorno che esiste, l'accoppiamento è una sonda |
 | ⛔ **la decodifica VERA dei byte `bincode` dal capo TypeScript** — in questo piano **nessuno decodifica**: la SPA confronta i propri tipi col `.json` delle fixture (**D36**), e i byte li prova `ipc_wire.rs` nel cancello. ⚠️ **E il lettore che servirebbe è rotto come spedito** — `bincode-ts` 1.0.0 non si carica da nessuno dei due punti d'ingresso, misurato in M-11 | **P-63**, **D36**, e la riga di `bincode-ts` in [`riferimenti.md`](../../riferimenti.md) | il **guscio**, dove la decodifica vive davvero (Q1 di SP-8: il processo principale Node); il giorno che esiste, la copia corretta di `bincode-ts` o un lettore mantenuto è una **sua** decisione, non di questo piano. ⚠️ **Stesso chiusore del secondo capo di `SOCKET_NAME`, e non è un caso:** entrambe aspettano l'unico pezzo che la §8 del 2 mette *«fuori dal cancello di oggi»* |
 | ⛔ **il terzo comando del menu del modulo, «finestra a parte»** — `addPopoutGroup` vuole `popoutUrl` e una pagina servita da un'origine http(s), e Q3 di SP-8 l'ha misurata rifiutata in entrambi i gusci com'erano; il 14 porta «stacca» e «pagina intera» | **P-91**, **D58**; la riga 20 della tabella Chat della stella polare, vera a metà | il **guscio**, come il secondo capo di `SOCKET_NAME` e la decodifica vera: le tre voci aspettano lo stesso pezzo, che la §8 del 2 mette *«fuori dal cancello di oggi»* |
-| ⛔ **«il resto spento»** della riga *i quattro stati della connessione* della §6a del 2 — *core non in esecuzione → una fascia che lo dice e un pulsante «riprova», il resto spento* — **nessun passo del 13 o del 14 spegne nulla**: nel 2 i moduli senza dati mostrano lo stato vuoto (`—`, «nessuna richiesta») e la griglia resta manovrabile, perché la disposizione è presentazione (I1) e non dipende dal core; **P-78** e **D48** discutono i quattro stati e non nominano questa metà (tabella di copertura di R6, 2026-09-16) | la riga della §6a, e la tabella di copertura di `R6-report.md` | il **proprietario**, in A/B alla prossima rilettura: **(A)** «spento» è lo stato vuoto di oggi, e la riga della §6a riceve il richiamo datato dal 14, che costruisce i moduli; **(B)** «spento» è una disabilitazione della griglia (`inert`) finché `Accepted` non arriva — un passo nuovo nel 13. Il consiglio del coordinatore è **A**: una griglia bloccata terrebbe ferma la disposizione, che il core non decide |
+| ⛔ **«il resto spento»** della riga *i quattro stati della connessione* della §6a del 2 — *core non in esecuzione → una fascia che lo dice e un pulsante «riprova», il resto spento* — **nessun passo del 13 o del 14 spegne nulla**: nel 2 i moduli senza dati mostrano lo stato vuoto (`—`, «nessuna richiesta») e la griglia resta manovrabile, perché la disposizione è presentazione (I1) e non dipende dal core; **P-78** e **D48** discutono i quattro stati e non nominano questa metà (tabella di copertura di R6, 2026-09-16) | la riga della §6a, e la tabella di copertura di `R6-report.md` | il **proprietario**, in A/B alla prossima rilettura: **(A)** «spento» è lo stato vuoto di oggi, e la riga della §6a riceve il richiamo datato dal 14, che costruisce i moduli; **(B)** «spento» è una disabilitazione della griglia (`inert`) finché `Accepted` non arriva — un passo nuovo nel 13. Il consiglio del coordinatore è **A**: una griglia bloccata terrebbe ferma la disposizione, che il core non decide ✅ **DECISA dal proprietario il 2026-09-16 — A**, controllata sui cinque criteri di `anthropic-skills:decision-principles` (verificato nel piano: il Passo 8 del 14 spegne già il gruppo radio della policy, `<fieldset :disabled="core.policy === null">`, con la sonda *«is off until the core has said which policy is active»* e il commento che cita «the rest off (§6a)»; coerenza: si spegne il controllo che parlerebbe col core, non la finestra; proporzione: nel 2 la SPA gira contro il core finto nel browser e «core non in esecuzione» arriva col guscio, P-53): il **Passo 15-bis** del 14 scrive il richiamo nella riga della §6a, e la riga *Files*, il `git add` e il criterio di chiusura del 14 lo contano. ⚠️ **E la frase «nessun passo del 13 o del 14 spegne nulla» qui sopra era imprecisa, misurato lo stesso giorno:** «spento» esisteva già per l'unico controllo del 2 che parla col core; resta vero che nessun passo spegne la griglia, e la decisione dice che non deve |
 
 ---
 
@@ -17180,6 +17461,7 @@ un valore che fallisce è una modifica a `tokens.css` — com'era scritto nel fi
 - Modify: `gui/src/frame/BigTab.ts` (**LF**) — i **due** comandi del menu del modulo, con le loro etichette (**P-91**, **D58**)
 - Modify: `gui/src/frame/Frame.vue` (**LF**) — la finestra di conferma e la tastiera
 - Modify: `gui/src/main.ts` (**LF**) — i moduli registrati, gli store nuovi in ascolto, la finta esposta al revisore (**D57**)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**) — il richiamo sulla riga *«i quattro stati della connessione»* della §6a: «il resto spento», decisione del proprietario del 2026-09-16 (**C13-2**, A) — Passo 15-bis
 - Modify: `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` (**LF**) — i richiami datati della §1 e delle registrate: la riga 1 di Passi (**D56**), le righe 3 di Permessi e 12 di Passi (R7-14), uno per modulo costruito (**D87**), la riga delle scorciatoie (R9b-5) — Passo 15 (R10-8: mancava dalla lista mentre il Passo 15 e il commit la toccavano)
 - Create: `gui/src/panels/functions.ts` (**LF**) — i tre letterali della funzione registrata (**P-88**, **D55**)
 - Create: `gui/src/stores/stream.ts`, `gui/src/stores/invoke.ts` (**LF**) — **D40**, **D59**, **D61**
@@ -19328,6 +19610,80 @@ dubbio, e il modulo lo mostra (`in dubbio`); la riga 3 è il dettaglio, che il r
 ragione della riga 1 e che il richiamo della riga 1 copre nominando il riassunto. Un richiamo per **fatto**, non per
 riga che lo sfiora (gotcha #68).
 
+- [ ] **Passo 15-bis: il richiamo nella §6a del disegno del 2 — «il resto spento», decisione del proprietario del 2026-09-16 (C13-2)**
+
+⛔ **C13-2, dalla tabella di copertura di R6 (2026-09-16):** la riga *«i quattro stati della connessione»* della §6a del 2 dice,
+per *core non in esecuzione*, *«una fascia che lo dice e un pulsante «riprova», il resto spento (ADR-0019)»*, e nessuna riga
+del piano diceva che cosa «spento» significhi. Il proprietario ha deciso **A** il 2026-09-16, sui cinque criteri di
+`anthropic-skills:decision-principles`: **spento è ogni controllo che parlerebbe col core, finché il core non ha risposto** — nel
+2 ce n'è uno, il gruppo radio della policy che il Passo 8 mette in un `<fieldset :disabled="core.policy === null">` con la sonda
+*«is off until the core has said which policy is active»* — e i moduli senza dati mostrano lo **stato vuoto** (`status.unknown`,
+`permissions.none`, `steps.none`, `chat.noRun`); la griglia resta manovrabile, perché spostare un pannello è presentazione e non
+chiede nulla al core, che custodisce il pacchetto senza aprirlo né decidere la mossa (riga 1 delle decisioni della §2 della stella
+polare). ⚠️ **Costo dichiarato:** una disposizione cambiata mentre il core non gira non ha chi la riceva — `SaveLayout` senza pari
+— e non sopravvive alla GUI; nel 2 il caso non si dà, perché la SPA gira contro il core finto nel browser (**D57**), e col guscio
+(**P-53**) la fascia lo dichiara **prima** (ADR-0019). La via **B** — la griglia `inert` fino ad `Accepted`, un passo nuovo nel 13 —
+è scartata: terrebbe ferma una cosa che il core non decide, e nel 2 nessuno la userebbe (quinto criterio).
+
+`docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` è **LF**: la forma del Passo 12 del compito 8, un
+file solo — l'ancora è la riga intera presa dal file, per sezione e inizio di riga, lo script pretende che sia **una** e appende
+il richiamo **nell'ultima cella** della riga, e un `assert` sul numero di righe chiude. ⚠️ **`<data>` si sostituisce con la data
+del giorno in cui il compito si esegue, nello script E nei `grep` sotto**, o i `grep` rendono 0.
+
+```bash
+python - <<'EOF'
+import io, os, re, sys
+sys.stdout.reconfigure(encoding="utf-8")
+DATE = "<data>"
+assert DATE != "<data>", "the date goes in before the recall (R8-23)"
+path = "docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md"
+b = io.open(path, encoding="utf-8", newline="").read()
+assert "\r\n" not in b, f"{path} is LF: something rewrote it"
+lines = b.split("\n")
+
+
+def section(heading):
+    """The line indexes under the ONE heading that starts with `heading`, up to the next heading of
+    the same or a higher level."""
+    starts = [i for i, line in enumerate(lines) if line.startswith(heading)]
+    assert len(starts) == 1, f"{heading!r}: {len(starts)} headings"
+    level = len(lines[starts[0]].split(" ")[0])
+    end = next((i for i in range(starts[0] + 1, len(lines)) if re.match(r"^#{1,%d} " % level, lines[i])), len(lines))
+    return range(starts[0], end)
+
+
+def row(heading, prefix, recall):
+    """Appends `recall` inside the LAST cell of the one row of `heading` that starts with `prefix`."""
+    hits = [i for i in section(heading) if lines[i].startswith(prefix)]
+    assert len(hits) == 1, f"{prefix!r}: {len(hits)} lines match"
+    i = hits[0]
+    assert lines[i].endswith(" |"), lines[i][-60:]
+    lines[i] = lines[i][:-2] + " " + recall + " |"
+
+
+row("### §6a", "| i quattro stati della connessione |",
+    "✅ **RICHIAMO DEL " + DATE + ", compito 14 del piano della parte 2 (C13-2, decisione del proprietario del 2026-09-16 — A):** "
+    "«il resto spento» è **ogni controllo che parlerebbe col core, finché il core non ha risposto** — nel 2 ce n'è uno, il gruppo "
+    "radio della policy di `gui/src/panels/Settings.vue`, `disabled` finché `core.policy` è `null` — e lo **stato vuoto** nei moduli "
+    "senza dati; la griglia resta manovrabile, perché spostare un pannello è presentazione e il core custodisce il pacchetto senza "
+    "decidere la mossa. ⚠️ **Costo dichiarato:** una disposizione cambiata mentre il core non gira non ha chi la riceva (`SaveLayout` "
+    "senza pari) e non sopravvive alla GUI; nel 2 il caso non si dà, perché la SPA gira contro il core finto nel browser, e col guscio "
+    "la fascia lo dichiara **prima** (ADR-0019). La via B — la griglia `inert` fino ad `Accepted` — è scartata: terrebbe ferma una "
+    "cosa che il core non decide")
+out = "\n".join(lines)
+assert out.count("\n") == b.count("\n"), "a line was added or lost: the recall goes IN a line"
+tmp = path + ".tmp"
+io.open(tmp, "w", encoding="utf-8", newline="").write(out)
+os.replace(tmp, path)
+print("ok: one recall in", path)
+EOF
+grep -c 'RICHIAMO DEL <data>, compito 14 del piano della parte 2 (C13-2' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c
+```
+
+Atteso (con la data scritta al posto di `<data>`, **anche nel `grep`**): **1**; niente; **0**.
+
 - [ ] **Passo 16: il mondo web verde, il cancello, e il commit**
 
 ```bash
@@ -19343,7 +19699,7 @@ workspace Rust è intatto. Il mondo web lo dicono i tre comandi dentro `gui/`. �
 `it.json`, e si sposta la scritta, non la sonda.
 
 ```bash
-git add gui docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+git add gui docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 git commit -m "gui(compito 14): i moduli della SPA -- Stato, Permessi, Chat, Passi e Impostazioni, la finestra di conferma, la tastiera e l'accessibilita"
 git push
 ```
@@ -19368,6 +19724,7 @@ git push
 - [ ] ⛔ **il segnaposto è ancora UNO e il registro non ha cambiato forma:** `git log --oneline -- gui/src/panels/registry.ts | wc -l` → **1**, il solo commit del 13 (R7-12: un `diff --stat` stampa file e righe, mai commit)
 - [ ] ⛔ **le tre viste NON sono cambiate:** `git diff --quiet HEAD~1 -- gui/src/panels/views/ && echo unchanged` → `unchanged` — i moduli veri entrano dal registro, non dal JSON
 - [ ] ⛔ **i richiami sono nella stella polare — tre di riga, cinque di modulo, uno sulle registrate — e il file resta LF e con le tabelle intere:** i cinque comandi del Passo 15, **con la data al posto di `<data>`** (R7-26) → **3**, **5**, **1**, **0**, e niente
+- [ ] ⛔ **il richiamo di C13-2 è nella §6a del disegno del 2, e il file resta LF e con le tabelle intere:** i tre comandi del Passo 15-bis, **con la data al posto di `<data>`** → **1**, niente, **0**
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
 - [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -rcE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src --include='*.test.ts' | grep -v ':0$'` → **niente** — R7-6, misurato: senza `globstar` il `**` non scende di un livello (`gui/src/a11y.test.ts` sfuggiva) e con più file `grep -c` stampa `file:conteggio`, mai uno «0» nudo; provato una volta anche su un file con un corpo vuoto, che **deve** comparire
 - [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA, con i dati** — regola 5 della testa: `cd gui && npm run dev`; nella console del browser `harnessFake.deliverAll()` — ⚠️ che porta **anche `StaleBuild`**, per costruzione dell'insieme canonico (R7-3) — e subito dopo `harnessFake.deliver("Accepted")`, che rimette `connected`; poi si vedono la fascia che **sparisce** (è arrivato `Accepted`), il chip «collegato», Stato coi due campi, la policy col budget e la riga «protetto quanto il tuo account di sistema», la riga dell'ultimo verdetto **rifiutata**, Permessi con la richiesta in attesa della fixture, Passi col passo 42 chiuso, la Chat col `ciao` non fidato; in Impostazioni si sceglie **Locale** → la scritta «richiesta inviata» compare, il controllo **resta** su OpenRouter (è il core che decide) **e la finestra si apre al click** — `deliverAll` ha già lasciato la richiesta della fixture in `core.pending`, e la finestra apre su richiesta **più** chiamata in volo (R7-4; qui stava un secondo `deliver("PermissionRequired")`, che non cambiava nulla di visibile) — col focus dentro, il tabulatore **non esce**, «Consenti» la chiude, e `harnessFake.sent` porta un `Approve` con `vram-policy` e `local`; con `Ctrl+Alt+→` la tessera attiva si sposta nel gruppo accanto, e su un bordo si divide; i due comandi della linguetta staccano e portano a pagina intera; un link nella Chat mostra l'indirizzo accanto e **non apre nulla**

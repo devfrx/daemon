@@ -815,7 +815,7 @@ qualcuno sommò **uno**. Nessun controllo poteva accorgersene: è una cifra in p
 ⛔ **LA CURA NON È RIALLINEARE A «DODICI».** È la regola di `CLAUDE.md` — *«un numero misurato non si scrive: si
 scrive il COMANDO che lo produce»* — e il gotcha **#68**: un numerale in prosa che descrive un artefatto è già
 marcito una volta e marcirà di nuovo alla prima variante che si aggiunge o si toglie. Il numerale si **toglie**
-dalle otto case (`grep -c undici` le conta), e dove il conteggio deve essere verificabile lo dice un **comando**,
+dalle otto case (`grep -c undici` le conta — e `grep -ci eleven` la nona, in inglese, trovata dalla revisione del 2026-09-16, R11-7), e dove il conteggio deve essere verificabile lo dice un **comando**,
 nel criterio di chiusura del compito 3, accanto a quello delle fixture che già c'è.
 
 ⛔ **Corretto nel compito 3 e non con una voce d'errata**, come **P-23** e **P-25**: il compito 3 **non è
@@ -4419,7 +4419,7 @@ campo nuovo del giornale si ferma e va tradotto **a mano**, col compilatore che 
 | `degradation::Degradation` | due `bool` oggi, ma ADR-0019 dichiara la **lista degli eventi aperta** col rimando del 2026-09-08 — la telecamera arriva con ADR-0039 — e la §4 del 2 dice *«i due campi **di oggi**»*: cresce per costruzione | `crates/kernel/src/degradation.rs:23-27` |
 | `record::Trust` | già deciso dal disegno: *«Sul filo un enum a due valori gemello di `Trust`, per non appendere derive `bincode` a un tipo del giornale»* | §4 del 2 |
 
-⚠️ **Costo dichiarato:** le varianti nuove portano dieci tipi nuovi in `wire::ipc`, e ogni compito che le riempie
+⚠️ **Costo dichiarato:** le varianti nuove portano in `wire::ipc` un tipo nuovo per ogni tipo del kernel con campi, più il timbro (quanti lo dice `grep -cE '^pub (struct|enum) '` sul blocco del Passo 2, non un numerale — R11-11, 2026-09-16), e ogni compito che le riempie
 scrive una conversione. **Il beneficio è il compilatore:** ADR-0036 vuole che il giornale **evolva**, I4 rinuncia
 al versionamento sul filo, e senza i gemelli un campo aggiunto al giornale cambierebbe i byte del filo **in
 silenzio** — con una GUI vecchia che legge byte diversi e nessun rosso da nessuna parte.
@@ -4432,7 +4432,8 @@ grep -n 'pub enum IpcMessage' -A 8 crates/kernel/src/wire/ipc.rs
 ls gui 2>&1
 ls crates/kernel/tests/frozen/*.cbor | wc -l
 git ls-files --eol crates/kernel/src/wire/ipc.rs crates/kernel/tests/ipc_wire.rs
-grep -c '#\[test\]' crates/kernel/tests/ipc_wire.rs
+grep -cE '^#\[test\]' crates/kernel/tests/ipc_wire.rs
+# ancora di riga: due `#[test]` del file vivono dentro commenti, e senza `^` il conteggio dice 9 (R11-1, 2026-09-16)
 ```
 
 Atteso: `IpcMessage` ha **due** varianti, `Request` e `Verdict`; `gui` **non esiste**; **sei** `.cbor` congelati
@@ -4643,6 +4644,9 @@ pub enum IpcMessage {
 
 ⚠️ **`String` e `Vec` vogliono l'import:** in testa al file `use alloc::string::String;` accanto a
 `use alloc::vec::Vec;`, che c'è già. La crate è `no_std` + `alloc`, quindi `String` **non** è nel preludio.
+⛔ **E `Millis` vuole il suo:** `use crate::time::Millis;` accanto a `use crate::arbiter::{ComputeClass, Mib, Preemption};`
+— lo chiede `Preemption::After(Millis::new(500))` dell'insieme canonico del Passo 3; senza, `cargo build --locked -p kernel`
+è rosso di `E0433` (R11-2, misurato il 2026-09-16 su una copia del workspace).
 
 - [ ] **Passo 3: l'insieme canonico e il timbro, nello stesso posto**
 
@@ -4662,7 +4666,10 @@ silenzio: è l'argomento che `record_v1.map` scrive di sé. In coda a `crates/ke
 ///
 /// ⚠️ THE VALUES ARE ARBITRARY BUT NOT RANDOM: each one is chosen so that no two encodings
 /// are equal and no field is left at its type's default, because a fixture full of zeroes
-/// cannot tell a field that is written from one that is skipped.
+/// cannot tell a field that is written from one that is skipped. ⚠️ ONE DECLARED EXCEPTION:
+/// `DegradationReport::routing_degraded` is `false`, its default -- with two `bool`s this rule
+/// and P-34's (two equal values at two offsets pin one offset and its mirror) cannot both
+/// hold, and P-34's wins. Do not "fix" it.
 pub fn stamp_set() -> Vec<IpcMessage> {
     alloc::vec![
         IpcMessage::Hello(BuildStamp(0x0123_4567_89AB_CDEF)),
@@ -4860,7 +4867,9 @@ fn the_stamp_changes_when_the_schema_changes() {
     assert_eq!(build_stamp(), build_stamp(), "the stamp is stable within a build");
 
     let mut altered = stamp_set();
-    altered[0] = IpcMessage::Hello(BuildStamp(0));
+    // `build_stamp()` is the only constructor there is (the doc of `BuildStamp` refuses a `new`),
+    // and its value differs from the arbitrary one the canonical set carries: that is all this needs.
+    altered[0] = IpcMessage::Hello(build_stamp());
     assert_ne!(
         fnv_over(&altered),
         build_stamp().get(),
@@ -4891,9 +4900,10 @@ fn fnv_over(messages: &[IpcMessage]) -> u64 {
 }
 ```
 
-⚠️ **Gli import in testa al file crescono:** `use kernel::wire::ipc::{build_stamp, stamp_set, Access, BuildStamp,
-Call, DegradationReport, GrantRequest, IpcMessage, LayoutState, PolicyName, PolicyReport, Protection, Provenance,
-StepSummary, Triple, Verdict};`. ⛔ **Un test di integrazione compila con `std`**, quindi `String`, `Vec` e
+⚠️ **Gli import in testa al file crescono:** `use kernel::wire::ipc::{build_stamp, stamp_set, Access, Call,
+GrantRequest, IpcMessage, LayoutState, PolicyName, Protection, Provenance, Triple, Verdict};`. ⚠️ Né `BuildStamp`
+né `DegradationReport`, `PolicyReport`, `StepSummary`: nessuna sonda li nomina (i pattern distruggono quei valori senza
+nominare il tipo), e un `use` di troppo è un avviso che il Passo 4 non ammette (R11-4, zero avvisi misurati il 2026-09-16). ⛔ **Un test di integrazione compila con `std`**, quindi `String`, `Vec` e
 `format!` sono nel preludio qui, al contrario di `src/`.
 
 - [ ] **Passo 6: il generatore dichiarato, e le fixture**
@@ -4907,8 +4917,8 @@ ignorato dal cancello, in coda a `crates/kernel/tests/ipc_wire.rs`:
 #[ignore = "generator, not a check: run it on purpose when the schema changes -- see the map"]
 fn regenerate_the_fixtures() {
     // ⛔ THE ONLY WRITER OF `gui/schema/fixtures/`, and it writes the map in the same pass, so
-    // bytes and map cannot drift. `#[ignore]` with a reason, as `scripts/gate.sh` requires of
-    // every ignored test: the gate must not rewrite artefacts it is checking.
+    // bytes and map cannot drift. `#[ignore]` with a reason, as every ignored test of this
+    // workspace does by convention: the gate must not rewrite artefacts it is checking.
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../gui/schema/fixtures");
     std::fs::create_dir_all(&root).expect("create the fixtures directory");
     let mut map = String::from(
@@ -5127,7 +5137,9 @@ cargo test --locked -p kernel --test ipc_wire -- --ignored regenerate_the_fixtur
 ls gui/schema/fixtures/
 ls gui/schema/fixtures/*.bin | wc -l; ls gui/schema/fixtures/*.json | wc -l
 cat gui/schema/fixtures/ipc_v1.map | tail -3
-tr -cd '\r' < gui/schema/fixtures/*.json gui/schema/fixtures/ipc_v1.map | wc -c
+cat gui/schema/fixtures/*.json gui/schema/fixtures/ipc_v1.map | tr -cd '\r' | wc -c
+# la forma «tr -cd '\r' < <glob> <file>» era «ambiguous redirect» e rendeva 0 SEMPRE (R11-5, 2026-09-16);
+# la controprova nella direzione che deve rendere più di zero:  printf 'a\r\nb\r\n' | tr -cd '\r' | wc -c  → 2
 python -c "import json,glob,sys; [json.load(open(p)) for p in sorted(glob.glob('gui/schema/fixtures/*.json'))]; print('every fixture is valid JSON')"
 cat gui/schema/fixtures/00-hello.json
 ```
@@ -5185,6 +5197,16 @@ fn the_committed_fixtures_match_the_schema() {
             Err(error) => wrong.push(format!("  {index:02}-{name}.json: {error}")),
         }
     }
+    // ⛔ THE MAP IS CHECKED TOO, on its last line. D52 makes the SPA read the stamp from there,
+    // so a stale map is a SPA that sends a stamp the core no longer computes -- `StaleBuild` at
+    // the handshake -- with this bench GREEN. Measured before this check existed: with mutation
+    // G8 applied, twelve passed while the map still said the old stamp.
+    let stamp_line = format!("stamp {:#018x}", build_stamp().get());
+    match std::fs::read_to_string(root.join("ipc_v1.map")) {
+        Ok(map) if map.lines().rev().find(|line| !line.trim().is_empty()) == Some(stamp_line.as_str()) => {}
+        Ok(_) => wrong.push("  ipc_v1.map: the last line is not today's stamp".to_string()),
+        Err(error) => wrong.push(format!("  ipc_v1.map: {error}")),
+    }
     let extra: Vec<String> = std::fs::read_dir(&root)
         .expect("read the fixtures directory")
         .filter_map(|entry| entry.ok())
@@ -5210,6 +5232,9 @@ fn the_committed_fixtures_match_the_schema() {
 
 ⚠️ **La seconda metà è il file di TROPPO**, e senza di essa una variante tolta lascerebbe la sua fixture in
 `gui/` per sempre, letta da nessuno e committata da tutti.
+⚠️ **E la terza metà è la MAPPA** (R11-6, 2026-09-16): senza il confronto sull'ultima riga, con G8 applicata il banco restava
+**verde** mentre `ipc_v1.map` diceva un timbro che `build_stamp` non calcola più — e la SPA del 13 legge il timbro
+proprio da lì (D52). La seconda direzione è **G9** nel Passo 8.
 
 - [ ] **Passo 8: le due direzioni, misurate**
 
@@ -5219,8 +5244,9 @@ eseguita, e **revocata** con `git diff` a zero:
 | | La mutazione | Atteso |
 |---|---|---|
 | **G6** | in `stamp_set`, `Access::Write` → `Access::Read` nella `PermissionRequired` | `the_committed_fixtures_match_the_schema` **rosso**, e con **due** righe e non una — `06-permission-required.bin: different bytes` **e** `06-permission-required.json: different value` — più la riga «REGENERATE them». ⚠️ **Che siano due è la prova che il controllo del valore atteso non è decorativo** (richiamo del 2026-09-14, **D35**) |
-| **G7** | togli la riga `IpcMessage::Steps(...)` da `stamp_set` | `every_variant_is_in_the_canonical_set` **rosso** con `variants missing from stamp_set: [11]`, e il controllo delle fixture rosso su «left over» con **entrambi** i file della variante tolta, `.bin` e `.json` |
+| **G7** | togli l'elemento `IpcMessage::Verdict(...)` da `stamp_set` — ⚠️ l'**ultima** variante, non una in mezzo | `every_variant_is_in_the_canonical_set` **rosso** con `variants missing from stamp_set: [13]`, e il controllo delle fixture rosso su «left over» con **entrambi** i file della variante tolta, `13-verdict.bin` e `13-verdict.json`. ⚠️ **Perché l'ultima (R11-10, misurato il 2026-09-16):** togliere `Steps`, in mezzo, fa slittare di uno gli indici di tutte le varianti dopo — sei file di troppo e quattro mancanti, un Atteso che nessuno può leggere |
 | **G8** | in `build_stamp`, togli `(bytes.len() as u64).to_be_bytes().iter().chain(...)` e lascia `bytes.iter()` | `the_stamp_changes_when_the_schema_changes` resta **verde** — ⚠️ **e questo è il limite dichiarato della sonda**, non un difetto da correggere qui: la lunghezza difende contro due messaggi ri-tagliati, che l'insieme canonico non contiene. Si **registra** in coda alla voce, non si inventa un caso per farlo scattare |
+| **G9** | con **G8 ancora applicata** (la seconda direzione del confronto sulla mappa, R11-6), niente altro | `the_committed_fixtures_match_the_schema` **rosso** con la sola riga `ipc_v1.map: the last line is not today's stamp` più «REGENERATE them» — i `.bin` e i `.json` restano uguali, perché G8 cambia il timbro e non le codifiche; poi si revoca G8. ⛔ **Prima di questa riga nulla andava rosso** (misurato il 2026-09-16): la mappa è ciò che D52 consegna alla SPA |
 
 ```bash
 cargo test --locked -p kernel --test ipc_wire 2>&1 | tail -5
@@ -5242,10 +5268,13 @@ qui:
 //! shell while the mechanism needs an ADDRESSEE: sub-project 2 does not serve `Request` at all
 //! (decision D5 of its plan, argued against this file's own doc of `GrantRequest`), so NO
 //! ORDINARY GRANT EXISTS to revoke and there is nobody to tell. ⛔ THE TRIGGER IS THEREFORE
-//! THE 3D CONSUMER, subproject 7 -- the same closer row 27 of milestone 6 carries in
+//! THE 3D CONSUMER, sub-project 7 -- the same closer row 27 of milestone 6 carries in
 //! docs/porta-di-qualita.md. ⚠️ CORRECTED RATHER THAN DELETED: the paragraph above is the only
 //! place that says what the revocation IS, and it is gotcha #77 again -- a deadline written in
-//! prose, which nothing can go red for.
+//! prose, which nothing can go red for. ⛔ AND A THIRD HALF, FROM TASK 2 OF THE SAME PLAN:
+//! the sentence above that `grep -rnE "^ *impl Ipc for" crates/` "returns a bench fake" is
+//! false too -- `platform::ipc::LocalSocketIpc` is the real transport now, and the command that
+//! counts the implementations is the one written there, not this prose.
 //!
 //! ✅ AND THE OTHER HALF DID ARRIVE: the BUILD STAMP of §6.1.2 exists as of today,
 //! `crate::wire::ipc::build_stamp` over `stamp_set`. "Until it exists, NOTHING REFUSES A STALE
@@ -5256,7 +5285,7 @@ qui:
 
 ```rust
     /// ⚠️ DATED RECALL, <data> -- THE GRAPH READ ABOVE IS NO LONGER THIS TYPE'S GRAPH, AND
-    /// THE ARGUMENT IS RE-READ RATHER THAN INHERITED. Eleven variants arrived, and they put
+    /// THE ARGUMENT IS RE-READ RATHER THAN INHERITED. The variants added today put
     /// `String` and `Vec<u8>` into it. Re-read in bincode 2.0.1's `src/error.rs` the same day:
     /// the variants reachable without `std` are `UnexpectedEnd` (a writer out of room),
     /// `RefCellAlreadyBorrowed`, `Other(&'static str)` and `OtherString(String)` behind
@@ -5291,7 +5320,7 @@ Atteso: per i due file `CR` **uguale** alle righe e `i/lf w/crlf` **invariato**;
 
 ```bash
 git add crates/kernel/src/wire/ipc.rs crates/kernel/tests/ipc_wire.rs gui/schema/fixtures docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
-git commit -m "gui(compito 3): lo schema che cresce -- le varianti nuove di IpcMessage coi gemelli del filo (D11), l'insieme canonico e il timbro di build, le fixture rigenerabili in gui/schema/fixtures coi byte E il valore atteso in JSON dallo stesso passaggio (D35) e il controllo che dice rigenera; i richiami datati su P-16 (l'innesco della revoca e' il 7) e P-17 (il grafo di encode riletto)"
+git commit -m "gui(compito 3): lo schema che cresce -- le varianti nuove di IpcMessage coi gemelli del filo (D11), l'insieme canonico e il timbro di build, le fixture rigenerabili in gui/schema/fixtures coi byte E il valore atteso in JSON dallo stesso passaggio (D35) e il controllo che dice rigenera; i richiami datati su P-16 (l'innesco della revoca e' il sotto-progetto 7) e P-17 (il grafo di encode riletto)"
 git push
 ```
 
@@ -5306,7 +5335,7 @@ git push
 - [ ] ogni fixture è JSON valido, e il timbro è una **stringa**: `python -c "import json,glob; [json.load(open(p)) for p in glob.glob('gui/schema/fixtures/*.json')]; print('ok')"` → `ok`; `python -c "import json; print(type(json.load(open('gui/schema/fixtures/00-hello.json'))['value']).__name__)"` → `str` — **D35**
 - [ ] `grep -c 'DATED RECALL, <data>' crates/kernel/src/wire/ipc.rs` → **2**, con la data del giorno scritta al posto di `<data>` (D75)
 - [ ] `grep -c 'BUILD STAMP' crates/kernel/src/ports/ipc.rs` → **invariato rispetto al Passo 1**: quel file non si tocca
-- [ ] le tre mutazioni G6, G7, G8 provate **una per volta** e revocate, con `git diff --stat` vuoto
+- [ ] le mutazioni G6, G7, G8 e G9 provate **una per volta** e revocate, con `git diff --stat` vuoto
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/gate-deps.sh` **verde**: la lista di ADR-0031 **non è cresciuta** (il timbro è scritto a mano)
 - [ ] `crates/kernel/tests/frozen/` **invariato**: `ls crates/kernel/tests/frozen/*.cbor | wc -l` → **6**, e `git diff --stat crates/kernel/tests/frozen/` vuoto
 - [ ] i fine-riga rimisurati, `git ls-files --eol` invariato sui due file toccati

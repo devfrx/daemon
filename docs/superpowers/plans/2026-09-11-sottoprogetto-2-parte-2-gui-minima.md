@@ -2732,7 +2732,7 @@ giro — ma **nessuna** regola scatta su di loro, e nemmeno una virgola in coda 
 chi cercasse lì una rete la cercherebbe dove non c'è: le tre viste le prova la sonda della cornice del
 compito 13.
 
-**Conseguenza:** nessuna `D`; la forma dello script `lint` nel Passo 4.
+**Conseguenza:** nessuna `D`; la forma dello script `lint` nel **Passo 2** — ⚠️ qui stava «Passo 4», che è il lint nelle quattro direzioni (R8-9, 2026-09-16). ⛔ **E la conclusione di questa voce vale per i `.ts` e NON per i `.vue`:** il blocco `<script setup lang="ts">` vuole `@typescript-eslint/parser`, misurato — **D91** e il Passo 3 del compito 15 (R8-1).
 
 ### P-102 — le righe di `.gitignore` per `spikes/gui-shell/` e i lockfile dello spike ESISTONO GIÀ dalla parte 1: due dei quattro pezzi che la chiusura assegna al 15 sono eseguiti
 
@@ -3208,6 +3208,7 @@ smentisce — è ciò per cui esiste l'errata.
 | **D88** | ⛔ **ogni richiamo che una decisione `D` di questo piano rende dovuto nei due disegni si scrive dal compito che ESEGUE quella decisione**, non si lascia al 17: §3 del 2 (D9, D10, D78, D82) dal **2**; §4 riga `Request, Verdict` (D5) dal **7**; §8 *«decodificata dai byte»* e §2 *«la SPA parla `bincode`»* (D36) dall'**11**; §7 righe *«la disposizione»*, *«la lista dei passi»*, *«senza copiarla»*, il dedotto su `Accepted` (P-70, D41, D22) dal **12**; §8 *«le scritte»* (D63, D65) dal **15**; §8 *«Ciò che la §8 non fa»* (X-1, X-3) dal **16**; le decisioni 6, 45, 47, 51, 52, 55 del coordinatore della stella (D2, D71, D66, D3, D4, D63–D65) dal compito che le esegue | R9a-3, R9a-7, R9a-8, R9a-10, R9a-11, R9a-12, R9b-9, R3-18, R5-15, R5-16: quattordici contraddizioni **dichiarate in una `D`** e **mute nel disegno** — il precedente giusto è il compito 8, che scrive il richiamo della decisione 56 dove vive |
 | **D89** | ⛔ **il dock SEGUE lo store**: `createDock` osserva `view` e `arrivals` di `useLayout` — la barra scrive `layout.view` e basta; un pacchetto che il core manda **dopo** che il dock è su viene mostrato; l'**eco** del proprio `SaveLayout` (decisione 13: il core risponde con ciò che tiene) non conta come arrivo, perché lo store confronta i byte con quelli che ha mandato; e mostrare una vista **azzera la baseline** del `settle`, così guardare una vista non la salva | revisione del piano intero, 2026-09-15, scrivendo D80 (coordinatore; R6 caduto): il 13 dettava `apply` una volta sola in `createDock`, cioè **prima** del `Hello` di `main.ts` — e `layout.receive` del `Layout` dell'accoglienza aggiornava lo store senza che nulla lo mostrasse: la disposizione salvata **non compariva mai** all'avvio; e col `switchTo` che rilanciava `apply` da `Frame.vue`, il `settle` che seguiva copiava la vista spedita nell'archivio, contro la decisione 11 del coordinatore della stella. Compilava e passava tutte le sonde del 13 |
 | **D90** | ⛔ **il timbro entra nella SPA da `define` di `vite.config.ts`, che legge l'ultima riga di `ipc_v1.map` in Node; il browser non chiede mai un `.map`**, e `stamp.ts` dichiara la costante (`declare const __BUILD_STAMP__`) invece di importare la mappa | **R6-3**, misurato nel browser e sul modello compilato il 2026-09-16: il server di sviluppo di `vite` 8.3.0 tratta ogni URL che finisce in `.map` come una richiesta di source map e serve il file statico come `application/json` — `npm run dev` pagina bianca, `vite build` e `vitest` verdi, cioè un difetto **muto nel cancello**. Le vie scartate: rinominare la mappa spezza la forma che `record_v1.map` del giornale ha già e tocca il compito 3 in tredici punti; un secondo file col solo timbro scritto dal generatore sarebbe una seconda casa del timbro (gotcha #68) e riaprirebbe il 3, rivisto in profondità da R11; un `fetch` a tempo d'esecuzione renderebbe `buildStamp` asincrona e non gira sotto `vitest`; un middleware di sviluppo che serva il `.map?raw` come modulo sarebbe una seconda implementazione di `?raw`, accoppiata al formato degli URL di `vite`. `define` è la via documentata di `vite` per una costante di build, e vale in tutti e tre i mondi: sostituita nel bundle, iniettata come globale in sviluppo (`/@vite/env`) e sotto `vitest` — misurato. ⚠️ **Costo dichiarato:** la lettura vive nella configurazione e non in `stamp.ts`, e in sviluppo il server va riavviato quando la mappa cambia — che accade solo quando cambia lo schema del kernel, e allora la SPA si ricostruisce comunque; che il timbro arrivi nei tre mondi lo misura il criterio di chiusura del 13 |
+| **D91** | ⛔ **`@intlify/vue-i18n/no-raw-text` riceve `ignoreText: [":", "—"]`, e i due caratteri RESTANO nei template** — non si spostano in `it.json` | R8-2, misurato il 2026-09-16 sulla catena installata da R8 coi tredici `.vue` estratti dal piano: la regola a `error` nudo rende **sette** errori su `:` e `—` nudi fra due mustache — `ViewBar.vue`, `Status.vue` ×3, `Strip.vue` ×3 — che i compiti 13 e 14 dettano e la rete del 13 non vede (pretende `[A-Za-zÀ-ÿ]{2,}`): il 13 e il 14 chiuderebbero verdi e il **15 nascerebbe rosso**. La via scartata è spostare i sette caratteri nelle chiavi di `it.json`, che è una modifica a **due compiti già rivisti in profondità** (R6, R7) per punteggiatura che non è una scritta — *«chi lo userà, oggi?»*, quinto criterio. ⚠️ **E `ignoreText` NON spegne la regola**, misurato nelle due direzioni: con la lista, `npx eslint src` esce **0**; un template con `{{ a }}: ciao — {{ a }}` esce **1** con `raw text ': ciao —' is used`, perché la regola legge il **nodo di testo intero** e la lista vale solo quando il nodo è esattamente uno di quei caratteri. ⚠️ **Costo dichiarato:** due caratteri non sono più traducibili — e non lo erano comunque, perché `:` e `—` non cambiano con la lingua |
 
 **La baseline di partenza, misurata il 2026-09-11 su `42b50d8` e da NON citare nei compiti:**
 `bash scripts/gate.sh` → `GATE GREEN` · `bash scripts/check-docs.sh` → `OK — no inconsistencies.` ·
@@ -9933,6 +9934,33 @@ spunta finale.
   commit** — quale `.stderr`, e perché
 - [ ] la riga **7** della tabella della posizione a ✅ con la data
 - [ ] commit `gui(compito 7, sotto-progetto 2 parte 2): …`, **senza co-autore**, e push
+
+**Criterio di chiusura del compito 7**
+
+⛔ **RICHIAMO DEL 2026-09-16, dalla revisione in profondità dei compiti 15, 16 e 17 (R8-21): questo criterio NON
+esisteva.** Il compito 7 era l'unico dei diciassette senza, e il difetto è saltato fuori dal **17**, che si impegna a
+riassumerli tutti: `grep -nE '^(#### |\*\*)Criterio di chiusura' <questo file>` ne contava sedici su diciassette
+compiti. Le righe qui sotto sono ciò che i Passi di questo compito già pretendono, messe dove i fratelli le mettono.
+
+```bash
+grep -c '^#\[test\]' crates/kernel/tests/serving.rs
+grep -rn 'fn ipc' crates/kernel/src/serving.rs
+grep -c 'POLICY_FUNCTION' crates/kernel/src/serving.rs
+grep -rn 'admit' crates/kernel/src/serving.rs
+grep -c 'RICHIAMO DEL <data>, compito 7' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+grep -c 'RICHIAMO DEL <data>, compito 7' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+grep -c '<data>' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+```
+
+- [ ] `bash scripts/gate.sh` → `GATE GREEN`; `gate-deps.sh` e `gate-attributes.sh` verdi, e la lista di ADR-0031 **non cresciuta**
+- [ ] ⛔ **le sedici sonde di `crates/kernel/tests/serving.rs` sono verdi**, e il loro numero è quello che il Passo 6 detta: il primo comando le conta
+- [ ] ⛔ **`Core::ipc` NON esiste ancora:** il secondo comando **non rende nulla** — il suo chiamante è il rubinetto del compito **12**, e *«un elemento d'API senza chiamante si cancella»* (`crates/kernel/src/boundary.rs`)
+- [ ] ⛔ **il ramo `Request` non chiama l'arbitro (D5):** il quarto comando **non rende nulla**, e la sonda `a_request_reaches_neither_the_arbiter_nor_the_journal` è verde
+- [ ] ⛔ **la funzione registrata è UNA**, `POLICY_FUNCTION`, e `kernel::registry` non nomina l'arbitro (**D16**): `grep -c 'use crate::arbiter\|crate::arbiter::' crates/kernel/src/registry.rs` → **0**
+- [ ] ⛔ **i sette richiami datati sono scritti e la data è vera:** **5** nel disegno del 2 e **2** nella stella, e `grep -c '<data>'` sui due disegni → **0** (D75)
+- [ ] ⛔ **i `compile_fail` sono riletti, non rigenerati in blocco:** `git diff --stat -- crates/kernel/tests/compile_fail/` nomina il **solo** `parameters_have_no_default.stderr`, e il commit dice perché
+- [ ] ⛔ **i fine-riga sono invariati:** i due file nuovi a **zero** CR, `git ls-files --eol` uguale al Passo 1 su ogni file modificato
+- [ ] `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto; la riga **7** della tabella della posizione a ✅ col proprio commit
 
 ---
 
@@ -19360,7 +19388,7 @@ git push
 - ⛔ **NON si legge**: la §1 e la §2 della stella polare — questo compito non disegna niente che si veda; e i compiti 13 e 14, se non per i nomi dei file che il lint guarda
 
 **Interfaces:**
-- Consumes: `gui/package.json` col comando `test` e `build` (compito **11**); `gui/src/locales/copy.test.ts` e `gui/src/panels/registry.ts` (compito **13**); `gui/src/panels/Chat.vue` e le diciotto chiavi `modules.*` di `gui/src/locales/it.json` (compito **13**, Passo 5 — ⚠️ qui stava «14», R7-7, e poi «Passo 12»: le chiavi sono dettate per esteso al Passo 5 dal 2026-09-16, R6-4); `gui/fake-core/Cargo.toml` col proprio `Cargo.lock` (compito **12**); il settimo passo di `scripts/gate.sh` **come il compito 10 lo lascia**
+- Consumes: `gui/package.json` col comando `test` e `build` (compito **11**); `gui/src/locales/copy.test.ts` e `gui/src/panels/registry.ts` (compito **13**); `gui/src/panels/Chat.vue` (compito **14**, che lo crea); le diciotto chiavi `modules.*` di `gui/src/locales/it.json` (compito **13**, Passo 5 — ⚠️ qui stava «14», R7-7, e poi «Passo 12»: le chiavi sono dettate per esteso al Passo 5 dal 2026-09-16, R6-4; ⛔ **e `Chat.vue` è tornato al 14, dov'è creato:** la correzione delle chiavi se l'era portato dietro — R8-5, 2026-09-16); `gui/fake-core/Cargo.toml` col proprio `Cargo.lock` (compito **12**); il settimo passo di `scripts/gate.sh` **come il compito 10 lo lascia**
 - Produces, e i compiti 16 e 17 li usano con questi nomi esatti:
   - `scripts/gate-gui.sh` — un passo, nessun argomento; `cd` alla radice; esce **0** verde, **diverso da zero** al primo rosso. ⛔ **Il compito 16 gli aggiunge `npm audit` in coda**, quindi il file nasce con la forma che regge una riga in più
   - la riga `run "gui: fake core and SPA" bash scripts/gate-gui.sh` in `scripts/gate.sh`, **fra** «attributes of the constrained crates» e «documentation consistency»
@@ -19385,11 +19413,11 @@ grep -c '"lint"' gui/package.json
 ls gui/src/locales/copy.test.ts gui/src/panels/Chat.vue gui/fake-core/Cargo.toml 2>&1
 git ls-files --eol scripts/gate.sh .github/workflows/quality-gate.yml gui/package.json
 node --version
+time bash scripts/gate.sh > /dev/null 2>&1
 ```
 
 Atteso: i due file **non esistono**; **zero** per `gate-gui`, `setup-node` e `"lint"`; **otto** righe `gui-shell`
-in `.gitignore` e **quattro** lockfile dello spike tracciati — sono di `8fc9696`, **P-102**, e questo compito non
-li tocca; i tre file dei compiti 12, 13 e 14 **esistono**; `scripts/gate.sh` e il flusso di lavoro **`i/lf w/crlf`**, come il
+in `.gitignore` e **quattro** lockfile dello spike tracciati — ⚠️ **da TRE commit e non da uno**, `git blame -L 34,41 .gitignore`: `01694e3` le due di `app/`, `8fc9696` le tre di `electron/`, `d5eb0b8` le tre di `tauri/`, cioè i compiti 2, 4 e 5 della parte 1 (R8-8, 2026-09-16: **P-102** ne attribuiva otto a `8fc9696` perché il suo comando cercava `electron/out`, che uno solo ha aggiunto; il **conteggio** su cui il passo asserisce regge) — e questo compito non li tocca; i tre file dei compiti 12, 13 e 14 **esistono**; `scripts/gate.sh` e il flusso di lavoro **`i/lf w/crlf`**, come il
 compito 10 li lascia — R10-1: qui stava «LF», e un inserimento LF fra righe CRLF avrebbe reso il file `w/mixed`. Si misura:
 `tr -cd '\r' < scripts/gate.sh | wc -c` contro `wc -l < scripts/gate.sh`, **uguali**; lo stesso sul flusso.
 
@@ -19401,13 +19429,14 @@ parte: l'eccezione del Passo 3 nominerebbe un file che non c'è, e il lint non h
 
 ⛔ **Si rimisura prima di scrivere** — vincolo globale 8. Le versioni qui sono di **P-2**, del 2026-09-11,
 rilette il 2026-09-15 scrivendo questo compito: `eslint` **10.10.0**, `eslint-plugin-vue` **10.11.0**,
-`@intlify/eslint-plugin-vue-i18n` **4.5.1**.
+`@intlify/eslint-plugin-vue-i18n` **4.5.1**; e `@typescript-eslint/parser` **8.70.0**, che entra in P-2 dal 2026-09-16 (R8-1, misurato: MIT, `engines.node` `^18.18.0 || ^20.9.0 || >=21.1.0`, più largo di **D37**).
 
 ```bash
 python - <<'EOF'
 import json, urllib.request, urllib.parse
 for p, v in {"eslint": "10.10.0", "eslint-plugin-vue": "10.11.0",
-             "@intlify/eslint-plugin-vue-i18n": "4.5.1"}.items():
+             "@intlify/eslint-plugin-vue-i18n": "4.5.1",
+             "@typescript-eslint/parser": "8.70.0"}.items():
     d = json.load(urllib.request.urlopen("https://registry.npmjs.org/" + urllib.parse.quote(p, safe="@")))
     m = d["versions"][v]
     print(f"{p:34} latest={d['dist-tags']['latest']:10} pinned={v:9} {d['time'][v][:10]} "
@@ -19427,6 +19456,7 @@ In `gui/package.json` le `devDependencies` guadagnano:
 
 ```json
     "@intlify/eslint-plugin-vue-i18n": "4.5.1",
+    "@typescript-eslint/parser": "8.70.0",
     "eslint": "10.10.0",
     "eslint-plugin-vue": "10.11.0"
 ```
@@ -19437,10 +19467,7 @@ e gli `scripts` guadagnano — ⛔ **la cartella, non un elenco di file**, e il 
     "lint": "eslint src"
 ```
 
-⚠️ **Nessun `@typescript-eslint/parser`, e non è una dimenticanza:** è un peer **opzionale** di
-`eslint-plugin-vue` (`peerDependenciesMeta` dice `{"optional":true}`, misurato il 2026-09-15) e i `.ts` questa
-catena **non li guarda affatto** — li guarda `vue-tsc` dentro `npm run build`, che è il livello 1 del mondo web
-(§8). Una dipendenza in meno, e **P-101** è la misura.
+⛔ **RICHIAMO DEL 2026-09-16, dalla revisione in profondità di questo compito (R8-1): `@typescript-eslint/parser` SERVE, e qui stava il contrario.** La riga diceva che nessun analizzatore TypeScript è necessario perché «i `.ts` questa catena non li guarda affatto» — vero per i `.ts` (**P-101**), e **irrilevante**: il difetto è nei `.vue`. `vue-eslint-parser` analizza il blocco `<script setup lang="ts">` con **espree** quando `parserOptions.parser` non è dato, e la sintassi TypeScript lo ferma. Misurato installando la catena alle versioni qui sopra ed estraendo dal piano i tredici `.vue`: `npx eslint src` esce **1** con **dodici** problemi, di cui **sei `Parsing error`** — `Confirm.vue`, `Frame.vue`, `ViewBar.vue`, `Chat.vue`, `Placeholder.vue`, `Settings.vue`. ⛔ **E un file che non si parsa non riceve NESSUNA regola**, quindi la riga 4 della tabella del Passo 4 — l'eccezione di `Chat.vue` provata su `EXIT=0` — sarebbe **vacua**: `npx eslint src/panels/Chat.vue` esce **1** con *Parsing error*. Col blocco del Passo 3 i sei spariscono e la riga 4 rende **0**. ⚠️ **È un peer OPZIONALE** di `eslint-plugin-vue` (`peerDependenciesMeta` → `{"optional":true}`, rimisurato il 2026-09-16), quindi npm **non** lo tira dentro da sé: va nel manifesto.
 
 Poi, **fuori dal cancello** e prima del commit:
 
@@ -19471,6 +19498,7 @@ for (const p of ['vue-eslint-parser', 'jsonc-eslint-parser', 'yaml-eslint-parser
 
 ```js
 import i18n from "@intlify/eslint-plugin-vue-i18n";
+import tsParser from "@typescript-eslint/parser";
 import vue from "eslint-plugin-vue";
 
 /**
@@ -19487,6 +19515,20 @@ export default [
   ...vue.configs["flat/essential"],
   ...i18n.configs["flat/base"],
   {
+    /**
+     * ⛔ THE TypeScript PARSER FOR THE `.vue` FILES, AND WITHOUT IT SIX OF THE THIRTEEN DO NOT PARSE.
+     * `vue-eslint-parser` reads a `<script setup lang="ts">` block with espree unless it is given one,
+     * and TypeScript syntax stops espree -- measured on 2026-09-16 on the thirteen `.vue` of this plan:
+     * `Parsing error` on `Confirm`, `Frame`, `ViewBar`, `Chat`, `Placeholder`, `Settings`. A file that
+     * does not parse gets NO rule at all, so without this block the scoped exception below could not be
+     * proven either (R8-1). The `.ts` files are still nobody's business here (P-101): `vue-tsc` inside
+     * `npm run build` is the level 1 of the web world.
+     */
+    name: "harness/ts-in-vue",
+    files: ["**/*.vue"],
+    languageOptions: { parserOptions: { parser: tsParser } },
+  },
+  {
     name: "harness/settings",
     settings: { "vue-i18n": { localeDir: "./src/locales/*.json" } },
   },
@@ -19495,7 +19537,7 @@ export default [
     rules: {
       /**
        * ⛔ OFF, AND RENAMING IS NOT THE CURE. The file name of a panel IS the `module` of the
-       * `PANEL_TYPES` registry (task 13) and IS the `modules.*` key of the locale (task 14).
+       * `PANEL_TYPES` registry (task 13) and IS the `modules.*` key of the locale (task 13 too, step 5).
        * Renaming to please a lint would move two houses that have nothing to do with the lint.
        * Every `.vue` file here but `ViewBar` is single-word (P-99; recounted at the review, R7-11).
        */
@@ -19510,8 +19552,15 @@ export default [
        * preset's level, `eslint` exits 0 on a template full of raw text (P-98). This rule is what
        * replaces the FIRST probe of `src/locales/copy.test.ts`; the second one survives, because it
        * watches keys the SPA BUILDS and no lint can see those (P-105).
+       *
+       * ⛔ `ignoreText` IS PUNCTUATION AND NOT AN ESCAPE HATCH (D91). Measured on 2026-09-16 on the
+       * thirteen `.vue` of this plan: seven errors on bare `:` and `—` between two mustaches, in
+       * `ViewBar`, `Status` and `Strip` -- which tasks 13 and 14 dictate and whose own net does not see
+       * (it wants two letters), so 13 and 14 would close green and THIS task would be born red. The list
+       * only silences a text node that IS one of those characters: `{{ a }}: ciao — {{ a }}` still goes
+       * red with `raw text ': ciao —' is used`, measured in both directions.
        */
-      "@intlify/vue-i18n/no-raw-text": "error",
+      "@intlify/vue-i18n/no-raw-text": ["error", { ignoreText: [":", "—"] }],
       /**
        * ⛔ The other half: a key written in a template and missing from `it.json`. Blind to a built
        * key -- measured, both directions in one file (P-105).
@@ -19591,13 +19640,15 @@ Atteso, misurato il 2026-09-15 su una riproduzione della stessa configurazione:
 | 1 | testo grezzo nel template | `error  raw text 'riprova piu tardi' is used  @intlify/vue-i18n/no-raw-text`, `EXIT=1` |
 | 2 | `$t("modules.inventato")` | `error  'modules.inventato' does not exist in localization message resources`, `EXIT=1` |
 | 3 | `v-html` fuori da `Chat.vue` | `error  'v-html' directive can lead to XSS attack  vue/no-v-html`, `EXIT=1` |
-| 4 | `Chat.vue` **non toccato** | ⚠️ **avviso `File ignored because no matching configuration was supplied`? NO** — il file è `.vue` e la configurazione lo copre: atteso `EXIT=0` senza righe, che è la contro-prova dell'eccezione |
+| 4 | `Chat.vue` **non toccato** | ⚠️ **avviso `File ignored because no matching configuration was supplied`? NO** — il file è `.vue` e la configurazione lo copre: atteso `EXIT=0` senza righe, che è la contro-prova dell'eccezione. ⛔ **RICHIAMO DEL 2026-09-16, R8-1:** senza il blocco `harness/ts-in-vue` questa riga rende **1** con `Parsing error`, non `0`, e l'eccezione resta **non provata** |
 
 ⛔ **E `git diff --stat gui/src` deve essere VUOTO alla fine.** Se non lo è, una mutazione è sopravvissuta: si
 revoca prima di proseguire.
 
 ⚠️ **La quarta non è un di più:** senza di essa il blocco `files` sarebbe indistinguibile da un `no-v-html`
 spento per tutti, che è la mutazione che la 3 esiste per cogliere.
+
+⛔ **E la prima è ANCHE la contro-prova di `ignoreText`** (**D91**, R8-2): la lista `[":", "—"]` vale solo quando il nodo di testo **è** uno di quei caratteri, quindi *«riprova piu tardi»* resta rosso. Misurato il 2026-09-16 anche nella forma mista, `{{ a }}: ciao — {{ a }}` → `raw text ': ciao —' is used`, `EXIT=1`: chi esegue non aggiunge una mutazione, la **riconosce** in questa.
 
 - [ ] **Passo 5: la prima sonda di `copy.test.ts` muore, la seconda resta**
 
@@ -19830,18 +19881,19 @@ In `.github/workflows/quality-gate.yml`, **prima** di `- run: bash scripts/gate.
 ⛔ **Il blocco si scrive PRIMA in un file dello scratchpad, poi lo si appende**, e non si passa come argomento a
 una shell: porta apici, cancelletti e due punti, e passarlo inline è il modo in cui si perde un carattere senza
 accorgersene. Con l'editor si scrive il blocco qui sopra, **così com'è**, in `/tmp/setup-node.yml` — **LF**, e
-l'ultima riga termina con un a capo — e poi:
+l'ultima riga termina con un a capo — e poi: ⛔ **Python NON risolve il `/tmp` di Git Bash** — su Windows `os.path.abspath('/tmp/x')` rende `C:\tmp\x`, che non esiste (R8-3, 2026-09-16; è la trappola che la tredicesima chiusura di questo piano registra) — quindi il percorso glielo consegna `cygpath`, e il `tr` di bash resta com'è.
 
 ```bash
 tr -cd '\r' < /tmp/setup-node.yml | wc -c
+export SCRATCH="$(cygpath -w /tmp)"   # bash's /tmp as Windows sees it: Python does not resolve it (R8-3)
 python - <<'EOF'
-import io
+import io, os
 p = ".github/workflows/quality-gate.yml"
 text = io.open(p, encoding="utf-8", newline="").read()
 anchor = "      - run: bash scripts/gate.sh"
 assert text.count(anchor) == 1, "ancora non unica"
 assert "setup-node" not in text, "gia' inserito -- il compito e' eseguito"
-block = io.open("/tmp/setup-node.yml", encoding="utf-8", newline="").read()
+block = io.open(os.path.join(os.environ["SCRATCH"], "setup-node.yml"), encoding="utf-8", newline="").read()
 assert block.endswith("\n") and "\r" not in block, "il blocco deve essere LF e finire con un a capo"
 if "\r\n" in text:
     block = block.replace("\n", "\r\n")  # the workflow is CRLF in the working tree (R10-1)
@@ -19902,7 +19954,7 @@ questa riga — che non ne porta, deliberatamente. ⚠️ **E anche il commento 
 
 ⛔ **`<data>` e i tre `<tempo>` NON sono segnaposto:** sono i valori del giorno dell'esecuzione, e questo passo
 dice di sostituirli. Il terzo — il cancello **senza** il passo web — è il tempo che l'esecutore ha misurato
-**prima** di inserire la riga: si prende al Passo 1 e non si ricostruisce dopo.
+**prima** di inserire la riga: lo produce l'ultimo comando del **Passo 1**, `time bash scripts/gate.sh`, e non si ricostruisce dopo. ⚠️ **RICHIAMO DEL 2026-09-16, R8-4:** il Passo 1 non misurava **nessun** tempo — i suoi comandi erano `ls`, sei conteggi e `node --version` — quindi questa riga ordinava di scrivere un numero che nessun comando aveva prodotto; il `time` è stato aggiunto là, ed è anche la prova che il cancello è verde **prima** di cominciare.
 
 ⚠️ **Il commento va in inglese** (vincolo globale 2), come tutto `gate.sh`.
 
@@ -19939,7 +19991,11 @@ di essere condizionale. Il testo, in coda alla cella *«come si prova»* della r
 > quattro direzioni; la seconda sonda di `copy.test.ts` resta, per le chiavi che la SPA **costruisce** e che nessun lint
 > vede (P-105)
 
-Si scrive **prima** in `/tmp/richiamo-scritte.md`, **LF**, su una riga sola e senza il `>`, come l'altro.
+Si scrive **prima** in `/tmp/richiamo-scritte.md`, **LF**, su una riga sola e senza il `>`, come l'altro — e anche qui il percorso lo consegna a Python `cygpath`, mai `/tmp` (R8-3).
+
+⛔ **E un TERZO richiamo, sulla riga `scripts/gate-gui.sh` della §8 — R8-10:** la sua cella *Forma* elenca *«`npm ci`, `npm run build`, `npm test`»*, cioè **quattro** comandi col `cargo test` del finto, e dopo questo compito sono **cinque** e dopo il 16 **sette**; il commento dello script lo dice, la §8 no, e chi la rilegge ricostruirebbe uno script che non esiste. Il testo, in coda alla riga intera che comincia con `| \`scripts/gate-gui.sh\` |`, scritto prima in `/tmp/richiamo-forma.md`:
+
+> ✅ **RICHIAMO DEL \<data\>, dal compito 15 del piano della parte 2 (R8-10):** in coda arriva `npm run lint` da questo compito, e dal **16** `cargo audit --file gui/fake-core/Cargo.lock` prima del `cd gui` e `npm audit` in fondo (**D83**, **D71**): l'ordine che questa cella fissa **non cambia**, la catena si allunga
 
 ⛔ **Il richiamo si scrive PRIMA in `/tmp/richiamo-8.md`**, come il blocco YAML del Passo 9 e per la stessa ragione:
 porta apici, asterischi e trattini bassi. **LF**, su una riga sola, senza il `>` della citazione qui sopra — è un
@@ -19947,13 +20003,14 @@ capoverso, non un blocco citato. Poi:
 
 ```bash
 tr -cd '\r' < /tmp/richiamo-8.md | wc -c
+export SCRATCH="$(cygpath -w /tmp)"   # R8-3: Python does not resolve bash's /tmp
 python - <<'EOF'
-import io
+import io, os
 p = "docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md"
 text = io.open(p, encoding="utf-8", newline="").read()
 anchor = "finto e non riusi quello del workspace. **Assunto:** niente."
 assert text.count(anchor) == 1, "ancora non unica: %d" % text.count(anchor)
-recall = io.open("/tmp/richiamo-8.md", encoding="utf-8", newline="").read().strip()
+recall = io.open(os.path.join(os.environ["SCRATCH"], "richiamo-8.md"), encoding="utf-8", newline="").read().strip()
 assert "\r" not in recall and "<data>" not in recall, "LF, e la data va sostituita prima"
 assert recall not in text, "gia' scritto -- il passo e' eseguito"
 text = text.replace(anchor, "finto e non riusi quello del workspace. " + recall + " **Assunto:** niente.", 1)
@@ -19961,10 +20018,17 @@ text = text.replace(anchor, "finto e non riusi quello del workspace. " + recall 
 lines = text.split("\n")
 hits = [i for i, line in enumerate(lines) if line.startswith("| le scritte, `locales/it.json` (G21) |")]
 assert len(hits) == 1, "la riga delle scritte non e' una: %d" % len(hits)
-strings = io.open("/tmp/richiamo-scritte.md", encoding="utf-8", newline="").read().strip()
+strings = io.open(os.path.join(os.environ["SCRATCH"], "richiamo-scritte.md"), encoding="utf-8", newline="").read().strip()
 assert "\r" not in strings and "<data>" not in strings, "LF, e la data va sostituita prima"
 assert strings not in text and lines[hits[0]].endswith(" |"), "gia' scritto, o la riga non finisce con la barra"
-lines[hits[0]] = lines[hits[0]][:-2] + " " + strings + " |"
+    lines[hits[0]] = lines[hits[0]][:-2] + " " + strings + " |"
+# The THIRD recall, on the row of `gate-gui.sh` in §8 (R8-10): same shape, its own anchor.
+hits = [i for i, line in enumerate(lines) if line.startswith("| `scripts/gate-gui.sh` |")]
+assert len(hits) == 1, "la riga di gate-gui.sh non e' una: %d" % len(hits)
+shape = io.open(os.path.join(os.environ["SCRATCH"], "richiamo-forma.md"), encoding="utf-8", newline="").read().strip()
+assert "\r" not in shape and "<data>" not in shape, "LF, e la data va sostituita prima"
+assert shape not in text and lines[hits[0]].endswith(" |"), "gia' scritto, o la riga non finisce con la barra"
+lines[hits[0]] = lines[hits[0]][:-2] + " " + shape + " |"
 io.open(p, "w", encoding="utf-8", newline="").write("\n".join(lines))
 EOF
 tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c
@@ -19984,6 +20048,23 @@ git status --porcelain
 git diff --stat -- .gitignore
 ```
 
+⛔ **E `GATE RED` dal CANCELLO, non solo dallo script — R8-10bis, 2026-09-16 (R8-7).** La §8 chiede la seconda direzione *«un test della SPA reso rosso → `GATE RED`»*, e il Passo 7 la prova su `gate-gui.sh` **lanciato a mano**: che la riga `run` porti quel rosso fino in fondo al cancello non lo provava nessuno. Una mutazione sola, la stessa del mondo web:
+
+```bash
+cp gui/src/locales/copy.test.ts /tmp/copy.bak
+python - <<'EOF'
+import io
+p = "gui/src/locales/copy.test.ts"
+b = io.open(p, encoding="utf-8", newline="").read()
+io.open(p, "w", encoding="utf-8", newline="").write(b.replace("toContain(type.module)", 'toContain("non-esiste")', 1))
+EOF
+bash scripts/gate.sh 2>&1 | tail -3
+cp /tmp/copy.bak gui/src/locales/copy.test.ts
+git diff --stat gui/src
+```
+
+Atteso: **`GATE RED`** col nome del passo web nell'uscita, e `git diff --stat gui/src` **vuoto** dopo la revoca. ⛔ **Se il cancello resta verde, la riga `run` non è nel posto giusto o non propaga l'uscita:** si rilegge il Passo 8 prima di committare.
+
 Atteso: `GATE GREEN`; l'etichetta del passo compare **più di zero** volte nell'uscita — è la seconda metà della
 prova della §8, *«l'etichetta del passo compare nell'uscita del cancello»*; `check-docs.sh` → `OK`; e ⛔ **il diff
 di `.gitignore` VUOTO**, che è **D67** reso una asserzione invece di una promessa.
@@ -20002,6 +20083,7 @@ git push
 
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`, e `bash scripts/gate.sh 2>&1 | grep -c 'gui: fake core and SPA'` → **più di zero**
 - [ ] ⛔ **il passo web va rosso dai DUE mondi**, eseguito come al Passo 7, con `git status --porcelain` **vuoto** alla fine
+- [ ] ⛔ **e il CANCELLO dice `GATE RED`** con la mutazione del Passo 12, eseguita e revocata, `git diff --stat gui/src` vuoto (R8-7: la §8 chiede `GATE RED`, e prima del 2026-09-16 nessun passo lo pretendeva)
 - [ ] ⛔ **le quattro direzioni del lint** eseguite come al Passo 4, e `git diff --stat gui/src` **vuoto** alla fine
 - [ ] ⛔ **il preset NON stampa avvisi:** `cd gui && npx eslint src` su un albero pulito rende **zero righe** e `EXIT=0`. ⚠️ Se stampa avvisi, è `flat/recommended` invece di `flat/essential` — **D63**
 - [ ] ⛔ **l'eccezione di `Chat.vue` è SCOPED e lo si prova:** `cd gui && npx eslint src/panels/Chat.vue; echo $?` → **0**, e la mutazione 3 del Passo 4 — lo stesso `v-html` in un altro pannello — → **diverso da zero**
@@ -20013,6 +20095,7 @@ git push
   ```
 
   → **uno** e **zero**: una sonda sola, e la funzione che serviva solo alla prima se n'è andata con lei (**P-105**)
+- [ ] ⛔ **l'analizzatore TypeScript c'è e i tredici `.vue` si parsano:** `grep -c 'harness/ts-in-vue' gui/eslint.config.js` → **1**, `grep -c '@typescript-eslint/parser' gui/package.json` → **1**, e `cd gui && npx eslint src` **non** stampa nessun `Parsing error` (R8-1)
 - [ ] ⛔ **nessuna regola è rimasta ad avviso nel nostro blocco:**
 
   ```bash
@@ -20074,7 +20157,7 @@ git ls-files --eol scripts/gate.sh scripts/gate-gui.sh .github/workflows/quality
 awk -F'|' '/^\| \*\*X-1\*\*|^\| \*\*X-3\*\*/{print substr($0, 1, 90)}' docs/audit-2026-08-27.md
 ```
 
-Atteso: **zero** per `cargo audit` (in entrambi gli script), `npm audit` e `matrix`; **uno** per `gate-gui` e `setup-node`,
+Atteso: **zero** per `cargo audit` (in entrambi gli script), `npm audit` e `matrix`; **più di zero** per `gate-gui` — la riga `run` più il commento del Passo 10 del 15, che lo nomina su due righe (R8-16, 2026-09-16: qui stava «uno», e il conteggio vero è **tre**) — e **uno** per `setup-node`,
 ⛔ **e se sono zero il compito 15 non è eseguito** e questo compito non parte; le due righe dell'audit ci sono; `gate.sh`, il
 flusso e l'audit **`i/lf w/crlf`**, `gate-gui.sh` **`i/lf w/lf`** — R10-2: qui stava «tutti LF», e il Passo 6 diceva già il
 contrario dell'audit.
@@ -20118,11 +20201,14 @@ Il commento e la riga, **in inglese** (vincolo globale 2):
 #     cargo install cargo-audit --locked --version 0.22.2
 #
 # ⛔ NO `-n` / `--no-fetch`, AND THAT IS THE POINT OF THIS COMMENT. Measured on 2026-09-15 on this
-# lockfile: `-n` gives the SAME verdict in ~1.3s instead of ~10s, so somebody will add it as an
+# lockfile: `-n` gives the SAME verdict in a fraction of the time, so somebody will add it as an
 # optimisation -- and it would make the check blind to whatever was published AFTER the last run
 # that fetched, which is the exact failure X-3 exists to prevent.
 #
-# ⚠️ TWO COSTS, DECLARED. This step wants the NETWORK, and about nine of its ten seconds are that.
+# ⚠️ TWO COSTS, DECLARED. This step wants the NETWORK, and most of its wall time is that:
+#   <data>: `cargo audit` <tempo>, `cargo audit -n` <tempo> -- measured at step 3, same verdict.
+# ⛔ THE FIRST RUN ON A MACHINE IS DIFFERENT AND THAT IS WHY NO CONSTANT IS WRITTEN HERE: it CLONES the
+# ~45 MB advisory database (about ten seconds), and every run after it is an incremental fetch.
 # And it can go red WITHOUT A COMMIT, because the world published an advisory -- which is the point
 # rather than the price.
 #
@@ -20134,16 +20220,17 @@ run "dependency advisories"               cargo audit
 ```
 
 L'inserimento, **per ancora unica** e conservando i fine-riga — il commento si scrive **prima** in un file dello
-scratchpad, `/tmp/audit-comment.sh`, **LF**, e poi:
+scratchpad, `/tmp/audit-comment.sh`, **LF**, e poi — ⛔ **il percorso lo consegna `cygpath`, perché Python non risolve il `/tmp` di Git Bash** (R8-13, la stessa trappola del Passo 9 del 15):
 
 ```bash
 tr -cd '\r' < /tmp/audit-comment.sh | wc -c
+export SCRATCH="$(cygpath -w /tmp)"
 python - <<'EOF'
-import io
+import io, os
 p = "scripts/gate.sh"
 text = io.open(p, encoding="utf-8", newline="").read()
 anchor = 'run "attributes of the constrained crates"'
-block = io.open("/tmp/audit-comment.sh", encoding="utf-8", newline="").read()
+block = io.open(os.path.join(os.environ["SCRATCH"], "audit-comment.sh"), encoding="utf-8", newline="").read()
 assert text.count(anchor) == 1, "ancora non unica"
 assert "cargo audit" not in text, "gia' inserita -- il compito e' eseguito"
 assert block.endswith("\n") and "\r" not in block, "il blocco deve essere LF e finire con un a capo"
@@ -20186,6 +20273,8 @@ git status --porcelain
 Atteso, misurato il 2026-09-15: la prima rende `warning: 1 allowed warning found` e **`EXIT=0`**; la seconda
 `error: 1 denied warning found!` e **`EXIT=1`**; e `git status --porcelain` **vuoto**, perché nessuno dei due
 scrive.
+
+⚠️ **E i due tempi si annotano qui**, per il commento del Passo 2 (R8-14): `time cargo audit` e `time cargo audit -n`, con la data. ⛔ **Su una macchina che non ha mai scaricato la base degli avvisi la prima corsa CLONA ~45 MB** — `ls -la ~/.cargo/advisory-db` dice quando è nata — e vale una decina di secondi; le corse dopo sono un fetch incrementale, misurate **~2 s** contro **~0,55 s** il 2026-09-16. È il motivo per cui il commento porta `<tempo>` e non una costante: **l'argomento di D69 non cambia**, `-n` resta più veloce e resta cieco.
 
 ⚠️ **Se la prima uscisse ROSSA**, non si abbassa niente: significa che il mondo ha pubblicato un avviso **nuovo**
 su una delle nostre crate, ed è il caso per cui questo passo esiste. Si legge l'avviso, e la via è aggiornare o
@@ -20245,7 +20334,7 @@ a un commit distratto.
 - [ ] **Passo 5: la matrice e l'installazione nel flusso di lavoro**
 
 Il flusso di lavoro, **come il compito 15 lo lascia**, guadagna tre cose: la matrice, `runs-on` che la legge, e il
-passo che installa l'attrezzo. Si scrive il file **intero** in `/tmp/quality-gate.yml` — **LF** nell'editor, e
+passo che installa l'attrezzo. Si scrive il file **intero** in `/tmp/quality-gate.yml` — **LF** nell'editor, letto da Python col percorso di `cygpath` (R8-13), e
 poi convertito ai fine-riga del file, che è `w/crlf` (R10-2) — e lo si scrive sopra: è più corto di un inserimento per ancore,
 e il diff lo mostra tutto:
 
@@ -20311,9 +20400,10 @@ memoria: si confronta.
 tr -cd '\r' < /tmp/quality-gate.yml | wc -c
 diff <(git show HEAD:.github/workflows/quality-gate.yml | grep -A 4 'setup-node@') \
      <(grep -A 4 'setup-node@' /tmp/quality-gate.yml) && echo "il blocco setup-node e' INVARIATO"
+export SCRATCH="$(cygpath -w /tmp)"
 python - <<'EOF'
-import io
-src = io.open("/tmp/quality-gate.yml", encoding="utf-8", newline="").read()
+import io, os
+src = io.open(os.path.join(os.environ["SCRATCH"], "quality-gate.yml"), encoding="utf-8", newline="").read()
 assert "\r" not in src, "LF nell'editor"
 p = ".github/workflows/quality-gate.yml"
 old = io.open(p, encoding="utf-8", newline="").read()
@@ -20356,7 +20446,8 @@ testo senza `\r`. I due richiami, in coda alla rispettiva cella:
 > `strategy.matrix.os` con `ubuntu-latest` e `windows-latest` e `fail-fast: false`, così un rosso su un sistema non
 > nasconde l'altro. ⛔ **La metà che non si misura da terra è dichiarata:** che il runner Windows onori
 > `rust-toolchain.toml` lo dice **la corsa**, non un comando locale — **P-111**, e il criterio di chiusura del 16
-> manda a guardarla.
+> manda a guardarla. ⚠️ **E la sonda `#[cfg(unix)]` di questa cella è UNA**, non due — `the_journal_file_is_not_world_readable` in `crates/platform/tests/file_journal.rs`; il secondo `cfg(unix)` è la `mode(0o600)` di `FileBackend::open`, codice di produzione: quante siano lo dice
+> `grep -rn 'cfg(unix)' crates/ --include='*.rs'` (R8-15, 2026-09-16; era già così al commit dell'audit).
 
 > **X-3** — ✅ **CHIUSA IL \<data\>, dal compito 16 del piano della parte 2:** `cargo audit` in `gate.sh` accanto a
 > `gate-deps.sh` e `npm audit` in coda a `gate-gui.sh`, **senza** `-n` e **senza** `--audit-level` (**D69**,
@@ -20366,17 +20457,18 @@ testo senza `\r`. I due richiami, in coda alla rispettiva cella:
 > dell'ambiente** (**D68**), come il bersaglio di `rustup`.
 
 ⛔ **`<data>` è la data del giorno dell'esecuzione**, e questo passo dice di sostituirla: non è un segnaposto. I due
-testi si scrivono **prima** in `/tmp/x1.md` e `/tmp/x2.md`, su una riga sola ciascuno e **senza** il `>`, poi:
+testi si scrivono **prima** in `/tmp/x1.md` e `/tmp/x2.md`, su una riga sola ciascuno e **senza** il `>`, e il percorso lo consegna `cygpath` (R8-13), poi:
 
 ```bash
+export SCRATCH="$(cygpath -w /tmp)"
 python - <<'EOF'
-import io
+import io, os
 p = "docs/audit-2026-08-27.md"
 text = io.open(p, encoding="utf-8", newline="").read()
-pairs = [("la voce resta aperta finché il passo non esiste", "/tmp/x1.md"),
-         ("la voce resta aperta finché i passi non esistono", "/tmp/x2.md")]
+pairs = [("la voce resta aperta finché il passo non esiste", "x1.md"),
+         ("la voce resta aperta finché i passi non esistono", "x2.md")]
 for anchor, src in pairs:
-    add = io.open(src, encoding="utf-8", newline="").read().strip()
+    add = io.open(os.path.join(os.environ["SCRATCH"], src), encoding="utf-8", newline="").read().strip()
     assert text.count(anchor) == 1, "ancora non unica: %s" % anchor
     assert "\r" not in add and "<data>" not in add, "LF, e la data va sostituita prima"
     assert add not in text, "gia' scritto -- il passo e' eseguito"
@@ -20455,12 +20547,12 @@ git push
 - [ ] ⛔ **niente `-n` e niente `--audit-level`**, e lo si prova col comando invece di rileggerlo:
 
   ```bash
-  grep -cE 'cargo audit ((-n|--no-fetch)\b|.*--no-fetch)' scripts/gate.sh
-  grep -c 'audit-level' scripts/gate-gui.sh
+  grep -cE 'cargo audit ((-n|--no-fetch)\b|.*--no-fetch)' scripts/gate.sh scripts/gate-gui.sh
+  grep -cE '^[^#]*audit-level' scripts/gate-gui.sh
   ```
 
-  → **zero** ed **zero** (**D69**, **D71**)
-- [ ] ⛔ **`npm audit` è l'ULTIMA riga di `gate-gui.sh`**, dentro `gui/`: `tail -3 scripts/gate-gui.sh` lo mostra, e sopra c'è `npm run lint` del compito 15
+  → **zero** per entrambi i file e **zero** (**D69**, **D71**). ⛔ **RICHIAMO DEL 2026-09-16, R8-11 e R8-17:** il secondo comando era `grep -c 'audit-level'` e rendeva **1** su un file **giusto**, perché la parola sta nel commento che il Passo 4 stesso scrive — `^[^#]*` la cerca fuori dai commenti, provato nelle due direzioni sul file ricostruito (0 com'è, 1 con `npm audit --audit-level=high`); e il primo guardava **un** file solo, mentre da **D83** i siti di `cargo audit` sono due
+- [ ] ⛔ **`npm audit` è l'ULTIMA riga di `gate-gui.sh`**, dentro `gui/`: `tail -2 scripts/gate-gui.sh` lo mostra, e `grep -n 'npm run lint\|npm audit' scripts/gate-gui.sh` rende **due** righe, `lint` prima di `audit` (R8-12: `tail -3` non arrivava a `npm run lint`, che sta **undici** righe più su per via del commento di otto righe del Passo 4 — un numero fisso di righe invecchia col commento)
 - [ ] ⛔ **la riga di `cargo audit` sta FRA «allow-list» e «attributes»:** `grep -n 'run "' scripts/gate.sh` le mostra in quest'ordine — workspace build, tests, no-OS, allow-list, **dependency advisories**, attributes, gui, documentation
 - [ ] ⛔ **nessuna crate e nessun manifesto toccati:** `git diff --stat HEAD~1 -- crates/ Cargo.toml Cargo.lock` **vuoto** — `cargo audit` è un attrezzo, non una dipendenza
 - [ ] ⛔ **il blocco `setup-node` è IDENTICO a quello del compito 15**, col `diff` del Passo 5 **vuoto**
@@ -20487,6 +20579,7 @@ git push
 - Modify: `docs/HANDOFF.md` (**CRLF**) — i gotcha nuovi, nella loro **unica** casa
 - Modify: `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md` (**LF**) — la Definizione di «fatto» (**D74**)
 - Modify: `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` (**LF**) — la riga «codice e spec non toccati» della tabella dello stato, «Il prossimo passo», e i tre 🔶 che il piano ha confermato (R9b-6, R9b-13, **D87**) — Passo 8-bis
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**) — la riga *«Codice di prodotto»* della tabella dello stato della **§10**, che dice *«non toccato»* e da questo piano è falsa (R8-26) — Passo 8-quater
 - Modify: `docs/design/10-modello-dei-dati-durevoli.md` (**LF**, `docs/design/` è misto: `git ls-files --eol` al Passo 1) — `INVOCATION_DETAIL` e `POLICY_DETAIL` nel primo `erDiagram`, col richiamo (R9b-2, **D85**) — Passo 8-ter
 - ⛔ **NON si tocca nessun ADR:** questo piano non ne apre (vincolo globale 10), e la §5 del compendio non cresce
 - ⛔ **NON si tocca il codice:** questo compito è documenti, e il criterio di chiusura lo **asserisce**
@@ -20521,17 +20614,20 @@ bash scripts/gate.sh 2>&1 | tail -2
 
 Atteso: le sette case `i/lf w/crlf`, e la stella, `design/10` e il piano `i/lf w/lf` (**P-114**); il tetto e il peso del compendio, da cui il
 **margine** (**P-115**); il numero dei gotcha, che è la baseline del Passo 8; **zero** per i nomi del 2 in `README.md`
-(**P-116**); **uno** per la sezione S3, che è il modello; le due righe della roadmap; `GATE GREEN`.
+(**P-116**); **uno** per la sezione S3, che è il modello; `GATE GREEN`. ⚠️ **Della roadmap escono TRE righe e non due** (R8-22, 2026-09-16): l'intestazione *«Ultimo aggiornamento»*, che il Passo 5 riscrive, la riga **2** dei sotto-progetti e la riga del piano nella tabella dei piani.
 
 ⛔ **Se `grep -c 'sottoprogetto-2…' docs/README.md` NON è zero, questo compito è già in parte eseguito:** ci si ferma
 e si riporta invece di aggiungere righe doppie.
 
-⚠️ **E si rileggono i sedici criteri di chiusura**, uno per compito, perché il Passo 9 li riassume e un riassunto
-scritto a memoria è il modo in cui una consegna sembra più completa di quanto sia:
+⚠️ **E si rileggono i criteri di chiusura**, uno per compito — quanti siano lo dice il comando e non questa riga —
+perché il Passo 9 li riassume e un riassunto scritto a memoria è il modo in cui una consegna sembra più completa
+di quanto sia:
 
 ```bash
-grep -n '^\*\*Criterio di chiusura' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
+grep -nE '^(#### |\*\*)Criterio di chiusura' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
 ```
+
+⛔ **RICHIAMO DEL 2026-09-16, R8-20 e R8-21.** Il comando era ancorato a `^\*\*` e rendeva **dieci** righe su diciassette compiti — i compiti **1–6** intestano il proprio criterio con `#### ` — quindi il Passo 9 avrebbe riassunto dieci criteri credendoli tutti. E il numerale *«sedici»* è **tolto e non riallineato**: era esatto sui criteri **esistenti** e falso sui compiti, perché il **compito 7 non ne aveva nessuno** — gliene è stato scritto uno nello stesso commit, e ora il comando e i compiti coincidono.
 
 - [ ] **Passo 2: la §12 del compendio — quattro righe, e il margine rimisurato**
 
@@ -20609,7 +20705,7 @@ grep -n 'parte-2-gui-minima' docs/roadmap.md
 ```
 
 - la riga **2** della tabella dei sotto-progetti passa da ⬜ a ✅ con la data — ⛔ **e cambia TITOLO (D86, debito dichiarato dalla §3 della stella):** da *«GUI minima (shell, chat, stato)»* a *«GUI minima — la cornice con `dockview`, il filo, la settima porta, il registro delle funzioni; Stato, Permessi, Passi, Impostazioni e la Chat sul core finto»*, cioè il perimetro della §3; il criterio lo conta
-- la riga del **piano della parte 2** — trovata col secondo `grep`, e letta com'è **prima** di riscriverla (R10-19 l'ha già portata a *«scritto il 2026-09-15, rivisto …»*) — passa a **«eseguito il \<data\>»**, `GATE GREEN` a ogni compito
+- la riga del **piano della parte 2** — trovata con `grep -n '^| \[Sotto-progetto 2 · parte 2' docs/roadmap.md`, che rende **una** riga (R8-22, 2026-09-16: il `grep -n 'parte-2-gui-minima'` del Passo 1 ne rende **due**, perché l'intestazione *«Ultimo aggiornamento»* cita lo stesso file), e letta com'è **prima** di riscriverla (R10-19 l'ha già portata a *«scritto il 2026-09-15, rivisto …»*) — passa a **«eseguito il \<data\>»**, `GATE GREEN` a ogni compito
 
 ⛔ **Non si rimette il conteggio dei compiti** — **P-113**: è stato tolto il 2026-09-15 (commit `850137c`) perché
 viveva in due case, e la casa unica è la tabella della posizione del piano. ⚠️ **E la riga *«Ultimo
@@ -20689,6 +20785,7 @@ b = io.open(p, encoding="utf-8", newline="").read()
 assert "\r\n" not in b
 lines = b.split("\n")
 DATE = "<data>"
+assert DATE != "<data>", "la data va sostituita PRIMA di lanciare (R8-23)"
 
 
 def one(needle):
@@ -20774,11 +20871,50 @@ tr -cd '\r' < docs/design/10-modello-dei-dati-durevoli.md | wc -c
 
 Atteso: **più di tre** (due relazioni e due blocchi, e il blocco nomina l'entità almeno una volta), **0**, **1**, **0**.
 
+- [ ] **Passo 8-quater: la §10 del disegno del 2 — la riga «Codice di prodotto» (R8-26)**
+
+⛔ **È il GEMELLO della riga che il Passo 8-bis corregge nella stella, e nessun passo lo toccava.** La tabella *«Lo stato alla chiusura, e il comando che lo rifà»* della §10 dice *«Codice di prodotto | **non toccato**: `git diff --stat 664265a..HEAD -- crates/ …` non rende nulla»*, e dal **compito 1** quel comando rende. ⚠️ **E la §10 resta il verbale della sessione che ha scritto i disegni:** non diventa il diario della parte 2, che vive in questo piano (**D74**) — il richiamo lo dice, così nessuno la riscrive per zelo.
+
+Il file è **LF**; l'ancora è la riga intera presa dal file, e il richiamo si appende **nell'ultima cella**.
+
+```bash
+python - <<'EOF'
+import io, os, sys
+sys.stdout.reconfigure(encoding="utf-8")
+DATE = "<data>"
+assert DATE != "<data>", "la data va sostituita PRIMA di lanciare (R8-23)"
+p = "docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md"
+b = io.open(p, encoding="utf-8", newline="").read()
+assert "\r\n" not in b, "il disegno del 2 e' LF (P-47)"
+lines = b.split("\n")
+hits = [i for i, line in enumerate(lines) if line.startswith("| Codice di prodotto |")]
+assert len(hits) == 1, f"la riga non e' una: {len(hits)}"
+i = hits[0]
+assert lines[i].endswith(" |"), lines[i][-60:]
+lines[i] = lines[i][:-2] + " ✅ **RICHIAMO DEL " + DATE + ", dal compito 17 del piano della parte 2 (R8-26):** "
+    "da questo piano il codice di prodotto **è** toccato — `crates/`, `scripts/`, `.github/`, i due lockfile e "
+    "`gui/`, che nasce — e la **Definizione di «fatto»** del piano dice che cosa, file per file, col comando. "
+    "⚠️ **E questa §10 resta il verbale della sessione che ha scritto i disegni:** il diario della parte 2 vive "
+    "nel piano (D74), non qui " + "|"
+out = "\n".join(lines)
+assert out.count("\n") == b.count("\n"), "a line was added or lost"
+tmp = p + ".tmp"
+io.open(tmp, "w", encoding="utf-8", newline="").write(out)
+os.replace(tmp, p)
+print("ok: one recall in", p)
+EOF
+grep -c 'compito 17 del piano della parte 2 (R8-26)' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c
+awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+```
+
+Atteso (con la data scritta, **anche nel `grep`**): **1**, **0**, niente.
+
 - [ ] **Passo 9: la Definizione di «fatto» della parte 2 — comandi, non affermazioni**
 
 ⛔ **Va nel PIANO**, subito prima della sezione *«Come si riprende»* (**D74**), come sezione `##`. ⛔ **Ogni riga è un
 comando con la sua uscita attesa**, così invecchia col codice invece che contro di esso. Le righe vengono dai
-**sedici criteri di chiusura**, riletti al Passo 1, e non dalla memoria. Almeno:
+**criteri di chiusura**, riletti al Passo 1 **col comando che li conta** — uno per compito, compreso quello che il **7** ha ricevuto in questo commit (R8-20, R8-21) — e non dalla memoria. Almeno:
 
 ```bash
 bash scripts/gate.sh 2>&1 | tail -2                              # GATE GREEN
@@ -20787,7 +20923,7 @@ bash scripts/gate.sh 2>&1 | grep -c 'dependency advisories'      # > 0
 bash scripts/check-docs.sh 2>&1 | tail -1                        # OK
 bash scripts/gate-deps.sh                                        # verde: la lista di ADR-0031 non e' cresciuta
 bash scripts/gate-attributes.sh                                  # verde: nessun #[allow] nuovo, nessun unsafe
-ls crates/kernel/tests/frozen/ | wc -l                           # i record congelati, otto
+ls crates/kernel/tests/frozen/*.cbor | wc -l                      # i record congelati -- R8-19: senza `*.cbor` conta anche `record_v1.map`
 grep -c 'pub trait Custody' crates/kernel/src/ports/custody.rs   # 1: la settima porta esiste
 cd gui && npm ci --no-audit --no-fund && npm run build && npm test && npm run lint; echo $?; cd ..
 git diff --name-only 42b50d8..HEAD -- crates/ scripts/ .github/ Cargo.lock Cargo.toml gui/ docs/superpowers/specs/ docs/adr/ docs/design/   # ogni nome sta in una lista Files
@@ -20852,7 +20988,8 @@ git push
 - [ ] ⛔ **il `git diff --stat` nomina SOLO i file della lista *Files***, e nessun file di codice: `git diff --stat HEAD~1 -- crates/ gui/ scripts/ .github/` **vuoto**
 - [ ] `grep -c 'sottoprogetto-2\|direzione-gui\|gui-minima' docs/README.md` → **più di zero**, dove il Passo 1 dava **zero** (**P-116**)
 - [ ] ⛔ **la §12 ha quattro righe nuove e la §5 NESSUNA:** `git diff HEAD~1 -- docs/COMPENDIO.md | grep -c '^+|'` è più di tre, e `grep -c '^\*\*00' docs/COMPENDIO.md` è **invariato** rispetto al Passo 1 — nessun ADR nasce qui (vincolo globale 10)
-- [ ] ⛔ **il ⏭️ della §6 nomina il sotto-progetto 13 e AUD-004**, e **non** è una catena di ✅: `awk '/⏭️/{print}' docs/COMPENDIO.md` rende una riga sola, e `grep -c '<data>' docs/COMPENDIO.md` → **zero**
+- [ ] ⛔ **il ⏭️ della §6 nomina il sotto-progetto 13 e AUD-004**, e **non** è una catena di ✅: `grep -c '^⏭️ \*\*IL PROSSIMO PASSO' docs/COMPENDIO.md` → **1** — ⚠️ **qui stava `awk '/⏭️/{print}'` «una riga sola»**, che oggi ne rende **tre** e ne renderà due qualunque cosa faccia il 17: l'elemento 2 dell'elenco numerato porta un ⏭️ a metà riga e una riga della tabella delle voci aperte lo cita come **letterale** (R8-18, 2026-09-16) — e il Passo 3 riscrive **anche l'elenco numerato** sotto il puntatore, o il suo ⏭️ sopravvive dicendo «la parte 2» a parte 2 finita
+- [ ] ⛔ **nessun `<data>` e nessun `<tempo>` è sopravvissuto, in NESSUNA casa:** `grep -rn '<data>\|<tempo>' docs/ --include='*.md' | grep -v 'parte-2-gui-minima' ` → **niente** (R8-23: il criterio guardava il solo compendio, e il 17 scrive `<data>` in sette case più la stella, `design/10` e questo piano; il piano si esclude perché ne **detta** le occorrenze)
 - [ ] ⛔ **il conteggio dei compiti NON è tornato nella roadmap:** `grep -F 'parte-2-gui-minima.md' docs/roadmap.md | sed 's/«[^»]*»//g' | grep -cE 'sedici|diciassette|[0-9]+ compiti'` → **0** (**P-113**; R9b-15: ancorato alla riga del piano e depurato delle citazioni «…», perché il richiamo di P-113 sulla stessa riga **cita** il testo tolto — provato nelle due direzioni il 2026-09-15, senza il `sed` rende 1)
 - [ ] ⛔ **il titolo della riga 2 è quello del perimetro (D86):** `grep -c 'GUI minima (shell, chat, stato)' docs/roadmap.md` → **0**, e `grep -c '^| 2 | GUI minima' docs/roadmap.md` → **1**
 - [ ] ⛔ **la stella porta i cinque richiami del Passo 8-bis** (R9b-6, R9b-13, D87): i quattro comandi del passo, con la data → **2**, **3**, **0**, niente

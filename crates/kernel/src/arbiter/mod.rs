@@ -5,6 +5,14 @@
 //! would be a decision no ADR has taken. So the arbiter has no real implementation and no
 //! fake: there is ONE, and in simulation that one runs. That is what makes the DST
 //! campaign a proof about the product instead of about its imitation (ADR-0020).
+//! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: THE FAMILIES ARE SEVEN NOW, AND THE
+//! PREMISE ABOVE IS FALSE -- a seventh DID arrive, `custody`, and it was taken WITHOUT an ADR
+//! (decision 19 of the GUI north star). ⛔ THE CONCLUSION IS UNTOUCHED AND NEVER RESTED ON
+//! THAT PREMISE: what makes the arbiter logic rather than a port is the sentence right after
+//! it -- there is ONE implementation, and a port is a seam that wants two. The count is dated
+//! here rather than realigned because this paragraph ARGUES about `crate::ports` instead of
+//! counting it; the count lives there, and `grep -c '^pub mod ' crates/kernel/src/ports/mod.rs`
+//! says it.
 //!
 //! ⛔ AND THE SHAPE NOT TO BUILD, written because it is the natural temptation: a trait
 //! `Arbiter` with two implementations "so faults can be injected". Faults are injected

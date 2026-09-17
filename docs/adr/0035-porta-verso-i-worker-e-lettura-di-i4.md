@@ -4,6 +4,14 @@
 - **Date:** 2026-08-07
 - **Deciders:** proprietario del progetto
 
+> ⛔ **RICHIAMO DEL 2026-09-17 — le famiglie di porte sono SETTE, e due righe di questo ADR
+> dicono sei.** Il *Context* qui sotto e la regola **1** parlano della §2.3 com'era il 2026-08-07;
+> dal sotto-progetto 2, compito 4, la settima è `custody` (decisione 19 della stella polare della
+> GUI). ✅ **La decisione NON è superata, e il suo merito è intatto:** `process` copre avvio,
+> dialogo e uccisione, e **il dialogo con un worker non ha aperto una porta nuova**. A cambiare non
+> è ciò che questo ADR decise, ma il totale accanto a cui lo disse — e quel totale vive in una casa
+> sola: `grep -c '^pub mod ' crates/kernel/src/ports/mod.rs`.
+
 ## Context
 
 La §2.3 della [spec del sotto-progetto 1](../superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md)

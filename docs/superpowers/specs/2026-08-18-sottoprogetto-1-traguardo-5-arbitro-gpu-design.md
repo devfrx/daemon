@@ -124,6 +124,14 @@ sola, e in simulazione gira quella.
 | **Conseguenza 1** | l'arbitro **non ha una suite di conformità**: una suite pretende due implementazioni da confrontare, e qui ce n'è una. Gotcha **#44** |
 | **Conseguenza 2** | `simulator` **non guadagna una finta d'arbitro**. In campagna gira l'arbitro vero, ed è ciò che rende la campagna una prova sul prodotto invece che sulla sua imitazione — ADR-0020, ADR-0026 |
 
+> ⛔ **RICHIAMO DEL 2026-09-17 — una settima famiglia È arrivata, e SENZA un ADR.** La cella
+> *«Perché»* dice *«Una settima sarebbe una decisione strutturale che nessun ADR ha preso»*: dal
+> sotto-progetto 2, compito 4, quella settima è `custody`, e a deciderla è la **decisione 19 della
+> stella polare della GUI**, che un ADR non lo vuole.
+> ✅ **Ciò che la riga sostiene NON cambia:** l'arbitro resta un modulo e non una porta, per la
+> ragione della riga sotto — ne esiste **una** implementazione, e una porta è una cucitura che ne
+> vuole due.
+
 ⛔ **La forma da non costruire, scritta perché è la tentazione naturale:** un tratto `Arbiter`
 con due implementazioni «per poter iniettare guasti». I guasti si iniettano **dalle porte che
 l'arbitro usa** — `reactor` e `journal` — non dentro di lui. Un tratto lì sarebbe un'astrazione

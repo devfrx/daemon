@@ -526,7 +526,10 @@ decide il formato dell'archivio. In sotto-progetto 1 i default sono **letterali 
 
 **0035 — La porta verso i worker, e cosa significa «singolo» in I4.** Il dialogo con un
 worker vive dentro la porta **`process`**, che copre **avvio, dialogo e uccisione** —
-non nasce una porta nuova, le famiglie restano sei. Gli schemi dei due canali privati
+non nasce una porta nuova, le famiglie restano sei. ⚠️ **RICHIAMO DEL 2026-09-17:** sono
+**sette** dal compito 4 del sotto-progetto 2 — `custody` — e il merito di questa decisione resta
+intatto: il dialogo col worker **non** ha aperto una porta nuova (rimando datato in testa
+all'ADR). Gli schemi dei due canali privati
 sono **distinti**, ed entrambi vivono in `kernel`. **«Singolo» significa: un meccanismo
 di trasporto e uno schema _per canale privato_** — nessun broker, nessun service
 discovery, nessuna negoziazione, nessun versionamento. Ciò che I4 compra è che non

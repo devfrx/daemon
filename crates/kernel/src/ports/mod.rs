@@ -81,12 +81,12 @@
 //! on 2026-09-17, and the fifth family is `custody`, whose fake is the one this recall dates.
 //! Moving one half and leaving the other IS finding AUD-049, the third line of the audit
 //! discipline, and it is what this clause exists to close.
-//! ⚠️ THE OTHER `four`, IN THE TABLE PARAGRAPH ABOVE, IS A DIFFERENT COUNT AND IS LEFT ALONE ON
-//! PURPOSE: it counts the PORTS WITHOUT A CALLER, not the traits this bench holds a fake for,
-//! and it is task 2's -- dated in its own recall there. Written here so that the next census
-//! does not "fix" the two as if they were one figure in two houses. ⛔ AND IT IS NOT QUOTED
-//! WORD FOR WORD ON PURPOSE EITHER: that sentence is what the closing check of task 4 counts,
-//! and a quotation of it here would move a count that is supposed to prove nothing moved.
+//! ⚠️ AND THE TABLE PARAGRAPH ABOVE CARRIES THE SAME COUNT, WHICH MOVED IN THE SAME PASS:
+//! TWO PLUS FOUR became TWO PLUS FIVE when `custody` arrived. The two numerals name the SAME set
+//! of families -- the ones with no caller -- counted for two different purposes, so they move
+//! together, and moving one while leaving the other is exactly finding AUD-049. ⛔ THAT SENTENCE
+//! IS NOT QUOTED HERE WORD FOR WORD, and that is deliberate: it is what a closing check of task 4
+//! counts, and a quotation would move a count whose whole job is to prove nothing moved.
 //!
 //! ⛔ AND ON `process` THAT TEST EARNED ITS KEEP RATHER THAN CONFIRMING ANYTHING. The port as
 //! designed was NOT IMPLEMENTABLE: `instruct_one` has to HAND BACK a `SingleReceipt` whose

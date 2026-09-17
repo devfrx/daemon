@@ -46,7 +46,7 @@
 //! added later stops being a discrepancy anyone can see, which is gotcha #17 arriving by the
 //! back door.
 //!
-//! ⚠️ A TRAIT NOBODY IMPLEMENTS IS NOT A TRAIT PROVED IMPLEMENTABLE. The four declared
+//! ⚠️ A TRAIT NOBODY IMPLEMENTS IS NOT A TRAIT PROVED IMPLEMENTABLE. The five declared
 //! without a caller are held by `tests/ports_are_implementable.rs` — SIX fakes, because
 //! `process` needs two of them (`Worker` and `Process`), and calls that exercise each in both
 //! directions. It buys that the signatures compile FROM OUTSIDE THE CRATE and can be called;
@@ -62,6 +62,17 @@
 //! nobody moves. `ports/process.rs` carries the reckoning for that family; this paragraph
 //! keeps only what it measured, which is this one file.
 //! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: SIX from here on -- `custody` has a fake of its own; the FIVE above is dated, not realigned (gotcha #31).
+//! ⛔ AND THE OTHER NUMBER IN THAT SENTENCE MOVED WITH IT: the traits this bench holds a fake for
+//! go FOUR -> FIVE, and THAT one is REALIGNED rather than dated, because the sentence is an
+//! ARGUMENT and not an inventory -- five traits, `process` twice, six fakes -- and a sum that no
+//! longer closes teaches nothing. Moving one half and leaving the other IS finding AUD-049, the
+//! third line of the audit discipline, and it is what this clause exists to close.
+//! ⚠️ THE OTHER `four`, IN THE TABLE PARAGRAPH ABOVE, IS A DIFFERENT COUNT AND IS LEFT ALONE ON
+//! PURPOSE: it counts the PORTS WITHOUT A CALLER, not the traits this bench holds a fake for,
+//! and it is task 2's -- dated in its own recall there. Written here so that the next census
+//! does not "fix" the two as if they were one figure in two houses. ⛔ AND IT IS NOT QUOTED
+//! WORD FOR WORD ON PURPOSE EITHER: that sentence is what the closing check of task 4 counts,
+//! and a quotation of it here would move a count that is supposed to prove nothing moved.
 //!
 //! ⛔ AND ON `process` THAT TEST EARNED ITS KEEP RATHER THAN CONFIRMING ANYTHING. The port as
 //! designed was NOT IMPLEMENTABLE: `instruct_one` has to HAND BACK a `SingleReceipt` whose

@@ -21,3 +21,23 @@
 # cambiate in `git diff`. È già successo due volte, con uno script; da un `.gitattributes`
 # sarebbe peggio, perché nessuno lo rilegge.
 crates/kernel/tests/frozen/*.cbor binary
+
+# ⛔ LE FIXTURE DEL FILO `ipc` -- LA SECONDA REGOLA, E LA RISTRETTEZZA VALE ANCORA.
+#
+# `gui/schema/fixtures/` nasce col compito 3 del sotto-progetto 2. I `.json` portano il VALORE
+# ATTESO di ogni variante e `the_committed_fixtures_match_the_schema` li confronta BYTE A BYTE
+# con cio' che `variant_json` produce, che finisce sempre in un solo `\n`. Con `core.autocrlf=true`
+# -- che e' la configurazione di questa macchina -- un checkout fresco li riscriverebbe in CRLF, e
+# il controllo andrebbe rosso su TUTTI: verde dove sono stati scritti, rosso su ogni clone.
+# ✅ MISURATO IL 2026-09-17 e non dedotto: `git checkout-index -a --prefix=<dir>/` rende **14** CR
+# nei `.json` contro **0** nell'albero di lavoro. La mappa reggeva da se', perche' `str::lines()`
+# toglie il `\r`; i `.json` no, perche' il confronto e' sui byte.
+#
+# ⚠️ E I `.bin` SONO LA STESSA STORIA DEI `.cbor` QUI SOPRA: oggi git li riconosce binari da se'
+# perche' contengono un `00`, ma uno di essi porta gia' un `0d` -- quindi la protezione servirebbe
+# davvero se quel `00` sparisse, ed e' un accidente del contenuto come lo e' lassu'.
+#
+# ⛔ E RESTA VIETATO UN `* text=auto`: queste tre righe nominano UNA cartella, che e' il punto.
+gui/schema/fixtures/*.bin  binary
+gui/schema/fixtures/*.json text eol=lf
+gui/schema/fixtures/*.map  text eol=lf

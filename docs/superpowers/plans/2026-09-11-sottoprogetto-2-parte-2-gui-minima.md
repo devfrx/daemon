@@ -21429,6 +21429,69 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La ventitreesima chiusura — 2026-09-17, terza sessione del giorno: il COMPITO 4 è FATTO, rivisto in due giri più un'ondata di prosa, e spinto; restano i compiti 5–17
+
+⛔ **DA SAPERE SUBITO, cinque cose.** **(1)** ⏭️ **Il compito 4 è fatto e spinto; il prossimo è il compito 5**, e quale sia lo dice la tabella della posizione qui sopra, che porta ora **quattro** ✅ e **tredici** ⬜. **(2)** ⛔ **L'ERRATA È A VENTISETTE VOCI, E1…E27**, e si legge **prima** di ogni compito: **otto** sono nate oggi dal solo compito 4, e due di esse — **E23** ed **E26** — dicono che una voce d'errata precedente **non ha attraversato** al compito dopo. **(3)** ⛔ **LO STESSO DIFETTO È TORNATO QUATTRO VOLTE IN QUESTO COMPITO, ed è la cosa più istruttiva della sessione:** ogni correzione **aggiungeva una clausola di giustificazione**, e ogni clausola afferma qualcosa sul codice e sugli altri testi — entrambi si muovono, quindi la correzione successiva la rendeva falsa. Il doc di modulo di `crates/kernel/src/ports/mod.rs` è passato da **95** a **144** righe in un compito solo. ⛔ **Il rimedio che ha chiuso il ciclo non è stata un'altra clausola: è stato TOGLIERE quella che giustificava di non fare ciò che poi è stato fatto.** **(4)** ⛔ **IL COORDINATORE HA SBAGLIATO UN RULING, ed è scritto in E26** invece di essere corretto in silenzio: disse che il gemello di AUD-049 nel capoverso della tabella «era del compito 2, già datato, non si tocca», e la seconda metà era falsa. Lo ha trovato la **revisione**, come Critico. **(5)** ⚠️ **Le famiglie di porte sono SETTE**, e le case della frase «sei famiglie» che il piano non nominava sono censite e assegnate nella voce **E21**: quattro chiuse oggi in un commit a sé, le altre ai compiti **7**, **9** e **17**.
+
+✅ **Che cosa è stato fatto.** Sei commit, ciascuno col cancello verde prima (i log nello scratchpad, che può non sopravvivere):
+
+| Commit | Che cosa |
+|---|---|
+| `bc24492` | il **pre-controllo del compito 4**: due voci d'errata, **E20** ed **E21** |
+| `3be0c3a` | **compito 4**: il tratto `Custody`, la finta che lo prova da fuori, i richiami in due file |
+| `56fd8ae` | il **tocco 5 finito** — l'aritmetica della frase delle finte, che il piano aveva rotto a metà |
+| `a96eb5f` | i **sette rilievi** della revisione — un Critico, due Importanti, quattro Minori |
+| `11f79bd` | l'**ondata di prosa**: le cinque rotture della ri-revisione, e l'errata **E22…E27** |
+| `60d1667` | le **case di specie «meccanismo»** di **E21 (a)**, in un commit a sé |
+
+E lo stato alla chiusura, che non si ricorda ma si **rifà** — ogni riga porta il comando che la produce:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, `git status -sb`, `git stash list` vuoto |
+| I commit di questa sessione | `git log --oneline ef1c3da..HEAD` — ⛔ **senza la cifra accanto**, per la ragione che la ventiduesima chiusura ha imparato su di sé: quel conto cambia a ogni commit, **compreso quello che scrive questa riga** |
+| La posizione | `grep -cE '^\| \*\*[0-9]+\*\* \|.*✅ 2026-09-17 \|$' <questo file>` → **4**; `grep -cE '^\| \*\*[0-9]+\*\* \|.*⬜ \|$' <questo file>` → **13** |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **27** |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` e `grep -c '^[|] \*\*D[0-9]' <questo file>`, **invariati**: l'esecuzione non ne aggiunge |
+| Le famiglie di porte | `grep -c '^pub mod ' crates/kernel/src/ports/mod.rs` → **7**, contro **6** su `git show 42b50d8:` dello stesso file |
+| Il banco delle finte | `cargo test --locked -p kernel --test ports_are_implementable` → **15 passed**, contro i **14** della baseline del Passo 1 |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, lanciato prima di **ognuno** dei sei commit; `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | i quattro file toccati fuori dal compito restano `i/lf w/crlf`, e in ciascuno `wc -l` **uguaglia** `tr -cd '\r' \| wc -c`; `crates/kernel/src/ports/custody.rs` nasce **LF**, `crates/kernel/tests/ports_are_implementable.rs` resta `i/crlf w/crlf` |
+| Margine del compendio | `wc -c docs/COMPENDIO.md` contro il tetto di **111616** scritto in `scripts/check-docs.sh` |
+| Debito lasciato | **nessuno dentro il compito 4**. Restano **assegnate** dalla voce **E21**: tre case di sola cifra ai compiti **7**, **9** e **17**, e le altre case nei documenti al **17**, che le decide **rilanciando i tre comandi** invece di leggere un elenco. Resta la **minore parcheggiata** della ventunesima chiusura, sul commento di `const CAP` in `crates/platform/src/ipc.rs` |
+
+#### Le decisioni prese eseguendo, oltre a quelle dell'errata
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 111 | ⛔ **le case di una frase che un compito rende falsa si assegnano per SPECIE più «chi apre già quel file»** | è il criterio di **P-24**, che rimandò `platform/src/lib.rs` al compito che lo apre. Ma una frase che afferma un **meccanismo** non aspetta: la specie **X-4** dell'audit dice che un verbale che afferma un meccanismo sbagliato **resta** sbagliato, e qui non è un verbale ma il doc di un modulo vivo | quattro richiami datati da revocare con un diff, e tre voci che restano assegnate ai compiti 7, 9 e 17 |
+| 112 | **ciò che esce dal brief di un compito si chiude in un commit a SÉ, anche quando il compito lo CAUSA** | è la **forma** della decisione 110, non la sua ragione — quella riguarda un difetto *rivelato e non causato*, e la divergenza si dichiara invece di tacerla. Ciò che si compra è che il diff del compito resti rivedibile contro il suo brief | un commit in più |
+| 113 | ⛔ **la SECONDA ondata di sola prosa la corregge il coordinatore, senza un terzo giro né una seconda ri-revisione** | è la regola 6 di *«Come si esegue un compito»* e il precedente registrato del proprietario. Un terzo giro sarebbe costato due dispacci per cinque correzioni di commento, e la specie in gioco non era la correttezza del codice | cinque correzioni non riviste da nessun altro — mitigato **misurando** ogni affermazione nelle due direzioni prima di scriverla |
+| 114 | ⛔ **un derive promesso a un contratto RESTA anche se nessuno lo esercita, e ciò che non è esercitato si DICHIARA** | è la differenza dal precedente di `ipc`, dove tre derive **caddero**: lì nessuno li aveva promessi, qui il blocco *Interfaces* li promette per nome ai compiti 5, 7, 9, 10 e 12. ⛔ **E non si nomina un innesco che non scatterebbe** — la suite del compito 5 confronta con `assert_eq!`, cioè `PartialEq` e non `Eq` — perché sarebbe una scadenza in prosa, gotcha **#77** | due capoversi di doc, che si tolgono il giorno che un chiamante esercita quei derive |
+| 115 | **un messaggio di commit sbagliato NON si amenda se il suo hash è già citato altrove** | l'hash viveva già nel registro e nel rapporto, e cambiarlo li avrebbe resi stantii **entrambi** per raddrizzare una parola. La correzione vive nella voce **E24**, col costo dichiarato | chi legge il `git log` legge «riscritta» dove il richiamo dice «datata», e deve arrivare all'errata per saperlo |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UNA CLAUSOLA DI GIUSTIFICAZIONE È UNA PASSIVITÀ, E QUESTA SESSIONE L'HA PAGATA QUATTRO VOLTE.** Ogni volta che una correzione ha aggiunto prosa per spiegarsi, la correzione dopo ha reso quella prosa falsa: *«è un conto diverso»*, *«è del compito 2»*, *«ogni altro derive ha un utente nel banco»*, *«l'innesco è la suite del 5»* — quattro affermazioni scritte per chiarire, tutte e quattro false entro il giro successivo. 📌 **La regola che se ne ricava: una clausola che giustifica di NON fare qualcosa va TOLTA il giorno che quel qualcosa si fa, non estesa.** E una clausola che afferma un fatto porta accanto il **comando**, che non marcisce.
+- ⛔ **UN CENSIMENTO PER NUMERALE TROVA LE PAROLE CHE CERCA, NON LE FRASI CHE QUELLE PAROLE REGGONO.** `grep -niE 'SIX|FIVE|SEVEN'` non cerca `four`, e due frasi su due portavano **due** numeri legati da un'aritmetica: il censimento ne vedeva metà, e metà è esattamente ciò che è stato corretto la prima volta. 📌 Una frase che porta due numeri legati si legge **intera**.
+- ⛔ **UNA SONDA CHE TOGLIE UN ELEMENTO DI UN INSIEME I CUI ELEMENTI SI REGGONO A VICENDA MISURA LA CATENA, NON L'ELEMENTO.** Togliendo i derive uno per volta, `Clone` e `PartialEq` risultano «esercitati» — ma a esigerli sono `Copy` ed `Eq` **nello stesso file**, non il banco. ⛔ **A distinguere è DOVE cade l'errore**, e chi legge solo il verde contro il rosso conclude l'opposto del vero: il doc ha affermato il falso per **tre** giri di seguito prima che qualcuno rimisurasse per intero.
+- ⛔ **UNA FRASE CHE UN CRITERIO DI CHIUSURA CONTA NON SI CITA ALLA LETTERA IN UN COMMENTO, nemmeno per spiegarla.** Una citazione di `NO CALLER AT ALL` dentro una clausola portava il conto da **1** a **2**, cioè muoveva proprio il controllo che esiste per provare che quella riga non era stata toccata — e non rendeva un rosso, rendeva un **verde che non significava più niente**. Si **nomina** la frase invece di citarla.
+- ⛔ **UN INSERITORE SCRITTO A MANO LASCIA UN `\n` NUDO SE L'ANCORA SI RIPULISCE CON `rstrip` E IL TESTO NUOVO SI CHIUDE SUL `\n` ORIGINALE.** Tre file su quattro sono finiti a `w/mixed` senza che nessun errore lo dicesse: **l'ha detto il confronto fra `wc -l` e `tr -cd '\r' | wc -c` fatto DOPO la scrittura**, che è la riga di `CLAUDE.md` e che questo repository ha già pagato tre volte. 📌 Si ripara con una sostituzione mirata su `(?<!\r)\n`, **asserendo prima** quante occorrenze esistano.
+- ⚠️ **Un heredoc mangia i backslash anche dentro un `python -c`**, e in questa sessione è successo due volte. Gli script si scrivono con lo strumento di scrittura, **mai** da heredoc.
+- ⚠️ **Il costo, misurato:** questo compito è costato **più** di quanto la memoria stimasse per un compito intero — cinque dispacci invece di quattro, perché un ruling sbagliato del coordinatore ha innescato un giro in più. La stima *«come il compito 3»* **non** regge quando il coordinatore sbaglia: il giro extra costa quanto un implementatore più una ri-revisione.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — i vincoli globali, la posizione, ⛔ **l'errata, che ora ha ventisette voci**, le voci aperte. ⚠️ **Il registro e i rapporti della revisione NON si leggono per eseguire**.
+3. ⏭️ **Il compito 5** — le due implementazioni della settima porta, `redb` in `platform` e la finta in `simulator`, **e la suite di conformità che le confronta** — con `superpowers:subagent-driven-development`: un subagente fresco **su Opus**, con revisione fra uno e l'altro. ⛔ **Il pre-controllo delle quattro domande si rifà contro il codice di ADESSO**, e ⛔ **la revisione si dispaccia lo stesso anche quando il pre-controllo è andato bene**: oggi la revisione ha trovato il Critico che il pre-controllo e il coordinatore avevano entrambi mancato.
+4. ⛔ **Il compito 5 apre `crates/platform/src/lib.rs`, e P-24 gli assegna già un richiamo datato** — `Custody` nell'enumerazione del `grep`, l'enumerazione dichiarata tale, la scadenza sostituita da un fatto. ⚠️ **E la voce E21 gli è muta**: `platform/src/lib.rs` era già assegnato prima.
+5. ⛔ **Il brief di ogni compito porta QUATTRO pezzi**, estratti con `sed -n` sui numeri di riga, che si **ricalcolano dopo ogni inserzione in errata**: la sezione *Strumenti* della testa, i vincoli globali, l'errata e il testo del compito.
+6. Ogni compito: il **cancello prima del commit**, la riga della posizione aggiornata **nel commit del compito**, il commit **senza co-autore**, e il push **dopo** che la revisione è pulita. ⛔ **Il compendio non si tocca** per contarvi i compiti (decisione 106) — ma una **decisione che diventa falsa** vi riceve il proprio richiamo datato, come è successo oggi alla riga di ADR-0035.
+7. ⛔ **Prima del compito 11 si aggiorna Node** (P-64, P-65). ⛔ **Prima dei compiti 13 e 14** si guarda se `C:\Users\zagor\AppData\Local\Temp\probe-R13\gui\` c'è ancora.
+8. Alla chiusura del piano la cartella della revisione si **archivia** (decisione 69).
+9. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
 ### La ventiduesima chiusura — 2026-09-17, seconda sessione del giorno: il COMPITO 3 è FATTO, rivisto in due giri e spinto; restano i compiti 4–17
 
 ⛔ **DA SAPERE SUBITO, cinque cose.** **(1)** ⏭️ **Il compito 3 è fatto e spinto; il prossimo è il compito 4**, e quale

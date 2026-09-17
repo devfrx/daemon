@@ -142,6 +142,12 @@ use alloc::vec::Vec;
 /// ⛔ AND REMOVING IT WOULD LEAVE UNGUARDED THE VERY DEFECT IT EXISTS TO PREVENT, which is the
 /// whole reason the fix is a re-point: two independent counters that look identical, diverging
 /// with nothing to report it.
+/// ⚠️ DATED RECALL, 2026-09-17 -- THE COUNTER IT GUARDS NOW EXISTS, AND THIS PORT IS STILL NOT
+/// IMPLEMENTED HERE. It is `crate::numbering::Progressive`, seeded by
+/// `crate::numbering::seeded_from` above every step in the journal. "Whoever implements this
+/// port in milestone 6 draws from THAT counter rather than starting a private one of its own" is no longer a
+/// promise about a type that does not exist: the type is one line away, and a private `u64`
+/// inside the transport is now a visible choice rather than the only road.
 ///
 /// ⚠️ "ASSIGNED BY THE CORE" MEANS "NOT CHOSEN BY THE CLIENT", and the line is worth spending
 /// because the other reading contradicts the signature below it. `accept` RETURNS one, so the

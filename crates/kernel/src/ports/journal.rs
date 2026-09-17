@@ -76,6 +76,13 @@ use alloc::vec::Vec;
 /// than moved to a later one — a date written in prose has nothing to fire it when it passes,
 /// which is the shape `crate::reconcile` records for its own expired trigger. WHEN the
 /// allocator arrives is the owner's: registered, not taken.
+/// ⚠️ DATED RECALL, 2026-09-17 -- THE COUNTER EXISTS NOW, AND THE ALLOCATOR STILL DOES NOT.
+/// `crate::numbering::Progressive` is the core's one progressive counter and
+/// `crate::numbering::seeded_from` seeds it above every step this journal already holds; what
+/// mints identities today is the `ipc` transport, for `ClientId`. THE PORT IS UNCHANGED: no
+/// operation here allocates, and whether one should is open item 6 of §9 of the sub-project 2
+/// design, confirmed A by the owner on 2026-09-09 -- it stays out until a second consumer asks.
+/// The sentence above is therefore still exact, and this line says which half moved.
 ///
 /// ⚠️ The derive list is short on purpose. No ordering and no `Hash`: nothing sorts or indexes
 /// these yet, and `Hash` in particular would be an invitation in a crate where a negative case

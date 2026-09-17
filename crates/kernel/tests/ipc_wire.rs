@@ -118,6 +118,15 @@ fn a_truncated_body_in_an_honest_envelope_does_not_decode() {
     assert_eq!(IpcMessage::decode(&bytes), Err(WireError::Malformed));
 }
 
+/// How many variants `IpcMessage` has, in ONE place -- M-3 of the review of 2026-09-17.
+///
+/// ⚠️ THE `match` BELOW DOES NOT COVER THIS NUMBER, which is why it earns a name. Adding a
+/// variant makes the `match` a compile error, as its comment says; but once the new arm is
+/// written, indexing a `[bool; 14]` at 14 PANICS WITH `index out of bounds` instead of the
+/// message this probe knows how to give -- a red, but an illegible one, in the one place the
+/// file promised a legible one. The numeral used to sit in two lines that could drift apart.
+const VARIANTS: usize = 14;
+
 #[test]
 fn every_variant_is_in_the_canonical_set() {
     // ⛔ THE GUARD THAT MAKES THE OTHER PROBES WORTH SOMETHING. A variant added to
@@ -125,7 +134,7 @@ fn every_variant_is_in_the_canonical_set() {
     // unchanged, and every probe in this file GREEN -- the schema would have grown and
     // nothing would say so. The `match` is exhaustive on purpose: adding a variant makes THIS
     // a compile error, which is level 1 rather than a test at level 2.
-    let mut seen = [false; 14];
+    let mut seen = [false; VARIANTS];
     for message in stamp_set() {
         let slot = match message {
             IpcMessage::Hello(_) => 0,
@@ -146,7 +155,7 @@ fn every_variant_is_in_the_canonical_set() {
         assert!(!seen[slot], "slot {slot} appears twice in the canonical set");
         seen[slot] = true;
     }
-    let missing: Vec<usize> = (0..14).filter(|i| !seen[*i]).collect();
+    let missing: Vec<usize> = (0..VARIANTS).filter(|i| !seen[*i]).collect();
     assert!(missing.is_empty(), "variants missing from stamp_set: {missing:?}");
 }
 
@@ -211,6 +220,24 @@ fn the_stamp_changes_when_the_schema_changes() {
     // DIFFERENT set gives a DIFFERENT stamp -- computed here over a set with one message
     // altered, using the same function the real one uses.
     assert_eq!(build_stamp(), build_stamp(), "the stamp is stable within a build");
+
+    // ⛔ THE LINE THAT MAKES THE TWO `assert_ne!` BELOW MEAN ANYTHING -- C-1 of the review of
+    // 2026-09-17. "Using the same function the real one uses" was held by NOTHING: an
+    // `assert_ne!` is satisfied by ANY difference, INCLUDING the one that appears when the
+    // oracle `fnv_over` and the subject `build_stamp` stop being the same arithmetic. So this
+    // probe passed with `fnv_over` returning a constant, and passed with `build_stamp`
+    // returning a literal that ignores `stamp_set` ENTIRELY -- the schema changed, the stamp
+    // did not, and the whole bench was green. That is the failure §6.1.2 exists to prevent.
+    //
+    // ⚠️ IT IS AN `assert_eq!` BETWEEN ORACLE AND SUBJECT, and it is NOT the vacuous shape the
+    // doc of `fnv_over` refuses: `fnv_over` still takes the set as an argument and spells the
+    // arithmetic out, so this compares two INDEPENDENT spellings of one function over one
+    // input. What it forbids is exactly what was possible: the two drifting apart in silence.
+    assert_eq!(
+        fnv_over(&stamp_set()),
+        build_stamp().get(),
+        "the oracle must be the same arithmetic as the subject"
+    );
 
     let mut altered = stamp_set();
     // `build_stamp()` is the only constructor there is (the doc of `BuildStamp` refuses a `new`),
@@ -485,6 +512,59 @@ fn the_escaper_covers_the_characters_no_fixture_carries() {
 }
 
 #[test]
+fn every_u64_reaches_the_json_as_a_decimal_string() {
+    // ⛔ RULE 1 OF `variant_json` HELD BY SOMETHING AT LAST -- I-1 of the review of 2026-09-17.
+    // The doc above states in capitals that EVERY `u64` IS A DECIMAL STRING, and until this
+    // probe nothing could see it. The three checks that existed cannot decide: `json.load`
+    // proves SYNTAX, and a bare JSON number is valid syntax; the closing line that inspects the
+    // type reads `00-hello.json` ALONE; and `the_committed_fixtures_match_the_schema` compares
+    // the committed file against `variant_json`, THE VERY FUNCTION THAT WROTE IT -- an oracle
+    // only until someone regenerates, which is what its own red message prescribes. Measured:
+    // with the `Steps` arm emitting a bare number and the fixtures regenerated, the bench was
+    // GREEN and all three closing lines stayed ticked.
+    //
+    // ⚠️ THE ORACLE IS A LITERAL, the shape E12 settled on for the escaper: a VALUE, not a
+    // second copy of the rules, and so wrong only if written wrong.
+    //
+    // ⛔ AND IT IS EVERY FIXTURE THAT CARRIES A `u64`, NOT A SAMPLE. One left out is one the
+    // reading side rounds: `Number.MAX_SAFE_INTEGER` is 2^53-1 and `02-stale-build` alone
+    // carries 18364758544493064720, so a bare number there would reach the gui ALREADY WRONG
+    // and compare equal to itself (gotcha #51, which the step-6 prose cites of itself).
+    let set = stamp_set();
+    let rule = "rule 1: every u64 is a decimal STRING";
+    assert_eq!(
+        variant_json(&set[0]),
+        r#"{"kind":"Hello","value":"81985529216486895"}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[2]),
+        r#"{"kind":"StaleBuild","value":"18364758544493064720"}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[4]),
+        r#"{"kind":"Policy","value":{"policy":"Remote","allocated":"12288","total":"16384"}}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[11]),
+        r#"{"kind":"Steps","value":[{"step":"42","function":"arbiter.set_policy","done":true}]}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[12]),
+        r#"{"kind":"Request","value":{"reserved_vram":"2048","compute_class":"Interactive","preemption":{"kind":"After","grace_ms":"500"}}}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[13]),
+        r#"{"kind":"Verdict","value":{"verdict":"Refused","asked":"4096","ceiling":"1024"}}"#,
+        "{rule}"
+    );
+}
+
+#[test]
 fn the_committed_fixtures_match_the_schema() {
     // ⛔ THE CHECK THE GATE RUNS. A schema changed without regenerating is RED here, and the
     // message says what to do rather than leaving the reader to work it out -- because the
@@ -538,12 +618,17 @@ fn the_committed_fixtures_match_the_schema() {
             })
         })
         .collect();
+    // ⚠️ THE BULLET GOES INSIDE THE JOIN, the shape `wrong` already has -- M-2 of the review of
+    // 2026-09-17. With it outside, an EMPTY `extra` still printed a line made of two spaces: a
+    // bullet inviting the reader to look for a name that is not there, under a message whose
+    // whole point is to say "what to do rather than leaving the reader to work it out".
+    let bulleted: Vec<String> = extra.iter().map(|name| format!("  {name}")).collect();
     assert!(
         wrong.is_empty() && extra.is_empty(),
         "the committed fixtures do not match the schema. REGENERATE them:\n  \
          cargo test --locked -p kernel --test ipc_wire -- --ignored regenerate_the_fixtures\n\
-         mismatched:\n{}\nleft over:\n  {}",
+         mismatched:\n{}\nleft over:\n{}",
         wrong.join("\n"),
-        extra.join("\n  ")
+        bulleted.join("\n")
     );
 }

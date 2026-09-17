@@ -30,12 +30,32 @@
 //! an ADDRESSEE, and until milestone 2 of the subproject there is nobody to tell. Inventing
 //! the message before there is one would freeze a vocabulary against an imaginary consumer --
 //! gotcha #46 from the wrong side, which is the same reason §3.4 gives for the stamp.
+//!
+//! ✅ DATED RECALL, 2026-09-17 -- THE TRIGGER WRITTEN ABOVE FELL DUE TODAY AND IS NOT HONOURED,
+//! WHICH IS THE OPPOSITE OF WHAT "the same shell" READS LIKE. The shell arrived (ADR-0029,
+//! Electron, 2026-09-10) and the revocation is STILL not built, because the sentence names the
+//! shell while the mechanism needs an ADDRESSEE: sub-project 2 does not serve `Request` at all
+//! (decision D5 of its plan, argued against this file's own doc of `GrantRequest`), so NO
+//! ORDINARY GRANT EXISTS to revoke and there is nobody to tell. ⛔ THE TRIGGER IS THEREFORE
+//! THE 3D CONSUMER, sub-project 7 -- the same closer row 27 of milestone 6 carries in
+//! docs/porta-di-qualita.md. ⚠️ CORRECTED RATHER THAN DELETED: the paragraph above is the only
+//! place that says what the revocation IS, and it is gotcha #77 again -- a deadline written in
+//! prose, which nothing can go red for. ⛔ AND A THIRD HALF, FROM TASK 2 OF THE SAME PLAN:
+//! the sentence above that `grep -rnE "^ *impl Ipc for" crates/` "returns a bench fake" is
+//! false too -- `platform::ipc::LocalSocketIpc` is the real transport now, and the command that
+//! counts the implementations is the one written there, not this prose.
+//!
+//! ✅ AND THE OTHER HALF DID ARRIVE: the BUILD STAMP of §6.1.2 exists as of today,
+//! `crate::wire::ipc::build_stamp` over `stamp_set`. "Until it exists, NOTHING REFUSES A STALE
+//! GUI" above is now false, and the handshake that uses it is task 7 of the same plan.
 
+use alloc::string::String;
 use alloc::vec::Vec;
 use bincode::{Decode, Encode};
 
 use crate::arbiter::{ComputeClass, Mib, Preemption};
 use crate::framing::{self, WireError};
+use crate::time::Millis;
 
 /// What the gui asks for: an ordinary grant beyond the presentation quota (ADR-0033).
 ///
@@ -136,12 +156,194 @@ pub enum Verdict {
     Refused { asked: Mib, ceiling: Mib },
 }
 
+/// The identity of a build, §6.1.2. ⛔ IT IS NOT A CONTRACT, IT IS AN IDENTITY: one accepted
+/// value, and a gui carrying a different one does not start and says so. I4 renounces
+/// versioning, and this is the mechanism that stands in its place.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub struct BuildStamp(u64);
+
+impl BuildStamp {
+    /// ⛔ THE CONSTRUCTOR IS `crate::wire::ipc::build_stamp` AND NOT A `new` HERE, and that is
+    /// the point: a stamp anyone can mint from any number is a stamp that proves nothing. The
+    /// only value that exists is the one the canonical set produces.
+    pub const fn get(&self) -> u64 {
+        self.0
+    }
+}
+
+/// What the core knows about the journal's protection, as a VALUE and not as fixed text in
+/// the gui (G16, ADR-0023).
+///
+/// ⛔ ONE VARIANT AND NOT A `bool`, AND THE REASON IS ADR-0023 ITSELF: "encrypted at rest"
+/// here means PROTECTED AS MUCH AS YOUR SYSTEM ACCOUNT, and that sentence has to reach the
+/// interface -- a false sense of security is worse than none. A `bool` would let the gui
+/// write its own sentence beside it; an enum makes the sentence the core's, and a second
+/// level of protection a VARIANT rather than a silent change of meaning.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub enum Protection {
+    /// The keys are the OS's, reached through the platform module. ADR-0023.
+    AsSystemAccount,
+}
+
+/// The degradation, on the wire. Twin of `crate::degradation::Degradation` -- D11.
+///
+/// ⚠️ THE TWO FIELDS ARE TODAY'S. ADR-0019 declares the event list OPEN (dated recall of
+/// 2026-09-08), so a field added there must STOP HERE and be translated by hand.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub struct DegradationReport {
+    pub vram_exhausted: bool,
+    pub routing_degraded: bool,
+}
+
+/// Which VRAM policy is active, with the budget. Twin of `crate::arbiter::policy::VramPolicy`
+/// -- and here the twin is FORCED: that enum carries the policies themselves.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub enum PolicyName {
+    /// ADR-0006's default: OpenRouter, VRAM free.
+    Remote,
+    Local,
+}
+
+/// The policy with what the gui shows beside it (G15/G16).
+///
+/// ⛔ `allocated` IS WHAT THE BOOKS SPEAK FOR, THE TWO PERMANENT QUOTAS INCLUDED, and that
+/// is a decision rather than an oversight (D20). ADR-0033 holds those two as GRANTS WITH A
+/// HOLDER and not as subtractions -- "the subtraction is not an exemption", gotcha #4 -- so
+/// hiding them from this number would commit at the layer the user looks at the very mistake
+/// the arbiter was built to avoid. `total` is the machine, delivered through
+/// `Parameters::total_vram`; the kernel does not hold the audio and presentation quotas, and
+/// deliberately does not -- the doc of that accessor argues it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub struct PolicyReport {
+    pub policy: PolicyName,
+    pub allocated: Mib,
+    pub total: Mib,
+}
+
+/// The permission triple of ADR-0016, on the wire. Twin of `crate::permission::Permission`
+/// -- and FORCED, for `GrantRequest`'s own reason: that type carries `&'static str`.
+///
+/// ⛔ `String` AND NOT `&'static str`, WHICH IS THE WHOLE OF THIS TYPE. A `&'static str`
+/// cannot be produced from arriving bytes without leaking, and what would leak is text CHOSEN
+/// BY THE PEER -- untrusted content (ADR-0014) inside a type a permission decision reads.
+/// ⚠️ AND THE DIRECTION MATTERS: the core sends this DOWN (`PermissionRequired`) and receives
+/// it back UP (`Approve`). The returning one is untrusted, so whoever consumes it matches it
+/// against the triple IT asked for rather than trusting the strings -- written here so the
+/// consumer does not rediscover it. The probe is born with that consumer, task 7.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub struct Triple {
+    pub tool: String,
+    pub resource: String,
+    pub operation: Access,
+}
+
+/// The operation of the triple. Twin of `crate::permission::Operation` -- D11.
+///
+/// ⛔ AN ENUM AND NOT A `bool`, AND THE KERNEL ALREADY PAID FOR THIS LESSON: the doc of
+/// `Operation::is_write` records that `matches!` folds EVERY other variant into `false`, so a
+/// third operation would reach the DURABLE record as a read -- measured on 2026-09-01 with
+/// `Execute` added. On the wire the same fold would make a third operation arrive as a read.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub enum Access {
+    Read,
+    Write,
+}
+
+/// Which registry function, and with what argument. ADR-0038.
+///
+/// ⛔ NAMED `Call` AND NOT `Invocation`, and that is deliberate: task 6 brings
+/// `crate::record::Invocation`, the DURABLE detail, and two types one letter apart in the two
+/// worlds this plan keeps separate is the ambiguity D8 refused for `counter`.
+///
+/// ⚠️ THE ARGUMENT IS A `String` AND IT IS UNTRUSTED. Nothing here validates that `function`
+/// names a registered function: the registry does, by REFUSING (task 6). A schema that could
+/// only express registered names would be a second registry, kept aligned by hand.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub struct Call {
+    pub function: String,
+    pub argument: String,
+}
+
+/// Where a piece of text came from. Twin of `crate::record::Trust` -- and the twin the design
+/// asked for by name, "so as not to hang `bincode` derives on a journal type".
+///
+/// ⛔ A MODEL'S TEXT IS UNTRUSTED (ADR-0014) and the gui marks it (G13). The label is
+/// HEREDITARY: summarising or concatenating untrusted text leaves it untrusted.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+pub enum Provenance {
+    Trusted,
+    Untrusted,
+}
+
+/// What the seventh port holds under the layout key -- and its three states, decision 35.
+///
+/// ⛔ `Unavailable` IS NOT `Nothing`, AND CONFLATING THEM WOULD BE THE SILENT DEGRADATION
+/// ADR-0019 FORBIDS. "Nothing" is an archive that opened and is empty -- a first run.
+/// "Unavailable" is an archive that would not open at all, and the core starts anyway and
+/// SAYS SO. A gui told "nothing" would offer to save; one told "unavailable" knows the save
+/// will not stick.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub enum LayoutState {
+    /// The opaque package: `toJSON()` of `dockview` plus the active view.
+    Package(Vec<u8>),
+    /// The archive opened and holds nothing under the key.
+    Nothing,
+    /// The archive would not open. The core started anyway (decision 35).
+    Unavailable,
+}
+
+/// One line of the step list: in sub-project 2 these are registry invocations.
+///
+/// ⛔ A SUMMARY AND NOT THE RECORD. The journal's records must EVOLVE (ADR-0036) and this wire
+/// renounces versioning (I4): sending the record itself would tie the two, and a field added
+/// to a durable record would change these bytes with nothing going red.
+///
+/// ⛔ `done` IS A `bool` AND NOT AN `Option<bool>`, AND IT IS THE JOURNAL'S OWN VOCABULARY
+/// (P-39). `RecordV1::outcome` carries no success flag: an outcome written says the step
+/// CLOSED, and there is no "closed badly". A step whose effect failed returns before the
+/// outcome is written and stays IN DOUBT (ADR-0007), which is `false` here. A third state
+/// would be a variant on the wire with no producer, and an index on the wire never retires.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+pub struct StepSummary {
+    pub step: u64,
+    pub function: String,
+    /// `false` while the step is still in doubt -- ADR-0007's intent written and no outcome yet.
+    pub done: bool,
+}
+
 /// One message on the `ipc` wire.
 ///
 /// ⚠️ Same derive accounting as `GrantRequest`.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 pub enum IpcMessage {
+    /// gui -> core. The handshake, §6.1.2.
+    Hello(BuildStamp),
+    /// core -> gui. The stamp matched.
+    Accepted(Protection),
+    /// core -> gui. The stamp did not match; this carries the EXPECTED one, and the core
+    /// stops listening to that client -- the port has no close (decision 22).
+    StaleBuild(BuildStamp),
+    /// core -> gui.
+    Degradation(DegradationReport),
+    /// core -> gui.
+    Policy(PolicyReport),
     /// gui -> core.
+    Invoke(Call),
+    /// core -> gui. The triple the user must grant, before the invocation can run.
+    PermissionRequired(Triple),
+    /// gui -> core. ⛔ IT CARRIES THE CALL TOO, decision 21: `permission::grant` writes a NOTE
+    /// and wants a step already open, and the core opens that step only when the invocation
+    /// arrives. So `Approve` is enough, and the gui does not resend `Invoke`.
+    Approve { triple: Triple, call: Call },
+    /// core -> gui. In sub-project 2 only the fake core produces these.
+    Token { text: String, provenance: Provenance },
+    /// core -> gui. At the welcome after `Policy`, and again after every `SaveLayout`.
+    Layout(LayoutState),
+    /// gui -> core. The opaque package, when the layout settles and when the window closes.
+    SaveLayout(Vec<u8>),
+    /// core -> gui. At the welcome, and after every invocation.
+    Steps(Vec<StepSummary>),
+    /// gui -> core. ⚠️ NO GUI OF SUB-PROJECT 2 SENDS THIS -- D5, and the 3D is not in the 2.
     Request(GrantRequest),
     /// core -> gui.
     Verdict(Verdict),
@@ -170,6 +372,18 @@ impl IpcMessage {
     /// `an_empty_body_in_an_honest_envelope_does_not_decode` is what makes it true. If an empty
     /// body decoded, a stopped encoder would put a message NOBODY WROTE on the wire, and this
     /// paragraph would be a promise kept by nothing.
+    ///
+    /// ⚠️ DATED RECALL, 2026-09-17 -- THE GRAPH READ ABOVE IS NO LONGER THIS TYPE'S GRAPH, AND
+    /// THE ARGUMENT IS RE-READ RATHER THAN INHERITED. The variants added today put
+    /// `String` and `Vec<u8>` into it. Re-read in bincode 2.0.1's `src/error.rs` the same day:
+    /// the variants reachable without `std` are `UnexpectedEnd` (a writer out of room),
+    /// `RefCellAlreadyBorrowed`, `Other(&'static str)` and `OtherString(String)` behind
+    /// `alloc` -- and the last two are produced only by a HAND-WRITTEN `Encode`, which nothing
+    /// here has. The relation holds; the enumeration did not, which is why it is dated instead
+    /// of left standing. ⛔ AND IT IS NOW MEASURED RATHER THAN ARGUED:
+    /// `a_string_in_the_schema_still_cannot_stop_the_encoder` in
+    /// `crates/kernel/tests/ipc_wire.rs` is the probe, and it feeds the awkward string rather
+    /// than a convenient one.
     pub fn encode(&self) -> Result<Vec<u8>, WireError> {
         let body = bincode::encode_to_vec(self, bincode::config::standard()).unwrap_or_default();
         framing::frame(&body)
@@ -197,4 +411,101 @@ impl IpcMessage {
         }
         Ok(message)
     }
+}
+
+/// The canonical set: ONE message per variant, in a fixed order.
+///
+/// ⛔ ONE FUNCTION AND NOT TWO LISTS. The fixtures are generated from this and the stamp is
+/// computed from this, so THEY CANNOT DRIFT APART: a variant added here changes both, and a
+/// variant added to `IpcMessage` and forgotten here is caught by
+/// `every_variant_is_in_the_canonical_set` below. Two lists would be two places to keep
+/// aligned for one property, and the first one to stop being updated lies in silence -- the
+/// argument `crates/kernel/tests/frozen/record_v1.map` makes about itself.
+///
+/// ⚠️ THE VALUES ARE ARBITRARY BUT NOT RANDOM: each one is chosen so that no two encodings
+/// are equal and no field is left at its type's default, because a fixture full of zeroes
+/// cannot tell a field that is written from one that is skipped. ⚠️ ONE DECLARED EXCEPTION:
+/// `DegradationReport::routing_degraded` is `false`, its default -- with two `bool`s this rule
+/// and P-34's (two equal values at two offsets pin one offset and its mirror) cannot both
+/// hold, and P-34's wins. Do not "fix" it.
+pub fn stamp_set() -> Vec<IpcMessage> {
+    alloc::vec![
+        IpcMessage::Hello(BuildStamp(0x0123_4567_89AB_CDEF)),
+        IpcMessage::Accepted(Protection::AsSystemAccount),
+        IpcMessage::StaleBuild(BuildStamp(0xFEDC_BA98_7654_3210)),
+        IpcMessage::Degradation(DegradationReport {
+            vram_exhausted: true,
+            routing_degraded: false,
+        }),
+        IpcMessage::Policy(PolicyReport {
+            policy: PolicyName::Remote,
+            allocated: Mib::new(12288),
+            total: Mib::new(16384),
+        }),
+        IpcMessage::Invoke(Call {
+            function: String::from("arbiter.set_policy"),
+            argument: String::from("local"),
+        }),
+        IpcMessage::PermissionRequired(Triple {
+            tool: String::from("arbiter"),
+            resource: String::from("policy"),
+            operation: Access::Write,
+        }),
+        IpcMessage::Approve {
+            triple: Triple {
+                tool: String::from("arbiter"),
+                resource: String::from("policy"),
+                operation: Access::Write,
+            },
+            call: Call {
+                function: String::from("arbiter.set_policy"),
+                argument: String::from("local"),
+            },
+        },
+        IpcMessage::Token {
+            text: String::from("ciao"),
+            provenance: Provenance::Untrusted,
+        },
+        IpcMessage::Layout(LayoutState::Package(alloc::vec![0x7B, 0x7D])),
+        IpcMessage::SaveLayout(alloc::vec![0x5B, 0x5D]),
+        IpcMessage::Steps(alloc::vec![StepSummary {
+            step: 42,
+            function: String::from("arbiter.set_policy"),
+            done: true,
+        }]),
+        IpcMessage::Request(GrantRequest {
+            reserved_vram: Mib::new(2048),
+            compute_class: ComputeClass::Interactive,
+            preemption: Preemption::After(Millis::new(500)),
+        }),
+        IpcMessage::Verdict(Verdict::Refused {
+            asked: Mib::new(4096),
+            ceiling: Mib::new(1024),
+        }),
+    ]
+}
+
+/// The build stamp: FNV-1a over the encoding of the canonical set.
+///
+/// ⛔ WRITTEN BY HAND AND NOT A DEPENDENCY, and the two reasons are different. ADR-0031 makes
+/// adding a crate to the kernel's list a deliberate act, and this is SIX LINES. And it is an
+/// IDENTITY, not a defence: nothing here resists a peer that wants to forge a stamp, because a
+/// peer that can forge one is already inside the process boundary. ⚠️ THE DAY THIS IS ASKED TO
+/// BE A DEFENCE IT IS THE WRONG FUNCTION, and the note is here rather than in the design
+/// because this is where someone would reach for it. ⛔ AND IT IS NOT ADR-0018's FINGERPRINT
+/// for pruned payloads, which remains a registered decision of the owner
+/// (`crate::ports::journal`, the doc of `prune`).
+///
+/// ⚠️ THE LENGTH GOES IN TOO, not just the bytes: without it two adjacent messages could be
+/// re-split differently and hash the same.
+pub fn build_stamp() -> BuildStamp {
+    let mut hash: u64 = 0xCBF2_9CE4_8422_2325;
+    for message in stamp_set() {
+        let bytes = message.encode().unwrap_or_default();
+        for byte in (bytes.len() as u64).to_be_bytes().iter().chain(bytes.iter()) {
+            hash ^= *byte as u64;
+            hash = hash.wrapping_mul(0x0000_0100_0000_01B3);
+        }
+    }
+    BuildStamp(hash)
 }

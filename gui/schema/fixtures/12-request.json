@@ -1,0 +1,1 @@
+{"kind":"Request","value":{"reserved_vram":"2048","compute_class":"Interactive","preemption":{"kind":"After","grace_ms":"500"}}}

@@ -1,0 +1,37 @@
+# The map of the ipc fixtures -- §4 of the sub-project 2 design.
+# REGENERATED, not frozen: when the schema changes, run
+#   cargo test --locked -p kernel --test ipc_wire -- --ignored regenerate_the_fixtures
+# and commit what changes. The frozen bytes of ADR-0036 are the OPPOSITE artefact and
+# live in crates/kernel/tests/frozen/.
+# Produced by regenerate_the_fixtures in ../../../crates/kernel/tests/ipc_wire.rs.
+
+00 hello 14 bytes
+    Hello(BuildStamp(81985529216486895))
+01 accepted 6 bytes
+    Accepted(AsSystemAccount)
+02 stale-build 14 bytes
+    StaleBuild(BuildStamp(18364758544493064720))
+03 degradation 7 bytes
+    Degradation(DegradationReport { vram_exhausted: true, routing_degraded: false })
+04 policy 12 bytes
+    Policy(PolicyReport { policy: Remote, allocated: Mib(12288), total: Mib(16384) })
+05 invoke 30 bytes
+    Invoke(Call { function: "arbiter.set_policy", argument: "local" })
+06 permission-required 21 bytes
+    PermissionRequired(Triple { tool: "arbiter", resource: "policy", operation: Write })
+07 approve 46 bytes
+    Approve { triple: Triple { tool: "arbiter", resource: "policy", operation: Write }, call: Call { function: "arbiter.set_policy", argument: "local" } }
+08 token 11 bytes
+    Token { text: "ciao", provenance: Untrusted }
+09 layout 9 bytes
+    Layout(Package([123, 125]))
+10 save-layout 8 bytes
+    SaveLayout([91, 93])
+11 steps 27 bytes
+    Steps([StepSummary { step: 42, function: "arbiter.set_policy", done: true }])
+12 request 13 bytes
+    Request(GrantRequest { reserved_vram: Mib(2048), compute_class: Interactive, preemption: After(Millis(500)) })
+13 verdict 12 bytes
+    Verdict(Refused { asked: Mib(4096), ceiling: Mib(1024) })
+
+stamp 0x47b554435836e861

@@ -21,6 +21,12 @@
 //! against them. `kernel::ports` declares six modules: filesystem, ipc, journal, network,
 //! process, reactor.
 //!
+//! ⚠️ DATED RECALL, 2026-09-17 -- THE OPENING SENTENCE, the one that lists `Journal`, `Reactor` and `Rng`, IS
+//! FALSE FROM THIS TASK: `ipc::LocalSocketIpc` is the fourth. The `grep` above DOES find it -- `Ipc` is one of the names it
+//! enumerates -- so the two halves of that sentence now contradict each other, which is why the prose is
+//! dated here rather than left to be believed. The count is deliberately NOT rewritten into the sentence:
+//! the command answers it, and a figure inside prose is gotcha #31.
+//!
 //! ⛔ This crate USES `std` and WILL USE `unsafe` for FFI, and that is deliberate: it is
 //! the place where I/O has to live (ADR-0031, perimeter). The functions below exist as
 //! COUNTER-PROBES — they prove that the kernel's prohibitions do not fire where they
@@ -32,6 +38,8 @@ pub mod journal;
 pub mod reactor;
 
 pub mod rng;
+
+pub mod ipc;
 
 /// Counter-probe of `no_std`: `platform` names `std::fs` and **compiles**.
 pub fn counter_probe_std_compiles() -> bool {

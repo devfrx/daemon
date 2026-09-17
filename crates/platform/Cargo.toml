@@ -29,6 +29,13 @@ kernel = { path = "../kernel" }
 # lockfile resolves the UNION of every target rather than this one. Measured both ways.
 redb = "4.1.0"
 
+# The local socket under the `ipc` port: one named pipe on Windows, one unix socket on Linux,
+# behind one type. ⛔ IT IS HERE AND NOT IN `kernel`: the port is the kernel's, the socket is the
+# OS (I3), and ADR-0031 does not bind this crate -- `platform` is where the I/O must live.
+# Pinned to the version measured on 2026-09-11. SP-8's emitter resolved 2.4.3 from its own
+# ignored lockfile, which is a different graph and not a divergence (E6 of the part-1 plan).
+interprocess = "2.4.4"
+
 [dev-dependencies]
 # ⚠️ Needed by the CONFORMANCE SUITE, not by this crate: tests/reactor_contract_real.rs
 # `include!`s crates/kernel/tests/reactor_contract.rs, and that file builds a `VirtualReactor`

@@ -108,3 +108,40 @@ pub fn unframe(bytes: &[u8]) -> Result<&[u8], WireError> {
     }
     Ok(body)
 }
+
+/// The length the frame at the head of `bytes` declares, once the prefix has arrived.
+///
+/// ⚠️ IT EXISTS FOR THE CAP AND SAYS SO. A transport owns the memory a frame will be buffered
+/// into, and it has to decide whether to buffer it BEFORE the body arrives; without this it
+/// would have to re-read four bytes itself, which is a second copy of the prefix format.
+pub const fn declared_len(bytes: &[u8]) -> Option<usize> {
+    if bytes.len() < LENGTH_WIDTH {
+        return None;
+    }
+    let declared = u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]);
+    Some(declared as usize)
+}
+
+/// Reads the FIRST frame out of a byte STREAM, and says how many bytes it consumed.
+///
+/// ⛔ THIS IS THE SECOND ENTRY POINT `unframe`'s doc ASKS FOR, and it is a NEW FUNCTION BESIDE
+/// IT rather than a loosening of it. `unframe` refuses every tail, and that refusal is the whole
+/// of what `a_frame_with_a_tail_is_refused` holds for the two private channels: loosening it
+/// would let a decoder consume fewer bytes than the declared length and stay green, which is
+/// what catalogue line `Q4 · I5 · §6.10` forbids.
+///
+/// ⚠️ `None` IS "NOT YET", NOT AN ERROR. Fewer bytes than the prefix, or fewer than the prefix
+/// declares, is the ordinary state of a stream read halfway through a frame.
+///
+/// ⛔ IT CANNOT FAIL, AND THE ABSENCE OF A `Result` IS THE STATEMENT. The envelope knows how
+/// many bytes there are, never what they mean: ANY four bytes are a length. A body that does not
+/// decode is `WireError::Malformed`, produced by the schemas; a declared length nobody wants to
+/// buffer is a CAP, and a cap belongs to whoever owns the memory -- the transport -- not here.
+pub fn take_frame(bytes: &[u8]) -> Option<(&[u8], usize)> {
+    let declared = declared_len(bytes)?;
+    let body = &bytes[LENGTH_WIDTH..];
+    if body.len() < declared {
+        return None;
+    }
+    Some((&body[..declared], LENGTH_WIDTH + declared))
+}

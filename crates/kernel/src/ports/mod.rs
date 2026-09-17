@@ -15,7 +15,7 @@
 //! | `journal`    | §4          | milestone 3                              |
 //! | `filesystem` | §4          | staged (§0.4)                            |
 //! | `process`    | §5.6, §6.10 | milestone 6                              |
-//! | `ipc`        | §6.1        | milestone 6                              |
+//! | `ipc`        | §6.1        | milestone 6 (the port) · sub-project 2, task 2 (`platform::ipc::LocalSocketIpc`, the real transport) |
 //! | `network`    | §2.3.1      | staged — the single exit point           |
 //!
 //! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES — and with task 12 the two finally
@@ -23,6 +23,10 @@
 //! `reactor`, which the executor needs, and `journal`, which the promotion of
 //! `crate::boundary` demands as an argument. The other FOUR — `filesystem`, `network`,
 //! `process` and `ipc` — have NO CALLER AT ALL and are here for the reason above.
+//! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 2: `ipc` HAS ITS REAL IMPLEMENTATION NOW --
+//! `platform::ipc::LocalSocketIpc` -- and its first caller arrives with task 7 (`kernel::serving`),
+//! so the FOUR above are THREE from there on. The figure in the sentence is dated here and NOT
+//! realigned (gotcha #31): the command that counts is `grep -rnE "^ *impl Ipc for" crates/`.
 //!
 //! ⚠️ AND THAT COINCIDENCE IS PRECISELY WHEN THE TABLE LOOKS DELETABLE, so the reason it stays
 //! is written here rather than left to be re-derived. Until `ipc` landed, the table was the

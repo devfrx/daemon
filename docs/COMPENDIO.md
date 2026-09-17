@@ -666,7 +666,9 @@ più (decisione 32). La misura la rifanno i comandi nel prossimo passo della ste
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
 
 ⏭️ **IL PROSSIMO PASSO: ESEGUIRE IL PIANO DELLA PARTE 2 DEL SOTTO-PROGETTO 2 — è SCRITTO dal 2026-09-15, RIVISTO IN
-PROFONDITÀ dal 2026-09-16, e nessun compito è eseguito.** La parte 1, SP-8, è eseguita il 2026-09-10. I due disegni sono
+PROFONDITÀ dal 2026-09-16, e l'ESECUZIONE È COMINCIATA.** ⛔ **Quali compiti siano eseguiti NON si legge
+qui:** la casa unica è la **tabella della posizione** di quel piano, e il suo **diario** dice da quale si riprende.
+La parte 1, SP-8, è eseguita il 2026-09-10. I due disegni sono
 **scritti sul posto il 2026-09-09** (decisione 39 della stella polare): la
 [stella polare della GUI](superpowers/specs/2026-09-07-direzione-gui-design.md) — viste, moduli, disposizione, il protocollo
 core ↔ GUI — e il [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), le cui §1–§10 sono approvate.
@@ -679,7 +681,8 @@ Si riprende dalla **§10 del disegno del 2**, «Come si riprende», che dà l'or
    `dockview` resta; ✅ **il piano della parte 2 è SCRITTO dal 2026-09-15 e RIVISTO IN PROFONDITÀ dal 2026-09-16** —
    diciassette compiti, [piano](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), la cui
    **tabella della posizione** è la casa unica di quali compiti siano eseguiti, e il cui **diario** dice come si
-   riprende; ⏭️ **ciò che viene ora è ESEGUIRLO**, dal compito 1, con `superpowers:subagent-driven-development` — un
+   riprende; ⏭️ **ciò che viene ora è ESEGUIRLO**, dal primo compito che quella tabella lascia scoperto, con
+   `superpowers:subagent-driven-development` — un
    subagente fresco per compito, col pre-controllo delle quattro domande rifatto per ciascuno contro il codice di
    **adesso**; le righe nella §12 di questo file, in `README.md`, nella roadmap e in tracciabilità entrano col
    **compito 17** (D14 del piano);
@@ -692,6 +695,14 @@ coi numeri in mano … con lo stesso pre-controllo, in una sessione nuova»*, me
 non presa** dal 2026-09-16, nella tabella *«Le voci aperte che questo piano SA»*; ✅ **decisa dal proprietario il 2026-09-17 —
 B**: la §13 aggancia la manutenzione a *«cambio del prossimo passo»*, quel cambio era già avvenuto, e un documento di stato
 disallineato mente con autorevolezza.
+
+⛔ **SECONDO RICHIAMO DELLO STESSO GIORNO — la cifra, stavolta, non il verbo.** Questa riga diceva *«e **nessun
+compito è eseguito**»* e *«dal **compito 1**»*, scritte il mattino del 2026-09-17; lo stesso giorno i compiti **1 e 2**
+erano fatti, rivisti e spinti, e la riga mentiva in meno di una giornata. ⛔ **Il rimedio NON è riallinearla a «due»:**
+è la regola di [`../CLAUDE.md`](../CLAUDE.md) — *un puntatore o una cifra che vive in PIÙ documenti si TOGLIE, non si
+ricorregge* — e la casa unica di quali compiti siano eseguiti è la **tabella della posizione** del piano, che chi
+esegue aggiorna nel commit del compito. Un rimando non può marcire; un numeratore marcisce a ogni compito. Gotcha
+**#68**.
 
 ⚠️ La cronaca ripresa per ripresa non sta qui: vive nella stella polare e, parola per parola, negli archivi. Il margine del
 tetto di questo file lo dà il comando nella tabella dello stato della stella polare (gotcha #100).

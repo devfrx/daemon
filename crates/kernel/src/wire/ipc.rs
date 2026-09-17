@@ -419,10 +419,9 @@ impl IpcMessage {
 /// computed from this, so THEY CANNOT DRIFT APART: a variant added here changes both, and a
 /// variant added to `IpcMessage` and forgotten here is caught by
 /// `every_variant_is_in_the_canonical_set` in `crates/kernel/tests/ipc_wire.rs`, an integration
-/// bench OUTSIDE this crate -- named in full rather than "below", which is what this line used
-/// to say and which sent the reader looking down a file the probe is not in. Two lists would be
-/// two places to keep aligned for one property, and the first one to stop being updated lies in
-/// silence -- the argument `crates/kernel/tests/frozen/record_v1.map` makes about itself.
+/// bench OUTSIDE this crate. Two lists would be two places to keep aligned for one property,
+/// and the first one to stop being updated lies in silence -- the argument
+/// `crates/kernel/tests/frozen/record_v1.map` makes about itself.
 ///
 /// ⚠️ THE VALUES ARE ARBITRARY BUT NOT RANDOM: each one is chosen so that no two encodings
 /// are equal and no field is left at its type's default, because a fixture full of zeroes

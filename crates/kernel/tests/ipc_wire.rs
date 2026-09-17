@@ -530,6 +530,13 @@ fn every_u64_reaches_the_json_as_a_decimal_string() {
     // reading side rounds: `Number.MAX_SAFE_INTEGER` is 2^53-1 and `02-stale-build` alone
     // carries 18364758544493064720, so a bare number there would reach the gui ALREADY WRONG
     // and compare equal to itself (gotcha #51, which the step-6 prose cites of itself).
+    //
+    // ⚠️ AND THE LIMIT, DECLARED RATHER THAN HIDDEN: this list is kept BY HAND. It covers every
+    // arm of `variant_json` that renders a `u64` today, and nothing makes it grow on its own --
+    // a variant added tomorrow that carries one would come back green, UNWATCHED, while the name
+    // still says "every". WHOEVER ADDS A VARIANT WITH A `u64` ADDS ITS LINE HERE. A probe that
+    // walked the values instead would have to know which fields are `u64`, which is the schema
+    // stated a second time -- what ADR-0037 refuses and what the literal exists to avoid.
     let set = stamp_set();
     let rule = "rule 1: every u64 is a decimal STRING";
     assert_eq!(

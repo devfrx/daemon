@@ -54,6 +54,7 @@ use kernel::arbiter::{
     ResourceProfile, VramPolicy,
 };
 use kernel::parameters::Parameters;
+use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
 use kernel::ports::filesystem::{CheckpointId, Filesystem, FilesystemError, Path};
 use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 use kernel::ports::journal::StepId;
@@ -498,6 +499,41 @@ impl Ipc for FakeGui {
             return Err(IpcError::MalformedMessage);
         }
         Ok(Some(message))
+    }
+}
+
+// ============================================================================================
+// THE `custody` FAKE
+// ============================================================================================
+
+/// ⛔ A `Vec` OF PAIRS AND NOT A MAP, for the reason `crate::arbiter` writes down: `HashMap`
+/// lives in `std`, and a bench that reaches for one teaches the wrong reflex about the crate it
+/// is testing. With one key today the lookup is a scan of length one.
+#[derive(Default)]
+struct InMemoryCustody {
+    kept: Vec<(CustodyKey, Vec<u8>)>,
+    refuse: bool,
+}
+
+impl Custody for InMemoryCustody {
+    fn keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        if self.refuse {
+            return Err(CustodyError::Unavailable);
+        }
+        self.kept.retain(|(kept, _)| *kept != key);
+        self.kept.push((key, bytes.to_vec()));
+        Ok(())
+    }
+
+    fn retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        if self.refuse {
+            return Err(CustodyError::Unavailable);
+        }
+        Ok(self
+            .kept
+            .iter()
+            .find(|(kept, _)| *kept == key)
+            .map(|(_, bytes)| bytes.clone()))
     }
 }
 
@@ -1062,4 +1098,42 @@ fn a_dead_client_does_not_take_the_port_with_it() {
     assert_ne!(reborn, survivor);
     // ...and the corpse stays a corpse: reconnecting did not resurrect the identifier.
     assert_eq!(gui.send(doomed, b"state"), Err(IpcError::Disconnected));
+}
+
+#[test]
+fn the_custody_port_can_be_implemented_and_called() {
+    let mut custody = InMemoryCustody::default();
+
+    // Nothing kept yet -- and that is a VALUE, not a failure: the first run.
+    assert_eq!(custody.retrieve(CustodyKey::Layout), Ok(None));
+
+    // ⛔ BYTES THAT ARE NOT JSON, on purpose: the package is opaque, and a fake that only ever
+    // sees well-formed JSON would let a parsing implementation through. The real probe of this
+    // property lives with the implementations (task 5); here it keeps the FAKE honest.
+    let package = vec![0x00, 0xFF, 0x7B, 0x00];
+    custody
+        .keep(CustodyKey::Layout, &package)
+        .expect("the fake kept it");
+    assert_eq!(custody.retrieve(CustodyKey::Layout), Ok(Some(package)));
+
+    // Replacing, not appending.
+    custody
+        .keep(CustodyKey::Layout, b"second")
+        .expect("the fake kept it");
+    assert_eq!(
+        custody.retrieve(CustodyKey::Layout),
+        Ok(Some(b"second".to_vec()))
+    );
+
+    // And refusable, same rule 3 as above -- BOTH operations, because the consumer reads the
+    // difference between "write refused" and "unavailable" from WHICH ONE fails.
+    custody.refuse = true;
+    assert_eq!(
+        custody.keep(CustodyKey::Layout, b"third"),
+        Err(CustodyError::Unavailable)
+    );
+    assert_eq!(
+        custody.retrieve(CustodyKey::Layout),
+        Err(CustodyError::Unavailable)
+    );
 }

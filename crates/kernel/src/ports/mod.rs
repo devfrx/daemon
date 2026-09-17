@@ -1,6 +1,14 @@
-//! The SIX families of ports (§2.3), and the number is not decoration: §3.1 declares this
+//! The SEVEN families of ports (§2.3), and the number is not decoration: §3.1 declares this
 //! list EXHAUSTIVE — "there are no other points at which the world touches the kernel" —
 //! and the simulator substitutes ALL of them.
+//!
+//! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: THE NUMBER ABOVE WAS SIX UNTIL TODAY. The
+//! seventh family is `custody` -- it keeps the bytes the gui entrusts to the core and hands them
+//! back -- designed in §2 of the GUI north star (decision 15) and declared in §2.3 on the same
+//! day. ⛔ THE COUNT IS REALIGNED HERE RATHER THAN LEFT DATED IN PLACE, and this one sentence is
+//! the exception because it COUNTS WHAT THIS MODULE DECLARES: a figure that disagreed with the
+//! `pub mod` list below would make §3.1's "exhaustive" describe a world SMALLER than the real
+//! one, which is gotcha #17 — the very thing the next paragraph exists to prevent.
 //!
 //! ⛔ A port discovered later means criterion C1 was verified on a world SMALLER than the
 //! real one, and NOTHING WOULD HAVE GONE RED. That is gotcha #17, and it is the whole
@@ -17,9 +25,10 @@
 //! | `process`    | §5.6, §6.10 | milestone 6                              |
 //! | `ipc`        | §6.1        | milestone 6 (the port) · sub-project 2, task 2 (`platform::ipc::LocalSocketIpc`, the real transport) |
 //! | `network`    | §2.3.1      | staged — the single exit point           |
+//! | `custody`    | GUI north star §2 | sub-project 2, task 5                    |
 //!
 //! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES — and with task 12 the two finally
-//! COINCIDE: this module declares SIX submodules, one per row. Two of them have a caller —
+//! COINCIDE: this module declares SEVEN submodules, one per row. Two of them have a caller —
 //! `reactor`, which the executor needs, and `journal`, which the promotion of
 //! `crate::boundary` demands as an argument. The other FOUR — `filesystem`, `network`,
 //! `process` and `ipc` — have NO CALLER AT ALL and are here for the reason above.
@@ -38,7 +47,7 @@
 //! back door.
 //!
 //! ⚠️ A TRAIT NOBODY IMPLEMENTS IS NOT A TRAIT PROVED IMPLEMENTABLE. The four declared
-//! without a caller are held by `tests/ports_are_implementable.rs` — FIVE fakes, because
+//! without a caller are held by `tests/ports_are_implementable.rs` — SIX fakes, because
 //! `process` needs two of them (`Worker` and `Process`), and calls that exercise each in both
 //! directions. It buys that the signatures compile FROM OUTSIDE THE CRATE and can be called;
 //! it does not buy that they are the right signatures, and it is not the conformance suite,
@@ -52,6 +61,7 @@
 //! the point: extending it would give the figure a second house and it would rot in the one
 //! nobody moves. `ports/process.rs` carries the reckoning for that family; this paragraph
 //! keeps only what it measured, which is this one file.
+//! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: SIX from here on -- `custody` has a fake of its own; the FIVE above is dated, not realigned (gotcha #31).
 //!
 //! ⛔ AND ON `process` THAT TEST EARNED ITS KEEP RATHER THAN CONFIRMING ANYTHING. The port as
 //! designed was NOT IMPLEMENTABLE: `instruct_one` has to HAND BACK a `SingleReceipt` whose
@@ -81,6 +91,19 @@
 //! filing mistake: the simulator substitutes SEVEN things while §2.3 enumerates SIX, and
 //! §3.1 says so in those words. Repeated here so that nobody "fixes" the discrepancy by
 //! moving `rng` under this module, or by writing "seven families" in the line above.
+//! ✅ DATED RECALL, 2026-09-17 -- THE NUMBERS MOVED AND THE WARNING STANDS, WHICH IS THE WHOLE
+//! POINT OF DATING IT RATHER THAN REWRITING IT. A SEVENTH FAMILY ARRIVED -- `custody`, the
+//! layout the gui entrusts to the core (decision 15 of the GUI north star) -- so the simulator
+//! now substitutes EIGHT things while §2.3 enumerates SEVEN. ⛔ THE DISCREPANCY DID NOT CLOSE,
+//! IT MOVED: `rng` is still declared in §2.2 and still lives in `crate::rng`, and moving it
+//! under this module is still the wrong fix.
+//! ⛔ AND "seven families" IS NOW WRITTEN IN THE LINE ABOVE -- BY THIS RECALL, AND IT IS NOT THE
+//! THING THE SENTENCE FORBIDS. The forbidden seven was the one that COUNTS `rng` as a family of
+//! I/O; today's seven counts a real family and leaves `rng` exactly where it was. A reader who
+//! sees the two sentences side by side should read this one: the warning is about WHAT IS
+//! COUNTED, not about the digit.
+
+pub mod custody;
 
 pub mod filesystem;
 

@@ -210,6 +210,12 @@ spinta — e la sua finta dovrebbe generare eventi, cioè più macchina per meno
 > ragione per cui questa voce costa una sezione invece di una riscrittura. Se fosse servita
 > una settima famiglia, sarebbe stata regola B per intero e avrebbe dovuto entrare adesso,
 > come `process` in §2.3.1.
+>
+> ⛔ **RICHIAMO DEL 2026-09-17 — le famiglie sono SETTE, e il merito di questo riquadro RESTA VERO.** La frase
+> d'apertura è al presente e in assoluto, e dal sotto-progetto 2 è falsa alla lettera: `custody` è la settima
+> (§2.3, e decisione 15 della stella polare della GUI). ✅ **Ciò che il riquadro afferma non cambia:** l'anello 3
+> non ne aggiunge una, ed è ancora la ragione per cui quella voce costò una sezione invece di una riscrittura. Si
+> data invece di riscriverla perché è l'argomento di una voce chiusa, non un conteggio.
 
 ⛔ **Il limite dichiarato.** Qui si dichiara **da dove** una sorgente entra, non **come**
 funziona: il reattore reale non osserva percorsi finché l'anello 3 non si costruisce, e la
@@ -582,6 +588,14 @@ La casualità serve al `simulator` — per scegliere l'ordine e iniettare guasti
 | `ipc` — server verso la gui | §6 |
 | `network` — **l'unico punto di uscita verso la rete** (V25) | dichiarata qui, implementazione scaglionata (§0.4) |
 | `reactor` — «cosa è pronto», e l'attesa | §2.4 |
+| `custody` — **tenere i byte che la GUI affida al core, e ridarli** | dichiarata qui il 2026-09-17, progettata nella §2 della [stella polare della GUI](2026-09-07-direzione-gui-design.md) |
+
+> ⛔ **RICHIAMO DEL 2026-09-17 — la tabella passa da SEI a SETTE famiglie**, ed è la prima volta dal 2026-08-07
+> (§2.3.1). La settima è `custody`: due operazioni, `keep` e `retrieve`, e **una chiave sola**, un enum chiuso.
+> Il perché — e perché non il giornale — è la decisione 15 della stella polare della GUI, riassunta nel doc di
+> `crates/kernel/src/ports/custody.rs`. ⚠️ **Il costo, dichiarato lì e qui:** la §3.1 dichiara di sostituire
+> *«esattamente le porte della §2.3»*, quindi cresce con questa; e la campagna **C1** verifica da oggi un mondo
+> più largo — **detto** invece che scoperto, che è gotcha #17 nella direzione giusta.
 
 #### 2.3.1 Due celle riscritte — F1a e F5
 
@@ -916,6 +930,7 @@ punti in cui il mondo tocchi il kernel.
 | `process` | avvia, **istruisce** e uccide worker veri | worker finti: risposte, ritardi e uccisione scelti dal seme |
 | `network` | HTTPS **verso la rete** — i provider **e** l'esportazione OTLP opt-in | risposte, ritardi e perdite scelti dal seme |
 | `ipc` | named pipe verso la gui | client finto, che può **morire** quando il seme decide |
+| `custody` | `redb` su un file suo, una tabella, una chiave (ADR-0022, l'archivio «configurazione») | in memoria, come `MemoryJournal` |
 | `rng` | ⚠️ **`SequentialRng`: NON seminato e non casuale** — un contatore `wrapping_add(1)` che parte da zero. ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-070: questa cella diceva «seminato all'avvio»**, e non c'è nessun seme, nessun ingresso e nessuna sorgente dell'OS — `crates/platform/src/rng.rs` si apre con *«the real `rng`, and IN PRODUCTION IT IS NOT RANDOM AT ALL»*. ✅ **La divergenza è DECISA, non subita:** è la voce `D5` del piano del Traguardo 2, con l'argomento *«in produzione l'interlacciamento non si esplora, si fissa»*; era rimasta nel piano e non era mai risalita alla spec, che del piano è la fonte. ⚠️ **Perché conta per chi legge questa tabella:** la §7.4.6 confronta le **due** implementazioni della stessa porta, e *«seminato all'avvio»* fa attendere due generatori della stessa natura con semi diversi — sono invece un **contatore** contro uno **xorshift seminato**, che è una differenza di natura | seminato dal seme della campagna |
 
 > ⚠️ **La riga `process` è stata allargata il 2026-08-07**, con la §2.3 e nello stesso
@@ -927,7 +942,11 @@ punti in cui il mondo tocchi il kernel.
 >
 > 📌 Nota di lettura, senza conseguenze: `rng` è dichiarata in **§2.2**, non in §2.3. La
 > frase qui sopra resta vera in ciò che afferma — non esistono altri punti in cui il mondo
-> tocchi il kernel — ma l'elenco è di **sette** porte e la §2.3 ne enumera sei.
+> tocchi il kernel — ma l'elenco è di **otto** porte e la §2.3 ne enumera **sette**.
+> ⛔ **RICHIAMO DEL 2026-09-17:** i due numeri erano **sette** e **sei**; sono cresciuti insieme con `custody`, e
+> lo scarto resta **uno** ed è sempre `rng`. La stessa avvertenza, coi numeri di oggi, sta in
+> `crates/kernel/src/ports/mod.rs`, che è l'altra casa di questa discrepanza — e le due si toccano **insieme**,
+> o la prima che resta indietro mente in silenzio.
 
 ### 3.2 Il tempo virtuale
 

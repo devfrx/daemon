@@ -21504,10 +21504,20 @@ E lo stato alla chiusura, che non si ricorda ma si **rifà** — ogni riga porta
 - ⚠️ **UN ARTEFATTO CONFRONTATO BYTE A BYTE VUOLE UNA RIGA IN `.gitattributes`, O È VERDE SOLO DOVE È NATO.** Con
   `core.autocrlf=true` un checkout fresco riscriveva i quattordici `.json` in CRLF. ⛔ **Non si scopre girando i test:**
   si scopre con `git checkout-index -a --prefix=<dir>/` e un `tr -cd '\r' \| wc -c` sui due lati.
-- ⚠️ **Due attrezzi di questa macchina, misurati:** `$TMPDIR` **non esiste** nel Bash di queste sessioni — un redirect
-  che lo usa finisce in `/` con `Permission denied` e fa uscire il cancello **1 per il motivo sbagliato**; e
-  `.superpowers/` **non è git-ignored** in questo repository, malgrado il compendio la citi fra le cartelle che il
-  controllo dei link salta (`git check-ignore` lo dice). Brief, ledger e rapporti vanno nello **scratchpad**.
+- ⚠️ **Un attrezzo di questa macchina, misurato:** `$TMPDIR` **non esiste** nel Bash di queste sessioni — un redirect
+  che lo usa finisce in `/` con `Permission denied` e fa uscire il cancello **1 per il motivo sbagliato**.
+- ⛔ **`git check-ignore` SU UN PERCORSO VICINO NON RISPONDE DELLA CARTELLA CHE TI INTERESSA, E QUESTA RIGA È IL CASO.**
+  ⛔ **CORREZIONE DEL 2026-09-17, alla chiusura della sessione:** qui stava scritto che *«`.superpowers/` non è
+  git-ignored»* e che *«brief, ledger e rapporti vanno nello scratchpad»*. È **falso**, e la prova era a un comando:
+  `.superpowers/sdd/` porta un `.gitignore` **proprio**, con un `*` dentro, quindi tutto ciò che sta là sotto è
+  ignorato — mentre l'interrogazione che aveva deciso la riga guardava `.superpowers/<altro>`, un livello più su,
+  dove infatti non c'è nessuna regola. ✅ **La casa del ledger, dei brief e dei rapporti è quindi**
+  `.superpowers/sdd/<nome-del-piano>/`, che **sopravvive alla sessione** mentre lo scratchpad muore con essa, e che
+  in questo piano **esiste già** coi file dei compiti 1 e 2. ⚠️ **E ci si copia dentro GUARDANDO PRIMA:** lo stesso
+  giorno un `cp` fatto senza guardare ha **sovrascritto** il `progress.md` dei compiti 1 e 2, che non esisteva
+  altrove — il merito era salvo solo perché viveva nella **ventunesima chiusura** di questo diario, che è la ragione
+  per cui il diario esiste. 📌 **La forma generale: un'interrogazione fatta su un percorso VICINO a quello che ti
+  interessa non risponde della tua domanda**, e risponde con sicurezza.
 
 #### Che cosa la sessione nuova fa, nell'ordine
 

@@ -1,10 +1,10 @@
 //! The `ipc` conformance suite expanded against the REAL transport, plus the promises only a
 //! real peer can exercise.
 //!
-//! ⚠️ THE SOCKET NAME IS PER-TEST AND CARRIES THE LINE NUMBER, except in `build`, where a
-//! counter numbers the calls because all three suite tests share that one call site, the shape
-//! `crates/daemon/src/main.rs` already uses for its private directories: two tests sharing a
-//! name pass alone and fail together, which is the flakiest red there is.
+//! ⚠️ THE SOCKET NAME IS PER-TEST AND CARRIES THE LINE NUMBER, the shape
+//! `crates/daemon/src/main.rs` already uses for its private directories -- except in `build`,
+//! where a counter numbers the calls because all three suite tests share that one call site.
+//! Two tests sharing a name pass alone and fail together, which is the flakiest red there is.
 //!
 //! ⚠️ THE WAITS ARE `yield_now` LOOPS AND NOT FIXED SLEEPS, except where the assertion is about
 //! something that has NOT arrived -- there an interval must elapse, and those two are named.
@@ -209,7 +209,11 @@ fn a_peer_that_goes_away_is_disconnected_and_leaves_the_table() {
     assert_eq!(
         ipc.receive(client),
         Err(IpcError::Disconnected),
-        "and it STAYS gone: the client left the table, it was not merely reported once"
+        "and it SAYS SO AGAIN, which is the whole of what this oracle can see: `receive` \
+         answers `Disconnected` both for a client that has left the table and for one still in \
+         it whose channel is closed. That the table SHRANK is checked by \
+         `ipc::tests::a_peer_reported_gone_by_receive_is_out_of_the_table`, in \
+         `crates/platform/src/ipc.rs`, where `clients` is reachable"
     );
 }
 
@@ -240,6 +244,9 @@ fn a_send_to_a_peer_that_left_is_disconnected_and_drops_the_client() {
     assert_eq!(
         ipc.receive(client),
         Err(IpcError::Disconnected),
-        "and the client LEFT THE TABLE on that write"
+        "and it is `Disconnected` FROM HERE ON, which is as far as this oracle reaches: the \
+         same answer comes back whether or not the write removed the row. That it WAS removed \
+         is checked by `ipc::tests::a_peer_a_send_finds_gone_is_out_of_the_table`, in \
+         `crates/platform/src/ipc.rs`"
     );
 }

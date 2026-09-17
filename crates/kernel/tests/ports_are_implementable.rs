@@ -1,9 +1,10 @@
 //! One fake per port declared WITHOUT an implementation, and calls that exercise them
+//! (§2.3, gotcha #17).
+//!
 //! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 2: `ipc` HAS an implementation now --
 //! `platform::ipc::LocalSocketIpc` -- so "WITHOUT an implementation" is no longer true of every
 //! fake here. The fakes stay, because a bench of `kernel` cannot open a socket, and the line
 //! above is dated rather than rewritten.
-//! (§2.3, gotcha #17).
 //!
 //! ⛔ WHAT THIS BUYS: that the signatures of `Filesystem`, `Network`, `Worker`, `Process` and
 //! `Ipc` are IMPLEMENTABLE and CALLABLE. A trait nobody implements has not been proved

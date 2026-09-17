@@ -21421,6 +21421,120 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La ventiduesima chiusura — 2026-09-17, seconda sessione del giorno: il COMPITO 3 è FATTO, rivisto in due giri e spinto; restano i compiti 4–17
+
+⛔ **DA SAPERE SUBITO, cinque cose.** **(1)** ⏭️ **Il compito 3 è fatto e spinto; il prossimo è il compito 4**, e quale
+sia lo dice la **§6 del [`COMPENDIO.md`](../../COMPENDIO.md)** insieme alla tabella della posizione qui sopra, che porta
+ora **tre** ✅ e **quattordici** ⬜. **(2)** ⛔ **L'ERRATA È A DICIANNOVE VOCI, E1…E19**, e si legge **prima** di ogni
+compito: sette sono nate oggi dal solo compito 3. **(3)** ⛔ **IL PRE-CONTROLLO NON BASTA, E OGGI LO HA DIMOSTRATO.** Le
+quattro domande hanno trovato **quattro** difetti prima di dispacciare (E9…E12), e la **revisione** ne ha trovato uno
+**Critico** che nessuna corsa verde avrebbe mai mostrato: una sonda con due `assert_ne!` e **nessun** `assert_eq!` che
+leghi l'oracolo al soggetto. I due cancelli colgono cose diverse; saltare il secondo perché il primo è andato bene è il
+modo di perdere esattamente quella specie. **(4)** ⛔ **LA §6 DEL COMPENDIO NON CONTA PIÙ I COMPITI:** diceva *«nessun
+compito è eseguito»*, era marcita in mezza giornata, e la cifra è stata **tolta** invece che riallineata (gotcha #68) —
+chi chiude un compito **non tocca più il compendio**, aggiorna la tabella della posizione e basta. **(5)** ⚠️
+**`.gitattributes` ha una SECONDA regola** — `gui/schema/fixtures/` — e la sua testa spiega perché; chi aggiunge artefatti
+confrontati **byte a byte** ci passa, o li scrive verdi e li legge rossi altrove.
+
+✅ **Che cosa è stato fatto.** Otto commit, ciascuno col cancello verde prima (i log nello scratchpad, che può non
+sopravvivere):
+
+| Commit | Che cosa |
+|---|---|
+| `06f3f63` | il puntatore ⏭️ della **§6 del compendio** smette di contare i compiti e rimanda alla tabella della posizione |
+| `9dc6f4b` | il **pre-controllo del compito 3**: quattro voci d'errata, **E9…E12** |
+| `e45e1d6` | **compito 3**: le varianti nuove coi gemelli, l'insieme canonico, il timbro, le fixture e il controllo che dice «rigenera» |
+| `e64a71d` | i **cinque rilievi** della revisione — C-1, I-1, M-1, M-2, M-3 |
+| `6c2c79a` | l'**ondata di prosa**: i due rilievi della ri-revisione, N-1 e N-2 |
+| `8b99fe0` | **E16**: le tre righe di `.gitattributes` per le fixture |
+| `5c708ab` | l'**errata si chiude**: **E13…E19** |
+| questo | il **diario** |
+
+E lo stato alla chiusura, che non si ricorda ma si **rifà** — ogni riga porta il comando che la produce:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, `git status -sb`, `git stash list` vuoto |
+| I commit di oggi | `git log --oneline 095d338..HEAD` → **otto** |
+| La posizione | `grep -cE '^\| \*\*[0-9]+\*\* \|.*✅ 2026-09-17 \|$' <questo file>` → **3**; `grep -cE '^\| \*\*[0-9]+\*\* \|.*⬜ \|$' <questo file>` → **14** |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **19** |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` → **133** e `grep -c '^[|] \*\*D[0-9]' <questo file>` → **91**, **invariati**: l'esecuzione non ne aggiunge |
+| I criteri di chiusura | `grep -cE '^(#### \|\*\*)Criterio di chiusura' <questo file>` → **17** |
+| Le sonde del 3 | `cargo test --locked -p kernel --test ipc_wire` → **14** passati, **1** ignorato (il generatore); `--test framing` → **9**; `--test numbering` → **4** |
+| Lo schema | `awk '/^pub enum IpcMessage/{s=1} s&&/^}/{exit} s&&/^    [A-Z]/{c++} END{print c}' crates/kernel/src/wire/ipc.rs` → **14**, contro **2** su `git show 42b50d8:` dello stesso file |
+| Le fixture | `ls gui/schema/fixtures/*.bin \| wc -l` e `ls gui/schema/fixtures/*.json \| wc -l` → **14** e **14**, che si confrontano **fra loro**; `grep -c '^stamp 0x' gui/schema/fixtures/ipc_v1.map` → **1** |
+| Le implementazioni di `ipc` | `grep -rcE '^ *impl Ipc for' crates/ --include='*.rs'` → **tre**: le due finte e `LocalSocketIpc` |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, lanciato prima di **ognuno** degli otto commit; `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | questo piano è **LF**: `tr -cd '\r' < <questo file> \| wc -c` → **0**. `crates/kernel/src/wire/ipc.rs` e `crates/kernel/tests/ipc_wire.rs` restano `i/lf w/crlf`; le fixture nascono LF **e ora lo restano a un checkout**, che è E16 |
+| Margine del compendio | `wc -c docs/COMPENDIO.md` → **102541**, contro il tetto di **111616** scritto in `scripts/check-docs.sh` |
+| Debito lasciato | **nessuno dentro il compito 3**: i cinque rilievi della revisione e i due della ri-revisione sono chiusi e ri-verdettati uno per uno. Resta la **minore parcheggiata** della ventunesima chiusura, sul commento di `const CAP` in `crates/platform/src/ipc.rs` |
+
+#### Le decisioni prese eseguendo, oltre a quelle dell'errata
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 106 | ⛔ **la §6 del compendio non conta più i compiti: la cifra si TOGLIE, non si ricorregge** | la riga *«nessun compito è eseguito»* è stata scritta il mattino del 2026-09-17 ed era falsa il pomeriggio dello stesso giorno. Riallinearla a «due» l'avrebbe rimessa nello stato in cui marcisce al compito dopo; la casa unica è la tabella della posizione, che chi esegue aggiorna **nel commit del compito**. Gotcha **#68** | il compendio non dice più a colpo d'occhio quanto manca: lo dice un comando |
+| 107 | **l'oracolo di una funzione di formattazione scritta a mano è un LETTERALE** | un parser sarebbe una voce nuova nella lista di ADR-0031, vietata dal vincolo globale 9; un decodificatore scritto da noi sarebbe la seconda definizione che ADR-0037 rifiuta. Un letterale è un **valore**: sbagliato solo se lo si scrive sbagliato, e rileggibile carattere per carattere. Decisa dal proprietario in A/B, e applicata due volte — E12 sull'escaper, E18 sulle due regole del JSON | il letterale va riletto a mano in revisione |
+| 108 | ⛔ **quando una misura smentisce la ragione scritta per un Atteso, si REGISTRA la divergenza invece di riscrivere la ragione** | è la riga di `CLAUDE.md` *«un'evidenza scritta prima della misura è un'ipotesi»*. La riga G8 del Passo 8 attribuiva la propria greenness a un limite del **caso di prova**, e la misura ha detto che la causa era **strutturale**: riscrivere la ragione avrebbe cancellato proprio l'informazione che la misura ha comprato | l'errata è più lunga, e porta una voce che dice «qui c'era scritto il falso» |
+| 109 | **le voci d'errata dei rilievi Minori si raggruppano in UNA quando sono la stessa specie e la stessa passata** | tre correzioni di una riga trovate dalla stessa revisione non guadagnano nulla da tre voci, e ciascuna resta **nominata** dentro la voce. ⚠️ Diverge dal compito 2, che teneva E7 ed E8 separate — lì toccavano **Passi diversi**, che è il criterio | chi cerca «il rilievo M-2» trova E19, che lo nomina |
+| 110 | ⛔ **un difetto che un compito RIVELA ma non causa si chiude in un commit a SÉ** | E16 — le fixture verdi qui e rosse su ogni clone — nasce dal compito 3 ma vive in `.gitattributes`, che il compito non nomina. Infilarla nel commit del compito avrebbe allargato il perimetro in silenzio e reso il diff del compito non rivedibile contro il suo brief | un commit in più, e una voce d'errata che spiega perché è fuori |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UNA SONDA CON DUE `assert_ne!` E NESSUN `assert_eq!` CHE LEGHI L'ORACOLO AL SOGGETTO È VUOTA, E SEMBRA PIENA.**
+  `assert_ne!` è soddisfatta da **qualunque** differenza — compresa quella fra l'oracolo e il soggetto quando smettono
+  di essere la stessa funzione. Qui bastava rendere costante l'uno **o** l'altro perché il banco restasse verde, e la
+  clausola *«using the same function the real one uses»* era scritta in un commento e tenuta da niente. ⚠️ **Si cerca
+  chiedendosi, per ogni asserzione, quale oracolo vede la cosa che il messaggio promette** — non rileggendola.
+- ⛔ **LA PROVA CHE CONTA È QUELLA DOPO IL RIMEDIO CHE IL MESSAGGIO DI ROSSO PRESCRIVE.** Un controllo che dice
+  *«REGENERATE them»* si giudica **rigenerando**: qui, sotto la mutazione, il rosso appariva e poi la rigenerazione
+  chiudeva tutto in verde **con lo schema cambiato e il timbro fermo**. Un controllo provato solo fino al rosso è
+  provato a metà.
+- ⛔ **UN CONTEGGIO VIVE IN PIÙ PUNTI DELLO STESSO COMPITO**, e correggerne uno solo è la radice **R1** dentro un
+  compito: il conto delle sonde sta nel Passo che le misura **e** nel criterio che le chiude. Chi scrive una voce
+  d'errata che muove un numero lo **cerca con `grep` in tutti i suoi siti** prima di scriverla — successo due volte
+  oggi, sulla stessa cifra.
+- ⛔ **UN ORACOLO CHE NON PUÒ MAI ESSERE VERDE INSEGNA A SALTARLO.** Il Passo 8 chiedeva `git diff --stat` **vuoto**
+  dopo ogni revoca, mentre il commit sta al Passo 10: era falso per costruzione. Si perde così l'unica cosa che quella
+  riga voleva — che le mutazioni siano revocate **al byte** — e la forma che regge è `cmp` contro copie pristine più
+  la baseline riconfrontata.
+- ⛔ **IL RIMEDIO DI UN RILIEVO PUÒ LASCIARE DENTRO IL PROPRIO VERBALE.** Correggendo M-1 il rimedio ha scritto nel doc
+  *«…rather than "below", which is what this line used to say»*: è la riga di `CLAUDE.md` *un verbale di correzione non
+  resta nel documento corretto*, commessa dentro la correzione. È la seconda volta in due giorni — la prima fu E2.
+- ⚠️ **UN ARTEFATTO CONFRONTATO BYTE A BYTE VUOLE UNA RIGA IN `.gitattributes`, O È VERDE SOLO DOVE È NATO.** Con
+  `core.autocrlf=true` un checkout fresco riscriveva i quattordici `.json` in CRLF. ⛔ **Non si scopre girando i test:**
+  si scopre con `git checkout-index -a --prefix=<dir>/` e un `tr -cd '\r' \| wc -c` sui due lati.
+- ⚠️ **Due attrezzi di questa macchina, misurati:** `$TMPDIR` **non esiste** nel Bash di queste sessioni — un redirect
+  che lo usa finisce in `/` con `Permission denied` e fa uscire il cancello **1 per il motivo sbagliato**; e
+  `.superpowers/` **non è git-ignored** in questo repository, malgrado il compendio la citi fra le cartelle che il
+  controllo dei link salta (`git check-ignore` lo dice). Brief, ledger e rapporti vanno nello **scratchpad**.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è
+   il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — i vincoli globali, la posizione,
+   ⛔ **l'errata, che ora ha diciannove voci**, le voci aperte. ⚠️ **Il registro e i rapporti della revisione NON si
+   leggono per eseguire**: servivano alla revisione, che è chiusa.
+3. ⏭️ **Il compito 4** — la settima porta — con `superpowers:subagent-driven-development`: un subagente fresco **su
+   Opus**, con revisione fra uno e l'altro. ⛔ **Il pre-controllo delle quattro domande si rifà per OGNI compito prima
+   di dispacciarlo**, contro il codice di **adesso**; ⛔ **e la revisione si dispaccia lo stesso anche quando il
+   pre-controllo è andato bene**, perché oggi ha trovato il Critico che il pre-controllo non aveva visto.
+4. ⛔ **Il brief di ogni compito porta QUATTRO pezzi:** la sezione *Strumenti* della testa (col sorgente di
+   `replace_unique.py`, che non esiste in `scripts/`), i **vincoli globali**, l'**errata** e il testo del compito.
+   ⚠️ Lo `scripts/task-brief` della skill **non serve qui** — le intestazioni sono in italiano — e i quattro pezzi si
+   estraggono con `sed -n` sui numeri di riga, che si **ricalcolano dopo ogni inserzione in errata**.
+5. Ogni compito: il **cancello prima del commit** — ⛔ **due volte** se il compito tocca un banco con concorrenza — la
+   riga della posizione aggiornata **nel commit del compito**, il commit **senza co-autore**, e il push **dopo** che la
+   revisione è pulita. ⛔ **Il compendio NON si tocca** (decisione 106). Se il compito dice il falso **ci si ferma e si
+   riporta**: una divergenza è una voce d'errata prima di essere un rimedio.
+6. ⛔ **Prima del compito 11 si aggiorna Node** (P-64, P-65: il 2026-09-16 era `v24.9.0`, fuori da `^24.15.0`).
+   ⛔ **Prima dei compiti 13 e 14** si guarda se `C:\Users\zagor\AppData\Local\Temp\probe-R13\gui\` c'è ancora: è il
+   modello **installato e verde**, e risparmia un `npm ci` — ma i suoi sorgenti sono un'**estrazione** del piano, non
+   il repo.
+7. Alla chiusura del piano la cartella della revisione si **archivia** (decisione 69).
+8. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
 ### La ventunesima chiusura — 2026-09-17: L'ESECUZIONE È COMINCIATA — i compiti 1 e 2 sono FATTI, rivisti e spinti; restano i compiti 3–17
 
 ⛔ **DA SAPERE SUBITO, cinque cose.** **(1)** ⛔ **Questo piano non è più un'ipotesi da rivedere: si sta

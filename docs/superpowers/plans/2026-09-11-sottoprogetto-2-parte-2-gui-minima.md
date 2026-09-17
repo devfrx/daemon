@@ -21455,7 +21455,7 @@ E lo stato alla chiusura, che non si ricorda ma si **rifà** — ogni riga porta
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | Ramo | `main` = `origin/main`: `git fetch --all --prune`, `git status -sb`, `git stash list` vuoto |
-| I commit di oggi | `git log --oneline 095d338..HEAD` → **otto** |
+| I commit di questa sessione | `git log --oneline 095d338..HEAD` — ⛔ **senza la cifra accanto, e per una ragione che questa riga ha imparato SU DI SÉ:** quel conto cambia a **ogni** commit, **compreso quello che scrive questa riga**, quindi qualunque numero messo qui è falso appena lo si scrive. Diceva **otto**, e il commit che ha corretto la trappola di `.superpowers/sdd/` qui sotto lo ha fatto **nove** nel giro di un minuto. È la riga di `CLAUDE.md` *un numero misurato non si scrive: si scrive il COMANDO che lo produce*, colta nel suo caso più puro |
 | La posizione | `grep -cE '^\| \*\*[0-9]+\*\* \|.*✅ 2026-09-17 \|$' <questo file>` → **3**; `grep -cE '^\| \*\*[0-9]+\*\* \|.*⬜ \|$' <questo file>` → **14** |
 | L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **19** |
 | Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` → **133** e `grep -c '^[|] \*\*D[0-9]' <questo file>` → **91**, **invariati**: l'esecuzione non ne aggiunge |

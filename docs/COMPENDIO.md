@@ -665,7 +665,8 @@ aperte di questa §6, questo puntatore, `CLAUDE.md` — e `AVVIO-CHAT.md` resta 
 più (decisione 32). La misura la rifanno i comandi nel prossimo passo della stella polare; il metodo — misurare prima, ogni
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
 
-⏭️ **IL PROSSIMO PASSO: LA PARTE 2 DEL PIANO DEL SOTTO-PROGETTO 2 — LA PARTE 1, SP-8, È ESEGUITA IL 2026-09-10.** I due disegni sono
+⏭️ **IL PROSSIMO PASSO: ESEGUIRE IL PIANO DELLA PARTE 2 DEL SOTTO-PROGETTO 2 — è SCRITTO dal 2026-09-15, RIVISTO IN
+PROFONDITÀ dal 2026-09-16, e nessun compito è eseguito.** La parte 1, SP-8, è eseguita il 2026-09-10. I due disegni sono
 **scritti sul posto il 2026-09-09** (decisione 39 della stella polare): la
 [stella polare della GUI](superpowers/specs/2026-09-07-direzione-gui-design.md) — viste, moduli, disposizione, il protocollo
 core ↔ GUI — e il [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), le cui §1–§10 sono approvate.
@@ -673,9 +674,24 @@ Si riprende dalla **§10 del disegno del 2**, «Come si riprende», che dà l'or
 
 1. ✅ la **rilettura del proprietario** dei due disegni in questa forma, in chat — il sì è condizionato e non si deduce; la
    domanda minima con cui si apre sta nella §10 — **fatta il 2026-09-09**, voce per voce: le sei voci sue tutte A, decisioni 41–47 della stella polare;
-2. ✅ **la parte 1 del piano del 2, eseguita il 2026-09-10** — [piano](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md): SP-8, ADR-0029 chiuso, `dockview` resta; ⏭️ **la parte 2**: i pezzi 2–9 della §3 della stella polare, scritta **ora** coi numeri in mano — chi decodifica (Q1: il processo principale Node con `bincode-ts`), il guscio Electron che serve la build da un'origine http(s) per la finestra a parte (Q3, dedotto), la CI su Windows e `cargo audit` più `npm audit` (D13 del piano) — con lo stesso pre-controllo, in una sessione nuova; le righe nella §12 di questo file, in `README.md`, nella roadmap e in tracciabilità entrano con essa (D14 del piano);
+2. ✅ **la parte 1 del piano del 2, eseguita il 2026-09-10** —
+   [piano](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md): SP-8, ADR-0029 chiuso,
+   `dockview` resta; ✅ **il piano della parte 2 è SCRITTO dal 2026-09-15 e RIVISTO IN PROFONDITÀ dal 2026-09-16** —
+   diciassette compiti, [piano](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), la cui
+   **tabella della posizione** è la casa unica di quali compiti siano eseguiti, e il cui **diario** dice come si
+   riprende; ⏭️ **ciò che viene ora è ESEGUIRLO**, dal compito 1, con `superpowers:subagent-driven-development` — un
+   subagente fresco per compito, col pre-controllo delle quattro domande rifatto per ciascuno contro il codice di
+   **adesso**; le righe nella §12 di questo file, in `README.md`, nella roadmap e in tracciabilità entrano col
+   **compito 17** (D14 del piano);
 3. ✅ ADR-0029 **chiuso il 2026-09-10** con SP-8 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario
    che sbarra il **13**, non il 2 (voce 3 della rilettura del disegno della knowledge base); poi il 13, poi il 3 — decisione 16.
+
+⛔ **RICHIAMO DEL 2026-09-17 — il verbo era sbagliato, il soggetto no.** Questa riga diceva *«la parte 2 … scritta **ora**
+coi numeri in mano … con lo stesso pre-controllo, in una sessione nuova»*, mentre quel piano è **scritto** dal 2026-09-15 e
+**rivisto in profondità** dal 2026-09-16 — venti chiusure nel suo diario, che ne è la casa unica. La voce era **registrata e
+non presa** dal 2026-09-16, nella tabella *«Le voci aperte che questo piano SA»*; ✅ **decisa dal proprietario il 2026-09-17 —
+B**: la §13 aggancia la manutenzione a *«cambio del prossimo passo»*, quel cambio era già avvenuto, e un documento di stato
+disallineato mente con autorevolezza.
 
 ⚠️ La cronaca ripresa per ripresa non sta qui: vive nella stella polare e, parola per parola, negli archivi. Il margine del
 tetto di questo file lo dà il comando nella tabella dello stato della stella polare (gotcha #100).

@@ -30,12 +30,22 @@
 //! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES — and with task 12 the two finally
 //! COINCIDE: this module declares SEVEN submodules, one per row. Two of them have a caller —
 //! `reactor`, which the executor needs, and `journal`, which the promotion of
-//! `crate::boundary` demands as an argument. The other FOUR — `filesystem`, `network`,
-//! `process` and `ipc` — have NO CALLER AT ALL and are here for the reason above.
+//! `crate::boundary` demands as an argument. The other FIVE — `filesystem`, `network`,
+//! `process`, `ipc` and `custody` — have NO CALLER AT ALL and are here for the reason above.
 //! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 2: `ipc` HAS ITS REAL IMPLEMENTATION NOW --
 //! `platform::ipc::LocalSocketIpc` -- and its first caller arrives with task 7 (`kernel::serving`),
 //! so the FOUR above are THREE from there on. The figure in the sentence is dated here and NOT
 //! realigned (gotcha #31): the command that counts is `grep -rnE "^ *impl Ipc for" crates/`.
+//! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: THE BASE WENT FROM FOUR TO FIVE, and the
+//! subtraction above is UNTOUCHED because it is still right. `custody` joined the submodules with
+//! no caller, so the partition here reads TWO PLUS FIVE and the list had to NAME it: the command
+//! that counts the whole is `grep -c "^pub mod " crates/kernel/src/ports/mod.rs`, SEVEN on
+//! 2026-09-17. ⛔ A LIST THAT OMITS A MEMBER IS GOTCHA #17 ARRIVING AS AN OMISSION RATHER THAN AS
+//! A DIGIT, which is why the count and the names moved together rather than the count alone.
+//! ⛔ AND THE TWO SENTENCES COUNT DIFFERENT SETS, SO BOTH HOLD: `ipc` has a real implementation
+//! and no caller yet, so the ports with NEITHER are `filesystem`, `network`, `process` and
+//! `custody`. ⚠️ `custody`'s FIRST CALLER ARRIVES WITH TASK 7 -- `Core::new`, which takes it BY
+//! VALUE -- so this line carries the date on which it stops being true, written before it does.
 //!
 //! ⚠️ AND THAT COINCIDENCE IS PRECISELY WHEN THE TABLE LOOKS DELETABLE, so the reason it stays
 //! is written here rather than left to be re-derived. Until `ipc` landed, the table was the
@@ -62,11 +72,15 @@
 //! nobody moves. `ports/process.rs` carries the reckoning for that family; this paragraph
 //! keeps only what it measured, which is this one file.
 //! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: SIX from here on -- `custody` has a fake of its own; the FIVE above is dated, not realigned (gotcha #31).
-//! ⛔ AND THE OTHER NUMBER IN THAT SENTENCE MOVED WITH IT: the traits this bench holds a fake for
-//! go FOUR -> FIVE, and THAT one is REALIGNED rather than dated, because the sentence is an
-//! ARGUMENT and not an inventory -- five traits, `process` twice, six fakes -- and a sum that no
-//! longer closes teaches nothing. Moving one half and leaving the other IS finding AUD-049, the
-//! third line of the audit discipline, and it is what this clause exists to close.
+//! ⛔ AND THE OTHER NUMBER IN THAT SENTENCE MOVED WITH IT: the FAMILIES this bench holds a fake
+//! for go FOUR -> FIVE, and THAT one is REALIGNED rather than dated, because the sentence is an
+//! ARGUMENT and not an inventory -- five families, `process` twice, six fakes -- and a sum that
+//! no longer closes teaches nothing. ⚠️ AND THE ARITHMETIC IS COUNTED RATHER THAN ASSERTED,
+//! which is the whole reason a figure may live in prose at all:
+//! `grep -cE "^impl [A-Za-z]+ for " crates/kernel/tests/ports_are_implementable.rs` answers SIX
+//! on 2026-09-17, and the fifth family is `custody`, whose fake is the one this recall dates.
+//! Moving one half and leaving the other IS finding AUD-049, the third line of the audit
+//! discipline, and it is what this clause exists to close.
 //! ⚠️ THE OTHER `four`, IN THE TABLE PARAGRAPH ABOVE, IS A DIFFERENT COUNT AND IS LEFT ALONE ON
 //! PURPOSE: it counts the PORTS WITHOUT A CALLER, not the traits this bench holds a fake for,
 //! and it is task 2's -- dated in its own recall there. Written here so that the next census
@@ -108,11 +122,12 @@
 //! now substitutes EIGHT things while §2.3 enumerates SEVEN. ⛔ THE DISCREPANCY DID NOT CLOSE,
 //! IT MOVED: `rng` is still declared in §2.2 and still lives in `crate::rng`, and moving it
 //! under this module is still the wrong fix.
-//! ⛔ AND "seven families" IS NOW WRITTEN IN THE LINE ABOVE -- BY THIS RECALL, AND IT IS NOT THE
-//! THING THE SENTENCE FORBIDS. The forbidden seven was the one that COUNTS `rng` as a family of
-//! I/O; today's seven counts a real family and leaves `rng` exactly where it was. A reader who
-//! sees the two sentences side by side should read this one: the warning is about WHAT IS
-//! COUNTED, not about the digit.
+//! ⛔ AND "seven families" IS NOW WRITTEN IN THE LINE ABOVE -- BY THE OPENING SENTENCE OF THIS
+//! MODULE, WHICH THE SAME TASK REALIGNED WITH A RECALL OF ITS OWN, AND NOT BY THIS ONE -- AND IT
+//! IS NOT THE THING THE SENTENCE FORBIDS. The forbidden seven was the one that COUNTS `rng` as a
+//! family of I/O; today's seven counts a real family and leaves `rng` exactly where it was. A
+//! reader who sees the two sentences side by side should read this one: the warning is about
+//! WHAT IS COUNTED, not about the digit.
 
 pub mod custody;
 

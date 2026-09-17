@@ -29,6 +29,16 @@ use alloc::vec::Vec;
 /// What is being kept. ⛔ A CLOSED ENUM AND NOT A STRING: a string key is a namespace, and a
 /// namespace is the configuration system this port is deliberately not. A second thing to keep
 /// is a VARIANT, added deliberately, which is the same shape ADR-0031 asks of a dependency.
+///
+/// ⚠️ `Eq` IS PROMISED AND NOT YET EXERCISED, AND IT IS DECLARED HERE RATHER THAN LEFT IMPLICIT.
+/// Every other derive on this enum has a user in `crates/kernel/tests/ports_are_implementable.rs`
+/// -- `Debug` and `PartialEq` in its assertions, `Clone` and `Copy` in the key it holds in a
+/// variable and passes BY VALUE to both operations. `Eq` is a MARKER WITH NO METHODS: what
+/// exercises it is a key of a map or of a set, and nothing has one. ⛔ IT STAYS BECAUSE IT IS A
+/// CONTRACT, promised by name to tasks 5, 7, 9, 10 and 12, and that is the difference from `ipc`,
+/// where three derives came OFF on the evidence that nobody had promised them. ✅ THE TRIGGER IS
+/// TASK 5's CONFORMANCE SUITE, which compares two implementations: the day it uses it, this
+/// paragraph goes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CustodyKey {
     /// The gui's layout: `toJSON()` of `dockview` plus the active view, as ONE opaque package.
@@ -42,6 +52,10 @@ pub enum CustodyKey {
 /// FAILED. `keep` fails and `retrieve` answers: the write was refused, and the activity sends
 /// back the old package. Both fail: the archive is unavailable, and the activity says so
 /// (decision 35 of the sub-project 2 design). Written here so the consumer does not rediscover it.
+///
+/// ⚠️ `Eq` IS PROMISED AND NOT YET EXERCISED HERE EITHER, for the reason written beside
+/// `CustodyKey` and with the same trigger -- task 5's conformance suite. Said twice because a
+/// reader who lands on this enum alone would otherwise have to go and find out.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CustodyError {
     /// The archive could not be reached -- it would not open, or the write did not land.

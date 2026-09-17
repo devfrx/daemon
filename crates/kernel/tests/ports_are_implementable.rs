@@ -6,8 +6,8 @@
 //! fake here. The fakes stay, because a bench of `kernel` cannot open a socket, and the line
 //! above is dated rather than rewritten.
 //!
-//! ⛔ WHAT THIS BUYS: that the signatures of `Filesystem`, `Network`, `Worker`, `Process` and
-//! `Ipc` are IMPLEMENTABLE and CALLABLE. A trait nobody implements has not been proved
+//! ⛔ WHAT THIS BUYS: that the signatures of `Filesystem`, `Network`, `Worker`, `Process`, `Ipc`
+//! and `Custody` are IMPLEMENTABLE and CALLABLE. A trait nobody implements has not been proved
 //! implementable — a signature can be unusable for borrows, for ownership or for object
 //! safety, and one finds that out when the code that has to use it already exists. It has
 //! already happened in this milestone: a `Wakeup` enum declared in advance turned out to be
@@ -1104,36 +1104,30 @@ fn a_dead_client_does_not_take_the_port_with_it() {
 fn the_custody_port_can_be_implemented_and_called() {
     let mut custody = InMemoryCustody::default();
 
+    // ⚠️ THE KEY IS HELD IN A VARIABLE AND USED AGAIN AND AGAIN, which is how a consumer really
+    // holds it -- and it is also what exercises `Copy`, and through it `Clone`: both operations
+    // take the key BY VALUE, so without that derive every call after the first would be a use
+    // after move. NO ASSERTION IS SPENT ON IT: a probe that exists only to touch a derive tests
+    // the language, not the port.
+    let key = CustodyKey::Layout;
+
     // Nothing kept yet -- and that is a VALUE, not a failure: the first run.
-    assert_eq!(custody.retrieve(CustodyKey::Layout), Ok(None));
+    assert_eq!(custody.retrieve(key), Ok(None));
 
     // ⛔ BYTES THAT ARE NOT JSON, on purpose: the package is opaque, and a fake that only ever
     // sees well-formed JSON would let a parsing implementation through. The real probe of this
     // property lives with the implementations (task 5); here it keeps the FAKE honest.
     let package = vec![0x00, 0xFF, 0x7B, 0x00];
-    custody
-        .keep(CustodyKey::Layout, &package)
-        .expect("the fake kept it");
-    assert_eq!(custody.retrieve(CustodyKey::Layout), Ok(Some(package)));
+    custody.keep(key, &package).expect("the fake kept it");
+    assert_eq!(custody.retrieve(key), Ok(Some(package)));
 
     // Replacing, not appending.
-    custody
-        .keep(CustodyKey::Layout, b"second")
-        .expect("the fake kept it");
-    assert_eq!(
-        custody.retrieve(CustodyKey::Layout),
-        Ok(Some(b"second".to_vec()))
-    );
+    custody.keep(key, b"second").expect("the fake kept it");
+    assert_eq!(custody.retrieve(key), Ok(Some(b"second".to_vec())));
 
     // And refusable, same rule 3 as above -- BOTH operations, because the consumer reads the
     // difference between "write refused" and "unavailable" from WHICH ONE fails.
     custody.refuse = true;
-    assert_eq!(
-        custody.keep(CustodyKey::Layout, b"third"),
-        Err(CustodyError::Unavailable)
-    );
-    assert_eq!(
-        custody.retrieve(CustodyKey::Layout),
-        Err(CustodyError::Unavailable)
-    );
+    assert_eq!(custody.keep(key, b"third"), Err(CustodyError::Unavailable));
+    assert_eq!(custody.retrieve(key), Err(CustodyError::Unavailable));
 }

@@ -21410,6 +21410,109 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La ventunesima chiusura — 2026-09-17: L'ESECUZIONE È COMINCIATA — i compiti 1 e 2 sono FATTI, rivisti e spinti; restano i compiti 3–17
+
+⛔ **DA SAPERE SUBITO, cinque cose.** **(1)** ⛔ **Questo piano non è più un'ipotesi da rivedere: si sta
+ESEGUENDO.** I compiti **1** e **2** sono scritti, rivisti, corretti e **spinti** su `origin/main`; la tabella
+della posizione porta **due** ✅ e **quindici** ⬜. ⏭️ **Il prossimo è il compito 3**, e il proprietario ha
+deciso il 2026-09-17 che si fa in una **sessione nuova**. **(2)** ⛔ **L'ERRATA NON È PIÙ VUOTA: otto voci,
+E1…E8, e si leggono PRIMA di ogni compito** — è la sezione *«L'errata di questo piano»*, e due di quelle voci
+(**E5**, **E6**) sono rimedi a codice **dettato** che si impiantava. **(3)** ⛔ **IL CANCELLO COMPILA I BANCHI
+COME UN BINARIO DIVERSO da un `cargo test -p <crate>` nudo**, per l'unificazione delle feature sotto
+`--workspace`: l'impiantata di **E5** si vedeva **solo** nel binario del cancello. ⚠️ **Un banco provato verde
+a mano non è ancora provato verde nel cancello**, e da qui in poi il cancello si lancia **due volte** su un
+compito che tocca un banco con concorrenza. **(4)** ⛔ **Il pre-controllo delle quattro domande ha trovato un
+difetto reale nel compito 2 e NESSUNO nel compito 1**, ed è la prima volta che non ne trova: la nota di
+`CLAUDE.md` — *«ne ha trovato uno in TUTTI i compiti finora»* — è un **fatto storico**, non una garanzia, e
+non si inventa un difetto per rispettarla. **(5)** ⚠️ **Una minore parcheggiata, da chiudere quando qualcuno
+tocca quel modulo:** il commento di `const CAP` nel `mod tests` di `crates/platform/src/ipc.rs` dice *«Nothing
+here writes a body»* mentre la seconda sonda ne scrive uno attraverso `send`; la conclusione regge — `max_body`
+si consulta solo sui byte che **arrivano** dal pari — quindi sono due parole, non un'ondata.
+
+✅ **Che cosa è stato fatto.** Cinque commit, ciascuno col cancello verde prima (i log nello scratchpad delle
+due sessioni di oggi, che possono non sopravvivere):
+
+| Commit | Che cosa |
+|---|---|
+| `82e9343` | il puntatore ⏭️ della **§6 del compendio** dice ora **eseguire** — la voce aperta della ventesima chiusura, decisa dal proprietario: **B** |
+| `15bc453` | **compito 1**: `kernel::numbering::Progressive`, seminato dal giornale con `seeded_from`, e i due richiami datati |
+| `ff05982` | l'**errata si apre**: **E1** (compito 1, il *Trova* del Passo 5) ed **E2** (compito 2, `build()` e `line!()`) |
+| `318ac2a` | **compito 2**: `take_frame` accanto a `unframe`, il trasporto `ipc` su `interprocess` 2.4.4, la suite di conformità, gli otto richiami — più **E3…E6** |
+| `f22993a` | i **cinque rilievi** della revisione del compito 2, con **E7** ed **E8** |
+
+E lo stato alla chiusura, che non si ricorda ma si **rifà** — ogni riga porta il comando che la produce:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, `git status -sb` → `## main...origin/main`, niente sotto; `git stash list` vuoto |
+| I commit di oggi | `git log --oneline 6dec6bd..HEAD` → **cinque** |
+| La posizione | `grep -cE '^\| \*\*[0-9]+\*\* \|.*✅ 2026-09-17 \|$' <questo file>` → **2**, i compiti **fatti**; `grep -cE '^\| \*\*[0-9]+\*\* \|.*⬜ \|$' <questo file>` → **15**, quelli che restano |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **8** |
+| Il pre-controllo e le decisioni | `grep -c '^### P-' <questo file>` → **133** e `grep -c '^[|] \*\*D[0-9]' <questo file>` → **91**, **invariati**: l'esecuzione non ne aggiunge, i suoi scostamenti vanno nell'**errata** |
+| I criteri di chiusura | `grep -cE '^(#### \|\*\*)Criterio di chiusura' <questo file>` → **17** |
+| Le sonde del 2 | `cargo test --locked -p platform --test ipc_contract_real` → **10**; `--lib` → **7**; `cargo test --locked -p kernel --test framing` → **9**; `--test numbering` → **4** |
+| Le implementazioni di `ipc` | `grep -rcE '^ *impl Ipc for' crates/ --include='*.rs'` → **tre**: le due finte e `LocalSocketIpc` |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, lanciato **due volte** sull'ultimo commit dal riparatore e **altre due** dalla ri-revisione; `bash scripts/check-docs.sh` → `OK` |
+| Fine-riga | questo piano è **LF**: `tr -cd '\r' < <questo file> | wc -c` → **0**. ⚠️ `crates/kernel/tests/ports_are_implementable.rs` è `i/crlf w/crlf` — **CRLF anche nell'indice**, unico fra i sorgenti — e `Cargo.lock` è passato a `i/lf w/lf` col `cargo build` del compito 2 |
+| Margine del compendio | `wc -c docs/COMPENDIO.md` → **101595**, contro il tetto di **111616** scritto in `scripts/check-docs.sh` |
+| Debito lasciato | la **minore (5)** qui sopra, e nient'altro dentro i compiti 1 e 2: le cinque della revisione sono chiuse e ri-verdettate **ADDRESSED** una per una |
+
+#### Le decisioni prese eseguendo, oltre a quelle dell'errata
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 102 | **l'implementatore committa, il coordinatore pusha** — dopo che la revisione del compito è pulita | un commit già spinto è più costoso da correggere se la revisione trova qualcosa, e *«commit e push alla chiusura di ogni voce»* è soddisfatto quando la voce è **davvero** chiusa. Ha pagato subito: `318ac2a` è un `--amend` di `86ed32e` | un passo in più per il coordinatore |
+| 103 | **il messaggio del commit si emenda quando il compito ha fatto più di ciò che il piano dettava** | il messaggio del compito 2 era quello **dettato**, e non poteva nominare E5 ed E6, che il piano non conosceva. `CLAUDE.md` vuole che il commit dica ciò che il compito **ha fatto**; un commit non spinto si emenda senza costo | l'hash cambia, e un registro che nomina il vecchio resta indietro |
+| 104 | **una sonda entra in `src/` SOLO per privatezza, e lo dichiara** | la proprietà di I-1 — che `drop_client` tolga davvero il client dalla tabella — **non è osservabile** dal tratto `Ipc`, e togliendo l'una o l'altra chiamata il banco restava **10/10 verde**. La regola era già scritta in `crates/kernel/src/arbiter/mod.rs:1139-1159`: *«ONLY PRIVACY MOVES A PROBE IN HERE»*, precedente `platform/src/rng.rs` | una sonda in più dove la convenzione è `tests/`, e la convenzione si erode se qualcuno la copia senza la ragione |
+| 105 | **un costo che non si vuole pagare adesso si DICHIARA, non si aggira** | I-2 — il canale del client avvelenato cresce senza limite — si chiude con un capoverso nel doc di modulo, **non** con un `sync_channel`: il piano risponde già a questa identica classe di domanda per il `send` bloccante, *«a MEASUREMENT for sub-project 3, not a guess here»*, e cambiare il canale sarebbe una decisione di progetto presa di sfuggita | il limite è scritto e non imposto: un pari rotto bufferizza finché scrive |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UNA SONDA CHE SI IMPIANTA NON È UNA SONDA LENTA: È UNA SONDA CHE NON RENDE NESSUN VERDETTO**, e si
+  porta dietro il cancello — qui 23 minuti di silenzio e 1361 s di CPU su una corsa su due. La cura è in due
+  pezzi e servono **entrambi**: **E5** toglie la corsa (il pari deve esserci ancora quando lo si accetta), ed
+  **E6** mette un tetto al ciclo, perché una ricaduta sia un **rosso** invece di un'attesa. ⚠️ Il piano aveva
+  già limitato il ciclo che credeva potesse girare a vuoto e lasciato libero quello che gira a vuoto davvero.
+- ⛔ **`line!()` DENTRO UN AIUTANTE CONDIVISO SI ESPANDE UNA VOLTA SOLA**, al proprio rigo, non al sito di
+  chiamata: ogni chiamante riceve lo **stesso** numero. Il precedente giusto è `private_dir_for_line` di
+  `crates/platform/tests/journal_contract_real.rs`, che lo prende al **sito di chiamata** e scrive perché; per
+  una fabbrica chiamata più volte il repository usa un `AtomicU64`. Voce **E2**.
+- ⛔ **UN'ASSERZIONE IL CUI ORACOLO NON PUÒ VEDERE CIÒ CHE IL MESSAGGIO PROMETTE È VUOTA, E SEMBRA PIENA.**
+  `receive` rende `Disconnected` in **due** modi indistinguibili, quindi *«e il client è uscito dalla tabella»*
+  non era provato da nessuna delle due asserzioni che lo dicevano. Si cerca chiedendosi, per ogni messaggio,
+  **quale oracolo lo vede** — non rileggendolo.
+- ⛔ **IL RIMEDIO DI UNA VOCE D'ERRATA PUÒ REINTRODURRE LA SPECIE CHE LA VOCE ESISTE PER TOGLIERE.** La
+  clausola di **E2**, infilata in mezzo a una frase, ha spostato il soggetto di un'apposizione e l'ha resa
+  **falsa alla lettera**. Un rimedio di prosa si rilegge **contro il file che nomina**, non contro sé stesso.
+- ⚠️ **UN SUBAGENTE PUÒ MORIRE COL PROCESSO E AVER GIÀ FINITO IL LAVORO:** il revisore del compito 2 è morto
+  senza restituire il riassunto, e il suo rapporto era **scritto e completo** sul disco. ⛔ Prima di
+  ridispacciare si guardano **il file del rapporto e l'albero di lavoro** — che qui era pulito, senza
+  mutazioni dimenticate.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`:
+   la testa è `f22993a` o un commit dopo.
+2. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — i vincoli globali, la posizione,
+   ⛔ **l'errata, che ora ha otto voci**, le voci aperte. ⚠️ **Il registro e i rapporti della revisione NON si
+   leggono per eseguire**: servivano alla revisione, che è chiusa.
+3. ⏭️ **Il compito 3**, con `superpowers:subagent-driven-development`: un subagente fresco **su Opus**, con
+   revisione fra uno e l'altro. ⛔ **Il pre-controllo delle quattro domande si rifà per OGNI compito prima di
+   dispacciarlo**, contro il codice di **adesso**.
+4. ⛔ **Il brief di ogni compito porta QUATTRO pezzi, non due:** la sezione *Strumenti* della testa (col
+   sorgente di `replace_unique.py`, che non esiste in `scripts/`), i **vincoli globali**, l'**errata** e il
+   testo del compito. Tagliare il primo è costato una divergenza al compito 1.
+5. Ogni compito: il **cancello prima del commit** — ⛔ **due volte** se il compito tocca un banco con
+   concorrenza — la riga della posizione aggiornata **nel commit del compito**, il commit **senza co-autore**,
+   e il push **dopo** che la revisione è pulita. Se il compito dice il falso **ci si ferma e si riporta**: una
+   divergenza è una voce d'errata prima di essere un rimedio.
+6. ⛔ **Prima del compito 11 si aggiorna Node** (P-64, P-65: il 2026-09-16 era `v24.9.0`, fuori da `^24.15.0`).
+   ⛔ **Prima dei compiti 13 e 14** si guarda se `C:\Users\zagor\AppData\Local\Temp\probe-R13\gui\` c'è
+   ancora: è il modello **installato e verde**, e risparmia un `npm ci` — ma i suoi sorgenti sono
+   un'**estrazione** del piano, non il repo.
+7. Alla chiusura del piano la cartella della revisione si **archivia** (decisione 69).
+8. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
 ### La ventesima chiusura — 2026-09-16, quinta ripresa del giorno: i moduli riscritti del 12 e del 14 COMPILATI (R13) e i tre rilievi applicati (ondata 18); la revisione del piano è CHIUSA e non resta nessun dispaccio; nessun compito è eseguito
 
 ⛔ **DA SAPERE SUBITO, cinque cose.** **(1)** ⛔ **La revisione del piano è FINITA, e non resta nessun revisore da

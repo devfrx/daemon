@@ -175,7 +175,7 @@ codice di ADESSO.
 | **2** | il **trasporto `ipc`** in `platform` su `interprocess`, e la **suite di conformità** `tests/contract/ipc.rs` inclusa da `platform` (⚠️ **sul solo trasporto vero e senza bugiardi — D82, 2026-09-15**; qui stava «`ipc_contract.rs` … coi bugiardi»); ⛔ **più i tre richiami che `ipc` rende falsi** — richiamo del 2026-09-11, **P-23** — e i cinque nel disegno (**D88**). ⛔ **Il trasporto legge su un thread per client — D78, 2026-09-15** | uno | ✅ 2026-09-17 |
 | **3** | lo **schema che cresce**: le varianti nuove di `IpcMessage`, le **fixture** e il **timbro di build**, `ipc_wire.rs` | uno | ✅ 2026-09-17 |
 | **4** | la **settima porta**: il tratto `Custody` in `kernel::ports`, la finta di `ports_are_implementable.rs`; i richiami alle cifre in prosa di `ports/mod.rs` con la guardia di `rng` (P-21) e i **tre** nella spec — la riga dell'anello 3, la §2.3 e la §3.1 (P-22). ⛔ **La suite di conformità è al 5 — richiamo del 2026-09-11, D13** | ⚠️ **più di uno** — il piano ne prevedeva uno, i giri della revisione hanno aggiunto gli altri: `git log --oneline --grep="gui(compito 4"` | ✅ 2026-09-17 |
-| **5** | le **due implementazioni** della settima porta: `redb` in `platform`, la finta in `simulator`, **e la suite di conformità che le confronta** — arrivata qui dalla riga 4 col richiamo del 2026-09-11 (**D13**): una suite ne vuole due, e al 4 ce n'erano zero | uno | ⬜ |
+| **5** | le **due implementazioni** della settima porta: `redb` in `platform`, la finta in `simulator`, **e la suite di conformità che le confronta** — arrivata qui dalla riga 4 col richiamo del 2026-09-11 (**D13**): una suite ne vuole due, e al 4 ce n'erano zero | uno | ✅ 2026-09-18 |
 | **6** | il **registro delle funzioni** `kernel::registry`: la funzione registrata, `invoke`, il dettaglio `Invocation` col suo record congelato | uno | ⬜ |
 | **7** | l'**attività del kernel che serve la GUI** — `kernel::serving`: il dispaccio, il ramo `Request` **non servito** (D5), `Disconnected`, il tick in `Parameters`. ⛔ **Il limite di giri è al 9 — richiamo del 2026-09-11, D21 (⚠️ qui stava «al 8», il numero di prima di D25: corretto il 2026-09-15 alla revisione del piano intero, R10-3)** | uno | ⬜ |
 | **8** | la **specie `Policy` del giornale**, e la **policy riletta dal giornale**: `RecordKind::Policy` all'indice 7, `Detail::Policy` all'indice 4, `PolicyDetail`, l'**ottavo** record congelato, e la proiezione `kernel::arbiter::policy_now`. ⛔ **Arrivata qui DIVIDENDO la vecchia riga 8 — richiamo del 2026-09-14, D25**: la rilettura tocca il **formato durevole** e il cablaggio no, e un revisore può bocciare l'una approvando l'altro. ⚠️ **E NON è una nota con un dettaglio**, che non è pronunciabile — **P-44**, **D26** | uno | ⬜ |
@@ -6121,8 +6121,11 @@ git ls-files --eol crates/platform/src/lib.rs crates/simulator/src/lib.rs crates
 
 Atteso: i **cinque** file **non esistono**; `crates/kernel/src/ports/custody.rs` **esiste** (compito 4);
 il `grep` chiuso rende le implementazioni di oggi — ⛔ **quante, non si scrive qui: il compito 2 ne ha aggiunta una
-e il numero dipende da quali compiti sono passati**; `fn engine` è **privata**; i due prefissi di directory in uso
-sono `daemon-file-journal-` e `daemon-journal-contract-`, e i due nuovi devono essere **diversi da entrambi**;
+e il numero dipende da quali compiti sono passati**; `fn engine` è **privata**; ⛔ **RICHIAMO DEL 2026-09-18, dal
+pre-controllo del compito 5 (E30): i prefissi di directory in uso sono TRE, non due** — `daemon-file-journal-`,
+`daemon-journal-contract-` e `daemon-production-graph-`, quest'ultimo in `crates/daemon/src/main.rs`, che il `grep`
+qui sopra non può vedere perché cerca i due nomi che si aspetta dentro una cartella sola; a contarli è
+`grep -rhoE 'daemon-[a-z-]+' crates/ | sort -u`, e i due nuovi devono essere **diversi da tutti e tre**;
 i tre file da modificare sono `i/lf w/crlf`.
 
 - [ ] **Passo 2: la suite, e il rosso che deve dare**
@@ -7165,13 +7168,13 @@ un lettore futuro può verificare che il limite di **P-29** fu misurato e non su
 - [ ] `cargo test --locked -p platform --test custody_contract_real` → tutti passati, **uno in più** del banco del kernel
 - [ ] `cargo test --locked -p platform --test file_custody` → **tre** passati
 - [ ] ⛔ i **cinque bugiardi** verdi, e **nessuno** ha detto `THE SUITE IS VACUOUS` né `fired, but NOT on promise N`
-- [ ] ⛔ il **Passo 7 eseguito**: la mutazione cieca alla chiave provata, **passata**, revocata, `git diff --stat` **vuoto**, e l'esito **nel messaggio del commit**
+- [ ] ⛔ il **Passo 7 eseguito**: la mutazione cieca alla chiave provata, **passata**, revocata, provata con `cmp` contro la copia pristina e con `git status --porcelain` invariato, e l'esito **nel messaggio del commit**
 - [ ] `grep -c 'DATED RECALL, <data>' crates/platform/src/lib.rs` → **1** (con la data di oggi) e `grep -c 'DATED RECALL' crates/platform/src/lib.rs` → **2**: il richiamo del compito 2 è **ancora lì**
 - [ ] `grep -rEn "^impl (Custody|Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/` → include `impl Custody for FileCustody`
 - [ ] `grep -c 'pub(crate) fn engine' crates/platform/src/journal.rs` → **1**, `grep -c 'DATED RECALL <data>' crates/platform/src/journal.rs` → **1** (con la data scritta), e nessun altro tocco a quel file: `git diff -U0 -- crates/platform/src/journal.rs | grep -c '^@@'` → **2** regioni, `engine` e il commento della `TableDefinition` (R9a-6)
 - [ ] `grep -c 'chiusa il <data>, compito 5' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **1** (con la data scritta), e `grep -c '<data>'` sui due file → **0**
 - [ ] ⛔ **nessun `with_backend` su `FileCustody`**: `grep -c 'fn with_backend' crates/platform/src/custody.rs` → **0** — provato dove rende 1: `grep -c 'fn with_backend' crates/platform/src/journal.rs` → **1** (R2-8: il file dettato nomina `with_backend` nel doc e in `create_with_backend`, e il `grep` nudo rendeva **2** sul file stesso)
-- [ ] `git diff --name-only -- docs/superpowers/specs/` **vuoto**: questo compito non tocca nessuna spec
+- [ ] `git diff --name-only -- docs/superpowers/specs/2026-08-06-kernel-design.md` **vuoto**: questo compito non tocca la spec del sotto-progetto 1; il disegno del 2 lo tocca, ed è il Passo 5
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/gate-deps.sh` verde, la lista **non cresciuta**; `bash scripts/gate-attributes.sh` verde
 - [ ] i fine-riga rimisurati: i cinque nuovi a zero CR, i tre modificati invariati in `git ls-files --eol`
 - [ ] la riga **5** della tabella della posizione a ✅ con la data

@@ -9,6 +9,7 @@
 
 extern crate alloc;
 
+pub mod custody;
 pub mod ipc;
 pub mod journal;
 pub mod reactor;

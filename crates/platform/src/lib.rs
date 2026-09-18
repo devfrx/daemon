@@ -27,6 +27,22 @@
 //! dated here rather than left to be believed. The count is deliberately NOT rewritten into the sentence:
 //! the command answers it, and a figure inside prose is gotcha #31.
 //!
+//! ⛔ DATED RECALL, 2026-09-18 -- THE SENTENCE ABOVE CALLED ITSELF "not written here as a fixed set" AND IT WAS
+//! ONE. The `grep` it hands over ENUMERATES SEVEN TRAIT NAMES, so it can never answer with a
+//! family added later: `Custody` -- the seventh port, §2 of the GUI north star -- was invisible
+//! to it the moment `custody::FileCustody` existed. Measured, not reasoned. ⛔ AND THE CURE IS
+//! NOT AN OPEN REGEX, which was measured too: `^impl [A-Za-z_]+ for ` catches `StorageBackend for
+//! FileBackend` and `Default for SequentialRng`, neither of which is a port -- noise mistaken for
+//! coverage, the opposite error and just as silent. So the list IS an enumeration, it is now said
+//! to be one, and WHOEVER ADDS A PORT ADDS ITS NAME HERE, because nobody else can know.
+//! ⚠️ AND THE THIRD FALSEHOOD IN THE SAME SENTENCE WAS A DEADLINE IN PROSE (gotcha #77):
+//! "because milestone 6 adds to it". Milestone 6 CLOSED on 2026-09-02 and added nothing. It is
+//! replaced by a fact instead of by another deadline.
+//!
+//! ⛔ The list comes from
+//! `grep -rEn "^impl (Custody|Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/`,
+//! WHICH IS AN ENUMERATION OF THE PORT TRAITS AND NOT A DISCOVERY.
+//!
 //! ⛔ This crate USES `std` and WILL USE `unsafe` for FFI, and that is deliberate: it is
 //! the place where I/O has to live (ADR-0031, perimeter). The functions below exist as
 //! COUNTER-PROBES — they prove that the kernel's prohibitions do not fire where they
@@ -40,6 +56,8 @@ pub mod reactor;
 pub mod rng;
 
 pub mod ipc;
+
+pub mod custody;
 
 /// Counter-probe of `no_std`: `platform` names `std::fs` and **compiles**.
 pub fn counter_probe_std_compiles() -> bool {

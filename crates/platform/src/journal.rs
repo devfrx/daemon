@@ -60,7 +60,9 @@ use redb::{Database, ReadableDatabase, ReadableTable, StorageBackend, TableDefin
 /// question this file could ask answered that: `has_intent` only ever asked "has this step ANY
 /// record", and counting records is wrong because a NOTE is not an outcome, so an intent plus a
 /// note would have looked closed. Decoding the bytes to find out is forbidden (ADR-0036: the
-/// port exchanges BYTES, and `boundary.rs` writes some that are not a `Record` at all), so the
+/// port exchanges BYTES -- and, DATED RECALL 2026-09-18, sub-project 2 task 5: the bytes that are NOT
+/// a `Record` are written ONLY by benches; `boundary.rs` writes an ordinary `Record::V1` through
+/// `Untrusted::promote`, item 10 of §9 of the sub-project 2 design), so the
 /// operation is written down beside them, exactly as `simulator::journal::EntryKind` does.
 ///
 /// ⚠️ DECLARED COST: one byte per record on the disk, and the shape of this table changed —
@@ -140,7 +142,12 @@ impl From<io::Error> for OpenError {
 
 /// Every `redb` error type converts into `redb::Error`, so the five that `open` can meet are
 /// folded into one variant here instead of five.
-fn engine(error: impl Into<redb::Error>) -> OpenError {
+///
+/// ⚠️ `pub(crate)` SINCE 2026-09-18, AND THE SECOND CALLER IS `crate::custody`: the seventh port
+/// opens a `redb` archive of its own on the same `FileBackend`, so it meets the same five errors
+/// and folds them the same way. The alternative was a twin `OpenError` under `custody`, and the
+/// reason it was refused is written there, beside `FileCustody::open`.
+pub(crate) fn engine(error: impl Into<redb::Error>) -> OpenError {
     OpenError::Engine(error.into())
 }
 

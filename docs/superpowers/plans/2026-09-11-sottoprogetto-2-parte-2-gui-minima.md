@@ -255,6 +255,8 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E28** | ⛔ **Compito 5, Passo 7 — `git checkout --` NON PUÒ REVOCARE la mutazione, perché al Passo 7 `crates/platform/src/custody.rs` NON È TRACCIATO — e «`git diff --stat` vuoto» è E14 ed E23 una TERZA volta.** Il file nasce al **Passo 5** e il `git add` sta al **Passo 9**: quando il Passo 7 gira, quel file è **non tracciato**, quindi `git checkout -- crates/platform/src/custody.rs` risponde `error: pathspec ... did not match any file(s) known to git` e **la mutazione resta nell'albero**. ⛔ **E il rimedio istintivo — metterlo in scena per far funzionare il comando — è peggio del difetto:** su un file messo in scena `checkout --` riporta alla versione **in stage**, cioè a quella che c'era al momento del `git add`; se l'`add` cadesse dopo la mutazione, il comando la **conserverebbe** dichiarando di averla tolta. ⚠️ **È la trappola già registrata in memoria** — *«`git add -N` non rende `git diff` un oracolo e `checkout --` svuota il file»* — qui nella sua terza forma. ⛔ **E la seconda metà è E14 ed E23 alla lettera:** il commit sta al Passo 9 e le mutazioni al 7, quindi l'albero porta già i cinque file nuovi e i tre modificati dei Passi 2–6, e `git diff --stat` rende centinaia di righe anche con la mutazione revocata alla perfezione. ⛔ **Una voce d'errata ha corretto il compito in cui è nata e non il gemello due compiti più in là, per la SECONDA volta** — E14 nel 3, E23 nel 4, e il 5 la riscrive intatta: è la radice **R1** dentro l'errata che esiste per rimediarla, e stavolta col **precedente già scritto due volte**. ✅ **La forma che regge, la stessa di E14 e di E23:** si prende una **copia pristina** di `crates/platform/src/custody.rs` **prima** di mutarlo, si muta, si lancia, e si revoca **copiando indietro la pristina**; la revoca si prova con `cmp` **silenzioso** contro quella copia, e non con `git`. ⚠️ **E la baseline dell'albero si prende PRIMA del Passo:** `git status --porcelain` messo da parte prima della mutazione e riconfrontato dopo la revoca, **identico** — che è l'oracolo che il Passo voleva davvero. ⛔ **Il criterio di chiusura porta la stessa riga sbagliata** — *«revocata, `git diff --stat` **vuoto**»* — e si corregge **insieme**, perché un conteggio vive in più punti dello stesso compito (la lezione di **E13**). Trovata dal pre-controllo del compito 5, 2026-09-18 |
 | **E29** | ⛔ **Compito 5, criterio di chiusura — «`git diff --name-only -- docs/superpowers/specs/` **vuoto**: questo compito non tocca nessuna spec» è FALSO PER COSTRUZIONE DEL COMPITO STESSO.** Il blocco *Files* dice `Modify: docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` e il **Passo 5** detta la chiusura della voce 10 della sua §9: quel file vive **dentro** `docs/superpowers/specs/`, misurato il 2026-09-18, quindi il comando rende **una riga** e la casella non si può spuntare. ⛔ **Il difetto è del comando, non dell'intento:** ciò che il vincolo globale 1 protegge è la **spec del sotto-progetto 1**, `docs/superpowers/specs/2026-08-06-kernel-design.md`, che questo compito non tocca; il disegno del 2 **non è una spec** — la §12 del compendio lo dice di ogni file `…-design.md` — ma condivide la cartella. ✅ **Il comando che misura l'intento è `git diff --name-only -- docs/superpowers/specs/2026-08-06-kernel-design.md` → vuoto**, che nomina il **file** invece della cartella. ⚠️ **E la riga accanto va corretta con lui:** *«questo compito non tocca nessuna spec»* diventa *«questo compito non tocca la spec del sotto-progetto 1; il disegno del 2 lo tocca, ed è il Passo 5»*, perché una riga di criterio che dice il falso sul proprio compito insegna a spuntarla per fiducia. 📌 **La forma generale: un criterio che misura una CARTELLA per intendere un FILE è vero solo finché la cartella non contiene altro** — e qui conteneva già altro quando è stato scritto. Trovata dal pre-controllo del compito 5, 2026-09-18 |
 | **E30** | ⚠️ **Compito 5, Passo 1 — i prefissi di directory in uso sono TRE e il Passo ne dichiara DUE, e il doc dettato ne afferma QUATTRO quando saranno CINQUE.** Il terzo è `daemon-production-graph-`, in `crates/daemon/src/main.rs:434`, misurato il 2026-09-18. ⛔ **Il censimento non poteva vederlo, ed è la trappola del compito 4 in persona:** il comando del Passo 1 è `grep -rn 'daemon-file-journal-\|daemon-journal-contract-' crates/platform/tests/`, cioè cerca **i due nomi che si aspetta** dentro **una sola cartella** — *«un censimento per parola trova le parole che cerca»*, e qui lo fa due volte, sul motivo **e** sul perimetro. ✅ **Il comando che conta davvero è `grep -rhoE 'daemon-[a-z-]+' crates/ | sort -u`**, che non nomina ciò che cerca e non sceglie la cartella. ⚠️ **Nulla si rompe:** i due prefissi nuovi — `daemon-custody-contract-` e `daemon-file-custody-` — restano diversi da tutti e tre, che è ciò che il Passo voleva garantire; il difetto è nell'**affermazione**, non nella scelta. ✅ **Due rimedi, e il secondo è quello che invecchia bene:** l'Atteso del Passo 1 dice **tre** e li nomina; e nel doc di `crates/platform/tests/custody_contract_real.rs` la frase *«The four prefixes in use are …»* — che nascerebbe **già falsa**, perché dopo questo compito saranno cinque — si sostituisce col **comando**: *«No other bench may share this prefix; `grep -rhoE 'daemon-[a-z-]+' crates/ | sort -u` lists the ones in use.»* ⛔ **Un inventario scritto in un commento è una cifra in prosa travestita:** cresce a ogni banco nuovo e nessun controllo lo tiene. Trovata dal pre-controllo del compito 5, 2026-09-18 |
+| **E31** | ⛔ **Compito 5, Passo 7 — la SECONDA direzione della prova di revoca era VACUA: il `cmp` di controprova fu fatto contro il FRAMMENTO della mutazione e non contro il FILE mutato.** La §7.4 del rapporto e il messaggio di `281bab7` riportano `differ: char 1, line 1`, e quel valore **non può** venire da un `cmp` fra la copia pristina e il file mutato: `fn retrieve` sta alla riga **135** di `crates/platform/src/custody.rs` e le prime **134** righe fanno **7469** byte identici — `head -134 … \| wc -c`, misurato il 2026-09-18. L'operando vero era il `.txt` col solo corpo della mutazione, che differisce al primo carattere **per costruzione**: avrebbe reso `char 1, line 1` **anche se `cmp` fosse stato cieco alla mutazione**. ⛔ **È la specie dell'oracolo cieco del gotcha #51 — un oracolo che parte da un valore che il soggetto non ha prodotto non è un oracolo su quel soggetto — qui nella forma di un OPERANDO che il soggetto non ha toccato.** ⚠️ **La prima direzione NON era vacua** e non si tocca: `cmp` fra la pristina e il file revocato è silenzioso, e quello è il confronto giusto sui due operandi giusti. ✅ **Rifatta per davvero il 2026-09-18, e il valore è MISURATO e non predetto** — la stima a mente diceva 7494 e sbagliava di uno: `cmp <pristina> crates/platform/src/custody.rs` → `differ: char 7493, line 135`, e `cmp -l` dice che il byte è `153` (`k`) contro `137` (`_`), cioè esattamente il `key` → `_key` della mutazione. Poi revoca, `cmp` **silenzioso** (uscita 0), `git status --porcelain` riconfrontato con la baseline, **identico**, e `git diff --stat -- crates/platform/src/custody.rs` **vuoto**, cioè il file è tornato quello di `281bab7` al byte. ⛔ **Il commit `281bab7` NON si amenda** — decisione **115**, la forma di **E24**: il suo hash è già citato dal registro, dal pacchetto di revisione e da due rapporti, e cambiarlo li renderebbe stantii **tutti** per raddrizzare una cifra. ⚠️ **Costo dichiarato invece che taciuto: chi legge il `git log` legge `differ: char 1, line 1`, che è falso, e deve arrivare a questa voce per sapere che il valore vero è `char 7493, line 135`.** 📌 **La forma generale: una prova di revoca si fa contro il FILE, non contro un frammento — un operando che il soggetto non ha toccato differisce per conto suo, e la prova resta verde senza smettere di sembrare una prova.** Trovata dalla revisione del compito 5, 2026-09-18 (rilievo I-1), confermata dal coordinatore con un conto indipendente sui byte |
+| **E32** | ⚠️ **Compito 5 — tre correzioni di una riga al testo dettato, raccolte in una voce sola perché sono la stessa specie e la stessa passata** (la forma di **E19** nel compito 3), ciascuna **nominata**. **(M-1, Passo 7)** il blocco di comandi del Passo portava ancora i **tre comandi che E28 dichiara impossibili** — `git diff --stat`, `git checkout -- crates/platform/src/custody.rs`, `git diff --stat` — più la riga *«Il secondo `git diff --stat` deve essere vuoto»*. ⛔ **E28 aveva corretto il CRITERIO DI CHIUSURA e lasciato il PASSO**, cioè la radice **R1** dentro la voce che esiste per rimediarla, per la seconda volta in due compiti: chi esegue legge il Passo, non il criterio. ✅ **Sostituiti** con la forma di E28 — copia pristina e baseline **prima**, `cmp` nelle due direzioni e `git status --porcelain` riconfrontato **dopo** — con accanto il rimando a **E28** e a **E31**, così chi legge il Passo non deve scoprire da solo che i comandi non funzionano. **(M-2, Passo 2)** il doc di `OPAQUE_MESSAGE` in `crates/kernel/tests/custody_contract.rs` diceva *«**Promise** 1 of §2 of the north star»*, ma in quel file **«promise N» è un indice riservato**: i cinque bugiardi ci si nominano, e `a_custody_that_canonicalises_the_bytes_is_caught` usa proprio quel messaggio con `"promise 2"`. La stessa cosa, dodici righe più giù, è scritta con la parola giusta — *«PIECE 1 OF §2»*. ✅ **Una parola: `Promise 1` → `Piece 1`**, ⛔ **e corretta ANCHE NEL PIANO**, perché è testo dettato: lasciarla lì darebbe al prossimo che rilegge il piano contro il codice una divergenza che nessuno ha voluto. **(il residuo di E30)** il blocco del Passo 1 portava ancora `grep -rn 'daemon-file-journal-\|daemon-journal-contract-' crates/platform/tests/`, che **non può rendere tre**, sotto un Atteso che dice tre: è la specie di **E11** — una riga che non può decidere si spunta per fiducia. ✅ **Sostituito con `grep -rhoE 'daemon-[a-z-]+' crates/ \| sort -u`**; il richiamo datato scritto accanto resta. 📌 **E la regola che la passata ha SCRITTO invece di uniformare le due convenzioni, perché il difetto era che non fosse scritta: un CRITERIO DI CHIUSURA è un CONTROLLO, e quando cambia si RIALLINEA (precedente E13); il DOC DI UN FILE è un'AFFERMAZIONE, e quando diventa falsa si DATA.** È la distinzione che la voce **X-4** dell'audit fa fra un verbale che invecchia onestamente e una frase che afferma un meccanismo — ed è perché nello stesso commit E30 ha datato in loco mentre E28 ed E29 hanno riscritto in silenzio. Trovate dalla revisione del compito 5, 2026-09-18 (M-1, M-2, M-3), e il residuo di E30 consegnato dall'esecutore e ratificato dal coordinatore |
 
 ---
 
@@ -6115,7 +6117,7 @@ ls crates/kernel/src/ports/custody.rs
 grep -rEn "^impl (Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/
 grep -n 'fn engine' crates/platform/src/journal.rs
 grep -c '^#\[test\]' crates/kernel/tests/journal_contract.rs
-grep -rn 'daemon-file-journal-\|daemon-journal-contract-' crates/platform/tests/
+grep -rhoE 'daemon-[a-z-]+' crates/ | sort -u
 git ls-files --eol crates/platform/src/lib.rs crates/simulator/src/lib.rs crates/platform/src/journal.rs
 ```
 
@@ -6180,7 +6182,7 @@ use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
 pub const KEPT_COMES_BACK_MESSAGE: &str =
     "custody contract violated: what `keep` wrote must come back from `retrieve` byte for byte";
 
-/// Promise 1 of §2 of the north star, in one line: the package is OPAQUE.
+/// Piece 1 of §2 of the north star, in one line: the package is OPAQUE.
 pub const OPAQUE_MESSAGE: &str =
     "custody contract violated: bytes that are not text must be kept and handed back untouched";
 
@@ -7095,18 +7097,45 @@ provare è quella su `retrieve`, che **ignora l'argomento**:
     }
 ```
 
+⛔ **RICHIAMO DEL 2026-09-18, dalla revisione del compito 5 (E32 M-1): i tre comandi che stavano qui —
+`git diff --stat`, `git checkout -- crates/platform/src/custody.rs`, `git diff --stat` — NON SI ESEGUONO,
+ed è la voce E28.** Al Passo 7 quel file è **non tracciato** — nasce al Passo 5 e il `git add` sta al
+Passo 9 — quindi `checkout --` risponde `did not match any file(s) known to git` e lascia la mutazione
+nell'albero, e `git diff --stat` non può essere vuoto perché l'albero porta già tutto il lavoro dei Passi
+2–6. L'oracolo è una **copia pristina**, e sotto `S` si intende la cartella delle misure nello scratchpad.
+
+**Prima** di applicare la mutazione qui sopra:
+
+```bash
+cp crates/platform/src/custody.rs "$S/custody-pristina.rs"
+git status --porcelain > "$S/baseline.txt"
+```
+
+Poi si applica la mutazione, e si lancia:
+
 ```bash
 cargo test --locked -p platform --test custody_contract_real 2>&1 | tail -8
-git diff --stat
-git checkout -- crates/platform/src/custody.rs
-git diff --stat
+```
+
+Poi si revoca, e la revoca si prova nelle **due direzioni** — che il `cmp` **scatti** sul file mutato e
+che **taccia** su quello revocato — più la baseline dell'albero riconfrontata:
+
+```bash
+cmp "$S/custody-pristina.rs" crates/platform/src/custody.rs
+cp "$S/custody-pristina.rs" crates/platform/src/custody.rs
+cmp "$S/custody-pristina.rs" crates/platform/src/custody.rs
+git status --porcelain > "$S/dopo.txt"; diff "$S/baseline.txt" "$S/dopo.txt"
 ```
 
 ⛔ **Atteso: TUTTI VERDI.** È il risultato che il passo cerca — la suite **non** coglie la cecità alla chiave — e
 va scritto **nel messaggio del commit** con le parole della corsa, non riassunto. Se invece uscisse **rosso**, il
 limite di **P-29** è più stretto di come è scritto e la testa di `custody_contract.rs` va **corretta**: sarebbe una
 voce d'errata, non un sollievo.
-⚠️ Il secondo `git diff --stat` deve essere **vuoto**: la mutazione non si committa.
+⚠️ **Il primo `cmp` DEVE rendere una riga `differ: char N, line 135`, il secondo DEVE essere silenzioso, e
+il `diff` fra le due `git status --porcelain` DEVE essere vuoto:** la mutazione non si committa.
+⛔ **E il primo `cmp` si fa contro il FILE mutato, mai contro il frammento della mutazione** — voce **E31**:
+un operando che il soggetto non ha toccato differisce **per conto suo**, e la prova diventa vacua senza
+smettere di sembrare una prova.
 
 - [ ] **Passo 8: il richiamo datato di P-24 su `platform/src/lib.rs`**
 

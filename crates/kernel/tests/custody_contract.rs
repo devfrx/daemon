@@ -44,7 +44,7 @@ use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
 pub const KEPT_COMES_BACK_MESSAGE: &str =
     "custody contract violated: what `keep` wrote must come back from `retrieve` byte for byte";
 
-/// Promise 1 of §2 of the north star, in one line: the package is OPAQUE.
+/// Piece 1 of §2 of the north star, in one line: the package is OPAQUE.
 pub const OPAQUE_MESSAGE: &str =
     "custody contract violated: bytes that are not text must be kept and handed back untouched";
 

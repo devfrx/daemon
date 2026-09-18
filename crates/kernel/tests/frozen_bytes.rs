@@ -512,8 +512,8 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
             Detail::Routing(_) => {}
             Detail::Permission(_) => {}
             Detail::Invocation(_) => {}
-            // ⚠️ THE FIFTH SPECIES THAT CARRIES ONE, AND THE DECLARED LIMIT IS ITS FOUR SIBLINGS'
-            // WORD FOR WORD: extending the arm without freezing a record still compiles. What
+            // ⚠️ A SPECIES THAT CARRIES ONE TOO, AND THE DECLARED LIMIT IS ITS SIBLINGS' WORD FOR
+            // WORD: extending the arm without freezing a record still compiles. What
             // makes that acceptable is the assertion above, which stops this `match` from running
             // over an empty list, plus the head of this file — a new variant of a wire enum is A
             // FORMAT CHANGE, so it can never be a quiet addition.

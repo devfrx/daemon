@@ -227,6 +227,10 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
             "why this step exists",
             InvocationDetail::new("a function", 0),
         ),
+        // ⚠️ AND THE GUARD ABOVE PUT THIS ONE HERE TOO: `RecordKind::Policy` made this closure
+        // `error[E0004]` on the day it arrived (sub-project 2, task 8). Its detail is not
+        // optional either, and it is a struct literal rather than a `new` — `PolicyDetail` holds
+        // one public `bool`, and `record.rs` argues there why it is a `bool` and not a policy.
         RecordKind::Policy => RecordV1::policy(
             EffectClass::Idempotent,
             Trust::Instruction,

@@ -681,8 +681,13 @@ fn a_record_this_build_cannot_read_stops_the_answer() {
 /// it" — about an archive that holds a transition record naming no policy. That is the one answer
 /// `policy_now` must never give, because the caller starts on the default when it hears it.
 ///
-/// ⚠️ IT ALSO PINS `RecordKind::Policy`'s WIRE INDEX FROM A SECOND DIRECTION: the frozen record holds
-/// `07` by READING it back, this probe by WRITING it in.
+/// ⚠️ AND IT DOES NOT PIN `RecordKind::Policy`'s WIRE INDEX, though the `07` below invites that
+/// reading: the index is held by the FROZEN RECORD ALONE, which reads it back. ✅ MEASURED on
+/// 2026-09-18 rather than argued — with `Policy` moved to `#[n(9)]` in `src/record.rs` this whole
+/// bench stays GREEN and only `tests/frozen_bytes.rs` goes red, because once the index moves the
+/// relabelled bytes decode as nothing at all and this probe arrives at its `Err` through the FIRST
+/// road, `Record::decode` failing, instead of through its own. What this probe holds is the `else`
+/// branch, and nothing else in the workspace holds it.
 #[test]
 fn a_policy_record_whose_detail_is_not_a_policy_is_an_error() {
     let mut journal = MemoryJournal::new();

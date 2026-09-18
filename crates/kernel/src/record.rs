@@ -258,6 +258,7 @@ pub enum Detail {
     /// Who invoked which function of the registry (ADR-0038).
     #[n(3)]
     Invocation(#[n(0)] InvocationDetail),
+    /// Which VRAM policy the transition moved to (§5.4, ADR-0006).
     #[n(4)]
     Policy(#[n(0)] PolicyDetail),
 }

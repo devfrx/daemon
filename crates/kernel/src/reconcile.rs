@@ -49,7 +49,13 @@ pub struct InDoubt {
 /// kernel's property (ADR-0036). The record keeps the authority; this walk keeps trusting the
 /// field, and now does so BY DECISION rather than by default.
 ///
-/// ⚠️ THE DISAGREEMENT IS CLOSED BY WHOEVER WRITES, AND THERE ARE TWO OF THEM.
+/// ⚠️ THE DISAGREEMENT IS CLOSED BY WHOEVER WRITES, AND WHO THEY ARE IS WHAT
+/// `grep -rn 'journal.note(' crates/kernel/src/` LISTS — a NUMBER written here would age at the
+/// next writer, and it had. ⛔ RECALL OF 2026-09-18, FROM THE REVIEW OF TASK 8 OF THE PART-2
+/// PLAN: this sentence said "AND THERE ARE TWO OF THEM", which was already false before that
+/// task — `permission::grant` has been one of them since 2026-09-01 — and the recall below names
+/// it as a third three lines under a paragraph still saying two. The numeral is REMOVED and not
+/// realigned (gotcha #31), on the precedent of `AUD-021` and `AUD-061`.
 /// `Untrusted::promote` writes through `Journal::note` a record whose `kind` is
 /// `RecordKind::Note`; `Arbiter::set_policy`, since milestone 5 task 9, writes through
 /// `intent` and `outcome` records whose `kind` matches each.
@@ -70,8 +76,13 @@ pub struct InDoubt {
 /// landed on 2026-08-20 and NOTHING WENT RED to say so — a deadline written in prose has no
 /// mechanism behind it, unlike the `dead_code` deadlines of `E10` and `E67`, which the compiler
 /// remembers. REWRITTEN and not annotated, which is finding A-2's rule.
-/// ⛔ WHETHER TO BUILD THE HELPER IS THE OWNER'S and it is REGISTERED, NOT TAKEN: it changes
-/// the shape of code with two call sites, and the two probes hold the agreement meanwhile.
+/// ⛔ WHETHER TO BUILD THE HELPER IS THE OWNER'S and it is REGISTERED, NOT TAKEN: it changes the
+/// shape of every call site `grep -rn 'journal.note(' crates/kernel/src/` lists, and each of
+/// those writers holds the agreement meanwhile with a probe of its own — the ones named above
+/// are the examples, that command is the census. ⛔ RECALL OF 2026-09-18, FROM THE REVIEW OF
+/// TASK 8 OF THE PART-2 PLAN: this sentence said "code with two call sites" and "the two
+/// probes", and both numerals are REMOVED and not realigned (gotcha #31) — the writers were
+/// already more than two when it was written.
 ///
 /// ⚠️ MEASURED, BOTH DIRECTIONS, and the two do not fail alike — kept because it is the evidence
 /// that the probe above is worth its line:

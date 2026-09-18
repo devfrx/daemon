@@ -201,7 +201,7 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // EFFECT that may or may not have reached the world, and asking is not an effect.
                 // The step it names owes its own outcome, and writes one.
                 //
-                // ⛔ BOTH OTHER ANSWERS WERE MEASURED, which is what "measured" means here:
+                // ⛔ BOTH OTHER ANSWERS WERE PUT IN THIS ARM AND RUN:
                 // `enter` would leave EVERY invoked step in doubt for ever, because the note
                 // arrives after the step's own `intent` and a second `enter` on an open step is
                 // not what `leave` undoes; and `leave` would CLOSE the doubt the invocation's own

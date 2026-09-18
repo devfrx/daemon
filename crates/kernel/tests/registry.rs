@@ -115,7 +115,7 @@ fn a_granted_triple_reaches_the_effect_and_the_step_closes() {
 
     assert_eq!(produced, 42, "invoke must hand back what the effect produced");
 
-    // ⛔ AND THE SECOND HALF OF THIS PROBE'S NAME, WHICH NOTHING HELD UNTIL NOW: "the step
+    // ⛔ AND THE SECOND HALF OF THIS PROBE'S NAME, WHICH THIS PROBE DID NOT HOLD: "the step
     // closes". `produced == 42` says the effect RAN and says nothing at all about point 7 of the
     // sequence the doc of `invoke` lists -- an `invoke` that forgot the `outcome` on step A would
     // hand back 42 just the same and leave A IN DOUBT FOR EVER, which is the one failure ADR-0007
@@ -124,8 +124,10 @@ fn a_granted_triple_reaches_the_effect_and_the_step_closes() {
     //
     // ⚠️ AND THE ORACLE IS THE PROJECTION RATHER THAN A LIST OF KINDS, because it covers A AND B
     // AT ONCE: the effect opens and closes ITS OWN step, and a step of the effect left open is
-    // the same defect one level down. The sibling probe asserts the ORDER of the species on A;
-    // this one asserts that nothing anywhere is left owing an outcome.
+    // the same defect one level down. The sibling probe asserts the ORDER of the species on A
+    // and REDDENS UNDER THE SAME MUTATION, losing its trailing `Outcome`; this one asserts that
+    // nothing anywhere is left owing an outcome. Two roads, and neither replaces the other:
+    // that one reads the ARCHIVE, this one the PROJECTION a later reconciliation would see.
     let in_doubt = kernel::reconcile::steps_in_doubt(&journal).expect("the projection must answer");
     assert!(
         in_doubt.is_empty(),

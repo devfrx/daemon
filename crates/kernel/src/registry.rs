@@ -5,8 +5,8 @@
 //! every kernel registry. This module knows how to HOLD a function, how to check its triple and
 //! how to JOURNAL an invocation; WHICH functions exist is brought by the gui and by the
 //! capabilities. ⛔ AND THE RULE IS HELD AT LEVEL 1 RATHER THAN BY GOOD INTENTIONS: nothing here
-//! IMPORTS `Arbiter`, `VramPolicy` or any other effect, and it could not without an `import` a
-//! reader would see. The day the gesture arrives (sub-project 12) it registers ITS functions from
+//! IMPORTS `Arbiter`, `VramPolicy` or any other effect -- the `use` block at the top of this
+//! file is the whole list, and a reader checks it in one glance. The day the gesture arrives (sub-project 12) it registers ITS functions from
 //! outside, exactly as the click does — which is what "no gesture-only logic" means when it stops
 //! being a sentence.
 //!

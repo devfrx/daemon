@@ -250,6 +250,28 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
             return Outcome::Keep;
         };
         let id = self.clients[index].id;
+        // ⛔ ONLY `Hello` IS ANSWERED BEFORE THE HANDSHAKE, which is §5 of the sub-project 2 design
+        // -- "the first message must be `Hello`" -- and the promise `Stage::Greeting`'s own doc
+        // makes one screen above. Without this gate `Invoke`, `Approve` and `SaveLayout` are
+        // dispatched for a peer that never introduced itself: MEASURED on 2026-09-18, such a peer
+        // moved the policy to `local`, its package reached the seventh port, and the six records of
+        // the round were in the journal -- `Permission` among them -- while `attending()` was EMPTY
+        // (E46 of the plan).
+        //
+        // ⚠️ REFUSED WITHOUT A WORD AND WITHOUT A RECORD, like the three silent roads this dispatch
+        // already has: what arrived is content the peer chose, and untrusted content informs, it
+        // never authorises (ADR-0014). ⚠️ AND THE CLIENT IS KEPT: speaking out of turn is not a dead
+        // peer, any more than a bad frame is, and its `Hello` is still read on a later turn.
+        //
+        // ⛔ IT ASKS WHAT THE MESSAGE IS AND NOT WHETHER IT IS ONE OF THE SERVED ONES, so a variant
+        // added tomorrow is refused before the handshake rather than served by an omission. The
+        // other direction -- that a variant cannot be forgotten ALTOGETHER -- is the exhaustive
+        // `match` below, which is why this is a gate in front of it and not three guards inside it.
+        if !matches!(message, IpcMessage::Hello(_))
+            && !matches!(self.clients[index].stage, Stage::Attending { .. })
+        {
+            return Outcome::Keep;
+        }
         match message {
             IpcMessage::Hello(stamp) => self.greet(index, stamp),
             IpcMessage::Invoke(call) => self.run(id, call, Approval::Checked),

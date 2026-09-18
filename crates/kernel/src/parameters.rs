@@ -123,8 +123,10 @@ impl Parameters {
     /// vary in a campaign (gotcha #28).
     ///
     /// ⚠️ AND IT IS WHAT BOUNDS THE COST OF `crate::degradation::degradation_now`, which the
-    /// serving activity re-reads once per turn while a gui is attending (D23 of the sub-project 2
-    /// part 2 plan). That function declares its own cost -- the whole journal is replayed to
+    /// serving activity re-reads while a gui is attending (D23 of the sub-project 2 part 2 plan):
+    /// once per turn in the sweep, and ONCE MORE on the turn a client shakes hands, because
+    /// `crate::serving::Core::greet` reads it for the welcome as well. That function declares its
+    /// own cost -- the whole journal is replayed to
     /// answer one question -- and this value is the only dial over it until the checkpoint
     /// `Journal::replay` names arrives.
     pub const fn gui_tick(self) -> Millis {

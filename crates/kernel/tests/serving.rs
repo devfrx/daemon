@@ -424,6 +424,63 @@ fn a_stale_stamp_gets_the_expected_one_and_then_the_core_stops_listening() {
 }
 
 #[test]
+fn a_client_that_has_not_shaken_hands_is_served_nothing_and_keeps_its_place() {
+    // ⛔ THE HANDSHAKE IS A GATE AND NOT A GREETING -- §5 of the sub-project 2 design, "the first
+    // message must be `Hello`" -- and no other probe in this file ever arrives without saying it.
+    // MEASURED before the gate existed (E46 of the plan): this peer moved the policy to `local`,
+    // its package reached the seventh port, and the journal held the six records of the round --
+    // `Permission` among them -- while `attending()` stayed EMPTY.
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(
+        OTHER,
+        &[
+            IpcMessage::Approve { triple: the_triple(), call: switch_to_local() },
+            IpcMessage::SaveLayout(vec![7, 7, 7]),
+            // ⛔ THE THIRD MESSAGE IS THE SECOND DIRECTION: refusing is not disconnecting. Had the
+            // two above cost this client its place, the `Hello` would reach nobody and no welcome
+            // would come back. It is the only way to tell "kept" from "dropped" from out here,
+            // because `attending()` cannot see a client that is still in `Greeting` -- E43's
+            // lesson, used on purpose this time instead of walked into.
+            IpcMessage::Hello(build_stamp()),
+        ],
+    );
+
+    bench.round(
+        |_| {},
+        |core| {
+            assert_eq!(
+                core.arbiter().policy().name(),
+                "remote",
+                "a peer that has not shaken hands must not reach the effect"
+            );
+            assert!(
+                core.journal().replay().expect("the memory journal replays").is_empty(),
+                "and it must not write a record either"
+            );
+            assert_eq!(
+                core.custody().retrieve(CustodyKey::Layout),
+                Ok(None),
+                "and nothing of its must reach the seventh port"
+            );
+            assert!(
+                core.attending().contains(&OTHER),
+                "and it is at the table: the `Hello` it sent LAST was still read"
+            );
+        },
+    );
+
+    let heard = bench.heard(OTHER);
+    // The welcome, and not one word about the two that were refused -- the refusal is silent, like
+    // the dispatch's other three roads in
+    // `a_word_the_dispatch_does_not_know_is_refused_without_a_word`.
+    assert!(
+        matches!(heard.first(), Some(IpcMessage::Accepted(_))),
+        "what comes back is the welcome, opening where it always opens: {heard:?}"
+    );
+    assert_eq!(heard.len(), 5, "the welcome, and nothing else at all: {heard:?}");
+}
+
+#[test]
 fn a_request_reaches_neither_the_arbiter_nor_the_journal() {
     let bench = Bench::new();
     bench.wire.borrow_mut().arrives(
@@ -606,30 +663,47 @@ fn a_client_that_dies_gives_its_grant_back() {
             // be right -- ADR-0033 says the core notices FROM THE IPC DISCONNECTION and
             // reconciles -- and this is the only way to hold it until the 3D pillar brings the
             // writer.
-            let profile = ResourceProfile {
-                name: "a-client-of-the-bench",
-                reserved_vram: Mib::new(1_024),
-                compute_class: ComputeClass::Batch,
-                preemption: Preemption::Never,
+            //
+            // ⛔ AND THERE ARE TWO OF THEM, OF DIFFERENT SIZES, WHICH IS WHAT MAKES THE `after`
+            // BLOCK DECIDE. With one grant "gave back only the dead client's" and "gave back
+            // everything it holds" leave the SAME number in the books, so a sweeping
+            // reconciliation would pass -- measured, and it is rilievo I-1. With 1024 held by the
+            // client that dies and 512 by the one that lives, the books answer three different
+            // numbers: 512 when the right pair goes, 1024 when the wrong one does, 0 when both do.
+            let grant_of = |core: &mut BenchCore<'_>, name, vram| {
+                let profile = ResourceProfile {
+                    name,
+                    reserved_vram: Mib::new(vram),
+                    compute_class: ComputeClass::Batch,
+                    preemption: Preemption::Never,
+                };
+                let Admission::Granted(grant) =
+                    core.arbiter()
+                        .admit(&profile, Millis::new(1_000_000), Monotonic::ORIGIN)
+                else {
+                    panic!("this bench's machine is big enough for these two grants")
+                };
+                grant
             };
-            let Admission::Granted(grant) =
-                core.arbiter()
-                    .admit(&profile, Millis::new(1_000_000), Monotonic::ORIGIN)
-            else {
-                panic!("this bench's machine is big enough for one grant")
-            };
-            core.grants().register(OTHER, grant);
+            let dying = grant_of(core, "a-client-of-the-bench", 1_024);
+            let living = grant_of(core, "the-gui-of-the-bench", 512);
+            core.grants().register(OTHER, dying);
+            core.grants().register(GUI, living);
             assert_eq!(
                 core.arbiter().allocated(),
-                Mib::new(1_024),
-                "the books hold it before the round, or the round proves nothing"
+                Mib::new(1_536),
+                "the books hold both before the round, or the round proves nothing"
             );
         },
         |core| {
+            // ⛔ 512 AND NOT ZERO, AND THAT IS THE WHOLE ASSERTION: the grant of the client that
+            // DIED comes back and the one of the client that LIVES does not. A reconciliation that
+            // swept every pair it holds would answer 0, and one that released the wrong pair would
+            // answer 1024 -- neither is this number.
             assert_eq!(
                 core.arbiter().allocated(),
-                Mib::ZERO,
-                "the grant of a client that died must come back to the books"
+                Mib::new(512),
+                "only the grant of the client that died comes back to the books"
             );
             // ⛔ AND THE TABLE IS HELD BY THE ASSERTION ABOVE, NOT BY A SECOND ONE. An assertion on
             // `attending()` would be VACUOUS here, which is why there is none: that accessor
@@ -643,10 +717,13 @@ fn a_client_that_dies_gives_its_grant_back() {
         },
     );
 
-    // ⛔ THE OTHER DIRECTION, AND IT IS THE ONE A SWEEPING RECONCILIATION WOULD BREAK: the client
-    // that did NOT die is still served. Without it, an `on_disconnect` that gave back every pair
-    // it holds would pass the assertion above -- it is `gui_death_campaign.rs`'s standing witness,
-    // in miniature.
+    // ⚠️ AND THE CLIENT THAT DID NOT DIE IS STILL SERVED, which is what this last line says and
+    // ALL it says. ⛔ IT IS NOT THE WITNESS AGAINST A SWEEPING RECONCILIATION -- that is the
+    // assertion on the books above, which is where the two pairs of different sizes earn their
+    // keep. This line was claimed to be that witness and was not: with one grant registered a
+    // sweep left the same number behind, every probe of this file stayed green, and the red came
+    // out in `crates/kernel/tests/client_grants.rs` and `crates/simulator/tests/gui_death_campaign.rs`
+    // instead (rilievo I-1, measured 2026-09-18).
     let heard = bench.heard(GUI);
     assert_eq!(heard.len(), 5, "the living gui got its whole welcome: {heard:?}");
 }

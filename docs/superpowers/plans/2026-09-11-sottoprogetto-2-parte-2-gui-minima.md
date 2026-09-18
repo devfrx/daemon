@@ -270,6 +270,8 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E43** | ⛔ **Compito 7, Passo 6 — la seconda asserzione di `a_client_that_dies_gives_its_grant_back` è VACUA, perché `attending()` non può vedere il tavolo di cui il suo messaggio parla.** La sonda chiude con `assert!(!core.attending().contains(&OTHER), "and the client leaves the table")`, ma `Core::attending` — dettato dal **Passo 7 dello stesso compito** — filtra su `matches!(client.stage, Stage::Attending { .. })`, e `OTHER` **non raggiunge mai** quello stadio: `arrives(OTHER, &[])` non gli fa dire nulla, `dead(OTHER)` lo uccide prima del giro, e `FakeIpc::receive` guarda `gone` **per primo**, quindi nemmeno un `Hello` sarebbe letto. `OTHER` resta in `Stage::Greeting` per tutta la sua vita, e `attending()` non lo conterrebbe **nemmeno se `forget` non girasse affatto**. ✅ **La PRIMA asserzione non è vacua e non si tocca:** il blocco `before` mette la concessione nei libri e lo **asserisce** — `allocated() == Mib::new(1_024)` prima del giro — e il blocco `after` pretende `Mib::ZERO`, quindi un `forget` che non chiamasse `on_disconnect` la farebbe rossa. ⛔ **È la specie di E37, la seconda volta in due compiti:** il **messaggio** di un'asserzione è un contratto, e si legge contro ciò che l'asserzione **guarda**, mai contro il flusso che la precede. ✅ **Il rimedio è togliere l'asserzione scrivendo PERCHÉ**, e non farne una migliore: una migliore vorrebbe `clients` esposto, e *«un elemento d'API senza chiamante in questo repository si cancella»* (`crates/kernel/src/boundary.rs`). Al suo posto va la clausola che dice che a tenere il tavolo è la **prima** asserzione — una concessione può tornare ai libri **solo** passando da `forget`, che è la stessa riga che toglie il client dalla tabella. ⚠️ **E l'altro uso di `attending()` in questo banco NON è vacuo** e resta com'è: in `a_word_the_dispatch_does_not_know_is_refused_without_a_word` il client ha stretto la mano davvero, quindi `contains(&GUI)` distingue un client tenuto da uno buttato via. 📌 **La forma generale: un osservabile che FILTRA è cieco a ciò che sta fuori dal filtro**, e un'asserzione **negativa** su un osservabile filtrato è verde per due motivi diversi — quello che si voleva provare, e quello che non si è guardato. Trovata dal pre-controllo del compito 7, 2026-09-18 |
 | **E44** | ⛔ **Compito 7 — la casa di E21 (b) assegnata a QUESTO compito non è nominata da NESSUN suo Passo, e chi esegue legge il compito.** **E21** assegna al 7 una delle tre case di sola cifra — *«none of the six port families supplies hardware capacity»*, nel doc di `Parameters::total_vram` in `crates/kernel/src/parameters.rs` — col criterio *«al compito che **già apre** quel file»*, e il compito 7 quel file lo apre davvero, al **Passo 2**, per il campo `gui_tick`. ⛔ **Ma il Passo 2 non ne parla, il blocco *Files* non ne parla, e il criterio di chiusura non la conta:** misurato il 2026-09-18, `grep -n 'sei famiglie\|six port families\|E21'` sulle righe del compito 7 **non rende nulla**. L'assegnazione vive **solo** dentro E21 e nel punto 5 della venticinquesima chiusura del diario. ⚠️ **La riga *«Come si esegue un compito»* dice di leggere *«l'errata per intero, poi il compito»*, quindi un esecutore diligente la trova lo stesso** — ma questo piano dispaccia per **brief**, e un tocco che vive solo nell'errata è un tocco che nessun Passo annuncia e nessun criterio spunta. ✅ **Il rimedio è scrivere il tocco NEL PASSO 2**, dove il file si apre già, con la cura che E21 detta: **togliere la cifra**, non riallinearla a sette — *«none of the port families supplies hardware capacity»* — così che l'ottava porta non la riapra (`CLAUDE.md`). ⚠️ **E la riga del blocco *Files* lo dice con lui**, o il diff del compito porterà una modifica che nessuna sua riga aveva annunciato, che è ciò che rende un diff non rivedibile contro il brief (decisione 110). 📌 **La forma generale: un'assegnazione scritta in una voce d'errata NON raggiunge il compito che assegna.** L'errata è un elenco di correzioni **al piano**, non una parte del compito; chi assegna un tocco a un compito futuro lo porta **dentro** il suo Passo nello stesso momento, altrimenti ha spostato il lavoro in un posto dove il lavoro non si legge. Trovata dal pre-controllo del compito 7, 2026-09-18 |
 | **E45** | ⛔ **Compito 7, Passo 9 e criterio di chiusura — i tre comandi sui richiami datati NON POSSONO essere veri insieme, e metà della voce è la QUINTA ricaduta di E4.** Il criterio chiede `grep -c 'RICHIAMO DEL <data>, compito 7'` → **5** sul disegno del 2 e **2** sulla stella, **e** `grep -c '<data>'` sui due disegni → **0**. ⛔ **Se il secondo rende 0, il primo rende 0 per costruzione:** il motivo del primo **contiene** il segnaposto che il compito toglie, quindi i due si escludono a vicenda. Misurato il 2026-09-18 sul repository di adesso: il primo rende **0** e il secondo rende **1**. ✅ **Il rimedio del primo è di MOTIVO, e non di parentesi:** si cerca ciò che il richiamo porta davvero e non il segnaposto — `grep -c ', compito 7 (' <il disegno del 2>` → **5** e `grep -c 'compito 7 del piano della parte 2' <la stella>` → **2** — così la parentesi *«(con la data scritta — D75)»* smette di dover reggere da sola una sostituzione che il comando non fa. ⛔ **E la seconda metà è E4 ed E35 alla lettera, per la QUINTA volta:** l'unico `<data>` del disegno del 2 è un **nome di file** nella §10 — la riga che nomina il piano della parte 1 — e c'era prima del compito come ci sarà dopo: `git show HEAD:<quel file> \| grep -c '<data>'` rende **1**, identico al file di adesso. **E4** lo misurò il 2026-09-17 e concluse che *«il conto che il criterio intende è sui segnaposti scritti dal compito»*; **E35** lo rimisurò il 2026-09-18 e scrisse il comando che decide — `git diff -- <quel file> \| grep -c '^+.*<data>'` → **0**, che misura le righe **aggiunte** e non il file intero. Il compito 7 riscrive la riga sbagliata una **terza** volta. ✅ **Si adotta il comando di E35** sul disegno del 2; sulla **stella** il conto sul file resta vero e si lascia, perché lì `<data>` vale **0** prima e **0** dopo, misurato. 📌 **La forma generale, già scritta quattro volte e non ancora attraversata: una voce d'errata corregge il compito in cui NASCE, e i gemelli nei compiti che nessuno ha ancora aperto restano intatti** — E14 nel 3, E23 nel 4, E28 nel 5, E35 nel 6, questa nel 7. Chi scrive una voce su un criterio di chiusura la cerca con `git grep` su **tutto** il piano prima di chiudere, che è esattamente ciò che **E41** ha appena prescritto per i verbali: il gemello sta nel compito che nessuno ha ancora aperto. Trovata dal pre-controllo del compito 7, 2026-09-18 |
+| **E46** | ⛔ **Compito 7, Passo 7 — IL DISPACCIO NON GUARDA MAI LO STADIO DEL CLIENT, e tre operazioni girano per un pari che non ha mai detto `Hello`.** Il doc di `Stage::Greeting`, dettato dallo stesso Passo, promette *«Connected, and it has not introduced itself. **Only `Hello` is answered**»*, e la §5 del disegno del 2 dice *«il primo messaggio deve essere `Hello`»*; ma `Core::answer` **non legge `self.clients[index].stage` in nessun punto**, e il `match` dispaccia `Invoke`, `Approve` e `SaveLayout` a chiunque. ⛔ **Misurato il 2026-09-18 con una sonda aggiunta e revocata, non dedotto:** un pari che non ha mai stretto la mano porta la policy a `local`, gli fa scrivere il layout nella settima porta e lascia nel giornale i **sei** record del giro — `Permission` compresa — con `attending()` **vuoto**. ⚠️ **Nessuna delle dodici sonde lo copriva**, e la ragione è che tutte e dodici aprono col `Hello`. ⛔ **È un difetto del TESTO DETTATO e non della trascrizione**, e il ruling del coordinatore è che **il rilievo vince**: la §5 del disegno è l'autorità che vincola, il piano è il suo argomento. ✅ **Il rimedio è una GUARDIA DAVANTI AL `match`, e non tre guardie dentro:** solo `Hello` è servito prima della stretta di mano, e le altre varianti da un client che non è in `Attending` rendono `Outcome::Keep` **senza una parola e senza un record** — come le altre tre strade silenziose del ramo (ADR-0014: il contenuto non fidato informa, mai autorizza) — e il **client resta al tavolo**, perché parlare fuori turno non è un pari morto. ⚠️ **Davanti e non dentro** perché il `match` esaustivo è ciò che rende `error[E0004]` una variante nuova, e tre guardie con `if` lo renderebbero non esaustivo; la guardia chiede **che cosa è il messaggio** e non se sia fra quelli serviti, così una variante di domani è rifiutata prima della stretta invece che servita per omissione. ✅ **E una sonda la tiene**, `a_client_that_has_not_shaken_hands_is_served_nothing_and_keeps_its_place`: un pari manda `Approve` e `SaveLayout`, **poi** `Hello`, e l'oracolo è che la policy non si muove, che `replay()` è vuoto, che la custodia non tiene nulla, e che il **`Hello` mandato per ultimo viene comunque letto** — che è l'unico modo di distinguere «tenuto» da «buttato via» da fuori, perché `attending()` non vede un client ancora in `Greeting` (la lezione di **E43**, usata invece che ricalcata). ✅ **Provata nelle due direzioni:** verde con la guardia; **rossa** senza — `assertion left == right failed: a peer that has not shaken hands must not reach the effect, left: "local", right: "remote"` — e **una sola** delle tredici arrossa, che è la misura di quanto il difetto fosse scoperto. Mutazione revocata copiando indietro una pristina, `cmp` silenzioso, `git status --porcelain` riconfrontato. ⚠️ **Il conto delle sonde passa da 12 a 13**, e non c'è nessun numerale da inseguire: il codice non ne porta, l'Atteso del Passo 7 dice *«quante siano lo dice il comando del passo 6»* ed **E42** ha appena tolto quello del criterio. Il **DODICI** scritto dentro E42 è una **misura datata** del testo com'era quel giorno e resta com'è, per la ragione di **E15**. ⚠️ **E i compiti che verranno non si rompono, verificato invece che assunto:** i pari dei compiti **9**, **10** e **12** aprono tutti col `Hello` — `grep -n 'IpcMessage::Hello'` sulle loro regioni. Trovata dalla revisione del compito 7 (C-1), verificata dal coordinatore contro i file, 2026-09-18 |
+| **E47** | ⛔ **Compito 7 — tre cifre del messaggio di commit `e571c8c` sono sbagliate, e il commit NON si amenda.** Il messaggio dice *«le CINQUANTA chiamate in VENTUNO file»*, *«gli altri **diciannove** file dichiarano un `const GUI_TICK` proprio»* e *«fine-riga invariati su tutti e **venticinque** i file modificati»*. **Le cifre vere, misurate il 2026-09-18:** le righe non di commento con `Parameters::new` passano da **50** a **55** — le 50 del censimento, più **4** dalle sonde nuove di `crates/kernel/tests/parameters_delivered.rs` e **1** dal banco nuovo `crates/kernel/tests/serving.rs`, che il `grep -r crates/` conta anch'esso; i file che dichiarano davvero un `const GUI_TICK` sono **13** (`grep -rl 'const GUI_TICK' crates/ --include='*.rs' \| wc -l`), perché i **sette** `compile_fail` e il **daemon** prendono il tick **in linea** — come il messaggio stesso dice tre capoversi più sotto, quindi si contraddice da sé; e i file del commit sono **30**, di cui **28** modificati e **2** nuovi. ⛔ **RULING DEL COORDINATORE: il commit NON si amenda**, ed è il precedente di **E24** e la **decisione 115** — l'hash è già citato dal registro, dal pacchetto di revisione e da due rapporti, e cambiarlo li renderebbe stantii tutti per raddrizzare tre numeri. ⚠️ **Costo dichiarato invece che taciuto: chi legge il `git log` legge cifre false, e deve arrivare a questa voce per sapere quali siano vere.** ✅ **Il rapporto dell'esecutore invece SI CORREGGE**, perché non è append-only: la sua §2.2 diceva *«gli altri 19 file | 45»* e il conto delle chiamate diceva **54** (il rilievo **m-1**), misurato prima che il banco nuovo esistesse. ⛔ **E le cifre sono state cercate col `grep` altrove**, che è la metà che E13 insegna: nel testo dettato del piano non ce n'è nessuna, nel blocco *Files* nemmeno, e l'unica nel codice era il commento del daemon *«AT THE THREE PROBE CALL SITES OF THIS FILE»* — impreciso, perché uno dei tre è un aiutante e non una sonda — sostituito dal **meccanismo col suo comando**: *«at every other call site of this file … which `grep -c 'Millis::new(0)'` counts with this one»*. 📌 **La forma generale: un messaggio di commit è l'unico artefatto del compito che nessun richiamo datato può raggiungere** (la regola che **E24** ha già scritto), quindi le sue cifre si rimisurano **al momento di scriverlo** e non si riportano da un rapporto scritto tre passi prima. Trovata dalla revisione del compito 7 (I-2, m-1, m-2), confermata dal coordinatore, 2026-09-18 |
 
 ---
 
@@ -8594,8 +8596,10 @@ E l'accessore, in coda all'`impl`, **prima** della graffa che lo chiude:
     /// vary in a campaign (gotcha #28).
     ///
     /// ⚠️ AND IT IS WHAT BOUNDS THE COST OF `crate::degradation::degradation_now`, which the
-    /// serving activity re-reads once per turn while a gui is attending (D23 of the sub-project 2
-    /// part 2 plan). That function declares its own cost -- the whole journal is replayed to
+    /// serving activity re-reads while a gui is attending (D23 of the sub-project 2 part 2 plan):
+    /// once per turn in the sweep, and ONCE MORE on the turn a client shakes hands, because
+    /// `crate::serving::Core::greet` reads it for the welcome as well. That function declares its
+    /// own cost -- the whole journal is replayed to
     /// answer one question -- and this value is the only dial over it until the checkpoint
     /// `Journal::replay` names arrives.
     pub const fn gui_tick(self) -> Millis {
@@ -9290,6 +9294,63 @@ fn a_stale_stamp_gets_the_expected_one_and_then_the_core_stops_listening() {
 }
 
 #[test]
+fn a_client_that_has_not_shaken_hands_is_served_nothing_and_keeps_its_place() {
+    // ⛔ THE HANDSHAKE IS A GATE AND NOT A GREETING -- §5 of the sub-project 2 design, "the first
+    // message must be `Hello`" -- and no other probe in this file ever arrives without saying it.
+    // MEASURED before the gate existed (E46 of the plan): this peer moved the policy to `local`,
+    // its package reached the seventh port, and the journal held the six records of the round --
+    // `Permission` among them -- while `attending()` stayed EMPTY.
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(
+        OTHER,
+        &[
+            IpcMessage::Approve { triple: the_triple(), call: switch_to_local() },
+            IpcMessage::SaveLayout(vec![7, 7, 7]),
+            // ⛔ THE THIRD MESSAGE IS THE SECOND DIRECTION: refusing is not disconnecting. Had the
+            // two above cost this client its place, the `Hello` would reach nobody and no welcome
+            // would come back. It is the only way to tell "kept" from "dropped" from out here,
+            // because `attending()` cannot see a client that is still in `Greeting` -- E43's
+            // lesson, used on purpose this time instead of walked into.
+            IpcMessage::Hello(build_stamp()),
+        ],
+    );
+
+    bench.round(
+        |_| {},
+        |core| {
+            assert_eq!(
+                core.arbiter().policy().name(),
+                "remote",
+                "a peer that has not shaken hands must not reach the effect"
+            );
+            assert!(
+                core.journal().replay().expect("the memory journal replays").is_empty(),
+                "and it must not write a record either"
+            );
+            assert_eq!(
+                core.custody().retrieve(CustodyKey::Layout),
+                Ok(None),
+                "and nothing of its must reach the seventh port"
+            );
+            assert!(
+                core.attending().contains(&OTHER),
+                "and it is at the table: the `Hello` it sent LAST was still read"
+            );
+        },
+    );
+
+    let heard = bench.heard(OTHER);
+    // The welcome, and not one word about the two that were refused -- the refusal is silent, like
+    // the dispatch's other three roads in
+    // `a_word_the_dispatch_does_not_know_is_refused_without_a_word`.
+    assert!(
+        matches!(heard.first(), Some(IpcMessage::Accepted(_))),
+        "what comes back is the welcome, opening where it always opens: {heard:?}"
+    );
+    assert_eq!(heard.len(), 5, "the welcome, and nothing else at all: {heard:?}");
+}
+
+#[test]
 fn a_request_reaches_neither_the_arbiter_nor_the_journal() {
     let bench = Bench::new();
     bench.wire.borrow_mut().arrives(
@@ -9472,30 +9533,47 @@ fn a_client_that_dies_gives_its_grant_back() {
             // be right -- ADR-0033 says the core notices FROM THE IPC DISCONNECTION and
             // reconciles -- and this is the only way to hold it until the 3D pillar brings the
             // writer.
-            let profile = ResourceProfile {
-                name: "a-client-of-the-bench",
-                reserved_vram: Mib::new(1_024),
-                compute_class: ComputeClass::Batch,
-                preemption: Preemption::Never,
+            //
+            // ⛔ AND THERE ARE TWO OF THEM, OF DIFFERENT SIZES, WHICH IS WHAT MAKES THE `after`
+            // BLOCK DECIDE. With one grant "gave back only the dead client's" and "gave back
+            // everything it holds" leave the SAME number in the books, so a sweeping
+            // reconciliation would pass -- measured, and it is rilievo I-1. With 1024 held by the
+            // client that dies and 512 by the one that lives, the books answer three different
+            // numbers: 512 when the right pair goes, 1024 when the wrong one does, 0 when both do.
+            let mut grant_of = |core: &mut BenchCore<'_>, name, vram| {
+                let profile = ResourceProfile {
+                    name,
+                    reserved_vram: Mib::new(vram),
+                    compute_class: ComputeClass::Batch,
+                    preemption: Preemption::Never,
+                };
+                let Admission::Granted(grant) =
+                    core.arbiter()
+                        .admit(&profile, Millis::new(1_000_000), Monotonic::ORIGIN)
+                else {
+                    panic!("this bench's machine is big enough for these two grants")
+                };
+                grant
             };
-            let Admission::Granted(grant) =
-                core.arbiter()
-                    .admit(&profile, Millis::new(1_000_000), Monotonic::ORIGIN)
-            else {
-                panic!("this bench's machine is big enough for one grant")
-            };
-            core.grants().register(OTHER, grant);
+            let dying = grant_of(core, "a-client-of-the-bench", 1_024);
+            let living = grant_of(core, "the-gui-of-the-bench", 512);
+            core.grants().register(OTHER, dying);
+            core.grants().register(GUI, living);
             assert_eq!(
                 core.arbiter().allocated(),
-                Mib::new(1_024),
-                "the books hold it before the round, or the round proves nothing"
+                Mib::new(1_536),
+                "the books hold both before the round, or the round proves nothing"
             );
         },
         |core| {
+            // ⛔ 512 AND NOT ZERO, AND THAT IS THE WHOLE ASSERTION: the grant of the client that
+            // DIED comes back and the one of the client that LIVES does not. A reconciliation that
+            // swept every pair it holds would answer 0, and one that released the wrong pair would
+            // answer 1024 -- neither is this number.
             assert_eq!(
                 core.arbiter().allocated(),
-                Mib::ZERO,
-                "the grant of a client that died must come back to the books"
+                Mib::new(512),
+                "only the grant of the client that died comes back to the books"
             );
             // ⛔ AND THE TABLE IS HELD BY THE ASSERTION ABOVE, NOT BY A SECOND ONE. An assertion on
             // `attending()` would be VACUOUS here, which is why there is none: that accessor
@@ -9509,10 +9587,13 @@ fn a_client_that_dies_gives_its_grant_back() {
         },
     );
 
-    // ⛔ THE OTHER DIRECTION, AND IT IS THE ONE A SWEEPING RECONCILIATION WOULD BREAK: the client
-    // that did NOT die is still served. Without it, an `on_disconnect` that gave back every pair
-    // it holds would pass the assertion above -- it is `gui_death_campaign.rs`'s standing witness,
-    // in miniature.
+    // ⚠️ AND THE CLIENT THAT DID NOT DIE IS STILL SERVED, which is what this last line says and
+    // ALL it says. ⛔ IT IS NOT THE WITNESS AGAINST A SWEEPING RECONCILIATION -- that is the
+    // assertion on the books above, which is where the two pairs of different sizes earn their
+    // keep. This line was claimed to be that witness and was not: with one grant registered a
+    // sweep left the same number behind, every probe of this file stayed green, and the red came
+    // out in `crates/kernel/tests/client_grants.rs` and `crates/simulator/tests/gui_death_campaign.rs`
+    // instead (rilievo I-1, measured 2026-09-18).
     let heard = bench.heard(GUI);
     assert_eq!(heard.len(), 5, "the living gui got its whole welcome: {heard:?}");
 }
@@ -9970,6 +10051,28 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
             return Outcome::Keep;
         };
         let id = self.clients[index].id;
+        // ⛔ ONLY `Hello` IS ANSWERED BEFORE THE HANDSHAKE, which is §5 of the sub-project 2 design
+        // -- "the first message must be `Hello`" -- and the promise `Stage::Greeting`'s own doc
+        // makes one screen above. Without this gate `Invoke`, `Approve` and `SaveLayout` are
+        // dispatched for a peer that never introduced itself: MEASURED on 2026-09-18, such a peer
+        // moved the policy to `local`, its package reached the seventh port, and the six records of
+        // the round were in the journal -- `Permission` among them -- while `attending()` was EMPTY
+        // (E46 of the plan).
+        //
+        // ⚠️ REFUSED WITHOUT A WORD AND WITHOUT A RECORD, like the three silent roads this dispatch
+        // already has: what arrived is content the peer chose, and untrusted content informs, it
+        // never authorises (ADR-0014). ⚠️ AND THE CLIENT IS KEPT: speaking out of turn is not a dead
+        // peer, any more than a bad frame is, and its `Hello` is still read on a later turn.
+        //
+        // ⛔ IT ASKS WHAT THE MESSAGE IS AND NOT WHETHER IT IS ONE OF THE SERVED ONES, so a variant
+        // added tomorrow is refused before the handshake rather than served by an omission. The
+        // other direction -- that a variant cannot be forgotten ALTOGETHER -- is the exhaustive
+        // `match` below, which is why this is a gate in front of it and not three guards inside it.
+        if !matches!(message, IpcMessage::Hello(_))
+            && !matches!(self.clients[index].stage, Stage::Attending { .. })
+        {
+            return Outcome::Keep;
+        }
         match message {
             IpcMessage::Hello(stamp) => self.greet(index, stamp),
             IpcMessage::Invoke(call) => self.run(id, call, Approval::Checked),

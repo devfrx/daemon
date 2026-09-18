@@ -233,8 +233,9 @@ enum StartupError {
 /// on Linux — the project's second system.
 fn run_the_production_graph(journal_path: &Path) -> Result<(), StartupError> {
     run_the_graph(
-        // ⚠️ THE GUI TICK IS ZERO HERE, AND AT THE THREE PROBE CALL SITES OF THIS FILE,
-        // BECAUSE NOBODY READS IT YET: this graph spawns no activity at all, so
+        // ⚠️ THE GUI TICK IS ZERO HERE, AND AT EVERY OTHER CALL SITE OF THIS FILE -- the ones in
+        // the `tests` module below, which `grep -c 'Millis::new(0)'` on this file counts with this
+        // one -- BECAUSE NOBODY READS IT YET: this graph spawns no activity at all, so
         // `Parameters::gui_tick` has no consumer in this binary. Task 9 of the sub-project 2
         // part 2 plan brings both -- `kernel::serving::serve` and the delivered value, beside
         // the other constants above.

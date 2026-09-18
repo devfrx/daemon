@@ -50,8 +50,12 @@ pub struct InDoubt {
 /// field, and now does so BY DECISION rather than by default.
 ///
 /// ⚠️ THE DISAGREEMENT IS CLOSED BY WHOEVER WRITES, AND WHO THEY ARE IS WHAT
-/// `grep -rn 'journal.note(' crates/kernel/src/` LISTS — a NUMBER written here would age at the
-/// next writer, and it had. ⛔ RECALL OF 2026-09-18, FROM THE REVIEW OF TASK 8 OF THE PART-2
+/// `grep -rnE '\.(intent|outcome|note)\(' crates/kernel/src/ | grep -v '///'` LISTS — a NUMBER
+/// written here would age at the next writer, and it had. ⚠️ THE `grep -v '///'` IS WHAT MAKES
+/// IT SELF-SAFE: cited on a `///` line, the command does not count its own citation — written
+/// into a `//` comment it would, which is the trap `289f487` paid for, and this command was
+/// installed once WITHOUT being run: see `E58` of the part-2 plan.
+/// ⛔ RECALL OF 2026-09-18, FROM THE REVIEW OF TASK 8 OF THE PART-2
 /// PLAN: this sentence said "AND THERE ARE TWO OF THEM", which was already false before that
 /// task — `permission::grant` has been one of them since 2026-09-01 — and the recall below names
 /// it as a third three lines under a paragraph still saying two. The numeral is REMOVED and not
@@ -77,7 +81,7 @@ pub struct InDoubt {
 /// mechanism behind it, unlike the `dead_code` deadlines of `E10` and `E67`, which the compiler
 /// remembers. REWRITTEN and not annotated, which is finding A-2's rule.
 /// ⛔ WHETHER TO BUILD THE HELPER IS THE OWNER'S and it is REGISTERED, NOT TAKEN: it changes the
-/// shape of every call site `grep -rn 'journal.note(' crates/kernel/src/` lists, and each of
+/// shape of every call site the census command above lists, and each of
 /// those writers holds the agreement meanwhile with a probe of its own — the ones named above
 /// are the examples, that command is the census. ⛔ RECALL OF 2026-09-18, FROM THE REVIEW OF
 /// TASK 8 OF THE PART-2 PLAN: this sentence said "code with two call sites" and "the two

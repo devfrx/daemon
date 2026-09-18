@@ -52,7 +52,13 @@ pub struct InDoubt {
 /// ⚠️ THE DISAGREEMENT IS CLOSED BY WHOEVER WRITES, AND THERE ARE TWO OF THEM.
 /// `Untrusted::promote` writes through `Journal::note` a record whose `kind` is
 /// `RecordKind::Note`; `Arbiter::set_policy`, since milestone 5 task 9, writes through
-/// `intent` and `outcome` records whose `kind` matches each. Each writer carries its OWN
+/// `intent` and `outcome` records whose `kind` matches each.
+/// ⛔ RECALL OF 2026-09-18 — IT WRITES THREE NOW, NOT TWO. Between the intent and the outcome it
+/// writes, through `Journal::note`, a record whose `kind` is `RecordKind::Policy` — the species
+/// `crate::arbiter::policy_now` reads back, and the shape `permission::grant` already had, which
+/// writes through `note` a record whose `kind` is `RecordKind::Permission`. The agreement is
+/// still held by that writer's own probe, which now asserts THREE kinds in order.
+/// Each writer carries its OWN
 /// probe that pins the agreement — `the_promotion_writes_through_note_and_the_record_says_note`
 /// in `crates/kernel/tests/boundary_promotion.rs`, and
 /// `a_policy_transition_writes_its_intent_before_its_outcome` in
@@ -218,6 +224,35 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // in `tests/reconciliation.rs`, exactly as the `Note`, `Verdict`, `Routing` and
                 // `Permission` pairs are.
                 RecordKind::Invocation => {}
+                // ⛔ A POLICY TRANSITION RECORD NEITHER OPENS A DOUBT NOR CLOSES ONE, and the
+                // empty arm was MEASURED for this variant rather than inherited. The step that
+                // carries it ALREADY owns its own intent and its own outcome — `Arbiter::set_policy`
+                // writes all three — so the doubt of that step is fully described without this
+                // record. Both other answers were tried one at a time, each reverted from a
+                // byte-exact copy:
+                //
+                // - `enter` makes the step RE-ENTER the doubt with this record's own class. On a
+                //   COMPLETE transition that is invisible — the outcome that follows the note closes
+                //   the step again, and `arbiter_policy` stays green — which is why it is caught
+                //   where no outcome follows: a step in doubt came back with THIS record's class
+                //   instead of its intent's — `steps_in_doubt` answered
+                //   `[InDoubt { step: StepId(1), resolution: RunAgain }]` against
+                //   `[InDoubt { step: StepId(1), resolution: SuspendAndAsk }]` — and a policy record
+                //   written AFTER an outcome put a finished step back in doubt.
+                // - `leave` closes the doubt BEFORE the outcome is durable, so a crash between
+                //   this note and the outcome leaves a step that executed nothing looking closed —
+                //   `steps_in_doubt` answered `[]` against the open doubt: the silent loss
+                //   ADR-0007 exists to prevent.
+                //
+                // ⚠️ SO THE `effect` FIELD OF THIS RECORD IS NEVER READ EITHER, and `policy_note`
+                // fills it with `Idempotent` — the class of the transition itself, with the reason
+                // written on that call.
+                //
+                // Held in BOTH directions (§7.1.1 rule 3) by
+                // `a_policy_record_does_not_put_a_step_in_doubt` and
+                // `a_policy_record_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them`
+                // in `tests/reconciliation.rs`.
+                RecordKind::Policy => {}
             },
             // ⛔ A record this build cannot read closes nothing and resolves nothing: it is the
             // strongest form of "no declared class", and ADR-0007 says that means stop. Note it

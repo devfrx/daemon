@@ -476,6 +476,17 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
                  invocation, and this oracle must decide what one does to a doubt before it can \
                  stay independent"
             ),
+            // ⛔ UNREACHABLE IN THIS SCENARIO TOO, AND `panic!` RATHER THAN THE EMPTY ARM FOR THE
+            // REASON ITS SIBLINGS GIVE -- read them, the argument is one. Nothing here changes the
+            // VRAM policy, so no policy record can enter this trace.
+            //
+            // ⚠️ THE DAY THE SCENARIO GROWS A TRANSITION, THE RED IS A DECISION BEING ASKED FOR and
+            // not a defect being reported -- same as its siblings.
+            RecordKind::Policy => panic!(
+                "step {step} carries a policy record: this scenario has grown a VRAM policy \
+                 transition, and this oracle must decide what one does to a doubt before it can \
+                 stay independent"
+            ),
         }
     }
     open

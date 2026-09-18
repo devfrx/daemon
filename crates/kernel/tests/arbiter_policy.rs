@@ -14,13 +14,15 @@
 //! `` help: items from traits can only be used if the trait is in scope ``. Registered as `E88`.
 
 use kernel::arbiter::{
-    Admission, Arbiter, ArbiterId, ComputeClass, LocalPolicy, MakeRoom, Mib, Preemption,
-    RemotePolicy, ResourceProfile, VramPolicy,
+    Admission, Arbiter, ArbiterId, ComputeClass, LocalPolicy, MakeRoom, Mib, PolicyError,
+    Preemption, RemotePolicy, ResourceProfile, VramPolicy, policy_now,
 };
 use kernel::parameters::Parameters;
-use kernel::ports::journal::{Journal, StepId};
+use kernel::ports::journal::{Journal, JournalError, StepId};
 use kernel::reconcile::{Resolution, steps_in_doubt};
-use kernel::record::{Record, RecordKind, RecordV1, Trust};
+use kernel::record::{
+    Detail, EffectClass, PolicyDetail, Record, RecordError, RecordKind, RecordV1, Trust,
+};
 use kernel::time::{Millis, Monotonic};
 use simulator::journal::{CrashingJournal, MemoryJournal};
 
@@ -348,7 +350,10 @@ fn a_policy_transition_writes_its_intent_before_its_outcome() {
     assert_eq!(arbiter.policy().name(), "local");
 
     let entries = journal.replay().expect("the archive reads back");
-    assert_eq!(entries.len(), 2, "an intent AND an outcome");
+    // ⛔ RECALL OF 2026-09-18 — IT WAS `2`, "an intent AND an outcome". `Arbiter::set_policy` writes a
+    // THIRD record between them since the `Policy` species arrived: the structured half
+    // `crate::arbiter::policy_now` reads back, which the `reason` could only say in prose.
+    assert_eq!(entries.len(), 3, "an intent, the policy note, AND an outcome");
 
     let records: Vec<RecordV1> = entries
         .iter()
@@ -361,7 +366,11 @@ fn a_policy_transition_writes_its_intent_before_its_outcome() {
 
     assert_eq!(
         records.iter().map(|r| r.kind()).collect::<Vec<_>>(),
-        vec![RecordKind::Intent, RecordKind::Outcome]
+        vec![
+            RecordKind::Intent,
+            RecordKind::Policy,
+            RecordKind::Outcome
+        ]
     );
     // ⛔ THE NAME IS THE POINT, AND IT IS WHY `MakeRoom::name` EXISTS: a record that only said
     // "policy transition" would make the two directions indistinguishable in the archive, and
@@ -394,14 +403,28 @@ fn a_transition_names_the_policy_it_moves_to() {
         .expect("the journal accepts");
 
     let entries = journal.replay().expect("the archive reads back");
-    assert_eq!(entries.len(), 2);
+    assert_eq!(entries.len(), 3);
     for (_, bytes) in &entries {
         let Record::V1(record) = Record::decode(bytes).expect("our own bytes");
         assert_eq!(record.reason(), "remote");
-        // ⚠️ AND `detail` IS `None` ON BOTH, for the reason the note's is: a policy transition
-        // declares no structured species. Turned to `Some(..)`, the whole workspace stayed
-        // green — 41 targets, 298 passed, identical to the baseline. Errata `E79`.
-        assert_eq!(record.detail(), None);
+        // ⛔ RECALL OF 2026-09-18 — THIS ASSERTED `None` ON BOTH, saying "a policy transition declares
+        // no structured species". It declares one now, and the sentence is REWRITTEN rather than
+        // annotated beside itself (finding `A-2`). What the measurement behind it bought is KEPT
+        // and made sharper: `E79` found that turning the detail of the intent or the outcome to
+        // `Some(..)` left the whole workspace green, so the two that still carry `None` are still
+        // held here — and the third is now REQUIRED to carry the right one.
+        match record.kind() {
+            RecordKind::Policy => assert_eq!(
+                record.detail(),
+                Some(&Detail::Policy(PolicyDetail { local: false })),
+                "the note carries the policy it moved TO, structured"
+            ),
+            _ => assert_eq!(
+                record.detail(),
+                None,
+                "the intent and the outcome declare no structured species: `E79`"
+            ),
+        }
     }
 }
 
@@ -463,4 +486,223 @@ fn without_a_crash_a_transition_leaves_no_step_in_doubt() {
         .expect("the journal accepts");
 
     assert!(steps_in_doubt(&journal).expect("reads back").is_empty());
+}
+
+/// ⛔ AN ARCHIVE WITH NO TRANSITION NAMES NO POLICY, AND IT IS THE DIRECTION D27 EXISTS FOR: a
+/// `policy_now` that answered `Remote` here would be naming the default inside the projection,
+/// which is the one thing ADR-0034 forbids the kernel. It is asserted FIRST because it is the
+/// state every archive starts in.
+#[test]
+fn an_archive_with_no_transition_names_no_policy() {
+    let mut journal = MemoryJournal::new();
+
+    journal
+        .intent(
+            StepId::new(1),
+            &Record::V1(RecordV1::intent(
+                EffectClass::Idempotent,
+                Trust::Instruction,
+                Vec::new(),
+                "a step that is not a transition",
+            ))
+            .encode(),
+        )
+        .expect("the memory journal accepts");
+
+    // ⚠️ THROUGH `.map(.. name())` LIKE ITS THREE SISTERS: `VramPolicy` derives neither `PartialEq`
+    // nor `Debug` — its variants carry the policy objects themselves — and a derive added for a
+    // bench would be a kernel type widened for a test.
+    assert_eq!(
+        policy_now(&journal)
+            .expect("the archive reads back")
+            .map(|policy| policy.name()),
+        None,
+        "no transition was written, and the default is not the kernel's to name"
+    );
+    // ⛔ AND THE ARCHIVE IS NOT EMPTY, which is what makes this probe about the FILTER rather than
+    // about an empty loop: a `policy_now` that answered `None` because it never looked would pass
+    // on an empty journal and fail here.
+    assert_eq!(journal.replay().expect("the archive reads back").len(), 1);
+}
+
+/// ⛔ THE TRANSITION IS READ BACK, THROUGH THE REAL WRITER. It calls `set_policy` and not a
+/// hand-built record, which is what makes the pair `policy_note`/`policy_now` one artefact: a probe
+/// that wrote its own record would be a second copy of the format, green on the day the two drift.
+#[test]
+fn the_policy_the_archive_names_is_the_one_the_transition_moved_to() {
+    let mut journal = MemoryJournal::new();
+    let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
+
+    arbiter
+        .set_policy(VramPolicy::Local(LocalPolicy), StepId::new(1), &mut journal)
+        .expect("the journal accepts");
+
+    assert_eq!(
+        policy_now(&journal)
+            .expect("the archive reads back")
+            .map(|policy| policy.name()),
+        Some("local"),
+        "the archive names the policy the transition moved to"
+    );
+}
+
+/// ⛔ THE OTHER DIRECTION OF THE SAME RULE, and without it a `policy_now` that hard-coded `Local`
+/// would stay green — the lesson `a_transition_names_the_policy_it_moves_to` already paid for. Two
+/// directions kill every constant.
+#[test]
+fn a_transition_back_to_remote_is_read_back_as_remote() {
+    let mut journal = MemoryJournal::new();
+    let mut arbiter = arbiter(4_096, VramPolicy::Local(LocalPolicy));
+
+    arbiter
+        .set_policy(
+            VramPolicy::Remote(RemotePolicy),
+            StepId::new(1),
+            &mut journal,
+        )
+        .expect("the journal accepts");
+
+    assert_eq!(
+        policy_now(&journal)
+            .expect("the archive reads back")
+            .map(|policy| policy.name()),
+        Some("remote"),
+    );
+}
+
+/// ⛔ THE LAST TRANSITION AND NOT THE FIRST, AND IT IS THE DIRECTION THAT GETS FORGOTTEN: with only
+/// the three probes above, a `policy_now` that `break`s on the first `Policy` record it meets is
+/// green on every one of them, because each writes exactly one transition. ✅ MEASURED rather than
+/// feared: with `current = Some(..)` replaced by an early `return`, this probe alone goes red.
+#[test]
+fn the_archive_names_the_last_transition_and_not_the_first() {
+    let mut journal = MemoryJournal::new();
+    let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
+
+    arbiter
+        .set_policy(VramPolicy::Local(LocalPolicy), StepId::new(1), &mut journal)
+        .expect("the journal accepts");
+    arbiter
+        .set_policy(
+            VramPolicy::Remote(RemotePolicy),
+            StepId::new(2),
+            &mut journal,
+        )
+        .expect("the journal accepts");
+
+    assert_eq!(
+        policy_now(&journal)
+            .expect("the archive reads back")
+            .map(|policy| policy.name()),
+        Some("remote"),
+        "a policy set and then set back is not the state NOW"
+    );
+}
+
+/// Opens the step the notes below sit upon. ⚠️ `Journal::note` REFUSES A STEP WITHOUT AN INTENT
+/// (`OutOfOrder`), so every probe that writes a note writes this first — the shape the four benches
+/// that carry an `open_the_step` already have, each defining its own.
+fn open_the_step(journal: &mut MemoryJournal, step: StepId) {
+    let intent = Record::V1(RecordV1::intent(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        "the step this record sits upon",
+    ))
+    .encode();
+    journal.intent(step, &intent).expect("intent");
+}
+
+/// A journal whose `replay` refuses outright, for the road into `PolicyError::Journal`.
+struct ReplayRefusingJournal;
+
+impl Journal for ReplayRefusingJournal {
+    fn intent(&mut self, _step: StepId, _record: &[u8]) -> Result<(), JournalError> {
+        Ok(())
+    }
+    fn outcome(&mut self, _s: StepId, _r: &[u8]) -> Result<(), JournalError> {
+        Ok(())
+    }
+    fn note(&mut self, _s: StepId, _r: &[u8]) -> Result<(), JournalError> {
+        Ok(())
+    }
+    fn read_back(&self, _s: StepId) -> Result<Vec<u8>, JournalError> {
+        Err(JournalError::Missing)
+    }
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        Err(JournalError::NotDurable)
+    }
+    fn prune(&mut self, _s: StepId) -> Result<(), JournalError> {
+        Ok(())
+    }
+}
+
+/// ⛔ THE ROAD INTO `PolicyError::Journal`, and it is the reason that variant exists. A `policy_now`
+/// that folded a refusing archive into `Ok(None)` would tell the composition root "nobody ever
+/// changed the policy" about an archive it simply could not read, and the daemon would start on the
+/// default — which is the silent partial truth `PolicyError` exists to prevent.
+#[test]
+fn an_archive_that_will_not_be_read_is_an_error_and_not_an_absent_policy() {
+    assert_eq!(
+        policy_now(&ReplayRefusingJournal).map(|found| found.map(|policy| policy.name())),
+        Err(PolicyError::Journal(JournalError::NotDurable))
+    );
+}
+
+/// ⛔ THE FIRST ROAD INTO `PolicyError::Record`: bytes that are not a record at all. A `continue` in
+/// place of the `?` on `Record::decode` passes every other probe in this file, and it would let a
+/// corrupt archive read as a clean `None` while a transition sits in the very bytes that would not
+/// decode.
+///
+/// ⚠️ THE BYTES ARE WRITTEN THROUGH THE PORT, which takes `&[u8]` and validates nothing — road A4 of
+/// `kernel::boundary`, which already declares that nothing requires every write to the journal to
+/// be a `Record`.
+#[test]
+fn a_record_this_build_cannot_read_stops_the_answer() {
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    open_the_step(&mut journal, step);
+    journal
+        .note(step, b"not a record of any version")
+        .expect("note");
+
+    assert_eq!(
+        policy_now(&journal).map(|found| found.map(|policy| policy.name())),
+        Err(PolicyError::Record(RecordError::Malformed))
+    );
+}
+
+/// ⛔ THE SECOND ROAD INTO `PolicyError::Record`, AND IT IS REACHABLE rather than declared
+/// impossible — the sentence that variant's doc carries, held by nothing until this probe. In
+/// SOURCE it is unpronounceable: `RecordV1::policy` takes its `PolicyDetail` by value, so the
+/// `kind`/`detail` pair cannot be split. From BYTES it is one byte's work.
+///
+/// ⛔ AND AN `else { continue }` IN PLACE OF THE `return` WOULD ANSWER `None` — "nobody ever changed
+/// it" — about an archive that holds a transition record naming no policy. That is the one answer
+/// `policy_now` must never give, because the caller starts on the default when it hears it.
+///
+/// ⚠️ IT ALSO PINS `RecordKind::Policy`'s WIRE INDEX FROM A SECOND DIRECTION: the frozen record holds
+/// `07` by READING it back, this probe by WRITING it in.
+#[test]
+fn a_policy_record_whose_detail_is_not_a_policy_is_an_error() {
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    open_the_step(&mut journal, step);
+
+    let mut bytes = Record::V1(RecordV1::note(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        "a note, about to be relabelled from outside",
+    ))
+    .encode();
+    // Index 0 of `RecordV1` sits at byte 4 — `tests/frozen/record_v1.map`, checked by
+    // `every_field_sits_at_the_offset_the_map_gives_it`. `07` is `RecordKind::Policy`.
+    bytes[4] = 7;
+    journal.note(step, &bytes).expect("note");
+
+    assert_eq!(
+        policy_now(&journal).map(|found| found.map(|policy| policy.name())),
+        Err(PolicyError::Record(RecordError::Malformed))
+    );
 }

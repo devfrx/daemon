@@ -116,6 +116,20 @@ pub enum RecordKind {
     /// THIS VARIANT rather than inherited from the four above it: see the arm itself.
     #[n(6)]
     Invocation,
+    /// A VRAM POLICY TRANSITION, upon the step that performed it (§5.4, ADR-0006).
+    ///
+    /// ⛔ IT IS A SPECIES AND NOT A NOTE CARRYING A DETAIL, and that is not a preference: `note`
+    /// passes `detail: None` and names `RecordKind::Note`, so "a note with a typed detail" is not
+    /// something one writes badly — it is something one cannot write. The design said it in those
+    /// words (decision 56 of the gui north star) and the recall beside that decision carries the
+    /// correction with its date.
+    ///
+    /// ⚠️ WHAT IT BUYS OVER THE `reason`, which already carries the policy's name: `reason` is
+    /// free prose any writer fills, and a projection that matched on it would be reading a
+    /// human-readable field as though it were a contract. The shape used here is
+    /// `permission::is_granted`'s, word for word — filter by `kind`, read the STRUCTURED half.
+    #[n(7)]
+    Policy,
 }
 
 /// How an effect may be reconciled after a crash (ADR-0007).
@@ -244,6 +258,8 @@ pub enum Detail {
     /// Who invoked which function of the registry (ADR-0038).
     #[n(3)]
     Invocation(#[n(0)] InvocationDetail),
+    #[n(4)]
+    Policy(#[n(0)] PolicyDetail),
 }
 
 /// The structured half of a verdict (§6.4.1). ⛔ THE DETAIL TEXT IS NOT HERE: it is untrusted by
@@ -506,6 +522,38 @@ impl InvocationDetail {
     }
 }
 
+/// WHICH VRAM POLICY IS IN FORCE after a transition (§5.4, ADR-0006).
+///
+/// ⛔ A `bool` AND NOT `VramPolicy` ITSELF, and it is the decision `VerdictDetail::passed` and
+/// `PermissionDetail::write` both took — read either, the argument is one. In one line: an enum
+/// here would be a FOURTH `index_only` enum ON THE WIRE, whose variant indices
+/// `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index on the wire
+/// never retires (rule 4 of §4.9.2). ⚠️ AND `VramPolicy` IS NOT SERIALISABLE ANYWAY: its variants
+/// carry the policy objects themselves, so no derive would make one.
+///
+/// ⚠️ SO THE TWO POLICIES OF ADR-0006 ARE THE WHOLE OF WHAT THIS FIELD CAN SAY. A third one is a
+/// new ADR, and on that day this field RETIRES in favour of a new optional index — rule 3 of
+/// §4.9.2 doing its job. ⛔ AND THE COMPILER WILL SAY SO: the conversion in `crate::arbiter` is an
+/// exhaustive `match` on `VramPolicy` and not a `matches!`, so a third variant stops the build
+/// instead of silently encoding as `false`.
+///
+/// ⛔ THE POLICY'S NAME IS NOT HERE, AND THAT IS NOT AN OMISSION: the record's `reason` already
+/// carries `MakeRoom::name()`, which exists for exactly that, and a second house for one fact is
+/// gotcha #68. What lives here is the half a projection reads; what lives in `reason` is the half
+/// a human reads.
+///
+/// ⚠️ NOT SEALED, AND THAT IS MEASURED RATHER THAN AN OVERSIGHT — the same sentence
+/// `VerdictDetail` carries: it holds ONE `bool`, so no runtime TEXT can enter through it, and the
+/// `E94` signature that `RoutingDetail` and `PermissionDetail` owe is owed by a type with a mouth.
+/// This one has none.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
+pub struct PolicyDetail {
+    /// `false` is the REMOTE policy, the default of ADR-0006; `true` is the local one.
+    #[n(0)]
+    pub local: bool,
+}
+
 /// Version 1 of the durable record.
 ///
 /// ⛔ EVERY FIELD CARRIES AN EXPLICIT INDEX, and the indices follow three rules that no
@@ -757,6 +805,28 @@ impl RecordV1 {
             payload,
             reason,
             Some(Detail::Invocation(detail)),
+        )
+    }
+
+    /// A VRAM POLICY TRANSITION (§5.4, ADR-0006). ⛔ ITS DETAIL IS NOT OPTIONAL EITHER, for the
+    /// reason `verdict`, `routing` and `permission` give: a species that declares a structured
+    /// half is not constructible without it. Here that pairing is the whole point — a transition
+    /// record without its detail says which policy it moved to only in PROSE, and prose is what
+    /// `crate::arbiter::policy_now` exists not to read.
+    pub fn policy(
+        effect: EffectClass,
+        trust: Trust,
+        payload: Vec<u8>,
+        reason: &'static str,
+        detail: PolicyDetail,
+    ) -> Self {
+        Self::of(
+            RecordKind::Policy,
+            effect,
+            trust,
+            payload,
+            reason,
+            Some(Detail::Policy(detail)),
         )
     }
 

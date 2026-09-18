@@ -39,8 +39,8 @@
 //! `every_..._survives_the_round_trip` probes exist rather than resting on the round trip.
 
 use kernel::record::{
-    EffectClass, InvocationDetail, PermissionDetail, Record, RecordError, RecordKind, RecordV1,
-    RoutingDetail, Trust, VerdictDetail,
+    EffectClass, InvocationDetail, PermissionDetail, PolicyDetail, Record, RecordError, RecordKind,
+    RecordV1, RoutingDetail, Trust, VerdictDetail,
 };
 
 #[test]
@@ -227,6 +227,13 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
             "why this step exists",
             InvocationDetail::new("a function", 0),
         ),
+        RecordKind::Policy => RecordV1::policy(
+            EffectClass::Idempotent,
+            Trust::Instruction,
+            Vec::new(),
+            "why this step exists",
+            PolicyDetail { local: true },
+        ),
     };
     let encoded = |kind| Record::V1(of(kind)).encode();
 
@@ -249,6 +256,8 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
     // a new species, this ARRAY does not.
     // ⚠️ AND `Invocation` JOINED IT ON 2026-09-18 FOR THE SAME REASON THE THREE BEFORE IT DID
     // (sub-project 2, task 6): the `match` goes red on a new species, this ARRAY does not.
+    // ⚠️ AND `Policy` JOINED IT ON 2026-09-18 FOR THE SAME REASON THE ONES BEFORE IT DID
+    // (sub-project 2, task 8): the `match` goes red on a new species, this ARRAY does not.
     for kind in [
         RecordKind::Intent,
         RecordKind::Outcome,
@@ -257,6 +266,7 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
         RecordKind::Routing,
         RecordKind::Permission,
         RecordKind::Invocation,
+        RecordKind::Policy,
     ] {
         let Record::V1(read) = Record::decode(&encoded(kind)).expect("decode");
         assert_eq!(

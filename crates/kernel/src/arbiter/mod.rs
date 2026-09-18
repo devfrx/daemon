@@ -29,7 +29,9 @@ use alloc::vec::Vec;
 
 use crate::parameters::Parameters;
 use crate::ports::journal::{Journal, JournalError, StepId};
-use crate::record::{EffectClass, Record, RecordV1, Trust};
+use crate::record::{
+    Detail, EffectClass, PolicyDetail, Record, RecordError, RecordKind, RecordV1, Trust,
+};
 use crate::time::{Millis, Monotonic};
 
 pub mod policy;
@@ -505,6 +507,17 @@ impl Arbiter {
     ) -> Result<(), JournalError> {
         journal.intent(step, &transition_record(RecordV1::intent, policy.name()))?;
         self.policy = policy;
+        // ⛔ THE NOTE GOES AFTER THE SWAP AND BEFORE THE OUTCOME, and the order is the decision.
+        // After the swap, because a record of this species says what IS in force, and one written
+        // before it would name a policy this process had not applied. Before the outcome, because
+        // the outcome is what closes the step: a reader that finds the note finds a step whose
+        // doubt is still describable.
+        //
+        // ⚠️ IT WRITES THROUGH `Journal::note` AND CARRIES ITS OWN `kind`, which is
+        // `permission::grant`'s shape word for word — that one writes through `note` a record
+        // whose `kind` is `RecordKind::Permission`. The two truths are held by this writer's own
+        // probe, as `crate::reconcile` says each writer's must be.
+        journal.note(step, &policy_note(&self.policy))?;
         journal.outcome(
             step,
             &transition_record(RecordV1::outcome, self.policy.name()),
@@ -1142,6 +1155,105 @@ fn transition_record(
         policy,
     ))
     .encode()
+}
+
+/// The durable, STRUCTURED half of a policy transition — the species `policy_now` reads back.
+///
+/// ⛔ AN EXHAUSTIVE `match` AND NOT `matches!(policy, VramPolicy::Local(_))`, and that is the whole
+/// of what the `bool` of `PolicyDetail` costs: the day ADR-0006 grows a third policy this function
+/// stops compiling and the author lands on the field beside it. A `matches!` would encode the
+/// third one as `false` — as REMOTE — in silence, which is a wrong answer written durably.
+///
+/// ⚠️ THE PAYLOAD IS EMPTY AND THE LABEL IS `Trust::Instruction`, for the reason `transition_record`
+/// gives: no external byte reaches this record. ⚠️ AND `EffectClass::Idempotent` IS THE CLASS OF THE
+/// TRANSITION ITSELF — setting the policy twice to the same value leaves the same world — though
+/// `crate::reconcile` never reads the field of this species, which is written there.
+///
+/// ⚠️ AND `reason` CARRIES THE NAME, as the intent and the outcome do: the human half stays where
+/// it was, and this function adds the machine half beside it rather than moving it.
+fn policy_note(policy: &VramPolicy) -> Vec<u8> {
+    let local = match policy {
+        VramPolicy::Remote(_) => false,
+        VramPolicy::Local(_) => true,
+    };
+    Record::V1(RecordV1::policy(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        policy.name(),
+        PolicyDetail { local },
+    ))
+    .encode()
+}
+
+/// Why the current policy could not be answered.
+///
+/// ⚖️ THE SHAPE IS THE ONE `permission::PermissionError` AND `degradation::DegradationError` ALREADY
+/// HAVE, and it is reused rather than re-argued: same two causes, same refusal to fold a failure
+/// into a real answer.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PolicyError {
+    /// The journal would not hand its records back.
+    Journal(JournalError),
+    /// A record in the journal could not be read as a record this build understands. ⛔ IT ALSO
+    /// COVERS A `Policy` RECORD WHOSE `detail` IS NOT A POLICY, which is unpronounceable in source
+    /// — `RecordV1::policy` takes its detail by value — and reachable from BYTES. Such a record
+    /// names no policy, so the only honest answer is that this build cannot read it.
+    Record(RecordError),
+}
+
+/// WHICH VRAM POLICY THE ARCHIVE SAYS IS IN FORCE, by re-reading the journal (ADR-0006).
+///
+/// ⛔ AN `Option`, AND `None` IS NOT "REMOTE" — D27. `None` means NO TRANSITION HAS EVER BEEN
+/// WRITTEN, and the default is not the kernel's to name: ADR-0034 forbids it to read a parameter it
+/// was not handed, and the recall at the head of ADR-0006 splits the two facts in those words —
+/// "the profile gives the DEFAULT, and the CURRENT policy is the projection of the journal".
+/// Answering `Remote` here would fold the two into one value, and the composition root could no
+/// longer tell "nobody ever changed it" from "somebody put it back".
+///
+/// ⛔ THE LAST TRANSITION AND NOT ANY TRANSITION, which is `degradation_now`'s rule verbatim: a
+/// policy that was set and then set back is not the state NOW. So the assignment is an assignment
+/// and never a `break` on the first hit, and "last" is `replay`'s WRITE ORDER, which the port owes
+/// — it promises to re-read "EVERYTHING, in write order", and that order "IS PART OF THE PROMISE".
+///
+/// ⛔ A RECORD THIS BUILD CANNOT READ STOPS THE ANSWER, and it does NOT skip to the next one.
+/// Skipping would mean answering `None` — "nobody ever changed it" — while a transition may be
+/// sitting in the very bytes that would not decode, and the caller would start on the default.
+/// It is `is_granted`'s refusal, for a reason of the same species.
+///
+/// ⚠️ IT DOES NOT ASK WHETHER THE STEP COMPLETED, and that is declared rather than hidden: a
+/// transition whose outcome never became durable leaves its step IN DOUBT, and the doubt is
+/// `reconcile::steps_in_doubt`'s to report — this function answers what the archive says, and the
+/// class of that step is `Idempotent`, so re-applying it is safe by ADR-0007's own table.
+///
+/// ⚠️ AND THE COST OF ANSWERING BY RE-READING IS THE COST `Journal::replay` DECLARES: the whole
+/// journal is loaded to answer one question. The remedy is the same checkpoint that operation
+/// names, and it is closed by the first consumer that measures a large journal — not invented here.
+pub fn policy_now<J: Journal>(journal: &J) -> Result<Option<VramPolicy>, PolicyError> {
+    let mut current = None;
+
+    for (_, bytes) in journal.replay().map_err(PolicyError::Journal)? {
+        let Record::V1(body) = Record::decode(&bytes).map_err(PolicyError::Record)?;
+
+        // ⚠️ EVERY OTHER SPECIES IS SKIPPED AND THAT IS ORDINARY, not a hole: a journal holding a
+        // transition holds at least the INTENT of the step it was written upon, so the mixed
+        // journal is the only journal this function ever sees.
+        if body.kind() != RecordKind::Policy {
+            continue;
+        }
+
+        let Some(Detail::Policy(detail)) = body.detail() else {
+            return Err(PolicyError::Record(RecordError::Malformed));
+        };
+
+        current = Some(if detail.local {
+            VramPolicy::Local(LocalPolicy)
+        } else {
+            VramPolicy::Remote(RemotePolicy)
+        });
+    }
+
+    Ok(current)
 }
 
 // ⚠️ A UNIT TEST MODULE IN `src/`, WHERE THIS CRATE OTHERWISE PUTS EVERY TEST IN `tests/`, and

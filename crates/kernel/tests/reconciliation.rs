@@ -3,8 +3,8 @@
 use kernel::ports::journal::{Journal, JournalError, StepId};
 use kernel::reconcile::{InDoubt, Resolution, steps_in_doubt};
 use kernel::record::{
-    EffectClass, InvocationDetail, PermissionDetail, Record, RecordV1, RoutingDetail, Trust,
-    VerdictDetail,
+    EffectClass, InvocationDetail, PermissionDetail, PolicyDetail, Record, RecordV1, RoutingDetail,
+    Trust, VerdictDetail,
 };
 use simulator::journal::MemoryJournal;
 
@@ -803,4 +803,96 @@ fn an_invocation_note() -> Vec<u8> {
         InvocationDetail::new("a function", 0),
     ))
     .encode()
+}
+
+/// ⛔ THE FIRST DIRECTION: a policy record does not OPEN a doubt, and does not REOPEN one. The
+/// transition's own intent already opens the step, so on a COMPLETE transition an arm that
+/// called `enter` cancels out against the outcome that follows the note, and the archive reads
+/// right by accident — measured: `arbiter_policy` stays green under it. ⚠️ AND THE RECORD CANNOT
+/// BE WRITTEN ALONE: `Journal::note` refuses a step without an intent (`OutOfOrder`), which the
+/// design says in as many words. So this probe writes the whole transition and then ONE MORE
+/// policy record AFTER the outcome — the case that separates "does not open" from "does not
+/// reopen", the form `a_permission_does_not_put_a_step_in_doubt` already has, and the only one
+/// in which `enter` gets caught here.
+#[test]
+fn a_policy_record_does_not_put_a_step_in_doubt() {
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    let policy = Record::V1(RecordV1::policy(
+        EffectClass::Idempotent,
+        Trust::Instruction,
+        Vec::new(),
+        "local",
+        PolicyDetail { local: true },
+    ))
+    .encode();
+
+    journal
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
+        .expect("intent");
+    journal.note(step, &policy).expect("the policy note");
+    journal
+        .outcome(step, &record(RecordV1::outcome, EffectClass::Idempotent))
+        .expect("outcome");
+    journal
+        .note(step, &policy)
+        .expect("a policy note after the outcome");
+
+    assert!(
+        steps_in_doubt(&journal)
+            .expect("the archive reads back")
+            .is_empty(),
+        "a policy record put a finished step back in doubt"
+    );
+}
+
+/// ⛔ THE OTHER DIRECTION (§7.1.1 rule 3), AND IT IS THE HALF THAT GETS FORGOTTEN: an arm that
+/// called `leave` would take an OPEN step out of the doubt, and the probe above would stay green
+/// because it never opens one. The resolution is asserted too, because `enter` REPLACES it — a
+/// step declared `Unrepeatable` coming back `Idempotent` is the silent downgrade the `Note` arm
+/// measured.
+#[test]
+fn a_policy_record_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+
+    journal
+        .intent(
+            step,
+            &Record::V1(RecordV1::intent(
+                EffectClass::Unrepeatable,
+                Trust::Instruction,
+                Vec::new(),
+                "the step this record sits upon",
+            ))
+            .encode(),
+        )
+        .expect("the memory journal accepts");
+
+    let before = steps_in_doubt(&journal).expect("the archive reads back");
+
+    journal
+        .note(
+            step,
+            &Record::V1(RecordV1::policy(
+                EffectClass::Idempotent,
+                Trust::Instruction,
+                Vec::new(),
+                "local",
+                PolicyDetail { local: true },
+            ))
+            .encode(),
+        )
+        .expect("the memory journal accepts");
+
+    assert_eq!(
+        steps_in_doubt(&journal).expect("the archive reads back"),
+        before,
+        "the policy record neither closes the doubt nor changes its resolution"
+    );
+    assert_eq!(
+        before.len(),
+        1,
+        "and the comparison is not between two empty vectors, which would prove nothing"
+    );
 }

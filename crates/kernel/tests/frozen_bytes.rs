@@ -87,8 +87,8 @@
 //! and this one was left standing beside it, which is the shape of AUD-049. Errata `E113`.
 
 use kernel::record::{
-    Detail, EffectClass, InvocationDetail, PermissionDetail, Record, RecordKind, RecordV1,
-    RoutingDetail, Trust, VerdictDetail,
+    Detail, EffectClass, InvocationDetail, PermissionDetail, PolicyDetail, Record, RecordKind,
+    RecordV1, RoutingDetail, Trust, VerdictDetail,
 };
 
 /// The bytes on disk. ⛔ `include_bytes!` AND NOT A READ AT RUN TIME: the artefact enters the
@@ -101,6 +101,7 @@ const VERDICT_BYTES: &[u8] = include_bytes!("frozen/record_v1_verdict.cbor");
 const ROUTING_BYTES: &[u8] = include_bytes!("frozen/record_v1_routing.cbor");
 const PERMISSION_BYTES: &[u8] = include_bytes!("frozen/record_v1_permission.cbor");
 const INVOCATION_BYTES: &[u8] = include_bytes!("frozen/record_v1_invocation.cbor");
+const POLICY_BYTES: &[u8] = include_bytes!("frozen/record_v1_policy.cbor");
 
 /// The map, included for the same reason and READ BACK by
 /// `the_map_lists_the_bytes_that_are_really_frozen` instead of being believed.
@@ -148,7 +149,7 @@ fn record(species: impl FnOnce(Vec<u8>, &'static str) -> RecordV1) -> Record {
 ///
 /// ⚠️ THE ORDER IS THE MAP'S ORDER, and `the_map_lists_the_bytes_that_are_really_frozen`
 /// compares the names pairwise, so the two cannot drift apart in silence.
-fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 7] {
+fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 8] {
     [
         (
             "record_v1_intent.cbor",
@@ -293,6 +294,32 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 7] {
                 )
             }),
         ),
+        // ⛔ THE EIGHTH IS THE FIFTH SPECIES THAT CARRIES A `detail`, AND WHAT IT PINS THAT THE
+        // OTHER FOUR CANNOT IS INDEX 4 OF `Detail` — and, with it, index 7 of `RecordKind`. A wire
+        // index never retires (rule 4 of §4.9.2), so until this file both were held by nothing.
+        //
+        // ⛔ ITS DETAIL HAS ONE FIELD, so it cannot pin a PAIR of offsets the way the seventh does
+        // — and it does not need to: one field has no sibling to mirror, which is the hole the
+        // recall of 2026-09-01 measured on the `Permission` record. Said out loud so that nobody
+        // "completes" this record with a second field it has no use for.
+        //
+        // ⚠️ `local: true` AND `Idempotent`/`Instruction` ARE THE WRITER'S OWN VALUES, and that is
+        // a departure from the four records before it, which were laid out for COVERAGE of the
+        // wire enums. The coverage is already closed by those — the two loops below say so — so
+        // this record is free to freeze the pair `Arbiter::set_policy` really writes.
+        (
+            "record_v1_policy.cbor",
+            POLICY_BYTES,
+            record(|p, r| {
+                RecordV1::policy(
+                    EffectClass::Idempotent,
+                    Trust::Instruction,
+                    p,
+                    r,
+                    PolicyDetail { local: true },
+                )
+            }),
+        ),
     ]
 }
 
@@ -408,6 +435,7 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
         RecordKind::Routing,
         RecordKind::Permission,
         RecordKind::Invocation,
+        RecordKind::Policy,
     ] {
         // ⛔ THE EXHAUSTIVE `match` IS THE HALF THAT DOES NOT AGE: a variant added to
         // `RecordKind` STOPS THIS FILE COMPILING, and the author lands on the list beside it.
@@ -422,7 +450,8 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
             | RecordKind::Verdict
             | RecordKind::Routing
             | RecordKind::Permission
-            | RecordKind::Invocation => {}
+            | RecordKind::Invocation
+            | RecordKind::Policy => {}
         }
         assert!(
             kinds.contains(&kind),
@@ -483,6 +512,12 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
             Detail::Routing(_) => {}
             Detail::Permission(_) => {}
             Detail::Invocation(_) => {}
+            // ⚠️ THE FIFTH SPECIES THAT CARRIES ONE, AND THE DECLARED LIMIT IS ITS FOUR SIBLINGS'
+            // WORD FOR WORD: extending the arm without freezing a record still compiles. What
+            // makes that acceptable is the assertion above, which stops this `match` from running
+            // over an empty list, plus the head of this file — a new variant of a wire enum is A
+            // FORMAT CHANGE, so it can never be a quiet addition.
+            Detail::Policy(_) => {}
         }
     }
 }

@@ -621,6 +621,11 @@ fn an_approve_changes_the_policy_and_the_gui_is_told() {
             // invocation note, the permission note, then step B's own intent and outcome, then A's
             // outcome. A round that wrote the permission FIRST would be putting a note on a step
             // nobody had opened, which is what `permission::grant`'s doc forbids.
+            // ⛔ RECALL OF 2026-09-18 — THE SEQUENCE WAS SIX. `Arbiter::set_policy` now writes the
+            // `Policy` species between step B's intent and its outcome, so the effect's own step
+            // reads as three records instead of two. The order of decision 21 is UNCHANGED: what
+            // this probe holds is still step A's intent, the invocation note, the permission note,
+            // then step B, then A's outcome.
             assert_eq!(
                 kinds,
                 vec![
@@ -628,6 +633,7 @@ fn an_approve_changes_the_policy_and_the_gui_is_told() {
                     RecordKind::Invocation,
                     RecordKind::Permission,
                     RecordKind::Intent,
+                    RecordKind::Policy,
                     RecordKind::Outcome,
                     RecordKind::Outcome,
                 ],

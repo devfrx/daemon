@@ -261,6 +261,8 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E34** | ⛔ **Compito 6, Passo 5 — il doc di `Registry::held` afferma un CHIAMANTE CHE NON ESISTE, e lo afferma al presente.** La riga dice *«IT EXISTS FOR THE APPROVAL PATH AND **HAS A CALLER FROM THE DAY IT IS WRITTEN**: `crate::serving` compares the triple a peer sends back…»*, ma `crate::serving` nasce al **compito 7**: misurato il 2026-09-18, `crates/kernel/src/serving.rs` **non esiste** e `grep -c 'pub mod serving' crates/kernel/src/lib.rs` rende **0**. Nel giorno in cui `held` è scritto il suo unico chiamante è `invoke`, nello stesso modulo — dove non servirebbe nemmeno `pub`. ⛔ **È la specie del gotcha #57 in persona:** *una decisione presa prima che esistesse ciò di cui parla è una **previsione**, e si cita come se fosse una misura*. ✅ **`held` RESTA e non si toglie**, ed è la stessa distinzione che **E27** fece per i derive del compito 4: è un **contratto**, promesso per nome al compito 7 dal blocco *Interfaces*, e ciò che non è ancora esercitato **si dichiara** invece di essere tolto o affermato falso. ✅ **Il rimedio è di un tempo verbale:** *«HAS A CALLER FROM THE DAY IT IS WRITTEN»* diventa *«ITS CALLER ARRIVES WITH `crate::serving` IN TASK 7, and until then `invoke` is the only one»*, così la frase è vera il giorno in cui la si scrive **e** il giorno dopo. 📌 **La forma generale: un doc che giustifica un item nominando il suo consumatore si scrive al FUTURO finché quel consumatore non esiste**, e la differenza non è stilistica — al presente è un'affermazione che il repository smentisce, cioè la radice **R1**. Trovata dal pre-controllo del compito 6, 2026-09-18 |
 | **E35** | ⛔ **Compito 6, criterio di chiusura — «`grep -c '<data>'` sullo stesso file → **0**» è FALSO, e è la voce E4 che NON HA ATTRAVERSATO dal compito 2 al 6.** Misurato il 2026-09-18: `grep -c '<data>' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` rende **1**, alla riga **639**, e quel segnaposto è un **nome di file** — la riga che nomina il piano della parte 1 — **non** un richiamo datato. ⛔ **E non è una scoperta: è esattamente ciò che E4 ha già misurato e scritto il 2026-09-17**, fino al comando che lo dimostra, concludendo che *«il conto che il criterio intende è sui segnaposti scritti dal compito»*. Il compito 6 ha riscritto la stessa riga di criterio **ignorando la voce**. ⛔ **È la QUARTA ricaduta della stessa specie in questo piano** — E14 nel 3, E23 nel 4, E28 nel 5, questa nel 6 — e stavolta la voce che non ha attraversato è di **due compiti prima**, non di uno. ✅ **Il comando corretto conta i segnaposti che il compito scrive, non quelli che trova:** `git diff -- <quel file> | grep -c '^+.*<data>'` → **0**, che misura le righe **aggiunte** e non il file intero. ⚠️ **In alternativa** si confronta col prima: `git show HEAD:<quel file> | grep -c '<data>'` deve rendere lo **stesso** numero del file dopo — e quel numero è **1**, non **0**. 📌 **La forma generale, e questa è la quarta volta che il piano la paga: un criterio che conta occorrenze in un FILE conta anche quelle che c'erano prima.** Chi lo scrive misura il file **prima** e mette la baseline nel Passo 1, oppure conta sul **diff**. Trovata dal pre-controllo del compito 6, 2026-09-18 |
 | **E36** | ⛔ **Compito 6, Passo 8 — l'Atteso «misurato: 7 passed» È VERDE ANCHE SENZA IL PEZZO CHE IL PASSO STESSO DICHIARA A RISCHIO.** `crates/kernel/tests/frozen_bytes.rs` porta **già sette** `#[test]` oggi — misurato il 2026-09-18, `grep -c '^#\[test\]'` → **7** — e il compito 6 **non ne aggiunge nessuno**: cambia il contenuto dell'array, non il numero delle sonde. Quindi *«7 passed»* è il numero di **prima**, e una riga che rende lo stesso valore prima e dopo **non può decidere** — la specie di **E11**. ⛔ **E il caso peggiore non è teorico, perché il Passo 8 lo nomina da sé:** dei tre pezzi che tocca, il `match detail` è tenuto dal compilatore (`error[E0004]`) e il braccio del `match kind` pure, ma **l'array a mano del `for kind in […]` non lo è** — il file lo scrive nel proprio limite dichiarato, *«extending the arm without extending the array above still compiles»*. Dimenticare quella riga lascia il banco a **7 passed**, verde, **col settimo pin non controllato**: cioè l'Atteso è cieco esattamente sull'unica cosa che può andare storta in silenzio. ✅ **Il rimedio è un comando che decide, accanto al conteggio:** `grep -c 'RecordKind::Invocation' crates/kernel/tests/frozen_bytes.rs` → **2** — il braccio del `match kind` e la voce dell'array — dove **1** significa che l'array a mano è stato dimenticato. ⚠️ **E l'Atteso dice che il 7 è INVARIATO**, invece di presentarlo come un risultato: a decidere che il compito ha fatto qualcosa è `the_frozen_records()` che passa da **sei** a **sette**, che il Passo 1 misura già. 📌 **La forma generale: un conteggio che vale lo stesso prima e dopo non è un Atteso, è una rassicurazione** — e quando il pezzo non sorvegliato dal compilatore è proprio quello che il conteggio non vede, la rassicurazione è peggio del silenzio. Trovata dal pre-controllo del compito 6, 2026-09-18 |
+| **E37** | ⛔ **Compito 6, Passo 6 — il NOME di `a_granted_triple_reaches_the_effect_and_the_step_closes` PROMETTE una proprietà che il suo corpo NON asserisce, e il difetto che quella metà del nome copre è il peggiore che ADR-0007 nomini.** La sonda dettata asserisce **soltanto** `produced == 42`: *«and the step closes»* non era tenuto da niente. ⛔ **Misurato il 2026-09-18, non dedotto:** tolto l'`outcome` finale da `Registry::invoke` — il **punto 7** della sequenza che il doc di `invoke` elenca — la sonda **come dettata** resta **verde** e rende 42 lo stesso, mentre il passo A resta **in dubbio per sempre**, che è la perdita silenziosa di un dubbio vero. ⚠️ **Il revisore l'aveva graduata Minore** perché la proprietà è tenuta *altrove* — `an_approval_just_given_skips_the_question_and_writes_the_grant_on_step_a` asserisce l'ordine `[Intent, Invocation, Permission, Outcome]`; ⛔ **il coordinatore l'ha promossa a Importante, e la distinzione è la voce:** quella sonda cammina sulle **specie del solo passo A** e non dice nulla del passo **B** che l'effetto apre e chiude, quindi il punto 7 non aveva oracolo **nella sonda che lo nomina**. ✅ **Il rimedio è la PROIEZIONE come oracolo, che copre A e B in una volta:** `kernel::reconcile::steps_in_doubt(&journal)` deve rendere la lista **vuota**, e il messaggio **stampa** ciò che ha trovato, così che il rosso sia un verdetto leggibile e non un «false» (la lezione di **E6**). ✅ **Provato nelle DUE direzioni:** verde col codice com'è; **rosso** con l'`outcome` tolto, e il rosso **nomina il passo A** — `a finished invocation must leave no step in doubt: neither A nor the effect's own B. These are still owing an outcome: [InDoubt { step: StepId(2), resolution: RunAgain }]`. Revocata copiando indietro una **pristina** presa prima, `cmp` **silenzioso** contro il FILE e `git status --porcelain` riconfrontato, mai `git checkout --` (E14, E23, E28, E31). ⚠️ **E il rimedio ha avuto bisogno del proprio rimedio:** la prima stesura è passata da un **heredoc**, che si è mangiato la `\` della continuazione di riga e ha lasciato nel messaggio una **corsa di spazi** — il **gotcha #97** — trovata **leggendo il rosso** e non il sorgente, e corretta riscrivendo il frammento con lo strumento di scrittura. 📌 **La forma generale: il NOME di una sonda è un contratto, e si legge contro le sue ASSERZIONI, mai contro il flusso che le precede.** Una proprietà che *«discende dal flusso»* è tenuta dal flusso e non dalla sonda — e il flusso è esattamente ciò che una mutazione cambia. Trovata dalla revisione del compito 6 (m-5), **promossa a Importante dal coordinatore**, scritta e misurata dall'implementatore, 2026-09-18 |
+| **E38** | ⚠️ **Compito 6 — cinque correzioni al testo dettato, raccolte in una voce sola perché sono la stessa passata** (la forma di **E19** nel 3 e di **E32** nel 5), ciascuna **nominata**. **(I-1, Passo 3)** il commento del settimo braccio di `crates/kernel/src/reconcile.rs` diceva *«BOTH OTHER ANSWERS WERE TRIED **BEFORE THIS ARM WAS WRITTEN**»*, e l'ordine vero fu l'opposto: braccio, poi sonde, poi mutazioni — perché una mutazione misurata contro sonde che non esistono non decide nulla, e il Passo stesso lo prevede. ✅ **La clausola si TOGLIE e non si riscrive** — *«BOTH OTHER ANSWERS WERE MEASURED»* dice tutto ciò che serve — ed è la lezione che **E33** ha già scritto: *una clausola di giustificazione è una passività*. **(m-1, Passo 5)** il doc di modulo di `registry.rs` diceva *«nothing here **names** `Arbiter`, `VramPolicy` or any other effect»*, e `grep -c 'Arbiter' crates/kernel/src/registry.rs` rende **2** — la frase stessa e la riga che nomina `Arbiter::set_policy`. ⛔ **Ed è AUD-049 in persona:** **R2-17** aveva **già misurato** quelle due occorrenze e aveva corretto il **criterio di chiusura** — dal `grep` sulle parole a quello sull'`import` — lasciando intatta la **frase** che le rende false. ✅ Una parola: **IMPORTS**, che è vero, è ciò che la frase intendeva (lo dice da sé, *«it could not without an `import` a reader would see»*) ed è esattamente ciò che il criterio misura. **(m-3, Passo 5)** il `const` di `Registry::new()` non è esercitato da nulla: i due siti di chiamata sono `let`, e nessun `const` o `static` del repository ne dipende. **(m-4, Passo 5)** `InvokeError::Permission(_)` e `InvokeError::Journal(_)` sono costruite in **sei** siti di `invoke` e `crates/kernel/tests/registry.rs` non ne raggiunge nessuna. ✅ **Restano entrambi**, ed è il precedente di **E27**: un nome promesso dal blocco *Interfaces* è un **contratto**, e due rami di **propagazione** li ha ogni modulo del kernel che tocchi una porta. ⛔ **Ma promesso-e-non-esercitato si DICHIARA nel doc**, con la misura accanto, ⚠️ **e senza nominare un innesco che non scatterebbe** — il **gotcha #77**, la lezione di E27: quale consumatore li esercitera' non si sa oggi, e si scrive che non c'è. **(m-6, Passo 5)** il doc di `InvokeError` diceva che quello di `permission::PermissionError` *«spends **three paragraphs**»* sul perché ««unknown» riportato come «not granted»» sia vietato. Contato: quel doc ha **quattro** capoversi, e **uno solo** argomenta quel punto. ✅ **Il numerale si TOGLIE e non si riallinea a quattro** — sarebbe falso lo stesso, e invecchierebbe al capoverso successivo che qualcuno aggiunge (gotcha **#31**) — e al suo posto va il **puntatore** al capoverso, per le parole con cui si apre. ⛔ **E tutte e cinque sono state scritte ANCHE NEL PIANO**, perché sono testo dettato: è la regola di **E32** (M-2) e il rilievo **N-3** di **E33**, e le edit sono state **limitate alla regione del compito 6** perché il blocco che il compito 7 ripete è del coordinatore (**I-2**). ⚠️ **Più m-2, che vive nel RAPPORTO e non nel codice:** il §9(f) sotto-contava `cargo fmt --check` — non 2 diff in un file nuovo e 2 file preesistenti, ma **29** diff su **9** file, di cui **5** nei due file nuovi (tutti su righe **dettate**) e **24** in **7** file che questo compito non tocca. La **conclusione non cambia** — `scripts/gate.sh` non ha un passo `fmt` — ma un'enumerazione che tace dei membri è la specie **E26**, e il conto è stato corretto nel rapporto. Trovate dalla revisione del compito 6 (I-1, m-1, m-2, m-3, m-4, m-6), verificate dal coordinatore contro i file e applicate dall'implementatore, 2026-09-18 |
 
 ---
 
@@ -7416,16 +7418,16 @@ In `crates/kernel/src/reconcile.rs`, dopo il braccio di `Permission`:
                 // EFFECT that may or may not have reached the world, and asking is not an effect.
                 // The step it names owes its own outcome, and writes one.
                 //
-                // ⛔ BOTH OTHER ANSWERS WERE TRIED BEFORE THIS ARM WAS WRITTEN, which is what
-                // "measured" means here: `enter` would leave EVERY invoked step in doubt for
-                // ever, because the note arrives after the step's own `intent` and a second
-                // `enter` on an open step is not what `leave` undoes; and `leave` would CLOSE the
-                // doubt the invocation's own `intent` opened, so a crash between the note and the
-                // effect would reconcile as "finished" — the silent loss of a real doubt, the one
-                // failure ADR-0007 exists to prevent. ⚠️ AND THAT SECOND ONE IS WORSE HERE THAN
-                // IT WAS FOR `Routing`: the note sits between the intent and the effect BY
-                // DESIGN (§5 of the sub-project 2 design), so the window it would swallow is not
-                // hypothetical — it is the ordinary shape of every invocation.
+                // ⛔ BOTH OTHER ANSWERS WERE MEASURED, which is what "measured" means here:
+                // `enter` would leave EVERY invoked step in doubt for ever, because the note
+                // arrives after the step's own `intent` and a second `enter` on an open step is
+                // not what `leave` undoes; and `leave` would CLOSE the doubt the invocation's own
+                // `intent` opened, so a crash between the note and the effect would reconcile as
+                // "finished" — the silent loss of a real doubt, the one failure ADR-0007 exists
+                // to prevent. ⚠️ AND THAT SECOND ONE IS WORSE HERE THAN IT WAS FOR `Routing`: the
+                // note sits between the intent and the effect BY DESIGN (§5 of the sub-project 2
+                // design), so the window it would swallow is not hypothetical — it is the
+                // ordinary shape of every invocation.
                 //
                 // Held in BOTH directions (§7.1.1 rule 3) by
                 // `an_invocation_note_does_not_put_a_step_in_doubt` and
@@ -7558,7 +7560,7 @@ Atteso: **20 passed** — i **18** del Passo 1 più le due sonde nuove (R2-22).
 //! every kernel registry. This module knows how to HOLD a function, how to check its triple and
 //! how to JOURNAL an invocation; WHICH functions exist is brought by the gui and by the
 //! capabilities. ⛔ AND THE RULE IS HELD AT LEVEL 1 RATHER THAN BY GOOD INTENTIONS: nothing here
-//! names `Arbiter`, `VramPolicy` or any other effect, and it could not without an `import` a
+//! IMPORTS `Arbiter`, `VramPolicy` or any other effect, and it could not without an `import` a
 //! reader would see. The day the gesture arrives (sub-project 12) it registers ITS functions from
 //! outside, exactly as the click does — which is what "no gesture-only logic" means when it stops
 //! being a sentence.
@@ -7678,9 +7680,19 @@ pub enum Approval {
 /// triple, so all three names are ours.
 ///
 /// ⚠️ `Permission(PermissionError)` IS NOT `PermissionRequired`: the first says the archive would
-/// not answer, the second that it answered no. `permission::PermissionError`'s own doc spends
-/// three paragraphs on why "unknown" reported as "not granted" is forbidden, and folding them
-/// here would undo that at the call site that matters most.
+/// not answer, the second that it answered no. The paragraph of `permission::PermissionError`'s
+/// own doc that opens "WHY `is_granted` CANNOT SIMPLY RETURN `false`" spells out why "unknown"
+/// reported as "not granted" is forbidden, and folding them here would undo that at the call site
+/// that matters most.
+///
+/// ⚠️ AND TWO OF THESE FOUR VARIANTS ARE EXERCISED BY NO PROBE, declared rather than left to be
+/// discovered: `Permission(..)` and `Journal(..)` are built at six sites of `invoke`, and
+/// `tests/registry.rs` reaches neither — every journal it hands `invoke` answers every call.
+/// They stay because they are PROPAGATION arms, which every kernel module that touches a port
+/// has, and because folding them into a refusal would be exactly the "unknown reported as no"
+/// the paragraph above forbids. ⛔ AND NO TRIGGER IS NAMED HERE: which consumer will first hand
+/// this function a journal that refuses is not known today, and a deadline written in prose that
+/// nothing makes fire is gotcha #77.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InvokeError {
     /// No function of that name is registered. ⛔ AND NOTHING IS WRITTEN — not an intent, not a
@@ -7710,6 +7722,16 @@ pub struct Registry {
 // `SystemReactor`: nothing calls it. The argument is written out once, in
 // `crates/platform/src/reactor.rs`.
 impl Registry {
+    /// A registry that holds nothing yet.
+    ///
+    /// ⚠️ `const` IS PROMISED BY NAME AND EXERCISED BY NOTHING, and it is declared here rather
+    /// than left to be found: both call sites are `let` bindings, and no `const` or `static` in
+    /// this repository depends on it, so removing the qualifier leaves every bench green. It
+    /// stays for the reason `E27` kept the derives of `custody`: a name promised to the tasks
+    /// that come after is a CONTRACT, and what is not yet exercised is declared instead of being
+    /// removed or claimed. ⛔ AND NO TRIGGER IS NAMED: which consumer will first want a registry
+    /// in a `const` context is not known today, and a deadline in prose that nothing makes fire
+    /// is gotcha #77.
     pub const fn new() -> Self {
         Registry {
             functions: Vec::new(),
@@ -7994,6 +8016,24 @@ fn a_granted_triple_reaches_the_effect_and_the_step_closes() {
         .expect("a granted invocation must run");
 
     assert_eq!(produced, 42, "invoke must hand back what the effect produced");
+
+    // ⛔ AND THE SECOND HALF OF THIS PROBE'S NAME, WHICH NOTHING HELD UNTIL NOW: "the step
+    // closes". `produced == 42` says the effect RAN and says nothing at all about point 7 of the
+    // sequence the doc of `invoke` lists -- an `invoke` that forgot the `outcome` on step A would
+    // hand back 42 just the same and leave A IN DOUBT FOR EVER, which is the one failure ADR-0007
+    // exists to prevent, with this probe green over it. Measured in both directions on
+    // 2026-09-18: with that `outcome` removed this assertion goes red naming step 2.
+    //
+    // ⚠️ AND THE ORACLE IS THE PROJECTION RATHER THAN A LIST OF KINDS, because it covers A AND B
+    // AT ONCE: the effect opens and closes ITS OWN step, and a step of the effect left open is
+    // the same defect one level down. The sibling probe asserts the ORDER of the species on A;
+    // this one asserts that nothing anywhere is left owing an outcome.
+    let in_doubt = kernel::reconcile::steps_in_doubt(&journal).expect("the projection must answer");
+    assert!(
+        in_doubt.is_empty(),
+        "a finished invocation must leave no step in doubt: neither A nor the effect's own B. \
+         These are still owing an outcome: {in_doubt:?}"
+    );
 }
 
 #[test]

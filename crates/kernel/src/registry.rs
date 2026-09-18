@@ -5,7 +5,7 @@
 //! every kernel registry. This module knows how to HOLD a function, how to check its triple and
 //! how to JOURNAL an invocation; WHICH functions exist is brought by the gui and by the
 //! capabilities. ⛔ AND THE RULE IS HELD AT LEVEL 1 RATHER THAN BY GOOD INTENTIONS: nothing here
-//! names `Arbiter`, `VramPolicy` or any other effect, and it could not without an `import` a
+//! IMPORTS `Arbiter`, `VramPolicy` or any other effect, and it could not without an `import` a
 //! reader would see. The day the gesture arrives (sub-project 12) it registers ITS functions from
 //! outside, exactly as the click does — which is what "no gesture-only logic" means when it stops
 //! being a sentence.
@@ -125,9 +125,19 @@ pub enum Approval {
 /// triple, so all three names are ours.
 ///
 /// ⚠️ `Permission(PermissionError)` IS NOT `PermissionRequired`: the first says the archive would
-/// not answer, the second that it answered no. `permission::PermissionError`'s own doc spends
-/// three paragraphs on why "unknown" reported as "not granted" is forbidden, and folding them
-/// here would undo that at the call site that matters most.
+/// not answer, the second that it answered no. The paragraph of `permission::PermissionError`'s
+/// own doc that opens "WHY `is_granted` CANNOT SIMPLY RETURN `false`" spells out why "unknown"
+/// reported as "not granted" is forbidden, and folding them here would undo that at the call site
+/// that matters most.
+///
+/// ⚠️ AND TWO OF THESE FOUR VARIANTS ARE EXERCISED BY NO PROBE, declared rather than left to be
+/// discovered: `Permission(..)` and `Journal(..)` are built at six sites of `invoke`, and
+/// `tests/registry.rs` reaches neither — every journal it hands `invoke` answers every call.
+/// They stay because they are PROPAGATION arms, which every kernel module that touches a port
+/// has, and because folding them into a refusal would be exactly the "unknown reported as no"
+/// the paragraph above forbids. ⛔ AND NO TRIGGER IS NAMED HERE: which consumer will first hand
+/// this function a journal that refuses is not known today, and a deadline written in prose that
+/// nothing makes fire is gotcha #77.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InvokeError {
     /// No function of that name is registered. ⛔ AND NOTHING IS WRITTEN — not an intent, not a
@@ -157,6 +167,16 @@ pub struct Registry {
 // `SystemReactor`: nothing calls it. The argument is written out once, in
 // `crates/platform/src/reactor.rs`.
 impl Registry {
+    /// A registry that holds nothing yet.
+    ///
+    /// ⚠️ `const` IS PROMISED BY NAME AND EXERCISED BY NOTHING, and it is declared here rather
+    /// than left to be found: both call sites are `let` bindings, and no `const` or `static` in
+    /// this repository depends on it, so removing the qualifier leaves every bench green. It
+    /// stays for the reason `E27` kept the derives of `custody`: a name promised to the tasks
+    /// that come after is a CONTRACT, and what is not yet exercised is declared instead of being
+    /// removed or claimed. ⛔ AND NO TRIGGER IS NAMED: which consumer will first want a registry
+    /// in a `const` context is not known today, and a deadline in prose that nothing makes fire
+    /// is gotcha #77.
     pub const fn new() -> Self {
         Registry {
             functions: Vec::new(),

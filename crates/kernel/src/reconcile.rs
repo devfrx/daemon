@@ -201,16 +201,16 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // EFFECT that may or may not have reached the world, and asking is not an effect.
                 // The step it names owes its own outcome, and writes one.
                 //
-                // ⛔ BOTH OTHER ANSWERS WERE TRIED BEFORE THIS ARM WAS WRITTEN, which is what
-                // "measured" means here: `enter` would leave EVERY invoked step in doubt for
-                // ever, because the note arrives after the step's own `intent` and a second
-                // `enter` on an open step is not what `leave` undoes; and `leave` would CLOSE the
-                // doubt the invocation's own `intent` opened, so a crash between the note and the
-                // effect would reconcile as "finished" — the silent loss of a real doubt, the one
-                // failure ADR-0007 exists to prevent. ⚠️ AND THAT SECOND ONE IS WORSE HERE THAN
-                // IT WAS FOR `Routing`: the note sits between the intent and the effect BY
-                // DESIGN (§5 of the sub-project 2 design), so the window it would swallow is not
-                // hypothetical — it is the ordinary shape of every invocation.
+                // ⛔ BOTH OTHER ANSWERS WERE MEASURED, which is what "measured" means here:
+                // `enter` would leave EVERY invoked step in doubt for ever, because the note
+                // arrives after the step's own `intent` and a second `enter` on an open step is
+                // not what `leave` undoes; and `leave` would CLOSE the doubt the invocation's own
+                // `intent` opened, so a crash between the note and the effect would reconcile as
+                // "finished" — the silent loss of a real doubt, the one failure ADR-0007 exists
+                // to prevent. ⚠️ AND THAT SECOND ONE IS WORSE HERE THAN IT WAS FOR `Routing`: the
+                // note sits between the intent and the effect BY DESIGN (§5 of the sub-project 2
+                // design), so the window it would swallow is not hypothetical — it is the
+                // ordinary shape of every invocation.
                 //
                 // Held in BOTH directions (§7.1.1 rule 3) by
                 // `an_invocation_note_does_not_put_a_step_in_doubt` and

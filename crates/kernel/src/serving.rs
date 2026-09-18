@@ -252,7 +252,7 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
         let id = self.clients[index].id;
         // ⛔ ONLY `Hello` IS ANSWERED BEFORE THE HANDSHAKE, which is §5 of the sub-project 2 design
         // -- "the first message must be `Hello`" -- and the promise `Stage::Greeting`'s own doc
-        // makes one screen above. Without this gate `Invoke`, `Approve` and `SaveLayout` are
+        // makes. Without this gate `Invoke`, `Approve` and `SaveLayout` are
         // dispatched for a peer that never introduced itself: MEASURED on 2026-09-18, such a peer
         // moved the policy to `local`, its package reached the seventh port, and the six records of
         // the round were in the journal -- `Permission` among them -- while `attending()` was EMPTY

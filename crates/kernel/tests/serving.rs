@@ -426,8 +426,9 @@ fn a_stale_stamp_gets_the_expected_one_and_then_the_core_stops_listening() {
 #[test]
 fn a_client_that_has_not_shaken_hands_is_served_nothing_and_keeps_its_place() {
     // ⛔ THE HANDSHAKE IS A GATE AND NOT A GREETING -- §5 of the sub-project 2 design, "the first
-    // message must be `Hello`" -- and no other probe in this file ever arrives without saying it.
-    // MEASURED before the gate existed (E46 of the plan): this peer moved the policy to `local`,
+    // message must be `Hello`". Removing the gate reddens THIS PROBE ALONE, in the whole
+    // workspace -- measured on 2026-09-18, and that is why it exists.
+    // MEASURED before the gate existed (E46 of the plan): such a peer moved the policy to `local`,
     // its package reached the seventh port, and the journal held the six records of the round --
     // `Permission` among them -- while `attending()` stayed EMPTY.
     let bench = Bench::new();

@@ -233,7 +233,12 @@ enum StartupError {
 /// on Linux — the project's second system.
 fn run_the_production_graph(journal_path: &Path) -> Result<(), StartupError> {
     run_the_graph(
-        Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID),
+        // ⚠️ THE GUI TICK IS ZERO HERE, AND AT THE THREE PROBE CALL SITES OF THIS FILE,
+        // BECAUSE NOBODY READS IT YET: this graph spawns no activity at all, so
+        // `Parameters::gui_tick` has no consumer in this binary. Task 9 of the sub-project 2
+        // part 2 plan brings both -- `kernel::serving::serve` and the delivered value, beside
+        // the other constants above.
+        Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
         journal_path,
     )
 }
@@ -449,7 +454,12 @@ mod tests {
     /// `Debug`, so the `Result` cannot be formatted as a whole. Taking the error out first is
     /// what lets the failure say which quota fell.
     fn the_production_arbiter() -> Arbiter {
-        match build_the_arbiter(Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID)) {
+        match build_the_arbiter(Parameters::new(
+            EXECUTOR_TURN_LIMIT,
+            TOTAL_VRAM,
+            ARBITER_ID,
+            Millis::new(0),
+        )) {
             Ok(arbiter) => arbiter,
             Err(error) => panic!("a permanent quota of ADR-0033 must be granted: {error:?}"),
         }
@@ -687,7 +697,7 @@ mod tests {
         // 1024 fits in 1500; 1024 + 768 does not, and under `RemotePolicy` -- which may not
         // make room -- a request that fits the machine but not the moment is QUEUED.
         let outcome = run_the_graph(
-            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(1_500), ARBITER_ID),
+            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(1_500), ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
         );
 
@@ -710,7 +720,7 @@ mod tests {
 
         // 1024 is more than the whole machine, so no release will ever make room for it.
         let outcome = run_the_graph(
-            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(500), ARBITER_ID),
+            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(500), ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
         );
 

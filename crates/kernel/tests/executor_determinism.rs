@@ -10,7 +10,7 @@ use core::cell::{Cell, RefCell};
 use kernel::arbiter::{ArbiterId, Mib};
 use kernel::executor::{Executor, RunError, Sleep};
 use kernel::parameters::Parameters;
-use kernel::time::Monotonic;
+use kernel::time::{Millis, Monotonic};
 use simulator::reactor::VirtualReactor;
 use simulator::rng::SeededRng;
 
@@ -24,6 +24,16 @@ const TURN_LIMIT: u64 = 10_000;
 /// default.
 const TOTAL_VRAM: Mib = Mib::new(16_384);
 
+/// The gui tick this bench delivers. ⚠️ A LITERAL OF THIS BENCH, and it is inert here on
+/// purpose: nothing in this file runs `kernel::serving::serve`, so nobody reads it -- but
+/// `Parameters` carries every delivered value positionally, and §2.8.2 rule 2 forbids the kernel
+/// to name a default.
+///
+/// ⛔ ZERO IS NOT A NEUTRAL VALUE WHERE IT IS READ: a zero tick makes `kernel::executor::nap`
+/// behave as a yield (`Sleep::until`'s own rule), so a bench that really serves hands its own --
+/// `crates/kernel/tests/serving.rs` does.
+const GUI_TICK: Millis = Millis::new(0);
+
 /// The scenario of M-2, reduced to what milestone 2 can express: 3 activities x 4 steps,
 /// each step waiting 5000 VIRTUAL milliseconds. No journal, no faults — those are
 /// milestones 3 and 4.
@@ -33,7 +43,7 @@ fn trace_of(seed: u64) -> Vec<String> {
     let mut executor = Executor::new(
         SeededRng::new(seed),
         VirtualReactor::new(),
-        Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1)),
+        Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
         &sleep,
     );
 
@@ -128,7 +138,7 @@ fn c3_virtual_time_does_not_wait() {
     let mut executor = Executor::new(
         SeededRng::new(20_260_806),
         VirtualReactor::new(),
-        Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1)),
+        Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
         &sleep,
     );
     for _ in 0..3 {
@@ -180,7 +190,7 @@ fn a_block_becomes_an_error_and_not_an_infinite_wait() {
     let mut executor = Executor::new(
         SeededRng::new(1),
         VirtualReactor::new(),
-        Parameters::new(50, TOTAL_VRAM, ArbiterId::new(1)),
+        Parameters::new(50, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
         &sleep,
     );
     executor.spawn(async {
@@ -212,7 +222,7 @@ fn the_delivered_turn_limit_is_honoured_by_its_value() {
         let mut executor = Executor::new(
             SeededRng::new(1),
             VirtualReactor::new(),
-            Parameters::new(limit, TOTAL_VRAM, ArbiterId::new(1)),
+            Parameters::new(limit, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
             &sleep,
         );
         executor.spawn(async {
@@ -259,7 +269,7 @@ fn a_reactor_that_will_not_advance_is_an_error_and_not_a_spin() {
     let mut executor = Executor::new(
         SeededRng::new(1),
         RefusingReactor,
-        Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1)),
+        Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
         &sleep,
     );
     // ⚠️ THE ACTIVITY DECLARES ITS OWN DEADLINE, and until 2026-08-18 the bench wrote it
@@ -284,7 +294,7 @@ fn a_wait_already_over_wakes_immediately_and_the_clock_does_not_move() {
     let mut executor = Executor::new(
         SeededRng::new(1),
         VirtualReactor::new(),
-        Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1)),
+        Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
         &sleep,
     );
     // ⛔ AND THE THIRD THING, learnt on 2026-08-18: written with the bench preloading the
@@ -326,7 +336,7 @@ fn a_suspension_request_is_not_inherited_by_the_next_activity() {
         let mut executor = Executor::new(
             SeededRng::new(seed),
             VirtualReactor::new(),
-            Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1)),
+            Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
             &sleep,
         );
         // Declares a suspension, then finishes WITHOUT yielding.
@@ -392,7 +402,7 @@ fn a_request_written_before_the_run_belongs_to_nobody() {
         let mut executor = Executor::new(
             SeededRng::new(seed),
             VirtualReactor::new(),
-            Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1)),
+            Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
             &sleep,
         );
         executor.spawn(async {
@@ -425,7 +435,7 @@ fn a_request_written_by_a_destructor_belongs_to_nobody() {
         let mut executor = Executor::new(
             SeededRng::new(seed),
             VirtualReactor::new(),
-            Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1)),
+            Parameters::new(TURN_LIMIT, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
             &sleep,
         );
 
@@ -465,7 +475,7 @@ fn re_registering_a_past_deadline_for_ever_still_terminates() {
     let mut executor = Executor::new(
         SeededRng::new(1),
         VirtualReactor::new(),
-        Parameters::new(50, TOTAL_VRAM, ArbiterId::new(1)),
+        Parameters::new(50, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
         &sleep,
     );
     executor.spawn(async {

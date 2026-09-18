@@ -33,6 +33,16 @@ use simulator::journal::MemoryJournal;
 
 const TURN_LIMIT: u64 = 10_000;
 
+/// The gui tick this bench delivers. ⚠️ A LITERAL OF THIS BENCH, and it is inert here on
+/// purpose: nothing in this file runs `kernel::serving::serve`, so nobody reads it -- but
+/// `Parameters` carries every delivered value positionally, and §2.8.2 rule 2 forbids the kernel
+/// to name a default.
+///
+/// ⛔ ZERO IS NOT A NEUTRAL VALUE WHERE IT IS READ: a zero tick makes `kernel::executor::nap`
+/// behave as a yield (`Sleep::until`'s own rule), so a bench that really serves hands its own --
+/// `crates/kernel/tests/serving.rs` does.
+const GUI_TICK: Millis = Millis::new(0);
+
 /// A machine with room to spare, for every probe whose subject is the ROUTING half.
 const ROOMY: Mib = Mib::new(16_384);
 
@@ -55,7 +65,7 @@ const REMOTE_DEAR: Candidate = Candidate {
 /// revocation instead of about the ceiling.
 fn arbiter(total: Mib) -> Arbiter {
     Arbiter::new(
-        Parameters::new(TURN_LIMIT, total, ArbiterId::new(1)),
+        Parameters::new(TURN_LIMIT, total, ArbiterId::new(1), GUI_TICK),
         VramPolicy::Remote(RemotePolicy),
     )
 }

@@ -65,6 +65,16 @@ use kernel::ports::process::{
 };
 use kernel::time::{Millis, Monotonic};
 
+/// The gui tick this bench delivers. ⚠️ A LITERAL OF THIS BENCH, and it is inert here on
+/// purpose: nothing in this file runs `kernel::serving::serve`, so nobody reads it -- but
+/// `Parameters` carries every delivered value positionally, and §2.8.2 rule 2 forbids the kernel
+/// to name a default.
+///
+/// ⛔ ZERO IS NOT A NEUTRAL VALUE WHERE IT IS READ: a zero tick makes `kernel::executor::nap`
+/// behave as a yield (`Sleep::until`'s own rule), so a bench that really serves hands its own --
+/// `crates/kernel/tests/serving.rs` does.
+const GUI_TICK: Millis = Millis::new(0);
+
 // ============================================================================================
 // THE `filesystem` FAKE
 // ============================================================================================
@@ -191,7 +201,7 @@ impl Network for RecordingNetwork {
 /// hand back. Sharing it would tie the two together for no gain.
 fn a_real_grant() -> Grant {
     let mut arbiter = Arbiter::new(
-        Parameters::new(10_000, Mib::new(16_384), ArbiterId::new(1)),
+        Parameters::new(10_000, Mib::new(16_384), ArbiterId::new(1), GUI_TICK),
         VramPolicy::Remote(RemotePolicy),
     );
     let Admission::Granted(grant) = arbiter.admit(

@@ -19,7 +19,7 @@ use kernel::ports::process::{Process as _, Worker as _};
 
 fn a_real_grant() -> kernel::arbiter::Grant {
     let mut arbiter = kernel::arbiter::Arbiter::new(
-        kernel::parameters::Parameters::new(10_000, kernel::arbiter::Mib::new(16_384), kernel::arbiter::ArbiterId::new(1)),
+        kernel::parameters::Parameters::new(10_000, kernel::arbiter::Mib::new(16_384), kernel::arbiter::ArbiterId::new(1), kernel::time::Millis::new(0)),
         kernel::arbiter::VramPolicy::Remote(kernel::arbiter::RemotePolicy),
     );
     let kernel::arbiter::Admission::Granted(grant) = arbiter.admit(

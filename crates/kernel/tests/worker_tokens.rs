@@ -26,6 +26,16 @@ use kernel::ports::process::{
 };
 use kernel::time::{Millis, Monotonic};
 
+/// The gui tick this bench delivers. ⚠️ A LITERAL OF THIS BENCH, and it is inert here on
+/// purpose: nothing in this file runs `kernel::serving::serve`, so nobody reads it -- but
+/// `Parameters` carries every delivered value positionally, and §2.8.2 rule 2 forbids the kernel
+/// to name a default.
+///
+/// ⛔ ZERO IS NOT A NEUTRAL VALUE WHERE IT IS READ: a zero tick makes `kernel::executor::nap`
+/// behave as a yield (`Sleep::until`'s own rule), so a bench that really serves hands its own --
+/// `crates/kernel/tests/serving.rs` does.
+const GUI_TICK: Millis = Millis::new(0);
+
 /// A grant obtained the only way there is.
 ///
 /// ⛔ ITS ARBITER IS `ArbiterId::new(2)`, AND THE DIFFERENCE FROM `an_arbiter_and_a_real_grant`
@@ -37,7 +47,7 @@ use kernel::time::{Millis, Monotonic};
 /// whole bench while the literals matched, and dies now.
 fn a_real_grant() -> Grant {
     let mut arbiter = Arbiter::new(
-        Parameters::new(10_000, Mib::new(16_384), ArbiterId::new(2)),
+        Parameters::new(10_000, Mib::new(16_384), ArbiterId::new(2), GUI_TICK),
         VramPolicy::Remote(RemotePolicy),
     );
     let Admission::Granted(grant) = arbiter.admit(
@@ -239,7 +249,7 @@ fn a_spawn_that_does_not_happen_is_start_failed() {
 /// so they need the books that hold it.
 fn an_arbiter_and_a_real_grant() -> (Arbiter, Grant) {
     let mut arbiter = Arbiter::new(
-        Parameters::new(10_000, Mib::new(16_384), ArbiterId::new(1)),
+        Parameters::new(10_000, Mib::new(16_384), ArbiterId::new(1), GUI_TICK),
         VramPolicy::Remote(RemotePolicy),
     );
     let Admission::Granted(grant) = arbiter.admit(

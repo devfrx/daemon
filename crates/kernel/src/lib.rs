@@ -51,3 +51,5 @@ pub mod client;
 pub mod numbering;
 
 pub mod registry;
+
+pub mod serving;

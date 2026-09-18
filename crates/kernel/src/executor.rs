@@ -409,3 +409,39 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
         order
     }
 }
+
+/// Suspends the calling activity until `deadline`, and hands control back to the executor.
+///
+/// ⛔ IT IS THE ONLY WAY AN ACTIVITY OF THE KERNEL MAY SUSPEND (§2.4.1): the request is written
+/// into the one `Sleep` cell and the activity then returns `Pending` exactly once, which is what
+/// turns a written request into an actual suspension. Writing to the cell WITHOUT returning
+/// `Pending` leaves the request to be read by whoever is polled next -- finding K-1 of the
+/// 2026-08-11 audit, and the clearing in `poll_one_turn` is what contains it.
+///
+/// ⛔ IT IS PUBLIC BECAUSE ACTIVITIES ARE WRITTEN OUTSIDE THIS CRATE TOO. `gui/fake-core` runs
+/// `crate::serving::serve` beside a tap of its own (§7 of the sub-project 2 design), and every
+/// bench since milestone 2 of sub-project 1 has been carrying a private copy of this two-line future.
+///
+/// ⚠️ A DEADLINE ALREADY REACHED BEHAVES AS A YIELD, and that is `Sleep::until`'s rule rather than
+/// a second one: the executor promotes the activity and polls it again without touching the clock.
+pub async fn nap(sleep: &Sleep, deadline: Monotonic) {
+    sleep.until(deadline);
+    Suspended(false).await;
+}
+
+/// The one-shot `Pending`. ⚠️ PRIVATE: what callers need is `nap`, and a bare yield with no
+/// deadline would be a second way to suspend -- §2.4.1 allows exactly one.
+struct Suspended(bool);
+
+impl Future for Suspended {
+    type Output = ();
+
+    fn poll(mut self: Pin<&mut Self>, _context: &mut Context<'_>) -> Poll<()> {
+        if self.0 {
+            Poll::Ready(())
+        } else {
+            self.0 = true;
+            Poll::Pending
+        }
+    }
+}

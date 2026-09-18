@@ -177,7 +177,7 @@ codice di ADESSO.
 | **4** | la **settima porta**: il tratto `Custody` in `kernel::ports`, la finta di `ports_are_implementable.rs`; i richiami alle cifre in prosa di `ports/mod.rs` con la guardia di `rng` (P-21) e i **tre** nella spec — la riga dell'anello 3, la §2.3 e la §3.1 (P-22). ⛔ **La suite di conformità è al 5 — richiamo del 2026-09-11, D13** | ⚠️ **più di uno** — il piano ne prevedeva uno, i giri della revisione hanno aggiunto gli altri: `git log --oneline --grep="gui(compito 4"` | ✅ 2026-09-17 |
 | **5** | le **due implementazioni** della settima porta: `redb` in `platform`, la finta in `simulator`, **e la suite di conformità che le confronta** — arrivata qui dalla riga 4 col richiamo del 2026-09-11 (**D13**): una suite ne vuole due, e al 4 ce n'erano zero | uno | ✅ 2026-09-18 |
 | **6** | il **registro delle funzioni** `kernel::registry`: la funzione registrata, `invoke`, il dettaglio `Invocation` col suo record congelato | uno | ✅ 2026-09-18 |
-| **7** | l'**attività del kernel che serve la GUI** — `kernel::serving`: il dispaccio, il ramo `Request` **non servito** (D5), `Disconnected`, il tick in `Parameters`. ⛔ **Il limite di giri è al 9 — richiamo del 2026-09-11, D21 (⚠️ qui stava «al 8», il numero di prima di D25: corretto il 2026-09-15 alla revisione del piano intero, R10-3)** | uno | ⬜ |
+| **7** | l'**attività del kernel che serve la GUI** — `kernel::serving`: il dispaccio, il ramo `Request` **non servito** (D5), `Disconnected`, il tick in `Parameters`. ⛔ **Il limite di giri è al 9 — richiamo del 2026-09-11, D21 (⚠️ qui stava «al 8», il numero di prima di D25: corretto il 2026-09-15 alla revisione del piano intero, R10-3)** | uno | ✅ 2026-09-18 |
 | **8** | la **specie `Policy` del giornale**, e la **policy riletta dal giornale**: `RecordKind::Policy` all'indice 7, `Detail::Policy` all'indice 4, `PolicyDetail`, l'**ottavo** record congelato, e la proiezione `kernel::arbiter::policy_now`. ⛔ **Arrivata qui DIVIDENDO la vecchia riga 8 — richiamo del 2026-09-14, D25**: la rilettura tocca il **formato durevole** e il cablaggio no, e un revisore può bocciare l'una approvando l'altro. ⚠️ **E NON è una nota con un dettaglio**, che non è pronunciabile — **P-44**, **D26** | uno | ⬜ |
 | **9** | il **daemon**: il cablaggio dell'attività, il percorso dell'archivio come argomento, l'`unwrap_or` sul default di ADR-0006 — ⛔ **la specie e la proiezione sono al compito 8, richiamo del 2026-09-14, D25** — «salva, riavvia, ritrova», **e il limite di giri** — arrivato qui dalla riga 7 col richiamo del 2026-09-11 (**D21**): la sua sonda vuole il grafo con la GUI. ⚠️ **Il default resta un letterale del daemon**, che è ciò che **D27** compra | uno | ⬜ |
 | **10** | la **campagna DST del 2** in `simulator`, e la sua riga nel settimo passo del cancello | uno | ⬜ |
@@ -8480,7 +8480,7 @@ Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit �
 - Create: `crates/kernel/src/serving.rs` — **LF**
 - Create: `crates/kernel/tests/serving.rs` — **LF**
 - Modify: `crates/kernel/src/lib.rs` (**`i/lf w/crlf`**) — la riga `pub mod serving;`
-- Modify: `crates/kernel/src/parameters.rs` (**`i/lf w/crlf`**) — il campo `gui_tick`
+- Modify: `crates/kernel/src/parameters.rs` (**`i/lf w/crlf`**) — il campo `gui_tick`, **e la cifra tolta dal doc di `Parameters::total_vram`**: è la casa di **E21 (b)** assegnata a questo compito, e nessun Passo la nominava (**E44**)
 - Modify: `crates/kernel/src/executor.rs` (**`i/lf w/crlf`**) — `nap`, la sospensione pubblica
 - ⛔ **Né `crates/kernel/src/registry.rs` né `crates/kernel/src/wire/ipc.rs`** — qui stavano due «Modify» (*«dal compito 6, `Approval` e `Registry::held`»*, *«dal compito 3, `allocated` e `done`»*), e il testo dei compiti 3 e 6 li porta **già**: il 7 non li tocca, e il Passo 4 è il verbale (R3-4, 2026-09-15)
 - Modify: i **ventuno** file con le **cinquanta** chiamate a `Parameters::new` — delle cinquantasette righe del censimento, **sette** sono commenti in sei file e non si toccano (R3-5, misurato il 2026-09-15) — e il **solo** `.stderr` che si muove, `crates/kernel/tests/compile_fail/parameters_have_no_default.stderr`
@@ -8610,6 +8610,27 @@ proprio, come già fa per `TOTAL_VRAM`, e accanto alla costante va la ragione �
 `executor_determinism.rs` usa parola per parola (*«A LITERAL OF THIS BENCH, and it is inert here on
 purpose»*). Per i banchi in cui il tick **non fa nulla** basta `Millis::new(0)` con quella frase; per i due
 banchi di questo compito e per la campagna del compito 10 il valore è quello che la sonda esercita.
+
+⛔ **E nello stesso file la casa di E21 (b), che nessun Passo nominava** (**E44**): nel doc di
+`Parameters::total_vram` la frase *«none of the **six** port families supplies hardware capacity»* è
+falsa dal compito 4, che le famiglie le ha portate a sette. ✅ **Si TOGLIE la cifra e non si
+riallinea** — *«none of the port families supplies hardware capacity»* — così che l'ottava porta non
+la riapra (`CLAUDE.md`).
+
+⚠️ **E due cose che il Passo non diceva, decise dall'esecutore il 2026-09-18 e scritte qui perché il
+diff resti rivedibile contro il brief.** **(a)** `crates/daemon/src/main.rs` **non** guadagna una
+costante: `GUI_TICK` è una delle **quattro costanti nuove** che il Passo 2 del compito **9** inserisce
+in quel file, e una seconda dichiarazione non compilerebbe. I suoi quattro siti prendono
+`Millis::new(0)` **in linea**, con la ragione scritta una volta sola nel corpo di
+`run_the_production_graph` — quel grafo non lancia nessuna attività, quindi nessuno legge il valore —
+e il compito 9 riscrive tutti e quattro col proprio. **(b)** `crates/kernel/tests/parameters_delivered.rs`
+è il banco che esiste per *«ogni valore consegnato è consegnato»*, e un campo in più senza le sue righe
+lo renderebbe **falso di sé**: la sua sonda del confronto dichiara che *«senza questa riga un confronto
+che guardasse solo `executor_turn_limit` passerebbe ogni sonda di questo file»*. Guadagna quindi la
+coppia `assert_ne!` che differisce **nel solo tick**, la lettura di `gui_tick()` in
+`the_value_carries_the_resolved_parameters`, e la sonda gemella delle altre tre,
+`the_constructor_substitutes_nothing_for_the_tick_it_is_handed` — dove **zero** è il valore che più
+inviterebbe una guardia dentro il costruttore, che è §2.8.4 alla lettera.
 
 ```bash
 grep -rn 'Parameters::new' crates/ --include='*.rs' | grep -v compile_fail
@@ -9476,10 +9497,15 @@ fn a_client_that_dies_gives_its_grant_back() {
                 Mib::ZERO,
                 "the grant of a client that died must come back to the books"
             );
-            assert!(
-                !core.attending().contains(&OTHER),
-                "and the client leaves the table"
-            );
+            // ⛔ AND THE TABLE IS HELD BY THE ASSERTION ABOVE, NOT BY A SECOND ONE. An assertion on
+            // `attending()` would be VACUOUS here, which is why there is none: that accessor
+            // filters on `Stage::Attending`, and `OTHER` never reaches it -- it says nothing,
+            // `dead(OTHER)` kills it before the round, and `FakeIpc::receive` looks at `gone`
+            // first -- so `!contains(&OTHER)` would be green even if `forget` never ran at all.
+            // What holds the table is the line above: a grant returns to the books ONLY by way of
+            // `forget`, which is the same line that takes the client off the table. A better
+            // assertion would want `clients` exposed, and "an API item with no caller in this
+            // repository is deleted" (`crates/kernel/src/boundary.rs`).
         },
     );
 
@@ -10305,7 +10331,7 @@ la esegue):
 
 | Riga | Che cosa il richiamo dice |
 |---|---|
-| `Hello` | ⛔ **RICHIAMO DEL \<data\>, compito 7 del piano della parte 2 (D22):** la protezione **non è consegnata**. `Protection` ha una variante sola, e un parametro che può assumere un valore solo è superficie morta dentro `Parameters` — il doc di `total_vram` lo argomenta — pagata su ogni chiamante. L'attività manda `Protection::AsSystemAccount` e scrive l'**innesco** accanto: il giorno che `Protection` guadagna una seconda variante, il valore diventa consegnato. ⚠️ **E il client rifiutato esce SUBITO dalla tabella** (R3-12): il core lo dimentica nello stesso giro in cui gli manda `StaleBuild`, quindi il suo `Disconnected` non arriva a nessuno — e non serve, perché non tiene nulla. La sequenza 1 dice *«non lo ascolta più»*, e questo è il come |
+| `Hello` | ⛔ **RICHIAMO DEL \<data\>, compito 7 (D22):** la protezione **non è consegnata**. `Protection` ha una variante sola, e un parametro che può assumere un valore solo è superficie morta dentro `Parameters` — il doc di `total_vram` lo argomenta — pagata su ogni chiamante. L'attività manda `Protection::AsSystemAccount` e scrive l'**innesco** accanto: il giorno che `Protection` guadagna una seconda variante, il valore diventa consegnato. ⚠️ **E il client rifiutato esce SUBITO dalla tabella** (R3-12): il core lo dimentica nello stesso giro in cui gli manda `StaleBuild`, quindi il suo `Disconnected` non arriva a nessuno — e non serve, perché non tiene nulla. La sequenza 1 dice *«non lo ascolta più»*, e questo è il come |
 | `Request` | ⛔ **RICHIAMO DEL \<data\>, compito 7 (D5):** questa riga dice *«`admit` → `Verdict`»*, e il ramo **non chiama `admit`**. Le tre vie sono state esaminate contro il codice (P-1, P-11, P-12) e il perimetro negativo vive sul ramo stesso, in `crates/kernel/src/serving.rs`; la riga 27 delle voci aperte del Traguardo 6 resta aperta **col suo innesco intatto** |
 | il **limite di giri** | ⛔ **RICHIAMO DEL \<data\>, compito 7 (D21):** la riga resta vera e **cambia compito**: `EXECUTOR_TURN_LIMIT` vive in `crates/daemon/src/main.rs`, e la sonda che questa cella detta — *«il grafo con la GUI resta vivo oltre centomila giri»* — vuole il grafo con la GUI, cioè il cablaggio. È il compito **9** |
 | `Request`, `Verdict` — la riga della **§4**; l'ancora è la riga intera che comincia con `\| \`Request\`, \`Verdict\` \|` | ⛔ **RICHIAMO DEL \<data\>, compito 7 (D5):** *«il daemon risponde»* è falso nel 2 — il ramo `Request` **non è servito** e nessun `Verdict` parte; la risposta *«strada»* del proprietario più sotto si lascia com'è, perché è una risposta e non una riga di disegno (R9a-10) |
@@ -10323,10 +10349,14 @@ E la riga **2** della tabella *Stato* della [stella polare](../specs/2026-09-07-
 > consegnati.
 
 E il 🔶 dedotto in fondo alle tre sequenze di *«La GUI dentro»* della stessa stella polare — l'ancora è la riga intera
-che contiene `e che il client rifiutato resti nella tabella fino al \`Disconnected\``, e il richiamo si appende in coda a
-quella riga:
+che contiene `e che il client rifiutato resti nella tabella fino al \`Disconnected\``. ⛔ **RICHIAMO DEL 2026-09-18,
+dall'esecutore: il richiamo NON va in coda a quella riga.** Qui stava *«e il richiamo si appende in coda a quella
+riga»*, e quella riga **finisce a metà frase** — chiude con *«stessa forma dei diagrammi di»* e prosegue alla
+successiva con `docs/design/` — quindi un'inserzione in fondo la spezzerebbe in due: è **E7** ed **E20** una terza
+volta. Va **accanto alla deduzione che corregge**, fra parentesi subito dopo `Disconnected`, dove la riga ha un
+confine vero; le due parentesi chiudono la clausola e il `;` che segue resta dove stava:
 
-> ⛔ **RICHIAMO DEL \<data\>, compito 7 (R3-12):** il client rifiutato **non** resta nella tabella: il core lo dimentica
+> ⛔ **RICHIAMO DEL \<data\>, compito 7 del piano della parte 2 (R3-12):** il client rifiutato **non** resta nella tabella: il core lo dimentica
 > nello stesso giro in cui gli manda `StaleBuild`, il suo `Disconnected` non arriva a nessuno, e non serve — non tiene
 > nulla.
 
@@ -10343,7 +10373,7 @@ spunta finale.
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `gate-deps.sh` verde e la lista **non cresciuta**;
   `gate-attributes.sh` verde
 - [ ] `bash scripts/check-docs.sh` → `OK`
-- [ ] i richiami: `grep -c 'RICHIAMO DEL <data>, compito 7' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **5** e sulla stella polare → **2** (con la data scritta — D75), e `grep -c '<data>'` sui due disegni → **0**
+- [ ] i richiami, **col motivo che il richiamo porta davvero e non col segnaposto** (**E45**): `grep -c ', compito 7 (' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **5** e `grep -c 'compito 7 del piano della parte 2' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` → **2** (con la data scritta — D75); e i segnaposti **scritti da questo compito**, col comando di E35, `git diff -- <il disegno del 2> | grep -c '^+.*<data>'` → **0**, mentre sulla stella `grep -c '<data>'` sul file resta **0**
 - [ ] i fine-riga: i due file nuovi a **zero** CR, e `git ls-files --eol` **invariato** su tutti i modificati
 - [ ] `git diff --stat -- crates/kernel/tests/compile_fail/` riletto, e ciò che è cambiato **nominato nel
   commit** — quale `.stderr`, e perché
@@ -10362,17 +10392,18 @@ grep -c '^#\[test\]' crates/kernel/tests/serving.rs
 grep -rn 'fn ipc' crates/kernel/src/serving.rs
 grep -c 'POLICY_FUNCTION' crates/kernel/src/serving.rs
 grep -rn 'admit' crates/kernel/src/serving.rs
-grep -c 'RICHIAMO DEL <data>, compito 7' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
-grep -c 'RICHIAMO DEL <data>, compito 7' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
-grep -c '<data>' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+grep -c ', compito 7 (' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+grep -c 'compito 7 del piano della parte 2' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+git diff -- docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | grep -c '^+.*<data>'
+grep -c '<data>' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
 ```
 
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `gate-deps.sh` e `gate-attributes.sh` verdi, e la lista di ADR-0031 **non cresciuta**
-- [ ] ⛔ **le sedici sonde di `crates/kernel/tests/serving.rs` sono verdi**, e il loro numero è quello che il Passo 6 detta: il primo comando le conta
+- [ ] ⛔ **le sonde di `crates/kernel/tests/serving.rs` sono verdi**, e quante siano lo dice il primo comando (**E42**: qui stava un numerale, e la riga si contraddiceva da sé)
 - [ ] ⛔ **`Core::ipc` NON esiste ancora:** il secondo comando **non rende nulla** — il suo chiamante è il rubinetto del compito **12**, e *«un elemento d'API senza chiamante si cancella»* (`crates/kernel/src/boundary.rs`)
 - [ ] ⛔ **il ramo `Request` non chiama l'arbitro (D5):** il quarto comando **non rende nulla**, e la sonda `a_request_reaches_neither_the_arbiter_nor_the_journal` è verde
 - [ ] ⛔ **la funzione registrata è UNA**, `POLICY_FUNCTION`, e `kernel::registry` non nomina l'arbitro (**D16**): `grep -c 'use crate::arbiter\|crate::arbiter::' crates/kernel/src/registry.rs` → **0**
-- [ ] ⛔ **i sette richiami datati sono scritti e la data è vera:** **5** nel disegno del 2 e **2** nella stella, e `grep -c '<data>'` sui due disegni → **0** (D75)
+- [ ] ⛔ **i sette richiami datati sono scritti e la data è vera:** **5** nel disegno del 2 e **2** nella stella, coi motivi di **E45**; i segnaposti **aggiunti** dal compito sono **0** — il sesto comando — e sulla stella il settimo resta **0** (D75)
 - [ ] ⛔ **i `compile_fail` sono riletti, non rigenerati in blocco:** `git diff --stat -- crates/kernel/tests/compile_fail/` nomina il **solo** `parameters_have_no_default.stderr`, e il commit dice perché
 - [ ] ⛔ **i fine-riga sono invariati:** i due file nuovi a **zero** CR, `git ls-files --eol` uguale al Passo 1 su ogni file modificato
 - [ ] `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto; la riga **7** della tabella della posizione a ✅ col proprio commit

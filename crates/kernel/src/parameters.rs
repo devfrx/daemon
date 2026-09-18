@@ -22,6 +22,7 @@
 //! quietly re-entering as a constant.
 
 use crate::arbiter::{ArbiterId, Mib};
+use crate::time::Millis;
 
 /// The parameters the kernel has been configured with.
 ///
@@ -46,6 +47,7 @@ pub struct Parameters {
     executor_turn_limit: u64,
     total_vram: Mib,
     arbiter_id: ArbiterId,
+    gui_tick: Millis,
 }
 
 impl Parameters {
@@ -56,11 +58,17 @@ impl Parameters {
     /// would put a number chosen inside the kernel just as surely as an `impl Default`
     /// would, and it is cheaper to write. Validation is outside the perimeter above for
     /// this reason, not for laziness.
-    pub const fn new(executor_turn_limit: u64, total_vram: Mib, arbiter_id: ArbiterId) -> Self {
+    pub const fn new(
+        executor_turn_limit: u64,
+        total_vram: Mib,
+        arbiter_id: ArbiterId,
+        gui_tick: Millis,
+    ) -> Self {
         Parameters {
             executor_turn_limit,
             total_vram,
             arbiter_id,
+            gui_tick,
         }
     }
 
@@ -86,7 +94,7 @@ impl Parameters {
     /// ⛔ IT IS DELIVERED AND NOT ASKED FOR, and §5.1 spent a dated recall on exactly this:
     /// the formula for the allocatable budget appears identically in three documents and
     /// NONE of them said where `total` comes from. Querying the GPU is an OS call, which I3
-    /// forbids the kernel, and none of the six port families supplies hardware capacity. So
+    /// forbids the kernel, and none of the port families supplies hardware capacity. So
     /// it is DECLARED, like the reservation of ADR-0005, and a systematic discrepancy is a
     /// defect of the PARAMETER rather than an accident.
     ///
@@ -103,5 +111,23 @@ impl Parameters {
     /// surface inside the kernel.
     pub const fn total_vram(self) -> Mib {
         self.total_vram
+    }
+
+    /// How long the activity that serves the gui sleeps between two turns.
+    ///
+    /// ⛔ IT IS DELIVERED AND NOT CHOSEN HERE, and the reason is the one §2.8 gives for every
+    /// other field: the kernel's reactor has no I/O readiness, so the serving activity POLLS --
+    /// `accept`, then one `receive` per client -- and how often it does so is a trade between how
+    /// fast the gui feels and what the machine spends on an idle core. That trade is not the
+    /// kernel's to settle, and a constant here would appear in no list and could not be made to
+    /// vary in a campaign (gotcha #28).
+    ///
+    /// ⚠️ AND IT IS WHAT BOUNDS THE COST OF `crate::degradation::degradation_now`, which the
+    /// serving activity re-reads once per turn while a gui is attending (D23 of the sub-project 2
+    /// part 2 plan). That function declares its own cost -- the whole journal is replayed to
+    /// answer one question -- and this value is the only dial over it until the checkpoint
+    /// `Journal::replay` names arrives.
+    pub const fn gui_tick(self) -> Millis {
+        self.gui_tick
     }
 }

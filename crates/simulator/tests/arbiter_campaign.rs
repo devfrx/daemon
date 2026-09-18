@@ -75,6 +75,16 @@ const REQUESTS: usize = 4;
 /// `chat` + `render` + `index` is 9 216 and does not.
 const TOTAL: Mib = Mib::new(8_192);
 
+/// The gui tick this bench delivers. ⚠️ A LITERAL OF THIS BENCH, and it is inert here on
+/// purpose: nothing in this file runs `kernel::serving::serve`, so nobody reads it -- but
+/// `Parameters` carries every delivered value positionally, and §2.8.2 rule 2 forbids the kernel
+/// to name a default.
+///
+/// ⛔ ZERO IS NOT A NEUTRAL VALUE WHERE IT IS READ: a zero tick makes `kernel::executor::nap`
+/// behave as a yield (`Sleep::until`'s own rule), so a bench that really serves hands its own --
+/// `crates/kernel/tests/serving.rs` does.
+const GUI_TICK: Millis = Millis::new(0);
+
 /// How long the bench keeps a grant it took OUT OF THE QUEUE. ⚠️ It is one number for all
 /// lanes because the promotion does not say whose ticket it was in a way this bench keeps:
 /// `Promotion` carries the ticket and the grant, and the bench does not index the parties by
@@ -383,7 +393,7 @@ impl Default for Observed {
 /// and not about the concurrency.
 fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Observed) {
     let arbiter = RefCell::new(Arbiter::new(
-        Parameters::new(TURN_LIMIT, TOTAL, ArbiterId::new(1)),
+        Parameters::new(TURN_LIMIT, TOTAL, ArbiterId::new(1), GUI_TICK),
         VramPolicy::Remote(RemotePolicy),
     ));
     let observed = RefCell::new(Observed::default());
@@ -395,7 +405,7 @@ fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Observed) {
     let mut executor = Executor::new(
         SeededRng::new(seed),
         SharedClock { inner: &clock },
-        Parameters::new(TURN_LIMIT, TOTAL, ArbiterId::new(1)),
+        Parameters::new(TURN_LIMIT, TOTAL, ArbiterId::new(1), GUI_TICK),
         &sleep,
     );
 

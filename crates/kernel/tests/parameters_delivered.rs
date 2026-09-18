@@ -13,16 +13,28 @@
 
 use kernel::arbiter::{ArbiterId, Mib};
 use kernel::parameters::Parameters;
+use kernel::time::Millis;
 
 /// A literal of this bench, and the value is arbitrary on purpose: nothing here admits
 /// anything, and no probe below depends on the number being plausible.
 const TOTAL_VRAM: Mib = Mib::new(16_384);
 
+/// The gui tick this bench delivers. ⚠️ A LITERAL OF THIS BENCH, and it is inert here on
+/// purpose: nothing in this file runs `kernel::serving::serve`, so nobody reads it -- but
+/// `Parameters` carries every delivered value positionally, and §2.8.2 rule 2 forbids the kernel
+/// to name a default.
+///
+/// ⛔ ZERO IS NOT A NEUTRAL VALUE WHERE IT IS READ: a zero tick makes `kernel::executor::nap`
+/// behave as a yield (`Sleep::until`'s own rule), so a bench that really serves hands its own --
+/// `crates/kernel/tests/serving.rs` does.
+const GUI_TICK: Millis = Millis::new(0);
+
 #[test]
 fn the_value_carries_the_resolved_parameters() {
-    let parameters = Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1));
+    let parameters = Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK);
     assert_eq!(parameters.executor_turn_limit(), 10_000);
     assert_eq!(parameters.total_vram(), TOTAL_VRAM);
+    assert_eq!(parameters.gui_tick(), GUI_TICK);
 }
 
 #[test]
@@ -30,24 +42,31 @@ fn parameters_are_comparable_so_a_substitution_is_observable() {
     // §2.8.2 rule 4: substituting a parameter is a journalled step. Before it can be
     // journalled, "it changed" has to be expressible.
     assert_ne!(
-        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1)),
-        Parameters::new(20_000, TOTAL_VRAM, ArbiterId::new(1))
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
+        Parameters::new(20_000, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK)
     );
     // And the same for the second delivered value, differing in IT ALONE. Without this
     // line a comparison that looked only at `executor_turn_limit` would pass every probe
     // in this file, and substituting a total would be unobservable — the very thing rule 4
     // needs expressible.
     assert_ne!(
-        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1)),
-        Parameters::new(10_000, Mib::new(8_192), ArbiterId::new(1))
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
+        Parameters::new(10_000, Mib::new(8_192), ArbiterId::new(1), GUI_TICK)
     );
     // And the third, for the same reason again -- differing in the IDENTITY alone.
     // ✅ Measured 2026-08-30: with `PartialEq` written by hand over the other two fields
     // only, the whole workspace stayed green without this line. "Substituting the arbiter
     // this decision belongs to is observable" was held by nothing.
     assert_ne!(
-        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1)),
-        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(2))
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(2), GUI_TICK)
+    );
+    // And the fourth, differing in THE TICK alone -- the value sub-project 2 delivered last.
+    // Without this line a comparison written by hand over the other three would pass every
+    // probe in this file, which is exactly what the measurement above found for the identity.
+    assert_ne!(
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1), Millis::new(0)),
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1), Millis::new(50))
     );
 }
 
@@ -58,8 +77,8 @@ fn equal_parameters_do_not_report_a_substitution_that_never_happened() {
     // "different" to everything — which would journal a substitution at every step. A
     // check that fires where it must not is worse than one that is absent: gotcha #24.
     assert_eq!(
-        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1)),
-        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1))
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK),
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK)
     );
 }
 
@@ -75,11 +94,11 @@ fn the_constructor_substitutes_nothing_for_the_value_it_is_handed() {
     // The compile-fail case forbids the `Default` route; nothing but this test covers the
     // inline one, and §2.8.4 says outright that the compiler cannot.
     assert_eq!(
-        Parameters::new(0, TOTAL_VRAM, ArbiterId::new(1)).executor_turn_limit(),
+        Parameters::new(0, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK).executor_turn_limit(),
         0
     );
     assert_eq!(
-        Parameters::new(u64::MAX, TOTAL_VRAM, ArbiterId::new(1)).executor_turn_limit(),
+        Parameters::new(u64::MAX, TOTAL_VRAM, ArbiterId::new(1), GUI_TICK).executor_turn_limit(),
         u64::MAX
     );
 }
@@ -98,11 +117,11 @@ fn the_constructor_substitutes_nothing_for_the_total_it_is_handed() {
     // total must show up as over-admission that can be traced to the parameter, never as a
     // budget the kernel invented.
     assert_eq!(
-        Parameters::new(10_000, Mib::ZERO, ArbiterId::new(1)).total_vram(),
+        Parameters::new(10_000, Mib::ZERO, ArbiterId::new(1), GUI_TICK).total_vram(),
         Mib::ZERO
     );
     assert_eq!(
-        Parameters::new(10_000, Mib::new(u64::MAX), ArbiterId::new(1)).total_vram(),
+        Parameters::new(10_000, Mib::new(u64::MAX), ArbiterId::new(1), GUI_TICK).total_vram(),
         Mib::new(u64::MAX)
     );
 }
@@ -117,11 +136,30 @@ fn the_arbiter_identity_is_delivered_and_not_invented() {
     // answered a CONSTANT would satisfy a single-value probe, so one value tests the
     // constructor's arity and not what it delivers.
     assert_eq!(
-        Parameters::new(64, Mib::new(8_192), ArbiterId::new(7)).arbiter_id(),
+        Parameters::new(64, Mib::new(8_192), ArbiterId::new(7), GUI_TICK).arbiter_id(),
         ArbiterId::new(7)
     );
     assert_eq!(
-        Parameters::new(64, Mib::new(8_192), ArbiterId::new(u64::MAX)).arbiter_id(),
+        Parameters::new(64, Mib::new(8_192), ArbiterId::new(u64::MAX), GUI_TICK).arbiter_id(),
         ArbiterId::new(u64::MAX)
+    );
+}
+
+#[test]
+fn the_constructor_substitutes_nothing_for_the_tick_it_is_handed() {
+    // The same half once more, for the value delivered last -- and of the four it is the one
+    // a guard would look most defensible on: a ZERO tick makes `kernel::executor::nap` behave
+    // as a yield (`Sleep::until`'s own rule), so `if gui_tick == 0 { … }` reads like prudence.
+    //
+    // ⛔ It is gotcha #28 all the same. The number would be chosen INSIDE the kernel -- on no
+    // list, firing no check -- and a campaign that wanted a core which never waits could not
+    // ask for one, which is the single thing §2.8.4's declared limit leaves to a test.
+    assert_eq!(
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1), Millis::new(0)).gui_tick(),
+        Millis::new(0)
+    );
+    assert_eq!(
+        Parameters::new(10_000, TOTAL_VRAM, ArbiterId::new(1), Millis::new(50)).gui_tick(),
+        Millis::new(50)
     );
 }

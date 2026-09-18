@@ -102,6 +102,16 @@ use kernel::time::{Millis, Monotonic};
 const TURN_LIMIT: u64 = 10_000;
 const TOTAL: Mib = Mib::new(16_384);
 
+/// The gui tick this bench delivers. ⚠️ A LITERAL OF THIS BENCH, and it is inert here on
+/// purpose: nothing in this file runs `kernel::serving::serve`, so nobody reads it -- but
+/// `Parameters` carries every delivered value positionally, and §2.8.2 rule 2 forbids the kernel
+/// to name a default.
+///
+/// ⛔ ZERO IS NOT A NEUTRAL VALUE WHERE IT IS READ: a zero tick makes `kernel::executor::nap`
+/// behave as a yield (`Sleep::until`'s own rule), so a bench that really serves hands its own --
+/// `crates/kernel/tests/serving.rs` does.
+const GUI_TICK: Millis = Millis::new(0);
+
 fn profile(name: &'static str, vram: u64, lane: ComputeClass) -> ResourceProfile {
     ResourceProfile {
         name,
@@ -140,7 +150,7 @@ fn preemptible(name: &'static str, vram: u64, lane: ComputeClass, grace: u64) ->
 /// stop describing what it does.
 fn arbiter(id: ArbiterId, total: Mib) -> Arbiter {
     Arbiter::new(
-        Parameters::new(TURN_LIMIT, total, id),
+        Parameters::new(TURN_LIMIT, total, id, GUI_TICK),
         VramPolicy::Remote(RemotePolicy),
     )
 }

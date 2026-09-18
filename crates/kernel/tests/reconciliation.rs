@@ -3,7 +3,8 @@
 use kernel::ports::journal::{Journal, JournalError, StepId};
 use kernel::reconcile::{InDoubt, Resolution, steps_in_doubt};
 use kernel::record::{
-    EffectClass, PermissionDetail, Record, RecordV1, RoutingDetail, Trust, VerdictDetail,
+    EffectClass, InvocationDetail, PermissionDetail, Record, RecordV1, RoutingDetail, Trust,
+    VerdictDetail,
 };
 use simulator::journal::MemoryJournal;
 
@@ -715,4 +716,91 @@ fn an_archive_that_will_not_replay_is_not_an_answer_of_no_doubt() {
     let journal = ReplayRefusingJournal;
 
     assert_eq!(steps_in_doubt(&journal), Err(JournalError::NotDurable));
+}
+
+#[test]
+fn an_invocation_note_does_not_put_a_step_in_doubt() {
+    // ⛔ THE FIRST DIRECTION: the arm must not `enter`. A step whose intent and outcome are both
+    // written is CLOSED, and an invocation note landing between them must not reopen it.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(3);
+
+    journal
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
+        .expect("intent");
+    journal
+        .note(step, &an_invocation_note())
+        .expect("the invocation note");
+    journal
+        .outcome(step, &record(RecordV1::outcome, EffectClass::Idempotent))
+        .expect("outcome");
+    // ⛔ AND A NOTE AFTER THE OUTCOME, which is the case that separates "does not open" from
+    // "does not reopen": without it an `enter` in the arm is undone by the `leave` of the
+    // outcome, and this probe stays green under the mutation it exists to catch (measured at
+    // the plan review, 2026-09-15). The `Permission` pair above does the same, for the same reason.
+    journal
+        .note(step, &an_invocation_note())
+        .expect("the invocation note after the outcome");
+
+    assert_eq!(
+        steps_in_doubt(&journal).expect("the projection must answer"),
+        Vec::new(),
+        "an invocation note upon a step that closed must leave nothing in doubt"
+    );
+}
+
+#[test]
+fn an_invocation_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them() {
+    // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3): the arm must not `leave` either. Here the
+    // step has an intent and NO outcome — the crash between the note and the effect — so the
+    // doubt must survive the note WITH ITS RESOLUTION UNCHANGED. Without this probe a `leave` in
+    // the arm would pass the test above and swallow every real doubt.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(4);
+
+    journal
+        .intent(step, &record(RecordV1::intent, EffectClass::Idempotent))
+        .expect("intent");
+
+    let before = steps_in_doubt(&journal).expect("the projection must answer");
+
+    journal
+        .note(step, &an_invocation_note())
+        .expect("the invocation note");
+
+    let after = steps_in_doubt(&journal).expect("the projection must answer");
+
+    assert_eq!(
+        before, after,
+        "an invocation note must change neither the doubt nor its resolution"
+    );
+    assert!(
+        !after.is_empty(),
+        "the bench is vacuous if the step was never in doubt to begin with"
+    );
+}
+
+/// An invocation note of no importance, so the two probes above say what they mean.
+///
+/// ⛔ THE CLASS IS `Unrepeatable` ON PURPOSE, AND IT IS WHAT KEEPS THE SECOND PROBE NON-VACUOUS:
+/// it DIFFERS from the `Idempotent` every step here declares, so an `enter` in the arm re-enters
+/// the step with a resolution it did NOT have and the vector moves. With `Idempotent` -- measured
+/// at the plan review, 2026-09-15 -- the `enter` mutation re-entered the step with the SAME
+/// `RunAgain` and `before == after` held: the mutation survived. It is the lesson `a_note()` and
+/// `a_permission()` already write out, in a third dress. ⚠️ In the REAL registry the note carries
+/// the function's own class (`noted` in `registry.rs`); this bench chooses the class that makes
+/// the probe bite, exactly as `a_note()` does.
+///
+/// ⛔ THE LAST ASSERTION OF THE SECOND PROBE IS NOT DECORATION: `before == after` is satisfied by
+/// two empty lists, so without it a bench that never opened a doubt would pass while proving
+/// nothing. It is the non-vacuity guard of §8.6.2 written at the size of one test.
+fn an_invocation_note() -> Vec<u8> {
+    Record::V1(RecordV1::invocation(
+        EffectClass::Unrepeatable,
+        Trust::Untrusted,
+        Vec::from(&b"an argument the gui chose"[..]),
+        "who invoked what",
+        InvocationDetail::new("a function", 0),
+    ))
+    .encode()
 }

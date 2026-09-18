@@ -454,6 +454,18 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
                  grant, and this oracle must decide what a permission does to a doubt before it \
                  can stay independent"
             ),
+            // ⛔ UNREACHABLE IN THIS SCENARIO TOO, AND `panic!` RATHER THAN THE EMPTY ARM FOR THE
+            // REASON ITS THREE SIBLINGS GIVE -- read them, the argument is one. Nothing here invokes
+            // a function of the registry, so no invocation record can enter this trace
+            // (sub-project 2, task 6).
+            //
+            // ⚠️ THE DAY THE SCENARIO GROWS AN INVOCATION, THE RED IS A DECISION BEING ASKED FOR
+            // and not a defect being reported -- same as its siblings.
+            RecordKind::Invocation => panic!(
+                "step {step} carries an invocation record: this scenario has grown a registry \
+                 invocation, and this oracle must decide what one does to a doubt before it can \
+                 stay independent"
+            ),
         }
     }
     open

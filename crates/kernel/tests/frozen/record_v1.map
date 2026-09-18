@@ -4,8 +4,8 @@
 #
 # Produced from `the_frozen_records()` in ../frozen_bytes.rs, by hand, from the hexadecimal
 # output of a throwaway probe deleted in the commit that added its file — the first three
-# on 2026-08-10, the verdict on 2026-08-31, the routing and the permission on 2026-09-01. Each
-# file, its own probe.
+# on 2026-08-10, the verdict on 2026-08-31, the routing and the permission on 2026-09-01, and
+# the invocation on 2026-09-18. Each file, its own probe.
 # ⛔ NOT REGENERATED. If the bytes change, a new VERSION of the record is opened.
 #
 # ⛔ ONE MAP FOR ALL THE FILES, AND THE ASYMMETRY IS DELIBERATE. The `.cbor` files are separate
@@ -125,3 +125,15 @@ record_v1_permission.cbor
   7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
  14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
  21 | 82 02 81 83 66 66 72 6f 7a 65 6e 66 66 72 6f 7a 65 6e f5 | index 5 · detail · Some(Detail::Permission { tool: "frozen", resource: "frozen", write: true })
+
+record_v1_invocation.cbor
+  0 | 82                   | array(2) — the version enum
+  1 | 00                   | variant index 0 = Record::V1
+  2 | 81                   | array(1) — the body of the variant
+  3 | 86                   | array(6) — the SIX fields of RecordV1
+  4 | 06                   | index 0 · kind    · RecordKind::Invocation
+  5 | 00                   | index 1 · effect  · EffectClass::Verifiable
+  6 | 01                   | index 2 · trust   · Trust::Untrusted
+  7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
+ 14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
+ 21 | 82 03 81 82 66 66 72 6f 7a 65 6e 03 | index 5 · detail · Some(Detail::Invocation { function: "frozen", invoker: 3 }) — ⚠️ `3` is NO code any `Invoker` has, deliberately: this record freezes the FIELD'S FORMAT, and the field is a `u8` precisely because the codes are not an enum on the wire

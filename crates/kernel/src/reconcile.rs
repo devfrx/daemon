@@ -195,6 +195,29 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // in `tests/reconciliation.rs`, written in BOTH directions (§7.1.1 rule 3) exactly
                 // as the `Note`, `Verdict` and `Routing` pairs are.
                 RecordKind::Permission => {}
+                // ⛔ AN INVOCATION RECORD NEITHER OPENS A DOUBT NOR CLOSES ONE, and it was
+                // MEASURED for THIS variant rather than inherited from the four above it. An
+                // invocation note says WHO asked for WHAT; the doubt of ADR-0007 is about an
+                // EFFECT that may or may not have reached the world, and asking is not an effect.
+                // The step it names owes its own outcome, and writes one.
+                //
+                // ⛔ BOTH OTHER ANSWERS WERE TRIED BEFORE THIS ARM WAS WRITTEN, which is what
+                // "measured" means here: `enter` would leave EVERY invoked step in doubt for
+                // ever, because the note arrives after the step's own `intent` and a second
+                // `enter` on an open step is not what `leave` undoes; and `leave` would CLOSE the
+                // doubt the invocation's own `intent` opened, so a crash between the note and the
+                // effect would reconcile as "finished" — the silent loss of a real doubt, the one
+                // failure ADR-0007 exists to prevent. ⚠️ AND THAT SECOND ONE IS WORSE HERE THAN
+                // IT WAS FOR `Routing`: the note sits between the intent and the effect BY
+                // DESIGN (§5 of the sub-project 2 design), so the window it would swallow is not
+                // hypothetical — it is the ordinary shape of every invocation.
+                //
+                // Held in BOTH directions (§7.1.1 rule 3) by
+                // `an_invocation_note_does_not_put_a_step_in_doubt` and
+                // `an_invocation_note_leaves_the_doubt_and_its_resolution_exactly_as_it_found_them`
+                // in `tests/reconciliation.rs`, exactly as the `Note`, `Verdict`, `Routing` and
+                // `Permission` pairs are.
+                RecordKind::Invocation => {}
             },
             // ⛔ A record this build cannot read closes nothing and resolves nothing: it is the
             // strongest form of "no declared class", and ADR-0007 says that means stop. Note it

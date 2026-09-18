@@ -49,3 +49,5 @@ pub mod degradation;
 pub mod client;
 
 pub mod numbering;
+
+pub mod registry;

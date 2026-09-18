@@ -39,8 +39,8 @@
 //! `every_..._survives_the_round_trip` probes exist rather than resting on the round trip.
 
 use kernel::record::{
-    EffectClass, PermissionDetail, Record, RecordError, RecordKind, RecordV1, RoutingDetail, Trust,
-    VerdictDetail,
+    EffectClass, InvocationDetail, PermissionDetail, Record, RecordError, RecordKind, RecordV1,
+    RoutingDetail, Trust, VerdictDetail,
 };
 
 #[test]
@@ -216,6 +216,17 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
             "why this step exists",
             PermissionDetail::new("file", "/a", false),
         ),
+        // ⚠️ THE SEVENTH SPECIES, AND THE GUARD ABOVE PUT IT HERE AGAIN: `RecordKind::Invocation`
+        // made this closure `error[E0004]` on the day it arrived (sub-project 2, task 6). Its
+        // detail is not optional either, and `InvocationDetail::new` takes a `&'static str` and
+        // a `u8` -- read the type, the `u8` is a decision.
+        RecordKind::Invocation => RecordV1::invocation(
+            EffectClass::Idempotent,
+            Trust::Instruction,
+            Vec::new(),
+            "why this step exists",
+            InvocationDetail::new("a function", 0),
+        ),
     };
     let encoded = |kind| Record::V1(of(kind)).encode();
 
@@ -236,6 +247,8 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
     // ⚠️ AND `Permission` JOINED IT ON 2026-09-01 FOR THE SAME REASON THE TWO BEFORE IT DID, and
     // the second half of the note above is why it had to be added BY HAND: the `match` goes red on
     // a new species, this ARRAY does not.
+    // ⚠️ AND `Invocation` JOINED IT ON 2026-09-18 FOR THE SAME REASON THE THREE BEFORE IT DID
+    // (sub-project 2, task 6): the `match` goes red on a new species, this ARRAY does not.
     for kind in [
         RecordKind::Intent,
         RecordKind::Outcome,
@@ -243,6 +256,7 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
         RecordKind::Verdict,
         RecordKind::Routing,
         RecordKind::Permission,
+        RecordKind::Invocation,
     ] {
         let Record::V1(read) = Record::decode(&encoded(kind)).expect("decode");
         assert_eq!(

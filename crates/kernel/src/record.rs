@@ -109,6 +109,13 @@ pub enum RecordKind {
     /// inherited from the three above it: see the arm itself.
     #[n(5)]
     Permission,
+    /// ⛔ AN INVOCATION OF THE REGISTRY (ADR-0038). Like the four before it, it neither opens a
+    /// doubt nor closes one: the note says WHO asked for WHAT, and the step it names still owes
+    /// its own outcome — the invocation's own `intent` and `outcome` carry that, and they are
+    /// `Intent` and `Outcome` like anybody's. ⚠️ AND THE EMPTY ARM IN `reconcile` WAS MEASURED FOR
+    /// THIS VARIANT rather than inherited from the four above it: see the arm itself.
+    #[n(6)]
+    Invocation,
 }
 
 /// How an effect may be reconciled after a crash (ADR-0007).
@@ -234,6 +241,9 @@ pub enum Detail {
     /// The triple a permission was granted for (§6.6, ADR-0016).
     #[n(2)]
     Permission(#[n(0)] PermissionDetail),
+    /// Who invoked which function of the registry (ADR-0038).
+    #[n(3)]
+    Invocation(#[n(0)] InvocationDetail),
 }
 
 /// The structured half of a verdict (§6.4.1). ⛔ THE DETAIL TEXT IS NOT HERE: it is untrusted by
@@ -424,6 +434,75 @@ impl PermissionDetail {
     /// Whether the granted operation WRITES. See the field for why it is a `bool`.
     pub fn write(&self) -> bool {
         self.write
+    }
+}
+
+/// The structured half of an invocation (ADR-0038): WHAT was invoked, and BY WHOM.
+///
+/// ⛔ THE ARGUMENT IS NOT HERE, AND IT IS THE SAME DECISION `VerdictDetail` TOOK FOR ITS DETAIL
+/// TEXT — read that type, the argument is one. The argument is text the GUI CHOSE, so it is
+/// untrusted by inheritance (ADR-0014) and travels in the record's `payload`, under the `trust`
+/// label that exists to say so. What lives here is what is OURS and structured: a name this
+/// crate registered, and a code this crate assigned. ⚠️ SO THE §5 OF THE SUB-PROJECT 2 DESIGN SAYS
+/// "funzione, invocatore, argomento" AND THE THIRD IS BESIDE THIS TYPE RATHER THAN IN IT; the
+/// dated recall is on that line.
+///
+/// ⛔ THE TWO FIELDS HAVE DIFFERENT TYPES, AND THAT IS LOAD-BEARING RATHER THAN INCIDENTAL. The
+/// recall of 2026-09-01 beside the frozen `Permission` record measured that TWO EQUAL STRINGS at
+/// two offsets pin ONE offset and its mirror image — exchanging the two `#[n(..)]` moved no byte
+/// and the workspace stayed green. A text and a number cannot mirror each other, so the frozen
+/// record here really does pin both indices. Written down because the NEXT two-field detail may
+/// not be so lucky.
+///
+/// ⚠️ THE QUALIFIER `RoutingDetail` AND `PermissionDetail` BOTH CARRY APPLIES HERE WORD FOR WORD:
+/// this type derives `Decode` and `Record::decode` is `pub`, so BYTES build one without passing
+/// through `new`. That is road A4 of `crate::boundary`. What `new` shuts is every road a caller
+/// can WRITE IN SOURCE.
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[cbor(array)]
+pub struct InvocationDetail {
+    #[n(0)]
+    function: String,
+    /// ⛔ A `u8` AND NOT THE `registry::Invoker` ENUM, AND IT IS `PermissionDetail`'s ARGUMENT ONE
+    /// SIZE UP. An enum here would be a FOURTH `index_only` enum ON THE WIRE, whose variant
+    /// indices `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index
+    /// on the wire never retires (rule 4 of §4.9.2). That type could use a `bool` because it had
+    /// two values; this one has four coming — click, gesture, voice, agent — so a `bool` cannot
+    /// serve and a `u8` is the same trade at the next size.
+    ///
+    /// ⛔ AND THE CODE IS ASSIGNED BY AN EXHAUSTIVE `match` IN `registry::Invoker::code`, never by
+    /// `as u8`: a cast would number a new variant BY POSITION, and a reordering would silently
+    /// repoint every record already written. Read that function; it is `Operation::is_write`'s
+    /// lesson at four values instead of two.
+    #[n(1)]
+    invoker: u8,
+}
+
+impl InvocationDetail {
+    /// The ONLY way to build one in source. ⛔ `function` IS `&'static str` FOR THE REASON
+    /// `PermissionDetail::new` GIVES: the name that ARRIVES is compared against the registered
+    /// ones and dropped — it never becomes the kernel's own vocabulary (I6, ADR-0014). What
+    /// reaches here is the REGISTERED name.
+    pub fn new(function: &'static str, invoker: u8) -> Self {
+        Self {
+            function: String::from(function),
+            invoker,
+        }
+    }
+
+    /// The function that was invoked, as it was named THEN.
+    pub fn function(&self) -> &str {
+        &self.function
+    }
+
+    /// The code of whoever invoked it. ⚠️ A `u8` COMES BACK AND NOT AN `Invoker`, and there is
+    /// deliberately NO `from_code`: nothing decides on the invoker today — the `Steps` list shows
+    /// the function and its outcome — so a reverse conversion would buy a failing branch no
+    /// caller has, which is the rule this crate applies to `simulator`'s `EntryKind` and to
+    /// `platform`'s three stored kinds. The FIRST consumer that BRANCHES on who invoked writes
+    /// it, with its probe.
+    pub fn invoker(&self) -> u8 {
+        self.invoker
     }
 }
 
@@ -657,6 +736,27 @@ impl RecordV1 {
             payload,
             reason,
             Some(Detail::Permission(detail)),
+        )
+    }
+
+    /// AN INVOCATION OF THE REGISTRY (ADR-0038). ⛔ ITS DETAIL IS NOT OPTIONAL EITHER, for the
+    /// reason the three species before it give: a record that says an invocation happened and
+    /// names neither the function nor the invoker would be a record that records nothing while
+    /// claiming to be a record of something.
+    pub fn invocation(
+        effect: EffectClass,
+        trust: Trust,
+        payload: Vec<u8>,
+        reason: &'static str,
+        detail: InvocationDetail,
+    ) -> Self {
+        Self::of(
+            RecordKind::Invocation,
+            effect,
+            trust,
+            payload,
+            reason,
+            Some(Detail::Invocation(detail)),
         )
     }
 

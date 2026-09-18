@@ -176,7 +176,7 @@ codice di ADESSO.
 | **3** | lo **schema che cresce**: le varianti nuove di `IpcMessage`, le **fixture** e il **timbro di build**, `ipc_wire.rs` | uno | ✅ 2026-09-17 |
 | **4** | la **settima porta**: il tratto `Custody` in `kernel::ports`, la finta di `ports_are_implementable.rs`; i richiami alle cifre in prosa di `ports/mod.rs` con la guardia di `rng` (P-21) e i **tre** nella spec — la riga dell'anello 3, la §2.3 e la §3.1 (P-22). ⛔ **La suite di conformità è al 5 — richiamo del 2026-09-11, D13** | ⚠️ **più di uno** — il piano ne prevedeva uno, i giri della revisione hanno aggiunto gli altri: `git log --oneline --grep="gui(compito 4"` | ✅ 2026-09-17 |
 | **5** | le **due implementazioni** della settima porta: `redb` in `platform`, la finta in `simulator`, **e la suite di conformità che le confronta** — arrivata qui dalla riga 4 col richiamo del 2026-09-11 (**D13**): una suite ne vuole due, e al 4 ce n'erano zero | uno | ✅ 2026-09-18 |
-| **6** | il **registro delle funzioni** `kernel::registry`: la funzione registrata, `invoke`, il dettaglio `Invocation` col suo record congelato | uno | ⬜ |
+| **6** | il **registro delle funzioni** `kernel::registry`: la funzione registrata, `invoke`, il dettaglio `Invocation` col suo record congelato | uno | ✅ 2026-09-18 |
 | **7** | l'**attività del kernel che serve la GUI** — `kernel::serving`: il dispaccio, il ramo `Request` **non servito** (D5), `Disconnected`, il tick in `Parameters`. ⛔ **Il limite di giri è al 9 — richiamo del 2026-09-11, D21 (⚠️ qui stava «al 8», il numero di prima di D25: corretto il 2026-09-15 alla revisione del piano intero, R10-3)** | uno | ⬜ |
 | **8** | la **specie `Policy` del giornale**, e la **policy riletta dal giornale**: `RecordKind::Policy` all'indice 7, `Detail::Policy` all'indice 4, `PolicyDetail`, l'**ottavo** record congelato, e la proiezione `kernel::arbiter::policy_now`. ⛔ **Arrivata qui DIVIDENDO la vecchia riga 8 — richiamo del 2026-09-14, D25**: la rilettura tocca il **formato durevole** e il cablaggio no, e un revisore può bocciare l'una approvando l'altro. ⚠️ **E NON è una nota con un dettaglio**, che non è pronunciabile — **P-44**, **D26** | uno | ⬜ |
 | **9** | il **daemon**: il cablaggio dell'attività, il percorso dell'archivio come argomento, l'`unwrap_or` sul default di ADR-0006 — ⛔ **la specie e la proiezione sono al compito 8, richiamo del 2026-09-14, D25** — «salva, riavvia, ritrova», **e il limite di giri** — arrivato qui dalla riga 7 col richiamo del 2026-09-11 (**D21**): la sua sonda vuole il grafo con la GUI. ⚠️ **Il default resta un letterale del daemon**, che è ciò che **D27** compra | uno | ⬜ |
@@ -7736,10 +7736,10 @@ impl Registry {
 
     /// The function held under this name, if the registry holds one.
     ///
-    /// ⛔ IT EXISTS FOR THE APPROVAL PATH AND HAS A CALLER FROM THE DAY IT IS WRITTEN:
-    /// `crate::serving` compares the triple a peer sends back against the triple THE REGISTRY
-    /// holds, rather than trusting the strings that came in (ADR-0014, and the doc of
-    /// `crate::wire::ipc::Triple` asks that consumer for it by name).
+    /// ⛔ IT EXISTS FOR THE APPROVAL PATH AND ITS CALLER ARRIVES WITH `crate::serving` IN TASK 7,
+    /// and until then `invoke` is the only one: `crate::serving` compares the triple a peer sends
+    /// back against the triple THE REGISTRY holds, rather than trusting the strings that came in
+    /// (ADR-0014, and the doc of `crate::wire::ipc::Triple` asks that consumer for it by name).
     pub fn held(&self, name: &str) -> Option<Function> {
         self.functions.iter().find(|held| held.name == name).copied()
     }
@@ -8279,7 +8279,7 @@ P-33 non censì (R2-13), dentro `every_variant_of_the_wire_enums_is_pinned_by_a_
 `for kind in [ … ]` sopra quel `match` riceve `RecordKind::Invocation,` in coda — è la metà che il compilatore **non**
 sorveglia, e senza di essa il settimo pin non viene controllato (limite dichiarato del file); e il `match detail`
 esaustivo più sotto — `Detail::Verdict(_) => {}` · `Routing` · `Permission` — riceve il braccio
-`Detail::Invocation(_) => {}`, senza il quale il banco è `error[E0004]`. Con i tre pezzi, misurato: **7 passed**.
+`Detail::Invocation(_) => {}`, senza il quale il banco è `error[E0004]`. Con i tre pezzi, misurato: **7 passed** — ⛔ **e il 7 è INVARIATO** (**E36**): questo compito non aggiunge una sola sonda, quindi quel numero è quello di **prima** e non può decidere; a decidere che il compito ha fatto qualcosa è `the_frozen_records()`, che passa da **sei** a **sette**, e il Passo 1 lo misura. ⛔ **E il comando che decide sul pezzo che il compilatore NON sorveglia — l'array a mano — è `grep -c 'RecordKind::Invocation' crates/kernel/tests/frozen_bytes.rs` → 2**: il braccio del `match kind` e la voce dell'array, dove **1** significa array dimenticato, col banco verde e il settimo pin non controllato.
 
 ```bash
 cargo test --locked -p kernel --test frozen_bytes 2>&1 | tail -12
@@ -8417,7 +8417,7 @@ Poi la riga **6** della tabella della posizione a ✅ con la data, e il commit �
 - [ ] ⛔ le **due misure del Passo 3** fatte: `enter` al posto del braccio vuoto → rosse **entrambe** le sonde; `leave` → rossa la **seconda** (R2-15; qui stava «`enter` → la seconda, `leave` → la prima», falso in entrambe le metà sul testo dettato); entrambe revocate, `git diff --stat` pulito
 - [ ] ⛔ la sonda usa e getta del Passo 7 **cancellata**, e il commit lo dice
 - [ ] ⛔ **il registro non IMPORTA l'arbitro**: `grep -c 'use crate::arbiter\|crate::arbiter::' crates/kernel/src/registry.rs` → **0** (**D16**) — provato dove rende 1: `grep -c 'use crate::arbiter' crates/kernel/src/degradation.rs` → **1**. ⚠️ Qui stava un `grep` sulle **parole** `Arbiter|VramPolicy|arbiter`, che sul file dettato rende **2**: il doc del modulo le *nomina* proprio per dire che non le importa (R2-17)
-- [ ] `grep -c 'RICHIAMO DEL <data>, dal pre-controllo del compito 6' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **2** (con la data scritta — D75), e `grep -c '<data>'` sullo stesso file → **0**
+- [ ] `grep -c 'RICHIAMO DEL <data>, dal pre-controllo del compito 6' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **2** (con la data scritta — D75), e i segnaposti che il compito **aggiunge** sono zero: `git diff -- docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | grep -c '^+.*<data>'` → **0** (**E35**: quel file porta già un `<data>` alla riga 639, un NOME DI FILE che c'era prima del compito, ed è ciò che **E4** aveva già misurato il 2026-09-17)
 - [ ] `git diff --name-only -- docs/superpowers/specs/2026-08-06-kernel-design.md docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` **vuoto** (vincolo 1: questo compito non tocca le due spec)
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `gate-deps.sh` verde, la lista **non cresciuta**; `gate-attributes.sh` verde
 - [ ] i fine-riga rimisurati: i due nuovi a zero CR, i nove modificati invariati

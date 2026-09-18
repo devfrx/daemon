@@ -96,13 +96,25 @@ const PROMOTED_HOLD: Millis = Millis::new(1_000);
 const TRANSITION_STEP: u64 = 900;
 
 /// How many records one transition writes: the intent and the outcome -- the write-ahead
-/// discipline of ADR-0007. ⛔ IT IS THE PREMISE `crash_point` RESTS ON, and it is held rather
+/// discipline of ADR-0007.
+///
+/// ⛔ RECALL OF 2026-09-18, FROM THE REVIEW OF TASK 8 OF THE PART-2 PLAN -- THE SENTENCE ABOVE
+/// AND THIS NUMBER STAYED AT TWO WHILE THE TRANSITION HAD GROWN A THIRD WRITE. Since task 8
+/// `Arbiter::set_policy` puts a `RecordKind::Policy` note BETWEEN the intent and the outcome, so
+/// the records are the intent, the policy note and the outcome. While this said `2` the fall
+/// point 2 -- the crash between the note and the outcome, which is the very window task 8
+/// opened -- was never drawn, and
+/// `property_4_a_severed_transition_leaves_a_reconcilable_step` stayed green while proving less
+/// than its name promises. ⚠️ AND THE GUARD BELOW DID NOT CATCH IT BECAUSE IT LOOKS ONE WAY: it
+/// fires when the transition writes FEWER records than this number, never when it writes MORE.
+///
+/// ⛔ IT IS THE PREMISE `crash_point` RESTS ON, and it is held rather
 /// than trusted: the fall point is drawn modulo this number, so a transition that wrote fewer
 /// records would leave the tail of the range firing on nothing, and
 /// `property_4_a_severed_transition_leaves_a_reconcilable_step` asserts that EVERY seed
 /// reaches its point. It is the shape `WRITES_PER_RUN` has in `dst_campaign.rs`, for the same
 /// reason.
-const WRITES_PER_TRANSITION: u64 = 2;
+const WRITES_PER_TRANSITION: u64 = 3;
 
 /// How many seeds the SHORT campaign sweeps. ⛔ FIXED AND VERSIONED WITH THIS FILE, never
 /// drawn from the clock or from an environment variable: constraint 7 of §11, so two runs of
@@ -572,6 +584,13 @@ impl core::future::Future for Yield {
 /// outcome -- so the space of fall points has cardinality two, and both members are
 /// interesting: 0 falls before the intent and leaves no doubt, 1 falls between the two and
 /// leaves one.
+///
+/// ⛔ RECALL OF 2026-09-18, FROM THE REVIEW OF TASK 8 OF THE PART-2 PLAN -- THE WRITES ARE THREE
+/// AND SO ARE THE FALL POINTS, and every one of them is interesting: 0 still falls before the
+/// intent and leaves no doubt, 1 falls between the intent and the policy note, 2 falls between
+/// the policy note and the outcome. The last is the window task 8 opened, and it was not drawn
+/// AT ALL while the constant said two -- which is how this campaign stayed green over a
+/// transition it had stopped severing where the new record sits.
 ///
 /// ⛔ IT COMES FROM A DERIVED MIXING AND NOT FROM THE SAME GENERATOR AS THE INTERLEAVING: two
 /// `SeededRng` built from the same number give the SAME sequence, so the campaign would

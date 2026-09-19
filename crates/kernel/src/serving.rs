@@ -30,8 +30,9 @@
 //! - ⚠️ NOTHING HERE EVER CALLS `ClientGrants::register`, which follows from the line above: with
 //!   no request served, no grant is ever issued to a client. The register and `on_disconnect` are
 //!   wired anyway, because ADR-0033 says the core notices a dead gui FROM THE IPC DISCONNECTION and
-//!   reconciles; the writer arrives with the 3D pillar, and `tests/serving.rs` holds the wiring
-//!   meanwhile by putting a grant in by hand.
+//!   reconciles; the writer arrives with the 3D pillar, and the benches hold the wiring meanwhile
+//!   by putting a grant in by hand -- `tests/serving.rs` from task 7, and the DST campaign of
+//!   task 10 since 2026-09-19. Which files those are is what the command on `grants` prints.
 //! - ⚠️ IT NEVER STOPS. In production the turn limit is `u64::MAX` (task 9); under a finite limit
 //!   the run ends as `RunError::TurnLimitReached`, which is the expected answer and not a failure.
 
@@ -163,9 +164,14 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
 
     /// The register of who holds what.
     ///
-    /// ⚠️ ITS ONLY CALLER TODAY IS A BENCH, and that is stated rather than hidden: sub-project 2
-    /// issues no grant to a client (D5), so `register` has no production writer yet. Removing it
-    /// would leave `on_disconnect`'s wiring held by nothing at all.
+    /// ⚠️ IT HAS NO PRODUCTION WRITER, and that is stated rather than hidden: sub-project 2 issues
+    /// no grant to a client (D5), so every caller is a bench or a campaign. Removing it would
+    /// leave `on_disconnect`'s wiring held by nothing at all. ⛔ WHO CALLS IT IS WHAT THE COMMAND
+    /// PRINTS, not a tally that ages the day another bench arrives:
+    /// `grep -rn '\.grants()' crates/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
+    /// -- and the filter is there because a line that NAMES the pattern is counted by it (E63,
+    /// E88, E96 of the sub-project 2 plan). Here the tally said ONE bench and the campaign of
+    /// task 10 made it two, on 2026-09-19.
     pub fn grants(&mut self) -> &mut ClientGrants {
         &mut self.grants
     }

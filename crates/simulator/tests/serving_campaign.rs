@@ -13,8 +13,10 @@
 //! than imported: a `tests/` is a crate of its own and a binary exports nothing. ⚠️ WHERE ELSE IT
 //! IS WRITTEN IS WHAT `grep -rn 'struct Wire' crates/ --include='*.rs'` PRINTS, not this line:
 //! here stood "this is the THIRD place it is written", an ordinal that resolved to nothing a
-//! reader could check, and the cure is the one E76 applied four paragraphs below -- applied here
-//! on 2026-09-20 to a line that predates it.
+//! reader could check. The cure is the one E76 applied to the `SharedClock` tally in this same
+//! file -- applied here on 2026-09-20 to a line that predates it. ⚠️ AND "four paragraphs below"
+//! stood here for one commit: a distance counted in prose, which is the species E93 exists to
+//! remove, committed inside the cure for it. Naming the thing does not rot; counting to it does.
 //!
 //! ⛔ AND THE FIRST HALF WOULD BE VACUOUS WITHOUT A GRANT PUT IN BY HAND. Sub-project 2 issues NO
 //! grant to a client -- `serving.rs` says so of itself -- so a gui that dies here holds nothing,

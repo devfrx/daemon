@@ -24,6 +24,16 @@
 //! nothing leaves the sum ABOVE the baseline; one that released every pair it holds instead of the
 //! dead client's takes the second client's and leaves it BELOW. One assertion, two mutations.
 //!
+//! ⚠️ DECLARED, NOT PINNED: what buys the second direction is a single line --
+//! `built.grants().register(STANDING, standing)` -- and NOTHING IN THIS REPOSITORY HOLDS IT.
+//! Measured on 2026-09-19, in two steps: with that register deleted the sweep is green, `4 passed`;
+//! with it deleted AND the greedy `on_disconnect` mutation put back, the first property is green
+//! too -- the second direction is gone in silence. ⛔ NO PROBE IS ADDED FOR IT, for the reason the
+//! paragraph below measures: `ClientGrants` exposes nothing that counts without releasing, so no
+//! observable tells "registered" from "not registered" apart without a SECOND death, which is a
+//! different scenario rather than a stronger assertion. It is E66's shape, one task on. ITS
+//! TRIGGER: the first observable of `ClientGrants` that counts without releasing.
+//!
 //! ⚠️ AND THAT IS WHY THE SUM IS THE ORACLE RATHER THAN THE REGISTER: `ClientGrants` exposes
 //! `new`, `register` and `on_disconnect` and NOTHING THAT COUNTS WITHOUT RELEASING -- measured --
 //! and `grants()` and `arbiter()` are two mutable borrows of the same `&mut Core`, so a campaign
@@ -52,9 +62,15 @@
 //! WRITING to depend on `simulator`, the reactors these copies wrap are not even the same type,
 //! and one home for all of them would want a wrapper generic over `R: Reactor` -- more machinery
 //! than the lines it would save (P-59, P-74). ⚠️ ITS TRIGGER, DECLARED RATHER THAN LEFT TO BE
-//! DISCOVERED: a copy born inside `simulator` ITSELF, or in a crate that can import it, wrapping
-//! the SAME reactor -- on that day the measure is taken again. This file is not that day: a
-//! `tests/` is a crate of its own and nothing can import it.
+//! DISCOVERED, AND WITH THE THRESHOLD D34 GAVE IT: a FIFTH home -- D34's words are that four
+//! copies of the same shape stay four -- and how many there are is what the command above prints,
+//! never this line. ⛔ AND WHAT HOLDS THE ANSWER IS THE REACTOR, WHICH IS P-74's REASON: the
+//! question the trigger asks is not whether anyone can import a copy -- "a `tests/` is a crate of
+//! its own and nothing can import it" answers a different one -- it is whether a copy could draw
+//! on a common home instead. The ones that wrap `VirtualReactor` could: a concrete `SharedClock`
+//! in `simulator::reactor` would serve them. It would still leave out every copy that wraps
+//! `SystemReactor` unless it were generic over `R: Reactor`, and that is the cost D34 priced as
+//! more machinery than the lines it saves -- a fifth home does not change its species.
 
 use core::cell::RefCell;
 use std::collections::BTreeSet;
@@ -123,7 +139,11 @@ const TICK: Millis = Millis::new(50);
 const TURNS: u64 = 64;
 
 /// How many seeds the SHORT campaign sweeps. ⛔ FIXED AND VERSIONED, for `TURNS`' reason. It is the
-/// figure the two campaigns beside this one already use.
+/// figure the campaigns beside this one already use -- ⚠️ WITHOUT A TALLY, which is the cure and
+/// not a looseness: this line said "the two campaigns" and
+/// `grep -rln 'const SHORT_CAMPAIGN_SEEDS' crates/simulator/tests/` listed FOUR besides this one on
+/// 2026-09-19, and listed four at `42b50d8` too, so the numeral was never true of the plain
+/// reading. A fifth campaign would age it again (gotcha #31).
 const SHORT_CAMPAIGN_SEEDS: u64 = 2_000;
 
 /// Everything the gui side holds, and the only thing the probes read. ⛔ IT LIVES OUTSIDE `Core`,
@@ -277,6 +297,13 @@ impl Reactor for SharedClock<'_> {
 /// The seed the death point is drawn from. ⛔ DERIVED, and a DIFFERENT mixing from the one the
 /// executor is seeded with: two draws from the same number move together, and the campaign would
 /// explore a DIAGONAL of the space instead of the space (decision D2 of the milestone 4 plan).
+///
+/// ⚠️ THE DIAGONAL IS NOT A RISK THIS SCENARIO RUNS TODAY, AND THAT IS SAID RATHER THAN LEFT TO BE
+/// ASSUMED: the executor's own seed is INERT here -- frozen to `SeededRng::new(0)` in `one_death`
+/// the sweep still sees 37 worlds, measured on 2026-09-19 -- because one activity is spawned and
+/// the world is a function of `death_seed` alone. The discipline is kept because it becomes
+/// load-bearing the day more than one activity runs together, not because it is bearing anything
+/// now.
 fn death_seed(seed: u64) -> u64 {
     seed.wrapping_mul(0xBF58_476D_1CE4_E5B9)
 }
@@ -345,8 +372,10 @@ struct Died {
     /// Where the wire was TOLD to die. ⚠️ NOT AN ORACLE: it feeds the world count and the
     /// diagnostic of the assertion below.
     dies_at: u64,
-    /// How many messages the gui had heard before it went -- this is what makes the worlds
-    /// distinct, and it is a fact about the ACTIVITY rather than about the fake.
+    /// How many messages the gui had heard before it went. ⚠️ NOT WHAT MAKES THE WORLDS DISTINCT:
+    /// it is a function of where the death landed, and what carries the count is `dies_at` --
+    /// measured on 2026-09-19, and the doc of `EXPECTED_DEATH_WORLDS` says the same. Frozen alone
+    /// it costs ZERO worlds of the 37; frozen alone, `dies_at` costs thirty-one of them.
     heard: usize,
     /// What the books held once the activity had stopped.
     allocated: u64,
@@ -686,7 +715,14 @@ fn an_approval_without_a_crash_writes_this_many_records() {
 const EXPECTED_DEATH_WORLDS: usize = 37;
 
 /// How many DISTINCT worlds the journal-crash scenario can produce at all. Same posture, same
-/// remedy as `EXPECTED_DEATH_WORLDS`.
+/// remedy as `EXPECTED_DEATH_WORLDS` -- ⚠️ WHICH IS TRUE OF THE CONSTANT AND NOT OF ITS PROBE:
+/// the twin property guards its sweep with `distinct.len() > 1` before the equality, and the
+/// property below does not. Its non-vacuity is `left_something_in_doubt > 0`, which is a different
+/// claim -- two thousand seeds all falling on the same write would satisfy it with one world.
+/// ⛔ NEITHER GUARD CAN BITE TODAY, and that is why this is a declaration rather than a line of
+/// code: both constants are above one, so the `assert_eq!` implies `> 1` on both sides. ITS
+/// TRIGGER: the day either constant is re-measured to ONE, on which day the twin's guard is
+/// written here too.
 ///
 /// ⛔ WHAT INVALIDATES IT: a change to `WRITES_PER_APPROVAL`, to what `Registry::invoke` or
 /// `Arbiter::set_policy` write, or to `SHORT_CAMPAIGN_SEEDS`.
@@ -705,6 +741,17 @@ const EXPECTED_CRASH_WORLDS: usize = 7;
 /// ⚠️ THIS `match` DOES NOT DECIDE ANYTHING, and neither does `From<Resolution> for Doubt`: both
 /// CONVERT so that a world can be counted. Row 24 of milestone 6 -- "`Resolution` is settled by no
 /// `match`" -- stays open, and its closer is the first consumer that branches on it.
+///
+/// ⚠️ DECLARED, NOT PINNED -- WHAT THE CALLER APPLIES THIS TO IS NOT ONE STEP BUT TWO. The sweep
+/// asserts this value on EVERY step a fall leaves in doubt, and on the seeds that fall late there
+/// are two of them: step 1 is the road this constant declares, step 2 is the arbiter's own, whose
+/// class is pinned by `transition_record` in `crates/kernel/src/arbiter/mod.rs` -- a file that
+/// names `POLICY_FUNCTION` in no line, measured on 2026-09-19. ⛔ THE TWO DECLARATIONS COINCIDE
+/// TODAY, both `EffectClass::Idempotent`, read in both sources on 2026-09-19, so the assertion
+/// below pins their COINCIDENCE as much as the class -- and no ADR says they must coincide. ITS
+/// TRIGGER: the day they diverge, on which the red below will name the wrong file. ⛔ NARROWING
+/// THE ASSERTION TO STEP 1 IS NOT THE CURE: it would want a literal on the `StepId`, which is the
+/// literal this helper exists to avoid, and it would drop the coverage of step B, which is real.
 fn the_doubt_the_one_function_resolves_to() -> Doubt {
     match POLICY_FUNCTION.effect {
         EffectClass::Verifiable => Doubt::AskTheWorld,
@@ -726,8 +773,8 @@ fn a_gui_that_dies_under_the_activity_gives_its_grant_back() {
 
     assert!(
         distinct.len() > 1,
-        "every seed produced the SAME world: the two mixings are moving together, so this \
-         campaign is one run repeated {SHORT_CAMPAIGN_SEEDS} times"
+        "every seed produced the SAME world: the death point no longer moves with the seed, so \
+         this campaign is one run repeated {SHORT_CAMPAIGN_SEEDS} times"
     );
     assert_eq!(
         distinct.len(),
@@ -772,7 +819,8 @@ fn an_approval_that_crashes_leaves_the_step_in_doubt_with_its_class() {
                 *resolution,
                 the_doubt_the_one_function_resolves_to(),
                 "seed {seed}: step {step} is in doubt as {resolution:?}, which is not what the \
-                 class this road declares resolves to"
+                 class declared for ITS OWN road resolves to -- step 1 carries \
+                 `POLICY_FUNCTION.effect`, step 2 the class `transition_record` pins"
             );
         }
         if !observed.in_doubt.is_empty() {

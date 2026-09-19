@@ -71,8 +71,12 @@ run "documentation consistency"           bash scripts/check-docs.sh
 # engine_crash_consistency 0.13s.
 # ⚠️ THE FIGURE IS RE-MEASURED WHENEVER THIS LIST CHANGES AND NEVER REALIGNED FROM MEMORY,
 # which is why it carries its date: it said "~0.2s" at milestone 4 with two campaigns and
-# "1.45s" on 2026-08-25 with three. ⛔ AND THE RE-MEASUREMENT IS NOT THE ARITHMETIC ANYBODY
-# WOULD HAVE PREDICTED: the three targets of that 1.45s cost 0.78s of today's 0.81s -- the
+# "1.45s" on 2026-08-25 with three. ⛔ WHAT FOLLOWS IS ABOUT THE RE-MEASUREMENT OF 2026-09-02,
+# WHICH THIS LINE NO LONGER CARRIES: that day the second pass cost 0.81s over five targets,
+# and it is kept because the lesson is the arithmetic and not the figure -- which also puts
+# back the link the chain above lost when the date on the line changed. ⛔ AND THE
+# RE-MEASUREMENT IS NOT THE ARITHMETIC ANYBODY
+# WOULD HAVE PREDICTED: the three targets of that 1.45s cost 0.78s of that 0.81s -- the
 # same binaries, the same machine, at roughly half the price -- so the two new campaigns add
 # 0.03s and the figure still FELL. Which is the point: it is an ORDER OF MAGNITUDE and not a
 # constant -- the arbiter binary alone, same command, came out 0.63s and 1.53s within one

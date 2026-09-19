@@ -16,9 +16,10 @@
 //! Here stood "this is the THIRD place it is written", an ordinal that resolved to nothing a
 //! reader could check. The cure is the one E76 applied to the `SharedClock` tally in this same
 //! file -- applied here on 2026-09-20 to a line that predates it. ⛔ AND THE FILTER IS NOT
-//! DECORATION HERE EITHER: without it this very line is counted, because it spells `struct Wire`
-//! to name the command -- three instead of two, measured on 2026-09-20. It is E63 for the third
-//! time in this task, and the second inside a cure that cites E63 (E96). ⚠️ AND "four paragraphs
+//! DECORATION HERE EITHER: every line that NAMES the command is counted by it, and this paragraph
+//! names it more than once, so the unfiltered figure moves whenever this prose does -- which is
+//! why no figure is written here at all. It is E63 for the third time in this task, and the
+//! second inside a cure that cites E63 (E96). ⚠️ AND "four paragraphs
 //! below" stood here for one commit: a distance counted in prose, which is the species E93 exists
 //! to remove, committed inside the cure for it. Naming the thing does not rot; counting to it
 //! does.

@@ -26,6 +26,7 @@ dependencies = [
 name = "daemon"
 version = "0.0.0"
 dependencies = [
+ "interprocess",
  "kernel",
  "platform",
  "secrets",

@@ -12,3 +12,10 @@ secrets = { path = "../secrets" }
 # `platform`. In simulation the wiring is done by the bench, which receives the resolved
 # parameters — ADR-0034, and §1.2 corrected on 2026-08-08 after table and graph
 # contradicted each other.
+
+[dev-dependencies]
+# ⚠️ Needed by the PROBES and not by this crate: the peer of `a_peer_that_says` connects to the
+# local socket from a thread, and only a real peer can say that the core is serving (P-52). A
+# dev-dependency, so it does not enter the shipped graph — and `daemon` is outside the ADR-0031
+# allow-list anyway, which measures `kernel` and `simulator`.
+interprocess = "2.4.4"

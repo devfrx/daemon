@@ -35,15 +35,23 @@
 //! of ADR-0033 does not get in — and each of them is a claim of its own. The sentence is
 //! REWRITTEN and not answered beside itself, which is finding A-2 of this project's audit.
 
+use std::cell::RefCell;
 use std::path::Path;
 
 use kernel::arbiter::{
-    Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption, RemotePolicy,
-    ResourceProfile, VramPolicy,
+    self, Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, PolicyError, Preemption,
+    RemotePolicy, ResourceProfile, VramPolicy,
 };
 use kernel::executor::{Executor, RunError, Sleep};
+use kernel::numbering::{self, Progressive};
 use kernel::parameters::Parameters;
-use kernel::time::{Millis, Monotonic};
+use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
+use kernel::ports::journal::JournalError;
+use kernel::ports::reactor::Reactor;
+use kernel::serving::{self, Core};
+use kernel::time::{Millis, Monotonic, WallTime};
+use platform::custody::FileCustody;
+use platform::ipc::LocalSocketIpc;
 use platform::journal::{FileJournal, OpenError};
 use platform::reactor::SystemReactor;
 use platform::rng::SequentialRng;
@@ -87,16 +95,33 @@ use platform::rng::SequentialRng;
 /// so the SMALLEST limit that still returns `Ok(())` IS the count. It is nine, and the same
 /// nine on all 200 seeds of that file — the seed changes the ORDER within a turn, not the
 /// NUMBER of turns. Eight fails, which is what makes nine a boundary rather than a guess.
-const EXECUTOR_TURN_LIMIT: u64 = 100_000;
+/// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE VALUE IS `u64::MAX`, AND THE TABLE ABOVE NOW
+/// DESCRIBES A RUN THIS BINARY NO LONGER MAKES. Until this task the graph had NO activity, so the
+/// ceiling bounded nothing that existed; from here it carries `kernel::serving::serve`, which is a
+/// `loop` with no exit. A finite ceiling would therefore be a CLOCK ON THE DAEMON'S LIFE — the core
+/// would stop serving after so many turns, for no reason a user could name — and that is the one
+/// thing this number must not be. Decision A of §5 of the sub-project 2 design, delegated and taken.
+///
+/// ⚠️ WHAT IS GIVEN UP, SAID PLAINLY: with no ceiling, an activity that spins can no longer be
+/// caught HERE. `RunError::TurnLimitReached` remains reachable in the benches, which hand their own
+/// finite limits through `Parameters` (ADR-0034), and in the sub-project 2 campaign (task 10). In production the
+/// guard against a run that goes nowhere is an OS watchdog, which §5 assigns to sub-project 10 along
+/// with the clean shutdown. Declared, not pinned (gotcha #73).
+///
+/// ⚠️ AND THE SATURATION IS THE PRECEDENT `FOR_EVER` SET, in this same file: `u64::MAX` is not
+/// "never", it is "further than this run can reach", and the arithmetic is the same one the comment
+/// beside `FOR_EVER` measured — about 584 million years at one turn per millisecond, and turns are
+/// far faster than that.
+const EXECUTOR_TURN_LIMIT: u64 = u64::MAX;
 
 /// How much VRAM the machine has, in whole MiB (§5.1).
 ///
 /// # ⛔ It is DECLARED here, because the kernel has no way to ask
 ///
-/// Querying the GPU is an OS call, which I3 forbids the kernel, and none of the six port
-/// families supplies hardware capacity. So the total is a DELIVERED parameter like every
-/// other, and this binary is the somebody who resolves it — constraint 11 of §11, the same
-/// boundary `EXECUTOR_TURN_LIMIT` sits on.
+/// Querying the GPU is an OS call, which I3 forbids the kernel, and none of the port families
+/// supplies hardware capacity. So the total is a DELIVERED parameter like every other, and
+/// this binary is the somebody who resolves it — constraint 11 of §11, the same boundary
+/// `EXECUTOR_TURN_LIMIT` sits on.
 ///
 /// # Where the number comes from
 ///
@@ -146,6 +171,71 @@ const ARBITER_ID: ArbiterId = ArbiterId::new(0);
 /// path. Every test passes its OWN path, so nothing in the gate depends on this constant.
 const JOURNAL_PATH: &str = "journal.redb";
 
+/// Where the LAYOUT ARCHIVE lives, in production — the seventh port's store.
+///
+/// ⛔ A SECOND FILE AND NOT A SECOND TABLE IN THE JOURNAL, and the difference is ADR-0022: the
+/// journal is authoritative state and is BACKED UP AND ENCRYPTED; a window layout is neither. It is
+/// also what lets the layout archive fail to open WITHOUT stopping the start-up (decision 35),
+/// which sharing a file with the journal would make impossible.
+///
+/// ⚠️ RELATIVE TO THE WORKING DIRECTORY, exactly as `JOURNAL_PATH` is and declared for the same
+/// reason: where a per-user data directory belongs is a decision no ADR has taken, and inventing one
+/// here would be that decision taken by whoever typed the path. Every probe passes its OWN path.
+const LAYOUT_PATH: &str = "layout.redb";
+
+/// The name the GUI knocks on.
+///
+/// ⛔ IT IS PROTOCOL AND NOT A TUNING KNOB, and that is why it is named in this task's closing
+/// criterion: THE SHELL must open the SAME name, and nothing in the gate couples the two ends.
+/// ⛔ AND THE SHELL IS NOT A TASK OF THIS PLAN — the fake core binds THE SAME NAME, as a copy
+/// (`gui/fake-core/src/main.rs`, task 12, whose closing criterion compares the two literals — D45),
+/// the SPA never touches a socket, and §8 puts the end-to-end run in the shell "outside today's gate". The day the
+/// shell exists, the coupling is a probe; until then this literal is the whole of the agreement, and
+/// a fact of protocol living in one house with no index naming it is how a fact of protocol rots in
+/// silence.
+///
+/// ⛔ A NAMESPACED NAME AND NOT A PATH: `LocalSocketIpc::bound` resolves it through
+/// `to_ns_name::<GenericNamespaced>()`, which is what makes ONE string work as a named pipe on
+/// Windows and as a local socket on Linux — the two systems of ADR-0002 behind one line.
+///
+/// ⚠️ THE `harness-` PREFIX IS THE ONE THE BENCHES ALREADY USE, so that a stray socket left behind
+/// by a crash is recognisable as ours by name alone.
+const SOCKET_NAME: &str = "harness-core";
+
+/// The longest body the core will buffer from a peer (D9).
+///
+/// ⛔ DELIVERED RATHER THAN INVENTED, like `TOTAL_VRAM` and for the same reason (ADR-0034): the
+/// transport must not name a default, so the number is chosen HERE, where it is visible and can be
+/// varied. What it buys is written beside `LocalSocketIpc::max_body`: without a cap a peer declaring
+/// four gibibytes would be buffered for ever, because any four bytes are a valid length.
+///
+/// ⚠️ THE SIZE IS NOT MEASURED AND IS DECLARED AS SUCH. The largest message that climbs this wire is
+/// the layout package — `toJSON()` of `dockview` plus the active view — and no such package exists
+/// yet to measure. What the value has to be is COMFORTABLY ABOVE that and FAR BELOW a memory
+/// problem, and a mebibyte is both. ⛔ ITS TRIGGER IS THE FIRST PACKAGE REFUSED: a `SaveLayout` that
+/// comes back `MalformedMessage` is this line being too small, not a broken peer, and the remedy is
+/// this literal rather than a loosening of the transport.
+const MAX_BODY: usize = 1024 * 1024;
+
+/// How long the serving activity sleeps between turns (§5, ADR-0034).
+///
+/// ⛔ IT EXISTS BECAUSE THE REACTOR HAS NO I/O READINESS, which is entry 5 of §9 of the sub-project 2
+/// design, confirmed as-is by the owner on 2026-09-09: nothing can wake the core when a byte
+/// arrives, so the core LOOKS, on a rhythm. The tick is that rhythm, and it is the WORST-CASE
+/// LATENCY between the GUI speaking and the core hearing.
+///
+/// ⚠️ NOT MEASURED, AND DECLARED AS SUCH. What picks it is a trade with no measurement behind it
+/// yet: larger wastes nothing and makes the GUI feel slow, smaller costs a syscall per turn for
+/// latency nobody can perceive. Sixteen milliseconds is one frame at sixty hertz — the interval the
+/// GUI itself is already paced by, so the core cannot be the slower half of a round trip.
+/// ⛔ ITS TRIGGER IS THE FIRST PERCEIVED-LATENCY MEASUREMENT on the assembled shell, which this
+/// plan does not build (P-53): until somebody watches a round trip, any number here is an argument.
+///
+/// ⚠️ AND THE BENCHES DO NOT INHERIT IT: the tick is delivered through `Parameters`, so a probe
+/// hands its own — zero, where a turn must not wait (`Sleep::until`'s rule). That is what keeps the
+/// production value out of the gate's wall clock.
+const GUI_TICK: Millis = Millis::new(16);
+
 /// The audio quota, and the presentation quota of ADR-0033.
 ///
 /// ⛔ THEY ARE NOT SUBTRACTIONS, THEY ARE TWO PERMANENT GRANTS, and the difference is I2. A
@@ -194,6 +284,108 @@ const PRESENTATION_RESERVATION: ResourceProfile = ResourceProfile {
     preemption: Preemption::Never,
 };
 
+/// The one `SystemReactor`, seen from two places.
+///
+/// ⛔ IT EXISTS BECAUSE THE TWO SIGNATURES DISAGREE, not for tidiness: `Executor::new` takes the
+/// reactor BY VALUE and `kernel::serving::serve` takes a clock BY REFERENCE, so one of the two has
+/// to be a light copy over a single owner.
+///
+/// ⛔ AND BUILDING TWO `SystemReactor`s WOULD COMPILE AND BE WRONG. That type carries an `origin`
+/// anchored to `Instant::now()` INSIDE its constructor — its own doc calls it "THE ONLY ORIGIN IT
+/// HAS" — so two instances answer two different `Monotonic`s for the same real instant. The
+/// deadlines `serve` computes would then not be comparable with the ones the executor waits on:
+/// two independent truths about one fact, which is the shape of `E25`, at the layer that decides
+/// when an activity wakes.
+///
+/// ⚠️ THE SHAPE IS REPEATED ON PURPOSE AND THE DUPLICATION IS DECLARED RATHER THAN HIDDEN, and
+/// WHERE THE COPIES ARE IS WHAT THE COMMAND SAYS AND NOT THIS LINE —
+/// `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' | grep -v '///'`. ⛔ IT WALKS
+/// BOTH TREES ON PURPOSE: `gui/` is a sibling of `crates/`, it exists already, and task 12 of
+/// this plan puts a copy of its own in `gui/fake-core`, which a command looking only under
+/// `crates/` could never see. ⛔ AND THE SECOND HALF IS WHAT MAKES IT BLIND TO THE LINE ABOVE:
+/// without it the command COUNTS ITS OWN CITATION and answers one more than there are —
+/// measured on 2026-09-19, four against three. ⚠️ Its limit, declared rather than hidden: moved
+/// into a `//` instead of a `///`, it would count itself again. None of the copies can be
+/// imported in any case — a `tests/` file is a crate of its own, a binary exports nothing, and
+/// `gui/fake-core` is outside this workspace altogether.
+///
+/// ⛔ WHETHER IT SHOULD RISE INTO `simulator` IS DECIDED, AND THE ANSWER IS NO: D34 keeps it
+/// local (P-59, P-74). This crate refuses to depend on `simulator` — its manifest says so — so a
+/// common home there could not serve the callers that live outside it, and the reactors the
+/// copies wrap are not even the same type. One home for all of them would want a wrapper generic
+/// over `R: Reactor`, which is more machinery than the lines it would save.
+struct SharedClock<'a> {
+    inner: &'a RefCell<SystemReactor>,
+}
+
+impl Reactor for SharedClock<'_> {
+    fn now(&self) -> Monotonic {
+        self.inner.borrow().now()
+    }
+
+    fn wall_time(&self) -> WallTime {
+        self.inner.borrow().wall_time()
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        self.inner.borrow_mut().wait_until(deadline)
+    }
+}
+
+/// The layout archive, open or not — and the core starts either way (decision 35 of §8).
+///
+/// ⛔ IT LIVES HERE AND NOT IN THE PORT, and that is the whole decision. `FileCustody::open` hands
+/// back a `Result` and `Core::new` wants a `Custody` BY VALUE, so between the two there is a value
+/// missing, and the only place that knows the core must start anyway is the composition root. The
+/// two roads not taken: making `open` always hand back a custody would change a task already
+/// written and throw away the name of the failure that `OpenError` carries; a SECOND variant of
+/// `CustodyError` would give the port a word for a state that belongs to the root, and it is the
+/// variant with no caller that `CustodyError`'s own doc refuses.
+///
+/// ⛔ AND NOTHING NEW IS NEEDED IN THE ACTIVITY: `kernel::serving` already turns
+/// `Err(CustodyError::Unavailable)` into `LayoutState::Unavailable`, so decision 35 falls out of
+/// this type without a line anywhere else — which is what §8 predicted in those words, "no new
+/// operation in the port".
+///
+/// ⚠️ DECLARED RESIDUAL — WHY THE ARCHIVE WOULD NOT OPEN DOES NOT REACH THE OPERATOR. `OpenError`
+/// is dropped here rather than carried, because a field only `Debug` reads is flagged dead (the
+/// paragraph beside `main` measured exactly that), and printing from `run_the_graph` would take on
+/// the job that same function's doc gives to `main` alone. ⛔ ITS TRIGGER IS THE FIRST DIAGNOSTIC
+/// CHANNEL the daemon grows — sub-project 10, with the clean shutdown — and until then the operator
+/// sees the effect, "layout unavailable", and not the cause.
+enum MaybeCustody {
+    Open(FileCustody),
+    Unavailable,
+}
+
+impl MaybeCustody {
+    /// ⛔ IT SWALLOWS THE ERROR ON PURPOSE, which is the sentence above turned into code: a layout
+    /// archive that will not open is NOT authoritative state (I1), so it does not stop a start-up
+    /// the way the journal does.
+    fn open(path: &Path) -> Self {
+        match FileCustody::open(path) {
+            Ok(custody) => MaybeCustody::Open(custody),
+            Err(_) => MaybeCustody::Unavailable,
+        }
+    }
+}
+
+impl Custody for MaybeCustody {
+    fn keep(&mut self, key: CustodyKey, bytes: &[u8]) -> Result<(), CustodyError> {
+        match self {
+            MaybeCustody::Open(custody) => custody.keep(key, bytes),
+            MaybeCustody::Unavailable => Err(CustodyError::Unavailable),
+        }
+    }
+
+    fn retrieve(&self, key: CustodyKey) -> Result<Option<Vec<u8>>, CustodyError> {
+        match self {
+            MaybeCustody::Open(custody) => custody.retrieve(key),
+            MaybeCustody::Unavailable => Err(CustodyError::Unavailable),
+        }
+    }
+}
+
 /// Why the start-up did not complete.
 ///
 /// ⛔ THREE VARIANTS, AND THE THIRD IS THE ONE THAT CLOSES `E41`. An impossible VRAM
@@ -208,6 +400,26 @@ const PRESENTATION_RESERVATION: ResourceProfile = ResourceProfile {
 /// ⚠️ NO `PartialEq`, AND IT IS FORCED RATHER THAN CHOSEN: `OpenError` derives `Debug` alone,
 /// so an `assert_eq!` on this type does not compile and the probes match instead. `Debug` is
 /// what the probes and `main` both need, and it is the only thing `OpenError` gives.
+///
+/// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE VARIANTS ARE NOW SIX, AND THE PARAGRAPH
+/// ABOVE IS ABOUT THE THIRD, WHICH IS UNCHANGED. The wiring grew three failures it can name and
+/// did not have: the journal will not replay at all, so the step number to carry on from cannot
+/// be found (`numbering::seeded_from`); it replays, and a record in it is not one this build can
+/// read, so the policy in force cannot be answered (ADR-0006, `policy_now`); and the local socket
+/// will not bind, which on both systems means somebody is already listening on that name — a
+/// SECOND core, which is exactly what a single-instance process must refuse to be.
+///
+/// ⛔ THE FIRST TWO ARE TWO DIFFERENT FAULTS AND NOT ONE SAID TWICE, AND THE ORDER IS WHAT MAKES
+/// THEM SO. Both re-reads go through the same `Journal::replay`, so whichever runs FIRST takes
+/// every replay failure and the second can only fail on what replay handed back. `seeded_from`
+/// runs first and replaying is its ONLY way to fail, so `Numbering` means "the archive would not
+/// re-read"; `policy_now` runs second, on a replay that worked, so `Policy` means "it re-read,
+/// and a record in it is not one this build understands". Written the other way round —
+/// `policy_now` first — `Numbering` would have had no possible producer at all, and its sentence
+/// in `main` would be one no operator could ever see.
+///
+/// ⚠️ Each is spelt out in `main` for the reason written there: `#[derive(Debug)]` does not count
+/// as a read, so folding them would flag their payloads dead.
 #[derive(Debug)]
 enum StartupError {
     /// The journal file would not open. Two things a human has to tell apart live inside
@@ -217,6 +429,20 @@ enum StartupError {
     ReservedQuota { name: &'static str },
     /// The run stopped without finishing.
     Run(RunError),
+    /// The journal would not say which VRAM policy is in force (ADR-0006, `policy_now`).
+    Policy(PolicyError),
+    /// The journal would not say which step number to carry on from (`numbering::seeded_from`).
+    /// ⛔ DECLARED, NOT PINNED (gotcha #73): the re-read runs FIRST, so reaching this variant
+    /// wants a `redb` archive that will not replay at all — a corrupt DATABASE, not a corrupt
+    /// record — and nothing in this workspace knows how to make one. ITS TRIGGER IS THE FIRST
+    /// BENCH THAT DOES. It stays because it is reachable in production; what is missing is the
+    /// provocation, not the road.
+    Numbering(JournalError),
+    /// The local socket would not bind. ⛔ ON BOTH SYSTEMS THE ORDINARY CAUSE IS A SECOND CORE
+    /// ALREADY LISTENING, and refusing is the point: `daemon` is the single instance of ADR-0004,
+    /// and two cores on one journal is the one thing the exclusive lock cannot catch, because the
+    /// second one never gets that far.
+    Ipc(std::io::Error),
 }
 
 /// Builds the production graph and runs the executor, handing back what the start-up said.
@@ -227,22 +453,22 @@ enum StartupError {
 /// and a principle nobody can check is an intention. `main` keeps the process-level job,
 /// what to print and what to exit with, and nothing else.
 ///
+/// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — NO TEST CALLS IT ANY MORE, AND THE PARAGRAPH
+/// ABOVE IS DATED. It hands `u64::MAX`, so a probe calling it would HANG rather than fail (D28);
+/// every probe goes through `run_the_graph` with a limit of its own. What this function chooses —
+/// the four production literals and the socket name — is walked by nothing: declared, not
+/// covered. The sentence below about "the test that already existed" describes that day, not this.
+///
 /// ⛔ THE PATH IS AN ARGUMENT, AND THAT IS NOT CAUTION. Handed a `FileJournal`, the test that
 /// already existed starts writing a REAL FILE; a fixed path in a shared directory is gotcha
 /// #52, and on Windows the clean-up of an open file fails silently, so the red would come out
 /// on Linux — the project's second system.
-fn run_the_production_graph(journal_path: &Path) -> Result<(), StartupError> {
+fn run_the_production_graph(journal_path: &Path, layout_path: &Path) -> Result<(), StartupError> {
     run_the_graph(
-        // ⚠️ THE GUI TICK IS ZERO HERE, AND AT EVERY OTHER CALL SITE OF THIS FILE -- the ones in
-        // the `tests` module below; how many they are,
-        // `grep 'Millis::new(0)' <this file> | grep -vc '^\s*//'` says -- it counts the code
-        // lines and not this one, which a bare `grep -c` would add -- BECAUSE NOBODY READS IT
-        // YET: this graph spawns no activity at all, so
-        // `Parameters::gui_tick` has no consumer in this binary. Task 9 of the sub-project 2
-        // part 2 plan brings both -- `kernel::serving::serve` and the delivered value, beside
-        // the other constants above.
-        Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+        Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID, GUI_TICK),
         journal_path,
+        layout_path,
+        SOCKET_NAME,
     )
 }
 
@@ -254,26 +480,74 @@ fn run_the_production_graph(journal_path: &Path) -> Result<(), StartupError> {
 /// would be reachable by no check at all. It is also the shape ADR-0034 already imposes
 /// everywhere else — the value is DELIVERED at construction, and here it is delivered one
 /// level further down.
-fn run_the_graph(parameters: Parameters, journal_path: &Path) -> Result<(), StartupError> {
-    // ⚠️ THE JOURNAL HAS NO CONSUMER IN THIS BINARY YET, and that is what this task delivers
-    // rather than a placeholder: it is OPENED, so the file exists, the exclusive lock is
-    // taken and a bad path stops the start-up here instead of at the first write. The day
-    // something journals, it journals into this one.
-    let _journal = FileJournal::open(journal_path).map_err(StartupError::Journal)?;
+/// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE SOCKET NAME IS AN ARGUMENT TOO, FOR THE REASON
+/// THE PATH ALREADY IS. The doc of `run_the_production_graph` says a fixed path in a shared directory is gotcha #52;
+/// a fixed socket NAME is worse, because it is shared across the whole machine rather than a
+/// directory: two probes binding `SOCKET_NAME` at once make the second fail with "already in use",
+/// and `cargo test` runs them at once BY DEFAULT. Every probe hands its own name, built from
+/// `line!()` and the process id, exactly as `private_dir_for_line` does (P-55).
+///
+/// ⚠️ NO PROBE HERE WATCHES A CLIENT DIE: this binary exposes no `Core`, so the wiring of
+/// `ClientGrants::on_disconnect` is held by the bench of task 7 and by the campaign of task 10, on
+/// `Core::attending` (R4-9). In sub-project 2 no ordinary grant exists to give back (D5).
+fn run_the_graph(
+    parameters: Parameters,
+    journal_path: &Path,
+    layout_path: &Path,
+    socket_name: &str,
+) -> Result<(), StartupError> {
+    // ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE JOURNAL HAS A CONSUMER NOW, and the comment
+    // that stood here said it did not: "THE JOURNAL HAS NO CONSUMER IN THIS BINARY YET … The day
+    // something journals, it journals into this one." That day is this one. It is still opened
+    // first, so a bad path stops the start-up here rather than at the first write.
+    let journal = FileJournal::open(journal_path).map_err(StartupError::Journal)?;
 
-    let _arbiter = build_the_arbiter(parameters)?;
+    // ⛔ THE TWO PROJECTIONS ARE READ BEFORE THE JOURNAL IS HANDED OVER, and the order is forced:
+    // `Core::new` takes it by value. Both re-read the whole archive, which is the cost
+    // `Journal::replay` declares of itself.
+    //
+    // ⛔ AND WHICH OF THE TWO GOES FIRST IS LOAD-BEARING RATHER THAN TIDY. They share one
+    // `Journal::replay`, so whichever runs first takes every replay failure and the second can
+    // only fail on what replay handed back. Seeding first is what gives `StartupError::Numbering`
+    // and `StartupError::Policy` two different meanings instead of one; the doc of that enum
+    // argues it, and the other order left `Numbering` with no producer at all.
+    let steps = numbering::seeded_from(&journal).map_err(StartupError::Numbering)?;
 
-    // ⚠️ THE CELL IS DECLARED FIRST, and the order is load-bearing: `Executor` borrows it for
-    // `'a`, and locals drop in reverse order of declaration, so the executor goes before the
-    // cell it points at. Swapping these two lines does not compile.
+    // ⛔ AND THE `unwrap_or` IS WHERE THE DEFAULT OF ADR-0006 LIVES — D27. `policy_now` answers an
+    // `Option` because the kernel may not name a default (ADR-0034), and `None` means NOBODY EVER
+    // CHANGED IT rather than "remote". Folding the two inside the kernel would leave this root
+    // unable to tell those apart.
+    let policy = arbiter::policy_now(&journal)
+        .map_err(StartupError::Policy)?
+        .unwrap_or(VramPolicy::Remote(RemotePolicy));
+
+    let arbiter = build_the_arbiter(parameters, policy)?;
+
+    let ipc = LocalSocketIpc::bound(socket_name, Progressive::starting_at(0), MAX_BODY)
+        .map_err(StartupError::Ipc)?;
+
+    // ⚠️ THE DECLARATION ORDER IS LOAD-BEARING and swapping two lines does not compile: the
+    // executor borrows `sleep`, `core` and `clock` for its whole life, `clock` borrows `reactor`,
+    // and locals drop in reverse order of declaration.
+    let reactor = RefCell::new(SystemReactor::new());
+    let core = RefCell::new(Core::new(
+        ipc,
+        journal,
+        MaybeCustody::open(layout_path),
+        arbiter,
+        steps,
+        parameters,
+    ));
+    let clock = SharedClock { inner: &reactor };
     let sleep = Sleep::new();
 
     let mut executor = Executor::new(
         SequentialRng::new(),
-        SystemReactor::new(),
+        SharedClock { inner: &reactor },
         parameters,
         &sleep,
     );
+    executor.spawn(serving::serve(&core, &clock, &sleep));
 
     executor.run().map_err(StartupError::Run)
 }
@@ -293,13 +567,15 @@ fn run_the_graph(parameters: Parameters, journal_path: &Path) -> Result<(), Star
 /// ⚠️ THE TWO GRANTS ARE DROPPED HERE AND THE RESERVATIONS ARE NOT, and that is the point
 /// rather than an oversight: "permanent" is not a type, it is "nobody calls release". The
 /// arbiter keeps both in its books until somebody hands a grant back, and nobody ever will.
-fn build_the_arbiter(parameters: Parameters) -> Result<Arbiter, StartupError> {
-    let mut arbiter = Arbiter::new(
-        parameters,
-        // ⛔ REMOTE is the default of ADR-0006, and reopening that turns a coordinated swap
-        // from an exception into the normal case.
-        VramPolicy::Remote(RemotePolicy),
-    );
+fn build_the_arbiter(parameters: Parameters, policy: VramPolicy) -> Result<Arbiter, StartupError> {
+    // ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE POLICY IS HANDED IN, AND THE COMMENT THAT WAS
+    // HERE SAID THE OPPOSITE. It read: "REMOTE is the default of ADR-0006, and reopening that turns
+    // a coordinated swap from an exception into the normal case." The DEFAULT is unchanged and is
+    // still remote; what changed is WHO SAYS SO. The recall at the head of ADR-0006 splits the two
+    // facts: "the profile gives the DEFAULT, and the CURRENT policy is the projection of the
+    // journal". The default now lives at the ONE call site that re-reads the journal, as an
+    // `unwrap_or`, and this function names neither.
+    let mut arbiter = Arbiter::new(parameters, policy);
 
     let _audio = reserve(&mut arbiter, &AUDIO_RESERVATION)?;
     let _presentation = reserve(&mut arbiter, &PRESENTATION_RESERVATION)?;
@@ -369,8 +645,14 @@ fn reserve(arbiter: &mut Arbiter, profile: &ResourceProfile) -> Result<Grant, St
 /// that with an `#[allow]` is a prohibition switched off (gotcha #13), and emptying the two
 /// payloads would throw away the only thing that says WHICH file and WHICH failure. Reading
 /// them is what the fix had to be, and the operator gets three different sentences out of it.
+///
+/// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THEY ARE SIX. The reason is unchanged and is
+/// the reason the three new ones are also spelt out: a single arm would leave every payload
+/// flagged "never read". ⚠️ AND THE RESIDUAL ABOVE GREW WITH THEM: none of the six error branches
+/// is walked by a check, and three of them now name values — the socket, the policy, the counter
+/// — that only `main` knows how to print.
 fn main() {
-    match run_the_production_graph(Path::new(JOURNAL_PATH)) {
+    match run_the_production_graph(Path::new(JOURNAL_PATH), Path::new(LAYOUT_PATH)) {
         Ok(()) => println!(
             "daemon: the graph is wired, the two reserved quotas are held, and the executor ran \
              with no activities."
@@ -391,6 +673,22 @@ fn main() {
         Err(StartupError::Run(error)) => {
             stop(&format!(
                 "the executor stopped without finishing: {error:?}"
+            ));
+        }
+        Err(StartupError::Policy(error)) => {
+            stop(&format!(
+                "the journal at {JOURNAL_PATH} would not say which VRAM policy is in force: {error:?}"
+            ));
+        }
+        Err(StartupError::Numbering(error)) => {
+            stop(&format!(
+                "the journal at {JOURNAL_PATH} would not say which step to carry on from: {error:?}"
+            ));
+        }
+        Err(StartupError::Ipc(error)) => {
+            stop(&format!(
+                "the channel {SOCKET_NAME} would not bind, and the usual cause is a core already \
+                 running: {error:?}"
             ));
         }
     }
@@ -431,6 +729,22 @@ mod tests {
     // this repository does not switch off with an `#[allow]` (gotcha #13).
     use kernel::arbiter::MakeRoom;
 
+    // ⚠️ THE WIRE IS A BENCH-ONLY IMPORT, for the same reason `MakeRoom` is: the binary itself
+    // never encodes or decodes a message -- `kernel::serving` does that on the other side of the
+    // port -- so at the top of the file every one of these would be an `unused import`. The peer
+    // of `a_peer_that_says` is the only thing here that speaks the wire.
+    use kernel::framing;
+    use kernel::wire::ipc::{build_stamp, IpcMessage, LayoutState, PolicyName};
+
+    // ⚠️ AND THE TWO BELOW ARE BENCH-ONLY FOR A DIFFERENT REASON: the binary never NAMES a
+    // policy other than the default and never writes a record of its own, so they reach this file
+    // only through the transition `the_policy_in_the_journal_is_the_one_the_arbiter_starts_on`
+    // arranges, and through the garbage record `a_record_this_build_cannot_read_...` writes.
+    use kernel::arbiter::LocalPolicy;
+    // ⚠️ `Journal` IS THE TRAIT AND NOT THE TYPE: `intent` is a method of the port, and the
+    // binary itself never calls it -- it hands the journal over to `Core` and `Core` writes.
+    use kernel::ports::journal::{Journal, StepId};
+
     /// ⛔ A DIRECTORY OF ITS OWN PER CALL SITE, from `line!()`, and it is not caution: a
     /// fixed path in a shared directory is gotcha #52, measured at milestone 3. Windows
     /// refuses to delete a file that is open, so the removal FAILS SILENTLY there and the
@@ -445,6 +759,102 @@ mod tests {
         dir
     }
 
+    /// ⛔ A NAME OF ITS OWN PER CALL SITE, and it is the socket twin of `private_dir_for_line`
+    /// (P-55). A socket name is machine-wide rather than directory-wide, so two probes sharing one
+    /// pass alone and fail together — the flakiest red there is — and `cargo test` runs them at
+    /// once by default. The process id is in it because two `cargo test` invocations can overlap.
+    fn socket_name_for_line(line: u32) -> String {
+        format!("harness-daemon-{}-{}", std::process::id(), line)
+    }
+
+    /// How many messages the core sends after a valid `Hello` -- the welcome of sequence 1.
+    ///
+    /// ⛔ MEASURED ON THE DISPATCH OF TASK 7, `greet` in `crates/kernel/src/serving.rs`:
+    /// `Accepted`, `Degradation`, `Policy`, `Layout`, `Steps`. The bench of that task pins the same
+    /// number in `the_welcome_is_the_five_messages_of_sequence_one`, so the day the welcome grows,
+    /// that probe goes red before this constant does.
+    const WELCOME: usize = 5;
+
+    /// The turn budget of every probe that has a PEER. ⛔ IT IS WALL CLOCK IN DISGUISE (R4-6): the
+    /// listener lives only inside `run_the_graph`, and the peer connects from a thread the OS
+    /// schedules when it likes, so a short run can end before the peer ever knocks. A hundred
+    /// thousand turns at a zero tick is a fraction of a second of polling, and it is the same
+    /// number the turn probe delivers. Probes WITHOUT a peer keep their own small budgets.
+    const WITH_A_PEER: u64 = 100_001;
+
+    /// A peer on the other end of the wire: it connects, says its piece, and hands back what it
+    /// heard.
+    ///
+    /// ⛔ IT IS WHAT MAKES THE TURN PROBE NON-VACUOUS (P-52). `serve` is a `loop` with no exit, so
+    /// `Executor::run` answers `Err(TurnLimitReached)` at ANY limit — one turn or a hundred
+    /// thousand — and reading that value alone would be green over an activity that never ran. What
+    /// only a peer can say is THAT THE CORE IS SERVING.
+    ///
+    /// ⛔ IT CANNOT HANG, AND THE REASON IS THE DROP ORDER RATHER THAN A TIMEOUT: when
+    /// `run_the_graph` returns, its locals fall, the `LocalSocketIpc` falls with them, and the
+    /// server end of this connection closes — so `read` here comes back `Ok(0)` and the loop ends.
+    /// Every caller therefore `join`s AFTER the run, never before.
+    ///
+    /// ⚠️ THE CONNECT IS A `yield_now` LOOP AND NOT A SLEEP, the shape `ipc_contract_real.rs` uses:
+    /// the listener exists from `bound()`, which happens before `run()`, but this thread may be
+    /// scheduled first. ⛔ AND THE LOOP HAS A WALL-CLOCK DEADLINE (R4-6): the listener lives only
+    /// inside `run_the_graph`, so if the run ends before this thread connects, `connect` fails FOR
+    /// EVER and a bare loop would hang the gate -- the worst red there is. Five seconds is not a
+    /// tuning: it is an order of magnitude above any scheduling delay, and the panic names this line.
+    fn a_peer_that_says(
+        name: String,
+        said: Vec<IpcMessage>,
+        wants: usize,
+    ) -> std::thread::JoinHandle<Vec<IpcMessage>> {
+        std::thread::spawn(move || {
+            use interprocess::local_socket::{prelude::*, GenericNamespaced, Stream};
+            use std::io::{Read, Write};
+
+            let ns = name.to_ns_name::<GenericNamespaced>().expect("a namespaced name");
+            let started = std::time::Instant::now();
+            let mut stream = loop {
+                match Stream::connect(ns.clone()) {
+                    Ok(stream) => break stream,
+                    Err(error) => {
+                        assert!(
+                            started.elapsed() < std::time::Duration::from_secs(5),
+                            "the peer could not connect within five seconds ({error:?}): the run \
+                             ended before this thread got to the listener (R4-6)"
+                        );
+                        std::thread::yield_now();
+                    }
+                }
+            };
+            for message in &said {
+                let bytes = message.encode().expect("the peer frames what it sends");
+                stream.write_all(&bytes).expect("the peer writes");
+            }
+
+            let mut buffer = Vec::new();
+            let mut heard = Vec::new();
+            let mut chunk = [0_u8; 4_096];
+            while heard.len() < wants {
+                match stream.read(&mut chunk) {
+                    Ok(0) => break,
+                    Ok(read) => buffer.extend_from_slice(&chunk[..read]),
+                    Err(_) => break,
+                }
+                // ⚠️ `take_frame` AND NOT `unframe`: the buffer ordinarily holds a frame and a half,
+                // which `unframe` refuses by design (P-13). It hands back where the next frame starts,
+                // and `IpcMessage::decode` is given the WHOLE frame, envelope included, because
+                // `decode` unframes what it is given (task 2's bench says so in those words). Measured
+                // at the plan review (R4-2): `decode(body)` answered `Err` on every message.
+                while let Some((_, next)) = framing::take_frame(&buffer) {
+                    heard.push(
+                        IpcMessage::decode(&buffer[..next]).expect("the core sends what it says"),
+                    );
+                    buffer.drain(..next);
+                }
+            }
+            heard
+        })
+    }
+
     /// The arbiter of the PRODUCTION parameters, or a red that NAMES the quota that fell.
     ///
     /// ⛔ IT HOLDS SOMETHING INSTEAD OF ONLY SHORTENING TWO CALL SITES, which is the shape a
@@ -457,55 +867,52 @@ mod tests {
     /// `Debug`, so the `Result` cannot be formatted as a whole. Taking the error out first is
     /// what lets the failure say which quota fell.
     fn the_production_arbiter() -> Arbiter {
-        match build_the_arbiter(Parameters::new(
-            EXECUTOR_TURN_LIMIT,
-            TOTAL_VRAM,
-            ARBITER_ID,
-            Millis::new(0),
-        )) {
+        match build_the_arbiter(
+            Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID, GUI_TICK),
+            VramPolicy::Remote(RemotePolicy),
+        ) {
             Ok(arbiter) => arbiter,
             Err(error) => panic!("a permanent quota of ADR-0033 must be granted: {error:?}"),
         }
     }
 
-    /// What this buys, stated exactly: THE GRAPH ASSEMBLES AND RUNS. Not that it DOES
-    /// anything -- no activity is spawned, and there is nothing to do yet -- but that the real
-    /// `SequentialRng`, the real `SystemReactor`, the real `FileJournal`, the arbiter with the
-    /// two permanent grants of ADR-0033, the delivered `Parameters` and the `Sleep` cell fit
-    /// together and the executor comes back saying the run finished.
+    /// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE NAME CHANGED BECAUSE THE CLAIM DID. There is no
+    /// "completion" any more: the graph now carries `kernel::serving::serve`, a `loop` with no exit,
+    /// so a run that ENDED would mean the core stopped serving. What the run terminating proves is
+    /// that the turns ran out, which is the delivered limit reaching the executor.
     ///
-    /// ⚠️ IT CALLS THE SAME FUNCTION `main` CALLS, which is why that function exists. A test
-    /// that rebuilt the wiring itself would be a second copy, and on the day the two drifted
-    /// apart this one would go on passing about a graph nobody ships.
+    /// ⛔ AND IT CANNOT GO THROUGH `run_the_production_graph` ANY MORE, which is the cost D28
+    /// declares: that function hands `u64::MAX`, so calling it here would HANG rather than fail —
+    /// the worst way for a gate to break, because a gate that does not come back says nothing to
+    /// anybody. The limit is delivered instead, which is the shape ADR-0034 imposes everywhere.
     ///
-    /// ⚠️ `assert!` AND NOT `assert_eq!`, and the reason is measured rather than stylistic:
-    /// `StartupError` carries an `OpenError`, which derives `Debug` ALONE, so the enum cannot
-    /// derive `PartialEq` and `assert_eq!(…, Ok(()))` does not compile. The `Debug` goes INTO
-    /// THE MESSAGE, because a bare `is_ok()` would not say which of the three branches fired.
+    /// ⛔ THE TICK IS ZERO, AND IT IS NOT A SHORTCUT (P-51). `serve` naps every turn, and this
+    /// binary mounts the REAL `SystemReactor`, whose `wait_until` is a real sleep — so a production
+    /// tick would cost tick × turns of wall clock inside `bash scripts/gate.sh`. A deadline already
+    /// reached makes the activity READY instead (`Sleep::until`'s own rule), so the turn is polling
+    /// and the ceiling costs milliseconds. ⚠️ What the zero tick does NOT buy is that
+    /// `Reactor::wait_until` is reached on this graph; that half is the sub-project 2 campaign's
+    /// (task 10), where the clock is virtual.
     ///
-    /// ⛔ DECLARED RESIDUAL -- IT DOES NOT COVER THE VALUE OF `EXECUTOR_TURN_LIMIT`, and the
-    /// two directions were measured rather than assumed:
-    ///
-    /// - setting the constant to `0` leaves this test GREEN. `Executor::run` is
-    ///   `while !self.tasks.is_empty()`, so with nothing spawned the body never runs and the
-    ///   counter is never compared with the limit. Any value whatsoever passes here;
-    /// - spawning a never-ready activity turns it RED with `Err(TurnLimitReached)`, which is
-    ///   what says the assertion is not unconditionally true and that the delivered limit
-    ///   really does reach the executor.
-    ///
-    /// So what this test holds is the WIRING -- that the graph assembles and the run
-    /// terminates -- and not the sizing of the number. The number gets its own check when
-    /// something is spawned to exercise it.
+    /// ⚠️ THE RESIDUAL OF THIS PROBE GREW, and it is the same residual said wider: it did not cover
+    /// the VALUE of `EXECUTOR_TURN_LIMIT`, and now it does not cover the wiring of
+    /// `run_the_production_graph` either — the four production literals it chooses are walked by
+    /// nothing. The doc of that function carries the recall.
     #[test]
-    fn the_production_graph_assembles_and_the_executor_runs_to_completion() {
+    fn the_production_graph_assembles_and_the_serving_activity_takes_the_turns() {
         let dir = private_dir_for_line(line!());
 
-        let outcome = run_the_production_graph(&dir.join("journal.redb"));
-
-        assert!(
-            outcome.is_ok(),
-            "the production graph must assemble: {outcome:?}"
+        let outcome = run_the_graph(
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &dir.join("journal.redb"),
+            &dir.join("layout.redb"),
+            &socket_name_for_line(line!()),
         );
+
+        match outcome {
+            Err(StartupError::Run(RunError::TurnLimitReached)) => {}
+            other => panic!("the graph must assemble and the serving loop must run: {other:?}"),
+        }
     }
 
     /// ⛔ WHAT THIS BUYS THAT THE ASSEMBLY TEST DOES NOT: that the journal is really OPENED.
@@ -514,17 +921,32 @@ mod tests {
     /// test above would stay green over a graph with no durable store in it at all. The file
     /// on the disk is the only thing that tells the two apart, and it is there because
     /// `FileJournal::open` COMMITS on every open, which is written down beside that function.
+    ///
+    /// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — TWO CLAUSES ABOVE ARE DATED, AND WHAT THIS
+    /// PROBE BUYS IS NOT ONE OF THEM. The expected outcome is now `Err(TurnLimitReached)`, for the
+    /// reason the probe above carries: the graph runs `kernel::serving::serve`, a `loop` with no
+    /// exit, so an `Ok(())` would mean the core stopped serving — and the call goes through
+    /// `run_the_graph` with a limit of its own, because `run_the_production_graph` hands
+    /// `u64::MAX` and would hang (D28). And "nothing in this binary reads the journal yet" stopped
+    /// being true today: `numbering::seeded_from` and `arbiter::policy_now` both re-read it and
+    /// `Core` is handed it, so dropping the `open` line no longer compiles at all. What tells the
+    /// two wirings apart is unchanged — only an `open` that really happened leaves a file behind.
     #[test]
     fn the_production_graph_leaves_its_journal_on_the_disk() {
         let dir = private_dir_for_line(line!());
         let path = dir.join("journal.redb");
 
-        let outcome = run_the_production_graph(&path);
-
-        assert!(
-            outcome.is_ok(),
-            "the production graph must assemble: {outcome:?}"
+        let outcome = run_the_graph(
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &path,
+            &dir.join("layout.redb"),
+            &socket_name_for_line(line!()),
         );
+
+        match outcome {
+            Err(StartupError::Run(RunError::TurnLimitReached)) => {}
+            other => panic!("the graph must assemble and the serving loop must run: {other:?}"),
+        }
         assert!(
             path.is_file(),
             "the journal must be a real file, and this is what says `open` was reached"
@@ -542,7 +964,12 @@ mod tests {
     fn a_journal_that_cannot_be_opened_stops_the_start_up() {
         let dir = private_dir_for_line(line!());
 
-        let outcome = run_the_production_graph(&dir.join("no-such-directory").join("journal.redb"));
+        let outcome = run_the_graph(
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &dir.join("no-such-directory").join("journal.redb"),
+            &dir.join("layout.redb"),
+            &socket_name_for_line(line!()),
+        );
 
         match outcome {
             Err(StartupError::Journal(_)) => {}
@@ -567,6 +994,16 @@ mod tests {
     /// gotcha #14. ✅ MEASURED, not feared: with the wiring swapped to
     /// `VramPolicy::Local(LocalPolicy)` and this line absent, the WHOLE WORKSPACE stayed green
     /// -- 253 passed, 0 failed. The mutant was alive.
+    ///
+    /// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE POLICY ASSERTION NOW HOLDS WHAT THE
+    /// HELPER CHOOSES AND NOT WHAT THE ROOT CHOOSES, AND THE PARAGRAPH ABOVE DESCRIBES THE OLD
+    /// WIRING. `build_the_arbiter` is handed a policy today, so `the_production_arbiter` is the
+    /// one that names `VramPolicy::Remote(RemotePolicy)` and this line reads it straight back.
+    /// The line STAYS, because the two together are still what would go red if the helper started
+    /// naming something else. ⛔ WHAT MOVED IS THE CLAIM ABOUT THE ROOT: that the composition root
+    /// starts on the DEFAULT of ADR-0006 — and on what the journal says instead, when it says
+    /// anything — is held by `the_policy_in_the_journal_is_the_one_the_arbiter_starts_on`, which
+    /// reads it where it now lives, at the `unwrap_or` of `run_the_graph`.
     ///
     /// ⚠️ `match` AND NOT `assert!(… .is_ok())`, and it is forced rather than chosen:
     /// `build_the_arbiter` hands back an `Arbiter`, which has no `Debug`, so the `Result`
@@ -702,6 +1139,8 @@ mod tests {
         let outcome = run_the_graph(
             Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(1_500), ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
+            &dir.join("layout.redb"),
+            &socket_name_for_line(line!()),
         );
 
         match outcome {
@@ -725,6 +1164,8 @@ mod tests {
         let outcome = run_the_graph(
             Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(500), ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
+            &dir.join("layout.redb"),
+            &socket_name_for_line(line!()),
         );
 
         match outcome {
@@ -737,6 +1178,316 @@ mod tests {
                     "a permanent quota bigger than the machine must stop the start-up: {other:?}"
                 )
             }
+        }
+    }
+
+    /// ⛔ WHAT THIS BUYS THAT THE ASSEMBLY PROBE DOES NOT: that the core is STILL SERVING when the
+    /// turns run out. The assembly probe reads `Err(TurnLimitReached)`, and that value comes back at
+    /// ANY limit because `serve` never finishes — so on its own it cannot tell a hundred thousand
+    /// turns from none. ✅ MEASURED, not feared: with the limit cut to `0` and no peer at all, `run`
+    /// answers exactly the same `Err(TurnLimitReached)` without one turn of serving — the executor
+    /// refuses before the first poll (R4-7) — 2026-09-19. What separates the two runs is what the
+    /// PEER heard, never the value of `run`, and that measurement is what makes the assertion below
+    /// an oracle rather than a restatement of the loop.
+    ///
+    /// ⛔ AND IT IS THE PROBE §5 ASKS FOR — "the graph with the GUI stays alive past a hundred
+    /// thousand turns" — which is the number the old `EXECUTOR_TURN_LIMIT` stopped at. A daemon that
+    /// died there would have died after minutes of ordinary use, silently, with `TurnLimitReached`
+    /// nobody reads.
+    ///
+    /// ⚠️ THE PEER IS JOINED AFTER THE RUN, always: the server end closes when the run's locals
+    /// fall, and that close is what ends the peer's read loop. Joining first would deadlock.
+    #[test]
+    fn the_graph_with_the_gui_stays_alive_past_a_hundred_thousand_turns() {
+        let dir = private_dir_for_line(line!());
+        let name = socket_name_for_line(line!());
+
+        // ⚠️ THE PEER SPEAKS BEFORE THE RUN STARTS, and that is allowed: the listener exists from
+        // `bound()` inside `run_the_graph`, and the helper retries the connect until it does.
+        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 1);
+
+        let outcome = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &dir.join("journal.redb"),
+            &dir.join("layout.redb"),
+            &name,
+        );
+
+        match outcome {
+            Err(StartupError::Run(RunError::TurnLimitReached)) => {}
+            other => panic!("the serving loop must still be looping when the turns end: {other:?}"),
+        }
+
+        let heard = peer.join().expect("the peer thread does not panic");
+        assert!(
+            matches!(heard.first(), Some(IpcMessage::Accepted { .. })),
+            "the core must have SERVED the peer, which is what the turn count alone cannot say: \
+             {heard:?}"
+        );
+    }
+
+    /// ⛔ THE PROBE OF SEQUENCE 2 OF THE NORTH STAR, end to end on the REAL archive: the GUI saves,
+    /// the core stops, the core starts again, and the same package comes back. It is the one probe
+    /// that holds the seventh port's whole reason for existing.
+    ///
+    /// ⛔ TWO RUNS, ONE ARCHIVE PATH, TWO SOCKET NAMES. The path is shared because that is the
+    /// claim; the names are not, because a named pipe may linger a moment after its listener falls
+    /// on Windows, and a probe that fails only on one of the project's two systems is the red this
+    /// repository pays for most (gotcha #52).
+    ///
+    /// ⚠️ THE FIRST RUN'S PEER WANTS THE WELCOME AND THEN THE ANSWER TO `SaveLayout`, so it asks for
+    /// enough messages to reach it; how many the welcome is comes from §5 and is RE-READ rather
+    /// than assumed — a wrong count here makes the peer wait for a message that never comes, and the
+    /// close ends it with a short vector instead of a hang.
+    #[test]
+    fn a_layout_saved_is_found_again_after_a_restart() {
+        let dir = private_dir_for_line(line!());
+        let journal = dir.join("journal.redb");
+        let layout = dir.join("layout.redb");
+        let package = b"{\"grid\":1}".to_vec();
+
+        let first = socket_name_for_line(line!());
+        let saver = a_peer_that_says(
+            first.clone(),
+            vec![
+                IpcMessage::Hello(build_stamp()),
+                IpcMessage::SaveLayout(package.clone()),
+            ],
+            WELCOME + 1,
+        );
+        let _ = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &journal,
+            &layout,
+            &first,
+        );
+        let saved = saver.join().expect("the peer thread does not panic");
+        assert!(
+            saved
+                .iter()
+                .any(|said| said == &IpcMessage::Layout(LayoutState::Package(package.clone()))),
+            "the core answers a save with what it now HOLDS (decision 13): {saved:?}"
+        );
+
+        let second = socket_name_for_line(line!());
+        let reader = a_peer_that_says(second.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
+        let _ = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &journal,
+            &layout,
+            &second,
+        );
+        let found = reader.join().expect("the peer thread does not panic");
+        assert!(
+            found
+                .iter()
+                .any(|said| said == &IpcMessage::Layout(LayoutState::Package(package.clone()))),
+            "a RESTARTED core finds the package the previous one kept: {found:?}"
+        );
+    }
+
+    /// ⛔ DECISION 35, THE WHOLE OF IT: an archive that will not open must NOT stop the start-up, and
+    /// every `SaveLayout` must come back "unavailable". A core that refused to start here would be
+    /// treating a window layout as authoritative state, which I1 says it is not.
+    ///
+    /// ⚠️ THE FAILURE IS PROVOKED BY A DIRECTORY THAT IS NOT THERE, the same way
+    /// `a_journal_that_cannot_be_opened_stops_the_start_up` provokes its own — one road, two
+    /// opposite outcomes, which is what makes the pair say something.
+    #[test]
+    fn a_layout_archive_that_will_not_open_lets_the_core_start() {
+        let dir = private_dir_for_line(line!());
+        let name = socket_name_for_line(line!());
+        // A directory that is not there: `FileCustody::open` fails, and `MaybeCustody` swallows it.
+        let broken = dir.join("not-there").join("layout.redb");
+
+        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
+        let outcome = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &dir.join("journal.redb"),
+            &broken,
+            &name,
+        );
+
+        match outcome {
+            Err(StartupError::Run(RunError::TurnLimitReached)) => {}
+            other => panic!("a layout archive that will not open must not stop the start-up: {other:?}"),
+        }
+        let heard = peer.join().expect("the peer thread does not panic");
+        assert!(
+            heard.contains(&IpcMessage::Layout(LayoutState::Unavailable)),
+            "the welcome must say the layout is UNAVAILABLE, not `Nothing`: {heard:?}"
+        );
+    }
+
+    /// ⛔ THE OTHER DIRECTION OF `MaybeCustody`, and without it a wrapper that ALWAYS refused would
+    /// pass the probe above: the archive that opens must really delegate. ✅ Held by the restart
+    /// probe of step 11, which is why this one asserts the REFUSING half only -- said here rather
+    /// than left for a reviewer to wonder about.
+    #[test]
+    fn a_core_started_on_a_broken_archive_answers_unavailable_to_every_save() {
+        let dir = private_dir_for_line(line!());
+        let name = socket_name_for_line(line!());
+        let broken = dir.join("not-there").join("layout.redb");
+
+        let peer = a_peer_that_says(
+            name.clone(),
+            vec![
+                IpcMessage::Hello(build_stamp()),
+                IpcMessage::SaveLayout(b"{\"grid\":1}".to_vec()),
+            ],
+            WELCOME + 1,
+        );
+        let _ = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &dir.join("journal.redb"),
+            &broken,
+            &name,
+        );
+
+        let heard = peer.join().expect("the peer thread does not panic");
+        assert_eq!(
+            heard.get(WELCOME),
+            Some(&IpcMessage::Layout(LayoutState::Unavailable)),
+            "the answer to a save on a broken archive is UNAVAILABLE, never a package: {heard:?}"
+        );
+        assert!(
+            !heard
+                .iter()
+                .any(|said| matches!(said, IpcMessage::Layout(LayoutState::Package(_)))),
+            "and no package ever comes back: {heard:?}"
+        );
+    }
+
+    /// ⛔ THE `unwrap_or` OF D27, MEASURED IN BOTH DIRECTIONS, and the two are different claims.
+    /// Empty journal → the DEFAULT of ADR-0006, which is remote and lives HERE as a literal; a
+    /// journal carrying a transition → what the transition says, not the default. A `policy_now`
+    /// that answered `Remote` on an empty archive would make the two indistinguishable, which is
+    /// exactly what D27 refused inside the kernel.
+    ///
+    /// ⚠️ THE TRANSITION IS WRITTEN THROUGH `Arbiter::set_policy` ON A REAL `FileJournal`, not by
+    /// hand: a hand-built record would be this probe agreeing with itself about a format, and the
+    /// pair `set_policy`/`policy_now` is one artefact.
+    #[test]
+    fn the_policy_in_the_journal_is_the_one_the_arbiter_starts_on() {
+        let dir = private_dir_for_line(line!());
+        let journal = dir.join("journal.redb");
+        let layout = dir.join("layout.redb");
+
+        // ⛔ THE FIRST DIRECTION: an EMPTY journal, and the welcome names the default of ADR-0006.
+        let first = socket_name_for_line(line!());
+        let peer = a_peer_that_says(first.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
+        let _ = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &journal,
+            &layout,
+            &first,
+        );
+        let heard = peer.join().expect("the peer thread does not panic");
+        assert!(
+            heard.iter().any(|said| matches!(
+                said,
+                IpcMessage::Policy(report) if report.policy == PolicyName::Remote
+            )),
+            "an empty journal starts on the default, which is remote: {heard:?}"
+        );
+
+        // ⛔ THE SECOND DIRECTION: a transition WRITTEN THROUGH `set_policy` on the real archive,
+        // between the two runs, and the next start names it. The arbiter here is a bare one: what
+        // is under test is the pair `set_policy`/`policy_now` on the archive, not the two quotas.
+        {
+            let mut archive = FileJournal::open(&journal).expect("the journal opens between runs");
+            let mut arbiter = Arbiter::new(
+                Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+                VramPolicy::Remote(RemotePolicy),
+            );
+            arbiter
+                .set_policy(VramPolicy::Local(LocalPolicy), StepId::new(1_000), &mut archive)
+                .expect("the transition is written");
+        }
+
+        let second = socket_name_for_line(line!());
+        let peer = a_peer_that_says(second.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
+        let _ = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &journal,
+            &layout,
+            &second,
+        );
+        let heard = peer.join().expect("the peer thread does not panic");
+        assert!(
+            heard.iter().any(|said| matches!(
+                said,
+                IpcMessage::Policy(report) if report.policy == PolicyName::Local
+            )),
+            "a restarted core starts on the policy the journal holds, not on the default: {heard:?}"
+        );
+    }
+
+    /// ⛔ THE SECOND CORE. `StartupError::Ipc` has exactly one ordinary cause, and a variant with no
+    /// probe is a claim nobody checks: two graphs on one socket name, and the second must stop
+    /// instead of starting beside the first.
+    ///
+    /// ⚠️ NO THREAD AND NO RACE (R4-8): the first core is reduced to the one thing that matters, a
+    /// listener bound to the name and held for the whole probe. On Windows `interprocess` creates
+    /// the first instance with `FILE_FLAG_FIRST_PIPE_INSTANCE`, so a second `bound` on the name is
+    /// refused; on Linux the second bind is `EADDRINUSE`. Read in the crate's source, not assumed.
+    #[test]
+    fn a_second_core_on_the_same_channel_stops_the_start_up() {
+        let dir = private_dir_for_line(line!());
+        let name = socket_name_for_line(line!());
+        let _first = LocalSocketIpc::bound(&name, Progressive::starting_at(0), MAX_BODY)
+            .expect("the first listener binds");
+
+        let outcome = run_the_graph(
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &dir.join("journal.redb"),
+            &dir.join("layout.redb"),
+            &name,
+        );
+
+        match outcome {
+            Err(StartupError::Ipc(_)) => {}
+            other => panic!("a second core on the same channel must stop at the bind: {other:?}"),
+        }
+    }
+
+    /// ⛔ THE ROAD INTO `StartupError::Policy`, AND IT IS THE ONE THAT CAN BE PROVOKED. The two
+    /// re-reads of the journal name two DIFFERENT failures: `Numbering` means the archive would
+    /// not replay at all, and `Policy` means it replayed and a record in it is not one this build
+    /// understands. Only the second can be arranged from outside, and it is arranged the way
+    /// `crates/kernel/tests/arbiter_policy.rs` already arranges it -- bytes written THROUGH the port,
+    /// which takes `&[u8]` and validates nothing (road A4 of `kernel::boundary`).
+    ///
+    /// ⚠️ THE BYTES GO IN AS AN `intent` AND NOT AS A `note`, and that is measured rather than
+    /// stylistic: `note` and `outcome` refuse a step that has no intent yet, `intent` refuses only a
+    /// step that already has one. A `note` here would come back `OutOfOrder` and the probe would be
+    /// red for the wrong reason.
+    ///
+    /// ⛔ AND THE OTHER ROAD, `StartupError::Numbering`, IS DECLARED AND NOT PINNED: its trigger is
+    /// written beside the variant itself, where a reader of the type finds it, rather than copied
+    /// to a second house here (gotcha #68).
+    #[test]
+    fn a_record_this_build_cannot_read_stops_the_start_up() {
+        let dir = private_dir_for_line(line!());
+        let journal = dir.join("journal.redb");
+
+        {
+            let mut archive = FileJournal::open(&journal).expect("the archive is created");
+            archive
+                .intent(StepId::new(1), b"not a record of any version")
+                .expect("the port takes bytes and validates nothing");
+        }
+
+        let outcome = run_the_graph(
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &journal,
+            &dir.join("layout.redb"),
+            &socket_name_for_line(line!()),
+        );
+
+        match outcome {
+            Err(StartupError::Policy(_)) => {}
+            other => panic!("a journal this build cannot read must stop the start-up: {other:?}"),
         }
     }
 }

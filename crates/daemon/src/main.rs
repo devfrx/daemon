@@ -557,9 +557,13 @@ fn run_the_graph(
     let ipc = LocalSocketIpc::bound(socket_name, Progressive::starting_at(0), MAX_BODY)
         .map_err(StartupError::Ipc)?;
 
-    // ⚠️ THE DECLARATION ORDER IS LOAD-BEARING and swapping two lines does not compile: the
-    // executor borrows `sleep`, `core` and `clock` for its whole life, `clock` borrows `reactor`,
-    // and locals drop in reverse order of declaration.
+    // ⚠️ THE DECLARATION ORDER IS LOAD-BEARING and swapping the two lines that carry a BORROW
+    // does not compile: the executor borrows `sleep`, `core` and `clock` for its whole life,
+    // `clock` borrows `reactor`, and locals drop in reverse order of declaration. ⚠️ THE
+    // QUALIFIER IS MEASURED AND NOT CAUTIOUS: this said "swapping two lines", and `reactor` and
+    // `core` swap over each other and COMPILE -- exit 0, 2026-09-19 -- while `clock` over
+    // `reactor` gives error[E0425]. The recall above leans on this sentence to say what a
+    // compiler-held order looks like, so an over-wide claim here weakens THAT one too.
     let reactor = RefCell::new(SystemReactor::new());
     let core = RefCell::new(Core::new(
         ipc,
@@ -749,8 +753,7 @@ fn main() {
 /// families" line: a count in prose goes false again at the seventh error this binary learns to
 /// name. ⚠️ AND NO COMMAND IS OFFERED IN ITS PLACE, which is deliberate: the number must not
 /// appear here at all, so handing the reader a motif to count with would only be the same
-/// numeral one step removed -- and a motif written on this line would count ITS OWN citation,
-/// measured at 7 against 6 on 2026-09-19.
+/// numeral one step removed -- and a motif written on this line would count ITS OWN citation.
 fn stop(reason: &str) -> ! {
     eprintln!("daemon: {reason}.");
     std::process::exit(1)

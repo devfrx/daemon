@@ -69,14 +69,17 @@ run "documentation consistency"           bash scripts/check-docs.sh
 # the second pass costs 0.49s of test time -- dst_campaign 0.07s, arbiter_campaign 0.05s,
 # gui_death_campaign 0.00s, serving_campaign 0.23s, worker_kill_campaign 0.01s,
 # engine_crash_consistency 0.13s.
+# ⚠️ AND THE RE-REVIEW TOOK IT AGAIN ON 2026-09-20 over the same six targets and got 0.53s and
+# 0.52s in two passes. BOTH ARE KEPT AND NEITHER IS REALIGNED (E70): nothing asserts on this
+# number, so the SPREAD between two takes is itself the datum the paragraph below argues for.
 # ⚠️ THE FIGURE IS RE-MEASURED WHENEVER THIS LIST CHANGES AND NEVER REALIGNED FROM MEMORY,
 # which is why it carries its date: it said "~0.2s" at milestone 4 with two campaigns and
 # "1.45s" on 2026-08-25 with three. ⛔ WHAT FOLLOWS IS ABOUT THE RE-MEASUREMENT OF 2026-09-02,
 # WHICH THIS LINE NO LONGER CARRIES: that day the second pass cost 0.81s over five targets,
 # and it is kept because the lesson is the arithmetic and not the figure -- which also puts
 # back the link the chain above lost when the date on the line changed. ⛔ AND THE
-# RE-MEASUREMENT IS NOT THE ARITHMETIC ANYBODY
-# WOULD HAVE PREDICTED: the three targets of that 1.45s cost 0.78s of that 0.81s -- the
+# RE-MEASUREMENT IS NOT THE ARITHMETIC ANYBODY WOULD HAVE PREDICTED: the three targets of
+# that 1.45s cost 0.78s of that 0.81s -- the
 # same binaries, the same machine, at roughly half the price -- so the two new campaigns add
 # 0.03s and the figure still FELL. Which is the point: it is an ORDER OF MAGNITUDE and not a
 # constant -- the arbiter binary alone, same command, came out 0.63s and 1.53s within one

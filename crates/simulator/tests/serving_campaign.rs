@@ -9,9 +9,12 @@
 //! which does not expose its transport, so nothing could read it afterwards.
 //!
 //! ⛔ SO THE WIRE LIVES OUTSIDE THE CORE, behind a `RefCell` the campaign owns, and the port holds
-//! a borrow of it. That is the shape of `crates/kernel/tests/serving.rs`, and this is the THIRD
-//! place it is written: a `tests/` is a crate of its own and a binary exports nothing, so the
-//! first two cannot be imported.
+//! a borrow of it. That is the shape of `crates/kernel/tests/serving.rs`, repeated here rather
+//! than imported: a `tests/` is a crate of its own and a binary exports nothing. ⚠️ WHERE ELSE IT
+//! IS WRITTEN IS WHAT `grep -rn 'struct Wire' crates/ --include='*.rs'` PRINTS, not this line:
+//! here stood "this is the THIRD place it is written", an ordinal that resolved to nothing a
+//! reader could check, and the cure is the one E76 applied four paragraphs below -- applied here
+//! on 2026-09-20 to a line that predates it.
 //!
 //! ⛔ AND THE FIRST HALF WOULD BE VACUOUS WITHOUT A GRANT PUT IN BY HAND. Sub-project 2 issues NO
 //! grant to a client -- `serving.rs` says so of itself -- so a gui that dies here holds nothing,
@@ -62,15 +65,19 @@
 //! WRITING to depend on `simulator`, the reactors these copies wrap are not even the same type,
 //! and one home for all of them would want a wrapper generic over `R: Reactor` -- more machinery
 //! than the lines it would save (P-59, P-74). ⚠️ ITS TRIGGER, DECLARED RATHER THAN LEFT TO BE
-//! DISCOVERED, AND WITH THE THRESHOLD D34 GAVE IT: a FIFTH home -- D34's words are that four
-//! copies of the same shape stay four -- and how many there are is what the command above prints,
-//! never this line. ⛔ AND WHAT HOLDS THE ANSWER IS THE REACTOR, WHICH IS P-74's REASON: the
-//! question the trigger asks is not whether anyone can import a copy -- "a `tests/` is a crate of
-//! its own and nothing can import it" answers a different one -- it is whether a copy could draw
-//! on a common home instead. The ones that wrap `VirtualReactor` could: a concrete `SharedClock`
-//! in `simulator::reactor` would serve them. It would still leave out every copy that wraps
-//! `SystemReactor` unless it were generic over `R: Reactor`, and that is the cost D34 priced as
-//! more machinery than the lines it saves -- a fifth home does not change its species.
+//! DISCOVERED, WITH THE THRESHOLD AND THE TWO QUALIFIERS D34 GAVE IT: a FIFTH home, born inside
+//! `simulator` or in a crate that can import it, AND wrapping the SAME reactor -- on that day the
+//! measure is taken again. How many homes there are is what the command above prints, never this
+//! line. ⛔ AND THE FIFTH IS ALREADY CENSUSED AND ALREADY RULED OUT, so that the next pass does
+//! not reopen a settled measure: `gui/fake-core`, which task 12 builds, wraps `SystemReactor`, and
+//! P-74 read the trigger against it on 2026-09-14 -- before it existed -- and answered that it
+//! does not fire. ⛔ AND WHAT HOLDS THAT ANSWER IS THE REACTOR, WHICH IS P-74's REASON: the
+//! trigger does not ask whether anyone can import a copy -- "a `tests/` is a crate of its own and
+//! nothing can import it" answers a different question -- it asks whether the copies could draw
+//! on ONE home. The copies that wrap `VirtualReactor` could: a concrete `SharedClock` in
+//! `simulator::reactor` would serve them. It would leave out every copy that wraps
+//! `SystemReactor` unless it were generic over `R: Reactor`, which is the cost D34 priced as more
+//! machinery than the lines it saves.
 
 use core::cell::RefCell;
 use std::collections::BTreeSet;
@@ -84,10 +91,12 @@ use kernel::numbering::Progressive;
 use kernel::parameters::Parameters;
 use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 use kernel::ports::reactor::Reactor;
-// ⚠️ `EffectClass` IS HERE FOR ONE `match`, AND IT IS NOT IN THE DICTATED LIST: the helper
-// `the_doubt_the_one_function_resolves_to` reads `POLICY_FUNCTION.effect` and names the three
-// classes, which cannot be spelled without the type. Without this line the file does not compile
-// at all (E77 of the plan).
+// ⚠️ `EffectClass` IS HERE FOR ONE `match`: the helper `the_doubt_the_one_function_resolves_to`
+// reads `POLICY_FUNCTION.effect` and names the three classes, which cannot be spelled without the
+// type. Without this line the file does not compile at all (E77 of the plan).
+// ⛔ DATED RECALL, 2026-09-20: here stood "AND IT IS NOT IN THE DICTATED LIST", true while E77
+// lived in the source alone and false from the moment the dictated block was mirrored. That
+// mirroring is the other half of E77 -- the half E76 had and E77 had not.
 use kernel::record::EffectClass;
 use kernel::reconcile::{steps_in_doubt, Resolution};
 // ⚠️ `below` LIVES ON THE EXTENSION TRAIT, not on `SeededRng`: `kernel::rng::RngExt`
@@ -743,10 +752,10 @@ const EXPECTED_CRASH_WORLDS: usize = 7;
 /// `match`" -- stays open, and its closer is the first consumer that branches on it.
 ///
 /// ⚠️ DECLARED, NOT PINNED -- WHAT THE CALLER APPLIES THIS TO IS NOT ONE STEP BUT TWO. The sweep
-/// asserts this value on EVERY step a fall leaves in doubt, and on the seeds that fall late there
-/// are two of them: step 1 is the road this constant declares, step 2 is the arbiter's own, whose
-/// class is pinned by `transition_record` in `crates/kernel/src/arbiter/mod.rs` -- a file that
-/// names `POLICY_FUNCTION` in no line, measured on 2026-09-19. ⛔ THE TWO DECLARATIONS COINCIDE
+/// asserts this value on EVERY step a fall leaves in doubt, and on some seeds there are two of
+/// them: step 1 is the road `POLICY_FUNCTION` declares, step 2 is the arbiter's own, whose class
+/// is pinned by `transition_record` in `crates/kernel/src/arbiter/mod.rs` -- a file that names
+/// `POLICY_FUNCTION` in no line, measured on 2026-09-19. ⛔ THE TWO DECLARATIONS COINCIDE
 /// TODAY, both `EffectClass::Idempotent`, read in both sources on 2026-09-19, so the assertion
 /// below pins their COINCIDENCE as much as the class -- and no ADR says they must coincide. ITS
 /// TRIGGER: the day they diverge, on which the red below will name the wrong file. ⛔ NARROWING
@@ -818,9 +827,10 @@ fn an_approval_that_crashes_leaves_the_step_in_doubt_with_its_class() {
             assert_eq!(
                 *resolution,
                 the_doubt_the_one_function_resolves_to(),
-                "seed {seed}: step {step} is in doubt as {resolution:?}, which is not what the \
-                 class declared for ITS OWN road resolves to -- step 1 carries \
-                 `POLICY_FUNCTION.effect`, step 2 the class `transition_record` pins"
+                "seed {seed}: step {step} is in doubt as {resolution:?}, which is not what \
+                 `POLICY_FUNCTION.effect` resolves to -- EVERY step in doubt is held against \
+                 that ONE class, and step 2's own is pinned by `transition_record`: see the doc \
+                 of this helper"
             );
         }
         if !observed.in_doubt.is_empty() {

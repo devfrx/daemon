@@ -34,6 +34,20 @@
 //! it can say out loud and did not have — the journal will not open, and either permanent quota
 //! of ADR-0033 does not get in — and each of them is a claim of its own. The sentence is
 //! REWRITTEN and not answered beside itself, which is finding A-2 of this project's audit.
+//!
+//! ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE HEADING ABOVE AND WHAT IT CLAIMS ARE FALSE
+//! FROM THIS TASK, and they are dated rather than answered underneath themselves, which is the
+//! same finding A-2 the paragraph above names. An activity IS spawned now —
+//! `kernel::serving::serve`, from `run_the_graph` — so there is work to do, there is no run "with
+//! NO activities", and the executor CANNOT run to completion, because `serve` is a `loop` with no
+//! exit and `Executor::run` is `while !self.tasks.is_empty()`: a run that ENDED would mean the
+//! core stopped serving.
+//!
+//! What the run claims INSTEAD: the whole graph assembles — the real `SequentialRng`, the one
+//! real `SystemReactor` seen from two places, the real `FileJournal`, the real `LocalSocketIpc`,
+//! the layout archive open or not, the arbiter holding the two permanent grants of ADR-0033 on
+//! the policy the journal names — and the serving activity TAKES THE TURNS it is given, which is
+//! what a peer hearing its welcome is the only witness of.
 
 use std::cell::RefCell;
 use std::path::Path;
@@ -304,8 +318,11 @@ const PRESENTATION_RESERVATION: ResourceProfile = ResourceProfile {
 /// this plan puts a copy of its own in `gui/fake-core`, which a command looking only under
 /// `crates/` could never see. ⛔ AND THE SECOND HALF IS WHAT MAKES IT BLIND TO THE LINE ABOVE:
 /// without it the command COUNTS ITS OWN CITATION and answers one more than there are —
-/// measured on 2026-09-19, four against three. ⚠️ Its limit, declared rather than hidden: moved
-/// into a `//` instead of a `///`, it would count itself again. None of the copies can be
+/// measured on 2026-09-19, four against three. ⚠️ ITS LIMIT, DECLARED RATHER THAN HIDDEN AND
+/// MEASURED RATHER THAN GUESSED: the filter drops any line CONTAINING `///`, so it hides this
+/// citation and every other that quotes the CURED motif, whatever comment marker that one sits
+/// behind -- the `'///'` travels inside the quoted text. What it would still count is a line
+/// quoting the BLIND form, without the filter, from outside a `///` comment. None of the copies can be
 /// imported in any case — a `tests/` file is a crate of its own, a binary exports nothing, and
 /// `gui/fake-core` is outside this workspace altogether.
 ///
@@ -506,11 +523,25 @@ fn run_the_graph(
     // `Core::new` takes it by value. Both re-read the whole archive, which is the cost
     // `Journal::replay` declares of itself.
     //
-    // ⛔ AND WHICH OF THE TWO GOES FIRST IS LOAD-BEARING RATHER THAN TIDY. They share one
+    // ⛔ AND WHICH OF THE TWO GOES FIRST DECIDES WHAT TWO ERRORS MEAN. They share one
     // `Journal::replay`, so whichever runs first takes every replay failure and the second can
     // only fail on what replay handed back. Seeding first is what gives `StartupError::Numbering`
     // and `StartupError::Policy` two different meanings instead of one; the doc of that enum
     // argues it, and the other order left `Numbering` with no producer at all.
+    //
+    // ⛔ AND THAT ORDER IS DECLARED, NOT PINNED. ⚠️ IT IS NOT THE "LOAD-BEARING" OF THE
+    // DECLARATION ORDER FURTHER DOWN, which the COMPILER holds and which says so of itself:
+    // NOTHING holds this one. ✅ MEASURED on 2026-09-19 by applying the swap rather than deduced:
+    // with `policy_now` put back in front and nothing else touched, `cargo test --locked -p
+    // daemon` comes back 15 passed, 0 failed, and the whole workspace stays green. ⛔ AND NO
+    // PROBE CAN HOLD IT, which is a fact about the port and not a gap in the bench: telling the
+    // two orders apart wants an archive that OPENS and then will not REPLAY, and
+    // `FileJournal::replay` maps every one of its faults onto `JournalError::NotDurable` from a
+    // `redb` error -- none of which a caller can arrange from outside. The probe below cannot see
+    // the difference either: a record this build cannot read answers `PolicyError::Record` under
+    // BOTH orders. ⛔ ITS TRIGGER IS THE ONE WRITTEN BESIDE `StartupError::Numbering`: the first
+    // bench that can make a `FileJournal` refuse to replay. Until then this paragraph and review
+    // are what hold it, and saying so is the point.
     let steps = numbering::seeded_from(&journal).map_err(StartupError::Numbering)?;
 
     // ⛔ AND THE `unwrap_or` IS WHERE THE DEFAULT OF ADR-0006 LIVES — D27. `policy_now` answers an
@@ -650,12 +681,26 @@ fn reserve(arbiter: &mut Arbiter, profile: &ResourceProfile) -> Result<Grant, St
 /// the reason the three new ones are also spelt out: a single arm would leave every payload
 /// flagged "never read". ⚠️ AND THE RESIDUAL ABOVE GREW WITH THEM: none of the six error branches
 /// is walked by a check, and three of them now name values — the socket, the policy, the counter
-/// — that only `main` knows how to print.
+/// — that only `main` knows how to print. ⚠️ AND THE `Ok` ARM IS WORSE OFF THAN THEY ARE: it has
+/// no possible producer at all since this task, which is said at the arm itself rather than
+/// counted a second time here.
 fn main() {
     match run_the_production_graph(Path::new(JOURNAL_PATH), Path::new(LAYOUT_PATH)) {
+        // ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THIS ARM HAS NO POSSIBLE PRODUCER, AND
+        // THE SENTENCE IT PRINTED WAS FALSE TWICE OVER. It read "the executor ran with no
+        // activities": this task spawns one, and while that one is `kernel::serving::serve` --
+        // a `loop` with no exit -- `run()` cannot answer `Ok(())` at all, because `Executor::run`
+        // reaches its `Ok(())` only when the task list EMPTIES, and this list never does.
+        // ⛔ IT IS THE STANDARD E61 USED AGAINST `StartupError::Numbering`, applied in the other
+        // direction and said out loud instead of left to be found: a branch no run can reach is a
+        // claim nobody checks, and none of this file's probes covers it. ⚠️ THE ARM STAYS, because
+        // the `match` must be exhaustive and `Ok` is a variant of `Result` rather than a choice
+        // made here. ⛔ ITS TRIGGER IS THE CLEAN SHUTDOWN of sub-project 10, which §5 assigns
+        // there along with the watchdog: the day the serving activity can FINISH, this is the
+        // sentence that prints, so it is written to be true on that day rather than on the last.
         Ok(()) => println!(
-            "daemon: the graph is wired, the two reserved quotas are held, and the executor ran \
-             with no activities."
+            "daemon: the graph is wired, the two reserved quotas are held, and the serving \
+             activity finished."
         ),
         // ⛔ stderr and exit 1 on every failing branch: a start-up that did not complete must
         // be distinguishable by a caller that reads neither stream.
@@ -696,8 +741,16 @@ fn main() {
 
 /// Says why the start-up stopped, on stderr, and leaves exit code 1 behind.
 ///
-/// ⚠️ `!` AND NOT `()`, so that the three call sites above do not each need a statement saying
-/// nothing follows. It is the return type `std::process::exit` already has.
+/// ⚠️ `!` AND NOT `()`, so that the call sites above do not each need a statement saying nothing
+/// follows. It is the return type `std::process::exit` already has.
+///
+/// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THIS SAID "the THREE call sites above" AND THE
+/// FIGURE IS REMOVED RATHER THAN REALIGNED, which is the same cure this task gave the "six port
+/// families" line: a count in prose goes false again at the seventh error this binary learns to
+/// name. ⚠️ AND NO COMMAND IS OFFERED IN ITS PLACE, which is deliberate: the number must not
+/// appear here at all, so handing the reader a motif to count with would only be the same
+/// numeral one step removed -- and a motif written on this line would count ITS OWN citation,
+/// measured at 7 against 6 on 2026-09-19.
 fn stop(reason: &str) -> ! {
     eprintln!("daemon: {reason}.");
     std::process::exit(1)
@@ -1021,7 +1074,8 @@ mod tests {
         assert_eq!(
             arbiter.policy().name(),
             "remote",
-            "the composition root runs the DEFAULT policy of ADR-0006"
+            "the arbiter runs the policy `the_production_arbiter` hands it, which is the DEFAULT \
+             of ADR-0006"
         );
     }
 
@@ -1136,8 +1190,15 @@ mod tests {
 
         // 1024 fits in 1500; 1024 + 768 does not, and under `RemotePolicy` -- which may not
         // make room -- a request that fits the machine but not the moment is QUEUED.
+        //
+        // ⛔ THE LIMIT IS FINITE AND NOT `EXECUTOR_TURN_LIMIT`, which is `u64::MAX` since task 9
+        // -- D28, and it is not decoration. This probe is meant to stop at `build_the_arbiter`,
+        // long before the executor exists, so today the delivered limit is never read at all.
+        // The day a change let the two quotas through, `u64::MAX` would make this probe HANG
+        // instead of going red, and a gate that does not come back says nothing to anybody
+        // (E5, E6). A finite limit turns that silence into a verdict.
         let outcome = run_the_graph(
-            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(1_500), ARBITER_ID, Millis::new(0)),
+            Parameters::new(8, Mib::new(1_500), ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &dir.join("layout.redb"),
             &socket_name_for_line(line!()),
@@ -1161,8 +1222,10 @@ mod tests {
         let dir = private_dir_for_line(line!());
 
         // 1024 is more than the whole machine, so no release will ever make room for it.
+        //
+        // ⛔ THE LIMIT IS FINITE FOR THE REASON THE PROBE ABOVE GIVES.
         let outcome = run_the_graph(
-            Parameters::new(EXECUTOR_TURN_LIMIT, Mib::new(500), ARBITER_ID, Millis::new(0)),
+            Parameters::new(8, Mib::new(500), ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &dir.join("layout.redb"),
             &socket_name_for_line(line!()),

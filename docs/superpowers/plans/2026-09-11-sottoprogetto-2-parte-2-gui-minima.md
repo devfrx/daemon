@@ -21933,6 +21933,79 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La ventinovesima chiusura — 2026-09-19, seconda sessione del giorno: il COMPITO 10 è SCRITTO e RIVISTO, i rilievi sono APERTI coi ruling già dati, e il commit NON è spinto
+
+⛔ **DA SAPERE SUBITO, cinque cose.**
+
+**(1)** ⛔ **`main` è AVANTI DI UN COMMIT su `origin/main` e il push è SOSPESO.** Il commit del compito è `726bbba`, e il push non arriva finché la revisione non è pulita — regola 8 di *«Che cosa la sessione nuova fa»*. ⚠️ **E questa chiusura del diario è committata SOPRA di esso e non spinta per lo stesso motivo:** spingere il diario trascinerebbe `726bbba`. La sessione nuova spinge **entrambi** quando i rilievi sono chiusi.
+
+**(2)** ⛔ **LA REVISIONE HA CHIUSO CON RILIEVI APERTI — zero Critici, cinque Importanti, sette Minori — E I RULING SONO GIÀ DATI, NELLA TABELLA QUI SOTTO.** Non si rifanno: si applicano. Il rapporto del revisore, con le riproduzioni per esteso, è in `.superpowers/sdd/2026-09-11-sottoprogetto-2-parte-2-gui-minima/task-10-review.md` — git-ignorato, quindi **muore col disco e non col repo**: ciò che serve a ripartire è **qui**.
+
+**(3)** ⛔ **`E76` ed `E77` SONO APPLICATE NEL CODICE E NON SCRITTE NELL'ERRATA.** Misurato alla chiusura: l'errata chiude a **`E75`** e `grep -c '^| \*\*E7[678]\*\*'` sul piano rende **0**, mentre il commit `726bbba` porta entrambe le cure nel sorgente. ⚠️ È debito **dichiarato**: il codice ha le cure, il piano non le registra, e chi rileggesse il piano contro il codice troverebbe una divergenza che nessuno ha voluto. Le scrive la sessione nuova, con `E78` e le voci nuove dei rilievi.
+
+**(4)** ⛔ **IL GIRO DI CORREZIONI È MORTO PER UN ERRORE DELL'API, NON PER UN DIFETTO DEL LAVORO.** L'implementatore ripreso con `SendMessage` (decisione 137) è stato terminato da un rifiuto di **Opus 5** sul contenuto del messaggio di correzioni — `[reasoning_extraction]`, *«safeguards flagged this message»*. ✅ **L'albero è rimasto INTATTO:** `git status --porcelain` vuoto, `git diff` vuoto, nessuno stato intermedio da recuperare. ⚠️ **Se ricapita, la decisione 137 non è più applicabile a questo contenuto** e il ripiego è la decisione 133 — un agente fresco col brief delle correzioni.
+
+**(5)** ⚠️ **Il cancello è VERDE adesso**, dopo che il coordinatore ha applicato e revocato due mutazioni: `bash scripts/gate.sh` → `GATE GREEN`, `bash scripts/check-docs.sh` → `OK`, `git diff` vuoto contro `726bbba`.
+
+✅ **Che cosa è stato fatto.** Due commit, ciascuno col cancello verde prima:
+
+| Commit | Che cosa |
+|---|---|
+| `dc3045c` | il **pre-controllo del compito 10**: `E72` (le etichette dei fine-riga, decise dal proprietario in A/B — **A**, per compito, col comando), `E73` (il doc di `the_approval()` contro i gemelli di D11), `E74` (due artefatti senza riga nel criterio, e la cifra sbagliata che ne era il sintomo), `E75` (il blocco che portava il comando che il proprio Atteso dichiara sbagliato) |
+| `726bbba` | **compito 10**: `crates/simulator/tests/serving_campaign.rs` a quattro sonde, la riga nel settimo passo di `gate.sh` più la riga dei costi rimisurata, il richiamo datato nella §5 del disegno del 2, e la riga 10 della posizione a ✅ |
+
+E lo stato alla chiusura, che non si ricorda ma si **rifà** — ogni riga porta il comando che la produce:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` **avanti di 1** su `origin/main`: `git status -sb`, `git stash list` vuoto |
+| ⛔ Fine-riga | `git ls-files --eol scripts/` → **`w/lf` su tutti e cinque**, e i soli `w/crlf` restano i quattro `i/crlf` di `E50`. ⚠️ **È il fatto che ha prodotto `E72`**: il piano li dava `w/crlf`. Non cambiare `core.autocrlf` |
+| La posizione | `grep -cE '^\| \*\*[0-9]+\*\* \|.*✅ [0-9-]+ \|$'` → **10**; con `⬜ \|$` → **7** |
+| L'errata | l'`awk` della §*errata* → **75**. ⛔ E `grep -c '^\| \*\*E7[678]\*\*'` → **0**: vedi il punto (3) |
+| Le sonde della campagna | `grep -c '#\[test\]' crates/simulator/tests/serving_campaign.rs` → **4** |
+| I quattro numeri | `OPERATIONS` **37** (il piano prevedeva 8), `WRITES_PER_APPROVAL` **7**, `EXPECTED_DEATH_WORLDS` **37**, `EXPECTED_CRASH_WORLDS` **7** — ⛔ **misurati, non previsti**, e il revisore li ha rifatti tutti e quattro **senza una divergenza**; ha anche misurato la **legge**, `OPERATIONS = 5 + TURNS/2`, a quattro valori di `TURNS` |
+| Il cancello | `bash scripts/gate.sh` → `GATE GREEN`; `grep -c 'serving_campaign' scripts/gate.sh` → **2**, e il **due** è l'oracolo di `E74` |
+| ⛔ I costi, due prese | **0.49s** in totale su entrambe, e due bersagli su sei divergono di un centesimo — `gui_death_campaign` 0.00 contro 0.01, `engine_crash` 0.13 contro 0.12. **Si tengono entrambe** (`E70`): per un numero senza soglia lo scarto è il dato |
+| Margine del compendio | ✅ **il compendio NON è stato toccato** (decisione 106) |
+
+#### ⛔ I RILIEVI APERTI, COI RULING DEL COORDINATORE — è la parte che vive SOLO qui
+
+| | Il rilievo | Il ruling, e chi l'ha verificato |
+|---|---|---|
+| **I-1** | l'oracolo della classe è applicato anche al **passo B dell'arbitro**, la cui classe la pianta `transition_record` in `crates/kernel/src/arbiter/mod.rs` e non `POLICY_FUNCTION`; nome, doc e messaggio promettono tutti e tre *«la ONE function»* | ⛔ **APPLICA come DICHIARAZIONE, non restringendo l'asserzione** — restringerla al solo passo 1 perderebbe la copertura del passo B, che è vera e utile. Forma *«DECLARED, NOT PINNED … ITS TRIGGER IS»*, con la misura, la data e l'innesco: il giorno in cui le due classi divergono. Specie `E56`. ✅ Il coordinatore ha **letto `transition_record` nel sorgente**: scrive `EffectClass::Idempotent` a mano |
+| **I-2** | la cura che compra la **seconda direzione** — la riga che registra il secondo client — **non è tenuta da nulla** | ⛔ **APPLICA, stessa forma.** ✅ **Riprodotto dal COORDINATORE**, non solo dal revisore: tolte entrambe le righe `built.grants().register(STANDING, standing)`, `cargo test --locked -p simulator --test serving_campaign` rende **`4 passed; 0 failed`**. È `E66` un compito dopo — una cura giusta e indifesa. ⛔ **Non inventare una sonda**: non esiste un osservabile per pinzare quella riga, ed è la stessa ragione per cui `E66` non ne volle una |
+| **I-3** | l'**innesco di D34** sarebbe soddisfatto dal file che lo scrive, perché `kernel` ha `simulator` fra le dev-dependencies | ⛔ **Il MERITO di D34 NON si riapre.** ✅ Il coordinatore ha **letto `P-74` prima di decidere**, com'è la regola: la prova che il revisore porta **era già nota a P-74**, che rispose *«Riletto nel merito, la risposta resta, e a tenerla è il REATTORE»*. ⛔ **Ciò che si corregge è la CLAUSOLA nel file nuovo**, e in due modi: ha citato l'innesco **lasciando cadere la sua soglia** (D34 dice *«una QUINTA casa»*), così che risulti soddisfatto da sé; e la ragione che dà — *«nothing can import it»* — **risponde a un'altra domanda**, cioè se qualcuno possa importare *quel file*, non se *quel file* possa attingere a una casa comune. Si riscrive sulla ragione di P-74, nominandola |
+| **I-4** | il doc di `heard` dice che è **lui** a rendere distinti i mondi, e la misura dello stesso commit, 340 righe sotto, dice `dies_at` | ⛔ **APPLICA.** ✅ **Riprodotto dal COORDINATORE**: congelato `heard`, la campagna resta **`4 passed`**. Specie `E67` — un commit che scrive la versione vera in una casa e lascia quella falsa nell'altra, nello stesso file |
+| **I-5** | il **richiamo datato della §5** non nomina la cella che corregge | ⛔ **APPLICA, forma `E57`/`E65`, terza ricaduta.** ✅ Verificato dal coordinatore: l'intestazione è `\| Pezzo \| Forma \| La prova \|`, la frase falsa (*«così la DST la muove con `DyingGui`»*) vive in **Forma**, il richiamo sta in *La prova*, che è intatta e vera. ⛔ **Il richiamo resta dov'è** — una riga di tabella resta una riga — e **nomina** la cella: *«sulla cella «Forma» di questa riga»*. Il testo non cambia, solo la clausola che lo colloca |
+| **E78** | la cura che l'implementatore proponeva — `today's` → `that day's` — è **necessaria ma non sufficiente** | ⛔ **APPLICA LA FORMA DEL REVISORE: una edit invece di tre.** La rimisura ha tolto dal commento **la sola data a cui *«that day»* potrebbe puntare** (il `RE-MEASURED on 2026-09-02` quattro righe sopra, ora `2026-09-19`), e il capoverso ne ha **altre due** pendenti che nessuno aveva censito — *«AND THE RE-MEASUREMENT IS NOT THE ARITHMETIC…»* e *«so the two new campaigns add 0.03s»*. La forma che le lascia vere tutte: **dire in testa al capoverso che parla della rimisura del 2026-09-02**. ⛔ **Non toccare** *«roughly half the price»*, l'osservazione datata sull'arbitro (è un verbale, `E15`) e *«red TWICE from the second check»*: il revisore le ha verificate vere |
+| **Minori 1, 2, 3** | la guardia `distinct.len() > 1` manca nella seconda proprietà; *«the two campaigns»* dove sono quattro; il **seme dell'esecutore è inerte** (congelato a 0 → 37 mondi) e due frasi lo trattano come variabile | **Applica quelli che alla riproduzione reggono, riporta gli altri.** Il 2 porta il **dubbio del revisore** addosso — potrebbe voler dire «i due modelli», e allora è vera: si misura e si decide sul merito |
+| **Minore 4** | `crates/kernel/src/serving.rs` dice *«ITS ONLY CALLER TODAY IS A BENCH»* e i banchi sono ora **due** | ⛔ **NON entra nel commit del compito**: è **causato** dal 10 ma vive in `kernel`, che il compito dichiara di non toccare. **Commit a SÉ del coordinatore**, dopo che la revisione è pulita — precedente `E21 (a)` e **decisione 112** |
+| **Minore 5** | `crates/kernel/src/ports/ipc.rs` conta le implementazioni di `Ipc` a due e sono di più | ⛔ **PRECEDE il commit** (falsa dai compiti 2 e 7): fuori perimetro in entrambi i sensi, **non si tocca qui** |
+| **Minore 6** | l'oracolo di `E74` **decide meno di quanto `E74` dichiari**: `grep -c 'serving_campaign' scripts/gate.sh` vede il **nome del bersaglio** nella riga dei costi, non la **rimisura** | ⛔ **Il rilievo è giusto e la voce è del COORDINATORE**: `E74` si corregge dicendo che cosa quel due decide davvero, invece di vantare più di quanto tenga — che è la specie che `E74` stessa condanna |
+| **Minore 7** | numeri di riga nel rapporto del revisore | **Parcheggiato**: il rapporto è git-ignorato e sparisce alla chiusura del piano |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **IL PRE-CONTROLLO CHE LEGGE NON COGLIE CIÒ CHE SOLO IL COMPILATORE VEDE.** `E77` — il blocco `use` dettato non portava `kernel::record::EffectClass`, e **senza di esso il file non compila** — è la **terza** domanda del pre-controllo, *«l'artefatto è sbagliato, e compila»*, che si coglie **solo scrivendone un'implementazione**. Il coordinatore il pre-controllo l'ha fatto leggendo, e quella domanda è rimasta scoperta. 📌 **Chi pre-controlla un compito che detta codice ne compila almeno gli `use`**, o accetta di scoprirlo dall'implementatore.
+- ⛔ **UNA VOCE D'ERRATA APPLICATA NEL CODICE E NON SCRITTA NEL PIANO È METÀ RIMEDIO** — `E32 (M-2)`, `E33 (N-3)`, e oggi `E76`/`E77`. La regola è scritta da due compiti e non ha retto: chi applica una cura al sorgente la scrive **nello stesso momento** nel testo dettato, non «dopo».
+- ⛔ **UN RULING DATO IN CHAT VIVE SOLO IN CHAT.** I cinque ruling di questa sessione erano in un messaggio a un sotto-agente che è **morto**: senza questa tabella sarebbero costati una seconda revisione da capo. 📌 È la lezione del commit `088dcc6` del proprietario — *«la voce aperta che viveva solo in chat»* — pagata di nuovo il giorno dopo, su un artefatto diverso.
+- ⚠️ **IL RAPPORTO DI UN REVISORE È GIT-IGNORATO E MUORE COL DISCO.** Ciò che serve a ripartire si copia **nel diario**; il rapporto resta per le riproduzioni per esteso, non come casa unica.
+- ⚠️ **IL COSTO, MISURATO:** **due dispacci** (implementatore e revisore, entrambi su Opus 5, ~341k e ~350k token) più **una ripresa fallita** per errore dell'API. Il coordinatore ha riprodotto **due** rilievi da sé invece di fidarsi.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, e `main` è **avanti** su `origin/main`.
+2. ⛔ **MISURA I FINE-RIGA PRIMA DI CREDERE A UN'ETICHETTA:** `git config --show-origin --get-all core.autocrlf` e `git ls-files --eol`. Il valore **locale** è `false` e vince; **E51** ed **E72** dicono perché.
+3. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — i vincoli globali, la posizione, l'errata (**settantacinque** voci), le voci aperte — e **questa chiusura**.
+4. ⏭️ **IL GIRO DI CORREZIONI DEL COMPITO 10**, coi ruling della tabella qui sopra, che **non si rifanno**: si applicano. Sono **tutte di prosa** — il codice della campagna non si tocca — più le voci d'errata `E76`, `E77`, `E78` e quelle nuove dei rilievi, da scrivere nel piano. ⚠️ **Rispecchia nel TESTO DETTATO** ogni correzione che tocca testo che il piano detta (`E32 (M-2)`).
+5. ⛔ **Poi una RI-REVISIONE**, perché un'ondata che tocca un **fatto** si ri-rivede — regola 6 di *«Come si esegue un compito»*. Se il giro di correzioni l'ha fatto il coordinatore a mano, la ri-revisione è il controllo che la regola chiede, e **non** è facoltativa.
+6. Poi il **push di entrambi i commit** — `726bbba` e questa chiusura — e i due commit a sé dei **Minori 4 e 5**, che restano fuori dal compito.
+7. ⏭️ Poi il **compito 11** — `gui/` nasce — con `superpowers:subagent-driven-development`, il pre-controllo delle quattro domande rifatto contro il codice di **adesso** e ⛔ **la terza domanda esercitata compilando**, non leggendo. ⛔ **Prima del compito 11 si aggiorna Node** (P-64, P-65).
+8. ⛔ **Il brief di ogni compito porta i pezzi estratti con `sed -n` sui numeri di riga, che si RICALCOLANO** dopo ogni inserzione in errata: i confini del compito 11 non sono quelli di ieri.
+9. ⚠️ **La casa dei brief è `.superpowers/sdd/<nome-del-piano>/`**, col suo `.gitignore` a `*`. Ci sono i file dei compiti 8, 9 e 10.
+10. Alla chiusura del piano la cartella della revisione si **archivia** (decisione 69).
+11. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
 ### La ventottesima chiusura — 2026-09-19: il COMPITO 9 è FATTO, rivisto in un giro più una ri-revisione e un'ondata del coordinatore, e spinto; restano i compiti 10–17
 
 ⛔ **DA SAPERE SUBITO, quattro cose.**

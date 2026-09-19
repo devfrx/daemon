@@ -70,9 +70,16 @@
 //! a third variant of `IpcError`. The full argument, and why the signature nevertheless stays
 //! as it is today, sits on `Ipc::accept`.
 //!
-//! ⚠️ AND WHAT HOLDS THESE THREE SIGNATURES IS TWO IMPLEMENTATIONS FROM OUTSIDE THE CRATE:
-//! `tests/ports_are_implementable.rs` writes a fake gui and calls it, and
-//! `simulator::ipc::DyingGui` is a second one. They buy that the signatures are IMPLEMENTABLE
+//! ⚠️ AND WHAT HOLDS THESE THREE SIGNATURES IS EVERY IMPLEMENTATION FROM OUTSIDE THE CRATE, and
+//! WHICH THEY ARE IS WHAT THE COMMAND PRINTS rather than this line:
+//! `grep -rnE "^ *impl Ipc for" crates/`. ⛔ DATED RECALL, 2026-09-20: here stood "IS TWO
+//! IMPLEMENTATIONS", naming `tests/ports_are_implementable.rs` and `simulator::ipc::DyingGui`.
+//! It was true when milestone 6 wrote it and false from task 2 of sub-project 2, which brought
+//! the TRANSPORT -- `platform::ipc::LocalSocketIpc` -- and from tasks 7 and 10, which added two
+//! more fakes. The figure is REMOVED rather than realigned, because the dated-recall chain on
+//! `ClientId` in this file predicted the recurrence in writing: "naming a third would only
+//! schedule the same correction again" (E89 of the sub-project 2 plan).
+//! They buy that the signatures are IMPLEMENTABLE
 //! FROM OUTSIDE THE CRATE and callable; they do NOT buy that they are the right signatures, and
 //! neither is the conformance suite, which compares two implementations against ONE contract and
 //! is born with the real channel.
@@ -139,6 +146,14 @@ use alloc::vec::Vec;
 /// -- is guarded by neither number but by the sentence above.
 /// ⚠️ Read "whoever implements this port" WITH NO MILESTONE ATTACHED. This line has now
 /// named two, and naming a third would only schedule the same correction again.
+/// ⛔ DATED RECALL, 2026-09-20 -- IT SCHEDULED IT, AND THE APPOINTMENT CAME: task 2 of
+/// sub-project 2 brought `platform::ipc::LocalSocketIpc`, so "finds TWO FAKES and no transport"
+/// above is false in BOTH halves, and tasks 7 and 10 added two more fakes. ✅ THE FIGURE IS
+/// REPLACED BY THE COMMAND AND NOT BY A THIRD NUMBER, which is what this very paragraph asked
+/// for: `grep -rnE "^ *impl Ipc for" crates/`. ⛔ WHAT THE SENTENCE ABOVE CLAIMS IS UNTOUCHED:
+/// MILESTONE 6 did not implement this port, and that stays true however many implementations
+/// exist now -- the dated recall is re-pointed, never dropped (§6.5, gotcha #87). E89 of the
+/// sub-project 2 plan holds the record.
 /// ⛔ AND REMOVING IT WOULD LEAVE UNGUARDED THE VERY DEFECT IT EXISTS TO PREVENT, which is the
 /// whole reason the fix is a re-point: two independent counters that look identical, diverging
 /// with nothing to report it.

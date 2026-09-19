@@ -21910,6 +21910,76 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La ventottesima chiusura — 2026-09-19: il COMPITO 9 è FATTO, rivisto in un giro più una ri-revisione e un'ondata del coordinatore, e spinto; restano i compiti 10–17
+
+⛔ **DA SAPERE SUBITO, quattro cose.**
+
+**(1)** ⏭️ **Il compito 9 è fatto e spinto; il prossimo è il compito 10**, e quale sia lo dice la tabella della posizione qui sopra, che porta ora **nove** ✅ e **otto** ⬜.
+
+**(2)** ⛔ **L'ERRATA È A SETTANTUNO VOCI, E1…E71**, e si legge **prima** di ogni compito: **undici** sono nate oggi, `E61`…`E71`. ⚠️ **Due riguardano il compito 10 direttamente** — `E63` ne corregge il comando del Passo 1 e quello del criterio di chiusura, `E69` gli dice quali siti **non** toccare.
+
+**(3)** ⛔ **IL PRE-CONTROLLO HA TROVATO IL CRITICO, E LA REVISIONE HA TROVATO CHE IL CRITICO NON ERA TENUTO.** `E61`: con l'ordine che il piano dettava, `StartupError::Numbering` non aveva **nessun produttore possibile**, perché `policy_now` e `seeded_from` chiamano *la stessa* `Journal::replay` e la prima che fallisce è `policy_now`. La cura è lo scambio delle due righe — ma lo scambio **non è tenuto da niente**: rimesso a rovescio, `cargo test --locked -p daemon` dà **`15 passed; 0 failed`** e il workspace resta verde. ✅ Chiuso con la clausola di `E66`, *declared, not pinned*, e col suo innesco. ⛔ **La lezione: una cura può essere giusta e indifesa, e il pre-controllo non se ne accorge perché guarda il difetto, non la cura.**
+
+**(4)** ⛔ **`EXECUTOR_TURN_LIMIT` È `u64::MAX` DA QUESTO COMPITO**, e una sonda che arrivi a `executor.run()` con quel valore **si pianta** invece di arrossare: misurato, `running 1 test` e nient'altro, uccisa da `timeout 25`, uscita **143**. ⚠️ **I soli due siti che lo consegnano ancora sono giusti così** e non si «correggono» per zelo — la produzione, e `the_production_arbiter()`, dove `build_the_arbiter` rende prima che un esecutore esista (**E69**).
+
+✅ **Che cosa è stato fatto.** Quattro commit, ciascuno col cancello verde prima:
+
+| Commit | Che cosa |
+|---|---|
+| `b8e4a25` | il **pre-controllo del compito 9**: `E61` (il critico) ed `E62`, il **Passo 12-bis** che dà una sonda alla rotta provocabile, e i tre comandi di censimento corretti perché erano ciechi a `gui/` |
+| `9ba48e2` | **compito 9**: le quattro costanti, `u64::MAX`, `SharedClock`, `MaybeCustody`, `StartupError` a sei varianti, `build_the_arbiter` che riceve la policy, il cablaggio di `serving::serve`, le sette sonde nuove, `interprocess` in `[dev-dependencies]`, i tre richiami nel disegno del 2, e il debito `E21` (b) — più l'errata `E63`…`E65` |
+| `48b5e04` | i **rilievi della revisione** — un Critico, due Importanti, tre Minori, **tutti applicati e nessuno respinto** — e l'errata `E66`…`E70` |
+| `ce80c5d` | l'**ondata del coordinatore**: i due Minori della ri-revisione e l'errata `E71` |
+
+E lo stato alla chiusura, che non si ricorda ma si **rifà** — ogni riga porta il comando che la produce:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` = `origin/main`: `git fetch --all --prune`, `git status -sb`, `git stash list` vuoto |
+| ⛔ Fine-riga | `git config --show-origin --get-all core.autocrlf` → il **locale** dice `false` e vince; `git ls-files --eol` → quattro soli `w/crlf`, e sono i quattro `i/crlf`. **Non cambiarlo senza rileggere E51** |
+| I commit di questa sessione | `git log --oneline b8e4a25~1..HEAD` — li elenca lui, **senza la cifra accanto** |
+| La posizione | `grep -cE '^\| \*\*[0-9]+\*\* \|.*✅ [0-9-]+ \|$' <questo file>` → **9**; con `⬜ \|$` → **8** |
+| L'errata | `awk '/^## ⚠️ L.errata di questo piano/{s=1; next} s&&/^## /{s=0} s&&/^\| \*\*E[0-9]/{c++} END{print c+0}' <questo file>` → **71** |
+| Le sonde del daemon | `grep -c '#\[test\]' crates/daemon/src/main.rs` → **15** (otto alla baseline) |
+| Le varianti d'avvio | `grep -n 'enum StartupError' -A 20 crates/daemon/src/main.rs` → **sei**, e `grep -c 'stop(&format!' crates/daemon/src/main.rs` → **sei** bracci in `main` |
+| ⛔ Il censimento dei `SharedClock` | `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' \| grep -v '///'` → **tre**. ⚠️ **`gui/` non è opzionale nel comando** (`E62`) e **`\| grep -v '///'` non lo è** (`E63`): senza il primo è cieco alla quinta casa, senza il secondo conta la propria citazione |
+| Il formato durevole | `ls crates/kernel/tests/frozen/*.cbor \| wc -l` → **8**, ⚠️ **invariato**: il compito 9 non tocca il giornale |
+| Le famiglie di porte | `grep -c '^pub mod ' crates/kernel/src/ports/mod.rs` → **7**, ⚠️ **invariate** |
+| ⛔ Il processore a riposo | **DUE misure dello stesso giorno, e si tengono entrambe** (`E70`): **0,18 %** di un core (implementatore) e **0,29 %** (revisore), 60 s, `GUI_TICK` 16 ms, 2026-09-19, senza soglia. Il **17** le porta **entrambe** in `riferimenti.md`: lo scarto fra due misure dice più di una delle due |
+| Cancello | `bash scripts/gate.sh` → `GATE GREEN`, prima di **ognuno** dei quattro commit e dopo l'ultimo; `gate-deps.sh` (lista **non cresciuta**: `interprocess` entra in `daemon`, fuori da ADR-0031), `gate-attributes.sh` e `check-docs.sh` verdi |
+| Margine del compendio | ✅ **il compendio NON è stato toccato**: la §6 rimanda alla tabella della posizione (decisione 106) |
+| Debito lasciato | **nessuno dentro il compito 9** — il residuo di `E64` (2) è **chiuso** da `E69`. Restano la **minore parcheggiata** della ventunesima chiusura su `const CAP`, la `m-4` della ventiseiesima, la casa di sola cifra che `E21` assegna al **17**, e ⚠️ **il secondo capo di `SOCKET_NAME`**, che è del **guscio** e non di questo piano |
+
+#### Le decisioni prese eseguendo, oltre a quelle dell'errata
+
+| # | Decisione | Perché | Costo se sbagliata |
+|---|---|---|---|
+| 135 | ⛔ **Quando la regola dice di TOGLIERE una cifra, il comando che la conterebbe NON è il rimedio: è la cifra travestita** | la specie di `E58` è scattata **cinque volte** in questo piano — `E48`, `E58`, `E63`, e due dentro il giro di correzioni — e **due** di esse erano dentro rimedi scritti per le prime tre. La peggiore è `E71` (1): il doc di `stop` **stampava** il conto dei propri siti di chiamata dentro il capoverso che quattro righe sopra dichiara *«the number must not appear here at all»*, ed era l'unico numero del file **impossibile da rifare**, perché quello stesso capoverso rifiuta di offrire un comando. ⚠️ **Il discrimine non è «cifra sì / comando no»:** `CLAUDE.md` ammette una cifra che porti **comando e data sulla stessa frase**, ed è per questo che il *«15 passed, 0 failed»* della clausola di `E66` sta bene | si torna a rincorrere la cifra con un comando che la conta, che è la stessa malattia con un sintomo in meno |
+| 136 | **una frase EREDITATA dal testo dettato si corregge quando un compito la rende PORTANTE**, non quando la si nota | `E71` (2): *«swapping two lines does not compile»* è del Passo 7 e non nasce oggi, ed è **sovra-estesa** — misurato, `reactor` sopra `core` **compila**, uscita 0, mentre `clock` sopra `reactor` dà `error[E0425]`, uscita 101. Finché nessuno vi si appoggiava era una imprecisione; da `E66`, che la usa come **esemplare** di ciò che il compilatore tiene, è diventata una gamba. ⚠️ **Il segnale da cercare:** una frase vecchia che una clausola **nuova** cita per definire qualcosa | si corregge tutto ciò che si nota, e un compito non chiude mai; oppure non si corregge nulla, e una clausola nuova poggia su una gamba rotta |
+| 137 | **il giro di correzioni va all'implementatore RIPRESO quando `SendMessage` c'è**, e la decisione 133 resta il ripiego | oggi lo strumento c'era. L'agente ripreso ha **riprodotto tutte e sei le misure** prima di applicarle — compresa quella del Minore che il revisore stesso dichiarava respingibile, e che alla prova **reggeva** — e ha trovato **da sé** due ricadute della specie 135 dentro la propria passata. Un agente fresco avrebbe dovuto ricostruire ciò che lui già sapeva | si paga la riscrittura del brief e si perde chi conosce il proprio codice; il costo è scrittura, non qualità (è la 133 letta al contrario) |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UNA CURA PUÒ ESSERE GIUSTA E INDIFESA, E IL PRE-CONTROLLO NON SE NE ACCORGE.** Le quattro domande guardano il **difetto**; nessuna chiede *chi tiene il rimedio*. `E61` ha tolto un difetto reale e ha lasciato la cura appesa a due commenti, e a dirlo è stata la revisione. 📌 **La quinta domanda, per chi pre-controlla: se qualcuno disfacesse la mia cura, che cosa diventerebbe rosso?**
+- ⛔ **UN RILIEVO CHE IL REVISORE STESSO DICHIARA RESPINGIBILE PUÒ ESSERE GIUSTO.** Il Minore 6 arrivò col proprio dubbio addosso; riprodotto, reggeva. 📌 **Il dubbio di chi lo scrive è un'informazione, non un verdetto**: si misura come gli altri.
+- ⛔ **RILANCIARE UNA MISURA FA PARTE DEL RIVEDERE, E LA DIVERGENZA SI REGISTRA.** Il revisore ha rifatto il Passo 14 e ha ottenuto **0,29 %** dove l'implementatore aveva **0,18 %**, stesso giorno e stesso comando. Nessuna delle due è «quella giusta»: per un numero senza soglia, lo **scarto** è il dato, e `CLAUDE.md` dice di registrare la divergenza invece di allinearsi.
+- ⛔ **UN'AFFERMAZIONE VICINA CONTAMINA QUELLA CHE LE STA ACCANTO.** La clausola di `E66` diceva il vero, ma venti righe sotto c'era un *«LOAD-BEARING»* tenuto dal **compilatore**: chi legge porta quella lettura sulla prima. La cura non è stata distinguere, ma **togliere la parola ambigua** dalla frase che induceva in errore.
+- ⚠️ **IL COSTO, MISURATO:** **due dispacci e due riprese** — implementatore e revisore dispacciati una volta sola, poi il giro di correzioni **sull'implementatore ripreso** e la ri-revisione **sul revisore ripreso** (decisione 137) — più un'ondata fatta dal coordinatore a mano. ⛔ **Il compito 8 costò QUATTRO dispacci**, perché `SendMessage` non c'era e il giro di correzioni andò a un agente fresco (decisione 133).
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è `ce80c5d` o uno dopo.
+2. ⛔ **MISURA I FINE-RIGA PRIMA DI CREDERE A UN'ETICHETTA:** `git config --show-origin --get-all core.autocrlf` e `git ls-files --eol`. Il valore **locale** di questo repository è `false` e vince su qualunque account; **E51** dice perché e che cosa costa cambiarlo.
+3. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — i vincoli globali, la posizione, ⛔ **l'errata, che ora ha settantuno voci**, le voci aperte. ⚠️ **Il registro e i rapporti della revisione NON si leggono per eseguire.**
+4. ⏭️ **Il compito 10** — la campagna DST del 2 in `simulator`, l'attività sotto due guasti, e la riga nel settimo passo del cancello — con `superpowers:subagent-driven-development`: un subagente fresco **su Opus**, con revisione fra uno e l'altro. ⛔ **Il pre-controllo delle quattro domande si rifà contro il codice di ADESSO**, e ⛔ **la revisione si dispaccia lo stesso anche quando il pre-controllo è andato bene** — oggi ha trovato che il Critico del pre-controllo non era tenuto da niente, per la terza sessione di fila in cui la revisione trova ciò che il pre-controllo non vede.
+5. ⛔ **E il pre-controllo del 10 fa DUE domande in più.** La prima è quella del compito 9: *quali decisioni questo compito CHIUDE, e che cosa dicono i loro COSTI?* — il 10 chiude **D34** (il `SharedClock` resta locale, e il 10 ne scrive la quarta casa) e la riga 24 del Traguardo 6. La seconda è nuova, ed è la decisione 135 applicata al pre-controllo stesso: *se qualcuno disfacesse la mia cura, che cosa diventerebbe rosso?*
+6. ⛔ **Il brief di ogni compito porta QUATTRO pezzi**, estratti con `sed -n` sui numeri di riga, che si **ricalcolano dopo ogni inserzione in errata**. ⚠️ L'errata è cresciuta di **undici** righe oggi, più il Passo 12-bis dentro il compito 9: i confini del compito 10 **non** sono quelli di ieri.
+7. ⚠️ **La casa dei brief è `.superpowers/sdd/<nome-del-piano>/`**, col suo `.gitignore` a `*`. Ci sono i due file del compito 9. ⛔ **`SendMessage` ERA disponibile oggi**: se lo è anche domani, il giro di correzioni va all'implementatore **ripreso** (decisione 137), e la ri-revisione al revisore **ripreso**.
+8. Ogni compito: il **cancello prima del commit**, la riga della posizione aggiornata **nel commit del compito**, il commit **senza co-autore**, e il push **dopo** che la revisione è pulita. ⛔ **Il compendio non si tocca** (decisione 106).
+9. ⛔ **Prima del compito 11 si aggiorna Node** (P-64, P-65). ⛔ **Prima dei compiti 13 e 14** si guarda se `C:\Users\zagor\AppData\Local\Temp\probe-R13\gui\` c'è ancora.
+10. Alla chiusura del piano la cartella della revisione si **archivia** (decisione 69).
+11. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
 ### La ventisettesima chiusura — 2026-09-18, quarta sessione del giorno (verbale scritto il 2026-09-19): il COMPITO 8 è FATTO, rivisto in due giri più un'ondata del coordinatore, e spinto; restano i compiti 9–17
 
 ⛔ **DA SAPERE SUBITO, cinque cose, e la prima può fare danno prima che tu cominci.**

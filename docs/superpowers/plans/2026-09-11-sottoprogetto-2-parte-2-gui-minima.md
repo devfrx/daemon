@@ -285,6 +285,8 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E58** | ⛔ **Il comando che il rimedio a `E49`/I-3 ha messo al posto del numerale CONTA SÉ STESSO, ne manca uno, e copre meno della frase che sostiene — ed è la SECONDA volta in due giorni.** Il giro di correzioni ha tolto *«TWO OF THEM»* da `crates/kernel/src/reconcile.rs` (giusto) e vi ha scritto *«WHO THEY ARE IS WHAT `grep -rn 'journal.note(' crates/kernel/src/` LISTS»*. ⚠️ **Lanciato il 2026-09-18 rende SETTE righe, e tre sono sbagliate:** due sono la **citazione del comando dentro i commenti che lo propongono** — `reconcile.rs:53` e `:80`, che non sono scrittori — e ⛔ **manca `crates/kernel/src/registry.rs:273`**, dove `.note(` è concatenato sulla riga successiva a `journal` e nessun motivo ancorato a `journal.note(` lo vede. ⛔ **E la frase dice *«WHOEVER WRITES»*, mentre il comando guarda il solo `note`:** il capoverso sotto enumera `Arbiter::set_policy`, che scrive anche attraverso `intent` e `outcome`, e quegli scrittori il comando non li vede mai. ⛔ **La prima metà è il precedente `n-3` di `E48`, di due giorni fa** — *«un comando offerto dentro un commento conta la propria citazione»* — e la regola che ne era uscita, **decisione 130**, dice che *un rimedio che tocca un comando si verifica COL comando*: il comando è stato **suggerito dal coordinatore** nel brief delle correzioni e **installato alla lettera senza lanciarlo**, da entrambi. ✅ **Sostituito il 2026-09-18 con uno VERIFICATO NELLE DUE DIREZIONI** — `grep -rnE '\.(intent\|outcome\|note)\(' crates/kernel/src/ \| grep -v '///'` → **undici** siti, che è anche il conto senza filtri (nessuno manca) e senza falsi positivi (la controprova rende vuoto), e il `grep -v '///'` lo rende **cieco alla propria citazione**, che vive su una riga `///`. ⚠️ **Il limite è dichiarato accanto:** scritto dentro un `//` invece che un `///`, tornerebbe a contarsi. ⚠️ **E la seconda casa è tolta:** il secondo sito rimanda al primo invece di ricopiare il comando (gotcha **#68**). ⛔ **Il messaggio di `96e3cb6` afferma *«che oggi elenca cinque scrittori — arbiter, boundary, gateway, permission, sensor»*, ed è falso; il commit NON si amenda** — decisione 129, precedente `E47`. Trovata dalla ri-revisione del compito 8, riprodotta dal coordinatore, 2026-09-18 |
 | **E59** | ⚠️ **La voce `E53` offriva, come cura al numerale, un comando che rende il numerale che `E53` stessa condanna.** `E53` toglie *«tre note»* dal testo dettato e propone `grep -c 'JOINED IT' crates/kernel/tests/record_shape.rs` per contarle *«senza che nessuno le ricopi»*. ⛔ **Il comando è in meno di uno, sempre:** la prima nota dice `JOINED THIS LIST` e non `JOINED IT` — `crates/kernel/tests/record_shape.rs:246` — quindi oggi rende **quattro** dove le note sono **cinque**, e al commit `4783683` rendeva **tre** dove erano **quattro**, cioè esattamente il numerale che la voce stava correggendo. ✅ **Corretto in `grep -c 'JOINED' crates/kernel/tests/record_shape.rs`**, misurato il 2026-09-18: **5** oggi, **4** prima del compito 8. 📌 **La forma generale, che è la stessa di `E58` da un altro lato: un comando scritto per sostituire una cifra va lanciato SUL FILE CHE DEVE CONTARE**, o la cura porta lo stesso difetto della malattia — e qui lo portava dentro la voce che la prescriveva. Trovata dalla ri-revisione del compito 8, riprodotta dal coordinatore, 2026-09-18 |
 | **E60** | ⚠️ **I testi dettati del Passo 8 restavano divergenti dal codice, mentre gli altri tre rilievi dello stesso giro il testo dettato l'avevano corretto.** Il giro di correzioni ha allineato al codice i testi dettati di `E52`, `E56` ed `E57`, e ha lasciato quelli di `E53` e `E54` — righe **11422** e **11437** del piano — dicendo *«tre note»* e *«ITS THREE SIBLINGS»*, dove il codice committato dice *«FOR THE SAME REASON THE ONES BEFORE IT DID»* e *«REASON ITS SIBLINGS GIVE»*. ⛔ **Il motivo dichiarato era che riallineare a «quattro» violerebbe il gotcha #31, ed è vero — ma il rimedio non era riallineare: era TOGLIERE**, che è ciò che il codice aveva già fatto. ✅ **Corrette per sottrazione il 2026-09-18**, coi blocchi resi **identici al sorgente committato**, il trattino ASCII compreso. ⛔ **E le righe 8387 e 8407 NON si toccano:** sono le copie del **compito 6**, dove *«tre note»* e *«ITS THREE SIBLINGS»* erano **vere** quando furono scritte — correggerle per zelo renderebbe falso un testo vero, che è l'avvertimento in coda a `E41`. 📌 **La forma generale: quando un giro di correzioni allinea alcuni testi dettati e non altri, la ragione si scrive** — altrimenti la prossima passata non sa se la differenza è una decisione o una dimenticanza. Trovata dalla ri-revisione del compito 8, 2026-09-18 |
+| **E61** | ⛔ **Compito 9, Passi 5 e 7 — `StartupError::Numbering` NON HA NESSUN PRODUTTORE POSSIBILE con l'ordine dettato, e il suo messaggio è morto.** Il Passo 7 detta `policy_now` **prima** di `seeded_from`, e le due funzioni chiamano **la stessa** `Journal::replay`: `kernel::arbiter::policy_now` apre con `journal.replay().map_err(PolicyError::Journal)?` e `kernel::numbering::seeded_from` con `journal.replay()?` — che è il suo **unico** modo di fallire, perché il resto del corpo è `Ok(...)`. Quindi su qualunque archivio in cui `replay` rifiuta, a fermarsi è la **prima** chiamata, e l'avvio esce con `StartupError::Policy(PolicyError::Journal(…))`; perché esca `StartupError::Numbering` servirebbe un giornale che risponde **due volte in modo diverso** dentro la stessa funzione, che su `FileJournal` non è una cosa che una sonda possa disporre. ⛔ **E il doc dettato dal Passo 5(a) lo AFFERMA al contrario:** *«the same re-read seeds the step counter, **and it fails the same way**»* — non fallisce affatto, perché la ri-lettura di prima l'ha già fermato; e il braccio di `main` che stampa *«would not say which step to carry on from»* è un messaggio che nessun operatore può vedere. 📌 **È la specie di P-14 e P-39** — una variante senza produttore possibile — e questo compito ne porta la regola addosso: il doc dettato per `StartupError::Ipc` scrive *«a variant with no probe is a claim nobody checks»*. ✅ **La cura è lo SCAMBIO DI DUE RIGHE, ed è la forma di P-14 (dare un produttore) invece di quella di P-39 (restringere il tipo), perché entrambe le rotte esistono davvero in produzione:** nel Passo 7 `numbering::seeded_from` va **prima** di `arbiter::policy_now`, e da lì `StartupError::Numbering` significa *«l'archivio non si rilegge»* e `StartupError::Policy` significa *«l'archivio si rilegge ma un record non si decodifica»* — due guasti distinti, due messaggi onesti, nessun'altra riga toccata (nessuno dei due valori dipende dall'altro; `build_the_arbiter` viene dopo entrambi). ⛔ **E il doc dettato dal Passo 5(a) si riscrive su quella verità**, senza il *«fails the same way»*. ✅ **PIÙ UNA SONDA, perché la regola che il compito si scrive addosso valga anche per sé:** nel Passo 12, la rotta **provocabile** — `StartupError::Policy` — si prova come `arbiter_policy.rs` già prova `PolicyError::Record`, cioè scrivendo byte che non sono un record **attraverso la porta**, che prende `&[u8]` e non valida nulla (rotta A4 di `kernel::boundary`): fra due corse, `FileJournal::open`, `journal.note(StepId::new(1), b"not a record of any version")`, e la corsa dopo rende `Err(StartupError::Policy(_))`. ⚠️ **La rotta di `Numbering` resta DICHIARATA E NON PINZATA** — provocarla vuole un archivio `redb` corrotto, non un record corrotto — con l'innesco scritto accanto alla variante: il primo banco che sappia corrompere un archivio. È la forma che il repository usa già (gotcha #73). Trovata dal pre-controllo del compito 9, 2026-09-19 |
+| **E62** | ⛔ **Compito 9, Passo 3 — il censimento dei `SharedClock` che il doc dettato PIANTA NEL SORGENTE si ferma a QUATTRO, e P-74 ha già misurato che sono CINQUE.** Il blocco detta un commento che si dichiara censimento — *«THE THIRD OF ITS SHAPE IN THIS REPOSITORY»* — elenca le case e chiude con *«Task 10 … carries the fourth copy»*. Ma **P-74**, il 2026-09-14, ha contato **cinque** case: le tre dei banchi su `VirtualReactor`, il daemon e `gui/fake-core/src/main.rs` del compito 12, **due delle quali avvolgono `SystemReactor`** — e la sua stessa conclusione avverte che *«senza questa riga la prossima passata riconta quattro, ne trova cinque, e riapre una misura già fatta»*. ⛔ **P-74 assegnò i richiami datati a D34 e alla tabella di P-59, cioè DENTRO il piano; la casa che il prossimo censimento apre davvero è il COMMENTO NEL SORGENTE**, che è `grep`-abile e si dichiara censimento, e che il compito 9 sta per scrivere già stantio. ⛔ **E IL COMANDO CHE LO RIFÀ È CIECO, misurato il 2026-09-19:** `grep -rn 'struct SharedClock' crates/ --include='*.rs'` — la forma che P-59 e P-74 consegnano entrambe — cerca **solo** sotto `crates/`, e `gui/` è un albero fratello che **esiste già** (le fixture del compito 3: `ls gui/schema/fixtures` le elenca) e che al compito 12 porterà `gui/fake-core`. Quel comando non potrà **mai** vedere la quinta casa: è la specie di **P-24**, *«un elenco chiuso travestito da comando»*, e della **decisione 132**, *«un comando che sostituisce un numerale si lancia prima di scriverlo»*. ✅ **La cura è la regola di [`../../../CLAUDE.md`](../../../CLAUDE.md) — *un numero misurato non si scrive: si scrive il COMANDO che lo produce* — applicata due volte:** nel doc dettato l'**ordinale sparisce** (né *«the third»* né *«the fourth»*), resta il **merito**, che è intatto e non dipende dal conto — la forma è ripetuta di proposito, D34 la tiene locale, e i due reattori sono diversi — e accanto va il comando che copre **entrambi** gli alberi, `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs'`; e la stessa cecità vive in **più case di questo piano**, che si chiudono **per specie e non per elenco**. ⚠️ **Nessun numerale qui, e il perché è misurato:** qualunque comando che cerchi la forma cieca **conta la propria citazione** dentro questa riga e conta anche la forma **curata**, che la contiene come prefisso — `grep -c "struct SharedClock' crates/"` su questo file rende **undici** contro le sei righe che portano davvero la forma cieca, misurato il 2026-09-19. È **E58** e la **decisione 132** in persona, commesse dentro il rimedio che le cita, e la cura è la regola invece della cifra. ✅ **La regola, in tre righe:** un comando che un compito **rilancerà** si **corregge** — il Passo 1 del compito 9, il Passo 1 del compito 10 e il criterio di chiusura del 10, fatti qui; un comando dentro un **verbale datato** resta com'era misurato e riceve un **richiamo datato** accanto **solo dove è consegnato come metodo** — P-59 e P-74, fatti qui; P-49 e la diciannovesima chiusura del diario lo citano come **reperto** della loro misura e **non si toccano** (*«il diario NON si corregge»*). ✅ **E una casa era GIÀ GIUSTA, trovata contando invece che rileggendo:** il criterio di chiusura del compito **12** conta i due alberi separatamente — `grep -c 'struct SharedClock' gui/fake-core/src/main.rs` più `grep -rl … crates/ … | wc -l` — somma cinque e cita **P-74**: non è cieca e non si tocca. ⚠️ **E il primo censimento di questa voce ne nominava DUE**, P-59 e P-74: è la radice **R1** commessa dentro il rimedio che la cita, corretta rilanciando il comando invece di rileggere la frase — il quinto passo della disciplina dell'audit. ⚠️ **Il merito di D34 NON si riapre:** P-74 l'ha già riletta nel merito e confermata — una casa comune vorrebbe un avvolgente generico su `R: Reactor`, che il quinto criterio di `anthropic-skills:decision-principles` chiama *sfoggio* — e questa voce tocca **il censimento, non la decisione**. Trovata dal pre-controllo del compito 9, 2026-09-19 |
 
 ---
 
@@ -1582,6 +1584,7 @@ qui si prende con la misura in mano.** Censite le case il 2026-09-14:
 grep -rn 'struct SharedClock' crates/ --include='*.rs'
 grep -n 'simulator' crates/daemon/Cargo.toml
 ```
+⚠️ **RICHIAMO DEL 2026-09-19, dal pre-controllo del compito 9 (E62): il comando qui sopra è CIECO a `gui/`**, che è un albero fratello di `crates/` e non un suo discendente — quindi non potrà mai vedere `gui/fake-core/src/main.rs`, che è la quinta casa e la ragione per cui questo blocco esiste. La misura che il blocco riporta resta quella del suo giorno e non si riallinea; chi lo rilancia usa `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs'`.
 
 | Casa | Che cosa avvolge | Può importare da `simulator`? |
 |---|---|---|
@@ -2044,6 +2047,7 @@ restano quattro»*, e la tabella di **P-59** ne elenca quattro.
 grep -rn 'struct SharedClock' crates/ --include='*.rs'
 grep -n 'simulator' gui/fake-core/Cargo.toml
 ```
+⚠️ **RICHIAMO DEL 2026-09-19, dal pre-controllo del compito 9 (E62): il comando qui sopra è CIECO a `gui/`**, che è un albero fratello di `crates/` e non un suo discendente — quindi non potrà mai vedere `gui/fake-core/src/main.rs`, che è la quinta casa e la ragione per cui questo blocco esiste. La misura che il blocco riporta resta quella del suo giorno e non si riallinea; chi lo rilancia usa `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs'`.
 
 ✅ **E l'innesco, letto alla lettera, NON scatta.** D34 lo formula così, e le parole sono queste: *«una quinta
 casa **dentro `simulator`** riapre la misura»*. `gui/fake-core` non è dentro `simulator`: è un binario fuori dal
@@ -11759,7 +11763,7 @@ grep -n 'const EXECUTOR_TURN_LIMIT\|const TOTAL_VRAM\|const ARBITER_ID\|const JO
 grep -n 'fn run_the_production_graph\|fn run_the_graph\|fn build_the_arbiter\|fn reserve\|fn main' crates/daemon/src/main.rs
 grep -c '^    fn \|^    #\[test\]' crates/daemon/src/main.rs
 grep -n 'enum StartupError' -A 12 crates/daemon/src/main.rs
-grep -rn 'struct SharedClock' crates/ --include='*.rs'
+grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs'
 grep -n 'pub fn new' -A 2 crates/platform/src/reactor.rs
 grep -n 'interprocess' crates/platform/Cargo.toml crates/daemon/Cargo.toml Cargo.lock
 git ls-files --eol crates/daemon/src/main.rs crates/daemon/Cargo.toml Cargo.lock docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
@@ -12723,6 +12727,76 @@ percorso e nome propri, `run_the_graph` con limite finito e tick nullo, un pari 
 cargo test --locked -p daemon 2>&1 | tail -20
 ```
 
+- [ ] **Passo 12-bis: la sonda di `StartupError::Policy`, e la rotta di `Numbering` dichiarata — E61**
+
+⛔ **Nato dal pre-controllo del compito 9 (E61), e fa parte del compito come tutti gli altri.** Il Passo 5 fa nascere
+**due** varianti a cui nessun passo dava una sonda, mentre la terza — `Ipc` — ne riceve una al Passo 12 con un doc che
+scrive la regola per tutte e tre: *«a variant with no probe is a claim nobody checks»*. ⛔ **E prima dello scambio di
+righe che E61 impone al Passo 7, una delle due non aveva nemmeno un PRODUTTORE possibile.**
+
+⚠️ **Lo scambio del Passo 7 viene PRIMA di questa sonda** — `numbering::seeded_from` sopra `arbiter::policy_now` — o
+l'esito atteso qui sotto non è quello che il grafo rende.
+
+✅ **La via è MISURATA sul sorgente, non scelta a memoria (2026-09-19):** `FileJournal::note` e `FileJournal::outcome`
+rifiutano con `JournalError::OutOfOrder` se il passo non ha già un intento — `if !self.has_intent(step)?` — mentre
+`intent` rifiuta solo se il passo ne ha **già** uno, quindi su un passo libero passa. E `FileJournal::replay` rende
+**tutti** i record senza raggrupparli, il che è ciò che porta la spazzatura sotto gli occhi di `policy_now`.
+
+```rust
+    /// ⛔ THE ROAD INTO `StartupError::Policy`, AND IT IS THE ONE THAT CAN BE PROVOKED. After E61 the
+    /// two re-reads of the journal name two DIFFERENT failures: `Numbering` means the archive would
+    /// not replay at all, and `Policy` means it replayed and a record in it is not one this build
+    /// understands. Only the second can be arranged from outside, and it is arranged the way
+    /// `crates/kernel/tests/arbiter_policy.rs` already arranges it -- bytes written THROUGH the port,
+    /// which takes `&[u8]` and validates nothing (road A4 of `kernel::boundary`).
+    ///
+    /// ⚠️ THE BYTES GO IN AS AN `intent` AND NOT AS A `note`, and that is measured rather than
+    /// stylistic: `note` and `outcome` refuse a step that has no intent yet, `intent` refuses only a
+    /// step that already has one. A `note` here would come back `OutOfOrder` and the probe would be
+    /// red for the wrong reason.
+    ///
+    /// ⛔ AND `StartupError::Numbering` IS DECLARED, NOT PINNED (gotcha #73): provoking it wants a
+    /// `redb` archive that will not replay -- a corrupt DATABASE, not a corrupt record -- and nothing
+    /// in this workspace knows how to make one. ITS TRIGGER IS THE FIRST BENCH THAT DOES. The variant
+    /// is reachable in production, which is why it stays; it is the provocation that is missing.
+    #[test]
+    fn a_record_this_build_cannot_read_stops_the_start_up() {
+        let dir = private_dir_for_line(line!());
+        let journal = dir.join("journal.redb");
+
+        {
+            let mut archive = FileJournal::open(&journal).expect("the archive is created");
+            archive
+                .intent(StepId::new(1), b"not a record of any version")
+                .expect("the port takes bytes and validates nothing");
+        }
+
+        let outcome = run_the_graph(
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &journal,
+            &dir.join("layout.redb"),
+            &socket_name_for_line(line!()),
+        );
+
+        match outcome {
+            Err(StartupError::Policy(_)) => {}
+            other => panic!("a journal this build cannot read must stop the start-up: {other:?}"),
+        }
+    }
+```
+
+⛔ **E si prova nella SECONDA direzione, perché un controllo si prova in due direzioni:** tolto il blocco che scrive
+i byte-spazzatura, la sonda deve diventare **rossa**, perché l'avvio riesce e l'esito è `Err(StartupError::Run(…))`;
+la mutazione si **revoca** subito dopo e a fine compito `git diff` sulle mutazioni è a **zero**. Senza questa prova
+la sonda direbbe soltanto che un avvio può fallire.
+
+⚠️ **Gli `use` del modulo `tests` crescono di `kernel::ports::journal::Journal`** — `intent` è un metodo del
+**tratto**, non di `FileJournal` — e `cargo build --tests` lo detta.
+
+```bash
+cargo test --locked -p daemon 2>&1 | tail -20
+```
+
 - [ ] **Passo 13: `Disconnected` — coperto dal banco del 7 e dalla campagna del 10, e detto (R4-9)**
 
 La §8 chiede *«la GUI che muore con una concessione ordinaria → `on_disconnect`, già provato in `client.rs`, più
@@ -12886,7 +12960,7 @@ forma viene scritta, e i primi due non si possono importare.
 ls crates/simulator/tests/serving_campaign.rs 2>&1
 ls crates/simulator/tests/
 grep -n 'run "DST campaigns' -A 7 scripts/gate.sh
-grep -rn 'struct SharedClock' crates/ --include='*.rs'
+grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs'
 grep -n 'simulator' crates/daemon/Cargo.toml
 grep -nE '^\s*pub (fn|const fn|struct)' crates/kernel/src/client.rs
 grep -n 'pub enum Resolution' -A 10 crates/kernel/src/reconcile.rs
@@ -13675,7 +13749,7 @@ grep -n 'const OPERATIONS\|const WRITES_PER_APPROVAL\|const EXPECTED_DEATH_WORLD
 grep -c 'DyingGui' crates/simulator/tests/serving_campaign.rs
 grep -c 'serving_campaign' scripts/gate.sh
 bash scripts/gate.sh 2>&1 | grep -c 'DST serving'
-grep -rn 'struct SharedClock' crates/ --include='*.rs' | wc -l
+grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' | wc -l
 ```
 
 Atteso: le sonde sono **quattro** — i due premi e le due proprietà; le quattro costanti ci sono e **nessuna porta

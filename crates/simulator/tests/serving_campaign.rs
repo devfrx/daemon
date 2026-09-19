@@ -13,16 +13,10 @@
 //! than imported: a `tests/` is a crate of its own and a binary exports nothing. ⚠️ WHERE ELSE IT
 //! IS WRITTEN IS WHAT THE COMMAND PRINTS, not this line:
 //! `grep -rn 'struct Wire' crates/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`.
-//! Here stood "this is the THIRD place it is written", an ordinal that resolved to nothing a
-//! reader could check. The cure is the one E76 applied to the `SharedClock` tally in this same
-//! file -- applied here on 2026-09-20 to a line that predates it. ⛔ AND THE FILTER IS NOT
-//! DECORATION HERE EITHER: every line that NAMES the command is counted by it, and this paragraph
-//! names it more than once, so the unfiltered figure moves whenever this prose does -- which is
-//! why no figure is written here at all. It is E63 for the third time in this task, and the
-//! second inside a cure that cites E63 (E96). ⚠️ AND "four paragraphs
-//! below" stood here for one commit: a distance counted in prose, which is the species E93 exists
-//! to remove, committed inside the cure for it. Naming the thing does not rot; counting to it
-//! does.
+//! ⛔ THE FILTER IS NOT DECORATION: the line above SPELLS the pattern in order to name the
+//! command, so an unfiltered run counts that line too -- the defect E63 measured on 2026-09-19,
+//! and E96 on 2026-09-20. ⚠️ WHAT STOOD HERE BEFORE, AND WHY IT WENT, IS IN E93 AND E96 OF THE
+//! PLAN: a correction's record does not live in the document it corrects (`CLAUDE.md`).
 //!
 //! ⛔ AND THE FIRST HALF WOULD BE VACUOUS WITHOUT A GRANT PUT IN BY HAND. Sub-project 2 issues NO
 //! grant to a client -- `serving.rs` says so of itself -- so a gui that dies here holds nothing,
@@ -101,10 +95,7 @@ use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 use kernel::ports::reactor::Reactor;
 // ⚠️ `EffectClass` IS HERE FOR ONE `match`: the helper `the_doubt_the_one_function_resolves_to`
 // reads `POLICY_FUNCTION.effect` and names the three classes, which cannot be spelled without the
-// type. Without this line the file does not compile at all (E77 of the plan).
-// ⛔ DATED RECALL, 2026-09-20: here stood "AND IT IS NOT IN THE DICTATED LIST", true while E77
-// lived in the source alone and false from the moment the dictated block was mirrored. That
-// mirroring is the other half of E77 -- the half E76 had and E77 had not.
+// type. Without this line the file does not compile at all (E77 and E90 of the plan).
 use kernel::record::EffectClass;
 use kernel::reconcile::{steps_in_doubt, Resolution};
 // ⚠️ `below` LIVES ON THE EXTENSION TRAIT, not on `SeededRng`: `kernel::rng::RngExt`

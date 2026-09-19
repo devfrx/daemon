@@ -78,17 +78,15 @@ run "documentation consistency"           bash scripts/check-docs.sh
 # WHICH THIS LINE NO LONGER CARRIES: that day the second pass cost 0.81s over five targets,
 # and it is kept because the lesson is the arithmetic and not the figure -- which also puts
 # back the link the chain above lost when the date on the line changed. ⛔ AND THE
-# RE-MEASUREMENT IS NOT THE ARITHMETIC ANYBODY WOULD HAVE PREDICTED: the three targets of
-# that 1.45s cost 0.78s of that 0.81s -- the
-# same binaries, the same machine, at roughly half the price -- so the two new campaigns add
-# 0.03s and the figure still FELL. Which is the point: it is an ORDER OF MAGNITUDE and not a
-# constant -- the arbiter binary alone, same command, came out 0.63s and 1.53s within one
-# session on this machine -- so nothing asserts on it, and what the gate collects is the
-# printed line, for a reader to compare against the run before. And a failing
-# campaign turns the gate red TWICE, from this step and
-# from the second check: that redundancy is not a defect but the only proof the step really
-# executes what it claims -- a printing step that could not go red would be indistinguishable
-# from one that prints nothing.
+# RE-MEASUREMENT IS NOT THE ARITHMETIC ANYBODY WOULD HAVE PREDICTED: the three targets of that
+# 1.45s cost 0.78s of that 0.81s -- the same binaries, the same machine, at roughly half the
+# price -- so the two new campaigns add 0.03s and the figure still FELL. Which is the point:
+# it is an ORDER OF MAGNITUDE and not a constant -- the arbiter binary alone, same command,
+# came out 0.63s and 1.53s within one session on this machine -- so nothing asserts on it, and
+# what the gate collects is the printed line, for a reader to compare against the run before.
+# And a failing campaign turns the gate red TWICE, from this step and from the second check:
+# that redundancy is not a defect but the only proof the step really executes what it claims
+# -- a printing step that could not go red would be indistinguishable from one that prints nothing.
 run "DST campaigns -- wall time" bash -c '
   cargo test --locked -p simulator --test dst_campaign -- --nocapture &&
   cargo test --locked -p simulator --test arbiter_campaign -- --nocapture &&

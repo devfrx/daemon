@@ -65,9 +65,10 @@ run "documentation consistency"           bash scripts/check-docs.sh
 # This comment said "all three DST campaigns" until 2026-09-02 and the campaigns were five: a
 # tally in a comment ages the day somebody adds one, and the list cannot (gotcha #31).
 #
-# ⚠️ TWO COSTS, both declared. The short campaigns run twice: RE-MEASURED on 2026-09-02,
-# the second pass costs 0.81s of test time -- dst_campaign 0.21s, arbiter_campaign 0.16s,
-# gui_death_campaign 0.01s, worker_kill_campaign 0.02s, engine_crash_consistency 0.41s.
+# ⚠️ TWO COSTS, both declared. The short campaigns run twice: RE-MEASURED on 2026-09-19,
+# the second pass costs 0.49s of test time -- dst_campaign 0.07s, arbiter_campaign 0.05s,
+# gui_death_campaign 0.00s, serving_campaign 0.23s, worker_kill_campaign 0.01s,
+# engine_crash_consistency 0.13s.
 # ⚠️ THE FIGURE IS RE-MEASURED WHENEVER THIS LIST CHANGES AND NEVER REALIGNED FROM MEMORY,
 # which is why it carries its date: it said "~0.2s" at milestone 4 with two campaigns and
 # "1.45s" on 2026-08-25 with three. ⛔ AND THE RE-MEASUREMENT IS NOT THE ARITHMETIC ANYBODY
@@ -85,6 +86,7 @@ run "DST campaigns -- wall time" bash -c '
   cargo test --locked -p simulator --test dst_campaign -- --nocapture &&
   cargo test --locked -p simulator --test arbiter_campaign -- --nocapture &&
   cargo test --locked -p simulator --test gui_death_campaign -- --nocapture &&
+  cargo test --locked -p simulator --test serving_campaign -- --nocapture &&
   cargo test --locked -p simulator --test worker_kill_campaign -- --nocapture &&
   cargo test --locked -p platform --test engine_crash_consistency -- --nocapture'
 

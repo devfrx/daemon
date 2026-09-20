@@ -21,6 +21,10 @@ Desktop.ini
 # measure a graph nobody has approved. The spikes below ignore their own because they are
 # throwaway probes; this is the product.
 
+# Build artefacts of the gui -- the lockfile is committed, the tree it installs is not
+/gui/node_modules/
+/gui/dist/
+
 # Build artefacts of the spikes -- the probes are kept, the binaries are not
 /spikes/rust/target/
 /spikes/rust/Cargo.lock

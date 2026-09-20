@@ -334,6 +334,9 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E107** | ⛔ **Compito 11, dalla ri-revisione — l'ondata che chiudeva `E104` («un doc promette un meccanismo che il codice non ha») ne ha scritti TRE NUOVI nello stesso blocco.** Tutti e tre riprodotti dal ri-revisore e **riverificati dal coordinatore** il 2026-09-20, mutando e revocando con `git diff` a zero. **(a)** *«ITS TRIGGER IS THE FIRST CALL SITE: … task 14»* è **falso, e l'innesco è già acceso**: un sito di chiamata esiste **dentro il compito 11**, `fakeBridge.test.ts` manda `Hello`, quindi rinominare `Hello` rende `npm run build` **EXIT=2** oggi. Gli altri tre ricevono il primo chiamante ai compiti **13** e **14**. ⚠️ **E la misura accanto era un universale tratto da un caso solo:** *«renaming a variant … leaves EXIT=0»* vale per le tre specie **senza** chiamante, non per `Hello`. **(b)** *«a field that changes SHAPE is a compile error here»* è **falso**: `Approve` guadagna `note: string`, `parse.ts` tenuto coerente, `bridge.ts` intatto → build **EXIT=0** e **zero** diagnosi in quel file. **(c)** *«measured … the probes stay at 9 passed with the root moved to "src"»* **non è riproducibile com'è scritta**: spostando la sola `root` l'uscita è `No test files found, exiting with code 1` — serve spostare **anche** `include`, e allora la conclusione regge. ⚠️ **E `root` non è «il default `gui/`»:** il default di Vite è la **cartella di lavoro del processo** — misurato con `resolveConfig`, che dalla radice del repository rende la radice del repository — ed è `gui/` perché gli script npm girano lì. ✅ **La cura di questa seconda ondata è una SOTTRAZIONE**, e la forma generale è quella: quando una prosa di cura sbaglia, il rimedio non è una prosa più ricca ma una **più corta**, che dica solo ciò che una mutazione ha misurato, e nomini il **file** in cui l'errore cade invece del compito in cui si immagina cadrà. Trovati dalla ri-revisione del compito 11, 2026-09-20 |
 | **E108** | ⚠️ **Compito 11, dalla ri-revisione — le voci di questa sessione promettevano o citavano più di quanto tenessero, in cinque punti.** **(a)** `E106` dichiarava che il sorgente marca *«non verificata»* la metà sul browser: **non la marcava**, l'affermava piatta — cioè la specie di `E104` commessa nella voce che la chiudeva. Corretto il sorgente, che ora porta il proprio `NOT MEASURED`. **(b)** `E105` citava come prova che *«neutralizzando l'oracolo l'albero corretto resta a 9 su 9»*: **non prova nulla**, perché vale per qualunque oracolo su un albero verde — l'unica prova che decide è il timbro `"42"`, e basta lei. **(c)** `E103` ed `E98` citano **fra virgolette** un testo che non è verbatim, e la frase di `.gitattributes` compare in **tre** forme diverse nello stesso file. **(d)** *«tre righe sopra il blocco che `E98` ha scritto»*: la distanza è giusta, il possessivo no — quel blocco esiste dalla nascita del compito 11. **(e)** `E103` (b) misurava **due** livelli di `core.autocrlf` su tre: il **system** rende `true`, il locale vince e la conclusione regge, ma la forma completa il piano la usa già altrove. ⚠️ **E l'etichetta `E32 (M-3)` non ha referente:** `E32` marca `(M-1)` e `(M-2)`, e la regola citata vive nel suo 📌 finale. 📌 **La forma generale: una citazione fra virgolette è un'affermazione**, e si verifica come una cifra. Trovati dalla ri-revisione del compito 11, 2026-09-20 |
 | **E109** | ⛔ **REGISTRATA PER IL PRE-CONTROLLO DEL COMPITO 12, finché la riproduzione è in mano: il 12 porta `E98` intatta, e il suo Passo 2 detta un terminatore CRLF come ANCORA.** Il compito 12 riscrive la forma vecchia — `i/lf w/crlf` nella lista dei file e nell'Atteso, e *«E in `.gitignore` (CRLF)»* — e il suo blocco Python cerca `anchor = "/gui/dist/" + CRLF`. ⛔ **Riprodotto dal ri-revisore su una copia del `.gitignore` di oggi**, che è `i/lf w/lf` a CR zero: l'assert scatta con `the two lines of task 11 are not there, or the task is executed`, mentre `grep -c '^/gui/' .gitignore` rende **2** — le due righe **ci sono**. ⚠️ **La diagnosi manda chi esegue a cercare nel compito 11 un difetto che non esiste**, ed è il modo peggiore di fallire. ✅ **Non si cura qui**, per la decisione del proprietario del 2026-09-19 in `E72` — *«per compito, col comando»*: la cura è del **pre-controllo del compito 12**, che questa voce mette in mano invece di farla riscoprire. ⚠️ **E una SETTIMA casa esiste nel compito 11, oggi vera e innocua:** le tre righe che danno il disegno del 2 per `LF`/`i/lf w/lf`. Reggono — misurato, CR **0** — e il passo usa `newline=""` senza ricavare nulla dall'etichetta; ma su un account con `core.autocrlf=true` il criterio di chiusura fallirebbe senza che nulla sia rotto. **Registrata, non presa.** Trovata dalla ri-revisione del compito 11, 2026-09-20 |
+| **E110** | ⛔ **Compito 12, Passo 8 — `a_stale_stamp_is_refused_and_then_silence` NON è rossa: si PIANTA, per sempre, e il doc del pari afferma che non può.** Misurato il 2026-09-20 compilando ed **eseguendo** i blocchi dettati in una copia del workspace fuori dal repository: cinque sonde su sei passano, questa non torna — uccisa a 300 s da `timeout`, `exit code: 143`, dopo `has been running for over 60 seconds`. ⛔ **DOVE si pianta è misurato con due marcatori e non dedotto:** `run_the_graph` **restituisce**, e a non tornare è `peer.join()`. ✅ **Il meccanismo è LETTO nel sorgente:** `Core::forget` fa `self.clients.remove(index)` sulla tabella **del core** (`crates/kernel/src/serving.rs`) e non tocca il trasporto, che conserva `Connected` e il **thread di lettura staccato** che `accept` gli ha spawnato (`crates/platform/src/ipc.rs`); `LocalSocketIpc::drop_client` esiste e **nessuno lo chiama**, perché *«il core che chiude» non è un'operazione della porta* (decisione 22). Nessuno dei due capi chiude, quindi `read` non vede mai `Ok(0)`, e il predicato che chiede due messaggi non è soddisfacibile perché il core ne manda **uno** e poi tace. ⛔ **E il doc del pari afferma l'opposto, parola per parola:** *«IT CANNOT HANG, AND THE REASON IS THE DROP ORDER RATHER THAN A TIMEOUT: when `run_the_graph` returns, its locals fall, the `LocalSocketIpc` with them, and the server end closes -- so `read` comes back `Ok(0)` and the loop ends»*. ⚠️ **A coglierlo è la lettura fra FRATELLI** (regola 7 di [`../../../CLAUDE.md`](../../../CLAUDE.md)): la decisione **22** toglie al core il potere di chiudere e **D78** dà al trasporto un thread per client — insieme non lasciano **nessuno** a chiudere, e nessuna delle due nomina l'altra. ⚠️ **E le altre cinque sonde non lo rivelano**, perché il loro predicato è soddisfatto dal flusso di gettoni: la stantia è l'unica che osserva un **silenzio**, e un silenzio non si osserva aspettando per sempre. ✅ **DECISO dal proprietario il 2026-09-20, in A/B — la via che CONSERVA la prova:** il pari guadagna un `Option<Sender<IpcMessage>>` e **trasmette** ogni messaggio appena lo decodifica; la sonda stantia apre il canale, lo passa, e **raccoglie con un tetto** invece di unirsi — due secondi di nulla **sono** la prova del silenzio. ✅ **Provata nelle DUE direzioni:** col codice com'è, **sei su sei** in 2,10 s; col core che dice `StaleBuild` **due volte**, la sonda è **rossa con un verdetto leggibile** in 0,08 s — `left` porta due `StaleBuild` contro il `right` che ne porta uno — cioè un verdetto e non un blocco, che è ciò che **E6** compra. Mutazione revocata copiando indietro una pristina, `cmp` **silenzioso**. ⚠️ **Il costo è dichiarato invece che taciuto:** il thread del pari resta **appeso** — muore col binario di prova — e cinque chiamanti passano `None`. ⛔ **La via scartata NON è una cifra:** restringere il predicato al primo messaggio rende sei su sei in 0,08 s e lascia la sonda **verde sul caso che il suo nome promette**, cioè `E37` ed `E105` commesse sapendolo. ⛔ **E LA STESSA AFFERMAZIONE VIVE NEL SORGENTE ESEGUITO, fuori perimetro:** `grep -rn 'IT CANNOT HANG' crates/ --include='*.rs'` la trova in `crates/daemon/src/main.rs`, dal compito 9. Lì **non morde** — i predicati di quelle sonde sono soddisfacibili e il cancello è verde — e il compito 12 non apre quel file: **registrata e non presa**, sul precedente di `E88`. 📌 **La forma generale: un doc che dichiara «non può piantarsi» è un'affermazione, e si prova ESEGUENDO** — la terza domanda del pre-controllo non finisce quando il codice compila. Trovata dal pre-controllo del compito 12, 2026-09-20 |
+| **E111** | ⛔ **Compito 12, Passo 2 — `E109` coglieva UN blocco su due: falliscono ENTRAMBE le ancore.** `E109` nomina il solo `.gitignore`; riprodotto alla lettera il 2026-09-20 su copie dei due file di oggi, fallisce anche quello di `Cargo.toml` — `AssertionError: anchor not unique -- the task is executed, or the root changed` — mentre `grep -n 'exclude' Cargo.toml` rende la riga e `grep -c '^/gui/' .gitignore` rende due: **i due file sono a posto, ed è il blocco a cercare un terminatore che non c'è**. ⛔ **È la forma di `E98` — contava cinque case e ne esistevano sei — commessa dentro la voce che la stava chiudendo, per la seconda volta in due compiti.** ✅ **Le case sono CENSITE col comando e non a occhio**, che è la lezione di `E103`: `grep -nF` sulle tre forme, sulle sole righe del compito. ⚠️ **E il primo censimento, fatto con un motivo ERE solo, era SPORCO:** in ERE il terminatore scritto con le barre rovesciate vale «r» seguito da «n», e ha pescato ogni riga che nomina `kernel` — a decidere è `grep -F`, che cerca la stringa e non il motivo. ✅ **La cura è quella che il proprietario ha deciso il 2026-09-19 in `E72` — «per compito, col comando» — e che `E98` ha applicato al compito 11:** le case in prosa rimandano al `git ls-files --eol` che il **Passo 1 già lancia** e nessuna scrive più una forma; i due blocchi **ricavano il terminatore dal file** e **rifiutano un albero già misto** invece di peggiorarlo. ✅ **Provata nelle TRE direzioni sui due file, e non dedotta:** albero LF, resta **LF uniforme** con la riga nuova al posto giusto; albero CRLF, resta **CRLF uniforme**, quindi l'account su cui il compito fu scritto **non si rompe**; albero misto, l'assert **scatta** e dice quante righe lo siano. 📌 **La forma generale è quella di `E72`, e questa è la sua seconda ricaduta: un'etichetta di FORMA invecchia a ogni ACCOUNT e non solo a ogni commit** — e una voce che la corregge si rilegge contro **tutte** le case, col comando, perché la riga accanto è quella che nessuno guarda. Trovata dal pre-controllo del compito 12, 2026-09-20 |
+| **E112** | ⚠️ **Compito 12 — una cura FALSIFICATA provandola, e si registra invece di proporla.** Davanti al blocco di `E110` la via che sembrava ovvia era un tetto di parete sul ciclo di lettura del pari, nella forma che **E6** ha stabilito per `accept_one`; ⛔ **ma `read` blocca, quindi un controllo in testa al ciclo non scatta mai**, e un tetto vuole che la lettura torni da sé. ⛔ **`interprocess` 2.4.4 non ha `set_read_timeout`** — `grep -rn 'fn set_read_timeout'` sul suo sorgente non rende nulla — **e `set_nonblocking`, che c'è, FALLISCE su questa via:** misurato il 2026-09-20, `set_nonblocking(true)` su una named pipe rende `ERROR_PIPE_BUSY` (codice 231) e fa cadere **tutte e sei** le sonde invece di curarne una. ✅ **Per questo la via scelta non tocca il socket:** il pari **trasmette** su un canale e la sonda raccoglie con `recv_timeout`, che è di `std` e non dipende dal trasporto (`E110`). 📌 **La forma generale, che `E99` ha già pagato al compito 11: una cura può essere sbagliata LEI, e si prova PRIMA di scriverla** — qui una prova ha tolto dal piano un rimedio che avrebbe reso rosso tutto il banco. Trovata dal pre-controllo del compito 12, 2026-09-20 |
 
 ---
 
@@ -14913,8 +14916,8 @@ git push
 ## Compito 12: il core finto — l'attività vera su porte in memoria, il rubinetto, e le sonde
 
 **Files:**
-- Modify: `Cargo.toml` di radice (**`i/lf w/crlf`**) — `exclude` guadagna `gui`, con la **propria** ragione (**D44**)
-- Modify: `.gitignore` (**`i/lf w/crlf`**) — una riga, `/gui/fake-core/target/` (**D38**)
+- Modify: `Cargo.toml` di radice (**la forma la dà `git ls-files --eol` del Passo 1** — E72, E111) — `exclude` guadagna `gui`, con la **propria** ragione (**D44**)
+- Modify: `.gitignore` (**la forma la dà `git ls-files --eol` del Passo 1** — E72, E111) — una riga, `/gui/fake-core/target/` (**D38**)
 - Modify: `crates/kernel/src/serving.rs` (**LF**, dal compito 7) — ⛔ **un solo elemento nuovo**: `Core::ipc`
 - Create: `gui/fake-core/Cargo.toml` (**LF**) — fuori dal workspace, dipendenze **per percorso**
 - Create: `gui/fake-core/Cargo.lock` (**LF**) — **si committa**, vincolo globale 7, e ⛔ **nello stesso commit del manifesto**
@@ -14954,7 +14957,7 @@ git ls-files --eol Cargo.toml .gitignore crates/kernel/src/serving.rs docs/super
 
 Atteso: `gui/fake-core` **non esiste**; `exclude = ["spikes"]`, **senza** `gui`; **nessun** `pub fn ipc` in
 `serving.rs` e **cinque** accessori (**P-56**); le costanti del daemon ci sono; **due** righe `/gui/` in
-`.gitignore`, dal compito 11; `Cargo.toml`, `.gitignore` `i/lf w/crlf`, `serving.rs` **LF**, il disegno del 2
+`.gitignore`, dal compito 11; di `Cargo.toml`, `.gitignore`, `serving.rs` e del disegno del 2 **si annota la forma che il comando dà oggi**, che è dell'account e non del repository (E72, E111), e la si riconfronta a fine compito; il disegno del 2
 `i/lf w/lf`.
 
 ⛔ **Se `Core::ipc` esiste già, il compito è eseguito.** ⚠️ **Se gli accessori non sono cinque, il compito 7 è
@@ -14974,7 +14977,7 @@ cargo metadata --no-deps --format-version 1 --manifest-path gui/fake-core/Cargo.
 Atteso: **`EXIT=101`** con `error: current package believes it's in a workspace when it's not:` — è
 **P-72**, rifatto sul repository vero invece che sul workspace usa-e-getta.
 
-Poi, in `Cargo.toml` di radice (**CRLF**, quindi Python `newline=""` — e il comando sta qui sotto, R5-19), `exclude` diventa:
+Poi, in `Cargo.toml` di radice (Python con `newline=""`, **e il terminatore RICAVATO dal file** — E72, E111 — col comando qui sotto, R5-19), `exclude` diventa:
 
 ```toml
 # `gui` is NOT a member either, and NOT for the reason above: `gui/fake-core` is a TOOL with a
@@ -14989,15 +14992,22 @@ python - <<'EOF'
 from pathlib import Path
 p = Path("Cargo.toml")
 text = p.read_text(encoding="utf-8", newline="")
-anchor = 'exclude = ["spikes"]\r\n'
+# THE TERMINATOR IS READ FROM THE FILE AND NOT WRITTEN (E72, E111): `core.autocrlf` is not
+# versioned, so the working-tree form belongs to the ACCOUNT, not to the repository. A tree
+# that is ALREADY mixed is refused rather than quietly made worse.
+crlf, lf = text.count("\r\n"), text.count("\n")
+assert crlf in (0, lf), "Cargo.toml is MIXED: stop before making it worse"
+eol = "\r\n" if crlf else "\n"
+anchor = 'exclude = ["spikes"]' + eol
 assert text.count(anchor) == 1, "anchor not unique -- the task is executed, or the root changed"
-new = (
-    "# `gui` is NOT a member either, and NOT for the reason above: `gui/fake-core` is a TOOL with a\r\n"
-    "# lockfile of its own, under the root's `rust-toolchain.toml` (rustup walks up: measured, R5-22),\r\n"
-    "# built by `scripts/gate-gui.sh` through `--manifest-path`,\r\n"
-    "# and `gui/` also holds a node project that cargo has no business walking into.\r\n"
-    'exclude = ["spikes", "gui"]\r\n'
-)
+new = eol.join([
+    "# `gui` is NOT a member either, and NOT for the reason above: `gui/fake-core` is a TOOL with a",
+    "# lockfile of its own, under the root's `rust-toolchain.toml` (rustup walks up: measured, R5-22),",
+    "# built by `scripts/gate-gui.sh` through `--manifest-path`,",
+    "# and `gui/` also holds a node project that cargo has no business walking into.",
+    'exclude = ["spikes", "gui"]',
+    "",
+])
 p.write_text(text.replace(anchor, new, 1), encoding="utf-8", newline="")
 EOF
 ```
@@ -15008,9 +15018,9 @@ git ls-files --eol Cargo.toml
 git diff --stat Cargo.toml
 ```
 
-Atteso: **`EXIT=0`**; `i/lf w/crlf` **invariato**; il diff dice **poche righe**, non l'intero file.
+Atteso: **`EXIT=0`**; la forma di `git ls-files --eol` **invariata** rispetto al Passo 1; il diff dice **poche righe**, non l'intero file.
 
-E in `.gitignore` (**CRLF**), sotto le due righe del compito 11:
+E in `.gitignore` (stesso trattamento, terminatore ricavato), sotto le due righe del compito 11:
 
 ```
 /gui/fake-core/target/
@@ -15021,16 +15031,20 @@ python - <<'EOF'
 from pathlib import Path
 p = Path(".gitignore")
 text = p.read_text(encoding="utf-8", newline="")
-anchor = "/gui/dist/\r\n"
+# Same reading as above (E72, E111): the terminator comes from the file, never from here.
+crlf, lf = text.count("\r\n"), text.count("\n")
+assert crlf in (0, lf), ".gitignore is MIXED: stop before making it worse"
+eol = "\r\n" if crlf else "\n"
+anchor = "/gui/dist/" + eol
 assert text.count(anchor) == 1, "the two lines of task 11 are not there, or the task is executed"
 assert "/gui/fake-core/target/" not in text, "already there -- the task is executed"
-p.write_text(text.replace(anchor, anchor + "/gui/fake-core/target/\r\n", 1), encoding="utf-8", newline="")
+p.write_text(text.replace(anchor, anchor + "/gui/fake-core/target/" + eol, 1), encoding="utf-8", newline="")
 EOF
 git ls-files --eol .gitignore
 git diff --stat .gitignore
 ```
 
-Atteso: `i/lf w/crlf` **invariato**, e il diff dice **una riga aggiunta** — non seicento (R5-19: i due file CRLF si toccano
+Atteso: la forma **invariata** rispetto al Passo 1, e il diff dice **una riga aggiunta** — non seicento (R5-19: i due file di radice si toccano
 con lo script e non a mano, la forma del Passo 3 del compito 11; senza il comando il `sed -i` è a un passo, vincolo globale 4).
 
 - [ ] **Passo 3: `Core::ipc`, il sesto accessore**
@@ -15537,10 +15551,16 @@ mod tests {
 
     /// The peer, in the shape task 9 gives it and for its reasons.
     ///
-    /// ⛔ IT CANNOT HANG, AND THE REASON IS THE DROP ORDER RATHER THAN A TIMEOUT: when
-    /// `run_the_graph` returns, its locals fall, the `LocalSocketIpc` with them, and the server end
-    /// closes — so `read` comes back `Ok(0)` and the loop ends. ⛔ EVERY CALLER THEREFORE `join`s
-    /// AFTER THE RUN, NEVER BEFORE.
+    /// ⛔ IT CAN HANG, AND MEASURING IT IS WHAT E110 COST. Nothing closes this connection:
+    /// `Core::forget` drops the client from the CORE's table and never from the transport, which
+    /// keeps `Connected` and the detached reader thread `accept` spawned for it -- and
+    /// `LocalSocketIpc::drop_client` has no caller, because "the core closes" is not an operation
+    /// of the port (decision 22). So `read` sees `Ok(0)` only when the peer's own predicate is
+    /// satisfied, never because the run ended. ⛔ A PROBE THAT WAITS FOR A MESSAGE THE CORE WILL
+    /// NEVER SEND THEREFORE HANGS FOR EVER, which is the worst red there is (E5, E6): it prints
+    /// nothing, it cannot be bisected, and it eats the gate. ⚠️ EVERY CALLER WHOSE PREDICATE THE
+    /// TOKEN STREAM SATISFIES may `join` AFTER the run; one that observes SILENCE takes
+    /// `as_they_come` instead and collects under a ceiling.
     ///
     /// ⚠️ THE CONNECT IS A `yield_now` LOOP AND NOT A SLEEP: the listener exists from `bound()`,
     /// which happens inside the run, so this thread may be scheduled first. ⛔ AND THE LOOP HAS A
@@ -15556,6 +15576,9 @@ mod tests {
         said: Vec<IpcMessage>,
         until: Until,
         mut then_types: Option<(mpsc::Sender<String>, &'static str)>,
+        // ⛔ THE STREAM FOR WHOEVER OBSERVES SILENCE (E110). `None` for the five probes whose
+        // predicate the token stream satisfies: they `join` and read the vector it returns.
+        as_they_come: Option<mpsc::Sender<IpcMessage>>,
     ) -> std::thread::JoinHandle<Vec<IpcMessage>> {
         std::thread::spawn(move || {
             use interprocess::local_socket::{GenericNamespaced, Stream, prelude::*};
@@ -15596,9 +15619,12 @@ mod tests {
                 // `decode` unframes what it is given. Measured at the plan review (R5-3, R4-2):
                 // `decode(body)` answered `Err` on every message, in all six probes.
                 while let Some((_, next)) = kernel::framing::take_frame(&buffer) {
-                    heard.push(
-                        IpcMessage::decode(&buffer[..next]).expect("the core sends what it says"),
-                    );
+                    let message =
+                        IpcMessage::decode(&buffer[..next]).expect("the core sends what it says");
+                    if let Some(sender) = &as_they_come {
+                        let _ = sender.send(message.clone());
+                    }
+                    heard.push(message);
                     buffer.drain(..next);
                 }
                 if heard.len() >= WELCOME {
@@ -15619,6 +15645,7 @@ mod tests {
             name.clone(),
             vec![IpcMessage::Hello(build_stamp())],
             |heard| heard.len() >= WELCOME,
+            None,
             None,
         );
         run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
@@ -15663,8 +15690,13 @@ mod tests {
         let (_hand, words) = a_keyboard();
         // ⛔ THE SECOND MESSAGE IS THE PROBE, as task 7 argues: "the core closes" is not an
         // operation of the port (decision 22), so only a message sent AFTER the refusal tells
-        // "it stopped listening" apart from "it had nothing more to say". The peer asks for two
-        // and gets one: the loop ends on `Ok(0)`, when the run is over.
+        // "it stopped listening" apart from "it had nothing more to say".
+        //
+        // ⛔ AND THAT IS WHY THIS ONE PROBE STREAMS INSTEAD OF BEING JOINED (E110): the second
+        // message never comes -- which is the point -- and nothing closes the connection, so a
+        // `join` here waits FOR EVER. Measured 2026-09-20: `run_the_graph` returns, `peer.join()`
+        // does not.
+        let (as_they_come, arrivals) = mpsc::channel();
         let peer = a_peer_that_says(
             name.clone(),
             vec![
@@ -15676,9 +15708,17 @@ mod tests {
             ],
             |heard| heard.len() >= 2,
             None,
+            Some(as_they_come),
         );
         run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
-        let heard = peer.join().expect("the peer thread");
+        // ⛔ A BOUNDED COLLECT AND NOT A `join`: THE WAIT IS THE OBSERVATION, and two seconds of
+        // nothing is what "and then silence" means. ⚠️ The peer thread is left dangling on
+        // purpose -- it dies with the test binary -- and the cost is declared rather than hidden.
+        let mut heard = Vec::new();
+        while let Ok(message) = arrivals.recv_timeout(std::time::Duration::from_secs(2)) {
+            heard.push(message);
+        }
+        drop(peer);
         assert_eq!(
             heard,
             vec![IpcMessage::StaleBuild(build_stamp())],
@@ -15707,6 +15747,7 @@ mod tests {
                     >= 2
             },
             Some((hand, "degrade")),
+            None,
         );
         run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = peer.join().expect("the peer thread");
@@ -15735,6 +15776,7 @@ mod tests {
             vec![IpcMessage::Hello(build_stamp())],
             |heard| heard.iter().any(|message| matches!(message, IpcMessage::Verdict(_))),
             Some((hand, "verdict")),
+            None,
         );
         run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = peer.join().expect("the peer thread");
@@ -15758,6 +15800,7 @@ mod tests {
                     .count()
                     >= 3
             },
+            None,
             None,
         );
         run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
@@ -15792,6 +15835,7 @@ mod tests {
             name.clone(),
             vec![IpcMessage::Hello(build_stamp())],
             |heard| heard.iter().any(|message| matches!(message, IpcMessage::Token { .. })),
+            None,
             None,
         );
         run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
@@ -15896,7 +15940,7 @@ git status --porcelain
 ```
 
 Atteso: le sonde del finto verdi; `GATE GREEN`; `OK`; il `diff` **`EXIT=0`**; i due file di radice ancora
-`i/lf w/crlf`; **zero** CR nel sorgente nuovo; in `git status` niente `target/`. ⚠️ **E due tempi, a freddo e a caldo** (R5-17), che il compito **15** scrive con la data nel commento di `gate-gui.sh` — la
+la stessa forma che il Passo 1 ha annotato; **zero** CR nel sorgente nuovo; in `git status` niente `target/`. ⚠️ **E due tempi, a freddo e a caldo** (R5-17), che il compito **15** scrive con la data nel commento di `gate-gui.sh` — la
 riga *«il core finto nel cancello»* della §8 li vuole *«dichiarati e misurati al piano»*, e la cifra non si scrive qui
 (vincolo globale 3); e lo script stampa **`[]`**: nessuna crate comune ai due lockfile cambia versione (**D83**).
 

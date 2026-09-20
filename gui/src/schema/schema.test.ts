@@ -20,11 +20,14 @@ describe("the committed fixtures and the TypeScript types", () => {
     expect([...fromFixtures].sort()).toEqual([...MESSAGE_KINDS].sort());
   });
 
-  it("carries a build stamp too big for a JSON number, which is why D35 sends a string", () => {
+  it("carries a build stamp past Number.MAX_SAFE_INTEGER, which is why D35 sends a string", () => {
     const hello = loadFixtures().find((fixture) => fixture.message.kind === "Hello");
     expect(hello).toBeDefined();
-    // ⛔ THE ORACLE IS THAT THE STAMP DOES NOT FIT A JSON NUMBER, which is the PREMISE of D35
-    // -- not that it is a string, which `u64` in `parse.ts` refuses and `G1` already covers.
+    // ⛔ THE ORACLE IS THAT THE STAMP DOES NOT SURVIVE A JSON NUMBER INTACT, which is the
+    // PREMISE of D35 -- not that it is a string, which `u64` in `parse.ts` refuses and `G1`
+    // already covers. ⚠️ `Number.MAX_SAFE_INTEGER` AND NOT `Number.MAX_VALUE`: a JSON number
+    // holds far larger magnitudes, it just stops holding them EXACTLY, and rounding is the
+    // failure D35 exists to prevent.
     // Measured on 2026-09-20: the round trip through `BigInt` that stood here is IMPLIED by
     // the `^[0-9]+$` of `u64` for every stamp a `u64` can print, so it stayed green on a
     // stamp of "42" -- green under the very case this name promises to catch.

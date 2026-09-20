@@ -3,16 +3,18 @@ import type { IpcMessage } from "../schema/messages";
 /**
  * The four the gui sends (§6a of the sub-project 2 design), stated ONCE.
  *
- * ⛔ DECLARED, NOT PINNED -- the four kinds below are WRITTEN BY HAND, and nothing holds them
- * against a rename. Measured on 2026-09-20: renaming a variant in `IpcMessage` and leaving
- * this filter alone leaves `npm run build` at EXIT=0, because `Extract` with a filter of
- * literals simply matches one member fewer and says nothing -- which is what a second
- * hand-written list would do, because that is what this is.
+ * ⛔ THE FOUR KINDS BELOW ARE WRITTEN BY HAND, and `Extract` does not hold them. Measured on
+ * 2026-09-20, in both shapes a change can take: rename a variant in `IpcMessage`, or add a
+ * field to one, leave this filter alone -- `npm run build` stays at EXIT=0 and NOTHING in
+ * this file goes red. A filter of literals matches one member fewer and says nothing, which
+ * is what a second hand-written list would do, because that is what this is.
  *
- * ⚠️ ITS TRIGGER IS THE FIRST CALL SITE: the task that sends one of these -- task 14 of the
- * part-2 plan -- stops compiling on the kind that vanished. `Extract` still buys one thing,
- * and only that: the message TYPES come from `IpcMessage`, so a field that changes SHAPE is
- * a compile error here.
+ * ⚠️ WHERE IT DOES GO RED is wherever a caller CONSTRUCTS one of these -- and one such caller
+ * already exists in this task: `fakeBridge.test.ts` sends `Hello`, so renaming `Hello` is red
+ * TODAY. `Invoke`, `Approve` and `SaveLayout` get their first caller at tasks 13 and 14.
+ *
+ * ⛔ WHAT `Extract` BUYS, and only this: the message types are not RETYPED here. They are the
+ * ones `IpcMessage` declares, so this file cannot become a second definition of them.
  */
 export type OutboundMessage = Extract<
   IpcMessage,

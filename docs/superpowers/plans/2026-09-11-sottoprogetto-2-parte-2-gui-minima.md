@@ -322,6 +322,7 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E95** | ⚠️ **Compito 10, Passo 7 — il costo del secondo passo DIVERGE fra le prese, e si registra la divergenza invece di sceglierne una.** Dichiarato **0.49s** dall'implementatore il 2026-09-19, misurato **0.53s** e **0.52s** dalla ri-revisione il 2026-09-20 sugli stessi sei bersagli, due prese. ⛔ **Nessuna soglia esiste su questo numero** — il capoverso accanto lo dice di sé, *«nothing asserts on it»* — e lo **scarto fra le prese è il dato**, che è la disciplina di `E70` e la riga di `CLAUDE.md` *«dove diverge si registra la divergenza»*. ⚠️ **La divergenza fra le due sessioni è però maggiore di quella fra le due prese della ri-revisione**, e questo è esso stesso il dato: il capoverso argomenta che la cifra è un **ordine di grandezza** e non una costante. ✅ **Entrambe scritte in `scripts/gate.sh`, con la data e chi le ha prese**, e nessuna riallineata. |
 | **E96** | ⛔ **Compito 10, il capo-file — il comando che la cura di `E93` installa conta la PROPRIA CITAZIONE: è `E63` per la SECONDA volta in questo COMPITO — ⚠️ **`E63` è del compito 9, quindi *«la terza volta in questo compito»* era falso: corretto il 2026-09-20** — e la seconda dentro una cura che cita `E63`.** La cura ha sostituito l'ordinale col comando `grep -rn 'struct Wire' crates/ --include='*.rs'`, scritto dentro un `//!` — quindi la riga che **nomina** il comando contiene `struct Wire` e il comando la trova: **tre** invece di due nell'istante in cui il difetto è stato colto, misurato dal coordinatore il 2026-09-20 rileggendo il capo-file intero. ⚠️ **E IL CONTO NUDO SI È MOSSO DUE VOLTE IN DUE COMMIT**, il che non è un difetto nuovo ma la dimostrazione dell'invariante: quando la cura si è spiegata nominando il comando una seconda volta è salito, e quando la spiegazione è stata sfoltita è sceso. ⛔ **Per questo nel sorgente NESSUNA CIFRA è scritta**, solo il comando filtrato e la ragione — e per questo la cifra non si scrive nemmeno qui al presente: chi vuole il numero lo **rilancia**. ⚠️ Una prima stesura di questa voce dichiarava *«oggi rende quattro»* e fu resa falsa dal commit successivo, che tolse la seconda citazione: è la specie della voce, commessa dentro la voce, colta dalla ri-revisione stretta. ⛔ **E il capoverso che insegna questa trappola sta a poche righe di distanza, nello stesso file:** quello di `SharedClock` porta il filtro e dice di sé *«the filter is not decoration»*. Scrivere il comando nuovo senza filtro è stato leggere quella lezione e non applicarla al proprio rigo. ✅ **Cura del 2026-09-20: il comando porta il filtro** — `grep -rn 'struct Wire' crates/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'` → **2** — e il perché è scritto accanto, come `E76` fa per il proprio. 📌 **La forma generale, e ormai è misurata tre volte:** un comando scritto DENTRO il file che quel comando legge nasce con un falso positivo, e il filtro va messo **nello stesso momento** in cui il comando entra — non quando qualcuno rilancia il comando e si accorge. ⚠️ Il filtro esclude `///` **e** `//!`, come in `E88`. |
 | **E97** | ⛔ **Compito 10 — il capo-file era diventato per metà il VERBALE DELLE PROPRIE CORREZIONI, ed è la radice di metà dei rilievi del delta.** Misurato dalla ri-revisione stretta il 2026-09-20: quindici righe, di cui **nove** parlavano della propria storia editoriale — *«Here stood …»*, *«applied here on … to a line that predates it»*, *«AND "four paragraphs below" stood here for one commit»* — e il merito tecnico occupava le prime tre. ⛔ **`CLAUDE.md` ha una riga esatta per questo:** *«Un verbale di correzione non resta nel documento corretto: va in `docs/archivio/`, con la data; il documento vivo porta ciò che è VERO ADESSO»*. ⚠️ **E il contro-argomento è serio e si dichiara:** questo repository **usa** il richiamo datato nei sorgenti, e ne ha un esempio buono a pochi righi — quello di `SharedClock`, che sta in una riga. La differenza è di **proporzione**, non di regola. ✅ **Deciso dal coordinatore il 2026-09-20: il verbale esce dal sorgente e resta nell'errata**, che è la casa dei verbali di questo piano; nel sorgente resta un **puntatore di una riga** alle voci che lo tengono. 📌 **E la ragione è misurata, non estetica:** dei rilievi della ri-revisione stretta, **tre** — la cifra che si muoveva, il *«names it more than once»*, il *«third time in this task»* — vivevano **tutti** dentro quelle nove righe di cronaca. Il verbale nel sorgente non è solo ingombro: è superficie che invecchia a ogni commit successivo, e ne produce di nuova a ogni cura. |
+| **E98** | ⛔ **Compito 11 — l'etichetta `i/lf w/crlf` di `.gitignore` vive in CINQUE case e il Passo 3 detta un terminatore CRLF: su questo account il file è LF, e il blocco dettato lo renderebbe MISTO.** Misurato il 2026-09-20 dal pre-controllo del compito 11: `git ls-files --eol .gitignore` rende **`i/lf w/lf`**, mentre **P-66** lo misurò `i/lf w/crlf` il 2026-09-14 — ⛔ **e P-66 NON si tocca**, è un verbale datato e la sua misura era vera quel giorno. ⛔ **RIPRODOTTO SU UNA COPIA nello scratchpad, non dedotto:** applicando alla lettera il blocco dettato, il file passa da **55 righe LF e zero CRLF** a **55 LF più 4 CRLF** — misto. ⛔ **E nulla lo raddrizzerebbe dopo:** `git check-attr text eol -- .gitignore` risponde `unspecified` su **entrambi** gli attributi, quindi `.gitattributes` non normalizza quel file e il misto entrerebbe nell'indice **verbatim**, contro il vincolo globale 4. ✅ **È `E72` un compito dopo, e la decisione del proprietario del 2026-09-19 — A, «per compito, col comando» — si applica senza riaprirsi:** le **cinque** case del compito 11 rimandano al `git ls-files --eol` che il Passo 1 **già lancia** e nessuna scrive più una forma, e il Passo 3 **ricava il terminatore dal file** invece di scriverlo, con un assert che rifiuta un albero già misto. ✅ **E la cura è provata nelle TRE direzioni, sul testo ESTRATTO dal piano e non ricopiato:** albero LF → resta LF uniforme, con le due righe `/gui/`; albero CRLF → resta CRLF uniforme, quindi l'account su cui il compito fu scritto **non si rompe**; albero misto → l'assert **scatta**. ⚠️ **E `.gitattributes` porta la STESSA specie di affermazione** — *«`core.autocrlf=true` -- che e' la configurazione di questa macchina»*, scritta il 2026-09-17 e falsa su questo account: è un verbale datato, **non si tocca**, ma chi vi si appoggia rimisura. 📌 **La forma generale, già scritta da `E72` e ricaduta al PRIMO compito che l'ha applicata:** un'etichetta di forma invecchia **a ogni account**, non solo a ogni commit, perché `core.autocrlf` non è versionato. Trovata dal pre-controllo del compito 11, 2026-09-20 |
 
 ---
 
@@ -13888,7 +13889,7 @@ che è un'altra cosa: il chiusore è il primo consumatore che vi si dirami, e no
 - Create: `gui/src/schema/schema.test.ts` (**LF**) — la sonda dello schema
 - Create: `gui/src/transport/bridge.ts` (**LF**) — il ponte, e le quattro che la GUI manda
 - Create: `gui/src/transport/fakeBridge.ts`, `gui/src/transport/fakeBridge.test.ts` (**LF**)
-- Modify: `.gitignore` (**`i/lf w/crlf`**) — due righe, **D38**
+- Modify: `.gitignore` — due righe, **D38**; ⛔ **la forma dei suoi fine-riga NON si scrive qui**: la dice il `git ls-files --eol` che il Passo 1 già lancia, e il Passo 3 ricava il terminatore dal file (**E98**)
 - Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**) — ⛔ **due richiami datati, D88**, arrivati qui dalla revisione del piano intero (R5-15, R9a-7): la riga *«la SPA, `schema/`»* della §8 e la frase *«la SPA parla `bincode`»* del richiamo del 2026-09-10 nella §2, che **D36** rende false senza che il disegno lo dica
 - Read: la §6a del [disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), righe «dove e con che cosa», «il ponte» e «gli strati»; la riga *«la SPA, `schema/`»* e la riga *«la versione di Node»* della §8; **P-2**, **P-62**…**P-67**; **D2**, **D3**, **D4**, **D35**…**D40**, **D79**, **D88**
 - ⛔ **NON si legge**: la §1 e la §2 della stella polare, che sono dei compiti **13** e **14**. Questo compito non disegna niente che si veda
@@ -13922,7 +13923,8 @@ node --version; npm --version
 
 Atteso: `gui/` esiste e contiene **solo** `schema/fixtures/` — il compito 3 l'ha creata; tanti `.json` quanti
 `.bin`, e **zero** è un rosso che dice *«il compito 3 non è eseguito»*, non un permesso a proseguire; **zero**
-righe `/gui/` in `.gitignore`, che è `i/lf w/crlf`.
+righe `/gui/` in `.gitignore`. ⛔ **E la forma dei suoi fine-riga non si scrive qui — E98:** la rende il
+comando, e ciò che conta è che al Passo 14 sia **invariata** rispetto a questa presa.
 
 ⛔ **Se `gui/package.json` esiste già, il compito è eseguito** — quarta domanda del pre-controllo: ci si ferma e
 si riporta invece di sovrascrivere.
@@ -14034,13 +14036,25 @@ from pathlib import Path
 p = Path(".gitignore")
 text = p.read_text(encoding="utf-8", newline="")
 anchor = "# Build artefacts of the spikes"
-addition = (
-    "# Build artefacts of the gui -- the lockfile is committed, the tree it installs is not\r\n"
-    "/gui/node_modules/\r\n"
-    "/gui/dist/\r\n"
-    "\r\n"
+# THE TERMINATOR IS DERIVED FROM THE FILE, never written here: `core.autocrlf` is NOT
+# versioned, and the two accounts of this machine hold OPPOSITE values (E72, E98). A hand
+# written terminator makes this file MIXED on whichever account disagrees, and nothing
+# straightens it after: `git check-attr text eol -- .gitignore` answers `unspecified` twice,
+# so the mixture would enter the index verbatim.
+crlf = text.count("\r\n")
+lf = text.count("\n") - crlf
+assert (crlf == 0) != (lf == 0), "mixed line endings -- measure before writing"
+eol = "\r\n" if crlf else "\n"
+addition = "".join(
+    line + eol
+    for line in (
+        "# Build artefacts of the gui -- the lockfile is committed, the tree it installs is not",
+        "/gui/node_modules/",
+        "/gui/dist/",
+        "",
+    )
 )
-assert anchor in text, "anchor not found"
+assert text.count(anchor) == 1, "anchor not unique"
 assert "/gui/node_modules/" not in text, "already there -- the task is executed"
 p.write_text(text.replace(anchor, addition + anchor, 1), encoding="utf-8", newline="")
 EOF
@@ -14048,7 +14062,8 @@ git ls-files --eol .gitignore
 git diff --stat .gitignore
 ```
 
-Atteso: `i/lf w/crlf` **invariato**, e il diff dice **tre righe aggiunte** più la vuota — non seicento. ⛔ **Se
+Atteso: `git ls-files --eol .gitignore` **invariato** rispetto al Passo 1 (**E98**), e il diff dice **tre righe
+aggiunte** più la vuota — non seicento. ⛔ **Se
 il diff è grande, i fine-riga sono stati normalizzati**: si revoca e si rifà, gotcha dei fine-riga misti.
 
 - [ ] **Passo 4: l'installazione, e `engine-strict` nelle due direzioni**
@@ -14816,7 +14831,8 @@ git status --porcelain
 ```
 
 Atteso: `EXIT=0`; le due sonde con **più di zero** `it(` ciascuna — che è la chiusura del rosso vacuo del
-Passo 10; `GATE GREEN`; `OK`; `.gitignore` ancora `i/lf w/crlf`; **zero** CR nei file nuovi, che nascono LF; e
+Passo 10; `GATE GREEN`; `OK`; `.gitignore` **invariato** rispetto al Passo 1 (**E98**); **zero** CR nei file
+nuovi, che nascono LF; e
 in `git status` **solo** ciò che questo compito nomina, **niente** `node_modules` né `dist`.
 
 ⚠️ **Il cancello non conosce ancora `gui/`** — lo impara al compito **15** — quindi qui `gate.sh` prova che il
@@ -14834,7 +14850,7 @@ git push
 - [ ] `cd gui && npm test; echo $?` → **0**
 - [ ] le fixture e le specie combaciano nelle **due** direzioni: è la sonda `has a fixture for every kind the union declares, and no fixture for any other`, e `ls gui/schema/fixtures/*.json | wc -l` confrontato con l'uscita di `npm test` — **nessuno dei due numeri si scrive qui**
 - [ ] `engine-strict` morde: con `engines.node` reso impossibile, `npm ci` esce **1** con `EBADENGINE`; revocato, esce **0** e `git diff` è vuoto (**P-64**)
-- [ ] `grep -c '^/gui/' .gitignore` → **2**, e `git ls-files --eol .gitignore` → `i/lf w/crlf` **invariato**
+- [ ] `grep -c '^/gui/' .gitignore` → **2**, e `git ls-files --eol .gitignore` **invariato** rispetto al Passo 1 (**E98**)
 - [ ] `git status --porcelain` **vuoto** dopo il commit — cioè `node_modules/` e `dist/` sono davvero ignorati (**D38**)
 - [ ] `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK`
 - [ ] le cinque mutazioni del Passo 13 sono state eseguite **una per volta** e revocate, e `git diff gui` è vuoto — **dopo** il `git add gui` del Passo 13, senza il quale un file nuovo non ha diff (R5-11)

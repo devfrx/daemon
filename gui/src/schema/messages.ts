@@ -63,7 +63,8 @@ export type Verdict =
  * One message on the `ipc` wire, mirroring `kernel::wire::ipc::IpcMessage`.
  *
  * ⛔ ONE UNION FOR BOTH DIRECTIONS, as I4 has it on the Rust side. Which four the gui may send
- * is not a second list: `OutboundMessage` in `../transport/bridge` derives them from this one.
+ * is narrowed from this one by `OutboundMessage` in `../transport/bridge`, which names those
+ * four BY HAND -- and says there what that does and does not buy (measured 2026-09-20).
  */
 export type IpcMessage =
   | { kind: "Hello"; value: U64 }

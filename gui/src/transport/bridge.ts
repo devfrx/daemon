@@ -3,8 +3,16 @@ import type { IpcMessage } from "../schema/messages";
 /**
  * The four the gui sends (§6a of the sub-project 2 design), stated ONCE.
  *
- * ⛔ DERIVED FROM `IpcMessage` AND NOT RETYPED: a variant renamed on the wire becomes a compile
- * error here, where a second hand-written list would simply stop matching and say nothing.
+ * ⛔ DECLARED, NOT PINNED -- the four kinds below are WRITTEN BY HAND, and nothing holds them
+ * against a rename. Measured on 2026-09-20: renaming a variant in `IpcMessage` and leaving
+ * this filter alone leaves `npm run build` at EXIT=0, because `Extract` with a filter of
+ * literals simply matches one member fewer and says nothing -- which is what a second
+ * hand-written list would do, because that is what this is.
+ *
+ * ⚠️ ITS TRIGGER IS THE FIRST CALL SITE: the task that sends one of these -- task 14 of the
+ * part-2 plan -- stops compiling on the kind that vanished. `Extract` still buys one thing,
+ * and only that: the message TYPES come from `IpcMessage`, so a field that changes SHAPE is
+ * a compile error here.
  */
 export type OutboundMessage = Extract<
   IpcMessage,

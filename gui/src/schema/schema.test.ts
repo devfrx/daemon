@@ -20,14 +20,16 @@ describe("the committed fixtures and the TypeScript types", () => {
     expect([...fromFixtures].sort()).toEqual([...MESSAGE_KINDS].sort());
   });
 
-  it("carries the build stamp as a string, because it does not fit a JSON number", () => {
+  it("carries a build stamp too big for a JSON number, which is why D35 sends a string", () => {
     const hello = loadFixtures().find((fixture) => fixture.message.kind === "Hello");
     expect(hello).toBeDefined();
-    // ⛔ THE ORACLE IS THE ROUND TRIP THROUGH `BigInt`, not `typeof`. A stamp read as a number
-    // would already have been rounded by `JSON.parse` before anything here could look at it,
-    // and the rounded value compares equal to itself -- green and false (D35).
+    // ⛔ THE ORACLE IS THAT THE STAMP DOES NOT FIT A JSON NUMBER, which is the PREMISE of D35
+    // -- not that it is a string, which `u64` in `parse.ts` refuses and `G1` already covers.
+    // Measured on 2026-09-20: the round trip through `BigInt` that stood here is IMPLIED by
+    // the `^[0-9]+$` of `u64` for every stamp a `u64` can print, so it stayed green on a
+    // stamp of "42" -- green under the very case this name promises to catch.
     const value = (hello?.message as { kind: "Hello"; value: string }).value;
-    expect(BigInt(value).toString()).toBe(value);
+    expect(BigInt(value) > BigInt(Number.MAX_SAFE_INTEGER)).toBe(true);
   });
 
   it("refuses a message whose kind it does not know", () => {

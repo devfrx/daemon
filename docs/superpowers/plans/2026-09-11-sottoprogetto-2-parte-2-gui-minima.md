@@ -22075,6 +22075,62 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La trentunesima chiusura — 2026-09-20: il COMPITO 11 è CHIUSO — `gui/` esiste, due giri di revisione, e la cura del primo aveva introdotto tre falsi nuovi; restano i compiti 12–17
+
+⛔ **DA SAPERE SUBITO, quattro cose.**
+
+**(1)** ✅ **IL PUSH È FATTO** — `main` e `origin/main` coincidono: `git status -sb`, `git stash list` vuoto, albero pulito. ⛔ **E la chiusura è una DECISIONE del proprietario, non un verdetto di revisore**, come la trentesima: l'**ondata 2** — il commit `7b91c00` — **non è stata rivista da nessuno tranne il coordinatore**. Il proprietario ha scelto *«chiudi, session-handoff e prossima sessione si continua»* con questo residuo scritto davanti.
+
+**(2)** ⛔ **NODE NON BASTA ANCORA, E IL NODE CHE HA FATTO IL LAVORO È MORTO CON LA SESSIONE.** `node --version` di sistema rende **v24.14.0**, fuori dall'intersezione `^22.22.2 || ^24.15.0 || >=26.0.0` (P-65, rimisurata il 2026-09-20: invariata). Tutto il compito 11 è girato su un **24.21.0 portatile nello scratchpad di sessione**, che **non sopravvive**. ⛔ **La sessione nuova rifà una delle due**: aggiorna Node davvero (`winget install --id OpenJS.NodeJS.LTS --exact` in un terminale **elevato** — il primo tentativo morì su una finestra UAC mai risposta), oppure riscarica il portatile da `nodejs.org/dist`, **verificandone l'impronta contro `SHASUMS256.txt`** come si è fatto qui.
+
+**(3)** ⛔ **`E109` METTE IN MANO AL PRE-CONTROLLO DEL COMPITO 12 IL DIFETTO CHE EREDITA, con la riproduzione già fatta:** il 12 porta `E98` intatta — riscrive la forma `i/lf w/crlf` in più case — e il suo Passo 2 detta un terminatore **CRLF come ancora**, che su questo albero (`i/lf w/lf`, CR zero) fa scattare un assert la cui diagnosi manda a cercare nel compito 11 un difetto che non esiste. **Non si cura nel 12 prima di eseguirlo**: è la decisione del proprietario in `E72`, *«per compito, col comando»*.
+
+**(4)** ⛔ **IL TASSO NON È CALATO FRA UN GIRO E L'ALTRO: sei rilievi reali al primo, TREDICI al secondo** — e **tre** di quelli del secondo erano affermazioni **introdotte dalla cura del primo**. 📌 È il gotcha **124**: una prosa di cura che sbaglia si **accorcia**, non si arricchisce.
+
+✅ **Che cosa è stato fatto.** ⛔ **Quanti commit NON è scritto qui**, perché il commit di questa chiusura falsificherebbe il numerale nell'istante in cui lo scrive: li elenca `git log --oneline 92ed3f3..HEAD`. Due sono il **pre-controllo** del coordinatore, uno è il **compito**, tre sono i giri di rilievi.
+
+| Giro | Chi ha trovato | Che cosa |
+|---|---|---|
+| **pre-controllo** | il coordinatore, **compilando** su una copia fuori dal repository | `E98` (l'etichetta dei fine-riga era di un **altro account**, e il Passo 3 avrebbe reso `.gitignore` **misto**), `E99` (`vite build` non raggiunge mai `fixtures.ts`), `E100` (l'Atteso di `G3` e `G4` dichiarava una rossa su due e sette) |
+| **1** | l'implementatore, eseguendo | `E101` — il comando dei richiami cercava il **segnaposto** che il compito sostituisce, quindi rendeva zero per costruzione |
+| **2** | la revisione (Opus 5) | tre Importanti e tre Minori: due doc promettevano meccanismi assenti, una sonda era **verde** sul caso del proprio nome, e **`E98` contava cinque case su sei** |
+| **3** | la ri-revisione stretta (Opus 5) | cinque Importanti e otto Minori — **tre erano affermazioni nuove scritte dall'ondata che chiudeva il giro 2** |
+
+E lo stato alla chiusura, che non si ricorda ma si **rifà** — ogni riga porta il comando che la produce:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` **allineato** a `origin/main`: `git status -sb`; `git stash list` vuoto; `git status --porcelain --untracked-files=all` vuoto |
+| La posizione | `grep -cE '^\| \*\*[0-9]+\*\* \|.*✅ [0-9-]+ \|$'` → **11**; con `⬜ \|$` → **6** |
+| L'errata | l'`awk` **ristretto alla sezione** → **109**, `E1`…`E109` senza buchi né duplicati. ⛔ Un `grep` su tutto il file conta di più: il diario porta righe della stessa forma |
+| I gotcha | l'`awk` della §*I gotcha* di [`HANDOFF.md`](../../HANDOFF.md) → questa sessione ne ha aggiunti **tre**, dal **124** al **126** |
+| Il rispecchiamento | **tutti e quattordici** i blocchi dettati del compito 11 contro i file su disco: **identici**, e ciascun blocco **unico** nel piano — rifatto dal ri-revisore con sha256 per lato |
+| La SPA | `cd gui && npm run build` → `EXIT=0`; `npm test` → **9 passed (9)** in 2 file |
+| Il cancello | `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK` |
+| I fine-riga | `git ls-files --eol` **invariato** su tutti i file toccati; zero CR nel piano e nei sorgenti nuovi |
+| Margine del compendio | ✅ **il compendio NON è stato toccato** (decisione 106) |
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **TRE GOTCHA NUOVI, E TUTTI E TRE SONO MODI DI SBAGLIARE DEL COORDINATORE.** Il **124** (una prosa di cura si accorcia, non si arricchisce), il **125** (un oracolo implicato da un controllo a monte non è un oracolo), il **126** (una citazione fra virgolette è un'affermazione, e si verifica come una cifra). La loro casa unica è [`HANDOFF.md`](../../HANDOFF.md).
+- ⛔ **LA TERZA DOMANDA DEL PRE-CONTROLLO SI ESERCITA COMPILANDO, E QUI HA PAGATO DUE VOLTE.** I quattordici blocchi dettati, **estratti** dal piano e materializzati in una copia fuori dal repository, hanno dato `E99` prima che un subagente fosse dispacciato. ⚠️ **E una cura proposta dal coordinatore è stata FALSIFICATA provandola**: importare `loadFixtures` in `App.vue` non rende rossa la build col glob rotto, perché un `import.meta.glob` che non trova nulla non è un errore per Vite.
+- ⛔ **CHI SCRIVE UNA CORREZIONE NON RILEGGE LA RIGA ACCANTO A QUELLA CHE CORREGGE.** `E98` dichiarava chiuse **cinque** case e la sesta stava **tre righe sopra** il blocco che quella stessa voce aveva scritto: è `AUD-049` commessa dentro la voce che la stava chiudendo.
+- ⛔ **OGNI CORREZIONE AL SORGENTE SI SCRIVE NEL TESTO DETTATO NELLO STESSO PASSAGGIO**, e qui l'ha garantito un **meccanismo** invece di una regola: uno script che asserisce l'unicità dell'ancora **su entrambi i lati** prima di scrivere su uno. È `E32 (M-2)` trasformata da promessa in guardia.
+- ⚠️ **IL COSTO, MISURATO:** **tre dispacci** su Opus 5 — implementatore ~280k token, revisore ~295k, ri-revisore ~218k — più due ondate del coordinatore, che ha **riprodotto da sé** ogni rilievo prima di dargli un ruling.
+- ⛔ **UN RESIDUO TROVATO E NON PRESO, PERCHÉ PRECEDE QUESTA SESSIONE:** la tabella dei gotcha di [`HANDOFF.md`](../../HANDOFF.md) è **spezzata da una riga vuota** fra il **49** e il **50**, quindi da lì in giù non è più una tabella per chi la legge resa. ✅ **Misurato, e non è di questa sessione:** l'`awk` sulle tabelle spezzate la trova **anche in `HEAD` prima del tocco di oggi**. ⛔ **Non toccata qui**, sul precedente dei Minori 4 e 5 della ventinovesima chiusura — *ciò che precede il compito è fuori perimetro in entrambi i sensi* — e ⚠️ **`check-docs.sh` non la vede**, quindi nessun cancello la coglierà da solo. **Registrata, non presa.**
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura e `main` è **allineato**.
+2. ⛔ **MISURA I FINE-RIGA PRIMA DI CREDERE A UN'ETICHETTA:** `git config --show-origin --get-all core.autocrlf` e `git ls-files --eol`. Il valore **locale** è `false` e vince; **E51**, **E72** ed **E98** dicono perché.
+3. La lettura d'apertura di `CLAUDE.md`, poi **la testa di questo piano** — i vincoli globali, la posizione, l'errata, le voci aperte — e **questa chiusura**.
+4. ⛔ **PRIMA DI QUALSIASI COSA DEL COMPITO 12: NODE**, col punto (2) qui sopra, e si **rimisura** l'intersezione col comando di **P-65** invece di fidarsi di questa riga.
+5. ⏭️ **IL COMPITO 12** — il core finto — con `superpowers:subagent-driven-development`, un subagente fresco **su Opus 5**, e il pre-controllo delle quattro domande rifatto contro il codice di **adesso**. ⛔ **La terza si esercita COMPILANDO**, non leggendo. ⛔ **E il punto (3) qui sopra è già mezzo pre-controllo: `E109` va letta per prima.**
+6. ⛔ **Il brief di ogni compito porta i pezzi estratti con `sed -n` sui numeri di riga, che si RICALCOLANO** dopo ogni inserzione in errata — questa sessione ne ha aggiunte **dodici**. ⛔ **E ogni comando che il brief porta si lancia prima di scriverlo.**
+7. ⚠️ **La casa dei brief è `.superpowers/sdd/<nome-del-piano>/`**, col suo `.gitignore` a `*`. Ci sono i file dei compiti 8, 9, 10 e **11**, questi ultimi tre fra brief e rapporti.
+8. Alla chiusura del piano la cartella della revisione si **archivia** (decisione 69).
+9. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
 ### La trentesima chiusura — 2026-09-20: il COMPITO 10 è CHIUSO — i rilievi applicati in tre giri, una revisione, due ri-revisioni, e il PUSH fatto; restano i compiti 11–17
 
 ⛔ **DA SAPERE SUBITO, quattro cose.**

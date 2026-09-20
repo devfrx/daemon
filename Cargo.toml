@@ -10,7 +10,11 @@ members = [
 # spikes/ is NOT a member: spikes/rust/ is a nested workspace and carries a clippy.toml
 # that, at workspace level, would fire at platform, which MUST call the clock and the
 # filesystem. Constraint 5 of §11, decided in §7.4.4.
-exclude = ["spikes"]
+# `gui` is NOT a member either, and NOT for the reason above: `gui/fake-core` is a TOOL with a
+# lockfile of its own, under the root's `rust-toolchain.toml` (rustup walks up: measured, R5-22),
+# built by `scripts/gate-gui.sh` through `--manifest-path`,
+# and `gui/` also holds a node project that cargo has no business walking into.
+exclude = ["spikes", "gui"]
 
 [workspace.package]
 edition = "2024"

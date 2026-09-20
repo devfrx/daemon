@@ -1,0 +1,23 @@
+[package]
+name = "fake-core"
+edition = "2024"
+version = "0.0.0"
+publish = false
+
+# ⛔ A TOOL, NOT A SPIKE, and that is why the lockfile is committed: `scripts/gate-gui.sh` runs
+# `cargo test --locked --manifest-path gui/fake-core/Cargo.toml`, and `--locked` needs a lockfile
+# somebody approved. A spike's lockfile is ignored because a spike is redone from a seed.
+[dependencies]
+kernel = { path = "../../crates/kernel" }
+platform = { path = "../../crates/platform" }
+# ⛔ DEPENDS ON `simulator`, unlike the daemon -- and the asymmetry is the point. The daemon is
+# the PRODUCTION wiring and mounts `platform`; this is a TOOL that mounts the in-memory ports so
+# that nothing it does survives the run (§7: "non persiste nulla oltre la corsa").
+simulator = { path = "../../crates/simulator" }
+
+# ⛔ THE PROBES NEED A PEER, and a peer speaks the transport directly. The version is the one
+# `crates/platform/Cargo.toml` pins -- READ WITH `grep`, never from memory -- because two versions
+# of a transport at the two ends of one socket is a bug nobody would look for.
+# ⚠️ Manifest and `Cargo.lock` in the SAME commit: the gate passes `--locked` (finding G-5).
+[dev-dependencies]
+interprocess = { version = "2.4.4", default-features = false }

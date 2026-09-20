@@ -24,6 +24,7 @@ Desktop.ini
 # Build artefacts of the gui -- the lockfile is committed, the tree it installs is not
 /gui/node_modules/
 /gui/dist/
+/gui/fake-core/target/
 
 # Build artefacts of the spikes -- the probes are kept, the binaries are not
 /spikes/rust/target/

@@ -185,6 +185,20 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
             .map(|client| client.id)
             .collect()
     }
+
+    /// The transport, for the ONE caller that has to speak outside the dispatch.
+    ///
+    /// ⛔ ITS ONLY CALLER IS THE FAUCET OF `gui/fake-core`, and that is why it was not born with
+    /// the other five: an API element without a caller in this repository is deleted
+    /// (`crate::boundary`). The faucet produces what nothing real produces yet -- tokens, and the
+    /// two words it reads from a console -- and it must reach the attending clients to do it.
+    ///
+    /// ⚠️ NOT A DOOR INTO THE DISPATCH. Nothing that branches on an INCOMING message may use
+    /// this: the dispatch is `serve`, in one place, and a second one in the fake core is exactly
+    /// what §7 of the sub-project 2 design forbids.
+    pub fn ipc(&mut self) -> &mut I {
+        &mut self.ipc
+    }
 }
 
 /// The activity: one turn, then a nap of the delivered tick, for ever.

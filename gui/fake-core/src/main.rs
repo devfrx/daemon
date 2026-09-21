@@ -339,9 +339,12 @@ mod tests {
     // and would never show the warning.
     use kernel::wire::ipc::build_stamp;
 
-    // ⛔ THE ONLY TWO NAMES THE SEALED MODULE LETS OUT, and there is no third: `Peer` carries no
-    // way to reach the thread inside it, so `collect_until` is the only place a peer can be
-    // settled. See the doc on `settling`.
+    // ⛔ WHAT THE SEALED MODULE LETS OUT, AND IT IS THREE AND NOT TWO -- this comment said two and
+    // "there is no third", and `settling::Peer::new(...)` compiles, measured. The third is
+    // `Peer::new`, and it MUST be reachable because `a_peer_that_says` lives out here and has to
+    // wrap its own thread. What the seal buys is narrower and true: `Peer` carries no way to
+    // REACH the thread inside it (`peer.0` is `E0616`), so `collect_until` is the only place a
+    // peer can be settled. See the doc on `settling`.
     use settling::{Peer, collect_until};
 
     // ⛔ EACH PROBE BINDS A NAME OF ITS OWN. A socket name is valid for the whole machine and
@@ -434,10 +437,15 @@ mod tests {
     ///
     /// ⛔ THE GRAPH RUNS ON A THREAD OF ITS OWN ONLY SO THAT THE WAIT CAN BE BOUNDED: there is no
     /// other way to put a deadline on a call that does not take one. What the probe observes is
-    /// unchanged -- it still waits for the graph to finish before it collects -- and the ONLY new
-    /// outcome is the red that used to be a hang. ⚠️ The thread is left behind when the ceiling
-    /// expires: the process is ending anyway with a failed probe, and a graph that cannot be
-    /// stopped is the very thing being reported.
+    /// unchanged -- it still waits for the graph to finish before it collects.
+    ///
+    /// ⚠️ THE NEW OUTCOMES ARE TWO AND NOT ONE, and the first draft of this doc said one: the red
+    /// that used to be a hang, AND the graph thread that dies, which has a verdict of its own and
+    /// must not be dressed up as the first. ⛔ The thread is left behind when the ceiling expires,
+    /// and the sentence that used to excuse it -- *«the process is ending anyway with a failed
+    /// probe»* -- was FALSE: measured, after the first red the run went on to five more probes
+    /// with their abandoned graphs still alive. What makes it harmless is narrower and measured:
+    /// the six probes bind six DIFFERENT socket names, so an abandoned graph steals no name.
     fn run_the_graph_within(name: &str, turns: u64, cadence: Millis, words: Receiver<String>) {
         let name = name.to_owned();
         let (ended, done) = mpsc::channel();
@@ -445,11 +453,24 @@ mod tests {
             run_the_graph(&name, turns, cadence, words);
             let _ = ended.send(());
         });
-        assert!(
-            done.recv_timeout(A_GRAPH_CEILING).is_ok(),
-            "the graph did not reach its last turn within {A_GRAPH_CEILING:?}: the executor is \
-             stuck, so no probe below could ever give a verdict (C-2)"
-        );
+        // ⛔ THE TWO FAILURES ARE NOT THE SAME ONE, and the first draft of this helper told them
+        // apart nowhere: `is_ok()` is false for a `Disconnected` too, so a graph thread that
+        // PANICKED was reported as an executor that is STUCK -- in 0,00 s, with both halves of
+        // the sentence false, and it buried the `expect("bind the channel -- is a core already
+        // listening on it?")` that task 9 put there on purpose. It is the species of `E119` --
+        // *a dead peer is not silence* -- which this same file cures three hundred lines below
+        // with an explicit `Disconnected` arm, written by the wave that then forgot it here.
+        match done.recv_timeout(A_GRAPH_CEILING) {
+            Ok(()) => {}
+            Err(mpsc::RecvTimeoutError::Timeout) => panic!(
+                "the graph did not reach its last turn within {A_GRAPH_CEILING:?}: the executor \
+                 is stuck, so no probe below could ever give a verdict (C-2)"
+            ),
+            Err(mpsc::RecvTimeoutError::Disconnected) => panic!(
+                "the graph thread DIED before its last turn: its own panic is printed above this \
+                 line and IS the verdict -- read that, not this (E119's species)"
+            ),
+        }
     }
 
     /// Collect what the peer streams until `enough` is satisfied, or the ceiling passes -- and
@@ -489,8 +510,11 @@ mod tests {
     /// anyone is the assertion -- and if it asks for LESS than the predicate did, the short vector
     /// passes it and the probe goes green over a corpse. Measured 2026-09-21: with every peer
     /// mutated to die after its first token, `the_tokens_arrive_untrusted` -- predicate three
-    /// tokens, assertion one -- was GREEN in 0,21 s. The ceiling does not remove the hang on its
-    /// own: without this half it converts the hang into a silent green.
+    /// tokens, assertion one -- was GREEN. ⚠️ NO WALL TIME HERE: the figure lives in `E124`, in
+    /// one house, and it was already written two ways in the commit that measured it. The
+    /// ceiling does not remove the hang on its own: without this half it converts the hang into
+    /// a silent green -- which is why the verdict is now given in the `else` below, for every
+    /// caller, instead of being asked of each one.
     mod settling {
         use super::*;
 
@@ -510,6 +534,10 @@ mod tests {
             }
         }
 
+        // ⛔ `#[track_caller]` SO THAT THE RED NAMES THE PROBE and not this line: the verdict below
+        // is given here for every caller, and a red that points at the helper is a red nobody can
+        // act on.
+        #[track_caller]
         pub(super) fn collect_until(
             arrivals: &Receiver<IpcMessage>,
             peer: Peer,
@@ -529,7 +557,21 @@ mod tests {
             if enough(&heard) {
                 peer.0.join().expect("the peer thread");
             } else {
+                // ⛔ AND THE VERDICT IS GIVEN HERE, FOR EVERY CALLER, instead of being a rule each
+                // one must remember. The rule -- *the assertion after the ceiling must be at least
+                // as strong as the predicate* -- was written in this doc and left to the callers
+                // to honour, which is the shape `E127` itself calls "a defect waiting to happen":
+                // measured, a probe pairing `len >= 10` with `assert!(!heard.is_empty())` stayed
+                // GREEN. Now an unmet predicate is red wherever it happens, and a caller cannot
+                // weaken it because it never gets the short vector back.
                 drop(peer);
+                panic!(
+                    "the ceiling of {A_CEILING:?} expired with the predicate still unmet after \
+                     {} messages: the peer was dropped without being joined, so THIS is the \
+                     verdict -- whatever the assertion below would have said about a short \
+                     vector, it would have said it about a run that never got there",
+                    heard.len()
+                );
             }
             heard
         }
@@ -589,10 +631,12 @@ mod tests {
         // ⛔ THE STREAM, AND EVERY PROBE HANDS ONE (E110, E116, and the two rounds after). ⚠️ IT
         // WAS AN `Option` UNTIL THE THIRD REVIEW, kept "only because the signature would
         // otherwise lie about a future caller that wants the returned vector" -- but no such
-        // caller existed, and the option was the last way left to write the probe that joins its
-        // own peer. Measured 2026-09-21: all six callers passed `Some`, so the shape lost nothing
-        // and the wrong probe stopped compiling. ⚠️ NO TALLY HERE, deliberately: the one that
-        // stood in this comment aged inside a single task.
+        // caller existed. ⚠️ AND THE REASON FIRST WRITTEN HERE WAS WRONG: it said the option was
+        // "the last way left to write the probe that joins its own peer", and it was not -- what
+        // closes that probe is the SEAL on `Peer`, measured to hold with the option in place
+        // (`E0599` on `join`, `E0616` on the field). Dropping the option is a plain
+        // simplification, and all six callers passed `Some`. ⚠️ NO TALLY HERE, deliberately: the
+        // one that stood in this comment aged inside a single task.
         as_they_come: mpsc::Sender<IpcMessage>,
     ) -> Peer {
         Peer::new(std::thread::spawn(move || {
@@ -854,7 +898,8 @@ mod tests {
         let (_hand, words) = a_keyboard();
         // ⛔ ONE NUMBER, TWO USES, AND IT IS THE CURE OF `C-1`: the predicate asked for three and
         // the verdict below asked for one, so a peer that died after the first token left a short
-        // vector that the verdict still accepted -- green over a corpse, measured at 0,21 s. The
+        // vector that the verdict still accepted -- green over a corpse. ⚠️ THE WALL TIME LIVES
+        // IN `E124` AND NOWHERE ELSE: it stood in two places at once and the two disagreed. The
         // rule is on `settling`; here the two cannot drift apart because there is one number.
         const ENOUGH_TOKENS: usize = 3;
         let three_tokens: Until = |heard| {
@@ -881,8 +926,12 @@ mod tests {
             .iter()
             .filter(|message| matches!(message, IpcMessage::Token { .. }))
             .collect();
-        // ⛔ THE COUNT, NOT `{heard:?}`: when the ceiling expires the vector can be long, and a
-        // red nobody can read is a red nobody acts on (E116).
+        // ⛔ THE COUNT, NOT `{heard:?}`, and a red nobody can read is a red nobody acts on (E116).
+        // ⚠️ THE REASON FIRST GIVEN HERE HAS MOVED, AND SO HAS THE CASE: it said "when the ceiling
+        // expires the vector can be long", and since the verdict for an unmet predicate is given
+        // inside `collect_until` this assertion is only ever reached when the predicate HELD --
+        // so the vector is minimal, the loop having stopped at the first message that satisfied
+        // it. The long-vector red now lives in one place, with its own count.
         assert!(
             tokens.len() >= ENOUGH_TOKENS,
             "the faucet streams {ENOUGH_TOKENS} tokens (heard {} of them in {} messages in all)",
@@ -915,9 +964,9 @@ mod tests {
         // (m-2 of the third review): the sibling's lives to the end of its scope, while THIS one
         // is dropped by name right after the run. What the redundancy rests on is narrower and
         // still true -- during the RUN, which is the only stretch `try_recv` is called in, both
-        // hands are alive and both answer `Empty`. Measured: under the
-        // mutation G1 BOTH go red, TOGETHER and for the same reason. What this one still buys is
-        // the NAME -- a reader looking for "and with nothing typed?" finds a probe that answers
+        // hands are alive and both answer `Empty`. Measured: under the mutation G1 BOTH go red,
+        // TOGETHER and for the same reason. What this one still buys is the NAME -- a reader
+        // looking for "and with nothing typed?" finds a probe that answers
         // it -- and that is all it buys. ⚠️ THIS LINE USED TO SAY "BOTH HANG", and it was true and
         // filed as REDUNDANCY: the evidence that the pair had the defect of E116 was written down
         // here by the very wave that cured only the other two probes. It is red now because both

@@ -50,11 +50,16 @@ pub struct InDoubt {
 /// field, and now does so BY DECISION rather than by default.
 ///
 /// ⚠️ THE DISAGREEMENT IS CLOSED BY WHOEVER WRITES, AND WHO THEY ARE IS WHAT
-/// `grep -rnE '\.(intent|outcome|note)\(' crates/kernel/src/ | grep -v '///'` LISTS — a NUMBER
-/// written here would age at the next writer, and it had. ⚠️ THE `grep -v '///'` IS WHAT MAKES
-/// IT SELF-SAFE: cited on a `///` line, the command does not count its own citation — written
-/// into a `//` comment it would, which is the trap `289f487` paid for, and this command was
-/// installed once WITHOUT being run: see `E58` of the part-2 plan.
+/// `grep -rnE '\.(intent|outcome|note)\(' crates/kernel/src/ | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'` LISTS — a NUMBER
+/// written here would age at the next writer, and it had. ⚠️ THE SECOND HALF IS WHAT MAKES IT
+/// SELF-SAFE: the command does not count its own citation, because the filter drops the matched
+/// line when a comment marker opens it. ⛔ RECALL OF 2026-09-21, FINDING m-1 OF THE THIRD REVIEW
+/// OF TASK 12 OF THE PART-2 PLAN: it used to be `grep -v '///'`, and these very lines said so --
+/// *«cited on a `///` line the command does not count its own citation — written into a `//`
+/// comment it would»*. That was a DEFECT REPORT filed as a declared limit, and it sat here while
+/// the same blindness was cured elsewhere; the form now covers every comment marker. The trap
+/// `289f487` paid for is the same one, and this command was installed once WITHOUT being run:
+/// see `E58` and `E134` of the part-2 plan.
 /// ⛔ RECALL OF 2026-09-18, FROM THE REVIEW OF TASK 8 OF THE PART-2
 /// PLAN: this sentence said "AND THERE ARE TWO OF THEM", which was already false before that
 /// task — `permission::grant` has been one of them since 2026-09-01 — and the recall below names

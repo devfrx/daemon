@@ -313,16 +313,20 @@ const PRESENTATION_RESERVATION: ResourceProfile = ResourceProfile {
 ///
 /// ⚠️ THE SHAPE IS REPEATED ON PURPOSE AND THE DUPLICATION IS DECLARED RATHER THAN HIDDEN, and
 /// WHERE THE COPIES ARE IS WHAT THE COMMAND SAYS AND NOT THIS LINE —
-/// `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' | grep -v '///'`. ⛔ IT WALKS
+/// `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`. ⛔ IT WALKS
 /// BOTH TREES ON PURPOSE: `gui/` is a sibling of `crates/`, it exists already, and task 12 of
 /// this plan puts a copy of its own in `gui/fake-core`, which a command looking only under
 /// `crates/` could never see. ⛔ AND THE SECOND HALF IS WHAT MAKES IT BLIND TO THE LINE ABOVE:
 /// without it the command COUNTS ITS OWN CITATION and answers one more than there are —
-/// measured on 2026-09-19, four against three. ⚠️ ITS LIMIT, DECLARED RATHER THAN HIDDEN AND
-/// MEASURED RATHER THAN GUESSED: the filter drops any line CONTAINING `///`, so it hides this
-/// citation and every other that quotes the CURED motif, whatever comment marker that one sits
-/// behind -- the `'///'` travels inside the quoted text. What it would still count is a line
-/// quoting the BLIND form, without the filter, from outside a `///` comment. None of the copies can be
+/// measured on 2026-09-19, four against three. ⛔ RECALL OF 2026-09-21, FINDING m-1 OF THE THIRD
+/// REVIEW OF TASK 12: the second half used to be `grep -v '///'`, which dropped any line
+/// CONTAINING `///` -- so it was blind to a citation written into a plain `//` comment, and this
+/// file's own sibling in `crates/kernel/src/reconcile.rs` had that blindness WRITTEN OUT as a
+/// known limit. The form now anchors on the comment marker at the head of the matched line and
+/// covers EVERY comment; measured before it was written, it answers the same count as the old
+/// one on today's code. ⚠️ ITS LIMIT, DECLARED RATHER THAN HIDDEN: it drops comment lines only,
+/// so a citation of the motif from CODE -- inside a string literal, say -- would still be
+/// counted. There is none today. None of the copies can be
 /// imported in any case — a `tests/` file is a crate of its own, a binary exports nothing, and
 /// `gui/fake-core` is outside this workspace altogether.
 ///

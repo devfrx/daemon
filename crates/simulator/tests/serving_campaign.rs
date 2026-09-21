@@ -56,12 +56,15 @@
 //!
 //! ⛔ THE CLOCK IS SHARED THROUGH A LOCAL `SharedClock`, AND THAT IS A DECISION -- D34, not a copy
 //! nobody noticed (gotcha #49). ⛔ HOW MANY COPIES THERE ARE IS WHAT THE COMMAND SAYS AND NOT THIS
-//! LINE: `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' | grep -v '///'`. It walks
+//! LINE: `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`. It walks
 //! BOTH trees because `gui/` is a sibling of `crates/` that exists already and takes a copy of its
 //! own at task 12, and the filter is not decoration: without it the command counts its own
 //! citation, which is the defect E63 measured on 2026-09-19 beside the same motif in
 //! `crates/daemon/src/main.rs`. ⚠️ THE LIMIT OF THAT FILTER IS WRITTEN OUT ONCE, THERE, and not
-//! copied here: a pointer that lives in two documents is one that diverges (gotcha #68).
+//! copied here: a pointer that lives in two documents is one that diverges (gotcha #68). ⛔ AND
+//! THE FILTER ITSELF CHANGED ON 2026-09-21 (m-1 of the third review of task 12): it was blind to
+//! a citation in a plain `//` comment, and it now covers every comment marker -- same count on
+//! today's code, measured before it was written.
 //!
 //! ⛔ AND IT STAYS LOCAL, WHICH IS D34 AND NOT AN OVERSIGHT: `crates/daemon/Cargo.toml` refuses IN
 //! WRITING to depend on `simulator`, the reactors these copies wrap are not even the same type,

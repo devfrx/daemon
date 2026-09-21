@@ -13,7 +13,14 @@
    jsdom files `color-contrast` as INCOMPLETE every time (there is no layout to read a background
    from -- measured on 2026-09-15, task 14), so a green from axe proves nothing about it. A value
    that fails is a change to THIS file, not to forty templates -- which is the whole reason the
-   shape comes before the palette. */
+   shape comes before the palette.
+
+   ⛔ AND ONE HAS ALREADY FAILED, so the sentence above is a measure and not a promise. `--stop`
+   was `#e5534b`, which is 4,21:1 on `--surface-raised` -- under the 4,5 AA asks of normal text --
+   and it dresses a REAL string of the bar: the chip "Core: timbro diverso" at `--font-size`, the
+   only place `var(--stop)` is used (`frame/ViewBar.vue`). Measured on 2026-09-21 by the review of
+   task 13, E167; the seven other pairs passed. The value below is 5,12:1 on `--surface-raised`
+   and 5,72:1 on `--surface`. */
 :root {
   --ink: #e6e9ef;
   --ink-dim: #9aa3b2;
@@ -22,7 +29,7 @@
   --line: #2b313c;
   --accent: #6ea8fe;
   --warn: #f0b429;
-  --stop: #e5534b;
+  --stop: #ef6a60;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -55,4 +62,36 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* ⛔ THE TWO ELEMENTS NO SFC DRESSES, AND THIS IS WHY THEY FELL THROUGH. Every other piece of the
+   frame is a Vue SFC with its own scoped <style>; `frame/BigTab.ts` and `frame/VueContent.ts`
+   build plain DOM, because `dockview` asks for a RENDERER and not a component -- so both classes
+   were named and never defined, and nothing could say so: not `vue-tsc`, not `copy.test.ts`, not
+   the gate. Found by the review of task 13 on 2026-09-21, E165 and E166.
+
+   ⚠️ THE MEASURES ARE LITERALS ON PURPOSE. They are the ones move 5 of SP-8 was judged on
+   (`spikes/gui-shell/app/src/style.css`), rewritten line by line as D49 asks. They are a grab
+   size, not a palette choice, so there is no token to take them from -- and replacing them with
+   the nearest token would be re-deciding what the owner already judged. */
+.bigtab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 10px;
+  font-weight: 600;
+  cursor: grab;
+  user-select: none;
+}
+
+.bigtab-title {
+  flex: 1;
+}
+
+/* The element `VueContent` hands to `dockview`. Without a height of its own it collapses to its
+   content, so every `height: 100%` INSIDE a panel resolves against nothing -- the strip's today
+   (it took 20 px of its 56 and sat at the top), every module's at task 14. */
+.panel {
+  height: 100%;
 }

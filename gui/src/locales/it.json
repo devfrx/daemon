@@ -1,7 +1,4 @@
 {
-  "app": {
-    "title": "Harness"
-  },
   "views": {
     "home": "Home",
     "work": "Lavoro",

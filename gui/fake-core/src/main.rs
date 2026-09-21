@@ -477,48 +477,12 @@ mod tests {
         }
     }
 
-    /// Collect what the peer streams until `enough` is satisfied, or the ceiling passes -- and
-    /// then settle with the peer.
+    /// The settling of a peer, and the one bounded wait the probes are allowed.
     ///
-    /// ⛔ THE HALF OF E110'S CURE THAT WAS MISSED (E116): `a_peer_that_says` says why nothing
-    /// closes the connection, so a probe whose predicate can become unsatisfiable must NOT `join`
-    /// -- the peer loops for ever and `join` never returns. Here the wait is BOUNDED, and the
-    /// assertion after it gives a verdict on what arrived.
-    ///
-    /// ⛔ AND THE PEER IS TAKEN BY VALUE ON PURPOSE, which is the cure of the SECOND round: the
-    /// first draft returned the vector and left the caller to `drop(peer)`, so every caller had to
-    /// remember a rule -- and `collect_until` itself then swallowed a peer that had PANICKED,
-    /// which is `E119 (2)` reintroduced by the cure of `E116`. Measured: with the peer mutated to
-    /// die, three probes passed while their peer was panicking. Now the wrong thing is not
-    /// expressible: whoever collects hands the peer over, and the settling happens in one place.
-    ///
-    /// ⛔ THE SETTLING IS CONDITIONAL, AND THE CONDITION IS FREE. If `enough` holds, the peer has
-    /// already left its own loop -- it streams a message BEFORE testing its predicate, so it exits
-    /// at the next test -- and `join` returns AT ONCE, propagating a panic if there was one. Only
-    /// when the ceiling expired is the peer still running, and only then is it dropped. ✅ PROVED
-    /// IN BOTH DIRECTIONS, 2026-09-21: as the code stands, six of six; with the peer mutated to
-    /// die as soon as its predicate holds, the probes that used to pass IN SILENCE go red.
-    ///
-    /// ⚠️ IT READS A CHANNEL AND NOT A SOCKET, which is the only reason a ceiling is enforceable
-    /// at all: `recv_timeout` takes one, `Read::read` does not.
-    ///
-    /// ⚠️ AND IT IS NOT THE LOOP IN `a_stale_stamp_is_refused_and_then_silence`: there the WAIT IS
-    /// THE OBSERVATION, so a timeout is the SUCCESS and a `Disconnected` is a failure. Here a
-    /// timeout is the failure. ⛔ A `Disconnected` BEFORE `enough` HOLDS IS NOT A NORMAL END --
-    /// the clause that used to say so was false (E33): it means the peer's THREAD is over, panic
-    /// included. A peer that died AFTER satisfying is caught by the `join`.
-    ///
-    /// ⛔ AND THE OTHER HALF, WHICH THE ROUND BEFORE GOT WRONG (`C-1` of the third review): THE
-    /// ASSERTION THAT FOLLOWS MUST BE AT LEAST AS STRONG AS `enough`. A peer that dies BEFORE
-    /// satisfying leaves a short vector and is dropped in silence, so the only thing left to tell
-    /// anyone is the assertion -- and if it asks for LESS than the predicate did, the short vector
-    /// passes it and the probe goes green over a corpse. Measured 2026-09-21: with every peer
-    /// mutated to die after its first token, `the_tokens_arrive_untrusted` -- predicate three
-    /// tokens, assertion one -- was GREEN. ⚠️ NO WALL TIME HERE: the figure lives in `E124`, in
-    /// one house, and it was already written two ways in the commit that measured it. The
-    /// ceiling does not remove the hang on its own: without this half it converts the hang into
-    /// a silent green -- which is why the verdict is now given in the `else` below, for every
-    /// caller, instead of being asked of each one.
+    /// ⛔ A MODULE AND NOT A PAIR OF FUNCTIONS, because what it buys is PRIVACY: the handle
+    /// inside `Peer` is unreachable from outside these braces, and `recv_timeout` is called
+    /// here and nowhere else in a probe. Both are properties of the BOUNDARY, not of any one
+    /// function, and each of them was a rule somebody had to remember until it moved here.
     mod settling {
         use super::*;
 
@@ -530,9 +494,11 @@ mod tests {
         /// cure written for a different defect put back an `Err(_) => break` that merged the two
         /// failures and then ASSERTED the wrong one, saying *«the ceiling expired»* over a run of
         /// 0,27 s in which the peer had died. Each round the shape was "remember to split the
-        /// error", and each round somebody did not. ⛔ NOW SPLITTING IS THE ONLY WAY TO COMPILE:
-        /// the wait is done in one place, it answers with this enum, and a caller must match all
-        /// three arms. ⚠️ A ceiling that expires and an other end that is GONE mean opposite
+        /// error", and each round somebody did not. ⛔ NOW A WAIT THAT COMES THROUGH
+        /// `wait_with_a_bottom` CANNOT MERGE THEM: it answers with this enum, and the caller owes
+        /// all three arms or the compiler refuses (`E0004`, measured). ⚠️ THAT IS WHAT IS
+        /// ENFORCED, AND NOT MORE: a probe that writes its own loop is still free to merge them
+        /// by hand, and one did until the round that wrote this sentence moved it here. ⚠️ A ceiling that expires and an other end that is GONE mean opposite
         /// things -- one is "nothing came in time", the other is "there is nobody left to come",
         /// panic included -- and a red that names the wrong one sends the reader hunting a defect
         /// that is not there.
@@ -545,11 +511,28 @@ mod tests {
             OtherEndGone,
         }
 
-        /// The ONE bounded wait of this bench, and the only place `recv_timeout` is called.
+        /// The bounded wait of this bench, and today the only call of `recv_timeout` in the file.
         ///
-        /// ⛔ GENERIC OVER WHAT ARRIVES because the two waits carry different payloads -- messages
+        /// ⚠️ THE SENTENCE ABOVE IS A MEASUREMENT AND NOT A GUARANTEE, and it was written as a
+        /// guarantee while a second loop stood three hundred lines below. What is true is what
+        /// the command says --
+        /// `grep -n 'recv_timeout(' gui/fake-core/src/main.rs | grep -vcE '^[0-9]+:[[:space:]]*//'`
+        /// -- and the filter is not decoration: the bare count answers TWO, because the line you
+        /// are reading cites the pattern. That is gotcha 120 caught inside the sentence that
+        /// quotes it, measured 2026-09-21. What the compiler enforces is narrower: a wait that
+        /// comes through here cannot merge the two failures, because the caller matches `Stopped`.
+        /// Nothing stops a future probe from writing a loop of its own; if one does, it owes the
+        /// three arms by hand, and this line stops being true.
+        ///
+        /// ⛔ GENERIC OVER WHAT ARRIVES because the waits carry different payloads -- messages
         /// from the peer, and a single `()` from the graph -- and a second copy is what let the
         /// two drift apart in the first place.
+        ///
+        /// ⚠️ THE PREDICATE IS TAKEN BY VALUE AND ITS CALLERS PUT AN EFFECT IN IT: `collect_until`
+        /// and the stale probe both PUSH the item into a vector of their own and then answer.
+        /// That is deliberate -- it is how a wait over items becomes a wait over what accumulated
+        /// -- but it is not obvious from the signature, so whoever writes a new predicate here
+        /// must know that a predicate with no effect accumulates nothing.
         pub(super) fn wait_with_a_bottom<T>(
             arrivals: &Receiver<T>,
             ceiling: std::time::Duration,
@@ -588,6 +571,48 @@ mod tests {
             }
         }
 
+        /// Collect what the peer streams until `enough` is satisfied, or the ceiling passes -- and
+        /// then settle with the peer.
+        ///
+        /// ⛔ THE HALF OF E110'S CURE THAT WAS MISSED (E116): `a_peer_that_says` says why nothing
+        /// closes the connection, so a probe whose predicate can become unsatisfiable must NOT `join`
+        /// -- the peer loops for ever and `join` never returns. Here the wait is BOUNDED, and the
+        /// assertion after it gives a verdict on what arrived.
+        ///
+        /// ⛔ AND THE PEER IS TAKEN BY VALUE ON PURPOSE, which is the cure of the SECOND round: the
+        /// first draft returned the vector and left the caller to `drop(peer)`, so every caller had to
+        /// remember a rule -- and `collect_until` itself then swallowed a peer that had PANICKED,
+        /// which is `E119 (2)` reintroduced by the cure of `E116`. Measured: with the peer mutated to
+        /// die, three probes passed while their peer was panicking. Now the wrong thing is not
+        /// expressible: whoever collects hands the peer over, and the settling happens in one place.
+        ///
+        /// ⛔ THE SETTLING IS CONDITIONAL, AND THE CONDITION IS FREE. If `enough` holds, the peer has
+        /// already left its own loop -- it streams a message BEFORE testing its predicate, so it exits
+        /// at the next test -- and `join` returns AT ONCE, propagating a panic if there was one. Only
+        /// when the ceiling expired is the peer still running, and only then is it dropped. ✅ PROVED
+        /// IN BOTH DIRECTIONS, 2026-09-21: as the code stands, six of six; with the peer mutated to
+        /// die as soon as its predicate holds, the probes that used to pass IN SILENCE go red.
+        ///
+        /// ⚠️ IT READS A CHANNEL AND NOT A SOCKET, which is the only reason a ceiling is enforceable
+        /// at all: `recv_timeout` takes one, `Read::read` does not.
+        ///
+        /// ⚠️ AND IT IS NOT THE LOOP IN `a_stale_stamp_is_refused_and_then_silence`: there the WAIT IS
+        /// THE OBSERVATION, so a timeout is the SUCCESS and a `Disconnected` is a failure. Here a
+        /// timeout is the failure. ⛔ A `Disconnected` BEFORE `enough` HOLDS IS NOT A NORMAL END --
+        /// the clause that used to say so was false (E33): it means the peer's THREAD is over, panic
+        /// included. A peer that died AFTER satisfying is caught by the `join`.
+        ///
+        /// ⛔ AND THE OTHER HALF, WHICH THE ROUND BEFORE GOT WRONG (`C-1` of the third review): THE
+        /// ASSERTION THAT FOLLOWS MUST BE AT LEAST AS STRONG AS `enough`. A peer that dies BEFORE
+        /// satisfying leaves a short vector and is dropped in silence, so the only thing left to tell
+        /// anyone is the assertion -- and if it asks for LESS than the predicate did, the short vector
+        /// passes it and the probe goes green over a corpse. Measured 2026-09-21: with every peer
+        /// mutated to die after its first token, `the_tokens_arrive_untrusted` -- predicate three
+        /// tokens, assertion one -- was GREEN. ⚠️ NO WALL TIME HERE: the figure lives in `E124`, in
+        /// one house, and it was already written two ways in the commit that measured it. The
+        /// ceiling does not remove the hang on its own: without this half it converts the hang into
+        /// a silent green -- which is why the verdict is now given in the `else` below, for every
+        /// caller, instead of being asked of each one.
         // ⛔ `#[track_caller]` SO THAT THE RED NAMES THE PROBE and not this line: the verdict below
         // is given here for every caller, and a red that points at the helper is a red nobody can
         // act on.
@@ -620,12 +645,35 @@ mod tests {
                 Stopped::Satisfied => {
                     peer.0.join().expect("the peer thread");
                 }
+                // ⛔ AND THE CEILING ARM LOOKS BEFORE IT SPEAKS. It used to ASSERT that the peer
+                // was still running, which it had never checked: the wait can hand back `Ceiling`
+                // from the deadline test at the head of the loop, without touching the channel at
+                // all, so a peer that had died a moment earlier was reported as a slow one -- and
+                // `drop` threw its panic away. That is `E144` a fifth time, inside the cure that
+                // declared the species closed in the type. What the probe was waiting for never
+                // came: THAT is the fact, and whether anybody was still there to send it is asked
+                // of the thread instead of assumed.
+                Stopped::Ceiling if peer.0.is_finished() => {
+                    let how = peer.0.join();
+                    panic!(
+                        "the ceiling of {A_CEILING:?} expired with the predicate still unmet \
+                         after {} messages, and the peer had ALREADY ENDED{}",
+                        heard.len(),
+                        if how.is_err() {
+                            " -- it PANICKED, and its own message is printed above this line and \
+                             IS the verdict: read that, not this"
+                        } else {
+                            " without panicking"
+                        }
+                    );
+                }
                 Stopped::Ceiling => {
                     drop(peer);
                     panic!(
                         "the ceiling of {A_CEILING:?} expired with the predicate still unmet \
-                         after {} messages, and the peer was STILL RUNNING: nothing arrived in \
-                         time, which is not the same as nobody being left to send",
+                         after {} messages, and the peer was still running: what this probe was \
+                         waiting for never came, which is not the same as nobody being left to \
+                         send it",
                         heard.len()
                     );
                 }
@@ -851,23 +899,25 @@ mod tests {
         // ⛔ A BOUNDED COLLECT AND NOT A `join`: THE WAIT IS THE OBSERVATION, and two seconds of
         // nothing is what "and then silence" means. ⚠️ The peer thread is left dangling on
         // purpose -- it dies with the test binary -- and the cost is declared rather than hidden.
+        // ⛔ THE SAME WAIT AS EVERY OTHER PROBE, and it used to be a loop of its own -- the second
+        // call of `recv_timeout` in this file, which made *«the only place it is called»* a false
+        // sentence and left a hand-written pair of arms that a future hand could merge again. The
+        // outcomes map one to one, only the VERDICTS are swapped: here the ceiling is the SUCCESS.
+        // ⛔ A DEAD PEER IS NOT SILENCE, and treating it as one made this probe GREEN on the very
+        // case its name promises (E119). The reachable way in is the `IpcMessage::decode(...)
+        // .expect(...)` of `a_peer_that_says`, i.e. a core that sends a SECOND, malformed frame.
         let mut heard = Vec::new();
-        loop {
-            match arrivals.recv_timeout(std::time::Duration::from_secs(2)) {
-                Ok(message) => heard.push(message),
-                // ⛔ THE TIMEOUT IS THE SUCCESS: it is the silence itself.
-                Err(mpsc::RecvTimeoutError::Timeout) => break,
-                // ⛔ A DEAD PEER IS NOT SILENCE, and treating it as one made this probe GREEN on
-                // the very case its name promises (E119). With the sender gone `recv_timeout`
-                // answers AT ONCE, the collect ends with what it had, and the `drop(peer)` below
-                // throws the `JoinHandle` away -- so the peer's PANIC never surfaces. Measured by
-                // the review with a `panic!` in the peer after the first message: green in 0,08 s
-                // instead of the two seconds this comment claims. The reachable way in is the
-                // `IpcMessage::decode(...).expect(...)` of `a_peer_that_says`, i.e. a core that
-                // sends a SECOND, malformed frame.
-                Err(mpsc::RecvTimeoutError::Disconnected) => {
-                    panic!("the peer ENDED after {} messages instead of falling silent", heard.len())
-                }
+        match settling::wait_with_a_bottom(&arrivals, std::time::Duration::from_secs(2), |message| {
+            heard.push(message);
+            heard.len() >= 2
+        }) {
+            // ⛔ THE CEILING IS THE SUCCESS: it is the silence itself.
+            Stopped::Ceiling => {}
+            Stopped::Satisfied => {
+                panic!("a SECOND message arrived where silence was promised: {heard:?}")
+            }
+            Stopped::OtherEndGone => {
+                panic!("the peer ENDED after {} messages instead of falling silent", heard.len())
             }
         }
         drop(peer);

@@ -1,0 +1,182 @@
+{
+  "grid": {
+    "root": {
+      "type": "branch",
+      "data": [
+        {
+          "type": "branch",
+          "data": [
+            {
+              "type": "branch",
+              "data": [
+                {
+                  "type": "branch",
+                  "data": [
+                    {
+                      "type": "leaf",
+                      "data": {
+                        "views": [
+                          "status"
+                        ],
+                        "activeView": "status",
+                        "id": "3"
+                      },
+                      "size": 314
+                    },
+                    {
+                      "type": "leaf",
+                      "data": {
+                        "views": [
+                          "permissions"
+                        ],
+                        "activeView": "permissions",
+                        "id": "4"
+                      },
+                      "size": 314
+                    },
+                    {
+                      "type": "leaf",
+                      "data": {
+                        "views": [
+                          "settings"
+                        ],
+                        "activeView": "settings",
+                        "id": "5"
+                      },
+                      "size": 316
+                    }
+                  ],
+                  "size": 533
+                },
+                {
+                  "type": "leaf",
+                  "data": {
+                    "views": [
+                      "knowledge"
+                    ],
+                    "activeView": "knowledge",
+                    "id": "1",
+                    "locked": true,
+                    "hideHeader": true
+                  },
+                  "size": 533
+                },
+                {
+                  "type": "branch",
+                  "data": [
+                    {
+                      "type": "leaf",
+                      "data": {
+                        "views": [
+                          "activity"
+                        ],
+                        "activeView": "activity",
+                        "id": "6"
+                      },
+                      "size": 472
+                    },
+                    {
+                      "type": "leaf",
+                      "data": {
+                        "views": [
+                          "costs"
+                        ],
+                        "activeView": "costs",
+                        "id": "7"
+                      },
+                      "size": 472
+                    }
+                  ],
+                  "size": 534
+                }
+              ],
+              "size": 944
+            },
+            {
+              "type": "leaf",
+              "data": {
+                "views": [
+                  "strip"
+                ],
+                "activeView": "strip",
+                "id": "2",
+                "locked": true,
+                "hideHeader": true
+              },
+              "size": 56
+            }
+          ],
+          "size": 1600
+        }
+      ],
+      "size": 1000
+    },
+    "width": 1600,
+    "height": 1000,
+    "orientation": "HORIZONTAL"
+  },
+  "panels": {
+    "knowledge": {
+      "id": "knowledge",
+      "contentComponent": "knowledge",
+      "params": {
+        "module": "knowledge",
+        "who": 6
+      },
+      "title": "knowledge"
+    },
+    "strip": {
+      "id": "strip",
+      "contentComponent": "strip",
+      "title": "strip",
+      "minimumHeight": 56,
+      "maximumHeight": 56
+    },
+    "status": {
+      "id": "status",
+      "contentComponent": "status",
+      "params": {
+        "module": "status",
+        "who": 2
+      },
+      "title": "status"
+    },
+    "permissions": {
+      "id": "permissions",
+      "contentComponent": "permissions",
+      "params": {
+        "module": "permissions",
+        "who": 2
+      },
+      "title": "permissions"
+    },
+    "settings": {
+      "id": "settings",
+      "contentComponent": "settings",
+      "params": {
+        "module": "settings",
+        "who": 2
+      },
+      "title": "settings"
+    },
+    "activity": {
+      "id": "activity",
+      "contentComponent": "activity",
+      "params": {
+        "module": "activity",
+        "who": 3
+      },
+      "title": "activity"
+    },
+    "costs": {
+      "id": "costs",
+      "contentComponent": "costs",
+      "params": {
+        "module": "costs",
+        "who": 3
+      },
+      "title": "costs"
+    }
+  },
+  "activeGroup": "7"
+}

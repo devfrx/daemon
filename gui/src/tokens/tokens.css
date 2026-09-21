@@ -1,0 +1,58 @@
+/* The design tokens of the whole SPA: colours, spacing, type. ONE file (§6a of the sub-project 2
+   design), because a kit is extracted at the SECOND occurrence and sub-project 2 has none.
+
+   ⚠️ THESE ARE PLACEHOLDER VALUES, and saying so is the point: the design system is decided in
+   three moments with their own proof, and this is not one of them. What is real here is the
+   SHAPE -- every colour and every measure a component uses comes from a variable, so the day a
+   palette arrives it lands in one file instead of in forty templates.
+
+   ⛔ `dockview` keeps its own theme (`themeAbyss`, the one the eight moves were judged on). These
+   tokens dress what WE draw: the bar, the band, the drawer, the strip, the placeholder.
+
+   ⚠️ G20 WANTS AA CONTRAST, and the check is `contrast.test.ts` in this folder: `axe-core` under
+   jsdom files `color-contrast` as INCOMPLETE every time (there is no layout to read a background
+   from -- measured on 2026-09-15, task 14), so a green from axe proves nothing about it. A value
+   that fails is a change to THIS file, not to forty templates -- which is the whole reason the
+   shape comes before the palette. */
+:root {
+  --ink: #e6e9ef;
+  --ink-dim: #9aa3b2;
+  --surface: #171a21;
+  --surface-raised: #1f242d;
+  --line: #2b313c;
+  --accent: #6ea8fe;
+  --warn: #f0b429;
+  --stop: #e5534b;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+
+  --radius: 6px;
+  --font: system-ui, "Segoe UI", sans-serif;
+  --font-size: 14px;
+  --line-height: 1.45;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+}
+
+/* G20: focus must be VISIBLE, and a default outline removed for looks is the commonest way an
+   interface stops being keyboard-usable. Nothing in this file removes one. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

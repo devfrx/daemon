@@ -1,0 +1,66 @@
+{
+  "app": {
+    "title": "Harness"
+  },
+  "views": {
+    "home": "Home",
+    "work": "Lavoro",
+    "compact": "Compatta"
+  },
+  "modules": {
+    "chat": "Chat",
+    "status": "Stato",
+    "permissions": "Permessi",
+    "steps": "Passi",
+    "activity": "Attività",
+    "settings": "Impostazioni",
+    "scope": "Ambito",
+    "diff": "Diff",
+    "preview": "Anteprima",
+    "terminal": "Terminale",
+    "sensors": "Sensori",
+    "costs": "Costi",
+    "knowledge": "Knowledge base",
+    "assets3d": "Asset 3D",
+    "voice": "Voce e gesti",
+    "backup": "Backup",
+    "checkpoint": "Checkpoint",
+    "models": "Modelli locali"
+  },
+  "bar": {
+    "views": "Viste",
+    "search": "Cerca",
+    "searchHint": "la ricerca sugli artefatti arriva col sotto-progetto 6",
+    "core": "Core",
+    "coreWaiting": "in attesa",
+    "coreConnected": "collegato",
+    "coreStale": "timbro diverso"
+  },
+  "band": {
+    "waiting": "Il core non ha risposto.",
+    "stale": "Il core parla una versione diversa del protocollo. La finestra non procede.",
+    "retry": "Riprova",
+    "expected": "Timbro atteso: {stamp}"
+  },
+  "strip": {
+    "degradation": "Degrado",
+    "vram": "VRAM esaurita",
+    "routing": "Instradamento degradato",
+    "none": "nessuno",
+    "permissions": "Permessi",
+    "pending": "una richiesta in attesa",
+    "quiet": "nessuna richiesta"
+  },
+  "drawer": {
+    "open": "+ moduli",
+    "title": "I moduli",
+    "close": "Chiudi",
+    "who": "arriva col sotto-progetto {number}"
+  },
+  "placeholder": {
+    "nucleus": "niente ancora",
+    "who": "arriva col sotto-progetto {number}",
+    "missing": "Questo tipo di modulo non esiste più.",
+    "closeMissing": "Chiudi il pannello"
+  }
+}

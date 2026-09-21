@@ -1,0 +1,64 @@
+{
+  "grid": {
+    "root": {
+      "type": "branch",
+      "data": [
+        {
+          "type": "branch",
+          "data": [
+            {
+              "type": "leaf",
+              "data": {
+                "views": [
+                  "knowledge"
+                ],
+                "activeView": "knowledge",
+                "id": "1",
+                "locked": true,
+                "hideHeader": true
+              },
+              "size": 500
+            },
+            {
+              "type": "leaf",
+              "data": {
+                "views": [
+                  "strip"
+                ],
+                "activeView": "strip",
+                "id": "2",
+                "locked": true,
+                "hideHeader": true
+              },
+              "size": 500
+            }
+          ],
+          "size": 1600
+        }
+      ],
+      "size": 1000
+    },
+    "width": 1600,
+    "height": 1000,
+    "orientation": "HORIZONTAL"
+  },
+  "panels": {
+    "knowledge": {
+      "id": "knowledge",
+      "contentComponent": "knowledge",
+      "params": {
+        "module": "knowledge",
+        "who": 6
+      },
+      "title": "knowledge"
+    },
+    "strip": {
+      "id": "strip",
+      "contentComponent": "strip",
+      "title": "strip",
+      "minimumHeight": 56,
+      "maximumHeight": 56
+    }
+  },
+  "activeGroup": "2"
+}

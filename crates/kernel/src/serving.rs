@@ -168,10 +168,12 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
     /// no grant to a client (D5), so every caller is a bench or a campaign. Removing it would
     /// leave `on_disconnect`'s wiring held by nothing at all. ⛔ WHO CALLS IT IS WHAT THE COMMAND
     /// PRINTS, not a tally that ages the day another bench arrives:
-    /// `grep -rn '\.grants()' crates/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
+    /// `grep -rn '\.grants()' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
     /// -- and the filter is there because a line that NAMES the pattern is counted by it (E63,
     /// E88, E96 of the sub-project 2 plan). Here the tally said ONE bench and the campaign of
-    /// task 10 made it two, on 2026-09-19.
+    /// task 10 made it two, on 2026-09-19. ⚠️ `gui/` JOINED THE COMMAND ON 2026-09-21 (E118): it
+    /// adds nothing today -- measured -- but a `crates/`-only grep is blind by construction, and
+    /// the sibling below was blind in a way that DID bite. Closed by species, not by list (E62).
     pub fn grants(&mut self) -> &mut ClientGrants {
         &mut self.grants
     }
@@ -186,12 +188,23 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
             .collect()
     }
 
-    /// The transport, for the ONE caller that has to speak outside the dispatch.
+    /// The transport, for whoever has to speak outside the dispatch.
     ///
-    /// ⛔ ITS ONLY CALLER IS THE FAUCET OF `gui/fake-core`, and that is why it was not born with
-    /// the other five: an API element without a caller in this repository is deleted
+    /// ⛔ IT EXISTS FOR THE FAUCET OF `gui/fake-core`, and that is why it was not born with the
+    /// other five: an API element without a caller in this repository is deleted
     /// (`crate::boundary`). The faucet produces what nothing real produces yet -- tokens, and the
     /// two words it reads from a console -- and it must reach the attending clients to do it.
+    /// ⛔ WHO CALLS IT IS WHAT THE COMMAND PRINTS, like its brother `grants` and for the same
+    /// reason -- a tally ages the day another caller arrives:
+    /// `grep -rn '\.ipc()' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
+    /// -- and it spans BOTH trees, because the only caller lives in `gui/`, which a `crates/`-only
+    /// grep cannot see (E62, E118).
+    ///
+    /// ⛔ AND THE HOLE IS DECLARED RATHER THAN LEFT GREEN (E120): nothing in the gate builds or
+    /// runs the fake core until `scripts/gate-gui.sh` arrives with TASK 15, so until then this is
+    /// a `pub` element of `kernel` with ZERO callers inside the gate and ZERO coverage -- the
+    /// gate is green WITHOUT LOOKING at it. That is exactly the condition `crate::boundary`
+    /// exists to refuse, carried on purpose and with a date on it.
     ///
     /// ⚠️ NOT A DOOR INTO THE DISPATCH. Nothing that branches on an INCOMING message may use
     /// this: the dispatch is `serve`, in one place, and a second one in the fake core is exactly

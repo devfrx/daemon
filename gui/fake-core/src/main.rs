@@ -62,9 +62,16 @@ const GUI_TICK: Millis = Millis::new(5);
 /// are fixed at five (constraint 1), a VRAM quota is not an OS concern, and a `lib.rs` in `daemon`
 /// would drag the PRODUCTION wiring into a tool.
 ///
-/// ⚠️ THE SAME SHAPE LIVES IN THREE PLACES, AND EACH ONE SAYS SO: here,
-/// `crates/daemon/src/main.rs`, and the sub-project 2 DST campaign (task 10). ⛔ AUDIO FIRST, and it is not
-/// arbitrary: both profiles sit in one lane, and the daemon's own comment argues it.
+/// ⚠️ THE SAME SHAPE LIVES IN MORE THAN ONE PLACE, AND THE COMMAND SAYS WHERE -- not this line,
+/// which named three and was wrong twice (E118): the sub-project 2 campaign of task 10 builds its
+/// grants through a generic `standing_grant` helper and does not carry the shape at all, and "each
+/// one says so" was true of this house alone. The list is gone and the command stays, which is the
+/// rule of `../../../CLAUDE.md` -- a number is not written, the command that produces it is:
+/// `grep -rn 'const AUDIO_RESERVATION' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
+/// -- and the filter is there because the line you are reading NAMES the pattern (E63, E88, E96).
+///
+/// ⛔ AUDIO FIRST, and it is not arbitrary: both profiles sit in one lane, and the daemon's own
+/// comment argues it.
 const AUDIO_RESERVATION: ResourceProfile = ResourceProfile {
     name: "audio-reserved",
     reserved_vram: AUDIO_QUOTA,
@@ -100,11 +107,17 @@ fn build_the_arbiter(parameters: Parameters) -> Arbiter {
 /// The reactor, shared between the executor -- which takes it BY VALUE -- and `serve`, which wants
 /// a BORROW.
 ///
-/// ⛔ THE FIFTH COPY OF THIS SHAPE, AND IT STAYS LOCAL: D34, re-read on 2026-09-14 (P-74). The
-/// other four are `crates/simulator/tests/arbiter_campaign.rs`, `crates/kernel/tests/serving.rs`,
-/// the sub-project 2 campaign (task 10) and `crates/daemon/src/main.rs`. A common home would have to be
-/// GENERIC over the reactor, because three of the five wrap `VirtualReactor` and two -- the daemon
-/// and this one -- wrap `SystemReactor`.
+/// ⛔ A COPY OF THIS SHAPE, AND IT STAYS LOCAL: D34, re-read on 2026-09-14 (P-74). ⚠️ NO ORDINAL
+/// AND NO CLOSED LIST HERE -- this census declared itself without carrying its command, which is
+/// the one thing E62 had stripped from its siblings and left in the text this task then wrote
+/// (E118). What says where they are is the command, over BOTH trees, because `gui/` is a sibling
+/// that `crates/`-only greps cannot see:
+/// `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
+/// -- and the filter keeps the line you are reading out of its own count (E63, E88, E96).
+///
+/// ⛔ A COMMON HOME WOULD HAVE TO BE GENERIC over the reactor, because some of these wrap
+/// `VirtualReactor` and others -- the daemon and this one -- wrap `SystemReactor`; D34 keeps the
+/// repetition instead, and P-74 re-read that on the merits.
 struct SharedClock<'a, R: Reactor>(&'a RefCell<R>);
 
 impl<R: Reactor> Reactor for SharedClock<'_, R> {
@@ -207,8 +220,10 @@ async fn the_faucet<I, J, C, R>(
             );
         }
         // ⛔ THE BORROW IS DROPPED BEFORE THIS LINE, and that is the rule D43 states: two live
-        // `borrow_mut` are a panic that only appears when the two tasks interleave -- that is, not
-        // in the shortest probe.
+        // `borrow_mut` are a panic. ⚠️ THE CLAUSE THAT USED TO JUSTIFY IT IS GONE (E121): it said
+        // the panic "only appears when the two tasks interleave -- that is, not in the shortest
+        // probe", and the bench underneath falsifies it -- held across the `await`, ALL SIX turn
+        // red at once, in 0.00s. The rule stands; the excuse for it did not, which is E33 again.
         let deadline = clock.now().saturating_add(cadence);
         nap(sleep, deadline).await;
     }
@@ -353,16 +368,24 @@ mod tests {
     /// wrong one is taken from where one already exists — the `StaleBuild` of the canonical set,
     /// which holds a value chosen precisely for not being the real one.
     ///
-    /// ⚠️ IF TASK 7 ALREADY EXPOSES SUCH A HELPER when this is written, it is REUSED and not
-    /// copied: two ways to obtain the same wrong stamp is one too many.
+    /// ⛔ AND THE ASSERTION IS NOT DECORATION, which is the half this helper was born without
+    /// (E119): the day that literal ever coincided with a real stamp, the probe below would be
+    /// exercising the ACCEPTING path while claiming to test the refusing one. Today the two
+    /// differ -- measured -- and that is the direction nothing else was proving.
+    ///
+    /// ⚠️ THE TWIN IN `crates/kernel/tests/serving.rs` COULD NOT BE REUSED, and the doc that
+    /// stood here said it could: an integration test is a crate of its own and exports nothing to
+    /// another binary. The copy is forced; what was avoidable was losing the guard with it.
     fn a_stamp_that_is_not_ours() -> kernel::wire::ipc::BuildStamp {
-        kernel::wire::ipc::stamp_set()
+        let stamp = kernel::wire::ipc::stamp_set()
             .into_iter()
             .find_map(|message| match message {
                 IpcMessage::StaleBuild(stamp) => Some(stamp),
                 _ => None,
             })
-            .expect("the canonical set holds a StaleBuild")
+            .expect("the canonical set holds a StaleBuild");
+        assert_ne!(stamp, build_stamp(), "the canonical StaleBuild must not carry this build's own stamp");
+        stamp
     }
 
     /// The keyboard of a probe: the words the faucet reads, and the hand that types them.
@@ -376,26 +399,72 @@ mod tests {
         mpsc::channel()
     }
 
+    /// How long a streaming probe waits for its predicate before it gives a verdict on what came.
+    ///
+    /// ⛔ IT IS THE PROBE'S CLOCK AND NOT THE PEER'S, and that is forced: the peer sits in a
+    /// blocking `Read::read`, so a deadline at the head of ITS loop never fires -- E112 falsified
+    /// `set_nonblocking` as the way round, and it drops all six.
+    const A_CEILING: std::time::Duration = std::time::Duration::from_secs(5);
+
+    /// Collect what the peer streams until `enough` is satisfied, or the ceiling passes.
+    ///
+    /// ⛔ THE HALF OF E110'S CURE THAT WAS MISSED, and the most expensive lesson of this task
+    /// (E116): `a_peer_that_says` says why nothing closes the connection, so a probe whose
+    /// predicate can become unsatisfiable must NOT `join` -- the peer loops for ever and `join`
+    /// never returns. Here the wait is BOUNDED, and the assertion after it gives a verdict on
+    /// what arrived. ⛔ PROVED IN BOTH DIRECTIONS, 2026-09-20: as the code stands, six of six; with
+    /// the faucet mutated once per probe, `degrade` and `verdict` FAIL in about five seconds with
+    /// a readable left/right -- verdicts, not blocks.
+    ///
+    /// ⚠️ IT READS A CHANNEL AND NOT A SOCKET, which is the only reason a ceiling is enforceable
+    /// at all: `recv_timeout` takes one, `Read::read` does not.
+    ///
+    /// ⚠️ AND IT IS NOT THE LOOP IN `a_stale_stamp_is_refused_and_then_silence`: there the WAIT IS
+    /// THE OBSERVATION, so a timeout is the success and a `Disconnected` is a failure. Here a
+    /// timeout is the failure, and a `Disconnected` only means the peer's own predicate came first.
+    fn collect_until(arrivals: &Receiver<IpcMessage>, enough: Until) -> Vec<IpcMessage> {
+        let started = std::time::Instant::now();
+        let mut heard = Vec::new();
+        while !enough(&heard) {
+            let Some(left) = A_CEILING.checked_sub(started.elapsed()) else {
+                break;
+            };
+            match arrivals.recv_timeout(left) {
+                Ok(message) => heard.push(message),
+                Err(_) => break,
+            }
+        }
+        heard
+    }
+
     /// What a probe waits for before it stops reading.
     ///
     /// ⛔ A PREDICATE AND NOT A COUNT (R5-4): the faucet streams a token per turn, so a fixed
     /// number of messages fills up with tokens before the one the probe is after has been sent.
-    /// The loop still ends when the server closes -- `read` answers `Ok(0)` -- so a predicate that
-    /// is never satisfied makes the probe FAIL on what it heard, not hang.
+    ///
+    /// ⚠️ WHETHER A PROBE MAY `join` ITS PEER IS DECIDED IN `a_peer_that_says`, NOT HERE. The
+    /// sentence that used to stand at this spot answered it, and answered it wrongly (E117).
     type Until = fn(&[IpcMessage]) -> bool;
 
     /// The peer, in the shape task 9 gives it and for its reasons.
     ///
-    /// ⛔ IT CAN HANG, AND MEASURING IT IS WHAT E110 COST. Nothing closes this connection:
-    /// `Core::forget` drops the client from the CORE's table and never from the transport, which
-    /// keeps `Connected` and the detached reader thread `accept` spawned for it -- and
-    /// `LocalSocketIpc::drop_client` has no caller, because "the core closes" is not an operation
-    /// of the port (decision 22). So `read` sees `Ok(0)` only when the peer's own predicate is
-    /// satisfied, never because the run ended. ⛔ A PROBE THAT WAITS FOR A MESSAGE THE CORE WILL
-    /// NEVER SEND THEREFORE HANGS FOR EVER, which is the worst red there is (E5, E6): it prints
-    /// nothing, it cannot be bisected, and it eats the gate. ⚠️ EVERY CALLER WHOSE PREDICATE THE
-    /// TOKEN STREAM SATISFIES may `join` AFTER the run; one that observes SILENCE takes
-    /// `as_they_come` instead and collects under a ceiling.
+    /// ⛔ IT CAN HANG, AND MEASURING IT IS WHAT E110 AND THEN E116 COST. Nothing closes this
+    /// connection: `Core::forget` drops the client from the CORE's table and never from the
+    /// transport, which keeps `Connected` and the detached reader thread `accept` spawned for it.
+    /// `LocalSocketIpc::drop_client` is PRIVATE TO THE TRANSPORT, which calls it on its own
+    /// failures -- a `write_all` that errs, a peer whose channel ended -- and its own doc says the
+    /// reader thread is not told; nothing in the CORE can call it at all, because "the core
+    /// closes" is not an operation of the port (decision 22). ⛔ A PROBE THAT WAITS FOR A MESSAGE
+    /// THE CORE WILL NEVER SEND THEREFORE HANGS FOR EVER, which is the worst red there is (E5,
+    /// E6): it prints nothing, it cannot be bisected, and it eats the gate.
+    ///
+    /// ⛔ AND "THE TOKEN STREAM SATISFIES IT" IS THE WRONG TEST -- it is the one this paragraph
+    /// used to apply, and E116 measured two probes it had wrongly blessed. What decides is
+    /// whether the core can STOP satisfying the predicate under a mutation: a predicate that only
+    /// the REAL code satisfies becomes unsatisfiable the moment that code breaks, which is
+    /// precisely the run in which the probe must give a VERDICT. Such a caller hands
+    /// `as_they_come` and reads it through `collect_until`; a caller whose predicate the faucet
+    /// satisfies on its own may `join` AFTER the run.
     ///
     /// ⚠️ THE CONNECT IS A `yield_now` LOOP AND NOT A SLEEP: the listener exists from `bound()`,
     /// which happens inside the run, so this thread may be scheduled first. ⛔ AND THE LOOP HAS A
@@ -411,8 +480,12 @@ mod tests {
         said: Vec<IpcMessage>,
         until: Until,
         mut then_types: Option<(mpsc::Sender<String>, &'static str)>,
-        // ⛔ THE STREAM FOR WHOEVER OBSERVES SILENCE (E110). `None` for the five probes whose
-        // predicate the token stream satisfies: they `join` and read the vector it returns.
+        // ⛔ THE STREAM FOR WHOEVER CANNOT `join` (E110, E116). `Some` wherever the core can STOP
+        // satisfying the predicate -- the probe that observes SILENCE, and the probes whose oracle
+        // is the REAL code; `None` only where the faucet satisfies it by itself, and those `join`
+        // and read the vector it returns. ⚠️ NO TALLY HERE, deliberately: the one that stood in
+        // this comment aged inside a single task, and the rule above decides every caller without
+        // one.
         as_they_come: Option<mpsc::Sender<IpcMessage>>,
     ) -> std::thread::JoinHandle<Vec<IpcMessage>> {
         std::thread::spawn(move || {
@@ -550,8 +623,23 @@ mod tests {
         // nothing is what "and then silence" means. ⚠️ The peer thread is left dangling on
         // purpose -- it dies with the test binary -- and the cost is declared rather than hidden.
         let mut heard = Vec::new();
-        while let Ok(message) = arrivals.recv_timeout(std::time::Duration::from_secs(2)) {
-            heard.push(message);
+        loop {
+            match arrivals.recv_timeout(std::time::Duration::from_secs(2)) {
+                Ok(message) => heard.push(message),
+                // ⛔ THE TIMEOUT IS THE SUCCESS: it is the silence itself.
+                Err(mpsc::RecvTimeoutError::Timeout) => break,
+                // ⛔ A DEAD PEER IS NOT SILENCE, and treating it as one made this probe GREEN on
+                // the very case its name promises (E119). With the sender gone `recv_timeout`
+                // answers AT ONCE, the collect ends with what it had, and the `drop(peer)` below
+                // throws the `JoinHandle` away -- so the peer's PANIC never surfaces. Measured by
+                // the review with a `panic!` in the peer after the first message: green in 0,08 s
+                // instead of the two seconds this comment claims. The reachable way in is the
+                // `IpcMessage::decode(...).expect(...)` of `a_peer_that_says`, i.e. a core that
+                // sends a SECOND, malformed frame.
+                Err(mpsc::RecvTimeoutError::Disconnected) => {
+                    panic!("the peer ENDED after {} messages instead of falling silent", heard.len())
+                }
+            }
         }
         drop(peer);
         assert_eq!(
@@ -571,21 +659,33 @@ mod tests {
         // ⛔ THE ORACLE IS THE SECOND `Degradation`, not the first: the welcome always sends one.
         // What the word buys is a SECOND one, which task 7's code sends only because the value
         // CHANGED — so this probe exercises the real rule rather than a branch of the faucet.
+        //
+        // ⛔ AND FOR THAT REASON IT STREAMS INSTEAD OF BEING JOINED (E116): the predicate asks the
+        // core for the very message the mechanism under test produces, so the run in which that
+        // mechanism breaks is the run in which the predicate can never be met -- and a `join`
+        // there waits FOR EVER. Measured 2026-09-20: `timeout 90 cargo test degrade_makes` came
+        // back `143` after "has been running for over 60 seconds".
+        //
+        // ⚠️ ONE PREDICATE HANDED TO BOTH, not two copies: the peer stops on it and the collector
+        // waits for it, and two spellings of the same rule are two things nobody compares.
+        let two_degradations: Until = |heard| {
+            heard
+                .iter()
+                .filter(|message| matches!(message, IpcMessage::Degradation(_)))
+                .count()
+                >= 2
+        };
+        let (as_they_come, arrivals) = mpsc::channel();
         let peer = a_peer_that_says(
             name.clone(),
             vec![IpcMessage::Hello(build_stamp())],
-            |heard| {
-                heard
-                    .iter()
-                    .filter(|message| matches!(message, IpcMessage::Degradation(_)))
-                    .count()
-                    >= 2
-            },
+            two_degradations,
             Some((hand, "degrade")),
-            None,
+            Some(as_they_come),
         );
         run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
-        let heard = peer.join().expect("the peer thread");
+        let heard = collect_until(&arrivals, two_degradations);
+        drop(peer);
         let degraded: Vec<bool> = heard
             .iter()
             .filter_map(|message| match message {
@@ -593,10 +693,13 @@ mod tests {
                 _ => None,
             })
             .collect();
+        // ⛔ THE DIAGNOSTIC IS THE COUNT AND THE DECIDING VALUES, NEVER `{heard:?}`: five seconds
+        // of tokens printed whole made a 7,5 MB red, which is unreadable and therefore useless.
         assert_eq!(
             degraded,
             [false, true],
-            "the welcome's Degradation is clean, and the word buys a SECOND one from the REAL code: {heard:?}"
+            "the welcome's Degradation is clean, and the word buys a SECOND one from the REAL code (heard {} messages in all)",
+            heard.len()
         );
     }
 
@@ -606,18 +709,32 @@ mod tests {
         let (hand, words) = a_keyboard();
         // ⛔ TYPED AFTER THE WELCOME, for the reason `degrade` states (R5-4): a `Verdict` sent to an
         // empty `attending()` reaches nobody, and the word is spent.
+        //
+        // ⛔ AND IT STREAMS FOR THE REASON `degrade` STREAMS (E116): the predicate asks for the one
+        // message the mechanism under test produces, so it is unsatisfiable exactly when that
+        // mechanism breaks. Measured 2026-09-20: `timeout 90 cargo test verdict_reaches` came back
+        // `143`, not a red.
+        let a_verdict: Until =
+            |heard| heard.iter().any(|message| matches!(message, IpcMessage::Verdict(_)));
+        let (as_they_come, arrivals) = mpsc::channel();
         let peer = a_peer_that_says(
             name.clone(),
             vec![IpcMessage::Hello(build_stamp())],
-            |heard| heard.iter().any(|message| matches!(message, IpcMessage::Verdict(_))),
+            a_verdict,
             Some((hand, "verdict")),
-            None,
+            Some(as_they_come),
         );
         run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
-        let heard = peer.join().expect("the peer thread");
+        let heard = collect_until(&arrivals, a_verdict);
+        drop(peer);
+        // ⛔ THE COUNT AND THE DECIDING VALUE, NEVER `{heard:?}` -- see `degrade` for what that
+        // cost.
+        let verdicts =
+            heard.iter().filter(|message| matches!(message, IpcMessage::Verdict(_))).count();
         assert!(
-            heard.iter().any(|message| matches!(message, IpcMessage::Verdict(_))),
-            "the word `verdict` asks the REAL arbiter and the answer reaches the gui: {heard:?}"
+            verdicts >= 1,
+            "the word `verdict` asks the REAL arbiter and the answer reaches the gui (heard {} messages, {verdicts} of them verdicts)",
+            heard.len()
         );
     }
 
@@ -657,13 +774,19 @@ mod tests {
 
     #[test]
     fn the_faucet_keeps_streaming_with_no_word_waiting() {
-        // ⛔ THE HALF THAT GETS FORGOTTEN, and the one that catches P-69. With NO word queued the
+        // ⛔ THE HALF THAT GETS FORGOTTEN, and the one that names P-69. With NO word queued the
         // turn must pass anyway: if the faucet read `stdin` blockingly — or called `recv` instead
-        // of `try_recv` — nothing would arrive at all, and every probe above would hang rather
-        // than fail. ⚠️ THE HAND STAYS ON THE KEYBOARD ACROSS THE RUN (R5-6, 2026-09-15), so
-        // `try_recv` answers `Empty`: that is the case in which `recv` would wait for ever. A
-        // dropped sender is the EASY case -- `recv` returns `Err` at once, std's doc says so -- and
-        // with it the mutation G1 would stay green. Measured at the plan review.
+        // of `try_recv` — nothing would arrive at all. ⚠️ THE HAND STAYS ON THE KEYBOARD ACROSS
+        // THE RUN (R5-6, 2026-09-15), so `try_recv` answers `Empty`: that is the case in which
+        // `recv` would wait for ever. A dropped sender is the EASY case -- `recv` returns `Err` at
+        // once, std's doc says so.
+        //
+        // ⛔ AND THE LIMIT IS DECLARED RATHER THAN CLAIMED AWAY (E121, gotcha #77): this probe
+        // DISTINGUISHES NOTHING that `the_tokens_arrive_untrusted` does not already distinguish.
+        // That one binds its hand with `let (_hand, words)`, which lives to the end of its scope
+        // exactly as `hand` does here, and its assertion is strictly stronger. Measured: under the
+        // mutation G1 BOTH hang. What this one still buys is the NAME -- a reader looking for
+        // "and with nothing typed?" finds a probe that answers it -- and that is all it buys.
         let name = a_name_for("nowords");
         let (hand, words) = a_keyboard();
         let peer = a_peer_that_says(

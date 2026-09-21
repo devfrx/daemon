@@ -4,9 +4,12 @@ edition = "2024"
 version = "0.0.0"
 publish = false
 
-# ⛔ A TOOL, NOT A SPIKE, and that is why the lockfile is committed: `scripts/gate-gui.sh` runs
+# ⛔ A TOOL, NOT A SPIKE, and that is why the lockfile is committed: `scripts/gate-gui.sh` WILL run
 # `cargo test --locked --manifest-path gui/fake-core/Cargo.toml`, and `--locked` needs a lockfile
 # somebody approved. A spike's lockfile is ignored because a spike is redone from a seed.
+# ⚠️ FUTURE TENSE ON PURPOSE (E120): that script is TASK 15 and does not exist yet -- `ls scripts/`
+# says so. A comment that justifies an item by naming a consumer writes it in the future until the
+# consumer is there, which is E34 in its general form.
 [dependencies]
 kernel = { path = "../../crates/kernel" }
 platform = { path = "../../crates/platform" }
@@ -17,7 +20,12 @@ simulator = { path = "../../crates/simulator" }
 
 # ⛔ THE PROBES NEED A PEER, and a peer speaks the transport directly. The version is the one
 # `crates/platform/Cargo.toml` pins -- READ WITH `grep`, never from memory -- because two versions
-# of a transport at the two ends of one socket is a bug nobody would look for.
+# of a transport at the two ends of one socket is a bug nobody would look for. That is what this
+# line buys, and the versions do match.
+# ⚠️ `default-features = false` IS INERT HERE, and it is declared rather than left to be believed
+# (E121): `platform` pulls `interprocess` with its defaults and cargo unifies features across the
+# graph -- `cargo tree -e features` prints `interprocess feature "default"`. It is kept because
+# dropping it would move the manifest for no effect, and a manifest touch drags the lockfile.
 # ⚠️ Manifest and `Cargo.lock` in the SAME commit: the gate passes `--locked` (finding G-5).
 [dev-dependencies]
 interprocess = { version = "2.4.4", default-features = false }

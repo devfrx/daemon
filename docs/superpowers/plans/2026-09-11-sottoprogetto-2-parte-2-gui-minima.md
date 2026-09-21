@@ -22210,6 +22210,34 @@ E lo stato alla chiusura, che non si ricorda ma si **rifà**:
 | I filtri deboli | `grep -rnF -e "\| grep -v '///'" -e "\| grep -vE '^[^:]+:[0-9]+: *//[!/]'" --include='*.rs' --include='*.sh' crates/ gui/ scripts/ \| grep -v '/target/' \| wc -l` → **0** |
 | Margine del compendio | ✅ **il compendio NON è stato toccato** (decisione 106) |
 
+#### Il vicolo cieco, e le tracce che questa sessione lascia
+
+⛔ **IL VICOLO CIECO, perché non venga ripercorso: una mutazione che uccide il pari al SECONDO
+messaggio NON raggiunge la sonda del silenzio, che di messaggi ne riceve UNO SOLO.** Provando la
+cura di `E153` la prima mutazione ha reso *sei rossi e una verde*, e la verde era proprio la sonda
+che volevo esercitare — non perché la cura fosse debole, ma perché il suo pari non arrivava mai al
+panico. 📌 **La forma generale: una mutazione si sceglie contro il FLUSSO della sonda che deve
+cogliere, non contro il banco in generale**; qui è servita la variante che uccide il pari al
+**primo** messaggio, e solo quella prova qualcosa.
+
+⚠️ **UN DOCUMENTO APPROVATO È STATO TOCCATO, e chi riprende deve saperlo:**
+[`../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md`](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md)
+consegnava al lettore un comando col filtro **stretto** (la nona casa di `E150`). Corretto con il
+**richiamo datato** che la convenzione impone, e il merito della sezione non è toccato: cambia il
+filtro dentro un comando, nient'altro.
+
+📌 **Le tracce del ciclo, e dove vivono.** Quattro revisori freschi su Opus 5, quattro rapporti:
+`rereview3-12`, `rereview3b-12`, `rereview4-12`, `rereview5-12`, coi rispettivi dispacci, dentro
+`.superpowers/sdd/2026-09-11-sottoprogetto-2-parte-2-gui-minima/`. ⛔ **Quella cartella è ignorata
+da git:** su un'**altra macchina** non esiste, e ciò che resta è ciò che sta qui e nelle voci
+d'errata — per questo ogni rilievo ha la sua voce. Accanto vive
+`_extract_brief_12.py`, lo script che rigenera il brief **per intestazione**: si adatta al 13
+cambiando due stringhe.
+
+✅ **Nessun rosso, né ereditato né nuovo:** ogni riga `test result` del cancello dice
+`0 failed`. Le uniche voci `ignored` sono le **due campagne DST a ciclo lungo**, che sono
+`#[ignore]` per decisione (vincolo 8 della §11 del compendio) e lo erano già all'apertura.
+
 #### Le trappole di questa sessione — istruzioni, non aneddoti
 
 - ⛔ **QUANDO UNA SPECIE RIAPRE PIÙ DI DUE VOLTE, IL DIFETTO NON È CHI L'HA RIAPERTA: È CHE LA COSA SBAGLIATA ERA ANCORA SCRIVIBILE.** Si smette di curare il sito e si sposta il vincolo nel **tipo**, anche se costa venticinque righe. Quattro ricadute misurate prima che qualcuno lo facesse.

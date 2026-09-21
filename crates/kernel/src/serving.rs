@@ -168,7 +168,7 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
     /// no grant to a client (D5), so every caller is a bench or a campaign. Removing it would
     /// leave `on_disconnect`'s wiring held by nothing at all. ⛔ WHO CALLS IT IS WHAT THE COMMAND
     /// PRINTS, not a tally that ages the day another bench arrives:
-    /// `grep -rn '\.grants()' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
+    /// `grep -rn '\.grants()' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`
     /// -- and the filter is there because a line that NAMES the pattern is counted by it (E63,
     /// E88, E96 of the sub-project 2 plan). Here the tally said ONE bench and the campaign of
     /// task 10 made it two, on 2026-09-19. ⚠️ `gui/` JOINED THE COMMAND ON 2026-09-21 (E118): it
@@ -196,7 +196,7 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
     /// two words it reads from a console -- and it must reach the attending clients to do it.
     /// ⛔ WHO CALLS IT IS WHAT THE COMMAND PRINTS, like its brother `grants` and for the same
     /// reason -- a tally ages the day another caller arrives:
-    /// `grep -rn '\.ipc()' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
+    /// `grep -rn '\.ipc()' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`
     /// -- and it spans BOTH trees, because what calls it lives in `gui/`, which a `crates/`-only
     /// grep cannot see (E62, E118). ⚠️ NO TALLY IN THAT CLAUSE EITHER: the first draft wrote "the
     /// ONLY caller", two lines under a sentence refusing tallies.

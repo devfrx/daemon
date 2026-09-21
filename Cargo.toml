@@ -13,9 +13,10 @@ members = [
 # `gui` is NOT a member either, and NOT for the reason above: `gui/fake-core` is a TOOL with a
 # lockfile of its own, under the root's `rust-toolchain.toml` (rustup walks up: measured, R5-22),
 # which will be built by `scripts/gate-gui.sh` through `--manifest-path` -- that script is TASK 15
-# and does not exist yet, so the tense is future (E120, E34); `ls scripts/` says whether it still
-# does not, which is what the sibling manifest carries and this one at first did not --
-# and `gui/` also holds a node project that cargo has no business walking into.
+# and does not exist yet, so the tense is future (E120, E34). To check whether it still does not,
+# run `ls scripts/`: the sibling manifest in `gui/fake-core` carries that same command, and this
+# one did not until E120 -- and `gui/` also holds a node project that cargo has no business
+# walking into.
 exclude = ["spikes", "gui"]
 
 [workspace.package]

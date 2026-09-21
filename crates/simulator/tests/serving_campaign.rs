@@ -12,7 +12,7 @@
 //! a borrow of it. That is the shape of `crates/kernel/tests/serving.rs`, repeated here rather
 //! than imported: a `tests/` is a crate of its own and a binary exports nothing. ⚠️ WHERE ELSE IT
 //! IS WRITTEN IS WHAT THE COMMAND PRINTS, not this line:
-//! `grep -rn 'struct Wire' crates/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`.
+//! `grep -rn 'struct Wire' crates/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`.
 //! ⛔ THE FILTER IS NOT DECORATION: the line above SPELLS the pattern in order to name the
 //! command, so an unfiltered run counts that line too -- the defect E63 measured on 2026-09-19,
 //! and E96 on 2026-09-20. ⚠️ WHAT STOOD HERE BEFORE, AND WHY IT WENT, IS IN E93 AND E96 OF THE

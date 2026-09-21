@@ -67,7 +67,7 @@ const GUI_TICK: Millis = Millis::new(5);
 /// grants through a generic `standing_grant` helper and does not carry the shape at all, and "each
 /// one says so" was true of this house alone. The list is gone and the command stays, which is the
 /// rule of `../../../CLAUDE.md` -- a number is not written, the command that produces it is:
-/// `grep -rn 'const AUDIO_RESERVATION' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
+/// `grep -rn 'const AUDIO_RESERVATION' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`
 /// -- and the filter is there because the line you are reading NAMES the pattern (E63, E88, E96).
 ///
 /// ⛔ AUDIO FIRST, and it is not arbitrary: both profiles sit in one lane, and the daemon's own
@@ -112,7 +112,7 @@ fn build_the_arbiter(parameters: Parameters) -> Arbiter {
 /// the one thing E62 had stripped from its siblings and left in the text this task then wrote
 /// (E118). What says where they are is the command, over BOTH trees, because `gui/` is a sibling
 /// that `crates/`-only greps cannot see:
-/// `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
+/// `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`
 /// -- and the filter keeps the line you are reading out of its own count (E63, E88, E96).
 ///
 /// ⛔ A COMMON HOME WOULD HAVE TO BE GENERIC over the reactor, because some of these wrap
@@ -339,6 +339,11 @@ mod tests {
     // and would never show the warning.
     use kernel::wire::ipc::build_stamp;
 
+    // ⛔ THE ONLY TWO NAMES THE SEALED MODULE LETS OUT, and there is no third: `Peer` carries no
+    // way to reach the thread inside it, so `collect_until` is the only place a peer can be
+    // settled. See the doc on `settling`.
+    use settling::{Peer, collect_until};
+
     // ⛔ EACH PROBE BINDS A NAME OF ITS OWN. A socket name is valid for the whole machine and
     // `cargo test` runs in parallel by default: two probes on `SOCKET_NAME` make the second fail
     // with "already in use", which is a red in the wrong probe's box. The lesson is task 9's.
@@ -406,6 +411,47 @@ mod tests {
     /// `set_nonblocking` as the way round, and it drops all six.
     const A_CEILING: std::time::Duration = std::time::Duration::from_secs(5);
 
+    /// How long a probe lets the GRAPH run before it gives a verdict instead of waiting.
+    ///
+    /// ⛔ A SECOND CEILING, AND IT IS NOT THE SAME ONE (`C-2` of the third review). `A_CEILING`
+    /// bounds the wait on the PEER, which happens AFTER `run_the_graph` returns -- so it bounds
+    /// nothing at all when the graph itself is what never ends. And the graph not ending is not a
+    /// hypothesis: it is precisely the mutation `the_faucet_keeps_streaming_with_no_word_waiting`
+    /// exists to catch (P-69, D42). Measured 2026-09-21 with `try_recv` turned into a blocking
+    /// `recv`: the executor stops, `executor.run()` never returns, and the WHOLE bench was killed
+    /// at 120 s without a single probe reaching a verdict. ⚠️ The sentence that said so was
+    /// already written here -- *«and every probe above would hang rather than fail»* -- and the
+    /// first round DELETED it instead of reading it as the defect report it was (gotcha 129).
+    ///
+    /// ⚠️ IT IS LONGER THAN `A_CEILING` ON PURPOSE: the graph is the thing under test and runs
+    /// `WITH_A_PEER` turns, which costs well under a second per probe (the whole suite is ~2,3 s),
+    /// so ten seconds is a margin of an order of magnitude and still bounds a pathological suite
+    /// to a minute. ⛔ AND IT IS A PROBE'S CEILING, NOT THE PROGRAMME'S: `main` runs the same
+    /// graph with `u64::MAX` turns and must NOT have one -- there the run ends with Ctrl-C (§7).
+    const A_GRAPH_CEILING: std::time::Duration = std::time::Duration::from_secs(10);
+
+    /// Run the graph to its last turn, or give a verdict saying it did not get there.
+    ///
+    /// ⛔ THE GRAPH RUNS ON A THREAD OF ITS OWN ONLY SO THAT THE WAIT CAN BE BOUNDED: there is no
+    /// other way to put a deadline on a call that does not take one. What the probe observes is
+    /// unchanged -- it still waits for the graph to finish before it collects -- and the ONLY new
+    /// outcome is the red that used to be a hang. ⚠️ The thread is left behind when the ceiling
+    /// expires: the process is ending anyway with a failed probe, and a graph that cannot be
+    /// stopped is the very thing being reported.
+    fn run_the_graph_within(name: &str, turns: u64, cadence: Millis, words: Receiver<String>) {
+        let name = name.to_owned();
+        let (ended, done) = mpsc::channel();
+        std::thread::spawn(move || {
+            run_the_graph(&name, turns, cadence, words);
+            let _ = ended.send(());
+        });
+        assert!(
+            done.recv_timeout(A_GRAPH_CEILING).is_ok(),
+            "the graph did not reach its last turn within {A_GRAPH_CEILING:?}: the executor is \
+             stuck, so no probe below could ever give a verdict (C-2)"
+        );
+    }
+
     /// Collect what the peer streams until `enough` is satisfied, or the ceiling passes -- and
     /// then settle with the peer.
     ///
@@ -435,30 +481,58 @@ mod tests {
     /// THE OBSERVATION, so a timeout is the SUCCESS and a `Disconnected` is a failure. Here a
     /// timeout is the failure. ⛔ A `Disconnected` BEFORE `enough` HOLDS IS NOT A NORMAL END --
     /// the clause that used to say so was false (E33): it means the peer's THREAD is over, panic
-    /// included. It needs no panic of its own, because the assertion that follows gives the
-    /// verdict on a short vector, and a peer that died AFTER satisfying is caught by the `join`.
-    fn collect_until(
-        arrivals: &Receiver<IpcMessage>,
-        peer: std::thread::JoinHandle<Vec<IpcMessage>>,
-        enough: Until,
-    ) -> Vec<IpcMessage> {
-        let started = std::time::Instant::now();
-        let mut heard = Vec::new();
-        while !enough(&heard) {
-            let Some(left) = A_CEILING.checked_sub(started.elapsed()) else {
-                break;
-            };
-            match arrivals.recv_timeout(left) {
-                Ok(message) => heard.push(message),
-                Err(_) => break,
+    /// included. A peer that died AFTER satisfying is caught by the `join`.
+    ///
+    /// ⛔ AND THE OTHER HALF, WHICH THE ROUND BEFORE GOT WRONG (`C-1` of the third review): THE
+    /// ASSERTION THAT FOLLOWS MUST BE AT LEAST AS STRONG AS `enough`. A peer that dies BEFORE
+    /// satisfying leaves a short vector and is dropped in silence, so the only thing left to tell
+    /// anyone is the assertion -- and if it asks for LESS than the predicate did, the short vector
+    /// passes it and the probe goes green over a corpse. Measured 2026-09-21: with every peer
+    /// mutated to die after its first token, `the_tokens_arrive_untrusted` -- predicate three
+    /// tokens, assertion one -- was GREEN in 0,21 s. The ceiling does not remove the hang on its
+    /// own: without this half it converts the hang into a silent green.
+    mod settling {
+        use super::*;
+
+        /// The peer's thread, sealed: a probe can hand it over or let it fall, and nothing else.
+        ///
+        /// ⛔ THE FIELD IS PRIVATE TO THIS MODULE, and that is the whole point of the module
+        /// existing. The round before wrote *«now the wrong thing is not expressible»* while
+        /// `a_peer_that_says` still handed back a bare `JoinHandle`: a seventh probe that joined
+        /// its own peer COMPILED, measured 2026-09-21 (`I-1` of the third review). A rule that
+        /// every caller must remember is what failed twice here; the cure is that the compiler
+        /// refuses, not that the doc asks.
+        pub(super) struct Peer(std::thread::JoinHandle<Vec<IpcMessage>>);
+
+        impl Peer {
+            pub(super) fn new(thread: std::thread::JoinHandle<Vec<IpcMessage>>) -> Self {
+                Self(thread)
             }
         }
-        if enough(&heard) {
-            peer.join().expect("the peer thread");
-        } else {
-            drop(peer);
+
+        pub(super) fn collect_until(
+            arrivals: &Receiver<IpcMessage>,
+            peer: Peer,
+            enough: Until,
+        ) -> Vec<IpcMessage> {
+            let started = std::time::Instant::now();
+            let mut heard = Vec::new();
+            while !enough(&heard) {
+                let Some(left) = A_CEILING.checked_sub(started.elapsed()) else {
+                    break;
+                };
+                match arrivals.recv_timeout(left) {
+                    Ok(message) => heard.push(message),
+                    Err(_) => break,
+                }
+            }
+            if enough(&heard) {
+                peer.0.join().expect("the peer thread");
+            } else {
+                drop(peer);
+            }
+            heard
         }
-        heard
     }
 
     /// What a probe waits for before it stops reading.
@@ -512,15 +586,16 @@ mod tests {
         said: Vec<IpcMessage>,
         until: Until,
         mut then_types: Option<(mpsc::Sender<String>, &'static str)>,
-        // ⛔ THE STREAM, AND EVERY PROBE HANDS ONE (E110, E116, and the round after). It is still
-        // an `Option` only because the signature would otherwise lie about a future caller that
-        // wants the returned vector; today none does, and none should -- the rule above has no
-        // exception left. ⚠️ NO TALLY HERE, deliberately: the one that stood in this comment aged
-        // inside a single task, and then the rule that replaced it carved out an exemption that
-        // was itself false. What decides is the paragraph above, per caller.
-        as_they_come: Option<mpsc::Sender<IpcMessage>>,
-    ) -> std::thread::JoinHandle<Vec<IpcMessage>> {
-        std::thread::spawn(move || {
+        // ⛔ THE STREAM, AND EVERY PROBE HANDS ONE (E110, E116, and the two rounds after). ⚠️ IT
+        // WAS AN `Option` UNTIL THE THIRD REVIEW, kept "only because the signature would
+        // otherwise lie about a future caller that wants the returned vector" -- but no such
+        // caller existed, and the option was the last way left to write the probe that joins its
+        // own peer. Measured 2026-09-21: all six callers passed `Some`, so the shape lost nothing
+        // and the wrong probe stopped compiling. ⚠️ NO TALLY HERE, deliberately: the one that
+        // stood in this comment aged inside a single task.
+        as_they_come: mpsc::Sender<IpcMessage>,
+    ) -> Peer {
+        Peer::new(std::thread::spawn(move || {
             use interprocess::local_socket::{GenericNamespaced, Stream, prelude::*};
             use std::io::{Read, Write};
 
@@ -561,9 +636,7 @@ mod tests {
                 while let Some((_, next)) = kernel::framing::take_frame(&buffer) {
                     let message =
                         IpcMessage::decode(&buffer[..next]).expect("the core sends what it says");
-                    if let Some(sender) = &as_they_come {
-                        let _ = sender.send(message.clone());
-                    }
+                    let _ = as_they_come.send(message.clone());
                     heard.push(message);
                     buffer.drain(..next);
                 }
@@ -574,7 +647,7 @@ mod tests {
                 }
             }
             heard
-        })
+        }))
     }
 
     #[test]
@@ -593,9 +666,9 @@ mod tests {
             vec![IpcMessage::Hello(build_stamp())],
             a_full_welcome,
             None,
-            Some(as_they_come),
+            as_they_come,
         );
-        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = collect_until(&arrivals, peer, a_full_welcome);
         // ⚠️ THE FIRST FIVE: one `read` may carry the welcome AND the first token, and the frames
         // are drained together.
@@ -655,9 +728,9 @@ mod tests {
             ],
             |heard| heard.len() >= 2,
             None,
-            Some(as_they_come),
+            as_they_come,
         );
-        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
         // ⛔ A BOUNDED COLLECT AND NOT A `join`: THE WAIT IS THE OBSERVATION, and two seconds of
         // nothing is what "and then silence" means. ⚠️ The peer thread is left dangling on
         // purpose -- it dies with the test binary -- and the cost is declared rather than hidden.
@@ -720,9 +793,9 @@ mod tests {
             vec![IpcMessage::Hello(build_stamp())],
             two_degradations,
             Some((hand, "degrade")),
-            Some(as_they_come),
+            as_they_come,
         );
-        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = collect_until(&arrivals, peer, two_degradations);
         let degraded: Vec<bool> = heard
             .iter()
@@ -760,9 +833,9 @@ mod tests {
             vec![IpcMessage::Hello(build_stamp())],
             a_verdict,
             Some((hand, "verdict")),
-            Some(as_they_come),
+            as_they_come,
         );
-        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = collect_until(&arrivals, peer, a_verdict);
         // ⛔ THE COUNT AND THE DECIDING VALUE, NEVER `{heard:?}` -- see `degrade` for what that
         // cost.
@@ -779,12 +852,17 @@ mod tests {
     fn the_tokens_arrive_untrusted() {
         let name = a_name_for("tokens");
         let (_hand, words) = a_keyboard();
+        // ⛔ ONE NUMBER, TWO USES, AND IT IS THE CURE OF `C-1`: the predicate asked for three and
+        // the verdict below asked for one, so a peer that died after the first token left a short
+        // vector that the verdict still accepted -- green over a corpse, measured at 0,21 s. The
+        // rule is on `settling`; here the two cannot drift apart because there is one number.
+        const ENOUGH_TOKENS: usize = 3;
         let three_tokens: Until = |heard| {
             heard
                 .iter()
                 .filter(|message| matches!(message, IpcMessage::Token { .. }))
                 .count()
-                >= 3
+                >= ENOUGH_TOKENS
         };
         // ⛔ IT STREAMS: the predicate IS the faucet's output, and the faucet is code under test.
         // Measured 2026-09-21 with the token send removed: joined, this probe ran past sixty
@@ -795,9 +873,9 @@ mod tests {
             vec![IpcMessage::Hello(build_stamp())],
             three_tokens,
             None,
-            Some(as_they_come),
+            as_they_come,
         );
-        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
         let heard = collect_until(&arrivals, peer, three_tokens);
         let tokens: Vec<&IpcMessage> = heard
             .iter()
@@ -805,7 +883,12 @@ mod tests {
             .collect();
         // ⛔ THE COUNT, NOT `{heard:?}`: when the ceiling expires the vector can be long, and a
         // red nobody can read is a red nobody acts on (E116).
-        assert!(!tokens.is_empty(), "the faucet streams (heard {} messages in all)", heard.len());
+        assert!(
+            tokens.len() >= ENOUGH_TOKENS,
+            "the faucet streams {ENOUGH_TOKENS} tokens (heard {} of them in {} messages in all)",
+            tokens.len(),
+            heard.len()
+        );
         // ⛔ EVERY ONE, not "at least one": ADR-0014 makes the label hereditary, and a faucet that
         // marked only the first would be exactly the silent hole G13 exists to close.
         assert!(
@@ -827,8 +910,12 @@ mod tests {
         //
         // ⛔ AND THE LIMIT IS DECLARED RATHER THAN CLAIMED AWAY (E121, gotcha #77): this probe
         // DISTINGUISHES NOTHING that `the_tokens_arrive_untrusted` does not already distinguish.
-        // That one binds its hand with `let (_hand, words)`, which lives to the end of its scope
-        // exactly as `hand` does here, and its assertion is strictly stronger. Measured: under the
+        // That one binds its hand with `let (_hand, words)`, and its assertion is strictly
+        // stronger. ⚠️ THE TWO HANDS DO NOT LIVE EQUALLY LONG, and this line used to say they did
+        // (m-2 of the third review): the sibling's lives to the end of its scope, while THIS one
+        // is dropped by name right after the run. What the redundancy rests on is narrower and
+        // still true -- during the RUN, which is the only stretch `try_recv` is called in, both
+        // hands are alive and both answer `Empty`. Measured: under the
         // mutation G1 BOTH go red, TOGETHER and for the same reason. What this one still buys is
         // the NAME -- a reader looking for "and with nothing typed?" finds a probe that answers
         // it -- and that is all it buys. ⚠️ THIS LINE USED TO SAY "BOTH HANG", and it was true and
@@ -850,9 +937,9 @@ mod tests {
             vec![IpcMessage::Hello(build_stamp())],
             a_token,
             None,
-            Some(as_they_come),
+            as_they_come,
         );
-        run_the_graph(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
         drop(hand);
         let heard = collect_until(&arrivals, peer, a_token);
         // ⛔ THE COUNT, NOT `{heard:?}` -- see `the_tokens_arrive_untrusted`.

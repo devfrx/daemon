@@ -20,11 +20,19 @@ export interface PanelType {
  * short one. ⛔ THE LIST IS THE CATALOGUE'S, NOT THIS FILE'S: a module type is added when §1
  * gains a row.
  *
- * ⛔ `who` IS THE FIRST SUB-PROJECT THAT TOUCHES THE MODULE, WHICH IS NOT ALWAYS THE WHOLE
- * "Chi" OF THE ROW: two rows of §1 carry more than one number -- "Voce e gesti | 8, 12" and
- * "Impostazioni | 2, poi 3 e 10" -- and this field is a single number on purpose, because the
- * placeholder and the drawer each render exactly one. The other sixteen match one to one, compared
- * row by row on 2026-09-21 (E163). Saying it here is what keeps the next census from reopening it.
+ * ⛔ `who` IS THE NUMBER THE PLACEHOLDER AND THE DRAWER SHOW: the sub-project that FILLS
+ * the module. It is NOT mechanically derivable from §1, and this doc does not pretend it is --
+ * a row there may name several sub-projects, and SIX of the eighteen do: "Chat" (2 and 3),
+ * "Permessi" (2, then 3 and 4), "Passi" (2 and 3), "Attività" (3, 4 and 13), "Voce e gesti"
+ * (8, 12) and "Impostazioni" (2, then 3 and 10). Nor is it always the FIRST: Chat's row opens
+ * with the 2 and `who` is 3, because the 2 builds the frame around a fake core and the 3 brings
+ * the real chat.
+ *
+ * ⛔ THE ANCHOR IS §1's "Attività" ROW, WHICH SAYS IT OUTRIGHT: "nel 2 la tessera dice a
+ * parole << arriva col 3 >>" -- so the field is what the tile SAYS, and each value is a reading
+ * of its row rather than the output of a rule. Measured row by row on 2026-09-21 (E164).
+ * ⚠️ E163 claimed "the first sub-project" and "two rows", and both were wrong: its census
+ * had read the SHORT table's "Chi" column and not the prose of the five full ones.
  *
  * ⚠️ `strip` IS NOT HERE, and that is the distinction D50 draws: the strip is a panel of the
  * grid, so it is registered as a component, but it is not a MODULE -- it does not appear in the

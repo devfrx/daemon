@@ -19,8 +19,15 @@
    was `#e5534b`, which is 4,21:1 on `--surface-raised` -- under the 4,5 AA asks of normal text --
    and it dresses a REAL string of the bar: the chip "Core: timbro diverso" at `--font-size`, the
    only place `var(--stop)` is used (`frame/ViewBar.vue`). Measured on 2026-09-21 by the review of
-   task 13, E167; the seven other pairs passed. The value below is 5,12:1 on `--surface-raised`
-   and 5,72:1 on `--surface`. */
+   task 13, E167. The value below is 5,12:1 on `--surface-raised` and 5,72:1 on `--surface`.
+
+   ⚠️ THE PAIRS MEASURED THERE WERE SEVEN, of which SIX passed -- this said "the seven other pairs
+   passed", a number no measure sustains, and it is corrected here rather than quietly (E171). The
+   six are `--ink` and `--ink-dim` over both surfaces, `--accent` and `--warn` over the raised one.
+   ⛔ SEVEN IS NOT ALL OF THEM: `--line` over `--surface` is 1,33:1 and was left as a declared
+   SUSPECT, not a finding, because a divider is not the only indicator of a component. Whoever
+   writes `contrast.test.ts` at task 14 decides which pairs the probe owns -- this comment does
+   not. */
 :root {
   --ink: #e6e9ef;
   --ink-dim: #9aa3b2;
@@ -70,15 +77,40 @@ body {
    were named and never defined, and nothing could say so: not `vue-tsc`, not `copy.test.ts`, not
    the gate. Found by the review of task 13 on 2026-09-21, E165 and E166.
 
-   ⚠️ THE MEASURES ARE LITERALS ON PURPOSE. They are the ones move 5 of SP-8 was judged on
-   (`spikes/gui-shell/app/src/style.css`), rewritten line by line as D49 asks. They are a grab
-   size, not a palette choice, so there is no token to take them from -- and replacing them with
-   the nearest token would be re-deciding what the owner already judged. */
+   ⛔ AND THE GRAB IS THE CONTAINER'S, NOT THE TAB'S -- the first cure got this wrong and made the
+   grab SMALLER. `dockview` sizes the whole tab strip from `--dv-tabs-and-actions-container-height`
+   (35px, set on `.dockview-theme-abyss`) and clips `.dv-tabs-container` with `overflow: hidden`,
+   so a height set on the INNER element cannot grow the strip: it overflows and is cut. Measured on
+   2026-09-21 -- `.bigtab` at `height: 40px` gave a real grab of **31 px**, less than the 35 it
+   replaced (`elementFromPoint` hit `placeholder` from y+31 down), and pushed the title 6,5 px off
+   centre to 1,58 px from the edge. E170. So the VARIABLE moves and the tab fills it.
+
+   ⚠️ THE 40 IS A LITERAL ON PURPOSE: it is the grab size move 5 of SP-8 was judged on
+   (`spikes/gui-shell/app/src/style.css`), not a palette choice, so there is no token to take it
+   from. ⛔ It is NOT brought up under D49, which says the MERIT comes up and the code does not,
+   and whose four pieces are the bridge, the `createDockview` options, `lock` in two lines and the
+   canonical comparison -- no stylesheet among them (E172). The spike never redefined the variable
+   either, so this rule is ours, written for our container. */
+.dock .dockview-theme-abyss {
+  --dv-tabs-and-actions-container-height: 40px;
+}
+
+/* ⛔ AND THE VERTICAL PADDING GOES, so the two readings of "the grab" cannot disagree. `.dv-tab`
+   is 40px `border-box` with 4px above and below, so `.bigtab` at `height: 100%` fills 32 of them
+   and the pointer meets `.dv-tab` in the two bands. Whether `dockview` listens on `.dv-tab` or on
+   what we put inside it is not written anywhere we could read (`draggable` is `false` on the whole
+   chain -- it drags on `pointerdown`), so instead of deciding it by argument the padding is
+   removed and both answers become 40. The horizontal padding stays: `.bigtab` has its own. */
+.dock .dv-tab {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .bigtab {
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 40px;
+  height: 100%;
   padding: 0 10px;
   font-weight: 600;
   cursor: grab;

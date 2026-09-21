@@ -22194,6 +22194,85 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La trentaseiesima chiusura — 2026-09-21, quarta sessione del giorno: il COMPITO 13 È ESEGUITO e NON rivisto, il pre-controllo ha trovato QUATTRO difetti, e il QUINTO era dentro la mia stessa cura
+
+⛔ **DA SAPERE SUBITO, cinque cose.**
+
+**(1)** ⛔ **`main` È AVANTI DI DUE COMMIT SU `origin/main` E IL PUSH È SOSPESO.** `8679f27` è il compito, `00547f6` è `E164`; il push non arriva finché la revisione non è pulita. Albero **pulito**, `git stash list` vuoto, nessuna operazione git a metà.
+
+**(2)** ⛔ **IL COMPITO 13 È SCRITTO E NON È STATO RIVISTO: nessun revisore è stato dispacciato.** Il proprietario ha scelto di chiudere la sessione dopo l'implementatore. Il passo che viene è la **revisione**, che per il 13 vuole un **browser** — regola 5 della testa: un `npm run build` verde non prova che un pannello si veda.
+
+**(3)** ✅ **TUTTO VERDE, misurato dopo `00547f6`:** `bash scripts/gate.sh` → `GATE GREEN`, **62** righe `test result` tutte a `0 failed`; `bash scripts/check-docs.sh` → `OK`; in `gui/` `npm run build` esce **0** e `npm test` dà **32 passate e 1 saltata**; `gui/fake-core` **6 passate**. ⚠️ **`gate.sh` NON prova ancora `gui/`** — il passo web è il compito **15** — quindi il mondo web lo dicono i tre comandi dentro `gui/`.
+
+**(4)** ⚠️ **`gui/node_modules/` ORA ESISTE ed è git-ignored:** su un'altra macchina non c'è, e si rifà con `cd gui && npm ci`. Node `v24.19.0`, npm `11.17.0`, dentro l'intersezione di **P-65**.
+
+**(5)** ⛔ **IL PRE-CONTROLLO HA TROVATO QUATTRO DIFETTI — `E160`…`E163` — E POI L'IMPLEMENTATORE NE HA TROVATO UN QUINTO DENTRO LA MIA CURA, `E164`.** La regola *«tutti i compiti, senza una sola eccezione»* regge; e la novità di questa sessione è che il difetto nuovo stava nel **rimedio**, non nel piano.
+
+✅ **Che cosa è stato fatto.** ⛔ **Quanti commit NON è scritto qui:** li elenca `git log --oneline 9920a70..HEAD`.
+
+| Giro | Chi | Che cosa |
+|---|---|---|
+| **il pre-controllo** | il coordinatore | le quattro domande rifatte contro il codice di adesso: `E160`…`E163`, committate e spinte **prima** del dispaccio (`aa45eba`) |
+| **l'implementatore** | un subagente fresco (Opus 5) | il compito 13 per intero, diciannove Passi, **33 file e 3286 righe**; criterio di chiusura **18 righe su 18** verdi; `DONE_WITH_CONCERNS` |
+| **la verifica del rapporto** | il coordinatore | le quattro preoccupazioni riprovate una per una: **una vera e mia**, **una falsa**, due reali e dichiarate |
+| **`E164`** | il coordinatore | il doc di `PANEL_TYPES` corretto nel sorgente **e** nel testo dettato |
+
+E lo stato alla chiusura, che non si ricorda ma si **rifà**:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` **avanti di due**, push **sospeso**: `git rev-list --left-right --count origin/main...main` → `0	2`; `git status --porcelain --untracked-files=all` vuoto; `git stash list` vuoto |
+| La posizione | **tredici** ✅ e **quattro** ⬜ — restano i compiti **14, 15, 16, 17** |
+| L'errata | l'`awk` **ristretto alla sezione** → `E1`…`E164` senza buchi né duplicati; **cinque** voci nuove in questa sessione |
+| I gotcha | l'`awk` della §*I gotcha* di [`../../HANDOFF.md`](../../HANDOFF.md) → **nessuno nuovo**: la lezione di `E164` è già quella del **120** |
+| Il mondo web | `cd gui && npm run build` → **0**; `npm test` → **32 passate, 1 saltata** (il generatore delle viste, saltato senza `REGENERATE_VIEWS=1`) |
+| Il finto | `cd gui/fake-core && cargo test --locked` → **6 passed** |
+| Il cancello | `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK` |
+| I fine-riga | `git ls-files --eol gui/` → `i/lf` su tutti e **59** i file di testo (le 14 fixture `.bin` sono binarie); il piano **25644 righe / 25644 CR** |
+| Il timbro | `5167128795697047649`, **diverso** dalla fixture `81985529216486895`, e raggiunge la SPA nei **tre** mondi (bundle, `vitest`, `/@vite/env`) |
+| Margine del compendio | ✅ **il compendio NON è stato toccato** (decisione 106) |
+
+#### Le cinque voci nuove, e la quinta è la lezione
+
+| | |
+|---|---|
+| **E160** | `drawer.built` era una **chiave morta**: nessuna riga del piano la legge, e `Drawer.vue` non è nei *Files* del 14. **Tolta.** La domanda che portava — il cassetto dirà *«arriva col sotto-progetto 2»* per moduli costruiti — è una **riga nuova** nella tabella *«Le voci aperte che questo piano SA»*, con l'A/B, per **decisione 97** |
+| **E161** | il blocco *Interfaces* sbagliava in **due sensi**: `Verdict` mancava, quattro tipi non avevano consumatore. Ricensito |
+| **E162** | **nessun comando** verificava `dockview-core`, mentre `reka-ui` e `vitest` sono verificati per nome. Comando aggiunto al Passo 2 |
+| **E163** | il doc di `PANEL_TYPES` affermava che `who` è il «Chi» della §1: falso per due righe |
+| **E164** | ⛔ **`E163` aveva sostituito una regola falsa con un'ALTRA regola falsa, e il suo censimento era di TREDICI righe su diciotto.** Trovata dall'**implementatore**, che si è fermato invece di aggirarla perché il dispaccio gli vietava di riaprire `E163` |
+
+⛔ **LA DECISIONE DEL PROPRIETARIO, e come è stata presa.** Davanti all'A/B su `drawer.built` ha risposto *«decidi secondo decision-principles»*: la scelta è **B** (togliere, non costruire il ramo), e a deciderla sono stati **coerenza** — la cura di *«un doc promette un meccanismo che il codice non ha»* è già stata decisa tre volte in questo piano ed è una **sottrazione** (`E107`…`E109`, `7b91c00`; **R6-10**) — e **proporzione**: costruire un ramo per uno stato che nel 13 **non può esistere** è lo scambio che **D40** e **P-2** hanno già rifiutato. ⚠️ **E la correttezza ha ristretto il difetto:** non è un dato falso ma un **tempo verbale**, perché `who` dice *quale sotto-progetto RIEMPIE il modulo*, non *è già costruito?*.
+
+#### Ciò che resta aperto, e non è nascosto
+
+- ⛔ **La revisione del compito 13 non c'è stata.** È il passo che viene.
+- ⚠️ **`@types/node`:** il Passo 2 dice che la versione *«si misura con `npm view @types/node@24 version | tail -1`»*, e la misura del 2026-09-21 dà **24.13.6**, mentre è appuntata la **24.13.5**, che si installa. L'implementatore ha tenuto l'appuntata per la regola generale e l'ha **dichiarato**: sono due letture, e sceglierne una costa una cifra e un `npm install`. Le altre tre più vecchie della `latest` — `vue-i18n`, `jsdom`, `@vue/test-utils` — non sono ambigue e restano.
+- ⚠️ **`reka-ui` avverte** `Missing Description or aria-describedby for DialogContent`: unico messaggio non-debug in console. Il 13 non detta un `DialogDescription` e l'accessibilità è il **14**, che ci sbatterà contro con G20 e `axe-core`.
+- ⚠️ **Un avviso di `npm` verificato innocuo:** il `postinstall` di `vue-demi` non gira (`allowScripts` di npm 11), ma il `lib/index.mjs` spedito è già quello di Vue 3.
+- ⛔ **La riga nuova della tabella delle voci aperte** — il cassetto e i moduli costruiti — è **del proprietario**, in A/B, e non si chiude per zelo.
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **QUANDO SI TOGLIE A UN DOC UNA REGOLA FALSA, LA SOSTITUTA È UN ARTEFATTO NUOVO E SI PROVA COME TALE.** `E163` ha scambiato *«il Chi della riga»* con *«il primo sotto-progetto»* e la seconda era falsa quanto la prima. È la lezione del **gotcha 120**, *«una cura è un artefatto come un altro»*, commessa dentro una voce che cura un censimento.
+- ⛔ **UN CENSIMENTO SU UNA TABELLA NON È UN CENSIMENTO SUL CATALOGO.** La §1 della stella polare tiene il «Chi» in **due forme**: una **colonna** nella tabella corta e una **frase** — *«Costruito dal …»* — nei cinque moduli pieni. `E163` aveva letto solo la prima, tredici righe su diciotto. È la specie di **E134**, *«la forma letterale già nota invece della specie»*.
+- ⛔ **UN RAPPORTO DI SUBAGENTE È UNA DICHIARAZIONE, E VERIFICARLA COSTA UN COMANDO.** Delle quattro preoccupazioni, la (c) — *«i test `ignored` sono cinque, non tre»* — è **falsa**: contava le righe del **log del cancello**, che lancia `cargo test` in più siti, mentre `cargo test --locked --workspace -- --list --ignored` rende **tre** righe, una per test. 📌 **Un log conta le OCCORRENZE, `--list` conta i TEST**, e la differenza non si vede leggendo.
+- ⛔ **UN'ETICHETTA *(LF)* IN UN PIANO PARLA DELL'INDICE, NON DEL WORKING TREE.** Tutti i file di `gui/` sono `i/lf w/crlf` con `core.autocrlf=true`: un implementatore che misurasse `tr -cd '\r'` nel working tree si fermerebbe per niente. Detto nel dispaccio, con le baseline misurate file per file, non è costato nulla.
+- 📌 **IL DIVIETO DI RIAPRIRE UNA VOCE FUNZIONA, E FA EMERGERE I DIFETTI DEL COORDINATORE.** Il dispaccio vietava di riaprire `E160`/`E163`; l'implementatore ha censito, **si è fermato** e ha riferito. È la regola 3 di *«Come si esegue un compito»* che rende un rilievo **contro chi ha scritto il dispaccio**.
+- ⚠️ **IL BRIEF SI RIGENERA DOPO OGNI SCRITTURA SUL PIANO.** Le voci `E160`…`E163` nominano il compito 13, quindi il brief rigenerato ne porta **quattro** dove la prima estrazione ne portava **zero**. Lo script sta in `.superpowers/sdd/…/_extract_brief_13.py` e si adatta al 14 cambiando due stringhe.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -5`.
+2. La lettura d'apertura di `CLAUDE.md` e del compendio, poi **la testa di questo piano** e **questa chiusura**.
+3. ⏭️ **IL PASSO CHE VIENE È LA REVISIONE DEL COMPITO 13**, non il compito 14: il commit `8679f27` non è rivisto e i due commit non sono spinti. Un revisore fresco **su Opus**, col costo detto prima e il sì del proprietario — **un dispaccio per sessione** è il ritmo che ha accettato.
+4. ⛔ **IL REVISORE APRE LA SPA NEL BROWSER E GUARDA**, regola 5 della testa: `cd gui && npm ci && npm run dev`. Il server si spegne **per PID** (`netstat -ano | grep 5173`, poi `taskkill //F //PID <pid>`), mai per nome. Il rapporto dell'implementatore, con ciò che ha visto voce per voce, sta in `.superpowers/sdd/…/task-13-report.md` — ⚠️ **git-ignorato, quindi su un'altra macchina non esiste**: ciò che serve a ripartire è in questa chiusura e nelle voci d'errata.
+5. ⛔ **Il revisore RILANCIA ogni comando** accanto a un'affermazione misurabile e li elenca.
+6. Chiusi i rilievi: **si spinge**, e solo allora si passa al compito **14**.
+7. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
+---
+
 ### La trentacinquesima chiusura — 2026-09-21, terza sessione del giorno: QUATTRO giri di revisione sul compito 12, SETTE Critici, e la specie che riapriva CINQUE volte è chiusa nel TIPO
 
 ⛔ **DA SAPERE SUBITO, sei cose.**

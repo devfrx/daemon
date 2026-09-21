@@ -73,9 +73,11 @@ body {
 
 /* ⛔ THE TWO ELEMENTS NO SFC DRESSES, AND THIS IS WHY THEY FELL THROUGH. Every other piece of the
    frame is a Vue SFC with its own scoped <style>; `frame/BigTab.ts` and `frame/VueContent.ts`
-   build plain DOM, because `dockview` asks for a RENDERER and not a component -- so both classes
-   were named and never defined, and nothing could say so: not `vue-tsc`, not `copy.test.ts`, not
-   the gate. Found by the review of task 13 on 2026-09-21, E165 and E166.
+   build plain DOM, because `dockview` asks for a RENDERER and not a component -- so the THREE
+   classes those two files name (`bigtab`, `bigtab-title`, `panel`) were never defined, and
+   nothing could say so: not `vue-tsc`, not `copy.test.ts`, not the gate. Found by the review of
+   task 13 on 2026-09-21, E165 and E166; "both" here said two, which is the count of the
+   RENDERERS and not of the classes (E176).
 
    ⛔ AND THE GRAB IS THE CONTAINER'S, NOT THE TAB'S -- the first cure got this wrong and made the
    grab SMALLER. `dockview` sizes the whole tab strip from `--dv-tabs-and-actions-container-height`

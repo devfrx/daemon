@@ -197,8 +197,9 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
     /// ⛔ WHO CALLS IT IS WHAT THE COMMAND PRINTS, like its brother `grants` and for the same
     /// reason -- a tally ages the day another caller arrives:
     /// `grep -rn '\.ipc()' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+: *//[!/]'`
-    /// -- and it spans BOTH trees, because the only caller lives in `gui/`, which a `crates/`-only
-    /// grep cannot see (E62, E118).
+    /// -- and it spans BOTH trees, because what calls it lives in `gui/`, which a `crates/`-only
+    /// grep cannot see (E62, E118). ⚠️ NO TALLY IN THAT CLAUSE EITHER: the first draft wrote "the
+    /// ONLY caller", two lines under a sentence refusing tallies.
     ///
     /// ⛔ AND THE HOLE IS DECLARED RATHER THAN LEFT GREEN (E120): nothing in the gate builds or
     /// runs the fake core until `scripts/gate-gui.sh` arrives with TASK 15, so until then this is

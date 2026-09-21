@@ -22,10 +22,14 @@ simulator = { path = "../../crates/simulator" }
 # `crates/platform/Cargo.toml` pins -- READ WITH `grep`, never from memory -- because two versions
 # of a transport at the two ends of one socket is a bug nobody would look for. That is what this
 # line buys, and the versions do match.
-# ⚠️ `default-features = false` IS INERT HERE, and it is declared rather than left to be believed
+# ⚠️ `default-features = false` IS INERT TODAY, and it is declared rather than left to be believed
 # (E121): `platform` pulls `interprocess` with its defaults and cargo unifies features across the
-# graph -- `cargo tree -e features` prints `interprocess feature "default"`. It is kept because
-# dropping it would move the manifest for no effect, and a manifest touch drags the lockfile.
+# graph -- `cargo tree -e features` prints `interprocess feature "default"`. ⛔ IT IS KEPT AS A
+# DECLARATION OF WHAT THIS CRATE NEEDS ON ITS OWN, so that the day `platform` stops pulling the
+# transport the probes do not silently gain the defaults. ⚠️ THE FIRST REASON WRITTEN HERE WAS
+# FALSE and is gone: it said dropping the line would drag the lockfile. Measured 2026-09-21 --
+# line removed, `cargo build --tests` rebuilt, `cmp` of `Cargo.lock` SILENT. An excuse that a
+# command falsifies is worse than no excuse.
 # ⚠️ Manifest and `Cargo.lock` in the SAME commit: the gate passes `--locked` (finding G-5).
 [dev-dependencies]
 interprocess = { version = "2.4.4", default-features = false }

@@ -100,8 +100,15 @@ body {
    and the pointer meets `.dv-tab` in the two bands. Whether `dockview` listens on `.dv-tab` or on
    what we put inside it is not written anywhere we could read (`draggable` is `false` on the whole
    chain -- it drags on `pointerdown`), so instead of deciding it by argument the padding is
-   removed and both answers become 40. The horizontal padding stays: `.bigtab` has its own. */
-.dock .dv-tab {
+   removed and both answers become 40. The horizontal padding stays: `.bigtab` has its own.
+
+   ⛔ AND THE SELECTOR IS THE STRIP'S TABS, NOT EVERY `.dv-tab` IN THE DOCK. `.dv-tab` is
+   `dockview`'s class, not ours, and the overflow dropdown renders its rows inside the dock too --
+   `PopupService` prepends them there -- so `.dock .dv-tab` reached a menu we never meant to touch
+   and shrank its rows by 30% (E173, measured by the third review with two real drags). The child
+   combinator on `.dv-tabs-container` cannot leave the strip, which closes it by construction
+   rather than by argument. */
+.dock .dv-tabs-container > .dv-tab {
   padding-top: 0;
   padding-bottom: 0;
 }

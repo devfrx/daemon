@@ -1,6 +1,6 @@
 # Handoff — ripresa del progetto
 
-Aggiornato il **2026-09-22**, con la **chiusura del sotto-progetto 2** — ⚠️ questa riga diceva **2026-08-28** dopo tre tocchi del 2026-09-01: la data segue il file (finding **AUD-039**), e qui non l'aveva seguito.
+Aggiornato il **2026-09-22**, con la **chiusura del sotto-progetto 2** e la cura del suo residuo (E236) — ⚠️ questa riga diceva **2026-08-28** dopo tre tocchi del 2026-09-01: la data segue il file (finding **AUD-039**), e qui non l'aveva seguito.
 ⚠️ **L'ancora è stata corretta il 2026-08-27 e la DATA no**, perché era già giusta: a marcire
 qui non è il *quando* ma il *a che cosa si riferisce*, ed è la metà che il rimedio del 2026-08-11
 — *«sono due date»* — non aveva coperto. Stessa specie del finding **AUD-034** sul compendio.

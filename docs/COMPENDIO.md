@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-22**, con la **parte 2 del piano del 2 eseguita** — il sotto-progetto 2 chiuso, la GUI minima sul core finto — e il puntatore della §6 al design system e al 13; l'ultimo contenuto di merito sono le quattro righe della §12. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
+**Aggiornato il 2026-09-22**, con la **parte 2 del piano del 2 eseguita** — il sotto-progetto 2 chiuso, la GUI minima sul core finto — e il puntatore della §6 al design system e al 13; l'ultimo contenuto di merito è il proxy di M5 nella §8, dalla cura di E236. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -670,10 +670,6 @@ ESEGUITO alla tredicesima ripresa:** cinque tagli, tutti A — la stella polare,
 aperte di questa §6, questo puntatore, `CLAUDE.md` — e `AVVIO-CHAT.md` resta com'è, perché il proprietario non lo incolla
 più (decisione 32). La misura la rifanno i comandi nel prossimo passo della stella polare; il metodo — misurare prima, ogni
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
-
-✅ **Il residuo del compito 17 è curato** — i Minori e i Nit della sua ri-revisione, **E236**, e i due commenti dei manifesti,
-**E237**, del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), il 2026-09-22 alla
-ripresa. ⚖️ Se la cura vada ri-rivista lo decide il proprietario.
 
 ⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il brainstorming del DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi
 e token centralizzati — **primo atto della sessione che apre dopo la chiusura del 2**, per decisione del proprietario (2026-09-21,

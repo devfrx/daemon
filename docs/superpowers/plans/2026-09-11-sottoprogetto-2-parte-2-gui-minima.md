@@ -448,6 +448,7 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E221** | ⚠️ **Compito 17, Passo 7 e criterio — tre precisazioni misurate.** **(1)** Il punto 1 diceva *«`cargo audit` e `npm audit`»*, due siti: sono **tre** dal 2026-09-22 (E212, D83) — `cargo audit` in `gate.sh` fra «allow-list» e «attributes», `cargo audit --file fake-core/Cargo.lock` dentro `gui/` dopo il lint, `npm audit` ultimo — e i sotto-passi `-------- gui:` sono **sette** nell'ordine `fake core, install, build, probes, lint, fake core advisories, advisories` (`grep -n 'gui:' scripts/gate-gui.sh`), le `run` di `gate.sh` **nove**. **(2)** `grep -c 'PARTE 2' docs/porta-di-qualita.md` → **1** va rosso se il corpo della sezione scrive «PARTE 2» in maiuscolo una seconda volta: il maiuscolo sta nel solo titolo, il corpo dice «parte 2» (E193, evitata per costruzione). **(3)** *«il numero di righe della §7.4 è invariato»* non aveva un comando: `git diff HEAD~1 -U0 -- docs/porta-di-qualita.md \| grep -c '^@@'` → **1** (un pezzo solo, in coda dopo S3) e `git diff HEAD~1 -- docs/porta-di-qualita.md \| grep -c '^-[^-]'` → **0** (nulla tolto o cambiato sopra). Trovata dal pre-controllo del compito 17, 2026-09-22 |
 | **E222** | ⚖️ **Compito 17 — TRE voci registrate con casa «il 17 o il proprietario», portate al proprietario col dispaccio in A/B (una risposta sola, col perimetro del giro).** Le voci: **E192**, il segnaposto al posto della data nel nome del piano della parte 1, voce 5 della §10 del disegno del 2; **E213**, la metà «stella» di D88 — quali righe della tabella del coordinatore aspettino il richiamo del compito che le ha eseguite; **Nit-3 di E214**, la riga *«le dipendenze nuove»* della tabella *«Il cancello, pezzo per pezzo»* della §8 del disegno del 2, incompleta dopo i tre siti di scansione. ⛔ **Il censimento di D88 è fatto il 2026-09-22, per contenuto e non per numero (E213):** delle sei righe che D88 nomina, **quattro** si riconoscono — la **47** (*niente cache npm in CI*: D66, eseguita dal **15**), la **51** (`markdown-it`: D3, dal **14**), la **52** (`vitest` 4.1.11: D4, dall'**11**), la **55** (`no-raw-text` nel cancello: D63–D65, dal **15**) — e **nessuna porta un richiamo** (`grep -c 'compito 15 del piano della parte 2'` sulla stella → **0**; la 51 e la 52 non ne hanno né del 14 né dell'11); le righe «6» e «45» non si riconoscono per contenuto e restano del proprietario. ✅ **Via A (consiglio):** il 17 le chiude, tutte in file che già tocca — la data vera al posto del segnaposto nella voce 5 della §10, col richiamo nella stessa riga; i quattro richiami sulle righe 47, 51, 52 e 55 della tabella del coordinatore (Passo 8-bis, secondo script); il richiamo sulla riga *«le dipendenze nuove»* (Passo 8-quater, secondo script); i conti del criterio dicono i due valori, A e B. **Via B:** restano registrate, del proprietario, e il criterio le ignora. Perché A: il 17 è *«la chiusura — i documenti in ogni casa»*, le tre voci sono correzioni datate a righe che il piano ha reso false o stantie, e lasciarle a un'altra sessione costa una lettura d'apertura intera per tre righe. Trovata dal pre-controllo del compito 17, 2026-09-22 |
 | **E223** | ⛔ **Compito 17, Passo 8-quater — lo script dettato NON COMPILA: `IndentationError: unexpected indent` alla seconda riga del richiamo.** Il testo del richiamo era spezzato su cinque righe di stringa, le ultime quattro indentate sotto `lines[i] = …` **senza** parentesi né `\` di continuazione: Python le legge come istruzioni a sé, e la prima già indentata è un errore di sintassi — lo script si ferma **prima** di aprire il file, quindi non scrive nulla, ma un compito che detta uno script rotto lascia l'implementatore a ripararlo da solo (punto 3 di *«Come si esegue un compito»*: un rosso sul testo dettato è una voce d'errata, non un aggiustamento). È la specie di **E189** — *ogni blocco Python dettato si estrae e si passa a `py_compile`* — e il blocco gemello del Passo 8-bis compila, perché le sue continuazioni stanno dentro parentesi. ⛔ **Misurato il 2026-09-22 dal pre-controllo:** `py_compile` sul blocco estratto da `HEAD` → `IndentationError`; sul blocco del Passo 8-bis → ok. ✅ **CORRETTO:** il richiamo è una stringa sola costruita con `\` di continuazione, dentro lo script riscritto da E215. Trovata dal pre-controllo del compito 17, 2026-09-22 |
+| **E224** | ⛔ **Compito 17 — gli Attesi dei fine-riga che E215 ha riscritto sono la colonna `w/…` della macchina del pre-controllo, e su una macchina con `core.autocrlf=false` in `.git/config` sono ROSSI a compito perfetto: *«CR uguale alle righe»* e *«qui `w/crlf` su undici»* vi sono falsi, e chi esegue si fermerebbe su una cosa già decisa.** È **E51 → E180 → E188 → E200 → E215** per la **sesta** volta: il pre-controllo del 17 girava su una macchina con `core.autocrlf=true` e l'albero `w/crlf`, l'esecuzione va su quella dove E51 ha messo `false` locale — e una cura che **riscrive** l'etichetta la rende falsa sulla macchina dopo. ⛔ **Misurato il 2026-09-22 alla ripresa, dopo il fast-forward a `1e1f752`:** `git config --show-origin --get-all core.autocrlf` → `true` di sistema, `false` utente, **`false` in `.git/config`**; `git ls-files --eol` sui dodici file della lista *Files* → **`i/lf w/lf` su tutti e dodici**; `tr -cd '\r' < … \| wc -c` → **0** sulla stella e sul disegno del 2, dove `wc -l` → **1081** e **726**. ✅ **La logica degli script dettati NON cambia:** E215 li ha già resi indipendenti dall'albero (`eol` letto dal file), e provati a secco qui su copie LF (`_precheck_17_dry_lf.py`, git-ignorato) compilano, girano, lasciano CR **0** e le righe invariate, e danno i conti del criterio come dettati — stella **6** e **3**, disegno **1**, **3**, **0** e **1**, nessuna tabella spezzata. ✅ **CORRETTO secondo la decisione del proprietario registrata in E72 — *«per compito, col comando»*:** l'etichetta di forma **si toglie** e si rimanda al `git ls-files --eol` del Passo 1, e l'oracolo diventa l'**invariante** — CR **uguale a prima** e la colonna `w/…` **uguale al Passo 1** — vero su tutte e due le macchine; ⛔ **non** si riallinea a «0» e `w/lf`, che sarebbe la stessa malattia col segno opposto. Tolte le dodici etichette della lista *Files*, con una riga nuova che dice dove sta la forma; riscritti gli Attesi dei Passi 1, 8-bis (due), 8-ter e 8-quater (due), le frasi di forma dei Passi 3, 8-bis, 8-ter e 8-quater, i due commenti degli script che dicevano *«on this machine»*, e le tre righe del criterio sui fine-riga, sulla stella e su `design/10`. 📌 **La forma generale è scritta dal 2026-09-19 — un'etichetta di FORMA è una misura travestita da attributo — e qui si paga di nuovo perché E215 ha riscritto l'etichetta invece di toglierla.** Trovata alla ripresa del 2026-09-22, su un'altra macchina, prima del dispaccio del 17 |
 
 ---
 
@@ -22033,18 +22034,19 @@ git push
 ## Compito 17: la chiusura — i documenti in ogni casa, e la Definizione di «fatto» della parte 2
 
 **Files:**
-- Modify: `docs/COMPENDIO.md` (**CRLF**) — quattro righe in **§12**, il puntatore di **§6** riscritto (**D72**), l'intestazione (riga 21) riscritta (**E218**)
-- Modify: `docs/archivio/stato-storico.md` (**`i/lf`**, qui `w/crlf`) — il puntatore ⏭️ della §6 com'era, con l'elenco 1–3 e i due richiami del 2026-09-17, archiviato parola per parola (**E218**)
-- Modify: `docs/README.md` (**CRLF**) — due righe nella tabella «Specifiche» (**P-116**)
-- Modify: `docs/roadmap.md` (**CRLF**) — la riga **2** dei sotto-progetti, e la riga del piano della parte 2 a «eseguito» (**P-113**)
-- Modify: `docs/tracciabilita.md` (**CRLF**) — dove vivono ora i pezzi della GUI che la parte 2 ha costruito
-- Modify: `docs/porta-di-qualita.md` (**CRLF**) — **una** sezione nuova, sul precedente di S3 (**D73**)
-- Modify: `docs/riferimenti.md` (**CRLF**) — le misure e le fonti di questa parte, coi comandi e le date
-- Modify: `docs/HANDOFF.md` (**CRLF**) — i gotcha nuovi, nella loro **unica** casa
-- Modify: `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md` (**`i/lf`** — ⚠️ E215: qui stava «LF», e su questa macchina è `w/crlf`, CR uguale alle righe) — la Definizione di «fatto» (**D74**), e la riga **17** della tabella della posizione
-- Modify: `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` (**`i/lf`** — ⚠️ E215: qui stava «LF», e su questa macchina è `w/crlf`) — la riga «codice e spec non toccati» della tabella dello stato, «Il prossimo passo», e i tre 🔶 che il piano ha confermato (R9b-6, R9b-13, **D87**) — Passo 8-bis
-- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**`i/lf`** — ⚠️ E215: qui stava «LF», e su questa macchina è `w/crlf`) — la riga *«Codice di prodotto»* della tabella dello stato della **§10**, che dice *«non toccato»* e da questo piano è falsa (R8-26) — Passo 8-quater
-- Modify: `docs/design/10-modello-dei-dati-durevoli.md` (**LF**, `docs/design/` è misto: `git ls-files --eol` al Passo 1) — `INVOCATION_DETAIL` e `POLICY_DETAIL` nel primo `erDiagram`, col richiamo (R9b-2, **D85**) — Passo 8-ter
+- Modify: `docs/COMPENDIO.md` — quattro righe in **§12**, il puntatore di **§6** riscritto (**D72**), l'intestazione (riga 21) riscritta (**E218**)
+- Modify: `docs/archivio/stato-storico.md` — il puntatore ⏭️ della §6 com'era, con l'elenco 1–3 e i due richiami del 2026-09-17, archiviato parola per parola (**E218**)
+- Modify: `docs/README.md` — due righe nella tabella «Specifiche» (**P-116**)
+- Modify: `docs/roadmap.md` — la riga **2** dei sotto-progetti, e la riga del piano della parte 2 a «eseguito» (**P-113**)
+- Modify: `docs/tracciabilita.md` — dove vivono ora i pezzi della GUI che la parte 2 ha costruito
+- Modify: `docs/porta-di-qualita.md` — **una** sezione nuova, sul precedente di S3 (**D73**)
+- Modify: `docs/riferimenti.md` — le misure e le fonti di questa parte, coi comandi e le date
+- Modify: `docs/HANDOFF.md` — i gotcha nuovi, nella loro **unica** casa
+- Modify: `docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md` — la Definizione di «fatto» (**D74**), e la riga **17** della tabella della posizione
+- Modify: `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` — la riga «codice e spec non toccati» della tabella dello stato, «Il prossimo passo», e i tre 🔶 che il piano ha confermato (R9b-6, R9b-13, **D87**) — Passo 8-bis
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` — la riga *«Codice di prodotto»* della tabella dello stato della **§10**, che dice *«non toccato»* e da questo piano è falsa (R8-26) — Passo 8-quater
+- Modify: `docs/design/10-modello-dei-dati-durevoli.md` — `INVOCATION_DETAIL` e `POLICY_DETAIL` nel primo `erDiagram`, col richiamo (R9b-2, **D85**) — Passo 8-ter
+- ⚠️ **I fine-riga NON si scrivono in questa lista (E224):** li misura `git ls-files --eol` al Passo 1 sulla macchina che esegue, e il criterio li vuole **invariati** al Passo 11. La colonna `w/…` la decide `core.autocrlf` della sessione, che non è versionato (E51), e ogni script di questo compito conserva il fine-riga che trova
 - ⛔ **NON si tocca nessun ADR:** questo piano non ne apre (vincolo globale 10), e la §5 del compendio non cresce
 - ⛔ **NON si tocca il codice:** questo compito è documenti, e il criterio di chiusura lo **asserisce**
 - Read: la **§12** e la **§13** del [compendio](../../COMPENDIO.md); la sezione *«⛔ LA SONDA S3 DEL RICONOSCIMENTO GESTI»* di [`porta-di-qualita.md`](../../porta-di-qualita.md), che è il **modello**; il riquadro in testa a [`tracciabilita.md`](../../tracciabilita.md); **D14 del piano della PARTE 1** — ⛔ **non di questo, dove `D14` è un'altra cosa** (**P-112**); **P-112**…**P-116**; **D72**, **D73**, **D74**; le voci **E215**…**E223** del pre-controllo del 2026-09-22, ed **E207** ed **E212**, i due gotcha candidati del Passo 8
@@ -22077,7 +22079,7 @@ grep -rn '<data>\|<tempo>' docs/ --include='*.md' | grep -v 'parte-2-gui-minima'
 bash scripts/gate.sh 2>&1 | tail -2
 ```
 
-Atteso: **dodici** file, tutti `i/lf`; la colonna `w/…` è di questa macchina e si annota per confrontarla al Passo 11 — qui oggi `w/crlf` su undici e `w/lf` sul solo `design/10` (⚠️ **E215**: qui stava *«le sette case `i/lf w/crlf`, e la stella, `design/10` e il piano `i/lf w/lf`»*, vero solo su un albero LF; **P-114**); il censimento dei segnaposto, che alla chiusura deve essere lo stesso (E216); il tetto e il peso del compendio, da cui il
+Atteso: **dodici** file, tutti `i/lf`; la colonna `w/…` è **della sessione** — la decide `core.autocrlf`, che non è versionato (E51) — e si annota per confrontarla al Passo 11 (⚠️ **E224**: qui stava *«qui oggi `w/crlf` su undici e `w/lf` sul solo `design/10`»*, la colonna della macchina del pre-controllo, e dove `core.autocrlf` è `false` in `.git/config` i dodici sono `w/lf`; **P-114**); il censimento dei segnaposto, che alla chiusura deve essere lo stesso (E216); il tetto e il peso del compendio, da cui il
 **margine** (**P-115**); il numero dei gotcha, che è la baseline del Passo 8; **zero** per i nomi del 2 in `README.md`
 (**P-116**); **uno** per la sezione S3, che è il modello; `GATE GREEN`. ⚠️ **Della roadmap escono TRE righe e non due** (R8-22, 2026-09-16): l'intestazione *«Ultimo aggiornamento»*, che il Passo 5 riscrive, la riga **2** dei sotto-progetti e la riga del piano nella tabella dei piani.
 
@@ -22165,8 +22167,8 @@ all'ultima riga del punto 3, **e i due richiami del 2026-09-17** che lo corregge
 2026-09-09 e del 2026-09-10 di quel file (la riga *«⚠️ Vero il giorno in cui fu scritto.»* con la provenienza, i link riscritti per
 quella cartella): è la regola di `CLAUDE.md` — *un verbale di correzione non resta nel documento corretto* — e un richiamo lasciato
 sotto un testo sparito correggerebbe il nulla (⚠️ **E218**, deciso dal coordinatore per regola scritta: se il proprietario preferisce
-cancellare senza archiviare, la sezione si toglie). Il file è `i/lf w/crlf`: si tocca con Python `newline=""` o con
-`replace_unique.py`. Sonde: `grep -c 'archiviato il <data>' docs/archivio/stato-storico.md` → **1**;
+cancellare senza archiviare, la sezione si toglie). Il file si tocca con Python `newline=""` o con
+`replace_unique.py`, che conservano il fine-riga che trovano (⚠️ **E224**: qui stava «è `i/lf w/crlf`», la colonna di un'altra macchina). Sonde: `grep -c 'archiviato il <data>' docs/archivio/stato-storico.md` → **1**;
 `grep -c 'SECONDO RICHIAMO DELLO STESSO GIORNO' docs/COMPENDIO.md` → **0**;
 `grep -c 'IL PROSSIMO PASSO: ESEGUIRE IL PIANO DELLA PARTE 2' docs/COMPENDIO.md` → **0**.
 
@@ -22300,7 +22302,7 @@ finto prima del daemon) — restano 🔶 senza che chi ha costruito lo scriva (l
 §1 restano:** parlano dei sotto-progetti 3, 5 e oltre, non del 2.
 
 Le ancore si prendono **dal file**, per frase contenuta, e ogni richiamo si appende **in coda** alla riga o al capoverso: il file
-è **`i/lf`**, e su questa macchina `w/crlf` — lo script conserva il fine-riga che trova (⚠️ **E215**: qui stava «è **LF**»). `<data>` è
+è **`i/lf`**, e lo script conserva il fine-riga che trova nell'albero, quale che sia (⚠️ **E224**: qui stava «e su questa macchina `w/crlf`», la colonna di un'altra macchina). `<data>` è
 la data del giorno.
 
 ```bash
@@ -22310,7 +22312,7 @@ import io, os, sys
 sys.stdout.reconfigure(encoding="utf-8")
 p = "docs/superpowers/specs/2026-09-07-direzione-gui-design.md"
 b = io.open(p, encoding="utf-8", newline="").read()
-# E215: the north star is `i/lf w/crlf` on this machine (core.autocrlf=true) and keeps ITS OWN line endings --
+# E215, E224: the north star keeps ITS OWN line endings, whatever `core.autocrlf` the session has (E51) --
 # global constraint 4. `split("\n")` would leave a `\r` on every line: `endswith(" |")` false everywhere, and
 # `paragraph()` running to the last line of the file (E200).
 eol = "\r\n" if "\r\n" in b else "\n"
@@ -22368,7 +22370,7 @@ tr -cd '\r' < docs/superpowers/specs/2026-09-07-direzione-gui-design.md | wc -c;
 awk 'prev ~ /^\|/ && $0 ~ /^\r?$/ {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
 ```
 
-Atteso (con la data al posto di `<data>`, anche nei `grep`): **2**, **3**, CR uguale alle righe e uguale a prima (⚠️ E215: qui stava «**0**», vero solo su un albero LF), niente. ⚠️ **Le cinque frasi-ancora sono
+Atteso (con la data al posto di `<data>`, anche nei `grep`): **2**, **3**, CR **uguale a prima** (⚠️ E224: qui stava «CR uguale alle righe e uguale a prima», vero su un albero `w/crlf` soltanto — come il «**0**» che E215 correggeva lo era su uno `w/lf`), niente. ⚠️ **Le cinque frasi-ancora sono
 state contate il 2026-09-15 e ricontate il 2026-09-22 (E215), una volta ciascuna nel file:** se una manca, la stella è cambiata e si rilegge prima di scrivere.
 
 ⚖️ **Se il proprietario ha scelto la via A di E222 — il censimento di D88, secondo script del passo:** quattro richiami sulle righe
@@ -22420,15 +22422,15 @@ grep -c 'compito 17 del piano della parte 2' docs/superpowers/specs/2026-09-07-d
 tr -cd '\r' < docs/superpowers/specs/2026-09-07-direzione-gui-design.md | wc -c; wc -l < docs/superpowers/specs/2026-09-07-direzione-gui-design.md
 ```
 
-Atteso, via A: **6**, CR uguale alle righe. Via B: il blocco non si lancia e il conto resta **2**.
+Atteso, via A: **6**, CR uguale a prima (E224). Via B: il blocco non si lancia e il conto resta **2**.
 
 - [ ] **Passo 8-ter: `docs/design/10` — l'entità costruita passa al primo diagramma (D85)**
 
 ⛔ **La regola sta nel file stesso** (decisione 20 del proprietario): *«quando un sotto-progetto costruisce, la sua entità passa
 dal secondo diagramma al primo, con richiamo datato»*. Il 6 ha costruito `InvocationDetail` (`Detail::Invocation`, indice 3) e
 l'8 `PolicyDetail` (`Detail::Policy`, indice 4), e il file non lo sa: `INVOCATION_DETAIL` sta nel secondo `erDiagram` come
-*«specie nuova (col 2)»* e `POLICY_DETAIL` non c'è. Il file è **LF** (`git ls-files --eol` al Passo 1: `docs/design/` è misto,
-questo è `i/lf w/lf`), si tocca con Python `newline=""`.
+*«specie nuova (col 2)»* e `POLICY_DETAIL` non c'è. Il file è **`i/lf`** e si tocca con Python `newline=""`,
+che conserva il fine-riga che trova (⚠️ **E224**: qui stava «è **LF**», con `docs/design/` «misto» e il file `i/lf w/lf`: la colonna `w/…` di una macchina).
 
 ```bash
 grep -n 'erDiagram\|INVOCATION_DETAIL\|POLICY_DETAIL\|specie [0-9]' docs/design/10-modello-dei-dati-durevoli.md
@@ -22452,13 +22454,13 @@ grep -c 'costruita dal compito 6 del piano della parte 2' docs/design/10-modello
 tr -cd '\r' < docs/design/10-modello-dei-dati-durevoli.md | wc -c
 ```
 
-Atteso: **più di tre** (due relazioni e due blocchi, e il blocco nomina l'entità almeno una volta), **0**, **1**, **0**.
+Atteso: **più di tre** (due relazioni e due blocchi, e il blocco nomina l'entità almeno una volta), **0**, **1**, CR uguale a prima (E224: qui stava «**0**»).
 
 - [ ] **Passo 8-quater: la §10 del disegno del 2 — la riga «Codice di prodotto» (R8-26)**
 
 ⛔ **È il GEMELLO della riga che il Passo 8-bis corregge nella stella, e nessun passo lo toccava.** La tabella *«Lo stato alla chiusura, e il comando che lo rifà»* della §10 dice *«Codice di prodotto | **non toccato**: `git diff --stat 664265a..HEAD -- crates/ …` non rende nulla»*, e dal **compito 1** quel comando rende. ⚠️ **E la §10 resta il verbale della sessione che ha scritto i disegni:** non diventa il diario della parte 2, che vive in questo piano (**D74**) — il richiamo lo dice, così nessuno la riscrive per zelo.
 
-Il file è **`i/lf`**, qui `w/crlf`, e lo script conserva il fine-riga che trova (⚠️ **E215**: qui stava «**LF**»); l'ancora è la riga
+Il file è **`i/lf`**, e lo script conserva il fine-riga che trova (⚠️ **E224**: qui stava «qui `w/crlf`», la colonna di un'altra macchina); l'ancora è la riga
 intera presa dal file, e il richiamo si appende **nell'ultima cella**. ⛔ **E223: lo script com'era NON COMPILAVA** — le quattro
 righe del richiamo dopo la prima erano indentate senza continuazione, `IndentationError` prima di leggere il file (la specie di E189:
 ogni blocco Python dettato si passa a `py_compile`); qui sotto è riscritto con le continuazioni.
@@ -22472,7 +22474,7 @@ DATE = "<data>"
 assert DATE != "<data>", "la data va sostituita PRIMA di lanciare (R8-23)"
 p = "docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md"
 b = io.open(p, encoding="utf-8", newline="").read()
-# E215: the design is `i/lf w/crlf` on this machine and keeps ITS OWN line endings (global constraint 4).
+# E215, E224: the design keeps ITS OWN line endings, whatever `core.autocrlf` the session has (global constraint 4).
 eol = "\r\n" if "\r\n" in b else "\n"
 assert b.count("\r") == (b.count("\r\n") if eol == "\r\n" else 0), "a CR outside a CRLF: the file is mixed"
 lines = b.split(eol)
@@ -22499,7 +22501,7 @@ tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-desig
 awk 'prev ~ /^\|/ && $0 ~ /^\r?$/ {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 ```
 
-Atteso (con la data scritta, **anche nel `grep`**): **1**, CR uguale alle righe e uguale a prima (⚠️ E215: qui stava «**0**»), niente.
+Atteso (con la data scritta, **anche nel `grep`**): **1**, CR uguale a prima (⚠️ E224: qui stava «CR uguale alle righe e uguale a prima», vero su un albero `w/crlf` soltanto), niente.
 
 ⚖️ **Se il proprietario ha scelto la via A di E222 — le altre due voci del disegno del 2, secondo script del passo:** la voce 5 della
 §10, dove il nome del piano della parte 1 porta un segnaposto al posto della data (E192), prende la data vera e il richiamo nella
@@ -22545,7 +22547,7 @@ grep -c '<data>-sottoprogetto-2' docs/superpowers/specs/2026-09-06-sottoprogetto
 tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c; wc -l < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 ```
 
-Atteso, via A: **3**, **0**, CR uguale alle righe. Via B: il blocco non si lancia, e i conti restano **1** e **1**.
+Atteso, via A: **3**, **0**, CR uguale a prima (E224). Via B: il blocco non si lancia, e i conti restano **1** e **1**.
 
 - [ ] **Passo 9: la Definizione di «fatto» della parte 2 — comandi, non affermazioni**
 
@@ -22630,7 +22632,7 @@ git push
 
 - [ ] `bash scripts/check-docs.sh` → `OK`, e `bash scripts/gate.sh` → `GATE GREEN`
 - [ ] ⛔ **il compendio è sotto il tetto, col margine misurato DOPO:** `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` — e ⛔ **se fosse rosso si toglie prosa dalla §6, non si alza il tetto** (**P-115**, gotcha #100)
-- [ ] ⛔ **i fine-riga di tutti i file della lista *Files* sono INVARIATI** rispetto al Passo 1: `git ls-files --eol` sui **dodici** file dà `i/lf` su tutti e la stessa colonna `w/…` del Passo 1 — qui `w/crlf` su undici e `w/lf` su `design/10` (⚠️ E215: qui stava *«le sette case `i/lf w/crlf`, e la stella, `design/10` e il piano `i/lf w/lf`»*, vero solo su un albero LF; **P-114**)
+- [ ] ⛔ **i fine-riga di tutti i file della lista *Files* sono INVARIATI** rispetto al Passo 1: `git ls-files --eol` sui **dodici** file dà `i/lf` su tutti e la stessa colonna `w/…` del Passo 1, quale che sia sulla macchina che esegue (⚠️ E224: qui stava *«qui `w/crlf` su undici e `w/lf` su `design/10`»*, la colonna della macchina del pre-controllo; **P-114**)
 - [ ] ⛔ **il `git diff --stat` nomina SOLO i file della lista *Files***, e nessun file di codice: `git diff --stat HEAD~1 -- crates/ gui/ scripts/ .github/` **vuoto**
 - [ ] `grep -c 'sottoprogetto-2\|direzione-gui\|gui-minima' docs/README.md` → **più di zero**, dove il Passo 1 dava **zero** (**P-116**)
 - [ ] ⛔ **la §12 ha quattro righe nuove e la §5 NESSUNA:** `git diff HEAD~1 -- docs/COMPENDIO.md | grep -c '^+|'` è più di tre, e `grep -c '^\*\*00' docs/COMPENDIO.md` è **invariato** rispetto al Passo 1 — nessun ADR nasce qui (vincolo globale 10)
@@ -22638,8 +22640,8 @@ git push
 - [ ] ⛔ **nessun `<data>` e nessun `<tempo>` è sopravvissuto, in NESSUNA casa:** `git diff HEAD~1 -- docs/ | grep '^+' | grep -c '<data>\|<tempo>'` → **0** — il commit non ne AGGIUNGE nessuno, la forma di E206 (⚠️ **E216**: qui stava `grep -rn '<data>\|<tempo>' docs/ --include='*.md' | grep -v 'parte-2-gui-minima'` → «niente», rosso a compito perfetto: il 2026-09-22 rendeva **129** righe in nove file, perché i piani eseguiti dettano `<data>` e il disegno del 2 ne porta uno da prima, E192 — quel comando è ora il censimento del Passo 1, e alla chiusura deve dare lo stesso numero, meno uno se la via A di E222) (R8-23: il criterio guardava il solo compendio, e il 17 scrive `<data>` in sette case più la stella, `design/10` e questo piano; il piano si esclude perché ne **detta** le occorrenze)
 - [ ] ⛔ **il conteggio dei compiti NON è tornato nella roadmap:** `grep -F 'parte-2-gui-minima.md' docs/roadmap.md | sed 's/«[^»]*»//g' | grep -cE 'sedici|diciassette|[0-9]+ compiti'` → **0** (**P-113**; R9b-15: ancorato alla riga del piano e depurato delle citazioni «…», perché il richiamo di P-113 sulla stessa riga **cita** il testo tolto — provato nelle due direzioni il 2026-09-15, senza il `sed` rende 1)
 - [ ] ⛔ **il titolo della riga 2 è quello del perimetro (D86):** `grep -c 'GUI minima (shell, chat, stato)' docs/roadmap.md` → **0**, e `grep -c '^| 2 | GUI minima' docs/roadmap.md` → **1**
-- [ ] ⛔ **la stella porta i cinque richiami del Passo 8-bis** (R9b-6, R9b-13, D87): i quattro comandi del passo, con la data → **2**, **3**, CR uguale alle righe e uguale a prima (E215: qui stava «**0**»), niente
-- [ ] ⛔ **`design/10` ha le due entità nel primo diagramma e nessuna nel secondo (D85):** i quattro comandi del Passo 8-ter → **più di tre**, **0**, **1**, **0**
+- [ ] ⛔ **la stella porta i cinque richiami del Passo 8-bis** (R9b-6, R9b-13, D87): i quattro comandi del passo, con la data → **2**, **3**, CR uguale a prima (E224), niente
+- [ ] ⛔ **`design/10` ha le due entità nel primo diagramma e nessuna nel secondo (D85):** i quattro comandi del Passo 8-ter → **più di tre**, **0**, **1**, CR uguale a prima (E224)
 - [ ] ⛔ **`porta-di-qualita.md` ha UNA sezione nuova e NESSUNA riga di catalogo:** `grep -c 'PARTE 2' docs/porta-di-qualita.md` → **1** (il maiuscolo nel solo titolo, E221), e nessuna riga sopra la sezione nuova è toccata — coi comandi (E221; qui stava *«il numero di righe della §7.4 è invariato»*, senza comando): `git diff HEAD~1 -U0 -- docs/porta-di-qualita.md | grep -c '^@@'` → **1** e `git diff HEAD~1 -- docs/porta-di-qualita.md | grep -c '^-[^-]'` → **0** (**D73**, vincolo globale 7)
 - [ ] ⛔ **i gotcha stanno in UNA casa:** il comando della §9 del compendio dà un numero **maggiore** di quello del Passo 1, e `git diff HEAD~1 -- docs/COMPENDIO.md | grep -c 'gotcha'` **non** mostra gotcha ricopiati nel compendio (gotcha #68)
 - [ ] ⚠️ **le due intestazioni e le due sonde nuove (E219, E220):** `grep -c '^Aggiornato il \*\*<data>\*\*, con la \*\*chiusura del sotto-progetto 2\*\*' docs/HANDOFF.md` → **1**; `grep -c '^> ✅ \*\*Aggiornata il <data>' docs/tracciabilita.md` → **1**; `grep -c 'gui/src/panels/' docs/tracciabilita.md` → **più di zero** (Passo 1: **0**); `grep -c '^## Esecuzione della parte 2 del sotto-progetto 2' docs/riferimenti.md` → **1** (Passo 1: **0**)

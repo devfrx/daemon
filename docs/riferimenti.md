@@ -2529,6 +2529,50 @@ EOF
 
 ---
 
+## Esecuzione della parte 2 del sotto-progetto 2 — le versioni installate, gli attrezzi del cancello web, il processore a riposo
+
+Eseguita dal **2026-09-17** (compito 1, `15bc453`) al **2026-09-22** (compito 17) col
+[piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) · Windows 11, su due macchine (la colonna
+`w/…` dei fine-riga la decide `core.autocrlf` della sessione, E51) · `cargo` 1.95.0 della toolchain appuntata · Node dentro
+l'intersezione `engines.node` di `gui/package.json` (D37) · `cargo-audit` 0.22.2, prerequisito dell'ambiente e non dipendenza
+(D68). Le versioni **installate** stanno nei tre lockfile — `Cargo.lock`, `gui/fake-core/Cargo.lock`, `gui/package-lock.json` —
+che ne sono la casa; qui stanno i fatti di ciascun giorno, col comando. ⚠️ **Le versioni del 2026-09-06 e del 2026-09-07 stanno
+nella sezione dei due disegni qui sopra e non si riscrivono**, `vitest` 5.0.0 con *«si valuta la 4 al piano»* compreso: la
+risposta a quella riga è la seconda di questa tabella.
+
+**Le versioni, rimisurate dal compito che le ha installate** (vincolo globale 8 del piano: una major nuova non si prende, una minor
+o patch nuova solo se l'appuntata non si installa):
+
+| Verifica | Comando | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| le appuntate di oggi | `node -e "const p=require('./gui/package.json'); console.log({...p.dependencies, ...p.devDependencies})"` | le stampa il comando: la casa è il manifesto, e qui non si ricopiano | `gui/package.json` |
+| il giorno del compito 11, il 2026-09-20 | `for p in vue vite @vitejs/plugin-vue typescript vue-tsc vitest; do npm view "$p" version dist-tags; done` | `vitest` `latest` 5.0.1 (2026-09-15): resta il tag `V4`, 4.1.11 (D4); `vue` `latest` 3.5.43: resta la 3.5.42, che si installa; `typescript` `latest` 7.0.2, la major che `vue-tsc` 3.3.11 non regge (D79): resta 5.9.3; `vite` 8.3.0, `@vitejs/plugin-vue` 6.0.9 e `vue-tsc` 3.3.11 come l'appuntato | il messaggio di `0193bbd` |
+| il giorno del compito 13, il 2026-09-21 | lo stesso `npm view` sui pacchetti del compito | `dockview-core`, `dockview`, `pinia` e `reka-ui` ancora le appuntate; `vue-i18n` 11.4.12, `jsdom` 30.1.0, `@vue/test-utils` 2.5.1 e `@types/node@24` 24.13.6 più nuove delle appuntate, che si installano: restano quelle del piano | il messaggio di `8679f27` |
+| il giorno del compito 14, il 2026-09-22 | idem | `markdown-it` 15.0.2 (D3) e `axe-core` 4.13.0, col lockfile nello stesso commit | il messaggio di `c6bc9a9` |
+| il giorno del compito 15, il 2026-09-22 | idem, sulla catena `eslint` | `eslint` 10.10.0, `eslint-plugin-vue` 10.11.0, `@intlify/eslint-plugin-vue-i18n` 4.5.1, `@typescript-eslint/parser` 8.70.0 (D91): nessuna major nuova; i tre peer non opzionali li tira npm da sé e vivono nel lockfile — `vue-eslint-parser` 10.4.1, `jsonc-eslint-parser` 3.3.0, `yaml-eslint-parser` 2.1.0 | il messaggio di `b0ef8f7` |
+| le due crate nuove per il 2 | `grep -A1 -e '^name = "interprocess"$' -e '^name = "redb"$' Cargo.lock` | `interprocess` 2.4.4 (compito 2); `redb` 4.1.0, quella del lockfile (D6), la stessa nel lockfile del finto, seminato dalla radice (D83) | `Cargo.lock`, `gui/fake-core/Cargo.lock` |
+
+**Gli attrezzi del cancello web**, misurati prima di scrivere i compiti 15 e 16 — le voci P del piano portano il comando per intero:
+
+| Verifica | Comando | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| `no-raw-text` nel preset di `@intlify/eslint-plugin-vue-i18n` 4.5.1 (P-98) | `grep -n "no-raw-text" node_modules/@intlify/eslint-plugin-vue-i18n/dist/configs/flat/recommended.js`, poi `npx eslint` su un componente con una scritta grezza | `'@intlify/vue-i18n/no-raw-text': 'warn'`, ed `eslint` esce `EXIT=0` sui soli avvisi (`EXIT=1` con `--max-warnings 0`) — 2026-09-15 | D65: la regola sale a `error` nel blocco nostro di `gui/eslint.config.js` |
+| i preset di `eslint-plugin-vue` 10.11.0 (P-100) | il `node -e` di P-100 sulle regole di `flat/recommended` e di `flat/essential` | `flat/recommended` porta trentatré regole di avviso, quasi tutte di formattazione; `flat/essential` ottantacinque regole e zero avvisi — 2026-09-15 | D63: `flat/essential`, e niente `--max-warnings 0` |
+| i `.ts` e i `.json` davanti al lint (P-101) | `npx eslint src/probe.ts`, poi `npx eslint src` | un `.ts` nominato: `File ignored because no matching configuration was supplied`, `EXIT=0`; per cartella non compare; un `{ "a": 1, }` in `panels/views/` lascia `EXIT=0` — 2026-09-15. ⚠️ Per i `.vue` con `<script setup lang="ts">` l'analizzatore TypeScript **serve** (R8-1, D91) | lo script `lint` nomina la cartella `src`; *«il lint non valida i JSON»* sta nella sezione della parte 2 di `porta-di-qualita.md` |
+| `package-manager-cache` di `actions/setup-node` v7.0.0 (P-103) | il `python -c` di P-103 su `action.yml` della v7.0.0, alla fonte primaria | `default: true`: la cache si accende se `package.json` dichiara `packageManager` o `devEngines.packageManager` — letto il 2026-09-15 | D66: `package-manager-cache: false` per esteso in `.github/workflows/quality-gate.yml` |
+| `--manifest-path` e le cartelle `target` (P-104) | `cargo metadata --manifest-path spikes/rust/Cargo.toml --no-deps --format-version 1`, lo stesso su `spikes/gui-ipc/Cargo.toml` e sul workspace senza `--manifest-path` | tre `target_directory` distinte — 2026-09-15: una crate fuori dal workspace compila nel proprio `target/` | il finto ricompila `kernel`, `platform` e `simulator` nel suo (commento di `scripts/gate-gui.sh`); `/gui/fake-core/target/` in `.gitignore` (compito 12) |
+| `cargo audit` sul nostro `Cargo.lock` (P-107) | `cargo audit`, poi `cargo audit --deny unmaintained` | `warning: 1 allowed warning found` — `bincode` 2.0.1, RUSTSEC-2025-0141 — `EXIT=0`; negato, `error: 1 denied warning found!`, `EXIT=1` — 2026-09-15, rifatto dal compito 16 il 2026-09-22 anche su `gui/fake-core/Cargo.lock` | `run "dependency advisories"` in `scripts/gate.sh` e il sesto sotto-passo di `scripts/gate-gui.sh`; nessun `audit.toml` |
+| `npm audit` sull'insieme del 2 (P-110) | `npm audit` sull'insieme dei compiti 11, 13, 14 e 15 installato fuori dal repository; poi su un albero con `minimist` 0.0.8 | 369 pacchetti, `found 0 vulnerabilities`, `EXIT=0`, ~6 s; `1 critical severity vulnerability`, `EXIT=1` — 2026-09-15 | D71: nessun `--audit-level`; `npm audit` ultima riga di `scripts/gate-gui.sh` |
+
+**Le due misure di tempo del 2**, senza soglia:
+
+| Verifica | Comando | Dato ottenuto | Dove entra |
+|---|---|---|---|
+| il processore a riposo del daemon (D84, decisione 41 del proprietario) | il blocco PowerShell del Passo 14 del compito 9: `cargo build --locked -p daemon`, `Start-Process -PassThru` da una cartella **fuori** dal repository, `TotalProcessorTime` letto prima e dopo `Start-Sleep -Seconds 60`, la differenza divisa per 60 | **0,18 %** di un core su 60 s, presa dall'implementatore, e **0,29 %**, presa dal revisore — entrambe il 2026-09-19, `GUI_TICK` a 16 ms, nessun client, binario di debug. ⛔ **Senza soglia, ed entrambe**: non la media né la minore (E70) | il messaggio di `9ba48e2`, che porta la sola 0,18 %, e la voce E70 del piano |
+| il core finto, a freddo e a caldo (R5-17) | `cargo test --locked --manifest-path gui/fake-core/Cargo.toml`, dopo `cargo clean` e poi di nuovo | 20,9 s a freddo, 2,5 s a caldo — 2026-09-22, dal Passo 10 del compito 12, rilanciato dal 15 | il commento di `scripts/gate-gui.sh`: un ordine di grandezza datato, e nessuno ci asserisce sopra |
+
+---
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

@@ -187,7 +187,7 @@ codice di ADESSO.
 | **14** | la **SPA, i moduli**: Stato, Permessi con la finestra di conferma, Chat col markdown e la provenienza, Passi, **e Impostazioni col cambio di policy VRAM — richiamo del 2026-09-14, P-85**, senza il quale nella SPA del 2 nessuno manda mai un `Invoke` e il registro di ADR-0038 resta senza il suo primo invocatore; l'accessibilità e le scorciatoie sopra `moveTo`. ⛔ **Il segnaposto è passato al 13 — richiamo del 2026-09-14, D47**: qui restano i moduli **veri**, e il segnaposto non è un modulo ma il pezzo della cornice che dice *«questo tipo non c'è ancora»* | uno | ✅ 2026-09-22 |
 | **15** | il **passo del cancello**: `scripts/gate-gui.sh`, la riga in `gate.sh`, `actions/setup-node` nella CI, e la **catena `eslint`** con la configurazione di `gui/`. ⛔ **RICHIAMO DEL 2026-09-15, dal pre-controllo del compito 15 (P-102): `.gitignore` NON è di questo compito** — le otto righe di `spikes/gui-shell/` ci sono dal commit `8fc9696` della parte 1 e i quattro lockfile dello spike sono tracciati; le due righe di `gui/` sono del compito 11 (**D38**) e `/gui/fake-core/target/` del 12. Al 15 non ne resta nessuna — **D67** | uno | ✅ 2026-09-22 |
 | **16** | **X-1 e X-3**: la matrice Windows nella CI, `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh` | uno | ✅ 2026-09-22 |
-| **17** | la **chiusura**: i documenti in ogni casa — la §12 del compendio, `README.md`, la roadmap, tracciabilità, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — e la Definizione di «fatto» della parte 2, coi comandi | uno | ⬜ |
+| **17** | la **chiusura**: i documenti in ogni casa — la §12 del compendio, `README.md`, la roadmap, tracciabilità, `HANDOFF.md`, `porta-di-qualita.md`, `riferimenti.md` — e la Definizione di «fatto» della parte 2, coi comandi | uno | ✅ 2026-09-22 |
 
 ⛔ **QUALE compito venga dopo NON è scritto qui:** vive nella §6 del
 [`COMPENDIO.md`](../../COMPENDIO.md), in un posto solo. Ciò che resta qui è la **posizione** del piano —
@@ -22649,6 +22649,135 @@ git push
 - [ ] ⛔ **D56 è registrata e la «finestra a parte» è ancora APERTA:** i due `grep` del Passo 10, e la voce nella tabella *«Le voci aperte che questo piano SA, e non chiude»* c'è ancora
 - [ ] ⚖️ **le tre voci registrate con casa «il 17» (E222), secondo la via scelta dal proprietario:** via **A** — `grep -c 'compito 17 del piano della parte 2'` sulla stella → **6** e sul disegno del 2 → **3**, `grep -c '<data>-sottoprogetto-2'` sul disegno → **0**, `grep -c 'Nit-3 di E214'` sul disegno → **1**; via **B** — **2**, **1**, **1**, **0**, e le tre voci restano registrate in E192, E213 ed E214
 - [ ] ⛔ **la tabella della posizione è tutta ✅**, e ogni riga porta il proprio commit: `awk '/^\| \*\*[0-9]+\*\* \|/{print}' <questo file> | grep -c '⬜'` → **zero**
+
+## La Definizione di «fatto» della parte 2 — i comandi, con le uscite del 2026-09-22
+
+⛔ **Comandi, non affermazioni (D74).** Ogni riga qui sotto è un comando con la sua uscita **vera**, lanciato il
+**2026-09-22** sull'albero del commit del compito 17: invecchia col codice invece che contro di esso. Le righe vengono dai
+**criteri di chiusura** dei compiti 1–16, che restano nella loro casa — li elenca
+`grep -nE '^(#### |\*\*)Criterio di chiusura' <questo file>`, uno per compito — e ⚠️ **dove un compito dopo ha cambiato ciò
+che il criterio di uno prima misurava, la riga dice lo stato FINALE e nomina chi l'ha cambiato**: un criterio è la
+fotografia del proprio giorno (il 7 diceva *«`Core::ipc` NON esiste ancora»* e il 12 l'ha scritto; il 13 voleva in
+`panels/` i soli `Placeholder.vue` e `Strip.vue`, e il 14 ne ha aggiunti cinque). Un conteggio sta **accanto al proprio comando** (vincolo globale 3):
+chi rilancia confronta due uscite, non una cifra con la memoria.
+
+**Il cancello e i documenti.** Per le prime quattro righe basta una corsa: `bash scripts/gate.sh > /tmp/gate.log 2>&1`,
+poi `tail -2` e i `grep -c` sullo stesso file.
+
+```bash
+bash scripts/gate.sh 2>&1 | tail -2                              # una riga vuota, poi GATE GREEN.
+bash scripts/gate.sh 2>&1 | grep -c 'gui: fake core and SPA'     # 1 -- il passo web, compito 15
+bash scripts/gate.sh 2>&1 | grep -c 'dependency advisories'      # 1 -- cargo audit in gate.sh, compito 16
+bash scripts/gate.sh 2>&1 | grep -c 'DST serving'                # 2 -- le due righe della campagna del 10
+bash scripts/check-docs.sh 2>&1 | tail -1                        # OK — no inconsistencies.
+bash scripts/gate-deps.sh > /dev/null 2>&1; echo $?              # 0: la lista di ADR-0031 non e' cresciuta
+bash scripts/gate-attributes.sh > /dev/null 2>&1; echo $?        # 0: nessun #[allow] nuovo, nessun unsafe
+```
+
+**Compito per compito**, dai criteri di chiusura:
+
+```bash
+# 1 -- il contatore condiviso
+cargo test --locked -p kernel --test numbering 2>&1 | grep '^test result'                # ok. 4 passed
+grep -c 'DATED RECALL, 2026-09-17' crates/kernel/src/ports/journal.rs crates/kernel/src/ports/ipc.rs   # 1 e 1
+# 2 -- il lettore di flusso e il trasporto ipc in platform
+cargo test --locked -p platform --test ipc_contract_real 2>&1 | grep '^test result'      # ok. 10 passed
+grep -rnE "^ *impl Ipc for" crates/ --include='*.rs' | wc -l      # 5: le due finte e LocalSocketIpc del 2, piu' le finte dei banchi del 7 e del 10
+# 3 -- lo schema che cresce, le fixture, il timbro
+cargo test --locked -p kernel --test ipc_wire 2>&1 | grep '^test result'                 # ok. 14 passed; 1 ignored -- cresciute dopo il 3
+awk '/^pub enum IpcMessage/{s=1} s&&/^}/{exit} s&&/^    [A-Z]/{c++} END{print c}' crates/kernel/src/wire/ipc.rs   # 14
+ls gui/schema/fixtures/*.bin | wc -l; ls gui/schema/fixtures/*.json | wc -l            # 14 e 14, uguali fra loro
+grep -c '^stamp 0x' gui/schema/fixtures/ipc_v1.map                                       # 1
+# 4 -- la settima porta
+grep -c 'pub trait Custody' crates/kernel/src/ports/custody.rs                           # 1
+cargo test --locked -p kernel --test ports_are_implementable 2>&1 | grep '^test result'  # ok. 15 passed
+git ls-files --eol crates/kernel/tests/ports_are_implementable.rs                        # i/crlf, unico fra i sorgenti (P-3)
+# 5 -- le due implementazioni della settima porta
+cargo test --locked -p kernel --test custody_contract 2>&1 | grep '^test result'         # ok. 7 passed
+cargo test --locked -p platform --test custody_contract_real 2>&1 | grep '^test result'  # ok. 8 passed -- uno in piu' del banco del kernel
+cargo test --locked -p platform --test file_custody 2>&1 | grep '^test result'           # ok. 3 passed
+grep -c 'fn with_backend' crates/platform/src/custody.rs                                  # 0
+# 6 -- il registro delle funzioni
+cargo test --locked -p kernel --test registry 2>&1 | grep '^test result'                 # ok. 6 passed
+cargo test --locked -p kernel --test frozen_bytes 2>&1 | grep '^test result'             # ok. 7 passed
+grep -c 'use crate::arbiter\|crate::arbiter::' crates/kernel/src/registry.rs             # 0: il registro non importa l'arbitro (D16)
+# 7 -- l'attivita' che serve la GUI
+cargo test --locked -p kernel --test serving 2>&1 | grep '^test result'                  # ok. 13 passed
+grep -c '^#\[test\]' crates/kernel/tests/serving.rs                                      # 13, lo stesso numero
+grep -rn 'admit' crates/kernel/src/serving.rs | wc -l                                     # 0: il ramo Request non chiama l'arbitro (D5)
+grep -o 'name: "[a-z-]*"' crates/kernel/src/serving.rs | head -1                          # name: "vram-policy", la funzione registrata
+# 8 -- la specie Policy del giornale
+ls crates/kernel/tests/frozen/*.cbor | wc -l                      # 8 -- R8-19: senza *.cbor conta anche record_v1.map
+cargo test --locked -p kernel --test arbiter_policy 2>&1 | grep '^test result'           # ok. 19 passed
+grep -rn 'policy_now' crates/ --include='*.rs' | grep -v '^[^:]*:[0-9]*: *//' | cut -d: -f1 | sort | uniq -c   # la definizione in arbiter/mod.rs, il banco, e UN chiamante di produzione in daemon/src/main.rs (compito 9)
+# 9 -- il daemon
+grep -n 'const EXECUTOR_TURN_LIMIT' crates/daemon/src/main.rs                            # const EXECUTOR_TURN_LIMIT: u64 = u64::MAX;
+grep -n 'run_the_production_graph(' crates/daemon/src/main.rs | grep -vE '^[0-9]+: *//|fn run_the_production_graph'   # una riga sola, dentro fn main (D28)
+cargo test --locked -p daemon 2>&1 | grep '^test result'                                 # ok. 15 passed
+# 10 -- la campagna DST del 2
+grep -c '#\[test\]' crates/simulator/tests/serving_campaign.rs                            # 4
+grep -cE 'DyingGui::' crates/simulator/tests/serving_campaign.rs                          # 0: nessuna CHIAMATA
+grep -c 'serving_campaign' scripts/gate.sh                                                # 2: la riga run e la riga dei costi
+# 11 -- gui/ nasce
+grep -c '^/gui/' .gitignore                                                               # 3 -- il 12 ha aggiunto la terza
+git grep -n bincode -- 'gui/*.ts' 'gui/*.json' ':!gui/package-lock.json' | wc -l   # 0: nessun byte decodificato in TypeScript (D36) -- la forma dell'11, grep -rn su gui/, trova oggi le impronte di cargo in gui/fake-core/target/, git-ignorata
+# 12 -- il core finto
+(cd gui/fake-core && cargo test --locked 2>&1 | grep '^test result')                      # ok. 6 passed
+grep -cE '^struct SharedClock' gui/fake-core/src/main.rs; grep -rl 'struct SharedClock' crates/ --include='*.rs' | wc -l   # 1 e 4
+grep -n 'pub fn ipc' crates/kernel/src/serving.rs | grep -vcE '^[0-9]+:[[:space:]]*//'   # 1: Core::ipc esiste, col rubinetto come chiamante
+grep -c 'exclude = \["spikes", "gui"\]' Cargo.toml                                        # 1
+awk '/#\[cfg\(test\)\]/{exit} {print}' gui/fake-core/src/main.rs | grep -cE 'IpcMessage::(Hello|Invoke|Approve|Request|SaveLayout) *(\(|\{|=>)'   # 0: il finto manda, non interpreta
+# 13 -- la SPA, la cornice
+ls gui/src/panels/views/*.json | wc -l                                                    # 3
+grep -c '"dockview"' gui/package.json; grep -c '"dockview-core"' gui/package.json          # 1 e 1
+# 14 -- la SPA, i moduli
+ls gui/src/panels/*.vue                                  # Chat, Permissions, Placeholder, Settings, Status, Steps, Strip
+diff <(grep -o 'name: "[a-z-]*"' crates/kernel/src/serving.rs | head -1) <(grep -o 'name: "[a-z-]*"' gui/src/panels/functions.ts); echo $?   # 0, nessuna riga
+diff <(grep -o '"remote"\|"local"' crates/kernel/src/arbiter/policy.rs | sort -u) <(grep -o '"remote"\|"local"' gui/src/panels/functions.ts | sort -u); echo $?   # 0, nessuna riga
+# 15 -- il passo web del cancello
+cd gui && npm ci --no-audit --no-fund && npm run build && npm test && npm run lint; echo $?; cd ..   # l'ultima riga: 0
+cd gui && npx eslint src | wc -l; cd ..                                                    # 0: il preset non stampa avvisi (D63)
+grep -c 'harness/ts-in-vue' gui/eslint.config.js                                           # 1
+grep -cE '^ +package-manager-cache: false$' .github/workflows/quality-gate.yml             # 1 (D66)
+# 16 -- X-1 e X-3
+grep -cE '^ +fail-fast: false$' .github/workflows/quality-gate.yml; grep -c 'windows-latest' .github/workflows/quality-gate.yml   # 1 e 1
+grep -cE '^ +shell: bash$' .github/workflows/quality-gate.yml                              # 1 (E207)
+grep -c 'cargo audit --file fake-core/Cargo.lock' scripts/gate-gui.sh                      # 1 (D83, E212)
+tail -1 scripts/gate-gui.sh                                                                # npm audit
+grep -cE '^[^#]*cargo audit ((-n|--no-fetch)\b|.*--no-fetch)' scripts/gate.sh scripts/gate-gui.sh   # 0 e 0 (D69)
+grep -cE '^[^#]*audit-level' scripts/gate-gui.sh                                            # 0 (D71)
+grep -c 'CHIUSA IL' docs/audit-2026-08-27.md                                               # 2: X-1 e X-3, nella loro casa unica
+```
+
+**Il perimetro di tutto il piano, e gli ADR** (R9a-16, E217):
+
+```bash
+git diff --name-status 42b50d8..HEAD -- docs/adr/ | grep -c '^A'   # 0: nessun ADR NUOVO (vincolo globale 10); ADR-0035 e' una M, il richiamo di E21 (a)
+ls docs/adr/*.md | wc -l; grep -c '^\*\*00' docs/COMPENDIO.md      # 39 e 39, uguali fra loro
+git diff --name-only 42b50d8..HEAD -- crates/ scripts/ .github/ Cargo.lock Cargo.toml gui/ docs/superpowers/specs/ docs/adr/ docs/design/ | wc -l   # 167
+git status --porcelain                                             # vuoto
+```
+
+⚠️ **Il perimetro si legge nome per nome, non col numero:** ogni nome che il penultimo comando elenca sta in una lista
+*Files* dei compiti 1–17 **o in una voce d'errata** (E217). Il censimento del 2026-09-22 a `f47d8d6` — 166 nomi, nessuno
+senza casa: 114 letterali, 34 in cartelle nominate, 16 della prosa del compito 7, 2 nominati da E21 (a) — sta in
+`.superpowers/sdd/2026-09-11-sottoprogetto-2-parte-2-gui-minima/perimetro-17.txt`, git-ignorato; il commit del 17 aggiunge
+il solo `docs/design/10-modello-dei-dati-durevoli.md`, che la sua lista *Files* nomina. Si rifà col comando.
+
+**Ciò che un comando non dice**, e dove si guarda:
+
+- ⛔ **la SPA si GUARDA nel browser**, per i compiti 13 e 14 (regola 5 della testa): `cd gui && npm run dev`, e la lista di ciò
+  che si vede sta nell'ultima riga dei loro criteri di chiusura — un `npm run build` verde non prova che un pannello si veda;
+- ⛔ **la metà Windows di X-1 la dice la CORSA** (P-111): i due job `gate (ubuntu-latest)` e `gate (windows-latest)`, nessuno
+  dei due «cancelled». Letta dall'API di GitHub il 2026-09-22 — `success` su entrambi per ogni corsa da `2142e24` a
+  `f47d8d6` — col comando della trentanovesima chiusura, che legge anche i job di ciascuna:
+
+  ```bash
+  python -c "import json,urllib.request as u; H={'User-Agent':'harness'}; d=json.load(u.urlopen(u.Request('https://api.github.com/repos/devfrx/daemon/actions/runs?per_page=6',headers=H))); [print(r['head_sha'][:7],r['conclusion'],[(j['name'],j['conclusion']) for j in json.load(u.urlopen(u.Request(r['jobs_url'],headers=H)))['jobs']]) for r in d['workflow_runs']]"
+  ```
+
+- ⚠️ **le voci che questo piano SA e non chiude** restano nella loro tabella, qui sopra: la «finestra a parte» aspetta il guscio
+  (**P-91**, **D58**), e il costo di **D56** — la lista del 2 non dice quale policy un'invocazione ha chiesto — resta dichiarato.
 
 ## Come si riprende — il diario di questo piano, coi comandi
 

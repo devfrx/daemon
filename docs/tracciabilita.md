@@ -71,6 +71,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 > ✅ **Aggiornata il 2026-09-03 con le righe del riconoscimento gesti**, dalla §5.2 del [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) approvato dal proprietario — fuori da una chiusura di sotto-progetto, e per questo detto: la sezione 6 diventa «Voce e gesti», e la riga del registro delle funzioni entra nella sezione 2 accanto ai comandi rapidi.
 >
 > ✅ **Aggiornata il 2026-09-05 con le righe della knowledge base**, dalla §5.2 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md) approvato e riletto dal proprietario — fuori da una chiusura di sotto-progetto, e per questo detto: il registro delle guide e i trigger hanno la sede **13**, «Registro delle guide, trigger e proiezione»; la Conoscenza è il sotto-progetto **6** in due metà, la mappa e poi la ricerca; e la cattura con un gesto ha la destinazione decisa.
+>
+> ✅ **Aggiornata il 2026-09-22 con le sedi dei pezzi della GUI costruiti dalla parte 2 del sotto-progetto 2**, dalla Definizione di «fatto» del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) — alla chiusura del sotto-progetto, come dice la riga sotto il titolo.
 
 ---
 
@@ -104,8 +106,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| UI/UX della chat | 📋 | GUI |
-| Streaming delle risposte | 🔶 | trasporto §3 · resa nel processo `gui` → GUI minima |
+| UI/UX della chat | 🔶 | `gui/src/panels/Chat.vue` sul core finto: il flusso in markdown con la provenienza su ogni pezzo, dal messaggio `Token` — sotto-progetto 2 · la casella di scrittura → Conversazione |
+| Streaming delle risposte | 🔶 | trasporto §3 · resa nel processo `gui`: `gui/src/panels/Chat.vue` e `gui/src/stores/stream.ts`, dal messaggio `Token` (fixture `08-token`) — costruita dal 2 sul core finto |
 | Sessioni multiple | 🔶 | gerarchia §3 (ADR-0011) · politica → Conversazione |
 | Fork e branching | 📋 | Conversazione — il giornale lo consente |
 | Modifica e rigenerazione | 📋 | Conversazione |
@@ -118,7 +120,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Preview renderizzate | 📋 | GUI |
 | Allegati in chat | 📋 | Conversazione (+ etichettatura I6) |
 | Comandi rapidi e slash-command | 📋 | GUI |
-| Registro delle funzioni del programma | 🔶 | registro di [ADR-0038](adr/0038-registro-delle-funzioni-del-programma.md), nella forma dei registri §5 (ADR-0009) · registrazione, invocazione, permesso come tripla, giornale · implementazione → GUI minima, col primo invocatore |
+| Registro delle funzioni del programma | ✅ | registro di [ADR-0038](adr/0038-registro-delle-funzioni-del-programma.md), nella forma dei registri §5 (ADR-0009) · registrazione, invocazione, permesso come tripla, giornale · `crates/kernel/src/registry.rs` e la specie `Invocation` del giornale, dal sotto-progetto 2, con una funzione — `vram-policy` — e il primo invocatore `gui/src/panels/Settings.vue` |
 | Template e prompt salvati | 📋 | Conversazione |
 | Esportazione conversazioni | 📋 | Conversazione |
 
@@ -161,7 +163,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Task in background | ✅ | §4 + ADR-0004 |
 | Scheduling | ✅ | trigger anello 3 §5 |
 | Coda e priorità delle run | 🔶 | corsie §2 · coda generica → Agenti |
-| Replay dei trace | 🔶 | giornale §4 · proiezione trace §7 (ADR-0017) → GUI minima |
+| Replay dei trace | 🔶 | giornale §4 · proiezione trace §7 (ADR-0017) · nel 2 la lista ordinata dei passi con l'esito: `gui/src/panels/Steps.vue`, dal messaggio `Steps` sul core finto · lo scorrere una run → Conversazione |
 | Valutazione degli agenti | 📋 | Agenti — esplicitamente **fuori** dal kernel (§8) |
 | Regole e vincoli di progetto | 🔶 | guide §5 · registro delle guide → **13** |
 | Agenti in parallelo isolati | 🔶 | sub-run §4 · isolamento su disco → Coding |
@@ -234,13 +236,13 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Permessi e sandbox policy | 🔶 | §6 + §10 · ADR-0025 — confinamento reale → Coding |
+| Permessi e sandbox policy | 🔶 | §6 + §10 · ADR-0025 · la metà GUI nel 2: `gui/src/panels/Permissions.vue` e la finestra di conferma `gui/src/components/Confirm.vue`, dai messaggi `PermissionRequired` e `Approve` — confinamento reale → Coding |
 | Difese da prompt injection | ✅ | §6 · ADR-0014 |
 | Difesa da tool poisoning | 🔶 | §6 · ADR-0015 · ciclo di approvazione → Agenti |
 | Gestione segreti e credenziali | 🔶 | §10 · ADR-0023 — gestore unico · implementazione → Conversazione |
 | Storage e cifratura a riposo | 🔶 | layout §10 (ADR-0022) già rispettato · cifratura reale (ADR-0023) → sede da assegnare |
 | Backup ed export dei dati | 🔶 | §10 · ADR-0022 — solo l'irriproducibile · implementazione → Backup e ripristino |
-| Osservabilità e tracing locale | 🔶 | giornale §4 · proiezione trace §7 (ADR-0017) → GUI minima |
+| Osservabilità e tracing locale | 🔶 | giornale §4 · proiezione trace §7 (ADR-0017) · nel 2 `gui/src/panels/Steps.vue` (i passi, dal messaggio `Steps`) e `gui/src/panels/Status.vue` (degrado, policy e ultimo verdetto: `Degradation`, `Policy`, `Verdict`), sul core finto · i passi delle run → Conversazione |
 | Logging | ✅ | §7 |
 | Hotkey globale, tray e clipboard | 📋 | L3 |
 | Automazione OS | 📋 | L3 |
@@ -248,10 +250,10 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Avvio automatico e daemon in background | 🔶 | ADR-0004 · implementazione → L3 |
 | Packaging e aggiornamenti | 📋 | L3 |
 | Estensibilità e plugin | ✅ | ADR-0003 |
-| Accessibilità | 📋 | GUI |
-| Internazionalizzazione (i18n) | 📋 | GUI + Voce |
+| Accessibilità | ✅ | `axe-core` sui pannelli montati (`gui/src/a11y.test.ts`), il contrasto AA dei token (`gui/src/tokens/contrast.test.ts`) e la tastiera (`gui/src/frame/moveActive.ts`, `gui/src/frame/keys.test.ts`), nel passo web del cancello — dal sotto-progetto 2 |
+| Internazionalizzazione (i18n) | 🔶 | la metà GUI nel 2: `vue-i18n` con `gui/src/locales/it.json`, e la regola `no-raw-text` di `gui/eslint.config.js` nel passo web del cancello — il meccanismo, una lingua · la metà Voce → Voce |
 | Comportamento offline | ✅ | §7 · ADR-0019 |
-| Impostazioni e profili di configurazione | 🔶 | profili §2/§3 · pannello → GUI |
+| Impostazioni e profili di configurazione | 🔶 | profili §2/§3 · pannello: `gui/src/panels/Settings.vue` nel 2, col cambio di policy VRAM — la funzione `vram-policy` del registro, dai messaggi `Invoke` e `Policy` · il resto del pannello → GUI |
 
 ---
 
@@ -272,7 +274,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Notifica «l'agente ha bisogno di te» | 🔶 | V9 §4 · notifica all'utente → GUI minima |
+| Notifica «l'agente ha bisogno di te» | 🔶 | V9 §4 · notifica all'utente: nel 2 la richiesta di permesso in `gui/src/panels/Permissions.vue` e nella striscia `gui/src/panels/Strip.vue`, dal messaggio `PermissionRequired` · lo stato «aspetta te» di una run → Conversazione; la notifica di sistema → L3 |
 | Determinismo/replay riproducibile | ✅ | §4 + §8 (seed) |
 | Hook sul ciclo di vita | 🔶 | trigger e anelli §5 · politica → Agenti |
 | Classificatore di sicurezza delle azioni | 🔶 | si realizza come **sensore** §5 · politica → Agenti |

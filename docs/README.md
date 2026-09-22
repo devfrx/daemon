@@ -204,6 +204,8 @@ sotto-progetto**, nello stesso passaggio.
 | [La chiusura — il disegno](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md) | la chiusura del sotto-progetto 1 | ⛔ **Non è una spec:** come si rilegge la §0.7 contro il codice; la **§7** è il verbale |
 | [Riconoscimento gesti — il disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) | il riconoscimento gesti dalla telecamera | ⛔ **Non è una spec:** perimetro, forme e il controllo che esercita ciascun artefatto; le decisioni col loro chiusore; la §6.4 porta l'esito di SP-7 |
 | [Knowledge base — il disegno](superpowers/specs/2026-09-04-knowledge-base-design.md) | la knowledge base: che cosa chiede al kernel, e dove va | ⛔ **Non è una spec**, e **non disegna la capacità**: perimetro, la forma nel kernel, i rimandi in append, la GUI e il sotto-progetto 6 in due metà, le voci aperte col loro chiusore, e per ogni artefatto il controllo che lo esercita; il verdetto — nessuna sesta proprietà «che non si aggiunge dopo», ma un vincolo d'ordine: il sotto-progetto 13 prima del 3 |
+| [Stella polare della GUI](superpowers/specs/2026-09-07-direzione-gui-design.md) | la direzione della GUI | ⛔ **Non è una spec:** viste, moduli, disposizione, il protocollo core ↔ GUI, le decisioni col loro chiusore |
+| [Sotto-progetto 2 — il disegno](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) | GUI minima | ⛔ **Non è una spec:** perimetro, filo, schema, registro, core finto, prove e cancello; la §10 dice come si riprende. ✅ **RICHIAMO DEL 2026-09-22:** la parte 2 del piano è **eseguita** — la Definizione di «fatto» del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), coi comandi |
 
 ## Decomposizione del sistema
 

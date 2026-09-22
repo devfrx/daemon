@@ -35,6 +35,8 @@ erDiagram
     DETAIL ||--o| VERDICT_DETAIL : "specie 0"
     DETAIL ||--o| ROUTING_DETAIL : "specie 1"
     DETAIL ||--o| PERMISSION_DETAIL : "specie 2"
+    DETAIL ||--o| INVOCATION_DETAIL : "specie 3"
+    DETAIL ||--o| POLICY_DETAIL : "specie 4"
 
     STEP {
         u64 id PK "StepId - oggi senza run e senza passo padre"
@@ -70,6 +72,13 @@ erDiagram
         string resource
         bool write "l operazione - scrittura si o no"
     }
+    INVOCATION_DETAIL {
+        string function "l argomento no - sta nel payload, Untrusted"
+        u8 invoker "un codice per variante, dato da un match - mai la posizione"
+    }
+    POLICY_DETAIL {
+        bool local "false la remota, il default di ADR-0006 - true la locale"
+    }
 ```
 
 | Chi scrive oggi | Che cosa | Dove |
@@ -95,7 +104,6 @@ erDiagram
     AMBITO ||--o| CARTELLA_KB : "la cartella e un ambito dichiarato (col 6)"
     CARTELLA_KB ||--|{ NODO_KB : "contiene"
     NODO_KB }|--|| INDICE_MAPPA : "frecce router, gruppo, foglia, skill, router - segnali orfano e rotto (col 6)"
-    DETAIL ||--o| INVOCATION_DETAIL : "specie nuova (col 2)"
     DETAIL ||--o| GUIDA_APPROVATA : "specie nuova (col 13), dedotta"
 
     RUN {
@@ -122,12 +130,6 @@ erDiagram
     }
     DETAIL {
         enum specie "esiste oggi - Verdict Routing Permission"
-    }
-    INVOCATION_DETAIL {
-        arriva col_2 "disegno del 2, sezione 5"
-        string funzione
-        enum invocatore "una variante oggi, il client della GUI - col 12 il gesto"
-        valore argomento
     }
     GUIDA_APPROVATA {
         arriva col_13 "registro delle guide, ADR-0009 - nella forma di permission.rs"
@@ -157,7 +159,7 @@ erDiagram
 
 | Entità | Chi la costruisce | Fonte | Verificato · dedotto |
 |---|---|---|---|
-| `INVOCATION_DETAIL` | 2 | §5 del [disegno del 2](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md): funzione, invocatore, argomento; l'invocatore ha una variante oggi, il 12 aggiunge il gesto con un indice nuovo | verificato; la forma dell'argomento la dice il disegno del 2 |
+| `INVOCATION_DETAIL` | 2 | §5 del [disegno del 2](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md): funzione, invocatore, argomento; l'invocatore ha una variante oggi, il 12 aggiunge il gesto con un indice nuovo | verificato; la forma dell'argomento la dice il disegno del 2 ✅ **costruita dal compito 6 del piano della parte 2, 2026-09-22** — passata al primo diagramma, con `POLICY_DETAIL` (compito 8), regola di questo file |
 | `DISPOSIZIONE` | 2 | stella polare §2, decisioni 14 e 15: due operazioni, una chiave, un pacchetto opaco | verificato |
 | `RUN`, il passo padre | 3 | ADR-0011: passo → run → run padre; oggi `RunId` non esiste, solo `StepId` | verificato |
 | `ARTEFATTO` | il primo sotto-progetto che produce un file | ADR-0008 e ADR-0018: l'artefatto è un **riferimento**, il contenuto vive sul disco | fonte verificata; il «chi» **dedotto** dalla roadmap |

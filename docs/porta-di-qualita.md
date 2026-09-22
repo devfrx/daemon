@@ -5180,3 +5180,42 @@ riga propria lo decide il proprietario: voce 6 delle *«voci che questo disegno 
 
 Revocate entrambe da una copia byte-esatta presa prima, `cmp` a zero, e `git status` che nomina
 solo il banco.
+
+## ⛔ IL PASSO WEB E LE SONDE DELLA PARTE 2 — 2026-09-22
+
+Il passo web del cancello e i tre siti di scansione degli avvisi, dai compiti 15 e 16 del
+[piano della parte 2 del sotto-progetto 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), per la §8 del [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md).
+`scripts/gate-gui.sh` entra in `scripts/gate.sh` con la riga `run "gui: fake core and SPA"` (compito 15). Il compito 16
+aggiunge i tre siti: `run "dependency advisories"` con `cargo audit` in `gate.sh`, fra *«allow-list on the two graphs»* e
+*«attributes of the constrained crates»*; `cargo audit --file fake-core/Cargo.lock` dentro `gui/`, dopo il lint (D83, E212);
+`npm audit`, ultima riga di `gate-gui.sh`, dentro `gui/` (D71). L'ordine del 2026-09-22 lo rileggono due comandi:
+`grep -n 'run "' scripts/gate.sh` — nove righe `run` — e `grep -n 'gui:' scripts/gate-gui.sh` — sette sotto-passi, nell'ordine
+`fake core`, `install`, `build`, `probes`, `lint`, `fake core advisories`, `advisories`. ⚠️ **Non hanno una riga di catalogo**:
+la §7.4 è spec (vincolo globale 7), quindi le sonde si **registrano** e non si prendono — stesso trattamento di PL-1, di K-1/B-1
+e di S3, stessa ragione (gotcha #36). Se pretendano una riga propria lo decide il proprietario.
+
+| Mutazione | Esito misurato il 2026-09-22 |
+|---|---|
+| lint, 1 — una scritta grezza nel template di `gui/src/frame/Band.vue` (compito 15, Passo 4) | `raw text 'riprova piu tardi' is used`, `EXIT=1` |
+| lint, 2 — `$t("modules.inventato")` nel template di `gui/src/panels/Status.vue` | `'modules.inventato' does not exist in localization message resources`, `EXIT=1` |
+| lint, 3 — `v-html` in `gui/src/panels/Status.vue`, fuori da `Chat.vue` | `'v-html' directive can lead to XSS attack`, `EXIT=1` |
+| lint, 4 — la contro-prova dell'eccezione: `npx eslint src/panels/Chat.vue` su `Chat.vue` com'è | `EXIT=0`; e sull'albero pulito `npx eslint src` rende zero righe, `EXIT=0` |
+| passo web, dal mondo web — una sonda della SPA resa rossa in `gui/src/locales/copy.test.ts` (compito 15, Passo 7) | `gate-gui.sh` si ferma a `npm test`, `EXIT=1`; dal cancello intero, con la stessa mutazione, `GATE RED -- 1 checks failed` sul passo `gui: fake core and SPA` (R8-7) |
+| passo web, dal mondo Rust — un `assert_eq!(1, 2)` in `gui/fake-core/src/main.rs` | `gate-gui.sh` si ferma al primo comando, `EXIT=101` |
+| passo web, dal quinto sotto-passo — `gui/src/panels/LintProbe.vue`, che nessuno importa, con una scritta grezza (E196) | attraversa `vue-tsc` e `vitest`; `gate-gui.sh` esce `1` con le cinque etichette `-------- gui:` nel log: lo vede il solo lint |
+| `cargo audit` sul `Cargo.lock` di radice, com'è (compito 16, Passo 3) | `warning: 1 allowed warning found` — `bincode` 2.0.1, RUSTSEC-2025-0141 — `EXIT=0` |
+| `cargo audit --deny unmaintained` sullo stesso lockfile, niente di mutato | `error: 1 denied warning found!`, `EXIT=1` |
+| le stesse due su `gui/fake-core/Cargo.lock` (D83), da `gui/` come `--file fake-core/Cargo.lock` dopo E212 | le stesse due uscite, sullo stesso avviso; e con `--deny unmaintained` in una copia di `gate-gui.sh`, `EXIT=1` dopo sei etichette su sette (E212) |
+| `npm audit` dentro `gui/`, com'è (compito 16, Passo 4) | `found 0 vulnerabilities`, `EXIT=0` |
+| `npm audit` su un albero costruito **fuori** dal repository, con `minimist` 0.0.8 | `1 critical severity vulnerability`, `EXIT=1` |
+
+Revocate una per volta — da una copia pristina, con `git checkout --` per il sorgente del finto, con `rm` per il file che nessuno
+importa — e `git status --porcelain` vuoto alla fine; le direzioni di `cargo audit` non mutano niente, e quella rossa di
+`npm audit` vive fuori dal repository. Le uscite sono quelle dei messaggi di `b0ef8f7` e di `d545f5b` e delle voci E196 ed E212
+del piano, del giorno in cui furono prese.
+
+| Che cosa la porta NON controlla, di questa parte | Perché |
+|---|---|
+| la metà **Windows** della CI — che `windows-latest` onori `rust-toolchain.toml` e che Git Bash vi lanci `gate.sh` | la dice solo la corsa su GitHub, e nessun comando locale (P-111): il criterio di chiusura del compito 16 manda a guardarla |
+| la prova **capo a capo** — la SPA nel guscio col core finto | *«fuori dal cancello di oggi, dichiarato»*, nella §8 del disegno del 2: il guscio non è di questo piano |
+| la **validità dei JSON** sotto `gui/src` | il lint li legge con `jsonc-eslint-parser` e nessuna regola li giudica — misurato il 2026-09-15, un `{ "a": 1, }` in `panels/views/` lascia `EXIT=0` (P-101); le tre viste le prova la sonda della cornice del compito 13 |

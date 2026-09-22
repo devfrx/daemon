@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-10**, con la **parte 1 del piano del 2 eseguita** — SP-8, ADR-0029 chiuso, il guscio **Electron** — e il puntatore della §6 alla parte 2; l'ultimo contenuto di merito è la voce 0029 della §5. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
+**Aggiornato il 2026-09-22**, con la **parte 2 del piano del 2 eseguita** — il sotto-progetto 2 chiuso, la GUI minima sul core finto — e il puntatore della §6 al design system e al 13; l'ultimo contenuto di merito sono le quattro righe della §12. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -661,6 +661,7 @@ stato di oggi: è l'unico posto dove vive il prossimo passo, e più è corto men
 | i **due disegni della GUI, scritti sul posto** — la [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md), sezioni 1–4 e 6, e il [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), §1–§10, con le §1, §2 e §6a riscritte; le due consegne in archivio parola per parola, le fonti in `riferimenti.md` | 2026-09-09 | la **§10 del disegno del 2**, «Come si riprende»; gli archivi [`consegna-brainstorming-direzione-gui.md`](archivio/consegna-brainstorming-direzione-gui.md) e [`consegna-brainstorming-sottoprogetto-2.md`](archivio/consegna-brainstorming-sottoprogetto-2.md) |
 | la **rilettura del proprietario** dei due disegni — B alla domanda minima, poi le sei voci sue una per volta, tutte A: decisioni 41–47 | 2026-09-09 | la tabella delle decisioni della [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md); la §10 del [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md); X-1 e X-3 nell'[audit](audit-2026-08-27.md) |
 | la **parte 1 del piano del 2** — SP-8: il guscio **Electron** deciso dal proprietario, ADR-0029 `Accepted`, `dockview` resta dopo le otto mosse | 2026-09-10 | il [piano](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md), «A che punto è» e l'errata; la sezione SP-8 di `spikes/RISULTATI.md`; ADR-0029 |
+| il **sotto-progetto 2**, la GUI minima — il filo in `platform`, lo schema, il registro delle funzioni, la settima porta `custody`, il daemon che ascolta, la SPA con `dockview` e il core finto, il passo web del cancello, **X-1** e **X-3** | 2026-09-22 | la **Definizione di «fatto»** del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), coi comandi |
 
 ✅ **Il mandato del proprietario del 2026-09-09 — sfoltire la lettura d'apertura (decisione 26 della stella polare) — è
 ESEGUITO alla tredicesima ripresa:** cinque tagli, tutti A — la stella polare, la testa dell'audit, il riquadro delle voci
@@ -668,44 +669,15 @@ aperte di questa §6, questo puntatore, `CLAUDE.md` — e `AVVIO-CHAT.md` resta 
 più (decisione 32). La misura la rifanno i comandi nel prossimo passo della stella polare; il metodo — misurare prima, ogni
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
 
-⏭️ **IL PROSSIMO PASSO: ESEGUIRE IL PIANO DELLA PARTE 2 DEL SOTTO-PROGETTO 2 — è SCRITTO dal 2026-09-15, RIVISTO IN
-PROFONDITÀ dal 2026-09-16, e l'ESECUZIONE È COMINCIATA.** ⛔ **Quali compiti siano eseguiti NON si legge
-qui:** la casa unica è la **tabella della posizione** di quel piano, e il suo **diario** dice da quale si riprende.
-La parte 1, SP-8, è eseguita il 2026-09-10. I due disegni sono
-**scritti sul posto il 2026-09-09** (decisione 39 della stella polare): la
-[stella polare della GUI](superpowers/specs/2026-09-07-direzione-gui-design.md) — viste, moduli, disposizione, il protocollo
-core ↔ GUI — e il [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), le cui §1–§10 sono approvate.
-Si riprende dalla **§10 del disegno del 2**, «Come si riprende», che dà l'ordine coi comandi; i due disegni si leggono **per intero**:
-
-1. ✅ la **rilettura del proprietario** dei due disegni in questa forma, in chat — il sì è condizionato e non si deduce; la
-   domanda minima con cui si apre sta nella §10 — **fatta il 2026-09-09**, voce per voce: le sei voci sue tutte A, decisioni 41–47 della stella polare;
-2. ✅ **la parte 1 del piano del 2, eseguita il 2026-09-10** —
-   [piano](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md): SP-8, ADR-0029 chiuso,
-   `dockview` resta; ✅ **il piano della parte 2 è SCRITTO dal 2026-09-15 e RIVISTO IN PROFONDITÀ dal 2026-09-16** —
-   diciassette compiti, [piano](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), la cui
-   **tabella della posizione** è la casa unica di quali compiti siano eseguiti, e il cui **diario** dice come si
-   riprende; ⏭️ **ciò che viene ora è ESEGUIRLO**, dal primo compito che quella tabella lascia scoperto, con
-   `superpowers:subagent-driven-development` — un
-   subagente fresco per compito, col pre-controllo delle quattro domande rifatto per ciascuno contro il codice di
-   **adesso**; le righe nella §12 di questo file, in `README.md`, nella roadmap e in tracciabilità entrano col
-   **compito 17** (D14 del piano);
-3. ✅ ADR-0029 **chiuso il 2026-09-10** con SP-8 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario
-   che sbarra il **13**, non il 2 (voce 3 della rilettura del disegno della knowledge base); poi il 13, poi il 3 — decisione 16.
-
-⛔ **RICHIAMO DEL 2026-09-17 — il verbo era sbagliato, il soggetto no.** Questa riga diceva *«la parte 2 … scritta **ora**
-coi numeri in mano … con lo stesso pre-controllo, in una sessione nuova»*, mentre quel piano è **scritto** dal 2026-09-15 e
-**rivisto in profondità** dal 2026-09-16 — venti chiusure nel suo diario, che ne è la casa unica. La voce era **registrata e
-non presa** dal 2026-09-16, nella tabella *«Le voci aperte che questo piano SA»*; ✅ **decisa dal proprietario il 2026-09-17 —
-B**: la §13 aggancia la manutenzione a *«cambio del prossimo passo»*, quel cambio era già avvenuto, e un documento di stato
-disallineato mente con autorevolezza.
-
-⛔ **SECONDO RICHIAMO DELLO STESSO GIORNO — la cifra, stavolta, non il verbo.** Questa riga diceva *«e **nessun
-compito è eseguito**»* e *«dal **compito 1**»*, scritte il mattino del 2026-09-17; lo stesso giorno i compiti **1 e 2**
-erano fatti, rivisti e spinti, e la riga mentiva in meno di una giornata. ⛔ **Il rimedio NON è riallinearla a «due»:**
-è la regola di [`../CLAUDE.md`](../CLAUDE.md) — *un puntatore o una cifra che vive in PIÙ documenti si TOGLIE, non si
-ricorregge* — e la casa unica di quali compiti siano eseguiti è la **tabella della posizione** del piano, che chi
-esegue aggiorna nel commit del compito. Un rimando non può marcire; un numeratore marcisce a ogni compito. Gotcha
-**#68**.
+⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il brainstorming del DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi
+e token centralizzati — **primo atto della sessione che apre dopo la chiusura del 2**, per decisione del proprietario (2026-09-21,
+trentasettesima chiusura del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md); i tre
+momenti in [`archivio/consegna-avvio-brainstorming-sottoprogetto-2.md`](archivio/consegna-avvio-brainstorming-sottoprogetto-2.md)):
+`superpowers:brainstorming` prima di tutto; lo stile di oggi è un **segnaposto dichiarato**, in testa a `gui/src/tokens/tokens.css`.
+**Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
+del 3. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
+sta nel [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge
+**per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.
 
 ⚠️ La cronaca ripresa per ripresa non sta qui: vive nella stella polare e, parola per parola, negli archivi. Il margine del
 tetto di questo file lo dà il comando nella tabella dello stato della stella polare (gotcha #100).
@@ -948,6 +920,10 @@ Apri **un** file, quello che serve. Non la cartella.
 | come si è **eseguito** il riconoscimento gesti — i due ADR, i rimandi, la roadmap, SP-7 e la sonda S3, con l'errata in testa e la tabella della posizione | [`plans/2026-09-03-riconoscimento-gesti.md`](superpowers/plans/2026-09-03-riconoscimento-gesti.md) — ⚠️ **a compiti, mai intero** |
 | ⛔ **il perimetro della KNOWLEDGE BASE** — che cosa la mappa chiede al kernel e dove va: la strada B, i tre meccanismi del sotto-progetto 13 con le due pretese, le CRUD nel registro delle funzioni, il pannello col 6, le decisioni col loro chiusore, e per ogni artefatto il controllo che lo esercita | [`specs/2026-09-04-knowledge-base-design.md`](superpowers/specs/2026-09-04-knowledge-base-design.md) — ⚠️ **non è una spec**, e **non disegna la capacità** |
 | come si è **eseguito** il piano dei documenti della knowledge base — i rimandi in testa a quattro ADR e nella riga di ADR-0039, la riga 13 in roadmap, le righe di tracciabilità, la decisione 7 dei gesti chiusa, con l'errata in testa e la tabella della posizione | [`plans/2026-09-04-knowledge-base-documenti.md`](superpowers/plans/2026-09-04-knowledge-base-documenti.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **la direzione della GUI** — le viste, i moduli, la disposizione, il protocollo core ↔ GUI, e la tabella delle decisioni col loro chiusore | [`specs/2026-09-07-direzione-gui-design.md`](superpowers/specs/2026-09-07-direzione-gui-design.md) — ⚠️ **non è una spec**: è la stella polare, e si legge **per intero** da chi riprende il fronte GUI |
+| ⛔ **il perimetro della GUI minima** — che cosa il 2 costruisce e che cosa no, il filo, lo schema, il registro, il core finto, le prove e il cancello, le decisioni aperte col chiusore | [`specs/2026-09-06-sottoprogetto-2-gui-minima-design.md`](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) — ⚠️ **non è una spec**; la **§10** dice come si riprende |
+| come si è **eseguita la parte 1** — SP-8, i due gusci misurati, ADR-0029 chiuso | [`plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md`](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **come si è ESEGUITA la parte 2** — il filo, la settima porta, il registro, il daemon, la SPA, il cancello web, X-1 e X-3; con l'errata in testa, la tabella della posizione e la **Definizione di «fatto»** | [`plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md`](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) — ⚠️ **a compiti, mai intero** |
 | ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) |
 | il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** |

@@ -2364,3 +2364,48 @@ del sotto-progetto 2 (compito 8, decisione D16 del piano), parola per parola; i 
    `dockview` — la seconda scritta dopo la misura; il pre-controllo delle quattro domande di `CLAUDE.md` nella sessione che
    scrive il piano; l'esecuzione, subagent-driven, in sessioni nuove;
    ✅ **RICHIAMO DEL 2026-09-10, alla chiusura della sessione che l'ha completato:** il piano della parte 1 è **scritto per intero** — pre-controllo, decisioni, compiti 1–8, riletto — in [`superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md`](../superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md); l'esecuzione è **in corso** dal 2026-09-10 — i compiti **1–6** chiusi in tre sessioni, dieci commit di compito, l'errata E1–E13; **SP-8 è misurato** sui due gusci installati, e la sezione SP-8 di `spikes/RISULTATI.md` porta M1–M5, Q1 e Q2 con le righe del proprietario in attesa — il **compito 7** è chiuso il 2026-09-10 col proprietario allo schermo — `dockview` resta (otto su otto), il guscio è **Electron** (A, sua), Q3 rifiutata in entrambi i gusci con le cause lette, M4 sopra soglia su entrambi anche con la chat nascosta — e riprende dal **compito 8**, la chiusura, in una sessione **nuova**, come dice la sua sezione «Come si riprende», la settima chiusura;
+
+## Il puntatore «Il prossimo passo» della §6 del compendio, com'era — archiviato il 2026-09-22
+
+⚠️ **Vero il giorno in cui fu scritto.** Uscito dalla §6 del compendio alla chiusura della parte 2 del piano del sotto-progetto 2
+(compito 17, voce **E218** del [piano](../superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)), parola per parola,
+dal ⏭️ all'ultima riga del punto 3, coi due richiami del 2026-09-17 che lo correggevano; i link riscritti per questa cartella.
+
+⏭️ **IL PROSSIMO PASSO: ESEGUIRE IL PIANO DELLA PARTE 2 DEL SOTTO-PROGETTO 2 — è SCRITTO dal 2026-09-15, RIVISTO IN
+PROFONDITÀ dal 2026-09-16, e l'ESECUZIONE È COMINCIATA.** ⛔ **Quali compiti siano eseguiti NON si legge
+qui:** la casa unica è la **tabella della posizione** di quel piano, e il suo **diario** dice da quale si riprende.
+La parte 1, SP-8, è eseguita il 2026-09-10. I due disegni sono
+**scritti sul posto il 2026-09-09** (decisione 39 della stella polare): la
+[stella polare della GUI](../superpowers/specs/2026-09-07-direzione-gui-design.md) — viste, moduli, disposizione, il protocollo
+core ↔ GUI — e il [disegno del 2](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), le cui §1–§10 sono approvate.
+Si riprende dalla **§10 del disegno del 2**, «Come si riprende», che dà l'ordine coi comandi; i due disegni si leggono **per intero**:
+
+1. ✅ la **rilettura del proprietario** dei due disegni in questa forma, in chat — il sì è condizionato e non si deduce; la
+   domanda minima con cui si apre sta nella §10 — **fatta il 2026-09-09**, voce per voce: le sei voci sue tutte A, decisioni 41–47 della stella polare;
+2. ✅ **la parte 1 del piano del 2, eseguita il 2026-09-10** —
+   [piano](../superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md): SP-8, ADR-0029 chiuso,
+   `dockview` resta; ✅ **il piano della parte 2 è SCRITTO dal 2026-09-15 e RIVISTO IN PROFONDITÀ dal 2026-09-16** —
+   diciassette compiti, [piano](../superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), la cui
+   **tabella della posizione** è la casa unica di quali compiti siano eseguiti, e il cui **diario** dice come si
+   riprende; ⏭️ **ciò che viene ora è ESEGUIRLO**, dal primo compito che quella tabella lascia scoperto, con
+   `superpowers:subagent-driven-development` — un
+   subagente fresco per compito, col pre-controllo delle quattro domande rifatto per ciascuno contro il codice di
+   **adesso**; le righe nella §12 di questo file, in `README.md`, nella roadmap e in tracciabilità entrano col
+   **compito 17** (D14 del piano);
+3. ✅ ADR-0029 **chiuso il 2026-09-10** con SP-8 (voce 0029 della §5) — **e in parallelo AUD-004**, l'ADR del proprietario
+   che sbarra il **13**, non il 2 (voce 3 della rilettura del disegno della knowledge base); poi il 13, poi il 3 — decisione 16.
+
+⛔ **RICHIAMO DEL 2026-09-17 — il verbo era sbagliato, il soggetto no.** Questa riga diceva *«la parte 2 … scritta **ora**
+coi numeri in mano … con lo stesso pre-controllo, in una sessione nuova»*, mentre quel piano è **scritto** dal 2026-09-15 e
+**rivisto in profondità** dal 2026-09-16 — venti chiusure nel suo diario, che ne è la casa unica. La voce era **registrata e
+non presa** dal 2026-09-16, nella tabella *«Le voci aperte che questo piano SA»*; ✅ **decisa dal proprietario il 2026-09-17 —
+B**: la §13 aggancia la manutenzione a *«cambio del prossimo passo»*, quel cambio era già avvenuto, e un documento di stato
+disallineato mente con autorevolezza.
+
+⛔ **SECONDO RICHIAMO DELLO STESSO GIORNO — la cifra, stavolta, non il verbo.** Questa riga diceva *«e **nessun
+compito è eseguito**»* e *«dal **compito 1**»*, scritte il mattino del 2026-09-17; lo stesso giorno i compiti **1 e 2**
+erano fatti, rivisti e spinti, e la riga mentiva in meno di una giornata. ⛔ **Il rimedio NON è riallinearla a «due»:**
+è la regola di [`../CLAUDE.md`](../../CLAUDE.md) — *un puntatore o una cifra che vive in PIÙ documenti si TOGLIE, non si
+ricorregge* — e la casa unica di quali compiti siano eseguiti è la **tabella della posizione** del piano, che chi
+esegue aggiorna nel commit del compito. Un rimando non può marcire; un numeratore marcisce a ogni compito. Gotcha
+**#68**.

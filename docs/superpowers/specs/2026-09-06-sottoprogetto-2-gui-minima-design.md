@@ -459,7 +459,7 @@ Costo di A: il passo web gira anche per un commit di sola documentazione, come g
 il trasporto in `platform` è OS-specifico e la CI prova solo la metà Unix: la metà Windows la prova il cancello
 sulla macchina del proprietario; la prova capo a capo nel guscio, parte 2; il lint delle scritte, se immaturo; la
 scansione degli avvisi di sicurezza (X-3, del proprietario), che con npm ha un secondo mondo; il tempo del cancello
-col passo web, che si misura al piano e si scrive nel commento di `gate.sh` con la data, come per il settimo passo. ✅ **RICHIAMO DEL 2026-09-22, dal compito 16 del piano della parte 2 (D88):** la CI gira **anche su Windows** — decisione 44, X-1 chiusa — e gli avvisi di sicurezza si **cercano**: `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh` — decisione 45, X-3 chiusa; il verbale nelle due righe dell'audit. Il resto di questo capoverso resta com'è
+col passo web, che si misura al piano e si scrive nel commento di `gate.sh` con la data, come per il settimo passo. ✅ **RICHIAMO DEL 2026-09-22, dal compito 16 del piano della parte 2 (D88):** la CI gira **anche su Windows** — decisione 44, X-1 chiusa — e gli avvisi di sicurezza si **cercano**: `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh` — decisione 45, X-3 chiusa, e il lockfile del finto con `cargo audit --file fake-core/Cargo.lock` nello stesso `gate-gui.sh` (D83; M-3 della revisione del 16, 2026-09-22); il verbale nelle due righe dell'audit. Il resto di questo capoverso resta com'è
 
 **Decisioni del coordinatore in questa sezione**, nella tabella omonima della stella polare: 46, la versione di
 Node in `package.json` con `engine-strict`; 47, niente cache npm; 48, le sonde del finto in `main.rs` e la

@@ -91,6 +91,11 @@ run "documentation consistency"           bash scripts/check-docs.sh
 # visible before it becomes a temptation" -- and `cargo test` swallows the output of tests
 # that pass.
 #
+# ⚠️ 2026-09-22: "SEVENTH" is the NAME this step carries in the plan and the compendium ("il settimo
+#   passo"), and it was the seventh `run` line when written; counted today it is the NINTH, after tasks
+#   15 and 16 added one `run` each above. Kept as a name, not realigned as a count (M-1 of the review
+#   of task 16): the list of `run` lines is the only count that cannot age.
+#
 # ⚠️ EVERY CAMPAIGN HAS TO BE ADDED HERE BY NAME, and that is the lesson rather than the
 # history: this step names its targets ONE BY ONE, so a campaign absent from the list is
 # SILENT. It has been learned TWICE, both times the same way -- the bench in place, the line

@@ -21,11 +21,6 @@ cd "$(dirname "$0")/.." || exit 1
 #   (step 10) and re-run here (R5-17). An order of magnitude, dated; nothing asserts on it.
 echo "-------- gui: fake core"
 cargo test --locked --manifest-path gui/fake-core/Cargo.toml
-# ⛔ THE FAKE CORE'S OWN LOCKFILE IS AUDITED TOO (D83). It is seeded from the root's and pins the same
-# crates, but it is a SECOND lockfile, and the `cargo audit` of `gate.sh` reads the root's alone. Same
-# verdict expected on the same crates; a divergence between the two is task 12's comparison script.
-echo "-------- gui: fake core advisories"
-cargo audit --file gui/fake-core/Cargo.lock
 
 cd gui
 # `npm ci` is the twin of `--locked`: a manifest and a lockfile that disagree are a red, and
@@ -45,6 +40,22 @@ npm test
 # the lint, so they must not sit behind it.
 echo "-------- gui: lint"
 npm run lint
+# ⛔ THE FAKE CORE'S OWN LOCKFILE IS AUDITED TOO (D83). It is seeded from the root's and pins the same
+# crates, but it is a SECOND lockfile, and the `cargo audit` of `gate.sh` reads the root's alone. Same
+# verdict expected on the same crates; a divergence between the two is task 12's comparison script.
+#
+# ⛔ AFTER THE PROBES AND THE LINT, AND THAT IS THIS FILE'S OWN ORDERING RULE ("lint last" above): under
+# `set -e` a red here must not hide the build and the probes, and this check CAN go red without a
+# commit -- the world publishes an advisory -- exactly like its twin in `gate.sh`. Measured on
+# 2026-09-22 by the review of task 16 (I-2): in second position, one denied warning left five of the
+# seven sub-steps unrun. The cost that stays, declared: a red here still hides `npm audit` below, and
+# the root audit in `gate.sh` reds on the same crates anyway. It runs from `gui/`: the path is relative.
+# ⚠️ It fetches the advisory database a SECOND time per run (an incremental fetch, seconds): no `-n`
+# here either (D69) -- two network rounds per run are the declared price of two lockfiles.
+# ⛔ SAME PREREQUISITE AS `gate.sh`: if this goes red with `error: no such command: audit`, the cure is
+#     cargo install cargo-audit --locked --version 0.22.2
+echo "-------- gui: fake core advisories"
+cargo audit --file fake-core/Cargo.lock
 # ⛔ THE SECOND WORLD OF X-3. `npm ci` above installs what the lockfile pins; this asks the registry
 # how those pins ARE. Same shape as `cargo audit` in `gate.sh`, same network cost, and the same
 # property: it can go red without a commit.

@@ -22406,6 +22406,84 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La trentanovesima chiusura — 2026-09-22, seconda sessione del giorno: il COMPITO 15 è ESEGUITO, RIVISTO e CURATO; la cura è ACCETTATA dal proprietario senza ri-revisione; il PUSH è fatto; restano 16, 17
+
+⛔ **DA SAPERE SUBITO, cinque cose.**
+
+**(1)** ✅ **IL PUSH È FATTO** — `main` e `origin/main` coincidono: `git rev-list --left-right --count origin/main...main` → `0	0`. Albero **pulito**, `git stash list` vuoto, nessuna operazione git a metà, nessun server acceso. ⚠️ **La CI di `ac4c6b6` è la PRIMA corsa del cancello CON IL PASSO WEB su `ubuntu-latest`**, ed è **VERDE** — `completed success`, letta dall'API di GitHub prima del commit di questa chiusura: `setup-node`, `npm ci` su Linux e la compilazione a freddo del finto sul runner hanno retto la prima volta. La sessione nuova rilegge comunque la corsa del commit di **questa chiusura**, col comando del punto 3 qui sotto (`gh` non è installato).
+
+**(2)** ✅ **IL COMPITO 15 È ESEGUITO (`b0ef8f7`) E RIVISTO** da un revisore fresco su Opus: conformità al brief **piena** — i cinque blocchi dettati coincidono col codice byte per byte, i soli scarti sono i segnaposto dei tempi che il compito ordina di sostituire — **0 Critici, 3 Importanti, 3 Minori, 3 Nit**; tutte le direzioni rifatte e arrossate, più sei sue. La riga **15** della posizione è ✅. Le tre divergenze dell'implementatore (`E193`…`E195`, `620b04d`) erano tutte sulla **sonda** e nessuna sull'artefatto.
+
+**(3)** ✅ **I tre Importanti sono CURATI DAL COORDINATORE (`ac4c6b6`, `E196`…`E199`) e la cura è ACCETTATA dal proprietario SENZA ri-revisione — decisione B del 2026-09-22, terzo precedente dopo il 13 e il 14.** `E196`: la terza mutazione del Passo 7 — un `.vue` sotto `src/` che nessuno importa, con una scritta grezza — ferma `gate-gui.sh` dal **quinto** sotto-passo con le cinque etichette nel log, rifatta dal coordinatore prima di scriverla. `E197`: una guardia statica di non-vacuità in `copy.test.ts` (la riga `settings` di `eslint.config.js` testuale, e `src/locales/it.json` presente), **82 ms**, rossa con `localeDir` rotto. ⛔ **La PRIMA forma di quella cura — l'API di `ESLint` sulla configurazione vera — aveva un difetto:** 4,6 s da sola e **27 s in suite**, cioè `Test timed out in 5000ms`, colto solo perché la direzione di `E196` rilanciava `gate-gui.sh` prima del commit. `E198`: sette parole nel terzo richiamo della §8 (*«sulla cella «Forma» di questa riga»*). ⚠️ **Anche la cura del 14 (`E186`, `58f1dd7`) è stata accettata senza ri-revisione (B)**, all'apertura di questa sessione, dopo una rilettura del coordinatore contro lo schema dei messaggi.
+
+**(4)** ⚠️ **Registrate e NON prese, tutte del proprietario:** l'avviso di `vite` sui chunk sopra i 500 kB (663 kB, **nessun** compito del piano lo tiene — richiamo del 2026-09-22 su `E187`: A/B alla chiusura del piano nella forma della decisione 97); il `<data>` della voce 5 della §10 del disegno del 2 (`E192`: casa il **17** o il proprietario); M-3 del 14 (`E187`, le regioni `role="status"`, un lettore di schermo vero in mano); ⛔ **il design system da Agentic OS — chiesto DUE volte oggi — si fa a sotto-progetto 2 CHIUSO, cioè dopo il 17, come PRIMO brainstorming della sessione successiva**: va scritto come prossimo passo alla chiusura del 17 e nella §6 del compendio, o la domanda torna.
+
+**(5)** ⏭️ **IL PASSO CHE VIENE È IL COMPITO 16** — X-1, la matrice Windows nella CI; `cargo audit` in `gate.sh`; `npm audit` in `gate-gui.sh` — col pre-controllo delle quattro domande rifatto contro il codice di ADESSO: su questo piano ha trovato difetti in **tutti** i compiti, e il 15 ne aveva **cinque** prima del dispaccio, **tre** durante e **tre** dalla revisione. La prossima voce d'errata è **E200**. ⚠️ **Ciò che il pre-controllo del 16 deve sapere da oggi:** `cd gui && npm audit` rende **0** su tutte e cinque le gravità (il 16 nasce verde), e `npm install` stampa `glob@10.5.0` deprecato (dev, via `@intlify/eslint-plugin-vue-i18n`: non è un rosso); ⛔ **`cargo audit` è un binario da installare** — `cargo audit --version` su questa macchina **e** sul runner sono la prima misura, prima di ogni riga dettata; `scripts/gate-gui.sh` finisce **dentro** `gui/` e il terzo richiamo della §8 fissa dove entrano i due audit (`cargo audit --file gui/fake-core/Cargo.lock` **prima** del `cd gui`, `npm audit` **in fondo**: D83, D71); `.github/workflows/quality-gate.yml` è `i/lf w/crlf` a **32** righe e `scripts/gate.sh` a **112**, entrambi si toccano con Python `newline=""`; `actions/checkout` resta **v4** (§8) e il commento della CI nomina `v7.0.0` di `setup-node` mentre `uses:` segue tutta la `v7` (Nit-2); tutti gli script del cancello sono `100644` e si lanciano con `bash scripts/…`; `core.filemode` è `false` qui e lo sarà sul runner Windows.
+
+✅ **Che cosa è stato fatto, in una sessione.** ⛔ **Quanti commit NON è scritto qui:** li elenca `git log --oneline 339cf15..HEAD`.
+
+| Giro | Chi | Che cosa ha trovato |
+|---|---|---|
+| **il pre-controllo** | il coordinatore | `E188`…`E192`, `e52c019`: il disegno del 2 `i/lf w/crlf` e lo script del Passo 11 che si fermava al primo `assert` (E180 nel compito dopo), lo stesso script che **non compilava** (`IndentationError`, misurato con `py_compile`), tre richiami e non due, il piano assente dal `git add` (E182 nel compito dopo), un `<data>` della §10 che il criterio avrebbe contato. ✅ E la catena `eslint` dettata installata **fuori** da `gui/` e lanciata sul codice di oggi: 17 file, verde, e rossa con una mutazione — il 15 non nasceva rosso |
+| **l'implementatore** | un subagente fresco (Opus 5) | `b0ef8f7`, 9 file, +2225/−44 (2067 il lockfile), **~274k token, 99 chiamate, ~45 min**; tre divergenze riferite invece di aggirate, tutte sulla sonda: i due `grep` della CI contavano il commento dettato (`E193`), il `blame -L 34,41` leggeva righe del piano dei gesti (`E194`), la prosa del Passo 11 smentiva lo script (`E195`) |
+| **le voci** | il coordinatore | `620b04d`: `E193`…`E195` e il richiamo su `E187` (i chunk non sono di nessuno); nessun blocco da rispecchiare — `eslint.config.js` e `copy.test.ts` identici ai blocchi (`cmp`, `diff`) |
+| **la revisione** | un revisore fresco (Opus 5) | **~353k token, 111 chiamate, ~30 min** — sopra la banda, perché ha fatto girare `gate-gui.sh` e il cancello intero per ogni direzione; conforme byte per byte; **I-1** (il rosso web si ferma alle sonde: `npm run lint` non era esercitato da nessuno), **I-2** (`no-missing-keys` muto se `localeDir` non risolve), **I-3** (il terzo richiamo nomina la cella sbagliata), M-1 (`100644` contro «eseguibile»), M-2 (il check dei `warn` non va rosso da solo), M-3 (`npm ci` cancella `node_modules/`), tre nit; sul ruling di `E195` dà ragione al coordinatore |
+| **la cura** | il coordinatore | `ac4c6b6`: `E196`…`E199`, la guardia statica, le tre righe del commento M-3, sette parole nel disegno, i Passi 5, 6, 7, 11 e quattro righe del criterio, il blocco di `copy.test.ts` rispecchiato; **accettata senza ri-revisione (B)** |
+
+E lo stato alla chiusura, che non si ricorda ma si **rifà**:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` **allineato**: `git rev-list --left-right --count origin/main...main` → `0	0`; `git status --porcelain --untracked-files=all` vuoto; `git stash list` vuoto |
+| La posizione | **quindici** ✅ e **due** ⬜ — restano i compiti **16, 17** |
+| L'errata | l'`awk` ristretto alla sezione per intestazione → `E1`…`E199` senza buchi né duplicati; **dodici** voci nuove in questa sessione, `E188`…`E199` |
+| Il mondo web | `cd gui && npm run build` → **0** (con l'avviso di `vite` sui chunk, da prima del 14); `npm test` → **84 passate, 1 saltata**; `npx eslint src` → **zero righe**, `EXIT=0` |
+| Il finto | `cd gui/fake-core && cargo test --locked` → **6 passed** |
+| Il cancello | `bash scripts/gate.sh` → `GATE GREEN`, con l'etichetta `gui: fake core and SPA` **una** volta e i cinque sotto-passi `-------- gui:` nell'uscita; `bash scripts/check-docs.sh` → `OK`. ⚠️ Il cancello dura ora ~**2m41s** (misurato dall'implementatore, scritto nel commento di `gate.sh` con la data), `gate-gui.sh` da solo ~1m50s, e **cancella `gui/node_modules/` a ogni corsa** |
+| I fine-riga | `git ls-files --eol scripts/gate-gui.sh scripts/gate.sh gui/eslint.config.js gui/package.json gui/package-lock.json gui/src/locales/copy.test.ts .github/workflows/quality-gate.yml docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md` → `i/lf` su tutti e nove; la colonna `w/…` è di questa macchina e non conta; il piano nell'albero ha righe e CR **uguali** (`wc -l` e `tr -cd '\r' \| wc -c`) |
+| Margine del compendio | ✅ **il compendio NON è stato toccato** |
+| I gotcha | nessuno nuovo in `HANDOFF.md`: le lezioni di questa sessione sono specie già scritte — #31, #57, #68, la famiglia `E51`/`E180`, e la serie «ogni cura lascia un difetto» che da `E119` arriva ora anche al coordinatore |
+| La CI | **verde** per `ac4c6b6` (`completed success`: la prima corsa del cancello col passo web su `ubuntu-latest`), come per `e52c019` e `339cf15` — letta dall'API di GitHub, comando al punto 3 |
+
+#### Ciò che resta aperto, e non è nascosto
+
+- ✅ **La CI di `ac4c6b6` è verde**; quella del commit di questa chiusura parte col push, e la sessione nuova la legge per prima.
+- ⚠️ **Le due cure del coordinatore (`58f1dd7` del 14, `ac4c6b6` del 15) sono accettate senza ri-revisione** per decisione del proprietario: il rischio che restano è dichiarato in `E186` ed `E197`.
+- ⚠️ Le registrate del punto (4): i chunk, il `<data>` della §10, M-3 del 14, il design system dopo il 17.
+- ⚠️ **Sette numeri d'errata compaiono due volte nel piano** (`E12`, `E78`, `E160`…`E164`): ricopiature in una sezione di riepilogo, preesistenti e identiche a `e52c019` — misurato dalla revisione; il conteggio dell'errata resta giusto perché l'`awk` è ristretto alla sezione per intestazione.
+- ⚠️ I rapporti, i dispacci, i brief e gli script di oggi stanno in `.superpowers/sdd/2026-09-11-sottoprogetto-2-parte-2-gui-minima/` — git-ignorati, **spariscono con la macchina**: ciò che deve sopravvivere è dentro `E188`…`E199` e in questo diario. La cartella `_task15_lint/` (la catena installata fuori da `gui/`) è **cancellata** alla chiusura: la catena vera è in `gui/`.
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **LA SPECIE DI OGNI VOCE D'ERRATA DEL COMPITO PRIMA SI CERCA IN TUTTO IL PIANO PRIMA DI DISPACCIARE IL COMPITO DOPO** (`E188`, `E191`): `E51` → `E180` → `E188` è la stessa trappola tre volte, sempre nel compito che nessuno aveva ancora aperto.
+- ⛔ **UN BLOCCO PYTHON DETTATO SI ESTRAE E SI COMPILA PRIMA DEL DISPACCIO** (`E189`): `awk` fra `python - <<'EOF'` ed `EOF` dopo `tr -d '\r'`, poi `python -m py_compile`. Tre revisioni l'avevano **letto**.
+- ⛔ **OGNI `grep -c` DI UN CRITERIO SI LANCIA SUL FILE DI OGGI PRIMA DEL DISPACCIO** (`E192`, `E193`): un `<data>` che il file portava da prima, il commento che lo stesso Passo detta. La sonda si ancora alla riga o alla frase che il compito scrive, mai al file intero.
+- ⛔ **UNA CATENA DETTATA SI INSTALLA FUORI DA `gui/` E GIRA SUL CODICE DI OGGI CON UNA MUTAZIONE** prima del dispaccio: 23 s di `npm install` dicono se il compito nasce rosso, e `--format json` conta i file letti contro la vacuità.
+- ⛔ **UN ROSSO CHE «SI FERMA AL PRIMO ROSSO» SI PROVA ANCHE PER L'ULTIMO PASSO** (`E196`): il rosso web si ferma alle sonde; solo un `.vue` che nessuno importa arriva al lint. E la mutazione ovvia — testo grezzo in `Band.vue` — la coglie una sonda della SPA.
+- ⛔ **UNA CURA SI MISURA SULLA SUITE INTERA, NON SUL SOLO FILE** (`E197`): 4,6 s da sola, 27 s in suite → timeout, colto perché un'ALTRA direzione è stata rilanciata prima del commit. E una guardia che carica una catena intera dentro `vitest` va rossa per lentezza: la forma che regge è statica, col punto cieco dichiarato.
+- ⛔ **UN RICHIAMO NOMINA LA CELLA CHE CORREGGE** (`E198`): la convenzione del file è *«sulla cella «…» di questa riga»*; `E195` ne aveva preso la metà.
+- ⚠️ **LA DURATA DELLA SUITE SI CONFRONTA COME DIFFERENZA, NON COME TOTALE**: 13,5 s contro 12,7 s con e senza il file nel pomeriggio; 6,6 s al mattino per la stessa suite — la macchina, non la sonda.
+- ⚠️ **`git ls-files 'gui/src/*.vue'` → 13**: l'asterisco di git attraversa la barra; sommare due modelli conta due volte (Nit-1).
+- ⚠️ **LA LISTA «FUORI PERIMETRO» DI UN RAPPORTO È L'INGRESSO DEL PRE-CONTROLLO DEL COMPITO DOPO**: il revisore ha già censito ciò che è del 16 e del 17.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -5`: la testa è il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md` e del compendio, poi **la testa di questo piano** e **questa chiusura**.
+3. ⛔ **PER PRIMA COSA la CI del commit di questa chiusura** (quella di `ac4c6b6`, col passo web, è verde), dall'API di GitHub (`gh` non c'è):
+
+   ```bash
+   python -c "import json,urllib.request as u; d=json.load(u.urlopen(u.Request('https://api.github.com/repos/devfrx/daemon/actions/runs?per_page=4',headers={'User-Agent':'harness'}))); [print(r['created_at'][:16],r['status'],r['conclusion'],r['head_sha'][:7],r['html_url']) for r in d['workflow_runs']]"
+   ```
+
+   Se è **rossa**, il log su GitHub dice quale sotto-passo, e la voce d'errata viene **prima** del pre-controllo del 16, che tocca lo stesso flusso di lavoro.
+4. ⏭️ **Poi il COMPITO 16**: il pre-controllo delle quattro domande contro il codice di ADESSO, con la lista del punto (5) — poi un subagente fresco su Opus, poi un revisore fresco su Opus.
+5. ⛔ **Un dispaccio per volta, col costo detto PRIMA e il sì del proprietario**: oggi due dispacci (implementatore ~274k, revisore ~353k), autorizzati con una risposta sola all'apertura; le due cure del coordinatore accettate senza ri-revisione, ciascuna con la propria A/B.
+6. ⛔ **I modelli di questa sessione**, in `.superpowers/sdd/2026-09-11-sottoprogetto-2-parte-2-gui-minima/`: `_extract_brief_15.py` (il brief per intestazione, con le voci P e le righe D che il compito nomina: si cambiano `TASK`, `NEXT`, `P_LIST`, `D_LIST`), `_precheck_15.py` (le voci d'errata dopo l'ultima e le ancore asserite), `_wave_15b.py` (il `mirror()` dall'albero di lavoro), `_task15_lint_setup.py` (una catena dettata installata fuori da `gui/`), `_task15_warn_check.sh` (un comando del criterio provato nelle due direzioni su una copia), `_closure_39.py` (questa chiusura). Il prompt del dispaccio si salva su file **prima** del dispaccio e il subagente lo legge da lì.
+7. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
+---
+
 ### La trentottesima chiusura — 2026-09-22: il COMPITO 14 è ESEGUITO, RIVISTO e CURATO; la cura NON è rivista; il PUSH è fatto; restano 15, 16, 17
 
 ⛔ **DA SAPERE SUBITO, cinque cose.**

@@ -672,10 +672,10 @@ più (decisione 32). La misura la rifanno i comandi nel prossimo passo della ste
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
 
 ⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il brainstorming del DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi
-e token centralizzati — **primo atto della sessione che apre dopo la chiusura del 2**, per decisione del proprietario (2026-09-21,
-trentasettesima chiusura del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md); i tre
-momenti in [`archivio/consegna-avvio-brainstorming-sottoprogetto-2.md`](archivio/consegna-avvio-brainstorming-sottoprogetto-2.md)):
-`superpowers:brainstorming` prima di tutto; lo stile di oggi è un **segnaposto dichiarato**, in testa a `gui/src/tokens/tokens.css`.
+e token centralizzati — **primo atto di una sessione nuova**, per decisione del proprietario (2026-09-21, trentasettesima chiusura
+del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md); la sessione nuova, 2026-09-22): la
+consegna dell'avvio è [`specs/2026-09-22-design-system-design.md`](superpowers/specs/2026-09-22-design-system-design.md), che si legge
+**per intero**, poi `superpowers:brainstorming`; lo stile di oggi è un **segnaposto dichiarato**, in testa a `gui/src/tokens/tokens.css`.
 **Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
 del 3. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
 sta nel [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge

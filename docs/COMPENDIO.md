@@ -671,6 +671,11 @@ aperte di questa §6, questo puntatore, `CLAUDE.md` — e `AVVIO-CHAT.md` resta 
 più (decisione 32). La misura la rifanno i comandi nel prossimo passo della stella polare; il metodo — misurare prima, ogni
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
 
+⛔ **PRIMA DEL PRIMO TEMPO, il residuo del compito 17** — i Minori e i Nit della sua ri-revisione e i due commenti dei
+manifesti, censiti in **E236** ed **E237** del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md):
+la cura è rimandata per decisione del proprietario (2026-09-22, contesto saturo), e la quarantaduesima chiusura del suo diario
+dice come si fa.
+
 ⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il brainstorming del DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi
 e token centralizzati — **primo atto della sessione che apre dopo la chiusura del 2**, per decisione del proprietario (2026-09-21,
 trentasettesima chiusura del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md); i tre

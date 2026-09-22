@@ -25,6 +25,9 @@ cargo test --locked --manifest-path gui/fake-core/Cargo.toml
 cd gui
 # `npm ci` is the twin of `--locked`: a manifest and a lockfile that disagree are a red, and
 # `engine-strict=true` in `.npmrc` makes a wrong Node a red HERE, with the reason printed.
+# ⚠️ AND `npm ci` DELETES `gui/node_modules/` FIRST, EVERY RUN -- so on every commit, documentation
+# included: a linked or hand-patched package does not survive the gate, and nothing else says so
+# (M-3 of the review, E199).
 echo "-------- gui: install"
 npm ci --no-audit --no-fund
 # `vue-tsc` inside `build` is the level 1 of the web world, the way `rustc` is for the kernel.

@@ -420,6 +420,10 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E193** | ⛔ **Compito 15, criterio di chiusura — le due sonde della CI erano ROSSE a compito perfetto: `grep -c 'package-manager-cache: false'` rende 2 e `grep -c 'cache: npm'` rende 1, perché contano sul FILE INTERO e trovano il COMMENTO che lo stesso Passo 9 detta e che D66 pretende.** È E192 alla lettera, nella riga accanto del medesimo criterio, che E192 non ha ricontato: la regola *«quando una voce corregge una specie, si cerca la specie in tutto il piano»* vale anche dentro un criterio solo. ⛔ **Misurato dall'implementatore il 2026-09-22 su `b0ef8f7`, e rifatto dal coordinatore:** `grep -n 'package-manager-cache: false' .github/workflows/quality-gate.yml` rende la riga del commento *«⛔ `package-manager-cache: false` IS WRITTEN OUT…»* e la riga dell'input; `grep -n 'cache: npm'` rende la riga del commento *«`cache: npm` would switch caching ON»*. ✅ **CORRETTO nel criterio — la sonda si ancora alla RIGA, non al testo:** `grep -cE '^ +package-manager-cache: false$'` → **1** e `grep -cE '^ +cache: npm$'` → **0**, misurate nelle due direzioni dall'implementatore. ⛔ **Il commento non si tocca:** è dettato, e D66 lo vuole accanto alla riga. Trovata eseguendo il compito 15, 2026-09-22 |
 | **E194** | ⚠️ **Compito 15, Passo 1 — l'Atteso diceva `git blame -L 34,41 .gitignore`, e le otto righe `gui-shell` non stanno più lì: un numero di riga in un Atteso marcisce, e questo era già marcito (P-102 lo porta uguale, come istantanea del 2026-09-11).** ⛔ **Misurato il 2026-09-22:** `grep -n 'gui-shell' .gitignore` rende otto righe che cominciano dalla **39**, e il `blame -L 34,41` leggeva cinque righe del piano dei gesti. ✅ **L'attribuzione è vera sulle righe giuste** — `git blame .gitignore \| grep 'gui-shell'` → `01694e3` ×2, `8fc9696` ×3, `d5eb0b8` ×3 — e il conteggio su cui il passo asserisce (otto) regge, quindi il compito non si è fermato: a marcire era il comando dell'aneddoto accanto. ✅ **CORRETTO nell'Atteso col comando che non marcisce**, `git blame .gitignore \| grep 'gui-shell'`: è `CLAUDE.md` in persona — *un numero di riga non entra in un Atteso, si scrive il grep sulla frase*. P-102 resta com'è: è un'istantanea datata. Trovata eseguendo il compito 15, 2026-09-22 |
 | **E195** | ⚠️ **Compito 15, Passo 11 — la prosa del secondo richiamo diceva «in coda alla cella *come si prova*», lo script dettato appende in coda alla RIGA, cioè nell'ultima cella (*Specie*): due righe dettate che si smentiscono, la settima regola del pre-controllo dentro un passo solo.** La tabella della §8 ha tre colonne — *Artefatto*, *Il controllo che lo esercita*, *Specie* — e nessuna si chiama «come si prova». ⚖️ **Deciso dal coordinatore il 2026-09-22: vince lo SCRIPT, e la prosa si allinea**, per tre ragioni che l'implementatore ha misurato e il coordinatore ha riletto: il terzo richiamo dello stesso passo dice esplicito *«in coda alla riga intera»*; il richiamo del 2026-09-19 sulla riga *«il limite di giri e `Disconnected`»* sta nell'ultima cella, nello stesso file; e la cella *Specie* diceva *«`npm test`, o revisione dichiarata»*, che è proprio ciò che il richiamo corregge. Costo se sbagliata: uno spostamento di una cella, con lo stesso script e un taglio sulla penultima barra. ✅ **Eseguito come lo script, e registrato dall'implementatore invece che aggiustato in silenzio; la prosa del Passo 11 ora dice «in coda alla riga».** Trovata eseguendo il compito 15, 2026-09-22 |
+| **E196** | ⛔ **Compito 15, Passo 7 — la prosa diceva che il rosso dal mondo web *«prova che la catena dopo il `cd` arriva davvero in fondo»*, e la misura dice QUATTRO etichette su cinque: `npm test` ferma la catena prima di `npm run lint`, che è l'unico sotto-passo che questo compito aggiunge, e NESSUNA delle otto direzioni dettate lo esercitava.** È la seconda domanda del pre-controllo — *la sonda manca, e non si vede leggendo* — sul meccanismo che il compito costruisce, e la lezione che il Passo 7 cita in proprio (*«un passo che si ferma al primo rosso può fermarsi sempre nello stesso punto»*) applicata a sé stesso. ⛔ **Misurato dalla revisione il 2026-09-22 (I-1):** con `copy.test.ts` mutato, `gate-gui.sh` → `EXIT=1` e `grep '^-------- gui:'` rende `fake core`, `install`, `build`, `probes` — `lint` **non compare**. ⚠️ **E la mutazione ovvia non basta:** una scritta grezza in `Band.vue` la coglie una sonda della SPA (`expect(wrapper.text()).toBe("")`), e la catena si ferma di nuovo alle sonde. ✅ **La direzione che funziona, colmata dalla revisione e rifatta dal coordinatore lo stesso giorno:** un `.vue` sotto `src/` che **nessuno importa**, con una scritta grezza — attraversa `vue-tsc` e `vitest` senza una riga, e `gate-gui.sh` esce **1** dal **quinto** sotto-passo con le cinque etichette nel log; dal cancello intero, `GATE RED`. ✅ **CORRETTO:** terza mutazione nel Passo 7, la prosa dice fin dove arriva ciascun rosso, e una riga nuova nel criterio di chiusura. Trovata dalla revisione del compito 15, 2026-09-22 |
+| **E197** | ⛔ **Compito 15 — `@intlify/vue-i18n/no-missing-keys` diventa MUTO, non rosso, se `settings["vue-i18n"].localeDir` di `eslint.config.js` smette di risolvere: metà della rete di D65 aveva una via di vacuità silenziosa, e nessuna delle diciassette righe del criterio la guardava.** ⛔ **Misurato dalla revisione il 2026-09-22 (I-2), nelle due direzioni su una copia:** con `localeDir` a `./non/esiste/*.json`, `$t("modules.inventato")` in `Status.vue` → **nessuna riga**, `EXIT=0`; com'è → `error 'modules.inventato' does not exist…`, `EXIT=1`. Il giorno che `src/locales/` si rinomini o il glob smetta di corrispondere, il lint resta verde, il cancello resta verde, e la sonda superstite di `copy.test.ts` non lo vede: guarda le chiavi che la SPA **costruisce** (P-105), non quelle **scritte** in un template. ⚖️ **Deciso dal coordinatore: una GUARDIA DI NON-VACUITÀ permanente, non una riga di criterio** — una riga di criterio vale il giorno dell'esecuzione, la guardia vale a ogni corsa del cancello (§8.6.2 del compendio). ✅ **CURATO dal coordinatore in `gui/src/locales/copy.test.ts`, la casa di *«ciò che nessun lint può fare»*, in DUE forme, e la prima è caduta alla misura:** la prima sonda costruiva un `ESLint` sulla configurazione **vera** e pretendeva da `lintText` esattamente l'errore di `no-missing-keys` su una chiave inventata — giusta nelle due direzioni da sola (`2 passed`; `localeDir` rotto → `expected [] to deeply equal [ '@intlify/vue-i18n/no-missing-keys' ]`), ma **4,6 s** da sola e **27 s dentro la suite intera**, cioè `Test timed out in 5000ms` alla prima corsa di `gate-gui.sh`: carica la catena intera con `typescript`, e una guardia che va rossa per lentezza non guarda niente. ⛔ **È la regola «ogni cura lascia un difetto» applicata al coordinatore, e l'ha colta la rimisura della direzione di E196 prima del commit.** ✅ **La forma che resta è STATICA, con il punto cieco dichiarato nel commento:** la riga `settings` di `eslint.config.js` **testuale**, una volta, e `src/locales/it.json` **presente** — due case per un percorso, e la sonda le tiene d'accordo; costa millisecondi; non vede un plugin che rinomini l'impostazione, e quel caso è della revisione. ✅ **Le due direzioni, misurate:** com'è → verde, e la sonda costa millisecondi (**82 ms** nell'uscita di `vitest`) — il file intero pesa **0,8 s** di suite, misurato come DIFFERENZA e non come totale: `npx vitest run` con e senza `--exclude src/locales/copy.test.ts` → 13,5 s contro 12,7 s il pomeriggio del 2026-09-22, su una macchina che rendeva la stessa suite due volte più lenta del mattino (6,6 s) a parità di sonde; `localeDir` rotto in `eslint.config.js` → `expected 0 to be 1`, `1 failed`; ritorno da copia pristina con `cmp`; `npm run build` **0**, `npx eslint src` **0**. Il blocco dettato del Passo 5 è **rispecchiato** sul file (E32 M-2), e il criterio conta **due** `it(` e prova la sonda nuova nelle due direzioni. ⚠️ **La cura NON è rivista**: è la prima A/B del proprietario dopo questa ondata. Trovata dalla revisione del compito 15, 2026-09-22 |
+| **E198** | ⚠️ **Compito 15, Passo 11 — il terzo richiamo alla §8 diceva *«l'ordine che questa cella fissa»* stando nella cella *La prova*, che non fissa nessun ordine: un'autoreferenza falsa, e la cella *Forma* — quella che R8-10 correggeva — restava senza segno.** La tabella *«Il cancello, pezzo per pezzo»* ha intestazione `| Pezzo | Forma | La prova |`, e il richiamo, appeso in coda alla riga, sta nella terza; l'elenco dei comandi che il richiamo allunga vive nella seconda. ⛔ **Misurato dalla revisione il 2026-09-22 (I-3):** `grep -c 'npm run lint'` sulla riga → **1**, ed è dentro il richiamo, non nell'elenco. **E il file ha già la convenzione che risolve il caso**, tre volte — *«sulla cella «…» di questa riga»* — e una delle tre è proprio il precedente che E195 cita: il richiamo del 2026-09-19 sta nell'ultima cella **e nomina la cella che corregge**; E195 ne aveva preso la metà. ⚖️ **Sul ruling di E195 la revisione dà ragione al coordinatore** — il secondo richiamo corregge entrambe le celle che tocca — e questa è una cosa diversa. ✅ **CORRETTO nel disegno e nel testo dettato, sette parole:** *«(R8-10), sulla cella «Forma» di questa riga:»* e *«l'ordine che quella cella fissa»*; il fine-riga del disegno conservato (CR uguale alle righe), `check-docs.sh` → `OK`. Trovata dalla revisione del compito 15, 2026-09-22 |
+| **E199** | 📌 **Compito 15 — i rilievi minori e i nit della revisione, curati nella prosa o censiti qui perché il rapporto è git-ignored (la lezione di E176).** La revisione del 2026-09-22, un revisore fresco su Opus: conformità **piena** — cinque blocchi dettati byte per byte, i soli scarti sono i segnaposto dei tempi che il compito ordina di sostituire — **0 Critici, 3 Importanti (E196, E197, E198), 3 Minori, 3 Nit**; tutte le direzioni rifatte e arrossate, più sei sue. ✅ **M-1 — curato nella prosa:** `scripts/gate-gui.sh` è `100644` nell'indice come gli altri cinque script del cancello (`git ls-files -s scripts/`), e `core.filemode` è `false`: il `chmod +x` del Passo 6 non poteva arrivare all'indice, e la parola «eseguibile» rassicurava; tolti entrambi, la via è `bash scripts/gate-gui.sh` come per ogni script del cancello, e il criterio lo asserisce. ✅ **M-2 — curato nel criterio:** la riga *«nessuna regola ad avviso»* stampava e non sapeva andare rossa, ed era cieca a `files`; ora stampa anche `files` ed esce **1** se compare `"warn"` — misurato nelle due direzioni sulla copia della configurazione (`no-raw-text` a `warn` → `EXIT=1`). ✅ **M-3 — curato nel commento di `gate-gui.sh` e nel blocco dettato:** `npm ci` **cancella** `gui/node_modules/` a ogni corsa, anche per un commit di soli documenti; un `npm link` o un pacchetto ritoccato a mano non sopravvive al cancello, e prima nessuna riga lo diceva. **Nit-1:** la ricetta *«i due modelli»* del rapporto dell'implementatore conta i `.vue` due volte — `git ls-files 'gui/src/*.vue'` da solo rende **13**, perché l'asterisco di git attraversa la barra; sommare i due modelli dà 25. **Nit-2:** il commento della CI nomina `v7.0.0` mentre `uses:` segue tutta la `v7` — vero oggi, e la riga **dichiara** invece di dipendere dal default: resta. **Nit-3:** due forme di `files` nello stesso `eslint.config.js` (`**/*.vue` e `src/panels/Chat.vue`), entrambe dettate e misurate: nessuno le «uniformi» senza misurare. ⚠️ **Non verificato da nessuno, dichiarato:** la CI vera su GitHub — `setup-node`, la cache spenta, i tempi — si vede al push. Censite chiudendo la revisione del compito 15, 2026-09-22 |
 
 ---
 
@@ -20981,12 +20985,20 @@ e **non** la seconda: la seconda guarda che ogni `module` di `PANEL_TYPES` abbia
 
 In `gui/src/locales/copy.test.ts` si toglie il primo `it(...)` **con la funzione `templates` che serviva solo a
 lui**, si tolgono gli `import` che restano senza consumatore, e il commento in testa si riscrive: non è più una
-rete a termine, è il controllo che nessun lint può fare. Il file diventa:
+rete a termine, è il controllo che nessun lint può fare. ⚠️ **E197 (I-2 della revisione, 2026-09-22): al file entra una TERZA sonda** — gli occhi del lint sulle chiavi
+scritte, che pretende da `no-missing-keys` esattamente un errore su una chiave inventata, attraverso la configurazione
+vera — provata nelle due direzioni; il blocco qui sotto è il file com'è dopo la cura, rispecchiato (E32 M-2). Il file diventa:
 
 ```ts
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { describe, expect, it } from "vitest";
 
 import it_ from "./it.json";
+
+const GUI = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 /**
  * ⛔ WHAT NO LINT CAN DO, AND THAT IS WHY THIS FILE OUTLIVED THE NET.
@@ -20999,12 +21011,34 @@ import it_ from "./it.json";
  *
  * ⚠️ NOT RENAMED: `src/frame/keys.test.ts` already exists (task 14), and two files of that name
  * in two folders is exactly the confusion this repository pays for when re-reading.
+ *
+ * ⛔ AND ONE THING THE LINT CAN DO ONLY WHILE ITS EYES ARE OPEN (I-2 of the review, E197):
+ * `no-missing-keys` reads the locale through `settings["vue-i18n"].localeDir` of
+ * `eslint.config.js`, and when that glob stops resolving -- the folder renamed, the pattern
+ * mistyped -- the rule reports NOTHING: `npm run lint` green, the gate green, measured on
+ * 2026-09-22 with `localeDir` pointed at a folder that does not exist. The second probe is the
+ * non-vacuity guard of the other half of D65: the `settings` line of the config, verbatim, and
+ * the file it points at, present. Nothing else in the gate watches that.
+ * ⚠️ STATIC ON PURPOSE, AND THE BLIND SPOT IS DECLARED: linting a made-up key through the real
+ * `ESLint` API was the first form, and it measured 4.6 s alone and 27 s -- a timeout -- inside
+ * the suite on 2026-09-22, because it loads the whole chain, `typescript` included. A guard that
+ * can go red for being slow guards nothing. This one costs milliseconds, and it cannot see a
+ * plugin that renames the setting: that case is the review's, not this file's.
  */
 describe("the strings", () => {
   it("has a name for every module type", async () => {
     const { PANEL_TYPES } = await import("../panels/registry");
     const modules = (it_ as { modules?: Record<string, string> }).modules ?? {};
     for (const type of PANEL_TYPES) expect(Object.keys(modules), type.module).toContain(type.module);
+  });
+
+  it("keeps the lint's eyes on the locale: the config names the folder, and the folder is there", () => {
+    // Two houses for one path -- this line and the folder -- and the probe is what keeps them agreeing:
+    // whoever moves the locale or retypes the glob turns this red and updates both.
+    const config = readFileSync(join(GUI, "eslint.config.js"), "utf8");
+    const setting = 'settings: { "vue-i18n": { localeDir: "./src/locales/*.json" } },';
+    expect(config.split(setting).length - 1, "the localeDir line of eslint.config.js").toBe(1);
+    expect(existsSync(join(GUI, "src/locales/it.json")), "src/locales/it.json").toBe(true);
   });
 });
 ```
@@ -21033,7 +21067,9 @@ Atteso: **`EXIT=0`**, poi **diverso da zero** col nome della chiave tolta nel me
 
 - [ ] **Passo 6: `scripts/gate-gui.sh` — il passo web**
 
-`scripts/gate-gui.sh`, **LF**, nuovo, eseguibile.
+`scripts/gate-gui.sh`, **LF**, nuovo — `100644` nell'indice come gli altri cinque script del cancello, lanciato con
+`bash scripts/gate-gui.sh` (⚠️ M-1 della revisione, E199: qui stava «eseguibile», e un `chmod +x` che con
+`core.filemode=false` non entra nell'indice; su Linux la via è `bash`, come per gli altri).
 
 ```bash
 #!/usr/bin/env bash
@@ -21063,6 +21099,9 @@ cargo test --locked --manifest-path gui/fake-core/Cargo.toml
 cd gui
 # `npm ci` is the twin of `--locked`: a manifest and a lockfile that disagree are a red, and
 # `engine-strict=true` in `.npmrc` makes a wrong Node a red HERE, with the reason printed.
+# ⚠️ AND `npm ci` DELETES `gui/node_modules/` FIRST, EVERY RUN -- so on every commit, documentation
+# included: a linked or hand-patched package does not survive the gate, and nothing else says so
+# (M-3 of the review, E199).
 echo "-------- gui: install"
 npm ci --no-audit --no-fund
 # `vue-tsc` inside `build` is the level 1 of the web world, the way `rustc` is for the kernel.
@@ -21081,11 +21120,11 @@ npm run lint
 `gui/`. Il compito **16** aggiunge `npm audit` **in coda**, cioè dentro `gui/`, ed è la forma che regge.
 
 ```bash
-chmod +x scripts/gate-gui.sh
 git ls-files --eol scripts/gate-gui.sh 2>/dev/null; tr -cd '\r' < scripts/gate-gui.sh | wc -c
 ```
 
-Atteso: **zero** CR — il file nasce **LF**, vincolo globale 4.
+Atteso: **zero** CR — il file nasce **LF**, vincolo globale 4 (⚠️ qui stava anche `chmod +x`: con `core.filemode=false`
+non arriva all'indice, e nessuno dei cinque script del cancello è `100755` — E199).
 
 - [ ] **Passo 7: il passo web nelle due direzioni, PRIMA di metterlo nel cancello**
 
@@ -21120,17 +21159,30 @@ EOF
 bash scripts/gate-gui.sh; echo "EXIT=$?"
 git checkout -- gui/fake-core/src/main.rs
 
+echo "== rosso dal QUINTO sotto-passo, che SOLO il lint vede (E196) =="
+printf '%s\n' '<template>' '  <div>riprova piu tardi</div>' '</template>' > gui/src/panels/LintProbe.vue
+grep -rn 'LintProbe' gui/src --include=*.ts --include=*.vue | wc -l
+bash scripts/gate-gui.sh 2>&1 | tee /tmp/gate-gui-lint.log | tail -3; echo "EXIT=${PIPESTATUS[0]}"
+grep -c '^-------- gui:' /tmp/gate-gui-lint.log
+rm gui/src/panels/LintProbe.vue
+
 echo "== e il verde torna =="
 bash scripts/gate-gui.sh; echo "EXIT=$?"
 git status --porcelain
 ```
 
-Atteso: `EXIT=0`, poi **diverso da zero** due volte, poi `EXIT=0`, e `git status --porcelain` **vuoto**.
+Atteso: `EXIT=0`, poi **diverso da zero** tre volte — e la terza con **cinque** etichette `-------- gui:` nel log e
+**zero** importatori del file, perché il rosso viene dal quinto sotto-passo, mentre i primi due si fermano al primo
+comando (Rust) e al quarto (le sonde) — poi `EXIT=0`, e `git status --porcelain` **vuoto** (E196: qui stava «due volte»).
 
 ⛔ **Le due direzioni sono due perché i mondi sono due**, ed è la lezione che il settimo passo di `gate.sh` ha già
 pagato: un passo che si ferma al primo rosso può fermarsi **sempre nello stesso punto** e lasciare muto tutto ciò
-che viene dopo. Il rosso dal mondo Rust prova il primo comando; quello dal mondo web prova che la catena dopo
-il `cd` arriva davvero in fondo.
+che viene dopo. Il rosso dal mondo Rust prova il primo comando; quello dal mondo web prova la catena dopo il `cd`
+**fino alle sonde**, e lì si ferma — ⚠️ **E196: qui stava *«arriva davvero in fondo»*, e la revisione ha misurato
+quattro etichette su cinque** — quindi il terzo rosso, un `.vue` che nessuno importa con una scritta grezza, è l'unico
+che attraversa `vue-tsc` e `vitest` e prova il quinto sotto-passo, `npm run lint`, che è l'unico che questo compito
+aggiunge. ⚠️ Una scritta grezza in `Band.vue` **non** basta: la coglie una sonda della SPA, e la catena si ferma
+di nuovo alle sonde (misurato dalla revisione).
 
 ⚠️ **E il rosso dal mondo Rust è scritto con `git checkout --` e non con una copia**, perché il file è di un'altra
 crate e un `.bak` dimenticato dentro `gui/fake-core/` finirebbe nel commit.
@@ -21318,7 +21370,7 @@ Si scrive **prima** in `/tmp/richiamo-scritte.md`, **LF**, su una riga sola e se
 
 ⛔ **E un TERZO richiamo, sulla riga `scripts/gate-gui.sh` della §8 — R8-10:** la sua cella *Forma* elenca *«`npm ci`, `npm run build`, `npm test`»*, cioè **quattro** comandi col `cargo test` del finto, e dopo questo compito sono **cinque** e dopo il 16 **sette**; il commento dello script lo dice, la §8 no, e chi la rilegge ricostruirebbe uno script che non esiste. Il testo, in coda alla riga intera che comincia con `| \`scripts/gate-gui.sh\` |`, scritto prima in `/tmp/richiamo-forma.md`:
 
-> ✅ **RICHIAMO DEL \<data\>, dal compito 15 del piano della parte 2 (R8-10):** in coda arriva `npm run lint` da questo compito, e dal **16** `cargo audit --file gui/fake-core/Cargo.lock` prima del `cd gui` e `npm audit` in fondo (**D83**, **D71**): l'ordine che questa cella fissa **non cambia**, la catena si allunga
+> ✅ **RICHIAMO DEL \<data\>, dal compito 15 del piano della parte 2 (R8-10), sulla cella «Forma» di questa riga:** in coda arriva `npm run lint` da questo compito, e dal **16** `cargo audit --file gui/fake-core/Cargo.lock` prima del `cd gui` e `npm audit` in fondo (**D83**, **D71**): l'ordine che quella cella fissa **non cambia**, la catena si allunga
 
 ⛔ **Il richiamo si scrive PRIMA in `/tmp/richiamo-8.md`**, come il blocco YAML del Passo 9 e per la stessa ragione:
 porta apici, asterischi e trattini bassi. **LF**, su una riga sola, senza il `>` della citazione qui sopra — è un
@@ -21418,6 +21470,10 @@ git push
 
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`, e `bash scripts/gate.sh 2>&1 | grep -c 'gui: fake core and SPA'` → **più di zero**
 - [ ] ⛔ **il passo web va rosso dai DUE mondi**, eseguito come al Passo 7, con `git status --porcelain` **vuoto** alla fine
+- [ ] ⛔ **e va rosso dal QUINTO sotto-passo, l'unico che questo compito aggiunge** (E196, I-1 della revisione): la terza
+  mutazione del Passo 7 — un `.vue` sotto `src/` che nessuno importa, con una scritta grezza — passa `vue-tsc` e `vitest` e
+  ferma `gate-gui.sh` con `EXIT` diverso da zero e le **cinque** etichette `-------- gui:` nel log; `rm` del file e
+  `git status --porcelain` vuoto
 - [ ] ⛔ **e il CANCELLO dice `GATE RED`** con la mutazione del Passo 12, eseguita e revocata, `git diff --stat gui/src` vuoto (R8-7: la §8 chiede `GATE RED`, e prima del 2026-09-16 nessun passo lo pretendeva)
 - [ ] ⛔ **le quattro direzioni del lint** eseguite come al Passo 4, e `git diff --stat gui/src` **vuoto** alla fine
 - [ ] ⛔ **il preset NON stampa avvisi:** `cd gui && npx eslint src` su un albero pulito rende **zero righe** e `EXIT=0`. ⚠️ Se stampa avvisi, è `flat/recommended` invece di `flat/essential` — **D63**
@@ -21429,7 +21485,11 @@ git push
   grep -c 'templates(' gui/src/locales/copy.test.ts
   ```
 
-  → **uno** e **zero**: una sonda sola, e la funzione che serviva solo alla prima se n'è andata con lei (**P-105**)
+  → **due** e **zero**: le due sonde che nessun lint può fare da sé — le chiavi che la SPA costruisce, e gli occhi del
+  lint sulle chiavi scritte (E197, I-2 della revisione; qui stava «uno … una sonda sola») — e la funzione che serviva solo
+  alla prima se n'è andata con lei (**P-105**); ⛔ **e la sonda nuova va rossa:** `localeDir` portato a `./non/esiste/*.json`
+  in `gui/eslint.config.js` → `cd gui && npx vitest run src/locales/copy.test.ts` rende
+  `expected 0 to be 1` sulla riga `localeDir`, ritorno da copia pristina con `cmp`
 - [ ] ⛔ **l'analizzatore TypeScript c'è e i tredici `.vue` si parsano:** `grep -c 'harness/ts-in-vue' gui/eslint.config.js` → **1**, `grep -c '@typescript-eslint/parser' gui/package.json` → **1**, e `cd gui && npx eslint src` **non** stampa nessun `Parsing error` (R8-1)
 - [ ] ⛔ **nessuna regola è rimasta ad avviso nel nostro blocco:**
 
@@ -21437,18 +21497,27 @@ git push
   cd gui && node --input-type=module -e "
   const c = (await import('./eslint.config.js')).default;
   const ours = c.filter((b) => String(b.name).startsWith('harness/'));
-  for (const b of ours) console.log(b.name, JSON.stringify(b.rules ?? {}));
-  "; cd ..
+  let warn = false;
+  for (const b of ours) {
+    const rules = JSON.stringify(b.rules ?? {});
+    console.log(b.name, JSON.stringify(b.files ?? '(every file)'), rules);
+    if (rules.includes('\"warn\"')) warn = true;
+  }
+  process.exit(warn ? 1 : 0);
+  "; echo "EXIT=$?"; cd ..
   ```
 
-  Atteso: nessun `\"warn\"` in nessuna delle righe stampate
+  Atteso: `EXIT=0`, e ogni riga stampa il nome del blocco, il suo `files` e le sue regole; con una regola portata a
+  `\"warn\"` in una copia della configurazione → `EXIT=1` (⚠️ M-2 della revisione, E199: qui il comando stampava soltanto,
+  non sapeva andare rosso da solo, ed era cieco a `files`)
 - [ ] ⛔ **`.gitignore` NON è stato toccato** — `git diff --stat -- .gitignore` vuoto, e `grep -c 'gui-shell' .gitignore` **invariato** rispetto al Passo 1 (**P-102**, **D67**)
 - [ ] ⛔ **la CI dichiara la cache spenta:** `grep -cE '^ +package-manager-cache: false$' .github/workflows/quality-gate.yml` → **1**, e `grep -cE '^ +cache: npm$' .github/workflows/quality-gate.yml` → **0** (**D66**; ⚠️ E193: qui stavano due `grep -c` sul testo, che contano anche il commento dettato dal Passo 9 — 2 e 1 a compito perfetto — e la sonda si ancora alla riga)
 - [ ] `grep -c 'node-version-file: gui/package.json' .github/workflows/quality-gate.yml` → **1**, e `grep -c 'engines' gui/package.json` → **1**: la versione di Node resta in **una** casa (decisione 46)
 - [ ] ⛔ **il tempo del cancello è scritto e datato**, e i tre `<tempo>` del Passo 10 e i due del finto sono numeri veri: `grep -c '<tempo>\|<data>' scripts/gate.sh scripts/gate-gui.sh` → **0** per entrambi (R5-17)
 - [ ] ⛔ **i tre richiami alla §8 sono scritti e la data è vera:** `grep -c 'RICHIAMO DEL <data>' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **0** (⚠️ E192: qui stava `grep -c '<data>'`, che conta anche un `<data>` che il file porta da PRIMA — la voce 5 della §10, il nome del piano della parte 1 — e sarebbe rosso a compito perfetto; quel segnaposto non è di questo compito), e `grep -c 'compito 15 del piano della parte 2' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **3** (R9a-12: qui stava un richiamo solo, contato con un `grep` su **tutti** i richiami; ⚠️ e poi «2», scritto prima che R8-10 aggiungesse il terzo — E190)
 - [ ] `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
-- [ ] ⛔ **i fine-riga sono invariati:** `git ls-files --eol scripts/gate.sh .github/workflows/quality-gate.yml gui/package.json docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` uguale al Passo 1, e `tr -cd '\r' < scripts/gate-gui.sh | wc -c` → **0**
+- [ ] ⛔ **i fine-riga sono invariati:** `git ls-files --eol scripts/gate.sh .github/workflows/quality-gate.yml gui/package.json docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` uguale al Passo 1, e `tr -cd '\r' < scripts/gate-gui.sh | wc -c` → **0**; e `git ls-files -s scripts/gate-gui.sh` → `100644`, come
+  `git ls-files -s scripts/` dice degli altri cinque (E199)
 - [ ] ⛔ **nessuna dipendenza Rust nuova:** `bash scripts/gate-deps.sh` verde, e `git diff --stat -- Cargo.lock Cargo.toml crates/` **vuoto** — questo compito non tocca il workspace
 
 ## Compito 16: X-1 e X-3 — la matrice Windows nella CI, `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh`

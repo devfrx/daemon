@@ -41,6 +41,14 @@ run "example and compile-fail tests"      cargo test --locked --workspace
 run "no-OS gate"                          bash scripts/gate-no-os.sh
 run "allow-list on the two graphs"        bash scripts/gate-deps.sh
 run "attributes of the constrained crates" bash scripts/gate-attributes.sh
+# ⚠️ THE COST OF THIS STEP, MEASURED AND DATED. `gate-gui.sh` rebuilds `kernel`, `platform` and
+# `simulator` in the fake core's own `target/` -- measured with `cargo metadata` on 2026-09-15: a
+# crate outside the workspace gets its own target directory -- and then runs `npm ci`, the
+# TypeScript build, the probes and the lint. The figure below is an ORDER OF MAGNITUDE, not a
+# constant, and nothing asserts on it: what the gate collects is the printed line, for a reader to
+# compare against the run before.
+#   2026-09-22: `gate-gui.sh` alone 1m50s, the whole gate 2m41s (was 1m19s without this step).
+run "gui: fake core and SPA"              bash scripts/gate-gui.sh
 run "documentation consistency"           bash scripts/check-docs.sh
 
 # ⛔ A SEVENTH STEP THAT IS NOT A SEVENTH CONTROL, and the catalogue count stays at six. The

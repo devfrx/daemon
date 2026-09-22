@@ -1,43 +1,20 @@
-import { readFileSync, readdirSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
 import { describe, expect, it } from "vitest";
 
 import it_ from "./it.json";
 
-const SRC = join(dirname(fileURLToPath(import.meta.url)), "..");
-
 /**
- * ⛔ A NET, NOT A LINT, AND IT DIES AT TASK 15. The real rule is `no-raw-text` of
- * `@intlify/eslint-plugin-vue-i18n` (decision 55), and it enters the gate with
- * `scripts/gate-gui.sh` -- which is task 15. Between this task and that one, nothing would watch
- * the strings that G21 requires, and whoever reviews would look for a probe that does not exist.
+ * ⛔ WHAT NO LINT CAN DO, AND THAT IS WHY THIS FILE OUTLIVED THE NET.
  *
- * ⚠️ AND IT IS WORTH SAYING WHAT IT CANNOT DO: it reads raw text, so it knows nothing of Vue's
- * syntax and nothing of the exceptions a lint rule declares. Task 15 REPLACES it.
+ * Task 13 wrote two probes here and called the file a net until task 15. Task 15 replaced the
+ * first one -- bare words in a template -- with `@intlify/vue-i18n/no-raw-text` at `error`
+ * (D65). It could NOT replace this one: the SPA BUILDS these keys, `modules.${type.module}` in
+ * the drawer and `modules.${parameters.api.id}` in `BigTab.ts`, and `no-missing-keys` is blind
+ * to a built key -- measured on 2026-09-15, both directions in one file (P-105).
+ *
+ * ⚠️ NOT RENAMED: `src/frame/keys.test.ts` already exists (task 14), and two files of that name
+ * in two folders is exactly the confusion this repository pays for when re-reading.
  */
-function templates(dir: string): string[] {
-  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
-    entry.isDirectory() ? templates(join(dir, entry.name))
-    : entry.name.endsWith(".vue") ? [join(dir, entry.name)]
-    : []
-  );
-}
-
 describe("the strings", () => {
-  it("are all keys: no bare words between tags in a template", () => {
-    const offenders: string[] = [];
-    for (const file of templates(SRC)) {
-      const body = readFileSync(file, "utf8");
-      const template = /<template>([\s\S]*)<\/template>/.exec(body)?.[1] ?? "";
-      for (const text of template.matchAll(/>([^<>{}]*[A-Za-zÀ-ÿ]{2,}[^<>{}]*)</g)) {
-        offenders.push(`${file}: ${text[1]?.trim()}`);
-      }
-    }
-    expect(offenders).toEqual([]);
-  });
-
   it("has a name for every module type", async () => {
     const { PANEL_TYPES } = await import("../panels/registry");
     const modules = (it_ as { modules?: Record<string, string> }).modules ?? {};

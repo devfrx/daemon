@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "test": "vitest run"
+    "test": "vitest run",
+    "lint": "eslint src"
   },
   "dependencies": {
     "dockview-core": "8.3.1",
@@ -21,10 +22,14 @@
     "vue-i18n": "11.4.10"
   },
   "devDependencies": {
+    "@intlify/eslint-plugin-vue-i18n": "4.5.1",
     "@types/node": "24.13.5",
+    "@typescript-eslint/parser": "8.70.0",
     "@vitejs/plugin-vue": "6.0.9",
     "@vue/test-utils": "2.5.0",
     "axe-core": "4.13.0",
+    "eslint": "10.10.0",
+    "eslint-plugin-vue": "10.11.0",
     "jsdom": "30.0.1",
     "typescript": "5.9.3",
     "vite": "8.3.0",

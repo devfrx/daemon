@@ -13,4 +13,20 @@ jobs:
       # rust-toolchain.toml declares version and target: rustup installs them by itself,
       # and that is why constraint 4 of §11 does not require a step here.
       - run: rustup show
+      # Node for the web step of the gate. `node-version-file` reads `engines.node` from the
+      # manifest, so the version lives in ONE house (decision 46): re-read at the action's own docs
+      # on 2026-09-15, whose example uses an OR range exactly like ours, and the file is resolved
+      # relative to the repository root.
+      #
+      # ⛔ `package-manager-cache: false` IS WRITTEN OUT, and that is the point of the line. The
+      # input defaults to `true` in v7.0.0 and switches caching on only when the manifest declares
+      # `packageManager` or `devEngines.packageManager` -- ours declares neither, so decision 47
+      # ("no npm cache today") would hold BY ACCIDENT. The day somebody adds that field the action
+      # would look for the lockfile at the REPOSITORY ROOT, where ours is not -- ours is
+      # `gui/package-lock.json` -- and CI would go red for a reason nobody chose. This line is not
+      # the one decision 47 defers: `cache: npm` would switch caching ON, this one declares it off.
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: gui/package.json
+          package-manager-cache: false
       - run: bash scripts/gate.sh

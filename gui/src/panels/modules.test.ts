@@ -176,6 +176,25 @@ describe("Impostazioni", () => {
     expect((local?.element as HTMLInputElement).checked).toBe(true);
     expect((remote?.element as HTMLInputElement).checked).toBe(false);
   });
+
+  it("keeps saying a call is in flight after the yes, until the core answers with Policy", async () => {
+    // ⛔ I-1 OF THE REVIEW (E186): `approve()` used to clear the call, and the panel went silent for
+    // exactly the stretch its own comment names -- "after the confirmation window".
+    const { bridge, invoke } = wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    bridge.deliver("Policy");
+    await nextTick();
+    const [, local] = wrapper.findAll("input[type=radio]");
+    await local?.setValue(true);
+    bridge.deliver("PermissionRequired");
+    expect(invoke.approve()).toBe(true);
+    await nextTick();
+    expect(wrapper.text()).toContain(t("settings.inFlight"));
+    // ⛔ THE SECOND DIRECTION: `Policy` lands the call, and the line goes.
+    bridge.deliver("Policy");
+    await nextTick();
+    expect(wrapper.text()).not.toContain(t("settings.inFlight"));
+  });
 });
 
 describe("the confirmation window", () => {

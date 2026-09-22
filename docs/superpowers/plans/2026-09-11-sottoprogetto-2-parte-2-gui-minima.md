@@ -410,6 +410,8 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E183** | ⛔ **Compito 14, Passo 9 — la Chat montata DOPO il token restava etichettata e VUOTA: il `watch` dettato non era `immediate`, e nessuna delle cinque sonde poteva coglierlo.** Un `watch` di Vue parte al primo cambiamento **successivo**, non al montaggio; la Chat è una scheda di **Lavoro** (§6a, domanda 7) e la vista di partenza è Home, quindi nel browser i token atterrano **prima** che la tessera esista, e la tessera nasce con `currentHtml` vuoto — finché non arriva un token nuovo, che con la finta (un solo `Token`) non arriva mai. ⛔ **Misurato dall'implementatore nel browser il 2026-09-22:** dopo `deliverAll()` in Home e un click su «Lavoro», `body` vuoto con l'etichetta «non fidato» presente, anche dopo un frame vero; la riga del criterio *«la Chat col `ciao` non fidato»* era **rossa** con `npm run build` e `npm test` verdi. ⚠️ **È la seconda domanda del pre-controllo — la sonda che MANCA:** tutte e cinque le sonde di `chat.test.ts` montavano la Chat **prima** di consegnare il token. ✅ **CORRETTO nel codice (`c6bc9a9`) e rispecchiato qui:** `{ immediate: true }` come terzo argomento del `watch`, col perché accanto, e una sonda nuova — *«renders a block that was ALREADY streaming when the tile mounted»* — che monta **dopo** il token; le due direzioni provate sul modello compilato: col testo dettato **1 failed** (`Received: <div class="body"></div>`), con la cura **6 passati**, ritorno da copia pristina con `cmp`. 📌 **La forma generale:** una sonda che costruisce lo stato **dopo** aver montato il componente non prova il caso in cui lo stato c'era **prima**, e in una GUI a schede quel caso è la norma. Trovata eseguendo il compito 14, 2026-09-22 |
 | **E184** | ⛔ **Compito 14, Passo 8 — *«`v-model` on a native radio snaps the control back to the model on every update»* era FALSO, letto nel pacchetto spedito, e il controllo della policy restava sull'ULTIMO CLICK invece che sulla policy del core.** Il commento dettato in `Settings.vue` reggeva *«il controllo mostra la policy del core, non l'ultimo click (I1)»* e la riga del criterio *«il controllo **resta** su OpenRouter»*. ⛔ **Misurato il 2026-09-22 nel browser:** dopo `deliverAll()` (policy `Remote`) e un click su «Locale», i due radio erano `[false, true]` — il controllo **si era mosso** — con `Invoke` partito e la finestra aperta; **e il perché, in `@vue/runtime-dom` di vue 3.5.42:** `vModelRadio.beforeUpdate` risincronizza `el.checked` **solo** `if (value !== oldValue)`, e qui il valore legato non cambia — il modello dice ancora ciò che il core ha detto — quindi il `checked` messo dal browser **sopravvive**; un `:checked` nudo ha lo stesso buco, perché una prop del DOM si ripatcha solo se differisce dal vnode precedente. ⚠️ **La sonda dettata non lo coglieva:** *«sends Invoke … and nothing on the current value»* guarda il **filo**, non il controllo. ✅ **CORRETTO nel codice (`c6bc9a9`) e rispecchiato qui:** niente `v-model`; `:checked="current === …"` per la resa, `@change` per il click, e nell'handler i due radio rimessi **a mano** sul modello con un `ref` sul `<fieldset>` — `change` e non `click.prevent`, perché le frecce muovono un gruppo radio nativo e mandano `change` (G20: verificato nel browser, `ArrowDown` manda un secondo `Invoke` e il controllo non si muove); e una sonda nuova sul **controllo**, *«leaves the control on the core's policy until the core answers, then moves with it»*; le due direzioni: col testo dettato **1 failed** (`expected true to be false`), con la cura **11 passati**; nel browser il click rende `[true, false]`. 📌 **La forma generale:** un'affermazione su come si comporta una libreria si legge nel pacchetto spedito, non si ricorda; e una sonda che guarda il filo non prova ciò che si vede sullo schermo. Trovata eseguendo il compito 14, 2026-09-22 |
 | **E185** | ⚠️ **Compito 14, Passo 11 — *«`grep -n '^\.bigtab' … rende oggi le due regole, e se ne rende una terza ci si ferma»* (E178) si falsifica da sé DOPO il passo che lo porta: la regola che il passo scrive si chiama `.bigtab button`, e comincia per `.bigtab`.** Prima del passo il comando rende **2**; dopo, **3** — misurato dall'implementatore il 2026-09-22 — e un revisore che lo rilanciasse a compito fatto leggerebbe un rosso che non c'è. È la specie già scritta nel diario il 2026-09-17: un controllo aggiunto in un compito lascia stantio un Atteso dello stesso compito. ✅ **CORRETTO:** la frase dice **prima** e **dopo**, e l'oracolo che non invecchia è `grep -c '^\.bigtab {'` → **1** e `grep -c '^\.bigtab button {'` → **1**. ⚠️ **E una cifra del DISPACCIO era stantia** — `gui/package.json` a 24/24 righe e CR, che sono **32/32** dal 13: il dispaccio è git-ignorato e non è il piano, quindi la lezione vive nel diario e non qui; la si nomina perché la specie è gotcha #31 dentro una baseline copiata dal dispaccio precedente. Trovata eseguendo il compito 14, 2026-09-22 |
+| **E186** | ⛔ **Compito 14, Passo 6 — dopo «Consenti» il pannello Impostazioni smetteva di dire che una chiamata è in volo PROPRIO MENTRE LO È: `approve()` azzerava `inFlight`, e il testo dettato si contraddiceva da sé.** Il commento dettato di `Settings.vue` promette *«meanwhile the panel says a call is in flight, so nobody is left wondering»* **dopo la finestra di conferma**, e il doc dettato di `receive` in `invoke.ts` dice che `Policy` è ciò che fa atterrare *«whatever was in flight … with or without a window in between»*: ma la riga `inFlight.value = null;` dentro `approve()` — anch'essa dettata, e tenuta da `invoke.test.ts` con `expect(invoke.inFlight).toBeNull()` — azzerava la chiamata al «sì». ⛔ **Misurato dalla revisione nella pagina viva, subito dopo «Consenti», col core che non ha risposto:** `invoke.inFlight: null`, «Richiesta inviata» **sparita**, radio `[remote:true, local:false]` — il pannello identico a prima del click; e con la finta, che a un `Approve` non risponde mai, lo stato è **terminale**. È la settima regola del pre-controllo — *un testo si legge contro i propri FRATELLI* — dentro un compito solo: tre righe dettate, e la terza smentiva le prime due. ⚖️ **Deciso dal coordinatore il 2026-09-22 — il rilievo VINCE sul testo dettato, perché l'intento è scritto due volte e la riga una:** `approve()` non azzera più `inFlight`; a farlo atterrare è `receive` quando arriva `Policy`, com'era già scritto; `refuse()` lo azzera come prima, perché non manda niente; la finestra si chiude lo stesso, perché `open` chiede anche `core.pending`, che `settled()` azzera. L'oracolo di `invoke.test.ts` diventa `toEqual(CALL)` dopo il «sì» e `toBeNull()` dopo `Policy`, e `modules.test.ts` guadagna la sonda sul **pannello** — *«keeps saying a call is in flight after the yes, until the core answers with Policy»* — che è ciò che la revisione ha guardato. ✅ **Le due direzioni, misurate dal coordinatore sul modello compilato:** con la riga dettata rimessa, **2 failed** — la sonda di `invoke.test.ts` e quella nuova di `modules.test.ts` — e con la cura tutte verdi; ritorno da copia pristina con `cmp`. Costo se sbagliata: una riga e due asserzioni. ⚠️ **E il sospetto vicino la revisione l'ha scartato con una misura:** chiudere la finestra col «sì» **non** passa dal «no» (`{approve: 1, refuse: 0}`; un `DialogRoot` controllato non riemette `update:open`). Trovata dalla revisione del compito 14, 2026-09-22 |
+| **E187** | 📌 **Compito 14 — i rilievi della revisione NON curati nel codice, censiti qui perché il rapporto è git-ignored (la lezione di E176).** La revisione del 2026-09-22, un revisore fresco su Opus: conformità **piena** — 24 blocchi su 24 byte per byte, i due frammenti a meno delle giunture — **0 Critici, 1 Importante (E186), 3 Minori, 2 Nit**; **otto** mutazioni su otto arrossate, due in più di quelle chieste; E181 misurata a 900×470 nelle tre viste con sforamento **0,0 px**. ⚠️ **M-1 — DICHIARATO, non curato:** `⤢` («A pagina intera, o ritorno») su una tessera **flottante** — prodotta dal comando accanto — è un no-op silenzioso (`maximize()` di `dockview-core` 8.3.1 non fa nulla lì: rettangolo `61,122 460x298` prima e dopo, nessun errore); il doc di `BigTab.ts` lo dichiara come limite, e un pulsante che segua `api.location` è una seconda occorrenza della stessa domanda di kit, che aspetta. ⚠️ **M-2 — DICHIARATO, non curato:** dopo una freccia sul gruppo radio il **focus** sta sul radio raggiunto e la **selezione** torna sul modello (`focus: remote → local`, `checked: [remote:true, local:false]`) — conseguenza di E184 che nessuna riga dichiarava; ora il doc di `Settings.vue` lo dice, e riportare il focus indietro combatterebbe la tastiera che serve. ⚠️ **M-3 — REGISTRATA, NON PRESA, e non misurata da nessuno:** le due regioni `role="status"` (la riga «in attesa del core» di `Settings.vue` e la riga dell'ultimo verdetto di `Status.vue`) nascono nel DOM **insieme** al loro testo, e molti lettori di schermo non annunciano una regione viva inserita col suo contenuto; `axe-core` non ha una regola per questo, e la cura — la regione sempre nel DOM che cambia contenuto — urta la riga *«no empty box»* di §6a per il verdetto. Si decide con un lettore di schermo vero in mano, cioè non oggi: è del **proprietario**. **N-1:** il dispaccio di revisione diceva «32 file» e il perimetro ne ha **31** — una cifra del dispaccio, git-ignored, e va nel diario. **N-2:** l'avviso di `vite` sui chunk sopra i 500 kB **c'era già prima del compito** — misurato dal coordinatore sul log della baseline del mattino, a `b00dd31`: `553.75 kB` con lo stesso avviso, oggi `663.27 kB` per `markdown-it` (una `dependency` per costruzione, D40); `axe-core` **non** entra nel bundle (`grep -c "axe" dist/assets/*.js` → 0); il taglio dei chunk è del **15**. Censite chiudendo la revisione del compito 14, 2026-09-22 |
 
 ---
 
@@ -18695,6 +18697,11 @@ export const useInvoke = defineStore("invoke", () => {
    * FLIGHT, and there is nothing to approve without both: a `PermissionRequired` that follows no
    * `Invoke` of ours is a shape the core never produces -- the registry only ever answers one.
    * Returns whether an `Approve` went out.
+   *
+   * ⛔ THE CALL STAYS IN FLIGHT AFTER THE YES (E186, I-1 of the review): the core has not answered,
+   * and `receive` is what lands it when `Policy` arrives -- so the Settings panel keeps saying so
+   * meanwhile, which is the whole point of its line. Clearing it here left the panel silent for
+   * exactly the stretch between the consent and the answer, measured in the browser on 2026-09-22.
    */
   function approve(): boolean {
     const triple = core.pending;
@@ -18702,7 +18709,6 @@ export const useInvoke = defineStore("invoke", () => {
     if (triple === null || call === null) return false;
     wire?.send({ kind: "Approve", triple, call });
     approved.value.push(triple);
-    inFlight.value = null;
     core.settled();
     return true;
   }
@@ -18836,8 +18842,11 @@ describe("the invocation", () => {
     expect(invoke.approve()).toBe(true);
     expect(bridge.sent.at(-1)).toEqual({ kind: "Approve", triple: TRIPLE, call: CALL });
     expect(core.pending).toBeNull();
-    expect(invoke.inFlight).toBeNull();
+    // ⛔ STILL IN FLIGHT AFTER THE YES (E186): the core has not answered, and only `Policy` lands it.
+    expect(invoke.inFlight).toEqual(CALL);
     expect(invoke.approved).toEqual([TRIPLE]);
+    invoke.receive({ kind: "Policy", value: { policy: "Local", allocated: "12288", total: "16384" } });
+    expect(invoke.inFlight).toBeNull();
   });
 
   it("refuses locally: nothing is sent, and nothing stays pending", () => {
@@ -19177,6 +19186,11 @@ const current = computed<PolicyArgument | null>(() =>
  *
  * ⚠️ `change` AND NOT `click.prevent`: the arrow keys move a native radio group and fire `change`,
  * and a handler hung on `click` would leave the keyboard path silent (G20).
+ *
+ * ⚠️ AND AFTER AN ARROW KEY THE FOCUS SITS ON THE RADIO THE ARROW REACHED WHILE THE CHECK IS BACK
+ * ON THE MODEL (M-2 of the review, E187): the browser moved both, this handler put the check back,
+ * and the line under the group says why. Declared, not cured: moving the focus back would fight
+ * the keyboard it exists to serve.
  */
 function choose(argument: PolicyArgument): void {
   if (argument !== current.value) invoke.send({ function: VRAM_POLICY.name, argument });
@@ -19598,6 +19612,11 @@ import { isModule } from "../panels/registry";
  * window" needs `popoutUrl` and a page served from an http(s) origin, which is the shell's (Q3 of
  * SP-8, P-91), and the shell is outside this plan. Each command is a `<button>` with a name from
  * the locale: reachable with the tab key, read by a screen reader (G20).
+ *
+ * ⚠️ DECLARED LIMIT (M-1 of the review, E187): on a FLOATING group `maximize()` is a no-op in
+ * `dockview-core` 8.3.1 -- measured on 2026-09-22, rectangle unchanged, no error -- so the second
+ * command does nothing on a tile the first one detached, and is not disabled there. A button that
+ * follows `api.location` is a second occurrence of the same kit question, and waits for it.
  */
 export class BigTab implements ITabRenderer {
   readonly element = document.createElement("div");
@@ -19972,6 +19991,25 @@ describe("Impostazioni", () => {
     await nextTick();
     expect((local?.element as HTMLInputElement).checked).toBe(true);
     expect((remote?.element as HTMLInputElement).checked).toBe(false);
+  });
+
+  it("keeps saying a call is in flight after the yes, until the core answers with Policy", async () => {
+    // ⛔ I-1 OF THE REVIEW (E186): `approve()` used to clear the call, and the panel went silent for
+    // exactly the stretch its own comment names -- "after the confirmation window".
+    const { bridge, invoke } = wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    bridge.deliver("Policy");
+    await nextTick();
+    const [, local] = wrapper.findAll("input[type=radio]");
+    await local?.setValue(true);
+    bridge.deliver("PermissionRequired");
+    expect(invoke.approve()).toBe(true);
+    await nextTick();
+    expect(wrapper.text()).toContain(t("settings.inFlight"));
+    // ⛔ THE SECOND DIRECTION: `Policy` lands the call, and the line goes.
+    bridge.deliver("Policy");
+    await nextTick();
+    expect(wrapper.text()).not.toContain(t("settings.inFlight"));
   });
 });
 

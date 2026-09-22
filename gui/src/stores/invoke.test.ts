@@ -41,8 +41,11 @@ describe("the invocation", () => {
     expect(invoke.approve()).toBe(true);
     expect(bridge.sent.at(-1)).toEqual({ kind: "Approve", triple: TRIPLE, call: CALL });
     expect(core.pending).toBeNull();
-    expect(invoke.inFlight).toBeNull();
+    // ⛔ STILL IN FLIGHT AFTER THE YES (E186): the core has not answered, and only `Policy` lands it.
+    expect(invoke.inFlight).toEqual(CALL);
     expect(invoke.approved).toEqual([TRIPLE]);
+    invoke.receive({ kind: "Policy", value: { policy: "Local", allocated: "12288", total: "16384" } });
+    expect(invoke.inFlight).toBeNull();
   });
 
   it("refuses locally: nothing is sent, and nothing stays pending", () => {

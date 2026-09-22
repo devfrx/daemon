@@ -39,6 +39,11 @@ export const useInvoke = defineStore("invoke", () => {
    * FLIGHT, and there is nothing to approve without both: a `PermissionRequired` that follows no
    * `Invoke` of ours is a shape the core never produces -- the registry only ever answers one.
    * Returns whether an `Approve` went out.
+   *
+   * ⛔ THE CALL STAYS IN FLIGHT AFTER THE YES (E186, I-1 of the review): the core has not answered,
+   * and `receive` is what lands it when `Policy` arrives -- so the Settings panel keeps saying so
+   * meanwhile, which is the whole point of its line. Clearing it here left the panel silent for
+   * exactly the stretch between the consent and the answer, measured in the browser on 2026-09-22.
    */
   function approve(): boolean {
     const triple = core.pending;
@@ -46,7 +51,6 @@ export const useInvoke = defineStore("invoke", () => {
     if (triple === null || call === null) return false;
     wire?.send({ kind: "Approve", triple, call });
     approved.value.push(triple);
-    inFlight.value = null;
     core.settled();
     return true;
   }

@@ -32,6 +32,11 @@ const current = computed<PolicyArgument | null>(() =>
  *
  * ⚠️ `change` AND NOT `click.prevent`: the arrow keys move a native radio group and fire `change`,
  * and a handler hung on `click` would leave the keyboard path silent (G20).
+ *
+ * ⚠️ AND AFTER AN ARROW KEY THE FOCUS SITS ON THE RADIO THE ARROW REACHED WHILE THE CHECK IS BACK
+ * ON THE MODEL (M-2 of the review, E187): the browser moved both, this handler put the check back,
+ * and the line under the group says why. Declared, not cured: moving the focus back would fight
+ * the keyboard it exists to serve.
  */
 function choose(argument: PolicyArgument): void {
   if (argument !== current.value) invoke.send({ function: VRAM_POLICY.name, argument });

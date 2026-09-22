@@ -15,6 +15,11 @@ import { isModule } from "../panels/registry";
  * window" needs `popoutUrl` and a page served from an http(s) origin, which is the shell's (Q3 of
  * SP-8, P-91), and the shell is outside this plan. Each command is a `<button>` with a name from
  * the locale: reachable with the tab key, read by a screen reader (G20).
+ *
+ * ⚠️ DECLARED LIMIT (M-1 of the review, E187): on a FLOATING group `maximize()` is a no-op in
+ * `dockview-core` 8.3.1 -- measured on 2026-09-22, rectangle unchanged, no error -- so the second
+ * command does nothing on a tile the first one detached, and is not disabled there. A button that
+ * follows `api.location` is a second occurrence of the same kit question, and waits for it.
  */
 export class BigTab implements ITabRenderer {
   readonly element = document.createElement("div");

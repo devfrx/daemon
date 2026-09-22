@@ -4,12 +4,12 @@ edition = "2024"
 version = "0.0.0"
 publish = false
 
-# ⛔ A TOOL, NOT A SPIKE, and that is why the lockfile is committed: `scripts/gate-gui.sh` WILL run
+# ⛔ A TOOL, NOT A SPIKE, and that is why the lockfile is committed: `scripts/gate-gui.sh` runs
 # `cargo test --locked --manifest-path gui/fake-core/Cargo.toml`, and `--locked` needs a lockfile
 # somebody approved. A spike's lockfile is ignored because a spike is redone from a seed.
-# ⚠️ FUTURE TENSE ON PURPOSE (E120): that script is TASK 15 and does not exist yet -- `ls scripts/`
-# says so. A comment that justifies an item by naming a consumer writes it in the future until the
-# consumer is there, which is E34 in its general form.
+# ⚠️ PRESENT TENSE SINCE TASK 15 WROTE THAT SCRIPT (E237) -- future until then (E120): a comment
+# that justifies an item by naming a consumer writes it in the future until the consumer is
+# there, which is E34 in its general form. `grep -n 'manifest-path' scripts/gate-gui.sh` finds it.
 [dependencies]
 kernel = { path = "../../crates/kernel" }
 platform = { path = "../../crates/platform" }

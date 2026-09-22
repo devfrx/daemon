@@ -12,11 +12,9 @@ members = [
 # filesystem. Constraint 5 of §11, decided in §7.4.4.
 # `gui` is NOT a member either, and NOT for the reason above: `gui/fake-core` is a TOOL with a
 # lockfile of its own, under the root's `rust-toolchain.toml` (rustup walks up: measured, R5-22),
-# which will be built by `scripts/gate-gui.sh` through `--manifest-path` -- that script is TASK 15
-# and does not exist yet, so the tense is future (E120, E34). To check whether it still does not,
-# run `ls scripts/`: the sibling manifest in `gui/fake-core` carries that same command, and this
-# one did not until E120 -- and `gui/` also holds a node project that cargo has no business
-# walking into.
+# built by `scripts/gate-gui.sh` through `--manifest-path` (E237: present tense since task 15
+# wrote the script; `grep -n 'manifest-path' scripts/gate-gui.sh` finds the line) -- and `gui/`
+# also holds a node project that cargo has no business walking into.
 exclude = ["spikes", "gui"]
 
 [workspace.package]

@@ -50,7 +50,7 @@ una sola GPU da 16 GB.
 ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
 scrive qui, e vive in [`../crates/`](../crates/): cinque crate, con `kernel` e `simulator`
 in `no_std` — e, dal sotto-progetto 2, in [`../gui/`](../gui/): la SPA e il core finto `gui/fake-core/`, fuori dal
-workspace e provati da `scripts/gate-gui.sh` (richiamo del 2026-09-22, E232). Gli spike in `spikes/` restano
+workspace e provati da `scripts/gate-gui.sh` (richiamo del 2026-09-22, E232 del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)). Gli spike in `spikes/` restano
 **prove**, fuori dal workspace.
 
 ---
@@ -107,7 +107,7 @@ dell'unico archivio irriproducibile**.
 | worker ML | **Python** | ADR-0028 |
 | persistenza | **`redb` 4.1.0**, con `StorageBackend` scritto da noi | ADR-0032 |
 | dipendenze del kernel | **allow-list sul grafo transitivo**, due grafi con rimedi opposti | ADR-0031 · §7.3.1 |
-| schema IPC | **`bincode` 2.0.1** — appuntato a `2`. ⚠️ **Dichiarato NON MANTENUTO** — RUSTSEC-2025-0141, `INFO`, non una vulnerabilità. ⛔ **RICHIAMO DEL 2026-08-31: qui stava *«registrato il 2026-08-18, si decide al Traguardo 6»*, e il Traguardo 6 ha MISURATO.** L'avviso è ancora attivo e il monte è archiviato; esistono alternative **mantenute**, e per una di esse lo **stesso formato sul filo** non è più una dichiarazione ma una **misura** — **M-12**, del 2026-08-31. ✅ **DECISO il 2026-08-31 dal proprietario: `bincode` 2.0.1 RESTA e §6.1.1 non si riapre** — contro l'evidenza di **M-12** e non attorno, perché la radice di C-1 è il **buco fra due criteri** e non questa crate; la cura alla radice è la voce **X-3**, il cui stato vive nella sua tabella dell'audit (richiamo del 2026-09-22, E231: qui stava *«che resta aperta»*, falso dal compito 16). Le ragioni in [`porta-di-qualita.md`](porta-di-qualita.md), le fonti in [`riferimenti.md`](riferimenti.md) | M-1 · §6.1.1 · gotcha #22 · C-1 |
+| schema IPC | **`bincode` 2.0.1** — appuntato a `2`. ⚠️ **Dichiarato NON MANTENUTO** — RUSTSEC-2025-0141, `INFO`, non una vulnerabilità. ⛔ **RICHIAMO DEL 2026-08-31: qui stava *«registrato il 2026-08-18, si decide al Traguardo 6»*, e il Traguardo 6 ha MISURATO.** L'avviso è ancora attivo e il monte è archiviato; esistono alternative **mantenute**, e per una di esse lo **stesso formato sul filo** non è più una dichiarazione ma una **misura** — **M-12**, del 2026-08-31. ✅ **DECISO il 2026-08-31 dal proprietario: `bincode` 2.0.1 RESTA e §6.1.1 non si riapre** — contro l'evidenza di **M-12** e non attorno, perché la radice di C-1 è il **buco fra due criteri** e non questa crate; la cura alla radice è la voce **X-3**, il cui stato vive nella sua tabella dell'audit (richiamo del 2026-09-22, E231 del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md): qui stava *«che resta aperta»*, falso dal suo compito 16). Le ragioni in [`porta-di-qualita.md`](porta-di-qualita.md), le fonti in [`riferimenti.md`](riferimenti.md) | M-1 · §6.1.1 · gotcha #22 · C-1 |
 | formato del **giornale** | **versione + indici espliciti** — `minicbor` 2.3.0, codifica in `kernel` | ADR-0036 · §4.9 |
 | formato del **canale worker** | **`minicbor` 2.3.0**, codifica in `kernel`, porta a **byte** | ADR-0037 · §6.10 |
 | **edition** | **2024**, su tutte e cinque le crate | scelta dal piano del Traguardo 1 |
@@ -671,10 +671,9 @@ aperte di questa §6, questo puntatore, `CLAUDE.md` — e `AVVIO-CHAT.md` resta 
 più (decisione 32). La misura la rifanno i comandi nel prossimo passo della stella polare; il metodo — misurare prima, ogni
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
 
-⛔ **PRIMA DEL PRIMO TEMPO, il residuo del compito 17** — i Minori e i Nit della sua ri-revisione e i due commenti dei
-manifesti, censiti in **E236** ed **E237** del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md):
-la cura è rimandata per decisione del proprietario (2026-09-22, contesto saturo), e la quarantaduesima chiusura del suo diario
-dice come si fa.
+✅ **Il residuo del compito 17 è curato** — i Minori e i Nit della sua ri-revisione, **E236**, e i due commenti dei manifesti,
+**E237**, del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), il 2026-09-22 alla
+ripresa. ⚖️ Se la cura vada ri-rivista lo decide il proprietario.
 
 ⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il brainstorming del DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi
 e token centralizzati — **primo atto della sessione che apre dopo la chiusura del 2**, per decisione del proprietario (2026-09-21,
@@ -798,7 +797,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 | ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ **rifare gli spike SP-5, SP-6, SP-7 e SP-8** | esiti, versioni e comandi in `spikes/RISULTATI.md` — coi **seed** per SP-5 e SP-6, che SP-7 e SP-8 non hanno; per SP-7 e SP-8 i protocolli congelati in `spikes/gesti/PROTOCOLLO.md` e `spikes/gui-shell/PROTOCOLLO.md` |
-| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta era **M5** (senza trattino) ✅ **misurata da SP-8 il 2026-09-10** su Windows; la metà Linux è l'innesco scritto in ADR-0029 |
+| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta era **M5** (senza trattino) ✅ **misurata da SP-8 il 2026-09-10** su Windows, ma come **proxy** — la memoria condivisa dell'integrata di un'altra macchina, da rimisurare su quella di ADR-0002 — e la metà Linux è l'innesco: entrambe scritte in ADR-0029 (richiamo del 2026-09-22, E236 del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)) |
 | ❌ **riaprire le due decisioni della §7.3** | prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
 | ❌ **riaprire la copertura della §8** | la §8 è **spec**, e il vincolo globale 1 del piano della chiusura vieta di toccarla: le righe si leggono, non si ri-giudicano. ⚠️ **RICHIAMO DEL 2026-09-03: il sotto-progetto 1 l'ha riaperta una volta**, e per decisione del **proprietario** — la via **A**, voce `E10` dell'errata del [piano della chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) — col vincolo **sospeso** per il solo compito 3bis e per le sole §8.3 e §8.4. Riaprirla di nuovo richiede la stessa decisione |
 | ❌ **riaprire F3, F6, F5, F1a, F2, F7** | chiuse, con i limiti dichiarati |

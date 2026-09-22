@@ -20,9 +20,10 @@ riga che li introduceva. Un elenco di date
 si allunga a ogni chiusura e non c'è nessun numero da riconoscere come stantio: le date, una
 per traguardo, stanno nella tabella dei traguardi di [`roadmap.md`](roadmap.md) e nella §6 del
 [`COMPENDIO.md`](COMPENDIO.md), e un rimando non può marcire.
-Dove vive il codice del prodotto lo dice la §1 del [compendio](COMPENDIO.md), in un posto solo (⚠️ **richiamo
-del 2026-09-22, E232:** qui stava *«vive in `../crates/` — cinque crate»*, falso dal compito 11, che ha aperto
-`gui/`), e la porta di qualità gira con un comando solo, `bash scripts/gate.sh`. Il **Traguardo 3** — giornale e formato durevole — è chiuso con
+Dove vive il codice del prodotto lo dice la §1 del [compendio](COMPENDIO.md) (⚠️ **richiamo
+del 2026-09-22, E232:** qui stava *«vive in `../crates/` — cinque crate»*, falso dal compito 11, che ha portato la SPA
+in `gui/` — la cartella l'aveva aperta il compito 3, con `gui/schema/fixtures/`; ed E236: qui stava anche *«in un posto
+solo»*, che la cura di E232 aveva reso falso), e la porta di qualità gira con un comando solo, `bash scripts/gate.sh`. Il **Traguardo 3** — giornale e formato durevole — è chiuso con
 **dodici compiti su dodici**: il record come enum di versione, **due** implementazioni della
 porta `journal` tenute alle stesse nove promesse a ogni commit, la riconciliazione. ⛔ **Col
 Task 10 il formato durevole è CONGELATO:** i byte del record sono nel repository e non si

@@ -242,8 +242,9 @@ Il vincolo che governa tutto non è funzionale ma di risorsa: quattro aree che s
 una sola GPU.
 
 ⚠️ **Questo non è un repository di sola documentazione:** dove vive il codice del prodotto lo
-dice la §1 del [compendio](COMPENDIO.md), in un posto solo (⚠️ **richiamo del 2026-09-22, E232:** qui stava
-*«vive in `../crates/`: cinque crate»*, falso dal compito 11). Gli spike in [`../spikes/rust/`](../spikes/rust/) restano
+dice la §1 del [compendio](COMPENDIO.md), e la *«Mappa dei documenti»* in fondo a questo file ne porta le cartelle
+(⚠️ **richiamo del 2026-09-22, E232:** qui stava *«vive in `../crates/`: cinque crate»*, falso dal compito 11; ed E236:
+qui stava anche *«in un posto solo»*). Gli spike in [`../spikes/rust/`](../spikes/rust/) restano
 **prove**, **fuori dal workspace** — e la §2.5 della spec dice riga per riga quali pezzi
 saliranno a `crates/kernel/` e quali restano dove sono. Nel Traguardo 1 **non era salito
 niente**; col Traguardo 2 è salito **tutto ciò che la §2.5 assegnava a questo traguardo** — il
@@ -969,7 +970,7 @@ M-10 e M-11 hanno un secondo capo: Python **3.13.7** e Node **v24.9.0** con npm 
 | **M-10** | il pari **Python** decodifica `bincode` 2.0.1? | ⛔ **no.** L'unica libreria che si dichiara compatibile è ferma alla configurazione **1.x** (33 B contro 12) e **non ha tipi somma**; il pacchetto PyPI omonimo è un helper base64. ✅ `minicbor` letto da `cbor2` 6.1.4: valori giusti. Evidenze in [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) |
 | **M-11** | e il pari **TypeScript**? | ✅ **sì** — `bincode-ts` 1.0.0 decodifica con i valori giusti e i byte tutti consumati. ⚠️ pacchetto a **una sola versione**, con entrambi i punti d'ingresso rotti su Node 24. Anche `cbor-x` 1.6.5 ✅ |
 | **M-12** | il fork `bincode-next` 3.1.1 mette davvero gli **stessi byte** sul filo? | ✅ **sì, misurato il 2026-08-31** e non dedotto dal suo README: cinque casi **byte per byte identici** a `bincode` 2.0.1, andata-e-ritorno incrociata **sui valori** con tutti i byte consumati, e `bincode-ts` 1.0.0 che legge i byte del fork coi valori giusti. ⛔ **Due costi misurati:** il grafo spedito cresce di **una voce netta**, e il pari resta rotto **come spedito** su Node 24 — costo di `bincode` su `ipc`, non del fork. ⚖️ Decide la **compatibilità**, non l'**adozione**: quella è la D12. Evidenze in [`riferimenti.md`](riferimenti.md) |
-| **M5** | quanta VRAM prende la presentazione della GUI | ⬜ **aperta e dichiarata tale** — richiede una GUI: sotto-progetto 2, accanto a M1–M4 di ADR-0029 ✅ **RICHIAMO DEL 2026-09-22 (E228, E235):** misurata da SP-8 il 2026-09-10 su Windows, con M1–M4 — gli esiti nella sezione SP-8 di `spikes/RISULTATI.md`; la metà Linux è l'innesco scritto in ADR-0029 |
+| **M5** | quanta VRAM prende la presentazione della GUI | ⬜ **aperta e dichiarata tale** — richiede una GUI: sotto-progetto 2, accanto a M1–M4 di ADR-0029 ✅ **RICHIAMO DEL 2026-09-22 (E228, E235):** misurata da SP-8 il 2026-09-10 su Windows, con M1–M4 — gli esiti nella sezione SP-8 di `spikes/RISULTATI.md`; ⚠️ **e le metà aperte sono due**, entrambe scritte in ADR-0029 (E236): la misura su Windows è un **proxy**, presa sulla memoria condivisa dell'integrata di un'altra macchina e da rimisurare su quella di ADR-0002, e la metà Linux è l'innesco |
 
 #### M-3 — ✅ evidenze trasferite nella spec
 

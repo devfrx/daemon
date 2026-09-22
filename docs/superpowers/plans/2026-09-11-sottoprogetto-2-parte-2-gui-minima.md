@@ -401,6 +401,12 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E174** | ⛔ **Compito 13 — LA STRISCIA A 40 px COSTA 5 px DI CONTENUTO A OGNI GRUPPO, e «zero sforamenti in tutte e tre le viste» era misurato a UNA dimensione sola.** La cura di **E170** ha portato `--dv-tabs-and-actions-container-height` da 35 a 40 px, e quei cinque pixel `dockview` li toglie all'area di contenuto di **ogni** gruppo di **ogni** vista. ⛔ **E la riverifica che la cura dichiara era su una dimensione di finestra sola**, mentre il rapporto che quella cura chiudeva ne aveva misurate quattro: la conclusione è stata riscritta più larga dell'evidenza che la reggeva. ✅ **MISURATO ADESSO, A/B nelle due direzioni a 900×470, annullando e rimettendo le due regole dal browser senza toccare il repository:** con la cura i figli di tre `.panel` sforano di **8,3 · 8,3 · 7,3 px**; senza la cura, a 35 px, sforano **lo stesso** di **3,3 · 3,3 · 2,3**. ⛔ **QUINDI IL TAGLIO NON È NATO CON LA CURA: la cura ne ha spostato la SOGLIA di esattamente cinque pixel.** La causa vera è che **`.panel` non scorre** — `overflow: visible`, misurato — quindi un contenuto più alto del pannello viene **tagliato** da `.dv-groupview` invece di scorrere, e questo è vero a **qualunque** altezza di striscia. ✅ **DUE DECISIONI DEL PROPRIETARIO, il 2026-09-21.** La prima: **i 40 px restano**, perché sono il merito della **mossa 5** che lui stesso ha giudicato — la presa grande per il puntatore che è una **mano** (ADR-0039, mossa 8) — e i cinque pixel sono un **costo dichiarato**, non un difetto scoperto. La seconda: **il taglio si dichiara e lo possiede il compito 14**, che è quello che costruisce i moduli veri e in cui ogni modulo decide **se scorre** — la chat sì, un modulo di stato forse no. ⛔ **Deciderlo qui sarebbe decidere al posto del 14**, e una riga `.panel { overflow: auto }` cambierebbe il comportamento di **ogni** modulo futuro. 📌 **La forma generale, e vale oltre il CSS: una riverifica vale per le condizioni in cui è stata fatta, e una conclusione non si scrive più larga della misura che la regge.** Tre viste a una dimensione non sono «tutte e tre le viste». Trovata dalla terza revisione, 2026-09-21 |
 | **E175** | ⚠️ **Compito 13 — TRE AFFERMAZIONI NUMERICHE della cura sono più forti della misura che le regge, e nessuna cambia la sostanza.** ⛔ **(1)** *«tutti e quaranta i pixel atterrano su `bigtab`»* è **falso in generale**: il `dv-sash` orizzontale — 4 px, `z-index` 99, centrato sul confine fra due gruppi — ne copre **due**, quindi il conto è **40** solo sulle linguette che non confinano e **38** sulle altre. ✅ **Ricontato da me nella pagina viva:** `40, 38, 38, 40, 38` sulle cinque linguette visibili a quella dimensione. ⚠️ **E il contatto col sash è NUOVO:** prima della cura i 4 px di padding tenevano `.bigtab` **fuori** dal sash. Resta un miglioramento — 38 o 40 contro 32 — ma l'assoluto era falso. ⛔ **(2)** *«gli unici pixel in cui si atterrava su `bigtab` erano **trentuno**»* (`E170`): il conto identico ne rende **trentadue**, `y` da 81 a 112 compresi. **31,0** è l'intersezione **geometrica** esatta (81,4 → 112,4), quindi il numero è difendibile come **lunghezza** e non come **conto di righe**, che è il modo in cui `E170` lo dichiara. La sostanza — presa **sotto** i 35 di partenza — regge in entrambe le letture. ⛔ **(3)** *«SEVEN IS NOT ALL OF THEM: `--line` over `--surface` is 1,33:1»* ne nomina **una** mentre le coppie fuori dalle sette sono **cinque**, e quelle che **falliscono** sono **due**: `--line`/`--surface` **1,33** e `--line`/`--surface-raised` **1,19**; le altre tre passano (`--accent`/`--surface` 7,21 · `--warn`/`--surface` 9,34 · `--stop`/`--surface` 5,72). ⚠️ **Il commento NON pretende di essere esaustivo** — dice in proprio che il perimetro della sonda lo decide il compito 14 — quindi è **incompleto e non falso**, ed è la ragione per cui questa è una voce sola e non tre. 📌 **La forma generale, ed è la terza volta in tre giri: un numero che vale «di solito» si scrive col suo QUANTIFICATORE, o diventa un assoluto che il primo caso di confine falsifica.** «Tutti», «gli unici», «non tutte» sono affermazioni più forti della misura che le regge, e costano una parola in più. Trovata dalla terza revisione, 2026-09-21 |
 | **E176** | ⛔ **Compito 13 — «both classes» diceva DUE dove sono TRE, e i rilievi NON applicati delle tre revisioni vivevano SOLO in file git-ignored.** ✅ **La correzione di una parola:** il commento di `gui/src/tokens/tokens.css` diceva *«so **both classes** were named and never defined»*, e le classi mai definite erano **tre** — `bigtab`, `bigtab-title`, `panel` — mentre **due** è il conto dei **renderer**, `BigTab.ts` e `VueContent.ts`. ⛔ **Corretto nel sorgente**, che ora le **nomina** invece di contarle: è la terza volta in questa catena che un numero scritto come assoluto si rivela più forte della misura, ed è la stessa specie di **E175**. ⛔ **E LA PARTE CHE VALE DI PIÙ, perché è la lezione di E169 applicata a sé stessa:** i tre rapporti di revisione stanno in `.superpowers/sdd/…/`, che `.gitignore` tiene a `*`, quindi **spariscono con la macchina**. Ciò che il proprietario ha scelto di **non** applicare è scritto qui, che è una casa che resta. **Dalla prima revisione:** `m-2` in sviluppo la finta non consegna niente e dal browser non c'è modo di guidarla, quindi l'unico stato visibile è `waiting` · `m-4` il Passo 2 dà un comando che **misura** `@types/node` e l'appuntata non è ciò che il comando rende · `m-5` `compact.json` committa una griglia che `dockview` corregge al caricamento · `m-6` nessuna sonda copre il nome italiano sulla linguetta (**R6-4**, **P-95**): la copertura è delegata al browser · `m-7` la scritta *«Compatta IS A PLACEHOLDER AND SAYS SO»* non dice niente di sé · e i Nit: la linguetta nascosta della striscia rende la stringa inglese `strip` come titolo ma è `w=0 h=0` e non si vede · il cassetto è una `<ul>` non vestita, coi pallini del browser · il doc di `E164` scrive le virgolette traslitterate dove gli altri sorgenti usano quelle vere · `--line` su `--surface` è **1,33∶1**, dichiarato come **sospetto** e non misurato contro una regola · in Lavoro *«Passi e Sensori in basso»* è realizzato sotto la **sola** colonna della chat, che è ciò che il generatore dettato produce · i due avvisi di degrado si toccano, separati da quattro pixel e nient'altro. **Dalla seconda:** dallo spike è salito `height: 100%` di `.tile` e **non** il resto della sua regola — `box-sizing`, `overflow: auto`, `padding` — e oggi non costa niente (`scrollHeight === clientHeight` su **tutti** i pannelli, tre viste, quattro dimensioni), ⚠️ **ma è esattamente il pezzo che `E174` lascia al compito 14**: lo scorrimento sarà del modulo · e `E169` dice *«delle cinque divergenze»* elencandone cinque su sei, perché la sesta non era una divergenza — difendibile, ma mezza riga l'avrebbe detto. **Dalla terza:** l'`awk` che conta l'errata, nella **tabella della baseline di un dispaccio**, portava una costante di riga che le voci nuove hanno spostato; nel repository non ne esiste nessuno (`grep` → nulla), quindi la lezione è su **come si scrive un dispaccio** e vive nel diario. 📌 **La forma generale: un rapporto di revisione è git-ignorato per costruzione, quindi il censimento di ciò che NON si applica si fa nello stesso passo in cui si decide di non applicarlo** — altrimenti la decisione sopravvive e la ragione no. Trovata chiudendo la catena del compito 13, 2026-09-21 |
+| **E177** | ⛔ **Compito 14 — `--stop` È GIÀ CORRETTO DAL 13 (E167, `#ef6a60`), e il Passo 3 dettava di riscriverlo a `#ec5f57` partendo da un `#e5534b` che nel file non c'è più.** Il Passo 1 attendeva `--stop: #e5534b;`, il Passo 3 dettava *«la riga `--stop: #e5534b;` diventa `--stop: #ec5f57;`»* con un commento sopra, la mutazione delle due direzioni asseriva `b.count("--stop: #ec5f57;") == 1`, e il criterio di chiusura chiedeva `#ec5f57` nel file alla fine — tutto scritto il 2026-09-15, quando quel valore era vero. ⛔ **Misurato il 2026-09-22 dal pre-controllo:** `grep -n '^  --stop' gui/src/tokens/tokens.css` → `--stop: #ef6a60;`, scritto dalla prima cura del 13 (`c1ffd34`, E167) con **5,12∶1** su `--surface-raised` e **5,72∶1** su `--surface` — un margine più largo del `#ec5f57` di qui (5,26 e 4,70) — e col perché nel capoverso in testa al file. Con lo script dettato l'`assert` sarebbe scattato al primo comando: è la **regola 5 di `CLAUDE.md`**, *il contratto cresce sotto il piano*. ✅ **CORRETTO nel compito:** il Passo 3 non tocca il valore e scrive la sola sonda; la mutazione delle due direzioni parte da `#ef6a60` e vi torna; il Passo 1, la lista dei file e il criterio dicono `#ef6a60`. ⚠️ La cifra 4,21 resta com'era, perché è la misura del 2026-09-15 e la sonda la rende rossa nella seconda direzione. Trovata dal pre-controllo del compito 14, 2026-09-22 |
+| **E178** | ⛔ **Compito 14 — `.bigtab` e `.bigtab-title` SONO GIÀ in `tokens.css` (E165), corrette DUE volte (E170, E173), e il Passo 11 dettava di riscriverle con l'`height: 40px` che E170 ha misurato come una presa di 31 px e tolto.** Il Passo 11 diceva *«entrano, in coda, le regole della linguetta che lo spike aveva in `style.css` e che il 13 non ha portato perché non aveva comandi»*, e si difendeva con un *«se il 13 aveva già messo `.bigtab` … si aggiunge solo ciò che manca»* — una previsione (gotcha #57) scritta il 2026-09-15, quando il 13 non era eseguito. ⛔ **Misurato il 2026-09-22:** `grep -n '^\.bigtab' gui/src/tokens/tokens.css` rende **due** regole, `.bigtab` a `height: 100%` e `.bigtab-title`; la presa è del **contenitore** — `--dv-tabs-and-actions-container-height: 40px` su `.dock .dockview-theme-abyss` — e il padding verticale di `.dock .dv-tabs-container > .dv-tab` è a zero: un `.bigtab { height: 40px }` scritto sotto vincerebbe per ordine e rimetterebbe la presa a 31 px, in silenzio, con `npm run build` verde. ✅ **CORRETTO nel compito:** entra la sola regola `.bigtab button` (26 px in una striscia da 40, col padding verticale a zero); `.bigtab` e `.bigtab-title` non si toccano; la difesa *«se il 13 aveva già messo»* è tolta perché non è più un'ipotesi. Trovata dal pre-controllo del compito 14, 2026-09-22 |
+| **E179** | ⛔ **Compito 14 — il criterio *«`git log --oneline -- gui/src/panels/registry.ts \| wc -l` → 1, il solo commit del 13»* era già falso PRIMA di questo compito: i commit sono DUE.** `8679f27` (il 13) e `00547f6` (E164, il doc di `PANEL_TYPES` riscritto) — misurato il 2026-09-22 col comando stesso, che rende **2**. Un numeratore di commit invecchia a ogni cura che tocca il file, che è la specie di gotcha #68 dentro un criterio di chiusura; e R7-12, che aveva scartato `diff --stat` perché *«stampa file e righe, mai commit»*, non copre la forma che la riga successiva dello stesso criterio usa già per le tre viste. ✅ **CORRETTO:** `git diff --quiet HEAD~1 -- gui/src/panels/registry.ts && echo unchanged` → `unchanged` — l'oracolo è *«questo compito non l'ha toccato»*, che non invecchia. Trovata dal pre-controllo del compito 14, 2026-09-22 |
+| **E180** | ⛔ **Compito 14, Passi 15 e 15-bis — i due `assert "\r\n" not in b` sono ROSSI su questa macchina: la stella polare e il disegno del 2 sono `i/lf w/crlf`, e lo script si sarebbe fermato al primo comando.** È **E51** alla lettera — *«i quattro `assert` sono verdi solo dove i file sono stati SCRITTI, rossi su ogni clone»* — e E51 ha corretto i quattro di allora e non questi due fratelli, scritti il 2026-09-15 e il 2026-09-16 nel compito che nessuno aveva ancora aperto (la forma di E72). ⛔ **Misurato il 2026-09-22:** `git config core.autocrlf` → `true` (la regolazione locale di E51 non c'è su questa macchina, e il 13 ha lavorato il 2026-09-21 con lo stesso `true`); `git ls-files --eol` sui due disegni → `i/lf w/crlf`; `tr -cd '\r' … \| wc -c` → **1081** su 1081 righe e **726** su 726. Con `lines = b.split("\n")` ogni riga avrebbe portato il `\r` in coda e `lines[i].endswith(" \|")` sarebbe stato falso ovunque. ✅ **CORRETTO nei due script — vincolo globale 4, *i fine-riga si conservano per file*:** `eol = "\r\n" if "\r\n" in b else "\n"`, l'`assert` diventa *«nessun `\r` fuori da un `\r\n`»*, `split(eol)` e `join(eol)`, e il conto finale confronta gli `eol`. ✅ **E l'oracolo dei fine-riga cambia con lui:** `tr -cd '\r' … \| wc -c` si lancia **prima e dopo** lo script e coincide (0 dove l'albero è LF, tante quante le righe dove è CRLF), e a commit fatto `git ls-files --eol <file>` → `i/lf` — non più *«→ 0»*, che è vero solo su un albero LF. ✅ **Le dieci ancore dei due script sono state provate a secco il 2026-09-22 su questa macchina:** ogni intestazione una, ogni riga una e chiusa da ` \|`, ogni capoverso uno. Trovata dal pre-controllo del compito 14, 2026-09-22 |
+| **E181** | ✅ **Compito 14 — E174 chiede a questo compito di decidere chi scorre: TUTTI E CINQUE i moduli scorrono, con le tre righe che il Passo 9 già detta alla Chat.** E174 ha misurato che `.panel` non scorre (`overflow: visible`) e che un contenuto più alto della tessera viene **tagliato** da `.dv-groupview` a qualunque altezza di striscia — 8,3 · 8,3 · 7,3 px a 900×470 — e ha lasciato la decisione qui, *«dove ogni modulo decide se scorre — la chat sì, un modulo di stato forse no»*. Il testo dettato il 2026-09-15 dava lo scorrimento alla sola Chat e niente agli altri quattro, perché E174 non esisteva. ⚖️ **Deciso dal coordinatore il 2026-09-22, sui cinque criteri di `anthropic-skills:decision-principles`:** `overflow: auto; height: 100%; box-sizing: border-box` sulla radice di Stato, Permessi, Passi e Impostazioni, com'è già sulla Chat — **coerenza** (una forma sola, quella dettata), **proporzione** (una barra di scorrimento compare solo quando serve, quindi un modulo che ci sta è identico a prima; Permessi e Passi sono liste che crescono senza tetto), e un taglio nasconde ciò che uno scorrimento tiene raggiungibile. Costo se sbagliata: quattro righe di CSS. ⛔ **Il revisore lo misura nel browser a 900×470, come E174:** nessun figlio di `.panel` sfora `.dv-groupview`. Registrata dal pre-controllo del compito 14, 2026-09-22 |
+| **E182** | ⚠️ **Compito 14, Passo 16 — il `git add` non nomina il PIANO, e la riga 14 della tabella della posizione va a ✅ nello stesso commit.** La testa del piano dice *«la tabella qui sopra, che chi esegue aggiorna nel commit del compito»*, e il 13 l'ha fatto — `8679f27` tocca 33 file, il piano compreso — ma il comando del Passo 16 elenca `gui` e i due disegni soltanto: eseguito alla lettera lascerebbe il piano fuori dal commit e la posizione ferma a tredici. ✅ **CORRETTO:** il piano è nel `git add`. ⚠️ E il `git push` del Passo 16 resta scritto, ma chi esegue non lo lancia: pusha il coordinatore a revisione pulita, come per ogni compito di questo piano. Trovata dal pre-controllo del compito 14, 2026-09-22 |
 
 ---
 
@@ -18278,7 +18284,7 @@ un valore che fallisce è una modifica a `tokens.css` — com'era scritto nel fi
 **Files:**
 - Modify: `gui/package.json` (**LF**) — `markdown-it` e `axe-core`, i due che **questo** compito consuma (**D40**)
 - Modify: `gui/package-lock.json` (**LF**) — **nello stesso commit** del manifesto, vincolo globale 7
-- Modify: `gui/src/tokens/tokens.css` (**LF**) — `--stop`, l'unico token che l'AA boccia (**P-86**), e le regole della linguetta in coda (Passo 11) — R7-9 (⚠️ qui stava anche «il capoverso in testa (Passo 3)»: dal 2026-09-16 lo scrive il **13** nella forma di D53, R6-11, e il Passo 3 lo verifica)
+- Modify: `gui/src/tokens/tokens.css` (**LF**) — la sola regola `.bigtab button` in coda (Passo 11) — R7-9 (⚠️ qui stava anche «il capoverso in testa (Passo 3)»: dal 2026-09-16 lo scrive il **13** nella forma di D53, R6-11, e il Passo 3 lo verifica; ⛔ **e qui stava «`--stop`, l'unico token che l'AA boccia (P-86), e le regole della linguetta»: il 13 ha già corretto `--stop` (E167) e già scritto `.bigtab` e `.bigtab-title` (E165, E170) — richiamo del 2026-09-22, E177 ed E178**)
 - Modify: `gui/src/locales/it.json` (**LF**) — le scritte dei cinque moduli, della finestra, del menu e della tastiera
 - Modify: `gui/src/frame/BigTab.ts` (**LF**) — i **due** comandi del menu del modulo, con le loro etichette (**P-91**, **D58**)
 - Modify: `gui/src/frame/Frame.vue` (**LF**) — la finestra di conferma e la tastiera
@@ -18329,9 +18335,9 @@ node --version
 ```
 
 Atteso: `gui/src/components/` **non esiste**, le altre tre ci sono dal 13; `ls gui/src/panels/*.vue` rende **solo**
-`Placeholder.vue` e `Strip.vue`; **nessuno** dei due pacchetti nel manifesto; `--stop: #e5534b;`; **niente** in
+`Placeholder.vue` e `Strip.vue`; **nessuno** dei due pacchetti nel manifesto; `--stop: #ef6a60;` (⚠️ qui stava `#e5534b`: E167 l'ha corretto al 13 — E177); **niente** in
 `main.ts`; `name: "vram-policy"` in `serving.rs`; una riga con `"remote"` e una con `"local"` in `policy.rs`; tutto
-**LF**, la stella polare compresa.
+**`i/lf`**, la stella polare compresa — ⚠️ **la colonna dell'albero (`w/…`) è di questa macchina e non conta** (E51, E72, E180).
 
 ⛔ **Se `gui/src/panels/Status.vue` esiste già, il compito è eseguito** — quarta domanda del pre-controllo: ci si ferma
 e si riporta. ⚠️ **Se `gui/src/panels/registry.ts` non esiste, il compito 13 non è eseguito**, e questo compito non
@@ -18384,19 +18390,16 @@ le due espressioni regolari **identiche** a quelle scritte qui; e **una** riga p
 regola che il Passo 7 **sostituisce** (**P-87**). ⛔ **Se una delle tre proprietà è diversa**, ci si ferma: è una voce
 d'errata e la decisione 51 si rilegge, non si aggira.
 
-- [ ] **Passo 3: il token che l'AA boccia, e la sonda che lo tiene — D53**
+- [ ] **Passo 3: il token che l'AA bocciava è già corretto (E167), e la sonda che lo tiene nasce qui — D53**
 
 ⛔ **Misurato il 2026-09-15 sui valori del compito 13 (P-86):** `--stop` `#e5534b` su `--surface-raised` `#1f242d`
 dà **4,21**, sotto il 4,5 di AA — ed è esattamente la coppia che il 13 disegna, il chip «timbro diverso» sulla barra.
-Tutte le altre coppie passano. Il valore più vicino che passa su **entrambe** le superfici è `#ec5f57` (5,26 e 4,70).
-
-In `gui/src/tokens/tokens.css` la riga `--stop: #e5534b;` diventa:
-
-```css
-  /* ⛔ #e5534b measured 4.21 on --surface-raised on 2026-09-15 (task 14, P-86): below AA. This is
-     the smallest change that passes on both surfaces, and `contrast.test.ts` is what keeps it. */
-  --stop: #ec5f57;
-```
+Tutte le altre coppie passano. ✅ **RICHIAMO DEL 2026-09-22, dal pre-controllo di questo compito (E177): il valore è GIÀ
+corretto dal 13** — la revisione del 13 l'ha misurato nella pagina viva e `E167` ha scritto `--stop: #ef6a60`, **5,12∶1** su
+`--surface-raised` e **5,72∶1** su `--surface`, col perché nel capoverso in testa a `tokens.css`. ⛔ **Questo passo NON tocca
+il valore**: `grep -n '^  --stop' gui/src/tokens/tokens.css` → `--stop: #ef6a60;`, e se rende altro ci si ferma. ⚠️ Qui stava
+*«il valore più vicino che passa su entrambe le superfici è `#ec5f57` (5,26 e 4,70)»* e la riscrittura della riga con un
+commento sopra: la cifra era vera il 2026-09-15 e il 13 ha scelto un margine più largo — non si riallinea, si rimanda a E167.
 
 ✅ **Il capoverso in testa al file è già nella forma di D53 — lo scrive il compito 13 (R6-11, 2026-09-16), e qui si
 verifica invece di riscriverlo:** `grep -c -F 'INCOMPLETE every time' gui/src/tokens/tokens.css` → **1**, e
@@ -18473,8 +18476,8 @@ python - <<'EOF'
 import io
 p = "src/tokens/tokens.css"
 b = io.open(p, encoding="utf-8", newline="").read()
-assert b.count("--stop: #ec5f57;") == 1
-io.open(p, "w", encoding="utf-8", newline="").write(b.replace("--stop: #ec5f57;", "--stop: #e5534b;"))
+assert b.count("--stop: #ef6a60;") == 1  # E177: the value the 13 wrote, not #ec5f57
+io.open(p, "w", encoding="utf-8", newline="").write(b.replace("--stop: #ef6a60;", "--stop: #e5534b;"))
 EOF
 npx vitest run src/tokens/contrast.test.ts; echo "rosso atteso: EXIT=$?"
 git checkout -- src/tokens/tokens.css
@@ -18484,7 +18487,7 @@ cd ..
 ⚠️ **`git checkout` rimette il file com'era nell'INDICE**, ed è per questo che il `git add` sta **prima** della mutazione
 (R7-8, la forma di R5-11): senza, il `checkout` riporterebbe il file al 13 — e «si rilancia il primo script» non reggeva,
 perché il solo script di questo passo è la mutazione **inversa**, che dopo il `checkout` fallirebbe sul proprio `assert`.
-Atteso alla fine: `--stop: #ec5f57;` nel file, e la sonda **verde**.
+Atteso alla fine: `--stop: #ef6a60;` nel file (E177), e la sonda **verde**.
 
 - [ ] **Passo 4: le scritte dei moduli**
 
@@ -19009,6 +19012,9 @@ const core = useCore();
 <style scoped>
 .status {
   padding: var(--space-3);
+  overflow: auto;
+  height: 100%;
+  box-sizing: border-box;
 }
 dt {
   color: var(--ink-dim);
@@ -19064,6 +19070,9 @@ const invoke = useInvoke();
 <style scoped>
 .permissions {
   padding: var(--space-3);
+  overflow: auto;
+  height: 100%;
+  box-sizing: border-box;
 }
 h3 {
   font-size: inherit;
@@ -19110,6 +19119,9 @@ const core = useCore();
 <style scoped>
 .steps {
   padding: var(--space-3);
+  overflow: auto;
+  height: 100%;
+  box-sizing: border-box;
 }
 .outcome {
   color: var(--ink-dim);
@@ -19178,6 +19190,9 @@ const choice = computed<PolicyArgument | null>({
 <style scoped>
 .settings {
   padding: var(--space-3);
+  overflow: auto;
+  height: 100%;
+  box-sizing: border-box;
 }
 fieldset {
   border: 1px solid var(--line);
@@ -19193,6 +19208,15 @@ label {
 }
 </style>
 ```
+
+⛔ **RICHIAMO DEL 2026-09-22, E174 → E181 — i quattro moduli SCORRONO, come la Chat.** `E174` ha lasciato a questo compito la
+decisione su chi scorre: `.panel` non scorre (`overflow: visible`) e un contenuto più alto della tessera viene **tagliato** da
+`.dv-groupview`, a qualunque altezza di striscia — misurato a 900×470 dalla terza revisione del 13. La decisione: le tre righe che
+il Passo 9 detta alla Chat — `overflow: auto; height: 100%; box-sizing: border-box` — stanno sulla radice di **tutti e cinque** i
+moduli, e i quattro blocchi qui sopra le portano. Il perché: una barra di scorrimento compare solo quando serve, quindi un modulo
+che ci sta è identico; Permessi e Passi sono liste che crescono; e un taglio nasconde ciò che uno scorrimento tiene raggiungibile.
+Costo se sbagliata: quattro righe di CSS. Il revisore lo misura nel browser a 900×470 (E174): nessun figlio di `.panel` sfora
+`.dv-groupview`.
 
 - [ ] **Passo 9: la Chat**
 
@@ -19610,25 +19634,17 @@ grep -n 'interface FloatingGroupOptions' -A 4 gui/node_modules/dockview-core/dis
 
 Atteso: ogni nome trovato. ⛔ **Un nome che manca è una voce d'errata**, non un `as never`.
 
-E in `gui/src/tokens/tokens.css` — è l'unico foglio che veste ciò che disegniamo noi — entrano, in coda, le regole
-della linguetta che lo spike aveva in `style.css` e che il 13 non ha portato perché non aveva comandi:
+E in `gui/src/tokens/tokens.css` — è l'unico foglio che veste ciò che disegniamo noi — entra, in coda, la sola regola
+dei due comandi. ✅ **RICHIAMO DEL 2026-09-22, dal pre-controllo di questo compito (E178): `.bigtab` e `.bigtab-title` CI
+SONO GIÀ**, scritte dalla cura del 13 (E165) e corrette due volte (E170, E173): la presa è del **contenitore** —
+`--dv-tabs-and-actions-container-height: 40px` su `.dock .dockview-theme-abyss` — e `.bigtab` sta a `height: 100%`.
+⛔ **Il blocco che qui stava — `.bigtab { … height: 40px; … }` e `.bigtab-title { flex: 1 }` — NON si scrive:** quel
+`height: 40px` è esattamente ciò che E170 ha misurato come una presa di **31 px** e ha tolto.
+`grep -n '^\.bigtab' gui/src/tokens/tokens.css` rende oggi le due regole, e se ne rende una terza ci si ferma.
 
 ```css
 
-/* The big grab handle (move 5) and its two commands (task 14). */
-.bigtab {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  height: 40px;
-  padding: 0 var(--space-3);
-  font-weight: 600;
-  cursor: grab;
-  user-select: none;
-}
-.bigtab-title {
-  flex: 1;
-}
+/* The two commands of the big grab handle (task 14): `.bigtab` and `.bigtab-title` are above. */
 .bigtab button {
   font: inherit;
   width: 26px;
@@ -19640,10 +19656,6 @@ della linguetta che lo spike aveva in `style.css` e che il 13 non ha portato per
   cursor: pointer;
 }
 ```
-
-⚠️ **Se il 13 aveva già messo `.bigtab` in `tokens.css`** — il suo Passo 4 non lo detta, ma un esecutore potrebbe averlo
-fatto per vedere la linguetta — si aggiunge solo ciò che manca: `grep -n '^\.bigtab' gui/src/tokens/tokens.css` prima
-di scrivere.
 
 - [ ] **Passo 12: i moduli registrati, e la finta esposta al revisore**
 
@@ -20362,7 +20374,7 @@ compito, e riceve il suo «✅ chiusa» come le righe già chiuse della stessa t
 
 ⛔ **Le ancore si prendono DAL FILE, non da questo piano** (E6 del piano dei gesti; R7-26): lo script trova ogni riga per
 **sezione e inizio di riga** — o, per un capoverso, per la frase che contiene — pretende che sia **una**, e appende il
-richiamo **in coda**: una riga di tabella resta una riga, un capoverso resta un capoverso. Il file è **LF** (Passo 1);
+richiamo **in coda**: una riga di tabella resta una riga, un capoverso resta un capoverso. Il file è `i/lf` nell'indice e nell'albero porta il fine-riga di questa macchina (Passo 1, `git ls-files --eol`; E180);
 si tocca con Python, mai con `sed -i`. ⚠️ **`<data>` si sostituisce con la data del giorno in cui il compito si esegue,
 nello script E nei `grep` qui sotto** — altrimenti i `grep` rendono 0 (R7-26).
 
@@ -20372,8 +20384,11 @@ import io, os, re, sys
 sys.stdout.reconfigure(encoding="utf-8")
 p = "docs/superpowers/specs/2026-09-07-direzione-gui-design.md"
 b = io.open(p, encoding="utf-8", newline="").read()
-assert "\r\n" not in b, "the north star is LF: something rewrote it"
-lines = b.split("\n")
+# ⛔ THE FILE'S OWN LINE ENDING IS KEPT (global constraint 4, E180): `i/lf` in the index, and in the
+# working tree whatever `core.autocrlf` made it on THIS machine -- CRLF here on 2026-09-22.
+eol = "\r\n" if "\r\n" in b else "\n"
+assert b.count("\r") == b.count("\r\n"), "mixed line endings: something rewrote it"
+lines = b.split(eol)
 DATE = "<data>"
 
 
@@ -20435,8 +20450,8 @@ row("## Registrate, non prese", "| le scorciatoie da tastiera per spostare un pa
     ", compito 14 del piano della parte 2**: `gui/src/frame/moveActive.ts`, `Ctrl+Alt+freccia` sopra `moveTo`, "
     "con la sonda `keys.test.ts`")
 
-out = "\n".join(lines)
-assert out.count("\n") == b.count("\n"), "a line was added or lost: every recall goes IN a line"
+out = eol.join(lines)
+assert out.count(eol) == b.count(eol), "a line was added or lost: every recall goes IN a line"
 tmp = p + ".tmp"
 io.open(tmp, "w", encoding="utf-8", newline="").write(out)
 os.replace(tmp, p)
@@ -20449,7 +20464,7 @@ tr -cd '\r' < docs/superpowers/specs/2026-09-07-direzione-gui-design.md | wc -c
 awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}' docs/superpowers/specs/2026-09-07-direzione-gui-design.md
 ```
 
-Atteso (con la data scritta al posto di `<data>`, **anche nei `grep`**): **3**, **5**, **1**, **0**, e niente.
+Atteso (con la data scritta al posto di `<data>`, **anche nei `grep`**): **3**, **5**, **1**, **i CR di prima dello script** (`tr -cd '\r' … | wc -c` si lancia prima e dopo, e coincide: 0 dove l'albero è LF, tante quante le righe dove è CRLF — E180), e niente; a commit fatto `git ls-files --eol docs/superpowers/specs/2026-09-07-direzione-gui-design.md` → `i/lf`.
 
 ⛔ **Delle righe di Passi ricevono il richiamo la 1 e la 12, benché la riga 2 dica *«con la classe dell'effetto»* e la
 riga 3 *«il dettaglio del passo secondo la specie»*:** la riga 2 parla di ciò che la lista **mostra** di un passo in
@@ -20472,8 +20487,8 @@ polare). ⚠️ **Costo dichiarato:** una disposizione cambiata mentre il core n
 (**P-53**) la fascia lo dichiara **prima** (ADR-0019). La via **B** — la griglia `inert` fino ad `Accepted`, un passo nuovo nel 13 —
 è scartata: terrebbe ferma una cosa che il core non decide, e nel 2 nessuno la userebbe (quinto criterio).
 
-`docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` è **LF**: la forma del Passo 12 del compito 8, un
-file solo — l'ancora è la riga intera presa dal file, per sezione e inizio di riga, lo script pretende che sia **una** e appende
+`docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` è `i/lf`, e nell'albero porta il fine-riga di questa
+macchina (E180): la forma del Passo 12 del compito 8, un file solo — l'ancora è la riga intera presa dal file, per sezione e inizio di riga, lo script pretende che sia **una** e appende
 il richiamo **nell'ultima cella** della riga, e un `assert` sul numero di righe chiude. ⚠️ **`<data>` si sostituisce con la data
 del giorno in cui il compito si esegue, nello script E nei `grep` sotto**, o i `grep` rendono 0.
 
@@ -20485,8 +20500,11 @@ DATE = "<data>"
 assert DATE != "<data>", "the date goes in before the recall (R8-23)"
 path = "docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md"
 b = io.open(path, encoding="utf-8", newline="").read()
-assert "\r\n" not in b, f"{path} is LF: something rewrote it"
-lines = b.split("\n")
+# ⛔ THE FILE'S OWN LINE ENDING IS KEPT (global constraint 4, E180): `i/lf` in the index, and in the
+# working tree whatever `core.autocrlf` made it on THIS machine -- CRLF here on 2026-09-22.
+eol = "\r\n" if "\r\n" in b else "\n"
+assert b.count("\r") == b.count("\r\n"), "mixed line endings: something rewrote it"
+lines = b.split(eol)
 
 
 def section(heading):
@@ -20517,8 +20535,8 @@ row("### §6a", "| i quattro stati della connessione |",
     "senza pari) e non sopravvive alla GUI; nel 2 il caso non si dà, perché la SPA gira contro il core finto nel browser, e col guscio "
     "la fascia lo dichiara **prima** (ADR-0019). La via B — la griglia `inert` fino ad `Accepted` — è scartata: terrebbe ferma una "
     "cosa che il core non decide")
-out = "\n".join(lines)
-assert out.count("\n") == b.count("\n"), "a line was added or lost: the recall goes IN a line"
+out = eol.join(lines)
+assert out.count(eol) == b.count(eol), "a line was added or lost: the recall goes IN a line"
 tmp = path + ".tmp"
 io.open(tmp, "w", encoding="utf-8", newline="").write(out)
 os.replace(tmp, path)
@@ -20529,7 +20547,7 @@ awk 'prev ~ /^\|/ && $0 == "" {getline nxt; if (nxt ~ /^\|/) print NR} {prev=$0}
 tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c
 ```
 
-Atteso (con la data scritta al posto di `<data>`, **anche nel `grep`**): **1**; niente; **0**.
+Atteso (con la data scritta al posto di `<data>`, **anche nel `grep`**): **1**; niente; **i CR di prima dello script** (E180), e a commit fatto `git ls-files --eol docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → `i/lf`.
 
 - [ ] **Passo 16: il mondo web verde, il cancello, e il commit**
 
@@ -20546,12 +20564,13 @@ workspace Rust è intatto. Il mondo web lo dicono i tre comandi dentro `gui/`. �
 `it.json`, e si sposta la scritta, non la sonda.
 
 ```bash
-git add gui docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+git add gui docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
 git commit -m "gui(compito 14): i moduli della SPA -- Stato, Permessi, Chat, Passi e Impostazioni, la finestra di conferma, la tastiera e l'accessibilita"
 git push
 ```
 
-⛔ **Senza co-autore**, vincolo globale 13.
+⛔ **Senza co-autore**, vincolo globale 13. ⛔ **E il piano è nel `git add` per la riga 14 della posizione (E182)** — la testa
+del piano lo pretende e il 13 l'ha fatto in `8679f27`; il `git push` lo lancia il coordinatore a revisione pulita.
 
 **Criterio di chiusura del compito 14**
 
@@ -20565,13 +20584,13 @@ git push
   ```
 
   Atteso: **nessuna riga** da entrambi i `diff`
-- [ ] ⛔ **il contrasto nelle DUE direzioni** eseguito come al Passo 3, e `--stop: #ec5f57;` nel file alla fine
+- [ ] ⛔ **il contrasto nelle DUE direzioni** eseguito come al Passo 3, e `--stop: #ef6a60;` nel file alla fine (E177)
 - [ ] ⛔ **`color-contrast` è disabilitata in UN posto e con la ragione accanto:** `grep -c '"color-contrast": { enabled: false }' gui/src/a11y.test.ts` → **1**, e `grep -rc 'color-contrast' gui/src --include='*.ts' --include='*.vue' | grep -v ':0'` rende **solo** quel file
 - [ ] ⛔ **nessun `<a` e nessun `<img` esce dal renderer:** `grep -c 'not.toContain("<a")\|not.toContain("<img")' gui/src/components/markdown.test.ts` → **3** o più (**D54**)
-- [ ] ⛔ **il segnaposto è ancora UNO e il registro non ha cambiato forma:** `git log --oneline -- gui/src/panels/registry.ts | wc -l` → **1**, il solo commit del 13 (R7-12: un `diff --stat` stampa file e righe, mai commit)
+- [ ] ⛔ **il segnaposto è ancora UNO e il registro non ha cambiato forma:** `git diff --quiet HEAD~1 -- gui/src/panels/registry.ts && echo unchanged` → `unchanged` — ⚠️ qui stava `git log --oneline -- … | wc -l` → **1**, *«il solo commit del 13»*, ed era già falso prima di questo compito: E164 l'ha toccato una seconda volta (`00547f6`), e un numeratore di commit invecchia a ogni cura — E179
 - [ ] ⛔ **le tre viste NON sono cambiate:** `git diff --quiet HEAD~1 -- gui/src/panels/views/ && echo unchanged` → `unchanged` — i moduli veri entrano dal registro, non dal JSON
-- [ ] ⛔ **i richiami sono nella stella polare — tre di riga, cinque di modulo, uno sulle registrate — e il file resta LF e con le tabelle intere:** i cinque comandi del Passo 15, **con la data al posto di `<data>`** (R7-26) → **3**, **5**, **1**, **0**, e niente
-- [ ] ⛔ **il richiamo di C13-2 è nella §6a del disegno del 2, e il file resta LF e con le tabelle intere:** i tre comandi del Passo 15-bis, **con la data al posto di `<data>`** → **1**, niente, **0**
+- [ ] ⛔ **i richiami sono nella stella polare — tre di riga, cinque di modulo, uno sulle registrate — e il file resta `i/lf` e con le tabelle intere:** i cinque comandi del Passo 15, **con la data al posto di `<data>`** (R7-26) → **3**, **5**, **1**, **i CR di prima** (E180), e niente; e `git ls-files --eol docs/superpowers/specs/2026-09-07-direzione-gui-design.md` → `i/lf`
+- [ ] ⛔ **il richiamo di C13-2 è nella §6a del disegno del 2, e il file resta `i/lf` e con le tabelle intere:** i tre comandi del Passo 15-bis, **con la data al posto di `<data>`** → **1**, niente, **i CR di prima** (E180); e `git ls-files --eol docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → `i/lf`
 - [ ] `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
 - [ ] ⛔ **nessuna sonda col corpo vuoto:** `grep -rcE '^\s*(it|describe)\([^)]*\(\) => \{\}\)' gui/src --include='*.test.ts' | grep -v ':0$'` → **niente** — R7-6, misurato: senza `globstar` il `**` non scende di un livello (`gui/src/a11y.test.ts` sfuggiva) e con più file `grep -c` stampa `file:conteggio`, mai uno «0» nudo; provato una volta anche su un file con un corpo vuoto, che **deve** comparire
 - [ ] ⛔ **il revisore apre la SPA nel browser e GUARDA, con i dati** — regola 5 della testa: `cd gui && npm run dev`; nella console del browser `harnessFake.deliverAll()` — ⚠️ che porta **anche `StaleBuild`**, per costruzione dell'insieme canonico (R7-3) — e subito dopo `harnessFake.deliver("Accepted")`, che rimette `connected`; poi si vedono la fascia che **sparisce** (è arrivato `Accepted`), il chip «collegato», Stato coi due campi, la policy col budget e la riga «protetto quanto il tuo account di sistema», la riga dell'ultimo verdetto **rifiutata**, Permessi con la richiesta in attesa della fixture, Passi col passo 42 chiuso, la Chat col `ciao` non fidato; in Impostazioni si sceglie **Locale** → la scritta «richiesta inviata» compare, il controllo **resta** su OpenRouter (è il core che decide) **e la finestra si apre al click** — `deliverAll` ha già lasciato la richiesta della fixture in `core.pending`, e la finestra apre su richiesta **più** chiamata in volo (R7-4; qui stava un secondo `deliver("PermissionRequired")`, che non cambiava nulla di visibile) — col focus dentro, il tabulatore **non esce**, «Consenti» la chiude, e `harnessFake.sent` porta un `Approve` con `vram-policy` e `local`; con `Ctrl+Alt+→` la tessera attiva si sposta nel gruppo accanto, e su un bordo si divide; i due comandi della linguetta staccano e portano a pagina intera; un link nella Chat mostra l'indirizzo accanto e **non apre nulla**

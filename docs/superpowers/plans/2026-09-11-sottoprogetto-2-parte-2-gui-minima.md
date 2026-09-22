@@ -424,6 +424,14 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E197** | ⛔ **Compito 15 — `@intlify/vue-i18n/no-missing-keys` diventa MUTO, non rosso, se `settings["vue-i18n"].localeDir` di `eslint.config.js` smette di risolvere: metà della rete di D65 aveva una via di vacuità silenziosa, e nessuna delle diciassette righe del criterio la guardava.** ⛔ **Misurato dalla revisione il 2026-09-22 (I-2), nelle due direzioni su una copia:** con `localeDir` a `./non/esiste/*.json`, `$t("modules.inventato")` in `Status.vue` → **nessuna riga**, `EXIT=0`; com'è → `error 'modules.inventato' does not exist…`, `EXIT=1`. Il giorno che `src/locales/` si rinomini o il glob smetta di corrispondere, il lint resta verde, il cancello resta verde, e la sonda superstite di `copy.test.ts` non lo vede: guarda le chiavi che la SPA **costruisce** (P-105), non quelle **scritte** in un template. ⚖️ **Deciso dal coordinatore: una GUARDIA DI NON-VACUITÀ permanente, non una riga di criterio** — una riga di criterio vale il giorno dell'esecuzione, la guardia vale a ogni corsa del cancello (§8.6.2 del compendio). ✅ **CURATO dal coordinatore in `gui/src/locales/copy.test.ts`, la casa di *«ciò che nessun lint può fare»*, in DUE forme, e la prima è caduta alla misura:** la prima sonda costruiva un `ESLint` sulla configurazione **vera** e pretendeva da `lintText` esattamente l'errore di `no-missing-keys` su una chiave inventata — giusta nelle due direzioni da sola (`2 passed`; `localeDir` rotto → `expected [] to deeply equal [ '@intlify/vue-i18n/no-missing-keys' ]`), ma **4,6 s** da sola e **27 s dentro la suite intera**, cioè `Test timed out in 5000ms` alla prima corsa di `gate-gui.sh`: carica la catena intera con `typescript`, e una guardia che va rossa per lentezza non guarda niente. ⛔ **È la regola «ogni cura lascia un difetto» applicata al coordinatore, e l'ha colta la rimisura della direzione di E196 prima del commit.** ✅ **La forma che resta è STATICA, con il punto cieco dichiarato nel commento:** la riga `settings` di `eslint.config.js` **testuale**, una volta, e `src/locales/it.json` **presente** — due case per un percorso, e la sonda le tiene d'accordo; costa millisecondi; non vede un plugin che rinomini l'impostazione, e quel caso è della revisione. ✅ **Le due direzioni, misurate:** com'è → verde, e la sonda costa millisecondi (**82 ms** nell'uscita di `vitest`) — il file intero pesa **0,8 s** di suite, misurato come DIFFERENZA e non come totale: `npx vitest run` con e senza `--exclude src/locales/copy.test.ts` → 13,5 s contro 12,7 s il pomeriggio del 2026-09-22, su una macchina che rendeva la stessa suite due volte più lenta del mattino (6,6 s) a parità di sonde; `localeDir` rotto in `eslint.config.js` → `expected 0 to be 1`, `1 failed`; ritorno da copia pristina con `cmp`; `npm run build` **0**, `npx eslint src` **0**. Il blocco dettato del Passo 5 è **rispecchiato** sul file (E32 M-2), e il criterio conta **due** `it(` e prova la sonda nuova nelle due direzioni. ⚠️ **La cura NON è rivista**: è la prima A/B del proprietario dopo questa ondata. Trovata dalla revisione del compito 15, 2026-09-22 |
 | **E198** | ⚠️ **Compito 15, Passo 11 — il terzo richiamo alla §8 diceva *«l'ordine che questa cella fissa»* stando nella cella *La prova*, che non fissa nessun ordine: un'autoreferenza falsa, e la cella *Forma* — quella che R8-10 correggeva — restava senza segno.** La tabella *«Il cancello, pezzo per pezzo»* ha intestazione `| Pezzo | Forma | La prova |`, e il richiamo, appeso in coda alla riga, sta nella terza; l'elenco dei comandi che il richiamo allunga vive nella seconda. ⛔ **Misurato dalla revisione il 2026-09-22 (I-3):** `grep -c 'npm run lint'` sulla riga → **1**, ed è dentro il richiamo, non nell'elenco. **E il file ha già la convenzione che risolve il caso**, tre volte — *«sulla cella «…» di questa riga»* — e una delle tre è proprio il precedente che E195 cita: il richiamo del 2026-09-19 sta nell'ultima cella **e nomina la cella che corregge**; E195 ne aveva preso la metà. ⚖️ **Sul ruling di E195 la revisione dà ragione al coordinatore** — il secondo richiamo corregge entrambe le celle che tocca — e questa è una cosa diversa. ✅ **CORRETTO nel disegno e nel testo dettato, sette parole:** *«(R8-10), sulla cella «Forma» di questa riga:»* e *«l'ordine che quella cella fissa»*; il fine-riga del disegno conservato (CR uguale alle righe), `check-docs.sh` → `OK`. Trovata dalla revisione del compito 15, 2026-09-22 |
 | **E199** | 📌 **Compito 15 — i rilievi minori e i nit della revisione, curati nella prosa o censiti qui perché il rapporto è git-ignored (la lezione di E176).** La revisione del 2026-09-22, un revisore fresco su Opus: conformità **piena** — cinque blocchi dettati byte per byte, i soli scarti sono i segnaposto dei tempi che il compito ordina di sostituire — **0 Critici, 3 Importanti (E196, E197, E198), 3 Minori, 3 Nit**; tutte le direzioni rifatte e arrossate, più sei sue. ✅ **M-1 — curato nella prosa:** `scripts/gate-gui.sh` è `100644` nell'indice come gli altri cinque script del cancello (`git ls-files -s scripts/`), e `core.filemode` è `false`: il `chmod +x` del Passo 6 non poteva arrivare all'indice, e la parola «eseguibile» rassicurava; tolti entrambi, la via è `bash scripts/gate-gui.sh` come per ogni script del cancello, e il criterio lo asserisce. ✅ **M-2 — curato nel criterio:** la riga *«nessuna regola ad avviso»* stampava e non sapeva andare rossa, ed era cieca a `files`; ora stampa anche `files` ed esce **1** se compare `"warn"` — misurato nelle due direzioni sulla copia della configurazione (`no-raw-text` a `warn` → `EXIT=1`). ✅ **M-3 — curato nel commento di `gate-gui.sh` e nel blocco dettato:** `npm ci` **cancella** `gui/node_modules/` a ogni corsa, anche per un commit di soli documenti; un `npm link` o un pacchetto ritoccato a mano non sopravvive al cancello, e prima nessuna riga lo diceva. **Nit-1:** la ricetta *«i due modelli»* del rapporto dell'implementatore conta i `.vue` due volte — `git ls-files 'gui/src/*.vue'` da solo rende **13**, perché l'asterisco di git attraversa la barra; sommare i due modelli dà 25. **Nit-2:** il commento della CI nomina `v7.0.0` mentre `uses:` segue tutta la `v7` — vero oggi, e la riga **dichiara** invece di dipendere dal default: resta. **Nit-3:** due forme di `files` nello stesso `eslint.config.js` (`**/*.vue` e `src/panels/Chat.vue`), entrambe dettate e misurate: nessuno le «uniformi» senza misurare. ⚠️ **Non verificato da nessuno, dichiarato:** la CI vera su GitHub — `setup-node`, la cache spenta, i tempi — si vede al push. Censite chiudendo la revisione del compito 15, 2026-09-22 |
+| **E200** | ⛔ **Compito 16, Passo 6 — il disegno del 2 è `i/lf w/crlf` su questa macchina, e lo script dettato del richiamo si sarebbe fermato al primo `assert` senza scrivere; e SENZA quell'`assert` avrebbe scritto nel posto sbagliato: con `split("\n")` ogni riga porta il `\r` in coda, la riga vuota che chiude il capoverso non è mai `""`, e il ciclo corre fino all'ULTIMA riga del file.** È **E188** alla lettera — E51 → E180 → E188 → E200, sempre nel compito che nessuno aveva ancora aperto — e la trentanovesima chiusura lo scrive come prima trappola: *«la specie di ogni voce d'errata del compito prima si cerca in tutto il piano prima di dispacciare il compito dopo»*. ⛔ **Misurato il 2026-09-22 dal pre-controllo, a secco su una copia** (`_precheck_16_blocks.py`, git-ignorato): `git ls-files --eol` sul disegno → `i/lf w/crlf`, `tr -cd '\r' … \| wc -c` uguale a `wc -l`; lo script com'era → `AssertionError: il disegno del 2 e' LF (P-47)`; tolto l'`assert`, il ciclo si ferma all'ultima riga del file. ✅ **CORRETTO nel compito — vincolo globale 4:** lo script legge `eol`, asserisce *«nessun `\r` fuori da un `\r\n`»*, divide e ricompone con `eol`, confronta il conto degli `eol` prima e dopo e scrive su un temporaneo con `os.replace` (gotcha #82); la riga *Files*, il Passo 1 (che misura anche il disegno, come E188 fece per il 15), la prosa del Passo 6 e il criterio dicono `i/lf` e *«CR uguale alle righe»* invece di «LF» e `w/lf`. ✅ **Provato a secco sulla copia col richiamo datato:** una riga cambiata, il capoverso chiuso alla riga giusta, CR uguale alle righe prima e dopo, `compito 16 del piano della parte 2` → **1**. Trovata dal pre-controllo del compito 16, 2026-09-22 |
+| **E201** | ⛔ **Compito 16, Passo 6 — lo script dettato del richiamo apriva `/tmp/richiamo-8-non-fa.md` DA PYTHON, che non risolve il `/tmp` di Git Bash: `FileNotFoundError` prima di scrivere.** È **R8-13** — la trappola che lo stesso compito cita nei Passi 2, 5 e 6 per i due script gemelli, che passano il percorso con `cygpath -w` in `SCRATCH` — lasciata nel terzo script dello stesso Passo. ⛔ **Misurato il 2026-09-22 dal pre-controllo:** `io.open("/tmp/richiamo-8-non-fa.md")` da Python → `FileNotFoundError` (Python vede `C:\tmp`, la Git Bash la cartella temporanea dell'utente). ✅ **CORRETTO nello script riscritto da E200:** `export SCRATCH="$(cygpath -w /tmp)"` prima dell'heredoc e `os.path.join(os.environ["SCRATCH"], "richiamo-8-non-fa.md")`, la forma dei due gemelli; la prosa del Passo 6 lo dice. Trovata dal pre-controllo del compito 16, 2026-09-22 |
+| **E202** | ⚠️ **Compito 16, Passo 7 — il `git add` non nomina il PIANO, e la riga 16 della tabella della posizione va a ✅ nello stesso commit: è E182 ed E191 alla lettera, nel terzo compito di fila.** La testa del piano dice *«la tabella qui sopra, che chi esegue aggiorna nel commit del compito»*, e il 15 l'ha fatto (`b0ef8f7` tocca il piano); il comando del Passo 7 elenca i cinque file della riga *Files* e il piano non c'è — E191 ha corretto il Passo 12 del 15 e non il fratello del compito che nessuno aveva ancora aperto. ✅ **CORRETTO:** il piano è nel `git add`. ⚠️ Il `git push` resta scritto, e chi esegue non lo lancia: pusha il coordinatore a revisione pulita, come per ogni compito di questo piano. Trovata dal pre-controllo del compito 16, 2026-09-22 |
+| **E203** | ⛔ **Compito 16, criterio di chiusura — la sonda «niente `-n`» era ROSSA a compito perfetto: `grep -cE 'cargo audit ((-n\|--no-fetch)\b\|.*--no-fetch)' scripts/gate.sh` rende **1**, perché il commento dettato dal Passo 2 porta *«`cargo audit -n` <tempo>»*, la riga dei due tempi che il Passo 3 ordina di annotare.** È **E193** alla lettera — *la sonda conta sul file intero e trova il commento che lo stesso Passo detta* — e R8-17 aveva già curato con `^[^#]*` la sonda gemella su `audit-level`, nella riga sotto, senza ricontare questa. ⛔ **Misurato il 2026-09-22 dal pre-controllo, a secco sul `gate.sh` ricostruito col blocco dettato** (`_precheck_16_blocks.py`): la sonda com'era → **1**; con `^[^#]*` → **0**; sulla mutazione — `cargo audit -n` nella riga `run` — → **1**. ✅ **CORRETTO nel criterio:** `grep -cE '^[^#]*cargo audit ((-n\|--no-fetch)\b\|.*--no-fetch)'`, la stessa cura di R8-17, sui due file. ⛔ **Il commento non si tocca:** è dettato, e D69 vuole i due tempi accanto alla riga. Trovata dal pre-controllo del compito 16, 2026-09-22 |
+| **E204** | ⛔ **Compito 16, criterio di chiusura — `grep -n 'npm run lint\|npm audit' scripts/gate-gui.sh` rende TRE righe a compito perfetto, non due: il commento dettato dal Passo 4 dice *«`npm audit` found 0 vulnerabilities in about six seconds»*.** È E193 nella riga accanto a E203, e la cura è la stessa: la sonda si ancora alla RIGA. ⛔ **Misurato il 2026-09-22 dal pre-controllo, a secco sul `gate-gui.sh` ricostruito coi due blocchi dettati:** la sonda com'era → `npm run lint`, il commento, `npm audit`; `grep -nE '^(npm run lint\|npm audit)$'` → **due**, `lint` prima di `audit`. ✅ **CORRETTO nel criterio.** Trovata dal pre-controllo del compito 16, 2026-09-22 |
+| **E205** | ⛔ **Compito 16, criterio di chiusura — `grep -c 'fail-fast: false' .github/workflows/quality-gate.yml` → 1 era ROSSO a compito perfetto: il flusso dettato lo porta DUE volte, la riga e il commento *«⛔ `fail-fast: false` IS NOT A DETAIL»* che P-111 vuole accanto.** È E193 per la terza volta nello stesso criterio, e la trentanovesima chiusura lo prescrive come terza trappola — *«ogni `grep -c` di un criterio si lancia sul file di oggi prima del dispaccio»* — qui sul file **ricostruito**, perché il flusso di oggi non ha ancora la matrice. ⛔ **Misurato il 2026-09-22 dal pre-controllo, a secco sul flusso dettato:** `grep -c 'fail-fast: false'` → **2**; `grep -cE '^ +fail-fast: false$'` → **1**; `grep -c 'windows-latest'` → **1**, che resta giusta. ✅ **CORRETTO nel criterio,** la forma di E193. Trovata dal pre-controllo del compito 16, 2026-09-22 |
+| **E206** | ⚠️ **Compito 16, criterio di chiusura — DUE sonde su `gate.sh`: la prima MANCA, la seconda è a otto su nove.** (1) Il commento dettato dal Passo 2 porta `<data>` e `<tempo>`, che il Passo 3 ordina di sostituire coi tempi misurati, e nessuna riga del criterio pretendeva che fossero spariti: la seconda domanda del pre-controllo — *per ogni artefatto che il compito produce, quale controllo lo esercita?* — e il 15 aveva la sonda gemella nel proprio dispaccio. ⛔ **Misurato il 2026-09-22:** `grep -cE '<data>\|<tempo>' scripts/gate.sh` → **0** oggi, **1** sul file ricostruito prima della sostituzione — quindi la sonda coglie esattamente un segnaposto sopravvissuto e non un `<data>` che il file porta da prima (la forma di E192). ✅ **CORRETTO:** la riga nel criterio e nel Passo 7, → **0**. (2) La sonda sull'ordine delle `run` elencava otto etichette — *«workspace build, tests, no-OS, allow-list, dependency advisories, attributes, gui, documentation»* — e `grep -n 'run "' scripts/gate.sh` ne rende **nove** a compito perfetto: la nona, `DST campaigns -- wall time`, è ultima da prima del 15 e l'elenco la ometteva, che un revisore avrebbe contato come divergenza. ✅ **CORRETTO:** la lista dice anche la nona. Trovata dal pre-controllo del compito 16, 2026-09-22 |
+| **E207** | ⚖️ **Compito 16, Passo 5 — l'ultimo passo del flusso dichiara `shell: bash`, per la stessa ragione per cui `package-manager-cache: false` è scritto per esteso: un `bash` nudo sotto la shell per difetto di Windows (`pwsh`) è QUELLO CHE IL PATH TROVA PRIMA, e l'immagine `windows-latest` ne porta TRE.** ⛔ **Letto alle fonti il 2026-09-22 dal pre-controllo:** il readme dell'immagine Windows Server 2025 di `actions/runner-images` elenca `gitbash.exe` (`C:\Program Files\Git\bin\bash.exe`), `msys2bash.cmd` (`C:\msys64\usr\bin\bash.exe`) e `wslbash.exe` (`C:\Windows\System32\bash.exe`), con WSL **abilitato**; la sintassi dei flussi di GitHub dice *«When specifying a bash shell on Windows, the bash shell included with Git for Windows is used»*; e il sorgente del runner (`ScriptHandler.cs`) sceglie `pwsh` quando nessuna shell è dichiarata. Quale dei tre `bash` un `run: bash scripts/gate.sh` trovi sotto `pwsh` dipende dall'ordine del PATH dell'immagine, che nessuno qui ha scelto e nessun comando locale può misurare (P-111): il flusso reggerebbe **per caso**, come la cache di `setup-node` senza la riga di D66. ⚖️ **Deciso dal coordinatore, e portato al proprietario col dispaccio: una riga, `shell: bash`, sull'ultimo passo** — su Linux è lo stesso `bash --noprofile --norc -eo pipefail` di prima; la decisione 44 chiede *«che Git Bash vi lanci `gate.sh`»*, e la riga lo dice invece di sperarlo; la corsa poi lo prova, come P-111 prescrive. Costo: nessuno misurato; la riga sta **dopo** le quattro che il `diff` del Passo 5 confronta, quindi il blocco `setup-node` resta identico. ⚠️ **La via A — lasciare il `bash` nudo e leggere la corsa — resta registrata:** se il proprietario la preferisce, la riga si toglie con un comando. ✅ **Nel criterio:** `grep -cE '^ +shell: bash$'` → **1**. Trovata dal pre-controllo del compito 16, 2026-09-22 |
 
 ---
 
@@ -21527,7 +21535,7 @@ git push
 - Modify: `scripts/gate-gui.sh` (**LF**) — `npm audit` **in coda**, dentro `gui/` (**D71**)
 - Modify: `.github/workflows/quality-gate.yml` (**`i/lf w/crlf`** — R10-2) — la matrice a due sistemi con `fail-fast: false`, e il passo che installa `cargo audit` (**D70**)
 - Modify: `docs/audit-2026-08-27.md` (**`i/lf w/crlf`** — R10-2: qui stava «LF», e il Passo 6 diceva già il contrario) — i richiami datati che chiudono **X-1** e **X-3**
-- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**) — un richiamo datato in coda al capoverso «Ciò che la §8 non fa» (R9a-11, **D88**)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**`i/lf`** — ⚠️ E200: qui stava «LF», e su questa macchina è `w/crlf`) — un richiamo datato in coda al capoverso «Ciò che la §8 non fa» (R9a-11, **D88**)
 - ⛔ **NON si tocca `Cargo.toml`, `Cargo.lock`, né nessuna crate:** `cargo audit` è un attrezzo, non una dipendenza — non entra in nessun manifesto e **non** riguarda ADR-0031
 - Read: la tabella *«Le voci aperte che NON hanno un numero AUD»* di [`audit-2026-08-27.md`](../../audit-2026-08-27.md), righe **X-1** e **X-3**; le **decisioni 44 e 45** della [stella polare](../specs/2026-09-07-direzione-gui-design.md), **per intero**, che sono il mandato di questo compito; `scripts/gate.sh`, `scripts/gate-gui.sh` e `.github/workflows/quality-gate.yml` **come il compito 15 li lascia**; **P-106**…**P-111**; **D68**…**D71**
 - ⛔ **NON si legge**: il «Dettaglio» dell'audit, che si apre una scheda per volta e qui non serve — X-1 e X-3 **non hanno** un numero AUD e vivono nella sola tabella
@@ -21557,14 +21565,15 @@ grep -c 'matrix' .github/workflows/quality-gate.yml
 grep -c 'gate-gui' scripts/gate.sh
 grep -c 'setup-node' .github/workflows/quality-gate.yml
 cargo audit --version 2>&1 | head -1
-git ls-files --eol scripts/gate.sh scripts/gate-gui.sh .github/workflows/quality-gate.yml docs/audit-2026-08-27.md
+git ls-files --eol scripts/gate.sh scripts/gate-gui.sh .github/workflows/quality-gate.yml docs/audit-2026-08-27.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c; wc -l < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 awk -F'|' '/^\| \*\*X-1\*\*|^\| \*\*X-3\*\*/{print substr($0, 1, 90)}' docs/audit-2026-08-27.md
 ```
 
 Atteso: **zero** per `cargo audit` (in entrambi gli script), `npm audit` e `matrix`; **più di zero** per `gate-gui` — la riga `run` più il commento del Passo 10 del 15, che lo nomina su due righe (R8-16, 2026-09-16: qui stava «uno», e il conteggio vero è **tre**) — e **uno** per `setup-node`,
 ⛔ **e se sono zero il compito 15 non è eseguito** e questo compito non parte; le due righe dell'audit ci sono; `gate.sh`, il
 flusso e l'audit **`i/lf w/crlf`**, `gate-gui.sh` **`i/lf w/lf`** — R10-2: qui stava «tutti LF», e il Passo 6 diceva già il
-contrario dell'audit.
+contrario dell'audit. ⚠️ **E il disegno del 2 `i/lf`, con la colonna `w/…` che è di questa macchina e non conta** (E51, E72, E180, E188): qui è `w/crlf`, CR uguale alle righe, e il Passo 6 conserva quel fine-riga (E200).
 
 ⚠️ **`cargo audit --version` può dire `error: no such command: audit`, ed è normale** — **P-106**: è il
 prerequisito che questo compito dichiara. Si installa **adesso**, prima di proseguire, perché i Passi 3 e 7 lo
@@ -21795,6 +21804,13 @@ jobs:
           node-version-file: gui/package.json
           package-manager-cache: false
       - run: bash scripts/gate.sh
+        # ⛔ `shell: bash` IS WRITTEN OUT, for the same reason as `package-manager-cache` above. The Windows
+        # image ships THREE executables named `bash` -- Git's, MSYS2's and WSL's C:\Windows\System32\bash.exe
+        # (runner-images Windows2025 readme, read on 2026-09-22) -- and a bare `bash` under the default `pwsh`
+        # is whichever PATH finds first, an order nobody here chose. With `shell: bash` the workflow syntax
+        # says "the bash shell included with Git for Windows is used" (read on 2026-09-22), and on Linux it is
+        # the same bash as before. Decision 44 asked that Git Bash launch the gate: this line says so (E207).
+        shell: bash
 ```
 
 ⛔ **Il blocco `setup-node` dev'essere IDENTICO a quello che il compito 15 ha scritto**, e non si riscrive a
@@ -21821,7 +21837,7 @@ git diff .github/workflows/quality-gate.yml
 
 Atteso: **zero** CR in `/tmp/quality-gate.yml`; nel flusso CR **uguale alle righe** e `i/lf w/crlf` invariato (R10-2: qui stava
 «zero CR le due volte», e un `cp` di un file LF sopra un `w/crlf` lo portava a `w/lf`); il `diff` **vuoto** con la riga *«il
-blocco setup-node e' INVARIATO»*; e il diff di git che mostra **solo** la matrice, `runs-on` e il passo di `cargo install`.
+blocco setup-node e' INVARIATO»*; e il diff di git che mostra **solo** la matrice, `runs-on`, il passo di `cargo install` e `shell: bash` sull'ultimo passo (E207).
 
 ⛔ **`actions/checkout` resta alla `v4`**, come il compito 15 l'ha lasciata e come la §8 dice; la divergenza con la
 `v7.0.1` pubblicata il 2026-07-20 è **registrata e non presa**, e il comando che la rimisura sta nel Passo 9 del
@@ -21890,35 +21906,47 @@ centinaia, i fine-riga sono stati normalizzati:** si revoca e si rifà — e `ch
 ⛔ **E un richiamo nel disegno del 2 — R9a-11, D88:** il capoverso *«**Ciò che la §8 non fa:** la CI resta solo Linux (X-1 …)
 … la scansione degli avvisi di sicurezza (X-3 …)»* è falso da questo commit in due delle sue frasi, e la voce 13 della §9 lo
 dava già per superato dal 2026-09-09. Il richiamo va **in coda al capoverso**, trovato per la frase che contiene; il file è
-**LF** (P-47). Il testo, scritto **prima** in `/tmp/richiamo-8-non-fa.md`, su una riga e senza il `>`:
+**`i/lf`**, e su questa macchina `w/crlf` — ⚠️ E200: qui stava «**LF** (P-47)» — e lo script qui sotto conserva il fine-riga del file. Il testo, scritto **prima** in `/tmp/richiamo-8-non-fa.md`, **LF**, su una riga e senza il `>`, e il percorso lo consegna `cygpath` (R8-13 — ⚠️ E201: lo script apriva `/tmp/…` da Python, che non lo risolve):
 
 > ✅ **RICHIAMO DEL \<data\>, dal compito 16 del piano della parte 2 (D88):** la CI gira **anche su Windows** — decisione 44,
 > X-1 chiusa — e gli avvisi di sicurezza si **cercano**: `cargo audit` in `gate.sh`, `npm audit` in `gate-gui.sh` — decisione
 > 45, X-3 chiusa; il verbale nelle due righe dell'audit. Il resto di questo capoverso resta com'è
 
 ```bash
+tr -cd '\r' < /tmp/richiamo-8-non-fa.md | wc -c
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c; wc -l < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+export SCRATCH="$(cygpath -w /tmp)"   # R8-13: Python does not resolve bash's /tmp (E201)
 python - <<'EOF'
-import io
+import io, os
 p = "docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md"
 text = io.open(p, encoding="utf-8", newline="").read()
-assert "\r\n" not in text, "il disegno del 2 e' LF (P-47)"
-lines = text.split("\n")
+# E200: the design is `i/lf w/crlf` on this machine (core.autocrlf=true), and the file keeps ITS OWN line
+# endings -- global constraint 4. `split("\n")` would leave a `\r` on every line, the blank line that closes
+# the paragraph would never be found, and the recall would land on the LAST line of the file.
+eol = "\r\n" if "\r\n" in text else "\n"
+assert text.count("\r") == (text.count("\r\n") if eol == "\r\n" else 0), "a CR outside a CRLF: the file is mixed"
+lines = text.split(eol)
 hits = [i for i, line in enumerate(lines) if "**Ciò che la §8 non fa:**" in line]
 assert len(hits) == 1, "il capoverso non e' uno: %d" % len(hits)
 i = hits[0]
 while i + 1 < len(lines) and lines[i + 1] != "":
     i += 1
-add = io.open("/tmp/richiamo-8-non-fa.md", encoding="utf-8", newline="").read().strip()
+add = io.open(os.path.join(os.environ["SCRATCH"], "richiamo-8-non-fa.md"), encoding="utf-8", newline="").read().strip()
 assert "\r" not in add and "<data>" not in add and add not in text, "LF, la data sostituita, e non gia' scritto"
 lines[i] = lines[i] + " " + add
-io.open(p, "w", encoding="utf-8", newline="").write("\n".join(lines))
+out = eol.join(lines)
+assert out.count(eol) == text.count(eol), "the line count changed"
+# Built first, written to a temporary, renamed over the original (gotcha #82).
+tmp = p + ".tmp"
+io.open(tmp, "w", encoding="utf-8", newline="").write(out)
+os.replace(tmp, p)
 EOF
-tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c; wc -l < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 grep -c 'compito 16 del piano della parte 2' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 bash scripts/check-docs.sh
 ```
 
-Atteso: **0**, **1**, `OK`.
+Atteso: **zero** CR in `/tmp/richiamo-8-non-fa.md`; nel disegno CR **uguale alle righe** prima e dopo lo script — ⚠️ qui stava «**0**», vero solo su un albero LF (E200); **1**; `OK`.
 
 - [ ] **Passo 7: il cancello, e il commit**
 
@@ -21926,22 +21954,25 @@ Atteso: **0**, **1**, `OK`.
 time bash scripts/gate.sh 2>&1 | tee /tmp/gate-16.log | tail -3
 grep -c 'dependency advisories' /tmp/gate-16.log
 grep -c 'gui: advisories' /tmp/gate-16.log
+grep -cE '<data>|<tempo>' scripts/gate.sh
 bash scripts/check-docs.sh
 git status --porcelain
 ```
 
-Atteso: `GATE GREEN`, le due etichette **più di zero** volte ciascuna, `OK`, e niente da committare oltre ai file
+Atteso: `GATE GREEN`, le due etichette **più di zero** volte ciascuna, **0** segnaposto in `gate.sh` (E206), `OK`, e niente da committare oltre ai file
 che questo compito nomina. ⚠️ **Il tempo del cancello è cresciuto**: se il commento del Passo 10 del compito 15
 porta un numero, questo compito lo **rimisura e lo data** accanto al vecchio invece di riallinearlo — è la regola
 del settimo passo, che porta il proprio tempo con la data.
 
 ```bash
-git add scripts/gate.sh scripts/gate-gui.sh .github/workflows/quality-gate.yml docs/audit-2026-08-27.md docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+git add scripts/gate.sh scripts/gate-gui.sh .github/workflows/quality-gate.yml docs/audit-2026-08-27.md \
+        docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md \
+        docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
 git commit -m "gui(compito 16): X-1 e X-3 -- la matrice Windows nella CI, cargo audit in gate.sh, npm audit in gate-gui.sh"
 git push
 ```
 
-⛔ **Senza co-autore**, vincolo globale 13.
+⛔ **Senza co-autore**, vincolo globale 13. ⚠️ **Il piano è nel `git add`** per la riga **16** della tabella della posizione, che va a ✅ nello stesso commit (E202: qui mancava, come al 14 e al 15 — E182, E191); e il `git push` resta scritto ma chi esegue non lo lancia: pusha il coordinatore a revisione pulita.
 
 **Criterio di chiusura del compito 16**
 
@@ -21951,24 +21982,26 @@ git push
 - [ ] ⛔ **niente `-n` e niente `--audit-level`**, e lo si prova col comando invece di rileggerlo:
 
   ```bash
-  grep -cE 'cargo audit ((-n|--no-fetch)\b|.*--no-fetch)' scripts/gate.sh scripts/gate-gui.sh
+  grep -cE '^[^#]*cargo audit ((-n|--no-fetch)\b|.*--no-fetch)' scripts/gate.sh scripts/gate-gui.sh
   grep -cE '^[^#]*audit-level' scripts/gate-gui.sh
   ```
 
-  → **zero** per entrambi i file e **zero** (**D69**, **D71**). ⛔ **RICHIAMO DEL 2026-09-16, R8-11 e R8-17:** il secondo comando era `grep -c 'audit-level'` e rendeva **1** su un file **giusto**, perché la parola sta nel commento che il Passo 4 stesso scrive — `^[^#]*` la cerca fuori dai commenti, provato nelle due direzioni sul file ricostruito (0 com'è, 1 con `npm audit --audit-level=high`); e il primo guardava **un** file solo, mentre da **D83** i siti di `cargo audit` sono due
-- [ ] ⛔ **`npm audit` è l'ULTIMA riga di `gate-gui.sh`**, dentro `gui/`: `tail -2 scripts/gate-gui.sh` lo mostra, e `grep -n 'npm run lint\|npm audit' scripts/gate-gui.sh` rende **due** righe, `lint` prima di `audit` (R8-12: `tail -3` non arrivava a `npm run lint`, che sta **undici** righe più su per via del commento di otto righe del Passo 4 — un numero fisso di righe invecchia col commento)
-- [ ] ⛔ **la riga di `cargo audit` sta FRA «allow-list» e «attributes»:** `grep -n 'run "' scripts/gate.sh` le mostra in quest'ordine — workspace build, tests, no-OS, allow-list, **dependency advisories**, attributes, gui, documentation
+  → **zero** per entrambi i file e **zero** (**D69**, **D71**). ⛔ **RICHIAMO DEL 2026-09-16, R8-11 e R8-17:** il secondo comando era `grep -c 'audit-level'` e rendeva **1** su un file **giusto**, perché la parola sta nel commento che il Passo 4 stesso scrive — `^[^#]*` la cerca fuori dai commenti, provato nelle due direzioni sul file ricostruito (0 com'è, 1 con `npm audit --audit-level=high`); e il primo guardava **un** file solo, mentre da **D83** i siti di `cargo audit` sono due. ⛔ **E il primo, il 2026-09-22 (E203):** rendeva **1** su `gate.sh` a compito perfetto, perché il commento dettato del Passo 2 porta *«`cargo audit -n` <tempo>»* — la stessa cura `^[^#]*`, provata a secco nelle due direzioni (0 sul file corretto, 1 con `cargo audit -n` nella riga `run`)
+- [ ] ⛔ **`npm audit` è l'ULTIMA riga di `gate-gui.sh`**, dentro `gui/`: `tail -2 scripts/gate-gui.sh` lo mostra, e `grep -nE '^(npm run lint|npm audit)$' scripts/gate-gui.sh` rende **due** righe, `lint` prima di `audit` (⚠️ E204: qui stava `grep -n 'npm run lint\|npm audit'`, che rende **tre** a compito perfetto — il commento dettato del Passo 4 dice *«`npm audit` found 0 vulnerabilities»*: la sonda si ancora alla riga, E193) (R8-12: `tail -3` non arrivava a `npm run lint`, che sta **undici** righe più su per via del commento di otto righe del Passo 4 — un numero fisso di righe invecchia col commento)
+- [ ] ⛔ **la riga di `cargo audit` sta FRA «allow-list» e «attributes»:** `grep -n 'run "' scripts/gate.sh` le mostra in quest'ordine — workspace build, tests, no-OS, allow-list, **dependency advisories**, attributes, gui, documentation, e per ultima `DST campaigns -- wall time`, la nona (⚠️ E206: la lista era a otto su nove righe)
+- [ ] ⛔ **i segnaposto del commento del Passo 2 sono sostituiti** (E206): `grep -cE '<data>|<tempo>' scripts/gate.sh` → **0** — oggi è 0 e il solo blocco che li porta è quello dettato, quindi la sonda coglie esattamente un segnaposto sopravvissuto, la forma di E192
 - [ ] ⛔ **nessuna crate e nessun manifesto toccati:** `git diff --stat HEAD~1 -- crates/ Cargo.toml Cargo.lock` **vuoto** — `cargo audit` è un attrezzo, non una dipendenza
 - [ ] ⛔ **il blocco `setup-node` è IDENTICO a quello del compito 15**, col `diff` del Passo 5 **vuoto**
-- [ ] `grep -c 'fail-fast: false' .github/workflows/quality-gate.yml` → **1**, e `grep -c 'windows-latest' …` → **1** (**P-111**)
+- [ ] `grep -cE '^ +fail-fast: false$' .github/workflows/quality-gate.yml` → **1** (⚠️ E205: qui stava `grep -c 'fail-fast: false'`, che rende **2** a compito perfetto — il commento dettato lo nomina in code span: la sonda si ancora alla riga, E193), e `grep -c 'windows-latest' …` → **1** (**P-111**)
+- [ ] ⛔ **l'ultimo passo dichiara `shell: bash`** (E207): `grep -cE '^ +shell: bash$' .github/workflows/quality-gate.yml` → **1**, e il blocco `setup-node` resta identico perché la riga sta **dopo** le quattro che il `diff` del Passo 5 confronta
 - [ ] ⛔ **X-1 e X-3 sono chiuse nella loro casa unica**, e nessun altro documento le ricopia: `grep -c 'CHIUSA IL' docs/audit-2026-08-27.md` → **più di uno**, `grep -c '<data>' docs/audit-2026-08-27.md` → **zero**, e `grep -rc 'X-1' docs/COMPENDIO.md` **invariato** rispetto al Passo 1 (gotcha #68)
 - [ ] `bash scripts/check-docs.sh` → `OK`; i fine-riga di tutti i file della lista *Files* **invariati** rispetto al Passo 1 (R10-2)
 - [ ] ⛔ **il lockfile del finto è verificato anche lui (D83):** `grep -c 'cargo audit --file gui/fake-core/Cargo.lock' scripts/gate-gui.sh` → **1**, e nell'uscita del cancello compare `gui: fake core advisories`
-- [ ] ⛔ **il capoverso «Ciò che la §8 non fa» porta il richiamo (R9a-11, D88):** `grep -c 'compito 16 del piano della parte 2' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **1**, e il file resta `i/lf w/lf`
+- [ ] ⛔ **il capoverso «Ciò che la §8 non fa» porta il richiamo (R9a-11, D88):** `grep -c 'compito 16 del piano della parte 2' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **1**, e il file resta **`i/lf`** con CR uguale alle righe — ⚠️ E200: qui stava «`i/lf w/lf`», e su questa macchina è `w/crlf`
 - [ ] ⛔ **E POI SI GUARDA LA CORSA, perché metà di X-1 non si misura da terra** — **P-111**. Aperta la pagina delle azioni del repository sul commit appena spinto:
   - [ ] ci sono **due** job, uno per sistema, e **nessuno dei due è «cancelled»** — è `fail-fast: false` che si vede
   - [ ] nel job Windows il passo `rustup show` stampa il canale e il bersaglio di `rust-toolchain.toml`: è **la** metà che la decisione 44 chiedeva di provare e che nessun comando locale può dire
-  - [ ] nel job Windows `bash scripts/gate.sh` **parte** — Git Bash c'è sull'immagine — e arriva a `GATE GREEN`
+  - [ ] nel job Windows `bash scripts/gate.sh` **parte** — Git Bash c'è sull'immagine, e lo lancia per dichiarazione, `shell: bash`, non per l'ordine del PATH (E207) — e arriva a `GATE GREEN`
   - [ ] ⚠️ **se il job Windows è rosso, NON si toglie dalla matrice:** è la prima volta che quel codice viene provato là, ed è il motivo per cui X-1 esisteva. Il rosso è una voce d'errata col suo rimedio
 
 ## Compito 17: la chiusura — i documenti in ogni casa, e la Definizione di «fatto» della parte 2

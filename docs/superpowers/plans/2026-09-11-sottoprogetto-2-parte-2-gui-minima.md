@@ -407,6 +407,9 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E180** | ⛔ **Compito 14, Passi 15 e 15-bis — i due `assert "\r\n" not in b` sono ROSSI su questa macchina: la stella polare e il disegno del 2 sono `i/lf w/crlf`, e lo script si sarebbe fermato al primo comando.** È **E51** alla lettera — *«i quattro `assert` sono verdi solo dove i file sono stati SCRITTI, rossi su ogni clone»* — e E51 ha corretto i quattro di allora e non questi due fratelli, scritti il 2026-09-15 e il 2026-09-16 nel compito che nessuno aveva ancora aperto (la forma di E72). ⛔ **Misurato il 2026-09-22:** `git config core.autocrlf` → `true` (la regolazione locale di E51 non c'è su questa macchina, e il 13 ha lavorato il 2026-09-21 con lo stesso `true`); `git ls-files --eol` sui due disegni → `i/lf w/crlf`; `tr -cd '\r' … \| wc -c` → **1081** su 1081 righe e **726** su 726. Con `lines = b.split("\n")` ogni riga avrebbe portato il `\r` in coda e `lines[i].endswith(" \|")` sarebbe stato falso ovunque. ✅ **CORRETTO nei due script — vincolo globale 4, *i fine-riga si conservano per file*:** `eol = "\r\n" if "\r\n" in b else "\n"`, l'`assert` diventa *«nessun `\r` fuori da un `\r\n`»*, `split(eol)` e `join(eol)`, e il conto finale confronta gli `eol`. ✅ **E l'oracolo dei fine-riga cambia con lui:** `tr -cd '\r' … \| wc -c` si lancia **prima e dopo** lo script e coincide (0 dove l'albero è LF, tante quante le righe dove è CRLF), e a commit fatto `git ls-files --eol <file>` → `i/lf` — non più *«→ 0»*, che è vero solo su un albero LF. ✅ **Le dieci ancore dei due script sono state provate a secco il 2026-09-22 su questa macchina:** ogni intestazione una, ogni riga una e chiusa da ` \|`, ogni capoverso uno. Trovata dal pre-controllo del compito 14, 2026-09-22 |
 | **E181** | ✅ **Compito 14 — E174 chiede a questo compito di decidere chi scorre: TUTTI E CINQUE i moduli scorrono, con le tre righe che il Passo 9 già detta alla Chat.** E174 ha misurato che `.panel` non scorre (`overflow: visible`) e che un contenuto più alto della tessera viene **tagliato** da `.dv-groupview` a qualunque altezza di striscia — 8,3 · 8,3 · 7,3 px a 900×470 — e ha lasciato la decisione qui, *«dove ogni modulo decide se scorre — la chat sì, un modulo di stato forse no»*. Il testo dettato il 2026-09-15 dava lo scorrimento alla sola Chat e niente agli altri quattro, perché E174 non esisteva. ⚖️ **Deciso dal coordinatore il 2026-09-22, sui cinque criteri di `anthropic-skills:decision-principles`:** `overflow: auto; height: 100%; box-sizing: border-box` sulla radice di Stato, Permessi, Passi e Impostazioni, com'è già sulla Chat — **coerenza** (una forma sola, quella dettata), **proporzione** (una barra di scorrimento compare solo quando serve, quindi un modulo che ci sta è identico a prima; Permessi e Passi sono liste che crescono senza tetto), e un taglio nasconde ciò che uno scorrimento tiene raggiungibile. Costo se sbagliata: quattro righe di CSS. ⛔ **Il revisore lo misura nel browser a 900×470, come E174:** nessun figlio di `.panel` sfora `.dv-groupview`. Registrata dal pre-controllo del compito 14, 2026-09-22 |
 | **E182** | ⚠️ **Compito 14, Passo 16 — il `git add` non nomina il PIANO, e la riga 14 della tabella della posizione va a ✅ nello stesso commit.** La testa del piano dice *«la tabella qui sopra, che chi esegue aggiorna nel commit del compito»*, e il 13 l'ha fatto — `8679f27` tocca 33 file, il piano compreso — ma il comando del Passo 16 elenca `gui` e i due disegni soltanto: eseguito alla lettera lascerebbe il piano fuori dal commit e la posizione ferma a tredici. ✅ **CORRETTO:** il piano è nel `git add`. ⚠️ E il `git push` del Passo 16 resta scritto, ma chi esegue non lo lancia: pusha il coordinatore a revisione pulita, come per ogni compito di questo piano. Trovata dal pre-controllo del compito 14, 2026-09-22 |
+| **E183** | ⛔ **Compito 14, Passo 9 — la Chat montata DOPO il token restava etichettata e VUOTA: il `watch` dettato non era `immediate`, e nessuna delle cinque sonde poteva coglierlo.** Un `watch` di Vue parte al primo cambiamento **successivo**, non al montaggio; la Chat è una scheda di **Lavoro** (§6a, domanda 7) e la vista di partenza è Home, quindi nel browser i token atterrano **prima** che la tessera esista, e la tessera nasce con `currentHtml` vuoto — finché non arriva un token nuovo, che con la finta (un solo `Token`) non arriva mai. ⛔ **Misurato dall'implementatore nel browser il 2026-09-22:** dopo `deliverAll()` in Home e un click su «Lavoro», `body` vuoto con l'etichetta «non fidato» presente, anche dopo un frame vero; la riga del criterio *«la Chat col `ciao` non fidato»* era **rossa** con `npm run build` e `npm test` verdi. ⚠️ **È la seconda domanda del pre-controllo — la sonda che MANCA:** tutte e cinque le sonde di `chat.test.ts` montavano la Chat **prima** di consegnare il token. ✅ **CORRETTO nel codice (`c6bc9a9`) e rispecchiato qui:** `{ immediate: true }` come terzo argomento del `watch`, col perché accanto, e una sonda nuova — *«renders a block that was ALREADY streaming when the tile mounted»* — che monta **dopo** il token; le due direzioni provate sul modello compilato: col testo dettato **1 failed** (`Received: <div class="body"></div>`), con la cura **6 passati**, ritorno da copia pristina con `cmp`. 📌 **La forma generale:** una sonda che costruisce lo stato **dopo** aver montato il componente non prova il caso in cui lo stato c'era **prima**, e in una GUI a schede quel caso è la norma. Trovata eseguendo il compito 14, 2026-09-22 |
+| **E184** | ⛔ **Compito 14, Passo 8 — *«`v-model` on a native radio snaps the control back to the model on every update»* era FALSO, letto nel pacchetto spedito, e il controllo della policy restava sull'ULTIMO CLICK invece che sulla policy del core.** Il commento dettato in `Settings.vue` reggeva *«il controllo mostra la policy del core, non l'ultimo click (I1)»* e la riga del criterio *«il controllo **resta** su OpenRouter»*. ⛔ **Misurato il 2026-09-22 nel browser:** dopo `deliverAll()` (policy `Remote`) e un click su «Locale», i due radio erano `[false, true]` — il controllo **si era mosso** — con `Invoke` partito e la finestra aperta; **e il perché, in `@vue/runtime-dom` di vue 3.5.42:** `vModelRadio.beforeUpdate` risincronizza `el.checked` **solo** `if (value !== oldValue)`, e qui il valore legato non cambia — il modello dice ancora ciò che il core ha detto — quindi il `checked` messo dal browser **sopravvive**; un `:checked` nudo ha lo stesso buco, perché una prop del DOM si ripatcha solo se differisce dal vnode precedente. ⚠️ **La sonda dettata non lo coglieva:** *«sends Invoke … and nothing on the current value»* guarda il **filo**, non il controllo. ✅ **CORRETTO nel codice (`c6bc9a9`) e rispecchiato qui:** niente `v-model`; `:checked="current === …"` per la resa, `@change` per il click, e nell'handler i due radio rimessi **a mano** sul modello con un `ref` sul `<fieldset>` — `change` e non `click.prevent`, perché le frecce muovono un gruppo radio nativo e mandano `change` (G20: verificato nel browser, `ArrowDown` manda un secondo `Invoke` e il controllo non si muove); e una sonda nuova sul **controllo**, *«leaves the control on the core's policy until the core answers, then moves with it»*; le due direzioni: col testo dettato **1 failed** (`expected true to be false`), con la cura **11 passati**; nel browser il click rende `[true, false]`. 📌 **La forma generale:** un'affermazione su come si comporta una libreria si legge nel pacchetto spedito, non si ricorda; e una sonda che guarda il filo non prova ciò che si vede sullo schermo. Trovata eseguendo il compito 14, 2026-09-22 |
+| **E185** | ⚠️ **Compito 14, Passo 11 — *«`grep -n '^\.bigtab' … rende oggi le due regole, e se ne rende una terza ci si ferma»* (E178) si falsifica da sé DOPO il passo che lo porta: la regola che il passo scrive si chiama `.bigtab button`, e comincia per `.bigtab`.** Prima del passo il comando rende **2**; dopo, **3** — misurato dall'implementatore il 2026-09-22 — e un revisore che lo rilanciasse a compito fatto leggerebbe un rosso che non c'è. È la specie già scritta nel diario il 2026-09-17: un controllo aggiunto in un compito lascia stantio un Atteso dello stesso compito. ✅ **CORRETTO:** la frase dice **prima** e **dopo**, e l'oracolo che non invecchia è `grep -c '^\.bigtab {'` → **1** e `grep -c '^\.bigtab button {'` → **1**. ⚠️ **E una cifra del DISPACCIO era stantia** — `gui/package.json` a 24/24 righe e CR, che sono **32/32** dal 13: il dispaccio è git-ignorato e non è il piano, quindi la lezione vive nel diario e non qui; la si nomina perché la specie è gotcha #31 dentro una baseline copiata dal dispaccio precedente. Trovata eseguendo il compito 14, 2026-09-22 |
 
 ---
 
@@ -19141,7 +19144,7 @@ const core = useCore();
 
 ```vue
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 import { useCore } from "../stores/core";
 import { useInvoke } from "../stores/invoke";
@@ -19152,6 +19155,7 @@ import { VRAM_POLICY, type PolicyArgument } from "./functions";
 // function with its triple (ADR-0038). This is the FIRST INVOKER of the registry -- the click.
 const core = useCore();
 const invoke = useInvoke();
+const group = ref<HTMLFieldSetElement | null>(null);
 
 const current = computed<PolicyArgument | null>(() =>
   core.policy === null ? null
@@ -19159,17 +19163,27 @@ const current = computed<PolicyArgument | null>(() =>
   : VRAM_POLICY.argument.remote,
 );
 
-// ⛔ THE CONTROL SHOWS THE CORE'S POLICY, NOT THE LAST CLICK (I1): a click sends `Invoke`, and the
-// radio moves when `Policy` comes back -- after the confirmation window, if the triple is not yet
-// granted. Meanwhile the panel says a call is in flight, so nobody is left wondering. `v-model`
-// on a native radio snaps the control back to the model on every update, which is exactly that.
-const choice = computed<PolicyArgument | null>({
-  get: () => current.value,
-  set: (argument) => {
-    if (argument === null || argument === current.value) return;
-    invoke.send({ function: VRAM_POLICY.name, argument });
-  },
-});
+/**
+ * ⛔ THE CONTROL SHOWS THE CORE'S POLICY, NOT THE LAST CLICK (I1): a click sends `Invoke`, and the
+ * radio moves when `Policy` comes back -- after the confirmation window, if the triple is not yet
+ * granted. Meanwhile the panel says a call is in flight, so nobody is left wondering.
+ *
+ * ⛔ AND THE CONTROL IS PUT BACK BY HAND, BECAUSE `v-model` DOES NOT DO IT -- E184, measured in the
+ * browser on 2026-09-22 and then read in the shipped `@vue/runtime-dom` of vue 3.5.42:
+ * `vModelRadio.beforeUpdate` re-syncs `el.checked` only `if (value !== oldValue)`, and here the
+ * bound value does NOT change -- the model still says what the core said -- so the browser's own
+ * check survives and the radio shows the click. `:checked` alone has the same hole: a DOM prop is
+ * patched only when the vnode's value differs from the previous one.
+ *
+ * ⚠️ `change` AND NOT `click.prevent`: the arrow keys move a native radio group and fire `change`,
+ * and a handler hung on `click` would leave the keyboard path silent (G20).
+ */
+function choose(argument: PolicyArgument): void {
+  if (argument !== current.value) invoke.send({ function: VRAM_POLICY.name, argument });
+  for (const input of group.value?.querySelectorAll<HTMLInputElement>("input[type=radio]") ?? []) {
+    input.checked = input.value === current.value;
+  }
+}
 </script>
 
 <template>
@@ -19177,10 +19191,10 @@ const choice = computed<PolicyArgument | null>({
     <!-- A NATIVE RADIO GROUP AND NOT A LIBRARY PRIMITIVE (D62): the browser gives it the keyboard
          and the roles; Reka UI is for what HTML has no primitive for -- the focus trap of the
          window. Disabled while the core has not said which policy is active: "the rest off" (§6a). -->
-    <fieldset :disabled="core.policy === null">
+    <fieldset ref="group" :disabled="core.policy === null">
       <legend>{{ $t("settings.policy") }}</legend>
-      <label><input v-model="choice" type="radio" name="vram-policy" :value="VRAM_POLICY.argument.remote" /> {{ $t("settings.remote") }}</label>
-      <label><input v-model="choice" type="radio" name="vram-policy" :value="VRAM_POLICY.argument.local" /> {{ $t("settings.local") }}</label>
+      <label><input type="radio" name="vram-policy" :value="VRAM_POLICY.argument.remote" :checked="current === VRAM_POLICY.argument.remote" @change="choose(VRAM_POLICY.argument.remote)" /> {{ $t("settings.remote") }}</label>
+      <label><input type="radio" name="vram-policy" :value="VRAM_POLICY.argument.local" :checked="current === VRAM_POLICY.argument.local" @change="choose(VRAM_POLICY.argument.local)" /> {{ $t("settings.local") }}</label>
     </fieldset>
     <p v-if="invoke.inFlight !== null" role="status">{{ $t("settings.inFlight") }}</p>
     <p class="who">{{ $t("settings.who") }}</p>
@@ -19261,6 +19275,11 @@ watch(
       frame = requestAnimationFrame(render);
     }
   },
+  // ⛔ `immediate` BECAUSE A CHAT IS MOUNTED WHILE A BLOCK IS ALREADY IN FLIGHT (E183, measured in
+  // the browser on 2026-09-22): the Chat is a tab of Lavoro, the tokens land while Home is open,
+  // and a watcher that only fires on the NEXT token leaves the piece labelled and EMPTY until one
+  // arrives -- which, with the fake replaying a single `Token`, is never.
+  { immediate: true },
 );
 onUnmounted(() => {
   if (frame !== 0 && typeof cancelAnimationFrame === "function") cancelAnimationFrame(frame);
@@ -19640,7 +19659,9 @@ SONO GIÀ**, scritte dalla cura del 13 (E165) e corrette due volte (E170, E173):
 `--dv-tabs-and-actions-container-height: 40px` su `.dock .dockview-theme-abyss` — e `.bigtab` sta a `height: 100%`.
 ⛔ **Il blocco che qui stava — `.bigtab { … height: 40px; … }` e `.bigtab-title { flex: 1 }` — NON si scrive:** quel
 `height: 40px` è esattamente ciò che E170 ha misurato come una presa di **31 px** e ha tolto.
-`grep -n '^\.bigtab' gui/src/tokens/tokens.css` rende oggi le due regole, e se ne rende una terza ci si ferma.
+`grep -c '^\.bigtab {' gui/src/tokens/tokens.css` → **1**, e `grep -c '^\.bigtab button {' gui/src/tokens/tokens.css` → **0**
+prima di scrivere e **1** dopo — ⚠️ qui stava *«`grep -n '^\.bigtab'` rende oggi le due regole, e se ne rende una terza ci si
+ferma»*, che DOPO il passo rende tre, perché `.bigtab button` comincia per `.bigtab` (E185).
 
 ```css
 
@@ -19931,6 +19952,27 @@ describe("Impostazioni", () => {
     expect(invoke.inFlight).not.toBeNull();
     expect(wrapper.text()).toContain(t("settings.inFlight"));
   });
+
+  it("leaves the control on the core's policy until the core answers, then moves with it", async () => {
+    // ⛔ E184: the probe above asserts what went ON THE WIRE and says nothing about the CONTROL,
+    // which is what the reviewer looks at -- "the core decides". Measured in the browser on
+    // 2026-09-22: with `v-model` the radio kept the click.
+    const { bridge, core } = wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    bridge.deliver("Policy");
+    await nextTick();
+    const [remote, local] = wrapper.findAll("input[type=radio]");
+    await local?.setValue(true);
+    await nextTick();
+    expect((local?.element as HTMLInputElement).checked).toBe(false);
+    expect((remote?.element as HTMLInputElement).checked).toBe(true);
+    // ⛔ THE SECOND DIRECTION: the core answers, and the control DOES move -- otherwise a control
+    // nailed to `remote` would pass the half above.
+    core.receive({ kind: "Policy", value: { policy: "Local", allocated: "12288", total: "16384" } });
+    await nextTick();
+    expect((local?.element as HTMLInputElement).checked).toBe(true);
+    expect((remote?.element as HTMLInputElement).checked).toBe(false);
+  });
 });
 
 describe("the confirmation window", () => {
@@ -20065,6 +20107,17 @@ describe("the Chat", () => {
     expect(body).toContain("&lt;b&gt;x&lt;/b&gt;");
     expect(body).not.toContain("<a");
     expect(body).toContain('data-href="https://e.com"');
+  });
+
+  it("renders a block that was ALREADY streaming when the tile mounted", async () => {
+    // ⛔ THE DIRECTION EVERY OTHER PROBE HERE MISSES (E183): they all mount BEFORE the token, and
+    // the watcher fires. The Chat is a tab of Lavoro, so in the browser it is mounted AFTER the
+    // tokens landed -- and without `immediate` the piece was labelled and empty.
+    const stream = useStream();
+    stream.receive({ kind: "Token", text: "in volo prima del montaggio", provenance: "Untrusted" });
+    const wrapper = mount(Chat, { global: { plugins: [i18n] } });
+    await frame();
+    expect(wrapper.get("article.streaming .body").html()).toContain("<p>in volo prima del montaggio</p>");
   });
 
   it("renders the text as it stands when the frame runs, not the first token of the frame", async () => {

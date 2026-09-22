@@ -412,6 +412,11 @@ proprio numero, prima di eseguirlo. Un piano è un'ipotesi.
 | **E185** | ⚠️ **Compito 14, Passo 11 — *«`grep -n '^\.bigtab' … rende oggi le due regole, e se ne rende una terza ci si ferma»* (E178) si falsifica da sé DOPO il passo che lo porta: la regola che il passo scrive si chiama `.bigtab button`, e comincia per `.bigtab`.** Prima del passo il comando rende **2**; dopo, **3** — misurato dall'implementatore il 2026-09-22 — e un revisore che lo rilanciasse a compito fatto leggerebbe un rosso che non c'è. È la specie già scritta nel diario il 2026-09-17: un controllo aggiunto in un compito lascia stantio un Atteso dello stesso compito. ✅ **CORRETTO:** la frase dice **prima** e **dopo**, e l'oracolo che non invecchia è `grep -c '^\.bigtab {'` → **1** e `grep -c '^\.bigtab button {'` → **1**. ⚠️ **E una cifra del DISPACCIO era stantia** — `gui/package.json` a 24/24 righe e CR, che sono **32/32** dal 13: il dispaccio è git-ignorato e non è il piano, quindi la lezione vive nel diario e non qui; la si nomina perché la specie è gotcha #31 dentro una baseline copiata dal dispaccio precedente. Trovata eseguendo il compito 14, 2026-09-22 |
 | **E186** | ⛔ **Compito 14, Passo 6 — dopo «Consenti» il pannello Impostazioni smetteva di dire che una chiamata è in volo PROPRIO MENTRE LO È: `approve()` azzerava `inFlight`, e il testo dettato si contraddiceva da sé.** Il commento dettato di `Settings.vue` promette *«meanwhile the panel says a call is in flight, so nobody is left wondering»* **dopo la finestra di conferma**, e il doc dettato di `receive` in `invoke.ts` dice che `Policy` è ciò che fa atterrare *«whatever was in flight … with or without a window in between»*: ma la riga `inFlight.value = null;` dentro `approve()` — anch'essa dettata, e tenuta da `invoke.test.ts` con `expect(invoke.inFlight).toBeNull()` — azzerava la chiamata al «sì». ⛔ **Misurato dalla revisione nella pagina viva, subito dopo «Consenti», col core che non ha risposto:** `invoke.inFlight: null`, «Richiesta inviata» **sparita**, radio `[remote:true, local:false]` — il pannello identico a prima del click; e con la finta, che a un `Approve` non risponde mai, lo stato è **terminale**. È la settima regola del pre-controllo — *un testo si legge contro i propri FRATELLI* — dentro un compito solo: tre righe dettate, e la terza smentiva le prime due. ⚖️ **Deciso dal coordinatore il 2026-09-22 — il rilievo VINCE sul testo dettato, perché l'intento è scritto due volte e la riga una:** `approve()` non azzera più `inFlight`; a farlo atterrare è `receive` quando arriva `Policy`, com'era già scritto; `refuse()` lo azzera come prima, perché non manda niente; la finestra si chiude lo stesso, perché `open` chiede anche `core.pending`, che `settled()` azzera. L'oracolo di `invoke.test.ts` diventa `toEqual(CALL)` dopo il «sì» e `toBeNull()` dopo `Policy`, e `modules.test.ts` guadagna la sonda sul **pannello** — *«keeps saying a call is in flight after the yes, until the core answers with Policy»* — che è ciò che la revisione ha guardato. ✅ **Le due direzioni, misurate dal coordinatore sul modello compilato:** con la riga dettata rimessa, **2 failed** — la sonda di `invoke.test.ts` e quella nuova di `modules.test.ts` — e con la cura tutte verdi; ritorno da copia pristina con `cmp`. Costo se sbagliata: una riga e due asserzioni. ⚠️ **E il sospetto vicino la revisione l'ha scartato con una misura:** chiudere la finestra col «sì» **non** passa dal «no» (`{approve: 1, refuse: 0}`; un `DialogRoot` controllato non riemette `update:open`). Trovata dalla revisione del compito 14, 2026-09-22 |
 | **E187** | 📌 **Compito 14 — i rilievi della revisione NON curati nel codice, censiti qui perché il rapporto è git-ignored (la lezione di E176).** La revisione del 2026-09-22, un revisore fresco su Opus: conformità **piena** — 24 blocchi su 24 byte per byte, i due frammenti a meno delle giunture — **0 Critici, 1 Importante (E186), 3 Minori, 2 Nit**; **otto** mutazioni su otto arrossate, due in più di quelle chieste; E181 misurata a 900×470 nelle tre viste con sforamento **0,0 px**. ⚠️ **M-1 — DICHIARATO, non curato:** `⤢` («A pagina intera, o ritorno») su una tessera **flottante** — prodotta dal comando accanto — è un no-op silenzioso (`maximize()` di `dockview-core` 8.3.1 non fa nulla lì: rettangolo `61,122 460x298` prima e dopo, nessun errore); il doc di `BigTab.ts` lo dichiara come limite, e un pulsante che segua `api.location` è una seconda occorrenza della stessa domanda di kit, che aspetta. ⚠️ **M-2 — DICHIARATO, non curato:** dopo una freccia sul gruppo radio il **focus** sta sul radio raggiunto e la **selezione** torna sul modello (`focus: remote → local`, `checked: [remote:true, local:false]`) — conseguenza di E184 che nessuna riga dichiarava; ora il doc di `Settings.vue` lo dice, e riportare il focus indietro combatterebbe la tastiera che serve. ⚠️ **M-3 — REGISTRATA, NON PRESA, e non misurata da nessuno:** le due regioni `role="status"` (la riga «in attesa del core» di `Settings.vue` e la riga dell'ultimo verdetto di `Status.vue`) nascono nel DOM **insieme** al loro testo, e molti lettori di schermo non annunciano una regione viva inserita col suo contenuto; `axe-core` non ha una regola per questo, e la cura — la regione sempre nel DOM che cambia contenuto — urta la riga *«no empty box»* di §6a per il verdetto. Si decide con un lettore di schermo vero in mano, cioè non oggi: è del **proprietario**. **N-1:** il dispaccio di revisione diceva «32 file» e il perimetro ne ha **31** — una cifra del dispaccio, git-ignored, e va nel diario. **N-2:** l'avviso di `vite` sui chunk sopra i 500 kB **c'era già prima del compito** — misurato dal coordinatore sul log della baseline del mattino, a `b00dd31`: `553.75 kB` con lo stesso avviso, oggi `663.27 kB` per `markdown-it` (una `dependency` per costruzione, D40); `axe-core` **non** entra nel bundle (`grep -c "axe" dist/assets/*.js` → 0); il taglio dei chunk è del **15**. Censite chiudendo la revisione del compito 14, 2026-09-22 |
+| **E188** | ⛔ **Compito 15, Passo 11 — il disegno del 2 è `i/lf w/crlf` su questa macchina, e lo script dettato si sarebbe fermato al primo `assert` senza scrivere: `lines[hits[0]].endswith(" |")` è falso su ogni riga che finisce con `\r`.** Il Passo 11 attendeva *«`i/lf w/lf` — il disegno del 2 è LF (P-47)»* e *«zero CR le due volte»*, e lo script divideva con `split("\n")` e ricomponeva con `"\n".join`: è **E180** alla lettera — E51 corresse i quattro `assert` di allora, E180 i due dei Passi 15 e 15-bis del 14, e nessuno ha cercato la specie nel compito che nessuno aveva ancora aperto, contro la regola che la trentottesima chiusura scrive in proprio: *«quando una voce d'errata corregge una specie, si cerca la specie in tutto il piano»*. ⛔ **Misurato il 2026-09-22 dal pre-controllo:** `git ls-files --eol docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → `i/lf w/crlf`; `tr -cd '\r' < … \| wc -c` uguale a `wc -l`; `git config core.autocrlf` → `true`. ✅ **CORRETTO nel compito — vincolo globale 4:** lo script legge `eol`, asserisce *«nessun `\r` fuori da un `\r\n`»*, divide e ricompone con `eol`, confronta il conto degli `eol` prima e dopo, e scrive su un temporaneo con `os.replace` (gotcha #82); il Passo 1 misura anche il disegno con `git ls-files --eol`; i tre Attesi dicono `i/lf` e *«CR uguale alle righe prima e dopo»* invece di `w/lf` e *«zero CR»*, e la riga *Files* dice `i/lf`. ✅ **Provato a secco il 2026-09-22 su una copia del disegno**, coi tre richiami datati: le tre ancore una, CR uguale alle righe prima e dopo, tre righe cambiate, `compito 15 del piano della parte 2` a **tre**, e il solo `<data>` che resta è quello che il file porta da prima (E192). Trovata dal pre-controllo del compito 15, 2026-09-22 |
+| **E189** | ⛔ **Compito 15, Passo 11 — lo script dettato NON COMPILA: la riga `lines[hits[0]] = lines[hits[0]][:-2] + " " + strings + " |"` porta quattro spazi in testa dopo un `assert` a colonna zero, e Python si ferma con `IndentationError: unexpected indent` prima di aprire il file.** Il blocco è nato il 2026-09-16 (R9a-12) inserendo le righe del secondo richiamo, e nessuno l'ha mai fatto girare: la revisione in profondità lo ha letto. ⛔ **Misurato il 2026-09-22 dal pre-controllo:** estratto dalla sezione del compito il blocco `python - <<'EOF'` che nomina `richiamo-8.md` e passato a `python -m py_compile` → `IndentationError: unexpected indent`, exit **1**. È la terza domanda del pre-controllo — *l'artefatto è sbagliato* — nella forma che non compila nemmeno: un rosso che si vede solo eseguendo, e che non avrebbe fatto danno solo perché arriva **prima** dell'apertura in scrittura. ✅ **CORRETTO:** la riga torna a colonna zero, nello script riscritto da E188. Trovata dal pre-controllo del compito 15, 2026-09-22 |
+| **E190** | ⚠️ **Compito 15 — i richiami datati alla §8 sono TRE, e il titolo del Passo 11, la riga *Files* e il criterio di chiusura dicevano DUE.** Il Passo 11 ne detta tre — il capoverso dei dedotti (P-104), la riga «le scritte» (R9a-12, D88) e la riga di `scripts/gate-gui.sh` (R8-10) — e ciascuno porta la frase *«dal compito 15 del piano della parte 2»*; il criterio attendeva `grep -c 'compito 15 del piano della parte 2' … → 2`, scritto da R9a-12 quando i richiami erano due, e R8-10 ha aggiunto il terzo senza ricontare: è la specie che il diario registra dal 2026-09-17 — *un controllo aggiunto a un Passo lascia stantio un Atteso dello stesso compito* — e gotcha #31 su un numeratore. ⛔ **Misurato il 2026-09-22 a secco sulla copia (E188):** il `grep -c` rende **3**. ✅ **CORRETTO:** «tre» nel titolo del Passo 11 e nella riga *Files*, e **3** nel criterio, col richiamo. Trovata dal pre-controllo del compito 15, 2026-09-22 |
+| **E191** | ⚠️ **Compito 15, Passo 12 — il `git add` non nomina il PIANO, e la riga 15 della tabella della posizione va a ✅ nello stesso commit: è E182 alla lettera, nel compito successivo.** La testa del piano dice *«la tabella qui sopra, che chi esegue aggiorna nel commit del compito»*, e il 14 l'ha fatto (`c6bc9a9` tocca il piano); il comando del Passo 12 elenca otto file e il piano non c'è — E182 ha corretto il Passo 16 del 14 e non il fratello del compito che nessuno aveva ancora aperto, la stessa forma di E180 ed E188. ✅ **CORRETTO:** il piano è nel `git add`. ⚠️ Il `git push` resta scritto, e chi esegue non lo lancia: pusha il coordinatore a revisione pulita, come per ogni compito di questo piano. Trovata dal pre-controllo del compito 15, 2026-09-22 |
+| **E192** | ⚠️ **Compito 15, criterio di chiusura — `grep -c '<data>' <disegno del 2>` → 0 sarebbe ROSSO a compito perfetto: il file porta UN `<data>` da prima, che non è di questo compito.** ⛔ **Misurato il 2026-09-22 dal pre-controllo:** `grep -n '<data>' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` rende **una** riga, la voce *«5. `superpowers:writing-plans`: la parte 1 in `docs/superpowers/plans/<data>-sottoprogetto-2-parte-1-spike-del-guscio.md`»* della §10 — un segnaposto di nome file scritto quando quel piano non esisteva, e quel piano è `2026-09-09-…` dal 2026-09-09. La sonda dettata da R9a-12 non è mai stata lanciata sul file: attacca il file intero invece dei richiami che il compito scrive — la prima domanda del pre-controllo, *la sonda attacca il caso invece del meccanismo*. ✅ **CORRETTO:** la sonda diventa `grep -c 'RICHIAMO DEL <data>'` → **0**, che coglie esattamente un segnaposto sopravvissuto nei tre richiami, e `grep -c 'compito 15 del piano della parte 2'` → **3** resta la seconda metà (E190). ⚠️ **Il `<data>` della §10 resta com'è — registrato, non preso:** correggerlo è un richiamo datato in una sezione approvata che nessun compito nomina; la casa è il compito **17**, che rilegge i documenti in ogni casa, o il proprietario. Trovata dal pre-controllo del compito 15, 2026-09-22 |
 
 ---
 
@@ -20696,7 +20701,7 @@ del piano lo pretende e il 13 l'ha fatto in `8679f27`; il `git push` lo lancia i
 - Modify: `gui/src/locales/copy.test.ts` (**LF**) — muore la **prima** sonda, resta la **seconda** (**P-105**, **D65**)
 - Modify: `scripts/gate.sh` (**`i/lf w/crlf`**, come il compito 10 lo lascia — R10-1: qui stava «LF») — una riga `run`, fra «attributes» e «documentation consistency»
 - Modify: `.github/workflows/quality-gate.yml` (**`i/lf w/crlf`** — R10-1: qui stava «LF») — un passo `actions/setup-node` prima di `gate.sh` (**D66**)
-- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**LF**) — **due** richiami datati nella §8: sul capoverso dei dedotti (**P-104**) e sulla riga «le scritte» (R9a-12, **D88**)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` (**`i/lf`** — ⚠️ E188: qui stava «LF», e su questa macchina è `w/crlf`) — **tre** richiami datati nella §8: sul capoverso dei dedotti (**P-104**), sulla riga «le scritte» (R9a-12, **D88**) e sulla riga di `scripts/gate-gui.sh` (R8-10) — ⚠️ qui stava «**due**», scritto prima che R8-10 aggiungesse il terzo (E190)
 - ⛔ **NON si modifica `.gitignore`**, e non è una dimenticanza: **P-102**, **D67**
 - Read: la §8 del [disegno del 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) **per intero**; `scripts/gate.sh` **come il compito 10 lo lascia**; `.github/workflows/quality-gate.yml`; la voce 3 della §9 del 2 e la **decisione 55** della [stella polare](../specs/2026-09-07-direzione-gui-design.md); **P-2**, **P-96**, **P-98**…**P-105**; **D40**, **D51**, **D63**…**D67**
 - ⛔ **NON si legge**: la §1 e la §2 della stella polare — questo compito non disegna niente che si veda; e i compiti 13 e 14, se non per i nomi dei file che il lint guarda
@@ -20725,7 +20730,7 @@ grep -n 'gui-shell' .gitignore | wc -l
 git ls-files 'spikes/gui-shell/**package-lock.json' 'spikes/gui-shell/**Cargo.lock' | wc -l
 grep -c '"lint"' gui/package.json
 ls gui/src/locales/copy.test.ts gui/src/panels/Chat.vue gui/fake-core/Cargo.toml 2>&1
-git ls-files --eol scripts/gate.sh .github/workflows/quality-gate.yml gui/package.json
+git ls-files --eol scripts/gate.sh .github/workflows/quality-gate.yml gui/package.json docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 node --version
 time bash scripts/gate.sh > /dev/null 2>&1
 ```
@@ -20733,7 +20738,7 @@ time bash scripts/gate.sh > /dev/null 2>&1
 Atteso: i due file **non esistono**; **zero** per `gate-gui`, `setup-node` e `"lint"`; **otto** righe `gui-shell`
 in `.gitignore` e **quattro** lockfile dello spike tracciati — ⚠️ **da TRE commit e non da uno**, `git blame -L 34,41 .gitignore`: `01694e3` le due di `app/`, `8fc9696` le tre di `electron/`, `d5eb0b8` le tre di `tauri/`, cioè i compiti 2, 4 e 5 della parte 1 (R8-8, 2026-09-16: **P-102** ne attribuiva otto a `8fc9696` perché il suo comando cercava `electron/out`, che uno solo ha aggiunto; il **conteggio** su cui il passo asserisce regge) — e questo compito non li tocca; i tre file dei compiti 12, 13 e 14 **esistono**; `scripts/gate.sh` e il flusso di lavoro **`i/lf w/crlf`**, come il
 compito 10 li lascia — R10-1: qui stava «LF», e un inserimento LF fra righe CRLF avrebbe reso il file `w/mixed`. Si misura:
-`tr -cd '\r' < scripts/gate.sh | wc -c` contro `wc -l < scripts/gate.sh`, **uguali**; lo stesso sul flusso.
+`tr -cd '\r' < scripts/gate.sh | wc -c` contro `wc -l < scripts/gate.sh`, **uguali**; lo stesso sul flusso. ⚠️ **E il disegno del 2 `i/lf`, con la colonna `w/…` che è di questa macchina e non conta** (E51, E72, E180): qui è `w/crlf`, CR uguale alle righe, e il Passo 11 conserva quel fine-riga (E188).
 
 ⛔ **Se `scripts/gate-gui.sh` esiste già, il compito è eseguito** — quarta domanda del pre-controllo: ci si ferma
 e si riporta. ⚠️ **Se `gui/src/panels/Chat.vue` non esiste, il compito 14 non è eseguito**, e questo compito non
@@ -21272,7 +21277,7 @@ dice di sostituirli. Il terzo — il cancello **senza** il passo web — è il t
 
 ⚠️ **Il commento va in inglese** (vincolo globale 2), come tutto `gate.sh`.
 
-- [ ] **Passo 11: i due richiami datati nella §8 — il capoverso dei dedotti, e la riga delle scritte (D88)**
+- [ ] **Passo 11: i tre richiami datati nella §8 — il capoverso dei dedotti, la riga delle scritte (D88), e la riga di `gate-gui.sh` (R8-10)** — ⚠️ qui stava «i due» (E190)
 
 ⛔ **La §8 del 2 dichiara 🔶 dedotte tre cose, e a questo punto sono tutte e tre MISURATE — da tre compiti
 diversi.** Il richiamo si scrive **qui** perché questo è il compito che mette `--manifest-path` nel cancello, cioè
@@ -21281,9 +21286,10 @@ quello che rende la terza visibile; e nomina dove sono state misurate le altre d
 ```bash
 grep -n 'manifest-path. compili nel' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 git ls-files --eol docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c; wc -l < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 ```
 
-Atteso: **una** riga, e **`i/lf w/lf`** — il disegno del 2 è LF (**P-47**), quindi Python con `newline=""`.
+Atteso: **una** riga, e **`i/lf`** con CR **uguale alle righe** — ⚠️ **la colonna `w/…` è di questa macchina e non conta** (E51, E72, E180): qui stava *«`i/lf w/lf` — il disegno del 2 è LF (P-47)»*, e su questa macchina è `w/crlf` (E188). Python con `newline=""`, e lo script qui sotto conserva il fine-riga del file.
 
 Il testo che si appende **dopo** *«e non riusi quello del workspace.»*, prima di **Assunto:**:
 
@@ -21322,6 +21328,11 @@ python - <<'EOF'
 import io, os
 p = "docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md"
 text = io.open(p, encoding="utf-8", newline="").read()
+# E188: the design is `i/lf w/crlf` on this machine (core.autocrlf=true), and the file keeps ITS OWN line
+# endings -- global constraint 4. `split("\n")` would leave a `\r` on every line and the `endswith(" |")`
+# below would be false everywhere.
+eol = "\r\n" if "\r\n" in text else "\n"
+assert text.count("\r") == (text.count("\r\n") if eol == "\r\n" else 0), "a CR outside a CRLF: the file is mixed"
 anchor = "finto e non riusi quello del workspace. **Assunto:** niente."
 assert text.count(anchor) == 1, "ancora non unica: %d" % text.count(anchor)
 recall = io.open(os.path.join(os.environ["SCRATCH"], "richiamo-8.md"), encoding="utf-8", newline="").read().strip()
@@ -21329,13 +21340,13 @@ assert "\r" not in recall and "<data>" not in recall, "LF, e la data va sostitui
 assert recall not in text, "gia' scritto -- il passo e' eseguito"
 text = text.replace(anchor, "finto e non riusi quello del workspace. " + recall + " **Assunto:** niente.", 1)
 # The SECOND recall, on the row of the strings (R9a-12, D88): found by its prefix, appended in its last cell.
-lines = text.split("\n")
+lines = text.split(eol)
 hits = [i for i, line in enumerate(lines) if line.startswith("| le scritte, `locales/it.json` (G21) |")]
 assert len(hits) == 1, "la riga delle scritte non e' una: %d" % len(hits)
 strings = io.open(os.path.join(os.environ["SCRATCH"], "richiamo-scritte.md"), encoding="utf-8", newline="").read().strip()
 assert "\r" not in strings and "<data>" not in strings, "LF, e la data va sostituita prima"
 assert strings not in text and lines[hits[0]].endswith(" |"), "gia' scritto, o la riga non finisce con la barra"
-    lines[hits[0]] = lines[hits[0]][:-2] + " " + strings + " |"
+lines[hits[0]] = lines[hits[0]][:-2] + " " + strings + " |"
 # The THIRD recall, on the row of `gate-gui.sh` in §8 (R8-10): same shape, its own anchor.
 hits = [i for i, line in enumerate(lines) if line.startswith("| `scripts/gate-gui.sh` |")]
 assert len(hits) == 1, "la riga di gate-gui.sh non e' una: %d" % len(hits)
@@ -21343,13 +21354,19 @@ shape = io.open(os.path.join(os.environ["SCRATCH"], "richiamo-forma.md"), encodi
 assert "\r" not in shape and "<data>" not in shape, "LF, e la data va sostituita prima"
 assert shape not in text and lines[hits[0]].endswith(" |"), "gia' scritto, o la riga non finisce con la barra"
 lines[hits[0]] = lines[hits[0]][:-2] + " " + shape + " |"
-io.open(p, "w", encoding="utf-8", newline="").write("\n".join(lines))
+out = eol.join(lines)
+assert out.count(eol) == text.count(eol), "the line count changed"
+# Built and encoded first, written to a temporary, renamed over the original (gotcha #82): a rename cannot
+# fail half-way, an open for writing truncates first.
+tmp = p + ".tmp"
+io.open(tmp, "w", encoding="utf-8", newline="").write(out)
+os.replace(tmp, p)
 EOF
-tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c
+tr -cd '\r' < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md | wc -c; wc -l < docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
 bash scripts/check-docs.sh
 ```
 
-Atteso: **zero** CR le due volte, e `OK`. ⚠️ **L'`assert` sul `<data>` è deliberato:** è l'unico modo perché il
+Atteso: **zero** CR in `/tmp/richiamo-8.md`, nel disegno CR **uguale alle righe** prima e dopo lo script, e `OK` — ⚠️ qui stava *«zero CR le due volte»*, vero solo su un albero LF (E188). ⚠️ **L'`assert` sul `<data>` è deliberato:** è l'unico modo perché il
 segnaposto non sopravviva al commit, e il Passo 12 lo ricontrolla col `grep`.
 
 - [ ] **Passo 12: il cancello, e il commit**
@@ -21386,12 +21403,13 @@ di `.gitignore` VUOTO**, che è **D67** reso una asserzione invece di una promes
 ```bash
 git add scripts/gate-gui.sh scripts/gate.sh gui/eslint.config.js gui/package.json gui/package-lock.json \
         gui/src/locales/copy.test.ts .github/workflows/quality-gate.yml \
-        docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md
+        docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md \
+        docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md
 git commit -m "gui(compito 15): il passo web del cancello -- gate-gui.sh, la catena eslint col preset essential, e setup-node in CI"
 git push
 ```
 
-⛔ **Senza co-autore**, vincolo globale 13.
+⛔ **Senza co-autore**, vincolo globale 13. ⚠️ **Il piano è nel `git add`** per la riga **15** della tabella della posizione, che va a ✅ nello stesso commit (E191: qui mancava, come al 14 — E182); e il `git push` resta scritto ma chi esegue non lo lancia: pusha il coordinatore a revisione pulita.
 
 **Criterio di chiusura del compito 15**
 
@@ -21425,7 +21443,7 @@ git push
 - [ ] ⛔ **la CI dichiara la cache spenta:** `grep -c 'package-manager-cache: false' .github/workflows/quality-gate.yml` → **1**, e `grep -c 'cache: npm' …` → **0** (**D66**)
 - [ ] `grep -c 'node-version-file: gui/package.json' .github/workflows/quality-gate.yml` → **1**, e `grep -c 'engines' gui/package.json` → **1**: la versione di Node resta in **una** casa (decisione 46)
 - [ ] ⛔ **il tempo del cancello è scritto e datato**, e i tre `<tempo>` del Passo 10 e i due del finto sono numeri veri: `grep -c '<tempo>\|<data>' scripts/gate.sh scripts/gate-gui.sh` → **0** per entrambi (R5-17)
-- [ ] ⛔ **i due richiami alla §8 sono scritti e la data è vera:** `grep -c '<data>' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **0**, e `grep -c 'compito 15 del piano della parte 2' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **2** (R9a-12: qui stava un richiamo solo, contato con un `grep` su **tutti** i richiami)
+- [ ] ⛔ **i tre richiami alla §8 sono scritti e la data è vera:** `grep -c 'RICHIAMO DEL <data>' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **0** (⚠️ E192: qui stava `grep -c '<data>'`, che conta anche un `<data>` che il file porta da PRIMA — la voce 5 della §10, il nome del piano della parte 1 — e sarebbe rosso a compito perfetto; quel segnaposto non è di questo compito), e `grep -c 'compito 15 del piano della parte 2' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **3** (R9a-12: qui stava un richiamo solo, contato con un `grep` su **tutti** i richiami; ⚠️ e poi «2», scritto prima che R8-10 aggiungesse il terzo — E190)
 - [ ] `bash scripts/check-docs.sh` → `OK`; `git status --porcelain` vuoto
 - [ ] ⛔ **i fine-riga sono invariati:** `git ls-files --eol scripts/gate.sh .github/workflows/quality-gate.yml gui/package.json docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` uguale al Passo 1, e `tr -cd '\r' < scripts/gate-gui.sh | wc -c` → **0**
 - [ ] ⛔ **nessuna dipendenza Rust nuova:** `bash scripts/gate-deps.sh` verde, e `git diff --stat -- Cargo.lock Cargo.toml crates/` **vuoto** — questo compito non tocca il workspace

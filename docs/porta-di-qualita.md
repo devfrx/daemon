@@ -508,7 +508,9 @@ perché `release` legge il campo. Se è ancora lì, il campo non serviva.
 ⛔ **Il totale è CONSEGNATO, non chiesto**, e la §5.1 ci aveva speso un richiamo datato: la
 formula del budget allocabile compare identica in tre documenti e **nessuno** diceva da dove
 venga `total`. Interrogare la GPU è una chiamata al sistema operativo, che I3 vieta al kernel,
-e nessuna delle sei famiglie di porte consegna la capacità dell'hardware. Quindi `Parameters`
+e nessuna delle famiglie di porte consegna la capacità dell'hardware (⚠️ **RICHIAMO DEL 2026-09-22, E225 —
+E21 (b) del piano della parte 2 del sotto-progetto 2:** qui stava *«delle sei famiglie»*; sono sette dal
+compito 4, e la cifra è **tolta** invece di riallineata, così che l'ottava porta non la riapra). Quindi `Parameters`
 guadagna un secondo campo, e **diciannove siti chiamanti** in quattro file lo scrivono sul
 posto — un default in `Parameters` è precisamente ciò che §2.8.2 regola 2 vieta.
 

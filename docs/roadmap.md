@@ -71,6 +71,9 @@ con `git log -1 --format=%ad --date=short -- docs/roadmap.md` è una **riga di c
 > ✅ **Il Traguardo 2 — il substrato iniettabile** — piano percorso **per intero**,
 > `GATE GREEN` a ogni compito. ✅ **Le sei famiglie di porte sono complete** — `reactor` ·
 > `journal` · `filesystem` · `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive.
+> ⚠️ **RICHIAMO DEL 2026-09-22 (E225):** vero alla chiusura del Traguardo 2; le famiglie sono **sette** dal
+> compito 4 del piano della parte 2 del sotto-progetto 2 — la settima è `custody` — e la §3.1 della spec del
+> sotto-progetto 1 la porta, col richiamo del 2026-09-17.
 > ✅ **Il Traguardo 3 — giornale e formato durevole** — piano in due parti,
 > `GATE GREEN` a tutti. ⚠️ **Questa riga diceva
 > «dieci eseguiti, si riprende dal Task 11»**, e la §6 del compendio era già a undici: è la

@@ -24,7 +24,10 @@ decisione 20.
 ## Il giornale, com'è nel codice oggi
 
 Letto il 2026-09-08 in `crates/kernel/src/record.rs`, `crates/kernel/src/ports/journal.rs` e
-`crates/platform/src/journal.rs`; i comandi che rifanno la lettura stanno in fondo.
+`crates/platform/src/journal.rs`; i comandi che rifanno la lettura stanno in fondo. ✅ **RICHIAMO DEL
+2026-09-22 (E227):** riletto alla chiusura della parte 2 del sotto-progetto 2 — le specie `Invocation` e
+`Policy`, i loro scrittori e tre lettori nuovi di `replay()` sono nati dopo la prima lettura, e ogni riga
+che li nomina porta il proprio richiamo.
 
 ```mermaid
 erDiagram
@@ -51,7 +54,7 @@ erDiagram
         enum versione "V1 - un record senza versione non si scrive (ADR-0036)"
     }
     RECORD_V1 {
-        enum kind "idx 0 - Intent Outcome Note Verdict Routing Permission"
+        enum kind "idx 0 - Intent Outcome Note Verdict Routing Permission Invocation Policy"
         enum effect "idx 1 - Verifiable Idempotent Unrepeatable, obbligatorio"
         enum trust "idx 2 - Instruction o Untrusted"
         bytes payload "idx 3 - il contenuto, byte altrui se Untrusted"
@@ -83,15 +86,20 @@ erDiagram
 
 | Chi scrive oggi | Che cosa | Dove |
 |---|---|---|
-| `Arbiter::set_policy` | un intento e un esito, `Idempotent`, `Instruction`, payload vuoto, la policy per nome nel `reason`; nessun dettaglio | `crates/kernel/src/arbiter/mod.rs`, `transition_record` |
+| `Arbiter::set_policy` | un intento e un esito, `Idempotent`, `Instruction`, payload vuoto, la policy per nome nel `reason`; e fra i due una **nota** `Policy` col dettaglio `PolicyDetail { local }` — ✅ **richiamo del 2026-09-22 (E227):** qui stava «nessun dettaglio», e la nota è del compito 8 del piano della parte 2 | `crates/kernel/src/arbiter/mod.rs`, `transition_record` e `policy_note` |
+| `Registry::invoke` | un intento e un esito con la classe della funzione, `Instruction`, payload vuoto; e fra i due una **nota** `Invocation`, `Untrusted`, con l'argomento nel payload e `InvocationDetail` — la funzione e l'invocatore — nel dettaglio. ✅ **Riga aggiunta il 2026-09-22 (E227):** lo scrittore è nato col compito 6 del piano della parte 2 | `crates/kernel/src/registry.rs`, `opened`, `noted` e `closed` |
 | `Untrusted::promote` | una nota `Unrepeatable`, `Untrusted`, col contenuto nel payload e la ragione nel `reason` | `crates/kernel/src/boundary.rs` |
 | `permission::grant` | un record `Permission` col suo dettaglio, scritto con l'operazione `note` | `crates/kernel/src/permission.rs` |
 | il gateway | un record `Routing` col suo dettaglio | `crates/kernel/src/gateway/mod.rs` |
 | un sensore | un record `Verdict` col suo dettaglio e, a verdetto negativo, un **intento nuovo** come feedback (ADR-0013: la correzione è un passo nuovo) | `crates/kernel/src/sensor.rs` |
 
-E chi legge: `reconcile::steps_in_doubt`, `permission::is_granted` e `degradation_now` rileggono
-`replay()` **per intero** — le proiezioni del giornale (ADR-0017) oggi sono queste tre, e nessun
-indice le aiuta: il primo giornale grande lo misura (compendio, §6, la riga di `replay()`).
+E chi legge: `reconcile::steps_in_doubt`, `permission::is_granted`, `degradation_now`,
+`arbiter::policy_now`, `numbering::seeded_from` e `Core::step_list` di `kernel::serving` rileggono
+`replay()` **per intero** — quante siano le proiezioni del giornale (ADR-0017) lo dice
+`grep -rn '\.replay()' crates/kernel/src`, e nessun indice le aiuta: il primo giornale grande lo
+misura (compendio, §6, la riga di `replay()`). ✅ **RICHIAMO DEL 2026-09-22 (E227):** qui stava *«oggi
+sono queste tre»*; le altre tre sono nate coi compiti 8, 1 e 7 del piano della parte 2, e la cifra è
+tolta invece di riallineata.
 
 ## Deciso e non costruito, per sotto-progetto
 
@@ -129,7 +137,7 @@ erDiagram
         bytes versione_precedente "conservata PRIMA della scrittura"
     }
     DETAIL {
-        enum specie "esiste oggi - Verdict Routing Permission"
+        enum specie "esiste oggi - Verdict Routing Permission Invocation Policy"
     }
     GUIDA_APPROVATA {
         arriva col_13 "registro delle guide, ADR-0009 - nella forma di permission.rs"
@@ -160,7 +168,7 @@ erDiagram
 | Entità | Chi la costruisce | Fonte | Verificato · dedotto |
 |---|---|---|---|
 | `INVOCATION_DETAIL` | 2 | §5 del [disegno del 2](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md): funzione, invocatore, argomento; l'invocatore ha una variante oggi, il 12 aggiunge il gesto con un indice nuovo | verificato; la forma dell'argomento la dice il disegno del 2 ✅ **costruita dal compito 6 del piano della parte 2, 2026-09-22** — passata al primo diagramma, con `POLICY_DETAIL` (compito 8), regola di questo file |
-| `DISPOSIZIONE` | 2 | stella polare §2, decisioni 14 e 15: due operazioni, una chiave, un pacchetto opaco | verificato |
+| `DISPOSIZIONE` | 2 | stella polare §2, decisioni 14 e 15: due operazioni, una chiave, un pacchetto opaco | verificato ✅ **costruita dal compito 5 del piano della parte 2 — richiamo del 2026-09-22 (E227):** `FileCustody` su `redb` in `platform`, `MemoryCustody` in `simulator`. ⚠️ **Dove disegnarla resta APERTO:** la regola di questo file la passerebbe al primo diagramma, che è *«Il giornale»*, e la custodia non ne fa parte — decisione del proprietario, registrata in E227; fino ad allora resta nel secondo |
 | `RUN`, il passo padre | 3 | ADR-0011: passo → run → run padre; oggi `RunId` non esiste, solo `StepId` | verificato |
 | `ARTEFATTO` | il primo sotto-progetto che produce un file | ADR-0008 e ADR-0018: l'artefatto è un **riferimento**, il contenuto vive sul disco | fonte verificata; il «chi» **dedotto** dalla roadmap |
 | `AMBITO`, `CHECKPOINT` | 5 | ADR-0024, decisioni 1 e 2; la porta `filesystem` ha già `declare_scope`, `preserve` e `restore`, e `CheckpointId`; l'implementazione vera col 5 | verificato |
@@ -177,22 +185,29 @@ erDiagram
   loro posto impronta e dimensione — voce aperta 1 di [`porta-di-qualita.md`](../porta-di-qualita.md),
   chiusore il traguardo della ritenzione. Un passo in dubbio non si pota (`StepInDoubt`).
 - **La chiave della voce è progressiva e non si riusa**: un buco lasciato da `prune` resta un buco.
-- **I byte congelati sono sei**, uno per `RecordKind`, con una mappa sola —
-  `crates/kernel/tests/frozen/`. Non si rigenerano: se cambiano, si apre una versione nuova.
+- **I byte congelati sono uno per `RecordKind`**, con una mappa sola — `crates/kernel/tests/frozen/`;
+  quanti, lo dice `ls crates/kernel/tests/frozen/*.cbor | wc -l`. Non si rigenerano: se cambiano, si
+  apre una versione nuova. ✅ **RICHIAMO DEL 2026-09-22 (E227):** qui stava *«sono sei»*; il settimo e
+  l'ottavo sono nati coi compiti 6 e 8 del piano della parte 2.
 - **Il payload di un record `Untrusted` sono byte altrui**: il `Debug` del record non lo stampa
   (indice 3) e stampa il `reason` (indice 4), che è statico al costruttore.
 - **Non disegnato, e perché**: il piano (col 4) e la sostituzione di un parametro (ADR-0034)
   stanno nel giornale ma senza una forma decisa; i segreti e i pesi dei modelli hanno la politica
   in design/09 e nessuna entità decisa; il dettaglio tipizzato della transizione di policy è
-  registrato nella stella polare, e lo decide il disegno del 2.
+  registrato nella stella polare, e lo decide il disegno del 2. ✅ **RICHIAMO DEL 2026-09-22 (E227):**
+  deciso e costruito — `PolicyDetail`, specie 4, compito 8 del piano della parte 2 — ed è nel primo
+  diagramma.
 
 ## I comandi che rifanno la lettura
+
+✅ **RICHIAMO DEL 2026-09-22 (E227):** il quarto comando cercava i sei costruttori della prima lettura;
+ora cerca anche `invocation` e `policy`, le due specie del sotto-progetto 2.
 
 ```bash
 grep -n -A1 '#\[n(' crates/kernel/src/record.rs
 grep -n 'const RECORDS\|const KIND_' crates/platform/src/journal.rs
 ls crates/kernel/tests/frozen/
-grep -rn 'RecordV1::\(intent\|outcome\|note\|verdict\|routing\|permission\)(' crates/*/src | grep -v 'src/record.rs'
+grep -rn 'RecordV1::\(intent\|outcome\|note\|verdict\|routing\|permission\|invocation\|policy\)(' crates/*/src | grep -v 'src/record.rs'
 grep -n '^\s*fn ' crates/kernel/src/ports/filesystem.rs
 grep -rE '^\s*erDiagram' docs/
 ```

@@ -22316,6 +22316,74 @@ git push
 
 ## Come si riprende — il diario di questo piano, coi comandi
 
+### La trentottesima chiusura — 2026-09-22: il COMPITO 14 è ESEGUITO, RIVISTO e CURATO; la cura NON è rivista; il PUSH è fatto; restano 15, 16, 17
+
+⛔ **DA SAPERE SUBITO, cinque cose.**
+
+**(1)** ✅ **IL PUSH È FATTO** — `main` e `origin/main` coincidono: `git rev-list --left-right --count origin/main...main` → `0	0`. Albero **pulito**, `git stash list` vuoto, nessuna operazione git a metà, nessun server acceso (`netstat -ano | grep LISTENING | grep 5173` → niente).
+
+**(2)** ✅ **IL COMPITO 14 È ESEGUITO (`c6bc9a9`) E RIVISTO** da un revisore fresco su Opus: conformità al brief **piena** — 24 blocchi dettati su 24 coincidono con il codice byte per byte — **0 Critici, 1 Importante, 3 Minori, 2 Nit**; otto mutazioni su otto arrossate; `E181` misurata a 900×470 nelle tre viste con sforamento **0,0 px**; le cure di `E183` ed `E184` reggono nel codice e nel browser. La riga **14** della posizione è ✅.
+
+**(3)** ⛔ **L'Importante (I-1) È CURATO DAL COORDINATORE E LA CURA NON È RIVISTA — `E186`, commit `58f1dd7`.** Una riga tolta in `invoke.ts` (`approve()` non azzera più `inFlight`: lo fa `receive` su `Policy`), due sonde nuove, due commenti (M-1 e M-2 **dichiarati**, `E187`); le due direzioni misurate sul modello compilato — **2 rossi** con la riga dettata rimessa, **16 verdi** con la cura, ritorno da copia pristina con `cmp` — la suite intera a **84 passate + 1 saltata**, build **0**, cancello verde. ⛔ **Il proprietario ha chiuso la sessione qui: se ri-rivederla è la PRIMA A/B della sessione nuova**, col costo — una ri-revisione scoped su Opus costa ~250–300k token e ~20–25 minuti; il precedente del 13 (terza cura, dodici righe in due file) fu «non si rivede», per decisione del proprietario. Qui il codice cambiato è **una riga** più due sonde e due commenti.
+
+**(4)** ⚠️ **M-3 — le due regioni `role="status"` nascono nel DOM col loro testo — è REGISTRATA e NON PRESA (`E187`)**: non misurata da nessuno, si decide con un lettore di schermo vero in mano; è del proprietario.
+
+**(5)** ⏭️ **IL PASSO CHE VIENE È IL COMPITO 15** — `scripts/gate-gui.sh`, la catena `eslint`, la riga in `gate.sh`, `actions/setup-node` nella CI — col pre-controllo delle quattro domande rifatto contro il codice di ADESSO: su questo piano ha trovato difetti in **tutti** i compiti, e il 14 ne aveva **sei** prima del dispaccio, **tre** durante e **uno** dalla revisione. La prossima voce d'errata è **E188**.
+
+✅ **Che cosa è stato fatto, in una sessione.** ⛔ **Quanti commit NON è scritto qui:** li elenca `git log --oneline b00dd31..HEAD`.
+
+| Giro | Chi | Che cosa ha trovato |
+|---|---|---|
+| **il pre-controllo** | il coordinatore | `E177`…`E182`, `5d44521`: `--stop` e `.bigtab` già corretti dal 13 e riscritti all'indietro, un criterio che contava commit, i due `assert` sui fine-riga rossi su questa macchina (E51 non propagata ai compiti scritti dopo), la decisione su chi scorre (tutti e cinque), il piano assente dal `git add` |
+| **l'implementatore** | un subagente fresco (Opus 5) | `c6bc9a9`, 31 file, 1731/28, **~386k token, 217 chiamate, ~42 min**; quattro divergenze, due vere e visibili solo nel browser: la Chat montata dopo il token vuota (`E183`), il radio sull'ultimo click (`E184`); più `E185` |
+| **le voci** | il coordinatore | `109c10a`: `E183`…`E185`, i quattro blocchi dettati rispecchiati sul codice — le sole righe diverse erano le due cure e le due sonde nuove |
+| **la revisione** | un revisore fresco (Opus 5) | **~312k token, 121 chiamate, ~24 min**; conforme byte per byte; **I-1** (dopo «Consenti» il pannello tace mentre la chiamata è in volo), M-1 (`⤢` no-op su una tessera flottante), M-2 (focus e selezione divergono dopo una freccia), M-3, N-1, N-2 |
+| **la cura** | il coordinatore | `58f1dd7`: `E186`, `E187`, cinque blocchi dettati rispecchiati; **non rivista** |
+
+E lo stato alla chiusura, che non si ricorda ma si **rifà**:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| Ramo | `main` **allineato**: `git rev-list --left-right --count origin/main...main` → `0	0`; `git status --porcelain --untracked-files=all` vuoto; `git stash list` vuoto |
+| La posizione | **quattordici** ✅ e **tre** ⬜ — restano i compiti **15, 16, 17** |
+| L'errata | l'`awk` ristretto alla sezione per intestazione → `E1`…`E187` senza buchi né duplicati; **undici** voci nuove in questa sessione, `E177`…`E187` |
+| Il mondo web | `cd gui && npm run build` → **0**; `npm test` → **84 passate, 1 saltata** (`generate-views`, saltata per costruzione dal 13) |
+| Il finto | `cd gui/fake-core && cargo test --locked` → **6 passed** |
+| Il cancello | `bash scripts/gate.sh` → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK` |
+| I fine-riga | `git ls-files --eol gui/ docs/superpowers/specs/ docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md` → `i/lf` su ogni file di testo, `i/-text` sulle 14 fixture; `core.autocrlf` è `true` su questa macchina e l'albero è misto, ed è normale; il piano nell'albero ha righe e CR **uguali** (`wc -l` e `tr -cd '\r' \| wc -c`) |
+| Margine del compendio | ✅ **il compendio NON è stato toccato** |
+| I gotcha | nessuno nuovo in `HANDOFF.md`: le lezioni di questa sessione sono specie già scritte — #31, #57, #68, e `E51` |
+
+#### Ciò che resta aperto, e non è nascosto
+
+- ⛔ **La cura di I-1 (`E186`, `58f1dd7`) NON è rivista** — la prima A/B del proprietario alla ripresa, col costo detto sopra.
+- ⚠️ **M-3** (`E187`) — registrata, non presa, non misurata: del proprietario.
+- ⚠️ I rapporti, i dispacci, i brief e gli script di oggi stanno in `.superpowers/sdd/2026-09-11-sottoprogetto-2-parte-2-gui-minima/` — git-ignorati, **spariscono con la macchina**: ciò che deve sopravvivere è dentro `E177`…`E187` e in questo diario.
+- ⛔ Le voci già aperte restano aperte: il design system da Agentic OS a sotto-progetto 2 chiuso (trentasettesima chiusura), la riga del cassetto e i moduli costruiti (decisione 97, del proprietario).
+
+#### Le trappole di questa sessione — istruzioni, non aneddoti
+
+- ⛔ **UNA BASELINE COPIATA DAL DISPACCIO PRECEDENTE È UNA CIFRA STANTIA.** `gui/package.json` a 24/24 righe e CR veniva dal dispaccio del 13; dopo il 13 sono 32/32, e l'ha trovato l'implementatore. Ogni numero di un dispaccio si rimisura il giorno in cui lo si scrive, col comando accanto (gotcha #31).
+- ⛔ **UNA SONDA CHE COSTRUISCE LO STATO DOPO AVER MONTATO NON PROVA IL CASO IN CUI LO STATO C'ERA PRIMA**, e in una GUI a schede quel caso è la norma (`E183`): per ogni componente che legge uno store si scrive anche la sonda «montato dopo».
+- ⛔ **UN'AFFERMAZIONE SU COME SI COMPORTA UNA LIBRERIA SI LEGGE NEL PACCHETTO SPEDITO** (`E184`): `vModelRadio.beforeUpdate` di vue 3.5.42 risincronizza solo se il valore legato è cambiato.
+- ⛔ **UN ORACOLO CHE IL PASSO STESSO FALSIFICA** (`E185`): un `grep` scritto prima del passo si rilegge dopo il passo, e dice «prima» e «dopo».
+- ⛔ **LA REGOLA DEI FRATELLI VALE DENTRO UN SOLO COMPITO** (`E186`): tre righe dettate — un commento, un doc e una riga di codice — e la terza smentiva le prime due. Il diff col testo dettato era byte per byte, e il difetto c'era lo stesso: la conformità non è la qualità.
+- ⛔ **QUANDO UNA VOCE D'ERRATA CORREGGE UNA SPECIE, SI CERCA LA SPECIE IN TUTTO IL PIANO** (`E180`): `E51` aveva corretto i quattro `assert "\r\n" not in b` di allora e non i due dei compiti che nessuno aveva ancora aperto.
+- ⚠️ **LO SCRATCHPAD DI QUESTA SESSIONE SUPERA `MAX_PATH`**: `python <scratchpad>/x.py` da Bash fallisce con `No such file`; gli script usa-e-getta e i modelli vanno in `.superpowers/sdd/<piano>/`, git-ignorata e corta.
+- ⚠️ **UN NUMERO DI FILE IN UN DISPACCIO SI CONTA COL COMANDO** (N-1): «32 file» nel dispaccio di revisione, il perimetro ne aveva 31.
+
+#### Che cosa la sessione nuova fa, nell'ordine
+
+1. Aprirla **nella cartella del repo**. `git fetch --all --prune`, `git status -sb`, `git log --oneline -5`: la testa è il commit di questa chiusura o uno dopo.
+2. La lettura d'apertura di `CLAUDE.md` e del compendio, poi **la testa di questo piano** e **questa chiusura**.
+3. ⛔ **La PRIMA A/B al proprietario: ri-rivedere la cura di I-1 (`E186`, `58f1dd7`)** — A: un ri-revisore fresco su Opus, scoped al pacchetto `109c10a..58f1dd7`, ~250–300k token e ~20–25 min; B: la si accetta com'è, come la terza cura del 13, con le due direzioni già misurate e la suite intera verde.
+4. ⏭️ **Poi il COMPITO 15**: il pre-controllo delle quattro domande contro il codice di ADESSO — ⚠️ `copy.test.ts` è la rete che il 15 sostituisce; le due righe `v-html` di `Chat.vue` sono l'eccezione dichiarata per `vue/no-v-html`; il bundle è a 663 kB con l'avviso di `vite` da **prima** del 14 (`E187`, N-2) — poi un subagente fresco su Opus, poi un revisore fresco su Opus.
+5. ⛔ **Un dispaccio per volta, col costo detto PRIMA e il sì del proprietario**: oggi due dispacci (implementatore ~386k, revisore ~312k), entrambi autorizzati con la scelta **A** all'apertura, che li nominava con il costo.
+6. ⛔ **Il brief si estrae per intestazione** (`_extract_brief_14.py` è il modello: si cambiano `TASK` e `NEXT`), il prompt del dispaccio si salva su file **prima** del dispaccio e il subagente lo legge da lì, e i blocchi dettati si rispecchiano sul codice con uno script che stampa il diff riga per riga (`_mirror_14.py` è il modello): se differiscono solo le cure, l'implementatore ha trascritto verbatim.
+7. Alla chiusura di ogni sessione: questa sezione come diario, la memoria dell'agente, `session-handoff`.
+
+---
+
 ### La trentasettesima chiusura — 2026-09-21, quinta sessione del giorno: il COMPITO 13 è CHIUSO dopo TRE revisioni, ogni cura ha lasciato un difetto alla successiva, e il PUSH è fatto
 
 ⛔ **DA SAPERE SUBITO, cinque cose.**

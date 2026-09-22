@@ -21,6 +21,11 @@ cd "$(dirname "$0")/.." || exit 1
 #   (step 10) and re-run here (R5-17). An order of magnitude, dated; nothing asserts on it.
 echo "-------- gui: fake core"
 cargo test --locked --manifest-path gui/fake-core/Cargo.toml
+# ⛔ THE FAKE CORE'S OWN LOCKFILE IS AUDITED TOO (D83). It is seeded from the root's and pins the same
+# crates, but it is a SECOND lockfile, and the `cargo audit` of `gate.sh` reads the root's alone. Same
+# verdict expected on the same crates; a divergence between the two is task 12's comparison script.
+echo "-------- gui: fake core advisories"
+cargo audit --file gui/fake-core/Cargo.lock
 
 cd gui
 # `npm ci` is the twin of `--locked`: a manifest and a lockfile that disagree are a red, and
@@ -40,3 +45,14 @@ npm test
 # the lint, so they must not sit behind it.
 echo "-------- gui: lint"
 npm run lint
+# ⛔ THE SECOND WORLD OF X-3. `npm ci` above installs what the lockfile pins; this asks the registry
+# how those pins ARE. Same shape as `cargo audit` in `gate.sh`, same network cost, and the same
+# property: it can go red without a commit.
+#
+# ⛔ NO `--audit-level`, AND THAT IS A DECISION. Measured on 2026-09-15 on the whole dependency set
+# of sub-project 2 -- 369 packages -- `npm audit` found 0 vulnerabilities in about six seconds, so
+# the noise to tune is ZERO and a threshold picked today would be a knob nobody calibrated, sitting
+# ready as a shortcut for the first inconvenient advisory. When one arrives the way out is to
+# upgrade, or to declare the exception WITH ITS DATE -- not to lower the bar quietly.
+echo "-------- gui: advisories"
+npm audit

@@ -7,12 +7,32 @@ on:
 
 jobs:
   gate:
-    runs-on: ubuntu-latest
+    # ⛔ TWO OPERATING SYSTEMS, AND THAT IS X-1 OF THE 2026-08-27 AUDIT. ADR-0002 says "we develop
+    # and test on Windows", and until this commit CI ran on Linux alone -- while `platform` is the
+    # crate that actually touches the OS, and since sub-project 2 the `ipc` transport there has two
+    # halves. The owner decided A on 2026-09-09 (decision 44 of the GUI north star): a matrix, the
+    # SAME gate on both.
+    strategy:
+      # ⛔ `fail-fast: false` IS NOT A DETAIL. By default GitHub CANCELS the other jobs of a matrix
+      # at the first red, so a red on Linux would hide the state of Windows -- which is exactly the
+      # half X-1 exists to look at.
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       # rust-toolchain.toml declares version and target: rustup installs them by itself,
       # and that is why constraint 4 of §11 does not require a step here.
       - run: rustup show
+      # ⛔ X-3: NEITHER IMAGE SHIPS `cargo audit`, AND THIS BUILDS IT FROM SOURCE -- about three
+      # minutes per job, measured on 2026-09-15. That cost is accepted rather than avoided with a
+      # third-party action that downloads a prebuilt binary: minutes are free here (the repository
+      # is public, read from the GitHub API on 2026-09-15 -- the same premise decision 44 used for
+      # the matrix), and a third party in CI's trust path runs with the repository token. The other
+      # way is REGISTERED AND NOT TAKEN: if wall time ever becomes a MEASURED problem, it is the
+      # owner's decision.
+      - run: cargo install cargo-audit --locked --version 0.22.2
       # Node for the web step of the gate. `node-version-file` reads `engines.node` from the
       # manifest, so the version lives in ONE house (decision 46): re-read at the action's own docs
       # on 2026-09-15, whose example uses an OR range exactly like ours, and the file is resolved
@@ -30,3 +50,10 @@ jobs:
           node-version-file: gui/package.json
           package-manager-cache: false
       - run: bash scripts/gate.sh
+        # ⛔ `shell: bash` IS WRITTEN OUT, for the same reason as `package-manager-cache` above. The Windows
+        # image ships THREE executables named `bash` -- Git's, MSYS2's and WSL's C:\Windows\System32\bash.exe
+        # (runner-images Windows2025 readme, read on 2026-09-22) -- and a bare `bash` under the default `pwsh`
+        # is whichever PATH finds first, an order nobody here chose. With `shell: bash` the workflow syntax
+        # says "the bash shell included with Git for Windows is used" (read on 2026-09-22), and on Linux it is
+        # the same bash as before. Decision 44 asked that Git Bash launch the gate: this line says so (E207).
+        shell: bash

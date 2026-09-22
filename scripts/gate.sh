@@ -40,6 +40,33 @@ run "workspace build"                     cargo build --locked --workspace
 run "example and compile-fail tests"      cargo test --locked --workspace
 run "no-OS gate"                          bash scripts/gate-no-os.sh
 run "allow-list on the two graphs"        bash scripts/gate-deps.sh
+# ⛔ WHAT `gate-deps.sh` ABOVE CANNOT SEE. That step measures WHICH crates are in the two graphs
+# against the ADR-0031 allow-list; it never measures HOW THEY ARE. That is the whole of X-3 of the
+# 2026-08-27 audit: `bincode`/RUSTSEC-2025-0141 stayed invisible for seven months, and not because
+# nobody was looking -- because nothing was fetching.
+#
+# ⛔ `cargo audit` IS A PREREQUISITE OF THE ENVIRONMENT, like the `x86_64-unknown-none` target of
+# constraint 4 of §11. If this line goes red with `error: no such command: audit`, the cure is:
+#     cargo install cargo-audit --locked --version 0.22.2
+#
+# ⛔ NO `-n` / `--no-fetch`, AND THAT IS THE POINT OF THIS COMMENT. Measured on 2026-09-15 on this
+# lockfile: `-n` gives the SAME verdict in a fraction of the time, so somebody will add it as an
+# optimisation -- and it would make the check blind to whatever was published AFTER the last run
+# that fetched, which is the exact failure X-3 exists to prevent.
+#
+# ⚠️ TWO COSTS, DECLARED. This step wants the NETWORK, and most of its wall time is that:
+#   2026-09-22: `cargo audit` 0m3.088s, `cargo audit -n` 0m1.147s -- measured at step 3, same verdict.
+# ⛔ THE FIRST RUN ON A MACHINE IS DIFFERENT AND THAT IS WHY NO CONSTANT IS WRITTEN HERE: it CLONES the
+# ~45 MB advisory database (about ten seconds), and every run after it is an incremental fetch.
+# And it can go red WITHOUT A COMMIT, because the world published an advisory -- which is the point
+# rather than the price.
+#
+# ⚠️ `bincode`'s "unmaintained" stays a WARNING and does not stop the gate, with NO configuration
+# file: measured on 2026-09-15, `cargo audit` on this lockfile prints `1 allowed warning found` and
+# exits 0. That is the owner's 2026-08-31 decision ("bincode 2.0.1 stays") holding by itself. The
+# counter-probe is `cargo audit --deny unmaintained`, which turns that same warning red.
+run "dependency advisories"               cargo audit
+
 run "attributes of the constrained crates" bash scripts/gate-attributes.sh
 # ⚠️ THE COST OF THIS STEP, MEASURED AND DATED. `gate-gui.sh` rebuilds `kernel`, `platform` and
 # `simulator` in the fake core's own `target/` -- measured with `cargo metadata` on 2026-09-15: a
@@ -48,6 +75,11 @@ run "attributes of the constrained crates" bash scripts/gate-attributes.sh
 # constant, and nothing asserts on it: what the gate collects is the printed line, for a reader to
 # compare against the run before.
 #   2026-09-22: `gate-gui.sh` alone 1m50s, the whole gate 2m41s (was 1m19s without this step).
+#   2026-09-22: RE-MEASURED after task 16 added the three advisory steps, and the line
+#   above is KEPT rather than realigned -- `gate-gui.sh` alone 2m55s, the whole gate 3m28s
+#   AND 4m12s in two takes minutes apart, on a warm tree. BOTH ARE KEPT, like the two takes
+#   of the DST comment below (E70): the SPREAD is itself the datum, and it is the reason
+#   nothing asserts on this number.
 run "gui: fake core and SPA"              bash scripts/gate-gui.sh
 run "documentation consistency"           bash scripts/check-docs.sh
 

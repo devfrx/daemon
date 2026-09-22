@@ -59,5 +59,71 @@
     "who": "arriva col sotto-progetto {number}",
     "missing": "Questo tipo di modulo non esiste più.",
     "closeMissing": "Chiudi il pannello"
+  },
+  "menu": {
+    "float": "Stacca la tessera in un pannello libero",
+    "page": "A pagina intera, o ritorno"
+  },
+  "status": {
+    "degradation": "Degrado",
+    "vram": "VRAM esaurita",
+    "routing": "Instradamento degradato",
+    "yes": "sì",
+    "no": "no",
+    "policy": "Policy VRAM",
+    "policyName": {
+      "Remote": "OpenRouter, VRAM libera",
+      "Local": "locale"
+    },
+    "budget": "{allocated} MiB allocati su {total}",
+    "protection": "Giornale",
+    "protectionValue": {
+      "AsSystemAccount": "protetto quanto il tuo account di sistema"
+    },
+    "unknown": "il core non l'ha ancora detto",
+    "verdict": {
+      "Granted": "Ultima richiesta di VRAM: concessa",
+      "Queued": "Ultima richiesta di VRAM: in coda",
+      "Refused": "Ultima richiesta di VRAM: rifiutata"
+    },
+    "refusedDetail": "chiesti {asked} MiB, tetto {ceiling}"
+  },
+  "permissions": {
+    "pendingTitle": "Richiesta in attesa",
+    "none": "nessuna",
+    "approvedTitle": "Concesse in questa sessione",
+    "noneApproved": "nessuna",
+    "triple": "strumento {tool}, risorsa {resource}, {operation}",
+    "operation": {
+      "Read": "lettura",
+      "Write": "scrittura"
+    },
+    "duration": "Un permesso vale per quella tripla e per quella sessione; il confine di sessione lo costruisce il sotto-progetto 3."
+  },
+  "steps": {
+    "none": "Nessun passo ancora.",
+    "row": "passo {step}: {function}",
+    "done": "chiuso",
+    "inDoubt": "in dubbio",
+    "who": "Nel sotto-progetto 2 i passi sono le invocazioni del registro; i passi delle run arrivano col 3."
+  },
+  "settings": {
+    "policy": "Policy VRAM",
+    "remote": "OpenRouter, VRAM libera",
+    "local": "Locale",
+    "inFlight": "Richiesta inviata: in attesa del core.",
+    "who": "Le altre preferenze arrivano coi sotto-progetti 3 e 10."
+  },
+  "chat": {
+    "noRun": "Nessuna run: col daemon vero non arriva nessun token fino al sotto-progetto 3.",
+    "untrusted": "non fidato (un modello): reso come testo e codice, mai come HTML",
+    "trusted": "fidato"
+  },
+  "confirm": {
+    "title": "Serve un permesso",
+    "call": "Per: {function} con {argument}",
+    "scope": "Vale per questa tripla e per questa sessione.",
+    "yes": "Consenti",
+    "no": "Rifiuta"
   }
 }

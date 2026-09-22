@@ -360,7 +360,7 @@ sotto-progetto non è chiuso mostra a parole chi lo riempie.
 
 **Tipo** registrato nella SPA; **esemplare**: una scheda per run. Costruito dal **2** — la cornice, il flusso
 del core finto, la finestra di permesso — e dal **3**, la chat vera. Messaggi IPC oggi: `Token`,
-`PermissionRequired`, `Approve`; col 3 i messaggi della run.
+`PermissionRequired`, `Approve`; col 3 i messaggi della run. ✅ **Costruito dal compito 14 del piano della parte 2, 2026-09-22: `gui/src/panels/Chat.vue`** sul flusso del core finto (`gui/fake-core/`, compito 12), con `gui/src/components/markdown.ts` — le righe con «2» nella colonna «chi»; dove il 2 porta meno di quanto una riga promette, la riga lo dice col proprio richiamo
 
 | # | Dove | Cosa mostra o fa | Fonte | Chi | Verificato · dedotto |
 |---|---|---|---|---|---|
@@ -412,7 +412,7 @@ fonte oggi, niente disegno in pixel.
 
 **Tipo** registrato nella SPA; **esemplare**: uno. È la tessera «Stato» della Home, viva nel 2; la striscia
 sempre visibile ne è il riassunto (decisione 4 del coordinatore), il modulo è l'intero. Costruito dal **2**.
-Messaggi IPC del disegno del 2, nomi provvisori (§4 del 2): `Degradation`, `Policy`, `Accepted`, `Verdict`.
+Messaggi IPC del disegno del 2, nomi provvisori (§4 del 2): `Degradation`, `Policy`, `Accepted`, `Verdict`. ✅ **Costruito dal compito 14 del piano della parte 2, 2026-09-22: `gui/src/panels/Status.vue`** — le righe con «2» nella colonna «chi»; dove il 2 porta meno di quanto una riga promette, la riga lo dice col proprio richiamo
 
 | # | Cosa mostra | Fonte | Chi | Verificato · dedotto |
 |---|---|---|---|---|
@@ -451,13 +451,13 @@ nessuna dipendenza da scegliere; solo righe con una fonte oggi.
 **Tipo** registrato nella SPA; **esemplare**: uno. È la tessera «Permessi» della Home, viva nel 2 — la tripla del
 registro, oggi una, e la finestra di conferma; la voce «permessi» della striscia ne è il riassunto. Costruito dal
 **2**, poi dal 3 (le run) e dal 4 (i preset, i server MCP). Messaggi IPC del disegno del 2: `PermissionRequired`,
-`Approve`; la lista delle triple concesse chiede un messaggio nuovo (riga 1).
+`Approve`; la lista delle triple concesse chiede un messaggio nuovo (riga 1). ✅ **Costruito dal compito 14 del piano della parte 2, 2026-09-22: `gui/src/panels/Permissions.vue`**, e la finestra di conferma in `gui/src/components/Confirm.vue` — le righe con «2» nella colonna «chi»; dove il 2 porta meno di quanto una riga promette, la riga lo dice col proprio richiamo (riga 3)
 
 | # | Cosa mostra o fa | Fonte | Chi | Verificato · dedotto |
 |---|---|---|---|---|
 | 1 | le triple concesse nella sessione — strumento, risorsa, operazione — ognuna con chi l'ha chiesta, quando, per quale run | G10 · V21 · ADR-0016 · ADR-0038 | 2 la tripla del registro, 3 per run | fonte verificata; il messaggio IPC con la lista, dal core (I1): dedotto |
 | 2 | quanto dura un permesso: quella tripla, quella sessione; finché il 3 non costruisce il confine di sessione la GUI non lo promette | ADR-0016 · V21 · §5 del 2, letto nel codice: `is_granted` rilegge tutto il giornale | 2 dichiara, 3 costruisce | verificato |
-| 3 | la richiesta in attesa, e quante ce ne sono per run: la tripla a parole di tutti i giorni, la classe dell'effetto, chi la invoca, il livello di confinamento richiesto e se c'è | ADR-0016 · ADR-0038 · ADR-0007 · ADR-0025 · `PermissionRequired` · riga «HITL: approvazioni» | 2 il click, 3 l'agente, 5 il livello, 8 la voce, 12 il gesto | verificato; il livello qui o in Stato (riga 9 di Stato): dedotto |
+| 3 | la richiesta in attesa, e quante ce ne sono per run: la tripla a parole di tutti i giorni, la classe dell'effetto, chi la invoca, il livello di confinamento richiesto e se c'è | ADR-0016 · ADR-0038 · ADR-0007 · ADR-0025 · `PermissionRequired` · riga «HITL: approvazioni» | 2 il click, 3 l'agente, 5 il livello, 8 la voce, 12 il gesto | verificato; il livello qui o in Stato (riga 9 di Stato): dedotto ✅ **RICHIAMO DEL 2026-09-22, dal compito 14 del piano della parte 2 (R7-14):** nel 2 la classe dell'effetto e chi invoca sono **costanti** — una funzione sola, `Idempotent`, e l'invocatore è il click di questa finestra — e il filo non li porta (`PermissionRequired(Triple)`, compito 3): il modulo mostra la tripla a parole e la finestra la chiamata in volo, e i due arrivano col messaggio che crescerà. Il livello di confinamento resta dedotto, com'era |
 | 4 | il preset attivo — chiede sempre, auto-approva sicuri (default), autonomo — e cosa ognuno lascia passare | ADR-0016 · riga «Modalità di permessi a più livelli» | 4 | verificato; per run o globale nelle registrate |
 | 5 | i vincoli sui dati del profilo: ritenzione, provider esclusi, solo locale; e l'escalation automatica quando un contenuto è passato dal gestore dei segreti | ADR-0016 · ADR-0012 · ADR-0023 · riga «Zero-Data-Retention selettivo» | 3 | fonte verificata; qui o in Stato: dedotto |
 | 6 | i server MCP e i loro strumenti: la descrizione approvata con l'impronta; sospeso col diff se cambia | ADR-0003 · ADR-0015 · righe «MCP» e «Difesa da tool poisoning» | 4 | verificato |
@@ -492,11 +492,11 @@ già nel costo della domanda 8. Nel codice il giornale ha oggi quattro tipi di r
 aggiunge `Invocation` (§5 del 2). ⚠️ **RICHIAMO DEL 2026-09-08, sesta ripresa: i tipi di record sono SEI, non quattro** —
 `Routing` e `Permission` sono varianti proprie di `RecordKind` (indici 4 e 5), non note con dettaglio; le tre specie di
 dettaglio reggono. Trovato scrivendo design/03 (decisione 18); approvato dal proprietario (A). Le righe della tabella non
-cambiano.
+cambiano. ✅ **Costruito dal compito 14 del piano della parte 2, 2026-09-22: `gui/src/panels/Steps.vue`** — le righe con «2» nella colonna «chi»; dove il 2 porta meno di quanto una riga promette, la riga lo dice col proprio richiamo (righe 1 e 12)
 
 | # | Cosa mostra o fa | Fonte | Chi | Verificato · dedotto |
 |---|---|---|---|---|
-| 1 | la lista dei passi, dal core: nel 2 le invocazioni del registro — funzione, invocatore, argomento, classe dell'effetto, esito; dal 3 i passi delle run | domanda 8 · decisione 5 del coordinatore · §5 del 2 · ADR-0038 · righe «Replay dei trace» e «Osservabilità e tracing locale» | 2, 3 | verificato |
+| 1 | la lista dei passi, dal core: nel 2 le invocazioni del registro — funzione, invocatore, argomento, classe dell'effetto, esito; dal 3 i passi delle run | domanda 8 · decisione 5 del coordinatore · §5 del 2 · ADR-0038 · righe «Replay dei trace» e «Osservabilità e tracing locale» | 2, 3 | verificato ✅ **RICHIAMO DEL 2026-09-22, dal compito 14 del piano della parte 2 (P-89, D56):** sul filo la lista porta **numero del passo, funzione, esito** — `StepSummary` del compito 3, un riassunto e non il record (I4, ADR-0036), come la §4 del 2 dice dal 2026-09-09 (*«con intento ed esito»*). Nel 2 l'invocatore e la classe dell'effetto sono **costanti** — un solo invocatore, una sola funzione — e l'argomento è payload non fidato che il riassunto non porta: il modulo mostra i tre e dice a parole che il resto arriva quando il riassunto crescerà, col timbro |
 | 2 | ogni passo com'è nel giornale: intento prima, esito dopo, le note, i verdetti; un intento senza esito è **in dubbio** e si vede così, con la classe dell'effetto | ADR-0007 · `RecordKind` in `crates/kernel/src/record.rs` | 2 | verificato, letto nel codice |
 | 3 | il dettaglio del passo secondo la specie: routing, permesso, verdetto oggi; l'invocazione col 2 | `Detail` in `crates/kernel/src/record.rs` · §5 del 2 | 2 | verificato, letto nel codice |
 | 4 | per un passo di modello: il record di routing risolto — modello, destinazione, provider, parametri, vincoli, catena di riserva valutata, tentativi, esito — con token e costo; un ritentativo non è un passo nuovo; uno stream interrotto ha comunque il suo costo | ADR-0011 · righe «Contabilità token e costi» e «Cronologia e riproducibilità» | 3 | verificato |
@@ -507,7 +507,7 @@ cambiano.
 | 9 | il payload potato: impronta e dimensione al posto del testo, distinto da «mai registrato»; un passo in dubbio non si pota | ADR-0018 | 3 | fonte verificata; il «chi» dedotto |
 | 10 | la sostituzione di un parametro consegnato, come passo giornalato | ADR-0034 | chi porta la prima sostituzione | fonte verificata; il «chi» dedotto |
 | 11 | un gesto di comando come passo nella run aperta, con l'invocatore «gesto» | ADR-0039 · ADR-0038 | 12 | verificato |
-| 12 | comando: il replay — scorrere i passi di una run nell'ordine, intento ed esito; non è la ripresa del core, che è riconciliazione | riga «Replay dei trace» · ADR-0017 · ADR-0007 | 2, 3 | verificato |
+| 12 | comando: il replay — scorrere i passi di una run nell'ordine, intento ed esito; non è la ripresa del core, che è riconciliazione | riga «Replay dei trace» · ADR-0017 · ADR-0007 | 2, 3 | verificato ✅ **RICHIAMO DEL 2026-09-22, dal compito 14 del piano della parte 2 (R7-14):** nel 2 «il replay» è la lista ordinata dei passi con l'esito, che il modulo mostra così com'è; un comando che scorra una run arriva col 3, con le run |
 | 13 | comando: esporta il trace — solo via OTLP, opt-in, verso una destinazione scelta dall'utente; nulla esce per default | ADR-0017 · V25 | chi costruisce l'esportazione: nelle registrate | fonte verificata; il «chi» dedotto |
 | 14 | regola: Passi è una proiezione del giornale, non uno stato suo — si rilegge dal core; i campi della proiezione seguono il vocabolario GenAI di OpenTelemetry, le scritte restano in `locales/it.json` | ADR-0017 · I1 · G1 · G21 | 2 | verificato |
 
@@ -590,7 +590,7 @@ della GUI».
 | **Backup** | 11 | cosa il backup **non** contiene, al momento del backup — indici ed embedding, pesi dei modelli, e mai i segreti; il ripristino | G17 · ADR-0022 · righe «Backup ed export dei dati» e «Backup della KB indipendente dall'app» |
 | **Checkpoint** | 5 | le versioni conservate per passo e il ripristino: vivono dentro Diff e Ambito; se sia un modulo a sé lo decide il 5 | ADR-0024 · righe «Checkpoint e rollback» e «Undo/checkpoint del filesystem» |
 | **Modelli locali** | 9 | catalogo e download; caricamento su richiesta, pre-caricamento, scarico per inattività; il tetto ai modelli residenti; l'indicatore di stato modello; il grafico dell'occupazione GPU, se vive qui (registrata) | ADR-0005 · ADR-0006 · righe «Catalogo e download modelli locali», «Caricamento su richiesta e pre-caricamento», «Scarico per inattività (TTL)», «Tetto ai modelli residenti» e «Indicatore di stato modello» |
-| **Impostazioni** | 2, poi 3 e 10 | nel 2 il cambio di policy VRAM, funzione del registro con la sua tripla; poi le preferenze di provider, la telemetria opt-in e la sua destinazione, il profilo «riservato», l'avvio automatico, la lingua | §5 e §6a del 2 · ADR-0038 · ADR-0006 · ADR-0017 · ADR-0023 · G21 · righe «Preferenze di provider (OpenRouter)» e «Avvio automatico e daemon in background» |
+| **Impostazioni** | 2, poi 3 e 10 | nel 2 il cambio di policy VRAM, funzione del registro con la sua tripla; poi le preferenze di provider, la telemetria opt-in e la sua destinazione, il profilo «riservato», l'avvio automatico, la lingua | §5 e §6a del 2 · ADR-0038 · ADR-0006 · ADR-0017 · ADR-0023 · G21 · righe «Preferenze di provider (OpenRouter)» e «Avvio automatico e daemon in background» ✅ **Costruito dal compito 14 del piano della parte 2, 2026-09-22: `gui/src/panels/Settings.vue`** — nel 2 il solo cambio di policy VRAM (P-85), il primo invocatore del registro di ADR-0038 |
 
 Controllo sui cinque criteri, per la tabella corta: fonti lette il 2026-09-07 — la §5 del compendio, le righe G,
 tracciabilità, e ADR-0016 e ADR-0024 aperti per la decisione 13; stessa forma delle tabelle piene ma senza comandi,
@@ -948,7 +948,7 @@ mappa.
 | se più chat sulla stessa cartella condividono un **ambito** come «progetto», o se ogni run dichiara il suo; la proposta: «+ nuova run» chiede la cartella e propone l'ultima usata | il **3** |
 | cosa contiene «Automazione OS»: schermo, mouse e tastiera sì o no; una riga in tracciabilità che lo dica | il proprietario, prima del **10** |
 | ✅ **chiusa il 2026-09-08** — se «salva disposizione» sia una funzione del registro con tripla, o una scrittura di configurazione fuori dal registro | decisione 14, delegata: **fuori dal registro** — §2 |
-| le scorciatoie da tastiera per spostare un pannello scritte noi sopra `moveTo`, contro l'aggancio da tastiera a pagamento di `dockview-enterprise` | il piano del 2, con G20 |
+| le scorciatoie da tastiera per spostare un pannello scritte noi sopra `moveTo`, contro l'aggancio da tastiera a pagamento di `dockview-enterprise` | il piano del 2, con G20 — ✅ **chiusa il 2026-09-22, compito 14 del piano della parte 2**: `gui/src/frame/moveActive.ts`, `Ctrl+Alt+freccia` sopra `moveTo`, con la sonda `keys.test.ts` |
 | la libreria del grafo per il nucleo a pagina intera e la fisica della rete viva (`sigma`, `d3-force`, `cytoscape`, `pixi.js`: candidati verificati, nessuno scelto) | il **6**, con le versioni di quel giorno |
 | se Compatta sia una finestra popout di `dockview` o la finestra principale rimpicciolita | il **10** |
 | le decisioni aperte già elencate nella §9 proposta del 2: renderer di markdown, attrezzi di prova, lint delle scritte, dove va la crate Rust del guscio, prontezza I/O del reattore, allocatore nella porta `journal`, confine di sessione dei permessi, watchdog e spegnimento, AUD-004, il ledger `.superpowers/sdd/` | come lì |

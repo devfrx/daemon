@@ -49,7 +49,9 @@ una sola GPU da 16 GB.
 
 ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
 scrive qui, e vive in [`../crates/`](../crates/): cinque crate, con `kernel` e `simulator`
-in `no_std`. Gli spike in `spikes/` restano **prove**, fuori dal workspace.
+in `no_std` — e, dal sotto-progetto 2, in [`../gui/`](../gui/): la SPA e il core finto `gui/fake-core/`, fuori dal
+workspace e provati da `scripts/gate-gui.sh` (richiamo del 2026-09-22, E232). Gli spike in `spikes/` restano
+**prove**, fuori dal workspace.
 
 ---
 
@@ -105,7 +107,7 @@ dell'unico archivio irriproducibile**.
 | worker ML | **Python** | ADR-0028 |
 | persistenza | **`redb` 4.1.0**, con `StorageBackend` scritto da noi | ADR-0032 |
 | dipendenze del kernel | **allow-list sul grafo transitivo**, due grafi con rimedi opposti | ADR-0031 · §7.3.1 |
-| schema IPC | **`bincode` 2.0.1** — appuntato a `2`. ⚠️ **Dichiarato NON MANTENUTO** — RUSTSEC-2025-0141, `INFO`, non una vulnerabilità. ⛔ **RICHIAMO DEL 2026-08-31: qui stava *«registrato il 2026-08-18, si decide al Traguardo 6»*, e il Traguardo 6 ha MISURATO.** L'avviso è ancora attivo e il monte è archiviato; esistono alternative **mantenute**, e per una di esse lo **stesso formato sul filo** non è più una dichiarazione ma una **misura** — **M-12**, del 2026-08-31. ✅ **DECISO il 2026-08-31 dal proprietario: `bincode` 2.0.1 RESTA e §6.1.1 non si riapre** — contro l'evidenza di **M-12** e non attorno, perché la radice di C-1 è il **buco fra due criteri** e non questa crate; la cura alla radice è la voce **X-3**, che resta aperta. Le ragioni in [`porta-di-qualita.md`](porta-di-qualita.md), le fonti in [`riferimenti.md`](riferimenti.md) | M-1 · §6.1.1 · gotcha #22 · C-1 |
+| schema IPC | **`bincode` 2.0.1** — appuntato a `2`. ⚠️ **Dichiarato NON MANTENUTO** — RUSTSEC-2025-0141, `INFO`, non una vulnerabilità. ⛔ **RICHIAMO DEL 2026-08-31: qui stava *«registrato il 2026-08-18, si decide al Traguardo 6»*, e il Traguardo 6 ha MISURATO.** L'avviso è ancora attivo e il monte è archiviato; esistono alternative **mantenute**, e per una di esse lo **stesso formato sul filo** non è più una dichiarazione ma una **misura** — **M-12**, del 2026-08-31. ✅ **DECISO il 2026-08-31 dal proprietario: `bincode` 2.0.1 RESTA e §6.1.1 non si riapre** — contro l'evidenza di **M-12** e non attorno, perché la radice di C-1 è il **buco fra due criteri** e non questa crate; la cura alla radice è la voce **X-3**, il cui stato vive nella sua tabella dell'audit (richiamo del 2026-09-22, E231: qui stava *«che resta aperta»*, falso dal compito 16). Le ragioni in [`porta-di-qualita.md`](porta-di-qualita.md), le fonti in [`riferimenti.md`](riferimenti.md) | M-1 · §6.1.1 · gotcha #22 · C-1 |
 | formato del **giornale** | **versione + indici espliciti** — `minicbor` 2.3.0, codifica in `kernel` | ADR-0036 · §4.9 |
 | formato del **canale worker** | **`minicbor` 2.3.0**, codifica in `kernel`, porta a **byte** | ADR-0037 · §6.10 |
 | **edition** | **2024**, su tutte e cinque le crate | scelta dal piano del Traguardo 1 |

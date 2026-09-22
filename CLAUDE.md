@@ -56,7 +56,9 @@ nessuna funzionalità utente**: fornisce i meccanismi.
 
 ⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
 scrive **qui**, e vive in [`crates/`](crates/): cinque crate, con `kernel` e `simulator`
-in `no_std`. Gli spike in [`spikes/`](spikes/) restano **prove**, fuori dal workspace.
+in `no_std` — e, dal sotto-progetto 2, in [`gui/`](gui/): la SPA e il core finto, fuori dal workspace e
+provati da `scripts/gate-gui.sh` (richiamo del 2026-09-22). Gli spike in [`spikes/`](spikes/) restano
+**prove**, fuori dal workspace.
 La porta di qualità si lancia con un comando solo — `bash scripts/gate.sh` — e la mappa
 dei controlli è in [`docs/porta-di-qualita.md`](docs/porta-di-qualita.md).
 Lo stato corrente e il prossimo passo stanno nella **§6 del compendio** — non qui, o si

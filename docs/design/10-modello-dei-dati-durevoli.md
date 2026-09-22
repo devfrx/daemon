@@ -27,7 +27,7 @@ Letto il 2026-09-08 in `crates/kernel/src/record.rs`, `crates/kernel/src/ports/j
 `crates/platform/src/journal.rs`; i comandi che rifanno la lettura stanno in fondo. ✅ **RICHIAMO DEL
 2026-09-22 (E227):** riletto alla chiusura della parte 2 del sotto-progetto 2 — le specie `Invocation` e
 `Policy`, i loro scrittori e tre lettori nuovi di `replay()` sono nati dopo la prima lettura, e ogni riga
-che li nomina porta il proprio richiamo.
+di prosa che li nomina porta il proprio richiamo.
 
 ```mermaid
 erDiagram
@@ -201,13 +201,15 @@ erDiagram
 ## I comandi che rifanno la lettura
 
 ✅ **RICHIAMO DEL 2026-09-22 (E227):** il quarto comando cercava i sei costruttori della prima lettura;
-ora cerca anche `invocation` e `policy`, le due specie del sotto-progetto 2.
+ora cerca anche `invocation` e `policy`, le due specie del sotto-progetto 2. E coglie anche il costruttore
+passato come argomento — `transition_record(RecordV1::intent, …)` in `Arbiter::set_policy` — con `[(,]` al
+posto di `(` (E235, N-6).
 
 ```bash
 grep -n -A1 '#\[n(' crates/kernel/src/record.rs
 grep -n 'const RECORDS\|const KIND_' crates/platform/src/journal.rs
 ls crates/kernel/tests/frozen/
-grep -rn 'RecordV1::\(intent\|outcome\|note\|verdict\|routing\|permission\|invocation\|policy\)(' crates/*/src | grep -v 'src/record.rs'
+grep -rn 'RecordV1::\(intent\|outcome\|note\|verdict\|routing\|permission\|invocation\|policy\)[(,]' crates/*/src | grep -v 'src/record.rs'
 grep -n '^\s*fn ' crates/kernel/src/ports/filesystem.rs
 grep -rE '^\s*erDiagram' docs/
 ```

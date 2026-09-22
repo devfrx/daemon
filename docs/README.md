@@ -4,8 +4,10 @@ Assistente desktop locale — piattaforma a **quattro pilastri paritari** (conve
 conoscenza, agenti e coding, voce, generazione asset) su kernel comune. ⚠️ **Questa riga ne
 elencava cinque dicendo «quattro»**: il raggruppamento è quello della §1 del compendio.
 
-**Fase corrente: il sotto-progetto 1 è ✅ chiuso il 2026-09-03 contro la §0.7 della sua spec; il
-prossimo passo lo dice la §6 del [compendio](COMPENDIO.md).** ⚠️ **La coda di date che la «Fase
+**Lo stato per sotto-progetto lo dice la tabella dei sotto-progetti di [`roadmap.md`](roadmap.md); il
+prossimo passo, la §6 del [compendio](COMPENDIO.md).** ⚠️ **RICHIAMO DEL 2026-09-22 (E230): qui stava la «Fase
+corrente»** — *«il sotto-progetto 1 è ✅ chiuso il 2026-09-03 …»*, falsa dalla chiusura del 2 — ed è **tolta** invece di
+riscritta, perché invecchia a ogni chiusura (gotcha #68). ⚠️ **La coda di date che la «Fase
 corrente» portava è TOLTA e non riallineata:** diceva *«il 2026-08-08 e il 2026-08-10»* per
 quattro traguardi, ed era già sbagliata a sé stante —
 **questo stesso file** data il Traguardo 4 al **2026-08-11**, nel capoverso che ne annuncia il
@@ -18,9 +20,9 @@ riga che li introduceva. Un elenco di date
 si allunga a ogni chiusura e non c'è nessun numero da riconoscere come stantio: le date, una
 per traguardo, stanno nella tabella dei traguardi di [`roadmap.md`](roadmap.md) e nella §6 del
 [`COMPENDIO.md`](COMPENDIO.md), e un rimando non può marcire.
-Il codice del prodotto vive in [`../crates/`](../crates/) — cinque crate,
-`kernel` e `simulator` in `no_std` — e la porta di qualità gira con un comando solo,
-`bash scripts/gate.sh`. Il **Traguardo 3** — giornale e formato durevole — è chiuso con
+Dove vive il codice del prodotto lo dice la §1 del [compendio](COMPENDIO.md), in un posto solo (⚠️ **richiamo
+del 2026-09-22, E232:** qui stava *«vive in `../crates/` — cinque crate»*, falso dal compito 11, che ha aperto
+`gui/`), e la porta di qualità gira con un comando solo, `bash scripts/gate.sh`. Il **Traguardo 3** — giornale e formato durevole — è chiuso con
 **dodici compiti su dodici**: il record come enum di versione, **due** implementazioni della
 porta `journal` tenute alle stesse nove promesse a ogni commit, la riconciliazione. ⛔ **Col
 Task 10 il formato durevole è CONGELATO:** i byte del record sono nel repository e non si

@@ -107,7 +107,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Funzionalità | | Sede |
 |---|---|---|
 | UI/UX della chat | 🔶 | `gui/src/panels/Chat.vue` sul core finto: il flusso in markdown con la provenienza su ogni pezzo, dal messaggio `Token` — sotto-progetto 2 · la casella di scrittura → Conversazione |
-| Streaming delle risposte | 🔶 | trasporto §3 · resa nel processo `gui`: `gui/src/panels/Chat.vue` e `gui/src/stores/stream.ts`, dal messaggio `Token` (fixture `08-token`) — costruita dal 2 sul core finto |
+| Streaming delle risposte | 🔶 | trasporto §3 · resa nel processo `gui`: `gui/src/panels/Chat.vue` e `gui/src/stores/stream.ts`, dal messaggio `Token` (fixture `08-token`) — costruita dal 2 sul core finto · il flusso vero e il confine del messaggio → Conversazione |
 | Sessioni multiple | 🔶 | gerarchia §3 (ADR-0011) · politica → Conversazione |
 | Fork e branching | 📋 | Conversazione — il giornale lo consente |
 | Modifica e rigenerazione | 📋 | Conversazione |

@@ -227,8 +227,8 @@ passaggio dai nomi di oggi* — e i controlli **1–7** della tabella del prodot
   `gui/src/tokens/theme.test.ts`, `gui/src/tokens/index.ts`, `gui/src/tokens/dock.css`
 - Rewrite: `gui/src/tokens/contrast.test.ts`
 - Delete: `gui/src/tokens/tokens.css`
-- Modify: `gui/src/main.ts`, `gui/src/App.vue`, `gui/src/stores/layout.ts`, `gui/src/stores/stores.test.ts`,
-  `gui/src/a11y.test.ts` (un commento), e gli **undici** componenti che il censimento del passo 1 nomina
+- Modify: `gui/src/main.ts`, `gui/src/App.vue`, `gui/src/stores/layout.ts`, `gui/src/stores/stores.test.ts`, e gli
+  **undici** componenti che il censimento del passo 1 nomina
 - Modify: `gui/package.json`, `gui/package-lock.json` — i due caratteri
 - Modify: `docs/COMPENDIO.md` — la riga della §6 che nomina `tokens.css`
 
@@ -1108,8 +1108,8 @@ con `newline=""` e le sue sostituzioni non contengono fine-riga: si rimisura lo 
 git rm gui/src/tokens/tokens.css
 ```
 
-In `gui/src/a11y.test.ts`, *Trova* `` * `tokens/contrast.test.ts` is what proves AA, on every text colour over every surface. ``
-— *Sostituisci con* `` * `tokens/contrast.test.ts` is what proves AA, on the families of the design system's pairs. ``
+⚠️ Il commento di `gui/src/a11y.test.ts` che nomina `contrast.test.ts` resta com'è: lo toglie il compito 3, che porta
+quell'aiutante in un modulo suo.
 
 In `docs/COMPENDIO.md`, *Trova* la riga che comincia con `Lo stile di oggi è un **segnaposto dichiarato**`, **intera, presa
 dal file** — *Sostituisci con*:
@@ -1170,9 +1170,2849 @@ git push
 ```
 
 ---
+## Compito 2: il browser dei test — due progetti, Chrome installato, le prime prove vere
+
+**Da:** la (f) del disegno — *«Il browser dei test»* — e i controlli **8**, **9** e **20**; la trappola **2** (il carattere
+si misura dopo averlo caricato) e la **11** (l'alto contrasto); **P-12**.
+
+**Files:**
+- Modify: `gui/package.json`, `gui/package-lock.json` — `@vitest/browser-playwright` 4.1.11 e `playwright` 1.63.0, di sviluppo
+- Modify: `gui/vite.config.ts` — i due progetti e il comando `emulateMedia`
+- Create: `gui/src/browser.d.ts` — il tipo del comando, per le prove
+- Create: `gui/src/tokens/tokens.browser.test.ts`
+- Modify: `scripts/gate-gui.sh` — il commento del passo delle prove
+
+**Interfaces:**
+- Consumes: `gui/src/tokens/index.ts` e `watchTheme` del compito 1.
+- Produces: il progetto `browser` di `vitest`, che prende ogni `src/**/*.browser.test.ts`; il comando
+  `commands.emulateMedia({ colorScheme?, reducedMotion?, forcedColors? })` da `vitest/browser`, dove `null` restituisce la
+  caratteristica al browser; la finestra delle prove a **1440 × 900**.
+
+⚠️ **Fonti lette il 2026-09-23 alla v4.1.11 di `vitest-dev/vitest`, su GitHub:** `docs/guide/browser/index.md` (il
+fornitore, i progetti), `docs/config/browser/playwright.md` (`launchOptions`), `docs/api/browser/commands.md` (un comando
+riceve `page`, *«the full page that contains the test iframe»*), `docs/api/browser/context.md` (`page.viewport`),
+`docs/guide/projects.md` (`extends: true` per ereditare `plugins`), `docs/config/css.md` (*«This option is not applied to
+browser tests»*: nel browser il CSS vale), `docs/config/browser/headless.md` (di base `process.env.CI`: **fuori** dalla CI
+si aprirebbe una finestra), `docs/config/browser/viewport.md` (di base 414 × 896). E il tipo di `ctx.page` sta in
+`@vitest/browser-playwright/dist/index.d.ts`, che aumenta `BrowserCommandContext` di `vitest/node`.
+
+- [ ] **Passo 1: le due dipendenze, in due passi**
+
+```bash
+cd gui
+npm install --save-dev --save-exact @vitest/browser-playwright@4.1.11 playwright@1.63.0
+npm ls @vitest/browser-playwright playwright vitest
+npm view playwright@1.63.0 scripts.install scripts.postinstall
+```
+
+Atteso: `@vitest/browser-playwright@4.1.11` che porta `@vitest/browser@4.1.11`, `vitest@4.1.11` **invariato**, e
+`playwright@1.63.0` **senza** script d'installazione — l'ultimo comando non stampa nulla: **non scarica un browser**
+(trappola 15). Licenze: MIT e Apache-2.0.
+
+- [ ] **Passo 2: la prova, prima della configurazione**
+
+Crea `gui/src/tokens/tokens.browser.test.ts` (LF):
+
+```ts
+import { commands, userEvent } from "vitest/browser";
+import { afterEach, describe, expect, it } from "vitest";
+
+import "./index";
+import { watchTheme, type ThemeChoice } from "./theme";
+
+// ⛔ THIS FILE RUNS IN THE INSTALLED CHROME (design system, section (f)): the tokens and the fonts are the
+// SPA's own, imported above, and every probe asks the layout engine rather than a copy of the values.
+
+/** Every emulated feature goes back to the browser, so a probe never inherits the previous one's. */
+afterEach(async () => {
+  await commands.emulateMedia({ colorScheme: null, reducedMotion: null, forcedColors: null });
+  document.body.replaceChildren();
+});
+
+const rootStyle = (): CSSStyleDeclaration => getComputedStyle(document.documentElement);
+
+describe("the browser the probes run in", () => {
+  it("is a real one: it lays out, and it is Chrome", () => {
+    // ⛔ THE NON-VACUITY OF THE WHOLE PROJECT (control 20 of the design): under jsdom every rectangle is zero,
+    // so a box with a size proves a layout engine; and the channel is the installed Chrome (decision 22).
+    const box = document.createElement("div");
+    box.style.cssText = "width:120px;height:40px";
+    document.body.append(box);
+    expect(box.getBoundingClientRect().width).toBe(120);
+    expect(navigator.userAgent).toMatch(/Chrome\//);
+  });
+});
+
+describe("the tokens, in a real browser (design system, sections (a) and (f))", () => {
+  it("load both fonts, and draw the tool font's digits at one width", async () => {
+    // ⛔ LOAD BEFORE MEASURING (trap 2): a face loads only when some text needs it. And the oracle is the
+    // FontFace's status, not `document.fonts.check()`, which says yes for a family no @font-face declares.
+    await document.fonts.load('400 14px "Geist Variable"');
+    for (const weight of [300, 400, 500, 600]) await document.fonts.load(`${weight} 32px "Barlow"`);
+    const loaded = (family: string): number =>
+      [...document.fonts].filter((face) => face.family.replace(/"/g, "") === family && face.status === "loaded").length;
+    expect(loaded("Geist Variable")).toBeGreaterThan(0);
+    expect(loaded("Barlow")).toBeGreaterThanOrEqual(4);
+
+    const width = (text: string, variant: string): number => {
+      const span = document.createElement("span");
+      span.textContent = text;
+      span.style.cssText = `position:absolute;white-space:nowrap;font:var(--font-display);font-variant-numeric:${variant}`;
+      document.body.append(span);
+      return span.getBoundingClientRect().width;
+    };
+    expect(Math.abs(width("111111", "tabular-nums") - width("000000", "tabular-nums"))).toBeLessThan(0.5);
+    // ⛔ THE SECOND DIRECTION, and it is what makes the first one mean something: without `tabular-nums`
+    // Barlow's digits are proportional -- measured on the token board on 2026-09-23, 67.34 against 108.10 px --
+    // so a probe that measured the fallback, or the wrong variant, would see the difference.
+    expect(Math.abs(width("111111", "normal") - width("000000", "normal"))).toBeGreaterThan(10);
+  });
+
+  it("put the motion to zero when the system asks for less, and only then (WCAG 2.3.3)", async () => {
+    await commands.emulateMedia({ reducedMotion: "reduce" });
+    for (const name of ["--duration-fast", "--duration-moderate", "--duration-slow"]) {
+      expect(rootStyle().getPropertyValue(name).trim(), name).toBe("0ms");
+    }
+    // ⛔ THE SECOND DIRECTION: without the request, the durations are the board's and not zero.
+    await commands.emulateMedia({ reducedMotion: "no-preference" });
+    expect(rootStyle().getPropertyValue("--duration-fast").trim()).not.toBe("0ms");
+  });
+
+  it("keep the focus ring under Windows' high contrast: an outline, which forced colours keep (G20, trap 11)", async () => {
+    await commands.emulateMedia({ forcedColors: "active" });
+    const button = document.createElement("button");
+    button.textContent = "focus";
+    document.body.append(button);
+    // A KEY and not `focus()`: `:focus-visible` is the keyboard's ring, and the probe must reach it the same way.
+    await userEvent.tab();
+    expect(document.activeElement).toBe(button);
+    const ring = (element: HTMLElement): boolean => {
+      const style = getComputedStyle(element);
+      return style.outlineStyle !== "none" && Number.parseFloat(style.outlineWidth) >= 2;
+    };
+    expect(ring(button)).toBe(true);
+    // ⛔ THE SECOND DIRECTION: the same probe sees a ring taken away.
+    button.style.outline = "none";
+    expect(ring(button)).toBe(false);
+  });
+
+  it("follow the system's scheme through the real query while the choice is `system`", async () => {
+    const root = document.createElement("div");
+    const stop = watchTheme((): ThemeChoice => "system", root);
+    await commands.emulateMedia({ colorScheme: "dark" });
+    await expect.poll(() => root.dataset.theme).toBe("dark");
+    await commands.emulateMedia({ colorScheme: "light" });
+    await expect.poll(() => root.dataset.theme).toBe("light");
+    stop();
+  });
+});
+```
+
+Crea `gui/src/browser.d.ts` (LF):
+
+```ts
+// The custom command of `vite.config.ts`, as the probes in the browser see it ("Custom Commands", Vitest 4.1).
+// `null` gives a feature back to the browser.
+export {};
+
+declare module "vitest/browser" {
+  interface BrowserCommands {
+    emulateMedia: (media: {
+      colorScheme?: "light" | "dark" | null;
+      reducedMotion?: "reduce" | "no-preference" | null;
+      forcedColors?: "active" | "none" | null;
+    }) => Promise<void>;
+  }
+}
+```
+
+```bash
+cd gui && npx vitest run src/tokens/tokens.browser.test.ts
+```
+
+Atteso: **rosso** — sotto jsdom, com'è la configurazione di oggi, `vitest/browser` non c'è e il file non si carica. È il
+rosso giusto: la prova chiede un browser che la configurazione non ha ancora.
+
+- [ ] **Passo 3: i due progetti, e il comando**
+
+In `gui/vite.config.ts` (`replace_unique.py`), tre sostituzioni.
+
+*Trova:*
+
+```ts
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vitest/config";
+```
+
+*Sostituisci con:*
+
+```ts
+import { playwright } from "@vitest/browser-playwright";
+import vue from "@vitejs/plugin-vue";
+import { configDefaults, defineConfig } from "vitest/config";
+import type { BrowserCommand } from "vitest/node";
+```
+
+*Trova:*
+
+```ts
+export default defineConfig({
+```
+
+*Sostituisci con:*
+
+```ts
+/** The media features a probe may emulate -- the three the design system reads. `null` gives one back. */
+interface Media {
+  colorScheme?: "light" | "dark" | null;
+  reducedMotion?: "reduce" | "no-preference" | null;
+  forcedColors?: "active" | "none" | null;
+}
+
+/**
+ * ⛔ A COMMAND AND NOT A CONTEXT OPTION: `contextOptions` would fix one value for a whole file, while a probe
+ * must see BOTH directions -- "reduce" and "no-preference" -- in one test. `page` is the page that holds the
+ * test iframe (Vitest 4.1, "Custom Commands"), and `emulateMedia` applies to its frames.
+ */
+const emulateMedia: BrowserCommand<[media: Media]> = async ({ page }, media) => {
+  await page.emulateMedia(media);
+};
+
+export default defineConfig({
+```
+
+*Trova:*
+
+```ts
+  test: {
+    // ⛔ `jsdom` FROM THIS TASK ON: task 11 ran on `node` because nothing it built touched a DOM,
+    // and said so. The frame mounts components, so it needs one.
+    environment: "jsdom",
+    include: ["src/**/*.test.ts"],
+    // ⛔ `jsdom` 30.0.1 has no `ResizeObserver`, and `dockview-core` wants one the moment a grid is
+    // created: the fake in this file is what lets a probe mount a grid at all (R6-8).
+    setupFiles: ["src/jsdom-setup.ts"],
+  },
+```
+
+*Sostituisci con:*
+
+```ts
+  test: {
+    /**
+     * ⛔ TWO PROJECTS, ONE COMMAND (design system, section (f)): `npm test` runs both, so the gate's "probes"
+     * step keeps its shape. `extends: true` hands each one the `plugins` and the `define` above; everything else
+     * is written per project, because an inline project inherits nothing it does not ask for.
+     */
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "jsdom",
+          // ⛔ `jsdom` since task 11 of part 2: the frame mounts components, so it needs a DOM.
+          environment: "jsdom",
+          include: ["src/**/*.test.ts"],
+          exclude: [...configDefaults.exclude, "src/**/*.browser.test.ts"],
+          // ⛔ `jsdom` 30.0.1 has no `ResizeObserver`, and `dockview-core` wants one the moment a grid is
+          // created: the fake in this file is what lets a probe mount a grid at all (R6-8).
+          setupFiles: ["src/jsdom-setup.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "browser",
+          include: ["src/**/*.browser.test.ts"],
+          browser: {
+            enabled: true,
+            // ⛔ EXPLICIT: the default is `process.env.CI`, which would open a window on every local gate.
+            headless: true,
+            // ⛔ THE INSTALLED CHROME (decision 22 of the design): nothing is downloaded, and a machine without
+            // it goes red at this step with Playwright's own message -- the prerequisite, declared.
+            provider: playwright({ launchOptions: { channel: "chrome" } }),
+            instances: [{ browser: "chromium" }],
+            // The width the approved boards were probed at; the default is a phone's, 414 x 896.
+            viewport: { width: 1440, height: 900 },
+            commands: { emulateMedia },
+          },
+        },
+      },
+    ],
+  },
+```
+
+- [ ] **Passo 4: le prove, verdi**
+
+```bash
+cd gui && npx vitest run --project browser && npm test && npm run build
+```
+
+Atteso: il progetto `browser` **verde**, cinque prove; `npm test` coi **due** progetti nell'uscita, `jsdom` e `browser`, e
+il conto dei file e delle prove più alto di quello della baseline del compito 1 di **un** file e **cinque** prove;
+`npm run build` verde — `vue-tsc` legge anche `vite.config.ts` e `browser.d.ts`.
+
+- [ ] **Passo 5: le due direzioni del cancello**
+
+| La prova | La violazione | Atteso |
+|---|---|---|
+| il browser **non parte** → il passo è **rosso**, non verde (controllo 20) | in `vite.config.ts` `channel: "chrome-that-does-not-exist"` | `npm test` esce **diverso da zero**, col messaggio di Playwright |
+| il browser è vero | in `vite.config.ts` il progetto `browser` con `enabled: false` | rosso: sotto Node non c'è `document`, o il rettangolo è zero — si **legge** quale |
+| i caratteri | in `tokens/index.ts` tolta la riga di Barlow 300 | rosso: `loaded("Barlow")` sotto quattro, o le cifre |
+| il movimento | in `base.css` tolto il blocco `prefers-reduced-motion` | rosso — ⛔ poi `base.css` si **ripristina con `git checkout`**, e `board.test.ts` lo conferma verde |
+
+Poi `git diff --stat` a zero sui file toccati per le prove.
+
+- [ ] **Passo 6: il cancello, e il suo commento**
+
+In `scripts/gate-gui.sh`, *Trova*:
+
+```bash
+echo "-------- gui: probes"
+npm test
+```
+
+*Sostituisci con:*
+
+```bash
+echo "-------- gui: probes"
+# ⛔ TWO PROJECTS IN ONE COMMAND (design system, task 2): jsdom, and the INSTALLED Chrome for what only a layout
+# engine can judge -- fonts, motion, radii, clipping, the contrast of the drawn page. Nothing is downloaded
+# (decision 22 of the design): a machine without Google Chrome goes red here with Playwright's message, and that
+# is a prerequisite of the environment, like the `rustup` target and `cargo audit`.
+npm test
+```
+
+- [ ] **Passo 7: il cancello, il commit, la CI**
+
+La riga **2** della tabella della posizione diventa `✅ <data>`; poi `bash scripts/gate.sh`, da solo, e
+`bash scripts/check-docs.sh`; il commit coi file del compito e il piano; `git push`. ⛔ **La CI si legge**, coi due comandi
+di `docs/porta-di-qualita.md`, *«Leggere la CI da terra»*: è la prima corsa col browser su `ubuntu-latest` e
+`windows-latest`, e un rosso là è una voce d'errata di questo compito, non del prossimo.
+
+---
+## Compito 3: il kit — gli otto pezzi di base, la mappa delle icone, le regole del linter
+
+**Da:** la (b) del disegno — *Dove vive*, *I pezzi di base — otto*, *La forma di un pezzo di base*, *`BaseIcon` e la mappa*,
+*`BaseStatus`*, *Le regole, come controlli del linter* — i controlli **10–13**; le decisioni **18–20** del disegno; **P-2,
+P-3, P-8, P-9** e **D6** di questo piano. L'aspetto dei pezzi viene dalla tavola dei token, dalle regole `.btn`, `.field`,
+`.row`, `.dlg` del suo foglio (`grep -n '^\.btn\|^\.field\|^\.row\|^\.dlg' docs/superpowers/specs/2026-09-22-design-system-tavole/token.html`),
+riscritte coi **soli** token.
+
+**Files:**
+- Modify: `gui/package.json`, `gui/package-lock.json` — `lucide` 1.47.0
+- Create: `gui/src/components/icons.ts`, `BaseIcon.vue`, `BaseButton.vue`, `BaseLabel.vue`, `BaseList.vue`,
+  `BaseStatus.vue`, `BaseTextField.vue`, `BaseRadioGroup.vue`, `BaseDialog.vue` — tutti in `gui/src/components/`
+- Create: `gui/src/components/kit.test.ts`, `gui/src/testing/axe.ts`
+- Modify: `gui/src/a11y.test.ts` — l'aiutante di `axe` passa in `testing/axe.ts`, seconda occorrenza
+- Modify: `gui/eslint.config.js` — il blocco dei `.ts` e le regole sugli import
+
+**Interfaces:**
+- Consumes: i token del compito 1.
+- Produces, per i compiti 4–8:
+  - `ICONS`, `type IconName = keyof typeof ICONS`, `isIconName(name: string): name is IconName` da `components/icons.ts`;
+  - `BaseIcon` — props `name: IconName`, `size?: "sm" | "md" | "lg"`;
+  - `BaseButton` — props `variant?: "primary" | "secondary" | "quiet" | "card"`, `size?: "sm" | "md" | "lg"`, `pill?`,
+    `disabled?`, `icon?: IconName`, `label?: string` (il nome del pulsante che è **solo** un'icona); slot `default`; gli
+    attributi e gli ascoltatori di chi lo usa vanno sul `<button>`, che è la radice;
+  - `BaseLabel` — props `icon?: IconName`, `as?: "span" | "h2" | "h3" | "h4"`; slot `default`;
+  - `BaseList<T>` — props `items: readonly T[]`, `keyOf: (item: T, index: number) => string | number`, `ordered?`; slot
+    `item({ item, index })`;
+  - `BaseStatus` — slot `default`; la radice è un `div role="status"` sempre presente;
+  - `BaseTextField` — `v-model: string`, props `label: string`, `icon?: IconName`, `disabled?`, `error?: string`,
+    `type?: "text" | "search"`; gli attributi di chi lo usa vanno sull'`input`;
+  - `BaseRadioGroup` — props `modelValue: string | null`, `options: readonly { value: string; label: string }[]`,
+    `legend: string`, `disabled?`; emette `update:modelValue(value: string)` e **non cambia da sé**;
+  - `BaseDialog` — `v-model:open?: boolean`, props `title: string`, `description?: string`,
+    `variant?: "center" | "sheet" | "full"`; slot `default`, `trigger`, `actions`;
+  - `violations(node: Element, options?: { contrast?: boolean }): Promise<string[]>` da `testing/axe.ts`.
+
+- [ ] **Passo 1: `lucide`, in due passi**
+
+```bash
+cd gui
+npm install --save-exact lucide@1.47.0
+npm ls lucide && npm view lucide@1.47.0 license
+```
+
+Atteso: `lucide@1.47.0` in `dependencies`, licenza `ISC` — e MIT per le icone che vengono da Feather, lo dice la sua
+licenza; il pacchetto dei **soli disegni**, non quello per Vue (la (b), nello spirito di ADR-0030).
+
+- [ ] **Passo 2: l'aiutante di `axe`, seconda occorrenza**
+
+Crea `gui/src/testing/axe.ts` (LF):
+
+```ts
+import axe from "axe-core";
+
+/**
+ * Every violation axe finds under a node, as `rule: targets`, and nothing else. Two users since the design system's
+ * task 3 -- `a11y.test.ts` and `components/kit.test.ts` -- so it lives here once.
+ *
+ * ⛔ `color-contrast` IS OFF UNLESS ASKED, AND NOT IGNORED: under jsdom axe files it under `incomplete` every time --
+ * there is no layout to read a background from (measured on 2026-09-15, P-86 of part 2) -- so a green from it would
+ * prove nothing there. `tokens/contrast.test.ts` holds the families of the pairs; the probes of the kit page, in the
+ * real browser, turn it ON with `contrast: true` (task 4).
+ */
+export async function violations(node: Element, options: { contrast?: boolean } = {}): Promise<string[]> {
+  const results = await axe.run(node, { rules: { "color-contrast": { enabled: options.contrast === true } } });
+  return results.violations.map((violation) => `${violation.id}: ${violation.nodes.map((n) => n.target.join(" ")).join(", ")}`);
+}
+```
+
+In `gui/src/a11y.test.ts` (`replace_unique.py`), tre sostituzioni — ⚠️ ciascuna col testo **intorno**, perché
+l'aiutante toglie l'ultimo fine-riga dei due testi e una riga tolta da sola lascerebbe la sua riga vuota. *Trova*:
+
+```ts
+import { mount } from "@vue/test-utils";
+import axe from "axe-core";
+```
+
+*Sostituisci con:*
+
+```ts
+import { mount } from "@vue/test-utils";
+```
+
+*Trova:*
+
+```ts
+import { createFakeBridge } from "./transport/fakeBridge";
+```
+
+*Sostituisci con:*
+
+```ts
+import { violations } from "./testing/axe";
+import { createFakeBridge } from "./transport/fakeBridge";
+```
+
+*Trova* il blocco che comincia con il `/**` sopra `async function violations(node: Element): Promise<string[]> {`, finisce
+con la `}` che chiude la funzione, e prosegue con la riga vuota e con la riga
+`/** Fills the stores the way a welcome does, so every component has something to draw. */` — **intero, preso dal file**
+(`grep -n 'async function violations\|Fills the stores' gui/src/a11y.test.ts`, poi `sed -n` fra le due righe) —
+*Sostituisci con* la sola riga `/** Fills the stores the way a welcome does, so every component has something to draw. */`.
+
+```bash
+cd gui && npx vitest run src/a11y.test.ts
+```
+
+Atteso: **verde**, come prima: le prove sono le stesse, l'aiutante è lo stesso.
+
+- [ ] **Passo 3: le prove, prima dei pezzi**
+
+Crea `gui/src/components/kit.test.ts` (LF):
+
+```ts
+import { mount } from "@vue/test-utils";
+import { beforeEach, describe, expect, it } from "vitest";
+import { h, nextTick, ref, type Component } from "vue";
+
+import { PANEL_TYPES } from "../panels/registry";
+import { violations } from "../testing/axe";
+
+import BaseButton from "./BaseButton.vue";
+import BaseDialog from "./BaseDialog.vue";
+import BaseIcon from "./BaseIcon.vue";
+import BaseLabel from "./BaseLabel.vue";
+import BaseList from "./BaseList.vue";
+import BaseRadioGroup from "./BaseRadioGroup.vue";
+import BaseStatus from "./BaseStatus.vue";
+import BaseTextField from "./BaseTextField.vue";
+import { ICONS, isIconName, type IconName } from "./icons";
+
+// ⛔ THE WORDS BELOW ARE SPECIMENS: a base piece carries none of its own (section (b)), so a probe hands them in.
+
+/** `BaseList` is generic for its callers' templates; a probe hands it plain props, so it sees a plain component. */
+const List = BaseList as Component;
+
+beforeEach(() => {
+  document.body.replaceChildren();
+});
+
+describe("BaseIcon and the one map (design system, section (b); control 10)", () => {
+  it("draws every icon of the map, with `currentColor`, hidden from the reader", () => {
+    const names = Object.keys(ICONS) as IconName[];
+    expect(names.length).toBeGreaterThan(0);
+    for (const name of names) {
+      const svg = mount(BaseIcon, { props: { name } }).get("svg");
+      expect(svg.attributes("data-icon")).toBe(name);
+      expect(svg.attributes("stroke")).toBe("currentColor");
+      expect(svg.attributes("aria-hidden")).toBe("true");
+      expect(svg.element.children.length, name).toBeGreaterThan(0);
+    }
+  });
+
+  it("has an icon for every module type, by the same name (D6 of the plan)", () => {
+    expect(PANEL_TYPES.filter((type) => !isIconName(type.module)).map((type) => type.module)).toEqual([]);
+  });
+
+  it("takes only a name of the map, and the compiler is the check", () => {
+    // ⛔ `vue-tsc` in the build reads this file, and an UNUSED `@ts-expect-error` is an error too: the line below is
+    // proven in both directions -- a name outside the map does not compile, and the directive is not idle.
+    // @ts-expect-error -- "not-an-icon" is not an IconName
+    const wrong: IconName = "not-an-icon";
+    expect(isIconName(wrong)).toBe(false);
+  });
+});
+
+describe("BaseButton", () => {
+  it("is a button that never submits, with the words of whoever uses it", () => {
+    const button = mount(BaseButton, { slots: { default: () => "Consenti" } }).get("button");
+    expect(button.attributes("type")).toBe("button");
+    expect(button.text()).toBe("Consenti");
+  });
+
+  it("takes `label` as the name of an icon alone, and only then (WCAG 2.5.3)", () => {
+    const alone = mount(BaseButton, { props: { icon: "float", label: "Stacca" } }).get("button");
+    expect(alone.attributes("aria-label")).toBe("Stacca");
+    expect(alone.attributes("data-icon-only")).toBeDefined();
+    const worded = mount(BaseButton, { props: { icon: "float", label: "Stacca" }, slots: { default: () => "Stacca la tessera" } }).get("button");
+    // ⛔ THE SECOND DIRECTION: with visible words, the words are the name.
+    expect(worded.attributes("aria-label")).toBeUndefined();
+  });
+
+  it("carries its shape to the element, and is off when disabled", () => {
+    const button = mount(BaseButton, { props: { variant: "card", size: "lg", pill: true, disabled: true }, slots: { default: () => "Home" } }).get("button");
+    expect(button.attributes("data-variant")).toBe("card");
+    expect(button.attributes("data-size")).toBe("lg");
+    expect(button.attributes("data-pill")).toBeDefined();
+    expect((button.element as HTMLButtonElement).disabled).toBe(true);
+  });
+});
+
+describe("BaseStatus -- M-3 of E187, closed by construction", () => {
+  it("is in the DOM while empty, and the words enter the same region", async () => {
+    const shown = ref(false);
+    const wrapper = mount(() => h(BaseStatus, null, { default: () => (shown.value ? h("p", "Il core non ha risposto.") : null) }));
+    const region = wrapper.get('[role="status"]');
+    expect(region.text()).toBe("");
+    shown.value = true;
+    await nextTick();
+    // ⛔ THE SAME ELEMENT, NOW WITH WORDS: a region born with its text is the case many readers do not announce.
+    expect(wrapper.get('[role="status"]').element).toBe(region.element);
+    expect(region.text()).toBe("Il core non ha risposto.");
+  });
+});
+
+describe("BaseList and BaseLabel", () => {
+  it("draws one row per item through the slot, as a list or an ordered one", () => {
+    const items = ["uno", "due"];
+    const slots = { item: ({ item }: { item: string }) => h("span", item) };
+    const plain = mount(List, { props: { items, keyOf: (item: string) => item }, slots });
+    expect(plain.get("ul").findAll("li").map((row) => row.text())).toEqual(items);
+    const ordered = mount(List, { props: { items, keyOf: (item: string) => item, ordered: true }, slots });
+    expect(ordered.find("ol").exists()).toBe(true);
+  });
+
+  it("puts the label in the element asked for, with its icon", () => {
+    const label = mount(BaseLabel, { props: { icon: "permissions", as: "h3" }, slots: { default: () => "Permessi" } });
+    expect(label.get("h3").text()).toBe("Permessi");
+    expect(label.find('svg[data-icon="permissions"]').exists()).toBe(true);
+  });
+});
+
+describe("BaseTextField", () => {
+  it("binds its text, puts the caller's attributes on the input, and says an error under it", async () => {
+    const text = ref("");
+    const wrapper = mount(() =>
+      h(BaseTextField, {
+        label: "Nome della vista",
+        placeholder: "Revisione",
+        modelValue: text.value,
+        "onUpdate:modelValue": (value: string) => (text.value = value),
+        error: text.value === "Home" ? "esiste già" : undefined,
+      }),
+    );
+    const input = wrapper.get("input");
+    expect(input.attributes("aria-label")).toBe("Nome della vista");
+    expect(input.attributes("placeholder")).toBe("Revisione");
+    await input.setValue("Home");
+    expect(text.value).toBe("Home");
+    await nextTick();
+    expect(wrapper.get("input").attributes("aria-invalid")).toBe("true");
+    const describedBy = wrapper.get("input").attributes("aria-describedby");
+    expect(wrapper.get(`[id="${describedBy}"]`).text()).toBe("esiste già");
+  });
+});
+
+describe("BaseRadioGroup -- controlled (P-8 of the plan)", () => {
+  const options = [
+    { value: "remote", label: "OpenRouter, VRAM libera" },
+    { value: "local", label: "Locale" },
+  ];
+  it("checks what it is given, asks on a click, and does not move by itself", async () => {
+    const asked: string[] = [];
+    const wrapper = mount(BaseRadioGroup, {
+      attachTo: document.body,
+      props: { modelValue: "remote", options, legend: "Policy VRAM", "onUpdate:modelValue": (value: string) => asked.push(value) },
+    });
+    const checked = (): (string | undefined)[] => wrapper.findAll('[role="radio"]').map((radio) => radio.attributes("aria-checked"));
+    expect(checked()).toEqual(["true", "false"]);
+    await wrapper.findAll('[role="radio"]')[1]?.trigger("click");
+    expect(asked).toEqual(["local"]);
+    // ⛔ WHOEVER HOLDS THE VALUE DECIDES: the prop did not change, so the check did not move.
+    expect(checked()).toEqual(["true", "false"]);
+    await wrapper.setProps({ modelValue: "local" });
+    expect(checked()).toEqual(["false", "true"]);
+    wrapper.unmount();
+  });
+
+  it("checks nothing on null, and names the group with its legend", () => {
+    const wrapper = mount(BaseRadioGroup, { props: { modelValue: null, options, legend: "Policy VRAM" } });
+    expect(wrapper.findAll('[role="radio"]').map((radio) => radio.attributes("aria-checked"))).toEqual(["false", "false"]);
+    const group = wrapper.get('[role="radiogroup"]');
+    expect(wrapper.get(`[id="${group.attributes("aria-labelledby")}"]`).text()).toBe("Policy VRAM");
+  });
+});
+
+describe("BaseDialog", () => {
+  it("opens bound, names itself with its title, and asks to close on Esc", async () => {
+    const asked: boolean[] = [];
+    const wrapper = mount(BaseDialog, {
+      attachTo: document.body,
+      props: { open: true, title: "Serve un permesso", "onUpdate:open": (value: boolean | undefined) => asked.push(value === true) },
+      slots: { actions: () => h(BaseButton, null, () => "Rifiuta") },
+    });
+    await nextTick();
+    const dialog = document.querySelector('[role="dialog"]');
+    expect(dialog).not.toBeNull();
+    expect(document.getElementById(dialog?.getAttribute("aria-labelledby") ?? "")?.textContent).toBe("Serve un permesso");
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await nextTick();
+    expect(asked).toEqual([false]);
+    wrapper.unmount();
+  });
+});
+
+describe("the eight pieces, under axe", () => {
+  // ⛔ ONE PROBE PER PIECE (the (b), "un test con axe per ciascuno"), each in the state a user meets.
+  const pieces: [string, () => ReturnType<typeof h>][] = [
+    ["BaseButton", () => h(BaseButton, null, () => "Consenti")],
+    ["BaseButton, an icon alone", () => h(BaseButton, { icon: "fullPage", label: "A pagina intera" })],
+    ["BaseIcon, inside a named button", () => h("button", { type: "button" }, [h(BaseIcon, { name: "search" }), "Cerca"])],
+    ["BaseLabel", () => h(BaseLabel, { icon: "status", as: "h3" }, () => "Stato")],
+    ["BaseList", () => h(List, { items: ["uno"], keyOf: (item: string) => item }, { item: ({ item }: { item: string }) => item })],
+    ["BaseStatus", () => h(BaseStatus, null, () => "Richiesta inviata.")],
+    ["BaseTextField", () => h(BaseTextField, { label: "Cerca", icon: "search", modelValue: "" })],
+    ["BaseRadioGroup", () => h(BaseRadioGroup, { modelValue: "system", options: [{ value: "system", label: "Sistema" }, { value: "dark", label: "Scuro" }], legend: "Tema" })],
+  ];
+  for (const [name, render] of pieces) {
+    it(`${name} has no violation`, async () => {
+      const wrapper = mount(render, { attachTo: document.body });
+      await nextTick();
+      expect(await violations(wrapper.element)).toEqual([]);
+      wrapper.unmount();
+    });
+  }
+
+  it("BaseDialog, open, has no violation", async () => {
+    const wrapper = mount(BaseDialog, { attachTo: document.body, props: { open: true, title: "Serve un permesso", description: "Vale per questa sessione." } });
+    await nextTick();
+    // The portal renders into `body`, so the whole document is the node under probe.
+    expect(await violations(document.body)).toEqual([]);
+    wrapper.unmount();
+  });
+});
+```
+
+```bash
+cd gui && npx vitest run src/components/kit.test.ts
+```
+
+Atteso: **rosso** — i pezzi non esistono ancora.
+
+- [ ] **Passo 4: la mappa e `BaseIcon`**
+
+Crea `gui/src/components/icons.ts` (LF):
+
+```ts
+import {
+  Activity,
+  AppWindow,
+  Archive,
+  BookmarkPlus,
+  Box,
+  Coins,
+  Cpu,
+  Eye,
+  FolderTree,
+  Gauge,
+  GitCompare,
+  Layers,
+  LayoutGrid,
+  ListChecks,
+  Maximize2,
+  MessageSquare,
+  Mic,
+  Network,
+  Radar,
+  RotateCcw,
+  Search,
+  Settings,
+  ShieldCheck,
+  SquareTerminal,
+  type IconNode,
+} from "lucide";
+
+/**
+ * ⛔ THE ONE MAP OF THE PROGRAM'S ICONS (answer 11 of the design system): OUR name -> a Lucide drawing, and no other
+ * file imports `lucide` -- the linter says so. Changing the set touches this file alone. Only the icons we use are
+ * here: one is about half a kB, the whole set hundreds of kB (the measures of answer 11).
+ *
+ * Lucide 1.47.0 is ISC, and MIT for the icons that come from Feather: the licences travel with the package the
+ * shell of sub-project 10 will ship (trap 14 of the design).
+ */
+export const ICONS = {
+  // the frame
+  views: Layers,
+  modules: LayoutGrid,
+  search: Search,
+  saveView: BookmarkPlus,
+  float: AppWindow,
+  fullPage: Maximize2,
+  // one per module type of `panels/registry.ts`, BY THE SAME NAME: the big grab and the overview draw them. The
+  // boards gave Stato, Permessi, Passi, Attività and Chat; the rest are the plan's choice, one line each (D6).
+  chat: MessageSquare,
+  status: Gauge,
+  permissions: ShieldCheck,
+  steps: ListChecks,
+  activity: Activity,
+  settings: Settings,
+  scope: FolderTree,
+  diff: GitCompare,
+  preview: Eye,
+  terminal: SquareTerminal,
+  sensors: Radar,
+  costs: Coins,
+  knowledge: Network,
+  assets3d: Box,
+  voice: Mic,
+  backup: Archive,
+  checkpoint: RotateCcw,
+  models: Cpu,
+} satisfies Record<string, IconNode>;
+
+export type IconName = keyof typeof ICONS;
+
+export function isIconName(name: string): name is IconName {
+  return Object.hasOwn(ICONS, name);
+}
+```
+
+Crea `gui/src/components/BaseIcon.vue` (LF):
+
+```vue
+<script setup lang="ts">
+import { h } from "vue";
+
+import { ICONS, type IconName } from "./icons";
+
+/**
+ * The one door of the program's icons (answer 11 of the design system): a Lucide drawing of `icons.ts`, drawn with
+ * `h()` and never with `v-html`. ⛔ DECORATIVE BY CONSTRUCTION -- `aria-hidden` -- because the name belongs to the
+ * control around it: a button that is an icon alone carries `label` (BaseButton).
+ */
+const props = withDefaults(defineProps<{ name: IconName; size?: "sm" | "md" | "lg" }>(), { size: "md" });
+
+function Drawing() {
+  return h(
+    "svg",
+    {
+      class: "base-icon",
+      "data-icon": props.name,
+      "data-size": props.size,
+      xmlns: "http://www.w3.org/2000/svg",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      "aria-hidden": "true",
+      focusable: "false",
+    },
+    ICONS[props.name].map(([tag, attributes]) => h(tag, attributes)),
+  );
+}
+</script>
+
+<template>
+  <Drawing />
+</template>
+
+<style scoped>
+.base-icon {
+  flex: none;
+  stroke-width: var(--icon-stroke);
+}
+.base-icon[data-size="sm"] {
+  width: var(--size-icon-sm);
+  height: var(--size-icon-sm);
+}
+.base-icon[data-size="md"] {
+  width: var(--size-icon-md);
+  height: var(--size-icon-md);
+}
+.base-icon[data-size="lg"] {
+  width: var(--size-icon-lg);
+  height: var(--size-icon-lg);
+}
+</style>
+```
+
+- [ ] **Passo 5: `BaseButton`, `BaseLabel`, `BaseList`, `BaseStatus`**
+
+Crea `gui/src/components/BaseButton.vue` (LF):
+
+```vue
+<script setup lang="ts">
+import { computed, useSlots } from "vue";
+
+import BaseIcon from "./BaseIcon.vue";
+import type { IconName } from "./icons";
+
+/**
+ * The button of the kit (design system, section (b)): the board's `.btn`, with three variants for the controls and a
+ * fourth, `card`, for a whole card that is one button -- the views of the overview and "Salva questa vista" (P-9 of the
+ * plan). `pill` is imposed by the radius rule: inside a pill goes a pill -- the strip's "moduli".
+ *
+ * ⛔ NO WORDS INSIDE: they come from whoever uses it, in the slot -- or in `label` when the button is an icon alone,
+ * and only then, because with visible words the words are the name (WCAG 2.5.3).
+ */
+const props = withDefaults(
+  defineProps<{
+    variant?: "primary" | "secondary" | "quiet" | "card";
+    size?: "sm" | "md" | "lg";
+    pill?: boolean;
+    disabled?: boolean;
+    icon?: IconName;
+    label?: string;
+  }>(),
+  { variant: "secondary", size: "md", pill: false, disabled: false, icon: undefined, label: undefined },
+);
+const slots = useSlots();
+const iconOnly = computed(() => props.icon !== undefined && slots.default === undefined);
+</script>
+
+<template>
+  <button
+    type="button"
+    class="base-button"
+    :data-variant="variant"
+    :data-size="size"
+    :data-pill="pill || undefined"
+    :data-icon-only="iconOnly || undefined"
+    :disabled="disabled"
+    :aria-label="iconOnly ? label : undefined"
+    :title="iconOnly ? label : undefined"
+  >
+    <BaseIcon v-if="icon !== undefined" :name="icon" :size="size === 'lg' ? 'lg' : 'md'" />
+    <slot />
+  </button>
+</template>
+
+<style scoped>
+.base-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--size-control-md);
+  padding: 0 var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-text);
+  font: var(--font-body-strong);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+.base-button:hover:not(:disabled) {
+  background: var(--color-bg-fill-hover);
+}
+.base-button:active:not(:disabled) {
+  background: var(--color-bg-fill-active);
+}
+.base-button:disabled {
+  color: var(--color-text-disabled);
+  cursor: default;
+}
+
+.base-button[data-variant="primary"] {
+  background: var(--color-bg-accent);
+  border-color: var(--color-bg-accent);
+  color: var(--color-text-on-accent);
+}
+.base-button[data-variant="primary"]:hover:not(:disabled) {
+  background: var(--color-bg-accent-hover);
+  border-color: var(--color-bg-accent-hover);
+}
+.base-button[data-variant="primary"]:active:not(:disabled) {
+  background: var(--color-bg-accent-active);
+  border-color: var(--color-bg-accent-active);
+}
+.base-button[data-variant="primary"]:disabled {
+  background: var(--color-bg-fill);
+  border-color: var(--color-bg-fill);
+  color: var(--color-text-disabled);
+}
+
+.base-button[data-variant="quiet"] {
+  border-color: transparent;
+  color: var(--color-text-muted);
+}
+.base-button[data-variant="quiet"]:hover:not(:disabled),
+.base-button[data-variant="quiet"]:active:not(:disabled) {
+  color: var(--color-text);
+}
+
+/* A whole card that is one button: the card of the (a), a column, the words where they fall. */
+.base-button[data-variant="card"] {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  height: auto;
+  padding: var(--space-3);
+  border-color: var(--color-border-card);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-card);
+  font: var(--font-body);
+  text-align: start;
+  white-space: normal;
+}
+/* The current card: the mark all around -- the overview's view in bordeaux (the (d)). */
+.base-button[data-variant="card"][aria-current]:not([aria-current="false"]) {
+  border-color: var(--color-mark);
+  box-shadow: 0 0 0 var(--border-width) var(--color-mark);
+}
+
+.base-button[data-size="sm"] {
+  height: var(--size-control-sm);
+  padding: 0 var(--space-2);
+}
+.base-button[data-size="lg"] {
+  height: var(--size-control-lg);
+  padding: 0 var(--space-4);
+}
+.base-button[data-icon-only] {
+  padding: 0;
+  aspect-ratio: 1;
+}
+.base-button[data-pill] {
+  border-radius: var(--radius-full);
+}
+</style>
+```
+
+Crea `gui/src/components/BaseLabel.vue` (LF):
+
+```vue
+<script setup lang="ts">
+import BaseIcon from "./BaseIcon.vue";
+import type { IconName } from "./icons";
+
+/**
+ * The label of the kit (design system, section (b)): the board's `.lab` -- small capitals, spaced, with an icon in the
+ * mark's colour. `as` keeps the meaning where the label is a heading: the titles of Permessi are `h3`.
+ */
+withDefaults(defineProps<{ icon?: IconName; as?: "span" | "h2" | "h3" | "h4" }>(), { icon: undefined, as: "span" });
+</script>
+
+<template>
+  <component :is="as" class="base-label">
+    <BaseIcon v-if="icon !== undefined" :name="icon" size="sm" />
+    <slot />
+  </component>
+</template>
+
+<style scoped>
+.base-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font: var(--font-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.base-label :deep(.base-icon) {
+  color: var(--color-mark);
+}
+</style>
+```
+
+Crea `gui/src/components/BaseList.vue` (LF):
+
+```vue
+<script setup lang="ts" generic="T">
+/**
+ * The list of the kit (design system, section (b)): the rows of the drawer, of Permessi and of Passi. Static rows --
+ * no hover, because nothing in them is clickable -- in the board's `.row` shape; the words come in the `item` slot.
+ */
+withDefaults(defineProps<{ items: readonly T[]; keyOf: (item: T, index: number) => string | number; ordered?: boolean }>(), {
+  ordered: false,
+});
+defineSlots<{ item(props: { item: T; index: number }): unknown }>();
+</script>
+
+<template>
+  <component :is="ordered ? 'ol' : 'ul'" class="base-list">
+    <li v-for="(item, index) in items" :key="keyOf(item, index)" class="base-list-row">
+      <slot name="item" :item="item" :index="index" />
+    </li>
+  </component>
+</template>
+
+<style scoped>
+.base-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.base-list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--size-control-md);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+}
+</style>
+```
+
+Crea `gui/src/components/BaseStatus.vue` (LF):
+
+```vue
+<script setup lang="ts">
+/**
+ * The status region of the kit (design system, section (b)) -- and the cure of M-3 of E187 BY CONSTRUCTION: the region
+ * is ALWAYS in the DOM, empty and zero high, and the words ENTER it. Many screen readers announce a live region only
+ * when its content changes, never one that is born with its text; and an empty `div` draws nothing, which is the
+ * "no empty box" rule of §6a of the sub-project 2 design.
+ */
+</script>
+
+<template>
+  <div class="base-status" role="status"><slot /></div>
+</template>
+```
+
+- [ ] **Passo 6: `BaseTextField`, `BaseRadioGroup`, `BaseDialog`**
+
+Crea `gui/src/components/BaseTextField.vue` (LF):
+
+```vue
+<script setup lang="ts">
+import { useId } from "vue";
+
+import BaseIcon from "./BaseIcon.vue";
+import type { IconName } from "./icons";
+
+/**
+ * The text field of the kit (design system, section (b); decision 20): the name of a saved view and the bar's search
+ * are its two occurrences. `label` is the accessible name -- the board draws no visible label, the icon and the
+ * placeholder speak to the eye; `error` says what is wrong under the field and marks it invalid.
+ * ⛔ The caller's attributes -- `placeholder`, `@keydown` -- land on the INPUT, not on the frame around it.
+ */
+defineOptions({ inheritAttrs: false });
+withDefaults(defineProps<{ label: string; icon?: IconName; disabled?: boolean; error?: string; type?: "text" | "search" }>(), {
+  icon: undefined,
+  disabled: false,
+  error: undefined,
+  type: "text",
+});
+const model = defineModel<string>({ default: "" });
+const errorId = useId();
+</script>
+
+<template>
+  <div class="base-text-field">
+    <div class="frame" :data-error="error !== undefined || undefined" :data-disabled="disabled || undefined">
+      <BaseIcon v-if="icon !== undefined" :name="icon" />
+      <input
+        v-model="model"
+        v-bind="$attrs"
+        :type="type"
+        :disabled="disabled"
+        :aria-label="label"
+        :aria-invalid="error !== undefined || undefined"
+        :aria-describedby="error !== undefined ? errorId : undefined"
+      />
+    </div>
+    <p v-if="error !== undefined" :id="errorId" class="error">{{ error }}</p>
+  </div>
+</template>
+
+<style scoped>
+.frame {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--size-control-md);
+  padding: 0 var(--space-3);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font: var(--font-body);
+}
+.frame:hover:not([data-disabled]) {
+  border-color: var(--color-text-muted);
+}
+/* ⛔ THE RING IS THE FRAME'S, as on the board: the input inside gives its own away. */
+.frame:has(input:focus-visible) {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+  color: var(--color-text);
+}
+.frame[data-disabled] {
+  background: var(--color-bg-fill);
+  border-color: var(--color-border);
+  color: var(--color-text-disabled);
+}
+.frame[data-error] {
+  border-color: var(--color-border-stop);
+  color: var(--color-text);
+}
+input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+}
+input:focus-visible {
+  outline: none;
+}
+input:disabled {
+  color: var(--color-text-disabled);
+}
+input::placeholder {
+  color: var(--color-text-muted);
+}
+.error {
+  margin: var(--space-1) 0 0;
+  font: var(--font-caption);
+  color: var(--color-text-stop);
+}
+</style>
+```
+
+Crea `gui/src/components/BaseRadioGroup.vue` (LF):
+
+```vue
+<script setup lang="ts">
+import { RadioGroupIndicator, RadioGroupItem, RadioGroupRoot } from "reka-ui";
+import { useId } from "vue";
+
+/**
+ * The choice among a few options (design system, section (b)), on `reka-ui`'s radio group, which gives the arrows and
+ * the roles. ⛔ CONTROLLED, AND THAT IS THE POINT (P-8 of the plan): the group SHOWS `modelValue` and only ASKS for a
+ * change with `update:modelValue` -- `reka-ui` 2.10.4 keeps no state of its own once a value is given, `null`
+ * included -- so a choice the core decides moves when the core answers, not on the click. `null` checks nothing.
+ */
+defineProps<{ modelValue: string | null; options: readonly { value: string; label: string }[]; legend: string; disabled?: boolean }>();
+const emit = defineEmits<{ "update:modelValue": [value: string] }>();
+const id = useId();
+
+function ask(value: unknown): void {
+  if (typeof value === "string") emit("update:modelValue", value);
+}
+</script>
+
+<template>
+  <div class="base-radio-group">
+    <span :id="`${id}-legend`" class="legend">{{ legend }}</span>
+    <RadioGroupRoot :model-value="modelValue" :disabled="disabled" :aria-labelledby="`${id}-legend`" class="options" @update:model-value="ask">
+      <div v-for="option in options" :key="option.value" class="option">
+        <RadioGroupItem :id="`${id}-${option.value}`" :value="option.value" class="radio">
+          <RadioGroupIndicator class="dot" />
+        </RadioGroupItem>
+        <label :for="`${id}-${option.value}`">{{ option.label }}</label>
+      </div>
+    </RadioGroupRoot>
+  </div>
+</template>
+
+<style scoped>
+.base-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.legend {
+  font: var(--font-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.base-radio-group :deep(.options) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--size-target-min);
+}
+/* The radio is a `button` in `reka-ui` (trap 10): a 24 x 24 target (WCAG 2.5.8) around a 16 px circle. */
+.base-radio-group :deep(.radio) {
+  display: grid;
+  place-items: center;
+  width: var(--size-target-min);
+  height: var(--size-target-min);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  cursor: pointer;
+}
+.base-radio-group :deep(.radio)::before {
+  content: "";
+  grid-area: 1 / 1;
+  width: var(--size-icon-md);
+  height: var(--size-icon-md);
+  box-sizing: border-box;
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+}
+.base-radio-group :deep(.radio[data-state="checked"])::before {
+  border-color: var(--color-mark);
+}
+.base-radio-group :deep(.dot) {
+  grid-area: 1 / 1;
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--color-mark);
+}
+.base-radio-group :deep(.radio[data-disabled]) {
+  cursor: default;
+}
+.base-radio-group :deep(.radio[data-disabled])::before {
+  border-color: var(--color-border);
+  background: var(--color-bg-fill);
+}
+label {
+  font: var(--font-body);
+  color: var(--color-text);
+  cursor: pointer;
+}
+.option:has([data-disabled]) label {
+  color: var(--color-text-disabled);
+  cursor: default;
+}
+</style>
+```
+
+Crea `gui/src/components/BaseDialog.vue` (LF):
+
+```vue
+<script setup lang="ts">
+import { DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from "reka-ui";
+
+/**
+ * The modal window of the kit (design system, section (b)), on `reka-ui`'s dialog, which gives Esc, the focus kept inside
+ * and given back to the control that opened it (decision 18). Three shapes: `center`, a question with its answers;
+ * `sheet`, from the bottom -- the drawer; `full`, the whole window -- the overview.
+ *
+ * `open` is optional: bound with `v-model:open` the window is the caller's, unbound the `trigger` slot opens it.
+ * ⛔ NO WORDS INSIDE: the title and the description are props, the body and the `actions` are slots.
+ */
+withDefaults(defineProps<{ title: string; description?: string; variant?: "center" | "sheet" | "full" }>(), {
+  description: undefined,
+  variant: "center",
+});
+const open = defineModel<boolean | undefined>("open", { default: undefined });
+</script>
+
+<template>
+  <DialogRoot v-model:open="open">
+    <DialogTrigger v-if="$slots.trigger" as-child>
+      <slot name="trigger" />
+    </DialogTrigger>
+    <DialogPortal>
+      <DialogOverlay class="base-dialog-veil" />
+      <DialogContent class="base-dialog" :data-variant="variant">
+        <DialogTitle class="title">{{ title }}</DialogTitle>
+        <DialogDescription v-if="description !== undefined" class="description">{{ description }}</DialogDescription>
+        <slot />
+        <div v-if="$slots.actions" class="actions">
+          <slot name="actions" />
+        </div>
+      </DialogContent>
+    </DialogPortal>
+  </DialogRoot>
+</template>
+
+<style scoped>
+.base-dialog-veil {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  background: var(--color-veil);
+}
+.base-dialog {
+  position: fixed;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-border-card);
+  background: var(--color-bg-raised);
+  box-shadow: var(--shadow-overlay);
+  color: var(--color-text);
+}
+/* The radii follow the rule of answer 4: a card of 20 with 12 of margin around controls of 8. */
+.base-dialog[data-variant="center"] {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(30rem, calc(100vw - var(--space-12)));
+  border-radius: var(--radius-card);
+}
+.base-dialog[data-variant="sheet"] {
+  inset: auto 0 0 0;
+  max-height: 60vh;
+  overflow: auto;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+/* The whole window: its corners are Windows' (the (d)), so ours are square. */
+.base-dialog[data-variant="full"] {
+  inset: 0;
+  overflow: auto;
+  padding: var(--space-6);
+  border: 0;
+  border-radius: 0;
+  background: var(--color-bg);
+}
+.title {
+  margin: 0;
+  font: var(--font-title);
+}
+.base-dialog[data-variant="sheet"] .title,
+.base-dialog[data-variant="full"] .title {
+  font: var(--font-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.description {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+</style>
+```
+
+```bash
+cd gui && npx vitest run src/components && npm run build
+```
+
+Atteso: **verde** — le prove di `kit.test.ts`, `markdown.test.ts` com'era; il *build* verde, con `vue-tsc` che ha letto la
+riga `@ts-expect-error`. Il pezzo JavaScript dopo il *build* — `npm run build 2>&1 | grep 'kB'` — si scrive nel commit:
+le icone sono ventiquattro, circa mezzo kB ciascuna (**N-2 di E187**).
+
+- [ ] **Passo 7: il linter — i `.ts`, e le regole del kit**
+
+In `gui/eslint.config.js` (`replace_unique.py`), tre sostituzioni. *Trova*:
+
+```js
+import vue from "eslint-plugin-vue";
+```
+
+*Sostituisci con:*
+
+```js
+import vue from "eslint-plugin-vue";
+
+/** The one door of the icons (answer 11 of the design system). */
+const LUCIDE = {
+  name: "lucide",
+  message: "icons pass through BaseIcon and the one map, src/components/icons.ts (answer 11 of the design system)",
+};
+/** What a base piece may not reach: the global state, and every layer above the kit (section (b); P-3 of its plan). */
+const UPWARD = {
+  regex: "^pinia$|(^|/)(stores|panels|frame|transport)(/|$)",
+  message: "a base piece reads no global state and knows no layer above it (design system, section (b))",
+};
+```
+
+*Trova:*
+
+```js
+  {
+    name: "harness/settings",
+```
+
+*Sostituisci con:*
+
+```js
+  {
+    /**
+     * ⛔ THE `.ts` FILES ARE READ FROM THE DESIGN SYSTEM ON (P-2 of its plan). P-101 of part 2 left them to `vue-tsc`,
+     * and their TYPES stay there; but the import rules below must see `icons.ts`, `BigTab.ts`, `dock.ts`, or `lucide` and
+     * `reka-ui` could come in through a `.ts` unseen. The unscoped blocks now reach the `.ts` too, and the gate says
+     * whether any of them objects.
+     */
+    name: "harness/ts",
+    files: ["**/*.ts"],
+    languageOptions: { parser: tsParser },
+  },
+  {
+    name: "harness/settings",
+```
+
+*Trova* — la chiusura del file, dopo il blocco di `Chat.vue`:
+
+```js
+    name: "harness/chat-renders-our-own-html",
+    files: ["src/panels/Chat.vue"],
+    rules: { "vue/no-v-html": "off" },
+  },
+];
+```
+
+*Sostituisci con:*
+
+```js
+    name: "harness/chat-renders-our-own-html",
+    files: ["src/panels/Chat.vue"],
+    rules: { "vue/no-v-html": "off" },
+  },
+  /**
+   * ⛔ THE IMPORT RULES OF THE KIT (design system, section (b)). One rule, three scopes, and the ORDER MATTERS: in a flat
+   * config a later block REPLACES an earlier one's options for the same rule, it does not merge them -- so every block
+   * says the whole list for its files.
+   */
+  {
+    name: "harness/imports",
+    files: ["**/*.vue", "**/*.ts"],
+    rules: { "no-restricted-imports": ["error", { paths: [LUCIDE] }] },
+  },
+  {
+    name: "harness/imports/base-pieces",
+    files: ["src/components/Base*.vue"],
+    rules: { "no-restricted-imports": ["error", { paths: [LUCIDE], patterns: [UPWARD] }] },
+  },
+  {
+    // The one file that may import `lucide`, and the only rule it keeps is the base pieces' one.
+    name: "harness/imports/the-icon-map",
+    files: ["src/components/icons.ts"],
+    rules: { "no-restricted-imports": ["error", { patterns: [UPWARD] }] },
+  },
+];
+```
+
+```bash
+cd gui && npm run lint
+```
+
+Atteso: **verde** sul codice di oggi. ⛔ Se una regola già attiva scatta su un `.ts` ora letto — le regole di
+`vue/essential` e dei due blocchi nostri non hanno `files` — è una voce d'errata col suo esito, **non** un blocco del
+linter spento per farla tacere.
+
+- [ ] **Passo 8: le due direzioni del linter**
+
+Una alla volta, `npm run lint` dopo ciascuna, poi indietro con `git checkout -- <file>`:
+
+| La violazione messa a mano | Atteso |
+|---|---|
+| in `src/components/BaseLabel.vue` la riga `import { useCore } from "../stores/core";` | **rosso**: *«a base piece reads no global state»* |
+| in `src/frame/moveActive.ts` la riga `import { Search } from "lucide";` | **rosso**: *«icons pass through BaseIcon»* — ⛔ è la prova che i `.ts` ora si leggono |
+| in `src/components/BaseButton.vue` la riga `import { Search } from "lucide";` | **rosso**: lo stesso messaggio, dal blocco dei pezzi di base |
+| niente: `src/components/icons.ts` importa `lucide`, `src/components/Confirm.vue` legge due negozi | **verde**: la prima è la porta unica, il secondo è un pezzo composto (**P-3**) |
+
+⚠️ **Il linter non ha una guardia di non-vacuità**: se un `files` smettesse di trovare i suoi file, le regole tacerebbero
+col verde. La prova delle due direzioni si rifà a mano in ogni compito che tocca `eslint.config.js`; una guardia statica è
+un controllo nuovo, del proprietario (vincolo globale 7 della parte 2) — **registrata, non presa**.
+
+- [ ] **Passo 9: tutte le prove, il cancello, il commit**
+
+```bash
+cd gui && npm test && npm run build && npm run lint
+```
+
+Poi la riga **3** della tabella della posizione a `✅ <data>`, `bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`,
+il commit — `design-system(compito 3): il kit …` — coi fine-riga rimisurati, e `git push`.
+
+---
+## Compito 4: la pagina kit — fuori dal pacchetto, e le sonde diventano prove nel browser
+
+**Da:** la (b), *La pagina kit*; la (f), la tabella *«nel browser vero»*; i controlli **9, 11, 14, 20**; le trappole **1,
+3, 4, 12**; **D7** e **D8** di questo piano. Le tre sonde delle tavole, lette per intero:
+`docs/superpowers/specs/2026-09-22-design-system-tavole/sonda-raggi.js`, `sonda-icone.js`, `sonda-caratteri.js`.
+
+**Files:**
+- Create: `gui/kit.html`, `gui/src/kit/main.ts`, `gui/src/kit/Kit.vue`, `gui/src/kit/kit.browser.test.ts`
+- Create: `gui/src/testing/probes.ts` — le tre sonde come funzioni, per questo compito e per il compito 8
+- Modify: `gui/eslint.config.js` — il blocco delle parole esemplari (D8)
+- Modify: `scripts/gate-gui.sh` — la pagina kit **fuori** dal pacchetto, provato sull'uscita del *build*
+
+**Interfaces:**
+- Consumes: gli otto pezzi e `ICONS` del compito 3; `watchTheme` e `isThemeChoice` del compito 1; `violations` di
+  `testing/axe.ts`; il progetto `browser` del compito 2.
+- Produces, da `gui/src/testing/probes.ts`:
+  `concentricRadii(roots: Element[]): { near: number; bad: string[] }`,
+  `fits(roots: Element[], boxes: string): { seen: number; boxed: number; problems: string[] }`,
+  `iconsCentred(roots: Element[]): { icons: number; centred: number; problems: string[] }`,
+  `firstFamily(element: Element): string`.
+- Produces: `Kit.vue`, con la prop `initialTheme?: ThemeChoice`; le classi `kit-card`, `kit-frame`, `kit-strip` sono le
+  **radici** delle prove.
+
+⚠️ **La regola dei raggi decide anche come è fatta la pagina kit**: un elemento che non può stare in un angolo con lo stesso
+centro *«si allontana dall'angolo»* (la (a), il linguaggio visivo). Quindi le carte che sono pulsanti stanno in una cornice
+`kit-frame` da `--radius-frame` — 20 + 12 = 32 —, il pulsante a pillola sta nella pillola `kit-strip` e non in una scheda, e
+nessuna scheda finisce con un radio nel suo angolo: ciascuna chiude con una nota. Una prova rossa sulla pagina kit si legge
+**prima** di toccare un pezzo: può dire che è la pagina a violare la regola.
+
+- [ ] **Passo 1: le sonde, come funzioni**
+
+Crea `gui/src/testing/probes.ts` (LF):
+
+```ts
+/**
+ * The probes of the design-system boards, as functions over the real DOM (design system, section (f)). They were
+ * scripts pasted into a console on 2026-09-23 -- `sonda-raggi.js`, `sonda-icone.js`, `sonda-caratteri.js`, next to the
+ * approved boards -- and each was proven in both directions there. Here they take their ROOTS as a parameter (trap 4),
+ * and each returns how much it looked at, so that a caller can refuse a green that looked at nothing (trap 1).
+ *
+ * ⛔ THEY NEED A LAYOUT ENGINE: under jsdom every rectangle is zero, so they run in the browser project alone.
+ */
+
+function describe(element: Element): string {
+  const classes = (element.getAttribute("class") ?? "").trim().split(/\s+/)[0];
+  return classes !== undefined && classes !== "" ? classes : element.tagName.toLowerCase();
+}
+
+/**
+ * The owner's rule of answer 4 -- OUTER radius = INNER radius + distance. For every element with a radius, the nearest
+ * rounded ancestor inside a root, and its four corners: where the inner corner sits close to the outer one (within the
+ * larger radius, plus 2 px), an element IN the corner must share the centre, and one OFF the corner must not be rounder
+ * than the outer radius minus the smaller distance. A straight corner is never compared (answer 20): an element or an
+ * ancestor with no radius is skipped. SVG content is a drawing, not a surface.
+ */
+export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
+  const radius = (element: Element): number => Number.parseFloat(getComputedStyle(element).borderTopLeftRadius) || 0;
+  const effective = (element: Element): number => {
+    const box = element.getBoundingClientRect();
+    return Math.min(radius(element), box.height / 2, box.width / 2);
+  };
+  const bad: string[] = [];
+  let near = 0;
+  for (const root of roots) {
+    for (const element of [root, ...root.querySelectorAll("*")]) {
+      if (element.closest("svg") !== null) continue;
+      const inner = effective(element);
+      if (inner === 0) continue;
+      let ancestor = element.parentElement;
+      while (ancestor !== null && !(radius(ancestor) > 0)) ancestor = ancestor.parentElement;
+      if (ancestor === null || (!root.contains(ancestor) && ancestor !== root)) continue;
+      const outer = effective(ancestor);
+      const b = element.getBoundingClientRect();
+      const B = ancestor.getBoundingClientRect();
+      const corners: [string, number, number][] = [
+        ["top-left", b.left - B.left, b.top - B.top],
+        ["top-right", B.right - b.right, b.top - B.top],
+        ["bottom-left", b.left - B.left, B.bottom - b.bottom],
+        ["bottom-right", B.right - b.right, B.bottom - b.bottom],
+      ];
+      for (const [corner, dx, dy] of corners) {
+        const reach = Math.max(outer, inner) + 2;
+        if (!(dx < reach && dy < reach)) continue;
+        near += 1;
+        const inTheCorner = Math.abs(dx - dy) <= 1.5;
+        const ok = inTheCorner ? Math.abs(inner - (outer - dx)) <= 1.5 : inner <= outer - Math.min(dx, dy) + 1.5;
+        if (!ok) {
+          bad.push(`${describe(element)} in ${describe(ancestor)}, ${corner}: radius ${inner.toFixed(1)}, outer ${outer.toFixed(1)}, distance ${dx.toFixed(1)}/${dy.toFixed(1)}`);
+        }
+      }
+    }
+  }
+  return { near, bad };
+}
+
+/**
+ * No text is cut -- an element's content is never wider than the element -- and nothing sticks out of the nearest
+ * box that holds it: the fourth check of `sonda-caratteri.js`, with the boxes as a parameter.
+ */
+export function fits(roots: Element[], boxes: string): { seen: number; boxed: number; problems: string[] } {
+  const problems: string[] = [];
+  let seen = 0;
+  let boxed = 0;
+  for (const root of roots) {
+    for (const element of root.querySelectorAll<HTMLElement>("*")) {
+      if (element.closest("svg") !== null) continue;
+      seen += 1;
+      if (element.clientWidth > 0 && element.scrollWidth > element.clientWidth + 1) {
+        problems.push(`cut: ${describe(element)} "${(element.textContent ?? "").trim().slice(0, 24)}" ${element.scrollWidth}>${element.clientWidth}`);
+      }
+      const box = element.parentElement?.closest(boxes);
+      if (box === null || box === undefined) continue;
+      const b = element.getBoundingClientRect();
+      const B = box.getBoundingClientRect();
+      if (b.width === 0 && b.height === 0) continue;
+      boxed += 1;
+      if (b.left < B.left - 1 || b.right > B.right + 1 || b.top < B.top - 1 || b.bottom > B.bottom + 1) {
+        problems.push(`sticks out: ${describe(element)} of ${describe(box)}`);
+      }
+    }
+  }
+  return { seen, boxed, problems };
+}
+
+/**
+ * Every icon is drawn, strokes with `currentColor`, and -- in a flex row that centres -- sits within 0.75 px of the
+ * centre of its parent's content box: `sonda-icone.js`, on the icons of `BaseIcon`.
+ */
+export function iconsCentred(roots: Element[]): { icons: number; centred: number; problems: string[] } {
+  const problems: string[] = [];
+  let icons = 0;
+  let centred = 0;
+  for (const root of roots) {
+    for (const svg of root.querySelectorAll("svg.base-icon")) {
+      icons += 1;
+      const name = svg.getAttribute("data-icon") ?? "?";
+      const b = svg.getBoundingClientRect();
+      if (!(b.width > 0 && b.height > 0)) problems.push(`not drawn: ${name}`);
+      if (svg.getAttribute("stroke") !== "currentColor") problems.push(`stroke is not currentColor: ${name}`);
+      const parent = svg.parentElement;
+      if (parent === null) continue;
+      const style = getComputedStyle(parent);
+      if (!style.display.includes("flex") || style.alignItems !== "center" || style.flexDirection.startsWith("column")) continue;
+      const P = parent.getBoundingClientRect();
+      const top = P.top + Number.parseFloat(style.borderTopWidth) + Number.parseFloat(style.paddingTop);
+      const bottom = P.bottom - Number.parseFloat(style.borderBottomWidth) - Number.parseFloat(style.paddingBottom);
+      const off = (b.top + b.bottom) / 2 - (top + bottom) / 2;
+      centred += 1;
+      if (Math.abs(off) > 0.75) problems.push(`off centre by ${off.toFixed(2)} px: ${name} in ${describe(parent)}`);
+    }
+  }
+  return { icons, centred, problems };
+}
+
+/** The first family an element computes -- the check "applied" of `sonda-caratteri.js`. */
+export function firstFamily(element: Element): string {
+  return (getComputedStyle(element).fontFamily.split(",")[0] ?? "").trim().replace(/^["']|["']$/g, "");
+}
+```
+
+- [ ] **Passo 2: la prova, prima della pagina**
+
+Crea `gui/src/kit/kit.browser.test.ts` (LF):
+
+```ts
+import { mount } from "@vue/test-utils";
+import { afterEach, describe, expect, it } from "vitest";
+import { nextTick } from "vue";
+
+import "../tokens";
+import { violations } from "../testing/axe";
+import { concentricRadii, firstFamily, fits, iconsCentred } from "../testing/probes";
+
+import Kit from "./Kit.vue";
+
+// ⛔ THE KIT PAGE IN THE INSTALLED CHROME (design system, section (f)): the probes of the boards, on the real pieces.
+
+const ROOTS = ".kit-card, .kit-frame, .kit-strip";
+const BOXES = ".kit-card, .kit-frame, .kit-strip, .base-button, .base-list-row, .base-text-field > .frame, .option, .base-dialog";
+
+afterEach(() => {
+  document.body.replaceChildren();
+});
+
+async function kit(theme: "light" | "dark") {
+  const wrapper = mount(Kit, { attachTo: document.body, props: { initialTheme: theme } });
+  await nextTick();
+  await document.fonts.ready;
+  return wrapper;
+}
+
+const roots = (selector: string): Element[] => [...document.querySelectorAll(selector)];
+
+for (const theme of ["light", "dark"] as const) {
+  describe(`the kit page, ${theme} theme`, () => {
+    it("puts its theme on the root", async () => {
+      const wrapper = await kit(theme);
+      expect(document.documentElement.dataset.theme).toBe(theme);
+      wrapper.unmount();
+    });
+
+    it("keeps every radius concentric (answer 4)", async () => {
+      const wrapper = await kit(theme);
+      const report = concentricRadii(roots(ROOTS));
+      // ⛔ NON-VACUITY (trap 1): a probe that met no corner near another is green for nothing.
+      expect(report.near).toBeGreaterThan(0);
+      expect(report.bad).toEqual([]);
+      wrapper.unmount();
+    });
+
+    it("cuts no text, and lets nothing stick out of its box", async () => {
+      const wrapper = await kit(theme);
+      const report = fits(roots(ROOTS), BOXES);
+      expect(report.seen).toBeGreaterThan(0);
+      expect(report.boxed).toBeGreaterThan(0);
+      expect(report.problems).toEqual([]);
+      wrapper.unmount();
+    });
+
+    it("draws every icon in currentColor, and centres it", async () => {
+      const wrapper = await kit(theme);
+      const report = iconsCentred(roots(".kit"));
+      expect(report.icons).toBeGreaterThan(0);
+      expect(report.centred).toBeGreaterThan(0);
+      expect(report.problems).toEqual([]);
+      wrapper.unmount();
+    });
+
+    it("dresses labels and numbers in Barlow, and the text in Geist", async () => {
+      const wrapper = await kit(theme);
+      const label = document.querySelector(".base-label");
+      const text = document.querySelector(".base-list-row span");
+      const number = document.querySelector(".kit em");
+      expect(label !== null && text !== null && number !== null).toBe(true);
+      expect(firstFamily(label as Element)).toBe("Barlow");
+      expect(firstFamily(text as Element)).toBe("Geist Variable");
+      expect(firstFamily(number as Element)).toBe("Barlow");
+      wrapper.unmount();
+    });
+
+    it("has no axe violation -- contrast included, on the drawn page", async () => {
+      const wrapper = await kit(theme);
+      expect(await violations(wrapper.element, { contrast: true })).toEqual([]);
+      wrapper.unmount();
+    });
+
+    it("opens its window with the radii concentric, and no axe violation", async () => {
+      const wrapper = await kit(theme);
+      document.querySelector<HTMLButtonElement>('[data-kit="open-dialog"]')?.click();
+      await nextTick();
+      await nextTick();
+      const dialog = roots(".base-dialog");
+      expect(dialog).toHaveLength(1);
+      const report = concentricRadii(dialog);
+      expect(report.near).toBeGreaterThan(0);
+      expect(report.bad).toEqual([]);
+      expect(await violations(dialog[0] as Element, { contrast: true })).toEqual([]);
+      wrapper.unmount();
+    });
+  });
+}
+```
+
+```bash
+cd gui && npx vitest run --project browser src/kit
+```
+
+Atteso: **rosso** — `Kit.vue` non c'è.
+
+- [ ] **Passo 3: la pagina**
+
+Crea `gui/kit.html` (LF):
+
+```html
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Harness — il kit</title>
+  </head>
+  <body>
+    <div id="kit"></div>
+    <script type="module" src="/src/kit/main.ts"></script>
+  </body>
+</html>
+```
+
+Crea `gui/src/kit/main.ts` (LF):
+
+```ts
+import { createApp } from "vue";
+
+import "../tokens";
+import Kit from "./Kit.vue";
+
+// The kit page (design system, section (b); answer 12): `npm run dev`, then /kit.html. A development page: `vite build`
+// takes `index.html` alone, and the gate proves it on the output (task 4 of the plan).
+createApp(Kit).mount("#kit");
+```
+
+Crea `gui/src/kit/Kit.vue` (LF):
+
+```vue
+<script setup lang="ts">
+import { onUnmounted, ref } from "vue";
+
+import BaseButton from "../components/BaseButton.vue";
+import BaseDialog from "../components/BaseDialog.vue";
+import BaseIcon from "../components/BaseIcon.vue";
+import BaseLabel from "../components/BaseLabel.vue";
+import BaseList from "../components/BaseList.vue";
+import BaseRadioGroup from "../components/BaseRadioGroup.vue";
+import BaseStatus from "../components/BaseStatus.vue";
+import BaseTextField from "../components/BaseTextField.vue";
+import { ICONS, type IconName } from "../components/icons";
+import { isThemeChoice, watchTheme, type ThemeChoice } from "../tokens/theme";
+
+/**
+ * The kit page (design system, section (b); answer 12): every piece in the states it can be shown in, at full size, in
+ * the theme chosen at the top -- ONE THEME AT A TIME (D7 of the plan), because a dialog goes to a portal on `body` and
+ * would take the root's theme, not a column's. ⛔ The words and the values are SPECIMENS (D8).
+ *
+ * ⛔ THE RADIUS RULE SHAPES THIS PAGE TOO: the card buttons sit in a frame of `--radius-frame`, the pill button in a
+ * pill, and no card ends with a small round control in its corner -- each one closes with a note.
+ */
+const props = withDefaults(defineProps<{ initialTheme?: ThemeChoice }>(), { initialTheme: "system" });
+const theme = ref<ThemeChoice>(props.initialTheme);
+onUnmounted(watchTheme(() => theme.value));
+
+function chooseTheme(value: string): void {
+  if (isThemeChoice(value)) theme.value = value;
+}
+
+const themes = [
+  { value: "system", label: "Sistema" },
+  { value: "light", label: "Chiaro" },
+  { value: "dark", label: "Scuro" },
+];
+const variants = ["primary", "secondary", "quiet"] as const;
+const sizes = ["sm", "md", "lg"] as const;
+const icons = Object.keys(ICONS) as IconName[];
+const text = ref("");
+const policies = [
+  { value: "remote", label: "OpenRouter, VRAM libera" },
+  { value: "local", label: "Locale" },
+];
+const policy = ref<string | null>("remote");
+const rows = [
+  { what: "policy · VRAM · cambia", when: "14:02" },
+  { what: "file · ~/note · leggi", when: "13:58" },
+  { what: "rete · openrouter · usa", when: "13:41" },
+];
+</script>
+
+<template>
+  <main class="kit">
+    <header class="kit-head">
+      <h1>Il kit</h1>
+      <BaseRadioGroup :model-value="theme" :options="themes" legend="Tema" @update:model-value="chooseTheme" />
+    </header>
+
+    <div class="kit-grid">
+      <section class="kit-card">
+        <BaseLabel icon="modules" as="h2">Pulsanti</BaseLabel>
+        <div v-for="variant in variants" :key="variant" class="kit-row">
+          <BaseButton v-for="size in sizes" :key="size" :variant="variant" :size="size">Consenti</BaseButton>
+          <BaseButton :variant="variant" disabled>Spento</BaseButton>
+          <BaseButton :variant="variant" icon="float" label="Stacca la tessera" />
+        </div>
+        <div class="kit-row">
+          <BaseButton icon="search">Cerca</BaseButton>
+          <BaseButton size="lg" icon="fullPage" label="A pagina intera" />
+        </div>
+        <p class="kit-note">Principale, normale, discreto; tre misure; spento; solo un'icona, col nome per chi non vede.</p>
+      </section>
+
+      <section class="kit-card">
+        <BaseLabel icon="status" as="h2">Etichette</BaseLabel>
+        <BaseLabel icon="status">Stato</BaseLabel>
+        <BaseLabel icon="permissions">Permessi</BaseLabel>
+        <BaseLabel icon="steps">Passi</BaseLabel>
+        <p class="kit-note">Maiuscolo spaziato, con l'icona nel colore del segno.</p>
+      </section>
+
+      <section class="kit-card">
+        <BaseLabel icon="search" as="h2">Campo</BaseLabel>
+        <BaseTextField v-model="text" label="Cerca negli artefatti" icon="search" placeholder="Cerca negli artefatti" />
+        <BaseTextField model-value="" label="Cerca" icon="search" placeholder="la ricerca arriva col sotto-progetto 6" disabled />
+        <BaseTextField model-value="Home" label="Nome della vista" error="Esiste già una vista con questo nome." />
+        <p class="kit-note">Normale, spento, con un errore sotto.</p>
+      </section>
+
+      <section class="kit-card">
+        <BaseLabel icon="settings" as="h2">Scelta</BaseLabel>
+        <BaseRadioGroup :model-value="policy" :options="policies" legend="Policy VRAM" @update:model-value="policy = $event" />
+        <BaseRadioGroup :model-value="null" :options="policies" legend="Spenta, finché il core non parla" disabled />
+        <p class="kit-note">Il radio mostra il valore che riceve: si muove quando il valore cambia.</p>
+      </section>
+
+      <section class="kit-card">
+        <BaseLabel icon="steps" as="h2">Lista</BaseLabel>
+        <BaseList :items="rows" :key-of="(row) => row.when">
+          <template #item="{ item }">
+            <span>{{ item.what }}</span>
+            <em>{{ item.when }}</em>
+          </template>
+        </BaseList>
+      </section>
+
+      <section class="kit-card">
+        <BaseLabel icon="status" as="h2">Stato</BaseLabel>
+        <BaseStatus><p>Richiesta inviata: in attesa del core.</p></BaseStatus>
+        <p class="kit-note">La regione c'è sempre, anche vuota: le parole ci entrano.</p>
+      </section>
+
+      <section class="kit-card">
+        <BaseLabel icon="float" as="h2">Finestra</BaseLabel>
+        <BaseDialog title="Serve un permesso" description="Vale per questa tripla e per questa sessione.">
+          <template #trigger>
+            <BaseButton data-kit="open-dialog">Apri la finestra</BaseButton>
+          </template>
+          <template #actions>
+            <BaseButton variant="quiet">Rifiuta</BaseButton>
+            <BaseButton variant="primary">Consenti</BaseButton>
+          </template>
+        </BaseDialog>
+        <p class="kit-note">Esc chiude, il fuoco resta dentro e torna al pulsante.</p>
+      </section>
+
+      <section class="kit-section kit-wide">
+        <BaseLabel icon="views" as="h2">Carte</BaseLabel>
+        <div class="kit-frame">
+          <BaseButton variant="card" aria-current="page">
+            <BaseLabel icon="views">Home</BaseLabel>
+            <span>La vista di adesso, col segno tutto intorno.</span>
+          </BaseButton>
+          <BaseButton variant="card">
+            <BaseLabel icon="saveView">Salva questa vista</BaseLabel>
+            <span>Una carta intera che è un pulsante.</span>
+          </BaseButton>
+        </div>
+      </section>
+
+      <section class="kit-section kit-wide">
+        <BaseLabel icon="modules" as="h2">Pillola</BaseLabel>
+        <div class="kit-strip">
+          <span>Degrado nessuno</span>
+          <BaseButton size="lg" pill icon="modules">moduli</BaseButton>
+        </div>
+      </section>
+
+      <section class="kit-section kit-wide">
+        <BaseLabel icon="views" as="h2">Icone</BaseLabel>
+        <div class="kit-icons">
+          <span v-for="name in icons" :key="name" class="kit-icon"><BaseIcon :name="name" /><code>{{ name }}</code></span>
+        </div>
+      </section>
+    </div>
+  </main>
+</template>
+
+<style scoped>
+.kit {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: var(--space-8) var(--space-6);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: var(--font-body);
+}
+.kit-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+h1 {
+  margin: 0;
+  font: var(--font-heading);
+}
+.kit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: var(--space-6);
+}
+.kit-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-border-card);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-card);
+}
+.kit-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.kit-wide {
+  grid-column: 1 / -1;
+}
+/* A frame of 32 with 12 of margin around cards of 20: answer 4, and the `calc` of the tokens. */
+.kit-frame {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-frame);
+  background: var(--color-bg-fill);
+}
+/* The strip's shape: a pill with 8 of margin around a pill button of 40 -- inside a pill goes a pill. */
+.kit-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--color-border-card);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-card);
+}
+.kit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.kit-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+}
+.kit-icon {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.kit-note {
+  margin: 0;
+  font: var(--font-caption);
+  color: var(--color-text-muted);
+}
+code {
+  font: var(--font-mono);
+  color: var(--color-text-muted);
+}
+em {
+  font: var(--font-numeric);
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+</style>
+```
+
+- [ ] **Passo 4: il linter — le parole esemplari**
+
+In `gui/eslint.config.js`, *Trova*:
+
+```js
+  {
+    name: "harness/imports",
+```
+
+*Sostituisci con:*
+
+```js
+  {
+    // ⛔ THE KIT PAGE'S WORDS ARE SPECIMENS (D8 of the design-system plan): a development page outside the package, whose
+    // words in `it.json` would ship for nothing. The one exception to the raw-text rule, in one place, like Chat's above.
+    name: "harness/kit-page-specimens",
+    files: ["src/kit/**"],
+    rules: { "@intlify/vue-i18n/no-raw-text": "off" },
+  },
+  {
+    name: "harness/imports",
+```
+
+- [ ] **Passo 5: le prove, verdi — e che cosa dice un rosso**
+
+```bash
+cd gui && npx vitest run --project browser && npm run lint && npm run build
+```
+
+Atteso: il progetto `browser` **verde**, le prove della pagina kit nei due temi. ⛔ Un rosso di `concentricRadii` o di `fits`
+si **legge** prima di correggere: nomina l'elemento, l'antenato, l'angolo e le distanze; dice se è la pagina a mettere un
+pezzo nell'angolo sbagliato — si corregge la pagina, con la regola scritta nel commento di `Kit.vue` — o se è il pezzo a
+sbagliare il raggio — si corregge il pezzo, **mai** il token.
+
+- [ ] **Passo 6: la pagina fuori dal pacchetto, provata sull'uscita**
+
+In `scripts/gate-gui.sh`, *Trova*:
+
+```bash
+echo "-------- gui: build"
+npm run build
+```
+
+*Sostituisci con:*
+
+```bash
+echo "-------- gui: build"
+npm run build
+# ⛔ THE KIT PAGE STAYS OUT OF THE PACKAGE (design system, section (b)): `vite build` takes the inputs it is given, and with
+# none it takes `index.html` alone. Proven on the output, not believed (trap 12 of the design); the first line is the
+# non-vacuity guard -- a build that produced nothing would pass the second.
+test -f dist/index.html || { echo "dist/index.html is missing: the build produced nothing to check"; exit 1; }
+if [ -e dist/kit.html ] || grep -rlq 'kit-card' dist/assets; then echo "the kit page is in the package"; exit 1; fi
+```
+
+Le due direzioni: in `gui/vite.config.ts` si aggiunge per prova
+`build: { rollupOptions: { input: { index: "index.html", kit: "kit.html" } } },` accanto a `define`, e
+`bash scripts/gate-gui.sh` è **rosso** con *«the kit page is in the package»*; si toglie, ed è **verde**.
+
+- [ ] **Passo 7: le due direzioni delle sonde**
+
+Una alla volta, nel progetto `browser`, poi indietro con `git checkout -- <file>`:
+
+| La violazione | Atteso |
+|---|---|
+| in `BaseButton.vue` `border-radius: var(--radius-card)` al posto di `var(--radius-control)` | rosso: `concentricRadii`, un `base-button` in `kit-card` |
+| in `Kit.vue` `.kit-card` con `width: 12rem` e `overflow: hidden` | rosso: `fits`, un testo tagliato |
+| in `BaseLabel.vue` `.base-label` con `align-items: flex-start` e `min-height: var(--size-control-lg)` | rosso: `iconsCentred`, un'icona fuori centro — o nessuna centrata: si **legge** quale |
+| in `tokens/index.ts` tolta la riga di Geist | rosso: la famiglia del testo non è `Geist Variable` |
+| in `themes.css` `--color-text-muted` dello scuro portato a `var(--ref-neutral-39)` | rosso: `axe`, `color-contrast` — ⛔ e anche `board.test.ts`, che lo vuole: poi `git checkout` |
+
+- [ ] **Passo 8: guardarla, e il commit**
+
+`cd gui && npm run dev`, poi `/kit.html` nel browser: i tre temi dalla scelta in cima, a grandezza vera; la tastiera sui
+radio e sulla finestra. Poi la riga **4** della tabella della posizione a `✅ <data>`, `bash scripts/gate.sh` da solo,
+`bash scripts/check-docs.sh`, il commit — `design-system(compito 4): la pagina kit …` — e `git push`.
+
+---
+## Compito 5: il kit al lavoro — i pezzi di base nei pannelli e nella cornice
+
+**Da:** la (b), la tabella *«I pezzi di base»* — la colonna *«La seconda occorrenza»* dice dove va ciascuno — e *«Le regole,
+come controlli del linter»*, le ultime due; la (e), la voce **M-3 di E187**; la (a), *«I due temi»*, la riga *«a mano»*; i
+controlli **11–13**; la trappola **10**; **P-8** di questo piano; la decisione **21** del disegno.
+
+**Files:**
+- Rewrite: `gui/src/components/Confirm.vue`, `gui/src/frame/Drawer.vue`, `gui/src/frame/Band.vue`,
+  `gui/src/panels/Settings.vue`, `gui/src/panels/Permissions.vue`, `gui/src/panels/Steps.vue`,
+  `gui/src/panels/Placeholder.vue`, `gui/src/frame/ViewBar.vue` — ciascuno **per intero**, col terminatore che ha oggi
+- Modify: `gui/src/panels/Status.vue` — la riga dell'evento dentro `BaseStatus`
+- Modify: `gui/src/locales/it.json` — la scelta del tema
+- Modify: `gui/src/panels/modules.test.ts`, `gui/src/a11y.test.ts` — le prove su `[role=radio]` e su `[role=dialog]`
+- Modify: `gui/eslint.config.js` — le due regole su `panels/` e `frame/`
+
+**Interfaces:**
+- Consumes: gli otto pezzi del compito 3; `useLayout().theme`, `chooseTheme`, `THEME_CHOICES`, `isThemeChoice` del
+  compito 1.
+- Produces: nessun `<button>`, nessun `<ul>` e nessun `<ol>` scritti a mano nei template di `panels/` e `frame/`, e nessun
+  import di `reka-ui` o di `lucide` in quelle due cartelle — ⚠️ **tranne** i due `document.createElement("button")` di
+  `frame/BigTab.ts`, che il linter dei template non vede (trappola 5): li toglie il compito 6.
+- Produces: in `it.json` le chiavi `settings.themeTitle` e `settings.theme.system`, `.light`, `.dark`.
+
+- [ ] **Passo 1: le prove che cambiano, prima del codice**
+
+Le prove della finestra di conferma cercano `.confirm`, una classe che il `DialogContent` di `BaseDialog` non porta: si
+cerca il **ruolo**, che è ciò che un lettore di schermo vede. Scrivi `retarget_confirm.py` nello scratchpad:
+
+```python
+"""retarget_confirm.py -- the confirmation-window probes look for the dialog's ROLE, not a class (design system, task 5).
+
+Usage: python retarget_confirm.py <repository root>
+Refuses, writing nothing, when a count is not the one measured on 2026-09-23.
+"""
+import io
+import os
+import sys
+
+root = sys.argv[1]
+PLAN = {
+    "gui/src/panels/modules.test.ts": [('".confirm button"', """'[role="dialog"] button'""", 2), ('".confirm"', """'[role="dialog"]'""", 4)],
+    "gui/src/a11y.test.ts": [('".confirm"', """'[role="dialog"]'""", 1)],
+}
+out = {}
+for rel, renames in PLAN.items():
+    path = os.path.join(root, rel)
+    text = io.open(path, encoding="utf-8", newline="").read()
+    for old, new, expected in renames:
+        found = text.count(old)
+        if found != expected:
+            sys.exit(f"refused: {old} found {found} times in {rel}, expected {expected} -- nothing written")
+        text = text.replace(old, new)
+    out[path] = text
+for path, text in out.items():
+    with io.open(path, "w", encoding="utf-8", newline="") as f:
+        f.write(text)
+    print(f"ok: {path}")
+```
+
+```bash
+python <scratchpad>/retarget_confirm.py "$(git rev-parse --show-toplevel)"
+```
+
+Poi in `gui/src/panels/modules.test.ts` il blocco `describe("Impostazioni", () => {` — dalla sua riga fino alla riga prima di
+`describe("the confirmation window", () => {`, **preso dal file** con i due ancoraggi — si sostituisce con:
+
+```ts
+describe("Impostazioni", () => {
+  // The policy is the FIRST radio group of the panel; the theme is the second.
+
+  it("is off until the core has said which policy is active", () => {
+    wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    const radios = wrapper.findAll('[role="radiogroup"]')[0]?.findAll('[role="radio"]') ?? [];
+    expect(radios).toHaveLength(2);
+    for (const radio of radios) expect((radio.element as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it("sends Invoke with the registry's literals on a change, and nothing on the current value", async () => {
+    const { bridge, invoke } = wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    bridge.deliver("Policy");
+    await nextTick();
+    const [remote, local] = wrapper.findAll('[role="radiogroup"]')[0]?.findAll('[role="radio"]') ?? [];
+    expect(remote?.attributes("aria-checked")).toBe("true");
+    await remote?.trigger("click");
+    expect(bridge.sent).toEqual([]);
+    await local?.trigger("click");
+    expect(bridge.sent).toEqual([{ kind: "Invoke", value: { function: "vram-policy", argument: "local" } }]);
+    expect(invoke.inFlight).not.toBeNull();
+    expect(wrapper.text()).toContain(t("settings.inFlight"));
+  });
+
+  it("leaves the control on the core's policy until the core answers, then moves with it", async () => {
+    // ⛔ E184, AND THE TRAP 10 OF THE DESIGN SYSTEM: the radio is a `button` with `role="radio"` in `reka-ui` 2.10.4 now,
+    // and the group is CONTROLLED (P-8) -- the probe still asks what the CONTROL shows, not only what went on the wire.
+    const { bridge, core } = wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    bridge.deliver("Policy");
+    await nextTick();
+    const policyRadios = () => wrapper.findAll('[role="radiogroup"]')[0]?.findAll('[role="radio"]') ?? [];
+    const checked = (): (string | undefined)[] => policyRadios().map((radio) => radio.attributes("aria-checked"));
+    await policyRadios()[1]?.trigger("click");
+    await nextTick();
+    expect(checked()).toEqual(["true", "false"]);
+    // ⛔ THE SECOND DIRECTION: the core answers, and the control DOES move.
+    core.receive({ kind: "Policy", value: { policy: "Local", allocated: "12288", total: "16384" } });
+    await nextTick();
+    expect(checked()).toEqual(["false", "true"]);
+  });
+
+  it("keeps saying a call is in flight after the yes, until the core answers with Policy", async () => {
+    // ⛔ I-1 OF THE REVIEW (E186): the line must not go silent between the yes and `Policy`.
+    const { bridge, invoke } = wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    bridge.deliver("Policy");
+    await nextTick();
+    await wrapper.findAll('[role="radiogroup"]')[0]?.findAll('[role="radio"]')[1]?.trigger("click");
+    bridge.deliver("PermissionRequired");
+    expect(invoke.approve()).toBe(true);
+    await nextTick();
+    expect(wrapper.text()).toContain(t("settings.inFlight"));
+    bridge.deliver("Policy");
+    await nextTick();
+    expect(wrapper.text()).not.toContain(t("settings.inFlight"));
+  });
+
+  it("chooses the theme, which the layout package keeps at once (design system, section (a))", async () => {
+    wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    const layout = useLayout();
+    expect(layout.theme).toBe("system");
+    const themeRadios = wrapper.findAll('[role="radiogroup"]')[1]?.findAll('[role="radio"]') ?? [];
+    expect(themeRadios.map((radio) => radio.attributes("aria-checked"))).toEqual(["true", "false", "false"]);
+    await themeRadios[2]?.trigger("click");
+    await nextTick();
+    expect(layout.theme).toBe("dark");
+    expect(wrapper.findAll('[role="radiogroup"]')[1]?.findAll('[role="radio"]').map((radio) => radio.attributes("aria-checked"))).toEqual(["false", "false", "true"]);
+  });
+});
+
+```
+
+E `useLayout` entra negli import di `modules.test.ts`: *Trova* `import { useInvoke } from "../stores/invoke";` — *Sostituisci
+con* le due righe `import { useInvoke } from "../stores/invoke";` e `import { useLayout } from "../stores/layout";`.
+
+```bash
+cd gui && npx vitest run src/panels/modules.test.ts src/a11y.test.ts
+```
+
+Atteso: **rosso** sulle prove di Impostazioni — i radio nativi non hanno `role="radio"` né `aria-checked`, e non c'è il
+secondo gruppo — e **verde** sulla finestra di conferma: un `DialogContent` di `reka-ui` ha già `role="dialog"`.
+
+- [ ] **Passo 2: le parole del tema**
+
+In `gui/src/locales/it.json`, *Trova*:
+
+```json
+    "who": "Le altre preferenze arrivano coi sotto-progetti 3 e 10."
+  },
+```
+
+*Sostituisci con:*
+
+```json
+    "who": "Le altre preferenze arrivano coi sotto-progetti 3 e 10.",
+    "themeTitle": "Tema",
+    "theme": {
+      "system": "Sistema",
+      "light": "Chiaro",
+      "dark": "Scuro"
+    }
+  },
+```
+
+- [ ] **Passo 3: la finestra di conferma e il cassetto, su `BaseDialog`**
+
+Riscrivi `gui/src/components/Confirm.vue`:
+
+```vue
+<script setup lang="ts">
+import { computed } from "vue";
+
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
+
+import BaseButton from "./BaseButton.vue";
+import BaseDialog from "./BaseDialog.vue";
+
+// A COMPOSED piece, and that is why it may read two stores (P-3 of the design-system plan): the base pieces below do not.
+const core = useCore();
+const invoke = useInvoke();
+
+// ⛔ OPEN ONLY WHEN THE CORE ASKED AND A CALL OF OURS IS IN FLIGHT (D59): a `PermissionRequired` following no `Invoke` is a
+// shape the core never produces -- the registry only ever answers one -- and a window that opened on it would offer a
+// "yes" with nothing to send. The Permessi panel shows such a request; this window does not ask about it.
+const open = computed(() => core.pending !== null && invoke.inFlight !== null);
+
+// Escape and the veil are the "no" (ADR-0016: nothing is granted by silence).
+function onOpenChange(value: boolean | undefined): void {
+  if (value !== true) invoke.refuse();
+}
+</script>
+
+<template>
+  <!-- THE TRIPLE IN EVERYDAY WORDS (sequence 3 of the north star, G20): tool, resource, operation -- what the core asked,
+       not what the click meant. -->
+  <BaseDialog
+    :open="open"
+    :title="$t('confirm.title')"
+    :description="core.pending === null ? undefined : $t('permissions.triple', { tool: core.pending.tool, resource: core.pending.resource, operation: $t(`permissions.operation.${core.pending.operation}`) })"
+    @update:open="onOpenChange"
+  >
+    <p v-if="invoke.inFlight !== null">{{ $t("confirm.call", { function: invoke.inFlight.function, argument: invoke.inFlight.argument }) }}</p>
+    <p class="scope">{{ $t("confirm.scope") }}</p>
+    <template #actions>
+      <BaseButton variant="quiet" @click="invoke.refuse()">{{ $t("confirm.no") }}</BaseButton>
+      <BaseButton variant="primary" @click="invoke.approve()">{{ $t("confirm.yes") }}</BaseButton>
+    </template>
+  </BaseDialog>
+</template>
+
+<style scoped>
+p {
+  margin: 0;
+}
+.scope {
+  color: var(--color-text-muted);
+}
+</style>
+```
+
+Riscrivi `gui/src/frame/Drawer.vue`:
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+
+import BaseButton from "../components/BaseButton.vue";
+import BaseDialog from "../components/BaseDialog.vue";
+import BaseList from "../components/BaseList.vue";
+import { PANEL_TYPES } from "../panels/registry";
+
+// ⛔ THE DRAWER IS WHERE "WHO FILLS WHAT" LIVES (decision 16 of the north star): every type with its number, so the strip
+// can stay thin. On `BaseDialog` since the design system -- its second occurrence, with the confirmation window: the two
+// veils written by hand, already different, are one role now, `--color-veil`.
+const open = ref(false);
+</script>
+
+<template>
+  <BaseDialog v-model:open="open" :title="$t('drawer.title')" variant="sheet">
+    <template #trigger>
+      <BaseButton>{{ $t("drawer.open") }}</BaseButton>
+    </template>
+    <BaseList :items="PANEL_TYPES" :key-of="(type) => type.name">
+      <template #item="{ item }">
+        <span>{{ $t(`modules.${item.module}`) }}</span>
+        <span class="who">{{ $t("drawer.who", { number: item.who }) }}</span>
+      </template>
+    </BaseList>
+    <template #actions>
+      <BaseButton variant="quiet" @click="open = false">{{ $t("drawer.close") }}</BaseButton>
+    </template>
+  </BaseDialog>
+</template>
+
+<style scoped>
+.who {
+  color: var(--color-text-muted);
+}
+</style>
+```
+
+- [ ] **Passo 4: le regioni di stato — M-3 chiusa per costruzione**
+
+Riscrivi `gui/src/frame/Band.vue`:
+
+```vue
+<script setup lang="ts">
+import BaseButton from "../components/BaseButton.vue";
+import BaseStatus from "../components/BaseStatus.vue";
+import { useConnection } from "../stores/connection";
+
+// ⛔ THE BAND APPEARS ONLY WHEN THE CORE IS MISSING OR THE STAMP IS WRONG (§6a), and it is NOT a panel (D50): a panel that
+// came and went would rewrite the saved layout on every disconnection. ⛔ AND THERE IS NO THRESHOLD (D48): "not running"
+// and "slow" are one state here, because the gui does the same thing in both -- offer `retry`.
+// ⛔ THE REGION IS ALWAYS THERE AND THE BAND ENTERS IT (M-3 of E187, closed by `BaseStatus`): a status region born with
+// its text is the one many screen readers never announce.
+const connection = useConnection();
+</script>
+
+<template>
+  <BaseStatus>
+    <div v-if="connection.phase !== 'connected'" class="band">
+      <span v-if="connection.phase === 'stale'">
+        {{ $t("band.stale") }}
+        <template v-if="connection.expected !== null">
+          {{ $t("band.expected", { stamp: connection.expected }) }}
+        </template>
+      </span>
+      <template v-else>
+        <span>{{ $t("band.waiting") }}</span>
+        <BaseButton size="sm" @click="connection.retry()">{{ $t("band.retry") }}</BaseButton>
+      </template>
+    </div>
+  </BaseStatus>
+</template>
+
+<style scoped>
+/* The warning message of the (a): the subtle tint, the warning's text, a border of decoration -- the words carry it. */
+.band {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-warn-subtle);
+  border-bottom: var(--border-width) solid var(--color-border-warn);
+  color: var(--color-text-warn);
+}
+</style>
+```
+
+In `gui/src/panels/Status.vue`, *Trova*:
+
+```vue
+    <!-- ONE EVENT ROW FOR THE LAST Verdict, AND ONLY WHEN ONE HAS ARRIVED (§6a): no empty box. -->
+    <p v-if="core.lastVerdict !== null" class="event" role="status">
+      {{ $t(`status.verdict.${core.lastVerdict.verdict}`) }}
+      <template v-if="core.lastVerdict.verdict === 'Refused'">{{ $t("status.refusedDetail", { asked: core.lastVerdict.asked, ceiling: core.lastVerdict.ceiling }) }}</template>
+    </p>
+```
+
+*Sostituisci con:*
+
+```vue
+    <!-- ONE EVENT ROW FOR THE LAST Verdict, AND ONLY WHEN ONE HAS ARRIVED (§6a): no empty box -- and the row ENTERS a region
+         that is always there (M-3 of E187, `BaseStatus`). -->
+    <BaseStatus>
+      <p v-if="core.lastVerdict !== null" class="event">
+        {{ $t(`status.verdict.${core.lastVerdict.verdict}`) }}
+        <template v-if="core.lastVerdict.verdict === 'Refused'">{{ $t("status.refusedDetail", { asked: core.lastVerdict.asked, ceiling: core.lastVerdict.ceiling }) }}</template>
+      </p>
+    </BaseStatus>
+```
+
+E l'import: *Trova* `import { useConnection } from "../stores/connection";` in `Status.vue` — *Sostituisci con* le due righe
+`import BaseStatus from "../components/BaseStatus.vue";` e `import { useConnection } from "../stores/connection";`.
+
+- [ ] **Passo 5: Impostazioni — la policy e il tema, su `BaseRadioGroup`**
+
+Riscrivi `gui/src/panels/Settings.vue`:
+
+```vue
+<script setup lang="ts">
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+import BaseRadioGroup from "../components/BaseRadioGroup.vue";
+import BaseStatus from "../components/BaseStatus.vue";
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
+import { useLayout } from "../stores/layout";
+import { THEME_CHOICES, isThemeChoice } from "../tokens/theme";
+
+import { VRAM_POLICY, type PolicyArgument } from "./functions";
+
+// The Impostazioni row of the short table of §1: in sub-project 2 the VRAM policy change, a registry function with its triple
+// (ADR-0038) -- the FIRST INVOKER of the registry, the click; and since the design system the theme (answer 5).
+const { t } = useI18n();
+const core = useCore();
+const invoke = useInvoke();
+const layout = useLayout();
+
+const current = computed<PolicyArgument | null>(() =>
+  core.policy === null ? null
+  : core.policy.policy === "Local" ? VRAM_POLICY.argument.local
+  : VRAM_POLICY.argument.remote,
+);
+const policies = computed(() => [
+  { value: VRAM_POLICY.argument.remote, label: t("settings.remote") },
+  { value: VRAM_POLICY.argument.local, label: t("settings.local") },
+]);
+const themes = computed(() => THEME_CHOICES.map((choice) => ({ value: choice, label: t(`settings.theme.${choice}`) })));
+
+/**
+ * ⛔ THE CONTROL SHOWS THE CORE'S POLICY, NOT THE LAST CLICK (I1): a choice sends `Invoke`, and the radio moves when
+ * `Policy` comes back -- after the confirmation window, if the triple is not yet granted; meanwhile the line below says a
+ * call is in flight. Since the design system the group is CONTROLLED (P-8 of its plan): it shows `current` and only asks,
+ * so the hand re-sync E184 needed on native radios went away with them, and an arrow key asks the way a click does.
+ * ⚠️ M-2 of E187 stays true, and declared: after an arrow key the focus sits on the radio the arrow reached, while the
+ * check stays on the core's value.
+ */
+function choosePolicy(argument: string): void {
+  if (argument !== current.value) invoke.send({ function: VRAM_POLICY.name, argument });
+}
+
+/** The theme is the SPA's and not the core's (answer 16): saved at once, in the layout package. */
+function chooseTheme(choice: string): void {
+  if (isThemeChoice(choice)) layout.chooseTheme(choice);
+}
+</script>
+
+<template>
+  <section class="settings">
+    <!-- Off while the core has not said which policy is active: "the rest off" (§6a). -->
+    <BaseRadioGroup
+      :model-value="current"
+      :options="policies"
+      :legend="$t('settings.policy')"
+      :disabled="core.policy === null"
+      @update:model-value="choosePolicy"
+    />
+    <BaseStatus>
+      <p v-if="invoke.inFlight !== null">{{ $t("settings.inFlight") }}</p>
+    </BaseStatus>
+    <BaseRadioGroup :model-value="layout.theme" :options="themes" :legend="$t('settings.themeTitle')" @update:model-value="chooseTheme" />
+    <p class="who">{{ $t("settings.who") }}</p>
+  </section>
+</template>
+
+<style scoped>
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  overflow: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+p {
+  margin: 0;
+}
+.who {
+  color: var(--color-text-muted);
+}
+</style>
+```
+
+- [ ] **Passo 6: Permessi, Passi, il segnaposto, la barra**
+
+Riscrivi `gui/src/panels/Permissions.vue`:
+
+```vue
+<script setup lang="ts">
+import BaseLabel from "../components/BaseLabel.vue";
+import BaseList from "../components/BaseList.vue";
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
+
+// The Permessi table of §1 of the north star, rows 1-3, 7-9 -- what sub-project 2 builds: the request in flight, the triples
+// THIS session approved, and the rule on duration. The window that answers is the frame's (`components/Confirm.vue`, D60).
+const core = useCore();
+const invoke = useInvoke();
+</script>
+
+<template>
+  <section class="permissions">
+    <BaseLabel icon="permissions" as="h3">{{ $t("permissions.pendingTitle") }}</BaseLabel>
+    <p v-if="core.pending === null">{{ $t("permissions.none") }}</p>
+    <p v-else class="pending">{{ $t("permissions.triple", { tool: core.pending.tool, resource: core.pending.resource, operation: $t(`permissions.operation.${core.pending.operation}`) }) }}</p>
+    <BaseLabel icon="permissions" as="h3">{{ $t("permissions.approvedTitle") }}</BaseLabel>
+    <p v-if="invoke.approved.length === 0">{{ $t("permissions.noneApproved") }}</p>
+    <BaseList v-else :items="invoke.approved" :key-of="(_triple, index) => index">
+      <template #item="{ item }">{{ $t("permissions.triple", { tool: item.tool, resource: item.resource, operation: $t(`permissions.operation.${item.operation}`) }) }}</template>
+    </BaseList>
+    <p class="rule">{{ $t("permissions.duration") }}</p>
+  </section>
+</template>
+
+<style scoped>
+.permissions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  overflow: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+p {
+  margin: 0;
+}
+.pending {
+  color: var(--color-text-warn);
+}
+.rule {
+  color: var(--color-text-muted);
+  margin-top: var(--space-2);
+}
+</style>
+```
+
+Riscrivi `gui/src/panels/Steps.vue`:
+
+```vue
+<script setup lang="ts">
+import BaseList from "../components/BaseList.vue";
+import { useCore } from "../stores/core";
+
+// The Passi table of §1 of the north star, rows 1-3 and 14: a PROJECTION of the journal, re-read from the core (`Steps`
+// replaces, it never appends). ⛔ THREE FIELDS AND NOT FIVE (P-89, D56): the wire's `StepSummary` carries the step, the
+// function and whether it closed; the row says so in words.
+const core = useCore();
+</script>
+
+<template>
+  <section class="steps">
+    <p v-if="core.steps.length === 0">{{ $t("steps.none") }}</p>
+    <BaseList v-else :items="core.steps" :key-of="(step) => step.step" ordered>
+      <template #item="{ item }">
+        <span>{{ $t("steps.row", { step: item.step, function: item.function }) }}</span>
+        <span class="outcome" :data-done="item.done">{{ item.done ? $t("steps.done") : $t("steps.inDoubt") }}</span>
+      </template>
+    </BaseList>
+    <p class="who">{{ $t("steps.who") }}</p>
+  </section>
+</template>
+
+<style scoped>
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  overflow: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+p {
+  margin: 0;
+}
+.outcome {
+  color: var(--color-text-muted);
+}
+.outcome[data-done="false"] {
+  color: var(--color-text-warn);
+}
+.who {
+  color: var(--color-text-muted);
+}
+</style>
+```
+
+In `gui/src/panels/Placeholder.vue`, *Trova*
+`      <button type="button" @click="api?.close()">{{ $t("placeholder.closeMissing") }}</button>` — *Sostituisci con*
+`      <BaseButton @click="api?.close()">{{ $t("placeholder.closeMissing") }}</BaseButton>`; e *Trova*
+`import type { DockviewPanelApi } from "dockview-core";` — *Sostituisci con* le due righe
+`import type { DockviewPanelApi } from "dockview-core";` e `import BaseButton from "../components/BaseButton.vue";`.
+
+Riscrivi `gui/src/frame/ViewBar.vue` — ⚠️ la forma di questo compito è **di passaggio**: il compito 8 porta la barra della
+(d), col nome della vista e la Panoramica; qui i pulsanti diventano `BaseButton` perché la regola del linter entra ora:
+
+```vue
+<script setup lang="ts">
+import BaseButton from "../components/BaseButton.vue";
+import BaseTextField from "../components/BaseTextField.vue";
+import { useConnection } from "../stores/connection";
+import { useLayout, type ViewName } from "../stores/layout";
+
+import Drawer from "./Drawer.vue";
+
+const connection = useConnection();
+const layout = useLayout();
+const views: ViewName[] = ["home", "work", "compact"];
+const emit = defineEmits<{ (event: "switch", view: ViewName): void }>();
+</script>
+
+<template>
+  <header class="bar">
+    <nav :aria-label="$t('bar.views')">
+      <BaseButton
+        v-for="name in views"
+        :key="name"
+        variant="quiet"
+        :aria-current="layout.view === name ? 'page' : undefined"
+        @click="emit('switch', name)"
+      >
+        {{ $t(`views.${name}`) }}
+      </BaseButton>
+    </nav>
+
+    <!-- ⚠️ DISABLED AND SAYING WHO FILLS IT, not hidden: decision 16 of the north star wants the search box to say who fills
+         it, and a control that is simply absent teaches nothing. -->
+    <div class="search">
+      <BaseTextField model-value="" type="search" icon="search" :label="$t('bar.search')" :placeholder="$t('bar.searchHint')" disabled />
+    </div>
+
+    <span class="chip" :data-phase="connection.phase">
+      {{ $t("bar.core") }}:
+      {{
+        connection.phase === "connected"
+          ? $t("bar.coreConnected")
+          : connection.phase === "stale"
+            ? $t("bar.coreStale")
+            : $t("bar.coreWaiting")
+      }}
+    </span>
+
+    <Drawer />
+  </header>
+</template>
+
+<style scoped>
+.bar {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-raised);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+.search {
+  flex: 1;
+  max-width: 320px;
+}
+.chip[data-phase="connected"] {
+  color: var(--color-text-accent);
+}
+.chip[data-phase="stale"] {
+  color: var(--color-text-stop);
+}
+</style>
+```
+
+```bash
+cd gui && npm test && npm run build
+```
+
+Atteso: **verde** — le prove di Impostazioni coi radio di `reka-ui`, la finestra di conferma per ruolo, la fascia che se ne
+va (la prova di `frame.test.ts`: *«is there while waiting, and gone once connected»*), le prove di `axe`.
+
+- [ ] **Passo 7: le due regole del linter su `panels/` e `frame/`**
+
+In `gui/eslint.config.js`, *Trova* la chiusura del file:
+
+```js
+  {
+    // The one file that may import `lucide`, and the only rule it keeps is the base pieces' one.
+    name: "harness/imports/the-icon-map",
+    files: ["src/components/icons.ts"],
+    rules: { "no-restricted-imports": ["error", { patterns: [UPWARD] }] },
+  },
+];
+```
+
+*Sostituisci con:*
+
+```js
+  {
+    // The one file that may import `lucide`, and the only rule it keeps is the base pieces' one.
+    name: "harness/imports/the-icon-map",
+    files: ["src/components/icons.ts"],
+    rules: { "no-restricted-imports": ["error", { patterns: [UPWARD] }] },
+  },
+  {
+    /**
+     * ⛔ THE VIEWS ARE MADE OF PIECES (design system, section (b); criterion 5 of its perimeter): in the panels and in the
+     * frame a button is `BaseButton` and a list is `BaseList`, and `reka-ui` is reached through the base pieces only.
+     * ⚠️ `vue/no-restricted-html-elements` READS TEMPLATES: a `document.createElement("button")` in a `.ts` is invisible
+     * to it (trap 5) -- `frame/BigTab.ts` until task 6.
+     */
+    name: "harness/panels-and-frame",
+    files: ["src/panels/**/*.{vue,ts}", "src/frame/**/*.{vue,ts}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        { paths: [LUCIDE, { name: "reka-ui", message: "panels and frame use the base pieces, which sit on reka-ui (design system, section (b))" }] },
+      ],
+      "vue/no-restricted-html-elements": [
+        "error",
+        { element: ["button"], message: "a button is BaseButton (design system, section (b))" },
+        { element: ["ul", "ol"], message: "a list is BaseList (design system, section (b))" },
+      ],
+    },
+  },
+];
+```
+
+```bash
+cd gui && npm run lint
+```
+
+Atteso: **verde**. Poi le due direzioni, una alla volta, `git checkout -- <file>` dopo ciascuna:
+
+| La violazione | Atteso |
+|---|---|
+| in `panels/Strip.vue` un `<button type="button">x</button>` nel template | rosso: *«a button is BaseButton»* |
+| in `frame/ViewBar.vue` un `<ul><li>x</li></ul>` nel template | rosso: *«a list is BaseList»* |
+| in `frame/moveActive.ts` la riga `import { DialogRoot } from "reka-ui";` | rosso: *«panels and frame use the base pieces»* |
+| niente: `components/Confirm.vue` usa `BaseDialog`, e `components/BaseDialog.vue` importa `reka-ui` | verde |
+
+- [ ] **Passo 8: M-3 col lettore di schermo vero — a mano (decisione 21)**
+
+Un passo per il proprietario o per chi rivede, non per un subagente: `cd gui && npm run dev`, la pagina nel browser,
+l'**Assistente vocale** di Windows acceso (`Win + Ctrl + Invio`). Poi, nella console:
+
+1. al caricamento la fascia dice *«Il core non ha risposto.»*: la si sente?
+2. `harnessFake.deliver("Accepted")`: la fascia se ne va;
+3. `harnessFake.deliver("StaleBuild")`: la fascia **rientra** nella regione che c'era già — si sente *«Il core parla una
+   versione diversa del protocollo…»*?
+4. nelle Impostazioni, `harnessFake.deliver("Policy")`, poi un clic su «Locale»: si sente *«Richiesta inviata: in attesa
+   del core.»*?
+
+Il verbale — che cosa si è sentito, a ogni punto, con la data — va nella cella *Stato* della riga **5** della tabella della
+posizione. ⛔ Se un annuncio **non** si sente, è una voce d'errata: M-3 non è chiusa, e lo si dice.
+
+- [ ] **Passo 9: il cancello e il commit**
+
+La riga **5** della tabella della posizione a `✅ <data>`, col verbale; `bash scripts/gate.sh` da solo,
+`bash scripts/check-docs.sh`, il commit — `design-system(compito 5): il kit al lavoro …` — coi fine-riga rimisurati, e
+`git push`.
+
+---
 ## Come si riprende — punto fermo della scrittura, 2026-09-23
 
-⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e il **compito 1**. Da scrivere: i compiti **2–9** e la
+⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e i **compiti 1–5**. Da scrivere: i compiti **6–9** e la
 Definizione di «fatto». Chi riprende la scrittura legge questo file per intero, poi il disegno, e scrive i compiti che
 mancano con le forme qui sotto — già decise scrivendo, e da non ridecidere senza una misura nuova.
 

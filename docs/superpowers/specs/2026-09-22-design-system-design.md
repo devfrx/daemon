@@ -564,7 +564,7 @@ delle immagini della CI: nella sezione *«Il design system della GUI — le font
 | # | Voce | Perché è sua, e il consiglio |
 |---|---|---|
 | 1 | **la rilettura di questo disegno** | le sezioni sono approvate nel merito; da leggere come **aggiunte di chi scrive** sono le righe *«proposta»* della tabella dei controlli, le decisioni 23–27 e le precisioni di *«Cosa questo disegno ha misurato»*. Il consiglio: rileggerlo prima del piano, com'è stato per ogni disegno |
-| 2 | **il numero** — il design system non ha una riga nella roadmap, e darglielo è suo: decisione 2 del coordinatore: **A** una riga nuova in coda alla roadmap, senza rinumerare, con la sua riga in *«Perché quest'ordine»* — viene prima del 13; **B** nessun numero: resta il primo tempo della §6, con una riga nella tabella delle decisioni della stella polare | **consiglio A**: lo stato per traguardo vive nelle tabelle di `roadmap.md` e di `README.md` (`CLAUDE.md`), e un lavoro con disegno, piano ed esecuzione suoi senza una riga lì ha come sola casa il puntatore della §6, che è una riga. Costo: una riga nella roadmap, una in *«Perché quest'ordine»* e una in `README.md`, scritte dal piano |
+| 2 | **il numero** — il design system non ha una riga nella roadmap, e darglielo è suo: decisione 2 del coordinatore: **A** una riga nuova in coda alla roadmap, senza rinumerare, con la sua riga in *«Perché quest'ordine»* — viene prima del 13; **B** nessun numero: resta il primo tempo della §6, con una riga nella tabella delle decisioni della stella polare | **consiglio A**: lo stato per traguardo vive nelle tabelle di `roadmap.md` e di `README.md` (`CLAUDE.md`), e un lavoro con disegno, piano ed esecuzione suoi senza una riga lì ha come sola casa il puntatore della §6, che è una riga. Costo: una riga nella roadmap, una in *«Perché quest'ordine»* e una in `README.md`, scritte dal piano. ✅ **Scelto il 2026-09-23: A**, in chat, subito dopo la scrittura del disegno, con un clic sul consiglio: il piano scrive le tre righe, e il numero è il primo libero in coda alla roadmap |
 
 Restano sue, e **non** le apre questo disegno: N-2 di E187, i chunk; E228, chi costruisce progress e notifiche; il terzo
 carattere; e **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13.
@@ -671,7 +671,7 @@ non si deduce da una chiusura.
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin`: `git fetch --all --prune`, poi `git status -sb` |
-| **i commit di questa sessione** | `git log --oneline ab39f39..HEAD` — il disegno scritto sul posto, la consegna in archivio, le fonti in `riferimenti.md`, `--z-floating` nella tavola dei token, il puntatore della §6 del compendio |
+| **i commit di questa sessione** | `git log --oneline ab39f39..HEAD` — il disegno scritto sul posto, la consegna in archivio, le fonti in `riferimenti.md`, `--z-floating` nella tavola dei token, il puntatore della §6 del compendio; poi, in un secondo commit, la voce 2 del proprietario, scelta **A** |
 | **codice di prodotto** | **non toccato**: `git diff --stat ab39f39..HEAD -- . ':!docs'` non rende nulla |
 | **cancello** | `bash scripts/check-docs.sh` → `OK`; `bash scripts/gate.sh` → `GATE GREEN` all'apertura e alla chiusura. Si rilanciano, non si citano |
 | **la CI** | i commit di questa sessione partono col push: la sessione dopo la legge **per prima**, coi due comandi del punto 3 della quarantunesima chiusura del [piano della parte 2](../plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) — due job per corsa |
@@ -687,8 +687,9 @@ non si deduce da una chiusura.
 3. **Questo file, per intero.** La consegna in archivio **non** è lettura obbligatoria: si apre per le parole testuali del
    proprietario o per le trappole delle tavole.
 4. La **rilettura del proprietario**, con la domanda minima: *«il disegno è riletto?»* — **A**, sì: si passa al piano; **B**, no:
-   le due voci di *«Le voci che questo disegno apre per il proprietario»*, una per volta, in forma A/B col consiglio scritto, e le
-   proposte della tabella dei controlli dette a parole. Se il proprietario non dice altro, il piano scrive i consigli.
+   le aggiunte di chi scrive della voce 1 di *«Le voci che questo disegno apre per il proprietario»* dette a parole, una per
+   volta, in forma A/B col consiglio scritto — la voce 2 è già scelta. Se il proprietario non dice altro, il piano scrive i
+   consigli.
 5. Prima di scrivere il piano, la regola di `CLAUDE.md` su `superpowers:writing-plans`: le voci aperte **si sanno prima** — la
    colonna *«Chi la chiude»* di [`porta-di-qualita.md`](../../porta-di-qualita.md), le voci senza numero AUD
    dell'[audit](../../audit-2026-08-27.md), le voci del proprietario qui sopra.
@@ -699,8 +700,8 @@ non si deduce da una chiusura.
 8. L'**esecuzione** in un'altra sessione ancora, un subagente fresco per compito, revisione fra uno e l'altro
    (`superpowers:subagent-driven-development`).
 9. A piano eseguito: la riga «Accessibilità» di `tracciabilita.md`, questo file nella §12 del compendio e in `README.md`, e la
-   riga della roadmap se il numero è **A**.
+   riga della roadmap, con la sua riga in *«Perché quest'ordine»*: il numero è **A**, scelto il 2026-09-23.
 
 📌 **Ciò che questo disegno consegna a chi scriverà il piano**, ed è suo e non un puntatore: le sezioni (a)–(f), la tabella dei
 controlli per artefatto, le venti trappole, le misure 4–11 — le cose che il piano avrebbe dovuto scoprire da sé — e le due voci
-del proprietario coi consigli scritti.
+del proprietario, la seconda già scelta.

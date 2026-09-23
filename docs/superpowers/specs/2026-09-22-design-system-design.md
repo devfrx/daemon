@@ -20,11 +20,11 @@ quando il **disegno** è scritto, com'è stato per la stella polare; il testo co
 ## Stato in una riga
 
 Il sotto-progetto 2 è chiuso, e il design system è il **primo tempo** del prossimo passo della §6. Il brainstorming è **a
-metà**: cominciato il 2026-09-23, undici risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
+metà**: cominciato il 2026-09-23, dodici risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
 perimetro, l'idea di stile, la direzione, lo stile approvato coi raggi concentrici, i due temi, i caratteri aperti dentro il
 programma, la stella polare letta a pezzi, la coppia **Geist + Barlow**, un set di icone aperto, **Lucide**, dietro un
-**componente unico** con la sua mappa — e ⛔ **la prossima è la domanda 7, dove si guardano i componenti**, da porre com'è
-nella tabella *«Le domande del brainstorming»*, coi fatti verificati quel giorno.
+**componente unico** con la sua mappa, la **pagina «kit»** nell'app — e ⛔ **la prossima è la domanda 8, come si cambia
+vista**, l'ultima: è **visiva**, e va nel browser.
 
 ## ⛔ Da sapere subito
 
@@ -135,6 +135,11 @@ quarantatreesima chiusura non le ha ripetute. Il testo intero sta nella voce, ne
 | 9 | **2026-09-23**, seconda sessione — la domanda 6, le icone: **A** nessun set, poche icone disegnate da noi; **B** un set aperto, già pronto, usato da un solo componente del kit | **B.** Con un clic, sul consiglio — l'opzione *«B, un set aperto»*. I fatti verificati quel giorno: in `gui/src` **nessuna** icona, e nessun documento ha già scelto un set, stella polare compresa; le icone **arrivano** — l'immagine di riferimento della risposta 2 mette una piccola icona accanto a ogni etichetta di sezione, e poi pulsanti, cambio di vista, pilastri; i candidati nella sezione qui sotto. Il pacchetto dei **soli disegni** e non quello per Vue è la lettura del coordinatore, nello spirito di ADR-0030: si decide nel disegno. È una **dipendenza nuova**, ed è sua |
 | 10 | **2026-09-23**, seconda sessione — il set di icone, nel browser: le stesse venti icone da **A** Lucide e **B** Tabler, sulla Home e sul kit della tavola approvata coi caratteri scelti, e le venti di ciascun set, più grandi, in una striscia | **A, Lucide.** Con un clic, sul consiglio: a misura piccola, accanto alle etichette, è più essenziale — l'occhio del coordinatore, detto al proprietario come tale e **non** misurato; Tabler ne ha di più, ma 1848 bastano anche per i pilastri. La tavola era pulita sulle tre sonde, e [`sonda-icone.js`](2026-09-22-design-system-tavole/sonda-icone.js) è nata qui: icone disegnate, centrate, lo stesso numero per set. La [tavola approvata](2026-09-22-design-system-tavole/stile-approvato.html) ora porta anche le icone, e in testa la licenza di Lucide copiata parola per parola |
 | 11 | **2026-09-23**, seconda sessione — la **richiesta del proprietario**, scritta nel mezzo del turno: *«vorrei fosse un componente centralizzato con tutto il set delle icone mappate al suo interno riutilizzato in tutto il software»*; e la domanda che ne è nata, che cosa vuol dire «tutto il set»: **A** le icone che usiamo, coi nomi nostri; **B** tutte le 1848 di Lucide | **A.** Con un clic, sul consiglio. Quindi: **un solo componente** `Icon` e **una sola mappa** — nome nostro, come `stato` o `cerca`, → icona di Lucide, importate una per una — e nessun'altra parte del codice importa icone; cambiare set tocca la sola mappa. La B costava **442 433 byte** in più, `lucide` 1.47.0 intero e minimizzato, contro circa 500 byte a icona — 935 024 byte per 1848 moduli — col comando nella sezione qui sotto. Come la regola diventa **controllata** — il nome come tipo, che non compila se è sbagliato, e una regola del linter che vieta gli import fuori dalla mappa — è una proposta del coordinatore, detta al proprietario: si decide nel disegno |
+| 12 | **2026-09-23**, seconda sessione — la domanda 7, dove si guardano i componenti: **A** una pagina «kit» dentro l'app, solo in sviluppo, con ogni componente in ogni stato nei due temi, e le sonde che diventano test su quella pagina; **B** Storybook, una vetrina a sé | **A.** Con un clic, sul consiglio. I fatti verificati quel giorno: oggi nessun posto mostra tutti i componenti — si vedono nelle loro viste, contro il core finto, e si provano con `vitest`; `storybook` 10.6.0 del 2026-09-02, e `@storybook/vue3-vite` accetta Vite `^8.0.0`, quindi la B era possibile davvero — il nucleo pesa 22 168 203 byte spacchettati, con 17 dipendenze dirette; `histoire` è fermo alla 1.0.0-beta.1 del 2026-01-07 e chiede Vite `^7.3.0`: col nostro Vite 8 non regge. Il comando è qui sotto |
+
+```bash
+python -c "import json,urllib.request as u; g=lambda n: json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))); [print(n, (lambda d,v: (v, d['time'][v][:10], d['versions'][v]['dist'].get('unpackedSize'), len(d['versions'][v].get('dependencies',{})), d['versions'][v].get('peerDependencies',{}).get('vite')))(d, d['dist-tags']['latest'])) for n,d in ((n,g(n)) for n in ['storybook','@storybook/vue3-vite','histoire'])]"
+```
 
 ## I caratteri — i candidati, e il comando che li verifica
 
@@ -243,8 +248,7 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 
 ## Decisioni aperte, del proprietario
 
-- ⛔ **la domanda 7, dove si guardano i componenti — la prossima, da porre**; poi la 8, come si cambia vista — una per
-  messaggio; la 4 è caduta con la risposta 5;
+- ⛔ **la domanda 8, come si cambia vista — la prossima e l'ultima, da porre nel browser**; la 4 è caduta con la risposta 5;
 - se il design system prenda un **numero**: nella tabella delle decisioni della stella polare, o una riga della roadmap;
 - **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13;
 - le voci registrate della tabella qui sopra.
@@ -260,8 +264,8 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
    la risposta 7. Le skill: `anthropic-skills:decision-principles`,
    `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, e
    `superpowers:brainstorming` — il percorso è **architetturale**, già detto al proprietario.
-4. Al proprietario **la domanda 7**, dove si guardano i componenti; poi la 8, come si cambia vista. La 8 è **visiva** e va
-   nel browser: il visual companion si riavvia con `--project-dir`
+4. Al proprietario **la domanda 8**, come si cambia vista: è **visiva** e va nel browser, coi pezzi della stella polare sulle
+   viste letti prima — la risposta 7: il visual companion si riavvia con `--project-dir`
    sullo scratchpad della sessione nuova, in sottofondo, e le tavole nuove partono dalla approvata, cioè da `gen_style_v5.py`. Il
    proprietario ha accettato il companion il 2026-09-23 — *«sì, usa il browser»* — e se la skill vuole di nuovo l'offerta, è una
    riga.

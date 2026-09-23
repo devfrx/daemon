@@ -20,10 +20,10 @@ quando il **disegno** è scritto, com'è stato per la stella polare; il testo co
 ## Stato in una riga
 
 Il sotto-progetto 2 è chiuso, e il design system è il **primo tempo** del prossimo passo della §6. Il brainstorming è **a
-metà**: cominciato il 2026-09-23, sette risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
+metà**: cominciato il 2026-09-23, otto risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
 perimetro, l'idea di stile, la direzione, lo stile approvato coi raggi concentrici, i due temi, i caratteri aperti dentro il
-programma, la stella polare letta a pezzi — e ⛔ **la domanda in corso è quella VISIVA sulle coppie di caratteri**, nel
-browser: i candidati stanno in *«I caratteri — i candidati, e il comando che li verifica»* qui sotto.
+programma, la stella polare letta a pezzi, la coppia **Geist + Barlow** — e ⛔ **la prossima è la domanda 6, le icone**, da
+porre com'è nella tabella *«Le domande del brainstorming»*, coi fatti verificati quel giorno.
 
 ## ⛔ Da sapere subito
 
@@ -33,7 +33,11 @@ proprietario vivono nella tabella *«Le risposte del proprietario, una per doman
 risposta: si ripone, non si deduce. Le tavole mostrate vivono nello scratchpad della sessione del 2026-09-23, **su questa
 macchina** — `C:\Users\zagor\AppData\Local\Temp\claude\C--Users-zagor-Desktop-harness\db7f9418-81f8-4641-a26c-fdc4ffec03f8\scratchpad\`,
 coi generatori `gen_style_v1.py`, `gen_style_v2.py` e `gen_style_v3.py` — e **solo l'approvata** è nel repository, con la sua
-sonda, in `docs/superpowers/specs/2026-09-22-design-system-tavole/`: dall'altra macchina si riparte da lì.
+sonda, in `docs/superpowers/specs/2026-09-22-design-system-tavole/`: dall'altra macchina si riparte da lì. La **seconda**
+sessione, lo stesso giorno, ha lo scratchpad
+`C:\Users\zagor\AppData\Local\Temp\claude\C--Users-zagor-Desktop-harness\68e60615-409a-456a-a16e-8ef420ce4dca\scratchpad\`, con
+`gen_style_v4.py` — la tavola approvata coi caratteri scelti, da cui partono le tavole nuove — e `gen_fonts_v1.py`, il
+confronto delle coppie; tutti e due eseguono `gen_style_v3.py`, copiato lì accanto, fino alla sua uscita.
 
 ⚠️ **Sull'altra macchina** — il clone con `core.autocrlf` `true`, albero `w/crlf` — tre cose prima di credere a un verde o a
 un rosso: un Node che soddisfi `node -p "require('./gui/package.json').engines.node"`; `cargo audit --version` **0.22.2**,
@@ -125,19 +129,23 @@ quarantatreesima chiusura non le ha ripetute. Il testo intero sta nella voce, ne
 | 5 | **2026-09-23** — la domanda 3, i temi: **A** due temi subito, scuro e chiaro, che di base seguono Windows e si possono scegliere a mano; **B** solo lo scuro adesso, coi token pronti per il chiaro | **A.** Parole sue: *«A, due temi subito»*. Verificato alla fonte il 2026-09-23, la pagina di `nativeTheme` della documentazione di Electron: `themeSource` vale di base `system`, e la query CSS `prefers-color-scheme` della pagina lo segue; `inForcedColorsMode` dice se Windows è in alto contrasto, e l'evento `updated` segnala un cambio. La scelta a mano **non** la tiene la GUI (I1): la conserva il core, come la disposizione — dove, lo dice il disegno. L'alto contrasto di Windows e la riduzione del movimento **non sono temi**: sono regole di G20, sempre rispettate. **Conseguenza, decisione del coordinatore: la domanda 4 cade.** Con due temi `themeAbyss`, che è solo scuro, non può restare: il dock si veste coi **nostri** token con un tema suo — il `DockviewTheme` di `dockview-core` 8.3.1 porta `className`, `colorScheme` e `gap`, letto in `gui/node_modules/dockview-core/dist/cjs/dockview/theme.d.ts` il 2026-09-23 — e le sue variabili di raggio, `--dv-border-radius` fra le altre, seguono la regola dei raggi concentrici della risposta 4 |
 | 6 | **2026-09-23**, seconda sessione — la domanda 5, i caratteri, riposta uguale coi fatti riverificati quel giorno: **A** quelli di sistema, e su Linux l'aspetto cambia da solo; **B** due caratteri aperti dentro il programma, uno per il testo e uno da strumento per etichette e numeri, stesso aspetto ovunque e niente rete a runtime | **B.** Con un clic, sul consiglio — l'opzione *«B, aperti nel programma»*. I fatti riverificati: la tavola approvata usa `Bahnschrift` per etichette e numeri e `system-ui` per il testo, e la GUI vera i caratteri di sistema — `grep -o "font-family:[^;]*"` sulla tavola, e la variabile `--font` di `gui/src/tokens/tokens.css`; **nessun documento** ha già scelto i caratteri, stella polare compresa — un `grep` su `docs/`, `gui/src` e `spikes/GUI-REQUISITI.md`, archivio escluso, trova «tipografico» solo nel senso di refuso; i quattro candidati e il loro peso col comando della sezione qui sotto, contro i 368,9 MB della cartella installata, riga M2 di `spikes/RISULTATI.md`. È una **dipendenza nuova**, ed è sua. Nessun candidato è scelto: la coppia si sceglie **guardandola** |
 | 7 | **2026-09-23**, seconda sessione — la registrata della tredicesima ripresa della [stella polare](2026-09-07-direzione-gui-design.md), in *«Registrate, non prese»*: **A** rileggerla per intero a ogni ripresa di questo brainstorming; **B** i soli pezzi che la domanda del momento tocca, trovati col `grep`, e per intero una volta, prima di scrivere il disegno | **B.** Con un clic, sul consiglio — l'opzione *«B, solo i pezzi utili»*. La stella pesa quanto dicono `wc -c` e lo snippet `tiktoken` di `CLAUDE.md`: il 2026-09-23, 187 481 byte e almeno 60 224 token, limite inferiore. Vale per **questo brainstorming**: la voce nella stella polare e la riga della stella nella §12 del compendio portano il richiamo con la data |
+| 8 | **2026-09-23**, seconda sessione — le coppie di caratteri, nel browser: la Home e il kit della tavola approvata in tre coppie, più il riferimento coi caratteri di Windows; **A** Geist + Barlow, **B** Inter + Barlow, **C** Geist + Barlow Semi Condensed — B e C cambiano un carattere solo rispetto ad A | **A, Geist + Barlow.** Con un clic, sul consiglio. Il consiglio era **misurato**, nel pannello browser dell'app, con [`sonda-caratteri.js`](2026-09-22-design-system-tavole/sonda-caratteri.js): un'etichetta di prova in Barlow è 0,992 di Bahnschrift e una frase in Geist 1,019 di Segoe UI Variable Text — Inter 1,075, Barlow Semi Condensed 0,916 — quindi con A le lettere occupano quasi lo stesso spazio della tavola approvata; in tutte e tre le coppie le cifre sono tabulari. La [tavola approvata](2026-09-22-design-system-tavole/stile-approvato.html) ora porta la coppia scelta, e la sonda nuova le sta accanto; com'era alla risposta 4 lo rende `git show 8c0bbe6:docs/superpowers/specs/2026-09-22-design-system-tavole/stile-approvato.html` |
 
 ## I caratteri — i candidati, e il comando che li verifica
 
-La risposta 6 è **B**, e la coppia **non è scelta**: si sceglie guardandola, nel browser, sulla stessa Home della tavola
-approvata. I candidati, **verificati il 2026-09-23** col comando qui sotto, che stampa versione, data d'uscita, licenza e peso
+La risposta 6 è **B**, e la 8 sceglie la coppia: ✅ **Geist** per il testo, **Barlow** per etichette, numeri e orari. I
+candidati confrontati, **verificati il 2026-09-23** col comando qui sotto, che stampa versione, data d'uscita, licenza e peso
 spacchettato in byte:
 
-| Pacchetto | Per che cosa | Forma |
-|---|---|---|
-| `@fontsource-variable/inter` | il testo | variabile |
-| `@fontsource-variable/geist` | il testo | variabile |
-| `@fontsource/barlow` | etichette e numeri | pesi fissi |
-| `@fontsource/barlow-semi-condensed` | etichette e numeri, più stretta | pesi fissi |
+| Pacchetto | Per che cosa | Forma | |
+|---|---|---|---|
+| `@fontsource-variable/inter` | il testo | variabile | |
+| `@fontsource-variable/geist` | il testo | variabile | ✅ scelto |
+| `@fontsource/barlow` | etichette e numeri | pesi fissi | ✅ scelto |
+| `@fontsource/barlow-semi-condensed` | etichette e numeri, più stretta | pesi fissi | |
+
+I pesi di Barlow che la tavola usa sono **quattro** — 300 per i numeri grandi, 400, 500 per il pulsante della striscia, 600
+per le etichette — e il browser ne carica proprio quattro; Geist è variabile, un file per sottoinsieme.
 
 Tutti `5.3.0` del 2026-07-19 e `OFL-1.1`. Il peso spacchettato — da 0,18 a 1,9 MB per pacchetto, con tutti i sottoinsiemi e
 tutti i formati — è un **limite superiore**: nel programma va solo ciò che i token importano.
@@ -179,6 +187,11 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
   nascere la regola.
 - Il disegno che illustra una regola la deve rispettare: il riquadro attorno al disegno dei raggi la violava, ed è stato tolto.
 - Un `cd` in una sottocartella resta per le chiamate dopo: percorsi assoluti, o `cd` alla radice in testa a ogni comando.
+- `document.fonts.check()` **non** dice se un carattere è in uso: risponde «sì» anche per un nome che nessun `@font-face`
+  dichiara. L'oracolo è lo stato dei `FontFace` in `document.fonts`, `loaded` — è la prima prova di `sonda-caratteri.js`.
+- La pagina del companion non serve i file delle sonde: si lanciano sull'**anteprima privata**, dove stanno accanto alla
+  tavola, e il frammento spinto al companion è lo stesso byte per byte. Sulla pagina del companion basta contare i
+  `FontFace` caricati.
 
 ## Decisioni prese dal coordinatore, col perché — il proprietario può ribaltarle
 
@@ -192,12 +205,13 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 | 6 | la tavola approvata si salva con una **cornice nostra**, non con quella del plugin del companion | il file resta nostro e si apre senza il plugin. Costo: la cornice minima si tiene coerente a mano |
 | 7 | le parole del proprietario **testuali** nelle risposte, e l'immagine di riferimento **non committata** | è il lavoro di un altro, e il repository è pubblico; gli spunti che se ne prendono stanno a parole nella risposta 2. Costo: se serve di nuovo, la si chiede al proprietario |
 | 8 | la domanda 4, il dock, **non posta**: la risposta 5 la decide | con due temi `themeAbyss`, solo scuro, non può restare, e chiedere una cosa già determinata sarebbe una domanda di rito. Costo: se il proprietario voleva `themeAbyss` nel solo tema scuro, lo dice e si riapre |
+| 9 | nel confronto dei caratteri la coppia **A** è quella **misurata** più vicina alla tavola approvata, e B e C cambiano un carattere solo | la prima forma della tavola aveva come A Inter + Barlow Semi Condensed, scelta a occhio, e Geist + Barlow non c'era: la sonda l'ha smentita **prima** che la tavola si mostrasse. Costo: nessuno |
+| 10 | la tavola approvata **si aggiorna** coi caratteri scelti, e non nasce un secondo file | una tavola coi caratteri di Windows mentirebbe sullo stile di oggi, e le tavole nuove partono da lì; com'era sta nella storia di git, col comando nella risposta 8. Costo: chi cerca la tavola della risposta 4 la trova in `8c0bbe6` |
 
 ## Decisioni aperte, del proprietario
 
-- ⛔ **le coppie di caratteri — la domanda visiva dopo la risposta 6, in corso**: due o tre coppie sulla stessa Home, nel
-  browser; poi la 6, le icone, la 7, dove si guardano i componenti, e la 8, come si cambia vista — una per messaggio; la 4 è
-  caduta con la risposta 5;
+- ⛔ **la domanda 6, le icone — la prossima, da porre**; poi la 7, dove si guardano i componenti, e la 8, come si cambia
+  vista — una per messaggio; la 4 è caduta con la risposta 5;
 - se il design system prenda un **numero**: nella tabella delle decisioni della stella polare, o una riga della roadmap;
 - **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13;
 - le voci registrate della tabella qui sopra.
@@ -213,9 +227,9 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
    la risposta 7. Le skill: `anthropic-skills:decision-principles`,
    `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, e
    `superpowers:brainstorming` — il percorso è **architetturale**, già detto al proprietario.
-4. Al proprietario **le coppie di caratteri**, nel browser; poi la 6, la 7 e la 8, una per messaggio. Le domande **visive** —
-   le coppie di caratteri, le icone, il cambio di vista — vanno nel browser: il visual companion si riavvia con
-   `--project-dir` sullo scratchpad della sessione nuova, in sottofondo, e le tavole nuove partono dalla approvata. Il
+4. Al proprietario **la domanda 6, le icone**; poi la 7 e la 8, una per messaggio. Le domande **visive** — le icone, se la 6
+   porta un set da guardare, e il cambio di vista — vanno nel browser: il visual companion si riavvia con `--project-dir`
+   sullo scratchpad della sessione nuova, in sottofondo, e le tavole nuove partono dalla approvata, cioè da `gen_style_v4.py`. Il
    proprietario ha accettato il companion il 2026-09-23 — *«sì, usa il browser»* — e se la skill vuole di nuovo l'offerta, è una
    riga.
 5. Dopo l'ultima domanda: gli approcci, poi il **disegno a sezioni**, una approvata per volta — i token a strati coi due temi,

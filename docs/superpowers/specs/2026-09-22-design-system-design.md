@@ -14,12 +14,14 @@ consegne della [knowledge base](../../archivio/consegna-brainstorming-knowledge-
 ## Stato in una riga
 
 Il sotto-progetto 2 è chiuso — il piano della parte 2 per intero, residuo del compito 17 compreso — e il design system è il
-**primo tempo** del prossimo passo della §6: manca il brainstorming, che comincia dalla **domanda 1** qui sotto, senza risposta.
+**primo tempo** del prossimo passo della §6: il brainstorming è **cominciato il 2026-09-23**, e le risposte avute stanno in
+*«Le risposte del proprietario, una per domanda»* qui sotto; si riprende dalla prima domanda senza risposta.
 
 ## ⛔ Da sapere subito
 
-**Niente è a metà.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato, nessun server acceso,
-nessun subagente; il brainstorming **non è cominciato** e nessun file della GUI è stato toccato.
+**Il brainstorming è a metà, e nient'altro.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato,
+nessun server acceso, nessun subagente; nessun file della GUI è stato toccato. Le risposte del proprietario vivono nella tabella
+*«Le risposte del proprietario, una per domanda»*, e una domanda senza riga lì non ha risposta: si ripone, non si deduce.
 
 ⚠️ **Sull'altra macchina** — il clone con `core.autocrlf` `true`, albero `w/crlf` — tre cose prima di credere a un verde o a
 un rosso: un Node che soddisfi `node -p "require('./gui/package.json').engines.node"`; `cargo audit --version` **0.22.2**,
@@ -98,6 +100,12 @@ quarantatreesima chiusura non le ha ripetute. Il testo intero sta nella voce, ne
 | **E227** | dove disegnare `DISPOSIZIONE` in `design/10` | no, è del modello dei dati |
 | **E209** | i numeri di P-107 invecchiano | no |
 
+## Le risposte del proprietario, una per domanda
+
+| # | Domanda | Risposta |
+|---|---|---|
+| 1 | **2026-09-23** — che cosa vuol dire *«da Agentic OS»*, e quanto è grande questo lavoro: **A** le fondamenta più i componenti che oggi hanno la seconda occorrenza; **B** anche il kit dei pilastri che verranno | **A, nella sostanza — letta dal coordinatore e detta al proprietario come tale, quindi correggibile.** Il proprietario ha risposto con le sue parole e non con una lettera: *«Vorrei creare un design moderno da AGENTIC OS e che sia ben definito come stile, oltre ad essere ben organizzato come design system (quindi tutti i componenti riutilizzabili e non, kit ui, viste che favoriscono sempre l'uso di componenti etc..) che siano ben organizzati logicamente e architetturalmente e che lo stile prima di tutto rispecchi la mia idea, quanto appuntato nel progetto e sia professionale curato nel minimo dettaglio, con temi e token centralizzati, e modularità»*, e *«i futuri componetni e viste nascerando già ereditando tutto il necessario o creando quello che serve»*. La seconda frase è la **A**: ciò che verrà nasce quando arriva, ereditando o creando, e non si disegna ora. La prima ne fissa i **criteri**: (1) lo stile rispecchia **prima di tutto l'idea del proprietario** e ciò che il progetto ha già scritto; (2) professionale, curato nel minimo dettaglio; (3) temi e token centralizzati; (4) **tutti** i componenti, riutilizzabili e no, ordinati logicamente e architetturalmente; (5) le viste si compongono di componenti; (6) modularità. 🔶 **Dedotto, non smentito:** *«da Agentic OS»* è un aspetto all'altezza di un sistema operativo per agenti — *«un misto fra Jarvis e Claude Desktop»*, parole sue del 2026-09-07 che vivono nella memoria dell'agente e in nessun documento del repository — e non la copia di un prodotto. Sullo stile di oggi, parole sue: *«a me non piace per niente»* |
+
 ## Le domande del brainstorming, una alla volta — proposte del coordinatore, non decisioni
 
 Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una riga: è la forma che il proprietario vuole.
@@ -124,7 +132,8 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 
 ## Decisioni aperte, del proprietario
 
-- la **domanda 1**, e a seguire le altre, una per messaggio;
+- le domande dalla **2** in poi, una per messaggio — la 2 parte dall'**idea del proprietario**, chiesta a parole prima di ogni
+  tavola (criterio 1 della risposta 1);
 - se il design system prenda un **numero**: nella tabella delle decisioni della stella polare, o una riga della roadmap;
 - **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13;
 - le voci registrate della tabella qui sopra.
@@ -137,9 +146,10 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 3. **Questo file, per intero**, poi la **stella polare per intero**. Le skill: `anthropic-skills:decision-principles`,
    `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`,
    e `superpowers:brainstorming`.
-4. Il visual companion della skill offerto **in un messaggio a sé**: la domanda 2 è visiva, e la consegna d'avvio del 2 già
-   diceva che i wireframe si mostrano nel browser.
-5. Al proprietario la **domanda 1**, poi le altre, una per messaggio.
+4. Il visual companion della skill offerto **in un messaggio a sé**, alla **prima domanda che si capisce meglio vedendo** e non
+   in apertura: così dice `superpowers:brainstorming` letta il 2026-09-23 (*just-in-time*); la consegna d'avvio del 2 già diceva
+   che i wireframe si mostrano nel browser.
+5. Al proprietario la prima domanda senza risposta in *«Le risposte del proprietario»*, poi le altre, una per messaggio.
 6. Alla chiusura: riscrivere questo file sul posto, spostarne il testo in archivio parola per parola, muovere il puntatore della
    §6 se cambia, `bash scripts/check-docs.sh`, commit, push.
 

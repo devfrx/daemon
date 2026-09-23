@@ -20,6 +20,10 @@
 // applies another font than it declares, a table cell whose text no longer fits, a button pushed out of its card --
 // it reported every one, and the tabular check turned red too, on the fallback font of the undeclared family.
 //
+// ⚠️ AND IT LOADS THE FACE BEFORE IT MEASURES THE DIGITS, since the overview board of the same day: the first form
+// measured the fallback on a board with no light number on it -- the comment at the tabular check says how. Fetch
+// this file with `{ cache: "no-store" }`: a browser that cached the previous form runs the previous form.
+//
 // ⛔ IT IS A PROBE ON A MOCKUP, NOT A TEST OF THE PRODUCT, like `sonda-raggi.js` next to it: the plan turns it into
 // a test of the real kit.
 (async () => {
@@ -60,6 +64,11 @@
         if (got !== want[role]) r.problems.push(`${s}: ${got}, wanted ${want[role]}`);
       }
     }
+    // ⚠️ LOAD BEFORE MEASURING: a face loads only when some text needs it, and a board with no light number on it
+    // never asks for weight 300 -- the first run measured the FALLBACK and called the digits not tabular (the
+    // overview board, 2026-09-23; the second run was clean, because the first had triggered the load). An
+    // undeclared family still resolves to nothing here, so the red it deserves stays red.
+    await document.fonts.load(`300 27px "${want.tool}"`);
     const tool = `font-family:"${want.tool}";font-size:27px;font-weight:300;`;
     const tab = [width(row, tool + "font-variant-numeric:tabular-nums", "111111"),
                  width(row, tool + "font-variant-numeric:tabular-nums", "000000")];

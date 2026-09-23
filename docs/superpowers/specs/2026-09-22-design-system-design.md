@@ -20,11 +20,12 @@ quando il **disegno** è scritto, com'è stato per la stella polare; il testo co
 ## Stato in una riga
 
 Il sotto-progetto 2 è chiuso, e il design system è il **primo tempo** del prossimo passo della §6. Il brainstorming è **a
-metà**: cominciato il 2026-09-23, dodici risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
+metà**: cominciato il 2026-09-23, tredici risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
 perimetro, l'idea di stile, la direzione, lo stile approvato coi raggi concentrici, i due temi, i caratteri aperti dentro il
 programma, la stella polare letta a pezzi, la coppia **Geist + Barlow**, un set di icone aperto, **Lucide**, dietro un
-**componente unico** con la sua mappa, la **pagina «kit»** nell'app — e ⛔ **la prossima è la domanda 8, come si cambia
-vista**, l'ultima: è **visiva**, e va nel browser.
+**componente unico** con la sua mappa, la **pagina «kit»** nell'app, la **Panoramica** per cambiare vista. ✅ **Le domande
+sono finite.** ⛔ **Il prossimo passo sono gli approcci e il disegno a sezioni**, dopo la lettura **intera** della stella
+polare — la risposta 7.
 
 ## ⛔ Da sapere subito
 
@@ -38,8 +39,10 @@ sonda, in `docs/superpowers/specs/2026-09-22-design-system-tavole/`: dall'altra 
 sessione, lo stesso giorno, ha lo scratchpad
 `C:\Users\zagor\AppData\Local\Temp\claude\C--Users-zagor-Desktop-harness\68e60615-409a-456a-a16e-8ef420ce4dca\scratchpad\`, con
 `gen_style_v5.py` — la tavola approvata coi caratteri e le icone scelti, da cui partono le tavole nuove — e i confronti
-`gen_fonts_v1.py` e `gen_icons_v1.py`, più `gen_style_v4.py`, la tavola coi soli caratteri; tutti eseguono `gen_style_v3.py`,
-copiato lì accanto, fino alla sua uscita, e `gen_style_v5.py` esegue così anche `gen_icons_v1.py`.
+`gen_fonts_v1.py`, `gen_icons_v1.py` e `gen_views_v1.py`, più `gen_style_v4.py`, la tavola coi soli caratteri, e
+`gen_panoramica_v1.py`, la panoramica approvata; tutti eseguono `gen_style_v3.py`, copiato lì accanto, fino alla sua uscita,
+passando per `gen_icons_v1.py` quando servono le icone. Nel repository le tavole approvate sono **due** — lo stile e la
+panoramica — con **tre** sonde: raggi, caratteri, icone.
 
 ⚠️ **Sull'altra macchina** — il clone con `core.autocrlf` `true`, albero `w/crlf` — tre cose prima di credere a un verde o a
 un rosso: un Node che soddisfi `node -p "require('./gui/package.json').engines.node"`; `cargo audit --version` **0.22.2**,
@@ -136,6 +139,7 @@ quarantatreesima chiusura non le ha ripetute. Il testo intero sta nella voce, ne
 | 10 | **2026-09-23**, seconda sessione — il set di icone, nel browser: le stesse venti icone da **A** Lucide e **B** Tabler, sulla Home e sul kit della tavola approvata coi caratteri scelti, e le venti di ciascun set, più grandi, in una striscia | **A, Lucide.** Con un clic, sul consiglio: a misura piccola, accanto alle etichette, è più essenziale — l'occhio del coordinatore, detto al proprietario come tale e **non** misurato; Tabler ne ha di più, ma 1848 bastano anche per i pilastri. La tavola era pulita sulle tre sonde, e [`sonda-icone.js`](2026-09-22-design-system-tavole/sonda-icone.js) è nata qui: icone disegnate, centrate, lo stesso numero per set. La [tavola approvata](2026-09-22-design-system-tavole/stile-approvato.html) ora porta anche le icone, e in testa la licenza di Lucide copiata parola per parola |
 | 11 | **2026-09-23**, seconda sessione — la **richiesta del proprietario**, scritta nel mezzo del turno: *«vorrei fosse un componente centralizzato con tutto il set delle icone mappate al suo interno riutilizzato in tutto il software»*; e la domanda che ne è nata, che cosa vuol dire «tutto il set»: **A** le icone che usiamo, coi nomi nostri; **B** tutte le 1848 di Lucide | **A.** Con un clic, sul consiglio. Quindi: **un solo componente** `Icon` e **una sola mappa** — nome nostro, come `stato` o `cerca`, → icona di Lucide, importate una per una — e nessun'altra parte del codice importa icone; cambiare set tocca la sola mappa. La B costava **442 433 byte** in più, `lucide` 1.47.0 intero e minimizzato, contro circa 500 byte a icona — 935 024 byte per 1848 moduli — col comando nella sezione qui sotto. Come la regola diventa **controllata** — il nome come tipo, che non compila se è sbagliato, e una regola del linter che vieta gli import fuori dalla mappa — è una proposta del coordinatore, detta al proprietario: si decide nel disegno |
 | 12 | **2026-09-23**, seconda sessione — la domanda 7, dove si guardano i componenti: **A** una pagina «kit» dentro l'app, solo in sviluppo, con ogni componente in ogni stato nei due temi, e le sonde che diventano test su quella pagina; **B** Storybook, una vetrina a sé | **A.** Con un clic, sul consiglio. I fatti verificati quel giorno: oggi nessun posto mostra tutti i componenti — si vedono nelle loro viste, contro il core finto, e si provano con `vitest`; `storybook` 10.6.0 del 2026-09-02, e `@storybook/vue3-vite` accetta Vite `^8.0.0`, quindi la B era possibile davvero — il nucleo pesa 22 168 203 byte spacchettati, con 17 dipendenze dirette; `histoire` è fermo alla 1.0.0-beta.1 del 2026-01-07 e chiede Vite `^7.3.0`: col nostro Vite 8 non regge. Il comando è qui sotto |
+| 13 | **2026-09-23**, seconda sessione — la domanda 8, come si cambia vista, nel browser, sulla Home approvata coi caratteri e le icone scelti: **A** «Spazi», le viste una accanto all'altra come i desktop di Windows, nella barra solo la vista in cui sei con un segno per ciascuna, e Compatta come un pulsante nella striscia; **B** «Panoramica», un clic sul nome della vista nella barra, o un tasto, apre tutte le viste in miniatura | **B.** Con un clic, sul consiglio: vedi tutto prima di entrare, regge con le viste salvate, e il nome nella barra dice sempre dove sei. La forma, com'è nella [tavola](2026-09-22-design-system-tavole/panoramica.html): nella barra il **nome** della vista con un'icona, niente schede; la panoramica è una griglia di **miniature vive** — Home, Lavoro, **Compatta come finestrella**, le viste salvate col loro nome — con la corrente in bordeaux e l'ultima scheda **«Salva questa vista»**; Esc chiude. I fatti verificati quel giorno: oggi la barra ha **tre pulsanti in fila**, `gui/src/frame/ViewBar.vue`, cioè le schede che il 2026-09-07 il proprietario disse di non volere — detto nella memoria dell'agente e da oggi scritto qui; nessun documento aveva deciso o scartato né gli spazi né la panoramica; **Ctrl+Alt+frecce** sono già dei pannelli, `directionOf` in `gui/src/frame/moveActive.ts`, quindi i tasti delle tavole sono esempi. 🔶 **Dedotto:** gli spazi si possono aggiungere sopra la panoramica più avanti senza rifare niente |
 
 ```bash
 python -c "import json,urllib.request as u; g=lambda n: json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))); [print(n, (lambda d,v: (v, d['time'][v][:10], d['versions'][v]['dist'].get('unpackedSize'), len(d['versions'][v].get('dependencies',{})), d['versions'][v].get('peerDependencies',{}).get('vite')))(d, d['dist-tags']['latest'])) for n,d in ((n,g(n)) for n in ['storybook','@storybook/vue3-vite','histoire'])]"
@@ -228,6 +232,12 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
   angoli da 28 della Home e del kit restino lontani dal suo. La prima forma di `sonda-raggi.js` guardava solo dentro la Home e
   il kit, e non l'ha vista.
 - Un disegno **copiato** in un file del repository si porta dietro la sua licenza; uno caricato dalla rete no.
+- Una sonda che **misura** un carattere lo deve **caricare** prima, con `document.fonts.load`: un peso che nessun testo
+  visibile usa non è caricato, e la misura cade sul carattere di riserva — la prima forma di `sonda-caratteri.js` ha dato le
+  cifre «non tabulari» sulla tavola della panoramica, che non ha numeri grandi, e pulite al secondo giro.
+- I file delle sonde si prendono con `fetch(…, { cache: "no-store" })`: il browser tiene in cache ciò che `http.server` gli
+  serve, e una sonda corretta sulla stessa porta gira nella forma **vecchia** — successo con la correzione qui sopra, che
+  sembrava non funzionare.
 
 ## Decisioni prese dal coordinatore, col perché — il proprietario può ribaltarle
 
@@ -245,10 +255,12 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 | 10 | la tavola approvata **si aggiorna** coi caratteri scelti, e non nasce un secondo file | una tavola coi caratteri di Windows mentirebbe sullo stile di oggi, e le tavole nuove partono da lì; com'era sta nella storia di git, col comando nella risposta 8. Costo: chi cerca la tavola della risposta 4 la trova in `8c0bbe6` |
 | 11 | la tavola approvata porta anche le icone scelte, e con esse la **licenza di Lucide**, copiata parola per parola in testa al file | i disegni sono **copiati** nel file, e la licenza ISC chiede l'avviso *«in all copies»*; una parte delle icone viene da Feather, sotto MIT, e la licenza lo dice; il repository è pubblico. I caratteri invece non sono copiati: arrivano da jsDelivr. Costo: una cinquantina di righe in testa alla tavola |
 | 12 | `sonda-raggi.js` guarda anche le **scatole di scelta** del companion | la tavola dei caratteri si è mostrata con un angolo di 28 accanto a uno di 12, e con la letterina della scatola non concentrica: difetti della scatola del companion e non del nostro stile, ma la regola del proprietario vale per tutta la tavola, e il proprietario l'ha saputo alla tavola dopo. La sonda allargata li ha trovati sulla tavola dei caratteri — sei, due per scatola — e sulla tavola delle icone prima di mostrarla. Costo: nessuno; sulla tavola approvata, che non ha scatole, non cambia nulla |
+| 13 | la Panoramica approvata si salva **a sé**, [`panoramica.html`](2026-09-22-design-system-tavole/panoramica.html), accanto alla tavola dello stile e non dentro | la tavola dello stile mostra lo stile, la panoramica è un meccanismo della cornice; ma una tavola nel repository serve a chi riprende dall'altra macchina, dove lo scratchpad non c'è. Le sue sonde: raggi, testo che entra, cifre e icone, pulite nei due temi e a 1440 e 800 px; i campioni della sonda dei caratteri pensati per la Home **mancano** in questa tavola, e lì la prova vale solo per il testo tagliato, lo sbordare, il caricamento e le cifre. Costo: due file da tenere coerenti |
 
 ## Decisioni aperte, del proprietario
 
-- ⛔ **la domanda 8, come si cambia vista — la prossima e l'ultima, da porre nel browser**; la 4 è caduta con la risposta 5;
+- ⛔ **gli approcci e il disegno a sezioni** — il prossimo passo, una sezione approvata per volta; le domande sono finite, e la
+  4 è caduta con la risposta 5;
 - se il design system prenda un **numero**: nella tabella delle decisioni della stella polare, o una riga della roadmap;
 - **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13;
 - le voci registrate della tabella qui sopra.
@@ -257,22 +269,24 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 
 1. Aprire la sessione **nella cartella del repo**; `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa
    è il commit di questa chiusura o uno successivo. Sull'altra macchina, prima i comandi di *«Da sapere subito»*.
-2. La lettura obbligatoria di `CLAUDE.md`; poi, **per prima cosa**, la CI di `8c0bbe6`, `35708f5` e di questa chiusura, in corsa
-   alla chiusura, coi comandi della riga «la CI».
-3. **Questo file, per intero**, e la tavola approvata, `2026-09-22-design-system-tavole/stile-approvato.html`, aperta nel
-   browser. La stella polare **a pezzi**, col `grep` sulla domanda del momento, e per intero prima di scrivere il disegno —
-   la risposta 7. Le skill: `anthropic-skills:decision-principles`,
+2. La lettura obbligatoria di `CLAUDE.md`; poi, **per prima cosa**, la CI dei commit della seconda sessione — la chiusura
+   compresa — coi comandi della riga «la CI».
+3. **Questo file, per intero**, e le due tavole approvate aperte nel browser, `stile-approvato.html` e `panoramica.html` in
+   `2026-09-22-design-system-tavole/`, con le tre sonde accanto, prese con `cache: "no-store"`. ⛔ **La stella polare PER
+   INTERO**: è il momento della risposta 7, prima del disegno. Le skill: `anthropic-skills:decision-principles`,
    `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, e
    `superpowers:brainstorming` — il percorso è **architetturale**, già detto al proprietario.
-4. Al proprietario **la domanda 8**, come si cambia vista: è **visiva** e va nel browser, coi pezzi della stella polare sulle
-   viste letti prima — la risposta 7: il visual companion si riavvia con `--project-dir`
-   sullo scratchpad della sessione nuova, in sottofondo, e le tavole nuove partono dalla approvata, cioè da `gen_style_v5.py`. Il
-   proprietario ha accettato il companion il 2026-09-23 — *«sì, usa il browser»* — e se la skill vuole di nuovo l'offerta, è una
-   riga.
-5. Dopo l'ultima domanda: gli approcci, poi il **disegno a sezioni**, una approvata per volta — i token a strati coi due temi,
-   la regola dei raggi, il kit e dove vive, il dock, la cornice della finestra, le voci registrate della tabella qui sopra, e le
-   sonde che rendono verificabile ogni regola, contrasto e raggi. Poi il disegno scritto al posto di questo file, questo testo in
-   archivio **parola per parola**, e il piano in una sessione nuova.
+4. Gli **approcci**, due o tre, al proprietario — la forma del design system nel codice: dove vivono token, temi e kit, e come
+   le regole diventano controlli — poi il **disegno a sezioni**, una approvata per volta: (a) i token a strati coi due temi —
+   i colori, Geist e Barlow coi loro pesi, la regola dei raggi come `calc`, il tratto delle icone; (b) il kit e dove vive — i
+   componenti con la regola della seconda occorrenza, il componente `Icon` con la sua mappa (risposta 11), la pagina «kit»
+   (risposta 12); (c) il dock vestito coi nostri token (risposta 5); (d) la cornice — la barra col nome della vista, la
+   Panoramica (risposta 13), la cornice della finestra; (e) le voci registrate della tabella qui sopra; (f) le sonde che
+   diventano test — contrasto, raggi, caratteri, icone. Se una sezione ha una domanda visiva, il visual companion si riavvia con
+   `--project-dir` sullo scratchpad della sessione nuova, in sottofondo, e le tavole partono da `gen_style_v5.py` o da
+   `gen_views_v1.py`; il proprietario lo ha accettato il 2026-09-23.
+5. Poi il disegno scritto al posto di questo file, questo testo in archivio **parola per parola**, e il piano in una sessione
+   nuova.
 6. Alla chiusura di ogni sessione: questo file aggiornato sul posto, `bash scripts/check-docs.sh`, commit, push.
 
 ## Come tornare operativi

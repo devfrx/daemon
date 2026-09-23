@@ -67,6 +67,19 @@ il workflow non era **mai stato eseguito** — committato lo stesso giorno, ramo
 pushato — quindi nessuna regola di protezione del ramo poteva ancora riferirsi al nome vecchio.
 Dopo la prima corsa non sarebbe più stato gratis.
 
+📌 **Leggere la CI da terra**, senza `gh`: dall'API pubblica di GitHub, le ultime corse e poi i job di ciascuna — due
+per corsa, `ubuntu-latest` e `windows-latest`, la matrice di X-1. È la **casa unica** di questi due comandi: le consegne
+di fine sessione rimandano qui invece di ricopiarli, e `per_page` si alza fino a coprire i commit da controllare.
+
+```bash
+python -c "import json,urllib.request as u; d=json.load(u.urlopen(u.Request('https://api.github.com/repos/devfrx/daemon/actions/runs?per_page=4',headers={'User-Agent':'harness'}))); [print(r['created_at'][:16],r['status'],r['conclusion'],r['head_sha'][:7],r['html_url']) for r in d['workflow_runs']]"
+python -c "import json,urllib.request as u; d=json.load(u.urlopen(u.Request('https://api.github.com/repos/devfrx/daemon/actions/runs?per_page=2',headers={'User-Agent':'harness'}))); [print(r['head_sha'][:7], j['name'], j['status'], j['conclusion']) for r in d['workflow_runs'] for j in json.load(u.urlopen(u.Request(r['jobs_url'],headers={'User-Agent':'harness'})))['jobs']]"
+```
+
+Presi parola per parola dal punto 3 della quarantunesima chiusura del
+[piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), che era la loro casa fino al
+2026-09-23 — il taglio 3 del mandato del proprietario sul ridimensionamento della lettura.
+
 ## Livello 1 — il compilatore
 
 Le tre righe del **blocco A** di §7.4.1, **nove righe del blocco C** e **una del blocco B** —

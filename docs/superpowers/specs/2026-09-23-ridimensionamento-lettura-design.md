@@ -124,8 +124,8 @@ niente. Alla chiusura questo file si riscrive come verbale, e il testo della con
 |---|---|---|---|
 | 1 | il metodo resta quello delle tre volte prima? | **A** — niente si cancella, la cronaca in archivio parola per parola, il documento vivo porta lo stato, ogni taglio in A/B | — |
 | 2 | taglio 1 — le tre note più grandi della memoria dell'agente diventano regole corte, e la storia va parola per parola in una cartella d'archivio **fuori** dalla memoria, che non si carica | **A** | fuori dal repository, su questa macchina |
-| 3 | taglio 2 — la cronaca delle correzioni esce dal compendio: sedici pezzi, fuori dalla §6 e dalla sua tabella delle voci aperte, che sono decisioni del proprietario | **A** | eseguito: il commit di questo punto fermo |
-| 4 | taglio 3 — i due comandi della CI da leggere da terra passano in `docs/porta-di-qualita.md`, accanto alla riga sulla CI, e il disegno del design system rimanda lì | **A** | da eseguire |
+| 3 | taglio 2 — la cronaca delle correzioni esce dal compendio: sedici pezzi, fuori dalla §6 e dalla sua tabella delle voci aperte, che sono decisioni del proprietario | **A** | eseguito: `4a7111d` |
+| 4 | taglio 3 — i due comandi della CI da leggere da terra passano in `docs/porta-di-qualita.md`, accanto alla riga sulla CI, e il disegno del design system rimanda lì | **A** | eseguito: il commit che aggiorna questa riga |
 
 **La mappa misurata prima di proporre** — `cl100k_base`, limite inferiore: la lettura obbligatoria vale circa 41 000 token
 (il compendio circa 33 700); la sessione che ha scritto il disegno del design system ne ha spesi circa 70 000 in letture su 488 346.

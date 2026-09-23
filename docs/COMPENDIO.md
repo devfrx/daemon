@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-23**, col **ridimensionamento della lettura** eseguito — la cronaca delle correzioni fuori dalle sezioni che non sono la §6, in [`archivio/lettura-di-apertura-storico.md`](archivio/lettura-di-apertura-storico.md) — e il puntatore della §6 al design system — disegno scritto, da rileggere — e al 13; l'ultimo contenuto di merito è la voce di ADR-0029, riscritta allo stato di oggi. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
+**Aggiornato il 2026-09-23**, col **ridimensionamento della lettura** eseguito — la cronaca delle correzioni fuori dalle sezioni che non sono la §6, in [`archivio/lettura-di-apertura-storico.md`](archivio/lettura-di-apertura-storico.md) — e il puntatore della §6 al design system — disegno riletto, piano in scrittura — e al 13; l'ultimo contenuto di merito è la voce di ADR-0029, riscritta allo stato di oggi. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -659,7 +659,7 @@ taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogn
 centralizzati, per decisione del proprietario (2026-09-21, trentasettesima chiusura del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)).
 ✅ **Il brainstorming è finito e il disegno è scritto, il 2026-09-23** —
 [`specs/2026-09-22-design-system-design.md`](superpowers/specs/2026-09-22-design-system-design.md), che si legge **per intero**;
-⛔ ora il proprietario lo **rilegge**, e il piano si scrive in una sessione nuova: la sua sezione *«Come si riprende»* dice come.
+✅ **Riletto il 2026-09-23 — A**, la voce 1 del disegno: ⏳ **ora si scrive il piano**, in una sessione sua; la sezione *«Come si riprende»* del disegno dice come.
 Lo stile di oggi è un **segnaposto dichiarato**, in testa a `gui/src/tokens/tokens.css`.
 **Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
 del 3. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro

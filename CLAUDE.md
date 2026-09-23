@@ -84,7 +84,7 @@ Si invocano **prima** di qualsiasi risposta o esplorazione, quando si applicano 
 | **Le misure nello scratchpad** | non nel repository, e si ripulisce dopo |
 | ⛔ **I fine-riga sono misti _per file_** | non c'è una convenzione da seguire: c'è **un file da non cambiare**. Uno strumento che tocca file **conserva i fine-riga di ciascuno** — in Python con `newline=""`, mai `sed -i` — e li **rimisura dopo** con `tr -cd '\r' \| wc -c`; altrimenti `git diff` dichiara centinaia di righe che nessuno ha toccato |
 | ⛔ **Una dipendenza si aggiunge in _due_ passi** | il cancello passa `--locked` a **tutti** i suoi siti `cargo` — il comando che lo verifica sta in [`docs/riferimenti.md`](docs/riferimenti.md) — quindi il `Cargo.lock` è un **ingresso**. Il lockfile si rinfresca **fuori** dal cancello, con un `cargo build` senza il flag, e si committa **insieme** al manifesto: ADR-0031 vuole che aggiungere una voce sia *«un atto deliberato e rivedibile»*. Finding **G-5** |
-| **Il cancello, uno alla volta** | `bash scripts/check-docs.sh` prima di ogni commit di documentazione; `bash scripts/gate.sh` **da solo** — due cancelli insieme si pestano su `gui/node_modules` (`EBUSY`, successo il 2026-09-23) — e il commit parte **solo sul verde** |
+| **Il cancello, uno alla volta** | `bash scripts/check-docs.sh` prima di ogni commit di documentazione; `bash scripts/gate.sh` **da solo** — due cancelli insieme si pestano su `gui/node_modules` (`EBUSY`) — gotcha **#133** — e il commit parte **solo sul verde** |
 | **Commit e push** | alla chiusura di ogni voce si **committa e si pusha**, senza chiedere, e **senza co-autore** |
 
 ## Prima di eseguire un compito di un piano

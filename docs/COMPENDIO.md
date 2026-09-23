@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-23**, con la **parte 2 del piano del 2 eseguita** — il sotto-progetto 2 chiuso, la GUI minima sul core finto — e il puntatore della §6 al ridimensionamento della lettura, al design system — disegno scritto, da rileggere — e al 13; l'ultimo contenuto di merito è il richiamo sulla stella polare nella §12, dalla risposta 7 del brainstorming del design system. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
+**Aggiornato il 2026-09-23**, col **ridimensionamento della lettura** eseguito — la cronaca delle correzioni fuori dalle sezioni che non sono la §6, in [`archivio/lettura-di-apertura-storico.md`](archivio/lettura-di-apertura-storico.md) — e il puntatore della §6 al design system — disegno scritto, da rileggere — e al 13; l'ultimo contenuto di merito è la voce di ADR-0029, riscritta allo stato di oggi. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -647,6 +647,7 @@ stato di oggi: è l'unico posto dove vive il prossimo passo, e più è corto men
 | la **rilettura del proprietario** dei due disegni — B alla domanda minima, poi le sei voci sue una per volta, tutte A: decisioni 41–47 | 2026-09-09 | la tabella delle decisioni della [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md); la §10 del [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md); X-1 e X-3 nell'[audit](audit-2026-08-27.md) |
 | la **parte 1 del piano del 2** — SP-8: il guscio **Electron** deciso dal proprietario, ADR-0029 `Accepted`, `dockview` resta dopo le otto mosse | 2026-09-10 | il [piano](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md), «A che punto è» e l'errata; la sezione SP-8 di `spikes/RISULTATI.md`; ADR-0029 |
 | il **sotto-progetto 2**, la GUI minima — il filo in `platform`, lo schema, il registro delle funzioni, la settima porta `custody`, il daemon che ascolta, la SPA con `dockview` e il core finto, il passo web del cancello, **X-1** e **X-3** | 2026-09-22 | la **Definizione di «fatto»** del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), coi comandi |
+| il **ridimensionamento della lettura** — mandato del proprietario: le note di memoria dell'agente a regole corte, la cronaca delle correzioni fuori dal compendio, i comandi della CI in una casa sola in `porta-di-qualita.md`, `CLAUDE.md` rivisto per intero | 2026-09-23 | il [verbale](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) |
 
 ✅ **Il mandato del proprietario del 2026-09-09 — sfoltire la lettura d'apertura (decisione 26 della stella polare) — è
 ESEGUITO alla tredicesima ripresa:** cinque tagli, tutti A — la stella polare, la testa dell'audit, il riquadro delle voci
@@ -654,10 +655,7 @@ aperte di questa §6, questo puntatore, `CLAUDE.md` — e `AVVIO-CHAT.md` resta 
 più (decisione 32). La misura la rifanno i comandi nel prossimo passo della stella polare; il metodo — misurare prima, ogni
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
 
-⏭️ **IL PROSSIMO PASSO, IN TRE TEMPI. Zero, prima del piano del design system: il RIDIMENSIONAMENTO della lettura** — handoff,
-documentazione, lettura obbligatoria e opzionale, mandato del proprietario del 2026-09-23: la
-[consegna](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md), che si legge **per intero**.
-**Uno: il DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi e token
+⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi e token
 centralizzati, per decisione del proprietario (2026-09-21, trentasettesima chiusura del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)).
 ✅ **Il brainstorming è finito e il disegno è scritto, il 2026-09-23** —
 [`specs/2026-09-22-design-system-design.md`](superpowers/specs/2026-09-22-design-system-design.md), che si legge **per intero**;

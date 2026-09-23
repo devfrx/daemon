@@ -2348,6 +2348,40 @@ spreco** — il taglio è solo dove si rileggeva cronaca. Gotcha **#119**.
 
 ⚠️ **E una parte del taglio si ripaga: l'ottava chiusura CRESCE**, da **4 764** a **5 145**, perché il richiamo che spiega il taglio sta dentro di lei. È il prezzo giusto — *«niente si cancella»* — e va **misurato dopo**, non previsto: la prima stima di questa tabella diceva **8 907** per il piano, e la misura ha detto **9 288**.
 
+### Il ridimensionamento della lettura — 2026-09-23: la mappa a pezzi, e il verbale
+
+⛔ **Lo stesso metodo, allargato a ciò che una sessione carica e il repository non tiene** — la memoria dell'agente — e
+alla **forma** dei documenti. Il mandato, le decisioni del proprietario e ciò che è rimasto fuori stanno nel
+[verbale](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md). Il conto **per sezione** di un file, la misura
+che ha scelto i tagli — si cambia il nome del file:
+
+```bash
+python -c "import io,re,tiktoken; e=tiktoken.get_encoding('cl100k_base'); t=io.open('docs/HANDOFF.md',encoding='utf-8').read(); [print(len(e.encode(s)), s.split(chr(10))[0][:70]) for s in re.split(r'(?m)^(?=## )',t)]"
+```
+
+E la memoria dell'agente, che vive **fuori** dal repository e su **una** macchina — il percorso è quello di questa:
+
+```bash
+python -c "import io,glob,os,tiktoken; e=tiktoken.get_encoding('cl100k_base'); [print(len(e.encode(io.open(p,encoding='utf-8').read())), os.path.basename(p)) for p in sorted(glob.glob(os.path.expanduser('~/.claude/projects/C--Users-zagor-Desktop-harness/memory/*.md')))]"
+```
+
+📌 **Il verbale del 2026-09-23**, prima e dopo, `cl100k_base`:
+
+| | prima | dopo |
+|---|---|---|
+| `CLAUDE.md` | 4 554 | 4 423 |
+| `docs/COMPENDIO.md` | 33 695 | 31 825 |
+| la memoria, `harness-attrezzi-sdd-e-heredoc.md` | 21 128 | 9 996 |
+| la memoria, `harness-revisione-piano-sonde-e-date.md` | 13 875 | 6 296 |
+| la memoria, `sessione-fresca-per-eseguire-dopo-il-precontrollo.md` | 6 269 | 2 760 |
+
+⚠️ **Ciò che la misura ha detto prima di ogni taglio, ed è la parte da ricordare.** La lettura obbligatoria valeva già
+circa 41 000 token, e dentro il compendio la cronaca delle correzioni era il **5,6%**: il peso di una sessione **non** è più
+la lettura d'apertura. La sessione che ha scritto il disegno del design system ne ha spesi circa 70 000 in letture su
+488 346; il resto era **lavoro**. Il peso che cresceva senza freno stava in tre posti: le **note di memoria** diventate
+diari, il **diario delle chiusure** dei piani — circa 183 000 token su 740 000 in quello della parte 2 — e i **puntatori**
+che mandano una sessione dentro un file enorme per due righe, come i comandi della CI.
+
 ---
 
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)

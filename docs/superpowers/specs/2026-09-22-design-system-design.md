@@ -20,9 +20,10 @@ quando il **disegno** è scritto, com'è stato per la stella polare; il testo co
 ## Stato in una riga
 
 Il sotto-progetto 2 è chiuso, e il design system è il **primo tempo** del prossimo passo della §6. Il brainstorming è **a
-metà**: cominciato il 2026-09-23, cinque risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
-perimetro, l'idea di stile, la direzione, lo stile approvato coi raggi concentrici, i due temi — e ⛔ **si riprende ESATTAMENTE
-dalla domanda 5, i caratteri, posta e senza risposta**, com'è scritta in *«La domanda 5, com'è stata posta»* qui sotto.
+metà**: cominciato il 2026-09-23, sette risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
+perimetro, l'idea di stile, la direzione, lo stile approvato coi raggi concentrici, i due temi, i caratteri aperti dentro il
+programma, la stella polare letta a pezzi — e ⛔ **la domanda in corso è quella VISIVA sulle coppie di caratteri**, nel
+browser: i candidati stanno in *«I caratteri — i candidati, e il comando che li verifica»* qui sotto.
 
 ## ⛔ Da sapere subito
 
@@ -122,26 +123,27 @@ quarantatreesima chiusura non le ha ripetute. Il testo intero sta nella voce, ne
 | 3 | **2026-09-23** — la domanda 2, le tavole: due direzioni, ciascuna nel tema scuro e in quello chiaro, mostrate nel browser col visual companion — **A, «Strumento»**: denso, da cruscotto, linee sottili al posto delle scatole, etichette in maiuscolo spaziato, numeri grandi; **B, «Scrivania»**: calmo, schede morbide con un'ombra leggera, più spazio | **A, con le schede morbide della B.** Parole sue: *«A, ma con le schede morbide della B (angoli arrotondati)»*. Nel browser aveva cliccato la B, e vale il terminale, com'è la regola del visual companion; il consiglio del coordinatore era la A. Quindi: il **linguaggio della A** — etichette in maiuscolo spaziato col segno bordeaux, numeri grandi e leggeri, la barra a segmenti, l'orario acceso nella riga «prossima», il nucleo col quadrante — **dentro schede arrotondate** come quelle della B. La palette delle tavole, rifinibile: off-white `#EFE9DF`, bordeaux `#7A1F2E`, carbone `#151112`, e un bordeaux acceso `#B0475A` **solo nel tema scuro**, per linee e segni sottili. ⚠️ **Il bordeaux sul carbone non basta né per il testo né per un segno sottile** (contrasto WCAG): nel tema scuro è uno **sfondo pieno** col testo off-white sopra; nel chiaro va bene ovunque. Le tavole e lo script che ne calcola i contrasti stanno nello scratchpad della sessione, **non nel repository**: la tavola unita, una volta approvata, si salva accanto a questo file, sul precedente dei wireframe della [stella polare](2026-09-07-direzione-gui-design.md) (decisione 1 del coordinatore) |
 | 4 | **2026-09-23** — la tavola unita: la A con le schede della B, nei due temi, coi pezzi del kit accanto — pulsanti, segni, campo, messaggi di stato, finestra di conferma, lista | **Sì, lo stile è questo**, con una nota: *«sì, passa ai temi, attenzione alla concentricità dei border radius, non voglio casi come come questo che vedi in foto, piccola nota di dettaglio»*. La foto era la finestra di conferma della tavola: una scheda di raggio 14 dentro un riquadro di raggio 10, a dieci pixel. **La regola, decisione del coordinatore dalla nota:** *raggio di fuori = raggio di dentro + distanza*, **per costruzione nei token** e non per convenzione — `--r-card: calc(var(--r-ctl) + var(--pad-card))`, `--r-frame: calc(var(--r-card) + var(--gap))` — così, se cambia un margine, i raggi lo seguono da soli. La scala delle tavole: 6 in linea, 8 i controlli, 18 le schede, 28 la cornice, e le pillole, dove dentro una pillola va una pillola; un elemento che non può stare in un angolo con lo stesso centro **si allontana dall'angolo**: la finestra di conferma sta al centro. **La sonda** è [`sonda-raggi.js`](2026-09-22-design-system-tavole/sonda-raggi.js), accanto alla [tavola approvata](2026-09-22-design-system-tavole/stile-approvato.html), salvata sul precedente dei wireframe della [stella polare](2026-09-07-direzione-gui-design.md): provata nelle **due direzioni**, vuota sulla tavola approvata e rossa su quella precedente, dove coglie proprio la finestra della foto. ⚠️ **La prima forma della sonda NON la coglieva**, perché guardava solo dentro l'arco esterno e la finestra ne stava esattamente sul bordo: il perché sta nel commento della sonda. Il piano la farà diventare un test del kit vero, come `gui/src/tokens/contrast.test.ts` tiene il contrasto. 🔶 **Registrata, non presa:** l'angolo della finestra vera lo disegna Windows, e come si accorda con la cornice da 28 lo decide la cornice della finestra |
 | 5 | **2026-09-23** — la domanda 3, i temi: **A** due temi subito, scuro e chiaro, che di base seguono Windows e si possono scegliere a mano; **B** solo lo scuro adesso, coi token pronti per il chiaro | **A.** Parole sue: *«A, due temi subito»*. Verificato alla fonte il 2026-09-23, la pagina di `nativeTheme` della documentazione di Electron: `themeSource` vale di base `system`, e la query CSS `prefers-color-scheme` della pagina lo segue; `inForcedColorsMode` dice se Windows è in alto contrasto, e l'evento `updated` segnala un cambio. La scelta a mano **non** la tiene la GUI (I1): la conserva il core, come la disposizione — dove, lo dice il disegno. L'alto contrasto di Windows e la riduzione del movimento **non sono temi**: sono regole di G20, sempre rispettate. **Conseguenza, decisione del coordinatore: la domanda 4 cade.** Con due temi `themeAbyss`, che è solo scuro, non può restare: il dock si veste coi **nostri** token con un tema suo — il `DockviewTheme` di `dockview-core` 8.3.1 porta `className`, `colorScheme` e `gap`, letto in `gui/node_modules/dockview-core/dist/cjs/dockview/theme.d.ts` il 2026-09-23 — e le sue variabili di raggio, `--dv-border-radius` fra le altre, seguono la regola dei raggi concentrici della risposta 4 |
+| 6 | **2026-09-23**, seconda sessione — la domanda 5, i caratteri, riposta uguale coi fatti riverificati quel giorno: **A** quelli di sistema, e su Linux l'aspetto cambia da solo; **B** due caratteri aperti dentro il programma, uno per il testo e uno da strumento per etichette e numeri, stesso aspetto ovunque e niente rete a runtime | **B.** Con un clic, sul consiglio — l'opzione *«B, aperti nel programma»*. I fatti riverificati: la tavola approvata usa `Bahnschrift` per etichette e numeri e `system-ui` per il testo, e la GUI vera i caratteri di sistema — `grep -o "font-family:[^;]*"` sulla tavola, e la variabile `--font` di `gui/src/tokens/tokens.css`; **nessun documento** ha già scelto i caratteri, stella polare compresa — un `grep` su `docs/`, `gui/src` e `spikes/GUI-REQUISITI.md`, archivio escluso, trova «tipografico» solo nel senso di refuso; i quattro candidati e il loro peso col comando della sezione qui sotto, contro i 368,9 MB della cartella installata, riga M2 di `spikes/RISULTATI.md`. È una **dipendenza nuova**, ed è sua. Nessun candidato è scelto: la coppia si sceglie **guardandola** |
+| 7 | **2026-09-23**, seconda sessione — la registrata della tredicesima ripresa della [stella polare](2026-09-07-direzione-gui-design.md), in *«Registrate, non prese»*: **A** rileggerla per intero a ogni ripresa di questo brainstorming; **B** i soli pezzi che la domanda del momento tocca, trovati col `grep`, e per intero una volta, prima di scrivere il disegno | **B.** Con un clic, sul consiglio — l'opzione *«B, solo i pezzi utili»*. La stella pesa quanto dicono `wc -c` e lo snippet `tiktoken` di `CLAUDE.md`: il 2026-09-23, 187 481 byte e almeno 60 224 token, limite inferiore. Vale per **questo brainstorming**: la voce nella stella polare e la riga della stella nella §12 del compendio portano il richiamo con la data |
 
-## La domanda 5, com'è stata posta — si ripone uguale
+## I caratteri — i candidati, e il comando che li verifica
 
-Posta il 2026-09-23, alla chiusura, e **senza risposta**: il proprietario ha chiuso la sessione con `session-handoff`. Si ripone
-**uguale**, a parole di tutti i giorni, e i fatti si **riverificano quel giorno**.
+La risposta 6 è **B**, e la coppia **non è scelta**: si sceglie guardandola, nel browser, sulla stessa Home della tavola
+approvata. I candidati, **verificati il 2026-09-23** col comando qui sotto, che stampa versione, data d'uscita, licenza e peso
+spacchettato in byte:
 
-- **Il problema.** La tavola approvata usa due caratteri che stanno dentro Windows — Segoe UI per il testo, Bahnschrift per
-  etichette e numeri — e su Linux non esistono; Linux arriva, e senza riscrivere (ADR-0002): lì l'aspetto cambierebbe da solo.
-- **A, i caratteri di sistema.** Niente da aggiungere, ma su Linux l'aspetto cambia.
-- **B, due caratteri aperti dentro il programma.** Uno per il testo, uno da strumento per etichette e numeri: stesso aspetto
-  ovunque, e niente rete a runtime.
-- **Il consiglio: B.** Lo stile va curato nel minimo dettaglio e identico sui due sistemi, e il peso è trascurabile accanto al
-  programma installato — la riga **M2** di `spikes/RISULTATI.md`. È una **dipendenza nuova**, quindi del proprietario.
-- **Verificato il 2026-09-23 al registro npm**, col comando qui sotto: `@fontsource-variable/inter`, `@fontsource/barlow`,
-  `@fontsource/barlow-semi-condensed` e `@fontsource-variable/geist` hanno licenza `OFL-1.1` e l'ultima uscita del 2026-07-19.
-  Sono **candidati**, e **nessuno è scelto**.
-- **Se B**, la domanda dopo è **visiva**: due o tre coppie di caratteri sulla stessa Home della tavola approvata, nel browser.
+| Pacchetto | Per che cosa | Forma |
+|---|---|---|
+| `@fontsource-variable/inter` | il testo | variabile |
+| `@fontsource-variable/geist` | il testo | variabile |
+| `@fontsource/barlow` | etichette e numeri | pesi fissi |
+| `@fontsource/barlow-semi-condensed` | etichette e numeri, più stretta | pesi fissi |
+
+Tutti `5.3.0` del 2026-07-19 e `OFL-1.1`. Il peso spacchettato — da 0,18 a 1,9 MB per pacchetto, con tutti i sottoinsiemi e
+tutti i formati — è un **limite superiore**: nel programma va solo ciò che i token importano.
 
 ```bash
-python -c "import json,urllib.request as u; [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license')))(json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))))) for n in ['@fontsource-variable/inter','@fontsource/barlow','@fontsource/barlow-semi-condensed','@fontsource-variable/geist']]"
+python -c "import json,urllib.request as u; [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license'), d['versions'][d['dist-tags']['latest']]['dist'].get('unpackedSize')))(json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))))) for n in ['@fontsource-variable/inter','@fontsource/barlow','@fontsource/barlow-semi-condensed','@fontsource-variable/geist']]"
 ```
 
 ## Le domande del brainstorming, una alla volta — proposte del coordinatore, non decisioni
@@ -193,11 +195,9 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 
 ## Decisioni aperte, del proprietario
 
-- ⛔ **la domanda 5, i caratteri — posta e senza risposta**: si ripone uguale, *«La domanda 5, com'è stata posta»*; poi la 6,
-  le icone, la 7, dove si guardano i componenti, e la 8, come si cambia vista — una per messaggio; la 4 è caduta con la
-  risposta 5;
-- se la **stella polare** si rilegga **per intero a ogni ripresa** del brainstorming — la registrata della sua tredicesima
-  ripresa: la prima A/B della ripresa;
+- ⛔ **le coppie di caratteri — la domanda visiva dopo la risposta 6, in corso**: due o tre coppie sulla stessa Home, nel
+  browser; poi la 6, le icone, la 7, dove si guardano i componenti, e la 8, come si cambia vista — una per messaggio; la 4 è
+  caduta con la risposta 5;
 - se il design system prenda un **numero**: nella tabella delle decisioni della stella polare, o una riga della roadmap;
 - **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13;
 - le voci registrate della tabella qui sopra.
@@ -209,11 +209,12 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 2. La lettura obbligatoria di `CLAUDE.md`; poi, **per prima cosa**, la CI di `8c0bbe6`, `35708f5` e di questa chiusura, in corsa
    alla chiusura, coi comandi della riga «la CI».
 3. **Questo file, per intero**, e la tavola approvata, `2026-09-22-design-system-tavole/stile-approvato.html`, aperta nel
-   browser. La stella polare: la prima A/B, in *«Decisioni aperte»*. Le skill: `anthropic-skills:decision-principles`,
+   browser. La stella polare **a pezzi**, col `grep` sulla domanda del momento, e per intero prima di scrivere il disegno —
+   la risposta 7. Le skill: `anthropic-skills:decision-principles`,
    `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, e
    `superpowers:brainstorming` — il percorso è **architetturale**, già detto al proprietario.
-4. Al proprietario **la domanda 5 com'è stata posta**; poi la 6, la 7 e la 8, una per messaggio. Le domande **visive** — le
-   coppie di caratteri se la 5 è B, le icone, il cambio di vista — vanno nel browser: il visual companion si riavvia con
+4. Al proprietario **le coppie di caratteri**, nel browser; poi la 6, la 7 e la 8, una per messaggio. Le domande **visive** —
+   le coppie di caratteri, le icone, il cambio di vista — vanno nel browser: il visual companion si riavvia con
    `--project-dir` sullo scratchpad della sessione nuova, in sottofondo, e le tavole nuove partono dalla approvata. Il
    proprietario ha accettato il companion il 2026-09-23 — *«sì, usa il browser»* — e se la skill vuole di nuovo l'offerta, è una
    riga.
